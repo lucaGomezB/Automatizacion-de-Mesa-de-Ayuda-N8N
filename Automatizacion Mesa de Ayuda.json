@@ -16,8 +16,8 @@
       "type": "n8n-nodes-base.microsoftOutlookTrigger",
       "typeVersion": 1,
       "position": [
-        -160,
-        32
+        -176,
+        -32
       ],
       "id": "6c8c398a-f292-42d6-a15e-7c207d3cb5b6",
       "name": "Llega un email a Mesa de Ayuda"
@@ -29,8 +29,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        48,
-        32
+        32,
+        -32
       ],
       "id": "9dd82e54-ca78-4a82-a350-af1e4c9a435e",
       "name": "Se verifica que la informacion sea la necesaria para levantar un incidente"
@@ -63,8 +63,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        272,
-        32
+        256,
+        -32
       ],
       "id": "a685137d-c2a6-4ec8-a9c4-ff431e265fc2",
       "name": "La informacion esta OK"
@@ -76,8 +76,8 @@
       "type": "n8n-nodes-base.microsoftOutlook",
       "typeVersion": 2,
       "position": [
-        464,
-        128
+        448,
+        64
       ],
       "id": "8d5034d0-31ba-42c1-81a0-11d080b19269",
       "name": "Se le envia un mensaje al usuario pidiendole que vuelva a mandar el mail + los datos que le faltaron / eran incorrectos",
@@ -91,8 +91,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        480,
-        -64
+        448,
+        -144
       ],
       "id": "70893531-ce20-4e27-ad12-18b4b0edb21b",
       "name": "HTTP POST a MTM-SRU"
@@ -106,17 +106,17 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        16,
-        400
+        -16,
+        528
       ],
       "id": "7865af46-7363-4076-ae22-c43c48ab9785",
       "name": "AI Agent"
     },
     {
       "parameters": {
-        "content": "**Automatizacion de Mesa de Ayuda**     \n\nHay varios puntos de acceso, primero, por mail se podra mandar un formulario para reportar un incidente y se podran recibir llamadas telefonicas tambien por twilio",
-        "height": 336,
-        "width": 336,
+        "content": "# Automatizacion de Mesa de Ayuda    \n\nHay varios puntos de acceso, primero, por mail se podra mandar un formulario para reportar un incidente y se podran recibir llamadas telefonicas tambien por twilio",
+        "height": 496,
+        "width": 416,
         "color": 7
       },
       "type": "n8n-nodes-base.stickyNote",
@@ -132,13 +132,13 @@
       "parameters": {
         "content": "## Recepcion de incidente por email",
         "height": 80,
-        "width": 304
+        "width": 400
       },
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -544,
-        48
+        -240,
+        -272
       ],
       "id": "21d351fb-cb0a-48dc-ac1d-04eb52da7e7d",
       "name": "Sticky Note1"
@@ -147,13 +147,13 @@
       "parameters": {
         "content": "## Recepcion de incidente por llamada telefonica",
         "height": 80,
-        "width": 304
+        "width": 544
       },
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -528,
-        400
+        -224,
+        416
       ],
       "id": "9e7e9572-f683-425b-8598-f4eb1ea8affd",
       "name": "Sticky Note2"
@@ -165,8 +165,8 @@
       "type": "n8n-nodes-base.twilioTrigger",
       "typeVersion": 1,
       "position": [
-        -160,
-        400
+        -192,
+        528
       ],
       "id": "b701a375-d9e4-46bb-af03-7d9764067b5a",
       "name": "Llamada telefonica",
@@ -177,11 +177,105 @@
       "type": "@n8n/n8n-nodes-langchain.memoryRedisChat",
       "typeVersion": 1.5,
       "position": [
-        112,
-        560
+        80,
+        752
       ],
       "id": "d3e452d7-b9a4-49a8-88bc-304d7d621982",
       "name": "Con el fin de enviar los datos que parsee la IA como JSON, se guardaran en memoria por un momento"
+    },
+    {
+      "parameters": {
+        "language": "pythonNative",
+        "pythonCode": "# Loop over input items and add a new field called 'my_new_field' to the JSON of each one\nfor item in _items:\n  item[\"json\"][\"my_new_field\"] = 1\nreturn _items"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        336,
+        528
+      ],
+      "id": "043955de-0857-484d-8369-3414b3cdf3c3",
+      "name": "Se verifica lo que trajo la IA"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4cf03753-d476-4193-98d4-646ef98e176d",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        544,
+        528
+      ],
+      "id": "3b2bde63-92ca-4408-9f67-471d1210f196",
+      "name": "Lo que trajo puede crear un incidente"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        720,
+        448
+      ],
+      "id": "8416d940-707c-48fb-a369-3a814610f3bb",
+      "name": "HTTP POST a MTM-SRU se crea un incidente"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 592,
+        "width": 1136,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -272
+      ],
+      "id": "0eb8c9e3-74d9-4b72-b810-b4e584de613b",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 512,
+        "width": 1136,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        400
+      ],
+      "id": "9a2237a8-0caa-4bdb-b90b-1b658475699a",
+      "name": "Sticky Note4"
     }
   ],
   "pinData": {
@@ -243,7 +337,13 @@
     },
     "Se le envia un mensaje al usuario pidiendole que vuelva a mandar el mail + los datos que le faltaron / eran incorrectos": {
       "main": [
-        []
+        [
+          {
+            "node": "Se verifica que la informacion sea la necesaria para levantar un incidente",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Llamada telefonica": {
@@ -267,6 +367,46 @@
           }
         ]
       ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Se verifica lo que trajo la IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Se verifica lo que trajo la IA": {
+      "main": [
+        [
+          {
+            "node": "Lo que trajo puede crear un incidente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lo que trajo puede crear un incidente": {
+      "main": [
+        [
+          {
+            "node": "HTTP POST a MTM-SRU se crea un incidente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -275,7 +415,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "33b16458-6a98-4198-97c0-bb9e1fee2663",
+  "versionId": "8981a808-b64e-445c-b69b-51e05538c168",
   "meta": {
     "instanceId": "a4b8ca842a7c0684266b4c8cf4f059c6f8739c3d0efb923fb4e27e81cd06b34e"
   },
