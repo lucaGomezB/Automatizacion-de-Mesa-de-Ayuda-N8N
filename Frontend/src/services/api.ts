@@ -31,6 +31,8 @@ export const apiClient = axios.create({
 /** Estructura del cuerpo de error 422 Unprocessable Entity de FastAPI/Pydantic. */
 interface FastApiValidationError {
   detail: string | Array<{ msg: string; loc: string[] }>;
+  /** Formato de error propio del backend (manejadores personalizados en error_handlers.py). */
+  error?: { code: string; message: string };
 }
 
 /**
@@ -53,10 +55,13 @@ export function extractApiErrorMessage(error: unknown): string {
 
     if (typeof detail === 'string') return detail;
     if (Array.isArray(detail)) return detail.map((d) => d.msg).join('; ');
+    // Formato de error propio del backend: {"error": {"code": "...", "message": "..."}}
+    if (axiosError.response?.data?.error?.message) return axiosError.response.data.error.message;
 
     const status = axiosError.response?.status;
     if (status === 404) return 'El recurso solicitado no existe.';
     if (status === 422) return 'Los datos enviados no son válidos.';
+    if (status === 500) return 'Error interno del servidor. Verificá que la base de datos esté accesible.';
     if (status === 503) return 'El servicio no está disponible temporalmente.';
     if (axiosError.code === 'ECONNABORTED') return 'La solicitud tardó demasiado. Intentá de nuevo.';
     if (!axiosError.response) return 'No se pudo conectar con el servidor. Verificá que la API esté activa.';

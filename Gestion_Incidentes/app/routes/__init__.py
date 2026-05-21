@@ -6,6 +6,7 @@ from app.routes.incidentes import router as incidentes_router
 
 
 def register_routes(app: FastAPI) -> None:
-    app.include_router(health_router)
+    app.include_router(health_router)                          # /health, /health/db
+    app.include_router(health_router, prefix="/api/v1")       # /api/v1/health, /api/v1/health/db
     app.include_router(incidentes_router, prefix="/api/v1")
     app.include_router(clasificaciones_router, prefix="/api/v1")
