@@ -1,0 +1,60 @@
+/* Variables CSS del tema corporativo UTN y estilos base globales. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Fondos y texto */
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+
+    /* Tarjetas */
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    /* Popovers */
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Color primario: azul marino #1e2a4a */
+    --primary: 224 47% 20%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Color secundario: gris claro */
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 224 47% 20%;
+
+    /* Colores funcionales */
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Bordes e inputs */
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 224 47% 20%;
+
+    /* Radio de borde base */
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  /* Tipografía de encabezados con peso uniforme */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+}
