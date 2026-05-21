@@ -3,7 +3,9 @@
     "allow": [
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\Usuario\\\\Desktop\\\\UTN\\\\2026\\\\Tesis\\\\Automatizacion-de-Mesa-de-Ayuda-N8N\\\\Automatizacion-de-Mesa-de-Ayuda-N8N\" -Force)",
       "Bash(Select-Object Name, PSIsContainer)",
-      "Bash(Format-Table -AutoSize)"
+      "Bash(Format-Table -AutoSize)",
+      "Bash(npx tsc *)",
+      "Bash(npm install *)"
     ]
   }
 }
