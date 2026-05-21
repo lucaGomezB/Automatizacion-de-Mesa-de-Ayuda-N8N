@@ -1,0 +1,36 @@
+# Node
+node_modules/
+dist/
+build/
+
+# Env
+.env
+*.env
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Coverage
+coverage/
+htmlcov/
+
+# Docker
+*.pid
+
+# Alembic
+alembic/versions/__pycache__/
