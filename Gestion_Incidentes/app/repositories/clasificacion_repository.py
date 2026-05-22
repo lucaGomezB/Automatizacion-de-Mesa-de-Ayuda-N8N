@@ -20,6 +20,17 @@ from sqlalchemy.orm import selectinload
 from app.models.clasificacion_log import ClasificacionLog
 from app.repositories.base import BaseRepository
 
+# Opciones de carga estandarizadas para serializar ClasificacionLogRead.
+# ClasificacionLogRead expone sector_predicho y sector_validado como objetos
+# anidados. En SQLAlchemy async el lazy-load de relationships está prohibido:
+# requeriría un await implícito que Python no puede emitir, lanzando
+# MissingGreenlet / greenlet_spawn. Todos los métodos que devuelven instancias
+# destinadas a la serialización HTTP deben incluir estos selectinload.
+_CLASIFICACION_LOAD_OPTIONS = (
+    selectinload(ClasificacionLog.sector_predicho),
+    selectinload(ClasificacionLog.sector_validado),
+)
+
 
 class ClasificacionRepository(BaseRepository[ClasificacionLog]):
     """
@@ -49,10 +60,7 @@ class ClasificacionRepository(BaseRepository[ClasificacionLog]):
         result = await self._session.execute(
             select(ClasificacionLog)
             .where(ClasificacionLog.incidente_id == incidente_id)
-            .options(
-                selectinload(ClasificacionLog.sector_predicho),
-                selectinload(ClasificacionLog.sector_validado),
-            )
+            .options(*_CLASIFICACION_LOAD_OPTIONS)
             .order_by(ClasificacionLog.created_at.desc())
         )
         return list(result.scalars().all())
@@ -84,7 +92,7 @@ class ClasificacionRepository(BaseRepository[ClasificacionLog]):
             # Filtro 2: el operador aún no validó la categoría
             .where(ClasificacionLog.sector_id_validado == None)  # noqa: E711
             .options(
-                selectinload(ClasificacionLog.sector_predicho),
+                *_CLASIFICACION_LOAD_OPTIONS,            # sector_predicho + sector_validado
                 selectinload(ClasificacionLog.incidente),
             )
             .order_by(ClasificacionLog.created_at.asc())  # FIFO: más antiguo primero
@@ -117,5 +125,29 @@ class ClasificacionRepository(BaseRepository[ClasificacionLog]):
         instance.sector_id_validado = sector_id  # Asignar la etiqueta de verdad
         self._session.add(instance)
         await self._session.flush()
-        await self._session.refresh(instance)
-        return instance
+
+        # BUG FIX — por qué NO se usa session.refresh() aquí:
+        #
+        #   session.refresh() recarga únicamente las columnas escalares de la fila.
+        #   Los atributos de relationship (sector_predicho, sector_validado) quedan
+        #   marcados como "expirados" o directamente vacíos en la Identity Map.
+        #
+        #   En SQLAlchemy async, acceder a un relationship no cargado dispara un
+        #   lazy-load sincrónico que Python no puede ejecutar (necesitaría un await
+        #   implícito dentro de __getattr__). El resultado es:
+        #
+        #       sqlalchemy.exc.MissingGreenlet: greenlet_spawn has not been called;
+        #       can't call await_only() here. Was IO attempted in an unexpected place?
+        #
+        #   → FastAPI convierte eso en HTTP 500 con "An unexpected error occurred."
+        #
+        # Solución: re-consultar el registro con selectinload explícito para los
+        # dos relationships que ClasificacionLogRead necesita al serializar.
+        # La sesión sigue abierta (el commit ocurre en get_db_session después del
+        # yield), así que la re-query ve el valor recién escrito por el flush.
+        result = await self._session.execute(
+            select(ClasificacionLog)
+            .where(ClasificacionLog.id == log_id)
+            .options(*_CLASIFICACION_LOAD_OPTIONS)
+        )
+        return result.scalar_one()
