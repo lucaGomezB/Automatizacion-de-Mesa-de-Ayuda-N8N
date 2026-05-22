@@ -51,9 +51,16 @@ class Sector(Base, TimestampMixin):
     incidentes: Mapped[list["Incidente"]] = relationship(  # type: ignore[name-defined]
         "Incidente", back_populates="sector", lazy="select"
     )
-    # Relación inversa: todos los logs donde este sector fue la predicción del clasificador
+    # Relación inversa: todos los logs donde este sector fue la predicción del clasificador.
+    # foreign_keys en forma de string (forward reference) porque ClasificacionLog se
+    # define DESPUÉS de Sector. Es obligatorio porque ClasificacionLog tiene DOS FK
+    # hacia sector.id (sector_id_predicho y sector_id_validado): sin este argumento
+    # SQLAlchemy lanza AmbiguousForeignKeysError en configure_mappers().
     clasificaciones: Mapped[list["ClasificacionLog"]] = relationship(  # type: ignore[name-defined]
-        "ClasificacionLog", back_populates="sector_predicho", lazy="select"
+        "ClasificacionLog",
+        foreign_keys="[ClasificacionLog.sector_id_predicho]",
+        back_populates="sector_predicho",
+        lazy="select",
     )
 
     def __repr__(self) -> str:

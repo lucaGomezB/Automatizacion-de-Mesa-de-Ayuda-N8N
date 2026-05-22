@@ -71,8 +71,15 @@ class ClasificacionLog(Base, TimestampMixin):
         ForeignKey("sector.id", ondelete="SET NULL"),
         nullable=True,
     )
+    # foreign_keys es obligatorio: ClasificacionLog tiene DOS FK apuntando a sector.id
+    # (sector_id_predicho y sector_id_validado). Sin este argumento, SQLAlchemy
+    # no puede determinar el join y lanza AmbiguousForeignKeysError en la primera
+    # query que involucre ClasificacionLog, causando HTTP 500 en todos los endpoints
+    # de clasificaciones.
     sector_predicho: Mapped[Sector | None] = relationship(
-        "Sector", back_populates="clasificaciones"
+        "Sector",
+        foreign_keys=[sector_id_predicho],
+        back_populates="clasificaciones",
     )
 
     # Valor de confianza normalizado en [0.0, 1.0].
