@@ -49,6 +49,12 @@ class Settings(BaseSettings):
     debug: bool = False            # En True, habilita /docs y /redoc de FastAPI
     environment: str = "production"
 
+    # ── CORS ──────────────────────────────────────────────────────────────────
+    # Lista de orígenes permitidos. En desarrollo se usa ["*"] para simplicidad.
+    # En producción reemplazar por los dominios reales del frontend.
+    # Ejemplo .env: CORS_ALLOW_ORIGINS=["https://mi-app.com","http://localhost:3000"]
+    cors_allow_origins: list[str] = ["*"]
+
     # ── Base de datos PostgreSQL ───────────────────────────────────────────────
     # URL completa con driver asyncpg para operaciones no bloqueantes.
     # Ejemplo: postgresql+asyncpg://usuario:clave@host:5432/nombre_db

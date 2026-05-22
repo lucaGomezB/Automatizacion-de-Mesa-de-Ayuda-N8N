@@ -148,8 +148,27 @@ def register_error_handlers(app: FastAPI) -> None:
         Registra la traza completa en el sistema de logging para diagnóstico
         posterior, pero devuelve al cliente un mensaje genérico para evitar
         filtración de detalles internos del sistema.
+
+        IMPORTANTE — Por qué el try/except alrededor del logger:
+            Si este handler lanzara una excepción (p. ej. fallo en structlog
+            antes de que configure_logging() haya corrido, o error en un
+            procesador), la excepción escapa de ExceptionMiddleware sin enviar
+            ninguna respuesta. CORSMiddleware nunca llama a su `send` wrapper y
+            ServerErrorMiddleware responde con un 500 sin el header
+            Access-Control-Allow-Origin. El try/except garantiza que este
+            handler siempre retorna un JSONResponse, sin importar el estado del
+            sistema de logging.
         """
-        logger.exception("unhandled_exception", exc_info=exc)
+        try:
+            logger.exception(
+                "unhandled_exception",
+                path=str(request.url),
+                method=request.method,
+                exc_info=exc,
+            )
+        except Exception:
+            # El logging nunca debe impedir que se envíe la respuesta de error.
+            pass
         return JSONResponse(
             status_code=500,
             content=_error_body("INTERNAL_ERROR", "An unexpected error occurred."),
