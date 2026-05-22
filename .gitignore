@@ -34,3 +34,8 @@ htmlcov/
 
 # Alembic
 alembic/versions/__pycache__/
+
+.claude/
+node_modules/
+venv/
+.venv/

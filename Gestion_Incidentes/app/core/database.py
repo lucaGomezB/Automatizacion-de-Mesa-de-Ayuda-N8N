@@ -78,15 +78,33 @@ async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
 
     Este diseño garantiza que cada solicitud HTTP opere con una transacción
     atómica y que los recursos de base de datos sean liberados correctamente.
+
+    IMPORTANTE — Por qué el rollback tiene su propio try/except:
+        Si la excepción original proviene de un fallo de conectividad con
+        PostgreSQL (p. ej. DB caída, AmbiguousForeignKeysError de SQLAlchemy),
+        el rollback intentaría usar la misma conexión rota y lanzaría una
+        SEGUNDA excepción. Python encadenaría ambas (exception chaining) y
+        la segunda propagaría hacia arriba, confundiendo al unhandled_handler
+        y potencialmente causando que la excepción escapara de ExceptionMiddleware
+        sin que CORSMiddleware agregara los headers de Access-Control-Allow-Origin.
+        El try/except interno silencia el error de rollback y garantiza que solo
+        la excepción original suba hasta los exception handlers de FastAPI.
     """
     async with AsyncSessionFactory() as session:
         try:
             yield session
             await session.commit()
         except Exception:
-            # Revertir cualquier operación pendiente ante fallo inesperado
-            await session.rollback()
+            # Revertir cualquier operación pendiente ante fallo inesperado.
+            # Si el rollback mismo falla (conexión caída, mapper roto), se ignora:
+            # la excepción original ya está en el contexto de Python y es la que
+            # FastAPI debe procesar para generar la respuesta de error correcta.
+            try:
+                await session.rollback()
+            except Exception:
+                pass
             raise
         finally:
-            # Liberar la conexión al pool independientemente del resultado
+            # Liberar la conexión al pool independientemente del resultado.
+            # close() sobre una conexión ya rota es seguro: asyncpg lo maneja.
             await session.close()
