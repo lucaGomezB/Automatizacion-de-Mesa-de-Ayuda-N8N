@@ -57,6 +57,32 @@ Response validation must perform in order:
 4. Confidence must be float in range [0.0, 1.0]
 5. On any failure: log exception, set confidence = 0.0, escalate to human review
 
+## Memoria Compartida (Engram)
+
+Las decisiones, descubrimientos y progreso del proyecto se persisten mediante **Engram**,
+un sistema de memoria persistente que sobrevive entre sesiones y compactiones.
+
+**La memoria se comparte via el repositorio** — no es solo local. El directorio `.engram/chunks/`
+contiene chunks comprimidos exportados que deben trackearse en git.
+
+**Workflow para colaboradores:**
+
+```bash
+# Al clonar o antes de empezar a trabajar:
+engram sync --import --project "Automatizacion-de-Mesa-de-Ayuda-N8N"
+
+# Durante la sesion, la memoria se guarda automaticamente via MCP
+
+# Al finalizar la sesion (antes de commitear):
+engram sync --project "Automatizacion-de-Mesa-de-Ayuda-N8N"
+```
+
+**Recomendacion:** alias en `.bashrc` / `$PROFILE`:
+```powershell
+function engram-sync-all { engram sync --project "Automatizacion-de-Mesa-de-Ayuda-N8N" }
+function engram-import { engram sync --import --project "Automatizacion-de-Mesa-de-Ayuda-N8N" }
+```
+
 ## External Integrations
 
 - **Microsoft Outlook**: Email trigger and automated reply
