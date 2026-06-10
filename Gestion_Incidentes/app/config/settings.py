@@ -73,6 +73,10 @@ class Settings(BaseSettings):
     gemini_max_output_tokens: int = 100         # Suficiente para JSON (~15 tokens) + margen
     gemini_candidate_count: int = 1             # Respuesta única; optimiza latencia
     gemini_timeout_seconds: int = 10            # Límite de espera antes de activar fallback
+    # Ruta al archivo de prompt. Vacío = autoresolver desde la raíz del repositorio
+    # (docs/prompt_gemini.txt). El override es necesario en contenedores donde la
+    # estructura difiere del repo (ej. GEMINI_PROMPT_PATH=/app/docs/prompt_gemini.txt).
+    gemini_prompt_path: str = ""
 
     # ── Umbrales del clasificador híbrido ─────────────────────────────────────
     # Determinados empíricamente; documentados en docs/parameters_gemini.md.

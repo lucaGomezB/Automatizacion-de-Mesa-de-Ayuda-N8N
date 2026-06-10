@@ -82,7 +82,7 @@ C-01 foundation-setup (ninguna)
 
 ### [C-01] `foundation-setup`
 
-- **Estado**: `[ ]` pendiente
+- **Estado**: `[x]` completado (2026-06-10 — openspec/changes/c-01-foundation-setup)
 - **Scope**:
   - Completar `openspec/config.yaml` con el stack tecnologico del proyecto
   - Configurar `.engram/` en el repo para memoria compartida entre colaboradores
