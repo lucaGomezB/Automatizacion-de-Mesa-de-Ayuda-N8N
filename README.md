@@ -19,3 +19,20 @@ El sistema puede ser replicado exactamente siguiendo:
 5. Configuración: `docker-compose.yml`
 
 **Nota**: El corpus de validación está disponible bajo `data/corpus_evaluacion_pseudonimizado.csv` con 200 casos etiquetados.
+
+## Memoria compartida del proyecto (engram)
+
+El directorio `.engram/` versiona la memoria técnica del proyecto (decisiones, bugs resueltos, convenciones) para que viaje con el código y sea recuperable por cualquier colaborador.
+
+### Workflow
+
+```bash
+# Antes de hacer push — exportar la memoria nueva de ESTE proyecto:
+engram sync
+git add .engram && git commit -m "chore(engram): sync project memory"
+
+# Después de clonar o hacer pull — importar la memoria al engram local:
+engram sync --import
+```
+
+⚠️ **Nunca usar `engram sync --all`**: exportaría la memoria de TODOS los proyectos de la máquina a este repositorio. El comando sin flags filtra automáticamente por este proyecto.
