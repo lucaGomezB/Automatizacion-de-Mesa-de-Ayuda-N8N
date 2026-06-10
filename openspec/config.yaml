@@ -30,7 +30,7 @@ stack:
     tool: N8N 1.62 (Docker autoalojado)
     workflow: Automatizacion_Mesa_de_Ayuda.json
   inference:
-    model: Gemini 2.5 Flash (google-generativeai 0.8)
+    model: Gemini 2.5 Flash (google-genai >= 1.0)
     params: { temperature: 0.3, top_p: 0.9, max_output_tokens: 100, timeout_s: 10 }
     prompt: docs/prompt_gemini.txt
 
@@ -38,7 +38,7 @@ conventions:
   language: Español rioplatense (código y docs); identificadores de dominio en español
   layers: routes -> services -> repositories -> models (no saltear capas)
   async: SQLAlchemy async — siempre selectinload explícito para relationships serializados (nunca lazy-load)
-  errors: cuerpo estándar {"error": {"code", "message", "details?"}} vía core/error_handlers.py
+  errors: 'cuerpo estándar {"error": {"code", "message", "details?"}} vía core/error_handlers.py'
   thresholds: { deterministic: 0.90, human_review: 0.70 }
   categorias: ["Sistemas", "Operaciones", "Soporte Técnico"]  # exactas, case-sensitive
 

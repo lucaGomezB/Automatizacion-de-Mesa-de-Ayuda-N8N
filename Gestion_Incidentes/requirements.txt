@@ -11,8 +11,8 @@ alembic==1.13.3
 pydantic==2.9.2
 pydantic-settings==2.5.2
 
-# Google Gemini
-google-generativeai>=0.8
+# Google Gemini (SDK nuevo; reemplaza al deprecado google-generativeai)
+google-genai>=1.0
 
 # HTTP client (N8N webhook notifications)
 httpx==0.27.2

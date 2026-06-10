@@ -28,10 +28,12 @@ Validación de respuestas (Anexo H §H.3):
         4. Valor de "confianza" numérico en el rango [0.0, 1.0].
 """
 
+import asyncio
 import json
 from pathlib import Path
 
-import google.generativeai as genai
+from google import genai
+from google.genai import types as genai_types
 
 from app.classifiers.base import BaseClassifier
 from app.config.settings import get_settings
@@ -205,28 +207,27 @@ class GeminiClassifier(BaseClassifier):
         parámetros definidos en Settings (que reproducen docs/parameters_gemini.md).
         """
         settings = get_settings()
-        genai.configure(api_key=settings.gemini_api_key)
+        self._client = genai.Client(api_key=settings.gemini_api_key)
 
         # Modelo especificado en la tesis: Gemini 2.5 Flash (marzo 2026)
-        self._model = genai.GenerativeModel(settings.gemini_model)
+        self._model_name = settings.gemini_model
 
-        # Configuración de generación con parámetros calibrados (Anexo H §H.2)
-        self._generation_config = genai.types.GenerationConfig(
+        # Configuración de generación con parámetros calibrados (Anexo H §H.2).
+        # Safety settings parcialmente desactivados para permitir terminología
+        # técnica que podría ser bloqueada por los filtros de contenido predeterminados
+        # (ej. "se cayó", "atasco", "corte de red"). Ver Anexo H §H.2.
+        self._generation_config = genai_types.GenerateContentConfig(
             temperature=settings.gemini_temperature,         # 0.3: reduce variabilidad
             top_p=settings.gemini_top_p,                     # 0.9: nucleus sampling rioplatense
             max_output_tokens=settings.gemini_max_output_tokens,  # 100: suficiente para JSON
             candidate_count=settings.gemini_candidate_count,      # 1: optimiza latencia
+            safety_settings=[
+                genai_types.SafetySetting(category="HARM_CATEGORY_HARASSMENT", threshold="BLOCK_NONE"),
+                genai_types.SafetySetting(category="HARM_CATEGORY_HATE_SPEECH", threshold="BLOCK_NONE"),
+                genai_types.SafetySetting(category="HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold="BLOCK_NONE"),
+                genai_types.SafetySetting(category="HARM_CATEGORY_DANGEROUS_CONTENT", threshold="BLOCK_NONE"),
+            ],
         )
-
-        # Safety settings parcialmente desactivados para permitir terminología
-        # técnica que podría ser bloqueada por los filtros de contenido predeterminados
-        # (ej. "se cayó", "atasco", "corte de red"). Ver Anexo H §H.2.
-        self._safety_settings = [
-            {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-            {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-            {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-            {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
-        ]
 
         self._timeout = settings.gemini_timeout_seconds       # 10s: límite de latencia
         self._human_review_threshold = settings.human_review_threshold  # 0.70
@@ -255,11 +256,16 @@ class GeminiClassifier(BaseClassifier):
         raw_response: str | None = None
 
         try:
-            response = self._model.generate_content(
-                prompt,
-                generation_config=self._generation_config,
-                safety_settings=self._safety_settings,
-                request_options={"timeout": self._timeout},
+            # asyncio.wait_for garantiza el límite de latencia (10s) y lanza
+            # TimeoutError (asyncio.TimeoutError == TimeoutError en Python ≥3.11),
+            # preservando el contrato del bloque except de más abajo.
+            response = await asyncio.wait_for(
+                self._client.aio.models.generate_content(
+                    model=self._model_name,
+                    contents=prompt,
+                    config=self._generation_config,
+                ),
+                timeout=self._timeout,
             )
             raw_response = response.text.strip()
 
