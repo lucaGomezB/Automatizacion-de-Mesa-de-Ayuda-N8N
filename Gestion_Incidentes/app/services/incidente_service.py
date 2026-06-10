@@ -20,12 +20,14 @@ Patrón de diseño:
     de escritura de una solicitud compartan la misma transacción.
 """
 
+import asyncio
 from datetime import datetime
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.classifiers.hybrid import HybridClassifier
+from app.utils.n8n_webhook import notify_n8n
 from app.core.exceptions import (
     CanalOrigenNotFoundError,
     EntityNotFoundError,
@@ -262,6 +264,10 @@ class IncidenteService:
             etapa=result.etapa,
             requiere_revision_humana=result.requiere_revision_humana,
         )
+
+        # Notificar a N8N de forma fire-and-forget: no bloquea la respuesta HTTP
+        # ni propaga fallos (notify_n8n ya envuelve toda excepción en try/except).
+        asyncio.create_task(notify_n8n(incidente.id, result))
 
     async def _resolve_estado(self, nombre: str) -> Estado:
         """
