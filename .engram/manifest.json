@@ -8,6 +8,22 @@
       "sessions": 1,
       "memories": 6,
       "prompts": 0
+    },
+    {
+      "id": "e524f72b",
+      "created_by": "Usuario",
+      "created_at": "2026-06-10T22:54:46Z",
+      "sessions": 0,
+      "memories": 6,
+      "prompts": 0
+    },
+    {
+      "id": "289f534e",
+      "created_by": "Usuario",
+      "created_at": "2026-06-10T22:55:54Z",
+      "sessions": 0,
+      "memories": 2,
+      "prompts": 0
     }
   ]
 }

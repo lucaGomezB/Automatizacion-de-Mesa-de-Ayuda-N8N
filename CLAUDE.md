@@ -88,7 +88,7 @@ function engram-import { engram sync --import --project "Automatizacion-de-Mesa-
 - **Microsoft Outlook**: Email trigger and automated reply
 - **Twilio**: Receives phone call transcription via webhook
 - **MTM-SRU**: Internal incident management system, receives HTTP POST to create tickets
-- **Google Gemini API**: Classification requests (`google-generativeai >= 0.8`)
+- **Google Gemini API**: Classification requests (`google-genai >= 1.0`, the new SDK that replaces the deprecated `google-generativeai`)
 - **Redis**: Session/memory storage for the LangChain AI agent
 
 ## Development Notes

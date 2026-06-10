@@ -10,7 +10,7 @@
 | Driver DB | asyncpg | — | La tesis menciona psycopg2; el código usa asyncpg (ver [09](09_decisiones_y_supuestos.md) DD-08) |
 | Base de datos | PostgreSQL | 15.5 | Imagen `postgres:15.5-alpine`, volumen persistente |
 | Migraciones | Alembic | — | `alembic/versions/001_seed_catalogs.py` siembra catálogos |
-| Inferencia LLM | Gemini 2.5 Flash | `google-generativeai` 0.8 | temp 0,3 · top_p 0,9 · max_tokens 100 · timeout 10 s |
+| Inferencia LLM | Gemini 2.5 Flash | `google-genai` ≥ 1.0 | temp 0,3 · top_p 0,9 · max_tokens 100 · timeout 10 s; reemplaza al deprecado `google-generativeai` |
 | Telefonía | Twilio Programmable Voice | — | TwiML + transcripción automática nativa |
 | Frontend | React 18 + TypeScript + Vite | — | React Query + Axios + shadcn/ui |
 | Logging | structlog | — | JSON (prod) / consola (dev) |
@@ -50,7 +50,7 @@ Principios: cohesión alta / acoplamiento bajo; cada capa reemplazable de forma 
 
 | Servicio | Propósito | Tipo |
 |---|---|---|
-| Google Gemini API | Clasificación semántica (etapa 2) | SDK `google-generativeai` |
+| Google Gemini API | Clasificación semántica (etapa 2) | SDK `google-genai` |
 | Twilio | Recepción telefónica + transcripción | Webhook → N8N |
 | Servidor IMAP (Outlook) | Trigger de correos entrantes | Polling IMAP en N8N |
 | N8N | Orquestación; recibe webhook post-clasificación | Webhook saliente (`notify_n8n`) |
