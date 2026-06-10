@@ -49,14 +49,34 @@ logger = get_logger(__name__)
 # definidos en el prompt (docs/prompt_gemini.txt), incluyendo tildes y mayúsculas.
 _VALID_CATEGORIES = frozenset({"Sistemas", "Operaciones", "Soporte Técnico"})
 
-# Ruta al archivo de prompt documentado en la tesis. Se carga una sola vez
-# al importar el módulo y se reutiliza en todas las invocaciones.
-_PROMPT_PATH = Path(__file__).parent.parent.parent / "docs" / "prompt_gemini.txt"
+# Ruta default al prompt documentado en la tesis, anclada a la RAÍZ del repositorio
+# (no al cwd ni a BackEnd/): classifiers → app → BackEnd → raíz. El archivo vive en
+# docs/prompt_gemini.txt junto al resto de la documentación de la tesis.
+_DEFAULT_PROMPT_PATH = Path(__file__).resolve().parents[3] / "docs" / "prompt_gemini.txt"
+
+
+def _resolve_prompt_path() -> Path:
+    """
+    Resuelve la ruta del archivo de prompt de forma determinística.
+
+    Prioridad:
+        1. settings.gemini_prompt_path (env var GEMINI_PROMPT_PATH) si está definida —
+           necesario en contenedores donde la estructura difiere del repo.
+        2. Default anclado a la raíz del repo vía la ubicación de este módulo,
+           independiente del directorio de trabajo del proceso.
+
+    Returns:
+        Ruta al archivo de prompt (puede no existir; _load_prompt degrada en ese caso).
+    """
+    settings = get_settings()
+    if settings.gemini_prompt_path:
+        return Path(settings.gemini_prompt_path)
+    return _DEFAULT_PROMPT_PATH
 
 
 def _load_prompt() -> str:
     """
-    Carga el prompt desde el archivo docs/prompt_gemini.txt.
+    Carga el prompt desde la ruta resuelta por _resolve_prompt_path().
 
     Si el archivo no existe (por ejemplo, en un entorno de CI donde solo
     está el código), se utiliza una copia embebida que reproduce el contenido
@@ -66,10 +86,11 @@ def _load_prompt() -> str:
     Returns:
         Contenido completo del prompt como cadena de texto.
     """
+    prompt_path = _resolve_prompt_path()
     try:
-        return _PROMPT_PATH.read_text(encoding="utf-8").strip()
+        return prompt_path.read_text(encoding="utf-8").strip()
     except FileNotFoundError:
-        logger.warning("prompt_file_not_found", path=str(_PROMPT_PATH))
+        logger.warning("prompt_file_not_found", path=str(prompt_path))
         # Fallback inline: réplica exacta del contenido de docs/prompt_gemini.txt
         return (
             "INSTRUCCIÓN DE ROL\n"

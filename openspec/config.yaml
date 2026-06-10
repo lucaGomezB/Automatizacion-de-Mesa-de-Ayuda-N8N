@@ -1,0 +1,50 @@
+# OpenSpec — Configuración del proyecto
+# Contexto que heredan los sub-agentes OPSX. Apuntador, no copia: el detalle vive en knowledge-base/.
+
+project:
+  name: Automatizacion-de-Mesa-de-Ayuda-N8N
+  description: >
+    Sistema automatizado de registro de incidentes para mesa de ayuda empresarial
+    (tesis UTN-FRM 2026). Tres canales de entrada (correo, formulario web, telefonía
+    Twilio) convergen vía N8N en una API FastAPI que clasifica con pipeline híbrido
+    (reglas deterministicas -> Gemini 2.5 Flash -> fallback) y persiste en PostgreSQL
+    con revisión humana para confianza < 0.70.
+
+stack:
+  backend:
+    path: Gestion_Incidentes/
+    language: Python 3.12
+    framework: FastAPI 0.115 + Uvicorn
+    orm: SQLAlchemy 2.0 async (asyncpg)
+    database: PostgreSQL 15.5
+    migrations: Alembic (seed de catálogos en 001)
+    testing: pytest 8.3 (tests/ con conftest async + SQLite in-memory)
+    logging: structlog (JSON prod / consola dev)
+    config: pydantic-settings (.env)
+  frontend:
+    path: Frontend/
+    framework: React 18 + TypeScript + Vite
+    data: React Query + Axios
+    ui: shadcn/ui + Tailwind
+  orchestration:
+    tool: N8N 1.62 (Docker autoalojado)
+    workflow: Automatizacion_Mesa_de_Ayuda.json
+  inference:
+    model: Gemini 2.5 Flash (google-generativeai 0.8)
+    params: { temperature: 0.3, top_p: 0.9, max_output_tokens: 100, timeout_s: 10 }
+    prompt: docs/prompt_gemini.txt
+
+conventions:
+  language: Español rioplatense (código y docs); identificadores de dominio en español
+  layers: routes -> services -> repositories -> models (no saltear capas)
+  async: SQLAlchemy async — siempre selectinload explícito para relationships serializados (nunca lazy-load)
+  errors: cuerpo estándar {"error": {"code", "message", "details?"}} vía core/error_handlers.py
+  thresholds: { deterministic: 0.90, human_review: 0.70 }
+  categorias: ["Sistemas", "Operaciones", "Soporte Técnico"]  # exactas, case-sensitive
+
+context_files:
+  roadmap: CHANGES.md
+  knowledge_base: knowledge-base/
+  thesis: docs/Tesis/tesis_para_agente.md
+  gemini_spec: ANEXO_H_Prompt_Gemini_Especificacion.md
+  rules: CLAUDE.md

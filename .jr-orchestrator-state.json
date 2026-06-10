@@ -1,0 +1,48 @@
+{
+  "version": 3,
+  "step": "done",
+  "owner": "jr-orchestrator",
+  "kb": {
+    "created_by": "kb-creator",
+    "source": "ingest",
+    "discovery": {
+      "problem": "El registro manual de incidentes en una mesa de ayuda mediana (~42/dia) demora 165s por caso con ~15% de derivacion erronea; se automatiza la recepcion multicanal, clasificacion y registro con supervision humana solo en baja confianza.",
+      "system_type": "web_app + api + workflow_automation",
+      "domain": "itsm_mesa_de_ayuda",
+      "scale": "team",
+      "stack": ["FastAPI", "SQLAlchemy 2.0 async", "PostgreSQL 15", "N8N", "Gemini 2.5 Flash", "Twilio", "React 18 + TypeScript + Vite", "Docker Compose", "pytest"],
+      "needs_infra": true
+    },
+    "files": [
+      "knowledge-base/README.md",
+      "knowledge-base/01_vision_y_objetivos.md",
+      "knowledge-base/02_descripcion_general.md",
+      "knowledge-base/03_actores_y_roles.md",
+      "knowledge-base/04_modelo_de_datos.md",
+      "knowledge-base/05_reglas_de_negocio.md",
+      "knowledge-base/06_funcionalidades.md",
+      "knowledge-base/07_flujos_principales.md",
+      "knowledge-base/08_arquitectura_propuesta.md",
+      "knowledge-base/09_decisiones_y_supuestos.md",
+      "knowledge-base/10_preguntas_abiertas.md",
+      "knowledge-base/11_evaluacion_experimental.md"
+    ]
+  },
+  "roadmap": {
+    "created_by": "roadmap-generator",
+    "changes_file": "CHANGES.md",
+    "pre_existing": true,
+    "note": "CHANGES.md ya existia en el repo (10 changes, 6 fases) al iniciar la fundacion; fase no re-ejecutada por idempotencia"
+  },
+  "skills": {
+    "created_by": "find-skill",
+    "skipped": true,
+    "reason": "skills del stack ya instaladas globalmente (fastapi-templates, sqlalchemy-postgres, python-testing, python-testing-patterns, pytest-coverage, python-design-patterns, tailwind-design-system); fase satisfecha previamente",
+    "recommended": [],
+    "installed": ["fastapi-templates", "sqlalchemy-postgres", "python-testing", "python-testing-patterns", "pytest-coverage", "python-design-patterns"]
+  },
+  "registry": {
+    "created_by": "skill-registry",
+    "file": ".atl/skill-registry.md"
+  }
+}
