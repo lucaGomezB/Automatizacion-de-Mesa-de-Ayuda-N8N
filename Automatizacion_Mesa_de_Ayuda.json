@@ -205,93 +205,6 @@
     },
     {
       "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "id": "4cf03753-d476-4193-98d4-646ef98e176d",
-              "leftValue": "={{ $json.confianza }}",
-              "rightValue": 0.7,
-              "operator": {
-                "type": "number",
-                "operation": "gte",
-                "name": "filter.operator.gte"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        544,
-        528
-      ],
-      "id": "3b2bde63-92ca-4408-9f67-471d1210f196",
-      "name": "Lo que trajo puede crear un incidente"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "={{ $env.BACKEND_URL }}/api/v1/incidentes",
-        "sendBody": true,
-        "contentType": "json",
-        "body": {
-          "descripcion": "={{ $json.descripcion }}",
-          "prioridad": "={{ $json.prioridad || 'media' }}"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.4,
-      "position": [
-        720,
-        448
-      ],
-      "id": "8416d940-707c-48fb-a369-3a814610f3bb",
-      "name": "HTTP POST a MTM-SRU se crea un incidente"
-    },
-    {
-      "parameters": {
-        "content": "",
-        "height": 592,
-        "width": 1136,
-        "color": 7
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        -240,
-        -272
-      ],
-      "id": "0eb8c9e3-74d9-4b72-b810-b4e584de613b",
-      "name": "Sticky Note3"
-    },
-    {
-      "parameters": {
-        "content": "",
-        "height": 512,
-        "width": 1136,
-        "color": 5
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        -240,
-        400
-      ],
-      "id": "9a2237a8-0caa-4bdb-b90b-1b658475699a",
-      "name": "Sticky Note4"
-    },
-    {
-      "parameters": {
         "jsCode": "// Normalizacion de entrada a estructura unificada — tesis §5.3\n// Homogeniza la entrada de cualquiera de los tres canales:\n//   correo, web, telefonia\n// Produce exactamente: { id, timestamp, canal_origen, descripcion }\n// canal_origen ∈ { correo, web, telefonia }\n//\n// Nota de privacidad (C-04 §Decision 2):\n//   La descripcion se transmite en texto claro al backend.\n//   La pseudonimizacion ocurre en el backend (IncidenteService.create_and_classify).\n//   El transporte usa HTTPS.\n\nconst { v4: uuidv4 } = require('uuid');\nconst items = $input.all();\nconst result = [];\n\nconst CANALES_VALIDOS = new Set(['correo', 'web', 'telefonia']);\n\nfor (const item of items) {\n  // Determinar canal segun lo marcado por el nodo previo\n  const canalRaw = item.json.canal_raw || 'correo';\n  const canalOrigen = CANALES_VALIDOS.has(canalRaw) ? canalRaw : null;\n\n  if (!canalOrigen) {\n    // Canal invalido: derivar a revision humana\n    result.push({\n      json: {\n        ...item.json,\n        canal_origen: canalRaw,\n        es_valido: false,\n        error_normalizacion: 'canal_invalido'\n      }\n    });\n    continue;\n  }\n\n  // Extraer descripcion segun canal\n  let descripcion = '';\n  if (canalOrigen === 'correo') {\n    descripcion = item.json.descripcion || item.json.body || item.json.text || '';\n  } else if (canalOrigen === 'telefonia') {\n    descripcion = item.json.descripcion || item.json.output || item.json.text || '';\n  } else if (canalOrigen === 'web') {\n    descripcion = item.json.descripcion || item.json.message || item.json.body || '';\n  }\n\n  result.push({\n    json: {\n      id: item.json.id || $execution.id + '-' + Date.now(),\n      timestamp: new Date().toISOString(),  // ISO-8601 con milisegundos\n      canal_origen: canalOrigen,\n      descripcion: String(descripcion).trim(),\n      prioridad: item.json.prioridad || 'media',\n      es_valido: item.json.es_valido !== undefined ? item.json.es_valido : true\n    }\n  });\n}\n\nreturn result;"
       },
       "type": "n8n-nodes-base.code",
@@ -302,6 +215,120 @@
       ],
       "id": "f1a2b3c4-d5e6-47f8-a9b0-c1d2e3f4a5b6",
       "name": "Normalizar entrada del incidente"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "incidente-web",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -176,
+        320
+      ],
+      "id": "1a273abc-a765-482e-8a0e-a0c15448027b",
+      "name": "Webhook formulario web"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Marca el canal de origen como web antes de la normalizacion\nconst item = .item;\nreturn [\n  {\n    json: {\n      ...item.json,\n      canal_raw: 'web'\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        160,
+        320
+      ],
+      "id": "44691c0c-dfc7-4cd2-b31c-4d968a7bbcd9",
+      "name": "Marcar canal web"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ incidente_id: .id, mensaje: 'Incidente registrado correctamente. Su numero de incidente es: ' + .id }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        320
+      ],
+      "id": "4cd59f7d-9dee-4aae-ba82-0622f60dad64",
+      "name": "Confirmacion web al usuario"
+    },
+    {
+      "parameters": {
+        "subject": "=Incidente registrado - Numero {{ .id }}",
+        "bodyContent": "=Su incidente ha sido registrado exitosamente con el numero {{ .id }}. Un agente de la mesa de ayuda se comunicara con usted a la brevedad.",
+        "toRecipients": "={{ .remitente || .from || '' }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        -144
+      ],
+      "id": "abe6b56a-1e61-4d32-9b2e-01fe81f229ac",
+      "name": "Correo de confirmacion al usuario"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Registro de auditoria - C-05 (fix: todas las ramas, tolerante a rechazo)\n// Contrato del evento: { incidente_id, canal_origen, timestamp, categoria, confianza, resultado, retencion_dias }\n// EXCLUSION DE PII: la descripcion cruda NO se incluye; solo metadatos y referencias.\n// Retencion: 30 dias - declarada aqui; el destino persistente (Docker logging con rotacion)\n// se configura en docker-compose.yml segun la guia operativa.\n//\n// Ramas que llegan a este nodo:\n//   - Rama exitosa: item tiene id, categoria, confianza del response HTTP (resultado: 'creado')\n//   - Rama de rechazo (datos incompletos): item tiene canal_origen pero NO id/categoria/confianza\n//     En ese caso resultado proviene del campo resultado emitido por el validador o se infiere.\nconst item = $input.item.json;\n\n// Determinar el resultado segun la rama:\n// Si el item no tiene id (no paso por HTTP POST), es un rechazo por datos incompletos.\nconst resultado = item.resultado\n  || (item.id ? 'creado' : 'rechazado_datos_incompletos');\n\nconst evento = {\n  incidente_id: item.id || null,\n  canal_origen: item.canal_origen || item.canal_raw || null,\n  timestamp: new Date().toISOString(),\n  categoria: item.categoria || null,\n  confianza: item.confianza ?? null,\n  resultado: resultado,\n  retencion_dias: 30\n};\nconsole.log('[AUDITORIA]', JSON.stringify(evento));\nreturn [{ json: evento }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        0
+      ],
+      "id": "cdfa5825-39fd-42f3-8b6a-98d2001f1743",
+      "name": "Registro de auditoria"
+    },
+    {
+      "id": "switch-canal-origen-01",
+      "name": "Rutear por canal de origen",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        1000,
+        -32
+      ],
+      "parameters": {
+        "mode": "expression",
+        "output": "={{ $json.canal_origen }}",
+        "rules": {
+          "values": [
+            {
+              "outputKey": "web",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.canal_origen }}",
+                    "rightValue": "web",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true
+            }
+          ]
+        },
+        "fallbackOutput": "extra"
+      }
     }
   ],
   "pinData": {},
@@ -351,6 +378,11 @@
         [
           {
             "node": "Se le envia un mensaje al usuario pidiendole que vuelva a mandar el mail + los datos que le faltaron / eran incorrectos",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Registro de auditoria",
             "type": "main",
             "index": 0
           }
@@ -405,25 +437,63 @@
       "main": [
         [
           {
-            "node": "Lo que trajo puede crear un incidente",
+            "node": "Normalizar entrada del incidente",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Lo que trajo puede crear un incidente": {
+    "Webhook formulario web": {
       "main": [
         [
           {
-            "node": "HTTP POST a MTM-SRU se crea un incidente",
+            "node": "Marcar canal web",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marcar canal web": {
+      "main": [
+        [
+          {
+            "node": "Normalizar entrada del incidente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP POST a MTM-SRU": {
+      "main": [
+        [
+          {
+            "node": "Rutear por canal de origen",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Registro de auditoria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rutear por canal de origen": {
+      "main": [
+        [
+          {
+            "node": "Confirmacion web al usuario",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "AI Agent",
+            "node": "Correo de confirmacion al usuario",
             "type": "main",
             "index": 0
           }
