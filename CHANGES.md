@@ -238,7 +238,7 @@ C-01 foundation-setup (ninguna)
 
 ### [C-08] `evaluation-framework`
 
-- **Estado**: `[ ]` pendiente
+- **Estado**: `[x]` completado (2026-06-11 — openspec/changes/archive/2026-06-11-c-08-evaluation-framework; tarea 8.1 corrida real pendiente del corpus no-trackeado)
 - **Scope**:
   - Crear script Python en `evaluation/run_evaluation.py` que cargue el corpus de 200 casos desde CSV
   - Ejecutar el clasificador hibrido sobre cada caso y recolectar: categoria predicha, confianza, etapa
