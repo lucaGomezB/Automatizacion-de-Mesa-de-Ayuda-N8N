@@ -1284,3 +1284,201 @@ def test_no_orphan_executable_nodes():
         f"Nodos ejecutables huérfanos encontrados (inalcanzables desde triggers): {orphans}. "
         "Eliminalos o cabléalos con propósito real."
     )
+
+
+# ---------------------------------------------------------------------------
+# Grupo 15 — Defectos de runtime D-1..D-4 (verificación funcional C-05)
+#
+# D-1: SyntaxError en jsCode de "Marcar canal web" — const item = .item
+# D-2: IF evalúa $json.confianza que no existe para correo/web → siempre false
+# D-3: Auditoría lee item.categoria/item.confianza pero el backend devuelve sector.nombre
+# D-4: Auditoría pierde canal_origen porque tras HTTP POST el item es el response body
+# ---------------------------------------------------------------------------
+
+CANAL_WEB_NODE_NAME = "Marcar canal web"
+
+
+def test_d1_marcar_canal_web_jsCode_syntax():
+    """
+    RED (D-1): el jsCode de 'Marcar canal web' NO debe contener '= .item'
+    (SyntaxError en N8N — token inesperado).
+    Debe usar '$input.item' o la asignación correcta del ítem.
+
+    Actualmente el JSON contiene: const item = .item;  → SyntaxError en runtime.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    assert CANAL_WEB_NODE_NAME in by_name, (
+        f"Nodo '{CANAL_WEB_NODE_NAME}' no encontrado en el workflow"
+    )
+    node = by_name[CANAL_WEB_NODE_NAME]
+    code = node["parameters"].get("jsCode", "")
+
+    # El patrón '= .item' es un SyntaxError: falta el objeto antes del punto
+    assert "= .item" not in code, (
+        f"Nodo '{CANAL_WEB_NODE_NAME}' contiene '= .item' (SyntaxError en N8N). "
+        "Debe ser '$input.item' u otro patrón válido."
+    )
+
+
+def test_d1_marcar_canal_web_jsCode_uses_valid_input_ref():
+    """
+    TRIANGULATE (D-1): el jsCode de 'Marcar canal web' usa la referencia
+    N8N idiomática para obtener el ítem de entrada ($input.item o $input.all()).
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    node = by_name[CANAL_WEB_NODE_NAME]
+    code = node["parameters"].get("jsCode", "")
+
+    valid_refs = ["$input.item", "$input.all()", "$input.first()"]
+    has_valid = any(ref in code for ref in valid_refs)
+    assert has_valid, (
+        f"Nodo '{CANAL_WEB_NODE_NAME}' no usa una referencia válida de entrada N8N. "
+        f"Esperado alguno de: {valid_refs}. Código actual: {code!r}"
+    )
+
+
+def test_d2_if_condition_evaluates_es_valido():
+    """
+    RED (D-2): el nodo IF 'La informacion esta OK' debe evaluar un campo
+    que el normalizador garantiza para los TRES canales.
+
+    El normalizador produce 'es_valido' (bool) para todos los canales.
+    La condición actual '$json.confianza >= 0.70' solo existe para telefonía
+    (el canal de IA la genera), pero NO para correo ni web — causa que
+    correo/web siempre tomen la rama false.
+
+    El normalizador propaga 'confianza' a partir de 'es_valido' para que
+    el IF compartido funcione en los tres canales.
+
+    Fix esperado: el normalizador mapea es_valido→confianza (1.0 si válido, 0.0 si no),
+    y el IF sigue evaluando confianza >= 0.70. Verificamos que el normalizador
+    produce 'confianza' para todos los canales.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    normalizer = by_name[NORMALIZER_NODE_NAME]
+    code = normalizer["parameters"].get("jsCode", "")
+
+    # El normalizador debe emitir 'confianza' como campo para que el IF lo encuentre
+    assert "confianza" in code, (
+        f"El normalizador '{NORMALIZER_NODE_NAME}' no produce el campo 'confianza'. "
+        "Debe sintetizar confianza = 1.0 (datos válidos) o 0.0 (inválidos) para correo/web, "
+        "y propagar la confianza existente para telefonía. "
+        "Esto garantiza que el IF compartido '$json.confianza >= 0.70' funcione "
+        "para los tres canales."
+    )
+
+
+def test_d2_normalizer_produces_confianza_from_es_valido():
+    """
+    TRIANGULATE (D-2): el normalizador debe derivar 'confianza' desde 'es_valido'
+    cuando no viene del upstream de telefonía.
+    Verifica que el código menciona tanto 'es_valido' como 'confianza' juntos,
+    lo que indica que la lógica de síntesis existe.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    normalizer = by_name[NORMALIZER_NODE_NAME]
+    code = normalizer["parameters"].get("jsCode", "")
+
+    # El normalizador debe referenciar es_valido Y confianza para hacer la síntesis
+    assert "es_valido" in code and "confianza" in code, (
+        f"El normalizador no sintetiza 'confianza' desde 'es_valido'. "
+        "Ambos campos deben aparecer juntos para que la lógica de síntesis sea verificable."
+    )
+
+
+def test_d3_audit_reads_sector_nombre_not_item_categoria():
+    """
+    RED (D-3): el jsCode de auditoría NO debe leer 'item.categoria' (campo inexistente
+    en el response del backend). El backend devuelve 'sector.nombre' (nested).
+
+    Shape real del 201: { id, sector: { nombre, ... }, requiere_revision_humana, ... }
+    El código actual: categoria: item.categoria || null  → siempre null.
+
+    Fix: leer item.sector?.nombre (o equivalente tolerante a undefined).
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    node = by_name[AUDIT_NODE_NAME]
+    code = node["parameters"].get("jsCode", "")
+
+    # No debe leer directamente 'item.categoria' ni '$json.categoria' (campo inexistente)
+    # Los patrones incorrectos que dejan categoria = null siempre:
+    bad_patterns = [
+        "item.categoria",
+        "$json.categoria",
+        "json.categoria",
+    ]
+    found_bad = [p for p in bad_patterns if p in code]
+    assert not found_bad, (
+        f"El nodo de auditoría lee {found_bad} pero el backend NO devuelve ese campo. "
+        "El shape real del 201 tiene 'sector.nombre' (nested). "
+        "Fix: usar item.sector?.nombre o equivalente."
+    )
+
+
+def test_d3_audit_reads_sector_nombre():
+    """
+    TRIANGULATE (D-3): el jsCode de auditoría lee 'sector' (el campo anidado real
+    de la respuesta del backend) para obtener el nombre de la categoría/sector.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    node = by_name[AUDIT_NODE_NAME]
+    code = node["parameters"].get("jsCode", "")
+
+    assert "sector" in code, (
+        "El nodo de auditoría no referencia 'sector' del response del backend. "
+        "El shape real de la respuesta 201 tiene 'sector.nombre' para identificar "
+        "la categoría/sector asignado."
+    )
+
+
+def test_d4_audit_reads_canal_origen_from_upstream_node():
+    """
+    RED (D-4): el jsCode de auditoría debe obtener 'canal_origen' desde el nodo
+    aguas arriba 'Normalizar entrada del incidente', NO desde item.canal_origen
+    del item corriente (que tras HTTP POST es el response body del backend).
+
+    El response del backend NO incluye canal_origen. Si la auditoría lee
+    item.canal_origen del item corriente, siempre obtiene null en la rama exitosa.
+
+    Fix idiomático N8N: usar $('Normalizar entrada del incidente').item.json.canal_origen
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    node = by_name[AUDIT_NODE_NAME]
+    code = node["parameters"].get("jsCode", "")
+
+    # Debe usar la referencia al nodo aguas arriba para canal_origen
+    upstream_ref = "Normalizar entrada del incidente"
+    assert upstream_ref in code, (
+        f"El nodo de auditoría no referencia '{upstream_ref}' para recuperar canal_origen. "
+        "Tras el HTTP POST el item corriente es el response body (sin canal_origen). "
+        "Fix: $('Normalizar entrada del incidente').item.json.canal_origen"
+    )
+
+
+def test_d4_audit_canal_origen_not_only_from_current_item():
+    """
+    TRIANGULATE (D-4): verificar que el código de auditoría no depende ÚNICAMENTE
+    de item.canal_origen del item corriente para la rama exitosa.
+    Acepta una referencia al nodo upstream como fuente primaria.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    node = by_name[AUDIT_NODE_NAME]
+    code = node["parameters"].get("jsCode", "")
+
+    # La referencia upstream debe ser la fuente primaria de canal_origen
+    upstream_ref = "Normalizar entrada del incidente"
+    # Si la referencia upstream existe, el fix está bien aplicado
+    # (puede haber fallback a item.canal_raw pero la fuente primaria debe ser upstream)
+    assert upstream_ref in code, (
+        "El nodo de auditoría debe referenciar el normalizador como fuente de canal_origen."
+    )

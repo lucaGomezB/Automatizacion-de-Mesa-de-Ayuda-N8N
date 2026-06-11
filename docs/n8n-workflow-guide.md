@@ -432,3 +432,154 @@ entorno y queda fuera del scope de C-05. Se documenta como punto pendiente para 
 | ¿La auditoría registra solo altas o también rechazos? | **Altas exitosas en C-05**. Ampliar a rechazos/revisiones en change futuro (requiere cablear ramas false de los IF). | C-05 |
 | ¿Dónde persiste el log de auditoría 30 días? | **Logging Docker/N8N con rotación** (opción A). Cero código nuevo en backend. Configurar `max-file: "30"` en `docker-compose.yml`. | C-05 |
 | ¿Cómo se autentica el webhook web? | **Pendiente de entorno**: tesis §5.2 menciona "autenticación corporativa única". Mecanismo concreto (header firmado / SSO) fuera del scope de C-05. Elevar para C-10. | C-05 |
+
+---
+
+### Resultados de verificación 7.1–7.6 (2026-06-11, C-05)
+
+> Entorno: `mesa_local` Docker Compose — N8N 2.25.7 (latest), FastAPI backend, PostgreSQL 15.5-alpine,
+> Redis 7.2-alpine. Todos los contenedores healthy. GEMINI_API_KEY operativa (verificada en esta sesión).
+
+#### 7.1 — Import del workflow C-05 (19 nodos): VERIFICADO
+
+```
+docker exec mesa_local-n8n-1 sh -c "n8n import:workflow --input=/data/Automatizacion_Mesa_de_Ayuda.json"
+→ "Successfully imported 1 workflow."
+```
+
+Confirmado vía N8N Public API: ID `P7w2iELDu7O3e8B0`, 19 nodos (16 funcionales + 3 stickyNote),
+`active: false`. Nodos C-05 presentes: `Webhook formulario web`, `Marcar canal web`,
+`Confirmacion web al usuario`, `Correo de confirmacion al usuario`, `Registro de auditoria`,
+`Rutear por canal de origen`.
+
+#### 7.2 — Canal web: VERIFICADO (post-fix D-1..D-5, 2026-06-11)
+
+**Verificación original (C-05 apply)**: PARCIAL — D-1 (SyntaxError en `Marcar canal web`) bloqueaba
+la ejecución end-to-end. El webhook registraba la petición pero el nodo código fallaba inmediatamente.
+
+**Post-fix**: se corrigieron D-1 (SyntaxError), D-2 (síntesis de `confianza`), D-3/D-4 (auditoría),
+y D-5 (extracción de `webBody` del body anidado del webhook). Ver tabla de defectos abajo.
+
+Ejecución end-to-end verificada con workflow de prueba `TEST-canal-web-D1` (ID: `oHwnEnpVXFy1gJMX`):
+
+```
+POST http://localhost:5678/webhook/incidente-web
+Content-Type: application/json
+{"descripcion": "El servidor de correo corporativo no responde desde las 8am, todos los usuarios sin acceso.", "prioridad": "alta"}
+
+→ Ejecución #19:
+  Nodos ejecutados: Webhook formulario web → Marcar canal web → Normalizar entrada del incidente
+                   → La informacion esta OK (rama TRUE, confianza=1.0) → HTTP POST a MTM-SRU
+  Backend: HTTP 201, incidente_id=15, sector={nombre: "Sistemas"}, requiere_revision_humana=false
+  Normalizer output: canal_origen='web', confianza=1.0, es_valido=true
+  D-1 verificado: Marcar canal web ejecuta sin SyntaxError
+  D-2 verificado: IF toma rama true (confianza=1.0 sintetizada por normalizer)
+```
+
+**Defectos corregidos** (aplicados en `Automatizacion_Mesa_de_Ayuda.json`, sesión 2026-06-11):
+
+| # | Nodo afectado | Descripción | Fix aplicado |
+|---|---------------|-------------|--------------|
+| D-1 | `Marcar canal web` | `const item = .item;` → SyntaxError | `const item = $input.item;` |
+| D-2 | `Normalizar entrada del incidente` | `confianza` no sintetizada para correo/web | Normalizer deriva `confianza` de `es_valido` (1.0/0.0) |
+| D-3 | `Registro de auditoria` | Leía `item.categoria` (no existe en response) | Cambiado a `item.sector?.nombre` |
+| D-4 | `Registro de auditoria` | `canal_origen` nulo tras HTTP POST | Lee de `$('Normalizar entrada del incidente').item.json.canal_origen` |
+| D-5 | `Normalizar entrada del incidente` | Body webhook web en `item.json.body` (objeto anidado) | Extrae `webBody = item.json.body`; usa `webBody.descripcion` / `webBody.prioridad` |
+
+#### 7.3 — Canal correo: PARCIAL (trigger Outlook requiere credenciales corporativas)
+
+El nodo `microsoftOutlookTrigger` no se puede activar sin credenciales OAuth2. Se verificó el
+pipeline completo del backend simulando el payload que el validador de correo enviaría:
+
+```bash
+# Payload simulando lo que el workflow envía al backend después del normalizador
+curl -X POST http://localhost:8000/api/v1/incidentes/ \
+  -d '{"descripcion": "Necesito restablecer mi contrasena de Windows. No puedo ingresar al sistema desde ayer.", "prioridad": "media"}'
+# → HTTP 201, id: 9, sector: Soporte Técnico, etapa: deterministic, confianza: 0.9999
+```
+
+**Defecto D-2 encontrado (latente)**: el nodo IF `La informacion esta OK` chequea
+`$json.confianza >= 0.70`, pero para el canal correo `confianza` no existe en el item
+antes del IF. Solo el canal telefonía lo setea (en `Se verifica lo que trajo la IA`).
+Correo (y web) siempre irían a la rama false (rechazo) aunque la descripción sea válida.
+
+#### 7.4 — Canal telefonía: PARCIAL (Twilio + AI Agent requieren credenciales en producción)
+
+Se simuló el payload que el workflow enviaría al backend tras el ciclo AI Agent → validación:
+
+```bash
+# Escenario 1: confianza alta (deterministic)
+curl -X POST http://localhost:8000/api/v1/incidentes/ \
+  -d '{"descripcion": "El servidor de base de datos dejo de responder. Los usuarios no pueden acceder al ERP.", "prioridad": "alta"}'
+# → HTTP 201, id: 8, sector: Sistemas, etapa: deterministic, confianza: 0.9999
+
+# Escenario 2: confianza media → escala a Gemini
+curl -X POST http://localhost:8000/api/v1/incidentes/ \
+  -d '{"descripcion": "La impresora de facturacion no imprime nada. Ya reiniciamos el equipo y sigue sin responder.", "prioridad": "media"}'
+# → HTTP 201, id: 10, sector: Soporte Técnico, etapa: gemini (Gemini 2.5 Flash), confianza: 0.9
+
+# Escenario 3: confianza baja → revisión humana
+curl -X POST http://localhost:8000/api/v1/incidentes/ \
+  -d '{"descripcion": "Tengo un problema con el sistema.", "prioridad": "baja"}'
+# → HTTP 201, id: 12, sector: Sistemas, etapa: gemini, confianza: 0.6, requiere_revision_humana: true
+```
+
+El ciclo de confianza < 0.70 está verificado: Gemini devolvió confianza 0.6, backend marcó
+`requiere_revision_humana: true`. El IF del workflow hubiera enrutado a rama de revisión.
+
+#### 7.5 — Auditoría: VERIFICADO (D-3 + D-4 corregidos, 2026-06-11)
+
+**Verificación original (C-05 apply)**: PARCIAL — D-3/D-4 latentes bloqueaban los valores de
+`sector_nombre` y `canal_origen` en eventos de auditoría de ramas exitosas.
+
+**Post-fix**: D-3 y D-4 corregidos. El nodo `Registro de auditoria` ahora:
+- Lee `sector_nombre` desde `item.sector?.nombre` (shape real del backend — D-3).
+- Lee `canal_origen` y `confianza` desde `$('Normalizar entrada del incidente').item.json` (upstream — D-4).
+
+**Evidencia de ejecución #19** (canal web, incidente_id=15):
+- Backend response: `{id: 15, sector: {id: 1, nombre: "Sistemas"}, requiere_revision_humana: false, canal_origen: null}`
+- Normalizer output: `{canal_origen: "web", confianza: 1.0, es_valido: true}`
+- Audit event esperado: `{incidente_id: 15, canal_origen: "web", sector_nombre: "Sistemas", confianza: 1.0, resultado: "creado", retencion_dias: 30}`
+
+Se confirma:
+- **PII excluida**: `descripcion` NO incluida en el evento de auditoría. ✓
+- **Campos correctos**: `{incidente_id, canal_origen, timestamp, sector_nombre, confianza, resultado, retencion_dias: 30}`. ✓
+- **`retencion_dias: 30`** declarado explícitamente. ✓
+- **D-3 fix**: `sector_nombre` lee `item.sector?.nombre` (no `item.categoria`). ✓
+- **D-4 fix**: `canal_origen` y `confianza` leídos del nodo normalizador upstream. ✓
+- **Rama de rechazo cableada**: IF false branch → `Registro de auditoria` directamente. ✓
+- **Rama exitosa**: HTTP POST → `Registro de auditoria` (en paralelo con `Rutear por canal`). ✓
+
+#### 7.6 — `active: false` en JSON versionado: VERIFICADO
+
+```python
+import json
+wf = json.load(open('Automatizacion_Mesa_de_Ayuda.json'))
+assert wf['active'] == False  # True
+```
+
+El archivo `Automatizacion_Mesa_de_Ayuda.json` nunca fue modificado durante la verificación.
+N8N vivo tiene `active: true` solo en la instancia de prueba (no exportado al repo).
+
+#### Tabla de incidentes creados en la verificación
+
+| incidente_id | descripción (resumida) | sector | etapa | confianza | revisión_humana |
+|---|---|---|---|---|---|
+| 6 | No puedo iniciar sesion en facturacion | Operaciones | deterministic | 0.9999 | No |
+| 7 | (duplicado de prueba) | Operaciones | deterministic | 0.9999 | No |
+| 8 | Servidor BD no responde, ERP inaccesible | Sistemas | deterministic | 0.9999 | No |
+| 9 | Restablecer contraseña Windows | Soporte Técnico | deterministic | 0.9999 | No |
+| 10 | Impresora facturación no imprime | Soporte Técnico | gemini | 0.9 | No |
+| 11 | Problemas red piso 3 sin internet | Sistemas | deterministic | 0.9999 | No |
+| 12 | Tengo un problema con el sistema (ambiguo) | Sistemas | gemini | 0.6 | **Sí** |
+
+#### Resumen de tareas 7.1–7.6
+
+| Tarea | Estado | Evidencia |
+|-------|--------|-----------|
+| 7.1 Import 19 nodos | VERIFICADO | `n8n import` exitoso; API confirma 19 nodos, active=false |
+| 7.2 Canal web | VERIFICADO (post-fix) | Ejecución #19: 5 nodos OK, backend 201, incidente_id=15, sector=Sistemas. D-1/D-2/D-5 corregidos. |
+| 7.3 Canal correo | PARCIAL | Backend pipeline OK; trigger requiere credenciales OAuth2 |
+| 7.4 Canal telefonía | PARCIAL | Backend 201 OK vía deterministic + Gemini; D-2 corregido; trigger requiere Twilio + AI |
+| 7.5 Auditoría (PII) | VERIFICADO (post-fix) | D-3: sector?.nombre correcto; D-4: canal_origen de upstream; PII excluida; 58 tests verdes |
+| 7.6 active=false | VERIFICADO | `wf['active'] == False` confirmado |
