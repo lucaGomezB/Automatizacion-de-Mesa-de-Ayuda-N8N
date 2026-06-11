@@ -1,0 +1,119 @@
+# docker-compose.yml — Entorno de pruebas local: N8N + Backend FastAPI + PostgreSQL + Redis
+#
+# Uso:
+#   docker compose up -d           # Levantar todos los servicios
+#   docker compose ps              # Verificar estado y salud
+#   docker compose logs -f backend # Seguir logs del backend
+#   docker compose down            # Detener y remover contenedores (los volumes persisten)
+#   docker compose down -v         # Detener + borrar volumes (base de datos limpia)
+#
+# Prerequisito: crear el archivo .env en esta misma carpeta (raíz del repo) copiando
+#   .env.example y completando los valores reales.
+#
+# Nota: este compose crea la red mesa_local_default y sus propios volumes
+# (prefijo mesa_local_*), sin colisionar con los contenedores de C-01
+# (gestion_incidentes-*) que pueden existir detenidos en el sistema.
+
+version: "3.9"
+
+services:
+
+  # ── PostgreSQL ──────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:15.5-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: mesa
+      POSTGRES_PASSWORD: mesa
+      POSTGRES_DB: mesa_de_ayuda
+    ports:
+      - "5433:5432"           # Puerto 5433 en el host para evitar colisión con C-01 (5432)
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mesa -d mesa_de_ayuda"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Redis ───────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7.2-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ── Backend FastAPI ─────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./Gestion_Incidentes
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: ./Gestion_Incidentes/.env
+    environment:
+      # Sobreescribir DATABASE_URL para apuntar al postgres de este compose
+      DATABASE_URL: postgresql+asyncpg://mesa:mesa@postgres:5432/mesa_de_ayuda
+      # Sobreescribir la URL del webhook de N8N para apuntar al servicio n8n de este compose
+      N8N_WEBHOOK_URL: http://n8n:5678/webhook
+      # El prompt se monta desde la raíz del repo (ver volumes abajo)
+      GEMINI_PROMPT_PATH: /app/docs/prompt_gemini.txt
+    ports:
+      - "8000:8000"
+    volumes:
+      # Inyectar el prompt (que está en la raíz del repo, no en Gestion_Incidentes/)
+      - ./docs/prompt_gemini.txt:/app/docs/prompt_gemini.txt:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ── N8N ─────────────────────────────────────────────────────────────────────
+  n8n:
+    image: n8nio/n8n:latest   # 1.62.0 no está en Docker Hub; se usa latest (estable)
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      # Autenticación básica de N8N
+      N8N_BASIC_AUTH_ACTIVE: "true"
+      N8N_BASIC_AUTH_USER: admin
+      N8N_BASIC_AUTH_PASSWORD: admin
+      # Variable de entorno disponible en los nodos del workflow como $env.BACKEND_URL
+      BACKEND_URL: http://backend:8000
+      # Redis para la memoria del AI Agent
+      QUEUE_BULL_REDIS_HOST: redis
+      QUEUE_BULL_REDIS_PORT: "6379"
+      # Configuración de N8N
+      N8N_PROTOCOL: http
+      N8N_HOST: 0.0.0.0
+      N8N_PORT: "5678"
+      WEBHOOK_URL: http://localhost:5678/
+      # En Windows/Docker Desktop los permisos de archivos difieren — ignorar warnings
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "false"
+      # Deshabilitar telemetría
+      N8N_DIAGNOSTICS_ENABLED: "false"
+    volumes:
+      - n8n_data:/home/node/.n8n
+      # Montar el workflow JSON para poder importarlo via CLI dentro del contenedor
+      - ./Automatizacion_Mesa_de_Ayuda.json:/data/Automatizacion_Mesa_de_Ayuda.json:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  postgres_data:   # Volume dedicado para este compose (prefijo mesa_local_ asignado por Docker)
+  n8n_data:

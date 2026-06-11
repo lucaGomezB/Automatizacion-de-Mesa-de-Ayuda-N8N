@@ -79,6 +79,24 @@ El nodo de auditoría usa operadores tolerantes (`|| null`, `?? null`) para todo
 
 **A confirmar con el usuario (governance MEDIO)**: ¿dónde debe persistir el log de auditoría para los 30 días? Opciones: (A) logging de Docker/N8N con rotación (default, cero código nuevo de backend); (B) una tabla `auditoria_ejecucion` en PostgreSQL (requiere endpoint/repo nuevo → toca backend, governance ALTO, otro change); (C) un archivo append-only montado. Default propuesto: (A), declarando la rotación de 30 días en `docker-compose`/guía. Se eleva por tocar política de retención de datos.
 
+### Decisión D-2 — Síntesis de `confianza` en el normalizador para que el IF compartido funcione en los tres canales [POST-APPLY — fix runtime]
+
+**Contexto**: el nodo IF `La informacion esta OK` evalúa `$json.confianza >= 0.70`. El campo `confianza` solo existía en el item cuando venía del canal telefonía (lo seteaba el validador de IA `Se verifica lo que trajo la IA`). Para correo y web, `confianza` nunca estaba presente → el IF siempre tomaba la rama false → todos los incidentes de correo/web eran rechazados sin importar la validez de los datos.
+
+**Elección**: el normalizador `Normalizar entrada del incidente` sintetiza `confianza` para los tres canales:
+- **telefonía**: propaga la `confianza` del validador de IA upstream (ya existía); si no está disponible, deriva de `es_valido`.
+- **correo / web**: sintetiza desde `es_valido`:
+  - `es_valido = true` → `confianza = 1.0` (datos completos, supera el umbral de 0.70)
+  - `es_valido = false` → `confianza = 0.0` (datos incompletos, toma rama false)
+
+El IF compartido NO se modifica; sigue evaluando `$json.confianza >= 0.70`.
+
+**Nota sobre extracción de body en canal web**: el `Webhook formulario web` expone el body del POST como `item.json.body` (objeto anidado), no como campos planos en `item.json`. El normalizador extrae `webBody = item.json.body` antes del bloque if-else de canales, y usa `webBody.descripcion` / `webBody.prioridad` para el canal web. (Defecto D-5 / fix adicional al apply C-05.)
+
+**Por qué**: el IF compartido es el contrato de la spec (un único condicional para los tres canales); cambiar su semántica requeriría actualizar la spec. La síntesis en el normalizador mantiene el contrato inalterado y proporciona un valor consistente para todos los canales sin modificar el nodo IF.
+
+**Alternativa considerada**: (B) cambiar el IF para evaluar `es_valido == true` en lugar de `confianza >= 0.70`. Rechazada: el umbral de confianza es una decisión de diseño de la tesis §5.3 y cambiarlo afectaría la semántica del canal telefonía.
+
 ### Decisión 5 — Verificación Strict TDD sobre la estructura del JSON, espejando C-04
 
 **Elección**: extender `Gestion_Incidentes/tests/test_n8n_workflow.py` con un grupo nuevo de tests (Grupo 9 en adelante) que valide, sobre el JSON exportado: presencia del `webhook` web (`type == n8n-nodes-base.webhook`, `httpMethod == POST`, `path` no vacío) cableado al normalizador; `canal_raw` por trigger; presencia de los nodos de notificación cableados tras la persistencia; presencia del nodo de auditoría con sus campos de metadatos y la retención de 30 días; y que el log de auditoría no referencie la `descripcion` cruda. Los tests buscan por `type`/`name` y por contenido del `jsCode`/parámetros, nunca por índice. La verificación funcional contra N8N vivo queda como sección manual final (como tareas 8.x de C-04).
