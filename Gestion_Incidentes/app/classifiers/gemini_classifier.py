@@ -221,6 +221,13 @@ class GeminiClassifier(BaseClassifier):
             top_p=settings.gemini_top_p,                     # 0.9: nucleus sampling rioplatense
             max_output_tokens=settings.gemini_max_output_tokens,  # 100: suficiente para JSON
             candidate_count=settings.gemini_candidate_count,      # 1: optimiza latencia
+            # Modo JSON: la API restringe la salida a JSON puro, sin fences Markdown
+            # (```json ... ```) que el validador del Anexo H §H.3 rechaza por diseño.
+            response_mime_type="application/json",
+            # Gemini 2.5 Flash razona ("thinking") por defecto y esos tokens cuentan
+            # contra max_output_tokens=100, truncando la respuesta visible. Presupuesto
+            # 0 desactiva el razonamiento: respuesta directa, completa y de menor latencia.
+            thinking_config=genai_types.ThinkingConfig(thinking_budget=0),
             safety_settings=[
                 genai_types.SafetySetting(category="HARM_CATEGORY_HARASSMENT", threshold="BLOCK_NONE"),
                 genai_types.SafetySetting(category="HARM_CATEGORY_HATE_SPEECH", threshold="BLOCK_NONE"),

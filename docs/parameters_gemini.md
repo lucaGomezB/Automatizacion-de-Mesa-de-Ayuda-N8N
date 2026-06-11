@@ -17,6 +17,8 @@ config = genai_types.GenerateContentConfig(
     top_p=0.9,
     max_output_tokens=100,
     candidate_count=1,
+    response_mime_type="application/json",
+    thinking_config=genai_types.ThinkingConfig(thinking_budget=0),
     safety_settings=[
         genai_types.SafetySetting(category="HARM_CATEGORY_HARASSMENT", threshold="BLOCK_NONE"),
         genai_types.SafetySetting(category="HARM_CATEGORY_HATE_SPEECH", threshold="BLOCK_NONE"),
@@ -47,6 +49,8 @@ response = await asyncio.wait_for(
 | top_p | 0.9 | Nucleus sampling permite variantes léxicas rioplatenses |
 | max_tokens | 100 | Suficiente para JSON (~15 tokens) + margen de error |
 | candidate_count | 1 | Única respuesta candidata; optimiza latencia |
+| response_mime_type | application/json | Modo JSON de la API: impide fences Markdown (```json) que el validador del Anexo H rechaza |
+| thinking_config | thinking_budget=0 | Gemini 2.5 Flash razona por defecto y esos tokens cuentan contra max_output_tokens, truncando el JSON; presupuesto 0 = respuesta directa y menor latencia |
 | safety_settings | BLOCK_NONE en las 4 categorías de daño | Permite terminología técnica de incidentes (ej. "se cayó", "atasco", "corte de red") |
 | timeout | 10s | Límite máximo; fallback a revisión humana si excede |
 
@@ -73,5 +77,6 @@ Para futuras iteraciones, considerar:
 
 ## Historial de Cambios
 
+- v1.2 (Jun 2026): `response_mime_type="application/json"` + `thinking_budget=0`. Causa: en verificación funcional, Gemini 2.5 Flash devolvió solo "```json" (truncado por tokens de thinking dentro de max_output_tokens=100 + fence Markdown), forzando fallback con confianza=0.0. Parámetros calibrados sin cambios.
 - v1.1 (Jun 2026): Migración al SDK `google-genai` (cliente async `client.aio`, timeout vía `asyncio.wait_for`). Parámetros de inferencia sin cambios.
 - v1.0 (Mar 2026): Parámetros iniciales validados con corpus de 200 casos
