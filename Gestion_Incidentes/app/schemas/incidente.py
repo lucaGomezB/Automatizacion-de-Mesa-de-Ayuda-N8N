@@ -91,12 +91,16 @@ class IncidenteRead(BaseModel):
     Incluye los objetos relacionados completos (sector, estado, canal_origen)
     en lugar de solo sus IDs, para que el cliente no necesite realizar
     consultas adicionales para obtener sus nombres.
+
+    Política de privacidad (C-03, Ley 25.326):
+        Solo se expone 'descripcion_pseudonimizada' (texto con etiquetas PII).
+        'descripcion_original' (cifrada, con PII) NO forma parte de esta respuesta.
     """
 
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    descripcion: str                   # Texto completo del incidente
+    descripcion_pseudonimizada: str    # Texto pseudonimizado del incidente (única repr. operativa)
     prioridad: PrioridadEnum
     requiere_revision_humana: bool
     created_at: datetime
