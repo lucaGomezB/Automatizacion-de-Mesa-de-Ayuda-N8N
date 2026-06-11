@@ -166,7 +166,7 @@ C-01 foundation-setup (ninguna)
 
 ### [C-05] `n8n-channel-triggers`
 
-- **Estado**: `[ ]` pendiente
+- **Estado**: `[x]` completado (2026-06-11 — openspec/changes/archive/2026-06-11-c-05-n8n-channel-triggers; verificación funcional 7.1–7.6 ejecutada con alcance parcial: 7.1 y 7.6 verificados end-to-end, 7.2–7.5 verificados hasta backend; 4 defectos latentes detectados D-1/D-4 — ver tasks.md y n8n-workflow-guide.md)
 - **Scope**:
   - Configurar nodo trigger IMAP para recepcion de correos electronicos (Outlook)
   - Configurar nodo trigger Webhook para formulario web (consumido por el frontend)
