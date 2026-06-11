@@ -1,0 +1,1602 @@
+[
+  {
+    "caso_id": "S001",
+    "descripcion": "el servidor principal no levanta desde esta manana, reiniciamos dos veces y nada",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.99999950000025,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S002",
+    "descripcion": "no puedo conectarme a internet desde mi puesto, el resto del piso tampoco tiene red",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S003",
+    "descripcion": "la base de datos del ERP cayó y no podemos facturar, es urgente",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S004",
+    "descripcion": "alguien accedió a la carpeta compartida de recursos humanos sin tener permiso, necesito que lo revisen",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S005",
+    "descripcion": "el firewall está bloqueando el acceso al portal de proveedores y no sé por qué",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9,
+    "etapa": "gemini"
+  },
+  {
+    "caso_id": "S006",
+    "descripcion": "[HOST] no responde hace dos horas y tenemos varios servicios caídos encima",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S007",
+    "descripcion": "se cayó la VPN y no puedo trabajar desde casa, ya intenté reconectarme varias veces",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S008",
+    "descripcion": "el switch del piso 4 parece que se colgó, varios equipos sin red",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9,
+    "etapa": "gemini"
+  },
+  {
+    "caso_id": "S009",
+    "descripcion": "se perdió la conexión al servidor de archivos y perdimos trabajo sin guardar",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S010",
+    "descripcion": "necesito que activen el puerto de red del nuevo puesto de trabajo que instalamos ayer",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S011",
+    "descripcion": "el sistema de monitoreo de servidores mandó alertas toda la noche pero nadie las vio",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S012",
+    "descripcion": "la base de datos de producción tiene el disco casi lleno, me avisaron que está al 95%",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S013",
+    "descripcion": "hay un ransomware en la red, detectamos archivos encriptados en varios equipos",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S014",
+    "descripcion": "el backup nocturno falló tres noches seguidas y nadie había notado",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S015",
+    "descripcion": "el certificado SSL del portal de clientes venció y los usuarios no pueden entrar",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S016",
+    "descripcion": "el servidor de correo interno está rechazando los mails entrantes desde ayer a la tarde",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S017",
+    "descripcion": "detectaron un ataque de fuerza bruta contra el panel de administración, ya bloquearon la IP pero quieren que lo revisen",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9,
+    "etapa": "gemini"
+  },
+  {
+    "caso_id": "S018",
+    "descripcion": "la replicación entre la base de datos primaria y la secundaria se rompió hace varios días",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S019",
+    "descripcion": "el servidor [HOST] se reinició solo esta madrugada y no sé si fue una actualización o un problema",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S020",
+    "descripcion": "necesito acceso de lectura a la base de datos de analytics para un informe urgente",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S021",
+    "descripcion": "el servicio de directorio activo no autentica usuarios desde las 9am, todo el mundo bloqueado",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.95,
+    "etapa": "gemini"
+  },
+  {
+    "caso_id": "S022",
+    "descripcion": "se cayó el nodo 2 del cluster de alta disponibilidad y quedó corriendo en modo degradado",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S023",
+    "descripcion": "el antivirus corporativo no se actualizó en los equipos del área de contabilidad",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S024",
+    "descripcion": "la red wifi de la sala de reuniones no funciona y tenemos visitas en una hora",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S025",
+    "descripcion": "el servidor de bases de datos tiene la CPU al 100% y no sé qué proceso lo está consumiendo",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.99999950000025,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S026",
+    "descripcion": "nos bloquearon el acceso a ciertos sitios que necesitamos para trabajar, no entiendo la restricción",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S027",
+    "descripcion": "hay fuga de memoria en el servidor de aplicaciones y se está poniendo lento todo",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S028",
+    "descripcion": "el router del edificio secundario se reinició y dejó sin conectividad a 30 personas",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S029",
+    "descripcion": "no podemos hacer consultas a la base de datos de clientes, dice que superó el límite de conexiones",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S030",
+    "descripcion": "los logs del servidor de correo muestran intentos de acceso desde IPs de otro país",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S031",
+    "descripcion": "el servidor de desarrollo quedó inaccesible después del mantenimiento del fin de semana",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S032",
+    "descripcion": "la red de laboratorio está completamente separada de la red corporativa y no debería estarlo",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S033",
+    "descripcion": "la contraseña del administrador de base de datos venció y nadie tiene acceso para resetearla",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S034",
+    "descripcion": "cayó el servicio de DNS interno y los equipos no pueden resolver nombres de host",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S035",
+    "descripcion": "hay un proceso en [HOST] que consume toda la memoria y tira abajo los demás servicios",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S036",
+    "descripcion": "nos dimos cuenta que un ex empleado todavía tiene acceso activo al servidor de archivos",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S037",
+    "descripcion": "el sistema de monitoreo está mostrando latencia de 900ms en la red interna, claramente algo está mal",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.99999950000025,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S038",
+    "descripcion": "no puedo conectarme remotamente al servidor de producción, la clave SSH ya no funciona",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S039",
+    "descripcion": "el servidor de actualizaciones de software está caído y los equipos no pueden parchear",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S040",
+    "descripcion": "tengo que migrar la base de datos a un servidor nuevo y necesito ayuda con el proceso",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.99999950000025,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S041",
+    "descripcion": "el almacenamiento en red NAS está mostrando errores de escritura, puede que haya un disco fallando",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S042",
+    "descripcion": "la herramienta de gestión de vulnerabilidades detectó un CVE crítico en el middleware",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S043",
+    "descripcion": "nos quedamos sin IPs disponibles en el rango DHCP del piso 2",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S044",
+    "descripcion": "el servidor de impresión cayó y nadie puede imprimir en toda la empresa",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S045",
+    "descripcion": "hay tráfico sospechoso saliendo de un equipo de administración hacia una IP desconocida",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S046",
+    "descripcion": "el balanceador de carga dejó de distribuir correctamente y todo va a un solo nodo",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S047",
+    "descripcion": "el servidor de archivos compartidos [HOST] responde muy lento, está tardando minutos en abrir carpetas",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S048",
+    "descripcion": "se configuró mal una regla del firewall y ahora nadie puede acceder al portal de facturación",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S049",
+    "descripcion": "cayeron los servicios en el datacenter secundario y el failover automático no funcionó",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S050",
+    "descripcion": "la red inalámbrica de la planta baja tiene interferencia y se desconecta constantemente",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S051",
+    "descripcion": "el servidor proxy no está dejando pasar las actualizaciones automáticas del sistema operativo",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S052",
+    "descripcion": "me cambiaron el equipo y necesito que me den acceso al servidor de archivos igual que antes",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S053",
+    "descripcion": "el servicio de autenticación de dos factores no manda los SMS desde ayer a la noche",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S054",
+    "descripcion": "el sistema de videoconferencia no puede conectarse al servidor externo de señalización",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S055",
+    "descripcion": "hay dos usuarios con el mismo nombre de cuenta en directorio activo y uno no puede entrar",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S056",
+    "descripcion": "el servidor de bases de datos se está quedando lento y los timeouts están aumentando",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S057",
+    "descripcion": "la replicación de archivos entre los dos sitios se detuvo y el sitio de contingencia está desactualizado",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S058",
+    "descripcion": "tenemos que renovar los certificados de los servidores internos antes del viernes que viene",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S059",
+    "descripcion": "los registros de auditoría del servidor muestran accesos fuera de horario que nadie reconoce",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S060",
+    "descripcion": "el servidor [HOST] tiene el disco de sistema al 98% y puede fallar en cualquier momento",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S061",
+    "descripcion": "el servicio de time sync (NTP) está fallando y los logs de varios sistemas muestran timestamps incorrectos",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S062",
+    "descripcion": "el API gateway no está enrutando las peticiones al microservicio correcto después de la última actualización",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S063",
+    "descripcion": "se detectó una conexión abierta desde la red interna al exterior por un puerto no estándar",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S064",
+    "descripcion": "el servidor de logs centralizados dejó de recibir eventos de varios agentes",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S065",
+    "descripcion": "necesito revisar qué puertos están abiertos en el servidor expuesto a internet, hay una auditoría pronto",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S066",
+    "descripcion": "el gestor de contraseñas corporativo no sincroniza desde hace dos días",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S067",
+    "descripcion": "hay una alarma de temperatura alta en la sala de servidores pero el aire acondicionado parece funcionar",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S068",
+    "descripcion": "el módulo de inventario del ERP no puede conectarse a la base de datos, dice connection refused",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S069",
+    "descripcion": "el acceso remoto por escritorio (RDP) al servidor de contabilidad dejó de funcionar de golpe",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S070",
+    "descripcion": "el script de backup que corre a las 2am está fallando con un error de permisos que no entiendo",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S071",
+    "descripcion": "cayó la conectividad entre la sede central y la sucursal, llevamos tres horas sin poder trabajar juntos",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S072",
+    "descripcion": "el servidor de autenticación LDAP no responde y nadie puede loguearse en los sistemas internos",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.99999950000025,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S073",
+    "descripcion": "el firewall de aplicaciones web (WAF) está bloqueando peticiones legítimas de nuestros clientes",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S074",
+    "descripcion": "el servicio de monitoreo detectó un pico de CPU en cinco servidores al mismo tiempo a medianoche",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S075",
+    "descripcion": "necesitamos aumentar el espacio en el volumen de la base de datos de archivos históricos",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S076",
+    "descripcion": "el sistema de ticketing cayó y no podemos registrar nuevos incidentes, paradoja total",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S077",
+    "descripcion": "el servidor de base de datos tiene una tabla con cientos de millones de filas y las consultas tardan media hora",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.99999950000025,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S078",
+    "descripcion": "el acceso por VPN del equipo externo que hace el mantenimiento del software dejó de funcionar",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "S079",
+    "descripcion": "el servidor de video vigilancia no está grabando desde hace dos días, nadie se había dado cuenta",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S080",
+    "descripcion": "el repositorio git corporativo está inaccesible y el equipo de desarrollo no puede hacer push",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S081",
+    "descripcion": "hay un proceso zombie en el servidor que no se puede matar y está bloqueando recursos",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "S082",
+    "descripcion": "el certificado de autenticación de la VPN venció y todos los usuarios remotos están cortados",
+    "categoria_real": "Sistemas",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O001",
+    "descripcion": "el proceso de cierre mensual no se puede ejecutar porque el módulo de planificación tiene un error",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O002",
+    "descripcion": "nadie me avisó que cambiaron el procedimiento para solicitar días por enfermedad y me mandaron un mail tarde",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O003",
+    "descripcion": "el sistema de gestión de turnos está caído y hay cola acumulada en recepción",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O004",
+    "descripcion": "necesito que me expliquen el nuevo proceso de aprobación de compras, cambió la semana pasada y no entiendo nada",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O005",
+    "descripcion": "el informe de continuidad del negocio para la reunión del jueves todavía no está generado",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O006",
+    "descripcion": "el servicio de planificación de recursos no refleja las últimas modificaciones del presupuesto",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.99999950000025,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O007",
+    "descripcion": "el sistema de gestión de contratos no está mandando las alertas de vencimiento automático",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O008",
+    "descripcion": "el proceso de alta de nuevo proveedor lleva más de dos semanas parado esperando aprobación",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O009",
+    "descripcion": "el dashboard de indicadores operativos muestra datos del mes pasado, no los actualizó",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O010",
+    "descripcion": "no puedo acceder al módulo de planificación de la demanda, me dice que no tengo permisos",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O011",
+    "descripcion": "el flujo de aprobación de gastos se cortó en el paso de gerencia y nadie sabe quién tiene que seguir",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O012",
+    "descripcion": "el sistema de gestión de servicios compartidos no está procesando las solicitudes de los últimos dos días",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O013",
+    "descripcion": "me mandaron a una capacitación de un proceso que ya no existe, quién actualiza esas cosas?",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O014",
+    "descripcion": "el módulo de planning de producción no considera las restricciones de capacidad que cargamos la semana pasada",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O015",
+    "descripcion": "el proceso de conciliación entre áreas tarda una semana y ya empezamos a tener inconsistencias",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O016",
+    "descripcion": "el plan de continuidad operativa del área no fue actualizado en dos años y hay una auditoría interna",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O017",
+    "descripcion": "la herramienta de gestión de riesgos operativos no deja cargar nuevos eventos desde ayer",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O018",
+    "descripcion": "el workflow de aprobación de vacaciones está roto, las solicitudes llegan pero no se pueden aprobar",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O019",
+    "descripcion": "el servicio de atención al cliente interno no registró las consultas de la semana pasada",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O020",
+    "descripcion": "el módulo de SLA tracking muestra todos los tickets como vencidos aunque no lo están",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O021",
+    "descripcion": "nos llegó una auditoría de procesos y no encontramos el documento de procedimiento actualizado para ningún área",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O022",
+    "descripcion": "el sistema de planificación de proyectos no está sincronizando con el módulo de recursos humanos",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O023",
+    "descripcion": "el proceso de onboarding de nuevos empleados no tiene un responsable claro desde que se fue [PERSONA]",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O024",
+    "descripcion": "el módulo de gestión de proveedores no está generando los reportes de desempeño del trimestre",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O025",
+    "descripcion": "el proceso de aprobación de órdenes de compra tiene un cuello de botella en la segunda firma y todo está frenado",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O026",
+    "descripcion": "el servicio de despacho no puede acceder al sistema de seguimiento de envíos",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O027",
+    "descripcion": "el módulo de costeo de procesos muestra valores negativos para varios centros de costo",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O028",
+    "descripcion": "el proceso de actualización del mapa de riesgos operativos no se completó antes del cierre del trimestre",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O029",
+    "descripcion": "la herramienta de gestión de calidad no envía las notificaciones de auditorías programadas",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O030",
+    "descripcion": "el proceso de facturación interna entre áreas está parado porque el sistema no acepta las tarifas nuevas",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O031",
+    "descripcion": "el módulo de gestión de capacidad del call center no muestra las métricas de hoy",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O032",
+    "descripcion": "hay discrepancias entre el sistema de operaciones y el ERP en los inventarios del cierre del mes",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O033",
+    "descripcion": "el proceso de escalado de incidentes críticos no funcionó en el incidente del martes, nadie fue notificado",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O034",
+    "descripcion": "la herramienta de gestión de acuerdos de nivel de servicio no está calculando bien los tiempos de resolución",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O035",
+    "descripcion": "el módulo de gestión de la continuidad del negocio no refleja el nuevo árbol de decisiones que aprobaron",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O036",
+    "descripcion": "el sistema de seguimiento de objetivos (OKR) está mostrando metas del año pasado para varios equipos",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O037",
+    "descripcion": "el proceso de resolución de conflictos entre áreas no tiene documentado el nuevo escalado a partir de octubre",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O038",
+    "descripcion": "el módulo de gestión de turnos del área de operaciones no reconoce las guardias especiales del fin de año",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O039",
+    "descripcion": "el informe de gestión semanal no se generó porque el módulo de consolidación falló",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O040",
+    "descripcion": "la herramienta de planificación de la demanda está usando datos de entrada que no fueron validados",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O041",
+    "descripcion": "el módulo de aprobación de proyectos tiene una solicitud trabada hace 15 días sin que nadie la vea",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O042",
+    "descripcion": "el proceso de rendición de gastos de viaje tarda más de un mes y el área de finanzas se queja",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O043",
+    "descripcion": "el sistema de gestión de incidentes operativos no categorizó bien tres eventos del mes pasado",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O044",
+    "descripcion": "el módulo de planificación de mantenimiento preventivo no tiene cargado el calendario de paradas del año próximo",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O045",
+    "descripcion": "el proceso de entrega de materiales entre almacenes no tiene un responsable de coordinación asignado",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O046",
+    "descripcion": "el sistema de seguimiento de KPIs operativos no está leyendo los datos del sistema de producción",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O047",
+    "descripcion": "hay una diferencia en los registros del módulo de operaciones compartidas y no encuentro el origen",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O048",
+    "descripcion": "el proceso de revisión periódica del mapa de procesos críticos está vencido hace tres meses",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O049",
+    "descripcion": "la herramienta de gestión del servicio no identificó correctamente el impacto del incidente de ayer",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O050",
+    "descripcion": "el módulo de gestión de cambios operativos no envió la notificación a los responsables del área afectada",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O051",
+    "descripcion": "el proceso de solicitud de habilitaciones operativas está documentado en un lugar y se ejecuta en otro",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O052",
+    "descripcion": "el sistema de planificación no refleja las restricciones de operación del fin de semana largo",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O053",
+    "descripcion": "el módulo de reporting operativo no genera el informe semanal en el formato que pide la gerencia",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O054",
+    "descripcion": "el proceso de escalado de desvíos de producción no tiene responsable asignado para el turno noche",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O055",
+    "descripcion": "el sistema de monitoreo de acuerdos de nivel de servicio no descargó los datos del último período",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O056",
+    "descripcion": "el módulo de gestión de reclamos internos entre áreas está mostrando estados incorrectos",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O057",
+    "descripcion": "el proceso de actualización del plan de contingencia del área fue postergado por tercera vez",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O058",
+    "descripcion": "el sistema de tracking de compromisos inter-área no registró los acuerdos de la reunión del miércoles",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O059",
+    "descripcion": "el módulo de gestión de servicios compartidos tiene configuraciones del año pasado que ya no aplican",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O060",
+    "descripcion": "el proceso de aprobación de excepciones operativas no tiene claro quién puede autorizar en ausencia del gerente",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O061",
+    "descripcion": "hay un proceso que no tiene dueño asignado desde la reorganización del área y nadie lo está ejecutando",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O062",
+    "descripcion": "el sistema de planificación estratégica no integra los cambios que hicimos en el modelo operativo",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "O063",
+    "descripcion": "el módulo de gestión de proyectos compartidos no tiene visibilidad de los recursos comprometidos en otros proyectos",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "O064",
+    "descripcion": "la herramienta de seguimiento de acciones correctivas no envía recordatorios cuando se acercan los vencimientos",
+    "categoria_real": "Operaciones",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST001",
+    "descripcion": "la computadora de mi escritorio no enciende, la enchufo y nada",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST002",
+    "descripcion": "se me rompió el teclado, una tecla se quedó pegada y no puedo escribir bien",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST003",
+    "descripcion": "el mouse no funciona, ya probé en otro puerto USB y tampoco",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.99999950000025,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST004",
+    "descripcion": "la pantalla del monitor está parpadeando y me duele la vista trabajar así",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.99999950000025,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST005",
+    "descripcion": "mi notebook tiene la batería inflada, se ve que empuja la parte de abajo del plástico",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST006",
+    "descripcion": "instalé una actualización de Windows y ahora el equipo tarda 15 minutos en arrancar",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999996666667778,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST007",
+    "descripcion": "el software de gestión documental que uso todos los dias se cierra solo después de 5 minutos",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST008",
+    "descripcion": "necesito que me instalen el Adobe Acrobat porque tengo que firmar documentos PDF",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST009",
+    "descripcion": "el lector de código de barras del puesto de caja dejó de leer correctamente",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST010",
+    "descripcion": "la impresora de mi área no aparece en la lista de impresoras disponibles",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST011",
+    "descripcion": "mi computadora mostró una pantalla azul y se reinició, perdí todo lo que estaba haciendo",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST012",
+    "descripcion": "el micrófono del headset no funciona bien en las videoconferencias, me dicen que no me escuchan",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST013",
+    "descripcion": "necesito acceso remoto a mi equipo de la oficina porque voy a trabajar desde casa esta semana",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.99999950000025,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST014",
+    "descripcion": "se me olvidó la contraseña del sistema de facturación y no puedo entrar",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST015",
+    "descripcion": "el escáner de documentos del área de legajos no está siendo reconocido por ninguna computadora",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST016",
+    "descripcion": "mi notebook se sobrecalienta mucho y se apaga sola cuando trabajo mucho rato",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST017",
+    "descripcion": "el programa de contabilidad dice que la licencia venció pero yo tenía licencia hasta fin de año",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST018",
+    "descripcion": "no puedo abrir los archivos xlsx que me mandan, me dice que el formato no es compatible",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST019",
+    "descripcion": "la cámara web del equipo no funciona y tengo una reunión virtual en media hora",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST020",
+    "descripcion": "necesito que me borren los archivos temporales porque la computadora está muy lenta y el disco lleno",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST021",
+    "descripcion": "el Excel se trabó con una planilla grande y no respondía más, lo cerré y cuando abrí el archivo estaba vacío",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST022",
+    "descripcion": "el auricular bluetooth no se conecta a la laptop, antes funcionaba bien",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST023",
+    "descripcion": "el touchpad de mi notebook está haciendo cosas raras, el cursor se mueve solo",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST024",
+    "descripcion": "instalé un programa que me pidió un compañero y ahora la computadora está lenta y tiene publicidades",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST025",
+    "descripcion": "la impresora de etiquetas del depósito imprime borroso y las etiquetas no pasan bien por el lector",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.99999950000025,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST026",
+    "descripcion": "mi cuenta de correo no está sincronizando los mails nuevos desde ayer a la mañana",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST027",
+    "descripcion": "la computadora del puesto de guardia no tiene conexión a internet y necesitan consultar la lista de visitantes",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST028",
+    "descripcion": "el software de turno médico se congela cuando intento cargar más de 10 pacientes",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST029",
+    "descripcion": "necesito instalar el cliente VPN en mi notebook personal para conectarme desde casa",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST030",
+    "descripcion": "el equipo del recepcionista tiene la pantalla rayada y ya no se puede leer bien",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.99999950000025,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST031",
+    "descripcion": "me llegó un mail sospechoso que me pide que ingrese mis credenciales corporativas, qué hago?",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST032",
+    "descripcion": "el software de firma digital no reconoce el token USB que tengo",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST033",
+    "descripcion": "la notebook que uso para presentaciones no tiene la entrada HDMI que necesito para el proyector",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST034",
+    "descripcion": "necesito recuperar un archivo que borré sin querer de mi escritorio la semana pasada",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST035",
+    "descripcion": "el equipo de la sala de reuniones se quedó sin sonido después de que alguien actualizó algo",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST036",
+    "descripcion": "mi contraseña de Windows venció y el sistema no me deja cambiarla por ninguna que yo ingrese",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST037",
+    "descripcion": "el programa de facturación electrónica no puede conectarse al servicio de AFIP y da error de certificado",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST038",
+    "descripcion": "la impresora multifunción del área de marketing está atascada y no se puede desatascar sola",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST039",
+    "descripcion": "me cambiaron el equipo y no me migraron los favoritos del navegador ni los archivos del escritorio",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST040",
+    "descripcion": "el proyector de la sala B no enciende y hay una capacitación en 40 minutos",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Operaciones",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST041",
+    "descripcion": "necesito que me amplíen el espacio en el correo, llevo meses con el buzón lleno y borrando todo",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST042",
+    "descripcion": "la notebook nueva que me entregaron no tiene instalado el paquete de Office",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.99999950000025,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST043",
+    "descripcion": "el lector de huella dactilar del equipo de entrada al edificio no reconoce a tres empleados",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST044",
+    "descripcion": "el software de diseño que uso para los folletos perdió todas las fuentes tipográficas después de una actualización",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST045",
+    "descripcion": "la pantalla de la notebook tiene una línea vertical verde que apareció sola esta mañana",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.99999950000025,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST046",
+    "descripcion": "mi equipo no puede imprimir en doble faz aunque la impresora lo soporta",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.99999950000025,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST047",
+    "descripcion": "el antivirus del equipo está bloqueando una aplicación que necesito usar para trabajar",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST048",
+    "descripcion": "la conexión WiFi de mi notebook se cae cada 20 minutos y tengo que reconectarme",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.9999990000010001,
+    "etapa": "deterministic"
+  },
+  {
+    "caso_id": "ST049",
+    "descripcion": "necesito hacer una videoconferencia con alguien de afuera pero el sistema no me deja invitar externos",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST050",
+    "descripcion": "el equipo del nuevo ingresante todavía no tiene configurado el correo corporativo y ya lleva una semana",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST051",
+    "descripcion": "el software de control de stock no cierra correctamente y cada vez que lo abro dice que hubo un cierre inesperado",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST052",
+    "descripcion": "la computadora de recepción se pone muy lenta a partir de las 10am y hay que reiniciarla todos los días",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST053",
+    "descripcion": "el disco externo de backup personal no es reconocido por el equipo, ya probé varios puertos",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Sistemas",
+    "confianza": 0.0,
+    "etapa": "fallback"
+  },
+  {
+    "caso_id": "ST054",
+    "descripcion": "el teclado numérico no funciona aunque el numlock está activado",
+    "categoria_real": "Soporte Técnico",
+    "categoria_predicha": "Soporte Técnico",
+    "confianza": 0.99999950000025,
+    "etapa": "deterministic"
+  }
+]
