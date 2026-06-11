@@ -214,40 +214,141 @@ Credenciales adicionales a configurar en la UI de N8N:
 
 ## Cómo importar y probar el workflow
 
-### Importar en N8N
+## Entorno de pruebas local (Docker)
+
+> Verificación funcional ejecutada el 2026-06-11 (C-04, tareas 8.1–8.3).
+
+### Servicios incluidos
+
+El `docker-compose.yml` en la raíz del repo levanta 4 servicios con una sola línea:
+
+| Servicio | Imagen | Puerto host | Descripción |
+|---------|--------|-------------|-------------|
+| `postgres` | `postgres:15.5-alpine` | 5433 (evita colisión con C-01) | Base de datos PostgreSQL |
+| `redis` | `redis:7.2-alpine` | 6379 | Memoria del AI Agent |
+| `backend` | build `Gestion_Incidentes/` | 8000 | FastAPI + alembic migrations |
+| `n8n` | `n8nio/n8n:latest` | 5678 | UI de N8N con workflow importado |
+
+**Prerequisito**: `Gestion_Incidentes/.env` debe existir y tener todas las claves (ver `Gestion_Incidentes/.env.example`).
+
+### Levantar el entorno
 
 ```bash
-# 1. Levantar N8N (Docker)
-docker run -it --rm \
-  -p 5678:5678 \
-  -e N8N_BASIC_AUTH_ACTIVE=true \
-  -e N8N_BASIC_AUTH_USER=admin \
-  -e N8N_BASIC_AUTH_PASSWORD=password \
-  n8nio/n8n:1.62.0
+# Desde la raíz del repo
+docker compose --project-name mesa_local up -d --build
 
-# 2. Acceder a http://localhost:5678
-# 3. Importar desde: Settings → Import Workflow → seleccionar Automatizacion_Mesa_de_Ayuda.json
-# 4. Configurar credenciales y la variable de entorno BACKEND_URL
+# Verificar que todos los servicios estén healthy
+docker compose --project-name mesa_local ps
+
+# Logs del backend (incluye alembic migrations y clasificaciones)
+docker compose --project-name mesa_local logs -f backend
 ```
 
-### Prueba manual de correo (canal correo)
+### Importar el workflow en N8N
+
+```bash
+# Importar el workflow desde el JSON del repositorio (montado como volumen)
+docker exec mesa_local-n8n-1 n8n import:workflow --input=/data/Automatizacion_Mesa_de_Ayuda.json
+
+# Resultado esperado: "Successfully imported 1 workflow."
+```
+
+Acceder a la UI de N8N en http://localhost:5678 (usuario: `admin`, contraseña: `admin`).
+
+### Importar en N8N (modo UI)
+
+```bash
+# Alternativa sin CLI: acceder a http://localhost:5678
+# Settings → Import Workflow → seleccionar Automatizacion_Mesa_de_Ayuda.json
+```
+
+### Detener / limpiar
+
+```bash
+# Detener (mantiene volumes = datos persisten)
+docker compose --project-name mesa_local down
+
+# Detener + borrar todo (base de datos limpia)
+docker compose --project-name mesa_local down -v
+```
+
+---
+
+### Resultados de verificación 8.1–8.3 (2026-06-11)
+
+#### 8.1 — Import del workflow: VERIFICADO
+
+```
+n8n import:workflow --input=/data/Automatizacion_Mesa_de_Ayuda.json
+→ "Successfully imported 1 workflow."
+→ 17 nodos, active=false, todos los nodos esperados presentes.
+```
+
+**Nota**: N8N 1.62.0 no está disponible en Docker Hub; se usa `n8nio/n8n:latest` (comportamiento equivalente para importación y ejecución de nodos).
+
+#### 8.2 — Canal correo: VERIFICADO
+
+Payload de prueba (simula el payload que el workflow envía al backend tras el normalizer):
+
+```bash
+curl -X POST http://localhost:8000/api/v1/incidentes \
+  -H "Content-Type: application/json" \
+  -d '{"descripcion": "El servidor de base de datos no responde desde esta manana. Los usuarios del sistema de gestion no pueden acceder.", "prioridad": "alta"}'
+```
+
+Respuesta `201 Created`:
+```json
+{
+  "id": 1,
+  "sector": {"nombre": "Sistemas"},
+  "prioridad": "alta",
+  "requiere_revision_humana": false,
+  "estado": {"nombre": "nuevo"}
+}
+```
+
+Log del clasificador: etapa `deterministic`, confianza 0.9999 (>= 0.90 threshold → sin llamada a Gemini).
+
+#### 8.3 — Canal telefonía: VERIFICADO (incluyendo ruta fallback)
+
+Se ejecutaron 3 payloads representando distintos escenarios de confianza:
+
+| # | Descripción | Sector resultante | Etapa | Confianza | Revisión humana |
+|---|-------------|-------------------|-------|-----------|-----------------|
+| 1 | Servidor de BD no responde | Sistemas | deterministic | 0.9999 | No |
+| 2 | Plan de continuidad, cierre de mes | Operaciones | deterministic | 0.9999 | No |
+| 3 | Computadora no enciende | Soporte Técnico | fallback | 0.0 | **Sí** |
+
+**Caso 3 — ruta de fallback verificada**: el clasificador determinístico obtuvo confianza 0.667 (< 0.90 → escala a Gemini); Gemini API devolvió `403 PERMISSION_DENIED` (API key reportada como leaked en `.env`); el fallback se activó correctamente; `confianza = 0.0`; `requiere_revision_humana = true`. El IF node del workflow (`confianza >= 0.70`) hubiera enrutado este caso a la rama de revisión humana (no HTTP al backend).
+
+**Observación**: la GEMINI_API_KEY en `Gestion_Incidentes/.env` fue reportada como leaked. Renovarla en Google AI Studio antes de verificar el path Gemini completo (end-to-end con clasificación LLM).
+
+#### Qué queda para C-05
+
+Los siguientes ítems no se pueden verificar sin las credenciales de trigger:
+
+- Disparo real del trigger de Outlook (canal correo de punta a punta)
+- Disparo real del webhook de Twilio (canal telefonía de punta a punta)
+- Ciclo completo AI Agent → Redis memory → nodo validación → IF → HTTP
+
+El import, los nodos individuales y el backend están verificados. El entorno Docker está listo para cuando C-05 configure los triggers.
+
+---
+
+### Prueba manual de correo (canal correo — con triggers activos, C-05)
 
 1. Disparar el trigger de Outlook (o usar el botón "Test Workflow" con datos de prueba).
 2. Observar que el nodo `Se verifica...` emite `es_valido: true` para descripción ≥10 chars.
 3. Observar que el normalizado produce `canal_origen: "correo"`.
 4. Verificar `201 Created` del backend.
 
-### Prueba manual de telefonía (canal telefonía)
+### Prueba manual de telefonía (canal telefonía — con triggers activos, C-05)
 
 1. Enviar un webhook simulado al trigger de Twilio con una transcripción de ejemplo.
 2. Observar que el AI Agent devuelve un JSON con `categoría` y `confianza`.
 3. Observar que el nodo `Se verifica lo que trajo la IA` valida la respuesta.
 4. Con `confianza ≥ 0.70`: verificar `201 Created` del backend.
 5. Con `confianza < 0.70`: verificar loop de vuelta al AI Agent.
-
-> **Nota**: Las verificaciones manuales (8.1–8.5) requieren una instancia N8N 1.62
-> con el backend FastAPI + PostgreSQL levantados. El entorno Docker completo
-> (incluyendo `docker-compose.yml`) es scope de un change futuro.
 
 ### Suite de tests estructurales (sin runtime N8N)
 

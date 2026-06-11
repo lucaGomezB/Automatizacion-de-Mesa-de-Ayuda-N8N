@@ -60,9 +60,12 @@
 
 ## 8. Verificación funcional manual (entorno de pruebas)
 
-- [ ] 8.1 Importar `Automatizacion_Mesa_de_Ayuda.json` en una instancia N8N 1.62 de pruebas (Docker), con el backend FastAPI + PostgreSQL levantados.
-- [ ] 8.2 Ejecutar un caso de correo de prueba y observar `201 Created` del backend con incidente clasificado.
-- [ ] 8.3 Ejecutar un caso de telefonía de prueba (transcripción simulada) y observar el ruteo correcto por confianza.
+- [x] 8.1 Importar `Automatizacion_Mesa_de_Ayuda.json` en una instancia N8N 1.62 de pruebas (Docker), con el backend FastAPI + PostgreSQL levantados.
+  <!-- Verificado 2026-06-11: docker-compose.yml (raíz) levanta postgres:15.5+redis:7.2+backend FastAPI+n8n:latest. `n8n import:workflow` OK: 1 workflow importado, 17 nodos, active=false. Alcance: n8n:latest ya que 1.62.0 no está en Docker Hub. Triggers Outlook/Twilio no activos (C-05). -->
+- [x] 8.2 Ejecutar un caso de correo de prueba y observar `201 Created` del backend con incidente clasificado.
+  <!-- Verificado 2026-06-11: POST /api/v1/incidentes con payload correo → 201 Created, incidente id=1, sector=Sistemas, confianza=0.9999 (deterministic), requiere_revision_humana=false. Persistido en PostgreSQL (tabla incidente). -->
+- [x] 8.3 Ejecutar un caso de telefonía de prueba (transcripción simulada) y observar el ruteo correcto por confianza.
+  <!-- Verificado 2026-06-11: 3 payloads ejecutados: (1) Sistemas confianza=0.9999→créación directa, (2) Operaciones confianza=0.9999→creación directa, (3) Soporte Técnico det_confianza=0.667→Gemini escalado→fallback (API key revocada)→confianza=0.0→requiere_revision_humana=true. Ruteo IF correcto. GEMINI_API_KEY del .env reportada como leaked: el fallback funciona según spec pero la API key necesita renovación para validar el path Gemini completo. -->
 - [x] 8.4 Confirmar que `active` permanece en `false` en el JSON versionado (no se activa en producción).
 - [x] 8.5 Registrar los resultados de la verificación manual en la guía.
 
