@@ -1,18 +1,38 @@
 # Guía del Workflow N8N — Automatización de Mesa de Ayuda
 
-> C-04: n8n-workflow-validation — Implementado en la rama `feat/c-04-n8n-workflow-validation`.
-> Estado: workflow funcional sin placeholders, verificado por suite pytest estructural.
+> C-04: n8n-workflow-validation — Implementado y verificado.
+> C-05: n8n-channel-triggers — Canal web agregado, notificaciones por canal y auditoría con retención de 30 días.
+> Estado: 17 nodos funcionales; 45 tests estructurales pasando + 1 xfail documentado.
 
 ## Descripción general
 
 El archivo `Automatizacion_Mesa_de_Ayuda.json` (raíz del repo) es el workflow N8N exportado que
-automatiza la recepción y clasificación de incidentes de mesa de ayuda desde dos canales:
+automatiza la recepción y clasificación de incidentes de mesa de ayuda desde **tres canales**:
 
-- **Canal correo**: Microsoft Outlook (trigger por sondeo cada minuto)
-- **Canal telefonía**: Twilio (webhook de transcripción de llamada)
+- **Canal correo**: Microsoft Outlook trigger por sondeo (equivalente funcional a IMAP — ver Decisión 1 C-05)
+- **Canal web**: Webhook HTTP POST en la ruta `/webhook/incidente-web` (formulario web del frontend)
+- **Canal telefonía**: Twilio webhook de transcripción de llamada
 
+Los tres canales convergen en un **único nodo normalizador** antes de la persistencia.
 El workflow está configurado con `"active": false` en el JSON versionado. **No activar en
 producción editando el JSON** — activar desde la UI de N8N en el entorno de destino.
+
+## Tabla de los tres canales
+
+| Canal | Trigger | `canal_raw` emitido | `canal_origen` normalizado |
+|-------|---------|--------------------|-----------------------------|
+| Correo | `microsoftOutlookTrigger` (sondeo) | `"correo"` | `"correo"` |
+| Web | `webhook` `POST /webhook/incidente-web` | `"web"` | `"web"` |
+| Telefonía | `twilioTrigger` (transcripción) | `"telefonia"` | `"telefonia"` |
+
+### Equivalencia Outlook trigger ≈ IMAP (Decisión 1 — C-05)
+
+La tesis §5.2 describe el canal correo como "trigger IMAP". El workflow usa un
+`microsoftOutlookTrigger` (nodo nativo N8N de sondeo de buzón). Se **ratifica este nodo**
+como equivalente funcional del IMAP genérico: no se reemplazó por `emailReadImap` porque el
+trigger de Outlook ya cumple la función de recepción de correos del canal correo y
+las credenciales configuradas en C-04 quedan intactas. Esta equivalencia se registra
+para el Anexo E de la tesis (C-10).
 
 ## Nodos del workflow
 
@@ -20,12 +40,26 @@ producción editando el JSON** — activar desde la UI de N8N en el entorno de d
 
 | Posición | Nombre | Tipo | Función |
 |----------|--------|------|---------|
-| 1 | Llega un email a Mesa de Ayuda | `microsoftOutlookTrigger` | Disparador por sondeo. Recibe el correo del usuario. |
+| 1 | Llega un email a Mesa de Ayuda | `microsoftOutlookTrigger` | Disparador por sondeo. Recibe el correo del usuario. Emite `canal_raw = "correo"`. |
 | 2 | Se verifica que la informacion sea la necesaria para levantar un incidente | `code` (JS) | Valida `descripcion` ≥10 y ≤5000 caracteres. Emite `es_valido`. |
-| 3 | Normalizar entrada del incidente | `code` (JS) | Homogeniza a estructura unificada: `{id, timestamp, canal_origen, descripcion}`. |
+| 3 | Normalizar entrada del incidente | `code` (JS) | Homogeniza a estructura unificada: `{id, timestamp, canal_origen, descripcion}`. Compartido entre los tres canales. |
 | 4 | La informacion esta OK | `if` | Condición: `confianza >= 0.70`. Rama true → HTTP; rama false → reenvío. |
 | 5a | HTTP POST a MTM-SRU | `httpRequest` | `POST /api/v1/incidentes` al backend FastAPI. |
 | 5b | Se le envia un mensaje... | `microsoftOutlook` | Solicita al usuario reenviar datos faltantes. |
+| 6a | Correo de confirmacion al usuario | `microsoftOutlook` | **[C-05]** Envía correo de confirmación con el número de incidente al remitente. |
+| 6b | Registro de auditoria | `code` (JS) | **[C-05]** Registra metadatos de la ejecución (sin PII). Ver sección Auditoría. |
+
+### Canal web (formulario web) — C-05
+
+| Posición | Nombre | Tipo | Función |
+|----------|--------|------|---------|
+| 1 | Webhook formulario web | `webhook` | `POST /webhook/incidente-web`. Recibe el envío del formulario del frontend. |
+| 2 | Marcar canal web | `code` (JS) | Asigna `canal_raw = "web"` al ítem antes de normalizar. |
+| 3 | Normalizar entrada del incidente | `code` (JS) | Compartido — idem canal correo. |
+| 4 | La informacion esta OK | `if` | Compartido — idem canal correo. |
+| 5 | HTTP POST a MTM-SRU | `httpRequest` | Idem canal correo. |
+| 6a | Confirmacion web al usuario | `respondToWebhook` | **[C-05]** Responde al webhook con `{incidente_id, mensaje}`. |
+| 6b | Registro de auditoria | `code` (JS) | **[C-05]** Compartido — idem canal correo. |
 
 ### Canal telefonía
 
@@ -34,9 +68,15 @@ producción editando el JSON** — activar desde la UI de N8N en el entorno de d
 | 1 | Llamada telefonica | `twilioTrigger` | Webhook de Twilio al completar la transcripción. |
 | 2 | AI Agent | `agent` (LangChain) | Parsea la transcripción con el prompt del negocio. |
 | 2b | Con el fin de enviar los datos... | `memoryRedisChat` | Memoria Redis para el AI Agent. |
-| 3 | Se verifica lo que trajo la IA | `code` (JS) | Valida los 5 pasos Anexo H §H.3 (JSON, campos, categoría, rango confianza). |
-| 4 | Lo que trajo puede crear un incidente | `if` | Condición: `confianza >= 0.70`. Rama true → HTTP; rama false → loop AI Agent. |
-| 5 | HTTP POST a MTM-SRU se crea un incidente | `httpRequest` | `POST /api/v1/incidentes` al backend FastAPI. |
+| 3 | Se verifica lo que trajo la IA | `code` (JS) | Valida los 5 pasos Anexo H §H.3 (JSON, campos, categoría, rango confianza). Emite `canal_raw = "telefonia"`. |
+| 4 | Normalizar entrada del incidente | `code` (JS) | **[C-05]** Compartido — telefonia ahora converge aquí antes del IF. |
+| 5 | La informacion esta OK | `if` | Compartido — condición `confianza >= 0.70`. Rama false → loop AI Agent. |
+| 6a | HTTP POST a MTM-SRU | `httpRequest` | Compartido. |
+| 6b | Registro de auditoria | `code` (JS) | **[C-05]** Compartido — idem canal correo. |
+
+> **Nota sobre telefonía**: la confirmación al usuario se resuelve mediante la respuesta del
+> propio webhook de Twilio/TwiML durante la llamada. No se agrega un nodo SMS de confirmación
+> adicional (ver Decisión 2 C-05 — Open Question resuelta: basta la respuesta del webhook).
 
 ### Nodos decorativos
 
@@ -216,12 +256,78 @@ cd Gestion_Incidentes
 python -m pytest tests/test_n8n_workflow.py -v
 ```
 
-Verifica 31 propiedades estructurales del JSON sin necesitar N8N en ejecución.
+Verifica 45 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04: 31, C-05: 14 nuevos).
+
+### Prueba manual del canal web (C-05)
+
+1. Importar el workflow en N8N con `BACKEND_URL` configurado.
+2. Activar el workflow desde la UI de N8N.
+3. Enviar un POST al webhook: `POST {N8N_BASE_URL}/webhook/incidente-web` con cuerpo:
+   ```json
+   { "descripcion": "No puedo iniciar sesion en el sistema de facturacion", "prioridad": "alta" }
+   ```
+4. Verificar que el backend responde `201 Created` y el webhook responde con `{incidente_id, mensaje}`.
+5. Verificar que el nodo de auditoría registra los metadatos en el log de N8N (sin `descripcion`).
+
+## Notificaciones al usuario post-registro (C-05)
+
+Tras un alta exitosa (`201 Created` del backend), el workflow notifica al usuario por su canal:
+
+| Canal | Nodo | Mecanismo |
+|-------|------|-----------|
+| Web | `Confirmacion web al usuario` (`respondToWebhook`) | Responde al frontend con `{"incidente_id": <id>, "mensaje": "Incidente registrado"}` |
+| Correo | `Correo de confirmacion al usuario` (`microsoftOutlook`) | Envía correo con el número de incidente al remitente original |
+| Telefonía | — (sin nodo dedicado) | La confirmación ocurre en la respuesta Twilio/TwiML de la propia llamada |
+
+Los nodos de notificación y el nodo de auditoría están **en paralelo** desde la salida del
+`httpRequest` de persistencia. La notificación no bloquea el registro de auditoría.
+
+## Registro de auditoría (C-05)
+
+El nodo `Registro de auditoria` (`code` JS) registra por cada ejecución exitosa:
+
+```json
+{
+  "incidente_id": "<id del incidente creado>",
+  "canal_origen": "correo" | "web" | "telefonia",
+  "timestamp": "2026-06-11T14:23:45.123Z",
+  "categoria": "Sistemas" | "Operaciones" | "Soporte Técnico",
+  "confianza": 0.87,
+  "resultado": "creado",
+  "retencion_dias": 30
+}
+```
+
+**Exclusión de PII**: la `descripcion` cruda no se incluye en el evento de auditoría.
+Solo metadatos y referencias al incidente.
+
+**Retención de 30 días** (tesis §5.3): declarada como `retencion_dias: 30` en el nodo.
+El destino persistente recomendado es el logging de Docker/N8N con rotación configurada
+en `docker-compose.yml` (opción A, sin código nuevo en el backend). Configurar:
+
+```yaml
+# docker-compose.yml — logging con rotación a 30 días
+logging:
+  driver: "json-file"
+  options:
+    max-size: "100m"
+    max-file: "30"
+```
+
+**Autenticación del webhook web**: el endpoint `POST /webhook/incidente-web` debe
+protegerse en el entorno de despliegue (header firmado, red interna o SSO corporativo —
+tesis §5.2 menciona "autenticación corporativa única"). El mecanismo concreto depende del
+entorno y queda fuera del scope de C-05. Se documenta como punto pendiente para C-10.
 
 ## Open Questions resueltas (para Anexo E / C-10)
 
-| Pregunta | Resolución |
-|----------|-----------|
-| ¿1 endpoint o 2 (clasificar + incidentes)? | **1 endpoint**: `POST /api/v1/incidentes` con clasificación embebida. No existe `POST /api/v1/clasificar`. Documentar discrepancia en Anexo E. |
-| ¿Dónde ocurre la pseudonimización? | **En el backend**, dentro de `create_and_classify()`. N8N envía texto claro. Gap de privacidad documentado. |
-| ¿El IF del workflow decide revisión humana o lo decide el backend? | **Ambos**: el IF del workflow es la primera capa (antes de persistir); el backend también marca `requiere_revision_humana` internamente. El IF del workflow es la puerta de creación, no de revisión posterior. |
+| Pregunta | Resolución | Change |
+|----------|-----------|--------|
+| ¿1 endpoint o 2 (clasificar + incidentes)? | **1 endpoint**: `POST /api/v1/incidentes` con clasificación embebida. No existe `POST /api/v1/clasificar`. Documentar discrepancia en Anexo E. | C-04 |
+| ¿Dónde ocurre la pseudonimización? | **En el backend**, dentro de `create_and_classify()`. N8N envía texto claro. Gap de privacidad documentado. | C-04 |
+| ¿El IF del workflow decide revisión humana o lo decide el backend? | **Ambos**: el IF del workflow es la primera capa (antes de persistir); el backend también marca `requiere_revision_humana` internamente. | C-04 |
+| ¿Outlook trigger ≈ IMAP genérico? | **Sí**: el `microsoftOutlookTrigger` se ratifica como equivalente funcional. No se reemplaza por `emailReadImap`. Documentar equivalencia en Anexo E. | C-05 |
+| ¿La telefonía requiere SMS de confirmación adicional? | **No**: basta la respuesta del webhook/TwiML de la llamada. No se agrega nodo SMS de Twilio. | C-05 |
+| ¿La auditoría registra solo altas o también rechazos? | **Altas exitosas en C-05**. Ampliar a rechazos/revisiones en change futuro (requiere cablear ramas false de los IF). | C-05 |
+| ¿Dónde persiste el log de auditoría 30 días? | **Logging Docker/N8N con rotación** (opción A). Cero código nuevo en backend. Configurar `max-file: "30"` en `docker-compose.yml`. | C-05 |
+| ¿Cómo se autentica el webhook web? | **Pendiente de entorno**: tesis §5.2 menciona "autenticación corporativa única". Mecanismo concreto (header firmado / SSO) fuera del scope de C-05. Elevar para C-10. | C-05 |
