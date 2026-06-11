@@ -94,8 +94,8 @@ function engram-import { engram sync --import --project "Automatizacion-de-Mesa-
 ## Development Notes
 
 - The workflow is currently set to **inactive** (`"active": false` in the JSON). Activate it in the N8N UI before testing.
-- The JavaScript and Python code nodes in the workflow contain placeholder logic (`myNewField = 1`) — the actual validation logic described in ANEXO_H still needs to be implemented in those nodes.
-- The IF node conditions in the workflow are empty and need to be configured to evaluate the validation results.
-- To deploy: import `Automatizacion_Mesa_de_Ayuda.json` into an N8N instance and configure credentials for Outlook, Twilio, MTM-SRU, and Gemini.
-- A `docker-compose.yml` for local N8N deployment is not yet in the repository.
+- The JavaScript and Python code nodes in the workflow have been fully implemented (C-04): validation, normalization, Anexo H §H.3 checks, and HTTP payload mapping. No placeholders remain.
+- The IF node conditions are configured: `confianza >= 0.70` (inclusive) in both channels.
+- To deploy: import `Automatizacion_Mesa_de_Ayuda.json` into an N8N instance and configure credentials for Outlook, Twilio, and Gemini. The backend endpoint is `POST /api/v1/incidentes`.
+- A `docker-compose.yml` for local testing (N8N 1.62 + FastAPI backend + PostgreSQL + Redis) is available at the root of the repository (added in C-04 verification). See `docs/n8n-workflow-guide.md` for setup instructions.
 - The evaluation corpus (`data/corpus_evaluacion_pseudonimizado.csv`, 200 labeled cases) is not tracked in git.
