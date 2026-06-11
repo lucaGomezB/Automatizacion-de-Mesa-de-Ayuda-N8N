@@ -12,10 +12,12 @@ pydantic==2.9.2
 pydantic-settings==2.5.2
 
 # Google Gemini (SDK nuevo; reemplaza al deprecado google-generativeai)
-google-genai>=1.0
+# Piso 2.0: ThinkingConfig(thinking_budget=...) no existe en 1.x — con >=1.0,
+# el pin viejo httpx==0.27.2 hacía que pip resolviera google-genai 1.2.0.
+google-genai>=2.0
 
-# HTTP client (N8N webhook notifications)
-httpx==0.27.2
+# HTTP client (N8N webhook notifications). 0.28.1 es requisito de google-genai 2.x.
+httpx==0.28.1
 
 # Structured logging
 structlog==24.4.0
