@@ -48,6 +48,14 @@
       "sessions": 0,
       "memories": 4,
       "prompts": 0
+    },
+    {
+      "id": "1740d1fe",
+      "created_by": "Usuario",
+      "created_at": "2026-06-11T14:57:57Z",
+      "sessions": 0,
+      "memories": 2,
+      "prompts": 0
     }
   ]
 }
