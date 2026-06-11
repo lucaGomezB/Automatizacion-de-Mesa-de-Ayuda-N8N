@@ -202,6 +202,7 @@ async def test_notify_n8n_called_even_when_webhook_url_empty(db_session):
         database_url="sqlite+aiosqlite:///:memory:",
         gemini_api_key="fake-key",
         n8n_webhook_url="",
+        pseudonymization_encryption_key="2BFqlzB9uZlu2axKBM-ZrYJGq3u8JOK93ZYzIwkE3tQ=",
     )
 
     # Act
