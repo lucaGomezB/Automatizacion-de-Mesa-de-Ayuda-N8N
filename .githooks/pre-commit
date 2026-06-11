@@ -1,0 +1,86 @@
+#!/bin/sh
+# Hook pre-commit: bloquea commits que contengan secretos.
+#
+# Contexto: en este repo ya se filtró una GEMINI_API_KEY real (Gestion_Incidentes/.env
+# fue commiteado al historial y Google bloqueó la clave por "leaked"). Este hook es la
+# barrera automática para que no vuelva a pasar.
+#
+# Instalación (una sola vez por clon):
+#   git config core.hooksPath .githooks
+#
+# Qué bloquea:
+#   1. Archivos .env staged (las claves reales viven SOLO en .env, que no se versiona;
+#      las plantillas .env.example/.env.sample/.env.template sí están permitidas).
+#   2. Líneas AGREGADAS que matcheen patrones de claves: Google (AIza…/AQ.…),
+#      claves privadas PEM, y asignaciones genéricas key/secret/token/password
+#      con valores largos.
+#   3. Si gitleaks está instalado, corre además como capa extra (opcional).
+#
+# Falso positivo legítimo: agregar el marcador  gitleaks:allow  en esa misma línea.
+# Saltear el hook a conciencia (NO recomendado): git commit --no-verify
+
+fail=0
+
+# ── 1) Archivos .env staged ───────────────────────────────────────────────────
+env_files=$(git diff --cached --name-only --diff-filter=ACM \
+    | grep -E '(^|/)\.env(\.[A-Za-z0-9._-]+)?$' \
+    | grep -vE '\.env\.(example|sample|template)$')
+if [ -n "$env_files" ]; then
+    echo "" >&2
+    echo "✖ BLOQUEADO: hay archivos .env en el commit. Las claves reales van SOLO" >&2
+    echo "  en .env (ignorado por git); en el repo solo entran plantillas .env.example." >&2
+    printf '%s\n' "$env_files" | sed 's/^/    - /' >&2
+    fail=1
+fi
+
+# ── 2) Patrones de secretos en líneas agregadas ──────────────────────────────
+# Claves con formato inequívoco (case-sensitive):
+SPECIFIC_RE='AIza[0-9A-Za-z_-]{35}|AQ\.[0-9A-Za-z_-]{30,}|-----BEGIN [A-Z ]*PRIVATE KEY-----'
+# Asignaciones genéricas nombre-de-clave = valor-largo (case-insensitive):
+GENERIC_RE='(api[_-]?key|apikey|secret|token|passwd|password|encryption[_-]?key)["'"'"']?[[:space:]]*[:=][[:space:]]*["'"'"']?[A-Za-z0-9+/_.=-]{20,}'
+# Allowlist (case-insensitive): marcador explícito, placeholders y hashes de lockfiles.
+ALLOW_RE='gitleaks:allow|your[-_]|example|placeholder|changeme|integrity|sha(256|384|512)-'
+# Clave Fernet de PRUEBA documentada en los tests del repo (no es un dato real):
+TEST_FERNET_KEY='2BFqlzB9uZlu2axKBM-ZrYJGq3u8JOK93ZYzIwkE3tQ='
+
+secret_hits=$(
+    git diff --cached --name-only --diff-filter=ACM | while IFS= read -r f; do
+        case "$f" in
+            # Binarios y lockfiles: sin secretos escaneables / llenos de hashes
+            *.gz|*.zip|*.png|*.jpg|*.jpeg|*.ico|*.pdf|*.woff|*.woff2) continue ;;
+            package-lock.json|*/package-lock.json|yarn.lock|*/yarn.lock|pnpm-lock.yaml|*/pnpm-lock.yaml) continue ;;
+            # El hook mismo contiene los patrones como literales
+            .githooks/*) continue ;;
+        esac
+        added=$(git diff --cached -U0 --no-color -- "$f" \
+            | grep '^+' | grep -v '^+++' | cut -c2- \
+            | grep -viE "$ALLOW_RE" \
+            | grep -vF "$TEST_FERNET_KEY")
+        [ -z "$added" ] && continue
+        {
+            printf '%s\n' "$added" | grep -E  "$SPECIFIC_RE"
+            printf '%s\n' "$added" | grep -iE "$GENERIC_RE"
+        } | sort -u | cut -c1-80 | sed "s|^|    $f: |"
+    done
+)
+
+if [ -n "$secret_hits" ]; then
+    echo "" >&2
+    echo "✖ BLOQUEADO: posible secreto en las líneas agregadas:" >&2
+    printf '%s\n' "$secret_hits" >&2
+    echo "" >&2
+    echo "  Si es una clave real: movela a .env (ignorado por git) y rotala si ya se expuso." >&2
+    echo "  Si es un falso positivo: agregá el marcador 'gitleaks:allow' en esa línea." >&2
+    fail=1
+fi
+
+# ── 3) gitleaks como capa extra (solo si está instalado) ─────────────────────
+if command -v gitleaks >/dev/null 2>&1; then
+    if gitleaks protect --help >/dev/null 2>&1; then
+        gitleaks protect --staged --redact --no-banner || fail=1
+    elif gitleaks git --help >/dev/null 2>&1; then
+        gitleaks git --pre-commit --staged --redact --no-banner || fail=1
+    fi
+fi
+
+exit $fail

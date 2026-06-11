@@ -20,6 +20,21 @@ El sistema puede ser replicado exactamente siguiendo:
 
 **Nota**: El corpus de validación está disponible bajo `data/corpus_evaluacion_pseudonimizado.csv` con 200 casos etiquetados.
 
+## Hook anti-secretos (obligatorio al clonar)
+
+El repo incluye un hook pre-commit en `.githooks/pre-commit` que bloquea commits con
+API keys, claves privadas o archivos `.env` (en este proyecto ya se filtró una clave
+real por commitear un `.env`). Activarlo una sola vez después de clonar:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+Las claves reales van **solo** en `.env` (ignorado por git); al repo solo entran
+plantillas `.env.example` con placeholders. Ante un falso positivo, agregar el
+marcador `gitleaks:allow` en esa línea. Si además tenés [gitleaks](https://github.com/gitleaks/gitleaks)
+instalado, el hook lo usa como capa extra de escaneo.
+
 ## Memoria compartida del proyecto (engram)
 
 El directorio `.engram/` versiona la memoria técnica del proyecto (decisiones, bugs resueltos, convenciones) para que viaje con el código y sea recuperable por cualquier colaborador.
