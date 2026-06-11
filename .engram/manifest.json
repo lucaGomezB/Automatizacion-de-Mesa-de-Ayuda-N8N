@@ -24,6 +24,22 @@
       "sessions": 0,
       "memories": 2,
       "prompts": 0
+    },
+    {
+      "id": "67367aed",
+      "created_by": "Usuario",
+      "created_at": "2026-06-11T14:10:04Z",
+      "sessions": 0,
+      "memories": 4,
+      "prompts": 0
+    },
+    {
+      "id": "af22aba2",
+      "created_by": "Usuario",
+      "created_at": "2026-06-11T14:11:29Z",
+      "sessions": 0,
+      "memories": 2,
+      "prompts": 0
     }
   ]
 }

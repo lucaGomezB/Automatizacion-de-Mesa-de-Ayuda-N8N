@@ -92,6 +92,16 @@ class Settings(BaseSettings):
     log_level: str = "INFO"        # Nivel mínimo de emisión de eventos
     log_format: str = "json"       # "json" para producción; "console" para desarrollo
 
+    # ── Pseudonimización (Ley 25.326) ─────────────────────────────────────────
+    # Dominios corporativos internos cuyos hosts se enmascaran como [HOST].
+    # Ejemplo .env: PSEUDONYMIZATION_INTERNAL_DOMAINS=["empresa.local","corp.empresa.com"]
+    pseudonymization_internal_domains: list[str] = []
+    # Clave Fernet (base64 urlsafe de 32 bytes) para cifrar descripcion_original at-rest.
+    # Generar con: python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+    # OBLIGATORIA antes de arrancar la app o correr migraciones que toquen incidentes.
+    # Ejemplo .env: PSEUDONYMIZATION_ENCRYPTION_KEY=<resultado del comando anterior>
+    pseudonymization_encryption_key: str
+
 
 @lru_cache
 def get_settings() -> Settings:
