@@ -106,7 +106,7 @@ C-01 foundation-setup (ninguna)
 
 ### [C-02] `notify-n8n-hook`
 
-- **Estado**: `[ ]` pendiente
+- **Estado**: `[x]` completado (2026-06-10 — openspec/changes/archive/2026-06-10-c-02-notify-n8n-hook, PR #9)
 - **Scope**:
   - Importar y llamar `notify_n8n(incidente_id, result)` desde `IncidenteService._apply_classification()` en `app/services/incidente_service.py`
   - La llamada debe ser fire-and-forget (no bloquear la respuesta HTTP ni propagar fallos)
@@ -123,7 +123,7 @@ C-01 foundation-setup (ninguna)
 
 ### [C-03] `pseudonymization-module`
 
-- **Estado**: `[ ]` pendiente
+- **Estado**: `[x]` completado (2026-06-11 — openspec/changes/archive/2026-06-11-c-03-pseudonymization-module, PR #10)
 - **Scope**:
   - Crear `app/utils/pseudonymizer.py` con modulo de pseudonimizacion pre-transmision
   - Implementar regex que reemplace: nombres propios → `[PERSONA]`, emails → `[EMAIL]`, telefonos → `[TELEFONO]`, hosts internos → `[HOST]`
@@ -147,7 +147,7 @@ C-01 foundation-setup (ninguna)
 
 ### [C-04] `n8n-workflow-validation`
 
-- **Estado**: `[ ]` pendiente
+- **Estado**: `[x]` completado (2026-06-11 — openspec/changes/archive/2026-06-11-c-04-n8n-workflow-validation; tareas 8.1–8.3 de verificación funcional pendientes de entorno Docker)
 - **Scope**:
   - Reemplazar la logica placeholder en los nodos JavaScript del workflow N8N con la logica real de validacion del Anexo H
   - Configurar condiciones IF para evaluar `confianza >= 0.70` y rutear a revision humana vs creacion directa
