@@ -1,0 +1,10 @@
+id,descripcion,categoria_real,tiempo_manual_s,tiempo_automatizado_s
+1,El servidor de base de datos no responde y los usuarios no pueden acceder al sistema ERP.,Sistemas,180,12
+2,La red del piso 3 esta caida y los equipos no tienen conectividad a internet.,Sistemas,210,14
+3,Se detectó un acceso no autorizado a la base de datos de clientes.,Sistemas,240,15
+4,El proceso de cierre mensual no puede ejecutarse porque el modulo de planificacion falla.,Operaciones,195,13
+5,El servicio de gestion de turnos no esta disponible y hay cola de atencion acumulada.,Operaciones,220,16
+6,El sistema de continuidad del negocio no genera los reportes de disponibilidad.,Operaciones,200,14
+7,La laptop del empleado Juan no enciende y tiene una reunion importante en una hora.,Soporte Técnico,175,11
+8,El mouse inalambrico del puesto 14 dejó de funcionar y necesita reemplazo urgente.,Soporte Técnico,160,10
+9,El software de facturacion instalado en la PC del area contable lanza error al imprimir.,Soporte Técnico,190,12
