@@ -27,7 +27,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.classifiers.hybrid import HybridClassifier
+from app.config.settings import get_settings
 from app.utils.n8n_webhook import notify_n8n
+from app.utils.pseudonymizer import pseudonymize
 from app.core.exceptions import (
     CanalOrigenNotFoundError,
     EntityNotFoundError,
@@ -147,16 +149,18 @@ class IncidenteService:
         """
         Crea un nuevo incidente y ejecuta la clasificación automática.
 
-        Flujo de ejecución:
+        Flujo de ejecución (C-03 doble representación — Ley 25.326):
             1. Resolver el estado "nuevo" del catálogo.
             2. Resolver el canal de origen si fue especificado.
-            3. Persistir el incidente con estado inicial.
-            4. Invocar el clasificador híbrido sobre la descripción.
-            5. Actualizar el incidente con el sector asignado.
-            6. Crear el registro de auditoría en clasificacion_log.
-            7. Retornar el incidente completo con relaciones cargadas.
+            3. Pseudonimizar la descripción (punto canónico único) → doble repr.
+            4. Persistir el incidente con descripcion_original (cifrada) y
+               descripcion_pseudonimizada (en claro).
+            5. Invocar el clasificador híbrido SOLO sobre la pseudonimizada.
+            6. Actualizar el incidente con el sector asignado.
+            7. Crear el registro de auditoría en clasificacion_log.
+            8. Retornar el incidente completo con relaciones cargadas.
 
-        Los pasos 3-6 ocurren dentro de la misma transacción de base de datos,
+        Los pasos 4-7 ocurren dentro de la misma transacción de base de datos,
         garantizando que no queden incidentes sin log de clasificación ni
         logs de clasificación sin incidente asociado.
 
@@ -176,9 +180,23 @@ class IncidenteService:
         # Paso 2: Resolver canal de origen (puede ser None si no se especificó)
         canal = await self._resolve_canal(payload.canal_origen_id)
 
-        # Paso 3: Crear el registro del incidente con estado inicial
+        # Paso 3 (C-03): Pseudonimizar la descripción antes de persistir.
+        # Punto canónico único: la pseudonimización ocurre aquí y nunca más.
+        # El clasificador recibe SOLO la versión pseudonimizada.
+        settings = get_settings()
+        resultado_pseudo = pseudonymize(
+            payload.descripcion,
+            settings.pseudonymization_internal_domains,
+        )
+        logger.debug(
+            "pseudonimizacion_cobertura",
+            **resultado_pseudo.conteos,  # conteos por categoría, sin PII
+        )
+
+        # Paso 4: Crear el registro del incidente con doble representación
         incidente = await self._incidente_repo.create(
-            descripcion=payload.descripcion,
+            descripcion_original=payload.descripcion,        # cifrada at-rest por EncryptedText
+            descripcion_pseudonimizada=resultado_pseudo.texto,  # en claro, operativa
             prioridad=payload.prioridad,
             estado_id=estado_nuevo.id,
             canal_origen_id=canal.id if canal else None,
@@ -187,8 +205,8 @@ class IncidenteService:
 
         logger.info("incidente_created", incidente_id=incidente.id)
 
-        # Pasos 4-6: Clasificar y persistir el resultado
-        result = await self._classifier.classify(payload.descripcion)
+        # Pasos 5-7: Clasificar sobre la pseudonimizada y persistir el resultado
+        result = await self._classifier.classify(resultado_pseudo.texto)
         await self._apply_classification(incidente, result)
 
         # Paso 7: Retornar el incidente completo con todas las relaciones

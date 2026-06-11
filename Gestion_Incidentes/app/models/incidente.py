@@ -2,14 +2,22 @@
 Modelo ORM de la entidad principal del sistema: Incidente.
 
 Responsabilidad:
-    Define la tabla 'incidente', que almacena la descripción pseudonimizada
-    del problema reportado, su nivel de prioridad, el sector responsable
-    asignado por el clasificador, el estado actual dentro del ciclo de vida
-    y el canal por el que fue recibido.
+    Define la tabla 'incidente' con DOBLE REPRESENTACIÓN de la descripción
+    (arquitectura C-03, Ley 25.326):
 
-    La descripción almacenada ya tiene los datos de identificación personal
-    eliminados o sustituidos por el flujo de N8N antes de llegar a esta API,
-    garantizando el cumplimiento de privacidad requerido en la tesis.
+        descripcion_original       — texto crudo con PII, CIFRADO at-rest
+                                     mediante EncryptedText (Fernet). Solo para
+                                     auditoría / ejercicio de derechos ARCO.
+                                     NO se expone en los endpoints de la API.
+
+        descripcion_pseudonimizada — texto operativo en claro con etiquetas
+                                     [EMAIL]/[TELEFONO]/[HOST]/[PERSONA].
+                                     Única representación que consume el pipeline
+                                     de clasificación (Gemini + determinístico)
+                                     y que expone la API al frontend.
+
+    La pseudonimización ocurre UNA SOLA VEZ, en IncidenteService.create_and_classify(),
+    antes de persistir. N8N ya no garantiza ningún tratamiento previo.
 
 Índices compuestos:
     Se definen dos índices compuestos para optimizar las consultas más frecuentes:
@@ -24,6 +32,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin
 from app.models.catalog import CanalOrigen, Estado, Sector
+from app.utils.encryption import EncryptedText
 
 
 class PrioridadEnum(str, PyEnum):
@@ -71,9 +80,14 @@ class Incidente(Base, TimestampMixin):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
-    # Texto libre pseudonimizado. El proceso de anonimización ocurre en N8N
-    # antes de que el payload llegue a este módulo (ver flujo de trabajo N8N).
-    descripcion: Mapped[str] = mapped_column(Text, nullable=False)
+    # Texto crudo del incidente con PII — CIFRADO at-rest con Fernet (EncryptedText).
+    # Solo para auditoría / ejercicio de derechos ARCO (Ley 25.326).
+    # No se expone en los endpoints de la API.
+    descripcion_original: Mapped[str] = mapped_column(EncryptedText, nullable=False)
+
+    # Texto operativo con etiquetas [EMAIL]/[TELEFONO]/[HOST]/[PERSONA].
+    # Única representación que consume el pipeline de clasificación y la API.
+    descripcion_pseudonimizada: Mapped[str] = mapped_column(Text, nullable=False)
 
     # Nivel de prioridad; por defecto 'media' si no se especifica en el payload
     prioridad: Mapped[PrioridadEnum] = mapped_column(
