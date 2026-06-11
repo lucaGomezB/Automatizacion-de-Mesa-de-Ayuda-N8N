@@ -1,0 +1,227 @@
+# Guía del Workflow N8N — Automatización de Mesa de Ayuda
+
+> C-04: n8n-workflow-validation — Implementado en la rama `feat/c-04-n8n-workflow-validation`.
+> Estado: workflow funcional sin placeholders, verificado por suite pytest estructural.
+
+## Descripción general
+
+El archivo `Automatizacion_Mesa_de_Ayuda.json` (raíz del repo) es el workflow N8N exportado que
+automatiza la recepción y clasificación de incidentes de mesa de ayuda desde dos canales:
+
+- **Canal correo**: Microsoft Outlook (trigger por sondeo cada minuto)
+- **Canal telefonía**: Twilio (webhook de transcripción de llamada)
+
+El workflow está configurado con `"active": false` en el JSON versionado. **No activar en
+producción editando el JSON** — activar desde la UI de N8N en el entorno de destino.
+
+## Nodos del workflow
+
+### Canal correo
+
+| Posición | Nombre | Tipo | Función |
+|----------|--------|------|---------|
+| 1 | Llega un email a Mesa de Ayuda | `microsoftOutlookTrigger` | Disparador por sondeo. Recibe el correo del usuario. |
+| 2 | Se verifica que la informacion sea la necesaria para levantar un incidente | `code` (JS) | Valida `descripcion` ≥10 y ≤5000 caracteres. Emite `es_valido`. |
+| 3 | Normalizar entrada del incidente | `code` (JS) | Homogeniza a estructura unificada: `{id, timestamp, canal_origen, descripcion}`. |
+| 4 | La informacion esta OK | `if` | Condición: `confianza >= 0.70`. Rama true → HTTP; rama false → reenvío. |
+| 5a | HTTP POST a MTM-SRU | `httpRequest` | `POST /api/v1/incidentes` al backend FastAPI. |
+| 5b | Se le envia un mensaje... | `microsoftOutlook` | Solicita al usuario reenviar datos faltantes. |
+
+### Canal telefonía
+
+| Posición | Nombre | Tipo | Función |
+|----------|--------|------|---------|
+| 1 | Llamada telefonica | `twilioTrigger` | Webhook de Twilio al completar la transcripción. |
+| 2 | AI Agent | `agent` (LangChain) | Parsea la transcripción con el prompt del negocio. |
+| 2b | Con el fin de enviar los datos... | `memoryRedisChat` | Memoria Redis para el AI Agent. |
+| 3 | Se verifica lo que trajo la IA | `code` (JS) | Valida los 5 pasos Anexo H §H.3 (JSON, campos, categoría, rango confianza). |
+| 4 | Lo que trajo puede crear un incidente | `if` | Condición: `confianza >= 0.70`. Rama true → HTTP; rama false → loop AI Agent. |
+| 5 | HTTP POST a MTM-SRU se crea un incidente | `httpRequest` | `POST /api/v1/incidentes` al backend FastAPI. |
+
+### Nodos decorativos
+
+Seis nodos `stickyNote` con documentación visual interna del workflow (se conservan intactos).
+
+## Contrato: `POST /api/v1/incidentes`
+
+El workflow invoca un **único** endpoint HTTP:
+
+```
+POST {BACKEND_URL}/api/v1/incidentes
+Content-Type: application/json
+
+{
+  "descripcion": "<texto del incidente — máx. 5000 chars>",
+  "prioridad": "<media|alta|baja>"
+}
+```
+
+La URL del backend se inyecta a través de la variable de entorno N8N `$env.BACKEND_URL`
+(configurar en la instancia N8N antes de activar).
+
+### Respuesta esperada: `201 Created`
+
+```json
+{
+  "id": 123,
+  "descripcion_pseudonimizada": "...",
+  "sector": "Sistemas",
+  "confianza": 0.87,
+  "requiere_revision_humana": false,
+  ...
+}
+```
+
+El backend (`IncidenteService.create_and_classify`) ejecuta el pipeline completo:
+clasificación híbrida (determinístico → Gemini → fallback) + persistencia. La respuesta
+incluye `sector`, `confianza` y `requiere_revision_humana`.
+
+## Discrepancia tesis vs implementación — 1 endpoint vs 2
+
+La tesis (§6.3 y diagrama conceptual) describe dos llamadas HTTP separadas:
+
+1. `POST /api/v1/clasificar` — clasifica sin persistir
+2. `POST /api/v1/incidentes` — persiste el incidente ya clasificado
+
+**La implementación real usa un único endpoint** (`POST /api/v1/incidentes`) donde la
+clasificación está embebida en `create_and_classify()`. El endpoint `/api/v1/clasificar`
+**no existe** en el backend actual.
+
+Motivo: forzar dos llamadas requeriría crear un endpoint nuevo en el backend (governance ALTO,
+fuera de scope C-04). La solución con un único endpoint es funcionalmente equivalente y
+mantiene la atomicidad crear+clasificar.
+
+**Acción para C-10** (`documentation-annexes`): actualizar el Anexo E de la tesis para
+reflejar la arquitectura real de 1 endpoint. Ver Open Questions en `design.md`.
+
+## Estructura unificada de normalización
+
+El nodo `Normalizar entrada del incidente` produce para todos los canales:
+
+```json
+{
+  "id": "<execution_id>-<timestamp_ms>",
+  "timestamp": "2026-06-11T14:23:45.123Z",
+  "canal_origen": "correo" | "web" | "telefonia",
+  "descripcion": "<texto trimmed>",
+  "prioridad": "media",
+  "es_valido": true
+}
+```
+
+- `timestamp`: ISO-8601 con milisegundos (`new Date().toISOString()`).
+- `canal_origen ∈ {correo, web, telefonia}`. Entradas con canal inválido derivan a revisión.
+- El canal `web` es soportado desde C-04; su trigger se cablea en C-05.
+
+## Validación de la respuesta de clasificación — Anexo H §H.3
+
+El nodo `Se verifica lo que trajo la IA` implementa 5 pasos en orden:
+
+1. **JSON válido**: `JSON.parse()` dentro de `try/catch`. Fallo → `confianza = 0.0`.
+2. **Campos presentes**: `categoría` y `confianza` deben existir. Fallo → `confianza = 0.0`.
+3. **Categoría exacta** (case-sensitive): debe ser uno de `{Sistemas, Operaciones, Soporte Técnico}`. Fallo → `confianza = 0.0`.
+4. **Confianza numérica en [0.0, 1.0]**: `typeof === 'number'`, `!isNaN`, `>= 0`, `<= 1.0`. Fallo → `confianza = 0.0`.
+5. **Respuesta válida**: conserva `categoría` y `confianza` originales para el ruteo por umbral.
+
+En cualquier fallo: `confianza = 0.0`, `requiere_revision_humana = true`, `error_validacion = <código>`.
+
+## Ruteo por umbral de confianza (0.70 inclusivo)
+
+Ambos nodos `if` usan la condición:
+
+```
+$json.confianza >= 0.70   (operador: gte, tipo: number)
+```
+
+- **Rama true** (`confianza ≥ 0.70`): flujo a `POST /api/v1/incidentes` (creación directa).
+- **Rama false** (`confianza < 0.70` o falla de validación con `confianza = 0.0`):
+  - Canal correo: solicitar reenvío de datos.
+  - Canal telefonía: volver al AI Agent para refinamiento.
+
+Nota: el backend también marca internamente `requiere_revision_humana`; el nodo `if` del
+workflow es la primera capa de ruteo (antes de persistir).
+
+## Pseudonimización en tránsito — Decisión de diseño (C-04 §Decisión 2)
+
+**La pseudonimización NO ocurre en N8N.** La descripción viaja en texto claro desde
+N8N al backend vía HTTPS.
+
+El backend pseudonimiza internamente en `IncidenteService.create_and_classify()`
+(archivo: `Gestion_Incidentes/app/services/incidente_service.py`, líneas 183–190):
+
+```python
+# Paso 3 (C-03): Pseudonimizar la descripción antes de persistir.
+resultado_pseudo = pseudonymize(payload.descripcion, ...)
+```
+
+**Gap de privacidad documentado**: si el canal de transporte (HTTPS) se comprometiera,
+la PII viajaría expuesta entre N8N y el backend. Registrado como hallazgo para auditoría
+de privacidad (C-10 / posible C-05).
+
+**Por qué no se pseudonimiza en N8N**: reimplementar el módulo Fernet (C-03) en JavaScript
+duplicaría lógica de seguridad crítica fuera de su módulo Python testeado (governance ALTO).
+
+## Variables de entorno requeridas (instancia N8N)
+
+| Variable | Descripción | Ejemplo |
+|----------|-------------|---------|
+| `BACKEND_URL` | URL base del backend FastAPI | `http://localhost:8000` |
+
+Credenciales adicionales a configurar en la UI de N8N:
+- `MICROSOFT_OUTLOOK_*`: cuenta de correo de mesa de ayuda
+- `TWILIO_*`: credenciales del webhook de voz
+- `REDIS_URL`: para el nodo de memoria del AI Agent
+
+## Cómo importar y probar el workflow
+
+### Importar en N8N
+
+```bash
+# 1. Levantar N8N (Docker)
+docker run -it --rm \
+  -p 5678:5678 \
+  -e N8N_BASIC_AUTH_ACTIVE=true \
+  -e N8N_BASIC_AUTH_USER=admin \
+  -e N8N_BASIC_AUTH_PASSWORD=password \
+  n8nio/n8n:1.62.0
+
+# 2. Acceder a http://localhost:5678
+# 3. Importar desde: Settings → Import Workflow → seleccionar Automatizacion_Mesa_de_Ayuda.json
+# 4. Configurar credenciales y la variable de entorno BACKEND_URL
+```
+
+### Prueba manual de correo (canal correo)
+
+1. Disparar el trigger de Outlook (o usar el botón "Test Workflow" con datos de prueba).
+2. Observar que el nodo `Se verifica...` emite `es_valido: true` para descripción ≥10 chars.
+3. Observar que el normalizado produce `canal_origen: "correo"`.
+4. Verificar `201 Created` del backend.
+
+### Prueba manual de telefonía (canal telefonía)
+
+1. Enviar un webhook simulado al trigger de Twilio con una transcripción de ejemplo.
+2. Observar que el AI Agent devuelve un JSON con `categoría` y `confianza`.
+3. Observar que el nodo `Se verifica lo que trajo la IA` valida la respuesta.
+4. Con `confianza ≥ 0.70`: verificar `201 Created` del backend.
+5. Con `confianza < 0.70`: verificar loop de vuelta al AI Agent.
+
+> **Nota**: Las verificaciones manuales (8.1–8.5) requieren una instancia N8N 1.62
+> con el backend FastAPI + PostgreSQL levantados. El entorno Docker completo
+> (incluyendo `docker-compose.yml`) es scope de un change futuro.
+
+### Suite de tests estructurales (sin runtime N8N)
+
+```bash
+cd Gestion_Incidentes
+python -m pytest tests/test_n8n_workflow.py -v
+```
+
+Verifica 31 propiedades estructurales del JSON sin necesitar N8N en ejecución.
+
+## Open Questions resueltas (para Anexo E / C-10)
+
+| Pregunta | Resolución |
+|----------|-----------|
+| ¿1 endpoint o 2 (clasificar + incidentes)? | **1 endpoint**: `POST /api/v1/incidentes` con clasificación embebida. No existe `POST /api/v1/clasificar`. Documentar discrepancia en Anexo E. |
+| ¿Dónde ocurre la pseudonimización? | **En el backend**, dentro de `create_and_classify()`. N8N envía texto claro. Gap de privacidad documentado. |
+| ¿El IF del workflow decide revisión humana o lo decide el backend? | **Ambos**: el IF del workflow es la primera capa (antes de persistir); el backend también marca `requiere_revision_humana` internamente. El IF del workflow es la puerta de creación, no de revisión posterior. |

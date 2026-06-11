@@ -24,7 +24,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.myNewField = 1;\n}\n\nreturn $input.all();"
+        "jsCode": "// Validacion de entrada del canal de correo — Anexo H §H.3\n// Verifica que la descripcion exista, no este vacia y tenga al menos 10 caracteres.\n// Si la validacion falla, emite es_valido=false para que el nodo IF rutee al reenvio.\n// Limite maximo: 5000 caracteres (contrato IncidenteCreate del backend).\n\nconst items = $input.all();\nconst result = [];\n\nfor (const item of items) {\n  const descripcion = item.json.body || item.json.descripcion || item.json.text || '';\n  const descripcionTrim = String(descripcion).trim();\n\n  const esValida = descripcionTrim.length >= 10 && descripcionTrim.length <= 5000;\n\n  result.push({\n    json: {\n      ...item.json,\n      descripcion: descripcionTrim,\n      es_valido: esValida,\n      canal_raw: 'correo'\n    }\n  });\n}\n\nreturn result;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -47,12 +47,12 @@
           "conditions": [
             {
               "id": "b4a0da0c-e805-4067-896f-e7dabd1ed5f3",
-              "leftValue": "",
-              "rightValue": "",
+              "leftValue": "={{ $json.confianza }}",
+              "rightValue": 0.7,
               "operator": {
-                "type": "string",
-                "operation": "equals",
-                "name": "filter.operator.equals"
+                "type": "number",
+                "operation": "gte",
+                "name": "filter.operator.gte"
               }
             }
           ],
@@ -63,7 +63,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        256,
+        640,
         -32
       ],
       "id": "a685137d-c2a6-4ec8-a9c4-ff431e265fc2",
@@ -76,7 +76,7 @@
       "type": "n8n-nodes-base.microsoftOutlook",
       "typeVersion": 2,
       "position": [
-        448,
+        832,
         64
       ],
       "id": "8d5034d0-31ba-42c1-81a0-11d080b19269",
@@ -86,12 +86,19 @@
     {
       "parameters": {
         "method": "POST",
+        "url": "={{ $env.BACKEND_URL }}/api/v1/incidentes",
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "descripcion": "={{ $json.descripcion }}",
+          "prioridad": "={{ $json.prioridad || 'media' }}"
+        },
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        448,
+        832,
         -144
       ],
       "id": "70893531-ce20-4e27-ad12-18b4b0edb21b",
@@ -185,8 +192,7 @@
     },
     {
       "parameters": {
-        "language": "pythonNative",
-        "pythonCode": "# Loop over input items and add a new field called 'my_new_field' to the JSON of each one\nfor item in _items:\n  item[\"json\"][\"my_new_field\"] = 1\nreturn _items"
+        "jsCode": "// Validacion de la respuesta de clasificacion del AI Agent — Anexo H §H.3\n// 5 pasos en orden:\n//   1. Parseo JSON valido\n//   2. Presencia de campos 'categoría' y 'confianza'\n//   3. Categoria en el set exacto case-sensitive: {Sistemas, Operaciones, Soporte Técnico}\n//   4. Confianza numerica en [0.0, 1.0]\n//   Ante cualquier fallo: confianza = 0.0 + requiere_revision_humana = true\n\nconst CATEGORIAS_VALIDAS = new Set(['Sistemas', 'Operaciones', 'Soporte Técnico']);\nconst items = $input.all();\nconst result = [];\n\nfor (const item of items) {\n  // Paso 1: Parseo JSON valido\n  let parsed = null;\n  try {\n    const raw = item.json.output || item.json.text || JSON.stringify(item.json);\n    parsed = JSON.parse(raw);\n  } catch (e) {\n    // Fallo paso 1: JSON malformado\n    result.push({\n      json: {\n        ...item.json,\n        confianza: 0.0,\n        requiere_revision_humana: true,\n        error_validacion: 'json_malformado'\n      }\n    });\n    continue;\n  }\n\n  // Paso 2: Presencia de campos requeridos\n  if (!('categoría' in parsed) || !('confianza' in parsed)) {\n    result.push({\n      json: {\n        ...item.json,\n        confianza: 0.0,\n        requiere_revision_humana: true,\n        error_validacion: 'campos_faltantes'\n      }\n    });\n    continue;\n  }\n\n  const categoria = parsed['categoría'];\n  const confianza = parsed['confianza'];\n\n  // Paso 3: Categoria exacta case-sensitive\n  if (!CATEGORIAS_VALIDAS.has(categoria)) {\n    result.push({\n      json: {\n        ...item.json,\n        confianza: 0.0,\n        requiere_revision_humana: true,\n        error_validacion: 'categoria_invalida'\n      }\n    });\n    continue;\n  }\n\n  // Paso 4: Confianza numerica en [0.0, 1.0]\n  if (typeof confianza !== 'number' || isNaN(confianza) || confianza < 0.0 || confianza > 1.0) {\n    result.push({\n      json: {\n        ...item.json,\n        confianza: 0.0,\n        requiere_revision_humana: true,\n        error_validacion: 'confianza_fuera_de_rango'\n      }\n    });\n    continue;\n  }\n\n  // Respuesta valida: conservar categoria y confianza originales\n  const descripcion = parsed['descripcion'] || item.json.descripcion || '';\n  result.push({\n    json: {\n      ...item.json,\n      categoría: categoria,\n      confianza: confianza,\n      descripcion: String(descripcion).trim(),\n      prioridad: item.json.prioridad || 'media',\n      canal_raw: 'telefonia',\n      requiere_revision_humana: false\n    }\n  });\n}\n\nreturn result;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -209,12 +215,12 @@
           "conditions": [
             {
               "id": "4cf03753-d476-4193-98d4-646ef98e176d",
-              "leftValue": "",
-              "rightValue": "",
+              "leftValue": "={{ $json.confianza }}",
+              "rightValue": 0.7,
               "operator": {
-                "type": "string",
-                "operation": "equals",
-                "name": "filter.operator.equals"
+                "type": "number",
+                "operation": "gte",
+                "name": "filter.operator.gte"
               }
             }
           ],
@@ -234,6 +240,13 @@
     {
       "parameters": {
         "method": "POST",
+        "url": "={{ $env.BACKEND_URL }}/api/v1/incidentes",
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "descripcion": "={{ $json.descripcion }}",
+          "prioridad": "={{ $json.prioridad || 'media' }}"
+        },
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -276,24 +289,22 @@
       ],
       "id": "9a2237a8-0caa-4bdb-b90b-1b658475699a",
       "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalizacion de entrada a estructura unificada — tesis §5.3\n// Homogeniza la entrada de cualquiera de los tres canales:\n//   correo, web, telefonia\n// Produce exactamente: { id, timestamp, canal_origen, descripcion }\n// canal_origen ∈ { correo, web, telefonia }\n//\n// Nota de privacidad (C-04 §Decision 2):\n//   La descripcion se transmite en texto claro al backend.\n//   La pseudonimizacion ocurre en el backend (IncidenteService.create_and_classify).\n//   El transporte usa HTTPS.\n\nconst { v4: uuidv4 } = require('uuid');\nconst items = $input.all();\nconst result = [];\n\nconst CANALES_VALIDOS = new Set(['correo', 'web', 'telefonia']);\n\nfor (const item of items) {\n  // Determinar canal segun lo marcado por el nodo previo\n  const canalRaw = item.json.canal_raw || 'correo';\n  const canalOrigen = CANALES_VALIDOS.has(canalRaw) ? canalRaw : null;\n\n  if (!canalOrigen) {\n    // Canal invalido: derivar a revision humana\n    result.push({\n      json: {\n        ...item.json,\n        canal_origen: canalRaw,\n        es_valido: false,\n        error_normalizacion: 'canal_invalido'\n      }\n    });\n    continue;\n  }\n\n  // Extraer descripcion segun canal\n  let descripcion = '';\n  if (canalOrigen === 'correo') {\n    descripcion = item.json.descripcion || item.json.body || item.json.text || '';\n  } else if (canalOrigen === 'telefonia') {\n    descripcion = item.json.descripcion || item.json.output || item.json.text || '';\n  } else if (canalOrigen === 'web') {\n    descripcion = item.json.descripcion || item.json.message || item.json.body || '';\n  }\n\n  result.push({\n    json: {\n      id: item.json.id || $execution.id + '-' + Date.now(),\n      timestamp: new Date().toISOString(),  // ISO-8601 con milisegundos\n      canal_origen: canalOrigen,\n      descripcion: String(descripcion).trim(),\n      prioridad: item.json.prioridad || 'media',\n      es_valido: item.json.es_valido !== undefined ? item.json.es_valido : true\n    }\n  });\n}\n\nreturn result;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        -32
+      ],
+      "id": "f1a2b3c4-d5e6-47f8-a9b0-c1d2e3f4a5b6",
+      "name": "Normalizar entrada del incidente"
     }
   ],
-  "pinData": {
-    "Se verifica que la informacion sea la necesaria para levantar un incidente": [
-      {
-        "json": {
-          "name": "First item",
-          "code": 1
-        }
-      },
-      {
-        "json": {
-          "name": "Second item",
-          "code": 2
-        }
-      }
-    ]
-  },
+  "pinData": {},
   "connections": {
     "Llega un email a Mesa de Ayuda": {
       "main": [
@@ -307,6 +318,17 @@
       ]
     },
     "Se verifica que la informacion sea la necesaria para levantar un incidente": {
+      "main": [
+        [
+          {
+            "node": "Normalizar entrada del incidente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar entrada del incidente": {
       "main": [
         [
           {
