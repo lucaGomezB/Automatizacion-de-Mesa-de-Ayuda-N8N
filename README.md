@@ -4,6 +4,98 @@
 
 En este proyecto se busca una forma eficiente de facilitar el trabajo de la Mesa de Ayuda de cualquier empresa haciendo uso una automatizacion N8N
 
+---
+
+## Despliegue local
+
+> Tiempo estimado desde un clon limpio: **menos de 15 minutos**.
+>
+> Para procedimientos detallados (backup, monitoreo, actualizaciones), ver
+> [`docs/operational-guide.md`](docs/operational-guide.md).
+> Para resolver problemas frecuentes, ver
+> [`docs/troubleshooting.md`](docs/troubleshooting.md).
+
+### Prerrequisitos
+
+- **Docker Engine 24+** y **Docker Compose v2** (plugin integrado en Docker Desktop)
+- **Git 2.x**
+
+Verificar:
+```bash
+docker --version
+docker compose version
+```
+
+### 1. Clonar y configurar el hook anti-secretos
+
+```bash
+git clone https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N.git
+cd Automatizacion-de-Mesa-de-Ayuda-N8N
+
+# Activar el hook pre-commit que bloquea commits con credenciales (obligatorio)
+git config core.hooksPath .githooks
+```
+
+### 2. Configurar las variables de entorno
+
+```bash
+cp Gestion_Incidentes/.env.example Gestion_Incidentes/.env
+```
+
+Editar `Gestion_Incidentes/.env` y completar:
+
+| Variable                          | Descripción |
+|-----------------------------------|-------------|
+| `GEMINI_API_KEY`                  | Clave de Google Gemini (obtener en [aistudio.google.com](https://aistudio.google.com/app/apikey)) |
+| `PSEUDONYMIZATION_ENCRYPTION_KEY` | Clave Fernet de 32 bytes en base64url (generar con `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`) |
+| `DATABASE_URL`                    | Ya configurada en `.env.example` para el compose; no cambiar el host |
+
+### 3. Levantar todos los servicios
+
+```bash
+docker compose up -d
+```
+
+El compose levanta PostgreSQL (puerto 5433), Redis (6379), el backend FastAPI (8000)
+y N8N (5678). Las migraciones Alembic se aplican automáticamente al iniciar el backend.
+
+Verificar que todos los servicios están healthy:
+```bash
+docker compose ps
+```
+
+### 4. Verificar salud del sistema
+
+```bash
+# Backend en funcionamiento
+curl http://localhost:8000/health
+
+# Backend conectado a la base de datos
+curl http://localhost:8000/health/db
+```
+
+Ambas respuestas deben devolver `{"status": "ok"}`.
+
+### 5. Importar y activar el workflow N8N
+
+1. Abrir `http://localhost:5678` (usuario: `admin`, contraseña: `admin`)
+2. **Workflows → Import from file** → seleccionar `Automatizacion_Mesa_de_Ayuda.json`
+3. Configurar las credenciales de Outlook, Twilio y Gemini en N8N
+4. Activar el workflow con el toggle superior derecho
+
+### Frontend (opcional)
+
+El frontend React no forma parte del compose. Para levantarlo por separado:
+
+```bash
+cd Frontend
+npm install
+npm run dev
+# Disponible en http://localhost:3000
+```
+
+---
+
 ## Especificación Técnica
 
 ### Clasificación Automática
