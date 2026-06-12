@@ -27,6 +27,14 @@ INSTRUCCIÓN DE DECISIÓN
 Analiza la descripción del incidente y asigna una categoría única de las tres opciones listadas.
 Si la descripción contiene elementos de múltiples categorías, elige la que sea DOMINANTE.
 
+CASING
+El valor del campo "categoría" en tu respuesta JSON debe ser EXACTAMENTE uno de estos tres strings,
+respetando el casing (mayúsculas/minúsculas) y las tildes tal como aparecen aquí:
+  "Sistemas"
+  "Operaciones"
+  "Soporte Técnico"
+No uses "SISTEMAS", "sistemas", "SOPORTE TÉCNICO" ni ninguna variante. Usa exactamente los strings listados.
+
 VALIDACIÓN
 - Devuelve SIEMPRE un JSON válido sin texto adicional
 - No incluyas comentarios, explicaciones ni markdown
