@@ -34,6 +34,6 @@
 - [x] 6.1 Validar la sintaxis del workflow (actionlint si está disponible, o validación local equivalente)
 - [x] 6.2 Ejecutar localmente los comandos exactos del job de backend (ruff + pytest con cobertura desde `Gestion_Incidentes/`) y confirmar que pasan offline sin secretos
 - [x] 6.3 Ejecutar localmente los comandos exactos del job de frontend (`npm ci` + `npm run lint` + `npm run test:coverage` desde `Frontend/`) y confirmar que pasan
-- [ ] 6.4 Abrir el PR y confirmar que ambos jobs (`backend-tests`, `frontend-tests`) pasan en GitHub Actions (verificación final del pipeline)
-- [ ] 6.5 (Opcional) Una vez que el CI corre, medir la cobertura real del backend en Python 3.12 para decidir si conviene fijar un `--cov-fail-under` con holgura; documentar el número
+- [x] 6.4 Abrir el PR y confirmar que ambos jobs (`backend-tests`, `frontend-tests`) pasan en GitHub Actions (verificación final del pipeline) — PR #22, run 27390150616: ambos jobs success (tras fix 952d4d5: env dummies que Settings exige y que localmente provee el .env gitignorado)
+- [x] 6.5 (Opcional) Una vez que el CI corre, medir la cobertura real del backend en Python 3.12 para decidir si conviene fijar un `--cov-fail-under` con holgura; documentar el número — medido en run 27390150616: TOTAL 89% (269 stmts, 29 miss), igual que local en 3.13; un futuro `--cov-fail-under=85` tendría holgura razonable
 - [x] 6.6 Marcar C-09 como completado en `CHANGES.md`
