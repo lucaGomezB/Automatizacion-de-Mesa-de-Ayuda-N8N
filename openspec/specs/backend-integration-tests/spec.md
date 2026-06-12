@@ -112,10 +112,22 @@ La suite SHALL verificar el endpoint `GET /api/v1/clasificaciones/revision-pendi
 
 La suite SHALL verificar el endpoint `PATCH /api/v1/clasificaciones/{id}/validar`. Una validación válida MUST producir HTTP 200, asignar `sector_id_validado` al registro y retirarlo de la cola de revisión pendiente. La suite MUST verificar tanto el caso en que el sector validado coincide con el predicho (acierto del clasificador) como el caso en que difiere (corrección humana). Un `log_id` inexistente o un `sector_id_validado` inexistente MUST producir HTTP 404.
 
+La validación MUST además propagarse al incidente en la misma transacción: `incidente.sector_id` queda asignado al sector validado y `requiere_revision_humana` queda en falso, de modo que el ticket quede ruteado según el veredicto humano y salga del estado de revisión pendiente. La auditoría NO SHALL alterarse: el registro de clasificación conserva `sector_id_predicho` intacto como etiqueta para las métricas de la tesis. (Comportamiento agregado en el fix ISSUE-002 de la sesión de QA 2026-06-12; cubierto por `tests/test_api_validar_cascade.py`.)
+
 #### Scenario: Validación humana retira el registro de la cola
 
 - **WHEN** un operador valida un registro pendiente indicando un sector existente
 - **THEN** la respuesta es HTTP 200 con `sector_validado` asignado, y ese registro ya no aparece en la cola de revisión pendiente
+
+#### Scenario: La corrección humana se propaga al incidente
+
+- **WHEN** un operador valida un registro pendiente indicando un sector distinto del predicho
+- **THEN** el incidente queda asignado al sector validado con `requiere_revision_humana` en falso, y el registro de clasificación conserva `sector_predicho` original para auditoría
+
+#### Scenario: La confirmación humana limpia el flag de revisión del incidente
+
+- **WHEN** un operador valida un registro pendiente confirmando el sector predicho
+- **THEN** el incidente conserva el sector predicho y `requiere_revision_humana` queda en falso
 
 #### Scenario: Validación de un log inexistente
 
