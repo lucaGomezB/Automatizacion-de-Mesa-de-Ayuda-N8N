@@ -26,6 +26,21 @@ Notas:
       mínimos y determinísticos en git.
     - El archivo de salida es siempre docs/openapi.json relativo a la raíz
       del repositorio (dos niveles arriba de este script).
+
+IMPORTANTE — versión de dependencias:
+    Este script DEBE ejecutarse con las versiones pinadas en requirements.txt
+    (fastapi==0.115.0, pydantic==2.9.2, pydantic-settings==2.5.2). Distintas
+    versiones de pydantic/fastapi serializan los schemas dict de manera
+    diferente (e.g. pydantic ≥ 2.10 agrega ``"additionalProperties": true``
+    en respuestas ``dict`` y campos extra en ValidationError), lo que produce
+    un openapi.json que no coincide con el generado por CI y rompe el test
+    ``test_openapi_in_sync_with_app``. Antes de regenerar, verificar versiones:
+
+        pip show fastapi pydantic | grep -E "^(Name|Version)"
+
+    Si las versiones no coinciden con requirements.txt, instalarlas primero:
+
+        pip install -r Gestion_Incidentes/requirements.txt
 """
 
 from __future__ import annotations
