@@ -20,6 +20,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.logging import get_logger
 from app.models.clasificacion_log import ClasificacionLog
 from app.repositories.clasificacion_repository import ClasificacionRepository
+from app.repositories.incidente_repository import IncidenteRepository
 from app.repositories.sector_repository import SectorRepository
 
 logger = get_logger(__name__)
@@ -47,6 +48,8 @@ class ClasificacionService:
         self._repo = ClasificacionRepository(session)
         # SectorRepository para verificar que el sector de validación existe
         self._sector_repo = SectorRepository(session)
+        # IncidenteRepository para propagar la validación al incidente (misma transacción)
+        self._incidente_repo = IncidenteRepository(session)
 
     async def list_by_incidente(self, incidente_id: int) -> list[ClasificacionLog]:
         """
@@ -114,9 +117,19 @@ class ClasificacionService:
 
         log = await self._repo.set_validated_sector(log_id, sector_id)
 
+        # Propagar el veredicto al incidente en la misma transacción: el ticket
+        # queda asignado al sector validado y sale del estado "requiere revisión".
+        # La auditoría no se altera: el log conserva sector_id_predicho intacto.
+        await self._incidente_repo.update_fields(
+            log.incidente_id,
+            sector_id=sector_id,
+            requiere_revision_humana=False,
+        )
+
         logger.info(
             "clasificacion_validated",
             log_id=log_id,
+            incidente_id=log.incidente_id,
             sector_id_validado=sector_id,
         )
         return log
