@@ -26,7 +26,8 @@ export interface IncidenteCreate {
 // Representación completa devuelta por el endpoint de detalle GET /api/v1/incidentes/{id}
 export interface IncidenteRead {
   id: number;
-  descripcion: string;
+  /** El backend expone la descripción ya pseudonimizada (la original viaja cifrada y no sale de la API). */
+  descripcion_pseudonimizada: string;
   prioridad: PrioridadEnum;
   requiere_revision_humana: boolean;
   created_at: string;

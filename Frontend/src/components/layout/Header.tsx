@@ -22,7 +22,7 @@ export function Header() {
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     cn(
-      'px-4 py-2 rounded-md text-sm font-medium transition-colors',
+      'px-2.5 py-2 sm:px-4 rounded-md text-xs sm:text-sm font-medium transition-colors whitespace-nowrap',
       isActive
         ? 'bg-white/20 text-white'
         : 'text-white/75 hover:bg-white/10 hover:text-white'
@@ -30,16 +30,19 @@ export function Header() {
 
   return (
     <header className="bg-primary text-primary-foreground shadow-md sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-4 h-16 grid grid-cols-3 items-center">
+      <div className="max-w-7xl mx-auto px-4 h-16 grid grid-cols-[auto_1fr_auto] sm:grid-cols-3 items-center gap-2">
 
         {/* Columna izquierda: identidad institucional */}
-        <div className="flex items-center gap-3">
-          <div className="bg-white/10 p-1.5 rounded-md">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="hidden sm:block bg-white/10 p-1.5 rounded-md">
             <TicketCheck className="h-5 w-5" />
           </div>
           <div className="leading-tight">
-            <p className="font-semibold text-base leading-none">Mesa de Ayuda</p>
-            <p className="text-[11px] text-white/60 mt-0.5">UTN · Automatización IA — 2026</p>
+            <p className="font-semibold text-base leading-none whitespace-nowrap">Mesa de Ayuda</p>
+            {/* El subtítulo no entra en viewports angostos sin pisar la navegación */}
+            <p className="hidden sm:block text-[11px] text-white/60 mt-0.5">
+              UTN · Automatización IA — 2026
+            </p>
           </div>
         </div>
 
@@ -65,7 +68,8 @@ export function Header() {
                   healthError && 'bg-red-400'
                 )}
               />
-              <span className="text-white/75 text-xs">
+              {/* En móvil queda solo el punto de color; el texto necesita ancho de tablet+ */}
+              <span className="hidden md:inline text-white/75 text-xs whitespace-nowrap">
                 {healthPending && 'Verificando API…'}
                 {health && !healthError && `API operativa · v${health.version}`}
                 {healthError && 'API sin conexión'}
