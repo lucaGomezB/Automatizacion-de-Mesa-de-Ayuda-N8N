@@ -1,0 +1,100 @@
+# ci.yml — GitHub Actions CI workflow (C-09)
+# Dos jobs paralelos: backend-tests y frontend-tests.
+# Triggers: push a main y pull_request.
+# Sin secretos: toda la suite corre 100% offline.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  # -----------------------------------------------------------------------
+  # Job 1: Backend — ruff lint + pytest con cobertura + evaluation suite
+  # -----------------------------------------------------------------------
+  backend-tests:
+    name: Backend tests (Python 3.12)
+    runs-on: ubuntu-latest
+
+    # Settings (pydantic-settings) exige estos 3 campos sin default. Localmente
+    # salen del .env (gitignorado); en CI se inyectan dummies validos. NO son
+    # secretos: los tests mockean Gemini/N8N, el engine de la DATABASE_URL nunca
+    # conecta (conftest inyecta SQLite in-memory) y la clave Fernet es de relleno
+    # (base64url de 32 bytes '0').
+    env:
+      DATABASE_URL: postgresql+asyncpg://ci:ci@localhost:5432/ci_dummy
+      GEMINI_API_KEY: ci-dummy-key
+      PSEUDONYMIZATION_ENCRYPTION_KEY: MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA= # gitleaks:allow (dummy: base64url de 32 bytes '0')
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: Gestion_Incidentes/requirements.txt
+
+      - name: Install backend dependencies
+        working-directory: Gestion_Incidentes
+        run: pip install -r requirements.txt
+
+      - name: Install ruff (pinned, not in requirements.txt)
+        run: pip install ruff==0.8.4
+
+      - name: Lint backend with ruff
+        working-directory: Gestion_Incidentes
+        run: ruff check .
+
+      - name: Run backend tests with coverage
+        working-directory: Gestion_Incidentes
+        run: |
+          pytest \
+            --cov=app.routes \
+            --cov=app.services \
+            --cov=app.repositories \
+            --cov-report=term-missing
+
+      # Evaluation suite — self-contained (corpus_fixture.csv + FakeClassifier)
+      # Chapter 7 thesis evidence; must not rot.
+      - name: Install evaluation dependencies
+        working-directory: evaluation
+        run: pip install -r requirements.txt
+
+      - name: Run evaluation tests
+        working-directory: evaluation
+        run: pytest
+
+  # -----------------------------------------------------------------------
+  # Job 2: Frontend — ESLint + Vitest con cobertura
+  # -----------------------------------------------------------------------
+  frontend-tests:
+    name: Frontend tests (Node 20)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: Frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: Frontend
+        run: npm ci
+
+      - name: Lint frontend with ESLint
+        working-directory: Frontend
+        run: npm run lint
+
+      - name: Run frontend tests with coverage
+        working-directory: Frontend
+        run: npm run test:coverage
