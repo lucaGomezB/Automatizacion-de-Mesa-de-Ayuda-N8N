@@ -114,6 +114,13 @@ def _load_prompt() -> str:
             "INSTRUCCIÓN DE DECISIÓN\n"
             "Analiza la descripción del incidente y asigna una categoría única de las tres opciones listadas.\n"
             "Si la descripción contiene elementos de múltiples categorías, elige la que sea DOMINANTE.\n\n"
+            "CASING\n"
+            'El valor del campo "categoría" en tu respuesta JSON debe ser EXACTAMENTE uno de estos tres strings,\n'
+            "respetando el casing (mayúsculas/minúsculas) y las tildes tal como aparecen aquí:\n"
+            '  "Sistemas"\n'
+            '  "Operaciones"\n'
+            '  "Soporte Técnico"\n'
+            'No uses "SISTEMAS", "sistemas", "SOPORTE TÉCNICO" ni ninguna variante. Usa exactamente los strings listados.\n\n'
             "VALIDACIÓN\n"
             "- Devuelve SIEMPRE un JSON válido sin texto adicional\n"
             "- No incluyas comentarios, explicaciones ni markdown\n"
@@ -224,6 +231,24 @@ class GeminiClassifier(BaseClassifier):
             # Modo JSON: la API restringe la salida a JSON puro, sin fences Markdown
             # (```json ... ```) que el validador del Anexo H §H.3 rechaza por diseño.
             response_mime_type="application/json",
+            # Schema estructurado: restringe la respuesta a exactamente los 3 strings
+            # canónicos con su casing correcto. Evita que Gemini devuelva "SISTEMAS"
+            # u otras variantes de mayúsculas que el validador del Anexo H §H.3 rechaza
+            # por ser case-sensitive. El enum actúa en el ORIGEN (request), complementando
+            # la instrucción del prompt (defensa en profundidad). Ver docs/parameters_gemini.md.
+            response_schema=genai_types.Schema(
+                type="OBJECT",
+                properties={
+                    "categoría": genai_types.Schema(
+                        type="STRING",
+                        enum=["Sistemas", "Operaciones", "Soporte Técnico"],
+                    ),
+                    "confianza": genai_types.Schema(
+                        type="NUMBER",
+                    ),
+                },
+                required=["categoría", "confianza"],
+            ),
             # Gemini 2.5 Flash razona ("thinking") por defecto y esos tokens cuentan
             # contra max_output_tokens=100, truncando la respuesta visible. Presupuesto
             # 0 desactiva el razonamiento: respuesta directa, completa y de menor latencia.
