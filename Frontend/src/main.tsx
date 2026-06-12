@@ -33,7 +33,10 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+      {/* Future flags v7: opt-in anticipado al comportamiento de React Router 7
+          (startTransition en updates y resolución de splat relativa) — silencia
+          los warnings de migración y deja la app lista para el upgrade. */}
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
           <Route path="/" element={<ReportarIncidentePage />} />
           <Route path="/admin" element={<AdministracionPage />} />
