@@ -165,3 +165,71 @@ Ajustar el clasificador sobre el corpus de evaluación invalidaría las métrica
 reportadas (data leakage). Si identificás errores sistemáticos y necesitás
 ajustar el sistema, usá el corpus de evaluación **solo para diagnóstico** y
 medí el impacto sobre datos separados.
+
+## Corpus Sintético Provisional
+
+### Qué es
+
+`data/corpus_sintetico_provisional.csv` es un corpus de **200 casos sintéticos**
+(82 Sistemas, 64 Operaciones, 54 Soporte Técnico) generados por Claude para
+validar el pipeline de evaluación antes de disponer del corpus real.
+
+Este corpus es trackeado en git porque no contiene PII real (usa tokens del
+pseudonimizador: `[HOST]`, `[PERSONA]`, `[EMAIL]`, `[TELEFONO]` donde aplica).
+
+### Por qué existe
+
+El corpus real (`corpus_evaluacion_pseudonimizado.csv`) es recolectado de
+incidentes productivos y requiere trabajo de campo. El corpus sintético permite:
+
+- Verificar que el pipeline de evaluación funciona end-to-end.
+- Detectar bugs en el runner, los cálculos de métricas o el reporte.
+- Obtener feedback temprano sobre categorías que confunde el clasificador.
+- Calibrar el script de corrida antes de gastar cuota de Gemini en el corpus real.
+
+### Advertencia importante
+
+**Los números del corpus sintético NO son válidos para la tesis.**
+El Capítulo 7 requiere el corpus real. La corrida provisional sirve únicamente
+para validar el pipeline, no para reportar métricas de producción.
+
+### Cómo regenerar la corrida provisional
+
+```bash
+# Desde la raíz del repositorio:
+python scripts/run_provisional.py
+```
+
+Requiere:
+- `data/corpus_sintetico_provisional.csv` (ya incluido en git)
+- `Gestion_Incidentes/.env` con `GEMINI_API_KEY` válida
+- Paciencia: el free tier de Gemini 2.5 Flash tiene 5 RPM / 20 RPD.
+  El script hace pausas automáticas entre lotes. Tiempo estimado: ~10 min.
+
+El reporte se escribe en `evaluation/report_provisional.md`.
+
+### Primera corrida provisional — hallazgos
+
+Corrida del 2026-06-11 con el clasificador híbrido:
+
+| Métrica | Valor |
+|---------|-------|
+| Exactitud | 63.0% |
+| F1 Macro | 0.594 |
+| Casos determinísticos | 101 (50.5%) |
+| Casos Gemini | 4 (2.0%) |
+| Casos fallback/revisión | 95 (47.5%) |
+
+**Diagnóstico principal:** 95 casos cayeron a fallback porque Gemini agotó el
+cupo diario del free tier (20 RPD). Con cupo suficiente el clasificador debería
+resolver correctamente los casos actualmente en fallback.
+
+**Sesgo detectado:** Operaciones tiene el F1 más bajo (0.437). 42 de 64 casos
+de Operaciones fueron clasificados como Sistemas. El clasificador determinístico
+activa keywords de Sistemas en muchos reportes que mencionan módulos/servicios/sistemas,
+aunque el problema sea de proceso. Este sesgo es un hallazgo de calibración valioso.
+
+**Sesgo por fallback masivo:** con 95 casos que caen a fallback con confianza 0.0
+y se marcan para revisión humana, el 47.5% del corpus no fue clasificado — lo que
+infla el error en Operaciones (donde el determinístico falla más). Una corrida con
+cupo Gemini suficiente dará métricas mucho más representativas.
