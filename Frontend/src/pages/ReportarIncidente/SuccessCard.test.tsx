@@ -20,7 +20,7 @@ const mockCanal = { id: 2, nombre: 'formulario web', descripcion: null };
 function makeIncidente(overrides: Partial<IncidenteRead> = {}): IncidenteRead {
   return {
     id: 42,
-    descripcion: 'El servidor de base de datos no responde desde esta mañana',
+    descripcion_pseudonimizada: 'El servidor de base de datos no responde desde esta mañana',
     prioridad: 'alta',
     requiere_revision_humana: false,
     created_at: '2026-06-11T10:00:00Z',
