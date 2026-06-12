@@ -224,6 +224,14 @@
       "sessions": 0,
       "memories": 1,
       "prompts": 0
+    },
+    {
+      "id": "196cebfd",
+      "created_by": "Usuario",
+      "created_at": "2026-06-12T04:39:44Z",
+      "sessions": 0,
+      "memories": 5,
+      "prompts": 0
     }
   ]
 }
