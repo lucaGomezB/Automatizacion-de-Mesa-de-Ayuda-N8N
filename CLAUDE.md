@@ -99,3 +99,22 @@ function engram-import { engram sync --import --project "Automatizacion-de-Mesa-
 - To deploy: import `Automatizacion_Mesa_de_Ayuda.json` into an N8N instance and configure credentials for Outlook, Twilio, and Gemini. The backend endpoint is `POST /api/v1/incidentes`.
 - A `docker-compose.yml` for local testing (N8N 1.62 + FastAPI backend + PostgreSQL + Redis) is available at the root of the repository (added in C-04 verification). See `docs/n8n-workflow-guide.md` for setup instructions.
 - The evaluation corpus (`data/corpus_evaluacion_pseudonimizado.csv`, 200 labeled cases) is not tracked in git.
+
+## Skill routing
+
+When the user's request matches an available skill, invoke it via the Skill tool. When in doubt, invoke the skill.
+
+Key routing rules:
+- Product ideas/brainstorming → invoke /office-hours
+- Strategy/scope → invoke /plan-ceo-review
+- Architecture → invoke /plan-eng-review
+- Design system/plan review → invoke /design-consultation or /plan-design-review
+- Full review pipeline → invoke /autoplan
+- Bugs/errors → invoke /investigate
+- QA/testing site behavior → invoke /qa or /qa-only
+- Code review/diff check → invoke /review
+- Visual polish → invoke /design-review
+- Ship/deploy/PR → invoke /ship or /land-and-deploy
+- Save progress → invoke /context-save
+- Resume context → invoke /context-restore
+- Author a backlog-ready spec/issue → invoke /spec
