@@ -14,7 +14,10 @@
 # (prefijo mesa_local_*), sin colisionar con los contenedores de C-01
 # (gestion_incidentes-*) que pueden existir detenidos en el sistema.
 
-version: "3.9"
+# Nombre de proyecto fijo: sin esto, `docker compose up` usa el nombre del
+# directorio como proyecto y crea un stack DUPLICADO que colisiona los puertos
+# publicados (8000/5678/6379/5433) con el stack ya corriendo.
+name: mesa_local
 
 services:
 
