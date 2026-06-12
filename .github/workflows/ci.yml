@@ -59,6 +59,13 @@ jobs:
             --cov=app.repositories \
             --cov-report=term-missing
 
+      # Verificación de sincronía del OpenAPI estático (C-10, D3):
+      # regenera el esquema en memoria y lo compara contra docs/openapi.json.
+      # Falla si el archivo commiteado no refleja el estado actual de la app.
+      - name: Verify OpenAPI spec is in sync
+        working-directory: Gestion_Incidentes
+        run: pytest tests/test_openapi_sync.py -v
+
       # Evaluation suite — self-contained (corpus_fixture.csv + FakeClassifier)
       # Chapter 7 thesis evidence; must not rot.
       - name: Install evaluation dependencies
