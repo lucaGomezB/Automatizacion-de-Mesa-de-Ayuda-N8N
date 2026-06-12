@@ -16,7 +16,7 @@ vi.mock('../services/incidentesService');
 
 const mockIncidenteRead: IncidenteRead = {
   id: 7,
-  descripcion: 'La impresora del piso 3 no funciona desde el lunes',
+  descripcion_pseudonimizada: 'La impresora del piso 3 no funciona desde el lunes',
   prioridad: 'media',
   requiere_revision_humana: false,
   created_at: '2026-06-11T12:00:00Z',

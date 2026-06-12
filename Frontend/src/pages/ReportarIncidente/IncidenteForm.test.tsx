@@ -26,7 +26,7 @@ vi.mock('@/hooks/useReportarIncidente');
 // Mock de IncidenteRead para simular respuesta exitosa
 const mockIncidenteRead: IncidenteRead = {
   id: 1,
-  descripcion: 'test',
+  descripcion_pseudonimizada: 'test',
   prioridad: 'media',
   requiere_revision_humana: false,
   created_at: '2026-06-11T10:00:00Z',
