@@ -212,7 +212,7 @@ C-01 foundation-setup (ninguna)
 
 ### [C-07] `frontend-testing-setup`
 
-- **Estado**: `[ ]` pendiente
+- **Estado**: `[x]` completado (2026-06-11 — openspec/changes/archive/2026-06-11-c-07-frontend-testing-setup; Vitest + Testing Library, 68 tests, cobertura 98.6% en components/hooks/services)
 - **Scope**:
   - Instalar Vitest + `@testing-library/react` + `@testing-library/jest-dom` + `happy-dom`
   - Configurar `vitest.config.ts` con alias `@/` y entorno `happy-dom`
