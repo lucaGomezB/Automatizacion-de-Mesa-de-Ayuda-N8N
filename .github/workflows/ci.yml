@@ -18,6 +18,16 @@ jobs:
     name: Backend tests (Python 3.12)
     runs-on: ubuntu-latest
 
+    # Settings (pydantic-settings) exige estos 3 campos sin default. Localmente
+    # salen del .env (gitignorado); en CI se inyectan dummies validos. NO son
+    # secretos: los tests mockean Gemini/N8N, el engine de la DATABASE_URL nunca
+    # conecta (conftest inyecta SQLite in-memory) y la clave Fernet es de relleno
+    # (base64url de 32 bytes '0').
+    env:
+      DATABASE_URL: postgresql+asyncpg://ci:ci@localhost:5432/ci_dummy
+      GEMINI_API_KEY: ci-dummy-key
+      PSEUDONYMIZATION_ENCRYPTION_KEY: MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA= # gitleaks:allow (dummy: base64url de 32 bytes '0')
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
