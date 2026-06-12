@@ -258,7 +258,7 @@ C-01 foundation-setup (ninguna)
 
 ### [C-09] `ci-cd-pipeline`
 
-- **Estado**: `[x]` completado (2026-06-11 — openspec/changes/c-09-ci-cd-pipeline; .github/workflows/ci.yml creado con jobs backend-tests + frontend-tests; ruff.toml permisivo; ESLint flat config; badge en README)
+- **Estado**: `[x]` completado (2026-06-11 — openspec/changes/archive/2026-06-11-c-09-ci-cd-pipeline; .github/workflows/ci.yml creado con jobs backend-tests + frontend-tests; ruff.toml permisivo; ESLint flat config; badge en README)
 - **Scope**:
   - Crear `.github/workflows/ci.yml` con workflow de GitHub Actions
   - Jobs: `backend-tests` (pytest + coverage) y `frontend-tests` (vitest)
