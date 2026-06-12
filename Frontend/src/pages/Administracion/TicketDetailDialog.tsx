@@ -173,7 +173,7 @@ export function TicketDetailDialog({ open, incidenteId, onClose }: TicketDetailD
             {/* Descripción completa del incidente */}
             <CampoDetalle icono={<FileText className="h-3.5 w-3.5" />} etiqueta="Descripción">
               <p className="text-sm leading-relaxed whitespace-pre-wrap bg-muted/40 rounded-md p-3 border">
-                {incidente.descripcion}
+                {incidente.descripcion_pseudonimizada}
               </p>
             </CampoDetalle>
 
