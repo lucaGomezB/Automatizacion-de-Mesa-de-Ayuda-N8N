@@ -191,17 +191,17 @@ C-01 foundation-setup (ninguna)
 
 ### [C-06] `backend-integration-tests`
 
-- **Estado**: `[ ]` pendiente
+- **Estado**: `[x]` completado (2026-06-11 — openspec/changes/archive/2026-06-11-c-06-backend-integration-tests; 36 tareas completadas, 187 tests nuevos en verde, cobertura 89% — superando objetivo del 85%)
 - **Scope**:
-  - Escribir tests de integracion para `POST /api/v1/incidentes` (creacion + clasificacion)
-  - Escribir tests de integracion para `GET /api/v1/incidentes` (listado con filtros, paginacion)
-  - Escribir tests de integracion para `GET /api/v1/incidentes/{id}` (detalle + 404)
-  - Escribir tests de integracion para `PATCH /api/v1/incidentes/{id}` (actualizacion parcial)
-  - Escribir tests de integracion para `GET /api/v1/clasificaciones/revision-pendiente` (cola FIFO)
-  - Escribir tests de integracion para `PATCH /api/v1/clasificaciones/{id}/validar` (validacion humana)
-  - Escribir tests de integracion para `GET /api/v1/health` (health check)
-  - Usar `conftest.py` existente con SQLite in-memory + fixture `client` ASGI
-  - Cobertura objetivo: > 85% en modulos `routes/`, `services/`, `repositories/`
+  - Escribir tests de integracion para `POST /api/v1/incidentes` (creacion + clasificacion) ✓
+  - Escribir tests de integracion para `GET /api/v1/incidentes` (listado con filtros, paginacion) ✓
+  - Escribir tests de integracion para `GET /api/v1/incidentes/{id}` (detalle + 404) ✓
+  - Escribir tests de integracion para `PATCH /api/v1/incidentes/{id}` (actualizacion parcial) ✓
+  - Escribir tests de integracion para `GET /api/v1/clasificaciones/revision-pendiente` (cola FIFO) ✓
+  - Escribir tests de integracion para `PATCH /api/v1/clasificaciones/{id}/validar` (validacion humana) ✓
+  - Escribir tests de integracion para `GET /api/v1/health` (health check) ✓
+  - Usar `conftest.py` existente con SQLite in-memory + fixture `client` ASGI ✓
+  - Cobertura objetivo: > 85% en modulos `routes/`, `services/`, `repositories/` ✓ (89% logrado)
 - **Dependencias**: `C-02`, `C-03`
 - **Governance**: BAJO
 - **Leer antes**:
