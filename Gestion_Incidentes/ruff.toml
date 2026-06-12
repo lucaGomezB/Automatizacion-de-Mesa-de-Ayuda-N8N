@@ -1,0 +1,20 @@
+# ruff.toml — configuración permisiva de linting para el backend (C-09)
+# Objetivo: instalar el guardarraíl de linting sin bloquear el pipeline
+# por la deuda de estilo preexistente. El endurecimiento queda para
+# un change futuro.
+#
+# Reglas habilitadas: E (pycodestyle), excluyendo E501 (line-too-long)
+# Reglas omitidas (en el baseline):
+#   F401 (38 unused imports), F841 (7 unused vars), F821 (6 undefined names),
+#   F541 (1 f-string without placeholders)
+# Decisión: no habilitar F para no bloquear código existente; se revisará
+# junto con la limpieza de deuda de estilo en un change futuro.
+
+target-version = "py312"
+
+[lint]
+# Solo pycodestyle básico; sin F (pyflakes) por deuda preexistente
+select = ["E"]
+ignore = [
+    "E501",  # Line too long — hay 237 líneas que lo violan; se excluye por ahora
+]
