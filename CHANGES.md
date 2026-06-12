@@ -283,7 +283,7 @@ C-01 foundation-setup (ninguna)
 
 ### [C-10] `documentation-annexes`
 
-- **Estado**: `[ ]` pendiente
+- **Estado**: `[x]` completado (2026-06-11 — openspec/changes/archive/2026-06-11-c-10-documentation-annexes; 25 tareas completadas, especificacion project-documentation sincronizada, todos los anexos A-G y documentacion operativa generados)
 - **Scope**:
   - Crear diagrama de arquitectura UML (despliegue, secuencia, componentes) en `docs/diagrams/`
   - Generar especificacion OpenAPI 3.1 estatica en `docs/openapi.json`
