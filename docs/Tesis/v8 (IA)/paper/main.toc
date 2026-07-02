@@ -67,19 +67,20 @@
 \contentsline {subsection}{\numberline {10.3}Panel de monitoreo en tiempo real}{57}{subsection.10.3}%
 \contentsline {subsection}{\numberline {10.4}Mecanismos de aprendizaje activo}{58}{subsection.10.4}%
 \contentsline {subsection}{\numberline {10.5}Estudios de replicacion}{58}{subsection.10.5}%
-\contentsline {subsection}{\numberline {10.6}Evaluacion de modelos de lenguaje de codigo abierto}{58}{subsection.10.6}%
-\contentsline {section}{\numberline {11}Consideraciones eticas y aspectos legales}{60}{section.11}%
-\contentsline {subsection}{\numberline {11.1}Marco normativo aplicable}{60}{subsection.11.1}%
-\contentsline {subsection}{\numberline {11.2}Principios aplicados al tratamiento de datos}{60}{subsection.11.2}%
-\contentsline {subsection}{\numberline {11.3}Transferencia internacional y pseudonimizacion}{61}{subsection.11.3}%
-\contentsline {subsection}{\numberline {11.4}Seguridad tecnica}{61}{subsection.11.4}%
-\contentsline {subsection}{\numberline {11.5}Consentimiento, derechos del usuario y supervision humana}{61}{subsection.11.5}%
-\contentsline {section}{Referencias bibliograficas}{63}{subsection.11.5}%
-\contentsline {section}{Appendices}{66}{section*.11}%
-\contentsline {section}{\numberline {A}Diagrama de arquitectura del sistema}{66}{appendix.1.Alph1}%
-\contentsline {section}{\numberline {B}Repositorio de codigo fuente}{66}{appendix.1.Alph2}%
-\contentsline {section}{\numberline {C}Esquema de base de datos}{66}{appendix.1.Alph3}%
-\contentsline {section}{\numberline {D}Especificacion OpenAPI de la interfaz REST}{67}{appendix.1.Alph4}%
-\contentsline {section}{\numberline {E}Configuracion del flujo N8N}{67}{appendix.1.Alph5}%
-\contentsline {section}{\numberline {F}Corpus de validacion}{68}{appendix.1.Alph6}%
-\contentsline {section}{\numberline {G}Documentacion operativa}{68}{appendix.1.Alph7}%
+\contentsline {subsection}{\numberline {10.6}Evaluacion de modelos de lenguaje de codigo abierto}{59}{subsection.10.6}%
+\contentsline {subsection}{\numberline {10.7}Base de conocimientos para resolucion automatica}{59}{subsection.10.7}%
+\contentsline {section}{\numberline {11}Consideraciones eticas y aspectos legales}{61}{section.11}%
+\contentsline {subsection}{\numberline {11.1}Marco normativo aplicable}{61}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}Principios aplicados al tratamiento de datos}{61}{subsection.11.2}%
+\contentsline {subsection}{\numberline {11.3}Transferencia internacional y pseudonimizacion}{62}{subsection.11.3}%
+\contentsline {subsection}{\numberline {11.4}Seguridad tecnica}{62}{subsection.11.4}%
+\contentsline {subsection}{\numberline {11.5}Consentimiento, derechos del usuario y supervision humana}{62}{subsection.11.5}%
+\contentsline {section}{Referencias bibliograficas}{64}{subsection.11.5}%
+\contentsline {section}{Appendices}{67}{section*.11}%
+\contentsline {section}{\numberline {A}Diagrama de arquitectura del sistema}{67}{appendix.1.Alph1}%
+\contentsline {section}{\numberline {B}Repositorio de codigo fuente}{67}{appendix.1.Alph2}%
+\contentsline {section}{\numberline {C}Esquema de base de datos}{67}{appendix.1.Alph3}%
+\contentsline {section}{\numberline {D}Especificacion OpenAPI de la interfaz REST}{68}{appendix.1.Alph4}%
+\contentsline {section}{\numberline {E}Configuracion del flujo N8N}{68}{appendix.1.Alph5}%
+\contentsline {section}{\numberline {F}Corpus de validacion}{69}{appendix.1.Alph6}%
+\contentsline {section}{\numberline {G}Documentacion operativa}{69}{appendix.1.Alph7}%
