@@ -1,0 +1,107 @@
+%==============================================================================
+% Capitulo 5: Arquitectura del Sistema
+%==============================================================================
+\section{Arquitectura del sistema}
+
+\subsection{Vision general}
+
+El sistema propuesto se estructura como una arquitectura distribuida y modular compuesta por cinco capas claramente diferenciadas, siguiendo los principios de cohesion alta y acoplamiento bajo descritos por \textcite{Pressman2020_software_engineering}. La comunicacion entre capas se realiza mediante el protocolo HTTP sobre TLS~1.3, utilizando interfaces de programacion de aplicaciones de tipo REST con cuerpos JSON para el intercambio estructurado de datos \parencite{Fielding2002_rest}. Esta separacion de responsabilidades facilita el reemplazo independiente de cualquier componente sin afectar a los demas.
+
+La Tabla~\ref{tab:capas} sintetiza las cinco capas y sus responsabilidades especificas.
+
+\begin{table}[htbp]
+\centering
+\caption{Capas funcionales de la arquitectura del sistema}
+\label{tab:capas}
+\begin{tabular}{@{}p{2.5cm} p{11.0cm}@{}}
+\toprule
+\textbf{Capa} & \textbf{Componentes y responsabilidades} \\
+\midrule
+1. Canales de entrada & Casilla IMAP de correo electronico, formulario web expuesto como webhook y numero virtual de Twilio con transcripcion automatica del habla. \\
+2. Orquestacion & Motor N8N v1.62 desplegado en contenedor Docker autoalojado. Normaliza la entrada y coordina la invocacion a las capas inferiores. \\
+3. Procesamiento & Servicio Python sobre FastAPI~0.115 ejecutado bajo Uvicorn. Aplica clasificador hibrido en dos etapas (reglas + LLM) y expone una API REST documentada con OpenAPI~3.1. \\
+4. Inferencia & Modelo Gemini~2.5 Flash de Google, invocado unicamente cuando el filtro deterministico previo no alcanza el umbral de confianza preestablecido. \\
+5. Persistencia & PostgreSQL~15.5 desplegado en contenedor con volumen persistente y respaldos diarios. Almacena los incidentes y la trazabilidad de cada decision del clasificador. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La trazabilidad operativa se garantiza mediante registros estructurados en cada capa, accesibles desde la capa de orquestacion. La Figura~\ref{fig:arquitectura} representa esquematicamente el flujo de informacion entre capas.
+
+\begin{figure}[htbp]
+\centering
+% Placeholder para el diagrama de arquitectura
+% \includegraphics[width=\textwidth]{arquitectura_sistema}
+\fbox{\parbox{0.9\textwidth}{\centering\vspace{4cm}[Diagrama de arquitectura del sistema --- Vease Anexo A]\vspace{4cm}}}
+\caption{Diagrama de arquitectura del sistema. La version completa en notacion UML se incluye en el Anexo~A.}
+\label{fig:arquitectura}
+\end{figure}
+
+\subsection{Capa de canales de entrada}
+
+La capa de canales de entrada habilita tres vias paralelas a traves de las cuales un usuario puede reportar un incidente. La primera es el correo electronico, monitoreado por un nodo IMAP de N8N que detecta nuevos mensajes en una casilla institucional dedicada. La segunda via es un formulario web alojado bajo un punto de entrada webhook expuesto por N8N, accesible desde la intranet corporativa mediante autenticacion corporativa unica (SSO). La tercera via es la llamada telefonica, en la cual el usuario marca un numero virtual provisto por Twilio, recibe instrucciones por voz pregrabadas y deja su solicitud; la grabacion es transcrita automaticamente por el servicio de reconocimiento del habla del proveedor y enviada al flujo N8N mediante webhook posterior al cuelgue. Esta diversidad de canales amplia la accesibilidad del sistema y reduce las barreras al reporte oportuno.
+
+\subsection{Capa de orquestacion}
+
+N8N actua como orquestador principal del flujo de trabajo. Cada canal de entrada dispara un disparador especifico que normaliza la informacion en una estructura unificada con campos de identificador unico (UUID v4), marca temporal con precision al milisegundo, canal de origen y descripcion textual completa. A continuacion, un nodo HTTP envia esta estructura al modulo de procesamiento Python expuesto como servicio interno, recibe la respuesta con la clasificacion sugerida y la confianza asociada, e invoca finalmente la interfaz REST del sistema de gestion de incidentes para persistir el ticket en PostgreSQL. Los registros de cada ejecucion se conservan durante 30 dias para fines de auditoria y diagnostico operativo.
+
+\subsection{Capa de procesamiento}
+
+El modulo de procesamiento se implemento como un servicio web ligero utilizando el marco FastAPI~0.115, expuesto sobre un servidor ASGI Uvicorn~0.32 \parencite{Tiangolo2024_fastapi}. La eleccion de FastAPI obedece a su soporte nativo de validacion de esquemas mediante Pydantic, su rendimiento competitivo y su documentacion automatica conforme a la especificacion OpenAPI~3.1.
+
+Las dependencias del modulo se organizan por capas funcionales claramente delimitadas. La capa de acceso a datos utiliza SQLAlchemy~2.0 como mapeador objeto-relacional (ORM) y psycopg2-binary~2.9 como adaptador de bajo nivel para PostgreSQL. La capa de procesamiento textual emplea las bibliotecas regex y unicodedata de la biblioteca estandar de Python para normalizacion ortografica y eliminacion de signos diacriticos. La capa de inferencia se comunica con la interfaz oficial del modelo Gemini~2.5 Flash mediante el cliente google-generativeai~0.8, con parametros de configuracion optimizados para exactitud y latencia: temperatura \(= 0{,}3\), top\_p \(= 0{,}9\), max\_tokens \(= 100\), timeout \(= 10\)~s. Las bibliotecas NumPy~2.1 y Pandas~2.2 se utilizan exclusivamente para la generacion de reportes agregados de desempeno y no participan del flujo de procesamiento individual de incidentes.
+
+\subsection{Subsistema de clasificacion hibrido}
+
+El subsistema de clasificacion adopta un enfoque hibrido en dos etapas, caracteristica que lo diferencia de aproximaciones puramente basadas en modelo externo. La primera etapa aplica un filtro deterministico basado en expresiones regulares y diccionarios de terminos del dominio. Para mitigar el riesgo de fuga de datos (\emph{data leakage}), la construccion del filtro deterministico se realizo de forma rigurosa: primero, se definieron manualmente un conjunto de patrones regex basados en conocimiento del dominio y analisis preliminar de descripciones de incidentes (analisis que no utilizo el corpus de validacion de 200 casos); segundo, los parametros del prompt enviado a Gemini~2.5 Flash se ajustaron exclusivamente mediante validacion manual sobre incidentes representativos en entornos de preproduccion, sin acceso al corpus de validacion.
+
+Este filtro es capaz de derivar de forma inmediata aquellos incidentes que contienen marcadores inequivocos. Por ejemplo, la presencia simultanea de las palabras \texttt{impresora}, \texttt{papel} y \texttt{atasco} sugiere con alta certeza una categoria de Soporte Tecnico. Cuando este filtro inicial alcanza un umbral de confianza superior al 90~\%, la decision se toma sin consultar al modelo externo, lo que reduce sustancialmente la latencia y el costo de inferencia.
+
+La segunda etapa, activada unicamente cuando el filtro deterministico no alcanza el umbral, consulta al modelo Gemini~2.5 Flash mediante un prompt estructurado en espanol que incluye una breve descripcion de cada categoria, ejemplos representativos balanceados y la solicitud explicita de devolver la categoria asignada y un valor numerico de confianza entre 0 y 1 en formato JSON estricto. La justificacion de este diseno compositivo radica en aprovechar la rapidez del filtro deterministico para los casos triviales y reservar la capacidad semantica del modelo de lenguaje grande para los casos ambiguos o de redaccion atipica, optimizando la relacion entre exactitud, costo y latencia. La medicion sobre el corpus de validacion muestra que aproximadamente el 62~\% de los incidentes son resueltos por la primera etapa, mientras que el 38~\% restante requiere la consulta al modelo externo.
+
+\subsection{Modelo de datos}
+
+La persistencia se realiza sobre PostgreSQL~15.5, desplegado en contenedor Docker bajo configuracion de respaldo diario y replicacion fisica opcional para entornos productivos \parencite{PostgreSQL2024_docs}. El modelo de datos se organiza alrededor de cinco entidades principales, descritas en la Tabla~\ref{tab:entidades}.
+
+\begin{table}[htbp]
+\centering
+\caption{Entidades principales del modelo de datos}
+\label{tab:entidades}
+\begin{tabular}{@{}p{2.8cm} p{4.2cm} p{6.0cm}@{}}
+\toprule
+\textbf{Tabla} & \textbf{Atributos clave} & \textbf{Descripcion} \\
+\midrule
+\texttt{incidente} & id\_incidente (PK), id\_canal (FK), id\_sector (FK), id\_estado (FK) & Tabla central: fecha de creacion, descripcion cruda pseudonimizada, prioridad, sector asignado y estado actual. \\
+\texttt{sector} & id\_sector (PK), nombre & Catalogo de los tres sectores: Sistemas, Operaciones y Soporte Tecnico. \\
+\texttt{estado} & id\_estado (PK), nombre & Catalogo de estados: nuevo, en proceso, en espera, resuelto y cerrado. \\
+\texttt{canal\_origen} & id\_canal (PK), nombre & Catalogo de canales: correo, formulario web y llamada telefonica. \\
+\texttt{clasificacion\_log} & id\_log (PK), id\_incidente (FK), categoria\_predicha, confianza, categoria\_validada & Registro de cada decision del clasificador, con categoria predicha, confianza asociada y categoria validada por el sector responsable. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La entidad central \texttt{incidente} referencia mediante claves foraneas a las entidades \texttt{sector}, \texttt{estado} y \texttt{canal\_origen}, y mantiene una relacion uno a muchos con \texttt{clasificacion\_log} para preservar la trazabilidad historica de las decisiones del clasificador. Los identificadores de incidente se generan mediante una secuencia con prefijo configurable, lo cual produce numeros legibles y consistentes que se comunican al usuario al momento del registro. El esquema completo, incluyendo restricciones de integridad referencial e indices secundarios, se documenta en el Anexo~C.
+
+\subsection{Contrato de la interfaz REST}
+
+La interfaz de programacion de aplicaciones expuesta por el modulo Python sigue el estilo arquitectonico REST \parencite{Fielding2002_rest}, con representacion de recursos mediante identificadores uniformes, uso semantico de los metodos HTTP estandar y comunicacion sin estado del lado del servidor. La autenticacion se realiza mediante encabezados con tokens portadores firmados (Bearer tokens), validados en cada solicitud contra una clave compartida con el motor de orquestacion. La Tabla~\ref{tab:api} sintetiza los principales puntos de entrada.
+
+\begin{table}[htbp]
+\centering
+\caption{Puntos de entrada principales de la interfaz REST}
+\label{tab:api}
+\begin{tabular}{@{}p{2.2cm} p{4.5cm} p{2.0cm} p{5.0cm}@{}}
+\toprule
+\textbf{Metodo} & \textbf{Ruta} & \textbf{Codigo} & \textbf{Funcion} \\
+\midrule
+POST & \texttt{/api/v1/incidentes} & 201 Created & Crea un nuevo ticket y devuelve el identificador generado. \\
+GET & \texttt{/api/v1/incidentes/\{id\}} & 200 OK & Recupera la informacion de un ticket por su identificador. \\
+POST & \texttt{/api/v1/clasificar} & 200 OK & Recibe descripcion textual y devuelve categoria sugerida con su confianza. \\
+GET & \texttt{/api/v1/health} & 200 OK & Verificacion de salud del servicio para monitoreo externo. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Los codigos de estado HTTP se utilizan conforme a su semantica original: 201 cuando un recurso se crea exitosamente, 200 cuando una consulta se atiende con exito, 400 cuando los datos de entrada no validan el esquema esperado, 401 cuando la autenticacion falla, y 500 cuando ocurre un error interno no recuperable. La especificacion completa en formato OpenAPI~3.1 se genera automaticamente por FastAPI y se encuentra disponible en el Anexo~D.
+
+\newpage

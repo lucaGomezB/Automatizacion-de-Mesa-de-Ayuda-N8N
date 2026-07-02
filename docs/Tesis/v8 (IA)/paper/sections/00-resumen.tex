@@ -1,0 +1,32 @@
+%==============================================================================
+% Resumen — APA 7: maximo 250 palabras + palabras clave
+%==============================================================================
+\newpage
+\section*{Resumen}
+
+La creciente digitalizacion de los procesos organizacionales ha generado una dependencia cada vez mayor de los sistemas informaticos para la ejecucion de las actividades operativas. En este contexto, la gestion eficiente de incidentes tecnologicos constituye un factor determinante para garantizar la continuidad del negocio y la calidad del servicio brindado a los usuarios internos. Sin embargo, en numerosas organizaciones medianas el proceso de registro inicial de incidentes continua realizandose de manera manual, lo que introduce demoras operativas, errores de clasificacion y una utilizacion ineficiente de los recursos tecnicos disponibles.
+
+La presente investigacion tiene como proposito el diseno, desarrollo, implementacion y validacion experimental de un sistema automatizado de mesa de ayuda empresarial basado en la integracion de orquestacion de flujos mediante la plataforma N8N, un modulo de procesamiento de lenguaje natural desarrollado en Python con el marco FastAPI, una capa de inferencia linguistica sustentada en el modelo Gemini~2.5 de Google, una capa de persistencia sobre PostgreSQL version~15 y un canal de telefonia gestionado por Twilio. La arquitectura propuesta contempla la recepcion de solicitudes a traves de tres canales paralelos ---correo electronico, formulario web y llamadas telefonicas con transcripcion automatica--- y deriva cada incidente al sector responsable (Sistemas, Operaciones o Soporte Tecnico) mediante un clasificador hibrido en dos etapas que combina reglas deterministicas y modelo de lenguaje grande.
+
+El estudio se desarrollo bajo un enfoque cuantitativo con diseno cuasiexperimental de muestras pareadas y contrabalanceo del orden de procesamiento. El corpus de validacion, construido por muestreo estratificado proporcional sobre un universo trimestral de aproximadamente 3.700 incidentes, comprende 200 casos representativos del entorno operativo. El acuerdo entre los dos analistas que realizaron el doble etiquetado independiente alcanzo un coeficiente Kappa de Cohen de 0,87, considerado sustancial.
+
+Los resultados obtenidos evidencian una reduccion estadisticamente significativa del tiempo medio de registro, que descendio desde 165,3~s en el flujo manual hasta 18,2~s en el flujo automatizado, lo que representa una reduccion relativa del 89~\%. La prueba de Wilcoxon de rangos con signo aplicada sobre las mediciones pareadas arrojo un valor \(p < 0{,}001\), permitiendo rechazar la hipotesis nula de igualdad de medianas. La exactitud global del clasificador alcanzo el 92~\% y el valor F1 macro promediado se ubico en 0,919. La proporcion de intervencion humana descendio desde el 100~\% en el flujo manual hasta el 9,5~\% en el flujo automatizado, materializando un esquema \emph{human in the loop} en el cual el operador conserva la potestad de revision sobre los casos de baja confianza o ambiguedad estructural.
+
+Los hallazgos confirman la viabilidad tecnica, economica y operativa de la automatizacion inteligente del registro de tickets en organizaciones medianas. La investigacion aporta una arquitectura reproducible y escalable construida sobre componentes maduros de codigo abierto e inferencia linguistica externa, evidencia empirica sobre el desempeno de modelos de lenguaje grandes aplicados a clasificacion de tickets en espanol rioplatense, y un marco normativo aplicable que contempla la Ley~25.326 de Proteccion de los Datos Personales de la Republica Argentina.
+
+\bigskip
+\noindent\textbf{Palabras clave:} automatizacion, mesa de ayuda, procesamiento de lenguaje natural, modelo de lenguaje grande, N8N, FastAPI, clasificacion de tickets, espanol rioplatense, human in the loop
+
+\newpage
+\section*{Abstract}
+
+The increasing digitization of organizational processes has made IT incident management critical for business continuity. Yet in many medium-sized organizations, incident registration remains entirely manual, introducing delays, classification errors, and inefficient use of technical resources. This thesis presents the design, implementation, and experimental validation of an automated help desk system integrating N8N workflow orchestration, a Python-based natural language processing module built with FastAPI, Google's Gemini~2.5 Flash large language model, PostgreSQL for persistence, and Twilio for telephony. The architecture receives requests through three parallel channels ---email, web form, and phone calls with automatic transcription--- and routes each incident to the appropriate sector using a two-stage hybrid classifier that combines deterministic rules with a large language model.
+
+The study employed a quantitative quasi-experimental paired-samples design with a stratified proportional sample of 200 incidents drawn from a quarterly universe of approximately 3,700. Inter-rater agreement reached a Cohen's Kappa of 0.87. Results show a statistically significant reduction in mean registration time from 165.3~s to 18.2~s ---an 89~\% reduction--- with a Wilcoxon signed-rank test yielding \(p < 0.001\) and maximum effect size (\(r = 1.00\)). Classification accuracy reached 92~\% with a macro-averaged F1 score of 0.919. Human intervention decreased from 100~\% to 9.5~\%, establishing a \emph{human-in-the-loop} scheme where routine cases are automated while ambiguous ones are reserved for operator review.
+
+The findings confirm the technical, economic, and operational feasibility of intelligent ticket registration automation in medium-sized organizations. The thesis contributes a reproducible architecture on mature open-source components, empirical evidence on large language model performance for ticket classification in Rioplatense Spanish, and a regulatory framework aligned with Argentina's Personal Data Protection Law 25.326.
+
+\bigskip
+\noindent\textbf{Keywords:} automation, help desk, natural language processing, large language model, N8N, FastAPI, ticket classification, Rioplatense Spanish, human in the loop
+
+\newpage

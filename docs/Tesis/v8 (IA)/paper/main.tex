@@ -1,0 +1,83 @@
+%==============================================================================
+% main.tex — Tesis de Grado
+% Automatizacion inteligente del registro de incidentes en mesas de ayuda
+% UTN FRM — Tecnicatura Universitaria en Programacion
+%==============================================================================
+\input{preambles/preamble.tex}
+
+\begin{document}
+
+% --- Portada ---
+\input{sections/00-portada.tex}
+
+% --- Resumen ---
+\input{sections/00-resumen.tex}
+
+% --- Indice general ---
+\newpage
+\renewcommand{\contentsname}{Indice general}
+\tableofcontents
+\newpage
+
+% --- Indice de tablas ---
+\renewcommand{\listtablename}{Indice de tablas}
+\listoftables
+\newpage
+
+% --- Indice de figuras ---
+\renewcommand{\listfigurename}{Indice de figuras}
+\listoffigures
+\newpage
+
+%=====================================================================
+% CUERPO DE LA TESIS
+%=====================================================================
+
+% --- Capitulo 1: Introduccion ---
+\input{sections/01-introduccion.tex}
+
+% --- Capitulo 2: Marco teorico ---
+\input{sections/02-marco-teorico.tex}
+
+% --- Capitulo 3: Estado del arte ---
+\input{sections/03-estado-del-arte.tex}
+
+% --- Capitulo 4: Marco metodologico ---
+\input{sections/04-marco-metodologico.tex}
+
+% --- Capitulo 5: Arquitectura del sistema ---
+\input{sections/05-arquitectura.tex}
+
+% --- Capitulo 6: Implementacion ---
+\input{sections/06-implementacion.tex}
+
+% --- Capitulo 7: Resultados ---
+\input{sections/07-resultados.tex}
+
+% --- Capitulo 8: Discusion ---
+\input{sections/08-discusion.tex}
+
+% --- Capitulo 9: Conclusiones ---
+\input{sections/09-conclusiones.tex}
+
+% --- Capitulo 10: Recomendaciones y trabajo futuro ---
+\input{sections/10-recomendaciones.tex}
+
+% --- Capitulo 11: Consideraciones eticas y legales ---
+\input{sections/11-aspectos-legales.tex}
+
+%=====================================================================
+% REFERENCIAS Y ANEXOS
+%=====================================================================
+
+% --- Referencias bibliograficas ---
+\newpage
+\printbibliography[heading=bibintoc,title={Referencias bibliograficas}]
+
+% --- Anexos ---
+\newpage
+\begin{appendices}
+\input{sections/12-anexos.tex}
+\end{appendices}
+
+\end{document}

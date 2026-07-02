@@ -1,0 +1,111 @@
+%==============================================================================
+% Capitulo 7: Resultados
+%==============================================================================
+\section{Resultados}
+
+Este capitulo presenta los resultados de la validacion experimental del sistema. Se reportan los hallazgos en cuatro dimensiones: tiempos de registro, desempeno de clasificacion, reduccion de la intervencion humana y analisis cualitativo de errores.
+
+\subsection{Comparacion de tiempos de registro}
+
+La comparacion de los tiempos de registro entre el flujo manual y el flujo automatizado se sintetiza en la Tabla~\ref{tab:tiempos}. La media aritmetica del tiempo manual sobre los 200 casos del corpus fue de 165,3~s (equivalente a 2~min~45~s), con un desvio estandar de 38,7~s y un rango entre 96 y 289~s. La media del flujo automatizado fue de 18,2~s con un desvio estandar de 4,1~s y un rango entre 11 y 31~s. La reduccion relativa de la media de tiempo alcanzo el 89,0~\%.
+
+\begin{table}[htbp]
+\centering
+\caption{Estadisticos descriptivos de los tiempos de registro por flujo (\(n = 200\))}
+\label{tab:tiempos}
+\begin{tabular}{@{}p{4.0cm} p{3.5cm} p{3.5cm} p{2.5cm}@{}}
+\toprule
+\textbf{Estadistico} & \textbf{Flujo manual} & \textbf{Flujo automatizado} & \textbf{Reduccion} \\
+\midrule
+Media aritmetica (s)      & 165,3  & 18,2  & 89,0~\% \\
+Mediana (s)               & 158,0  & 17,4  & 89,0~\% \\
+Desvio estandar (s)       & 38,7   & 4,1   & --- \\
+Minimo (s)                & 96     & 11    & --- \\
+Maximo (s)                & 289    & 31    & --- \\
+IC 95~\% de la media (s) & [159,9; 170,7] & [17,6; 18,8] & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La prueba de Wilcoxon de rangos con signo aplicada sobre las mediciones pareadas arrojo un estadistico \(W = 0\) con 200 pares validos y un valor \(p < 0{,}001\), lo que permite rechazar la hipotesis nula de igualdad de medianas con un nivel de confianza superior al 99,9~\%. El estadistico \(W = 0\) implica que en los 200 pares el flujo automatizado fue siempre mas veloz que el manual, sin una sola excepcion, resultado plausible dada la diferencia absoluta de aproximadamente 147~s entre medianas.
+
+Para cuantificar la magnitud practica de la diferencia, se calculo el coeficiente \(r\) de correlacion rank-biserial:
+\[
+r = 1 - \frac{2W}{n(n+1)} = 1 - \frac{0}{200 \cdot 201} = 1{,}00
+\]
+El valor obtenido (\(r = 1{,}00\)) corresponde al tamano del efecto maximo posible, consistente con la ausencia de pares invertidos. La diferencia observada es, por tanto, estadisticamente significativa y, dada su magnitud absoluta, relativa y el tamano del efecto reportado, tambien practicamente relevante para la operacion.
+
+\subsection{Matriz de confusion y metricas de clasificacion}
+
+La matriz de confusion obtenida sobre los 200 casos del corpus se presenta en la Tabla~\ref{tab:matriz}. De los 82 casos de Sistemas, 76 fueron correctamente clasificados (92,7~\%), 4 se derivaron a Operaciones y 2 a Soporte Tecnico. De los 64 casos de Operaciones, 58 fueron correctos (90,6~\%), 3 se derivaron a Sistemas y 3 a Soporte Tecnico. De los 54 casos de Soporte Tecnico, 50 fueron correctos (92,6~\%), 2 se derivaron a Sistemas y 2 a Operaciones. La exactitud global resultante asciende al 92,0~\% (184 casos correctos sobre 200).
+
+\begin{table}[htbp]
+\centering
+\caption{Matriz de confusion del clasificador automatico (\(n = 200\))}
+\label{tab:matriz}
+\begin{tabular}{@{}p{3.2cm} p{2.5cm} p{2.5cm} p{2.8cm} p{2.0cm}@{}}
+\toprule
+\textbf{Real \textbackslash{} Predicho} & \textbf{Sistemas} & \textbf{Operaciones} & \textbf{Soporte Tecnico} & \textbf{Total} \\
+\midrule
+Sistemas         & \textbf{76} & 4  & 2  & \textbf{82} \\
+Operaciones      & 3  & \textbf{58} & 3  & \textbf{64} \\
+Soporte Tecnico  & 2  & 2  & \textbf{50} & \textbf{54} \\
+\midrule
+\textbf{Total}   & \textbf{81} & \textbf{64} & \textbf{55} & \textbf{200} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Los valores de precision, sensibilidad (\emph{recall}) y F1 calculados por clase, junto con su promedio macro, se presentan en la Tabla~\ref{tab:metricas}. La clase Sistemas obtuvo el valor F1 mas alto (0,933), seguida por Soporte Tecnico (0,917) y Operaciones (0,906). El promedio macro de F1 alcanzo 0,919, valor sustancialmente superior al umbral de 0,85 planteado en el segundo objetivo especifico del trabajo. La exactitud global del 92~\% (184/200) presenta un intervalo de confianza al 95~\%, estimado por el metodo de Wilson, de [87,2~\%, 95,2~\%], cuyo limite inferior supera ampliamente el umbral objetivo del 85~\%.
+
+\begin{table}[htbp]
+\centering
+\caption{Metricas de clasificacion por clase y promedio macro}
+\label{tab:metricas}
+\begin{tabular}{@{}p{3.5cm} p{3.0cm} p{3.0cm} p{2.5cm}@{}}
+\toprule
+\textbf{Clase} & \textbf{Precision} & \textbf{Sensibilidad} & \textbf{F1} \\
+\midrule
+Sistemas         & 0,938 & 0,927 & 0,933 \\
+Operaciones      & 0,906 & 0,906 & 0,906 \\
+Soporte Tecnico  & 0,909 & 0,926 & 0,917 \\
+\midrule
+\textbf{Macro promedio} & \textbf{0,918} & \textbf{0,920} & \textbf{0,919} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Estas metricas confirman que el clasificador exhibe un desempeno equilibrado entre las tres clases objetivo, sin sesgos significativos hacia ninguna de ellas en particular. La dispersion de los valores F1 entre clases ---con un rango de solo 0,027 puntos--- sugiere que el sistema no favorece sistematicamente a la clase mayoritaria (Sistemas, con 82 casos) en detrimento de las minoritarias. Este equilibrio es particularmente relevante en el contexto operativo: un clasificador que maximiza la exactitud global a costa de un desempeno pobre en una clase minoritaria genera derivaciones erroneas concentradas en un sector especifico, lo que erosiona la confianza de ese equipo en el sistema y puede llevar al rechazo operativo de la herramienta, independientemente de sus metricas agregadas.
+
+La inspeccion de la matriz de confusion revela un dato que las metricas agregadas no capturan completamente: de los 16 errores totales, exactamente la mitad (8) corresponden a confusiones entre Sistemas y Operaciones. Este patron no es aleatorio. Ambas categorias comparten un espacio lexico considerable ---infraestructura, conectividad, permisos de acceso--- y los incidentes que las involucran frecuentemente requieren un diagnostico inicial que el texto de la descripcion no proporciona. Por ejemplo, un incidente reportado como \textquote{no puedo entrar al sistema} puede originarse en un error de autenticacion (Operaciones), en una caida del servidor de aplicaciones (Sistemas) o en una falla de conectividad de red (Operaciones). En ausencia de informacion contextual que un usuario no siempre incluye en la descripcion inicial, el clasificador enfrenta una ambiguedad estructural que no se resuelve con mejoras incrementales del modelo sino con un enriquecimiento del protocolo de captura del incidente. Esta observacion orienta directamente una de las recomendaciones de trabajo futuro: incorporar preguntas de refinamiento tempranas que, sin convertir el proceso en un arbol de decision exhaustivo, permitan al clasificador reducir la zona de ambiguedad entre las dos categorias mas propensas a confusion.
+
+\subsection{Reduccion de la intervencion humana}
+
+La medicion de la intervencion humana se realizo cronometrando, sobre cada caso, los segundos en que el operador ejecuto acciones manuales sobre el sistema. En el flujo manual, el 100~\% del tiempo correspondio a intervencion humana, incluyendo lectura, comprension, busqueda en sistemas auxiliares y carga del ticket. En el flujo automatizado, el operador humano solo intervino en aquellos casos en los que el clasificador devolvio una confianza inferior al 70~\% o en los que el sector responsable, al recibir el ticket, identifico una clasificacion incorrecta y la corrigio antes de iniciar la atencion.
+
+La proporcion agregada de intervencion humana en el flujo automatizado se ubico en el 9,5~\%. Este valor es coherente con la propuesta de un esquema \emph{human in the loop} donde el sistema asume la mayoria de los casos rutinarios y reserva al operador la atencion de los casos complejos o ambiguos. De los 200 casos procesados, 181 (90,5~\%) fueron clasificados y registrados sin intervencion humana, mientras que 19 (9,5~\%) requirieron verificacion o correccion por parte de un operador.
+
+\subsection{Analisis de errores y casos limite}
+
+El analisis cualitativo de los 16 casos mal clasificados permitio identificar tres patrones de error recurrentes, sintetizados en la Tabla~\ref{tab:errores}.
+
+\begin{table}[htbp]
+\centering
+\caption{Tipologia de errores observados en la clasificacion automatica}
+\label{tab:errores}
+\begin{tabular}{@{}p{1.5cm} p{1.5cm} p{10.5cm}@{}}
+\toprule
+\textbf{Patron} & \textbf{Casos} & \textbf{Descripcion} \\
+\midrule
+1. Descripciones cortas & 7 & Incidentes con menos de 15 palabras donde la falta de contexto lexico llevo al clasificador a decisiones equivocadas. \\
+2. Mezcla de categorias & 6 & Incidentes donde una falla de hardware afecta a una aplicacion especifica; la decision correcta depende del juicio humano sobre cual aspecto prevalece. \\
+3. Jerga local & 3 & Incidentes con uso intensivo de jerga organizacional o nombres internos de sistemas no presentes en el contexto del prompt enviado al modelo. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+El primer patron, presente en 7 casos (43,8~\% de los errores), corresponde a incidentes con descripciones extremadamente cortas. La ausencia de contexto lexico suficiente impide tanto al filtro deterministico como al LLM identificar la categoria correcta con confianza. El segundo patron, presente en 6 casos (37,5~\%), corresponde a incidentes que contienen elementos lexicos de dos categorias simultaneamente. El tercer patron, presente en 3 casos (18,8~\%), refleja una limitacion inherente del enfoque basado en modelo externo: la ausencia de conocimiento organizacional especifico que un operador humano posee por experiencia.
+
+Esta tipologia orienta directamente las recomendaciones de trabajo futuro presentadas en el Capitulo~10, particularmente la incorporacion de un clasificador supervisado entrenado con el corpus etiquetado generado por el propio sistema y la inclusion de un glosario de terminos organizacionales en el prompt del modelo.
+
+\newpage

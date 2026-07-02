@@ -1,0 +1,101 @@
+%==============================================================================
+% Capitulo 4: Marco Metodologico
+%==============================================================================
+\section{Marco metodologico}
+
+\subsection{Enfoque y tipo de investigacion}
+
+La investigacion se enmarca dentro del enfoque cuantitativo aplicado, dado que propone el desarrollo de una solucion informatica orientada a mejorar el funcionamiento de un proceso organizacional concreto y mide su impacto mediante indicadores numericos. \textcite{HernandezSampieri2018_metodologia} ubican este tipo de estudios dentro de la investigacion tecnologica de caracter aplicado, donde el conocimiento producido se orienta a la transformacion practica de la realidad antes que a la generacion de teoria general. El trabajo posee adicionalmente caracter experimental, en la medida en que disena, implementa y evalua un artefacto tecnologico bajo condiciones controladas.
+
+\subsection{Diseno experimental}
+
+El diseno experimental adoptado es de tipo cuasiexperimental con muestras pareadas y mediciones repetidas. La unidad de observacion es el incidente individual, y cada uno se procesa secuencialmente bajo dos condiciones: la condicion manual y la condicion automatizada. Esta estrategia ---procesar el mismo conjunto de incidentes por ambas vias--- reduce sustancialmente la variabilidad asociada a las caracteristicas intrinsecas de cada caso, lo que aumenta la potencia estadistica del contraste entre flujos.
+
+Para mitigar el efecto de aprendizaje del operador humano sobre el corpus, se aplico contrabalanceo del orden de procesamiento: el corpus de 200 casos se dividio en dos mitades equilibradas de 100 incidentes cada una, procesandose la primera mitad por la via manual seguida de la via automatizada, y la segunda mitad en orden inverso. Este contrabalanceo distribuye simetricamente cualquier posible ventaja derivada del orden de exposicion al corpus.
+
+La investigacion se desenvolvio bajo un protocolo de observacion naturalista donde los operadores no fueron informados de que sus tiempos estaban siendo registrados como parte de un estudio, sino unicamente de que se estaba utilizando el nuevo sistema para procesamiento de incidentes. Este enfoque elimina el efecto Hawthorne ---la alteracion del comportamiento de los sujetos cuando saben que estan siendo observados--- al mantener la condicion operativa como indistinguible de la practica laboral regular \parencite{HernandezSampieri2018_metodologia}. La medicion del tiempo se realizo mediante registros automaticos del propio sistema en el caso del flujo automatizado (marcas de tiempo de entrada y salida en la base de datos, con precision al milisegundo) y mediante registros administrativos de sistemas de soporte posteriores al ciclo de pruebas en el caso del flujo manual, evitando cronometraje visual explicito que pudiera alertar a los operadores.
+
+\subsection{Operacionalizacion de variables}
+
+La Tabla~\ref{tab:variables} presenta la operacionalizacion de las variables del estudio, distinguiendo entre variables cuantitativas continuas, cuantitativas proporcionales y cualitativas nominales. Cada variable se acompana de su unidad de medida y de la definicion operacional aplicada durante la captura, garantizando la trazabilidad entre la definicion conceptual y el procedimiento de medicion efectivo.
+
+\begin{table}[htbp]
+\centering
+\caption{Operacionalizacion de variables del estudio}
+\label{tab:variables}
+\begin{tabular}{@{}p{3.0cm} p{2.8cm} p{2.8cm} p{5.0cm}@{}}
+\toprule
+\textbf{Variable} & \textbf{Tipo} & \textbf{Unidad} & \textbf{Definicion operacional} \\
+\midrule
+Tiempo de registro & Cuantitativa continua & Segundos (s) & Lapso entre la recepcion del incidente en el canal de entrada y la persistencia confirmada del ticket en la base de datos. \\
+Exactitud de clasificacion & Cuantitativa proporcional & Porcentaje [0; 100] & Cociente entre incidentes correctamente clasificados y total de incidentes evaluados. \\
+F1 macro promediado & Cuantitativa proporcional & Adimensional [0; 1] & Promedio aritmetico del valor F1 calculado de forma independiente para cada una de las tres clases objetivo. \\
+Intervencion humana & Cuantitativa proporcional & Porcentaje [0; 100] & Proporcion del tiempo total del proceso que requiere accion manual de un operador humano. \\
+Canal de origen & Cualitativa nominal & Categoria & Via de entrada: correo electronico, formulario web o llamada telefonica. \\
+Categoria asignada & Cualitativa nominal & Categoria & Sector responsable: Sistemas, Operaciones o Soporte Tecnico. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Poblacion, muestra y corpus}
+
+La poblacion de referencia esta constituida por la totalidad de incidentes informaticos reportados a la mesa de ayuda de la organizacion analizada durante un trimestre representativo (julio a septiembre de 2025). A partir de un universo aproximado de 3.700 incidentes registrados durante ese periodo, se construyo por muestreo estratificado proporcional un corpus de 200 casos distribuidos entre las tres categorias objetivo en la misma proporcion que la poblacion original: 82 casos para Sistemas, 64 casos para Operaciones y 54 casos para Soporte Tecnico.
+
+El tamano muestral se determino con un nivel de confianza del 95~\% y un margen de error del 6,5~\%, valores razonables para un estudio piloto orientado a evaluar viabilidad tecnica antes de un despliegue definitivo. El calculo siguio la formula clasica para muestreo aleatorio simple en poblaciones finitas, con correccion por finitud aplicada al universo trimestral observado.
+
+Cada incidente del corpus fue revisado y etiquetado de forma independiente por dos analistas con experiencia en la mesa de ayuda, y las discrepancias fueron resueltas por consenso bajo la supervision del director del trabajo. El acuerdo entre evaluadores, calculado mediante el coeficiente Kappa de Cohen \parencite{Cohen1960_kappa}, alcanzo un valor de \(\kappa = 0{,}87\), considerado sustancial segun los rangos de interpretacion habitualmente aceptados (\(\kappa > 0{,}80\) indica acuerdo casi perfecto). Este valor respalda la confiabilidad de la categoria de referencia utilizada como verdad fundamental (\emph{ground truth}) para evaluar el clasificador automatico.
+
+\subsection{Protocolo de pruebas}
+
+El protocolo de pruebas se ejecuto en dos fases sucesivas. La primera fase consistio en una validacion funcional del sistema, en la cual se verifico la correcta integracion de los componentes mediante: (a)~pruebas unitarias del modulo Python con cobertura superior al 80~\%, (b)~pruebas de integracion del flujo N8N orientadas a verificar el comportamiento extremo a extremo de cada canal, y (c)~pruebas de aceptacion simuladas con incidentes sinteticos representativos de cada categoria.
+
+La segunda fase consistio en la validacion experimental propiamente dicha, en la cual los 200 incidentes del corpus se procesaron bajo ambas condiciones operativas y se registraron las variables descritas en la Seccion~4.3. El procesamiento manual fue realizado por dos operadores experimentados con mas de tres anos de antiguedad en la mesa de ayuda, ambos capacitados previamente en el uso del sistema de gestion de tickets utilizado como referencia. El procesamiento automatizado se ejecuto sobre la misma infraestructura, sin intervencion humana, durante una ventana operativa controlada de tres dias habiles consecutivos y con monitoreo continuo de los tiempos de respuesta.
+
+\subsection{Metricas e instrumentos}
+
+La evaluacion del sistema se sustenta en cuatro metricas principales. La primera es el tiempo medio de registro, calculado como la media aritmetica y la mediana de los tiempos individuales bajo cada condicion, junto con su desvio estandar e intervalo de confianza al 95~\%. La segunda es la exactitud global de clasificacion, calculada como la proporcion de incidentes correctamente derivados al sector responsable. La tercera es el valor F1 macro promediado, calculado como la media aritmetica de los valores F1 obtenidos por cada clase, con el fin de neutralizar el efecto del desbalanceo de clases observado en el corpus \parencite{Sokolova2009_performance_measures}. La cuarta es la proporcion de intervencion humana, calculada como el cociente entre el tiempo dedicado a tareas manuales y el tiempo total del proceso.
+
+Como instrumentos de captura se utilizaron: (a)~registros automaticos generados por el propio sistema con marcas de tiempo precisas al milisegundo para el flujo automatizado, (b)~planillas de cronometraje con medicion observacional sin retroalimentacion inmediata para el flujo manual, y (c)~matrices de confusion generadas mediante la biblioteca scikit-learn \parencite{Pedregosa2011_scikit_learn}.
+
+\subsection{Analisis estadistico}
+
+Para la comparacion de los tiempos de registro entre ambas condiciones se aplico la prueba de Wilcoxon de rangos con signo, prueba no parametrica para muestras pareadas, dado que la prueba previa de normalidad de Shapiro-Wilk rechazo la hipotesis de normalidad en ambos grupos con valores \(p < 0{,}01\). El nivel de significancia se fijo en \(\alpha = 0{,}05\).
+
+Para cuantificar la magnitud practica de la diferencia se calculo el coeficiente \(r\) de correlacion rank-biserial, indicador de tamano del efecto para pruebas no parametricas cuyo rango oscila entre \(-1\) y \(+1\). El calculo sigue la formula:
+\[
+r = 1 - \frac{2W}{n(n+1)}
+\]
+donde \(W\) es el estadistico de Wilcoxon y \(n\) el numero de pares.
+
+Para el analisis de la clasificacion se construyo la matriz de confusion global y se calcularon los valores de precision, sensibilidad (recall) y F1 por cada clase, asi como su promedio macro. Los intervalos de confianza para las proporciones se estimaron mediante el metodo de Wilson, recomendado para muestras moderadas \parencite{Wilson1927_probable_inference}. Todos los calculos se realizaron mediante la biblioteca SciPy del ecosistema Python \parencite{Virtanen2020_scipy}.
+
+\subsection{Amenazas a la validez}
+
+Se identificaron y trataron explicitamente cuatro amenazas a la validez del estudio.
+
+La primera, una amenaza a la validez interna por efecto de aprendizaje del operador humano sobre el corpus, se mitigo mediante el contrabalanceo del orden de procesamiento descrito en la Seccion~4.2 y mediante la rotacion de operadores entre las dos mitades del corpus.
+
+La segunda, una amenaza a la validez de constructo por la subjetividad inherente a la categorizacion de los incidentes, se mitigo mediante el doble etiquetado independiente, el calculo del coeficiente Kappa de Cohen y la resolucion de discrepancias por consenso supervisado. El valor obtenido (\(\kappa = 0{,}87\)) respalda la solidez del constructo de medicion.
+
+La tercera, una amenaza a la validez externa derivada del idioma y del dominio organizacional, se reconoce como limitacion explicita del estudio: los resultados no son extrapolables sin nuevas validaciones a corpus en otros idiomas, en otras organizaciones o en otros sectores de la economia.
+
+La cuarta, una amenaza a la validez de conclusion derivada del tamano moderado de la muestra (\(n = 200\)), se trato mediante el reporte de intervalos de confianza y la eleccion de pruebas no parametricas robustas frente a tamanos muestrales pequenos y a desviaciones de la normalidad \parencite{HernandezSampieri2018_metodologia}.
+
+\subsection{Gestion del proyecto bajo enfoque Scrumban}
+
+La construccion del sistema se organizo bajo un esquema Scrumban, combinando la planificacion por iteraciones propia de Scrum con la gestion continua del flujo de trabajo caracteristica del metodo Kanban \parencite{Ladas2009_scrumban}. Se ejecutaron seis iteraciones de dos semanas cada una, totalizando 12 semanas de desarrollo efectivo:
+
+\begin{enumerate}[label=Iteracion \arabic*:, leftmargin=*]
+  \item Elicitacion de requisitos y diseno preliminar de la arquitectura.
+  \item Construccion del modulo Python: modelo de datos, repositorios y servicios.
+  \item Configuracion inicial del flujo N8N y primeras integraciones.
+  \item Integracion del canal de telefonia y persistencia en PostgreSQL.
+  \item Validacion funcional y ajuste fino del clasificador hibrido.
+  \item Validacion experimental y documentacion final del sistema.
+\end{enumerate}
+
+La distribucion de roles asigno la coordinacion general y la integracion de componentes a Luca Gomez, el desarrollo del modulo Python y el modelado de la base de datos a Carla Bustos, y la configuracion del flujo N8N junto con la integracion telefonica mediante Twilio a Gonzalo Sevilla, bajo supervision academica continua del director del trabajo, Prof. Alberto Cortez.
+
+El tablero Kanban se gestiono mediante GitHub Projects, con seguimiento diario del estado de las tareas y reuniones de planificacion al inicio de cada iteracion. Las definiciones de terminado (\emph{Definition of Done}) incluyeron, para cada tarea, la aprobacion de las pruebas unitarias correspondientes, la revision de codigo por pares y la actualizacion de la documentacion asociada.
+
+\newpage

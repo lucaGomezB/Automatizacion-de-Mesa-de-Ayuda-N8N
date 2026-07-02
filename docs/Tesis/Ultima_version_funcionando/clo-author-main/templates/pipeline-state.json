@@ -1,0 +1,29 @@
+{
+  "project": "",
+  "phase": "",
+  "last_updated": "",
+  "agents_completed": [
+    {
+      "agent": "",
+      "critic": "",
+      "score": null,
+      "artifact": "",
+      "rounds": 0,
+      "timestamp": ""
+    }
+  ],
+  "agents_in_progress": [
+    {
+      "agent": "",
+      "critic": "",
+      "current_round": 0,
+      "max_rounds": 3,
+      "last_score": null,
+      "issues_remaining": []
+    }
+  ],
+  "agents_pending": [],
+  "artifacts": {},
+  "overall_score": null,
+  "blocked_by": null
+}

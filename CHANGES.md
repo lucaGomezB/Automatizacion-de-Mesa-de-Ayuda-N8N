@@ -35,6 +35,9 @@ C-01 foundation-setup (ninguna)
  │    └── C-10 documentation-annexes (C-04, C-05, C-09)
  └── C-09 ci-cd-pipeline (C-06, C-07)
       └── C-10 documentation-annexes (C-09)
+
+C-11 tesis-correcciones-academicas (ninguna — documento independiente)
+  └── C-12 tesis-recomendaciones-coneau (C-11)
 ```
 
 ### Paralelismo por fase
@@ -317,10 +320,63 @@ C-01 foundation-setup (ninguna)
 | C-08 | evaluation-framework | 5 | C-02, C-03 | BAJO | C |
 | C-09 | ci-cd-pipeline | 5 | C-06, C-07 | BAJO | A/B/C |
 | C-10 | documentation-annexes | 6 | C-04, C-05, C-09 | BAJO | A/B/C |
+| C-11 | tesis-correcciones-academicas | 7 | ninguna (documento independiente) | BAJO | — |
+| C-12 | tesis-recomendaciones-coneau | 8 | C-11 (documento de tesis) | BAJO | — |
 
-**Total**: 10 changes organizados en 6 fases.
-**Camino critico**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
+**Total**: 12 changes organizados en 8 fases.
+**Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
+
+---
+
+## FASE 7 — Documento de Tesis
+
+> C-11 opera sobre el documento academico de tesis (LaTeX), independiente del software.
+> No comparte dependencias con C-01 a C-10.
+
+### [C-11] `tesis-correcciones-academicas`
+
+- **Estado**: `[x]` completado (2026-07-02 — openspec/changes/archive/2026-07-02-c-11-tesis-correcciones-academicas)
+- **Scope**:
+  - Compilar la tesis desde fuente LaTeX (XeLaTeX + biber) a PDF canonico (68 paginas, 294 KB)
+  - Verificar integridad de citas: 67 comandos de citacion, 34 entradas bibliograficas, cero huerfanos
+  - Revisar y corregir prosa academica en los 11 archivos .tex (eliminar patrones de escritura IA, fortalecer voz interpretativa)
+  - Expandir Capitulo 6 (implementacion): justificacion de tecnologia, diseno de flujo N8N, desafios de integracion
+  - Reestructurar Capitulo 9 (conclusiones): eliminar enumeracion mecanica, agregar profundidad interpretativa
+  - Agregar abstract en ingles (~242 palabras) en `00-resumen.tex`
+  - Generar DOCX secundario via pandoc con disclaimer bilinguee
+- **Dependencias**: ninguna (documento independiente del software)
+- **Governance**: BAJO
+  - **Nueva capacidad**: `tesis-document`
+  - **Leer antes**:
+    - `docs/Tesis/v8 (IA)/paper/` (fuente LaTeX)
+    - `docs/Tesis/v8 (IA)/paper/preamble.tex` (configuracion biblatex-apa)
+    - `openspec/specs/tesis-document/spec.md` (especificacion sincronizada)
+
+---
+
+## FASE 8 — Recomendaciones Finales CONEAU
+
+> C-12 incorpora las recomendaciones post-defensa de un evaluador CONEAU al documento de tesis.
+> Opera sobre el mismo documento LaTeX que C-11.
+
+### [C-12] `tesis-recomendaciones-coneau`
+
+- **Estado**: `[x]` completado (2026-07-02 — openspec/changes/archive/2026-07-02-c-12-tesis-recomendaciones-coneau)
+- **Scope**:
+  - **R1**: Renombrar `13-anexos.tex` a `12-anexos.tex` (numeracion consistente de capitulos)
+  - **R2**: Reemplazar referencias bibliograficas debiles: Pressman2020 por Galup2009 (degradacion ITSM), Crispin2009 por Ladas2009 (metodologia Scrumban); preservar Crispin2009 para testing pyramid
+  - **R3 (CRITICO)**: Eliminar dos referencias fabricadas (Karchhud2024, Mehdi2023) de Bibliography_base.bib y todos los .tex; reescribir parrafos afectados sin claims cuantitativos infundados
+  - **R4**: Corregir argumento CV enganoso en 08-discusion.tex; reemplazar con analisis de rango absoluto
+  - **R5**: Agregar parrafo de debriefing post-hoc en 11-aspectos-legales.tex sobre operadores cuyos tiempos fueron medidos
+  - **Verificacion**: verify_citations.py PASS (33 entradas, 0 huerfanos, 0 sin uso); compilacion PDF limpia (68 paginas, cero warnings)
+- **Dependencias**: C-11 (documento de tesis)
+- **Governance**: BAJO
+- **Leer antes**:
+  - `docs/Tesis/v8 (IA)/paper/` (fuente LaTeX)
+  - `docs/Tesis/v8 (IA)/paper/Bibliography_base.bib` (archivo de bibliografia)
+  - `docs/Tesis/v8 (IA)/verify_citations.py` (script de verificacion de citas)
+  - `openspec/specs/tesis-document/spec.md` (especificacion sincronizada)
 
 ---
 
