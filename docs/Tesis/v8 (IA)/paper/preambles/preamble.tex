@@ -1,0 +1,137 @@
+%==============================================================================
+% Preambulo — Tesis de Grado UTN FRM
+% Formato: APA 7ma edicion adaptado a tesis
+% Compilador: XeLaTeX
+%==============================================================================
+
+% --- Clase de documento ---
+\documentclass[11pt,a4paper]{article}
+
+% --- Idioma: Espanol ---
+\usepackage[spanish,es-tabla,es-nodecimaldot,es-noindentfirst]{babel}
+
+% --- Fuentes: Arial 11pt ---
+\usepackage{fontspec}
+\setmainfont{Arial}
+\setsansfont{Arial}
+\setmonofont{Courier New}
+
+% --- Geometria: 2.54 cm (1 pulgada) todos los margenes (APA 7) ---
+\usepackage[paper=a4paper,left=2.54cm,right=2.54cm,top=2.54cm,bottom=2.54cm]{geometry}
+
+% --- Interlineado: Doble espacio (APA 7) ---
+\usepackage{setspace}
+\doublespacing
+
+% --- Sangria en primera linea de parrafos: 1.27 cm (APA 7) ---
+\usepackage{indentfirst}
+\setlength{\parindent}{1.27cm}
+\setlength{\parskip}{0pt}
+
+% --- Encabezados y pies de pagina ---
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small AUTOMATIZACION DE MESA DE AYUDA}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+% Primera pagina de cada seccion sin encabezado (APA 7 permite running head o no)
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \fancyhead[R]{\small\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+
+% --- Titulos de seccion: APA 7 niveles ---
+\usepackage{titlesec}
+% Nivel 1: Centrado, negrita, titulo en mayuscula/minuscula
+\titleformat{\section}[block]{\centering\bfseries\normalsize}{\thesection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{12pt}{6pt}
+% Nivel 2: Alineado a izquierda, negrita
+\titleformat{\subsection}[hang]{\bfseries\normalsize}{\thesubsection.}{0.5em}{}
+\titlespacing*{\subsection}{0pt}{12pt}{6pt}
+% Nivel 3: Alineado a izquierda, negrita cursiva
+\titleformat{\subsubsection}[hang]{\bfseries\itshape\normalsize}{\thesubsubsection.}{0.5em}{}
+\titlespacing*{\subsubsection}{0pt}{12pt}{6pt}
+
+\usepackage{tocloft}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftdotsep}{1}
+
+% --- Tablas: formato APA 7 (solo bordes horizontales, sin lineas verticales) ---
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\renewcommand{\arraystretch}{1.2}
+
+% --- Figuras ---
+\usepackage{graphicx}
+\graphicspath{{./figures/}}
+\usepackage[font=small,labelfont=bf,labelsep=period,justification=raggedright,singlelinecheck=false]{caption}
+
+% --- Ecuaciones matematicas y simbolos ---
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{siunitx}
+\sisetup{output-decimal-marker={,},group-separator={.},group-minimum-digits=4}
+
+% --- Comillas tipograficas (requerido por biblatex) ---
+\usepackage[autostyle,spanish=mexican]{csquotes}
+
+% --- Hipervinculos (APA 7: sin bordes de color) ---
+\usepackage[hidelinks,bookmarks=true,bookmarksnumbered=true,pdfstartview=FitH]{hyperref}
+\hypersetup{
+  pdftitle={Automatizacion inteligente del registro de incidentes en mesas de ayuda},
+  pdfauthor={Luca Gomez, Carla Bustos, Gonzalo Sevilla},
+  pdfsubject={Tesis de Grado — Tecnicatura Universitaria en Programacion},
+  pdfkeywords={automatizacion, mesa de ayuda, NLP, LLM, N8N, FastAPI, clasificacion de tickets, espanol rioplatense},
+  colorlinks=false,
+  pdfborder={0 0 0}
+}
+
+% --- Bibliografia: APA 7ma edicion ---
+\usepackage[style=apa,backend=biber,sorting=nyt,language=spanish]{biblatex}
+\addbibresource{../Bibliography_base.bib}
+% Mapeo de campos para APA 7 en espanol
+\DefineBibliographyStrings{spanish}{%
+  bibliography = {Referencias bibliograficas},
+  references = {Referencias},
+  page = {p.},
+  pages = {pp.},
+  andothers = {et al.},
+  retrieved = {Recuperado},
+  from = {de},
+  urlseen = {Consultado},
+  edition = {ed.},
+  volume = {Vol.},
+  number = {N.°},
+  in = {En},
+}
+
+% --- Listas enumeradas ---
+\usepackage{enumitem}
+\setlist{nosep,labelindent=1.27cm,leftmargin=*}
+
+% --- Codigo fuente ---
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  numbers=left,
+  numberstyle=\tiny,
+  showstringspaces=false,
+  tabsize=2,
+  captionpos=b
+}
+
+% --- Apendices ---
+\usepackage[toc,title]{appendix}
+
+% --- Comandos personalizados ---
+\newcommand{\doi}[1]{\href{https://doi.org/#1}{#1}}
+\newcommand{\urlref}[1]{\href{#1}{#1}}
+
+% --- Metadatos del documento ---
+\title{Automatizacion inteligente del registro de incidentes\\en mesas de ayuda empresariales mediante\\orquestacion de flujos con N8N y procesamiento\\de lenguaje natural basado en modelos\\de lenguaje grandes}
+\author{}
+\date{2026}
