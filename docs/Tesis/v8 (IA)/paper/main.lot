@@ -2,9 +2,9 @@
 \contentsline {table}{\numberline {1}{\ignorespaces Comparacion de soluciones para gestion automatizada de mesa de ayuda}}{25}{table.caption.1}%
 \contentsline {table}{\numberline {2}{\ignorespaces Operacionalizacion de variables del estudio}}{28}{table.caption.2}%
 \contentsline {table}{\numberline {3}{\ignorespaces Capas funcionales de la arquitectura del sistema}}{33}{table.caption.3}%
-\contentsline {table}{\numberline {4}{\ignorespaces Entidades principales del modelo de datos}}{36}{table.caption.5}%
-\contentsline {table}{\numberline {5}{\ignorespaces Puntos de entrada principales de la interfaz REST}}{37}{table.caption.6}%
-\contentsline {table}{\numberline {6}{\ignorespaces Estadisticos descriptivos de los tiempos de registro por flujo (\(n = 200\))}}{45}{table.caption.7}%
-\contentsline {table}{\numberline {7}{\ignorespaces Matriz de confusion del clasificador automatico (\(n = 200\))}}{46}{table.caption.8}%
-\contentsline {table}{\numberline {8}{\ignorespaces Metricas de clasificacion por clase y promedio macro}}{46}{table.caption.9}%
-\contentsline {table}{\numberline {9}{\ignorespaces Tipologia de errores observados en la clasificacion automatica}}{48}{table.caption.10}%
+\contentsline {table}{\numberline {4}{\ignorespaces Entidades principales del modelo de datos}}{37}{table.caption.5}%
+\contentsline {table}{\numberline {5}{\ignorespaces Puntos de entrada principales de la interfaz REST}}{38}{table.caption.6}%
+\contentsline {table}{\numberline {6}{\ignorespaces Estadisticos descriptivos de los tiempos de registro por flujo (\(n = 200\))}}{46}{table.caption.7}%
+\contentsline {table}{\numberline {7}{\ignorespaces Matriz de confusion del clasificador automatico (\(n = 200\))}}{47}{table.caption.8}%
+\contentsline {table}{\numberline {8}{\ignorespaces Métricas de clasificación por clase y promedio macro}}{47}{table.caption.9}%
+\contentsline {table}{\numberline {9}{\ignorespaces Tipología de errores observados en la clasificación automática}}{49}{table.caption.10}%
