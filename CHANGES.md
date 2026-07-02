@@ -38,6 +38,7 @@ C-01 foundation-setup (ninguna)
 
 C-11 tesis-correcciones-academicas (ninguna — documento independiente)
   └── C-12 tesis-recomendaciones-coneau (C-11)
+       └── C-13 tesis-notas-sentido-comun (C-12)
 ```
 
 ### Paralelismo por fase
@@ -376,6 +377,21 @@ C-11 tesis-correcciones-academicas (ninguna — documento independiente)
   - `docs/Tesis/v8 (IA)/paper/` (fuente LaTeX)
   - `docs/Tesis/v8 (IA)/paper/Bibliography_base.bib` (archivo de bibliografia)
   - `docs/Tesis/v8 (IA)/verify_citations.py` (script de verificacion de citas)
+   - `openspec/specs/tesis-document/spec.md` (especificacion sincronizada)
+
+### [C-13] `tesis-notas-sentido-comun`
+
+- **Estado**: `[x]` completado (2026-07-02 — openspec/changes/archive/2026-07-02-c-13-tesis-notas-sentido-comun)
+- **Scope**:
+  - Integrar 3 notas de "sentido comun" operativo de mesa de ayuda en la discusion y trabajo futuro
+  - **N2**: Agregar parrafo sobre gestion gradual del cambio en 08-discusion.tex §8.4
+  - **N3**: Expandir parrafo de analitica organizacional en 10-recomendaciones.tex §10.3
+  - **N4**: Nueva subseccion 10.7 "Base de conocimientos para resolucion automatica" en 10-recomendaciones.tex
+  - Tambien en esta sesion (no trackeado como tareas separadas): diagrama de arquitectura en Capitulo 5, ajuste de 6 tablas por warnings LaTeX, 225 acentos en 14 archivos .tex, backups .tex.bak
+- **Dependencias**: C-12 (documento de tesis)
+- **Governance**: BAJO
+- **Leer antes**:
+  - `docs/Tesis/v8 (IA)/paper/` (fuente LaTeX)
   - `openspec/specs/tesis-document/spec.md` (especificacion sincronizada)
 
 ---
