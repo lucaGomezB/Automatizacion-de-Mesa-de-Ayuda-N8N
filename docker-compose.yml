@@ -1,4 +1,4 @@
-# docker-compose.yml — Entorno de pruebas local: N8N + Backend FastAPI + PostgreSQL + Redis
+# docker-compose.yml — Entorno de desarrollo: Frontend + Backend + N8N + PostgreSQL + Redis
 #
 # Uso:
 #   docker compose up -d           # Levantar todos los servicios
@@ -84,12 +84,12 @@ services:
 
   # ── N8N ─────────────────────────────────────────────────────────────────────
   n8n:
-    image: n8nio/n8n:latest   # 1.62.0 no está en Docker Hub; se usa latest (estable)
+    image: n8nio/n8n:latest   # 1.62.0 no esta en Docker Hub; se usa latest (estable)
     restart: unless-stopped
     ports:
       - "5678:5678"
     environment:
-      # Autenticación básica de N8N
+      # Autenticacion basica de N8N
       N8N_BASIC_AUTH_ACTIVE: "true"
       N8N_BASIC_AUTH_USER: admin
       N8N_BASIC_AUTH_PASSWORD: admin
@@ -98,14 +98,14 @@ services:
       # Redis para la memoria del AI Agent
       QUEUE_BULL_REDIS_HOST: redis
       QUEUE_BULL_REDIS_PORT: "6379"
-      # Configuración de N8N
+      # Configuracion de N8N
       N8N_PROTOCOL: http
       N8N_HOST: 0.0.0.0
       N8N_PORT: "5678"
       WEBHOOK_URL: http://localhost:5678/
       # En Windows/Docker Desktop los permisos de archivos difieren — ignorar warnings
       N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "false"
-      # Deshabilitar telemetría
+      # Deshabilitar telemetria
       N8N_DIAGNOSTICS_ENABLED: "false"
     volumes:
       - n8n_data:/home/node/.n8n
@@ -116,6 +116,24 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+
+  # ── Frontend React ───────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      VITE_API_BASE_URL: http://localhost:8000/api/v1
+    volumes:
+      # Hot reload: montar src/ para reflejar cambios sin rebuild
+      - ./Frontend/src:/app/src:ro
+      - ./Frontend/index.html:/app/index.html:ro
+      - ./Frontend/vite.config.ts:/app/vite.config.ts:ro
+    depends_on:
+      - backend
 
 volumes:
   postgres_data:   # Volume dedicado para este compose (prefijo mesa_local_ asignado por Docker)

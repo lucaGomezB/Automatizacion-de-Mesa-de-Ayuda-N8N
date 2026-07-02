@@ -42,8 +42,10 @@ from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from app.core.database import Base, get_db_session
+from app.core.security import get_current_user
 from app.main import create_app
 from app.models.catalog import CanalOrigen, Estado, Sector
+from app.models.user import User
 from app.routes.incidentes import get_service as get_incidente_service
 from app.schemas.clasificacion import ClasificacionResult
 from app.services.incidente_service import IncidenteService
@@ -132,6 +134,12 @@ async def client(engine):
 
     # Reemplazar la dependencia de producción con la versión de test
     app.dependency_overrides[get_db_session] = override_db
+
+    # Bypass de autenticacion: todos los tests heredados usan un usuario mock.
+    # Los tests de auth usan su propio fixture que no tiene este override.
+    async def override_auth():
+        return User(id=1, username="test_user", hashed_password="", is_active=True)
+    app.dependency_overrides[get_current_user] = override_auth
 
     async with AsyncClient(
         transport=ASGITransport(app=app),
@@ -257,6 +265,11 @@ def make_client_with_classifier(engine):
 
         app.dependency_overrides[get_db_session] = override_db
         app.dependency_overrides[get_incidente_service] = _build_service_override(result)
+
+        # Bypass de autenticacion — mismo mock que en el fixture client
+        async def override_auth():
+            return User(id=1, username="test_user", hashed_password="", is_active=True)
+        app.dependency_overrides[get_current_user] = override_auth
 
         with patch(
             "app.services.incidente_service.notify_n8n",

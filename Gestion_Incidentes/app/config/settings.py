@@ -102,6 +102,15 @@ class Settings(BaseSettings):
     # Ejemplo .env: PSEUDONYMIZATION_ENCRYPTION_KEY=<resultado del comando anterior>
     pseudonymization_encryption_key: str
 
+    # ── Autenticación JWT ──────────────────────────────────────────────────────
+    # Clave secreta para firmar tokens JWT (algoritmo HS256). OBLIGATORIA.
+    # Generar con: python -c "import secrets; print(secrets.token_urlsafe(32))"
+    jwt_secret_key: str
+    # Algoritmo de firma; HS256 es simétrico y suficiente para un backend monolítico.
+    jwt_algorithm: str = "HS256"
+    # Tiempo de expiración del token en minutos (24 horas por defecto).
+    jwt_expire_minutes: int = 1440
+
 
 @lru_cache
 def get_settings() -> Settings:
