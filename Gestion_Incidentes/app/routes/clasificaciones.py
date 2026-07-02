@@ -24,6 +24,8 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db_session
+from app.core.security import get_current_user
+from app.models.user import User
 from app.schemas.clasificacion import ClasificacionLogRead, ClasificacionValidar
 from app.services.clasificacion_service import ClasificacionService
 
@@ -56,6 +58,7 @@ async def list_pending_review(
     service: ServiceDep,
     limit: int = Query(50, ge=1, le=200, description="Cantidad máxima de resultados"),
     offset: int = Query(0, ge=0, description="Desplazamiento para paginación"),
+    current_user: User = Depends(get_current_user),
 ) -> list[ClasificacionLogRead]:
     """
     Retorna la cola de clasificaciones pendientes de revisión humana.
@@ -78,7 +81,9 @@ async def list_pending_review(
     summary="Historial de clasificaciones de un incidente",
 )
 async def list_by_incidente(
-    incidente_id: int, service: ServiceDep
+    incidente_id: int,
+    service: ServiceDep,
+    current_user: User = Depends(get_current_user),
 ) -> list[ClasificacionLogRead]:
     """
     Retorna el historial completo de clasificaciones de un incidente específico.
@@ -103,7 +108,10 @@ async def list_by_incidente(
     summary="Registrar la validación humana de una clasificación",
 )
 async def validar_clasificacion(
-    log_id: int, payload: ClasificacionValidar, service: ServiceDep
+    log_id: int,
+    payload: ClasificacionValidar,
+    service: ServiceDep,
+    current_user: User = Depends(get_current_user),
 ) -> ClasificacionLogRead:
     """
     Registra la decisión del operador humano sobre la categoría correcta.

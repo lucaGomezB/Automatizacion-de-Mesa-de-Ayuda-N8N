@@ -1,0 +1,26 @@
+
+
+-- URLs una vez arranca todo:
+
+Backend: http://localhost:8000 (swagger: .../docs)
+Frontend: http://localhost:3000
+N8N: http://localhost:5678 (login: admin | admin)
+
+
+-- Sin Docker:
+
+Postgres: net start postgresql-x64-18
+Backend: alembic upgrade head uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+Frontend: npm run dev
+
+
+-- Con Docker:
+
+docker compose up -d
+
+docker compose ps
+
+docker compose logs -f backend
+
+docker compose down    #Los datos persisten.
+docker compose down -v #Borra todo, arranque limpio luego.

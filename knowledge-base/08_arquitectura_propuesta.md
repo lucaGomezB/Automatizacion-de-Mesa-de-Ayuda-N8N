@@ -44,15 +44,15 @@ Automatizacion-de-Mesa-de-Ayuda-N8N/
 ## Seguridad
 
 | Aspecto | Tesis (objetivo) | Estado actual |
-|---|---|---|
-| Cifrado en tránsito | TLS 1.3 entre todos los componentes | HTTP local en dev; TLS pendiente para despliegue |
-| Autenticación API | Tokens portadores firmados, clave compartida con N8N | ❌ no implementada (IN-02) |
-| Integridad | HMAC-SHA-256 en identificadores; validación Pydantic | Pydantic ✅; HMAC ❌ |
-| Cifrado en reposo | pgcrypto para campos sensibles | ❌ pendiente |
+|---|---|---|---|
+| Cifrado en transito | TLS 1.3 entre todos los componentes | HTTP local en dev; TLS pendiente para despliegue |
+| Autenticacion API | Tokens portadores firmados, clave compartida con N8N | En curso: C-15 (jwt-auth-backend-frontend) |
+| Integridad | HMAC-SHA-256 en identificadores; validacion Pydantic | Pydantic ✅; HMAC ❌ |
+| Cifrado en reposo | pgcrypto para campos sensibles | Parcial: `EncryptedText` (Fernet) para descripcion_original; pgcrypto ❌ |
 | Secrets | Solo variables de entorno (12-Factor) | ✅ `.env` + pydantic-settings (.env fuera de git) |
-| Auditoría | Registro de actor + timestamp + delta por modificación | Parcial: `clasificacion_log` ✅; audit general ❌ |
-| Pseudonimización pre-LLM | Regex PERSONA/EMAIL/TELEFONO/HOST + tests | ❌ pendiente (C-03, governance ALTO) |
-| CORS | Restringir orígenes en producción | Permisivo (`*`) en dev; configurable vía `CORS_ALLOW_ORIGINS` |
+| Auditoria | Registro de actor + timestamp + delta por modificacion | Parcial: `clasificacion_log` ✅; audit general ❌ |
+| Pseudonimizacion pre-LLM | Regex PERSONA/EMAIL/TELEFONO/HOST + tests | ✅ implementado (C-03). 4 categorias PII. Double representation. |
+| CORS | Restringir origenes en produccion | Permisivo (`*`) en dev; configurable via `CORS_ALLOW_ORIGINS` |
 
 ## Variables de entorno (settings.py)
 

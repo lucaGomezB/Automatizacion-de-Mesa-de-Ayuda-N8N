@@ -38,16 +38,19 @@
 ## Supuestos inferidos
 
 ### SU-01 — El corpus de 200 casos existe fuera del repo
-**Origen**: tesis Anexo F; `data/corpus_evaluacion_pseudonimizado.csv` no está en git. **Riesgo si es falso**: C-08 (evaluación) bloqueado. **Validación**: pedir el CSV a los autores antes de C-08.
+**Origen**: tesis Anexo F; `data/corpus_evaluacion_pseudonimizado.csv` no esta en git.
+**Estado (2026-07-02)**: corpus real NO existe. Se construira corpus simulado en C-17 (evaluation-corpus-simulado) con distribucion 82/64/54.
 
-### SU-02 — Las métricas de la tesis son resultados esperados a reproducir
-**Origen**: el capítulo 7 reporta resultados completos, pero el framework de evaluación (C-08) aún no existe en el repo. **Riesgo**: si la evaluación reproducida difiere mucho del 92 %, hay inconsistencia tesis↔sistema. **Validación**: ejecutar C-08 y comparar.
+### SU-02 — Las metricas de la tesis son resultados esperados a reproducir
+**Origen**: el capitulo 7 reporta resultados completos. Framework de evaluacion (C-08) completado y archivado.
+**Estado (2026-07-02)**: framework implementado (evaluation/ con 20 archivos). Corpus pendiente (C-17). Metricas de tesis (92%, F1=0.919) NO son reproducibles sin el corpus. La corrida provisoria con FakeClassifier da 63% — no comparable.
 
 ### SU-03 — N8N corre en la misma red Docker que la API
 **Origen**: docker-compose del repo + §6.1. **Riesgo**: URLs de webhook mal configuradas entre contenedores. **Validación**: probar `notify_n8n` en C-02 con ambos contenedores arriba.
 
-### SU-04 — La casilla IMAP y la cuenta Twilio existen y están configurables
-**Origen**: §5.2, §6.4. **Riesgo**: C-05 no puede probarse end-to-end sin credenciales reales. **Validación**: confirmar credenciales antes de C-05.
+### SU-04 — La casilla de correo y la cuenta Twilio existen y son configurables
+**Origen**: §5.2, §6.4. **Riesgo**: C-05 no puede probarse end-to-end sin credenciales reales.
+**Estado (2026-07-02)**: el trigger de correo usa Microsoft Outlook (Graph API), NO IMAP como dice la tesis. Sin credenciales Outlook/Twilio no se puede probar end-to-end. Twilio requiere ademas script TwiML (C-16).
 
 ### SU-05 — El despliegue productivo en Kubernetes es aspiracional
 **Origen**: §6.1 menciona K8s 1.30, pero no hay manifiestos en el repo. **Riesgo**: bajo (la validación corre sobre Compose). **Validación**: decidir si K8s entra en alcance de C-10.

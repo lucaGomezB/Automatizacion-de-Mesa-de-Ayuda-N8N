@@ -1,0 +1,201 @@
+id,descripcion,canal_origen,categoria_real
+1,Solicitud de acceso a Active Directory para pasante de Legales por 3 meses.,formulario,Operaciones
+2,Las llamadas entrantes no se derivan correctamente al area Contabilidad.,correo,Soporte Técnico
+3,VPN no funciona. Ya reinstale el cliente y sigue igual. Necesito acceso remoto para terminar un informe.,correo,Sistemas
+4,El proceso batch de SAP no se ejecuto anoche. Hay que correrlo manual.,formulario,Sistemas
+5,El SRV-VPN esta dando timeout. Ya reiniciamos dos veces y sigue igual.,correo,Sistemas
+6,No se generaron las notificaciones automaticas de el sistema de gestion este mes.,telefono,Operaciones
+7,Me olvide la contrase�a del sistema. No puedo ingresar a el modulo de RRHH.,correo,Operaciones
+8,Se me rompio el mouse. Necesito uno nuevo para el puesto de Sistemas.,correo,Soporte Técnico
+9,Solicito acceso a el sistema de compras para Maria Garcia. Es nuevo en el area Compras.,formulario,Operaciones
+10,El teclado no escribe la letra 'a'. Hay que cambiarlo urgente porque no puedo trabajar.,formulario,Soporte Técnico
+11,El formulario de carga de el sistema de facturacion no valida los campos correctamente.,correo,Operaciones
+12,Diego Gonzalez no recuerda su clave de acceso. Solicita reseteo urgente.,correo,Operaciones
+13,VPN no funciona. Ya reinstale el cliente y sigue igual. Necesito acceso remoto para terminar un informe.,telefono,Sistemas
+14,La VPN no me deja entrar. Probe desde dos equipos distintos y nada.,correo,Sistemas
+15,No puedo instalar el software de gestion. Me pide permisos que no tengo.,correo,Sistemas
+16,No me aparecen los registros que cargue ayer en el CRM. Se perdieron?,formulario,Operaciones
+17,La sincronizacion de el modulo de RRHH con Active Directory fallo. Usuarios nuevos no pueden entrar.,correo,Operaciones
+18,El SAP esta caido desde las 3 AM. No podemos facturar.,correo,Sistemas
+19,Se me rompio el mouse. Necesito uno nuevo para el puesto de Marketing.,correo,Soporte Técnico
+20,La impresora imprime todo borroso. Creo que necesita mantenimiento.,correo,Soporte Técnico
+21,No me aparecen los registros que cargue ayer en GDE. Se perdieron?,formulario,Operaciones
+22,La pantalla se quedo en negro. La PC esta prendida pero no da video.,telefono,Soporte Técnico
+23,Carlos Lopez se desvinculo de la empresa. Bloquear accesos a todos los sistemas.,formulario,Operaciones
+24,No me puedo conectar a la VPN desde casa. Me tira error de autenticacion.,formulario,Sistemas
+25,VPN caida. Todo el equipo remoto no puede acceder a los servidores.,formulario,Sistemas
+26,Error al generar el reporte mensual de Marketing. Faltan datos de la semana pasada.,formulario,Operaciones
+27,Necesito instalar Outlook en mi PC. No tengo permisos de administrador.,formulario,Sistemas
+28,No puedo aprobar solicitudes en el portal interno. El boton de aprobar no aparece.,correo,Operaciones
+29,Perdi todos los datos que cargue en el sistema de compras. Se cerro la sesion sin guardar.,telefono,Operaciones
+30,Se corto un cable del rack de piso 1. Nadie en esa ala tiene conexion.,correo,Soporte Técnico
+31,Necesito un alargue con mas enchufes en mi puesto. Solo tengo uno.,formulario,Soporte Técnico
+32,El GDE esta caido desde las 5 AM. No podemos facturar.,correo,Sistemas
+33,El modulo de reportes de Tango no genera PDF. Da error de renderizado.,telefono,Sistemas
+34,"Despues de la actualizacion de ayer, Word dejo de funcionar. Se cierra solo.",telefono,Sistemas
+35,Hay un cable suelto en piso 1 que deja sin conexion a varios puestos.,telefono,Soporte Técnico
+36,WiFi caido en piso 2. Urgente porque tenemos reunion por videollamada en 15 minutos.,correo,Sistemas
+37,Las llamadas entrantes no se derivan correctamente al area Logistica.,correo,Soporte Técnico
+38,Instale una actualizacion de Windows y ahora no me anda el navegador.,correo,Sistemas
+39,Instale una actualizacion de Windows y ahora no me anda Chrome.,telefono,Sistemas
+40,La base de datos esta lenta. Las consultas demoran mucho mas de lo normal.,correo,Sistemas
+41,El calendario de Outlook no sincroniza con el telefono de Carla Flores.,telefono,Soporte Técnico
+42,La actualizacion de GDE fallo. Ahora el sistema no abre.,correo,Sistemas
+43,el sistema de facturacion da error al iniciar sesion. Pantalla en blanco despues del login.,correo,Sistemas
+44,El monitor no enciende. La luz de power esta apagada completamente.,formulario,Soporte Técnico
+45,Hay que resetear la clave de Sofia Diaz. Ya cumplio el plazo de vencimiento.,correo,Operaciones
+46,El sistema de turnos no asigna correctamente los horarios esta semana.,correo,Operaciones
+47,No puedo acceder a los archivos compartidos del servidor. Error de permisos.,correo,Sistemas
+48,"Buenas, Valentina Torres tiene la cuenta bloqueada en GDE. Hicimos varios intentos fallidos.",formulario,Operaciones
+49,La VPN no me deja entrar. Probe desde dos equipos distintos y nada.,correo,Sistemas
+50,Hay que actualizar el sistema de gestion en todas las PCs de RRHH. Ya esta el instalador.,correo,Sistemas
+51,El microfono del telefono no funciona. Me escuchan entrecortado.,correo,Soporte Técnico
+52,No puedo aprobar solicitudes en el sistema contable. El boton de aprobar no aparece.,correo,Operaciones
+53,el sistema contable da error al iniciar sesion. Pantalla en blanco despues del login.,correo,Sistemas
+54,"Buenas, estoy de home office y la VPN no conecta. Error 809. Es urgente.",correo,Sistemas
+55,VPN no funciona. Ya reinstale el cliente y sigue igual. Necesito acceso remoto para terminar un informe.,correo,Sistemas
+56,La resolucion de la pantalla cambio sola y no la puedo volver a configurar.,correo,Soporte Técnico
+57,Me olvide la contrase�a del sistema. No puedo ingresar a el sistema de turnos.,telefono,Operaciones
+58,El teclado no escribe la letra 'a'. Hay que cambiarlo urgente porque no puedo trabajar.,correo,Soporte Técnico
+59,No puedo aprobar solicitudes en el ERP. El boton de aprobar no aparece.,correo,Operaciones
+60,Hay mucha lentitud en la red. Las paginas tardan una eternidad en cargar.,correo,Sistemas
+61,No me aparecen los registros que cargue ayer en SAP. Se perdieron?,correo,Operaciones
+62,el CRM da error al iniciar sesion. Pantalla en blanco despues del login.,correo,Sistemas
+63,El telefono IP se reinicia solo. Pierdo las llamadas en el medio.,correo,Soporte Técnico
+64,Valentina Torres no recuerda su clave de acceso. Solicita reseteo urgente.,formulario,Operaciones
+65,El telefono de mi puesto no funciona. No da tono.,correo,Soporte Técnico
+66,Buenas. Solicito acceso al modulo de el sistema de facturacion para el equipo de Gerencia. Somos 4 personas.,telefono,Sistemas
+67,No puedo instalar el software de gestion. Me pide permisos que no tengo.,telefono,Sistemas
+68,Solicito acceso a Tango para Maria Garcia. Es nuevo en el area Sistemas.,correo,Operaciones
+69,No tengo acceso a la carpeta compartida de Marketing. Me aparece acceso denegado.,telefono,Sistemas
+70,La actualizacion de el ERP fallo. Ahora el sistema no abre.,formulario,Sistemas
+71,No puedo instalar la impresora en mi PC. No aparece en la red.,telefono,Soporte Técnico
+72,"Buenos dias, necesito un reseteo de clave para el portal interno. Mi usuario es juan.perez@empresa.com.ar.",correo,Operaciones
+73,Por favor den de alta a Laura Fernandez en el sistema. Empieza manana en Marketing.,correo,Operaciones
+74,VPN caida. Todo el equipo remoto no puede acceder a los servidores.,correo,Sistemas
+75,"Buenas, estoy de home office y la VPN no conecta. Error 809. Es urgente.",correo,Sistemas
+76,Problemas de red en planta baja. No hay acceso a internet ni a los servidores internos.,correo,Sistemas
+77,Olvide mi contrasena de Active Directory. Necesito resetearla urgente.,formulario,Operaciones
+78,La resolucion de la pantalla cambio sola y no la puedo volver a configurar.,telefono,Soporte Técnico
+79,VPN caida. Todo el equipo remoto no puede acceder a los servidores.,formulario,Sistemas
+80,Necesito un monitor adicional para Ana Martinez en Gerencia. Estamos con una sola pantalla.,formulario,Soporte Técnico
+81,Mi PC no enciende. Aprieto el boton y no hace nada.,correo,Soporte Técnico
+82,La impresora imprime todo borroso. Creo que necesita mantenimiento.,formulario,Soporte Técnico
+83,Problemas de red en piso 1. No hay acceso a internet ni a los servidores internos.,telefono,Sistemas
+84,No me deja abrir archivos PDF. Dice que no hay programa asociado.,correo,Soporte Técnico
+85,Se corto un cable del rack de planta baja. Nadie en esa ala tiene conexion.,correo,Soporte Técnico
+86,"Se cayo SRV-APP-01 y no podemos laburar. Es urgente, tenemos cierre hoy.",formulario,Sistemas
+87,La replica de datos entre servidores no se completo. Faltan registros.,correo,Operaciones
+88,El proceso de cierre de Gerencia no se ejecuto. Hay que revisar los logs.,correo,Operaciones
+89,El monitor titila constantemente. Me esta haciendo doler los ojos.,correo,Soporte Técnico
+90,La VPN no me deja entrar. Probe desde dos equipos distintos y nada.,correo,Sistemas
+91,Solicito acceso a el portal interno para Diego Gonzalez. Es nuevo en el area Contabilidad.,correo,Operaciones
+92,Buenos dias. Necesito permisos de edicion en la carpeta compartida de Compras.,correo,Operaciones
+93,la VPN se cierra inesperadamente cada vez que intento imprimir.,correo,Soporte Técnico
+94,Alta de nuevo empleado: Pedro Rodriguez en Ventas. Necesita todo el setup de sistemas.,formulario,Operaciones
+95,El cable de red de mi puesto esta roto. Se desconecta todo el tiempo.,correo,Soporte Técnico
+96,La actualizacion de el sistema de gestion fallo. Ahora el sistema no abre.,correo,Sistemas
+97,"Ingreso Carlos Lopez al area Legales hoy. Necesita usuario, mail y acceso a el sistema de compras.",correo,Operaciones
+98,Laura Fernandez se desvinculo de la empresa. Bloquear accesos a todos los sistemas.,correo,Operaciones
+99,"Despues de la actualizacion de ayer, Firefox dejo de funcionar. Se cierra solo.",formulario,Sistemas
+100,No puedo instalar el software de gestion. Me pide permisos que no tengo.,correo,Sistemas
+101,Se colgo GDE. No responde a nada. Intente cerrar y abrir y sigue igual.,telefono,Sistemas
+102,El puerto USB del frente no funciona. Probe con dos pendrives distintos.,formulario,Soporte Técnico
+103,Necesito permisos de administrador en el sistema contable. No puedo aprobar las solicitudes pendientes.,formulario,Sistemas
+104,La base de datos de produccion esta saturada. Las consultas tardan 10 veces mas.,correo,Sistemas
+105,Buenos dias. El servidor SRV-FILE-01 presenta problemas de conectividad desde temprano. Solicito revision urgente.,telefono,Sistemas
+106,La red del planta baja esta caida. Los equipos no tienen conectividad.,correo,Sistemas
+107,Se me rompio el mouse. Necesito uno nuevo para el puesto de Ventas.,correo,Soporte Técnico
+108,Instale una actualizacion de Windows y ahora no me anda Excel.,correo,Sistemas
+109,Se colgo Active Directory. No responde a nada. Intente cerrar y abrir y sigue igual.,formulario,Sistemas
+110,Problemas de red en piso 2. No hay acceso a internet ni a los servidores internos.,correo,Sistemas
+111,El calendario de Outlook no sincroniza con el telefono de Valentina Torres.,telefono,Soporte Técnico
+112,No puedo iniciar sesion en el modulo de RRHH. Dice usuario bloqueado. Necesito desbloqueo urgente.,correo,Operaciones
+113,Olvide mi contrasena de el portal interno. Necesito resetearla urgente.,telefono,Operaciones
+114,La sincronizacion de el modulo de RRHH con Active Directory fallo. Usuarios nuevos no pueden entrar.,correo,Operaciones
+115,Me bloquearon el acceso a la carpeta de red. Necesito que me restauren los permisos.,correo,Sistemas
+116,Mi computadora tira pantalla azul todas las mananas al arrancar.,formulario,Soporte Técnico
+117,la multifuncion HP esta con luz roja titilando. No responde a nada.,formulario,Soporte Técnico
+118,No puedo dar de alta un proveedor en el sistema de turnos. Da error de duplicado.,telefono,Operaciones
+119,El proceso batch de el sistema de gestion no se ejecuto anoche. Hay que correrlo manual.,correo,Sistemas
+120,"Buenas, estoy de home office y la VPN no conecta. Error 809. Es urgente.",telefono,Sistemas
+121,Hay mucha lentitud en la red. Las paginas tardan una eternidad en cargar.,correo,Sistemas
+122,Necesito un hub USB. Mi notebook tiene un solo puerto y necesito conectar varias cosas.,formulario,Soporte Técnico
+123,Actualizacion de el modulo de RRHH pendiente. No puedo trabajar hasta que se complete.,correo,Sistemas
+124,Las llamadas entrantes no se derivan correctamente al area Administracion.,formulario,Soporte Técnico
+125,Error en el proceso batch de facturacion. No proceso los archivos de anoche.,formulario,Operaciones
+126,VPN no funciona. Ya reinstale el cliente y sigue igual. Necesito acceso remoto para terminar un informe.,formulario,Sistemas
+127,Perdi todos los datos que cargue en el sistema de compras. Se cerro la sesion sin guardar.,correo,Operaciones
+128,Error 403 en Tango. No me deja entrar con mi usuario de siempre.,correo,Sistemas
+129,El sistema de pedidos no me deja cargar una solicitud nueva. Error al guardar.,correo,Operaciones
+130,El monitor no enciende. La luz de power esta apagada completamente.,correo,Soporte Técnico
+131,Por favor den de alta a Carla Flores en el sistema. Empieza manana en Administracion.,correo,Operaciones
+132,"Che, no anda internet en piso 4. Me fije los cables y estan bien, pero no conecta.",correo,Sistemas
+133,Solicitud de acceso a Active Directory para pasante de Sistemas por 3 meses.,correo,Operaciones
+134,No tengo internet en mi puesto. Aparentemente todo el piso 2 esta igual.,formulario,Sistemas
+135,Mi computadora tira pantalla azul todas las mananas al arrancar.,correo,Soporte Técnico
+136,Al iniciar sesion me dice 'cuenta deshabilitada'. Necesito acceso hoy.,correo,Operaciones
+137,No puedo instalar la impresora en mi PC. No aparece en la red.,correo,Soporte Técnico
+138,Problemas de red en planta baja. No hay acceso a internet ni a los servidores internos.,formulario,Sistemas
+139,El el sistema de facturacion tira error 500. Parece que la base de datos no responde.,telefono,Sistemas
+140,El puerto USB del frente no funciona. Probe con dos pendrives distintos.,formulario,Soporte Técnico
+141,"Buenas, estoy de home office y la VPN no conecta. Error 809. Es urgente.",telefono,Sistemas
+142,No me puedo conectar a la VPN desde casa. Me tira error de autenticacion.,telefono,Sistemas
+143,Se me desinstalo Firefox solo. Ayer funcionaba bien y hoy no esta.,formulario,Soporte Técnico
+144,El monitor titila constantemente. Me esta haciendo doler los ojos.,formulario,Soporte Técnico
+145,Error 403 en el sistema de compras. No me deja entrar con mi usuario de siempre.,correo,Sistemas
+146,No me deja abrir archivos PDF. Dice que no hay programa asociado.,formulario,Soporte Técnico
+147,Las llamadas entrantes no se derivan correctamente al area Administracion.,formulario,Soporte Técnico
+148,El proceso batch de el sistema de turnos no se ejecuto anoche. Hay que correrlo manual.,correo,Sistemas
+149,"Buenas, estoy de home office y la VPN no conecta. Error 809. Es urgente.",correo,Sistemas
+150,Necesito instalar la VPN en mi PC. No tengo permisos de administrador.,correo,Sistemas
+151,La sincronizacion de GDE con Active Directory fallo. Usuarios nuevos no pueden entrar.,telefono,Operaciones
+152,La contrasena de el sistema contable expiro. No me deja poner una nueva.,telefono,Operaciones
+153,No tengo internet en mi puesto. Aparentemente todo el piso 3 esta igual.,formulario,Sistemas
+154,No puedo entrar a la red. Cambie la clave ayer y ahora no me la toma.,correo,Operaciones
+155,Se me desinstalo Outlook solo. Ayer funcionaba bien y hoy no esta.,correo,Soporte Técnico
+156,El calendario de Outlook no sincroniza con el telefono de Laura Fernandez.,correo,Soporte Técnico
+157,Solicito acceso a el CRM para Carla Flores. Es nuevo en el area Administracion.,correo,Operaciones
+158,La actualizacion de GDE fallo. Ahora el sistema no abre.,correo,Sistemas
+159,No se generaron las notificaciones automaticas de GDE este mes.,correo,Operaciones
+160,No puedo entrar a la red. Cambie la clave ayer y ahora no me la toma.,correo,Operaciones
+161,No me puedo conectar a la VPN desde casa. Me tira error de autenticacion.,correo,Sistemas
+162,Nesecito cambiar la clave de SAP. Me olvide la anterior.,formulario,Operaciones
+163,"Che, no anda internet en piso 1. Me fije los cables y estan bien, pero no conecta.",correo,Sistemas
+164,"Se cayo SRV-BACKUP y no podemos laburar. Es urgente, tenemos cierre hoy.",correo,Sistemas
+165,el sistema de compras da error al iniciar sesion. Pantalla en blanco despues del login.,correo,Sistemas
+166,La sincronizacion de el modulo de RRHH con Active Directory fallo. Usuarios nuevos no pueden entrar.,correo,Operaciones
+167,WiFi caido en piso 1. Urgente porque tenemos reunion por videollamada en 15 minutos.,correo,Sistemas
+168,Me bloquearon el acceso a la carpeta de red. Necesito que me restauren los permisos.,correo,Sistemas
+169,El sistema de pedidos no me deja cargar una solicitud nueva. Error al guardar.,correo,Operaciones
+170,Error de conexion a la base de datos en el ERP. No puedo cargar los datos del cierre.,telefono,Sistemas
+171,Baja de Pablo Ramirez del area Contabilidad. Hay que deshabilitar todos sus acsesos.,correo,Operaciones
+172,Problemas de red en piso 4. No hay acceso a internet ni a los servidores internos.,correo,Sistemas
+173,Error al generar el reporte mensual de Contabilidad. Faltan datos de la semana pasada.,correo,Operaciones
+174,la impresora del piso 2 esta con luz roja titilando. No responde a nada.,correo,Soporte Técnico
+175,El monitor no enciende. La luz de power esta apagada completamente.,correo,Soporte Técnico
+176,El formulario de carga de el sistema de gestion no valida los campos correctamente.,telefono,Operaciones
+177,No me aparecen los registros que cargue ayer en el sistema de gestion. Se perdieron?,correo,Operaciones
+178,"Ingreso Sofia Diaz al area Legales hoy. Necesita usuario, mail y acceso a el modulo de RRHH.",formulario,Operaciones
+179,La contrasena de Active Directory expiro. No me deja poner una nueva.,telefono,Operaciones
+180,La impresora esta fuera de linea. No la encuentra ningun equipo del area.,correo,Soporte Técnico
+181,Necesito un alargue con mas enchufes en mi puesto. Solo tengo uno.,formulario,Soporte Técnico
+182,la impresora del area se atasca el papel todo el tiempo. Hay que revisarla urgente.,correo,Soporte Técnico
+183,La resolucion de la pantalla cambio sola y no la puedo volver a configurar.,formulario,Soporte Técnico
+184,Los datos entre el CRM y SAP no se sincronizan desde ayer.,correo,Operaciones
+185,La sincronizacion de el sistema contable con Active Directory fallo. Usuarios nuevos no pueden entrar.,telefono,Operaciones
+186,El sistema de pedidos no me deja cargar una solicitud nueva. Error al guardar.,formulario,Operaciones
+187,No puedo acceder al servidor SRV-ERP. Me tira error de conexion desde hace 2 horas.,correo,Sistemas
+188,No puedo acceder a los archivos compartidos del servidor. Error de permisos.,correo,Sistemas
+189,VPN caida. Todo el equipo remoto no puede acceder a los servidores.,correo,Sistemas
+190,Buenas. Solicito acceso al modulo de el sistema de facturacion para el equipo de RRHH. Somos 4 personas.,formulario,Sistemas
+191,La base de datos esta lenta. Las consultas demoran mucho mas de lo normal.,telefono,Sistemas
+192,Buenos dias. Necesito permisos de edicion en la carpeta compartida de Legales.,telefono,Operaciones
+193,El sistema de turnos no asigna correctamente los horarios esta semana.,telefono,Operaciones
+194,El telefono IP se reinicia solo. Pierdo las llamadas en el medio.,correo,Soporte Técnico
+195,Los datos entre el sistema contable y SAP no se sincronizan desde ayer.,formulario,Operaciones
+196,El cable de red de mi puesto esta roto. Se desconecta todo el tiempo.,formulario,Soporte Técnico
+197,La pantalla se quedo en negro. La PC esta prendida pero no da video.,correo,Soporte Técnico
+198,La impresora imprime todo borroso. Creo que necesita mantenimiento.,telefono,Soporte Técnico
+199,Baja de Diego Gonzalez del area Gerencia. Hay que deshabilitar todos sus accesos.,correo,Operaciones
+200,Hay que actualizar el sistema de compras en todas las PCs de RRHH. Ya esta el instalador.,correo,Sistemas

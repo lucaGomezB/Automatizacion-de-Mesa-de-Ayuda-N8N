@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <Say voice="Polly.Mia-Neural" language="es-US">
+        Bienvenido a la mesa de ayuda.
+        Describi tu problema despues del tono.
+        Cuando termines, presiona numeral.
+        Tenes hasta cuarenta y cinco segundos.
+    </Say>
+    <Record
+        maxLength="45"
+        finishOnKey="#"
+        transcribe="true"
+        transcribeCallback="https://TU_DOMINIO/webhook/twilio-transcripcion"
+        playBeep="true"
+    />
+    <Say voice="Polly.Mia-Neural" language="es-US">
+        Gracias. Tu incidente fue registrado.
+        Vas a recibir un numero de ticket por correo.
+    </Say>
+</Response>

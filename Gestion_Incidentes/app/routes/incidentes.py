@@ -26,7 +26,9 @@ from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db_session
+from app.core.security import get_current_user
 from app.models.incidente import PrioridadEnum
+from app.models.user import User
 from app.schemas.incidente import (
     IncidenteCreate,
     IncidenteListItem,
@@ -64,7 +66,9 @@ ServiceDep = Annotated[IncidenteService, Depends(get_service)]
     summary="Crear y clasificar un incidente",
 )
 async def create_incidente(
-    payload: IncidenteCreate, service: ServiceDep
+    payload: IncidenteCreate,
+    service: ServiceDep,
+    current_user: User = Depends(get_current_user),
 ) -> IncidenteRead:
     """
     Crea un nuevo incidente y ejecuta la clasificación automática.
@@ -94,6 +98,7 @@ async def create_incidente(
 )
 async def list_incidentes(
     service: ServiceDep,
+    current_user: User = Depends(get_current_user),
     sector_id: int | None = Query(None, description="Filtrar por sector responsable"),
     estado_id: int | None = Query(None, description="Filtrar por estado del ciclo de vida"),
     prioridad: PrioridadEnum | None = Query(None, description="Filtrar por nivel de prioridad"),
@@ -132,7 +137,9 @@ async def list_incidentes(
     summary="Obtener el detalle completo de un incidente",
 )
 async def get_incidente(
-    incidente_id: int, service: ServiceDep
+    incidente_id: int,
+    service: ServiceDep,
+    current_user: User = Depends(get_current_user),
 ) -> IncidenteRead:
     """
     Retorna la representación completa de un incidente, incluyendo relaciones.
@@ -156,7 +163,10 @@ async def get_incidente(
     summary="Actualizar parcialmente un incidente",
 )
 async def update_incidente(
-    incidente_id: int, payload: IncidenteUpdate, service: ServiceDep
+    incidente_id: int,
+    payload: IncidenteUpdate,
+    service: ServiceDep,
+    current_user: User = Depends(get_current_user),
 ) -> IncidenteRead:
     """
     Actualiza uno o más campos de un incidente existente (PATCH semántico).

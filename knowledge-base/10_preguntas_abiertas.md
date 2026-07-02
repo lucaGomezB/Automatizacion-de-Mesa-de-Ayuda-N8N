@@ -2,17 +2,16 @@
 
 ## Inconsistencias detectadas
 
-### IN-01 — Endpoint de clasificación: ¿separado o integrado?
-**La tesis dice** (§5.7, Tabla 5; §6.3): N8N invoca `POST /api/v1/clasificar` (descripción → categoría + confianza) y luego `POST /api/v1/incidentes` para persistir — dos llamadas.
-**El código dice**: `POST /api/v1/incidentes` clasifica y persiste en una sola operación; `POST /clasificar` no existe.
-**Impacto**: C-04 (workflow N8N) no puede implementarse como lo describe la tesis sin agregar el endpoint, o bien el workflow debe simplificarse a una sola llamada.
-**Resolución propuesta**: agregar `POST /api/v1/clasificar` como endpoint sin efectos (clasifica sin persistir) — alinea código y tesis, da a N8N el control del IF por confianza, y mantiene `POST /incidentes` como vía integrada para el frontend.
+### IN-01 — Endpoint de clasificacion: ¿separado o integrado?
+**La tesis dice** (§5.7, Tabla 5; §6.3): N8N invoca `POST /api/v1/clasificar` (descripcion -> categoria + confianza) y luego `POST /api/v1/incidentes` para persistir — dos llamadas.
+**El codigo dice**: `POST /api/v1/incidentes` clasifica y persiste en una sola operacion; `POST /clasificar` no existe.
+**Estado actual (2026-07-02)**: Decidido — la clasificacion permanece embebida en `POST /api/v1/incidentes`. El workflow N8N usa una sola llamada HTTP. La tesis sera corregida en futura revision para reflejar la arquitectura real. NO se agrega endpoint `/clasificar` separado.
 
-### IN-02 — Autenticación declarada pero no implementada
+### IN-02 — Autenticacion declarada pero no implementada
 **La tesis dice** (§5.7): tokens portadores firmados validados contra clave compartida con N8N; 401 ante fallo.
-**El código dice**: ningún endpoint exige autenticación.
+**El codigo dice**: ningun endpoint exige autenticacion (auditado 2026-07-02).
 **Impacto**: brecha de seguridad y de fidelidad a la tesis; cualquier actor en la red puede crear/leer tickets.
-**Resolución propuesta**: middleware de API key/Bearer simple (clave compartida en env var) — alcance acotado, alto valor. Candidato a change nuevo (no está en CHANGES.md). Governance: ALTO.
+**Estado actual**: C-15 (jwt-auth-backend-frontend) en curso. Implementa JWT Bearer token con Python-Jose + middleware FastAPI. Governance: ALTO.
 
 ### IN-03 — Driver de base de datos
 **La tesis dice** (§5.4): psycopg2-binary 2.9. **El código dice**: asyncpg + SQLAlchemy async.
@@ -31,23 +30,22 @@
 **Impacto**: incumplimiento de RN-PR-04 en operación prolongada.
 **Resolución propuesta**: tarea programada (cron N8N o script) — candidato a línea futura o C-10.
 
-### IN-06 — Workflow N8N del repo vs. descripción de la tesis
-**La tesis dice** (§6.3): 12 nodos con normalización, IF por confianza, dos llamadas HTTP y notificaciones paralelas.
-**El repo dice**: `Automatizacion_Mesa_de_Ayuda.json` con lógica placeholder (`myNewField = 1`), IF vacíos, y un agente LangChain + Redis para llamadas que la tesis no describe en ese nivel de detalle.
-**Impacto**: C-04/C-05 deben reconciliar ambas versiones.
-**Resolución propuesta**: tratar la tesis §6.3 como especificación normativa y el JSON como esqueleto a reescribir.
+### IN-06 — Workflow N8N del repo vs. descripcion de la tesis
+**La tesis dice** (§6.3): 12 nodos con normalizacion, IF por confianza, dos llamadas HTTP y notificaciones paralelas.
+**El repo dice**: `Automatizacion_Mesa_de_Ayuda.json` con 16 nodos operativos reales + 3 sticky notes. Trigger email es Microsoft Outlook (NO IMAP). Clasificacion embebida en backend (una sola llamada HTTP). Canal telefonico con AI Agent (LangChain) + Redis.
+**Estado actual (2026-07-02)**: workflow funcional con 16 nodos. Divergencias documentadas: (a) Outlook vs IMAP, (b) 16 nodos vs 12, (c) clasificacion embebida vs endpoint separado, (d) AI Agent + Redis para canal telefonico.
 
 ## Preguntas abiertas (priorizadas)
 
 | Prioridad | Pregunta | Bloquea | Decisor |
 |---|---|---|---|
-| Alta | ¿Dónde está el CSV del corpus de 200 casos? (no versionado) | C-08 | Autores de la tesis |
-| Alta | ¿Se agrega `POST /api/v1/clasificar` (IN-01)? | C-04 | Equipo técnico |
-| Alta | ¿Credenciales reales de IMAP/Outlook y Twilio disponibles para pruebas? | C-05 | Organización |
-| Media | ¿Auth de API entra al roadmap como change nuevo (IN-02)? | Despliegue productivo | Equipo + director |
-| Media | ¿La instancia N8N de pruebas corre en el mismo compose? URL del webhook | C-02 | Equipo técnico |
+| Alta | ¿Donde esta el CSV del corpus de 200 casos? → Resuelto: se construye simulado en C-17 | C-17 (nuevo) | Equipo tecnico |
+| Alta | ¿Se agrega `POST /api/v1/clasificar` (IN-01)? → Resuelto: NO. Clasificacion embebida en POST /incidentes | — | Decidido (2026-07-02) |
+| Alta | ¿Credenciales reales de Outlook y Twilio disponibles para pruebas? | C-05 | Organizacion |
+| Alta | ¿Auth JWT Bearer token se implementa? → Si, en C-15 (jwt-auth-backend-frontend) | C-15 (nuevo) | Equipo + director |
+| Media | ¿La instancia N8N de pruebas corre en el mismo compose? URL del webhook | C-02 | Equipo tecnico |
 | Baja | ¿K8s 1.30 es alcance real o aspiracional (SU-05)? | C-10 | Equipo + director |
-| Baja | ¿Se implementa retención/purga automática (IN-05)? | Operación prolongada | Responsable de datos |
+| Baja | ¿Se implementa retencion/purga automatica (IN-05)? | Operacion prolongada | Responsable de datos |
 
 ## [DISCOVERY] Campos inferidos con confianza — sin pendientes
 

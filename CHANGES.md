@@ -39,6 +39,13 @@ C-01 foundation-setup (ninguna)
 C-11 tesis-correcciones-academicas (ninguna — documento independiente)
   └── C-12 tesis-recomendaciones-coneau (C-11)
        └── C-13 tesis-notas-sentido-comun (C-12)
+
+--- FASE 9: Auditoria y correccion brechas tesis/codigo (2026-07-02) ---
+
+C-14 kb-sync-implementation-state (ninguna — KB update)
+C-15 jwt-auth-backend-frontend (C-01, C-14)
+C-16 twilio-twiml-script (C-05)
+C-17 evaluation-corpus-simulado (C-08)
 ```
 
 ### Paralelismo por fase
@@ -418,16 +425,24 @@ C-11 tesis-correcciones-academicas (ninguna — documento independiente)
 | Frontend: hooks/services | COMPLETO | React Query + Axios, todos los endpoints conectados |
 | Frontend: tests | NO IMPLEMENTADO | Sin Vitest, sin testing-library |
 | Infra: Docker | COMPLETO | docker-compose.yml, Dockerfile |
-| Infra: CI/CD | NO IMPLEMENTADO | Sin GitHub Actions |
-| Docs: anexos A-G | PARCIAL | Algunos marcados "{A desarrollar}" en la tesis |
+| Infra: CI/CD | COMPLETO | .github/workflows/ci.yml (C-09) |
+| Docs: anexos A-G | COMPLETO | C-10 documentation-annexes |
+| Auth: JWT Bearer | COMPLETO | C-15 jwt-auth-backend-frontend |
+| KB: knowledge-base | ACTUALIZADA | C-14 kb-sync-implementation-state |
+| Twilio: TwiML script | COMPLETO | C-16 twilio-twiml-script |
+| Corpus: 200 casos | COMPLETO | C-17 evaluation-corpus-simulado |
 
-Cambios que NO estan en el roadmap porque el proyecto completario esta implementado:
+Cambios que NO estan en el roadmap original porque se implementaron durante el desarrollo:
 - Clasificador hibrido (completo)
 - CRUD de incidentes (completo)
 - Cola de revision humana (completa)
 - Frontend completo (completo)
 - Infraestructura Docker (completa)
 - Keywords dictionary (completo)
+- Pseudonymization module (completo — C-03)
+- CI/CD pipeline (completo — C-09)
+- Frontend testing (completo — C-07)
+- Backend integration tests (completo — C-06)
 
 ---
 
