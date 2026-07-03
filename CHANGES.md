@@ -128,9 +128,9 @@ C-17 evaluation-corpus-simulado (C-08)
 - **Leer antes**:
   - `docs/Tesis/tesis_para_agente.md` §5.3 (capa de orquestacion N8N)
   - `docs/Tesis/tesis_para_agente.md` §5.7 (contrato REST)
-  - `Gestion_Incidentes/app/utils/n8n_webhook.py` (funcion existente)
-  - `Gestion_Incidentes/app/services/incidente_service.py` (donde debe llamarse)
-  - `Gestion_Incidentes/app/config/settings.py` §n8n_webhook_url
+  - `App/Backend/app/utils/n8n_webhook.py` (funcion existente)
+  - `App/Backend/app/services/incidente_service.py` (donde debe llamarse)
+  - `App/Backend/app/config/settings.py` §n8n_webhook_url
 
 ### [C-03] `pseudonymization-module`
 
@@ -147,7 +147,7 @@ C-17 evaluation-corpus-simulado (C-08)
   - `docs/Tesis/tesis_para_agente.md` §11.3 (transferencia internacional y pseudonimizacion)
   - `docs/Tesis/tesis_para_agente.md` §5.4 (capa de procesamiento Python)
   - `ANEXO_H_Prompt_Gemini_Especificacion.md` §H.3 (validacion de respuesta)
-  - `Gestion_Incidentes/app/classifiers/gemini_classifier.py` (donde se envia a Gemini)
+  - `App/Backend/app/classifiers/gemini_classifier.py` (donde se envia a Gemini)
 
 ---
 
@@ -216,8 +216,8 @@ C-17 evaluation-corpus-simulado (C-08)
 - **Dependencias**: `C-02`, `C-03`
 - **Governance**: BAJO
 - **Leer antes**:
-  - `Gestion_Incidentes/tests/conftest.py` (infraestructura existente)
-  - `Gestion_Incidentes/tests/test_deterministic_classifier.py` (patron de tests existente)
+  - `App/Backend/tests/conftest.py` (infraestructura existente)
+  - `App/Backend/tests/test_deterministic_classifier.py` (patron de tests existente)
   - `docs/Tesis/tesis_para_agente.md` §6.5 (pruebas automatizadas)
   - `docs/Tesis/tesis_para_agente.md` §4.5 (protocolo de pruebas)
 
@@ -236,8 +236,8 @@ C-17 evaluation-corpus-simulado (C-08)
 - **Dependencias**: `C-01`
 - **Governance**: BAJO
 - **Leer antes**:
-  - `Frontend/package.json` (dependencias actuales)
-  - `Frontend/vite.config.ts` (configuracion existente)
+  - `App/Frontend/package.json` (dependencias actuales)
+  - `App/Frontend/vite.config.ts` (configuracion existente)
   - `docs/Tesis/tesis_para_agente.md` §6.5 (pruebas automatizadas)
 
 ---
@@ -282,8 +282,8 @@ C-17 evaluation-corpus-simulado (C-08)
 - **Governance**: BAJO
 - **Leer antes**:
   - `docs/Tesis/tesis_para_agente.md` §6.5 (pruebas automatizadas)
-  - `Gestion_Incidentes/pytest.ini` (configuracion pytest existente)
-  - `Gestion_Incidentes/requirements.txt` (dependencias)
+  - `App/Backend/pytest.ini` (configuracion pytest existente)
+  - `App/Backend/requirements.txt` (dependencias)
 
 ---
 
@@ -309,8 +309,8 @@ C-17 evaluation-corpus-simulado (C-08)
   - `docs/Tesis/tesis_para_agente.md` §13 (Anexos A-G)
   - `docs/Tesis/tesis_para_agente.md` §11.4 (seguridad tecnica)
   - `docs/Tesis/tesis_para_agente.md` §6.1 (entorno de despliegue)
-  - `Gestion_Incidentes/Dockerfile` y `Gestion_Incidentes/docker-compose.yml`
-  - `Frontend/vite.config.ts`
+  - `App/Backend/Dockerfile` y `App/Backend/docker-compose.yml`
+  - `App/Frontend/vite.config.ts`
 
 ---
 

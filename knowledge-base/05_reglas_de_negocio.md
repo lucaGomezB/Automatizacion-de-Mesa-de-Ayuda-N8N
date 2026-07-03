@@ -1,6 +1,6 @@
 # Reglas de Negocio
 
-Cada regla tiene código único `RN-{DOMINIO}-{NN}`. Fuente: tesis §5.5, §11, Anexo H, y código en `Gestion_Incidentes/app/`.
+Cada regla tiene código único `RN-{DOMINIO}-{NN}`. Fuente: tesis §5.5, §11, Anexo H, y código en `App/Backend/app/`.
 
 ## Dominio: Clasificación (RN-CL)
 

@@ -10,8 +10,8 @@ Estrategia:
     2. Cargar el archivo commiteado docs/openapi.json.
     3. Comparar ambos dicts; fallar con mensaje accionable si difieren.
 
-El archivo docs/openapi.json está en la raíz del REPO, dos niveles arriba
-de este directorio (Gestion_Incidentes/tests/). Se localiza de forma
+El archivo docs/openapi.json está en la raíz del REPO, tres niveles arriba
+de este directorio (App/Backend/tests/). Se localiza de forma
 reproducible usando __file__ para no depender del directorio de trabajo.
 
 Variables de entorno requeridas (mismas que CI de C-09):
@@ -23,9 +23,9 @@ import json
 import os
 from pathlib import Path
 
-# El repo root es 2 niveles arriba de Gestion_Incidentes/tests/
+# El repo root es 3 niveles arriba de App/Backend/tests/
 _THIS_FILE = Path(__file__).resolve()
-_REPO_ROOT = _THIS_FILE.parent.parent.parent  # repo root
+_REPO_ROOT = _THIS_FILE.parent.parent.parent.parent  # repo root
 _OPENAPI_PATH = _REPO_ROOT / "docs" / "openapi.json"
 
 
@@ -44,11 +44,11 @@ def test_openapi_file_exists():
     RED → GREEN: el archivo docs/openapi.json debe existir en el repo.
 
     Si falla, ejecutar el script de generación:
-        cd Gestion_Incidentes && python scripts/export_openapi.py
+        cd App/Backend && python scripts/export_openapi.py
     """
     assert _OPENAPI_PATH.exists(), (
         f"docs/openapi.json no encontrado en {_OPENAPI_PATH}.\n"
-        "Regenerarlo con: cd Gestion_Incidentes && python scripts/export_openapi.py"
+        "Regenerarlo con: cd App/Backend && python scripts/export_openapi.py"
     )
 
 
@@ -102,7 +102,7 @@ def test_openapi_in_sync_with_app():
     El archivo commiteado debe ser idéntico al esquema generado por la app.
 
     Falla con mensaje accionable si difieren:
-        cd Gestion_Incidentes && python scripts/export_openapi.py
+        cd App/Backend && python scripts/export_openapi.py
     """
     if not _OPENAPI_PATH.exists():
         import pytest
@@ -119,7 +119,7 @@ def test_openapi_in_sync_with_app():
     assert committed_str == live_str, (
         "docs/openapi.json está DESACTUALIZADO respecto del esquema que la app genera.\n"
         "Regenerarlo con:\n"
-        "    cd Gestion_Incidentes\n"
+        "    cd App/Backend\n"
         "    python scripts/export_openapi.py\n"
         "Luego commitear docs/openapi.json."
     )

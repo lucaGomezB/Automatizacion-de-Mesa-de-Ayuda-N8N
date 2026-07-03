@@ -12,7 +12,7 @@ project:
 
 stack:
   backend:
-    path: Gestion_Incidentes/
+    path: App/Backend/
     language: Python 3.12
     framework: FastAPI 0.115 + Uvicorn
     orm: SQLAlchemy 2.0 async (asyncpg)
@@ -22,7 +22,7 @@ stack:
     logging: structlog (JSON prod / consola dev)
     config: pydantic-settings (.env)
   frontend:
-    path: Frontend/
+    path: App/Frontend/
     framework: React 18 + TypeScript + Vite
     data: React Query + Axios
     ui: shadcn/ui + Tailwind

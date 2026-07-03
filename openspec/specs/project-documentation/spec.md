@@ -26,7 +26,7 @@ El proyecto SHALL publicar la especificación OpenAPI 3.1 de la interfaz REST en
 #### Scenario: El spec se genera desde la app, no a mano
 
 - **WHEN** se ejecuta el script de generación apuntando a `app.main:app`
-- **THEN** produce un `openapi.json` cuyos `paths` coinciden con los `@router` declarados en `Gestion_Incidentes/app/routes/`
+- **THEN** produce un `openapi.json` cuyos `paths` coinciden con los `@router` declarados en `App/Backend/app/routes/`
 
 ### Requirement: Verificación de sincronía de openapi.json
 
@@ -44,7 +44,7 @@ El proyecto SHALL proveer una verificación que falle cuando `docs/openapi.json`
 
 ### Requirement: Anexo C — Esquema de base de datos
 
-El proyecto SHALL incluir `docs/anexo_c_esquema_bd.md` con el script SQL completo de las cinco tablas del modelo de datos (`sector`, `estado`, `canal_origen`, `incidente`, `clasificacion_log`), derivado fielmente de los modelos ORM en `Gestion_Incidentes/app/models/`. El documento MUST declarar, por cada tabla, sus columnas con tipos, las claves primarias, las claves foráneas con su acción `ON DELETE` real (`SET NULL`, `RESTRICT`, `CASCADE`), las restricciones de unicidad y los índices secundarios e índices compuestos definidos en el código. El documento MUST documentar la doble representación de la descripción (`descripcion_original` cifrada at-rest, `descripcion_pseudonimizada` en claro) conforme a la arquitectura de pseudonimización.
+El proyecto SHALL incluir `docs/anexo_c_esquema_bd.md` con el script SQL completo de las cinco tablas del modelo de datos (`sector`, `estado`, `canal_origen`, `incidente`, `clasificacion_log`), derivado fielmente de los modelos ORM en `App/Backend/app/models/`. El documento MUST declarar, por cada tabla, sus columnas con tipos, las claves primarias, las claves foráneas con su acción `ON DELETE` real (`SET NULL`, `RESTRICT`, `CASCADE`), las restricciones de unicidad y los índices secundarios e índices compuestos definidos en el código. El documento MUST documentar la doble representación de la descripción (`descripcion_original` cifrada at-rest, `descripcion_pseudonimizada` en claro) conforme a la arquitectura de pseudonimización.
 
 #### Scenario: Las cinco tablas están definidas
 

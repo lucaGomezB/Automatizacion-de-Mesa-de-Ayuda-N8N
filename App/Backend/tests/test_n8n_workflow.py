@@ -23,7 +23,7 @@ import pytest
 WORKFLOW_PATH = (
     Path(__file__)
     .resolve()
-    .parents[2]  # raíz del repo (dos niveles por encima de Gestion_Incidentes/)
+    .parents[3]  # raíz del repo (tres niveles por encima de App/Backend/tests/)
     / "Automatizacion_Mesa_de_Ayuda.json"
 )
 

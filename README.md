@@ -39,10 +39,10 @@ git config core.hooksPath .githooks
 ### 2. Configurar las variables de entorno
 
 ```bash
-cp Gestion_Incidentes/.env.example Gestion_Incidentes/.env
+cp App/Backend/.env.example App/Backend/.env
 ```
 
-Editar `Gestion_Incidentes/.env` y completar:
+Editar `App/Backend/.env` y completar:
 
 | Variable                          | Descripción |
 |-----------------------------------|-------------|
@@ -88,7 +88,7 @@ Ambas respuestas deben devolver `{"status": "ok"}`.
 El frontend React no forma parte del compose. Para levantarlo por separado:
 
 ```bash
-cd Frontend
+cd App/Frontend
 npm install
 npm run dev
 # Disponible en http://localhost:3000
@@ -110,7 +110,7 @@ El sistema puede ser replicado exactamente siguiendo:
 1. Prompt: `docs/prompt_gemini.txt`
 2. Parámetros: `docs/parameters_gemini.md`
 3. Workflow: `Automatizacion_Mesa_de_Ayuda.json`
-4. Código: `Gestion_Incidentes/`
+4. Código: `App/Backend/`
 5. Configuración: `docker-compose.yml`
 
 **Nota**: El corpus de validación está disponible bajo `data/corpus_evaluacion_pseudonimizado.csv` con 200 casos etiquetados.

@@ -17,7 +17,7 @@
 
 ```
 Automatizacion-de-Mesa-de-Ayuda-N8N/
-├── Gestion_Incidentes/            # Backend FastAPI
+├── App/Backend/            # Backend FastAPI
 │   ├── app/
 │   │   ├── main.py                # create_app + middleware CORS/errores
 │   │   ├── config/settings.py     # pydantic-settings
@@ -32,7 +32,7 @@ Automatizacion-de-Mesa-de-Ayuda-N8N/
 │   ├── alembic/                   # migraciones + seed de catálogos
 │   ├── tests/                     # pytest (conftest listo para integración)
 │   └── docker-compose.yml / Dockerfile
-├── Frontend/                      # React 18 + TS + Vite
+├── App/Frontend/                      # React 18 + TS + Vite
 │   └── src/{components,hooks,services,types,utils,lib}
 ├── Automatizacion_Mesa_de_Ayuda.json   # Workflow N8N exportado
 ├── docs/                          # Tesis md, prompt y parámetros Gemini

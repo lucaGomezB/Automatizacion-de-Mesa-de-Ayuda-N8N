@@ -72,11 +72,11 @@ Organizadas por épica. Estado: ✅ implementado · 🔶 parcial · ❌ pendient
 
 ### US-012 — Tests backend ✅ (C-06)
 **Como** equipo **quiero** tests unitarios y de integracion con cobertura > 85% **para** garantizar calidad.
-- Estado: 23 archivos de test en `Gestion_Incidentes/tests/`. Cobertura de routes, services, repositories. SQLite in-memory via aiosqlite. Conftest con seed_catalogs, make_client_with_classifier. Tests para classifiers (deterministico, gemini, hybrid), pseudonymization, encryption, schemas, API endpoints, N8N workflow, OpenAPI sync.
+- Estado: 23 archivos de test en `App/Backend/tests/`. Cobertura de routes, services, repositories. SQLite in-memory via aiosqlite. Conftest con seed_catalogs, make_client_with_classifier. Tests para classifiers (deterministico, gemini, hybrid), pseudonymization, encryption, schemas, API endpoints, N8N workflow, OpenAPI sync.
 
 ### US-013 — Testing frontend ✅ (C-07)
 **Como** equipo **quiero** tests de componentes y hooks con cobertura > 70% **para** garantizar calidad del frontend.
-- Estado: 12 archivos de test en `Frontend/src/`. Vitest 2.1 + Testing Library 16 + happy-dom. Tests para services (api, incidentes, clasificaciones), hooks (useReportarIncidente, useIncidentes, useRevisionPendiente), pages (IncidenteForm, SuccessCard, TicketsTable, RevisionHumanaTable), shared components (SectorBadge, ConfianzaIndicator).
+- Estado: 12 archivos de test en `App/Frontend/src/`. Vitest 2.1 + Testing Library 16 + happy-dom. Tests para services (api, incidentes, clasificaciones), hooks (useReportarIncidente, useIncidentes, useRevisionPendiente), pages (IncidenteForm, SuccessCard, TicketsTable, RevisionHumanaTable), shared components (SectorBadge, ConfianzaIndicator).
 
 ### US-014 — CI/CD GitHub Actions ✅ (C-09)
 **Como** equipo **quiero** integracion continua en cada PR **para** no romper nada al mergear.
