@@ -40,7 +40,7 @@ El workflow SHALL definir un job `backend-tests` que se ejecute sobre Python 3.1
 
 ### Requirement: Job de pruebas del frontend
 
-El workflow SHALL definir un job `frontend-tests` que se ejecute sobre Node 20. El job MUST hacer checkout del repositorio, configurar Node 20 con caché de npm, instalar las dependencias del frontend con `npm ci` desde `Frontend/`, y ejecutar la suite de pruebas con cobertura mediante el script `test:coverage` de `App/Frontend/package.json` (Vitest con proveedor `v8`). El job MUST poder completarse sin acceso a servicios externos: la suite mockea Axios y no levanta el backend.
+El workflow SHALL definir un job `frontend-tests` que se ejecute sobre Node 20. El job MUST hacer checkout del repositorio, configurar Node 20 con caché de npm, instalar las dependencias del frontend con `npm ci` desde `App/Frontend/`, y ejecutar la suite de pruebas con cobertura mediante el script `test:coverage` de `App/Frontend/package.json` (Vitest con proveedor `v8`). El job MUST poder completarse sin acceso a servicios externos: la suite mockea Axios y no levanta el backend.
 
 #### Scenario: El job de frontend instala dependencias y corre la suite con cobertura
 

@@ -28,7 +28,7 @@ stack:
     ui: shadcn/ui + Tailwind
   orchestration:
     tool: N8N 1.62 (Docker autoalojado)
-    workflow: Automatizacion_Mesa_de_Ayuda.json
+    workflow: n8n/workflow.json
   inference:
     model: Gemini 2.5 Flash (google-genai >= 1.0)
     params: { temperature: 0.3, top_p: 0.9, max_output_tokens: 100, timeout_s: 10 }
@@ -46,5 +46,5 @@ context_files:
   roadmap: CHANGES.md
   knowledge_base: knowledge-base/
   thesis: docs/Tesis/tesis_para_agente.md
-  gemini_spec: ANEXO_H_Prompt_Gemini_Especificacion.md
+  gemini_spec: docs/anexo_h_prompt_gemini.md
   rules: CLAUDE.md

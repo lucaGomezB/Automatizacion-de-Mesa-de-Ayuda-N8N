@@ -110,7 +110,7 @@ services:
     volumes:
       - n8n_data:/home/node/.n8n
       # Montar el workflow JSON para poder importarlo via CLI dentro del contenedor
-      - ./Automatizacion_Mesa_de_Ayuda.json:/data/Automatizacion_Mesa_de_Ayuda.json:ro
+      - ./n8n/workflow.json:/data/Automatizacion_Mesa_de_Ayuda.json:ro
     depends_on:
       backend:
         condition: service_healthy

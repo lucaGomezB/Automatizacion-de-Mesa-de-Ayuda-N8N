@@ -34,7 +34,7 @@ Automatizacion-de-Mesa-de-Ayuda-N8N/
 │   └── docker-compose.yml / Dockerfile
 ├── App/Frontend/                      # React 18 + TS + Vite
 │   └── src/{components,hooks,services,types,utils,lib}
-├── Automatizacion_Mesa_de_Ayuda.json   # Workflow N8N exportado
+├── n8n/workflow.json   # Workflow N8N exportado
 ├── docs/                          # Tesis md, prompt y parámetros Gemini
 ├── knowledge-base/                # Esta KB
 ├── openspec/                      # Artefactos OPSX (changes/specs)

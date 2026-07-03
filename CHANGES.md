@@ -146,7 +146,7 @@ C-17 evaluation-corpus-simulado (C-08)
 - **Leer antes**:
   - `docs/Tesis/tesis_para_agente.md` §11.3 (transferencia internacional y pseudonimizacion)
   - `docs/Tesis/tesis_para_agente.md` §5.4 (capa de procesamiento Python)
-  - `ANEXO_H_Prompt_Gemini_Especificacion.md` §H.3 (validacion de respuesta)
+  - `docs/anexo_h_prompt_gemini.md` §H.3 (validacion de respuesta)
   - `App/Backend/app/classifiers/gemini_classifier.py` (donde se envia a Gemini)
 
 ---
@@ -173,7 +173,7 @@ C-17 evaluation-corpus-simulado (C-08)
   - `docs/Tesis/tesis_para_agente.md` §5.3 (capa de orquestacion)
   - `docs/Tesis/tesis_para_agente.md` §6.3 (construccion del flujo N8N)
   - `docs/Tesis/tesis_para_agente.md` §6.5 (pruebas automatizadas)
-  - `Automatizacion_Mesa_de_Ayuda.json` (workflow actual)
+  - `n8n/workflow.json` (workflow actual)
 
 ### [C-05] `n8n-channel-triggers`
 
@@ -265,7 +265,7 @@ C-17 evaluation-corpus-simulado (C-08)
   - `docs/Tesis/tesis_para_agente.md` §4.6 (metricas e instrumentos)
   - `docs/Tesis/tesis_para_agente.md` §4.7 (analisis estadistico)
   - `docs/Tesis/tesis_para_agente.md` §7.1-7.4 (resultados esperados)
-  - `ANEXO_H_Prompt_Gemini_Especificacion.md` §H.4 (iteracion y mejora)
+  - `docs/anexo_h_prompt_gemini.md` §H.4 (iteracion y mejora)
 
 ### [C-09] `ci-cd-pipeline`
 

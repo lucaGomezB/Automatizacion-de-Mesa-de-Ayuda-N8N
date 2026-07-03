@@ -6,7 +6,7 @@
 
 ## Descripción general
 
-El archivo `Automatizacion_Mesa_de_Ayuda.json` (raíz del repo) es el workflow N8N exportado que
+El archivo `n8n/workflow.json` (raíz del repo) es el workflow N8N exportado que
 automatiza la recepción y clasificación de incidentes de mesa de ayuda desde **tres canales**:
 
 - **Canal correo**: Microsoft Outlook trigger por sondeo (equivalente funcional a IMAP — ver Decisión 1 C-05)
@@ -259,7 +259,7 @@ Acceder a la UI de N8N en http://localhost:5678 (usuario: `admin`, contraseña: 
 
 ```bash
 # Alternativa sin CLI: acceder a http://localhost:5678
-# Settings → Import Workflow → seleccionar Automatizacion_Mesa_de_Ayuda.json
+# Settings → Import Workflow → seleccionar n8n/workflow.json
 ```
 
 ### Detener / limpiar
@@ -476,7 +476,7 @@ Content-Type: application/json
   D-2 verificado: IF toma rama true (confianza=1.0 sintetizada por normalizer)
 ```
 
-**Defectos corregidos** (aplicados en `Automatizacion_Mesa_de_Ayuda.json`, sesión 2026-06-11):
+**Defectos corregidos** (aplicados en `n8n/workflow.json`, sesión 2026-06-11):
 
 | # | Nodo afectado | Descripción | Fix aplicado |
 |---|---------------|-------------|--------------|
@@ -554,11 +554,11 @@ Se confirma:
 
 ```python
 import json
-wf = json.load(open('Automatizacion_Mesa_de_Ayuda.json'))
+wf = json.load(open('n8n/workflow.json'))
 assert wf['active'] == False  # True
 ```
 
-El archivo `Automatizacion_Mesa_de_Ayuda.json` nunca fue modificado durante la verificación.
+El archivo `n8n/workflow.json` nunca fue modificado durante la verificación.
 N8N vivo tiene `active: true` solo en la instancia de prueba (no exportado al repo).
 
 #### Tabla de incidentes creados en la verificación

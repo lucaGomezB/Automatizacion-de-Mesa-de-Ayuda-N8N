@@ -6,7 +6,7 @@ Responsabilidad:
     Google Gemini 2.5 Flash con los parámetros exactos documentados en:
         - docs/parameters_gemini.md
         - docs/prompt_gemini.txt
-        - Anexo H de la tesis (ANEXO_H_Prompt_Gemini_Especificacion.md)
+        - Anexo H de la tesis (docs/anexo_h_prompt_gemini.md)
 
     Esta etapa solo se activa cuando el clasificador determinístico no
     supera el umbral de confianza de 0.90. Aprovecha la comprensión
