@@ -1,7 +1,8 @@
-# ci.yml — GitHub Actions CI workflow (C-09)
+# ci.yml — GitHub Actions CI workflow (C-09, C-19)
 # Dos jobs paralelos: backend-tests y frontend-tests.
 # Triggers: push a main y pull_request.
-# Sin secretos: toda la suite corre 100% offline.
+# C-19: PostgreSQL service container + integration test step.
+# Sin secretos: toda la suite corre 100% offline (Gemini/N8N mockeados).
 
 name: CI
 
@@ -12,21 +13,38 @@ on:
 
 jobs:
   # -----------------------------------------------------------------------
-  # Job 1: Backend — ruff lint + pytest con cobertura + evaluation suite
+  # Job 1: Backend — ruff lint + pytest (SQLite unit + PostgreSQL integration) + evaluation suite
   # -----------------------------------------------------------------------
   backend-tests:
     name: Backend tests (Python 3.12)
     runs-on: ubuntu-latest
 
-    # Settings (pydantic-settings) exige estos 3 campos sin default. Localmente
+    # C-19: PostgreSQL 15.5 service container for integration tests.
+    # Maps port 5432 inside the job; TEST_PG_URL points at it.
+    services:
+      postgres:
+        image: postgres:15.5-alpine
+        env:
+          POSTGRES_USER: mesa
+          POSTGRES_PASSWORD: mesa
+          POSTGRES_DB: mesa_de_ayuda
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    # Settings (pydantic-settings) exige 4 campos sin default. Localmente
     # salen del .env (gitignorado); en CI se inyectan dummies validos. NO son
     # secretos: los tests mockean Gemini/N8N, el engine de la DATABASE_URL nunca
-    # conecta (conftest inyecta SQLite in-memory) y la clave Fernet es de relleno
-    # (base64url de 32 bytes '0').
+    # conecta (conftest inyecta SQLite in-memory) y las claves son de relleno.
     env:
       DATABASE_URL: postgresql+asyncpg://ci:ci@localhost:5432/ci_dummy
       GEMINI_API_KEY: ci-dummy-key
       PSEUDONYMIZATION_ENCRYPTION_KEY: MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA= # gitleaks:allow (dummy: base64url de 32 bytes '0')
+      JWT_SECRET_KEY: ci-dummy-jwt-secret-key-for-testing-only # gitleaks:allow (dummy)
 
     steps:
       - name: Checkout
@@ -50,16 +68,25 @@ jobs:
         working-directory: App/Backend
         run: ruff check .
 
-      - name: Run backend tests with coverage
+      - name: Run backend unit tests (SQLite) with coverage
         working-directory: App/Backend
         run: |
-          pytest \
+          pytest -m "not integration" \
             --cov=app.routes \
             --cov=app.services \
             --cov=app.repositories \
             --cov-report=term-missing
 
-      # Verificación de sincronía del OpenAPI estático (C-10, D3):
+      # C-19: PostgreSQL integration tests against the service container.
+      # TEST_PG_URL overrides the default (localhost:5433) to use the
+      # GitHub Actions service container on localhost:5432.
+      - name: Run PostgreSQL integration tests
+        working-directory: App/Backend
+        env:
+          TEST_PG_URL: postgresql+asyncpg://mesa:mesa@localhost:5432/mesa_de_ayuda
+        run: pytest -m integration -v
+
+      # Verification de sincronia del OpenAPI estatico (C-10, D3):
       # regenera el esquema en memoria y lo compara contra docs/openapi.json.
       # Falla si el archivo commiteado no refleja el estado actual de la app.
       - name: Verify OpenAPI spec is in sync
