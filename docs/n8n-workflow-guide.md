@@ -205,7 +205,7 @@ duplicaría lógica de seguridad crítica fuera de su módulo Python testeado (g
 
 | Variable | Descripción | Ejemplo |
 |----------|-------------|---------|
-| `BACKEND_URL` | URL base del backend FastAPI | `http://localhost:8000` |
+| `BACKEND_URL` | URL base del backend FastAPI | `https://localhost/api/v1` |
 
 Credenciales adicionales a configurar en la UI de N8N:
 - `MICROSOFT_OUTLOOK_*`: cuenta de correo de mesa de ayuda
