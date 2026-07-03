@@ -1,6 +1,6 @@
 ## MODIFIED Requirements
 
-### Requirement: Anexo G --- Guia operativa
+### Requirement: Anexo G — Guía operativa
 
 El proyecto SHALL incluir `docs/operational-guide.md` con los procedimientos operativos del sistema: despliegue (via `docker compose`, incluyendo la generacion de certificados TLS como prerrequisito), respaldo (backup) y restauracion de la base PostgreSQL, y monitoreo de salud mediante los endpoints de chequeo expuestos por el backend. Los comandos documentados MUST ser coherentes con la configuracion real de `docker-compose.yml` (nombres de servicios, puertos publicados — 80/443 para nginx, 5433 para postgres, 6379 para redis, 5678 para n8n —, credenciales de ejemplo y endpoints de health accesibles via `https://localhost/api/v1/health`).
 
