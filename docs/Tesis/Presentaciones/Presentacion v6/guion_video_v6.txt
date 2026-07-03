@@ -19,8 +19,8 @@ conclusiones."
 [0:45–2:00] Problema y motivacion
 ===============================================================================
 
-Partimos de una organizacion mediana de servicios en Mendoza, 120 usuarios internos.
-El sector de Operaciones atiende además los incidentes informaticos: 42 por dia, cada
+Partimos de una organizacion mediana en Mendoza, con 120 usuarios internos.
+En su sector de Operaciones, se atienden además los incidentes informaticos: Son 42 por dia, y cada
 uno toma 2 minutos 45 segundos en registrarse manualmente. Proyectado al trimestre:
 3700 incidentes, 200 horas-persona solo para anotar tickets.
 
@@ -46,7 +46,7 @@ tiempo de registro y mejora la exactitud de clasificacion, en comparacion con el
 proceso manual realizado por personal experimentado?
 
 Objetivo general: desarrollar un sistema automatizado de mesa de ayuda que reciba,
-clasifique y registre incidentes reduciendo tiempo e intervencion humana.
+clasifique y registre incidentes reduciendo el tiempo y la intervencion humana.
 
 Tenemos cinco objetivos especificos: Primero, diseñar una arquitectura distribuida de cinco
 capas. Segundo, implementar un clasificador hibrido con al menos 85 por ciento de
@@ -66,9 +66,9 @@ Tres pilares sostienen el trabajo. El primero es ITSM —Gestion de Servicios TI
 Galup y colegas establecen que la mesa de ayuda es el punto unico de contacto con el resto de la empresa y su
 eficiencia condiciona la continuidad operativa. El segundo es PLN aplicado a
 clasificacion de tickets: Paramesh y Satyanarayana lograron 87 por ciento de
-exactitud con SVM y TF-IDF, pero en ingles. El espanol rioplatense esta ausente
-de la literatura. El tercero es orquestacion de flujos: Hohpe y Woolf distinguen
-orquestacion —coordinador central, trazable— de coreografia —descentralizada—.
+exactitud con Máquinas Vector de Soporte y Frequencia de Términos y Frecuencia de Documentos Inversos, pero en 
+ingles. El espanol rioplatense esta ausente de la literatura. El tercero es orquestacion de flujos: Hohpe y 
+Woolf distinguen orquestacion —coordinador central, trazable— de coreografia —descentralizada—.
 Para un dominio donde auditar cada decision es requisito normativo, la orquestacion
 es la opcion correcta.
 
