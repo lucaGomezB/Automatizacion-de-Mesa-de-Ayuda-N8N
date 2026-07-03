@@ -54,7 +54,7 @@ openspec list --json
 │       ├── services/         # Axios API clients
 │       └── test/setup.ts     # Testing Library setup
 │
-├── Automatizacion_Mesa_de_Ayuda.json  # N8N workflow (import into N8N UI)
+├── n8n/workflow.json  # N8N workflow (import into N8N UI)
 ├── evaluation/               # Self-contained eval framework (own pytest.ini + requirements.txt)
 ├── data/                     # Evaluation corpus (NOT tracked in git)
 └── docs/                     # Design docs, guides, OpenAPI spec, prompt

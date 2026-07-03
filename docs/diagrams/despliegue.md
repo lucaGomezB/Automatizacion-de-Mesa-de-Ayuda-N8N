@@ -18,7 +18,7 @@ graph TD
         end
 
         ENV[".env\n(credenciales reales,\ngitignorado)"]
-        WF["Automatizacion_Mesa_de_Ayuda.json\n(workflow N8N, montado :ro)"]
+        WF["n8n/workflow.json\n(workflow N8N, montado :ro)"]
         PROMPT["docs/prompt_gemini.txt\n(prompt Gemini, montado :ro)"]
     end
 

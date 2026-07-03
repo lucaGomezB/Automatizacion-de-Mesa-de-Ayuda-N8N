@@ -59,7 +59,7 @@ Organizadas por épica. Estado: ✅ implementado · 🔶 parcial · ❌ pendient
 ### US-010 — Workflow funcional end-to-end 🔶 (C-04)
 **Como** organización **quiero** el flujo de 16 nodos operativo **para** que los 3 canales converjan en un único pipeline.
 - CA: normalizacion unificada (UUID v4, timestamp, canal, descripcion); IF por confianza ≥ 0.70; invocacion HTTP a API; notificaciones paralelas post-registro; logs de auditoria 30 dias. Canal telefonico con AI Agent (LangChain) + Redis.
-- Estado: `Automatizacion_Mesa_de_Ayuda.json` con 16 nodos operativos reales + 3 sticky notes. Trigger email es Microsoft Outlook (NO IMAP). Clasificacion embebida en backend (no existe nodo HTTP a `/api/v1/clasificar` — divergencia con tesis §6.3). Funcional con credenciales configuradas.
+- Estado: `n8n/workflow.json` con 16 nodos operativos reales + 3 sticky notes. Trigger email es Microsoft Outlook (NO IMAP). Clasificacion embebida en backend (no existe nodo HTTP a `/api/v1/clasificar` — divergencia con tesis §6.3). Funcional con credenciales configuradas.
 
 ## Épica 6: Evaluación experimental
 

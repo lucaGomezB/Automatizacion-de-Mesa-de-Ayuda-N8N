@@ -1,7 +1,7 @@
 """
 Tests estructurales del workflow N8N exportado — C-04: n8n-workflow-validation
 
-Verifica el JSON `Automatizacion_Mesa_de_Ayuda.json` sin requerir un runtime N8N.
+Verifica el JSON `n8n/workflow.json` sin requerir un runtime N8N.
 Cubre: ausencia de placeholders, normalización, validación de canales, ruteo IF,
 endpoint HTTP y pseudonimización en tránsito.
 
@@ -24,7 +24,7 @@ WORKFLOW_PATH = (
     Path(__file__)
     .resolve()
     .parents[3]  # raíz del repo (tres niveles por encima de App/Backend/tests/)
-    / "Automatizacion_Mesa_de_Ayuda.json"
+    / "n8n/workflow.json"
 )
 
 # Nombres exactos de los nodos del workflow (inventariados de design.md)

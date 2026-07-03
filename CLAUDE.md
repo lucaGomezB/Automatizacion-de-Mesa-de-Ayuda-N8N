@@ -14,10 +14,10 @@ This is a UTN thesis project (2026) that automates help desk ticket classificati
 
 | File | Purpose |
 |------|---------|
-| `Automatizacion_Mesa_de_Ayuda.json` | The N8N workflow definition — the core of the project |
+| `n8n/workflow.json` | The N8N workflow definition — the core of the project |
 | `docs/prompt_gemini.txt` | The exact prompt sent to Gemini for classification |
 | `docs/parameters_gemini.md` | Gemini API parameter configuration and rationale |
-| `ANEXO_H_Prompt_Gemini_Especificacion.md` | Full specification for the Gemini prompt design |
+| `docs/anexo_h_prompt_gemini.md` | Full specification for the Gemini prompt design |
 
 ## Architecture
 
@@ -96,7 +96,7 @@ function engram-import { engram sync --import --project "Automatizacion-de-Mesa-
 - The workflow is currently set to **inactive** (`"active": false` in the JSON). Activate it in the N8N UI before testing.
 - The JavaScript and Python code nodes in the workflow have been fully implemented (C-04): validation, normalization, Anexo H §H.3 checks, and HTTP payload mapping. No placeholders remain.
 - The IF node conditions are configured: `confianza >= 0.70` (inclusive) in both channels.
-- To deploy: import `Automatizacion_Mesa_de_Ayuda.json` into an N8N instance and configure credentials for Outlook, Twilio, and Gemini. The backend endpoint is `POST /api/v1/incidentes`.
+- To deploy: import `n8n/workflow.json` into an N8N instance and configure credentials for Outlook, Twilio, and Gemini. The backend endpoint is `POST /api/v1/incidentes`.
 - A `docker-compose.yml` for local testing (N8N 1.62 + FastAPI backend + PostgreSQL + Redis) is available at the root of the repository (added in C-04 verification). See `docs/n8n-workflow-guide.md` for setup instructions.
 - The evaluation corpus (`data/corpus_evaluacion_pseudonimizado.csv`, 200 labeled cases) is not tracked in git.
 

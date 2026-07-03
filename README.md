@@ -79,7 +79,7 @@ Ambas respuestas deben devolver `{"status": "ok"}`.
 ### 5. Importar y activar el workflow N8N
 
 1. Abrir `http://localhost:5678` (usuario: `admin`, contraseña: `admin`)
-2. **Workflows → Import from file** → seleccionar `Automatizacion_Mesa_de_Ayuda.json`
+2. **Workflows → Import from file** → seleccionar `n8n/workflow.json`
 3. Configurar las credenciales de Outlook, Twilio y Gemini en N8N
 4. Activar el workflow con el toggle superior derecho
 
@@ -109,7 +109,7 @@ npm run dev
 El sistema puede ser replicado exactamente siguiendo:
 1. Prompt: `docs/prompt_gemini.txt`
 2. Parámetros: `docs/parameters_gemini.md`
-3. Workflow: `Automatizacion_Mesa_de_Ayuda.json`
+3. Workflow: `n8n/workflow.json`
 4. Código: `App/Backend/`
 5. Configuración: `docker-compose.yml`
 

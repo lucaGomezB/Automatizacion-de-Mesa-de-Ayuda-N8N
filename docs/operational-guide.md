@@ -108,7 +108,7 @@ Respuesta esperada:
 1. Abrir `http://localhost:5678` en el navegador.
 2. Autenticarse con usuario `admin` / contraseña `admin`.
 3. Importar el workflow: **Workflows → Import from file** → seleccionar
-   `Automatizacion_Mesa_de_Ayuda.json` (ya montado en `/data/` del contenedor).
+   `n8n/workflow.json` (ya montado en `/data/` del contenedor).
 4. Configurar las credenciales de Outlook, Twilio y Gemini en N8N.
 5. Activar el workflow (botón toggle en la esquina superior derecha).
 

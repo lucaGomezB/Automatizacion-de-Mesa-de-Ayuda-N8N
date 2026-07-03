@@ -12,7 +12,7 @@ Cuando un usuario llama al numero virtual de la mesa de ayuda, Twilio ejecuta el
 4. Envia la transcripcion a N8N via webhook
 5. Reproduce un mensaje de despedida confirmando el registro
 
-El workflow N8N (`Automatizacion_Mesa_de_Ayuda.json`) procesa la transcripcion con un AI Agent (LangChain + Redis) y crea el incidente via la API FastAPI.
+El workflow N8N (`n8n/workflow.json`) procesa la transcripcion con un AI Agent (LangChain + Redis) y crea el incidente via la API FastAPI.
 
 ## Requisitos Previos
 
@@ -59,7 +59,7 @@ La mas simple. Sin infraestructura adicional.
 
 1. Ir a **Develop > TwiML > TwiML Bins** en la consola Twilio
 2. Crear un nuevo TwiML Bin con el boton `+`
-3. Copiar y pegar el contenido completo de `twilio/twiml.xml`
+3. Copiar y pegar el contenido completo de `n8n/twilio/twiml.xml`
 4. Reemplazar `TU_DOMINIO` por la URL real del webhook N8N
 5. Guardar: Twilio genera una URL publica (ej. `https://handler.twilio.com/twiml/EH...`)
 6. Usar esa URL como **A call comes in** en la configuracion del numero
@@ -71,7 +71,7 @@ La mas simple. Sin infraestructura adicional.
 Servir `twiml.xml` desde cualquier servidor HTTP con Content-Type `text/xml`.
 
 Ejemplos:
-- **GitHub Pages**: subir `twiml.xml` a un repo publico, acceder via `https://<user>.github.io/<repo>/twilio/twiml.xml`
+- **GitHub Pages**: subir `twiml.xml` a un repo publico, acceder via `https://<user>.github.io/<repo>/n8n/twilio/twiml.xml`
 - **Netlify/Vercel**: deploy del archivo con redirect/rewrite para Content-Type correcto
 - **S3/Cloud Storage**: bucket publico con Content-Type `text/xml`
 
