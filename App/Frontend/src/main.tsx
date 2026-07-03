@@ -21,6 +21,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { onUnauthorized } from './services/api';
 import ReportarIncidentePage from './pages/ReportarIncidente';
 import AdministracionPage from './pages/Administracion';
+import DashboardPage from './pages/Dashboard';
 import LoginPage from './pages/LoginPage';
 import './index.css';
 
@@ -74,6 +75,14 @@ function App() {
           element={
             <ProtectedRoute>
               <ReportarIncidentePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
             </ProtectedRoute>
           }
         />

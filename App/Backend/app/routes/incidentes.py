@@ -175,12 +175,18 @@ async def update_incidente(
     de None. Casos de uso típicos: cambio de estado por el operador,
     reasignación de sector tras revisión manual, o modificación de prioridad.
 
+    Los incidentes en estado terminal (cerrado, es_terminal=true) son de solo
+    lectura. Cualquier intento de PATCH sobre un incidente cerrado retorna
+    HTTP 409 Conflict con código INCIDENTE_CERRADO.
+
     Args:
         incidente_id: ID del incidente a modificar.
         payload:      Campos a actualizar (todos opcionales).
 
     Returns:
-        Representación actualizada del incidente (HTTP 200) o 404 si no existe.
+        Representación actualizada del incidente (HTTP 200).
+        HTTP 404 si el incidente no existe.
+        HTTP 409 si el incidente está cerrado (solo lectura).
     """
     incidente = await service.update_incidente(incidente_id, payload)
     return IncidenteRead.model_validate(incidente)

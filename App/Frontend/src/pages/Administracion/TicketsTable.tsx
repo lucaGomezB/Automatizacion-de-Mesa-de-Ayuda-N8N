@@ -16,7 +16,7 @@
  *   Badge local que encapsula la lógica de color por nivel de prioridad para mantener
  *   la tabla limpia y separar presentación de datos.
  */
-import { ExternalLink, RefreshCcw } from 'lucide-react';
+import { ExternalLink, Lock, RefreshCcw } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -133,7 +133,14 @@ export function TicketsTable({
                 {formatearFecha(incidente.created_at)}
               </TableCell>
               <TableCell className="text-right">
-                <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+                {incidente.estado.es_terminal ? (
+                  <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+                    <Lock className="h-3 w-3" />
+                    Solo lectura
+                  </span>
+                ) : (
+                  <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+                )}
               </TableCell>
             </TableRow>
           ))}

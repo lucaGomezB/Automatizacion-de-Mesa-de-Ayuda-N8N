@@ -284,7 +284,13 @@ async def seed_catalogs(engine):
 
     # ── Arrange: sembrar catálogos ────────────────────────────────────────────
     async with factory() as session:
+        # Todos los estados del ciclo de vida (cerrado es el unico terminal)
         estado_nuevo = Estado(nombre="nuevo", descripcion="Incidente recibido, sin asignar", es_terminal=False)
+        estado_en_proceso = Estado(nombre="en proceso", descripcion="Asignado y en atencion", es_terminal=False)
+        estado_en_espera = Estado(nombre="en espera", descripcion="Bloqueado esperando respuesta", es_terminal=False)
+        estado_resuelto = Estado(nombre="resuelto", descripcion="Solucion aplicada", es_terminal=False)
+        estado_cerrado = Estado(nombre="cerrado", descripcion="Finalizado", es_terminal=True)
+
         sector_sistemas = Sector(nombre="Sistemas", descripcion="Infraestructura y redes")
         sector_operaciones = Sector(nombre="Operaciones", descripcion="Procesos operativos")
         sector_soporte = Sector(nombre="Soporte Técnico", descripcion="Equipamiento de usuarios")
@@ -293,19 +299,24 @@ async def seed_catalogs(engine):
         canal_llamada = CanalOrigen(nombre="llamada telefónica", descripcion="Vía Twilio")
 
         session.add_all([
-            estado_nuevo,
+            estado_nuevo, estado_en_proceso, estado_en_espera, estado_resuelto, estado_cerrado,
             sector_sistemas, sector_operaciones, sector_soporte,
             canal_correo, canal_formulario, canal_llamada,
         ])
         await session.commit()
 
         # Refrescar para obtener IDs asignados
-        for obj in [estado_nuevo, sector_sistemas, sector_operaciones, sector_soporte,
+        for obj in [estado_nuevo, estado_en_proceso, estado_en_espera, estado_resuelto, estado_cerrado,
+                    sector_sistemas, sector_operaciones, sector_soporte,
                     canal_correo, canal_formulario, canal_llamada]:
             await session.refresh(obj)
 
         catalog = {
             "estado_nuevo": estado_nuevo,
+            "estado_en_proceso": estado_en_proceso,
+            "estado_en_espera": estado_en_espera,
+            "estado_resuelto": estado_resuelto,
+            "estado_cerrado": estado_cerrado,
             "sector_sistemas": sector_sistemas,
             "sector_operaciones": sector_operaciones,
             "sector_soporte": sector_soporte,
