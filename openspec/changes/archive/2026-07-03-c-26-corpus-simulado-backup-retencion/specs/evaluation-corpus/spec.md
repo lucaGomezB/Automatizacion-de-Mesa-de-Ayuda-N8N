@@ -40,7 +40,7 @@ El CSV MUST contener las columnas `id`, `descripcion`, `canal_origen`, `categori
 - **AND** el valor p es inferior a 0.001
 - **AND** para cada caso individual, `tiempo_manual_s > tiempo_automatizado_s`
 
-### Requirement: CORPUS-004 — Descripciones realistas con keywords calibradas
+### Requirement: CORPUS-004 — Descripciones realistas
 
 Las descripciones MUST ser textualmente realistas en espanol rioplatense y contener palabras clave calibradas para que el clasificador deterministico produzca las predicciones deseadas (asi como errores intencionales en 16 casos para reproducir la matriz de confusion de la Tabla 7).
 
