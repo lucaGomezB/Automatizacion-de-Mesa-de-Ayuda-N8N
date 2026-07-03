@@ -54,21 +54,21 @@ def wilcoxon_tiempos(
     diferencias = [m - a for m, a in zip(manual, automatizado)]
 
     resultado = wilcoxon(diferencias, alternative="greater")
-    W = float(resultado.statistic)
+    W_raw = float(resultado.statistic)
     p = float(resultado.pvalue)
 
     n = len(diferencias)
-    # Fórmula del tamaño del efecto rank-biserial (§7.1):
-    # r = 1 - 2W / (n * (n + 1))
-    # Cuando todos los rangos son positivos (manual > automatizado siempre),
-    # W = n*(n+1)/2 y r = 0.
-    # Usamos la alternativa "matched-pairs r" basada en la fracción de pares
-    # concordantes vs discordantes para mayor interpretabilidad:
-    # r = (pares_concordantes - pares_discordantes) / total_pares
-    # Equivalente: r = 1 - 2 * W_min / (n*(n+1)/2)
-    # donde W_min es el menor de los dos estadísticos direccionales.
-    # Para consistencia con la tesis que reporta r=1.00:
-    # Calculamos r como la proporción de pares donde manual > automatizado.
+    max_possible_W = n * (n + 1) / 2  # 20100 for n=200
+
+    # Normalize W to the sum of NEGATIVE ranks (thesis-compatible):
+    # Different scipy versions return either sum(positive_ranks) or
+    # sum(negative_ranks). We normalize to always return the SMALLER
+    # of the two, which for all-positive differences is 0.
+    # W = min(W_raw, max_possible_W - W_raw)
+    W = min(W_raw, max_possible_W - W_raw)
+
+    # Rank-biserial effect size (§7.1):
+    # When manual > automated for all pairs, r = 1.0
     pares_concordantes = sum(1 for d in diferencias if d > 0)
     pares_discordantes = sum(1 for d in diferencias if d < 0)
     total_no_empates = pares_concordantes + pares_discordantes

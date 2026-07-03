@@ -116,6 +116,10 @@ services:
       N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "false"
       # Deshabilitar telemetria
       N8N_DIAGNOSTICS_ENABLED: "false"
+      # Retencion automatica de datos de ejecucion (30 dias = 720 horas)
+      # Configurado segun tesis §5.3 para cumplir con politica de retencion de 30 dias
+      EXECUTIONS_DATA_PRUNE: "true"
+      EXECUTIONS_DATA_MAX_AGE: "720"
     volumes:
       - n8n_data:/home/node/.n8n
       # Montar el workflow JSON para poder importarlo via CLI dentro del contenedor
