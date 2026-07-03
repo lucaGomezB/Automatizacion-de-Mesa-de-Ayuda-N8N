@@ -3,9 +3,7 @@
 ## Purpose
 
 Define la estructura canónica de directorios del repositorio, el esquema de nomenclatura para los componentes principales del sistema, y las reglas de organización del código fuente.
-
 ## Requirements
-
 ### Requirement: Directorio unificado App/
 
 El repositorio SHALL contener un directorio `App/` en la raiz que agrupe los componentes principales del sistema. `App/Backend/` SHALL contener la aplicacion FastAPI (antes `Gestion_Incidentes/`) y `App/Frontend/` SHALL contener la aplicacion React (antes `Frontend/`). Ambos directorios SHALL preservar su estructura interna sin modificaciones.
@@ -84,3 +82,51 @@ Los archivos `CHANGES.md` y las notas de C-24 SHALL documentar que los cambios a
 
 - **WHEN** se lee la entrada de C-24 en `CHANGES.md`
 - **THEN** menciona explicitamente que C-19 y C-23 requieren actualizacion de paths en sus proposal files
+
+### Requirement: Directorio n8n/ para artefactos de orquestacion
+
+El repositorio SHALL contener un directorio `n8n/` en la raiz que agrupe todos los artefactos relacionados con la orquestacion N8N. El workflow principal SHALL residir en `n8n/workflow.json`. Los artefactos de integracion Twilio (TwiML script y documentacion) SHALL residir en `n8n/twilio/`.
+
+#### Scenario: Workflow N8N bajo n8n/
+
+- **WHEN** se inspecciona el directorio `n8n/`
+- **THEN** contiene `workflow.json` (el workflow N8N exportado) y `twilio/twiml.xml` con `twilio/README.md`
+
+#### Scenario: docker-compose monta el workflow desde n8n/
+
+- **WHEN** se inspecciona el archivo `docker-compose.yml`
+- **THEN** el volume mount del servicio `n8n` referencia `./n8n/workflow.json` como fuente
+
+### Requirement: Raiz del repositorio ordenada para presentacion de tesis
+
+La raiz del repositorio SHALL contener exclusivamente archivos de configuracion y tooling de proyecto (`docker-compose.yml`, `README.md`, `CHANGES.md`, `AGENTS.md`, `CLAUDE.md`, `.gitignore`, `.env.example`, `.jr-orchestrator-state.json`), directorios de infraestructura oculta (`.github/`, `.claude/`, `.engram/`, `.githooks/`, `.opencode/`), y directorios de primer nivel para cada componente del sistema (`App/`, `data/`, `docs/`, `evaluation/`, `knowledge-base/`, `n8n/`, `openspec/`, `scripts/`). Los archivos de tesis y los artefactos N8N NO SHALL residir sueltos en la raiz.
+
+#### Scenario: No hay archivos de tesis sueltos en raiz
+
+- **WHEN** se lista el contenido de la raiz del repositorio
+- **THEN** `ANEXO_H_Prompt_Gemini_Especificacion.md` NO aparece; el anexo H reside en `docs/anexo_h_prompt_gemini.md`
+
+#### Scenario: No hay workflow JSON suelto en raiz
+
+- **WHEN** se lista el contenido de la raiz del repositorio
+- **THEN** `Automatizacion_Mesa_de_Ayuda.json` NO aparece; el workflow reside en `n8n/workflow.json`
+
+#### Scenario: No hay directorio twilio/ en raiz
+
+- **WHEN** se lista el contenido de la raiz del repositorio
+- **THEN** `twilio/` NO aparece; los artefactos Twilio residen en `n8n/twilio/`
+
+### Requirement: Anexo H de tesis en docs/ con nombre normalizado
+
+El anexo H de la tesis (especificacion del prompt Gemini) SHALL residir en `docs/anexo_h_prompt_gemini.md`, siguiendo la misma convencion de nomenclatura que los otros anexos en `docs/` (`anexo_c_esquema_bd.md`, `anexo_f_corpus.md`). El archivo `openspec/config.yaml` SHALL referenciarlo con su nuevo path.
+
+#### Scenario: openspec/config.yaml referencia el anexo H correctamente
+
+- **WHEN** se lee `openspec/config.yaml`
+- **THEN** `context_files.gemini_spec` es `docs/anexo_h_prompt_gemini.md`
+
+#### Scenario: El anexo H es accesible desde docs/
+
+- **WHEN** se lee `docs/anexo_h_prompt_gemini.md`
+- **THEN** contiene la especificacion completa del prompt Gemini (mismo contenido que el antiguo `ANEXO_H_Prompt_Gemini_Especificacion.md`)
+
