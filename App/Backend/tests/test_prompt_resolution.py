@@ -20,8 +20,8 @@ def test_default_prompt_path_anchors_to_repo_root() -> None:
     """El default debe apuntar a docs/prompt_gemini.txt en la RAÍZ del repo y existir."""
     resolved = _resolve_prompt_path()
 
-    # Ancla esperada: tres niveles arriba del módulo (classifiers→app→BackEnd→raíz)
-    repo_root = Path(gemini_classifier.__file__).resolve().parents[3]
+    # Ancla esperada: cuatro niveles arriba del módulo (classifiers→app→Backend→App→raíz)
+    repo_root = Path(gemini_classifier.__file__).resolve().parents[4]
     assert resolved == repo_root / "docs" / "prompt_gemini.txt"
     # Regresión del bug prompt_file_not_found: la ruta default debe existir realmente
     assert resolved.exists(), f"El prompt no existe en la ruta resuelta: {resolved}"

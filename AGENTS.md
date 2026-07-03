@@ -33,7 +33,7 @@ openspec list --json
 
 ```
 .
-├── Gestion_Incidentes/       # FastAPI backend (Python 3.12)
+├── App/Backend/       # FastAPI backend (Python 3.12)
 │   ├── app/
 │   │   ├── routes/           # API endpoints → delegates to services
 │   │   ├── services/         # Business logic (IncidenteService, ClasificacionService)
@@ -47,7 +47,7 @@ openspec list --json
 │   ├── alembic/              # Migrations (seed catalogs in 001)
 │   └── tests/                # 190+ tests, SQLite in-memory (NOT PostgreSQL)
 │
-├── Frontend/                 # React 18 + TypeScript + Vite
+├── App/Frontend/                 # React 18 + TypeScript + Vite
 │   └── src/
 │       ├── components/       # Domain components (exclude ui/ and layout/ from coverage)
 │       ├── hooks/            # React Query wrappers
@@ -64,40 +64,40 @@ openspec list --json
 
 All commands run from the repo root unless noted.
 
-### Backend (Gestion_Incidentes/)
+### Backend (App/Backend/)
 
 ```bash
 # Run all backend tests (SQLite in-memory — NO Docker required)
-cd Gestion_Incidentes; pytest
+cd App/Backend; pytest
 
 # Run a single test file
-cd Gestion_Incidentes; pytest tests/test_api_incidentes.py
+cd App/Backend; pytest tests/test_api_incidentes.py
 
 # Run a single test function
-cd Gestion_Incidentes; pytest tests/test_api_incidentes.py::test_create_incidente
+cd App/Backend; pytest tests/test_api_incidentes.py::test_create_incidente
 
 # Run with coverage (routes, services, repositories only)
-cd Gestion_Incidentes; pytest --cov=app.routes --cov=app.services --cov=app.repositories --cov-report=term-missing
+cd App/Backend; pytest --cov=app.routes --cov=app.services --cov=app.repositories --cov-report=term-missing
 
 # Lint (ruff — currently only pycodestyle E rules, no F rules)
-cd Gestion_Incidentes; ruff check .
+cd App/Backend; ruff check .
 
 # Verify OpenAPI spec is synchronized with code
-cd Gestion_Incidentes; pytest tests/test_openapi_sync.py -v
+cd App/Backend; pytest tests/test_openapi_sync.py -v
 
 # Regenerate alembic migration after model changes
-cd Gestion_Incidentes; alembic revision --autogenerate -m "description"
+cd App/Backend; alembic revision --autogenerate -m "description"
 ```
 
-### Frontend (Frontend/)
+### Frontend (App/Frontend/)
 
 ```bash
-cd Frontend; npm run dev           # Dev server on :3000
-cd Frontend; npm run test          # Vitest (run mode)
-cd Frontend; npm run test:watch    # Vitest (watch mode)
-cd Frontend; npm run test:coverage # Vitest with coverage
-cd Frontend; npm run lint          # ESLint flat config
-cd Frontend; npm run build         # tsc + vite build (typecheck FIRST)
+cd App/Frontend; npm run dev           # Dev server on :3000
+cd App/Frontend; npm run test          # Vitest (run mode)
+cd App/Frontend; npm run test:watch    # Vitest (watch mode)
+cd App/Frontend; npm run test:coverage # Vitest with coverage
+cd App/Frontend; npm run lint          # ESLint flat config
+cd App/Frontend; npm run build         # tsc + vite build (typecheck FIRST)
 ```
 
 ### Evaluation (evaluation/)
@@ -121,8 +121,8 @@ docker compose ps
 
 ## Env Vars and Secrets
 
-- **`.env` location**: `Gestion_Incidentes/.env` (NOT root `.env`)
-- **Template**: `Gestion_Incidentes/.env.example`
+- **`.env` location**: `App/Backend/.env` (NOT root `.env`)
+- **Template**: `App/Backend/.env.example`
 - **Pre-commit hook**: `.githooks/pre-commit` blocks commits containing API keys, PEM keys, or `.env` files. Use `gitleaks:allow` comment to whitelist false positives.
 - **CI dummies**: backend tests in CI need these env vars even though tests are offline (pydantic-settings requires them without defaults):
 
@@ -164,7 +164,7 @@ Triggers: push to `main`, all pull requests. Two parallel jobs:
 The OpenAPI sync check (`test_openapi_sync.py`) regenerates the spec in-memory and compares against `docs/openapi.json`. If you add/change endpoints, regenerate the static file:
 
 ```bash
-cd Gestion_Incidentes; python -c "from app.main import app; import json; open('../docs/openapi.json','w').write(json.dumps(app.openapi(), indent=2, ensure_ascii=False))"
+cd App/Backend; python -c "from app.main import app; import json; open('../docs/openapi.json','w').write(json.dumps(app.openapi(), indent=2, ensure_ascii=False))"
 ```
 
 ## Engram Memory

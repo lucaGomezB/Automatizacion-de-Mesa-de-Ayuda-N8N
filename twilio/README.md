@@ -108,7 +108,7 @@ Para pruebas locales sin exponer N8N a internet:
 
 ## Variables de Entorno
 
-Agregar al archivo `.env` del backend (`Gestion_Incidentes/.env`):
+Agregar al archivo `.env` del backend (`App/Backend/.env`):
 
 ```env
 TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

@@ -32,7 +32,7 @@
 └───────────────┬──────────────────────────────────────────────┘
                 ▼ HTTP/REST (TLS 1.3)
 ┌──────────────────────────────────────────────────────────────┐
-│ 3. PROCESAMIENTO — FastAPI (Gestion_Incidentes/app/)         │
+│ 3. PROCESAMIENTO — FastAPI (App/Backend/app/)         │
 │    routes → services → repositories → models                 │
 │    Clasificador híbrido: deterministic → gemini → fallback   │
 └──────┬────────────────────────────────────────┬──────────────┘
@@ -55,7 +55,7 @@ Principios: cohesión alta / acoplamiento bajo; cada capa reemplazable de forma 
 | Servidor IMAP (Outlook) | Trigger de correos entrantes | Polling IMAP en N8N |
 | N8N | Orquestación; recibe webhook post-clasificación | Webhook saliente (`notify_n8n`) |
 
-## API REST (implementada en `Gestion_Incidentes/app/routes/`)
+## API REST (implementada en `App/Backend/app/routes/`)
 
 | Método | Ruta | Éxito | Función |
 |---|---|---|---|

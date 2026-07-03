@@ -100,3 +100,5 @@ MEDIUM — feature nueva, sin impacto en datos existentes. El bloqueo de escritu
 ## Dependencias
 
 C-15 (JWT Auth) — el dashboard requiere autenticacion.
+
+**NOTA C-24**: Los paths en este archivo referencian `Gestion_Incidentes/` y `Frontend/` (directorios antiguos). Antes de aplicar C-23, actualizar todas las referencias a `App/Backend/` y `App/Frontend/` respectivamente (ver C-24-restructure-app-directory).

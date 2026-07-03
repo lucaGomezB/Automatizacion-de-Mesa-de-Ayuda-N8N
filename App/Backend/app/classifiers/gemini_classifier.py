@@ -52,9 +52,9 @@ logger = get_logger(__name__)
 _VALID_CATEGORIES = frozenset({"Sistemas", "Operaciones", "Soporte Técnico"})
 
 # Ruta default al prompt documentado en la tesis, anclada a la RAÍZ del repositorio
-# (no al cwd ni a BackEnd/): classifiers → app → BackEnd → raíz. El archivo vive en
-# docs/prompt_gemini.txt junto al resto de la documentación de la tesis.
-_DEFAULT_PROMPT_PATH = Path(__file__).resolve().parents[3] / "docs" / "prompt_gemini.txt"
+# (no al cwd ni a Backend/): classifiers → app → Backend → App → raíz.
+# El archivo vive en docs/prompt_gemini.txt junto al resto de la documentación de la tesis.
+_DEFAULT_PROMPT_PATH = Path(__file__).resolve().parents[4] / "docs" / "prompt_gemini.txt"
 
 
 def _resolve_prompt_path() -> Path:

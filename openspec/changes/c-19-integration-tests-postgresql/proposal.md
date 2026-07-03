@@ -57,3 +57,5 @@ MEDIUM — cambios en tests, sin impacto en codigo de produccion.
 ## Dependencias
 
 C-15 (JWT Auth) — los tests de integracion deben probar tambien rutas protegidas.
+
+**NOTA C-24**: Los paths en este archivo referencian `Gestion_Incidentes/` (directorio antiguo). Antes de aplicar C-19, actualizar todas las referencias a `App/Backend/` (ver C-24-restructure-app-directory).

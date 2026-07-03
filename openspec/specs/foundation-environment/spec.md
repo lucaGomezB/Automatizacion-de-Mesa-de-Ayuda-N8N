@@ -7,7 +7,7 @@ Define los requisitos del entorno base del proyecto: configuración OPSX, resolu
 ## Requirements
 
 ### Requirement: Configuración OPSX del proyecto
-El repositorio SHALL contener `openspec/config.yaml` declarando el stack tecnológico (FastAPI, SQLAlchemy 2.0 async, PostgreSQL 15, N8N, Gemini 2.5 Flash, React 18 + TypeScript + Vite) y las rutas canónicas del proyecto (`Gestion_Incidentes/`, `Frontend/`, `knowledge-base/`, `CHANGES.md`).
+El repositorio SHALL contener `openspec/config.yaml` declarando el stack tecnológico (FastAPI, SQLAlchemy 2.0 async, PostgreSQL 15, N8N, Gemini 2.5 Flash, React 18 + TypeScript + Vite) y las rutas canónicas del proyecto (`App/Backend/`, `App/Frontend/`, `knowledge-base/`, `CHANGES.md`).
 
 #### Scenario: Sub-agente consulta el contexto del proyecto
 - **WHEN** un agente ejecuta `openspec status` o lee `openspec/config.yaml`
@@ -16,8 +16,8 @@ El repositorio SHALL contener `openspec/config.yaml` declarando el stack tecnol�
 ### Requirement: Resolución del prompt de Gemini independiente del cwd
 El clasificador Gemini SHALL resolver la ruta de `prompt_gemini.txt` de forma determinística e independiente del directorio de trabajo, con default anclado a la raíz del repositorio (`docs/prompt_gemini.txt`) y override posible vía variable de entorno `GEMINI_PROMPT_PATH`.
 
-#### Scenario: Arranque desde Gestion_Incidentes/
-- **WHEN** la aplicación se inicia con cwd en `Gestion_Incidentes/`
+#### Scenario: Arranque desde App/Backend/
+- **WHEN** la aplicación se inicia con cwd en `App/Backend/`
 - **THEN** el prompt se carga correctamente y NO se emite el warning `prompt_file_not_found`
 
 #### Scenario: Override por variable de entorno

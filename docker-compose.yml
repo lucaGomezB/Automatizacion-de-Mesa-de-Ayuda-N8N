@@ -54,10 +54,10 @@ services:
   # ── Backend FastAPI ─────────────────────────────────────────────────────────
   backend:
     build:
-      context: ./Gestion_Incidentes
+      context: ./App/Backend
       dockerfile: Dockerfile
     restart: unless-stopped
-    env_file: ./Gestion_Incidentes/.env
+    env_file: ./App/Backend/.env
     environment:
       # Sobreescribir DATABASE_URL para apuntar al postgres de este compose
       DATABASE_URL: postgresql+asyncpg://mesa:mesa@postgres:5432/mesa_de_ayuda
@@ -68,7 +68,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      # Inyectar el prompt (que está en la raíz del repo, no en Gestion_Incidentes/)
+      # Inyectar el prompt (que está en la raíz del repo, no en App/Backend/)
       - ./docs/prompt_gemini.txt:/app/docs/prompt_gemini.txt:ro
     depends_on:
       postgres:
@@ -120,7 +120,7 @@ services:
   # ── Frontend React ───────────────────────────────────────────────────────────
   frontend:
     build:
-      context: ./Frontend
+      context: ./App/Frontend
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
@@ -129,9 +129,9 @@ services:
       VITE_API_BASE_URL: http://localhost:8000/api/v1
     volumes:
       # Hot reload: montar src/ para reflejar cambios sin rebuild
-      - ./Frontend/src:/app/src:ro
-      - ./Frontend/index.html:/app/index.html:ro
-      - ./Frontend/vite.config.ts:/app/vite.config.ts:ro
+      - ./App/Frontend/src:/app/src:ro
+      - ./App/Frontend/index.html:/app/index.html:ro
+      - ./App/Frontend/vite.config.ts:/app/vite.config.ts:ro
     depends_on:
       - backend
 

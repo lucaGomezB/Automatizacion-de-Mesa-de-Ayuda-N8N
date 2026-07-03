@@ -37,21 +37,21 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-          cache-dependency-path: Gestion_Incidentes/requirements.txt
+          cache-dependency-path: App/Backend/requirements.txt
 
       - name: Install backend dependencies
-        working-directory: Gestion_Incidentes
+        working-directory: App/Backend
         run: pip install -r requirements.txt
 
       - name: Install ruff (pinned, not in requirements.txt)
         run: pip install ruff==0.8.4
 
       - name: Lint backend with ruff
-        working-directory: Gestion_Incidentes
+        working-directory: App/Backend
         run: ruff check .
 
       - name: Run backend tests with coverage
-        working-directory: Gestion_Incidentes
+        working-directory: App/Backend
         run: |
           pytest \
             --cov=app.routes \
@@ -63,7 +63,7 @@ jobs:
       # regenera el esquema en memoria y lo compara contra docs/openapi.json.
       # Falla si el archivo commiteado no refleja el estado actual de la app.
       - name: Verify OpenAPI spec is in sync
-        working-directory: Gestion_Incidentes
+        working-directory: App/Backend
         run: pytest tests/test_openapi_sync.py -v
 
       # Evaluation suite — self-contained (corpus_fixture.csv + FakeClassifier)
@@ -77,10 +77,10 @@ jobs:
         run: pytest
 
   # -----------------------------------------------------------------------
-  # Job 2: Frontend — ESLint + Vitest con cobertura
+  # Job 2: App/Frontend — ESLint + Vitest con cobertura
   # -----------------------------------------------------------------------
   frontend-tests:
-    name: Frontend tests (Node 20)
+    name: App/Frontend tests (Node 20)
     runs-on: ubuntu-latest
 
     steps:
@@ -92,16 +92,16 @@ jobs:
         with:
           node-version: "20"
           cache: npm
-          cache-dependency-path: Frontend/package-lock.json
+          cache-dependency-path: App/Frontend/package-lock.json
 
       - name: Install frontend dependencies
-        working-directory: Frontend
+        working-directory: App/Frontend
         run: npm ci
 
       - name: Lint frontend with ESLint
-        working-directory: Frontend
+        working-directory: App/Frontend
         run: npm run lint
 
       - name: Run frontend tests with coverage
-        working-directory: Frontend
+        working-directory: App/Frontend
         run: npm run test:coverage
