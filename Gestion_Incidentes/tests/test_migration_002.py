@@ -231,8 +231,8 @@ class TestMigration002Downgrade:
         # Migrar a head
         _run_alembic(["upgrade", "head"], db_file)
 
-        # Regresar un paso
-        _run_alembic(["downgrade", "-1"], db_file)
+        # Regresar dos pasos (003→002→001) para restaurar esquema original
+        _run_alembic(["downgrade", "-2"], db_file)
 
         columnas = _get_column_names(db_file)
 
