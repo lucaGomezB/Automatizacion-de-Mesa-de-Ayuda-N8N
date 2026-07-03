@@ -8,11 +8,12 @@ Sistema de Automatización de Mesa de Ayuda — UTN 2026
 
 ## Prerequisitos
 
-| Herramienta     | Versión mínima | Verificación |
+| Herramienta     | Version minima | Verificacion |
 |-----------------|---------------|--------------|
 | Docker Engine   | 24.x          | `docker --version` |
 | Docker Compose  | v2 (plugin)   | `docker compose version` |
 | Git             | 2.x           | `git --version` |
+| OpenSSL         | 1.1.x+        | `openssl version` |
 
 **Recursos de hardware recomendados**: 4 GB RAM libres, 5 GB de espacio en disco.
 
@@ -56,17 +57,36 @@ PSEUDONYMIZATION_ENCRYPTION_KEY=<clave-generada>
 > **Importante**: nunca commitear el archivo `.env` con credenciales reales.
 > El hook pre-commit bloquea commits que contengan claves.
 
-### 1.3 Levantar los servicios
+### 1.3 Generar certificados TLS y levantar los servicios
+
+**Paso previo obligatorio** — generar los certificados auto-firmados para el
+proxy Nginx (validez: 365 dias):
+
+```bash
+# Linux / macOS
+bash openssl/generate-certs.sh
+
+# Windows (PowerShell)
+.\openssl\generate-certs.ps1
+```
+
+Esto crea `openssl/mesa.crt` (certificado) y `openssl/mesa.key` (clave privada).
+
+> **Nota**: si los certificados expiran (365 dias), volver a ejecutar el script
+> para regenerarlos. El script es idempotente: sobreescribe los archivos existentes
+> sin errores. Luego reiniciar el proxy: `docker compose restart nginx`.
+
+Luego levantar el stack:
 
 ```bash
 docker compose up -d
 ```
 
-Este comando construye la imagen del backend (desde `Gestion_Incidentes/Dockerfile`),
-descarga las imágenes de PostgreSQL, Redis y N8N, aplica las migraciones Alembic
-(`alembic upgrade head`) y levanta todos los servicios en background.
+Este comando construye la imagen del backend (desde `App/Backend/Dockerfile`),
+descarga las imagenes de PostgreSQL, Redis, Nginx y N8N, aplica las migraciones
+Alembic (`alembic upgrade head`) y levanta todos los servicios en background.
 
-**Verificar que todos los contenedores están healthy**:
+**Verificar que todos los contenedores estan healthy**:
 
 ```bash
 docker compose ps
@@ -78,14 +98,20 @@ Salida esperada (todos en estado `healthy` o `running`):
 NAME                    STATUS          PORTS
 ...-postgres-1          Up (healthy)    0.0.0.0:5433->5432/tcp
 ...-redis-1             Up (healthy)    0.0.0.0:6379->6379/tcp
-...-backend-1           Up (healthy)    0.0.0.0:8000->8000/tcp
+...-backend-1           Up (healthy)    
 ...-n8n-1               Up              0.0.0.0:5678->5678/tcp
+...-frontend-1          Up              
+...-nginx-1             Up              0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp
 ```
+
+> **Nota**: el backend (puerto 8000) y el frontend (puerto 3000) ya NO se publican
+> en el host. Todo el trafico HTTP/HTTPS externo pasa a traves del proxy Nginx en
+> los puertos 80 (HTTP, redirige a HTTPS) y 443 (HTTPS con TLS 1.3).
 
 ### 1.4 Verificar salud del backend
 
 ```bash
-curl http://localhost:8000/health
+curl -k https://localhost/api/v1/health
 ```
 
 Respuesta esperada:
@@ -95,13 +121,17 @@ Respuesta esperada:
 
 Verificar conectividad con la base de datos:
 ```bash
-curl http://localhost:8000/health/db
+curl -k https://localhost/api/v1/health/db
 ```
 
 Respuesta esperada:
 ```json
 {"status": "ok", "database": "reachable"}
 ```
+
+> **Nota**: el flag `-k` (o `--insecure`) es necesario porque se usa un certificado
+> auto-firmado en desarrollo. En produccion, con un certificado de CA reconocida
+> (p. ej. Let's Encrypt), este flag no es necesario.
 
 ### 1.5 Acceder a N8N e importar el workflow
 
@@ -110,19 +140,28 @@ Respuesta esperada:
 3. Importar el workflow: **Workflows → Import from file** → seleccionar
    `n8n/workflow.json` (ya montado en `/data/` del contenedor).
 4. Configurar las credenciales de Outlook, Twilio y Gemini en N8N.
-5. Activar el workflow (botón toggle en la esquina superior derecha).
+5. Activar el workflow (boton toggle en la esquina superior derecha).
 
-### 1.6 Frontend (opcional)
+> **Nota**: N8N mantiene su acceso directo en el puerto 5678 (HTTP) por
+> limitaciones tecnicas con path-prefix en el proxy inverso. El backend
+> se comunica con N8N internamente via `http://n8n:5678/webhook`.
 
-El frontend React no está incluido en el `docker-compose.yml`. Para levantarlo:
+### 1.6 Frontend
+
+El frontend React se levanta como parte del compose y se accede a traves
+del proxy Nginx en `https://localhost/`. El puerto 3000 no esta publicado
+en el host; todo el trafico de la SPA pasa por HTTPS.
+
+Para desarrollo con hot reload (fuera del compose):
 
 ```bash
-cd Frontend
+cd App/Frontend
 npm install
 npm run dev
 ```
 
-La aplicación estará disponible en `http://localhost:3000`.
+La aplicacion estara disponible en `http://localhost:3000` (acceso directo,
+sin TLS, util solo para desarrollo de la UI).
 
 ---
 
@@ -203,9 +242,9 @@ docker run --rm \
 | `GET /health/db`    | Readiness probe: ¿PostgreSQL es alcanzable?  | `{"status":"ok","database":"reachable"}` |
 
 ```bash
-# Verificación rápida
-curl -s http://localhost:8000/health | python -m json.tool
-curl -s http://localhost:8000/health/db | python -m json.tool
+# Verificacion rapida
+curl -k -s https://localhost/api/v1/health | python -m json.tool
+curl -k -s https://localhost/api/v1/health/db | python -m json.tool
 ```
 
 ### 4.2 Estado de los contenedores
@@ -235,7 +274,7 @@ docker compose logs --since 1h backend
 Verificar si hay clasificaciones pendientes de revisión:
 
 ```bash
-curl -s http://localhost:8000/api/v1/clasificaciones/revision-pendiente | python -m json.tool
+curl -k -s https://localhost/api/v1/clasificaciones/revision-pendiente | python -m json.tool
 ```
 
 Un número alto de revisiones pendientes indica baja confianza sistemática del

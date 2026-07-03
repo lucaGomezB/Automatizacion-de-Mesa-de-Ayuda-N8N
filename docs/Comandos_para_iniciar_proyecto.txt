@@ -2,8 +2,8 @@
 
 -- URLs una vez arranca todo:
 
-Backend: http://localhost:8000 (swagger: .../docs)
-Frontend: http://localhost:3000
+Backend: https://localhost/api/v1 (swagger: .../docs)
+Frontend: https://localhost/
 N8N: http://localhost:5678 (login: admin | admin)
 
 

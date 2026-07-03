@@ -61,7 +61,7 @@ docker compose up -d
 
 ### 2.1 El endpoint `/health/db` devuelve 500
 
-**Síntoma**: `curl http://localhost:8000/health/db` retorna un error 500 o
+**Sintoma**: `curl -k https://localhost/api/v1/health/db` retorna un error 500 o
 `{"detail":"..."}`.
 
 **Causa probable A — PostgreSQL no está corriendo**:
@@ -229,7 +229,7 @@ docker compose exec n8n wget -qO- http://backend:8000/health
 # En Frontend/, verificar si existe un .env.local con la URL del backend
 cat Frontend/.env.local
 # Si no existe, crearlo:
-echo "VITE_API_BASE_URL=http://localhost:8000" > Frontend/.env.local
+echo "VITE_API_BASE_URL=https://localhost/api/v1" > App/Frontend/.env.local
 npm run dev
 ```
 
@@ -248,12 +248,12 @@ docker compose ps
 # Logs en tiempo real del backend
 docker compose logs -f backend
 
-# Salud del backend
-curl http://localhost:8000/health
-curl http://localhost:8000/health/db
+# Salud del backend (a traves del proxy Nginx)
+curl -k https://localhost/api/v1/health
+curl -k https://localhost/api/v1/health/db
 
-# Cola de revisión humana (cuántos incidentes esperan validación)
-curl http://localhost:8000/api/v1/clasificaciones/revision-pendiente | python -m json.tool
+# Cola de revision humana (cuantos incidentes esperan validacion)
+curl -k https://localhost/api/v1/clasificaciones/revision-pendiente | python -m json.tool
 
 # Conectividad de N8N al backend (desde dentro del contenedor)
 docker compose exec n8n wget -qO- http://backend:8000/health

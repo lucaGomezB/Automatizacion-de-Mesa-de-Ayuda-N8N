@@ -19,12 +19,16 @@ En este proyecto se busca una forma eficiente de facilitar el trabajo de la Mesa
 
 - **Docker Engine 24+** y **Docker Compose v2** (plugin integrado en Docker Desktop)
 - **Git 2.x**
+- **OpenSSL** (para generar los certificados TLS de desarrollo)
 
 Verificar:
 ```bash
 docker --version
 docker compose version
+openssl version
 ```
+
+> **Nota sobre Windows**: si `openssl` no esta disponible en el PATH, Git for Windows lo incluye en `C:\Program Files\Git\usr\bin\`. El script `openssl\generate-certs.ps1` lo detecta automaticamente.
 
 ### 1. Clonar y configurar el hook anti-secretos
 
@@ -50,48 +54,82 @@ Editar `App/Backend/.env` y completar:
 | `PSEUDONYMIZATION_ENCRYPTION_KEY` | Clave Fernet de 32 bytes en base64url (generar con `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`) |
 | `DATABASE_URL`                    | Ya configurada en `.env.example` para el compose; no cambiar el host |
 
-### 3. Levantar todos los servicios
+### 3. Generar los certificados TLS
+
+El proyecto usa un proxy inverso Nginx con TLS 1.3 para el trafico externo.
+Antes de levantar los servicios por primera vez, generar los certificados
+auto-firmados:
+
+**Linux / macOS:**
+```bash
+bash openssl/generate-certs.sh
+```
+
+**Windows (PowerShell):**
+```powershell
+.\openssl\generate-certs.ps1
+```
+
+Esto crea `openssl/mesa.crt` y `openssl/mesa.key`. Son certificados
+auto-firmados validos por 365 dias. Volver a ejecutar el script para
+regenerarlos cuando expiren (el script es idempotente).
+
+> **Advertencia del navegador**: por ser un certificado auto-firmado, el
+> navegador mostrara un aviso "Your connection is not private". Es seguro
+> hacer clic en **Advanced → Proceed to localhost** en el entorno de
+> desarrollo local.
+
+### 4. Levantar todos los servicios
 
 ```bash
 docker compose up -d
 ```
 
-El compose levanta PostgreSQL (puerto 5433), Redis (6379), el backend FastAPI (8000)
-y N8N (5678). Las migraciones Alembic se aplican automáticamente al iniciar el backend.
+El compose levanta Nginx (puertos 80 y 443 — proxy TLS), PostgreSQL (5433),
+Redis (6379), el backend FastAPI y N8N (5678). El backend y el frontend
+NO publican puertos al host: todo el trafico HTTP/HTTPS pasa por Nginx.
+Las migraciones Alembic se aplican automaticamente al iniciar el backend.
 
-Verificar que todos los servicios están healthy:
+Verificar que todos los servicios estan healthy:
 ```bash
 docker compose ps
 ```
 
-### 4. Verificar salud del sistema
+### 5. Verificar salud del sistema
 
 ```bash
-# Backend en funcionamiento
-curl http://localhost:8000/health
+# Backend en funcionamiento (a traves del proxy Nginx en HTTPS)
+curl -k https://localhost/api/v1/health
 
 # Backend conectado a la base de datos
-curl http://localhost:8000/health/db
+curl -k https://localhost/api/v1/health/db
 ```
 
 Ambas respuestas deben devolver `{"status": "ok"}`.
 
-### 5. Importar y activar el workflow N8N
+> **Nota**: el flag `-k` (o `--insecure`) es necesario porque el certificado
+> es auto-firmado. En produccion, con un certificado de CA reconocida, no
+> hace falta.
+
+### 6. Importar y activar el workflow N8N
 
 1. Abrir `http://localhost:5678` (usuario: `admin`, contraseña: `admin`)
 2. **Workflows → Import from file** → seleccionar `n8n/workflow.json`
 3. Configurar las credenciales de Outlook, Twilio y Gemini en N8N
 4. Activar el workflow con el toggle superior derecho
 
-### Frontend (opcional)
+### Frontend
 
-El frontend React no forma parte del compose. Para levantarlo por separado:
+El frontend React se levanta como parte del compose y se accede a traves
+del proxy Nginx en `https://localhost/`. El puerto 3000 no esta publicado
+en el host; todo el trafico pasa por HTTPS.
 
+Para desarrollo con hot reload (opcional, fuera del compose):
 ```bash
 cd App/Frontend
 npm install
 npm run dev
-# Disponible en http://localhost:3000
+# Disponible en http://localhost:3000 (acceso directo, sin TLS)
 ```
 
 ---
