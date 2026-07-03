@@ -62,25 +62,25 @@ H0 postula igualdad de medianas; H1 postula que la mediana automatizada es infer
 [3:00–4:30] Marco teorico / antecedentes
 ===============================================================================
 
-Tres pilares sostienen el trabajo. El primero es ITSM —Gestion de Servicios TI—:
+Tres pilares sostienen el trabajo. El primero es la Gestion de Servicios TI:
 Galup y colegas establecen que la mesa de ayuda es el punto unico de contacto con el resto de la empresa y su
 eficiencia condiciona la continuidad operativa. El segundo es PLN aplicado a
 clasificacion de tickets: Paramesh y Satyanarayana lograron 87 por ciento de
-exactitud con Máquinas Vector de Soporte y Frequencia de Términos y Frecuencia de Documentos Inversos, pero en 
+exactitud con Máquinas Vector de Soporte y Frecuencia de Documentos Inversos, pero en 
 ingles. El espanol rioplatense esta ausente de la literatura. El tercero es orquestacion de flujos: Hohpe y 
 Woolf distinguen orquestacion —coordinador central, trazable— de coreografia —descentralizada—.
 Para un dominio donde auditar cada decision es requisito normativo, la orquestacion
 es la opcion correcta.
 
-Nuestro aporte se ubica en la interseccion: no usamos un clasificador supervisado
-tradicional —no teniamos corpus etiquetado al inicio— sino un esquema hibrido:
-filtro deterministico basado en reglas para los casos claros, y Gemini 2.5 Flash
-como arbitro semantico para los casos ambiguos. Reglas primero, LLM despues. Esto
-optimiza la relacion exactitud-latencia-costo. Todo con herramientas de codigo
-abierto —N8N, Python, FastAPI, PostgreSQL— y pseudonimizacion de datos antes de
-cualquier transmision externa, en linea con la Ley 25.326.
+Nuestro aporte se ubica en la interseccion: No usamos un clasificador supervisado
+tradicional —no teniamos corpus etiquetado al inicio— sino que usamos un esquema hibrido:
+un filtro deterministico basado en reglas para los casos claros, y Gemini 2.5 Flash
+como arbitro semantico para los casos ambiguos. Reglas primero, LLM despues. 
+Esto optimiza la relacion exactitud-latencia-costo. Todo con herramientas de codigo
+abierto —N8N, Python, FastAPI, PostgreSQL— y pseudonimizacion de datos antes de cualquier transmision externa, en linea con la Ley 
+25.326.
 
-Luca investigo el marco teorico y aporto experiencia empirica del dominio. Gonzalo
+Yo, Luca, investigo el marco teorico y aporto experiencia empirica del dominio. Gonzalo
 desarrollo el proyecto con metodologias dirigidas por especificaciones. Carla
 superviso la teoria, el plan de desarrollo y la redaccion de la tesis.
 
