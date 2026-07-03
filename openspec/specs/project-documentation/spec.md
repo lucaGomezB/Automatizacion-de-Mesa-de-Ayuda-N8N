@@ -79,17 +79,18 @@ El proyecto SHALL incluir `docs/anexo_f_corpus.md` describiendo el corpus de val
 
 ### Requirement: Anexo G — Guía operativa
 
-El proyecto SHALL incluir `docs/operational-guide.md` con los procedimientos operativos del sistema: despliegue (via `docker compose`, incluyendo la generacion de certificados TLS como prerrequisito), respaldo (backup) y restauracion de la base PostgreSQL, y monitoreo de salud mediante los endpoints de chequeo expuestos por el backend. Los comandos documentados MUST ser coherentes con la configuracion real de `docker-compose.yml` (nombres de servicios, puertos publicados — 80/443 para nginx, 5433 para postgres, 6379 para redis, 5678 para n8n —, credenciales de ejemplo y endpoints de health accesibles via `https://localhost/api/v1/health`).
+La guia operativa (`docs/operational-guide.md`) SHALL incluir referencias a los scripts automatizados de backup (`scripts/backup.sh` y `scripts/backup.ps1`) como metodo recomendado para backups diarios, reemplazando el comando manual de cron documentado en la seccion 3.
 
-#### Scenario: Procedimientos cubren despliegue, backup y monitoreo
+#### Scenario: Seccion de backup referencia scripts
+- **WHEN** se lee la seccion 3 (Backup y restauracion de PostgreSQL) de `docs/operational-guide.md`
+- **THEN** el documento referencia los scripts `scripts/backup.sh` y `scripts/backup.ps1`
+- **AND** describe como configurar la ejecucion automatica via cron (Linux/macOS) o Task Scheduler (Windows)
+- **AND** incluye el comando de ejemplo para ambos entornos
 
-- **WHEN** se inspecciona `docs/operational-guide.md`
-- **THEN** incluye secciones para despliegue (con paso de generacion de certificados), backup/restauracion de PostgreSQL y monitoreo de salud, cada una con comandos concretos
-
-#### Scenario: Los comandos coinciden con docker-compose
-
-- **WHEN** se contrastan los comandos de la guia contra `docker-compose.yml`
-- **THEN** los nombres de servicios referenciados existen en el compose, las URL de verificacion de salud usan HTTPS (`https://localhost/api/v1/health` en lugar de `http://localhost:8000/health`), y los puertos documentados para el proxy son 80 y 443
+#### Scenario: Comando manual permanece documentado
+- **WHEN** se lee la seccion 3 de la guia operativa
+- **THEN** el comando `docker compose exec postgres pg_dump` sigue documentado como alternativa manual
+- **AND** la documentacion de restauracion no sufre cambios
 
 ### Requirement: Guía de troubleshooting para operadores
 
@@ -118,4 +119,22 @@ El proyecto SHALL actualizar `README.md` con instrucciones de despliegue local q
 
 - **WHEN** se revisan los enlaces del README
 - **THEN** referencia `docs/operational-guide.md` y `docs/troubleshooting.md` para los procedimientos detallados
+
+### Requirement: DOC-002 — Tesis v8 K8s language verified
+
+La tesis en version 8 (LaTeX) SHALL mantener el lenguaje suavizado sobre Kubernetes: "preparados para migracion" (futuro), no "mediante un cluster Kubernetes" (presente). Este requisito es de VERIFICACION unicamente.
+
+#### Scenario: Lenguaje K8s es futuro, no presente
+- **WHEN** se inspecciona `docs/Tesis/v8 (IA)/paper/sections/06-implementacion.tex` linea 8
+- **THEN** el texto contiene "preparados para migracion a un cluster Kubernetes~1.30"
+- **AND** NO contiene frases que afirmen que Kubernetes esta desplegado actualmente ("mediante un cluster", "se despliega en Kubernetes")
+
+### Requirement: DOC-003 — Anexo G referencia scripts de backup
+
+La documentacion operativa del Anexo G en la tesis SHALL mencionar la existencia de scripts automatizados de backup con retencion de 7 dias.
+
+#### Scenario: Anexo G menciona backup automatizado
+- **WHEN** se lee la seccion del Anexo G en la tesis v8
+- **THEN** el texto menciona que existen scripts de backup automatizados (`backup.sh` y `backup.ps1`)
+- **AND** describe la politica de retencion (7 backups diarios)
 

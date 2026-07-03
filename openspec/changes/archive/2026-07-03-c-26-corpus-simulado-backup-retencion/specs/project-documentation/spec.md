@@ -1,6 +1,6 @@
 ## MODIFIED Requirements
 
-### Requirement: DOC-001 — Guia operativa referencia scripts de backup
+### Requirement: Anexo G — Guía operativa
 
 La guia operativa (`docs/operational-guide.md`) SHALL incluir referencias a los scripts automatizados de backup (`scripts/backup.sh` y `scripts/backup.ps1`) como metodo recomendado para backups diarios, reemplazando el comando manual de cron documentado en la seccion 3.
 
@@ -15,6 +15,8 @@ La guia operativa (`docs/operational-guide.md`) SHALL incluir referencias a los 
 - **THEN** el comando `docker compose exec postgres pg_dump` sigue documentado como alternativa manual
 - **AND** la documentacion de restauracion no sufre cambios
 
+## ADDED Requirements
+
 ### Requirement: DOC-002 — Tesis v8 K8s language verified
 
 La tesis en version 8 (LaTeX) SHALL mantener el lenguaje suavizado sobre Kubernetes: "preparados para migracion" (futuro), no "mediante un cluster Kubernetes" (presente). Este requisito es de VERIFICACION unicamente.
@@ -23,8 +25,6 @@ La tesis en version 8 (LaTeX) SHALL mantener el lenguaje suavizado sobre Kuberne
 - **WHEN** se inspecciona `docs/Tesis/v8 (IA)/paper/sections/06-implementacion.tex` linea 8
 - **THEN** el texto contiene "preparados para migracion a un cluster Kubernetes~1.30"
 - **AND** NO contiene frases que afirmen que Kubernetes esta desplegado actualmente ("mediante un cluster", "se despliega en Kubernetes")
-
-## ADDED Requirements
 
 ### Requirement: DOC-003 — Anexo G referencia scripts de backup
 

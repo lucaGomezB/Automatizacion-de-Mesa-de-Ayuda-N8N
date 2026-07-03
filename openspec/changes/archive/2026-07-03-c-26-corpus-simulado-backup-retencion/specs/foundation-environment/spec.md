@@ -1,4 +1,4 @@
-## MODIFIED Requirements
+## ADDED Requirements
 
 ### Requirement: ENV-001 — N8N configurado con retencion de ejecuciones
 
