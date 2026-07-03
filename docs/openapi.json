@@ -1,9 +1,670 @@
 {
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Gestion de Incidentes API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Liveness probe",
+        "description": "Verificación de actividad del proceso (liveness probe).\n\nRetorna inmediatamente sin acceder a ningún recurso externo.\nConfirma únicamente que el proceso uvicorn está corriendo y\nque la aplicación FastAPI fue inicializada correctamente.\n\nReturns:\n    JSON con estado \"ok\" y la versión actual de la aplicación.",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Health Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/db": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Database readiness probe",
+        "description": "Verificación de conectividad con la base de datos (readiness probe).\n\nEjecuta una consulta mínima (SELECT 1) para confirmar que la conexión\na PostgreSQL está establecida y operativa. Si la base de datos no es\nalcanzable, SQLAlchemy lanzará una excepción que el manejador global\nconvertirá en una respuesta 500.\n\nUtilizado por el healthcheck del servicio 'api' en docker-compose.yml\npara evitar que el API comience a servir solicitudes antes de que\nla base de datos esté lista.\n\nReturns:\n    JSON con estado \"ok\" y confirmación de conectividad.",
+        "operationId": "health_db_health_db_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Health Db Health Db Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Liveness probe",
+        "description": "Verificación de actividad del proceso (liveness probe).\n\nRetorna inmediatamente sin acceder a ningún recurso externo.\nConfirma únicamente que el proceso uvicorn está corriendo y\nque la aplicación FastAPI fue inicializada correctamente.\n\nReturns:\n    JSON con estado \"ok\" y la versión actual de la aplicación.",
+        "operationId": "health_api_v1_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Health Api V1 Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health/db": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Database readiness probe",
+        "description": "Verificación de conectividad con la base de datos (readiness probe).\n\nEjecuta una consulta mínima (SELECT 1) para confirmar que la conexión\na PostgreSQL está establecida y operativa. Si la base de datos no es\nalcanzable, SQLAlchemy lanzará una excepción que el manejador global\nconvertirá en una respuesta 500.\n\nUtilizado por el healthcheck del servicio 'api' en docker-compose.yml\npara evitar que el API comience a servir solicitudes antes de que\nla base de datos esté lista.\n\nReturns:\n    JSON con estado \"ok\" y confirmación de conectividad.",
+        "operationId": "health_db_api_v1_health_db_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Health Db Api V1 Health Db Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Iniciar sesion y obtener token JWT",
+        "description": "Autentica al usuario con username y password, retornando un token JWT.\n\nEl token debe enviarse en el header Authorization de requests subsiguientes:\n    Authorization: Bearer <access_token>\n\nEl token expira segun la configuracion JWT_EXPIRE_MINUTES (24 horas por defecto).\n\nArgs:\n    payload: Credenciales de inicio de sesion (username + password).\n\nReturns:\n    TokenResponse con access_token y token_type \"bearer\" (HTTP 200).\n\nRaises:\n    JSONResponse 401: Si las credenciales son invalidas.",
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/incidentes/": {
+      "post": {
+        "tags": [
+          "Incidentes"
+        ],
+        "summary": "Crear y clasificar un incidente",
+        "description": "Crea un nuevo incidente y ejecuta la clasificación automática.\n\nInvocado por N8N tras recibir un correo electrónico en Outlook o una\ntranscripción de llamada de Twilio, o directamente desde un cliente HTTP.\n\nEl incidente se persiste en estado \"nuevo\" y es clasificado inmediatamente\npor el pipeline híbrido (determinístico + Gemini). El resultado incluye\nel sector asignado, la confianza de la clasificación y el indicador\nde revisión humana si la confianza fue insuficiente.\n\nArgs:\n    payload: Descripción pseudonimizada del incidente, prioridad y canal.\n\nReturns:\n    Representación completa del incidente creado y clasificado (HTTP 201).",
+        "operationId": "create_incidente_api_v1_incidentes__post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncidenteCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidenteRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Incidentes"
+        ],
+        "summary": "Listar incidentes con filtros opcionales",
+        "description": "Lista incidentes con filtros combinables y paginación.\n\nTodos los parámetros de filtro son opcionales y se combinan con AND lógico.\nEl resultado se ordena por fecha de creación descendente (más reciente primero).\nRetorna la proyección ligera IncidenteListItem (sin texto de descripción)\npara optimizar el tamaño de la respuesta en consultas masivas.",
+        "operationId": "list_incidentes_api_v1_incidentes__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sector_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filtrar por sector responsable",
+              "title": "Sector Id"
+            },
+            "description": "Filtrar por sector responsable"
+          },
+          {
+            "name": "estado_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filtrar por estado del ciclo de vida",
+              "title": "Estado Id"
+            },
+            "description": "Filtrar por estado del ciclo de vida"
+          },
+          {
+            "name": "prioridad",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/PrioridadEnum"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filtrar por nivel de prioridad",
+              "title": "Prioridad"
+            },
+            "description": "Filtrar por nivel de prioridad"
+          },
+          {
+            "name": "requiere_revision_humana",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filtrar por indicador de revisión pendiente",
+              "title": "Requiere Revision Humana"
+            },
+            "description": "Filtrar por indicador de revisión pendiente"
+          },
+          {
+            "name": "desde",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Fecha de creación mínima (ISO 8601)",
+              "title": "Desde"
+            },
+            "description": "Fecha de creación mínima (ISO 8601)"
+          },
+          {
+            "name": "hasta",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Fecha de creación máxima (ISO 8601)",
+              "title": "Hasta"
+            },
+            "description": "Fecha de creación máxima (ISO 8601)"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "description": "Cantidad máxima de resultados",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Cantidad máxima de resultados"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Desplazamiento para paginación",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Desplazamiento para paginación"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IncidenteListItem"
+                  },
+                  "title": "Response List Incidentes Api V1 Incidentes  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/incidentes/{incidente_id}": {
+      "get": {
+        "tags": [
+          "Incidentes"
+        ],
+        "summary": "Obtener el detalle completo de un incidente",
+        "description": "Retorna la representación completa de un incidente, incluyendo relaciones.\n\nA diferencia del listado, esta respuesta incluye la descripción completa\ndel incidente y los objetos de catálogo completos (sector, estado, canal).\n\nArgs:\n    incidente_id: ID del incidente a recuperar.\n\nReturns:\n    Detalle completo del incidente (HTTP 200) o error 404 si no existe.",
+        "operationId": "get_incidente_api_v1_incidentes__incidente_id__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "incidente_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Incidente Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidenteRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Incidentes"
+        ],
+        "summary": "Actualizar parcialmente un incidente",
+        "description": "Actualiza uno o más campos de un incidente existente (PATCH semántico).\n\nSolo se modifican los campos incluidos en el payload con valor distinto\nde None. Casos de uso típicos: cambio de estado por el operador,\nreasignación de sector tras revisión manual, o modificación de prioridad.\n\nArgs:\n    incidente_id: ID del incidente a modificar.\n    payload:      Campos a actualizar (todos opcionales).\n\nReturns:\n    Representación actualizada del incidente (HTTP 200) o 404 si no existe.",
+        "operationId": "update_incidente_api_v1_incidentes__incidente_id__patch",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "incidente_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Incidente Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncidenteUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidenteRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/clasificaciones/revision-pendiente": {
+      "get": {
+        "tags": [
+          "Clasificaciones"
+        ],
+        "summary": "Listar clasificaciones que requieren revisión humana",
+        "description": "Retorna la cola de clasificaciones pendientes de revisión humana.\n\nUn registro aparece en esta cola cuando el clasificador emitió\nuna confianza inferior al umbral (0.70) y el operador aún no registró\nsu validación. El orden FIFO (más antiguo primero) garantiza que\nningún incidente quede en espera indefinidamente.\n\nReturns:\n    Lista de registros de auditoría pendientes, ordenados por antigüedad.",
+        "operationId": "list_pending_review_api_v1_clasificaciones_revision_pendiente_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "description": "Cantidad máxima de resultados",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Cantidad máxima de resultados"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Desplazamiento para paginación",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Desplazamiento para paginación"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClasificacionLogRead"
+                  },
+                  "title": "Response List Pending Review Api V1 Clasificaciones Revision Pendiente Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/clasificaciones/incidente/{incidente_id}": {
+      "get": {
+        "tags": [
+          "Clasificaciones"
+        ],
+        "summary": "Historial de clasificaciones de un incidente",
+        "description": "Retorna el historial completo de clasificaciones de un incidente específico.\n\nPermite al operador ver todas las decisiones tomadas por el sistema\npara un incidente (incluyendo el registro de la etapa utilizada,\nla confianza, y la respuesta raw de Gemini si corresponde).\n\nArgs:\n    incidente_id: ID del incidente cuyo historial se desea consultar.\n\nReturns:\n    Lista de registros de auditoría ordenados del más reciente al más antiguo.",
+        "operationId": "list_by_incidente_api_v1_clasificaciones_incidente__incidente_id__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "incidente_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Incidente Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClasificacionLogRead"
+                  },
+                  "title": "Response List By Incidente Api V1 Clasificaciones Incidente  Incidente Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/clasificaciones/{log_id}/validar": {
+      "patch": {
+        "tags": [
+          "Clasificaciones"
+        ],
+        "summary": "Registrar la validación humana de una clasificación",
+        "description": "Registra la decisión del operador humano sobre la categoría correcta.\n\nEste endpoint cierra el ciclo de revisión: el operador indica cuál es\nel sector correcto para el incidente, lo que actualiza el campo\nsector_id_validado en el registro de auditoría. A partir de ese momento,\nel registro deja de aparecer en la cola de revisión pendiente y\npasa a formar parte del corpus de evaluación con etiqueta confirmada.\n\nSi el sector validado coincide con el predicho, confirma la exactitud\ndel clasificador. Si difiere, registra un caso de error para el análisis\nde métricas de la tesis.\n\nArgs:\n    log_id:  ID del registro de auditoría a validar.\n    payload: ID del sector correcto según el criterio del operador.\n\nReturns:\n    Representación actualizada del registro de auditoría (HTTP 200).",
+        "operationId": "validar_clasificacion_api_v1_clasificaciones__log_id__validar_patch",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "log_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Log Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClasificacionValidar"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClasificacionLogRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "components": {
     "schemas": {
       "CanalOrigenRead": {
-        "description": "Proyección de solo lectura del canal de ingreso del incidente.\n\nInforma al consumidor de la API a través de qué medio fue recibido\nel reporte: correo electrónico, formulario web o llamada telefónica.",
         "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
           "descripcion": {
             "anyOf": [
               {
@@ -14,51 +675,38 @@
               }
             ],
             "title": "Descripcion"
-          },
-          "id": {
-            "title": "Id",
-            "type": "integer"
-          },
-          "nombre": {
-            "title": "Nombre",
-            "type": "string"
           }
         },
+        "type": "object",
         "required": [
           "id",
           "nombre",
           "descripcion"
         ],
         "title": "CanalOrigenRead",
-        "type": "object"
+        "description": "Proyección de solo lectura del canal de ingreso del incidente.\n\nInforma al consumidor de la API a través de qué medio fue recibido\nel reporte: correo electrónico, formulario web o llamada telefónica."
       },
       "ClasificacionLogRead": {
-        "description": "Representación de un registro de auditoría para la API HTTP.\n\nExpone el historial de clasificaciones de un incidente, incluyendo\nel sector predicho y el sector validado manualmente (si existe).\nEs la forma en que los operadores humanos acceden a los registros\npendientes de revisión a través de los endpoints correspondientes.",
         "properties": {
-          "confianza": {
-            "title": "Confianza",
-            "type": "number"
-          },
-          "created_at": {
-            "format": "date-time",
-            "title": "Created At",
-            "type": "string"
-          },
-          "etapa": {
-            "title": "Etapa",
-            "type": "string"
-          },
           "id": {
-            "title": "Id",
-            "type": "integer"
+            "type": "integer",
+            "title": "Id"
           },
           "incidente_id": {
-            "title": "Incidente Id",
-            "type": "integer"
+            "type": "integer",
+            "title": "Incidente Id"
+          },
+          "confianza": {
+            "type": "number",
+            "title": "Confianza"
+          },
+          "etapa": {
+            "type": "string",
+            "title": "Etapa"
           },
           "requiere_revision_humana": {
-            "title": "Requiere Revision Humana",
-            "type": "boolean"
+            "type": "boolean",
+            "title": "Requiere Revision Humana"
           },
           "respuesta_raw": {
             "anyOf": [
@@ -70,6 +718,11 @@
               }
             ],
             "title": "Respuesta Raw"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
           },
           "sector_predicho": {
             "anyOf": [
@@ -92,6 +745,7 @@
             ]
           }
         },
+        "type": "object",
         "required": [
           "id",
           "incidente_id",
@@ -104,25 +758,32 @@
           "sector_validado"
         ],
         "title": "ClasificacionLogRead",
-        "type": "object"
+        "description": "Representación de un registro de auditoría para la API HTTP.\n\nExpone el historial de clasificaciones de un incidente, incluyendo\nel sector predicho y el sector validado manualmente (si existe).\nEs la forma en que los operadores humanos acceden a los registros\npendientes de revisión a través de los endpoints correspondientes."
       },
       "ClasificacionValidar": {
-        "description": "Payload enviado por el operador humano para validar o corregir una clasificación.\n\nEl campo sector_id_validado referencia al sector correcto según el criterio\ndel operador. Este dato se almacena en clasificacion_log.sector_id_validado\ny constituye la etiqueta de verdad para las métricas de evaluación del sistema.",
         "properties": {
           "sector_id_validado": {
-            "title": "Sector Id Validado",
-            "type": "integer"
+            "type": "integer",
+            "title": "Sector Id Validado"
           }
         },
+        "type": "object",
         "required": [
           "sector_id_validado"
         ],
         "title": "ClasificacionValidar",
-        "type": "object"
+        "description": "Payload enviado por el operador humano para validar o corregir una clasificación.\n\nEl campo sector_id_validado referencia al sector correcto según el criterio\ndel operador. Este dato se almacena en clasificacion_log.sector_id_validado\ny constituye la etiqueta de verdad para las métricas de evaluación del sistema."
       },
       "EstadoRead": {
-        "description": "Proyección de solo lectura de un estado del ciclo de vida del incidente.\n\nEl campo es_terminal permite a los clientes de la API identificar si el\nincidente llegó a un estado final sin necesidad de lógica adicional.",
         "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
           "descripcion": {
             "anyOf": [
               {
@@ -135,18 +796,11 @@
             "title": "Descripcion"
           },
           "es_terminal": {
-            "title": "Es Terminal",
-            "type": "boolean"
-          },
-          "id": {
-            "title": "Id",
-            "type": "integer"
-          },
-          "nombre": {
-            "title": "Nombre",
-            "type": "string"
+            "type": "boolean",
+            "title": "Es Terminal"
           }
         },
+        "type": "object",
         "required": [
           "id",
           "nombre",
@@ -154,7 +808,7 @@
           "es_terminal"
         ],
         "title": "EstadoRead",
-        "type": "object"
+        "description": "Proyección de solo lectura de un estado del ciclo de vida del incidente.\n\nEl campo es_terminal permite a los clientes de la API identificar si el\nincidente llegó a un estado final sin necesidad de lógica adicional."
       },
       "HTTPValidationError": {
         "properties": {
@@ -162,16 +816,26 @@
             "items": {
               "$ref": "#/components/schemas/ValidationError"
             },
-            "title": "Detail",
-            "type": "array"
+            "type": "array",
+            "title": "Detail"
           }
         },
-        "title": "HTTPValidationError",
-        "type": "object"
+        "type": "object",
+        "title": "HTTPValidationError"
       },
       "IncidenteCreate": {
-        "description": "Payload de creación de un incidente.\n\nAceptado por el endpoint POST /api/v1/incidentes. Puede provenir de:\n    - El webhook de N8N tras recibir un correo electrónico en Outlook.\n    - El webhook de N8N tras procesar la transcripción de una llamada en Twilio.\n    - Una llamada directa a la API desde un cliente externo.\n\nValidaciones de negocio:\n    - La descripción no puede estar en blanco ni ser solo espacios.\n    - La longitud mínima de 10 caracteres evita incidentes vacíos de contenido.\n    - La longitud máxima de 5000 caracteres previene abusos de almacenamiento.",
         "properties": {
+          "descripcion": {
+            "type": "string",
+            "maxLength": 5000,
+            "minLength": 10,
+            "title": "Descripcion",
+            "description": "Texto pseudonimizado del incidente. Mínimo 10 caracteres."
+          },
+          "prioridad": {
+            "$ref": "#/components/schemas/PrioridadEnum",
+            "default": "media"
+          },
           "canal_origen_id": {
             "anyOf": [
               {
@@ -182,46 +846,32 @@
               }
             ],
             "title": "Canal Origen Id"
-          },
-          "descripcion": {
-            "description": "Texto pseudonimizado del incidente. Mínimo 10 caracteres.",
-            "maxLength": 5000,
-            "minLength": 10,
-            "title": "Descripcion",
-            "type": "string"
-          },
-          "prioridad": {
-            "$ref": "#/components/schemas/PrioridadEnum",
-            "default": "media"
           }
         },
+        "type": "object",
         "required": [
           "descripcion"
         ],
         "title": "IncidenteCreate",
-        "type": "object"
+        "description": "Payload de creación de un incidente.\n\nAceptado por el endpoint POST /api/v1/incidentes. Puede provenir de:\n    - El webhook de N8N tras recibir un correo electrónico en Outlook.\n    - El webhook de N8N tras procesar la transcripción de una llamada en Twilio.\n    - Una llamada directa a la API desde un cliente externo.\n\nValidaciones de negocio:\n    - La descripción no puede estar en blanco ni ser solo espacios.\n    - La longitud mínima de 10 caracteres evita incidentes vacíos de contenido.\n    - La longitud máxima de 5000 caracteres previene abusos de almacenamiento."
       },
       "IncidenteListItem": {
-        "description": "Proyección ligera de un incidente para endpoints de listado.\n\nOmite el campo 'descripcion' para reducir el tamaño de las respuestas\ncuando se listan múltiples incidentes. Los consumidores que necesiten\nel texto completo deben usar el endpoint de detalle individual.",
         "properties": {
-          "created_at": {
-            "format": "date-time",
-            "title": "Created At",
-            "type": "string"
-          },
-          "estado": {
-            "$ref": "#/components/schemas/EstadoRead"
-          },
           "id": {
-            "title": "Id",
-            "type": "integer"
+            "type": "integer",
+            "title": "Id"
           },
           "prioridad": {
             "$ref": "#/components/schemas/PrioridadEnum"
           },
           "requiere_revision_humana": {
-            "title": "Requiere Revision Humana",
-            "type": "boolean"
+            "type": "boolean",
+            "title": "Requiere Revision Humana"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
           },
           "sector": {
             "anyOf": [
@@ -232,8 +882,12 @@
                 "type": "null"
               }
             ]
+          },
+          "estado": {
+            "$ref": "#/components/schemas/EstadoRead"
           }
         },
+        "type": "object",
         "required": [
           "id",
           "prioridad",
@@ -243,43 +897,34 @@
           "estado"
         ],
         "title": "IncidenteListItem",
-        "type": "object"
+        "description": "Proyección ligera de un incidente para endpoints de listado.\n\nOmite el campo 'descripcion' para reducir el tamaño de las respuestas\ncuando se listan múltiples incidentes. Los consumidores que necesiten\nel texto completo deben usar el endpoint de detalle individual."
       },
       "IncidenteRead": {
-        "description": "Representación completa de un incidente para el endpoint de detalle.\n\nIncluye los objetos relacionados completos (sector, estado, canal_origen)\nen lugar de solo sus IDs, para que el cliente no necesite realizar\nconsultas adicionales para obtener sus nombres.\n\nPolítica de privacidad (C-03, Ley 25.326):\n    Solo se expone 'descripcion_pseudonimizada' (texto con etiquetas PII).\n    'descripcion_original' (cifrada, con PII) NO forma parte de esta respuesta.",
         "properties": {
-          "canal_origen": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/CanalOrigenRead"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "created_at": {
-            "format": "date-time",
-            "title": "Created At",
-            "type": "string"
+          "id": {
+            "type": "integer",
+            "title": "Id"
           },
           "descripcion_pseudonimizada": {
-            "title": "Descripcion Pseudonimizada",
-            "type": "string"
-          },
-          "estado": {
-            "$ref": "#/components/schemas/EstadoRead"
-          },
-          "id": {
-            "title": "Id",
-            "type": "integer"
+            "type": "string",
+            "title": "Descripcion Pseudonimizada"
           },
           "prioridad": {
             "$ref": "#/components/schemas/PrioridadEnum"
           },
           "requiere_revision_humana": {
-            "title": "Requiere Revision Humana",
-            "type": "boolean"
+            "type": "boolean",
+            "title": "Requiere Revision Humana"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
           },
           "sector": {
             "anyOf": [
@@ -291,12 +936,21 @@
               }
             ]
           },
-          "updated_at": {
-            "format": "date-time",
-            "title": "Updated At",
-            "type": "string"
+          "estado": {
+            "$ref": "#/components/schemas/EstadoRead"
+          },
+          "canal_origen": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CanalOrigenRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
+        "type": "object",
         "required": [
           "id",
           "descripcion_pseudonimizada",
@@ -309,11 +963,20 @@
           "canal_origen"
         ],
         "title": "IncidenteRead",
-        "type": "object"
+        "description": "Representación completa de un incidente para el endpoint de detalle.\n\nIncluye los objetos relacionados completos (sector, estado, canal_origen)\nen lugar de solo sus IDs, para que el cliente no necesite realizar\nconsultas adicionales para obtener sus nombres.\n\nPolítica de privacidad (C-03, Ley 25.326):\n    Solo se expone 'descripcion_pseudonimizada' (texto con etiquetas PII).\n    'descripcion_original' (cifrada, con PII) NO forma parte de esta respuesta."
       },
       "IncidenteUpdate": {
-        "description": "Payload de actualización parcial de un incidente.\n\nTodos los campos son opcionales. El servicio aplica únicamente los\ncampos con valor no nulo, implementando el patrón PATCH semántico.\n\nCasos de uso típicos:\n    - Cambio de estado por el operador de mesa de ayuda.\n    - Reasignación de sector tras revisión manual.\n    - Cambio de prioridad ante escalamiento.\n    - Marcado o desmarcado de revisión humana requerida.",
         "properties": {
+          "prioridad": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PrioridadEnum"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "estado_id": {
             "anyOf": [
               {
@@ -325,15 +988,16 @@
             ],
             "title": "Estado Id"
           },
-          "prioridad": {
+          "sector_id": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/PrioridadEnum"
+                "type": "integer"
               },
               {
                 "type": "null"
               }
-            ]
+            ],
+            "title": "Sector Id"
           },
           "requiere_revision_humana": {
             "anyOf": [
@@ -345,24 +1009,37 @@
               }
             ],
             "title": "Requiere Revision Humana"
-          },
-          "sector_id": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Sector Id"
           }
         },
+        "type": "object",
         "title": "IncidenteUpdate",
-        "type": "object"
+        "description": "Payload de actualización parcial de un incidente.\n\nTodos los campos son opcionales. El servicio aplica únicamente los\ncampos con valor no nulo, implementando el patrón PATCH semántico.\n\nCasos de uso típicos:\n    - Cambio de estado por el operador de mesa de ayuda.\n    - Reasignación de sector tras revisión manual.\n    - Cambio de prioridad ante escalamiento.\n    - Marcado o desmarcado de revisión humana requerida."
+      },
+      "LoginRequest": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Username",
+            "description": "Nombre de usuario"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Password",
+            "description": "Password en texto plano"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "LoginRequest",
+        "description": "Payload de inicio de sesion.\n\nAceptado por POST /api/v1/auth/login. Ambos campos son requeridos."
       },
       "PrioridadEnum": {
-        "description": "Enumeración de niveles de prioridad de un incidente.\n\nHereda de str para que SQLAlchemy almacene el valor textual en la base\nde datos, lo que mejora la legibilidad de consultas directas y simplifica\nla serialización en las respuestas JSON de la API.\n\nNiveles (de menor a mayor urgencia):\n    baja    → Puede ser atendido en el próximo turno disponible.\n    media   → Valor por defecto; afecta a un usuario individual.\n    alta    → Afecta a múltiples usuarios o un proceso crítico.\n    critica → Detención de operaciones; requiere atención inmediata.",
+        "type": "string",
         "enum": [
           "baja",
           "media",
@@ -370,11 +1047,18 @@
           "critica"
         ],
         "title": "PrioridadEnum",
-        "type": "string"
+        "description": "Enumeración de niveles de prioridad de un incidente.\n\nHereda de str para que SQLAlchemy almacene el valor textual en la base\nde datos, lo que mejora la legibilidad de consultas directas y simplifica\nla serialización en las respuestas JSON de la API.\n\nNiveles (de menor a mayor urgencia):\n    baja    → Puede ser atendido en el próximo turno disponible.\n    media   → Valor por defecto; afecta a un usuario individual.\n    alta    → Afecta a múltiples usuarios o un proceso crítico.\n    critica → Detención de operaciones; requiere atención inmediata."
       },
       "SectorRead": {
-        "description": "Proyección de solo lectura de un sector responsable.\n\nUtilizada en las respuestas de endpoints de incidentes y clasificaciones\npara presentar el sector asignado sin exponer detalles internos del ORM.",
         "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
           "descripcion": {
             "anyOf": [
               {
@@ -385,23 +1069,37 @@
               }
             ],
             "title": "Descripcion"
-          },
-          "id": {
-            "title": "Id",
-            "type": "integer"
-          },
-          "nombre": {
-            "title": "Nombre",
-            "type": "string"
           }
         },
+        "type": "object",
         "required": [
           "id",
           "nombre",
           "descripcion"
         ],
         "title": "SectorRead",
-        "type": "object"
+        "description": "Proyección de solo lectura de un sector responsable.\n\nUtilizada en las respuestas de endpoints de incidentes y clasificaciones\npara presentar el sector asignado sin exponer detalles internos del ORM."
+      },
+      "TokenResponse": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token",
+            "description": "Token JWT firmado"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "description": "Tipo de token (bearer)",
+            "default": "bearer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token"
+        ],
+        "title": "TokenResponse",
+        "description": "Respuesta exitosa de autenticacion.\n\nContiene el token JWT firmado y el tipo de token (siempre \"bearer\")."
       },
       "ValidationError": {
         "properties": {
@@ -416,598 +1114,36 @@
                 }
               ]
             },
-            "title": "Location",
-            "type": "array"
+            "type": "array",
+            "title": "Location"
           },
           "msg": {
-            "title": "Message",
-            "type": "string"
+            "type": "string",
+            "title": "Message"
           },
           "type": {
-            "title": "Error Type",
-            "type": "string"
+            "type": "string",
+            "title": "Error Type"
           }
         },
+        "type": "object",
         "required": [
           "loc",
           "msg",
           "type"
         ],
-        "title": "ValidationError",
-        "type": "object"
-      }
-    }
-  },
-  "info": {
-    "title": "Gestion de Incidentes API",
-    "version": "1.0.0"
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/api/v1/clasificaciones/incidente/{incidente_id}": {
-      "get": {
-        "description": "Retorna el historial completo de clasificaciones de un incidente específico.\n\nPermite al operador ver todas las decisiones tomadas por el sistema\npara un incidente (incluyendo el registro de la etapa utilizada,\nla confianza, y la respuesta raw de Gemini si corresponde).\n\nArgs:\n    incidente_id: ID del incidente cuyo historial se desea consultar.\n\nReturns:\n    Lista de registros de auditoría ordenados del más reciente al más antiguo.",
-        "operationId": "list_by_incidente_api_v1_clasificaciones_incidente__incidente_id__get",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "incidente_id",
-            "required": true,
-            "schema": {
-              "title": "Incidente Id",
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/ClasificacionLogRead"
-                  },
-                  "title": "Response List By Incidente Api V1 Clasificaciones Incidente  Incidente Id  Get",
-                  "type": "array"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Historial de clasificaciones de un incidente",
-        "tags": [
-          "Clasificaciones"
-        ]
+        "title": "ValidationError"
       }
     },
-    "/api/v1/clasificaciones/revision-pendiente": {
-      "get": {
-        "description": "Retorna la cola de clasificaciones pendientes de revisión humana.\n\nUn registro aparece en esta cola cuando el clasificador emitió\nuna confianza inferior al umbral (0.70) y el operador aún no registró\nsu validación. El orden FIFO (más antiguo primero) garantiza que\nningún incidente quede en espera indefinidamente.\n\nReturns:\n    Lista de registros de auditoría pendientes, ordenados por antigüedad.",
-        "operationId": "list_pending_review_api_v1_clasificaciones_revision_pendiente_get",
-        "parameters": [
-          {
-            "description": "Cantidad máxima de resultados",
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "default": 50,
-              "description": "Cantidad máxima de resultados",
-              "maximum": 200,
-              "minimum": 1,
-              "title": "Limit",
-              "type": "integer"
-            }
-          },
-          {
-            "description": "Desplazamiento para paginación",
-            "in": "query",
-            "name": "offset",
-            "required": false,
-            "schema": {
-              "default": 0,
-              "description": "Desplazamiento para paginación",
-              "minimum": 0,
-              "title": "Offset",
-              "type": "integer"
-            }
+    "securitySchemes": {
+      "OAuth2PasswordBearer": {
+        "type": "oauth2",
+        "flows": {
+          "password": {
+            "scopes": {},
+            "tokenUrl": "/api/v1/auth/login"
           }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/ClasificacionLogRead"
-                  },
-                  "title": "Response List Pending Review Api V1 Clasificaciones Revision Pendiente Get",
-                  "type": "array"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Listar clasificaciones que requieren revisión humana",
-        "tags": [
-          "Clasificaciones"
-        ]
-      }
-    },
-    "/api/v1/clasificaciones/{log_id}/validar": {
-      "patch": {
-        "description": "Registra la decisión del operador humano sobre la categoría correcta.\n\nEste endpoint cierra el ciclo de revisión: el operador indica cuál es\nel sector correcto para el incidente, lo que actualiza el campo\nsector_id_validado en el registro de auditoría. A partir de ese momento,\nel registro deja de aparecer en la cola de revisión pendiente y\npasa a formar parte del corpus de evaluación con etiqueta confirmada.\n\nSi el sector validado coincide con el predicho, confirma la exactitud\ndel clasificador. Si difiere, registra un caso de error para el análisis\nde métricas de la tesis.\n\nArgs:\n    log_id:  ID del registro de auditoría a validar.\n    payload: ID del sector correcto según el criterio del operador.\n\nReturns:\n    Representación actualizada del registro de auditoría (HTTP 200).",
-        "operationId": "validar_clasificacion_api_v1_clasificaciones__log_id__validar_patch",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "log_id",
-            "required": true,
-            "schema": {
-              "title": "Log Id",
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ClasificacionValidar"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ClasificacionLogRead"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Registrar la validación humana de una clasificación",
-        "tags": [
-          "Clasificaciones"
-        ]
-      }
-    },
-    "/api/v1/health": {
-      "get": {
-        "description": "Verificación de actividad del proceso (liveness probe).\n\nRetorna inmediatamente sin acceder a ningún recurso externo.\nConfirma únicamente que el proceso uvicorn está corriendo y\nque la aplicación FastAPI fue inicializada correctamente.\n\nReturns:\n    JSON con estado \"ok\" y la versión actual de la aplicación.",
-        "operationId": "health_api_v1_health_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "title": "Response Health Api V1 Health Get",
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Liveness probe",
-        "tags": [
-          "Health"
-        ]
-      }
-    },
-    "/api/v1/health/db": {
-      "get": {
-        "description": "Verificación de conectividad con la base de datos (readiness probe).\n\nEjecuta una consulta mínima (SELECT 1) para confirmar que la conexión\na PostgreSQL está establecida y operativa. Si la base de datos no es\nalcanzable, SQLAlchemy lanzará una excepción que el manejador global\nconvertirá en una respuesta 500.\n\nUtilizado por el healthcheck del servicio 'api' en docker-compose.yml\npara evitar que el API comience a servir solicitudes antes de que\nla base de datos esté lista.\n\nReturns:\n    JSON con estado \"ok\" y confirmación de conectividad.",
-        "operationId": "health_db_api_v1_health_db_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "title": "Response Health Db Api V1 Health Db Get",
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Database readiness probe",
-        "tags": [
-          "Health"
-        ]
-      }
-    },
-    "/api/v1/incidentes/": {
-      "get": {
-        "description": "Lista incidentes con filtros combinables y paginación.\n\nTodos los parámetros de filtro son opcionales y se combinan con AND lógico.\nEl resultado se ordena por fecha de creación descendente (más reciente primero).\nRetorna la proyección ligera IncidenteListItem (sin texto de descripción)\npara optimizar el tamaño de la respuesta en consultas masivas.",
-        "operationId": "list_incidentes_api_v1_incidentes__get",
-        "parameters": [
-          {
-            "description": "Filtrar por sector responsable",
-            "in": "query",
-            "name": "sector_id",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Filtrar por sector responsable",
-              "title": "Sector Id"
-            }
-          },
-          {
-            "description": "Filtrar por estado del ciclo de vida",
-            "in": "query",
-            "name": "estado_id",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Filtrar por estado del ciclo de vida",
-              "title": "Estado Id"
-            }
-          },
-          {
-            "description": "Filtrar por nivel de prioridad",
-            "in": "query",
-            "name": "prioridad",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/PrioridadEnum"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Filtrar por nivel de prioridad",
-              "title": "Prioridad"
-            }
-          },
-          {
-            "description": "Filtrar por indicador de revisión pendiente",
-            "in": "query",
-            "name": "requiere_revision_humana",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "boolean"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Filtrar por indicador de revisión pendiente",
-              "title": "Requiere Revision Humana"
-            }
-          },
-          {
-            "description": "Fecha de creación mínima (ISO 8601)",
-            "in": "query",
-            "name": "desde",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "format": "date-time",
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Fecha de creación mínima (ISO 8601)",
-              "title": "Desde"
-            }
-          },
-          {
-            "description": "Fecha de creación máxima (ISO 8601)",
-            "in": "query",
-            "name": "hasta",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "format": "date-time",
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Fecha de creación máxima (ISO 8601)",
-              "title": "Hasta"
-            }
-          },
-          {
-            "description": "Cantidad máxima de resultados",
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "default": 50,
-              "description": "Cantidad máxima de resultados",
-              "maximum": 200,
-              "minimum": 1,
-              "title": "Limit",
-              "type": "integer"
-            }
-          },
-          {
-            "description": "Desplazamiento para paginación",
-            "in": "query",
-            "name": "offset",
-            "required": false,
-            "schema": {
-              "default": 0,
-              "description": "Desplazamiento para paginación",
-              "minimum": 0,
-              "title": "Offset",
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/IncidenteListItem"
-                  },
-                  "title": "Response List Incidentes Api V1 Incidentes  Get",
-                  "type": "array"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Listar incidentes con filtros opcionales",
-        "tags": [
-          "Incidentes"
-        ]
-      },
-      "post": {
-        "description": "Crea un nuevo incidente y ejecuta la clasificación automática.\n\nInvocado por N8N tras recibir un correo electrónico en Outlook o una\ntranscripción de llamada de Twilio, o directamente desde un cliente HTTP.\n\nEl incidente se persiste en estado \"nuevo\" y es clasificado inmediatamente\npor el pipeline híbrido (determinístico + Gemini). El resultado incluye\nel sector asignado, la confianza de la clasificación y el indicador\nde revisión humana si la confianza fue insuficiente.\n\nArgs:\n    payload: Descripción pseudonimizada del incidente, prioridad y canal.\n\nReturns:\n    Representación completa del incidente creado y clasificado (HTTP 201).",
-        "operationId": "create_incidente_api_v1_incidentes__post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/IncidenteCreate"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IncidenteRead"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Crear y clasificar un incidente",
-        "tags": [
-          "Incidentes"
-        ]
-      }
-    },
-    "/api/v1/incidentes/{incidente_id}": {
-      "get": {
-        "description": "Retorna la representación completa de un incidente, incluyendo relaciones.\n\nA diferencia del listado, esta respuesta incluye la descripción completa\ndel incidente y los objetos de catálogo completos (sector, estado, canal).\n\nArgs:\n    incidente_id: ID del incidente a recuperar.\n\nReturns:\n    Detalle completo del incidente (HTTP 200) o error 404 si no existe.",
-        "operationId": "get_incidente_api_v1_incidentes__incidente_id__get",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "incidente_id",
-            "required": true,
-            "schema": {
-              "title": "Incidente Id",
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IncidenteRead"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Obtener el detalle completo de un incidente",
-        "tags": [
-          "Incidentes"
-        ]
-      },
-      "patch": {
-        "description": "Actualiza uno o más campos de un incidente existente (PATCH semántico).\n\nSolo se modifican los campos incluidos en el payload con valor distinto\nde None. Casos de uso típicos: cambio de estado por el operador,\nreasignación de sector tras revisión manual, o modificación de prioridad.\n\nArgs:\n    incidente_id: ID del incidente a modificar.\n    payload:      Campos a actualizar (todos opcionales).\n\nReturns:\n    Representación actualizada del incidente (HTTP 200) o 404 si no existe.",
-        "operationId": "update_incidente_api_v1_incidentes__incidente_id__patch",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "incidente_id",
-            "required": true,
-            "schema": {
-              "title": "Incidente Id",
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/IncidenteUpdate"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IncidenteRead"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Actualizar parcialmente un incidente",
-        "tags": [
-          "Incidentes"
-        ]
-      }
-    },
-    "/health": {
-      "get": {
-        "description": "Verificación de actividad del proceso (liveness probe).\n\nRetorna inmediatamente sin acceder a ningún recurso externo.\nConfirma únicamente que el proceso uvicorn está corriendo y\nque la aplicación FastAPI fue inicializada correctamente.\n\nReturns:\n    JSON con estado \"ok\" y la versión actual de la aplicación.",
-        "operationId": "health_health_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "title": "Response Health Health Get",
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Liveness probe",
-        "tags": [
-          "Health"
-        ]
-      }
-    },
-    "/health/db": {
-      "get": {
-        "description": "Verificación de conectividad con la base de datos (readiness probe).\n\nEjecuta una consulta mínima (SELECT 1) para confirmar que la conexión\na PostgreSQL está establecida y operativa. Si la base de datos no es\nalcanzable, SQLAlchemy lanzará una excepción que el manejador global\nconvertirá en una respuesta 500.\n\nUtilizado por el healthcheck del servicio 'api' en docker-compose.yml\npara evitar que el API comience a servir solicitudes antes de que\nla base de datos esté lista.\n\nReturns:\n    JSON con estado \"ok\" y confirmación de conectividad.",
-        "operationId": "health_db_health_db_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "title": "Response Health Db Health Db Get",
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Database readiness probe",
-        "tags": [
-          "Health"
-        ]
+        }
       }
     }
   }
