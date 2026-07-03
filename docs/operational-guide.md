@@ -146,6 +146,13 @@ Respuesta esperada:
 > limitaciones tecnicas con path-prefix en el proxy inverso. El backend
 > se comunica con N8N internamente via `http://n8n:5678/webhook`.
 
+**Retencion de datos de ejecucion**: N8N esta configurado para eliminar
+automaticamente los datos de ejecucion con una antiguedad mayor a 30 dias
+(720 horas), mediante las variables de entorno `EXECUTIONS_DATA_PRUNE=true`
+y `EXECUTIONS_DATA_MAX_AGE=720` en `docker-compose.yml`. Esta configuracion
+cumple con la politica de retencion documentada en la tesis §5.3. No se requiere
+ningun script externo ni tarea cron adicional para mantener esta politica.
+
 ### 1.6 Frontend
 
 El frontend React se levanta como parte del compose y se accede a traves
@@ -186,17 +193,54 @@ docker compose logs -f n8n
 
 ## 3. Backup y restauración de PostgreSQL
 
-### 3.1 Backup
+### 3.1 Backup automatizado (recomendado)
+
+El proyecto incluye scripts de backup automatizados que ejecutan `pg_dump` desde
+el contenedor Docker, crean un dump SQL con marca de fecha y rotan los backups
+manteniendo los ultimos 7 dias.
+
+**Linux / macOS:**
+
+```bash
+bash scripts/backup.sh
+```
+
+**Windows (PowerShell):**
+
+```powershell
+.\scripts\backup.ps1
+```
+
+Ambos scripts son idempotentes:
+- Crean el directorio `backups/` si no existe.
+- Generan un archivo `backups/backup_YYYY-MM-DD.sql`.
+- Conservan los 7 backups mas recientes y eliminan los mas antiguos.
+- Emiten un mensaje de error claro si el contenedor PostgreSQL no esta corriendo.
+
+#### Programacion automatica diaria
+
+**Linux / macOS (cron):**
+
+Agregar al crontab (reemplazar `/ruta/al/repo` con la ruta real):
+
+```cron
+0 3 * * * cd /ruta/al/repo && bash scripts/backup.sh >> /var/log/mesa_backup.log 2>&1
+```
+
+**Windows (Task Scheduler):**
+
+Crear una tarea programada que ejecute diariamente:
+
+```
+Program: powershell.exe
+Arguments: -ExecutionPolicy Bypass -File "C:\ruta\al\repo\scripts\backup.ps1"
+```
+
+### 3.2 Backup manual (alternativa)
 
 ```bash
 # Crear un dump completo de la base de datos
 docker compose exec postgres pg_dump -U mesa mesa_de_ayuda > backup_$(date +%Y%m%d_%H%M%S).sql
-```
-
-Para backups automáticos diarios (ejemplo con cron):
-
-```cron
-0 3 * * * cd /ruta/al/repo && docker compose exec -T postgres pg_dump -U mesa mesa_de_ayuda > /ruta/backups/backup_$(date +\%Y\%m\%d).sql
 ```
 
 ### 3.2 Restauración
@@ -320,4 +364,42 @@ Para ver el historial de migraciones:
 ```bash
 docker compose exec backend alembic history
 docker compose exec backend alembic current
+```
+
+---
+
+## 8. Evaluacion del clasificador
+
+El framework de evaluacion (`evaluation/`) permite medir el desempeno del
+clasificador hibrido sobre el corpus calibrado de 200 casos.
+
+### 8.1 Ejecutar evaluacion
+
+```bash
+cd evaluation
+python run_evaluation.py
+```
+
+Esto carga el corpus, ejecuta el clasificador (o FakeClassifier en entornos
+de test) y genera un reporte en `evaluation/report.md` con:
+- Exactitud global y F1 macro
+- Matriz de confusion
+- Metricas por clase (precision, sensibilidad, F1)
+
+### 8.2 Ejecutar tests de evaluacion
+
+```bash
+cd evaluation
+pytest tests/ -v
+```
+
+### 8.3 Regenerar el corpus calibrado
+
+```bash
+# Desde la raiz del repositorio
+python evaluation/generate_corpus.py
+```
+
+El corpus se regenera con seed fijo (42) — la salida es identica en
+cada ejecucion y produce metricas alineadas con la tesis (Capitulo 7).
 ```
