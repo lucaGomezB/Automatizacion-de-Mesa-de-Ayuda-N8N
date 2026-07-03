@@ -232,6 +232,14 @@
       "sessions": 0,
       "memories": 5,
       "prompts": 0
+    },
+    {
+      "id": "8cc10007",
+      "created_by": "Skywalker",
+      "created_at": "2026-07-03T21:14:49Z",
+      "sessions": 8,
+      "memories": 49,
+      "prompts": 92
     }
   ]
 }
