@@ -29,6 +29,7 @@ from app.core.exceptions import (
     GeminiTimeoutError,
     GeminiUnavailableError,
     IncidentValidationError,
+    IncidenteCerradoError,
 )
 from app.core.logging import get_logger
 
@@ -110,6 +111,16 @@ def register_error_handlers(app: FastAPI) -> None:
         return JSONResponse(
             status_code=503,
             content=_error_body("CLASSIFIER_UNAVAILABLE", exc.message),
+        )
+
+    @app.exception_handler(IncidenteCerradoError)
+    async def incidente_cerrado_handler(
+        request: Request, exc: IncidenteCerradoError
+    ) -> JSONResponse:
+        """Convierte IncidenteCerradoError en respuesta 409 Conflict."""
+        return JSONResponse(
+            status_code=409,
+            content=_error_body("INCIDENTE_CERRADO", exc.message, exc.details),
         )
 
     @app.exception_handler(ClassificationError)

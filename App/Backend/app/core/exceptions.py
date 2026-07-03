@@ -141,3 +141,19 @@ class EstadoNotFoundError(AppBaseException):
 
 class CanalOrigenNotFoundError(AppBaseException):
     """El canal de origen referenciado no existe en el catálogo correspondiente."""
+
+
+class IncidenteCerradoError(AppBaseException):
+    """
+    Se intento modificar un incidente que esta en estado terminal (cerrado).
+
+    Los incidentes con estado terminal son de solo lectura. Cualquier intento
+    de PATCH debe ser rechazado con HTTP 409 Conflict.
+    """
+
+    def __init__(self, incidente_id: int) -> None:
+        super().__init__(
+            "Los incidentes cerrados son de solo lectura",
+            {"incidente_id": incidente_id, "code": "INCIDENTE_CERRADO"},
+        )
+        self.incidente_id = incidente_id

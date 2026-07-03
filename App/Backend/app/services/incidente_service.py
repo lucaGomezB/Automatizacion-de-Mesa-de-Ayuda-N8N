@@ -34,6 +34,7 @@ from app.core.exceptions import (
     CanalOrigenNotFoundError,
     EntityNotFoundError,
     EstadoNotFoundError,
+    IncidenteCerradoError,
 )
 from app.core.logging import get_logger
 from app.models.catalog import CanalOrigen, Estado
@@ -232,8 +233,14 @@ class IncidenteService:
         Raises:
             EntityNotFoundError: Si no existe el incidente con ese ID.
         """
-        # Verificar existencia antes de intentar la actualización
-        await self._incidente_repo.get_by_id(incidente_id)
+        # Verificar existencia antes de intentar la actualización.
+        # get_by_id carga relaciones con selectinload, incluyendo estado.
+        incidente = await self.get_by_id(incidente_id)
+
+        # Bloquear escritura si el incidente está en estado terminal (cerrado).
+        if incidente.estado.es_terminal:
+            raise IncidenteCerradoError(incidente_id)
+
         updates = payload.model_dump(exclude_none=True)  # Solo campos no nulos
         await self._incidente_repo.update_fields(incidente_id, **updates)
         return await self.get_by_id(incidente_id)

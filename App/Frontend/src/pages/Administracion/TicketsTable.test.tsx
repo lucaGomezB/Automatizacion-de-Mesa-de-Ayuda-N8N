@@ -142,4 +142,28 @@ describe('TicketsTable', () => {
     await user.click(screen.getByText('#00007'));
     expect(onSelectIncidente).toHaveBeenCalledWith(7);
   });
+
+  // ---- Read-only para incidentes cerrados (C-23) ----
+
+  it('muestra indicador Solo lectura para incidentes con estado terminal', () => {
+    const estadoCerrado = { id: 5, nombre: 'cerrado', descripcion: null, es_terminal: true };
+    const incidentes = [
+      makeItem(1),
+      makeItem(2, { estado: estadoCerrado }),
+    ];
+
+    render(<TicketsTable {...defaultProps} incidentes={incidentes} />);
+
+    // El incidente cerrado debe mostrar el indicador "Solo lectura"
+    expect(screen.getByText('Solo lectura')).toBeInTheDocument();
+  });
+
+  it('NO muestra indicador Solo lectura para incidentes no terminales', () => {
+    const estadoProceso = { id: 2, nombre: 'en proceso', descripcion: null, es_terminal: false };
+    const incidentes = [makeItem(1, { estado: estadoProceso })];
+
+    render(<TicketsTable {...defaultProps} incidentes={incidentes} />);
+
+    expect(screen.queryByText('Solo lectura')).not.toBeInTheDocument();
+  });
 });

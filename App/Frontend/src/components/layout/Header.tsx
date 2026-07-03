@@ -11,7 +11,7 @@
  *   El estilo active de los NavLinks se aplica dinámicamente para reflejar la ruta actual.
  */
 import { NavLink, useLocation } from 'react-router-dom';
-import { TicketCheck } from 'lucide-react';
+import { BarChart3, TicketCheck } from 'lucide-react';
 import { useHealthCheck } from '@/hooks/useHealthCheck';
 import { cn } from '@/lib/utils';
 
@@ -50,6 +50,10 @@ export function Header() {
         <nav className="flex items-center justify-center gap-1">
           <NavLink to="/" end className={navLinkClass}>
             Portal
+          </NavLink>
+          <NavLink to="/dashboard" className={navLinkClass}>
+            <BarChart3 className="h-3.5 w-3.5 mr-1 inline" />
+            Dashboard
           </NavLink>
           <NavLink to="/admin" className={navLinkClass}>
             Administración

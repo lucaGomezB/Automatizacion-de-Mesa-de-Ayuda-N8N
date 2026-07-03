@@ -12,6 +12,7 @@ import { useQuery } from '@tanstack/react-query';
 import {
   Hash,
   Calendar,
+  Lock,
   Mail,
   FileText,
   Brain,
@@ -121,11 +122,19 @@ export function TicketDetailDialog({ open, incidenteId, onClose }: TicketDetailD
         {/* Contenido del incidente */}
         {incidente && (
           <div className="space-y-5">
-            {/* Indicador de revisión pendiente */}
+            {/* Indicador de revision pendiente */}
             {incidente.requiere_revision_humana && (
               <div className="flex items-center gap-2 p-2.5 bg-amber-50 border border-amber-200 rounded-md text-amber-800 text-sm">
                 <AlertTriangle className="h-4 w-4 flex-shrink-0 text-amber-600" />
-                Este incidente requiere revisión humana (confianza insuficiente).
+                Este incidente requiere revision humana (confianza insuficiente).
+              </div>
+            )}
+
+            {/* Indicador de solo lectura para incidentes cerrados */}
+            {incidente.estado.es_terminal && (
+              <div className="flex items-center gap-2 p-2.5 bg-slate-100 border border-slate-200 rounded-md text-slate-600 text-sm">
+                <Lock className="h-4 w-4 flex-shrink-0 text-slate-500" />
+                Solo lectura — Cerrado. Este incidente esta en estado terminal y no puede ser modificado.
               </div>
             )}
 
