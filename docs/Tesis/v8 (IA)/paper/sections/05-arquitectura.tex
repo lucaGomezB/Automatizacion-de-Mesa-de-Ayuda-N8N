@@ -17,8 +17,8 @@ La Tabla~\ref{tab:capas} sintetiza las cinco capas y sus responsabilidades espec
 \toprule
 \textbf{Capa} & \textbf{Componentes y responsabilidades} \\
 \midrule
-1. Canales de entrada & Casilla IMAP de correo electrónico, formulario web expuesto como webhook y número virtual de Twilio con transcripción automática del habla. \\
-2. Orquestacion & Motor N8N v1.62 desplegado en contenedor Docker autoalojado. Normaliza la entrada y coordina la invocacion a las capas inferiores. \\
+1. Canales de entrada & Casilla de correo electrónico monitoreada mediante Microsoft Outlook (Graph API), formulario web implementado como SPA React y número virtual de Twilio con transcripción automática del habla. \\
+2. Orquestacion & Motor N8N (versión estable más reciente; la versión 1.62 no se encuentra disponible en Docker Hub al momento del despliegue) desplegado en contenedor Docker autoalojado. Normaliza la entrada y coordina la invocacion a las capas inferiores. \\
 3. Procesamiento & Servicio Python sobre FastAPI~0.115 ejecutado bajo Uvicorn. Aplica clasificador hibrido en dos etapas (reglas + LLM) y expone una API REST documentada con OpenAPI~3.1. \\
 4. Inferencia & Modelo Gemini~2.5 Flash de Google, invocado únicamente cuando el filtro deterministico previo no alcanza el umbral de confianza preestablecido. \\
 5. Persistencia & PostgreSQL~15.5 desplegado en contenedor con volumen persistente y respaldos diarios. Almacena los incidentes y la trazabilidad de cada decision del clasificador. \\
@@ -37,7 +37,7 @@ La trazabilidad operativa se garantiza mediante registros estructurados en cada 
 
 \subsection{Capa de canales de entrada}
 
-La capa de canales de entrada habilita tres vias paralelas a través de las cuales un usuario puede reportar un incidente. La primera es el correo electrónico, monitoreado por un nodo IMAP de N8N que detecta nuevos mensajes en una casilla institucional dedicada. La segunda via es un formulario web alojado bajo un punto de entrada webhook expuesto por N8N, accesible desde la intranet corporativa mediante autenticacion corporativa única (SSO). La tercera via es la llamada telefonica, en la cual el usuario marca un número virtual provisto por Twilio, recibe instrucciones por voz pregrabadas y deja su solicitud; la grabacion es transcrita automáticamente por el servicio de reconocimiento del habla del proveedor y enviada al flujo N8N mediante webhook posterior al cuelgue. Esta diversidad de canales amplia la accesibilidad del sistema y reduce las barreras al reporte oportuno.
+La capa de canales de entrada habilita tres vias paralelas a través de las cuales un usuario puede reportar un incidente. La primera es el correo electrónico, monitoreado mediante Microsoft Outlook (Graph API) que detecta nuevos mensajes en una casilla institucional dedicada. La segunda via es un formulario web implementado como aplicación React de página única (SPA) que se comunica directamente con la API REST del módulo de procesamiento. La autenticación se realiza mediante tokens JWT (JSON Web Tokens) con usuario y contraseña; la autenticación única corporativa (SSO) se prevé como evolución para entornos productivos (Capítulo 10). La tercera via es la llamada telefónica, en la cual el usuario marca un número virtual provisto por Twilio, recibe instrucciones por voz pregrabadas y deja su solicitud; la grabación es transcrita automáticamente por el servicio de reconocimiento del habla del proveedor y enviada al flujo N8N mediante webhook posterior al cuelgue. El script TwiML que define el flujo de la llamada —incluyendo el mensaje de bienvenida en español rioplatense y la configuración de grabación— se encuentra documentado en el Anexo~E. Esta diversidad de canales amplía la accesibilidad del sistema y reduce las barreras al reporte oportuno.
 
 \subsection{Capa de orquestacion}
 
@@ -45,9 +45,9 @@ N8N actua como orquestador principal del flujo de trabajo. Cada canal de entrada
 
 \subsection{Capa de procesamiento}
 
-El modulo de procesamiento se implementó como un servicio web ligero utilizando el marco FastAPI~0.115, expuesto sobre un servidor ASGI Uvicorn~0.32 \parencite{Tiangolo2024_fastapi}. La eleccion de FastAPI obedece a su soporte nativo de validación de esquemas mediante Pydantic, su rendimiento competitivo y su documentación automática conforme a la especificación OpenAPI~3.1.
+El modulo de procesamiento se implementó como un servicio web ligero utilizando el marco FastAPI~0.115, expuesto sobre un servidor ASGI Uvicorn 0.30.6 \parencite{Tiangolo2024_fastapi}. La eleccion de FastAPI obedece a su soporte nativo de validación de esquemas mediante Pydantic, su rendimiento competitivo y su documentación automática conforme a la especificación OpenAPI~3.1.
 
-Las dependencias del modulo se organizan por capas funcionales claramente delimitadas. La capa de acceso a datos utiliza SQLAlchemy~2.0 como mapeador objeto-relacional (ORM) y psycopg2-binary~2.9 como adaptador de bajo nivel para PostgreSQL. La capa de procesamiento textual emplea las bibliotecas regex y unicodedata de la biblioteca estandar de Python para normalización ortografica y eliminacion de signos diacriticos. La capa de inferencia se comunica con la interfaz oficial del modelo Gemini~2.5 Flash mediante el cliente google-generativeai~0.8, con parámetros de configuración optimizados para exactitud y latencia: temperatura \(= 0{,}3\), top\_p \(= 0{,}9\), max\_tokens \(= 100\), timeout \(= 10\)~s. Las bibliotecas NumPy~2.1 y Pandas~2.2 se utilizan exclusivamente para la generación de reportes agregados de desempeño y no participan del flujo de procesamiento individual de incidentes.
+Las dependencias del modulo se organizan por capas funcionales claramente delimitadas. La capa de acceso a datos utiliza SQLAlchemy~2.0 como mapeador objeto-relacional (ORM) y asyncpg como driver asincrónico para PostgreSQL, en coherencia con la operación no bloqueante de FastAPI. La capa de procesamiento textual emplea las bibliotecas regex y unicodedata de la biblioteca estandar de Python para normalización ortografica y eliminacion de signos diacriticos. La capa de inferencia se comunica con la interfaz oficial del modelo Gemini~2.5 Flash mediante el cliente google-genai >=2.0 (SDK unificado de Google Generative AI), con parámetros de configuración optimizados para exactitud y latencia: temperatura \(= 0{,}3\), top\_p \(= 0{,}9\), max\_tokens \(= 100\), timeout \(= 10\)~s. Las bibliotecas NumPy~2.1 y Pandas~2.2 se utilizan exclusivamente para la generación de reportes agregados de desempeño y no participan del flujo de procesamiento individual de incidentes.
 
 \subsection{Subsistema de clasificación híbrido}
 
@@ -59,7 +59,7 @@ La segunda etapa, activada únicamente cuando el filtro deterministico no alcanz
 
 \subsection{Modelo de datos}
 
-La persistencia se realiza sobre PostgreSQL~15.5, desplegado en contenedor Docker bajo configuración de respaldo diario y replicación fisica opcional para entornos productivos \parencite{PostgreSQL2024_docs}. El modelo de datos se organiza alrededor de cinco entidades principales, descritas en la Tabla~\ref{tab:entidades}.
+La persistencia se realiza sobre PostgreSQL~15.5, desplegado en contenedor Docker bajo configuración de respaldo diario y replicación fisica opcional para entornos productivos \parencite{PostgreSQL2024_docs}. El modelo de datos se organiza alrededor de seis entidades principales, descritas en la Tabla~\ref{tab:entidades}.
 
 \begin{table}[htbp]
 \centering
@@ -75,6 +75,7 @@ La persistencia se realiza sobre PostgreSQL~15.5, desplegado en contenedor Docke
 \texttt{estado} & id\_estado (PK), nombre & Catalogo de estados: nuevo, en proceso, en espera, resuelto y cerrado. \\
 \texttt{canal\_origen} & id\_canal (PK), nombre & Catalogo de canales: correo, formulario web y llamada telefonica. \\
 \texttt{clasificacion\_log} & id\_log (PK), id\_incidente (FK), \\ categoría\_predicha, confianza, \\ categoría\_validada & Registro de cada decision del clasificador, con categoría predicha, confianza asociada y categoría validada por el sector responsable. \\
+\texttt{users} & id (PK), username (UNIQUE), hashed\_password, is\_active & Almacena credenciales de operadores para autenticacion JWT. \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -83,7 +84,7 @@ La entidad central \texttt{incidente} referencia mediante claves foraneas a los 
 
 \subsection{Contrato de la interfaz REST}
 
-La interfaz de programacion de aplicaciones expuesta por el modulo Python sigue el estilo arquitectonico REST \parencite{Fielding2002_rest}, con representación de recursos mediante identificadores uniformes, uso semántico de los métodos HTTP estandar y comunicación sin estado del lado del servidor. La autenticacion se realiza mediante encabezados con tokens portadores firmados (Bearer tokens), validados en cada solicitud contra una clave compartida con el motor de orquestación. La Tabla~\ref{tab:api} sintetiza los principales puntos de entrada.
+La interfaz de programacion de aplicaciones expuesta por el modulo Python sigue el estilo arquitectonico REST \parencite{Fielding2002_rest}, con representación de recursos mediante identificadores uniformes, uso semántico de los métodos HTTP estandar y comunicación sin estado del lado del servidor. La autenticacion se realiza mediante tokens JWT (JSON Web Tokens) firmados con HS256, validados en cada solicitud mediante el esquema OAuth2PasswordBearer de FastAPI. La Tabla~\ref{tab:api} sintetiza los principales puntos de entrada.
 
 \begin{table}[htbp]
 \centering
@@ -95,12 +96,11 @@ La interfaz de programacion de aplicaciones expuesta por el modulo Python sigue 
 \midrule
 POST & \texttt{/api/v1/incidentes} & 201 Created & Crea un nuevo ticket y devuelve el identificador generado. \\
 GET & \texttt{/api/v1/incidentes/\{id\}} & 200 OK & Recupera la información de un ticket por su identificador. \\
-POST & \texttt{/api/v1/clasificar} & 200 OK & Recibe descripción textual y devuelve categoría sugerida con su confianza. \\
-GET & \texttt{/api/v1/health} & 200 OK & Verificacion de salud del servicio para monitoreo externo. \\
+GET & \texttt{/health} y \texttt{/health/db} & 200 OK & Verificacion de salud del servicio para monitoreo externo. \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Los códigos de estado HTTP se utilizan conforme a su semántica original: 201 cuando un recurso se crea exitosamente, 200 cuando una consulta se atiende con éxito, 400 cuando los datos de entrada no validan el esquema esperado, 401 cuando la autenticacion falla, y 500 cuando ocurre un error interno no recuperable. La especificación completa en formato OpenAPI~3.1 se genera automáticamente por FastAPI y se encuentra disponible en el Anexo~D.
+Los códigos de estado HTTP se utilizan conforme a su semántica original: 201 cuando un recurso se crea exitosamente, 200 cuando una consulta se atiende con éxito, 400 cuando los datos de entrada no validan el esquema esperado, 401 cuando la autenticacion falla, y 500 cuando ocurre un error interno no recuperable. La especificación completa en formato OpenAPI~3.1 se genera automáticamente por FastAPI y se encuentra disponible en el Anexo~D. La clasificación del incidente no se expone como punto de entrada independiente sino que se encuentra embebida dentro de la creación del incidente (POST \texttt{/api/v1/incidentes}): el clasificador híbrido se invoca internamente durante la creación y la respuesta incluye tanto el identificador del ticket como la categoría asignada y la confianza asociada.
 
 \newpage

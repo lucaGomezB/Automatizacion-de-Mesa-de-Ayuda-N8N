@@ -1,86 +1,87 @@
 \babel@toc {spanish}{}\relax 
-\contentsline {section}{\numberline {1}Introduccion}{10}{section.1}%
-\contentsline {subsection}{\numberline {1.1}Contextualizacion}{10}{subsection.1.1}%
-\contentsline {subsection}{\numberline {1.2}Planteamiento del problema}{11}{subsection.1.2}%
-\contentsline {subsection}{\numberline {1.3}Pregunta de investigacion}{12}{subsection.1.3}%
-\contentsline {subsection}{\numberline {1.4}Hipotesis de trabajo}{12}{subsection.1.4}%
-\contentsline {subsection}{\numberline {1.5}Objetivo general}{13}{subsection.1.5}%
-\contentsline {subsection}{\numberline {1.6}Objetivos especificos}{13}{subsection.1.6}%
-\contentsline {subsection}{\numberline {1.7}Justificacion}{14}{subsection.1.7}%
-\contentsline {subsection}{\numberline {1.8}Alcance y delimitaciones}{15}{subsection.1.8}%
-\contentsline {section}{\numberline {2}Marco teorico}{17}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Gestion de servicios de tecnologias de la informacion}{17}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}Mesa de ayuda y modelo ITIL}{17}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Automatizacion de procesos y orquestacion de flujos}{18}{subsection.2.3}%
-\contentsline {subsection}{\numberline {2.4}Procesamiento de lenguaje natural y modelos de lenguaje grandes}{19}{subsection.2.4}%
-\contentsline {subsection}{\numberline {2.5}Reconocimiento automatico del habla}{20}{subsection.2.5}%
-\contentsline {subsection}{\numberline {2.6}Bases de datos relacionales y persistencia transaccional}{21}{subsection.2.6}%
-\contentsline {subsection}{\numberline {2.7}Métricas de evaluación de clasificadores multiclase}{21}{subsection.2.7}%
-\contentsline {section}{\numberline {3}Estado del arte}{23}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Soluciones comerciales de mesa de ayuda}{23}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Plataformas de orquestacion de flujos}{24}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Trabajos académicos previos sobre clasificación de tickets}{24}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}Analisis comparativo y brecha identificada}{25}{subsection.3.4}%
-\contentsline {section}{\numberline {4}Marco metodologico}{27}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Enfoque y tipo de investigacion}{27}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Diseno experimental}{27}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Operacionalizacion de variables}{28}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}Poblacion, muestra y corpus}{28}{subsection.4.4}%
-\contentsline {subsection}{\numberline {4.5}Protocolo de pruebas}{29}{subsection.4.5}%
-\contentsline {subsection}{\numberline {4.6}Metricas e instrumentos}{30}{subsection.4.6}%
-\contentsline {subsection}{\numberline {4.7}Analisis estadistico}{30}{subsection.4.7}%
-\contentsline {subsection}{\numberline {4.8}Amenazas a la validez}{31}{subsection.4.8}%
-\contentsline {subsection}{\numberline {4.9}Gestion del proyecto bajo enfoque Scrumban}{31}{subsection.4.9}%
-\contentsline {section}{\numberline {5}Arquitectura del sistema}{33}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Vision general}{33}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}Capa de canales de entrada}{33}{subsection.5.2}%
-\contentsline {subsection}{\numberline {5.3}Capa de orquestacion}{34}{subsection.5.3}%
-\contentsline {subsection}{\numberline {5.4}Capa de procesamiento}{35}{subsection.5.4}%
-\contentsline {subsection}{\numberline {5.5}Subsistema de clasificación híbrido}{35}{subsection.5.5}%
-\contentsline {subsection}{\numberline {5.6}Modelo de datos}{36}{subsection.5.6}%
-\contentsline {subsection}{\numberline {5.7}Contrato de la interfaz REST}{36}{subsection.5.7}%
-\contentsline {section}{\numberline {6}Implementacion}{38}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Entorno de despliegue y dependencias}{38}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}Construccion del modulo Python}{38}{subsection.6.2}%
-\contentsline {subsection}{\numberline {6.3}Construccion del flujo en N8N}{40}{subsection.6.3}%
-\contentsline {subsection}{\numberline {6.4}Integracion del canal telefonico}{41}{subsection.6.4}%
-\contentsline {subsection}{\numberline {6.5}Desafios de integracion}{42}{subsection.6.5}%
-\contentsline {subsection}{\numberline {6.6}Conexion con el proceso Scrumban}{43}{subsection.6.6}%
-\contentsline {subsection}{\numberline {6.7}Pruebas automatizadas}{44}{subsection.6.7}%
-\contentsline {section}{\numberline {7}Resultados}{46}{section.7}%
-\contentsline {subsection}{\numberline {7.1}Comparacion de tiempos de registro}{46}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}Matriz de confusión y métricas de clasificación}{47}{subsection.7.2}%
-\contentsline {subsection}{\numberline {7.3}Reduccion de la intervencion humana}{48}{subsection.7.3}%
-\contentsline {subsection}{\numberline {7.4}Analisis de errores y casos limite}{49}{subsection.7.4}%
-\contentsline {section}{\numberline {8}Discusion}{50}{section.8}%
-\contentsline {subsection}{\numberline {8.1}Interpretacion de los resultados}{50}{subsection.8.1}%
-\contentsline {subsection}{\numberline {8.2}Comparacion con la literatura}{51}{subsection.8.2}%
-\contentsline {subsection}{\numberline {8.3}Limitaciones del estudio}{52}{subsection.8.3}%
-\contentsline {subsection}{\numberline {8.4}Implicancias practicas}{53}{subsection.8.4}%
-\contentsline {subsection}{\numberline {8.5}Reflexiones sobre la generalizacion}{54}{subsection.8.5}%
-\contentsline {section}{\numberline {9}Conclusiones}{55}{section.9}%
-\contentsline {subsection}{\numberline {9.1}Cumplimiento de los objetivos del trabajo}{55}{subsection.9.1}%
-\contentsline {subsection}{\numberline {9.2}Aportes y generalizacion}{57}{subsection.9.2}%
-\contentsline {section}{\numberline {10}Recomendaciones y lineas de trabajo futuro}{58}{section.10}%
-\contentsline {subsection}{\numberline {10.1}Incorporacion de un clasificador supervisado con corpus propio}{58}{subsection.10.1}%
-\contentsline {subsection}{\numberline {10.2}Ampliacion de canales de entrada}{58}{subsection.10.2}%
-\contentsline {subsection}{\numberline {10.3}Panel de monitoreo en tiempo real}{58}{subsection.10.3}%
-\contentsline {subsection}{\numberline {10.4}Mecanismos de aprendizaje activo}{59}{subsection.10.4}%
-\contentsline {subsection}{\numberline {10.5}Estudios de replicacion}{59}{subsection.10.5}%
-\contentsline {subsection}{\numberline {10.6}Evaluación de modelos de lenguaje de código abierto}{60}{subsection.10.6}%
-\contentsline {subsection}{\numberline {10.7}Base de conocimientos para resolucion automatica}{60}{subsection.10.7}%
-\contentsline {section}{\numberline {11}Consideraciones eticas y aspectos legales}{62}{section.11}%
-\contentsline {subsection}{\numberline {11.1}Marco normativo aplicable}{62}{subsection.11.1}%
-\contentsline {subsection}{\numberline {11.2}Principios aplicados al tratamiento de datos}{62}{subsection.11.2}%
-\contentsline {subsection}{\numberline {11.3}Transferencia internacional y pseudonimizacion}{63}{subsection.11.3}%
-\contentsline {subsection}{\numberline {11.4}Seguridad tecnica}{63}{subsection.11.4}%
-\contentsline {subsection}{\numberline {11.5}Consentimiento, derechos del usuario y supervision humana}{63}{subsection.11.5}%
-\contentsline {section}{Referencias bibliograficas}{65}{subsection.11.5}%
-\contentsline {section}{Appendices}{68}{section*.11}%
-\contentsline {section}{\numberline {A}Diagrama de arquitectura del sistema}{68}{appendix.1.Alph1}%
-\contentsline {section}{\numberline {B}Repositorio de código fuente}{68}{appendix.1.Alph2}%
-\contentsline {section}{\numberline {C}Esquema de base de datos}{68}{appendix.1.Alph3}%
-\contentsline {section}{\numberline {D}Especificacion OpenAPI de la interfaz REST}{69}{appendix.1.Alph4}%
-\contentsline {section}{\numberline {E}Configuracion del flujo N8N}{69}{appendix.1.Alph5}%
-\contentsline {section}{\numberline {F}Corpus de validacion}{70}{appendix.1.Alph6}%
-\contentsline {section}{\numberline {G}Documentacion operativa}{70}{appendix.1.Alph7}%
+\contentsline {section}{\numberline {1}Introduccion}{11}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Contextualizacion}{11}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Planteamiento del problema}{12}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Pregunta de investigacion}{13}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Hipotesis de trabajo}{13}{subsection.1.4}%
+\contentsline {subsection}{\numberline {1.5}Objetivo general}{14}{subsection.1.5}%
+\contentsline {subsection}{\numberline {1.6}Objetivos especificos}{14}{subsection.1.6}%
+\contentsline {subsection}{\numberline {1.7}Justificacion}{15}{subsection.1.7}%
+\contentsline {subsection}{\numberline {1.8}Alcance y delimitaciones}{16}{subsection.1.8}%
+\contentsline {section}{\numberline {2}Marco teorico}{18}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Gestion de servicios de tecnologias de la informacion}{18}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Mesa de ayuda y modelo ITIL}{18}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Automatizacion de procesos y orquestacion de flujos}{19}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Procesamiento de lenguaje natural y modelos de lenguaje grandes}{20}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Reconocimiento automatico del habla}{21}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}Bases de datos relacionales y persistencia transaccional}{22}{subsection.2.6}%
+\contentsline {subsection}{\numberline {2.7}Métricas de evaluación de clasificadores multiclase}{22}{subsection.2.7}%
+\contentsline {section}{\numberline {3}Estado del arte}{24}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Soluciones comerciales de mesa de ayuda}{24}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Plataformas de orquestacion de flujos}{25}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Trabajos académicos previos sobre clasificación de tickets}{25}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Analisis comparativo y brecha identificada}{26}{subsection.3.4}%
+\contentsline {section}{\numberline {4}Marco metodologico}{28}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Enfoque y tipo de investigacion}{28}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Diseno experimental}{28}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Operacionalizacion de variables}{29}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Poblacion, muestra y corpus}{29}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Protocolo de pruebas}{30}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Metricas e instrumentos}{31}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Analisis estadistico}{31}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.8}Amenazas a la validez}{32}{subsection.4.8}%
+\contentsline {subsection}{\numberline {4.9}Gestion del proyecto bajo enfoque Scrumban}{32}{subsection.4.9}%
+\contentsline {section}{\numberline {5}Arquitectura del sistema}{34}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Vision general}{34}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Capa de canales de entrada}{35}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Capa de orquestacion}{36}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Capa de procesamiento}{36}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Subsistema de clasificación híbrido}{36}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}Modelo de datos}{37}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.7}Contrato de la interfaz REST}{39}{subsection.5.7}%
+\contentsline {section}{\numberline {6}Implementacion}{40}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Entorno de despliegue y dependencias}{40}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Construccion del modulo Python}{40}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Construccion del flujo en N8N}{41}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Integracion del canal telefonico}{43}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}Desafios de integracion}{44}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.6}Conexion con el proceso Scrumban}{45}{subsection.6.6}%
+\contentsline {subsection}{\numberline {6.7}Pruebas automatizadas}{46}{subsection.6.7}%
+\contentsline {subsection}{\numberline {6.8}Dashboard de analitica}{47}{subsection.6.8}%
+\contentsline {section}{\numberline {7}Resultados}{49}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Comparacion de tiempos de registro}{49}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Matriz de confusión y métricas de clasificación}{50}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Reduccion de la intervencion humana}{51}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Analisis de errores y casos limite}{52}{subsection.7.4}%
+\contentsline {section}{\numberline {8}Discusion}{53}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Interpretacion de los resultados}{53}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Comparacion con la literatura}{54}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Limitaciones del estudio}{55}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Implicancias practicas}{56}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Reflexiones sobre la generalizacion}{57}{subsection.8.5}%
+\contentsline {section}{\numberline {9}Conclusiones}{58}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Cumplimiento de los objetivos del trabajo}{58}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Aportes y generalizacion}{60}{subsection.9.2}%
+\contentsline {section}{\numberline {10}Recomendaciones y lineas de trabajo futuro}{61}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Incorporacion de un clasificador supervisado con corpus propio}{61}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Ampliacion de canales de entrada}{61}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}Panel de monitoreo en tiempo real}{61}{subsection.10.3}%
+\contentsline {subsection}{\numberline {10.4}Mecanismos de aprendizaje activo}{62}{subsection.10.4}%
+\contentsline {subsection}{\numberline {10.5}Estudios de replicacion}{63}{subsection.10.5}%
+\contentsline {subsection}{\numberline {10.6}Evaluación de modelos de lenguaje de código abierto}{63}{subsection.10.6}%
+\contentsline {subsection}{\numberline {10.7}Base de conocimientos para resolucion automatica}{63}{subsection.10.7}%
+\contentsline {section}{\numberline {11}Consideraciones eticas y aspectos legales}{65}{section.11}%
+\contentsline {subsection}{\numberline {11.1}Marco normativo aplicable}{65}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}Principios aplicados al tratamiento de datos}{65}{subsection.11.2}%
+\contentsline {subsection}{\numberline {11.3}Transferencia internacional y pseudonimizacion}{66}{subsection.11.3}%
+\contentsline {subsection}{\numberline {11.4}Seguridad tecnica}{66}{subsection.11.4}%
+\contentsline {subsection}{\numberline {11.5}Consentimiento, derechos del usuario y supervision humana}{67}{subsection.11.5}%
+\contentsline {section}{Referencias bibliograficas}{69}{subsection.11.5}%
+\contentsline {section}{Appendices}{72}{section*.11}%
+\contentsline {section}{\numberline {A}Diagrama de arquitectura del sistema}{72}{appendix.1.Alph1}%
+\contentsline {section}{\numberline {B}Repositorio de código fuente}{72}{appendix.1.Alph2}%
+\contentsline {section}{\numberline {C}Esquema de base de datos}{72}{appendix.1.Alph3}%
+\contentsline {section}{\numberline {D}Especificacion OpenAPI de la interfaz REST}{73}{appendix.1.Alph4}%
+\contentsline {section}{\numberline {E}Configuracion del flujo N8N}{73}{appendix.1.Alph5}%
+\contentsline {section}{\numberline {F}Corpus de validacion}{74}{appendix.1.Alph6}%
+\contentsline {section}{\numberline {G}Documentacion operativa}{74}{appendix.1.Alph7}%

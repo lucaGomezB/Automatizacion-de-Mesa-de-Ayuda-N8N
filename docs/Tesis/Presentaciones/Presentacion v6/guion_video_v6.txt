@@ -1,0 +1,187 @@
+GUION DE DEFENSA — 10 minutos
+Automatizacion inteligente del registro de incidentes en mesas de ayuda
+Carla Bustos, Gonzalo Sevilla, Luca Gomez — Director: Alberto Cortez
+UTN FRM — Tecnicatura Universitaria en Programacion — 2026
+
+===============================================================================
+[0:00–0:45] Apertura e identificacion
+===============================================================================
+
+"Buenos dias. Somos Carla Bustos, Gonzalo Sevilla y Luca Gomez, y presentamos nuestro
+trabajo final de tesis titulado 'Automatizacion inteligente del registro de incidentes
+en mesas de ayuda empresariales con N8N y procesamiento
+de lenguaje natural basado en LLMs', desarrollado bajo la
+direccion de Alberto Cortez. En los proximos diez minutos vamos a recorrer el problema
+que motivó esta investigacion, los objetivos, la metodologia, los resultados y las
+conclusiones."
+
+===============================================================================
+[0:45–2:00] Problema y motivacion
+===============================================================================
+
+Partimos de una organizacion mediana de servicios en Mendoza, 120 usuarios internos.
+El sector de Operaciones atiende además los incidentes informaticos: 42 por dia, cada
+uno toma 2 minutos 45 segundos en registrarse manualmente. Proyectado al trimestre:
+3700 incidentes, 200 horas-persona solo para anotar tickets.
+
+El problema no es solo el tiempo. La clasificacion manual tiene un 15 por ciento de
+error de derivacion. Un ticket mal derivado suma 10 a 15 minutos de reasignacion.
+Y los canales —correo, telefono, formularios— no estan unificados: el personal
+monitorea multiples fuentes sin criterio comun.
+
+El contexto argentino agrava esto: presupuestos acotados, restricciones cambiarias
+que encarecen soluciones como Zendesk o ServiceNow, y la Ley 25.326 que exige control
+sobre los datos personales. Las herramientas de codigo abierto y la inferencia bajo
+demanda son un camino viable. Cerramos este bloque con una idea clara: hay un cuello
+de botella operativo, medido con datos concretos, y existe una oportunidad tecnologica
+para resolverlo.
+
+===============================================================================
+[2:00–3:00] Pregunta de investigacion y objetivos
+===============================================================================
+
+La pregunta que guia el trabajo: ¿reduce la automatizacion del registro inicial de
+incidentes mediante orquestacion de flujos y procesamiento de lenguaje natural el
+tiempo de registro y mejora la exactitud de clasificacion, en comparacion con el
+proceso manual realizado por personal experimentado?
+
+Objetivo general: desarrollar un sistema automatizado de mesa de ayuda que reciba,
+clasifique y registre incidentes reduciendo tiempo e intervencion humana.
+
+Tenemos cinco objetivos especificos: Primero, diseñar una arquitectura distribuida de cinco
+capas. Segundo, implementar un clasificador hibrido con al menos 85 por ciento de
+exactitud sobre 200 casos. Tercero, integrar tres canales de entrada paralelos.
+Cuarto, evaluar comparativamente flujo manual versus automatizado con diseno
+cuasiexperimental. Quinto, documentar todo como activo reproducible.
+
+Hipotéticamente el sistema automatizado reduce significativamente el tiempo y la
+intervencion humana manteniendo exactitud comparable al operador. Formalmente,
+H0 postula igualdad de medianas; H1 postula que la mediana automatizada es inferior.
+
+===============================================================================
+[3:00–4:30] Marco teorico / antecedentes
+===============================================================================
+
+Tres pilares sostienen el trabajo. El primero es ITSM —Gestion de Servicios TI—:
+Galup y colegas establecen que la mesa de ayuda es el punto unico de contacto con el resto de la empresa y su
+eficiencia condiciona la continuidad operativa. El segundo es PLN aplicado a
+clasificacion de tickets: Paramesh y Satyanarayana lograron 87 por ciento de
+exactitud con SVM y TF-IDF, pero en ingles. El espanol rioplatense esta ausente
+de la literatura. El tercero es orquestacion de flujos: Hohpe y Woolf distinguen
+orquestacion —coordinador central, trazable— de coreografia —descentralizada—.
+Para un dominio donde auditar cada decision es requisito normativo, la orquestacion
+es la opcion correcta.
+
+Nuestro aporte se ubica en la interseccion: no usamos un clasificador supervisado
+tradicional —no teniamos corpus etiquetado al inicio— sino un esquema hibrido:
+filtro deterministico basado en reglas para los casos claros, y Gemini 2.5 Flash
+como arbitro semantico para los casos ambiguos. Reglas primero, LLM despues. Esto
+optimiza la relacion exactitud-latencia-costo. Todo con herramientas de codigo
+abierto —N8N, Python, FastAPI, PostgreSQL— y pseudonimizacion de datos antes de
+cualquier transmision externa, en linea con la Ley 25.326.
+
+Luca investigo el marco teorico y aporto experiencia empirica del dominio. Gonzalo
+desarrollo el proyecto con metodologias dirigidas por especificaciones. Carla
+superviso la teoria, el plan de desarrollo y la redaccion de la tesis.
+
+===============================================================================
+[4:30–6:30] Metodologia
+===============================================================================
+
+Investigacion cuantitativa aplicada, diseno cuasiexperimental con muestras pareadas.
+Cada incidente se procesa bajo dos condiciones —manual y automatizada— eliminando
+variabilidad entre casos. Contrabalanceo del orden para mitigar efecto de aprendizaje:
+100 casos manual primero, 100 casos automatizado primero.
+
+Corpus de 200 casos por muestreo estratificado proporcional desde un universo de
+3700 incidentes: 82 de Sistemas, 64 de Operaciones, 54 de Soporte Tecnico. Confianza
+del 95 por ciento, margen de error 6,5 por ciento. Doble etiquetado independiente
+por analistas experimentados. Discrepancias resueltas por consenso supervisado.
+Acuerdo entre evaluadores: Kappa de Cohen 0,87 —casi perfecto—.
+
+Cuatro variables medidas: tiempo de registro, exactitud de clasificacion, F1 macro
+y proporcion de intervencion humana. Instrumentos: registros automaticos del sistema
+con precision al milisegundo para el flujo automatizado, planillas de cronometraje
+para el manual. Analisis estadistico: Wilcoxon pareado —no parametrico—, coeficiente
+rank-biserial para tamano del efecto, intervalos de Wilson para proporciones.
+
+Gestion del proyecto bajo Scrumban: seis iteraciones de dos semanas, 12 semanas
+totales, tablero Kanban en GitHub Projects, definiciones de terminado con pruebas,
+revision de pares y documentacion actualizada por cada tarea.
+
+===============================================================================
+[6:30–8:00] Resultados
+===============================================================================
+
+Tres resultados principales.
+
+Tiempo de registro. Flujo manual: 165,3 segundos. Flujo automatizado: 18,2 segundos.
+Reduccion del 89 por ciento. Wilcoxon: W igual a cero, p menor a 0,001. W igual a
+cero significa que en los 200 pares el sistema automatizado fue siempre mas rapido,
+sin una sola excepcion. Tamano del efecto: r igual a 1,00, el maximo posible.
+
+Clasificacion. Exactitud global: 92 por ciento —184 de 200 correctos—, siete puntos
+por encima del umbral objetivo del 85. Intervalo de confianza Wilson al 95 por ciento:
+87,2 a 95,2 por ciento. F1 macro: 0,919, con dispersion minima entre categorias:
+0,933 Sistemas, 0,906 Operaciones, 0,917 Soporte Tecnico. Solo 0,027 puntos de rango.
+El clasificador no favorece a la clase mayoritaria.
+
+Intervencion humana. Del 100 por ciento en el flujo manual al 9,5 por ciento en el
+automatizado. De 200 casos, 181 se procesaron sin intervencion; 19 requirieron
+verificacion. Ademas, el 62 por ciento de los casos fue resuelto por la etapa
+deterministica sin consultar a Gemini: sin costo de inferencia, sin latencia de red,
+sin transferencia de datos a terceros.
+
+Un cuarto resultado, de orden mas cualitativo: el sistema incorpora un dashboard de
+analitica con graficos de tendencias que permite identificar problemas sistemicos.
+Si veinte auriculares se rompen en la misma semana, el patron salta a la vista. Esto
+transforma la mesa de ayuda de un centro de costo reactivo en un nodo de inteligencia
+organizacional: los datos acumulados permiten atacar causas raiz, no solo apagar
+incendios.
+
+===============================================================================
+[8:00–9:00] Discusion y conclusiones
+===============================================================================
+
+Los cinco objetivos se cumplieron. La arquitectura de cinco capas funciona con
+componentes independientes. El clasificador hibrido supero el umbral: 92 por ciento
+de exactitud. Los tres canales convergen en un unico flujo —el telefonico con
+latencia de 12 a 15 segundos—. La evaluacion experimental fue concluyente: 89 por
+ciento de reduccion con p menor a 0,001. La documentacion generada —OpenAPI, N8N
+exportable, migraciones, tipologia de errores— es reproducible.
+
+La contribucion central no es solo la magnitud de los numeros sino el patron
+arquitectonico: reglas deterministicas para casos triviales, LLM como arbitro para
+casos ambiguos, supervision humana solo cuando la confianza es baja. Esta combinacion
+es reproducible para organizaciones medianas de America Latina, donde presupuesto
+y soberania de datos son determinantes.
+
+Costo operativo marginal: 28 dolares por trimestre en API de inferencia frente a
+180 horas-persona liberadas.
+
+===============================================================================
+[9:00–10:00] Limitaciones, trabajo futuro y cierre
+===============================================================================
+
+Cuatro limitaciones. Validez externa: los resultados son de una organizacion en
+Mendoza con espanol rioplatense. Dependencia del proveedor de inferencia: Gemini
+puede cambiar su rendimiento o modelo comercial. Tamano muestral moderado: 200
+casos, adecuado para estudio piloto pero con precision limitada. Temporalidad:
+los resultados reflejan la version del modelo a mediados de 2026.
+
+Trabajo futuro. Entrenar un clasificador supervisado con el corpus etiquetado
+que genera el propio sistema. Incorporar canales de mensajeria como Slack o Teams.
+Evolucionar el dashboard actual hacia un sistema de alertas automaticas basadas
+en umbrales de tendencias. Integracion con inventarios de activos
+informaticos. Replicar la validacion en otras organizaciones.
+
+Cerramos con una sintesis. Demostramos que es posible automatizar el registro de
+incidentes en una mesa de ayuda mediana con herramientas de codigo abierto: 89
+por ciento menos tiempo, 92 por ciento de exactitud, cumplimiento normativo y costo
+marginal. La arquitectura no depende de infraestructura especializada ni licencias
+propietarias. Agradecemos al tribunal, al profesor Cortez por su direccion, a la
+organizacion que nos abrio sus puertas, y a la UTN por la formacion recibida.
+
+Muchas gracias.
+
+[FIN DEL GUION — 10:00]

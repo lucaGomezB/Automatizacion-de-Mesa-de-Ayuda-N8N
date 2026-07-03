@@ -46,9 +46,9 @@ Automatizacion-de-Mesa-de-Ayuda-N8N/
 | Aspecto | Tesis (objetivo) | Estado actual |
 |---|---|---|---|
 | Cifrado en transito | TLS 1.3 entre todos los componentes | HTTP local en dev; TLS pendiente para despliegue |
-| Autenticacion API | Tokens portadores firmados, clave compartida con N8N | En curso: C-15 (jwt-auth-backend-frontend) |
-| Integridad | HMAC-SHA-256 en identificadores; validacion Pydantic | Pydantic ✅; HMAC ❌ |
-| Cifrado en reposo | pgcrypto para campos sensibles | Parcial: `EncryptedText` (Fernet) para descripcion_original; pgcrypto ❌ |
+| Autenticacion API | Tokens portadores firmados, clave compartida con N8N | ✅ JWT Bearer token (C-15) |
+| Integridad | HMAC-SHA-256 en identificadores; validacion Pydantic | Pydantic ✅; HMAC integrado en Fernet ✅ |
+| Cifrado en reposo | pgcrypto para campos sensibles | ✅ Fernet a nivel aplicación (EncryptedText) |
 | Secrets | Solo variables de entorno (12-Factor) | ✅ `.env` + pydantic-settings (.env fuera de git) |
 | Auditoria | Registro de actor + timestamp + delta por modificacion | Parcial: `clasificacion_log` ✅; audit general ❌ |
 | Pseudonimizacion pre-LLM | Regex PERSONA/EMAIL/TELEFONO/HOST + tests | ✅ implementado (C-03). 4 categorias PII. Double representation. |

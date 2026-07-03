@@ -1,18 +1,34 @@
 GUIÓN GENÉRICO — Defensa de Tesis en Video (10 min)
 
-[0:00–0:45] Apertura e identificación
-"Buenos días. Mi nombre es [nombre], y presento mi trabajo final de tesis titulado '[título]', desarrollado bajo la dirección de Alberto Cortez. En los próximos diez minutos voy a recorrer el problema que motivó esta investigación, los objetivos, el marco teórico, la metodología, los resultados y las conclusiones."
+[0:00–0:45] Apertura e identificación (sin cambios)
+"Buenos días. Somos el grupo Carla Bustos, Gonzalo Sevilla y Luca Gómez, y presentamos nuestro trabajo final de tesis titulado 'Gestión de Mesa de Ayuda Automatizada 
+con Inteligencia Artificial', desarrollado bajo la dirección de Alberto Cortez. En los próximos diez minutos recorreremos el problema que motivó esta investigación, 
+los objetivos, el marco teórico, la metodología, los resultados y las conclusiones."
+
 [0:45–2:00] Problema y motivación
-Explicá qué problema o vacío detectaste. Por qué importa. A quién afecta. Contextualizá brevemente el área de estudio y mostrá que hay algo sin resolver que justifica el trabajo. Cerrá este bloque dejando claro el "para qué" de la tesis.
+Explicá qué problema o vacío detectaste. Por qué importa. A quién afecta. Contextualizá brevemente el área de estudio y mostrá que hay algo sin resolver que justifica 
+el trabajo. Cerrá este bloque dejando claro el "para qué" de la tesis.
+
 [2:00–3:00] Pregunta de investigación y objetivos
 Enunciá la pregunta central de investigación. Luego presentá el objetivo general y 2 o 3 objetivos específicos. Esto le da al tribunal el mapa de lo que vas a demostrar.
+
 [3:00–4:30] Marco teórico / antecedentes
-Resumí los conceptos clave y los principales antecedentes en los que te apoyás. No hagas una lista exhaustiva: seleccioná las 3 o 4 referencias que sostienen tu enfoque y mostrá dónde se ubica tu aporte respecto de lo ya existente.
+Resumí los conceptos clave y los principales antecedentes en los que te apoyás. No hagas una lista exhaustiva: seleccioná las 3 o 4 referencias que sostienen tu enfoque
+ y mostrá dónde se ubica tu aporte respecto de lo ya existente (Luca se encargó de investigar y proporcionar soluciones y teoría, a la vez que aportó experiencia empírica, 
+Gonzalo desarrolló el proyecto con metodologías SDD y Carla supervisó la teoría, plan de desarrollo y la tésis a medida que fue creciendo).
+
 [4:30–6:30] Metodología
-Describí el diseño de la investigación: enfoque (cualitativo, cuantitativo o mixto), población o muestra, instrumentos de recolección de datos, y procedimiento. Justificá por qué elegiste ese método. Este bloque demuestra rigor, así que sé concreto y ordenado.
+Describí el diseño de la investigación: enfoque (cualitativo, cuantitativo o mixto), población o muestra, instrumentos de recolección de datos, y procedimiento. 
+Justificá por qué elegiste ese método. Este bloque demuestra rigor, así que sé concreto y ordenado.
+
 [6:30–8:00] Resultados
-Presentá los hallazgos principales apoyándote en una tabla o gráfico claro. No muestres todo: elegí los resultados que responden directamente a tus objetivos. Interpretá brevemente qué significa cada dato.
+Presentá los hallazgos principales apoyándote en una tabla o gráfico claro. No muestres todo: elegí los resultados que responden directamente a tus objetivos. 
+Interpretá brevemente qué significa cada dato.
+
 [8:00–9:00] Discusión y conclusiones
-Conectá los resultados con la pregunta de investigación. ¿Se cumplieron los objetivos? Señalá la contribución original del trabajo y dialogá con los antecedentes (confirma, contradice o amplía lo previo).
+Conectá los resultados con la pregunta de investigación. ¿Se cumplieron los objetivos? Señalá la contribución original del trabajo y dialogá con los antecedentes 
+(confirma, contradice o amplía lo previo).
+
 [9:00–10:00] Limitaciones, trabajo futuro y cierre
-Reconocé honestamente las limitaciones. Proponé líneas de investigación futura. Cerrá con una frase que sintetice el valor del aporte y agradecé al tribunal y a quienes acompañaron el proceso.
+Reconocé honestamente las limitaciones. Proponé líneas de investigación futura. Cerrá con una frase que sintetice el valor del aporte y agradecé al tribunal y a 
+quienes acompañaron el proceso.
