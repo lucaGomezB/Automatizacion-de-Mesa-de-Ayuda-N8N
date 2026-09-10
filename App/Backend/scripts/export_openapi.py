@@ -64,12 +64,12 @@ for _key, _val in _DUMMIES.items():
 
 # ── Agregar el directorio padre (Gestion_Incidentes/) al sys.path ────────────
 # Necesario cuando se ejecuta el script desde cualquier directorio de trabajo.
-_SCRIPT_DIR = Path(__file__).resolve().parent          # Gestion_Incidentes/scripts/
-_GI_ROOT = _SCRIPT_DIR.parent                          # Gestion_Incidentes/
-_REPO_ROOT = _GI_ROOT.parent                           # raíz del repo
+_SCRIPT_DIR = Path(__file__).resolve().parent          # App/Backend/scripts/
+_BACKEND_ROOT = _SCRIPT_DIR.parent                         # App/Backend/
+_REPO_ROOT = _BACKEND_ROOT.parent.parent                   # raiz del repo
 
-if str(_GI_ROOT) not in sys.path:
-    sys.path.insert(0, str(_GI_ROOT))
+if str(_BACKEND_ROOT) not in sys.path:
+    sys.path.insert(0, str(_BACKEND_ROOT))
 
 # ── Ruta de salida por defecto ────────────────────────────────────────────────
 _DEFAULT_OUTPUT = _REPO_ROOT / "docs" / "openapi.json"

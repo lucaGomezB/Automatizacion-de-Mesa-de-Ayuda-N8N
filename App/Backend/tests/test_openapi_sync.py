@@ -23,7 +23,7 @@ import json
 import os
 from pathlib import Path
 
-# El repo root es 3 niveles arriba de App/Backend/tests/
+# El repo root es 4 niveles arriba de App/Backend/tests/
 _THIS_FILE = Path(__file__).resolve()
 _REPO_ROOT = _THIS_FILE.parent.parent.parent.parent  # repo root
 _OPENAPI_PATH = _REPO_ROOT / "docs" / "openapi.json"
