@@ -21,7 +21,7 @@
 
 > ⚠️ `clasificacion_log` tiene **dos FK** hacia `sector.id`. Ambos lados de cada relationship llevan `foreign_keys` explícito — sin él, SQLAlchemy lanza `AmbiguousForeignKeysError` (bug ya corregido; ver [09](09_decisiones_y_supuestos.md) DD-09).
 
-## Entidades (implementación real en `Gestion_Incidentes/app/models/`)
+## Entidades (implementación real en `App/Backend/app/models/`)
 
 ### incidente
 - `id` PK autoincremental; identificador legible con prefijo configurable (tesis §5.6).

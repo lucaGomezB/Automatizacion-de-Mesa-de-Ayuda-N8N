@@ -1,6 +1,6 @@
 # Automatización de Mesa de Ayuda N8N — Base de Conocimiento
 
-KB generada por ingesta desde `docs/Tesis/tesis_para_agente.md` (tesis completa UTN-FRM 2026), `docs/parameters_gemini.md`, `docs/prompt_gemini.txt`, `ANEXO_H_Prompt_Gemini_Especificacion.md` y verificación contra el código real del repositorio.
+KB generada por ingesta desde `docs/Tesis/tesis_para_agente.md` (tesis completa UTN-FRM 2026), `docs/parameters_gemini.md`, `docs/prompt_gemini.txt`, `docs/anexo_h_prompt_gemini.md` y verificación contra el código real del repositorio.
 
 ## Índice de Archivos
 

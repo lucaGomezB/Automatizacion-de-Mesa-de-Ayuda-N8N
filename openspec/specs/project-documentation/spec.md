@@ -1,5 +1,7 @@
-## ADDED Requirements
+## Purpose
 
+This specification defines the documentation artifacts required for the Mesa de Ayuda project: architecture diagrams, OpenAPI specification, database schema reference, evaluation corpus description, operational guide, troubleshooting guide, and README deployment instructions. Every artifact must be reproducible, version-controlled, and kept in sync with the live system configuration.
+## Requirements
 ### Requirement: Diagramas de arquitectura UML
 
 El proyecto SHALL incluir, bajo `docs/diagrams/`, tres diagramas de arquitectura en notación UML mantenidos como fuente de texto versionable (Mermaid): un diagrama de despliegue, un diagrama de secuencia y un diagrama de componentes. El diagrama de despliegue MUST representar los componentes de infraestructura reales declarados en `docker-compose.yml` (PostgreSQL, Redis, backend FastAPI, N8N) y sus relaciones de comunicación. El diagrama de secuencia MUST ilustrar el flujo extremo a extremo de un incidente desde su recepción en un canal de entrada hasta la confirmación al usuario. El diagrama de componentes MUST reflejar la organización en capas del módulo Python (routes, services, repositories, classifiers, models). Cada archivo de diagrama MUST contener un bloque de código Mermaid sintácticamente válido.
@@ -26,7 +28,7 @@ El proyecto SHALL publicar la especificación OpenAPI 3.1 de la interfaz REST en
 #### Scenario: El spec se genera desde la app, no a mano
 
 - **WHEN** se ejecuta el script de generación apuntando a `app.main:app`
-- **THEN** produce un `openapi.json` cuyos `paths` coinciden con los `@router` declarados en `Gestion_Incidentes/app/routes/`
+- **THEN** produce un `openapi.json` cuyos `paths` coinciden con los `@router` declarados en `App/Backend/app/routes/`
 
 ### Requirement: Verificación de sincronía de openapi.json
 
@@ -44,7 +46,7 @@ El proyecto SHALL proveer una verificación que falle cuando `docs/openapi.json`
 
 ### Requirement: Anexo C — Esquema de base de datos
 
-El proyecto SHALL incluir `docs/anexo_c_esquema_bd.md` con el script SQL completo de las cinco tablas del modelo de datos (`sector`, `estado`, `canal_origen`, `incidente`, `clasificacion_log`), derivado fielmente de los modelos ORM en `Gestion_Incidentes/app/models/`. El documento MUST declarar, por cada tabla, sus columnas con tipos, las claves primarias, las claves foráneas con su acción `ON DELETE` real (`SET NULL`, `RESTRICT`, `CASCADE`), las restricciones de unicidad y los índices secundarios e índices compuestos definidos en el código. El documento MUST documentar la doble representación de la descripción (`descripcion_original` cifrada at-rest, `descripcion_pseudonimizada` en claro) conforme a la arquitectura de pseudonimización.
+El proyecto SHALL incluir `docs/anexo_c_esquema_bd.md` con el script SQL completo de las cinco tablas del modelo de datos (`sector`, `estado`, `canal_origen`, `incidente`, `clasificacion_log`), derivado fielmente de los modelos ORM en `App/Backend/app/models/`. El documento MUST declarar, por cada tabla, sus columnas con tipos, las claves primarias, las claves foráneas con su acción `ON DELETE` real (`SET NULL`, `RESTRICT`, `CASCADE`), las restricciones de unicidad y los índices secundarios e índices compuestos definidos en el código. El documento MUST documentar la doble representación de la descripción (`descripcion_original` cifrada at-rest, `descripcion_pseudonimizada` en claro) conforme a la arquitectura de pseudonimización.
 
 #### Scenario: Las cinco tablas están definidas
 
@@ -77,17 +79,18 @@ El proyecto SHALL incluir `docs/anexo_f_corpus.md` describiendo el corpus de val
 
 ### Requirement: Anexo G — Guía operativa
 
-El proyecto SHALL incluir `docs/operational-guide.md` con los procedimientos operativos del sistema: despliegue (vía `docker compose`), respaldo (backup) y restauración de la base PostgreSQL, y monitoreo de salud mediante los endpoints de chequeo expuestos por el backend. Los comandos documentados MUST ser coherentes con la configuración real de `docker-compose.yml` (nombres de servicios, puertos, credenciales de ejemplo y endpoints de health).
+La guia operativa (`docs/operational-guide.md`) SHALL incluir referencias a los scripts automatizados de backup (`scripts/backup.sh` y `scripts/backup.ps1`) como metodo recomendado para backups diarios, reemplazando el comando manual de cron documentado en la seccion 3.
 
-#### Scenario: Procedimientos cubren despliegue, backup y monitoreo
+#### Scenario: Seccion de backup referencia scripts
+- **WHEN** se lee la seccion 3 (Backup y restauracion de PostgreSQL) de `docs/operational-guide.md`
+- **THEN** el documento referencia los scripts `scripts/backup.sh` y `scripts/backup.ps1`
+- **AND** describe como configurar la ejecucion automatica via cron (Linux/macOS) o Task Scheduler (Windows)
+- **AND** incluye el comando de ejemplo para ambos entornos
 
-- **WHEN** se inspecciona `docs/operational-guide.md`
-- **THEN** incluye secciones para despliegue, backup/restauración de PostgreSQL y monitoreo de salud, cada una con comandos concretos
-
-#### Scenario: Los comandos coinciden con docker-compose
-
-- **WHEN** se contrastan los comandos de la guía contra `docker-compose.yml`
-- **THEN** los nombres de servicios y endpoints de monitoreo referenciados existen en el compose (p. ej. servicio `backend` y su healthcheck a `/health`)
+#### Scenario: Comando manual permanece documentado
+- **WHEN** se lee la seccion 3 de la guia operativa
+- **THEN** el comando `docker compose exec postgres pg_dump` sigue documentado como alternativa manual
+- **AND** la documentacion de restauracion no sufre cambios
 
 ### Requirement: Guía de troubleshooting para operadores
 
@@ -100,14 +103,38 @@ El proyecto SHALL incluir `docs/troubleshooting.md` con una guía de resolución
 
 ### Requirement: README de despliegue local reproducible
 
-El proyecto SHALL actualizar `README.md` con instrucciones de despliegue local que permitan levantar el sistema completo en menos de 15 minutos a partir de un clon limpio. Las instrucciones MUST listar los prerrequisitos, el paso de configuración de variables de entorno (desde una plantilla `.env.example`) y el comando de arranque (`docker compose up`), y MUST referenciar la guía operativa y la de troubleshooting para procedimientos detallados.
+El proyecto SHALL actualizar `README.md` con instrucciones de despliegue local que permitan levantar el sistema completo en menos de 15 minutos a partir de un clon limpio. Las instrucciones MUST listar los prerrequisitos (incluyendo OpenSSL para la generacion de certificados), el paso de generacion de certificados TLS (`scripts/generate-certs.sh` o `scripts/generate-certs.ps1`), el paso de configuracion de variables de entorno (desde una plantilla `.env.example`), y el comando de arranque (`docker compose up -d`). Las URL de verificacion de salud MUST referenciar `https://localhost/api/v1/health`. La seccion MUST referenciar la guia operativa y la de troubleshooting para procedimientos detallados, e incluir una nota sobre la advertencia de certificado auto-firmado en el navegador.
 
 #### Scenario: README cubre el camino de despliegue local
 
-- **WHEN** se lee la sección de despliegue local del `README.md`
-- **THEN** incluye prerrequisitos, configuración de `.env`, el comando `docker compose up` y una verificación de salud, sin contradecir `docker-compose.yml`
+- **WHEN** se lee la seccion de despliegue local del `README.md`
+- **THEN** incluye prerrequisitos (OpenSSL), generacion de certificados, configuracion de `.env`, el comando `docker compose up -d` y una verificacion de salud con HTTPS, sin contradecir `docker-compose.yml`
 
-#### Scenario: README enlaza la documentación operativa
+#### Scenario: README advierte sobre certificado auto-firmado
+
+- **WHEN** se lee la seccion de despliegue local del `README.md`
+- **THEN** incluye una nota explicando que el navegador mostrara una advertencia de seguridad por ser un certificado auto-firmado y que es seguro proceder en el entorno de desarrollo local
+
+#### Scenario: README enlaza la documentacion operativa
 
 - **WHEN** se revisan los enlaces del README
 - **THEN** referencia `docs/operational-guide.md` y `docs/troubleshooting.md` para los procedimientos detallados
+
+### Requirement: DOC-002 — Tesis v8 K8s language verified
+
+La tesis en version 8 (LaTeX) SHALL mantener el lenguaje suavizado sobre Kubernetes: "preparados para migracion" (futuro), no "mediante un cluster Kubernetes" (presente). Este requisito es de VERIFICACION unicamente.
+
+#### Scenario: Lenguaje K8s es futuro, no presente
+- **WHEN** se inspecciona `docs/Tesis/v8 (IA)/paper/sections/06-implementacion.tex` linea 8
+- **THEN** el texto contiene "preparados para migracion a un cluster Kubernetes~1.30"
+- **AND** NO contiene frases que afirmen que Kubernetes esta desplegado actualmente ("mediante un cluster", "se despliega en Kubernetes")
+
+### Requirement: DOC-003 — Anexo G referencia scripts de backup
+
+La documentacion operativa del Anexo G en la tesis SHALL mencionar la existencia de scripts automatizados de backup con retencion de 7 dias.
+
+#### Scenario: Anexo G menciona backup automatizado
+- **WHEN** se lee la seccion del Anexo G en la tesis v8
+- **THEN** el texto menciona que existen scripts de backup automatizados (`backup.sh` y `backup.ps1`)
+- **AND** describe la politica de retencion (7 backups diarios)
+

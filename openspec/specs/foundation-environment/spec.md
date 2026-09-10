@@ -3,11 +3,9 @@
 ## Purpose
 
 Define los requisitos del entorno base del proyecto: configuración OPSX, resolución determinística del prompt de Gemini, estado inicial de la base de datos, y versionado de la memoria compartida del proyecto.
-
 ## Requirements
-
 ### Requirement: Configuración OPSX del proyecto
-El repositorio SHALL contener `openspec/config.yaml` declarando el stack tecnológico (FastAPI, SQLAlchemy 2.0 async, PostgreSQL 15, N8N, Gemini 2.5 Flash, React 18 + TypeScript + Vite) y las rutas canónicas del proyecto (`Gestion_Incidentes/`, `Frontend/`, `knowledge-base/`, `CHANGES.md`).
+El repositorio SHALL contener `openspec/config.yaml` declarando el stack tecnológico (FastAPI, SQLAlchemy 2.0 async, PostgreSQL 15, N8N, Gemini 2.5 Flash, React 18 + TypeScript + Vite) y las rutas canónicas del proyecto (`App/Backend/`, `App/Frontend/`, `knowledge-base/`, `CHANGES.md`).
 
 #### Scenario: Sub-agente consulta el contexto del proyecto
 - **WHEN** un agente ejecuta `openspec status` o lee `openspec/config.yaml`
@@ -16,8 +14,8 @@ El repositorio SHALL contener `openspec/config.yaml` declarando el stack tecnol�
 ### Requirement: Resolución del prompt de Gemini independiente del cwd
 El clasificador Gemini SHALL resolver la ruta de `prompt_gemini.txt` de forma determinística e independiente del directorio de trabajo, con default anclado a la raíz del repositorio (`docs/prompt_gemini.txt`) y override posible vía variable de entorno `GEMINI_PROMPT_PATH`.
 
-#### Scenario: Arranque desde Gestion_Incidentes/
-- **WHEN** la aplicación se inicia con cwd en `Gestion_Incidentes/`
+#### Scenario: Arranque desde App/Backend/
+- **WHEN** la aplicación se inicia con cwd en `App/Backend/`
 - **THEN** el prompt se carga correctamente y NO se emite el warning `prompt_file_not_found`
 
 #### Scenario: Override por variable de entorno
@@ -93,3 +91,17 @@ The frontend Dockerfile SHALL implement multi-stage builds with nginx for produc
 - **WHEN** the frontend container serves the application
 - **THEN** nginx SHALL serve index.html for all routes to support client-side routing
 - **AND** static assets SHALL be served with appropriate caching headers
+
+### Requirement: ENV-001 — N8N configurado con retencion de ejecuciones
+
+El servicio N8N en `docker-compose.yml` SHALL incluir variables de entorno que configuren la poda automatica de datos de ejecucion con antiguedad mayor a 30 dias (720 horas).
+
+#### Scenario: Variables de retencion presentes en compose
+- **WHEN** se inspecciona la seccion `services.n8n.environment` en `docker-compose.yml`
+- **THEN** la variable `EXECUTIONS_DATA_PRUNE` tiene el valor `"true"`
+- **AND** la variable `EXECUTIONS_DATA_MAX_AGE` tiene el valor `"720"`
+
+#### Scenario: Resto de la configuracion N8N sin cambios
+- **WHEN** se inspeccionan el resto de las variables de entorno del servicio N8N
+- **THEN** las variables existentes (`N8N_BASIC_AUTH_ACTIVE`, `BACKEND_URL`, `QUEUE_BULL_REDIS_HOST`, etc.) permanecen sin modificacion
+- **AND** los volumes, puertos y dependencias del servicio N8N no se alteran

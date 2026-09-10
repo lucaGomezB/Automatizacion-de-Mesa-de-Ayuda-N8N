@@ -20,8 +20,8 @@ os.environ.setdefault("PYTHONIOENCODING", "utf-8")
 
 REPO_ROOT = pathlib.Path(__file__).parent.parent
 
-# Cargar variables de entorno desde Gestion_Incidentes/.env antes del import de Settings
-env_file = REPO_ROOT / "Gestion_Incidentes" / ".env"
+# Cargar variables de entorno desde App/Backend/.env antes del import de Settings
+env_file = REPO_ROOT / "App" / "Backend" / ".env"
 if env_file.exists():
     for line in env_file.read_text(encoding="utf-8").splitlines():
         line = line.strip()
@@ -29,8 +29,8 @@ if env_file.exists():
             key, _, val = line.partition("=")
             os.environ.setdefault(key.strip(), val.strip())
 
-# Agregar Gestion_Incidentes al path para importar HybridClassifier
-sys.path.insert(0, str(REPO_ROOT / "Gestion_Incidentes"))
+# Agregar App/Backend al path para importar HybridClassifier
+sys.path.insert(0, str(REPO_ROOT / "App" / "Backend"))
 sys.path.insert(0, str(REPO_ROOT))
 
 from evaluation.corpus import cargar_corpus, CasoEvaluacion
