@@ -25,7 +25,7 @@
 
 ### incidente
 - `id` PK autoincremental; identificador legible con prefijo configurable (tesis §5.6).
-- `descripcion` (texto crudo **pseudonimizado** según tesis §11.3 — pendiente C-03).
+- `descripcion` (texto pseudonimizado segun tesis §11.3 — implementado en C-03 via `utils/pseudonymizer.py`, patrones regex para `[PERSONA]`, `[EMAIL]`, `[TELEFONO]`, `[HOST]`).
 - `prioridad`, `created_at`/`updated_at` (TimestampMixin, precisión ms).
 - FK: `canal_origen_id`, `sector_id` (nullable hasta clasificar), `estado_id`.
 - Relación 1:N con `clasificacion_log` (cascade delete).
@@ -60,8 +60,9 @@
 | estado | nuevo, en proceso, en espera, resuelto, cerrado (es_terminal=true) |
 | canal_origen | correo electrónico, formulario web, llamada telefónica |
 
-## Reglas de retención (tesis §11.2 — pendiente de implementar)
+## Politica de conservacion (tesis v8 §11.2, corregida por C-18)
 
-- Registros operativos: 90 días.
-- Incidentes resueltos: 1 año → luego anonimizar o eliminar.
-- Logs de ejecución N8N: 30 días.
+- Conservacion **indefinida** de todos los incidentes. Justificacion: valor estadistico de los datos historicos para analisis de tendencias e identificacion de problemas recurrentes.
+- Incidentes en estado cerrado: registro auditable permanente. Pueden consultarse pero no editarse ni eliminarse desde la interfaz (bloqueo 409 implementado en C-23).
+- La pseudonimizacion (regex pre-Gemini) y el cifrado Fernet (AES-128-CBC + HMAC-SHA-256) garantizan la proteccion de datos incluso en periodos prolongados.
+- Logs de ejecucion N8N: poda automatica a 30 dias (`EXECUTIONS_DATA_PRUNE=true`, `EXECUTIONS_DATA_MAX_AGE=720` en `docker-compose.yml`).
