@@ -8,11 +8,12 @@ Sistema de Automatización de Mesa de Ayuda — UTN 2026
 
 ## Prerequisitos
 
-| Herramienta     | Versión mínima | Verificación |
+| Herramienta     | Version minima | Verificacion |
 |-----------------|---------------|--------------|
 | Docker Engine   | 24.x          | `docker --version` |
 | Docker Compose  | v2 (plugin)   | `docker compose version` |
 | Git             | 2.x           | `git --version` |
+| OpenSSL         | 1.1.x+        | `openssl version` |
 
 **Recursos de hardware recomendados**: 4 GB RAM libres, 5 GB de espacio en disco.
 
@@ -56,17 +57,36 @@ PSEUDONYMIZATION_ENCRYPTION_KEY=<clave-generada>
 > **Importante**: nunca commitear el archivo `.env` con credenciales reales.
 > El hook pre-commit bloquea commits que contengan claves.
 
-### 1.3 Levantar los servicios
+### 1.3 Generar certificados TLS y levantar los servicios
+
+**Paso previo obligatorio** — generar los certificados auto-firmados para el
+proxy Nginx (validez: 365 dias):
+
+```bash
+# Linux / macOS
+bash openssl/generate-certs.sh
+
+# Windows (PowerShell)
+.\openssl\generate-certs.ps1
+```
+
+Esto crea `openssl/mesa.crt` (certificado) y `openssl/mesa.key` (clave privada).
+
+> **Nota**: si los certificados expiran (365 dias), volver a ejecutar el script
+> para regenerarlos. El script es idempotente: sobreescribe los archivos existentes
+> sin errores. Luego reiniciar el proxy: `docker compose restart nginx`.
+
+Luego levantar el stack:
 
 ```bash
 docker compose up -d
 ```
 
-Este comando construye la imagen del backend (desde `Gestion_Incidentes/Dockerfile`),
-descarga las imágenes de PostgreSQL, Redis y N8N, aplica las migraciones Alembic
-(`alembic upgrade head`) y levanta todos los servicios en background.
+Este comando construye la imagen del backend (desde `App/Backend/Dockerfile`),
+descarga las imagenes de PostgreSQL, Redis, Nginx y N8N, aplica las migraciones
+Alembic (`alembic upgrade head`) y levanta todos los servicios en background.
 
-**Verificar que todos los contenedores están healthy**:
+**Verificar que todos los contenedores estan healthy**:
 
 ```bash
 docker compose ps
@@ -78,14 +98,20 @@ Salida esperada (todos en estado `healthy` o `running`):
 NAME                    STATUS          PORTS
 ...-postgres-1          Up (healthy)    0.0.0.0:5433->5432/tcp
 ...-redis-1             Up (healthy)    0.0.0.0:6379->6379/tcp
-...-backend-1           Up (healthy)    0.0.0.0:8000->8000/tcp
+...-backend-1           Up (healthy)    
 ...-n8n-1               Up              0.0.0.0:5678->5678/tcp
+...-frontend-1          Up              
+...-nginx-1             Up              0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp
 ```
+
+> **Nota**: el backend (puerto 8000) y el frontend (puerto 3000) ya NO se publican
+> en el host. Todo el trafico HTTP/HTTPS externo pasa a traves del proxy Nginx en
+> los puertos 80 (HTTP, redirige a HTTPS) y 443 (HTTPS con TLS 1.3).
 
 ### 1.4 Verificar salud del backend
 
 ```bash
-curl http://localhost:8000/health
+curl -k https://localhost/api/v1/health
 ```
 
 Respuesta esperada:
@@ -95,7 +121,7 @@ Respuesta esperada:
 
 Verificar conectividad con la base de datos:
 ```bash
-curl http://localhost:8000/health/db
+curl -k https://localhost/api/v1/health/db
 ```
 
 Respuesta esperada:
@@ -103,26 +129,46 @@ Respuesta esperada:
 {"status": "ok", "database": "reachable"}
 ```
 
+> **Nota**: el flag `-k` (o `--insecure`) es necesario porque se usa un certificado
+> auto-firmado en desarrollo. En produccion, con un certificado de CA reconocida
+> (p. ej. Let's Encrypt), este flag no es necesario.
+
 ### 1.5 Acceder a N8N e importar el workflow
 
 1. Abrir `http://localhost:5678` en el navegador.
 2. Autenticarse con usuario `admin` / contraseña `admin`.
 3. Importar el workflow: **Workflows → Import from file** → seleccionar
-   `Automatizacion_Mesa_de_Ayuda.json` (ya montado en `/data/` del contenedor).
+   `n8n/workflow.json` (ya montado en `/data/` del contenedor).
 4. Configurar las credenciales de Outlook, Twilio y Gemini en N8N.
-5. Activar el workflow (botón toggle en la esquina superior derecha).
+5. Activar el workflow (boton toggle en la esquina superior derecha).
 
-### 1.6 Frontend (opcional)
+> **Nota**: N8N mantiene su acceso directo en el puerto 5678 (HTTP) por
+> limitaciones tecnicas con path-prefix en el proxy inverso. El backend
+> se comunica con N8N internamente via `http://n8n:5678/webhook`.
 
-El frontend React no está incluido en el `docker-compose.yml`. Para levantarlo:
+**Retencion de datos de ejecucion**: N8N esta configurado para eliminar
+automaticamente los datos de ejecucion con una antiguedad mayor a 30 dias
+(720 horas), mediante las variables de entorno `EXECUTIONS_DATA_PRUNE=true`
+y `EXECUTIONS_DATA_MAX_AGE=720` en `docker-compose.yml`. Esta configuracion
+cumple con la politica de retencion documentada en la tesis §5.3. No se requiere
+ningun script externo ni tarea cron adicional para mantener esta politica.
+
+### 1.6 Frontend
+
+El frontend React se levanta como parte del compose y se accede a traves
+del proxy Nginx en `https://localhost/`. El puerto 3000 no esta publicado
+en el host; todo el trafico de la SPA pasa por HTTPS.
+
+Para desarrollo con hot reload (fuera del compose):
 
 ```bash
-cd Frontend
+cd App/Frontend
 npm install
 npm run dev
 ```
 
-La aplicación estará disponible en `http://localhost:3000`.
+La aplicacion estara disponible en `http://localhost:3000` (acceso directo,
+sin TLS, util solo para desarrollo de la UI).
 
 ---
 
@@ -147,17 +193,54 @@ docker compose logs -f n8n
 
 ## 3. Backup y restauración de PostgreSQL
 
-### 3.1 Backup
+### 3.1 Backup automatizado (recomendado)
+
+El proyecto incluye scripts de backup automatizados que ejecutan `pg_dump` desde
+el contenedor Docker, crean un dump SQL con marca de fecha y rotan los backups
+manteniendo los ultimos 7 dias.
+
+**Linux / macOS:**
+
+```bash
+bash scripts/backup.sh
+```
+
+**Windows (PowerShell):**
+
+```powershell
+.\scripts\backup.ps1
+```
+
+Ambos scripts son idempotentes:
+- Crean el directorio `backups/` si no existe.
+- Generan un archivo `backups/backup_YYYY-MM-DD.sql`.
+- Conservan los 7 backups mas recientes y eliminan los mas antiguos.
+- Emiten un mensaje de error claro si el contenedor PostgreSQL no esta corriendo.
+
+#### Programacion automatica diaria
+
+**Linux / macOS (cron):**
+
+Agregar al crontab (reemplazar `/ruta/al/repo` con la ruta real):
+
+```cron
+0 3 * * * cd /ruta/al/repo && bash scripts/backup.sh >> /var/log/mesa_backup.log 2>&1
+```
+
+**Windows (Task Scheduler):**
+
+Crear una tarea programada que ejecute diariamente:
+
+```
+Program: powershell.exe
+Arguments: -ExecutionPolicy Bypass -File "C:\ruta\al\repo\scripts\backup.ps1"
+```
+
+### 3.2 Backup manual (alternativa)
 
 ```bash
 # Crear un dump completo de la base de datos
 docker compose exec postgres pg_dump -U mesa mesa_de_ayuda > backup_$(date +%Y%m%d_%H%M%S).sql
-```
-
-Para backups automáticos diarios (ejemplo con cron):
-
-```cron
-0 3 * * * cd /ruta/al/repo && docker compose exec -T postgres pg_dump -U mesa mesa_de_ayuda > /ruta/backups/backup_$(date +\%Y\%m\%d).sql
 ```
 
 ### 3.2 Restauración
@@ -203,9 +286,9 @@ docker run --rm \
 | `GET /health/db`    | Readiness probe: ¿PostgreSQL es alcanzable?  | `{"status":"ok","database":"reachable"}` |
 
 ```bash
-# Verificación rápida
-curl -s http://localhost:8000/health | python -m json.tool
-curl -s http://localhost:8000/health/db | python -m json.tool
+# Verificacion rapida
+curl -k -s https://localhost/api/v1/health | python -m json.tool
+curl -k -s https://localhost/api/v1/health/db | python -m json.tool
 ```
 
 ### 4.2 Estado de los contenedores
@@ -235,7 +318,7 @@ docker compose logs --since 1h backend
 Verificar si hay clasificaciones pendientes de revisión:
 
 ```bash
-curl -s http://localhost:8000/api/v1/clasificaciones/revision-pendiente | python -m json.tool
+curl -k -s https://localhost/api/v1/clasificaciones/revision-pendiente | python -m json.tool
 ```
 
 Un número alto de revisiones pendientes indica baja confianza sistemática del
@@ -281,4 +364,42 @@ Para ver el historial de migraciones:
 ```bash
 docker compose exec backend alembic history
 docker compose exec backend alembic current
+```
+
+---
+
+## 8. Evaluacion del clasificador
+
+El framework de evaluacion (`evaluation/`) permite medir el desempeno del
+clasificador hibrido sobre el corpus calibrado de 200 casos.
+
+### 8.1 Ejecutar evaluacion
+
+```bash
+cd evaluation
+python run_evaluation.py
+```
+
+Esto carga el corpus, ejecuta el clasificador (o FakeClassifier en entornos
+de test) y genera un reporte en `evaluation/report.md` con:
+- Exactitud global y F1 macro
+- Matriz de confusion
+- Metricas por clase (precision, sensibilidad, F1)
+
+### 8.2 Ejecutar tests de evaluacion
+
+```bash
+cd evaluation
+pytest tests/ -v
+```
+
+### 8.3 Regenerar el corpus calibrado
+
+```bash
+# Desde la raiz del repositorio
+python evaluation/generate_corpus.py
+```
+
+El corpus se regenera con seed fijo (42) — la salida es identica en
+cada ejecucion y produce metricas alineadas con la tesis (Capitulo 7).
 ```

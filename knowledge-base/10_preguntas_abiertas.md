@@ -32,7 +32,7 @@
 
 ### IN-06 — Workflow N8N del repo vs. descripcion de la tesis
 **La tesis dice** (§6.3): 12 nodos con normalizacion, IF por confianza, dos llamadas HTTP y notificaciones paralelas.
-**El repo dice**: `Automatizacion_Mesa_de_Ayuda.json` con 16 nodos operativos reales + 3 sticky notes. Trigger email es Microsoft Outlook (NO IMAP). Clasificacion embebida en backend (una sola llamada HTTP). Canal telefonico con AI Agent (LangChain) + Redis.
+**El repo dice**: `n8n/workflow.json` con 16 nodos operativos reales + 3 sticky notes. Trigger email es Microsoft Outlook (NO IMAP). Clasificacion embebida en backend (una sola llamada HTTP). Canal telefonico con AI Agent (LangChain) + Redis.
 **Estado actual (2026-07-02)**: workflow funcional con 16 nodos. Divergencias documentadas: (a) Outlook vs IMAP, (b) 16 nodos vs 12, (c) clasificacion embebida vs endpoint separado, (d) AI Agent + Redis para canal telefonico.
 
 ## Preguntas abiertas (priorizadas)

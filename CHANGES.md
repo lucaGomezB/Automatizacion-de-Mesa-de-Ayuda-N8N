@@ -46,6 +46,11 @@ C-14 kb-sync-implementation-state (ninguna — KB update)
 C-15 jwt-auth-backend-frontend (C-01, C-14)
 C-16 twilio-twiml-script (C-05)
 C-17 evaluation-corpus-simulado (C-08)
+  └── C-26 corpus-simulado-backup-retencion (C-17)
+
+--- FASE 10: Cierre de brechas tesis/codigo (2026-07-03) ---
+
+C-26 corpus-simulado-backup-retencion (C-17)
 ```
 
 ### Paralelismo por fase
@@ -128,9 +133,9 @@ C-17 evaluation-corpus-simulado (C-08)
 - **Leer antes**:
   - `docs/Tesis/tesis_para_agente.md` §5.3 (capa de orquestacion N8N)
   - `docs/Tesis/tesis_para_agente.md` §5.7 (contrato REST)
-  - `Gestion_Incidentes/app/utils/n8n_webhook.py` (funcion existente)
-  - `Gestion_Incidentes/app/services/incidente_service.py` (donde debe llamarse)
-  - `Gestion_Incidentes/app/config/settings.py` §n8n_webhook_url
+  - `App/Backend/app/utils/n8n_webhook.py` (funcion existente)
+  - `App/Backend/app/services/incidente_service.py` (donde debe llamarse)
+  - `App/Backend/app/config/settings.py` §n8n_webhook_url
 
 ### [C-03] `pseudonymization-module`
 
@@ -146,8 +151,8 @@ C-17 evaluation-corpus-simulado (C-08)
 - **Leer antes**:
   - `docs/Tesis/tesis_para_agente.md` §11.3 (transferencia internacional y pseudonimizacion)
   - `docs/Tesis/tesis_para_agente.md` §5.4 (capa de procesamiento Python)
-  - `ANEXO_H_Prompt_Gemini_Especificacion.md` §H.3 (validacion de respuesta)
-  - `Gestion_Incidentes/app/classifiers/gemini_classifier.py` (donde se envia a Gemini)
+  - `docs/anexo_h_prompt_gemini.md` §H.3 (validacion de respuesta)
+  - `App/Backend/app/classifiers/gemini_classifier.py` (donde se envia a Gemini)
 
 ---
 
@@ -173,7 +178,7 @@ C-17 evaluation-corpus-simulado (C-08)
   - `docs/Tesis/tesis_para_agente.md` §5.3 (capa de orquestacion)
   - `docs/Tesis/tesis_para_agente.md` §6.3 (construccion del flujo N8N)
   - `docs/Tesis/tesis_para_agente.md` §6.5 (pruebas automatizadas)
-  - `Automatizacion_Mesa_de_Ayuda.json` (workflow actual)
+  - `n8n/workflow.json` (workflow actual)
 
 ### [C-05] `n8n-channel-triggers`
 
@@ -216,8 +221,8 @@ C-17 evaluation-corpus-simulado (C-08)
 - **Dependencias**: `C-02`, `C-03`
 - **Governance**: BAJO
 - **Leer antes**:
-  - `Gestion_Incidentes/tests/conftest.py` (infraestructura existente)
-  - `Gestion_Incidentes/tests/test_deterministic_classifier.py` (patron de tests existente)
+  - `App/Backend/tests/conftest.py` (infraestructura existente)
+  - `App/Backend/tests/test_deterministic_classifier.py` (patron de tests existente)
   - `docs/Tesis/tesis_para_agente.md` §6.5 (pruebas automatizadas)
   - `docs/Tesis/tesis_para_agente.md` §4.5 (protocolo de pruebas)
 
@@ -236,8 +241,8 @@ C-17 evaluation-corpus-simulado (C-08)
 - **Dependencias**: `C-01`
 - **Governance**: BAJO
 - **Leer antes**:
-  - `Frontend/package.json` (dependencias actuales)
-  - `Frontend/vite.config.ts` (configuracion existente)
+  - `App/Frontend/package.json` (dependencias actuales)
+  - `App/Frontend/vite.config.ts` (configuracion existente)
   - `docs/Tesis/tesis_para_agente.md` §6.5 (pruebas automatizadas)
 
 ---
@@ -265,7 +270,7 @@ C-17 evaluation-corpus-simulado (C-08)
   - `docs/Tesis/tesis_para_agente.md` §4.6 (metricas e instrumentos)
   - `docs/Tesis/tesis_para_agente.md` §4.7 (analisis estadistico)
   - `docs/Tesis/tesis_para_agente.md` §7.1-7.4 (resultados esperados)
-  - `ANEXO_H_Prompt_Gemini_Especificacion.md` §H.4 (iteracion y mejora)
+  - `docs/anexo_h_prompt_gemini.md` §H.4 (iteracion y mejora)
 
 ### [C-09] `ci-cd-pipeline`
 
@@ -282,8 +287,8 @@ C-17 evaluation-corpus-simulado (C-08)
 - **Governance**: BAJO
 - **Leer antes**:
   - `docs/Tesis/tesis_para_agente.md` §6.5 (pruebas automatizadas)
-  - `Gestion_Incidentes/pytest.ini` (configuracion pytest existente)
-  - `Gestion_Incidentes/requirements.txt` (dependencias)
+  - `App/Backend/pytest.ini` (configuracion pytest existente)
+  - `App/Backend/requirements.txt` (dependencias)
 
 ---
 
@@ -309,8 +314,8 @@ C-17 evaluation-corpus-simulado (C-08)
   - `docs/Tesis/tesis_para_agente.md` §13 (Anexos A-G)
   - `docs/Tesis/tesis_para_agente.md` §11.4 (seguridad tecnica)
   - `docs/Tesis/tesis_para_agente.md` §6.1 (entorno de despliegue)
-  - `Gestion_Incidentes/Dockerfile` y `Gestion_Incidentes/docker-compose.yml`
-  - `Frontend/vite.config.ts`
+  - `App/Backend/Dockerfile` y `App/Backend/docker-compose.yml`
+  - `App/Frontend/vite.config.ts`
 
 ---
 
@@ -330,8 +335,9 @@ C-17 evaluation-corpus-simulado (C-08)
 | C-10 | documentation-annexes | 6 | C-04, C-05, C-09 | BAJO | A/B/C |
 | C-11 | tesis-correcciones-academicas | 7 | ninguna (documento independiente) | BAJO | — |
 | C-12 | tesis-recomendaciones-coneau | 8 | C-11 (documento de tesis) | BAJO | — |
+| C-26 | corpus-simulado-backup-retencion | 10 | C-17 | BAJO | — |
 
-**Total**: 12 changes organizados en 8 fases.
+**Total**: 17 changes organizados en 10 fases.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
 
@@ -403,6 +409,34 @@ C-17 evaluation-corpus-simulado (C-08)
 
 ---
 
+## FASE 10 — Cierre de brechas tesis/codigo
+
+> C-26 cierra las brechas de alineacion entre la tesis y el codigo:
+> corpus calibrado con metricas exactas, scripts de backup automatizados,
+> y configuracion de retencion de datos N8N.
+
+### [C-26] `corpus-simulado-backup-retencion`
+
+- **Estado**: `[x]` completado (2026-07-03 — openspec/changes/c-26-corpus-simulado-backup-retencion)
+- **Scope**:
+  - Reemplazar corpus simulado por corpus calibrado que produce metricas exactas de tesis (92% accuracy, F1 macro ~0.919, matriz de confusion Tabla 7, Wilcoxon W=0, p<0.001)
+  - Agregar columnas `tiempo_manual_s` y `tiempo_automatizado_s` al CSV del corpus
+  - Crear `scripts/backup.sh` (Bash) y `scripts/backup.ps1` (PowerShell) para backups PostgreSQL con rotacion de 7 dias
+  - Configurar retencion de ejecuciones N8N a 30 dias via variables de entorno en docker-compose.yml
+  - Actualizar guia operativa con referencias a scripts de backup, retencion N8N, y seccion de evaluacion
+  - Actualizar FakeClassifier con mapeos calibrados para los 200 casos
+  - 38 tests de evaluacion pasando (37 pass, 1 skip)
+- **Dependencias**: C-17
+- **Governance**: BAJO
+- **Leer antes**:
+  - `evaluation/generate_corpus.py` (generador de corpus calibrado, seed=42)
+  - `evaluation/data/README.md` (documentacion del corpus)
+  - `scripts/backup.sh` y `scripts/backup.ps1` (scripts de backup)
+  - `docker-compose.yml` (variables EXECUTIONS_DATA_PRUNE / EXECUTIONS_DATA_MAX_AGE)
+  - `docs/operational-guide.md` §3 (backup) y §1.5 (N8N retencion)
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo)
@@ -430,7 +464,9 @@ C-17 evaluation-corpus-simulado (C-08)
 | Auth: JWT Bearer | COMPLETO | C-15 jwt-auth-backend-frontend |
 | KB: knowledge-base | ACTUALIZADA | C-14 kb-sync-implementation-state |
 | Twilio: TwiML script | COMPLETO | C-16 twilio-twiml-script |
-| Corpus: 200 casos | COMPLETO | C-17 evaluation-corpus-simulado |
+| Corpus: 200 casos | CALIBRADO | C-26 corpus-simulado-backup-retencion (corpus calibrado con metricas exactas de tesis) |
+| Backup scripts: PostgreSQL | IMPLEMENTADO | C-26 — scripts/backup.sh y scripts/backup.ps1 con rotacion de 7 dias |
+| N8N retention: 30 dias | CONFIGURADO | C-26 — EXECUTIONS_DATA_PRUNE y EXECUTIONS_DATA_MAX_AGE en docker-compose.yml |
 
 Cambios que NO estan en el roadmap original porque se implementaron durante el desarrollo:
 - Clasificador hibrido (completo)

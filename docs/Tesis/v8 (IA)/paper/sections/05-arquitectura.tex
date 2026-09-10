@@ -5,7 +5,7 @@
 
 \subsection{Vision general}
 
-El sistema propuesto se estructura como una arquitectura distribuida y modular compuesta por cinco capas claramente diferenciadas, siguiendo los principios de cohesion alta y acoplamiento bajo descritos por \textcite{Pressman2020_software_engineering}. La comunicación entre capas se realiza mediante el protocolo HTTP sobre TLS~1.3, utilizando interfaces de programacion de aplicaciones de tipo REST con cuerpos JSON para el intercambio estructurado de datos \parencite{Fielding2002_rest}. Esta separación de responsabilidades facilita el reemplazo independiente de cualquier componente sin afectar a los demas.
+El sistema propuesto se estructura como una arquitectura distribuida y modular compuesta por cinco capas claramente diferenciadas, siguiendo los principios de cohesion alta y acoplamiento bajo descritos por \textcite{Pressman2020_software_engineering}. La comunicación con el exterior se protege mediante TLS~1.3 a nivel del proxy inverso (Nginx), mientras que la comunicación interna entre los servicios del sistema (N8N, backend, PostgreSQL, Redis) se realiza sobre la red aislada de Docker, que constituye el perímetro de confianza. Todas las interfaces entre capas utilizan el estilo arquitectónico REST con cuerpos JSON para el intercambio estructurado de datos \parencite{Fielding2002_rest}. Esta separación de responsabilidades facilita el reemplazo independiente de cualquier componente sin afectar a los demas.
 
 La Tabla~\ref{tab:capas} sintetiza las cinco capas y sus responsabilidades específicas.
 

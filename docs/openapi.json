@@ -420,7 +420,7 @@
           "Incidentes"
         ],
         "summary": "Actualizar parcialmente un incidente",
-        "description": "Actualiza uno o más campos de un incidente existente (PATCH semántico).\n\nSolo se modifican los campos incluidos en el payload con valor distinto\nde None. Casos de uso típicos: cambio de estado por el operador,\nreasignación de sector tras revisión manual, o modificación de prioridad.\n\nArgs:\n    incidente_id: ID del incidente a modificar.\n    payload:      Campos a actualizar (todos opcionales).\n\nReturns:\n    Representación actualizada del incidente (HTTP 200) o 404 si no existe.",
+        "description": "Actualiza uno o más campos de un incidente existente (PATCH semántico).\n\nSolo se modifican los campos incluidos en el payload con valor distinto\nde None. Casos de uso típicos: cambio de estado por el operador,\nreasignación de sector tras revisión manual, o modificación de prioridad.\n\nLos incidentes en estado terminal (cerrado, es_terminal=true) son de solo\nlectura. Cualquier intento de PATCH sobre un incidente cerrado retorna\nHTTP 409 Conflict con código INCIDENTE_CERRADO.\n\nArgs:\n    incidente_id: ID del incidente a modificar.\n    payload:      Campos a actualizar (todos opcionales).\n\nReturns:\n    Representación actualizada del incidente (HTTP 200).\n    HTTP 404 si el incidente no existe.\n    HTTP 409 si el incidente está cerrado (solo lectura).",
         "operationId": "update_incidente_api_v1_incidentes__incidente_id__patch",
         "security": [
           {
@@ -651,10 +651,187 @@
           }
         }
       }
+    },
+    "/api/v1/estadisticas/tendencias": {
+      "get": {
+        "tags": [
+          "Estadisticas"
+        ],
+        "summary": "Obtener tendencias de incidentes agrupadas por dia o mes",
+        "description": "Retorna una serie temporal con la cantidad de incidentes por periodo\n(dia o mes) dentro del rango de fechas especificado.\n\nIncluye desglose por sector y distribucion de estados para el rango completo.",
+        "operationId": "get_tendencias_api_v1_estadisticas_tendencias_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agrupar_por",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/AgruparPorEnum",
+              "description": "Granularidad de agrupacion: 'dia' o 'mes'"
+            },
+            "description": "Granularidad de agrupacion: 'dia' o 'mes'"
+          },
+          {
+            "name": "desde",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "description": "Fecha de inicio del rango (YYYY-MM-DD)",
+              "title": "Desde"
+            },
+            "description": "Fecha de inicio del rango (YYYY-MM-DD)"
+          },
+          {
+            "name": "hasta",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "description": "Fecha de fin del rango (YYYY-MM-DD)",
+              "title": "Hasta"
+            },
+            "description": "Fecha de fin del rango (YYYY-MM-DD)"
+          },
+          {
+            "name": "sector_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filtrar por sector responsable (opcional)",
+              "title": "Sector Id"
+            },
+            "description": "Filtrar por sector responsable (opcional)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TendenciasResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/estadisticas/resumen": {
+      "get": {
+        "tags": [
+          "Estadisticas"
+        ],
+        "summary": "Obtener resumen de KPIs del dashboard",
+        "description": "Retorna KPIs agregados: total de incidentes, promedio diario,\ndistribucion por sector y estado, y tasa de revision humana.\n\nSi no se especifican fechas, se usa el rango de los ultimos 30 dias.",
+        "operationId": "get_resumen_api_v1_estadisticas_resumen_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "desde",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Fecha de inicio del rango. Default: 30 dias atras.",
+              "title": "Desde"
+            },
+            "description": "Fecha de inicio del rango. Default: 30 dias atras."
+          },
+          {
+            "name": "hasta",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Fecha de fin del rango. Default: hoy.",
+              "title": "Hasta"
+            },
+            "description": "Fecha de fin del rango. Default: hoy."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResumenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "AgruparPorEnum": {
+        "type": "string",
+        "enum": [
+          "dia",
+          "mes"
+        ],
+        "title": "AgruparPorEnum",
+        "description": "Granularidad de agrupacion temporal para la serie de tendencias."
+      },
       "CanalOrigenRead": {
         "properties": {
           "id": {
@@ -1038,6 +1215,33 @@
         "title": "LoginRequest",
         "description": "Payload de inicio de sesion.\n\nAceptado por POST /api/v1/auth/login. Ambos campos son requeridos."
       },
+      "PeriodoInfo": {
+        "properties": {
+          "desde": {
+            "type": "string",
+            "title": "Desde",
+            "description": "Fecha de inicio del rango consultado"
+          },
+          "hasta": {
+            "type": "string",
+            "title": "Hasta",
+            "description": "Fecha de fin del rango consultado"
+          },
+          "agrupar_por": {
+            "type": "string",
+            "title": "Agrupar Por",
+            "description": "Granularidad usada: 'dia' o 'mes'"
+          }
+        },
+        "type": "object",
+        "required": [
+          "desde",
+          "hasta",
+          "agrupar_por"
+        ],
+        "title": "PeriodoInfo",
+        "description": "Metadatos del rango consultado en la respuesta de tendencias."
+      },
       "PrioridadEnum": {
         "type": "string",
         "enum": [
@@ -1048,6 +1252,49 @@
         ],
         "title": "PrioridadEnum",
         "description": "Enumeración de niveles de prioridad de un incidente.\n\nHereda de str para que SQLAlchemy almacene el valor textual en la base\nde datos, lo que mejora la legibilidad de consultas directas y simplifica\nla serialización en las respuestas JSON de la API.\n\nNiveles (de menor a mayor urgencia):\n    baja    → Puede ser atendido en el próximo turno disponible.\n    media   → Valor por defecto; afecta a un usuario individual.\n    alta    → Afecta a múltiples usuarios o un proceso crítico.\n    critica → Detención de operaciones; requiere atención inmediata."
+      },
+      "ResumenResponse": {
+        "properties": {
+          "total_incidentes": {
+            "type": "integer",
+            "title": "Total Incidentes",
+            "description": "Total de incidentes en el rango"
+          },
+          "promedio_diario": {
+            "type": "number",
+            "title": "Promedio Diario",
+            "description": "Promedio de incidentes por dia en el rango"
+          },
+          "distribucion_sectores": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Distribucion Sectores",
+            "description": "Distribucion de incidentes por sector"
+          },
+          "distribucion_estados": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Distribucion Estados",
+            "description": "Distribucion de incidentes por estado"
+          },
+          "tasa_revision_humana": {
+            "type": "number",
+            "title": "Tasa Revision Humana",
+            "description": "Proporcion de incidentes que requirieron revision humana (0.0 a 1.0)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_incidentes",
+          "promedio_diario",
+          "tasa_revision_humana"
+        ],
+        "title": "ResumenResponse",
+        "description": "Respuesta del endpoint GET /api/v1/estadisticas/resumen."
       },
       "SectorRead": {
         "properties": {
@@ -1079,6 +1326,77 @@
         ],
         "title": "SectorRead",
         "description": "Proyección de solo lectura de un sector responsable.\n\nUtilizada en las respuestas de endpoints de incidentes y clasificaciones\npara presentar el sector asignado sin exponer detalles internos del ORM."
+      },
+      "SerieTemporal": {
+        "properties": {
+          "periodo": {
+            "type": "string",
+            "title": "Periodo",
+            "description": "Etiqueta del periodo: YYYY-MM-DD (dia) o YYYY-MM (mes)"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total",
+            "description": "Cantidad de incidentes en este periodo"
+          },
+          "por_sector": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Por Sector",
+            "description": "Desglose de incidentes por nombre de sector (ej. {'Sistemas': 10, ...})"
+          }
+        },
+        "type": "object",
+        "required": [
+          "periodo",
+          "total"
+        ],
+        "title": "SerieTemporal",
+        "description": "Un punto en la serie temporal de tendencias (un periodo)."
+      },
+      "TendenciasResponse": {
+        "properties": {
+          "periodo": {
+            "$ref": "#/components/schemas/PeriodoInfo"
+          },
+          "total_incidentes": {
+            "type": "integer",
+            "title": "Total Incidentes",
+            "description": "Total de incidentes en el rango completo"
+          },
+          "series": {
+            "items": {
+              "$ref": "#/components/schemas/SerieTemporal"
+            },
+            "type": "array",
+            "title": "Series"
+          },
+          "distribucion_sectores": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Distribucion Sectores",
+            "description": "Distribucion agregada de incidentes por sector en el rango"
+          },
+          "distribucion_estados": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Distribucion Estados",
+            "description": "Distribucion agregada de incidentes por estado en el rango"
+          }
+        },
+        "type": "object",
+        "required": [
+          "periodo",
+          "total_incidentes"
+        ],
+        "title": "TendenciasResponse",
+        "description": "Respuesta del endpoint GET /api/v1/estadisticas/tendencias."
       },
       "TokenResponse": {
         "properties": {
