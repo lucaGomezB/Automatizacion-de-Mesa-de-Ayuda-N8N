@@ -180,6 +180,7 @@ Never use `engram sync --all` — it exports ALL projects to this repo.
 
 ## What NOT to Do
 
+- Do NOT use emojis under any circumstance — not in code, not in comments, not in commit messages, not in chat responses, not in documentation. They degrade readability and professionalism.
 - Do NOT commit `.env` files. The pre-commit hook blocks them.
 - Do NOT write production code that lazy-loads SQLAlchemy relationships in async context.
 - Do NOT change the three category strings — they are locked by domain spec and the evaluation corpus.
