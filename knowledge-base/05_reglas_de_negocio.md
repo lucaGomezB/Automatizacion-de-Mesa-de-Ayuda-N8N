@@ -30,10 +30,10 @@ Cada regla tiene código único `RN-{DOMINIO}-{NN}`. Fuente: tesis §5.5, §11, 
 
 ## Dominio: Privacidad y datos personales (RN-PR) — Ley 25.326
 
-- **RN-PR-01**: **Pseudonimizar antes de transmitir a Gemini**: nombres propios → `[PERSONA]`, emails → `[EMAIL]`, teléfonos → `[TELEFONO]`, hosts internos → `[HOST]`, identificadores corporativos → etiqueta genérica. Se ejecuta en el módulo Python local, con regex + tests unitarios dedicados. *(Pendiente: change C-03 — governance ALTO.)*
+- **RN-PR-01**: **Pseudonimizar antes de transmitir a Gemini**: nombres propios -> `[PERSONA]`, emails -> `[EMAIL]`, telefonos -> `[TELEFONO]`, hosts internos -> `[HOST]`, identificadores corporativos -> etiqueta generica. Implementado en `App/Backend/app/utils/pseudonymizer.py` con regex + tests unitarios. (Completado: C-03.)
 - **RN-PR-02**: Minimización: no almacenar identificadores personales más allá del usuario corporativo; descartar datos incidentales (direcciones, DNI, datos financieros).
 - **RN-PR-03**: Finalidad: los datos solo se usan para registro y derivación de incidentes.
-- **RN-PR-04**: Retención: 90 días registros operativos · 1 año incidentes resueltos · 30 días logs N8N. Luego anonimizar o eliminar.
+- **RN-PR-04**: Conservacion: **indefinida** para todos los incidentes (corregido por C-18). Justificacion: valor estadistico de los datos historicos para analisis de tendencias e identificacion de problemas recurrentes. Incidentes cerrados: registro auditable permanente, consultables pero no editables (bloqueo 409 en PATCH). La pseudonimizacion y el cifrado Fernet garantizan la proteccion en periodos prolongados. Logs N8N: 30 dias (poda automatica).
 - **RN-PR-05**: Derechos ARCO: acceso ≤ 10 días corridos; rectificación/supresión ≤ 5 días corridos.
 - **RN-PR-06**: El usuario puede revisar y corregir el contenido del incidente antes de su persistencia definitiva (principio de exactitud).
 

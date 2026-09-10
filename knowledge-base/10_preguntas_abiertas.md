@@ -7,28 +7,27 @@
 **El codigo dice**: `POST /api/v1/incidentes` clasifica y persiste en una sola operacion; `POST /clasificar` no existe.
 **Estado actual (2026-07-02)**: Decidido — la clasificacion permanece embebida en `POST /api/v1/incidentes`. El workflow N8N usa una sola llamada HTTP. La tesis sera corregida en futura revision para reflejar la arquitectura real. NO se agrega endpoint `/clasificar` separado.
 
-### IN-02 — Autenticacion declarada pero no implementada
-**La tesis dice** (§5.7): tokens portadores firmados validados contra clave compartida con N8N; 401 ante fallo.
-**El codigo dice**: ningun endpoint exige autenticacion (auditado 2026-07-02).
-**Impacto**: brecha de seguridad y de fidelidad a la tesis; cualquier actor en la red puede crear/leer tickets.
-**Estado actual**: C-15 (jwt-auth-backend-frontend) en curso. Implementa JWT Bearer token con Python-Jose + middleware FastAPI. Governance: ALTO.
+### IN-02 — Autenticacion declarada pero no implementada — RESUELTO (C-15)
+
+**La tesis dice** (seccion 5.7): tokens portadores firmados validados contra clave compartida con N8N; 401 ante fallo.
+**Estado actual**: Implementado en C-15 (jwt-auth-backend-frontend). JWT Bearer token con python-jose + middleware FastAPI. Todos los endpoints protegidos requieren autenticacion. Frontend con AuthContext y ruta `/login`. Governance: ALTO. Completado y archivado (2026-07-02).
 
 ### IN-03 — Driver de base de datos
 **La tesis dice** (§5.4): psycopg2-binary 2.9. **El código dice**: asyncpg + SQLAlchemy async.
 **Impacto**: ninguno funcional (la elección del código es superior para FastAPI); solo desfase documental.
 **Resolución propuesta**: anotar la divergencia en el Anexo B/C al cerrar C-10 (ya documentada en DD-08).
 
-### IN-04 — Cifrado en reposo y HMAC ausentes
-**La tesis dice** (§11.4): pgcrypto para campos sensibles; identificadores firmados HMAC-SHA-256.
-**El código dice**: no implementado.
-**Impacto**: compromiso de cumplimiento §11.4 si se despliega productivamente sin esto.
-**Resolución propuesta**: evaluar si entra en C-10 o en un change de seguridad dedicado junto con IN-02.
+### IN-04 — Cifrado en reposo y HMAC — RESUELTO (2026-09-10)
 
-### IN-05 — Política de retención no implementada
-**La tesis dice** (§11.2): 90 días operativos / 1 año resueltos / 30 días logs N8N.
-**El código dice**: sin job de purga ni anonimización.
-**Impacto**: incumplimiento de RN-PR-04 en operación prolongada.
-**Resolución propuesta**: tarea programada (cron N8N o script) — candidato a línea futura o C-10.
+**La tesis corregida dice** (v8 LaTeX, C-18, seccion 11.4): Fernet a nivel de aplicacion (AES-128-CBC con HMAC-SHA-256 integrado) para campos sensibles.
+**El codigo dice**: `App/Backend/app/utils/encryption.py` implementa un `EncryptedText` TypeDecorator de SQLAlchemy que usa Fernet (biblioteca `cryptography`). La columna `incidente.descripcion_original` esta cifrada en reposo con este mecanismo. Fernet incorpora HMAC-SHA-256 en su modo de operacion -- todo ciphertext es autenticado; si se altera, `decrypt()` lanza `InvalidToken`.
+**Estado actual**: Resuelto. C-03 eligio Fernet sobre pgcrypto explicitamente (Decision 4 del revisor). C-18 corrigio el LaTeX de la tesis: `pgcrypto -> Fernet, eliminar HMAC-SHA-256 independiente`. La implementacion satisface los requisitos de confidencialidad e integridad de la seccion 11.4. No se requiere accion adicional.
+
+### IN-05 — Politica de retencion — RESUELTO (2026-09-10)
+
+**La tesis corregida dice** (v8 LaTeX, C-18, seccion 11.2): "conservacion indefinida de los incidentes, justificada por el valor estadistico de los datos historicos para el analisis de tendencias y la identificacion de problemas recurrentes. Los incidentes en estado cerrado se preservan como registro auditable permanente: pueden consultarse pero no editarse ni eliminarse desde la interfaz de usuario."
+**El codigo dice**: El bloqueo de escritura sobre incidentes cerrados esta implementado (C-23: `PATCH /api/v1/incidentes/{id}` devuelve 409 si el estado es terminal). No se requiere purga automatica.
+**Estado actual**: Resuelto. C-18 redefinio la politica de retencion a conservacion indefinida. La pseudonimizacion y el cifrado Fernet garantizan la proteccion de datos en periodos prolongados. La version v7 de `tesis_para_agente.md` (que aun dice "90 dias / 1 ano") quedo desactualizada; la fuente de verdad es el LaTeX corregido en `v8 (IA)/paper/sections/11-aspectos-legales.tex`.
 
 ### IN-06 — Workflow N8N del repo vs. descripcion de la tesis
 **La tesis dice** (§6.3): 12 nodos con normalizacion, IF por confianza, dos llamadas HTTP y notificaciones paralelas.
@@ -45,7 +44,6 @@
 | Alta | ¿Auth JWT Bearer token se implementa? → Si, en C-15 (jwt-auth-backend-frontend) | C-15 (nuevo) | Equipo + director |
 | Media | ¿La instancia N8N de pruebas corre en el mismo compose? URL del webhook | C-02 | Equipo tecnico |
 | Baja | ¿K8s 1.30 es alcance real o aspiracional (SU-05)? | C-10 | Equipo + director |
-| Baja | ¿Se implementa retencion/purga automatica (IN-05)? | Operacion prolongada | Responsable de datos |
 
 ## [DISCOVERY] Campos inferidos con confianza — sin pendientes
 
