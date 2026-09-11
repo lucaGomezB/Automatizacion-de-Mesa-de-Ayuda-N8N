@@ -1,9 +1,4 @@
-# evaluation-corpus Specification
-
-## Purpose
-TBD - created by archiving change c-17-evaluation-corpus-simulado. Update Purpose after archive.
-
-## Requirements
+## ADDED Requirements
 
 ### Requirement: CORPUS-009 — Estructura del documento JSON
 
@@ -67,3 +62,53 @@ El repositorio MUST NOT contener el corpus sintetico provisional ni su generador
 
 - **WHEN** se ejecuta el runner y `data/corpus_evaluacion_pseudonimizado.json` no esta presente
 - **THEN** el runner termina con un error claro indicando que debe colocarse el corpus real, sin inventar datos
+
+## REMOVED Requirements
+
+### Requirement: CORPUS-001 — Corpus de 200 casos
+
+**Reason**: El corpus sintetico de 200 casos fue descartado por los revisores de tesis y no es evidencia experimental valida.
+
+**Migration**: La evaluacion se realiza sobre el corpus real JSON (`data/corpus_evaluacion_pseudonimizado.json`), definido por CORPUS-009 y CORPUS-010.
+
+### Requirement: CORPUS-002 — Distribucion estratificada
+
+**Reason**: La distribucion fija 82/64/54 pertenece al corpus sintetico descartado y a la taxonomia de 3 categorias ya eliminada.
+
+**Migration**: La distribucion se calcula dinamicamente a partir del corpus real JSON.
+
+### Requirement: CORPUS-003 — Columnas requeridas
+
+**Reason**: El esquema CSV con la columna `categoria_real` es reemplazado por el esquema JSON multietiqueta.
+
+**Migration**: Usar los campos JSON definidos por CORPUS-012 y las invariantes de CORPUS-010.
+
+### Requirement: CORPUS-004 — Descripciones realistas
+
+**Reason**: La calibracion de descripciones para forzar errores intencionales solo tenia sentido para el corpus sintetico.
+
+**Migration**: Las descripciones provienen del corpus real pseudonimizado; la unica restriccion remanente es que no contengan PII en claro.
+
+### Requirement: CORPUS-005 — Reproducibilidad
+
+**Reason**: El generador deterministico con seed fijo se elimina junto con el corpus sintetico.
+
+**Migration**: Ya no se genera corpus en el proyecto; el corpus real es provisto externamente.
+
+### Requirement: CORPUS-006 — Documentacion
+
+**Reason**: La documentacion describia un corpus calibrado con seed fijo que deja de existir.
+
+**Migration**: La documentacion del Anexo F se actualiza al esquema JSON y a las cinco categorias.
+
+### Requirement: CORPUS-007 — Matriz de confusion alineada con Tabla 7
+
+**Reason**: La Tabla 7 y sus conteos pertenecen al corpus sintetico de 3 categorias y quedan superadas.
+
+**Migration**: Las metricas se calculan sobre el corpus real con el rediseno multietiqueta del framework de evaluacion.
+
+### Requirement: CORPUS-008 — Tiempos alineados con §7.1
+
+**Reason**: Los estadisticos de tiempo objetivo fueron calibrados para el corpus sintetico descartado.
+
+**Migration**: Los tiempos se toman del corpus real y se analizan con la prueba de Wilcoxon del framework.

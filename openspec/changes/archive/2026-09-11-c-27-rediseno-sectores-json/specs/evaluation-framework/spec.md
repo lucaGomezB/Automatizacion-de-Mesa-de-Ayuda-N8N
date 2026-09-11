@@ -1,9 +1,4 @@
-# evaluation-framework Specification
-
-## Purpose
-TBD - created by archiving change c-08-evaluation-framework. Update Purpose after archive.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Contrato y carga del corpus de evaluación
 
@@ -86,20 +81,6 @@ El framework SHALL calcular, sobre la definición de acierto primaria (igualdad 
 - **WHEN** `sector_asignado` no coincide con `sector_predicho` pero sí aparece en `sectores_adicionales`
 - **THEN** la definición de acierto por pertenencia cuenta el caso como acierto y la definición estricta no
 
-### Requirement: Análisis estadístico de tiempos
-
-El framework SHALL aplicar la prueba de Wilcoxon de rangos con signo sobre los pares (tiempo_manual, tiempo_automatizado) para contrastar la igualdad de medianas entre ambos flujos, y SHALL reportar el tamaño del efecto rank-biserial asociado, conforme a §4.7 y §7.1 de la tesis. El cálculo SHALL ser una función pura que recibe las dos series pareadas y devuelve el estadístico, el valor p y el tamaño del efecto.
-
-#### Scenario: Diferencia sistemática produce p significativo
-
-- **WHEN** el flujo automatizado es consistentemente más rápido que el manual en todos los pares
-- **THEN** la prueba devuelve un valor p por debajo del nivel de significancia 0.05 y un tamaño del efecto de magnitud alta
-
-#### Scenario: Series de distinta longitud son rechazadas
-
-- **WHEN** se invoca la prueba con dos series de cantidad de elementos distinta
-- **THEN** el framework lanza un error en lugar de producir un resultado inválido
-
 ### Requirement: Runner de evaluación sobre el corpus
 
 El framework SHALL proveer un runner que, dado un corpus, invoque el clasificador híbrido caso por caso recolectando para cada uno el sector predicho principal, los sectores adicionales predichos, la confianza y la etapa del pipeline (`deterministic`, `gemini` o `fallback`), y produzca las métricas de clasificación multietiqueta y un reporte en `evaluation/report.md`. El runner MUST ser ejecutable como una operación de un solo comando cuando el corpus real esté presente en `data/corpus_evaluacion_pseudonimizado.json`, y MUST aislar la recolección de predicciones del cálculo de métricas (inyección del clasificador) para permitir pruebas con un clasificador simulado.
@@ -118,6 +99,8 @@ El framework SHALL proveer un runner que, dado un corpus, invoque el clasificado
 
 - **WHEN** se ejecuta el runner y el archivo `data/corpus_evaluacion_pseudonimizado.json` no está presente
 - **THEN** el runner termina con un error claro indicando que debe colocarse el corpus real, sin inventar datos ni producir un reporte con resultados ficticios
+
+## ADDED Requirements
 
 ### Requirement: Métricas de conjunto para evaluación multietiqueta
 

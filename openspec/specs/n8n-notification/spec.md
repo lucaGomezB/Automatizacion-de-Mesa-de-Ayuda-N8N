@@ -1,5 +1,8 @@
 # N8N Notification Capability Specification
 
+## Purpose
+Definir el contrato de notificación de retorno hacia N8N tras la clasificación de un incidente: cuándo se notifica, el payload enviado y las garantías fire-and-forget (no bloqueante, no propaga fallos).
+
 ## Requirements
 
 ### Requirement: Notificación a N8N tras la clasificación
@@ -32,8 +35,9 @@ Un fallo de la notificación a N8N (timeout, error de red, código HTTP de error
 - **THEN** el incidente y su `clasificacion_log` permanecen persistidos en la base de datos sin alteración
 
 ### Requirement: Payload de notificación
-El payload enviado a N8N SHALL incluir los campos mínimos para que N8N continúe el flujo de orquestación: `incidente_id`, `categoria`, `confianza`, `etapa` y `requiere_revision_humana`, derivados del `incidente_id` y del `ClasificacionResult`.
+El payload enviado a N8N SHALL incluir los campos mínimos para que N8N continúe el flujo de orquestación: `incidente_id`, `sector_predicho`, `sectores_adicionales`, `confianza`, `etapa` y `requiere_revision_humana`, derivados del `incidente_id` y del `ClasificacionResult`. El campo `categoria` MUST dejar de existir en el payload. `sectores_adicionales` SHALL ser una lista, posiblemente vacía.
 
 #### Scenario: Contenido del payload enviado al webhook
 - **WHEN** `n8n_webhook_url` está configurado y se notifica una clasificación
-- **THEN** el cuerpo JSON de la solicitud `POST` contiene `incidente_id`, `categoria`, `confianza`, `etapa` y `requiere_revision_humana` con los valores del incidente clasificado
+- **THEN** el cuerpo JSON de la solicitud `POST` contiene `incidente_id`, `sector_predicho`, `sectores_adicionales`, `confianza`, `etapa` y `requiere_revision_humana` con los valores del incidente clasificado
+- **AND** no contiene el campo `categoria`

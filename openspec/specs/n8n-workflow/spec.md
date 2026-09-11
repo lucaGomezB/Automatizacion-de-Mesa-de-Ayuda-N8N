@@ -2,7 +2,9 @@
 
 ## Purpose
 Specifies the end-to-end N8N workflow for automated help desk incident classification, covering all three input channels (Outlook email, web form webhook, Twilio call transcription), validation, categorization via Gemini AI, notification by channel, audit logging, and persistence via a FastAPI backend. Combines the foundation from C-04 (normalization, validation, routing) with channel-layer infrastructure from C-05 (explicit channel identification, per-channel triggers, post-registration notifications, audit trails).
+
 ## Requirements
+
 ### Requirement: Normalización de canales a estructura unificada
 
 El workflow N8N SHALL incluir un nodo de normalización que homogenice la entrada de cualquiera de los tres canales (correo electrónico, formulario web, telefonía con transcripción) en una estructura unificada con exactamente los campos `id` (identificador único), `timestamp` (marca temporal con precisión al milisegundo), `canal_origen` (uno de `correo`, `web`, `telefonia`) y `descripcion` (texto del incidente). Los nodos posteriores SHALL operar exclusivamente sobre esta estructura unificada y no sobre la forma cruda de cada canal.
@@ -38,16 +40,21 @@ El nodo `code` del canal de correo SHALL reemplazar la lógica placeholder por u
 
 ### Requirement: Validación de la respuesta de clasificación según Anexo H §H.3
 
-El nodo `code` del canal telefónico SHALL validar la respuesta de clasificación aplicando, en orden, los cinco pasos del Anexo H §H.3: (1) parseo JSON válido; (2) presencia de los campos `categoría` y `confianza`; (3) `categoría` exactamente en `{"Sistemas", "Operaciones", "Soporte Técnico"}` (case-sensitive); (4) `confianza` numérica en el rango `[0.0, 1.0]`. Ante el fallo de cualquier paso, SHALL registrar el error, fijar `confianza = 0.0` y marcar el incidente para revisión humana, sin propagar estados inconsistentes.
+El nodo `code` del canal telefónico SHALL validar la respuesta de clasificación aplicando, en orden, los pasos del Anexo H §H.3: (1) parseo JSON válido; (2) presencia de los campos `sector_predicho` y `confianza`; (3) `sector_predicho` exactamente en `{"Seguridad Informatica", "Soporte Tecnico Hardware", "Soporte Tecnico Software", "Bases de Datos", "Sistemas"}` (case-sensitive, sin tildes); (4) `confianza` numérica en el rango `[0.0, 1.0]`; (5) si el campo `sectores_adicionales` está presente, cada uno de sus valores MUST pertenecer al mismo conjunto canónico. Ante el fallo de cualquier paso, SHALL registrar el error, fijar `confianza = 0.0` y marcar el incidente para revisión humana, sin propagar estados inconsistentes.
 
 #### Scenario: Respuesta válida aceptada
 
-- **WHEN** la validación recibe `{"categoría": "Sistemas", "confianza": 0.95}`
-- **THEN** la marca como válida y conserva la categoría y la confianza para el ruteo por umbral
+- **WHEN** la validación recibe `{"sector_predicho": "Soporte Tecnico Software", "confianza": 0.95, "sectores_adicionales": ["Bases de Datos"]}`
+- **THEN** la marca como válida y conserva el sector predicho, los sectores adicionales y la confianza para el ruteo por umbral
 
 #### Scenario: Categoría fuera del conjunto permitido
 
-- **WHEN** la validación recibe una respuesta con `categoría` igual a `"sistemas"` (minúscula) o cualquier valor fuera del conjunto exacto
+- **WHEN** la validación recibe una respuesta con `sector_predicho` igual a `"operaciones"` (minúscula), `"Operaciones"` o cualquier valor fuera del conjunto exacto
+- **THEN** la rechaza, fija `confianza = 0.0` y marca el incidente para revisión humana
+
+#### Scenario: Sector adicional inválido
+
+- **WHEN** la validación recibe un `sectores_adicionales` con un valor fuera del conjunto canónico
 - **THEN** la rechaza, fija `confianza = 0.0` y marca el incidente para revisión humana
 
 #### Scenario: JSON malformado
@@ -193,12 +200,12 @@ Tras un alta exitosa del incidente (respuesta `201 Created` del backend), el wor
 
 ### Requirement: Registro de auditoría con retención de 30 días
 
-El workflow N8N SHALL incluir un nodo de registro de auditoría que, por cada ejecución, registre al menos el identificador del incidente, el `canal_origen`, el `timestamp`, la categoría, la confianza y el resultado (creado / derivado a revisión / rechazado), conforme a la conservación de 30 días que establece la tesis §5.3. El registro de auditoría NO SHALL contener la descripción con PII en claro; SHALL limitarse a metadatos de la ejecución y referencias al incidente. La política de retención de 30 días SHALL quedar declarada de forma verificable en el workflow o su documentación.
+El workflow N8N SHALL incluir un nodo de registro de auditoría que, por cada ejecución, registre al menos el identificador del incidente, el `canal_origen`, el `timestamp`, el sector predicho, sus sectores adicionales, la confianza y el resultado (creado / derivado a revisión / rechazado), conforme a la conservación de 30 días que establece la tesis §5.3. El registro de auditoría NO SHALL contener la descripción con PII en claro; SHALL limitarse a metadatos de la ejecución y referencias al incidente. La política de retención de 30 días SHALL quedar declarada de forma verificable en el workflow o su documentación.
 
 #### Scenario: La ejecución queda registrada en auditoría
 
 - **WHEN** una ejecución del workflow completa el procesamiento de un incidente
-- **THEN** el nodo de auditoría registra `id`, `canal_origen`, `timestamp`, categoría, confianza y resultado de esa ejecución
+- **THEN** el nodo de auditoría registra `id`, `canal_origen`, `timestamp`, sector predicho, sectores adicionales, confianza y resultado de esa ejecución
 
 #### Scenario: El registro de auditoría no contiene PII en claro
 
@@ -228,4 +235,3 @@ El JSON exportado del workflow (`Automatizacion_Mesa_de_Ayuda.json`) SHALL ser v
 
 - **WHEN** la suite de pruebas inspecciona el workflow exportado
 - **THEN** existe un nodo de auditoría/log con los campos de metadatos esperados y la retención de 30 días declarada
-
