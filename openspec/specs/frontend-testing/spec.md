@@ -1,4 +1,10 @@
-## ADDED Requirements
+# frontend-testing Specification
+
+## Purpose
+
+Esta especificación define la infraestructura y la cobertura de pruebas automatizadas del frontend React con Vitest, abarcando la capa de servicios, los hooks de React Query, los indicadores compartidos, el formulario de reporte y las tablas de administración.
+
+## Requirements
 
 ### Requirement: Infraestructura de pruebas del frontend
 

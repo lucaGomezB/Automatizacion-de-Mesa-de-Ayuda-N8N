@@ -1,4 +1,10 @@
-## ADDED Requirements
+# backend-integration-tests Specification
+
+## Purpose
+
+Esta especificación define la suite de pruebas de integración del backend: el aislamiento de servicios externos, el sembrado de catálogos de prueba y la verificación de extremo a extremo de los endpoints HTTP de la API de incidentes.
+
+## Requirements
 
 ### Requirement: Aislamiento de servicios externos en la suite de integración
 
@@ -16,7 +22,7 @@ La suite de pruebas de integración SHALL ejercitar los endpoints HTTP a través
 
 ### Requirement: Catálogos sembrados disponibles para los tests de integración
 
-La suite SHALL proveer una fixture que siembre en la base de datos de test los registros de catálogo mínimos que la capa de servicio resuelve por nombre: el `Estado` "nuevo", los tres `Sector` (`Sistemas`, `Operaciones`, `Soporte Técnico`) y los `CanalOrigen` del dominio. La fixture MUST estar disponible para los tests que crean incidentes, ya que sin el `Estado` "nuevo" la creación falla con `EstadoNotFoundError`. La fixture MUST garantizar el aislamiento entre tests, sin filtrar datos sembrados de un test al siguiente.
+La suite SHALL proveer una fixture que siembre en la base de datos de test los registros de catálogo mínimos que la capa de servicio resuelve por nombre: el `Estado` "nuevo", los cinco `Sector` (`Seguridad Informatica`, `Soporte Tecnico Hardware`, `Soporte Tecnico Software`, `Bases de Datos`, `Sistemas`) y los `CanalOrigen` del dominio. La fixture MUST estar disponible para los tests que crean incidentes, ya que sin el `Estado` "nuevo" la creación falla con `EstadoNotFoundError`. La fixture MUST garantizar el aislamiento entre tests, sin filtrar datos sembrados de un test al siguiente.
 
 #### Scenario: Creación de incidente con catálogos sembrados
 

@@ -2,7 +2,9 @@
 
 ## Purpose
 TBD - created by archiving change c-23-dashboard-analytics-implementation. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: Time-based trend aggregation endpoint
 The system SHALL provide `GET /api/v1/estadisticas/tendencias` that returns incident counts grouped by time period (day or month), filtered by optional date range and sector.
 
@@ -82,17 +84,6 @@ The frontend SHALL render a line or bar chart (`TendenciaChart`) that displays i
 - **WHEN** the API returns an error for the trend data
 - **THEN** the `TendenciaChart` SHALL display an error message with a retry button
 
-### Requirement: Dashboard page with sector distribution chart
-The frontend SHALL render a pie or donut chart (`SectorPieChart`) that shows the distribution of incidents across the three sectors: Sistemas, Operaciones, and Soporte Tecnico.
-
-#### Scenario: Pie chart renders with three sectors
-- **WHEN** the summary data is loaded and contains non-zero counts for all three sectors
-- **THEN** the `SectorPieChart` SHALL display three slices with proper proportions and sector labels
-
-#### Scenario: Pie chart with zero-value sector
-- **WHEN** one sector has zero incidents in the selected range
-- **THEN** the `SectorPieChart` SHALL still display the sector with a zero-value slice or omit it gracefully
-
 ### Requirement: Dashboard page with estado distribution chart
 The frontend SHALL render a bar chart (`EstadoBarChart`) that shows incident counts grouped by estado (nuevo, en proceso, en espera, resuelto, cerrado).
 
@@ -159,3 +150,17 @@ The `/dashboard` route SHALL be wrapped in ProtectedRoute, requiring JWT authent
 - **WHEN** an authenticated user navigates to `/dashboard`
 - **THEN** the Dashboard page SHALL render with all chart components
 
+### Requirement: Dashboard page with five-sector distribution chart
+The frontend SHALL render a pie or donut chart (`SectorPieChart`) that shows the distribution of incidents across the five canonical sectors: `Seguridad Informatica`, `Soporte Tecnico Hardware`, `Soporte Tecnico Software`, `Bases de Datos`, and `Sistemas`.
+
+#### Scenario: Pie chart renders with five sectors
+- **WHEN** the summary data is loaded and contains non-zero counts for sectors
+- **THEN** the `SectorPieChart` SHALL display one slice per sector present, with proper proportions and sector labels
+
+#### Scenario: Pie chart with zero-value sector
+- **WHEN** one sector has zero incidents in the selected range
+- **THEN** the `SectorPieChart` SHALL still display the sector with a zero-value slice or omit it gracefully
+
+#### Scenario: Pie chart tolerates an unknown sector label
+- **WHEN** the distribution contains a sector name outside the five canonical names
+- **THEN** the `SectorPieChart` SHALL render it with a default color without throwing

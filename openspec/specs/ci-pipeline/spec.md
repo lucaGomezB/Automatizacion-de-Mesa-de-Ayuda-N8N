@@ -1,4 +1,10 @@
-## ADDED Requirements
+# ci-pipeline Specification
+
+## Purpose
+
+Esta especificación define el pipeline de integración continua en GitHub Actions: los disparadores del workflow, los jobs de pruebas de backend y frontend, el linting, el manejo seguro de secretos y el badge de estado en el README.
+
+## Requirements
 
 ### Requirement: Workflow de integración continua en GitHub Actions
 

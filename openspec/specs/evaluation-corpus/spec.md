@@ -2,102 +2,68 @@
 
 ## Purpose
 TBD - created by archiving change c-17-evaluation-corpus-simulado. Update Purpose after archive.
+
 ## Requirements
-### Requirement: CORPUS-001 — Corpus de 200 casos
 
-El sistema SHALL proporcionar un corpus simulado de exactamente 200 incidentes en formato CSV, calibrado para producir metricas alineadas con la tesis (§7.1, §7.2) cuando se evalua con el FakeClassifier del framework de evaluacion.
+### Requirement: CORPUS-009 — Estructura del documento JSON
 
-#### Scenario: Carga exitosa del corpus
-- **WHEN** se ejecuta `cargar_corpus('evaluation/data/corpus_evaluacion.csv')`
-- **THEN** se retorna una lista con exactamente 200 casos
-- **AND** los ids son secuenciales de 1 a 200
+El corpus SHALL ser un objeto JSON con `schema_version` (entero), un objeto `metadata` (con al menos `descripcion` y `total_casos`) y un arreglo `casos`. El campo `schema_version` MUST permitir evolucionar el esquema; `total_casos` MUST coincidir con la cantidad de elementos de `casos`.
 
-#### Scenario: Corpus produce exactitud de 92% con FakeClassifier calibrado
-- **WHEN** el corpus se evalua con `FakeClassifier` programado con las predicciones calibradas
-- **THEN** la exactitud global es 92% (184 aciertos sobre 200)
-- **AND** el F1 macro es aproximadamente 0.919
+#### Scenario: Documento JSON bien formado
 
-### Requirement: CORPUS-002 — Distribucion estratificada
+- **WHEN** se carga un corpus con `schema_version`, `metadata` y `casos`
+- **THEN** el loader valida la estructura y devuelve un caso por cada elemento de `casos`
 
-La distribucion de categorias MUST coincidir exactamente con la reportada en la tesis §4.4: 82 Sistemas, 64 Operaciones, 54 Soporte Tecnico.
+#### Scenario: total_casos inconsistente es rechazado
 
-#### Scenario: Conteo de categorias
-- **WHEN** se agrupa el corpus por `categoria_real`
-- **THEN** Sistemas tiene exactamente 82 casos
-- **AND** Operaciones tiene exactamente 64 casos
-- **AND** Soporte Tecnico tiene exactamente 54 casos
+- **WHEN** `metadata.total_casos` no coincide con la cantidad real de `casos`
+- **THEN** el loader reporta un error de consistencia
 
-### Requirement: CORPUS-003 — Columnas requeridas
+### Requirement: CORPUS-012 — Campos requeridos del caso
 
-El CSV MUST contener las columnas `id`, `descripcion`, `canal_origen`, `categoria_real`, `tiempo_manual_s` y `tiempo_automatizado_s`. SHALL ser cargable por el framework de evaluacion existente (`evaluation.corpus.cargar_corpus()`).
+Cada caso del corpus MUST contener los campos `id`, `descripcion`, `canal_origen`, `sector_asignado`, `sectores_adicionales`, `tiempo_manual_s` y `tiempo_automatizado_s`. El campo `categoria_real` MUST dejar de existir. El corpus SHALL ser cargable por el framework de evaluacion existente (`evaluation.corpus.cargar_corpus()`), que MUST validar los campos requeridos y los sectores canonicos antes de devolver los casos.
 
 #### Scenario: Framework carga el corpus sin errores
-- **WHEN** el modulo `evaluation.corpus.cargar_corpus()` procesa el archivo
+
+- **WHEN** el modulo `evaluation.corpus.cargar_corpus()` procesa un corpus JSON valido
 - **THEN** no se lanza ninguna excepcion
-- **AND** los valores de `categoria_real` pertenecen al conjunto {"Sistemas", "Operaciones", "Soporte Tecnico"}
-- **AND** los valores de `tiempo_manual_s` y `tiempo_automatizado_s` son floats validos
+- **AND** cada caso expone `sector_asignado` y `sectores_adicionales`
+- **AND** los valores de `tiempo_manual_s` y `tiempo_automatizado_s` son numericos validos
 
-#### Scenario: Tiempos producen Wilcoxon W=0
-- **WHEN** se ejecuta `wilcoxon_tiempos(tiempos_manual, tiempos_automatizado)` con los 200 pares del corpus
-- **THEN** el estadistico W es cercano a 0
-- **AND** el valor p es inferior a 0.001
-- **AND** para cada caso individual, `tiempo_manual_s > tiempo_automatizado_s`
+#### Scenario: Campo requerido ausente produce error accionable
 
-### Requirement: CORPUS-004 — Descripciones realistas
+- **WHEN** un caso del corpus omite `sectores_adicionales`, `sector_asignado` o `id`
+- **THEN** el loader lanza un error que identifica el campo faltante y el caso afectado
 
-Las descripciones MUST ser textualmente realistas en espanol rioplatense y contener palabras clave calibradas para que el clasificador deterministico produzca las predicciones deseadas (asi como errores intencionales en 16 casos para reproducir la matriz de confusion de la Tabla 7).
+### Requirement: CORPUS-010 — Invariantes de la verdad multietiqueta
 
-#### Scenario: Validacion de contenido textual
-- **WHEN** se inspeccionan las descripciones del corpus
-- **THEN** cada descripcion tiene entre 10 y 80 palabras
-- **AND** al menos 5% de las descripciones contienen variaciones de tipeo o tildes
-- **AND** no contiene PII real (nombres, emails, telefonos son placeholders genericos)
+`sector_asignado` MUST ser un unico string canonico. `sectores_adicionales` MUST estar presente en todos los casos (arreglo vacio `[]` cuando no hay sectores adicionales) y MUST NOT incluir el valor de `sector_asignado`. Todos los valores, tanto de `sector_asignado` como de `sectores_adicionales`, MUST pertenecer al conjunto canonico de cinco sectores.
 
-#### Scenario: Keywords producen clasificaciones correctas
-- **WHEN** el DeterministicClassifier clasifica un caso del corpus que esta disenado para ser correcto
-- **THEN** la categoria predicha coincide con la categoria real del caso
+#### Scenario: Sector asignado no se repite en adicionales
 
-### Requirement: CORPUS-005 — Reproducibilidad
+- **WHEN** un caso repite su `sector_asignado` dentro de `sectores_adicionales`
+- **THEN** el loader rechaza el caso con un error de invariante
 
-La generacion del corpus MUST ser reproducible mediante un script deterministico con seed fijo (42).
+#### Scenario: Sector adicional invalido es rechazado
 
-#### Scenario: Generacion reproducible
-- **WHEN** se ejecuta `evaluation/generate_corpus.py` dos veces con el mismo seed
-- **THEN** el CSV resultante es identico bit a bit
-- **AND** el script no depende de APIs externas
+- **WHEN** un caso contiene en `sectores_adicionales` un valor fuera del conjunto canonico
+- **THEN** el loader lanza un error que identifica el valor invalido y el caso afectado
 
-### Requirement: CORPUS-006 — Documentacion
+#### Scenario: Ausencia de sectores adicionales es valida
 
-El corpus MUST incluir documentacion que indique su origen como corpus calibrado para alineacion con la tesis.
+- **WHEN** un caso declara `sectores_adicionales: []`
+- **THEN** el caso es valido y su conjunto de verdad es el de `sector_asignado` unicamente
 
-#### Scenario: README informa sobre corpus calibrado
-- **WHEN** se lee `evaluation/data/README.md`
-- **THEN** el documento indica que el corpus esta calibrado para producir metricas alineadas con la tesis
-- **AND** describe las columnas incluyendo `tiempo_manual_s` y `tiempo_automatizado_s`
-- **AND** indica que el corpus se genera con seed fijo (42) y es reproducible
+### Requirement: CORPUS-011 — Corpus real y eliminacion del corpus sintetico
 
-### Requirement: CORPUS-007 — Matriz de confusion alineada con Tabla 7
+El repositorio MUST NOT contener el corpus sintetico provisional ni su generador; la unica fuente de evaluacion SHALL ser el corpus real en formato JSON, cuya ruta canonica es `data/corpus_evaluacion_pseudonimizado.json` (ignorada por git y provista externamente). El fixture de pruebas del framework SHALL vivir en JSON con las etiquetas canonicas.
 
-El corpus calibrado SHALL producir, cuando se evalua con el FakeClassifier programado, una matriz de confusion que coincida exactamente con la Tabla 7 de la tesis §7.2.
+#### Scenario: El corpus sintetico ya no existe en el repositorio
 
-#### Scenario: Matriz de confusion coincide con Tabla 7
-- **WHEN** se calcula `matriz_confusion(reales, predichas)` sobre el corpus evaluado
-- **THEN** Sistemas tiene 76 correctos, 4 errores → Operaciones, 2 errores → Soporte Tecnico
-- **AND** Operaciones tiene 58 correctos, 3 errores → Sistemas, 3 errores → Soporte Tecnico
-- **AND** Soporte Tecnico tiene 50 correctos, 2 errores → Sistemas, 2 errores → Operaciones
+- **WHEN** se inspecciona el arbol del repositorio
+- **THEN** no existen `evaluation/data/corpus_evaluacion.csv`, `evaluation/generate_corpus.py`, `data/corpus_sintetico_provisional.csv` ni `scripts/gen_corpus.py`
 
-### Requirement: CORPUS-008 — Tiempos alineados con §7.1
+#### Scenario: Corpus real ausente no rompe el framework
 
-El corpus SHALL incluir las columnas `tiempo_manual_s` y `tiempo_automatizado_s` con valores compatibles con los estadisticos reportados en la tesis §7.1.
-
-#### Scenario: Estadisticos de tiempo coinciden con Tabla 6
-- **WHEN** se calculan media y mediana de `tiempo_manual_s`
-- **THEN** la media esta en el rango 163.0-167.0 segundos
-- **AND** la mediana esta en el rango 156.0-160.0 segundos
-- **AND** el minimo es >= 96 y el maximo es <= 289
-
-#### Scenario: Tiempo automatizado significativamente menor
-- **WHEN** se calcula la media de `tiempo_automatizado_s`
-- **THEN** la media esta en el rango 17.0-19.5 segundos
-- **AND** la reduccion relativa entre medias es aproximadamente 89%
-
+- **WHEN** se ejecuta el runner y `data/corpus_evaluacion_pseudonimizado.json` no esta presente
+- **THEN** el runner termina con un error claro indicando que debe colocarse el corpus real, sin inventar datos

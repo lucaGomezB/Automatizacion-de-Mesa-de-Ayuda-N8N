@@ -3,7 +3,9 @@
 ## Purpose
 
 Define los requisitos del entorno base del proyecto: configuración OPSX, resolución determinística del prompt de Gemini, estado inicial de la base de datos, y versionado de la memoria compartida del proyecto.
+
 ## Requirements
+
 ### Requirement: Configuración OPSX del proyecto
 El repositorio SHALL contener `openspec/config.yaml` declarando el stack tecnológico (FastAPI, SQLAlchemy 2.0 async, PostgreSQL 15, N8N, Gemini 2.5 Flash, React 18 + TypeScript + Vite) y las rutas canónicas del proyecto (`App/Backend/`, `App/Frontend/`, `knowledge-base/`, `CHANGES.md`).
 
@@ -27,15 +29,19 @@ El clasificador Gemini SHALL resolver la ruta de `prompt_gemini.txt` de forma de
 - **THEN** se emite un log de advertencia con la ruta intentada y el clasificador Gemini queda en modo degradado (fallback), sin impedir el arranque de la aplicación
 
 ### Requirement: Migraciones y catálogos sembrados
-La base de datos SHALL estar al día con las migraciones Alembic, y las tablas de catálogo SHALL contener sus valores canónicos: sector (Sistemas, Operaciones, Soporte Técnico), estado (nuevo, en proceso, en espera, resuelto, cerrado), canal_origen (correo electrónico, formulario web, llamada telefónica).
+La base de datos SHALL estar al día con las migraciones Alembic, y las tablas de catálogo SHALL contener sus valores canónicos: sector (`Seguridad Informatica`, `Soporte Tecnico Hardware`, `Soporte Tecnico Software`, `Bases de Datos`, `Sistemas`), estado (nuevo, en proceso, en espera, resuelto, cerrado), canal_origen (correo electrónico, formulario web, llamada telefónica). Los cinco sectores canónicos SHALL quedar sembrados por la migración `004`, que MUST NOT modificar la migración ya aplicada `001_seed_catalogs.py`.
 
 #### Scenario: Base de datos nueva
 - **WHEN** se ejecuta `alembic upgrade head` sobre una base vacía
-- **THEN** se crean las 5 tablas y los catálogos quedan sembrados con sus valores canónicos
+- **THEN** se crean las tablas y los catálogos quedan sembrados con sus valores canónicos, incluyendo los cinco sectores canónicos y las estructuras de persistencia multietiqueta
 
 #### Scenario: Base de datos existente (idempotencia)
 - **WHEN** se ejecuta `alembic upgrade head` sobre una base ya migrada
 - **THEN** la operación es no-op y los catálogos no se duplican
+
+#### Scenario: Operaciones ausente y Sistemas presente
+- **WHEN** se inspecciona el catálogo `sector` tras las migraciones
+- **THEN** `Operaciones` no existe como fila y `Sistemas` permanece como sector propio
 
 ### Requirement: Memoria compartida del proyecto versionada
 El repositorio SHALL versionar `.engram/` con la memoria del proyecto exportada por `engram sync` (filtrada por proyecto, nunca `--all`), y el `README.md` SHALL documentar el workflow: exportar antes de push, importar (`engram sync --import`) después de clone/pull.

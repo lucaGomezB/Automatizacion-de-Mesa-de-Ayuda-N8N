@@ -2,7 +2,9 @@
 
 ## Purpose
 TBD - created by archiving change c-03-pseudonymization-module. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: Función de pseudonimización pura con conteo de cobertura
 El sistema SHALL exponer una función pura `pseudonymize(text: str, internal_domains: list[str]) -> PseudonymizationResult` en `app/utils/pseudonymizer.py` que reciba una cadena y la lista de dominios internos, y devuelva un resultado con el texto pseudonimizado y el **conteo de reemplazos por categoría** (`email`, `telefono`, `host`, `persona`). La función SHALL ser determinística, sin estado y sin efectos secundarios (sin I/O, sin acceso a red ni a base de datos, sin logging): para una misma entrada SHALL producir siempre la misma salida. Las expresiones regulares SHALL estar compiladas a nivel de módulo. El módulo `app/utils/pseudonymizer.py` NO SHALL importar de `app/classifiers/` ni de `app/services/`.
 
@@ -54,17 +56,6 @@ La función `pseudonymize` SHALL reemplazar todo identificador de host interno p
 #### Scenario: Sin dominios configurados sigue funcionando el fallback
 - **WHEN** se invoca `pseudonymize` con `internal_domains` vacío y un texto que contiene `srv-db01` o `localhost`
 - **THEN** esos hosts son reemplazados por `[HOST]` aunque no haya dominios configurados
-
-### Requirement: Reemplazo de nombres propios
-La función `pseudonymize` SHALL reemplazar los nombres propios de personas por la etiqueta `[PERSONA]` (conteo en categoría `persona`), según el patrón heurístico basado en expresiones regulares definido en el diseño. El sistema SHALL aceptar explícitamente el tradeoff de cobertura del enfoque regex (posibles falsos positivos y falsos negativos sobre nombres en español), documentado en `docs/pseudonymization.md`; NO SHALL incorporar NER ni modelos de aprendizaje automático.
-
-#### Scenario: Nombre y apellido se reemplazan
-- **WHEN** se invoca `pseudonymize("El usuario Juan Pérez reportó el problema", [])`
-- **THEN** el resultado contiene `[PERSONA]` y NO contiene `Juan Pérez`
-
-#### Scenario: Las tres categorías de incidente nunca se pseudonimizan como persona
-- **WHEN** se invoca `pseudonymize` sobre un texto que menciona las categorías del dominio `"Sistemas"`, `"Operaciones"` o `"Soporte Técnico"` sin nombres propios de personas
-- **THEN** esas cadenas de categoría permanecen intactas y NO son reemplazadas por `[PERSONA]`
 
 ### Requirement: Orden de aplicación de patrones libre de colisiones
 La función `pseudonymize` SHALL aplicar los patrones en un orden que evite colisiones: los patrones de email, teléfono y host SHALL aplicarse ANTES que el de nombres propios, de modo que ningún fragmento ya reemplazado sea re-procesado por un patrón posterior. El resultado SHALL ser estable: ninguna etiqueta ya insertada (`[EMAIL]`, `[TELEFONO]`, `[HOST]`, `[PERSONA]`) SHALL ser alterada por un patrón aplicado después.
@@ -132,3 +123,13 @@ El sistema SHALL emitir, en la capa de servicio durante la creación del inciden
 - **WHEN** se crea y clasifica un incidente con datos personales y el sistema emite logs de nivel INFO
 - **THEN** ningún evento INFO contiene el texto original con PII ni lo empareja con su versión pseudonimizada
 
+### Requirement: Reemplazo de nombres propios con exclusion de sectores canonicos
+La función `pseudonymize` SHALL reemplazar los nombres propios de personas por la etiqueta `[PERSONA]` (conteo en categoría `persona`), según el patrón heurístico basado en expresiones regulares definido en el diseño. El conjunto de exclusión de personas MUST incluir los cinco nombres canónicos de sector, de modo que nunca se enmascaren como `[PERSONA]`. El sistema SHALL aceptar explícitamente el tradeoff de cobertura del enfoque regex (posibles falsos positivos y falsos negativos sobre nombres en español), documentado en `docs/pseudonymization.md`; NO SHALL incorporar NER ni modelos de aprendizaje automático.
+
+#### Scenario: Nombre y apellido se reemplazan
+- **WHEN** se invoca `pseudonymize("El usuario Juan Pérez reportó el problema", [])`
+- **THEN** el resultado contiene `[PERSONA]` y NO contiene `Juan Pérez`
+
+#### Scenario: Las cinco categorías de incidente nunca se pseudonimizan como persona
+- **WHEN** se invoca `pseudonymize` sobre un texto que menciona los sectores del dominio `"Seguridad Informatica"`, `"Soporte Tecnico Hardware"`, `"Soporte Tecnico Software"`, `"Bases de Datos"` o `"Sistemas"` sin nombres propios de personas
+- **THEN** esas cadenas de sector permanecen intactas y NO son reemplazadas por `[PERSONA]`

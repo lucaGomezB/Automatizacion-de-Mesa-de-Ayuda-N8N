@@ -1,4 +1,10 @@
-## ADDED Requirements
+# tesis-document Specification
+
+## Purpose
+
+Esta especificación define los criterios de calidad del documento de tesis en LaTeX: compilación a PDF, renderizado de citas, ecuaciones y tablas, eliminación de patrones de escritura generados por IA, profundidad de capítulos y consistencia de referencias.
+
+## Requirements
 
 ### Requirement: Thesis PDF compilation
 
