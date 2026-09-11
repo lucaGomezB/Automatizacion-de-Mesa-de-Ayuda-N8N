@@ -18,14 +18,20 @@ config = genai_types.GenerateContentConfig(
     max_output_tokens=100,
     candidate_count=1,
     response_mime_type="application/json",
-    # Schema con enum: restringe "categoría" a los 3 strings exactos con casing correcto.
+    # Schema con enum: restringe "categoría" a los 5 strings canónicos con casing correcto.
     # Evita que Gemini devuelva "SISTEMAS" u otras variantes que el validador del Anexo H rechaza.
     response_schema=genai_types.Schema(
         type="OBJECT",
         properties={
             "categoría": genai_types.Schema(
                 type="STRING",
-                enum=["Sistemas", "Operaciones", "Soporte Técnico"],
+                enum=[
+                    "Seguridad Informatica",
+                    "Soporte Tecnico Hardware",
+                    "Soporte Tecnico Software",
+                    "Bases de Datos",
+                    "Sistemas",
+                ],
             ),
             "confianza": genai_types.Schema(type="NUMBER"),
         },
@@ -63,7 +69,7 @@ response = await asyncio.wait_for(
 | max_tokens | 100 | Suficiente para JSON (~15 tokens) + margen de error |
 | candidate_count | 1 | Única respuesta candidata; optimiza latencia |
 | response_mime_type | application/json | Modo JSON de la API: impide fences Markdown (```json) que el validador del Anexo H rechaza |
-| response_schema | Schema con enum | Restringe el valor de "categoría" a los 3 strings exactos con su casing correcto (Sistemas / Operaciones / Soporte Técnico). Sin este schema, Gemini puede devolver "SISTEMAS" u otras variantes que el validador case-sensitive del Anexo H §H.3 rechaza, generando fallback innecesario e inflando la revisión humana. Ver docs/prompt_gemini.txt sección CASING para el refuerzo complementario en el prompt. |
+| response_schema | Schema con enum | Restringe el valor de "categoría" a los 5 strings exactos con su casing correcto (Seguridad Informatica / Soporte Tecnico Hardware / Soporte Tecnico Software / Bases de Datos / Sistemas). Sin este schema, Gemini puede devolver "SISTEMAS" u otras variantes que el validador case-sensitive del Anexo H §H.3 rechaza, generando fallback innecesario e inflando la revisión humana. Ver docs/prompt_gemini.txt sección CASING para el refuerzo complementario en el prompt. |
 | thinking_config | thinking_budget=0 | Gemini 2.5 Flash razona por defecto y esos tokens cuentan contra max_output_tokens, truncando el JSON; presupuesto 0 = respuesta directa y menor latencia |
 | safety_settings | BLOCK_NONE en las 4 categorías de daño | Permite terminología técnica de incidentes (ej. "se cayó", "atasco", "corte de red") |
 | timeout | 10s | Límite máximo; fallback a revisión humana si excede |
@@ -73,7 +79,7 @@ response = await asyncio.wait_for(
 La respuesta DEBE:
 1. Ser JSON válido (`json.loads()` sin error)
 2. Contener exactamente dos claves: `"categoría"` y `"confianza"`
-3. `"categoría"` debe ser string en `{Sistemas, Operaciones, Soporte Técnico}`
+3. `"categoría"` debe ser string en `{Seguridad Informatica, Soporte Tecnico Hardware, Soporte Tecnico Software, Bases de Datos, Sistemas}`
 4. `"confianza"` debe ser número en [0.0, 1.0]
 
 Si FALLA cualquier validación:
@@ -91,6 +97,7 @@ Para futuras iteraciones, considerar:
 
 ## Historial de Cambios
 
+- v1.4 (Sep 2026): `enum` del `response_schema` y validación de respuesta actualizados a los 5 sectores canónicos sin tildes (`Seguridad Informatica`, `Soporte Tecnico Hardware`, `Soporte Tecnico Software`, `Bases de Datos`, `Sistemas`); `Operaciones` eliminado (C-27). Parámetros de inferencia sin cambios.
 - v1.3 (Jun 2026): `response_schema` con `enum=["Sistemas", "Operaciones", "Soporte Técnico"]` + instrucción CASING en `docs/prompt_gemini.txt`. Causa: en corrida provisional (PR #17), Gemini devolvió "SISTEMAS" (todo mayúsculas); el validador case-sensitive del Anexo H §H.3 lo rechazó generando fallback con confianza=0.0 e inflando la revisión humana. El schema restringe el valor en el ORIGEN (request); el prompt es defensa en profundidad. Parámetros calibrados sin cambios.
 - v1.2 (Jun 2026): `response_mime_type="application/json"` + `thinking_budget=0`. Causa: en verificación funcional, Gemini 2.5 Flash devolvió solo "```json" (truncado por tokens de thinking dentro de max_output_tokens=100 + fence Markdown), forzando fallback con confianza=0.0. Parámetros calibrados sin cambios.
 - v1.1 (Jun 2026): Migración al SDK `google-genai` (cliente async `client.aio`, timeout vía `asyncio.wait_for`). Parámetros de inferencia sin cambios.

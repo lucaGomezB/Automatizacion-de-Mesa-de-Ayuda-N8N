@@ -228,11 +228,11 @@ class TestMigration002Downgrade:
         Tras downgrade -1 (002 → 001), la tabla incidente vuelve a tener
         'descripcion' y no tiene las columnas nuevas.
         """
-        # Migrar a head
+        # Migrar a head (004)
         _run_alembic(["upgrade", "head"], db_file)
 
-        # Regresar dos pasos (003→002→001) para restaurar esquema original
-        _run_alembic(["downgrade", "-2"], db_file)
+        # Regresar tres pasos (004→003→002→001) para restaurar el esquema original
+        _run_alembic(["downgrade", "-3"], db_file)
 
         columnas = _get_column_names(db_file)
 

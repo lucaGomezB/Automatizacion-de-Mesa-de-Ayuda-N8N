@@ -53,9 +53,9 @@ Usuario → React → POST /incidentes → Service → Classifier ─┬─ dete
 4. `PATCH /clasificaciones/{log_id}/validar` → verifica que el sector exista → asigna `sector_id_validado`.
 5. El registro sale de la cola y se vuelve etiqueta de verdad del corpus (RN-RH-04).
 
-## Flujo 5: Evaluación experimental (pendiente C-08)
+## Flujo 5: Evaluación experimental (C-08, rediseñado en C-27)
 
-1. Cargar corpus CSV de 200 casos (no versionado en git — pseudonimizado).
-2. Clasificar cada caso; registrar categoría, confianza, etapa.
-3. Calcular: exactitud global, matriz de confusión 3×3, precision/recall/F1 por clase, F1 macro, IC Wilson 95 %, Wilcoxon pareado para tiempos.
+1. Cargar corpus JSON multietiqueta (no versionado en git — pseudonimizado).
+2. Clasificar cada caso; registrar sector predicho, sectores adicionales, confianza y etapa.
+3. Calcular: exactitud primaria, matriz de confusión primaria 5×5, subset accuracy, pérdida de Hamming, precision/recall/F1 por sector, F1 micro/macro, IC Wilson 95 % (igualdad estricta y pertenencia), Wilcoxon pareado para tiempos.
 4. Emitir `evaluation/report.md` + notebook con visualizaciones.

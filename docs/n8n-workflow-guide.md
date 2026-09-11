@@ -68,7 +68,7 @@ para el Anexo E de la tesis (C-10).
 | 1 | Llamada telefonica | `twilioTrigger` | Webhook de Twilio al completar la transcripción. |
 | 2 | AI Agent | `agent` (LangChain) | Parsea la transcripción con el prompt del negocio. |
 | 2b | Con el fin de enviar los datos... | `memoryRedisChat` | Memoria Redis para el AI Agent. |
-| 3 | Se verifica lo que trajo la IA | `code` (JS) | Valida los 5 pasos Anexo H §H.3 (JSON, campos, categoría, rango confianza). Emite `canal_raw = "telefonia"`. |
+| 3 | Se verifica lo que trajo la IA | `code` (JS) | Valida los 5 pasos Anexo H §H.3 (JSON, campos `sector_predicho`/`sectores_adicionales`, set canónico de 5 sectores, rango confianza). Emite `canal_raw = "telefonia"`. |
 | 4 | Normalizar entrada del incidente | `code` (JS) | **[C-05]** Compartido — telefonia ahora converge aquí antes del IF. |
 | 5 | La informacion esta OK | `if` | Compartido — condición `confianza >= 0.70`. Rama false → loop AI Agent. |
 | 6a | HTTP POST a MTM-SRU | `httpRequest` | Compartido. |
@@ -105,8 +105,8 @@ La URL del backend se inyecta a través de la variable de entorno N8N `$env.BACK
 {
   "id": 123,
   "descripcion_pseudonimizada": "...",
-  "sector": "Sistemas",
-  "confianza": 0.87,
+  "sector": {"nombre": "Sistemas"},
+  "sectores_adicionales": [],
   "requiere_revision_humana": false,
   ...
 }
@@ -158,10 +158,10 @@ El nodo `Normalizar entrada del incidente` produce para todos los canales:
 El nodo `Se verifica lo que trajo la IA` implementa 5 pasos en orden:
 
 1. **JSON válido**: `JSON.parse()` dentro de `try/catch`. Fallo → `confianza = 0.0`.
-2. **Campos presentes**: `categoría` y `confianza` deben existir. Fallo → `confianza = 0.0`.
-3. **Categoría exacta** (case-sensitive): debe ser uno de `{Sistemas, Operaciones, Soporte Técnico}`. Fallo → `confianza = 0.0`.
+2. **Campos presentes**: `sector_predicho` y `confianza` deben existir (`sectores_adicionales` se normaliza a `[]` si falta). Fallo → `confianza = 0.0`.
+3. **Sector principal exacto** (case-sensitive): debe ser uno de `{Seguridad Informatica, Soporte Tecnico Hardware, Soporte Tecnico Software, Bases de Datos, Sistemas}`; los `sectores_adicionales` también deben pertenecer al set. Fallo → `confianza = 0.0`.
 4. **Confianza numérica en [0.0, 1.0]**: `typeof === 'number'`, `!isNaN`, `>= 0`, `<= 1.0`. Fallo → `confianza = 0.0`.
-5. **Respuesta válida**: conserva `categoría` y `confianza` originales para el ruteo por umbral.
+5. **Respuesta válida**: conserva `sector_predicho`, `sectores_adicionales` y `confianza` originales para el ruteo por umbral.
 
 En cualquier fallo: `confianza = 0.0`, `requiere_revision_humana = true`, `error_validacion = <código>`.
 
@@ -316,8 +316,8 @@ Se ejecutaron 3 payloads representando distintos escenarios de confianza:
 | # | Descripción | Sector resultante | Etapa | Confianza | Revisión humana |
 |---|-------------|-------------------|-------|-----------|-----------------|
 | 1 | Servidor de BD no responde | Sistemas | deterministic | 0.9999 | No |
-| 2 | Plan de continuidad, cierre de mes | Operaciones | deterministic | 0.9999 | No |
-| 3 | Computadora no enciende | Soporte Técnico | fallback | 0.0 | **Sí** |
+| 2 | Plan de continuidad, cierre de mes | Bases de Datos | deterministic | 0.9999 | No |
+| 3 | Computadora no enciende | Soporte Tecnico Hardware | fallback | 0.0 | **Sí** |
 
 **Caso 3 — ruta de fallback verificada**: el clasificador determinístico obtuvo confianza 0.667 (< 0.90 → escala a Gemini); Gemini API devolvió `403 PERMISSION_DENIED` (API key reportada como leaked en `.env`); el fallback se activó correctamente; `confianza = 0.0`; `requiere_revision_humana = true`. El IF node del workflow (`confianza >= 0.70`) hubiera enrutado este caso a la rama de revisión humana (no HTTP al backend).
 
@@ -345,7 +345,7 @@ El import, los nodos individuales y el backend están verificados. El entorno Do
 ### Prueba manual de telefonía (canal telefonía — con triggers activos, C-05)
 
 1. Enviar un webhook simulado al trigger de Twilio con una transcripción de ejemplo.
-2. Observar que el AI Agent devuelve un JSON con `categoría` y `confianza`.
+2. Observar que el AI Agent devuelve un JSON con `sector_predicho`, `sectores_adicionales` y `confianza`.
 3. Observar que el nodo `Se verifica lo que trajo la IA` valida la respuesta.
 4. Con `confianza ≥ 0.70`: verificar `201 Created` del backend.
 5. Con `confianza < 0.70`: verificar loop de vuelta al AI Agent.
@@ -392,7 +392,7 @@ El nodo `Registro de auditoria` (`code` JS) registra por cada ejecución exitosa
   "incidente_id": "<id del incidente creado>",
   "canal_origen": "correo" | "web" | "telefonia",
   "timestamp": "2026-06-11T14:23:45.123Z",
-  "categoria": "Sistemas" | "Operaciones" | "Soporte Técnico",
+  "sector_nombre": "Seguridad Informatica" | "Soporte Tecnico Hardware" | "Soporte Tecnico Software" | "Bases de Datos" | "Sistemas",
   "confianza": 0.87,
   "resultado": "creado",
   "retencion_dias": 30
@@ -495,7 +495,7 @@ pipeline completo del backend simulando el payload que el validador de correo en
 # Payload simulando lo que el workflow envía al backend después del normalizador
 curl -X POST http://localhost:8000/api/v1/incidentes/ \
   -d '{"descripcion": "Necesito restablecer mi contrasena de Windows. No puedo ingresar al sistema desde ayer.", "prioridad": "media"}'
-# → HTTP 201, id: 9, sector: Soporte Técnico, etapa: deterministic, confianza: 0.9999
+# → HTTP 201, id: 9, sector: Soporte Tecnico Software, etapa: deterministic, confianza: 0.9999
 ```
 
 **Defecto D-2 encontrado (latente)**: el nodo IF `La informacion esta OK` chequea
@@ -516,7 +516,7 @@ curl -X POST http://localhost:8000/api/v1/incidentes/ \
 # Escenario 2: confianza media → escala a Gemini
 curl -X POST http://localhost:8000/api/v1/incidentes/ \
   -d '{"descripcion": "La impresora de facturacion no imprime nada. Ya reiniciamos el equipo y sigue sin responder.", "prioridad": "media"}'
-# → HTTP 201, id: 10, sector: Soporte Técnico, etapa: gemini (Gemini 2.5 Flash), confianza: 0.9
+# → HTTP 201, id: 10, sector: Soporte Tecnico Hardware, etapa: gemini (Gemini 2.5 Flash), confianza: 0.9
 
 # Escenario 3: confianza baja → revisión humana
 curl -X POST http://localhost:8000/api/v1/incidentes/ \
@@ -565,11 +565,11 @@ N8N vivo tiene `active: true` solo en la instancia de prueba (no exportado al re
 
 | incidente_id | descripción (resumida) | sector | etapa | confianza | revisión_humana |
 |---|---|---|---|---|---|
-| 6 | No puedo iniciar sesion en facturacion | Operaciones | deterministic | 0.9999 | No |
-| 7 | (duplicado de prueba) | Operaciones | deterministic | 0.9999 | No |
+| 6 | No puedo iniciar sesion en facturacion | Soporte Tecnico Software | deterministic | 0.9999 | No |
+| 7 | (duplicado de prueba) | Soporte Tecnico Software | deterministic | 0.9999 | No |
 | 8 | Servidor BD no responde, ERP inaccesible | Sistemas | deterministic | 0.9999 | No |
-| 9 | Restablecer contraseña Windows | Soporte Técnico | deterministic | 0.9999 | No |
-| 10 | Impresora facturación no imprime | Soporte Técnico | gemini | 0.9 | No |
+| 9 | Restablecer contraseña Windows | Soporte Tecnico Software | deterministic | 0.9999 | No |
+| 10 | Impresora facturación no imprime | Soporte Tecnico Hardware | gemini | 0.9 | No |
 | 11 | Problemas red piso 3 sin internet | Sistemas | deterministic | 0.9999 | No |
 | 12 | Tengo un problema con el sistema (ambiguo) | Sistemas | gemini | 0.6 | **Sí** |
 

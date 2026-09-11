@@ -109,7 +109,7 @@ class HybridClassifier(BaseClassifier):
             logger.info(
                 "classifier_short_circuit",
                 stage="deterministic",
-                categoria=det_result.categoria,
+                sector_predicho=det_result.sector_predicho,
                 confianza=det_result.confianza,
             )
             return det_result
@@ -118,7 +118,7 @@ class HybridClassifier(BaseClassifier):
         logger.info(
             "classifier_escalate_to_gemini",
             det_confianza=det_result.confianza,
-            det_categoria=det_result.categoria,
+            det_sector_predicho=det_result.sector_predicho,
         )
 
         # ── Etapa 2: Clasificador Gemini ──────────────────────────────────────
@@ -133,7 +133,8 @@ class HybridClassifier(BaseClassifier):
                 message=exc.message,
             )
             return ClasificacionResult(
-                categoria=det_result.categoria,  # Mejor estimación disponible
+                sector_predicho=det_result.sector_predicho,  # Mejor estimación disponible
+                sectores_adicionales=det_result.sectores_adicionales,
                 confianza=0.0,                   # Señal explícita de fallo
                 etapa="fallback",
                 requiere_revision_humana=True,

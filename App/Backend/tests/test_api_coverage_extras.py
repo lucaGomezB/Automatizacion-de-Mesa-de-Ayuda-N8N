@@ -71,7 +71,7 @@ async def test_base_repository_list_all(engine, seed_catalogs):
     async with factory() as session:
         repo = SectorRepository(session)
         result = await repo.list_all()
-    # Debe incluir los tres sectores sembrados por seed_catalogs
+    # Debe incluir los cinco sectores sembrados por seed_catalogs
     assert len(result) >= 3
 
 
@@ -131,7 +131,7 @@ async def test_incidente_clasificacion_sector_desconocido(
     """
     # Arrange: clasificador que predice una categoría no existente en catálogos
     result = ClasificacionResult(
-        categoria="CategoríaInexistente",
+        sector_predicho="CategoríaInexistente",
         confianza=0.85,
         etapa="gemini",
         requiere_revision_humana=False,

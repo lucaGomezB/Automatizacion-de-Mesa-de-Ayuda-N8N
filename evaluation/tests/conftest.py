@@ -1,20 +1,18 @@
 """
 Fixtures compartidos para la suite de evaluacion.
 
-El FakeClassifier cumple el contrato async de BaseClassifier devolviendo
-predicciones predeterminadas por descripcion. Nunca llama a Gemini ni al
-backend; es el clasificador inyectable en todos los tests del runner.
-
-Las predicciones se cargan desde el archivo auto-generado
-fake_classifier_mappings.py, que es producido por generate_corpus.py
-y mantenido sincronizado con el corpus calibrado.
+El FakeClassifier cumple el contrato async del clasificador del backend
+(`sector_predicho` + `sectores_adicionales` + `confianza` + `etapa`) sin llamar
+a Gemini ni al backend. Sus predicciones se derivan del unico fixture JSON
+(`tests/fixtures/corpus_fixture.json`); ya no existe corpus sintetico ni
+mapeos calibrados autogenerados (C-27, task 7.12).
 """
 
 from __future__ import annotations
 
 import pathlib
-from dataclasses import dataclass
-from typing import Dict
+from dataclasses import dataclass, field
+from typing import Dict, List, Optional
 
 import pytest
 
@@ -23,14 +21,7 @@ import pytest
 # Rutas de fixtures
 # ---------------------------------------------------------------------------
 FIXTURES_DIR = pathlib.Path(__file__).parent / "fixtures"
-CORPUS_FIXTURE_PATH = FIXTURES_DIR / "corpus_fixture.csv"
-
-# Mappings generados por evaluation/generate_corpus.py
-FAKE_MAPPINGS_DIR = pathlib.Path(__file__).parent / "data"
-FAKE_MAPPINGS_PATH = FAKE_MAPPINGS_DIR / "fake_classifier_mappings.py"
-CALIBRATED_CORPUS_PATH = (
-    pathlib.Path(__file__).parent.parent / "data" / "corpus_evaluacion.csv"
-)
+CORPUS_FIXTURE_PATH = FIXTURES_DIR / "corpus_fixture.json"
 
 
 # ---------------------------------------------------------------------------
@@ -38,13 +29,14 @@ CALIBRATED_CORPUS_PATH = (
 # ---------------------------------------------------------------------------
 @dataclass
 class ClasificacionResultFake:
-    """DTO minimo que emula ClasificacionResult del backend para los tests."""
+    """DTO minimo que emula el resultado de clasificacion multietiqueta."""
 
-    categoria: str
+    sector_predicho: str
     confianza: float
     etapa: str  # "deterministic" | "gemini" | "fallback"
+    sectores_adicionales: List[str] = field(default_factory=list)
     requiere_revision_humana: bool = False
-    respuesta_raw: str | None = None
+    respuesta_raw: Optional[str] = None
 
 
 # ---------------------------------------------------------------------------
@@ -55,56 +47,28 @@ class FakeClassifier:
     Clasificador falso inyectable en tests.
 
     Devuelve respuestas deterministicas predefinidas para cada descripcion
-    o, si no se encuentra un mapeo, devuelve la respuesta por defecto.
-    Nunca realiza llamadas a Gemini ni a ningun servicio externo.
-
-    Uso:
-        fake = FakeClassifier(predicciones={
-            "desc1": ClasificacionResultFake(categoria="Sistemas", ...),
-        })
-        result = await fake.classify("desc1")
+    o, si no se encuentra un mapeo, la respuesta por defecto. Nunca realiza
+    llamadas a Gemini ni a ningun servicio externo.
     """
 
     def __init__(
         self,
-        predicciones: Dict[str, ClasificacionResultFake] | None = None,
-        default_categoria: str = "Sistemas",
+        predicciones: Optional[Dict[str, ClasificacionResultFake]] = None,
+        default_sector: str = "Sistemas",
         default_confianza: float = 0.92,
         default_etapa: str = "deterministic",
+        default_adicionales: Optional[List[str]] = None,
     ) -> None:
         self._predicciones: Dict[str, ClasificacionResultFake] = predicciones or {}
         self._default = ClasificacionResultFake(
-            categoria=default_categoria,
+            sector_predicho=default_sector,
             confianza=default_confianza,
             etapa=default_etapa,
+            sectores_adicionales=list(default_adicionales or []),
         )
 
     async def classify(self, descripcion: str) -> ClasificacionResultFake:
         return self._predicciones.get(descripcion, self._default)
-
-
-def _load_calibrated_mappings() -> Dict[str, ClasificacionResultFake]:
-    """Carga los mapeos calibrados desde el archivo auto-generado."""
-    if not FAKE_MAPPINGS_PATH.exists():
-        return {}
-
-    # Leer y ejecutar el archivo Python generado
-    namespace: dict = {}
-    mapping_code = FAKE_MAPPINGS_PATH.read_text(encoding="utf-8")
-    exec(mapping_code, namespace)
-
-    raw: dict[str, tuple[str, float, str]] = namespace.get(
-        "FAKE_CLASSIFIER_MAPPINGS", {}
-    )
-
-    result: Dict[str, ClasificacionResultFake] = {}
-    for desc, (cat, conf, etapa) in raw.items():
-        result[desc] = ClasificacionResultFake(
-            categoria=cat,
-            confianza=conf,
-            etapa=etapa,
-        )
-    return result
 
 
 # ---------------------------------------------------------------------------
@@ -112,52 +76,28 @@ def _load_calibrated_mappings() -> Dict[str, ClasificacionResultFake]:
 # ---------------------------------------------------------------------------
 @pytest.fixture
 def fake_classifier() -> FakeClassifier:
-    """FakeClassifier con predicciones alineadas al corpus calibrado (200 casos)."""
-    from evaluation.tests.conftest import _load_calibrated_mappings
+    """
+    FakeClassifier perfecto derivado del fixture JSON.
 
-    predicciones = _load_calibrated_mappings()
+    Predice, para cada caso, su `sector_asignado` real y sus
+    `sectores_adicionales` reales. El fixture JSON es la unica fuente.
+    """
+    from evaluation.corpus import cargar_corpus
 
-    # Fallback: si no se genero el archivo, usar predicciones del fixture original
-    if not predicciones:
-        predicciones = {
-            "El servidor de base de datos no responde y los usuarios no pueden acceder al sistema ERP.": ClasificacionResultFake(
-                categoria="Sistemas", confianza=0.95, etapa="deterministic"
-            ),
-            "La red del piso 3 esta caida y los equipos no tienen conectividad a internet.": ClasificacionResultFake(
-                categoria="Sistemas", confianza=0.93, etapa="deterministic"
-            ),
-            "Se detecto un acceso no autorizado a la base de datos de clientes.": ClasificacionResultFake(
-                categoria="Sistemas", confianza=0.91, etapa="deterministic"
-            ),
-            "El proceso de cierre mensual no puede ejecutarse porque el modulo de planificacion falla.": ClasificacionResultFake(
-                categoria="Operaciones", confianza=0.88, etapa="gemini"
-            ),
-            "El servicio de gestion de turnos no esta disponible y hay cola de atencion acumulada.": ClasificacionResultFake(
-                categoria="Operaciones", confianza=0.85, etapa="gemini"
-            ),
-            "El sistema de continuidad del negocio no genera los reportes de disponibilidad.": ClasificacionResultFake(
-                categoria="Operaciones", confianza=0.87, etapa="gemini"
-            ),
-            "La laptop del empleado Juan no enciende y tiene una reunion importante en una hora.": ClasificacionResultFake(
-                categoria="Soporte Tecnico", confianza=0.96, etapa="deterministic"
-            ),
-            "El mouse inalambrico del puesto 14 dejo de funcionar y necesita reemplazo urgente.": ClasificacionResultFake(
-                categoria="Soporte Tecnico", confianza=0.94, etapa="deterministic"
-            ),
-            "El software de facturacion instalado en la PC del area contable lanza error al imprimir.": ClasificacionResultFake(
-                categoria="Soporte Tecnico", confianza=0.92, etapa="deterministic"
-            ),
-        }
+    casos = cargar_corpus(CORPUS_FIXTURE_PATH)
+    predicciones = {
+        caso.descripcion: ClasificacionResultFake(
+            sector_predicho=caso.sector_asignado,
+            sectores_adicionales=list(caso.sectores_adicionales),
+            confianza=0.95,
+            etapa="deterministic",
+        )
+        for caso in casos
+    }
     return FakeClassifier(predicciones=predicciones)
 
 
 @pytest.fixture
 def corpus_fixture_path() -> pathlib.Path:
-    """Ruta al corpus sintetico de fixtures."""
+    """Ruta al fixture JSON del corpus de evaluacion."""
     return CORPUS_FIXTURE_PATH
-
-
-@pytest.fixture
-def corpus_calibrado_path() -> pathlib.Path:
-    """Ruta al corpus calibrado de 200 casos."""
-    return CALIBRATED_CORPUS_PATH

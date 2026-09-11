@@ -26,8 +26,22 @@ class SectorRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    nombre: str           # Uno de: "Sistemas", "Operaciones", "Soporte Técnico"
+    nombre: str           # Uno de los 5 sectores canonicos (app.constants.SECTORES_CANONICOS)
     descripcion: str | None
+
+
+class SectorCatalogoRead(BaseModel):
+    """
+    Proyección mínima de sector para el endpoint de catálogo (C-27).
+
+    Expone únicamente `id` y `nombre`, la forma exacta que el frontend necesita
+    para construir opciones sin depender de IDs numéricos fijos.
+    """
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    nombre: str           # Uno de los 5 sectores canonicos
 
 
 class EstadoRead(BaseModel):

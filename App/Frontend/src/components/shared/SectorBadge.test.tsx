@@ -1,28 +1,51 @@
 /**
  * Pruebas de SectorBadge.
- * Verifica que muestra el nombre del sector cuando está presente
- * y "Pendiente" cuando nombre es null o undefined.
+ * Verifica que la insignia resuelve color/etiqueta por el nombre canónico del sector
+ * (no por IDs numéricos), que cubre los cinco sectores y que tolera un nombre
+ * desconocido sin romper el renderizado.
  */
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { SectorBadge } from './SectorBadge';
+import { SectorBadge, getSectorVariant } from './SectorBadge';
+
+const SECTORES_CANONICOS: Array<[string, string]> = [
+  ['Seguridad Informatica', 'destructive'],
+  ['Soporte Tecnico Hardware', 'warning'],
+  ['Soporte Tecnico Software', 'info'],
+  ['Bases de Datos', 'success'],
+  ['Sistemas', 'secondary'],
+];
 
 describe('SectorBadge', () => {
-  // ---------- Sectores válidos ----------
+  // ---------- Sectores canónicos ----------
 
-  it('muestra "Sistemas" cuando nombre es "Sistemas"', () => {
-    render(<SectorBadge nombre="Sistemas" />);
-    expect(screen.getByText('Sistemas')).toBeInTheDocument();
+  it.each(SECTORES_CANONICOS)('muestra el nombre canónico "%s"', (nombre) => {
+    render(<SectorBadge nombre={nombre} />);
+    expect(screen.getByText(nombre)).toBeInTheDocument();
+    expect(screen.queryByText('Pendiente')).not.toBeInTheDocument();
   });
 
-  it('muestra "Operaciones" cuando nombre es "Operaciones"', () => {
-    render(<SectorBadge nombre="Operaciones" />);
-    expect(screen.getByText('Operaciones')).toBeInTheDocument();
+  it.each(SECTORES_CANONICOS)(
+    'asigna la variante de color esperada a "%s"',
+    (nombre, variante) => {
+      expect(getSectorVariant(nombre)).toBe(variante);
+    }
+  );
+
+  // ---------- Sector desconocido ----------
+
+  it('usa la variante muted para un nombre de sector desconocido', () => {
+    expect(getSectorVariant('Sector Inexistente')).toBe('muted');
   });
 
-  it('muestra "Soporte Técnico" cuando nombre es "Soporte Técnico"', () => {
-    render(<SectorBadge nombre="Soporte Técnico" />);
-    expect(screen.getByText('Soporte Técnico')).toBeInTheDocument();
+  it('renderiza un nombre desconocido sin romper y sin marcarlo como Pendiente', () => {
+    render(<SectorBadge nombre="Sector Inexistente" />);
+    expect(screen.getByText('Sector Inexistente')).toBeInTheDocument();
+    expect(screen.queryByText('Pendiente')).not.toBeInTheDocument();
+  });
+
+  it('NO reconoce el sector eliminado "Operaciones" como canónico', () => {
+    expect(getSectorVariant('Operaciones')).toBe('muted');
   });
 
   // ---------- Estado pendiente ----------
@@ -35,10 +58,5 @@ describe('SectorBadge', () => {
   it('muestra "Pendiente" cuando nombre es undefined', () => {
     render(<SectorBadge nombre={undefined} />);
     expect(screen.getByText('Pendiente')).toBeInTheDocument();
-  });
-
-  it('NO muestra "Pendiente" cuando nombre es un sector válido', () => {
-    render(<SectorBadge nombre="Sistemas" />);
-    expect(screen.queryByText('Pendiente')).not.toBeInTheDocument();
   });
 });

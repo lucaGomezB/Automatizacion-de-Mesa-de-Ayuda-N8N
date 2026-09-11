@@ -37,11 +37,12 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { useIncidentes } from '@/hooks/useIncidentes';
 import { useRevisionPendiente } from '@/hooks/useRevisionPendiente';
+import { useSectores } from '@/hooks/useSectores';
 import { TicketsTable } from './TicketsTable';
 import { RevisionHumanaTable } from './RevisionHumanaTable';
 import { TicketDetailDialog } from './TicketDetailDialog';
 import { ValidarClasificacionDialog } from './ValidarClasificacionDialog';
-import { SECTORES_OPCIONES, ESTADOS_OPCIONES } from '@/types/catalog';
+import { ESTADOS_OPCIONES } from '@/types/catalog';
 import type { IncidenteListParams } from '@/types/incidente';
 import type { ClasificacionLogRead } from '@/types/clasificacion';
 
@@ -82,6 +83,9 @@ export default function AdministracionPage() {
   const [incidenteIdSeleccionado, setIncidenteIdSeleccionado] = useState<number | null>(null);
   const [clasificacionSeleccionada, setClasificacionSeleccionada] =
     useState<ClasificacionLogRead | null>(null);
+
+  // ── Catálogo de sectores (opciones en runtime, sin IDs numéricos fijos) ─────
+  const { data: sectores } = useSectores();
 
   // ── Consultas de datos ──────────────────────────────────────────────────────
 
@@ -239,7 +243,7 @@ export default function AdministracionPage() {
                   <SelectValue placeholder="Sector" />
                 </SelectTrigger>
                 <SelectContent>
-                  {SECTORES_OPCIONES.map((s) => (
+                  {sectores?.map((s) => (
                     <SelectItem key={s.id} value={s.id.toString()}>
                       {s.nombre}
                     </SelectItem>

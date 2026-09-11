@@ -2,119 +2,156 @@
 
 ---
 
-## ⚠️ Declaración de integridad académica
+## Declaración de integridad académica
 
-> **El corpus de validación disponible actualmente en el repositorio
-> (`data/corpus_sintetico_provisional.csv`) es SINTÉTICO y PROVISIONAL.**
+> **El corpus sintético de 200 casos fue descartado por los revisores de la tesis
+> y eliminado del repositorio.**
 >
-> Fue generado programáticamente con el único propósito de verificar el
-> correcto funcionamiento del framework de evaluación (módulo `evaluation/`)
-> durante el desarrollo. **No representa datos reales de una mesa de ayuda y
-> no debe interpretarse como evidencia experimental del desempeño del sistema.**
+> Existió como artefacto provisional (`data/corpus_sintetico_provisional.csv`) para
+> verificar el funcionamiento del framework de evaluación durante el desarrollo.
+> **No representaba datos reales de una mesa de ayuda y no constituye evidencia
+> experimental del desempeño del sistema.** Fue retirado junto con su generador y
+> su andamiaje (`generate_corpus.py`, `FakeClassifier` calibrado, columna
+> `categoria_real`). Ninguno de sus números (82/64/54, exactitud 92 %, F1 0,919,
+> Tabla 7) puede citarse como resultado vigente.
 >
-> El corpus real, constituido por 200 casos pseudonimizados extraídos de
-> incidentes reales de una organización, es **trabajo de campo futuro** que
-> se realizará en la etapa de evaluación experimental de la tesis. Ese corpus
-> no está versionado en git por razones de privacidad y cumplimiento de la
+> El corpus real, pseudonimizado y extraído de incidentes reales de una
+> organización, es **trabajo de campo futuro** de la etapa de evaluación
+> experimental. No está versionado en git por privacidad y cumplimiento de la
 > Ley 25.326 (Protección de Datos Personales de la República Argentina).
->
-> (Decisión D5 del diseño de C-10.)
 
 ---
 
 ## Descripción del corpus
 
-El corpus de validación es el conjunto de datos etiquetados que permite
-medir la exactitud del sistema de clasificación automática propuesto en
-esta tesis. Cada caso representa un incidente de mesa de ayuda con su
-categoría real confirmada por un operador humano experto.
-
-### Tamaño objetivo
-
-**200 casos** etiquetados manualmente, distribuidos de forma representativa
-entre las tres categorías del sistema. El tamaño fue determinado para
-proveer poder estadístico suficiente para calcular accuracy e intervalos
-de confianza al 95 % (estimación previa: ≈ 150–200 casos para un margen
-de ±5 pp con distribución balanceada).
+El corpus de validación es el conjunto de datos etiquetados que permite medir la
+exactitud del sistema de clasificación automática propuesto. Cada caso representa
+un incidente de mesa de ayuda con su **sector asignado** y, opcionalmente,
+**sectores adicionales**, confirmados por un operador humano experto. La verdad
+es multietiqueta: el conjunto de verdad de un caso es
+`{sector_asignado} ∪ sectores_adicionales`.
 
 ---
 
-## Esquema del archivo CSV
+## Esquema del archivo JSON
 
-El corpus se almacena como CSV con codificación UTF-8 y las siguientes columnas:
+El corpus se almacena como un documento JSON codificado en UTF-8:
 
-### Columnas requeridas
+```json
+{
+  "schema_version": 1,
+  "metadata": {
+    "descripcion": "Corpus de evaluación pseudonimizado (mesa de ayuda)",
+    "total_casos": 2
+  },
+  "casos": [
+    {
+      "id": "R001",
+      "descripcion": "El servidor [HOST] esta caido desde las 4 AM.",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": ["Bases de Datos"],
+      "tiempo_manual_s": 169.06,
+      "tiempo_automatizado_s": 22.97
+    },
+    {
+      "id": "R002",
+      "descripcion": "El touchpad de la notebook de [PERSONA] no responde.",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 155.77,
+      "tiempo_automatizado_s": 21.08
+    }
+  ]
+}
+```
 
-| Columna          | Tipo   | Descripción |
-|------------------|--------|-------------|
-| `id`             | string | Identificador único del caso (p. ej. `"001"`, `"caso_042"`) |
-| `descripcion`    | string | Texto del incidente **pseudonimizado** (PII reemplazada por etiquetas `[EMAIL]`, `[TELEFONO]`, `[HOST]`, `[PERSONA]`) |
-| `categoria_real` | string | Categoría correcta confirmada por el operador humano; debe ser exactamente uno de los tres valores válidos (ver abajo) |
+### Nivel documento
 
-### Columnas opcionales (cronometraje)
+| Campo            | Tipo     | Requerido | Descripción |
+|------------------|----------|-----------|-------------|
+| `schema_version` | entero   | sí        | Versión del esquema; permite evolucionarlo |
+| `metadata`       | objeto   | sí        | Metadatos del corpus |
+| `casos`          | arreglo  | sí        | Lista de casos etiquetados |
 
-| Columna                | Tipo   | Descripción |
-|------------------------|--------|-------------|
-| `tiempo_manual_s`      | float  | Tiempo en segundos que tomó clasificar el incidente manualmente |
-| `tiempo_automatizado_s`| float  | Tiempo en segundos que tomó el sistema automatizado en clasificarlo |
+`metadata` contiene al menos `descripcion` (string) y `total_casos` (entero). El
+loader **normaliza** `total_casos = len(casos)` y persiste el archivo antes de
+validarlo y usarlo, de modo que la cabecera nunca quede desincronizada. Si ya
+coincidía, la escritura es idempotente (no reescribe).
 
-Estas columnas son opcionales; el framework de evaluación las incluye solo
-si están presentes en el CSV. Se usan para calcular la comparativa de
-eficiencia temporal entre el proceso manual y el automatizado (objetivo
-secundario de la tesis).
+### Campos del caso
+
+| Campo                    | Tipo    | Requerido | Descripción |
+|--------------------------|---------|-----------|-------------|
+| `id`                     | string  | sí        | Identificador único del caso (p. ej. `"R001"`) |
+| `descripcion`            | string  | sí        | Texto del incidente **pseudonimizado** (PII reemplazada por `[EMAIL]`, `[TELEFONO]`, `[HOST]`, `[PERSONA]`) |
+| `canal_origen`           | string  | sí        | Canal de ingreso (`correo electrónico`, `formulario web`, `llamada telefónica`) |
+| `sector_asignado`        | string  | sí        | Sector principal de verdad, exactamente uno de los cinco canónicos |
+| `sectores_adicionales`   | arreglo | sí        | Sectores adicionales de verdad; `[]` cuando no hay. **No repite** el sector asignado |
+| `tiempo_manual_s`        | number  | sí        | Tiempo de clasificación manual en segundos |
+| `tiempo_automatizado_s`  | number  | sí        | Tiempo del sistema automatizado en segundos |
+
+La columna `categoria_real` del esquema CSV anterior **ya no existe**.
 
 ---
 
 ## Categorías válidas
 
-El campo `categoria_real` debe contener exactamente uno de estos tres
-valores (sensible a mayúsculas, en español):
+Tanto `sector_asignado` como cada valor de `sectores_adicionales` deben ser
+exactamente uno de estos cinco valores (sensibles a mayúsculas y **sin tildes**):
 
-| Categoría         | Ámbito |
-|-------------------|--------|
-| `Sistemas`        | Infraestructura, redes, servidores, bases de datos, ciberseguridad |
-| `Operaciones`     | Procesos compartidos, gestión de servicios, planificación, continuidad del negocio |
-| `Soporte Técnico` | Equipamiento de usuarios, periféricos, software cliente, asistencia remota |
+| Categoría                  | Ámbito |
+|----------------------------|--------|
+| `Seguridad Informatica`    | Ciberseguridad, firewall, VPN, malware, phishing, accesos e identidad |
+| `Soporte Tecnico Hardware` | Equipamiento de usuarios, periféricos, impresoras, fallas físicas |
+| `Soporte Tecnico Software` | Aplicaciones de escritorio, instalación, configuración, asistencia remota |
+| `Bases de Datos`           | Motores de datos, consultas, replicación, backup y recuperación |
+| `Sistemas`                 | Infraestructura, redes, servidores y servicios de plataforma |
 
-Cualquier valor fuera de este conjunto es rechazado por el validador del
-framework de evaluación con un error explícito (ver `evaluation/corpus.py`,
-constante `CATEGORIAS_VALIDAS`).
+`Operaciones` **no** pertenece al vocabulario vigente. Cualquier valor fuera de
+este conjunto es rechazado por el validador del framework de evaluación con un
+error explícito (ver `evaluation/corpus.py`, constante `CATEGORIAS_VALIDAS`).
+
+---
+
+## Invariantes de la verdad multietiqueta
+
+1. `sector_asignado` es un único string canónico.
+2. `sectores_adicionales` está presente en todos los casos (`[]` cuando no hay).
+3. `sector_asignado` no puede repetirse dentro de `sectores_adicionales`.
+4. Todos los valores pertenecen al conjunto canónico de cinco sectores.
 
 ---
 
 ## Contrato con el framework de evaluación
 
-El módulo `evaluation/corpus.py` (C-08) define el contrato formal del corpus:
+El módulo `evaluation/corpus.py` define el contrato formal del corpus:
 
 ```python
-CATEGORIAS_VALIDAS = frozenset({"Sistemas", "Operaciones", "Soporte Técnico"})
-COLUMNAS_REQUERIDAS = ["id", "descripcion", "categoria_real"]
+SECTORES_CANONICOS = (
+    "Seguridad Informatica",
+    "Soporte Tecnico Hardware",
+    "Soporte Tecnico Software",
+    "Bases de Datos",
+    "Sistemas",
+)
+CATEGORIAS_VALIDAS = frozenset(SECTORES_CANONICOS)
+CAMPOS_CASO_REQUERIDOS = (
+    "id", "descripcion", "canal_origen", "sector_asignado",
+    "sectores_adicionales", "tiempo_manual_s", "tiempo_automatizado_s",
+)
 ```
 
 El cargador `cargar_corpus(path)` valida:
 1. Que el archivo existe en la ruta indicada.
-2. Que las columnas requeridas están presentes.
-3. Que cada valor de `categoria_real` pertenece al conjunto válido.
+2. Que el documento es un objeto JSON con `schema_version`, `metadata` y `casos`.
+3. Que cada caso contiene los siete campos requeridos.
+4. Que `sector_asignado` y `sectores_adicionales` pertenecen al conjunto canónico.
+5. Las invariantes multietiqueta (ver sección anterior).
 
-Este Anexo F es consistente con ese contrato: las mismas columnas, las
-mismas categorías exactas.
-
----
-
-## Corpus provisional disponible en el repositorio
-
-**Archivo**: `data/corpus_sintetico_provisional.csv`
-
-Este archivo fue generado por un script de síntesis para que los tests del
-framework de evaluación (`evaluation/tests/`) puedan correr en CI sin depender
-de datos reales. Sus características:
-
-- Generado programáticamente; **no proviene de incidentes reales**.
-- Respeta el esquema CSV (columnas `id`, `descripcion`, `categoria_real`).
-- Las descripciones son ejemplos artificiales que cubren patrones lexicales
-  de cada categoría, suficientes para testear el clasificador pero sin validez
-  estadística para medir el desempeño real del sistema.
-- **No se debe citar como evidencia experimental** en la tesis ni en publicaciones.
+Este Anexo F es consistente con ese contrato: los mismos campos, las mismas
+cinco categorías exactas.
 
 ---
 
@@ -123,15 +160,15 @@ de datos reales. Sus características:
 El corpus real se obtendrá mediante el siguiente procedimiento:
 
 1. **Recolección**: exportar registros de `clasificacion_log` de la base de datos
-   en producción, filtrando los 200 casos con mayor representatividad por categoría.
-2. **Pseudonimización**: todos los registros deben exportarse desde la columna
-   `descripcion_pseudonimizada` (nunca `descripcion_original`) para garantizar
-   el cumplimiento de la Ley 25.326.
-3. **Etiquetado**: un operador humano experto valida la categoría de cada caso
-   (columna `sector_id_validado` en `clasificacion_log`), constituyendo el
-   ground truth.
+   en producción, seleccionando los casos representativos por sector.
+2. **Pseudonimización**: exportar desde `descripcion_pseudonimizada` (nunca
+   `descripcion_original`) para cumplir la Ley 25.326.
+3. **Etiquetado**: un operador humano experto valida el sector principal
+   (`sector_id_validado`) y los sectores adicionales
+   (`clasificacion_sector_validado`), constituyendo el ground truth.
 4. **Almacenamiento**: el corpus real se guarda como
-   `data/corpus_evaluacion_pseudonimizado.csv` (gitignorado por privacidad).
+   `data/corpus_evaluacion_pseudonimizado.json` (gitignorado por privacidad).
 
-El framework de evaluación leerá el corpus real con el mismo `cargar_corpus()`
-que usa hoy con el corpus sintético, sin cambios de código.
+El framework de evaluación lee el corpus real con `cargar_corpus()`. Si el
+archivo no está presente, el runner termina con un error claro y no inventa
+datos.

@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "metadata": {
+    "descripcion": "Corpus de prueba sintetico minimo para el framework de evaluacion multietiqueta.",
+    "total_casos": 9
+  },
+  "casos": [
+    {
+      "id": "1",
+      "descripcion": "Se detecto un acceso no autorizado a la base de datos de clientes.",
+      "canal_origen": "correo",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 180,
+      "tiempo_automatizado_s": 12
+    },
+    {
+      "id": "2",
+      "descripcion": "El servidor de base de datos no responde y los usuarios no pueden acceder al sistema ERP.",
+      "canal_origen": "formulario",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": ["Sistemas"],
+      "tiempo_manual_s": 210,
+      "tiempo_automatizado_s": 14
+    },
+    {
+      "id": "3",
+      "descripcion": "La laptop del empleado no enciende y tiene una reunion importante en una hora.",
+      "canal_origen": "llamada",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 240,
+      "tiempo_automatizado_s": 15
+    },
+    {
+      "id": "4",
+      "descripcion": "El mouse inalambrico del puesto 14 dejo de funcionar y necesita reemplazo urgente.",
+      "canal_origen": "correo",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": ["Soporte Tecnico Software"],
+      "tiempo_manual_s": 195,
+      "tiempo_automatizado_s": 13
+    },
+    {
+      "id": "5",
+      "descripcion": "El software de facturacion lanza error al imprimir y no permite emitir comprobantes.",
+      "canal_origen": "formulario",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 220,
+      "tiempo_automatizado_s": 16
+    },
+    {
+      "id": "6",
+      "descripcion": "La conexion a la base de datos se corta constantemente con error de timeout.",
+      "canal_origen": "correo",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 200,
+      "tiempo_automatizado_s": 14
+    },
+    {
+      "id": "7",
+      "descripcion": "El servidor de archivos compartidos no permite guardar documentos.",
+      "canal_origen": "llamada",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": ["Bases de Datos"],
+      "tiempo_manual_s": 175,
+      "tiempo_automatizado_s": 11
+    },
+    {
+      "id": "8",
+      "descripcion": "La red del piso 3 esta caida y los equipos no tienen conectividad.",
+      "canal_origen": "correo",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 160,
+      "tiempo_automatizado_s": 10
+    },
+    {
+      "id": "9",
+      "descripcion": "El servidor principal presenta un pico de trafico anormal y accesos sospechosos.",
+      "canal_origen": "formulario",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": ["Sistemas", "Bases de Datos"],
+      "tiempo_manual_s": 190,
+      "tiempo_automatizado_s": 12
+    }
+  ]
+}

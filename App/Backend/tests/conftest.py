@@ -16,7 +16,7 @@ Fixtures disponibles:
     db_session:      Sesión con rollback automático tras cada test (scope=function).
     client:          Cliente HTTP asíncrono (ASGI) con la base de datos de test inyectada.
     seed_catalogs:   Siembra registros de catálogo mínimos vía el engine compartido
-                     (Estado "nuevo", tres Sector, tres CanalOrigen). Limpia al finalizar.
+                     (Estado "nuevo", cinco Sector, tres CanalOrigen). Limpia al finalizar.
     make_client_with_classifier: Factory que devuelve un AsyncClient con el clasificador
                      inyectado como doble de prueba (dependency_override de get_service).
 
@@ -268,7 +268,7 @@ async def seed_catalogs(engine):
 
     IncidenteService.create_and_classify resuelve por nombre:
       - Estado "nuevo"   → requerido para inicializar todo incidente.
-      - Sector (×3)      → Sistemas, Operaciones, Soporte Técnico.
+      - Sector (×5)      → vocabulario canonico C-27 (sin tildes).
       - CanalOrigen (×3) → correo electrónico, formulario web, llamada telefónica.
 
     Estrategia de aislamiento:
@@ -291,23 +291,25 @@ async def seed_catalogs(engine):
         estado_resuelto = Estado(nombre="resuelto", descripcion="Solucion aplicada", es_terminal=False)
         estado_cerrado = Estado(nombre="cerrado", descripcion="Finalizado", es_terminal=True)
 
+        sector_seguridad = Sector(nombre="Seguridad Informatica", descripcion="Ciberseguridad")
+        sector_hardware = Sector(nombre="Soporte Tecnico Hardware", descripcion="Equipos y perifericos")
+        sector_software = Sector(nombre="Soporte Tecnico Software", descripcion="Aplicaciones de escritorio")
+        sector_bases_datos = Sector(nombre="Bases de Datos", descripcion="Motores y consultas")
         sector_sistemas = Sector(nombre="Sistemas", descripcion="Infraestructura y redes")
-        sector_operaciones = Sector(nombre="Operaciones", descripcion="Procesos operativos")
-        sector_soporte = Sector(nombre="Soporte Técnico", descripcion="Equipamiento de usuarios")
         canal_correo = CanalOrigen(nombre="correo electrónico", descripcion="Vía Outlook")
         canal_formulario = CanalOrigen(nombre="formulario web", descripcion="API REST directa")
         canal_llamada = CanalOrigen(nombre="llamada telefónica", descripcion="Vía Twilio")
 
         session.add_all([
             estado_nuevo, estado_en_proceso, estado_en_espera, estado_resuelto, estado_cerrado,
-            sector_sistemas, sector_operaciones, sector_soporte,
+            sector_seguridad, sector_hardware, sector_software, sector_bases_datos, sector_sistemas,
             canal_correo, canal_formulario, canal_llamada,
         ])
         await session.commit()
 
         # Refrescar para obtener IDs asignados
         for obj in [estado_nuevo, estado_en_proceso, estado_en_espera, estado_resuelto, estado_cerrado,
-                    sector_sistemas, sector_operaciones, sector_soporte,
+                    sector_seguridad, sector_hardware, sector_software, sector_bases_datos, sector_sistemas,
                     canal_correo, canal_formulario, canal_llamada]:
             await session.refresh(obj)
 
@@ -317,9 +319,11 @@ async def seed_catalogs(engine):
             "estado_en_espera": estado_en_espera,
             "estado_resuelto": estado_resuelto,
             "estado_cerrado": estado_cerrado,
+            "sector_seguridad": sector_seguridad,
+            "sector_hardware": sector_hardware,
+            "sector_software": sector_software,
+            "sector_bases_datos": sector_bases_datos,
             "sector_sistemas": sector_sistemas,
-            "sector_operaciones": sector_operaciones,
-            "sector_soporte": sector_soporte,
             "canal_correo": canal_correo,
             "canal_formulario": canal_formulario,
             "canal_llamada": canal_llamada,
@@ -331,9 +335,17 @@ async def seed_catalogs(engine):
     # El orden importa por las FK: primero limpiar tablas dependientes.
     async with factory() as session:
         # Importar modelos aquí para evitar importación circular en el módulo
+        from app.models.asociaciones import (
+            clasificacion_sector_predicho,
+            clasificacion_sector_validado,
+            incidente_sector_adicional,
+        )
         from app.models.clasificacion_log import ClasificacionLog
         from app.models.incidente import Incidente
 
+        await session.execute(delete(clasificacion_sector_predicho))
+        await session.execute(delete(clasificacion_sector_validado))
+        await session.execute(delete(incidente_sector_adicional))
         await session.execute(delete(ClasificacionLog))
         await session.execute(delete(Incidente))
         await session.execute(delete(CanalOrigen))
@@ -424,7 +436,7 @@ async def seed_pg_catalogs(pg_engine):
 
     Mirrors the exact same catalog data as seed_catalogs:
       - Estado "nuevo"
-      - Sector (x3): Sistemas, Operaciones, Soporte Tecnico
+      - Sector (x5): vocabulario canonico C-27 (sin tildes)
       - CanalOrigen (x3): correo electronico, formulario web, llamada telefonica
 
     Teardown cleans incidentes/logs first, then catalogs (FK-safe order).
@@ -439,29 +451,34 @@ async def seed_pg_catalogs(pg_engine):
         estado_nuevo = Estado(
             nombre="nuevo", descripcion="Incidente recibido, sin asignar", es_terminal=False
         )
+        sector_seguridad = Sector(nombre="Seguridad Informatica", descripcion="Ciberseguridad")
+        sector_hardware = Sector(nombre="Soporte Tecnico Hardware", descripcion="Equipos y perifericos")
+        sector_software = Sector(nombre="Soporte Tecnico Software", descripcion="Aplicaciones de escritorio")
+        sector_bases_datos = Sector(nombre="Bases de Datos", descripcion="Motores y consultas")
         sector_sistemas = Sector(nombre="Sistemas", descripcion="Infraestructura y redes")
-        sector_operaciones = Sector(nombre="Operaciones", descripcion="Procesos operativos")
-        sector_soporte = Sector(nombre="Soporte Técnico", descripcion="Equipamiento de usuarios")
         canal_correo = CanalOrigen(nombre="correo electrónico", descripcion="Vía Outlook")
         canal_formulario = CanalOrigen(nombre="formulario web", descripcion="API REST directa")
         canal_llamada = CanalOrigen(nombre="llamada telefónica", descripcion="Vía Twilio")
 
         session.add_all([
             estado_nuevo,
-            sector_sistemas, sector_operaciones, sector_soporte,
+            sector_seguridad, sector_hardware, sector_software, sector_bases_datos, sector_sistemas,
             canal_correo, canal_formulario, canal_llamada,
         ])
         await session.commit()
 
-        for obj in [estado_nuevo, sector_sistemas, sector_operaciones, sector_soporte,
+        for obj in [estado_nuevo,
+                    sector_seguridad, sector_hardware, sector_software, sector_bases_datos, sector_sistemas,
                     canal_correo, canal_formulario, canal_llamada]:
             await session.refresh(obj)
 
         catalog = {
             "estado_nuevo": estado_nuevo,
+            "sector_seguridad": sector_seguridad,
+            "sector_hardware": sector_hardware,
+            "sector_software": sector_software,
+            "sector_bases_datos": sector_bases_datos,
             "sector_sistemas": sector_sistemas,
-            "sector_operaciones": sector_operaciones,
-            "sector_soporte": sector_soporte,
             "canal_correo": canal_correo,
             "canal_formulario": canal_formulario,
             "canal_llamada": canal_llamada,
@@ -471,9 +488,17 @@ async def seed_pg_catalogs(pg_engine):
 
     # ── Teardown: clean dependent rows first, then catalogs ─────────────────
     async with factory() as session:
+        from app.models.asociaciones import (
+            clasificacion_sector_predicho,
+            clasificacion_sector_validado,
+            incidente_sector_adicional,
+        )
         from app.models.clasificacion_log import ClasificacionLog
         from app.models.incidente import Incidente
 
+        await session.execute(delete(clasificacion_sector_predicho))
+        await session.execute(delete(clasificacion_sector_validado))
+        await session.execute(delete(incidente_sector_adicional))
         await session.execute(delete(ClasificacionLog))
         await session.execute(delete(Incidente))
         await session.execute(delete(CanalOrigen))

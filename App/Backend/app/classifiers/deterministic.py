@@ -120,6 +120,13 @@ class DeterministicClassifier(BaseClassifier):
         winner, winner_score = sorted_cats[0]
         runner_up_score = sorted_cats[1][1] if len(sorted_cats) > 1 else 0
 
+        # Sectores secundarios con alguna señal (conjunto multietiqueta).
+        sectores_adicionales = [
+            categoria
+            for categoria, score in scores.items()
+            if score > 0 and categoria != winner
+        ]
+
         # Fórmula de confianza normalizada: penaliza los casos con ambigüedad
         confidence = winner_score / (winner_score + runner_up_score + self._EPS)
 
@@ -134,7 +141,8 @@ class DeterministicClassifier(BaseClassifier):
         )
 
         return ClasificacionResult(
-            categoria=winner,
+            sector_predicho=winner,
+            sectores_adicionales=sectores_adicionales,
             confianza=confidence,
             etapa="deterministic",
             requiere_revision_humana=False,  # Evaluado por el HybridClassifier

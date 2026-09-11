@@ -28,7 +28,7 @@ const mockedApiClient = vi.mocked(apiClient);
 
 // ---- Fixtures ----
 
-const mockSector: SectorRead = { id: 2, nombre: 'Operaciones', descripcion: null };
+const mockSector: SectorRead = { id: 2, nombre: 'Soporte Tecnico Hardware', descripcion: null };
 
 const mockClasificacion: ClasificacionLogRead = {
   id: 10,
@@ -36,7 +36,7 @@ const mockClasificacion: ClasificacionLogRead = {
   confianza: 0.55,
   etapa: 'gemini',
   requiere_revision_humana: true,
-  respuesta_raw: '{"categoría":"Operaciones","confianza":0.55}',
+  respuesta_raw: '{"sector_predicho":"Soporte Tecnico Hardware","confianza":0.55}',
   created_at: '2026-06-11T10:00:00Z',
   sector_predicho: mockSector,
   sector_validado: null,

@@ -19,7 +19,11 @@ const mockTendencias: TendenciasResponse = {
   series: [
     { periodo: '2026-01', total: 10, por_sector: { Sistemas: 5 } },
   ],
-  distribucion_sectores: { Sistemas: 50, Operaciones: 30, 'Soporte Técnico': 20 },
+  distribucion_sectores: {
+    'Seguridad Informatica': 50,
+    'Soporte Tecnico Hardware': 30,
+    'Soporte Tecnico Software': 20,
+  },
   distribucion_estados: { nuevo: 10, cerrado: 70 },
 };
 

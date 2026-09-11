@@ -51,6 +51,10 @@ C-17 evaluation-corpus-simulado (C-08)
 --- FASE 10: Cierre de brechas tesis/codigo (2026-07-03) ---
 
 C-26 corpus-simulado-backup-retencion (C-17)
+
+--- FASE 11: Rediseno de sectores y corpus JSON multietiqueta (2026-09-11) ---
+
+C-27 rediseno-sectores-json (C-26)
 ```
 
 ### Paralelismo por fase
@@ -256,7 +260,7 @@ C-26 corpus-simulado-backup-retencion (C-17)
 
 - **Estado**: `[x]` completado (2026-06-11 — openspec/changes/archive/2026-06-11-c-08-evaluation-framework; tarea 8.1 corrida real pendiente del corpus no-trackeado)
 - **Scope**:
-  - Crear script Python en `evaluation/run_evaluation.py` que cargue el corpus de 200 casos desde CSV
+  - Crear script Python en `evaluation/run_evaluation.py` que cargue el corpus de 200 casos desde CSV (superado por C-27: corpus JSON multietiqueta)
   - Ejecutar el clasificador hibrido sobre cada caso y recolectar: categoria predicha, confianza, etapa
   - Calcular metricas: exactitud global, matriz de confusion, precision/sensibilidad/F1 por clase, F1 macro
   - Generar reporte en `evaluation/report.md` con tablas de metricas
@@ -419,12 +423,12 @@ C-26 corpus-simulado-backup-retencion (C-17)
 
 - **Estado**: `[x]` completado (2026-07-03 — openspec/changes/c-26-corpus-simulado-backup-retencion)
 - **Scope**:
-  - Reemplazar corpus simulado por corpus calibrado que produce metricas exactas de tesis (92% accuracy, F1 macro ~0.919, matriz de confusion Tabla 7, Wilcoxon W=0, p<0.001)
+  - (SUPERADO por C-27) Reemplazar corpus simulado por corpus calibrado que produce metricas exactas de tesis (92% accuracy, F1 macro ~0.919, matriz de confusion Tabla 7, Wilcoxon W=0, p<0.001)
   - Agregar columnas `tiempo_manual_s` y `tiempo_automatizado_s` al CSV del corpus
   - Crear `scripts/backup.sh` (Bash) y `scripts/backup.ps1` (PowerShell) para backups PostgreSQL con rotacion de 7 dias
   - Configurar retencion de ejecuciones N8N a 30 dias via variables de entorno en docker-compose.yml
   - Actualizar guia operativa con referencias a scripts de backup, retencion N8N, y seccion de evaluacion
-  - Actualizar FakeClassifier con mapeos calibrados para los 200 casos
+  - (SUPERADO por C-27) Actualizar FakeClassifier con mapeos calibrados para los 200 casos
   - 38 tests de evaluacion pasando (37 pass, 1 skip)
 - **Dependencias**: C-17
 - **Governance**: BAJO
@@ -434,6 +438,31 @@ C-26 corpus-simulado-backup-retencion (C-17)
   - `scripts/backup.sh` y `scripts/backup.ps1` (scripts de backup)
   - `docker-compose.yml` (variables EXECUTIONS_DATA_PRUNE / EXECUTIONS_DATA_MAX_AGE)
   - `docs/operational-guide.md` §3 (backup) y §1.5 (N8N retencion)
+
+---
+
+## FASE 11 — Rediseño de sectores y corpus JSON multietiqueta
+
+> C-27 reemplaza la taxonomia de 3 categorias por 5 sectores canonicos, migra la
+> verdad del corpus a JSON multietiqueta y elimina el corpus sintetico de 200 casos.
+
+### [C-27] `rediseno-sectores-json`
+
+- **Estado**: `[x]` completado (2026-09-11 — openspec/changes/c-27-rediseno-sectores-json)
+- **Scope**:
+  - Vocabulario canonico de 5 sectores sin tildes (`Seguridad Informatica`, `Soporte Tecnico Hardware`, `Soporte Tecnico Software`, `Bases de Datos`, `Sistemas`); `Operaciones` eliminado.
+  - Migracion `004_sectores_multietiqueta.py`: tablas de union `incidente_sector_adicional`, `clasificacion_sector_predicho`, `clasificacion_sector_validado`.
+  - Contrato `sector_predicho` + `sectores_adicionales` en schemas, servicio y webhook N8N.
+  - Corpus JSON multietiqueta (`schema_version`/`metadata`/`casos`) con `sector_asignado` + `sectores_adicionales`; elimina `categoria_real` y el corpus sintetico de 200 casos.
+  - Metricas multietiqueta: matriz primaria 5x5, subset accuracy, Hamming loss, micro/macro F1, Wilson en igualdad estricta y pertenencia.
+  - Frontend sin IDs numericos fijos: catalogo de sectores en runtime (`GET /api/v1/catalogos/sectores`).
+- **Dependencias**: C-26 (corpus sintetico y andamiaje que se elimina)
+- **Governance**: ALTA/CRITICA (strings de dominio persistidos + migracion de datos)
+- **Nota**: los numeros 82/64/54, exactitud 92 %, F1 ~0.919 y Tabla 7 del corpus sintetico quedan superados; se re-miden con el corpus real.
+- **Leer antes**:
+  - `openspec/changes/c-27-rediseno-sectores-json/design.md` (decisiones D1-D8)
+  - `knowledge-base/05_reglas_de_negocio.md` (RN-CL-01/04, RN-VA-03)
+  - `docs/anexo_f_corpus.md` (esquema JSON y 5 categorias)
 
 ---
 
@@ -448,7 +477,7 @@ C-26 corpus-simulado-backup-retencion (C-17)
 | Backend: servicios | COMPLETO | IncidenteService, ClasificacionService con inyeccion de dependencias |
 | Backend: modelos ORM | COMPLETO | 5 tablas segun tesis: incidente, sector, estado, canal_origen, clasificacion_log |
 | Backend: repositorios | COMPLETO | Patron repositorio con sesion compartida, filtros dinanicos |
-| Backend: keywords | COMPLETO | Regex para Sistemas (24), Operaciones (16), Soporte Tecnico (20) |
+| Backend: keywords | COMPLETO | Mapa redistribuido en los 5 sectores canonicos (C-27) |
 | Backend: util n8n_webhook | DEFINIDO NO USADO | `notify_n8n()` existe pero nunca se llama desde el servicio |
 | Backend: tests | PARCIAL | 13 tests solo clasificador; conftest.py listo para integration tests |
 | Backend: pseudonimizacion | NO IMPLEMENTADO | Requisito Ley 25.326 para envio a Gemini |
@@ -464,7 +493,7 @@ C-26 corpus-simulado-backup-retencion (C-17)
 | Auth: JWT Bearer | COMPLETO | C-15 jwt-auth-backend-frontend |
 | KB: knowledge-base | ACTUALIZADA | C-14 kb-sync-implementation-state |
 | Twilio: TwiML script | COMPLETO | C-16 twilio-twiml-script |
-| Corpus: 200 casos | CALIBRADO | C-26 corpus-simulado-backup-retencion (corpus calibrado con metricas exactas de tesis) |
+| Corpus: JSON multietiqueta | PENDIENTE DATOS REALES | C-27 rediseno-sectores-json (sintetico de 200 casos eliminado; se re-mide con corpus real) |
 | Backup scripts: PostgreSQL | IMPLEMENTADO | C-26 — scripts/backup.sh y scripts/backup.ps1 con rotacion de 7 dias |
 | N8N retention: 30 dias | CONFIGURADO | C-26 — EXECUTIONS_DATA_PRUNE y EXECUTIONS_DATA_MAX_AGE en docker-compose.yml |
 

@@ -24,16 +24,32 @@ const mockTendencias: TendenciasResponse = {
   periodo: { desde: '2026-01-01', hasta: '2026-06-30', agrupar_por: 'mes' },
   total_incidentes: 100,
   series: [
-    { periodo: '2026-01', total: 10, por_sector: { Sistemas: 5, Operaciones: 3, 'Soporte Técnico': 2 } },
+    {
+      periodo: '2026-01',
+      total: 10,
+      por_sector: {
+        'Seguridad Informatica': 5,
+        'Soporte Tecnico Hardware': 3,
+        'Soporte Tecnico Software': 2,
+      },
+    },
   ],
-  distribucion_sectores: { Sistemas: 50, Operaciones: 30, 'Soporte Técnico': 20 },
+  distribucion_sectores: {
+    'Seguridad Informatica': 50,
+    'Soporte Tecnico Hardware': 30,
+    'Soporte Tecnico Software': 20,
+  },
   distribucion_estados: { nuevo: 10, 'en proceso': 20, cerrado: 70 },
 };
 
 const mockResumen: ResumenResponse = {
   total_incidentes: 100,
   promedio_diario: 3.33,
-  distribucion_sectores: { Sistemas: 50, Operaciones: 30, 'Soporte Técnico': 20 },
+  distribucion_sectores: {
+    'Seguridad Informatica': 50,
+    'Soporte Tecnico Hardware': 30,
+    'Soporte Tecnico Software': 20,
+  },
   distribucion_estados: { nuevo: 10, cerrado: 90 },
   tasa_revision_humana: 0.15,
 };

@@ -9,7 +9,7 @@ import userEvent from '@testing-library/user-event';
 import { RevisionHumanaTable } from './RevisionHumanaTable';
 import type { ClasificacionLogRead } from '@/types/clasificacion';
 
-const mockSectorPredicho = { id: 2, nombre: 'Operaciones', descripcion: null };
+const mockSectorPredicho = { id: 2, nombre: 'Soporte Tecnico Hardware', descripcion: null };
 const mockSectorValidado = { id: 1, nombre: 'Sistemas', descripcion: null };
 
 function makeClasificacion(

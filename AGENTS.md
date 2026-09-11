@@ -39,7 +39,7 @@ openspec list --json
 │   │   ├── services/         # Business logic (IncidenteService, ClasificacionService)
 │   │   ├── repositories/     # Data access pattern
 │   │   ├── models/           # SQLAlchemy ORM (5 tables + catalogs)
-│   │   ├── classifiers/      # Deterministic + Gemini + Hybrid (F1 ~0.88)
+│   │   ├── classifiers/      # Deterministic + Gemini + Hybrid (F1 se re-mide con el corpus real)
 │   │   ├── schemas/          # Pydantic v2 request/response models
 │   │   ├── utils/            # n8n_webhook, pseudonymizer
 │   │   ├── core/             # Database, error_handlers, logging (structlog)
@@ -138,7 +138,7 @@ PSEUDONYMIZATION_ENCRYPTION_KEY=MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA= # g
 
 - **Layer discipline**: routes → services → repositories → models. NEVER skip a layer in implementation.
 - **Async SQLAlchemy**: always use `selectinload()` for relationships being serialized. Lazy-loading will fail in async context.
-- **Category strings**: `["Sistemas", "Operaciones", "Soporte Técnico"]` — EXACT, case-sensitive, with accents. Any deviation breaks classifier comparison.
+- **Category strings**: `["Seguridad Informatica", "Soporte Tecnico Hardware", "Soporte Tecnico Software", "Bases de Datos", "Sistemas"]` — EXACT, case-sensitive, WITHOUT accents. `Operaciones` was removed. Any accent or casing deviation breaks classifier comparison.
 - **Domain identifiers in Spanish**: model fields, route paths (`/incidentes`), schema keys. Code identifiers (functions, variables) may be English or Spanish — keep consistent per file.
 - **Error response body**: standard envelope `{"error": {"code": "...", "message": "...", "details?": "..."}}` via `core/error_handlers.py`.
 - **N8N webhook notification**: fire-and-forget via `asyncio.create_task`. Do NOT block HTTP response on webhook completion. The mock in `conftest.py` patches this out globally.
@@ -183,7 +183,7 @@ Never use `engram sync --all` — it exports ALL projects to this repo.
 - Do NOT use emojis under any circumstance — not in code, not in comments, not in commit messages, not in chat responses, not in documentation. They degrade readability and professionalism.
 - Do NOT commit `.env` files. The pre-commit hook blocks them.
 - Do NOT write production code that lazy-loads SQLAlchemy relationships in async context.
-- Do NOT change the three category strings — they are locked by domain spec and the evaluation corpus.
+- Do NOT change the five category strings — they are locked by domain spec and the evaluation corpus.
 - Do NOT remove or rename `CLAUDE.md` — it contains the Skill routing table used by other tooling.
 - Do NOT run `docker compose` without the fixed project name `mesa_local` — duplicate stacks will collide on ports 8000/5678/6379/5433.
 - Do NOT run tests from repo root expecting all suites to execute — backend, frontend, and evaluation each require their own working directory.

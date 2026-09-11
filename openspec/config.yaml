@@ -17,7 +17,7 @@ stack:
     framework: FastAPI 0.115 + Uvicorn
     orm: SQLAlchemy 2.0 async (asyncpg)
     database: PostgreSQL 15.5
-    migrations: Alembic (seed de catálogos en 001)
+    migrations: Alembic (seed de catálogos en 001; tablas multietiqueta de sectores en 004)
     testing: pytest 8.3 (tests/ con conftest async + SQLite in-memory)
     logging: structlog (JSON prod / consola dev)
     config: pydantic-settings (.env)
@@ -40,7 +40,7 @@ conventions:
   async: SQLAlchemy async — siempre selectinload explícito para relationships serializados (nunca lazy-load)
   errors: 'cuerpo estándar {"error": {"code", "message", "details?"}} vía core/error_handlers.py'
   thresholds: { deterministic: 0.90, human_review: 0.70 }
-  categorias: ["Sistemas", "Operaciones", "Soporte Técnico"]  # exactas, case-sensitive
+  categorias: ["Seguridad Informatica", "Soporte Tecnico Hardware", "Soporte Tecnico Software", "Bases de Datos", "Sistemas"]  # exactas, case-sensitive, SIN tildes (C-27)
 
 context_files:
   roadmap: CHANGES.md

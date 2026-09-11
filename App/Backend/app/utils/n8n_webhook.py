@@ -39,9 +39,10 @@ async def notify_n8n(incidente_id: int, result: ClasificacionResult) -> None:
     durante el desarrollo o los tests).
 
     El payload incluye los campos mínimos necesarios para que N8N
-    pueda actualizar el sistema MTM-SRU con la categoría asignada:
+    pueda actualizar el sistema MTM-SRU con el sector asignado:
         - incidente_id:           ID del incidente en la base de datos.
-        - categoria:              Nombre del sector predicho.
+        - sector_predicho:        Nombre del sector principal predicho.
+        - sectores_adicionales:   Sectores secundarios predichos.
         - confianza:              Nivel de certeza de la clasificación.
         - etapa:                  Qué componente del pipeline clasificó.
         - requiere_revision_humana: Si el operador debe revisar el caso.
@@ -59,7 +60,8 @@ async def notify_n8n(incidente_id: int, result: ClasificacionResult) -> None:
     # Payload con los datos de clasificación para el flujo de N8N
     payload = {
         "incidente_id": incidente_id,
-        "categoria": result.categoria,
+        "sector_predicho": result.sector_predicho,
+        "sectores_adicionales": result.sectores_adicionales,
         "confianza": result.confianza,
         "etapa": result.etapa,
         "requiere_revision_humana": result.requiere_revision_humana,

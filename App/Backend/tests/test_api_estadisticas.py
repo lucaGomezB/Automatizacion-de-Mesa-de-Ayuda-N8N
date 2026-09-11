@@ -28,13 +28,13 @@ VALID_DESCRIPCION = "Falla en el servidor de base de datos principal del sector 
 
 
 def _make_result(
-    categoria: str = "Sistemas",
+    sector_predicho: str = "Sistemas",
     confianza: float = 0.95,
     requiere_revision_humana: bool = False,
 ) -> ClasificacionResult:
     """Construye un ClasificacionResult para el clasificador doble."""
     return ClasificacionResult(
-        categoria=categoria,
+        sector_predicho=sector_predicho,
         confianza=confianza,
         etapa="deterministic",
         requiere_revision_humana=requiere_revision_humana,
@@ -84,7 +84,7 @@ async def test_tendencias_daily_7_days(
     """
     5.2: Agrupar por dia en rango de 7 dias → 7 entradas en series.
     """
-    result = _make_result(categoria="Sistemas", confianza=0.95)
+    result = _make_result(sector_predicho="Sistemas", confianza=0.95)
 
     async with make_client_with_classifier(result) as client:
         await _create_incidentes(client, count=3)
@@ -120,7 +120,7 @@ async def test_tendencias_monthly_with_sector_filter(
     """
     5.3: Agrupar por mes con filtro de sector.
     """
-    result_sistemas = _make_result(categoria="Sistemas", confianza=0.95)
+    result_sistemas = _make_result(sector_predicho="Sistemas", confianza=0.95)
 
     async with make_client_with_classifier(result_sistemas) as client:
         await _create_incidentes(client, count=4)
@@ -191,7 +191,7 @@ async def test_resumen_default_30_days(
     """
     5.6: Sin parametros → resumen para ultimos 30 dias.
     """
-    result = _make_result(categoria="Sistemas", confianza=0.95)
+    result = _make_result(sector_predicho="Sistemas", confianza=0.95)
 
     async with make_client_with_classifier(result) as client:
         await _create_incidentes(client, count=5)
@@ -217,7 +217,7 @@ async def test_resumen_explicit_date_range(
     """
     5.7: Rango explicito ano completo → resumen.
     """
-    result = _make_result(categoria="Operaciones", confianza=0.90)
+    result = _make_result(sector_predicho="Seguridad Informatica", confianza=0.90)
 
     async with make_client_with_classifier(result) as client:
         await _create_incidentes(client, count=3)
@@ -313,7 +313,7 @@ async def test_patch_incidente_cerrado_409(
     from sqlalchemy.ext.asyncio import async_sessionmaker
     from app.models.incidente import Incidente
 
-    result = _make_result(categoria="Sistemas", confianza=0.95)
+    result = _make_result(sector_predicho="Sistemas", confianza=0.95)
 
     async with make_client_with_classifier(result) as client:
         # Crear incidente fresco (estado "nuevo")
@@ -355,7 +355,7 @@ async def test_patch_non_terminal_incidente_200(
     """
     6.2: PATCH sobre incidente no terminal (nuevo) → 200 OK.
     """
-    result = _make_result(categoria="Sistemas", confianza=0.95)
+    result = _make_result(sector_predicho="Sistemas", confianza=0.95)
 
     async with make_client_with_classifier(result) as client:
         r = await client.post(

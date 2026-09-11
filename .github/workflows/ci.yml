@@ -93,7 +93,7 @@ jobs:
         working-directory: App/Backend
         run: pytest tests/test_openapi_sync.py -v
 
-      # Evaluation suite — self-contained (corpus_fixture.csv + FakeClassifier)
+      # Evaluation suite — self-contained (fixture JSON + FakeClassifier)
       # Chapter 7 thesis evidence; must not rot.
       - name: Install evaluation dependencies
         working-directory: evaluation

@@ -2,25 +2,39 @@
  * Tipos TypeScript y constantes para las entidades de catálogo del sistema.
  *
  * Responsabilidad:
- *   Define las interfaces que espejo los schemas Pydantic de `app/schemas/catalog.py`
- *   y expone constantes derivadas de la migración de seed `001_seed_catalogs.py`.
+ *   Define las interfaces que espejo los schemas Pydantic de `app/schemas/catalog.py`.
  *
- *   Los catálogos son inmutables en tiempo de ejecución (no existe endpoint de modificación),
- *   por lo que sus IDs se hardcodean aquí como constantes `as const` en lugar de consultarlos
- *   dinámicamente. Cualquier cambio en la base de datos requiere actualizar este archivo.
+ *   Los sectores se obtienen en runtime desde `GET /api/v1/catalogos/sectores`
+ *   (ver `services/catalogosService.ts`), por lo que NO se hardcodean identificadores
+ *   numéricos de sector: los nombres canónicos son el único identificador estable de
+ *   dominio. Los estados y canales, en cambio, son inmutables y sus IDs se declaran
+ *   aquí como constantes `as const`.
  *
  * Valores de catálogo definidos en 001_seed_catalogs.py:
- *   Sectores   : Sistemas (1), Operaciones (2), Soporte Técnico (3)
+ *   Sectores   : obtenidos en runtime desde el endpoint de catálogo
  *   Estados    : Nuevo (1), En Proceso (2), En Espera (3), Resuelto (4), Cerrado (5)
  *   Canales    : Correo electrónico (1), Formulario web (2), Llamada telefónica (3)
  */
 
 export interface SectorRead {
   id: number;
-  /** Uno de: "Sistemas" | "Operaciones" | "Soporte Técnico" */
+  /**
+   * Uno de los cinco nombres canónicos (sin tildes):
+   * "Seguridad Informatica" | "Soporte Tecnico Hardware" | "Soporte Tecnico Software"
+   * | "Bases de Datos" | "Sistemas".
+   */
   nombre: string;
   descripcion: string | null;
 }
+
+/**
+ * Opción de sector consumida por los controles de la interfaz.
+ *
+ * Es el contrato mínimo devuelto por `GET /api/v1/catalogos/sectores`: la interfaz
+ * solo necesita el `id` (para enviar referencias al backend) y el `nombre` (para
+ * mostrar y resolver color/etiqueta).
+ */
+export type SectorOpcion = Pick<SectorRead, 'id' | 'nombre'>;
 
 export interface EstadoRead {
   id: number;
@@ -38,14 +52,6 @@ export interface CanalOrigenRead {
   descripcion: string | null;
 }
 
-// IDs de catálogo determinados por la migración 001_seed_catalogs.py.
-// Estos valores son estables ya que los catálogos son inmutables en tiempo de ejecución.
-export const SECTOR_IDS = {
-  SISTEMAS: 1,
-  OPERACIONES: 2,
-  SOPORTE_TECNICO: 3,
-} as const;
-
 export const ESTADO_IDS = {
   NUEVO: 1,
   EN_PROCESO: 2,
@@ -59,13 +65,6 @@ export const CANAL_ORIGEN_IDS = {
   FORMULARIO_WEB: 2,
   LLAMADA_TELEFONICA: 3,
 } as const;
-
-// Opciones de sector disponibles para dropdowns de filtro y validación
-export const SECTORES_OPCIONES = [
-  { id: SECTOR_IDS.SISTEMAS, nombre: 'Sistemas' },
-  { id: SECTOR_IDS.OPERACIONES, nombre: 'Operaciones' },
-  { id: SECTOR_IDS.SOPORTE_TECNICO, nombre: 'Soporte Técnico' },
-] as const;
 
 // Opciones de estado disponibles para dropdowns de filtro
 export const ESTADOS_OPCIONES = [

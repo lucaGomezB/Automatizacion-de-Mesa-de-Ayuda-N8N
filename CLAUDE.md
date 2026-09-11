@@ -4,11 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a UTN thesis project (2026) that automates help desk ticket classification using **N8N** (workflow automation platform) and **Google Gemini 2.5 Flash**. Incoming incidents from email (Microsoft Outlook) and phone calls (Twilio) are automatically classified into one of three categories in Spanish:
+This is a UTN thesis project (2026) that automates help desk ticket classification using **N8N** (workflow automation platform) and **Google Gemini 2.5 Flash**. Incoming incidents from email (Microsoft Outlook) and phone calls (Twilio) are automatically classified into one of five canonical sectors in Spanish (exact strings, case-sensitive, without accents):
 
-- **Sistemas**: Infrastructure, networks, servers, databases, cybersecurity
-- **Operaciones**: Shared processes, service management, planning, business continuity  
-- **Soporte Técnico**: User equipment, peripherals, client software, remote assistance
+- **Seguridad Informatica**: Cybersecurity, firewall, VPN, malware, phishing, corporate access and identity
+- **Soporte Tecnico Hardware**: User equipment, peripherals, printers, physical failures
+- **Soporte Tecnico Software**: Desktop applications, installation, configuration, remote assistance
+- **Bases de Datos**: Data engines, queries, replication, backup and recovery
+- **Sistemas**: Infrastructure, networks, servers, platform services
 
 ## Key Files
 
@@ -44,7 +46,7 @@ Twilio Webhook (call transcription)
 ```
 
 ### AI Classification (Gemini 2.5 Flash)
-- **Response format**: Strict JSON with `"categoría"` (one of three strings) and `"confianza"` (float 0.0–1.0)
+- **Response format**: Strict JSON with `"categoría"` (one of five canonical strings) and `"confianza"` (float 0.0–1.0)
 - **Confidence threshold**: ≥ 0.7 required; below that routes to human review
 - **Temperature**: 0.3 | **Top_p**: 0.9 | **Max tokens**: 100 | **Timeout**: 10s
 - **Language**: Rioplatense Spanish dialect
@@ -53,7 +55,7 @@ Twilio Webhook (call transcription)
 Response validation must perform in order:
 1. JSON syntax check via `json.loads()`
 2. Field presence: both `"categoría"` and `"confianza"` must exist
-3. Category string must match one of the three exact Spanish strings (case-sensitive)
+3. Category string must match one of the five exact canonical Spanish strings (case-sensitive, without accents)
 4. Confidence must be float in range [0.0, 1.0]
 5. On any failure: log exception, set confidence = 0.0, escalate to human review
 
@@ -98,7 +100,7 @@ function engram-import { engram sync --import --project "Automatizacion-de-Mesa-
 - The IF node conditions are configured: `confianza >= 0.70` (inclusive) in both channels.
 - To deploy: import `n8n/workflow.json` into an N8N instance and configure credentials for Outlook, Twilio, and Gemini. The backend endpoint is `POST /api/v1/incidentes`.
 - A `docker-compose.yml` for local testing (N8N 1.62 + FastAPI backend + PostgreSQL + Redis) is available at the root of the repository (added in C-04 verification). See `docs/n8n-workflow-guide.md` for setup instructions.
-- The evaluation corpus (`data/corpus_evaluacion_pseudonimizado.csv`, 200 labeled cases) is not tracked in git.
+- The evaluation corpus (`data/corpus_evaluacion_pseudonimizado.json`, multi-label JSON) is not tracked in git. The synthetic 200-case corpus was discarded and removed (C-27).
 
 ## Skill routing
 

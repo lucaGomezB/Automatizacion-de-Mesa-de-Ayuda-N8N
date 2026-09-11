@@ -12,7 +12,8 @@ Responsabilidad:
     duplicación de categorías, estados o canales de ingreso.
 
 Tablas de catálogo definidas en la tesis:
-    - sector:       Sistemas | Operaciones | Soporte Técnico
+    - sector:       Seguridad Informatica | Soporte Tecnico Hardware |
+                    Soporte Tecnico Software | Bases de Datos | Sistemas
     - estado:       nuevo | en proceso | en espera | resuelto | cerrado
     - canal_origen: correo electrónico | formulario web | llamada telefónica
 """
@@ -27,15 +28,17 @@ class Sector(Base, TimestampMixin):
     """
     Catálogo de sectores responsables de atender los incidentes.
 
-    Representa los tres sectores funcionales definidos en el modelo
+    Representa los cinco sectores funcionales definidos en el modelo
     de clasificación de la tesis. El clasificador híbrido produce
     como resultado el nombre de uno de estos sectores, que luego
     es resuelto a un registro de esta tabla por la capa de servicio.
 
-    Sectores válidos (sembrados en la migración 001):
-        - Sistemas: infraestructura, redes, servidores, bases de datos, ciberseguridad.
-        - Operaciones: procesos compartidos, gestión de servicios, planificación.
-        - Soporte Técnico: equipamiento de usuarios, periféricos, software cliente.
+    Sectores válidos (vocabulario canonico vigente, migracion 004):
+        - Seguridad Informatica: ciberseguridad, accesos y politicas de seguridad.
+        - Soporte Tecnico Hardware: equipamiento de usuarios, perifericos.
+        - Soporte Tecnico Software: aplicaciones de escritorio y ofimatica.
+        - Bases de Datos: motores, consultas y respaldos.
+        - Sistemas: infraestructura, redes y servidores.
     """
 
     __tablename__ = "sector"
