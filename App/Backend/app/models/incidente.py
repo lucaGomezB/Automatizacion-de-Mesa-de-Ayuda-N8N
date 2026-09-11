@@ -30,6 +30,7 @@ from enum import Enum as PyEnum
 from sqlalchemy import Boolean, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.models.asociaciones import incidente_sector_adicional
 from app.models.base import Base, TimestampMixin
 from app.models.catalog import CanalOrigen, Estado, Sector
 from app.utils.encryption import EncryptedText
@@ -123,6 +124,14 @@ class Incidente(Base, TimestampMixin):
     )
     canal_origen: Mapped[CanalOrigen | None] = relationship(
         "CanalOrigen", back_populates="incidentes"
+    )
+
+    # Sectores adicionales (N-a-N): el sector principal vive en sector_id; esta
+    # coleccion guarda el resto del conjunto multietiqueta del incidente.
+    sectores_adicionales: Mapped[list[Sector]] = relationship(
+        "Sector",
+        secondary=incidente_sector_adicional,
+        lazy="selectin",
     )
 
     # Indicador de alerta: True cuando el clasificador no alcanzó el umbral de

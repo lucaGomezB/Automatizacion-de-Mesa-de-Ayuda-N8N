@@ -9,6 +9,9 @@
  * que puede ser frágil en happy-dom. Para el test de payload se usa el valor
  * por defecto (prioridad: 'media') sin interactuar con el Select, conforme
  * al plan de mitigación del design.
+ *
+ * C-27: las opciones de sector se obtienen en runtime desde el catálogo
+ * (`GET /api/v1/catalogos/sectores`), nunca de IDs numéricos fijos.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -17,11 +20,26 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { IncidenteForm } from './IncidenteForm';
 import * as useReportarIncidenteHook from '@/hooks/useReportarIncidente';
+import * as catalogosService from '@/services/catalogosService';
 import { createTestQueryClient } from '@/test/utils';
 import type { IncidenteCreate, IncidenteRead } from '@/types/incidente';
+import type { SectorOpcion } from '@/types/catalog';
 
 // Mockear el hook completo para controlar la mutación
 vi.mock('@/hooks/useReportarIncidente');
+
+// Mockear el catálogo: las opciones se resuelven en runtime desde el servicio
+vi.mock('@/services/catalogosService', () => ({
+  listarSectores: vi.fn(),
+}));
+
+const mockSectores: SectorOpcion[] = [
+  { id: 1, nombre: 'Seguridad Informatica' },
+  { id: 2, nombre: 'Soporte Tecnico Hardware' },
+  { id: 3, nombre: 'Soporte Tecnico Software' },
+  { id: 4, nombre: 'Bases de Datos' },
+  { id: 5, nombre: 'Sistemas' },
+];
 
 // Mock de IncidenteRead para simular respuesta exitosa
 const mockIncidenteRead: IncidenteRead = {
@@ -31,7 +49,7 @@ const mockIncidenteRead: IncidenteRead = {
   requiere_revision_humana: false,
   created_at: '2026-06-11T10:00:00Z',
   updated_at: '2026-06-11T10:00:00Z',
-  sector: { id: 1, nombre: 'Sistemas', descripcion: null },
+  sector: { id: 1, nombre: 'Seguridad Informatica', descripcion: null },
   estado: { id: 1, nombre: 'nuevo', descripcion: null, es_terminal: false },
   canal_origen: { id: 2, nombre: 'formulario web', descripcion: null },
 };
@@ -68,9 +86,50 @@ function makeMockMutation(overrides: Partial<ReturnType<typeof useReportarIncide
   } as unknown as ReturnType<typeof useReportarIncidenteHook.useReportarIncidente>;
 }
 
+/** Abre el Select de sector (Radix) y espera a que renderice las opciones. */
+async function abrirSelectSector(user: ReturnType<typeof userEvent.setup>) {
+  const trigger = document.getElementById('sector_usuario');
+  if (!trigger) throw new Error('No se encontró el trigger del sector');
+  await user.click(trigger);
+}
+
 describe('IncidenteForm', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(catalogosService.listarSectores).mockResolvedValue(mockSectores);
+  });
+
+  // ---- C-27: opciones de sector desde el catálogo ----
+
+  it('renderiza las cinco opciones de sector obtenidas en runtime del catálogo', async () => {
+    vi.mocked(useReportarIncidenteHook.useReportarIncidente).mockReturnValue(
+      makeMockMutation()
+    );
+
+    const user = userEvent.setup();
+    renderForm();
+    await abrirSelectSector(user);
+
+    for (const sector of mockSectores) {
+      expect(await screen.findByRole('option', { name: sector.nombre })).toBeInTheDocument();
+    }
+    expect(screen.queryByRole('option', { name: 'Operaciones' })).not.toBeInTheDocument();
+  });
+
+  it('no muestra opciones hardcodeadas: refleja exactamente lo que devuelve el catálogo', async () => {
+    vi.mocked(catalogosService.listarSectores).mockResolvedValue([
+      { id: 99, nombre: 'Sector Personalizado' },
+    ]);
+    vi.mocked(useReportarIncidenteHook.useReportarIncidente).mockReturnValue(
+      makeMockMutation()
+    );
+
+    const user = userEvent.setup();
+    renderForm();
+    await abrirSelectSector(user);
+
+    expect(await screen.findByRole('option', { name: 'Sector Personalizado' })).toBeInTheDocument();
+    expect(screen.queryByRole('option', { name: 'Sistemas' })).not.toBeInTheDocument();
   });
 
   // ---- Task 5.1: Validación de mínimo de palabras ----

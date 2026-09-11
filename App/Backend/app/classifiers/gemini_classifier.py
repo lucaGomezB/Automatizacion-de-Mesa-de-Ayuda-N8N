@@ -24,7 +24,8 @@ Validación de respuestas (Anexo H §H.3):
     aceptada. Los cuatro controles son:
         1. Sintaxis JSON válida.
         2. Presencia de los campos "categoría" y "confianza".
-        3. Valor de "categoría" dentro del conjunto {Sistemas, Operaciones, Soporte Técnico}.
+        3. Valor de "categoría" dentro del conjunto canónico de 5 sectores
+           (app.constants.SECTORES_CANONICOS).
         4. Valor de "confianza" numérico en el rango [0.0, 1.0].
 """
 
@@ -37,6 +38,7 @@ from google.genai import types as genai_types
 
 from app.classifiers.base import BaseClassifier
 from app.config.settings import get_settings
+from app.constants import SECTORES_CANONICOS
 from app.core.exceptions import (
     GeminiResponseInvalidError,
     GeminiTimeoutError,
@@ -48,8 +50,8 @@ from app.schemas.clasificacion import ClasificacionResult
 logger = get_logger(__name__)
 
 # Conjunto de categorías válidas. Debe coincidir exactamente con los valores
-# definidos en el prompt (docs/prompt_gemini.txt), incluyendo tildes y mayúsculas.
-_VALID_CATEGORIES = frozenset({"Sistemas", "Operaciones", "Soporte Técnico"})
+# definidos en el prompt (docs/prompt_gemini.txt) y en app.constants.
+_VALID_CATEGORIES = frozenset(SECTORES_CANONICOS)
 
 # Ruta default al prompt documentado en la tesis, anclada a la RAÍZ del repositorio
 # (no al cwd ni a Backend/): classifiers → app → Backend → App → raíz.
@@ -93,34 +95,42 @@ def _load_prompt() -> str:
         return prompt_path.read_text(encoding="utf-8").strip()
     except FileNotFoundError:
         logger.warning("prompt_file_not_found", path=str(prompt_path))
-        # Fallback inline: réplica exacta del contenido de docs/prompt_gemini.txt
+        # Fallback inline: réplica del contenido de docs/prompt_gemini.txt (C-27).
         return (
             "INSTRUCCIÓN DE ROL\n"
             "Eres un agente especializado en clasificación de incidentes técnicos en español rioplatense.\n\n"
-            "DEFINICIÓN DE CATEGORÍAS\n"
-            "El incidente debe clasificarse en UNA de estas tres categorías:\n\n"
-            "1. SISTEMAS\n"
-            "   Abarca: infraestructura, redes, servidores, bases de datos, ciberseguridad, autenticación corporativa\n"
-            '   Ejemplo: "Se cayó el servidor de correo. No pueden conectarse los clientes de Outlook. Error SMTP timeout."\n\n'
-            "2. OPERACIONES\n"
-            "   Abarca: procesos compartidos, gestión de servicios, planificación, continuidad operativa, trámites administrativos\n"
-            '   Ejemplo: "Necesitamos reservar una sala de 15 personas para reunión el próximo miércoles a las 14 horas."\n\n'
-            "3. SOPORTE TÉCNICO\n"
-            "   Abarca: equipamiento de usuarios, periféricos, software cliente, asistencia remota, impresoras\n"
+            "DEFINICIÓN DE SECTORES\n"
+            "El incidente debe clasificarse en UNO de estos cinco sectores:\n\n"
+            "1. SEGURIDAD INFORMATICA\n"
+            "   Abarca: ciberseguridad, firewall, VPN, malware, phishing, accesos e identidad corporativa\n"
+            '   Ejemplo: "Detectamos un ataque de phishing y actividad de malware en la red."\n\n'
+            "2. SOPORTE TECNICO HARDWARE\n"
+            "   Abarca: equipamiento de usuarios, periféricos, impresoras y fallas físicas\n"
             '   Ejemplo: "Mi impresora no imprime. Sale papel atascado. Código de error 13."\n\n'
+            "3. SOPORTE TECNICO SOFTWARE\n"
+            "   Abarca: aplicaciones de escritorio, instalación, configuración y asistencia remota\n"
+            '   Ejemplo: "No puedo abrir Outlook, la aplicación se traba."\n\n'
+            "4. BASES DE DATOS\n"
+            "   Abarca: motores de datos, consultas, replicación, backup y recuperación\n"
+            '   Ejemplo: "El backup de la base de datos falló durante la replicación."\n\n'
+            "5. SISTEMAS\n"
+            "   Abarca: infraestructura, redes, servidores y servicios de plataforma\n"
+            '   Ejemplo: "Se cayó el servidor de correo. Error SMTP timeout en la red."\n\n'
             "FORMATO DE RESPUESTA\n"
             "Devuelve SIEMPRE un JSON válido con exactamente dos campos:\n"
-            '{\n  "categoría": "Sistemas|Operaciones|Soporte Técnico",\n  "confianza": 0.0-1.0\n}\n\n'
+            '{\n  "categoría": "Seguridad Informatica|Soporte Tecnico Hardware|Soporte Tecnico Software|Bases de Datos|Sistemas",\n  "confianza": 0.0-1.0\n}\n\n'
             "INSTRUCCIÓN DE DECISIÓN\n"
-            "Analiza la descripción del incidente y asigna una categoría única de las tres opciones listadas.\n"
-            "Si la descripción contiene elementos de múltiples categorías, elige la que sea DOMINANTE.\n\n"
+            "Analiza la descripción del incidente y asigna un sector único de las cinco opciones listadas.\n"
+            "Si la descripción contiene elementos de múltiples sectores, elige el que sea DOMINANTE.\n\n"
             "CASING\n"
-            'El valor del campo "categoría" en tu respuesta JSON debe ser EXACTAMENTE uno de estos tres strings,\n'
-            "respetando el casing (mayúsculas/minúsculas) y las tildes tal como aparecen aquí:\n"
+            'El valor del campo "categoría" en tu respuesta JSON debe ser EXACTAMENTE uno de estos cinco strings,\n'
+            "respetando el casing (mayúsculas/minúsculas). Los sectores NO llevan tildes:\n"
+            '  "Seguridad Informatica"\n'
+            '  "Soporte Tecnico Hardware"\n'
+            '  "Soporte Tecnico Software"\n'
+            '  "Bases de Datos"\n'
             '  "Sistemas"\n'
-            '  "Operaciones"\n'
-            '  "Soporte Técnico"\n'
-            'No uses "SISTEMAS", "sistemas", "SOPORTE TÉCNICO" ni ninguna variante. Usa exactamente los strings listados.\n\n'
+            'No uses "SISTEMAS", "sistemas" ni variantes con tilde como "Soporte Técnico". Usa exactamente los strings listados.\n\n'
             "VALIDACIÓN\n"
             "- Devuelve SIEMPRE un JSON válido sin texto adicional\n"
             "- No incluyas comentarios, explicaciones ni markdown\n"
@@ -241,7 +251,7 @@ class GeminiClassifier(BaseClassifier):
                 properties={
                     "categoría": genai_types.Schema(
                         type="STRING",
-                        enum=["Sistemas", "Operaciones", "Soporte Técnico"],
+                        enum=list(SECTORES_CANONICOS),
                     ),
                     "confianza": genai_types.Schema(
                         type="NUMBER",
@@ -338,7 +348,7 @@ class GeminiClassifier(BaseClassifier):
         )
 
         return ClasificacionResult(
-            categoria=validated["categoría"],
+            sector_predicho=validated["categoría"],
             confianza=confianza,
             etapa="gemini",
             requiere_revision_humana=requiere_revision,
@@ -363,7 +373,7 @@ class GeminiClassifier(BaseClassifier):
             ClasificacionResult de fallback para ser persistido como auditoría.
         """
         return ClasificacionResult(
-            categoria="Sistemas",          # Placeholder sin valor semántico real
+            sector_predicho="Sistemas",    # Placeholder sin valor semántico real
             confianza=0.0,                 # Indica fallo explícito del clasificador
             etapa="fallback",
             requiere_revision_humana=True, # Revisión humana obligatoria

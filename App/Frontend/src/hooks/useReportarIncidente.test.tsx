@@ -21,7 +21,7 @@ const mockIncidenteRead: IncidenteRead = {
   requiere_revision_humana: false,
   created_at: '2026-06-11T12:00:00Z',
   updated_at: '2026-06-11T12:00:00Z',
-  sector: { id: 3, nombre: 'Soporte Técnico', descripcion: null },
+  sector: { id: 3, nombre: 'Soporte Tecnico Software', descripcion: null },
   estado: { id: 1, nombre: 'nuevo', descripcion: null, es_terminal: false },
   canal_origen: { id: 2, nombre: 'formulario web', descripcion: null },
 };

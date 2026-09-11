@@ -14,7 +14,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.catalog import Sector
 from app.repositories.base import BaseRepository
 
-
 class SectorRepository(BaseRepository[Sector]):
     """
     Repositorio de acceso a datos para la entidad Sector.
@@ -36,7 +35,9 @@ class SectorRepository(BaseRepository[Sector]):
 
         La comparación es exacta e incluye sensibilidad a mayúsculas, lo cual
         es intencional dado que los nombres del catálogo tienen capitalización
-        específica definida en la tesis: "Sistemas", "Operaciones", "Soporte Técnico".
+        específica definida en la tesis: "Seguridad Informatica",
+        "Soporte Tecnico Hardware", "Soporte Tecnico Software",
+        "Bases de Datos" y "Sistemas".
 
         Args:
             nombre: Nombre exacto del sector a buscar.
@@ -48,3 +49,24 @@ class SectorRepository(BaseRepository[Sector]):
             select(Sector).where(Sector.nombre == nombre)
         )
         return result.scalar_one_or_none()
+
+    async def get_by_nombres(self, nombres: list[str]) -> dict[str, "Sector"]:
+        """
+        Resuelve una lista de nombres canónicos a sus registros de Sector.
+
+        Pensado para persistir el conjunto multietiqueta (sectores adicionales)
+        en una sola consulta. Los nombres inexistentes simplemente no aparecen
+        en el resultado (la capa de servicio decide cómo tratarlos).
+
+        Args:
+            nombres: Nombres exactos de sector a resolver.
+
+        Returns:
+            Diccionario {nombre: Sector} con los que existan.
+        """
+        if not nombres:
+            return {}
+        result = await self._session.execute(
+            select(Sector).where(Sector.nombre.in_(nombres))
+        )
+        return {sector.nombre: sector for sector in result.scalars().all()}

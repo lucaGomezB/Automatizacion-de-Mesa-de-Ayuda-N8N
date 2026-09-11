@@ -1,16 +1,16 @@
 """
-Runner de evaluación del clasificador híbrido.
+Runner de evaluación del clasificador híbrido (multietiqueta, C-27).
 
-Orquesta la carga del corpus, la invocación del clasificador caso por caso,
-el cálculo de métricas y la escritura del reporte.
+Orquesta la carga del corpus JSON, la invocación del clasificador caso por caso,
+el cálculo de métricas multietiqueta y la escritura del reporte.
 
 Uso (corpus real):
     python -m evaluation.run_evaluation
 
     Requiere:
-    - data/corpus_evaluacion_pseudonimizado.csv (no trackeado en git)
+    - data/corpus_evaluacion_pseudonimizado.json (no trackeado en git)
     - GEMINI_API_KEY en el entorno
-    - PYTHONPATH configurado para incluir Gestion_Incidentes/
+    - PYTHONPATH configurado para incluir App/Backend/
 
 Diseño (D1): el clasificador se inyecta por parámetro, lo que permite
     testear con FakeClassifier sin llamadas a Gemini.
@@ -22,26 +22,33 @@ from __future__ import annotations
 import asyncio
 import json
 import pathlib
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from typing import Any, Dict, List, Optional, Protocol
 
 from evaluation.corpus import CasoEvaluacion, cargar_corpus
 from evaluation.metrics import (
     CLASES,
+    aciertos_estrictos,
+    aciertos_pertenencia,
     exactitud_global,
+    exactitud_subconjunto,
     f1_macro,
+    f1_micro,
     f1_por_clase,
     intervalo_wilson,
+    jaccard_promedio,
     matriz_confusion,
+    perdida_hamming,
     precision_por_clase,
     sensibilidad_por_clase,
+    soporte_por_clase,
 )
 
 # ---------------------------------------------------------------------------
 # Rutas por defecto
 # ---------------------------------------------------------------------------
 _REPO_ROOT = pathlib.Path(__file__).parent.parent
-CORPUS_REAL_PATH = _REPO_ROOT / "data" / "corpus_evaluacion_pseudonimizado.csv"
+CORPUS_REAL_PATH = _REPO_ROOT / "data" / "corpus_evaluacion_pseudonimizado.json"
 REPORT_PATH = pathlib.Path(__file__).parent / "report.md"
 PREDICCIONES_PATH = pathlib.Path(__file__).parent / "predicciones.json"
 
@@ -55,10 +62,11 @@ class Prediccion:
 
     caso_id: str
     descripcion: str
-    categoria_real: str
-    categoria_predicha: str
+    sector_asignado: str
+    sector_predicho: str
     confianza: float
     etapa: str  # "deterministic" | "gemini" | "fallback"
+    sectores_adicionales: List[str] = field(default_factory=list)
 
 
 class ClasificadorProtocol(Protocol):
@@ -79,7 +87,7 @@ async def evaluar_corpus(
     Ejecuta el clasificador sobre cada caso del corpus y recolecta predicciones.
 
     Args:
-        corpus: Lista de casos cargados del CSV.
+        corpus: Lista de casos cargados del JSON.
         classifier: Clasificador con método `async classify(descripcion)`.
 
     Returns:
@@ -91,8 +99,9 @@ async def evaluar_corpus(
         pred = Prediccion(
             caso_id=caso.id,
             descripcion=caso.descripcion,
-            categoria_real=caso.categoria_real,
-            categoria_predicha=resultado.categoria,
+            sector_asignado=caso.sector_asignado,
+            sector_predicho=resultado.sector_predicho,
+            sectores_adicionales=list(resultado.sectores_adicionales),
             confianza=float(resultado.confianza),
             etapa=str(resultado.etapa),
         )
@@ -109,38 +118,54 @@ def generar_reporte(
     output_path: pathlib.Path = REPORT_PATH,
 ) -> str:
     """
-    Genera el reporte de métricas en Markdown y lo escribe en `output_path`.
+    Genera el reporte de métricas multietiqueta en Markdown.
 
-    Reutiliza las funciones puras de evaluation.metrics (grupos 2-4).
+    Reutiliza las funciones puras de evaluation.metrics (design D5).
 
     Args:
         predicciones: Lista de predicciones del runner.
-        corpus: Lista de casos originales del corpus.
+        corpus: Lista de casos originales del corpus (mismo orden).
         output_path: Ruta donde escribir el reporte (default: evaluation/report.md).
 
     Returns:
         Contenido del reporte como string.
     """
-    reales = [p.categoria_real for p in predicciones]
-    predichas = [p.categoria_predicha for p in predicciones]
+    reales = [p.sector_asignado for p in predicciones]
+    predichas = [p.sector_predicho for p in predicciones]
+    adicionales_predichos = [p.sectores_adicionales for p in predicciones]
+
+    conjuntos_verdad = [caso.conjunto_verdad for caso in corpus]
+    conjuntos_predichos = [
+        frozenset({p.sector_predicho, *p.sectores_adicionales}) for p in predicciones
+    ]
 
     mc = matriz_confusion(reales, predichas)
-    exactitud = exactitud_global(reales, predichas)
-    aciertos = sum(r == p for r, p in zip(reales, predichas))
+    exactitud = exactitud_global(reales, predichos=predichas)
+    aciertos = aciertos_estrictos(reales, predichas)
     lower_ic, upper_ic = intervalo_wilson(aciertos, len(reales))
+
+    aciertos_pert = aciertos_pertenencia(reales, predichas, adicionales_predichos)
+    lower_pert, upper_pert = intervalo_wilson(aciertos_pert, len(reales))
+    exactitud_pert = aciertos_pert / len(reales) if reales else 0.0
+
+    subset = exactitud_subconjunto(conjuntos_verdad, conjuntos_predichos)
+    hamming = perdida_hamming(conjuntos_verdad, conjuntos_predichos)
+    micro_f1 = f1_micro(conjuntos_verdad, conjuntos_predichos)
+    jaccard = jaccard_promedio(conjuntos_verdad, conjuntos_predichos)
+
     precisiones = precision_por_clase(mc)
     sensibilidades = sensibilidad_por_clase(mc)
     f1s = f1_por_clase(mc)
     f1_m = f1_macro(f1s)
+    soportes = soporte_por_clase(mc)
 
-    # Contar etapas
     etapas: Dict[str, int] = {"deterministic": 0, "gemini": 0, "fallback": 0}
     for pred in predicciones:
         etapa = pred.etapa if pred.etapa in etapas else "fallback"
         etapas[etapa] += 1
 
     lineas = [
-        "# Reporte de Evaluación del Clasificador",
+        "# Reporte de Evaluación del Clasificador (multietiqueta)",
         "",
         f"**Total de casos evaluados:** {len(predicciones)}",
         "",
@@ -152,42 +177,55 @@ def generar_reporte(
         f"| Gemini | {etapas['gemini']} |",
         f"| Fallback | {etapas['fallback']} |",
         "",
-        "## Exactitud Global",
+        "## Exactitud",
         "",
-        f"- **Exactitud:** {exactitud:.4f} ({exactitud*100:.1f}%)",
-        f"- **Aciertos:** {aciertos} / {len(reales)}",
-        f"- **IC Wilson 95%:** [{lower_ic:.4f}, {upper_ic:.4f}]",
+        "Definiciones (design D5): igualdad estricta del sector principal y",
+        "pertenencia del sector asignado al conjunto predicho.",
         "",
-        "## Matriz de Confusión",
+        f"- **Exactitud (estricta):** {exactitud:.4f} ({exactitud * 100:.1f}%)",
+        f"- **Aciertos (estrictos):** {aciertos} / {len(reales)}",
+        f"- **IC Wilson 95% (estricto):** [{lower_ic:.4f}, {upper_ic:.4f}]",
+        f"- **Exactitud (pertenencia):** {exactitud_pert:.4f} ({exactitud_pert * 100:.1f}%)",
+        f"- **Aciertos (pertenencia):** {aciertos_pert} / {len(reales)}",
+        f"- **IC Wilson 95% (pertenencia):** [{lower_pert:.4f}, {upper_pert:.4f}]",
         "",
-        "Filas = categoría real | Columnas = categoría predicha",
+        "## Matriz de Confusión (primaria 5x5)",
+        "",
+        "Filas = sector asignado | Columnas = sector predicho principal",
         "",
     ]
 
-    # Encabezado de la tabla
-    header = "| Real \\ Predicho | " + " | ".join(CLASES) + " |"
+    header = "| Asignado \\ Predicho | " + " | ".join(CLASES) + " |"
     separator = "|" + "---|" * (len(CLASES) + 1)
     lineas.append(header)
     lineas.append(separator)
-    for clase_real in CLASES:
-        fila = f"| **{clase_real}** | "
-        celdas = " | ".join(str(mc[clase_real][clase_pred]) for clase_pred in CLASES)
+    for sector_asignado in CLASES:
+        fila = f"| **{sector_asignado}** | "
+        celdas = " | ".join(str(mc[sector_asignado][p]) for p in CLASES)
         lineas.append(fila + celdas + " |")
 
     lineas += [
         "",
-        "## Métricas por Clase",
+        "## Métricas por sector (one-vs-rest)",
         "",
-        "| Clase | Precisión | Sensibilidad | F1 |",
-        "|-------|-----------|--------------|-----|",
+        "| Sector | Precisión | Sensibilidad | F1 | Soporte |",
+        "|--------|-----------|--------------|-----|---------|",
     ]
-    for clase in CLASES:
+    for sector in CLASES:
         lineas.append(
-            f"| {clase} | {precisiones[clase]:.4f} | {sensibilidades[clase]:.4f} | {f1s[clase]:.4f} |"
+            f"| {sector} | {precisiones[sector]:.4f} | {sensibilidades[sector]:.4f} "
+            f"| {f1s[sector]:.4f} | {soportes[sector]} |"
         )
+
     lineas += [
         "",
-        f"**F1 Macro:** {f1_m:.4f}",
+        "## Métricas de conjunto",
+        "",
+        f"- **Subset accuracy:** {subset:.4f}",
+        f"- **Hamming loss:** {hamming:.4f}",
+        f"- **Micro-F1:** {micro_f1:.4f}",
+        f"- **Macro-F1:** {f1_m:.4f}",
+        f"- **Jaccard (IoU) promedio:** {jaccard:.4f}",
         "",
         "---",
         "_Generado automáticamente por `evaluation/run_evaluation.py`_",
@@ -251,39 +289,36 @@ async def main_con_corpus_real(
     mensaje claro indicando dónde colocar el corpus (sin inventar datos).
 
     Args:
-        corpus_path: Ruta al corpus CSV (default: data/corpus_evaluacion_pseudonimizado.csv).
+        corpus_path: Ruta al corpus JSON (default: data/corpus_evaluacion_pseudonimizado.json).
         classifier: Clasificador a inyectar (None = usar HybridClassifier real).
         report_path: Dónde escribir el reporte.
         predicciones_path: Dónde persistir las predicciones.
     """
     corpus_path = pathlib.Path(corpus_path)
 
-    # Validar presencia del corpus real antes de hacer nada
     if not corpus_path.exists():
         raise FileNotFoundError(
             f"El corpus de evaluación no está en: {corpus_path}\n"
-            f"Colocá el archivo 'corpus_evaluacion_pseudonimizado.csv' en la carpeta 'data/' "
+            f"Colocá el archivo 'corpus_evaluacion_pseudonimizado.json' en la carpeta 'data/' "
             f"antes de ejecutar la evaluación. Ver evaluation/README.md para instrucciones."
         )
 
     corpus = cargar_corpus(corpus_path)
 
     if classifier is None:
-        # Import diferido: solo necesario para la corrida real
         try:
             import sys
-            import os
-            # El clasificador vive en Gestion_Incidentes/app/
-            gestion_path = str(_REPO_ROOT / "Gestion_Incidentes")
-            if gestion_path not in sys.path:
-                sys.path.insert(0, gestion_path)
+
+            backend_path = str(_REPO_ROOT / "App" / "Backend")
+            if backend_path not in sys.path:
+                sys.path.insert(0, backend_path)
             from app.classifiers.hybrid import HybridClassifier  # type: ignore[import]
 
             classifier = HybridClassifier()
         except ImportError as exc:
             raise ImportError(
                 "No se pudo importar HybridClassifier. "
-                "Asegurate de correr con PYTHONPATH que incluya Gestion_Incidentes/. "
+                "Asegurate de correr con PYTHONPATH que incluya App/Backend/. "
                 "Ver evaluation/README.md para instrucciones de setup."
             ) from exc
 

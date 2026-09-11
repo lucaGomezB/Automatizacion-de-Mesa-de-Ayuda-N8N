@@ -32,6 +32,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useReportarIncidente } from '@/hooks/useReportarIncidente';
+import { useSectores } from '@/hooks/useSectores';
 import { validarMinimoPalabras, validarNoVacio, contarPalabras } from '@/utils/validators';
 import { extractApiErrorMessage } from '@/services/api';
 import type { IncidenteFormData, IncidenteRead } from '@/types/incidente';
@@ -45,6 +46,8 @@ interface IncidenteFormProps {
 
 export function IncidenteForm({ onSuccess }: IncidenteFormProps) {
   const { mutate, isPending, error, reset: resetMutation } = useReportarIncidente();
+  // Opciones de sector obtenidas en runtime desde el catálogo (sin IDs numéricos fijos)
+  const { data: sectores } = useSectores();
 
   const {
     register,
@@ -132,9 +135,11 @@ export function IncidenteForm({ onSuccess }: IncidenteFormProps) {
                 <SelectValue placeholder="Seleccioná tu sector" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Sistemas">Sistemas</SelectItem>
-                <SelectItem value="Operaciones">Operaciones</SelectItem>
-                <SelectItem value="Soporte Técnico">Soporte Técnico</SelectItem>
+                {sectores?.map((sector) => (
+                  <SelectItem key={sector.id} value={sector.nombre}>
+                    {sector.nombre}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           )}

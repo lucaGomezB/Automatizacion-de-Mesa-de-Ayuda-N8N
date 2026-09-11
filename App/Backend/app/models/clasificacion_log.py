@@ -26,6 +26,10 @@ Relación con el corpus de evaluación:
 from sqlalchemy import Boolean, ForeignKey, Integer, Numeric, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.models.asociaciones import (
+    clasificacion_sector_predicho,
+    clasificacion_sector_validado,
+)
 from app.models.base import Base, TimestampMixin
 from app.models.catalog import Sector
 
@@ -111,6 +115,21 @@ class ClasificacionLog(Base, TimestampMixin):
     sector_validado: Mapped[Sector | None] = relationship(
         "Sector",
         foreign_keys=[sector_id_validado],  # Distinción explícita de la FK ante múltiples relaciones a Sector
+    )
+
+    # Sectores adicionales del conjunto predicho (N-a-N): el principal vive en
+    # sector_id_predicho; esta coleccion guarda el resto.
+    sectores_predichos: Mapped[list[Sector]] = relationship(
+        "Sector",
+        secondary=clasificacion_sector_predicho,
+        lazy="selectin",
+    )
+
+    # Sectores adicionales del conjunto validado (N-a-N).
+    sectores_validados: Mapped[list[Sector]] = relationship(
+        "Sector",
+        secondary=clasificacion_sector_validado,
+        lazy="selectin",
     )
 
     def __repr__(self) -> str:

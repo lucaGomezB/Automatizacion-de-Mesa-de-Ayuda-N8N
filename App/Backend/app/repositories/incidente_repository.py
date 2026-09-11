@@ -54,6 +54,7 @@ class IncidenteRepository(BaseRepository[Incidente]):
             .where(Incidente.id == incidente_id)
             .options(
                 selectinload(Incidente.sector),
+                selectinload(Incidente.sectores_adicionales),
                 selectinload(Incidente.estado),
                 selectinload(Incidente.canal_origen),
                 selectinload(Incidente.clasificaciones),

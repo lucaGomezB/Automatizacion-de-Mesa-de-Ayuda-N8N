@@ -18,17 +18,25 @@ const mockTendencias: TendenciasResponse = {
   periodo: { desde: '2026-06-01', hasta: '2026-06-07', agrupar_por: 'dia' },
   total_incidentes: 35,
   series: [
-    { periodo: '2026-06-01', total: 5, por_sector: { Sistemas: 3, Operaciones: 2 } },
-    { periodo: '2026-06-02', total: 7, por_sector: { Sistemas: 4, Operaciones: 3 } },
+    { periodo: '2026-06-01', total: 5, por_sector: { 'Seguridad Informatica': 3, Sistemas: 2 } },
+    { periodo: '2026-06-02', total: 7, por_sector: { 'Seguridad Informatica': 4, Sistemas: 3 } },
   ],
-  distribucion_sectores: { Sistemas: 20, Operaciones: 10, 'Soporte Técnico': 5 },
+  distribucion_sectores: {
+    'Seguridad Informatica': 20,
+    'Soporte Tecnico Hardware': 10,
+    'Bases de Datos': 5,
+  },
   distribucion_estados: { nuevo: 5, 'en proceso': 10, cerrado: 20 },
 };
 
 const mockResumen: ResumenResponse = {
   total_incidentes: 35,
   promedio_diario: 5.0,
-  distribucion_sectores: { Sistemas: 20, Operaciones: 10, 'Soporte Técnico': 5 },
+  distribucion_sectores: {
+    'Seguridad Informatica': 20,
+    'Soporte Tecnico Hardware': 10,
+    'Bases de Datos': 5,
+  },
   distribucion_estados: { nuevo: 5, 'en proceso': 10, cerrado: 20 },
   tasa_revision_humana: 0.15,
 };

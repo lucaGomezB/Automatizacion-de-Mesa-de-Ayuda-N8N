@@ -21,8 +21,9 @@ Responsabilidad:
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from app.constants import SECTORES_CANONICOS
 from app.schemas.catalog import SectorRead
 
 # Tipo literal que restringe los valores válidos de la etapa del clasificador.
@@ -41,13 +42,18 @@ class ClasificacionResult(BaseModel):
     No debe exponerse directamente en respuestas HTTP; eso es responsabilidad
     de ClasificacionLogRead.
 
+    Contrato multietiqueta (C-27):
+        sector_predicho        — sector principal asignado por el clasificador.
+        sectores_adicionales   — sectores secundarios predichos (sin incluir el principal).
+
     Invariantes del sistema:
         - Si etapa == "fallback": confianza == 0.0 y requiere_revision_humana == True.
         - Si confianza < 0.70:    requiere_revision_humana debe ser True.
         - Si confianza >= 0.90 y etapa == "deterministic": Gemini no fue invocado.
     """
 
-    categoria: str                                      # Nombre del sector predicho
+    sector_predicho: str                                # Nombre del sector principal predicho
+    sectores_adicionales: list[str] = Field(default_factory=list)  # Sectores secundarios predichos
     confianza: float = Field(..., ge=0.0, le=1.0)       # Nivel de certeza normalizado
     etapa: ClasificacionEtapa                           # Componente que produjo el resultado
     requiere_revision_humana: bool                      # Alerta de revisión manual
@@ -73,17 +79,49 @@ class ClasificacionLogRead(BaseModel):
     requiere_revision_humana: bool
     respuesta_raw: str | None           # None si la etapa fue deterministic
     created_at: datetime
-    sector_predicho: SectorRead | None  # Predicción del clasificador
-    sector_validado: SectorRead | None  # Corrección humana; None si aún no fue revisado
+    sector_predicho: SectorRead | None  # Predicción principal del clasificador
+    sector_validado: SectorRead | None  # Corrección humana principal; None si aún no fue revisado
+    sectores_predichos: list[SectorRead] = Field(default_factory=list)   # Secundarios predichos
+    sectores_validados: list[SectorRead] = Field(default_factory=list)   # Secundarios validados
 
 
 class ClasificacionValidar(BaseModel):
     """
     Payload enviado por el operador humano para validar o corregir una clasificación.
 
-    El campo sector_id_validado referencia al sector correcto según el criterio
-    del operador. Este dato se almacena en clasificacion_log.sector_id_validado
-    y constituye la etiqueta de verdad para las métricas de evaluación del sistema.
+    Acepta el sector principal por nombre canonico (`sector_validado`) o, por
+    compatibilidad, por identificador (`sector_id_validado`). `sectores_adicionales`
+    permite registrar el conjunto validado completo cuando el incidente es
+    multietiqueta.
     """
 
-    sector_id_validado: int  # FK al sector considerado correcto por el operador
+    sector_id_validado: int | None = None   # FK al sector principal (compatibilidad)
+    sector_validado: str | None = None      # Nombre canonico del sector principal
+    sectores_adicionales: list[str] = Field(default_factory=list)  # Nombres secundarios validados
+
+    @field_validator("sector_validado")
+    @classmethod
+    def _validar_nombre_canonico(cls, v: str | None) -> str | None:
+        if v is not None and v not in SECTORES_CANONICOS:
+            raise ValueError(
+                f"Sector '{v}' no pertenece al vocabulario canonico."
+            )
+        return v
+
+    @field_validator("sectores_adicionales")
+    @classmethod
+    def _validar_adicionales_canonicos(cls, v: list[str]) -> list[str]:
+        invalidos = [s for s in v if s not in SECTORES_CANONICOS]
+        if invalidos:
+            raise ValueError(
+                f"Sectores adicionales fuera del vocabulario canonico: {invalidos}"
+            )
+        return v
+
+    @model_validator(mode="after")
+    def _requiere_sector_principal(self) -> "ClasificacionValidar":
+        if self.sector_id_validado is None and not self.sector_validado:
+            raise ValueError(
+                "Debe indicar 'sector_validado' (nombre) o 'sector_id_validado' (id)."
+            )
+        return self

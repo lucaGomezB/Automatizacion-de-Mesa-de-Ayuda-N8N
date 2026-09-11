@@ -260,19 +260,25 @@ class IncidenteService:
             incidente: Instancia del incidente recién creado.
             result:    Resultado producido por el clasificador híbrido.
         """
-        # Resolver categoría (string) → sector (registro ORM con ID)
-        sector = await self._sector_repo.get_by_nombre(result.categoria)
+        # Resolver sector principal (string) → sector (registro ORM con ID)
+        sector = await self._sector_repo.get_by_nombre(result.sector_predicho)
         sector_id = sector.id if sector else None
 
-        # Actualizar el incidente con el sector asignado y la bandera de revisión
-        await self._incidente_repo.update_fields(
-            incidente.id,
-            sector_id=sector_id,
-            requiere_revision_humana=result.requiere_revision_humana,
+        # Resolver el conjunto de sectores adicionales predichos (N-a-N).
+        adicionales = await self._sector_repo.get_by_nombres(
+            result.sectores_adicionales
         )
+        adicionales_objs = list(adicionales.values())
+
+        # Actualizar el incidente: sector principal + adicionales + bandera de revisión
+        incidente.sector_id = sector_id
+        incidente.requiere_revision_humana = result.requiere_revision_humana
+        incidente.sectores_adicionales = adicionales_objs
+        self._session.add(incidente)
+        await self._session.flush()
 
         # Crear el registro de auditoría con todos los detalles de la clasificación
-        await self._clasificacion_repo.create(
+        log = await self._clasificacion_repo.create(
             incidente_id=incidente.id,
             sector_id_predicho=sector_id,
             confianza=result.confianza,
@@ -280,11 +286,15 @@ class IncidenteService:
             requiere_revision_humana=result.requiere_revision_humana,
             respuesta_raw=result.respuesta_raw,
         )
+        # Conjunto predicho adicional (el principal vive en sector_id_predicho)
+        log.sectores_predichos = adicionales_objs
+        await self._session.flush()
 
         logger.info(
             "incidente_classified",
             incidente_id=incidente.id,
-            categoria=result.categoria,
+            sector_predicho=result.sector_predicho,
+            sectores_adicionales=result.sectores_adicionales,
             confianza=result.confianza,
             etapa=result.etapa,
             requiere_revision_humana=result.requiere_revision_humana,

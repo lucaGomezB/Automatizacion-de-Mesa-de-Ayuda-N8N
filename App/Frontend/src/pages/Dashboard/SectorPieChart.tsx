@@ -1,5 +1,8 @@
 /**
  * Grafico de torta (donut) con la distribucion de incidentes por sector.
+ *
+ * El color de cada porcion se resuelve por el nombre canonico del sector (nunca por
+ * IDs numericos). Un sector desconocido se dibuja con un color por defecto.
  */
 import { useRef } from 'react';
 import {
@@ -13,13 +16,22 @@ import {
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { ExportButton } from './ExportButton';
 
-// Colores consistentes para los tres sectores
+// Colores consistentes para los cinco sectores canonicos.
 const SECTOR_COLORS: Record<string, string> = {
-  Sistemas: '#2563eb',         // azul
-  Operaciones: '#16a34a',      // verde
-  'Soporte Técnico': '#d97706', // ambar
-  'Sin asignar': '#9ca3af',    // gris
+  'Seguridad Informatica': '#dc2626',    // rojo
+  'Soporte Tecnico Hardware': '#d97706', // ambar
+  'Soporte Tecnico Software': '#2563eb', // azul
+  'Bases de Datos': '#16a34a',           // verde
+  Sistemas: '#7c3aed',                   // violeta
+  'Sin asignar': '#9ca3af',              // gris
 };
+
+const COLOR_POR_DEFECTO = '#6b7280';
+
+/** Resuelve el color de un sector a partir de su nombre canonico. */
+export function getSectorColor(nombre: string): string {
+  return SECTOR_COLORS[nombre] ?? COLOR_POR_DEFECTO;
+}
 
 interface SectorPieChartProps {
   data: Record<string, number> | undefined;
@@ -68,7 +80,7 @@ export function SectorPieChart({ data, isLoading }: SectorPieChartProps) {
               {chartData.map((entry) => (
                 <Cell
                   key={entry.name}
-                  fill={SECTOR_COLORS[entry.name] ?? '#6b7280'}
+                  fill={getSectorColor(entry.name)}
                 />
               ))}
             </Pie>

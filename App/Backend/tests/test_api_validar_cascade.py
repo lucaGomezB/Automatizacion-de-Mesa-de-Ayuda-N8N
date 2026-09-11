@@ -32,12 +32,12 @@ DESCRIPCION_LARGA = "Servidor de base de datos principal no responde desde las 0
 
 
 def _result_pendiente(
-    categoria: str = "Sistemas",
+    sector_predicho: str = "Sistemas",
     confianza: float = 0.55,
 ) -> ClasificacionResult:
     """Resultado con baja confianza → requiere_revision_humana=True → entra en cola."""
     return ClasificacionResult(
-        categoria=categoria,
+        sector_predicho=sector_predicho,
         confianza=confianza,
         etapa="gemini",
         requiere_revision_humana=True,
@@ -54,9 +54,9 @@ async def test_patch_validar_correccion_actualiza_incidente(
     el incidente queda asignado al sector validado y sin flag de revisión,
     mientras el log conserva la predicción original para auditoría.
     """
-    sector_operaciones_id = seed_catalogs["sector_operaciones"].id
+    sector_bases_datos_id = seed_catalogs["sector_bases_datos"].id
 
-    async with make_client_with_classifier(_result_pendiente(categoria="Sistemas")) as client:
+    async with make_client_with_classifier(_result_pendiente(sector_predicho="Sistemas")) as client:
         # Arrange: incidente pendiente predicho como Sistemas
         crear_resp = await client.post(
             "/api/v1/incidentes/",
@@ -66,16 +66,16 @@ async def test_patch_validar_correccion_actualiza_incidente(
         cola = (await client.get("/api/v1/clasificaciones/revision-pendiente")).json()
         log_id = cola[0]["id"]
 
-        # Act: el operador corrige a Operaciones
+        # Act: el operador corrige a Bases de Datos
         validar_resp = await client.patch(
             f"/api/v1/clasificaciones/{log_id}/validar",
-            json={"sector_id_validado": sector_operaciones_id},
+            json={"sector_id_validado": sector_bases_datos_id},
         )
         assert validar_resp.status_code == 200
 
         # Assert: el incidente refleja la corrección
         detalle = (await client.get(f"/api/v1/incidentes/{incidente_id}")).json()
-        assert detalle["sector"]["id"] == sector_operaciones_id
+        assert detalle["sector"]["id"] == sector_bases_datos_id
         assert detalle["requiere_revision_humana"] is False
 
         # Assert: la auditoría conserva la predicción original
@@ -83,7 +83,7 @@ async def test_patch_validar_correccion_actualiza_incidente(
             await client.get(f"/api/v1/clasificaciones/incidente/{incidente_id}")
         ).json()
         assert historial[0]["sector_predicho"]["nombre"] == "Sistemas"
-        assert historial[0]["sector_validado"]["id"] == sector_operaciones_id
+        assert historial[0]["sector_validado"]["id"] == sector_bases_datos_id
 
 
 @pytest.mark.asyncio
@@ -96,7 +96,7 @@ async def test_patch_validar_confirmacion_limpia_flag_revision(
     """
     sector_sistemas_id = seed_catalogs["sector_sistemas"].id
 
-    async with make_client_with_classifier(_result_pendiente(categoria="Sistemas")) as client:
+    async with make_client_with_classifier(_result_pendiente(sector_predicho="Sistemas")) as client:
         crear_resp = await client.post(
             "/api/v1/incidentes/",
             json={"descripcion": DESCRIPCION_LARGA, "prioridad": "alta"},

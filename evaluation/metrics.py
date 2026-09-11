@@ -1,108 +1,92 @@
 """
-Métricas de evaluación del clasificador — funciones puras.
+Metricas de evaluacion del clasificador multietiqueta (C-27, design D5).
 
-Todas las funciones operan sobre las tres categorías fijas del sistema en
-orden canónico. No realizan I/O ni dependencias de red; son completamente
-testeables con asserts numéricos.
+Todas las funciones operan sobre los cinco sectores canonicos, en orden fijo.
+No realizan I/O ni dependencias de red; son funciones puras y testeables.
 
-Orden de clases: ["Sistemas", "Operaciones", "Soporte Técnico"]
-Convención de la matriz: filas = categoría real, columnas = categoría predicha.
+Definiciones:
+- Matriz primaria 5x5: filas = `sector_asignado`, columnas = `sector_predicho`.
+- Exactitud primaria: proporcion de casos con `sector_predicho == sector_asignado`.
+- Subset accuracy: conjunto predicho == conjunto de verdad.
+- Perdida de Hamming: etiquetas erroneas sobre el universo del caso.
+- Micro-F1: TP/FP/FN acumulados de todas las etiquetas.
+- Macro-F1: media aritmetica de los F1 por sector (los cinco).
+- One-vs-rest por sector: precision, recall, F1 y soporte.
+- Wilson CI: sobre igualdad estricta y sobre pertenencia.
 """
 
 from __future__ import annotations
 
-import math
-from typing import Dict, List, Tuple
+from typing import Dict, Iterable, List, Set, Tuple
+
+from evaluation.corpus import SECTORES_CANONICOS
 
 # ---------------------------------------------------------------------------
-# Constante de orden de clases (todas las funciones la usan)
+# Clases canonicas (todas las funciones las usan)
 # ---------------------------------------------------------------------------
-CLASES: List[str] = ["Sistemas", "Operaciones", "Soporte Técnico"]
+CLASES: List[str] = list(SECTORES_CANONICOS)
 
-# Tipo alias para legibilidad
 MatrizConfusion = Dict[str, Dict[str, int]]
 
+ConjuntoEtiquetas = Set[str]
+
 
 # ---------------------------------------------------------------------------
-# Helper: denominador cero → 0.0
+# Helper: denominador cero -> 0.0
 # ---------------------------------------------------------------------------
 def _dividir_seguro(numerador: float, denominador: float) -> float:
-    """
-    Divide numerador/denominador devolviendo 0.0 si el denominador es cero.
-
-    Esto implementa la convención del spec: 'Clase sin predicciones → 0.0'.
-    """
+    """Divide numerador/denominador devolviendo 0.0 si el denominador es cero."""
     if denominador == 0:
         return 0.0
     return numerador / denominador
 
 
 # ---------------------------------------------------------------------------
-# Grupo 2 — Matriz de confusión
+# Grupo 2 — Matriz de confusion primaria 5x5
 # ---------------------------------------------------------------------------
-def matriz_confusion(
-    reales: List[str],
-    predichos: List[str],
-) -> MatrizConfusion:
+def matriz_confusion(reales: List[str], predichos: List[str]) -> MatrizConfusion:
     """
-    Calcula la matriz de confusión sobre las tres clases fijas.
+    Calcula la matriz de confusion 5x5 sobre las clases canonicas.
 
-    Args:
-        reales: Lista de categorías reales (verdad fundamental).
-        predichos: Lista de categorías predichas (misma longitud).
-
-    Returns:
-        Diccionario mc[real][predicho] con los conteos.
-        Filas = categoría real; columnas = categoría predicha.
+    Filas = sector asignado (real); columnas = sector predicho principal.
     """
-    # Inicializar en cero
     mc: MatrizConfusion = {c: {p: 0 for p in CLASES} for c in CLASES}
 
     for real, predicho in zip(reales, predichos):
+        if real not in CLASES:
+            raise ValueError(f"Sector real invalido: '{real}'. Validos: {CLASES}")
+        if predicho not in CLASES:
+            raise ValueError(f"Sector predicho invalido: '{predicho}'. Validos: {CLASES}")
         mc[real][predicho] += 1
 
     return mc
 
 
 # ---------------------------------------------------------------------------
-# Grupo 3 — Métricas por clase y macro
+# Grupo 3 — Metricas por sector (one-vs-rest) y promedios
 # ---------------------------------------------------------------------------
 def precision_por_clase(mc: MatrizConfusion) -> Dict[str, float]:
-    """
-    Precisión por clase = TP / (TP + FP).
-
-    Denominador cero → 0.0 (ninguna predicción cayó en esa clase).
-    """
+    """Precision por sector = TP / (TP + FP). Denominador cero -> 0.0."""
     resultado: Dict[str, float] = {}
     for clase in CLASES:
         tp = mc[clase][clase]
-        # FP = otras clases que fueron predichas como `clase`
         fp = sum(mc[real][clase] for real in CLASES if real != clase)
         resultado[clase] = _dividir_seguro(tp, tp + fp)
     return resultado
 
 
 def sensibilidad_por_clase(mc: MatrizConfusion) -> Dict[str, float]:
-    """
-    Sensibilidad (recall) por clase = TP / (TP + FN).
-
-    Denominador cero → 0.0 (no hay casos reales de esa clase).
-    """
+    """Sensibilidad (recall) por sector = TP / (TP + FN). Denominador cero -> 0.0."""
     resultado: Dict[str, float] = {}
     for clase in CLASES:
         tp = mc[clase][clase]
-        # FN = casos reales de `clase` predichos como otra clase
         fn = sum(mc[clase][pred] for pred in CLASES if pred != clase)
         resultado[clase] = _dividir_seguro(tp, tp + fn)
     return resultado
 
 
 def f1_por_clase(mc: MatrizConfusion) -> Dict[str, float]:
-    """
-    F1 por clase = 2 * P * R / (P + R).
-
-    Denominador cero → 0.0 (cuando P + R = 0).
-    """
+    """F1 por sector = 2 * P * R / (P + R). Denominador cero -> 0.0."""
     precisiones = precision_por_clase(mc)
     sensibilidades = sensibilidad_por_clase(mc)
     resultado: Dict[str, float] = {}
@@ -113,33 +97,60 @@ def f1_por_clase(mc: MatrizConfusion) -> Dict[str, float]:
     return resultado
 
 
-def f1_macro(f1s: Dict[str, float]) -> float:
-    """
-    F1 macro = media aritmética de los F1 por clase.
+def soporte_por_clase(mc: MatrizConfusion) -> Dict[str, int]:
+    """Soporte por sector = cantidad de casos reales de ese sector (suma de la fila)."""
+    return {clase: sum(mc[clase].values()) for clase in CLASES}
 
-    Pondera las tres clases por igual (independiente de distribución).
-    """
+
+def f1_macro(f1s: Dict[str, float]) -> float:
+    """F1 macro = media aritmetica de los cinco F1 por sector."""
     return sum(f1s[c] for c in CLASES) / len(CLASES)
 
 
+def f1_micro(
+    conjuntos_verdad: Iterable[ConjuntoEtiquetas],
+    conjuntos_predichos: Iterable[ConjuntoEtiquetas],
+) -> float:
+    """F1 micro sobre TP/FP/FN acumulados de todas las etiquetas."""
+    tp = fp = fn = 0
+    for verdad, predicho in zip(conjuntos_verdad, conjuntos_predichos):
+        tp += len(verdad & predicho)
+        fp += len(predicho - verdad)
+        fn += len(verdad - predicho)
+
+    precision = _dividir_seguro(tp, tp + fp)
+    recall = _dividir_seguro(tp, tp + fn)
+    return _dividir_seguro(2 * precision * recall, precision + recall)
+
+
 # ---------------------------------------------------------------------------
-# Grupo 4 — Exactitud global e IC de Wilson
+# Grupo 4 — Exactitud primaria e IC de Wilson
 # ---------------------------------------------------------------------------
 def exactitud_global(reales: List[str], predichos: List[str]) -> float:
-    """
-    Exactitud = K aciertos / N casos totales.
-
-    Args:
-        reales: Lista de categorías reales.
-        predichos: Lista de categorías predichas.
-
-    Returns:
-        Proporción de aciertos en [0.0, 1.0].
-    """
+    """Exactitud primaria = K aciertos estrictos / N casos totales."""
     if not reales:
         return 0.0
     aciertos = sum(r == p for r, p in zip(reales, predichos))
     return aciertos / len(reales)
+
+
+def aciertos_estrictos(reales: List[str], predichos: List[str]) -> int:
+    """Cantidad de casos con `sector_predicho == sector_asignado`."""
+    return sum(r == p for r, p in zip(reales, predichos))
+
+
+def aciertos_pertenencia(
+    asignados: List[str],
+    predichos: List[str],
+    adicionales_predichos: Iterable[Iterable[str]],
+) -> int:
+    """Cantidad de casos donde `sector_asignado` pertenece al conjunto predicho."""
+    aciertos = 0
+    for asignado, predicho, adicionales in zip(asignados, predichos, adicionales_predichos):
+        conjunto = {predicho, *adicionales}
+        if asignado in conjunto:
+            aciertos += 1
+    return aciertos
 
 
 def intervalo_wilson(
@@ -148,35 +159,20 @@ def intervalo_wilson(
     confianza: float = 0.95,
 ) -> Tuple[float, float]:
     """
-    Intervalo de confianza de Wilson para una proporción binomial.
+    Intervalo de confianza de Wilson para una proporcion binomial.
 
-    Implementa la fórmula cerrada de Wilson (1927), consistente con §4.7:
-
-        p̂ = aciertos / total
-        z = z_{α/2} para el nivel de confianza
-        lower/upper = (p̂ + z²/2n ± z√(p̂(1-p̂)/n + z²/4n²)) / (1 + z²/n)
-
-    Args:
-        aciertos: Número de clasificaciones correctas.
-        total: Número total de casos.
-        confianza: Nivel de confianza (default 0.95).
-
-    Returns:
-        Tupla (lower, upper) acotada en [0, 1].
+    Implementa la formula cerrada de Wilson (1927). Funcion pura, sin I/O.
     """
-    # z_{α/2} para 95% ≈ 1.96
-    # Usamos el valor exacto de la distribución normal estándar
-    # Para confianza=0.95, z=1.9599639845400536
-    # Implementado con la fórmula inversa sin scipy para evitar dependencia
-    # (si scipy está disponible, usar stats.norm.ppf es equivalente)
     from math import sqrt
+
+    if total <= 0:
+        return 0.0, 1.0
 
     try:
         from scipy.stats import norm  # type: ignore[import]
 
         z = norm.ppf(1 - (1 - confianza) / 2)
     except ImportError:
-        # Aproximación para 95% sin scipy
         z = 1.959963984540054
 
     p_hat = aciertos / total
@@ -191,3 +187,66 @@ def intervalo_wilson(
     upper = min(1.0, centro + margen)
 
     return lower, upper
+
+
+# ---------------------------------------------------------------------------
+# Requisito ADDED — metricas de conjunto multietiqueta
+# ---------------------------------------------------------------------------
+def _pares_conjuntos(
+    conjuntos_verdad: Iterable[ConjuntoEtiquetas],
+    conjuntos_predichos: Iterable[ConjuntoEtiquetas],
+) -> List[Tuple[ConjuntoEtiquetas, ConjuntoEtiquetas]]:
+    return list(zip(conjuntos_verdad, conjuntos_predichos))
+
+
+def exactitud_subconjunto(
+    conjuntos_verdad: Iterable[ConjuntoEtiquetas],
+    conjuntos_predichos: Iterable[ConjuntoEtiquetas],
+) -> float:
+    """Subset accuracy: proporcion de casos con conjunto predicho == conjunto de verdad."""
+    pares = _pares_conjuntos(conjuntos_verdad, conjuntos_predichos)
+    if not pares:
+        return 0.0
+    aciertos = sum(1 for verdad, predicho in pares if verdad == predicho)
+    return aciertos / len(pares)
+
+
+def perdida_hamming(
+    conjuntos_verdad: Iterable[ConjuntoEtiquetas],
+    conjuntos_predichos: Iterable[ConjuntoEtiquetas],
+) -> float:
+    """
+    Perdida de Hamming: proporcion de etiquetas del universo del caso que no coinciden.
+
+    Universo del caso = union(conjunto de verdad, conjunto predicho). Promedio por caso.
+    """
+    pares = _pares_conjuntos(conjuntos_verdad, conjuntos_predichos)
+    if not pares:
+        return 0.0
+
+    acumulado = 0.0
+    for verdad, predicho in pares:
+        universo = verdad | predicho
+        if not universo:
+            continue
+        acumulado += len(verdad ^ predicho) / len(universo)
+    return acumulado / len(pares)
+
+
+def jaccard_por_caso(verdad: ConjuntoEtiquetas, predicho: ConjuntoEtiquetas) -> float:
+    """Similitud de Jaccard = |interseccion| / |union|. Union vacia -> 0.0."""
+    universo = verdad | predicho
+    if not universo:
+        return 0.0
+    return len(verdad & predicho) / len(universo)
+
+
+def jaccard_promedio(
+    conjuntos_verdad: Iterable[ConjuntoEtiquetas],
+    conjuntos_predichos: Iterable[ConjuntoEtiquetas],
+) -> float:
+    """Promedio de Jaccard por caso."""
+    pares = _pares_conjuntos(conjuntos_verdad, conjuntos_predichos)
+    if not pares:
+        return 0.0
+    return sum(jaccard_por_caso(v, p) for v, p in pares) / len(pares)

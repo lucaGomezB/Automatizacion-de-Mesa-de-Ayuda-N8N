@@ -28,6 +28,8 @@ Referencias:
 import re
 from dataclasses import dataclass, field
 
+from app.constants import SECTORES_CANONICOS
+
 
 # ─── Resultado ────────────────────────────────────────────────────────────────
 
@@ -111,12 +113,11 @@ _RE_PERSONA = re.compile(
 )
 
 # Lista de exclusión: términos que empiezan con mayúscula pero NO son personas.
-# Incluye las tres categorías del dominio y arranques de oración frecuentes.
+# Incluye los cinco sectores canónicos del dominio (C-27) y arranques de oración
+# frecuentes. Los nombres de sector NUNCA deben enmascararse como [PERSONA].
 _EXCLUSION_PERSONA: frozenset[str] = frozenset({
-    # Categorías del dominio (exactas)
-    "Sistemas",
-    "Operaciones",
-    "Soporte Técnico",
+    # Sectores del dominio (exactos, sin tildes)
+    *SECTORES_CANONICOS,
     # Palabras técnicas frecuentes con mayúscula inicial
     "FastAPI",
     "SQLAlchemy",

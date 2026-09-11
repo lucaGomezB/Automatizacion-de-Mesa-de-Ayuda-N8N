@@ -1,4 +1,9 @@
 from app.models.base import Base, TimestampMixin
+from app.models.asociaciones import (
+    clasificacion_sector_predicho,
+    clasificacion_sector_validado,
+    incidente_sector_adicional,
+)
 from app.models.catalog import CanalOrigen, Estado, Sector
 from app.models.clasificacion_log import ClasificacionLog
 from app.models.incidente import Incidente, PrioridadEnum
@@ -14,4 +19,7 @@ __all__ = [
     "PrioridadEnum",
     "ClasificacionLog",
     "User",
+    "incidente_sector_adicional",
+    "clasificacion_sector_predicho",
+    "clasificacion_sector_validado",
 ]

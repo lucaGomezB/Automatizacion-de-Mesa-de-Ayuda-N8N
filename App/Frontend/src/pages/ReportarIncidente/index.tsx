@@ -16,8 +16,10 @@ import { ShieldAlert, Info } from 'lucide-react';
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { useSectores } from '@/hooks/useSectores';
 import { IncidenteForm } from './IncidenteForm';
 import { SuccessCard } from './SuccessCard';
+import type { SectorOpcion } from '@/types/catalog';
 import type { IncidenteRead } from '@/types/incidente';
 
 interface SubmissionResult {
@@ -25,8 +27,28 @@ interface SubmissionResult {
   nombreUsuario: string;
 }
 
+/**
+ * Lista de sectores de la nota informativa, construida en runtime a partir del
+ * catálogo. No se hardcodean nombres ni identificadores.
+ */
+function ListaSectores({ sectores }: { sectores: SectorOpcion[] | undefined }) {
+  if (!sectores || sectores.length === 0) return null;
+  return (
+    <>
+      {sectores.map((sector, i) => (
+        <span key={sector.id}>
+          <strong>{sector.nombre}</strong>
+          {i < sectores.length - 2 ? ', ' : i === sectores.length - 2 ? ' o ' : ''}
+        </span>
+      ))}
+    </>
+  );
+}
+
 export default function ReportarIncidentePage() {
   const [resultado, setResultado] = useState<SubmissionResult | null>(null);
+  // Sectores canónicos obtenidos en runtime desde el catálogo
+  const { data: sectores } = useSectores();
 
   const handleSuccess = (incidente: IncidenteRead, nombreUsuario: string) => {
     setResultado({ incidente, nombreUsuario });
@@ -80,12 +102,14 @@ export default function ReportarIncidentePage() {
 
         {/* Nota informativa sobre el proceso de clasificación */}
         {!resultado && (
-          <div className="flex items-start gap-2 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
+          <div
+            data-testid="nota-clasificacion"
+            className="flex items-start gap-2 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800"
+          >
             <Info className="h-4 w-4 flex-shrink-0 mt-0.5 text-blue-600" />
             <p>
-              El incidente será clasificado automáticamente en una de tres categorías:{' '}
-              <strong>Sistemas</strong>, <strong>Operaciones</strong> o{' '}
-              <strong>Soporte Técnico</strong>. Si la confianza del modelo es baja (&lt; 70%),
+              El incidente será clasificado automáticamente en una de las siguientes categorías:{' '}
+              <ListaSectores sectores={sectores} />. Si la confianza del modelo es baja (&lt; 70%),
               el ticket quedará marcado para revisión humana.
             </p>
           </div>

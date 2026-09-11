@@ -2,11 +2,15 @@
 
 **AVISO: Este corpus es SINTÉTICO y fue creado únicamente para los tests automatizados.**
 
-NO es el corpus de 200 casos de la tesis (que se encuentra en `data/corpus_evaluacion_pseudonimizado.csv`
-y no está trackeado en git por privacidad).
+NO es el corpus de evaluación de la tesis (que se encuentra en
+`data/corpus_evaluacion_pseudonimizado.json` y no está trackeado en git por privacidad).
 
-## Contenido de `corpus_fixture.csv`
+## Contenido de `corpus_fixture.json`
 
-- 9 casos: 3 por cada clase (`Sistemas`, `Operaciones`, `Soporte Técnico`)
-- Incluye columnas opcionales `tiempo_manual_s` y `tiempo_automatizado_s` para testear §7.1
-- Los textos de descripción son ilustrativos y no provienen de datos reales
+- Esquema JSON (`schema_version` / `metadata` / `casos`) con 9 casos.
+- Etiquetas canónicas del vocabulario de 5 sectores (sin tildes):
+  `Seguridad Informatica`, `Soporte Tecnico Hardware`, `Soporte Tecnico Software`,
+  `Bases de Datos`, `Sistemas`.
+- Cada caso incluye `sectores_adicionales` y los tiempos `tiempo_manual_s` /
+  `tiempo_automatizado_s`.
+- Los textos de descripción son ilustrativos y no provienen de datos reales.

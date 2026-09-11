@@ -110,7 +110,7 @@ El pseudonymizer usa expresiones regulares, **no NER ni modelos de aprendizaje a
 
 ### Lista de exclusión
 
-Las tres categorías del clasificador (`Sistemas`, `Operaciones`, `Soporte Técnico`) y otras palabras del dominio se excluyen del patrón de nombres para no degradar la clasificación.
+Las cinco categorías canónicas del clasificador (`Seguridad Informatica`, `Soporte Tecnico Hardware`, `Soporte Tecnico Software`, `Bases de Datos`, `Sistemas`) y otras palabras del dominio se excluyen del patrón de nombres para no degradar la clasificación.
 
 ---
 

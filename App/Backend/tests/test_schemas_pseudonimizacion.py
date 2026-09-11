@@ -158,7 +158,7 @@ async def test_endpoint_detalle_no_expone_original(client, db_session):
     from app.schemas.clasificacion import ClasificacionResult
 
     result_mock = ClasificacionResult(
-        categoria="Sistemas",
+        sector_predicho="Sistemas",
         confianza=0.95,
         etapa="deterministic",
         requiere_revision_humana=False,

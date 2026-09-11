@@ -128,10 +128,10 @@ async def validar_clasificacion(
 
     Args:
         log_id:  ID del registro de auditoría a validar.
-        payload: ID del sector correcto según el criterio del operador.
+        payload: Sector correcto (por nombre canónico o id) y adicionales validados.
 
     Returns:
         Representación actualizada del registro de auditoría (HTTP 200).
     """
-    log = await service.validate(log_id, payload.sector_id_validado)
+    log = await service.validate_payload(log_id, payload)
     return ClasificacionLogRead.model_validate(log)

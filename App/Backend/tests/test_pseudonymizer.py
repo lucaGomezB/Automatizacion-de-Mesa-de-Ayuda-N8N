@@ -208,16 +208,18 @@ def test_pseudonymize_reemplaza_nombre_y_apellido() -> None:
 
 def test_pseudonymize_categorias_dominio_no_se_marcan_como_persona() -> None:
     """
-    Las tres categorías canónicas del dominio no son marcadas como [PERSONA]
-    aunque empiezan con mayúscula.
+    Los cinco sectores canónicos no son marcados como [PERSONA] aunque empiecen
+    con mayúscula. Es crítico para los nombres multi-palabra (p. ej.
+    "Soporte Tecnico Hardware"), que de otro modo matchearían la heurística.
     """
-    texto = "Clasificado como Sistemas por el modelo. Ver también Operaciones y Soporte Técnico."
-    resultado = pseudonymize(texto, [])
+    from app.constants import SECTORES_CANONICOS
 
-    assert "Sistemas" in resultado.texto or resultado.texto.count("[PERSONA]") == 0
-    # Las categorías NO deben ser reemplazadas
-    assert "Sistemas" in resultado.texto
-    assert "Operaciones" in resultado.texto
+    for sector in SECTORES_CANONICOS:
+        resultado = pseudonymize(f"Clasificado como {sector} por el modelo.", [])
+        assert sector in resultado.texto, (
+            f"El sector {sector!r} fue enmascarado como [PERSONA]"
+        )
+        assert "[PERSONA]" not in resultado.texto
 
 
 def test_pseudonymize_reemplaza_nombre_con_tildes_y_enie() -> None:

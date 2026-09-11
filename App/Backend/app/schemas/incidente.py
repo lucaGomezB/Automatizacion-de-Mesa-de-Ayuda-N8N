@@ -105,7 +105,8 @@ class IncidenteRead(BaseModel):
     requiere_revision_humana: bool
     created_at: datetime
     updated_at: datetime
-    sector: SectorRead | None          # None mientras la clasificación está pendiente
+    sector: SectorRead | None          # Sector principal; None mientras la clasificación está pendiente
+    sectores_adicionales: list[SectorRead] = Field(default_factory=list)  # Sectores secundarios (C-27)
     estado: EstadoRead
     canal_origen: CanalOrigenRead | None
 

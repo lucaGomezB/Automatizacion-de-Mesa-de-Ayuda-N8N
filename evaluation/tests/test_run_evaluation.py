@@ -1,81 +1,92 @@
 """
-Tests para evaluation/run_evaluation.py — runner de evaluación.
+Tests para evaluation/run_evaluation.py — runner de evaluacion multietiqueta (C-27).
 
-TDD — ciclos: RED → GREEN → TRIANGULATE → REFACTOR (Grupo 6)
+TDD — ciclos: RED -> GREEN -> TRIANGULATE -> REFACTOR
 """
 
 from __future__ import annotations
 
-import pathlib
-
 import pytest
-
-from evaluation.tests.conftest import CORPUS_FIXTURE_PATH
 
 
 # ---------------------------------------------------------------------------
-# 6.1 RED → 6.2 GREEN: runner recolecta una predicción por caso
+# 7.8 RED -> 7.9 GREEN: el runner recolecta una prediccion multietiqueta por caso
 # ---------------------------------------------------------------------------
 async def test_runner_recolecta_una_prediccion_por_caso(
     fake_classifier,
     corpus_fixture_path,
 ):
-    """Por cada caso del corpus fixture, el runner registra exactamente una predicción."""
+    """Por cada caso del corpus JSON, el runner registra exactamente una prediccion."""
     from evaluation.corpus import cargar_corpus
+    from evaluation.metrics import CLASES
     from evaluation.run_evaluation import evaluar_corpus
 
     corpus = cargar_corpus(corpus_fixture_path)
     predicciones = await evaluar_corpus(corpus, fake_classifier)
 
-    # Una predicción por caso
     assert len(predicciones) == len(corpus)
 
-    # Cada predicción tiene los campos esperados
     for pred in predicciones:
-        assert hasattr(pred, "categoria_predicha")
+        assert hasattr(pred, "sector_asignado")
+        assert hasattr(pred, "sector_predicho")
+        assert hasattr(pred, "sectores_adicionales")
         assert hasattr(pred, "confianza")
         assert hasattr(pred, "etapa")
-        assert pred.categoria_predicha in {"Sistemas", "Operaciones", "Soporte Técnico"}
+        assert not hasattr(pred, "categoria_real")
+        assert not hasattr(pred, "categoria_predicha")
+        assert pred.sector_predicho in CLASES
+        assert isinstance(pred.sectores_adicionales, list)
+        for sector in pred.sectores_adicionales:
+            assert sector in CLASES
         assert 0.0 <= pred.confianza <= 1.0
         assert pred.etapa in {"deterministic", "gemini", "fallback"}
 
 
 # ---------------------------------------------------------------------------
-# 6.3 RED → 6.4 GREEN: runner genera report.md con métricas
+# 7.8 RED -> 7.9 GREEN: el reporte expone todas las metricas multietiqueta
 # ---------------------------------------------------------------------------
 async def test_runner_genera_report_md_con_metricas(
     fake_classifier,
     corpus_fixture_path,
     tmp_path,
 ):
-    """Tras correr, se escribe report.md con matriz de confusión, exactitud y métricas."""
+    """Tras correr, se escribe report.md con matriz 5x5, exactitud, subset, Hamming y F1."""
     from evaluation.corpus import cargar_corpus
+    from evaluation.metrics import CLASES
     from evaluation.run_evaluation import evaluar_corpus, generar_reporte
 
     corpus = cargar_corpus(corpus_fixture_path)
     predicciones = await evaluar_corpus(corpus, fake_classifier)
 
     reporte_path = tmp_path / "report.md"
-    generar_reporte(predicciones, corpus, output_path=reporte_path)
+    contenido = generar_reporte(predicciones, corpus, output_path=reporte_path)
 
     assert reporte_path.exists()
-    contenido = reporte_path.read_text(encoding="utf-8")
-
-    # El reporte debe contener las secciones clave
-    assert "Exactitud" in contenido or "exactitud" in contenido
-    assert "Matriz" in contenido or "matriz" in contenido
-    # Debe mencionar las tres clases
-    assert "Sistemas" in contenido
-    assert "Operaciones" in contenido
-    assert "Soporte Técnico" in contenido
+    assert "Exactitud" in contenido
+    assert "Matriz" in contenido
+    assert "Subset" in contenido or "subconjunto" in contenido.lower()
+    assert "Hamming" in contenido
+    assert "Micro" in contenido
+    assert "Macro" in contenido
+    for sector in CLASES:
+        assert sector in contenido
 
 
 # ---------------------------------------------------------------------------
-# 6.5 TRIANGULATE: corpus real ausente falla con mensaje claro
+# 7.8 RED -> 7.9 GREEN: corpus real ausente falla con mensaje claro
 # ---------------------------------------------------------------------------
-async def test_runner_corpus_real_ausente_falla_claro(fake_classifier):
-    """Si el corpus real no existe, el runner falla con mensaje claro y no inventa datos."""
+async def test_runner_corpus_real_ausente_falla_claro(fake_classifier, tmp_path):
+    """Si el corpus JSON no existe, el runner falla claro y no inventa datos."""
     from evaluation.run_evaluation import main_con_corpus_real
 
-    with pytest.raises((FileNotFoundError, ValueError), match="corpus|corpus_evaluacion"):
-        await main_con_corpus_real(classifier=fake_classifier)
+    ruta_ausente = tmp_path / "corpus_ausente.json"
+    with pytest.raises(FileNotFoundError, match="corpus_ausente.json"):
+        await main_con_corpus_real(corpus_path=ruta_ausente, classifier=fake_classifier)
+
+
+def test_ruta_canonica_del_corpus_real_es_json():
+    """La ruta por defecto del corpus real debe apuntar al JSON, no al CSV."""
+    from evaluation.run_evaluation import CORPUS_REAL_PATH
+
+    assert CORPUS_REAL_PATH.suffix == ".json"
+    assert CORPUS_REAL_PATH.name == "corpus_evaluacion_pseudonimizado.json"

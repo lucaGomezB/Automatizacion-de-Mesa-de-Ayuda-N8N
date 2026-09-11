@@ -39,7 +39,7 @@ import { SectorBadge } from '@/components/shared/SectorBadge';
 import { ConfianzaIndicator } from '@/components/shared/ConfianzaIndicator';
 import { validarClasificacion } from '@/services/clasificacionesService';
 import { extractApiErrorMessage } from '@/services/api';
-import { SECTORES_OPCIONES } from '@/types/catalog';
+import { useSectores } from '@/hooks/useSectores';
 import { REVISION_PENDIENTE_QUERY_KEY } from '@/hooks/useRevisionPendiente';
 import { INCIDENTES_QUERY_KEY } from '@/hooks/useIncidentes';
 import type { ClasificacionLogRead } from '@/types/clasificacion';
@@ -57,6 +57,8 @@ export function ValidarClasificacionDialog({
 }: ValidarClasificacionDialogProps) {
   const queryClient = useQueryClient();
   const [sectorIdSeleccionado, setSectorIdSeleccionado] = useState<string>('');
+  // Opciones de sector obtenidas en runtime desde el catálogo (sin IDs numéricos fijos)
+  const { data: sectores } = useSectores();
 
   const { mutate, isPending, error, reset: resetMutation } = useMutation({
     mutationFn: ({ logId, sectorId }: { logId: number; sectorId: number }) =>
@@ -86,7 +88,7 @@ export function ValidarClasificacionDialog({
   };
 
   const sectorPredicho = clasificacion?.sector_predicho;
-  const sectorSeleccionadoNombre = SECTORES_OPCIONES.find(
+  const sectorSeleccionadoNombre = sectores?.find(
     (s) => s.id.toString() === sectorIdSeleccionado
   )?.nombre;
 
@@ -142,7 +144,7 @@ export function ValidarClasificacionDialog({
                 <SelectValue placeholder="Seleccioná el sector correcto" />
               </SelectTrigger>
               <SelectContent>
-                {SECTORES_OPCIONES.map((sector) => (
+                {sectores?.map((sector) => (
                   <SelectItem key={sector.id} value={sector.id.toString()}>
                     {sector.nombre}
                   </SelectItem>

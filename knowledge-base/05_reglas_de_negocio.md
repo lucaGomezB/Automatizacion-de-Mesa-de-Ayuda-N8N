@@ -4,10 +4,10 @@ Cada regla tiene código único `RN-{DOMINIO}-{NN}`. Fuente: tesis §5.5, §11, 
 
 ## Dominio: Clasificación (RN-CL)
 
-- **RN-CL-01**: Todo incidente se clasifica en exactamente uno de tres sectores: `"Sistemas"`, `"Operaciones"`, `"Soporte Técnico"` — strings exactos, case-sensitive, en español.
-- **RN-CL-02**: El clasificador es híbrido en 2 etapas: primero el filtro determinístico (regex + diccionarios); si su confianza ≥ **0,90**, se decide sin invocar Gemini. — *Razón: ~62 % de los casos se resuelven sin costo ni latencia de inferencia externa.*
+- **RN-CL-01**: Todo incidente se clasifica en exactamente un sector principal, y opcionalmente en sectores adicionales (verdad multietiqueta), entre los cinco sectores canónicos: `"Seguridad Informatica"`, `"Soporte Tecnico Hardware"`, `"Soporte Tecnico Software"`, `"Bases de Datos"`, `"Sistemas"` — strings exactos, case-sensitive, **sin tildes**. `"Operaciones"` ya no pertenece al vocabulario.
+- **RN-CL-02**: El clasificador es híbrido en 2 etapas: primero el filtro determinístico (regex + diccionarios); si su confianza ≥ **0,90**, se decide sin invocar Gemini. — *Razón: reduce el costo y la latencia de inferencia externa (la proporción exacta de casos resueltos sin Gemini se re-mide con el corpus real, C-27).*
 - **RN-CL-03**: Si la etapa determinística no alcanza 0,90, se consulta Gemini 2.5 Flash con prompt estructurado en español rioplatense (`docs/prompt_gemini.txt`), parámetros: temperature 0,3 · top_p 0,9 · max_output_tokens 100 · candidate_count 1 · timeout 10 s.
-- **RN-CL-04**: La respuesta de Gemini debe ser JSON estricto con `"categoría"` (uno de los 3 strings) y `"confianza"` (float [0,1]).
+- **RN-CL-04**: La respuesta de Gemini debe ser JSON estricto con `"categoría"` (uno de los 5 strings canónicos) y `"confianza"` (float [0,1]). El clasificador asigna el sector principal; los `sectores_adicionales` se persisten como conjunto por separado.
 - **RN-CL-05**: Si confianza final < **0,70** → `requiere_revision_humana = true` y el caso entra a la cola FIFO de revisión.
 - **RN-CL-06**: Ante cualquier fallo (timeout, JSON inválido, categoría desconocida, confianza fuera de rango): etapa = `"fallback"`, confianza = **0,0**, revisión humana obligatoria. Nunca se descarta un incidente por fallo del clasificador.
 - **RN-CL-07**: Toda decisión se registra en `clasificacion_log` con etapa, confianza y respuesta cruda — trazabilidad total, sin excepciones.
@@ -16,7 +16,7 @@ Cada regla tiene código único `RN-{DOMINIO}-{NN}`. Fuente: tesis §5.5, §11, 
 
 - **RN-VA-01**: Paso 1 — verificar sintaxis JSON (`json.loads()`).
 - **RN-VA-02**: Paso 2 — verificar presencia de ambos campos `"categoría"` y `"confianza"`.
-- **RN-VA-03**: Paso 3 — verificar que la categoría coincida exactamente con uno de los 3 strings válidos.
+- **RN-VA-03**: Paso 3 — verificar que la categoría coincida exactamente con uno de los 5 strings canónicos.
 - **RN-VA-04**: Paso 4 — verificar que la confianza sea float ∈ [0,0 ; 1,0].
 - **RN-VA-05**: Paso 5 — ante cualquier falla: log de la excepción, confianza = 0,0, escalar a revisión humana.
 

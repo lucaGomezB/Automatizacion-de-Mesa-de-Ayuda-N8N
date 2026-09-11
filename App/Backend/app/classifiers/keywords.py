@@ -3,137 +3,133 @@ Diccionario de palabras clave y patrones regex para el clasificador determiníst
 
 Responsabilidad:
     Define el vocabulario controlado de términos técnicos asociados a cada
-    categoría de incidente. El clasificador determinístico (DeterministicClassifier)
-    utiliza estos patrones para calcular una puntuación por categoría y determinar
-    si puede clasificar con suficiente confianza sin invocar a Gemini.
+    sector canónico (C-27). El clasificador determinístico
+    (DeterministicClassifier) usa estos patrones para calcular una puntuación
+    por sector y decidir si puede clasificar sin invocar a Gemini.
 
-Criterios de diseño del diccionario:
-    - Cada patrón es una expresión regular con límites de palabra (\b) para
-      evitar coincidencias parciales (ej. "red" en "redacción").
-    - Se incluyen variantes morfológicas del español rioplatense:
-      plurales, formas verbales conjugadas, acentuación alternativa.
-    - Los patrones de Sistemas priorizan terminología de infraestructura técnica.
-    - Los patrones de Operaciones priorizan procesos administrativos y de gestión.
-    - Los patrones de Soporte Técnico priorizan hardware de usuario y software de escritorio.
+Vocabulario canónico: cinco sectores, sin tildes. `Operaciones` fue eliminada
+y sus términos se redistribuyeron; el viejo `Soporte Técnico` se dividió en
+`Soporte Tecnico Hardware` y `Soporte Tecnico Software`.
 
-Extensibilidad:
-    Para agregar nuevos términos a una categoría, únicamente es necesario
-    añadir el patrón regex a la lista correspondiente. No es necesario
-    modificar el código del clasificador. Los patrones se compilan al iniciar
-    la aplicación (via lru_cache) y no tienen costo de compilación en runtime.
+Criterios de diseño:
+    - Cada patrón usa límites de palabra (\\b) para evitar coincidencias parciales.
+    - Se incluyen variantes morfológicas y de acentuación del español rioplatense.
+    - Las claves provienen de `app.constants.SECTORES_CANONICOS` para garantizar
+      una única fuente de verdad (design.md D8).
 """
 
 from typing import Final
 
-# Mapa de categoría → lista de patrones regex.
-# Las claves coinciden exactamente con los valores válidos del campo "categoría"
-# definido en el prompt de Gemini (docs/prompt_gemini.txt) y en el Anexo H.
+from app.constants import SECTORES_CANONICOS
+
 KEYWORD_MAP: Final[dict[str, list[str]]] = {
-    "Sistemas": [
-        # Infraestructura de servidores y redes
-        r"\bservidor(?:es)?\b",
-        r"\bbase[s]?\s+de\s+datos\b",
-        r"\bred(?:es)?\b",
-        r"\binfrastructura\b",
-        r"\binfrastructure\b",
+    # ── Seguridad Informatica ────────────────────────────────────────────────
+    "Seguridad Informatica": [
         r"\bciberseguridad\b",
-        r"\bfirewall\b",
+        r"\bfirewall(?:s)?\b",
         r"\bvpn\b",
-        # Operaciones de backup y recuperación
+        r"\bmalware\b",
+        r"\bransomware\b",
+        r"\bphishing\b",
+        r"\bantivirus\b",
+        r"\bintrusi[oó]n(?:es)?\b",
+        r"\bincidente\s+de\s+seguridad\b",
+        r"\bfuga\s+de\s+(?:datos|informaci[oó]n)\b",
+        r"\bpermisos\s+de\s+acceso\b",
+        r"\bautenticaci[oó]n\s+corporativa\b",
+        r"\bcertificado(?:s)?\s+(?:SSL|digital(?:es)?)\b",
+        r"\bcuenta(?:s)?\s+comprometida(?:s)?\b",
+    ],
+    # ── Soporte Tecnico Hardware ─────────────────────────────────────────────
+    "Soporte Tecnico Hardware": [
+        r"\bimpresora(?:s)?\b",
+        r"\bimprime\b",
+        r"\bteclado(?:s)?\b",
+        r"\bmouse\b",
+        r"\bmonitor(?:es)?\b",
+        r"\bpantalla(?:s)?\b",
+        r"\bequipo(?:s)?\b",
+        r"\bpc\b",
+        r"\blaptop(?:s)?\b",
+        r"\bnotebook(?:s)?\b",
+        r"\bperif[eé]rico(?:s)?\b",
+        r"\bpapel\s+atascado\b",
+        r"\bno\s+(?:enciende|prende)\b",
+        r"\bdisco\s+(?:r[ií]gido|duro)\b",
+        r"\bmemoria\s+ram\b",
+        r"\bbater[ií]a\b",
+        r"\bcargador\b",
+        r"\bdocking\b",
+        r"\besc[aá]ner\b",
+        r"\bc[aá]mara\b",
+    ],
+    # ── Soporte Tecnico Software ─────────────────────────────────────────────
+    "Soporte Tecnico Software": [
+        r"\bsoftware\s+(?:cliente|de\s+escritorio)\b",
+        r"\basistencia\s+remota\b",
+        r"\bremoto\b",
+        r"\binstalar\b",
+        r"\binstalaci[oó]n\b",
+        r"\bdesinstalar\b",
+        r"\bactualizar\b",
+        r"\bactualizaci[oó]n\b",
+        r"\bconfiguraci[oó]n\b",
+        r"\boutlook\b",
+        r"\bteams\b",
+        r"\bzoom\b",
+        r"\boffice\b",
+        r"\bwindows\b",
+        r"\bc[oó]digo\s+de\s+error\b",
+        r"\bse\s+traba\b",
+        r"\bcolgado\b",
+        r"\blento\b",
+        r"\baplicaci[oó]n(?:es)?\b",
+        r"\bcorreo\s+del\s+usuario\b",
+        r"\bno\s+funciona\b",
+    ],
+    # ── Bases de Datos ───────────────────────────────────────────────────────
+    "Bases de Datos": [
+        r"\bbases?\s+de\s+datos\b",
+        r"\bbase\s+de\s+datos\b",
+        r"\bSQL\b",
+        r"\bconsulta(?:s)?\b",
         r"\bbackup\b",
         r"\brestore\b",
         r"\brestaurar\b",
-        # Protocolos y servicios de red
-        r"\bSMTP\b",
-        r"\bcorreo\s+(?:corporativo|del\s+servidor)\b",
+        r"\breplicaci[oó]n\b",
+        r"\besquema\s+de\s+datos\b",
+        r"\bcorrupci[oó]n\s+de\s+datos\b",
+        r"\bpostgresql\b",
+        r"\bmysql\b",
+        r"\boracle\b",
+        r"\bmongodb\b",
+        r"\b[ií]ndice\s+de\s+la\s+tabla\b",
+    ],
+    # ── Sistemas ─────────────────────────────────────────────────────────────
+    "Sistemas": [
+        r"\bservidor(?:es)?\b",
+        r"\bred(?:es)?\b",
+        r"\binfraestructura\b",
         r"\bDNS\b",
         r"\bDHCP\b",
-        # Autenticación y directorio corporativo
+        r"\bSMTP\b",
         r"\bActive\s+Directory\b",
-        r"\bautenticaci[oó]n\s+corporativa\b",
-        r"\bcertificado(?:s)?\s+(?:SSL|digital(?:es)?)\b",
-        # Virtualización y contenedores
         r"\bvirtualizaci[oó]n\b",
         r"\bhypervisor\b",
         r"\bcontainer(?:es)?\b",
         r"\bdocker\b",
         r"\bkubernetes\b",
-        # Síntomas típicos de falla de sistemas (español rioplatense)
-        r"\bcaído\b",
-        r"\bca[eé](?:r|rse)\b",
-        r"\bno\s+levanta\b",
         r"\bno\s+responde\b",
         r"\btimeout\b",
         r"\blatencia\b",
-        r"\bcortó\s+la\s+red\b",
-    ],
-    "Operaciones": [
-        # Gestión de reuniones y espacios físicos
-        r"\breunión\b",
-        r"\bsala(?:s)?\b",
-        r"\breserva(?:r)?\b",
-        # Trámites y procesos administrativos
-        r"\btr[aá]mite(?:s)?\b",
-        r"\btr[aá]mites\s+administrativos\b",
-        r"\bproceso(?:s)?\s+compartido(?:s)?\b",
-        r"\bplanificaci[oó]n\b",
-        r"\bcontinuidad\s+operativa\b",
-        r"\bservice\s+management\b",
-        r"\bgestión\s+de\s+servicios\b",
-        r"\bprocedimiento(?:s)?\b",
-        # Gestión de proveedores y contratos
-        r"\bproveed(?:or|ores)\b",
-        r"\bcontrato(?:s)?\b",
-        r"\bfacturaci[oó]n\b",
-        r"\bpresupuesto(?:s)?\b",
-        # Gestión de accesos y altas/bajas de usuarios
-        r"\bhabilitaci[oó]n\b",
-        r"\bformulario\s+de\s+solicitud\b",
-        r"\bacceso\s+(?:a\s+)?(?:sistemas|aplicación)\b",
-        r"\bnuevo\s+(?:empleado|ingreso|usuario)\b",
-        r"\bbaja\s+de\s+(?:empleado|usuario)\b",
-        r"\bcambio\s+de\s+(?:area|sector|rol)\b",
-    ],
-    "Soporte Técnico": [
-        # Periféricos de impresión
-        r"\bimpresora(?:s)?\b",
-        r"\bimprime\b",
-        # Periféricos de entrada y salida
-        r"\bteclado(?:s)?\b",
-        r"\bmouse\b",
-        r"\bmonitor(?:es)?\b",
-        r"\bpantalla\b",
-        # Equipos de usuario final
-        r"\bequipo(?:s)?\b",
-        r"\bpc\b",
-        r"\blaptop(?:s)?\b",
-        r"\bnotebook(?:s)?\b",
-        r"\bperiférico(?:s)?\b",
-        # Software de escritorio y asistencia remota
-        r"\bsoftware\s+cliente\b",
-        r"\bsoftware\s+de\s+escritorio\b",
-        r"\basistencia\s+remota\b",
-        r"\bremoto\b",
-        # Operaciones de instalación y configuración
-        r"\binstalar\b",
-        r"\binstalación\b",
-        r"\bdesinstalar\b",
-        r"\bactualizar\b",
-        r"\bactualización\b",
-        r"\bconfiguraci[oó]n\s+(?:de)?\s+(?:equipo|pc|dispositivo)\b",
-        # Síntomas típicos de problemas de hardware/software de usuario
-        r"\batasco(?:ado)?\b",
-        r"\bpapel\s+atascado\b",
-        r"\bcódigo\s+de\s+error\b",
-        r"\bno\s+(?:enciende|prende|funciona)\b",
-        r"\bse\s+traba\b",
-        r"\bcolgado\b",
-        r"\blento\b",
-        # Aplicaciones de productividad de escritorio
-        r"\boutlook\s+(?:del\s+)?(?:usuario|escritorio)\b",
-        r"\bteams\b",
-        r"\bzoom\b",
-        r"\boffice\b",
-        r"\bwindows\b",
+        r"\bca[ií]do\b",
+        r"\bno\s+levanta\b",
+        r"\bse\s+cay(?:o|ó)\b",
+        r"\bcorreo\s+corporativo\b",
     ],
 }
+
+# Invariante del vocabulario: las claves del mapa son exactamente los 5 sectores.
+assert set(KEYWORD_MAP.keys()) == set(SECTORES_CANONICOS), (
+    "KEYWORD_MAP debe cubrir exactamente SECTORES_CANONICOS"
+)

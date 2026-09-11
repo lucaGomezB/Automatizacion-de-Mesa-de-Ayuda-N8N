@@ -33,12 +33,12 @@ DESCRIPCION_3 = "Impresora del área de recursos humanos sin conexión."
 
 
 def _result_pendiente(
-    categoria: str = "Sistemas",
+    sector_predicho: str = "Sistemas",
     confianza: float = 0.55,
 ) -> ClasificacionResult:
     """Resultado con baja confianza → requiere_revision_humana=True → entra en cola."""
     return ClasificacionResult(
-        categoria=categoria,
+        sector_predicho=sector_predicho,
         confianza=confianza,
         etapa="gemini",
         requiere_revision_humana=True,
@@ -46,10 +46,10 @@ def _result_pendiente(
     )
 
 
-def _result_alta_confianza(categoria: str = "Sistemas") -> ClasificacionResult:
+def _result_alta_confianza(sector_predicho: str = "Sistemas") -> ClasificacionResult:
     """Resultado con alta confianza → requiere_revision_humana=False → no entra en cola."""
     return ClasificacionResult(
-        categoria=categoria,
+        sector_predicho=sector_predicho,
         confianza=0.95,
         etapa="deterministic",
         requiere_revision_humana=False,
@@ -124,7 +124,7 @@ async def test_get_revision_pendiente_orden_fifo(
             "/api/v1/incidentes/",
             json={"descripcion": DESCRIPCION_LARGA, "prioridad": "alta"},
         )
-    async with make_client_with_classifier(_result_pendiente(categoria="Operaciones")) as c2:
+    async with make_client_with_classifier(_result_pendiente(sector_predicho="Bases de Datos")) as c2:
         await c2.post(
             "/api/v1/incidentes/",
             json={"descripcion": DESCRIPCION_2, "prioridad": "media"},
@@ -263,9 +263,9 @@ async def test_patch_validar_correccion_difiere_del_predicho(
     7.3 TRIANGULATE
     Sector validado distinto del predicho → 200 y se registra la corrección.
     """
-    sector_operaciones_id = seed_catalogs["sector_operaciones"].id
-    # El clasificador predice Sistemas pero el operador corrige a Operaciones
-    result = _result_pendiente(categoria="Sistemas")
+    sector_bases_datos_id = seed_catalogs["sector_bases_datos"].id
+    # El clasificador predice Sistemas pero el operador corrige a Bases de Datos
+    result = _result_pendiente(sector_predicho="Sistemas")
 
     async with make_client_with_classifier(result) as client:
         # Arrange
@@ -277,15 +277,15 @@ async def test_patch_validar_correccion_difiere_del_predicho(
         assert len(cola) >= 1
         log_id = cola[0]["id"]
 
-        # Act: corregir a Operaciones (diferente del predicho Sistemas)
+        # Act: corregir a Bases de Datos (diferente del predicho Sistemas)
         resp = await client.patch(
             f"/api/v1/clasificaciones/{log_id}/validar",
-            json={"sector_id_validado": sector_operaciones_id},
+            json={"sector_id_validado": sector_bases_datos_id},
         )
 
     assert resp.status_code == 200
     body = resp.json()
-    assert body["sector_validado"]["id"] == sector_operaciones_id
+    assert body["sector_validado"]["id"] == sector_bases_datos_id
     # El sector predicho sigue siendo Sistemas (no fue modificado)
     if body["sector_predicho"]:
         assert body["sector_predicho"]["nombre"] == "Sistemas"

@@ -65,7 +65,7 @@ async def _seed_catalogs(session: AsyncSession) -> tuple[Estado, Sector]:
 
 
 def _make_clasificacion_result(
-    categoria: str = "Sistemas",
+    sector_predicho: str = "Sistemas",
     confianza: float = 0.95,
     etapa: str = "deterministic",
     requiere_revision_humana: bool = False,
@@ -76,7 +76,7 @@ def _make_clasificacion_result(
     Función auxiliar que evita la repetición de campos en cada test.
 
     Args:
-        categoria:               Nombre del sector predicho.
+        sector_predicho:          Nombre del sector predicho.
         confianza:               Nivel de certeza (0.0 – 1.0).
         etapa:                   Etapa del pipeline que clasificó.
         requiere_revision_humana: Si el operador debe revisar el caso.
@@ -85,7 +85,7 @@ def _make_clasificacion_result(
         ClasificacionResult instanciado.
     """
     return ClasificacionResult(
-        categoria=categoria,
+        sector_predicho=sector_predicho,
         confianza=confianza,
         etapa=etapa,
         requiere_revision_humana=requiere_revision_humana,
@@ -154,7 +154,7 @@ async def test_notify_n8n_receives_actual_classification_result(db_session):
     """
     # Arrange
     result_fallback = _make_clasificacion_result(
-        categoria="Sistemas",
+        sector_predicho="Sistemas",
         confianza=0.0,
         etapa="fallback",
         requiere_revision_humana=True,
@@ -343,7 +343,7 @@ async def test_notify_n8n_posts_expected_payload_to_webhook():
 
     incidente_id = 42
     result = _make_clasificacion_result(
-        categoria="Sistemas",
+        sector_predicho="Sistemas",
         confianza=0.91,
         etapa="deterministic",
         requiere_revision_humana=False,
@@ -387,7 +387,8 @@ async def test_notify_n8n_posts_expected_payload_to_webhook():
     assert len(captured) == 1, f"Se esperaba 1 request, se recibieron {len(captured)}"
     payload = captured[0]
     assert payload["incidente_id"] == incidente_id
-    assert payload["categoria"] == "Sistemas"
+    assert payload["sector_predicho"] == "Sistemas"
+    assert payload["sectores_adicionales"] == []
     assert payload["confianza"] == pytest.approx(0.91)
     assert payload["etapa"] == "deterministic"
     assert payload["requiere_revision_humana"] is False

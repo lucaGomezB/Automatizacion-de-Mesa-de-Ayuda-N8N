@@ -48,7 +48,13 @@ HTTP_NODE_CORREO = "HTTP POST a MTM-SRU"
 
 CONFIDENCE_THRESHOLD = 0.70
 
-VALID_CATEGORIES = {"Sistemas", "Operaciones", "Soporte Técnico"}
+VALID_SECTORS = {
+    "Seguridad Informatica",
+    "Soporte Tecnico Hardware",
+    "Soporte Tecnico Software",
+    "Bases de Datos",
+    "Sistemas",
+}
 
 
 def load_workflow() -> dict:
@@ -340,7 +346,8 @@ def test_telefonia_validator_sets_zero_confidence_on_malformed():
 
 def test_telefonia_validator_checks_required_fields():
     """
-    TRIANGULATE: verifica presencia de 'categoría' y 'confianza'.
+    TRIANGULATE: verifica presencia de 'sector_predicho', 'sectores_adicionales'
+    y 'confianza'.
     Paso 2 Anexo H: presencia de campos requeridos.
     """
     wf = load_workflow()
@@ -348,8 +355,11 @@ def test_telefonia_validator_checks_required_fields():
     node = by_name[CODE_NODE_TELEFONIA]
     code_body = node["parameters"].get("jsCode", "") or node["parameters"].get("pythonCode", "")
 
-    assert "categor" in code_body, (
-        "El validador de telefonía no verifica la presencia del campo 'categoría'"
+    assert "sector_predicho" in code_body, (
+        "El validador de telefonía no verifica la presencia del campo 'sector_predicho'"
+    )
+    assert "sectores_adicionales" in code_body, (
+        "El validador de telefonía no contempla el campo 'sectores_adicionales'"
     )
     assert "confianza" in code_body, (
         "El validador de telefonía no verifica la presencia del campo 'confianza'"
@@ -358,40 +368,56 @@ def test_telefonia_validator_checks_required_fields():
 
 def test_telefonia_validator_checks_valid_category_set():
     """
-    TRIANGULATE: verifica que la categoría esté en el set exacto case-sensitive.
-    Paso 3 Anexo H: categoría ∈ {Sistemas, Operaciones, Soporte Técnico}.
+    TRIANGULATE: verifica que el sector esté en el set exacto case-sensitive.
+    Paso 3 Anexo H: sector ∈ {los cinco sectores canonicos C-27}.
     """
     wf = load_workflow()
     by_name, _ = index_nodes(wf)
     node = by_name[CODE_NODE_TELEFONIA]
     code_body = node["parameters"].get("jsCode", "") or node["parameters"].get("pythonCode", "")
 
-    # Las tres categorías exactas deben aparecer en el código
-    assert "Sistemas" in code_body, (
-        "El validador de telefonía no menciona la categoría exacta 'Sistemas'"
+    # Los cinco sectores canonicos exactos deben aparecer en el código
+    for sector in VALID_SECTORS:
+        assert sector in code_body, (
+            f"El validador de telefonía no menciona el sector canonico {sector!r}"
+        )
+
+
+def test_telefonia_validator_rejects_removed_vocabulary():
+    """
+    TRIANGULATE (5.3): el validador no admite el vocabulario eliminado.
+    'Operaciones' y 'Soporte Técnico' (con tilde) ya no pertenecen al dominio.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    node = by_name[CODE_NODE_TELEFONIA]
+    code_body = node["parameters"].get("jsCode", "") or node["parameters"].get("pythonCode", "")
+
+    assert "Operaciones" not in code_body, (
+        "El validador no debe aceptar 'Operaciones' (sector eliminado del dominio)"
     )
-    assert "Operaciones" in code_body, (
-        "El validador de telefonía no menciona la categoría 'Operaciones'"
-    )
-    assert "Soporte" in code_body, (
-        "El validador de telefonía no menciona 'Soporte Técnico'"
+    assert "Soporte Técnico" not in code_body, (
+        "El validador no debe aceptar 'Soporte Técnico' con tilde (variante invalida)"
     )
 
 
 def test_telefonia_validator_accepts_valid_response():
     """
-    TRIANGULATE: respuesta válida {categoría: 'Sistemas', confianza: 0.95} es aceptada.
-    El código referencia las 3 categorías válidas (implica que 'Sistemas' es aceptada).
+    TRIANGULATE: respuesta válida {sector_predicho: 'Sistemas', confianza: 0.95}
+    es aceptada. El código referencia los cinco sectores válidos (implica que
+    'Sistemas' es aceptada) y conserva el contrato multietiqueta.
     """
     wf = load_workflow()
     by_name, _ = index_nodes(wf)
     node = by_name[CODE_NODE_TELEFONIA]
     code_body = node["parameters"].get("jsCode", "") or node["parameters"].get("pythonCode", "")
 
-    # La lógica de aceptación conserva la categoría y confianza originales
-    # verificado por la presencia conjunta de las 3 categorías + referencia a confianza
-    assert "Sistemas" in code_body and "confianza" in code_body, (
-        "El validador de telefonía no parece conservar categoría y confianza para respuestas válidas"
+    # La lógica de aceptación conserva el sector principal, los adicionales y confianza
+    assert "sector_predicho" in code_body and "confianza" in code_body, (
+        "El validador de telefonía no parece conservar sector_predicho y confianza"
+    )
+    assert "sectores_adicionales" in code_body, (
+        "El validador de telefonía no conserva sectores_adicionales para respuestas válidas"
     )
 
 

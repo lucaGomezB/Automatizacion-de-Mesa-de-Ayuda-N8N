@@ -13,8 +13,12 @@
 
 ### `sector`
 
-Catálogo de sectores responsables de atender los incidentes. Valores sembrados
-en la migración inicial: `Sistemas`, `Operaciones`, `Soporte Técnico`.
+Catálogo de sectores responsables de atender los incidentes. Los cinco valores
+canónicos vigentes (exactos, sin tildes) fueron sembrados/upsertados por la
+migración `004_sectores_multietiqueta.py`: `Seguridad Informatica`,
+`Soporte Tecnico Hardware`, `Soporte Tecnico Software`, `Bases de Datos` y
+`Sistemas`. Las filas legacy `Operaciones` y `Soporte Técnico` fueron eliminadas
+por esa misma migración (C-27).
 
 ```sql
 CREATE TABLE sector (
@@ -224,6 +228,46 @@ documenta un error del clasificador y contribuye al análisis de métricas de la
 
 ---
 
+## Estructuras multietiqueta (migración `004_sectores_multietiqueta.py`)
+
+La migración `004` (C-27) agrega tres tablas de unión para la verdad multietiqueta.
+En las tres, el sector **principal** no se duplica: vive en la FK escalar
+correspondiente (`incidente.sector_id`, `clasificacion_log.sector_id_predicho`,
+`clasificacion_log.sector_id_validado`). La clave primaria compuesta impide
+repetir el mismo sector adicional dentro de una entidad.
+
+```sql
+-- Sectores adicionales del incidente (relación N-a-N)
+CREATE TABLE incidente_sector_adicional (
+    incidente_id    INTEGER NOT NULL REFERENCES incidente(id) ON DELETE CASCADE,
+    sector_id       INTEGER NOT NULL REFERENCES sector(id)    ON DELETE RESTRICT,
+    PRIMARY KEY (incidente_id, sector_id)
+);
+
+-- Sectores adicionales predichos por el clasificador
+CREATE TABLE clasificacion_sector_predicho (
+    clasificacion_log_id INTEGER NOT NULL REFERENCES clasificacion_log(id) ON DELETE CASCADE,
+    sector_id            INTEGER NOT NULL REFERENCES sector(id)            ON DELETE RESTRICT,
+    PRIMARY KEY (clasificacion_log_id, sector_id)
+);
+
+-- Sectores adicionales validados por el operador humano
+CREATE TABLE clasificacion_sector_validado (
+    clasificacion_log_id INTEGER NOT NULL REFERENCES clasificacion_log(id) ON DELETE CASCADE,
+    sector_id            INTEGER NOT NULL REFERENCES sector(id)            ON DELETE RESTRICT,
+    PRIMARY KEY (clasificacion_log_id, sector_id)
+);
+```
+
+**Relaciones**:
+- `incidente_sector_adicional` referencia `incidente` (CASCADE) y `sector` (RESTRICT).
+- `clasificacion_sector_predicho` y `clasificacion_sector_validado` referencian
+  `clasificacion_log` (CASCADE) y `sector` (RESTRICT).
+- `RESTRICT` en `sector` evita eliminar un sector referenciado por un conjunto
+  adicional; `CASCADE` limpia las uniones al eliminar la entidad dueña.
+
+---
+
 ## Resumen de restricciones ON DELETE
 
 | FK origen                        | FK destino        | ON DELETE   | Justificación |
@@ -234,6 +278,12 @@ documenta un error del clasificador y contribuye al análisis de métricas de la
 | `clasificacion_log.incidente_id` | `incidente(id)`   | **CASCADE**     | Los logs son dependientes del incidente; se borran con él |
 | `clasificacion_log.sector_id_predicho` | `sector(id)` | **SET NULL** | El log persiste; se pierde la referencia al sector |
 | `clasificacion_log.sector_id_validado` | `sector(id)` | **SET NULL** | Idem |
+| `incidente_sector_adicional.incidente_id` | `incidente(id)` | **CASCADE** | Las uniones de sectores adicionales dependen del incidente |
+| `incidente_sector_adicional.sector_id` | `sector(id)` | **RESTRICT** | No borrar un sector referenciado por un conjunto adicional |
+| `clasificacion_sector_predicho.clasificacion_log_id` | `clasificacion_log(id)` | **CASCADE** | Las uniones predichas dependen del log |
+| `clasificacion_sector_predicho.sector_id` | `sector(id)` | **RESTRICT** | Integridad referencial del catálogo |
+| `clasificacion_sector_validado.clasificacion_log_id` | `clasificacion_log(id)` | **CASCADE** | Las uniones validadas dependen del log |
+| `clasificacion_sector_validado.sector_id` | `sector(id)` | **RESTRICT** | Integridad referencial del catálogo |
 
 ---
 

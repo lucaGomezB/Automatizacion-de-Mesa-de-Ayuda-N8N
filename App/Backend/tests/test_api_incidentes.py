@@ -36,13 +36,13 @@ VALID_PAYLOAD = {
 
 
 def _make_result(
-    categoria: str = "Sistemas",
+    sector_predicho: str = "Sistemas",
     confianza: float = 0.95,
     requiere_revision_humana: bool = False,
 ) -> ClasificacionResult:
     """Construye un ClasificacionResult para el clasificador doble."""
     return ClasificacionResult(
-        categoria=categoria,
+        sector_predicho=sector_predicho,
         confianza=confianza,
         etapa="deterministic",
         requiere_revision_humana=requiere_revision_humana,
@@ -65,7 +65,7 @@ async def test_post_incidente_creacion_exitosa_201(
     201 con contrato IncidenteRead, sector "Sistemas", estado "nuevo".
     """
     # Arrange
-    result = _make_result(categoria="Sistemas", confianza=0.95, requiere_revision_humana=False)
+    result = _make_result(sector_predicho="Sistemas", confianza=0.95, requiere_revision_humana=False)
 
     async with make_client_with_classifier(result) as client:
         # Act
@@ -92,7 +92,7 @@ async def test_post_incidente_baja_confianza_marca_revision(
     """
     # Arrange
     result = _make_result(
-        categoria="Operaciones",
+        sector_predicho="Bases de Datos",
         confianza=0.55,
         requiere_revision_humana=True,
     )
@@ -195,10 +195,10 @@ async def test_get_incidentes_filtro_por_sector(
     Filtrar por sector_id devuelve solo los incidentes de ese sector.
     """
     sector_sistemas_id = seed_catalogs["sector_sistemas"].id
-    sector_operaciones_id = seed_catalogs["sector_operaciones"].id
+    sector_bases_datos_id = seed_catalogs["sector_bases_datos"].id
 
-    result_sistemas = _make_result(categoria="Sistemas")
-    result_operaciones = _make_result(categoria="Operaciones", confianza=0.80)
+    result_sistemas = _make_result(sector_predicho="Sistemas")
+    result_operaciones = _make_result(sector_predicho="Bases de Datos", confianza=0.80)
 
     async with make_client_with_classifier(result_sistemas) as client_sist:
         resp_sist = await client_sist.post("/api/v1/incidentes/", json=VALID_PAYLOAD)

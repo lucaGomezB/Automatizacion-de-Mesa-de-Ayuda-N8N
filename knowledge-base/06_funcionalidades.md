@@ -2,7 +2,7 @@
 
 Organizadas por épica. Estado: ✅ implementado · 🔶 parcial · ❌ pendiente (referencia al change de `CHANGES.md`).
 
-> Ultima actualizacion: 2026-07-02. Auditado contra codigo real. C-02 a C-10 archivados.
+> Ultima actualizacion: 2026-09-11. Auditado contra codigo real. C-02 a C-10 archivados; C-27 rediseño de sectores y corpus JSON.
 
 ## Épica 1: Recepción multicanal
 
@@ -26,7 +26,7 @@ Organizadas por épica. Estado: ✅ implementado · 🔶 parcial · ❌ pendient
 ### US-004 — Clasificación híbrida ✅
 **Como** organización **quiero** que cada incidente se derive automáticamente al sector correcto **para** eliminar la derivación manual.
 - CA: etapa determinística ≥ 0,90 decide sola; si no, Gemini; fallback ante fallo. Reglas RN-CL-01…07.
-- Implementación: `app/classifiers/` (deterministic, gemini_classifier, hybrid) + keywords (24 Sistemas / 16 Operaciones / 20 Soporte Técnico).
+- Implementación: `app/classifiers/` (deterministic, gemini_classifier, hybrid) + keywords redistribuidos en los 5 sectores canónicos (C-27).
 
 ### US-005 — Pseudonimización pre-Gemini ✅ (C-03)
 **Como** responsable de datos **quiero** que ningún dato personal salga hacia Gemini **para** cumplir la Ley 25.326.
@@ -51,7 +51,7 @@ Organizadas por épica. Estado: ✅ implementado · 🔶 parcial · ❌ pendient
 - Implementación: `GET /clasificaciones/revision-pendiente` + tabla en frontend.
 
 ### US-009 — Validación / corrección humana ✅
-**Como** sector responsable **quiero** confirmar o corregir la categoría predicha **para** cerrar el ciclo y alimentar el corpus.
+**Como** sector responsable **quiero** confirmar o corregir el sector predicho (y los sectores adicionales) **para** cerrar el ciclo y alimentar el corpus.
 - Implementación: `PATCH /clasificaciones/{log_id}/validar` + modal "Validación Humana".
 
 ## Épica 5: Orquestación N8N
@@ -63,10 +63,10 @@ Organizadas por épica. Estado: ✅ implementado · 🔶 parcial · ❌ pendient
 
 ## Épica 6: Evaluación experimental
 
-### US-011 — Framework de evaluación ✅ (C-08)
-**Como** equipo de investigación **quiero** ejecutar el clasificador sobre el corpus de 200 casos y calcular métricas **para** validar la hipótesis.
-- CA: exactitud global, matriz de confusión 3x3, precision/recall/F1 por clase, F1 macro, IC Wilson 95%, Wilcoxon pareado con rank-biserial effect size. Reporte md + Jupyter notebook con visualizaciones.
-- Estado: `evaluation/` con 20 archivos (corpus.py, metrics.py, stats.py, run_evaluation.py, tests/, analysis.ipynb). FakeClassifier para CI. **Corpus real de 200 casos no versionado** (C-17). Ver [11_evaluacion_experimental.md](11_evaluacion_experimental.md).
+### US-011 — Framework de evaluación ✅ (C-08, rediseñado en C-27)
+**Como** equipo de investigación **quiero** ejecutar el clasificador sobre el corpus real JSON multietiqueta y calcular métricas **para** validar la hipótesis.
+- CA: exactitud primaria, matriz de confusión primaria 5x5, subset accuracy, pérdida de Hamming, F1 micro/macro, precision/recall/F1 por sector (one-vs-rest), IC Wilson 95% en las dos definiciones de acierto (igualdad estricta y pertenencia), Wilcoxon pareado con rank-biserial effect size. Reporte md + notebook con visualizaciones.
+- Estado: `evaluation/` con loader JSON (`schema_version`/`metadata`/`casos`), `metrics.py` multietiqueta, `run_evaluation.py`, tests y fixture JSON. **Corpus real (`data/corpus_evaluacion_pseudonimizado.json`) no versionado**; el corpus sintético de 200 casos fue descartado y eliminado. Ver [11_evaluacion_experimental.md](11_evaluacion_experimental.md).
 
 ## Épica 7: Calidad e infraestructura
 

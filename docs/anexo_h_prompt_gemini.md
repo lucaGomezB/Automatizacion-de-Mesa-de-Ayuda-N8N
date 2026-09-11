@@ -8,25 +8,29 @@ El prompt enviado al modelo Gemini 2.5 Flash sigue una estructura fija en lengua
 Define explícitamente que el modelo actúa como **"agente especializado en clasificación de incidentes técnicos en español rioplatense"**. Esta instrucción ancla el comportamiento del modelo en el dominio y el dialecto específico del estudio.
 
 ### (2) Definición de categorías
-Presenta de forma concisa los tres sectores responsables:
-- **Sistemas**: infraestructura, redes, servidores, bases de datos, ciberseguridad
-- **Operaciones**: procesos compartidos, gestión de servicios, planificación, continuidad operativa
-- **Soporte Técnico**: equipamiento de usuarios, periféricos, software cliente, asistencia remota
+Presenta de forma concisa los cinco sectores canónicos (strings exactos, sensibles a mayúsculas y **sin tildes**):
+- **Seguridad Informatica**: ciberseguridad, firewall, VPN, malware, phishing, accesos e identidad corporativa
+- **Soporte Tecnico Hardware**: equipamiento de usuarios, periféricos, impresoras y fallas físicas
+- **Soporte Tecnico Software**: aplicaciones de escritorio, instalación, configuración y asistencia remota
+- **Bases de Datos**: motores de datos, consultas, replicación, backup y recuperación
+- **Sistemas**: infraestructura, redes, servidores y servicios de plataforma
 
-Se incluyen dos ejemplos balanceados de incidentes representativos por clase, extraídos del dominio real:
+Se incluye un ejemplo representativo por sector, extraído del dominio real:
+- Ejemplo Seguridad Informatica: "Detectamos un ataque de phishing y actividad de malware en la red."
+- Ejemplo Soporte Tecnico Hardware: "Mi impresora no imprime. Papel atascado. Código de error 13."
+- Ejemplo Soporte Tecnico Software: "No puedo abrir Outlook, la aplicación se traba."
+- Ejemplo Bases de Datos: "El backup de la base de datos falló durante la replicación."
 - Ejemplo Sistemas: "Se cayó el servidor de correo. No pueden conectarse los clientes de Outlook. Error SMTP timeout."
-- Ejemplo Operaciones: "Necesitamos reservar sala para reunión de 15 personas el próximo miércoles 14hs."
-- Ejemplo Soporte Técnico: "Mi impresora no imprime. Papel atascado. Código de error 13."
 
 ### (3) Definición de formato de respuesta
 Solicita explícitamente un JSON válido con **exactamente dos campos**:
-- `"categoría"` (string): valor estrictamente en `{Sistemas, Operaciones, Soporte Técnico}`
+- `"categoría"` (string): valor estrictamente en `{Seguridad Informatica, Soporte Tecnico Hardware, Soporte Tecnico Software, Bases de Datos, Sistemas}`
 - `"confianza"` (number): flotante entre 0.0 y 1.0 indicando nivel de seguridad
 
 Instrucción explícita: **"Devuelve siempre un JSON válido sin texto adicional, comentarios o explicaciones. Ejemplo: {"categoría": "Sistemas", "confianza": 0.95}"**
 
 ### (4) Instrucción de lógica de decisión
-**"Analiza la descripción del incidente y asigna una categoría única de las tres opciones listadas. Si la descripción contiene elementos de múltiples categorías, elige la que sea dominante."**
+**"Analiza la descripción del incidente y asigna una categoría única de las cinco opciones listadas. Si la descripción contiene elementos de múltiples categorías, elige la que sea dominante."**
 
 Esta instrucción maneja el caso ambiguo de incidentes borderline que podrían clasificarse en múltiples categorías.
 
@@ -90,7 +94,7 @@ def clasificar_con_gemini(descripcion: str) -> dict:
 
 3. **Validez de categoría**: 
    - Tipo: string no vacío
-   - Valor: exactamente en `{Sistemas, Operaciones, Soporte Técnico}`
+   - Valor: exactamente en `{Seguridad Informatica, Soporte Tecnico Hardware, Soporte Tecnico Software, Bases de Datos, Sistemas}`
    - Caso-sensibilidad: mayúscula inicial obligatoria
 
 4. **Validez de confianza**:
@@ -125,7 +129,7 @@ def validar_respuesta_gemini(response_text: str) -> tuple[bool, dict]:
         return False, {"error": "Falta campo 'categoría'"}
     
     categoria = data["categoría"]
-    if categoria not in {"Sistemas", "Operaciones", "Soporte Técnico"}:
+    if categoria not in {"Seguridad Informatica", "Soporte Tecnico Hardware", "Soporte Tecnico Software", "Bases de Datos", "Sistemas"}:
         return False, {"error": f"Categoría inválida: {categoria}"}
     
     # Verificar confianza
@@ -143,7 +147,7 @@ def validar_respuesta_gemini(response_text: str) -> tuple[bool, dict]:
 
 ## H.4. Iteración y mejora del prompt
 
-El prompt ha sido validado y ajustado iterativamente sobre un conjunto de ~100 incidentes representativos en entornos de preproducción, **sin exposición al corpus de validación de 200 casos** utilizado en el estudio.
+El prompt ha sido validado y ajustado iterativamente sobre un conjunto de ~100 incidentes representativos en entornos de preproducción, **sin exposición al corpus de validación utilizado en el estudio**.
 
 Versiones históricas del prompt se mantienen en el repositorio bajo `docs/prompt_gemini_history/` para auditoría y posible rollback.
 
@@ -162,5 +166,5 @@ Si las métricas se degradan con cambios en el modelo Gemini, se recomienda:
 ---
 
 **Fecha de creación**: Marzo 2026  
-**Última actualización**: Marzo 2026  
-**Estado**: Versión 1.0 del prompt utilizada en evaluación de tesis
+**Última actualización**: Septiembre 2026 (C-27)  
+**Estado**: Versión 1.1 del prompt — cinco sectores canónicos sin tildes, utilizada en evaluación de tesis

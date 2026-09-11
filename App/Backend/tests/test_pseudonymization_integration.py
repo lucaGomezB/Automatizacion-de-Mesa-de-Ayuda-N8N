@@ -79,12 +79,12 @@ async def _seed_catalogs(session: AsyncSession) -> tuple[Estado, Sector]:
 
 
 def _make_clasificacion_result(
-    categoria: str = "Sistemas",
+    sector_predicho: str = "Sistemas",
     confianza: float = 0.95,
     etapa: str = "deterministic",
 ) -> ClasificacionResult:
     return ClasificacionResult(
-        categoria=categoria,
+        sector_predicho=sector_predicho,
         confianza=confianza,
         etapa=etapa,
         requiere_revision_humana=False,

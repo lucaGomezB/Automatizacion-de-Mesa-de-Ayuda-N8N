@@ -43,10 +43,12 @@
 ### SU-01 — El corpus de 200 casos existe fuera del repo
 **Origen**: tesis Anexo F; `data/corpus_evaluacion_pseudonimizado.csv` no esta en git.
 **Estado (2026-07-02)**: corpus real NO existe. Se construira corpus simulado en C-17 (evaluation-corpus-simulado) con distribucion 82/64/54.
+**SUPERADO (C-27, 2026-09-11)**: el corpus simulado de 200 casos fue descartado y eliminado; la unica fuente de evaluacion es el corpus real JSON multietiqueta (`data/corpus_evaluacion_pseudonimizado.json`).
 
 ### SU-02 — Las metricas de la tesis son resultados esperados a reproducir
 **Origen**: el capitulo 7 reporta resultados completos. Framework de evaluacion (C-08) completado y archivado.
 **Estado (2026-07-02)**: framework implementado (evaluation/ con 20 archivos). Corpus pendiente (C-17). Metricas de tesis (92%, F1=0.919) NO son reproducibles sin el corpus. La corrida provisoria con FakeClassifier da 63% — no comparable.
+**SUPERADO (C-27, 2026-09-11)**: el framework fue rediseñado a metricas multietiqueta (matriz 5x5, subset accuracy, Hamming, micro/macro F1) y el corpus sintetico eliminado; los valores 92 %/0,919 quedan superados y se re-miden sobre el corpus real.
 
 ### SU-03 — N8N corre en la misma red Docker que la API
 **Origen**: docker-compose del repo + §6.1. **Riesgo**: URLs de webhook mal configuradas entre contenedores. **Validación**: probar `notify_n8n` en C-02 con ambos contenedores arriba.

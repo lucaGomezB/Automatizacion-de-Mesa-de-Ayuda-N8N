@@ -29,6 +29,8 @@ from app.repositories.base import BaseRepository
 _CLASIFICACION_LOAD_OPTIONS = (
     selectinload(ClasificacionLog.sector_predicho),
     selectinload(ClasificacionLog.sector_validado),
+    selectinload(ClasificacionLog.sectores_predichos),
+    selectinload(ClasificacionLog.sectores_validados),
 )
 
 
@@ -41,6 +43,21 @@ class ClasificacionRepository(BaseRepository[ClasificacionLog]):
     """
 
     model = ClasificacionLog
+
+    async def get_with_relations(self, log_id: int) -> ClasificacionLog | None:
+        """
+        Recupera un registro de clasificación con todas sus relaciones cargadas.
+
+        Necesario para serializar ClasificacionLogRead en contexto async sin
+        disparar lazy-loads (MissingGreenlet). Incluye el sector principal
+        predicho/validado y los conjuntos adicionales.
+        """
+        result = await self._session.execute(
+            select(ClasificacionLog)
+            .where(ClasificacionLog.id == log_id)
+            .options(*_CLASIFICACION_LOAD_OPTIONS)
+        )
+        return result.scalar_one_or_none()
 
     async def list_by_incidente(self, incidente_id: int) -> list[ClasificacionLog]:
         """
