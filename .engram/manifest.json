@@ -248,6 +248,14 @@
       "sessions": 0,
       "memories": 7,
       "prompts": 8
+    },
+    {
+      "id": "bda74441",
+      "created_by": "skywalker",
+      "created_at": "2026-09-12T00:31:17Z",
+      "sessions": 4,
+      "memories": 20,
+      "prompts": 59
     }
   ]
 }
