@@ -20,15 +20,52 @@ En este proyecto se busca una forma eficiente de facilitar el trabajo de la Mesa
 - **Docker Engine 24+** y **Docker Compose v2** (plugin integrado en Docker Desktop)
 - **Git 2.x**
 - **OpenSSL** (para generar los certificados TLS de desarrollo)
+- **curl** (para las verificaciones de salud por HTTPS)
+- **make** (opcional, solo como alias de conveniencia)
 
 Verificar:
 ```bash
 docker --version
 docker compose version
 openssl version
+curl --version
+make --version   # opcional
 ```
 
 > **Nota sobre Windows**: si `openssl` no esta disponible en el PATH, Git for Windows lo incluye en `C:\Program Files\Git\usr\bin\`. El script `openssl\generate-certs.ps1` lo detecta automaticamente.
+
+### Camino recomendado: un solo comando
+
+El comando unico verifica el entorno, genera los certificados TLS si faltan,
+levanta el stack con `docker compose up -d --build`, espera a que los servicios
+queden sanos y valida los endpoints de salud por HTTPS. Falla de forma explicita
+si `App/Backend/.env` no existe o si `GEMINI_API_KEY` /
+`PSEUDONYMIZATION_ENCRYPTION_KEY` siguen siendo los placeholders de la plantilla.
+
+**Linux / macOS:**
+```bash
+bash scripts/up.sh
+# Alternativa equivalente si make esta instalado:
+make up
+```
+
+**Windows (PowerShell):**
+```powershell
+.\scripts\up.ps1
+# Alternativa equivalente si make esta instalado:
+make up
+```
+
+`make` es opcional: los scripts pareados son la fuente de verdad y se pueden
+ejecutar directamente. En Windows, para obtener `make` usar
+`choco install make` (requiere Chocolatey); si no se desea instalar `make`,
+ejecutar `.\scripts\up.ps1` directamente.
+
+Al finalizar, el comando imprime las URLs de acceso y recuerda importar
+`n8n/workflow.json` y configurar las credenciales de Outlook, Twilio y Gemini en
+N8N de forma manual. La importacion del workflow NO es automatica.
+
+Los pasos siguientes describen el camino manual equivalente.
 
 ### 1. Clonar y configurar el hook anti-secretos
 
