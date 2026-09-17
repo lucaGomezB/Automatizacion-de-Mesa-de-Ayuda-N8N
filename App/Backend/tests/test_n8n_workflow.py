@@ -13,8 +13,12 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
+from typing import get_args
 
 import pytest
+from pydantic import BaseModel
+
+from app.schemas.incidente import IncidenteRead
 
 # ---------------------------------------------------------------------------
 # Helper: carga del workflow
@@ -1277,6 +1281,8 @@ def test_no_orphan_executable_nodes():
     NON_EXECUTABLE_TYPES = {
         "n8n-nodes-base.stickyNote",
         "@n8n/n8n-nodes-langchain.memoryRedisChat",  # sub-nodo de langchain, no ejecutable directamente
+        # Chat Model: sub-nodo del AI Agent, `inputs: []` (solo se conecta por ai_languageModel)
+        "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
     }
 
     triggers = [
@@ -1507,4 +1513,489 @@ def test_d4_audit_canal_origen_not_only_from_current_item():
     # (puede haber fallback a item.canal_raw pero la fuente primaria debe ser upstream)
     assert upstream_ref in code, (
         "El nodo de auditoría debe referenciar el normalizador como fuente de canal_origen."
+    )
+
+
+# ---------------------------------------------------------------------------
+# Grupo 16 — Contratos runtime de costura (C-29: c-29-seam-tests)
+#
+# Estos tests codifican la semántica runtime del workflow exportado y HOY
+# FALLAN (fase RED). No corrigen defectos: describen el comportamiento correcto
+# que un change posterior (c-30) debe implementar.
+# ---------------------------------------------------------------------------
+
+HTTP_NODE_TYPE = "n8n-nodes-base.httpRequest"
+AGENT_NODE_TYPE = "@n8n/n8n-nodes-langchain.agent"
+LANGUAGE_MODEL_TYPE_PREFIX = "@n8n/n8n-nodes-langchain.lm"
+SWITCH_NODE_TYPE = "n8n-nodes-base.switch"
+WEBHOOK_NODE_TYPE = "n8n-nodes-base.webhook"
+RESPOND_WEBHOOK_NODE_TYPE = "n8n-nodes-base.respondToWebhook"
+OUTLOOK_TRIGGER_NODE_TYPE = "n8n-nodes-base.microsoftOutlookTrigger"
+
+INCIDENTES_PATH_FRAGMENT = "/api/v1/incidentes"
+
+# Tipos que requieren credenciales para operar (los lm* se resuelven por prefijo).
+CREDENTIAL_REQUIRING_NODE_TYPES = {
+    "n8n-nodes-base.microsoftOutlook",
+    "n8n-nodes-base.microsoftOutlookTrigger",
+    "n8n-nodes-base.twilioTrigger",
+}
+
+# Campos de la respuesta real del backend (IncidenteRead) y subconjunto anidado.
+RESPONSE_SCHEMA_FIELDS = set(IncidenteRead.model_fields.keys())
+
+
+def _annotation_contains_model(annotation: object) -> bool:
+    """True si la anotación referencia directa o indirectamente un modelo Pydantic."""
+    if isinstance(annotation, type) and issubclass(annotation, BaseModel):
+        return True
+    return any(_annotation_contains_model(arg) for arg in get_args(annotation))
+
+
+NESTED_RESPONSE_FIELDS = {
+    name
+    for name, info in IncidenteRead.model_fields.items()
+    if _annotation_contains_model(info.annotation)
+}
+
+_JSON_FIELD_REF_RE = re.compile(r"\$json(?:\?)?\.([A-Za-z_][A-Za-z0-9_]*)")
+_NODE_NAME_REF_RE = re.compile(r"\$\(['\"]([^'\"]+)['\"]\)")
+_BARE_JSON_REF_RE = re.compile(r"\$json(?:\?)?\.[A-Za-z_][A-Za-z0-9_]*")
+_BARE_NODE_REF_RE = re.compile(
+    r"\$\(['\"][^'\"]+['\"]\)\.item(?:\.json)?(?:\?)?\.[A-Za-z_][A-Za-z0-9_]*"
+)
+
+
+def _unwrap_expression(value: object) -> str:
+    """Extrae el cuerpo de una expresión N8N (`={{ ... }}` o `{{ ... }}`)."""
+    text = str(value or "").strip()
+    if text.startswith("="):
+        text = text[1:].strip()
+    match = re.fullmatch(r"\{\{(.*)\}\}", text, re.DOTALL)
+    if match:
+        text = match.group(1).strip()
+    return text
+
+
+def _is_bare_field_reference(value: object) -> bool:
+    """True si la expresión es exactamente la lectura de un campo de datos."""
+    body = _unwrap_expression(value)
+    return bool(_BARE_JSON_REF_RE.fullmatch(body) or _BARE_NODE_REF_RE.fullmatch(body))
+
+
+def _has_numeric_literal(body: str) -> bool:
+    return bool(re.search(r"\d", body))
+
+
+def _expression_mode_switches(by_type: dict[str, list[dict]]) -> list[dict]:
+    return [
+        node
+        for node in by_type.get(SWITCH_NODE_TYPE, [])
+        if node.get("parameters", {}).get("mode") == "expression"
+    ]
+
+
+def _collect_switch_refs(node: dict) -> tuple[set[str], set[str]]:
+    """Campos `$json.*` y nombres de nodos `$('...')` referenciados por el switch."""
+    params = node.get("parameters", {})
+    blobs: list[str] = [str(params.get("output", ""))]
+    rules = params.get("rules", {})
+    values = rules.get("values", []) if isinstance(rules, dict) else []
+    for rule in values:
+        conditions = rule.get("conditions", {})
+        cond_list = conditions.get("conditions", []) if isinstance(conditions, dict) else []
+        for condition in cond_list:
+            blobs.append(str(condition.get("leftValue", "")))
+            blobs.append(str(condition.get("rightValue", "")))
+    joined = "\n".join(blobs)
+    return set(_JSON_FIELD_REF_RE.findall(joined)), set(_NODE_NAME_REF_RE.findall(joined))
+
+
+def _switch_is_routable(node: dict) -> bool:
+    """
+    True si el switch puede enrutar en runtime: en modo expression su salida es un
+    índice numérico y en modo reglas tiene reglas y fallbackOutput definidos.
+    """
+    params = node.get("parameters", {})
+    if params.get("mode") == "expression":
+        output = params.get("output", "")
+        body = _unwrap_expression(output)
+        return _has_numeric_literal(body) and not _is_bare_field_reference(output)
+    rules = params.get("rules", {})
+    values = rules.get("values", []) if isinstance(rules, dict) else []
+    fallback = params.get("fallbackOutput")
+    return bool(values) and fallback not in (None, "", "none")
+
+
+def _reachable_avoiding_broken_switches(wf: dict, start: str, target: str) -> bool:
+    """
+    BFS sobre `connections` que no atraviesa switches no enrutables (roto en runtime).
+    """
+    by_name = {node["name"]: node for node in wf["nodes"]}
+    conns = wf.get("connections", {})
+    visited: set[str] = set()
+    queue = [start]
+    while queue:
+        current = queue.pop(0)
+        if current == target:
+            return True
+        if current in visited:
+            continue
+        visited.add(current)
+        node = by_name.get(current)
+        if (
+            node is not None
+            and node.get("type") == SWITCH_NODE_TYPE
+            and not _switch_is_routable(node)
+        ):
+            continue
+        for output_list in conns.get(current, {}).get("main", []):
+            for edge in output_list:
+                queue.append(edge["node"])
+    return False
+
+
+def _ai_language_model_sources(wf: dict) -> dict[str, list[str]]:
+    """Mapea nodo destino -> tipos de los nodos origen conectados por ai_languageModel."""
+    by_name = {node["name"]: node for node in wf["nodes"]}
+    result: dict[str, list[str]] = {}
+    for source_name, outputs in wf.get("connections", {}).items():
+        for output_list in outputs.get("ai_languageModel", []):
+            for edge in output_list:
+                source_type = by_name.get(source_name, {}).get("type", "")
+                result.setdefault(edge["node"], []).append(source_type)
+    return result
+
+
+def _incidentes_http_nodes(by_type: dict[str, list[dict]]) -> list[dict]:
+    return [
+        node
+        for node in by_type.get(HTTP_NODE_TYPE, [])
+        if INCIDENTES_PATH_FRAGMENT in str(node.get("parameters", {}).get("url", ""))
+    ]
+
+
+def test_c29_incidentes_http_node_declares_authentication():
+    """
+    (a) B-01: el nodo httpRequest hacia /api/v1/incidentes declara autenticación.
+    Hoy no existe el campo `authentication`, por lo que el alta viaja sin JWT y el
+    backend responde 401.
+    """
+    wf = load_workflow()
+    _, by_type = index_nodes(wf)
+
+    nodes = _incidentes_http_nodes(by_type)
+    assert nodes, "No se encontró el nodo httpRequest hacia /api/v1/incidentes"
+
+    for node in nodes:
+        auth = node.get("parameters", {}).get("authentication")
+        assert auth not in (None, "", "none"), (
+            f"El nodo {node['name']!r} no declara autenticación hacia el backend "
+            f"(authentication={auth!r}). B-01: falta el header Authorization/JWT."
+        )
+
+
+def test_c29_incidentes_http_body_includes_canal_origen_id():
+    """
+    (b) B-08: el body del nodo HTTP de persistencia incluye `canal_origen_id`.
+    Hoy sólo contiene `descripcion` y `prioridad`, por lo que el incidente
+    persiste con canal NULL.
+    """
+    wf = load_workflow()
+    _, by_type = index_nodes(wf)
+
+    nodes = _incidentes_http_nodes(by_type)
+    assert nodes, "No se encontró el nodo httpRequest hacia /api/v1/incidentes"
+
+    for node in nodes:
+        body = node.get("parameters", {}).get("body", {})
+        body_str = json.dumps(body) if isinstance(body, (dict, list)) else str(body)
+        assert "canal_origen_id" in body_str, (
+            f"El body del nodo {node['name']!r} no incluye 'canal_origen_id' "
+            f"(body actual: {body_str}). B-08: el incidente queda con canal NULL."
+        )
+
+
+def test_c29_switch_expression_output_is_numeric_index():
+    """
+    (c) B-05: cada switch en `mode: expression` devuelve un índice numérico de rama.
+    Hoy la salida es `$json.canal_origen`, el valor de un campo y no un índice.
+    """
+    wf = load_workflow()
+    _, by_type = index_nodes(wf)
+
+    violations = []
+    for node in _expression_mode_switches(by_type):
+        output = node.get("parameters", {}).get("output", "")
+        body = _unwrap_expression(output)
+        if _is_bare_field_reference(output) or not _has_numeric_literal(body):
+            violations.append(f"{node['name']!r}: output={output!r}")
+
+    assert not violations, (
+        "Switch en modo expression que NO devuelve un índice numérico de rama: "
+        f"{violations}. B-05: la salida actual es el valor de un campo, no un índice."
+    )
+
+
+def test_c29_switch_referenced_fields_are_usable_from_response_or_upstream():
+    """
+    (c) B-05: los campos referenciados por el switch existen en `IncidenteRead` y son
+    usables como valor escalar, o provienen de un nodo aguas arriba existente.
+    Hoy `$json.canal_origen` es el objeto anidado de la respuesta y se compara contra
+    el string `"web"`, por lo que la rama nunca coincide.
+    """
+    wf = load_workflow()
+    by_name, by_type = index_nodes(wf)
+
+    violations = []
+    for node in _expression_mode_switches(by_type):
+        json_fields, node_names = _collect_switch_refs(node)
+        for field in sorted(json_fields):
+            if field not in RESPONSE_SCHEMA_FIELDS:
+                violations.append(
+                    f"{node['name']!r}: $json.{field} no existe en IncidenteRead"
+                )
+            elif field in NESTED_RESPONSE_FIELDS:
+                violations.append(
+                    f"{node['name']!r}: $json.{field} es un objeto anidado del response "
+                    "y se compara contra un string ('web')"
+                )
+        for referenced in sorted(node_names):
+            if referenced not in by_name:
+                violations.append(
+                    f"{node['name']!r}: referencia al nodo inexistente {referenced!r}"
+                )
+
+    assert not violations, (
+        "El switch referencia campos/tipos inválidos: "
+        f"{violations}. B-05: debe rutear sobre el canal normalizado."
+    )
+
+
+def test_c29_agent_nodes_have_ai_language_model_connection():
+    """
+    (d) B-02: cada nodo agent tiene una conexión entrante `ai_languageModel` desde un
+    nodo de modelo de lenguaje. Hoy el AI Agent sólo tiene conexión `ai_memory`.
+    """
+    wf = load_workflow()
+    _, by_type = index_nodes(wf)
+
+    agents = by_type.get(AGENT_NODE_TYPE, [])
+    assert agents, "No se encontró ningún nodo AI Agent en el workflow"
+
+    sources = _ai_language_model_sources(wf)
+    for agent in agents:
+        agent_sources = sources.get(agent["name"], [])
+        assert agent_sources, (
+            f"El nodo {agent['name']!r} no tiene conexión ai_languageModel. "
+            "B-02: el agente sólo tiene conexión ai_memory y no puede ejecutar."
+        )
+        for source_type in agent_sources:
+            assert source_type.startswith(LANGUAGE_MODEL_TYPE_PREFIX), (
+                f"La conexión ai_languageModel del agente {agent['name']!r} proviene "
+                f"de un nodo {source_type!r} que no es un modelo de lenguaje."
+            )
+
+
+def test_c29_agent_prompt_interpolates_trigger_payload():
+    """
+    (e) B-03: el prompt del agente interpola el payload del trigger (`$json`/`$input`).
+    Hoy es un texto estático que no incluye la transcripción ni el correo.
+    """
+    wf = load_workflow()
+    _, by_type = index_nodes(wf)
+
+    agents = by_type.get(AGENT_NODE_TYPE, [])
+    assert agents, "No se encontró ningún nodo AI Agent en el workflow"
+
+    for agent in agents:
+        params = agent.get("parameters", {})
+        prompt = str(params.get("text") or params.get("prompt") or "")
+        assert "$json" in prompt or "$input" in prompt, (
+            f"El prompt del agente {agent['name']!r} es estático y no interpola el "
+            f"payload del trigger ($json/$input). B-03. Prompt actual: {prompt[:120]!r}"
+        )
+
+
+def test_c29_outlook_trigger_exposes_email_body():
+    """
+    (f) B-07: el trigger de Outlook expone el cuerpo del correo que lee el validador.
+    Hoy no declara `output`, por lo que usa el default `simple` (bodyPreview, sin body).
+    """
+    wf = load_workflow()
+    _, by_type = index_nodes(wf)
+
+    triggers = by_type.get(OUTLOOK_TRIGGER_NODE_TYPE, [])
+    assert triggers, "No se encontró el trigger de Microsoft Outlook"
+
+    for trigger in triggers:
+        params = trigger.get("parameters", {})
+        output_mode = params.get("output", "simple")
+        assert output_mode == "fields", (
+            f"El trigger {trigger['name']!r} usa output={output_mode!r} (default 'simple'), "
+            "que expone bodyPreview pero no body. B-07: configurar output='fields'."
+        )
+        fields = params.get("fields", [])
+        assert "body" in fields, (
+            f"El trigger {trigger['name']!r} no selecciona el campo 'body' en 'fields' "
+            f"(fields actuales: {fields!r}). B-07: la descripción del correo no es legible."
+        )
+
+
+def test_c29_webhook_response_node_has_reachable_responder():
+    """
+    (g) B-06: todo webhook con `responseMode: responseNode` alcanza un `respondToWebHook`
+    sin atravesar un switch roto en runtime. Hoy el único camino depende del Switch
+    `Rutear por canal de origen`, que no enruta, por lo que el cliente queda sin respuesta.
+    """
+    wf = load_workflow()
+    _, by_type = index_nodes(wf)
+
+    webhooks = [
+        node
+        for node in by_type.get(WEBHOOK_NODE_TYPE, [])
+        if node.get("parameters", {}).get("responseMode") == "responseNode"
+    ]
+    assert webhooks, "No se encontró ningún webhook con responseMode=responseNode"
+
+    responders = {node["name"] for node in by_type.get(RESPOND_WEBHOOK_NODE_TYPE, [])}
+    assert responders, "No se encontró ningún nodo respondToWebHook en el workflow"
+
+    for hook in webhooks:
+        reachable = any(
+            _reachable_avoiding_broken_switches(wf, hook["name"], responder)
+            for responder in responders
+        )
+        assert reachable, (
+            f"El webhook {hook['name']!r} no alcanza ningún respondToWebHook sin "
+            "atravesar el switch roto de canal. B-06: el cliente queda sin respuesta."
+        )
+
+
+def test_c29_credential_requiring_nodes_declare_credentials():
+    """
+    (h) Los nodos que requieren credenciales (Outlook, trigger de Twilio, modelos de
+    lenguaje) declaran su credencial. Hoy ningún nodo del workflow declara credenciales.
+    """
+    wf = load_workflow()
+
+    violations = []
+    for node in wf["nodes"]:
+        node_type = node.get("type", "")
+        requires = (
+            node_type in CREDENTIAL_REQUIRING_NODE_TYPES
+            or node_type.startswith(LANGUAGE_MODEL_TYPE_PREFIX)
+        )
+        if not requires:
+            continue
+        credentials = node.get("credentials")
+        if not isinstance(credentials, dict) or not credentials:
+            violations.append(f"{node['name']!r} ({node_type})")
+
+    assert not violations, (
+        f"Nodos que requieren credenciales y no las declaran: {violations}. "
+        "El workflow depende de credenciales implícitas/ausentes."
+    )
+
+
+# ---------------------------------------------------------------------------
+# Grupo 17 — Dedupe de correos duplicados (tarea 6.5, opcion b)
+#
+# Sospecha confirmada: el trigger de Outlook no deduplicaba; dos correos
+# identicos creaban dos incidentes. Opcion (b): recolectar solo no leidos
+# (readStatus=unread) y marcar como leido el mensaje ya convertido en incidente.
+# ---------------------------------------------------------------------------
+
+OUTLOOK_TRIGGER_NAME = "Llega un email a Mesa de Ayuda"
+OUTLOOK_APP_NODE_TYPE = "n8n-nodes-base.microsoftOutlook"
+MARK_READ_NODE_NAME = "Marcar correo como leido"
+
+
+def test_outlook_trigger_filters_unread_only():
+    """
+    RED (6.5): el trigger de Outlook debe declarar `filters.readStatus = 'unread'`.
+    Sin el filtro, el polling re-recolecta correos ya procesados y crea duplicados.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    trigger = by_name[OUTLOOK_TRIGGER_NAME]
+    filters = trigger.get("parameters", {}).get("filters", {})
+    assert filters.get("readStatus") == "unread", (
+        f"El trigger {OUTLOOK_TRIGGER_NAME!r} no filtra por readStatus='unread' "
+        f"(filters={filters!r}). Sin el filtro se re-recolectan correos procesados."
+    )
+
+
+def test_outlook_trigger_exposes_message_id():
+    """
+    RED (6.5): el trigger debe exponer el `id` del mensaje para que aguas abajo
+    el nodo de marcado pueda resolver el messageId. En output='fields' eso exige
+    incluir 'id' en la lista de fields.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    trigger = by_name[OUTLOOK_TRIGGER_NAME]
+    fields = trigger.get("parameters", {}).get("fields", [])
+    assert "id" in fields, (
+        f"El trigger {OUTLOOK_TRIGGER_NAME!r} no expone 'id' (fields={fields!r}); "
+        "el nodo que marca como leido no puede resolver el messageId."
+    )
+
+
+def test_mark_read_node_exists_and_marks_message_read():
+    """
+    RED (6.5): debe existir un nodo Microsoft Outlook que marque el correo como
+    leido (operacion 'update' de Message con updateFields.isRead=true) usando el
+    id provisto por el trigger.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    assert MARK_READ_NODE_NAME in by_name, (
+        f"No existe el nodo {MARK_READ_NODE_NAME!r} que marque el correo como leido"
+    )
+    node = by_name[MARK_READ_NODE_NAME]
+    assert node.get("type") == OUTLOOK_APP_NODE_TYPE, (
+        f"{MARK_READ_NODE_NAME!r} debe ser {OUTLOOK_APP_NODE_TYPE!r}, got {node.get('type')!r}"
+    )
+
+    params = node.get("parameters", {})
+    assert params.get("operation") == "update", (
+        f"{MARK_READ_NODE_NAME!r} debe usar operation='update', got {params.get('operation')!r}"
+    )
+    assert params.get("updateFields", {}).get("isRead") is True, (
+        f"{MARK_READ_NODE_NAME!r} no marca isRead=true "
+        f"(updateFields={params.get('updateFields')!r})"
+    )
+
+    message_id = params.get("messageId")
+    assert isinstance(message_id, dict) and OUTLOOK_TRIGGER_NAME in str(message_id.get("value", "")), (
+        f"{MARK_READ_NODE_NAME!r} no resuelve el messageId desde {OUTLOOK_TRIGGER_NAME!r} "
+        f"(messageId={message_id!r})"
+    )
+
+
+def test_mark_read_runs_after_incident_creation_for_correo():
+    """
+    TRIANGULATE (6.5): el marcado como leido debe ser alcanzable desde la
+    persistencia (HTTP POST), en la rama correo del switch, y la confirmacion
+    debe seguir recibiendo el item del alta.
+
+    El nodo de marcado es una hoja: si alimentara a la confirmacion, el
+    `$json.id` de la confirmacion pasaria a ser el id del mensaje de Outlook
+    en lugar del id del incidente (regresion).
+    """
+    wf = load_workflow()
+    assert _connections_reachable(wf, HTTP_NODE_CORREO, MARK_READ_NODE_NAME), (
+        f"{MARK_READ_NODE_NAME!r} no es alcanzable desde {HTTP_NODE_CORREO!r}: "
+        "debe marcar el correo despues de crear el incidente."
+    )
+    assert _get_successors(wf, MARK_READ_NODE_NAME) == [], (
+        f"{MARK_READ_NODE_NAME!r} no debe alimentar la confirmacion: cambiaria el "
+        "item de entrada (id del mensaje en vez de id del incidente)."
+    )
+    assert _connections_reachable(wf, HTTP_NODE_CORREO, EMAIL_CONFIRM_NODE_NAME), (
+        f"{EMAIL_CONFIRM_NODE_NAME!r} dejo de ser alcanzable desde {HTTP_NODE_CORREO!r}"
     )

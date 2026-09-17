@@ -30,7 +30,7 @@ export interface HealthResponse {
 
 /** Crea un nuevo incidente y dispara la clasificación automática del pipeline híbrido. */
 export async function crearIncidente(payload: IncidenteCreate): Promise<IncidenteRead> {
-  const { data } = await apiClient.post<IncidenteRead>('/incidentes', payload);
+  const { data } = await apiClient.post<IncidenteRead>('/incidentes/', payload);
   return data;
 }
 
@@ -38,7 +38,7 @@ export async function crearIncidente(payload: IncidenteCreate): Promise<Incident
 export async function listarIncidentes(
   params: IncidenteListParams = {}
 ): Promise<IncidenteListItem[]> {
-  const { data } = await apiClient.get<IncidenteListItem[]>('/incidentes', { params });
+  const { data } = await apiClient.get<IncidenteListItem[]>('/incidentes/', { params });
   return data;
 }
 
