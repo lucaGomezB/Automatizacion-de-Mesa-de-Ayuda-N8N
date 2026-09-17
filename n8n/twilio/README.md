@@ -60,7 +60,7 @@ La mas simple. Sin infraestructura adicional.
 1. Ir a **Develop > TwiML > TwiML Bins** en la consola Twilio
 2. Crear un nuevo TwiML Bin con el boton `+`
 3. Copiar y pegar el contenido completo de `n8n/twilio/twiml.xml`
-4. Reemplazar `TU_DOMINIO` por la URL real del webhook N8N
+4. No hay dominios placeholder en el TwiML; la transcripcion llega por Twilio Event Streams al trigger de N8N
 5. Guardar: Twilio genera una URL publica (ej. `https://handler.twilio.com/twiml/EH...`)
 6. Usar esa URL como **A call comes in** en la configuracion del numero
 
@@ -97,10 +97,7 @@ Para pruebas locales sin exponer N8N a internet:
    ngrok http 5678
    ```
 3. Copiar la URL publica de ngrok (ej. `https://abc123.ngrok.io`)
-4. Reemplazar `TU_DOMINIO` en `twiml.xml` por la URL de ngrok:
-   ```
-   transcribeCallback="https://abc123.ngrok.io/webhook/twilio-transcripcion"
-   ```
+4. Configurar el sink de Twilio Event Streams hacia la URL publica de ngrok + `/webhook/58ea83d3-fa0a-4c88-8708-0c43794027c7` (webhook del trigger de N8N). El TwiML no contiene `transcribeCallback` legacy.
 5. Configurar el webhook de voz del numero Twilio con la URL del TwiML (puede ser el mismo ngrok si se usa Opcion C, o un TwiML Bin)
 6. Llamar al numero Twilio y verificar que el flujo funciona
 
@@ -142,7 +139,7 @@ Reproduce <Say> bienvenida (espanol rioplatense, Polly.Mia-Neural)
 Reproduce <Say> despedida
         │
         ▼
-Twilio transcribe ──► POST transcribeCallback ──► N8N twilioTrigger
+Twilio Event Streams ──► POST call-summary.complete ──► N8N twilioTrigger
         │
         ▼
 N8N: AI Agent (LangChain) + Redis ──► POST /api/v1/incidentes ──► FastAPI

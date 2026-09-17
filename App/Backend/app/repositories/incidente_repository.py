@@ -133,6 +133,33 @@ class IncidenteRepository(BaseRepository[Incidente]):
         result = await self._session.execute(stmt)
         return list(result.scalars().all())
 
+    async def apply_classification(
+        self,
+        incidente: Incidente,
+        *,
+        sector_id: int | None,
+        sectores_adicionales: list,
+        requiere_revision_humana: bool,
+    ) -> None:
+        """
+        Aplica el resultado de la clasificacion sobre un incidente persistido.
+
+        Centraliza la escritura del sector principal, los sectores adicionales
+        (contrato multietiqueta C-27) y la bandera de revision humana, de modo
+        que la capa de servicio no manipule el ORM ni la sesion directamente.
+
+        Args:
+            incidente:                Instancia ORM ya persistida.
+            sector_id:                ID del sector principal predicho (o None).
+            sectores_adicionales:     Instancias de Sector adicionales predichas.
+            requiere_revision_humana: Bandera de revision humana del resultado.
+        """
+        incidente.sector_id = sector_id
+        incidente.requiere_revision_humana = requiere_revision_humana
+        incidente.sectores_adicionales = sectores_adicionales
+        self._session.add(incidente)
+        await self._session.flush()
+
     async def update_fields(self, incidente_id: int, **kwargs) -> Incidente:
         """
         Actualiza dinámicamente los campos especificados de un incidente.

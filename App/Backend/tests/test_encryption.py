@@ -15,7 +15,7 @@ Clave de prueba generada con: Fernet.generate_key().decode()
 """
 
 import pytest
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet, InvalidToken
 from unittest.mock import MagicMock
 
 from app.config.settings import get_settings
@@ -123,3 +123,50 @@ class TestEncryptedTextRoundTrip:
         assert ciphertext is not None
         decrypted = _type.process_result_value(ciphertext, _dialect)
         assert decrypted == ""
+
+
+class TestFernetCacheRotation:
+    """El cache lazy de `_get_fernet` debe seguir la clave configurada."""
+
+    def test_get_fernet_reutiliza_instancia_si_la_clave_no_cambia(
+        self, monkeypatch
+    ) -> None:
+        """Con la misma clave, `_get_fernet` devuelve la misma instancia cacheada."""
+        import app.utils.encryption as enc
+
+        settings = MagicMock()
+        settings.pseudonymization_encryption_key = _TEST_FERNET_KEY
+        monkeypatch.setattr("app.utils.encryption.get_settings", lambda: settings)
+        enc._fernet_instance = None
+        enc._fernet_key = None
+
+        assert enc._get_fernet() is enc._get_fernet()
+
+    def test_get_fernet_invalida_cache_al_rotar_la_clave(self, monkeypatch) -> None:
+        """
+        Si la clave configurada cambia (rotación), la instancia cacheada debe
+        descartarse y reconstruirse con la clave nueva. Hoy el cache es global
+        y quedaba stale, por lo que la rotación se ignoraba.
+        """
+        import app.utils.encryption as enc
+
+        key_a = Fernet.generate_key().decode()
+        key_b = Fernet.generate_key().decode()
+
+        settings = MagicMock()
+        settings.pseudonymization_encryption_key = key_a
+        monkeypatch.setattr("app.utils.encryption.get_settings", lambda: settings)
+        enc._fernet_instance = None
+        enc._fernet_key = None
+
+        f_a = enc._get_fernet()
+        ciphertext_a = f_a.encrypt(b"secreto")
+
+        # Rotación: la configuración pasa a exponer la clave nueva.
+        settings.pseudonymization_encryption_key = key_b
+        f_b = enc._get_fernet()
+
+        assert f_b is not f_a
+        assert f_b.decrypt(Fernet(key_b).encrypt(b"secreto")) == b"secreto"
+        with pytest.raises(InvalidToken):
+            f_b.decrypt(ciphertext_a)

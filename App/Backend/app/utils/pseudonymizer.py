@@ -68,6 +68,8 @@ _RE_EMAIL = re.compile(
 # TELEFONO: formatos argentinos.
 # Cubre: +54 261 555-1234 / (261) 555 1234 / 2615551234 / 261 555 1234
 # Exige al menos 8 dígitos totales para evitar capturar números cortos.
+# El tramo local final acepta 4+ dígitos (`\d{4,}`) para absorber corridas
+# contiguas más largas (p. ej. "261 555 12345") sin dejar un dígito huérfano.
 _RE_TELEFONO = re.compile(
     r"""
     (?:
@@ -80,7 +82,7 @@ _RE_TELEFONO = re.compile(
         # Número local: 6-8 dígitos, con separadores opcionales
         \d{3,4}
         [\s\-]?
-        \d{4}
+        \d{4,}
     )
     """,
     re.VERBOSE,
@@ -140,6 +142,66 @@ _EXCLUSION_PERSONA: frozenset[str] = frozenset({
     # Días de la semana
     "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo",
 })
+
+# Allowlist de términos técnicos, productos y marcas (D8 / BE B4).
+# La heurística de [PERSONA] exige 2+ palabras capitalizadas, por lo que los
+# productos multi-palabra ("Windows Server", "Active Directory", "SQL Server",
+# "Google Chrome") caían en el enmascaramiento y degradaban la clasificación.
+# Estos términos se preservan, sin afectar el enmascaramiento de nombres reales.
+_TECHNICAL_TERMS: frozenset[str] = frozenset({
+    # Frases completas frecuentes (match exacto del patrón de persona)
+    "Windows Server",
+    "Windows Server 2019",
+    "Active Directory",
+    "SQL Server",
+    "Google Chrome",
+    "Microsoft Windows Server",
+    "Internet Explorer",
+    "Microsoft Office",
+    "Windows Defender",
+    "Power BI",
+    # Tokens técnicos: permiten eximir frases compuestas solo por ellos
+    "Windows",
+    "Server",
+    "Active",
+    "Directory",
+    "SQL",
+    "Google",
+    "Chrome",
+    "Microsoft",
+    "Office",
+    "Explorer",
+    "Defender",
+    "Power",
+    "BI",
+    "Linux",
+    "Docker",
+    "Kubernetes",
+})
+
+
+def _is_excluded_persona(matched_text: str) -> bool:
+    """
+    Determina si un match de la heurística de persona debe preservarse.
+
+    Un término se preserva si:
+        - está en la lista de exclusión (sectores canónicos, meses, etc.), o
+        - está en la allowlist de términos técnicos/productos/marcas, o
+        - está compuesto enteramente por tokens técnicos conocidos
+          (por ejemplo "Windows Server 2019" o "Microsoft Active Directory").
+
+    Args:
+        matched_text: Texto capturado por el patrón de persona.
+
+    Returns:
+        True si el texto debe conservarse tal cual; False si debe enmascararse.
+    """
+    if matched_text in _EXCLUSION_PERSONA:
+        return True
+    if matched_text in _TECHNICAL_TERMS:
+        return True
+    tokens = matched_text.split()
+    return bool(tokens) and all(token in _TECHNICAL_TERMS for token in tokens)
 
 
 def _build_host_pattern(internal_domains: list[str]) -> re.Pattern | None:
@@ -205,7 +267,7 @@ def pseudonymize(text: str, internal_domains: list[str]) -> PseudonymizationResu
     # 4. PERSONA — heurística regex con lista de exclusión
     def _replace_persona(match: re.Match) -> str:
         matched_text = match.group(0)
-        if matched_text in _EXCLUSION_PERSONA:
+        if _is_excluded_persona(matched_text):
             return matched_text
         # Excluir si es una etiqueta ya insertada (ej. [EMAIL])
         if matched_text.startswith("[") and matched_text.endswith("]"):

@@ -90,3 +90,31 @@ def test_generation_config_preserva_parametros_calibrados(classifier) -> None:
     assert config.top_p == 0.9
     assert config.max_output_tokens == 100
     assert config.candidate_count == 1
+
+
+# ── BE B7: cliente Gemini compartido y cerrado en el ciclo de vida ────────────
+
+
+def test_genai_client_es_reutilizado_entre_instancias(classifier, monkeypatch) -> None:
+    """
+    Dos clasificadores construidos en el mismo proceso comparten la misma
+    instancia de `genai.Client` (no se crea un cliente por request).
+    """
+    from app.classifiers import gemini_classifier as module
+
+    monkeypatch.setattr(module, "get_settings", lambda: Settings(**_REQUIRED_FIELDS))
+    otro = module.GeminiClassifier()
+
+    assert classifier._client is otro._client
+
+
+async def test_close_genai_client_es_idempotente(classifier) -> None:
+    """
+    El cierre del cliente compartido libera la referencia y puede invocarse
+    mas de una vez sin lanzar excepcion.
+    """
+    from app.classifiers import gemini_classifier as module
+
+    await module.close_genai_client()
+    await module.close_genai_client()
+

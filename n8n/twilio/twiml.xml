@@ -6,11 +6,13 @@
         Cuando termines, presiona numeral.
         Tenes hasta cuarenta y cinco segundos.
     </Say>
+    <!-- La transcripcion se entrega por Twilio Event Streams
+         (com.twilio.voice.insights.call-summary.complete) al trigger de N8N.
+         No se usa el transcribeCallback legacy ni se embebe un dominio placeholder. -->
     <Record
         maxLength="45"
         finishOnKey="#"
         transcribe="true"
-        transcribeCallback="https://TU_DOMINIO/webhook/twilio-transcripcion"
         playBeep="true"
     />
     <Say voice="Polly.Mia-Neural" language="es-US">

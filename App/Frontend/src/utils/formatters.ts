@@ -21,6 +21,20 @@ export function formatearFecha(isoString: string): string {
   }).format(new Date(isoString));
 }
 
+/**
+ * Formatea una fecha como "YYYY-MM-DD" usando los componentes de la zona horaria
+ * LOCAL del usuario.
+ *
+ * No usa `toISOString()` porque esa conversion a UTC desplaza un dia despues de
+ * las 21:00 en UTC-3 (FE 5).
+ */
+export function formatearFechaLocal(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 /** Convierte la confianza del clasificador (0.0–1.0) a porcentaje legible: "87%". */
 export function formatearConfianza(confianza: number): string {
   return `${Math.round(confianza * 100)}%`;

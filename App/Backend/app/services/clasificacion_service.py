@@ -128,9 +128,7 @@ class ClasificacionService:
             faltantes = [n for n in sectores_adicionales if n not in adjuntos]
             if faltantes:
                 raise EntityNotFoundError("Sector", ", ".join(faltantes))
-            log.sectores_validados = list(adjuntos.values())
-            self._repo._session.add(log)
-            await self._repo._session.flush()
+            await self._repo.set_sectores_validados(log, list(adjuntos.values()))
             log = await self._repo.get_with_relations(log_id)
 
         # Propagar el veredicto al incidente en la misma transacción: el ticket
