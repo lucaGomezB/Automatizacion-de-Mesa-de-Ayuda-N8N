@@ -1289,6 +1289,9 @@ def test_no_orphan_executable_nodes():
         "Llega un email a Mesa de Ayuda",
         "Llamada telefonica",
         WEBHOOK_WEB_NODE_NAME,
+        # C-33 (D7): el webhook dedicado de notificacion es un trigger propio;
+        # su subgrafo no crea incidentes y es intencionalmente no-op.
+        "notificacion-clasificacion",
     ]
 
     # Calcular todos los nodos alcanzables desde los triggers (BFS unificado)
@@ -1998,4 +2001,284 @@ def test_mark_read_runs_after_incident_creation_for_correo():
     )
     assert _connections_reachable(wf, HTTP_NODE_CORREO, EMAIL_CONFIRM_NODE_NAME), (
         f"{EMAIL_CONFIRM_NODE_NAME!r} dejo de ser alcanzable desde {HTTP_NODE_CORREO!r}"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Grupo 18 — Guardas de costo C-33 (change c-33-cost-guards)
+#
+# Contratos estructurales de:
+#   * N8N-REFINE-001: tope de refinamiento del agente pago + salida terminal.
+#   * N8N-EMAIL-LIFECYCLE-001: marcado del correo en todas las ramas terminales.
+#   * N8N-BACKLOG-001: lookback de 24 h en el trigger de Outlook.
+#   * N8N-INTAKE-001: Message-ID + clasificacion precalculada + marcador de origen.
+#   * Destino de notificacion dedicado que no crea incidentes.
+# ---------------------------------------------------------------------------
+
+AI_AGENT_NODE_NAME = "AI Agent"
+IF_TOPE_NODE_NAME = "Tope de refinamiento alcanzado"
+DERIVAR_NODE_NAME = "Derivar a revision humana"
+IF_ES_CORREO_NODE_NAME = "Es correo?"
+WEBHOOK_NOTIF_NODE_NAME = "notificacion-clasificacion"
+NOTIF_WEBHOOK_PATH = "notificacion-clasificacion"
+IF_IA_VALIDA_NODE_NAME = "La clasificacion de la IA es valida"
+
+
+def _output_successors(wf: dict, node_name: str, output_index: int) -> list[str]:
+    """Sucesores directos de `node_name` por la salida `main` de indice dado."""
+    conns = wf.get("connections", {}).get(node_name, {}).get("main", [])
+    if output_index >= len(conns):
+        return []
+    return [edge["node"] for edge in conns[output_index]]
+
+
+def _branch_reaches(wf: dict, if_node: str, branch_index: int, target: str) -> bool:
+    """True si algun sucesor directo de la rama dada alcanza `target`."""
+    return any(
+        _connections_reachable(wf, succ, target)
+        for succ in _output_successors(wf, if_node, branch_index)
+    )
+
+
+# ── N8N-REFINE-001: tope de refinamiento ────────────────────────────────────
+
+
+def test_c33_agent_declares_explicit_iteration_cap():
+    """
+    RED (1.1): el nodo `AI Agent` declara un tope explicito de iteraciones
+    (options.maxIterations == 2) y el nodo validador incrementa un contador
+    explicito `intento_agente`.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    assert AI_AGENT_NODE_NAME in by_name, "No existe el nodo 'AI Agent'"
+    agent = by_name[AI_AGENT_NODE_NAME]
+    options = agent.get("parameters", {}).get("options", {})
+    assert options.get("maxIterations") == 2, (
+        f"El nodo 'AI Agent' no declara options.maxIterations=2 (options={options!r})"
+    )
+
+    assert CODE_NODE_TELEFONIA in by_name
+    telefono_code = by_name[CODE_NODE_TELEFONIA]["parameters"].get("jsCode", "")
+    assert "intento_agente" in telefono_code, (
+        "El nodo 'Se verifica lo que trajo la IA' no contabiliza 'intento_agente'"
+    )
+    assert "+ 1" in telefono_code, (
+        "El contador 'intento_agente' no se incrementa en el validador de telefonia"
+    )
+
+
+def test_c33_topping_if_routes_to_terminal_not_back_to_agent():
+    """
+    RED (1.1): existe el IF 'Tope de refinamiento alcanzado' con condicion sobre
+    `intento_agente`; su rama false va al terminal y el terminal NO reingresa al
+    agente pago.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    assert IF_TOPE_NODE_NAME in by_name, (
+        f"No existe el IF '{IF_TOPE_NODE_NAME}'"
+    )
+    topping = by_name[IF_TOPE_NODE_NAME]
+    assert topping["type"] == "n8n-nodes-base.if"
+    conditions_str = json.dumps(topping.get("parameters", {}).get("conditions", {}))
+    assert "intento_agente" in conditions_str, (
+        "El IF de tope no evalua el contador 'intento_agente'"
+    )
+
+    # La rama de agotamiento (false) desemboca en el terminal.
+    assert DERIVAR_NODE_NAME in _output_successors(wf, IF_TOPE_NODE_NAME, 1), (
+        f"La rama false de '{IF_TOPE_NODE_NAME}' no va a '{DERIVAR_NODE_NAME}'"
+    )
+    # El terminal no reingresa al agente pago.
+    assert not _connections_reachable(wf, DERIVAR_NODE_NAME, AI_AGENT_NODE_NAME), (
+        f"'{DERIVAR_NODE_NAME}' reingresa al AI Agent: gasto pago sin tope"
+    )
+
+    # El refinamiento dentro del tope se conserva (rama true -> AI Agent).
+    assert AI_AGENT_NODE_NAME in _output_successors(wf, IF_TOPE_NODE_NAME, 0), (
+        f"La rama de refinamiento de '{IF_TOPE_NODE_NAME}' no reingresa al AI Agent"
+    )
+    # La clasificacion invalida ya no va directo al agente.
+    assert AI_AGENT_NODE_NAME not in _output_successors(wf, IF_IA_VALIDA_NODE_NAME, 1), (
+        "La rama false de 'La clasificacion de la IA es valida' sigue yendo directo al agente"
+    )
+
+
+def test_c33_terminal_sets_forced_human_review_and_reaches_persistence():
+    """
+    RED (1.2): el nodo terminal fija confianza=0.0, requiere_revision_humana=true
+    y alcanza el HTTP de persistencia sin volver al agente.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    assert DERIVAR_NODE_NAME in by_name, f"No existe '{DERIVAR_NODE_NAME}'"
+    node = by_name[DERIVAR_NODE_NAME]
+    assert node["type"] == "n8n-nodes-base.code"
+    code = node["parameters"].get("jsCode", "")
+
+    assert "0.0" in code, "El terminal no fija confianza=0.0"
+    assert "requiere_revision_humana" in code and "true" in code, (
+        "El terminal no marca requiere_revision_humana=true"
+    )
+    assert "revision_forzada" in code, (
+        "El terminal no marca revision_forzada para la persistencia"
+    )
+    assert "telefonia" in code, (
+        "El terminal no conserva canal_raw='telefonia'"
+    )
+    assert _connections_reachable(wf, DERIVAR_NODE_NAME, HTTP_NODE_CORREO), (
+        f"'{DERIVAR_NODE_NAME}' no alcanza '{HTTP_NODE_CORREO}'"
+    )
+
+
+# ── N8N-EMAIL-LIFECYCLE-001: marcado en todas las ramas ─────────────────────
+
+
+def test_c33_reject_branch_reaches_mark_read_with_channel_guard():
+    """
+    RED (1.3): la rama de rechazo alcanza 'Marcar correo como leido' y el camino
+    pasa por la guarda de canal 'Es correo?'.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    assert IF_ES_CORREO_NODE_NAME in by_name, f"No existe la guarda '{IF_ES_CORREO_NODE_NAME}'"
+    guard = by_name[IF_ES_CORREO_NODE_NAME]
+    conditions_str = json.dumps(guard.get("parameters", {}).get("conditions", {}))
+    assert "canal_origen" in conditions_str and "correo" in conditions_str, (
+        "La guarda no evalua canal_origen == 'correo'"
+    )
+
+    # La rama false del IF de validacion (rechazo) alcanza el marcado.
+    assert _branch_reaches(wf, IF_NODE_CORREO, 1, MARK_READ_NODE_NAME), (
+        "La rama de rechazo no alcanza 'Marcar correo como leido'"
+    )
+    # La guarda desemboca en el marcado.
+    assert MARK_READ_NODE_NAME in _get_successors(wf, IF_ES_CORREO_NODE_NAME), (
+        f"'{IF_ES_CORREO_NODE_NAME}' no desemboca en '{MARK_READ_NODE_NAME}'"
+    )
+
+
+def test_c33_error_branch_declares_continue_error_output_and_reaches_mark_read():
+    """
+    RED (1.4): el nodo de persistencia declara onError=continueErrorOutput y su
+    salida de error alcanza el marcado del correo (con guarda de canal).
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    http = by_name[HTTP_NODE_CORREO]
+    assert http.get("onError") == "continueErrorOutput", (
+        f"'{HTTP_NODE_CORREO}' no declara onError=continueErrorOutput (onError={http.get('onError')!r})"
+    )
+    error_successors = _output_successors(wf, HTTP_NODE_CORREO, 1)
+    assert error_successors, "La salida de error del HTTP POST no esta cableada"
+    assert IF_ES_CORREO_NODE_NAME in error_successors, (
+        f"La salida de error no pasa por la guarda '{IF_ES_CORREO_NODE_NAME}'"
+    )
+    assert any(
+        _connections_reachable(wf, succ, MARK_READ_NODE_NAME)
+        for succ in error_successors
+    ), "La salida de error no alcanza 'Marcar correo como leido'"
+
+    # La rama de exito se conserva.
+    assert _connections_reachable(wf, HTTP_NODE_CORREO, MARK_READ_NODE_NAME)
+
+
+# ── N8N-BACKLOG-001: lookback de 24 h ───────────────────────────────────────
+
+
+def test_c33_outlook_trigger_has_24h_lookback():
+    """
+    RED (1.5): el trigger de Outlook declara un filtro de fecha `receivedDateTime`
+    con lookback de 24 horas, conservando readStatus='unread'.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    trigger = by_name[OUTLOOK_TRIGGER_NAME]
+    filters = trigger.get("parameters", {}).get("filters", {})
+    assert filters.get("readStatus") == "unread", (
+        "El trigger dejo de filtrar por readStatus='unread'"
+    )
+    custom = str(filters.get("custom", ""))
+    assert "receivedDateTime" in custom, (
+        f"El trigger no declara filtro sobre receivedDateTime (filters={filters!r})"
+    )
+    assert "24" in custom, "El lookback declarado no es de 24 horas"
+    assert any(token in custom for token in ("60 * 60", "60*60", "86400", "h * 60")), (
+        "El lookback no expresa 24 horas de forma verificable (se esperaba h*60*60)"
+    )
+
+
+# ── N8N-INTAKE-001: payload enriquecido ─────────────────────────────────────
+
+
+def test_c33_http_body_sends_message_id_classification_and_origin_marker():
+    """
+    RED (1.6): el body del HTTP POST incluye `origen_message_id`, el bloque de
+    clasificacion precalculada y un marcador explicito de origen/evento.
+    """
+    wf = load_workflow()
+    _, by_type = index_nodes(wf)
+
+    nodes = _incidentes_http_nodes(by_type)
+    assert nodes, "No se encontro el HTTP POST a /api/v1/incidentes"
+    body = nodes[0].get("parameters", {}).get("body", {})
+    body_str = json.dumps(body) if isinstance(body, dict) else str(body)
+
+    assert "origen_message_id" in body_str, (
+        "El body no envia 'origen_message_id' (Message-ID de Outlook)"
+    )
+    assert "clasificacion" in body_str, (
+        "El body no envia el bloque de clasificacion precalculada"
+    )
+    assert "sector_predicho" in body_str and "confianza" in body_str, (
+        "El bloque de clasificacion no transporta sector_predicho/confianza"
+    )
+    assert "origen_evento" in body_str, (
+        "El body no envia un marcador explicito de origen/evento"
+    )
+    assert "creacion" in body_str or "incidente" in body_str, (
+        "El marcador de origen no identifica un evento de creacion de incidente"
+    )
+
+
+# ── Destino de notificacion dedicado ────────────────────────────────────────
+
+
+def test_c33_dedicated_notification_webhook_does_not_create_incidents():
+    """
+    RED (1.7): existe un webhook con ruta distinta de 'incidente-web' que NO
+    esta conectado a la creacion de incidentes.
+    """
+    wf = load_workflow()
+    by_name, by_type = index_nodes(wf)
+
+    webhooks = by_type.get(WEBHOOK_NODE_TYPE, [])
+    notif_nodes = [
+        n for n in webhooks
+        if n.get("parameters", {}).get("path") == NOTIF_WEBHOOK_PATH
+    ]
+    assert notif_nodes, (
+        f"No existe un webhook con path={NOTIF_WEBHOOK_PATH!r}. "
+        f"Webhooks encontrados: {[n.get('parameters', {}).get('path') for n in webhooks]}"
+    )
+    notif_node = notif_nodes[0]
+    assert notif_node["parameters"]["path"] != "incidente-web", (
+        "El webhook de notificacion reutiliza la ruta de alta de incidentes"
+    )
+    assert notif_node.get("parameters", {}).get("responseMode") != "responseNode", (
+        "El webhook de notificacion no debe depender de un responder de webhook"
+    )
+
+    assert not _connections_reachable(wf, notif_node["name"], HTTP_NODE_CORREO), (
+        "El webhook de notificacion alcanza la creacion de incidentes"
+    )
+    assert not _connections_reachable(wf, notif_node["name"], NORMALIZER_NODE_NAME), (
+        "El webhook de notificacion alcanza el normalizador de alta"
     )

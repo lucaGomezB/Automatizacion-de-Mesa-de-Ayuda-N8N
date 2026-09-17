@@ -66,7 +66,7 @@ Se agrega `origen_message_id: Mapped[str | None]` (`String(255)`, `unique=True`,
 
 ### D6 — Validacion estricta de lo provisto y rechazo de eventos que no crean incidentes
 
-Los validadores del schema rechazan un `sector_predicho` presente fuera del conjunto canonico y una `confianza` presente fuera de `[0.0, 1.0]`. El endpoint rechaza con 422 un `origen_evento` cuyo valor no sea de creacion de incidente (por ejemplo `notificacion`); un payload sin marcador se trata como alta directa.
+Los validadores del schema rechazan un `sector_predicho` presente fuera del conjunto canonico y una `confianza` presente fuera de `[0.0, 1.0]`. El endpoint rechaza con 422 un `origen_evento` cuyo valor no sea de creacion de incidente (por ejemplo `notificacion`); un payload sin marcador se trata como alta directa. El `origen_evento` validado se persiste en la fila creada (columna nullable de la migracion 005); el reintento idempotente no lo reescribe.
 
 - **Razon**: la validacion en el borde evita que un emisor con un contrato roto omita la clasificacion server-side con datos invalidos, y el marcador de evento es la barrera explicita contra el bucle backend -> N8N -> backend.
 - **Alternativas consideradas**: confiar en el emisor — descartado porque el objetivo del change es precisamente no confiar en la disciplina externa.
@@ -90,7 +90,7 @@ Se agrega al workflow un webhook dedicado (`path: "notificacion-clasificacion"`)
 
 ## Migration Plan
 
-1. Backend: agregar la migracion `005` (`origen_message_id` UNIQUE nullable), el campo en el modelo, el metodo del repositorio, los schemas y la rama del servicio; extender `ClasificacionEtapa` con `"precalculada"`.
+1. Backend: agregar la migracion `005` (`origen_message_id` UNIQUE nullable + `origen_evento` nullable sin unicidad), los campos en el modelo, el metodo del repositorio, los schemas y la rama del servicio; extender `ClasificacionEtapa` con `"precalculada"`. La columna `origen_evento` viaja en la misma revision 005 para satisfacer el escenario "Evento de creacion crea el incidente" (el marcador declarado queda persistido; sin marcador, nulo).
 2. Tests: escribir primero los RED (API + migracion) y luego el GREEN (SQLite unit subset y subconjunto PostgreSQL con la base descartable de c-32).
 3. N8N (checkpoint de aprobacion ALTA): tope de refinamiento + salida terminal, marcado de correo en todas las ramas, lookback de 24 h, payload enriquecido y webhook dedicado de notificacion.
 4. Infra: apuntar `N8N_WEBHOOK_URL` al webhook dedicado.

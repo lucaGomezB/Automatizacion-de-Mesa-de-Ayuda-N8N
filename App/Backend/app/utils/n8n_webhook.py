@@ -46,6 +46,9 @@ async def notify_n8n(incidente_id: int, result: ClasificacionResult) -> None:
         - confianza:              Nivel de certeza de la clasificación.
         - etapa:                  Qué componente del pipeline clasificó.
         - requiere_revision_humana: Si el operador debe revisar el caso.
+        - evento:                 Marcador explícito de evento de notificación
+                                  (C-33, D7). El webhook dedicado no crea
+                                  incidentes; este marcador lo hace explícito.
 
     Args:
         incidente_id: ID del incidente recién clasificado.
@@ -57,8 +60,11 @@ async def notify_n8n(incidente_id: int, result: ClasificacionResult) -> None:
     if not settings.n8n_webhook_url:
         return
 
-    # Payload con los datos de clasificación para el flujo de N8N
+    # Payload con los datos de clasificación para el flujo de N8N.
+    # `evento` distingue una notificación de una creación de incidente: el
+    # webhook dedicado no debe poder crear incidentes (C-33, D7).
     payload = {
+        "evento": "notificacion",
         "incidente_id": incidente_id,
         "sector_predicho": result.sector_predicho,
         "sectores_adicionales": result.sectores_adicionales,

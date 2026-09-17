@@ -2,7 +2,10 @@
 
 > C-04: n8n-workflow-validation — Implementado y verificado.
 > C-05: n8n-channel-triggers — Canal web agregado, notificaciones por canal y auditoría con retención de 30 días.
-> Estado: 17 nodos funcionales; 45 tests estructurales pasando + 1 xfail documentado.
+> C-33: cost-guards — Tope de refinamiento del agente pago, ciclo de vida del correo en todas
+> las ramas terminales, lookback de 24 horas, payload enriquecido y webhook de notificación dedicado.
+> Estado: 27 nodos (incluye 4 nodos de guarda C-33 + webhook de notificación); suite estructural
+> `test_n8n_workflow.py` en verde.
 
 ## Descripción general
 
@@ -24,6 +27,69 @@ producción editando el JSON** — activar desde la UI de N8N en el entorno de d
 | Correo | `microsoftOutlookTrigger` (sondeo) | `"correo"` | `"correo"` |
 | Web | `webhook` `POST /webhook/incidente-web` | `"web"` | `"web"` |
 | Telefonía | `twilioTrigger` (transcripción) | `"telefonia"` | `"telefonia"` |
+
+## Guardas de costo (C-33)
+
+> C-33 acota los tres caminos de gasto pago no acotado del sistema. Ninguna guarda
+> depende de credenciales reales: se verifica con la suite estructural del workflow y
+> los tests de contrato del backend.
+
+### 1. Tope de refinamiento del agente pago (HIGH-1)
+
+El canal telefonía limita a **2 intentos** la clasificación/refinamiento del `AI Agent`:
+
+- El nodo `AI Agent` declara `options.maxIterations = 2` como backstop del runtime.
+- El nodo `Se verifica lo que trajo la IA` incrementa un contador explícito
+  `intento_agente` en cada pasada (fallback a `$runIndex` para sobrevivir el ciclo).
+- El IF `Tope de refinamiento alcanzado` evalúa `intento_agente < 2`:
+  - **True** → `AI Agent` (se conserva un refinamiento dentro del tope).
+  - **False** → `Derivar a revision humana` (terminal).
+- `Derivar a revision humana` fija `confianza = 0.0`, `requiere_revision_humana = true`,
+  `revision_forzada = true`, conserva `canal_raw = 'telefonia'` y **no reingresa al agente**.
+  El normalizador propaga `revision_forzada` y el IF `La informacion esta OK` la acepta
+  (`confianza >= 0.70 OR revision_forzada == true`), de modo que el incidente se persiste
+  vía `Login operador → HTTP POST a MTM-SRU` con sector nulo y revisión humana forzada.
+
+### 2. Ciclo de vida del correo en todas las ramas terminales (HIGH-4)
+
+El mensaje de Outlook se marca como leído en **todas** las ramas terminales alcanzables:
+
+- **Éxito**: `HTTP POST a MTM-SRU → Rutear por canal de origen` (rama correo) → `Marcar correo como leido`.
+- **Rechazo**: la rama false de `La informacion esta OK` → `Es correo?` → `Marcar correo como leido`.
+- **Error**: `HTTP POST a MTM-SRU` declara `onError: "continueErrorOutput"` y su salida de
+  error → `Es correo?` → `Marcar correo como leido`.
+
+La guarda `Es correo?` evalúa `canal_origen == 'correo'` antes de tocar el nodo de Outlook,
+porque `Marcar correo como leido` referencia el trigger de Outlook por nombre y fallaría en
+canales que no pasaron por él. Un correo procesado en cualquier rama no se re-levanta.
+
+### 3. Lookback de 24 horas en el trigger de Outlook (MEDIUM-1)
+
+El trigger `Llega un email a Mesa de Ayuda` agrega a `filters` el filtro OData
+`custom = receivedDateTime ge <now - 24h>` (expresión relativa), conservando
+`readStatus: unread`. Así el arranque con una casilla real no dispara una ráfaga de
+incidentes sobre todo el historial no leído.
+
+### 4. Payload enriquecido del POST (HIGH-2 / HIGH-4)
+
+`HTTP POST a MTM-SRU` envía, además de descripción/prioridad/canal:
+
+- `origen_message_id`: `Message-ID` de Outlook (solo canal correo; nulo en el resto).
+- `clasificacion`: bloque precalculado **solo para telefonía**
+  (`sector_predicho`, `sectores_adicionales`, `confianza`, `requiere_revision_humana`,
+  `origen: 'n8n'`). En web/correo se envía `null` para conservar la clasificación server-side.
+  Cuando viene presente y válida, el backend omite la reclasificación paga y registra
+  `etapa = "precalculada"`.
+- `origen_evento: "creacion_incidente"`: marcador explícito de evento de creación.
+
+### 5. Notificación a un webhook dedicado (MEDIUM-3)
+
+El nodo webhook `notificacion-clasificacion` (ruta distinta de `incidente-web`) alimenta un
+nodo no-op `Auditar notificacion` y **no está conectado a la creación de incidentes**. El
+backend apunta `N8N_WEBHOOK_URL` a
+`http://n8n:5678/webhook/notificacion-clasificacion` y `notify_n8n` agrega el marcador
+`evento: "notificacion"`; el backend rechaza con 422 cualquier `origen_evento` que no sea de
+creación. La garantía es explícita y verificable, no un 404 accidental.
 
 ### Equivalencia Outlook trigger ≈ IMAP (Decisión 1 — C-05)
 
@@ -173,10 +239,12 @@ Ambos nodos `if` usan la condición:
 $json.confianza >= 0.70   (operador: gte, tipo: number)
 ```
 
-- **Rama true** (`confianza ≥ 0.70`): flujo a `POST /api/v1/incidentes` (creación directa).
+- **Rama true** (`confianza ≥ 0.70`, o `revision_forzada == true`): flujo a
+  `POST /api/v1/incidentes` (creación directa).
 - **Rama false** (`confianza < 0.70` o falla de validación con `confianza = 0.0`):
-  - Canal correo: solicitar reenvío de datos.
-  - Canal telefonía: volver al AI Agent para refinamiento.
+  - Canal correo: solicitar reenvío de datos (rama de rechazo → auditoría + marcado del correo).
+  - Canal telefonía: pasar por `Tope de refinamiento alcanzado`; dentro del tope vuelve al
+    `AI Agent` y, al agotarse, deriva al terminal `Derivar a revision humana` (C-33).
 
 Nota: el backend también marca internamente `requiere_revision_humana`; el nodo `if` del
 workflow es la primera capa de ruteo (antes de persistir).
