@@ -113,3 +113,15 @@ async def test_human_review_flagged_when_gemini_low_confidence() -> None:
     ):
         result = await classifier.classify("Descripción poco clara")
         assert result.requiere_revision_humana is True
+
+
+def test_cache_version_es_unica_fuente_compartida() -> None:
+    """W-3: la version del cache vive en app.constants y HybridClassifier la reusa.
+
+    El runner de evaluacion lee esta constante sin importar app.classifiers
+    (que arrastra get_settings); la unicidad evita que la version derive.
+    """
+    from app.constants import HYBRID_CACHE_VERSION
+
+    assert isinstance(HYBRID_CACHE_VERSION, str) and HYBRID_CACHE_VERSION
+    assert HybridClassifier.CACHE_VERSION == HYBRID_CACHE_VERSION

@@ -25,6 +25,13 @@ SECTORES_CANONICOS: Final[tuple[str, ...]] = (
 #: Vista de conjunto para validaciones O(1).
 _SECTORES_CANONICOS_SET: Final[frozenset[str]] = frozenset(SECTORES_CANONICOS)
 
+#: Clave de version del clasificador hibrido para el cache de evaluacion (C-34).
+#: Vive en este modulo liviano para que el runner de evaluacion la lea sin
+#: importar app.classifiers (que arrastra app.core.database -> get_settings) y
+#: asi un cache hit no exija credenciales (W-3). HybridClassifier la reutiliza
+#: como unica fuente de verdad.
+HYBRID_CACHE_VERSION: Final[str] = "hybrid-v1"
+
 
 def es_sector_canonico(nombre: object) -> bool:
     """
@@ -36,4 +43,4 @@ def es_sector_canonico(nombre: object) -> bool:
     return isinstance(nombre, str) and nombre in _SECTORES_CANONICOS_SET
 
 
-__all__ = ["SECTORES_CANONICOS", "es_sector_canonico"]
+__all__ = ["SECTORES_CANONICOS", "HYBRID_CACHE_VERSION", "es_sector_canonico"]

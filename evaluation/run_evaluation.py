@@ -23,7 +23,9 @@ import argparse
 import asyncio
 import hashlib
 import json
+import os
 import pathlib
+import sys
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Protocol
@@ -54,6 +56,50 @@ _REPO_ROOT = pathlib.Path(__file__).parent.parent
 CORPUS_REAL_PATH = _REPO_ROOT / "data" / "corpus_evaluacion_pseudonimizado.json"
 REPORT_PATH = pathlib.Path(__file__).parent / "report.md"
 PREDICCIONES_PATH = pathlib.Path(__file__).parent / "predicciones.json"
+
+
+# ---------------------------------------------------------------------------
+# Gate de corrida paga y estimacion de costo (C-36)
+# ---------------------------------------------------------------------------
+class PaidRunNotConfirmedError(RuntimeError):
+    """La corrida paga fue rechazada por falta de confirmacion explicita."""
+
+
+# Orden de magnitud orientativo para Gemini 2.5 Flash con un perfil de
+# ~1.500 tokens de entrada y ~200 de salida. No es una tarifa de facturacion.
+ESTIMATED_COST_PER_CALL_USD = 0.0002
+
+CONFIRM_PAID_ENV_VAR = "EVALUATION_CONFIRM_PAID"
+_TRUTHY_VALUES = {"1", "true", "yes"}
+
+
+def estimated_cost_usd(corpus_count: int) -> float:
+    """Costo total estimado de clasificar ``corpus_count`` casos."""
+    return corpus_count * ESTIMATED_COST_PER_CALL_USD
+
+
+def format_cost_estimation(
+    corpus_count: int,
+    cost_per_call: Optional[float] = None,
+) -> str:
+    """Renderiza la estimacion orientativa previa a una corrida paga."""
+    if cost_per_call is None:
+        cost_per_call = ESTIMATED_COST_PER_CALL_USD
+    total = corpus_count * cost_per_call
+    return "\n".join(
+        [
+            "Estimacion de costo (orientativa, no es una factura):",
+            f"- Casos del corpus: {corpus_count}",
+            f"- Costo asumido por llamada: USD {cost_per_call:.6f}",
+            f"- Costo total estimado: USD {total:.6f}",
+        ]
+    )
+
+
+def _env_confirm_paid() -> bool:
+    """True si EVALUATION_CONFIRM_PAID tiene un valor verdadero (1/true/yes)."""
+    value = os.environ.get(CONFIRM_PAID_ENV_VAR, "")
+    return value.strip().lower() in _TRUTHY_VALUES
 
 
 # ---------------------------------------------------------------------------
@@ -378,12 +424,61 @@ def cargar_predicciones(input_path: pathlib.Path) -> List[Prediccion]:
 # ---------------------------------------------------------------------------
 # main_con_corpus_real — punto de entrada para la corrida real (testeable)
 # ---------------------------------------------------------------------------
+def _ensure_backend_on_path() -> None:
+    """Agrega App/Backend/ a sys.path para importar los clasificadores reales."""
+    backend_path = str(_REPO_ROOT / "App" / "Backend")
+    if backend_path not in sys.path:
+        sys.path.insert(0, backend_path)
+
+
+def _version_clasificador_real() -> str:
+    """Devuelve el CACHE_VERSION del HybridClassifier real sin construirlo (W-3).
+
+    Construir el clasificador real exige credenciales (GeminiClassifier ->
+    get_settings). Un cache hit no debe pagar ese costo: la version vive en
+    ``app.constants`` (modulo liviano) y se lee sin importar ``app.classifiers``,
+    que arrastra ``app.core.database`` -> ``get_settings()``.
+    """
+    try:
+        _ensure_backend_on_path()
+        from app.constants import HYBRID_CACHE_VERSION  # type: ignore[import]
+
+        return HYBRID_CACHE_VERSION
+    except ImportError as exc:
+        raise ImportError(
+            "No se pudo importar HYBRID_CACHE_VERSION. "
+            "Asegurate de correr con PYTHONPATH que incluya App/Backend/. "
+            "Ver evaluation/README.md para instrucciones de setup."
+        ) from exc
+
+
+def _resolver_clasificador_real() -> ClasificadorProtocol:
+    """Importa y construye el HybridClassifier real (camino pago).
+
+    Se aísla en una funcion para que los tests puedan sustituirla sin tocar
+    el backend ni disparar una llamada paga.
+    """
+    try:
+        _ensure_backend_on_path()
+        from app.classifiers.hybrid import HybridClassifier  # type: ignore[import]
+
+        return HybridClassifier()
+    except ImportError as exc:
+        raise ImportError(
+            "No se pudo importar HybridClassifier. "
+            "Asegurate de correr con PYTHONPATH que incluya App/Backend/. "
+            "Ver evaluation/README.md para instrucciones de setup."
+        ) from exc
+
+
 async def main_con_corpus_real(
     corpus_path: pathlib.Path = CORPUS_REAL_PATH,
     classifier: Optional[ClasificadorProtocol] = None,
     report_path: pathlib.Path = REPORT_PATH,
     predicciones_path: pathlib.Path = PREDICCIONES_PATH,
     force: bool = False,
+    confirm_paid: bool = False,
+    estimated_cost_per_call: Optional[float] = None,
 ) -> None:
     """
     Carga el corpus real, evalua y genera el reporte.
@@ -404,6 +499,10 @@ async def main_con_corpus_real(
         report_path: Donde escribir el reporte.
         predicciones_path: Donde persistir las predicciones.
         force: Si True, bypasea el cache y re-ejecuta la clasificacion completa.
+        confirm_paid: Si True, autoriza la corrida que invoca al clasificador real
+            cuando no hay cache valido. Un cache hit o un clasificador inyectado
+            no requieren confirmacion.
+        estimated_cost_per_call: Override del costo estimado por llamada (USD).
     """
     corpus_path = pathlib.Path(corpus_path)
 
@@ -416,35 +515,43 @@ async def main_con_corpus_real(
 
     corpus = cargar_corpus(corpus_path)
 
-    if classifier is None:
-        try:
-            import sys
-
-            backend_path = str(_REPO_ROOT / "App" / "Backend")
-            if backend_path not in sys.path:
-                sys.path.insert(0, backend_path)
-            from app.classifiers.hybrid import HybridClassifier  # type: ignore[import]
-
-            classifier = HybridClassifier()
-        except ImportError as exc:
-            raise ImportError(
-                "No se pudo importar HybridClassifier. "
-                "Asegurate de correr con PYTHONPATH que incluya App/Backend/. "
-                "Ver evaluation/README.md para instrucciones de setup."
-            ) from exc
-
     corpus_hash = _compute_corpus_hash(corpus_path)
     corpus_count = len(corpus)
-    classifier_version = _get_classifier_version(classifier)
+    usa_clasificador_real = classifier is None
 
-    if not force and _is_cache_valid(
-        predicciones_path, corpus_hash, corpus_count, classifier_version
-    ):
+    cache_hit = False
+    if not force:
+        # W-3: la version del clasificador real se lee sin construirlo, de modo
+        # que un cache hit no exija credenciales ni invoque Gemini.
+        classifier_version = (
+            _version_clasificador_real()
+            if classifier is None
+            else _get_classifier_version(classifier)
+        )
+        cache_hit = _is_cache_valid(
+            predicciones_path, corpus_hash, corpus_count, classifier_version
+        )
+
+    if cache_hit:
         predicciones = cargar_predicciones(predicciones_path)
         print(
             f"Cache valido encontrado. Predicciones cargadas desde: {predicciones_path}"
         )
     else:
+        if usa_clasificador_real:
+            # El gate de costo se evalua ANTES de construir el clasificador real.
+            if not confirm_paid:
+                raise PaidRunNotConfirmedError(
+                    "Corrida paga sin confirmar: la evaluacion invocaria el "
+                    "HybridClassifier real. Confirma explicitamente con "
+                    "--confirm-paid o "
+                    f"{CONFIRM_PAID_ENV_VAR}=1."
+                )
+            classifier = _resolver_clasificador_real()
+            print(
+                format_cost_estimation(corpus_count, estimated_cost_per_call)
+            )
+        classifier_version = _get_classifier_version(classifier)
         predicciones = await evaluar_corpus(corpus, classifier)
         cache_meta: Dict[str, Any] = {
             "corpus_hash": corpus_hash,
@@ -477,8 +584,37 @@ def main() -> None:
             "aunque predicciones.json exista y sea valido."
         ),
     )
+    parser.add_argument(
+        "--confirm-paid",
+        dest="confirm_paid",
+        action="store_true",
+        default=False,
+        help=(
+            "Autoriza explicitamente una corrida que invoque al clasificador pago "
+            "real cuando no haya cache valido. Tambien puede habilitarse con "
+            f"{CONFIRM_PAID_ENV_VAR}=1."
+        ),
+    )
+    parser.add_argument(
+        "--estimated-cost-per-call",
+        dest="estimated_cost_per_call",
+        type=float,
+        default=None,
+        help="Override del costo estimado por llamada (USD), solo para la estimacion.",
+    )
     args = parser.parse_args()
-    asyncio.run(main_con_corpus_real(force=args.force))
+    confirm_paid = args.confirm_paid or _env_confirm_paid()
+    try:
+        asyncio.run(
+            main_con_corpus_real(
+                force=args.force,
+                confirm_paid=confirm_paid,
+                estimated_cost_per_call=args.estimated_cost_per_call,
+            )
+        )
+    except PaidRunNotConfirmedError as exc:
+        print(str(exc), file=sys.stderr)
+        raise SystemExit(2) from exc
 
 
 if __name__ == "__main__":
