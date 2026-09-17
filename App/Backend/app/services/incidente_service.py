@@ -23,6 +23,7 @@ Patrón de diseño:
 import asyncio
 from datetime import datetime
 
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.classifiers.hybrid import HybridClassifier
@@ -45,7 +46,7 @@ from app.repositories.estado_repository import EstadoRepository
 from app.repositories.incidente_repository import IncidenteRepository
 from app.repositories.sector_repository import SectorRepository
 from app.schemas.clasificacion import ClasificacionResult
-from app.schemas.incidente import IncidenteCreate, IncidenteUpdate
+from app.schemas.incidente import ClasificacionPrecalculada, IncidenteCreate, IncidenteUpdate
 
 logger = get_logger(__name__)
 
@@ -103,6 +104,9 @@ class IncidenteService:
         self._canal_repo = CanalOrigenRepository(session)
         self._clasificacion_repo = ClasificacionRepository(session)
         self._classifier = classifier or HybridClassifier()
+        # Referencia a la sesión para resolver colisiones de unicidad
+        # (IntegrityError) en la idempotencia del alta (C-33, D4).
+        self._session = session
 
     # ── Operaciones de Lectura ────────────────────────────────────────────────
 
@@ -196,6 +200,21 @@ class IncidenteService:
             EstadoNotFoundError:     Si el estado "nuevo" no está en la base de datos.
             CanalOrigenNotFoundError: Si el canal_origen_id especificado no existe.
         """
+        # Paso 0 (C-33, HIGH-4): cortocircuito idempotente por Message-ID.
+        # Se resuelve ANTES de pseudonimizar y clasificar: un reintento del mismo
+        # mensaje devuelve el incidente existente sin reclasificar ni notificar.
+        if payload.origen_message_id is not None:
+            existente = await self._incidente_repo.get_by_origen_message_id(
+                payload.origen_message_id
+            )
+            if existente is not None:
+                logger.info(
+                    "incidente_idempotente",
+                    origen_message_id=payload.origen_message_id,
+                    incidente_id=existente.id,
+                )
+                return existente
+
         # Paso 1: Resolver el estado inicial desde el catálogo
         estado_nuevo = await self._resolve_estado(_ESTADO_NUEVO)
 
@@ -215,24 +234,89 @@ class IncidenteService:
             **resultado_pseudo.conteos,  # conteos por categoría, sin PII
         )
 
-        # Paso 4: Crear el registro del incidente con doble representación
-        incidente = await self._incidente_repo.create(
-            descripcion_original=payload.descripcion,        # cifrada at-rest por EncryptedText
-            descripcion_pseudonimizada=resultado_pseudo.texto,  # en claro, operativa
-            prioridad=payload.prioridad,
-            estado_id=estado_nuevo.id,
-            canal_origen_id=canal.id if canal else None,
-            requiere_revision_humana=False,  # Se actualizará tras la clasificación
-        )
+        # Paso 4: Crear el registro del incidente con doble representación.
+        # La restricción UNIQUE de `origen_message_id` protege contra la carrera
+        # de dos peticiones concurrentes con el mismo identificador (C-33, D4).
+        try:
+            incidente = await self._incidente_repo.create(
+                descripcion_original=payload.descripcion,        # cifrada at-rest por EncryptedText
+                descripcion_pseudonimizada=resultado_pseudo.texto,  # en claro, operativa
+                prioridad=payload.prioridad,
+                estado_id=estado_nuevo.id,
+                canal_origen_id=canal.id if canal else None,
+                origen_message_id=payload.origen_message_id,
+                origen_evento=payload.origen_evento,
+                requiere_revision_humana=False,  # Se actualizará tras la clasificación
+            )
+        except IntegrityError:
+            # Colisión de unicidad por carrera: otra petición ya persistió el
+            # mismo `origen_message_id`. Se re-consulta y se devuelve el ganador.
+            await self._session.rollback()
+            existente = await self._incidente_repo.get_by_origen_message_id(
+                payload.origen_message_id
+            )
+            if existente is None:
+                raise
+            logger.info(
+                "incidente_idempotente_carrera",
+                origen_message_id=payload.origen_message_id,
+                incidente_id=existente.id,
+            )
+            return existente
 
         logger.info("incidente_created", incidente_id=incidente.id)
 
-        # Pasos 5-7: Clasificar sobre la pseudonimizada y persistir el resultado
-        result = await self._classifier.classify(resultado_pseudo.texto)
+        # Pasos 5-7: Clasificar sobre la pseudonimizada y persistir el resultado.
+        # La clasificación precalculada, si viene, omite el clasificador pago.
+        result = await self._resolve_classification(payload, resultado_pseudo.texto)
         await self._apply_classification(incidente, result)
 
         # Paso 7: Retornar el incidente completo con todas las relaciones
         return await self._incidente_repo.get_with_relations(incidente.id)  # type: ignore[return-value]
+
+    async def _resolve_classification(
+        self, payload: IncidenteCreate, texto_pseudonimizado: str
+    ) -> ClasificacionResult:
+        """
+        Resuelve el resultado de clasificación del alta (C-33, D5).
+
+        Si el payload trae un bloque `clasificacion` precalculado, se construye
+        el resultado a partir de él SIN invocar al clasificador híbrido (evita la
+        llamada paga). En caso contrario se conserva la clasificación
+        server-side como hasta ahora.
+        """
+        if payload.clasificacion is not None:
+            return self._result_from_precalculated(payload.clasificacion)
+        return await self._classifier.classify(texto_pseudonimizado)
+
+    @staticmethod
+    def _result_from_precalculated(
+        clasificacion: ClasificacionPrecalculada,
+    ) -> ClasificacionResult:
+        """
+        Construye un `ClasificacionResult` a partir de la clasificación provista.
+
+        El sector ausente se representa con cadena vacía y se persiste como
+        `sector_id` nulo. El marcador de revisión humana explícito tiene
+        prioridad; si no viene, se deriva del umbral sobre la confianza. El
+        `origen` del emisor se conserva en `respuesta_raw` para auditoría.
+        """
+        confianza = clasificacion.confianza if clasificacion.confianza is not None else 0.0
+        if clasificacion.requiere_revision_humana is not None:
+            requiere_revision = clasificacion.requiere_revision_humana
+        elif clasificacion.confianza is not None:
+            requiere_revision = clasificacion.confianza < 0.70
+        else:
+            requiere_revision = False
+
+        return ClasificacionResult(
+            sector_predicho=clasificacion.sector_predicho or "",
+            sectores_adicionales=list(clasificacion.sectores_adicionales),
+            confianza=confianza,
+            etapa="precalculada",
+            requiere_revision_humana=requiere_revision,
+            respuesta_raw=clasificacion.origen,
+        )
 
     async def update_incidente(
         self, incidente_id: int, payload: IncidenteUpdate
@@ -300,8 +384,12 @@ class IncidenteService:
             incidente: Instancia del incidente recién creado.
             result:    Resultado producido por el clasificador híbrido.
         """
-        # Resolver sector principal (string) → sector (registro ORM con ID)
-        sector = await self._sector_repo.get_by_nombre(result.sector_predicho)
+        # Resolver sector principal (string) → sector (registro ORM con ID).
+        # Un sector ausente (clasificación precalculada forzada a revisión) se
+        # persiste como `sector_id` nulo (C-33, D5).
+        sector = None
+        if result.sector_predicho:
+            sector = await self._sector_repo.get_by_nombre(result.sector_predicho)
         sector_id = sector.id if sector else None
 
         # Resolver el conjunto de sectores adicionales predichos (N-a-N).

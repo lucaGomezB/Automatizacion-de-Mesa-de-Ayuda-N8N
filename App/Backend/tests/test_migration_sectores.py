@@ -132,7 +132,10 @@ def test_upgrade_head_crea_tablas_union(db_file):
 
 def test_downgrade_restaura_vocabulario_previo(db_file):
     _run_alembic(["upgrade", "head"], db_file)
-    _run_alembic(["downgrade", "-1"], db_file)
+    # Bajar explicitamente hasta 003 (estado previo a la 004 de sectores). Se usa
+    # la revision destino en lugar de "-1" para no depender de migraciones
+    # posteriores que se agreguen por encima de 004.
+    _run_alembic(["downgrade", "003"], db_file)
 
     nombres = _sector_names(db_file)
     assert {"Sistemas", "Operaciones", "Soporte Técnico"} <= nombres
