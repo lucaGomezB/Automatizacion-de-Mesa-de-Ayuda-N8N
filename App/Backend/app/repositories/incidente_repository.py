@@ -62,6 +62,33 @@ class IncidenteRepository(BaseRepository[Incidente]):
         )
         return result.scalar_one_or_none()
 
+    async def get_by_origen_message_id(self, origen_message_id: str) -> Incidente | None:
+        """
+        Recupera el incidente asociado a un identificador de mensaje de origen.
+
+        Consulta de idempotencia del contrato de alta (C-33, HIGH-4): permite
+        cortocircuitar un reintento antes de pseudonimizar y clasificar, evitando
+        una nueva llamada paga al clasificador.
+
+        Args:
+            origen_message_id: Message-ID de Outlook reportado por el emisor.
+
+        Returns:
+            Incidente con relaciones cargadas, o None si no existe ninguno.
+        """
+        result = await self._session.execute(
+            select(Incidente)
+            .where(Incidente.origen_message_id == origen_message_id)
+            .options(
+                selectinload(Incidente.sector),
+                selectinload(Incidente.sectores_adicionales),
+                selectinload(Incidente.estado),
+                selectinload(Incidente.canal_origen),
+                selectinload(Incidente.clasificaciones),
+            )
+        )
+        return result.scalar_one_or_none()
+
     async def list_filtered(
         self,
         sector_id: int | None = None,
