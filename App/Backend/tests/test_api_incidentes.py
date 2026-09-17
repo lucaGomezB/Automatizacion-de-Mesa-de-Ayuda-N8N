@@ -18,6 +18,8 @@ Aislamiento de servicios externos:
     - Ningún test contacta la API de Gemini ni ningún servicio de red.
 """
 
+import asyncio
+
 import pytest
 import pytest_asyncio
 from httpx import AsyncClient
@@ -517,3 +519,298 @@ async def test_get_incidentes_filtro_por_desde_hasta(
     items = response.json()
     # El incidente creado debe estar en el rango
     assert len(items) >= 1
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Grupo 6 — Guardas de costo C-33 (change c-33-cost-guards)
+#
+#   * Idempotencia de alta por `origen_message_id` (N8N-REFINE/HIGH-4).
+#   * Aceptacion de clasificacion precalculada con origen explicito (HIGH-2).
+#   * Marcador de evento que impide crear incidentes desde notificaciones.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+def _clasificacion_payload(**overrides) -> dict:
+    """Bloque de clasificacion precalculada con valores por defecto validos."""
+    base = {
+        "sector_predicho": "Sistemas",
+        "sectores_adicionales": [],
+        "confianza": 0.92,
+        "requiere_revision_humana": False,
+        "origen": "n8n",
+    }
+    base.update(overrides)
+    return base
+
+
+@pytest.mark.asyncio
+async def test_c33_idempotencia_por_origen_message_id(
+    seed_catalogs, make_client_with_spy_classifier
+):
+    """
+    RED (2.1): un alta con `origen_message_id` crea el incidente; un reintento
+    con el mismo identificador devuelve el mismo incidente sin volver a invocar
+    al clasificador ni re-dispatchar la notificacion a N8N.
+    """
+    result = _make_result()
+    payload = {**VALID_PAYLOAD, "origen_message_id": "outlook-msg-001"}
+
+    async with make_client_with_spy_classifier(result) as (client, spy):
+        primera = await client.post("/api/v1/incidentes/", json=payload)
+        await asyncio.sleep(0)  # drenar la notificacion fire-and-forget
+        notificaciones_tras_primera = spy.notify.await_count
+
+        segunda = await client.post("/api/v1/incidentes/", json=payload)
+        await asyncio.sleep(0)  # drenar cualquier tarea pendiente del reintento
+        notificaciones_tras_reintento = spy.notify.await_count
+
+        lista = await client.get("/api/v1/incidentes/")
+
+    assert primera.status_code == 201
+    assert segunda.status_code == 201
+    assert primera.json()["id"] == segunda.json()["id"], (
+        "El reintento con el mismo origen_message_id creo un incidente distinto"
+    )
+    assert spy.classify.await_count == 1, (
+        f"El clasificador se invoco {spy.classify.await_count} veces; "
+        "el reintento no debe reclasificar (costo pago)"
+    )
+    assert notificaciones_tras_primera == 1, (
+        f"El alta inicial debe notificar a N8N exactamente una vez; se contaron "
+        f"{notificaciones_tras_primera}"
+    )
+    assert notificaciones_tras_reintento == 1, (
+        f"El reintento idempotente no debe re-dispatchar la notificacion; se "
+        f"contaron {notificaciones_tras_reintento} notificaciones en total"
+    )
+    assert len(lista.json()) == 1, "Se duplico el incidente en la base"
+
+
+@pytest.mark.asyncio
+async def test_c33_alta_sin_identificador_y_identificadores_distintos(
+    seed_catalogs, make_client_with_spy_classifier
+):
+    """
+    RED (2.2): el alta sin `origen_message_id` sigue funcionando y dos
+    identificadores distintos producen dos incidentes distintos.
+    """
+    result = _make_result()
+    async with make_client_with_spy_classifier(result) as (client, spy):
+        sin_id = await client.post("/api/v1/incidentes/", json=VALID_PAYLOAD)
+        con_a = await client.post(
+            "/api/v1/incidentes/",
+            json={**VALID_PAYLOAD, "origen_message_id": "msg-a"},
+        )
+        con_b = await client.post(
+            "/api/v1/incidentes/",
+            json={**VALID_PAYLOAD, "origen_message_id": "msg-b"},
+        )
+
+    assert sin_id.status_code == 201
+    assert con_a.status_code == 201
+    assert con_b.status_code == 201
+    assert con_a.json()["id"] != con_b.json()["id"]
+    assert spy.classify.await_count == 3, (
+        "Las altas con identificadores distintos deben clasificarse individualmente"
+    )
+
+
+@pytest.mark.asyncio
+async def test_c33_clasificacion_precalculada_evita_clasificador(
+    seed_catalogs, make_client_with_spy_classifier, engine
+):
+    """
+    RED (2.3): con clasificacion precalculada valida el incidente se persiste con
+    esa clasificacion, el origen queda auditable y NO se invoca al clasificador.
+    """
+    result = _make_result()  # no debe usarse
+    payload = {**VALID_PAYLOAD, "clasificacion": _clasificacion_payload()}
+
+    async with make_client_with_spy_classifier(result) as (client, spy):
+        response = await client.post("/api/v1/incidentes/", json=payload)
+
+    assert response.status_code == 201
+    body = response.json()
+    assert body["sector"]["nombre"] == "Sistemas"
+    assert spy.classify.await_count == 0, (
+        "El clasificador server-side se invoco pese a venir la clasificacion precalculada"
+    )
+
+    # El origen de la clasificacion queda auditable en clasificacion_log.
+    from sqlalchemy import select
+    from sqlalchemy.ext.asyncio import async_sessionmaker
+
+    from app.models.clasificacion_log import ClasificacionLog
+
+    factory = async_sessionmaker(engine, expire_on_commit=False)
+    async with factory() as session:
+        log = (
+            await session.execute(
+                select(ClasificacionLog).where(
+                    ClasificacionLog.incidente_id == body["id"]
+                )
+            )
+        ).scalar_one()
+        assert log.etapa == "precalculada"
+        assert log.respuesta_raw == "n8n"
+        assert float(log.confianza) == pytest.approx(0.92)
+
+
+@pytest.mark.asyncio
+async def test_c33_sin_clasificacion_precalculada_clasifica_server_side(
+    seed_catalogs, make_client_with_spy_classifier
+):
+    """
+    RED (2.4): sin clasificacion precalculada el backend clasifica server-side.
+    """
+    result = _make_result(sector_predicho="Bases de Datos", confianza=0.80)
+    async with make_client_with_spy_classifier(result) as (client, spy):
+        response = await client.post("/api/v1/incidentes/", json=VALID_PAYLOAD)
+
+    assert response.status_code == 201
+    assert response.json()["sector"]["nombre"] == "Bases de Datos"
+    assert spy.classify.await_count == 1
+
+
+@pytest.mark.asyncio
+async def test_c33_sector_invalido_y_confianza_fuera_de_rango_422(
+    seed_catalogs, make_client_with_spy_classifier
+):
+    """
+    RED (2.5): sector precalculado fuera del vocabulario y confianza fuera de
+    rango responden 422 sin invocar al clasificador.
+    """
+    result = _make_result()
+    async with make_client_with_spy_classifier(result) as (client, spy):
+        sector_invalido = await client.post(
+            "/api/v1/incidentes/",
+            json={
+                **VALID_PAYLOAD,
+                "clasificacion": _clasificacion_payload(sector_predicho="Operaciones"),
+            },
+        )
+        confianza_alta = await client.post(
+            "/api/v1/incidentes/",
+            json={**VALID_PAYLOAD, "clasificacion": _clasificacion_payload(confianza=1.5)},
+        )
+        confianza_baja = await client.post(
+            "/api/v1/incidentes/",
+            json={**VALID_PAYLOAD, "clasificacion": _clasificacion_payload(confianza=-0.1)},
+        )
+
+    for response in (sector_invalido, confianza_alta, confianza_baja):
+        assert response.status_code == 422, response.text
+        assert response.json()["error"]["code"] == "VALIDATION_ERROR"
+    assert spy.classify.await_count == 0, (
+        "Un payload invalido no debe llegar al clasificador pago"
+    )
+
+
+@pytest.mark.asyncio
+async def test_c33_origen_evento_notificacion_422_y_creacion_ok(
+    seed_catalogs, make_client_with_spy_classifier
+):
+    """
+    RED (2.6): un `origen_evento` de notificacion responde 422 y no crea
+    incidente; un marcador de creacion (y la ausencia de marcador) funcionan.
+    """
+    result = _make_result()
+    async with make_client_with_spy_classifier(result) as (client, spy):
+        notificacion = await client.post(
+            "/api/v1/incidentes/",
+            json={**VALID_PAYLOAD, "origen_evento": "notificacion"},
+        )
+        creacion = await client.post(
+            "/api/v1/incidentes/",
+            json={**VALID_PAYLOAD, "origen_evento": "creacion_incidente"},
+        )
+        sin_marcador = await client.post("/api/v1/incidentes/", json=VALID_PAYLOAD)
+        lista = await client.get("/api/v1/incidentes/")
+
+    assert notificacion.status_code == 422, notificacion.text
+    assert notificacion.json()["error"]["code"] == "VALIDATION_ERROR"
+    assert creacion.status_code == 201
+    assert sin_marcador.status_code == 201
+    assert len(lista.json()) == 2, (
+        "El evento de notificacion no debe haber creado incidente"
+    )
+
+
+@pytest.mark.asyncio
+async def test_c33_origen_evento_se_persiste_en_creacion(
+    seed_catalogs, make_client_with_spy_classifier, engine
+):
+    """
+    RED (2.6b) escenario "Evento de creacion crea el incidente": un payload con
+    `origen_evento="creacion_incidente"` crea el incidente y el origen declarado
+    queda registrado en la fila persistida; un payload sin marcador persiste nulo.
+    """
+    result = _make_result()
+    async with make_client_with_spy_classifier(result) as (client, spy):
+        con_marcador = await client.post(
+            "/api/v1/incidentes/",
+            json={**VALID_PAYLOAD, "origen_evento": "creacion_incidente"},
+        )
+        sin_marcador = await client.post("/api/v1/incidentes/", json=VALID_PAYLOAD)
+
+    assert con_marcador.status_code == 201, con_marcador.text
+    assert sin_marcador.status_code == 201, sin_marcador.text
+    assert con_marcador.json()["id"] != sin_marcador.json()["id"]
+
+    # El marcador es interno (no se expone en IncidenteRead): se verifica en la
+    # fila persistida consultando el modelo (C-33, W2).
+    from sqlalchemy import select
+    from sqlalchemy.ext.asyncio import async_sessionmaker
+
+    from app.models.incidente import Incidente
+
+    factory = async_sessionmaker(engine, expire_on_commit=False)
+    async with factory() as session:
+        fila_con = (
+            await session.execute(
+                select(Incidente).where(
+                    Incidente.id == con_marcador.json()["id"]
+                )
+            )
+        ).scalar_one()
+        fila_sin = (
+            await session.execute(
+                select(Incidente).where(
+                    Incidente.id == sin_marcador.json()["id"]
+                )
+            )
+        ).scalar_one()
+
+    assert fila_con.origen_evento == "creacion_incidente", (
+        "El origen declarado debe quedar registrado en la fila persistida"
+    )
+    assert fila_sin.origen_evento is None, (
+        "Un payload sin marcador debe persistir origen_evento nulo"
+    )
+
+
+@pytest.mark.asyncio
+async def test_c33_clasificacion_forzada_revision_sin_sector(
+    seed_catalogs, make_client_with_spy_classifier
+):
+    """
+    RED (2.7): un bloque precalculado con revision humana y sin sector persiste
+    el incidente con sector nulo y revision activada, sin invocar al clasificador.
+    """
+    result = _make_result()
+    clasificacion = _clasificacion_payload(
+        sector_predicho=None,
+        confianza=0.0,
+        requiere_revision_humana=True,
+    )
+    async with make_client_with_spy_classifier(result) as (client, spy):
+        response = await client.post(
+            "/api/v1/incidentes/",
+            json={**VALID_PAYLOAD, "clasificacion": clasificacion},
+        )
+
+    assert response.status_code == 201, response.text
+    body = response.json()
+    assert body["sector"] is None, "Un sector ausente debe persistirse como nulo"
+    assert body["requiere_revision_humana"] is True
+    assert spy.classify.await_count == 0

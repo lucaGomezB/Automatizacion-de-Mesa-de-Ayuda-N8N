@@ -126,6 +126,27 @@ class Incidente(Base, TimestampMixin):
         "CanalOrigen", back_populates="incidentes"
     )
 
+    # Identificador del mensaje de origen (Message-ID de Outlook) usado para la
+    # idempotencia de alta (C-33, HIGH-4). Nullable: los emisores que no lo
+    # proveen (formulario web, clientes API) crean el incidente normalmente.
+    # UNIQUE: un mismo mensaje no puede producir mas de un incidente. El indice
+    # unico se llama `ix_incidente_origen_message_id` (migracion 005).
+    origen_message_id: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True,
+        unique=True,
+        index=True,
+    )
+
+    # Marcador de evento declarado por el emisor en el alta (C-33, D6/W2).
+    # Nullable: un alta directa puede no declararlo. Sin unicidad ni indice: no
+    # se consulta por el, solo registra el origen declarado para auditoria.
+    # Valores validos de creacion se validan en el schema (`origen_evento`).
+    origen_evento: Mapped[str | None] = mapped_column(
+        String(50),
+        nullable=True,
+    )
+
     # Sectores adicionales (N-a-N): el sector principal vive en sector_id; esta
     # coleccion guarda el resto del conjunto multietiqueta del incidente.
     sectores_adicionales: Mapped[list[Sector]] = relationship(

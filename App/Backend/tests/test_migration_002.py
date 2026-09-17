@@ -225,14 +225,16 @@ class TestMigration002Downgrade:
     def test_downgrade_002_restaura_columna_descripcion(self, db_file, monkeypatch):
         """
         10.3 TRIANGULATE (downgrade):
-        Tras downgrade -1 (002 → 001), la tabla incidente vuelve a tener
+        Tras bajar a la revisión 001, la tabla incidente vuelve a tener
         'descripcion' y no tiene las columnas nuevas.
         """
-        # Migrar a head (004)
+        # Migrar a head (revision vigente)
         _run_alembic(["upgrade", "head"], db_file)
 
-        # Regresar tres pasos (004→003→002→001) para restaurar el esquema original
-        _run_alembic(["downgrade", "-3"], db_file)
+        # Bajar explicitamente hasta 001 para restaurar el esquema original.
+        # Se usa la revision destino (no un "-N" relativo) para que el test no
+        # dependa de cuantas migraciones se agreguen por encima de 002.
+        _run_alembic(["downgrade", "001"], db_file)
 
         columnas = _get_column_names(db_file)
 

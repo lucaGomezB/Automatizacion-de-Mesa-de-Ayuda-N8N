@@ -488,3 +488,48 @@ async def test_fire_and_forget_task_is_retained_until_completion(db_session):
             break
         await asyncio.sleep(0.01)
     assert len(svc._notification_tasks) == 0
+
+
+# ── C-33: marcador explicito de evento de notificacion ───────────────────────
+
+
+@pytest.mark.asyncio
+async def test_notify_n8n_payload_declares_notification_event():
+    """
+    RED (2.9): el payload de notify_n8n incluye un marcador explicito de evento
+    de notificacion (`evento: 'notificacion'`) para que el webhook dedicado no
+    pueda confundirlo con una creacion de incidente.
+    """
+    captured: list[dict] = []
+    mock_app = _make_webhook_mock_app(captured, fail=False)
+
+    result = _make_clasificacion_result()
+    settings_test = Settings(
+        database_url="sqlite+aiosqlite:///:memory:",
+        gemini_api_key="fake-key",
+        n8n_webhook_url="http://mock-n8n/webhook",
+        n8n_webhook_secret="",
+    )
+
+    import httpx
+    from app.utils import n8n_webhook as n8n_mod
+
+    transport = ASGITransport(app=mock_app)
+    _OriginalAsyncClient = httpx.AsyncClient
+
+    def make_asgi_client(**kwargs):
+        kwargs.pop("timeout", None)
+        return _OriginalAsyncClient(transport=transport, timeout=5.0)
+
+    with patch.object(n8n_mod, "get_settings", return_value=settings_test), \
+         patch.object(httpx, "AsyncClient", make_asgi_client):
+        from app.utils.n8n_webhook import notify_n8n
+        await notify_n8n(7, result)
+
+    assert len(captured) == 1
+    assert captured[0].get("evento") == "notificacion", (
+        f"El payload no declara el evento de notificacion: {captured[0]!r}"
+    )
+    # El payload de clasificacion se conserva ademas del marcador.
+    assert "incidente_id" in captured[0]
+    assert "sector_predicho" in captured[0]
