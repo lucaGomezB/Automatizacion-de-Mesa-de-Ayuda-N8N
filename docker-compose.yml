@@ -70,8 +70,10 @@ services:
     environment:
       # Sobreescribir DATABASE_URL para apuntar al postgres de este compose
       DATABASE_URL: postgresql+asyncpg://mesa:mesa@postgres:5432/mesa_de_ayuda
-      # Sobreescribir la URL del webhook de N8N para apuntar al servicio n8n de este compose
-      N8N_WEBHOOK_URL: http://n8n:5678/webhook
+      # Sobreescribir la URL del webhook de N8N para apuntar al servicio n8n de este compose.
+      # C-33 (D7): ruta dedicada de notificacion, distinta del webhook de alta
+      # `incidente-web`, que no crea incidentes.
+      N8N_WEBHOOK_URL: http://n8n:5678/webhook/notificacion-clasificacion
       # El prompt se monta desde la raíz del repo (ver volumes abajo)
       GEMINI_PROMPT_PATH: /app/docs/prompt_gemini.txt
     # Backend is accessed exclusively through the nginx reverse proxy on port 443.

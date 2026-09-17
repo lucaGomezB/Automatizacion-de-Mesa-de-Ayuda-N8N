@@ -20,8 +20,56 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from app.constants import es_sector_canonico
 from app.models.incidente import PrioridadEnum
 from app.schemas.catalog import CanalOrigenRead, EstadoRead, SectorRead
+
+# Marcadores de `origen_evento` que representan la CREACION de un incidente.
+# Cualquier otro valor (por ejemplo "notificacion") es un evento que no debe
+# crear incidentes y el contrato lo rechaza (C-33, D6).
+_ORIGEN_EVENTO_CREACION = frozenset({"creacion", "creacion_incidente"})
+
+
+class ClasificacionPrecalculada(BaseModel):
+    """
+    Clasificación ya producida por un emisor externo (N8N) — C-33, D5.
+
+    Todos los campos son opcionales: el bloque hace explícita la intención de
+    "clasificación provista" y permite el caso de refinamiento agotado, donde no
+    hay sector válido pero sí la marca de revisión humana. Cuando el bloque está
+    presente y es válido, el servicio lo persiste y omite la clasificación
+    server-side (sin llamada paga).
+
+    Validaciones de borde (D6):
+        - `sector_predicho` presente debe pertenecer al vocabulario canónico.
+        - `sectores_adicionales` presentes deben ser canónicos.
+        - `confianza` presente debe estar en [0.0, 1.0].
+    """
+
+    sector_predicho: str | None = None
+    sectores_adicionales: list[str] = Field(default_factory=list)
+    confianza: float | None = Field(None, ge=0.0, le=1.0)
+    requiere_revision_humana: bool | None = None
+    origen: str | None = None
+
+    @field_validator("sector_predicho")
+    @classmethod
+    def _sector_canonico(cls, v: str | None) -> str | None:
+        if v is not None and not es_sector_canonico(v):
+            raise ValueError(
+                f"Sector precalculado '{v}' no pertenece al vocabulario canonico."
+            )
+        return v
+
+    @field_validator("sectores_adicionales")
+    @classmethod
+    def _adicionales_canonicos(cls, v: list[str]) -> list[str]:
+        invalidos = [s for s in v if not es_sector_canonico(s)]
+        if invalidos:
+            raise ValueError(
+                f"Sectores adicionales fuera del vocabulario canonico: {invalidos}"
+            )
+        return v
 
 
 class IncidenteCreate(BaseModel):
@@ -37,6 +85,12 @@ class IncidenteCreate(BaseModel):
         - La descripción no puede estar en blanco ni ser solo espacios.
         - La longitud mínima de 10 caracteres evita incidentes vacíos de contenido.
         - La longitud máxima de 5000 caracteres previene abusos de almacenamiento.
+
+    Guardas de costo (C-33):
+        - `origen_message_id`: idempotencia del alta por Message-ID de Outlook.
+        - `clasificacion`: clasificación precalculada que omite la llamada paga.
+        - `origen_evento`: marcador de evento; un evento de notificación se
+          rechaza con error de validación para no crear incidentes.
     """
 
     descripcion: str = Field(
@@ -47,6 +101,18 @@ class IncidenteCreate(BaseModel):
     )
     prioridad: PrioridadEnum = PrioridadEnum.media  # Prioridad por defecto si no se especifica
     canal_origen_id: int | None = None              # Opcional; NULL si el canal es desconocido
+
+    # Identificador del mensaje de origen (Message-ID de Outlook). Opcional.
+    origen_message_id: str | None = Field(None, max_length=255)
+
+    # Clasificación precalculada provista por el emisor. Opcional: su ausencia
+    # conserva la clasificación server-side.
+    clasificacion: ClasificacionPrecalculada | None = None
+
+    # Marcador explícito de origen/evento. Sin marcador el payload es un alta
+    # directa; un marcador que no sea de creación (p. ej. "notificacion") se
+    # rechaza con error de validación.
+    origen_evento: str | None = None
 
     @field_validator("descripcion")
     @classmethod
@@ -62,6 +128,32 @@ class IncidenteCreate(BaseModel):
         if not v.strip():
             raise ValueError("La descripción no puede estar vacía o ser solo espacios.")
         return v.strip()
+
+    @field_validator("origen_evento")
+    @classmethod
+    def origen_evento_de_creacion(cls, v: str | None) -> str | None:
+        """
+        Rechaza marcadores de evento que no correspondan a la creación de un
+        incidente (por ejemplo, una notificación de clasificación) — C-33, D6.
+        """
+        if v is not None and v not in _ORIGEN_EVENTO_CREACION:
+            raise ValueError(
+                f"El evento '{v}' no crea incidentes; "
+                f"se esperaba uno de {sorted(_ORIGEN_EVENTO_CREACION)}."
+            )
+        return v
+
+    @field_validator("origen_message_id")
+    @classmethod
+    def origen_message_id_normalizado(cls, v: str | None) -> str | None:
+        """
+        Normaliza el identificador vacío a None para que la idempotencia solo
+        aplique a identificadores reales (varios NULL conviven bajo el UNIQUE).
+        """
+        if v is None:
+            return None
+        v = v.strip()
+        return v or None
 
 
 class IncidenteUpdate(BaseModel):

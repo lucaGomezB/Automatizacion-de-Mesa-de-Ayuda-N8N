@@ -30,7 +30,9 @@ from app.schemas.catalog import SectorRead
 # "deterministic": el filtro de reglas resolvió con confianza >= 0.90.
 # "gemini":        Gemini 2.5 Flash clasificó con confianza en rango válido.
 # "fallback":      El sistema no pudo clasificar; intervención humana requerida.
-ClasificacionEtapa = Literal["deterministic", "gemini", "fallback"]
+# "precalculada":  La clasificación fue provista por un emisor externo (N8N)
+#                  y el backend omitió la clasificación server-side (C-33, D5).
+ClasificacionEtapa = Literal["deterministic", "gemini", "fallback", "precalculada"]
 
 
 class ClasificacionResult(BaseModel):

@@ -667,6 +667,80 @@ def make_client_with_classifier(engine):
     return _make
 
 
+@pytest.fixture
+def make_client_with_spy_classifier(engine):
+    """
+    Factory de clientes HTTP que expone el doble del clasificador para espiarlo.
+
+    A diferencia de `make_client_with_classifier`, el mock del clasificador se
+    crea UNA vez fuera de la dependencia y se comparte entre todas las
+    peticiones del bloque `async with`. Esto permite afirmar cuantas veces se
+    invoco `classify` a lo largo de varias solicitudes (C-33: idempotencia y
+    clasificacion precalculada).
+
+    El mock de `notify_n8n` se expone en `spy.notify`, de modo que el test pueda
+    afirmar cuantas notificaciones fire-and-forget se dispatcharon (C-33, W1:
+    el reintento idempotente no debe volver a notificar). Se drena el event loop
+    con `asyncio.sleep(0)` antes del assert para que la tarea se ejecute.
+
+    Uso:
+        async with make_client_with_spy_classifier(result) as (client, spy):
+            ...
+            spy.classify.assert_not_called()
+            assert spy.notify.await_count == 0
+
+    Args:
+        result: ClasificacionResult que el clasificador doble debe devolver.
+
+    Returns:
+        Context manager que provee la tupla (AsyncClient, classifier_mock).
+    """
+    from contextlib import asynccontextmanager
+
+    @asynccontextmanager
+    async def _make(result: ClasificacionResult):
+        app = create_app()
+
+        async def override_db():
+            factory = async_sessionmaker(engine, expire_on_commit=False)
+            async with factory() as session:
+                try:
+                    yield session
+                    await session.commit()
+                except Exception:
+                    await session.rollback()
+                    raise
+
+        classifier_mock = AsyncMock()
+        classifier_mock.classify = AsyncMock(return_value=result)
+
+        async def _service_override(session: AsyncSession = Depends(get_db_session)):
+            return IncidenteService(session, classifier=classifier_mock)
+
+        app.dependency_overrides[get_db_session] = override_db
+        app.dependency_overrides[get_incidente_service] = _service_override
+
+        async def override_auth():
+            return User(id=1, username="test_user", hashed_password="", is_active=True)
+        app.dependency_overrides[get_current_user] = override_auth
+
+        with patch(
+            "app.services.incidente_service.notify_n8n",
+            new_callable=AsyncMock,
+        ) as notify_mock:
+            # Exponer la notificacion a traves del spy para que el test cuente
+            # los dispatches fire-and-forget (C-33, W1).
+            classifier_mock.notify = notify_mock
+            async with AsyncClient(
+                transport=ASGITransport(app=app),
+                base_url="http://test",
+            ) as ac:
+                yield ac, classifier_mock
+                await asyncio.sleep(0)
+
+    return _make
+
+
 # ── PostgreSQL Integration Fixtures (C-19) ──────────────────────────────────
 
 
