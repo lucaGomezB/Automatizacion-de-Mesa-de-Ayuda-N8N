@@ -17,11 +17,15 @@ El sistema SHALL notificar a N8N el resultado de la clasificación de un inciden
 - **THEN** no se realiza ninguna llamada HTTP saliente y la creación/clasificación del incidente concluye normalmente
 
 ### Requirement: Notificación fire-and-forget no bloqueante
-La notificación a N8N SHALL ser fire-and-forget: NO SHALL bloquear, demorar de forma observable, ni alterar la respuesta HTTP del endpoint que creó el incidente. El incidente persistido y clasificado SHALL retornarse al llamador independientemente del estado de la notificación a N8N.
+La notificación a N8N SHALL ser fire-and-forget: NO SHALL bloquear, demorar de forma observable, ni alterar la respuesta HTTP del endpoint que creó el incidente. El incidente persistido y clasificado SHALL retornarse al llamador independientemente del estado de la notificación a N8N. La tarea asíncrona SHALL conservar una referencia retenida durante su ciclo de vida, de modo que el recolector de basura no la cancele antes de completarse.
 
 #### Scenario: La respuesta no espera el resultado de N8N
 - **WHEN** un incidente se crea y clasifica correctamente
 - **THEN** `create_and_classify()` retorna el incidente completo sin que su valor de retorno dependa de la respuesta del webhook de N8N
+
+#### Scenario: La tarea fire-and-forget no es cancelada por el recolector de basura
+- **WHEN** se dispara la notificación a N8N mediante una tarea asíncrona fire-and-forget
+- **THEN** la tarea conserva una referencia retenida hasta completar y el webhook efectivamente se invoca
 
 ### Requirement: Aislamiento de fallos de la notificación
 Un fallo de la notificación a N8N (timeout, error de red, código HTTP de error, o cualquier excepción) NO SHALL propagarse al llamador ni impedir la creación, clasificación y persistencia del incidente. El fallo SHALL registrarse mediante logging estructurado (structlog) como advertencia, preservando la observabilidad sin degradar la operación principal.
