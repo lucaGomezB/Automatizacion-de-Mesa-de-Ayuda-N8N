@@ -75,6 +75,20 @@ def test_confianza_as_integer_is_valid() -> None:
     assert data["confianza"] == 1.0
 
 
+def test_confianza_booleana_es_invalida() -> None:
+    """
+    Un booleano JSON (`true`/`false`) NO es una confianza válida. En Python
+    `bool` es subclase de `int`, por lo que `isinstance(x, (int, float))` lo
+    aceptaría; el validador debe rechazarlo explícitamente.
+    """
+    for raw in (
+        '{"categoría": "Sistemas", "confianza": true}',
+        '{"categoría": "Sistemas", "confianza": false}',
+    ):
+        with pytest.raises(GeminiResponseInvalidError, match="Confianza inválida"):
+            _validate_gemini_response(raw)
+
+
 def test_markdown_wrapped_json_raises() -> None:
     with pytest.raises(GeminiResponseInvalidError):
         _validate_gemini_response('```json\n{"categoría": "Sistemas", "confianza": 0.9}\n```')

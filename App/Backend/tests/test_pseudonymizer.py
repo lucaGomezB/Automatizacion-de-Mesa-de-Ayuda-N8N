@@ -136,6 +136,27 @@ def test_pseudonymize_no_captura_numero_corto_no_telefonico() -> None:
     assert resultado.conteos["telefono"] == 0
 
 
+@pytest.mark.parametrize(
+    "texto,esperado",
+    [
+        ("El interno es 261 555 12345.", "El interno es [TELEFONO]."),
+        ("Numero 261 555 123456.", "Numero [TELEFONO]."),
+        ("Contacto 26155512345.", "Contacto [TELEFONO]."),
+    ],
+)
+def test_pseudonymize_telefono_seguido_de_digito_no_deja_orfano(
+    texto: str, esperado: str
+) -> None:
+    """
+    Un teléfono seguido de más dígitos (número local más largo) debe consumir
+    toda la corrida de dígitos y no dejar un dígito huérfano pegado a la etiqueta.
+    """
+    resultado = pseudonymize(texto, [])
+
+    assert resultado.texto == esperado
+    assert resultado.conteos["telefono"] == 1
+
+
 # ─── Sección 4: HOST ──────────────────────────────────────────────────────────
 
 def test_pseudonymize_reemplaza_host_fallback_prefijo_servidor() -> None:
@@ -278,3 +299,39 @@ def test_pseudonymize_combinacion_todas_las_categorias() -> None:
     assert resultado.conteos["telefono"] == 1
     assert resultado.conteos["host"] == 1
     assert resultado.conteos["persona"] >= 1
+
+
+# ─── Sección 7: allowlist de términos técnicos/productos/marcas (C-30 BE B4) ──
+
+def test_pseudonymize_preserva_productos_de_infraestructura() -> None:
+    """
+    Productos multi-palabra de infraestructura no deben enmascararse como
+    [PERSONA]; el conteo de la categoría persona debe ser cero.
+    """
+    resultado = pseudonymize("Falla en Windows Server y Active Directory", [])
+
+    assert "Windows Server" in resultado.texto
+    assert "Active Directory" in resultado.texto
+    assert resultado.conteos["persona"] == 0
+
+
+@pytest.mark.parametrize("termino", ["SQL Server", "Google Chrome"])
+def test_pseudonymize_preserva_bases_de_datos_y_navegadores(termino: str) -> None:
+    """`SQL Server` y `Google Chrome` permanecen en el texto y no cuentan como persona."""
+    resultado = pseudonymize(f"Problema detectado con {termino} en la estación.", [])
+
+    assert termino in resultado.texto
+    assert resultado.conteos["persona"] == 0
+
+
+def test_pseudonymize_nombre_real_junto_a_termino_tecnico() -> None:
+    """
+    Un nombre propio real se sigue enmascarando aunque conviva con términos
+    técnicos preservados en la misma oración.
+    """
+    resultado = pseudonymize("Juan Pérez reportó una falla en Windows Server", [])
+
+    assert "Windows Server" in resultado.texto
+    assert "Juan Pérez" not in resultado.texto
+    assert resultado.conteos["persona"] >= 1
+

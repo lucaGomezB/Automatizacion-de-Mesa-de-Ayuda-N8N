@@ -77,7 +77,6 @@ export default function AdministracionPage() {
   // ── Estado de filtros y paginación ─────────────────────────────────────────
   const [filtros, setFiltros] = useState<IncidenteListParams>(FILTROS_VACIOS);
   const [paginaTickets, setPaginaTickets] = useState(0);
-  const [paginaRevision, setPaginaRevision] = useState(0);
 
   // ── Estado de diálogos ──────────────────────────────────────────────────────
   const [incidenteIdSeleccionado, setIncidenteIdSeleccionado] = useState<number | null>(null);
@@ -107,7 +106,9 @@ export default function AdministracionPage() {
 
   /**
    * Cola de clasificaciones pendientes de revisión humana.
-   * Se refresca automáticamente cada 60 s (configurado en el hook).
+   * Se consulta SIN paginación: el contador de la pestaña debe reflejar el total
+   * de pendientes del backend, no el tamaño de una página (FE 4). Se refresca
+   * automáticamente cada 60 s (configurado en el hook).
    */
   const {
     data: clasificacionesPendientes,
@@ -115,10 +116,7 @@ export default function AdministracionPage() {
     isError: errorRevision,
     error: errorRevisionObj,
     refetch: refetchRevision,
-  } = useRevisionPendiente({
-    limit: PAGE_SIZE,
-    offset: paginaRevision * PAGE_SIZE,
-  });
+  } = useRevisionPendiente();
 
   // ── Handlers ────────────────────────────────────────────────────────────────
 
@@ -322,14 +320,6 @@ export default function AdministracionPage() {
               error={errorRevisionObj}
               onValidar={handleValidar}
               onRefetch={() => void refetchRevision()}
-            />
-
-            {/* Control de paginación */}
-            <Paginacion
-              pagina={paginaRevision}
-              totalEnPagina={clasificacionesPendientes?.length ?? 0}
-              pageSize={PAGE_SIZE}
-              onChange={setPaginaRevision}
             />
           </section>
         )}

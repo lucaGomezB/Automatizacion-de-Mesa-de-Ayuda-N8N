@@ -2,36 +2,41 @@
 Servicio de estadisticas y analitica para el dashboard.
 
 Responsabilidad:
-    Implementa las consultas de agregacion para los endpoints de estadisticas.
-    Ejecuta queries SQL con GROUP BY via SQLAlchemy func directamente sobre la
-    tabla 'incidente' sin delegar a un repositorio, ya que los resultados de
-    agregacion no mapean a una unica entidad ORM (Decision 2 del design.md).
+    Implementa la logica de negocio de las consultas de agregacion para los
+    endpoints de estadisticas. El acceso a datos (construccion y ejecucion de
+    las queries agregadas) se delega en EstadisticasRepository; este servicio
+    estructura las series, calcula periodos y arma los KPIs.
 
     Las consultas usan los indices compuestos existentes:
         - ix_incidente_created_sector (created_at, sector_id)
         - ix_incidente_estado_created (estado_id, created_at)
+
+Agrupacion temporal portable (BE B1):
+    El agrupamiento por periodo lo resuelve el repositorio con una funcion SQL
+    por dialecto (`to_char` en PostgreSQL, `strftime` en SQLite). La generacion
+    de periodos faltantes con ceros es una funcion pura en este servicio
+    (`_fill_missing_periods`), independiente del motor.
 """
 
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
-from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.catalog import Estado, Sector
-from app.models.incidente import Incidente
+from app.repositories.estadisticas_repository import EstadisticasRepository
+from app.utils.business_time import business_range_to_utc, business_today
 
 
 class EstadisticasService:
     """
     Servicio de lectura para consultas de agregacion del dashboard.
 
-    Recibe la sesion de base de datos en el constructor. Todos los metodos
-    son asincronos y retornan datos estructurados listos para serializar
-    en las respuestas de la API.
+    Recibe la sesion de base de datos en el constructor y construye el
+    repositorio de estadisticas. Todos los metodos son asincronos y retornan
+    datos estructurados listos para serializar en las respuestas de la API.
     """
 
     def __init__(self, session: AsyncSession) -> None:
-        self._session = session
+        self._repo = EstadisticasRepository(session)
 
     # ── Helper: fechas por defecto ──────────────────────────────────────────
 
@@ -45,6 +50,8 @@ class EstadisticasService:
         """
         Genera todos los periodos en el rango [desde, hasta] y completa
         con ceros aquellos periodos sin datos en series_map.
+
+        Funcion pura: no accede a base de datos ni al dialecto SQL.
 
         Args:
             series_map: Mapa periodo → {periodo, total, por_sector} con datos reales.
@@ -79,11 +86,18 @@ class EstadisticasService:
 
     @staticmethod
     def _default_date_range(
-        desde: date | None, hasta: date | None
+        desde: date | None, hasta: date | None, now: datetime | None = None
     ) -> tuple[date, date]:
-        """Resuelve desde/hasta con fallback a ultimos 30 dias."""
+        """
+        Resuelve desde/hasta con fallback a ultimos 30 dias.
+
+        El dia de negocio se obtiene con `business_today` (UTC-3), nunca con
+        `date.today()`: la fecha local del servidor puede no coincidir con la
+        jornada laboral argentina. `now` es la costura de reloj inyectable que
+        hace determinista el resultado en los tests.
+        """
         if hasta is None:
-            hasta = date.today()
+            hasta = business_today(now)
         if desde is None:
             desde = hasta - timedelta(days=30)
         return desde, hasta
@@ -102,49 +116,21 @@ class EstadisticasService:
 
         Args:
             agrupar_por: 'dia' o 'mes'.
-            desde: Fecha de inicio del rango (inclusive).
-            hasta: Fecha de fin del rango (inclusive).
+            desde: Fecha de inicio del rango (inclusive, dia de negocio UTC-3).
+            hasta: Fecha de fin del rango (inclusive, dia de negocio UTC-3).
             sector_id: ID de sector para filtrar (opcional).
 
         Returns:
             dict con keys: periodo, total_incidentes, series, distribucion_sectores,
             distribucion_estados.
         """
-        # Formatear periodo segun granularidad
-        if agrupar_por == "dia":
-            period_label = func.strftime("%Y-%m-%d", Incidente.created_at)
-        else:  # mes
-            period_label = func.strftime("%Y-%m", Incidente.created_at)
+        # El repositorio compara contra columnas UTC: el rango de dias de
+        # negocio se convierte a [desde 00:00 BA, hasta+1 00:00 BA) en UTC.
+        desde_utc, hasta_utc_exclusive = business_range_to_utc(desde, hasta)
 
-        # Ajustar hasta para incluir el dia completo (hasta + 1 dia, exclusive)
-        # porque SQLAlchemy compara DateTime con date como midnight, y los
-        # incidentes creados durante el dia quedarian excluidos.
-        hasta_inclusive = hasta + timedelta(days=1)
-
-        # Query principal: contar incidentes por periodo y sector
-        # Necesitamos el join con sector para obtener el nombre
-        base_query = (
-            select(
-                period_label.label("periodo"),
-                Sector.nombre.label("sector_nombre"),
-                func.count(Incidente.id).label("total"),
-            )
-            .select_from(Incidente)
-            .join(Sector, Incidente.sector_id == Sector.id, isouter=True)
-            .where(Incidente.created_at >= desde)
-            .where(Incidente.created_at < hasta_inclusive)
+        rows = await self._repo.contar_por_periodo_y_sector(
+            agrupar_por, desde_utc, hasta_utc_exclusive, sector_id
         )
-
-        if sector_id is not None:
-            base_query = base_query.where(Incidente.sector_id == sector_id)
-
-        grouped_query = (
-            base_query.group_by(period_label, Sector.nombre)
-            .order_by(period_label)
-        )
-
-        result = await self._session.execute(grouped_query)
-        rows = result.all()
 
         # Construir series: cada periodo con su total y por_sector
         series_map: dict[str, dict] = {}
@@ -165,28 +151,14 @@ class EstadisticasService:
             total_incidentes += count
 
         # Rellenar periodos sin datos con ceros para que la serie sea continua
-        series = self._fill_missing_periods(
-            series_map, desde, hasta, agrupar_por
-        )
+        series = self._fill_missing_periods(series_map, desde, hasta, agrupar_por)
 
         # Distribucion por estado en el rango
-        estado_query = (
-            select(
-                Estado.nombre.label("estado_nombre"),
-                func.count(Incidente.id).label("total"),
-            )
-            .select_from(Incidente)
-            .join(Estado, Incidente.estado_id == Estado.id)
-            .where(Incidente.created_at >= desde)
-            .where(Incidente.created_at < hasta_inclusive)
-            .group_by(Estado.nombre)
+        estado_rows = await self._repo.contar_por_estado(
+            desde_utc, hasta_utc_exclusive, sector_id
         )
-        if sector_id is not None:
-            estado_query = estado_query.where(Incidente.sector_id == sector_id)
-
-        estado_result = await self._session.execute(estado_query)
         distribucion_estados = {
-            row.estado_nombre: row.total for row in estado_result.all()
+            row.estado_nombre: row.total for row in estado_rows
         }
 
         return {
@@ -204,79 +176,57 @@ class EstadisticasService:
     # ── Resumen ─────────────────────────────────────────────────────────────
 
     async def get_resumen(
-        self, desde: date | None = None, hasta: date | None = None
+        self,
+        desde: date | None = None,
+        hasta: date | None = None,
+        now: datetime | None = None,
     ) -> dict:
         """
         Retorna KPIs agregados para el dashboard.
 
         Args:
             desde: Fecha de inicio (opcional, default 30 dias atras).
-            hasta: Fecha de fin (opcional, default hoy).
+            hasta: Fecha de fin (opcional, default hoy de negocio UTC-3).
+            now: Instante de referencia inyectable para resolver el dia de
+                negocio por defecto de forma determinista (tests).
 
         Returns:
             dict con keys: total_incidentes, promedio_diario, distribucion_sectores,
             distribucion_estados, tasa_revision_humana.
         """
-        desde, hasta = self._default_date_range(desde, hasta)
-        hasta_inclusive = hasta + timedelta(days=1)
+        desde, hasta = self._default_date_range(desde, hasta, now)
+        # El rango de dias de negocio se traduce a limites UTC semiabiertos:
+        # [desde 00:00 BA, (hasta + 1 dia) 00:00 BA), con el superior EXCLUSIVO.
+        desde_utc, hasta_utc_exclusive = business_range_to_utc(desde, hasta)
 
-        # Total de incidentes en el rango
-        total_query = (
-            select(func.count(Incidente.id))
-            .where(Incidente.created_at >= desde)
-            .where(Incidente.created_at < hasta_inclusive)
+        total_incidentes = await self._repo.contar_total(
+            desde_utc, hasta_utc_exclusive
         )
-        total_result = await self._session.execute(total_query)
-        total_incidentes = total_result.scalar_one()
 
         # Promedio diario
         dias = (hasta - desde).days + 1
         promedio_diario = total_incidentes / max(dias, 1)
 
         # Distribucion por sector
-        sector_query = (
-            select(
-                Sector.nombre.label("sector_nombre"),
-                func.count(Incidente.id).label("total"),
-            )
-            .select_from(Incidente)
-            .join(Sector, Incidente.sector_id == Sector.id, isouter=True)
-            .where(Incidente.created_at >= desde)
-            .where(Incidente.created_at < hasta_inclusive)
-            .group_by(Sector.nombre)
+        sector_rows = await self._repo.contar_por_sector(
+            desde_utc, hasta_utc_exclusive
         )
-        sector_result = await self._session.execute(sector_query)
         distribucion_sectores = {
-            row.sector_nombre or "Sin asignar": row.total
-            for row in sector_result.all()
+            row.sector_nombre or "Sin asignar": row.total for row in sector_rows
         }
 
         # Distribucion por estado
-        estado_query = (
-            select(
-                Estado.nombre.label("estado_nombre"),
-                func.count(Incidente.id).label("total"),
-            )
-            .select_from(Incidente)
-            .join(Estado, Incidente.estado_id == Estado.id)
-            .where(Incidente.created_at >= desde)
-            .where(Incidente.created_at < hasta_inclusive)
-            .group_by(Estado.nombre)
+        estado_rows = await self._repo.contar_por_estado(
+            desde_utc, hasta_utc_exclusive, None
         )
-        estado_result = await self._session.execute(estado_query)
         distribucion_estados = {
-            row.estado_nombre: row.total for row in estado_result.all()
+            row.estado_nombre: row.total for row in estado_rows
         }
 
         # Tasa de revision humana
-        revision_query = (
-            select(func.count(Incidente.id))
-            .where(Incidente.created_at >= desde)
-            .where(Incidente.created_at < hasta_inclusive)
-            .where(Incidente.requiere_revision_humana == True)  # noqa: E712
+        total_revision = await self._repo.contar_revision_humana(
+            desde_utc, hasta_utc_exclusive
         )
-        revision_result = await self._session.execute(revision_query)
-        total_revision = revision_result.scalar_one()
 
         tasa_revision = total_revision / max(total_incidentes, 1)
 

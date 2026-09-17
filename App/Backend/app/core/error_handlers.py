@@ -20,20 +20,37 @@ Decisión de diseño:
 """
 
 from fastapi import FastAPI, Request
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.core.exceptions import (
     AppBaseException,
+    CanalOrigenNotFoundError,
     ClassificationError,
     EntityNotFoundError,
+    EstadoNotFoundError,
     GeminiTimeoutError,
     GeminiUnavailableError,
     IncidentValidationError,
     IncidenteCerradoError,
+    SectorNotFoundError,
 )
 from app.core.logging import get_logger
 
 logger = get_logger(__name__)
+
+# Mapeo de codigos HTTP estandar a codigos estables del envelope de error.
+_HTTP_CODE_MAP = {
+    400: "BAD_REQUEST",
+    401: "UNAUTHORIZED",
+    403: "FORBIDDEN",
+    404: "NOT_FOUND",
+    405: "METHOD_NOT_ALLOWED",
+    409: "CONFLICT",
+    422: "VALIDATION_ERROR",
+}
 
 
 def _error_body(code: str, message: str, details: dict | None = None) -> dict:
@@ -74,6 +91,73 @@ def register_error_handlers(app: FastAPI) -> None:
         return JSONResponse(
             status_code=404,
             content=_error_body("NOT_FOUND", exc.message, exc.details),
+        )
+
+    @app.exception_handler(EstadoNotFoundError)
+    async def estado_not_found_handler(
+        request: Request, exc: EstadoNotFoundError
+    ) -> JSONResponse:
+        """Convierte EstadoNotFoundError en respuesta 404 con el envelope (ERR-003)."""
+        return JSONResponse(
+            status_code=404,
+            content=_error_body("ESTADO_NOT_FOUND", exc.message, exc.details),
+        )
+
+    @app.exception_handler(SectorNotFoundError)
+    async def sector_not_found_handler(
+        request: Request, exc: SectorNotFoundError
+    ) -> JSONResponse:
+        """Convierte SectorNotFoundError en respuesta 404 con el envelope (ERR-003)."""
+        return JSONResponse(
+            status_code=404,
+            content=_error_body("SECTOR_NOT_FOUND", exc.message, exc.details),
+        )
+
+    @app.exception_handler(CanalOrigenNotFoundError)
+    async def canal_origen_not_found_handler(
+        request: Request, exc: CanalOrigenNotFoundError
+    ) -> JSONResponse:
+        """Convierte CanalOrigenNotFoundError en respuesta 404 con el envelope (ERR-003)."""
+        return JSONResponse(
+            status_code=404,
+            content=_error_body("CANAL_ORIGEN_NOT_FOUND", exc.message, exc.details),
+        )
+
+    @app.exception_handler(StarletteHTTPException)
+    async def http_exception_handler(
+        request: Request, exc: StarletteHTTPException
+    ) -> JSONResponse:
+        """
+        Normaliza toda HTTPException (401/403/404/...) al envelope de error.
+
+        Preserva los headers originales (por ejemplo `WWW-Authenticate` en 401)
+        y evita exponer el campo `detail` en la raiz del cuerpo (ERR-001).
+        """
+        code = _HTTP_CODE_MAP.get(exc.status_code, "HTTP_ERROR")
+        detail = exc.detail if isinstance(exc.detail, str) else "HTTP error"
+        return JSONResponse(
+            status_code=exc.status_code,
+            content=_error_body(code, detail),
+            headers=getattr(exc, "headers", None),
+        )
+
+    @app.exception_handler(RequestValidationError)
+    async def request_validation_handler(
+        request: Request, exc: RequestValidationError
+    ) -> JSONResponse:
+        """
+        Normaliza los errores de validacion de Pydantic/FastAPI al envelope.
+
+        Devuelve 422 con `error.code`/`error.message` y los errores de detalle
+        bajo `error.details`, sin el campo `detail` en la raiz (ERR-001).
+        """
+        return JSONResponse(
+            status_code=422,
+            content=_error_body(
+                "VALIDATION_ERROR",
+                "Request validation failed.",
+                {"errors": jsonable_encoder(exc.errors())},
+            ),
         )
 
     @app.exception_handler(IncidentValidationError)

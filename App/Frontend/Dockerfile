@@ -3,6 +3,11 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
+# Vite hornea las variables VITE_* en tiempo de build; deben llegar como build
+# arg desde docker-compose (el `environment` de runtime NO afecta a un bundle ya
+# compilado servido por nginx). Declarada antes del comando de compilacion.
+ARG VITE_API_BASE_URL
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 RUN npm run build
 
 FROM nginx:alpine

@@ -58,3 +58,4 @@ backups/*.sql
 # Corpus de evaluacion real (PII — Ley 25.326)
 data/corpus_evaluacion_pseudonimizado.csv
 data/corpus_evaluacion_pseudonimizado.json
+data/Corpus Tesis*

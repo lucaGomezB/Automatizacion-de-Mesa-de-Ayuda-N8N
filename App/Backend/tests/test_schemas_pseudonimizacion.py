@@ -146,7 +146,7 @@ class TestIncidenteReadSchema:
 # ── 12.3: Endpoint de detalle no expone original ─────────────────────────────
 
 @pytest.mark.asyncio
-async def test_endpoint_detalle_no_expone_original(client, db_session):
+async def test_endpoint_detalle_no_expone_original(client, db_session, seed_catalogs):
     """
     12.3 TRIANGULATE:
     El endpoint GET /api/v1/incidentes/{id} devuelve la pseudonimizada
@@ -154,6 +154,9 @@ async def test_endpoint_detalle_no_expone_original(client, db_session):
 
     Nota: este test usa el fixture 'client' + 'db_session' del conftest.
     La clave Fernet se inyecta vía el fixture autouse de este módulo.
+    El fixture 'seed_catalogs' garantiza la disponibilidad de Estado/CanalOrigen/
+    Sector para que POST /api/v1/incidentes/ devuelva 201 de forma determinista;
+    el test corre SIEMPRE y falla fuerte ante regresiones (nunca se auto-omite).
     """
     from app.schemas.clasificacion import ClasificacionResult
 
@@ -181,10 +184,7 @@ async def test_endpoint_detalle_no_expone_original(client, db_session):
             json={"descripcion": _TEXTO_CON_PII, "prioridad": "media"},
         )
 
-    if response.status_code != 201:
-        # El endpoint puede fallar si los catálogos no están sembrados
-        # En ese caso, omitir el test (la validación del schema ya cubre lo que importa)
-        pytest.skip(f"Endpoint no disponible en este contexto de test: {response.status_code}")
+    assert response.status_code == 201, response.text
 
     data = response.json()
 
