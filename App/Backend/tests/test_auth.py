@@ -14,9 +14,12 @@ Estrategia de aislamiento:
     cliente ASGI (que abre su propia sesion) pueda consultar el usuario.
 """
 
+from datetime import datetime, timedelta, timezone
+
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
+from jose import jwt as jose_jwt
 from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
@@ -232,6 +235,84 @@ async def test_incidentes_with_expired_token_returns_401(
     assert response.status_code == 401
 
 
+# ── C-30 BE 6.4: el JWT debe exigir el claim `exp` ─────────────────────────────
+
+@pytest.mark.asyncio
+async def test_incidentes_with_token_without_exp_returns_401(
+    auth_client: AsyncClient, seed_user, seed_catalogs
+):
+    """
+    Un token correctamente firmado pero SIN claim `exp` debe rechazarse con 401.
+
+    Antes del fix el backend lo aceptaba (200): create_access_token omitia `exp`
+    y get_current_user decodificaba sin exigirlo. El rechazo usa el envelope de
+    error estandar (UNAUTHORIZED) y no expone `detail` en la raiz.
+    """
+    from app.config.settings import get_settings
+
+    settings = get_settings()
+    token = jose_jwt.encode(
+        {"sub": seed_user["username"]},
+        settings.jwt_secret_key,
+        algorithm=settings.jwt_algorithm,
+    )
+    response = await auth_client.get(
+        "/api/v1/incidentes",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 401
+    body = response.json()
+    assert "detail" not in body
+    assert body["error"]["code"] == "UNAUTHORIZED"
+
+
+def test_create_access_token_defaults_to_configured_expiry():
+    """
+    create_access_token sin `expires_delta` debe emitir un token con claim `exp`
+    derivado de settings.jwt_expire_minutes (no puede emitir tokens sin expiracion).
+    """
+    from app.config.settings import get_settings
+
+    settings = get_settings()
+    token = create_access_token(
+        data={"sub": "admin"},
+        secret=settings.jwt_secret_key,  # gitleaks:allow
+        algorithm=settings.jwt_algorithm,
+    )
+    payload = jose_jwt.decode(
+        token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm]
+    )
+    assert "exp" in payload
+    exp = datetime.fromtimestamp(payload["exp"], tz=timezone.utc)
+    expected = datetime.now(timezone.utc) + timedelta(
+        minutes=settings.jwt_expire_minutes
+    )
+    assert abs((exp - expected).total_seconds()) < 60
+
+
+@pytest.mark.asyncio
+async def test_incidentes_with_default_exp_token_returns_200(
+    auth_client: AsyncClient, seed_user, seed_catalogs
+):
+    """
+    Regresion: un token emitido con la expiracion configurada por defecto
+    (sin `expires_delta` explicito) sigue autenticando con 200.
+    """
+    from app.config.settings import get_settings
+
+    settings = get_settings()
+    token = create_access_token(
+        data={"sub": seed_user["username"]},
+        secret=settings.jwt_secret_key,  # gitleaks:allow
+        algorithm=settings.jwt_algorithm,
+    )
+    response = await auth_client.get(
+        "/api/v1/incidentes",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 200
+
+
 @pytest.mark.asyncio
 async def test_clasificaciones_without_token_returns_401(
     auth_client: AsyncClient, seed_catalogs
@@ -314,3 +395,42 @@ async def test_login_only_password_returns_422(auth_client: AsyncClient):
         json={"password": "admin123"},
     )
     assert response.status_code == 422
+
+
+# ── ERR-001: envelope de error uniforme en 422 y 401 (C-30 BE B5) ─────────────
+
+@pytest.mark.asyncio
+async def test_validation_error_uses_error_envelope(auth_client: AsyncClient):
+    """
+    Un error de validacion de request devuelve 422 con el envelope
+    `error.code`/`error.message`/`error.details` y sin `detail` en la raiz.
+    """
+    response = await auth_client.post(
+        "/api/v1/auth/login",
+        json={"username": "admin"},  # falta password
+    )
+
+    assert response.status_code == 422
+    body = response.json()
+    assert "detail" not in body
+    assert "error" in body
+    assert body["error"]["code"] == "VALIDATION_ERROR"
+    assert body["error"]["message"]
+    assert "details" in body["error"]
+
+
+@pytest.mark.asyncio
+async def test_unauthenticated_error_uses_error_envelope(auth_client: AsyncClient):
+    """
+    Una peticion sin token devuelve 401 con el envelope (sin `detail` en la
+    raiz) y preserva el header `WWW-Authenticate: Bearer`.
+    """
+    response = await auth_client.get("/api/v1/incidentes/")
+
+    assert response.status_code == 401
+    body = response.json()
+    assert "detail" not in body
+    assert "error" in body
+    assert body["error"]["code"] == "UNAUTHORIZED"
+    assert body["error"]["message"]
+    assert response.headers.get("www-authenticate") == "Bearer"

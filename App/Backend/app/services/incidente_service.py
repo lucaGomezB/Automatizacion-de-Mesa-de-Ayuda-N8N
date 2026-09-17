@@ -23,7 +23,6 @@ Patrón de diseño:
 import asyncio
 from datetime import datetime
 
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.classifiers.hybrid import HybridClassifier
@@ -35,11 +34,14 @@ from app.core.exceptions import (
     EntityNotFoundError,
     EstadoNotFoundError,
     IncidenteCerradoError,
+    SectorNotFoundError,
 )
 from app.core.logging import get_logger
 from app.models.catalog import CanalOrigen, Estado
 from app.models.incidente import Incidente, PrioridadEnum
+from app.repositories.canal_origen_repository import CanalOrigenRepository
 from app.repositories.clasificacion_repository import ClasificacionRepository
+from app.repositories.estado_repository import EstadoRepository
 from app.repositories.incidente_repository import IncidenteRepository
 from app.repositories.sector_repository import SectorRepository
 from app.schemas.clasificacion import ClasificacionResult
@@ -50,6 +52,25 @@ logger = get_logger(__name__)
 # Nombre del estado inicial de todo incidente recién creado.
 # Debe coincidir exactamente con el valor sembrado en la migración 001.
 _ESTADO_NUEVO = "nuevo"
+
+# Referencias retenidas de las tareas fire-and-forget de notificación a N8N.
+# Un `asyncio.create_task` sin referencia puede ser recolectado por el GC antes
+# de completarse; el set mantiene viva cada tarea hasta que termina, y el
+# done_callback la descarta para no acumular memoria (BE B6 / D10).
+_notification_tasks: set[asyncio.Task] = set()
+
+
+def _dispatch_notification(incidente_id: int, result: ClasificacionResult) -> None:
+    """
+    Programa la notificación fire-and-forget a N8N conservando su referencia.
+
+    Args:
+        incidente_id: ID del incidente recién clasificado.
+        result:       Resultado del clasificador híbrido.
+    """
+    task = asyncio.create_task(notify_n8n(incidente_id, result))
+    _notification_tasks.add(task)
+    task.add_done_callback(_notification_tasks.discard)
 
 
 class IncidenteService:
@@ -76,10 +97,10 @@ class IncidenteService:
             session:    Sesión de base de datos activa para la solicitud actual.
             classifier: Instancia del clasificador híbrido (opcional; usa la real por defecto).
         """
-        self._session = session
-        # Los repositorios comparten la misma sesión para garantizar atomicidad
         self._incidente_repo = IncidenteRepository(session)
         self._sector_repo = SectorRepository(session)
+        self._estado_repo = EstadoRepository(session)
+        self._canal_repo = CanalOrigenRepository(session)
         self._clasificacion_repo = ClasificacionRepository(session)
         self._classifier = classifier or HybridClassifier()
 
@@ -241,6 +262,25 @@ class IncidenteService:
         if incidente.estado.es_terminal:
             raise IncidenteCerradoError(incidente_id)
 
+        # Verificar la existencia de las FKs de catálogo antes de persistir
+        # (ERR-002). Sin esta validación, PostgreSQL rechaza el UPDATE con una
+        # violación de integridad que el handler genérico traduce a 500, y en
+        # motores sin enforcement la operación corrompe silenciosamente la
+        # referencia.
+        if payload.estado_id is not None:
+            estado = await self._estado_repo.get_or_none(payload.estado_id)
+            if estado is None:
+                raise EstadoNotFoundError(
+                    f"Estado con id={payload.estado_id} no encontrado en el catálogo."
+                )
+
+        if payload.sector_id is not None:
+            sector = await self._sector_repo.get_or_none(payload.sector_id)
+            if sector is None:
+                raise SectorNotFoundError(
+                    f"Sector con id={payload.sector_id} no encontrado en el catálogo."
+                )
+
         updates = payload.model_dump(exclude_none=True)  # Solo campos no nulos
         await self._incidente_repo.update_fields(incidente_id, **updates)
         return await self.get_by_id(incidente_id)
@@ -271,11 +311,12 @@ class IncidenteService:
         adicionales_objs = list(adicionales.values())
 
         # Actualizar el incidente: sector principal + adicionales + bandera de revisión
-        incidente.sector_id = sector_id
-        incidente.requiere_revision_humana = result.requiere_revision_humana
-        incidente.sectores_adicionales = adicionales_objs
-        self._session.add(incidente)
-        await self._session.flush()
+        await self._incidente_repo.apply_classification(
+            incidente,
+            sector_id=sector_id,
+            sectores_adicionales=adicionales_objs,
+            requiere_revision_humana=result.requiere_revision_humana,
+        )
 
         # Crear el registro de auditoría con todos los detalles de la clasificación
         log = await self._clasificacion_repo.create(
@@ -287,8 +328,7 @@ class IncidenteService:
             respuesta_raw=result.respuesta_raw,
         )
         # Conjunto predicho adicional (el principal vive en sector_id_predicho)
-        log.sectores_predichos = adicionales_objs
-        await self._session.flush()
+        await self._clasificacion_repo.set_sectores_predichos(log, adicionales_objs)
 
         logger.info(
             "incidente_classified",
@@ -302,7 +342,8 @@ class IncidenteService:
 
         # Notificar a N8N de forma fire-and-forget: no bloquea la respuesta HTTP
         # ni propaga fallos (notify_n8n ya envuelve toda excepción en try/except).
-        asyncio.create_task(notify_n8n(incidente.id, result))
+        # La tarea conserva una referencia retenida hasta completar (BE B6).
+        _dispatch_notification(incidente.id, result)
 
     async def _resolve_estado(self, nombre: str) -> Estado:
         """
@@ -317,10 +358,7 @@ class IncidenteService:
         Raises:
             EstadoNotFoundError: Si el estado no existe (probable error de seed).
         """
-        result = await self._session.execute(
-            select(Estado).where(Estado.nombre == nombre)
-        )
-        estado = result.scalar_one_or_none()
+        estado = await self._estado_repo.get_by_nombre(nombre)
         if estado is None:
             raise EstadoNotFoundError(
                 f"Estado '{nombre}' no encontrado en el catálogo. "
@@ -346,9 +384,9 @@ class IncidenteService:
         """
         if canal_id is None:
             return None
-        result = await self._session.get(CanalOrigen, canal_id)
-        if result is None:
+        canal = await self._canal_repo.get_or_none(canal_id)
+        if canal is None:
             raise CanalOrigenNotFoundError(
                 f"CanalOrigen con id={canal_id} no encontrado en el catálogo."
             )
-        return result
+        return canal

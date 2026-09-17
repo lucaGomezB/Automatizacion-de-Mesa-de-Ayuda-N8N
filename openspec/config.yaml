@@ -18,7 +18,7 @@ stack:
     orm: SQLAlchemy 2.0 async (asyncpg)
     database: PostgreSQL 15.5
     migrations: Alembic (seed de catálogos en 001; tablas multietiqueta de sectores en 004)
-    testing: pytest 8.3 (tests/ con conftest async + SQLite in-memory)
+    testing: pytest 8.3 (tests/ con conftest async; SQLite in-memory unit subset + PostgreSQL integration subset via @pytest.mark.integration against a disposable test database)
     logging: structlog (JSON prod / consola dev)
     config: pydantic-settings (.env)
   frontend:

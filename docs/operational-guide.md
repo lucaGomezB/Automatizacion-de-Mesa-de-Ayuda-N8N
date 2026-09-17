@@ -3,6 +3,9 @@
 Sistema de Automatización de Mesa de Ayuda — UTN 2026
 
 > Para la guía de resolución de problemas, ver [`troubleshooting.md`](troubleshooting.md).
+>
+> Para el arnés de validación local de costo cero (dry-run), ver
+> [`dry-run-harness.md`](dry-run-harness.md).
 
 ---
 
@@ -402,4 +405,27 @@ python evaluation/generate_corpus.py
 
 El corpus se regenera con seed fijo (42) — la salida es identica en
 cada ejecucion y produce metricas alineadas con la tesis (Capitulo 7).
+
+---
+
+## 9. Arnés de ejecución en seco (dry-run)
+
+Antes de configurar credenciales pagas (Gemini, Twilio), validar localmente y sin
+costo el tramo compartido de registro de incidentes con:
+
+```bash
+make dry-run
+# o
+python3 scripts/dry_run/dry_run.py
+```
+
+El arnés levanta o reutiliza el stack `mesa_local` con una `GEMINI_API_KEY`
+ficticia, importa/activa el workflow de N8N, ejecuta un preflight de contratos y
+recorre el canal web end-to-end verificando la persistencia con
+`canal_origen_id == 2`. No invoca servicios pagos y falla ruidosamente con un
+mensaje accionable ante cualquier quiebre de cableado.
+
+- Guía completa (prerrequisitos, guardarraíles de costo, checks, canal correo
+  opcional y procedimiento telefónico manual de pago):
+  [`dry-run-harness.md`](dry-run-harness.md).
 ```

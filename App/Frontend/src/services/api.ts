@@ -14,12 +14,17 @@
  *   errores 401 y dispara el callback de logout.
  *
  * Configuración:
- *   La URL base se toma de la variable de entorno `VITE_API_BASE_URL`; si no está
- *   definida, se usa `http://localhost:8000` como valor por defecto para desarrollo local.
+ *   La URL base se toma de la variable de entorno `VITE_API_BASE_URL` (única fuente
+ *   de verdad; en Docker se hornea en tiempo de build como build arg). Si no está
+ *   definida, se usa `http://localhost:8000` como fallback único documentado para
+ *   desarrollo local. La barra final se recorta y el prefijo `/api/v1` se agrega en
+ *   un solo lugar para no duplicar el sufijo.
  */
 import axios, { type AxiosError } from 'axios';
 
-const API_BASE_URL = import.meta.env['VITE_API_BASE_URL'] ?? 'http://localhost:8000';
+const API_BASE_URL = (
+  import.meta.env['VITE_API_BASE_URL'] ?? 'http://localhost:8000'
+).replace(/\/+$/, '');
 
 export const apiClient = axios.create({
   baseURL: `${API_BASE_URL}/api/v1`,

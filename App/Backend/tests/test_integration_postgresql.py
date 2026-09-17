@@ -17,7 +17,7 @@ Test organization follows the C-19 proposal and delta spec:
   6. API operations via PostgreSQL
 """
 
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 import pytest
 
@@ -288,7 +288,9 @@ async def test_numeric_precision_confianza(pg_session, seed_pg_catalogs):
     await pg_session.refresh(log)
 
     # PostgreSQL rounds to 4 decimal places: 0.12345 → 0.1235
-    assert log.confianza == pytest.approx(0.1235, abs=0.0001), (
+    # `confianza` es Numeric → asyncpg lo devuelve como Decimal; comparar
+    # Decimal con float en pytest.approx lanza TypeError, por eso se castea.
+    assert float(log.confianza) == pytest.approx(0.1235, abs=0.0001), (
         f"Numeric(5,4) should round to 4 decimals, got {log.confianza}"
     )
 
@@ -403,7 +405,7 @@ async def test_patch_updates_estado(pg_engine, pg_client, seed_pg_catalogs):
         "sector_id": catalogs["sector_sistemas"].id,
         "canal_origen_id": catalogs["canal_correo"].id,
     }
-    response = await pg_client.post("/api/v1/incidentes", json=create_payload)
+    response = await pg_client.post("/api/v1/incidentes/", json=create_payload)
     assert response.status_code == 201, f"Create failed: {response.text}"
     incidente_data = response.json()
     incidente_id = incidente_data["id"]
@@ -425,3 +427,105 @@ async def test_patch_updates_estado(pg_engine, pg_client, seed_pg_catalogs):
     assert response.status_code == 200
     retrieved = response.json()
     assert retrieved["estado"]["nombre"] == "en proceso"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 7. Estadisticas y PATCH con FK inexistente sobre PostgreSQL (C-29)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+async def _crear_incidente_via_pg_api(
+    pg_client, catalogs: dict, descripcion: str
+) -> dict:
+    """Helper: crea un incidente valido via la API respaldada por PostgreSQL."""
+    payload = {
+        "descripcion": descripcion,
+        "prioridad": "media",
+        "sector_id": catalogs["sector_sistemas"].id,
+        "canal_origen_id": catalogs["canal_correo"].id,
+    }
+    response = await pg_client.post("/api/v1/incidentes/", json=payload)
+    assert response.status_code == 201, f"Create failed: {response.text}"
+    return response.json()
+
+
+@pytest.mark.parametrize("agrupar_por", ["dia", "mes"])
+async def test_estadisticas_tendencias_200_on_postgresql(
+    pg_client, seed_pg_catalogs, agrupar_por
+):
+    """GET /api/v1/estadisticas/tendencias debe responder 200 sobre PostgreSQL.
+
+    Seam B1: el servicio formatea el periodo con `func.strftime`, una funcion
+    exclusiva de SQLite. Sobre PostgreSQL la query no compila/ejecuta y el
+    endpoint devuelve 500. Se cubren ambas granularidades (dia y mes).
+    """
+    catalogs = seed_pg_catalogs
+    await _crear_incidente_via_pg_api(
+        pg_client, catalogs, f"Tendencias PG seam ({agrupar_por})"
+    )
+
+    hoy = date.today().isoformat()
+    response = await pg_client.get(
+        "/api/v1/estadisticas/tendencias",
+        params={"agrupar_por": agrupar_por, "desde": hoy, "hasta": hoy},
+    )
+
+    assert response.status_code == 200, (
+        f"GET /api/v1/estadisticas/tendencias (agrupar_por={agrupar_por}) "
+        f"devolvio {response.status_code} sobre PostgreSQL (esperado 200). "
+        f"Body: {response.text}"
+    )
+
+
+async def test_estadisticas_resumen_200_on_postgresql(pg_client, seed_pg_catalogs):
+    """GET /api/v1/estadisticas/resumen debe responder 200 sobre PostgreSQL.
+
+    Contrato de no-regresion: las queries de resumen usan solo `func.count`
+    (portable) y deben seguir respondiendo 200 con PostgreSQL como motor.
+    """
+    catalogs = seed_pg_catalogs
+    await _crear_incidente_via_pg_api(pg_client, catalogs, "Resumen PG seam")
+
+    response = await pg_client.get("/api/v1/estadisticas/resumen")
+
+    assert response.status_code == 200, (
+        f"GET /api/v1/estadisticas/resumen devolvio {response.status_code} "
+        f"sobre PostgreSQL (esperado 200). Body: {response.text}"
+    )
+
+
+async def test_patch_incidente_nonexistent_fk_returns_4xx(
+    pg_client, seed_pg_catalogs
+):
+    """PATCH con una FK inexistente sobre PostgreSQL debe devolver 4xx, no 500.
+
+    Seam B2/B3: `update_incidente` aplica el `estado_id` directamente via
+    `update_fields` sin resolverlo contra el catalogo. PostgreSQL viola la FK
+    (IntegrityError) y el manejador generico la traduce a 500. El contrato
+    correcto es rechazar la peticion con un error de cliente (4xx) y conservar
+    las referencias previas del incidente.
+    """
+    catalogs = seed_pg_catalogs
+    created = await _crear_incidente_via_pg_api(
+        pg_client, catalogs, "PATCH FK inexistente PG seam"
+    )
+    incidente_id = created["id"]
+    sector_previo_id = created["sector"]["id"]
+
+    response = await pg_client.patch(
+        f"/api/v1/incidentes/{incidente_id}",
+        json={"estado_id": 99999},
+    )
+
+    assert 400 <= response.status_code < 500, (
+        f"PATCH /api/v1/incidentes/{incidente_id} con estado_id=99999 "
+        f"devolvio {response.status_code} (esperado 4xx, no 5xx). "
+        f"Body: {response.text}"
+    )
+
+    # El incidente debe conservar sus referencias previas (no corromperse).
+    verify = await pg_client.get(f"/api/v1/incidentes/{incidente_id}")
+    assert verify.status_code == 200, f"GET failed: {verify.text}"
+    assert verify.json()["sector"]["id"] == sector_previo_id, (
+        "El incidente cambio de sector pese a que el PATCH debia ser rechazado."
+    )

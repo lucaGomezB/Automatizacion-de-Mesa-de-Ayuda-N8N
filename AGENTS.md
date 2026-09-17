@@ -4,11 +4,13 @@ Project guidance for OpenCode sessions. Every line answers: "Would an agent like
 
 ## Project State
 
-All 10 OPSX changes are **complete and archived**. The project is in maintenance mode. Before touching anything, check:
+This project is **NOT in maintenance mode**. Several OPSX changes are active at any given time (for example `c-28` through `c-33` at the time of writing), and some are complete but NOT yet archived. Never assume a change is archived — always ask the CLI first:
 
 ```bash
 openspec list --json
 ```
+
+`status: complete` means the tasks are done, but the change only becomes archived once it is moved under `openspec/changes/archive/`. Treat `openspec list --json` as the single source of truth for what exists; this file can and will go stale.
 
 Primary sources of truth:
 - `openspec/config.yaml` — authoritative stack, conventions, thresholds, category strings
@@ -41,11 +43,11 @@ openspec list --json
 │   │   ├── models/           # SQLAlchemy ORM (5 tables + catalogs)
 │   │   ├── classifiers/      # Deterministic + Gemini + Hybrid (F1 se re-mide con el corpus real)
 │   │   ├── schemas/          # Pydantic v2 request/response models
-│   │   ├── utils/            # n8n_webhook, pseudonymizer
+│   │   ├── utils/            # n8n_webhook, pseudonymizer, business_time (UTC-3 day boundaries)
 │   │   ├── core/             # Database, error_handlers, logging (structlog)
 │   │   └── config/           # pydantic-settings (.env)
 │   ├── alembic/              # Migrations (seed catalogs in 001)
-│   └── tests/                # 190+ tests, SQLite in-memory (NOT PostgreSQL)
+│   └── tests/                # SQLite unit suite + PostgreSQL integration subset (disposable DB)
 │
 ├── App/Frontend/                 # React 18 + TypeScript + Vite
 │   └── src/
@@ -66,9 +68,20 @@ All commands run from the repo root unless noted.
 
 ### Backend (App/Backend/)
 
+The backend suite has TWO subsets:
+
+- **SQLite unit subset** (unmarked tests): fully offline, no Docker, no external services (Gemini/N8N mocked).
+- **PostgreSQL integration subset** (`@pytest.mark.integration`): REQUIRES a reachable PostgreSQL. PostgreSQL is a mandatory prerequisite — the suite fails loudly and never skips. Its fixtures run destructive DDL ONLY against a DISPOSABLE database, never the application database.
+
 ```bash
-# Run all backend tests (SQLite in-memory — NO Docker required)
+# Run the whole backend suite. Requires a reachable PostgreSQL for the integration subset.
 cd App/Backend; pytest
+
+# Run only the fast SQLite subset (no PostgreSQL required, fully offline)
+cd App/Backend; pytest -m "not integration"
+
+# Run only the PostgreSQL integration subset (uses the disposable database)
+cd App/Backend; pytest -m integration
 
 # Run a single test file
 cd App/Backend; pytest tests/test_api_incidentes.py
@@ -88,6 +101,26 @@ cd App/Backend; pytest tests/test_openapi_sync.py -v
 # Regenerate alembic migration after model changes
 cd App/Backend; alembic revision --autogenerate -m "description"
 ```
+
+#### Safe local workflow for the PostgreSQL integration subset
+
+The integration fixtures are destructive, so they run against a DISPOSABLE database (`mesa_de_ayuda_test`), created and dropped automatically by the session fixture. The application database (`mesa_de_ayuda`, the compose one) is NEVER targeted by default.
+
+```bash
+# 1. Start the compose PostgreSQL (from the repo root)
+docker compose up -d postgres
+
+# 2. Run the integration subset. Without TEST_PG_URL the fixtures provision
+#    `mesa_de_ayuda_test` via the `postgres` maintenance connection on the same
+#    server and DROP it at session teardown.
+cd App/Backend; pytest -m integration
+
+# 3. Point at your own dedicated database when needed (e.g. CI). When
+#    TEST_PG_URL is set, that database is used as-is (never created/dropped).
+cd App/Backend; TEST_PG_URL=postgresql+asyncpg://user:pw@host:5432/my_test_db pytest -m integration
+```
+
+**Safety guard**: before any destructive DDL the fixtures compare the target database NAME against the application database name (derived from `DATABASE_URL`). If they match, the run ABORTS with a non-zero exit code. The only exception is the explicit escape hatch `TEST_PG_ALLOW_APP_DB=1`, reserved for dedicated, ephemeral environments (e.g. a CI service container). Never set it against a database whose data you care about.
 
 ### Frontend (App/Frontend/)
 
@@ -124,7 +157,7 @@ docker compose ps
 - **`.env` location**: `App/Backend/.env` (NOT root `.env`)
 - **Template**: `App/Backend/.env.example`
 - **Pre-commit hook**: `.githooks/pre-commit` blocks commits containing API keys, PEM keys, or `.env` files. Use `gitleaks:allow` comment to whitelist false positives.
-- **CI dummies**: backend tests in CI need these env vars even though tests are offline (pydantic-settings requires them without defaults):
+- **CI dummies**: backend tests in CI need these env vars even though the SQLite subset is offline (pydantic-settings requires them without defaults). The integration subset additionally gets `TEST_PG_URL` pointed at its dedicated service container:
 
 ```
 DATABASE_URL=postgresql+asyncpg://ci:ci@localhost:5432/ci_dummy
@@ -132,7 +165,8 @@ GEMINI_API_KEY=ci-dummy-key
 PSEUDONYMIZATION_ENCRYPTION_KEY=MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA= # gitleaks:allow
 ```
 
-- **Backend tests run OFFLINE** — the conftest forces SQLite in-memory and mocks Gemini/N8N. No real service connections needed.
+- **SQLite subset runs OFFLINE** — the conftest forces SQLite in-memory and mocks Gemini/N8N; no real service connections are needed. The **PostgreSQL integration subset is NOT offline**: it requires a reachable PostgreSQL and runs destructive DDL against a disposable database only (see the safe local workflow above).
+- **`TEST_PG_URL` / `TEST_PG_ALLOW_APP_DB`**: `TEST_PG_URL` selects the integration target; without it the fixtures provision and drop the disposable `mesa_de_ayuda_test`. `TEST_PG_ALLOW_APP_DB=1` is the ONLY way to allow a target whose database name equals the application database (dedicated ephemeral environments only).
 
 ## Architecture Rules (Non-Obvious)
 
@@ -142,6 +176,7 @@ PSEUDONYMIZATION_ENCRYPTION_KEY=MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA= # g
 - **Domain identifiers in Spanish**: model fields, route paths (`/incidentes`), schema keys. Code identifiers (functions, variables) may be English or Spanish — keep consistent per file.
 - **Error response body**: standard envelope `{"error": {"code": "...", "message": "...", "details?": "..."}}` via `core/error_handlers.py`.
 - **N8N webhook notification**: fire-and-forget via `asyncio.create_task`. Do NOT block HTTP response on webhook completion. The mock in `conftest.py` patches this out globally.
+- **Business day is UTC-3**: dashboard date ranges and calendar days are resolved in `America/Argentina/Buenos_Aires` via `app/utils/business_time.py`, then converted to UTC-aware instants (half-open bounds) before querying. Do NOT use `date.today()` (server-local) against `created_at` UTC columns — near midnight it shifts the business day and excludes recent incidents.
 
 ## Testing Quirks
 

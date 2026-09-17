@@ -84,7 +84,7 @@ describe('incidentesService', () => {
 
       const result = await crearIncidente(payload);
 
-      expect(mockedApiClient.post).toHaveBeenCalledWith('/incidentes', payload);
+      expect(mockedApiClient.post).toHaveBeenCalledWith('/incidentes/', payload);
       expect(result).toEqual(mockIncidenteRead);
     });
 
@@ -104,7 +104,7 @@ describe('incidentesService', () => {
 
       const result = await listarIncidentes({ prioridad: 'alta', limit: 10 });
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/incidentes', {
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/incidentes/', {
         params: { prioridad: 'alta', limit: 10 },
       });
       expect(result).toEqual([mockListItem]);
@@ -115,7 +115,7 @@ describe('incidentesService', () => {
 
       await listarIncidentes();
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/incidentes', { params: {} });
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/incidentes/', { params: {} });
     });
   });
 

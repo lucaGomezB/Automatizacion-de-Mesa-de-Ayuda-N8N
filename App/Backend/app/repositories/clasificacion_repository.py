@@ -118,6 +118,37 @@ class ClasificacionRepository(BaseRepository[ClasificacionLog]):
         )
         return list(result.scalars().all())
 
+    async def set_sectores_predichos(
+        self, log: ClasificacionLog, sectores: list
+    ) -> None:
+        """
+        Persiste el conjunto multietiqueta de sectores predichos (C-27).
+
+        La capa de servicio no debe manipular el ORM ni la sesion directamente;
+        esta operacion encapsula la asignacion y el flush.
+
+        Args:
+            log:      Registro de auditoria ya persistido.
+            sectores: Instancias de Sector adicionales predichas.
+        """
+        log.sectores_predichos = sectores
+        self._session.add(log)
+        await self._session.flush()
+
+    async def set_sectores_validados(
+        self, log: ClasificacionLog, sectores: list
+    ) -> None:
+        """
+        Persiste el conjunto multietiqueta de sectores validados por el operador.
+
+        Args:
+            log:      Registro de auditoria a actualizar.
+            sectores: Instancias de Sector adicionales validadas.
+        """
+        log.sectores_validados = sectores
+        self._session.add(log)
+        await self._session.flush()
+
     async def set_validated_sector(
         self, log_id: int, sector_id: int
     ) -> ClasificacionLog:
