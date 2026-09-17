@@ -17,7 +17,7 @@ stack:
     framework: FastAPI 0.115 + Uvicorn
     orm: SQLAlchemy 2.0 async (asyncpg)
     database: PostgreSQL 15.5
-    migrations: Alembic (seed de catálogos en 001; tablas multietiqueta de sectores en 004)
+    migrations: Alembic (001 seed de catálogos; 004 tablas multietiqueta de sectores; 005 origen_message_id/origen_evento)
     testing: pytest 8.3 (tests/ con conftest async; SQLite in-memory unit subset + PostgreSQL integration subset via @pytest.mark.integration against a disposable test database)
     logging: structlog (JSON prod / consola dev)
     config: pydantic-settings (.env)
@@ -27,7 +27,7 @@ stack:
     data: React Query + Axios
     ui: shadcn/ui + Tailwind
   orchestration:
-    tool: N8N 1.62 (Docker autoalojado)
+    tool: N8N 2.11.2 (Docker autoalojado, imagen pinneada)
     workflow: n8n/workflow.json
   inference:
     model: Gemini 2.5 Flash (google-genai >= 1.0)
