@@ -1,0 +1,106 @@
+# cost-readiness Specification
+
+## Purpose
+Define como el proyecto demuestra, sin credenciales ni acceso a red, que las guardas de costo de sus artefactos estan efectivamente cableadas antes de habilitar servicios pagos, y como se acota el tiempo de ejecucion del servicio N8N para que ningun trabajo pago quede sin tope.
+
+## Requirements
+
+### Requirement: Preflight de preparacion de costo, sin red ni credenciales
+
+El sistema SHALL proveer un comando de preflight que, leyendo unicamente los artefactos del repositorio, verifique que las guardas de costo estan presentes y reporte una lista de resultados PASS/FAIL por guarda. El comando MUST NOT realizar acceso a red ni requerir Docker, credenciales o servicios externos. El comando SHALL terminar con codigo de salida 0 si y solo si todas las guardas verificadas estan presentes, y con codigo de salida no-cero si falta al menos una.
+
+#### Scenario: Todas las guardas presentes
+
+- **WHEN** se ejecuta el preflight sobre artefactos que contienen todas las guardas verificadas
+- **THEN** el preflight reporta PASS para cada guarda y termina con codigo de salida 0
+
+#### Scenario: Una guarda ausente
+
+- **WHEN** se ejecuta el preflight sobre artefactos a los que les falta una guarda
+- **THEN** el preflight reporta FAIL nombrando la guarda faltante y termina con codigo de salida no-cero
+
+#### Scenario: Costo cero
+
+- **WHEN** se ejecuta el preflight
+- **THEN** el comando no abre conexiones de red ni requiere credenciales o servicios externos
+
+#### Scenario: Reutilizable como test estructural
+
+- **WHEN** una suite de tests importa las funciones puras del preflight
+- **THEN** puede verificar guardas presentes y ausentes sin ejecutar el proceso CLI
+
+### Requirement: Guardas del workflow verificadas por el preflight
+
+El preflight SHALL verificar en `n8n/workflow.json`: (a) el nodo `AI Agent` declara un tope de iteraciones en `options.maxIterations`; (b) el trigger de Outlook declara `readStatus=unread` y un lookback de 24 horas sobre `receivedDateTime`; (c) el nodo `Marcar correo como leido` es alcanzable desde las ramas de exito, rechazo y error; (d) el body del nodo `HTTP POST a MTM-SRU` incluye `origen_message_id`, un bloque de clasificacion precalculada con `sector_predicho` y `confianza`, y un marcador explicito de evento; (e) existe un webhook dedicado con ruta `notificacion-clasificacion` que no esta conectado a la creacion de incidentes; (f) ningun nodo pago habilita reintentos.
+
+#### Scenario: Tope del agente pago presente
+
+- **WHEN** el preflight inspecciona el nodo `AI Agent` del workflow
+- **THEN** verifica que `options.maxIterations` esta declarado y la guarda pasa
+
+#### Scenario: Lookback del trigger de Outlook presente
+
+- **WHEN** el preflight inspecciona el trigger de Outlook
+- **THEN** verifica `readStatus=unread` y una ventana de 24 horas sobre `receivedDateTime`
+
+#### Scenario: Ciclo de vida del correo alcanzable
+
+- **WHEN** el preflight inspecciona el grafo del workflow
+- **THEN** verifica que `Marcar correo como leido` es alcanzable desde las ramas de exito, rechazo y error
+
+#### Scenario: Payload de alta enriquecido presente
+
+- **WHEN** el preflight inspecciona el body del nodo `HTTP POST a MTM-SRU`
+- **THEN** verifica la presencia de `origen_message_id`, la clasificacion precalculada y el marcador explicito de evento
+
+#### Scenario: Webhook de notificacion dedicado y aislado
+
+- **WHEN** el preflight inspecciona los webhooks del workflow
+- **THEN** verifica que existe la ruta `notificacion-clasificacion` y que su subgrafo no alcanza la creacion de incidentes
+
+### Requirement: Definicion de nodo pago para la guarda de reintentos
+
+El preflight SHALL considerar nodos pagos a los que ejecutan inferencia externa metrada: el nodo de agente `@n8n/n8n-nodes-langchain.agent` y los nodos de modelo de lenguaje cuyo tipo comienza con `@n8n/n8n-nodes-langchain.lm`. La guarda de reintentos SHALL fallar si cualquiera de esos nodos declara `retryOnFail` verdadero o un `maxTries` numerico.
+
+#### Scenario: Ningun nodo pago reintenta
+
+- **WHEN** ningun nodo pago declara `retryOnFail` verdadero ni `maxTries`
+- **THEN** la guarda de reintentos pasa
+
+#### Scenario: Reintento pago detectado
+
+- **WHEN** un nodo pago declara `retryOnFail` verdadero o un `maxTries` numerico
+- **THEN** la guarda de reintentos falla nombrando el nodo infractor
+
+### Requirement: Guardas del compose verificadas por el preflight
+
+El preflight SHALL verificar en `docker-compose.yml`: (a) la imagen del servicio `n8n` esta pineada a una version explicita y no a `latest`; (b) `N8N_WEBHOOK_URL` apunta a la ruta dedicada de notificacion `/webhook/notificacion-clasificacion`; (c) el environment del servicio `n8n` declara `EXECUTIONS_TIMEOUT`.
+
+#### Scenario: Imagen N8N pineada
+
+- **WHEN** el preflight inspecciona la imagen del servicio `n8n`
+- **THEN** la guarda pasa si la etiqueta es una version explicita y falla si es `latest` o si falta la etiqueta
+
+#### Scenario: Webhook de notificacion dedicado en el compose
+
+- **WHEN** el preflight inspecciona `N8N_WEBHOOK_URL`
+- **THEN** la guarda pasa si apunta a `/webhook/notificacion-clasificacion` y falla si apunta a otra ruta
+
+#### Scenario: Tope de ejecucion presente en el compose
+
+- **WHEN** el preflight inspecciona el environment del servicio `n8n`
+- **THEN** la guarda pasa si `EXECUTIONS_TIMEOUT` esta declarado y falla si esta ausente
+
+### Requirement: Tope de ejecucion declarado del servicio N8N
+
+El servicio `n8n` de `docker-compose.yml` SHALL declarar `EXECUTIONS_TIMEOUT` como cota por defecto y `EXECUTIONS_TIMEOUT_MAX` como cota maxima, ambas numericas y expresadas en segundos, de modo que una ejecucion colgada no permanezca activa de forma indefinida. `EXECUTIONS_TIMEOUT_MAX` SHALL ser mayor o igual que `EXECUTIONS_TIMEOUT`.
+
+#### Scenario: Ambas cotas declaradas
+
+- **WHEN** se inspecciona el environment del servicio `n8n`
+- **THEN** `EXECUTIONS_TIMEOUT` y `EXECUTIONS_TIMEOUT_MAX` estan presentes con valores numericos
+
+#### Scenario: Cotas coherentes
+
+- **WHEN** ambas cotas estan presentes
+- **THEN** `EXECUTIONS_TIMEOUT_MAX` es mayor o igual que `EXECUTIONS_TIMEOUT`

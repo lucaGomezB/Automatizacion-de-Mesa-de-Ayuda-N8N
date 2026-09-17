@@ -1,7 +1,9 @@
 # Por Implementar
 
-> Estado: 2026-09-17. 35 changes completos y archivados (C-01 a C-35; C-36 en curso).
-> Backend: 349 tests unit (SQLite) + 22 de integracion (PostgreSQL). Evaluation: 54. Frontend: 121.
+> Estado: 2026-09-17.
+> El estado de changes y el conteo de tests NO se hardcodean aqui: consultar
+> `openspec list` y `openspec/changes/archive/` como fuente de verdad de los changes
+> vigentes, y `.github/workflows/ci.yml` (o el ultimo run de CI) para el conteo de tests.
 > Este documento lista lo que falta para que el sistema funcione al 100% en un entorno real.
 > Las credenciales externas son inherentemente no automatizables; se documentan aqui para referencia del operador.
 

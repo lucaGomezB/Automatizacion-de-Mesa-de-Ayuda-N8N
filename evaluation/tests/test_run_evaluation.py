@@ -495,3 +495,414 @@ def test_no_cache_flag_es_equivalente_a_force(monkeypatch):
         monkeypatch.setattr(sys, "argv", ["run_evaluation", flag])
         run_evaluation.main()
         assert captured.get("force") is True, f"{flag} debe mapear a force=True"
+
+
+# ===========================================================================
+# C-36 — Gate de corrida paga y estimacion de costo
+#
+# Condicion del gate: la corrida invocaria al clasificador (cache miss o
+# `force=True`) Y `classifier is None` (se resolveria el HybridClassifier real).
+# Un cache hit no exige confirmacion. Un clasificador inyectado tampoco.
+# ===========================================================================
+def _spy_paid_classifier(corpus_path):
+    """Spy que simula el clasificador real: cuenta invocaciones."""
+    from evaluation.corpus import cargar_corpus
+    from evaluation.tests.conftest import ClasificacionResultFake, FakeClassifier
+
+    casos = cargar_corpus(corpus_path)
+    predicciones = {
+        caso.descripcion: ClasificacionResultFake(
+            sector_predicho=caso.sector_asignado,
+            sectores_adicionales=list(caso.sectores_adicionales),
+            confianza=0.95,
+            etapa="deterministic",
+        )
+        for caso in casos
+    }
+
+    class SpyPaidClassifier(FakeClassifier):
+        def __init__(self):
+            super().__init__(predicciones=predicciones)
+            self.call_count = 0
+
+        async def classify(self, descripcion):
+            self.call_count += 1
+            return await super().classify(descripcion)
+
+    return SpyPaidClassifier()
+
+
+def _resolver_a(monkeypatch, spy):
+    import evaluation.run_evaluation as run_evaluation
+
+    monkeypatch.setattr(
+        run_evaluation, "_resolver_clasificador_real", lambda: spy
+    )
+    # W-3: el camino real lee la version sin construir el clasificador; los
+    # tests la fijan a la version del spy para conservar la semantica del cache.
+    monkeypatch.setattr(
+        run_evaluation,
+        "_version_clasificador_real",
+        lambda: run_evaluation._get_classifier_version(spy),
+    )
+
+
+async def test_cache_miss_sin_confirmacion_rechaza_y_no_clasifica(
+    corpus_fixture_path, tmp_path, monkeypatch
+):
+    """3.1: cache miss + clasificador real + sin confirmacion -> rechazo sin invocar."""
+    import shutil
+
+    import evaluation.run_evaluation as run_evaluation
+    from evaluation.run_evaluation import PaidRunNotConfirmedError, main_con_corpus_real
+
+    spy = _spy_paid_classifier(corpus_fixture_path)
+    _resolver_a(monkeypatch, spy)
+
+    corpus_copy = tmp_path / "corpus.json"
+    shutil.copy(corpus_fixture_path, corpus_copy)
+
+    with pytest.raises(PaidRunNotConfirmedError) as exc_info:
+        await main_con_corpus_real(
+            corpus_path=corpus_copy,
+            classifier=None,
+            report_path=tmp_path / "report.md",
+            predicciones_path=tmp_path / "predicciones.json",
+        )
+
+    assert spy.call_count == 0, "El gate no debe invocar al clasificador pago"
+    mensaje = str(exc_info.value)
+    assert "--confirm-paid" in mensaje
+    assert "EVALUATION_CONFIRM_PAID" in mensaje
+
+
+async def test_cache_hit_sin_confirmacion_usa_cache(
+    corpus_fixture_path, tmp_path, monkeypatch
+):
+    """3.2: cache valido + sin confirmacion -> carga cache, no invoca, no exige."""
+    import shutil
+
+    from evaluation.run_evaluation import main_con_corpus_real
+
+    spy = _spy_paid_classifier(corpus_fixture_path)
+    _resolver_a(monkeypatch, spy)
+
+    corpus_copy = tmp_path / "corpus.json"
+    shutil.copy(corpus_fixture_path, corpus_copy)
+    pred_path = tmp_path / "predicciones.json"
+    report_path = tmp_path / "report.md"
+
+    # Genera el cache con el clasificador inyectado (no hay gate en ese camino).
+    await main_con_corpus_real(
+        corpus_path=corpus_copy,
+        classifier=spy,
+        report_path=report_path,
+        predicciones_path=pred_path,
+    )
+    assert spy.call_count > 0
+
+    spy.call_count = 0
+    await main_con_corpus_real(
+        corpus_path=corpus_copy,
+        classifier=None,
+        report_path=report_path,
+        predicciones_path=pred_path,
+    )
+    assert spy.call_count == 0, "Un cache hit no debe invocar al clasificador"
+
+
+async def test_confirm_paid_true_permite_corrida_paga(
+    corpus_fixture_path, tmp_path, monkeypatch
+):
+    """3.3 (nucleo): confirm_paid=True habilita la corrida paga."""
+    import shutil
+
+    from evaluation.run_evaluation import main_con_corpus_real
+
+    spy = _spy_paid_classifier(corpus_fixture_path)
+    _resolver_a(monkeypatch, spy)
+
+    corpus_copy = tmp_path / "corpus.json"
+    shutil.copy(corpus_fixture_path, corpus_copy)
+
+    await main_con_corpus_real(
+        corpus_path=corpus_copy,
+        classifier=None,
+        report_path=tmp_path / "report.md",
+        predicciones_path=tmp_path / "predicciones.json",
+        confirm_paid=True,
+    )
+    assert spy.call_count > 0, "Con confirmacion la corrida paga debe clasificar"
+
+
+def _capture_cli_confirmation(monkeypatch, argv, env_value):
+    import sys
+
+    import evaluation.run_evaluation as run_evaluation
+
+    captured: dict = {}
+
+    async def fake_main(*args, **kwargs):
+        captured["confirm_paid"] = kwargs.get("confirm_paid")
+
+    monkeypatch.setattr(run_evaluation, "main_con_corpus_real", fake_main)
+    if env_value is None:
+        monkeypatch.delenv("EVALUATION_CONFIRM_PAID", raising=False)
+    else:
+        monkeypatch.setenv("EVALUATION_CONFIRM_PAID", env_value)
+    monkeypatch.setattr(sys, "argv", ["run_evaluation", *argv])
+    run_evaluation.main()
+    return captured.get("confirm_paid")
+
+
+def test_cli_confirm_paid_por_flag(monkeypatch):
+    """3.3: `--confirm-paid` mapea a confirm_paid=True en el CLI."""
+    assert _capture_cli_confirmation(monkeypatch, ["--confirm-paid"], None) is True
+
+
+def test_cli_confirm_paid_por_entorno(monkeypatch):
+    """3.3: `EVALUATION_CONFIRM_PAID=1` habilita la corrida paga."""
+    assert _capture_cli_confirmation(monkeypatch, [], "1") is True
+
+
+def test_cli_confirm_paid_env_case_insensitive(monkeypatch):
+    """3.3: valores `true`/`yes` en cualquier casing son verdaderos."""
+    assert _capture_cli_confirmation(monkeypatch, [], "YES") is True
+    assert _capture_cli_confirmation(monkeypatch, [], "True") is True
+
+
+def test_cli_confirm_paid_valor_falso(monkeypatch):
+    """3.3: un valor no listado no habilita la corrida paga."""
+    assert _capture_cli_confirmation(monkeypatch, [], "0") is False
+
+
+def test_cli_gate_rechazado_sale_con_codigo_2(monkeypatch, capsys):
+    """4.3: el CLI captura el rechazo, imprime mensaje accionable y sale 2."""
+    import sys
+
+    import evaluation.run_evaluation as run_evaluation
+    from evaluation.run_evaluation import PaidRunNotConfirmedError
+
+    async def fake_main(*args, **kwargs):
+        raise PaidRunNotConfirmedError(
+            "Corrida paga sin confirmar: usa --confirm-paid o EVALUATION_CONFIRM_PAID"
+        )
+
+    monkeypatch.setattr(run_evaluation, "main_con_corpus_real", fake_main)
+    monkeypatch.delenv("EVALUATION_CONFIRM_PAID", raising=False)
+    monkeypatch.setattr(sys, "argv", ["run_evaluation"])
+
+    with pytest.raises(SystemExit) as exc_info:
+        run_evaluation.main()
+    assert exc_info.value.code == 2
+    salida = capsys.readouterr()
+    assert "--confirm-paid" in (salida.out + salida.err)
+
+
+async def test_clasificador_inyectado_no_exige_confirmacion(
+    corpus_fixture_path, tmp_path
+):
+    """3.4 (regresion): un clasificador inyectado clasifica sin confirmacion."""
+    import shutil
+
+    from evaluation.run_evaluation import main_con_corpus_real
+
+    spy = _spy_paid_classifier(corpus_fixture_path)
+    corpus_copy = tmp_path / "corpus.json"
+    shutil.copy(corpus_fixture_path, corpus_copy)
+
+    await main_con_corpus_real(
+        corpus_path=corpus_copy,
+        classifier=spy,
+        report_path=tmp_path / "report.md",
+        predicciones_path=tmp_path / "predicciones.json",
+    )
+    assert spy.call_count > 0
+
+
+async def test_force_con_clasificador_real_sin_confirmacion_rechaza(
+    corpus_fixture_path, tmp_path, monkeypatch
+):
+    """3.5: `force=True` no sustituye la confirmacion de corrida paga."""
+    import shutil
+
+    from evaluation.run_evaluation import PaidRunNotConfirmedError, main_con_corpus_real
+
+    spy = _spy_paid_classifier(corpus_fixture_path)
+    _resolver_a(monkeypatch, spy)
+
+    corpus_copy = tmp_path / "corpus.json"
+    shutil.copy(corpus_fixture_path, corpus_copy)
+    pred_path = tmp_path / "predicciones.json"
+    report_path = tmp_path / "report.md"
+
+    # Genera un cache valido (con clasificador inyectado).
+    await main_con_corpus_real(
+        corpus_path=corpus_copy,
+        classifier=spy,
+        report_path=report_path,
+        predicciones_path=pred_path,
+    )
+    spy.call_count = 0
+
+    with pytest.raises(PaidRunNotConfirmedError):
+        await main_con_corpus_real(
+            corpus_path=corpus_copy,
+            classifier=None,
+            report_path=report_path,
+            predicciones_path=pred_path,
+            force=True,
+        )
+    assert spy.call_count == 0
+
+
+def test_estimated_cost_usd_es_lineal():
+    """3.6: la estimacion es `casos * costo_por_llamada`."""
+    from evaluation.run_evaluation import (
+        ESTIMATED_COST_PER_CALL_USD,
+        estimated_cost_usd,
+    )
+
+    assert ESTIMATED_COST_PER_CALL_USD > 0
+    assert estimated_cost_usd(0) == 0.0
+    assert estimated_cost_usd(10) == pytest.approx(10 * ESTIMATED_COST_PER_CALL_USD)
+
+
+async def test_estimacion_impresa_antes_de_corrida_paga(
+    corpus_fixture_path, tmp_path, monkeypatch, capsys
+):
+    """3.6: antes de clasificar se imprime la cantidad de casos y el costo."""
+    import shutil
+
+    from evaluation.corpus import cargar_corpus
+    from evaluation.run_evaluation import main_con_corpus_real
+
+    spy = _spy_paid_classifier(corpus_fixture_path)
+    _resolver_a(monkeypatch, spy)
+
+    corpus_copy = tmp_path / "corpus.json"
+    shutil.copy(corpus_fixture_path, corpus_copy)
+    casos = len(cargar_corpus(corpus_copy))
+
+    await main_con_corpus_real(
+        corpus_path=corpus_copy,
+        classifier=None,
+        report_path=tmp_path / "report.md",
+        predicciones_path=tmp_path / "predicciones.json",
+        confirm_paid=True,
+    )
+
+    salida = capsys.readouterr().out
+    assert "Estimacion de costo" in salida
+    assert str(casos) in salida
+    assert "USD" in salida
+
+
+async def test_cache_hit_no_imprime_costo_pago(
+    corpus_fixture_path, tmp_path, monkeypatch, capsys
+):
+    """3.6: un cache hit no reporta estimacion de costo pago."""
+    import shutil
+
+    from evaluation.run_evaluation import main_con_corpus_real
+
+    spy = _spy_paid_classifier(corpus_fixture_path)
+    _resolver_a(monkeypatch, spy)
+
+    corpus_copy = tmp_path / "corpus.json"
+    shutil.copy(corpus_fixture_path, corpus_copy)
+    pred_path = tmp_path / "predicciones.json"
+    report_path = tmp_path / "report.md"
+
+    await main_con_corpus_real(
+        corpus_path=corpus_copy,
+        classifier=spy,
+        report_path=report_path,
+        predicciones_path=pred_path,
+    )
+    capsys.readouterr()  # descarta la salida de la primera corrida
+
+    await main_con_corpus_real(
+        corpus_path=corpus_copy,
+        classifier=None,
+        report_path=report_path,
+        predicciones_path=pred_path,
+    )
+    assert "Estimacion de costo" not in capsys.readouterr().out
+
+
+# ===========================================================================
+# W-3 (fix post-verificacion): un cache hit no resuelve el clasificador real
+# ===========================================================================
+async def test_cache_hit_no_resuelve_clasificador_real(
+    corpus_fixture_path, tmp_path, monkeypatch
+):
+    """W-3: con cache valido y classifier=None no se construye el clasificador real.
+
+    Un cache hit no debe exigir GEMINI_API_KEY: la resolucion del HybridClassifier
+    real (que construye GeminiClassifier y llama a get_settings) debe ocurrir solo
+    cuando la corrida paga realmente va a clasificar. Aqui el resolver real se
+    fuerza a explotar y el runner debe igualmente cargar del cache.
+    """
+    import shutil
+
+    import evaluation.run_evaluation as run_evaluation
+    from evaluation.run_evaluation import main_con_corpus_real
+
+    spy = _spy_paid_classifier(corpus_fixture_path)
+    # La version del cache se toma del camino real, sin credenciales. En el
+    # codigo previo al fix el helper no existe y se usa el valor canonico para
+    # que el RED sea el resolver real invocado antes del cache.
+    version_real = getattr(
+        run_evaluation, "_version_clasificador_real", lambda: "hybrid-v1"
+    )()
+    spy.CACHE_VERSION = version_real
+
+    corpus_copy = tmp_path / "corpus.json"
+    shutil.copy(corpus_fixture_path, corpus_copy)
+    pred_path = tmp_path / "predicciones.json"
+    report_path = tmp_path / "report.md"
+
+    # Primera corrida con clasificador inyectado: genera el cache.
+    await main_con_corpus_real(
+        corpus_path=corpus_copy,
+        classifier=spy,
+        report_path=report_path,
+        predicciones_path=pred_path,
+    )
+    assert spy.call_count > 0
+
+    # Segunda corrida: cache valido, classifier=None y resolver real que explota.
+    def _resolver_que_explota():
+        raise RuntimeError(
+            "un cache hit no debe construir el clasificador real"
+        )
+
+    monkeypatch.setattr(
+        run_evaluation, "_resolver_clasificador_real", _resolver_que_explota
+    )
+    spy.call_count = 0
+    await main_con_corpus_real(
+        corpus_path=corpus_copy,
+        classifier=None,
+        report_path=report_path,
+        predicciones_path=pred_path,
+    )
+    assert spy.call_count == 0, "Un cache hit no debe invocar al clasificador"
+
+
+def test_version_clasificador_real_no_exige_credenciales():
+    """W-3: leer la version del clasificador real no carga app.core.database.
+
+    Esta suite corre sin variables de entorno ni .env; si el helper importara
+    app.classifiers, get_settings fallaria por credenciales ausentes.
+    """
+    import sys
+
+    from evaluation import run_evaluation
+
+    version = run_evaluation._version_clasificador_real()
+    assert isinstance(version, str) and version
+    assert "app.core.database" not in sys.modules, (
+        "leer la version real no debe importar app.core.database (exige credenciales)"
+    )

@@ -2282,3 +2282,93 @@ def test_c33_dedicated_notification_webhook_does_not_create_incidents():
     assert not _connections_reachable(wf, notif_node["name"], NORMALIZER_NODE_NAME), (
         "El webhook de notificacion alcanza el normalizador de alta"
     )
+
+
+# ---------------------------------------------------------------------------
+# Grupo 19 — C-36: ningun nodo pago habilita reintentos
+#
+# Un reintento automatico sobre el agente o el modelo de lenguaje multiplica
+# llamadas pagas a Gemini sin control. La guarda vive aca (CI) y en el
+# preflight estatico (scripts/preflight/cost_readiness.py); cada superficie
+# lee n8n/workflow.json por su cuenta (design D7).
+# ---------------------------------------------------------------------------
+
+C36_PAID_AGENT_TYPE = "@n8n/n8n-nodes-langchain.agent"
+C36_PAID_LM_TYPE_PREFIX = "@n8n/n8n-nodes-langchain.lm"
+
+
+def _c36_paid_nodes(workflow: dict) -> list[dict]:
+    """Nodos que ejecutan inferencia externa metrada (agente o modelo)."""
+    return [
+        node
+        for node in workflow["nodes"]
+        if node["type"] == C36_PAID_AGENT_TYPE
+        or node["type"].startswith(C36_PAID_LM_TYPE_PREFIX)
+    ]
+
+
+def _c36_retry_violations(workflow: dict) -> list[str]:
+    """Nodos pagos que habilitan retryOnFail o un maxTries numerico."""
+    violations: list[str] = []
+    for node in _c36_paid_nodes(workflow):
+        if node.get("retryOnFail") is True:
+            violations.append(f"{node['name']!r}: retryOnFail=true")
+        max_tries = node.get("maxTries")
+        if isinstance(max_tries, (int, float)) and not isinstance(max_tries, bool):
+            violations.append(f"{node['name']!r}: maxTries={max_tries!r}")
+    return violations
+
+
+def test_c36_no_paid_node_enables_retry_or_max_tries():
+    """
+    RED (5.1): ningun nodo pago del workflow declara retryOnFail ni maxTries.
+    Caracterizacion del workflow real: pasa desde el inicio y protege contra
+    la introduccion futura de reintentos pagos.
+    """
+    wf = load_workflow()
+    paid = _c36_paid_nodes(wf)
+    assert paid, "No se encontraron nodos pagos en el workflow"
+    assert _c36_retry_violations(wf) == [], (
+        f"Nodos pagos con reintentos habilitados: {_c36_retry_violations(wf)}. "
+        "Un reintento multiplica llamadas pagas a Gemini."
+    )
+
+
+def test_c36_retry_guard_detects_injected_retry_on_paid_agent(tmp_path):
+    """
+    TRIANGULATE (5.1): inyectar retryOnFail=true en una copia temporal del JSON
+    hace que la guarda detecte la violacion (prueba que la guarda realmente guarda).
+    """
+    import copy
+
+    wf = copy.deepcopy(load_workflow())
+    agent = next(n for n in wf["nodes"] if n["type"] == C36_PAID_AGENT_TYPE)
+    agent["retryOnFail"] = True
+
+    mutated_path = tmp_path / "workflow_mutado.json"
+    mutated_path.write_text(json.dumps(wf, ensure_ascii=False), encoding="utf-8")
+    mutated = json.loads(mutated_path.read_text(encoding="utf-8"))
+
+    violations = _c36_retry_violations(mutated)
+    assert any("retryOnFail" in v for v in violations), (
+        f"La guarda no detecto retryOnFail=true inyectado: {violations}"
+    )
+
+
+def test_c36_retry_guard_detects_injected_max_tries_on_language_model(tmp_path):
+    """
+    TRIANGULATE (5.1): inyectar maxTries en el modelo de lenguaje pago
+    tambien es detectado por la guarda.
+    """
+    import copy
+
+    wf = copy.deepcopy(load_workflow())
+    model = next(
+        n for n in wf["nodes"] if n["type"].startswith(C36_PAID_LM_TYPE_PREFIX)
+    )
+    model["maxTries"] = 3
+
+    violations = _c36_retry_violations(wf)
+    assert any("maxTries" in v for v in violations), (
+        f"La guarda no detecto maxTries inyectado: {violations}"
+    )

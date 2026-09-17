@@ -26,6 +26,7 @@ from app.classifiers.base import BaseClassifier
 from app.classifiers.deterministic import DeterministicClassifier
 from app.classifiers.gemini_classifier import GeminiClassifier
 from app.config.settings import get_settings
+from app.constants import HYBRID_CACHE_VERSION
 from app.core.exceptions import GeminiTimeoutError, GeminiUnavailableError
 from app.core.logging import get_logger
 from app.schemas.clasificacion import ClasificacionResult
@@ -50,8 +51,10 @@ class HybridClassifier(BaseClassifier):
 
     # Clave de version del clasificador usada por el cache de predicciones de la
     # evaluacion (C-34). Se incrementa cuando cambia la logica de clasificacion
-    # de forma que invalide las predicciones persistidas.
-    CACHE_VERSION = "hybrid-v1"
+    # de forma que invalide las predicciones persistidas. La fuente de verdad es
+    # app.constants.HYBRID_CACHE_VERSION (W-3), para que el runner la lea sin
+    # construir el clasificador.
+    CACHE_VERSION = HYBRID_CACHE_VERSION
 
     def __init__(
         self,
