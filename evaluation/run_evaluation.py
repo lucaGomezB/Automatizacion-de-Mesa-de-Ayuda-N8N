@@ -19,10 +19,13 @@ Diseño (D1): el clasificador se inyecta por parámetro, lo que permite
 
 from __future__ import annotations
 
+import argparse
 import asyncio
+import hashlib
 import json
 import pathlib
 from dataclasses import asdict, dataclass, field
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Protocol
 
 from evaluation.corpus import CasoEvaluacion, cargar_corpus
@@ -238,21 +241,112 @@ def generar_reporte(
 
 
 # ---------------------------------------------------------------------------
+# Helpers de cache (D1, D2, D3)
+# ---------------------------------------------------------------------------
+def _compute_corpus_hash(corpus_path: pathlib.Path) -> str:
+    """
+    Calcula el hash SHA-256 del contenido binario del archivo de corpus.
+
+    Args:
+        corpus_path: Ruta al archivo de corpus JSON.
+
+    Returns:
+        Hex digest SHA-256 (64 caracteres).
+    """
+    return hashlib.sha256(corpus_path.read_bytes()).hexdigest()
+
+
+def _get_classifier_version(classifier: Any) -> str:
+    """
+    Obtiene la clave de version del clasificador.
+
+    Devuelve `classifier.CACHE_VERSION` si el atributo existe;
+    en caso contrario, devuelve `type(classifier).__name__`.
+
+    Args:
+        classifier: Instancia del clasificador.
+
+    Returns:
+        String identificador de version del clasificador.
+    """
+    return getattr(classifier, "CACHE_VERSION", type(classifier).__name__)
+
+
+def _is_cache_valid(
+    predicciones_path: pathlib.Path,
+    corpus_hash: str,
+    corpus_count: int,
+    classifier_version: str,
+) -> bool:
+    """
+    Verifica si el archivo de predicciones existente es un cache valido.
+
+    Un cache es valido si y solo si:
+    - El archivo existe.
+    - Contiene el campo `cache_meta` de nivel superior.
+    - `cache_meta.corpus_hash` coincide con `corpus_hash`.
+    - `cache_meta.corpus_count` coincide con `corpus_count`.
+    - `cache_meta.classifier_version` coincide con `classifier_version`.
+
+    Args:
+        predicciones_path: Ruta al archivo predicciones.json.
+        corpus_hash: Hash SHA-256 del archivo de corpus actual.
+        corpus_count: Cantidad de casos en el corpus actual.
+        classifier_version: Clave de version del clasificador actual.
+
+    Returns:
+        True si el cache es valido, False en cualquier otro caso.
+    """
+    if not predicciones_path.exists():
+        return False
+    try:
+        data = json.loads(predicciones_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return False
+
+    if not isinstance(data, dict) or "cache_meta" not in data:
+        return False
+
+    meta = data["cache_meta"]
+    return (
+        meta.get("corpus_hash") == corpus_hash
+        and meta.get("corpus_count") == corpus_count
+        and meta.get("classifier_version") == classifier_version
+    )
+
+
+# ---------------------------------------------------------------------------
 # Persistencia de predicciones (artefacto intermedio)
 # ---------------------------------------------------------------------------
 def guardar_predicciones(
     predicciones: List[Prediccion],
     output_path: pathlib.Path = PREDICCIONES_PATH,
+    cache_meta: Optional[Dict[str, Any]] = None,
 ) -> None:
     """
     Persiste las predicciones a JSON para no re-invocar Gemini al regenerar el reporte.
 
+    El archivo escrito usa el nuevo formato con `cache_meta` de nivel superior:
+
+        {
+            "cache_meta": { ... },
+            "predictions": [ ... ]
+        }
+
+    Si `cache_meta` es None, se escribe el campo como objeto vacio ({}). Los callers
+    que generan el cache completo deben pasar el dict de metadata; esta firma permite
+    compatibilidad con usos directos que no necesitan cache.
+
     Args:
         predicciones: Lista de predicciones a persistir.
         output_path: Ruta del JSON (default: evaluation/predicciones.json).
+        cache_meta: Metadata de cache a incluir en el archivo. Si es None, se usa {}.
     """
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    datos = [asdict(p) for p in predicciones]
+    datos = {
+        "cache_meta": cache_meta if cache_meta is not None else {},
+        "predictions": [asdict(p) for p in predicciones],
+    }
     output_path.write_text(
         json.dumps(datos, ensure_ascii=False, indent=2),
         encoding="utf-8",
@@ -263,13 +357,21 @@ def cargar_predicciones(input_path: pathlib.Path) -> List[Prediccion]:
     """
     Carga predicciones previamente persistidas desde JSON.
 
+    Compatible con ambos formatos:
+    - Nuevo formato: `{"cache_meta": {...}, "predictions": [...]}` — lee desde `predictions`.
+    - Formato antiguo (arreglo plano): lee directamente el arreglo.
+
     Args:
         input_path: Ruta del JSON con predicciones.
 
     Returns:
         Lista de Prediccion.
     """
-    datos = json.loads(input_path.read_text(encoding="utf-8"))
+    data = json.loads(input_path.read_text(encoding="utf-8"))
+    if isinstance(data, dict) and "predictions" in data:
+        datos = data["predictions"]
+    else:
+        datos = data
     return [Prediccion(**d) for d in datos]
 
 
@@ -281,26 +383,35 @@ async def main_con_corpus_real(
     classifier: Optional[ClasificadorProtocol] = None,
     report_path: pathlib.Path = REPORT_PATH,
     predicciones_path: pathlib.Path = PREDICCIONES_PATH,
+    force: bool = False,
 ) -> None:
     """
-    Carga el corpus real, evalúa y genera el reporte.
+    Carga el corpus real, evalua y genera el reporte.
 
     Si el corpus no existe en `corpus_path`, lanza FileNotFoundError con
-    mensaje claro indicando dónde colocar el corpus (sin inventar datos).
+    mensaje claro indicando donde colocar el corpus (sin inventar datos).
+
+    Logica de cache (D4):
+    - Si `force=False` y `predicciones_path` contiene un cache valido (mismo hash
+      SHA-256 del corpus, mismo corpus_count y misma version del clasificador),
+      las predicciones se cargan del archivo y se omite la invocacion al clasificador.
+    - En cualquier otro caso (cache ausente, invalido o `force=True`), se ejecuta
+      `evaluar_corpus` y se persiste el resultado con metadata de cache.
 
     Args:
         corpus_path: Ruta al corpus JSON (default: data/corpus_evaluacion_pseudonimizado.json).
         classifier: Clasificador a inyectar (None = usar HybridClassifier real).
-        report_path: Dónde escribir el reporte.
-        predicciones_path: Dónde persistir las predicciones.
+        report_path: Donde escribir el reporte.
+        predicciones_path: Donde persistir las predicciones.
+        force: Si True, bypasea el cache y re-ejecuta la clasificacion completa.
     """
     corpus_path = pathlib.Path(corpus_path)
 
     if not corpus_path.exists():
         raise FileNotFoundError(
-            f"El corpus de evaluación no está en: {corpus_path}\n"
-            f"Colocá el archivo 'corpus_evaluacion_pseudonimizado.json' en la carpeta 'data/' "
-            f"antes de ejecutar la evaluación. Ver evaluation/README.md para instrucciones."
+            f"El corpus de evaluacion no esta en: {corpus_path}\n"
+            f"Coloca el archivo 'corpus_evaluacion_pseudonimizado.json' en la carpeta 'data/' "
+            f"antes de ejecutar la evaluacion. Ver evaluation/README.md para instrucciones."
         )
 
     corpus = cargar_corpus(corpus_path)
@@ -322,10 +433,29 @@ async def main_con_corpus_real(
                 "Ver evaluation/README.md para instrucciones de setup."
             ) from exc
 
-    predicciones = await evaluar_corpus(corpus, classifier)
-    guardar_predicciones(predicciones, predicciones_path)
+    corpus_hash = _compute_corpus_hash(corpus_path)
+    corpus_count = len(corpus)
+    classifier_version = _get_classifier_version(classifier)
+
+    if not force and _is_cache_valid(
+        predicciones_path, corpus_hash, corpus_count, classifier_version
+    ):
+        predicciones = cargar_predicciones(predicciones_path)
+        print(
+            f"Cache valido encontrado. Predicciones cargadas desde: {predicciones_path}"
+        )
+    else:
+        predicciones = await evaluar_corpus(corpus, classifier)
+        cache_meta: Dict[str, Any] = {
+            "corpus_hash": corpus_hash,
+            "corpus_count": corpus_count,
+            "classifier_version": classifier_version,
+            "generated_at": datetime.now(tz=timezone.utc).isoformat(),
+        }
+        guardar_predicciones(predicciones, predicciones_path, cache_meta=cache_meta)
+
     generar_reporte(predicciones, corpus, report_path)
-    print(f"Evaluación completa. Reporte escrito en: {report_path}")
+    print(f"Evaluacion completa. Reporte escrito en: {report_path}")
 
 
 # ---------------------------------------------------------------------------
@@ -333,7 +463,22 @@ async def main_con_corpus_real(
 # ---------------------------------------------------------------------------
 def main() -> None:
     """Punto de entrada para `python -m evaluation.run_evaluation`."""
-    asyncio.run(main_con_corpus_real())
+    parser = argparse.ArgumentParser(
+        description="Runner de evaluacion del clasificador de mesa de ayuda."
+    )
+    parser.add_argument(
+        "--force",
+        "--no-cache",
+        dest="force",
+        action="store_true",
+        default=False,
+        help=(
+            "Bypasea el cache de predicciones y re-ejecuta la clasificacion completa, "
+            "aunque predicciones.json exista y sea valido."
+        ),
+    )
+    args = parser.parse_args()
+    asyncio.run(main_con_corpus_real(force=args.force))
 
 
 if __name__ == "__main__":

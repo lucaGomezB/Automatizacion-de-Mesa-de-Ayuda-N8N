@@ -95,7 +95,7 @@ services:
 
   # ── N8N ─────────────────────────────────────────────────────────────────────
   n8n:
-    image: n8nio/n8n:latest   # 1.62.0 no esta en Docker Hub; se usa latest (estable)
+    image: n8nio/n8n:2.11.2   # Pin a la version validada localmente; evita cambios silenciosos de 'latest' (C-34)
     restart: unless-stopped
     ports:
       - "5678:5678"

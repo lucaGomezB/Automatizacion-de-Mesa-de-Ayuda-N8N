@@ -48,6 +48,11 @@ class HybridClassifier(BaseClassifier):
         )
     """
 
+    # Clave de version del clasificador usada por el cache de predicciones de la
+    # evaluacion (C-34). Se incrementa cuando cambia la logica de clasificacion
+    # de forma que invalide las predicciones persistidas.
+    CACHE_VERSION = "hybrid-v1"
+
     def __init__(
         self,
         deterministic: DeterministicClassifier | None = None,
