@@ -1,0 +1,33 @@
+# compose.dry-run.yml — Cost-zero guardrail override for the dry-run harness.
+#
+# Two concerns are handled here, both WITHOUT touching any versioned file:
+#
+# 1. COST-ZERO GUARDRAIL
+#    `docker-compose.yml` pulls GEMINI_API_KEY from `env_file: ./App/Backend/.env`,
+#    so exporting a shell variable is NOT enough to override it. `environment:`
+#    has higher precedence than `env_file:`, so this override injects a DUMMY key
+#    for the backend service. The harness asserts the effective key inside the
+#    container before running and aborts if it is not this exact dummy value
+#    (see checks.py::DUMMY_GEMINI_API_KEY).
+#
+# 2. SOURCE-TREE EXECUTION (packaging workaround)
+#    `gemini_classifier.py` computes its default prompt path as
+#    `Path(__file__).resolve().parents[4]`, which is valid only when the module
+#    lives at `<repo>/App/Backend/app/classifiers/` (4 parents to the repo root).
+#    In the baked image the module is at `/app/app/classifiers/`, so the
+#    expression raises `IndexError: 4` at import time and the backend never
+#    boots. To keep the dry run running the real source tree (and therefore the
+#    real c-30 fixes) we mount `./App/Backend` at `/app/App/Backend` and run from
+#    there, where the relative layout is the same as the repository. This does
+#    NOT patch production code; it only changes where the container reads it.
+#
+# Usage (always combined with the base compose file):
+#   docker compose -f docker-compose.yml -f scripts/dry_run/compose.dry-run.yml up -d
+services:
+  backend:
+    environment:
+      GEMINI_API_KEY: "dry-run-dummy-gemini-key-not-real"  # gitleaks:allow
+      PYTHONPATH: /app/App/Backend
+    working_dir: /app/App/Backend
+    volumes:
+      - ./App/Backend:/app/App/Backend:ro
