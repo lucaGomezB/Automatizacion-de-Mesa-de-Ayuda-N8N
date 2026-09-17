@@ -63,10 +63,19 @@ export function ValidarClasificacionDialog({
   const { mutate, isPending, error, reset: resetMutation } = useMutation({
     mutationFn: ({ logId, sectorId }: { logId: number; sectorId: number }) =>
       validarClasificacion(logId, { sector_id_validado: sectorId }),
-    onSuccess: () => {
+    onSuccess: (clasificacionActualizada) => {
       // Invalida la cola de revisión y la lista de incidentes para reflejar el cambio
       void queryClient.invalidateQueries({ queryKey: [REVISION_PENDIENTE_QUERY_KEY] });
       void queryClient.invalidateQueries({ queryKey: [INCIDENTES_QUERY_KEY] });
+      // Invalida el detalle del incidente afectado para que muestre la validación
+      // recién guardada al reabrir el diálogo (FE 3)
+      void queryClient.invalidateQueries({
+        queryKey: ['incidente-detalle', clasificacionActualizada.incidente_id],
+      });
+      // Invalida el historial de clasificaciones del incidente (incluye el sector validado)
+      void queryClient.invalidateQueries({
+        queryKey: ['clasificaciones-historial', clasificacionActualizada.incidente_id],
+      });
       onClose();
     },
   });

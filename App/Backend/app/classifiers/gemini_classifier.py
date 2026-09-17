@@ -49,6 +49,45 @@ from app.schemas.clasificacion import ClasificacionResult
 
 logger = get_logger(__name__)
 
+# Cliente de Gemini compartido a nivel de proceso (BE B7 / D11).
+# Antes se instanciaba un `genai.Client` por cada clasificador (es decir, por
+# request) y nunca se cerraba: fuga de recursos y overhead en el camino caliente.
+# Ahora se crea una sola vez de forma perezosa (lazy) y se cierra en el shutdown
+# de la aplicacion mediante `close_genai_client()`.
+_genai_client: genai.Client | None = None
+
+
+def get_genai_client() -> genai.Client:
+    """
+    Devuelve el cliente de Gemini compartido, creandolo en el primer uso.
+
+    Returns:
+        Instancia unica de `genai.Client` para todo el proceso.
+    """
+    global _genai_client
+    if _genai_client is None:
+        settings = get_settings()
+        _genai_client = genai.Client(api_key=settings.gemini_api_key)  # gitleaks:allow
+    return _genai_client
+
+
+async def close_genai_client() -> None:
+    """
+    Cierra el cliente de Gemini compartido y libera su pool HTTP.
+
+    Se invoca en el shutdown de la aplicacion (lifespan). Es idempotente: si no
+    hay cliente creado, no hace nada. Nunca propaga excepciones de cierre para
+    no impedir el resto del shutdown.
+    """
+    global _genai_client
+    client = _genai_client
+    _genai_client = None
+    if client is not None:
+        try:
+            await client.aio.aclose()
+        except Exception as exc:  # pragma: no cover - defensa de shutdown
+            logger.warning("genai_client_close_failed", exc_info=exc)
+
 # Conjunto de categorías válidas. Debe coincidir exactamente con los valores
 # definidos en el prompt (docs/prompt_gemini.txt) y en app.constants.
 _VALID_CATEGORIES = frozenset(SECTORES_CANONICOS)
@@ -193,8 +232,14 @@ def _validate_gemini_response(raw: str) -> dict:
         )
 
     # Control 3b: Tipo numérico y rango [0.0, 1.0] para "confianza"
+    # `bool` es subclase de `int` en Python: se rechaza explícitamente para que
+    # `true`/`false` de JSON no pasen como confianza válida (0.0/1.0).
     confianza = data["confianza"]
-    if not isinstance(confianza, (int, float)) or not (0.0 <= float(confianza) <= 1.0):
+    if (
+        isinstance(confianza, bool)
+        or not isinstance(confianza, (int, float))
+        or not (0.0 <= float(confianza) <= 1.0)
+    ):
         raise GeminiResponseInvalidError(
             f"Confianza inválida: {confianza!r}",
             {"raw_response": raw[:200], "confianza": confianza},
@@ -224,7 +269,8 @@ class GeminiClassifier(BaseClassifier):
         parámetros definidos en Settings (que reproducen docs/parameters_gemini.md).
         """
         settings = get_settings()
-        self._client = genai.Client(api_key=settings.gemini_api_key)
+        # Cliente compartido y reutilizado (BE B7); se cierra en el shutdown.
+        self._client = get_genai_client()
 
         # Modelo especificado en la tesis: Gemini 2.5 Flash (marzo 2026)
         self._model_name = settings.gemini_model

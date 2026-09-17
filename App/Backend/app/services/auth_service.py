@@ -14,11 +14,12 @@ from datetime import datetime, timedelta, timezone
 
 import bcrypt
 from jose import jwt
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config.settings import get_settings
 from app.core.logging import get_logger
 from app.models.user import User
+from app.repositories.user_repository import UserRepository
 
 logger = get_logger(__name__)
 
@@ -64,19 +65,26 @@ def create_access_token(
     """
     Crea un token JWT firmado con los datos proporcionados.
 
+    Todo token emitido lleva el claim `exp`: si no se especifica
+    `expires_delta`, se usa settings.jwt_expire_minutes. Esto evita emitir
+    tokens sin expiracion, que serian validos indefinidamente.
+
     Args:
         data: Payload a incluir en el token (tipicamente {"sub": username}).
         secret: Clave secreta para firmar el token.
         algorithm: Algoritmo de firma (por defecto HS256).
-        expires_delta: Minutos hasta la expiracion. Si es None, no expira.
+        expires_delta: Minutos hasta la expiracion. Si es None, se usa
+            settings.jwt_expire_minutes.
 
     Returns:
         Token JWT codificado como string.
     """
+    if expires_delta is None:
+        expires_delta = get_settings().jwt_expire_minutes
+
     to_encode = data.copy()
-    if expires_delta is not None:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=expires_delta)
-        to_encode.update({"exp": expire})
+    expire = datetime.now(timezone.utc) + timedelta(minutes=expires_delta)
+    to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, secret, algorithm=algorithm)
     return encoded_jwt
 
@@ -98,8 +106,7 @@ async def authenticate_user(
     Returns:
         Instancia de User si las credenciales son validas, None en caso contrario.
     """
-    result = await session.execute(select(User).where(User.username == username))
-    user = result.scalar_one_or_none()
+    user = await UserRepository(session).get_by_username(username)
 
     if user is None:
         return None

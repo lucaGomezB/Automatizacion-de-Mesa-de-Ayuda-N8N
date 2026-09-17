@@ -42,6 +42,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.types import ASGIApp, Receive, Scope, Send
 
+from app.classifiers.gemini_classifier import close_genai_client
 from app.config.settings import get_settings
 from app.core.database import engine
 from app.core.error_handlers import register_error_handlers
@@ -140,6 +141,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     configure_logging()
     yield
     # ── Shutdown ──────────────────────────────────────────────────────────────
+    # Cerrar el cliente compartido de Gemini (BE B7) antes de liberar el pool
+    # de SQLAlchemy. Cada cierre es defensivo para no abortar el shutdown.
+    await close_genai_client()
     await engine.dispose()
 
 

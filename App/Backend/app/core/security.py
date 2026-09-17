@@ -16,13 +16,13 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config.settings import get_settings
 from app.core.database import get_db_session
 from app.core.logging import get_logger
 from app.models.user import User
+from app.repositories.user_repository import UserRepository
 from app.services.auth_service import create_access_token, get_password_hash  # noqa: F401 — re-export
 
 logger = get_logger(__name__)
@@ -41,7 +41,8 @@ async def get_current_user(
 
     Flujo:
         1. Verifica que el token este presente en el header Authorization.
-        2. Decodifica el JWT usando la clave secreta y algoritmo configurados.
+        2. Decodifica el JWT usando la clave secreta y algoritmo configurados,
+           exigiendo el claim `exp` (un token sin expiracion es rechazado).
         3. Extrae el username del campo 'sub' del payload.
         4. Busca al usuario en la base de datos.
         5. Retorna la instancia de User si todo es valido.
@@ -68,7 +69,10 @@ async def get_current_user(
 
     try:
         payload = jwt.decode(
-            token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm]
+            token,
+            settings.jwt_secret_key,
+            algorithms=[settings.jwt_algorithm],
+            options={"require_exp": True},
         )
         username: str | None = payload.get("sub")
         if username is None:
@@ -85,8 +89,7 @@ async def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    result = await session.execute(select(User).where(User.username == username))
-    user = result.scalar_one_or_none()
+    user = await UserRepository(session).get_by_username(username)
 
     if user is None:
         logger.warning("auth_user_not_found", username=username)

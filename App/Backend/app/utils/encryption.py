@@ -32,18 +32,21 @@ from app.config.settings import get_settings
 
 # Instancia Fernet con inicialización lazy (None hasta el primer uso).
 # Esto evita que la importación del módulo falle en entornos sin clave configurada.
+# `_fernet_key` retiene la clave con la que se construyó la instancia: si la
+# configuración rota la clave, el cache se invalida y se reconstruye.
 _fernet_instance: Fernet | None = None
+_fernet_key: str | None = None
 
 
 def _get_fernet() -> Fernet:
     """
-    Retorna la instancia Fernet, construyéndola la primera vez.
+    Retorna la instancia Fernet, construyéndola la primera vez o cuando la
+    clave configurada cambia.
 
-    La clave se lee de `settings.pseudonymization_encryption_key` en el primer
-    acceso (lazy init). Esta estrategia evita que la importación falle en
-    entornos donde la clave no está aún configurada (ej. al cargar módulos
-    antes de que el entorno esté completo), y permite que los tests inyecten
-    la clave vía monkeypatching de `get_settings`.
+    La clave se lee de `settings.pseudonymization_encryption_key` en cada
+    llamada y se compara con la clave del cache. Si difiere, la instancia se
+    reconstruye: esto hace que una rotación de clave en el entorno sea
+    efectiva sin reiniciar el proceso (evita el cache stale).
 
     Returns:
         Instancia Fernet lista para cifrar/descifrar.
@@ -53,10 +56,12 @@ def _get_fernet() -> Fernet:
         pydantic_settings.ValidationError: Si `pseudonymization_encryption_key`
             no está configurada en el entorno.
     """
-    global _fernet_instance
-    if _fernet_instance is None:
-        key = get_settings().pseudonymization_encryption_key
+    global _fernet_instance, _fernet_key
+    key = get_settings().pseudonymization_encryption_key
+    key_str = key.decode("ascii") if isinstance(key, bytes) else key
+    if _fernet_instance is None or _fernet_key != key_str:
         _fernet_instance = Fernet(key.encode() if isinstance(key, str) else key)
+        _fernet_key = key_str
     return _fernet_instance
 
 

@@ -13,24 +13,31 @@ import { useState, useMemo, useCallback } from 'react';
 import { BarChart3, TrendingUp, Users } from 'lucide-react';
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { ErrorAlert } from '@/components/shared/ErrorAlert';
 import { useTendencias, useResumen } from '@/hooks/useEstadisticas';
 import { extractApiErrorMessage } from '@/services/api';
+import { formatearFechaLocal } from '@/utils/formatters';
 import { FiltrosDashboard } from './FiltrosDashboard';
 import { TendenciaChart } from './TendenciaChart';
 import { SectorPieChart } from './SectorPieChart';
 import { EstadoBarChart } from './EstadoBarChart';
 import type { AgruparPor } from '@/types/estadisticas';
 
-/** Fecha de hoy en formato YYYY-MM-DD */
+/**
+ * Fecha de hoy en formato YYYY-MM-DD, en la zona local.
+ * Se construye desde los componentes locales de la fecha: `toISOString()` convierte
+ * a UTC y desplazaba un dia despues de las 21:00 en UTC-3 (FE 5).
+ */
 function todayStr(): string {
-  return new Date().toISOString().slice(0, 10);
+  return formatearFechaLocal(new Date());
 }
 
-/** Fecha de hace N dias en formato YYYY-MM-DD */
+/** Fecha de hace N dias en formato YYYY-MM-DD (zona local, sin desfase UTC). */
 function daysAgoStr(n: number): string {
   const d = new Date();
   d.setDate(d.getDate() - n);
-  return d.toISOString().slice(0, 10);
+  return formatearFechaLocal(d);
 }
 
 export default function DashboardPage() {
@@ -56,12 +63,23 @@ export default function DashboardPage() {
   const {
     data: resumen,
     isLoading: cargandoResumen,
+    isError: errorResumen,
+    error: errorResumenObj,
+    refetch: refetchResumen,
   } = useResumen({ desde, hasta });
+
+  // ── Estado combinado de las consultas (FE 6) ───────────────────────────
+  // Cargando si AL MENOS una consulta sigue pendiente; error solo si TODAS
+  // fallaron y no hay datos utilizables.
+  const cargandoAlgo = cargandoTendencias || cargandoResumen;
+  const hayDatosUtilizables = Boolean(tendencias) || Boolean(resumen);
+  const errorTotal = errorTendencias && errorResumen && !hayDatosUtilizables;
 
   // ── Handlers ───────────────────────────────────────────────────────────
   const handleRefetch = useCallback(() => {
     void refetchTendencias();
-  }, [refetchTendencias]);
+    void refetchResumen();
+  }, [refetchTendencias, refetchResumen]);
 
   // ── Renderizado ────────────────────────────────────────────────────────
 
@@ -86,55 +104,66 @@ export default function DashboardPage() {
           onAgruparPorChange={setAgruparPor}
         />
 
-        {/* Tarjetas KPI */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <KpiCard
-            title="Total Incidentes"
-            value={resumen?.total_incidentes}
-            loading={cargandoResumen}
-            icon={<BarChart3 className="h-5 w-5 text-blue-600" />}
+        {cargandoAlgo ? (
+          <LoadingSpinner texto="Cargando datos del dashboard..." />
+        ) : errorTotal ? (
+          <ErrorAlert
+            mensaje={extractApiErrorMessage(errorTendenciasObj ?? errorResumenObj)}
+            onReintentar={handleRefetch}
           />
-          <KpiCard
-            title="Promedio Diario"
-            value={resumen?.promedio_diario}
-            loading={cargandoResumen}
-            icon={<TrendingUp className="h-5 w-5 text-green-600" />}
-            decimals={1}
-          />
-          <KpiCard
-            title="Tasa Revision Humana"
-            value={
-              resumen?.tasa_revision_humana !== undefined
-                ? resumen.tasa_revision_humana * 100
-                : undefined
-            }
-            loading={cargandoResumen}
-            icon={<Users className="h-5 w-5 text-amber-600" />}
-            suffix="%"
-            decimals={1}
-          />
-        </div>
+        ) : (
+          <>
+            {/* Tarjetas KPI */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <KpiCard
+                title="Total Incidentes"
+                value={resumen?.total_incidentes}
+                loading={cargandoResumen}
+                icon={<BarChart3 className="h-5 w-5 text-blue-600" />}
+              />
+              <KpiCard
+                title="Promedio Diario"
+                value={resumen?.promedio_diario}
+                loading={cargandoResumen}
+                icon={<TrendingUp className="h-5 w-5 text-green-600" />}
+                decimals={1}
+              />
+              <KpiCard
+                title="Tasa Revision Humana"
+                value={
+                  resumen?.tasa_revision_humana !== undefined
+                    ? resumen.tasa_revision_humana * 100
+                    : undefined
+                }
+                loading={cargandoResumen}
+                icon={<Users className="h-5 w-5 text-amber-600" />}
+                suffix="%"
+                decimals={1}
+              />
+            </div>
 
-        {/* Grafico de tendencias */}
-        <TendenciaChart
-          data={tendencias?.series}
-          isLoading={cargandoTendencias}
-          isError={errorTendencias}
-          error={errorTendenciasObj}
-          onRefetch={handleRefetch}
-        />
+            {/* Grafico de tendencias */}
+            <TendenciaChart
+              data={tendencias?.series}
+              isLoading={cargandoTendencias}
+              isError={errorTendencias}
+              error={errorTendenciasObj}
+              onRefetch={handleRefetch}
+            />
 
-        {/* Graficos de distribucion (dos columnas) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <SectorPieChart
-            data={tendencias?.distribucion_sectores ?? resumen?.distribucion_sectores}
-            isLoading={cargandoTendencias && cargandoResumen}
-          />
-          <EstadoBarChart
-            data={tendencias?.distribucion_estados ?? resumen?.distribucion_estados}
-            isLoading={cargandoTendencias && cargandoResumen}
-          />
-        </div>
+            {/* Graficos de distribucion (dos columnas) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <SectorPieChart
+                data={tendencias?.distribucion_sectores ?? resumen?.distribucion_sectores}
+                isLoading={cargandoAlgo}
+              />
+              <EstadoBarChart
+                data={tendencias?.distribucion_estados ?? resumen?.distribucion_estados}
+                isLoading={cargandoAlgo}
+              />
+            </div>
+          </>
+        )}
       </div>
     </PageWrapper>
   );

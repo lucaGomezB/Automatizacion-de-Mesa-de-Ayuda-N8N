@@ -10,8 +10,19 @@
             }
           ]
         },
-        "filters": {},
-        "options": {}
+        "filters": {
+          "readStatus": "unread"
+        },
+        "options": {},
+        "output": "fields",
+        "fields": [
+          "id",
+          "body",
+          "bodyPreview",
+          "from",
+          "subject",
+          "receivedDateTime"
+        ]
       },
       "type": "n8n-nodes-base.microsoftOutlookTrigger",
       "typeVersion": 1,
@@ -20,7 +31,13 @@
         -32
       ],
       "id": "6c8c398a-f292-42d6-a15e-7c207d3cb5b6",
-      "name": "Llega un email a Mesa de Ayuda"
+      "name": "Llega un email a Mesa de Ayuda",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "REPLACE_WITH_OUTLOOK_OAUTH2_CREDENTIAL_ID",
+          "name": "Mesa de Ayuda - Outlook"
+        }
+      }
     },
     {
       "parameters": {
@@ -71,29 +88,27 @@
     },
     {
       "parameters": {
-        "additionalFields": {}
-      },
-      "type": "n8n-nodes-base.microsoftOutlook",
-      "typeVersion": 2,
-      "position": [
-        832,
-        64
-      ],
-      "id": "8d5034d0-31ba-42c1-81a0-11d080b19269",
-      "name": "Se le envia un mensaje al usuario pidiendole que vuelva a mandar el mail + los datos que le faltaron / eran incorrectos",
-      "webhookId": "dba2d0de-a834-4cfb-8cd5-48c27f0295fd"
-    },
-    {
-      "parameters": {
         "method": "POST",
-        "url": "={{ $env.BACKEND_URL }}/api/v1/incidentes",
+        "url": "http://backend:8000/api/v1/incidentes/",
         "sendBody": true,
         "contentType": "json",
         "body": {
-          "descripcion": "={{ $json.descripcion }}",
-          "prioridad": "={{ $json.prioridad || 'media' }}"
+          "descripcion": "={{ $('Normalizar entrada del incidente').item.json.descripcion }}",
+          "prioridad": "={{ $('Normalizar entrada del incidente').item.json.prioridad || 'media' }}",
+          "canal_origen_id": "={{ $('Normalizar entrada del incidente').item.json.canal_origen_id }}"
         },
-        "options": {}
+        "options": {},
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Login operador').item.json.access_token }}"
+            }
+          ]
+        }
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
@@ -102,12 +117,18 @@
         -144
       ],
       "id": "70893531-ce20-4e27-ad12-18b4b0edb21b",
-      "name": "HTTP POST a MTM-SRU"
+      "name": "HTTP POST a MTM-SRU",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_OPERATOR_JWT_CREDENTIAL_ID",
+          "name": "Mesa de Ayuda - JWT operador"
+        }
+      }
     },
     {
       "parameters": {
         "promptType": "define",
-        "text": "Se adjunta la transcripcion de una llamada a Mesa de Ayuda, necesito que identifiques y dividas la informacion que describe el usuario: login (si tiene), sucursal, terminal, sector y numero de telefono. Ademas, identificaras el incidente especifico que le ocurre al usuario y si hay que registrarlo para Seguridad Informatica, Soporte Tecnico Hardware, Soporte Tecnico Software, Bases de Datos, o Sistemas",
+        "text": "=Se adjunta la transcripcion de una llamada a Mesa de Ayuda. Descripcion del incidente: {{ $json.transcript || $json.body || $json.descripcion || $json.text || '' }}\n\nAnaliza la descripcion e identifica el sector que corresponde al incidente. Devolve EXCLUSIVAMENTE un objeto JSON valido, sin texto adicional ni bloques de codigo, con esta forma exacta:\n{\"sector_predicho\": \"<uno de: Seguridad Informatica, Soporte Tecnico Hardware, Soporte Tecnico Software, Bases de Datos, Sistemas>\", \"confianza\": <numero entre 0 y 1>, \"descripcion\": \"<descripcion normalizada del incidente>\"}",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -177,7 +198,13 @@
       ],
       "id": "b701a375-d9e4-46bb-af03-7d9764067b5a",
       "name": "Llamada telefonica",
-      "webhookId": "58ea83d3-fa0a-4c88-8708-0c43794027c7"
+      "webhookId": "58ea83d3-fa0a-4c88-8708-0c43794027c7",
+      "credentials": {
+        "twilioApi": {
+          "id": "REPLACE_WITH_TWILIO_CREDENTIAL_ID",
+          "name": "Mesa de Ayuda - Twilio"
+        }
+      }
     },
     {
       "parameters": {},
@@ -192,7 +219,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Validacion de la respuesta de clasificacion del AI Agent — Anexo H §H.3\n// 5 pasos en orden:\n//   1. Parseo JSON valido\n//   2. Presencia de campos 'sector_predicho' y 'confianza'\n//   3. Sector en el set exacto case-sensitive: {Seguridad Informatica, Soporte Tecnico Hardware, Soporte Tecnico Software, Bases de Datos, Sistemas}\n//   4. Confianza numerica en [0.0, 1.0]\n//   Ante cualquier fallo: confianza = 0.0 + requiere_revision_humana = true\n\nconst SECTORES_VALIDOS = new Set(['Seguridad Informatica', 'Soporte Tecnico Hardware', 'Soporte Tecnico Software', 'Bases de Datos', 'Sistemas']);\nconst items = $input.all();\nconst result = [];\n\nfor (const item of items) {\n  // Paso 1: Parseo JSON valido\n  let parsed = null;\n  try {\n    const raw = item.json.output || item.json.text || JSON.stringify(item.json);\n    parsed = JSON.parse(raw);\n  } catch (e) {\n    // Fallo paso 1: JSON malformado\n    result.push({\n      json: {\n        ...item.json,\n        confianza: 0.0,\n        requiere_revision_humana: true,\n        error_validacion: 'json_malformado'\n      }\n    });\n    continue;\n  }\n\n  // Paso 2: Presencia de campos requeridos\n  if (!('sector_predicho' in parsed) || !('confianza' in parsed)) {\n    result.push({\n      json: {\n        ...item.json,\n        confianza: 0.0,\n        requiere_revision_humana: true,\n        error_validacion: 'campos_faltantes'\n      }\n    });\n    continue;\n  }\n\n  const sector_predicho = parsed['sector_predicho']; const sectores_adicionales = Array.isArray(parsed['sectores_adicionales']) ? parsed['sectores_adicionales'] : [];\n  const confianza = parsed['confianza'];\n\n  // Paso 3: Categoria exacta case-sensitive\n  if (!SECTORES_VALIDOS.has(sector_predicho) || sectores_adicionales.some(function(s) { return !SECTORES_VALIDOS.has(s); })) {\n    result.push({\n      json: {\n        ...item.json,\n        confianza: 0.0,\n        requiere_revision_humana: true,\n        error_validacion: 'sector_invalido'\n      }\n    });\n    continue;\n  }\n\n  // Paso 4: Confianza numerica en [0.0, 1.0]\n  if (typeof confianza !== 'number' || isNaN(confianza) || confianza < 0.0 || confianza > 1.0) {\n    result.push({\n      json: {\n        ...item.json,\n        confianza: 0.0,\n        requiere_revision_humana: true,\n        error_validacion: 'confianza_fuera_de_rango'\n      }\n    });\n    continue;\n  }\n\n  // Respuesta valida: conservar categoria y confianza originales\n  const descripcion = parsed['descripcion'] || item.json.descripcion || '';\n  result.push({\n    json: {\n      ...item.json,\n      sector_predicho: sector_predicho, sectores_adicionales: sectores_adicionales,\n      confianza: confianza,\n      descripcion: String(descripcion).trim(),\n      prioridad: item.json.prioridad || 'media',\n      canal_raw: 'telefonia',\n      requiere_revision_humana: false\n    }\n  });\n}\n\nreturn result;"
+        "jsCode": "// Validacion de la respuesta de clasificacion del AI Agent — Anexo H §H.3\n// 5 pasos en orden:\n//   1. Parseo JSON valido\n//   2. Presencia de campos 'sector_predicho' y 'confianza'\n//   3. Sector en el set exacto case-sensitive: {Seguridad Informatica, Soporte Tecnico Hardware, Soporte Tecnico Software, Bases de Datos, Sistemas}\n//   4. Confianza numerica en [0.0, 1.0]\n//   Ante cualquier fallo: confianza = 0.0 + requiere_revision_humana = true\n//\n// B-15: en TODAS las ramas se preserva canal_raw = 'telefonia' para que un fallo\n//   del validador IA no reetiquete el incidente como 'correo' al pasar por el normalizador.\n\nconst SECTORES_VALIDOS = new Set(['Seguridad Informatica', 'Soporte Tecnico Hardware', 'Soporte Tecnico Software', 'Bases de Datos', 'Sistemas']);\nconst items = $input.all();\nconst result = [];\n\nfor (const item of items) {\n  // Paso 1: Parseo JSON valido\n  let parsed = null;\n  try {\n    const raw = item.json.output || item.json.text || JSON.stringify(item.json);\n    parsed = JSON.parse(raw);\n  } catch (e) {\n    // Fallo paso 1: JSON malformado\n    result.push({\n      json: {\n        ...item.json,\n        confianza: 0.0,\n        requiere_revision_humana: true,\n        canal_raw: 'telefonia',\n        error_validacion: 'json_malformado'\n      }\n    });\n    continue;\n  }\n\n  // Paso 2: Presencia de campos requeridos\n  if (!('sector_predicho' in parsed) || !('confianza' in parsed)) {\n    result.push({\n      json: {\n        ...item.json,\n        confianza: 0.0,\n        requiere_revision_humana: true,\n        canal_raw: 'telefonia',\n        error_validacion: 'campos_faltantes'\n      }\n    });\n    continue;\n  }\n\n  const sector_predicho = parsed['sector_predicho']; const sectores_adicionales = Array.isArray(parsed['sectores_adicionales']) ? parsed['sectores_adicionales'] : [];\n  const confianza = parsed['confianza'];\n\n  // Paso 3: Categoria exacta case-sensitive\n  if (!SECTORES_VALIDOS.has(sector_predicho) || sectores_adicionales.some(function(s) { return !SECTORES_VALIDOS.has(s); })) {\n    result.push({\n      json: {\n        ...item.json,\n        confianza: 0.0,\n        requiere_revision_humana: true,\n        canal_raw: 'telefonia',\n        error_validacion: 'sector_invalido'\n      }\n    });\n    continue;\n  }\n\n  // Paso 4: Confianza numerica en [0.0, 1.0]\n  if (typeof confianza !== 'number' || isNaN(confianza) || confianza < 0.0 || confianza > 1.0) {\n    result.push({\n      json: {\n        ...item.json,\n        confianza: 0.0,\n        requiere_revision_humana: true,\n        canal_raw: 'telefonia',\n        error_validacion: 'confianza_fuera_de_rango'\n      }\n    });\n    continue;\n  }\n\n  // Respuesta valida: conservar categoria y confianza originales\n  const descripcion = parsed['descripcion'] || item.json.descripcion || '';\n  result.push({\n    json: {\n      ...item.json,\n      sector_predicho: sector_predicho, sectores_adicionales: sectores_adicionales,\n      confianza: confianza,\n      descripcion: String(descripcion).trim(),\n      prioridad: item.json.prioridad || 'media',\n      canal_raw: 'telefonia',\n      requiere_revision_humana: false\n    }\n  });\n}\n\nreturn result;\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -205,7 +232,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Normalizacion de entrada a estructura unificada — tesis §5.3\n// Homogeniza la entrada de cualquiera de los tres canales:\n//   correo, web, telefonia\n// Produce: { id, timestamp, canal_origen, descripcion, prioridad, es_valido, confianza }\n// canal_origen debe ser uno de: correo, web, telefonia\n//\n// confianza: el IF compartido 'La informacion esta OK' evalua confianza >= 0.70.\n//   - telefonia: propaga la confianza del validador de IA (ya existe en el item).\n//   - correo/web: sintetiza confianza desde es_valido:\n//       es_valido = true  -> confianza = 1.0 (datos completos, pasa el umbral)\n//       es_valido = false -> confianza = 0.0 (datos incompletos, rama false del IF)\n// Esto garantiza que el IF compartido funcione para los tres canales.\n//\n// Nota de privacidad (C-04 Decision 2):\n//   La descripcion se transmite en texto claro al backend.\n//   La pseudonimizacion ocurre en el backend (IncidenteService.create_and_classify).\n//   El transporte usa HTTPS.\n\nconst items = $input.all();\nconst result = [];\n\nconst CANALES_VALIDOS = new Set(['correo', 'web', 'telefonia']);\n\nfor (const item of items) {\n  // Determinar canal segun lo marcado por el nodo previo\n  const canalRaw = item.json.canal_raw || 'correo';\n  const canalOrigen = CANALES_VALIDOS.has(canalRaw) ? canalRaw : null;\n\n  if (!canalOrigen) {\n    // Canal invalido: derivar a revision humana\n    result.push({\n      json: {\n        ...item.json,\n        canal_origen: canalRaw,\n        es_valido: false,\n        confianza: 0.0,\n        error_normalizacion: 'canal_invalido'\n      }\n    });\n    continue;\n  }\n\n  // Extraer descripcion segun canal\n  // Webhook N8N: body del formulario web llega como objeto anidado en item.json.body\n  const webBody = (canalOrigen === 'web' && typeof item.json.body === 'object' && item.json.body !== null) ? item.json.body : {};\n  let descripcion = '';\n  if (canalOrigen === 'correo') {\n    descripcion = item.json.descripcion || item.json.body || item.json.text || '';\n  } else if (canalOrigen === 'telefonia') {\n    descripcion = item.json.descripcion || item.json.output || item.json.text || '';\n  } else if (canalOrigen === 'web') {\n    // Webhook N8N: body del formulario llega como item.json.body (objeto anidado)\n    // webBody se declara antes del if-chain; aqui solo se extrae descripcion\n    descripcion = webBody.descripcion || item.json.descripcion || item.json.message || '';\n  }\n\n  // Sintetizar confianza para el IF compartido:\n  //   telefonia: propagar la confianza del validador de IA\n  //   correo/web: derivar de es_valido (1.0 si valido, 0.0 si invalido)\n  const esValido = item.json.es_valido !== undefined ? item.json.es_valido : true;\n  const confianzaUpstream = item.json.confianza;\n  let confianza;\n  if (canalOrigen === 'telefonia' && confianzaUpstream !== undefined) {\n    confianza = confianzaUpstream;\n  } else {\n    confianza = esValido ? 1.0 : 0.0;\n  }\n\n  result.push({\n    json: {\n      id: item.json.id || $execution.id + '-' + Date.now(),\n      timestamp: new Date().toISOString(),\n      canal_origen: canalOrigen,\n      descripcion: String(descripcion).trim(),\n      prioridad: (canalOrigen === 'web' ? (webBody.prioridad || item.json.prioridad) : item.json.prioridad) || 'media',\n      es_valido: esValido,\n      confianza: confianza\n    }\n  });\n}\n\nreturn result;"
+        "jsCode": "// Normalizacion de entrada a estructura unificada — tesis §5.3\n// Homogeniza la entrada de cualquiera de los tres canales:\n//   correo, web, telefonia\n// Produce: { id, timestamp, canal_origen, canal_origen_id, descripcion, prioridad, es_valido, confianza }\n// canal_origen debe ser uno de: correo, web, telefonia\n//\n// canal_origen_id: id del catalogo canal_origen de la migracion 001:\n//   correo electronico -> 1, formulario web -> 2, llamada telefonica -> 3.\n//   Se envia en el body del POST para que el incidente no quede con canal NULL (B-08).\n//\n// confianza: el IF compartido 'La informacion esta OK' evalua confianza >= 0.70.\n//   - telefonia: propaga la confianza del validador de IA (ya existe en el item).\n//   - correo/web: sintetiza confianza desde es_valido:\n//       es_valido = true  -> confianza = 1.0 (datos completos, pasa el umbral)\n//       es_valido = false -> confianza = 0.0 (datos incompletos, rama false del IF)\n// Esto garantiza que el IF compartido funcione para los tres canales.\n//\n// Nota de privacidad (C-04 Decision 2):\n//   La descripcion se transmite en texto claro al backend.\n//   La pseudonimizacion ocurre en el backend (IncidenteService.create_and_classify).\n//   El transporte usa HTTPS.\n\nconst items = $input.all();\nconst result = [];\n\nconst CANALES_VALIDOS = new Set(['correo', 'web', 'telefonia']);\nconst CANAL_ORIGEN_ID = { correo: 1, web: 2, telefonia: 3 };\n\nfor (const item of items) {\n  // Determinar canal segun lo marcado por el nodo previo\n  const canalRaw = item.json.canal_raw || 'correo';\n  const canalOrigen = CANALES_VALIDOS.has(canalRaw) ? canalRaw : null;\n\n  if (!canalOrigen) {\n    // Canal invalido: derivar a revision humana\n    result.push({\n      json: {\n        ...item.json,\n        canal_origen: canalRaw,\n        canal_origen_id: null,\n        es_valido: false,\n        confianza: 0.0,\n        error_normalizacion: 'canal_invalido'\n      }\n    });\n    continue;\n  }\n\n  // Extraer descripcion segun canal\n  // Webhook N8N: body del formulario web llega como objeto anidado en item.json.body\n  const webBody = (canalOrigen === 'web' && typeof item.json.body === 'object' && item.json.body !== null) ? item.json.body : {};\n  let descripcion = '';\n  if (canalOrigen === 'correo') {\n    descripcion = item.json.descripcion || item.json.body || item.json.text || '';\n  } else if (canalOrigen === 'telefonia') {\n    descripcion = item.json.descripcion || item.json.output || item.json.text || '';\n  } else if (canalOrigen === 'web') {\n    // Webhook N8N: body del formulario llega como item.json.body (objeto anidado)\n    // webBody se declara antes del if-chain; aqui solo se extrae descripcion\n    descripcion = webBody.descripcion || item.json.descripcion || item.json.message || '';\n  }\n\n  // Sintetizar confianza para el IF compartido:\n  //   telefonia: propagar la confianza del validador de IA\n  //   correo/web: derivar de es_valido (1.0 si valido, 0.0 si invalido)\n  const esValido = item.json.es_valido !== undefined ? item.json.es_valido : true;\n  const confianzaUpstream = item.json.confianza;\n  let confianza;\n  if (canalOrigen === 'telefonia' && confianzaUpstream !== undefined) {\n    confianza = confianzaUpstream;\n  } else {\n    confianza = esValido ? 1.0 : 0.0;\n  }\n\n  result.push({\n    json: {\n      id: item.json.id || $execution.id + '-' + Date.now(),\n      timestamp: new Date().toISOString(),\n      canal_origen: canalOrigen,\n      canal_origen_id: CANAL_ORIGEN_ID[canalOrigen],\n      descripcion: String(descripcion).trim(),\n      prioridad: (canalOrigen === 'web' ? (webBody.prioridad || item.json.prioridad) : item.json.prioridad) || 'media',\n      es_valido: esValido,\n      confianza: confianza\n    }\n  });\n}\n\nreturn result;\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -248,7 +275,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ JSON.stringify({ incidente_id: .id, mensaje: 'Incidente registrado correctamente. Su numero de incidente es: ' + .id }) }}",
+        "responseBody": "={{ JSON.stringify({ incidente_id: $json.id, mensaje: 'Incidente registrado correctamente. Su numero de incidente es: ' + $json.id }) }}",
         "options": {}
       },
       "type": "n8n-nodes-base.respondToWebhook",
@@ -262,9 +289,9 @@
     },
     {
       "parameters": {
-        "subject": "=Incidente registrado - Numero {{ .id }}",
-        "bodyContent": "=Su incidente ha sido registrado exitosamente con el numero {{ .id }}. Un agente de la mesa de ayuda se comunicara con usted a la brevedad.",
-        "toRecipients": "={{ .remitente || .from || '' }}",
+        "subject": "=Incidente registrado - Numero {{ $json.id }}",
+        "bodyContent": "=Su incidente ha sido registrado exitosamente con el numero {{ $json.id }}. Un agente de la mesa de ayuda se comunicara con usted a la brevedad.",
+        "toRecipients": "={{ $json.remitente || $json.from || '' }}",
         "options": {}
       },
       "type": "n8n-nodes-base.microsoftOutlook",
@@ -274,11 +301,45 @@
         -144
       ],
       "id": "abe6b56a-1e61-4d32-9b2e-01fe81f229ac",
-      "name": "Correo de confirmacion al usuario"
+      "name": "Correo de confirmacion al usuario",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "REPLACE_WITH_OUTLOOK_OAUTH2_CREDENTIAL_ID",
+          "name": "Mesa de Ayuda - Outlook"
+        }
+      }
     },
     {
       "parameters": {
-        "jsCode": "// Registro de auditoria - C-05 (fix D-3/D-4: shape real de backend + canal_origen/confianza upstream)\n// Contrato del evento: { incidente_id, canal_origen, timestamp, sector_nombre, confianza, resultado, retencion_dias }\n// EXCLUSION DE PII: la descripcion cruda NO se incluye; solo metadatos y referencias.\n// Retencion: 30 dias - declarada aqui; el destino persistente (Docker logging con rotacion)\n// se configura en docker-compose.yml segun la guia operativa.\n//\n// Shape real del response 201 de POST /api/v1/incidentes:\n//   { id, sector: { id, nombre, ... }, requiere_revision_humana, ... }\n//   El campo 'sector.nombre' es la categoria asignada; no existe 'categoria' en la raiz.\n//\n// D-4: canal_origen y confianza se obtienen del nodo normalizador (aguas arriba),\n//   NO del item corriente. Tras el HTTP POST el item corriente es el response body\n//   del backend, que no incluye canal_origen ni confianza.\n//   En la rama de rechazo el item ya viene con canal_origen del normalizador.\n//\n// Ramas que llegan a este nodo:\n//   - Rama exitosa: response HTTP POST (id, sector.nombre, requiere_revision_humana)\n//   - Rama de rechazo: item del normalizador (canal_origen, es_valido=false)\nconst item = $input.item.json;\n\n// D-4: obtener canal_origen y confianza desde el nodo normalizador (fuente primaria).\n// En la rama exitosa el item corriente (response HTTP) no incluye esos campos.\n// En la rama de rechazo el item ya viene con canal_origen del normalizador.\nlet canalOrigen = null;\nlet confianza = null;\ntry {\n  const normItem = $('Normalizar entrada del incidente').item.json;\n  canalOrigen = normItem.canal_origen || null;\n  confianza = normItem.confianza ?? null;\n} catch (_) {\n  // Si el nodo upstream no esta disponible, fallback al item corriente\n  canalOrigen = item.canal_origen || item.canal_raw || null;\n  confianza = item.confianza ?? null;\n}\n\n// D-3: leer sector.nombre del response HTTP (campo real del backend).\n// El response 201 tiene: { id, sector: { nombre }, requiere_revision_humana, ... }\n// En la rama de rechazo no hay response HTTP; sector es null.\nconst sectorNombre = item.sector?.nombre || null;\n\n// Determinar el resultado segun la rama:\n// Si el item no tiene id (no paso por HTTP POST), es un rechazo por datos incompletos.\nconst resultado = item.resultado\n  || (item.id ? 'creado' : 'rechazado_datos_incompletos');\n\nconst evento = {\n  incidente_id: item.id || null,\n  canal_origen: canalOrigen,\n  timestamp: new Date().toISOString(),\n  sector_nombre: sectorNombre,\n  confianza: confianza,\n  resultado: resultado,\n  retencion_dias: 30\n};\nconsole.log('[AUDITORIA]', JSON.stringify(evento));\nreturn [{ json: evento }];"
+        "resource": "message",
+        "operation": "update",
+        "messageId": {
+          "__rl": true,
+          "value": "={{ $('Llega un email a Mesa de Ayuda').item.json.id }}",
+          "mode": "id"
+        },
+        "updateFields": {
+          "isRead": true
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        -240
+      ],
+      "id": "8dd81bea-120c-4638-b6ee-5527e812cdc4",
+      "name": "Marcar correo como leido",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "REPLACE_WITH_OUTLOOK_OAUTH2_CREDENTIAL_ID",
+          "name": "Mesa de Ayuda - Outlook"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Registro de auditoria - C-05 (fix D-3/D-4 + B-14: shape real de backend, canal_origen upstream y resultado real)\n// Contrato del evento: { incidente_id, canal_origen, timestamp, sector_nombre, confianza, resultado, retencion_dias }\n// EXCLUSION DE PII: la descripcion cruda NO se incluye; solo metadatos y referencias.\n// Retencion: 30 dias - declarada aqui; el destino persistente (Docker logging con rotacion)\n// se configura en docker-compose.yml segun la guia operativa.\n//\n// Shape real del response 201 de POST /api/v1/incidentes:\n//   { id, sector: { id, nombre, ... }, requiere_revision_humana, ... }\n//   El campo 'sector.nombre' es la categoria asignada; no existe 'categoria' en la raiz.\n//\n// D-4: canal_origen y confianza se obtienen del nodo normalizador (aguas arriba),\n//   NO del item corriente. Tras el HTTP POST el item corriente es el response body\n//   del backend, que no incluye canal_origen ni confianza.\n//   En la rama de rechazo el item ya viene con canal_origen del normalizador.\n//\n// Ramas que llegan a este nodo:\n//   - Rama exitosa: response HTTP POST (id, sector.nombre, requiere_revision_humana)\n//   - Rama de rechazo: item del normalizador (canal_origen, es_valido=false)\nconst item = $input.item.json;\n\n// D-4: obtener canal_origen y confianza desde el nodo normalizador (fuente primaria).\n// En la rama exitosa el item corriente (response HTTP) no incluye esos campos.\n// En la rama de rechazo el item ya viene con canal_origen del normalizador.\nlet canalOrigen = null;\nlet confianza = null;\ntry {\n  const normItem = $('Normalizar entrada del incidente').item.json;\n  canalOrigen = normItem.canal_origen || null;\n  confianza = normItem.confianza ?? null;\n} catch (_) {\n  // Si el nodo upstream no esta disponible, fallback al item corriente\n  canalOrigen = item.canal_origen || item.canal_raw || null;\n  confianza = item.confianza ?? null;\n}\n\n// D-3: leer sector.nombre del response HTTP (campo real del backend).\n// El response 201 tiene: { id, sector: { nombre }, requiere_revision_humana, ... }\n// En la rama de rechazo no hay response HTTP; sector es null.\nconst sectorNombre = item.sector?.nombre || null;\n\n// B-14: distinguir creados de rechazados segun el resultado real del flujo.\n// El normalizador emite un id sintetico (string) tambien en la rama de rechazo,\n// por lo que 'item.id' NO alcanza para detectar un alta. El response del backend\n// tiene id numerico; la rama de rechazo llega con es_valido = false.\nconst resultado = item.resultado\n  || (item.es_valido === false\n      ? 'rechazado_datos_incompletos'\n      : (typeof item.id === 'number' ? 'creado' : 'rechazado_datos_incompletos'));\n\nconst evento = {\n  incidente_id: item.id || null,\n  canal_origen: canalOrigen,\n  timestamp: new Date().toISOString(),\n  sector_nombre: sectorNombre,\n  confianza: confianza,\n  resultado: resultado,\n  retencion_dias: 30\n};\nconsole.log('[AUDITORIA]', JSON.stringify(evento));\nreturn [{ json: evento }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -299,12 +360,12 @@
         -32
       ],
       "parameters": {
-        "mode": "expression",
-        "output": "={{ $json.canal_origen }}",
+        "mode": "rules",
         "rules": {
           "values": [
             {
-              "outputKey": "web",
+              "outputKey": "Web",
+              "renameOutput": true,
               "conditions": {
                 "options": {
                   "caseSensitive": true,
@@ -314,7 +375,7 @@
                 "combinator": "and",
                 "conditions": [
                   {
-                    "leftValue": "={{ $json.canal_origen }}",
+                    "leftValue": "={{ $('Normalizar entrada del incidente').item.json.canal_origen }}",
                     "rightValue": "web",
                     "operator": {
                       "type": "string",
@@ -322,13 +383,137 @@
                     }
                   }
                 ]
-              },
-              "renameOutput": true
+              }
+            },
+            {
+              "outputKey": "Correo",
+              "renameOutput": true,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Normalizar entrada del incidente').item.json.canal_origen }}",
+                    "rightValue": "correo",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "outputKey": "Telefonia",
+              "renameOutput": true,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Normalizar entrada del incidente').item.json.canal_origen }}",
+                    "rightValue": "telefonia",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
             }
           ]
         },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Otros"
+        },
         "fallbackOutput": "extra"
       }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        752
+      ],
+      "id": "a1b2c3d4-0002-4000-8000-000000000002",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "REPLACE_WITH_GEMINI_CREDENTIAL_ID",
+          "name": "Google Gemini (Mesa de Ayuda)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://backend:8000/api/v1/auth/login",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "contentType": "json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        720,
+        -320
+      ],
+      "id": "a1b2c3d4-0001-4000-8000-000000000001",
+      "name": "Login operador",
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "REPLACE_WITH_OPERATOR_LOGIN_CREDENTIAL_ID",
+          "name": "Operador Mesa de Ayuda (login)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a1b2c3d4-0004-4000-8000-000000000004",
+              "leftValue": "={{ $json.confianza }}",
+              "rightValue": 0.7,
+              "operator": {
+                "type": "number",
+                "operation": "gte",
+                "name": "filter.operator.gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        336,
+        640
+      ],
+      "id": "a1b2c3d4-0003-4000-8000-000000000003",
+      "name": "La clasificacion de la IA es valida"
     }
   ],
   "pinData": {},
@@ -370,30 +555,14 @@
       "main": [
         [
           {
-            "node": "HTTP POST a MTM-SRU",
+            "node": "Login operador",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Se le envia un mensaje al usuario pidiendole que vuelva a mandar el mail + los datos que le faltaron / eran incorrectos",
-            "type": "main",
-            "index": 0
-          },
-          {
             "node": "Registro de auditoria",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Se le envia un mensaje al usuario pidiendole que vuelva a mandar el mail + los datos que le faltaron / eran incorrectos": {
-      "main": [
-        [
-          {
-            "node": "Se verifica que la informacion sea la necesaria para levantar un incidente",
             "type": "main",
             "index": 0
           }
@@ -437,7 +606,7 @@
       "main": [
         [
           {
-            "node": "Normalizar entrada del incidente",
+            "node": "La clasificacion de la IA es valida",
             "type": "main",
             "index": 0
           }
@@ -493,7 +662,66 @@
         ],
         [
           {
+            "node": "Marcar correo como leido",
+            "type": "main",
+            "index": 0
+          },
+          {
             "node": "Correo de confirmacion al usuario",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Correo de confirmacion al usuario",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Correo de confirmacion al usuario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Login operador": {
+      "main": [
+        [
+          {
+            "node": "HTTP POST a MTM-SRU",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "La clasificacion de la IA es valida": {
+      "main": [
+        [
+          {
+            "node": "Normalizar entrada del incidente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
             "type": "main",
             "index": 0
           }

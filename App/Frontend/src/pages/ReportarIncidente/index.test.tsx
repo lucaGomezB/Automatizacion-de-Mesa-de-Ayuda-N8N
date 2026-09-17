@@ -15,6 +15,12 @@ vi.mock('@/services/catalogosService', () => ({
   listarSectores: vi.fn(),
 }));
 
+// El Header (vía PageWrapper) consulta useHealthCheck. Sin este mock, la prueba
+// dispararía una solicitud HTTP real a /health (fuga de red, FE 8).
+vi.mock('@/hooks/useHealthCheck', () => ({
+  useHealthCheck: () => ({ data: undefined, isError: false, isPending: true }),
+}));
+
 const mockSectores: SectorOpcion[] = [
   { id: 1, nombre: 'Seguridad Informatica' },
   { id: 2, nombre: 'Soporte Tecnico Hardware' },

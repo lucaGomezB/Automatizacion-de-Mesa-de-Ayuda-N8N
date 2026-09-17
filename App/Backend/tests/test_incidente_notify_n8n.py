@@ -441,3 +441,50 @@ async def test_notify_n8n_swallows_error_on_webhook_500():
     # Assert — no se propagó ninguna excepción
     assert raised is None, f"notify_n8n propagó una excepción: {raised}"
     assert returned is None  # La función retorna None siempre (fire-and-forget)
+
+
+# ── BE B6: la tarea fire-and-forget conserva una referencia retenida ──────────
+
+
+@pytest.mark.asyncio
+async def test_fire_and_forget_task_is_retained_until_completion(db_session):
+    """
+    La tarea de notificacion creada con asyncio.create_task conserva una
+    referencia retenida mientras esta en vuelo, de modo que el recolector de
+    basura no puede cancelarla antes de completarse.
+    """
+    from app.services import incidente_service as svc
+
+    result_esperado = _make_clasificacion_result()
+    classifier_mock = AsyncMock()
+    classifier_mock.classify = AsyncMock(return_value=result_esperado)
+    await _seed_catalogs(db_session)
+    payload = _make_payload()
+
+    release = asyncio.Event()
+
+    async def _slow_notify(*args, **kwargs):
+        await release.wait()
+
+    with patch(
+        "app.services.incidente_service.notify_n8n",
+        side_effect=_slow_notify,
+    ):
+        service = IncidenteService(session=db_session, classifier=classifier_mock)
+        await service.create_and_classify(payload)
+
+        # La tarea sigue pendiente y retenida en el set a nivel de modulo.
+        assert len(svc._notification_tasks) == 1
+        pending = next(iter(svc._notification_tasks))
+        assert not pending.done()
+
+    # Al completarse, el done_callback la descarta del set. Se cede el control
+    # varias iteraciones del event loop: la task debe reanudar (estaba esperando
+    # el Event), completar y recien despues corre su done_callback, que se agenda
+    # con call_soon. Un solo `sleep(0)` no alcanza.
+    release.set()
+    for _ in range(50):
+        if not svc._notification_tasks:
+            break
+        await asyncio.sleep(0.01)
+    assert len(svc._notification_tasks) == 0

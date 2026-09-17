@@ -135,16 +135,15 @@ services:
     build:
       context: ./App/Frontend
       dockerfile: Dockerfile
+      args:
+        # Vite hornea VITE_API_BASE_URL en tiempo de build: debe llegar como
+        # build arg, no como `environment` de runtime (que nginx ignora porque
+        # sirve un bundle estatico ya compilado). El valor es el ORIGEN sin
+        # `/api/v1`; api.ts agrega ese prefijo una sola vez.
+        VITE_API_BASE_URL: https://localhost
     restart: unless-stopped
 # Frontend is accessed exclusively through the nginx reverse proxy on port 443.
     # The internal port 3000 is NOT published to the host.
-    environment:
-      VITE_API_BASE_URL: https://localhost/api/v1
-    volumes:
-      # Hot reload: montar src/ para reflejar cambios sin rebuild
-      - ./App/Frontend/src:/app/src:ro
-      - ./App/Frontend/index.html:/app/index.html:ro
-      - ./App/Frontend/vite.config.ts:/app/vite.config.ts:ro
     depends_on:
       backend:
         condition: service_healthy
