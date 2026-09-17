@@ -428,4 +428,3 @@ mensaje accionable ante cualquier quiebre de cableado.
 - Guía completa (prerrequisitos, guardarraíles de costo, checks, canal correo
   opcional y procedimiento telefónico manual de pago):
   [`dry-run-harness.md`](dry-run-harness.md).
-```

@@ -38,6 +38,11 @@ from app.models.incidente import Incidente
 _POSTGRESQL = "postgresql"
 _SQLITE = "sqlite"
 
+# Zona horaria de negocio. Debe coincidir con
+# `app.utils.business_time.BUSINESS_TZ` (America/Argentina/Buenos_Aires).
+# Argentina no observa DST, por lo que UTC-3 es constante.
+_BUSINESS_TZ_NAME = "America/Argentina/Buenos_Aires"
+
 
 class EstadisticasRepository:
     """
@@ -71,9 +76,30 @@ class EstadisticasRepository:
             return "YYYY-MM-DD" if agrupar_por == "dia" else "YYYY-MM"
         return "%Y-%m-%d" if agrupar_por == "dia" else "%Y-%m"
 
-    def _period_expression(self, agrupar_por: str):
+    def _period_expression(self, agrupar_por: str, tz_offset_hours: int = -3):
         """
         Construye la expresion SQL de agrupacion temporal para el dialecto activo.
+
+        La etiqueta de periodo refleja el DIA DE NEGOCIO argentino (UTC-3), no la
+        fecha UTC: un incidente creado entre las 21:00 y las 24:00 BA pertenece al
+        dia de negocio en curso aunque su timestamp UTC ya caiga en el dia
+        calendario siguiente.
+
+        Por dialecto:
+            - PostgreSQL: `created_at` se convierte a
+              `America/Argentina/Buenos_Aires` con `func.timezone(...)` antes de
+              `to_char`.
+            - SQLite: no soporta zonas horarias; se aplica un desplazamiento fijo
+              de `tz_offset_hours` horas con `func.datetime(...)` antes de
+              `strftime`. El default -3 es equivalente a `BUSINESS_TZ` (Argentina
+              no observa DST). Es una aproximacion valida SOLO para tests: SQLite
+              nunca corre en produccion.
+
+        Args:
+            agrupar_por: 'dia' o 'mes'.
+            tz_offset_hours: Desplazamiento horario de la costura SQLite
+                (default -3, equivalente a America/Argentina/Buenos_Aires).
+                Inyectable para verificar limites de forma determinista.
 
         Raises:
             ValueError: Si el dialecto no esta soportado.
@@ -81,9 +107,12 @@ class EstadisticasRepository:
         dialect = self._session.get_bind().dialect.name
         fmt = self.period_format(agrupar_por, dialect)
         if dialect == _POSTGRESQL:
-            return func.to_char(Incidente.created_at, fmt)
+            localized = func.timezone(_BUSINESS_TZ_NAME, Incidente.created_at)
+            return func.to_char(localized, fmt)
         if dialect == _SQLITE:
-            return func.strftime(fmt, Incidente.created_at)
+            offset = f"{tz_offset_hours:+d} hours"
+            localized = func.datetime(Incidente.created_at, offset)
+            return func.strftime(fmt, localized)
         raise ValueError(
             f"Dialecto no soportado para agrupacion temporal: {dialect!r}"
         )

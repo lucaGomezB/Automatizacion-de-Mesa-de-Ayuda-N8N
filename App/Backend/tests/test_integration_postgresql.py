@@ -21,13 +21,14 @@ from datetime import date, datetime, timezone
 
 import pytest
 
-from sqlalchemy import text
+from sqlalchemy import select, text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from app.models.catalog import CanalOrigen, Estado, Sector
 from app.models.clasificacion_log import ClasificacionLog
 from app.models.incidente import Incidente, PrioridadEnum
+from app.repositories.estadisticas_repository import EstadisticasRepository
 
 pytestmark = pytest.mark.integration
 
@@ -475,6 +476,36 @@ async def test_estadisticas_tendencias_200_on_postgresql(
         f"devolvio {response.status_code} sobre PostgreSQL (esperado 200). "
         f"Body: {response.text}"
     )
+
+
+async def test_period_label_uses_argentina_business_day_on_postgresql(
+    pg_session, seed_pg_catalogs
+):
+    """B5 (c-35): el rotulo de periodo usa el dia de negocio argentino en PostgreSQL.
+
+    Un incidente creado a las 02:30 UTC del 17-09-2026 (23:30 BA del 16-09)
+    debe agruparse bajo 2026-09-16. En SQLite lo cubre la costura
+    `tz_offset_hours`; aca se valida la conversion real `func.timezone(...)`
+    sobre PostgreSQL.
+    """
+    catalogs = seed_pg_catalogs
+    incidente = Incidente(
+        descripcion_original="Falla nocturna en el servidor de base de datos.",
+        descripcion_pseudonimizada="Falla nocturna en el servidor de base de datos.",
+        prioridad=PrioridadEnum.media,
+        estado_id=catalogs["estado_nuevo"].id,
+        created_at=datetime(2026, 9, 17, 2, 30, tzinfo=timezone.utc),
+    )
+    pg_session.add(incidente)
+    await pg_session.flush()
+
+    repo = EstadisticasRepository(pg_session)
+    expr = repo._period_expression("dia")
+    result = await pg_session.execute(
+        select(expr).select_from(Incidente).where(Incidente.id == incidente.id)
+    )
+
+    assert result.scalar_one() == "2026-09-16"
 
 
 async def test_estadisticas_resumen_200_on_postgresql(pg_client, seed_pg_catalogs):
