@@ -1,6 +1,7 @@
 # Por Implementar
 
-> Estado: 2026-09-10. 26 changes completos (C-01 a C-26). 309 tests pasando.
+> Estado: 2026-09-17. 35 changes completos y archivados (C-01 a C-35; C-36 en curso).
+> Backend: 349 tests unit (SQLite) + 22 de integracion (PostgreSQL). Evaluation: 54. Frontend: 121.
 > Este documento lista lo que falta para que el sistema funcione al 100% en un entorno real.
 > Las credenciales externas son inherentemente no automatizables; se documentan aqui para referencia del operador.
 
@@ -105,11 +106,9 @@ El workflow N8N tiene el nodo "Correo de confirmacion al usuario" que envia conf
 
 ## 4. Limitaciones y Deuda Tecnica
 
-### 4.1 N8N usa imagen `latest`
+### 4.1 N8N — imagen pinneada (Resuelto por C-34)
 
-`docker-compose.yml` linea 96: `image: n8nio/n8n:latest`. Si una version nueva rompe compatibilidad con los nodos del workflow (especialmente `@n8n/n8n-nodes-langchain`), no hay rollback automatico.
-
-**Recomendacion**: pinear una version especifica cuando se valide estabilidad.
+Resuelto: `docker-compose.yml` fija `image: n8nio/n8n:2.11.2` (la version validada localmente, 2.11.2). Ya no se usa `latest`, por lo que no hay cambios silenciosos de version ni riesgo de romper los nodos del workflow (`@n8n/n8n-nodes-langchain`) sin rollback.
 
 ### 4.2 Frontend usa Vite Dev Server en Docker
 
@@ -144,5 +143,5 @@ Los scripts `scripts/backup.sh` y `scripts/backup.ps1` existen pero requieren ej
 | **Alta** | Credenciales Twilio | Credencial | Canal telefonico |
 | **Media** | URL publica Twilio | Config | Webhook telefonico |
 | **Media** | Backup automatico | Feature | Operacion prolongada |
-| **Baja** | Pinear version N8N | Deuda tecnica | Estabilidad futura |
+| — | Pinear version N8N | **Resuelto (C-34)** | — |
 | **Baja** | Build produccion frontend | Deuda tecnica | Rendimiento en prod |
