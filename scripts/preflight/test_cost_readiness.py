@@ -147,8 +147,8 @@ def test_mark_read_guard_passes_on_real_workflow():
 
 def test_mark_read_unreachable_from_reject_branch_fails(tmp_path):
     def mutate(wf):
-        outs = wf["connections"]["La informacion esta OK"]["main"][1]
-        wf["connections"]["La informacion esta OK"]["main"][1] = [
+        outs = wf["connections"]["Entrada valida"]["main"][1]
+        wf["connections"]["Entrada valida"]["main"][1] = [
             e for e in outs if e["node"] != "Es correo?"
         ]
 
@@ -169,6 +169,15 @@ def test_mark_read_unreachable_from_error_branch_fails(tmp_path):
 
 def test_mark_read_unreachable_from_success_branch_fails(tmp_path):
     def mutate(wf):
+        # Tras conectar la rama true de 'Requiere revision humana' a la guarda
+        # 'Es correo?', el exito alcanza 'Marcar correo como leido' por DOS rutas:
+        #   1. Requiere revision humana (true) -> Es correo? -> Marcar
+        #   2. Requiere revision humana (false) -> Rutear por canal (correo) -> Marcar
+        # Se cortan AMBAS para simular una rama de exito que no marca el correo.
+        true_outs = wf["connections"]["Requiere revision humana"]["main"][0]
+        wf["connections"]["Requiere revision humana"]["main"][0] = [
+            e for e in true_outs if e["node"] != "Es correo?"
+        ]
         outs = wf["connections"]["Rutear por canal de origen"]["main"][1]
         wf["connections"]["Rutear por canal de origen"]["main"][1] = [
             e for e in outs if e["node"] != "Marcar correo como leido"

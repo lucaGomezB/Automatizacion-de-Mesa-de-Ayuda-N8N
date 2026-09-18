@@ -36,10 +36,16 @@ CODE_NODE_CORREO = "Se verifica que la informacion sea la necesaria para levanta
 CODE_NODE_TELEFONIA = "Se verifica lo que trajo la IA"
 CODE_NODES = [CODE_NODE_CORREO, CODE_NODE_TELEFONIA]
 
-IF_NODE_CORREO = "La informacion esta OK"
+# "Entrada valida" es el gate de validacion de ENTRADA previo al POST:
+#   - correo/web: longitud de la descripcion (es_valido → confianza sintetizada)
+#   - telefonia: validez de la respuesta de la IA
+# NO es un gate de confianza del modelo. El ruteo real de revision humana por
+# confianza vive en el backend (IncidenteService.create_and_classify) y se
+# re-evalua en el gate post-POST "Requiere revision humana".
+IF_NODE_CORREO = "Entrada valida"
 # IF_NODE_TELEFONIA ("Lo que trajo puede crear un incidente") fue ELIMINADO en el
 # fix del apply C-05: era un nodo huérfano (sin entrada) — la telefonía ahora converge
-# en el normalizador compartido y usa el único IF "La informacion esta OK" + el único
+# en el normalizador compartido y usa el único IF "Entrada valida" + el único
 # HTTP POST a MTM-SRU.  IF_NODES queda con solo el IF del canal correo/unificado.
 IF_NODES = [IF_NODE_CORREO]
 
@@ -748,8 +754,13 @@ TRIGGER_CANAL_MAP = {
 }
 
 
-def _connections_reachable(wf: dict, start: str, target: str, max_depth: int = 10) -> bool:
-    """BFS sobre connections para verificar que `start` puede alcanzar `target`."""
+def _connections_reachable(wf: dict, start: str, target: str, max_depth: int = 50) -> bool:
+    """BFS sobre connections para verificar que `start` puede alcanzar `target`.
+
+    `max_depth` es un presupuesto de nodos, no un limite por nivel; el conjunto
+    `visited` ya impide ciclos. Se deja holgado porque el grafo crece con cada
+    gate (p. ej. el gate post-POST 'Requiere revision humana').
+    """
     conns = wf.get("connections", {})
     visited: set[str] = set()
     queue = [start]
@@ -1129,7 +1140,7 @@ def test_workflow_still_inactive():
 # ---------------------------------------------------------------------------
 # Grupo 14 — Corrección de defectos de cableado C-05 (bugfix apply)
 #
-# Defecto 1: la rama false de "La informacion esta OK" NO llega a auditoría.
+# Defecto 1: la rama false de "Entrada valida" NO llega a auditoría.
 # Defecto 2: "Confirmacion web al usuario" no es alcanzable desde el trigger web.
 # ---------------------------------------------------------------------------
 
@@ -1150,7 +1161,7 @@ def _direct_successors_of_if_branch(wf: dict, if_node: str, branch_index: int) -
 
 def test_audit_reachable_from_rejected_branch():
     """
-    RED → GREEN (14.1): la rama false (main#1) del IF "La informacion esta OK"
+    RED → GREEN (14.1): la rama false (main#1) del IF "Entrada valida"
     debe conectar —directa o indirectamente, SIN pasar por HTTP POST— al nodo de auditoría.
 
     Defecto confirmado: la única ruta actual desde la rama false al nodo de auditoría
@@ -1164,7 +1175,7 @@ def test_audit_reachable_from_rejected_branch():
     Spec/decisión: el log de auditoría registra TODAS las ramas.
     """
     wf = load_workflow()
-    IF_CORREO = "La informacion esta OK"
+    IF_CORREO = "Entrada valida"
 
     # Obtener los sucesores directos de la rama false (branch index 1)
     false_branch_direct = _direct_successors_of_if_branch(wf, IF_CORREO, 1)
@@ -1377,7 +1388,7 @@ def test_d1_marcar_canal_web_jsCode_uses_valid_input_ref():
 
 def test_d2_if_condition_evaluates_es_valido():
     """
-    RED (D-2): el nodo IF 'La informacion esta OK' debe evaluar un campo
+    RED (D-2): el nodo IF 'Entrada valida' debe evaluar un campo
     que el normalizador garantiza para los TRES canales.
 
     El normalizador produce 'es_valido' (bool) para todos los canales.
@@ -2371,4 +2382,319 @@ def test_c36_retry_guard_detects_injected_max_tries_on_language_model(tmp_path):
     violations = _c36_retry_violations(wf)
     assert any("maxTries" in v for v in violations), (
         f"La guarda no detecto maxTries inyectado: {violations}"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Grupo 20 — Gate post-POST de revision humana + notificacion al operador
+#
+# El gate de ENTRADA previo al POST ("Entrada valida") NO es un gate de
+# confianza del modelo: para correo/web valida longitud de texto y para
+# telefonia valida la respuesta de la IA. El ruteo real por confianza vive en
+# el backend (`IncidenteService.create_and_classify` fija
+# `requiere_revision_humana = confianza < 0.70`), que devuelve ese booleano en
+# `IncidenteRead`. Este grupo verifica el gate REAL post-POST: cuando el
+# backend marca `requiere_revision_humana = true`, se notifica al operador
+# designado antes de continuar con el ruteo normal y la auditoria.
+# ---------------------------------------------------------------------------
+
+IF_REVISION_HUMANA_NODE_NAME = "Requiere revision humana"
+NOTIFICAR_OPERADOR_NODE_NAME = "Notificar operador designado"
+OLD_IF_NODE_NAME = "La informacion esta OK"
+OPERATOR_EMAIL_REF = "$env.OPERATOR_EMAIL"
+
+
+def test_entrada_valida_renamed_from_old_node_name():
+    """
+    RED → GREEN: el gate pre-POST fue renombrado a 'Entrada valida' y el nombre
+    viejo 'La informacion esta OK' ya no existe en el workflow (ni como nodo, ni
+    como clave/valor de conexion).
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    assert IF_NODE_CORREO in by_name, (
+        f"El gate de entrada {IF_NODE_CORREO!r} no existe tras el rename"
+    )
+    assert OLD_IF_NODE_NAME not in by_name, (
+        f"El nombre viejo {OLD_IF_NODE_NAME!r} sigue existiendo como nodo"
+    )
+    assert OLD_IF_NODE_NAME not in wf.get("connections", {}), (
+        f"El nombre viejo {OLD_IF_NODE_NAME!r} sigue como clave de conexion"
+    )
+
+    for source, outputs in wf.get("connections", {}).items():
+        for output_list in outputs.get("main", []):
+            for edge in output_list:
+                assert edge["node"] != OLD_IF_NODE_NAME, (
+                    f"El nombre viejo {OLD_IF_NODE_NAME!r} sigue como destino "
+                    f"de conexion desde {source!r}"
+                )
+
+
+def test_entrada_valida_still_gates_login_operador():
+    """
+    TRIANGULATE: el rename preserva el cableado del gate de entrada.
+    La rama true (main#0) de 'Entrada valida' sigue desembocando en
+    'Login operador'.
+    """
+    wf = load_workflow()
+    assert "Login operador" in _output_successors(wf, IF_NODE_CORREO, 0), (
+        f"'{IF_NODE_CORREO}' dejo de desembocar en 'Login operador' tras el rename"
+    )
+
+
+def test_revision_humana_node_exists_and_is_if():
+    """
+    RED → GREEN: existe el nodo IF 'Requiere revision humana' de tipo
+    n8n-nodes-base.if, cableado tras el POST.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    assert IF_REVISION_HUMANA_NODE_NAME in by_name, (
+        f"No existe el nodo IF {IF_REVISION_HUMANA_NODE_NAME!r}"
+    )
+    node = by_name[IF_REVISION_HUMANA_NODE_NAME]
+    assert node.get("type") == "n8n-nodes-base.if", (
+        f"{IF_REVISION_HUMANA_NODE_NAME!r} debe ser un IF, got {node.get('type')!r}"
+    )
+
+
+def test_revision_humana_condition_references_flag():
+    """
+    RED → GREEN: la condición del IF post-POST referencia el booleano
+    `requiere_revision_humana` del response del backend.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    node = by_name[IF_REVISION_HUMANA_NODE_NAME]
+    conditions_str = json.dumps(node.get("parameters", {}).get("conditions", {}))
+    assert "requiere_revision_humana" in conditions_str, (
+        f"El IF {IF_REVISION_HUMANA_NODE_NAME!r} no evalua 'requiere_revision_humana' "
+        f"(conditions={conditions_str})"
+    )
+    assert "true" in conditions_str, (
+        f"El IF {IF_REVISION_HUMANA_NODE_NAME!r} no compara contra true"
+    )
+
+
+def test_notificar_operador_node_exists_and_references_env():
+    """
+    RED → GREEN: existe el nodo de notificacion microsoftOutlook de envio,
+    dirigido a la variable de entorno `$env.OPERATOR_EMAIL`.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    assert NOTIFICAR_OPERADOR_NODE_NAME in by_name, (
+        f"No existe el nodo {NOTIFICAR_OPERADOR_NODE_NAME!r}"
+    )
+    node = by_name[NOTIFICAR_OPERADOR_NODE_NAME]
+    assert node.get("type") == "n8n-nodes-base.microsoftOutlook", (
+        f"{NOTIFICAR_OPERADOR_NODE_NAME!r} debe ser microsoftOutlook, "
+        f"got {node.get('type')!r}"
+    )
+    params = node.get("parameters", {})
+    params_str = json.dumps(params)
+    assert OPERATOR_EMAIL_REF in params_str, (
+        f"{NOTIFICAR_OPERADOR_NODE_NAME!r} no referencia {OPERATOR_EMAIL_REF!r} "
+        f"(params={params_str})"
+    )
+    assert params.get("operation") == "send", (
+        f"{NOTIFICAR_OPERADOR_NODE_NAME!r} debe usar la operacion de envio "
+        f"('send'), got {params.get('operation')!r}"
+    )
+
+
+def test_notificar_operador_references_incident_and_review():
+    """
+    TRIANGULATE: el asunto/cuerpo de la notificacion referencia el id del
+    incidente y explicita que requiere revision humana.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    node = by_name[NOTIFICAR_OPERADOR_NODE_NAME]
+    params_str = json.dumps(node.get("parameters", {}))
+    assert "$json.id" in params_str, (
+        "La notificacion al operador no referencia el id del incidente ($json.id)"
+    )
+    assert "revision" in params_str.lower(), (
+        "La notificacion al operador no menciona que el incidente requiere revision"
+    )
+
+
+def test_http_post_reaches_revision_humana_gate():
+    """
+    RED → GREEN: la salida exitosa del POST (main#0) desemboca DIRECTAMENTE en
+    el gate post-POST 'Requiere revision humana' (ya no en el Switch ni en
+    auditoria de forma directa).
+    """
+    wf = load_workflow()
+    assert IF_REVISION_HUMANA_NODE_NAME in _output_successors(wf, HTTP_NODE_CORREO, 0), (
+        f"La salida exitosa de {HTTP_NODE_CORREO!r} no desemboca en "
+        f"{IF_REVISION_HUMANA_NODE_NAME!r}"
+    )
+    assert CANAL_SWITCH_NODE_NAME not in _output_successors(wf, HTTP_NODE_CORREO, 0), (
+        "El POST sigue conectado directamente al Switch de canal"
+    )
+    assert AUDIT_NODE_NAME not in _output_successors(wf, HTTP_NODE_CORREO, 0), (
+        "El POST sigue conectado directamente a auditoria"
+    )
+
+
+def test_revision_humana_true_branch_notifies_operator():
+    """
+    RED → GREEN: la rama true (main#0) del gate post-POST notifica al operador
+    designado.
+    """
+    wf = load_workflow()
+    assert NOTIFICAR_OPERADOR_NODE_NAME in _output_successors(
+        wf, IF_REVISION_HUMANA_NODE_NAME, 0
+    ), (
+        f"La rama true de {IF_REVISION_HUMANA_NODE_NAME!r} no notifica al operador"
+    )
+
+
+def test_revision_humana_false_branch_routes_and_audits():
+    """
+    TRIANGULATE: la rama false (main#1) del gate post-POST conserva el flujo
+    normal: ruteo por canal de origen y registro de auditoria.
+    """
+    wf = load_workflow()
+    false_successors = _output_successors(wf, IF_REVISION_HUMANA_NODE_NAME, 1)
+    assert CANAL_SWITCH_NODE_NAME in false_successors, (
+        f"La rama false de {IF_REVISION_HUMANA_NODE_NAME!r} no rutea por canal"
+    )
+    assert AUDIT_NODE_NAME in false_successors, (
+        f"La rama false de {IF_REVISION_HUMANA_NODE_NAME!r} no registra auditoria"
+    )
+
+
+def test_notificar_operador_reaches_audit():
+    """
+    TRIANGULATE: la notificacion al operador desemboca en auditoria para que el
+    evento quede registrado.
+    """
+    wf = load_workflow()
+    assert AUDIT_NODE_NAME in _get_successors(wf, NOTIFICAR_OPERADOR_NODE_NAME), (
+        f"{NOTIFICAR_OPERADOR_NODE_NAME!r} no desemboca en {AUDIT_NODE_NAME!r}"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Grupo 21 — Follow-ups de robustez de despliegue y ciclo del correo
+#
+# Fix 1: los nodos httpRequest que golpean el backend resuelven el host con
+#        `$env.BACKEND_URL` en lugar de hardcodear `http://backend:8000`, para
+#        que el mismo workflow exportado funcione en cualquier entorno.
+# Fix 2: la rama true del gate post-POST (revision humana) tambien marca el
+#        correo como leido, reutilizando la guarda de canal 'Es correo?'.
+# ---------------------------------------------------------------------------
+
+BACKEND_ENV_REF = "$env.BACKEND_URL"
+BACKEND_URL_LITERAL = "http://backend:8000"
+
+
+def _http_nodes_with_backend_path(by_type: dict[str, list[dict]]) -> list[dict]:
+    """Nodos httpRequest cuya URL apunta a una ruta /api/v1/ del backend."""
+    return [
+        node
+        for node in by_type.get(HTTP_NODE_TYPE, [])
+        if "/api/v1/" in str(node.get("parameters", {}).get("url", ""))
+    ]
+
+
+def test_http_backend_nodes_use_env_backend_url():
+    """
+    RED (Fix 1): todo nodo httpRequest que apunta a /api/v1/ resuelve el host
+    con la expresion `$env.BACKEND_URL` en lugar de hardcodear `http://backend:8000`.
+    """
+    wf = load_workflow()
+    _, by_type = index_nodes(wf)
+
+    nodes = _http_nodes_with_backend_path(by_type)
+    assert nodes, "No se encontraron nodos httpRequest hacia rutas /api/v1/"
+
+    for node in nodes:
+        url = str(node.get("parameters", {}).get("url", ""))
+        assert BACKEND_ENV_REF in url, (
+            f"El nodo {node['name']!r} no resuelve el host con {BACKEND_ENV_REF!r} "
+            f"(url={url!r}). La URL no debe hardcodear el host del backend."
+        )
+
+
+def test_http_nodes_do_not_hardcode_backend_host():
+    """
+    TRIANGULATE (Fix 1): ningun nodo httpRequest contiene el literal
+    `http://backend:8000` en su URL.
+    """
+    wf = load_workflow()
+    _, by_type = index_nodes(wf)
+
+    offenders = [
+        node["name"]
+        for node in by_type.get(HTTP_NODE_TYPE, [])
+        if BACKEND_URL_LITERAL in str(node.get("parameters", {}).get("url", ""))
+    ]
+    assert not offenders, (
+        f"Nodos httpRequest con host hardcodeado {BACKEND_URL_LITERAL!r}: {offenders}"
+    )
+
+
+def test_login_and_incidentes_nodes_use_env_backend_url():
+    """
+    TRIANGULATE (Fix 1): los dos nodos concretos que golpean el backend
+    ('Login operador' y 'HTTP POST a MTM-SRU') usan `$env.BACKEND_URL`.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    for node_name in ("Login operador", HTTP_NODE_CORREO):
+        assert node_name in by_name, f"No existe el nodo {node_name!r}"
+        url = str(by_name[node_name].get("parameters", {}).get("url", ""))
+        assert BACKEND_ENV_REF in url, (
+            f"El nodo {node_name!r} no usa {BACKEND_ENV_REF!r} (url={url!r})"
+        )
+
+
+def test_revision_branch_reaches_mark_read():
+    """
+    RED (Fix 2): la rama true del gate post-POST 'Requiere revision humana'
+    (revision humana) tambien alcanza 'Marcar correo como leido', de modo que un
+    correo de baja confianza no queda sin marcar.
+    """
+    wf = load_workflow()
+    assert _connections_reachable(wf, IF_REVISION_HUMANA_NODE_NAME, MARK_READ_NODE_NAME), (
+        f"La rama de revision humana no alcanza {MARK_READ_NODE_NAME!r}: "
+        "el correo que requiere revision queda sin marcar como leido."
+    )
+
+
+def test_revision_true_branch_notifies_operator_and_marks_read():
+    """
+    TRIANGULATE (Fix 2): la rama true (main#0) conserva la notificacion al
+    operador y agrega la guarda de canal 'Es correo?' en el mismo nivel.
+    """
+    wf = load_workflow()
+    true_successors = _output_successors(wf, IF_REVISION_HUMANA_NODE_NAME, 0)
+    assert NOTIFICAR_OPERADOR_NODE_NAME in true_successors, (
+        f"La rama true de {IF_REVISION_HUMANA_NODE_NAME!r} dejo de notificar al operador"
+    )
+    assert IF_ES_CORREO_NODE_NAME in true_successors, (
+        f"La rama true de {IF_REVISION_HUMANA_NODE_NAME!r} no pasa por "
+        f"la guarda de canal {IF_ES_CORREO_NODE_NAME!r}"
+    )
+
+
+def test_channel_guard_still_reaches_mark_read():
+    """
+    TRIANGULATE (Fix 2): la guarda 'Es correo?' sigue desembocando en
+    'Marcar correo como leido' (no regresion del cableado existente).
+    """
+    wf = load_workflow()
+    assert MARK_READ_NODE_NAME in _get_successors(wf, IF_ES_CORREO_NODE_NAME), (
+        f"'{IF_ES_CORREO_NODE_NAME}' dejo de desembocar en {MARK_READ_NODE_NAME!r}"
     )

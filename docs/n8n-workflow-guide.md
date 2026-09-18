@@ -4,8 +4,10 @@
 > C-05: n8n-channel-triggers — Canal web agregado, notificaciones por canal y auditoría con retención de 30 días.
 > C-33: cost-guards — Tope de refinamiento del agente pago, ciclo de vida del correo en todas
 > las ramas terminales, lookback de 24 horas, payload enriquecido y webhook de notificación dedicado.
-> Estado: 27 nodos (incluye 4 nodos de guarda C-33 + webhook de notificación); suite estructural
-> `test_n8n_workflow.py` en verde.
+> Gate post-POST de revisión humana — IF `Requiere revision humana` (evalúa la marca del backend)
+> + nodo `Notificar operador designado` (`$env.OPERATOR_EMAIL`); el gate pre-POST pasó a llamarse
+> `Entrada valida` (validación de entrada, no de confianza del modelo).
+> Estado: 29 nodos (26 operativos + 3 sticky notes); suite estructural `test_n8n_workflow.py` en verde.
 
 ## Descripción general
 
@@ -46,18 +48,23 @@ El canal telefonía limita a **2 intentos** la clasificación/refinamiento del `
   - **False** → `Derivar a revision humana` (terminal).
 - `Derivar a revision humana` fija `confianza = 0.0`, `requiere_revision_humana = true`,
   `revision_forzada = true`, conserva `canal_raw = 'telefonia'` y **no reingresa al agente**.
-  El normalizador propaga `revision_forzada` y el IF `La informacion esta OK` la acepta
+  El normalizador propaga `revision_forzada` y el IF `Entrada valida` la acepta
   (`confianza >= 0.70 OR revision_forzada == true`), de modo que el incidente se persiste
   vía `Login operador → HTTP POST a MTM-SRU` con sector nulo y revisión humana forzada.
 
-### 2. Ciclo de vida del correo en todas las ramas terminales (HIGH-4)
+### 2. Ciclo de vida del correo en las ramas terminales (HIGH-4)
 
-El mensaje de Outlook se marca como leído en **todas** las ramas terminales alcanzables:
+El mensaje de Outlook se marca como leído en las ramas terminales alcanzables:
 
-- **Éxito**: `HTTP POST a MTM-SRU → Rutear por canal de origen` (rama correo) → `Marcar correo como leido`.
-- **Rechazo**: la rama false de `La informacion esta OK` → `Es correo?` → `Marcar correo como leido`.
+- **Éxito sin revisión**: `HTTP POST a MTM-SRU` (main#0) → `Requiere revision humana` (rama
+  false) → `Rutear por canal de origen` (rama correo) → `Marcar correo como leido`.
+- **Rechazo**: la rama false de `Entrada valida` → `Es correo?` → `Marcar correo como leido`.
 - **Error**: `HTTP POST a MTM-SRU` declara `onError: "continueErrorOutput"` y su salida de
-  error → `Es correo?` → `Marcar correo como leido`.
+  error (main#1) → `Es correo?` → `Marcar correo como leido`.
+
+> **Excepción conocida**: la rama true de `Requiere revision humana` (revisión humana) va a
+> `Notificar operador designado → Registro de auditoria` y **no** pasa por `Marcar correo como
+> leido`; un correo que requiere revisión queda sin marcar.
 
 La guarda `Es correo?` evalúa `canal_origen == 'correo'` antes de tocar el nodo de Outlook,
 porque `Marcar correo como leido` referencia el trigger de Outlook por nombre y fallaría en
@@ -109,11 +116,13 @@ para el Anexo E de la tesis (C-10).
 | 1 | Llega un email a Mesa de Ayuda | `microsoftOutlookTrigger` | Disparador por sondeo. Recibe el correo del usuario. Emite `canal_raw = "correo"`. |
 | 2 | Se verifica que la informacion sea la necesaria para levantar un incidente | `code` (JS) | Valida `descripcion` ≥10 y ≤5000 caracteres. Emite `es_valido`. |
 | 3 | Normalizar entrada del incidente | `code` (JS) | Homogeniza a estructura unificada: `{id, timestamp, canal_origen, descripcion}`. Compartido entre los tres canales. |
-| 4 | La informacion esta OK | `if` | Condición: `confianza >= 0.70`. Rama true → HTTP; rama false → reenvío. |
-| 5a | HTTP POST a MTM-SRU | `httpRequest` | `POST /api/v1/incidentes` al backend FastAPI. |
-| 5b | Se le envia un mensaje... | `microsoftOutlook` | Solicita al usuario reenviar datos faltantes. |
-| 6a | Correo de confirmacion al usuario | `microsoftOutlook` | **[C-05]** Envía correo de confirmación con el número de incidente al remitente. |
-| 6b | Registro de auditoria | `code` (JS) | **[C-05]** Registra metadatos de la ejecución (sin PII). Ver sección Auditoría. |
+| 4 | Entrada valida | `if` | Gate de validación de ENTRADA previo al POST. Condición: `confianza >= 0.70 OR revision_forzada == true`. Rama true → `Login operador`; rama false → `Registro de auditoria` + `Es correo?`. |
+| 5 | Login operador | `httpRequest` | `POST /api/v1/auth/login`; obtiene el token que autentica el POST de incidentes. Compartido. |
+| 6 | HTTP POST a MTM-SRU | `httpRequest` | `POST /api/v1/incidentes/` al backend FastAPI. Compartido. |
+| 7 | Requiere revision humana | `if` | Gate post-POST. Evalúa `$json.requiere_revision_humana` del response. Rama true → `Notificar operador designado`; rama false → `Rutear por canal de origen` + `Registro de auditoria`. Compartido. |
+| 8 | Notificar operador designado | `microsoftOutlook` | Envía correo al operador designado (`$env.OPERATOR_EMAIL`) con el id del incidente. |
+| 9a | Correo de confirmacion al usuario | `microsoftOutlook` | **[C-05]** Envía correo de confirmación con el número de incidente al remitente. |
+| 9b | Registro de auditoria | `code` (JS) | **[C-05]** Registra metadatos de la ejecución (sin PII). Ver sección Auditoría. Compartido. |
 
 ### Canal web (formulario web) — C-05
 
@@ -122,10 +131,13 @@ para el Anexo E de la tesis (C-10).
 | 1 | Webhook formulario web | `webhook` | `POST /webhook/incidente-web`. Recibe el envío del formulario del frontend. |
 | 2 | Marcar canal web | `code` (JS) | Asigna `canal_raw = "web"` al ítem antes de normalizar. |
 | 3 | Normalizar entrada del incidente | `code` (JS) | Compartido — idem canal correo. |
-| 4 | La informacion esta OK | `if` | Compartido — idem canal correo. |
-| 5 | HTTP POST a MTM-SRU | `httpRequest` | Idem canal correo. |
-| 6a | Confirmacion web al usuario | `respondToWebhook` | **[C-05]** Responde al webhook con `{incidente_id, mensaje}`. |
-| 6b | Registro de auditoria | `code` (JS) | **[C-05]** Compartido — idem canal correo. |
+| 4 | Entrada valida | `if` | Compartido — idem canal correo. |
+| 5 | Login operador | `httpRequest` | Compartido — idem canal correo. |
+| 6 | HTTP POST a MTM-SRU | `httpRequest` | Compartido — idem canal correo. |
+| 7 | Requiere revision humana | `if` | Compartido — gate post-POST. |
+| 8 | Notificar operador designado | `microsoftOutlook` | Compartido — notifica al operador designado. |
+| 9a | Confirmacion web al usuario | `respondToWebhook` | **[C-05]** Responde al webhook con `{incidente_id, mensaje}` (rama false de `Requiere revision humana`). |
+| 9b | Registro de auditoria | `code` (JS) | **[C-05]** Compartido — idem canal correo. |
 
 ### Canal telefonía
 
@@ -134,11 +146,18 @@ para el Anexo E de la tesis (C-10).
 | 1 | Llamada telefonica | `twilioTrigger` | Webhook de Twilio al completar la transcripción. |
 | 2 | AI Agent | `agent` (LangChain) | Parsea la transcripción con el prompt del negocio. |
 | 2b | Con el fin de enviar los datos... | `memoryRedisChat` | Memoria Redis para el AI Agent. |
-| 3 | Se verifica lo que trajo la IA | `code` (JS) | Valida los 5 pasos Anexo H §H.3 (JSON, campos `sector_predicho`/`sectores_adicionales`, set canónico de 5 sectores, rango confianza). Emite `canal_raw = "telefonia"`. |
-| 4 | Normalizar entrada del incidente | `code` (JS) | **[C-05]** Compartido — telefonia ahora converge aquí antes del IF. |
-| 5 | La informacion esta OK | `if` | Compartido — condición `confianza >= 0.70`. Rama false → loop AI Agent. |
-| 6a | HTTP POST a MTM-SRU | `httpRequest` | Compartido. |
-| 6b | Registro de auditoria | `code` (JS) | **[C-05]** Compartido — idem canal correo. |
+| 2c | Google Gemini Chat Model | `lmChatGoogleGemini` | Modelo de lenguaje del AI Agent. |
+| 3 | Se verifica lo que trajo la IA | `code` (JS) | Valida los 5 pasos Anexo H §H.3 (JSON, campos `sector_predicho`/`sectores_adicionales`, set canónico de 5 sectores, rango confianza) e incrementa `intento_agente`. Emite `canal_raw = "telefonia"`. |
+| 4 | La clasificacion de la IA es valida | `if` | Gate de confianza del modelo: `confianza >= 0.70`. Rama true → `Normalizar`; rama false → `Tope de refinamiento alcanzado`. |
+| 5 | Tope de refinamiento alcanzado | `if` | **[C-33]** `intento_agente < 2`. Rama true → `AI Agent`; rama false → `Derivar a revision humana`. |
+| 6 | Derivar a revision humana | `code` (JS) | **[C-33]** Terminal: `confianza = 0.0`, `revision_forzada = true`; reingresa al normalizador. |
+| 7 | Normalizar entrada del incidente | `code` (JS) | **[C-05]** Compartido — telefonia converge aquí antes del gate de entrada. |
+| 8 | Entrada valida | `if` | Compartido — gate de ENTRADA (no de confianza del modelo). |
+| 9 | Login operador | `httpRequest` | Compartido. |
+| 10 | HTTP POST a MTM-SRU | `httpRequest` | Compartido. |
+| 11 | Requiere revision humana | `if` | Compartido — gate post-POST. |
+| 12 | Notificar operador designado | `microsoftOutlook` | Compartido — notifica al operador designado. |
+| 13 | Registro de auditoria | `code` (JS) | **[C-05]** Compartido — idem canal correo. |
 
 > **Nota sobre telefonía**: la confirmación al usuario se resuelve mediante la respuesta del
 > propio webhook de Twilio/TwiML durante la llamada. No se agrega un nodo SMS de confirmación
@@ -146,7 +165,12 @@ para el Anexo E de la tesis (C-10).
 
 ### Nodos decorativos
 
-Seis nodos `stickyNote` con documentación visual interna del workflow (se conservan intactos).
+Tres nodos `stickyNote` con documentación visual interna del workflow (se conservan intactos).
+
+**Total**: 26 nodos operativos + 3 `stickyNote` = 29, consistente con `n8n/workflow.json`. Las
+tablas por canal repiten los nodos compartidos (`Normalizar entrada del incidente`,
+`Entrada valida`, `Login operador`, `HTTP POST a MTM-SRU`, `Requiere revision humana`,
+`Notificar operador designado`, `Rutear por canal de origen`, `Registro de auditoria`).
 
 ## Contrato: `POST /api/v1/incidentes`
 
@@ -233,21 +257,30 @@ En cualquier fallo: `confianza = 0.0`, `requiere_revision_humana = true`, `error
 
 ## Ruteo por umbral de confianza (0.70 inclusivo)
 
-Ambos nodos `if` usan la condición:
+La confianza se evalúa en tres puntos distintos del flujo:
 
-```
-$json.confianza >= 0.70   (operador: gte, tipo: number)
-```
+1. **Pre-normalización — `La clasificacion de la IA es valida`** (solo telefonía). Condición:
+   `$json.confianza >= 0.70` (operador `gte`, tipo `number`). Rama true → `Normalizar entrada
+   del incidente`; rama false → `Tope de refinamiento alcanzado`.
+2. **Pre-POST — `Entrada valida`** (gate de validación de ENTRADA, compartido por los tres
+   canales). Condición: `$json.confianza >= 0.70 OR revision_forzada == true`. No es un gate
+   de confianza del modelo: para correo/web el normalizador sintetiza `confianza` desde
+   `es_valido` (1.0/0.0) y para telefonía valida la respuesta de la IA. Rama true → `Login
+   operador` → `HTTP POST a MTM-SRU`; rama false → `Registro de auditoria` + `Es correo?`.
+3. **Post-POST — `Requiere revision humana`** (gate de confianza REAL, tras persistir).
+   Condición: `$json.requiere_revision_humana == true`, el booleano que el backend fija cuando
+   la confianza de clasificación es menor a 0.70. Rama true → `Notificar operador designado`;
+   rama false → `Rutear por canal de origen` + `Registro de auditoria`.
 
-- **Rama true** (`confianza ≥ 0.70`, o `revision_forzada == true`): flujo a
-  `POST /api/v1/incidentes` (creación directa).
-- **Rama false** (`confianza < 0.70` o falla de validación con `confianza = 0.0`):
-  - Canal correo: solicitar reenvío de datos (rama de rechazo → auditoría + marcado del correo).
-  - Canal telefonía: pasar por `Tope de refinamiento alcanzado`; dentro del tope vuelve al
-    `AI Agent` y, al agotarse, deriva al terminal `Derivar a revision humana` (C-33).
+- **Telefonía, refinamiento**: la rama false de `La clasificacion de la IA es valida` pasa por
+  `Tope de refinamiento alcanzado`; dentro del tope vuelve al `AI Agent` y, al agotarse, deriva
+  al terminal `Derivar a revision humana` (C-33), que reingresa al normalizador con
+  `revision_forzada = true` para persistirse vía `Entrada valida` (rama true).
+- **Rechazo de entrada**: la rama false de `Entrada valida` (datos incompletos) registra
+  auditoría y, si el canal es correo, marca el correo como leído.
 
-Nota: el backend también marca internamente `requiere_revision_humana`; el nodo `if` del
-workflow es la primera capa de ruteo (antes de persistir).
+Nota: el backend es la fuente de verdad de `requiere_revision_humana`; el gate post-POST
+`Requiere revision humana` re-evalúa esa marca ya persistida para notificar al operador.
 
 ## Pseudonimización en tránsito — Decisión de diseño (C-04 §Decisión 2)
 
@@ -255,7 +288,7 @@ workflow es la primera capa de ruteo (antes de persistir).
 N8N al backend vía HTTPS.
 
 El backend pseudonimiza internamente en `IncidenteService.create_and_classify()`
-(archivo: `Gestion_Incidentes/app/services/incidente_service.py`, líneas 183–190):
+(archivo: `App/Backend/app/services/incidente_service.py`, líneas 183–190):
 
 ```python
 # Paso 3 (C-03): Pseudonimizar la descripción antes de persistir.
@@ -274,6 +307,7 @@ duplicaría lógica de seguridad crítica fuera de su módulo Python testeado (g
 | Variable | Descripción | Ejemplo |
 |----------|-------------|---------|
 | `BACKEND_URL` | URL base del backend FastAPI | `https://localhost/api/v1` |
+| `OPERATOR_EMAIL` | Destinatario de la notificación de revisión humana (nodo `Notificar operador designado`) | `operador@example.com` |
 
 Credenciales adicionales a configurar en la UI de N8N:
 - `MICROSOFT_OUTLOOK_*`: cuenta de correo de mesa de ayuda
@@ -294,10 +328,10 @@ El `docker-compose.yml` en la raíz del repo levanta 4 servicios con una sola l�
 |---------|--------|-------------|-------------|
 | `postgres` | `postgres:15.5-alpine` | 5433 (evita colisión con C-01) | Base de datos PostgreSQL |
 | `redis` | `redis:7.2-alpine` | 6379 | Memoria del AI Agent |
-| `backend` | build `Gestion_Incidentes/` | 8000 | FastAPI + alembic migrations |
+| `backend` | build `App/Backend/` | 8000 | FastAPI + alembic migrations |
 | `n8n` | `n8nio/n8n:latest` | 5678 | UI de N8N con workflow importado |
 
-**Prerequisito**: `Gestion_Incidentes/.env` debe existir y tener todas las claves (ver `Gestion_Incidentes/.env.example`).
+**Prerequisito**: `App/Backend/.env` debe existir y tener todas las claves (ver `App/Backend/.env.example`).
 
 ### Levantar el entorno
 
@@ -389,7 +423,7 @@ Se ejecutaron 3 payloads representando distintos escenarios de confianza:
 
 **Caso 3 — ruta de fallback verificada**: el clasificador determinístico obtuvo confianza 0.667 (< 0.90 → escala a Gemini); Gemini API devolvió `403 PERMISSION_DENIED` (API key reportada como leaked en `.env`); el fallback se activó correctamente; `confianza = 0.0`; `requiere_revision_humana = true`. El IF node del workflow (`confianza >= 0.70`) hubiera enrutado este caso a la rama de revisión humana (no HTTP al backend).
 
-**Observación**: la GEMINI_API_KEY en `Gestion_Incidentes/.env` fue reportada como leaked. Renovarla en Google AI Studio antes de verificar el path Gemini completo (end-to-end con clasificación LLM).
+**Observación**: la GEMINI_API_KEY en `App/Backend/.env` fue reportada como leaked. Renovarla en Google AI Studio antes de verificar el path Gemini completo (end-to-end con clasificación LLM).
 
 #### Qué queda para C-05
 
@@ -416,16 +450,17 @@ El import, los nodos individuales y el backend están verificados. El entorno Do
 2. Observar que el AI Agent devuelve un JSON con `sector_predicho`, `sectores_adicionales` y `confianza`.
 3. Observar que el nodo `Se verifica lo que trajo la IA` valida la respuesta.
 4. Con `confianza ≥ 0.70`: verificar `201 Created` del backend.
-5. Con `confianza < 0.70`: verificar loop de vuelta al AI Agent.
+5. Con `confianza < 0.70`: verificar que `La clasificacion de la IA es valida` deriva a
+   `Tope de refinamiento alcanzado` y que, dentro del tope, vuelve al `AI Agent`.
 
 ### Suite de tests estructurales (sin runtime N8N)
 
 ```bash
-cd Gestion_Incidentes
+cd App/Backend
 python -m pytest tests/test_n8n_workflow.py -v
 ```
 
-Verifica 45 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04: 31, C-05: 14 nuevos).
+Verifica 94 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33 y gate post-POST de revisión humana).
 
 ### Prueba manual del canal web (C-05)
 
@@ -438,22 +473,31 @@ Verifica 45 propiedades estructurales del JSON sin necesitar N8N en ejecución (
 4. Verificar que el backend responde `201 Created` y el webhook responde con `{incidente_id, mensaje}`.
 5. Verificar que el nodo de auditoría registra los metadatos en el log de N8N (sin `descripcion`).
 
-## Notificaciones al usuario post-registro (C-05)
+## Notificaciones post-registro (C-05)
 
-Tras un alta exitosa (`201 Created` del backend), el workflow notifica al usuario por su canal:
+Tras un alta exitosa (`201 Created` del backend), el gate `Requiere revision humana` separa dos
+caminos:
+
+- **Rama false** (`requiere_revision_humana = false`): notificación al usuario por su canal.
+- **Rama true** (`requiere_revision_humana = true`): `Notificar operador designado` envía un
+  correo al operador designado (`$env.OPERATOR_EMAIL`) con el id del incidente.
 
 | Canal | Nodo | Mecanismo |
 |-------|------|-----------|
 | Web | `Confirmacion web al usuario` (`respondToWebhook`) | Responde al frontend con `{"incidente_id": <id>, "mensaje": "Incidente registrado"}` |
 | Correo | `Correo de confirmacion al usuario` (`microsoftOutlook`) | Envía correo con el número de incidente al remitente original |
 | Telefonía | — (sin nodo dedicado) | La confirmación ocurre en la respuesta Twilio/TwiML de la propia llamada |
+| Revisión humana | `Notificar operador designado` (`microsoftOutlook`) | Notifica al operador designado (`$env.OPERATOR_EMAIL`) que el incidente requiere revisión |
 
-Los nodos de notificación y el nodo de auditoría están **en paralelo** desde la salida del
-`httpRequest` de persistencia. La notificación no bloquea el registro de auditoría.
+El gate `Requiere revision humana` se interpone entre el POST y el ruteo normal. En la rama
+false, `Rutear por canal de origen` y `Registro de auditoria` cuelgan en paralelo; en la rama
+true, `Notificar operador designado` desemboca en `Registro de auditoria`. La notificación no
+bloquea el registro de auditoría.
 
 ## Registro de auditoría (C-05)
 
-El nodo `Registro de auditoria` (`code` JS) registra por cada ejecución exitosa:
+El nodo `Registro de auditoria` (`code` JS) registra cada ejecución que alcanza el nodo (altas
+exitosas, revisiones humanas y rechazos de entrada):
 
 ```json
 {
@@ -469,6 +513,9 @@ El nodo `Registro de auditoria` (`code` JS) registra por cada ejecución exitosa
 
 **Exclusión de PII**: la `descripcion` cruda no se incluye en el evento de auditoría.
 Solo metadatos y referencias al incidente.
+
+`resultado` toma `"creado"` cuando el response del backend trae id numérico, o
+`"rechazado_datos_incompletos"` en la rama de rechazo de `Entrada valida` (B-14).
 
 **Retención de 30 días** (tesis §5.3): declarada como `retencion_dias: 30` en el nodo.
 El destino persistente recomendado es el logging de Docker/N8N con rotación configurada
@@ -494,10 +541,10 @@ entorno y queda fuera del scope de C-05. Se documenta como punto pendiente para 
 |----------|-----------|--------|
 | ¿1 endpoint o 2 (clasificar + incidentes)? | **1 endpoint**: `POST /api/v1/incidentes` con clasificación embebida. No existe `POST /api/v1/clasificar`. Documentar discrepancia en Anexo E. | C-04 |
 | ¿Dónde ocurre la pseudonimización? | **En el backend**, dentro de `create_and_classify()`. N8N envía texto claro. Gap de privacidad documentado. | C-04 |
-| ¿El IF del workflow decide revisión humana o lo decide el backend? | **Ambos**: el IF del workflow es la primera capa (antes de persistir); el backend también marca `requiere_revision_humana` internamente. | C-04 |
+| ¿El IF del workflow decide revisión humana o lo decide el backend? | **Ambos**: el backend marca `requiere_revision_humana` (fuente de verdad); el gate post-POST `Requiere revision humana` re-evalúa esa marca para notificar al operador. | C-04 / gate post-POST |
 | ¿Outlook trigger ≈ IMAP genérico? | **Sí**: el `microsoftOutlookTrigger` se ratifica como equivalente funcional. No se reemplaza por `emailReadImap`. Documentar equivalencia en Anexo E. | C-05 |
 | ¿La telefonía requiere SMS de confirmación adicional? | **No**: basta la respuesta del webhook/TwiML de la llamada. No se agrega nodo SMS de Twilio. | C-05 |
-| ¿La auditoría registra solo altas o también rechazos? | **Altas exitosas en C-05**. Ampliar a rechazos/revisiones en change futuro (requiere cablear ramas false de los IF). | C-05 |
+| ¿La auditoría registra solo altas o también rechazos? | **Todas las ramas terminales**: la rama false de `Entrada valida` (rechazo), la rama false de `Requiere revision humana` (alta sin revisión) y `Notificar operador designado` (alta con revisión) desembocan en `Registro de auditoria`. | C-05 / gate post-POST |
 | ¿Dónde persiste el log de auditoría 30 días? | **Logging Docker/N8N con rotación** (opción A). Cero código nuevo en backend. Configurar `max-file: "30"` en `docker-compose.yml`. | C-05 |
 | ¿Cómo se autentica el webhook web? | **Pendiente de entorno**: tesis §5.2 menciona "autenticación corporativa única". Mecanismo concreto (header firmado / SSO) fuera del scope de C-05. Elevar para C-10. | C-05 |
 
@@ -537,7 +584,7 @@ Content-Type: application/json
 
 → Ejecución #19:
   Nodos ejecutados: Webhook formulario web → Marcar canal web → Normalizar entrada del incidente
-                   → La informacion esta OK (rama TRUE, confianza=1.0) → HTTP POST a MTM-SRU
+                   → Entrada valida (rama TRUE, confianza=1.0) → HTTP POST a MTM-SRU
   Backend: HTTP 201, incidente_id=15, sector={nombre: "Sistemas"}, requiere_revision_humana=false
   Normalizer output: canal_origen='web', confianza=1.0, es_valido=true
   D-1 verificado: Marcar canal web ejecuta sin SyntaxError
@@ -566,7 +613,7 @@ curl -X POST http://localhost:8000/api/v1/incidentes/ \
 # → HTTP 201, id: 9, sector: Soporte Tecnico Software, etapa: deterministic, confianza: 0.9999
 ```
 
-**Defecto D-2 encontrado (latente)**: el nodo IF `La informacion esta OK` chequea
+**Defecto D-2 encontrado (latente)**: el nodo IF `Entrada valida` chequea
 `$json.confianza >= 0.70`, pero para el canal correo `confianza` no existe en el item
 antes del IF. Solo el canal telefonía lo setea (en `Se verifica lo que trajo la IA`).
 Correo (y web) siempre irían a la rama false (rechazo) aunque la descripción sea válida.
