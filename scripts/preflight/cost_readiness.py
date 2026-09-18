@@ -41,7 +41,7 @@ EXIT_FAIL = 1
 # Nombres de nodos y rutas anclados por la spec cost-readiness (literales).
 AI_AGENT_NODE = "AI Agent"
 HTTP_NODE = "HTTP POST a MTM-SRU"
-IF_NODE_CORREO = "La informacion esta OK"
+IF_NODE_CORREO = "Entrada valida"
 MARK_READ_NODE = "Marcar correo como leido"
 NORMALIZER_NODE = "Normalizar entrada del incidente"
 NOTIF_WEBHOOK_PATH = "notificacion-clasificacion"
