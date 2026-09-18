@@ -26,7 +26,7 @@ jobs:
         image: postgres:15.5-alpine
         env:
           POSTGRES_USER: mesa
-          POSTGRES_PASSWORD: mesa
+          POSTGRES_PASSWORD: mesa_ci_local
           POSTGRES_DB: mesa_de_ayuda
         ports:
           - 5432:5432
@@ -83,7 +83,7 @@ jobs:
       - name: Run PostgreSQL integration tests
         working-directory: App/Backend
         env:
-          TEST_PG_URL: postgresql+asyncpg://mesa:mesa@localhost:5432/mesa_de_ayuda
+          TEST_PG_URL: postgresql+asyncpg://mesa:mesa_ci_local@localhost:5432/mesa_de_ayuda
         run: pytest -m integration -v
 
       # Verification de sincronia del OpenAPI estatico (C-10, D3):

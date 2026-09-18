@@ -239,7 +239,7 @@ function Write-AccessInfo {
     Write-Info "Stack is up and healthy."
     Write-Host "Access URLs:"
     Write-Host "  Web UI : https://localhost/"
-    Write-Host "  N8N    : http://localhost:5678  (admin / admin)"
+    Write-Host "  N8N    : http://localhost:5678  (admin / n8n_local_dev, default local)"
     Write-Host ""
     Write-Host "Manual N8N setup (required, not automated):"
     Write-Host "  1. Open N8N and import n8n/workflow.json via Workflows -> Import from file."

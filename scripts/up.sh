@@ -224,7 +224,7 @@ print_access_info() {
     log_info "Stack is up and healthy."
     printf 'Access URLs:\n'
     printf '  Web UI : https://localhost/\n'
-    printf '  N8N    : http://localhost:5678  (admin / admin)\n'
+    printf '  N8N    : http://localhost:5678  (admin / n8n_local_dev, default local)\n'
     printf '\n'
     printf 'Manual N8N setup (required, not automated):\n'
     printf '  1. Open N8N and import n8n/workflow.json via Workflows -> Import from file.\n'

@@ -74,8 +74,10 @@ TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
 # Disposable test database used by the integration suite (c-32). It is
 # physically separate from the application database so destructive DDL never
 # reaches the development/production data.
+# The password must match the local compose default (POSTGRES_PASSWORD); if a
+# developer overrides POSTGRES_PASSWORD in the root .env, set TEST_PG_URL too.
 DEFAULT_TEST_PG_URL = (
-    "postgresql+asyncpg://mesa:mesa@localhost:5433/mesa_de_ayuda_test"
+    "postgresql+asyncpg://mesa:mesa_local_dev@localhost:5433/mesa_de_ayuda_test"
 )
 
 # Explicit opt-in required to allow a test target whose database NAME matches

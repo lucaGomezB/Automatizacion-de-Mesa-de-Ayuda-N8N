@@ -83,7 +83,9 @@ El usuario o contraseña en `DATABASE_URL` no coincide con los valores de
 ```bash
 # Verificar el DATABASE_URL en .env
 grep DATABASE_URL Gestion_Incidentes/.env
-# Debe coincidir con: postgresql+asyncpg://mesa:mesa@postgres:5432/mesa_de_ayuda
+# Debe coincidir con POSTGRES_USER/POSTGRES_PASSWORD del compose, por ejemplo:
+# postgresql+asyncpg://mesa:mesa_local_dev@postgres:5432/mesa_de_ayuda
+# (default local; si sobreescribis POSTGRES_PASSWORD en el .env raiz, ajustalo)
 # (cuando se usa desde dentro del compose; el host es 'postgres', no 'localhost')
 ```
 
