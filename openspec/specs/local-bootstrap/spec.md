@@ -69,7 +69,7 @@ El comando unico SHALL arrancar el stack con `docker compose up -d --build` sin 
 
 ### Requirement: Verificacion de salud y salida de acceso
 
-Una vez que los servicios estan sanos, el comando unico SHALL verificar `curl -k https://localhost/api/v1/health` y `curl -k https://localhost/api/v1/health/db`; si cualquiera de las dos verificaciones falla, el comando MUST terminar con exit code distinto de cero e informar el endpoint que fallo. Cuando ambas verificaciones pasan, el comando MUST imprimir las URLs de acceso: interfaz web `https://localhost/` y N8N `http://localhost:5678` (credenciales admin/admin).
+Una vez que los servicios estan sanos, el comando unico SHALL verificar `curl -k https://localhost/api/v1/health` y `curl -k https://localhost/api/v1/health/db`; si cualquiera de las dos verificaciones falla, el comando MUST terminar con exit code distinto de cero e informar el endpoint que fallo. Cuando ambas verificaciones pasan, el comando MUST imprimir las URLs de acceso: interfaz web `https://localhost/` y N8N `http://localhost:5678` (credenciales configuradas en el entorno, sin hardcodear valores en el repo).
 
 #### Scenario: Ambos endpoints de salud responden
 

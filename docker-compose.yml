@@ -35,15 +35,21 @@ services:
     image: postgres:15.5-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: mesa
-      POSTGRES_PASSWORD: mesa
-      POSTGRES_DB: mesa_de_ayuda
+      # Credenciales locales parametrizadas (ver .env.example de la raiz).
+      # Los valores por defecto son SOLO para desarrollo local y ya no son
+      # adivinables; sobreescribir en el .env raiz (gitignorado) para cualquier
+      # otro uso. Si un volumen postgres_data existente fue inicializado con la
+      # password vieja, definir POSTGRES_PASSWORD con ese valor en el .env raiz
+      # o recrear el volumen con `docker compose down -v`.
+      POSTGRES_USER: ${POSTGRES_USER:-mesa}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mesa_local_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-mesa_de_ayuda}
     ports:
       - "5433:5432"           # Puerto 5433 en el host para evitar colisión con C-01 (5432)
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U mesa -d mesa_de_ayuda"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mesa} -d ${POSTGRES_DB:-mesa_de_ayuda}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -69,7 +75,7 @@ services:
     env_file: ./App/Backend/.env
     environment:
       # Sobreescribir DATABASE_URL para apuntar al postgres de este compose
-      DATABASE_URL: postgresql+asyncpg://mesa:mesa@postgres:5432/mesa_de_ayuda
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-mesa}:${POSTGRES_PASSWORD:-mesa_local_dev}@postgres:5432/${POSTGRES_DB:-mesa_de_ayuda}
       # Sobreescribir la URL del webhook de N8N para apuntar al servicio n8n de este compose.
       # C-33 (D7): ruta dedicada de notificacion, distinta del webhook de alta
       # `incidente-web`, que no crea incidentes.
@@ -102,8 +108,8 @@ services:
     environment:
       # Autenticacion basica de N8N
       N8N_BASIC_AUTH_ACTIVE: "true"
-      N8N_BASIC_AUTH_USER: admin
-      N8N_BASIC_AUTH_PASSWORD: admin
+      N8N_BASIC_AUTH_USER: ${N8N_BASIC_AUTH_USER:-admin}
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_BASIC_AUTH_PASSWORD:-n8n_local_dev}
       # Variable de entorno disponible en los nodos del workflow como $env.BACKEND_URL
       BACKEND_URL: http://backend:8000
       # Redis para la memoria del AI Agent

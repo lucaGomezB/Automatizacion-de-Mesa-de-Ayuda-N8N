@@ -47,7 +47,10 @@ Editar `Gestion_Incidentes/.env` y completar los valores reales:
 
 ```dotenv
 # Base de datos (se usa en el contenedor; no cambiar el host cuando se usa compose)
-DATABASE_URL=postgresql+asyncpg://mesa:mesa@postgres:5432/mesa_de_ayuda
+# Debe coincidir con POSTGRES_USER/POSTGRES_PASSWORD del compose (default local:
+# mesa / mesa_local_dev). Si sobreescribis POSTGRES_PASSWORD en el .env raiz,
+# reflejalo aca.
+DATABASE_URL=postgresql+asyncpg://mesa:mesa_local_dev@postgres:5432/mesa_de_ayuda
 
 # API Key de Google Gemini (obtener en https://aistudio.google.com/app/apikey)
 GEMINI_API_KEY=<tu-clave-real>

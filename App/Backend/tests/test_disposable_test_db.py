@@ -19,8 +19,8 @@ from tests.conftest import (
     _maintenance_url,
 )
 
-APP_DB_URL = "postgresql+asyncpg://mesa:mesa@localhost:5433/mesa_de_ayuda"
-SAFE_PG_URL = "postgresql+asyncpg://mesa:mesa@localhost:5433/mesa_de_ayuda_test"
+APP_DB_URL = "postgresql+asyncpg://mesa:mesa_local_dev@localhost:5433/mesa_de_ayuda"
+SAFE_PG_URL = "postgresql+asyncpg://mesa:mesa_local_dev@localhost:5433/mesa_de_ayuda_test"
 
 
 def test_default_pg_url_never_targets_app_database(monkeypatch):
@@ -83,7 +83,7 @@ def test_guard_does_not_block_the_ci_scenario(monkeypatch):
     monkeypatch.setenv(
         "DATABASE_URL", "postgresql+asyncpg://ci:ci@localhost:5432/ci_dummy"
     )
-    ci_target = "postgresql+asyncpg://mesa:mesa@localhost:5432/mesa_de_ayuda"
+    ci_target = "postgresql+asyncpg://mesa:mesa_local_dev@localhost:5432/mesa_de_ayuda"
     monkeypatch.setenv("TEST_PG_URL", ci_target)
     monkeypatch.delenv("TEST_PG_ALLOW_APP_DB", raising=False)
 
