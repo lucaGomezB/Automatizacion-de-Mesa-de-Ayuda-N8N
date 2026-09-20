@@ -989,11 +989,13 @@ def test_notification_only_after_successful_creation():
     Fix apply C-05: HTTP_NODE_TELEFONIA fue eliminado (subgrafo huérfano).
     Ahora ambas notificaciones llegan desde HTTP_NODE_CORREO → Rutear por canal de origen:
       - Canal web → Confirmacion web al usuario
-      - Canal correo/telefonia → Correo de confirmacion al usuario
+      - Canal correo → Correo de confirmacion al usuario
+    C-40 (N8N-PHONE-002): telefonía y fallback YA NO se desvían al nodo de correo;
+    la confirmación telefónica se resuelve con la respuesta TwiML de la llamada.
     """
     wf = load_workflow()
 
-    # El correo de confirmación es alcanzable desde el HTTP POST (via Switch fallback)
+    # El correo de confirmación es alcanzable desde el HTTP POST (via Switch rama correo)
     assert _connections_reachable(wf, HTTP_NODE_CORREO, EMAIL_CONFIRM_NODE_NAME), (
         f"El correo de confirmación no es alcanzable desde {HTTP_NODE_CORREO!r}"
     )
@@ -1553,6 +1555,8 @@ CREDENTIAL_REQUIRING_NODE_TYPES = {
     "n8n-nodes-base.microsoftOutlook",
     "n8n-nodes-base.microsoftOutlookTrigger",
     "n8n-nodes-base.twilioTrigger",
+    # C-40 (N8N-MEMORY-001): el nodo de memoria Redis falla en runtime sin credencial.
+    "@n8n/n8n-nodes-langchain.memoryRedisChat",
 }
 
 # Campos de la respuesta real del backend (IncidenteRead) y subconjunto anidado.
@@ -1691,9 +1695,11 @@ def _incidentes_http_nodes(by_type: dict[str, list[dict]]) -> list[dict]:
 
 def test_c29_incidentes_http_node_declares_authentication():
     """
-    (a) B-01: el nodo httpRequest hacia /api/v1/incidentes declara autenticación.
-    Hoy no existe el campo `authentication`, por lo que el alta viaja sin JWT y el
-    backend responde 401.
+    (a) B-01 + N8N-AUTH-002 (C-40): el nodo httpRequest hacia /api/v1/incidentes
+    autentica con EXACTAMENTE un mecanismo: el header explicito `Authorization: Bearer`
+    resuelto dinamicamente desde `Login operador`. No debe declarar simultaneamente
+    `authentication`/`genericAuthType` con `httpHeaderAuth` ni una credencial
+    `httpHeaderAuth`, para no inyectar dos cabeceras `Authorization`.
     """
     wf = load_workflow()
     _, by_type = index_nodes(wf)
@@ -1702,10 +1708,39 @@ def test_c29_incidentes_http_node_declares_authentication():
     assert nodes, "No se encontró el nodo httpRequest hacia /api/v1/incidentes"
 
     for node in nodes:
-        auth = node.get("parameters", {}).get("authentication")
-        assert auth not in (None, "", "none"), (
-            f"El nodo {node['name']!r} no declara autenticación hacia el backend "
-            f"(authentication={auth!r}). B-01: falta el header Authorization/JWT."
+        params = node.get("parameters", {})
+        credentials = node.get("credentials", {}) or {}
+
+        # Unico mecanismo: header explicito con token dinamico de Login operador.
+        assert params.get("sendHeaders") is True, (
+            f"El nodo {node['name']!r} no envia headers explicitos (sendHeaders)"
+        )
+        header_values = [
+            str(header.get("value", ""))
+            for header in params.get("headerParameters", {}).get("parameters", [])
+            if str(header.get("name", "")).lower() == "authorization"
+        ]
+        assert header_values, (
+            f"El nodo {node['name']!r} no declara el header Authorization hacia el backend"
+        )
+        assert any("Login operador" in value for value in header_values), (
+            f"El header Authorization de {node['name']!r} no resuelve el token "
+            f"dinamicamente desde 'Login operador' (valores={header_values!r})"
+        )
+
+        # Sin mecanismo de credencial en conflicto (doble Authorization).
+        assert params.get("authentication") in (None, "", "none"), (
+            f"El nodo {node['name']!r} declara authentication="
+            f"{params.get('authentication')!r} ademas del header explicito "
+            "(N8N-AUTH-002: doble cabecera Authorization)."
+        )
+        assert params.get("genericAuthType") in (None, ""), (
+            f"El nodo {node['name']!r} declara genericAuthType="
+            f"{params.get('genericAuthType')!r} ademas del header explicito"
+        )
+        assert "httpHeaderAuth" not in credentials, (
+            f"El nodo {node['name']!r} declara credencial httpHeaderAuth ademas del "
+            "header explicito (N8N-AUTH-002: doble cabecera Authorization)"
         )
 
 
@@ -2697,4 +2732,716 @@ def test_channel_guard_still_reaches_mark_read():
     wf = load_workflow()
     assert MARK_READ_NODE_NAME in _get_successors(wf, IF_ES_CORREO_NODE_NAME), (
         f"'{IF_ES_CORREO_NODE_NAME}' dejo de desembocar en {MARK_READ_NODE_NAME!r}"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Grupo 22 — C-39: captura del instante de ingreso y envio en el POST
+#
+# N8N-TIMING-001: cada trigger captura el instante de ingreso en su BORDE.
+#   - Telefonia: sello aguas arriba del AI Agent (incluye el costo pago).
+#   - Correo: sello al inicio del flujo del trigger de Outlook (recogida del
+#     poller), NUNCA con `receivedDateTime`.
+#   - Web: sello en 'Marcar canal web' (recepcion del webhook).
+# N8N-TIMING-002: el body del POST incluye `ingresado_en` por expresion.
+# ---------------------------------------------------------------------------
+
+TELEFONIA_TRIGGER_NAME = "Llamada telefonica"
+
+
+def _js_code(node: dict) -> str:
+    """Devuelve el cuerpo jsCode/pythonCode de un nodo code (o cadena vacia)."""
+    params = node.get("parameters", {})
+    return params.get("jsCode", "") or params.get("pythonCode", "")
+
+
+def _active_js_code(node: dict) -> str:
+    """Codigo activo de un nodo: excluye lineas de comentario (`//`)."""
+    return "\n".join(
+        line
+        for line in _js_code(node).splitlines()
+        if line.strip() and not line.strip().startswith("//")
+    )
+
+
+def _nodes_sealing_ingreso(wf: dict) -> list[dict]:
+    """Nodos code que sellan `ingresado_en` con un instante ISO-8601 del reloj."""
+    sealing: list[dict] = []
+    for node in wf["nodes"]:
+        if node.get("type") != "n8n-nodes-base.code":
+            continue
+        code = _js_code(node)
+        if "ingresado_en" in code and ("toISOString" in code or "new Date" in code):
+            sealing.append(node)
+    return sealing
+
+
+def test_c39_telefonia_sella_ingreso_aguas_arriba_del_agente():
+    """
+    RED (4.1): el sello de ingreso de telefonia esta entre 'Llamada telefonica'
+    y 'AI Agent', de modo que la latencia incluye el tiempo del agente pago.
+    """
+    wf = load_workflow()
+    sealers = _nodes_sealing_ingreso(wf)
+    assert sealers, (
+        "No hay ningun nodo code que selle 'ingresado_en' con un instante del reloj"
+    )
+
+    candidatos = [
+        n
+        for n in sealers
+        if _connections_reachable(wf, TELEFONIA_TRIGGER_NAME, n["name"])
+        and _connections_reachable(wf, n["name"], AI_AGENT_NODE_NAME)
+    ]
+    assert candidatos, (
+        "El sello de telefonia debe estar aguas arriba del AI Agent "
+        "(alcanzable desde 'Llamada telefonica' y conducente al agente)"
+    )
+    for n in candidatos:
+        assert not _connections_reachable(wf, AI_AGENT_NODE_NAME, n["name"]), (
+            f"El sello {n['name']!r} esta despues del AI Agent: excluiria el "
+            "costo dominante del canal de telefonia"
+        )
+
+
+def test_c39_telefonia_preserva_ingreso_a_traves_del_agente():
+    """
+    TRIANGULATE (4.1): el validador de telefonia re-inyecta `ingresado_en`
+    porque el AI Agent no propaga los campos del item de entrada.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    code = _js_code(by_name[CODE_NODE_TELEFONIA])
+    assert "ingresado_en" in code, (
+        "El validador de telefonia debe re-inyectar 'ingresado_en' leido del nodo "
+        "de sello aguas arriba: el AI Agent no propaga los campos del item"
+    )
+
+
+def test_c39_correo_sella_al_inicio_del_flujo_y_no_usa_received_date():
+    """
+    RED (4.1): el correo sella el ingreso al inicio del flujo del trigger de
+    Outlook (recogida del poller), sin usar `receivedDateTime`.
+    """
+    wf = load_workflow()
+    sealers = _nodes_sealing_ingreso(wf)
+
+    correo_sealers = [
+        n
+        for n in sealers
+        if _connections_reachable(wf, OUTLOOK_TRIGGER_NAME, n["name"])
+        and _connections_reachable(wf, n["name"], NORMALIZER_NODE_NAME)
+    ]
+    assert correo_sealers, (
+        "El canal de correo debe sellar 'ingresado_en' al inicio de su flujo "
+        "con propagacion al normalizador"
+    )
+    for n in correo_sealers:
+        assert "receivedDateTime" not in _active_js_code(n), (
+            f"El sello {n['name']!r} usa 'receivedDateTime': el ingreso debe ser el "
+            "instante en que el poller recoge el mensaje, no su fecha de recepcion"
+        )
+
+
+def test_c39_web_sella_en_marcar_canal_web():
+    """
+    RED (4.1): el canal web sella el instante de ingreso en 'Marcar canal web'.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    code = _js_code(by_name[CANAL_WEB_NODE_NAME])
+    assert "ingresado_en" in code, (
+        f"El nodo {CANAL_WEB_NODE_NAME!r} debe sellar el instante de ingreso "
+        "del webhook"
+    )
+    assert "toISOString" in code or "new Date" in code, (
+        "El sello de web debe producir un instante ISO-8601 del reloj"
+    )
+
+
+def test_c39_normalizador_propaga_ingresado_en():
+    """
+    RED (4.1): la estructura normalizada contiene el campo `ingresado_en`.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    code = _js_code(by_name[NORMALIZER_NODE_NAME])
+    assert "ingresado_en" in code, (
+        "El normalizador debe propagar 'ingresado_en' en su estructura unificada"
+    )
+
+
+def test_c39_cada_trigger_sella_ingreso_hacia_el_normalizador():
+    """
+    TRIANGULATE (4.1): los tres triggers sellan el ingreso en su borde con
+    propagacion al normalizador.
+    """
+    wf = load_workflow()
+    sealers = _nodes_sealing_ingreso(wf)
+
+    for trigger in (
+        OUTLOOK_TRIGGER_NAME,
+        WEBHOOK_WEB_NODE_NAME,
+        TELEFONIA_TRIGGER_NAME,
+    ):
+        encontrado = any(
+            _connections_reachable(wf, trigger, n["name"])
+            and _connections_reachable(wf, n["name"], NORMALIZER_NODE_NAME)
+            for n in sealers
+        )
+        assert encontrado, (
+            f"El trigger {trigger!r} no sella 'ingresado_en' en su borde con "
+            "propagacion al normalizador"
+        )
+
+
+def test_c39_body_incluye_ingresado_en_por_expresion():
+    """
+    RED (4.3): el body del nodo HTTP de persistencia incluye `ingresado_en`
+    resuelto por expresion (no por constante).
+    """
+    wf = load_workflow()
+    _, by_type = index_nodes(wf)
+
+    nodes = _incidentes_http_nodes(by_type)
+    assert nodes, "No se encontro el HTTP POST a /api/v1/incidentes"
+
+    body = nodes[0].get("parameters", {}).get("body", {})
+    assert isinstance(body, dict) and "ingresado_en" in body, (
+        "El body del POST debe incluir la clave 'ingresado_en'"
+    )
+    value = body["ingresado_en"]
+    assert isinstance(value, str) and value.startswith("=") and "{{" in value, (
+        f"'ingresado_en' debe resolverse por expresion N8N, no por constante: {value!r}"
+    )
+    assert "Normalizar entrada del incidente" in value, (
+        "'ingresado_en' debe resolver al valor capturado y propagado por el "
+        "normalizador"
+    )
+
+
+def test_c39_body_sin_credenciales_y_host_por_env():
+    """
+    TRIANGULATE (4.3): el nodo de persistencia resuelve el host con
+    `$env.BACKEND_URL` y su body no embebe credenciales.
+    """
+    wf = load_workflow()
+    _, by_type = index_nodes(wf)
+
+    nodes = _incidentes_http_nodes(by_type)
+    assert nodes, "No se encontro el HTTP POST a /api/v1/incidentes"
+    node = nodes[0]
+
+    url = str(node.get("parameters", {}).get("url", ""))
+    assert BACKEND_ENV_REF in url, (
+        f"La URL del POST debe resolver el host con {BACKEND_ENV_REF!r}; url={url!r}"
+    )
+
+    body_str = json.dumps(node.get("parameters", {}).get("body", {}))
+    for token in ("Bearer ", "password", "secret", "apiKey", "token"):
+        assert token not in body_str, (
+            f"El body del POST no debe incluir credenciales (encontrado {token!r})"
+        )
+
+
+# ---------------------------------------------------------------------------
+# Grupo 23 — C-40: correccion de defectos de cableado (N8N-WEBHOOK-003,
+# N8N-EMAIL-002, N8N-PHONE-002, N8N-MEMORY-001, N8N-AUTH-002,
+# N8N-AUDIT-002, N8N-AUDIT-003, N8N-DOC-001).
+# ---------------------------------------------------------------------------
+
+ES_WEB_NODE_NAME = "Es web?"
+CLOSING_RESPONDER_NODE_NAME = "Respuesta web de cierre"
+MEMORY_REDIS_NODE_NAME = (
+    "Con el fin de enviar los datos que parsee la IA como JSON, "
+    "se guardaran en memoria por un momento"
+)
+MEMORY_REDIS_NODE_TYPE = "@n8n/n8n-nodes-langchain.memoryRedisChat"
+GUIDE_PATH = WORKFLOW_PATH.parents[1] / "docs" / "n8n-workflow-guide.md"
+TEST_SUITE_PATH = Path(__file__).resolve()
+
+
+def _load_guide() -> str:
+    assert GUIDE_PATH.exists(), f"Guia del workflow no encontrada en: {GUIDE_PATH}"
+    return GUIDE_PATH.read_text(encoding="utf-8")
+
+
+# ── Defecto 1 — Cierre de ramas terminales del webhook web ──────────────────
+
+
+def test_c40_web_guard_exists_and_wired_to_closing_responder():
+    """
+    RED (N8N-WEBHOOK-003): existe la guarda `Es web?`, la salida no-correo de
+    `Es correo?` desemboca en ella y su rama true desemboca en el responder de cierre.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    assert ES_WEB_NODE_NAME in by_name, f"No existe la guarda {ES_WEB_NODE_NAME!r}"
+    guard = by_name[ES_WEB_NODE_NAME]
+    assert guard.get("type") == "n8n-nodes-base.if", (
+        f"{ES_WEB_NODE_NAME!r} debe ser un IF, got {guard.get('type')!r}"
+    )
+    conditions_str = json.dumps(guard.get("parameters", {}).get("conditions", {}))
+    assert "canal_origen" in conditions_str and "web" in conditions_str, (
+        f"La guarda {ES_WEB_NODE_NAME!r} no evalua canal_origen == 'web'"
+    )
+
+    assert ES_WEB_NODE_NAME in _output_successors(wf, IF_ES_CORREO_NODE_NAME, 1), (
+        f"La salida no-correo de {IF_ES_CORREO_NODE_NAME!r} no desemboca en "
+        f"{ES_WEB_NODE_NAME!r}"
+    )
+    assert CLOSING_RESPONDER_NODE_NAME in _output_successors(wf, ES_WEB_NODE_NAME, 0), (
+        f"La rama web de {ES_WEB_NODE_NAME!r} no desemboca en "
+        f"{CLOSING_RESPONDER_NODE_NAME!r}"
+    )
+
+
+def test_c40_closing_responder_responds_200_without_alta():
+    """
+    RED (N8N-WEBHOOK-003): el responder de cierre responde JSON con 200 y un cuerpo
+    que marca `resultado: 'sin_alta'` (no es un alta).
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    assert CLOSING_RESPONDER_NODE_NAME in by_name, (
+        f"No existe el responder {CLOSING_RESPONDER_NODE_NAME!r}"
+    )
+    node = by_name[CLOSING_RESPONDER_NODE_NAME]
+    assert node.get("type") == RESPOND_WEBHOOK_NODE_TYPE, (
+        f"{CLOSING_RESPONDER_NODE_NAME!r} debe ser {RESPOND_WEBHOOK_NODE_TYPE!r}, "
+        f"got {node.get('type')!r}"
+    )
+    params = node.get("parameters", {})
+    assert params.get("respondWith") == "json", (
+        f"{CLOSING_RESPONDER_NODE_NAME!r} debe responder JSON "
+        f"(respondWith={params.get('respondWith')!r})"
+    )
+    assert params.get("options", {}).get("responseCode") == 200, (
+        f"{CLOSING_RESPONDER_NODE_NAME!r} debe responder 200 "
+        f"(options={params.get('options')!r})"
+    )
+    body_str = json.dumps(params)
+    assert "sin_alta" in body_str, (
+        f"{CLOSING_RESPONDER_NODE_NAME!r} no marca el resultado 'sin_alta'"
+    )
+    assert "incidente_id" in body_str, (
+        f"{CLOSING_RESPONDER_NODE_NAME!r} no incluye 'incidente_id' en el cuerpo"
+    )
+
+
+def test_c40_web_dead_ends_reach_closing_responder():
+    """
+    RED (N8N-WEBHOOK-003): las tres ramas terminales del webhook web (rechazo de
+    `Entrada valida`, error del POST y revision humana) alcanzan un responder de cierre.
+    """
+    wf = load_workflow()
+
+    # Rechazo por validacion: rama false de 'Entrada valida'.
+    assert _branch_reaches(
+        wf, IF_NODE_CORREO, 1, CLOSING_RESPONDER_NODE_NAME
+    ), "La rama de rechazo de 'Entrada valida' no alcanza un responder de cierre"
+
+    # Error del backend: salida de error (main#1) del POST.
+    assert any(
+        _connections_reachable(wf, succ, CLOSING_RESPONDER_NODE_NAME)
+        for succ in _output_successors(wf, HTTP_NODE_CORREO, 1)
+    ), "La salida de error del POST no alcanza un responder de cierre"
+
+    # Revision humana: rama true del gate post-POST.
+    assert _branch_reaches(
+        wf, IF_REVISION_HUMANA_NODE_NAME, 0, CLOSING_RESPONDER_NODE_NAME
+    ), "La rama de revision humana no alcanza un responder de cierre"
+
+
+def test_c40_web_guard_does_not_respond_for_non_web_channel():
+    """
+    TRIANGULATE (N8N-WEBHOOK-003): la rama false de `Es web?` (canal no web) NO
+    emite respuesta web, evitando respuestas cruzadas de correo/telefonia.
+    """
+    wf = load_workflow()
+    false_successors = _output_successors(wf, ES_WEB_NODE_NAME, 1)
+    assert all(
+        not _connections_reachable(wf, succ, CLOSING_RESPONDER_NODE_NAME)
+        for succ in false_successors
+    ), (
+        f"La rama false de {ES_WEB_NODE_NAME!r} alcanza {CLOSING_RESPONDER_NODE_NAME!r}: "
+        "un canal no web emitiria una respuesta de webhook web"
+    )
+
+
+# ── Defecto 2 — Destinatario de confirmacion por correo ─────────────────────
+
+
+def test_c40_normalizer_emits_remitente():
+    """
+    RED (N8N-EMAIL-002): el normalizador propaga `remitente` desde el payload del
+    trigger de correo (`remitente`/`from`).
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    code = _js_code(by_name[NORMALIZER_NODE_NAME])
+
+    assert "remitente" in code, (
+        "El normalizador no propaga el campo 'remitente' en la estructura normalizada"
+    )
+    assert "from" in code, (
+        "El normalizador no considera el campo 'from' del trigger de correo"
+    )
+
+
+def test_c40_email_confirmation_resolves_recipient_from_normalizer():
+    """
+    RED (N8N-EMAIL-002): `toRecipients` de `Correo de confirmacion al usuario`
+    referencia el nodo normalizador (aguas arriba) y su campo `remitente`, no el
+    item corriente posterior al POST.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    node = by_name[EMAIL_CONFIRM_NODE_NAME]
+    to_recipients = str(node.get("parameters", {}).get("toRecipients", ""))
+
+    assert NORMALIZER_NODE_NAME in to_recipients, (
+        f"'{EMAIL_CONFIRM_NODE_NAME}' no resuelve toRecipients desde "
+        f"{NORMALIZER_NODE_NAME!r} (toRecipients={to_recipients!r})"
+    )
+    assert "remitente" in to_recipients, (
+        f"'{EMAIL_CONFIRM_NODE_NAME}' no usa el campo 'remitente' del normalizador "
+        f"(toRecipients={to_recipients!r})"
+    )
+
+
+def test_c40_remitente_not_in_post_body_nor_audit():
+    """
+    TRIANGULATE (N8N-EMAIL-002): el remitente no contamina el payload del POST ni el
+    registro de auditoria (dato personal).
+    """
+    wf = load_workflow()
+    by_name, by_type = index_nodes(wf)
+
+    nodes = _incidentes_http_nodes(by_type)
+    assert nodes, "No se encontro el HTTP POST a /api/v1/incidentes"
+    body_str = json.dumps(nodes[0].get("parameters", {}).get("body", {}))
+    assert "remitente" not in body_str, (
+        "El body del POST incluye 'remitente' (viola el contrato IncidenteCreate y "
+        "expone PII)"
+    )
+
+    audit_code = _active_js_code(by_name[AUDIT_NODE_NAME])
+    assert "remitente" not in audit_code, (
+        "El codigo activo de auditoria incluye 'remitente' (PII)"
+    )
+
+
+# ── Defecto 3 — Telefonia y fallback sin nodo de correo ─────────────────────
+
+
+def test_c40_telefonia_branch_does_not_reach_email_confirmation():
+    """
+    RED (N8N-PHONE-002): la salida de telefonia del switch no alcanza el nodo de
+    correo de confirmacion.
+    """
+    wf = load_workflow()
+    assert all(
+        not _connections_reachable(wf, succ, EMAIL_CONFIRM_NODE_NAME)
+        for succ in _output_successors(wf, CANAL_SWITCH_NODE_NAME, 2)
+    ), (
+        f"La salida de telefonia de {CANAL_SWITCH_NODE_NAME!r} alcanza "
+        f"{EMAIL_CONFIRM_NODE_NAME!r}; la confirmacion telefonica es TwiML"
+    )
+
+
+def test_c40_fallback_branch_does_not_reach_email_confirmation():
+    """
+    RED (N8N-PHONE-002): la salida fallback (Otros) del switch no alcanza el nodo de
+    correo de confirmacion.
+    """
+    wf = load_workflow()
+    assert all(
+        not _connections_reachable(wf, succ, EMAIL_CONFIRM_NODE_NAME)
+        for succ in _output_successors(wf, CANAL_SWITCH_NODE_NAME, 3)
+    ), (
+        f"La salida fallback de {CANAL_SWITCH_NODE_NAME!r} alcanza "
+        f"{EMAIL_CONFIRM_NODE_NAME!r}; un canal desconocido no tiene destinatario"
+    )
+
+
+def test_c40_correo_branch_still_reaches_email_confirmation():
+    """
+    TRIANGULATE (N8N-PHONE-002): la salida de correo conserva su nodo de confirmacion.
+    """
+    wf = load_workflow()
+    assert any(
+        _connections_reachable(wf, succ, EMAIL_CONFIRM_NODE_NAME)
+        for succ in _output_successors(wf, CANAL_SWITCH_NODE_NAME, 1)
+    ), (
+        f"La salida de correo de {CANAL_SWITCH_NODE_NAME!r} dejo de alcanzar "
+        f"{EMAIL_CONFIRM_NODE_NAME!r}"
+    )
+
+
+# ── Defecto 4 — Memoria Redis configurada ───────────────────────────────────
+
+
+def test_c40_memory_redis_node_declares_credentials_and_session_params():
+    """
+    RED (N8N-MEMORY-001): el nodo de memoria Redis declara credencial `redis` no
+    vacia y parametros de sesion no vacios.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    assert MEMORY_REDIS_NODE_NAME in by_name, (
+        f"No existe el nodo de memoria {MEMORY_REDIS_NODE_NAME!r}"
+    )
+    node = by_name[MEMORY_REDIS_NODE_NAME]
+    assert node.get("type") == MEMORY_REDIS_NODE_TYPE, (
+        f"{MEMORY_REDIS_NODE_NAME!r} debe ser {MEMORY_REDIS_NODE_TYPE!r}, "
+        f"got {node.get('type')!r}"
+    )
+
+    credentials = node.get("credentials", {}) or {}
+    assert credentials, (
+        f"{MEMORY_REDIS_NODE_NAME!r} no declara credencial: fallaria en runtime"
+    )
+    assert any("redis" in key.lower() for key in credentials), (
+        f"{MEMORY_REDIS_NODE_NAME!r} no declara una credencial 'redis' "
+        f"(credentials={list(credentials)!r})"
+    )
+
+    parameters = node.get("parameters", {}) or {}
+    assert parameters, (
+        f"{MEMORY_REDIS_NODE_NAME!r} no declara parametros de sesion: fallaria en runtime"
+    )
+    assert "sessionId" in parameters, (
+        f"{MEMORY_REDIS_NODE_NAME!r} no declara la clave de sesion ('sessionId')"
+    )
+    assert all(value not in (None, "") for value in parameters.values()), (
+        f"{MEMORY_REDIS_NODE_NAME!r} tiene parametros vacios (parameters={parameters!r})"
+    )
+
+
+def test_c40_credential_requiring_types_include_memory_redis():
+    """
+    RED (N8N-MEMORY-001): el conjunto de tipos que requieren credenciales incluye el
+    tipo del nodo de memoria Redis, de modo que la suite lo cubra.
+    """
+    assert MEMORY_REDIS_NODE_TYPE in CREDENTIAL_REQUIRING_NODE_TYPES, (
+        f"{MEMORY_REDIS_NODE_TYPE!r} no esta en CREDENTIAL_REQUIRING_NODE_TYPES: "
+        "el nodo de memoria no queda cubierto por la guarda de credenciales"
+    )
+
+
+def test_c40_memory_redis_credential_uses_placeholder():
+    """
+    TRIANGULATE (N8N-MEMORY-001): la credencial usa un placeholder REPLACE_WITH_*
+    consistente con el resto del JSON exportado (no embebe un id real).
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    credentials = by_name[MEMORY_REDIS_NODE_NAME].get("credentials", {}) or {}
+    redis_cred = next(
+        value for key, value in credentials.items() if "redis" in key.lower()
+    )
+    assert "REPLACE_WITH" in json.dumps(redis_cred), (
+        f"La credencial redis no usa un placeholder REPLACE_WITH_*: {redis_cred!r}"
+    )
+
+
+# ── Defecto 5 — Unico mecanismo de autenticacion ────────────────────────────
+
+
+def test_c40_incidentes_http_node_has_single_auth_mechanism():
+    """
+    RED (N8N-AUTH-002): el nodo de persistencia no combina credencial
+    `httpHeaderAuth` con el header explicito; declara exactamente un mecanismo.
+    """
+    wf = load_workflow()
+    _, by_type = index_nodes(wf)
+    nodes = _incidentes_http_nodes(by_type)
+    assert nodes, "No se encontro el HTTP POST a /api/v1/incidentes"
+
+    node = nodes[0]
+    params = node.get("parameters", {})
+    credentials = node.get("credentials", {}) or {}
+
+    assert params.get("authentication") in (None, "", "none"), (
+        f"'{node['name']}' sigue declarando authentication="
+        f"{params.get('authentication')!r}"
+    )
+    assert params.get("genericAuthType") in (None, ""), (
+        f"'{node['name']}' sigue declarando genericAuthType="
+        f"{params.get('genericAuthType')!r}"
+    )
+    assert "httpHeaderAuth" not in credentials, (
+        f"'{node['name']}' sigue declarando la credencial httpHeaderAuth"
+    )
+
+
+def test_c40_incidentes_http_node_header_is_dynamic_bearer():
+    """
+    TRIANGULATE (N8N-AUTH-002): el unico mecanismo conservado es el header
+    `Authorization: Bearer` con token dinamico de `Login operador`.
+    """
+    wf = load_workflow()
+    _, by_type = index_nodes(wf)
+    node = _incidentes_http_nodes(by_type)[0]
+    params = node.get("parameters", {})
+
+    assert params.get("sendHeaders") is True, (
+        "El nodo de persistencia no conserva el envio de headers explicitos"
+    )
+    headers = params.get("headerParameters", {}).get("parameters", [])
+    auth_values = [
+        str(h.get("value", ""))
+        for h in headers
+        if str(h.get("name", "")).lower() == "authorization"
+    ]
+    assert len(auth_values) == 1, (
+        f"Se esperaba exactamente un header Authorization, hay {len(auth_values)}"
+    )
+    assert "Bearer" in auth_values[0] and "Login operador" in auth_values[0], (
+        f"El header Authorization no es un Bearer dinamico de Login operador: "
+        f"{auth_values[0]!r}"
+    )
+
+
+# ── Defecto 6 — Auditoria en el camino de error del backend ─────────────────
+
+
+def test_c40_audit_reachable_from_http_error_output():
+    """
+    RED (N8N-AUDIT-002): `Registro de auditoria` es sucesor directo de la salida de
+    error (main#1) del POST, en paralelo a `Es correo?`.
+    """
+    wf = load_workflow()
+    error_successors = _output_successors(wf, HTTP_NODE_CORREO, 1)
+
+    assert AUDIT_NODE_NAME in error_successors, (
+        f"La salida de error de {HTTP_NODE_CORREO!r} no desemboca en {AUDIT_NODE_NAME!r}: "
+        "un fallo del backend queda sin auditar"
+    )
+    assert IF_ES_CORREO_NODE_NAME in error_successors, (
+        f"La salida de error de {HTTP_NODE_CORREO!r} perdio la guarda "
+        f"{IF_ES_CORREO_NODE_NAME!r} (regresion del ciclo del correo)"
+    )
+
+
+def test_c40_audit_error_result_is_not_creado():
+    """
+    TRIANGULATE (N8N-AUDIT-002): la auditoria detecta explicitamente el item de error
+    de backend y registra un resultado distinto de `creado`.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    code = _active_js_code(by_name[AUDIT_NODE_NAME])
+
+    assert "item.error" in code, (
+        "La auditoria no detecta el item de error de backend ('item.error')"
+    )
+    assert "creado" in code, (
+        "La auditoria no conserva el resultado 'creado' para el alta exitosa"
+    )
+    assert "error_backend" in code, (
+        "La auditoria no registra un resultado 'error_backend' distinto de 'creado'"
+    )
+
+
+# ── Defecto 7 — Fallo de notificacion no omite auditoria ────────────────────
+
+
+def test_c40_notificar_operador_declares_on_error_continue():
+    """
+    RED (N8N-AUDIT-003): `Notificar operador designado` declara un onError de
+    continuacion distinto del default de detencion.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    node = by_name[NOTIFICAR_OPERADOR_NODE_NAME]
+
+    assert node.get("onError") in ("continueRegularOutput", "continueErrorOutput"), (
+        f"'{NOTIFICAR_OPERADOR_NODE_NAME}' no declara onError de continuacion "
+        f"(onError={node.get('onError')!r}): un fallo de envio abortaria la auditoria"
+    )
+
+
+def test_c40_notificar_operador_still_reaches_audit():
+    """
+    TRIANGULATE (N8N-AUDIT-003): aun con el manejo de error, la arista hacia
+    `Registro de auditoria` se conserva.
+    """
+    wf = load_workflow()
+    assert AUDIT_NODE_NAME in _get_successors(wf, NOTIFICAR_OPERADOR_NODE_NAME), (
+        f"'{NOTIFICAR_OPERADOR_NODE_NAME}' dejo de desembocar en {AUDIT_NODE_NAME!r}"
+    )
+
+
+# ── Defecto 8 — Guia sincronizada y verificable ─────────────────────────────
+
+
+def test_c40_guide_node_count_matches_workflow():
+    """
+    RED (N8N-DOC-001): el conteo de nodos declarado en la guia coincide con el JSON.
+    """
+    wf = load_workflow()
+    guide = _load_guide()
+
+    match = re.search(
+        r"Estado:\s*(\d+)\s*nodos\s*\((\d+)\s*operativos\s*\+\s*(\d+)\s*sticky",
+        guide,
+    )
+    assert match, (
+        "La guia no declara 'Estado: N nodos (M operativos + K sticky notes)'"
+    )
+    declared_total, declared_operative, declared_sticky = (int(g) for g in match.groups())
+    actual_sticky = sum(
+        1 for node in wf["nodes"] if node["type"] == "n8n-nodes-base.stickyNote"
+    )
+    actual_total = len(wf["nodes"])
+
+    assert declared_total == actual_total, (
+        f"La guia declara {declared_total} nodos; el JSON tiene {actual_total}"
+    )
+    assert declared_sticky == actual_sticky, (
+        f"La guia declara {declared_sticky} sticky notes; el JSON tiene {actual_sticky}"
+    )
+    assert declared_operative + declared_sticky == declared_total, (
+        f"El desglose de la guia no suma: {declared_operative} + {declared_sticky} "
+        f"!= {declared_total}"
+    )
+
+
+def test_c40_guide_test_count_matches_suite():
+    """
+    RED (N8N-DOC-001): el conteo de pruebas estructurales declarado en la guia
+    coincide con el numero de funciones `test_` de esta suite.
+    """
+    guide = _load_guide()
+    suite_source = TEST_SUITE_PATH.read_text(encoding="utf-8")
+
+    match = re.search(r"Verifica\s+(\d+)\s+propiedades\s+estructurales", guide)
+    assert match, (
+        "La guia no declara 'Verifica N propiedades estructurales'"
+    )
+    declared = int(match.group(1))
+    actual = len(re.findall(r"^def test_", suite_source, re.M))
+
+    assert declared == actual, (
+        f"La guia declara {declared} pruebas; la suite tiene {actual} funciones test_"
+    )
+
+
+def test_c40_guide_has_no_stale_review_branch_exception():
+    """
+    RED (N8N-DOC-001): la guia no afirma que la rama de revision humana deja el
+    correo sin marcar como leido (excepcion obsoleta).
+    """
+    guide = _load_guide()
+
+    assert "queda sin marcar" not in guide, (
+        "La guia conserva la excepcion obsoleta: la rama de revision 'queda sin marcar'"
+    )
+    assert "no** pasa por `Marcar correo como leido`" not in guide, (
+        "La guia afirma que la rama de revision no pasa por 'Marcar correo como leido'"
     )

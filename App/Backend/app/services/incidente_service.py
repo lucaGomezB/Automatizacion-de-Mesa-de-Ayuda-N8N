@@ -38,6 +38,7 @@ from app.core.exceptions import (
     SectorNotFoundError,
 )
 from app.core.logging import get_logger
+from app.models.base import utcnow
 from app.models.catalog import CanalOrigen, Estado
 from app.models.incidente import Incidente, PrioridadEnum
 from app.repositories.canal_origen_repository import CanalOrigenRepository
@@ -246,6 +247,7 @@ class IncidenteService:
                 canal_origen_id=canal.id if canal else None,
                 origen_message_id=payload.origen_message_id,
                 origen_evento=payload.origen_evento,
+                ingresado_en=payload.ingresado_en,  # C-39: instante de ingreso al sistema
                 requiere_revision_humana=False,  # Se actualizará tras la clasificación
             )
         except IntegrityError:
@@ -270,6 +272,14 @@ class IncidenteService:
         # La clasificación precalculada, si viene, omite el clasificador pago.
         result = await self._resolve_classification(payload, resultado_pseudo.texto)
         await self._apply_classification(incidente, result)
+
+        # C-39 (D2): sellar `persistido_en` UNA sola vez, dentro de la transaccion
+        # de alta y clasificacion, en el punto en que finalizan las escrituras del
+        # incidente y su log — inmediatamente antes del commit. Es inmutable: no
+        # usa onupdate ni figura en IncidenteUpdate, por lo que un PATCH posterior
+        # no lo sobrescribe (a diferencia de updated_at).
+        incidente.persistido_en = utcnow()
+        await self._session.flush()
 
         # Paso 7: Retornar el incidente completo con todas las relaciones
         return await self._incidente_repo.get_with_relations(incidente.id)  # type: ignore[return-value]

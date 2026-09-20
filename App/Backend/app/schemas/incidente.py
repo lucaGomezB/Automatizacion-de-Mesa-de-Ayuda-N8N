@@ -16,10 +16,11 @@ Responsabilidad:
     descripción, lo que reduce el tamaño de las respuestas en consultas masivas.
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validator
 
+from app.config.settings import get_settings
 from app.constants import es_sector_canonico
 from app.models.incidente import PrioridadEnum
 from app.schemas.catalog import CanalOrigenRead, EstadoRead, SectorRead
@@ -28,6 +29,20 @@ from app.schemas.catalog import CanalOrigenRead, EstadoRead, SectorRead
 # Cualquier otro valor (por ejemplo "notificacion") es un evento que no debe
 # crear incidentes y el contrato lo rechaza (C-33, D6).
 _ORIGEN_EVENTO_CREACION = frozenset({"creacion", "creacion_incidente"})
+
+
+def _to_utc(value: datetime) -> datetime:
+    """
+    Interpreta un instante como UTC para la derivación de latencia (C-39).
+
+    Las columnas TIMESTAMPTZ almacenan UTC, pero algunos drivers (SQLite en la
+    suite unitaria) devuelven datetimes sin tzinfo tras el round-trip. Se
+    normaliza un valor naive como UTC —lo que la columna garantiza— para que la
+    resta entre ambos instantes nunca mezcle naive y aware.
+    """
+    if value.tzinfo is None:
+        return value.replace(tzinfo=timezone.utc)
+    return value.astimezone(timezone.utc)
 
 
 class ClasificacionPrecalculada(BaseModel):
@@ -113,6 +128,39 @@ class IncidenteCreate(BaseModel):
     # directa; un marcador que no sea de creación (p. ej. "notificacion") se
     # rechaza con error de validación.
     origen_evento: str | None = None
+
+    # Instante en que el mensaje INGRESA al sistema (C-39). Debe ser ISO-8601 con
+    # zona horaria explícita; se normaliza a UTC. Se rechaza un valor naive (sin
+    # zona) y un valor futuro más allá de la tolerancia configurable, para evitar
+    # latencias negativas. Nullable: la ausencia no bloquea el alta.
+    ingresado_en: datetime | None = None
+
+    @field_validator("ingresado_en")
+    @classmethod
+    def ingresado_en_con_zona_y_no_futuro(cls, v: datetime | None) -> datetime | None:
+        """
+        Valida y normaliza el instante de ingreso (C-39, D4).
+
+        Rechaza un valor naive (enmascararía errores del emisor y contaminaría la
+        medición) y un valor futuro más allá de la tolerancia configurable
+        (`timing_future_tolerance_seconds`, 30 s por defecto), que produciría
+        latencias negativas. Un valor válido se normaliza a UTC.
+        """
+        if v is None:
+            return None
+        if v.tzinfo is None or v.utcoffset() is None:
+            raise ValueError(
+                "ingresado_en debe ser ISO-8601 con zona horaria explicita "
+                "(se rechaza un valor sin offset)."
+            )
+        v_utc = v.astimezone(timezone.utc)
+        tolerancia_s = get_settings().timing_future_tolerance_seconds
+        if v_utc > datetime.now(timezone.utc) + timedelta(seconds=tolerancia_s):
+            raise ValueError(
+                "ingresado_en no puede estar en el futuro mas alla de la "
+                f"tolerancia de {tolerancia_s} s."
+            )
+        return v_utc
 
     @field_validator("descripcion")
     @classmethod
@@ -201,6 +249,46 @@ class IncidenteRead(BaseModel):
     sectores_adicionales: list[SectorRead] = Field(default_factory=list)  # Sectores secundarios (C-27)
     estado: EstadoRead
     canal_origen: CanalOrigenRead | None
+
+    # Instrumentación temporal end-to-end (C-39). Ambos instantes son nullable:
+    # las filas legacy y los clientes que no proveen `ingresado_en` los dejan nulos.
+    ingresado_en: datetime | None = None
+    persistido_en: datetime | None = None
+
+    @computed_field
+    @property
+    def latencia_e2e_ms(self) -> int | None:
+        """
+        Latencia end-to-end derivada en milisegundos (C-39, D3/D9).
+
+        Es `persistido_en - ingresado_en` en ms. Es nula si falta cualquiera de
+        los dos instantes. Una latencia negativa NUNCA se reporta como medición
+        válida: se devuelve nulo y la anomalía queda marcada por
+        `latencia_anomala` para su diagnóstico y exclusión del corpus.
+        """
+        if self.ingresado_en is None or self.persistido_en is None:
+            return None
+        delta_ms = int(
+            (_to_utc(self.persistido_en) - _to_utc(self.ingresado_en)).total_seconds()
+            * 1000
+        )
+        if delta_ms < 0:
+            return None
+        return delta_ms
+
+    @computed_field
+    @property
+    def latencia_anomala(self) -> bool:
+        """
+        True si la latencia derivada es negativa (C-39, D9).
+
+        Una latencia negativa es físicamente inválida (por ejemplo, por un
+        ingreso futuro dentro de la tolerancia o por desalineación de relojes);
+        se marca como anomalía para excluirla del corpus y del análisis.
+        """
+        if self.ingresado_en is None or self.persistido_en is None:
+            return False
+        return (_to_utc(self.persistido_en) - _to_utc(self.ingresado_en)).total_seconds() < 0
 
 
 class IncidenteListItem(BaseModel):

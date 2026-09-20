@@ -29,6 +29,11 @@
       UP_ENV_EXAMPLE     - path to the template used for placeholder comparison
       UP_HEALTH_TIMEOUT  - health wait timeout in seconds (default: 600)
       UP_HEALTH_INTERVAL - health poll interval in seconds (default: 5)
+      UP_COST_PREFLIGHT  - path to the cost readiness checker
+      UP_PYTHON          - Python interpreter used for the cost preflight
+
+    Operator bypass (deliberately loud, never silent):
+      UP_SKIP_COST_PREFLIGHT=1 - skip the cost readiness gate and print a warning
 #>
 
 #requires -Version 5.1
@@ -45,6 +50,8 @@ if ($env:UP_ENV_EXAMPLE) { $EnvExample = $env:UP_ENV_EXAMPLE } else { $EnvExampl
 $CertFile = Join-Path $RepoRoot "openssl/mesa.crt"
 $KeyFile = Join-Path $RepoRoot "openssl/mesa.key"
 $CertGenerator = Join-Path $RepoRoot "openssl/generate-certs.ps1"
+$CostPreflightScript = Join-Path $RepoRoot "scripts/preflight/cost_readiness.py"
+$PreflightRequirements = "scripts/preflight/requirements.txt"
 
 if ($env:UP_HEALTH_TIMEOUT) { $HealthTimeout = [int]$env:UP_HEALTH_TIMEOUT } else { $HealthTimeout = 600 }
 if ($env:UP_HEALTH_INTERVAL) { $HealthInterval = [int]$env:UP_HEALTH_INTERVAL } else { $HealthInterval = 5 }
@@ -55,10 +62,11 @@ $ExpectedServiceCount = 6
 # Required secret variables. The values listed here are the placeholders from
 # App\Backend\.env.example; the template file is also parsed at runtime so this
 # remains a single named source of truth that tolerates template changes.
-$RequiredSecrets = @("GEMINI_API_KEY", "PSEUDONYMIZATION_ENCRYPTION_KEY")
+$RequiredSecrets = @("GEMINI_API_KEY", "PSEUDONYMIZATION_ENCRYPTION_KEY", "JWT_SECRET_KEY")
 $PlaceholderValues = @(
     "your-gemini-api-key-here",
     "your-fernet-key-here",
+    "your-jwt-secret-key-here",
     "your-key-here",
     "changeme"
 )
@@ -143,6 +151,52 @@ function Test-EnvPreflight {
             Write-Err "Replace the placeholder with a real value before starting the stack."
             return $false
         }
+    }
+
+    return $true
+}
+
+# -- Cost readiness preflight ------------------------------------------------
+# Runs the static cost preflight before any certificate or Docker work. Returns
+# $false when the gate must block startup. UP_SKIP_COST_PREFLIGHT=1 is the only
+# bypass and it is deliberately loud: it never skips silently.
+function Invoke-CostPreflight {
+    if ($env:UP_SKIP_COST_PREFLIGHT -eq "1") {
+        Write-Host "[up] WARNING: UP_SKIP_COST_PREFLIGHT=1: COST READINESS PREFLIGHT SKIPPED." -ForegroundColor Yellow
+        Write-Host "[up] WARNING: The stack may start with broken cost guards. Unset the variable to re-enable the gate." -ForegroundColor Yellow
+        return $true
+    }
+
+    $script = if ($env:UP_COST_PREFLIGHT) { $env:UP_COST_PREFLIGHT } else { $CostPreflightScript }
+    if (-not (Test-Path -LiteralPath $script)) {
+        Write-Err "Cost preflight script not found: $script"
+        Write-Err "Install the preflight dependencies and retry:"
+        Write-Err "  pip install -r $PreflightRequirements"
+        return $false
+    }
+
+    $python = $null
+    if ($env:UP_PYTHON) {
+        $python = $env:UP_PYTHON
+    } elseif (Get-Command python3 -ErrorAction SilentlyContinue) {
+        $python = "python3"
+    } elseif (Get-Command python -ErrorAction SilentlyContinue) {
+        $python = "python"
+    }
+    if (-not $python) {
+        Write-Err "No Python interpreter found for the cost preflight (tried UP_PYTHON, python3, python)."
+        Write-Err "Install the preflight dependencies and retry:"
+        Write-Err "  pip install -r $PreflightRequirements"
+        return $false
+    }
+
+    & $python $script
+    $status = $LASTEXITCODE
+    if ($status -ne 0) {
+        Write-Err "Cost readiness preflight FAILED (exit $status). The stack was NOT started."
+        Write-Err "Resolve the FAIL guards above before starting paid services."
+        Write-Err "If a dependency is missing, install: pip install -r $PreflightRequirements"
+        return $false
     }
 
     return $true
@@ -251,6 +305,7 @@ function Write-AccessInfo {
 
 # -- Entry point -------------------------------------------------------------
 if (-not (Test-EnvPreflight -EnvPath $EnvFile -ExamplePath $EnvExample)) { exit 1 }
+if (-not (Invoke-CostPreflight)) { exit 1 }
 if (-not (Invoke-EnsureCertificates)) { exit 1 }
 if (-not (Invoke-StartStack)) { exit 1 }
 if (-not (Wait-ForHealthy)) { exit 1 }

@@ -88,6 +88,14 @@ class Settings(BaseSettings):
     n8n_webhook_url: str = ""
     n8n_webhook_secret: str = ""   # Header X-N8N-Secret para autenticación básica
 
+    # ── Instrumentación temporal end-to-end (C-39) ────────────────────────────
+    # Tolerancia de futuro para `ingresado_en`: se acepta un ingreso hasta este
+    # desfase por delante del ahora del servidor (skew de relojes entre n8n y el
+    # backend). Valores más allá se rechazan para evitar latencias negativas.
+    # 30 s es suficiente porque en docker-compose todos los contenedores comparten
+    # el reloj del host; una tolerancia amplia encubriría datos inválidos.
+    timing_future_tolerance_seconds: int = 30
+
     # ── Logging estructurado ──────────────────────────────────────────────────
     log_level: str = "INFO"        # Nivel mínimo de emisión de eventos
     log_format: str = "json"       # "json" para producción; "console" para desarrollo
