@@ -4,10 +4,14 @@
 > C-05: n8n-channel-triggers — Canal web agregado, notificaciones por canal y auditoría con retención de 30 días.
 > C-33: cost-guards — Tope de refinamiento del agente pago, ciclo de vida del correo en todas
 > las ramas terminales, lookback de 24 horas, payload enriquecido y webhook de notificación dedicado.
+> C-39: e2e-timing-instrumentation — Sello de ingreso por canal (`ingresado_en`) en el borde de cada trigger.
+> C-40: n8n-wiring-fixes — Cierre de las ramas terminales del webhook web, destinatario real de la
+> confirmación por correo, telefonía sin nodo de correo, memoria Redis configurada, autenticación
+> única del POST, auditoría en el camino de error y notificación que no omite la auditoría.
 > Gate post-POST de revisión humana — IF `Requiere revision humana` (evalúa la marca del backend)
 > + nodo `Notificar operador designado` (`$env.OPERATOR_EMAIL`); el gate pre-POST pasó a llamarse
 > `Entrada valida` (validación de entrada, no de confianza del modelo).
-> Estado: 29 nodos (26 operativos + 3 sticky notes); suite estructural `test_n8n_workflow.py` en verde.
+> Estado: 32 nodos (29 operativos + 3 sticky notes); suite estructural `test_n8n_workflow.py` en verde.
 
 ## Descripción general
 
@@ -62,9 +66,9 @@ El mensaje de Outlook se marca como leído en las ramas terminales alcanzables:
 - **Error**: `HTTP POST a MTM-SRU` declara `onError: "continueErrorOutput"` y su salida de
   error (main#1) → `Es correo?` → `Marcar correo como leido`.
 
-> **Excepción conocida**: la rama true de `Requiere revision humana` (revisión humana) va a
-> `Notificar operador designado → Registro de auditoria` y **no** pasa por `Marcar correo como
-> leido`; un correo que requiere revisión queda sin marcar.
+> **Corrección C-40**: la rama true de `Requiere revision humana` (revisión humana) notifica al
+> operador y, en paralelo, pasa por `Es correo?` → `Marcar correo como leido`, de modo que un
+> correo que requiere revisión también queda marcado como leído (la excepción anterior ya no aplica).
 
 La guarda `Es correo?` evalúa `canal_origen == 'correo'` antes de tocar el nodo de Outlook,
 porque `Marcar correo como leido` referencia el trigger de Outlook por nombre y fallaría en
@@ -167,10 +171,11 @@ para el Anexo E de la tesis (C-10).
 
 Tres nodos `stickyNote` con documentación visual interna del workflow (se conservan intactos).
 
-**Total**: 26 nodos operativos + 3 `stickyNote` = 29, consistente con `n8n/workflow.json`. Las
+**Total**: 29 nodos operativos + 3 `stickyNote` = 32, consistente con `n8n/workflow.json`. Las
 tablas por canal repiten los nodos compartidos (`Normalizar entrada del incidente`,
 `Entrada valida`, `Login operador`, `HTTP POST a MTM-SRU`, `Requiere revision humana`,
-`Notificar operador designado`, `Rutear por canal de origen`, `Registro de auditoria`).
+`Notificar operador designado`, `Rutear por canal de origen`, `Es correo?`, `Es web?`,
+`Respuesta web de cierre`, `Registro de auditoria`).
 
 ## Contrato: `POST /api/v1/incidentes`
 
@@ -460,7 +465,7 @@ cd App/Backend
 python -m pytest tests/test_n8n_workflow.py -v
 ```
 
-Verifica 94 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33 y gate post-POST de revisión humana).
+Verifica 130 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39 y C-40).
 
 ### Prueba manual del canal web (C-05)
 
@@ -492,7 +497,17 @@ caminos:
 El gate `Requiere revision humana` se interpone entre el POST y el ruteo normal. En la rama
 false, `Rutear por canal de origen` y `Registro de auditoria` cuelgan en paralelo; en la rama
 true, `Notificar operador designado` desemboca en `Registro de auditoria`. La notificación no
-bloquea el registro de auditoría.
+bloquea el registro de auditoría: el nodo declara `onError: continueRegularOutput` (C-40), de
+modo que un fallo de envío no aborta la auditoría.
+
+C-40 (N8N-WEBHOOK-003): las ramas terminales del webhook web —rechazo de `Entrada valida`,
+error del POST (`main#1`) y revisión humana— pasan por la guarda `Es web?` y cierran en
+`Respuesta web de cierre` (`respondToWebhook`, HTTP 200, cuerpo con `resultado: 'sin_alta'`).
+La guarda restringe la respuesta al canal `web`, de modo que correo y telefonía no disparan
+respuestas web cruzadas y el cliente web nunca queda a la espera indefinida.
+
+C-40 (N8N-PHONE-002): la salida de telefonía del switch no se desvía al nodo de correo; la
+confirmación telefónica se resuelve con la respuesta TwiML de la llamada.
 
 ## Registro de auditoría (C-05)
 
@@ -514,7 +529,8 @@ exitosas, revisiones humanas y rechazos de entrada):
 **Exclusión de PII**: la `descripcion` cruda no se incluye en el evento de auditoría.
 Solo metadatos y referencias al incidente.
 
-`resultado` toma `"creado"` cuando el response del backend trae id numérico, o
+`resultado` toma `"creado"` cuando el response del backend trae id numérico,
+`"error_backend"` cuando la ejecución llega por la salida de error del POST (C-40) y
 `"rechazado_datos_incompletos"` en la rama de rechazo de `Entrada valida` (B-14).
 
 **Retención de 30 días** (tesis §5.3): declarada como `retencion_dias: 30` en el nodo.

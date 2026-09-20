@@ -25,9 +25,10 @@ Responsabilidad:
         - (estado_id, created_at): filtrado de cola de trabajo por estado activo.
 """
 
+from datetime import datetime
 from enum import Enum as PyEnum
 
-from sqlalchemy import Boolean, ForeignKey, Index, Integer, String, Text
+from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.asociaciones import incidente_sector_adicional
@@ -144,6 +145,26 @@ class Incidente(Base, TimestampMixin):
     # Valores validos de creacion se validan en el schema (`origen_evento`).
     origen_evento: Mapped[str | None] = mapped_column(
         String(50),
+        nullable=True,
+    )
+
+    # Instante de INGRESO al sistema (C-39). Capturado en el borde del trigger de
+    # cada canal y enviado por N8N en el payload de alta; se persiste normalizado
+    # a UTC. Nullable: los clientes API directos y las filas legacy pueden no
+    # proveerlo, y su ausencia no bloquea el alta.
+    ingresado_en: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
+
+    # Instante de PERSISTENCIA CONFIRMADA (C-39). Sellado UNA sola vez dentro de
+    # la transaccion de alta y clasificacion, inmediatamente antes del commit.
+    # Inmutable: sin `onupdate` y fuera del contrato de update, de modo que una
+    # revision humana o un PATCH posterior no lo sobrescriben (a diferencia de
+    # `updated_at`, que se recalcula en cada UPDATE). La latencia end-to-end se
+    # deriva en la capa de lectura como `persistido_en - ingresado_en`.
+    persistido_en: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
         nullable=True,
     )
 

@@ -93,6 +93,19 @@ jobs:
         working-directory: App/Backend
         run: pytest tests/test_openapi_sync.py -v
 
+      # C-41: cost readiness preflight. It is not part of App/Backend
+      # requirements, so its own requirements file is installed first. The
+      # suite covers guards present/absent; the CLI runs over the real
+      # n8n/workflow.json and docker-compose.yml.
+      - name: Install preflight dependencies
+        run: pip install -r scripts/preflight/requirements.txt
+
+      - name: Run cost preflight tests
+        run: python -m pytest scripts/preflight/test_cost_readiness.py -q
+
+      - name: Run cost readiness preflight
+        run: python scripts/preflight/cost_readiness.py
+
       # Evaluation suite — self-contained (fixture JSON + FakeClassifier)
       # Chapter 7 thesis evidence; must not rot.
       - name: Install evaluation dependencies

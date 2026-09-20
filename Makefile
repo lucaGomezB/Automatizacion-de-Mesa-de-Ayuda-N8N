@@ -10,6 +10,7 @@
 #   make ps      # show service status and health
 #   make logs    # follow logs from all services
 #   make health  # query the HTTPS health endpoints
+#   make preflight # run the cost readiness preflight (read-only, no Docker)
 
 # Detect the operating system. GNU Make sets OS=Windows_NT on Windows; on
 # Linux/macOS it is empty.
@@ -21,10 +22,13 @@ UP_COMMAND := bash scripts/up.sh
 PYTHON := python3
 endif
 
-.PHONY: up down ps logs health dry-run dry-run-email
+.PHONY: up down ps logs health dry-run dry-run-email preflight
 
 up: ## Start the full local stack
 	$(UP_COMMAND)
+
+preflight: ## Run the cost readiness preflight (read-only, no Docker, no network)
+	$(PYTHON) scripts/preflight/cost_readiness.py
 
 down: ## Stop and remove the stack (volumes persist)
 	docker compose down

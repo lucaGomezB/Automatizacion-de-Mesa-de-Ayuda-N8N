@@ -431,3 +431,20 @@ mensaje accionable ante cualquier quiebre de cableado.
 - Guía completa (prerrequisitos, guardarraíles de costo, checks, canal correo
   opcional y procedimiento telefónico manual de pago):
   [`dry-run-harness.md`](dry-run-harness.md).
+
+---
+
+## 10. Medición de latencia end-to-end
+
+El sistema instrumenta la latencia END-TO-END por incidente (ingreso del mensaje
+al sistema → persistencia confirmada) para alimentar `tiempo_automatizado_s` del
+corpus. El contrato completo —definiciones, unidades, validación, política de
+latencia negativa, caveats por canal y exclusión de replays— vive en:
+
+- [`medicion-latencia-e2e.md`](medicion-latencia-e2e.md).
+
+Los instantes se exponen en la representación de lectura del incidente
+(`ingresado_en`, `persistido_en`, `latencia_e2e_ms`, `latencia_anomala`). El
+análisis debe reportarse **por canal**, porque los puntos de ingreso no son
+homogéneos.
+

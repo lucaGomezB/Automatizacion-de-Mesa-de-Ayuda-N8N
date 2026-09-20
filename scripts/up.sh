@@ -24,6 +24,11 @@
 #   UP_ENV_EXAMPLE    — path to the template used for placeholder comparison
 #   UP_HEALTH_TIMEOUT — health wait timeout in seconds (default: 600)
 #   UP_HEALTH_INTERVAL— health poll interval in seconds (default: 5)
+#   UP_COST_PREFLIGHT — path to the cost readiness checker (default: scripts/preflight/cost_readiness.py)
+#   UP_PYTHON         — Python interpreter used for the cost preflight
+#
+# Operator bypass (deliberately loud, never silent):
+#   UP_SKIP_COST_PREFLIGHT=1 — skip the cost readiness gate and print a warning
 # ==============================================================================
 
 set -euo pipefail
@@ -37,6 +42,8 @@ ENV_EXAMPLE="${UP_ENV_EXAMPLE:-${REPO_ROOT}/App/Backend/.env.example}"
 CERT_FILE="${REPO_ROOT}/openssl/mesa.crt"
 KEY_FILE="${REPO_ROOT}/openssl/mesa.key"
 CERT_GENERATOR="${REPO_ROOT}/openssl/generate-certs.sh"
+COST_PREFLIGHT_SCRIPT="${REPO_ROOT}/scripts/preflight/cost_readiness.py"
+PREFLIGHT_REQUIREMENTS="scripts/preflight/requirements.txt"
 
 HEALTH_TIMEOUT="${UP_HEALTH_TIMEOUT:-600}"
 HEALTH_INTERVAL="${UP_HEALTH_INTERVAL:-5}"
@@ -47,10 +54,11 @@ EXPECTED_SERVICE_COUNT=6
 # Required secret variables. The values listed here are the placeholders from
 # App/Backend/.env.example; the template file is also parsed at runtime so this
 # remains a single named source of truth that tolerates template changes.
-REQUIRED_SECRETS=("GEMINI_API_KEY" "PSEUDONYMIZATION_ENCRYPTION_KEY")
+REQUIRED_SECRETS=("GEMINI_API_KEY" "PSEUDONYMIZATION_ENCRYPTION_KEY" "JWT_SECRET_KEY")
 PLACEHOLDER_VALUES=(
     "your-gemini-api-key-here"
     "your-fernet-key-here"
+    "your-jwt-secret-key-here"
     "your-key-here"
     "changeme"
 )
@@ -58,6 +66,7 @@ PLACEHOLDER_VALUES=(
 # ── Logging ──────────────────────────────────────────────────────────────────
 log_info() { printf '[up] %s\n' "$*"; }
 log_error() { printf '[up] ERROR: %s\n' "$*" >&2; }
+log_warn() { printf '[up] WARNING: %s\n' "$*" >&2; }
 
 # ── .env parsing ─────────────────────────────────────────────────────────────
 # Reads the last assignment of KEY=... from a dotenv-style file. Prints only the
@@ -137,6 +146,79 @@ check_env_file() {
             return 1
         fi
     done
+
+    return 0
+}
+
+# ── Cost readiness preflight ─────────────────────────────────────────────────
+# Resolves the Python interpreter lazily (inside the function, never at source
+# time) so `source up.sh` under `set -e` stays safe: UP_PYTHON -> python3 ->
+# python.
+detect_cost_preflight_python() {
+    local candidate
+    if [ -n "${UP_PYTHON:-}" ]; then
+        candidate="$UP_PYTHON"
+        if [ -x "$candidate" ] || command -v "$candidate" >/dev/null 2>&1; then
+            printf '%s' "$candidate"
+            return 0
+        fi
+        return 1
+    fi
+    for candidate in python3 python; do
+        if command -v "$candidate" >/dev/null 2>&1; then
+            printf '%s' "$candidate"
+            return 0
+        fi
+    done
+    return 1
+}
+
+# Single source of truth for the actionable install hint, so every cost-gate
+# failure points the operator at the same dependency file.
+log_preflight_install_hint() {
+    log_error "Install the preflight dependencies and retry:"
+    log_error "  pip install -r ${PREFLIGHT_REQUIREMENTS}"
+}
+
+# Runs the static cost readiness preflight and returns non-zero when the gate
+# must block startup. The checker output is printed verbatim because it already
+# names the FAIL guards. UP_SKIP_COST_PREFLIGHT=1 is the only bypass and it is
+# deliberately loud: it never skips silently.
+check_cost_preflight() {
+    local script python output status
+
+    if [ "${UP_SKIP_COST_PREFLIGHT:-}" = "1" ]; then
+        log_warn "UP_SKIP_COST_PREFLIGHT=1: COST READINESS PREFLIGHT SKIPPED."
+        log_warn "The stack may start with broken cost guards. Unset the variable to re-enable the gate."
+        return 0
+    fi
+
+    script="${UP_COST_PREFLIGHT:-$COST_PREFLIGHT_SCRIPT}"
+    if [ ! -f "$script" ]; then
+        log_error "Cost preflight script not found: ${script}"
+        log_preflight_install_hint
+        return 1
+    fi
+
+    if ! python="$(detect_cost_preflight_python)"; then
+        log_error "No Python interpreter found for the cost preflight (tried UP_PYTHON, python3, python)."
+        log_preflight_install_hint
+        return 1
+    fi
+
+    if output="$("$python" "$script" 2>&1)"; then
+        status=0
+    else
+        status=$?
+    fi
+    printf '%s\n' "$output"
+
+    if [ "$status" -ne 0 ]; then
+        log_error "Cost readiness preflight FAILED (exit ${status}). The stack was NOT started."
+        log_error "Resolve the FAIL guards above before starting paid services."
+        log_error "If a dependency is missing, install: pip install -r ${PREFLIGHT_REQUIREMENTS}"
+        return 1
+    fi
 
     return 0
 }
@@ -237,6 +319,7 @@ print_access_info() {
 # ── Entry point ──────────────────────────────────────────────────────────────
 main() {
     check_env_file "$ENV_FILE" "$ENV_EXAMPLE" || exit 1
+    check_cost_preflight || exit 1
     ensure_certificates || exit 1
     start_stack || exit 1
     wait_for_healthy || exit 1

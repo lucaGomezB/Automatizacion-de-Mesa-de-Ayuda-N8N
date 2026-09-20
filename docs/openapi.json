@@ -305,6 +305,18 @@
             "title": "Descripcion",
             "type": "string"
           },
+          "ingresado_en": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ingresado En"
+          },
           "origen_evento": {
             "anyOf": [
               {
@@ -412,6 +424,49 @@
             "title": "Id",
             "type": "integer"
           },
+          "ingresado_en": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ingresado En"
+          },
+          "latencia_anomala": {
+            "description": "True si la latencia derivada es negativa (C-39, D9).\n\nUna latencia negativa es físicamente inválida (por ejemplo, por un\ningreso futuro dentro de la tolerancia o por desalineación de relojes);\nse marca como anomalía para excluirla del corpus y del análisis.",
+            "readOnly": true,
+            "title": "Latencia Anomala",
+            "type": "boolean"
+          },
+          "latencia_e2e_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Latencia end-to-end derivada en milisegundos (C-39, D3/D9).\n\nEs `persistido_en - ingresado_en` en ms. Es nula si falta cualquiera de\nlos dos instantes. Una latencia negativa NUNCA se reporta como medición\nválida: se devuelve nulo y la anomalía queda marcada por\n`latencia_anomala` para su diagnóstico y exclusión del corpus.",
+            "readOnly": true,
+            "title": "Latencia E2E Ms"
+          },
+          "persistido_en": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Persistido En"
+          },
           "prioridad": {
             "$ref": "#/components/schemas/PrioridadEnum"
           },
@@ -451,7 +506,9 @@
           "updated_at",
           "sector",
           "estado",
-          "canal_origen"
+          "canal_origen",
+          "latencia_e2e_ms",
+          "latencia_anomala"
         ],
         "title": "IncidenteRead",
         "type": "object"

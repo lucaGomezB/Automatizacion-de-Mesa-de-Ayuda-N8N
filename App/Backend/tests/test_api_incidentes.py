@@ -19,6 +19,7 @@ Aislamiento de servicios externos:
 """
 
 import asyncio
+from datetime import datetime, timedelta, timezone
 
 import pytest
 import pytest_asyncio
@@ -814,3 +815,115 @@ async def test_c33_clasificacion_forzada_revision_sin_sector(
     assert body["sector"] is None, "Un sector ausente debe persistirse como nulo"
     assert body["requiere_revision_humana"] is True
     assert spy.classify.await_count == 0
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Grupo C-39: instrumentacion temporal end-to-end en la respuesta del alta
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+@pytest.mark.asyncio
+async def test_c39_alta_con_ingreso_expone_latencia_e2e(
+    seed_catalogs, make_client_with_classifier
+):
+    """
+    RED (C-39): un alta con `ingresado_en` responde con ambos instantes y una
+    `latencia_e2e_ms` no negativa, derivada de la diferencia.
+    """
+    result = _make_result()
+    ingresado = datetime.now(timezone.utc) - timedelta(seconds=5)
+    payload = {**VALID_PAYLOAD, "ingresado_en": ingresado.isoformat()}
+
+    async with make_client_with_classifier(result) as client:
+        response = await client.post("/api/v1/incidentes/", json=payload)
+
+    assert response.status_code == 201, response.text
+    body = response.json()
+    assert body["ingresado_en"] is not None
+    assert body["persistido_en"] is not None
+    assert body["latencia_anomala"] is False
+    assert body["latencia_e2e_ms"] is not None
+    assert body["latencia_e2e_ms"] >= 4000, (
+        f"La latencia derivada debe reflejar ~5 s de ingreso; se obtuvo "
+        f"{body['latencia_e2e_ms']} ms"
+    )
+
+
+@pytest.mark.asyncio
+async def test_c39_alta_sin_ingreso_deja_latencia_nula(
+    seed_catalogs, make_client_with_classifier
+):
+    """
+    TRIANGULATE (C-39): un alta sin `ingresado_en` persiste nulo y responde con
+    `latencia_e2e_ms` nula; `persistido_en` queda sellado igualmente.
+    """
+    result = _make_result()
+
+    async with make_client_with_classifier(result) as client:
+        response = await client.post("/api/v1/incidentes/", json=VALID_PAYLOAD)
+
+    assert response.status_code == 201, response.text
+    body = response.json()
+    assert body["ingresado_en"] is None
+    assert body["persistido_en"] is not None
+    assert body["latencia_e2e_ms"] is None
+    assert body["latencia_anomala"] is False
+
+
+@pytest.mark.asyncio
+async def test_c39_ingreso_futuro_dentro_de_tolerancia_marca_anomalia(
+    seed_catalogs, make_client_with_classifier
+):
+    """
+    TRIANGULATE (C-39, D9): un `ingresado_en` en el futuro dentro de la tolerancia
+    se acepta (201), pero la latencia resultante es negativa: NO se reporta como
+    valida (nula) y queda marcada como anomalia.
+    """
+    result = _make_result()
+    ingresado = datetime.now(timezone.utc) + timedelta(seconds=10)
+    payload = {**VALID_PAYLOAD, "ingresado_en": ingresado.isoformat()}
+
+    async with make_client_with_classifier(result) as client:
+        response = await client.post("/api/v1/incidentes/", json=payload)
+
+    assert response.status_code == 201, response.text
+    body = response.json()
+    assert body["latencia_anomala"] is True, (
+        "Una latencia negativa debe marcarse como anomalia"
+    )
+    assert body["latencia_e2e_ms"] is None, (
+        "Una latencia negativa no debe reportarse como medicion valida"
+    )
+
+
+@pytest.mark.asyncio
+async def test_c39_ingreso_naive_rechazado_422(
+    seed_catalogs, make_client_with_classifier
+):
+    """
+    TRIANGULATE (C-39): un `ingresado_en` sin zona horaria se rechaza con 422.
+    """
+    result = _make_result()
+    payload = {**VALID_PAYLOAD, "ingresado_en": "2026-09-19T12:00:00"}
+
+    async with make_client_with_classifier(result) as client:
+        response = await client.post("/api/v1/incidentes/", json=payload)
+
+    assert response.status_code == 422, response.text
+
+
+@pytest.mark.asyncio
+async def test_c39_ingreso_futuro_fuera_de_tolerancia_rechazado_422(
+    seed_catalogs, make_client_with_classifier
+):
+    """
+    TRIANGULATE (C-39): un `ingresado_en` mas alla de la tolerancia se rechaza 422.
+    """
+    result = _make_result()
+    ingresado = datetime.now(timezone.utc) + timedelta(seconds=120)
+    payload = {**VALID_PAYLOAD, "ingresado_en": ingresado.isoformat()}
+
+    async with make_client_with_classifier(result) as client:
+        response = await client.post("/api/v1/incidentes/", json=payload)
+
+    assert response.status_code == 422, response.text
