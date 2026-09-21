@@ -413,13 +413,13 @@ docker compose exec backend alembic current
 ## 8. Evaluacion del clasificador
 
 El framework de evaluacion (`evaluation/`) permite medir el desempeno del
-clasificador hibrido sobre el corpus calibrado de 200 casos.
+clasificador hibrido sobre el corpus real de evaluacion.
 
 ### 8.1 Ejecutar evaluacion
 
 ```bash
-cd evaluation
-python run_evaluation.py
+# Desde la raiz del repositorio:
+PYTHONPATH=App/Backend python -m evaluation.run_evaluation
 ```
 
 Esto carga el corpus, ejecuta el clasificador (o FakeClassifier en entornos
@@ -428,22 +428,35 @@ de test) y genera un reporte en `evaluation/report.md` con:
 - Matriz de confusion
 - Metricas por clase (precision, sensibilidad, F1)
 
-### 8.2 Ejecutar tests de evaluacion
+### 8.2 Gate de corrida paga
+
+Una corrida que invocaria el clasificador real (Gemini) exige confirmacion
+explicita del operador: el runner se niega a invocarlo sin ella.
+
+```bash
+# Confirmacion por flag:
+PYTHONPATH=App/Backend python -m evaluation.run_evaluation --confirm-paid
+
+# Confirmacion por variable de entorno:
+EVALUATION_CONFIRM_PAID=1 PYTHONPATH=App/Backend python -m evaluation.run_evaluation
+```
+
+Sin confirmacion, la corrida aborta con codigo de salida 2 y un mensaje claro,
+sin invocar el clasificador real. Al confirmar, el runner imprime una estimacion
+orientativa del costo antes de ejecutar (no es una factura).
+
+### 8.3 Ejecutar tests de evaluacion
 
 ```bash
 cd evaluation
 pytest tests/ -v
 ```
 
-### 8.3 Regenerar el corpus calibrado
+### 8.4 Preparar el corpus real
 
-```bash
-# Desde la raiz del repositorio
-python evaluation/generate_corpus.py
-```
-
-El corpus se regenera con seed fijo (42) — la salida es identica en
-cada ejecucion y produce metricas alineadas con la tesis (Capitulo 7).
+El corpus de evaluacion (`data/corpus_evaluacion_pseudonimizado.json`) no esta
+trackeado en git por privacidad. El procedimiento para construir y colocar el
+corpus real esta documentado en `docs/como_cargar_datos_corpus.md`.
 
 ---
 
