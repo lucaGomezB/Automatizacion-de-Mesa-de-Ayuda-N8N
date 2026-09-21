@@ -360,6 +360,14 @@
       "sessions": 1,
       "memories": 15,
       "prompts": 8
+    },
+    {
+      "id": "d4e4b081",
+      "created_by": "skywalker",
+      "created_at": "2026-09-21T22:35:15Z",
+      "sessions": 0,
+      "memories": 1,
+      "prompts": 1
     }
   ]
 }
