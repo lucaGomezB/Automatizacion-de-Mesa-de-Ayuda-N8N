@@ -65,8 +65,38 @@ PSEUDONYMIZATION_ENCRYPTION_KEY=<clave-generada>
 
 ### 1.3 Generar certificados TLS y levantar los servicios
 
-**Paso previo obligatorio** — generar los certificados auto-firmados para el
-proxy Nginx (validez: 365 dias):
+#### Camino recomendado: un solo comando
+
+El comando unico de arranque es el camino recomendado. Verifica el entorno,
+genera los certificados TLS auto-firmados si faltan, levanta el stack con
+`docker compose up -d --build`, espera a que los servicios queden sanos y valida
+los endpoints de salud por HTTPS.
+
+**Linux / macOS:**
+```bash
+bash scripts/up.sh
+# Alternativa equivalente si make esta instalado:
+make up
+```
+
+**Windows (PowerShell):**
+```powershell
+.\scripts\up.ps1
+# Alternativa equivalente si make esta instalado:
+make up
+```
+
+Antes de tocar Docker, el comando unico ejecuta el preflight de costo
+(`scripts/preflight/cost_readiness.py`). Si el preflight falla, el arranque se
+bloquea y no se levanta ningun servicio. El bypass explicito es
+`UP_SKIP_COST_PREFLIGHT=1`; al usarlo el arranque continua, pero imprime una
+advertencia audible. Es una excepcion deliberada para escenarios controlados, no
+el camino normal.
+
+#### Camino manual (alternativa)
+
+Si se prefiere controlar cada paso, generar primero los certificados auto-firmados
+para el proxy Nginx (validez: 365 dias):
 
 ```bash
 # Linux / macOS
@@ -91,6 +121,8 @@ docker compose up -d
 Este comando construye la imagen del backend (desde `App/Backend/Dockerfile`),
 descarga las imagenes de PostgreSQL, Redis, Nginx y N8N, aplica las migraciones
 Alembic (`alembic upgrade head`) y levanta todos los servicios en background.
+A diferencia del comando unico, este camino no ejecuta el preflight de entorno ni
+el de costo: la verificacion queda a cargo de quien lo ejecuta.
 
 **Verificar que todos los contenedores estan healthy**:
 

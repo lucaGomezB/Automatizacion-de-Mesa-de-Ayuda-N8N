@@ -39,8 +39,14 @@ make --version   # opcional
 El comando unico verifica el entorno, genera los certificados TLS si faltan,
 levanta el stack con `docker compose up -d --build`, espera a que los servicios
 queden sanos y valida los endpoints de salud por HTTPS. Falla de forma explicita
-si `App/Backend/.env` no existe o si `GEMINI_API_KEY` /
-`PSEUDONYMIZATION_ENCRYPTION_KEY` siguen siendo los placeholders de la plantilla.
+si `App/Backend/.env` no existe o si `GEMINI_API_KEY`,
+`PSEUDONYMIZATION_ENCRYPTION_KEY` o `JWT_SECRET_KEY` estan ausentes, vacias o
+conservan los placeholders de la plantilla.
+
+Antes de tocar Docker, el comando unico ejecuta un preflight de costo: si el
+preflight falla, el arranque se bloquea y no se levanta ningun servicio. El bypass
+explicito es `UP_SKIP_COST_PREFLIGHT=1`; al usarlo, el arranque continua pero
+imprime una advertencia audible. Es una excepcion deliberada, no el camino normal.
 
 **Linux / macOS:**
 ```bash
