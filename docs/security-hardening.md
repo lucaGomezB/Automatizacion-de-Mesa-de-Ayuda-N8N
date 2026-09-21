@@ -178,6 +178,9 @@ Cuando una credencial se filtra, seguir los pasos en este orden:
 
 - Un archivo `Gestion_Incidentes/.env` con una `GEMINI_API_KEY` real fue
   commiteado al historial (blob `be1ab368`, commits `0d430b5` y `eee5c84`).
+  `Gestion_Incidentes/.env` es una ruta historica (`ruta historica`): tras la
+  reestructuracion el modulo vive en `App/Backend/`, por lo que hoy el archivo
+  seria `App/Backend/.env`.
 - Google bloqueo la clave por estar expuesta ("leaked").
 - La clave fue **revocada** en Google y su valor fue rotado. El archivo se
   removio del arbol en `02e845c`.

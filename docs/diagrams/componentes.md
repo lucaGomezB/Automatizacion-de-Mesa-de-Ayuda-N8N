@@ -1,6 +1,6 @@
 # Diagrama de Componentes — Módulo Python (Backend FastAPI)
 
-Refleja la organización en capas del módulo `Gestion_Incidentes/app/`, siguiendo
+Refleja la organización en capas del módulo `App/Backend/app/`, siguiendo
 el principio de separación de responsabilidades: cada capa solo conoce a la capa
 inmediatamente inferior.
 

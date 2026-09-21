@@ -1,7 +1,7 @@
 # Módulo de Pseudonimización — Documentación Técnica
 
 > **Change C-03 (Ley 25.326)** · Gobernanza: ALTO · Revisión: aprobada  
-> Aplica a: `Gestion_Incidentes/app/utils/pseudonymizer.py`, `encryption.py`, `app/models/incidente.py`, `app/services/incidente_service.py`, `alembic/versions/002_doble_representacion.py`
+> Aplica a: `App/Backend/app/utils/pseudonymizer.py`, `encryption.py`, `app/models/incidente.py`, `app/services/incidente_service.py`, `alembic/versions/002_doble_representacion.py`
 
 ---
 

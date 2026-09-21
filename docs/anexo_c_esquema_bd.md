@@ -1,8 +1,8 @@
 # Anexo C — Esquema de Base de Datos
 
 > **Fuente de verdad**: este documento se deriva fielmente de los modelos ORM
-> ubicados en `Gestion_Incidentes/app/models/`. La fuente ejecutable de las
-> migraciones es Alembic (`Gestion_Incidentes/alembic/`); este anexo es la
+> ubicados en `App/Backend/app/models/`. La fuente ejecutable de las
+> migraciones es Alembic (`App/Backend/alembic/`); este anexo es la
 > vista documental consolidada para el jurado. (Decisión D4 de C-10.)
 >
 > Motor de base de datos: **PostgreSQL 15.5**.

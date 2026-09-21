@@ -56,7 +56,7 @@ response = await asyncio.wait_for(
 )
 ```
 
-> Implementación real: `Gestion_Incidentes/app/classifiers/gemini_classifier.py`.
+> Implementación real: `App/Backend/app/classifiers/gemini_classifier.py`.
 > El timeout se garantiza con `asyncio.wait_for` (el SDK nuevo no acepta
 > `request_options={"timeout": ...}` por llamada); `TimeoutError` activa el fallback.
 

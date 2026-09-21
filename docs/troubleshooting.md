@@ -22,9 +22,9 @@ Si alguna falta, `Settings` (pydantic-settings) lanza un error al iniciar.
 **Remediación**:
 ```bash
 # Verificar que el .env existe y tiene las tres variables
-cat Gestion_Incidentes/.env
+cat App/Backend/.env
 # Si falta, copiar el ejemplo y completar
-cp Gestion_Incidentes/.env.example Gestion_Incidentes/.env
+cp App/Backend/.env.example App/Backend/.env
 # Editar el .env y luego reiniciar
 docker compose up -d --force-recreate backend
 ```
@@ -82,7 +82,7 @@ El usuario o contraseña en `DATABASE_URL` no coincide con los valores de
 **Remediación**:
 ```bash
 # Verificar el DATABASE_URL en .env
-grep DATABASE_URL Gestion_Incidentes/.env
+grep DATABASE_URL App/Backend/.env
 # Debe coincidir con POSTGRES_USER/POSTGRES_PASSWORD del compose, por ejemplo:
 # postgresql+asyncpg://mesa:mesa_local_dev@postgres:5432/mesa_de_ayuda
 # (default local; si sobreescribis POSTGRES_PASSWORD en el .env raiz, ajustalo)
@@ -149,7 +149,7 @@ el prompt, el clasificador puede degradar.
 **Remediación**:
 ```bash
 # Verificar que la clave está bien configurada
-grep GEMINI_API_KEY Gestion_Incidentes/.env
+grep GEMINI_API_KEY App/Backend/.env
 # Probar la clave directamente
 python -c "
 import os; os.environ['GEMINI_API_KEY'] = '<tu-clave>'
