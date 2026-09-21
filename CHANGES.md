@@ -82,9 +82,10 @@ C-39 e2e-timing-instrumentation (C-33, C-32)
  └── C-40 n8n-wiring-fixes (C-39)
 C-41 cost-preflight-wiring (C-36)
 
---- FASE 15: Sincronizacion documental (C-42 — ACTIVO) ---
+--- FASE 15: Sincronizacion documental (C-42, C-43) ---
 
 C-42 bootstrap-docs-sync (C-39, C-40, C-41)
+C-43 docs-restructure-sync (C-42)
 ```
 
 ### Paralelismo por fase
@@ -956,7 +957,8 @@ C-42 bootstrap-docs-sync (C-39, C-40, C-41)
 
 ## FASE 15 — Sincronizacion documental
 
-> C-42 alinea la documentacion operativa con el arranque de la Fase 1.
+> C-42 alinea la documentacion operativa con el arranque de la Fase 1. C-43 cierra la
+> deuda de rutas post-reestructuracion y completa la documentacion de `JWT_SECRET_KEY`.
 
 ### [C-42] `bootstrap-docs-sync`
 
@@ -967,9 +969,25 @@ C-42 bootstrap-docs-sync (C-39, C-40, C-41)
 - **Dependencias**: `C-39`, `C-40`, `C-41`
 - **Governance**: BAJO
 - **Leer antes**:
-  - `openspec/changes/c-42-bootstrap-docs-sync/proposal.md`
+  - `openspec/changes/archive/2026-09-20-c-42-bootstrap-docs-sync/proposal.md`
   - `openspec/specs/local-bootstrap/spec.md`
   - `openspec/specs/cost-readiness/spec.md`
+
+### [C-43] `docs-restructure-sync`
+
+- **Estado**: `[x]` completado, verificado y archivado (2026-09-21 — `openspec/changes/archive/2026-09-21-c-43-docs-restructure-sync`; 24/24 tareas, 20 tests estructurales nuevos, 457 passed, 32/32 specs validos)
+- **Scope**:
+  - Cerrar la deuda de rutas post-reestructuracion (c-24 movio el modulo de `Gestion_Incidentes/` a `App/Backend/`): reemplazar las referencias obsoletas en `docs/operational-guide.md`, `docs/troubleshooting.md`, `docs/como_cargar_datos_corpus.md`, `docs/diagrams/componentes.md`, `docs/parameters_gemini.md`, `docs/pseudonymization.md` y `docs/anexo_c_esquema_bd.md`, verificando cada destino contra el repo real.
+  - Preservar y anotar la narrativa historica de `docs/security-hardening.md` (el archivo estaba realmente en `Gestion_Incidentes/.env`); el hecho no se reescribe.
+  - Completar la documentacion de entorno: agregar `JWT_SECRET_KEY` (clave de firma HS256) a la tabla de variables del `README.md` y al bloque dotenv de la seccion 1.2 de `docs/operational-guide.md`.
+  - Test estructural `App/Backend/tests/test_docs_restructure_sync.py` con control negativo del token obsoleto.
+  - Fuera de alcance: `docs/Tesis/**` y el docstring de `App/Backend/scripts/export_openapi.py` (queda como observacion para un change de scripts).
+- **Dependencias**: `C-42`
+- **Governance**: BAJO
+- **Leer antes**:
+  - `openspec/changes/archive/2026-09-21-c-43-docs-restructure-sync/proposal.md`
+  - `openspec/specs/project-documentation/spec.md`
+  - `docs/operational-guide.md`
 
 ---
 
@@ -999,7 +1017,8 @@ C-42 bootstrap-docs-sync (C-39, C-40, C-41)
 | Infra: CI/CD | COMPLETO | .github/workflows/ci.yml (C-09); incluye la suite y el CLI del preflight (C-41) |
 | Infra: arranque | COMPLETO | scripts/up.sh / up.ps1 + Makefile (C-28); preflight de entorno y de costo (C-41) |
 | Docs: anexos A-G | COMPLETO | C-10 documentation-annexes |
-| Docs: guia operativa | COMPLETO | C-42 alinea README y guia operativa con el arranque (archivado) |
+| Docs: guia operativa | COMPLETO | C-42 alinea README y guia operativa con el arranque; C-43 agrega `JWT_SECRET_KEY` a las tablas de entorno (ambos archivados) |
+| Docs: rutas post-reestructuracion | COMPLETO | C-43 reemplaza `Gestion_Incidentes/` por `App/Backend/` en 7 documentos y anota la narrativa historica (archivado) |
 | Auth: JWT Bearer | COMPLETO | C-15 jwt-auth-backend-frontend |
 | KB: knowledge-base | ACTUALIZADA | C-14 kb-sync-implementation-state |
 | Twilio: TwiML script | COMPLETO | C-16 twilio-twiml-script |
@@ -1009,7 +1028,7 @@ C-42 bootstrap-docs-sync (C-39, C-40, C-41)
 | Backup scripts: PostgreSQL | IMPLEMENTADO | C-26 — scripts/backup.sh y scripts/backup.ps1 con rotacion de 7 dias |
 | N8N retention: 30 dias | CONFIGURADO | C-26 — EXECUTIONS_DATA_PRUNE y EXECUTIONS_DATA_MAX_AGE en docker-compose.yml |
 
-Tabla reconciliada con el estado real el 2026-09-20: C-14..C-42 quedaron documentados en las FASE 12-15.
+Tabla reconciliada con el estado real el 2026-09-21: C-14..C-43 quedaron documentados en las FASE 12-15.
 
 Cambios que NO estan en el roadmap original porque se implementaron durante el desarrollo:
 - Clasificador hibrido (completo)
@@ -1027,7 +1046,7 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 
 ## Primer change recomendado
 
-Todos los changes estan implementados y archivados (C-01 a C-42; C-21 no existe). No hay
+Todos los changes estan implementados y archivados (C-01 a C-43; C-21 no existe). No hay
 ningun change activo.
 
 El proximo trabajo de mayor valor es la Fase 2 del pipeline, todavia sin change abierto:
@@ -1038,4 +1057,8 @@ El proximo trabajo de mayor valor es la Fase 2 del pipeline, todavia sin change 
 2. Cablear `tiempo_automatizado_s` al corpus de evaluacion (hoy `evaluation/corpus.py`
    rechaza el corpus real porque los tiempos automatizados estan nulos).
 
-Para abrir el primero: `/opsx:propose c-43-<nombre>`.
+Deuda menor pendiente (no bloqueante):
+- El docstring de `App/Backend/scripts/export_openapi.py` aun menciona `Gestion_Incidentes` (fuera del alcance de C-43; corresponde a un change de scripts si se desea).
+- Tesis post-pipeline: reconciliar cap. 7 con el corpus real y corregir 4.3/4.8/cap. 11.
+
+Para abrir el primero: `/opsx:propose c-44-<nombre>`.
