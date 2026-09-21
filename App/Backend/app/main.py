@@ -47,6 +47,8 @@ from app.config.settings import get_settings
 from app.core.database import engine
 from app.core.error_handlers import register_error_handlers
 from app.core.logging import configure_logging, get_logger
+from app.cost_guard.config import CostGuardConfig
+from app.cost_guard.posture import log_cost_guard_posture
 from app.routes import register_routes
 
 _middleware_logger = get_logger(__name__)
@@ -139,6 +141,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """
     # ── Startup ───────────────────────────────────────────────────────────────
     configure_logging()
+    # Postura efectiva de la guarda de costo (c-45): registra habilitacion,
+    # presupuesto, ventanas, costos unitarios, tasas y politicas al arranque.
+    log_cost_guard_posture(CostGuardConfig.from_settings(get_settings()))
     yield
     # ── Shutdown ──────────────────────────────────────────────────────────────
     # Cerrar el cliente compartido de Gemini (BE B7) antes de liberar el pool

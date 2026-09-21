@@ -82,6 +82,22 @@ services:
       N8N_WEBHOOK_URL: http://n8n:5678/webhook/notificacion-clasificacion
       # El prompt se monta desde la raíz del repo (ver volumes abajo)
       GEMINI_PROMPT_PATH: /app/docs/prompt_gemini.txt
+      # Secreto compartido de la guarda de costo en runtime (c-45). Fuente UNICA:
+      # el .env de la RAIZ del repo. Se inyecta TAMBIEN en n8n con la misma
+      # interpolacion, de modo que backend y n8n no pueden divergir. En el stack
+      # Docker este valor prevalece sobre el de App/Backend/.env (que se usa para
+      # correr el backend fuera de compose). Vacio = endpoints de guarda cerrados.
+      COST_GUARD_SHARED_SECRET: ${COST_GUARD_SHARED_SECRET:-}
+      # Uvicorn confia en los headers reenviados por el proxy para reconstruir la
+      # URL publica (W1 de c-45): sin esto, `request.url` detras del Nginx del
+      # stack resuelve `http://` y la firma X-Twilio-Signature (calculada por
+      # Twilio sobre la URL https publica) nunca valida -> 401. Es seguro confiar
+      # en `*` porque el puerto 8000 del backend NO se publica al host (solo
+      # Nginx expone 80/443) y Nginx sobreescribe X-Forwarded-Proto con $scheme,
+      # de modo que un cliente externo no puede falsificar el esquema. Para
+      # fijar una subred de proxy concreta, sobreescribir FORWARDED_ALLOW_IPS en
+      # el .env de la raiz (nunca dejarlo vacio: deshabilitaria la confianza).
+      FORWARDED_ALLOW_IPS: ${FORWARDED_ALLOW_IPS:-*}
     # Backend is accessed exclusively through the nginx reverse proxy on port 443.
     # The internal port 8000 is NOT published to the host.
     volumes:
@@ -112,6 +128,12 @@ services:
       N8N_BASIC_AUTH_PASSWORD: ${N8N_BASIC_AUTH_PASSWORD:-n8n_local_dev}
       # Variable de entorno disponible en los nodos del workflow como $env.BACKEND_URL
       BACKEND_URL: http://backend:8000
+      # Secreto compartido de la guarda de costo en runtime (c-45). MISMA variable
+      # del .env de la RAIZ que recibe el backend (fuente unica): el nodo
+      # 'Guard de costo' lo envia como $env.COST_GUARD_SHARED_SECRET en el header
+      # X-Cost-Guard-Secret. Si queda vacio, el endpoint de reserva responde 401 y
+      # el workflow degrada a revision humana (fail-closed).
+      COST_GUARD_SHARED_SECRET: ${COST_GUARD_SHARED_SECRET:-}
       # Destinatario de la notificacion de revision humana (nodo
       # 'Notificar operador designado'). Disponible en los nodos como
       # $env.OPERATOR_EMAIL. El placeholder NO es una direccion real.

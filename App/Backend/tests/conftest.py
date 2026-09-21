@@ -53,6 +53,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 from app.core.database import Base, get_db_session
 from app.core.security import get_current_user
+from app.cost_guard.dependencies import get_cost_guard
 from app.main import create_app
 from app.models.catalog import CanalOrigen, Estado, Sector
 from app.models.user import User
@@ -386,6 +387,10 @@ async def pg_client(pg_engine):
         return User(id=1, username="test_user", hashed_password="", is_active=True)
     app.dependency_overrides[get_current_user] = override_auth
 
+    # Guarda de costo deshabilitada por defecto en la suite offline: se inyecta
+    # None para no tocar PostgreSQL ni alterar el comportamiento existente.
+    app.dependency_overrides[get_cost_guard] = lambda: None
+
     # Mock N8N webhook to avoid external HTTP calls
     with patch(
         "app.services.incidente_service.notify_n8n",
@@ -500,6 +505,10 @@ async def client(engine):
     async def override_auth():
         return User(id=1, username="test_user", hashed_password="", is_active=True)
     app.dependency_overrides[get_current_user] = override_auth
+
+    # Guarda de costo deshabilitada por defecto en la suite offline: se inyecta
+    # None para no tocar PostgreSQL ni alterar el comportamiento existente.
+    app.dependency_overrides[get_cost_guard] = lambda: None
 
     async with AsyncClient(
         transport=ASGITransport(app=app),

@@ -96,6 +96,46 @@ class Settings(BaseSettings):
     # el reloj del host; una tolerancia amplia encubriría datos inválidos.
     timing_future_tolerance_seconds: int = 30
 
+    # ── Guarda de costo en runtime (c-45) ─────────────────────────────────────
+    # Tope de gasto pago de las tres superficies (Gemini backend, Gemini n8n y
+    # transcripcion Twilio) con una bolsa GLOBAL compartida. Default conservador
+    # HABILITADO, sobrescribible por .env/Settings. Los costos unitarios son
+    # ESTIMACIONES configurables, NO contabilidad exacta: el objetivo es acotar
+    # el gasto con un tope determinista, no medir tokens ni duraciones reales.
+    # Los defaults de costo unitario no estan verificados contra precios vigentes.
+    cost_guard_enabled: bool = True
+    cost_guard_budget_usd: float = 10.0           # bolsa global semanal (USD)
+    cost_guard_budget_window_seconds: int = 604800  # 7 dias (ventana tumbling)
+    cost_guard_unit_cost_backend_gemini_usd: float = 0.0005   # ESTIMACION por incidente
+    cost_guard_unit_cost_n8n_gemini_usd: float = 0.0015       # ESTIMACION por ejecucion
+    cost_guard_unit_cost_twilio_transcription_usd: float = 0.05  # ESTIMACION por llamada
+    cost_guard_rate_limit_calls: int = 30         # rate global de llamadas pagas
+    cost_guard_rate_window_seconds: int = 3600    # ventana del rate global
+    cost_guard_caller_rate_limit_calls: int = 3   # rate por numero de origen
+    cost_guard_caller_rate_window_seconds: int = 3600  # ventana del rate por origen
+    cost_guard_degradation_policy: str = "deterministic_review"  # vs "hard_block"
+    # Politica ante almacen caido. El default RESUELTO es "fail_closed". El valor
+    # "fail_open" permite la llamada paga sin tope y solo debe usarse de forma
+    # deliberada; cualquier valor distinto de "fail_open" se trata como fail_closed.
+    cost_guard_store_failure_policy: str = "fail_closed"         # vs "fail_open"
+    # Si True, ademas del evento estructurado obligatorio se dispara la
+    # notificacion externa al webhook de N8N (N8N_WEBHOOK_URL) cuando el almacen
+    # cae. El evento estructurado se emite SIEMPRE (observabilidad).
+    cost_guard_alert_enabled: bool = True
+    # Secreto compartido OBLIGATORIO para autenticar los endpoints de guarda
+    # (header `X-Cost-Guard-Secret`): el endpoint de reserva que consume n8n y el
+    # webhook de voz pre-llamada de Twilio. Si queda vacio, los endpoints
+    # RECHAZAN toda peticion con HTTP 401 y se emite una advertencia al arrancar:
+    # no existe configuracion con la guarda habilitada y los endpoints abiertos.
+    # El secreto NUNCA se acepta por query string (se registraria en los logs).
+    cost_guard_shared_secret: str = ""
+    # Auth token de la cuenta de Twilio. Cuando esta configurado, el webhook de
+    # voz exige la firma `X-Twilio-Signature` (HMAC-SHA1, ver
+    # app/cost_guard/twilio_signature.py). Cuando falta (credencial pendiente),
+    # se omite la validacion de firma pero el secreto compartido sigue siendo
+    # obligatorio: el endpoint nunca queda abierto.
+    twilio_auth_token: str = ""
+
     # ── Logging estructurado ──────────────────────────────────────────────────
     log_level: str = "INFO"        # Nivel mínimo de emisión de eventos
     log_format: str = "json"       # "json" para producción; "console" para desarrollo

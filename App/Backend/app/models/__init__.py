@@ -6,6 +6,7 @@ from app.models.asociaciones import (
 )
 from app.models.catalog import CanalOrigen, Estado, Sector
 from app.models.clasificacion_log import ClasificacionLog
+from app.models.costo_guarda_contador import CostoGuardaContador
 from app.models.incidente import Incidente, PrioridadEnum
 from app.models.user import User
 
@@ -18,6 +19,7 @@ __all__ = [
     "Incidente",
     "PrioridadEnum",
     "ClasificacionLog",
+    "CostoGuardaContador",
     "User",
     "incidente_sector_adicional",
     "clasificacion_sector_predicho",

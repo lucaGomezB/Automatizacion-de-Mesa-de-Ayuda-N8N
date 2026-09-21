@@ -10,6 +10,23 @@
         "title": "AgruparPorEnum",
         "type": "string"
       },
+      "Body_twilio_voice_webhook_api_v1_cost_guard_twilio_voice_post": {
+        "properties": {
+          "from_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From Number"
+          }
+        },
+        "title": "Body_twilio_voice_webhook_api_v1_cost_guard_twilio_voice_post",
+        "type": "object"
+      },
       "CanalOrigenRead": {
         "description": "Proyección de solo lectura del canal de ingreso del incidente.\n\nInforma al consumidor de la API a través de qué medio fue recibido\nel reporte: correo electrónico, formulario web o llamada telefónica.",
         "properties": {
@@ -223,6 +240,65 @@
           }
         },
         "title": "ClasificacionValidar",
+        "type": "object"
+      },
+      "CostGuardReserveRequest": {
+        "description": "Solicitud de reserva de una llamada paga de la superficie n8n.",
+        "properties": {
+          "caller": {
+            "anyOf": [
+              {
+                "maxLength": 32,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Numero de origen CRUDO cuando esta disponible (telefonia).",
+            "title": "Caller"
+          },
+          "provider": {
+            "const": "n8n_gemini",
+            "default": "n8n_gemini",
+            "enum": [
+              "n8n_gemini"
+            ],
+            "title": "Provider",
+            "type": "string"
+          }
+        },
+        "title": "CostGuardReserveRequest",
+        "type": "object"
+      },
+      "CostGuardReserveResponse": {
+        "description": "Decision de la guarda: permitir o denegar con causa.",
+        "properties": {
+          "allowed": {
+            "title": "Allowed",
+            "type": "boolean"
+          },
+          "cause": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cause"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          }
+        },
+        "required": [
+          "allowed",
+          "provider"
+        ],
+        "title": "CostGuardReserveResponse",
         "type": "object"
       },
       "EstadoRead": {
@@ -1111,6 +1187,131 @@
         "summary": "Registrar la validación humana de una clasificación",
         "tags": [
           "Clasificaciones"
+        ]
+      }
+    },
+    "/api/v1/cost-guard/reserve": {
+      "post": {
+        "description": "Evalua la guarda antes de invocar al AI Agent de n8n.\n\nExige el header `X-Cost-Guard-Secret`. Responde 200 con la decision en el\ncuerpo: `allowed` en true permite continuar; en false indica derivar a\nrevision humana. El flujo de n8n rutea segun `allowed` y NO invoca al AI\nAgent cuando es false.",
+        "operationId": "reserve_cost_guard_api_v1_cost_guard_reserve_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Cost-Guard-Secret",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Cost-Guard-Secret"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CostGuardReserveRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CostGuardReserveResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Header `X-Cost-Guard-Secret` ausente o distinto, o `COST_GUARD_SHARED_SECRET` no configurado (fail-closed)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Evaluar la guarda de costo antes de una llamada paga",
+        "tags": [
+          "Cost Guard"
+        ]
+      }
+    },
+    "/api/v1/cost-guard/twilio/voice": {
+      "post": {
+        "description": "Webhook que Twilio consulta ANTES de grabar y transcribir.\n\nSe autentica con la firma `X-Twilio-Signature`, exigida siempre que\n`TWILIO_AUTH_TOKEN` este configurado; si el token falta, responde 401\n(fail-closed) para no quedar abierto. NO usa el header\n`X-Cost-Guard-Secret` porque Twilio no puede enviar headers personalizados.\n\nPermite: responde TwiML con `<Record transcribe=\"true\">`. Deniega: responde\nTwiML con `<Say>` + `<Hangup/>`, de modo que NO se grabe ni se transcriba.\nLa reserva es de una unidad del costo unitario de transcripcion por llamada\nconcedida (la duracion se desconoce al inicio).",
+        "operationId": "twilio_voice_webhook_api_v1_cost_guard_twilio_voice_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Twilio-Signature",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Twilio-Signature"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_twilio_voice_webhook_api_v1_cost_guard_twilio_voice_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "text/xml": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Firma `X-Twilio-Signature` ausente o invalida, o `TWILIO_AUTH_TOKEN` no configurado (fail-closed)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Webhook de voz pre-llamada de Twilio (TwiML)",
+        "tags": [
+          "Cost Guard"
         ]
       }
     },

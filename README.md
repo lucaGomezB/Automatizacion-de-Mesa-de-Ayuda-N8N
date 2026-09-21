@@ -97,6 +97,39 @@ Editar `App/Backend/.env` y completar:
 | `PSEUDONYMIZATION_ENCRYPTION_KEY` | Clave Fernet de 32 bytes en base64url (generar con `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`) |
 | `JWT_SECRET_KEY`                  | Clave de firma HS256 de los tokens JWT (generar con `python -c "import secrets; print(secrets.token_urlsafe(32))"`) |
 | `DATABASE_URL`                    | Ya configurada en `.env.example` para el compose; no cambiar el host |
+| `COST_GUARD_SHARED_SECRET`        | Secreto compartido OBLIGATORIO del endpoint de reserva que consume n8n (`POST /api/v1/cost-guard/reserve`). Se envía en el header `X-Cost-Guard-Secret`; nunca por query string. En el stack Docker la fuente única es el `.env` de la raíz (docker-compose lo inyecta en backend y n8n). Si queda vacío, el endpoint responde HTTP 401 y el arranque advierte `cost_guard_secret_missing` |
+
+La guarda de costo en runtime viene **habilitada por defecto** con un default conservador. Todas
+sus variables son opcionales y se sobrescriben por `.env`:
+
+| Variable                                    | Default     | Descripción |
+|---------------------------------------------|-------------|-------------|
+| `COST_GUARD_ENABLED`                        | `true`      | Habilita el enforcement del gasto pago |
+| `COST_GUARD_BUDGET_USD`                     | `10.0`      | Bolsa GLOBAL compartida por ventana (USD) |
+| `COST_GUARD_BUDGET_WINDOW_SECONDS`          | `604800`    | Ventana del presupuesto (7 días) |
+| `COST_GUARD_UNIT_COST_BACKEND_GEMINI_USD`   | `0.0005`    | Costo unitario ESTIMADO por incidente (Gemini backend) |
+| `COST_GUARD_UNIT_COST_N8N_GEMINI_USD`       | `0.0015`    | Costo unitario ESTIMADO por ejecución (AI Agent de n8n) |
+| `COST_GUARD_UNIT_COST_TWILIO_TRANSCRIPTION_USD` | `0.05`  | Costo unitario ESTIMADO por llamada (transcripción Twilio) |
+| `COST_GUARD_RATE_LIMIT_CALLS`               | `30`        | Límite de llamadas pagas por ventana (global) |
+| `COST_GUARD_RATE_WINDOW_SECONDS`            | `3600`      | Ventana del rate global |
+| `COST_GUARD_CALLER_RATE_LIMIT_CALLS`        | `3`         | Límite de llamadas pagas por número de origen |
+| `COST_GUARD_CALLER_RATE_WINDOW_SECONDS`     | `3600`      | Ventana del rate por origen |
+| `COST_GUARD_DEGRADATION_POLICY`             | `deterministic_review` | `deterministic_review` o `hard_block` |
+| `COST_GUARD_STORE_FAILURE_POLICY`           | `fail_closed` | `fail_closed` o `fail_open`. `fail_open` permite la llamada paga sin tope cuando el almacén cae: usar solo de forma deliberada. Cualquier valor distinto de `fail_open` se trata como `fail_closed` |
+| `COST_GUARD_ALERT_ENABLED`                  | `true`      | Notificación externa adicional (webhook N8N) del fail-closed. El evento estructurado `cost_guard_store_unavailable` se emite SIEMPRE |
+| `COST_GUARD_SHARED_SECRET`                  | (vacío)     | Secreto compartido OBLIGATORIO del endpoint de reserva de n8n (header `X-Cost-Guard-Secret`). Vacío = endpoint cerrado (HTTP 401) y advertencia al arrancar. Fuente única en Docker: `.env` de la raíz |
+| `TWILIO_AUTH_TOKEN`                         | (vacío)     | Auth token de Twilio. Con token se exige `X-Twilio-Signature` (HMAC-SHA1) en el webhook de voz; sin token el webhook responde 401 (fail-closed) y el arranque advierte `cost_guard_twilio_token_missing`. Cargar el valor real al activar el canal |
+
+> Los costos unitarios son ESTIMACIONES configurables, no contabilidad exacta: acotan el gasto con
+> un tope determinista y se ajustan por `.env`. El detalle operativo está en
+> [`docs/operational-guide.md`](docs/operational-guide.md).
+>
+> **Detrás del proxy Nginx (stack Docker)**: el backend confía en `X-Forwarded-Proto` del proxy
+> (`FORWARDED_ALLOW_IPS`, default `*` en `docker-compose.yml`) para reconstruir la URL pública
+> `https://…` sobre la que Twilio calcula `X-Twilio-Signature`. Es seguro porque el puerto 8000 no
+> se publica al host y Nginx sobreescribe el header. Al cargar `TWILIO_AUTH_TOKEN`, la URL pública
+> configurada en Twilio debe coincidir exactamente con
+> `https://<host>/api/v1/cost-guard/twilio/voice` (ver `docs/operational-guide.md` §11.6).
 
 ### 3. Generar los certificados TLS
 

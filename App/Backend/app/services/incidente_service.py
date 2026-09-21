@@ -22,6 +22,7 @@ Patrón de diseño:
 
 import asyncio
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -48,6 +49,9 @@ from app.repositories.incidente_repository import IncidenteRepository
 from app.repositories.sector_repository import SectorRepository
 from app.schemas.clasificacion import ClasificacionResult
 from app.schemas.incidente import ClasificacionPrecalculada, IncidenteCreate, IncidenteUpdate
+
+if TYPE_CHECKING:
+    from app.cost_guard.guard import CostGuard
 
 logger = get_logger(__name__)
 
@@ -88,6 +92,7 @@ class IncidenteService:
         self,
         session: AsyncSession,
         classifier: HybridClassifier | None = None,
+        cost_guard: "CostGuard | None" = None,
     ) -> None:
         """
         Inicializa el servicio con sus dependencias.
@@ -98,13 +103,15 @@ class IncidenteService:
         Args:
             session:    Sesión de base de datos activa para la solicitud actual.
             classifier: Instancia del clasificador híbrido (opcional; usa la real por defecto).
+            cost_guard: Guarda de costo en runtime (opcional). Se inyecta en el
+                        clasificador híbrido para enforcar el gasto antes de Gemini.
         """
         self._incidente_repo = IncidenteRepository(session)
         self._sector_repo = SectorRepository(session)
         self._estado_repo = EstadoRepository(session)
         self._canal_repo = CanalOrigenRepository(session)
         self._clasificacion_repo = ClasificacionRepository(session)
-        self._classifier = classifier or HybridClassifier()
+        self._classifier = classifier or HybridClassifier(cost_guard=cost_guard)
         # Referencia a la sesión para resolver colisiones de unicidad
         # (IntegrityError) en la idempotencia del alta (C-33, D4).
         self._session = session

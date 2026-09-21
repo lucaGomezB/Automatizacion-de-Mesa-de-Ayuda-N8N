@@ -62,6 +62,33 @@ PSEUDONYMIZATION_ENCRYPTION_KEY=<clave-generada>
 # Clave de firma HS256 de los tokens JWT
 # Generar con: python -c "import secrets; print(secrets.token_urlsafe(32))"
 JWT_SECRET_KEY=<clave-generada>
+
+# Guarda de costo en runtime (opcional; viene habilitada con defaults conservadores)
+# La bolsa es GLOBAL y compartida por las tres superficies pagas (Gemini backend,
+# AI Agent de n8n y transcripcion Twilio). Los costos unitarios son ESTIMACIONES.
+# COST_GUARD_ENABLED=true
+# COST_GUARD_BUDGET_USD=10.0
+# COST_GUARD_BUDGET_WINDOW_SECONDS=604800
+# COST_GUARD_UNIT_COST_BACKEND_GEMINI_USD=0.0005
+# COST_GUARD_UNIT_COST_N8N_GEMINI_USD=0.0015
+# COST_GUARD_UNIT_COST_TWILIO_TRANSCRIPTION_USD=0.05
+# COST_GUARD_RATE_LIMIT_CALLS=30
+# COST_GUARD_RATE_WINDOW_SECONDS=3600
+# COST_GUARD_CALLER_RATE_LIMIT_CALLS=3
+# COST_GUARD_CALLER_RATE_WINDOW_SECONDS=3600
+# COST_GUARD_DEGRADATION_POLICY=deterministic_review
+# COST_GUARD_STORE_FAILURE_POLICY=fail_closed
+# COST_GUARD_ALERT_ENABLED=true
+# OBLIGATORIO para el endpoint de reserva que consume n8n: se envia en el header
+# X-Cost-Guard-Secret. En el stack Docker la fuente unica es el .env de la RAIZ
+# (docker-compose lo inyecta tambien en n8n); ver seccion 11.6. Si queda vacio,
+# el endpoint responde HTTP 401 y el arranque advierte cost_guard_secret_missing.
+# COST_GUARD_SHARED_SECRET=<secreto-compartido-del-endpoint-de-guarda>
+# Auth token de Twilio. Habilita la validacion de la firma X-Twilio-Signature en
+# el webhook de voz: con token, toda peticion sin firma valida recibe 401; sin
+# token, el webhook responde 401 (fail-closed) y el arranque advierte
+# cost_guard_twilio_token_missing. Cargar el valor real al activar el canal.
+# TWILIO_AUTH_TOKEN=<auth-token-de-twilio>
 ```
 
 > **Importante**: nunca commitear el archivo `.env` con credenciales reales.
@@ -496,4 +523,174 @@ Los instantes se exponen en la representación de lectura del incidente
 (`ingresado_en`, `persistido_en`, `latencia_e2e_ms`, `latencia_anomala`). El
 análisis debe reportarse **por canal**, porque los puntos de ingreso no son
 homogéneos.
+
+---
+
+## 11. Guarda de costo en runtime (c-45)
+
+La guarda acota el gasto de las TRES superficies pagas con una bolsa GLOBAL
+compartida, costo unitario por superficie y límites de tasa. Viene **habilitada
+por defecto** con un default conservador (USD 10 por semana, fail-closed).
+
+### 11.1 Postura al arranque
+
+Al iniciar el backend se emite el evento estructurado `cost_guard_posture` con la
+postura efectiva: habilitada/deshabilitada, presupuesto, ventana, costos unitarios
+por superficie, tasas (global y por origen) y políticas de degradación y de store.
+Un operador puede verificar la configuración sin inspeccionar el código.
+
+Las variables son las mismas que documenta `README.md` (sección "Configurar las
+variables de entorno"): `COST_GUARD_ENABLED`, `COST_GUARD_BUDGET_USD`,
+`COST_GUARD_BUDGET_WINDOW_SECONDS`, `COST_GUARD_UNIT_COST_BACKEND_GEMINI_USD`,
+`COST_GUARD_UNIT_COST_N8N_GEMINI_USD`, `COST_GUARD_UNIT_COST_TWILIO_TRANSCRIPTION_USD`,
+`COST_GUARD_RATE_LIMIT_CALLS`, `COST_GUARD_RATE_WINDOW_SECONDS`,
+`COST_GUARD_CALLER_RATE_LIMIT_CALLS`, `COST_GUARD_CALLER_RATE_WINDOW_SECONDS`,
+`COST_GUARD_DEGRADATION_POLICY`, `COST_GUARD_STORE_FAILURE_POLICY`,
+`COST_GUARD_ALERT_ENABLED` y `COST_GUARD_SHARED_SECRET`.
+
+### 11.2 Enforcement y degradación
+
+- **Backend (Gemini)**: la guarda se evalúa antes de invocar a Gemini. Si deniega,
+  el `HybridClassifier` degrada a determinístico con `requiere_revision_humana=true`
+  y NUNCA invoca al proveedor pago. La clasificación precalculada y el cortocircuito
+  determinístico no consultan la guarda ni consumen presupuesto ni tasa.
+- **n8n (AI Agent)**: el nodo `Guard de costo` llama a
+  `POST /api/v1/cost-guard/reserve`; el IF `Guard permite?` deriva a
+  `Derivar a revision humana` cuando la guarda deniega (confianza 0.0), sin invocar
+  al agente. Un error del endpoint deriva igual (fail-closed).
+- **Twilio (transcripción)**: la URL de voz del número debe apuntar a
+  `POST /api/v1/cost-guard/twilio/voice`. Si la guarda permite, responde TwiML con
+  `<Record transcribe="true">`; si deniega, responde `<Say>` + `<Hangup/>`, de modo
+  que NO se grabe ni se transcriba. La reserva es una unidad del costo unitario de
+  transcripción por llamada concedida (la duración se desconoce al inicio). El
+  endpoint se autentica con la firma `X-Twilio-Signature` y responde 401 hasta que
+  se cargue `TWILIO_AUTH_TOKEN` (ver §11.6).
+
+### 11.3 Fail-closed y notificación
+
+Si el almacén de contadores (PostgreSQL) no responde durante una evaluación, la
+guarda aplica la política `COST_GUARD_STORE_FAILURE_POLICY` (default
+`fail_closed`): deniega la llamada paga, degrada de forma segura (backend
+determinístico + revisión humana; n8n deriva; Twilio cuelga) y emite el evento
+ERROR `cost_guard_store_unavailable` (causa, superficie, ventana, límite, caller
+y clase de error; sin secretos). El evento estructurado se emite SIEMPRE.
+
+El valor `fail_open` permite la llamada paga SIN tope cuando el almacén cae: es
+peligroso y solo debe usarse de forma deliberada; cualquier valor distinto de
+`fail_open` se trata como `fail_closed`. Adicionalmente, con
+`COST_GUARD_ALERT_ENABLED=true` se dispara una notificación externa best-effort
+al webhook de N8N (`N8N_WEBHOOK_URL`) además del evento estructurado; su fallo
+nunca altera la decisión de la guarda. El disparo por presupuesto o tasa emite
+`cost_guard_tripped` (causa, superficie, ventana, límite, caller).
+
+### 11.4 Cómo deshabilitarla
+
+El rollback operativo inmediato es `COST_GUARD_ENABLED=false` en
+`App/Backend/.env` y reiniciar el backend. El rollback estructural es
+`alembic downgrade 006` (dropea la tabla `costo_guarda_contador`, cuyos contadores
+son efímeros).
+
+### 11.5 Número de origen crudo
+
+La guarda registra el número de origen CRUDO (parámetro `From` de Twilio) como clave
+del contador de tasa por origen y en sus eventos estructurados, para atribución
+anti-abuso. Su retención queda acotada a la ventana del rate por origen (se purga al
+vencer). NO se incorpora a las tablas de negocio del incidente ni al corpus de
+evaluación de la tesis.
+
+### 11.6 Autenticación de los endpoints de guarda
+
+Los dos endpoints usan mecanismos distintos porque sus callers tienen capacidades
+distintas:
+
+- `POST /api/v1/cost-guard/reserve` (n8n) exige el secreto compartido en el header
+  `X-Cost-Guard-Secret`. El secreto **nunca** se acepta por query string
+  (`?secret=...`), porque las URLs quedan registradas en logs y proxies.
+  - Sin `COST_GUARD_SHARED_SECRET` configurado, el endpoint responde **HTTP 401**
+    y el arranque emite `cost_guard_secret_missing`. No existe configuración con
+    la guarda habilitada y el endpoint abierto.
+  - Con secreto configurado, un header ausente o distinto responde **HTTP 401**.
+  - **Fuente única en el stack Docker**: `COST_GUARD_SHARED_SECRET` se define en
+    el `.env` de la RAÍZ del repo. `docker-compose.yml` lo inyecta con la misma
+    interpolación tanto en el backend como en n8n (el nodo `Guard de costo` lo
+    envía como `$env.COST_GUARD_SHARED_SECRET`), de modo que ambos servicios no
+    pueden divergir. En el stack Docker este valor prevalece sobre el de
+    `App/Backend/.env`, que se usa para correr el backend fuera de compose.
+- `POST /api/v1/cost-guard/twilio/voice` (webhook de voz de Twilio) se autentica
+  **exclusivamente** con la firma `X-Twilio-Signature` (HMAC-SHA1 sobre la URL
+  completa más los parámetros de formulario ordenados, en base64). Twilio
+  Programmable Voice **no puede** adjuntar headers personalizados, por lo que el
+  header `X-Cost-Guard-Secret` no se exige en este endpoint.
+  - Con `TWILIO_AUTH_TOKEN` configurado, toda petición sin firma válida responde
+    **HTTP 401**.
+  - Sin `TWILIO_AUTH_TOKEN` (credencial pendiente), el webhook responde **HTTP
+    401** (fail-closed) y el arranque emite `cost_guard_twilio_token_missing`.
+    Antes de cargar la credencial Twilio no está configurado para llamar al
+    endpoint, por lo que rechazar no rompe el flujo; al cargar `TWILIO_AUTH_TOKEN`
+    la validación de firma se activa sin ningún otro cambio.
+
+> **URL pública detrás del proxy (resuelto en c-45, W1)**: Twilio firma la URL
+> pública configurada en su consola, así que el backend debe reconstruir esa misma
+> URL (`https://<host>/api/v1/cost-guard/twilio/voice`). El stack Docker termina TLS
+> en Nginx y le habla al backend en HTTP plano, por lo que Uvicorn debe **confiar**
+> en los headers reenviados: `docker-compose.yml` define
+> `FORWARDED_ALLOW_IPS: ${FORWARDED_ALLOW_IPS:-*}` en el servicio `backend`, y
+> Nginx reenvía `X-Forwarded-Proto: $scheme` y `Host: $host`. Sin esto, `request.url`
+> resolvía `http://…` y la firma sobre `https://…` nunca validaba (401).
+>
+> **Supuesto de confianza**: confiar en `*` es seguro en este compose porque el
+> puerto 8000 del backend **no se publica** al host (solo Nginx expone 80/443) y
+> Nginx **sobreescribe** `X-Forwarded-Proto` con `$scheme`, de modo que un cliente
+> externo no puede falsificar el esquema. Si se publica el backend o se despliega
+> fuera de este compose, sobreescribir `FORWARDED_ALLOW_IPS` con la subred del proxy
+> (nunca vacío: deshabilitaría la confianza). Al **cargar `TWILIO_AUTH_TOKEN`**, la
+> URL pública del webhook en la consola de Twilio debe coincidir exactamente con la
+> reconstruida (esquema `https`, mismo host, path y query); un desajuste produce 401
+> por firma inválida aunque la petición provenga de Twilio.
+
+### 11.7 Campo de transcripción de Twilio — NO verificado
+
+El nombre EXACTO del campo que transporta el texto de la transcripción en el evento
+`com.twilio.voice.insights.call-summary.complete` de Event Streams sigue **sin
+verificar** contra la documentación de Twilio. El recurso Call Summary no incluye
+el texto de la transcripción (es un recurso separado) y el workflow lee hoy una
+cadena de fallback **hardcodeada** en el prompt del `AI Agent`:
+
+```
+{{ $json.transcript || $json.body || $json.descripcion || $json.text || '' }}
+```
+
+Si el campo real no coincide con ninguno de esos nombres, el agente recibe una
+cadena vacía de forma silenciosa. **Acción requerida**: al activar la credencial de
+Twilio y el Event Stream, inspeccionar el payload real de una llamada y confirmar
+el nombre del primer campo; ajustarlo en el nodo `AI Agent` de `n8n/workflow.json`
+(y en `docs/n8n-workflow-guide.md`). El campo es configurable solo por este cambio
+manual en el workflow; no hay variable de entorno para él.
+
+### 11.8 Reproducibilidad de la suite de integración PostgreSQL
+
+El subconjunto de integración (`pytest -m integration`) requiere PostgreSQL y corre
+DDL destructivo contra una base DESCARTABLE (`mesa_de_ayuda_test`). En hosts donde
+el volumen Docker nombrado `mesa_local_postgres_data` fue inicializado con otra
+contraseña (`mesa:mesa` en lugar de `mesa:mesa_local_dev`, o al revés), la
+autenticación del host falla con `password authentication failed for user "mesa"` y
+los 25 tests de integración quedan en error de fixture. Es deriva de entorno, no un
+defecto de código.
+
+**Recuperación segura (sin tocar datos reales):**
+
+1. Exportar `TEST_PG_URL` con las credenciales reales del volumen, apuntando a una
+   base descartable distinta de la de la aplicación:
+   ```bash
+   TEST_PG_URL=postgresql+asyncpg://mesa:<password-real>@localhost:5433/mesa_de_ayuda_test \
+     pytest -m integration
+   ```
+2. O recrear SOLO el volumen de desarrollo (`docker compose down -v`) sabiendo que
+   borra los datos locales; nunca hacerlo contra un entorno con datos que importen.
+
+Respetar siempre la salvaguarda de `AGENTS.md`: el nombre de la base destino DEBE
+ser distinto del de la aplicación, y `TEST_PG_ALLOW_APP_DB=1` se reserva
+exclusivamente para entornos efímeros dedicados (por ejemplo, un service container
+de CI), nunca para una base con datos reales.
+
 

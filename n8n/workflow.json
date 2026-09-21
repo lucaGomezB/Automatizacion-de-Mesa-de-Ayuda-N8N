@@ -643,7 +643,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// C-33 (HIGH-1): salida terminal del refinamiento del agente pago.\n// Al agotarse el tope se persiste el incidente para revision humana\n// con confianza 0.0, SIN volver a invocar al AI Agent.\nconst item = $input.item.json;\nreturn [{\n  json: {\n    ...item,\n    confianza: 0.0,\n    requiere_revision_humana: true,\n    revision_forzada: true,\n    sector_predicho: null,\n    canal_raw: 'telefonia'\n  }\n}];\n"
+        "jsCode": "// C-33 (HIGH-1): salida terminal del refinamiento del agente pago.\n// C-45: tambien recibe la rama DENEGADA de la guarda de costo (y su salida\n// de error). Se recupera el item sellado aguas arriba para conservar la\n// descripcion/transcripcion original, que el nodo HTTP de guarda no propaga.\nconst sellado = (() => {\n  try { return $('Sellar ingreso telefonia').item.json; } catch (e) { return {}; }\n})();\nconst item = $input.item.json;\nreturn [{\n  json: {\n    ...sellado,\n    ...item,\n    confianza: 0.0,\n    requiere_revision_humana: true,\n    revision_forzada: true,\n    sector_predicho: null,\n    canal_raw: 'telefonia'\n  }\n}];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -767,6 +767,71 @@
       ],
       "id": "c33-notif-audit-0005-000000000005",
       "name": "Auditar notificacion"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.BACKEND_URL }}/api/v1/cost-guard/reserve",
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "provider": "n8n_gemini",
+          "caller": "={{ $('Sellar ingreso telefonia').item.json.From || $('Sellar ingreso telefonia').item.json.from || null }}"
+        },
+        "options": {},
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Cost-Guard-Secret",
+              "value": "={{ $env.COST_GUARD_SHARED_SECRET }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -104,
+        700
+      ],
+      "id": "c45-guard-http-0001-000000000001",
+      "name": "Guard de costo",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c45-guard-if-0001-4000-8000-000000000001",
+              "leftValue": "={{ $json.allowed }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "name": "filter.operator.true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -16,
+        700
+      ],
+      "id": "c45-guard-if-0002-4000-8000-000000000002",
+      "name": "Guard permite?"
     }
   ],
   "pinData": {},
@@ -1093,7 +1158,43 @@
       "main": [
         [
           {
+            "node": "Guard de costo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard de costo": {
+      "main": [
+        [
+          {
+            "node": "Guard permite?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Derivar a revision humana",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard permite?": {
+      "main": [
+        [
+          {
             "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Derivar a revision humana",
             "type": "main",
             "index": 0
           }

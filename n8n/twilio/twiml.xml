@@ -1,4 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+    TwiML de referencia para el canal telefonico (c-45).
+
+    Este XML ya NO se sirve como archivo estatico: la respuesta de voz la
+    genera el webhook pre-llamada del backend, que decide PERMITIR o DENEGAR
+    segun la guarda de costo:
+
+        POST /api/v1/cost-guard/reserve      -> guarda para el AI Agent de n8n
+        POST /api/v1/cost-guard/twilio/voice  -> webhook de voz pre-llamada
+
+    La URL de voz del numero de Twilio debe apuntar a
+    `https://<backend>/api/v1/cost-guard/twilio/voice` (Method: POST). El backend
+    devuelve exactamente este contenido cuando la guarda permite, y
+    `<Say>` + `<Hangup/>` cuando deniega (sin grabar ni transcribir).
+
+    Autenticacion: el webhook se valida con la firma `X-Twilio-Signature` (Twilio
+    no puede enviar headers personalizados). Con `TWILIO_AUTH_TOKEN` configurado
+    toda peticion sin firma valida recibe 401; sin token, el webhook responde 401
+    (fail-closed) hasta que se cargue la credencial.
+
+    La transcripcion se entrega por Twilio Event Streams
+    (com.twilio.voice.insights.call-summary.complete) al trigger de N8N.
+-->
 <Response>
     <Say voice="Polly.Mia-Neural" language="es-US">
         Bienvenido a la mesa de ayuda.
@@ -6,9 +29,6 @@
         Cuando termines, presiona numeral.
         Tenes hasta cuarenta y cinco segundos.
     </Say>
-    <!-- La transcripcion se entrega por Twilio Event Streams
-         (com.twilio.voice.insights.call-summary.complete) al trigger de N8N.
-         No se usa el transcribeCallback legacy ni se embebe un dominio placeholder. -->
     <Record
         maxLength="45"
         finishOnKey="#"
