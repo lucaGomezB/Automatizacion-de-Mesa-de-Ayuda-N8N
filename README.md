@@ -95,6 +95,7 @@ Editar `App/Backend/.env` y completar:
 |-----------------------------------|-------------|
 | `GEMINI_API_KEY`                  | Clave de Google Gemini (obtener en [aistudio.google.com](https://aistudio.google.com/app/apikey)) |
 | `PSEUDONYMIZATION_ENCRYPTION_KEY` | Clave Fernet de 32 bytes en base64url (generar con `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`) |
+| `JWT_SECRET_KEY`                  | Clave de firma HS256 de los tokens JWT (generar con `python -c "import secrets; print(secrets.token_urlsafe(32))"`) |
 | `DATABASE_URL`                    | Ya configurada en `.env.example` para el compose; no cambiar el host |
 
 ### 3. Generar los certificados TLS

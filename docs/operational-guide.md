@@ -40,10 +40,10 @@ git config core.hooksPath .githooks
 ### 1.2 Configurar variables de entorno
 
 ```bash
-cp Gestion_Incidentes/.env.example Gestion_Incidentes/.env
+cp App/Backend/.env.example App/Backend/.env
 ```
 
-Editar `Gestion_Incidentes/.env` y completar los valores reales:
+Editar `App/Backend/.env` y completar los valores reales:
 
 ```dotenv
 # Base de datos (se usa en el contenedor; no cambiar el host cuando se usa compose)
@@ -58,6 +58,10 @@ GEMINI_API_KEY=<tu-clave-real>
 # Clave Fernet para cifrado at-rest de descripciones (base64url de 32 bytes)
 # Generar con: python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
 PSEUDONYMIZATION_ENCRYPTION_KEY=<clave-generada>
+
+# Clave de firma HS256 de los tokens JWT
+# Generar con: python -c "import secrets; print(secrets.token_urlsafe(32))"
+JWT_SECRET_KEY=<clave-generada>
 ```
 
 > **Importante**: nunca commitear el archivo `.env` con credenciales reales.
@@ -369,7 +373,7 @@ clasificador (posible degradación del modelo o cambio de distribución de incid
 Si se agregan o modifican rutas en el backend, regenerar `docs/openapi.json`:
 
 ```bash
-cd Gestion_Incidentes
+cd App/Backend
 python scripts/export_openapi.py
 ```
 
@@ -380,7 +384,7 @@ El test de sincronía fallará en CI hasta que el archivo regenerado se commitee
 ## 6. Actualizar dependencias del backend
 
 ```bash
-# Editar Gestion_Incidentes/requirements.txt con las nuevas versiones
+# Editar App/Backend/requirements.txt con las nuevas versiones
 # Reconstruir la imagen
 docker compose build backend
 docker compose up -d backend
