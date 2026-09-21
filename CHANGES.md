@@ -82,10 +82,11 @@ C-39 e2e-timing-instrumentation (C-33, C-32)
  └── C-40 n8n-wiring-fixes (C-39)
 C-41 cost-preflight-wiring (C-36)
 
---- FASE 15: Sincronizacion documental (C-42, C-43) ---
+--- FASE 15: Sincronizacion documental (C-42, C-43, C-44) ---
 
 C-42 bootstrap-docs-sync (C-39, C-40, C-41)
 C-43 docs-restructure-sync (C-42)
+C-44 docs-evaluation-sync (C-43)
 ```
 
 ### Paralelismo por fase
@@ -989,6 +990,23 @@ C-43 docs-restructure-sync (C-42)
   - `openspec/specs/project-documentation/spec.md`
   - `docs/operational-guide.md`
 
+### [C-44] `docs-evaluation-sync`
+
+- **Estado**: `[x]` completado, verificado y archivado (2026-09-21 — `openspec/changes/archive/2026-09-21-c-44-docs-evaluation-sync`; 25/25 tareas, 12 tests estructurales/funcionales, 469 passed, 32/32 specs validos)
+- **Scope**:
+  - Corregir `docs/operational-guide.md` §8.1: invocacion real del runner `PYTHONPATH=App/Backend python -m evaluation.run_evaluation` (antes `cd evaluation; python run_evaluation.py`, que no resolvia los imports).
+  - Eliminar la §8.3 muerta (`evaluation/generate_corpus.py`, eliminado por C-27) y reemplazarla por un puntero a `docs/como_cargar_datos_corpus.md`.
+  - Documentar el gate de corrida paga (`--confirm-paid` / `EVALUATION_CONFIRM_PAID=1`, aborto con exit 2, estimacion de costo) en la guia §8 y en `evaluation/README.md`.
+  - **Bugfix**: `App/Backend/scripts/export_openapi.py` no inyectaba dummy de `JWT_SECRET_KEY` (obligatoria en `Settings`), por lo que fallaba en entorno limpio; se corrige el dummy y el docstring (rutas `Gestion_Incidentes` → `App/Backend`, ejemplo `--output`).
+  - Eliminar el `cd evaluation` engañoso en `docs/como_cargar_datos_corpus.md` §8 (invocacion del runner).
+  - Fuera de alcance: `docs/anexo_f_corpus.md` (historico correcto), `docs/Tesis/**`, el runtime de evaluacion (se documenta el gate, no se cambia).
+- **Dependencias**: `C-43`
+- **Governance**: BAJO
+- **Leer antes**:
+  - `openspec/changes/archive/2026-09-21-c-44-docs-evaluation-sync/proposal.md`
+  - `openspec/specs/project-documentation/spec.md`
+  - `openspec/specs/evaluation-framework/spec.md`
+
 ---
 
 ## Notas del analisis
@@ -1004,7 +1022,7 @@ C-43 docs-restructure-sync (C-42)
 | Backend: repositorios | COMPLETO | Patron repositorio con sesion compartida, filtros dinamicos |
 | Backend: keywords | COMPLETO | Mapa redistribuido en los 5 sectores canonicos (C-27) |
 | Backend: util n8n_webhook | EN USO | `notify_n8n()` fire-and-forget desde el servicio; apunta al webhook N8N dedicado (C-33) |
-| Backend: tests | COMPLETO | Suite offline SQLite (437 passed) + subconjunto de integracion PostgreSQL sobre base descartable (C-19/C-32) |
+| Backend: tests | COMPLETO | Suite offline SQLite (469 passed) + subconjunto de integracion PostgreSQL sobre base descartable (C-19/C-32) |
 | Backend: pseudonimizacion | COMPLETO | C-03; cifrado at-rest con Fernet |
 | Backend: migraciones | COMPLETO | Alembic; migraciones 001-006 (la 006 agrega timing e2e, C-39) |
 | Backend: auth | COMPLETO | JWT Bearer (C-15) |
@@ -1019,6 +1037,7 @@ C-43 docs-restructure-sync (C-42)
 | Docs: anexos A-G | COMPLETO | C-10 documentation-annexes |
 | Docs: guia operativa | COMPLETO | C-42 alinea README y guia operativa con el arranque; C-43 agrega `JWT_SECRET_KEY` a las tablas de entorno (ambos archivados) |
 | Docs: rutas post-reestructuracion | COMPLETO | C-43 reemplaza `Gestion_Incidentes/` por `App/Backend/` en 7 documentos y anota la narrativa historica (archivado) |
+| Docs: evaluacion y exportador OpenAPI | COMPLETO | C-44 corrige la invocacion del runner, elimina el generador inexistente de C-27, documenta el gate de corrida paga y arregla `export_openapi.py` (dummy de `JWT_SECRET_KEY` + rutas) (archivado) |
 | Auth: JWT Bearer | COMPLETO | C-15 jwt-auth-backend-frontend |
 | KB: knowledge-base | ACTUALIZADA | C-14 kb-sync-implementation-state |
 | Twilio: TwiML script | COMPLETO | C-16 twilio-twiml-script |
@@ -1028,7 +1047,7 @@ C-43 docs-restructure-sync (C-42)
 | Backup scripts: PostgreSQL | IMPLEMENTADO | C-26 — scripts/backup.sh y scripts/backup.ps1 con rotacion de 7 dias |
 | N8N retention: 30 dias | CONFIGURADO | C-26 — EXECUTIONS_DATA_PRUNE y EXECUTIONS_DATA_MAX_AGE en docker-compose.yml |
 
-Tabla reconciliada con el estado real el 2026-09-21: C-14..C-43 quedaron documentados en las FASE 12-15.
+Tabla reconciliada con el estado real el 2026-09-21: C-14..C-44 quedaron documentados en las FASE 12-15.
 
 Cambios que NO estan en el roadmap original porque se implementaron durante el desarrollo:
 - Clasificador hibrido (completo)
@@ -1046,19 +1065,26 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 
 ## Primer change recomendado
 
-Todos los changes estan implementados y archivados (C-01 a C-43; C-21 no existe). No hay
+Todos los changes estan implementados y archivados (C-01 a C-44; C-21 no existe). No hay
 ningun change activo.
 
-El proximo trabajo de mayor valor es la Fase 2 del pipeline, todavia sin change abierto:
+El proximo trabajo de mayor valor, en orden:
 
-1. Verificar en runtime (workflow N8N real) que el sello de ingreso de telefonia sobrevive
-   al `AI Agent`; hoy solo tiene verificacion estructural y el try/catch silencioso devuelve
-   null si el pairing falla, desactivando la latencia del canal pago.
-2. Cablear `tiempo_automatizado_s` al corpus de evaluacion (hoy `evaluation/corpus.py`
-   rechaza el corpus real porque los tiempos automatizados estan nulos).
+1. **Guard de costo en runtime** (`c-45-<nombre>`, a abrir): hoy NO existe ningun tope de
+   gasto, rate ni quota en runtime. El preflight de costo (C-41) es estatico y verifica
+   cableado, no limita el gasto; una vez activado el workflow con credenciales reales, las
+   llamadas pagas (Gemini por ingreso; Twilio por llamada) ocurren solas. Es el riesgo real
+   de perdida de dinero. Verificado: no hay mecanismo de rate/budget/quota en
+   `App/Backend/app/` ni en el workflow.
+2. **Fase 2 del pipeline** (`c-46-<nombre>`, sin change abierto): fidelidad de medicion, no
+   costo.
+   - Verificar en runtime (workflow N8N real) que el sello de ingreso de telefonia sobrevive
+     al `AI Agent`; hoy solo tiene verificacion estructural y el try/catch silencioso devuelve
+     null si el pairing falla, desactivando la latencia del canal pago.
+   - Cablear `tiempo_automatizado_s` al corpus de evaluacion (hoy `evaluation/corpus.py`
+     rechaza el corpus real porque los 200/200 tiempos automatizados estan nulos).
 
 Deuda menor pendiente (no bloqueante):
-- El docstring de `App/Backend/scripts/export_openapi.py` aun menciona `Gestion_Incidentes` (fuera del alcance de C-43; corresponde a un change de scripts si se desea).
 - Tesis post-pipeline: reconciliar cap. 7 con el corpus real y corregir 4.3/4.8/cap. 11.
 
-Para abrir el primero: `/opsx:propose c-44-<nombre>`.
+Para abrir el guard de runtime: `/opsx:propose c-45-<nombre>`.
