@@ -27,6 +27,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db_session
 from app.core.security import get_current_user
+from app.cost_guard.dependencies import get_cost_guard
+from app.cost_guard.guard import CostGuard
 from app.models.incidente import PrioridadEnum
 from app.models.user import User
 from app.schemas.incidente import (
@@ -44,15 +46,19 @@ router = APIRouter(prefix="/incidentes", tags=["Incidentes"])
 SessionDep = Annotated[AsyncSession, Depends(get_db_session)]
 
 
-def get_service(session: SessionDep) -> IncidenteService:
+def get_service(
+    session: SessionDep,
+    cost_guard: Annotated[CostGuard | None, Depends(get_cost_guard)] = None,
+) -> IncidenteService:
     """
     Función de fábrica del servicio para la inyección de dependencias de FastAPI.
 
     Construye el IncidenteService con la sesión de la solicitud actual,
     garantizando que todos los repositorios internos del servicio compartan
-    la misma transacción de base de datos.
+    la misma transacción de base de datos. La guarda de costo se inyecta para
+    enforcar el gasto pago antes de invocar a Gemini.
     """
-    return IncidenteService(session)
+    return IncidenteService(session, cost_guard=cost_guard)
 
 
 # Alias de tipo para inyección del servicio como dependencia

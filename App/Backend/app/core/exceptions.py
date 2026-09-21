@@ -76,6 +76,25 @@ class GeminiUnavailableError(ClassificationError):
     """
 
 
+class CostGuardTrippedError(ClassificationError):
+    """
+    La guarda de costo en runtime denegó la llamada paga.
+
+    Se lanza ANTES de invocar al proveedor pago cuando la guarda se dispara
+    (presupuesto agotado, tasa excedida o almacén de contadores no disponible).
+    El HybridClassifier lo captura y aplica la degradación configurada
+    (determinístico + revisión humana), sin invocar al proveedor pago.
+    """
+
+    def __init__(self, cause: str, provider: str | None = None) -> None:
+        super().__init__(
+            f"Cost guard tripped ({cause})",
+            {"cause": cause, "provider": provider},
+        )
+        self.cause = cause
+        self.provider = provider
+
+
 # ── Grupo: Persistencia ───────────────────────────────────────────────────────
 
 class RepositoryError(AppBaseException):

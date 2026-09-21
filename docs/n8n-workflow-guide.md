@@ -11,7 +11,9 @@
 > Gate post-POST de revisión humana — IF `Requiere revision humana` (evalúa la marca del backend)
 > + nodo `Notificar operador designado` (`$env.OPERATOR_EMAIL`); el gate pre-POST pasó a llamarse
 > `Entrada valida` (validación de entrada, no de confianza del modelo).
-> Estado: 32 nodos (29 operativos + 3 sticky notes); suite estructural `test_n8n_workflow.py` en verde.
+> C-45: runtime-cost-guard — nodo `Guard de costo` + IF `Guard permite?` antes del `AI Agent`;
+> el agente NO se invoca cuando la guarda deniega (deriva a revisión humana).
+> Estado: 34 nodos (31 operativos + 3 sticky notes); suite estructural `test_n8n_workflow.py` en verde.
 
 ## Descripción general
 
@@ -56,7 +58,49 @@ El canal telefonía limita a **2 intentos** la clasificación/refinamiento del `
   (`confianza >= 0.70 OR revision_forzada == true`), de modo que el incidente se persiste
   vía `Login operador → HTTP POST a MTM-SRU` con sector nulo y revisión humana forzada.
 
-### 2. Ciclo de vida del correo en las ramas terminales (HIGH-4)
+### 2. Guarda de costo en runtime del agente pago (C-45)
+
+> C-45 acota el gasto pago de las tres superficies (Gemini del backend, Gemini del `AI Agent`
+> y transcripción de Twilio) con una bolsa GLOBAL compartida. La guarda se define en
+> `openspec/changes/c-45-runtime-cost-guard/` y se evalúa antes de cada llamada paga.
+
+En el canal telefonía, antes del `AI Agent`:
+
+- El nodo `Guard de costo` (`httpRequest`) llama a
+  `POST {{ $env.BACKEND_URL }}/api/v1/cost-guard/reserve` con `provider = "n8n_gemini"` y el
+  caller crudo si está disponible. Se autentica con el header
+  `X-Cost-Guard-Secret: {{ $env.COST_GUARD_SHARED_SECRET }}`. **Fuente única**:
+  `COST_GUARD_SHARED_SECRET` se define en el `.env` de la RAÍZ del repo;
+  `docker-compose.yml` lo inyecta en n8n (y en el backend) con la misma
+  interpolación, de modo que ambos comparten el valor y no pueden divergir. Si
+  queda vacío, el header llega vacío, el endpoint responde 401 y el nodo deriva a
+  revisión humana (degradación silenciosa, fail-closed).
+- El IF `Guard permite?` evalúa `$json.allowed`:
+  - **True** → `AI Agent` (flujo normal).
+  - **False** → `Derivar a revision humana` (terminal, `confianza = 0.0`), SIN re-invocar al agente.
+- **Fail-closed**: el nodo declara `onError: "continueErrorOutput"`; si el backend no responde,
+  el error va a la salida 1 y también deriva a revisión humana (nunca se invoca al agente sin
+  consultar la guarda).
+
+**Costo unitario `n8n_gemini` (estimación, no contabilidad exacta)**: se reserva UNA sola vez por
+ejecución de telefonía. La estimación cubre el número acotado de invocaciones del agente: hasta
+`options.maxIterations = 2` más la invocación del bucle de refinamiento. El valor por defecto
+(`COST_GUARD_UNIT_COST_N8N_GEMINI_USD = 0.0015`) es configurable y no está verificado contra
+precios vigentes; es un tope de seguridad, no una medición de tokens reales.
+
+> **Campo de transcripción de Twilio NO verificado (c-45)**: el nombre EXACTO del campo que
+> transporta el texto de la transcripción en el evento
+> `com.twilio.voice.insights.call-summary.complete` (Event Streams) sigue sin confirmar contra la
+> documentación de Twilio. El recurso Call Summary no incluye el texto (es un recurso separado) y
+> el prompt del `AI Agent` usa una cadena de fallback hardcodeada:
+> `{{ $json.transcript || $json.body || $json.descripcion || $json.text || '' }}`. Si el campo real
+> no coincide con ninguno de esos nombres, el agente recibe una cadena vacía de forma silenciosa.
+> Al activar la credencial/Event Stream, inspeccionar el payload real de una llamada y ajustar el
+> primer nombre del fallback en el nodo `AI Agent` de `n8n/workflow.json`. No hay variable de
+> entorno para este campo; el ajuste es manual en el workflow. Ver también
+> `docs/operational-guide.md` §11.7.
+
+### 3. Ciclo de vida del correo en las ramas terminales (HIGH-4)
 
 El mensaje de Outlook se marca como leído en las ramas terminales alcanzables:
 
@@ -148,20 +192,23 @@ para el Anexo E de la tesis (C-10).
 | Posición | Nombre | Tipo | Función |
 |----------|--------|------|---------|
 | 1 | Llamada telefonica | `twilioTrigger` | Webhook de Twilio al completar la transcripción. |
-| 2 | AI Agent | `agent` (LangChain) | Parsea la transcripción con el prompt del negocio. |
-| 2b | Con el fin de enviar los datos... | `memoryRedisChat` | Memoria Redis para el AI Agent. |
-| 2c | Google Gemini Chat Model | `lmChatGoogleGemini` | Modelo de lenguaje del AI Agent. |
-| 3 | Se verifica lo que trajo la IA | `code` (JS) | Valida los 5 pasos Anexo H §H.3 (JSON, campos `sector_predicho`/`sectores_adicionales`, set canónico de 5 sectores, rango confianza) e incrementa `intento_agente`. Emite `canal_raw = "telefonia"`. |
-| 4 | La clasificacion de la IA es valida | `if` | Gate de confianza del modelo: `confianza >= 0.70`. Rama true → `Normalizar`; rama false → `Tope de refinamiento alcanzado`. |
-| 5 | Tope de refinamiento alcanzado | `if` | **[C-33]** `intento_agente < 2`. Rama true → `AI Agent`; rama false → `Derivar a revision humana`. |
-| 6 | Derivar a revision humana | `code` (JS) | **[C-33]** Terminal: `confianza = 0.0`, `revision_forzada = true`; reingresa al normalizador. |
-| 7 | Normalizar entrada del incidente | `code` (JS) | **[C-05]** Compartido — telefonia converge aquí antes del gate de entrada. |
-| 8 | Entrada valida | `if` | Compartido — gate de ENTRADA (no de confianza del modelo). |
-| 9 | Login operador | `httpRequest` | Compartido. |
-| 10 | HTTP POST a MTM-SRU | `httpRequest` | Compartido. |
-| 11 | Requiere revision humana | `if` | Compartido — gate post-POST. |
-| 12 | Notificar operador designado | `microsoftOutlook` | Compartido — notifica al operador designado. |
-| 13 | Registro de auditoria | `code` (JS) | **[C-05]** Compartido — idem canal correo. |
+| 2 | Sellar ingreso telefonia | `code` (JS) | **[C-39]** Sella `ingresado_en` en el borde del trigger, antes del agente pago. |
+| 2d | Guard de costo | `httpRequest` | **[C-45]** `POST /api/v1/cost-guard/reserve` (`provider=n8n_gemini`). Salida de error → `Derivar a revision humana` (fail-closed). |
+| 2e | Guard permite? | `if` | **[C-45]** `$json.allowed == true`. Rama true → `AI Agent`; rama false → `Derivar a revision humana`. |
+| 3 | AI Agent | `agent` (LangChain) | Parsea la transcripción con el prompt del negocio. |
+| 3b | Con el fin de enviar los datos... | `memoryRedisChat` | Memoria Redis para el AI Agent. |
+| 3c | Google Gemini Chat Model | `lmChatGoogleGemini` | Modelo de lenguaje del AI Agent. |
+| 4 | Se verifica lo que trajo la IA | `code` (JS) | Valida los 5 pasos Anexo H §H.3 (JSON, campos `sector_predicho`/`sectores_adicionales`, set canónico de 5 sectores, rango confianza) e incrementa `intento_agente`. Emite `canal_raw = "telefonia"`. |
+| 5 | La clasificacion de la IA es valida | `if` | Gate de confianza del modelo: `confianza >= 0.70`. Rama true → `Normalizar`; rama false → `Tope de refinamiento alcanzado`. |
+| 6 | Tope de refinamiento alcanzado | `if` | **[C-33]** `intento_agente < 2`. Rama true → `AI Agent`; rama false → `Derivar a revision humana`. |
+| 7 | Derivar a revision humana | `code` (JS) | **[C-33/C-45]** Terminal: `confianza = 0.0`, `revision_forzada = true`; reingresa al normalizador. Recupera el ítem sellado para conservar la transcripción. |
+| 8 | Normalizar entrada del incidente | `code` (JS) | **[C-05]** Compartido — telefonia converge aquí antes del gate de entrada. |
+| 9 | Entrada valida | `if` | Compartido — gate de ENTRADA (no de confianza del modelo). |
+| 10 | Login operador | `httpRequest` | Compartido. |
+| 11 | HTTP POST a MTM-SRU | `httpRequest` | Compartido. |
+| 12 | Requiere revision humana | `if` | Compartido — gate post-POST. |
+| 13 | Notificar operador designado | `microsoftOutlook` | Compartido — notifica al operador designado. |
+| 14 | Registro de auditoria | `code` (JS) | **[C-05]** Compartido — idem canal correo. |
 
 > **Nota sobre telefonía**: la confirmación al usuario se resuelve mediante la respuesta del
 > propio webhook de Twilio/TwiML durante la llamada. No se agrega un nodo SMS de confirmación
@@ -171,7 +218,7 @@ para el Anexo E de la tesis (C-10).
 
 Tres nodos `stickyNote` con documentación visual interna del workflow (se conservan intactos).
 
-**Total**: 29 nodos operativos + 3 `stickyNote` = 32, consistente con `n8n/workflow.json`. Las
+**Total**: 31 nodos operativos + 3 `stickyNote` = 34, consistente con `n8n/workflow.json`. Las
 tablas por canal repiten los nodos compartidos (`Normalizar entrada del incidente`,
 `Entrada valida`, `Login operador`, `HTTP POST a MTM-SRU`, `Requiere revision humana`,
 `Notificar operador designado`, `Rutear por canal de origen`, `Es correo?`, `Es web?`,

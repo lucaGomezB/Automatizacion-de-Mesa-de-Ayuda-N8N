@@ -22,14 +22,24 @@ Principio de diseño:
     facilitando el testing y la evolución futura del sistema.
 """
 
+from typing import TYPE_CHECKING
+
 from app.classifiers.base import BaseClassifier
 from app.classifiers.deterministic import DeterministicClassifier
 from app.classifiers.gemini_classifier import GeminiClassifier
 from app.config.settings import get_settings
 from app.constants import HYBRID_CACHE_VERSION
-from app.core.exceptions import GeminiTimeoutError, GeminiUnavailableError
+from app.core.exceptions import (
+    CostGuardTrippedError,
+    GeminiTimeoutError,
+    GeminiUnavailableError,
+)
 from app.core.logging import get_logger
+from app.cost_guard.constants import CAUSE_BUDGET, PROVIDER_BACKEND_GEMINI
 from app.schemas.clasificacion import ClasificacionResult
+
+if TYPE_CHECKING:
+    from app.cost_guard.guard import CostGuard
 
 logger = get_logger(__name__)
 
@@ -60,6 +70,8 @@ class HybridClassifier(BaseClassifier):
         self,
         deterministic: DeterministicClassifier | None = None,
         gemini: GeminiClassifier | None = None,
+        cost_guard: "CostGuard | None" = None,
+        degradation_policy: str | None = None,
     ) -> None:
         """
         Inicializa el pipeline con las instancias de cada etapa.
@@ -71,9 +83,22 @@ class HybridClassifier(BaseClassifier):
         Args:
             deterministic: Instancia del clasificador determinístico (opcional).
             gemini:        Instancia del clasificador Gemini (opcional).
+            cost_guard:    Guarda de costo en runtime (opcional). Se evalua
+                           ANTES de invocar a Gemini; si deniega, no se invoca
+                           al proveedor pago y se degrada de forma segura.
+            degradation_policy: politica al dispararse la guarda. `deterministic_review`
+                           (default) degrada a deterministico + revision humana;
+                           `hard_block` propaga `CostGuardTrippedError` como senal
+                           explicita. En NINGUN caso se invoca al proveedor pago.
         """
         self._deterministic = deterministic or DeterministicClassifier()
         self._gemini = gemini or GeminiClassifier()
+        self._cost_guard = cost_guard
+        self._degradation_policy = (
+            degradation_policy
+            if degradation_policy is not None
+            else get_settings().cost_guard_degradation_policy
+        )
         # Umbrales leídos de Settings para permitir ajuste sin recompilación
         self._det_threshold = get_settings().deterministic_confidence_threshold
         self._human_threshold = get_settings().human_review_threshold
@@ -131,7 +156,42 @@ class HybridClassifier(BaseClassifier):
 
         # ── Etapa 2: Clasificador Gemini ──────────────────────────────────────
         try:
+            # Guarda de costo en runtime (c-45): se evalua ANTES de invocar al
+            # proveedor pago. El cortocircuito determinista de arriba nunca
+            # llega aqui, por lo que NO consume presupuesto ni tasa.
+            if self._cost_guard is not None:
+                decision = await self._cost_guard.evaluate(
+                    provider=PROVIDER_BACKEND_GEMINI
+                )
+                if not decision.allowed:
+                    raise CostGuardTrippedError(
+                        decision.cause or CAUSE_BUDGET, PROVIDER_BACKEND_GEMINI
+                    )
             gemini_result = await self._gemini.classify(descripcion)
+        except CostGuardTrippedError as exc:
+            # Politica de bloqueo duro: propagar la senal explicita sin invocar
+            # al proveedor pago (el llamador decide rechazar/diferir).
+            if self._degradation_policy == "hard_block":
+                logger.warning(
+                    "cost_guard_hard_block",
+                    cause=exc.cause,
+                    provider=exc.provider,
+                )
+                raise
+            # Politica por defecto: degradar a deterministico + revision humana.
+            logger.warning(
+                "gemini_fallback_triggered",
+                reason=type(exc).__name__,
+                message=exc.message,
+            )
+            return ClasificacionResult(
+                sector_predicho=det_result.sector_predicho,  # Mejor estimación disponible
+                sectores_adicionales=det_result.sectores_adicionales,
+                confianza=0.0,                   # Señal explícita de fallo
+                etapa="fallback",
+                requiere_revision_humana=True,
+                respuesta_raw=None,
+            )
         except (GeminiTimeoutError, GeminiUnavailableError) as exc:
             # Falla de Gemini: retornar fallback con la categoría del determinístico
             # como mejor aproximación disponible, pero marcando revisión humana.
