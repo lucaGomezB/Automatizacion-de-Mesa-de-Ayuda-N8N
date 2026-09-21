@@ -87,6 +87,10 @@ C-41 cost-preflight-wiring (C-36)
 C-42 bootstrap-docs-sync (C-39, C-40, C-41)
 C-43 docs-restructure-sync (C-42)
 C-44 docs-evaluation-sync (C-43)
+
+--- FASE 16: Guarda de costo en runtime (2026-09-21) ---
+
+C-45 runtime-cost-guard (C-41, C-33)
 ```
 
 ### Paralelismo por fase
@@ -401,11 +405,14 @@ C-44 docs-evaluation-sync (C-43)
 | C-40 | n8n-wiring-fixes | 14 | C-39 | ALTO | — |
 | C-41 | cost-preflight-wiring | 14 | C-36 | MEDIO | — |
 | C-42 | bootstrap-docs-sync | 15 | C-39, C-40, C-41 | BAJO | — |
+| C-43 | docs-restructure-sync | 15 | C-42 | BAJO | — |
+| C-44 | docs-evaluation-sync | 15 | C-43 | BAJO | — |
+| C-45 | runtime-cost-guard | 16 | C-41, C-33 | ALTO | — |
 
-**Total**: 42 changes documentados — 41 archivados (C-01..C-41, sin C-21) mas el mantenimiento sin numero `improve-dockerfiles`, y C-42 activo (propuesto, no aplicado). C-21 no existe: no fue creado.
+**Total**: 45 changes documentados — 44 archivados (C-01..C-45, sin C-21) mas el mantenimiento sin numero `improve-dockerfiles`. No hay changes activos. C-21 no existe: no fue creado.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
-**Fases**: 1-15 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12).
+**Fases**: 1-16 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12).
 
 ---
 
@@ -1009,6 +1016,35 @@ C-44 docs-evaluation-sync (C-43)
 
 ---
 
+## FASE 16 — Guarda de costo en runtime
+
+> C-45 acota el gasto pago en runtime (Gemini del backend, Gemini del `AI Agent` de n8n y
+> transcripcion de Twilio) con presupuesto global semanal, rate limit y degradacion segura.
+> Cierra el riesgo real de perdida de dinero al activar credenciales pagas reales.
+
+### [C-45] `runtime-cost-guard`
+
+- **Estado**: `[x]` completado, verificado y archivado (2026-09-21 — `openspec/changes/archive/2026-09-21-c-45-runtime-cost-guard`; 86/86 tareas, 72 tests de la guarda, 545 passed offline, ruff clean, 34/37 escenarios compliant y 0 failing; integracion PostgreSQL 25 passed con la deriva de password del volumen documentada)
+- **Scope**:
+  - Bolsa GLOBAL compartida de USD 10/semana (ventana tumbling 604800 s, configurable) sobre las TRES superficies pagas: Gemini del backend, Gemini del `AI Agent` de n8n y transcripcion de Twilio; costo unitario por superficie (estimaciones configurables, ajustables por el operador).
+  - Rate limit global (30/h) y por origen (3/h), este ultimo indexado por el numero de telefono llamante (logueado CRUDO para anti-abuso inicial, explicitamente EXCLUIDO del corpus de la tesis).
+  - Almacen PostgreSQL: tabla `costo_guarda_contador` con migracion Alembic 007; reserva atomica en transaccion propia (`INSERT ... ON CONFLICT ... RETURNING`) con rollback cuando la decision deniega.
+  - Puntos de enforcement: backend antes de Gemini (`HybridClassifier`); endpoint `/api/v1/cost-guard/reserve` para n8n (nodo `Guard de costo`); webhook de voz pre-llamada de Twilio `/api/v1/cost-guard/twilio/voice` que devuelve TwiML (`<Record transcribe="true">` permite / `<Say>`+`<Hangup>` deniega).
+  - Auth: `X-Cost-Guard-Secret` obligatorio en `/reserve` (cableado en n8n via `COST_GUARD_SHARED_SECRET`, fuente unica en `docker-compose.yml`); `X-Twilio-Signature` (HMAC-SHA1) obligatorio en `/twilio/voice` cuando `TWILIO_AUTH_TOKEN` esta configurado, con 401 fail-closed sin token.
+  - Degradacion: deterministico + `requiere_revision_humana=True` (nunca invoca al proveedor pago); politica `hard_block` disponible. Fail-closed con notificacion estructurada (`cost_guard_tripped`, `cost_guard_store_unavailable`, `cost_guard_twilio_token_missing`).
+  - Default conservador habilitado con override por `.env`; postura efectiva registrada al arranque.
+  - Docs: `README.md`, `docs/operational-guide.md` (§11), `docs/n8n-workflow-guide.md`; firma Twilio valida con `FORWARDED_ALLOW_IPS=*` detras del Nginx del compose (backend sin puerto publicado).
+  - Limitaciones conocidas documentadas: campo de transcripcion del evento `call-summary.complete` de Twilio sin verificar (fallback hardcodeado en el workflow); subconjunto de integracion no re-ejecutable en hosts con deriva de password del volumen.
+- **Dependencias**: `C-41` (preflight de costo), `C-33` (cost-guards)
+- **Governance**: ALTO
+- **Leer antes**:
+  - `openspec/changes/archive/2026-09-21-c-45-runtime-cost-guard/proposal.md`
+  - `openspec/changes/archive/2026-09-21-c-45-runtime-cost-guard/design.md`
+  - `openspec/changes/archive/2026-09-21-c-45-runtime-cost-guard/verify-report.md`
+  - `openspec/specs/runtime-cost-guard/spec.md`
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo)
@@ -1022,10 +1058,11 @@ C-44 docs-evaluation-sync (C-43)
 | Backend: repositorios | COMPLETO | Patron repositorio con sesion compartida, filtros dinamicos |
 | Backend: keywords | COMPLETO | Mapa redistribuido en los 5 sectores canonicos (C-27) |
 | Backend: util n8n_webhook | EN USO | `notify_n8n()` fire-and-forget desde el servicio; apunta al webhook N8N dedicado (C-33) |
-| Backend: tests | COMPLETO | Suite offline SQLite (469 passed) + subconjunto de integracion PostgreSQL sobre base descartable (C-19/C-32) |
+| Backend: tests | COMPLETO | Suite offline SQLite (545 passed) + subconjunto de integracion PostgreSQL sobre base descartable (C-19/C-32/C-45) |
 | Backend: pseudonimizacion | COMPLETO | C-03; cifrado at-rest con Fernet |
-| Backend: migraciones | COMPLETO | Alembic; migraciones 001-006 (la 006 agrega timing e2e, C-39) |
+| Backend: migraciones | COMPLETO | Alembic; migraciones 001-007 (la 006 agrega timing e2e, C-39; la 007 agrega `costo_guarda_contador`, C-45) |
 | Backend: auth | COMPLETO | JWT Bearer (C-15) |
+| Costo runtime: guarda | COMPLETO | C-45 bolsa global USD 10/semana, rate global y por origen, PostgreSQL 007, webhook pre-llamada de Twilio y fail-closed (archivado) |
 | N8N workflow JSON | COMPLETO | Canales cableados (C-04/C-05), compuerta de confianza de dos capas (C-38), wiring corregido (C-40) |
 | Frontend: paginas | COMPLETO | ReportarIncidente, Administracion, Dashboard (C-23), Login (C-15) |
 | Frontend: componentes | COMPLETO | shadcn/ui, badges, indicadores, tablas, dialogos |
@@ -1035,7 +1072,7 @@ C-44 docs-evaluation-sync (C-43)
 | Infra: CI/CD | COMPLETO | .github/workflows/ci.yml (C-09); incluye la suite y el CLI del preflight (C-41) |
 | Infra: arranque | COMPLETO | scripts/up.sh / up.ps1 + Makefile (C-28); preflight de entorno y de costo (C-41) |
 | Docs: anexos A-G | COMPLETO | C-10 documentation-annexes |
-| Docs: guia operativa | COMPLETO | C-42 alinea README y guia operativa con el arranque; C-43 agrega `JWT_SECRET_KEY` a las tablas de entorno (ambos archivados) |
+| Docs: guia operativa | COMPLETO | C-42 alinea README y guia operativa con el arranque; C-43 agrega `JWT_SECRET_KEY` a las tablas de entorno; C-45 documenta la guarda de costo (§11) (todos archivados) |
 | Docs: rutas post-reestructuracion | COMPLETO | C-43 reemplaza `Gestion_Incidentes/` por `App/Backend/` en 7 documentos y anota la narrativa historica (archivado) |
 | Docs: evaluacion y exportador OpenAPI | COMPLETO | C-44 corrige la invocacion del runner, elimina el generador inexistente de C-27, documenta el gate de corrida paga y arregla `export_openapi.py` (dummy de `JWT_SECRET_KEY` + rutas) (archivado) |
 | Auth: JWT Bearer | COMPLETO | C-15 jwt-auth-backend-frontend |
@@ -1047,7 +1084,7 @@ C-44 docs-evaluation-sync (C-43)
 | Backup scripts: PostgreSQL | IMPLEMENTADO | C-26 — scripts/backup.sh y scripts/backup.ps1 con rotacion de 7 dias |
 | N8N retention: 30 dias | CONFIGURADO | C-26 — EXECUTIONS_DATA_PRUNE y EXECUTIONS_DATA_MAX_AGE en docker-compose.yml |
 
-Tabla reconciliada con el estado real el 2026-09-21: C-14..C-44 quedaron documentados en las FASE 12-15.
+Tabla reconciliada con el estado real el 2026-09-21: C-14..C-45 quedaron documentados en las FASE 12-16.
 
 Cambios que NO estan en el roadmap original porque se implementaron durante el desarrollo:
 - Clasificador hibrido (completo)
@@ -1065,18 +1102,12 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 
 ## Primer change recomendado
 
-Todos los changes estan implementados y archivados (C-01 a C-44; C-21 no existe). No hay
+Todos los changes estan implementados y archivados (C-01 a C-45; C-21 no existe). No hay
 ningun change activo.
 
 El proximo trabajo de mayor valor, en orden:
 
-1. **Guard de costo en runtime** (`c-45-<nombre>`, a abrir): hoy NO existe ningun tope de
-   gasto, rate ni quota en runtime. El preflight de costo (C-41) es estatico y verifica
-   cableado, no limita el gasto; una vez activado el workflow con credenciales reales, las
-   llamadas pagas (Gemini por ingreso; Twilio por llamada) ocurren solas. Es el riesgo real
-   de perdida de dinero. Verificado: no hay mecanismo de rate/budget/quota en
-   `App/Backend/app/` ni en el workflow.
-2. **Fase 2 del pipeline** (`c-46-<nombre>`, sin change abierto): fidelidad de medicion, no
+1. **Fase 2 del pipeline** (`c-46-<nombre>`, sin change abierto): fidelidad de medicion, no
    costo.
    - Verificar en runtime (workflow N8N real) que el sello de ingreso de telefonia sobrevive
      al `AI Agent`; hoy solo tiene verificacion estructural y el try/catch silencioso devuelve
@@ -1084,7 +1115,14 @@ El proximo trabajo de mayor valor, en orden:
    - Cablear `tiempo_automatizado_s` al corpus de evaluacion (hoy `evaluation/corpus.py`
      rechaza el corpus real porque los 200/200 tiempos automatizados estan nulos).
 
+Operativo para habilitar el pipeline pago (fuera de changes):
+- Cargar la credencial real de Twilio (`TWILIO_AUTH_TOKEN`) y apuntar la Voice URL de la
+  consola a `https://<host>/api/v1/cost-guard/twilio/voice`; con eso la validacion de firma
+  de C-45 se activa sola.
+- Verificar el campo real de transcripcion del evento `call-summary.complete` (limitacion
+  documentada de C-45) y ajustar el fallback del workflow si difiere.
+
 Deuda menor pendiente (no bloqueante):
 - Tesis post-pipeline: reconciliar cap. 7 con el corpus real y corregir 4.3/4.8/cap. 11.
 
-Para abrir el guard de runtime: `/opsx:propose c-45-<nombre>`.
+Para abrir la Fase 2: `/opsx:propose c-46-<nombre>`.
