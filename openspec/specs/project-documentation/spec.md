@@ -20,7 +20,7 @@ El proyecto SHALL incluir, bajo `docs/diagrams/`, tres diagramas de arquitectura
 
 ### Requirement: Especificación OpenAPI 3.1 estática generada desde la app
 
-El proyecto SHALL publicar la especificación OpenAPI 3.1 de la interfaz REST en `docs/openapi.json`, generada **desde la aplicación FastAPI** (`app.main:app`) mediante un script reproducible, nunca escrita a mano. El documento MUST declarar versión OpenAPI `3.1.x` y MUST contener los puntos de entrada efectivamente expuestos por la app (incidentes, clasificaciones, health). El script de generación MUST poder ejecutarse con las variables de entorno dummy que ya emplea CI (`database_url`, `gemini_api_key`, `pseudonymization_encryption_key`) sin requerir una base de datos en ejecución.
+El proyecto SHALL publicar la especificación OpenAPI 3.1 de la interfaz REST en `docs/openapi.json`, generada **desde la aplicación FastAPI** (`app.main:app`) mediante un script reproducible, nunca escrita a mano. El documento MUST declarar versión OpenAPI `3.1.x` y MUST contener los puntos de entrada efectivamente expuestos por la app (incidentes, clasificaciones, health). El script de generación MUST poder ejecutarse en un entorno limpio, sin base de datos en ejecución y sin variables de entorno reales, inyectando dummies suficientes para instanciar `Settings`; ese conjunto MUST incluir explícitamente `JWT_SECRET_KEY`, además de `DATABASE_URL`, `GEMINI_API_KEY` y `PSEUDONYMIZATION_ENCRYPTION_KEY`. El uso documentado del script (docstring) MUST referenciar las rutas vigentes bajo `App/Backend/`, MUST NOT presentar `Gestion_Incidentes/` como ubicación del módulo ni de sus comandos, y su ejemplo de `--output` MUST ser consistente con la ruta de salida por defecto real del script.
 
 #### Scenario: openapi.json es un OpenAPI 3.1 bien formado
 
@@ -31,6 +31,17 @@ El proyecto SHALL publicar la especificación OpenAPI 3.1 de la interfaz REST en
 
 - **WHEN** se ejecuta el script de generación apuntando a `app.main:app`
 - **THEN** produce un `openapi.json` cuyos `paths` coinciden con los `@router` declarados en `App/Backend/app/routes/`
+
+#### Scenario: El script corre con dummies suficientes, sin JWT_SECRET_KEY real
+
+- **WHEN** se ejecuta el script de generación en un entorno sin `JWT_SECRET_KEY` definida y sin un `.env` descubrible, apuntando a una salida temporal
+- **THEN** termina con código de salida 0 y produce un documento OpenAPI 3.1 válido, sin fallar la validación de `Settings`
+
+#### Scenario: El uso documentado del script no referencia la ruta obsoleta
+
+- **WHEN** se inspecciona el docstring de `App/Backend/scripts/export_openapi.py`
+- **THEN** los comandos y rutas que documenta referencian `App/Backend/` y su ejemplo de `--output` es consistente con la salida por defecto real
+- **AND** no presenta `Gestion_Incidentes` como ubicación del módulo, de su `.env` ni de sus archivos
 
 ### Requirement: Verificación de sincronía de openapi.json
 
@@ -84,7 +95,7 @@ El proyecto SHALL incluir `docs/anexo_f_corpus.md` describiendo el corpus de val
 
 ### Requirement: Anexo G — Guía operativa
 
-La guia operativa (`docs/operational-guide.md`) SHALL presentar el comando unico de arranque (`bash scripts/up.sh` en Linux/macOS, `.\scripts\up.ps1` en Windows, o `make up` cuando `make` este disponible) como el camino recomendado para desplegar el stack local, y MUST mantener el camino manual (`openssl/generate-certs.sh` o `openssl/generate-certs.ps1` seguido de `docker compose up -d`) documentado como alternativa. La guia SHALL documentar que el comando unico ejecuta el preflight de costo antes de tocar Docker y que, si el preflight falla, el arranque se bloquea; asimismo MUST documentar el bypass explicito `UP_SKIP_COST_PREFLIGHT=1` y la advertencia audible que el arranque imprime al usarlo. El bloque dotenv de la seccion 1.2 (Configurar variables de entorno) MUST listar `JWT_SECRET_KEY`, ademas de `DATABASE_URL`, `GEMINI_API_KEY` y `PSEUDONYMIZATION_ENCRYPTION_KEY`, con una descripcion de su proposito como clave de firma HS256. Los comandos y rutas de archivo de la guia MUST referenciar la ubicacion post-reestructuracion del modulo (`App/Backend/`) y MUST NOT presentar `Gestion_Incidentes/` como la ubicacion vigente del modulo, de su `.env` o de sus archivos. La guia SHALL incluir referencias a los scripts automatizados de backup (`scripts/backup.sh` y `scripts/backup.ps1`) como metodo recomendado para backups diarios, reemplazando el comando manual de cron documentado en la seccion 3.
+La guia operativa (`docs/operational-guide.md`) SHALL presentar el comando unico de arranque (`bash scripts/up.sh` en Linux/macOS, `.\scripts\up.ps1` en Windows, o `make up` cuando `make` este disponible) como el camino recomendado para desplegar el stack local, y MUST mantener el camino manual (`openssl/generate-certs.sh` o `openssl/generate-certs.ps1` seguido de `docker compose up -d`) documentado como alternativa. La guia SHALL documentar que el comando unico ejecuta el preflight de costo antes de tocar Docker y que, si el preflight falla, el arranque se bloquea; asimismo MUST documentar el bypass explicito `UP_SKIP_COST_PREFLIGHT=1` y la advertencia audible que el arranque imprime al usarlo. El bloque dotenv de la seccion 1.2 (Configurar variables de entorno) MUST listar `JWT_SECRET_KEY`, ademas de `DATABASE_URL`, `GEMINI_API_KEY` y `PSEUDONYMIZATION_ENCRYPTION_KEY`, con una descripcion de su proposito como clave de firma HS256. Los comandos y rutas de archivo de la guia MUST referenciar la ubicacion post-reestructuracion del modulo (`App/Backend/`) y MUST NOT presentar `Gestion_Incidentes/` como la ubicacion vigente del modulo, de su `.env` o de sus archivos. La guia SHALL incluir referencias a los scripts automatizados de backup (`scripts/backup.sh` y `scripts/backup.ps1`) como metodo recomendado para backups diarios, reemplazando el comando manual de cron documentado en la seccion 3. La seccion 8 (Evaluacion del clasificador) MUST documentar la invocacion real del runner desde la raiz del repositorio (`PYTHONPATH=App/Backend python -m evaluation.run_evaluation`), MUST NOT indicar `python run_evaluation.py` ni un `cd evaluation` que no resuelva los imports del paquete, MUST NOT referenciar `evaluation/generate_corpus.py` ni afirmar la existencia de un generador de corpus con seed fijo, y MUST apuntar al procedimiento real de carga del corpus documentado en `docs/como_cargar_datos_corpus.md`. La seccion 8 MUST documentar el gate de corrida paga del runner: que una corrida que invocaria el clasificador real exige confirmacion explicita con `--confirm-paid` o `EVALUATION_CONFIRM_PAID=1`, que sin confirmacion aborta con codigo de salida 2, y que al confirmar se imprime una estimacion de costo.
 
 #### Scenario: Despliegue presenta el comando unico como camino recomendado
 
@@ -128,6 +139,24 @@ La guia operativa (`docs/operational-guide.md`) SHALL presentar el comando unico
 - **WHEN** se lee la seccion 3 de la guia operativa
 - **THEN** el comando `docker compose exec postgres pg_dump` sigue documentado como alternativa manual
 - **AND** la documentacion de restauracion no sufre cambios
+
+#### Scenario: Seccion 8 usa la invocacion real del runner
+
+- **WHEN** se lee la seccion 8 (Evaluacion del clasificador) de `docs/operational-guide.md`
+- **THEN** el comando de corrida documentado es `PYTHONPATH=App/Backend python -m evaluation.run_evaluation`, ejecutado desde la raiz del repositorio
+- **AND** el documento no presenta `python run_evaluation.py` ni un `cd evaluation` como forma de invocacion
+
+#### Scenario: Seccion 8 no referencia el generador de corpus eliminado
+
+- **WHEN** se inspecciona la seccion 8 de `docs/operational-guide.md`
+- **THEN** el documento no referencia `evaluation/generate_corpus.py` ni afirma un generador de corpus con seed fijo
+- **AND** apunta al procedimiento real de carga del corpus en `docs/como_cargar_datos_corpus.md`
+
+#### Scenario: Gate de corrida paga documentado en la guia
+
+- **WHEN** se lee la seccion 8 de `docs/operational-guide.md`
+- **THEN** el documento menciona que una corrida que invocaria el clasificador real exige confirmacion explicita con `--confirm-paid` o `EVALUATION_CONFIRM_PAID=1`
+- **AND** documenta que sin confirmacion la corrida aborta con codigo de salida 2 y que al confirmar se imprime una estimacion de costo
 
 ### Requirement: Guía de troubleshooting para operadores
 
