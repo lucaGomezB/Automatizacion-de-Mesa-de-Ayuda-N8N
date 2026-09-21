@@ -80,6 +80,24 @@ Esto:
 3. Persiste las predicciones en `evaluation/predicciones.json`
 4. Escribe el reporte en `evaluation/report.md`
 
+## Gate de Corrida Paga
+
+El runner invoca el clasificador real (Gemini) y esa corrida tiene costo. Antes
+de invocarlo exige confirmación explícita del operador; sin ella aborta sin
+llamar al clasificador.
+
+```bash
+# Confirmación por flag:
+PYTHONPATH=App/Backend python -m evaluation.run_evaluation --confirm-paid
+
+# Confirmación por variable de entorno:
+EVALUATION_CONFIRM_PAID=1 PYTHONPATH=App/Backend python -m evaluation.run_evaluation
+```
+
+Sin confirmación, la corrida aborta con código de salida 2 y un mensaje claro.
+Al confirmar, el runner imprime una estimación orientativa del costo antes de
+ejecutar (no es una factura).
+
 ## Setup del Entorno
 
 ### 1. Instalar dependencias de evaluación
@@ -114,6 +132,8 @@ export GEMINI_API_KEY="tu-clave-aqui"
 ```
 
 Solo es necesaria para los casos que no resuelve el clasificador determinístico.
+Una corrida que use el clasificador real exige además confirmar el gate de
+corrida paga (ver «Gate de Corrida Paga»).
 
 ## Correr los Tests del Framework
 

@@ -7,17 +7,17 @@ Propósito:
 
 Uso:
     # Desde la raíz del repo:
-    cd Gestion_Incidentes
+    cd App/Backend
     python scripts/export_openapi.py
 
     # Opcionalmente, apuntar a un directorio de salida distinto:
-    python scripts/export_openapi.py --output ../docs/openapi.json
+    python scripts/export_openapi.py --output ../../docs/openapi.json
 
 Variables de entorno:
     Si las variables requeridas por Settings (DATABASE_URL, GEMINI_API_KEY,
-    PSEUDONYMIZATION_ENCRYPTION_KEY) no están presentes, este script las
-    inyecta con valores dummy —suficientes para instanciar Settings sin DB
-    real, el mismo patrón que usa CI (C-09).
+    PSEUDONYMIZATION_ENCRYPTION_KEY, JWT_SECRET_KEY) no están presentes, este
+    script las inyecta con valores dummy —suficientes para instanciar Settings
+    sin DB real, el mismo patrón que usa CI (C-09).
 
 Notas:
     - `create_app()` no abre conexiones a la DB en el import: el engine
@@ -40,7 +40,7 @@ IMPORTANTE — versión de dependencias:
 
     Si las versiones no coinciden con requirements.txt, instalarlas primero:
 
-        pip install -r Gestion_Incidentes/requirements.txt
+        pip install -r App/Backend/requirements.txt
 """
 
 from __future__ import annotations
@@ -57,12 +57,13 @@ _DUMMIES = {
     "DATABASE_URL": "postgresql+asyncpg://ci:ci@localhost:5432/ci_dummy",
     "GEMINI_API_KEY": "ci-dummy-key",
     "PSEUDONYMIZATION_ENCRYPTION_KEY": "MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA=",  # gitleaks:allow
+    "JWT_SECRET_KEY": "ci-dummy-jwt-secret-key-for-testing-only",  # gitleaks:allow (dummy)
 }
 for _key, _val in _DUMMIES.items():
     if _key not in os.environ:
         os.environ[_key] = _val
 
-# ── Agregar el directorio padre (Gestion_Incidentes/) al sys.path ────────────
+# ── Agregar el directorio padre (App/Backend/) al sys.path ────────────────────
 # Necesario cuando se ejecuta el script desde cualquier directorio de trabajo.
 _SCRIPT_DIR = Path(__file__).resolve().parent          # App/Backend/scripts/
 _BACKEND_ROOT = _SCRIPT_DIR.parent                         # App/Backend/

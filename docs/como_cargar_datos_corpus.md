@@ -185,7 +185,6 @@ y se reporta con el intervalo de confianza de Wilson (95 %).
 
 ```bash
 # Desde la raiz del repositorio:
-cd evaluation
 PYTHONPATH=App/Backend python -m evaluation.run_evaluation
 ```
 
