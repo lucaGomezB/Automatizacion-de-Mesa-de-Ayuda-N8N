@@ -91,6 +91,10 @@ C-44 docs-evaluation-sync (C-43)
 --- FASE 16: Guarda de costo en runtime (2026-09-21) ---
 
 C-45 runtime-cost-guard (C-41, C-33)
+
+--- FASE 17: Fidelidad de medicion del pipeline (2026-09-22) ---
+
+C-46 telefonia-ingreso-sellado (C-39, C-45)
 ```
 
 ### Paralelismo por fase
@@ -408,11 +412,12 @@ C-45 runtime-cost-guard (C-41, C-33)
 | C-43 | docs-restructure-sync | 15 | C-42 | BAJO | — |
 | C-44 | docs-evaluation-sync | 15 | C-43 | BAJO | — |
 | C-45 | runtime-cost-guard | 16 | C-41, C-33 | ALTO | — |
+| C-46 | telefonia-ingreso-sellado | 17 | C-39, C-45 | MEDIO | — |
 
-**Total**: 45 changes documentados — 44 archivados (C-01..C-45, sin C-21) mas el mantenimiento sin numero `improve-dockerfiles`. No hay changes activos. C-21 no existe: no fue creado.
+**Total**: 46 changes documentados — 45 archivados (C-01..C-46, sin C-21) mas el mantenimiento sin numero `improve-dockerfiles`. No hay changes activos. C-21 no existe: no fue creado.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
-**Fases**: 1-16 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12).
+**Fases**: 1-17 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12).
 
 ---
 
@@ -1045,6 +1050,29 @@ C-45 runtime-cost-guard (C-41, C-33)
 
 ---
 
+## FASE 17 — Fidelidad de medicion del pipeline
+
+> La Fase 2 del pipeline ataca la fidelidad de la medicion (no el costo) y se divide en
+> changes chicos (C-46 a C-50). C-46 cierra la perdida silenciosa del sello de ingreso de
+> telefonia a traves del `AI Agent`.
+
+### [C-46] `telefonia-ingreso-sellado`
+
+- **Estado**: `[x]` completado, verificado y archivado (2026-09-22 — `openspec/changes/archive/2026-09-22-c-46-telefonia-ingreso-sellado`; 13/15 tareas, 2 pendientes manuales documentadas; 5/5 scenarios compliant; 134 passed + 1 xfailed en la suite N8N, 550 passed offline, 33/33 specs validos)
+- **Scope**:
+  - Recuperar el sello `ingresado_en` con `$('Sellar ingreso telefonia').first()` (no `.item`) en `Se verifica lo que trajo la IA` y en `Derivar a revision humana`, eliminando la dependencia de `pairedItem` que devolvia `null` en silencio cuando el item provenia del `AI Agent` (desviacion HIGH #3 de C-39).
+  - Ante sello irresoluble: WARN estructurado + `revision_forzada=true` + `requiere_revision_humana=true`, conservando la creacion del ticket (nunca aborta ni pierde el incidente).
+  - Suite estructural extendida en `test_n8n_workflow.py` (5 scenarios del requerimiento `N8N-TIMING-003`); `docs/n8n-workflow-guide.md` actualizado. Backend sin cambios.
+- **Pendiente documentado**: verificacion manual en N8N en vivo (tareas 5.2/5.3) — no bloqueante, aprobado dejarla pendiente.
+- **Dependencias**: `C-39` (instrumentacion temporal), `C-45` (guarda de costo)
+- **Governance**: MEDIO
+- **Leer antes**:
+  - `openspec/changes/archive/2026-09-22-c-46-telefonia-ingreso-sellado/verify-report.md`
+  - `openspec/specs/n8n-workflow/spec.md` (N8N-TIMING-003)
+  - `openspec/changes/archive/2026-09-20-c-39-e2e-timing-instrumentation/verify-report.md` (desviacion HIGH #3)
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo)
@@ -1058,12 +1086,12 @@ C-45 runtime-cost-guard (C-41, C-33)
 | Backend: repositorios | COMPLETO | Patron repositorio con sesion compartida, filtros dinamicos |
 | Backend: keywords | COMPLETO | Mapa redistribuido en los 5 sectores canonicos (C-27) |
 | Backend: util n8n_webhook | EN USO | `notify_n8n()` fire-and-forget desde el servicio; apunta al webhook N8N dedicado (C-33) |
-| Backend: tests | COMPLETO | Suite offline SQLite (545 passed) + subconjunto de integracion PostgreSQL sobre base descartable (C-19/C-32/C-45) |
+| Backend: tests | COMPLETO | Suite offline SQLite (550 passed) + subconjunto de integracion PostgreSQL sobre base descartable (C-19/C-32/C-45) |
 | Backend: pseudonimizacion | COMPLETO | C-03; cifrado at-rest con Fernet |
 | Backend: migraciones | COMPLETO | Alembic; migraciones 001-007 (la 006 agrega timing e2e, C-39; la 007 agrega `costo_guarda_contador`, C-45) |
 | Backend: auth | COMPLETO | JWT Bearer (C-15) |
 | Costo runtime: guarda | COMPLETO | C-45 bolsa global USD 10/semana, rate global y por origen, PostgreSQL 007, webhook pre-llamada de Twilio y fail-closed (archivado) |
-| N8N workflow JSON | COMPLETO | Canales cableados (C-04/C-05), compuerta de confianza de dos capas (C-38), wiring corregido (C-40) |
+| N8N workflow JSON | COMPLETO | Canales cableados (C-04/C-05), compuerta de confianza de dos capas (C-38), wiring corregido (C-40), recuperacion robusta del sello de ingreso de telefonia (C-46) |
 | Frontend: paginas | COMPLETO | ReportarIncidente, Administracion, Dashboard (C-23), Login (C-15) |
 | Frontend: componentes | COMPLETO | shadcn/ui, badges, indicadores, tablas, dialogos |
 | Frontend: hooks/services | COMPLETO | React Query + Axios, todos los endpoints conectados |
@@ -1080,11 +1108,11 @@ C-45 runtime-cost-guard (C-41, C-33)
 | Twilio: TwiML script | COMPLETO | C-16 twilio-twiml-script |
 | Seguridad: higiene de secretos | COMPLETO | C-37 (hook pre-commit + runbook + escaneo del lado GitHub) |
 | Corpus: JSON multietiqueta | PENDIENTE DATOS REALES | C-27 rediseno-sectores-json (sintetico de 200 casos eliminado; el corpus real aun no es cargable porque los tiempos automatizados estan nulos) |
-| Timing e2e | IMPLEMENTADO | C-39; `ingresado_en` / `persistido_en` / `latencia_e2e_ms` (pendiente verificacion de runtime del canal telefonico) |
+| Timing e2e | IMPLEMENTADO | C-39; `ingresado_en` / `persistido_en` / `latencia_e2e_ms`. C-46 elimina la perdida silenciosa del sello en el canal telefonico (verificacion de runtime en vivo pendiente) |
 | Backup scripts: PostgreSQL | IMPLEMENTADO | C-26 — scripts/backup.sh y scripts/backup.ps1 con rotacion de 7 dias |
 | N8N retention: 30 dias | CONFIGURADO | C-26 — EXECUTIONS_DATA_PRUNE y EXECUTIONS_DATA_MAX_AGE en docker-compose.yml |
 
-Tabla reconciliada con el estado real el 2026-09-21: C-14..C-45 quedaron documentados en las FASE 12-16.
+Tabla reconciliada con el estado real el 2026-09-22: C-14..C-46 quedaron documentados en las FASE 12-17.
 
 Cambios que NO estan en el roadmap original porque se implementaron durante el desarrollo:
 - Clasificador hibrido (completo)
@@ -1102,18 +1130,24 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 
 ## Primer change recomendado
 
-Todos los changes estan implementados y archivados (C-01 a C-45; C-21 no existe). No hay
-ningun change activo.
+El change C-46 quedo implementado y archivado (2026-09-22). No hay ningun change activo:
+C-01..C-46 estan archivados (C-21 no existe).
 
-El proximo trabajo de mayor valor, en orden:
+La Fase 2 del pipeline (fidelidad de medicion, no costo) se aprobo dividida en changes chicos.
+Pendientes, en orden recomendado:
 
-1. **Fase 2 del pipeline** (`c-46-<nombre>`, sin change abierto): fidelidad de medicion, no
-   costo.
-   - Verificar en runtime (workflow N8N real) que el sello de ingreso de telefonia sobrevive
-     al `AI Agent`; hoy solo tiene verificacion estructural y el try/catch silencioso devuelve
-     null si el pairing falla, desactivando la latencia del canal pago.
-   - Cablear `tiempo_automatizado_s` al corpus de evaluacion (hoy `evaluation/corpus.py`
-     rechaza el corpus real porque los 200/200 tiempos automatizados estan nulos).
+1. **`c-47-guard-costo-item`** (sin change abierto): el nodo `Guard de costo` (C-45) reemplaza
+   el item y el `AI Agent` pierde la transcripcion; ademas conserva un `.item` fragil
+   (`n8n/workflow.json:779`). Debe secuenciarse DESPUES de C-46 (mismo nodo terminal
+   `Derivar a revision humana`).
+2. **`c-48-timing-en-listado`**: exponer `ingresado_en`/`persistido_en`/`latencia_e2e_ms` en
+   `IncidenteListItem` (desviacion #2 de C-39) + regenerar `docs/openapi.json`.
+3. **`c-49-carga-corpus-db`**: cargar los 200 casos del corpus en una tabla dedicada
+   (`corpus_incidente`), solo con la descripcion pseudonimizada, aislada de la tabla operativa,
+   con FK nullable `incidente_id` -> `incidente.id`; temporal hasta poder correr el flujo completo.
+4. **`c-50-corpus-timing-wiring`**: separar el contrato del loader de `evaluation/corpus.py`
+   (carga para clasificacion vs analisis de timing), derivar `tiempo_automatizado_s` de
+   `latencia_e2e_ms` medido y cablear `stats.py`/Wilcoxon al reporte.
 
 Operativo para habilitar el pipeline pago (fuera de changes):
 - Cargar la credencial real de Twilio (`TWILIO_AUTH_TOKEN`) y apuntar la Voice URL de la
@@ -1121,8 +1155,10 @@ Operativo para habilitar el pipeline pago (fuera de changes):
   de C-45 se activa sola.
 - Verificar el campo real de transcripcion del evento `call-summary.complete` (limitacion
   documentada de C-45) y ajustar el fallback del workflow si difiere.
+- Verificacion manual en N8N en vivo de C-46 (tareas 5.2/5.3): confirmar que `.first()` resuelve
+  y que el incidente telefonico persiste `ingresado_en` no nulo.
 
 Deuda menor pendiente (no bloqueante):
 - Tesis post-pipeline: reconciliar cap. 7 con el corpus real y corregir 4.3/4.8/cap. 11.
 
-Para abrir la Fase 2: `/opsx:propose c-46-<nombre>`.
+Para abrir el siguiente change: `/opsx:propose c-47-guard-costo-item`.
