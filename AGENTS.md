@@ -56,11 +56,32 @@ openspec list --json
 │       ├── services/         # Axios API clients
 │       └── test/setup.ts     # Testing Library setup
 │
+├── .agents/skills/    # Vendored domain skills (see .agents/SKILLS.md)
+├── .opencode/skills/  # OPSX workflow skills (explore/propose/apply/archive/sync)
 ├── n8n/workflow.json  # N8N workflow (import into N8N UI)
 ├── evaluation/               # Self-contained eval framework (own pytest.ini + requirements.txt)
 ├── data/                     # Evaluation corpus (NOT tracked in git)
 └── docs/                     # Design docs, guides, OpenAPI spec, prompt
 ```
+
+## Skills (Domain Knowledge)
+
+The project VENDORS its domain skills into the repo, so every collaborator gets them on
+clone — no global install and no per-machine setup required. The canonical registry is
+`.agents/SKILLS.md`: read it before writing code during an apply.
+
+- `.agents/skills/<name>/SKILL.md` — vendored domain skills (SQLAlchemy/PostgreSQL, pytest,
+  TDD, Python design patterns, Tailwind). Origin and version tracked in `skills-lock.json`.
+- `.opencode/skills/` — OPSX workflow skills (explore / propose / apply / archive / sync).
+
+Rules:
+- During apply, load the FULL `SKILL.md` of every skill that matches the change's tasks
+  BEFORE writing code. Skill patterns win over general agent knowledge, but a hard project
+  rule (`AGENTS.md`, `openspec/config.yaml`) wins over the skill.
+- Known caveat: `tailwind-design-system` targets Tailwind v4 while this project is on
+  v3.4.11 — use only its transferable concepts, never its v4 syntax.
+- Update or reinstall: `npx skills check`, `npx skills update`,
+  `npx skills experimental_install` (restores exactly what `skills-lock.json` declares).
 
 ## Exact Developer Commands
 

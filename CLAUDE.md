@@ -106,17 +106,22 @@ function engram-import { engram sync --import --project "Automatizacion-de-Mesa-
 
 When the user's request matches an available skill, invoke it via the Skill tool. When in doubt, invoke the skill.
 
+This project runs the OPSX workflow and VENDORS its domain skills. The canonical
+registry is `.agents/SKILLS.md` — read it before writing code during an apply.
+
 Key routing rules:
-- Product ideas/brainstorming → invoke /office-hours
-- Strategy/scope → invoke /plan-ceo-review
-- Architecture → invoke /plan-eng-review
-- Design system/plan review → invoke /design-consultation or /plan-design-review
-- Full review pipeline → invoke /autoplan
-- Bugs/errors → invoke /investigate
-- QA/testing site behavior → invoke /qa or /qa-only
-- Code review/diff check → invoke /review
-- Visual polish → invoke /design-review
-- Ship/deploy/PR → invoke /ship or /land-and-deploy
-- Save progress → invoke /context-save
-- Resume context → invoke /context-restore
-- Author a backlog-ready spec/issue → invoke /spec
+- Explore / think through an idea → `openspec-explore` (`/opsx:explore`)
+- New feature / change proposal → `openspec-propose` (`/opsx:propose`)
+- Implement a change's tasks → `openspec-apply-change` (`/opsx:apply`)
+- Finish / close a change → `openspec-archive-change` (`/opsx:archive`)
+- Sync delta specs without archiving → `openspec-sync-specs`
+- Bugs / unexpected behavior → `systematic-debugging`
+- Writing tests / TDD → `test-driven-development` plus the pytest skills in `.agents/skills/`
+- Database layer (models, repositories, migrations) → `sqlalchemy-postgres`
+- Frontend / UI → `tailwind-design-system` (caveat: it targets Tailwind v4, this project is v3)
+- Code review / diff check → `code-review-excellence`
+- Adversarial double review → `judgment-day`
+- New issue / pull request → `issue-creation`, `branch-pr`
+- Discover or install a new skill → `find-skills`
+- Foundation flow (KB, roadmap, agent instructions) → `jr-orchestrator` (which dispatches
+  `kb-creator`, `roadmap-generator`, `agent-instruction`)
