@@ -37,12 +37,28 @@
   "skills": {
     "created_by": "find-skill",
     "skipped": true,
-    "reason": "skills del stack ya instaladas globalmente (fastapi-templates, sqlalchemy-postgres, python-testing, python-testing-patterns, pytest-coverage, python-design-patterns, tailwind-design-system); fase satisfecha previamente",
+    "reason": "Corregido 2026-09-22: el listado anterior era incorrecto (declaraba skills instaladas globalmente que no existian en ninguna maquina). Las skills de dominio se vendorizaron DENTRO del repo en .agents/skills/ via npx skills; ver .agents/SKILLS.md y skills-lock.json.",
     "recommended": [],
-    "installed": ["fastapi-templates", "sqlalchemy-postgres", "python-testing", "python-testing-patterns", "pytest-coverage", "python-design-patterns"]
+    "installed": [
+      "sqlalchemy-postgres",
+      "python-testing-patterns",
+      "python-testing",
+      "pytest-coverage",
+      "python-design-patterns",
+      "tailwind-design-system",
+      "find-skills"
+    ],
+    "vendored": {
+      "location": ".agents/skills/",
+      "registry": ".agents/SKILLS.md",
+      "lock": "skills-lock.json",
+      "method": "npx skills add <owner/repo> -s <skill> --copy -y",
+      "date": "2026-09-22"
+    }
   },
   "registry": {
     "created_by": "skill-registry",
-    "file": ".atl/skill-registry.md"
+    "file": ".atl/skill-registry.md",
+    "note": ".atl/ es un artefacto de build (gitignored): puede no existir en un clon. El registro canonico VERSIONADO de skills de dominio es .agents/SKILLS.md."
   }
 }
