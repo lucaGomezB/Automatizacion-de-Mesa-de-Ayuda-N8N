@@ -96,6 +96,7 @@ C-45 runtime-cost-guard (C-41, C-33)
 
 C-46 telefonia-ingreso-sellado (C-39, C-45)
  └── C-47 guard-costo-item (C-46, C-45)
+ └── C-52 telefonia-transcripcion-async (C-47)   [C-51 absorbido por C-52]
 ```
 
 ### Paralelismo por fase
@@ -415,8 +416,9 @@ C-46 telefonia-ingreso-sellado (C-39, C-45)
 | C-45 | runtime-cost-guard | 16 | C-41, C-33 | ALTO | — |
 | C-46 | telefonia-ingreso-sellado | 17 | C-39, C-45 | MEDIO | — |
 | C-47 | guard-costo-item | 17 | C-46, C-45 | MEDIO | — |
+| C-52 | telefonia-transcripcion-async | 17 | C-47 | CRITICO | — |
 
-**Total**: 47 changes documentados — 46 archivados (C-01..C-47, sin C-21) mas el mantenimiento sin numero `improve-dockerfiles`. No hay changes activos. C-21 no existe: no fue creado.
+**Total**: 48 changes documentados — 46 archivados (C-01..C-47, sin C-21) mas el mantenimiento sin numero `improve-dockerfiles`. Hay 1 change ACTIVO: C-52. C-21 nunca se creo; C-51 fue absorbido por C-52 y no se abre.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
 **Fases**: 1-17 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12).
@@ -1089,6 +1091,24 @@ C-46 telefonia-ingreso-sellado (C-39, C-45)
   - `openspec/specs/n8n-workflow/spec.md` (N8N-GUARD-001, N8N-GUARD-002)
   - `openspec/changes/archive/2026-09-21-c-45-runtime-cost-guard/design.md` (limitacion de la transcripcion)
 
+### [C-52] `telefonia-transcripcion-async` — ACTIVO (propuesto, sin aplicar)
+
+- **Estado**: `[ ]` propuesto (2026-09-22 — `openspec/changes/c-52-telefonia-transcripcion-async`; 44 tareas, 5 delta specs, `openspec validate --strict` pasa). Sin aplicar. Absorbe el change cancelado `c-51-twilio-payload-wiring`.
+- **Problema**: el canal de telefonia clasifica sobre una descripcion VACIA. El evento `com.twilio.voice.insights.call-summary.complete` no trae la transcripcion, y `<Record transcribe="true">` es solo ingles estadounidense. Ademas hay una fuga latente de PII (el `AI Agent` de n8n manda el transcript crudo a Gemini antes de pseudonimizar).
+- **Scope**:
+  - STT EN EL BACKEND con Google Gemini (transcripcion dedicada, modelo `gemini-3.5-transcribe`, modo `verbatim`, via Interactions API, `store=False`) sobre la grabacion mono de Twilio. El backend es dueno de la descarga (`RecordingUrl`, Basic auth) y de la transcripcion; pseudonimiza INMEDIATAMENTE y entrega SOLO texto pseudonimizado a n8n.
+  - TwiML: `<Record>` mono con `recordingStatusCallback` + `action`, sin `transcribe`; se corrige el `<Say>` post-grabacion (hoy inalcanzable).
+  - Tabla `telefonia_ingreso` (transcript crudo cifrado Fernet + pseudonimizado), migracion Alembic `008`.
+  - Nueva superficie paga `backend_stt` en la guarda de costo; `ingresado_en` sellado en el callback del backend; `origen_message_id = CallSid` para idempotencia.
+  - n8n: el `twilioTrigger` se reemplaza por un webhook; sobreviven guarda/restauracion/agente/validador/normalizador.
+- **Preguntas abiertas (bloquean el apply)**: (1) `google-genai==2.8.0` no tipa `transcription_config` (upgrade vs dict sin tipar vs REST con httpx); (2) disponibilidad y precio real de `gemini-3.5-transcribe`; (3) si `language_codes=["es-AR"]` se acepta (fallback auto-detect o `es-MX`); (4) retencion del audio; (5) alta placeholder vs reintento ante fallo de STT; (6) drop de la suscripcion Event Streams; (7) reescritura del `<Say>`.
+- **Dependencias**: `C-47` (mismo flujo telefonico), `C-45` (guarda de costo)
+- **Governance**: CRITICO
+- **Leer antes**:
+  - `openspec/changes/c-52-telefonia-transcripcion-async/{proposal,design,tasks}.md`
+  - `openspec/specs/n8n-workflow/spec.md`, `openspec/specs/runtime-cost-guard/spec.md`
+  - `openspec/changes/archive/2026-09-21-c-45-runtime-cost-guard/design.md` (limitacion de la transcripcion)
+
 ---
 
 ## Notas del analisis
@@ -1148,11 +1168,28 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 
 ## Primer change recomendado
 
-Los changes C-46 y C-47 quedaron implementados, verificados y archivados (2026-09-22). No hay
-ningun change activo: C-01..C-47 estan archivados (C-21 no existe).
+Los changes C-46 y C-47 quedaron implementados, verificados y archivados (2026-09-22).
+Hay 1 change ACTIVO: **`c-52-telefonia-transcripcion-async`** (propuesto, 44 tareas, sin aplicar).
+C-01..C-47 estan archivados (C-21 no existe). `c-51` fue absorbido por C-52 y no se abre.
 
-La Fase 2 del pipeline (fidelidad de medicion, no costo) se aprobo dividida en changes chicos.
-Pendientes planificados, en orden recomendado:
+**Change activo — `c-52-telefonia-transcripcion-async`** (Gobernanza CRITICA):
+
+- Cierra el gap del canal telefonico: la descripcion llegaba VACIA al `AI Agent` porque el evento
+  `call-summary.complete` no trae la transcripcion y `<Record transcribe="true">` es solo ingles.
+- Diseno: STT EN EL BACKEND con Google Gemini (transcripcion dedicada, `gemini-3.5-transcribe`,
+  `verbatim`, via Interactions API, `store=False`) sobre la grabacion mono de Twilio; el backend
+  es dueno de la descarga y de la transcripcion, pseudonimiza ANTES del handoff a n8n (cierra una
+  fuga latente de PII), persiste una tabla intake cifrada, agrega la superficie de guarda
+  `backend_stt` y sella `ingresado_en` en el callback del backend. Absorbe `c-51`.
+- **Preguntas abiertas que bloquean el apply** (ver `design.md`): (1) `google-genai==2.8.0` no tipa
+  `transcription_config` (upgrade vs dict sin tipar vs REST con httpx); (2) disponibilidad y precio
+  real de `gemini-3.5-transcribe`; (3) si `language_codes=["es-AR"]` se acepta; (4) retencion del
+  audio; (5) alta placeholder vs reintento ante fallo de STT; (6) drop de la suscripcion Event
+  Streams; (7) reescritura del `<Say>`.
+- **Leer antes**: `openspec/changes/c-52-telefonia-transcripcion-async/{proposal,design,tasks}.md`,
+  `openspec/specs/n8n-workflow/spec.md`, `openspec/specs/runtime-cost-guard/spec.md`.
+
+Pendientes planificados despues de C-52, en orden recomendado:
 
 1. **`c-48-timing-en-listado`**: exponer `ingresado_en`/`persistido_en`/`latencia_e2e_ms` en
    `IncidenteListItem` (desviacion #2 de C-39) + regenerar `docs/openapi.json`.
@@ -1162,18 +1199,6 @@ Pendientes planificados, en orden recomendado:
 3. **`c-50-corpus-timing-wiring`**: separar el contrato del loader de `evaluation/corpus.py`
    (carga para clasificacion vs analisis de timing), derivar `tiempo_automatizado_s` de
    `latencia_e2e_ms` medido y cablear `stats.py`/Wilcoxon al reporte.
-
-Gap detectado, PENDIENTE DE DEFINICION DE ALCANCE (exploracion tecnica en curso):
-
-- **Canal telefonico — la descripcion llega vacia al `AI Agent`.** El trigger de Event Streams
-  (`com.twilio.voice.insights.call-summary.complete`) entrega un body de CloudEvents con `data`
-  stringificado que ningun nodo desenvuelve; y el recurso `CallSummary` NO contiene la
-  transcripcion (es un recurso separado: el TwiML usa `<Record transcribe="true">` pero sin
-  `transcribeCallback` desde C-30). Parsear el payload arregla el `caller` (`data.from.caller`)
-  pero NO la descripcion. Candidato `c-51-twilio-payload-wiring`; su alcance (solo n8n vs. n8n +
-  backend + consola Twilio) depende de la exploracion tecnica en curso (payload en vivo +
-  mecanismo real de entrega de la transcripcion). Gobernanza probable ALTA/CRITICA si toca
-  backend/Twilio. Ver la limitacion de C-45 y el alcance acotado de C-47.
 
 Operativo para habilitar el pipeline pago (fuera de changes):
 - Cargar la credencial real de Twilio (`TWILIO_AUTH_TOKEN`) y apuntar la Voice URL de la
@@ -1186,5 +1211,5 @@ Operativo para habilitar el pipeline pago (fuera de changes):
 Deuda menor pendiente (no bloqueante):
 - Tesis post-pipeline: reconciliar cap. 7 con el corpus real y corregir 4.3/4.8/cap. 11.
 
-Para abrir el siguiente change: `/opsx:propose c-48-timing-en-listado`, o definir primero el
-alcance del gap telefonico (`c-51`) segun la prioridad.
+Para avanzar: resolver las preguntas abiertas 1-3 de `c-52` (SDK, disponibilidad/precio del modelo,
+`es-AR`) antes del `/opsx:apply`, dado que es gobernanza CRITICA.
