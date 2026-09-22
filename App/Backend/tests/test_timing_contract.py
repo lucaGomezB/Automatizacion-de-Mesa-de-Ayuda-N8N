@@ -21,7 +21,7 @@ from pydantic import ValidationError
 
 from app.models.incidente import Incidente
 from app.schemas.catalog import EstadoRead
-from app.schemas.incidente import IncidenteCreate, IncidenteRead
+from app.schemas.incidente import IncidenteCreate, IncidenteListItem, IncidenteRead
 
 _DESCRIPCION = "El servidor de base de datos principal no responde desde la manana."
 
@@ -43,6 +43,24 @@ def _read(
         sectores_adicionales=[],
         estado=EstadoRead(id=1, nombre="nuevo", descripcion=None, es_terminal=False),
         canal_origen=None,
+        ingresado_en=ingresado_en,
+        persistido_en=persistido_en,
+    )
+
+
+def _make_list_item(
+    *,
+    ingresado_en: datetime | None,
+    persistido_en: datetime | None,
+) -> IncidenteListItem:
+    """Construye un IncidenteListItem minimo con los dos instantes dados."""
+    return IncidenteListItem(
+        id=1,
+        prioridad="media",
+        requiere_revision_humana=False,
+        created_at=datetime(2026, 9, 19, 12, 0, tzinfo=timezone.utc),
+        sector=None,
+        estado=EstadoRead(id=1, nombre="nuevo", descripcion=None, es_terminal=False),
         ingresado_en=ingresado_en,
         persistido_en=persistido_en,
     )
@@ -204,3 +222,96 @@ def test_latencia_cero_no_es_anomala():
     read = _read(ingresado_en=ingresado, persistido_en=ingresado)
     assert read.latencia_e2e_ms == 0
     assert read.latencia_anomala is False
+
+
+# ---------------------------------------------------------------------------
+# Grupo 4 — IncidenteListItem: instantes y latencia derivada (c-48)
+#
+# La proyeccion de listado debe exponer los dos instantes fuente y derivar la
+# latencia con la misma logica que el detalle. Cubre los escenarios de la delta
+# spec `e2e-timing-instrumentation`: exposicion en listado, instantes ausentes,
+# paridad detalle/listado y anomalia visible en el listado.
+# ---------------------------------------------------------------------------
+
+
+def test_list_item_expone_ambos_instantes():
+    """IncidenteListItem expone `ingresado_en` y `persistido_en`."""
+    ingresado = datetime(2026, 9, 19, 12, 0, 0, tzinfo=timezone.utc)
+    persistido = datetime(2026, 9, 19, 12, 0, 12, 500000, tzinfo=timezone.utc)
+    item = _make_list_item(ingresado_en=ingresado, persistido_en=persistido)
+    assert item.ingresado_en == ingresado
+    assert item.persistido_en == persistido
+
+
+def test_list_item_latencia_derivada_en_milisegundos():
+    """12.5 s de diferencia derivan 12500 ms en la proyeccion de listado."""
+    ingresado = datetime(2026, 9, 19, 12, 0, 0, tzinfo=timezone.utc)
+    persistido = ingresado + timedelta(seconds=12.5)
+    item = _make_list_item(ingresado_en=ingresado, persistido_en=persistido)
+    assert item.latencia_e2e_ms == 12500
+
+
+def test_list_item_latencia_nula_si_falta_ingresado():
+    """Sin `ingresado_en` la latencia del listado es nula."""
+    item = _make_list_item(
+        ingresado_en=None,
+        persistido_en=datetime(2026, 9, 19, 12, 0, tzinfo=timezone.utc),
+    )
+    assert item.latencia_e2e_ms is None
+
+
+def test_list_item_latencia_nula_si_falta_persistido():
+    """Sin `persistido_en` la latencia del listado es nula."""
+    item = _make_list_item(
+        ingresado_en=datetime(2026, 9, 19, 12, 0, tzinfo=timezone.utc),
+        persistido_en=None,
+    )
+    assert item.latencia_e2e_ms is None
+
+
+def test_list_item_latencia_nula_si_ambos_instantes_son_nulos():
+    """Con ambos instantes nulos el item se construye sin error y la latencia es nula."""
+    item = _make_list_item(ingresado_en=None, persistido_en=None)
+    assert item.latencia_e2e_ms is None
+    assert item.latencia_anomala is False
+
+
+def test_list_item_latencia_negativa_no_se_reporta_y_marca_anomalia():
+    """Una latencia negativa en el listado no se reporta como valida y queda marcada."""
+    ingresado = datetime(2026, 9, 19, 12, 0, 30, tzinfo=timezone.utc)
+    persistido = datetime(2026, 9, 19, 12, 0, 0, tzinfo=timezone.utc)
+    item = _make_list_item(ingresado_en=ingresado, persistido_en=persistido)
+    assert item.latencia_e2e_ms is None, (
+        "Una latencia negativa no debe reportarse como medicion valida en el listado"
+    )
+    assert item.latencia_anomala is True, (
+        "Una latencia negativa debe quedar marcada como anomalia en el listado"
+    )
+
+
+def test_list_item_latencia_no_negativa_no_es_anomala():
+    """Una latencia valida en el listado no marca la bandera de anomalia."""
+    ingresado = datetime(2026, 9, 19, 12, 0, 0, tzinfo=timezone.utc)
+    item = _make_list_item(
+        ingresado_en=ingresado, persistido_en=ingresado + timedelta(seconds=1)
+    )
+    assert item.latencia_anomala is False
+    assert item.latencia_e2e_ms == 1000
+
+
+def test_list_item_latencia_cero_no_es_anomala():
+    """Una latencia exactamente cero es valida en el listado (no negativa)."""
+    ingresado = datetime(2026, 9, 19, 12, 0, 0, tzinfo=timezone.utc)
+    item = _make_list_item(ingresado_en=ingresado, persistido_en=ingresado)
+    assert item.latencia_e2e_ms == 0
+    assert item.latencia_anomala is False
+
+
+def test_paridad_de_derivacion_entre_detalle_y_listado():
+    """El mismo par de instantes deriva la misma latencia en detalle y listado."""
+    ingresado = datetime(2026, 9, 19, 12, 0, 0, tzinfo=timezone.utc)
+    persistido = ingresado + timedelta(seconds=7.25)
+    read = _read(ingresado_en=ingresado, persistido_en=persistido)
+    item = _make_list_item(ingresado_en=ingresado, persistido_en=persistido)
+    assert item.latencia_e2e_ms == read.latencia_e2e_ms == 7250
+    assert item.latencia_anomala is read.latencia_anomala is False

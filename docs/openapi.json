@@ -442,6 +442,49 @@
             "title": "Id",
             "type": "integer"
           },
+          "ingresado_en": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ingresado En"
+          },
+          "latencia_anomala": {
+            "description": "True si la latencia derivada es negativa (C-48).\n\nLa marca de anomalía es observable en el listado, no solo en el detalle.",
+            "readOnly": true,
+            "title": "Latencia Anomala",
+            "type": "boolean"
+          },
+          "latencia_e2e_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Latencia end-to-end derivada en milisegundos (C-48).\n\nParidad exacta con `IncidenteRead`: delega en\n`_derivar_latencia_e2e_ms`. Nula si falta un instante o si la latencia\nes negativa.",
+            "readOnly": true,
+            "title": "Latencia E2E Ms"
+          },
+          "persistido_en": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Persistido En"
+          },
           "prioridad": {
             "$ref": "#/components/schemas/PrioridadEnum"
           },
@@ -466,7 +509,9 @@
           "requiere_revision_humana",
           "created_at",
           "sector",
-          "estado"
+          "estado",
+          "latencia_e2e_ms",
+          "latencia_anomala"
         ],
         "title": "IncidenteListItem",
         "type": "object"
