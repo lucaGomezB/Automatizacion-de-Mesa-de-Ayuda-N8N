@@ -96,6 +96,7 @@ C-45 runtime-cost-guard (C-41, C-33)
 
 C-46 telefonia-ingreso-sellado (C-39, C-45)
  └── C-47 guard-costo-item (C-46, C-45)
+ └── C-48 timing-en-listado (C-39)
  └── C-52 telefonia-transcripcion-async (C-47)   [C-51 absorbido por C-52]
 ```
 
@@ -416,9 +417,10 @@ C-46 telefonia-ingreso-sellado (C-39, C-45)
 | C-45 | runtime-cost-guard | 16 | C-41, C-33 | ALTO | — |
 | C-46 | telefonia-ingreso-sellado | 17 | C-39, C-45 | MEDIO | — |
 | C-47 | guard-costo-item | 17 | C-46, C-45 | MEDIO | — |
+| C-48 | timing-en-listado | 17 | C-39 | BAJO | — |
 | C-52 | telefonia-transcripcion-async | 17 | C-47 | CRITICO | — |
 
-**Total**: 48 changes documentados — 46 archivados (C-01..C-47, sin C-21) mas el mantenimiento sin numero `improve-dockerfiles`. Hay 1 change ACTIVO: C-52. C-21 nunca se creo; C-51 fue absorbido por C-52 y no se abre.
+**Total**: 49 changes documentados — 47 archivados (C-01..C-48, sin C-21) mas el mantenimiento sin numero `improve-dockerfiles`. Hay 1 change ACTIVO: C-52. C-21 nunca se creo; C-51 fue absorbido por C-52 y no se abre.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
 **Fases**: 1-17 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12).
@@ -1091,6 +1093,16 @@ C-46 telefonia-ingreso-sellado (C-39, C-45)
   - `openspec/specs/n8n-workflow/spec.md` (N8N-GUARD-001, N8N-GUARD-002)
   - `openspec/changes/archive/2026-09-21-c-45-runtime-cost-guard/design.md` (limitacion de la transcripcion)
 
+### [C-48] `timing-en-listado`
+
+- **Estado**: `[x]` completado, verificado y archivado (2026-09-22 — `openspec/changes/archive/2026-09-22-c-48-timing-en-listado`; 20/20 tareas; verify READY TO ARCHIVE; 566 passed offline, ruff limpio, `openspec validate --strict` pasa)
+- **Scope**: `IncidenteListItem` expone `ingresado_en`, `persistido_en`, `latencia_e2e_ms` y `latencia_anomala`, con paridad exacta respecto de `IncidenteRead` (derivacion extraida a funciones puras compartidas). `docs/openapi.json` regenerado (cambio aditivo). Sin cambios en repositorio, rutas, modelos, migraciones ni n8n. Cierra la desviacion #2 de C-39.
+- **Dependencias**: `C-39` (instrumentacion temporal)
+- **Governance**: BAJO
+- **Leer antes**:
+  - `openspec/changes/archive/2026-09-22-c-48-timing-en-listado/verify-report.md`
+  - `openspec/specs/e2e-timing-instrumentation/spec.md`
+
 ### [C-52] `telefonia-transcripcion-async` — ACTIVO (propuesto, sin aplicar)
 
 - **Estado**: `[ ]` propuesto (2026-09-22 — `openspec/changes/c-52-telefonia-transcripcion-async`; 44 tareas, 5 delta specs, `openspec validate --strict` pasa). Sin aplicar. Absorbe el change cancelado `c-51-twilio-payload-wiring`.
@@ -1168,9 +1180,9 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 
 ## Primer change recomendado
 
-Los changes C-46 y C-47 quedaron implementados, verificados y archivados (2026-09-22).
+Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22).
 Hay 1 change ACTIVO: **`c-52-telefonia-transcripcion-async`** (propuesto, 44 tareas, sin aplicar).
-C-01..C-47 estan archivados (C-21 no existe). `c-51` fue absorbido por C-52 y no se abre.
+C-01..C-48 estan archivados (C-21 no existe). `c-51` fue absorbido por C-52 y no se abre.
 
 **Change activo — `c-52-telefonia-transcripcion-async`** (Gobernanza CRITICA):
 
@@ -1181,22 +1193,20 @@ C-01..C-47 estan archivados (C-21 no existe). `c-51` fue absorbido por C-52 y no
   es dueno de la descarga y de la transcripcion, pseudonimiza ANTES del handoff a n8n (cierra una
   fuga latente de PII), persiste una tabla intake cifrada, agrega la superficie de guarda
   `backend_stt` y sella `ingresado_en` en el callback del backend. Absorbe `c-51`.
-- **Preguntas abiertas que bloquean el apply** (ver `design.md`): (1) `google-genai==2.8.0` no tipa
-  `transcription_config` (upgrade vs dict sin tipar vs REST con httpx); (2) disponibilidad y precio
-  real de `gemini-3.5-transcribe`; (3) si `language_codes=["es-AR"]` se acepta; (4) retencion del
-  audio; (5) alta placeholder vs reintento ante fallo de STT; (6) drop de la suscripcion Event
-  Streams; (7) reescritura del `<Say>`.
+- **Preguntas abiertas 1-3 RESUELTAS**: (1) subir `google-genai` a `>=2.20.0` (el tipado de
+  `transcription_config` llega en `2.13.0`); (2) `gemini-3.5-transcribe` esta Stable, ~USD 0.005/min
+  (por debajo de Whisper); (3) se usa `language_codes=["es-419"]` (es-AR no soportado), con fallback
+  a auto-detect o `es-MX`. Restan 4 preguntas de diseno (retencion del audio, comportamiento ante
+  fallo de STT/denegacion, drop de la suscripcion Event Streams, reescritura del `<Say>`).
 - **Leer antes**: `openspec/changes/c-52-telefonia-transcripcion-async/{proposal,design,tasks}.md`,
   `openspec/specs/n8n-workflow/spec.md`, `openspec/specs/runtime-cost-guard/spec.md`.
 
-Pendientes planificados despues de C-52, en orden recomendado:
+Pendientes planificados, en orden recomendado:
 
-1. **`c-48-timing-en-listado`**: exponer `ingresado_en`/`persistido_en`/`latencia_e2e_ms` en
-   `IncidenteListItem` (desviacion #2 de C-39) + regenerar `docs/openapi.json`.
-2. **`c-49-carga-corpus-db`**: cargar los 200 casos del corpus en una tabla dedicada
+1. **`c-49-carga-corpus-db`**: cargar los 200 casos del corpus en una tabla dedicada
    (`corpus_incidente`), solo con la descripcion pseudonimizada, aislada de la tabla operativa,
    con FK nullable `incidente_id` -> `incidente.id`; temporal hasta poder correr el flujo completo.
-3. **`c-50-corpus-timing-wiring`**: separar el contrato del loader de `evaluation/corpus.py`
+2. **`c-50-corpus-timing-wiring`**: separar el contrato del loader de `evaluation/corpus.py`
    (carga para clasificacion vs analisis de timing), derivar `tiempo_automatizado_s` de
    `latencia_e2e_ms` medido y cablear `stats.py`/Wilcoxon al reporte.
 
