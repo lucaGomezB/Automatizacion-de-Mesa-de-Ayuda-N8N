@@ -198,10 +198,10 @@ para el Anexo E de la tesis (C-10).
 | 3 | AI Agent | `agent` (LangChain) | Parsea la transcripción con el prompt del negocio. |
 | 3b | Con el fin de enviar los datos... | `memoryRedisChat` | Memoria Redis para el AI Agent. |
 | 3c | Google Gemini Chat Model | `lmChatGoogleGemini` | Modelo de lenguaje del AI Agent. |
-| 4 | Se verifica lo que trajo la IA | `code` (JS) | Valida los 5 pasos Anexo H §H.3 (JSON, campos `sector_predicho`/`sectores_adicionales`, set canónico de 5 sectores, rango confianza) e incrementa `intento_agente`. Emite `canal_raw = "telefonia"`. |
+| 4 | Se verifica lo que trajo la IA | `code` (JS) | Valida los 5 pasos Anexo H §H.3 (JSON, campos `sector_predicho`/`sectores_adicionales`, set canónico de 5 sectores, rango confianza) e incrementa `intento_agente`. Emite `canal_raw = "telefonia"`. **[C-46]** Recupera el sello con `.first()` (no `.item`); ante sello ausente, WARN + revisión forzada. |
 | 5 | La clasificacion de la IA es valida | `if` | Gate de confianza del modelo: `confianza >= 0.70`. Rama true → `Normalizar`; rama false → `Tope de refinamiento alcanzado`. |
 | 6 | Tope de refinamiento alcanzado | `if` | **[C-33]** `intento_agente < 2`. Rama true → `AI Agent`; rama false → `Derivar a revision humana`. |
-| 7 | Derivar a revision humana | `code` (JS) | **[C-33/C-45]** Terminal: `confianza = 0.0`, `revision_forzada = true`; reingresa al normalizador. Recupera el ítem sellado para conservar la transcripción. |
+| 7 | Derivar a revision humana | `code` (JS) | **[C-33/C-45/C-46]** Terminal: `confianza = 0.0`, `revision_forzada = true`; reingresa al normalizador. Recupera el ítem sellado con `.first()` (no `.item`) para conservar la transcripción; ante sello ausente, WARN sin abortar. |
 | 8 | Normalizar entrada del incidente | `code` (JS) | **[C-05]** Compartido — telefonia converge aquí antes del gate de entrada. |
 | 9 | Entrada valida | `if` | Compartido — gate de ENTRADA (no de confianza del modelo). |
 | 10 | Login operador | `httpRequest` | Compartido. |
@@ -213,6 +213,32 @@ para el Anexo E de la tesis (C-10).
 > **Nota sobre telefonía**: la confirmación al usuario se resuelve mediante la respuesta del
 > propio webhook de Twilio/TwiML durante la llamada. No se agrega un nodo SMS de confirmación
 > adicional (ver Decisión 2 C-05 — Open Question resuelta: basta la respuesta del webhook).
+
+### Recuperación robusta del sello de ingreso (C-46)
+
+El canal de telefonía sella `ingresado_en` en `Sellar ingreso telefonia` (antes del
+`AI Agent`), pero el agente no propaga los campos del ítem de entrada. La recuperación
+aguas abajo usa referencias de nodo explícitas:
+
+- `Se verifica lo que trajo la IA` y `Derivar a revision humana` recuperan el sello con
+  `$('Sellar ingreso telefonia').first().json.ingresado_en`.
+- **No** se usa `.item`: esa resolución depende de `pairedItem` y se rompe cuando el ítem
+  corriente proviene del `AI Agent` (y del bucle de refinamiento), lo que devolvía
+  `ingresado_en = null` de forma silenciosa.
+- Si el sello no puede resolverse, el flujo **no se aborta ni pierde el ticket**: se emite un
+  `console.warn` estructurado con el evento `ingreso_sellado_ausente`, se marca el ítem con
+  `ingreso_sellado_ausente = true` y se fuerza `revision_forzada = true` +
+  `requiere_revision_humana = true`. El normalizador propaga el marcador y la revisión, el
+  gate pre-POST `Entrada valida` satisface su rama OR con `revision_forzada`, el POST se
+  ejecuta y el backend deriva el incidente a revisión humana.
+- El marcador `ingreso_sellado_ausente` es **interno**: nunca viaja en el body del POST.
+- El contrato del backend no cambia: `IncidenteCreate.ingresado_en` sigue siendo nullable.
+
+> **Caveat de verificación**: la suite estructural (`test_n8n_workflow.py`) verifica el JSON,
+> no el runtime. Confirmar que `.first()` resuelve en N8N y que el incidente persiste con
+> revisión exige una ejecución N8N en vivo (importar el `workflow.json` y ejecutar el canal
+> telefónico). Las tareas 5.2/5.3 del change `c-46-telefonia-ingreso-sellado` quedan
+> pendientes de verificación manual.
 
 ### Nodos decorativos
 
@@ -512,7 +538,7 @@ cd App/Backend
 python -m pytest tests/test_n8n_workflow.py -v
 ```
 
-Verifica 130 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39 y C-40).
+Verifica 135 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40 y C-46).
 
 ### Prueba manual del canal web (C-05)
 

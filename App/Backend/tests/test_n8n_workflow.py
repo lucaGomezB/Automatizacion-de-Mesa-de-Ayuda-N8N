@@ -18,7 +18,7 @@ from typing import get_args
 import pytest
 from pydantic import BaseModel
 
-from app.schemas.incidente import IncidenteRead
+from app.schemas.incidente import IncidenteCreate, IncidenteRead
 
 # ---------------------------------------------------------------------------
 # Helper: carga del workflow
@@ -3444,4 +3444,155 @@ def test_c40_guide_has_no_stale_review_branch_exception():
     )
     assert "no** pasa por `Marcar correo como leido`" not in guide, (
         "La guia afirma que la rama de revision no pasa por 'Marcar correo como leido'"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Grupo 24 — C-46 (N8N-TIMING-003): recuperación robusta del sello de ingreso
+# de telefonía a través del AI Agent.
+#
+# El validador y el terminal recuperan `ingresado_en` con
+# `$('Sellar ingreso telefonia').first()` (no `.item`, que depende de pairedItem
+# y se rompe cuando el ítem corriente proviene del AI Agent). Un sello
+# irresoluble NO se silencia: WARN estructurado + revisión forzada, conservando
+# la creación del ticket. La verificación es estructural; el comportamiento en
+# vivo exige una ejecución N8N real.
+# ---------------------------------------------------------------------------
+
+SELLO_NODE_NAME = "Sellar ingreso telefonia"
+SELLO_FIRST_REF = f"$('{SELLO_NODE_NAME}').first()"
+SELLO_ITEM_REF = f"$('{SELLO_NODE_NAME}').item"
+SELLO_AUSENTE_MARKER = "ingreso_sellado_ausente"
+
+
+def test_c46_validador_referencia_sello_por_primer_item():
+    """
+    Scenario 1 (N8N-TIMING-003): el `jsCode` del validador referencia el sello
+    con `.first()` y NO con `.item`.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    code = _js_code(by_name[CODE_NODE_TELEFONIA])
+
+    assert SELLO_FIRST_REF in code, (
+        f"El validador {CODE_NODE_TELEFONIA!r} no recupera el sello con "
+        f"{SELLO_FIRST_REF!r}: .item depende de pairedItem y se rompe a traves del AI Agent"
+    )
+    assert SELLO_ITEM_REF not in code, (
+        f"El validador {CODE_NODE_TELEFONIA!r} sigue usando "
+        f"{SELLO_ITEM_REF!r} (pairedItem fragil)"
+    )
+
+
+def test_c46_terminal_referencia_sello_por_primer_item():
+    """
+    Scenario 2 (N8N-TIMING-003): el `jsCode` del terminal referencia el sello
+    con `.first()` y NO con `.item`; ante sello ausente emite WARN y conserva
+    la revisión humana.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    code = _js_code(by_name[DERIVAR_NODE_NAME])
+
+    assert SELLO_FIRST_REF in code, (
+        f"El terminal {DERIVAR_NODE_NAME!r} no recupera el sello con "
+        f"{SELLO_FIRST_REF!r}"
+    )
+    assert SELLO_ITEM_REF not in code, (
+        f"El terminal {DERIVAR_NODE_NAME!r} sigue usando {SELLO_ITEM_REF!r}"
+    )
+    assert "console.warn" in _active_js_code(by_name[DERIVAR_NODE_NAME]), (
+        f"El terminal {DERIVAR_NODE_NAME!r} no emite WARN ante sello ausente"
+    )
+    assert "requiere_revision_humana" in code and "true" in code, (
+        f"El terminal {DERIVAR_NODE_NAME!r} no conserva requiere_revision_humana=true"
+    )
+
+
+def test_c46_ausencia_sello_no_se_silencia():
+    """
+    Scenario 3 (N8N-TIMING-003): la ausencia del sello no se silencia mediante
+    un `catch`/`return null`; el validador emite un WARN estructurado y marca el
+    item (marcador `ingreso_sellado_ausente`) para forzar revisión.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    code = _active_js_code(by_name[CODE_NODE_TELEFONIA])
+
+    assert "console.warn" in code, (
+        "El validador no emite WARN estructurado cuando el sello no resuelve"
+    )
+    assert SELLO_AUSENTE_MARKER in code, (
+        "El validador no marca 'ingreso_sellado_ausente' ante sello ausente"
+    )
+    assert "revision_forzada" in code, (
+        "El validador no fuerza la revision (revision_forzada) ante sello ausente"
+    )
+    assert "return null" not in code, (
+        "El validador sigue devolviendo null en silencio ante sello ausente"
+    )
+
+
+def test_c46_sello_ausente_deriva_revision_conservando_ticket():
+    """
+    Scenario 4 (N8N-TIMING-003): ante sello ausente el flujo marca revisión
+    humana y continúa hacia la persistencia (el ticket se crea y la ejecución no
+    aborta). El normalizador propaga el marcador/revisión y el terminal alcanza
+    el POST.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    norm = _js_code(by_name[NORMALIZER_NODE_NAME])
+    assert SELLO_AUSENTE_MARKER in norm, (
+        "El normalizador no propaga el marcador 'ingreso_sellado_ausente'"
+    )
+    assert "revision_forzada" in norm, (
+        "El normalizador no propaga 'revision_forzada'"
+    )
+    assert "requiere_revision_humana" in norm, (
+        "El normalizador no propaga 'requiere_revision_humana'"
+    )
+
+    # El gate pre-POST satisface su rama OR con revision_forzada aunque
+    # confianza sea 0.0, por lo que el ticket se crea igualmente.
+    cond_str = json.dumps(by_name[IF_NODE_CORREO].get("parameters", {}).get("conditions", {}))
+    assert "revision_forzada" in cond_str, (
+        "El gate 'Entrada valida' no rutea por revision_forzada: un sello ausente "
+        "con confianza 0.0 no crearia el ticket"
+    )
+
+    # El terminal conserva la revision humana y alcanza la persistencia.
+    assert _connections_reachable(wf, DERIVAR_NODE_NAME, HTTP_NODE_CORREO), (
+        f"El terminal {DERIVAR_NODE_NAME!r} no alcanza {HTTP_NODE_CORREO!r}: "
+        "el ticket se perderia"
+    )
+
+
+def test_c46_contrato_persistencia_backend_sin_cambios():
+    """
+    Scenario 5 (N8N-TIMING-003): el body del POST sigue enviando `ingresado_en`
+    por expresión (puede ser nulo), el marcador interno NO viaja al backend y
+    `IncidenteCreate.ingresado_en` permanece nullable.
+    """
+    wf = load_workflow()
+    _, by_type = index_nodes(wf)
+
+    nodes = _incidentes_http_nodes(by_type)
+    assert nodes, "No se encontro el HTTP POST a /api/v1/incidentes"
+    body = nodes[0].get("parameters", {}).get("body", {})
+
+    value = body.get("ingresado_en")
+    assert isinstance(value, str) and value.startswith("=") and "{{" in value, (
+        f"'ingresado_en' debe resolverse por expresion N8N, no por constante: {value!r}"
+    )
+    assert NORMALIZER_NODE_NAME in value, (
+        "'ingresado_en' debe resolver al valor propagado por el normalizador"
+    )
+    assert SELLO_AUSENTE_MARKER not in json.dumps(body), (
+        "El marcador interno 'ingreso_sellado_ausente' no debe viajar en el body del POST"
+    )
+
+    assert IncidenteCreate.model_fields["ingresado_en"].default is None, (
+        "El contrato del backend cambio: IncidenteCreate.ingresado_en debe seguir nullable"
     )
