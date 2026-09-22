@@ -45,6 +45,46 @@ def _to_utc(value: datetime) -> datetime:
     return value.astimezone(timezone.utc)
 
 
+def _derivar_latencia_e2e_ms(
+    ingresado_en: datetime | None,
+    persistido_en: datetime | None,
+) -> int | None:
+    """
+    Deriva la latencia end-to-end en milisegundos (C-39, C-48).
+
+    Es `persistido_en - ingresado_en` en ms, normalizando ambos instantes con
+    `_to_utc`. Es nula si falta cualquiera de los dos instantes. Una latencia
+    negativa NUNCA se reporta como medición válida: se devuelve nulo y la
+    anomalía queda marcada por `_es_latencia_anomala`. Fuente única de verdad
+    para el detalle (`IncidenteRead`) y el listado (`IncidenteListItem`).
+    """
+    if ingresado_en is None or persistido_en is None:
+        return None
+    delta_ms = int(
+        (_to_utc(persistido_en) - _to_utc(ingresado_en)).total_seconds() * 1000
+    )
+    if delta_ms < 0:
+        return None
+    return delta_ms
+
+
+def _es_latencia_anomala(
+    ingresado_en: datetime | None,
+    persistido_en: datetime | None,
+) -> bool:
+    """
+    True si la latencia derivada es negativa (C-39, C-48).
+
+    Una latencia negativa es físicamente inválida (por ejemplo, por un ingreso
+    futuro dentro de la tolerancia o por desalineación de relojes); se marca
+    como anomalía para excluirla del corpus y del análisis. Nula si falta
+    cualquiera de los dos instantes.
+    """
+    if ingresado_en is None or persistido_en is None:
+        return False
+    return (_to_utc(persistido_en) - _to_utc(ingresado_en)).total_seconds() < 0
+
+
 class ClasificacionPrecalculada(BaseModel):
     """
     Clasificación ya producida por un emisor externo (N8N) — C-33, D5.
@@ -266,15 +306,7 @@ class IncidenteRead(BaseModel):
         válida: se devuelve nulo y la anomalía queda marcada por
         `latencia_anomala` para su diagnóstico y exclusión del corpus.
         """
-        if self.ingresado_en is None or self.persistido_en is None:
-            return None
-        delta_ms = int(
-            (_to_utc(self.persistido_en) - _to_utc(self.ingresado_en)).total_seconds()
-            * 1000
-        )
-        if delta_ms < 0:
-            return None
-        return delta_ms
+        return _derivar_latencia_e2e_ms(self.ingresado_en, self.persistido_en)
 
     @computed_field
     @property
@@ -286,9 +318,7 @@ class IncidenteRead(BaseModel):
         ingreso futuro dentro de la tolerancia o por desalineación de relojes);
         se marca como anomalía para excluirla del corpus y del análisis.
         """
-        if self.ingresado_en is None or self.persistido_en is None:
-            return False
-        return (_to_utc(self.persistido_en) - _to_utc(self.ingresado_en)).total_seconds() < 0
+        return _es_latencia_anomala(self.ingresado_en, self.persistido_en)
 
 
 class IncidenteListItem(BaseModel):
@@ -308,3 +338,32 @@ class IncidenteListItem(BaseModel):
     created_at: datetime
     sector: SectorRead | None
     estado: EstadoRead
+
+    # Instrumentación temporal end-to-end (C-48). El listado expone los dos
+    # instantes fuente y deriva la latencia con la MISMA lógica que el detalle
+    # (única fuente de verdad). Nullable: las filas legacy sin instantes siguen
+    # serializando con latencia nula.
+    ingresado_en: datetime | None = None
+    persistido_en: datetime | None = None
+
+    @computed_field
+    @property
+    def latencia_e2e_ms(self) -> int | None:
+        """
+        Latencia end-to-end derivada en milisegundos (C-48).
+
+        Paridad exacta con `IncidenteRead`: delega en
+        `_derivar_latencia_e2e_ms`. Nula si falta un instante o si la latencia
+        es negativa.
+        """
+        return _derivar_latencia_e2e_ms(self.ingresado_en, self.persistido_en)
+
+    @computed_field
+    @property
+    def latencia_anomala(self) -> bool:
+        """
+        True si la latencia derivada es negativa (C-48).
+
+        La marca de anomalía es observable en el listado, no solo en el detalle.
+        """
+        return _es_latencia_anomala(self.ingresado_en, self.persistido_en)

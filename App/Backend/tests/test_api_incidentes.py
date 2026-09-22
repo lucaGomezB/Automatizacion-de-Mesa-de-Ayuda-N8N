@@ -927,3 +927,40 @@ async def test_c39_ingreso_futuro_fuera_de_tolerancia_rechazado_422(
         response = await client.post("/api/v1/incidentes/", json=payload)
 
     assert response.status_code == 422, response.text
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Grupo C-48: instrumentacion temporal end-to-end en la proyeccion de listado
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+@pytest.mark.asyncio
+async def test_c48_listado_expone_instantes_y_latencia(
+    seed_catalogs, make_client_with_classifier
+):
+    """
+    RED (c-48): un incidente sellado con `ingresado_en`/`persistido_en` se
+    consulta por GET /api/v1/incidentes y el item del listado devuelve ambos
+    instantes y la latencia derivada. Verifica que la ruta y el repositorio no
+    necesitan cambios y que una futura proyeccion que omita las columnas rompe
+    este test.
+    """
+    result = _make_result()
+    ingresado = datetime.now(timezone.utc) - timedelta(seconds=5)
+    payload = {**VALID_PAYLOAD, "ingresado_en": ingresado.isoformat()}
+
+    async with make_client_with_classifier(result) as client:
+        create_resp = await client.post("/api/v1/incidentes/", json=payload)
+        assert create_resp.status_code == 201, create_resp.text
+        incidente_id = create_resp.json()["id"]
+
+        # Act
+        lista = await client.get("/api/v1/incidentes/")
+
+    assert lista.status_code == 200, lista.text
+    item = next(i for i in lista.json() if i["id"] == incidente_id)
+    assert item["ingresado_en"] is not None
+    assert item["persistido_en"] is not None
+    assert item["latencia_e2e_ms"] is not None
+    assert item["latencia_e2e_ms"] >= 4000
+    assert item["latencia_anomala"] is False
