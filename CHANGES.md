@@ -95,6 +95,7 @@ C-45 runtime-cost-guard (C-41, C-33)
 --- FASE 17: Fidelidad de medicion del pipeline (2026-09-22) ---
 
 C-46 telefonia-ingreso-sellado (C-39, C-45)
+ └── C-47 guard-costo-item (C-46, C-45)
 ```
 
 ### Paralelismo por fase
@@ -413,8 +414,9 @@ C-46 telefonia-ingreso-sellado (C-39, C-45)
 | C-44 | docs-evaluation-sync | 15 | C-43 | BAJO | — |
 | C-45 | runtime-cost-guard | 16 | C-41, C-33 | ALTO | — |
 | C-46 | telefonia-ingreso-sellado | 17 | C-39, C-45 | MEDIO | — |
+| C-47 | guard-costo-item | 17 | C-46, C-45 | MEDIO | — |
 
-**Total**: 46 changes documentados — 45 archivados (C-01..C-46, sin C-21) mas el mantenimiento sin numero `improve-dockerfiles`. No hay changes activos. C-21 no existe: no fue creado.
+**Total**: 47 changes documentados — 46 archivados (C-01..C-47, sin C-21) mas el mantenimiento sin numero `improve-dockerfiles`. No hay changes activos. C-21 no existe: no fue creado.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
 **Fases**: 1-17 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12).
@@ -1071,6 +1073,22 @@ C-46 telefonia-ingreso-sellado (C-39, C-45)
   - `openspec/specs/n8n-workflow/spec.md` (N8N-TIMING-003)
   - `openspec/changes/archive/2026-09-20-c-39-e2e-timing-instrumentation/verify-report.md` (desviacion HIGH #3)
 
+### [C-47] `guard-costo-item`
+
+- **Estado**: `[x]` completado, verificado y archivado (2026-09-22 — `openspec/changes/archive/2026-09-22-c-47-guard-costo-item`; 16/17 tareas, 1 pendiente manual no bloqueante; 5/5 scenarios compliant; 140 passed + 1 xfailed en la suite N8N, 556 passed offline, 33/33 specs validos; verify PASS WITH WARNINGS)
+- **Scope**:
+  - Nuevo nodo `code` `Restaurar item telefonia` entre `Guard de costo` y `Guard permite?`: recupera el item sellado con `$('Sellar ingreso telefonia').first()` (patron C-46) y le re-inyecta la decision `allowed`, de modo que el `AI Agent` vuelve a recibir el item sellado (no solo el cuerpo de la guarda) y el IF conserva el ruteo por `$json.allowed`.
+  - `caller` del body de `Guard de costo`: del `.item` fragil (`n8n/workflow.json:779`) al item corriente (`$json.From || $json.from`), sin referencia cruzada entre nodos.
+  - Suite estructural extendida en `test_n8n_workflow.py` (6 tests: N8N-GUARD-001/002); adaptacion minima del assert de C-45 en `test_runtime_cost_guard.py`; `docs/n8n-workflow-guide.md` sincronizada (35 nodos, 141 propiedades). Backend sin cambios.
+- **Alcance acotado (hallazgo del verify)**: la descripcion del canal telefonico sigue vacia porque el payload del trigger `com.twilio.voice.insights.call-summary.complete` NO expone la transcripcion (limitacion heredada de C-45). C-47 garantiza la propagacion del item; el gap real (entrega de la transcripcion + `caller`) se rastrea en un change aparte (ver "Primer change recomendado").
+- **Pendiente documentado**: verificacion manual en N8N en vivo (tarea 5.4) — no bloqueante.
+- **Dependencias**: `C-46` (mismo nodo terminal `Derivar a revision humana`), `C-45` (guarda de costo)
+- **Governance**: MEDIO
+- **Leer antes**:
+  - `openspec/changes/archive/2026-09-22-c-47-guard-costo-item/verify-report.md`
+  - `openspec/specs/n8n-workflow/spec.md` (N8N-GUARD-001, N8N-GUARD-002)
+  - `openspec/changes/archive/2026-09-21-c-45-runtime-cost-guard/design.md` (limitacion de la transcripcion)
+
 ---
 
 ## Notas del analisis
@@ -1091,7 +1109,7 @@ C-46 telefonia-ingreso-sellado (C-39, C-45)
 | Backend: migraciones | COMPLETO | Alembic; migraciones 001-007 (la 006 agrega timing e2e, C-39; la 007 agrega `costo_guarda_contador`, C-45) |
 | Backend: auth | COMPLETO | JWT Bearer (C-15) |
 | Costo runtime: guarda | COMPLETO | C-45 bolsa global USD 10/semana, rate global y por origen, PostgreSQL 007, webhook pre-llamada de Twilio y fail-closed (archivado) |
-| N8N workflow JSON | COMPLETO | Canales cableados (C-04/C-05), compuerta de confianza de dos capas (C-38), wiring corregido (C-40), recuperacion robusta del sello de ingreso de telefonia (C-46) |
+| N8N workflow JSON | COMPLETO | Canales cableados (C-04/C-05), compuerta de confianza de dos capas (C-38), wiring corregido (C-40), recuperacion robusta del sello de ingreso de telefonia (C-46), item de telefonia preservado a traves de la guarda de costo (C-47) |
 | Frontend: paginas | COMPLETO | ReportarIncidente, Administracion, Dashboard (C-23), Login (C-15) |
 | Frontend: componentes | COMPLETO | shadcn/ui, badges, indicadores, tablas, dialogos |
 | Frontend: hooks/services | COMPLETO | React Query + Axios, todos los endpoints conectados |
@@ -1112,7 +1130,7 @@ C-46 telefonia-ingreso-sellado (C-39, C-45)
 | Backup scripts: PostgreSQL | IMPLEMENTADO | C-26 — scripts/backup.sh y scripts/backup.ps1 con rotacion de 7 dias |
 | N8N retention: 30 dias | CONFIGURADO | C-26 — EXECUTIONS_DATA_PRUNE y EXECUTIONS_DATA_MAX_AGE en docker-compose.yml |
 
-Tabla reconciliada con el estado real el 2026-09-22: C-14..C-46 quedaron documentados en las FASE 12-17.
+Tabla reconciliada con el estado real el 2026-09-22: C-14..C-47 quedaron documentados en las FASE 12-17.
 
 Cambios que NO estan en el roadmap original porque se implementaron durante el desarrollo:
 - Clasificador hibrido (completo)
@@ -1130,35 +1148,43 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 
 ## Primer change recomendado
 
-El change C-46 quedo implementado y archivado (2026-09-22). No hay ningun change activo:
-C-01..C-46 estan archivados (C-21 no existe).
+Los changes C-46 y C-47 quedaron implementados, verificados y archivados (2026-09-22). No hay
+ningun change activo: C-01..C-47 estan archivados (C-21 no existe).
 
 La Fase 2 del pipeline (fidelidad de medicion, no costo) se aprobo dividida en changes chicos.
-Pendientes, en orden recomendado:
+Pendientes planificados, en orden recomendado:
 
-1. **`c-47-guard-costo-item`** (sin change abierto): el nodo `Guard de costo` (C-45) reemplaza
-   el item y el `AI Agent` pierde la transcripcion; ademas conserva un `.item` fragil
-   (`n8n/workflow.json:779`). Debe secuenciarse DESPUES de C-46 (mismo nodo terminal
-   `Derivar a revision humana`).
-2. **`c-48-timing-en-listado`**: exponer `ingresado_en`/`persistido_en`/`latencia_e2e_ms` en
+1. **`c-48-timing-en-listado`**: exponer `ingresado_en`/`persistido_en`/`latencia_e2e_ms` en
    `IncidenteListItem` (desviacion #2 de C-39) + regenerar `docs/openapi.json`.
-3. **`c-49-carga-corpus-db`**: cargar los 200 casos del corpus en una tabla dedicada
+2. **`c-49-carga-corpus-db`**: cargar los 200 casos del corpus en una tabla dedicada
    (`corpus_incidente`), solo con la descripcion pseudonimizada, aislada de la tabla operativa,
    con FK nullable `incidente_id` -> `incidente.id`; temporal hasta poder correr el flujo completo.
-4. **`c-50-corpus-timing-wiring`**: separar el contrato del loader de `evaluation/corpus.py`
+3. **`c-50-corpus-timing-wiring`**: separar el contrato del loader de `evaluation/corpus.py`
    (carga para clasificacion vs analisis de timing), derivar `tiempo_automatizado_s` de
    `latencia_e2e_ms` medido y cablear `stats.py`/Wilcoxon al reporte.
+
+Gap detectado, PENDIENTE DE DEFINICION DE ALCANCE (exploracion tecnica en curso):
+
+- **Canal telefonico — la descripcion llega vacia al `AI Agent`.** El trigger de Event Streams
+  (`com.twilio.voice.insights.call-summary.complete`) entrega un body de CloudEvents con `data`
+  stringificado que ningun nodo desenvuelve; y el recurso `CallSummary` NO contiene la
+  transcripcion (es un recurso separado: el TwiML usa `<Record transcribe="true">` pero sin
+  `transcribeCallback` desde C-30). Parsear el payload arregla el `caller` (`data.from.caller`)
+  pero NO la descripcion. Candidato `c-51-twilio-payload-wiring`; su alcance (solo n8n vs. n8n +
+  backend + consola Twilio) depende de la exploracion tecnica en curso (payload en vivo +
+  mecanismo real de entrega de la transcripcion). Gobernanza probable ALTA/CRITICA si toca
+  backend/Twilio. Ver la limitacion de C-45 y el alcance acotado de C-47.
 
 Operativo para habilitar el pipeline pago (fuera de changes):
 - Cargar la credencial real de Twilio (`TWILIO_AUTH_TOKEN`) y apuntar la Voice URL de la
   consola a `https://<host>/api/v1/cost-guard/twilio/voice`; con eso la validacion de firma
   de C-45 se activa sola.
-- Verificar el campo real de transcripcion del evento `call-summary.complete` (limitacion
-  documentada de C-45) y ajustar el fallback del workflow si difiere.
-- Verificacion manual en N8N en vivo de C-46 (tareas 5.2/5.3): confirmar que `.first()` resuelve
-  y que el incidente telefonico persiste `ingresado_en` no nulo.
+- Verificacion manual en N8N en vivo de C-46 (tareas 5.2/5.3) y C-47 (tarea 5.4): confirmar que
+  `.first()` resuelve, que el incidente telefonico persiste `ingresado_en` no nulo y que el
+  `AI Agent` recibe el item sellado tras la guarda.
 
 Deuda menor pendiente (no bloqueante):
 - Tesis post-pipeline: reconciliar cap. 7 con el corpus real y corregir 4.3/4.8/cap. 11.
 
-Para abrir el siguiente change: `/opsx:propose c-47-guard-costo-item`.
+Para abrir el siguiente change: `/opsx:propose c-48-timing-en-listado`, o definir primero el
+alcance del gap telefonico (`c-51`) segun la prioridad.
