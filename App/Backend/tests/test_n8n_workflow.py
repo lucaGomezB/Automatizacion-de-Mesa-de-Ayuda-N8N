@@ -3596,3 +3596,175 @@ def test_c46_contrato_persistencia_backend_sin_cambios():
     assert IncidenteCreate.model_fields["ingresado_en"].default is None, (
         "El contrato del backend cambio: IncidenteCreate.ingresado_en debe seguir nullable"
     )
+
+
+# ---------------------------------------------------------------------------
+# Grupo 25 — C-47 (N8N-GUARD-001 / N8N-GUARD-002): la guarda de costo no
+# destruye el item del canal de telefonia.
+#
+# `Guard de costo` es un `httpRequest`: su salida REEMPLAZA el item por el
+# cuerpo de la respuesta (`{allowed, ...}`), de modo que el `AI Agent` perdia
+# el item sellado completo. El nodo `Restaurar item telefonia` recupera el
+# item sellado (patron `.first()` de C-46) y le re-inyecta `allowed` para el
+# ruteo de `Guard permite?`. El `caller` del body pasa al item corriente
+# (`$json`), eliminando la referencia fragil `.item` sin introducir una
+# referencia cruzada. La verificacion es estructural; el runtime exige una
+# ejecucion N8N real.
+# ---------------------------------------------------------------------------
+
+GUARD_NODE_NAME = "Guard de costo"
+GUARD_IF_NODE_NAME = "Guard permite?"
+RESTORE_NODE_NAME = "Restaurar item telefonia"
+
+
+def test_c47_nodo_restauracion_cablea_la_guarda():
+    """
+    RED (N8N-GUARD-001): existe un nodo code `Restaurar item telefonia`
+    intercalado entre `Guard de costo` (salida main) y `Guard permite?`, cuyo
+    `jsCode` recupera el item sellado con `$('Sellar ingreso telefonia').first()`.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    assert RESTORE_NODE_NAME in by_name, (
+        f"No existe el nodo de restauracion {RESTORE_NODE_NAME!r}"
+    )
+    node = by_name[RESTORE_NODE_NAME]
+    assert node.get("type") == "n8n-nodes-base.code", (
+        f"{RESTORE_NODE_NAME!r} debe ser un nodo code, got {node.get('type')!r}"
+    )
+    assert RESTORE_NODE_NAME in _output_successors(wf, GUARD_NODE_NAME, 0), (
+        f"La salida main de {GUARD_NODE_NAME!r} no desemboca en {RESTORE_NODE_NAME!r}"
+    )
+    assert GUARD_IF_NODE_NAME in _output_successors(wf, RESTORE_NODE_NAME, 0), (
+        f"{RESTORE_NODE_NAME!r} no desemboca en {GUARD_IF_NODE_NAME!r}"
+    )
+    assert SELLO_FIRST_REF in _js_code(node), (
+        f"{RESTORE_NODE_NAME!r} no recupera el sello con {SELLO_FIRST_REF!r}"
+    )
+
+
+def test_c47_restauracion_fusiona_sello_y_fija_allowed():
+    """
+    RED (N8N-GUARD-001): el `jsCode` de restauracion fusiona el item sellado y
+    fija `allowed` desde el item corriente de la guarda, de modo que el
+    `AI Agent` vuelve a ser alcanzable con el item sellado.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    code = _js_code(by_name[RESTORE_NODE_NAME])
+
+    assert "...sellado" in code, (
+        f"{RESTORE_NODE_NAME!r} no fusiona el item sellado (falta el spread '...sellado')"
+    )
+    assert "allowed" in code, (
+        f"{RESTORE_NODE_NAME!r} no fija 'allowed' para el ruteo de {GUARD_IF_NODE_NAME!r}"
+    )
+    assert "$input" in code, (
+        f"{RESTORE_NODE_NAME!r} no lee la decision desde el item corriente ($input)"
+    )
+    assert _connections_reachable(wf, RESTORE_NODE_NAME, AI_AGENT_NODE_NAME), (
+        f"El {AI_AGENT_NODE_NAME!r} no es alcanzable desde {RESTORE_NODE_NAME!r}"
+    )
+
+
+def test_c47_caller_usa_el_item_corriente_sin_referencia_cruzada():
+    """
+    RED (N8N-GUARD-002): el body de `Guard de costo` resuelve `caller` desde el
+    item corriente (`$json.From` / `$json.from`) y NO referencia
+    `$('Sellar ingreso telefonia')` (ni `.item` ni `.first()`).
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    body = by_name[GUARD_NODE_NAME].get("parameters", {}).get("body", {})
+    caller = str(body.get("caller", ""))
+    body_str = json.dumps(body)
+
+    assert "$json.From" in caller or "$json.from" in caller, (
+        f"El body de {GUARD_NODE_NAME!r} no resuelve caller desde el item corriente "
+        f"(caller={caller!r})"
+    )
+    assert SELLO_NODE_NAME not in body_str, (
+        f"El body de {GUARD_NODE_NAME!r} sigue referenciando {SELLO_NODE_NAME!r}: "
+        "referencia cruzada fragil que depende de pairedItem"
+    )
+    assert SELLO_FIRST_REF not in body_str and SELLO_ITEM_REF not in body_str, (
+        f"El body de {GUARD_NODE_NAME!r} conserva una referencia .item/.first() al sello"
+    )
+
+
+def test_c47_terminal_no_regresa_c46():
+    """
+    No regresion (N8N-TIMING-003): el `jsCode` del terminal `Derivar a revision
+    humana` conserva la recuperacion con `.first()`, el WARN estructurado
+    `ingreso_sellado_ausente` y `requiere_revision_humana = true`. PASA contra el
+    workflow actual (guarda de no regresion).
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    node = by_name[DERIVAR_NODE_NAME]
+    code = _js_code(node)
+
+    assert SELLO_FIRST_REF in code, (
+        f"{DERIVAR_NODE_NAME!r} perdio la recuperacion robusta {SELLO_FIRST_REF!r}"
+    )
+    assert SELLO_ITEM_REF not in code, (
+        f"{DERIVAR_NODE_NAME!r} regreso a {SELLO_ITEM_REF!r}"
+    )
+    assert "console.warn" in _active_js_code(node), (
+        f"{DERIVAR_NODE_NAME!r} perdio el WARN estructurado de C-46"
+    )
+    assert SELLO_AUSENTE_MARKER in code, (
+        f"{DERIVAR_NODE_NAME!r} perdio el marcador {SELLO_AUSENTE_MARKER!r}"
+    )
+    assert "requiere_revision_humana" in code and "true" in code, (
+        f"{DERIVAR_NODE_NAME!r} perdio requiere_revision_humana=true"
+    )
+
+
+def test_c47_caller_ausente_resuelve_null_sin_abortar():
+    """
+    TRIANGULATE (N8N-GUARD-002): sin numero de origen, el body resuelve `caller`
+    a `null` con un fallback tolerante y la guarda sigue evaluando la reserva
+    (POST al endpoint intacto).
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    params = by_name[GUARD_NODE_NAME].get("parameters", {})
+    caller = str(params.get("body", {}).get("caller", ""))
+
+    assert "$json.From" in caller or "$json.from" in caller, (
+        f"caller no resuelve el origen desde el item corriente (caller={caller!r})"
+    )
+    assert "|| null" in caller or "?? null" in caller, (
+        f"caller no tiene fallback tolerante: un origen ausente abortaria la guarda "
+        f"(caller={caller!r})"
+    )
+    assert params.get("method") == "POST", (
+        f"{GUARD_NODE_NAME!r} dejo de ser un POST"
+    )
+    assert "/api/v1/cost-guard/reserve" in str(params.get("url", "")), (
+        f"{GUARD_NODE_NAME!r} dejo de apuntar al endpoint de la guarda"
+    )
+
+
+def test_c47_rama_denegada_conserva_el_item_sellado():
+    """
+    TRIANGULATE (N8N-GUARD-001): la rama denegada de `Guard permite?` desemboca
+    en `Derivar a revision humana`, que fusiona el item sellado y conserva el
+    canal de telefonia (contenido preservado sin invocar al agente pago).
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    assert DERIVAR_NODE_NAME in _output_successors(wf, GUARD_IF_NODE_NAME, 1), (
+        f"La rama denegada de {GUARD_IF_NODE_NAME!r} no desemboca en {DERIVAR_NODE_NAME!r}"
+    )
+    terminal_code = _js_code(by_name[DERIVAR_NODE_NAME])
+    assert "...sellado" in terminal_code, (
+        f"{DERIVAR_NODE_NAME!r} no fusiona el item sellado: la rama denegada perderia "
+        "el item sellado de telefonia"
+    )
+    assert "canal_raw: 'telefonia'" in terminal_code, (
+        f"{DERIVAR_NODE_NAME!r} no conserva el canal de telefonia en la rama denegada"
+    )

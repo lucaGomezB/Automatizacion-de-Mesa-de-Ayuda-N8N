@@ -776,7 +776,7 @@
         "contentType": "json",
         "body": {
           "provider": "n8n_gemini",
-          "caller": "={{ $('Sellar ingreso telefonia').item.json.From || $('Sellar ingreso telefonia').item.json.from || null }}"
+          "caller": "={{ $json.From || $json.from || null }}"
         },
         "options": {},
         "sendHeaders": true,
@@ -798,6 +798,19 @@
       "id": "c45-guard-http-0001-000000000001",
       "name": "Guard de costo",
       "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// C-47 (N8N-GUARD-001): la guarda de costo es un httpRequest y su salida\n// REEMPLAZA el item por el cuerpo de la respuesta ({allowed}). Se restaura el\n// item sellado de telefonia (patron .first() de C-46, robusto frente a\n// pairedItem) y se le re-inyecta la decision de la guarda, de modo que el\n// AI Agent recupera la transcripcion/descripcion y 'Guard permite?' conserva\n// el ruteo por '$json.allowed'. Se preserva pairedItem para que las\n// referencias aguas abajo sigan resolviendo.\nconst sellado = $('Sellar ingreso telefonia').first().json;\nconst allowed = $input.item.json.allowed;\nreturn [\n  {\n    json: {\n      ...sellado,\n      allowed\n    },\n    pairedItem: { item: 0 }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -60,
+        700
+      ],
+      "id": "c47-restaurar-item-0001-000000000001",
+      "name": "Restaurar item telefonia"
     },
     {
       "parameters": {
@@ -1169,7 +1182,7 @@
       "main": [
         [
           {
-            "node": "Guard permite?",
+            "node": "Restaurar item telefonia",
             "type": "main",
             "index": 0
           }
@@ -1177,6 +1190,17 @@
         [
           {
             "node": "Derivar a revision humana",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Restaurar item telefonia": {
+      "main": [
+        [
+          {
+            "node": "Guard permite?",
             "type": "main",
             "index": 0
           }
