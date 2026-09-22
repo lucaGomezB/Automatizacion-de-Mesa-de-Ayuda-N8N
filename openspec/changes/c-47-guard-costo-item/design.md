@@ -4,7 +4,7 @@ Ver `proposal.md — Why`. Restricciones verificadas que moldean el enfoque:
 
 - `Guard de costo` (`n8n/workflow.json:799`) es un `n8n-nodes-base.httpRequest` (typeVersion 4.4) cuyo body llama a `POST {{ $env.BACKEND_URL }}/api/v1/cost-guard/reserve` con `provider="n8n_gemini"` y `caller`. La salida de un `httpRequest` es el cuerpo de la respuesta del backend; el item de entrada NO se propaga.
 - Cableado actual: `Sellar ingreso telefonia` → `Guard de costo`; `Guard de costo` main[0] → `Guard permite?`; `Guard de costo` main[1] (error, `onError: continueErrorOutput`) → `Derivar a revision humana`; `Guard permite?` main[0] (true) → `AI Agent`; main[1] (false) → `Derivar a revision humana`.
-- El `AI Agent` (`workflow.json:196-210`) interpola en su prompt `{{ $json.transcript || $json.body || $json.descripcion || $json.text || '' }}`. Como su item de entrada es la respuesta de la guarda (`{allowed: ...}`), todos esos campos quedan ausentes y el agente clasifica sobre una descripción vacía.
+- El `AI Agent` (`workflow.json:196-210`) interpola en su prompt `{{ $json.transcript || $json.body || $json.descripcion || $json.text || '' }}`. Como su item de entrada es la respuesta de la guarda (`{allowed: ...}`), pierde el item sellado completo. Nota de alcance: el payload del trigger `call-summary.complete` no expone ninguno de esos campos (limitación heredada de C-45); C-47 corrige la pérdida del item a través de la guarda, no la ausencia del campo de transcripción.
 - El item sellado que produce `Sellar ingreso telefonia` es `{...item.json del trigger, ingresado_en}` y es exactamente el item que entra al nodo de guarda (conexión directa), por lo que su recuperación es determinista.
 - El body de la guarda usa `$('Sellar ingreso telefonia').item.json.From` (`workflow.json:779`), patrón idéntico al que C-46 corrigió con `.first()` en el validador y el terminal.
 - C-46 ya dejó `Derivar a revision humana` recuperando `$('Sellar ingreso telefonia').first()` y marcando `ingreso_sellado_ausente` + `revision_forzada` + `requiere_revision_humana` ante sello ausente. C-47 NO debe regresar ese comportamiento.
@@ -14,7 +14,7 @@ Ver `proposal.md — Why`. Restricciones verificadas que moldean el enfoque:
 
 **Goals:**
 
-- Que el `AI Agent` del canal de telefonía vuelva a recibir la descripción/transcripción del incidente aunque el flujo pase por `Guard de costo`.
+- Que el `AI Agent` del canal de telefonía vuelva a recibir el item sellado completo (no solo el cuerpo de la guarda) aunque el flujo pase por `Guard de costo`.
 - Que `Guard permite?` conserve la decisión `allowed` de la guarda y su ruteo verdadero/falso no cambie.
 - Reemplazar la referencia frágil `.item` del `caller` por la referencia al item corriente del propio nodo (`$json.From || $json.from`), eliminando la dependencia de `pairedItem` sin introducir una referencia cruzada entre nodos.
 - Preservar el comportamiento N8N-TIMING-003 de C-46 en el terminal y cubrirlo con una prueba de no regresión.
@@ -26,12 +26,13 @@ Ver `proposal.md — Why`. Restricciones verificadas que moldean el enfoque:
 - No modificar el nodo terminal `Derivar a revision humana` ni el validador `Se verifica lo que trajo la IA` (C-46), solo verificarlos.
 - No agregar un harness de runtime N8N ni invocar servicios pagos reales.
 - No tocar `IncidenteListItem` (c-48), ni la carga/cableado del corpus (c-49/c-50).
+- No cablear la fuente real de la transcripción de Twilio ni modificar el trigger: el payload de `call-summary.complete` no expone un campo de transcripción/descripción (limitación heredada de C-45), y resolverlo se rastrea en un change aparte. C-47 solo garantiza la propagación del item sellado a través de la guarda.
 
 ## Decisions
 
 ### D1: Nodo `code` de restauración entre `Guard de costo` y `Guard permite?`
 
-Se intercala un nodo `n8n-nodes-base.code` cuya `jsCode` recupera el item sellado con `$('Sellar ingreso telefonia').first().json`, lee la decisión de la guarda del item corriente (`$input.item.json.allowed`) y devuelve `{...sellado, allowed}`. El nodo de restauración se cablea `Guard de costo` main[0] → restauración → `Guard permite?`. Resultado: el IF conserva su condición `$json.allowed`, la rama verdadera entrega al `AI Agent` un item con la descripción/transcripción, y la rama falsa entrega a `Derivar a revision humana` el item con contenido (el terminal además vuelve a fusionar el sello, de forma idempotente).
+Se intercala un nodo `n8n-nodes-base.code` cuya `jsCode` recupera el item sellado con `$('Sellar ingreso telefonia').first().json`, lee la decisión de la guarda del item corriente (`$input.item.json.allowed`) y devuelve `{...sellado, allowed}`. El nodo de restauración se cablea `Guard de costo` main[0] → restauración → `Guard permite?`. Resultado: el IF conserva su condición `$json.allowed`, la rama verdadera entrega al `AI Agent` el item sellado (no solo el cuerpo de la guarda), y la rama falsa entrega a `Derivar a revision humana` el item con contenido (el terminal además vuelve a fusionar el sello, de forma idempotente).
 
 Se elige colocar la restauración ANTES del IF (no solo en la rama verdadera) porque un único nodo beneficia a ambas ramas, mantiene `allowed` explícito para el ruteo y evita duplicar la restauración.
 
@@ -43,7 +44,7 @@ Se elige colocar la restauración ANTES del IF (no solo en la rama verdadera) po
 
 ### D2: `caller` desde el item corriente (`$json`) en el body de la guarda
 
-El body del nodo pasa a `={{ $json.From || $json.from || null }}`, reemplazando ambas apariciones de `$('Sellar ingreso telefonia').item`. La conexión verificada `Sellar ingreso telefonia` → `Guard de costo` es directa, así que el item de entrada del `httpRequest` YA es el item sellado: `$json` resuelve el número de origen sin ninguna referencia cruzada entre nodos y sin posibilidad de lanzar. Esto elimina la dependencia de `pairedItem` que C-46 ya corrigió en el validador y el terminal, con la expresión más simple posible.
+El body del nodo pasa a `={{ $json.From || $json.from || null }}`, reemplazando ambas apariciones de `$('Sellar ingreso telefonia').item`. La conexión verificada `Sellar ingreso telefonia` → `Guard de costo` es directa, así que el item de entrada del `httpRequest` YA es el item sellado: la expresión resuelve desde el item corriente sin ninguna referencia cruzada entre nodos y sin posibilidad de lanzar. Esto elimina la dependencia de `pairedItem` que C-46 ya corrigió en el validador y el terminal, con la expresión más simple posible. Nota: en la práctica el payload de `call-summary.complete` anida el número llamante dentro del campo `data` stringificado, por lo que `caller` resuelve `null`; el spec lo contempla como campo opcional y la reserva no aborta. Extraer el `caller` real del payload se rastrea junto con la transcripción en el change aparte.
 
 `caller` es opcional; cuando `From`/`from` faltan, la expresión resuelve `null` y la reserva continúa sin abortar el flujo.
 
@@ -62,7 +63,9 @@ No se modifica el endpoint `/api/v1/cost-guard/reserve`, ni `provider`, ni el he
 
 ### D5: Pruebas estructurales extendidas y guía sincronizada
 
-Se extienden las pruebas de `test_n8n_workflow.py` (las de C-46 usan `load_workflow`, `index_nodes`, `_js_code`, `_active_js_code`, `_connections_reachable`): (a) existe un nodo de restauración entre `Guard de costo` y `Guard permite?` cuyo código referencia `$('Sellar ingreso telefonia').first()`; (b) el body de `Guard de costo` resuelve `caller` desde `$json` y NO referencia `$('Sellar ingreso telefonia')`; (c) el `AI Agent` es alcanzable desde el nodo de restauración y su item de entrada incluye el contenido sellado (el prompt referencia `$json.transcript`/`$json.descripcion`); (d) el terminal de C-46 no regresó. `docs/n8n-workflow-guide.md` documenta la restauración y se actualiza el conteo declarado de propiedades estructurales.
+Se extienden las pruebas de `test_n8n_workflow.py` (las de C-46 usan `load_workflow`, `index_nodes`, `_js_code`, `_active_js_code`, `_connections_reachable`): (a) existe un nodo de restauración entre `Guard de costo` y `Guard permite?` cuyo código referencia `$('Sellar ingreso telefonia').first()`; (b) el body de `Guard de costo` resuelve `caller` desde `$json` y NO referencia `$('Sellar ingreso telefonia')`; (c) el `AI Agent` es alcanzable desde el nodo de restauración y su item de entrada proviene del sello (el test verifica alcanzabilidad y procedencia del item, NO que el prompt resuelva un campo de descripción no vacío — esa ausencia es la limitación heredada de C-45); (d) el terminal de C-46 no regresó. `docs/n8n-workflow-guide.md` documenta la restauración y se actualiza el conteo declarado de propiedades estructurales.
+
+Impacto no anticipado en `test_runtime_cost_guard.py`: su test `test_workflow_guarda_de_costo_entrega_al_ai_agent_y_deriva_al_denegar` (C-45) afirmaba que `Guard permite?` es sucesor DIRECTO de `Guard de costo`. Al intercalarse el nodo de restauración (D1), ese edge directo deja de existir y no hay cableado válido que lo conserve. Se aplica la adaptación mínima: el assert acepta el edge a través de `Restaurar item telefonia` y se conservan intactas las assertions de salida del IF (true → `AI Agent`, false → `Derivar a revision humana`). No se debilita el intento semántico del test ni se toca código de producto.
 
 - Alternativa considerada: un test de runtime con N8N efímero. Se descarta: no existe harness, e invocar el agente pago tendría costo real.
 

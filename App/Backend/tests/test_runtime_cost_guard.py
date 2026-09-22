@@ -891,7 +891,14 @@ def test_workflow_guarda_de_costo_entrega_al_ai_agent_y_deriva_al_denegar():
         return result
 
     assert "Guard de costo" in successors("Sellar ingreso telefonia")
-    assert "Guard permite?" in successors("Guard de costo")
+    # C-47: el nodo 'Restaurar item telefonia' se intercala entre la guarda y el
+    # IF para devolver el item sellado con la decision `allowed` re-inyectada.
+    # La guarda sigue alcanzando 'Guard permite?' a traves de ese nodo.
+    guard_successors = successors("Guard de costo")
+    assert "Guard permite?" in guard_successors or (
+        "Restaurar item telefonia" in guard_successors
+        and "Guard permite?" in successors("Restaurar item telefonia")
+    )
     guard_if_outputs = conns["Guard permite?"]["main"]
     assert "AI Agent" in [e["node"] for e in guard_if_outputs[0]]
     assert "Derivar a revision humana" in [e["node"] for e in guard_if_outputs[1]]

@@ -13,7 +13,10 @@
 > `Entrada valida` (validación de entrada, no de confianza del modelo).
 > C-45: runtime-cost-guard — nodo `Guard de costo` + IF `Guard permite?` antes del `AI Agent`;
 > el agente NO se invoca cuando la guarda deniega (deriva a revisión humana).
-> Estado: 34 nodos (31 operativos + 3 sticky notes); suite estructural `test_n8n_workflow.py` en verde.
+> C-47: guard-cost-item — la guarda de costo preserva el ítem del canal de telefonía mediante el
+> nodo `Restaurar item telefonia` (el `AI Agent` recupera el ítem sellado, no solo el cuerpo de la guarda) y el
+> `caller` del body pasa al ítem corriente (`$json`), sin la referencia frágil `.item`.
+> Estado: 35 nodos (32 operativos + 3 sticky notes); suite estructural `test_n8n_workflow.py` en verde.
 
 ## Descripción general
 
@@ -81,6 +84,16 @@ En el canal telefonía, antes del `AI Agent`:
 - **Fail-closed**: el nodo declara `onError: "continueErrorOutput"`; si el backend no responde,
   el error va a la salida 1 y también deriva a revisión humana (nunca se invoca al agente sin
   consultar la guarda).
+- **Preservación del ítem (C-47)**: la salida de un `httpRequest` es el cuerpo de la respuesta
+  (`{allowed, ...}`) y NO propaga el ítem de entrada. El nodo `Restaurar item telefonia`
+  (intercalado entre `Guard de costo` y `Guard permite?`) recupera el ítem sellado con
+  `$('Sellar ingreso telefonia').first()` —el patrón robusto de C-46— y le re-inyecta `allowed`,
+  de modo que el `AI Agent` vuelve a recibir el ítem sellado (no solo el cuerpo de la guarda) y `Guard permite?`
+  conserva el ruteo por `$json.allowed`. El nodo preserva `pairedItem` para que las referencias
+  aguas abajo sigan resolviendo. El `caller` del body de la guarda se resuelve desde el ítem
+  corriente (`$json.From || $json.from || null`), sin la referencia frágil
+  `$('Sellar ingreso telefonia').item` (dependiente de `pairedItem`); `caller` es opcional, por lo
+  que su ausencia resuelve `null` y no aborta la reserva.
 
 **Costo unitario `n8n_gemini` (estimación, no contabilidad exacta)**: se reserva UNA sola vez por
 ejecución de telefonía. La estimación cubre el número acotado de invocaciones del agente: hasta
@@ -194,6 +207,7 @@ para el Anexo E de la tesis (C-10).
 | 1 | Llamada telefonica | `twilioTrigger` | Webhook de Twilio al completar la transcripción. |
 | 2 | Sellar ingreso telefonia | `code` (JS) | **[C-39]** Sella `ingresado_en` en el borde del trigger, antes del agente pago. |
 | 2d | Guard de costo | `httpRequest` | **[C-45]** `POST /api/v1/cost-guard/reserve` (`provider=n8n_gemini`). Salida de error → `Derivar a revision humana` (fail-closed). |
+| 2d-bis | Restaurar item telefonia | `code` (JS) | **[C-47]** Recupera el ítem sellado con `$('Sellar ingreso telefonia').first()` y le re-inyecta `allowed`; el `AI Agent` recupera el ítem sellado (no solo el cuerpo de la guarda). Preserva `pairedItem`. |
 | 2e | Guard permite? | `if` | **[C-45]** `$json.allowed == true`. Rama true → `AI Agent`; rama false → `Derivar a revision humana`. |
 | 3 | AI Agent | `agent` (LangChain) | Parsea la transcripción con el prompt del negocio. |
 | 3b | Con el fin de enviar los datos... | `memoryRedisChat` | Memoria Redis para el AI Agent. |
@@ -240,11 +254,17 @@ aguas abajo usa referencias de nodo explícitas:
 > telefónico). Las tareas 5.2/5.3 del change `c-46-telefonia-ingreso-sellado` quedan
 > pendientes de verificación manual.
 
+> **Caveat de verificación C-47**: la suite estructural verifica el cableado del JSON, no el
+> runtime. Confirmar que el `AI Agent` recibe el ítem sellado (no solo el cuerpo de la guarda) tras `Guard de costo`
+> y que el incidente telefónico se crea exige una ejecución N8N en vivo (importar el
+> `workflow.json` y disparar el canal telefónico). La tarea 5.4 del change
+> `c-47-guard-costo-item` queda pendiente de verificación manual.
+
 ### Nodos decorativos
 
 Tres nodos `stickyNote` con documentación visual interna del workflow (se conservan intactos).
 
-**Total**: 31 nodos operativos + 3 `stickyNote` = 34, consistente con `n8n/workflow.json`. Las
+**Total**: 32 nodos operativos + 3 `stickyNote` = 35, consistente con `n8n/workflow.json`. Las
 tablas por canal repiten los nodos compartidos (`Normalizar entrada del incidente`,
 `Entrada valida`, `Login operador`, `HTTP POST a MTM-SRU`, `Requiere revision humana`,
 `Notificar operador designado`, `Rutear por canal de origen`, `Es correo?`, `Es web?`,
@@ -538,7 +558,7 @@ cd App/Backend
 python -m pytest tests/test_n8n_workflow.py -v
 ```
 
-Verifica 135 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40 y C-46).
+Verifica 141 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40, C-46 y C-47).
 
 ### Prueba manual del canal web (C-05)
 

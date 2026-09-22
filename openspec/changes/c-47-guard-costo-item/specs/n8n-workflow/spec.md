@@ -2,12 +2,14 @@
 
 ### Requirement: N8N-GUARD-001 — La guarda de costo preserva el item del canal de telefonía
 
-El nodo `Guard de costo` del canal de telefonía SHALL consultar la guarda SIN destruir el item sellado de la entrada. Como el nodo es un `httpRequest` y su salida es la respuesta del backend, el workflow SHALL restaurar el item recuperado de `Sellar ingreso telefonia` aguas abajo de la guarda y re-inyectarle la decisión de la guarda, de modo que (a) el `AI Agent` reciba la descripción/transcripción del incidente cuando la guarda permite, y (b) el nodo `Guard permite?` conserve la decisión `allowed` para rutear. La consulta a la guarda y su política de costo MUST NOT cambiar.
+El nodo `Guard de costo` del canal de telefonía SHALL consultar la guarda SIN destruir el item sellado de la entrada. Como el nodo es un `httpRequest` y su salida es la respuesta del backend, el workflow SHALL restaurar el item recuperado de `Sellar ingreso telefonia` aguas abajo de la guarda y re-inyectarle la decisión de la guarda, de modo que (a) el `AI Agent` reciba el item sellado completo cuando la guarda permite, y (b) el nodo `Guard permite?` conserve la decisión `allowed` para rutear. La consulta a la guarda y su política de costo MUST NOT cambiar.
 
-#### Scenario: El AI Agent recibe la descripción tras la guarda
+Alcance: este requisito cubre SOLO la propagación del item a través de la guarda. La presencia de un campo de transcripción/descripción en el payload del trigger de Twilio está FUERA de alcance: es una limitación heredada de C-45 (el evento `call-summary.complete` no expone la transcripción) y se rastrea por separado. C-47 garantiza que el `AI Agent` recibe el item sellado, no que ese item contenga una descripción no vacía.
+
+#### Scenario: El AI Agent recibe el item sellado, no solo el cuerpo de la guarda
 
 - **WHEN** el flujo de telefonía atraviesa el nodo `Guard de costo` y la guarda permite la invocación del `AI Agent`
-- **THEN** el item que llega al `AI Agent` conserva la descripción/transcripción del incidente proveniente de `Sellar ingreso telefonia`, y NO es únicamente el cuerpo de la respuesta de la guarda
+- **THEN** el item que llega al `AI Agent` proviene de `Sellar ingreso telefonia` (con `allowed` re-inyectado) y NO es únicamente el cuerpo de la respuesta de la guarda
 
 #### Scenario: La decisión de la guarda alimenta el ruteo
 
