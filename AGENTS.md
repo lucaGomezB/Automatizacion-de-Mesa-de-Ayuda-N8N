@@ -220,7 +220,7 @@ Triggers: push to `main`, all pull requests. Two parallel jobs:
 The OpenAPI sync check (`test_openapi_sync.py`) regenerates the spec in-memory and compares against `docs/openapi.json`. If you add/change endpoints, regenerate the static file:
 
 ```bash
-cd App/Backend; python -c "from app.main import app; import json; open('../docs/openapi.json','w').write(json.dumps(app.openapi(), indent=2, ensure_ascii=False))"
+cd App/Backend; python -c "from app.main import app; import json; open('../../docs/openapi.json','w').write(json.dumps(app.openapi(), indent=2, ensure_ascii=False))"
 ```
 
 ## Engram Memory
