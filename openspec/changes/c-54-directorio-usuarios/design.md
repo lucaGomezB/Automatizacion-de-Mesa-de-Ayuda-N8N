@@ -101,6 +101,10 @@ El handler global de `RequestValidationError` serializaba `exc.errors()`, que in
 
 `GET` list/detail ya aplicaban `alcance` (D7), pero `PATCH /incidentes/{id}` llamaba a `get_by_id` sin alcance, permitiendo a un no administrador leer/mutar por ID un incidente fuera de su sector. Se propaga `alcance` a `update_incidente` (y a su re-lectura), de modo que un incidente fuera de alcance responde 404 y NUNCA se modifica. El alcance es obligatorio en todas las rutas por ID (lectura y escritura).
 
+### D16: El alcance por rol aplica tambien a las CLASIFICACIONES por incidente (fix NIT-1)
+
+`GET /api/v1/clasificaciones/incidente/{incidente_id}` y `PATCH /api/v1/clasificaciones/{log_id}/validar` exigian solo autenticacion; el `PATCH` mutaba `incidente.sector_id` y `requiere_revision_humana` sin aplicar el alcance de VIS-001 (fix NIT-1, hallazgo pre-existente incluido en c-54 por decision). Se extiende la MISMA regla reutilizando el servicio `incident_visibility` (`AlcanceIncidentes`): la ruta inyecta la dependencia `get_alcance_incidentes` (la misma de incidentes, sin duplicar la derivacion rol -> sector) y el `ClasificacionService` verifica `alcance.permite_sector(incidente.sector_id)` ANTES de mutar. Un incidente fuera de alcance (o inexistente, o con alcance vacio) responde 404 `NOT_FOUND`; el `PATCH` NO modifica el log ni el incidente. Governance HIGH (misma que D7). El endpoint `GET /clasificaciones/revision-pendiente` (cola global multi-sector) queda FUERA de este change; si se desea acotar por sector es un change posterior.
+
 ## Risks / Trade-offs
 
 - **[Exposicion de datos personales]** texto plano en la base → Mitigacion: minimizacion (D6b), control de acceso por rol (D5), auditoria de accesos y no-PII en logs (DIR-006); dato no sensible bajo Ley 25.326 art. 2 (decision v8).
