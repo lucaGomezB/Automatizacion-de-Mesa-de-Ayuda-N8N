@@ -548,7 +548,7 @@
           "Clasificaciones"
         ],
         "summary": "Historial de clasificaciones de un incidente",
-        "description": "Retorna el historial completo de clasificaciones de un incidente específico.\n\nPermite al operador ver todas las decisiones tomadas por el sistema\npara un incidente (incluyendo el registro de la etapa utilizada,\nla confianza, y la respuesta raw de Gemini si corresponde).\n\nArgs:\n    incidente_id: ID del incidente cuyo historial se desea consultar.\n\nReturns:\n    Lista de registros de auditoría ordenados del más reciente al más antiguo.",
+        "description": "Retorna el historial completo de clasificaciones de un incidente específico.\n\nPermite al operador ver todas las decisiones tomadas por el sistema\npara un incidente (incluyendo el registro de la etapa utilizada,\nla confianza, y la respuesta raw de Gemini si corresponde).\n\nEl alcance de visibilidad por rol (VIS-001) se aplica igual que en los\nincidentes: un incidente fuera del alcance del usuario responde como no\nencontrado (404), sin revelar su existencia ni su historial.\n\nArgs:\n    incidente_id: ID del incidente cuyo historial se desea consultar.\n\nReturns:\n    Lista de registros de auditoría ordenados del más reciente al más antiguo.",
         "operationId": "list_by_incidente_api_v1_clasificaciones_incidente__incidente_id__get",
         "security": [
           {
@@ -600,7 +600,7 @@
           "Clasificaciones"
         ],
         "summary": "Registrar la validación humana de una clasificación",
-        "description": "Registra la decisión del operador humano sobre la categoría correcta.\n\nEste endpoint cierra el ciclo de revisión: el operador indica cuál es\nel sector correcto para el incidente, lo que actualiza el campo\nsector_id_validado en el registro de auditoría. A partir de ese momento,\nel registro deja de aparecer en la cola de revisión pendiente y\npasa a formar parte del corpus de evaluación con etiqueta confirmada.\n\nSi el sector validado coincide con el predicho, confirma la exactitud\ndel clasificador. Si difiere, registra un caso de error para el análisis\nde métricas de la tesis.\n\nArgs:\n    log_id:  ID del registro de auditoría a validar.\n    payload: Sector correcto (por nombre canónico o id) y adicionales validados.\n\nReturns:\n    Representación actualizada del registro de auditoría (HTTP 200).",
+        "description": "Registra la decisión del operador humano sobre la categoría correcta.\n\nEste endpoint cierra el ciclo de revisión: el operador indica cuál es\nel sector correcto para el incidente, lo que actualiza el campo\nsector_id_validado en el registro de auditoría. A partir de ese momento,\nel registro deja de aparecer en la cola de revisión pendiente y\npasa a formar parte del corpus de evaluación con etiqueta confirmada.\n\nSi el sector validado coincide con el predicho, confirma la exactitud\ndel clasificador. Si difiere, registra un caso de error para el análisis\nde métricas de la tesis.\n\nEl alcance de visibilidad por rol (VIS-001) también aplica a la ESCRITURA:\nun log cuyo incidente queda fuera del alcance del usuario responde como no\nencontrado (404) y NUNCA modifica el log ni el incidente.\n\nArgs:\n    log_id:  ID del registro de auditoría a validar.\n    payload: Sector correcto (por nombre canónico o id) y adicionales validados.\n\nReturns:\n    Representación actualizada del registro de auditoría (HTTP 200).",
         "operationId": "validar_clasificacion_api_v1_clasificaciones__log_id__validar_patch",
         "security": [
           {

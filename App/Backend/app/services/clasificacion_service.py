@@ -23,6 +23,7 @@ from app.models.clasificacion_log import ClasificacionLog
 from app.repositories.clasificacion_repository import ClasificacionRepository
 from app.repositories.incidente_repository import IncidenteRepository
 from app.repositories.sector_repository import SectorRepository
+from app.services.incident_visibility import AlcanceIncidentes
 
 logger = get_logger(__name__)
 
@@ -52,7 +53,9 @@ class ClasificacionService:
         # IncidenteRepository para propagar la validación al incidente (misma transacción)
         self._incidente_repo = IncidenteRepository(session)
 
-    async def list_by_incidente(self, incidente_id: int) -> list[ClasificacionLog]:
+    async def list_by_incidente(
+        self, incidente_id: int, alcance: AlcanceIncidentes | None = None
+    ) -> list[ClasificacionLog]:
         """
         Retorna el historial completo de clasificaciones de un incidente.
 
@@ -60,12 +63,23 @@ class ClasificacionService:
         tomadas por el sistema (incluyendo reintentos o correcciones anteriores)
         antes de emitir su validación.
 
+        Si se provee `alcance` (VIS-001 extendido a clasificaciones), se aplica
+        la misma regla de visibilidad por rol que en los incidentes: un incidente
+        fuera del alcance del usuario se comporta como no encontrado (404), sin
+        revelar su existencia ni su historial de clasificaciones.
+
         Args:
             incidente_id: ID del incidente cuyo historial se consulta.
+            alcance:      Alcance de visibilidad por rol (opcional).
 
         Returns:
             Lista de registros de auditoría ordenados de más reciente a más antiguo.
+
+        Raises:
+            EntityNotFoundError: Si el incidente no existe o queda fuera del alcance.
         """
+        if alcance is not None:
+            await self._verificar_alcance_incidente(incidente_id, alcance)
         return await self._repo.list_by_incidente(incidente_id)
 
     async def list_pending_review(
@@ -95,6 +109,7 @@ class ClasificacionService:
         log_id: int,
         sector_id: int,
         sectores_adicionales: list[str] | None = None,
+        alcance: AlcanceIncidentes | None = None,
     ) -> ClasificacionLog:
         """
         Registra la validación humana de una clasificación.
@@ -106,17 +121,29 @@ class ClasificacionService:
         La verificación de los sectores antes de la asignación previene que un
         sector inexistente quede registrado como etiqueta de verdad.
 
+        Si se provee `alcance` (VIS-001 extendido a clasificaciones), se verifica
+        el alcance del incidente ANTES de cualquier mutación: un log cuyo incidente
+        queda fuera del alcance del usuario responde como no encontrado (404) y
+        NUNCA modifica el log ni el incidente.
+
         Args:
             log_id:                 ID del registro de clasificación a validar.
             sector_id:              ID del sector principal correcto.
             sectores_adicionales:   Nombres canónicos de los sectores secundarios validados.
+            alcance:                Alcance de visibilidad por rol (opcional).
 
         Returns:
             Instancia actualizada del ClasificacionLog con todas sus relaciones.
 
         Raises:
-            EntityNotFoundError: Si el log_id, el sector principal o un adicional no existen.
+            EntityNotFoundError: Si el log_id, el sector principal, un adicional
+                                 no existen, o el incidente queda fuera de alcance.
         """
+        # Verificar el alcance ANTES de mutar (misma regla que la lectura).
+        if alcance is not None:
+            log_previo = await self._repo.get_by_id(log_id)
+            await self._verificar_alcance_incidente(log_previo.incidente_id, alcance)
+
         # Verificar que el sector de validación existe antes de asignarlo
         await self._sector_repo.get_by_id(sector_id)
 
@@ -149,7 +176,9 @@ class ClasificacionService:
         )
         return log
 
-    async def validate_payload(self, log_id: int, payload) -> ClasificacionLog:
+    async def validate_payload(
+        self, log_id: int, payload, alcance: AlcanceIncidentes | None = None
+    ) -> ClasificacionLog:
         """
         Resuelve el payload de validación (id o nombre) y delega en validate().
 
@@ -157,7 +186,8 @@ class ClasificacionService:
         canónico) y propaga los `sectores_adicionales` validados.
 
         Raises:
-            EntityNotFoundError: Si el nombre de sector no existe en el catálogo.
+            EntityNotFoundError: Si el nombre de sector no existe en el catálogo,
+                                 o el incidente queda fuera del alcance.
         """
         sector_id = payload.sector_id_validado
         if sector_id is None:
@@ -165,4 +195,23 @@ class ClasificacionService:
             if sector is None:
                 raise EntityNotFoundError("Sector", str(payload.sector_validado))
             sector_id = sector.id
-        return await self.validate(log_id, sector_id, payload.sectores_adicionales)
+        return await self.validate(
+            log_id, sector_id, payload.sectores_adicionales, alcance=alcance
+        )
+
+    async def _verificar_alcance_incidente(
+        self, incidente_id: int, alcance: AlcanceIncidentes
+    ) -> None:
+        """
+        Verifica que el incidente exista y esté dentro del alcance del usuario.
+
+        Reutiliza la regla de `incident_visibility` (AlcanceIncidentes) para no
+        duplicar la lógica; la ausencia o el fuera-de-alcance se reportan ambos
+        como no encontrado (404), sin revelar la existencia.
+
+        Raises:
+            EntityNotFoundError: Si el incidente no existe o queda fuera del alcance.
+        """
+        incidente = await self._incidente_repo.get_with_relations(incidente_id)
+        if incidente is None or not alcance.permite_sector(incidente.sector_id):
+            raise EntityNotFoundError("Incidente", incidente_id)

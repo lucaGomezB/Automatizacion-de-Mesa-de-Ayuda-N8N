@@ -26,14 +26,21 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db_session
 from app.core.security import get_current_user
 from app.models.user import User
+from app.routes.incidentes import get_alcance_incidentes
 from app.schemas.clasificacion import ClasificacionLogRead, ClasificacionValidar
 from app.services.clasificacion_service import ClasificacionService
+from app.services.incident_visibility import AlcanceIncidentes
 
 # Prefijo /clasificaciones; el prefijo /api/v1 lo agrega register_routes()
 router = APIRouter(prefix="/clasificaciones", tags=["Clasificaciones"])
 
 # Alias de tipo para inyección de sesión vía FastAPI Depends
 SessionDep = Annotated[AsyncSession, Depends(get_db_session)]
+
+# Alcance de visibilidad por rol (VIS-001), reutilizado de los incidentes para
+# no duplicar la regla: los endpoints de clasificaciones por incidente/log
+# aplican el mismo alcance.
+AlcanceDep = Annotated[AlcanceIncidentes, Depends(get_alcance_incidentes)]
 
 
 def get_service(session: SessionDep) -> ClasificacionService:
@@ -83,6 +90,7 @@ async def list_pending_review(
 async def list_by_incidente(
     incidente_id: int,
     service: ServiceDep,
+    alcance: AlcanceDep,
     current_user: User = Depends(get_current_user),
 ) -> list[ClasificacionLogRead]:
     """
@@ -92,13 +100,17 @@ async def list_by_incidente(
     para un incidente (incluyendo el registro de la etapa utilizada,
     la confianza, y la respuesta raw de Gemini si corresponde).
 
+    El alcance de visibilidad por rol (VIS-001) se aplica igual que en los
+    incidentes: un incidente fuera del alcance del usuario responde como no
+    encontrado (404), sin revelar su existencia ni su historial.
+
     Args:
         incidente_id: ID del incidente cuyo historial se desea consultar.
 
     Returns:
         Lista de registros de auditoría ordenados del más reciente al más antiguo.
     """
-    logs = await service.list_by_incidente(incidente_id)
+    logs = await service.list_by_incidente(incidente_id, alcance=alcance)
     return [ClasificacionLogRead.model_validate(log) for log in logs]
 
 
@@ -111,6 +123,7 @@ async def validar_clasificacion(
     log_id: int,
     payload: ClasificacionValidar,
     service: ServiceDep,
+    alcance: AlcanceDep,
     current_user: User = Depends(get_current_user),
 ) -> ClasificacionLogRead:
     """
@@ -126,6 +139,10 @@ async def validar_clasificacion(
     del clasificador. Si difiere, registra un caso de error para el análisis
     de métricas de la tesis.
 
+    El alcance de visibilidad por rol (VIS-001) también aplica a la ESCRITURA:
+    un log cuyo incidente queda fuera del alcance del usuario responde como no
+    encontrado (404) y NUNCA modifica el log ni el incidente.
+
     Args:
         log_id:  ID del registro de auditoría a validar.
         payload: Sector correcto (por nombre canónico o id) y adicionales validados.
@@ -133,5 +150,5 @@ async def validar_clasificacion(
     Returns:
         Representación actualizada del registro de auditoría (HTTP 200).
     """
-    log = await service.validate_payload(log_id, payload)
+    log = await service.validate_payload(log_id, payload, alcance=alcance)
     return ClasificacionLogRead.model_validate(log)
