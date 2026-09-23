@@ -105,18 +105,21 @@ class ClasificacionValidar(BaseModel):
     @classmethod
     def _validar_nombre_canonico(cls, v: str | None) -> str | None:
         if v is not None and v not in SECTORES_CANONICOS:
+            # Mensaje generico SIN el valor sometido: el `loc` del error ya
+            # identifica el campo, y un 422 nunca debe reflejar PII (W1/DIR-006).
             raise ValueError(
-                f"Sector '{v}' no pertenece al vocabulario canonico."
+                "El sector no pertenece al vocabulario canonico."
             )
         return v
 
     @field_validator("sectores_adicionales")
     @classmethod
     def _validar_adicionales_canonicos(cls, v: list[str]) -> list[str]:
-        invalidos = [s for s in v if s not in SECTORES_CANONICOS]
-        if invalidos:
+        if any(s not in SECTORES_CANONICOS for s in v):
+            # Generico: no se listan los valores ofensores para no reflejar el
+            # dato sometido en el cuerpo del 422 (W1/DIR-006).
             raise ValueError(
-                f"Sectores adicionales fuera del vocabulario canonico: {invalidos}"
+                "Uno o mas sectores adicionales no pertenecen al vocabulario canonico."
             )
         return v
 

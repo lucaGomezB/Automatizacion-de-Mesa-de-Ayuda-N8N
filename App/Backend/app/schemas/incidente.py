@@ -112,18 +112,21 @@ class ClasificacionPrecalculada(BaseModel):
     @classmethod
     def _sector_canonico(cls, v: str | None) -> str | None:
         if v is not None and not es_sector_canonico(v):
+            # Mensaje generico SIN el valor sometido: el `loc` del error ya
+            # identifica el campo, y un 422 nunca debe reflejar PII (W1/DIR-006).
             raise ValueError(
-                f"Sector precalculado '{v}' no pertenece al vocabulario canonico."
+                "El sector precalculado no pertenece al vocabulario canonico."
             )
         return v
 
     @field_validator("sectores_adicionales")
     @classmethod
     def _adicionales_canonicos(cls, v: list[str]) -> list[str]:
-        invalidos = [s for s in v if not es_sector_canonico(s)]
-        if invalidos:
+        if any(not es_sector_canonico(s) for s in v):
+            # Generico: no se listan los valores ofensores para no reflejar el
+            # dato sometido en el cuerpo del 422 (W1/DIR-006).
             raise ValueError(
-                f"Sectores adicionales fuera del vocabulario canonico: {invalidos}"
+                "Uno o mas sectores adicionales no pertenecen al vocabulario canonico."
             )
         return v
 
@@ -226,9 +229,10 @@ class IncidenteCreate(BaseModel):
         incidente (por ejemplo, una notificación de clasificación) — C-33, D6.
         """
         if v is not None and v not in _ORIGEN_EVENTO_CREACION:
+            # Generico: no se interpola el marcador recibido (podria contener PII)
+            # ni se listan los validos; el `loc` identifica el campo (W1/DIR-006).
             raise ValueError(
-                f"El evento '{v}' no crea incidentes; "
-                f"se esperaba uno de {sorted(_ORIGEN_EVENTO_CREACION)}."
+                "El evento de origen no es valido para crear incidentes."
             )
         return v
 
