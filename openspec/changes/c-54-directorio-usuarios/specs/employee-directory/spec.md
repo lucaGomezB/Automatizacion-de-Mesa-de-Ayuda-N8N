@@ -23,29 +23,39 @@ El sistema SHALL mantener los datos de contacto de empleados en una entidad prop
 - **WHEN** un empleado se asocia a una cuenta de acceso existente
 - **THEN** la fila del directorio referencia `users.id` de forma nullable, sin fusionar el dominio de autenticacion con el de contacto
 
-### Requirement: DIR-002 — Campos del empleado
+### Requirement: DIR-002 — Campos definitivos y minimizacion del empleado
 
-El directorio SHALL almacenar, como minimo: nombre completo, email, telefono en formato E.164, sector, rol y un indicador `activo`. El email MUST NOT ser obligatorio si el empleado solo se resuelve por telefono, y el telefono MUST NOT ser obligatorio si el empleado solo se resuelve por email. Al menos uno de email o telefono MUST estar presente. El sistema SHALL validar el formato E.164 del telefono y la forma basica del email al persistir un empleado.
+El directorio SHALL almacenar EXACTAMENTE los siguientes campos y NINGUNO mas: `id` (clave primaria), `legajo` (varchar, obligatorio, unico), `nombre` (varchar, obligatorio), `email` (varchar, obligatorio, unico por empleado e indexado), `telefono` (varchar E.164, opcional, indexado y que MAY repetirse entre empleados), `sector_id` (FK al catalogo `sector`, opcional), `rol`, `activo` (booleano, por defecto verdadero), `user_id` (FK nullable a `users`), `created_at` y `updated_at`. El `legajo` y el `nombre` MUST estar presentes. El `email` MUST estar presente y MUST ser unico entre empleados. El `telefono` MAY estar ausente y MAY repetirse. El sistema SHALL validar el formato E.164 del telefono y la forma basica del email al persistir un empleado. El sistema MUST NOT almacenar campos adicionales de datos personales.
 
 #### Scenario: Empleado con email y telefono
 
-- **WHEN** se registra un empleado con email valido y telefono en formato E.164
+- **WHEN** se registra un empleado con legajo, nombre, email valido y telefono en formato E.164
 - **THEN** el empleado queda persistido y puede resolverse por ambos datos
 
-#### Scenario: Empleado solo con email
+#### Scenario: Empleado sin telefono
 
-- **WHEN** se registra un empleado sin telefono pero con email valido
+- **WHEN** se registra un empleado con email valido y sin telefono
 - **THEN** el empleado se persiste y su resolucion por telefono queda sin resultado
 
-#### Scenario: Registro sin ningun dato de contacto
+#### Scenario: Email duplicado rechazado
 
-- **WHEN** se intenta registrar un empleado sin email y sin telefono
-- **THEN** el sistema rechaza el registro con un error de validacion accionable
+- **WHEN** se intenta registrar un email ya asignado a otro empleado
+- **THEN** el sistema rechaza el registro por violar la unicidad del email
+
+#### Scenario: Telefono repetido permitido
+
+- **WHEN** dos empleados comparten el mismo numero de telefono (mesa de area o casilla comun)
+- **THEN** ambos registros se persisten, habilitando el tratamiento de ambiguedad de RES-004
 
 #### Scenario: Telefono fuera de E.164
 
 - **WHEN** se registra un telefono que no cumple el formato E.164
 - **THEN** el sistema rechaza el registro con un error de validacion
+
+#### Scenario: Sin campos adicionales
+
+- **WHEN** se inspecciona el esquema de `directorio_empleado`
+- **THEN** sus columnas son exactamente las de este requisito, sin datos personales extra
 
 ### Requirement: DIR-003 — Modelo de roles minimo
 
@@ -66,47 +76,52 @@ El sistema SHALL modelar el rol del empleado con un vocabulario minimo de exacta
 - **WHEN** se clasifica un incidente
 - **THEN** el sector y la confianza resultantes son independientes del rol del empleado reportante o asignado
 
-### Requirement: DIR-004 — Vinculo al catalogo canonico de sectores
+### Requirement: DIR-004 — Vinculo al catalogo canonico de sectores y sector por rol
 
-El directorio SHALL referenciar el sector del empleado mediante una clave foranea al catalogo `sector` existente, cuyo vocabulario canonico es exactamente los cinco strings vigentes. El directorio MUST NOT introducir un vocabulario paralelo de sectores ni reutilizar un conjunto reducido de tres sectores. Un empleado MAY tener sector nulo cuando su funcion no pertenece a un sector especifico.
+El directorio SHALL referenciar el sector del empleado mediante una clave foranea al catalogo `sector` existente, cuyo vocabulario canonico es exactamente los cinco strings vigentes. El directorio MUST NOT introducir un vocabulario paralelo de sectores ni reutilizar un conjunto reducido de tres sectores. El `sector_id` SHALL ser obligatorio cuando el rol sea `usuario_final` o `operador` (cada usuario pertenece a su sector) y SHALL ser nulo cuando el rol sea `administrador_directorio`.
 
 #### Scenario: Sector tomado del catalogo existente
 
 - **WHEN** se asigna sector a un empleado
 - **THEN** el valor referenciado pertenece al catalogo `sector` canonico y no a una lista propia del directorio
 
-#### Scenario: Sector nulo permitido
+#### Scenario: Usuario final y operador requieren sector
 
-- **WHEN** se registra un empleado sin sector asociado
-- **THEN** el empleado se persiste con `sector` nulo y sigue siendo resoluble por sus datos de contacto
+- **WHEN** se registra un empleado con rol `usuario_final` o `operador` sin sector
+- **THEN** el sistema rechaza el registro con un error de validacion
+
+#### Scenario: Administrador sin sector
+
+- **WHEN** se registra un empleado con rol `administrador_directorio` sin sector
+- **THEN** el empleado se persiste con `sector` nulo y su visibilidad alcanza a todos los sectores
 
 #### Scenario: Sector inexistente rechazado
 
 - **WHEN** se intenta asignar un sector que no existe en el catalogo canonico
 - **THEN** el sistema rechaza la asignacion
 
-### Requirement: DIR-005 — PII cifrada at-rest e indice ciego para busqueda
+### Requirement: DIR-005 — Almacenamiento en texto plano (sin cifrado de aplicacion ni indice ciego)
 
-El sistema SHALL almacenar el email y el telefono del empleado cifrados at-rest, y SHALL permitir su busqueda por igualdad sin descifrado masivo mediante un indice ciego: un valor HMAC-SHA256 calculado sobre la forma normalizada del dato (email en minusculas; telefono E.164) con una clave dedicada. El indice ciego MUST ser determinista para permitir la comparacion por igualdad y MUST NOT almacenar el dato en claro. La clave del indice ciego MUST ser distinta de la clave de cifrado y MUST provenir de la configuracion del backend.
+El sistema SHALL almacenar el email y el telefono del empleado en TEXTO PLANO en columnas `varchar`. El directorio MUST NOT aplicar cifrado de aplicacion (`EncryptedText`) sobre estos campos ni MUST construir un indice ciego (HMAC) para su busqueda, y MUST NOT requerir una clave de cifrado o de indice ciego en la configuracion. Razon: auditabilidad directa y consultas SQL operativas sin custodia de claves; el dato es personal pero no sensible bajo Ley 25.326 art. 2. La proteccion se logra con minimizacion (DIR-002), control de acceso y auditoria (DIR-006), y no-PII en logs (DIR-006). El cifrado Fernet del contenido del incidente NO se modifica.
 
-#### Scenario: Busqueda por igualdad sobre dato cifrado
-
-- **WHEN** se busca un empleado por un email o telefono conocido
-- **THEN** la busqueda se resuelve comparando el indice ciego del valor normalizado, sin descifrar todas las filas
-
-#### Scenario: El dato en claro no se persiste
+#### Scenario: Contacto disponible en claro
 
 - **WHEN** se inspecciona una fila del directorio en la base de datos
-- **THEN** el email y el telefono no aparecen en claro; solo el valor cifrado y su indice ciego
+- **THEN** el email y el telefono se leen en claro y las consultas SQL operativas funcionan sin descifrado ni clave
 
-#### Scenario: Normalizacion consistente
+#### Scenario: Sin clave ni indice ciego
 
-- **WHEN** dos registros del mismo email difieren solo en mayusculas o espacios
-- **THEN** producen el mismo indice ciego y la unicidad del dato se puede hacer cumplir
+- **WHEN** se revisa la configuracion del backend y el esquema del directorio
+- **THEN** no existe una clave de indice ciego del directorio ni una columna de hash ciega
 
-### Requirement: DIR-006 — Control de acceso al directorio
+#### Scenario: El cifrado del incidente no cambia
 
-El directorio es PII. La gestion (alta, modificacion, activacion/desactivacion) SHALL requerir autenticacion y el rol `administrador_directorio`. La consulta SHALL requerir autenticacion y estar restringida a roles autorizados. La resolucion interna de contactos consumida por otros servicios del backend MUST NOT requerir autenticacion HTTP ni exponer datos de contacto fuera del proceso. El sistema MUST NOT registrar email ni telefono en claro en logs, respuestas de error ni auditoria.
+- **WHEN** se almacena el contenido de un incidente o el llamante de telefonia
+- **THEN** estos siguen cifrados con el mecanismo Fernet existente, ajeno al directorio
+
+### Requirement: DIR-006 — Control de acceso, auditoria y no-PII en logs
+
+El directorio contiene datos personales. La gestion (alta, modificacion, activacion/desactivacion, borrado ARCO) SHALL requerir autenticacion y el rol `administrador_directorio`. La consulta SHALL requerir autenticacion y estar restringida a roles autorizados. El sistema SHALL registrar de forma auditables los accesos y cambios del directorio (quien, cuando, operacion y resultado) y SHALL registrar los accesos en el contexto de la resolucion. La resolucion interna de contactos consumida por otros servicios del backend MUST NOT requerir autenticacion HTTP ni exponer datos de contacto fuera del proceso. El sistema MUST NOT registrar email, telefono ni otros datos personales en claro en logs, respuestas de error ni en la auditoria.
 
 #### Scenario: Gestion sin rol suficiente
 
@@ -123,14 +138,19 @@ El directorio es PII. La gestion (alta, modificacion, activacion/desactivacion) 
 - **WHEN** un servicio del backend resuelve un contacto internamente
 - **THEN** la resolucion no atraviesa la API publica ni exige token
 
+#### Scenario: Auditoria de accesos
+
+- **WHEN** se produce un alta, modificacion, consulta o borrado del directorio
+- **THEN** queda un registro de auditoria con el actor, la operacion y el resultado
+
 #### Scenario: PII fuera de los logs
 
 - **WHEN** se registra una operacion del directorio o de resolucion
-- **THEN** el log no contiene el email ni el telefono en claro
+- **THEN** el log y el registro de auditoria no contienen el email ni el telefono en claro
 
-### Requirement: DIR-007 — Ciclo de vida: desactivacion en lugar de borrado
+### Requirement: DIR-007 — Ciclo de vida: desactivacion, retencion y borrado ARCO
 
-El sistema SHALL desactivar empleados mediante el indicador `activo` en lugar de borrarlos, conservando la trazabilidad. La resolucion de contactos MUST ignorar empleados inactivos. El borrado fisico SHALL reservarse para el ejercicio de derechos de supresion (ARCO) y MUST NOT ser el camino operativo por defecto.
+El sistema SHALL desactivar empleados mediante el indicador `activo` en lugar de borrarlos, conservando la trazabilidad. La resolucion de contactos MUST ignorar empleados inactivos. El sistema SHALL conservar la fila mientras la relacion laboral este activa mas 1 año; vencido ese plazo SHALL ejecutar el borrado fisico. El borrado fisico SHALL tambien ejecutarse ante una solicitud de supresion (ARCO) y SHALL ser ejecutado por un `administrador_directorio`. El borrado fisico MUST NOT ser el camino operativo por defecto.
 
 #### Scenario: Empleado desactivado no resuelve
 
@@ -141,3 +161,13 @@ El sistema SHALL desactivar empleados mediante el indicador `activo` en lugar de
 
 - **WHEN** un empleado desactivado se reactiva
 - **THEN** vuelve a ser elegible para la resolucion sin volver a cargar sus datos
+
+#### Scenario: Borrado por retencion
+
+- **WHEN** una fila de directorio supera la relacion laboral activa mas 1 año
+- **THEN** el sistema ejecuta su borrado fisico
+
+#### Scenario: Borrado por ARCO
+
+- **WHEN** un `administrador_directorio` ejecuta una solicitud ARCO de supresion
+- **THEN** la fila correspondiente se elimina fisicamente de la base

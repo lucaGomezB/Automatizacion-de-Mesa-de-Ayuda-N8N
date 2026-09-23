@@ -3,14 +3,15 @@
 Ver `proposal.md — Why`. Restricciones verificadas que moldean el enfoque:
 
 - **No existe un modelo de roles.** `App/Backend/app/models/user.py` (`users`) es exclusivamente autenticacion (`id`, `username`, `hashed_password`, `is_active`) y su docstring declara que NO se relaciona con `Incidente` ni con el dominio de clasificacion. Las unicas apariciones de "roles" en el codigo son etiquetas internas de contadores de costo (`app/cost_guard/guard.py`), sin relacion con autorizacion. Por lo tanto, definir roles es parte de este change.
-- **Catalogo de sectores vs. categorias de clasificacion.** En el codigo vigente son el MISMO vocabulario: `app/constants.py` define `SECTORES_CANONICOS` con los cinco strings y la tabla `sector` (`app/models/catalog.py`) los persiste igual. NO existe en el codigo una derivacion de "tres sectores" (Sistemas/Operaciones/Soporte Tecnico): `Operaciones` fue eliminado (C-27) y `Sistemas` es categoria propia. El directorio MUST enlazar al catalogo `sector` existente; no se crea vocabulario nuevo.
+- **Catalogo de sectores vs. categorias de clasificacion.** En el codigo vigente son el MISMO vocabulario: `app/constants.py` define `SECTORES_CANONICOS` con los cinco strings y la tabla `sector` (`app/models/catalog.py`) los persiste igual. NO existe en el codigo una derivacion de "tres sectores". El directorio MUST enlazar al catalogo `sector` existente; no se crea vocabulario nuevo.
 - **Realidad de datos de contacto por canal.**
-  - Correo: el remitente se captura en N8N (`remitente` en `Normalizar entrada del incidente`; `from` del trigger Outlook) y se usa para la confirmacion; no se persiste en el backend.
+  - Correo: el remitente se captura en N8N (`remitente`; `from` del trigger Outlook) y se usa para la confirmacion; no se persiste en el backend.
   - Web: el reportante esta autenticado (`Depends(get_current_user)`), pero `users` no tiene email y ni el formulario ni `IncidenteCreate` capturan uno.
   - Telefonia: el llamante se captura ENCRYPTED en `telefonia_ingreso.caller_cifrado`; el `From` esta disponible en el webhook de VOZ (`app/routes/cost_guard.py`). No hay email.
-- **Cifrado existente.** `app/utils/encryption.py` provee `EncryptedText` (Fernet, NO determinista) sobre `pseudonymization_encryption_key`. El cifrado no determinista impide busqueda por igualdad directa: resuelve un indice ciego (blind index).
+- **Cifrado existente.** `app/utils/encryption.py` provee `EncryptedText` (Fernet, NO determinista) sobre `pseudonymization_encryption_key`. Aplica al contenido del incidente y al llamante de telefonia; NO se extiende al directorio: por decision humana (v8, cap. 11.2/11.4) el contacto del empleado se guarda en texto plano.
+- **Decision humana (v8):** el directorio almacena contacto en TEXTO PLANO, sin cifrado de aplicacion ni indice ciego, porque (a) la auditabilidad directa y las consultas SQL operativas deben funcionar sin custodia/aprobacion de claves, y (b) el dato es personal pero NO sensible bajo Ley 25.326 art. 2. La tesis v8 ya declara esta postura (cap. 11.2/11.4) y agrega `directorio_empleado` (cap. 5.6, Tabla 4 / Anexo C).
 - **Convenciones.** Capas `routes -> services -> repositories -> models`; async SQLAlchemy con `selectinload()`; migraciones en `App/Backend/alembic/versions/` (ultima: `008`); identificadores de dominio en español.
-- **Sibling `c-53-notificacion-numero-incidente`.** Ya propuesto; su design D10 declara que NO implementa el directorio y que la resolucion de contactos hoy es directa (el propio numero llamante), dejando el directorio como estrategia enchufable futura. c-53 funciona SIN el directorio; c-54 lo provee.
+- **Sibling `c-53-notificacion-numero-incidente`.** Ya propuesto; su design declara que NO implementa el directorio y deja la resolucion de contactos como estrategia enchufable futura. c-53 funciona SIN el directorio; c-54 lo provee.
 
 ## Goals / Non-Goals
 
@@ -19,7 +20,8 @@ Ver `proposal.md — Why`. Restricciones verificadas que moldean el enfoque:
 - Modelar un directorio de empleados con datos de contacto, sector, rol y estado activo, separado de la autenticacion.
 - Definir el modelo de roles que hoy no existe, con el minimo vocabulario que tiene uso real.
 - Hacer resolubles telefono, email y usuario autenticado hacia un empleado, con "no encontrado" no fatal.
-- Proteger la PII (Ley 25.326) con cifrado at-rest, indice ciego para busqueda y control de acceso.
+- Proteger el dato personal (Ley 25.326) con MINIMIZACION de campos, control de acceso por rol, auditoria de accesos y ausencia de PII en logs — sobre texto plano.
+- Aplicar visibilidad de incidentes por rol a nivel API.
 - Dejar un contrato de resolucion estable para que c-53 lo consuma sin cambiar su entrega.
 
 **Non-Goals:**
@@ -27,88 +29,101 @@ Ver `proposal.md — Why`. Restricciones verificadas que moldean el enfoque:
 - Enviar notificaciones (c-53), SMS o correo.
 - Twilio Media Streams / agente conversacional (diferido; tesis cap. 10).
 - Sincronizar con un sistema de RRHH o construir una UI de administracion completa.
+- La parte FRONTEND de la visibilidad por rol (diferida a un change posterior; en c-54 solo el filtrado a nivel API).
 - RBAC transversal de toda la aplicacion ni cambios a los cinco sectores canonicos.
-- Implementar codigo en esta fase (propose only).
+- Implementar codigo en esta fase (propose/design only).
 
 ## Decisions
 
 ### D1: Tabla propia `directorio_empleado`, NO extender `users`
 
-Se crea una entidad dedicada (`directorio_empleado`) y se mantiene `users` como dominio de autenticacion. Razon: `users` es auth-only por diseno y su docstring prohibe mezclarlo con el dominio; extenderlo obligaria a que toda cuenta de acceso tenga datos de contacto y a que el directorio dependa del ciclo de vida del login. Se ofrece un vinculo opcional `user_id` (FK nullable a `users.id`) para saber que cuenta corresponde a que empleado, sin fusionar ambos dominios (DIR-001). Alternativa considerada: agregar `email`/`telefono`/`sector`/`rol` a `users` — descartada por acoplar PII al alta de credenciales y romper la separacion de responsabilidades.
+Se crea una entidad dedicada y se mantiene `users` como dominio de autenticacion. Razon: `users` es auth-only por diseno y su docstring prohibe mezclarlo con el dominio; extenderlo obligaria a que toda cuenta de acceso tenga datos de contacto. Se ofrece un vinculo opcional `user_id` (FK nullable a `users.id`, `ON DELETE SET NULL`) para saber que cuenta corresponde a que empleado, sin fusionar ambos dominios (DIR-001). Alternativa considerada: agregar contacto a `users` — descartada por acoplar PII al alta de credenciales.
 
-### D2: Modelo de roles minimo de tres valores
+### D2: Modelo de roles minimo de tres valores, con sector obligatorio por rol
 
-Se define el rol como enum `RolEmpleado` con exactamente: `usuario_final`, `operador`, `administrador_directorio`. Uso real verificado: (a) `usuario_final` es el reportante, que no administra el directorio; (b) `operador` es quien atiende y puede ser destino de enrutamiento de su sector; (c) `administrador_directorio` es quien carga/mantiene la PII. Se descarta un RBAC con permisos granular: no hay caso de uso que lo justifique y aumentaria la superficie de seguridad. El rol NO interviene en la clasificacion (DIR-003). Alternativa considerada: derivar el rol implicitamente del sector — descartada: confundiria "que sector atiende" con "que puede hacer".
+Rol como enum `RolEmpleado` con exactamente: `usuario_final`, `operador`, `administrador_directorio`. Uso real: (a) `usuario_final` es el reportante; (b) `operador` atiende y puede ser destino de enrutamiento de su sector; (c) `administrador_directorio` carga/mantiene el directorio. Para `usuario_final`/`operador` el `sector_id` es OBLIGATORIO; el `administrador_directorio` NO tiene sector y puede ver TODOS los incidentes (OQ3). El rol NO interviene en la clasificacion (DIR-003). Alternativa considerada: rol implicito del sector — descartada: confundiria "que sector atiende" con "que puede hacer".
 
 ### D3: Vinculo al catalogo canonico `sector`, sin vocabulario nuevo
 
-El directorio referencia `sector.id` (FK nullable). Se reutiliza el catalogo de cinco sectores vigente y NO se introduce una lista propia ni se resucita un conjunto de tres sectores. Esto alinea el enrutamiento por sector con la clasificacion ya existente (DIR-004). Alternativa considerada: guardar el nombre del sector como string en el directorio — descartada: permitiria strings fuera del vocabulario canonico y romperia la integridad referencial semantica.
+El directorio referencia `sector.id` (FK). Se reutiliza el catalogo de cinco sectores vigente y NO se introduce una lista propia. `sector_id` es obligatorio cuando el rol es `usuario_final`/`operador` y MUST ser nulo para `administrador_directorio` (DIR-004). Alternativa considerada: guardar el nombre como string — descartada: permitiria strings fuera del vocabulario canonico.
 
-### D4: Indice ciego (HMAC) + cifrado at-rest para email y telefono
+### D4: Contacto en TEXTO PLANO, sin cifrado de aplicacion ni indice ciego
 
-La resolucion exige busqueda por igualdad, pero el cifrado Fernet del proyecto es no determinista. Se almacena: (a) el valor cifrado (`EncryptedText`) para retrieval autorizado y uso por c-53; (b) un indice ciego `HMAC-SHA256(clave, valor_normalizado)` en columna indexada para la busqueda. Normalizacion: email a minusculas y trim; telefono a E.164. Se agrega una clave dedicada `directory_blind_index_key` en `settings.py`/`.env.example` (distinta de la de cifrado) (DIR-005). Alternativa considerada: comparar descifrando todas las filas — descartada por costo y exposicion masiva de PII; alternativa considerada: hash sin clave — descartada por ser vulnerable a diccionario.
+El email y el telefono se almacenan en claro en columnas `varchar`. NO se aplica `EncryptedText` ni un indice ciego HMAC, y NO se agrega una clave `directory_blind_index_key`. Razon (decision humana, v8 cap. 11.2/11.4): auditabilidad directa y consultas SQL operativas sin custodia de claves; dato personal pero no sensible bajo Ley 25.326 art. 2. Se compensa con MINIMIZACION (solo los campos de D6b), control de acceso por rol, auditoria de accesos y no-PII en logs (DIR-005). Alternativa considerada: cifrado + indice ciego — descartada por la decision humana y por su costo operacional; se mantiene solo para el contenido del incidente (Fernet), que NO se toca.
 
 ### D5: Acceso: gestion con rol, resolucion interna sin HTTP
 
-La API de gestion vive en `routes/directorio.py` y exige autenticacion; las escrituras exigen rol `administrador_directorio` (dependencia de autorizacion nueva, acotada al directorio). La resolucion que consume c-53 es un servicio in-process (`contact_resolution_service`), sin borde HTTP ni token, para no ampliar la superficie de PII ni requerir red (DIR-006/RES-005). Se descarta exponer un endpoint de resolucion publico: seria un oraculo de PII. Alternativa considerada: enforcement de rol global — diferida; este change solo autoriza directorio.
+La API de gestion vive en `routes/directorio.py` y exige autenticacion; escrituras con rol `administrador_directorio` (dependencia de autorizacion nueva, acotada al directorio). La resolucion que consume c-53 es un servicio in-process (`contact_resolution_service`), sin borde HTTP ni token, para no ampliar la superficie de dato ni requerir red (DIR-006/RES-005). Se descarta exponer un endpoint de resolucion publico: seria un oraculo de contacto. Alternativa considerada: enforcement de rol global — diferida.
 
 ### D6: Ambiguedad => no resuelve
 
-Si un telefono/email normalizado corresponde a mas de un empleado activo (numeros de mesa de area, casilla compartida), la resolucion registra la ambiguedad y NO elige arbitrariamente (RES-004). Alternativa considerada: "primer match" — descartada por riesgo de notificar a la persona equivocada. Alternativa considerada: forzar unicidad estricta de email/telefono — descartada porque la realidad operativa admite casillas de area; se aplica unicidad a nivel de indice ciego como defensa, pero el contrato contempla la ambiguedad.
+Si un telefono normalizado corresponde a mas de un empleado activo (numeros de mesa de area), la resolucion registra la ambiguedad y NO elige arbitrariamente (RES-004/OQ4). El `telefono` MAY repetirse (no unique); el `email` es unico por empleado. Alternativa considerada: "primer match" — descartada por riesgo de avisar a la persona equivocada.
 
-### D7: Ciclo de vida por desactivacion
+### D6b: Modelo definitivo `directorio_empleado` (minimizacion)
 
-`activo=false` en lugar de borrado; la resolucion ignora inactivos (DIR-007). El borrado fisico queda reservado a derechos ARCO. Alternativa considerada: soft-delete con timestamp — innecesario; el flag alcanza y mantiene la fila referenciable.
+Campos EXACTOS (nada mas se almacena): `id` (PK), `legajo` (varchar, NOT NULL, UNIQUE), `nombre` (varchar, NOT NULL), `email` (varchar, NOT NULL, UNIQUE, indexado), `telefono` (varchar E.164, NULL, indexado, MAY repetirse), `sector_id` (FK -> `sector`, NULL), `rol` (enum), `activo` (bool default true), `user_id` (FK -> `users`, NULL, ON DELETE SET NULL), `created_at`/`updated_at`.
 
-### D8: Migracion aditiva 009 y seed sin PII real
+### D7: Visibilidad de incidentes por rol — a nivel API (frontend diferido)
 
-Nueva revision `009` (posterior a `008`), aditiva: crea `directorio_empleado` con indices (incluido el indice unico/indice del ciego) y FKs. NO se siembra PII real en la migracion de produccion: la fuente es RRHH (Open Question 1). Los tests usan fixtures que crean empleados sinteticos; el seed de demo, si se implementa, sera un script dev-only fuera de Alembic. Alternativa considerada: seed en la migracion — descartada por inventar PII y ensuciar produccion.
+Para usuarios NO administradores, los endpoints de lectura/listado de incidentes SHALL devolver solo los incidentes del sector del empleado autenticado; `administrador_directorio` SHALL ver todos. Se implementa como regla de alcance (scope) en la capa de API/servicio de incidentes. GOVERNANCE: HIGH. La interfaz de usuario que refleje esta visibilidad queda FUERA de c-54 y se difiere a un change posterior (solo se entrega el filtrado API). Requisito: `incident-visibility/VIS-001`.
 
-### D9: Estrategia de tests
+### D8: Ciclo de vida: desactivacion, retencion y ARCO
 
-- **Unit (SQLite, `-m "not integration"`)**: validaciones de campos/rol, normalizacion, calculo del indice ciego, reglas de autorizacion, resolucion encontrado/no-encontrado/ambiguo, no-PII en logs. El cifrado y el indice ciego son `TypeDecorator`/funciones puras y funcionan en SQLite.
-- **Integration (PostgreSQL, `-m integration`)**: FK a `sector` y `users`, indices unicos sobre el ciego, comportamiento de `ON DELETE` y busqueda por igualdad real. Se usa la base desechable existente.
+`activo=false` en lugar de borrado operativo; la resolucion ignora inactivos (DIR-007). Retencion (OQ6): mientras la relacion laboral este activa + 1 año, luego borrado fisico. El borrado fisico tambien se ejecuta ante cancelacion ARCO, por `administrador_directorio`. Alternativa considerada: soft-delete con timestamp — innecesario; el flag alcanza.
 
-### D10: Contrato de enganche con c-53
+### D9: Migracion aditiva 009 y seed idempotente sin PII real
 
-`contact_resolution_service` expone `resolver_por_telefono`, `resolver_por_email` y `resolver_por_usuario`, cada una devolviendo un `ResultadoResolucion` con el empleado o vacio, distinguible de error. c-53 lo consume como estrategia opcional: sin contacto, conserva su resolucion directa. Este change NO toca el codigo de c-53 ni su contrato de entrega (RES-005). Dependencia: c-54 NO depende de que c-53 este implementado; c-53 PUEDE engancharlo cuando ambos esten aplicados. Orden sugerido de archivado: c-52 (ya presente) -> c-53 y c-54 en cualquier orden, ya que c-54 no modifica specs de c-53.
+Nueva revision `009` (posterior a `008`), aditiva: crea `directorio_empleado` con indices (UNIQUE en `legajo` y `email`; indice en `telefono` y `sector_id`) y FKs. OQ1 RESUELTA: seed idempotente con UN (1) usuario sintetico por rol, con datos de contacto utiles, creando AMBAS filas —`users` (login) y `directorio_empleado`— enlazadas por `user_id`. Esto tambien resuelve el bootstrap del primer administrador (sin huevo-y-gallina). NO se siembra PII real; el seed es script dev-only fuera de Alembic. Alternativa considerada: seed en la migracion — descartada por inventar PII y ensuciar produccion.
 
-### D11: Gobierno (gobernanza)
+### D10: Estrategia de tests
 
-- Entidad, cifrado, indice ciego, matching y control de acceso son **HIGH/CRITICAL**: PII de empleados y Ley 25.326. No se escribe codigo en esta fase; la implementacion requiere revision humana de la clave del indice ciego y de la politica de retencion.
+- **Unit (SQLite, `-m "not integration"`)**: validaciones de campos/rol, normalizacion (email minusculas/trim, E.164), unicidad de `legajo`/`email`, repositorio/CRUD, reglas de autorizacion, resolucion encontrado/no-encontrado/ambiguo, visibilidad de incidentes por rol, y no-PII en logs/auditoria.
+- **Integration (PostgreSQL, `-m integration`)**: FK a `sector` y `users`, UNIQUE de `legajo`/`email`, indice de `telefono`, comportamiento de `ON DELETE SET NULL` y busqueda por igualdad. Base desechable existente.
+
+### D11: Contrato de enganche con c-53
+
+`contact_resolution_service` expone `resolver_por_telefono`, `resolver_por_email` y `resolver_por_usuario`, cada una devolviendo un `ResultadoResolucion` con el empleado o vacio, distinguible de error. c-53 lo consume como estrategia opcional: sin contacto, conserva su resolucion directa. Este change NO toca el codigo ni el contrato de c-53 (RES-005). Orden de archivado: c-52 -> c-53 y c-54 en cualquier orden.
+
+### D12: Gobierno (gobernanza)
+
+- Entidad, control de acceso, matching, auditoria, retencion/ARCO y la visibilidad por rol (D7) son **HIGH**: datos personales de empleados y Ley 25.326; D7 ademas expone informacion de incidentes entre sectores. No se escribe codigo en esta fase; la implementacion requiere revision humana de la politica de retencion/ARCO y de la regla de visibilidad.
 - Migracion y API de gestion: **HIGH**. Repositorio/servicio/test: MEDIUM.
 
-### D12: Sin cambios a clasificacion ni a notificaciones
+### D13: Sin cambios a clasificacion ni a notificaciones
 
-No se tocan `constants.py`, el clasificador, los cinco sectores ni `n8n/workflow.json` en lo relativo a notificaciones. El unico cambio de configuración es la clave del indice ciego (D4).
+No se tocan `constants.py`, el clasificador, los cinco sectores ni `n8n/workflow.json` en lo relativo a notificaciones. El cifrado Fernet del contenido del incidente (`app/utils/encryption.py`, `caller_cifrado`) PERMANECE sin cambios. c-54 NO agrega claves de configuracion nuevas.
 
 ## Risks / Trade-offs
 
-- **[Fuga de PII]** email/telefono sensibles → Mitigacion: cifrado at-rest + indice ciego, sin PII en logs, acceso autorizado (DIR-005/006).
-- **[Matching erroneo]** notificar a la persona equivocada → Mitigacion: igualdad exacta sobre normalizado; ambiguo => no resuelve (D6).
-- **[Indice ciego vulnerable]** hash sin clave o clave filtrada → Mitigacion: HMAC con clave dedicada en configuracion; revision de seguridad (Open Question 5).
-- **[Directorio vacio/desactualizado]** resolucion sin contacto → Mitigacion: "no encontrado" no fatal, c-53 sigue funcionando; deactivacion.
-- **[Acoplamiento con c-53]** romper su entrega → Mitigacion: contrato estable y consume opcional (D10); c-54 no modifica specs ni codigo de c-53.
+- **[Exposicion de datos personales]** texto plano en la base → Mitigacion: minimizacion (D6b), control de acceso por rol (D5), auditoria de accesos y no-PII en logs (DIR-006); dato no sensible bajo Ley 25.326 art. 2 (decision v8).
+- **[Matching erroneo]** avisar a la persona equivocada → Mitigacion: igualdad exacta sobre normalizado; ambiguo => no resuelve (D6).
+- **[Visibilidad por rol]** fuga de informacion de incidentes entre sectores → Mitigacion: alcance obligatorio en la capa de API/servicio, tests de aislamiento; revision humana HIGH (D7/D12).
+- **[Directorio vacio/desactualizado]** resolucion sin contacto → Mitigacion: "no encontrado" no fatal, c-53 sigue funcionando; desactivacion; seed dev.
+- **[Acoplamiento con c-53]** romper su entrega → Mitigacion: contrato estable y consumo opcional (D11); c-54 no modifica specs ni codigo de c-53.
 - **[Choque de migraciones]** varias changes activas → Mitigacion: 009 aditiva, no muta tablas previas.
-- **[Sobre-ingenieria de roles]** RBAC excesivo → Mitigacion: solo tres roles y autorizacion acotada al directorio (D2/D5).
-- **[Verificacion de PII en logs]** dificil de automatizar → Mitigacion: tests unitarios que aseveran ausencia del dato en claro.
+- **[Sobre-ingenieria de roles]** RBAC excesivo → Mitigacion: solo tres roles y autorizacion acotada (D2/D5).
+- **[Verificacion de no-PII en logs]** dificil de automatizar → Mitigacion: tests unitarios que aseveran ausencia del dato en claro.
 
 ## Migration Plan
 
-1. Agregar `directory_blind_index_key` a `settings.py` y `.env.example` (sin valor en claro en el repo).
-2. Crear `utils/blind_index.py` (funcion pura HMAC-SHA256 + normalizadores) con tests.
-3. Modelo `models/empleado.py` (tabla `directorio_empleado`, enums, FKs) y migracion `009` aditiva.
-4. Repositorio `empleado_repository.py` (busqueda por ciego, por email/telefono, por `user_id`) con `selectinload` donde aplique.
-5. Servicio `directorio_service.py` (CRUD, activacion, reglas de rol) y `contact_resolution_service.py` (seam c-53).
-6. Rutas `routes/directorio.py` + schemas + dependencia de autorizacion; regenerar `docs/openapi.json`.
+1. Modelo `models/empleado.py` (tabla `directorio_empleado`, enums, FKs) y migracion `009` aditiva (`down_revision = "008"`).
+2. `utils/contactos.py`: normalizadores (email minusculas/trim, telefono E.164) y validadores, con tests.
+3. Repositorio `empleado_repository.py` (busqueda por email/telefono/`user_id`, CRUD) con `selectinload` donde aplique.
+4. Servicio `directorio_service.py` (CRUD, activacion, reglas de rol, auditoria de accesos) y `contact_resolution_service.py` (seam c-53).
+5. Rutas `routes/directorio.py` + schemas + dependencia de autorizacion; filtro de visibilidad por rol en los endpoints de incidentes (D7); regenerar `docs/openapi.json`.
+6. Seed dev-only idempotente (un usuario sintetico por rol) con `users` + `directorio_empleado`.
 7. Fixtures de tests (empleados sinteticos) y suites unit/integration.
-8. Rollback: revertir el commit y ejecutar `cd App/Backend; alembic downgrade -1` (dropea la tabla; sin backfill). c-53 no se ve afectado.
+8. Rollback: revertir el commit y `cd App/Backend; alembic downgrade -1` (dropea la tabla; sin backfill). c-53 no se ve afectado.
 
 ## Open Questions
 
-1. **Origen de los datos del directorio**: export de RRHH, carga CSV/API, o UI de administracion. Define si entra un frontend en este change. Recomendacion: API + herramienta de importacion; UI diferida.
-2. **Campos obligatorios y unicidad**: legajo obligatorio; email unico por empleado o admitido por area (afecta D6).
-3. **Vocabulario de roles**: confirmar los tres roles; si un operador pertenece a un solo sector.
-4. **Politica de ambiguedad**: validar que casillas/numeros de area se tratan como "no concluyente" (D6).
-5. **Clave del indice ciego**: nueva clave dedicada vs. derivada de la existente, y plan de rotacion. Revision de seguridad.
-6. **Retencion y ARCO**: plazo de conservacion y proceso de supresion fisica (D7).
+RESUELTAS (registro de decision humana):
+
+1. **Origen de datos / bootstrap — RESUELTA**: seed idempotente con UN usuario sintetico por rol (contacto util), creando `users` + `directorio_empleado` enlazados por `user_id`; resuelve el primer administrador. Sin PII real.
+2. **Campos obligatorios y unicidad — RESUELTA**: `legajo` obligatorio y unico; `email` unico por empleado; `telefono` MAY repetirse.
+3. **Roles y sector — RESUELTA**: `usuario_final`/`operador` pertenecen a un sector (obligatorio); `administrador_directorio` sin sector y ve todos los incidentes. Impone la regla de visibilidad a nivel API (D7); su FRONTEND queda diferido; governance HIGH.
+4. **Politica de ambiguedad — RESUELTA**: telefono/casilla compartidos => no concluyente, sin notificacion.
+5. **Clave del indice ciego — RESUELTA (MOOT)**: no hay indice ciego ni clave.
+6. **Retencion y ARCO — RESUELTA**: relacion laboral activa + 1 año, luego borrado fisico; borrado fisico tambien ante cancelacion ARCO, ejecutado por `administrador_directorio`.
+
+Riesgo residual abierto: la implementacion de D7 requiere definir COMO se determina el sector efectivo del usuario autenticado (via `directorio_empleado.user_id -> sector_id`); si una cuenta no tiene empleado vinculado con sector, el alcance de incidentes debe ser vacio o restringido. Esto se documenta como decision de implementacion bajo governance HIGH.
