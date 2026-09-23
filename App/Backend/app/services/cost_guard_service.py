@@ -6,6 +6,8 @@ hay guarda inyectada (tests o guarda deshabilitada por composicion), permite la
 llamada sin tocar el almacen.
 """
 
+from decimal import Decimal
+
 from app.cost_guard.decision import GuardDecision
 from app.cost_guard.guard import CostGuard
 
@@ -17,7 +19,10 @@ class CostGuardService:
         self._guard = guard
 
     async def reserve(
-        self, provider: str, caller: str | None = None
+        self,
+        provider: str,
+        caller: str | None = None,
+        amount: Decimal | int = Decimal("1"),
     ) -> GuardDecision:
         """
         Evalua la guarda antes de una llamada paga.
@@ -25,13 +30,15 @@ class CostGuardService:
         Args:
             provider: superficie paga.
             caller: numero de origen CRUDO cuando esta disponible.
+            amount: cantidad de unidades del costo unitario a reservar
+                (c-52: `backend_stt` estima por duracion acotada).
 
         Returns:
             GuardDecision permitida o denegada con causa.
         """
         if self._guard is None:
             return GuardDecision(allowed=True, cause=None)
-        return await self._guard.evaluate(provider, caller=caller)
+        return await self._guard.evaluate(provider, caller=caller, amount=amount)
 
 
 __all__ = ["CostGuardService"]

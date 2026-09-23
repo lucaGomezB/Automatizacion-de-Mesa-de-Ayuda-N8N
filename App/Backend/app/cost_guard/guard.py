@@ -51,6 +51,7 @@ from app.cost_guard.protocols import (
 logger = get_logger(__name__)
 
 _ZERO = Decimal("0")
+_ONE = Decimal("1")
 
 # Rol de cada reserva dentro de la evaluacion (alineado con el orden de armado).
 _ROLE_BUDGET = "budget"
@@ -81,7 +82,10 @@ class CostGuard:
     # ── API publica ──────────────────────────────────────────────────────────
 
     async def evaluate(
-        self, provider: str, caller: str | None = None
+        self,
+        provider: str,
+        caller: str | None = None,
+        amount: Decimal | int = _ONE,
     ) -> GuardDecision:
         """
         Evalua la guarda antes de una llamada paga.
@@ -89,6 +93,10 @@ class CostGuard:
         Args:
             provider: superficie paga (una de `PAID_PROVIDERS`).
             caller: numero de origen CRUDO cuando esta disponible (telefonia).
+            amount: cantidad de unidades del costo unitario a reservar. Por
+                defecto una unidad (comportamiento historico). La superficie
+                `backend_stt` lo usa para estimar la reserva por duracion
+                acotada (c-52, design.md D6).
 
         Returns:
             GuardDecision permitida o denegada con causa.
@@ -98,8 +106,9 @@ class CostGuard:
 
         now = self._clock.now()
         unit_cost = self._config.unit_cost(provider)
+        factor = amount if isinstance(amount, Decimal) else Decimal(amount)
         reservations, roles, windows = self._build_reservations(
-            provider, caller, now, unit_cost
+            provider, caller, now, unit_cost * factor
         )
 
         try:

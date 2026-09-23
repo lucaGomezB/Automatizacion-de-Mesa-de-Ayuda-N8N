@@ -10,6 +10,101 @@
         "title": "AgruparPorEnum",
         "type": "string"
       },
+      "Body_recording_status_api_v1_telefonia_recording_status_post": {
+        "properties": {
+          "account_sid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Sid"
+          },
+          "call_sid": {
+            "title": "Call Sid",
+            "type": "string"
+          },
+          "from_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From Number"
+          },
+          "recording_channels": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recording Channels"
+          },
+          "recording_duration": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recording Duration"
+          },
+          "recording_sid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recording Sid"
+          },
+          "recording_source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recording Source"
+          },
+          "recording_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recording Status"
+          },
+          "recording_url": {
+            "title": "Recording Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "call_sid",
+          "recording_url"
+        ],
+        "title": "Body_recording_status_api_v1_telefonia_recording_status_post",
+        "type": "object"
+      },
       "Body_twilio_voice_webhook_api_v1_cost_guard_twilio_voice_post": {
         "properties": {
           "from_number": {
@@ -261,9 +356,6 @@
           "provider": {
             "const": "n8n_gemini",
             "default": "n8n_gemini",
-            "enum": [
-              "n8n_gemini"
-            ],
             "title": "Provider",
             "type": "string"
           }
@@ -865,6 +957,30 @@
           "total"
         ],
         "title": "SerieTemporal",
+        "type": "object"
+      },
+      "TelefoniaRecordingResponse": {
+        "description": "Respuesta del endpoint de callback (Twilio solo requiere 2xx).",
+        "properties": {
+          "call_sid": {
+            "title": "Call Sid",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "transcripcion_estado": {
+            "title": "Transcripcion Estado",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "call_sid",
+          "transcripcion_estado"
+        ],
+        "title": "TelefoniaRecordingResponse",
         "type": "object"
       },
       "TendenciasResponse": {
@@ -1537,6 +1653,7 @@
             "content": {
               "application/json": {
                 "schema": {
+                  "additionalProperties": true,
                   "title": "Response Health Api V1 Health Get",
                   "type": "object"
                 }
@@ -1560,6 +1677,7 @@
             "content": {
               "application/json": {
                 "schema": {
+                  "additionalProperties": true,
                   "title": "Response Health Db Api V1 Health Db Get",
                   "type": "object"
                 }
@@ -1903,6 +2021,122 @@
         ]
       }
     },
+    "/api/v1/telefonia/record-complete": {
+      "post": {
+        "description": "Documento `action` del `<Record>`: mensaje de cierre ALCANZABLE.\n\nNo promete la creacion inmediata del ticket: el alta es asincrona (el\nbackend transcribe, pseudonimiza y hace handoff a n8n).",
+        "operationId": "record_complete_api_v1_telefonia_record_complete_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Twilio-Signature",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Twilio-Signature"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/xml": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Firma `X-Twilio-Signature` ausente o invalida, o `TWILIO_AUTH_TOKEN` no configurado (fail-closed)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Accion posterior a la grabacion (TwiML de cierre)",
+        "tags": [
+          "Telefonia"
+        ]
+      }
+    },
+    "/api/v1/telefonia/recording-status": {
+      "post": {
+        "description": "Procesa la notificacion de grabacion disponible de Twilio.\n\nIdempotente por `CallSid`: un callback repetido no re-descarga, no\nre-transcribe ni re-reserva. Responde 200 en cualquiera de los estados del\ningreso para no perder la grabacion ante un fallo aguas abajo.",
+        "operationId": "recording_status_api_v1_telefonia_recording_status_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Twilio-Signature",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Twilio-Signature"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_recording_status_api_v1_telefonia_recording_status_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TelefoniaRecordingResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Firma `X-Twilio-Signature` ausente o invalida, o `TWILIO_AUTH_TOKEN` no configurado (fail-closed)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Callback de estado de grabacion de Twilio",
+        "tags": [
+          "Telefonia"
+        ]
+      }
+    },
     "/health": {
       "get": {
         "description": "Verificación de actividad del proceso (liveness probe).\n\nRetorna inmediatamente sin acceder a ningún recurso externo.\nConfirma únicamente que el proceso uvicorn está corriendo y\nque la aplicación FastAPI fue inicializada correctamente.\n\nReturns:\n    JSON con estado \"ok\" y la versión actual de la aplicación.",
@@ -1912,6 +2146,7 @@
             "content": {
               "application/json": {
                 "schema": {
+                  "additionalProperties": true,
                   "title": "Response Health Health Get",
                   "type": "object"
                 }
@@ -1935,6 +2170,7 @@
             "content": {
               "application/json": {
                 "schema": {
+                  "additionalProperties": true,
                   "title": "Response Health Db Health Db Get",
                   "type": "object"
                 }

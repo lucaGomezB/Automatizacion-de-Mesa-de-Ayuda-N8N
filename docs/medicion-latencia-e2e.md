@@ -9,7 +9,7 @@ para derivar `tiempo_automatizado_s` del corpus de la tesis (Capítulo 7).
 
 | Concepto | Campo | Definición |
 |----------|-------|------------|
-| Ingreso | `ingresado_en` | Instante en que el mensaje ingresa al sistema, capturado en el **borde del trigger** del canal (N8N) y enviado en el payload de alta. |
+| Ingreso | `ingresado_en` | Instante en que el mensaje ingresa al sistema. En correo y web se captura en el **borde del trigger** del canal (N8N) y se envía en el payload de alta. En telefonía lo sella el **BACKEND** al recibir el callback de estado de grabación (C-52), antes de descargar y transcribir. |
 | Persistencia confirmada | `persistido_en` | Instante en que finalizan las escrituras del incidente y su log de clasificación, sellado **una sola vez** dentro de la transacción de alta, inmediatamente antes del commit. |
 | Latencia derivada | `latencia_e2e_ms` | `persistido_en - ingresado_en` expresada en milisegundos. Es **derivada**, no se persiste como columna. |
 | Anomalía | `latencia_anomala` | `true` cuando la latencia derivada es negativa (medición inválida). |
@@ -56,14 +56,18 @@ son homogéneos y mezclarlos rompería la comparabilidad.
   mensaje**, NO la llegada al buzón. La latencia **excluye la espera previa a la
   recogida** (hasta ~60 s por `everyMinute`), por lo que **sub-mide** respecto de
   la llegada real al buzón y no es comparable caso a caso con web/telefonía.
-- **Telefonía**: el ingreso es la **recepción del resumen post-llamada de Twilio**
-  (`call-summary.complete`). La latencia **NO incluye la duración de la llamada ni
-  la generación del resumen en Twilio**; la hipótesis de medir desde el inicio de
-  la llamada (Voice Insights) queda diferida a Fase 2.
+- **Telefonía**: el ingreso es la **recepción del callback de estado de grabación en el
+  backend** (C-52), sellado ANTES de descargar y transcribir. La latencia **incluye** la
+  descarga de la grabación, la transcripción con el motor dedicado de Gemini, la
+  pseudonimización y el handoff hacia n8n, pero **NO incluye la duración de la llamada ni el
+  tiempo previo de generación de la grabación en Twilio**. El flujo ya no parsea el resumen
+  post-llamada (`call-summary.complete`); medir desde el inicio de la llamada (Voice Insights)
+  queda diferido a Fase 2.
 - **Web**: el ingreso es el **instante de recepción del webhook**; exacto.
 
-El sello de telefonía se captura **antes del `AI Agent`**, de modo que la latencia
-del canal incluye el tiempo del agente pago (el costo dominante).
+El sello de telefonía se captura en la recepción del callback del backend, de modo que la
+latencia del canal incluye la descarga, la transcripción, la pseudonimización y el handoff
+(trabajo dominante del canal). n8n propaga el instante como passthrough y NO lo re-sella.
 
 ## 6. Exclusion de replays idempotentes
 

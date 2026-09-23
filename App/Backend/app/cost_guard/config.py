@@ -13,6 +13,7 @@ from typing import Mapping
 
 from app.cost_guard.constants import (
     PROVIDER_BACKEND_GEMINI,
+    PROVIDER_BACKEND_STT,
     PROVIDER_N8N_GEMINI,
     PROVIDER_TWILIO,
 )
@@ -91,6 +92,9 @@ class CostGuardConfig:
                             "cost_guard_unit_cost_twilio_transcription_usd",
                         )
                     )
+                ),
+                PROVIDER_BACKEND_STT: Decimal(
+                    str(getattr(settings, "cost_guard_unit_cost_backend_stt_usd"))
                 ),
             },
             degradation_policy=str(

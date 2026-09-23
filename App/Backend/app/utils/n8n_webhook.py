@@ -25,6 +25,7 @@ import httpx
 from app.config.settings import get_settings
 from app.core.logging import get_logger
 from app.schemas.clasificacion import ClasificacionResult
+from app.schemas.telefonia import TelefoniaHandoffPayload
 
 logger = get_logger(__name__)
 
@@ -97,3 +98,97 @@ async def notify_n8n(incidente_id: int, result: ClasificacionResult) -> None:
             incidente_id=incidente_id,
             exc_info=exc,
         )
+
+
+# ── Handoff del canal de telefonía (c-52) ───────────────────────────────────
+
+# Resultados observables del handoff. La falta de URL o de secreto NO es un
+# éxito silencioso: se devuelve un resultado explícito y se registra el evento.
+HANDOFF_SENT = "sent"
+HANDOFF_SKIPPED_NO_URL = "skipped_no_url"
+HANDOFF_SKIPPED_NO_SECRET = "skipped_no_secret"
+HANDOFF_FAILED = "failed"
+
+
+def build_telefonia_handoff_payload(
+    *,
+    descripcion_pseudonimizada: str,
+    call_sid: str,
+    caller: str | None,
+    ingresado_en: object,
+) -> dict:
+    """
+    Construye el payload EXACTO del handoff backend -> n8n.
+
+    Frontera de PII: la unica representacion del texto que cruza el borde es la
+    pseudonimizada. El transcript crudo NUNCA se incluye (c-52, design.md D9).
+
+    Args:
+        descripcion_pseudonimizada: texto operativo ya pseudonimizado.
+        call_sid:                   identificador de la llamada (idempotencia).
+        caller:                     numero llamante o None.
+        ingresado_en:               instante sellado por el backend (datetime o str).
+
+    Returns:
+        Diccionario con exactamente las cuatro claves del contrato.
+    """
+    if hasattr(ingresado_en, "isoformat"):
+        ingresado_en = ingresado_en.isoformat()
+    return TelefoniaHandoffPayload(
+        descripcion_pseudonimizada=descripcion_pseudonimizada,
+        call_sid=call_sid,
+        caller=caller,
+        ingresado_en=ingresado_en if ingresado_en is None else str(ingresado_en),
+    ).model_dump()
+
+
+async def notify_telefonia_handoff(
+    payload: dict, http_client: httpx.AsyncClient | None = None
+) -> str:
+    """
+    Entrega el ingreso telefónico pseudonimizado a n8n (handoff autenticado).
+
+    Autenticación: secreto compartido en el header `X-N8N-Secret`. Sin secreto
+    configurado NO se envía: un handoff sin autenticar sería una entrega
+    silenciosa insegura. Sin URL configurada tampoco se envía. Ambos casos
+    devuelven un resultado observable y emiten un evento estructurado.
+
+    Args:
+        payload:     cuerpo exacto del contrato de handoff.
+        http_client: cliente HTTP inyectable (tests). Si no se inyecta se crea
+                     un `httpx.AsyncClient` por invocación.
+
+    Returns:
+        Uno de `HANDOFF_SENT`, `HANDOFF_SKIPPED_NO_URL`,
+        `HANDOFF_SKIPPED_NO_SECRET` o `HANDOFF_FAILED`.
+    """
+    settings = get_settings()
+
+    url = settings.n8n_telefonia_webhook_url
+    if not url:
+        logger.warning("telefonia_handoff_skipped", reason="url_not_configured")
+        return HANDOFF_SKIPPED_NO_URL
+
+    secret = settings.n8n_webhook_secret  # gitleaks:allow
+    if not secret:
+        logger.error("telefonia_handoff_secret_missing")
+        return HANDOFF_SKIPPED_NO_SECRET
+
+    headers = {"X-N8N-Secret": secret}
+    try:
+        if http_client is not None:
+            response = await http_client.post(url, json=payload, headers=headers)
+        else:
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                response = await client.post(url, json=payload, headers=headers)
+        response.raise_for_status()
+    except Exception as exc:
+        logger.warning(
+            "telefonia_handoff_failed",
+            call_sid=payload.get("call_sid"),
+            error_class=type(exc).__name__,
+        )
+        return HANDOFF_FAILED
+
+    logger.info("telefonia_handoff_sent", call_sid=payload.get("call_sid"))
+    return HANDOFF_SENT

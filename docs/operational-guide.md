@@ -558,13 +558,17 @@ variables de entorno"): `COST_GUARD_ENABLED`, `COST_GUARD_BUDGET_USD`,
   `POST /api/v1/cost-guard/reserve`; el IF `Guard permite?` deriva a
   `Derivar a revision humana` cuando la guarda deniega (confianza 0.0), sin invocar
   al agente. Un error del endpoint deriva igual (fail-closed).
-- **Twilio (transcripción)**: la URL de voz del número debe apuntar a
+- **Twilio (admisión de voz)**: la URL de voz del número debe apuntar a
   `POST /api/v1/cost-guard/twilio/voice`. Si la guarda permite, responde TwiML con
-  `<Record transcribe="true">`; si deniega, responde `<Say>` + `<Hangup/>`, de modo
-  que NO se grabe ni se transcriba. La reserva es una unidad del costo unitario de
-  transcripción por llamada concedida (la duración se desconoce al inicio). El
-  endpoint se autentica con la firma `X-Twilio-Signature` y responde 401 hasta que
-  se cargue `TWILIO_AUTH_TOKEN` (ver §11.6).
+  `<Say>` de bienvenida + `<Record>` mono (SIN `transcribe`) con
+  `recordingStatusCallback` (`POST /api/v1/telefonia/recording-status`) y `action`
+  (`POST /api/v1/telefonia/record-complete`, donde se sirve el `<Say>` de cierre);
+  si deniega, responde `<Say>` + `<Hangup/>`, de modo que NO se grabe. La reserva
+  es una unidad del costo unitario de admisión de voz por llamada concedida (la
+  duración se desconoce al inicio); la transcripción se reserva por separado
+  (`backend_stt`) al recibir el callback de grabación (ver §11.7). El endpoint se
+  autentica con la firma `X-Twilio-Signature` y responde 401 hasta que se cargue
+  `TWILIO_AUTH_TOKEN` (ver §11.6).
 
 ### 11.3 Fail-closed y notificación
 
@@ -648,24 +652,25 @@ distintas:
 > reconstruida (esquema `https`, mismo host, path y query); un desajuste produce 401
 > por firma inválida aunque la petición provenga de Twilio.
 
-### 11.7 Campo de transcripción de Twilio — NO verificado
+### 11.7 Transcripción de telefonía — delegada al backend (C-52)
 
-El nombre EXACTO del campo que transporta el texto de la transcripción en el evento
-`com.twilio.voice.insights.call-summary.complete` de Event Streams sigue **sin
-verificar** contra la documentación de Twilio. El recurso Call Summary no incluye
-el texto de la transcripción (es un recurso separado) y el workflow lee hoy una
-cadena de fallback **hardcodeada** en el prompt del `AI Agent`:
+El evento `com.twilio.voice.insights.call-summary.complete` de Event Streams **ya no se usa**:
+no exponía el texto de la transcripción y `<Record transcribe="true">` limitaba el
+reconocimiento al inglés estadounidense. El backend pasó a ser dueño de la STT:
 
-```
-{{ $json.transcript || $json.body || $json.descripcion || $json.text || '' }}
-```
+1. Twilio invoca `POST /api/v1/telefonia/recording-status` al estar disponible la grabación
+   (firma `X-Twilio-Signature` fail-closed). El backend sella `ingresado_en` y aplica
+   idempotencia por `CallSid` antes de cualquier llamada paga.
+2. El backend reserva la superficie `backend_stt`, descarga la grabación (Basic auth) y
+   transcribe con Gemini (`gemini-3.5-transcribe`, verbatim).
+3. El backend pseudonimiza el texto y lo entrega a n8n vía el webhook de handoff
+   `POST /webhook/telefonia-handoff` (header `X-N8N-Secret`) con
+   `{descripcion_pseudonimizada, call_sid, caller, ingresado_en}`.
 
-Si el campo real no coincide con ninguno de esos nombres, el agente recibe una
-cadena vacía de forma silenciosa. **Acción requerida**: al activar la credencial de
-Twilio y el Event Stream, inspeccionar el payload real de una llamada y confirmar
-el nombre del primer campo; ajustarlo en el nodo `AI Agent` de `n8n/workflow.json`
-(y en `docs/n8n-workflow-guide.md`). El campo es configurable solo por este cambio
-manual en el workflow; no hay variable de entorno para él.
+El prompt del `AI Agent` interpola `{{ $json.descripcion_pseudonimizada || $json.descripcion || '' }}`;
+el transcript crudo NUNCA cruza el borde hacia n8n. No hay una cadena de fallback de campo de
+transcripción de Twilio que ajustar. Ver `docs/medicion-latencia-e2e.md` §5 y
+`docs/n8n-workflow-guide.md` (canal telefonía).
 
 ### 11.8 Reproducibilidad de la suite de integración PostgreSQL
 

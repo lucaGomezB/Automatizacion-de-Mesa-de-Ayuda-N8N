@@ -12,11 +12,15 @@ from typing import Final
 PROVIDER_BACKEND_GEMINI: Final[str] = "backend_gemini"
 PROVIDER_N8N_GEMINI: Final[str] = "n8n_gemini"
 PROVIDER_TWILIO: Final[str] = "twilio"
+# c-52: speech-to-text del backend (Gemini verbatim). Superficie propia reservada
+# en el callback de grabacion ANTES de descargar y transcribir.
+PROVIDER_BACKEND_STT: Final[str] = "backend_stt"
 
 PAID_PROVIDERS: Final[tuple[str, ...]] = (
     PROVIDER_BACKEND_GEMINI,
     PROVIDER_N8N_GEMINI,
     PROVIDER_TWILIO,
+    PROVIDER_BACKEND_STT,
 )
 
 # ── Causas de disparo / denegacion ───────────────────────────────────────────
@@ -41,6 +45,7 @@ __all__ = [
     "PROVIDER_BACKEND_GEMINI",
     "PROVIDER_N8N_GEMINI",
     "PROVIDER_TWILIO",
+    "PROVIDER_BACKEND_STT",
     "PAID_PROVIDERS",
     "CAUSE_BUDGET",
     "CAUSE_RATE",
