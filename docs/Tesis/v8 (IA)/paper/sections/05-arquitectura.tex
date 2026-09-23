@@ -59,7 +59,7 @@ La segunda etapa, activada únicamente cuando el filtro deterministico no alcanz
 
 \subsection{Modelo de datos}
 
-La persistencia se realiza sobre PostgreSQL~15.5, desplegado en contenedor Docker bajo configuración de respaldo diario y replicación fisica opcional para entornos productivos \parencite{PostgreSQL2024_docs}. El modelo de datos se organiza alrededor de seis entidades principales, descritas en la Tabla~\ref{tab:entidades}.
+La persistencia se realiza sobre PostgreSQL~15.5, desplegado en contenedor Docker bajo configuración de respaldo diario y replicación fisica opcional para entornos productivos \parencite{PostgreSQL2024_docs}. El modelo de datos se organiza alrededor de siete entidades principales, descritas en la Tabla~\ref{tab:entidades}.
 
 \begin{table}[htbp]
 \centering
@@ -76,11 +76,12 @@ La persistencia se realiza sobre PostgreSQL~15.5, desplegado en contenedor Docke
 \texttt{canal\_origen} & id\_canal (PK), nombre & Catalogo de canales: correo, formulario web y llamada telefonica. \\
 \texttt{clasificacion\_log} & id\_log (PK), id\_incidente (FK), \\ categoría\_predicha, confianza, \\ categoría\_validada & Registro de cada decision del clasificador, con categoría predicha, confianza asociada y categoría validada por el sector responsable. \\
 \texttt{users} & id (PK), username (UNIQUE), hashed\_password, is\_active & Almacena credenciales de operadores para autenticacion JWT. \\
+\texttt{directorio\_empleado} & id (PK), legajo (UNIQUE), \\ email (UNIQUE), telefono, \\ sector\_id (FK), rol, activo, \\ user\_id (FK) & Directorio institucional de empleados para resolución de contacto y notificación. Datos de contacto almacenados en texto plano para su auditabilidad directa; el campo \texttt{rol} distingue usuario final, operador y administrador del directorio. \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-La entidad central \texttt{incidente} referencia mediante claves foraneas a los catalogos de sector, estado y canal de origen, y mantiene una relacion uno a muchos con \texttt{clasificacion\_log} para preservar la trazabilidad histórica de las decisiones del clasificador. Los identificadores de incidente se generan mediante una secuencia con prefijo configurable, lo cual produce números legibles y consistentes que se comunican al usuario al momento del registro. El esquema completó, incluyendo restricciones de integridad referencial e indices secundarios, se documenta en el Anexo~C.
+La entidad central \texttt{incidente} referencia mediante claves foraneas a los catalogos de sector, estado y canal de origen, y mantiene una relacion uno a muchos con \texttt{clasificacion\_log} para preservar la trazabilidad histórica de las decisiones del clasificador. El número de incidente que se comunica al usuario corresponde al identificador único del registro, formateado para su legibilidad; la incorporación de un prefijo configurable se prevé como evolución futura (Capítulo~10). El esquema completó, incluyendo restricciones de integridad referencial e indices secundarios, se documenta en el Anexo~C. El directorio de empleados (\texttt{directorio\_empleado}) se vincula opcionalmente con la tabla de autenticación mediante \texttt{user\_id} y referencia el catálogo de sectores mediante \texttt{sector\_id}; su campo \texttt{rol} distingue al usuario final, al operador y al administrador del directorio.
 
 \subsection{Contrato de la interfaz REST}
 
