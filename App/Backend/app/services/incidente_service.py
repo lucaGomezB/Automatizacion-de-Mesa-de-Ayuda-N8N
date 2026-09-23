@@ -52,6 +52,7 @@ from app.schemas.incidente import ClasificacionPrecalculada, IncidenteCreate, In
 
 if TYPE_CHECKING:
     from app.cost_guard.guard import CostGuard
+    from app.services.incident_visibility import AlcanceIncidentes
 
 logger = get_logger(__name__)
 
@@ -118,21 +119,33 @@ class IncidenteService:
 
     # ── Operaciones de Lectura ────────────────────────────────────────────────
 
-    async def get_by_id(self, incidente_id: int) -> Incidente:
+    async def get_by_id(
+        self, incidente_id: int, alcance: "AlcanceIncidentes | None" = None
+    ) -> Incidente:
         """
         Recupera un incidente completo con todas sus relaciones cargadas.
 
         Args:
             incidente_id: Identificador del incidente a recuperar.
+            alcance:      Alcance de visibilidad por rol (VIS-001). Si se provee
+                          y el incidente queda fuera, se comporta como no
+                          encontrado (404), sin revelar su existencia.
 
         Returns:
             Instancia de Incidente con relaciones eager-loaded.
 
         Raises:
-            EntityNotFoundError: Si no existe un incidente con ese ID.
+            EntityNotFoundError: Si no existe un incidente con ese ID o si queda
+                                 fuera del alcance del usuario.
         """
         instance = await self._incidente_repo.get_with_relations(incidente_id)
         if instance is None:
+            raise EntityNotFoundError("Incidente", incidente_id)
+        if (
+            alcance is not None
+            and not alcance.ver_todos
+            and not alcance.permite_sector(instance.sector_id)
+        ):
             raise EntityNotFoundError("Incidente", incidente_id)
         return instance
 
@@ -146,12 +159,15 @@ class IncidenteService:
         hasta: datetime | None = None,
         limit: int = 50,
         offset: int = 0,
+        alcance: "AlcanceIncidentes | None" = None,
     ) -> list[Incidente]:
         """
         Lista incidentes aplicando filtros opcionales con soporte de paginación.
 
         Delega la construcción de la consulta al repositorio, que maneja
-        la combinación dinámica de condiciones.
+        la combinación dinámica de condiciones. Si se provee `alcance` (VIS-001),
+        la regla de rol INTERSECTA el filtro de sector: un no administrador solo
+        ve su sector; una cuenta sin sector no ve incidentes.
 
         Args:
             sector_id:               Filtrar por sector responsable.
@@ -162,10 +178,20 @@ class IncidenteService:
             hasta:                   Límite superior de fecha de creación.
             limit:                   Cantidad máxima de resultados.
             offset:                  Desplazamiento para paginación.
+            alcance:                 Alcance de visibilidad por rol.
 
         Returns:
             Lista de incidentes que cumplen los criterios de filtrado.
         """
+        if alcance is not None and not alcance.ver_todos:
+            # Alcance vacio: una cuenta sin empleado/sector no ve incidentes.
+            if alcance.sector_id is None:
+                return []
+            # El sector pedido debe coincidir con el del usuario; si no, nada.
+            if sector_id is not None and sector_id != alcance.sector_id:
+                return []
+            sector_id = alcance.sector_id
+
         return await self._incidente_repo.list_filtered(
             sector_id=sector_id,
             estado_id=estado_id,

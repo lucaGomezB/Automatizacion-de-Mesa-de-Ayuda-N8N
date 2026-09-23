@@ -29,6 +29,7 @@ from app.core.exceptions import (
     AppBaseException,
     CanalOrigenNotFoundError,
     ClassificationError,
+    DirectorioValidationError,
     EntityNotFoundError,
     EstadoNotFoundError,
     GeminiTimeoutError,
@@ -165,6 +166,16 @@ def register_error_handlers(app: FastAPI) -> None:
         request: Request, exc: IncidentValidationError
     ) -> JSONResponse:
         """Convierte errores de validación de dominio en respuesta 422."""
+        return JSONResponse(
+            status_code=422,
+            content=_error_body("VALIDATION_ERROR", exc.message, exc.details),
+        )
+
+    @app.exception_handler(DirectorioValidationError)
+    async def directorio_validation_error_handler(
+        request: Request, exc: DirectorioValidationError
+    ) -> JSONResponse:
+        """Convierte errores de validacion del directorio en respuesta 422."""
         return JSONResponse(
             status_code=422,
             content=_error_body("VALIDATION_ERROR", exc.message, exc.details),

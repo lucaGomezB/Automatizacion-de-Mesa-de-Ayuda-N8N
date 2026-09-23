@@ -1,14 +1,1352 @@
 {
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Gestion de Incidentes API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Liveness probe",
+        "description": "Verificación de actividad del proceso (liveness probe).\n\nRetorna inmediatamente sin acceder a ningún recurso externo.\nConfirma únicamente que el proceso uvicorn está corriendo y\nque la aplicación FastAPI fue inicializada correctamente.\n\nReturns:\n    JSON con estado \"ok\" y la versión actual de la aplicación.",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Health Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/db": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Database readiness probe",
+        "description": "Verificación de conectividad con la base de datos (readiness probe).\n\nEjecuta una consulta mínima (SELECT 1) para confirmar que la conexión\na PostgreSQL está establecida y operativa. Si la base de datos no es\nalcanzable, SQLAlchemy lanzará una excepción que el manejador global\nconvertirá en una respuesta 500.\n\nUtilizado por el healthcheck del servicio 'api' en docker-compose.yml\npara evitar que el API comience a servir solicitudes antes de que\nla base de datos esté lista.\n\nReturns:\n    JSON con estado \"ok\" y confirmación de conectividad.",
+        "operationId": "health_db_health_db_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Health Db Health Db Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Liveness probe",
+        "description": "Verificación de actividad del proceso (liveness probe).\n\nRetorna inmediatamente sin acceder a ningún recurso externo.\nConfirma únicamente que el proceso uvicorn está corriendo y\nque la aplicación FastAPI fue inicializada correctamente.\n\nReturns:\n    JSON con estado \"ok\" y la versión actual de la aplicación.",
+        "operationId": "health_api_v1_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Health Api V1 Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health/db": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Database readiness probe",
+        "description": "Verificación de conectividad con la base de datos (readiness probe).\n\nEjecuta una consulta mínima (SELECT 1) para confirmar que la conexión\na PostgreSQL está establecida y operativa. Si la base de datos no es\nalcanzable, SQLAlchemy lanzará una excepción que el manejador global\nconvertirá en una respuesta 500.\n\nUtilizado por el healthcheck del servicio 'api' en docker-compose.yml\npara evitar que el API comience a servir solicitudes antes de que\nla base de datos esté lista.\n\nReturns:\n    JSON con estado \"ok\" y confirmación de conectividad.",
+        "operationId": "health_db_api_v1_health_db_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Health Db Api V1 Health Db Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Iniciar sesion y obtener token JWT",
+        "description": "Autentica al usuario con username y password, retornando un token JWT.\n\nEl token debe enviarse en el header Authorization de requests subsiguientes:\n    Authorization: Bearer <access_token>\n\nEl token expira segun la configuracion JWT_EXPIRE_MINUTES (24 horas por defecto).\n\nArgs:\n    payload: Credenciales de inicio de sesion (username + password).\n\nReturns:\n    TokenResponse con access_token y token_type \"bearer\" (HTTP 200).\n\nRaises:\n    JSONResponse 401: Si las credenciales son invalidas.",
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/incidentes/": {
+      "post": {
+        "tags": [
+          "Incidentes"
+        ],
+        "summary": "Crear y clasificar un incidente",
+        "description": "Crea un nuevo incidente y ejecuta la clasificación automática.\n\nInvocado por N8N tras recibir un correo electrónico en Outlook o una\ntranscripción de llamada de Twilio, o directamente desde un cliente HTTP.\n\nEl incidente se persiste en estado \"nuevo\" y es clasificado inmediatamente\npor el pipeline híbrido (determinístico + Gemini). El resultado incluye\nel sector asignado, la confianza de la clasificación y el indicador\nde revisión humana si la confianza fue insuficiente.\n\nArgs:\n    payload: Descripción pseudonimizada del incidente, prioridad y canal.\n\nReturns:\n    Representación completa del incidente creado y clasificado (HTTP 201).",
+        "operationId": "create_incidente_api_v1_incidentes__post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncidenteCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidenteRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Incidentes"
+        ],
+        "summary": "Listar incidentes con filtros opcionales",
+        "description": "Lista incidentes con filtros combinables y paginación.\n\nTodos los parámetros de filtro son opcionales y se combinan con AND lógico.\nEl resultado se ordena por fecha de creación descendente (más reciente primero).\nRetorna la proyección ligera IncidenteListItem (sin texto de descripción)\npara optimizar el tamaño de la respuesta en consultas masivas.",
+        "operationId": "list_incidentes_api_v1_incidentes__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sector_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filtrar por sector responsable",
+              "title": "Sector Id"
+            },
+            "description": "Filtrar por sector responsable"
+          },
+          {
+            "name": "estado_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filtrar por estado del ciclo de vida",
+              "title": "Estado Id"
+            },
+            "description": "Filtrar por estado del ciclo de vida"
+          },
+          {
+            "name": "prioridad",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/PrioridadEnum"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filtrar por nivel de prioridad",
+              "title": "Prioridad"
+            },
+            "description": "Filtrar por nivel de prioridad"
+          },
+          {
+            "name": "requiere_revision_humana",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filtrar por indicador de revisión pendiente",
+              "title": "Requiere Revision Humana"
+            },
+            "description": "Filtrar por indicador de revisión pendiente"
+          },
+          {
+            "name": "desde",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Fecha de creación mínima (ISO 8601)",
+              "title": "Desde"
+            },
+            "description": "Fecha de creación mínima (ISO 8601)"
+          },
+          {
+            "name": "hasta",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Fecha de creación máxima (ISO 8601)",
+              "title": "Hasta"
+            },
+            "description": "Fecha de creación máxima (ISO 8601)"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "description": "Cantidad máxima de resultados",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Cantidad máxima de resultados"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Desplazamiento para paginación",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Desplazamiento para paginación"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IncidenteListItem"
+                  },
+                  "title": "Response List Incidentes Api V1 Incidentes  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/incidentes/{incidente_id}": {
+      "get": {
+        "tags": [
+          "Incidentes"
+        ],
+        "summary": "Obtener el detalle completo de un incidente",
+        "description": "Retorna la representación completa de un incidente, incluyendo relaciones.\n\nA diferencia del listado, esta respuesta incluye la descripción completa\ndel incidente y los objetos de catálogo completos (sector, estado, canal).\n\nArgs:\n    incidente_id: ID del incidente a recuperar.\n\nReturns:\n    Detalle completo del incidente (HTTP 200) o error 404 si no existe.",
+        "operationId": "get_incidente_api_v1_incidentes__incidente_id__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "incidente_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Incidente Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidenteRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Incidentes"
+        ],
+        "summary": "Actualizar parcialmente un incidente",
+        "description": "Actualiza uno o más campos de un incidente existente (PATCH semántico).\n\nSolo se modifican los campos incluidos en el payload con valor distinto\nde None. Casos de uso típicos: cambio de estado por el operador,\nreasignación de sector tras revisión manual, o modificación de prioridad.\n\nLos incidentes en estado terminal (cerrado, es_terminal=true) son de solo\nlectura. Cualquier intento de PATCH sobre un incidente cerrado retorna\nHTTP 409 Conflict con código INCIDENTE_CERRADO.\n\nArgs:\n    incidente_id: ID del incidente a modificar.\n    payload:      Campos a actualizar (todos opcionales).\n\nReturns:\n    Representación actualizada del incidente (HTTP 200).\n    HTTP 404 si el incidente no existe.\n    HTTP 409 si el incidente está cerrado (solo lectura).",
+        "operationId": "update_incidente_api_v1_incidentes__incidente_id__patch",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "incidente_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Incidente Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncidenteUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidenteRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/clasificaciones/revision-pendiente": {
+      "get": {
+        "tags": [
+          "Clasificaciones"
+        ],
+        "summary": "Listar clasificaciones que requieren revisión humana",
+        "description": "Retorna la cola de clasificaciones pendientes de revisión humana.\n\nUn registro aparece en esta cola cuando el clasificador emitió\nuna confianza inferior al umbral (0.70) y el operador aún no registró\nsu validación. El orden FIFO (más antiguo primero) garantiza que\nningún incidente quede en espera indefinidamente.\n\nReturns:\n    Lista de registros de auditoría pendientes, ordenados por antigüedad.",
+        "operationId": "list_pending_review_api_v1_clasificaciones_revision_pendiente_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "description": "Cantidad máxima de resultados",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Cantidad máxima de resultados"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Desplazamiento para paginación",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Desplazamiento para paginación"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClasificacionLogRead"
+                  },
+                  "title": "Response List Pending Review Api V1 Clasificaciones Revision Pendiente Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/clasificaciones/incidente/{incidente_id}": {
+      "get": {
+        "tags": [
+          "Clasificaciones"
+        ],
+        "summary": "Historial de clasificaciones de un incidente",
+        "description": "Retorna el historial completo de clasificaciones de un incidente específico.\n\nPermite al operador ver todas las decisiones tomadas por el sistema\npara un incidente (incluyendo el registro de la etapa utilizada,\nla confianza, y la respuesta raw de Gemini si corresponde).\n\nArgs:\n    incidente_id: ID del incidente cuyo historial se desea consultar.\n\nReturns:\n    Lista de registros de auditoría ordenados del más reciente al más antiguo.",
+        "operationId": "list_by_incidente_api_v1_clasificaciones_incidente__incidente_id__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "incidente_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Incidente Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClasificacionLogRead"
+                  },
+                  "title": "Response List By Incidente Api V1 Clasificaciones Incidente  Incidente Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/clasificaciones/{log_id}/validar": {
+      "patch": {
+        "tags": [
+          "Clasificaciones"
+        ],
+        "summary": "Registrar la validación humana de una clasificación",
+        "description": "Registra la decisión del operador humano sobre la categoría correcta.\n\nEste endpoint cierra el ciclo de revisión: el operador indica cuál es\nel sector correcto para el incidente, lo que actualiza el campo\nsector_id_validado en el registro de auditoría. A partir de ese momento,\nel registro deja de aparecer en la cola de revisión pendiente y\npasa a formar parte del corpus de evaluación con etiqueta confirmada.\n\nSi el sector validado coincide con el predicho, confirma la exactitud\ndel clasificador. Si difiere, registra un caso de error para el análisis\nde métricas de la tesis.\n\nArgs:\n    log_id:  ID del registro de auditoría a validar.\n    payload: Sector correcto (por nombre canónico o id) y adicionales validados.\n\nReturns:\n    Representación actualizada del registro de auditoría (HTTP 200).",
+        "operationId": "validar_clasificacion_api_v1_clasificaciones__log_id__validar_patch",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "log_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Log Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClasificacionValidar"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClasificacionLogRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/estadisticas/tendencias": {
+      "get": {
+        "tags": [
+          "Estadisticas"
+        ],
+        "summary": "Obtener tendencias de incidentes agrupadas por dia o mes",
+        "description": "Retorna una serie temporal con la cantidad de incidentes por periodo\n(dia o mes) dentro del rango de fechas especificado.\n\nIncluye desglose por sector y distribucion de estados para el rango completo.",
+        "operationId": "get_tendencias_api_v1_estadisticas_tendencias_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agrupar_por",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/AgruparPorEnum",
+              "description": "Granularidad de agrupacion: 'dia' o 'mes'"
+            },
+            "description": "Granularidad de agrupacion: 'dia' o 'mes'"
+          },
+          {
+            "name": "desde",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "description": "Fecha de inicio del rango (YYYY-MM-DD)",
+              "title": "Desde"
+            },
+            "description": "Fecha de inicio del rango (YYYY-MM-DD)"
+          },
+          {
+            "name": "hasta",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "description": "Fecha de fin del rango (YYYY-MM-DD)",
+              "title": "Hasta"
+            },
+            "description": "Fecha de fin del rango (YYYY-MM-DD)"
+          },
+          {
+            "name": "sector_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filtrar por sector responsable (opcional)",
+              "title": "Sector Id"
+            },
+            "description": "Filtrar por sector responsable (opcional)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TendenciasResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/estadisticas/resumen": {
+      "get": {
+        "tags": [
+          "Estadisticas"
+        ],
+        "summary": "Obtener resumen de KPIs del dashboard",
+        "description": "Retorna KPIs agregados: total de incidentes, promedio diario,\ndistribucion por sector y estado, y tasa de revision humana.\n\nSi no se especifican fechas, se usa el rango de los ultimos 30 dias.",
+        "operationId": "get_resumen_api_v1_estadisticas_resumen_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "desde",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Fecha de inicio del rango. Default: 30 dias atras.",
+              "title": "Desde"
+            },
+            "description": "Fecha de inicio del rango. Default: 30 dias atras."
+          },
+          {
+            "name": "hasta",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Fecha de fin del rango. Default: hoy.",
+              "title": "Hasta"
+            },
+            "description": "Fecha de fin del rango. Default: hoy."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResumenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/catalogos/sectores": {
+      "get": {
+        "tags": [
+          "Catalogos"
+        ],
+        "summary": "Listar el catálogo de sectores",
+        "description": "Retorna los sectores del catálogo como pares { id, nombre }.\n\nSolo lectura: los catálogos son datos de referencia inmutables en runtime.\nEl orden respeta el vocabulario canónico.",
+        "operationId": "list_sectores_api_v1_catalogos_sectores_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SectorCatalogoRead"
+                  },
+                  "type": "array",
+                  "title": "Response List Sectores Api V1 Catalogos Sectores Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/cost-guard/reserve": {
+      "post": {
+        "tags": [
+          "Cost Guard"
+        ],
+        "summary": "Evaluar la guarda de costo antes de una llamada paga",
+        "description": "Evalua la guarda antes de invocar al AI Agent de n8n.\n\nExige el header `X-Cost-Guard-Secret`. Responde 200 con la decision en el\ncuerpo: `allowed` en true permite continuar; en false indica derivar a\nrevision humana. El flujo de n8n rutea segun `allowed` y NO invoca al AI\nAgent cuando es false.",
+        "operationId": "reserve_cost_guard_api_v1_cost_guard_reserve_post",
+        "parameters": [
+          {
+            "name": "X-Cost-Guard-Secret",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Cost-Guard-Secret"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CostGuardReserveRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CostGuardReserveResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Header `X-Cost-Guard-Secret` ausente o distinto, o `COST_GUARD_SHARED_SECRET` no configurado (fail-closed)."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cost-guard/twilio/voice": {
+      "post": {
+        "tags": [
+          "Cost Guard"
+        ],
+        "summary": "Webhook de voz pre-llamada de Twilio (TwiML)",
+        "description": "Webhook que Twilio consulta ANTES de grabar y transcribir.\n\nSe autentica con la firma `X-Twilio-Signature`, exigida siempre que\n`TWILIO_AUTH_TOKEN` este configurado; si el token falta, responde 401\n(fail-closed) para no quedar abierto. NO usa el header\n`X-Cost-Guard-Secret` porque Twilio no puede enviar headers personalizados.\n\nPermite: responde TwiML con `<Record transcribe=\"true\">`. Deniega: responde\nTwiML con `<Say>` + `<Hangup/>`, de modo que NO se grabe ni se transcriba.\nLa reserva es de una unidad del costo unitario de transcripcion por llamada\nconcedida (la duracion se desconoce al inicio).",
+        "operationId": "twilio_voice_webhook_api_v1_cost_guard_twilio_voice_post",
+        "parameters": [
+          {
+            "name": "X-Twilio-Signature",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Twilio-Signature"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_twilio_voice_webhook_api_v1_cost_guard_twilio_voice_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/xml": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Firma `X-Twilio-Signature` ausente o invalida, o `TWILIO_AUTH_TOKEN` no configurado (fail-closed)."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/telefonia/recording-status": {
+      "post": {
+        "tags": [
+          "Telefonia"
+        ],
+        "summary": "Callback de estado de grabacion de Twilio",
+        "description": "Procesa la notificacion de grabacion disponible de Twilio.\n\nIdempotente por `CallSid`: un callback repetido sobre un ingreso ya\ntranscrito o `pendiente` no re-descarga, no re-transcribe ni re-reserva. Si\nel ingreso quedo en un estado terminal de error, el callback lo reprocesa.\n\nCodigos de respuesta segun el estado resultante:\n    - `transcrito`, `pendiente` o `guarda_denegada` -> 200.\n    - `error_descarga` o `error_stt` -> 503, para invitar el reintento nativo\n      de Twilio. El estado de error se confirma antes de responder para que\n      el siguiente callback pueda reprocesarlo.",
+        "operationId": "recording_status_api_v1_telefonia_recording_status_post",
+        "parameters": [
+          {
+            "name": "X-Twilio-Signature",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Twilio-Signature"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_recording_status_api_v1_telefonia_recording_status_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TelefoniaRecordingResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Firma `X-Twilio-Signature` ausente o invalida, o `TWILIO_AUTH_TOKEN` no configurado (fail-closed)."
+          },
+          "503": {
+            "description": "Fallo transitorio de descarga o STT. El ingreso queda persistido en estado de error para que Twilio reintente el callback (W5)."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/telefonia/record-complete": {
+      "post": {
+        "tags": [
+          "Telefonia"
+        ],
+        "summary": "Accion posterior a la grabacion (TwiML de cierre)",
+        "description": "Documento `action` del `<Record>`: mensaje de cierre ALCANZABLE.\n\nNo promete la creacion inmediata del ticket: el alta es asincrona (el\nbackend transcribe, pseudonimiza y hace handoff a n8n).",
+        "operationId": "record_complete_api_v1_telefonia_record_complete_post",
+        "parameters": [
+          {
+            "name": "X-Twilio-Signature",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Twilio-Signature"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/xml": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Firma `X-Twilio-Signature` ausente o invalida, o `TWILIO_AUTH_TOKEN` no configurado (fail-closed)."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/directorio/empleados": {
+      "post": {
+        "tags": [
+          "Directorio"
+        ],
+        "summary": "Alta de un empleado del directorio (administrador)",
+        "description": "Crea un empleado del directorio. Requiere rol administrador.",
+        "operationId": "crear_empleado_api_v1_directorio_empleados_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmpleadoCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmpleadoRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Directorio"
+        ],
+        "summary": "Listar el directorio (operador/administrador)",
+        "description": "Lista los empleados del directorio. Requiere rol autorizado.",
+        "operationId": "listar_empleados_api_v1_directorio_empleados_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "solo_activos",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Solo Activos"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EmpleadoRead"
+                  },
+                  "title": "Response Listar Empleados Api V1 Directorio Empleados Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/directorio/empleados/{empleado_id}": {
+      "get": {
+        "tags": [
+          "Directorio"
+        ],
+        "summary": "Detalle de un empleado del directorio (operador/administrador)",
+        "description": "Recupera un empleado por id. Requiere rol autorizado.",
+        "operationId": "obtener_empleado_api_v1_directorio_empleados__empleado_id__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "empleado_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Empleado Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmpleadoRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Directorio"
+        ],
+        "summary": "Editar/activar/desactivar un empleado (administrador)",
+        "description": "Edita parcialmente un empleado; `activo` alterna su estado.",
+        "operationId": "actualizar_empleado_api_v1_directorio_empleados__empleado_id__patch",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "empleado_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Empleado Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmpleadoUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmpleadoRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Directorio"
+        ],
+        "summary": "Borrado ARCO de un empleado (administrador)",
+        "description": "Ejecuta el borrado fisico por solicitud ARCO. Requiere administrador.",
+        "operationId": "borrar_empleado_api_v1_directorio_empleados__empleado_id__delete",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "empleado_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Empleado Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "components": {
     "schemas": {
       "AgruparPorEnum": {
-        "description": "Granularidad de agrupacion temporal para la serie de tendencias.",
+        "type": "string",
         "enum": [
           "dia",
           "mes"
         ],
         "title": "AgruparPorEnum",
-        "type": "string"
+        "description": "Granularidad de agrupacion temporal para la serie de tendencias."
       },
       "Body_recording_status_api_v1_telefonia_recording_status_post": {
         "properties": {
@@ -24,41 +1362,8 @@
             "title": "Account Sid"
           },
           "call_sid": {
-            "title": "Call Sid",
-            "type": "string"
-          },
-          "from_number": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "From Number"
-          },
-          "recording_channels": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Recording Channels"
-          },
-          "recording_duration": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Recording Duration"
+            "type": "string",
+            "title": "Call Sid"
           },
           "recording_sid": {
             "anyOf": [
@@ -71,16 +1376,9 @@
             ],
             "title": "Recording Sid"
           },
-          "recording_source": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Recording Source"
+          "recording_url": {
+            "type": "string",
+            "title": "Recording Url"
           },
           "recording_status": {
             "anyOf": [
@@ -93,17 +1391,57 @@
             ],
             "title": "Recording Status"
           },
-          "recording_url": {
-            "title": "Recording Url",
-            "type": "string"
+          "recording_duration": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recording Duration"
+          },
+          "recording_channels": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recording Channels"
+          },
+          "recording_source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recording Source"
+          },
+          "from_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From Number"
           }
         },
+        "type": "object",
         "required": [
           "call_sid",
           "recording_url"
         ],
-        "title": "Body_recording_status_api_v1_telefonia_recording_status_post",
-        "type": "object"
+        "title": "Body_recording_status_api_v1_telefonia_recording_status_post"
       },
       "Body_twilio_voice_webhook_api_v1_cost_guard_twilio_voice_post": {
         "properties": {
@@ -119,12 +1457,19 @@
             "title": "From Number"
           }
         },
-        "title": "Body_twilio_voice_webhook_api_v1_cost_guard_twilio_voice_post",
-        "type": "object"
+        "type": "object",
+        "title": "Body_twilio_voice_webhook_api_v1_cost_guard_twilio_voice_post"
       },
       "CanalOrigenRead": {
-        "description": "Proyección de solo lectura del canal de ingreso del incidente.\n\nInforma al consumidor de la API a través de qué medio fue recibido\nel reporte: correo electrónico, formulario web o llamada telefónica.",
         "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
           "descripcion": {
             "anyOf": [
               {
@@ -135,51 +1480,38 @@
               }
             ],
             "title": "Descripcion"
-          },
-          "id": {
-            "title": "Id",
-            "type": "integer"
-          },
-          "nombre": {
-            "title": "Nombre",
-            "type": "string"
           }
         },
+        "type": "object",
         "required": [
           "id",
           "nombre",
           "descripcion"
         ],
         "title": "CanalOrigenRead",
-        "type": "object"
+        "description": "Proyección de solo lectura del canal de ingreso del incidente.\n\nInforma al consumidor de la API a través de qué medio fue recibido\nel reporte: correo electrónico, formulario web o llamada telefónica."
       },
       "ClasificacionLogRead": {
-        "description": "Representación de un registro de auditoría para la API HTTP.\n\nExpone el historial de clasificaciones de un incidente, incluyendo\nel sector predicho y el sector validado manualmente (si existe).\nEs la forma en que los operadores humanos acceden a los registros\npendientes de revisión a través de los endpoints correspondientes.",
         "properties": {
-          "confianza": {
-            "title": "Confianza",
-            "type": "number"
-          },
-          "created_at": {
-            "format": "date-time",
-            "title": "Created At",
-            "type": "string"
-          },
-          "etapa": {
-            "title": "Etapa",
-            "type": "string"
-          },
           "id": {
-            "title": "Id",
-            "type": "integer"
+            "type": "integer",
+            "title": "Id"
           },
           "incidente_id": {
-            "title": "Incidente Id",
-            "type": "integer"
+            "type": "integer",
+            "title": "Incidente Id"
+          },
+          "confianza": {
+            "type": "number",
+            "title": "Confianza"
+          },
+          "etapa": {
+            "type": "string",
+            "title": "Etapa"
           },
           "requiere_revision_humana": {
-            "title": "Requiere Revision Humana",
-            "type": "boolean"
+            "type": "boolean",
+            "title": "Requiere Revision Humana"
           },
           "respuesta_raw": {
             "anyOf": [
@@ -191,6 +1523,11 @@
               }
             ],
             "title": "Respuesta Raw"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
           },
           "sector_predicho": {
             "anyOf": [
@@ -216,17 +1553,18 @@
             "items": {
               "$ref": "#/components/schemas/SectorRead"
             },
-            "title": "Sectores Predichos",
-            "type": "array"
+            "type": "array",
+            "title": "Sectores Predichos"
           },
           "sectores_validados": {
             "items": {
               "$ref": "#/components/schemas/SectorRead"
             },
-            "title": "Sectores Validados",
-            "type": "array"
+            "type": "array",
+            "title": "Sectores Validados"
           }
         },
+        "type": "object",
         "required": [
           "id",
           "incidente_id",
@@ -239,46 +1577,10 @@
           "sector_validado"
         ],
         "title": "ClasificacionLogRead",
-        "type": "object"
+        "description": "Representación de un registro de auditoría para la API HTTP.\n\nExpone el historial de clasificaciones de un incidente, incluyendo\nel sector predicho y el sector validado manualmente (si existe).\nEs la forma en que los operadores humanos acceden a los registros\npendientes de revisión a través de los endpoints correspondientes."
       },
       "ClasificacionPrecalculada": {
-        "description": "Clasificación ya producida por un emisor externo (N8N) — C-33, D5.\n\nTodos los campos son opcionales: el bloque hace explícita la intención de\n\"clasificación provista\" y permite el caso de refinamiento agotado, donde no\nhay sector válido pero sí la marca de revisión humana. Cuando el bloque está\npresente y es válido, el servicio lo persiste y omite la clasificación\nserver-side (sin llamada paga).\n\nValidaciones de borde (D6):\n    - `sector_predicho` presente debe pertenecer al vocabulario canónico.\n    - `sectores_adicionales` presentes deben ser canónicos.\n    - `confianza` presente debe estar en [0.0, 1.0].",
         "properties": {
-          "confianza": {
-            "anyOf": [
-              {
-                "maximum": 1.0,
-                "minimum": 0.0,
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Confianza"
-          },
-          "origen": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Origen"
-          },
-          "requiere_revision_humana": {
-            "anyOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Requiere Revision Humana"
-          },
           "sector_predicho": {
             "anyOf": [
               {
@@ -294,15 +1596,50 @@
             "items": {
               "type": "string"
             },
-            "title": "Sectores Adicionales",
-            "type": "array"
+            "type": "array",
+            "title": "Sectores Adicionales"
+          },
+          "confianza": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confianza"
+          },
+          "requiere_revision_humana": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requiere Revision Humana"
+          },
+          "origen": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origen"
           }
         },
+        "type": "object",
         "title": "ClasificacionPrecalculada",
-        "type": "object"
+        "description": "Clasificación ya producida por un emisor externo (N8N) — C-33, D5.\n\nTodos los campos son opcionales: el bloque hace explícita la intención de\n\"clasificación provista\" y permite el caso de refinamiento agotado, donde no\nhay sector válido pero sí la marca de revisión humana. Cuando el bloque está\npresente y es válido, el servicio lo persiste y omite la clasificación\nserver-side (sin llamada paga).\n\nValidaciones de borde (D6):\n    - `sector_predicho` presente debe pertenecer al vocabulario canónico.\n    - `sectores_adicionales` presentes deben ser canónicos.\n    - `confianza` presente debe estar en [0.0, 1.0]."
       },
       "ClasificacionValidar": {
-        "description": "Payload enviado por el operador humano para validar o corregir una clasificación.\n\nAcepta el sector principal por nombre canonico (`sector_validado`) o, por\ncompatibilidad, por identificador (`sector_id_validado`). `sectores_adicionales`\npermite registrar el conjunto validado completo cuando el incidente es\nmultietiqueta.",
         "properties": {
           "sector_id_validado": {
             "anyOf": [
@@ -330,45 +1667,45 @@
             "items": {
               "type": "string"
             },
-            "title": "Sectores Adicionales",
-            "type": "array"
+            "type": "array",
+            "title": "Sectores Adicionales"
           }
         },
+        "type": "object",
         "title": "ClasificacionValidar",
-        "type": "object"
+        "description": "Payload enviado por el operador humano para validar o corregir una clasificación.\n\nAcepta el sector principal por nombre canonico (`sector_validado`) o, por\ncompatibilidad, por identificador (`sector_id_validado`). `sectores_adicionales`\npermite registrar el conjunto validado completo cuando el incidente es\nmultietiqueta."
       },
       "CostGuardReserveRequest": {
-        "description": "Solicitud de reserva de una llamada paga de la superficie n8n.",
         "properties": {
+          "provider": {
+            "type": "string",
+            "const": "n8n_gemini",
+            "title": "Provider",
+            "default": "n8n_gemini"
+          },
           "caller": {
             "anyOf": [
               {
-                "maxLength": 32,
-                "type": "string"
+                "type": "string",
+                "maxLength": 32
               },
               {
                 "type": "null"
               }
             ],
-            "description": "Numero de origen CRUDO cuando esta disponible (telefonia).",
-            "title": "Caller"
-          },
-          "provider": {
-            "const": "n8n_gemini",
-            "default": "n8n_gemini",
-            "title": "Provider",
-            "type": "string"
+            "title": "Caller",
+            "description": "Numero de origen CRUDO cuando esta disponible (telefonia)."
           }
         },
+        "type": "object",
         "title": "CostGuardReserveRequest",
-        "type": "object"
+        "description": "Solicitud de reserva de una llamada paga de la superficie n8n."
       },
       "CostGuardReserveResponse": {
-        "description": "Decision de la guarda: permitir o denegar con causa.",
         "properties": {
           "allowed": {
-            "title": "Allowed",
-            "type": "boolean"
+            "type": "boolean",
+            "title": "Allowed"
           },
           "cause": {
             "anyOf": [
@@ -382,20 +1719,259 @@
             "title": "Cause"
           },
           "provider": {
-            "title": "Provider",
-            "type": "string"
+            "type": "string",
+            "title": "Provider"
           }
         },
+        "type": "object",
         "required": [
           "allowed",
           "provider"
         ],
         "title": "CostGuardReserveResponse",
-        "type": "object"
+        "description": "Decision de la guarda: permitir o denegar con causa."
+      },
+      "EmpleadoCreate": {
+        "properties": {
+          "legajo": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 1,
+            "title": "Legajo"
+          },
+          "nombre": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Nombre"
+          },
+          "email": {
+            "type": "string",
+            "maxLength": 254,
+            "minLength": 3,
+            "title": "Email"
+          },
+          "telefono": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Telefono"
+          },
+          "sector_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sector Id"
+          },
+          "rol": {
+            "$ref": "#/components/schemas/RolEmpleado",
+            "default": "usuario_final"
+          },
+          "user_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "legajo",
+          "nombre",
+          "email"
+        ],
+        "title": "EmpleadoCreate",
+        "description": "Cuerpo de alta de un empleado del directorio."
+      },
+      "EmpleadoRead": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "legajo": {
+            "type": "string",
+            "title": "Legajo"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "telefono": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Telefono"
+          },
+          "sector_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sector Id"
+          },
+          "rol": {
+            "$ref": "#/components/schemas/RolEmpleado"
+          },
+          "activo": {
+            "type": "boolean",
+            "title": "Activo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "legajo",
+          "nombre",
+          "email",
+          "telefono",
+          "sector_id",
+          "rol",
+          "activo"
+        ],
+        "title": "EmpleadoRead",
+        "description": "Representacion minimizada de un empleado para la API de gestion."
+      },
+      "EmpleadoUpdate": {
+        "properties": {
+          "legajo": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 50,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legajo"
+          },
+          "nombre": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nombre"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 254,
+                "minLength": 3
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "telefono": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Telefono"
+          },
+          "sector_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sector Id"
+          },
+          "rol": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RolEmpleado"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "activo": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Activo"
+          },
+          "user_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Id"
+          }
+        },
+        "type": "object",
+        "title": "EmpleadoUpdate",
+        "description": "Cuerpo de edicion parcial (solo se aplican los campos enviados)."
       },
       "EstadoRead": {
-        "description": "Proyección de solo lectura de un estado del ciclo de vida del incidente.\n\nEl campo es_terminal permite a los clientes de la API identificar si el\nincidente llegó a un estado final sin necesidad de lógica adicional.",
         "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
           "descripcion": {
             "anyOf": [
               {
@@ -408,18 +1984,11 @@
             "title": "Descripcion"
           },
           "es_terminal": {
-            "title": "Es Terminal",
-            "type": "boolean"
-          },
-          "id": {
-            "title": "Id",
-            "type": "integer"
-          },
-          "nombre": {
-            "title": "Nombre",
-            "type": "string"
+            "type": "boolean",
+            "title": "Es Terminal"
           }
         },
+        "type": "object",
         "required": [
           "id",
           "nombre",
@@ -427,7 +1996,7 @@
           "es_terminal"
         ],
         "title": "EstadoRead",
-        "type": "object"
+        "description": "Proyección de solo lectura de un estado del ciclo de vida del incidente.\n\nEl campo es_terminal permite a los clientes de la API identificar si el\nincidente llegó a un estado final sin necesidad de lógica adicional."
       },
       "HTTPValidationError": {
         "properties": {
@@ -435,16 +2004,26 @@
             "items": {
               "$ref": "#/components/schemas/ValidationError"
             },
-            "title": "Detail",
-            "type": "array"
+            "type": "array",
+            "title": "Detail"
           }
         },
-        "title": "HTTPValidationError",
-        "type": "object"
+        "type": "object",
+        "title": "HTTPValidationError"
       },
       "IncidenteCreate": {
-        "description": "Payload de creación de un incidente.\n\nAceptado por el endpoint POST /api/v1/incidentes. Puede provenir de:\n    - El webhook de N8N tras recibir un correo electrónico en Outlook.\n    - El webhook de N8N tras procesar la transcripción de una llamada en Twilio.\n    - Una llamada directa a la API desde un cliente externo.\n\nValidaciones de negocio:\n    - La descripción no puede estar en blanco ni ser solo espacios.\n    - La longitud mínima de 10 caracteres evita incidentes vacíos de contenido.\n    - La longitud máxima de 5000 caracteres previene abusos de almacenamiento.\n\nGuardas de costo (C-33):\n    - `origen_message_id`: idempotencia del alta por Message-ID de Outlook.\n    - `clasificacion`: clasificación precalculada que omite la llamada paga.\n    - `origen_evento`: marcador de evento; un evento de notificación se\n      rechaza con error de validación para no crear incidentes.",
         "properties": {
+          "descripcion": {
+            "type": "string",
+            "maxLength": 5000,
+            "minLength": 10,
+            "title": "Descripcion",
+            "description": "Texto pseudonimizado del incidente. Mínimo 10 caracteres."
+          },
+          "prioridad": {
+            "$ref": "#/components/schemas/PrioridadEnum",
+            "default": "media"
+          },
           "canal_origen_id": {
             "anyOf": [
               {
@@ -456,6 +2035,18 @@
             ],
             "title": "Canal Origen Id"
           },
+          "origen_message_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origen Message Id"
+          },
           "clasificacion": {
             "anyOf": [
               {
@@ -465,25 +2056,6 @@
                 "type": "null"
               }
             ]
-          },
-          "descripcion": {
-            "description": "Texto pseudonimizado del incidente. Mínimo 10 caracteres.",
-            "maxLength": 5000,
-            "minLength": 10,
-            "title": "Descripcion",
-            "type": "string"
-          },
-          "ingresado_en": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Ingresado En"
           },
           "origen_evento": {
             "anyOf": [
@@ -496,93 +2068,43 @@
             ],
             "title": "Origen Evento"
           },
-          "origen_message_id": {
-            "anyOf": [
-              {
-                "maxLength": 255,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Origen Message Id"
-          },
-          "prioridad": {
-            "$ref": "#/components/schemas/PrioridadEnum",
-            "default": "media"
-          }
-        },
-        "required": [
-          "descripcion"
-        ],
-        "title": "IncidenteCreate",
-        "type": "object"
-      },
-      "IncidenteListItem": {
-        "description": "Proyección ligera de un incidente para endpoints de listado.\n\nOmite el campo 'descripcion' para reducir el tamaño de las respuestas\ncuando se listan múltiples incidentes. Los consumidores que necesiten\nel texto completo deben usar el endpoint de detalle individual.",
-        "properties": {
-          "created_at": {
-            "format": "date-time",
-            "title": "Created At",
-            "type": "string"
-          },
-          "estado": {
-            "$ref": "#/components/schemas/EstadoRead"
-          },
-          "id": {
-            "title": "Id",
-            "type": "integer"
-          },
           "ingresado_en": {
             "anyOf": [
               {
-                "format": "date-time",
-                "type": "string"
+                "type": "string",
+                "format": "date-time"
               },
               {
                 "type": "null"
               }
             ],
             "title": "Ingresado En"
-          },
-          "latencia_anomala": {
-            "description": "True si la latencia derivada es negativa (C-48).\n\nLa marca de anomalía es observable en el listado, no solo en el detalle.",
-            "readOnly": true,
-            "title": "Latencia Anomala",
-            "type": "boolean"
-          },
-          "latencia_e2e_ms": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Latencia end-to-end derivada en milisegundos (C-48).\n\nParidad exacta con `IncidenteRead`: delega en\n`_derivar_latencia_e2e_ms`. Nula si falta un instante o si la latencia\nes negativa.",
-            "readOnly": true,
-            "title": "Latencia E2E Ms"
-          },
-          "persistido_en": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Persistido En"
+          }
+        },
+        "type": "object",
+        "required": [
+          "descripcion"
+        ],
+        "title": "IncidenteCreate",
+        "description": "Payload de creación de un incidente.\n\nAceptado por el endpoint POST /api/v1/incidentes. Puede provenir de:\n    - El webhook de N8N tras recibir un correo electrónico en Outlook.\n    - El webhook de N8N tras procesar la transcripción de una llamada en Twilio.\n    - Una llamada directa a la API desde un cliente externo.\n\nValidaciones de negocio:\n    - La descripción no puede estar en blanco ni ser solo espacios.\n    - La longitud mínima de 10 caracteres evita incidentes vacíos de contenido.\n    - La longitud máxima de 5000 caracteres previene abusos de almacenamiento.\n\nGuardas de costo (C-33):\n    - `origen_message_id`: idempotencia del alta por Message-ID de Outlook.\n    - `clasificacion`: clasificación precalculada que omite la llamada paga.\n    - `origen_evento`: marcador de evento; un evento de notificación se\n      rechaza con error de validación para no crear incidentes."
+      },
+      "IncidenteListItem": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
           },
           "prioridad": {
             "$ref": "#/components/schemas/PrioridadEnum"
           },
           "requiere_revision_humana": {
-            "title": "Requiere Revision Humana",
-            "type": "boolean"
+            "type": "boolean",
+            "title": "Requiere Revision Humana"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
           },
           "sector": {
             "anyOf": [
@@ -593,8 +2115,55 @@
                 "type": "null"
               }
             ]
+          },
+          "estado": {
+            "$ref": "#/components/schemas/EstadoRead"
+          },
+          "ingresado_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ingresado En"
+          },
+          "persistido_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Persistido En"
+          },
+          "latencia_e2e_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latencia E2E Ms",
+            "description": "Latencia end-to-end derivada en milisegundos (C-48).\n\nParidad exacta con `IncidenteRead`: delega en\n`_derivar_latencia_e2e_ms`. Nula si falta un instante o si la latencia\nes negativa.",
+            "readOnly": true
+          },
+          "latencia_anomala": {
+            "type": "boolean",
+            "title": "Latencia Anomala",
+            "description": "True si la latencia derivada es negativa (C-48).\n\nLa marca de anomalía es observable en el listado, no solo en el detalle.",
+            "readOnly": true
           }
         },
+        "type": "object",
         "required": [
           "id",
           "prioridad",
@@ -606,86 +2175,34 @@
           "latencia_anomala"
         ],
         "title": "IncidenteListItem",
-        "type": "object"
+        "description": "Proyección ligera de un incidente para endpoints de listado.\n\nOmite el campo 'descripcion' para reducir el tamaño de las respuestas\ncuando se listan múltiples incidentes. Los consumidores que necesiten\nel texto completo deben usar el endpoint de detalle individual."
       },
       "IncidenteRead": {
-        "description": "Representación completa de un incidente para el endpoint de detalle.\n\nIncluye los objetos relacionados completos (sector, estado, canal_origen)\nen lugar de solo sus IDs, para que el cliente no necesite realizar\nconsultas adicionales para obtener sus nombres.\n\nPolítica de privacidad (C-03, Ley 25.326):\n    Solo se expone 'descripcion_pseudonimizada' (texto con etiquetas PII).\n    'descripcion_original' (cifrada, con PII) NO forma parte de esta respuesta.",
         "properties": {
-          "canal_origen": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/CanalOrigenRead"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "created_at": {
-            "format": "date-time",
-            "title": "Created At",
-            "type": "string"
+          "id": {
+            "type": "integer",
+            "title": "Id"
           },
           "descripcion_pseudonimizada": {
-            "title": "Descripcion Pseudonimizada",
-            "type": "string"
-          },
-          "estado": {
-            "$ref": "#/components/schemas/EstadoRead"
-          },
-          "id": {
-            "title": "Id",
-            "type": "integer"
-          },
-          "ingresado_en": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Ingresado En"
-          },
-          "latencia_anomala": {
-            "description": "True si la latencia derivada es negativa (C-39, D9).\n\nUna latencia negativa es físicamente inválida (por ejemplo, por un\ningreso futuro dentro de la tolerancia o por desalineación de relojes);\nse marca como anomalía para excluirla del corpus y del análisis.",
-            "readOnly": true,
-            "title": "Latencia Anomala",
-            "type": "boolean"
-          },
-          "latencia_e2e_ms": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Latencia end-to-end derivada en milisegundos (C-39, D3/D9).\n\nEs `persistido_en - ingresado_en` en ms. Es nula si falta cualquiera de\nlos dos instantes. Una latencia negativa NUNCA se reporta como medición\nválida: se devuelve nulo y la anomalía queda marcada por\n`latencia_anomala` para su diagnóstico y exclusión del corpus.",
-            "readOnly": true,
-            "title": "Latencia E2E Ms"
-          },
-          "persistido_en": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Persistido En"
+            "type": "string",
+            "title": "Descripcion Pseudonimizada"
           },
           "prioridad": {
             "$ref": "#/components/schemas/PrioridadEnum"
           },
           "requiere_revision_humana": {
-            "title": "Requiere Revision Humana",
-            "type": "boolean"
+            "type": "boolean",
+            "title": "Requiere Revision Humana"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
           },
           "sector": {
             "anyOf": [
@@ -701,15 +2218,73 @@
             "items": {
               "$ref": "#/components/schemas/SectorRead"
             },
-            "title": "Sectores Adicionales",
-            "type": "array"
+            "type": "array",
+            "title": "Sectores Adicionales"
           },
-          "updated_at": {
-            "format": "date-time",
-            "title": "Updated At",
-            "type": "string"
+          "estado": {
+            "$ref": "#/components/schemas/EstadoRead"
+          },
+          "canal_origen": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CanalOrigenRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ingresado_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ingresado En"
+          },
+          "persistido_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Persistido En"
+          },
+          "numero_incidente": {
+            "type": "string",
+            "title": "Numero Incidente",
+            "description": "Número de incidente canónico y legible (C-53, OQ1 / design D1).\n\nDeriva del PK `id` en un ÚNICO punto (`formatear_numero_incidente`), de modo\nque el prefijo de negocio futuro (`INC-{id:06d}`) sea un cambio de un solo\nlugar. El backend lo retorna en el alta y el workflow lo propaga en sus\nnotificaciones; no se expone el `id` crudo como número al usuario final.",
+            "readOnly": true
+          },
+          "latencia_e2e_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latencia E2E Ms",
+            "description": "Latencia end-to-end derivada en milisegundos (C-39, D3/D9).\n\nEs `persistido_en - ingresado_en` en ms. Es nula si falta cualquiera de\nlos dos instantes. Una latencia negativa NUNCA se reporta como medición\nválida: se devuelve nulo y la anomalía queda marcada por\n`latencia_anomala` para su diagnóstico y exclusión del corpus.",
+            "readOnly": true
+          },
+          "latencia_anomala": {
+            "type": "boolean",
+            "title": "Latencia Anomala",
+            "description": "True si la latencia derivada es negativa (C-39, D9).\n\nUna latencia negativa es físicamente inválida (por ejemplo, por un\ningreso futuro dentro de la tolerancia o por desalineación de relojes);\nse marca como anomalía para excluirla del corpus y del análisis.",
+            "readOnly": true
           }
         },
+        "type": "object",
         "required": [
           "id",
           "descripcion_pseudonimizada",
@@ -720,15 +2295,25 @@
           "sector",
           "estado",
           "canal_origen",
+          "numero_incidente",
           "latencia_e2e_ms",
           "latencia_anomala"
         ],
         "title": "IncidenteRead",
-        "type": "object"
+        "description": "Representación completa de un incidente para el endpoint de detalle.\n\nIncluye los objetos relacionados completos (sector, estado, canal_origen)\nen lugar de solo sus IDs, para que el cliente no necesite realizar\nconsultas adicionales para obtener sus nombres.\n\nPolítica de privacidad (C-03, Ley 25.326):\n    Solo se expone 'descripcion_pseudonimizada' (texto con etiquetas PII).\n    'descripcion_original' (cifrada, con PII) NO forma parte de esta respuesta."
       },
       "IncidenteUpdate": {
-        "description": "Payload de actualización parcial de un incidente.\n\nTodos los campos son opcionales. El servicio aplica únicamente los\ncampos con valor no nulo, implementando el patrón PATCH semántico.\n\nCasos de uso típicos:\n    - Cambio de estado por el operador de mesa de ayuda.\n    - Reasignación de sector tras revisión manual.\n    - Cambio de prioridad ante escalamiento.\n    - Marcado o desmarcado de revisión humana requerida.",
         "properties": {
+          "prioridad": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PrioridadEnum"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "estado_id": {
             "anyOf": [
               {
@@ -740,15 +2325,16 @@
             ],
             "title": "Estado Id"
           },
-          "prioridad": {
+          "sector_id": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/PrioridadEnum"
+                "type": "integer"
               },
               {
                 "type": "null"
               }
-            ]
+            ],
+            "title": "Sector Id"
           },
           "requiere_revision_humana": {
             "anyOf": [
@@ -760,74 +2346,64 @@
               }
             ],
             "title": "Requiere Revision Humana"
-          },
-          "sector_id": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Sector Id"
           }
         },
+        "type": "object",
         "title": "IncidenteUpdate",
-        "type": "object"
+        "description": "Payload de actualización parcial de un incidente.\n\nTodos los campos son opcionales. El servicio aplica únicamente los\ncampos con valor no nulo, implementando el patrón PATCH semántico.\n\nCasos de uso típicos:\n    - Cambio de estado por el operador de mesa de ayuda.\n    - Reasignación de sector tras revisión manual.\n    - Cambio de prioridad ante escalamiento.\n    - Marcado o desmarcado de revisión humana requerida."
       },
       "LoginRequest": {
-        "description": "Payload de inicio de sesion.\n\nAceptado por POST /api/v1/auth/login. Ambos campos son requeridos.",
         "properties": {
-          "password": {
-            "description": "Password en texto plano",
-            "minLength": 1,
-            "title": "Password",
-            "type": "string"
-          },
           "username": {
-            "description": "Nombre de usuario",
+            "type": "string",
             "minLength": 1,
             "title": "Username",
-            "type": "string"
+            "description": "Nombre de usuario"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Password",
+            "description": "Password en texto plano"
           }
         },
+        "type": "object",
         "required": [
           "username",
           "password"
         ],
         "title": "LoginRequest",
-        "type": "object"
+        "description": "Payload de inicio de sesion.\n\nAceptado por POST /api/v1/auth/login. Ambos campos son requeridos."
       },
       "PeriodoInfo": {
-        "description": "Metadatos del rango consultado en la respuesta de tendencias.",
         "properties": {
-          "agrupar_por": {
-            "description": "Granularidad usada: 'dia' o 'mes'",
-            "title": "Agrupar Por",
-            "type": "string"
-          },
           "desde": {
-            "description": "Fecha de inicio del rango consultado",
+            "type": "string",
             "title": "Desde",
-            "type": "string"
+            "description": "Fecha de inicio del rango consultado"
           },
           "hasta": {
-            "description": "Fecha de fin del rango consultado",
+            "type": "string",
             "title": "Hasta",
-            "type": "string"
+            "description": "Fecha de fin del rango consultado"
+          },
+          "agrupar_por": {
+            "type": "string",
+            "title": "Agrupar Por",
+            "description": "Granularidad usada: 'dia' o 'mes'"
           }
         },
+        "type": "object",
         "required": [
           "desde",
           "hasta",
           "agrupar_por"
         ],
         "title": "PeriodoInfo",
-        "type": "object"
+        "description": "Metadatos del rango consultado en la respuesta de tendencias."
       },
       "PrioridadEnum": {
-        "description": "Enumeración de niveles de prioridad de un incidente.\n\nHereda de str para que SQLAlchemy almacene el valor textual en la base\nde datos, lo que mejora la legibilidad de consultas directas y simplifica\nla serialización en las respuestas JSON de la API.\n\nNiveles (de menor a mayor urgencia):\n    baja    → Puede ser atendido en el próximo turno disponible.\n    media   → Valor por defecto; afecta a un usuario individual.\n    alta    → Afecta a múltiples usuarios o un proceso crítico.\n    critica → Detención de operaciones; requiere atención inmediata.",
+        "type": "string",
         "enum": [
           "baja",
           "media",
@@ -835,73 +2411,90 @@
           "critica"
         ],
         "title": "PrioridadEnum",
-        "type": "string"
+        "description": "Enumeración de niveles de prioridad de un incidente.\n\nHereda de str para que SQLAlchemy almacene el valor textual en la base\nde datos, lo que mejora la legibilidad de consultas directas y simplifica\nla serialización en las respuestas JSON de la API.\n\nNiveles (de menor a mayor urgencia):\n    baja    → Puede ser atendido en el próximo turno disponible.\n    media   → Valor por defecto; afecta a un usuario individual.\n    alta    → Afecta a múltiples usuarios o un proceso crítico.\n    critica → Detención de operaciones; requiere atención inmediata."
       },
       "ResumenResponse": {
-        "description": "Respuesta del endpoint GET /api/v1/estadisticas/resumen.",
         "properties": {
-          "distribucion_estados": {
-            "additionalProperties": {
-              "type": "integer"
-            },
-            "description": "Distribucion de incidentes por estado",
-            "title": "Distribucion Estados",
-            "type": "object"
+          "total_incidentes": {
+            "type": "integer",
+            "title": "Total Incidentes",
+            "description": "Total de incidentes en el rango"
+          },
+          "promedio_diario": {
+            "type": "number",
+            "title": "Promedio Diario",
+            "description": "Promedio de incidentes por dia en el rango"
           },
           "distribucion_sectores": {
             "additionalProperties": {
               "type": "integer"
             },
-            "description": "Distribucion de incidentes por sector",
+            "type": "object",
             "title": "Distribucion Sectores",
-            "type": "object"
+            "description": "Distribucion de incidentes por sector"
           },
-          "promedio_diario": {
-            "description": "Promedio de incidentes por dia en el rango",
-            "title": "Promedio Diario",
-            "type": "number"
+          "distribucion_estados": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Distribucion Estados",
+            "description": "Distribucion de incidentes por estado"
           },
           "tasa_revision_humana": {
-            "description": "Proporcion de incidentes que requirieron revision humana (0.0 a 1.0)",
+            "type": "number",
             "title": "Tasa Revision Humana",
-            "type": "number"
-          },
-          "total_incidentes": {
-            "description": "Total de incidentes en el rango",
-            "title": "Total Incidentes",
-            "type": "integer"
+            "description": "Proporcion de incidentes que requirieron revision humana (0.0 a 1.0)"
           }
         },
+        "type": "object",
         "required": [
           "total_incidentes",
           "promedio_diario",
           "tasa_revision_humana"
         ],
         "title": "ResumenResponse",
-        "type": "object"
+        "description": "Respuesta del endpoint GET /api/v1/estadisticas/resumen."
+      },
+      "RolEmpleado": {
+        "type": "string",
+        "enum": [
+          "usuario_final",
+          "operador",
+          "administrador_directorio"
+        ],
+        "title": "RolEmpleado",
+        "description": "Vocabulario minimo de roles del directorio (DIR-003).\n\nHereda de `str` para almacenar el valor textual y serializarlo directamente.\n\nValores:\n    usuario_final:            reportante; requiere sector.\n    operador:                 atiende y puede ser destino de enrutamiento; requiere sector.\n    administrador_directorio: gestiona el directorio; sin sector y ve todos los incidentes."
       },
       "SectorCatalogoRead": {
-        "description": "Proyección mínima de sector para el endpoint de catálogo (C-27).\n\nExpone únicamente `id` y `nombre`, la forma exacta que el frontend necesita\npara construir opciones sin depender de IDs numéricos fijos.",
         "properties": {
           "id": {
-            "title": "Id",
-            "type": "integer"
+            "type": "integer",
+            "title": "Id"
           },
           "nombre": {
-            "title": "Nombre",
-            "type": "string"
+            "type": "string",
+            "title": "Nombre"
           }
         },
+        "type": "object",
         "required": [
           "id",
           "nombre"
         ],
         "title": "SectorCatalogoRead",
-        "type": "object"
+        "description": "Proyección mínima de sector para el endpoint de catálogo (C-27).\n\nExpone únicamente `id` y `nombre`, la forma exacta que el frontend necesita\npara construir opciones sin depender de IDs numéricos fijos."
       },
       "SectorRead": {
-        "description": "Proyección de solo lectura de un sector responsable.\n\nUtilizada en las respuestas de endpoints de incidentes y clasificaciones\npara presentar el sector asignado sin exponer detalles internos del ORM.",
         "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
           "descripcion": {
             "anyOf": [
               {
@@ -912,139 +2505,132 @@
               }
             ],
             "title": "Descripcion"
-          },
-          "id": {
-            "title": "Id",
-            "type": "integer"
-          },
-          "nombre": {
-            "title": "Nombre",
-            "type": "string"
           }
         },
+        "type": "object",
         "required": [
           "id",
           "nombre",
           "descripcion"
         ],
         "title": "SectorRead",
-        "type": "object"
+        "description": "Proyección de solo lectura de un sector responsable.\n\nUtilizada en las respuestas de endpoints de incidentes y clasificaciones\npara presentar el sector asignado sin exponer detalles internos del ORM."
       },
       "SerieTemporal": {
-        "description": "Un punto en la serie temporal de tendencias (un periodo).",
         "properties": {
           "periodo": {
-            "description": "Etiqueta del periodo: YYYY-MM-DD (dia) o YYYY-MM (mes)",
+            "type": "string",
             "title": "Periodo",
-            "type": "string"
+            "description": "Etiqueta del periodo: YYYY-MM-DD (dia) o YYYY-MM (mes)"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total",
+            "description": "Cantidad de incidentes en este periodo"
           },
           "por_sector": {
             "additionalProperties": {
               "type": "integer"
             },
-            "description": "Desglose de incidentes por nombre de sector (ej. {'Sistemas': 10, ...})",
+            "type": "object",
             "title": "Por Sector",
-            "type": "object"
-          },
-          "total": {
-            "description": "Cantidad de incidentes en este periodo",
-            "title": "Total",
-            "type": "integer"
+            "description": "Desglose de incidentes por nombre de sector (ej. {'Sistemas': 10, ...})"
           }
         },
+        "type": "object",
         "required": [
           "periodo",
           "total"
         ],
         "title": "SerieTemporal",
-        "type": "object"
+        "description": "Un punto en la serie temporal de tendencias (un periodo)."
       },
       "TelefoniaRecordingResponse": {
-        "description": "Respuesta del endpoint de callback (Twilio solo requiere 2xx).",
         "properties": {
-          "call_sid": {
-            "title": "Call Sid",
-            "type": "string"
-          },
           "status": {
-            "title": "Status",
-            "type": "string"
+            "type": "string",
+            "title": "Status"
+          },
+          "call_sid": {
+            "type": "string",
+            "title": "Call Sid"
           },
           "transcripcion_estado": {
-            "title": "Transcripcion Estado",
-            "type": "string"
+            "type": "string",
+            "title": "Transcripcion Estado"
           }
         },
+        "type": "object",
         "required": [
           "status",
           "call_sid",
           "transcripcion_estado"
         ],
         "title": "TelefoniaRecordingResponse",
-        "type": "object"
+        "description": "Respuesta del endpoint de callback (Twilio solo requiere 2xx)."
       },
       "TendenciasResponse": {
-        "description": "Respuesta del endpoint GET /api/v1/estadisticas/tendencias.",
         "properties": {
-          "distribucion_estados": {
-            "additionalProperties": {
-              "type": "integer"
-            },
-            "description": "Distribucion agregada de incidentes por estado en el rango",
-            "title": "Distribucion Estados",
-            "type": "object"
-          },
-          "distribucion_sectores": {
-            "additionalProperties": {
-              "type": "integer"
-            },
-            "description": "Distribucion agregada de incidentes por sector en el rango",
-            "title": "Distribucion Sectores",
-            "type": "object"
-          },
           "periodo": {
             "$ref": "#/components/schemas/PeriodoInfo"
+          },
+          "total_incidentes": {
+            "type": "integer",
+            "title": "Total Incidentes",
+            "description": "Total de incidentes en el rango completo"
           },
           "series": {
             "items": {
               "$ref": "#/components/schemas/SerieTemporal"
             },
-            "title": "Series",
-            "type": "array"
+            "type": "array",
+            "title": "Series"
           },
-          "total_incidentes": {
-            "description": "Total de incidentes en el rango completo",
-            "title": "Total Incidentes",
-            "type": "integer"
+          "distribucion_sectores": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Distribucion Sectores",
+            "description": "Distribucion agregada de incidentes por sector en el rango"
+          },
+          "distribucion_estados": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Distribucion Estados",
+            "description": "Distribucion agregada de incidentes por estado en el rango"
           }
         },
+        "type": "object",
         "required": [
           "periodo",
           "total_incidentes"
         ],
         "title": "TendenciasResponse",
-        "type": "object"
+        "description": "Respuesta del endpoint GET /api/v1/estadisticas/tendencias."
       },
       "TokenResponse": {
-        "description": "Respuesta exitosa de autenticacion.\n\nContiene el token JWT firmado y el tipo de token (siempre \"bearer\").",
         "properties": {
           "access_token": {
-            "description": "Token JWT firmado",
+            "type": "string",
             "title": "Access Token",
-            "type": "string"
+            "description": "Token JWT firmado"
           },
           "token_type": {
-            "default": "bearer",
-            "description": "Tipo de token (bearer)",
+            "type": "string",
             "title": "Token Type",
-            "type": "string"
+            "description": "Tipo de token (bearer)",
+            "default": "bearer"
           }
         },
+        "type": "object",
         "required": [
           "access_token"
         ],
         "title": "TokenResponse",
-        "type": "object"
+        "description": "Respuesta exitosa de autenticacion.\n\nContiene el token JWT firmado y el tipo de token (siempre \"bearer\")."
       },
       "ValidationError": {
         "properties": {
@@ -1059,1133 +2645,36 @@
                 }
               ]
             },
-            "title": "Location",
-            "type": "array"
+            "type": "array",
+            "title": "Location"
           },
           "msg": {
-            "title": "Message",
-            "type": "string"
+            "type": "string",
+            "title": "Message"
           },
           "type": {
-            "title": "Error Type",
-            "type": "string"
+            "type": "string",
+            "title": "Error Type"
           }
         },
+        "type": "object",
         "required": [
           "loc",
           "msg",
           "type"
         ],
-        "title": "ValidationError",
-        "type": "object"
+        "title": "ValidationError"
       }
     },
     "securitySchemes": {
       "OAuth2PasswordBearer": {
+        "type": "oauth2",
         "flows": {
           "password": {
             "scopes": {},
             "tokenUrl": "/api/v1/auth/login"
           }
-        },
-        "type": "oauth2"
-      }
-    }
-  },
-  "info": {
-    "title": "Gestion de Incidentes API",
-    "version": "1.0.0"
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/api/v1/auth/login": {
-      "post": {
-        "description": "Autentica al usuario con username y password, retornando un token JWT.\n\nEl token debe enviarse en el header Authorization de requests subsiguientes:\n    Authorization: Bearer <access_token>\n\nEl token expira segun la configuracion JWT_EXPIRE_MINUTES (24 horas por defecto).\n\nArgs:\n    payload: Credenciales de inicio de sesion (username + password).\n\nReturns:\n    TokenResponse con access_token y token_type \"bearer\" (HTTP 200).\n\nRaises:\n    JSONResponse 401: Si las credenciales son invalidas.",
-        "operationId": "login_api_v1_auth_login_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LoginRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TokenResponse"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Iniciar sesion y obtener token JWT",
-        "tags": [
-          "Auth"
-        ]
-      }
-    },
-    "/api/v1/catalogos/sectores": {
-      "get": {
-        "description": "Retorna los sectores del catálogo como pares { id, nombre }.\n\nSolo lectura: los catálogos son datos de referencia inmutables en runtime.\nEl orden respeta el vocabulario canónico.",
-        "operationId": "list_sectores_api_v1_catalogos_sectores_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/SectorCatalogoRead"
-                  },
-                  "title": "Response List Sectores Api V1 Catalogos Sectores Get",
-                  "type": "array"
-                }
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "summary": "Listar el catálogo de sectores",
-        "tags": [
-          "Catalogos"
-        ]
-      }
-    },
-    "/api/v1/clasificaciones/incidente/{incidente_id}": {
-      "get": {
-        "description": "Retorna el historial completo de clasificaciones de un incidente específico.\n\nPermite al operador ver todas las decisiones tomadas por el sistema\npara un incidente (incluyendo el registro de la etapa utilizada,\nla confianza, y la respuesta raw de Gemini si corresponde).\n\nArgs:\n    incidente_id: ID del incidente cuyo historial se desea consultar.\n\nReturns:\n    Lista de registros de auditoría ordenados del más reciente al más antiguo.",
-        "operationId": "list_by_incidente_api_v1_clasificaciones_incidente__incidente_id__get",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "incidente_id",
-            "required": true,
-            "schema": {
-              "title": "Incidente Id",
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/ClasificacionLogRead"
-                  },
-                  "title": "Response List By Incidente Api V1 Clasificaciones Incidente  Incidente Id  Get",
-                  "type": "array"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "summary": "Historial de clasificaciones de un incidente",
-        "tags": [
-          "Clasificaciones"
-        ]
-      }
-    },
-    "/api/v1/clasificaciones/revision-pendiente": {
-      "get": {
-        "description": "Retorna la cola de clasificaciones pendientes de revisión humana.\n\nUn registro aparece en esta cola cuando el clasificador emitió\nuna confianza inferior al umbral (0.70) y el operador aún no registró\nsu validación. El orden FIFO (más antiguo primero) garantiza que\nningún incidente quede en espera indefinidamente.\n\nReturns:\n    Lista de registros de auditoría pendientes, ordenados por antigüedad.",
-        "operationId": "list_pending_review_api_v1_clasificaciones_revision_pendiente_get",
-        "parameters": [
-          {
-            "description": "Cantidad máxima de resultados",
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "default": 50,
-              "description": "Cantidad máxima de resultados",
-              "maximum": 200,
-              "minimum": 1,
-              "title": "Limit",
-              "type": "integer"
-            }
-          },
-          {
-            "description": "Desplazamiento para paginación",
-            "in": "query",
-            "name": "offset",
-            "required": false,
-            "schema": {
-              "default": 0,
-              "description": "Desplazamiento para paginación",
-              "minimum": 0,
-              "title": "Offset",
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/ClasificacionLogRead"
-                  },
-                  "title": "Response List Pending Review Api V1 Clasificaciones Revision Pendiente Get",
-                  "type": "array"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "summary": "Listar clasificaciones que requieren revisión humana",
-        "tags": [
-          "Clasificaciones"
-        ]
-      }
-    },
-    "/api/v1/clasificaciones/{log_id}/validar": {
-      "patch": {
-        "description": "Registra la decisión del operador humano sobre la categoría correcta.\n\nEste endpoint cierra el ciclo de revisión: el operador indica cuál es\nel sector correcto para el incidente, lo que actualiza el campo\nsector_id_validado en el registro de auditoría. A partir de ese momento,\nel registro deja de aparecer en la cola de revisión pendiente y\npasa a formar parte del corpus de evaluación con etiqueta confirmada.\n\nSi el sector validado coincide con el predicho, confirma la exactitud\ndel clasificador. Si difiere, registra un caso de error para el análisis\nde métricas de la tesis.\n\nArgs:\n    log_id:  ID del registro de auditoría a validar.\n    payload: Sector correcto (por nombre canónico o id) y adicionales validados.\n\nReturns:\n    Representación actualizada del registro de auditoría (HTTP 200).",
-        "operationId": "validar_clasificacion_api_v1_clasificaciones__log_id__validar_patch",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "log_id",
-            "required": true,
-            "schema": {
-              "title": "Log Id",
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ClasificacionValidar"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ClasificacionLogRead"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "summary": "Registrar la validación humana de una clasificación",
-        "tags": [
-          "Clasificaciones"
-        ]
-      }
-    },
-    "/api/v1/cost-guard/reserve": {
-      "post": {
-        "description": "Evalua la guarda antes de invocar al AI Agent de n8n.\n\nExige el header `X-Cost-Guard-Secret`. Responde 200 con la decision en el\ncuerpo: `allowed` en true permite continuar; en false indica derivar a\nrevision humana. El flujo de n8n rutea segun `allowed` y NO invoca al AI\nAgent cuando es false.",
-        "operationId": "reserve_cost_guard_api_v1_cost_guard_reserve_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "X-Cost-Guard-Secret",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Cost-Guard-Secret"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CostGuardReserveRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CostGuardReserveResponse"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "401": {
-            "description": "Header `X-Cost-Guard-Secret` ausente o distinto, o `COST_GUARD_SHARED_SECRET` no configurado (fail-closed)."
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Evaluar la guarda de costo antes de una llamada paga",
-        "tags": [
-          "Cost Guard"
-        ]
-      }
-    },
-    "/api/v1/cost-guard/twilio/voice": {
-      "post": {
-        "description": "Webhook que Twilio consulta ANTES de grabar y transcribir.\n\nSe autentica con la firma `X-Twilio-Signature`, exigida siempre que\n`TWILIO_AUTH_TOKEN` este configurado; si el token falta, responde 401\n(fail-closed) para no quedar abierto. NO usa el header\n`X-Cost-Guard-Secret` porque Twilio no puede enviar headers personalizados.\n\nPermite: responde TwiML con `<Record transcribe=\"true\">`. Deniega: responde\nTwiML con `<Say>` + `<Hangup/>`, de modo que NO se grabe ni se transcriba.\nLa reserva es de una unidad del costo unitario de transcripcion por llamada\nconcedida (la duracion se desconoce al inicio).",
-        "operationId": "twilio_voice_webhook_api_v1_cost_guard_twilio_voice_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "X-Twilio-Signature",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Twilio-Signature"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/x-www-form-urlencoded": {
-              "schema": {
-                "$ref": "#/components/schemas/Body_twilio_voice_webhook_api_v1_cost_guard_twilio_voice_post"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "text/xml": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "401": {
-            "description": "Firma `X-Twilio-Signature` ausente o invalida, o `TWILIO_AUTH_TOKEN` no configurado (fail-closed)."
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Webhook de voz pre-llamada de Twilio (TwiML)",
-        "tags": [
-          "Cost Guard"
-        ]
-      }
-    },
-    "/api/v1/estadisticas/resumen": {
-      "get": {
-        "description": "Retorna KPIs agregados: total de incidentes, promedio diario,\ndistribucion por sector y estado, y tasa de revision humana.\n\nSi no se especifican fechas, se usa el rango de los ultimos 30 dias.",
-        "operationId": "get_resumen_api_v1_estadisticas_resumen_get",
-        "parameters": [
-          {
-            "description": "Fecha de inicio del rango. Default: 30 dias atras.",
-            "in": "query",
-            "name": "desde",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "format": "date",
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Fecha de inicio del rango. Default: 30 dias atras.",
-              "title": "Desde"
-            }
-          },
-          {
-            "description": "Fecha de fin del rango. Default: hoy.",
-            "in": "query",
-            "name": "hasta",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "format": "date",
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Fecha de fin del rango. Default: hoy.",
-              "title": "Hasta"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ResumenResponse"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "summary": "Obtener resumen de KPIs del dashboard",
-        "tags": [
-          "Estadisticas"
-        ]
-      }
-    },
-    "/api/v1/estadisticas/tendencias": {
-      "get": {
-        "description": "Retorna una serie temporal con la cantidad de incidentes por periodo\n(dia o mes) dentro del rango de fechas especificado.\n\nIncluye desglose por sector y distribucion de estados para el rango completo.",
-        "operationId": "get_tendencias_api_v1_estadisticas_tendencias_get",
-        "parameters": [
-          {
-            "description": "Granularidad de agrupacion: 'dia' o 'mes'",
-            "in": "query",
-            "name": "agrupar_por",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/AgruparPorEnum",
-              "description": "Granularidad de agrupacion: 'dia' o 'mes'"
-            }
-          },
-          {
-            "description": "Fecha de inicio del rango (YYYY-MM-DD)",
-            "in": "query",
-            "name": "desde",
-            "required": true,
-            "schema": {
-              "description": "Fecha de inicio del rango (YYYY-MM-DD)",
-              "format": "date",
-              "title": "Desde",
-              "type": "string"
-            }
-          },
-          {
-            "description": "Fecha de fin del rango (YYYY-MM-DD)",
-            "in": "query",
-            "name": "hasta",
-            "required": true,
-            "schema": {
-              "description": "Fecha de fin del rango (YYYY-MM-DD)",
-              "format": "date",
-              "title": "Hasta",
-              "type": "string"
-            }
-          },
-          {
-            "description": "Filtrar por sector responsable (opcional)",
-            "in": "query",
-            "name": "sector_id",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Filtrar por sector responsable (opcional)",
-              "title": "Sector Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TendenciasResponse"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "summary": "Obtener tendencias de incidentes agrupadas por dia o mes",
-        "tags": [
-          "Estadisticas"
-        ]
-      }
-    },
-    "/api/v1/health": {
-      "get": {
-        "description": "Verificación de actividad del proceso (liveness probe).\n\nRetorna inmediatamente sin acceder a ningún recurso externo.\nConfirma únicamente que el proceso uvicorn está corriendo y\nque la aplicación FastAPI fue inicializada correctamente.\n\nReturns:\n    JSON con estado \"ok\" y la versión actual de la aplicación.",
-        "operationId": "health_api_v1_health_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "title": "Response Health Api V1 Health Get",
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Liveness probe",
-        "tags": [
-          "Health"
-        ]
-      }
-    },
-    "/api/v1/health/db": {
-      "get": {
-        "description": "Verificación de conectividad con la base de datos (readiness probe).\n\nEjecuta una consulta mínima (SELECT 1) para confirmar que la conexión\na PostgreSQL está establecida y operativa. Si la base de datos no es\nalcanzable, SQLAlchemy lanzará una excepción que el manejador global\nconvertirá en una respuesta 500.\n\nUtilizado por el healthcheck del servicio 'api' en docker-compose.yml\npara evitar que el API comience a servir solicitudes antes de que\nla base de datos esté lista.\n\nReturns:\n    JSON con estado \"ok\" y confirmación de conectividad.",
-        "operationId": "health_db_api_v1_health_db_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "title": "Response Health Db Api V1 Health Db Get",
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Database readiness probe",
-        "tags": [
-          "Health"
-        ]
-      }
-    },
-    "/api/v1/incidentes/": {
-      "get": {
-        "description": "Lista incidentes con filtros combinables y paginación.\n\nTodos los parámetros de filtro son opcionales y se combinan con AND lógico.\nEl resultado se ordena por fecha de creación descendente (más reciente primero).\nRetorna la proyección ligera IncidenteListItem (sin texto de descripción)\npara optimizar el tamaño de la respuesta en consultas masivas.",
-        "operationId": "list_incidentes_api_v1_incidentes__get",
-        "parameters": [
-          {
-            "description": "Filtrar por sector responsable",
-            "in": "query",
-            "name": "sector_id",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Filtrar por sector responsable",
-              "title": "Sector Id"
-            }
-          },
-          {
-            "description": "Filtrar por estado del ciclo de vida",
-            "in": "query",
-            "name": "estado_id",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Filtrar por estado del ciclo de vida",
-              "title": "Estado Id"
-            }
-          },
-          {
-            "description": "Filtrar por nivel de prioridad",
-            "in": "query",
-            "name": "prioridad",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/PrioridadEnum"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Filtrar por nivel de prioridad",
-              "title": "Prioridad"
-            }
-          },
-          {
-            "description": "Filtrar por indicador de revisión pendiente",
-            "in": "query",
-            "name": "requiere_revision_humana",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "boolean"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Filtrar por indicador de revisión pendiente",
-              "title": "Requiere Revision Humana"
-            }
-          },
-          {
-            "description": "Fecha de creación mínima (ISO 8601)",
-            "in": "query",
-            "name": "desde",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "format": "date-time",
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Fecha de creación mínima (ISO 8601)",
-              "title": "Desde"
-            }
-          },
-          {
-            "description": "Fecha de creación máxima (ISO 8601)",
-            "in": "query",
-            "name": "hasta",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "format": "date-time",
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Fecha de creación máxima (ISO 8601)",
-              "title": "Hasta"
-            }
-          },
-          {
-            "description": "Cantidad máxima de resultados",
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "default": 50,
-              "description": "Cantidad máxima de resultados",
-              "maximum": 200,
-              "minimum": 1,
-              "title": "Limit",
-              "type": "integer"
-            }
-          },
-          {
-            "description": "Desplazamiento para paginación",
-            "in": "query",
-            "name": "offset",
-            "required": false,
-            "schema": {
-              "default": 0,
-              "description": "Desplazamiento para paginación",
-              "minimum": 0,
-              "title": "Offset",
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/IncidenteListItem"
-                  },
-                  "title": "Response List Incidentes Api V1 Incidentes  Get",
-                  "type": "array"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "summary": "Listar incidentes con filtros opcionales",
-        "tags": [
-          "Incidentes"
-        ]
-      },
-      "post": {
-        "description": "Crea un nuevo incidente y ejecuta la clasificación automática.\n\nInvocado por N8N tras recibir un correo electrónico en Outlook o una\ntranscripción de llamada de Twilio, o directamente desde un cliente HTTP.\n\nEl incidente se persiste en estado \"nuevo\" y es clasificado inmediatamente\npor el pipeline híbrido (determinístico + Gemini). El resultado incluye\nel sector asignado, la confianza de la clasificación y el indicador\nde revisión humana si la confianza fue insuficiente.\n\nArgs:\n    payload: Descripción pseudonimizada del incidente, prioridad y canal.\n\nReturns:\n    Representación completa del incidente creado y clasificado (HTTP 201).",
-        "operationId": "create_incidente_api_v1_incidentes__post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/IncidenteCreate"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IncidenteRead"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "summary": "Crear y clasificar un incidente",
-        "tags": [
-          "Incidentes"
-        ]
-      }
-    },
-    "/api/v1/incidentes/{incidente_id}": {
-      "get": {
-        "description": "Retorna la representación completa de un incidente, incluyendo relaciones.\n\nA diferencia del listado, esta respuesta incluye la descripción completa\ndel incidente y los objetos de catálogo completos (sector, estado, canal).\n\nArgs:\n    incidente_id: ID del incidente a recuperar.\n\nReturns:\n    Detalle completo del incidente (HTTP 200) o error 404 si no existe.",
-        "operationId": "get_incidente_api_v1_incidentes__incidente_id__get",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "incidente_id",
-            "required": true,
-            "schema": {
-              "title": "Incidente Id",
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IncidenteRead"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "summary": "Obtener el detalle completo de un incidente",
-        "tags": [
-          "Incidentes"
-        ]
-      },
-      "patch": {
-        "description": "Actualiza uno o más campos de un incidente existente (PATCH semántico).\n\nSolo se modifican los campos incluidos en el payload con valor distinto\nde None. Casos de uso típicos: cambio de estado por el operador,\nreasignación de sector tras revisión manual, o modificación de prioridad.\n\nLos incidentes en estado terminal (cerrado, es_terminal=true) son de solo\nlectura. Cualquier intento de PATCH sobre un incidente cerrado retorna\nHTTP 409 Conflict con código INCIDENTE_CERRADO.\n\nArgs:\n    incidente_id: ID del incidente a modificar.\n    payload:      Campos a actualizar (todos opcionales).\n\nReturns:\n    Representación actualizada del incidente (HTTP 200).\n    HTTP 404 si el incidente no existe.\n    HTTP 409 si el incidente está cerrado (solo lectura).",
-        "operationId": "update_incidente_api_v1_incidentes__incidente_id__patch",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "incidente_id",
-            "required": true,
-            "schema": {
-              "title": "Incidente Id",
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/IncidenteUpdate"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IncidenteRead"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "summary": "Actualizar parcialmente un incidente",
-        "tags": [
-          "Incidentes"
-        ]
-      }
-    },
-    "/api/v1/telefonia/record-complete": {
-      "post": {
-        "description": "Documento `action` del `<Record>`: mensaje de cierre ALCANZABLE.\n\nNo promete la creacion inmediata del ticket: el alta es asincrona (el\nbackend transcribe, pseudonimiza y hace handoff a n8n).",
-        "operationId": "record_complete_api_v1_telefonia_record_complete_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "X-Twilio-Signature",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Twilio-Signature"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "text/xml": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "401": {
-            "description": "Firma `X-Twilio-Signature` ausente o invalida, o `TWILIO_AUTH_TOKEN` no configurado (fail-closed)."
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Accion posterior a la grabacion (TwiML de cierre)",
-        "tags": [
-          "Telefonia"
-        ]
-      }
-    },
-    "/api/v1/telefonia/recording-status": {
-      "post": {
-        "description": "Procesa la notificacion de grabacion disponible de Twilio.\n\nIdempotente por `CallSid`: un callback repetido sobre un ingreso ya\ntranscrito o `pendiente` no re-descarga, no re-transcribe ni re-reserva. Si\nel ingreso quedo en un estado terminal de error, el callback lo reprocesa.\n\nCodigos de respuesta segun el estado resultante:\n    - `transcrito`, `pendiente` o `guarda_denegada` -> 200.\n    - `error_descarga` o `error_stt` -> 503, para invitar el reintento nativo\n      de Twilio. El estado de error se confirma antes de responder para que\n      el siguiente callback pueda reprocesarlo.",
-        "operationId": "recording_status_api_v1_telefonia_recording_status_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "X-Twilio-Signature",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Twilio-Signature"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/x-www-form-urlencoded": {
-              "schema": {
-                "$ref": "#/components/schemas/Body_recording_status_api_v1_telefonia_recording_status_post"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TelefoniaRecordingResponse"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "401": {
-            "description": "Firma `X-Twilio-Signature` ausente o invalida, o `TWILIO_AUTH_TOKEN` no configurado (fail-closed)."
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          },
-          "503": {
-            "description": "Fallo transitorio de descarga o STT. El ingreso queda persistido en estado de error para que Twilio reintente el callback (W5)."
-          }
-        },
-        "summary": "Callback de estado de grabacion de Twilio",
-        "tags": [
-          "Telefonia"
-        ]
-      }
-    },
-    "/health": {
-      "get": {
-        "description": "Verificación de actividad del proceso (liveness probe).\n\nRetorna inmediatamente sin acceder a ningún recurso externo.\nConfirma únicamente que el proceso uvicorn está corriendo y\nque la aplicación FastAPI fue inicializada correctamente.\n\nReturns:\n    JSON con estado \"ok\" y la versión actual de la aplicación.",
-        "operationId": "health_health_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "title": "Response Health Health Get",
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Liveness probe",
-        "tags": [
-          "Health"
-        ]
-      }
-    },
-    "/health/db": {
-      "get": {
-        "description": "Verificación de conectividad con la base de datos (readiness probe).\n\nEjecuta una consulta mínima (SELECT 1) para confirmar que la conexión\na PostgreSQL está establecida y operativa. Si la base de datos no es\nalcanzable, SQLAlchemy lanzará una excepción que el manejador global\nconvertirá en una respuesta 500.\n\nUtilizado por el healthcheck del servicio 'api' en docker-compose.yml\npara evitar que el API comience a servir solicitudes antes de que\nla base de datos esté lista.\n\nReturns:\n    JSON con estado \"ok\" y confirmación de conectividad.",
-        "operationId": "health_db_health_db_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "title": "Response Health Db Health Db Get",
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Database readiness probe",
-        "tags": [
-          "Health"
-        ]
+        }
       }
     }
   }
