@@ -75,11 +75,43 @@ TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
 # Disposable test database used by the integration suite (c-32). It is
 # physically separate from the application database so destructive DDL never
 # reaches the development/production data.
-# The password must match the local compose default (POSTGRES_PASSWORD); if a
-# developer overrides POSTGRES_PASSWORD in the root .env, set TEST_PG_URL too.
-DEFAULT_TEST_PG_URL = (
+#
+# Se mantiene como FALLBACK: se usa solo si no se pueden leer las credenciales
+# de la aplicación (p. ej. una Settings incompleta). Asume el default endurecido
+# de compose (POSTGRES_PASSWORD=mesa_local_dev).
+_FALLBACK_TEST_PG_URL = (
     "postgresql+asyncpg://mesa:mesa_local_dev@localhost:5433/mesa_de_ayuda_test"
 )
+
+
+def _derive_default_test_pg_url() -> str:
+    """Deriva la URL de integración a partir de las credenciales de la app.
+
+    Reutiliza usuario y contraseña con los que la aplicación se conecta (los de
+    ``settings.database_url``) y sobrescribe SOLO host, puerto y base de datos
+    para apuntar a la base descartable local, sin hardcodear credenciales:
+      - host:     localhost (puerto publicado del compose PostgreSQL).
+      - port:     5433 (mapeo 5433:5432 de docker-compose.yml).
+      - database: mesa_de_ayuda_test (descartable, se elimina al finalizar).
+
+    Así una base inicializada con una contraseña distinta sigue funcionando sin
+    exportar TEST_PG_URL. Si Settings no puede construirse por cualquier motivo,
+    cae a ``_FALLBACK_TEST_PG_URL`` para no romper la colección (import local
+    para no depender de settings en import-time).
+    """
+    try:
+        from app.config.settings import get_settings
+
+        return (
+            make_url(get_settings().database_url)
+            .set(host="localhost", port=5433, database="mesa_de_ayuda_test")
+            .render_as_string(hide_password=False)
+        )
+    except Exception:
+        return _FALLBACK_TEST_PG_URL
+
+
+DEFAULT_TEST_PG_URL = _derive_default_test_pg_url()
 
 # Explicit opt-in required to allow a test target whose database NAME matches
 # the application database. It is never enabled automatically.
@@ -106,8 +138,9 @@ def _app_database_name() -> str | None:
 def _get_pg_url() -> str:
     """Return the PostgreSQL connection URL for integration tests.
 
-    Uses TEST_PG_URL if set; otherwise resolves to the disposable test database
-    derived from the development credentials. NO code path resolves to the
+    Uses TEST_PG_URL if set (CI); otherwise resolves to the disposable test
+    database derived from the application credentials (settings.database_url)
+    with only host/port/database overridden. NO code path resolves to the
     application database (c-32 D2).
     """
     return os.environ.get("TEST_PG_URL", DEFAULT_TEST_PG_URL)
