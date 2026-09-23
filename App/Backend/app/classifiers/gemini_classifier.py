@@ -95,7 +95,35 @@ _VALID_CATEGORIES = frozenset(SECTORES_CANONICOS)
 # Ruta default al prompt documentado en la tesis, anclada a la RAÍZ del repositorio
 # (no al cwd ni a Backend/): classifiers → app → Backend → App → raíz.
 # El archivo vive en docs/prompt_gemini.txt junto al resto de la documentación de la tesis.
-_DEFAULT_PROMPT_PATH = Path(__file__).resolve().parents[4] / "docs" / "prompt_gemini.txt"
+def _default_prompt_path(module_file: str | Path | None = None) -> Path:
+    """
+    Resuelve la ruta default al prompt anclada a la RAÍZ del repositorio.
+
+    Recorre los directorios padre del módulo buscando `docs/prompt_gemini.txt`.
+    La búsqueda es perezosa (se ejecuta al llamar, no al importar) y defensiva:
+    evita el acceso ansioso a `parents[4]`, que en layouts planos —como el de la
+    imagen Docker (`/app/app/classifiers/gemini_classifier.py`, solo 4 parents)—
+    lanzaba `IndexError` y abortaba `import app.main`.
+
+    Si no encuentra el archivo, devuelve una ruta best-effort inexistente para
+    que `_load_prompt` degrade a la copia embebida sin lanzar.
+
+    Args:
+        module_file: Ruta del módulo usada como ancla. Por defecto, este módulo.
+            Parametrizable para simular layouts alternativos (tests).
+
+    Returns:
+        Ruta al archivo de prompt (puede no existir).
+    """
+    source = Path(module_file) if module_file is not None else Path(__file__)
+    resolved = source.resolve()
+    for parent in resolved.parents:
+        candidate = parent / "docs" / "prompt_gemini.txt"
+        if candidate.exists():
+            return candidate
+    # Best-effort: ruta inexistente anclada al directorio del módulo. `_load_prompt`
+    # la captura como FileNotFoundError y degrada a la copia embebida.
+    return resolved.parent / "docs" / "prompt_gemini.txt"
 
 
 def _resolve_prompt_path() -> Path:
@@ -114,7 +142,7 @@ def _resolve_prompt_path() -> Path:
     settings = get_settings()
     if settings.gemini_prompt_path:
         return Path(settings.gemini_prompt_path)
-    return _DEFAULT_PROMPT_PATH
+    return _default_prompt_path()
 
 
 def _load_prompt() -> str:
