@@ -24,6 +24,7 @@ from app.config.settings import get_settings
 from app.constants import es_sector_canonico
 from app.models.incidente import PrioridadEnum
 from app.schemas.catalog import CanalOrigenRead, EstadoRead, SectorRead
+from app.utils.numero_incidente import formatear_numero_incidente
 
 # Marcadores de `origen_evento` que representan la CREACION de un incidente.
 # Cualquier otro valor (por ejemplo "notificacion") es un evento que no debe
@@ -294,6 +295,19 @@ class IncidenteRead(BaseModel):
     # las filas legacy y los clientes que no proveen `ingresado_en` los dejan nulos.
     ingresado_en: datetime | None = None
     persistido_en: datetime | None = None
+
+    @computed_field
+    @property
+    def numero_incidente(self) -> str:
+        """
+        Número de incidente canónico y legible (C-53, OQ1 / design D1).
+
+        Deriva del PK `id` en un ÚNICO punto (`formatear_numero_incidente`), de modo
+        que el prefijo de negocio futuro (`INC-{id:06d}`) sea un cambio de un solo
+        lugar. El backend lo retorna en el alta y el workflow lo propaga en sus
+        notificaciones; no se expone el `id` crudo como número al usuario final.
+        """
+        return formatear_numero_incidente(self.id)
 
     @computed_field
     @property
