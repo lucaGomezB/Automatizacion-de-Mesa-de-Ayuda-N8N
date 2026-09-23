@@ -145,6 +145,17 @@ class IncidentValidationError(AppBaseException):
     """
 
 
+class DirectorioValidationError(AppBaseException):
+    """
+    Una operación sobre el directorio viola una regla de validación de dominio.
+
+    Se usa para campos obligatorios, formato de contacto, vocabulario de rol,
+    unicidad de email y la coherencia rol/sector (DIR-002/DIR-003/DIR-004).
+    Se traduce a HTTP 422 con el envelope estándar. NUNCA incluye datos
+    personales en el mensaje (no-PII).
+    """
+
+
 class SectorNotFoundError(AppBaseException):
     """El sector referenciado no existe en el catálogo de sectores."""
 

@@ -57,8 +57,10 @@ from app.cost_guard.dependencies import get_cost_guard
 from app.main import create_app
 from app.models.catalog import CanalOrigen, Estado, Sector
 from app.models.user import User
+from app.routes.incidentes import get_alcance_incidentes
 from app.routes.incidentes import get_service as get_incidente_service
 from app.schemas.clasificacion import ClasificacionResult
+from app.services.incident_visibility import AlcanceIncidentes
 from app.services.incidente_service import IncidenteService
 
 # Importación de todos los modelos para que SQLAlchemy los registre en Base.metadata
@@ -419,6 +421,10 @@ async def pg_client(pg_engine):
     async def override_auth():
         return User(id=1, username="test_user", hashed_password="", is_active=True)
     app.dependency_overrides[get_current_user] = override_auth
+    # Visibilidad por rol (c-54): los tests heredados conservan alcance global.
+    app.dependency_overrides[get_alcance_incidentes] = lambda: AlcanceIncidentes(
+        ver_todos=True, sector_id=None
+    )
 
     # Guarda de costo deshabilitada por defecto en la suite offline: se inyecta
     # None para no tocar PostgreSQL ni alterar el comportamiento existente.
@@ -538,6 +544,10 @@ async def client(engine):
     async def override_auth():
         return User(id=1, username="test_user", hashed_password="", is_active=True)
     app.dependency_overrides[get_current_user] = override_auth
+    # Visibilidad por rol (c-54): los tests heredados conservan alcance global.
+    app.dependency_overrides[get_alcance_incidentes] = lambda: AlcanceIncidentes(
+        ver_todos=True, sector_id=None
+    )
 
     # Guarda de costo deshabilitada por defecto en la suite offline: se inyecta
     # None para no tocar PostgreSQL ni alterar el comportamiento existente.
@@ -695,6 +705,10 @@ def make_client_with_classifier(engine):
         async def override_auth():
             return User(id=1, username="test_user", hashed_password="", is_active=True)
         app.dependency_overrides[get_current_user] = override_auth
+        # Visibilidad por rol (c-54): los tests heredados conservan alcance global.
+        app.dependency_overrides[get_alcance_incidentes] = lambda: AlcanceIncidentes(
+            ver_todos=True, sector_id=None
+        )
 
         with patch(
             "app.services.incidente_service.notify_n8n",
@@ -767,6 +781,10 @@ def make_client_with_spy_classifier(engine):
         async def override_auth():
             return User(id=1, username="test_user", hashed_password="", is_active=True)
         app.dependency_overrides[get_current_user] = override_auth
+        # Visibilidad por rol (c-54): los tests heredados conservan alcance global.
+        app.dependency_overrides[get_alcance_incidentes] = lambda: AlcanceIncidentes(
+            ver_todos=True, sector_id=None
+        )
 
         with patch(
             "app.services.incidente_service.notify_n8n",

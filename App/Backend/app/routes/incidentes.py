@@ -31,11 +31,16 @@ from app.cost_guard.dependencies import get_cost_guard
 from app.cost_guard.guard import CostGuard
 from app.models.incidente import PrioridadEnum
 from app.models.user import User
+from app.repositories.empleado_repository import EmpleadoRepository
 from app.schemas.incidente import (
     IncidenteCreate,
     IncidenteListItem,
     IncidenteRead,
     IncidenteUpdate,
+)
+from app.services.incident_visibility import (
+    AlcanceIncidentes,
+    alcance_desde_empleado,
 )
 from app.services.incidente_service import IncidenteService
 
@@ -63,6 +68,24 @@ def get_service(
 
 # Alias de tipo para inyección del servicio como dependencia
 ServiceDep = Annotated[IncidenteService, Depends(get_service)]
+
+
+async def get_alcance_incidentes(
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: SessionDep,
+) -> AlcanceIncidentes:
+    """
+    Dependencia que deriva el alcance de incidentes por rol (VIS-001).
+
+    El sector efectivo se deriva del directorio via `user_id`. Una cuenta sin
+    empleado vinculado (o sin sector) obtiene un alcance VACIO.
+    """
+    empleado = await EmpleadoRepository(session).get_by_user_id(current_user.id)
+    return alcance_desde_empleado(empleado)
+
+
+# Alias de tipo para inyección del alcance como dependencia
+AlcanceDep = Annotated[AlcanceIncidentes, Depends(get_alcance_incidentes)]
 
 
 @router.post(
@@ -104,6 +127,7 @@ async def create_incidente(
 )
 async def list_incidentes(
     service: ServiceDep,
+    alcance: AlcanceDep,
     current_user: User = Depends(get_current_user),
     sector_id: int | None = Query(None, description="Filtrar por sector responsable"),
     estado_id: int | None = Query(None, description="Filtrar por estado del ciclo de vida"),
@@ -133,6 +157,7 @@ async def list_incidentes(
         hasta=hasta,
         limit=limit,
         offset=offset,
+        alcance=alcance,
     )
     return [IncidenteListItem.model_validate(i) for i in incidentes]
 
@@ -145,6 +170,7 @@ async def list_incidentes(
 async def get_incidente(
     incidente_id: int,
     service: ServiceDep,
+    alcance: AlcanceDep,
     current_user: User = Depends(get_current_user),
 ) -> IncidenteRead:
     """
@@ -159,7 +185,7 @@ async def get_incidente(
     Returns:
         Detalle completo del incidente (HTTP 200) o error 404 si no existe.
     """
-    incidente = await service.get_by_id(incidente_id)
+    incidente = await service.get_by_id(incidente_id, alcance=alcance)
     return IncidenteRead.model_validate(incidente)
 
 
