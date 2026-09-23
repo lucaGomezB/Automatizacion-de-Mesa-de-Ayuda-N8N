@@ -1,26 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    TwiML de referencia para el canal telefonico (c-45).
+    TwiML de referencia para el canal telefonico (c-45, actualizado por c-52).
 
     Este XML ya NO se sirve como archivo estatico: la respuesta de voz la
     genera el webhook pre-llamada del backend, que decide PERMITIR o DENEGAR
     segun la guarda de costo:
 
-        POST /api/v1/cost-guard/reserve      -> guarda para el AI Agent de n8n
-        POST /api/v1/cost-guard/twilio/voice  -> webhook de voz pre-llamada
+        POST /api/v1/cost-guard/reserve        -> guarda para el AI Agent de n8n
+        POST /api/v1/cost-guard/twilio/voice   -> webhook de voz pre-llamada
 
     La URL de voz del numero de Twilio debe apuntar a
     `https://<backend>/api/v1/cost-guard/twilio/voice` (Method: POST). El backend
     devuelve exactamente este contenido cuando la guarda permite, y
     `<Say>` + `<Hangup/>` cuando deniega (sin grabar ni transcribir).
 
+    c-52: la grabacion es MONO y SIN `transcribe`. La transcripcion la realiza
+    el backend con el motor dedicado de speech-to-text (Gemini verbatim), no el
+    reconocimiento embebido de Twilio. El `<Record>` declara:
+        - `recordingStatusCallback`: el backend descarga y transcribe cuando la
+          grabacion esta disponible.
+        - `action`: el documento de cierre (`render_twiml_record_complete`), que
+          es donde se reproduce el `<Say>` posterior (con `action` declarado, un
+          `<Say>` inline tras `<Record>` no se alcanza).
+
+    El `<Say>` de cierre NO promete la creacion inmediata del ticket: el alta es
+    asincrona (el backend transcribe, pseudonimiza y hace handoff a n8n).
+
     Autenticacion: el webhook se valida con la firma `X-Twilio-Signature` (Twilio
     no puede enviar headers personalizados). Con `TWILIO_AUTH_TOKEN` configurado
     toda peticion sin firma valida recibe 401; sin token, el webhook responde 401
     (fail-closed) hasta que se cargue la credencial.
-
-    La transcripcion se entrega por Twilio Event Streams
-    (com.twilio.voice.insights.call-summary.complete) al trigger de N8N.
 -->
 <Response>
     <Say voice="Polly.Mia-Neural" language="es-US">
@@ -32,11 +41,8 @@
     <Record
         maxLength="45"
         finishOnKey="#"
-        transcribe="true"
         playBeep="true"
+        recordingStatusCallback="https://TU-BACKEND/api/v1/telefonia/recording-status"
+        action="https://TU-BACKEND/api/v1/telefonia/record-complete"
     />
-    <Say voice="Polly.Mia-Neural" language="es-US">
-        Gracias. Tu incidente fue registrado.
-        Vas a recibir un numero de ticket por correo.
-    </Say>
 </Response>

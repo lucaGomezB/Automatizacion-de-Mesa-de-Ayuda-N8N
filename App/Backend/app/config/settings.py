@@ -87,6 +87,11 @@ class Settings(BaseSettings):
     # Si n8n_webhook_url está vacío, la notificación se omite silenciosamente.
     n8n_webhook_url: str = ""
     n8n_webhook_secret: str = ""   # Header X-N8N-Secret para autenticación básica
+    # c-52: webhook de handoff del canal de telefonía en n8n. El backend envía
+    # SOLO la descripción pseudonimizada ({descripcion_pseudonimizada, call_sid,
+    # caller, ingresado_en}) autenticado con `n8n_webhook_secret` (header
+    # `X-N8N-Secret`). Si queda vacío, el handoff se omite con evento observable.
+    n8n_telefonia_webhook_url: str = ""
 
     # ── Instrumentación temporal end-to-end (C-39) ────────────────────────────
     # Tolerancia de futuro para `ingresado_en`: se acepta un ingreso hasta este
@@ -97,18 +102,27 @@ class Settings(BaseSettings):
     timing_future_tolerance_seconds: int = 30
 
     # ── Guarda de costo en runtime (c-45) ─────────────────────────────────────
-    # Tope de gasto pago de las tres superficies (Gemini backend, Gemini n8n y
-    # transcripcion Twilio) con una bolsa GLOBAL compartida. Default conservador
-    # HABILITADO, sobrescribible por .env/Settings. Los costos unitarios son
-    # ESTIMACIONES configurables, NO contabilidad exacta: el objetivo es acotar
-    # el gasto con un tope determinista, no medir tokens ni duraciones reales.
-    # Los defaults de costo unitario no estan verificados contra precios vigentes.
+    # Tope de gasto pago de las CUATRO superficies (Gemini backend, Gemini n8n,
+    # admision de voz Twilio y STT del backend) con una bolsa GLOBAL compartida.
+    # Default conservador HABILITADO, sobrescribible por .env/Settings. Los
+    # costos unitarios son ESTIMACIONES configurables, NO contabilidad exacta: el
+    # objetivo es acotar el gasto con un tope determinista, no medir tokens ni
+    # duraciones reales. Los defaults no estan verificados contra precios
+    # vigentes.
     cost_guard_enabled: bool = True
     cost_guard_budget_usd: float = 10.0           # bolsa global semanal (USD)
     cost_guard_budget_window_seconds: int = 604800  # 7 dias (ventana tumbling)
     cost_guard_unit_cost_backend_gemini_usd: float = 0.0005   # ESTIMACION por incidente
     cost_guard_unit_cost_n8n_gemini_usd: float = 0.0015       # ESTIMACION por ejecucion
-    cost_guard_unit_cost_twilio_transcription_usd: float = 0.05  # ESTIMACION por llamada
+    # c-52: la admision de voz de Twilio ya NO incluye transcripcion (el STT es
+    # del backend y se reserva en su propia superficie). Re-estimado a partir del
+    # costo de voz programable + almacenamiento de la grabacion (~USD 0.0075 por
+    # llamada de 45 s). Es una ESTIMACION.
+    cost_guard_unit_cost_twilio_transcription_usd: float = 0.0075  # ESTIMACION por llamada
+    # c-52: superficie paga del STT del backend, reservada ANTES de descargar y
+    # transcribir. Default ~USD 0.0038 por llamada de 45 s (gemini-3.5-transcribe
+    # ~USD 0.005/min). Es una ESTIMACION configurable.
+    cost_guard_unit_cost_backend_stt_usd: float = 0.0038   # ESTIMACION por llamada
     cost_guard_rate_limit_calls: int = 30         # rate global de llamadas pagas
     cost_guard_rate_window_seconds: int = 3600    # ventana del rate global
     cost_guard_caller_rate_limit_calls: int = 3   # rate por numero de origen
@@ -135,6 +149,19 @@ class Settings(BaseSettings):
     # se omite la validacion de firma pero el secreto compartido sigue siendo
     # obligatorio: el endpoint nunca queda abierto.
     twilio_auth_token: str = ""
+
+    # ── Canal de telefonia / STT del backend (c-52) ───────────────────────────
+    # Account SID de Twilio: se usa como usuario del HTTP Basic al descargar la
+    # grabacion (`AccountSid:AuthToken`). Junto con `twilio_auth_token`.
+    twilio_account_sid: str = ""
+    # Base publica del backend tal como la ve Twilio, para construir los
+    # callbacks del `<Record>` (estado de grabacion y accion de cierre). Debe ser
+    # accesible desde internet (p. ej. el host de Nginx del stack). Sin valor,
+    # los callbacks quedan como rutas relativas y Twilio no puede alcanzarlos.
+    backend_public_base_url: str = ""
+    # Modelo dedicado de speech-to-text de Gemini (verbatim). Configurable sin
+    # tocar codigo; default `gemini-3.5-transcribe` (Stable).
+    gemini_stt_model: str = "gemini-3.5-transcribe"
 
     # ── Logging estructurado ──────────────────────────────────────────────────
     log_level: str = "INFO"        # Nivel mínimo de emisión de eventos

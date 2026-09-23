@@ -58,6 +58,7 @@ from app.cost_guard.constants import (
     EVENT_COST_GUARD_TRIPPED,
     EVENT_COST_GUARD_TWILIO_TOKEN_MISSING,
     PROVIDER_BACKEND_GEMINI,
+    PROVIDER_BACKEND_STT,
     PROVIDER_N8N_GEMINI,
     PROVIDER_TWILIO,
 )
@@ -502,7 +503,10 @@ def test_settings_defaults_conservadores():
     assert config.degradation_policy == "deterministic_review"
     assert config.unit_costs_usd[PROVIDER_BACKEND_GEMINI] == _UNIT_BACKEND
     assert config.unit_costs_usd[PROVIDER_N8N_GEMINI] == _UNIT_N8N
-    assert config.unit_costs_usd[PROVIDER_TWILIO] == _UNIT_TWILIO
+    # c-52: twilio re-estimado (ya no representa una transcripcion) y la STT del
+    # backend es una superficie propia con su propio costo.
+    assert config.unit_costs_usd[PROVIDER_TWILIO] == Decimal("0.0075")
+    assert config.unit_costs_usd[PROVIDER_BACKEND_STT] == Decimal("0.0038")
 
 
 def test_settings_default_es_estable_entre_instanciaciones():
@@ -730,7 +734,8 @@ async def test_endpoint_reserva_n8n_store_caido_fail_closed():
 # ── 1.11 / 8.x — Webhook de voz pre-llamada de Twilio ───────────────────────
 
 
-async def test_webhook_twilio_permite_devuelve_record_con_transcripcion():
+async def test_webhook_twilio_permite_devuelve_record_mono_con_callbacks():
+    """c-52: la rama admitida graba en mono con callbacks y SIN transcripcion."""
     guard = make_guard()
     params = {
         "From": "+5492615551234",
@@ -752,8 +757,15 @@ async def test_webhook_twilio_permite_devuelve_record_con_transcripcion():
     assert root.tag == "Response"
     record = root.find("Record")
     assert record is not None
-    assert record.attrib.get("transcribe") == "true"
+    # c-52: sin transcripcion embebida de Twilio; con callbacks de estado y fin.
+    assert "transcribe" not in record.attrib
     assert record.attrib.get("maxLength") == "45"
+    assert record.attrib.get("recordingStatusCallback", "").endswith(
+        "/api/v1/telefonia/recording-status"
+    )
+    assert record.attrib.get("action", "").endswith(
+        "/api/v1/telefonia/record-complete"
+    )
     # El XML debe ser parseable como TwiML valido
     assert root.find("Say") is not None
 
@@ -912,13 +924,20 @@ def test_workflow_nodo_guarda_apunta_al_endpoint_de_reserva():
     assert node["parameters"]["body"]["provider"] == "n8n_gemini"
 
 
-def test_twiml_xml_es_valido_y_graba_con_transcripcion():
-    """8.4 / 15.5: el twiml.xml de referencia es XML valido con transcripcion."""
+def test_twiml_xml_es_valido_y_graba_mono_con_callbacks():
+    """c-52: el twiml.xml de referencia es XML valido, mono y sin transcripcion."""
     path = Path(__file__).resolve().parents[3] / "n8n" / "twilio" / "twiml.xml"
     root = ElementTree.fromstring(path.read_text(encoding="utf-8"))
     assert root.tag == "Response"
     record = root.find("Record")
-    assert record is not None and record.attrib.get("transcribe") == "true"
+    assert record is not None
+    assert "transcribe" not in record.attrib
+    assert record.attrib.get("recordingStatusCallback", "").endswith(
+        "/api/v1/telefonia/recording-status"
+    )
+    assert record.attrib.get("action", "").endswith(
+        "/api/v1/telefonia/record-complete"
+    )
 
 
 # ── 17. Fix post-verify: cableado del secreto compartido de n8n (B2) ─────────

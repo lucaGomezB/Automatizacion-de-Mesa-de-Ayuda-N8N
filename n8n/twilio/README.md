@@ -6,19 +6,23 @@ Documentacion para la integracion de Twilio Programmable Voice con la mesa de ay
 
 El TwiML ya NO se sirve como archivo estatico. La URL de voz del numero de Twilio
 apunta al **webhook pre-llamada del backend**, que consulta la guarda de costo
-(c-45) y decide antes de grabar o transcribir:
+(c-45) y decide antes de grabar:
 
 ```
 POST /api/v1/cost-guard/twilio/voice
 ```
 
-- PERMITIDO: el backend responde TwiML con `<Say>` + `<Record transcribe="true">`
-  + `<Say>` (el contenido de referencia vive en `n8n/twilio/twiml.xml`).
-- DENEGADO: el backend responde `<Say>` + `<Hangup/>`, de modo que no se grabe ni
-  se transcriba.
+- PERMITIDO: el backend responde TwiML con `<Say>` de bienvenida + `<Record>` mono
+  (SIN `transcribe`) con `recordingStatusCallback` y `action` (el contenido de
+  referencia vive en `n8n/twilio/twiml.xml`). El `<Say>` de cierre se sirve en el
+  documento `action`, `POST /api/v1/telefonia/record-complete`.
+- DENEGADO: el backend responde `<Say>` + `<Hangup/>`, de modo que no se grabe.
 
-La transcripcion resultante se entrega por Twilio Event Streams
-(`com.twilio.voice.insights.call-summary.complete`) al trigger de N8N. El workflow
+La grabacion la procesa el backend: Twilio invoca
+`POST /api/v1/telefonia/recording-status` cuando la grabacion esta disponible; el
+backend descarga el audio (Basic auth), lo transcribe con el motor dedicado de
+speech-to-text (Gemini), lo pseudonimiza y hace handoff a N8N por webhook
+(`n8n_telefonia_webhook_url`, header `X-N8N-Secret`). El workflow
 (`n8n/workflow.json`) pasa por el nodo `Guard de costo` antes del AI Agent.
 
 ## Requisitos Previos
@@ -27,8 +31,8 @@ La transcripcion resultante se entrega por Twilio Event Streams
 - Numero de telefono virtual comprado en Twilio
 - Backend accesible desde internet por HTTPS (el webhook pre-llamada)
 - `TWILIO_AUTH_TOKEN` cargado en `App/Backend/.env`
-- N8N corriendo con el workflow importado (el nodo `twilioTrigger` escucha
-  `call-summary.complete`)
+- N8N corriendo con el workflow importado (el nodo `webhook` de telefonia recibe
+  el handoff pseudonimizado del backend)
 
 ## Paso a Paso
 
@@ -95,9 +99,9 @@ Para pruebas locales sin exponer el stack a internet:
 3. Copiar la URL publica de ngrok (ej. `https://abc123.ngrok.io`)
 4. Configurar **A call comes in** con
    `https://abc123.ngrok.io/api/v1/cost-guard/twilio/voice` y **Method: POST**
-5. Configurar el sink de Twilio Event Streams hacia la URL publica de ngrok +
-   `/webhook/58ea83d3-fa0a-4c88-8708-0c43794027c7` (webhook del trigger de N8N).
-   El TwiML no contiene `transcribeCallback` legacy.
+5. Configurar `BACKEND_PUBLIC_BASE_URL` en `App/Backend/.env` con la URL publica
+   de ngrok, de modo que los callbacks del `<Record>` (`recordingStatusCallback`
+   y `action`) apunten a endpoints alcanzables por Twilio.
 6. Llamar al numero Twilio y verificar que el flujo funciona.
 
 **Nota**: ngrok gratuito cambia la URL en cada reinicio. Para desarrollo continuo,
@@ -110,8 +114,10 @@ Backend (`App/Backend/.env`):
 | Variable | Descripcion | Donde obtenerla |
 |----------|-------------|-----------------|
 | `TWILIO_AUTH_TOKEN` | Token de autenticacion; habilita la validacion de `X-Twilio-Signature` en el webhook de voz | Console > Account Info |
-| `TWILIO_ACCOUNT_SID` | Identificador de cuenta Twilio (referencia; el backend no lo consume) | Console > Account Info |
+| `TWILIO_ACCOUNT_SID` | Identificador de cuenta Twilio; el backend lo usa como usuario del HTTP Basic (`AccountSid:AuthToken`) para descargar la grabacion | Console > Account Info |
 | `TWILIO_PHONE_NUMBER` | Numero virtual comprado (referencia) | Console > Phone Numbers |
+| `BACKEND_PUBLIC_BASE_URL` | Base publica del backend tal como la ve Twilio; construye los callbacks del `<Record>` (estado de grabacion y accion de cierre) | URL publica del backend (p. ej. el host de Nginx) |
+| `N8N_TELEFONIA_WEBHOOK_URL` | URL del webhook de handoff de telefonia en N8N; sin valor, el handoff se omite con evento observable | n8n (nodo `webhook` de telefonia) |
 
 N8N (`.env` de la RAIZ del repo, inyectado por `docker-compose.yml`):
 
@@ -127,12 +133,16 @@ Usuario llama al +54xxxxxxxxxx
         ▼
 Twilio contesta ──► POST /api/v1/cost-guard/twilio/voice (backend, firma X-Twilio-Signature)
         │
-        ├─ DENEGADO ──► <Say> + <Hangup/> (sin grabar ni transcribir)
+        ├─ DENEGADO ──► <Say> + <Hangup/> (sin grabar)
         │
-        └─ PERMITIDO ──► <Say> bienvenida + <Record transcribe="true"> + <Say> despedida
+        └─ PERMITIDO ──► <Say> bienvenida + <Record> mono (sin transcribe, callbacks)
         │
         ▼
-Twilio Event Streams ──► POST call-summary.complete ──► N8N twilioTrigger
+Twilio recordingStatusCallback ──► POST /api/v1/telefonia/recording-status (backend)
+        │  idempotencia CallSid ──► reserva backend_stt ──► descarga Basic auth
+        │  ──► Gemini STT ──► pseudonimiza
+        ▼
+Backend ──► POST /webhook/telefonia-handoff (X-N8N-Secret) ──► N8N webhook
         │
         ▼
 N8N: Guard de costo ──► AI Agent (LangChain) + Redis ──► POST /api/v1/incidentes ──► FastAPI
@@ -144,5 +154,4 @@ N8N: Guard de costo ──► AI Agent (LangChain) + Redis ──► POST /api/v
 - [Documentacion TwiML](https://www.twilio.com/docs/voice/twiml)
 - [TwiML <Say> reference](https://www.twilio.com/docs/voice/twiml/say)
 - [TwiML <Record> reference](https://www.twilio.com/docs/voice/twiml/record)
-- [Twilio Transcription](https://www.twilio.com/docs/voice/twiml/record#transcribe)
 - [ngrok](https://ngrok.com/)

@@ -2778,30 +2778,37 @@ def _nodes_sealing_ingreso(wf: dict) -> list[dict]:
 
 def test_c39_telefonia_sella_ingreso_aguas_arriba_del_agente():
     """
-    RED (4.1): el sello de ingreso de telefonia esta entre 'Llamada telefonica'
-    y 'AI Agent', de modo que la latencia incluye el tiempo del agente pago.
+    C-39 (4.1) MODIFICADO por C-52 (N8N-TIMING-001): el instante de ingreso de
+    telefonia lo sella el BACKEND al recibir el callback de grabacion; n8n lo
+    propaga como passthrough. El nodo 'Sellar ingreso telefonia' esta aguas
+    arriba del AI Agent y NO regenera el instante con el reloj de n8n, de modo
+    que la latencia incluya descarga, STT, pseudonimizacion y handoff.
     """
     wf = load_workflow()
-    sealers = _nodes_sealing_ingreso(wf)
-    assert sealers, (
-        "No hay ningun nodo code que selle 'ingresado_en' con un instante del reloj"
-    )
+    by_name, _ = index_nodes(wf)
 
-    candidatos = [
-        n
-        for n in sealers
-        if _connections_reachable(wf, TELEFONIA_TRIGGER_NAME, n["name"])
-        and _connections_reachable(wf, n["name"], AI_AGENT_NODE_NAME)
-    ]
-    assert candidatos, (
-        "El sello de telefonia debe estar aguas arriba del AI Agent "
-        "(alcanzable desde 'Llamada telefonica' y conducente al agente)"
+    assert SELLO_NODE_NAME in by_name, (
+        f"No existe el nodo de sello {SELLO_NODE_NAME!r}"
     )
-    for n in candidatos:
-        assert not _connections_reachable(wf, AI_AGENT_NODE_NAME, n["name"]), (
-            f"El sello {n['name']!r} esta despues del AI Agent: excluiria el "
-            "costo dominante del canal de telefonia"
-        )
+    node = by_name[SELLO_NODE_NAME]
+    code = _active_js_code(node)
+
+    assert "ingresado_en" in code, (
+        "El sello de telefonia debe propagar 'ingresado_en'"
+    )
+    assert "toISOString" not in code and "new Date" not in code, (
+        "C-52: el sello de telefonia NO debe regenerar el instante en n8n; "
+        "el backend ya lo sello en la recepcion del callback"
+    )
+    assert _connections_reachable(wf, TELEFONIA_TRIGGER_NAME, SELLO_NODE_NAME), (
+        "El sello debe ser alcanzable desde el webhook de telefonia"
+    )
+    assert _connections_reachable(wf, SELLO_NODE_NAME, AI_AGENT_NODE_NAME), (
+        "El sello debe estar aguas arriba del AI Agent"
+    )
+    assert not _connections_reachable(wf, AI_AGENT_NODE_NAME, SELLO_NODE_NAME), (
+        "El sello no debe estar despues del AI Agent"
+    )
 
 
 def test_c39_telefonia_preserva_ingreso_a_traves_del_agente():
@@ -2873,17 +2880,15 @@ def test_c39_normalizador_propaga_ingresado_en():
 
 def test_c39_cada_trigger_sella_ingreso_hacia_el_normalizador():
     """
-    TRIANGULATE (4.1): los tres triggers sellan el ingreso en su borde con
-    propagacion al normalizador.
+    TRIANGULATE (4.1 + C-52): correo y web sellan el ingreso con el reloj en su
+    borde; telefonia lo PROPAGA desde el backend (passthrough, sin reloj). Los
+    tres caminos llegan al normalizador.
     """
     wf = load_workflow()
+    by_name, _ = index_nodes(wf)
     sealers = _nodes_sealing_ingreso(wf)
 
-    for trigger in (
-        OUTLOOK_TRIGGER_NAME,
-        WEBHOOK_WEB_NODE_NAME,
-        TELEFONIA_TRIGGER_NAME,
-    ):
+    for trigger in (OUTLOOK_TRIGGER_NAME, WEBHOOK_WEB_NODE_NAME):
         encontrado = any(
             _connections_reachable(wf, trigger, n["name"])
             and _connections_reachable(wf, n["name"], NORMALIZER_NODE_NAME)
@@ -2893,6 +2898,18 @@ def test_c39_cada_trigger_sella_ingreso_hacia_el_normalizador():
             f"El trigger {trigger!r} no sella 'ingresado_en' en su borde con "
             "propagacion al normalizador"
         )
+
+    # Telefonia: passthrough del sello del backend, propagado al normalizador.
+    assert SELLO_NODE_NAME in by_name, f"No existe {SELLO_NODE_NAME!r}"
+    assert _connections_reachable(wf, TELEFONIA_TRIGGER_NAME, SELLO_NODE_NAME), (
+        "El webhook de telefonia no alcanza el sello"
+    )
+    assert _connections_reachable(wf, SELLO_NODE_NAME, NORMALIZER_NODE_NAME), (
+        "El sello de telefonia no alcanza el normalizador"
+    )
+    assert "ingresado_en" in _js_code(by_name[SELLO_NODE_NAME]), (
+        "El sello de telefonia no propaga 'ingresado_en'"
+    )
 
 
 def test_c39_body_incluye_ingresado_en_por_expresion():
@@ -3670,9 +3687,10 @@ def test_c47_restauracion_fusiona_sello_y_fija_allowed():
 
 def test_c47_caller_usa_el_item_corriente_sin_referencia_cruzada():
     """
-    RED (N8N-GUARD-002): el body de `Guard de costo` resuelve `caller` desde el
-    item corriente (`$json.From` / `$json.from`) y NO referencia
-    `$('Sellar ingreso telefonia')` (ni `.item` ni `.first()`).
+    RED (N8N-GUARD-002) MODIFICADO por C-52: el body de `Guard de costo`
+    resuelve `caller` desde el item corriente (`$json.caller`, campo del handoff
+    pseudonimizado del backend) y NO referencia `$('Sellar ingreso telefonia')`
+    (ni `.item` ni `.first()`).
     """
     wf = load_workflow()
     by_name, _ = index_nodes(wf)
@@ -3680,7 +3698,7 @@ def test_c47_caller_usa_el_item_corriente_sin_referencia_cruzada():
     caller = str(body.get("caller", ""))
     body_str = json.dumps(body)
 
-    assert "$json.From" in caller or "$json.from" in caller, (
+    assert "$json.caller" in caller, (
         f"El body de {GUARD_NODE_NAME!r} no resuelve caller desde el item corriente "
         f"(caller={caller!r})"
     )
@@ -3724,16 +3742,16 @@ def test_c47_terminal_no_regresa_c46():
 
 def test_c47_caller_ausente_resuelve_null_sin_abortar():
     """
-    TRIANGULATE (N8N-GUARD-002): sin numero de origen, el body resuelve `caller`
-    a `null` con un fallback tolerante y la guarda sigue evaluando la reserva
-    (POST al endpoint intacto).
+    TRIANGULATE (N8N-GUARD-002) MODIFICADO por C-52: sin numero de origen, el
+    body resuelve `caller` a `null` con un fallback tolerante y la guarda sigue
+    evaluando la reserva (POST al endpoint intacto).
     """
     wf = load_workflow()
     by_name, _ = index_nodes(wf)
     params = by_name[GUARD_NODE_NAME].get("parameters", {})
     caller = str(params.get("body", {}).get("caller", ""))
 
-    assert "$json.From" in caller or "$json.from" in caller, (
+    assert "$json.caller" in caller, (
         f"caller no resuelve el origen desde el item corriente (caller={caller!r})"
     )
     assert "|| null" in caller or "?? null" in caller, (
@@ -3767,4 +3785,246 @@ def test_c47_rama_denegada_conserva_el_item_sellado():
     )
     assert "canal_raw: 'telefonia'" in terminal_code, (
         f"{DERIVAR_NODE_NAME!r} no conserva el canal de telefonia en la rama denegada"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Grupo 26 — C-52 (telefonia-transcripcion-async): el canal de telefonia deja
+# de depender del trigger de resumen de Twilio. Un webhook autenticado recibe
+# del backend el ingreso YA pseudonimizado; el sello de ingreso es passthrough
+# del valor sellado por el backend; no hay parsing de CloudEvent; el CallSid
+# viaja como `origen_message_id` para la idempotencia del alta.
+#
+# Referencias: specs/n8n-workflow (N8N-PHONE-003/004, N8N-GUARD-002, trigger
+# webhook), specs/data-pseudonymization, specs/e2e-timing-instrumentation.
+# ---------------------------------------------------------------------------
+
+TELEFONIA_HANDOFF_PATH_BASE = "telefonia-handoff"
+
+
+def test_c52_no_existe_twilio_trigger_de_resumen():
+    """
+    RED (7.1a): no existe un nodo `twilioTrigger` de resumen post-llamada; el
+    canal de telefonia ya no depende de Twilio para la transcripcion.
+    """
+    wf = load_workflow()
+    _, by_type = index_nodes(wf)
+
+    assert by_type.get("n8n-nodes-base.twilioTrigger", []) == [], (
+        "C-52: el trigger twilioTrigger de resumen post-llamada debe desaparecer "
+        "del workflow"
+    )
+
+
+def test_c52_webhook_telefonia_existe_y_esta_autenticado():
+    """
+    RED (7.1b): existe un nodo `webhook` POST de telefonia, con ruta dedicada,
+    autenticado con el secreto compartido del handoff, cuya salida fluye al
+    `AI Agent` y al normalizador.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    assert TELEFONIA_TRIGGER_NAME in by_name, (
+        f"No existe el nodo de trigger de telefonia {TELEFONIA_TRIGGER_NAME!r}"
+    )
+    node = by_name[TELEFONIA_TRIGGER_NAME]
+    assert node.get("type") == "n8n-nodes-base.webhook", (
+        f"El trigger de telefonia debe ser un webhook, got {node.get('type')!r}"
+    )
+
+    params = node.get("parameters", {})
+    assert params.get("httpMethod") == "POST", (
+        "El webhook de telefonia debe aceptar POST"
+    )
+    path = str(params.get("path", ""))
+    assert path, "El webhook de telefonia debe tener una ruta no vacia"
+    assert path != "incidente-web", (
+        "El webhook de telefonia debe usar una ruta dedicada, distinta de "
+        "'incidente-web'"
+    )
+
+    auth = params.get("authentication", "none")
+    assert auth != "none", (
+        "C-52: el webhook de telefonia debe estar autenticado con el secreto "
+        "compartido del handoff (headerAuth)"
+    )
+    credentials = node.get("credentials")
+    assert isinstance(credentials, dict) and credentials, (
+        "El webhook autenticado de telefonia debe declarar su credencial"
+    )
+
+    assert _connections_reachable(wf, TELEFONIA_TRIGGER_NAME, AI_AGENT_NODE_NAME), (
+        "La salida del webhook de telefonia debe fluir hacia el AI Agent"
+    )
+    assert _connections_reachable(wf, TELEFONIA_TRIGGER_NAME, NORMALIZER_NODE_NAME), (
+        "La salida del webhook de telefonia debe alcanzar el normalizador"
+    )
+
+
+def test_c52_sin_parsing_de_cloudevent():
+    """
+    RED (7.1c): ningun nodo parsea el evento `call-summary.complete` ni una
+    carga CloudEvent.
+    """
+    wf = load_workflow()
+    blob = json.dumps(wf, ensure_ascii=False).lower()
+
+    for marker in (
+        "call-summary.complete",
+        "cloudevent",
+        "cloud_event",
+        "cloudevents",
+    ):
+        assert marker not in blob, (
+            f"C-52: el workflow conserva parsing de {marker!r}; el flujo nuevo no "
+            "depende del evento de resumen de Twilio"
+        )
+
+
+def test_c52_post_persistencia_envia_callsid_como_origen():
+    """
+    RED (7.1d): el POST de persistencia envia `origen_message_id` resuelto por
+    el normalizador, y el normalizador mapea el `CallSid` del handoff a ese
+    campo para el canal de telefonia (idempotencia del alta).
+    """
+    wf = load_workflow()
+    by_name, by_type = index_nodes(wf)
+
+    nodes = _incidentes_http_nodes(by_type)
+    assert nodes, "No se encontro el HTTP POST a /api/v1/incidentes"
+    body = nodes[0].get("parameters", {}).get("body", {})
+
+    assert "origen_message_id" in json.dumps(body), (
+        "El body del POST debe incluir 'origen_message_id'"
+    )
+    origen = str(body.get("origen_message_id", ""))
+    assert isinstance(body.get("origen_message_id"), str) and origen.startswith("="), (
+        f"'origen_message_id' debe resolverse por expresion N8N: {origen!r}"
+    )
+    assert NORMALIZER_NODE_NAME in origen, (
+        "'origen_message_id' debe resolver al valor propagado por el normalizador"
+    )
+
+    norm = _js_code(by_name[NORMALIZER_NODE_NAME])
+    assert "origen_message_id" in norm, (
+        "El normalizador no produce 'origen_message_id'"
+    )
+    assert "item.json.call_sid" in norm, (
+        "C-52: el normalizador debe mapear el CallSid del handoff a "
+        "'origen_message_id' para la rama de telefonia"
+    )
+
+
+def test_c52_sello_telefonia_es_passthrough():
+    """
+    RED (7.3a): 'Sellar ingreso telefonia' propaga el `ingresado_en` del handoff
+    del backend y NO genera un instante nuevo con el reloj de n8n.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    assert SELLO_NODE_NAME in by_name, f"No existe {SELLO_NODE_NAME!r}"
+    raw = _js_code(by_name[SELLO_NODE_NAME])
+    active = _active_js_code(by_name[SELLO_NODE_NAME])
+
+    assert "ingresado_en" in raw, "El sello no propaga 'ingresado_en'"
+    assert "item.json.ingresado_en" in raw, (
+        "El sello debe propagar el `ingresado_en` del handoff (item.json.ingresado_en)"
+    )
+    assert "toISOString" not in active and "new Date" not in active, (
+        "C-52 (N8N-PHONE-004): el sello NO debe regenerar el instante con el reloj "
+        "de n8n"
+    )
+    assert "descripcion_pseudonimizada" in raw, (
+        "El sello debe normalizar la descripcion pseudonimizada al item corriente"
+    )
+
+
+def test_c52_guard_caller_desde_json():
+    """
+    RED (7.3b): el `Guard de costo` resuelve `caller` desde el item corriente
+    (`$json.caller`, campo del handoff) sin referencia cruzada al sello.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    body = by_name[GUARD_NODE_NAME].get("parameters", {}).get("body", {})
+    caller = str(body.get("caller", ""))
+
+    assert "$json.caller" in caller, (
+        f"El Guard de costo no resuelve caller desde $json.caller (caller={caller!r})"
+    )
+    assert SELLO_NODE_NAME not in json.dumps(body), (
+        f"El Guard de costo referencia {SELLO_NODE_NAME!r}: referencia cruzada fragil"
+    )
+
+
+def test_c52_ai_agent_consume_descripcion_pseudonimizada():
+    """
+    RED (7.3c): el AI Agent del canal de telefonia interpola la descripcion
+    pseudonimizada del handoff y NO un transcript crudo.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    prompt = str(by_name[AI_AGENT_NODE_NAME].get("parameters", {}).get("text", ""))
+
+    assert "descripcion_pseudonimizada" in prompt, (
+        "C-52: el prompt del AI Agent debe interpolar la descripcion pseudonimizada "
+        "del handoff"
+    )
+    assert "transcript" not in prompt, (
+        "C-52: el prompt del AI Agent NO debe interpolar el transcript crudo"
+    )
+    assert "$json.body" not in prompt and "$json.text" not in prompt, (
+        "C-52: el prompt del AI Agent no debe leer campos crudos del payload"
+    )
+
+
+def test_c52_c46_no_regresa_en_telefonia():
+    """
+    TRIANGULATE (7.5): no regresion de C-46. El validador y el terminal siguen
+    recuperando el sello con `.first()` (no `.item`) y emitiendo el WARN de
+    sello ausente con revision forzada.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    for node_name in (CODE_NODE_TELEFONIA, DERIVAR_NODE_NAME):
+        raw = _js_code(by_name[node_name])
+        active = _active_js_code(by_name[node_name])
+        assert SELLO_FIRST_REF in raw, (
+            f"{node_name!r} perdio la recuperacion robusta con .first()"
+        )
+        assert SELLO_ITEM_REF not in raw, (
+            f"{node_name!r} regreso a la referencia fragil `.item`"
+        )
+        assert "console.warn" in active, (
+            f"{node_name!r} perdio el WARN estructurado de sello ausente"
+        )
+        assert SELLO_AUSENTE_MARKER in raw, (
+            f"{node_name!r} perdio el marcador {SELLO_AUSENTE_MARKER!r}"
+        )
+        assert "requiere_revision_humana" in raw and "true" in raw, (
+            f"{node_name!r} perdio requiere_revision_humana=true"
+        )
+
+
+def test_c52_c47_no_regresa_posicion_de_restauracion():
+    """
+    TRIANGULATE (7.5): no regresion de C-47. 'Restaurar item telefonia' sigue
+    intercalado entre el `Guard de costo` (salida main) y `Guard permite?`, y la
+    rama denegada sigue desembocando en el terminal.
+    """
+    wf = load_workflow()
+
+    assert RESTORE_NODE_NAME in _output_successors(wf, GUARD_NODE_NAME, 0), (
+        f"La salida main del {GUARD_NODE_NAME!r} no desemboca en {RESTORE_NODE_NAME!r}"
+    )
+    assert GUARD_IF_NODE_NAME in _output_successors(wf, RESTORE_NODE_NAME, 0), (
+        f"{RESTORE_NODE_NAME!r} no desemboca en {GUARD_IF_NODE_NAME!r}"
+    )
+    assert DERIVAR_NODE_NAME in _output_successors(wf, GUARD_IF_NODE_NAME, 1), (
+        f"La rama denegada de {GUARD_IF_NODE_NAME!r} no desemboca en {DERIVAR_NODE_NAME!r}"
     )

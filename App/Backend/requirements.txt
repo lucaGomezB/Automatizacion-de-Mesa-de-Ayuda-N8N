@@ -8,13 +8,19 @@ sqlalchemy[asyncio]==2.0.36
 alembic==1.13.3
 
 # Pydantic v2 + settings
-pydantic==2.9.2
+# Piso 2.12.5: google-genai>=2.20.0 lo exige (resolución de dependencias).
+pydantic>=2.12.5,<3
 pydantic-settings==2.5.2
 
 # Google Gemini (SDK nuevo; reemplaza al deprecado google-generativeai)
 # Piso 2.0: ThinkingConfig(thinking_budget=...) no existe en 1.x — con >=1.0,
 # el pin viejo httpx==0.27.2 hacía que pip resolviera google-genai 1.2.0.
-google-genai>=2.0
+# Piso 2.20.0 (c-52): la API de transcripción dedicada usa
+# `client.interactions.create(generation_config=GenerationConfig(
+# transcription_config=...))`. El tipado de transcription_config llega en 2.13.0;
+# la API de Interactions y VerbatimTranscriptionMode se consolidan en >=2.20.0.
+# Última verificada: 2.25.0.
+google-genai>=2.20.0
 
 # HTTP client (N8N webhook notifications). 0.28.1 es requisito de google-genai 2.x.
 httpx==0.28.1
