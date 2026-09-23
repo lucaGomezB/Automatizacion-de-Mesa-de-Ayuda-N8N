@@ -20,7 +20,12 @@
 > por un webhook `POST` autenticado que recibe del backend el ingreso YA pseudonimizado; el sello
 > `ingresado_en` es passthrough del valor sellado por el backend; no hay parsing de CloudEvent; el
 > `CallSid` viaja como `origen_message_id` para la idempotencia del alta.
-> Estado: 35 nodos (32 operativos + 3 sticky notes); suite estructural `test_n8n_workflow.py` en verde.
+> C-53: notificacion-numero-incidente (partes NO-SMS) — numero canonico `numero_incidente` (derivado
+> del PK `id` en un unico punto); la confirmacion por correo tambien se dispara en la rama de revision
+> humana y resuelve el remitente desde `from` string u objeto (`from.emailAddress.address`); el cierre
+> web de la revision humana responde con el numero. El SMS al llamante (telefonia) queda **DIFERIDO**
+> hasta el spike de entregabilidad a Argentina (+54).
+> Estado: 38 nodos (35 operativos + 3 sticky notes); suite estructural `test_n8n_workflow.py` en verde.
 
 ## Descripción general
 
@@ -183,9 +188,10 @@ para el Anexo E de la tesis (C-10).
 | 4 | Entrada valida | `if` | Gate de validación de ENTRADA previo al POST. Condición: `confianza >= 0.70 OR revision_forzada == true`. Rama true → `Login operador`; rama false → `Registro de auditoria` + `Es correo?`. |
 | 5 | Login operador | `httpRequest` | `POST /api/v1/auth/login`; obtiene el token que autentica el POST de incidentes. Compartido. |
 | 6 | HTTP POST a MTM-SRU | `httpRequest` | `POST /api/v1/incidentes/` al backend FastAPI. Compartido. |
-| 7 | Requiere revision humana | `if` | Gate post-POST. Evalúa `$json.requiere_revision_humana` del response. Rama true → `Notificar operador designado`; rama false → `Rutear por canal de origen` + `Registro de auditoria`. Compartido. |
-| 8 | Notificar operador designado | `microsoftOutlook` | Envía correo al operador designado (`$env.OPERATOR_EMAIL`) con el id del incidente. |
-| 9a | Correo de confirmacion al usuario | `microsoftOutlook` | **[C-05]** Envía correo de confirmación con el número de incidente al remitente. |
+| 7 | Requiere revision humana | `if` | Gate post-POST. Evalúa `$json.requiere_revision_humana` del response. Rama true → `Notificar operador designado` + `Confirmar correo en revision?`; rama false → `Rutear por canal de origen` + `Registro de auditoria`. Compartido. |
+| 8 | Notificar operador designado | `microsoftOutlook` | Envía correo al operador designado (`$env.OPERATOR_EMAIL`) con el número de incidente (`numero_incidente`). |
+| 8b | Confirmar correo en revision? | `if` | **[C-53]** `canal_origen == 'correo'`. Rama true → `Correo de confirmacion al usuario`; la confirmación también se dispara en la rama de revisión humana. |
+| 9a | Correo de confirmacion al usuario | `microsoftOutlook` | **[C-05/C-53]** Envía correo de confirmación con el número de incidente al remitente. Resuelve `toRecipients` desde el remitente normalizado (string u objeto `from.emailAddress.address`); declara `onError: continueRegularOutput` para no abortar auditoría ni marcado. |
 | 9b | Registro de auditoria | `code` (JS) | **[C-05]** Registra metadatos de la ejecución (sin PII). Ver sección Auditoría. Compartido. |
 
 ### Canal web (formulario web) — C-05
@@ -200,8 +206,12 @@ para el Anexo E de la tesis (C-10).
 | 6 | HTTP POST a MTM-SRU | `httpRequest` | Compartido — idem canal correo. |
 | 7 | Requiere revision humana | `if` | Compartido — gate post-POST. |
 | 8 | Notificar operador designado | `microsoftOutlook` | Compartido — notifica al operador designado. |
-| 9a | Confirmacion web al usuario | `respondToWebhook` | **[C-05]** Responde al webhook con `{incidente_id, mensaje}` (rama false de `Requiere revision humana`). |
-| 9b | Registro de auditoria | `code` (JS) | **[C-05]** Compartido — idem canal correo. |
+| 9a | Confirmacion web al usuario | `respondToWebhook` | **[C-05/C-53]** Responde al webhook con `{incidente_id, numero_incidente, mensaje}` (rama false de `Requiere revision humana`). |
+| 9b | Es web? | `if` | **[C-40]** Guarda de canal: `canal_origen == 'web'`. Rama true → `Web con incidente?`; rama false → sin respuesta. |
+| 9c | Web con incidente? | `if` | **[C-53]** Distingue el cierre con incidente (`requiere_revision_humana == true`) del cierre sin alta. Rama true → `Confirmacion web revision humana`; rama false → `Respuesta web de cierre`. |
+| 9d | Confirmacion web revision humana | `respondToWebhook` | **[C-53]** Responde al webhook de la rama de revisión humana con `{incidente_id, numero_incidente, mensaje, resultado: 'creado'}`. |
+| 9e | Respuesta web de cierre | `respondToWebhook` | **[C-40]** Cierre sin alta: HTTP 200, `resultado: 'sin_alta'`, sin número. |
+| 9f | Registro de auditoria | `code` (JS) | **[C-05]** Compartido — idem canal correo. |
 
 ### Canal telefonía
 
@@ -227,9 +237,10 @@ para el Anexo E de la tesis (C-10).
 | 13 | Notificar operador designado | `microsoftOutlook` | Compartido — notifica al operador designado. |
 | 14 | Registro de auditoria | `code` (JS) | **[C-05]** Compartido — idem canal correo. |
 
-> **Nota sobre telefonía**: la confirmación al llamante se resuelve con el TwiML de la llamada
-> (documento `record-complete` del backend). El webhook de n8n recibe el handoff pseudonimizado
-> del backend de forma asincrónica y no responde al llamante.
+> **Nota sobre telefonía**: la confirmación al llamante NO se resuelve en la respuesta de voz
+> de la llamada. El webhook de n8n recibe el handoff pseudonimizado del backend de forma
+> asincrónica y no responde al llamante; la notificación con el número de incidente la realiza
+> el backend por SMS (C-53), **DIFERIDO** hasta el spike de entregabilidad a Argentina (+54).
 
 ### Recuperación robusta del sello de ingreso (C-46)
 
@@ -268,11 +279,12 @@ recuperación aguas abajo usa referencias de nodo explícitas:
 
 Tres nodos `stickyNote` con documentación visual interna del workflow (se conservan intactos).
 
-**Total**: 32 nodos operativos + 3 `stickyNote` = 35, consistente con `n8n/workflow.json`. Las
+**Total**: 35 nodos operativos + 3 `stickyNote` = 38, consistente con `n8n/workflow.json`. Las
 tablas por canal repiten los nodos compartidos (`Normalizar entrada del incidente`,
 `Entrada valida`, `Login operador`, `HTTP POST a MTM-SRU`, `Requiere revision humana`,
-`Notificar operador designado`, `Rutear por canal de origen`, `Es correo?`, `Es web?`,
-`Respuesta web de cierre`, `Registro de auditoria`).
+`Notificar operador designado`, `Confirmar correo en revision?`, `Rutear por canal de origen`,
+`Es correo?`, `Es web?`, `Web con incidente?`, `Respuesta web de cierre`,
+`Confirmacion web revision humana`, `Registro de auditoria`).
 
 ## Contrato: `POST /api/v1/incidentes`
 
@@ -296,6 +308,7 @@ La URL del backend se inyecta a través de la variable de entorno N8N `$env.BACK
 ```json
 {
   "id": 123,
+  "numero_incidente": "123",
   "descripcion_pseudonimizada": "...",
   "sector": {"nombre": "Sistemas"},
   "sectores_adicionales": [],
@@ -336,6 +349,7 @@ El nodo `Normalizar entrada del incidente` produce para todos los canales:
   "timestamp": "2026-06-11T14:23:45.123Z",
   "canal_origen": "correo" | "web" | "telefonia",
   "descripcion": "<texto trimmed>",
+  "remitente": "<email normalizado o null>",
   "prioridad": "media",
   "es_valido": true
 }
@@ -343,6 +357,9 @@ El nodo `Normalizar entrada del incidente` produce para todos los canales:
 
 - `timestamp`: ISO-8601 con milisegundos (`new Date().toISOString()`).
 - `canal_origen ∈ {correo, web, telefonia}`. Entradas con canal inválido derivan a revisión.
+- `remitente`: solo canal correo. Se extrae de `from` string u objeto
+  (`from.emailAddress.address`); un remitente inválido se descarta con señal observable
+  (`remitente_invalido`) y NO se propaga como destinatario.
 - El canal `web` es soportado desde C-04; su trigger se cablea en C-05.
 
 ## Validación de la respuesta de clasificación — Anexo H §H.3
@@ -566,7 +583,7 @@ cd App/Backend
 python -m pytest tests/test_n8n_workflow.py -v
 ```
 
-Verifica 150 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40, C-46, C-47 y C-52).
+Verifica 162 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40, C-46, C-47, C-52 y C-53).
 
 ### Prueba manual del canal web (C-05)
 
@@ -579,36 +596,41 @@ Verifica 150 propiedades estructurales del JSON sin necesitar N8N en ejecución 
 4. Verificar que el backend responde `201 Created` y el webhook responde con `{incidente_id, mensaje}`.
 5. Verificar que el nodo de auditoría registra los metadatos en el log de N8N (sin `descripcion`).
 
-## Notificaciones post-registro (C-05)
+## Notificaciones post-registro (C-05, C-53)
 
 Tras un alta exitosa (`201 Created` del backend), el gate `Requiere revision humana` separa dos
 caminos:
 
 - **Rama false** (`requiere_revision_humana = false`): notificación al usuario por su canal.
 - **Rama true** (`requiere_revision_humana = true`): `Notificar operador designado` envía un
-  correo al operador designado (`$env.OPERATOR_EMAIL`) con el id del incidente.
+  correo al operador designado (`$env.OPERATOR_EMAIL`) con el número de incidente
+  (`numero_incidente`); en el canal correo, `Confirmar correo en revision?` dispara ADEMÁS la
+  confirmación al usuario (C-53), porque el usuario SIEMPRE debe recibir su número.
 
 | Canal | Nodo | Mecanismo |
 |-------|------|-----------|
-| Web | `Confirmacion web al usuario` (`respondToWebhook`) | Responde al frontend con `{"incidente_id": <id>, "mensaje": "Incidente registrado"}` |
-| Correo | `Correo de confirmacion al usuario` (`microsoftOutlook`) | Envía correo con el número de incidente al remitente original |
-| Telefonía | — (sin nodo dedicado) | La confirmación ocurre en la respuesta Twilio/TwiML de la propia llamada |
+| Web (alta normal) | `Confirmacion web al usuario` (`respondToWebhook`) | Responde al frontend con `{"incidente_id": <id>, "numero_incidente": "<n>", "mensaje": "..."}` |
+| Web (revisión humana) | `Confirmacion web revision humana` (`respondToWebhook`) | **[C-53]** Responde al frontend con el número del incidente creado (`resultado: 'creado'`), no `null` |
+| Correo | `Correo de confirmacion al usuario` (`microsoftOutlook`) | Envía correo con el número de incidente al remitente original; se dispara también en la rama de revisión humana y resuelve el destinatario desde `from` string u objeto |
+| Telefonía | — (sin nodo dedicado) | La notificación con el número la realiza el backend por SMS (C-53, **DIFERIDO** hasta el spike de entregabilidad a Argentina +54); NO se resuelve en la respuesta de voz de la llamada |
 | Revisión humana | `Notificar operador designado` (`microsoftOutlook`) | Notifica al operador designado (`$env.OPERATOR_EMAIL`) que el incidente requiere revisión |
 
 El gate `Requiere revision humana` se interpone entre el POST y el ruteo normal. En la rama
 false, `Rutear por canal de origen` y `Registro de auditoria` cuelgan en paralelo; en la rama
 true, `Notificar operador designado` desemboca en `Registro de auditoria`. La notificación no
-bloquea el registro de auditoría: el nodo declara `onError: continueRegularOutput` (C-40), de
-modo que un fallo de envío no aborta la auditoría.
+bloquea el registro de auditoría: los nodos declaran `onError: continueRegularOutput` (C-40/C-53),
+de modo que un fallo de envío no aborta la auditoría.
 
-C-40 (N8N-WEBHOOK-003): las ramas terminales del webhook web —rechazo de `Entrada valida`,
-error del POST (`main#1`) y revisión humana— pasan por la guarda `Es web?` y cierran en
-`Respuesta web de cierre` (`respondToWebhook`, HTTP 200, cuerpo con `resultado: 'sin_alta'`).
-La guarda restringe la respuesta al canal `web`, de modo que correo y telefonía no disparan
+C-40/C-53 (N8N-WEBHOOK-003/004): las ramas terminales del webhook web —rechazo de `Entrada valida`,
+error del POST (`main#1`) y revisión humana— pasan por la guarda `Es web?`. La rama con incidente
+(revisión humana) cierra en `Confirmacion web revision humana` con el número; las ramas sin alta
+cierran en `Respuesta web de cierre` (`respondToWebhook`, HTTP 200, `resultado: 'sin_alta'`, sin
+número). La guarda restringe la respuesta al canal `web`, de modo que correo y telefonía no disparan
 respuestas web cruzadas y el cliente web nunca queda a la espera indefinida.
 
-C-40 (N8N-PHONE-002): la salida de telefonía del switch no se desvía al nodo de correo; la
-confirmación telefónica se resuelve con la respuesta TwiML de la llamada.
+C-40/C-53 (N8N-PHONE-002): la salida de telefonía del switch no se desvía al nodo de correo; la
+confirmación del canal de telefonía NO se resuelve en la respuesta de voz de la llamada, sino por
+el SMS que envía el backend (C-53, **DIFERIDO** hasta el spike de entregabilidad a Argentina +54).
 
 ## Registro de auditoría (C-05)
 
@@ -660,7 +682,7 @@ entorno y queda fuera del scope de C-05. Se documenta como punto pendiente para 
 | ¿Dónde ocurre la pseudonimización? | **En el backend**, dentro de `create_and_classify()`. N8N envía texto claro. Gap de privacidad documentado. | C-04 |
 | ¿El IF del workflow decide revisión humana o lo decide el backend? | **Ambos**: el backend marca `requiere_revision_humana` (fuente de verdad); el gate post-POST `Requiere revision humana` re-evalúa esa marca para notificar al operador. | C-04 / gate post-POST |
 | ¿Outlook trigger ≈ IMAP genérico? | **Sí**: el `microsoftOutlookTrigger` se ratifica como equivalente funcional. No se reemplaza por `emailReadImap`. Documentar equivalencia en Anexo E. | C-05 |
-| ¿La telefonía requiere SMS de confirmación adicional? | **No**: basta la respuesta del webhook/TwiML de la llamada. No se agrega nodo SMS de Twilio. | C-05 |
+| ¿La telefonía requiere SMS de confirmación adicional? | **Sí** (C-53): el número se notifica por SMS al llamante desde el backend; la respuesta de voz de la llamada NO lo confirma. **DIFERIDO** hasta el spike de entregabilidad a Argentina (+54). | C-53 |
 | ¿La auditoría registra solo altas o también rechazos? | **Todas las ramas terminales**: la rama false de `Entrada valida` (rechazo), la rama false de `Requiere revision humana` (alta sin revisión) y `Notificar operador designado` (alta con revisión) desembocan en `Registro de auditoria`. | C-05 / gate post-POST |
 | ¿Dónde persiste el log de auditoría 30 días? | **Logging Docker/N8N con rotación** (opción A). Cero código nuevo en backend. Configurar `max-file: "30"` en `docker-compose.yml`. | C-05 |
 | ¿Cómo se autentica el webhook web? | **Pendiente de entorno**: tesis §5.2 menciona "autenticación corporativa única". Mecanismo concreto (header firmado / SSO) fuera del scope de C-05. Elevar para C-10. | C-05 |

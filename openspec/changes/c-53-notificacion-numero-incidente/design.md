@@ -45,7 +45,7 @@ backend crea incidente ──> tarea fire-and-forget:                      (D2)
 
 ### D1: Número de incidente = PK `id` (prefijo diferido)
 
-Se usa el PK `id` como número canónico y legible. El backend ya lo retorna en el alta, n8n lo usa en sus notificaciones y el frontend lo padea. Se descarta agregar un número de negocio con secuencia/prefijo ahora: exigiría columna nueva, generación de secuencia, unicidad global, migración y backfill de incidentes existentes, y cambiaría el contrato OpenAPI; el prefijo de la tesis es una preocupación de presentación que puede agregarse después como `numero_mostrado` calculado desde configuración, sin tocar el contrato de notificación si se centraliza el formato. Alternativa considerada: número de negocio con prefijo configurable — descartada por blast radius y por ausencia de requisito implementado. **Open Question 1** para confirmación humana.
+Se usa el PK `id` como número canónico y legible. El backend ya lo retorna en el alta, n8n lo usa en sus notificaciones y el frontend lo padea. Se descarta agregar un número de negocio con secuencia/prefijo ahora: exigiría columna nueva, generación de secuencia, unicidad global, migración y backfill de incidentes existentes, y cambiaría el contrato OpenAPI; el prefijo de la tesis es una preocupación de presentación que puede agregarse después como `numero_mostrado` calculado desde configuración, sin tocar el contrato de notificación si se centraliza el formato. Alternativa considerada: número de negocio con prefijo configurable — descartada por blast radius y por ausencia de requisito implementado. **Open Question 1 (RESUELTA)**: se adopta el PK `id` y la derivación se centraliza en `formatear_numero_incidente`.
 
 ### D2: El backend envía el SMS (no n8n)
 
@@ -69,7 +69,7 @@ Se agrega `PROVIDER_TWILIO_SMS = "twilio_sms"` a `cost_guard/constants.py` y `PA
 
 ### D7: Consentimiento y minimización (Ley 25.326)
 
-El SMS es transaccional: la persona llamó a la mesa de ayuda y entregó su número; el mensaje solo informa el número de su incidente. No hay marketing, perfilado ni reutilización; el número se mantiene cifrado at-rest y fuera de auditoría. Se adopta una postura sin mecanismo de opt-out en este alcance (mensaje único, disparado por el propio contacto), pero la decisión final es de negocio/legal. **Open Question 2**.
+El SMS es transaccional: la persona llamó a la mesa de ayuda y entregó su número; el mensaje solo informa el número de su incidente. No hay marketing, perfilado ni reutilización; el número se mantiene cifrado at-rest y fuera de auditoría. Se adopta una postura sin mecanismo de opt-out en este alcance (mensaje único, disparado por el propio contacto), con el consentimiento informado anunciado en el saludo TwiML. **Open Question 2 (RESUELTA)**.
 
 ### D8: Idempotencia del SMS
 
@@ -114,7 +114,18 @@ No se agregan columnas ni tablas nuevas para el SMS ni para el número de incide
 
 ## Open Questions
 
-1. **Número de incidente**: ¿se confirma el PK `id` como número canónico, o se requiere un número de negocio con prefijo configurable (tesis)? Recomendación: adoptar el PK `id` y diferir el prefijo. Decisión humana.
-2. **Consentimiento y costo (Ley 25.326)**: ¿se confirma la postura transaccional sin opt-out y el tope de gasto del SMS? Recomendación: postura transaccional, sin marketing, con costo unitario conservador. Decisión de negocio/legal.
-3. **Formato y longitud del SMS**: definir el texto exacto (por ejemplo `Mesa de Ayuda: su incidente N° <id> fue registrado.`) y si se usa un `MessagingServiceSid` o un número remitente directo.
-4. **Número remitente**: definir si el SMS sale de un número Twilio dedicado o de un Messaging Service, y si afecta la configuración de `TWILIO_PHONE_NUMBER` (hoy comentada en `.env.example`).
+### OQ1 — Número de incidente (RESUELTO)
+
+Se adopta el PK `id` como número canónico de incidente. La derivación se centraliza en un único punto (`formatear_numero_incidente(id) -> str`, que hoy devuelve `str(id)`), de modo que el prefijo de negocio (`INC-{id:06d}`) pueda agregarse en el futuro con un cambio en un solo lugar. Todos los contratos exponen el campo normalizado `numero_incidente` (string); no se expone el `id`/`$json.id` crudo como número al usuario final. El prefijo configurable queda diferido.
+
+### OQ2 — Consentimiento y costo del SMS (RESUELTO)
+
+El SMS es transaccional: la persona contactó a la mesa de ayuda y proporcionó su número; el contenido es mínimo (número de incidente y referencia breve), sin PII del incidente. La base de licitud (Ley 25.326) se anuncia en el saludo TwiML y el tope de gasto se aplica con la superficie `twilio_sms` de la guarda de costo. La implementación del SMS queda DIFERIDA (ver OQ3).
+
+### OQ3 — Entregabilidad del SMS a Argentina (ABIERTA)
+
+La entregabilidad de Twilio SMS a números argentinos (+54) está bajo un spike externo en curso. El envío de SMS (cliente de Twilio Messaging, superficie `twilio_sms`, captura del llamante específica para SMS y variables de entorno asociadas) queda DIFERIDO hasta que el spike devuelva resultado. El formato y la longitud exactos del mensaje se fijan al habilitar el envío.
+
+### OQ4 — Número remitente del SMS (RESUELTO)
+
+El remitente es el `TWILIO_PHONE_NUMBER` existente (o un Messaging Service). No se agrega una variable nueva de remitente. Aplicable al habilitar el SMS (diferido por OQ3).

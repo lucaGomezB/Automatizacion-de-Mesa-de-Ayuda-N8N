@@ -2553,8 +2553,9 @@ def test_notificar_operador_references_incident_and_review():
 
     node = by_name[NOTIFICAR_OPERADOR_NODE_NAME]
     params_str = json.dumps(node.get("parameters", {}))
-    assert "$json.id" in params_str, (
-        "La notificacion al operador no referencia el id del incidente ($json.id)"
+    assert "$json.numero_incidente" in params_str, (
+        "La notificacion al operador no referencia el numero de incidente "
+        "normalizado ($json.numero_incidente)"
     )
     assert "revision" in params_str.lower(), (
         "La notificacion al operador no menciona que el incidente requiere revision"
@@ -3008,8 +3009,16 @@ def test_c40_web_guard_exists_and_wired_to_closing_responder():
         f"La salida no-correo de {IF_ES_CORREO_NODE_NAME!r} no desemboca en "
         f"{ES_WEB_NODE_NAME!r}"
     )
-    assert CLOSING_RESPONDER_NODE_NAME in _output_successors(wf, ES_WEB_NODE_NAME, 0), (
+    # C-53: la guarda de canal web desemboca en el discriminador de incidente;
+    # el cierre sin alta se alcanza por su rama false (main#1).
+    assert WEB_INCIDENT_GUARD_NODE_NAME in _output_successors(wf, ES_WEB_NODE_NAME, 0), (
         f"La rama web de {ES_WEB_NODE_NAME!r} no desemboca en "
+        f"{WEB_INCIDENT_GUARD_NODE_NAME!r}"
+    )
+    assert CLOSING_RESPONDER_NODE_NAME in _output_successors(
+        wf, WEB_INCIDENT_GUARD_NODE_NAME, 1
+    ), (
+        f"La rama sin incidente de {WEB_INCIDENT_GUARD_NODE_NAME!r} no desemboca en "
         f"{CLOSING_RESPONDER_NODE_NAME!r}"
     )
 
@@ -4027,4 +4036,242 @@ def test_c52_c47_no_regresa_posicion_de_restauracion():
     )
     assert DERIVAR_NODE_NAME in _output_successors(wf, GUARD_IF_NODE_NAME, 1), (
         f"La rama denegada de {GUARD_IF_NODE_NAME!r} no desemboca en {DERIVAR_NODE_NAME!r}"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Grupo 27 — C-53 (notificacion-numero-incidente, partes NO-SMS)
+#
+# Contratos estructurales de la parte no-SMS del change:
+#   * N8N-EMAIL-002: el normalizador resuelve el remitente desde `from` string y
+#     desde el objeto `from.emailAddress.address`, con descarte observable del
+#     remitente invalido.
+#   * N8N-EMAIL-003: la confirmacion por correo tambien se dispara en la rama de
+#     revision humana del canal correo, tolerante a fallos.
+#   * N8N-WEBHOOK-004: el cierre web distingue una peticion con incidente (numero)
+#     de una sin alta (`sin_alta`, sin numero).
+#   * OQ1: los contratos consumen el numero normalizado `numero_incidente` (string),
+#     no el `id`/`$json.id` crudo.
+#   * N8N-DOC-001: la guia no afirma confirmacion telefonica por TwiML.
+# ---------------------------------------------------------------------------
+
+NUMERO_FIELD = "numero_incidente"
+CORREO_REVISION_GUARD_NODE_NAME = "Confirmar correo en revision?"
+WEB_INCIDENT_GUARD_NODE_NAME = "Web con incidente?"
+WEB_REVISION_RESPONDER_NODE_NAME = "Confirmacion web revision humana"
+
+
+# ── N8N-EMAIL-002: normalizacion del remitente ──────────────────────────────
+
+
+def test_c53_normalizer_remitente_soporta_string_y_objeto():
+    """
+    RED (N8N-EMAIL-002): el normalizador extrae la direccion efectiva admitiendo
+    `from` string y `from.emailAddress.address` (objeto de Outlook).
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    code = _js_code(by_name[NORMALIZER_NODE_NAME])
+
+    assert "remitente" in code, "El normalizador no propaga 'remitente'"
+    assert "emailAddress" in code and "address" in code, (
+        "El normalizador no extrae la direccion anidada del objeto `from` "
+        "(`from.emailAddress.address`)"
+    )
+    assert "typeof" in code, (
+        "El normalizador no distingue el `from` string del objeto para el remitente"
+    )
+
+
+def test_c53_normalizer_descarta_remitente_invalido_observable():
+    """
+    TRIANGULATE (N8N-EMAIL-002): un remitente que no resuelve a una direccion valida
+    se descarta con senal observable y no se propaga como destinatario invalido.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    node = by_name[NORMALIZER_NODE_NAME]
+    raw = _js_code(node)
+    active = _active_js_code(node)
+
+    assert "console.warn" in active, (
+        "El descarte de un remitente invalido no deja senal observable"
+    )
+    assert "remitente_descartado" in raw or "remitente_invalido" in raw, (
+        "El descarte del remitente no queda marcado de forma observable"
+    )
+
+
+# ── N8N-EMAIL-003: confirmacion en la rama de revision humana ───────────────
+
+
+def test_c53_correo_revision_branch_alcanza_confirmacion():
+    """
+    RED (N8N-EMAIL-003): la rama de revision humana del canal correo alcanza el
+    nodo `Correo de confirmacion al usuario` (el usuario recibe siempre el numero).
+    """
+    wf = load_workflow()
+    assert _branch_reaches(
+        wf, IF_REVISION_HUMANA_NODE_NAME, 0, EMAIL_CONFIRM_NODE_NAME
+    ), (
+        "La rama de revision humana del correo no alcanza "
+        f"{EMAIL_CONFIRM_NODE_NAME!r}"
+    )
+
+
+def test_c53_correo_confirmacion_es_tolerante_a_fallos():
+    """
+    TRIANGULATE (N8N-EMAIL-003): la confirmacion por correo declara un `onError`
+    de continuacion para no abortar auditoria ni marcado del correo.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    node = by_name[EMAIL_CONFIRM_NODE_NAME]
+
+    assert node.get("onError") in ("continueRegularOutput", "continueErrorOutput"), (
+        f"'{EMAIL_CONFIRM_NODE_NAME}' no declara onError de continuacion "
+        f"(onError={node.get('onError')!r})"
+    )
+
+
+def test_c53_correo_confirmacion_usa_numero_incidente():
+    """
+    TRIANGULATE (OQ1): la confirmacion por correo usa el numero normalizado
+    `$json.numero_incidente`, no el `$json.id` crudo.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    params_str = json.dumps(by_name[EMAIL_CONFIRM_NODE_NAME].get("parameters", {}))
+
+    assert "$json.numero_incidente" in params_str, (
+        "La confirmacion por correo no usa el numero normalizado "
+        f"('{NUMERO_FIELD}')"
+    )
+
+
+# ── N8N-WEBHOOK-004: cierre web con numero vs sin alta ──────────────────────
+
+
+def test_c53_web_confirmation_usa_numero_incidente():
+    """
+    RED (OQ1): la confirmacion web normal usa el numero normalizado.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    body = json.dumps(by_name[RESPOND_WEBHOOK_NODE_NAME].get("parameters", {}))
+
+    assert "$json.numero_incidente" in body, (
+        "La confirmacion web normal no usa el numero normalizado "
+        f"('{NUMERO_FIELD}')"
+    )
+
+
+def test_c53_web_revision_branch_alcanza_respuesta_con_numero():
+    """
+    RED (N8N-WEBHOOK-004): la rama de revision humana del web alcanza un
+    `respondToWebhook` que incluye el numero del incidente creado.
+    """
+    wf = load_workflow()
+    assert _branch_reaches(
+        wf, IF_REVISION_HUMANA_NODE_NAME, 0, WEB_REVISION_RESPONDER_NODE_NAME
+    ), (
+        "La rama de revision humana del web no alcanza "
+        f"{WEB_REVISION_RESPONDER_NODE_NAME!r}"
+    )
+
+
+def test_c53_web_revision_responder_incluye_numero_y_no_sin_alta():
+    """
+    TRIANGULATE (N8N-WEBHOOK-004): el responder de revision humana incluye el
+    numero (`incidente_id` no nulo) y NO declara `sin_alta`.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    node = by_name[WEB_REVISION_RESPONDER_NODE_NAME]
+
+    assert node.get("type") == RESPOND_WEBHOOK_NODE_TYPE, (
+        f"'{WEB_REVISION_RESPONDER_NODE_NAME}' debe ser {RESPOND_WEBHOOK_NODE_TYPE!r}, "
+        f"got {node.get('type')!r}"
+    )
+    body = json.dumps(node.get("parameters", {}))
+    assert "incidente_id" in body and "$json.numero_incidente" in body, (
+        "El responder de revision humana no incluye el numero del incidente"
+    )
+    assert "sin_alta" not in body, (
+        "El cierre con incidente no debe declarar 'sin_alta'"
+    )
+
+
+def test_c53_web_sin_incidente_conserva_sin_alta():
+    """
+    TRIANGULATE (N8N-WEBHOOK-004): la rama sin incidente conserva el cierre
+    `sin_alta` sin numero, y el discriminador la enruta por su rama false.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    body = json.dumps(by_name[CLOSING_RESPONDER_NODE_NAME].get("parameters", {}))
+
+    assert "sin_alta" in body and "incidente_id" in body, (
+        f"'{CLOSING_RESPONDER_NODE_NAME}' dejo de declarar el cierre sin alta"
+    )
+    assert CLOSING_RESPONDER_NODE_NAME in _output_successors(
+        wf, WEB_INCIDENT_GUARD_NODE_NAME, 1
+    ), (
+        f"La rama sin incidente de {WEB_INCIDENT_GUARD_NODE_NAME!r} no desemboca en "
+        f"{CLOSING_RESPONDER_NODE_NAME!r}"
+    )
+
+
+def test_c53_web_guarda_de_canal_se_mantiene():
+    """
+    TRIANGULATE (N8N-WEBHOOK-003/004): la guarda `Es web?` restringe la respuesta
+    al canal web: su rama false no alcanza ningun responder y el discriminador
+    cuelga de su rama true.
+    """
+    wf = load_workflow()
+
+    assert WEB_INCIDENT_GUARD_NODE_NAME in _output_successors(wf, ES_WEB_NODE_NAME, 0), (
+        f"La guarda {ES_WEB_NODE_NAME!r} no desemboca en {WEB_INCIDENT_GUARD_NODE_NAME!r}"
+    )
+    for responder in (CLOSING_RESPONDER_NODE_NAME, WEB_REVISION_RESPONDER_NODE_NAME):
+        assert all(
+            not _connections_reachable(wf, succ, responder)
+            for succ in _output_successors(wf, ES_WEB_NODE_NAME, 1)
+        ), (
+            f"La rama false de {ES_WEB_NODE_NAME!r} alcanza {responder!r}: "
+            "un canal no web emitiria una respuesta de webhook web"
+        )
+
+
+# ── OQ1: notificacion al operador con el numero normalizado ─────────────────
+
+
+def test_c53_notificacion_operador_usa_numero_incidente():
+    """
+    TRIANGULATE (OQ1): la notificacion al operador usa el numero normalizado.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    params_str = json.dumps(by_name[NOTIFICAR_OPERADOR_NODE_NAME].get("parameters", {}))
+
+    assert "$json.numero_incidente" in params_str, (
+        "La notificacion al operador no usa el numero normalizado "
+        f"('{NUMERO_FIELD}')"
+    )
+
+
+# ── N8N-DOC-001: la guia no afirma confirmacion telefonica por TwiML ────────
+
+
+def test_c53_guia_no_afirma_confirmacion_telefonica_por_twiml():
+    """
+    RED (N8N-DOC-001): la guia no afirma que la confirmacion del canal de telefonia
+    ocurre en la respuesta TwiML ni en un `<Say>` de cierre.
+    """
+    guide = _load_guide()
+    assert "TwiML" not in guide, (
+        "La guia conserva la afirmacion obsoleta de confirmacion telefonica por TwiML"
+    )
+    assert "<Say>" not in guide, (
+        "La guia conserva la afirmacion obsoleta de confirmacion por <Say>"
     )
