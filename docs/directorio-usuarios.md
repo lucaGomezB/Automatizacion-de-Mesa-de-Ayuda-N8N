@@ -120,7 +120,7 @@ resuelve el bootstrap del primer administrador.
 
 ```bash
 cd App/Backend
-python scripts/seed_directorio.py
+python -m scripts.seed_directorio
 ```
 
 Las contrasenas son de desarrollo y deben cambiarse antes de cualquier uso real.
