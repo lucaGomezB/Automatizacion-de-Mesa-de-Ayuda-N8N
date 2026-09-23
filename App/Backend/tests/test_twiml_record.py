@@ -49,8 +49,20 @@ def test_allowed_record_es_mono_con_callbacks_y_sin_transcribe():
     assert record.attrib.get("playBeep") == "true"
     assert record.attrib.get("recordingStatusCallback") == _STATUS_URL
     assert record.attrib.get("action") == _ACTION_URL
+    # c-52: la grabacion es MONO de forma explicita (no se depende del default).
+    assert record.attrib.get("channels") == "mono"
     # c-52: la transcripcion embebida de Twilio deja de usarse.
     assert "transcribe" not in record.attrib
+
+
+def test_solo_el_record_admitido_declara_canales_mono():
+    """Los documentos sin grabacion no declaran canales: mono solo aplica al <Record>."""
+    allowed = _parse(twiml.render_twiml_allowed(base_url=_BASE))
+    record = allowed.find("Record")
+    assert record is not None
+    assert record.attrib.get("channels") == "mono"
+    for xml in (twiml.render_twiml_record_complete(), twiml.render_twiml_denied()):
+        assert "channels" not in xml
 
 
 def test_allowed_no_promete_ticket_inmediato():

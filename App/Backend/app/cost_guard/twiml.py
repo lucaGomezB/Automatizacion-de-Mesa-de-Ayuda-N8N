@@ -54,6 +54,7 @@ def render_twiml_allowed(base_url: str | None = None) -> str:
         + "Tenes hasta cuarenta y cinco segundos."
         + "</Say>"
         + '<Record maxLength="45" finishOnKey="#" playBeep="true" '
+        + 'channels="mono" '
         + f'recordingStatusCallback="{base}{_STATUS_PATH}" '
         + f'action="{base}{_ACTION_PATH}"/>'
         + "</Response>"

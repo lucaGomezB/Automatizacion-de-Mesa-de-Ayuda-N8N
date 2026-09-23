@@ -19,7 +19,9 @@ Seguridad (gobernanza CRITICA):
 
 El endpoint de callback delega en `TelefoniaService`, que persiste el ingreso
 en cualquiera de sus estados (transcrito, error de descarga/STT o guarda
-denegada). Un fallo de descarga/STT NO devuelve 500 ni pierde el ingreso.
+denegada) y reprocesa un ingreso en estado terminal de error ante un callback
+repetido (W5). Un fallo de descarga/STT persiste el ingreso y responde 503 para
+invitar el reintento nativo de Twilio; nunca responde 500 ni pierde el ingreso.
 """
 
 from typing import Annotated
@@ -47,7 +49,7 @@ from app.schemas.telefonia import (
     TelefoniaRecordingResponse,
 )
 from app.services.cost_guard_service import CostGuardService
-from app.services.telefonia_service import TelefoniaService
+from app.services.telefonia_service import TRANSIENT_ERROR_STATES, TelefoniaService
 
 router = APIRouter(prefix="/telefonia", tags=["Telefonia"])
 
@@ -84,15 +86,19 @@ def get_telefonia_service(
 ServiceDep = Annotated[TelefoniaService, Depends(get_telefonia_service)]
 
 
-async def _require_twilio_signature(
-    request: Request, signature: str | None
+async def require_twilio_signature(
+    request: Request,
+    x_twilio_signature: SignatureHeader = None,
 ) -> None:
     """
     Exige `X-Twilio-Signature` (fail-closed).
 
-    Sin `TWILIO_AUTH_TOKEN` configurado se rechaza con 401: el endpoint nunca
-    queda abierto. Con token configurado, una firma ausente o invalida tambien
-    se rechaza con 401.
+    Se expone como DEPENDENCIA de FastAPI para que corra ANTES de la validacion
+    de los campos de formulario del endpoint: asi una peticion sin firma (o con
+    firma invalida) responde 401 aunque le falten campos requeridos, en lugar de
+    caer primero en un 422 de validacion. Sin `TWILIO_AUTH_TOKEN` configurado se
+    rechaza con 401: el endpoint nunca queda abierto. Con token configurado, una
+    firma ausente o invalida tambien se rechaza con 401.
     """
     auth_token = get_settings().twilio_auth_token
     if not auth_token:
@@ -101,11 +107,14 @@ async def _require_twilio_signature(
             detail="Twilio auth token is not configured",
         )
     form = await request.form()
-    if not verify_signature(auth_token, signature, str(request.url), form):
+    if not verify_signature(auth_token, x_twilio_signature, str(request.url), form):
         raise HTTPException(
             status_code=http_status.HTTP_401_UNAUTHORIZED,
             detail="Invalid Twilio signature",
         )
+
+
+SignatureDep = Annotated[None, Depends(require_twilio_signature)]
 
 
 @router.post(
@@ -119,12 +128,18 @@ async def _require_twilio_signature(
                 "`TWILIO_AUTH_TOKEN` no configurado (fail-closed)."
             )
         },
+        http_status.HTTP_503_SERVICE_UNAVAILABLE: {
+            "description": (
+                "Fallo transitorio de descarga o STT. El ingreso queda "
+                "persistido en estado de error para que Twilio reintente el "
+                "callback (W5)."
+            )
+        },
     },
 )
 async def recording_status(
-    request: Request,
     service: ServiceDep,
-    x_twilio_signature: SignatureHeader = None,
+    _signature: SignatureDep,
     account_sid: str | None = Form(None, alias="AccountSid"),
     call_sid: str = Form(..., alias="CallSid"),
     recording_sid: str | None = Form(None, alias="RecordingSid"),
@@ -138,11 +153,16 @@ async def recording_status(
     """
     Procesa la notificacion de grabacion disponible de Twilio.
 
-    Idempotente por `CallSid`: un callback repetido no re-descarga, no
-    re-transcribe ni re-reserva. Responde 200 en cualquiera de los estados del
-    ingreso para no perder la grabacion ante un fallo aguas abajo.
+    Idempotente por `CallSid`: un callback repetido sobre un ingreso ya
+    transcrito o `pendiente` no re-descarga, no re-transcribe ni re-reserva. Si
+    el ingreso quedo en un estado terminal de error, el callback lo reprocesa.
+
+    Codigos de respuesta segun el estado resultante:
+        - `transcrito`, `pendiente` o `guarda_denegada` -> 200.
+        - `error_descarga` o `error_stt` -> 503, para invitar el reintento nativo
+          de Twilio. El estado de error se confirma antes de responder para que
+          el siguiente callback pueda reprocesarlo.
     """
-    await _require_twilio_signature(request, x_twilio_signature)
     callback = RecordingStatusCallback(
         account_sid=account_sid,
         call_sid=call_sid,
@@ -155,6 +175,15 @@ async def recording_status(
         caller=from_number,
     )
     ingreso = await service.process_recording(callback)
+    if ingreso.transcripcion_estado in TRANSIENT_ERROR_STATES:
+        # Persistir el estado terminal antes del 503: `get_db_session` revierte la
+        # transaccion ante la excepcion, y el reintento de Twilio debe encontrar
+        # el ingreso en error para reprocesarlo.
+        await service.commit_error_state()
+        raise HTTPException(
+            status_code=http_status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Transient ingestion failure; a callback retry is expected.",
+        )
     return TelefoniaRecordingResponse(
         status="accepted",
         call_sid=ingreso.call_sid,
@@ -176,8 +205,7 @@ async def recording_status(
     },
 )
 async def record_complete(
-    request: Request,
-    x_twilio_signature: SignatureHeader = None,
+    _signature: SignatureDep,
 ) -> Response:
     """
     Documento `action` del `<Record>`: mensaje de cierre ALCANZABLE.
@@ -185,7 +213,6 @@ async def record_complete(
     No promete la creacion inmediata del ticket: el alta es asincrona (el
     backend transcribe, pseudonimiza y hace handoff a n8n).
     """
-    await _require_twilio_signature(request, x_twilio_signature)
     return TwimlResponse(content=render_twiml_record_complete())
 
 

@@ -116,3 +116,53 @@ async def test_recarga_por_callsid_trae_el_incidente_vinculado(db_session):
     # El eager loading debe poblar la relacion (sin lazy-load en async).
     assert reloaded.incidente is not None
     assert reloaded.incidente.id == incidente.id
+
+
+# ── W5 RED — Reclamo atomico para reintento ─────────────────────────────────
+
+
+def _estados_error():
+    from app.models.telefonia_ingreso import TranscripcionEstado
+
+    return {
+        TranscripcionEstado.guarda_denegada,
+        TranscripcionEstado.error_descarga,
+        TranscripcionEstado.error_stt,
+    }
+
+
+async def test_claim_for_retry_transiciona_desde_un_estado_de_error(db_session):
+    """El reclamo atomico mueve la fila a `pendiente` y limpia el error."""
+    from app.models.telefonia_ingreso import TranscripcionEstado
+
+    repo = _repo(db_session)
+    ingreso = await repo.create(
+        call_sid="CA-CLAIM-1",
+        transcripcion_estado=TranscripcionEstado.error_descarga,
+        error_detalle="timeout",
+    )
+
+    reclamado = await repo.claim_for_retry("CA-CLAIM-1", _estados_error())
+
+    assert reclamado is True
+    await db_session.refresh(ingreso)
+    assert ingreso.transcripcion_estado == TranscripcionEstado.pendiente
+    assert ingreso.error_detalle is None
+
+
+async def test_claim_for_retry_no_reclama_estados_no_terminales(db_session):
+    """Una fila ya transcrita no se reclama: el UPDATE afecta 0 filas."""
+    from app.models.telefonia_ingreso import TranscripcionEstado
+
+    repo = _repo(db_session)
+    await repo.create(
+        call_sid="CA-CLAIM-2",
+        transcripcion_estado=TranscripcionEstado.transcrito,
+    )
+
+    reclamado = await repo.claim_for_retry("CA-CLAIM-2", _estados_error())
+
+    assert reclamado is False
+    fila = await repo.get_by_call_sid("CA-CLAIM-2")
+    assert fila is not None
+    assert fila.transcripcion_estado == TranscripcionEstado.transcrito
