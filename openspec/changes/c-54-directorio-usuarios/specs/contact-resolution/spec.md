@@ -6,7 +6,7 @@ Define como el sistema resuelve la identidad de un contacto (empleado) a partir 
 
 ### Requirement: RES-001 — Resolucion por telefono
 
-El sistema SHALL resolver un empleado a partir de un numero telefonico normalizado a E.164, comparando su indice ciego. La resolucion por telefono SHALL devolver el empleado activo cuyo telefono coincide exactamente, o un resultado vacio si no hay coincidencia. La resolucion MUST NOT fallar cuando el numero no pertenece al directorio.
+El sistema SHALL resolver un empleado a partir de un numero telefonico normalizado a E.164, comparando por igualdad contra el telefono almacenado en texto plano. La resolucion por telefono SHALL devolver el empleado activo cuyo telefono coincide exactamente, o un resultado vacio si no hay coincidencia o si la coincidencia es ambigua. La resolucion MUST NOT fallar cuando el numero no pertenece al directorio.
 
 #### Scenario: Telefono conocido resuelve al empleado
 
@@ -21,11 +21,11 @@ El sistema SHALL resolver un empleado a partir de un numero telefonico normaliza
 #### Scenario: Normalizacion previa a la busqueda
 
 - **WHEN** se resuelve un telefono con formato local o con separadores
-- **THEN** el sistema lo normaliza a E.164 antes de calcular el indice ciego y comparar
+- **THEN** el sistema lo normaliza a E.164 antes de comparar por igualdad
 
 ### Requirement: RES-002 — Resolucion por email
 
-El sistema SHALL resolver un empleado a partir de una direccion de email normalizada a minusculas, comparando su indice ciego. La resolucion por email SHALL devolver el empleado activo cuyo email coincide exactamente, o un resultado vacio si no hay coincidencia. El sistema MUST aceptar tanto una direccion simple como la direccion efectiva extraida de una estructura de remitente del canal de correo.
+El sistema SHALL resolver un empleado a partir de una direccion de email normalizada a minusculas, comparando por igualdad contra el email almacenado en texto plano. La resolucion por email SHALL devolver el empleado activo cuyo email coincide exactamente, o un resultado vacio si no hay coincidencia o si la coincidencia es ambigua. El sistema MUST aceptar tanto una direccion simple como la direccion efectiva extraida de una estructura de remitente del canal de correo.
 
 #### Scenario: Email conocido resuelve al empleado
 
@@ -40,7 +40,7 @@ El sistema SHALL resolver un empleado a partir de una direccion de email normali
 #### Scenario: Email con mayusculas
 
 - **WHEN** se resuelve un email con mayusculas o espacios
-- **THEN** el sistema lo normaliza a minusculas y resuelve correctamente contra el indice ciego
+- **THEN** el sistema lo normaliza a minusculas y resuelve correctamente por igualdad
 
 ### Requirement: RES-003 — Resolucion por usuario autenticado
 
