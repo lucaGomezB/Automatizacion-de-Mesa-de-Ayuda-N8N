@@ -2,6 +2,11 @@
 fastapi==0.115.0
 uvicorn[standard]==0.30.6
 
+# Form parsing: FastAPI Form/File endpoints (e.g. /twilio/voice FromForm).
+# Import-time requirement of app/routes/cost_guard.py. Undeclared since c-45;
+# the local venv had it transitively, so Docker/CI crash-looped on missing it.
+python-multipart==0.0.32
+
 # Async PostgreSQL driver
 asyncpg==0.29.0
 sqlalchemy[asyncio]==2.0.36
