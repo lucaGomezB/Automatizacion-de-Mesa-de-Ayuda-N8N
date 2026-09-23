@@ -198,6 +198,7 @@ async def update_incidente(
     incidente_id: int,
     payload: IncidenteUpdate,
     service: ServiceDep,
+    alcance: AlcanceDep,
     current_user: User = Depends(get_current_user),
 ) -> IncidenteRead:
     """
@@ -206,6 +207,10 @@ async def update_incidente(
     Solo se modifican los campos incluidos en el payload con valor distinto
     de None. Casos de uso típicos: cambio de estado por el operador,
     reasignación de sector tras revisión manual, o modificación de prioridad.
+
+    El alcance de visibilidad por rol (VIS-001) se aplica también a la ESCRITURA:
+    un incidente fuera del alcance del usuario se comporta como no encontrado
+    (404), igual que en la lectura, y NUNCA se modifica.
 
     Los incidentes en estado terminal (cerrado, es_terminal=true) son de solo
     lectura. Cualquier intento de PATCH sobre un incidente cerrado retorna
@@ -217,8 +222,8 @@ async def update_incidente(
 
     Returns:
         Representación actualizada del incidente (HTTP 200).
-        HTTP 404 si el incidente no existe.
+        HTTP 404 si el incidente no existe o está fuera del alcance.
         HTTP 409 si el incidente está cerrado (solo lectura).
     """
-    incidente = await service.update_incidente(incidente_id, payload)
+    incidente = await service.update_incidente(incidente_id, payload, alcance=alcance)
     return IncidenteRead.model_validate(incidente)

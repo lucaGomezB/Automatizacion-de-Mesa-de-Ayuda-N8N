@@ -7,6 +7,8 @@ vida (desactivacion, reactivacion, borrado ARCO) y la AUDITORIA sin PII
 (DIR-006): los logs estructurados nunca contienen email ni telefono en claro.
 """
 
+from datetime import datetime, timedelta, timezone
+
 import pytest
 from structlog.testing import capture_logs
 
@@ -17,7 +19,7 @@ from app.core.exceptions import (
 )
 from app.models.catalog import Sector
 from app.models.empleado import Empleado, RolEmpleado
-from app.services.directorio_service import DirectorioService
+from app.services.directorio_service import DirectorioService, retencion_vencida
 
 
 async def _seed_sector(session, nombre: str = "Sistemas") -> Sector:
@@ -298,3 +300,117 @@ async def test_auditoria_de_desactivacion_y_borrado_sin_pii(db_session):
     }
     assert {"desactivacion", "borrado_arco"} <= operaciones
     assert email not in repr(logs)
+
+
+# ── Retencion: contrato + 1 año (DIR-007 / W2) ────────────────────────────────
+
+_AHORA = datetime(2026, 9, 23, 12, 0, tzinfo=timezone.utc)
+
+
+def test_retencion_vencida_limites_y_borde_bisiesto():
+    """`retencion_vencida` compara contra fecha_baja + 1 año (con clamp)."""
+    assert retencion_vencida(_AHORA - timedelta(days=365), _AHORA) is True
+    assert retencion_vencida(_AHORA - timedelta(days=364), _AHORA) is False
+    assert retencion_vencida(None, _AHORA) is False
+    # Borde: 29-feb + 1 año se acota a 28-feb (no explota).
+    assert retencion_vencida(
+        datetime(2024, 2, 29, 12, 0, tzinfo=timezone.utc), _AHORA
+    ) is True
+
+
+@pytest.mark.asyncio
+async def test_desactivacion_registra_fecha_baja_y_reactivacion_la_limpia(db_session):
+    """Desactivar sella `fecha_baja`; reactivar la limpia (DIR-007)."""
+    sector = await _seed_sector(db_session)
+    svc = _svc(db_session)
+    empleado = await svc.crear_empleado(
+        legajo="RET-1", nombre="N", email="ret1@example.test",
+        sector_id=sector.id, rol="usuario_final",
+    )
+    assert empleado.fecha_baja is None
+
+    desactivado = await svc.desactivar_empleado(empleado.id)
+    assert desactivado.activo is False
+    assert desactivado.fecha_baja is not None
+
+    reactivado = await svc.reactivar_empleado(empleado.id)
+    assert reactivado.activo is True
+    assert reactivado.fecha_baja is None
+
+
+@pytest.mark.asyncio
+async def test_purgar_vencidos_borra_solo_bajas_mayores_a_un_anio(db_session):
+    """Borra las bajas > 1 año; conserva activos y bajas recientes."""
+    sector = await _seed_sector(db_session)
+    svc = _svc(db_session)
+    activo = await svc.crear_empleado(
+        legajo="RET-ACT", nombre="N", email="retact@example.test",
+        sector_id=sector.id, rol="usuario_final",
+    )
+    reciente = await svc.crear_empleado(
+        legajo="RET-REC", nombre="N", email="retrec@example.test",
+        sector_id=sector.id, rol="usuario_final",
+    )
+    viejo = await svc.crear_empleado(
+        legajo="RET-VIE", nombre="N", email="retvie@example.test",
+        sector_id=sector.id, rol="usuario_final",
+    )
+    await svc.desactivar_empleado(reciente.id)
+    await svc.desactivar_empleado(viejo.id)
+    # Simular una baja ocurrida hace mas de un año.
+    viejo.fecha_baja = _AHORA - timedelta(days=366)
+    db_session.add(viejo)
+    await db_session.flush()
+
+    purgados = await svc.purgar_vencidos(ahora=_AHORA)
+
+    assert purgados == 1
+    assert (await svc.obtener(activo.id)).activo is True
+    assert (await svc.obtener(reciente.id)).activo is False
+    with pytest.raises(EntityNotFoundError):
+        await svc.obtener(viejo.id)
+
+
+@pytest.mark.asyncio
+async def test_purgar_vencidos_es_idempotente(db_session):
+    """Una segunda corrida no vuelve a borrar nada."""
+    sector = await _seed_sector(db_session)
+    svc = _svc(db_session)
+    viejo = await svc.crear_empleado(
+        legajo="RET-IDEM", nombre="N", email="retidem@example.test",
+        sector_id=sector.id, rol="usuario_final",
+    )
+    await svc.desactivar_empleado(viejo.id)
+    viejo.fecha_baja = _AHORA - timedelta(days=400)
+    db_session.add(viejo)
+    await db_session.flush()
+
+    assert await svc.purgar_vencidos(ahora=_AHORA) == 1
+    assert await svc.purgar_vencidos(ahora=_AHORA) == 0
+
+
+@pytest.mark.asyncio
+async def test_purgar_vencidos_loggea_conteo_sin_pii(db_session):
+    """La purga deja un conteo auditable y nunca el contacto en claro."""
+    sector = await _seed_sector(db_session)
+    svc = _svc(db_session, actor_id=5)
+    email = "purga.pii@example.test"
+    telefono = "+5491177776666"
+    viejo = await svc.crear_empleado(
+        legajo="RET-LOG", nombre="N", email=email,
+        telefono=telefono, sector_id=sector.id, rol="usuario_final",
+    )
+    await svc.desactivar_empleado(viejo.id)
+    viejo.fecha_baja = _AHORA - timedelta(days=366)
+    db_session.add(viejo)
+    await db_session.flush()
+
+    with capture_logs() as logs:
+        purgados = await svc.purgar_vencidos(ahora=_AHORA)
+
+    assert purgados == 1
+    eventos = [e for e in logs if e.get("event") == "directorio_retencion"]
+    assert eventos, "La purga debe dejar un evento auditable"
+    assert eventos[-1].get("purgados") == 1
+    assert email not in repr(logs)
+    assert telefono not in repr(logs)

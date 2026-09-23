@@ -61,7 +61,7 @@ Si un telefono normalizado corresponde a mas de un empleado activo (numeros de m
 
 ### D6b: Modelo definitivo `directorio_empleado` (minimizacion)
 
-Campos EXACTOS (nada mas se almacena): `id` (PK), `legajo` (varchar, NOT NULL, UNIQUE), `nombre` (varchar, NOT NULL), `email` (varchar, NOT NULL, UNIQUE, indexado), `telefono` (varchar E.164, NULL, indexado, MAY repetirse), `sector_id` (FK -> `sector`, NULL), `rol` (enum), `activo` (bool default true), `user_id` (FK -> `users`, NULL, ON DELETE SET NULL), `created_at`/`updated_at`.
+Campos EXACTOS (nada mas se almacena): `id` (PK), `legajo` (varchar, NOT NULL, UNIQUE), `nombre` (varchar, NOT NULL), `email` (varchar, NOT NULL, UNIQUE, indexado), `telefono` (varchar E.164, NULL, indexado, MAY repetirse), `sector_id` (FK -> `sector`, NULL), `rol` (enum), `activo` (bool default true), `fecha_baja` (timestamp con zona, NULL; instante de desactivacion y base de la retencion D8, se limpia al reactivar), `user_id` (FK -> `users`, NULL, ON DELETE SET NULL), `created_at`/`updated_at`.
 
 ### D7: Visibilidad de incidentes por rol — a nivel API (frontend diferido)
 
@@ -69,11 +69,11 @@ Para usuarios NO administradores, los endpoints de lectura/listado de incidentes
 
 ### D8: Ciclo de vida: desactivacion, retencion y ARCO
 
-`activo=false` en lugar de borrado operativo; la resolucion ignora inactivos (DIR-007). Retencion (OQ6): mientras la relacion laboral este activa + 1 año, luego borrado fisico. El borrado fisico tambien se ejecuta ante cancelacion ARCO, por `administrador_directorio`. Alternativa considerada: soft-delete con timestamp — innecesario; el flag alcanza.
+`activo=false` en lugar de borrado operativo; la resolucion ignora inactivos (DIR-007). Retencion (OQ6): mientras la relacion laboral este activa + 1 año, luego borrado fisico. Implementacion: al desactivar se sella `fecha_baja = utcnow()` y al reactivar se limpia a `NULL`; el vencimiento se evalua con una funcion pura (`retencion_vencida(fecha_baja, ahora)` = `fecha_baja + 1 año <= ahora`, con clamp de 29-feb). La purga (`DirectorioService.purgar_vencidos`) borra SOLO filas `activo=false` con `fecha_baja` vencida, es IDEMPOTENTE y deja un evento de auditoria con el conteo, sin PII. El camino ejecutable es el script CLI `scripts/purgar_directorio.py` (`python -m scripts.purgar_directorio`), que espeja el seed dev-only; el borrado por retencion NO es el camino operativo por defecto. El borrado fisico tambien se ejecuta ante cancelacion ARCO, por `administrador_directorio` (accion explicita via API). Alternativa considerada: soft-delete con timestamp — descartada; `activo` + `fecha_baja` alcanzan.
 
 ### D9: Migracion aditiva 009 y seed idempotente sin PII real
 
-Nueva revision `009` (posterior a `008`), aditiva: crea `directorio_empleado` con indices (UNIQUE en `legajo` y `email`; indice en `telefono` y `sector_id`) y FKs. OQ1 RESUELTA: seed idempotente con UN (1) usuario sintetico por rol, con datos de contacto utiles, creando AMBAS filas —`users` (login) y `directorio_empleado`— enlazadas por `user_id`. Esto tambien resuelve el bootstrap del primer administrador (sin huevo-y-gallina). NO se siembra PII real; el seed es script dev-only fuera de Alembic. Alternativa considerada: seed en la migracion — descartada por inventar PII y ensuciar produccion.
+Nueva revision `009` (posterior a `008`), aditiva: crea `directorio_empleado` con indices (UNIQUE en `legajo` y `email`; indice en `telefono` y `sector_id`) y FKs. La retencion de D8 agrega una revision APPEND-ONLY `010` (`down_revision = "009"`) que añade la columna nullable `fecha_baja`; la `009` ya fue publicada y NO se edita. OQ1 RESUELTA: seed idempotente con UN (1) usuario sintetico por rol, con datos de contacto utiles, creando AMBAS filas —`users` (login) y `directorio_empleado`— enlazadas por `user_id`. Esto tambien resuelve el bootstrap del primer administrador (sin huevo-y-gallina). NO se siembra PII real; el seed es script dev-only fuera de Alembic. Alternativa considerada: seed en la migracion — descartada por inventar PII y ensuciar produccion.
 
 ### D10: Estrategia de tests
 
@@ -93,6 +93,14 @@ Nueva revision `009` (posterior a `008`), aditiva: crea `directorio_empleado` co
 
 No se tocan `constants.py`, el clasificador, los cinco sectores ni `n8n/workflow.json` en lo relativo a notificaciones. El cifrado Fernet del contenido del incidente (`app/utils/encryption.py`, `caller_cifrado`) PERMANECE sin cambios. c-54 NO agrega claves de configuracion nuevas.
 
+### D14: Los errores 422 NO reflejan el valor enviado (fix W1)
+
+El handler global de `RequestValidationError` serializaba `exc.errors()`, que incluye `input` (el valor enviado) y `ctx`; un telefono/email invalido devolvia el dato en claro en el cuerpo del 422, contra DIR-006. Se sanea en el envelope global (`_sanitize_validation_errors`) conservando solo `loc`, `msg` y `type`, y descartando `input`, `ctx` y `url`. Aplica a TODA la API, no solo al directorio.
+
+### D15: El alcance por rol aplica tambien a las ESCRITURAS por ID (fix W3)
+
+`GET` list/detail ya aplicaban `alcance` (D7), pero `PATCH /incidentes/{id}` llamaba a `get_by_id` sin alcance, permitiendo a un no administrador leer/mutar por ID un incidente fuera de su sector. Se propaga `alcance` a `update_incidente` (y a su re-lectura), de modo que un incidente fuera de alcance responde 404 y NUNCA se modifica. El alcance es obligatorio en todas las rutas por ID (lectura y escritura).
+
 ## Risks / Trade-offs
 
 - **[Exposicion de datos personales]** texto plano en la base → Mitigacion: minimizacion (D6b), control de acceso por rol (D5), auditoria de accesos y no-PII en logs (DIR-006); dato no sensible bajo Ley 25.326 art. 2 (decision v8).
@@ -106,14 +114,15 @@ No se tocan `constants.py`, el clasificador, los cinco sectores ni `n8n/workflow
 
 ## Migration Plan
 
-1. Modelo `models/empleado.py` (tabla `directorio_empleado`, enums, FKs) y migracion `009` aditiva (`down_revision = "008"`).
+1. Modelo `models/empleado.py` (tabla `directorio_empleado`, enums, FKs) y migracion `009` aditiva (`down_revision = "008"`); la columna `fecha_baja` de la retencion se agrega con la migracion append-only `010` (`down_revision = "009"`).
 2. `utils/contactos.py`: normalizadores (email minusculas/trim, telefono E.164) y validadores, con tests.
 3. Repositorio `empleado_repository.py` (busqueda por email/telefono/`user_id`, CRUD) con `selectinload` donde aplique.
 4. Servicio `directorio_service.py` (CRUD, activacion, reglas de rol, auditoria de accesos) y `contact_resolution_service.py` (seam c-53).
 5. Rutas `routes/directorio.py` + schemas + dependencia de autorizacion; filtro de visibilidad por rol en los endpoints de incidentes (D7); regenerar `docs/openapi.json`.
 6. Seed dev-only idempotente (un usuario sintetico por rol) con `users` + `directorio_empleado`.
 7. Fixtures de tests (empleados sinteticos) y suites unit/integration.
-8. Rollback: revertir el commit y `cd App/Backend; alembic downgrade -1` (dropea la tabla; sin backfill). c-53 no se ve afectado.
+8. Purga por retencion: `DirectorioService.purgar_vencidos` + script CLI `scripts/purgar_directorio.py` (idempotente, conteo sin PII).
+9. Rollback: revertir el commit y `cd App/Backend; alembic downgrade -1` (dropea la tabla; sin backfill). c-53 no se ve afectado.
 
 ## Open Questions
 

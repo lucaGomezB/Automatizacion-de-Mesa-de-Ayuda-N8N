@@ -362,7 +362,10 @@ class IncidenteService:
         )
 
     async def update_incidente(
-        self, incidente_id: int, payload: IncidenteUpdate
+        self,
+        incidente_id: int,
+        payload: IncidenteUpdate,
+        alcance: "AlcanceIncidentes | None" = None,
     ) -> Incidente:
         """
         Actualiza parcialmente un incidente existente.
@@ -371,19 +374,25 @@ class IncidenteService:
         para retornar un error 404 claro en lugar de una actualización silenciosa
         de cero filas. Solo se aplican los campos con valor distinto de None.
 
+        Si se provee `alcance` (VIS-001), se aplica la misma regla de visibilidad
+        por rol que en la lectura: un incidente fuera del alcance del usuario se
+        comporta como no encontrado (404) y NUNCA se modifica.
+
         Args:
             incidente_id: ID del incidente a actualizar.
             payload:      Campos a modificar (todos opcionales).
+            alcance:      Alcance de visibilidad por rol (opcional).
 
         Returns:
             Instancia actualizada del incidente con relaciones cargadas.
 
         Raises:
-            EntityNotFoundError: Si no existe el incidente con ese ID.
+            EntityNotFoundError: Si no existe el incidente con ese ID o si queda
+                                 fuera del alcance del usuario.
         """
-        # Verificar existencia antes de intentar la actualización.
+        # Verificar existencia Y alcance antes de intentar la actualización.
         # get_by_id carga relaciones con selectinload, incluyendo estado.
-        incidente = await self.get_by_id(incidente_id)
+        incidente = await self.get_by_id(incidente_id, alcance=alcance)
 
         # Bloquear escritura si el incidente está en estado terminal (cerrado).
         if incidente.estado.es_terminal:
@@ -410,7 +419,7 @@ class IncidenteService:
 
         updates = payload.model_dump(exclude_none=True)  # Solo campos no nulos
         await self._incidente_repo.update_fields(incidente_id, **updates)
-        return await self.get_by_id(incidente_id)
+        return await self.get_by_id(incidente_id, alcance=alcance)
 
     # ── Métodos Auxiliares Privados ───────────────────────────────────────────
 

@@ -53,3 +53,15 @@
 - [x] 7.3 Ejecutar lint: `cd App/Backend; ruff check .`. Verificacion: sin errores E nuevos.
 - [x] 7.4 Ejecutar `openspec validate --strict --changes c-54-directorio-usuarios`. Verificacion: validacion estricta sin errores.
 - [ ] 7.5 Revision humana (HIGH): confirmar la politica de retencion/ARCO, la regla de visibilidad de incidentes por rol y su alcance, y que no hay PII real en el repositorio ni en la base; confirmar que no se agrego clave de indice ciego. Verificacion: aprobacion registrada antes de activar datos reales. PENDIENTE DE REVISION HUMANA (no ejecutada por el agente): la implementacion usa datos SINTETICOS; activar datos reales queda bloqueado hasta esta aprobacion.
+
+## 8. Fixes de la verificacion adversarial (W1-W3 + nits)
+
+- [x] 8.1 RED/GREEN (W1): test que exige que un 422 de schema NO refleje el valor enviado; sanear el envelope global (`_sanitize_validation_errors`) conservando solo `loc`/`msg`/`type`. Verificacion: `tests/test_validation_error_sanitization.py` y `tests/test_api_directorio.py::test_error_de_schema_no_refleja_el_telefono` en verde.
+- [x] 8.2 RED/GREEN (W2 modelo): agregar `fecha_baja` nullable al modelo y la migracion append-only `010` (`down_revision = "009"`); actualizar el test de columnas exactas. Verificacion: `tests/test_empleado_model.py` y `tests/test_migration_010_fecha_baja.py` en verde.
+- [x] 8.3 RED/GREEN (W2 retencion): sellar `fecha_baja` al desactivar y limpiarla al reactivar; `retencion_vencida` pura; `DirectorioService.purgar_vencidos` idempotente que borra `activo=false AND fecha_baja + 1 año <= ahora` y loggea el conteo sin PII; script CLI `scripts/purgar_directorio.py`. Verificacion: tests de retencion (baja < 1 año conservada, > 1 año purgada, activo conservado) y del script en verde.
+- [x] 8.4 (W2 docs): actualizar `design.md` (D6b/D8/D9/D14/D15 y plan de migracion), el spec DIR-002/DIR-007, `docs/directorio-usuarios.md`, la tabla de `fecha_baja` en la tesis v8 y este `tasks.md`. Verificacion: la retencion queda implementada y documentada, no aspiracional.
+- [x] 8.5 RED/GREEN (W3): propagar `alcance` a `update_incidente` y a la ruta PATCH; un no administrador que muta un incidente fuera de sector recibe 404 y el incidente NO se modifica; el administrador si puede. Verificacion: tests de visibilidad de escritura en verde.
+- [x] 8.6 (N1): test HTTP de acceso puntual por ID con alcance vacio (sin empleado) que responde 404, tanto GET como PATCH. Verificacion: en verde.
+- [x] 8.7 (N3): `EmpleadoRepository.get_by_user_id` robusto ante duplicados (`first()` determinista) con test. Verificacion: en verde.
+- [x] 8.8 (N2): test de caracterizacion de que el rol del directorio no altera la clasificacion. Verificacion: en verde.
+- [x] 8.9 Verificacion final: `pytest -m "not integration"`, `pytest -m integration`, `ruff check .`, `pytest tests/test_openapi_sync.py -v` y `openspec validate --strict --changes c-54-directorio-usuarios`. Verificacion: todo en verde, sin regresiones.

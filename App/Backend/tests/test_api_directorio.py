@@ -202,3 +202,19 @@ async def test_error_y_auditoria_sin_pii(engine, directorio_env):
     eventos = [e for e in logs if e.get("event") == "directorio_consulta"]
     assert eventos, "La lectura debe quedar auditada"
     assert email not in repr(logs)
+
+
+@pytest.mark.asyncio
+async def test_error_de_schema_no_refleja_el_telefono(engine, directorio_env):
+    """Un telefono que excede el schema devuelve 422 SIN el valor en claro (W1)."""
+    pii = "+5491100000111111111111111111111111111111"
+    async with _client(engine, directorio_env["admin_user"]) as c:
+        resp = await c.post(
+            _ENDPOINT,
+            json=_payload(telefono=pii, sector_id=directorio_env["sector_id"]),
+        )
+
+    assert resp.status_code == 422, resp.text
+    assert resp.json()["error"]["code"] == "VALIDATION_ERROR"
+    assert pii not in resp.text, "El 422 de schema no debe reflejar el telefono"
+    assert "telefono" in resp.text

@@ -25,7 +25,7 @@ El sistema SHALL mantener los datos de contacto de empleados en una entidad prop
 
 ### Requirement: DIR-002 — Campos definitivos y minimizacion del empleado
 
-El directorio SHALL almacenar EXACTAMENTE los siguientes campos y NINGUNO mas: `id` (clave primaria), `legajo` (varchar, obligatorio, unico), `nombre` (varchar, obligatorio), `email` (varchar, obligatorio, unico por empleado e indexado), `telefono` (varchar E.164, opcional, indexado y que MAY repetirse entre empleados), `sector_id` (FK al catalogo `sector`, opcional), `rol`, `activo` (booleano, por defecto verdadero), `user_id` (FK nullable a `users`), `created_at` y `updated_at`. El `legajo` y el `nombre` MUST estar presentes. El `email` MUST estar presente y MUST ser unico entre empleados. El `telefono` MAY estar ausente y MAY repetirse. El sistema SHALL validar el formato E.164 del telefono y la forma basica del email al persistir un empleado. El sistema MUST NOT almacenar campos adicionales de datos personales.
+El directorio SHALL almacenar EXACTAMENTE los siguientes campos y NINGUNO mas: `id` (clave primaria), `legajo` (varchar, obligatorio, unico), `nombre` (varchar, obligatorio), `email` (varchar, obligatorio, unico por empleado e indexado), `telefono` (varchar E.164, opcional, indexado y que MAY repetirse entre empleados), `sector_id` (FK al catalogo `sector`, opcional), `rol`, `activo` (booleano, por defecto verdadero), `fecha_baja` (timestamp nullable con zona; instante de desactivacion y base de la retencion de DIR-007; se limpia al reactivar), `user_id` (FK nullable a `users`), `created_at` y `updated_at`. El `legajo` y el `nombre` MUST estar presentes. El `email` MUST estar presente y MUST ser unico entre empleados. El `telefono` MAY estar ausente y MAY repetirse. El sistema SHALL validar el formato E.164 del telefono y la forma basica del email al persistir un empleado. El sistema MUST NOT almacenar campos adicionales de datos personales.
 
 #### Scenario: Empleado con email y telefono
 
@@ -55,7 +55,7 @@ El directorio SHALL almacenar EXACTAMENTE los siguientes campos y NINGUNO mas: `
 #### Scenario: Sin campos adicionales
 
 - **WHEN** se inspecciona el esquema de `directorio_empleado`
-- **THEN** sus columnas son exactamente las de este requisito, sin datos personales extra
+- **THEN** sus columnas son exactamente las de este requisito (incluida `fecha_baja`), sin datos personales extra
 
 ### Requirement: DIR-003 — Modelo de roles minimo
 
@@ -150,7 +150,7 @@ El directorio contiene datos personales. La gestion (alta, modificacion, activac
 
 ### Requirement: DIR-007 — Ciclo de vida: desactivacion, retencion y borrado ARCO
 
-El sistema SHALL desactivar empleados mediante el indicador `activo` en lugar de borrarlos, conservando la trazabilidad. La resolucion de contactos MUST ignorar empleados inactivos. El sistema SHALL conservar la fila mientras la relacion laboral este activa mas 1 año; vencido ese plazo SHALL ejecutar el borrado fisico. El borrado fisico SHALL tambien ejecutarse ante una solicitud de supresion (ARCO) y SHALL ser ejecutado por un `administrador_directorio`. El borrado fisico MUST NOT ser el camino operativo por defecto.
+El sistema SHALL desactivar empleados mediante el indicador `activo` en lugar de borrarlos, conservando la trazabilidad. El sistema SHALL registrar el instante de desactivacion en `fecha_baja` (timestamp con zona) y SHALL limpiarlo cuando el empleado se reactive. La resolucion de contactos MUST ignorar empleados inactivos. El sistema SHALL conservar la fila mientras la relacion laboral este activa mas 1 año; vencido ese plazo SHALL ejecutar el borrado fisico, evaluando el vencimiento como `fecha_baja + 1 año`. El borrado por retencion SHALL ser idempotente, SHALL conservar los empleados activos y las bajas recientes, y SHALL dejar un registro auditable con el conteo de filas eliminadas SIN datos personales. El borrado fisico SHALL tambien ejecutarse ante una solicitud de supresion (ARCO) y SHALL ser ejecutado por un `administrador_directorio`. El borrado fisico MUST NOT ser el camino operativo por defecto.
 
 #### Scenario: Empleado desactivado no resuelve
 
@@ -160,12 +160,12 @@ El sistema SHALL desactivar empleados mediante el indicador `activo` en lugar de
 #### Scenario: Reactivacion
 
 - **WHEN** un empleado desactivado se reactiva
-- **THEN** vuelve a ser elegible para la resolucion sin volver a cargar sus datos
+- **THEN** vuelve a ser elegible para la resolucion sin volver a cargar sus datos y su `fecha_baja` queda limpia
 
 #### Scenario: Borrado por retencion
 
-- **WHEN** una fila de directorio supera la relacion laboral activa mas 1 año
-- **THEN** el sistema ejecuta su borrado fisico
+- **WHEN** una fila de directorio desactivada supera `fecha_baja + 1 año`
+- **THEN** el sistema ejecuta su borrado fisico, conserva los activos y las bajas recientes, y registra el conteo sin datos personales
 
 #### Scenario: Borrado por ARCO
 

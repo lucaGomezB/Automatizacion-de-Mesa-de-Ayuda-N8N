@@ -20,7 +20,6 @@ Decisión de diseño:
 """
 
 from fastapi import FastAPI, Request
-from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -70,6 +69,40 @@ def _error_body(code: str, message: str, details: dict | None = None) -> dict:
     if details:
         body["error"]["details"] = details
     return body
+
+
+# Campos de un error de Pydantic que son seguros de exponer al cliente.
+# `input` (el valor enviado) y `ctx` (que puede contener el valor o el límite)
+# NUNCA se serializan: un 422 no debe reflejar PII en claro (DIR-006).
+_SAFE_VALIDATION_ERROR_FIELDS = ("loc", "msg", "type")
+
+
+def _sanitize_validation_errors(errors: list[dict]) -> list[dict]:
+    """
+    Reduce los errores de validación de Pydantic a campos no sensibles.
+
+    Pydantic incluye en `errors()` el valor enviado (`input`) y un `ctx` que
+    puede contenerlo (por ejemplo el límite o el valor ofensor). Exponerlos
+    devolvería PII en claro en el cuerpo del 422. Esta función conserva
+    únicamente `loc`, `msg` y `type`, que alcanzan para que el cliente
+    identifique el campo y la causa sin filtrar el dato.
+
+    Args:
+        errors: Lista cruda de `RequestValidationError.errors()`.
+
+    Returns:
+        Lista de diccionarios con solo los campos seguros.
+    """
+    sanitized: list[dict] = []
+    for error in errors:
+        item: dict = {}
+        loc = error.get("loc")
+        if loc is not None:
+            item["loc"] = list(loc)
+        item["msg"] = error.get("msg")
+        item["type"] = error.get("type")
+        sanitized.append(item)
+    return sanitized
 
 
 def register_error_handlers(app: FastAPI) -> None:
@@ -151,13 +184,16 @@ def register_error_handlers(app: FastAPI) -> None:
 
         Devuelve 422 con `error.code`/`error.message` y los errores de detalle
         bajo `error.details`, sin el campo `detail` en la raiz (ERR-001).
+
+        Los errores se SANEAN (`_sanitize_validation_errors`): no se expone el
+        valor enviado (`input`) ni `ctx`, para no reflejar PII en claro (W1).
         """
         return JSONResponse(
             status_code=422,
             content=_error_body(
                 "VALIDATION_ERROR",
                 "Request validation failed.",
-                {"errors": jsonable_encoder(exc.errors())},
+                {"errors": _sanitize_validation_errors(exc.errors())},
             ),
         )
 

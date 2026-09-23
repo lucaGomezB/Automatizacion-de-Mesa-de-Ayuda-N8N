@@ -71,16 +71,38 @@ class EmpleadoRepository(BaseRepository[Empleado]):
         return list(result.scalars().all())
 
     async def get_by_user_id(self, user_id: int) -> Empleado | None:
-        """Resuelve el empleado ACTIVO vinculado a una cuenta de autenticacion."""
+        """
+        Resuelve el empleado ACTIVO vinculado a una cuenta de autenticacion.
+
+        `user_id` NO es UNIQUE en el directorio: si por un error de datos hay
+        mas de una fila activa vinculada a la misma cuenta, se devuelve la
+        primera por `id` (deterministica) en lugar de lanzar
+        `MultipleResultsFound` (N3). La busqueda nunca falla por duplicados.
+        """
         result = await self._session.execute(
             self._con_sector(
-                select(Empleado).where(
+                select(Empleado)
+                .where(
                     Empleado.user_id == user_id,
                     Empleado.activo.is_(True),
                 )
+                .order_by(Empleado.id)
             )
         )
-        return result.scalar_one_or_none()
+        return result.scalars().first()
+
+    async def listar_inactivos(self) -> list[Empleado]:
+        """
+        Devuelve TODOS los empleados inactivos (base de la retencion, DIR-007).
+
+        No pagina: el conjunto de bajas es acotado y la purga debe evaluar el
+        universo completo. El filtro de vencimiento (fecha_baja + 1 año) se
+        resuelve en el servicio con una funcion pura y deterministica.
+        """
+        result = await self._session.execute(
+            select(Empleado).where(Empleado.activo.is_(False)).order_by(Empleado.id)
+        )
+        return list(result.scalars().all())
 
     async def listar(
         self, *, solo_activos: bool = False, limit: int = 100, offset: int = 0

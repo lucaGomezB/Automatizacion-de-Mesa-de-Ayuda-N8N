@@ -174,3 +174,59 @@ async def test_admin_accede_puntual_a_cualquier_sector(engine, vis_env):
     async with _client(engine, vis_env["admin_user"]) as c:
         resp = await c.get(f"/api/v1/incidentes/{vis_env['incidente_b']}")
     assert resp.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_no_admin_patch_fuera_de_sector_404_y_no_modifica(engine, vis_env):
+    """Un no administrador no puede mutar un incidente fuera de su sector (W3)."""
+    async with _client(engine, vis_env["oper_a_user"]) as c:
+        resp = await c.patch(
+            f"/api/v1/incidentes/{vis_env['incidente_b']}",
+            json={"prioridad": "alta"},
+        )
+    assert resp.status_code == 404
+    assert resp.json()["error"]["code"] == "NOT_FOUND"
+
+    # El incidente NO debe haberse modificado (verificado con alcance admin).
+    async with _client(engine, vis_env["admin_user"]) as c:
+        detalle = await c.get(f"/api/v1/incidentes/{vis_env['incidente_b']}")
+    assert detalle.status_code == 200
+    assert detalle.json()["prioridad"] == "media"
+
+
+@pytest.mark.asyncio
+async def test_no_admin_patch_dentro_de_sector_200(engine, vis_env):
+    """El control positivo: un no administrador si muta un incidente de su sector."""
+    async with _client(engine, vis_env["oper_a_user"]) as c:
+        resp = await c.patch(
+            f"/api/v1/incidentes/{vis_env['incidente_a']}",
+            json={"prioridad": "alta"},
+        )
+    assert resp.status_code == 200, resp.text
+    assert resp.json()["prioridad"] == "alta"
+
+
+@pytest.mark.asyncio
+async def test_admin_patch_fuera_de_sector_200(engine, vis_env):
+    """El administrador si puede mutar un incidente de cualquier sector."""
+    async with _client(engine, vis_env["admin_user"]) as c:
+        resp = await c.patch(
+            f"/api/v1/incidentes/{vis_env['incidente_b']}",
+            json={"prioridad": "alta"},
+        )
+    assert resp.status_code == 200, resp.text
+    assert resp.json()["prioridad"] == "alta"
+
+
+@pytest.mark.asyncio
+async def test_acceso_puntual_sin_empleado_404(engine, vis_env):
+    """Una cuenta con alcance vacio no accede por ID ni muta (N1)."""
+    async with _client(engine, vis_env["sin_empleado_user"]) as c:
+        detalle = await c.get(f"/api/v1/incidentes/{vis_env['incidente_a']}")
+        patch = await c.patch(
+            f"/api/v1/incidentes/{vis_env['incidente_a']}",
+            json={"prioridad": "alta"},
+        )
+    assert detalle.status_code == 404
+    assert patch.status_code == 404
+    assert patch.json()["error"]["code"] == "NOT_FOUND"
