@@ -2076,7 +2076,7 @@
     },
     "/api/v1/telefonia/recording-status": {
       "post": {
-        "description": "Procesa la notificacion de grabacion disponible de Twilio.\n\nIdempotente por `CallSid`: un callback repetido no re-descarga, no\nre-transcribe ni re-reserva. Responde 200 en cualquiera de los estados del\ningreso para no perder la grabacion ante un fallo aguas abajo.",
+        "description": "Procesa la notificacion de grabacion disponible de Twilio.\n\nIdempotente por `CallSid`: un callback repetido sobre un ingreso ya\ntranscrito o `pendiente` no re-descarga, no re-transcribe ni re-reserva. Si\nel ingreso quedo en un estado terminal de error, el callback lo reprocesa.\n\nCodigos de respuesta segun el estado resultante:\n    - `transcrito`, `pendiente` o `guarda_denegada` -> 200.\n    - `error_descarga` o `error_stt` -> 503, para invitar el reintento nativo\n      de Twilio. El estado de error se confirma antes de responder para que\n      el siguiente callback pueda reprocesarlo.",
         "operationId": "recording_status_api_v1_telefonia_recording_status_post",
         "parameters": [
           {
@@ -2129,6 +2129,9 @@
               }
             },
             "description": "Validation Error"
+          },
+          "503": {
+            "description": "Fallo transitorio de descarga o STT. El ingreso queda persistido en estado de error para que Twilio reintente el callback (W5)."
           }
         },
         "summary": "Callback de estado de grabacion de Twilio",

@@ -42,6 +42,7 @@
         maxLength="45"
         finishOnKey="#"
         playBeep="true"
+        channels="mono"
         recordingStatusCallback="https://TU-BACKEND/api/v1/telefonia/recording-status"
         action="https://TU-BACKEND/api/v1/telefonia/record-complete"
     />

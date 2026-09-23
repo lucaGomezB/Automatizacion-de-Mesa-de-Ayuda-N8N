@@ -932,6 +932,7 @@ def test_twiml_xml_es_valido_y_graba_mono_con_callbacks():
     record = root.find("Record")
     assert record is not None
     assert "transcribe" not in record.attrib
+    assert record.attrib.get("channels") == "mono"
     assert record.attrib.get("recordingStatusCallback", "").endswith(
         "/api/v1/telefonia/recording-status"
     )

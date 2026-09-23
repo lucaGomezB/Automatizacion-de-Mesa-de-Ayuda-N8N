@@ -23,7 +23,9 @@ Frontera de PII:
 Manejo de fallos:
     La guarda denegada, el fallo de descarga y el fallo de STT NO abortan ni
     descartan el ingreso: se persiste el estado explicito y el detalle para
-    reintento o revision humana (design.md D11).
+    reintento o revision humana (design.md D11). Un callback repetido de Twilio
+    sobre un ingreso en estado terminal de error lo reprocesa tras un reclamo
+    atomico (W5), de modo que la recuperacion no es manual.
 
 Referencias:
     design.md D4, D6, D8, D9, D10, D11
@@ -64,6 +66,26 @@ logger = get_logger(__name__)
 # `min(duracion, 45) / 45` unidades del costo unitario.
 STT_DURATION_CAP_SECONDS = 45
 _PROVIDER = "gemini"
+
+# Estados terminales de error elegibles para reintento (W5). Un callback repetido
+# sobre uno de estos estados REPROCESA el ingreso; sobre `transcrito` o
+# `pendiente` es un no-op idempotente.
+_TERMINAL_ERROR_STATES = frozenset(
+    {
+        TranscripcionEstado.guarda_denegada.value,
+        TranscripcionEstado.error_descarga.value,
+        TranscripcionEstado.error_stt.value,
+    }
+)
+
+# Estados cuyo fallo es transitorio de infraestructura: el endpoint responde 503
+# para invitar el reintento nativo de Twilio (W5).
+TRANSIENT_ERROR_STATES = frozenset(
+    {
+        TranscripcionEstado.error_descarga.value,
+        TranscripcionEstado.error_stt.value,
+    }
+)
 
 # Referencias retenidas de las tareas fire-and-forget del handoff (patron de
 # `IncidenteService`): evita que el GC recolecte la tarea antes de completarse.
@@ -139,6 +161,13 @@ class TelefoniaService:
         """
         Procesa el callback de estado de grabacion de Twilio.
 
+        Idempotencia por `CallSid` (design.md D8, W5):
+            - Ingreso ya transcrito o `pendiente` -> no-op, devuelve la fila.
+            - Ingreso en estado terminal de error (`guarda_denegada`,
+              `error_descarga` o `error_stt`) -> reclamo atomico y reproceso de la
+              MISMA fila, preservando `ingresado_en`.
+            - Sin ingreso -> alta nueva.
+
         Args:
             callback: parametros del callback ya validados por firma.
 
@@ -146,20 +175,41 @@ class TelefoniaService:
             El ingreso persistido, en cualquiera de sus estados (transcrito,
             error de descarga/STT o guarda denegada).
         """
-        # 1. Idempotencia por CallSid ANTES de la reserva paga (design.md D8).
         existente = await self._ingreso_repo.get_by_call_sid(callback.call_sid)
         if existente is not None:
-            logger.info(
-                "telefonia_idempotente",
-                call_sid=callback.call_sid,
-                ingreso_id=existente.id,
-            )
-            return existente
+            if existente.transcripcion_estado not in _TERMINAL_ERROR_STATES:
+                logger.info(
+                    "telefonia_idempotente",
+                    call_sid=callback.call_sid,
+                    ingreso_id=existente.id,
+                    estado=existente.transcripcion_estado,
+                )
+                return existente
+            return await self._retry_existing(existente, callback)
 
-        # 2. Sellar `ingresado_en` ANTES de descargar y transcribir (D4).
+        return await self._create_new(callback)
+
+    async def commit_error_state(self) -> None:
+        """
+        Confirma el estado de error persistido antes de responder 503 (W5).
+
+        La respuesta 503 invita el reintento nativo de Twilio, pero la dependency
+        `get_db_session` revierte la transaccion ante una excepcion. Confirmar
+        aqui garantiza que el ingreso quede persistido en su estado terminal de
+        error y sea reprocesable por el siguiente callback, en lugar de perderse.
+        """
+        await self._session.commit()
+
+    # ── Idempotencia y reintento ────────────────────────────────────────────
+
+    async def _create_new(
+        self, callback: RecordingStatusCallback
+    ) -> TelefoniaIngreso:
+        """Alta nueva del ingreso cuando el `CallSid` no existe (design.md D8)."""
+        # Sellar `ingresado_en` ANTES de descargar y transcribir (D4).
         ingresado_en = self._clock.now()
 
-        # 3. Persistir el ingreso en estado pendiente (trazabilidad de fallos).
+        # Persistir el ingreso en estado pendiente (trazabilidad de fallos).
         stt_client = self._resolve_stt()
         try:
             ingreso = await self._ingreso_repo.create(
@@ -180,7 +230,69 @@ class TelefoniaService:
                 raise
             return existente
 
-        # 4. Reservar `backend_stt` estimando por duracion (cap 45 s) (D6).
+        return await self._run_pipeline(ingreso, callback)
+
+    async def _retry_existing(
+        self, existente: TelefoniaIngreso, callback: RecordingStatusCallback
+    ) -> TelefoniaIngreso:
+        """
+        Reprocesa un ingreso en estado terminal de error tras reclamarlo (W5).
+
+        El reclamo atomico corre en la misma transaccion que el procesamiento, de
+        modo que la fila queda bloqueada: si otro reintento concurrente gano el
+        UPDATE, esta ejecucion afecta 0 filas y se resuelve como no-op.
+        """
+        reclamado = await self._ingreso_repo.claim_for_retry(
+            callback.call_sid, _TERMINAL_ERROR_STATES
+        )
+        if not reclamado:
+            actual = await self._ingreso_repo.get_by_call_sid(callback.call_sid)
+            logger.info(
+                "telefonia_reintento_no_reclamado",
+                call_sid=callback.call_sid,
+                ingreso_id=existente.id,
+            )
+            return actual if actual is not None else existente
+
+        # El UPDATE Core no sincroniza el identity map: recargar el estado ya
+        # reclamado (`pendiente`, `error_detalle` limpio) antes de reprocesar.
+        await self._session.refresh(existente)
+        self._apply_callback_fields(existente, callback)
+        logger.info(
+            "telefonia_reintento",
+            call_sid=callback.call_sid,
+            ingreso_id=existente.id,
+        )
+        return await self._run_pipeline(existente, callback)
+
+    @staticmethod
+    def _apply_callback_fields(
+        ingreso: TelefoniaIngreso, callback: RecordingStatusCallback
+    ) -> None:
+        """
+        Actualiza los datos aportados por el nuevo callback.
+
+        MUST NOT tocar `ingresado_en`: es el sello de auditoria y se preserva.
+        """
+        if callback.recording_sid is not None:
+            ingreso.recording_sid = callback.recording_sid
+        if callback.caller is not None:
+            ingreso.caller_cifrado = callback.caller
+        if callback.recording_duration is not None:
+            ingreso.duracion_segundos = callback.recording_duration
+
+    # ── Pipeline de procesamiento ───────────────────────────────────────────
+
+    async def _run_pipeline(
+        self, ingreso: TelefoniaIngreso, callback: RecordingStatusCallback
+    ) -> TelefoniaIngreso:
+        """
+        Reserva -> descarga -> STT -> pseudonimizacion -> persistencia -> handoff.
+
+        Compartido por el alta nueva y el reintento: en ambos casos la fila ya
+        existe en `pendiente` y se procesa dentro de la misma transaccion.
+        """
+        # Reservar `backend_stt` estimando por duracion (cap 45 s) (D6).
         amount = estimate_stt_amount(callback.recording_duration)
         decision = await self._reserve(amount, callback.caller)
         if not decision.allowed:
@@ -190,7 +302,7 @@ class TelefoniaService:
                 decision.cause or "guarda_denegada",
             )
 
-        # 5. Descargar la grabacion autenticada (D2).
+        # Descargar la grabacion autenticada (D2).
         try:
             audio = await self._resolve_media().download(callback.recording_url)
         except TwilioMediaError as exc:
@@ -198,25 +310,26 @@ class TelefoniaService:
                 ingreso, TranscripcionEstado.error_descarga, exc.message
             )
 
-        # 6. Transcribir con el motor dedicado (D2).
+        # Transcribir con el motor dedicado (D2).
         try:
-            texto = await stt_client.transcribe(audio)
+            texto = await self._resolve_stt().transcribe(audio)
         except SttTranscriptionError as exc:
             return await self._persist_failure(
                 ingreso, TranscripcionEstado.error_stt, exc.message
             )
 
-        # 7. Pseudonimizar INMEDIATAMENTE, antes de cualquier handoff (D9).
+        # Pseudonimizar INMEDIATAMENTE, antes de cualquier handoff (D9).
         resultado = pseudonymize(
             texto, self._settings.pseudonymization_internal_domains
         )
         ingreso.transcript_original = texto
         ingreso.descripcion_pseudonimizada = resultado.texto
         ingreso.transcripcion_estado = TranscripcionEstado.transcrito
+        ingreso.error_detalle = None
         ingreso.persistido_en = self._clock.now()
         await self._session.flush()
 
-        # 8. Handoff autenticado fire-and-forget con SOLO la pseudonimizada (D7).
+        # Handoff autenticado fire-and-forget con SOLO la pseudonimizada (D7).
         payload = build_telefonia_handoff_payload(
             descripcion_pseudonimizada=resultado.texto,
             call_sid=ingreso.call_sid,
@@ -274,4 +387,9 @@ class TelefoniaService:
         return self._media
 
 
-__all__ = ["TelefoniaService", "estimate_stt_amount", "STT_DURATION_CAP_SECONDS"]
+__all__ = [
+    "TelefoniaService",
+    "estimate_stt_amount",
+    "STT_DURATION_CAP_SECONDS",
+    "TRANSIENT_ERROR_STATES",
+]

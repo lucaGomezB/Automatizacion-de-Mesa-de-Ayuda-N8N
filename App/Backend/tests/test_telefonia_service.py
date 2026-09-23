@@ -165,7 +165,7 @@ class RecordingNotifier:
         self.payloads.append(payload)
 
 
-def _service(session, guard, media, stt, notifier, settings=None):
+def _service(session, guard, media, stt, notifier, settings=None, clock=None):
     from app.services.telefonia_service import TelefoniaService
 
     return TelefoniaService(
@@ -174,7 +174,7 @@ def _service(session, guard, media, stt, notifier, settings=None):
         media_client=media,
         stt_client=stt,
         notifier=notifier,
-        clock=FrozenClock(_NOW),
+        clock=clock if clock is not None else FrozenClock(_NOW),
         settings=settings if settings is not None else _settings(),
     )
 
@@ -419,3 +419,170 @@ async def test_latencia_incluye_stt_entre_sello_y_persistencia(db_session):
         "La latencia end-to-end debe incluir el tiempo de transcripcion del backend "
         f"(esperado 7 s, obtenido {latencia})"
     )
+
+
+# ── W5 RED — Reintento por estado terminal de error ─────────────────────────
+
+
+def _seed_ingreso(db_session, call_sid: str, estado: str):
+    from app.repositories.telefonia_ingreso_repository import (
+        TelefoniaIngresoRepository,
+    )
+
+    return TelefoniaIngresoRepository(db_session).create(
+        call_sid=call_sid, transcripcion_estado=estado
+    )
+
+
+async def test_callsid_transcrito_no_reprocesa(db_session):
+    """Un ingreso ya transcrito sigue siendo un no-op (no re-descarga ni STT)."""
+    existente = await _seed_ingreso(db_session, "CA-TRANS-NOOP", "transcrito")
+
+    guard = RecordingGuard()
+    media = RecordingMedia()
+    stt = RecordingStt()
+    notifier = RecordingNotifier()
+    service = _service(db_session, guard, media, stt, notifier)
+
+    resultado = await service.process_recording(_callback(call_sid="CA-TRANS-NOOP"))
+    await asyncio.sleep(0)
+
+    assert resultado.id == existente.id
+    assert resultado.transcripcion_estado == "transcrito"
+    assert guard.calls == []
+    assert media.calls == []
+    assert stt.calls == []
+    assert notifier.payloads == []
+
+
+async def test_callsid_pendiente_no_reprocesa(db_session):
+    """Un ingreso en vuelo (`pendiente`) es un no-op ante un callback repetido."""
+    existente = await _seed_ingreso(db_session, "CA-PEND-NOOP", "pendiente")
+
+    guard = RecordingGuard()
+    media = RecordingMedia()
+    stt = RecordingStt()
+    notifier = RecordingNotifier()
+    service = _service(db_session, guard, media, stt, notifier)
+
+    resultado = await service.process_recording(_callback(call_sid="CA-PEND-NOOP"))
+    await asyncio.sleep(0)
+
+    assert resultado.id == existente.id
+    assert resultado.transcripcion_estado == "pendiente"
+    assert guard.calls == []
+    assert media.calls == []
+    assert stt.calls == []
+    assert notifier.payloads == []
+
+
+@pytest.mark.parametrize(
+    "estado_inicial",
+    ["guarda_denegada", "error_descarga", "error_stt"],
+)
+async def test_reintento_reprocesa_desde_estado_terminal_de_error(
+    db_session, estado_inicial
+):
+    """Un callback repetido sobre un ingreso en error lo reprocesa y transcribe."""
+    from app.clients.gemini_stt import SttTranscriptionError
+    from app.utils.twilio_media import TwilioMediaDownloadError
+
+    guard = RecordingGuard(
+        allowed=estado_inicial != "guarda_denegada", cause="budget"
+    )
+    media = RecordingMedia(
+        error=(
+            TwilioMediaDownloadError("fallo")
+            if estado_inicial == "error_descarga"
+            else None
+        )
+    )
+    stt = RecordingStt(
+        error=SttTranscriptionError("fallo") if estado_inicial == "error_stt" else None
+    )
+    notifier = RecordingNotifier()
+    service = _service(db_session, guard, media, stt, notifier)
+    call_sid = f"CA-RETRY-{estado_inicial}"
+
+    primero = await service.process_recording(_callback(call_sid=call_sid))
+    assert primero.transcripcion_estado == estado_inicial
+
+    # Habilitar el exito y limpiar los registros para medir el segundo intento.
+    guard.allowed = True
+    media.error = None
+    stt.error = None
+    guard.calls.clear()
+    media.calls.clear()
+    stt.calls.clear()
+    notifier.payloads.clear()
+
+    segundo = await service.process_recording(_callback(call_sid=call_sid))
+    await asyncio.sleep(0)
+
+    assert segundo.id == primero.id
+    assert segundo.transcripcion_estado == "transcrito"
+    # Modelo por intento: el reintento vuelve a reservar la superficie paga.
+    assert len(guard.calls) == 1
+    assert media.calls == [_URL]
+    assert stt.calls == [b"WAVDATA"]
+    assert len(notifier.payloads) == 1
+
+
+async def test_reintento_preserva_ingresado_en(db_session):
+    """`ingresado_en` es el sello de auditoria y NO se sobrescribe al reintentar."""
+    from app.utils.twilio_media import TwilioMediaDownloadError
+
+    clock = FrozenClock(_NOW)
+    media = RecordingMedia(error=TwilioMediaDownloadError("fallo"))
+    service = _service(
+        db_session,
+        RecordingGuard(),
+        media,
+        RecordingStt(),
+        RecordingNotifier(),
+        clock=clock,
+    )
+
+    primero = await service.process_recording(_callback(call_sid="CA-RETRY-SEAL"))
+    assert primero.transcripcion_estado == "error_descarga"
+    sello = primero.ingresado_en
+    assert sello is not None
+
+    clock.advance(120)
+    media.error = None
+
+    segundo = await service.process_recording(_callback(call_sid="CA-RETRY-SEAL"))
+    await asyncio.sleep(0)
+
+    assert segundo.transcripcion_estado == "transcrito"
+    assert segundo.ingresado_en == sello
+
+
+async def test_claim_de_cero_filas_no_reprocesa(db_session, monkeypatch):
+    """Si otro reintento concurrente reclamo la fila, el servicio no reprocesa."""
+    from app.repositories.telefonia_ingreso_repository import (
+        TelefoniaIngresoRepository,
+    )
+
+    existente = await _seed_ingreso(db_session, "CA-LOSER", "error_descarga")
+
+    async def _sin_reclamo(self, call_sid, estados_error):
+        return False
+
+    monkeypatch.setattr(TelefoniaIngresoRepository, "claim_for_retry", _sin_reclamo)
+
+    guard = RecordingGuard()
+    media = RecordingMedia()
+    stt = RecordingStt()
+    notifier = RecordingNotifier()
+    service = _service(db_session, guard, media, stt, notifier)
+
+    resultado = await service.process_recording(_callback(call_sid="CA-LOSER"))
+    await asyncio.sleep(0)
+
+    assert resultado.id == existente.id
+    assert resultado.transcripcion_estado == "error_descarga"
+    assert guard.calls == []
+    assert media.calls == []
+    assert stt.calls == []
+    assert notifier.payloads == []

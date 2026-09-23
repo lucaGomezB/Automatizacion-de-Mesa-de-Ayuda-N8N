@@ -47,14 +47,39 @@ El backend SHALL sellar el instante de ingreso de la telefonía al recibir el ca
 - **WHEN** el backend entrega el ingreso a n8n
 - **THEN** el payload del handoff incluye el `ingresado_en` sellado por el backend
 
-### Requirement: Idempotencia del ingreso por CallSid
+### Requirement: Idempotencia del ingreso por CallSid con reintento por estado
 
-El backend SHALL tratar `CallSid` como la clave de idempotencia del ingreso de telefonía. Ante la recepción repetida del mismo `CallSid`, el backend SHALL NOT descargar ni transcribir de nuevo, SHALL NOT reservar presupuesto pago adicional y SHALL devolver un resultado idempotente. La idempotencia SHALL resolverse ANTES de la reserva de la superficie paga y de cualquier llamada a un proveedor externo.
+El backend SHALL tratar `CallSid` como la clave de idempotencia del ingreso de telefonía. Ante la recepción repetida del mismo `CallSid`, el backend SHALL distinguir el estado del ingreso:
 
-#### Scenario: Callback repetido no reprocesa
+- Si el ingreso ya está `transcrito` o `pendiente`, SHALL ser un no-op: SHALL NOT descargar, SHALL NOT transcribir de nuevo, SHALL NOT reservar presupuesto pago adicional y SHALL devolver el ingreso existente.
+- Si el ingreso está en un estado terminal de error (`guarda_denegada`, `error_descarga` o `error_stt`), SHALL reprocesarlo a través del pipeline normal.
 
-- **WHEN** llega un callback de grabación con un `CallSid` ya registrado
-- **THEN** el backend no descarga ni transcribe de nuevo y no reserva presupuesto adicional
+El reproceso SHALL comenzar con un reclamo atómico que transicione el ingreso fuera del estado de error dentro de la MISMA transacción que el procesamiento posterior, de modo que la fila quede bloqueada y solo un reintento concurrente lo reclame. El reintento que no gane el reclamo (el UPDATE afecta cero filas) SHALL resolver como no-op devolviendo el ingreso existente. El reproceso SHALL preservar `ingresado_en` (el sello de auditoría) y reservar la superficie paga por cada intento. La idempotencia SHALL resolverse ANTES de la reserva de la superficie paga y de cualquier llamada a un proveedor externo.
+
+#### Scenario: Callback repetido sobre un ingreso transcrito no reprocesa
+
+- **WHEN** llega un callback de grabación con un `CallSid` cuyo ingreso ya está `transcrito`
+- **THEN** el backend no descarga, no transcribe de nuevo ni reserva presupuesto adicional, y devuelve el ingreso existente
+
+#### Scenario: Callback repetido sobre un ingreso pendiente no reprocesa
+
+- **WHEN** llega un callback de grabación con un `CallSid` cuyo ingreso está `pendiente`
+- **THEN** el backend no descarga, no transcribe de nuevo ni reserva presupuesto adicional
+
+#### Scenario: Callback repetido sobre un ingreso en error lo reprocesa
+
+- **WHEN** llega un callback de grabación con un `CallSid` cuyo ingreso quedó en `error_descarga`, `error_stt` o `guarda_denegada`
+- **THEN** el backend reclama el ingreso atómicamente y lo reprocesa por el pipeline normal
+
+#### Scenario: El reintento preserva el sello de ingreso
+
+- **WHEN** el backend reprocesa un ingreso en estado terminal de error
+- **THEN** el `ingresado_en` original se conserva sin sobrescribirse
+
+#### Scenario: Solo un reintento concurrente reclama el ingreso
+
+- **WHEN** dos callbacks repetidos del mismo `CallSid` intentan reprocesar el ingreso en error de forma concurrente
+- **THEN** solo uno gana el reclamo atómico y reprocesa, y el otro resuelve como no-op devolviendo el ingreso existente
 
 #### Scenario: CallSid nuevo inicia el procesamiento
 
@@ -65,6 +90,20 @@ El backend SHALL tratar `CallSid` como la clave de idempotencia del ingreso de t
 
 - **WHEN** se evalúa un ingreso ya registrado
 - **THEN** la verificación de idempotencia ocurre antes de la reserva de la superficie paga
+
+### Requirement: Respuesta HTTP del callback según el estado del ingreso
+
+El endpoint del callback de estado de grabación SHALL mapear el estado resultante del ingreso a un código HTTP. Ante un fallo transitorio de infraestructura (`error_descarga` o `error_stt`), SHALL persistir el estado de error del ingreso y SHALL responder HTTP 503 con el envelope de error estándar, de modo que el reintento nativo del callback de Twilio pueda reprocesar el ingreso. Ante `transcrito`, `pendiente` o `guarda_denegada`, SHALL responder HTTP 200 con el modelo de respuesta del callback.
+
+#### Scenario: El fallo transitorio responde 503
+
+- **WHEN** el ingreso resultante queda en `error_descarga` o `error_stt`
+- **THEN** el endpoint responde HTTP 503 con el envelope de error estándar y el ingreso queda persistido en su estado terminal de error
+
+#### Scenario: Los estados no transitorios responden 200
+
+- **WHEN** el ingreso resultante queda en `transcrito`, `pendiente` o `guarda_denegada`
+- **THEN** el endpoint responde HTTP 200 con el modelo de respuesta del callback
 
 ### Requirement: Descarga autenticada de la grabación
 
@@ -163,7 +202,7 @@ El backend SHALL entregar el ingreso a n8n mediante una invocación autenticada 
 
 ### Requirement: Recuperación ante fallo de transcripción o denegación de la guarda
 
-Cuando la guarda de costo deniegue la reserva, o cuando la descarga o la transcripción fallen, el backend SHALL NOT abortar la ejecución ni descartar silenciosamente el ingreso. El backend SHALL persistir el ingreso con un estado de transcripción explícito y un detalle de error, de modo que el caso quede disponible para reintento o revisión humana. La ejecución MUST NOT quedar en un estado ambiguo.
+Cuando la guarda de costo deniegue la reserva, o cuando la descarga o la transcripción fallen, el backend SHALL NOT abortar la ejecución ni descartar silenciosamente el ingreso. El backend SHALL persistir el ingreso con un estado de transcripción explícito y un detalle de error, de modo que el caso quede disponible para reintento o revisión humana. Un fallo transitorio de descarga o transcripción SHALL además invitar el reintento nativo del callback (HTTP 503) y un callback repetido SHALL reprocesar el ingreso automáticamente, sin intervención manual. La ejecución MUST NOT quedar en un estado ambiguo.
 
 #### Scenario: La guarda denegada conserva el ingreso
 
@@ -179,6 +218,11 @@ Cuando la guarda de costo deniegue la reserva, o cuando la descarga o la transcr
 
 - **WHEN** ocurre cualquier fallo del flujo de transcripción
 - **THEN** el registro de ingreso permanece disponible para reintento o revisión
+
+#### Scenario: El reintento es automático
+
+- **WHEN** un ingreso queda en un estado terminal de error transitorio
+- **THEN** el estado queda persistido y un callback repetido del mismo `CallSid` reprocesa el ingreso sin intervención manual
 
 ### Requirement: Grabación mono con señales de finalización y estado
 
