@@ -22,6 +22,7 @@ Campos EXACTOS (no se almacena ningun otro dato personal):
 | `sector_id`  | int (FK)       | FK a `sector`, NULL. Obligatorio para usuario_final/operador. |
 | `rol`        | varchar(30)    | `usuario_final` / `operador` / `administrador_directorio`.    |
 | `activo`     | bool           | Default `true`.                                               |
+| `fecha_baja` | timestamptz    | NULL; instante de desactivacion (base de la retencion).       |
 | `user_id`    | int (FK)       | FK nullable a `users`, ON DELETE SET NULL.                    |
 | `created_at` | timestamptz    | Auditoria temporal.                                           |
 | `updated_at` | timestamptz    | Auditoria temporal.                                           |
@@ -71,12 +72,22 @@ ACTIVO, el resultado es `ambiguo` y NO se elige un contacto arbitrariamente.
 
 ## 5. Ciclo de vida, retencion y ARCO
 
-- Desactivacion: `activo=false` en lugar de borrado operativo. La resolucion
-  ignora inactivos. La reactivacion vuelve a hacer elegible al empleado.
-- Retencion: mientras la relacion laboral este activa + 1 anio, luego borrado
-  fisico.
+- Desactivacion: `activo=false` y se sella `fecha_baja` con el instante (UTC). La
+  resolucion ignora inactivos. La reactivacion vuelve a hacer elegible al empleado
+  y LIMPIA `fecha_baja`.
+- Retencion: la fila se conserva mientras la relacion laboral este activa + 1 anio.
+  Vencido `fecha_baja + 1 anio`, se ejecuta el borrado FISICO. La evaluacion del
+  vencimiento es una funcion pura (`retencion_vencida`) y la purga es IDEMPOTENTE:
+  conserva activos y bajas recientes, y registra el conteo sin PII.
 - ARCO: ante una solicitud de supresion, un `administrador_directorio` ejecuta el
   borrado FISICO. No es el camino operativo por defecto.
+
+Purga programada/operativa por retencion (espeja el seed dev-only):
+
+```bash
+cd App/Backend
+python -m scripts.purgar_directorio
+```
 
 GOVERNANCE: la politica de retencion/ARCO es HIGH y requiere revision humana antes
 de activar datos reales.

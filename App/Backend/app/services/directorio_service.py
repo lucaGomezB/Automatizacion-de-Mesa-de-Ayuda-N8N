@@ -14,6 +14,8 @@ Privacidad (Ley 25.326 / DIR-006):
     resultado: NUNCA el email, el telefono ni el nombre en claro.
 """
 
+from datetime import datetime, timezone
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import (
@@ -22,6 +24,7 @@ from app.core.exceptions import (
     SectorNotFoundError,
 )
 from app.core.logging import get_logger
+from app.models.base import utcnow
 from app.models.empleado import Empleado, RolEmpleado
 from app.repositories.empleado_repository import EmpleadoRepository
 from app.repositories.sector_repository import SectorRepository
@@ -31,6 +34,37 @@ logger = get_logger(__name__)
 
 # Roles que EXIGEN sector (DIR-004).
 _ROLES_CON_SECTOR = (RolEmpleado.usuario_final, RolEmpleado.operador)
+
+
+def _asegurar_utc(valor: datetime) -> datetime:
+    """Interpreta un instante naive como UTC (SQLite no preserva tzinfo)."""
+    if valor.tzinfo is None:
+        return valor.replace(tzinfo=timezone.utc)
+    return valor
+
+
+def _sumar_un_anio(valor: datetime) -> datetime:
+    """
+    Suma un año calendario, acotando el 29-feb a 28-feb cuando el destino no
+    es bisiesto (evita el ValueError de `replace`).
+    """
+    try:
+        return valor.replace(year=valor.year + 1)
+    except ValueError:
+        return valor.replace(year=valor.year + 1, day=28)
+
+
+def retencion_vencida(fecha_baja: datetime | None, ahora: datetime) -> bool:
+    """
+    True si la fila supero la retencion "baja + 1 año" (DIR-007).
+
+    Es una funcion pura: no consulta la base ni el reloj. Un `fecha_baja` nulo
+    (empleado activo o sin sellar) NUNCA se considera vencido. Se normaliza un
+    datetime naive como UTC para que la comparacion nunca mezcle naive y aware.
+    """
+    if fecha_baja is None:
+        return False
+    return _sumar_un_anio(_asegurar_utc(fecha_baja)) <= _asegurar_utc(ahora)
 
 
 def _normalizar_rol(rol: str | RolEmpleado | None) -> RolEmpleado:
@@ -180,9 +214,10 @@ class DirectorioService:
     async def desactivar_empleado(
         self, empleado_id: int, *, actor_id: int | None = None
     ) -> Empleado:
-        """Marca `activo=False` (desactivacion, no borrado operativo)."""
+        """Marca `activo=False` y sella `fecha_baja` (desactivacion, no borrado)."""
         empleado = await self.obtener(empleado_id)
         empleado.activo = False
+        empleado.fecha_baja = utcnow()
         self._session.add(empleado)
         await self._session.flush()
         await self._session.refresh(empleado)
@@ -192,9 +227,10 @@ class DirectorioService:
     async def reactivar_empleado(
         self, empleado_id: int, *, actor_id: int | None = None
     ) -> Empleado:
-        """Reactiva un empleado desactivado, sin recargar sus datos."""
+        """Reactiva un empleado desactivado y limpia `fecha_baja` (DIR-007)."""
         empleado = await self.obtener(empleado_id)
         empleado.activo = True
+        empleado.fecha_baja = None
         self._session.add(empleado)
         await self._session.flush()
         await self._session.refresh(empleado)
@@ -208,6 +244,42 @@ class DirectorioService:
         empleado = await self.obtener(empleado_id)
         await self._repo.delete(empleado.id)
         self._auditar("borrado_arco", "ok", empleado_id, actor_id)
+
+    async def purgar_vencidos(
+        self,
+        *,
+        ahora: datetime | None = None,
+        actor_id: int | None = None,
+    ) -> int:
+        """
+        Borra FISICAMENTE las bajas que superaron "fecha_baja + 1 año" (DIR-007).
+
+        Idempotente: una segunda corrida no encuentra candidatos vencidos y
+        devuelve 0. Solo considera filas con `activo=False` y `fecha_baja`
+        sellada; un empleado activo NUNCA se purga. Registra el conteo en un
+        evento de auditoria SIN datos personales.
+
+        Args:
+            ahora:    instante de referencia (inyectable para tests); UTC por defecto.
+            actor_id: actor de auditoria (opcional).
+
+        Returns:
+            Cantidad de filas eliminadas fisicamente.
+        """
+        momento = _asegurar_utc(ahora) if ahora is not None else utcnow()
+        candidatos = await self._repo.listar_inactivos()
+        vencidos = [e for e in candidatos if retencion_vencida(e.fecha_baja, momento)]
+
+        for empleado in vencidos:
+            await self._repo.delete(empleado.id)
+
+        logger.info(
+            "directorio_retencion",
+            operacion="purgar_vencidos",
+            purgados=len(vencidos),
+            actor_id=actor_id if actor_id is not None else self._actor_id,
+        )
+        return len(vencidos)
 
     # ── Validaciones privadas ─────────────────────────────────────────────────
 

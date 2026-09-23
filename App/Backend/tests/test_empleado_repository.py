@@ -147,3 +147,23 @@ async def test_sector_nulo_serializa_sin_lazy_load(db_session):
     assert admin.sector_id is None
     assert "sector" not in sa_inspect(fila).unloaded
     assert fila.sector is None
+
+
+@pytest.mark.asyncio
+async def test_get_by_user_id_robusto_ante_duplicados(db_session):
+    """Dos filas activas vinculadas a la misma cuenta no rompen la busqueda (N3)."""
+    repo = EmpleadoRepository(db_session)
+    user = User(username="u-dup", hashed_password="x", is_active=True)
+    db_session.add(user)
+    await db_session.flush()
+    await _crear_empleado(
+        db_session, legajo="DUP-1", email="dup1@example.test", user_id=user.id
+    )
+    await _crear_empleado(
+        db_session, legajo="DUP-2", email="dup2@example.test", user_id=user.id
+    )
+
+    resuelto = await repo.get_by_user_id(user.id)
+
+    assert resuelto is not None
+    assert resuelto.legajo == "DUP-1"  # primero por id, deterministico

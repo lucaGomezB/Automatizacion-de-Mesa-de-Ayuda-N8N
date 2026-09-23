@@ -23,6 +23,7 @@ _COLUMNAS_ESPERADAS = {
     "rol",
     "activo",
     "user_id",
+    "fecha_baja",
     "created_at",
     "updated_at",
 }
@@ -83,6 +84,13 @@ def test_activo_por_defecto_verdadero():
     col = Empleado.__table__.c.activo
     assert col.nullable is False
     assert col.server_default is not None or col.default is not None
+
+
+def test_fecha_baja_nullable_para_retencion():
+    """`fecha_baja` existe, es nullable y almacena un timestamp (DIR-007)."""
+    col = Empleado.__table__.c.fecha_baja
+    assert col.nullable is True
+    assert col.type.timezone is True
 
 
 def test_vocabulario_de_roles_minimo():

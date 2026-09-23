@@ -76,7 +76,7 @@ La persistencia se realiza sobre PostgreSQL~15.5, desplegado en contenedor Docke
 \texttt{canal\_origen} & id\_canal (PK), nombre & Catalogo de canales: correo, formulario web y llamada telefonica. \\
 \texttt{clasificacion\_log} & id\_log (PK), id\_incidente (FK), \\ categoría\_predicha, confianza, \\ categoría\_validada & Registro de cada decision del clasificador, con categoría predicha, confianza asociada y categoría validada por el sector responsable. \\
 \texttt{users} & id (PK), username (UNIQUE), hashed\_password, is\_active & Almacena credenciales de operadores para autenticacion JWT. \\
-\texttt{directorio\_empleado} & id (PK), legajo (UNIQUE), \\ email (UNIQUE), telefono, \\ sector\_id (FK), rol, activo, \\ user\_id (FK) & Directorio institucional de empleados para resolución de contacto y notificación. Datos de contacto almacenados en texto plano para su auditabilidad directa; el campo \texttt{rol} distingue usuario final, operador y administrador del directorio. \\
+\texttt{directorio\_empleado} & id (PK), legajo (UNIQUE), \\ email (UNIQUE), telefono, \\ sector\_id (FK), rol, activo, \\ fecha\_baja, user\_id (FK) & Directorio institucional de empleados para resolución de contacto y notificación. Datos de contacto almacenados en texto plano para su auditabilidad directa; el campo \texttt{rol} distingue usuario final, operador y administrador del directorio. La columna \texttt{fecha\_baja} registra la desactivación y sostiene la retención (relación laboral activa más un año). \\
 \bottomrule
 \end{tabular}
 \end{table}

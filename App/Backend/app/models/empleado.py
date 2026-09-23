@@ -22,9 +22,10 @@ repositorio cuando se serializa; nunca se accede de forma lazy fuera de una
 sesion activa.
 """
 
+from datetime import datetime
 from enum import Enum as PyEnum
 
-from sqlalchemy import Boolean, CheckConstraint, ForeignKey, Integer, String
+from sqlalchemy import Boolean, CheckConstraint, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin
@@ -60,6 +61,9 @@ class Empleado(Base, TimestampMixin):
         sector_id: FK al catalogo `sector` (obligatorio para usuario_final/operador).
         rol:      Rol del empleado (RolEmpleado).
         activo:   Estado de la relacion; False desactiva sin borrar.
+        fecha_baja: Instante de desactivacion (UTC); None si esta activo. Es la
+                    base de la retencion: se borra fisicamente al vencer
+                    "fecha_baja + 1 año" (DIR-007). Se limpia al reactivar.
         user_id:  FK nullable a `users` (ON DELETE SET NULL).
         created_at / updated_at: auditoria temporal (TimestampMixin).
     """
@@ -84,6 +88,10 @@ class Empleado(Base, TimestampMixin):
     )
     rol: Mapped[str] = mapped_column(String(30), nullable=False)
     activo: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    # Instante de desactivacion (retencion DIR-007). Nullable: None = activo.
+    fecha_baja: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     user_id: Mapped[int | None] = mapped_column(
         Integer,
         ForeignKey("users.id", ondelete="SET NULL"),
