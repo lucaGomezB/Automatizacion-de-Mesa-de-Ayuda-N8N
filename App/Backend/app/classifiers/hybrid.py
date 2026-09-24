@@ -50,7 +50,7 @@ class HybridClassifier(BaseClassifier):
 
     Combina la velocidad y el costo cero del filtro determinístico
     para los casos de alta confianza, con la comprensión semántica
-    del LLM Gemini 2.5 Flash para los casos ambiguos.
+    del LLM Gemini 3.6 Flash para los casos ambiguos.
 
     Permite inyección de dependencias de las sub-etapas para testing:
         classifier = HybridClassifier(

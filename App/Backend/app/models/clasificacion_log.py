@@ -11,7 +11,7 @@ Responsabilidad:
 
     El campo 'etapa' identifica qué componente del pipeline híbrido produjo
     la clasificación: el filtro determinístico de reglas, el modelo Gemini
-    2.5 Flash, o el mecanismo de fallback ante falla del clasificador.
+    3.6 Flash, o el mecanismo de fallback ante falla del clasificador.
 
     El campo 'sector_id_validado' permanece NULL hasta que un operador humano
     confirma o corrige la categoría predicha, cerrando el ciclo de aprendizaje
