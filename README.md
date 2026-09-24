@@ -109,7 +109,8 @@ sus variables son opcionales y se sobrescriben por `.env`:
 | `COST_GUARD_BUDGET_WINDOW_SECONDS`          | `604800`    | Ventana del presupuesto (7 días) |
 | `COST_GUARD_UNIT_COST_BACKEND_GEMINI_USD`   | `0.0005`    | Costo unitario ESTIMADO por incidente (Gemini backend) |
 | `COST_GUARD_UNIT_COST_N8N_GEMINI_USD`       | `0.0015`    | Costo unitario ESTIMADO por ejecución (AI Agent de n8n) |
-| `COST_GUARD_UNIT_COST_TWILIO_TRANSCRIPTION_USD` | `0.05`  | Costo unitario ESTIMADO por llamada (transcripción Twilio) |
+| `COST_GUARD_UNIT_COST_TWILIO_TRANSCRIPTION_USD` | `0.0075` | Costo unitario ESTIMADO por llamada (admisión de voz pre-llamada de Twilio; el STT se cobra aparte) |
+| `COST_GUARD_UNIT_COST_BACKEND_STT_USD`     | `0.0038`    | Costo unitario ESTIMADO por llamada (STT del backend, `gemini-3.5-transcribe`) |
 | `COST_GUARD_RATE_LIMIT_CALLS`               | `30`        | Límite de llamadas pagas por ventana (global) |
 | `COST_GUARD_RATE_WINDOW_SECONDS`            | `3600`      | Ventana del rate global |
 | `COST_GUARD_CALLER_RATE_LIMIT_CALLS`        | `3`         | Límite de llamadas pagas por número de origen |
@@ -214,11 +215,11 @@ npm run dev
 ## Especificación Técnica
 
 ### Clasificación Automática
-- **Modelo**: Google Gemini 2.5 Flash
+- **Modelo**: Google Gemini 3.6 Flash
 - **Enfoque**: Híbrido (filtrado determinístico + LLM)
 - **Documentación completa**: `docs/parameters_gemini.md` y `docs/ANEXO_H_Especificacion_Completa.md`
 - **Prompt exacto**: `docs/prompt_gemini.txt`
-- **Parámetros**: temperature=0.3, top_p=0.9, max_tokens=100, timeout=10s
+- **Parámetros**: temperature=0.3, top_p=0.9, max_tokens=100, timeout=30s
 
 ### Reproducibilidad
 El sistema puede ser replicado exactamente siguiendo:
