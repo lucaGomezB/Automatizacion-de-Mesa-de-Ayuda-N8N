@@ -28,7 +28,7 @@ from app.schemas.catalog import SectorRead
 
 # Tipo literal que restringe los valores válidos de la etapa del clasificador.
 # "deterministic": el filtro de reglas resolvió con confianza >= 0.90.
-# "gemini":        Gemini 2.5 Flash clasificó con confianza en rango válido.
+# "gemini":        Gemini 3.6 Flash clasificó con confianza en rango válido.
 # "fallback":      El sistema no pudo clasificar; intervención humana requerida.
 # "precalculada":  La clasificación fue provista por un emisor externo (N8N)
 #                  y el backend omitió la clasificación server-side (C-33, D5).

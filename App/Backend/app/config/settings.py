@@ -63,16 +63,21 @@ class Settings(BaseSettings):
     db_max_overflow: int = 20      # Conexiones adicionales permitidas bajo pico de carga
     db_echo: bool = False          # Si True, SQLAlchemy imprime cada sentencia SQL generada
 
-    # ── Parámetros de Gemini 2.5 Flash ────────────────────────────────────────
-    # Valores calibrados empíricamente sobre el corpus de 200 casos (Anexo H).
-    # Modificar estos valores requiere re-evaluar las métricas de exactitud.
+    # ── Parámetros de Gemini 3.6 Flash ────────────────────────────────────────
+    # Los parámetros de generación (temperatura, top_p, etc.) se calibraron
+    # empíricamente sobre el corpus de 200 casos (Anexo H) con Gemini 2.5 Flash.
+    # El modelo default se migró a Gemini 3.6 Flash porque la familia 2.5 ya no
+    # está disponible para cuentas nuevas. Cambiar el modelo exige re-evaluar las
+    # métricas de exactitud.
     gemini_api_key: str                         # Clave de API de Google AI (obligatoria)
-    gemini_model: str = "gemini-2.5-flash"
+    gemini_model: str = "gemini-3.6-flash"
     gemini_temperature: float = 0.3             # Reduce variabilidad; mejora consistencia
     gemini_top_p: float = 0.9                   # Nucleus sampling para variantes léxicas rioplatenses
     gemini_max_output_tokens: int = 100         # Suficiente para JSON (~15 tokens) + margen
     gemini_candidate_count: int = 1             # Respuesta única; optimiza latencia
-    gemini_timeout_seconds: int = 10            # Límite de espera antes de activar fallback
+    # 30s (antes 10s): la familia 3.x puede encadenar reintentos del SDK ante 503
+    # transitorios de alta demanda; 10s cortaba esos reintentos con falso timeout.
+    gemini_timeout_seconds: int = 30            # Límite de espera antes de activar fallback
     # Ruta al archivo de prompt. Vacío = autoresolver desde la raíz del repositorio
     # (docs/prompt_gemini.txt). El override es necesario en contenedores donde la
     # estructura difiere del repo (ej. GEMINI_PROMPT_PATH=/app/docs/prompt_gemini.txt).

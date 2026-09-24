@@ -1,9 +1,9 @@
 """
-Etapa 2 del clasificador híbrido: clasificación semántica con Gemini 2.5 Flash.
+Etapa 2 del clasificador híbrido: clasificación semántica con Gemini 3.6 Flash.
 
 Responsabilidad:
     Implementa la segunda etapa del pipeline híbrido. Invoca la API de
-    Google Gemini 2.5 Flash con los parámetros exactos documentados en:
+    Google Gemini 3.6 Flash con los parámetros exactos documentados en:
         - docs/parameters_gemini.md
         - docs/prompt_gemini.txt
         - Anexo H de la tesis (docs/anexo_h_prompt_gemini.md)
@@ -278,7 +278,7 @@ def _validate_gemini_response(raw: str) -> dict:
 
 class GeminiClassifier(BaseClassifier):
     """
-    Clasificador semántico basado en Gemini 2.5 Flash.
+    Clasificador semántico basado en Gemini 3.6 Flash.
 
     Implementa la Etapa 2 del pipeline híbrido. Construye el prompt combinando
     la plantilla fija (docs/prompt_gemini.txt) con la descripción del incidente
@@ -300,7 +300,7 @@ class GeminiClassifier(BaseClassifier):
         # Cliente compartido y reutilizado (BE B7); se cierra en el shutdown.
         self._client = get_genai_client()
 
-        # Modelo especificado en la tesis: Gemini 2.5 Flash (marzo 2026)
+        # Modelo configurable via settings.gemini_model (default: Gemini 3.6 Flash)
         self._model_name = settings.gemini_model
 
         # Configuración de generación con parámetros calibrados (Anexo H §H.2).
@@ -333,8 +333,8 @@ class GeminiClassifier(BaseClassifier):
                 },
                 required=["categoría", "confianza"],
             ),
-            # Gemini 2.5 Flash razona ("thinking") por defecto y esos tokens cuentan
-            # contra max_output_tokens=100, truncando la respuesta visible. Presupuesto
+            # Los tokens de razonamiento ("thinking") del modelo cuentan contra
+            # max_output_tokens=100, truncando la respuesta visible. Presupuesto
             # 0 desactiva el razonamiento: respuesta directa, completa y de menor latencia.
             thinking_config=genai_types.ThinkingConfig(thinking_budget=0),
             safety_settings=[
@@ -345,12 +345,12 @@ class GeminiClassifier(BaseClassifier):
             ],
         )
 
-        self._timeout = settings.gemini_timeout_seconds       # 10s: límite de latencia
+        self._timeout = settings.gemini_timeout_seconds       # configurable (default 30s): límite de latencia
         self._human_review_threshold = settings.human_review_threshold  # 0.70
 
     async def classify(self, descripcion: str) -> ClasificacionResult:
         """
-        Clasifica el incidente invocando la API de Gemini 2.5 Flash.
+        Clasifica el incidente invocando la API de Gemini 3.6 Flash.
 
         Construye el prompt completo concatenando la plantilla con la descripción,
         invoca la API, valida la respuesta y retorna el resultado estructurado.
