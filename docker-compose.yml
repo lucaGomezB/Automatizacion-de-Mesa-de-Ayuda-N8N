@@ -138,6 +138,10 @@ services:
       # 'Notificar operador designado'). Disponible en los nodos como
       # $env.OPERATOR_EMAIL. El placeholder NO es una direccion real.
       OPERATOR_EMAIL: ${OPERATOR_EMAIL:-operador@example.com}
+      # Remitente de los correos salientes (nodos emailSend). Disponible en los
+      # nodos como $env.SMTP_FROM_EMAIL. Formato requerido: "Nombre <direccion>".
+      # Debe coincidir con la casilla de la credencial IMAP/SMTP.
+      SMTP_FROM_EMAIL: ${SMTP_FROM_EMAIL:-Mesa de Ayuda <mesa-ayuda@example.com>}
       # Redis para la memoria del AI Agent
       QUEUE_BULL_REDIS_HOST: redis
       QUEUE_BULL_REDIS_PORT: "6379"
@@ -152,6 +156,12 @@ services:
       N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "false"
       # Deshabilitar telemetria
       N8N_DIAGNOSTICS_ENABLED: "false"
+      # n8n 2.x bloquea el acceso a variables de entorno ($env) en los nodos por
+      # defecto (N8N_BLOCK_ENV_ACCESS_IN_NODE=true). Este workflow depende de $env
+      # (BACKEND_URL, OPERATOR_EMAIL, SMTP_FROM_EMAIL, COST_GUARD_SHARED_SECRET):
+      # sin esta excepcion las expresiones resuelven vacio y el canal de correo
+      # enviaria con remitente/destinatario vacios. Habilitar el acceso a $env.
+      N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
       # Retencion automatica de datos de ejecucion (30 dias = 720 horas)
       # Configurado segun tesis §5.3 para cumplir con politica de retencion de 30 dias
       EXECUTIONS_DATA_PRUNE: "true"
