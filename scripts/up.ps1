@@ -121,14 +121,39 @@ function Get-Placeholders {
     return $result
 }
 
+# Prints the self-service guide to prepare App/Backend/.env. Never prints values,
+# so a clean clone can reach a working environment without reading external docs.
+function Write-EnvSetupGuide {
+    Write-Err "Create it from the template with these steps:"
+    Write-Err "  1. Copy the template:"
+    Write-Err "       Copy-Item App\Backend\.env.example App\Backend\.env"
+    Write-Err "     Linux/macOS:"
+    Write-Err "       cp App/Backend/.env.example App/Backend/.env"
+    Write-Err "  2. Generate the two local secrets and paste them into the file:"
+    Write-Err '       python -c "import secrets; print(secrets.token_urlsafe(32))"                            # JWT_SECRET_KEY'
+    Write-Err '       python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"  # PSEUDONYMIZATION_ENCRYPTION_KEY'
+    Write-Err "  3. Get a GEMINI_API_KEY at https://aistudio.google.com/apikey and paste it."
+    Write-Err "  4. Re-run: .\scripts\up.ps1   (Linux/macOS: bash scripts/up.sh)"
+}
+
+# Prints the case-specific fix for one required variable. Never prints values.
+function Write-EnvVariableHelp {
+    param([string]$Key)
+    switch ($Key) {
+        "GEMINI_API_KEY" { Write-Err "  Get a key at https://aistudio.google.com/apikey and set GEMINI_API_KEY." }
+        "JWT_SECRET_KEY" { Write-Err '  Generate one with: python -c "import secrets; print(secrets.token_urlsafe(32))"' }
+        "PSEUDONYMIZATION_ENCRYPTION_KEY" { Write-Err '  Generate one with: python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"' }
+        default { Write-Err "  Set $Key to a real value." }
+    }
+}
+
 # Preflight: validates the environment file without ever printing values.
 function Test-EnvPreflight {
     param([string]$EnvPath, [string]$ExamplePath)
 
     if (-not (Test-Path -LiteralPath $EnvPath)) {
         Write-Err "Missing environment file: $EnvPath"
-        Write-Err "Create it from the template and fill in real values:"
-        Write-Err "  Copy-Item App\Backend\.env.example App\Backend\.env"
+        Write-EnvSetupGuide
         return $false
     }
 
@@ -138,17 +163,17 @@ function Test-EnvPreflight {
         $value = Read-EnvValue -Key $key -File $EnvPath
         if ($null -eq $value) {
             Write-Err "Missing required variable in ${EnvPath}: $key"
-            Write-Err "Set $key to a real value before starting the stack."
+            Write-EnvVariableHelp -Key $key
             return $false
         }
         if ($value -eq "") {
             Write-Err "Empty required variable in ${EnvPath}: $key"
-            Write-Err "Set $key to a real value before starting the stack."
+            Write-EnvVariableHelp -Key $key
             return $false
         }
         if ($placeholders -contains $value) {
             Write-Err "Placeholder value detected for $key in ${EnvPath}"
-            Write-Err "Replace the placeholder with a real value before starting the stack."
+            Write-EnvVariableHelp -Key $key
             return $false
         }
     }

@@ -15,6 +15,44 @@ En este proyecto se busca una forma eficiente de facilitar el trabajo de la Mesa
 > Para resolver problemas frecuentes, ver
 > [`docs/troubleshooting.md`](docs/troubleshooting.md).
 
+### Primera ejecucion
+
+El stack es autocontenido: no modifica la configuracion del sistema anfitrion
+(no toca `/etc/hosts` ni el DNS, no requiere `sudo`) y genera solo los
+certificados TLS de desarrollo cuando faltan.
+
+Un clon limpio se levanta con **un solo comando**:
+
+```bash
+bash scripts/up.sh        # Linux / macOS
+```
+
+```powershell
+.\scripts\up.ps1          # Windows (PowerShell)
+```
+
+```bash
+make up                   # alternativa si tenes make instalado
+```
+
+Antes de ejecutarlo, prepara **una sola vez** `App/Backend/.env`:
+
+1. Copiar la plantilla:
+   ```bash
+   cp App/Backend/.env.example App/Backend/.env
+   ```
+   Windows (PowerShell): `Copy-Item App\Backend\.env.example App\Backend\.env`
+2. Generar y pegar los dos secretos locales:
+   ```bash
+   python -c "import secrets; print(secrets.token_urlsafe(32))"                             # JWT_SECRET_KEY
+   python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())" # PSEUDONYMIZATION_ENCRYPTION_KEY
+   ```
+3. Obtener una `GEMINI_API_KEY` en https://aistudio.google.com/apikey y pegarla.
+4. Volver a ejecutar el comando del inicio.
+
+Si falta el `.env` o alguno de esos secretos, el comando lo indica con los pasos
+exactos y **no levanta ningun servicio**.
+
 ### Prerrequisitos
 
 - **Docker Engine 24+** y **Docker Compose v2** (plugin integrado en Docker Desktop)

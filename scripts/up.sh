@@ -110,6 +110,39 @@ is_placeholder() {
     return 1
 }
 
+# Prints the self-service guide to prepare App/Backend/.env. Never prints values,
+# so a clean clone can reach a working environment without reading external docs.
+log_env_setup_guide() {
+    log_error "Create it from the template with these steps:"
+    log_error "  1. Copy the template:"
+    log_error "       cp App/Backend/.env.example App/Backend/.env"
+    log_error "     Windows (PowerShell):"
+    log_error "       Copy-Item App\\Backend\\.env.example App\\Backend\\.env"
+    log_error "  2. Generate the two local secrets and paste them into the file:"
+    log_error '       python -c "import secrets; print(secrets.token_urlsafe(32))"                            # JWT_SECRET_KEY'
+    log_error '       python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"  # PSEUDONYMIZATION_ENCRYPTION_KEY'
+    log_error "  3. Get a GEMINI_API_KEY at https://aistudio.google.com/apikey and paste it."
+    log_error "  4. Re-run: bash scripts/up.sh   (Windows: .\\scripts\\up.ps1)"
+}
+
+# Prints the case-specific fix for one required variable. Never prints values.
+log_env_variable_help() {
+    case "$1" in
+        GEMINI_API_KEY)
+            log_error "  Get a key at https://aistudio.google.com/apikey and set GEMINI_API_KEY."
+            ;;
+        JWT_SECRET_KEY)
+            log_error '  Generate one with: python -c "import secrets; print(secrets.token_urlsafe(32))"'
+            ;;
+        PSEUDONYMIZATION_ENCRYPTION_KEY)
+            log_error '  Generate one with: python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"'
+            ;;
+        *)
+            log_error "  Set $1 to a real value."
+            ;;
+    esac
+}
+
 # Preflight: validates the environment file without ever printing values.
 # Returns 0 when the file exists and both required secrets are real values.
 check_env_file() {
@@ -120,8 +153,7 @@ check_env_file() {
 
     if [ ! -f "$env_file" ]; then
         log_error "Missing environment file: ${env_file}"
-        log_error "Create it from the template and fill in real values:"
-        log_error "  cp App/Backend/.env.example App/Backend/.env"
+        log_env_setup_guide
         return 1
     fi
 
@@ -132,17 +164,17 @@ check_env_file() {
     for key in "${REQUIRED_SECRETS[@]}"; do
         if ! value="$(read_env_value "$key" "$env_file")"; then
             log_error "Missing required variable in ${env_file}: ${key}"
-            log_error "Set ${key} to a real value before starting the stack."
+            log_env_variable_help "$key"
             return 1
         fi
         if [ -z "$value" ]; then
             log_error "Empty required variable in ${env_file}: ${key}"
-            log_error "Set ${key} to a real value before starting the stack."
+            log_env_variable_help "$key"
             return 1
         fi
         if is_placeholder "$value" "${placeholders[@]}"; then
             log_error "Placeholder value detected for ${key} in ${env_file}"
-            log_error "Replace the placeholder with a real value before starting the stack."
+            log_env_variable_help "$key"
             return 1
         fi
     done
