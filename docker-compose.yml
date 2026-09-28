@@ -142,10 +142,12 @@ services:
       QUEUE_BULL_REDIS_HOST: redis
       QUEUE_BULL_REDIS_PORT: "6379"
       # Configuracion de N8N
-      N8N_PROTOCOL: https
+      # HTTP (no https): n8n se sirve en claro sobre 5678 y el callback OAuth local
+      # debe usar http://localhost (Microsoft solo permite http para localhost).
+      N8N_PROTOCOL: http
       N8N_HOST: 0.0.0.0
       N8N_PORT: "5678"
-      WEBHOOK_URL: https://localhost:5678/
+      WEBHOOK_URL: http://localhost:5678/
       # En Windows/Docker Desktop los permisos de archivos difieren — ignorar warnings
       N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "false"
       # Deshabilitar telemetria
