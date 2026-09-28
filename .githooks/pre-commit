@@ -15,6 +15,10 @@
 #      claves privadas PEM, y asignaciones genéricas key/secret/token/password
 #      con valores largos.
 #   3. Si gitleaks está instalado, corre además como capa extra (opcional).
+#   4. Memoria de Engram staged (.engram/): los chunks *.jsonl.gz no los ve el
+#      escaneo de líneas de la sección 2, así que se corren por separado con
+#      scripts/security/scan_engram_secrets.py. Si no hay python, se advierte y
+#      se continúa (no bloquea).
 #
 # Falso positivo legítimo: agregar el marcador  gitleaks:allow  en esa misma línea.
 # Saltear el hook a conciencia (NO recomendado): git commit --no-verify
@@ -80,6 +84,26 @@ if command -v gitleaks >/dev/null 2>&1; then
         gitleaks protect --staged --redact --no-banner || fail=1
     elif gitleaks git --help >/dev/null 2>&1; then
         gitleaks git --pre-commit --staged --redact --no-banner || fail=1
+    fi
+fi
+
+# ── 4) Memoria de Engram staged (.engram/): escaneo de chunks .gz ────────────
+# Los chunks de `engram sync` son .jsonl.gz de una sola línea; la sección 2 los
+# saltea por binarios y no puede descomprimirlos. Este escáner sí lo hace.
+engram_staged=$(git diff --cached --name-only --diff-filter=ACM \
+    | grep -E '^\.engram/')
+if [ -n "$engram_staged" ]; then
+    PY=$(command -v python3 || command -v python)
+    if [ -n "$PY" ]; then
+        if ! "$PY" scripts/security/scan_engram_secrets.py .engram; then
+            echo "" >&2
+            echo "BLOQUEADO: la memoria de Engram staged contiene posibles secretos." >&2
+            echo "  Saneá los valores antes de commitear: los chunks .gz no los ve" >&2
+            echo "  el escaneo de líneas agregadas de la sección 2." >&2
+            fail=1
+        fi
+    else
+        echo "ADVERTENCIA: no se encontró python3 ni python; se omite el escaneo de .engram." >&2
     fi
 fi
 
