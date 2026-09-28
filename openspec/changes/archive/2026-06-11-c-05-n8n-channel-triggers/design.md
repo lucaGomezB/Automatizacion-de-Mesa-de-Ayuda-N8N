@@ -47,11 +47,11 @@ Constraints: Strict TDD sobre la estructura del JSON (pytest, sin runtime N8N), 
 
 **Elección original**: la telefonía tenía su propio subgrafo de validación IF → HTTP POST paralelo.
 
-**Decisión revisada (fix apply C-05)**: los tres canales convergen en el normalizador único → IF único (`La informacion esta OK`) → un único `HTTP POST a MTM-SRU`. Las notificaciones post-registro se distinguen por canal usando un nodo `switch` `Rutear por canal de origen` después del HTTP POST:
+**Decisión revisada (fix apply C-05)**: los tres canales convergen en el normalizador único → IF único (`La informacion esta OK`) → un único `HTTP POST a MESA-AYUDAS`. Las notificaciones post-registro se distinguen por canal usando un nodo `switch` `Rutear por canal de origen` después del HTTP POST:
 - **canal web**: Switch branch 0 → `Confirmacion web al usuario` (`respondToWebhook` con `incidente_id`).
 - **canal correo / telefonía**: Switch fallback → `Correo de confirmacion al usuario` (`microsoftOutlook`).
 
-El subgrafo huérfano anterior (`Lo que trajo puede crear un incidente` + `HTTP POST a MTM-SRU se crea un incidente`) fue **eliminado**: no tenía ninguna conexión entrante y producía código muerto que nunca se ejecutaba. Los sticky notes vacíos asociados (Sticky Note3, Sticky Note4) también se eliminaron.
+El subgrafo huérfano anterior (`Lo que trajo puede crear un incidente` + `HTTP POST a MESA-AYUDAS se crea un incidente`) fue **eliminado**: no tenía ninguna conexión entrante y producía código muerto que nunca se ejecutaba. Los sticky notes vacíos asociados (Sticky Note3, Sticky Note4) también se eliminaron.
 
 El `Webhook formulario web` tiene `responseMode: responseNode`; el `respondToWebhook` queda alcanzable desde el trigger web a través del camino real (Marcar canal web → Normalizar → IF → HTTP POST → Switch → Confirmacion web).
 
@@ -62,7 +62,7 @@ El `Webhook formulario web` tiene `responseMode: responseNode`; el `respondToWeb
 **Elección original**: solo las altas exitosas llegaban a auditoría.
 
 **Decisión confirmada (fix apply C-05)**: el log de auditoría registra **TODAS** las ramas del flujo:
-- **Rama exitosa** (`confianza >= 0.70`): `HTTP POST a MTM-SRU` → nodo de auditoría con `resultado: 'creado'`.
+- **Rama exitosa** (`confianza >= 0.70`): `HTTP POST a MESA-AYUDAS` → nodo de auditoría con `resultado: 'creado'`.
 - **Rama de rechazo** (`confianza < 0.70` o datos incompletos): la rama false del IF `La informacion esta OK` → nodo de auditoría con `resultado: 'rechazado_datos_incompletos'`.
 
 Las **notificaciones al usuario** (confirmación web / correo de confirmación) siguen ocurriendo únicamente después de la alta exitosa (via el switch `Rutear por canal de origen`).

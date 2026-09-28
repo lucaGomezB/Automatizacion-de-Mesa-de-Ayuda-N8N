@@ -88,11 +88,11 @@ El nodo `memoryRedisChat` del `AI Agent` telefónico SHALL declarar una credenci
 
 ### Requirement: N8N-AUTH-002 — El nodo de persistencia autentica con un único mecanismo
 
-El nodo `HTTP POST a MTM-SRU` SHALL declarar exactamente un mecanismo de autenticación hacia el backend. Cuando autentique con el header explícito `Authorization: Bearer` cuyo token se resuelve dinámicamente desde `Login operador`, MUST NOT declarar simultáneamente `authentication`/`genericAuthType` con `httpHeaderAuth` ni una credencial `httpHeaderAuth`, de modo que no se inyecten dos cabeceras `Authorization`. El token MUST NOT ser un valor estático.
+El nodo `HTTP POST a MESA-AYUDAS` SHALL declarar exactamente un mecanismo de autenticación hacia el backend. Cuando autentique con el header explícito `Authorization: Bearer` cuyo token se resuelve dinámicamente desde `Login operador`, MUST NOT declarar simultáneamente `authentication`/`genericAuthType` con `httpHeaderAuth` ni una credencial `httpHeaderAuth`, de modo que no se inyecten dos cabeceras `Authorization`. El token MUST NOT ser un valor estático.
 
 #### Scenario: Un solo mecanismo de autenticación
 
-- **WHEN** la suite estructural inspecciona el nodo `HTTP POST a MTM-SRU`
+- **WHEN** la suite estructural inspecciona el nodo `HTTP POST a MESA-AYUDAS`
 - **THEN** el nodo no combina la autenticación por credencial `httpHeaderAuth` con un header `Authorization` explícito
 
 #### Scenario: El header usa el token dinámico del login
@@ -107,7 +107,7 @@ El nodo `HTTP POST a MTM-SRU` SHALL declarar exactamente un mecanismo de autenti
 
 ### Requirement: N8N-AUDIT-002 — La auditoría corre también en el camino de error del backend
 
-El nodo `Registro de auditoria` SHALL ser alcanzable desde la salida de error (`main#1`) del nodo `HTTP POST a MTM-SRU`, en paralelo a la guarda de canal, de modo que un fallo del backend quede auditado. El registro de la rama de error SHALL distinguir ese resultado de un alta exitosa y MUST NOT registrarlo como `creado`.
+El nodo `Registro de auditoria` SHALL ser alcanzable desde la salida de error (`main#1`) del nodo `HTTP POST a MESA-AYUDAS`, en paralelo a la guarda de canal, de modo que un fallo del backend quede auditado. El registro de la rama de error SHALL distinguir ese resultado de un alta exitosa y MUST NOT registrarlo como `creado`.
 
 #### Scenario: La salida de error alcanza la auditoría
 

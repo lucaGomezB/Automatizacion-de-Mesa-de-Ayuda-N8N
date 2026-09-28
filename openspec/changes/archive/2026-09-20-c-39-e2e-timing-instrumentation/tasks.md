@@ -23,7 +23,7 @@
 
 - [x] 4.1 Escribir los tests estructurales: el body del POST incluye `ingresado_en` por expresion; el sello de telefonia esta aguas arriba del `AI Agent`; el correo sella al inicio del trigger de Outlook (recogida del poller), no con `receivedDateTime`; el web sella en `Marcar canal web`; el normalizador propaga `ingresado_en`; confirmar RED.
 - [x] 4.2 Implementar la captura de ingreso por canal (nodo de sello inmediatamente posterior a `Llamada telefonica` y anterior al `AI Agent`; sellado en correo y web) y la propagacion en el normalizador; verificar GREEN.
-- [x] 4.3 Agregar `ingresado_en` al body del nodo `HTTP POST a MTM-SRU` resolviendo al valor capturado; verificar GREEN del test estructural de body.
+- [x] 4.3 Agregar `ingresado_en` al body del nodo `HTTP POST a MESA-AYUDAS` resolviendo al valor capturado; verificar GREEN del test estructural de body.
 - [x] 4.4 Verificar que no se introdujeron fixes de cableado de c-40 ni host/credenciales hardcodeadas, y que las suites estructurales previas del workflow siguen en verde.
 
 ## 5. Documentacion y verificacion de integracion

@@ -72,7 +72,7 @@ def test_removed_nodes_have_no_inbound_edges():
 def test_http_post_node_has_no_credential_authentication():
     workflow, _ = dry_run._workflow_for_dry_run(USERNAME, PASSWORD)
     nodes = {node["name"]: node for node in workflow["nodes"]}
-    node = nodes["HTTP POST a MTM-SRU"]
+    node = nodes["HTTP POST a MESA-AYUDAS"]
     assert "credentials" not in node
     assert node["parameters"].get("authentication") != "genericCredentialType"
     assert "genericAuthType" not in node["parameters"]
@@ -81,7 +81,7 @@ def test_http_post_node_has_no_credential_authentication():
 def test_http_post_node_keeps_explicit_authorization_header():
     workflow, _ = dry_run._workflow_for_dry_run(USERNAME, PASSWORD)
     nodes = {node["name"]: node for node in workflow["nodes"]}
-    header = nodes["HTTP POST a MTM-SRU"]["parameters"]["headerParameters"]["parameters"]
+    header = nodes["HTTP POST a MESA-AYUDAS"]["parameters"]["headerParameters"]["parameters"]
     assert any(
         entry["name"] == "Authorization" and "access_token" in entry["value"]
         for entry in header
@@ -91,12 +91,13 @@ def test_http_post_node_keeps_explicit_authorization_header():
 def test_http_post_node_sends_payload_as_json_expression():
     workflow, _ = dry_run._workflow_for_dry_run(USERNAME, PASSWORD)
     nodes = {node["name"]: node for node in workflow["nodes"]}
-    parameters = nodes["HTTP POST a MTM-SRU"]["parameters"]
+    parameters = nodes["HTTP POST a MESA-AYUDAS"]["parameters"]
     assert parameters["specifyBody"] == "json"
     assert "body" not in parameters
     json_body = parameters["jsonBody"]
-    assert json_body.startswith("={{")
-    assert "JSON.stringify" in json_body
+    # El nodo usa el modo JSON nativo (jsonBody string JSON con expresiones
+    # embebidas), no la forma legacy `={{ JSON.stringify({...}) }}`.
+    assert json.loads(json_body)
     for expression in (
         "$('Normalizar entrada del incidente').item.json.descripcion",
         "$('Normalizar entrada del incidente').item.json.prioridad || 'media'",

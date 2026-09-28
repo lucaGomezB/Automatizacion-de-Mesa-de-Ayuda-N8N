@@ -26,13 +26,13 @@
 
 ## 5. Mecanismo único de autenticación (N8N-AUTH-002)
 
-- [x] 5.1 RED: agregar tests que verifican que `HTTP POST a MTM-SRU` no combina credencial `httpHeaderAuth` con header `Authorization` explícito, que el header referencia el token de `Login operador` y que no declara credencial `httpHeaderAuth`; actualizar `test_c29_incidentes_http_node_declares_authentication` al contrato corregido (exactamente un mecanismo, header dinámico). Verificación: los tests nuevos fallan contra el estado actual.
-- [x] 5.2 GREEN: remover `authentication`, `genericAuthType` y `credentials.httpHeaderAuth` del nodo `HTTP POST a MTM-SRU`, conservando el header explícito `=Bearer {{ $('Login operador').item.json.access_token }}`. Verificación: los tests de 5.1 pasan y `test_login_and_incidentes_nodes_use_env_backend_url` sigue verde.
+- [x] 5.1 RED: agregar tests que verifican que `HTTP POST a MESA-AYUDAS` no combina credencial `httpHeaderAuth` con header `Authorization` explícito, que el header referencia el token de `Login operador` y que no declara credencial `httpHeaderAuth`; actualizar `test_c29_incidentes_http_node_declares_authentication` al contrato corregido (exactamente un mecanismo, header dinámico). Verificación: los tests nuevos fallan contra el estado actual.
+- [x] 5.2 GREEN: remover `authentication`, `genericAuthType` y `credentials.httpHeaderAuth` del nodo `HTTP POST a MESA-AYUDAS`, conservando el header explícito `=Bearer {{ $('Login operador').item.json.access_token }}`. Verificación: los tests de 5.1 pasan y `test_login_and_incidentes_nodes_use_env_backend_url` sigue verde.
 
 ## 6. Auditoría en el camino de error del backend (N8N-AUDIT-002)
 
-- [x] 6.1 RED: agregar tests que verifican que `Registro de auditoria` es alcanzable desde `HTTP POST a MTM-SRU` `main#1`, que `Es correo?` se conserva en esa salida, y que el resultado de la rama de error no es `creado`. Verificación: el test de alcance de auditoría falla contra el estado actual.
-- [x] 6.2 GREEN: agregar `Registro de auditoria` como sucesor de `HTTP POST a MTM-SRU` `main#1` en paralelo a `Es correo?`; refinar la detección de resultado del `jsCode` de auditoría para que un ítem de error de backend se registre con un `resultado` distinto de `creado`. Verificación: los tests de 6.1 pasan y `test_c33_error_branch_declares_continue_error_output_and_reaches_mark_read` sigue verde.
+- [x] 6.1 RED: agregar tests que verifican que `Registro de auditoria` es alcanzable desde `HTTP POST a MESA-AYUDAS` `main#1`, que `Es correo?` se conserva en esa salida, y que el resultado de la rama de error no es `creado`. Verificación: el test de alcance de auditoría falla contra el estado actual.
+- [x] 6.2 GREEN: agregar `Registro de auditoria` como sucesor de `HTTP POST a MESA-AYUDAS` `main#1` en paralelo a `Es correo?`; refinar la detección de resultado del `jsCode` de auditoría para que un ítem de error de backend se registre con un `resultado` distinto de `creado`. Verificación: los tests de 6.1 pasan y `test_c33_error_branch_declares_continue_error_output_and_reaches_mark_read` sigue verde.
 
 ## 7. Fallo de notificación no omite auditoría (N8N-AUDIT-003)
 

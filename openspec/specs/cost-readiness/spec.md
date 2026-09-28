@@ -31,7 +31,7 @@ El sistema SHALL proveer un comando de preflight que, leyendo unicamente los art
 
 ### Requirement: Guardas del workflow verificadas por el preflight
 
-El preflight SHALL verificar en `n8n/workflow.json`: (a) el nodo `AI Agent` declara un tope de iteraciones en `options.maxIterations`; (b) el trigger de Outlook declara `readStatus=unread` y un lookback de 24 horas sobre `receivedDateTime`; (c) el nodo `Marcar correo como leido` es alcanzable desde las ramas de exito, rechazo y error; (d) el body del nodo `HTTP POST a MTM-SRU` incluye `origen_message_id`, un bloque de clasificacion precalculada con `sector_predicho` y `confianza`, y un marcador explicito de evento; (e) existe un webhook dedicado con ruta `notificacion-clasificacion` que no esta conectado a la creacion de incidentes; (f) ningun nodo pago habilita reintentos.
+El preflight SHALL verificar en `n8n/workflow.json`: (a) el nodo `AI Agent` declara un tope de iteraciones en `options.maxIterations`; (b) el trigger de Outlook declara `readStatus=unread` y un lookback de 24 horas sobre `receivedDateTime`; (c) el nodo `Marcar correo como leido` es alcanzable desde las ramas de exito, rechazo y error; (d) el body del nodo `HTTP POST a MESA-AYUDAS` incluye `origen_message_id`, un bloque de clasificacion precalculada con `sector_predicho` y `confianza`, y un marcador explicito de evento; (e) existe un webhook dedicado con ruta `notificacion-clasificacion` que no esta conectado a la creacion de incidentes; (f) ningun nodo pago habilita reintentos.
 
 #### Scenario: Tope del agente pago presente
 
@@ -50,7 +50,7 @@ El preflight SHALL verificar en `n8n/workflow.json`: (a) el nodo `AI Agent` decl
 
 #### Scenario: Payload de alta enriquecido presente
 
-- **WHEN** el preflight inspecciona el body del nodo `HTTP POST a MTM-SRU`
+- **WHEN** el preflight inspecciona el body del nodo `HTTP POST a MESA-AYUDAS`
 - **THEN** verifica la presencia de `origen_message_id`, la clasificacion precalculada y el marcador explicito de evento
 
 #### Scenario: Webhook de notificacion dedicado y aislado

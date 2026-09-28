@@ -6,11 +6,11 @@ Estado actual relevante de `n8n/workflow.json`:
 
 - El webhook `Webhook formulario web` usa `responseMode: responseNode` (`n8n/workflow.json:325`).
 - El nodo `Es correo?` (`n8n/workflow.json:640-673`) tiene su salida `main#0` cableada a `Marcar correo como leido` y su `main#1` vacía.
-- La salida de error (`main#1`) de `HTTP POST a MTM-SRU` va solo a `Es correo?` (`n8n/workflow.json:837-843`).
+- La salida de error (`main#1`) de `HTTP POST a MESA-AYUDAS` va solo a `Es correo?` (`n8n/workflow.json:837-843`).
 - `Notificar operador designado` desemboca en `Registro de auditoria` (`n8n/workflow.json:874-884`).
 - El switch `Rutear por canal de origen` (`n8n/workflow.json:885-921`) conecta las salidas telefonía (`:906-912`) y fallback (`:913-919`) a `Correo de confirmacion al usuario`.
 - El nodo `memoryRedisChat` no declara credencial ni parámetros (`n8n/workflow.json:284-294`).
-- `HTTP POST a MTM-SRU` declara autenticación por credencial `httpHeaderAuth` (`n8n/workflow.json:115-116,135-140`) y además un header `Authorization` explícito (`:118-125`).
+- `HTTP POST a MESA-AYUDAS` declara autenticación por credencial `httpHeaderAuth` (`n8n/workflow.json:115-116,135-140`) y además un header `Authorization` explícito (`:118-125`).
 - La guía declara "29 nodos" (`docs/n8n-workflow-guide.md:10`), "94 propiedades" (`:463`) y una excepción obsoleta sobre la rama de revisión (`:65-67`).
 
 Restricciones:
@@ -94,7 +94,7 @@ Nota: los nombres exactos de los parámetros se confirman contra el schema del n
 
 ### Decision 5 — Un único mecanismo de autenticación en el nodo de persistencia
 
-Se elimina de `HTTP POST a MTM-SRU` el campo `authentication: genericCredentialType`, `genericAuthType: httpHeaderAuth` y la credencial `credentials.httpHeaderAuth`. Se conserva `sendHeaders: true` con el header explícito `Authorization: =Bearer {{ $('Login operador').item.json.access_token }}`, que es el mecanismo exigido por N8N-AUTH-001 (token dinámico por login).
+Se elimina de `HTTP POST a MESA-AYUDAS` el campo `authentication: genericCredentialType`, `genericAuthType: httpHeaderAuth` y la credencial `credentials.httpHeaderAuth`. Se conserva `sendHeaders: true` con el header explícito `Authorization: =Bearer {{ $('Login operador').item.json.access_token }}`, que es el mecanismo exigido por N8N-AUTH-001 (token dinámico por login).
 
 Esto obliga a actualizar el test existente `test_c29_incidentes_http_node_declares_authentication`, que hoy exige `parameters.authentication` no vacío. El test pasa a verificar el contrato corregido: existe exactamente un mecanismo, el header explícito referencia `Login operador`, y no coexiste con una credencial `httpHeaderAuth`.
 
@@ -102,7 +102,7 @@ Alternativa considerada: conservar la credencial y eliminar el header explícito
 
 ### Decision 6 — Auditoría en el camino de error del backend
 
-Se agrega `Registro de auditoria` como sucesor de `HTTP POST a MTM-SRU` `main#1`, en paralelo a `Es correo?`. El nodo de auditoría ya tolera ítems sin respuesta HTTP (usa el normalizador aguas arriba). Se refina su detección de resultado para que un ítem de error de backend (`item.error`) se registre con `resultado` distinto de `creado`.
+Se agrega `Registro de auditoria` como sucesor de `HTTP POST a MESA-AYUDAS` `main#1`, en paralelo a `Es correo?`. El nodo de auditoría ya tolera ítems sin respuesta HTTP (usa el normalizador aguas arriba). Se refina su detección de resultado para que un ítem de error de backend (`item.error`) se registre con `resultado` distinto de `creado`.
 
 Alternativa considerada: insertar un nodo code intermedio que marque el error. Descartada por agregar un nodo sin necesidad; el propio nodo de auditoría puede detectar la forma de error.
 

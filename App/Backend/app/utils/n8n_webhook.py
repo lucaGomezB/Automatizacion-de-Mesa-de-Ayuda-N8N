@@ -5,7 +5,7 @@ Responsabilidad:
     Implementa la comunicación de retorno desde esta API hacia N8N:
     luego de clasificar un incidente, notifica el resultado al webhook
     configurado en N8N para que el flujo de automatización continúe
-    (por ejemplo, enviando confirmación al usuario o actualizando MTM-SRU).
+    (por ejemplo, enviando confirmación al usuario o actualizando MESA-AYUDAS).
 
 Diseño fire-and-forget:
     Las fallas de esta notificación nunca se propagan al llamador.
@@ -40,7 +40,7 @@ async def notify_n8n(incidente_id: int, result: ClasificacionResult) -> None:
     durante el desarrollo o los tests).
 
     El payload incluye los campos mínimos necesarios para que N8N
-    pueda actualizar el sistema MTM-SRU con el sector asignado:
+    pueda actualizar el sistema MESA-AYUDAS con el sector asignado:
         - incidente_id:           ID del incidente en la base de datos.
         - sector_predicho:        Nombre del sector principal predicho.
         - sectores_adicionales:   Sectores secundarios predichos.

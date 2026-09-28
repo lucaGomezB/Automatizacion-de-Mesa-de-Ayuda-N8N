@@ -49,6 +49,14 @@ def _node(workflow: dict, name: str) -> dict:
     return next(n for n in workflow["nodes"] if n["name"] == name)
 
 
+def _pop_json_body_key(workflow: dict, name: str, key: str) -> None:
+    """Quita una clave del `jsonBody` (string JSON) de un nodo httpRequest v4.4."""
+    parameters = _node(workflow, name)["parameters"]
+    body = json.loads(parameters["jsonBody"])
+    body.pop(key, None)
+    parameters["jsonBody"] = json.dumps(body, ensure_ascii=False)
+
+
 def _write_workflow(tmp_path, mutate) -> pathlib.Path:
     data = _load_workflow()
     mutate(data)
@@ -110,81 +118,62 @@ def test_missing_agent_max_iterations_fails_named(tmp_path):
 
 
 # ===========================================================================
-# 1.2 Lookback del trigger de Outlook
+# 1.2 Lookback del trigger IMAP (C-55: migrado desde Outlook)
 # ===========================================================================
-def test_outlook_missing_lookback_fails_named(tmp_path):
+def test_imap_missing_lookback_fails_named(tmp_path):
     def mutate(wf):
-        _node(wf, "Llega un email a Mesa de Ayuda")["parameters"]["filters"].pop(
-            "custom", None
+        opts = _node(wf, "Llega un email a Mesa de Ayuda")["parameters"]["options"]
+        opts["customEmailConfig"] = '=["UNSEEN"]'
+
+    checks = check_workflow(_write_workflow(tmp_path, mutate))
+    _assert_single_named_fail(checks, "IMAP")
+
+
+def test_imap_missing_unread_filter_fails_named(tmp_path):
+    def mutate(wf):
+        opts = _node(wf, "Llega un email a Mesa de Ayuda")["parameters"]["options"]
+        opts["customEmailConfig"] = (
+            '=["SINCE", "{{ $now.minus(24, \'hours\') }}"]'
         )
 
     checks = check_workflow(_write_workflow(tmp_path, mutate))
-    _assert_single_named_fail(checks, "Outlook")
+    _assert_single_named_fail(checks, "IMAP")
 
 
-def test_outlook_missing_unread_filter_fails_named(tmp_path):
+def test_imap_missing_trigger_type_fails_named(tmp_path):
+    """Un workflow sin trigger emailReadImap produce un FAIL nombrando IMAP."""
     def mutate(wf):
-        _node(wf, "Llega un email a Mesa de Ayuda")["parameters"]["filters"][
-            "readStatus"
-        ] = "all"
+        _node(wf, "Llega un email a Mesa de Ayuda")["type"] = (
+            "n8n-nodes-base.microsoftOutlookTrigger"
+        )
 
     checks = check_workflow(_write_workflow(tmp_path, mutate))
-    _assert_single_named_fail(checks, "Outlook")
+    _assert_single_named_fail(checks, "IMAP")
 
 
 # ===========================================================================
-# 1.3 Alcanzabilidad de "Marcar correo como leido"
+# 1.3 Ciclo de marcado resuelto en el trigger (C-55: neutralizado)
+#    El nodo dedicado 'Marcar correo como leido' ya no existe; el marcado lo
+#    aplica el trigger IMAP. La guarda se conserva como verificacion de que el
+#    trigger declara postProcessAction=read.
 # ===========================================================================
 def test_mark_read_guard_passes_on_real_workflow():
     checks = check_workflow(REAL_WORKFLOW_PATH)
-    assert any("Marcar correo como leido" in c.name for c in checks)
-    assert all(
-        c.status == "PASS"
-        for c in checks
-        if "Marcar correo como leido" in c.name
-    ), _summary(checks)
+    mark_checks = [c for c in checks if "marcado" in c.name.lower()]
+    assert mark_checks, "No existe la guarda de marcado resuelto en el trigger"
+    assert all(c.status == "PASS" for c in mark_checks), _summary(checks)
 
 
-def test_mark_read_unreachable_from_reject_branch_fails(tmp_path):
-    def mutate(wf):
-        outs = wf["connections"]["Entrada valida"]["main"][1]
-        wf["connections"]["Entrada valida"]["main"][1] = [
-            e for e in outs if e["node"] != "Es correo?"
-        ]
-
-    checks = check_workflow(_write_workflow(tmp_path, mutate))
-    _assert_single_named_fail(checks, "Marcar correo como leido")
-
-
-def test_mark_read_unreachable_from_error_branch_fails(tmp_path):
-    def mutate(wf):
-        outs = wf["connections"]["HTTP POST a MTM-SRU"]["main"][1]
-        wf["connections"]["HTTP POST a MTM-SRU"]["main"][1] = [
-            e for e in outs if e["node"] != "Es correo?"
-        ]
-
-    checks = check_workflow(_write_workflow(tmp_path, mutate))
-    _assert_single_named_fail(checks, "Marcar correo como leido")
-
-
-def test_mark_read_unreachable_from_success_branch_fails(tmp_path):
-    def mutate(wf):
-        # Tras conectar la rama true de 'Requiere revision humana' a la guarda
-        # 'Es correo?', el exito alcanza 'Marcar correo como leido' por DOS rutas:
-        #   1. Requiere revision humana (true) -> Es correo? -> Marcar
-        #   2. Requiere revision humana (false) -> Rutear por canal (correo) -> Marcar
-        # Se cortan AMBAS para simular una rama de exito que no marca el correo.
-        true_outs = wf["connections"]["Requiere revision humana"]["main"][0]
-        wf["connections"]["Requiere revision humana"]["main"][0] = [
-            e for e in true_outs if e["node"] != "Es correo?"
-        ]
-        outs = wf["connections"]["Rutear por canal de origen"]["main"][1]
-        wf["connections"]["Rutear por canal de origen"]["main"][1] = [
-            e for e in outs if e["node"] != "Marcar correo como leido"
-        ]
-
-    checks = check_workflow(_write_workflow(tmp_path, mutate))
-    _assert_single_named_fail(checks, "Marcar correo como leido")
+def test_mark_read_guard_ignores_dedicated_node_mutations(tmp_path):
+    """La guarda neutralizada no depende de un nodo dedicado: mutar el JSON
+    quitando cualquier nodo de marcado no la hace FAIL."""
+    wf = _load_workflow()
+    names = [n["name"] for n in wf["nodes"]]
+    assert "Marcar correo como leido" not in names, (
+        "El workflow del repo todavia declara el nodo dedicado de marcado"
+    )
+    checks = check_workflow(REAL_WORKFLOW_PATH)
+    assert all(c.status == "PASS" for c in checks), _summary(checks)
 
 
 # ===========================================================================
@@ -192,9 +181,7 @@ def test_mark_read_unreachable_from_success_branch_fails(tmp_path):
 # ===========================================================================
 def test_body_missing_origen_message_id_fails_named(tmp_path):
     def mutate(wf):
-        _node(wf, "HTTP POST a MTM-SRU")["parameters"]["body"].pop(
-            "origen_message_id", None
-        )
+        _pop_json_body_key(wf, "HTTP POST a MESA-AYUDAS", "origen_message_id")
 
     checks = check_workflow(_write_workflow(tmp_path, mutate))
     _assert_single_named_fail(checks, "origen_message_id")
@@ -202,9 +189,7 @@ def test_body_missing_origen_message_id_fails_named(tmp_path):
 
 def test_body_missing_classification_fails_named(tmp_path):
     def mutate(wf):
-        _node(wf, "HTTP POST a MTM-SRU")["parameters"]["body"].pop(
-            "clasificacion", None
-        )
+        _pop_json_body_key(wf, "HTTP POST a MESA-AYUDAS", "clasificacion")
 
     checks = check_workflow(_write_workflow(tmp_path, mutate))
     _assert_single_named_fail(checks, "clasificacion")
@@ -212,9 +197,7 @@ def test_body_missing_classification_fails_named(tmp_path):
 
 def test_body_missing_origen_evento_fails_named(tmp_path):
     def mutate(wf):
-        _node(wf, "HTTP POST a MTM-SRU")["parameters"]["body"].pop(
-            "origen_evento", None
-        )
+        _pop_json_body_key(wf, "HTTP POST a MESA-AYUDAS", "origen_evento")
 
     checks = check_workflow(_write_workflow(tmp_path, mutate))
     _assert_single_named_fail(checks, "origen_evento")
@@ -234,7 +217,7 @@ def test_missing_notification_webhook_fails_named(tmp_path):
 def test_notification_webhook_connected_to_creation_fails(tmp_path):
     def mutate(wf):
         wf["connections"]["notificacion-clasificacion"]["main"] = [
-            [{"node": "HTTP POST a MTM-SRU", "type": "main", "index": 0}]
+            [{"node": "HTTP POST a MESA-AYUDAS", "type": "main", "index": 0}]
         ]
 
     checks = check_workflow(_write_workflow(tmp_path, mutate))

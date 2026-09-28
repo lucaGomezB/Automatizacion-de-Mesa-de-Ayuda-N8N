@@ -46,13 +46,13 @@ IF_NODE_CORREO = "Entrada valida"
 # IF_NODE_TELEFONIA ("Lo que trajo puede crear un incidente") fue ELIMINADO en el
 # fix del apply C-05: era un nodo huérfano (sin entrada) — la telefonía ahora converge
 # en el normalizador compartido y usa el único IF "Entrada valida" + el único
-# HTTP POST a MTM-SRU.  IF_NODES queda con solo el IF del canal correo/unificado.
+# HTTP POST a MESA-AYUDAS.  IF_NODES queda con solo el IF del canal correo/unificado.
 IF_NODES = [IF_NODE_CORREO]
 
 NORMALIZER_NODE_NAME = "Normalizar entrada del incidente"
 
-HTTP_NODE_CORREO = "HTTP POST a MTM-SRU"
-# HTTP_NODE_TELEFONIA ("HTTP POST a MTM-SRU se crea un incidente") fue ELIMINADO en el
+HTTP_NODE_CORREO = "HTTP POST a MESA-AYUDAS"
+# HTTP_NODE_TELEFONIA ("HTTP POST a MESA-AYUDAS se crea un incidente") fue ELIMINADO en el
 # fix del apply C-05: era parte del subgrafo huérfano descartado.
 # Los tres canales usan el único HTTP_NODE_CORREO para persistencia.
 
@@ -86,6 +86,25 @@ def index_nodes(workflow: dict) -> tuple[dict[str, dict], dict[str, list[dict]]]
         by_name[node["name"]] = node
         by_type.setdefault(node["type"], []).append(node)
     return by_name, by_type
+
+
+def http_json_body(node: dict) -> dict:
+    """Devuelve el body de un nodo httpRequest parseado desde `jsonBody`.
+
+    HTTP Request v4.4 con contentType=json solo envia el payload cuando
+    `specifyBody` es 'json' y el cuerpo viaja en `jsonBody` (un string JSON).
+    Un `body` objeto es ignorado por N8N y el POST llega vacio.
+    """
+    parameters = node.get("parameters", {})
+    assert parameters.get("specifyBody") == "json", (
+        f"{node.get('name')!r} no declara specifyBody='json': un body objeto "
+        "es ignorado por N8N y el POST viaja vacio"
+    )
+    raw = parameters.get("jsonBody", "")
+    assert isinstance(raw, str) and raw, (
+        f"{node.get('name')!r} no declara un jsonBody string no vacio"
+    )
+    return json.loads(raw)
 
 
 # ---------------------------------------------------------------------------
@@ -637,8 +656,8 @@ def test_http_payload_has_no_extra_fields():
     assert len(incidentes_nodes) > 0
 
     for node in incidentes_nodes:
-        body_params = node.get("parameters", {}).get("body", "")
-        body_str = json.dumps(body_params) if isinstance(body_params, dict) else str(body_params)
+        body_params = http_json_body(node)
+        body_str = json.dumps(body_params)
         assert "myNewField" not in body_str, (
             "El payload HTTP contiene el campo placeholder 'myNewField'"
         )
@@ -954,29 +973,24 @@ def test_web_confirmation_node_exists():
 
 def test_email_confirmation_node_exists():
     """
-    RED → GREEN (3.3/3.4): existe un nodo microsoftOutlook de confirmación
-    cableado tras la persistencia del flujo de correo.
+    RED → GREEN (3.3/3.4) adaptado a C-55: existe un nodo `n8n-nodes-base.emailSend`
+    de confirmación cableado tras la persistencia del flujo de correo.
     Spec: «el workflow envía correo de confirmación al usuario del canal correo».
     """
     wf = load_workflow()
     by_name, by_type = index_nodes(wf)
 
-    # Debe existir al menos un nodo microsoftOutlook de ENVÍO (no el trigger)
-    outlook_send_nodes = [
-        n for n in by_type.get("n8n-nodes-base.microsoftOutlook", [])
-        if n["name"] != "Llega un email a Mesa de Ayuda"
-    ]
+    send_nodes = by_type.get("n8n-nodes-base.emailSend", [])
 
-    # El correo de confirmación debe existir y debe ser alcanzable desde HTTP POST a MTM-SRU
     confirm_nodes = [
-        n for n in outlook_send_nodes
+        n for n in send_nodes
         if "confirmacion" in n["name"].lower() or "confirmar" in n["name"].lower()
         or "confir" in n["name"].lower()
     ]
 
     assert len(confirm_nodes) > 0, (
-        f"No se encontró un nodo microsoftOutlook de confirmación en el workflow. "
-        f"Nodos Outlook encontrados: {[n['name'] for n in outlook_send_nodes]}"
+        f"No se encontró un nodo emailSend de confirmación en el workflow. "
+        f"Nodos emailSend encontrados: {[n['name'] for n in send_nodes]}"
     )
 
 
@@ -1172,7 +1186,7 @@ def test_audit_reachable_from_rejected_branch():
     el rechazo en sí NUNCA se registra en auditoría.
 
     Fix esperado: la rama false del IF debe tener al menos un sucesor que conduzca
-    al nodo de auditoría sin pasar por HTTP POST a MTM-SRU.
+    al nodo de auditoría sin pasar por HTTP POST a MESA-AYUDAS.
 
     Spec/decisión: el log de auditoría registra TODAS las ramas.
     """
@@ -1216,7 +1230,7 @@ def test_audit_reachable_from_rejected_branch():
     )
     assert found, (
         f"La rama false del IF '{IF_CORREO}' no alcanza '{AUDIT_NODE_NAME}' "
-        "sin pasar por HTTP POST a MTM-SRU. "
+        "sin pasar por HTTP POST a MESA-AYUDAS. "
         "El evento de rechazo (datos incompletos) nunca se registra en auditoría. "
         "Fix: conectar la rama false también al nodo de auditoría."
     )
@@ -1265,14 +1279,14 @@ def test_web_confirmation_reachable_from_web_trigger():
     (Marcar canal web → Normalizar → IF → HTTP POST → Switch canal → respondToWebhook).
 
     Defecto confirmado: actualmente el nodo respondToWebhook solo recibe de
-    'HTTP POST a MTM-SRU se crea un incidente', que es un nodo HUÉRFANO
+    'HTTP POST a MESA-AYUDAS se crea un incidente', que es un nodo HUÉRFANO
     (sin entrada). El canal web nunca llega al respondToWebhook.
     """
     wf = load_workflow()
     assert _connections_reachable(wf, WEBHOOK_WEB_NODE_NAME, RESPOND_WEBHOOK_NODE_NAME), (
         f"'{RESPOND_WEBHOOK_NODE_NAME}' no es alcanzable desde '{WEBHOOK_WEB_NODE_NAME}'. "
         "El canal web nunca recibiría confirmación del webhook. "
-        "Fix: conectar HTTP POST a MTM-SRU → Switch canal → Confirmacion web al usuario."
+        "Fix: conectar HTTP POST a MESA-AYUDAS → Switch canal → Confirmacion web al usuario."
     )
 
 
@@ -1285,7 +1299,7 @@ def test_no_orphan_executable_nodes():
     debe ser alcanzable desde al menos un trigger.
 
     Defecto confirmado: 'Lo que trajo puede crear un incidente' y
-    'HTTP POST a MTM-SRU se crea un incidente' son huérfanos actualmente.
+    'HTTP POST a MESA-AYUDAS se crea un incidente' son huérfanos actualmente.
     """
     wf = load_workflow()
     by_name, by_type = index_nodes(wf)
@@ -1546,14 +1560,18 @@ LANGUAGE_MODEL_TYPE_PREFIX = "@n8n/n8n-nodes-langchain.lm"
 SWITCH_NODE_TYPE = "n8n-nodes-base.switch"
 WEBHOOK_NODE_TYPE = "n8n-nodes-base.webhook"
 RESPOND_WEBHOOK_NODE_TYPE = "n8n-nodes-base.respondToWebhook"
-OUTLOOK_TRIGGER_NODE_TYPE = "n8n-nodes-base.microsoftOutlookTrigger"
+# C-55: el canal de correo migra de Outlook a IMAP/SMTP.
+EMAIL_READ_IMAP_NODE_TYPE = "n8n-nodes-base.emailReadImap"
+EMAIL_SEND_NODE_TYPE = "n8n-nodes-base.emailSend"
+EMAIL_RECIPIENT_REF = "$('Normalizar entrada del incidente').item.json.remitente"
 
 INCIDENTES_PATH_FRAGMENT = "/api/v1/incidentes"
 
 # Tipos que requieren credenciales para operar (los lm* se resuelven por prefijo).
 CREDENTIAL_REQUIRING_NODE_TYPES = {
-    "n8n-nodes-base.microsoftOutlook",
-    "n8n-nodes-base.microsoftOutlookTrigger",
+    # C-55: el trigger IMAP y los envios SMTP requieren credencial propia.
+    "n8n-nodes-base.emailReadImap",
+    "n8n-nodes-base.emailSend",
     "n8n-nodes-base.twilioTrigger",
     # C-40 (N8N-MEMORY-001): el nodo de memoria Redis falla en runtime sin credencial.
     "@n8n/n8n-nodes-langchain.memoryRedisChat",
@@ -1757,8 +1775,8 @@ def test_c29_incidentes_http_body_includes_canal_origen_id():
     assert nodes, "No se encontró el nodo httpRequest hacia /api/v1/incidentes"
 
     for node in nodes:
-        body = node.get("parameters", {}).get("body", {})
-        body_str = json.dumps(body) if isinstance(body, (dict, list)) else str(body)
+        body = http_json_body(node)
+        body_str = json.dumps(body)
         assert "canal_origen_id" in body_str, (
             f"El body del nodo {node['name']!r} no incluye 'canal_origen_id' "
             f"(body actual: {body_str}). B-08: el incidente queda con canal NULL."
@@ -1866,28 +1884,25 @@ def test_c29_agent_prompt_interpolates_trigger_payload():
         )
 
 
-def test_c29_outlook_trigger_exposes_email_body():
+def test_c29_email_trigger_exposes_body_via_simple_format():
     """
-    (f) B-07: el trigger de Outlook expone el cuerpo del correo que lee el validador.
-    Hoy no declara `output`, por lo que usa el default `simple` (bodyPreview, sin body).
+    (f) B-07 adaptado a C-55: el trigger IMAP expone el cuerpo del correo que lee
+    el validador mediante el formato `simple`, que entrega los campos genericos
+    `textPlain`/`textHtml`/`text`. N8N-EMAIL-001.
     """
     wf = load_workflow()
     _, by_type = index_nodes(wf)
 
-    triggers = by_type.get(OUTLOOK_TRIGGER_NODE_TYPE, [])
-    assert triggers, "No se encontró el trigger de Microsoft Outlook"
+    triggers = by_type.get(EMAIL_READ_IMAP_NODE_TYPE, [])
+    assert triggers, "No se encontro el trigger IMAP (n8n-nodes-base.emailReadImap)"
 
     for trigger in triggers:
         params = trigger.get("parameters", {})
-        output_mode = params.get("output", "simple")
-        assert output_mode == "fields", (
-            f"El trigger {trigger['name']!r} usa output={output_mode!r} (default 'simple'), "
-            "que expone bodyPreview pero no body. B-07: configurar output='fields'."
-        )
-        fields = params.get("fields", [])
-        assert "body" in fields, (
-            f"El trigger {trigger['name']!r} no selecciona el campo 'body' en 'fields' "
-            f"(fields actuales: {fields!r}). B-07: la descripción del correo no es legible."
+        output_mode = params.get("format")
+        assert output_mode == "simple", (
+            f"El trigger {trigger['name']!r} usa format={output_mode!r}; "
+            "el formato 'simple' expone textPlain/textHtml que consume el validador. "
+            "N8N-EMAIL-001."
         )
 
 
@@ -1948,103 +1963,84 @@ def test_c29_credential_requiring_nodes_declare_credentials():
 
 
 # ---------------------------------------------------------------------------
-# Grupo 17 — Dedupe de correos duplicados (tarea 6.5, opcion b)
+# Grupo 17 — Dedupe de correos duplicados (tarea 6.5, opcion b; migrado a C-55)
 #
-# Sospecha confirmada: el trigger de Outlook no deduplicaba; dos correos
+# Sospecha confirmada: el trigger de correo no deduplicaba; dos correos
 # identicos creaban dos incidentes. Opcion (b): recolectar solo no leidos
-# (readStatus=unread) y marcar como leido el mensaje ya convertido en incidente.
+# (customEmailConfig UNSEEN) y marcar como leido el mensaje en el propio
+# trigger IMAP (`postProcessAction=read`), sin nodo dedicado de marcado.
 # ---------------------------------------------------------------------------
 
 OUTLOOK_TRIGGER_NAME = "Llega un email a Mesa de Ayuda"
-OUTLOOK_APP_NODE_TYPE = "n8n-nodes-base.microsoftOutlook"
 MARK_READ_NODE_NAME = "Marcar correo como leido"
 
 
 def test_outlook_trigger_filters_unread_only():
     """
-    RED (6.5): el trigger de Outlook debe declarar `filters.readStatus = 'unread'`.
-    Sin el filtro, el polling re-recolecta correos ya procesados y crea duplicados.
+    RED (6.5) migrado a C-55: el trigger IMAP declara la configuracion
+    `customEmailConfig` con el criterio `UNSEEN`; sin el filtro el polling
+    re-recolecta correos ya procesados y crea duplicados.
     """
     wf = load_workflow()
     by_name, _ = index_nodes(wf)
 
     trigger = by_name[OUTLOOK_TRIGGER_NAME]
-    filters = trigger.get("parameters", {}).get("filters", {})
-    assert filters.get("readStatus") == "unread", (
-        f"El trigger {OUTLOOK_TRIGGER_NAME!r} no filtra por readStatus='unread' "
-        f"(filters={filters!r}). Sin el filtro se re-recolectan correos procesados."
+    assert trigger.get("type") == EMAIL_READ_IMAP_NODE_TYPE, (
+        f"El trigger {OUTLOOK_TRIGGER_NAME!r} debe ser {EMAIL_READ_IMAP_NODE_TYPE!r}, "
+        f"got {trigger.get('type')!r}"
+    )
+    custom = str(trigger.get("parameters", {}).get("options", {}).get("customEmailConfig", ""))
+    assert "UNSEEN" in custom, (
+        f"El trigger {OUTLOOK_TRIGGER_NAME!r} no filtra por UNSEEN "
+        f"(customEmailConfig={custom!r}). Sin el filtro se re-recolectan correos procesados."
     )
 
 
 def test_outlook_trigger_exposes_message_id():
     """
-    RED (6.5): el trigger debe exponer el `id` del mensaje para que aguas abajo
-    el nodo de marcado pueda resolver el messageId. En output='fields' eso exige
-    incluir 'id' en la lista de fields.
+    RED (6.5) migrado a C-55: el trigger IMAP declara `options.trackLastMessageId`
+    para no re-procesar el mismo mensaje.
     """
     wf = load_workflow()
     by_name, _ = index_nodes(wf)
 
     trigger = by_name[OUTLOOK_TRIGGER_NAME]
-    fields = trigger.get("parameters", {}).get("fields", [])
-    assert "id" in fields, (
-        f"El trigger {OUTLOOK_TRIGGER_NAME!r} no expone 'id' (fields={fields!r}); "
-        "el nodo que marca como leido no puede resolver el messageId."
+    track = trigger.get("parameters", {}).get("options", {}).get("trackLastMessageId")
+    assert track is True, (
+        f"El trigger {OUTLOOK_TRIGGER_NAME!r} no declara options.trackLastMessageId=true "
+        f"(trackLastMessageId={track!r}); no puede deduplicar por UID de mensaje."
     )
 
 
-def test_mark_read_node_exists_and_marks_message_read():
+def test_mark_read_is_resolved_in_trigger():
     """
-    RED (6.5): debe existir un nodo Microsoft Outlook que marque el correo como
-    leido (operacion 'update' de Message con updateFields.isRead=true) usando el
-    id provisto por el trigger.
+    RED (6.5) migrado a C-55: el marcado como leido se resuelve en el disparador
+    IMAP (`postProcessAction=read`) y NO existe un nodo dedicado de marcado.
     """
     wf = load_workflow()
     by_name, _ = index_nodes(wf)
 
-    assert MARK_READ_NODE_NAME in by_name, (
-        f"No existe el nodo {MARK_READ_NODE_NAME!r} que marque el correo como leido"
+    assert MARK_READ_NODE_NAME not in by_name, (
+        f"No debe existir el nodo dedicado {MARK_READ_NODE_NAME!r}: "
+        "el trigger IMAP marca el correo como leido."
     )
-    node = by_name[MARK_READ_NODE_NAME]
-    assert node.get("type") == OUTLOOK_APP_NODE_TYPE, (
-        f"{MARK_READ_NODE_NAME!r} debe ser {OUTLOOK_APP_NODE_TYPE!r}, got {node.get('type')!r}"
-    )
-
-    params = node.get("parameters", {})
-    assert params.get("operation") == "update", (
-        f"{MARK_READ_NODE_NAME!r} debe usar operation='update', got {params.get('operation')!r}"
-    )
-    assert params.get("updateFields", {}).get("isRead") is True, (
-        f"{MARK_READ_NODE_NAME!r} no marca isRead=true "
-        f"(updateFields={params.get('updateFields')!r})"
-    )
-
-    message_id = params.get("messageId")
-    assert isinstance(message_id, dict) and OUTLOOK_TRIGGER_NAME in str(message_id.get("value", "")), (
-        f"{MARK_READ_NODE_NAME!r} no resuelve el messageId desde {OUTLOOK_TRIGGER_NAME!r} "
-        f"(messageId={message_id!r})"
+    node = by_name[OUTLOOK_TRIGGER_NAME]
+    assert node.get("parameters", {}).get("postProcessAction") == "read", (
+        f"{OUTLOOK_TRIGGER_NAME!r} no declara postProcessAction='read' "
+        f"(postProcessAction={node.get('parameters', {}).get('postProcessAction')!r})"
     )
 
 
-def test_mark_read_runs_after_incident_creation_for_correo():
+def test_email_confirmation_still_reachable_without_mark_read():
     """
-    TRIANGULATE (6.5): el marcado como leido debe ser alcanzable desde la
-    persistencia (HTTP POST), en la rama correo del switch, y la confirmacion
-    debe seguir recibiendo el item del alta.
-
-    El nodo de marcado es una hoja: si alimentara a la confirmacion, el
-    `$json.id` de la confirmacion pasaria a ser el id del mensaje de Outlook
-    en lugar del id del incidente (regresion).
+    TRIANGULATE (6.5) migrado a C-55: sin el nodo de marcado, la confirmacion
+    sigue siendo alcanzable desde la persistencia (el mensaje ya quedo leido en
+    el trigger, asi que no hay rama terminal que marcar).
     """
     wf = load_workflow()
-    assert _connections_reachable(wf, HTTP_NODE_CORREO, MARK_READ_NODE_NAME), (
-        f"{MARK_READ_NODE_NAME!r} no es alcanzable desde {HTTP_NODE_CORREO!r}: "
-        "debe marcar el correo despues de crear el incidente."
-    )
-    assert _get_successors(wf, MARK_READ_NODE_NAME) == [], (
-        f"{MARK_READ_NODE_NAME!r} no debe alimentar la confirmacion: cambiaria el "
-        "item de entrada (id del mensaje en vez de id del incidente)."
-    )
+    by_name, _ = index_nodes(wf)
+
+    assert MARK_READ_NODE_NAME not in by_name
     assert _connections_reachable(wf, HTTP_NODE_CORREO, EMAIL_CONFIRM_NODE_NAME), (
         f"{EMAIL_CONFIRM_NODE_NAME!r} dejo de ser alcanzable desde {HTTP_NODE_CORREO!r}"
     )
@@ -2181,13 +2177,14 @@ def test_c33_terminal_sets_forced_human_review_and_reaches_persistence():
     )
 
 
-# ── N8N-EMAIL-LIFECYCLE-001: marcado en todas las ramas ─────────────────────
+# ── N8N-EMAIL-LIFECYCLE-001: marcado resuelto en el trigger ─────────────────
 
 
-def test_c33_reject_branch_reaches_mark_read_with_channel_guard():
+def test_c33_reject_branch_keeps_channel_guard_without_mark_node():
     """
-    RED (1.3): la rama de rechazo alcanza 'Marcar correo como leido' y el camino
-    pasa por la guarda de canal 'Es correo?'.
+    RED (1.3) migrado a C-55: la guarda de canal 'Es correo?' sigue evaluando
+    `canal_origen == 'correo'` y es alcanzable desde la rama de rechazo; el
+    marcado ya no requiere nodo porque el trigger IMAP aplica `\\SEEN`.
     """
     wf = load_workflow()
     by_name, _ = index_nodes(wf)
@@ -2199,20 +2196,19 @@ def test_c33_reject_branch_reaches_mark_read_with_channel_guard():
         "La guarda no evalua canal_origen == 'correo'"
     )
 
-    # La rama false del IF de validacion (rechazo) alcanza el marcado.
-    assert _branch_reaches(wf, IF_NODE_CORREO, 1, MARK_READ_NODE_NAME), (
-        "La rama de rechazo no alcanza 'Marcar correo como leido'"
+    # La rama false del IF de validacion (rechazo) alcanza la guarda de canal.
+    assert _branch_reaches(wf, IF_NODE_CORREO, 1, IF_ES_CORREO_NODE_NAME), (
+        "La rama de rechazo no alcanza la guarda 'Es correo?'"
     )
-    # La guarda desemboca en el marcado.
-    assert MARK_READ_NODE_NAME in _get_successors(wf, IF_ES_CORREO_NODE_NAME), (
-        f"'{IF_ES_CORREO_NODE_NAME}' no desemboca en '{MARK_READ_NODE_NAME}'"
-    )
+    # El marcado ya no depende de un nodo dedicado.
+    assert MARK_READ_NODE_NAME not in by_name
 
 
-def test_c33_error_branch_declares_continue_error_output_and_reaches_mark_read():
+def test_c33_error_branch_declares_continue_error_output_with_channel_guard():
     """
-    RED (1.4): el nodo de persistencia declara onError=continueErrorOutput y su
-    salida de error alcanza el marcado del correo (con guarda de canal).
+    RED (1.4) migrado a C-55: el nodo de persistencia declara
+    onError=continueErrorOutput y su salida de error pasa por la guarda de canal;
+    el marcado como leido ya lo garantiza el trigger IMAP sin nodo dedicado.
     """
     wf = load_workflow()
     by_name, _ = index_nodes(wf)
@@ -2226,38 +2222,31 @@ def test_c33_error_branch_declares_continue_error_output_and_reaches_mark_read()
     assert IF_ES_CORREO_NODE_NAME in error_successors, (
         f"La salida de error no pasa por la guarda '{IF_ES_CORREO_NODE_NAME}'"
     )
-    assert any(
-        _connections_reachable(wf, succ, MARK_READ_NODE_NAME)
-        for succ in error_successors
-    ), "La salida de error no alcanza 'Marcar correo como leido'"
-
-    # La rama de exito se conserva.
-    assert _connections_reachable(wf, HTTP_NODE_CORREO, MARK_READ_NODE_NAME)
+    assert MARK_READ_NODE_NAME not in by_name
 
 
 # ── N8N-BACKLOG-001: lookback de 24 h ───────────────────────────────────────
 
 
-def test_c33_outlook_trigger_has_24h_lookback():
+def test_c33_email_trigger_has_24h_lookback():
     """
-    RED (1.5): el trigger de Outlook declara un filtro de fecha `receivedDateTime`
-    con lookback de 24 horas, conservando readStatus='unread'.
+    RED (1.5) migrado a C-55: el trigger IMAP declara en `customEmailConfig` un
+    filtro de fecha `SINCE` con lookback de 24 horas, conservando `UNSEEN`.
     """
     wf = load_workflow()
     by_name, _ = index_nodes(wf)
 
     trigger = by_name[OUTLOOK_TRIGGER_NAME]
-    filters = trigger.get("parameters", {}).get("filters", {})
-    assert filters.get("readStatus") == "unread", (
-        "El trigger dejo de filtrar por readStatus='unread'"
+    custom = str(trigger.get("parameters", {}).get("options", {}).get("customEmailConfig", ""))
+    assert "UNSEEN" in custom, (
+        "El trigger dejo de filtrar por UNSEEN"
     )
-    custom = str(filters.get("custom", ""))
-    assert "receivedDateTime" in custom, (
-        f"El trigger no declara filtro sobre receivedDateTime (filters={filters!r})"
+    assert "SINCE" in custom, (
+        f"El trigger no declara filtro de fecha SINCE (customEmailConfig={custom!r})"
     )
     assert "24" in custom, "El lookback declarado no es de 24 horas"
-    assert any(token in custom for token in ("60 * 60", "60*60", "86400", "h * 60")), (
-        "El lookback no expresa 24 horas de forma verificable (se esperaba h*60*60)"
+    assert "hours" in custom, (
+        "El lookback no expresa horas de forma verificable (se esperaba 'hours')"
     )
 
 
@@ -2274,8 +2263,8 @@ def test_c33_http_body_sends_message_id_classification_and_origin_marker():
 
     nodes = _incidentes_http_nodes(by_type)
     assert nodes, "No se encontro el HTTP POST a /api/v1/incidentes"
-    body = nodes[0].get("parameters", {}).get("body", {})
-    body_str = json.dumps(body) if isinstance(body, dict) else str(body)
+    body = http_json_body(nodes[0])
+    body_str = json.dumps(body)
 
     assert "origen_message_id" in body_str, (
         "El body no envia 'origen_message_id' (Message-ID de Outlook)"
@@ -2517,8 +2506,9 @@ def test_revision_humana_condition_references_flag():
 
 def test_notificar_operador_node_exists_and_references_env():
     """
-    RED → GREEN: existe el nodo de notificacion microsoftOutlook de envio,
-    dirigido a la variable de entorno `$env.OPERATOR_EMAIL`.
+    RED → GREEN adaptado a C-55: existe el nodo de notificacion
+    `n8n-nodes-base.emailSend` (SMTP), dirigido a la variable de entorno
+    `$env.OPERATOR_EMAIL`.
     """
     wf = load_workflow()
     by_name, _ = index_nodes(wf)
@@ -2527,8 +2517,8 @@ def test_notificar_operador_node_exists_and_references_env():
         f"No existe el nodo {NOTIFICAR_OPERADOR_NODE_NAME!r}"
     )
     node = by_name[NOTIFICAR_OPERADOR_NODE_NAME]
-    assert node.get("type") == "n8n-nodes-base.microsoftOutlook", (
-        f"{NOTIFICAR_OPERADOR_NODE_NAME!r} debe ser microsoftOutlook, "
+    assert node.get("type") == EMAIL_SEND_NODE_TYPE, (
+        f"{NOTIFICAR_OPERADOR_NODE_NAME!r} debe ser {EMAIL_SEND_NODE_TYPE!r}, "
         f"got {node.get('type')!r}"
     )
     params = node.get("parameters", {})
@@ -2537,9 +2527,9 @@ def test_notificar_operador_node_exists_and_references_env():
         f"{NOTIFICAR_OPERADOR_NODE_NAME!r} no referencia {OPERATOR_EMAIL_REF!r} "
         f"(params={params_str})"
     )
-    assert params.get("operation") == "send", (
-        f"{NOTIFICAR_OPERADOR_NODE_NAME!r} debe usar la operacion de envio "
-        f"('send'), got {params.get('operation')!r}"
+    assert params.get("emailFormat") == "text", (
+        f"{NOTIFICAR_OPERADOR_NODE_NAME!r} debe usar emailFormat='text', "
+        f"got {params.get('emailFormat')!r}"
     )
 
 
@@ -2683,7 +2673,7 @@ def test_http_nodes_do_not_hardcode_backend_host():
 def test_login_and_incidentes_nodes_use_env_backend_url():
     """
     TRIANGULATE (Fix 1): los dos nodos concretos que golpean el backend
-    ('Login operador' y 'HTTP POST a MTM-SRU') usan `$env.BACKEND_URL`.
+    ('Login operador' y 'HTTP POST a MESA-AYUDAS') usan `$env.BACKEND_URL`.
     """
     wf = load_workflow()
     by_name, _ = index_nodes(wf)
@@ -2696,23 +2686,27 @@ def test_login_and_incidentes_nodes_use_env_backend_url():
         )
 
 
-def test_revision_branch_reaches_mark_read():
+def test_revision_branch_requires_no_mark_read_node():
     """
-    RED (Fix 2): la rama true del gate post-POST 'Requiere revision humana'
-    (revision humana) tambien alcanza 'Marcar correo como leido', de modo que un
-    correo de baja confianza no queda sin marcar.
+    RED (Fix 2) migrado a C-55: la rama de revision humana no necesita un nodo
+    de marcado porque el trigger IMAP ya aplico `\\SEEN` al recoger el mensaje.
     """
     wf = load_workflow()
-    assert _connections_reachable(wf, IF_REVISION_HUMANA_NODE_NAME, MARK_READ_NODE_NAME), (
-        f"La rama de revision humana no alcanza {MARK_READ_NODE_NAME!r}: "
-        "el correo que requiere revision queda sin marcar como leido."
+    by_name, _ = index_nodes(wf)
+    assert MARK_READ_NODE_NAME not in by_name, (
+        f"{MARK_READ_NODE_NAME!r} sigue existiendo: el marcado debe resolverse "
+        "en el trigger IMAP."
+    )
+    trigger = by_name[OUTLOOK_TRIGGER_NAME]
+    assert trigger.get("parameters", {}).get("postProcessAction") == "read", (
+        f"{OUTLOOK_TRIGGER_NAME!r} no marca el correo como leido en el trigger"
     )
 
 
-def test_revision_true_branch_notifies_operator_and_marks_read():
+def test_revision_true_branch_notifies_operator_and_channel_guard():
     """
     TRIANGULATE (Fix 2): la rama true (main#0) conserva la notificacion al
-    operador y agrega la guarda de canal 'Es correo?' en el mismo nivel.
+    operador y la guarda de canal 'Es correo?' en el mismo nivel.
     """
     wf = load_workflow()
     true_successors = _output_successors(wf, IF_REVISION_HUMANA_NODE_NAME, 0)
@@ -2725,14 +2719,17 @@ def test_revision_true_branch_notifies_operator_and_marks_read():
     )
 
 
-def test_channel_guard_still_reaches_mark_read():
+def test_channel_guard_true_branch_is_terminal_without_mark_node():
     """
-    TRIANGULATE (Fix 2): la guarda 'Es correo?' sigue desembocando en
-    'Marcar correo como leido' (no regresion del cableado existente).
+    TRIANGULATE (Fix 2) migrado a C-55: la rama true de 'Es correo?' (canal
+    correo) queda terminal sin destino (no-op): el trigger ya marco el mensaje
+    como leido y no hay nodo dedicado.
     """
     wf = load_workflow()
-    assert MARK_READ_NODE_NAME in _get_successors(wf, IF_ES_CORREO_NODE_NAME), (
-        f"'{IF_ES_CORREO_NODE_NAME}' dejo de desembocar en {MARK_READ_NODE_NAME!r}"
+    by_name, _ = index_nodes(wf)
+    assert MARK_READ_NODE_NAME not in by_name
+    assert _output_successors(wf, IF_ES_CORREO_NODE_NAME, 0) == [], (
+        f"La rama true de '{IF_ES_CORREO_NODE_NAME}' debe quedar terminal (no-op)"
     )
 
 
@@ -2924,8 +2921,8 @@ def test_c39_body_incluye_ingresado_en_por_expresion():
     nodes = _incidentes_http_nodes(by_type)
     assert nodes, "No se encontro el HTTP POST a /api/v1/incidentes"
 
-    body = nodes[0].get("parameters", {}).get("body", {})
-    assert isinstance(body, dict) and "ingresado_en" in body, (
+    body = http_json_body(nodes[0])
+    assert "ingresado_en" in body, (
         "El body del POST debe incluir la clave 'ingresado_en'"
     )
     value = body["ingresado_en"]
@@ -2955,7 +2952,7 @@ def test_c39_body_sin_credenciales_y_host_por_env():
         f"La URL del POST debe resolver el host con {BACKEND_ENV_REF!r}; url={url!r}"
     )
 
-    body_str = json.dumps(node.get("parameters", {}).get("body", {}))
+    body_str = json.dumps(http_json_body(node))
     for token in ("Bearer ", "password", "secret", "apiKey", "token"):
         assert token not in body_str, (
             f"El body del POST no debe incluir credenciales (encontrado {token!r})"
@@ -3119,22 +3116,22 @@ def test_c40_normalizer_emits_remitente():
 
 def test_c40_email_confirmation_resolves_recipient_from_normalizer():
     """
-    RED (N8N-EMAIL-002): `toRecipients` de `Correo de confirmacion al usuario`
-    referencia el nodo normalizador (aguas arriba) y su campo `remitente`, no el
-    item corriente posterior al POST.
+    RED (N8N-EMAIL-002) adaptado a C-55: `toEmail` de
+    `Correo de confirmacion al usuario` referencia el nodo normalizador (aguas
+    arriba) y su campo `remitente`, no el item corriente posterior al POST.
     """
     wf = load_workflow()
     by_name, _ = index_nodes(wf)
     node = by_name[EMAIL_CONFIRM_NODE_NAME]
-    to_recipients = str(node.get("parameters", {}).get("toRecipients", ""))
+    to_email = str(node.get("parameters", {}).get("toEmail", ""))
 
-    assert NORMALIZER_NODE_NAME in to_recipients, (
-        f"'{EMAIL_CONFIRM_NODE_NAME}' no resuelve toRecipients desde "
-        f"{NORMALIZER_NODE_NAME!r} (toRecipients={to_recipients!r})"
+    assert NORMALIZER_NODE_NAME in to_email, (
+        f"'{EMAIL_CONFIRM_NODE_NAME}' no resuelve toEmail desde "
+        f"{NORMALIZER_NODE_NAME!r} (toEmail={to_email!r})"
     )
-    assert "remitente" in to_recipients, (
+    assert "remitente" in to_email, (
         f"'{EMAIL_CONFIRM_NODE_NAME}' no usa el campo 'remitente' del normalizador "
-        f"(toRecipients={to_recipients!r})"
+        f"(toEmail={to_email!r})"
     )
 
 
@@ -3148,7 +3145,7 @@ def test_c40_remitente_not_in_post_body_nor_audit():
 
     nodes = _incidentes_http_nodes(by_type)
     assert nodes, "No se encontro el HTTP POST a /api/v1/incidentes"
-    body_str = json.dumps(nodes[0].get("parameters", {}).get("body", {}))
+    body_str = json.dumps(http_json_body(nodes[0]))
     assert "remitente" not in body_str, (
         "El body del POST incluye 'remitente' (viola el contrato IncidenteCreate y "
         "expone PII)"
@@ -3606,7 +3603,7 @@ def test_c46_contrato_persistencia_backend_sin_cambios():
 
     nodes = _incidentes_http_nodes(by_type)
     assert nodes, "No se encontro el HTTP POST a /api/v1/incidentes"
-    body = nodes[0].get("parameters", {}).get("body", {})
+    body = http_json_body(nodes[0])
 
     value = body.get("ingresado_en")
     assert isinstance(value, str) and value.startswith("=") and "{{" in value, (
@@ -3703,7 +3700,7 @@ def test_c47_caller_usa_el_item_corriente_sin_referencia_cruzada():
     """
     wf = load_workflow()
     by_name, _ = index_nodes(wf)
-    body = by_name[GUARD_NODE_NAME].get("parameters", {}).get("body", {})
+    body = http_json_body(by_name[GUARD_NODE_NAME])
     caller = str(body.get("caller", ""))
     body_str = json.dumps(body)
 
@@ -3757,8 +3754,9 @@ def test_c47_caller_ausente_resuelve_null_sin_abortar():
     """
     wf = load_workflow()
     by_name, _ = index_nodes(wf)
-    params = by_name[GUARD_NODE_NAME].get("parameters", {})
-    caller = str(params.get("body", {}).get("caller", ""))
+    node = by_name[GUARD_NODE_NAME]
+    params = node.get("parameters", {})
+    caller = str(http_json_body(node).get("caller", ""))
 
     assert "$json.caller" in caller, (
         f"caller no resuelve el origen desde el item corriente (caller={caller!r})"
@@ -3902,7 +3900,7 @@ def test_c52_post_persistencia_envia_callsid_como_origen():
 
     nodes = _incidentes_http_nodes(by_type)
     assert nodes, "No se encontro el HTTP POST a /api/v1/incidentes"
-    body = nodes[0].get("parameters", {}).get("body", {})
+    body = http_json_body(nodes[0])
 
     assert "origen_message_id" in json.dumps(body), (
         "El body del POST debe incluir 'origen_message_id'"
@@ -3958,7 +3956,7 @@ def test_c52_guard_caller_desde_json():
     wf = load_workflow()
     by_name, _ = index_nodes(wf)
 
-    body = by_name[GUARD_NODE_NAME].get("parameters", {}).get("body", {})
+    body = http_json_body(by_name[GUARD_NODE_NAME])
     caller = str(body.get("caller", ""))
 
     assert "$json.caller" in caller, (
@@ -4274,4 +4272,296 @@ def test_c53_guia_no_afirma_confirmacion_telefonica_por_twiml():
     )
     assert "<Say>" not in guide, (
         "La guia conserva la afirmacion obsoleta de confirmacion por <Say>"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Grupo 28 — C-55 (canal-correo-imap): el canal de correo migra de Microsoft
+# Outlook OAuth2 a IMAP/SMTP.
+#
+#   * Trigger: `n8n-nodes-base.emailReadImap` con postProcessAction=read,
+#     format=simple, customEmailConfig ["UNSEEN", ["SINCE", <now - 24h>]],
+#     trackLastMessageId=true y credencial IMAP.
+#   * Envios: `n8n-nodes-base.emailSend` (SMTP) conservando asunto/cuerpo/
+#     destinatarios; crendencial SMTP.
+#   * Normalizador: remitente entre `<>` validado con EMAIL_RE; origen_message_id
+#     desde metadata['message-id'] con fallback attributes.uid; descripcion desde
+#     textPlain/textHtml/text/body; canal_raw='correo' explicito.
+#   * Ausencia de nodos `microsoftOutlook*`, de la credencial
+#     `microsoftOutlookOAuth2Api` y del nodo `Marcar correo como leido`.
+# ---------------------------------------------------------------------------
+
+SMTP_FROM_EMAIL_REF = "$env.SMTP_FROM_EMAIL"
+
+
+def test_c55_trigger_is_email_read_imap_and_no_outlook_trigger():
+    """
+    RED (2.1): existe un unico trigger `emailReadImap` y no existe ningun
+    `microsoftOutlookTrigger` en el workflow exportado.
+    """
+    wf = load_workflow()
+    by_name, by_type = index_nodes(wf)
+
+    imap_triggers = by_type.get(EMAIL_READ_IMAP_NODE_TYPE, [])
+    assert len(imap_triggers) == 1, (
+        f"Se esperaba exactamente un trigger {EMAIL_READ_IMAP_NODE_TYPE!r}, "
+        f"got {len(imap_triggers)}"
+    )
+    assert by_type.get("n8n-nodes-base.microsoftOutlookTrigger", []) == [], (
+        "El workflow conserva un trigger microsoftOutlookTrigger"
+    )
+    assert imap_triggers[0]["name"] == OUTLOOK_TRIGGER_NAME
+
+
+def test_c55_trigger_params_read_simple_inbox():
+    """
+    RED (2.1): el trigger IMAP declara mailbox=INBOX, postProcessAction=read,
+    downloadAttachments=false y format=simple.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    params = by_name[OUTLOOK_TRIGGER_NAME].get("parameters", {})
+
+    assert params.get("mailbox") == "INBOX", (
+        f"El trigger no declara mailbox='INBOX' (mailbox={params.get('mailbox')!r})"
+    )
+    assert params.get("postProcessAction") == "read", (
+        f"El trigger no marca leido (postProcessAction={params.get('postProcessAction')!r})"
+    )
+    assert params.get("downloadAttachments") is False, (
+        f"El trigger no desactiva adjuntos (downloadAttachments={params.get('downloadAttachments')!r})"
+    )
+    assert params.get("format") == "simple", (
+        f"El trigger no usa format='simple' (format={params.get('format')!r})"
+    )
+
+
+def test_c55_trigger_custom_email_config_unseen_since_24h():
+    """
+    RED (2.1): el trigger declara en `customEmailConfig` UNSEEN y SINCE con un
+    lookback de 24 horas, y `options.trackLastMessageId=true`.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    options = by_name[OUTLOOK_TRIGGER_NAME].get("parameters", {}).get("options", {})
+
+    custom = str(options.get("customEmailConfig", ""))
+    assert "UNSEEN" in custom, f"customEmailConfig sin UNSEEN: {custom!r}"
+    assert "SINCE" in custom, f"customEmailConfig sin SINCE: {custom!r}"
+    assert "24" in custom, f"customEmailConfig sin lookback de 24 h: {custom!r}"
+    assert "hours" in custom, f"customEmailConfig sin 'hours': {custom!r}"
+    assert options.get("trackLastMessageId") is True, (
+        f"El trigger no declara trackLastMessageId=true "
+        f"(trackLastMessageId={options.get('trackLastMessageId')!r})"
+    )
+
+
+def test_c55_trigger_declares_imap_credentials():
+    """
+    RED (2.1): el trigger declara una credencial IMAP no vacia (referencia, sin
+    secretos embebidos).
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    credentials = by_name[OUTLOOK_TRIGGER_NAME].get("credentials", {}) or {}
+
+    assert "imap" in credentials, (
+        f"El trigger no declara credencial 'imap' (credentials={list(credentials)!r})"
+    )
+    assert credentials["imap"], "La credencial 'imap' esta vacia"
+    assert "REPLACE_WITH" in json.dumps(credentials["imap"]), (
+        f"La credencial IMAP no usa un placeholder REPLACE_WITH_*: {credentials['imap']!r}"
+    )
+
+
+def test_c55_no_outlook_artifacts_and_node_count_37():
+    """
+    RED (2.1): no existe ningun nodo `microsoftOutlook*`, ninguna credencial
+    `microsoftOutlookOAuth2Api` ni el nodo `Marcar correo como leido`; el conteo
+    total de nodos es 37.
+    """
+    wf = load_workflow()
+    by_name, by_type = index_nodes(wf)
+
+    assert by_type.get("n8n-nodes-base.microsoftOutlook", []) == [], (
+        "El workflow conserva nodos microsoftOutlook"
+    )
+    assert by_type.get("n8n-nodes-base.microsoftOutlookTrigger", []) == [], (
+        "El workflow conserva el trigger microsoftOutlookTrigger"
+    )
+    assert MARK_READ_NODE_NAME not in by_name, (
+        f"El workflow conserva el nodo {MARK_READ_NODE_NAME!r}"
+    )
+    for node in wf["nodes"]:
+        credentials = node.get("credentials", {}) or {}
+        assert "microsoftOutlookOAuth2Api" not in credentials, (
+            f"El nodo {node['name']!r} declara credencial microsoftOutlookOAuth2Api"
+        )
+    assert len(wf["nodes"]) == 37, (
+        f"Se esperaban 37 nodos, el JSON tiene {len(wf['nodes'])}"
+    )
+
+
+def test_c55_confirmation_email_send_preserves_content():
+    """
+    RED (2.2): `Correo de confirmacion al usuario` es `emailSend` y conserva
+    asunto y cuerpo con el numero de incidente, resuelve el destinatario desde el
+    remitente normalizado y el remitente desde `$env.SMTP_FROM_EMAIL`.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    node = by_name[EMAIL_CONFIRM_NODE_NAME]
+    params = node.get("parameters", {})
+
+    assert node.get("type") == EMAIL_SEND_NODE_TYPE, (
+        f"'{EMAIL_CONFIRM_NODE_NAME}' debe ser {EMAIL_SEND_NODE_TYPE!r}, "
+        f"got {node.get('type')!r}"
+    )
+    assert "$json.numero_incidente" in str(params.get("subject", "")), (
+        "El asunto de la confirmacion no conserva el numero de incidente"
+    )
+    assert "$json.numero_incidente" in str(params.get("text", "")), (
+        "El cuerpo de la confirmacion no conserva el numero de incidente"
+    )
+    assert EMAIL_RECIPIENT_REF in str(params.get("toEmail", "")), (
+        f"La confirmacion no resuelve el destinatario desde el remitente "
+        f"(toEmail={params.get('toEmail')!r})"
+    )
+    assert SMTP_FROM_EMAIL_REF in str(params.get("fromEmail", "")), (
+        f"La confirmacion no declara fromEmail con {SMTP_FROM_EMAIL_REF!r} "
+        f"(fromEmail={params.get('fromEmail')!r})"
+    )
+    assert params.get("emailFormat") == "text", (
+        f"La confirmacion no usa emailFormat='text' (emailFormat={params.get('emailFormat')!r})"
+    )
+
+
+def test_c55_operator_email_send_preserves_content():
+    """
+    RED (2.2): `Notificar operador designado` es `emailSend` y conserva asunto y
+    cuerpo con el numero de incidente, dirigido a `$env.OPERATOR_EMAIL`.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    node = by_name[NOTIFICAR_OPERADOR_NODE_NAME]
+    params = node.get("parameters", {})
+
+    assert node.get("type") == EMAIL_SEND_NODE_TYPE, (
+        f"'{NOTIFICAR_OPERADOR_NODE_NAME}' debe ser {EMAIL_SEND_NODE_TYPE!r}, "
+        f"got {node.get('type')!r}"
+    )
+    assert "$json.numero_incidente" in str(params.get("subject", "")), (
+        "El asunto al operador no conserva el numero de incidente"
+    )
+    assert "$json.numero_incidente" in str(params.get("text", "")), (
+        "El cuerpo al operador no conserva el numero de incidente"
+    )
+    assert OPERATOR_EMAIL_REF in str(params.get("toEmail", "")), (
+        f"La notificacion al operador no usa {OPERATOR_EMAIL_REF!r} "
+        f"(toEmail={params.get('toEmail')!r})"
+    )
+    assert params.get("emailFormat") == "text", (
+        f"La notificacion al operador no usa emailFormat='text' "
+        f"(emailFormat={params.get('emailFormat')!r})"
+    )
+
+
+def test_c55_email_send_nodes_declare_smtp_credentials():
+    """
+    RED (2.2): los dos nodos `emailSend` declaran una credencial SMTP no vacia.
+    """
+    wf = load_workflow()
+    by_name, by_type = index_nodes(wf)
+    sends = by_type.get(EMAIL_SEND_NODE_TYPE, [])
+
+    assert len(sends) == 2, f"Se esperaban 2 nodos emailSend, got {len(sends)}"
+    for node in sends:
+        credentials = node.get("credentials", {}) or {}
+        assert "smtp" in credentials, (
+            f"El nodo {node['name']!r} no declara credencial 'smtp' "
+            f"(credentials={list(credentials)!r})"
+        )
+        assert credentials["smtp"], f"La credencial smtp de {node['name']!r} esta vacia"
+
+
+def test_c55_normalizer_parses_remitente_between_angle_brackets():
+    """
+    RED (2.2): el normalizador extrae la direccion entre `<>` del header
+    `"Nombre <addr>"` (formato de `emailReadImap`) y valida con `EMAIL_RE`.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    code = _js_code(by_name[NORMALIZER_NODE_NAME])
+
+    assert "EMAIL_RE" in code, "El normalizador no valida el remitente con EMAIL_RE"
+    assert "<([^>]+)>" in code, (
+        "El normalizador no extrae la direccion entre '<>' del header IMAP"
+    )
+    assert "match(" in code, (
+        "El normalizador no aplica el patron de extraccion entre '<>'"
+    )
+
+
+def test_c55_normalizer_origen_message_id_from_metadata_with_uid_fallback():
+    """
+    RED (2.2): el normalizador resuelve `origen_message_id` para correo desde
+    `metadata['message-id']` con fallback a `attributes.uid`.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    code = _js_code(by_name[NORMALIZER_NODE_NAME])
+
+    assert "metadata" in code, "El normalizador no lee metadata del mensaje IMAP"
+    assert "message-id" in code, (
+        "El normalizador no lee el header metadata['message-id']"
+    )
+    assert "attributes" in code, "El normalizador no lee attributes.uid del mensaje IMAP"
+    assert "uid" in code, (
+        "El normalizador no usa attributes.uid como fallback de origen_message_id"
+    )
+
+
+def test_c55_normalizer_canal_raw_correo_explicit():
+    """
+    RED (2.2): el nodo validador de correo marca `canal_raw = "correo"` de forma
+    explicita antes de normalizar.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    code = _js_code(by_name[CODE_NODE_CORREO])
+
+    assert "canal_raw" in code and "correo" in code, (
+        "El validador de correo no marca canal_raw='correo' explicitamente"
+    )
+
+
+def test_c55_normalizer_descripcion_from_imap_text_fields():
+    """
+    RED (2.2): el normalizador (y el validador de correo) extraen la descripcion
+    desde los campos genericos del mensaje IMAP (`textPlain`/`textHtml`/`text`).
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    norm = _js_code(by_name[NORMALIZER_NODE_NAME])
+    assert "textPlain" in norm, "El normalizador no lee textPlain del mensaje IMAP"
+    assert "textHtml" in norm, "El normalizador no lee textHtml del mensaje IMAP"
+
+    validator = _js_code(by_name[CODE_NODE_CORREO])
+    assert "textPlain" in validator or "text" in validator, (
+        "El validador de correo no lee el cuerpo generico del mensaje IMAP"
+    )
+
+
+def test_c55_email_trigger_wired_to_validator_and_normalizer():
+    """
+    RED (2.1): la salida del trigger IMAP fluye a traves del validador de correo
+    hacia el normalizador.
+    """
+    wf = load_workflow()
+    assert _connections_reachable(wf, OUTLOOK_TRIGGER_NAME, CODE_NODE_CORREO), (
+        f"El trigger IMAP no alcanza el validador {CODE_NODE_CORREO!r}"
+    )
+    assert _connections_reachable(wf, CODE_NODE_CORREO, NORMALIZER_NODE_NAME), (
+        f"El validador {CODE_NODE_CORREO!r} no alcanza el normalizador"
     )
