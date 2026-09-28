@@ -234,6 +234,13 @@ git add .engram && git commit -m "chore(engram): sync project memory"
 
 Never use `engram sync --all` — it exports ALL projects to this repo.
 
+Reglas duras de la memoria de Engram:
+
+- La memoria se versiona en un repositorio PUBLICO y es evidencia para la auditoria de la tesis. Por eso NUNCA se destrackea ni se agrega `.engram/` al `.gitignore`.
+- Las credenciales se SANEAN antes de cada `engram sync`. Un valor real no debe llegar nunca a un chunk.
+- El guard es `scripts/security/scan_engram_secrets.py`, invocado con `python3 scripts/security/scan_engram_secrets.py .engram`. Esta cableado en el hook `.githooks/pre-commit` (seccion 4), que lo corre cuando hay archivos `.engram/` staged y bloquea el commit si encuentra hallazgos.
+- Si el guard marca un falso positivo (por ejemplo, una referencia a codigo como `api_key=settings.gemini_api_key`), NO se debilita el patron: se evalua el caso y, si corresponde, se documenta. La memoria no se publica con un hallazgo sin resolver. <!-- gitleaks:allow -->
+
 ## What NOT to Do
 
 - Do NOT use emojis under any circumstance — not in code, not in comments, not in commit messages, not in chat responses, not in documentation. They degrade readability and professionalism.
