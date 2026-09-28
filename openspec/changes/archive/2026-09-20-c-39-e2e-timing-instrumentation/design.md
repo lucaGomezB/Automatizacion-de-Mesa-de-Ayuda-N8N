@@ -2,7 +2,7 @@
 
 Ver `proposal.md` — Why. Este change introduce un contrato de medicion temporal; el design fija las fronteras exactas y su trazabilidad. Estado verificado del codigo:
 
-- El normalizador de N8N (`n8n/workflow.json`, nodo `Normalizar entrada del incidente`) emite `timestamp: new Date().toISOString()` en su `jsCode`, pero el body del nodo `HTTP POST a MTM-SRU` solo envia `descripcion`, `prioridad`, `canal_origen_id`, `origen_message_id`, `origen_evento` y `clasificacion`. El `timestamp` nunca sale del workflow.
+- El normalizador de N8N (`n8n/workflow.json`, nodo `Normalizar entrada del incidente`) emite `timestamp: new Date().toISOString()` en su `jsCode`, pero el body del nodo `HTTP POST a MESA-AYUDAS` solo envia `descripcion`, `prioridad`, `canal_origen_id`, `origen_message_id`, `origen_evento` y `clasificacion`. El `timestamp` nunca sale del workflow.
 - `IncidenteCreate` (`App/Backend/app/schemas/incidente.py:75-156`) no tiene campo de ingreso.
 - `Incidente` (`App/Backend/app/models/incidente.py:59-186`) hereda `TimestampMixin` (`App/Backend/app/models/base.py:33-60`), que solo aporta `created_at`/`updated_at`. Las migraciones 001-005 confirman que no existe columna de ingreso ni de latencia.
 - `IncidenteService.create_and_classify` (`App/Backend/app/services/incidente_service.py:174-275`): cortocircuito idempotente por `origen_message_id` (206-216); INSERT (241-250); clasificacion (271); `_apply_classification` ejecuta el UPDATE del incidente y el INSERT del log (374-434); relectura con `selectinload` (275). El commit ocurre DESPUES de que el handler retorna, en `get_db_session` (`App/Backend/app/core/database.py:93-109`).

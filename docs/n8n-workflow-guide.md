@@ -25,14 +25,17 @@
 > humana y resuelve el remitente desde `from` string u objeto (`from.emailAddress.address`); el cierre
 > web de la revision humana responde con el numero. El SMS al llamante (telefonia) queda **DIFERIDO**
 > hasta el spike de entregabilidad a Argentina (+54).
-> Estado: 38 nodos (35 operativos + 3 sticky notes); suite estructural `test_n8n_workflow.py` en verde.
+> C-55: canal-correo-imap — el canal de correo migra de Microsoft Outlook OAuth2 a IMAP/SMTP: el
+> trigger pasa a `emailReadImap` (marca leido en el propio trigger), los envios a `emailSend` (SMTP)
+> y se elimina el nodo `Marcar correo como leido`.
+> Estado: 37 nodos (34 operativos + 3 sticky notes); suite estructural `test_n8n_workflow.py` en verde.
 
 ## Descripción general
 
 El archivo `n8n/workflow.json` (raíz del repo) es el workflow N8N exportado que
 automatiza la recepción y clasificación de incidentes de mesa de ayuda desde **tres canales**:
 
-- **Canal correo**: Microsoft Outlook trigger por sondeo (equivalente funcional a IMAP — ver Decisión 1 C-05)
+- **Canal correo**: trigger IMAP `emailReadImap` por sondeo (Gmail, App Password) — ver Decisión 1 C-05
 - **Canal web**: Webhook HTTP POST en la ruta `/webhook/incidente-web` (formulario web del frontend)
 - **Canal telefonía**: webhook `POST` autenticado que recibe del backend el ingreso YA pseudonimizado (la transcripción ocurre en el backend)
 
@@ -44,7 +47,7 @@ producción editando el JSON** — activar desde la UI de N8N en el entorno de d
 
 | Canal | Trigger | `canal_raw` emitido | `canal_origen` normalizado |
 |-------|---------|--------------------|-----------------------------|
-| Correo | `microsoftOutlookTrigger` (sondeo) | `"correo"` | `"correo"` |
+| Correo | `emailReadImap` (sondeo IMAP, marca leido) | `"correo"` | `"correo"` |
 | Web | `webhook` `POST /webhook/incidente-web` | `"web"` | `"web"` |
 | Telefonía | `webhook` `POST /webhook/telefonia-handoff` (handoff del backend, autenticado) | `"telefonia"` | `"telefonia"` |
 
@@ -68,7 +71,7 @@ El canal telefonía limita a **2 intentos** la clasificación/refinamiento del `
   `revision_forzada = true`, conserva `canal_raw = 'telefonia'` y **no reingresa al agente**.
   El normalizador propaga `revision_forzada` y el IF `Entrada valida` la acepta
   (`confianza >= 0.70 OR revision_forzada == true`), de modo que el incidente se persiste
-  vía `Login operador → HTTP POST a MTM-SRU` con sector nulo y revisión humana forzada.
+  vía `Login operador → HTTP POST a MESA-AYUDAS` con sector nulo y revisión humana forzada.
 
 ### 2. Guarda de costo en runtime del agente pago (C-45)
 
@@ -121,36 +124,48 @@ precios vigentes; es un tope de seguridad, no una medición de tokens reales.
 > crudo NUNCA cruza el borde de n8n. Ver también `docs/operational-guide.md` §11.7 y
 > `docs/medicion-latencia-e2e.md` §5.
 
-### 3. Ciclo de vida del correo en las ramas terminales (HIGH-4)
+### 3. Ciclo de vida del correo resuelto en el trigger (HIGH-4, C-55)
 
-El mensaje de Outlook se marca como leído en las ramas terminales alcanzables:
+El mensaje IMAP se marca como leído en el propio disparador, al recolectarlo:
 
-- **Éxito sin revisión**: `HTTP POST a MTM-SRU` (main#0) → `Requiere revision humana` (rama
-  false) → `Rutear por canal de origen` (rama correo) → `Marcar correo como leido`.
-- **Rechazo**: la rama false de `Entrada valida` → `Es correo?` → `Marcar correo como leido`.
-- **Error**: `HTTP POST a MTM-SRU` declara `onError: "continueErrorOutput"` y su salida de
-  error (main#1) → `Es correo?` → `Marcar correo como leido`.
+- El trigger `Llega un email a Mesa de Ayuda` (`emailReadImap`) declara
+  `postProcessAction: "read"`: N8N aplica `\SEEN` al mensaje en el momento del polling,
+  ANTES de cualquier procesamiento del canal. El marcado queda garantizado en TODAS las
+  ramas terminales (éxito, rechazo por validación y error) sin depender de la rama ejecutada.
+- **Éxito sin revisión**: `HTTP POST a MESA-AYUDAS` (main#0) → `Requiere revision humana` (rama
+  false) → `Rutear por canal de origen` (rama correo) → `Correo de confirmacion al usuario`.
+- **Rechazo**: la rama false de `Entrada valida` → `Es correo?` (rama true terminal, no-op).
+- **Error**: `HTTP POST a MESA-AYUDAS` declara `onError: "continueErrorOutput"` y su salida de
+  error (main#1) → `Es correo?` (rama true terminal, no-op).
 
-> **Corrección C-40**: la rama true de `Requiere revision humana` (revisión humana) notifica al
-> operador y, en paralelo, pasa por `Es correo?` → `Marcar correo como leido`, de modo que un
-> correo que requiere revisión también queda marcado como leído (la excepción anterior ya no aplica).
+> **Corrección C-55**: se eliminó el nodo `Marcar correo como leido`. La rama true de
+> `Es correo?` (canal correo) queda como terminal no-op: el trigger ya marcó el mensaje como
+> leído, de modo que no hace falta un nodo posterior en ninguna rama.
 
-La guarda `Es correo?` evalúa `canal_origen == 'correo'` antes de tocar el nodo de Outlook,
-porque `Marcar correo como leido` referencia el trigger de Outlook por nombre y fallaría en
-canales que no pasaron por él. Un correo procesado en cualquier rama no se re-levanta.
+La guarda `Es correo?` evalúa `canal_origen == 'correo'` y su rama false desemboca en
+`Es web?`, de modo que los canales web y telefonía no disparan respuestas cruzadas. Un correo
+procesado en cualquier rama no se re-levanta porque el trigger ya lo marcó como leído.
 
-### 3. Lookback de 24 horas en el trigger de Outlook (MEDIUM-1)
+### 3. Lookback de 24 horas en el trigger IMAP (MEDIUM-1, C-55)
 
-El trigger `Llega un email a Mesa de Ayuda` agrega a `filters` el filtro OData
-`custom = receivedDateTime ge <now - 24h>` (expresión relativa), conservando
-`readStatus: unread`. Así el arranque con una casilla real no dispara una ráfaga de
-incidentes sobre todo el historial no leído.
+El trigger `Llega un email a Mesa de Ayuda` declara en `options.customEmailConfig`:
+
+```
+["UNSEEN", ["SINCE", "{{ $now.minus(24, 'hours').toFormat('dd-LLL-yyyy') }}"]]
+```
+
+Esto recolecta solo mensajes no leídos (`UNSEEN`) recibidos desde el lookback de 24 horas
+(`SINCE`). `SINCE` tiene granularidad diaria; la deduplicación fina la aportan `UNSEEN`, el
+marcado `\SEEN` del propio trigger y `options.trackLastMessageId: true` (watermark de UID).
+Así el arranque con una casilla real no dispara una ráfaga de incidentes sobre todo el
+historial no leído.
 
 ### 4. Payload enriquecido del POST (HIGH-2 / HIGH-4)
 
-`HTTP POST a MTM-SRU` envía, además de descripción/prioridad/canal:
+`HTTP POST a MESA-AYUDAS` envía, además de descripción/prioridad/canal:
 
-- `origen_message_id`: `Message-ID` de Outlook (solo canal correo; nulo en el resto).
+- `origen_message_id`: `Message-ID` del mensaje IMAP (header `metadata['message-id']`, con
+  fallback al UID del mensaje; solo canal correo; nulo en el resto).
 - `clasificacion`: bloque precalculado **solo para telefonía**
   (`sector_predicho`, `sectores_adicionales`, `confianza`, `requiere_revision_humana`,
   `origen: 'n8n'`). En web/correo se envía `null` para conservar la clasificación server-side.
@@ -167,14 +182,20 @@ backend apunta `N8N_WEBHOOK_URL` a
 `evento: "notificacion"`; el backend rechaza con 422 cualquier `origen_evento` que no sea de
 creación. La garantía es explícita y verificable, no un 404 accidental.
 
-### Equivalencia Outlook trigger ≈ IMAP (Decisión 1 — C-05)
+### Decisión 1 — Canal de correo sobre IMAP/SMTP (C-05, ratificada en C-55)
 
-La tesis §5.2 describe el canal correo como "trigger IMAP". El workflow usa un
-`microsoftOutlookTrigger` (nodo nativo N8N de sondeo de buzón). Se **ratifica este nodo**
-como equivalente funcional del IMAP genérico: no se reemplazó por `emailReadImap` porque el
-trigger de Outlook ya cumple la función de recepción de correos del canal correo y
-las credenciales configuradas en C-04 quedan intactas. Esta equivalencia se registra
-para el Anexo E de la tesis (C-10).
+La tesis §5.2 describe el canal correo como "trigger IMAP". C-55 **ratifica IMAP como la
+opción elegida**: el workflow usa `n8n-nodes-base.emailReadImap` (trigger de sondeo genérico
+con `postProcessAction=read`, `format=simple` y lookback de 24 h) y `n8n-nodes-base.emailSend`
+(SMTP) para la confirmación al usuario y la notificación al operador.
+
+La migración desde `microsoftOutlookTrigger`/`microsoftOutlook` (Microsoft Entra OAuth2) se
+debe a que la cuenta Microsoft disponible es personal y sin tenant, y no hay acceso a
+registros Azure: el canal quedaba indeployable. IMAP/SMTP con App Password de Gmail da
+equivalencia funcional sin registro de app en la nube. Autenticación: IMAP
+`imap.gmail.com:993` SSL y SMTP `smtp.gmail.com:465` SSL, con una casilla dedicada, 2FA y
+App Password (documentado, sin secretos versionados). La credencial Outlook se conserva hasta
+validar el smoke manual de IMAP. Esta decisión se registra para el Anexo E de la tesis.
 
 ## Nodos del workflow
 
@@ -182,16 +203,16 @@ para el Anexo E de la tesis (C-10).
 
 | Posición | Nombre | Tipo | Función |
 |----------|--------|------|---------|
-| 1 | Llega un email a Mesa de Ayuda | `microsoftOutlookTrigger` | Disparador por sondeo. Recibe el correo del usuario. Emite `canal_raw = "correo"`. |
+| 1 | Llega un email a Mesa de Ayuda | `emailReadImap` | **[C-55]** Disparador IMAP por sondeo (`postProcessAction=read`, `format=simple`, lookback 24 h). Recibe el correo y lo marca como leído en el trigger. |
 | 2 | Se verifica que la informacion sea la necesaria para levantar un incidente | `code` (JS) | Valida `descripcion` ≥10 y ≤5000 caracteres. Emite `es_valido`. |
 | 3 | Normalizar entrada del incidente | `code` (JS) | Homogeniza a estructura unificada: `{id, timestamp, canal_origen, descripcion}`. Compartido entre los tres canales. |
 | 4 | Entrada valida | `if` | Gate de validación de ENTRADA previo al POST. Condición: `confianza >= 0.70 OR revision_forzada == true`. Rama true → `Login operador`; rama false → `Registro de auditoria` + `Es correo?`. |
 | 5 | Login operador | `httpRequest` | `POST /api/v1/auth/login`; obtiene el token que autentica el POST de incidentes. Compartido. |
-| 6 | HTTP POST a MTM-SRU | `httpRequest` | `POST /api/v1/incidentes/` al backend FastAPI. Compartido. |
+| 6 | HTTP POST a MESA-AYUDAS | `httpRequest` | `POST /api/v1/incidentes/` al backend FastAPI. Compartido. |
 | 7 | Requiere revision humana | `if` | Gate post-POST. Evalúa `$json.requiere_revision_humana` del response. Rama true → `Notificar operador designado` + `Confirmar correo en revision?`; rama false → `Rutear por canal de origen` + `Registro de auditoria`. Compartido. |
-| 8 | Notificar operador designado | `microsoftOutlook` | Envía correo al operador designado (`$env.OPERATOR_EMAIL`) con el número de incidente (`numero_incidente`). |
+| 8 | Notificar operador designado | `emailSend` (SMTP) | **[C-55]** Envía correo al operador designado (`$env.OPERATOR_EMAIL`) con el número de incidente (`numero_incidente`). |
 | 8b | Confirmar correo en revision? | `if` | **[C-53]** `canal_origen == 'correo'`. Rama true → `Correo de confirmacion al usuario`; la confirmación también se dispara en la rama de revisión humana. |
-| 9a | Correo de confirmacion al usuario | `microsoftOutlook` | **[C-05/C-53]** Envía correo de confirmación con el número de incidente al remitente. Resuelve `toRecipients` desde el remitente normalizado (string u objeto `from.emailAddress.address`); declara `onError: continueRegularOutput` para no abortar auditoría ni marcado. |
+| 9a | Correo de confirmacion al usuario | `emailSend` (SMTP) | **[C-05/C-53/C-55]** Envía correo de confirmación con el número de incidente al remitente. Resuelve `toEmail` desde el remitente normalizado (extraído del header IMAP `from` `"Nombre <addr>"`); declara `onError: continueRegularOutput` para no abortar auditoría. |
 | 9b | Registro de auditoria | `code` (JS) | **[C-05]** Registra metadatos de la ejecución (sin PII). Ver sección Auditoría. Compartido. |
 
 ### Canal web (formulario web) — C-05
@@ -203,9 +224,9 @@ para el Anexo E de la tesis (C-10).
 | 3 | Normalizar entrada del incidente | `code` (JS) | Compartido — idem canal correo. |
 | 4 | Entrada valida | `if` | Compartido — idem canal correo. |
 | 5 | Login operador | `httpRequest` | Compartido — idem canal correo. |
-| 6 | HTTP POST a MTM-SRU | `httpRequest` | Compartido — idem canal correo. |
+| 6 | HTTP POST a MESA-AYUDAS | `httpRequest` | Compartido — idem canal correo. |
 | 7 | Requiere revision humana | `if` | Compartido — gate post-POST. |
-| 8 | Notificar operador designado | `microsoftOutlook` | Compartido — notifica al operador designado. |
+| 8 | Notificar operador designado | `emailSend` (SMTP) | Compartido — notifica al operador designado. |
 | 9a | Confirmacion web al usuario | `respondToWebhook` | **[C-05/C-53]** Responde al webhook con `{incidente_id, numero_incidente, mensaje}` (rama false de `Requiere revision humana`). |
 | 9b | Es web? | `if` | **[C-40]** Guarda de canal: `canal_origen == 'web'`. Rama true → `Web con incidente?`; rama false → sin respuesta. |
 | 9c | Web con incidente? | `if` | **[C-53]** Distingue el cierre con incidente (`requiere_revision_humana == true`) del cierre sin alta. Rama true → `Confirmacion web revision humana`; rama false → `Respuesta web de cierre`. |
@@ -232,9 +253,9 @@ para el Anexo E de la tesis (C-10).
 | 8 | Normalizar entrada del incidente | `code` (JS) | **[C-05/C-52]** Compartido — telefonia converge aquí antes del gate de entrada; para telefonia mapea el `CallSid` del handoff a `origen_message_id` (idempotencia del alta). |
 | 9 | Entrada valida | `if` | Compartido — gate de ENTRADA (no de confianza del modelo). |
 | 10 | Login operador | `httpRequest` | Compartido. |
-| 11 | HTTP POST a MTM-SRU | `httpRequest` | Compartido. |
+| 11 | HTTP POST a MESA-AYUDAS | `httpRequest` | Compartido. |
 | 12 | Requiere revision humana | `if` | Compartido — gate post-POST. |
-| 13 | Notificar operador designado | `microsoftOutlook` | Compartido — notifica al operador designado. |
+| 13 | Notificar operador designado | `emailSend` (SMTP) | Compartido — notifica al operador designado. |
 | 14 | Registro de auditoria | `code` (JS) | **[C-05]** Compartido — idem canal correo. |
 
 > **Nota sobre telefonía**: la confirmación al llamante NO se resuelve en la respuesta de voz
@@ -279,9 +300,9 @@ recuperación aguas abajo usa referencias de nodo explícitas:
 
 Tres nodos `stickyNote` con documentación visual interna del workflow (se conservan intactos).
 
-**Total**: 35 nodos operativos + 3 `stickyNote` = 38, consistente con `n8n/workflow.json`. Las
+**Total**: 34 nodos operativos + 3 `stickyNote` = 37, consistente con `n8n/workflow.json`. Las
 tablas por canal repiten los nodos compartidos (`Normalizar entrada del incidente`,
-`Entrada valida`, `Login operador`, `HTTP POST a MTM-SRU`, `Requiere revision humana`,
+`Entrada valida`, `Login operador`, `HTTP POST a MESA-AYUDAS`, `Requiere revision humana`,
 `Notificar operador designado`, `Confirmar correo en revision?`, `Rutear por canal de origen`,
 `Es correo?`, `Es web?`, `Web con incidente?`, `Respuesta web de cierre`,
 `Confirmacion web revision humana`, `Registro de auditoria`).
@@ -385,7 +406,7 @@ La confianza se evalúa en tres puntos distintos del flujo:
    canales). Condición: `$json.confianza >= 0.70 OR revision_forzada == true`. No es un gate
    de confianza del modelo: para correo/web el normalizador sintetiza `confianza` desde
    `es_valido` (1.0/0.0) y para telefonía valida la respuesta de la IA. Rama true → `Login
-   operador` → `HTTP POST a MTM-SRU`; rama false → `Registro de auditoria` + `Es correo?`.
+   operador` → `HTTP POST a MESA-AYUDAS`; rama false → `Registro de auditoria` + `Es correo?`.
 3. **Post-POST — `Requiere revision humana`** (gate de confianza REAL, tras persistir).
    Condición: `$json.requiere_revision_humana == true`, el booleano que el backend fija cuando
    la confianza de clasificación es menor a 0.70. Rama true → `Notificar operador designado`;
@@ -426,10 +447,14 @@ duplicaría lógica de seguridad crítica fuera de su módulo Python testeado (g
 | Variable | Descripción | Ejemplo |
 |----------|-------------|---------|
 | `BACKEND_URL` | URL base del backend FastAPI | `https://localhost/api/v1` |
+| `SMTP_FROM_EMAIL` | Remitente de los correos salientes (nodos `emailSend`) | `mesa.ayuda@example.com` |
 | `OPERATOR_EMAIL` | Destinatario de la notificación de revisión humana (nodo `Notificar operador designado`) | `operador@example.com` |
 
 Credenciales adicionales a configurar en la UI de N8N:
-- `MICROSOFT_OUTLOOK_*`: cuenta de correo de mesa de ayuda
+- `imap` (C-55): casilla Gmail dedicada con 2FA y App Password (`imap.gmail.com:993` SSL).
+  Usada por el trigger `emailReadImap`.
+- `smtp` (C-55): misma casilla Gmail (`smtp.gmail.com:465` SSL, App Password). Usada por los
+  nodos `emailSend`.
 - `TWILIO_*`: credenciales del webhook de voz
 - `REDIS_URL`: para el nodo de memoria del AI Agent
 
@@ -583,7 +608,7 @@ cd App/Backend
 python -m pytest tests/test_n8n_workflow.py -v
 ```
 
-Verifica 162 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40, C-46, C-47, C-52 y C-53).
+Verifica 175 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40, C-46, C-47, C-52, C-53 y C-55).
 
 ### Prueba manual del canal web (C-05)
 
@@ -611,9 +636,9 @@ caminos:
 |-------|------|-----------|
 | Web (alta normal) | `Confirmacion web al usuario` (`respondToWebhook`) | Responde al frontend con `{"incidente_id": <id>, "numero_incidente": "<n>", "mensaje": "..."}` |
 | Web (revisión humana) | `Confirmacion web revision humana` (`respondToWebhook`) | **[C-53]** Responde al frontend con el número del incidente creado (`resultado: 'creado'`), no `null` |
-| Correo | `Correo de confirmacion al usuario` (`microsoftOutlook`) | Envía correo con el número de incidente al remitente original; se dispara también en la rama de revisión humana y resuelve el destinatario desde `from` string u objeto |
+| Correo | `Correo de confirmacion al usuario` (`emailSend` SMTP) | Envía correo con el número de incidente al remitente original; se dispara también en la rama de revisión humana y resuelve el destinatario desde el remitente normalizado (`from` `"Nombre <addr>"` del trigger IMAP) |
 | Telefonía | — (sin nodo dedicado) | La notificación con el número la realiza el backend por SMS (C-53, **DIFERIDO** hasta el spike de entregabilidad a Argentina +54); NO se resuelve en la respuesta de voz de la llamada |
-| Revisión humana | `Notificar operador designado` (`microsoftOutlook`) | Notifica al operador designado (`$env.OPERATOR_EMAIL`) que el incidente requiere revisión |
+| Revisión humana | `Notificar operador designado` (`emailSend` SMTP) | Notifica al operador designado (`$env.OPERATOR_EMAIL`) que el incidente requiere revisión |
 
 El gate `Requiere revision humana` se interpone entre el POST y el ruteo normal. En la rama
 false, `Rutear por canal de origen` y `Registro de auditoria` cuelgan en paralelo; en la rama
@@ -681,7 +706,7 @@ entorno y queda fuera del scope de C-05. Se documenta como punto pendiente para 
 | ¿1 endpoint o 2 (clasificar + incidentes)? | **1 endpoint**: `POST /api/v1/incidentes` con clasificación embebida. No existe `POST /api/v1/clasificar`. Documentar discrepancia en Anexo E. | C-04 |
 | ¿Dónde ocurre la pseudonimización? | **En el backend**, dentro de `create_and_classify()`. N8N envía texto claro. Gap de privacidad documentado. | C-04 |
 | ¿El IF del workflow decide revisión humana o lo decide el backend? | **Ambos**: el backend marca `requiere_revision_humana` (fuente de verdad); el gate post-POST `Requiere revision humana` re-evalúa esa marca para notificar al operador. | C-04 / gate post-POST |
-| ¿Outlook trigger ≈ IMAP genérico? | **Sí**: el `microsoftOutlookTrigger` se ratifica como equivalente funcional. No se reemplaza por `emailReadImap`. Documentar equivalencia en Anexo E. | C-05 |
+| ¿Outlook trigger ≈ IMAP genérico? | **Resuelto en C-55**: se adopta `emailReadImap` (IMAP/SMTP con App Password), descartando Outlook por la cuenta Microsoft personal sin tenant. Documentar en Anexo E. | C-05 / C-55 |
 | ¿La telefonía requiere SMS de confirmación adicional? | **Sí** (C-53): el número se notifica por SMS al llamante desde el backend; la respuesta de voz de la llamada NO lo confirma. **DIFERIDO** hasta el spike de entregabilidad a Argentina (+54). | C-53 |
 | ¿La auditoría registra solo altas o también rechazos? | **Todas las ramas terminales**: la rama false de `Entrada valida` (rechazo), la rama false de `Requiere revision humana` (alta sin revisión) y `Notificar operador designado` (alta con revisión) desembocan en `Registro de auditoria`. | C-05 / gate post-POST |
 | ¿Dónde persiste el log de auditoría 30 días? | **Logging Docker/N8N con rotación** (opción A). Cero código nuevo en backend. Configurar `max-file: "30"` en `docker-compose.yml`. | C-05 |
@@ -723,7 +748,7 @@ Content-Type: application/json
 
 → Ejecución #19:
   Nodos ejecutados: Webhook formulario web → Marcar canal web → Normalizar entrada del incidente
-                   → Entrada valida (rama TRUE, confianza=1.0) → HTTP POST a MTM-SRU
+                   → Entrada valida (rama TRUE, confianza=1.0) → HTTP POST a MESA-AYUDAS
   Backend: HTTP 201, incidente_id=15, sector={nombre: "Sistemas"}, requiere_revision_humana=false
   Normalizer output: canal_origen='web', confianza=1.0, es_valido=true
   D-1 verificado: Marcar canal web ejecuta sin SyntaxError
@@ -740,7 +765,13 @@ Content-Type: application/json
 | D-4 | `Registro de auditoria` | `canal_origen` nulo tras HTTP POST | Lee de `$('Normalizar entrada del incidente').item.json.canal_origen` |
 | D-5 | `Normalizar entrada del incidente` | Body webhook web en `item.json.body` (objeto anidado) | Extrae `webBody = item.json.body`; usa `webBody.descripcion` / `webBody.prioridad` |
 
-#### 7.3 — Canal correo: PARCIAL (trigger Outlook requiere credenciales corporativas)
+#### 7.3 — Canal correo: PARCIAL en C-05; **RESUELTO en C-55 con IMAP/SMTP**
+
+> **Actualización C-55**: el canal de correo ya no usa el trigger de Outlook. El
+> `microsoftOutlookTrigger` se reemplazó por `emailReadImap` (IMAP/SMTP con App Password),
+> de modo que no depende de credenciales OAuth2 corporativas. El smoke manual con el buzón
+> Gmail real (tarea 6.3 de C-55) queda pendiente; la verificación estructural del workflow y
+> del preflight está en verde. El texto siguiente es el registro histórico de C-05.
 
 El nodo `microsoftOutlookTrigger` no se puede activar sin credenciales OAuth2. Se verificó el
 pipeline completo del backend simulando el payload que el validador de correo enviaría:
@@ -837,3 +868,14 @@ N8N vivo tiene `active: true` solo en la instancia de prueba (no exportado al re
 | 7.4 Canal telefonía | PARCIAL (C-52) | Backend 201 OK vía deterministic + Gemini; el intake lo provee el backend (STT + handoff pseudonimizado); requiere verificación en vivo |
 | 7.5 Auditoría (PII) | VERIFICADO (post-fix) | D-3: sector?.nombre correcto; D-4: canal_origen de upstream; PII excluida; 58 tests verdes |
 | 7.6 active=false | VERIFICADO | `wf['active'] == False` confirmado |
+
+## Seguimiento (fuera de scope de C-55)
+
+- **Actualización de tesis**: la referencia de tesis debe actualizarse para reflejar el canal de
+  correo sobre IMAP/SMTP (Decisión 1 / Anexo E). La ruta REAL del documento es
+  `docs/Tesis/v7/tesis_para_agente.md` (la ruta `docs/Tesis/tesis_para_agente.md` declarada en
+  `openspec/config.yaml` NO existe). Se registra como seguimiento separado, no como parte de C-55.
+- **Prerrequisitos manuales de C-55**: documentar la casilla Gmail dedicada (2FA + App Password)
+  y crear las credenciales `imap`/`smtp` en la UI de N8N (tareas 1.1 y 1.2).
+- **Smoke manual de C-55**: verificar con el buzón Gmail real que un correo no leído de menos de
+  24 h crea incidente, dispara la confirmación y queda marcado como leído (tarea 6.3).

@@ -44,7 +44,7 @@
 
 ## 6. Persistencia vía backend FastAPI (spec: persistencia + contrato de payload)
 
-- [x] 6.1 RED: test `test_http_node_targets_incidentes_endpoint` que afirma que existe un `httpRequest` cuyo destino contiene `/api/v1/incidentes` con método POST. Falla (hoy apunta a "MTM-SRU" genérico).
+- [x] 6.1 RED: test `test_http_node_targets_incidentes_endpoint` que afirma que existe un `httpRequest` cuyo destino contiene `/api/v1/incidentes` con método POST. Falla (hoy apunta a "MESA-AYUDAS" genérico).
 - [x] 6.2 GREEN: ajustar el/los nodos `httpRequest` de persistencia a `POST /api/v1/incidentes`. Test pasa.
 - [x] 6.3 RED: test `test_http_payload_matches_incidente_create` que valida que el cuerpo enviado contiene `descripcion` y `prioridad` y NO contiene campos ajenos al schema `IncidenteCreate`. Falla.
 - [x] 6.4 GREEN: mapear la estructura unificada al payload `IncidenteCreate` en el nodo previo al HTTP. Test pasa.

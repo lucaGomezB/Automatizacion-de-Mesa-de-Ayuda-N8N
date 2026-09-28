@@ -67,7 +67,7 @@
       → Verificación original (C-05 apply): BLOQUEADO POR DEFECTO #1 (`const item = .item;`, SyntaxError).
       → POST-FIX (sesión de corrección): workflow temp `TEST-canal-web-D1` con fixes D-1..D-4 aplicados.
         Ejecución #19: 5 nodos ejecutados exitosamente — `Webhook formulario web` → `Marcar canal web`
-        → `Normalizar entrada del incidente` → `La informacion esta OK` (rama true) → `HTTP POST a MTM-SRU`.
+        → `Normalizar entrada del incidente` → `La informacion esta OK` (rama true) → `HTTP POST a MESA-AYUDAS`.
         Backend respondió HTTP 201: incidente_id=15, sector={nombre: "Sistemas"}, requiere_revision_humana=false.
         D-1 verificado: `Marcar canal web` corre sin SyntaxError (usa `$input.item`).
         D-2 verificado: normalizer sintetiza `confianza=1.0` para canal web → IF toma rama true.

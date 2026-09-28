@@ -40,7 +40,7 @@ EXIT_FAIL = 1
 
 # Nombres de nodos y rutas anclados por la spec cost-readiness (literales).
 AI_AGENT_NODE = "AI Agent"
-HTTP_NODE = "HTTP POST a MTM-SRU"
+HTTP_NODE = "HTTP POST a MESA-AYUDAS"
 IF_NODE_CORREO = "Entrada valida"
 MARK_READ_NODE = "Marcar correo como leido"
 NORMALIZER_NODE = "Normalizar entrada del incidente"
@@ -48,7 +48,8 @@ NOTIF_WEBHOOK_PATH = "notificacion-clasificacion"
 INCIDENTES_PATH_FRAGMENT = "/api/v1/incidentes"
 WEBHOOK_NODE_TYPE = "n8n-nodes-base.webhook"
 HTTP_NODE_TYPE = "n8n-nodes-base.httpRequest"
-OUTLOOK_TRIGGER_TYPE = "n8n-nodes-base.microsoftOutlookTrigger"
+# C-55: el canal de correo usa IMAP (emailReadImap); Outlook quedo fuera.
+IMAP_TRIGGER_TYPE = "n8n-nodes-base.emailReadImap"
 PAID_AGENT_TYPE = "@n8n/n8n-nodes-langchain.agent"
 PAID_LM_TYPE_PREFIX = "@n8n/n8n-nodes-langchain.lm"
 WEBHOOK_NOTIF_URL = "/webhook/notificacion-clasificacion"
@@ -153,14 +154,14 @@ def _body_to_text(body: object) -> str:
 WORKFLOW_GUARD_AGENT = (
     "workflow: AI Agent declara tope de iteraciones (options.maxIterations)"
 )
-WORKFLOW_GUARD_OUTLOOK = (
-    "workflow: trigger de Outlook filtra no leidos con lookback de 24h"
+WORKFLOW_GUARD_IMAP = (
+    "workflow: trigger IMAP filtra no leidos con lookback de 24h"
 )
 WORKFLOW_GUARD_MARK_READ = (
-    "workflow: 'Marcar correo como leido' alcanzable desde exito/rechazo/error"
+    "workflow: marcado del correo resuelto en el trigger IMAP"
 )
 WORKFLOW_GUARD_BODY = (
-    "workflow: body de 'HTTP POST a MTM-SRU' con origen_message_id + "
+    "workflow: body de 'HTTP POST a MESA-AYUDAS' con origen_message_id + "
     "clasificacion + origen_evento"
 )
 WORKFLOW_GUARD_NOTIF = (
@@ -187,64 +188,42 @@ def _check_agent_iterations(workflow: dict) -> Check:
     return _passing(WORKFLOW_GUARD_AGENT, f"maxIterations={max_iterations}")
 
 
-def _check_outlook_lookback(workflow: dict) -> Check:
-    trigger = _find_node_by_type(workflow, OUTLOOK_TRIGGER_TYPE)
+def _check_imap_lookback(workflow: dict) -> Check:
+    trigger = _find_node_by_type(workflow, IMAP_TRIGGER_TYPE)
     if trigger is None:
         return _failing(
-            WORKFLOW_GUARD_OUTLOOK, "No existe el trigger de Outlook"
+            WORKFLOW_GUARD_IMAP, "No existe el trigger IMAP (emailReadImap)"
         )
-    filters = trigger.get("parameters", {}).get("filters", {})
-    if filters.get("readStatus") != "unread":
+    options = trigger.get("parameters", {}).get("options", {})
+    custom = str(options.get("customEmailConfig", ""))
+    if "UNSEEN" not in custom:
         return _failing(
-            WORKFLOW_GUARD_OUTLOOK,
-            f"readStatus != 'unread' (filters={filters!r})",
+            WORKFLOW_GUARD_IMAP,
+            f"criterio UNSEEN ausente (customEmailConfig={custom!r})",
         )
-    custom = str(filters.get("custom", ""))
-    has_field = "receivedDateTime" in custom
-    has_24h = "24" in custom and any(
-        token in custom for token in ("60 * 60", "60*60", "86400", "h * 60", "h*60")
-    )
-    if not (has_field and has_24h):
+    has_since = "SINCE" in custom
+    has_24h = "24" in custom and "hours" in custom
+    if not (has_since and has_24h):
         return _failing(
-            WORKFLOW_GUARD_OUTLOOK,
-            f"lookback de 24h sobre receivedDateTime ausente (custom={custom!r})",
+            WORKFLOW_GUARD_IMAP,
+            f"lookback de 24h sobre SINCE ausente (customEmailConfig={custom!r})",
         )
-    return _passing(WORKFLOW_GUARD_OUTLOOK, "readStatus=unread + lookback 24h")
+    return _passing(WORKFLOW_GUARD_IMAP, "UNSEEN + SINCE lookback 24h")
 
 
-def _check_mark_read_reachable(workflow: dict) -> Check:
+def _check_mark_read_resolved_in_trigger(workflow: dict) -> Check:
+    """C-55: el marcado como leido lo garantiza el trigger IMAP
+    (`postProcessAction=read`), por lo que el nodo dedicado se elimino. La guarda
+    queda neutralizada: solo falla si alguien reintroduce el nodo dedicado."""
     by_name = _nodes_by_name(workflow)
-    if MARK_READ_NODE not in by_name:
+    if MARK_READ_NODE in by_name:
         return _failing(
-            WORKFLOW_GUARD_MARK_READ, f"No existe el nodo {MARK_READ_NODE!r}"
+            WORKFLOW_GUARD_MARK_READ,
+            f"Existe el nodo dedicado {MARK_READ_NODE!r}: el marcado debe "
+            "resolverse en el trigger IMAP",
         )
-
-    success = any(
-        _reachable(workflow, succ, MARK_READ_NODE)
-        for succ in _successors(workflow, HTTP_NODE, 0)
-    )
-    error = any(
-        _reachable(workflow, succ, MARK_READ_NODE)
-        for succ in _successors(workflow, HTTP_NODE, 1)
-    )
-    reject = any(
-        _reachable(workflow, succ, MARK_READ_NODE)
-        for succ in _successors(workflow, IF_NODE_CORREO, 1)
-    )
-    if success and error and reject:
-        return _passing(WORKFLOW_GUARD_MARK_READ, "exito, rechazo y error alcanzan")
-    missing = [
-        label
-        for label, reached in (
-            ("exito", success),
-            ("rechazo", reject),
-            ("error", error),
-        )
-        if not reached
-    ]
-    return _failing(
-        WORKFLOW_GUARD_MARK_READ,
-        f"no alcanzable desde: {', '.join(missing)}",
+    return _passing(
+        WORKFLOW_GUARD_MARK_READ, "marcado garantizado en el trigger IMAP"
     )
 
 
@@ -253,7 +232,7 @@ def _check_enriched_body(workflow: dict) -> Check:
     node = by_name.get(HTTP_NODE)
     if node is None:
         return _failing(WORKFLOW_GUARD_BODY, f"No existe el nodo {HTTP_NODE!r}")
-    body_text = _body_to_text(node.get("parameters", {}).get("body"))
+    body_text = _body_to_text(node.get("parameters", {}).get("jsonBody"))
     required = (
         "origen_message_id",
         "clasificacion",
@@ -328,8 +307,8 @@ def check_workflow(path: "pathlib.Path | str") -> List[Check]:
 
     checks = [
         _check_agent_iterations(workflow),
-        _check_outlook_lookback(workflow),
-        _check_mark_read_reachable(workflow),
+        _check_imap_lookback(workflow),
+        _check_mark_read_resolved_in_trigger(workflow),
         _check_enriched_body(workflow),
         _check_notification_webhook(workflow),
         _check_paid_retries(workflow),

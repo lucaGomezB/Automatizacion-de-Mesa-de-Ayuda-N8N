@@ -1,6 +1,6 @@
 ## Why
 
-La utilidad `notify_n8n(incidente_id, result)` ya existe en `app/utils/n8n_webhook.py`, pero **nadie la llama**. Tras clasificar un incidente, el backend persiste el resultado pero nunca notifica a N8N, dejando incompleto el ciclo de orquestación descrito en §5.3 de la tesis: N8N debe recibir la clasificación para continuar el flujo (confirmar al usuario, actualizar MTM-SRU). Este es uno de los dos gaps funcionales del backend identificados en el roadmap (FASE 2, C-02).
+La utilidad `notify_n8n(incidente_id, result)` ya existe en `app/utils/n8n_webhook.py`, pero **nadie la llama**. Tras clasificar un incidente, el backend persiste el resultado pero nunca notifica a N8N, dejando incompleto el ciclo de orquestación descrito en §5.3 de la tesis: N8N debe recibir la clasificación para continuar el flujo (confirmar al usuario, actualizar MESA-AYUDAS). Este es uno de los dos gaps funcionales del backend identificados en el roadmap (FASE 2, C-02).
 
 ## What Changes
 

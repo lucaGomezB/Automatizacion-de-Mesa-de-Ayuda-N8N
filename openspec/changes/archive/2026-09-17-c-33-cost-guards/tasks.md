@@ -12,7 +12,7 @@
 - [x] 1.2 En `App/Backend/tests/test_n8n_workflow.py`, escribir el test de la salida terminal: el nodo terminal fija `confianza=0.0` y `requiere_revision_humana=true` y alcanza el nodo HTTP de persistencia. Verificar RED.
 - [x] 1.3 En `App/Backend/tests/test_n8n_workflow.py`, escribir el test del ciclo de vida del correo: `Marcar correo como leido` es alcanzable desde las ramas de exito, rechazo y error, cada una con guarda de canal. Verificar RED.
 - [x] 1.4 En `App/Backend/tests/test_n8n_workflow.py`, escribir el test del lookback: el trigger de Outlook declara un filtro de fecha `receivedDateTime` con 24 horas. Verificar RED.
-- [x] 1.5 En `App/Backend/tests/test_n8n_workflow.py`, escribir el test del payload enriquecido: `HTTP POST a MTM-SRU` envia `origen_message_id`, la clasificacion precalculada y un marcador explicito de origen. Verificar RED.
+- [x] 1.5 En `App/Backend/tests/test_n8n_workflow.py`, escribir el test del payload enriquecido: `HTTP POST a MESA-AYUDAS` envia `origen_message_id`, la clasificacion precalculada y un marcador explicito de origen. Verificar RED.
 - [x] 1.6 En `App/Backend/tests/test_n8n_workflow.py`, escribir el test del webhook dedicado de notificacion: existe una ruta distinta de `incidente-web` que no esta conectada a la creacion de incidentes. Verificar RED.
 - [x] 1.7 Ejecutar `cd App/Backend; pytest tests/test_n8n_workflow.py -q` y confirmar que los tests nuevos fallan por asercion (no por error de coleccion); registrar la evidencia RED.
 
@@ -57,7 +57,7 @@
 - [x] 6.3 Agregar la guarda `Es correo?` y cablear `Marcar correo como leido` desde las ramas de rechazo y error; verificar el test 1.3.
 - [x] 6.4 Configurar `onError: "continueErrorOutput"` en los nodos de persistencia del canal correo y cablear la salida de error a la rama de marcado; verificar el test 1.3.
 - [x] 6.5 Agregar el filtro `receivedDateTime` con 24 horas de lookback al trigger de Outlook; verificar el test 1.4.
-- [x] 6.6 Extender el body de `HTTP POST a MTM-SRU` con `origen_message_id`, la clasificacion precalculada y el marcador de origen; verificar el test 1.5.
+- [x] 6.6 Extender el body de `HTTP POST a MESA-AYUDAS` con `origen_message_id`, la clasificacion precalculada y el marcador de origen; verificar el test 1.5.
 - [x] 6.7 Agregar el webhook dedicado `notificacion-clasificacion` sin conexion a la creacion de incidentes; verificar el test 1.6.
 - [x] 6.8 Ejecutar `cd App/Backend; pytest tests/test_n8n_workflow.py -q` completo y confirmar todos verdes; verificar con `git status --porcelain` que no hay cambios fuera de los archivos previstos.
 

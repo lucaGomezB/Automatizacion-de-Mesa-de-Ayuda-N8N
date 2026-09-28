@@ -12,7 +12,7 @@
 
 ## 3. URLs del backend configurables por entorno
 
-- [x] 3.1 Reemplazar el host hardcodeado `http://backend:8000` por `{{ $env.BACKEND_URL }}` en los nodos HTTP `Login operador` y `HTTP POST a MTM-SRU`; verificar que ningún nodo `httpRequest` contiene el literal del host
+- [x] 3.1 Reemplazar el host hardcodeado `http://backend:8000` por `{{ $env.BACKEND_URL }}` en los nodos HTTP `Login operador` y `HTTP POST a MESA-AYUDAS`; verificar que ningún nodo `httpRequest` contiene el literal del host
 - [x] 3.2 Definir `BACKEND_URL` en `docker-compose.yml` y `.env.example`; verificar que el servicio N8N la expone
 
 ## 4. Documentación y verificación

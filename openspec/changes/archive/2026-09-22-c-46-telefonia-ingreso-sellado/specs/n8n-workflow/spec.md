@@ -28,5 +28,5 @@ El workflow MUST NOT silenciar la ausencia del sello: un `catch` o un `|| null` 
 
 #### Scenario: El contrato de persistencia del backend no cambia
 
-- **WHEN** se inspecciona el body del nodo `HTTP POST a MTM-SRU` y el contrato del backend
+- **WHEN** se inspecciona el body del nodo `HTTP POST a MESA-AYUDAS` y el contrato del backend
 - **THEN** `ingresado_en` puede ser nulo y la revisión humana se resuelve por el flag explícito, sin cambios en el schema del backend

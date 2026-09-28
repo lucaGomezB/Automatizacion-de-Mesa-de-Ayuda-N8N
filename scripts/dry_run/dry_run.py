@@ -323,7 +323,7 @@ def _workflow_for_dry_run(username: str, password: str) -> tuple[dict, list[str]
     #    Authorization header, so its credential reference is redundant);
     #    paid-channel nodes (Twilio/Outlook/Gemini) are removed entirely so the
     #    workflow can activate without those credentials.
-    keep_but_strip = {"Login operador", "HTTP POST a MTM-SRU"}
+    keep_but_strip = {"Login operador", "HTTP POST a MESA-AYUDAS"}
     removed: list[str] = []
     retained: list[dict] = []
     for node in workflow.get("nodes", []):

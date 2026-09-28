@@ -2,8 +2,8 @@
 
 El workflow `Automatizacion_Mesa_de_Ayuda.json` (N8N 1.62, `active: false`) tiene 16 nodos. Estado actual verificado contra el JSON:
 
-- **Canal correo**: `microsoftOutlookTrigger` → `code` (validación, placeholder `myNewField = 1`) → `if` (sin condiciones) → rama NO: `microsoftOutlook` (pedir datos) / rama SÍ: `httpRequest` "HTTP POST a MTM-SRU".
-- **Canal telefonía**: `twilioTrigger` → `agent` (LangChain AI Agent) + `memoryRedisChat` (Redis) → `code` (validación, placeholder) → `if` (sin condiciones) → `httpRequest` "HTTP POST a MTM-SRU se crea un incidente".
+- **Canal correo**: `microsoftOutlookTrigger` → `code` (validación, placeholder `myNewField = 1`) → `if` (sin condiciones) → rama NO: `microsoftOutlook` (pedir datos) / rama SÍ: `httpRequest` "HTTP POST a MESA-AYUDAS".
+- **Canal telefonía**: `twilioTrigger` → `agent` (LangChain AI Agent) + `memoryRedisChat` (Redis) → `code` (validación, placeholder) → `if` (sin condiciones) → `httpRequest` "HTTP POST a MESA-AYUDAS se crea un incidente".
 - 6 nodos `stickyNote` (documentación visual, se conservan).
 - No existe nodo de normalización; cada canal tiene su forma cruda.
 

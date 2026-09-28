@@ -30,7 +30,7 @@ El body del nodo HTTP de persistencia SHALL incluir `ingresado_en` con la expres
 
 #### Scenario: El body incluye ingresado_en
 
-- **WHEN** la suite estructural inspecciona el body del nodo `HTTP POST a MTM-SRU`
+- **WHEN** la suite estructural inspecciona el body del nodo `HTTP POST a MESA-AYUDAS`
 - **THEN** el body contiene una entrada `ingresado_en` resuelta por expresion, no una constante
 
 #### Scenario: Formato ISO-8601 con zona horaria

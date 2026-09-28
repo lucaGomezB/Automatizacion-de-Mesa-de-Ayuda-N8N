@@ -30,7 +30,7 @@ The N8N workflow has two parallel processing channels:
 Outlook Email Trigger
   → JavaScript Validation Node (verify required fields)
   → IF Node: data complete?
-    ├─ YES → HTTP POST to MTM-SRU (create incident)
+    ├─ YES → HTTP POST to MESA-AYUDAS (create incident)
     └─ NO  → Send email requesting missing data
 ```
 
@@ -41,7 +41,7 @@ Twilio Webhook (call transcription)
   → Redis Memory (store parsed JSON session data)
   → Python Validation Node (verify extracted fields)
   → IF Node: can incident be created?
-    ├─ YES → HTTP POST to MTM-SRU (create incident)
+    ├─ YES → HTTP POST to MESA-AYUDAS (create incident)
     └─ NO  → Loop back to AI Agent for refinement
 ```
 
@@ -89,7 +89,7 @@ function engram-import { engram sync --import --project "Automatizacion-de-Mesa-
 
 - **Microsoft Outlook**: Email trigger and automated reply
 - **Twilio**: Receives phone call transcription via webhook
-- **MTM-SRU**: Internal incident management system, receives HTTP POST to create tickets
+- **MESA-AYUDAS**: Internal incident management system, receives HTTP POST to create tickets
 - **Google Gemini API**: Classification requests (`google-genai >= 1.0`, the new SDK that replaces the deprecated `google-generativeai`)
 - **Redis**: Session/memory storage for the LangChain AI agent
 

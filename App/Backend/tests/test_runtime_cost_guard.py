@@ -921,7 +921,7 @@ def test_workflow_nodo_guarda_apunta_al_endpoint_de_reserva():
     node = next(n for n in wf["nodes"] if n["name"] == "Guard de costo")
     url = node["parameters"]["url"]
     assert "/api/v1/cost-guard/reserve" in url
-    assert node["parameters"]["body"]["provider"] == "n8n_gemini"
+    assert json.loads(node["parameters"]["jsonBody"])["provider"] == "n8n_gemini"
 
 
 def test_twiml_xml_es_valido_y_graba_mono_con_callbacks():
