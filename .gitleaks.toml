@@ -1,0 +1,41 @@
+# .gitleaks.toml — configuración de gitleaks para el escaneo de secretos en CI.
+#
+# Extiende el ruleset por defecto de gitleaks (useDefault = true) y agrega una
+# allowlist MÍNIMA. No hay palabras comodín: cada entrada es puntual y está
+# justificada abajo. La idea es que el escaneo de historial completo pase en
+# verde sin ocultar secretos reales.
+
+[extend]
+# Conserva TODAS las reglas por defecto de gitleaks.
+useDefault = true
+
+[allowlist]
+description = "Allowlist mínima y específica del repositorio"
+
+# Clave real de Google Gemini filtrada en Gestion_Incidentes/.env. La clave YA
+# fue revocada y rotada (Google la bloqueó por leaked). El historial no se puede
+# reescribir sin romper los clones existentes, así que se excluye por COMMIT:
+# los dos commits que introdujeron el archivo y el que lo eliminó. Nunca se pega
+# el valor de la clave en la configuración.
+commits = [
+  "eee5c843ea7ac6f8826aad8f2d8605edf2c73252",
+  "0d430b58073cd8de768b301b38c50643546a85bf",
+  "02e845c457906949d90ee92227d27000d07eecaf",
+]
+
+# Archivo de test con una clave Google FICTICIA (AIzaSyA123...) usada como
+# fixture. No es un secreto real; se acota al archivo exacto.
+paths = [
+  '''scripts/dry_run/test_checks[.]py''',
+]
+
+# Valores placeholder concretos, sin permitir directorios enteros:
+# 1) Clave Fernet de PRUEBA documentada en los tests del repo (misma cadena
+#    repetida en varios test/*.py). Se acota al valor exacto para no ocultar un
+#    secreto real que se agregue más adelante en un test.
+# 2) Nombre de un test citado en un reporte de verify: la regla
+#    'generic-api-key' lo marcó como falso positivo por contener "api".
+regexes = [
+  '''2BFqlzB9uZlu2axKBM-ZrYJGq3u8JOK93ZYzIwkE3tQ=''',
+  '''test_fallo_descarga_persiste_el_ingreso_tras_503''',
+]

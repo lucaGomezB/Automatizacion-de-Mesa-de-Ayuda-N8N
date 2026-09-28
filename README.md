@@ -284,6 +284,10 @@ plantillas `.env.example` con placeholders. Ante un falso positivo, agregar el
 marcador `gitleaks:allow` en esa línea. Si además tenés [gitleaks](https://github.com/gitleaks/gitleaks)
 instalado, el hook lo usa como capa extra de escaneo.
 
+Como respaldo del hook, el job `secret-scan` de CI corre gitleaks sobre el historial
+completo de git (allowlist en `.gitleaks.toml`) y ejecuta el escáner de la memoria de
+Engram (`scripts/security/scan_engram_secrets.py`), que sí descomprime los `.gz`.
+
 ## Memoria compartida del proyecto (engram)
 
 El directorio `.engram/` versiona la memoria técnica del proyecto (decisiones, bugs resueltos, convenciones) para que viaje con el código y sea recuperable por cualquier colaborador.
