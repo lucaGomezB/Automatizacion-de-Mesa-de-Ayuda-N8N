@@ -177,7 +177,7 @@ docker compose ps
 
 - **`.env` location**: `App/Backend/.env` (NOT root `.env`)
 - **Template**: `App/Backend/.env.example`
-- **Pre-commit hook**: `.githooks/pre-commit` blocks commits containing API keys, PEM keys, or `.env` files. Use `gitleaks:allow` comment to whitelist false positives.
+- **Pre-commit hook**: `.githooks/pre-commit` blocks commits containing API keys, PEM keys, or `.env` files. Use `gitleaks:allow` comment to whitelist false positives. The CI `secret-scan` job backs it up with a full-history gitleaks scan (`.gitleaks.toml`).
 - **CI dummies**: backend tests in CI need these env vars even though the SQLite subset is offline (pydantic-settings requires them without defaults). The integration subset additionally gets `TEST_PG_URL` pointed at its dedicated service container:
 
 ```
@@ -210,12 +210,15 @@ PSEUDONYMIZATION_ENCRYPTION_KEY=MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA= # g
 
 ## CI Pipeline (.github/workflows/ci.yml)
 
-Triggers: push to `main`, all pull requests. Two parallel jobs:
+Triggers: push to `main`, all pull requests. Three parallel jobs:
 
 | Job | What it does |
 |-----|-------------|
 | `backend-tests` | ruff lint → pytest with coverage → verify OpenAPI sync → evaluation tests |
 | `frontend-tests` | ESLint → Vitest with coverage |
+| `secret-scan` | gitleaks over full git history (`.gitleaks.toml`) → Engram memory (`.engram`) scan |
+
+The `secret-scan` job backs up the local pre-commit hook in CI: it installs a pinned gitleaks, scans the full history (allowlist in `.gitleaks.toml`), and runs `scripts/security/scan_engram_secrets.py` over the gzip chunks that GitHub's native scanning cannot read.
 
 The OpenAPI sync check (`test_openapi_sync.py`) regenerates the spec in-memory and compares against `docs/openapi.json`. If you add/change endpoints, regenerate the static file:
 
