@@ -97,7 +97,13 @@ C-45 runtime-cost-guard (C-41, C-33)
 C-46 telefonia-ingreso-sellado (C-39, C-45)
  └── C-47 guard-costo-item (C-46, C-45)
  └── C-48 timing-en-listado (C-39)
- └── C-52 telefonia-transcripcion-async (C-47)   [C-51 absorbido por C-52]
+
+--- FASE 18: Notificacion, directorio y canal de correo (2026-09-23 / 2026-09-25) — ACTIVOS ---
+
+C-52 telefonia-transcripcion-async (C-47, C-45)          [ACTIVO — 43/44]
+ └── C-53 notificacion-numero-incidente (C-52, C-45)     [ACTIVO — 11/32]
+C-54 directorio-usuarios (C-53)                          [ACTIVO — 50/51]
+C-55 canal-correo-imap (ninguna)                         [ACTIVO — 0/15]
 ```
 
 ### Paralelismo por fase
@@ -418,12 +424,15 @@ C-46 telefonia-ingreso-sellado (C-39, C-45)
 | C-46 | telefonia-ingreso-sellado | 17 | C-39, C-45 | MEDIO | — |
 | C-47 | guard-costo-item | 17 | C-46, C-45 | MEDIO | — |
 | C-48 | timing-en-listado | 17 | C-39 | BAJO | — |
-| C-52 | telefonia-transcripcion-async | 17 | C-47 | CRITICO | — |
+| C-52 | telefonia-transcripcion-async | 18 | C-47, C-45 | CRITICO | — |
+| C-53 | notificacion-numero-incidente | 18 | C-52, C-45 | ALTO | — |
+| C-54 | directorio-usuarios | 18 | C-53 | ALTO | — |
+| C-55 | canal-correo-imap | 18 | ninguna | MEDIO | — |
 
-**Total**: 49 changes documentados — 47 archivados (C-01..C-48, sin C-21) mas el mantenimiento sin numero `improve-dockerfiles`. Hay 1 change ACTIVO: C-52. C-21 nunca se creo; C-51 fue absorbido por C-52 y no se abre.
+**Total**: 52 changes documentados — 48 archivados (C-01..C-48, sin C-21, mas el mantenimiento sin numero `improve-dockerfiles`) y 4 ACTIVOS (C-52, C-53, C-54, C-55). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
-**Fases**: 1-17 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12).
+**Fases**: 1-18 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa los changes activos post-roadmap).
 
 ---
 
@@ -1103,9 +1112,13 @@ C-46 telefonia-ingreso-sellado (C-39, C-45)
   - `openspec/changes/archive/2026-09-22-c-48-timing-en-listado/verify-report.md`
   - `openspec/specs/e2e-timing-instrumentation/spec.md`
 
-### [C-52] `telefonia-transcripcion-async` — ACTIVO (propuesto, sin aplicar)
+## FASE 18 — Notificacion, directorio y canal de correo (2026-09-23 / 2026-09-25) — ACTIVOS
 
-- **Estado**: `[ ]` propuesto (2026-09-22 — `openspec/changes/c-52-telefonia-transcripcion-async`; 44 tareas, 5 delta specs, `openspec validate --strict` pasa). Sin aplicar. Absorbe el change cancelado `c-51-twilio-payload-wiring`.
+> Changes post-roadmap. C-52 continua el pipeline telefonico asincrono; C-53 entrega el numero de incidente en los tres canales; C-54 agrega el directorio de empleados; C-55 migra el canal de correo a IMAP/SMTP. Los cuatro siguen ACTIVOS.
+
+### [C-52] `telefonia-transcripcion-async` — ACTIVO (implementado 43/44)
+
+- **Estado**: `[~]` en progreso (2026-09-23) — 43/44 tareas; falta la 8.4 (verificacion en vivo con una llamada real). Absorbe el change cancelado `c-51-twilio-payload-wiring`.
 - **Problema**: el canal de telefonia clasifica sobre una descripcion VACIA. El evento `com.twilio.voice.insights.call-summary.complete` no trae la transcripcion, y `<Record transcribe="true">` es solo ingles estadounidense. Ademas hay una fuga latente de PII (el `AI Agent` de n8n manda el transcript crudo a Gemini antes de pseudonimizar).
 - **Scope**:
   - STT EN EL BACKEND con Google Gemini (transcripcion dedicada, modelo `gemini-3.5-transcribe`, modo `verbatim`, via Interactions API, `store=False`) sobre la grabacion mono de Twilio. El backend es dueno de la descarga (`RecordingUrl`, Basic auth) y de la transcripcion; pseudonimiza INMEDIATAMENTE y entrega SOLO texto pseudonimizado a n8n.
@@ -1113,13 +1126,68 @@ C-46 telefonia-ingreso-sellado (C-39, C-45)
   - Tabla `telefonia_ingreso` (transcript crudo cifrado Fernet + pseudonimizado), migracion Alembic `008`.
   - Nueva superficie paga `backend_stt` en la guarda de costo; `ingresado_en` sellado en el callback del backend; `origen_message_id = CallSid` para idempotencia.
   - n8n: el `twilioTrigger` se reemplaza por un webhook; sobreviven guarda/restauracion/agente/validador/normalizador.
-- **Preguntas abiertas (bloquean el apply)**: (1) `google-genai==2.8.0` no tipa `transcription_config` (upgrade vs dict sin tipar vs REST con httpx); (2) disponibilidad y precio real de `gemini-3.5-transcribe`; (3) si `language_codes=["es-AR"]` se acepta (fallback auto-detect o `es-MX`); (4) retencion del audio; (5) alta placeholder vs reintento ante fallo de STT; (6) drop de la suscripcion Event Streams; (7) reescritura del `<Say>`.
+- **Preguntas abiertas (1-3 RESUELTAS; restan 4 de diseno)**: (1) `google-genai==2.8.0` no tipa `transcription_config` (upgrade vs dict sin tipar vs REST con httpx); (2) disponibilidad y precio real de `gemini-3.5-transcribe`; (3) si `language_codes=["es-AR"]` se acepta (fallback auto-detect o `es-MX`); (4) retencion del audio; (5) alta placeholder vs reintento ante fallo de STT; (6) drop de la suscripcion Event Streams; (7) reescritura del `<Say>`.
 - **Dependencias**: `C-47` (mismo flujo telefonico), `C-45` (guarda de costo)
 - **Governance**: CRITICO
 - **Leer antes**:
   - `openspec/changes/c-52-telefonia-transcripcion-async/{proposal,design,tasks}.md`
   - `openspec/specs/n8n-workflow/spec.md`, `openspec/specs/runtime-cost-guard/spec.md`
   - `openspec/changes/archive/2026-09-21-c-45-runtime-cost-guard/design.md` (limitacion de la transcripcion)
+
+---
+
+### [C-53] `notificacion-numero-incidente` — ACTIVO (implementado 11/32)
+
+- **Estado**: `[~]` en progreso (2026-09-23) — 11/32 tareas; las 21 restantes estan diferidas como `deferred pending AR SMS spike` (SMS a Argentina), incluida la notificacion telefonica. Los canales correo y web estan implementados.
+- **Problema**: el usuario final no recibe de forma garantizada el numero de incidente. El correo no confirma cuando `requiere_revision_humana=true` y su destinatario puede resolverse invalido (el `from` de Outlook es tipicamente un objeto `from.emailAddress.address`); el web responde `incidente_id: null` en revision humana; la telefonia no notifica (el `<Say>` de cierre no conoce el numero porque el alta es asincrona). No existe numero legible de incidente (solo el PK `id`).
+- **Scope**:
+  - Telefonia: SMS al numero llamante con el numero de incidente via Twilio Messaging; captura y persistencia cifrada del `From` en el webhook de VOZ (correlacion por `CallSid`); sin numero no se envia y se deja traza. Superficie de guarda nueva `twilio_sms`.
+  - Correo: extraccion del remitente soportando `from` string y objeto `from.emailAddress.address`; confirmacion tambien en la rama de revision humana.
+  - Web: la rama de revision humana responde con el `incidente_id` real (no `null`).
+  - Numero de incidente: PK `id` como numero canonico (prefijo configurable diferido).
+  - Doc fix en `docs/n8n-workflow-guide.md`.
+- **Dependencias**: `C-52` (flujo telefonico asincrono), `C-45` (guarda de costo)
+- **Governance**: ALTO
+- **Leer antes**:
+  - `openspec/changes/c-53-notificacion-numero-incidente/{proposal,design,tasks}.md`
+  - `openspec/specs/n8n-workflow/spec.md`, `openspec/specs/runtime-cost-guard/spec.md`
+
+---
+
+### [C-54] `directorio-usuarios` — ACTIVO (implementado 50/51)
+
+- **Estado**: `[~]` en progreso (2026-09-23) — 50/51 tareas; falta la 7.5 (revision humana HIGH: politica de retencion/ARCO, visibilidad de incidentes por rol y ausencia de PII), que bloquea activar datos reales. La implementacion usa datos sinteticos.
+- **Problema**: la mesa de ayuda no sabe QUIEN reporta ni a QUIEN avisar; no existe directorio de empleados ni modelo de roles (`users` es solo autenticacion).
+- **Scope**:
+  - Entidad `directorio_empleado` (migracion 009), separada de `users`, con vinculo opcional a una cuenta.
+  - Modelo de roles minimo (`usuario_final` / `operador` / `administrador_directorio`) vinculado al catalogo `sector` canonico.
+  - Resolucion de contactos (telefono -> empleado, email -> empleado, usuario -> empleado); "no encontrado" no fatal.
+  - Datos personales en texto plano (sin cifrado de aplicacion ni indice ciego) con minimizacion, control de acceso por rol, auditoria y sin PII en logs.
+  - Visibilidad de incidentes por rol a nivel API (frontend diferido).
+  - Seed idempotente dev-only con un usuario sintetico por rol (sin PII real).
+- **Dependencias**: `C-53` (contrato de resolucion de contacto; no implementa notificaciones aqui)
+- **Governance**: ALTO
+- **Leer antes**:
+  - `openspec/changes/c-54-directorio-usuarios/{proposal,design,tasks}.md`
+  - `App/Backend/app/models/empleado.py`, `openspec/specs/employee-directory/spec.md`
+
+---
+
+### [C-55] `canal-correo-imap` — ACTIVO (planificado, 0/15)
+
+- **Estado**: `[ ]` propuesto (2026-09-25) — planning completo (proposal, specs, design, tasks), `openspec validate --strict` pasa. Sin aplicar.
+- **Problema**: el canal de correo depende de Microsoft Entra OAuth2 (`microsoftOutlookTrigger`, `microsoftOutlook`, credencial `microsoftOutlookOAuth2Api`), via no provisionable: la cuenta Microsoft disponible es personal y sin tenant.
+- **Scope**:
+  - Migrar el trigger a `n8n-nodes-base.emailReadImap` (IMAP Gmail: `imap.gmail.com:993`, `UNSEEN` + `SINCE`/24 h, `postProcessAction=read`, `format=simple`).
+  - Reemplazar los nodos `microsoftOutlook` de envio por `emailSend` (SMTP `smtp.gmail.com:465`).
+  - `origen_message_id` desde `metadata['message-id']` con fallback a `attributes.uid`; `canal_raw="correo"`.
+  - Eliminar `Marcar correo como leido` y rewiring (conteo 37 nodos).
+  - Migrar las guardas de `scripts/preflight/` y actualizar `docs/n8n-workflow-guide.md`.
+- **Dependencias**: ninguna
+- **Governance**: MEDIO
+- **Leer antes**:
+  - `openspec/changes/c-55-canal-correo-imap/{proposal,design,tasks}.md`
+  - `openspec/specs/n8n-workflow/spec.md`, `docs/n8n-workflow-guide.md`
 
 ---
 
@@ -1138,7 +1206,7 @@ C-46 telefonia-ingreso-sellado (C-39, C-45)
 | Backend: util n8n_webhook | EN USO | `notify_n8n()` fire-and-forget desde el servicio; apunta al webhook N8N dedicado (C-33) |
 | Backend: tests | COMPLETO | Suite offline SQLite (550 passed) + subconjunto de integracion PostgreSQL sobre base descartable (C-19/C-32/C-45) |
 | Backend: pseudonimizacion | COMPLETO | C-03; cifrado at-rest con Fernet |
-| Backend: migraciones | COMPLETO | Alembic; migraciones 001-007 (la 006 agrega timing e2e, C-39; la 007 agrega `costo_guarda_contador`, C-45) |
+| Backend: migraciones | COMPLETO | Alembic; migraciones 001-009 (la 006 agrega timing e2e, C-39; la 007 agrega `costo_guarda_contador`, C-45; la 008 agrega `telefonia_ingreso`, C-52; la 009 agrega `directorio_empleado`, C-54) |
 | Backend: auth | COMPLETO | JWT Bearer (C-15) |
 | Costo runtime: guarda | COMPLETO | C-45 bolsa global USD 10/semana, rate global y por origen, PostgreSQL 007, webhook pre-llamada de Twilio y fail-closed (archivado) |
 | N8N workflow JSON | COMPLETO | Canales cableados (C-04/C-05), compuerta de confianza de dos capas (C-38), wiring corregido (C-40), recuperacion robusta del sello de ingreso de telefonia (C-46), item de telefonia preservado a traves de la guarda de costo (C-47) |
@@ -1162,7 +1230,7 @@ C-46 telefonia-ingreso-sellado (C-39, C-45)
 | Backup scripts: PostgreSQL | IMPLEMENTADO | C-26 — scripts/backup.sh y scripts/backup.ps1 con rotacion de 7 dias |
 | N8N retention: 30 dias | CONFIGURADO | C-26 — EXECUTIONS_DATA_PRUNE y EXECUTIONS_DATA_MAX_AGE en docker-compose.yml |
 
-Tabla reconciliada con el estado real el 2026-09-22: C-14..C-47 quedaron documentados en las FASE 12-17.
+Tabla reconciliada con el estado real el 2026-09-28: C-14..C-48 quedaron documentados en las FASE 12-17, y los changes activos C-52..C-55 en la FASE 18.
 
 Cambios que NO estan en el roadmap original porque se implementaron durante el desarrollo:
 - Clasificador hibrido (completo)
@@ -1181,10 +1249,16 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 ## Primer change recomendado
 
 Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22).
-Hay 1 change ACTIVO: **`c-52-telefonia-transcripcion-async`** (propuesto, 44 tareas, sin aplicar).
-C-01..C-48 estan archivados (C-21 no existe). `c-51` fue absorbido por C-52 y no se abre.
 
-**Change activo — `c-52-telefonia-transcripcion-async`** (Gobernanza CRITICA):
+Hay 4 changes ACTIVOS (post-roadmap, FASE 18):
+- **`c-52-telefonia-transcripcion-async`** — implementado 43/44 (falta la verificacion en vivo 8.4) — Governance CRITICA.
+- **`c-53-notificacion-numero-incidente`** — 11/32 (21 tareas diferidas por el spike AR SMS) — Governance ALTO.
+- **`c-54-directorio-usuarios`** — 50/51 (falta la revision humana 7.5) — Governance ALTO.
+- **`c-55-canal-correo-imap`** — 0/15 (planning completo, sin aplicar) — Governance MEDIO.
+
+C-01..C-48 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
+
+**Detalle de `c-52-telefonia-transcripcion-async`** (Gobernanza CRITICA):
 
 - Cierra el gap del canal telefonico: la descripcion llegaba VACIA al `AI Agent` porque el evento
   `call-summary.complete` no trae la transcripcion y `<Record transcribe="true">` es solo ingles.
@@ -1221,5 +1295,8 @@ Operativo para habilitar el pipeline pago (fuera de changes):
 Deuda menor pendiente (no bloqueante):
 - Tesis post-pipeline: reconciliar cap. 7 con el corpus real y corregir 4.3/4.8/cap. 11.
 
-Para avanzar: resolver las preguntas abiertas 1-3 de `c-52` (SDK, disponibilidad/precio del modelo,
-`es-AR`) antes del `/opsx:apply`, dado que es gobernanza CRITICA.
+Para avanzar:
+- `c-52`: cerrar la verificacion en vivo 8.4 (requiere una llamada real) y resolver las preguntas de diseno 4-7.
+- `c-55`: aplicar las fases 2-5 (offline); el smoke 6.3 requiere una casilla Gmail real con App Password.
+- `c-54`: registrar la aprobacion de la revision humana 7.5 para poder archivar.
+- `c-53`: las tareas diferidas siguen bloqueadas por el spike AR SMS.
