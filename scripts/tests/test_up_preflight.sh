@@ -295,9 +295,30 @@ assert_check_fails() {
 printf 'Preflight: missing .env\n'
 assert_preflight_fails "$MISSING" "$EXAMPLE" "missing .env" ".env"
 
+# The failure must be self-service: it prints the copy command and where to get
+# the Gemini key, so a clean clone needs no external docs.
+out=""
+status=0
+if out="$(run_script_subprocess "$MISSING" "$EXAMPLE")"; then status=0; else status=$?; fi
+assert_nonzero "$status" "missing .env: exits non-zero"
+assert_contains "$out" "cp App/Backend/.env.example App/Backend/.env" "missing .env: prints the copy command"
+assert_contains "$out" "aistudio.google.com" "missing .env: points to the Gemini key"
+assert_not_contains "$out" "$SECRET_SENTINEL" "missing .env: never prints a secret value"
+
 printf 'Preflight: placeholder secrets\n'
 assert_preflight_fails "$PLACEHOLDER_GEMINI" "$EXAMPLE" "gemini placeholder" "GEMINI_API_KEY"
 assert_preflight_fails "$PLACEHOLDER_FERNET" "$EXAMPLE" "fernet placeholder" "PSEUDONYMIZATION_ENCRYPTION_KEY"
+
+# Each failure names the case-specific fix (generate locally, or fetch the key).
+out=""
+status=0
+if out="$(run_script_subprocess "$PLACEHOLDER_GEMINI" "$EXAMPLE")"; then status=0; else status=$?; fi
+assert_contains "$out" "aistudio.google.com" "gemini placeholder: points to the Gemini key"
+
+out=""
+status=0
+if out="$(run_script_subprocess "$PLACEHOLDER_FERNET" "$EXAMPLE")"; then status=0; else status=$?; fi
+assert_contains "$out" "Fernet.generate_key" "fernet placeholder: shows the generator"
 
 printf 'Preflight: empty secret\n'
 assert_preflight_fails "$EMPTY_GEMINI" "$EXAMPLE" "empty gemini key" "GEMINI_API_KEY"
@@ -461,6 +482,8 @@ assert_contains "$ps1_content" "JWT_SECRET_KEY" "up.ps1 references JWT_SECRET_KE
 assert_contains "$ps1_content" "your-jwt-secret-key-here" "up.ps1 lists the JWT placeholder"
 assert_contains "$ps1_content" "Invoke-CostPreflight" "up.ps1 defines the cost gate"
 assert_contains "$ps1_content" "UP_SKIP_COST_PREFLIGHT" "up.ps1 supports the operator bypass"
+assert_contains "$ps1_content" "Write-EnvSetupGuide" "up.ps1 defines the env setup guide"
+assert_contains "$ps1_content" "aistudio.google.com" "up.ps1 points to the Gemini key"
 
 required_line="$(grep -n -F '$RequiredSecrets' "$UP_PS1" | head -n 1 | cut -d: -f1)"
 if [ -n "$required_line" ] && sed -n "${required_line}p" "$UP_PS1" | grep -q -F "JWT_SECRET_KEY"; then
