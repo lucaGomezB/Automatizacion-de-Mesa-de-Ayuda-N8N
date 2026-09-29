@@ -28,6 +28,8 @@
 > C-55: canal-correo-imap — el canal de correo migra de Microsoft Outlook OAuth2 a IMAP/SMTP: el
 > trigger pasa a `emailReadImap` (marca leido en el propio trigger), los envios a `emailSend` (SMTP)
 > y se elimina el nodo `Marcar correo como leido`.
+> C-57: auditoria-rama-revision — en la rama de revision humana la auditoria cuelga del gate
+> post-POST en paralelo con la notificacion y consume la respuesta del POST, no el resultado SMTP.
 > Estado: 37 nodos (34 operativos + 3 sticky notes); suite estructural `test_n8n_workflow.py` en verde.
 
 ## Descripción general
@@ -209,11 +211,11 @@ validar el smoke manual de IMAP. Esta decisión se registra para el Anexo E de l
 | 4 | Entrada valida | `if` | Gate de validación de ENTRADA previo al POST. Condición: `confianza >= 0.70 OR revision_forzada == true`. Rama true → `Login operador`; rama false → `Registro de auditoria` + `Es correo?`. |
 | 5 | Login operador | `httpRequest` | `POST /api/v1/auth/login`; obtiene el token que autentica el POST de incidentes. Compartido. |
 | 6 | HTTP POST a MESA-AYUDAS | `httpRequest` | `POST /api/v1/incidentes/` al backend FastAPI. Compartido. |
-| 7 | Requiere revision humana | `if` | Gate post-POST. Evalúa `$json.requiere_revision_humana` del response. Rama true → `Notificar operador designado` + `Confirmar correo en revision?`; rama false → `Rutear por canal de origen` + `Registro de auditoria`. Compartido. |
+| 7 | Requiere revision humana | `if` | Gate post-POST. Evalúa `$json.requiere_revision_humana` del response. Rama true → `Notificar operador designado` + `Registro de auditoria` + `Confirmar correo en revision?`; rama false → `Rutear por canal de origen` + `Registro de auditoria`. Compartido. **[C-57]** La auditoría es hermana de la notificación y consume la respuesta del POST (no el resultado SMTP). |
 | 8 | Notificar operador designado | `emailSend` (SMTP) | **[C-55]** Envía correo al operador designado (`$env.OPERATOR_EMAIL`) con el número de incidente (`numero_incidente`). |
 | 8b | Confirmar correo en revision? | `if` | **[C-53]** `canal_origen == 'correo'`. Rama true → `Correo de confirmacion al usuario`; la confirmación también se dispara en la rama de revisión humana. |
 | 9a | Correo de confirmacion al usuario | `emailSend` (SMTP) | **[C-05/C-53/C-55]** Envía correo de confirmación con el número de incidente al remitente. Resuelve `toEmail` desde el remitente normalizado (extraído del header IMAP `from` `"Nombre <addr>"`); declara `onError: continueRegularOutput` para no abortar auditoría. |
-| 9b | Registro de auditoria | `code` (JS) | **[C-05]** Registra metadatos de la ejecución (sin PII). Ver sección Auditoría. Compartido. |
+| 9b | Registro de auditoria | `code` (JS) | **[C-05/C-57]** Registra metadatos de la ejecución (sin PII). Ver sección Auditoría. Compartido; consume la respuesta del POST en ambas ramas del gate post-POST. |
 
 ### Canal web (formulario web) — C-05
 
@@ -409,8 +411,9 @@ La confianza se evalúa en tres puntos distintos del flujo:
    operador` → `HTTP POST a MESA-AYUDAS`; rama false → `Registro de auditoria` + `Es correo?`.
 3. **Post-POST — `Requiere revision humana`** (gate de confianza REAL, tras persistir).
    Condición: `$json.requiere_revision_humana == true`, el booleano que el backend fija cuando
-   la confianza de clasificación es menor a 0.70. Rama true → `Notificar operador designado`;
-   rama false → `Rutear por canal de origen` + `Registro de auditoria`.
+   la confianza de clasificación es menor a 0.70. Rama true → `Notificar operador designado` +
+   `Registro de auditoria` (en paralelo, C-57); rama false → `Rutear por canal de origen` +
+   `Registro de auditoria`.
 
 - **Telefonía, refinamiento**: la rama false de `La clasificacion de la IA es valida` pasa por
   `Tope de refinamiento alcanzado`; dentro del tope vuelve al `AI Agent` y, al agotarse, deriva
@@ -608,7 +611,7 @@ cd App/Backend
 python -m pytest tests/test_n8n_workflow.py -v
 ```
 
-Verifica 178 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40, C-46, C-47, C-52, C-53 y C-55).
+Verifica 181 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40, C-46, C-47, C-52, C-53, C-55 y C-57).
 
 ### Prueba manual del canal web (C-05)
 
@@ -630,7 +633,9 @@ caminos:
 - **Rama true** (`requiere_revision_humana = true`): `Notificar operador designado` envía un
   correo al operador designado (`$env.OPERATOR_EMAIL`) con el número de incidente
   (`numero_incidente`); en el canal correo, `Confirmar correo en revision?` dispara ADEMÁS la
-  confirmación al usuario (C-53), porque el usuario SIEMPRE debe recibir su número.
+  confirmación al usuario (C-53), porque el usuario SIEMPRE debe recibir su número. En paralelo,
+  `Registro de auditoria` registra el alta (`resultado: "creado"`) consumiendo la respuesta del
+  POST (C-57).
 
 | Canal | Nodo | Mecanismo |
 |-------|------|-----------|
@@ -642,7 +647,9 @@ caminos:
 
 El gate `Requiere revision humana` se interpone entre el POST y el ruteo normal. En la rama
 false, `Rutear por canal de origen` y `Registro de auditoria` cuelgan en paralelo; en la rama
-true, `Notificar operador designado` desemboca en `Registro de auditoria`. La notificación no
+true, `Notificar operador designado` y `Registro de auditoria` son hermanos (ambos cuelgan del
+gate, C-57), de modo que la auditoría consume la respuesta del POST y no el resultado SMTP del
+envío. La notificación no
 bloquea el registro de auditoría: los nodos declaran `onError: continueRegularOutput` (C-40/C-53),
 de modo que un fallo de envío no aborta la auditoría.
 
@@ -708,7 +715,7 @@ entorno y queda fuera del scope de C-05. Se documenta como punto pendiente para 
 | ¿El IF del workflow decide revisión humana o lo decide el backend? | **Ambos**: el backend marca `requiere_revision_humana` (fuente de verdad); el gate post-POST `Requiere revision humana` re-evalúa esa marca para notificar al operador. | C-04 / gate post-POST |
 | ¿Outlook trigger ≈ IMAP genérico? | **Resuelto en C-55**: se adopta `emailReadImap` (IMAP/SMTP con App Password), descartando Outlook por la cuenta Microsoft personal sin tenant. Documentar en Anexo E. | C-05 / C-55 |
 | ¿La telefonía requiere SMS de confirmación adicional? | **Sí** (C-53): el número se notifica por SMS al llamante desde el backend; la respuesta de voz de la llamada NO lo confirma. **DIFERIDO** hasta el spike de entregabilidad a Argentina (+54). | C-53 |
-| ¿La auditoría registra solo altas o también rechazos? | **Todas las ramas terminales**: la rama false de `Entrada valida` (rechazo), la rama false de `Requiere revision humana` (alta sin revisión) y `Notificar operador designado` (alta con revisión) desembocan en `Registro de auditoria`. | C-05 / gate post-POST |
+| ¿La auditoría registra solo altas o también rechazos? | **Todas las ramas terminales**: la rama false de `Entrada valida` (rechazo) y ambas ramas del gate post-POST `Requiere revision humana` (alta sin revisión por main#1 y alta con revisión por main#0, esta última en paralelo con la notificación) desembocan en `Registro de auditoria`. La rama de revisión consume la respuesta del POST (C-57). | C-05 / C-57 |
 | ¿Dónde persiste el log de auditoría 30 días? | **Logging Docker/N8N con rotación** (opción A). Cero código nuevo en backend. Configurar `max-file: "30"` en `docker-compose.yml`. | C-05 |
 | ¿Cómo se autentica el webhook web? | **Pendiente de entorno**: tesis §5.2 menciona "autenticación corporativa única". Mecanismo concreto (header firmado / SSO) fuera del scope de C-05. Elevar para C-10. | C-05 |
 
