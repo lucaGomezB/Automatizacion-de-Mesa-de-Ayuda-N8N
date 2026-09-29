@@ -32,7 +32,7 @@ Cuando el backend marca un incidente con `requiere_revision_humana = true`, el w
 - **WHEN** un incidente del canal correo requiere revision humana
 - **THEN** el mensaje ya quedo marcado como leido por el disparador IMAP, de modo que el trigger no lo reprocesa
 
-#### Scenario: La notificacion no depende de Entra OAuth2
+#### Scenario: La notificación no depende de Entra OAuth2
 
 - **WHEN** la suite estructural inspecciona el nodo `Notificar operador designado`
 - **THEN** el nodo es de tipo `n8n-nodes-base.emailSend` y no declara credenciales `microsoftOutlook*`
