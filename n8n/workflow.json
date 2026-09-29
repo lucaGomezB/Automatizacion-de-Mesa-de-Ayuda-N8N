@@ -98,7 +98,7 @@
         "sendBody": true,
         "contentType": "json",
         "specifyBody": "json",
-        "jsonBody": "{\"descripcion\": \"={{ $('Normalizar entrada del incidente').item.json.descripcion }}\", \"prioridad\": \"={{ $('Normalizar entrada del incidente').item.json.prioridad || 'media' }}\", \"canal_origen_id\": \"={{ $('Normalizar entrada del incidente').item.json.canal_origen_id }}\", \"origen_message_id\": \"={{ $('Normalizar entrada del incidente').item.json.origen_message_id }}\", \"origen_evento\": \"creacion_incidente\", \"clasificacion\": \"={{ $('Normalizar entrada del incidente').item.json.canal_origen === 'telefonia' ? { sector_predicho: $('Normalizar entrada del incidente').item.json.sector_predicho, sectores_adicionales: $('Normalizar entrada del incidente').item.json.sectores_adicionales, confianza: $('Normalizar entrada del incidente').item.json.confianza, requiere_revision_humana: $('Normalizar entrada del incidente').item.json.requiere_revision_humana, origen: 'n8n' } : null }}\", \"ingresado_en\": \"={{ $('Normalizar entrada del incidente').item.json.ingresado_en }}\"}",
+        "jsonBody": "={{ JSON.stringify({ descripcion: $('Normalizar entrada del incidente').item.json.descripcion, prioridad: $('Normalizar entrada del incidente').item.json.prioridad || 'media', canal_origen_id: $('Normalizar entrada del incidente').item.json.canal_origen_id, origen_message_id: $('Normalizar entrada del incidente').item.json.origen_message_id || null, origen_evento: 'creacion_incidente', clasificacion: ($('Normalizar entrada del incidente').item.json.canal_origen === 'telefonia' ? { sector_predicho: $('Normalizar entrada del incidente').item.json.sector_predicho, sectores_adicionales: $('Normalizar entrada del incidente').item.json.sectores_adicionales, confianza: $('Normalizar entrada del incidente').item.json.confianza, requiere_revision_humana: $('Normalizar entrada del incidente').item.json.requiere_revision_humana, origen: 'n8n' } : null), ingresado_en: $('Normalizar entrada del incidente').item.json.ingresado_en }) }}",
         "options": {},
         "sendHeaders": true,
         "headerParameters": {
@@ -741,7 +741,7 @@
         "sendBody": true,
         "contentType": "json",
         "specifyBody": "json",
-        "jsonBody": "{\"provider\": \"n8n_gemini\", \"caller\": \"={{ $json.caller || null }}\"}",
+        "jsonBody": "={{ JSON.stringify({ provider: 'n8n_gemini', caller: $json.caller || null }) }}",
         "options": {},
         "sendHeaders": true,
         "headerParameters": {
