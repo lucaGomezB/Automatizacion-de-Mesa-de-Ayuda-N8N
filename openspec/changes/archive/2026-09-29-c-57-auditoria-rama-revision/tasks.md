@@ -24,5 +24,5 @@
 
 - [x] 4.1 Ejecutar `cd App/Backend; pytest tests/test_n8n_workflow.py` y verificar verde completo.
 - [x] 4.2 Ejecutar `cd App/Backend; pytest -m "not integration"` y verificar que no hay regresiones en el subconjunto offline.
-- [ ] 4.3 Smoke manual en N8N: un alta con `requiere_revision_humana = true` (correo o web) registra en `Registro de auditoria` `resultado = "creado"` con `incidente_id` numérico y no `rechazado_datos_incompletos`.
+- [x] 4.3 Smoke manual en N8N: un alta con `requiere_revision_humana = true` (correo o web) registra en `Registro de auditoria` `resultado = "creado"` con `incidente_id` numérico y no `rechazado_datos_incompletos`. Satisfecho: ejecucion n8n #30 (workflow JYizNfNZXuhCr8Z7, 2026-09-29T19:17:18Z) creo el incidente #12 con requiere_revision_humana=true (clasificacion_log etapa=gemini confianza=0.20). El nodo Registro de auditoria, alimentado por el gate 'Requiere revision humana' (src del run), registro {incidente_id: 12, resultado: 'creado', sector_nombre: 'Soporte Tecnico Software'} — antes del fix registraba rechazado_datos_incompletos con incidente_id null.
 - [x] 4.4 Verificar que el canal de rechazo conserva `rechazado_datos_incompletos` y el camino de error del POST conserva `error_backend` (sin regresión de N8N-AUDIT-002).
