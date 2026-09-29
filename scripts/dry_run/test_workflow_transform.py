@@ -95,9 +95,12 @@ def test_http_post_node_sends_payload_as_json_expression():
     assert parameters["specifyBody"] == "json"
     assert "body" not in parameters
     json_body = parameters["jsonBody"]
-    # El nodo usa el modo JSON nativo (jsonBody string JSON con expresiones
-    # embebidas), no la forma legacy `={{ JSON.stringify({...}) }}`.
-    assert json.loads(json_body)
+    # C-55: el nodo usa una unica expresion que construye el JSON con tipos
+    # nativos (`={{ JSON.stringify({...}) }}`), preservando el tipo de cada campo
+    # (canal_origen_id numerico, clasificacion objeto o null). La forma template
+    # con valores "={{ ... }}" emitia el '=' literal y stringificaba todo.
+    assert json_body.startswith("={{")
+    assert "JSON.stringify" in json_body
     for expression in (
         "$('Normalizar entrada del incidente').item.json.descripcion",
         "$('Normalizar entrada del incidente').item.json.prioridad || 'media'",
