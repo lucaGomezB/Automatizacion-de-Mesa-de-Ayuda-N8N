@@ -4,13 +4,13 @@
 
 ### Requirement: Notificacion al operador designado
 
-Cuando el backend marca un incidente con `requiere_revision_humana = true`, el workflow SHALL notificar a los operadores designados mediante correos electronicos enviados por el nodo `Notificar operador designado` (`n8n-nodes-base.emailSend` sobre SMTP). La lista de destinatarios SHALL resolverse desde el campo `destinatarios_revision` del payload de alta, que contiene los operadores activos del sector del incidente resueltos por el backend. Cuando la lista este vacia o ausente, el workflow SHALL usar la direccion configurada en la variable de entorno `OPERATOR_EMAIL` como unico destinatario de respaldo, preservando el camino de un solo destinatario. La notificacion SHALL ocurrir en la rama verdadera del gate post-POST `Requiere revision humana`, antes del registro de auditoria, y NO SHALL emitirse cuando el flag es falso. El workflow SHALL enviar una copia por destinatario y MUST NOT exponer la lista completa de destinatarios en un campo compartido `To`, `Cc` ni `Bcc`.
+Cuando el backend marca un incidente con `requiere_revision_humana = true`, el workflow SHALL notificar a los operadores designados mediante correos electronicos enviados por el nodo `Notificar operador designado` (`n8n-nodes-base.emailSend` sobre SMTP). La lista de destinatarios SHALL resolverse desde el campo `destinatarios_revision` del payload de alta, que contiene los operadores activos del sector del incidente resueltos por el backend. Cuando la lista este vacia o ausente, el workflow SHALL usar la direccion configurada en la variable de entorno `OPERATOR_EMAIL` como unico destinatario de respaldo, preservando el camino de un solo destinatario. La notificacion SHALL ocurrir en la rama verdadera del gate post-POST `Requiere revision humana`, como hermana (no antecesora) del registro de auditoria, y NO SHALL emitirse cuando el flag es falso. El workflow SHALL enviar una copia por destinatario y MUST NOT exponer la lista completa de destinatarios en un campo compartido `To`, `Cc` ni `Bcc`.
 (Previously: el nodo enviaba a la unica direccion fija de `$env.OPERATOR_EMAIL`.)
 
 #### Scenario: Se notifica al operador cuando el backend pide revisión
 
 - **WHEN** el response del backend tiene `requiere_revision_humana = true`
-- **THEN** el nodo `Notificar operador designado` envia un correo por cada operador resuelto en `destinatarios_revision` y luego se registra la auditoria
+- **THEN** el nodo `Notificar operador designado` envia un correo por cada operador resuelto en `destinatarios_revision`; la auditoria se registra en paralelo desde el mismo gate
 
 #### Scenario: Fallback cuando no hay destinatarios resueltos
 
@@ -31,6 +31,11 @@ Cuando el backend marca un incidente con `requiere_revision_humana = true`, el w
 
 - **WHEN** un incidente del canal correo requiere revision humana
 - **THEN** el mensaje ya quedo marcado como leido por el disparador IMAP, de modo que el trigger no lo reprocesa
+
+#### Scenario: La notificación no antecede a la auditoría
+
+- **WHEN** la suite estructural inspecciona la rama verdadera del gate post-POST
+- **THEN** `Notificar operador designado` y `Registro de auditoria` cuelgan ambos del gate y el registro de auditoría no es alcanzable a través del nodo de notificación
 
 #### Scenario: La notificación no depende de Entra OAuth2
 
