@@ -25,10 +25,12 @@
 #   UP_HEALTH_TIMEOUT — health wait timeout in seconds (default: 600)
 #   UP_HEALTH_INTERVAL— health poll interval in seconds (default: 5)
 #   UP_COST_PREFLIGHT — path to the cost readiness checker (default: scripts/preflight/cost_readiness.py)
+#   UP_GEMINI_PREFLIGHT — path to the Gemini readiness checker (default: scripts/preflight/gemini_readiness.py)
 #   UP_PYTHON         — Python interpreter used for the cost preflight
 #
 # Operator bypass (deliberately loud, never silent):
 #   UP_SKIP_COST_PREFLIGHT=1 — skip the cost readiness gate and print a warning
+#   UP_SKIP_GEMINI_PREFLIGHT=1 — skip the Gemini readiness gate and print a warning
 # ==============================================================================
 
 set -euo pipefail
@@ -43,6 +45,7 @@ CERT_FILE="${REPO_ROOT}/openssl/mesa.crt"
 KEY_FILE="${REPO_ROOT}/openssl/mesa.key"
 CERT_GENERATOR="${REPO_ROOT}/openssl/generate-certs.sh"
 COST_PREFLIGHT_SCRIPT="${REPO_ROOT}/scripts/preflight/cost_readiness.py"
+GEMINI_PREFLIGHT_SCRIPT="${REPO_ROOT}/scripts/preflight/gemini_readiness.py"
 PREFLIGHT_REQUIREMENTS="scripts/preflight/requirements.txt"
 
 HEALTH_TIMEOUT="${UP_HEALTH_TIMEOUT:-600}"
@@ -255,6 +258,50 @@ check_cost_preflight() {
     return 0
 }
 
+# ── Gemini readiness preflight (c-58) ────────────────────────────────────────
+# Verifica la superficie Gemini del workflow (modelo pineado + reintento acotado
+# del agente) en el mismo punto del arranque que el cost gate. Es estatico: no
+# usa red ni la clave de API. UP_SKIP_GEMINI_PREFLIGHT=1 es el unico bypass y es
+# deliberadamente ruidoso.
+check_gemini_preflight() {
+    local script python output status
+
+    if [ "${UP_SKIP_GEMINI_PREFLIGHT:-}" = "1" ]; then
+        log_warn "UP_SKIP_GEMINI_PREFLIGHT=1: GEMINI READINESS PREFLIGHT SKIPPED."
+        log_warn "The stack may start with an implicit Gemini model or without bounded retries."
+        return 0
+    fi
+
+    script="${UP_GEMINI_PREFLIGHT:-$GEMINI_PREFLIGHT_SCRIPT}"
+    if [ ! -f "$script" ]; then
+        log_error "Gemini preflight script not found: ${script}"
+        log_preflight_install_hint
+        return 1
+    fi
+
+    if ! python="$(detect_cost_preflight_python)"; then
+        log_error "No Python interpreter found for the Gemini preflight (tried UP_PYTHON, python3, python)."
+        log_preflight_install_hint
+        return 1
+    fi
+
+    if output="$("$python" "$script" 2>&1)"; then
+        status=0
+    else
+        status=$?
+    fi
+    printf '%s\n' "$output"
+
+    if [ "$status" -ne 0 ]; then
+        log_error "Gemini readiness preflight FAILED (exit ${status}). The stack was NOT started."
+        log_error "Resolve the FAIL guards above before starting paid services."
+        log_error "If a dependency is missing, install: pip install -r ${PREFLIGHT_REQUIREMENTS}"
+        return 1
+    fi
+
+    return 0
+}
+
 # ── TLS certificates ─────────────────────────────────────────────────────────
 ensure_certificates() {
     if [ -f "$CERT_FILE" ] && [ -f "$KEY_FILE" ]; then
@@ -352,6 +399,7 @@ print_access_info() {
 main() {
     check_env_file "$ENV_FILE" "$ENV_EXAMPLE" || exit 1
     check_cost_preflight || exit 1
+    check_gemini_preflight || exit 1
     ensure_certificates || exit 1
     start_stack || exit 1
     wait_for_healthy || exit 1

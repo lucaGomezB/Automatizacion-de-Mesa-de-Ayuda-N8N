@@ -31,9 +31,13 @@ Validación de respuestas (Anexo H §H.3):
 
 import asyncio
 import json
+import random
+import time
 from pathlib import Path
+from typing import Awaitable, Callable
 
 from google import genai
+from google.genai import errors as genai_errors
 from google.genai import types as genai_types
 
 from app.classifiers.base import BaseClassifier
@@ -56,6 +60,19 @@ logger = get_logger(__name__)
 # de la aplicacion mediante `close_genai_client()`.
 _genai_client: genai.Client | None = None
 
+# Opciones HTTP del cliente compartido: se desactiva explicitamente el
+# auto-retry del SDK para que UNA sola capa (el bucle de `GeminiClassifier`)
+# gobierne los reintentos. En google-genai 2.25.0 el default ya es un unico
+# intento (`stop_after_attempt(1)`), pero se declara de forma explicita para no
+# depender de un default que puede cambiar entre versiones (c-58 D1).
+_GENAI_HTTP_OPTIONS = genai_types.HttpOptions(
+    retry_options=genai_types.HttpRetryOptions(attempts=1)
+)
+
+# Estados HTTP del proveedor considerados TRANSITORIOS y elegibles para reintento.
+# Los demas errores de cliente (400/401/403/404) son terminales (c-58 D2).
+TRANSIENT_HTTP_STATUS_CODES = frozenset({429, 500, 502, 503, 504})
+
 
 def get_genai_client() -> genai.Client:
     """
@@ -67,8 +84,39 @@ def get_genai_client() -> genai.Client:
     global _genai_client
     if _genai_client is None:
         settings = get_settings()
-        _genai_client = genai.Client(api_key=settings.gemini_api_key)  # gitleaks:allow
+        _genai_client = genai.Client(  # gitleaks:allow
+            api_key=settings.gemini_api_key,  # gitleaks:allow
+            http_options=_GENAI_HTTP_OPTIONS,
+        )
     return _genai_client
+
+
+def _is_transient_error(exc: BaseException) -> bool:
+    """
+    Clasifica una excepcion del proveedor como transitoria o terminal (helper puro).
+
+    Transitorias (elegibles para reintento): timeouts, errores de servidor (5xx,
+    incluido 503) y limites de tasa (429). Terminales (sin reintento): el resto
+    de los errores de cliente 4xx (400/401/403/404) y cualquier otra excepcion.
+
+    Args:
+        exc: excepcion capturada al invocar al proveedor.
+
+    Returns:
+        True si la falla es transitoria y admite reintento.
+    """
+    if isinstance(exc, TimeoutError):
+        return True
+    if isinstance(exc, genai_errors.ServerError):
+        return True
+    if isinstance(exc, genai_errors.APIError):
+        code = getattr(exc, "code", None)
+        try:
+            return int(code) in TRANSIENT_HTTP_STATUS_CODES
+        except (TypeError, ValueError):
+            return False
+    return False
+
 
 
 async def close_genai_client() -> None:
@@ -291,14 +339,27 @@ class GeminiClassifier(BaseClassifier):
         - API no disponible → propaga GeminiUnavailableError al HybridClassifier.
     """
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        *,
+        client: genai.Client | None = None,
+        sleep: Callable[[float], Awaitable[None]] | None = None,
+        monotonic: Callable[[], float] | None = None,
+        random_fn: Callable[[], float] | None = None,
+    ) -> None:
         """
         Inicializa el clasificador configurando el cliente de Gemini con los
         parámetros definidos en Settings (que reproducen docs/parameters_gemini.md).
+
+        Los parametros `sleep`, `monotonic` y `random_fn` son inyectables para que
+        el bucle de reintento sea testeable de forma determinista (sin esperas
+        reales ni aleatoriedad no reproducible). En produccion se usan los del
+        sistema.
         """
         settings = get_settings()
         # Cliente compartido y reutilizado (BE B7); se cierra en el shutdown.
-        self._client = get_genai_client()
+        # Inyectable para tests (cliente genai simulado, sin red ni costo).
+        self._client = client if client is not None else get_genai_client()
 
         # Modelo configurable via settings.gemini_model (default: Gemini 3.6 Flash)
         self._model_name = settings.gemini_model
@@ -348,17 +409,53 @@ class GeminiClassifier(BaseClassifier):
         self._timeout = settings.gemini_timeout_seconds       # configurable (default 30s): límite de latencia
         self._human_review_threshold = settings.human_review_threshold  # 0.70
 
+        # Resiliencia (c-58): reintento acotado con backoff+jitter y presupuesto total.
+        self._max_retries = settings.gemini_max_retries
+        self._retry_base_delay = settings.gemini_retry_base_delay_seconds
+        self._retry_max_delay = settings.gemini_retry_max_delay_seconds
+        self._retry_jitter_ratio = settings.gemini_retry_jitter_ratio
+        self._total_timeout = settings.gemini_total_timeout_seconds
+        self._sleep = sleep or asyncio.sleep
+        self._monotonic = monotonic or time.monotonic
+        self._random = random_fn or random.random
+
+    def _backoff_delay(self, attempt: int) -> float:
+        """
+        Espera antes del reintento `attempt+1`: exponencial, topeada y con jitter.
+
+        `min(base * 2**(attempt-1), max_delay)`, multiplicado por un factor de
+        jitter en `[1 - jitter_ratio, 1]`. Con `jitter_ratio <= 0` la espera es
+        determinista (util para tests).
+
+        Args:
+            attempt: numero de intento que acaba de fallar (1-based).
+
+        Returns:
+            Segundos de espera antes del proximo intento.
+        """
+        raw = self._retry_base_delay * (2 ** (attempt - 1))
+        capped = min(raw, self._retry_max_delay)
+        if self._retry_jitter_ratio <= 0:
+            return capped
+        return capped * (1.0 - self._retry_jitter_ratio * self._random())
+
+
     async def classify(self, descripcion: str) -> ClasificacionResult:
         """
         Clasifica el incidente invocando la API de Gemini 3.6 Flash.
 
         Construye el prompt completo concatenando la plantilla con la descripción,
-        invoca la API, valida la respuesta y retorna el resultado estructurado.
+        invoca la API con un reintento ACOTADO ante fallas transitorias, valida la
+        respuesta y retorna el resultado estructurado.
 
         Flujo de manejo de errores:
-            1. GeminiResponseInvalidError → retorna fallback silenciosamente.
-            2. TimeoutError              → propaga GeminiTimeoutError.
-            3. Cualquier otra excepción  → propaga GeminiUnavailableError.
+            1. GeminiResponseInvalidError → retorna fallback silenciosamente (terminal).
+            2. Falla transitoria (503/429/5xx/timeout) → reintenta con backoff+jitter
+               mientras queden intentos y presupuesto de latencia total.
+            3. Agotados los intentos/presupuesto → propaga GeminiTimeoutError (timeout)
+               o GeminiUnavailableError (resto), para el fallback del HybridClassifier.
+            4. Falla terminal (400/401/403) → un solo intento, propaga
+               GeminiUnavailableError sin reintentar.
 
         Args:
             descripcion: Texto pseudonimizado del incidente.
@@ -369,65 +466,117 @@ class GeminiClassifier(BaseClassifier):
         """
         # El prompt sigue el formato exacto especificado en docs/prompt_gemini.txt
         prompt = f"{_PROMPT_TEMPLATE}\n\nDESCRIPCIÓN DEL INCIDENTE:\n{descripcion}"
-        raw_response: str | None = None
+        max_attempts = max(1, self._max_retries + 1)
+        started_at = self._monotonic()
+        attempt = 0
+        last_reason = "unavailable"
+        last_error: BaseException | None = None
 
-        try:
-            # asyncio.wait_for garantiza el límite de latencia (10s) y lanza
-            # TimeoutError (asyncio.TimeoutError == TimeoutError en Python ≥3.11),
-            # preservando el contrato del bloque except de más abajo.
-            response = await asyncio.wait_for(
-                self._client.aio.models.generate_content(
-                    model=self._model_name,
-                    contents=prompt,
-                    config=self._generation_config,
-                ),
-                timeout=self._timeout,
+        while attempt < max_attempts:
+            attempt += 1
+            raw_response: str | None = None
+
+            try:
+                # asyncio.wait_for garantiza el límite de latencia POR INTENTO
+                # (asyncio.TimeoutError == TimeoutError en Python ≥3.11).
+                response = await asyncio.wait_for(
+                    self._client.aio.models.generate_content(
+                        model=self._model_name,
+                        contents=prompt,
+                        config=self._generation_config,
+                    ),
+                    timeout=self._timeout,
+                )
+                raw_response = response.text.strip()
+
+                # Validar la respuesta según el protocolo del Anexo H §H.3
+                validated = _validate_gemini_response(raw_response)
+
+            except GeminiResponseInvalidError as exc:
+                # Respuesta inválida: terminal (no se reintenta); fallback vigente.
+                logger.error(
+                    "gemini_response_invalid",
+                    message=exc.message,
+                    details=exc.details,
+                )
+                return self._fallback(raw_response)
+
+            except TimeoutError as exc:
+                # Timeout transitorio: elegible para reintento.
+                last_reason = "timeout"
+                last_error = exc
+                logger.warning(
+                    "gemini_timeout", timeout_s=self._timeout, attempt=attempt
+                )
+
+            except Exception as exc:
+                if not _is_transient_error(exc):
+                    # Falla terminal: un solo intento, sin reintento.
+                    logger.error(
+                        "gemini_retry_terminal",
+                        attempt=attempt,
+                        error_class=type(exc).__name__,
+                    )
+                    raise GeminiUnavailableError(
+                        "Gemini API no disponible."
+                    ) from exc
+                last_reason = "transient"
+                last_error = exc
+                logger.warning(
+                    "gemini_transient_error",
+                    attempt=attempt,
+                    error_class=type(exc).__name__,
+                )
+
+            else:
+                # Éxito: construir el resultado y salir del bucle.
+                confianza = validated["confianza"]
+                requiere_revision = confianza < self._human_review_threshold
+                logger.info(
+                    "gemini_classified",
+                    categoria=validated["categoría"],
+                    confianza=confianza,
+                    requiere_revision_humana=requiere_revision,
+                )
+                return ClasificacionResult(
+                    sector_predicho=validated["categoría"],
+                    confianza=confianza,
+                    etapa="gemini",
+                    requiere_revision_humana=requiere_revision,
+                    respuesta_raw=raw_response,  # Guardado para auditoría en clasificacion_log
+                )
+
+            # Fallo transitorio: decidir si se agenda otro intento.
+            if attempt >= max_attempts:
+                break
+            delay = self._backoff_delay(attempt)
+            remaining = self._total_timeout - (self._monotonic() - started_at)
+            if remaining <= 0 or delay >= remaining:
+                # Presupuesto de latencia total agotado: cortar sin agotar intentos.
+                logger.warning(
+                    "gemini_retry_budget_exhausted",
+                    attempts=attempt,
+                    remaining_seconds=round(max(remaining, 0.0), 4),
+                )
+                break
+            logger.info(
+                "gemini_retry_scheduled",
+                attempt=attempt,
+                next_attempt=attempt + 1,
+                delay_seconds=round(delay, 4),
+                reason=last_reason,
             )
-            raw_response = response.text.strip()
+            await self._sleep(delay)
 
-            # Validar la respuesta según el protocolo del Anexo H §H.3
-            validated = _validate_gemini_response(raw_response)
-
-        except GeminiResponseInvalidError as exc:
-            # Respuesta con formato inválido: activar fallback sin propagar la excepción
-            logger.error(
-                "gemini_response_invalid",
-                message=exc.message,
-                details=exc.details,
-            )
-            return self._fallback(raw_response)
-
-        except TimeoutError as exc:
-            # Tiempo de espera agotado: propagar para que el HybridClassifier maneje
-            logger.warning("gemini_timeout", timeout_s=self._timeout)
+        logger.warning(
+            "gemini_retry_exhausted", attempts=attempt, reason=last_reason
+        )
+        if last_reason == "timeout":
             raise GeminiTimeoutError(
                 f"Gemini no respondió en {self._timeout}s."
-            ) from exc
+            ) from last_error
+        raise GeminiUnavailableError("Gemini API no disponible.") from last_error
 
-        except Exception as exc:
-            # API inaccesible u otro error inesperado: propagar como no disponible
-            logger.error("gemini_unavailable", exc_info=exc)
-            raise GeminiUnavailableError("Gemini API no disponible.") from exc
-
-        confianza = validated["confianza"]
-
-        # Determinar si la confianza supera el umbral para revisión humana
-        requiere_revision = confianza < self._human_review_threshold
-
-        logger.info(
-            "gemini_classified",
-            categoria=validated["categoría"],
-            confianza=confianza,
-            requiere_revision_humana=requiere_revision,
-        )
-
-        return ClasificacionResult(
-            sector_predicho=validated["categoría"],
-            confianza=confianza,
-            etapa="gemini",
-            requiere_revision_humana=requiere_revision,
-            respuesta_raw=raw_response,  # Guardado para auditoría en clasificacion_log
-        )
 
     @staticmethod
     def _fallback(raw: str | None) -> ClasificacionResult:

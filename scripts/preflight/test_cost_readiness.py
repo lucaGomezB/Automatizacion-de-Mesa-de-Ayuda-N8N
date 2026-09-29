@@ -237,14 +237,40 @@ def test_notification_webhook_connected_to_creation_fails(tmp_path):
 
 
 # ===========================================================================
-# 1.6 Guarda de reintentos pagos
+# 1.6 Guarda de reintentos pagos (reformulada por c-58, D7)
+#    El agente puede reintentar de forma ACOTADA y explicita; los nodos de
+#    modelo y los reintentos implicitos/ilimitados siguen prohibidos.
 # ===========================================================================
-def test_paid_agent_retry_on_fail_fails_named(tmp_path):
+def test_paid_agent_bounded_retry_passes():
+    """El workflow real declara un reintento acotado del agente: la guarda pasa."""
+    checks = check_workflow(REAL_WORKFLOW_PATH)
+    retry_checks = [c for c in checks if "reintento" in c.name.lower()]
+    assert retry_checks, "No existe la guarda de reintentos pagos"
+    assert all(c.status == "PASS" for c in retry_checks), _summary(checks)
+
+
+def test_paid_agent_retry_without_bounds_fails_named(tmp_path):
+    """retryOnFail sin maxTries/waitBetweenTries es un reintento implicito: FAIL."""
     def mutate(wf):
-        _node(wf, "AI Agent")["retryOnFail"] = True
+        agent = _node(wf, "AI Agent")
+        agent["retryOnFail"] = True
+        agent.pop("maxTries", None)
+        agent.pop("waitBetweenTries", None)
 
     checks = check_workflow(_write_workflow(tmp_path, mutate))
-    _assert_single_named_fail(checks, "retryOnFail")
+    _assert_single_named_fail(checks, "maxTries")
+
+
+def test_paid_agent_retry_above_cap_fails_named(tmp_path):
+    """Un maxTries por encima del tope deja el peor caso sin acotar: FAIL."""
+    def mutate(wf):
+        agent = _node(wf, "AI Agent")
+        agent["retryOnFail"] = True
+        agent["maxTries"] = 99
+        agent["waitBetweenTries"] = cost_readiness.PAID_AGENT_MIN_WAIT_BETWEEN_TRIES_MS
+
+    checks = check_workflow(_write_workflow(tmp_path, mutate))
+    _assert_single_named_fail(checks, "tope")
 
 
 def test_paid_language_model_max_tries_fails_named(tmp_path):
@@ -253,6 +279,14 @@ def test_paid_language_model_max_tries_fails_named(tmp_path):
 
     checks = check_workflow(_write_workflow(tmp_path, mutate))
     _assert_single_named_fail(checks, "maxTries")
+
+
+def test_paid_language_model_retry_on_fail_fails_named(tmp_path):
+    def mutate(wf):
+        _node(wf, "Google Gemini Chat Model")["retryOnFail"] = True
+
+    checks = check_workflow(_write_workflow(tmp_path, mutate))
+    _assert_single_named_fail(checks, "retryOnFail")
 
 
 # ===========================================================================

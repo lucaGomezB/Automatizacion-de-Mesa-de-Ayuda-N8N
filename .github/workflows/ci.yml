@@ -102,10 +102,14 @@ jobs:
         run: pip install -r scripts/preflight/requirements.txt
 
       - name: Run cost preflight tests
-        run: python -m pytest scripts/preflight/test_cost_readiness.py -q
+        run: python -m pytest scripts/preflight -q
 
       - name: Run cost readiness preflight
         run: python scripts/preflight/cost_readiness.py
+
+      # c-58: estatico, sin red ni clave; verifica modelo pineado + reintento acotado.
+      - name: Run Gemini readiness preflight
+        run: python scripts/preflight/gemini_readiness.py
 
       # Evaluation suite — self-contained (fixture JSON + FakeClassifier)
       # Chapter 7 thesis evidence; must not rot.

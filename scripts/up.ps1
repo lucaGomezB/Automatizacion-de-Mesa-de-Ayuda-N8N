@@ -51,6 +51,7 @@ $CertFile = Join-Path $RepoRoot "openssl/mesa.crt"
 $KeyFile = Join-Path $RepoRoot "openssl/mesa.key"
 $CertGenerator = Join-Path $RepoRoot "openssl/generate-certs.ps1"
 $CostPreflightScript = Join-Path $RepoRoot "scripts/preflight/cost_readiness.py"
+$GeminiPreflightScript = Join-Path $RepoRoot "scripts/preflight/gemini_readiness.py"
 $PreflightRequirements = "scripts/preflight/requirements.txt"
 
 if ($env:UP_HEALTH_TIMEOUT) { $HealthTimeout = [int]$env:UP_HEALTH_TIMEOUT } else { $HealthTimeout = 600 }
@@ -227,6 +228,51 @@ function Invoke-CostPreflight {
     return $true
 }
 
+# -- Gemini readiness preflight (c-58) ---------------------------------------
+# Static check of the workflow Gemini surface (explicit model + bounded agent
+# retry). No network and no API key. UP_SKIP_GEMINI_PREFLIGHT=1 is the only
+# bypass and it is deliberately loud: it never skips silently.
+function Invoke-GeminiPreflight {
+    if ($env:UP_SKIP_GEMINI_PREFLIGHT -eq "1") {
+        Write-Host "[up] WARNING: UP_SKIP_GEMINI_PREFLIGHT=1: GEMINI READINESS PREFLIGHT SKIPPED." -ForegroundColor Yellow
+        Write-Host "[up] WARNING: The stack may start with an implicit Gemini model or without bounded retries." -ForegroundColor Yellow
+        return $true
+    }
+
+    $script = if ($env:UP_GEMINI_PREFLIGHT) { $env:UP_GEMINI_PREFLIGHT } else { $GeminiPreflightScript }
+    if (-not (Test-Path -LiteralPath $script)) {
+        Write-Err "Gemini preflight script not found: $script"
+        Write-Err "Install the preflight dependencies and retry:"
+        Write-Err "  pip install -r $PreflightRequirements"
+        return $false
+    }
+
+    $python = $null
+    if ($env:UP_PYTHON) {
+        $python = $env:UP_PYTHON
+    } elseif (Get-Command python3 -ErrorAction SilentlyContinue) {
+        $python = "python3"
+    } elseif (Get-Command python -ErrorAction SilentlyContinue) {
+        $python = "python"
+    }
+    if (-not $python) {
+        Write-Err "No Python interpreter found for the Gemini preflight (tried UP_PYTHON, python3, python)."
+        Write-Err "Install the preflight dependencies and retry:"
+        Write-Err "  pip install -r $PreflightRequirements"
+        return $false
+    }
+
+    & $python $script
+    $status = $LASTEXITCODE
+    if ($status -ne 0) {
+        Write-Err "Gemini readiness preflight FAILED (exit $status). The stack was NOT started."
+        Write-Err "Resolve the FAIL guards above before starting paid services."
+        return $false
+    }
+
+    return $true
+}
+
 # -- TLS certificates --------------------------------------------------------
 function Invoke-EnsureCertificates {
     if ((Test-Path -LiteralPath $CertFile) -and (Test-Path -LiteralPath $KeyFile)) {
@@ -331,6 +377,7 @@ function Write-AccessInfo {
 # -- Entry point -------------------------------------------------------------
 if (-not (Test-EnvPreflight -EnvPath $EnvFile -ExamplePath $EnvExample)) { exit 1 }
 if (-not (Invoke-CostPreflight)) { exit 1 }
+if (-not (Invoke-GeminiPreflight)) { exit 1 }
 if (-not (Invoke-EnsureCertificates)) { exit 1 }
 if (-not (Invoke-StartStack)) { exit 1 }
 if (-not (Wait-ForHealthy)) { exit 1 }

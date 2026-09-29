@@ -194,7 +194,10 @@
         528
       ],
       "id": "7865af46-7363-4076-ae22-c43c48ab9785",
-      "name": "AI Agent"
+      "name": "AI Agent",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 2000
     },
     {
       "parameters": {
@@ -498,6 +501,7 @@
     },
     {
       "parameters": {
+        "modelName": "gemini-3.6-flash",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",

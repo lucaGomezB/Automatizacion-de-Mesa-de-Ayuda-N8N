@@ -102,6 +102,12 @@ class HybridClassifier(BaseClassifier):
         # Umbrales leídos de Settings para permitir ajuste sin recompilación
         self._det_threshold = get_settings().deterministic_confidence_threshold
         self._human_threshold = get_settings().human_review_threshold
+        # c-58 (D4): la reserva de la superficie backend_gemini se dimensiona al
+        # PEOR CASO de intentos de UNA clasificacion (max_retries + 1) y se evalua
+        # UNA sola vez antes de invocar al proveedor. Los reintentos del
+        # GeminiClassifier NO re-evaluán la guarda ni reservan de nuevo.
+        self._gemini_max_attempts = get_settings().gemini_max_retries + 1
+
 
     async def classify(self, descripcion: str) -> ClasificacionResult:
         """
@@ -161,7 +167,8 @@ class HybridClassifier(BaseClassifier):
             # llega aqui, por lo que NO consume presupuesto ni tasa.
             if self._cost_guard is not None:
                 decision = await self._cost_guard.evaluate(
-                    provider=PROVIDER_BACKEND_GEMINI
+                    provider=PROVIDER_BACKEND_GEMINI,
+                    amount=self._gemini_max_attempts,
                 )
                 if not decision.allowed:
                     raise CostGuardTrippedError(

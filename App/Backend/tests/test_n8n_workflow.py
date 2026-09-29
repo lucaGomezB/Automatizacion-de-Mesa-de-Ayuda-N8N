@@ -2425,16 +2425,18 @@ def test_c33_dedicated_notification_webhook_does_not_create_incidents():
 
 
 # ---------------------------------------------------------------------------
-# Grupo 19 — C-36: ningun nodo pago habilita reintentos
+# Grupo 19 — C-36 / c-58: politica de reintentos de nodos pagos
 #
-# Un reintento automatico sobre el agente o el modelo de lenguaje multiplica
-# llamadas pagas a Gemini sin control. La guarda vive aca (CI) y en el
-# preflight estatico (scripts/preflight/cost_readiness.py); cada superficie
-# lee n8n/workflow.json por su cuenta (design D7).
+# c-58 (D5/D7) reformula la guarda: el nodo AGENTE puede declarar UN reintento
+# acotado y explicito (retryOnFail + maxTries dentro del tope + waitBetweenTries
+# no menor al minimo); los nodos de modelo (`...lm*`) NUNCA reintentan por su
+# cuenta, y ningun nodo pago admite un reintento implicito o ilimitado.
 # ---------------------------------------------------------------------------
 
 C36_PAID_AGENT_TYPE = "@n8n/n8n-nodes-langchain.agent"
 C36_PAID_LM_TYPE_PREFIX = "@n8n/n8n-nodes-langchain.lm"
+C36_AGENT_MAX_TRIES_CAP = 3
+C36_AGENT_MIN_WAIT_BETWEEN_TRIES_MS = 500
 
 
 def _c36_paid_nodes(workflow: dict) -> list[dict]:
@@ -2447,57 +2449,87 @@ def _c36_paid_nodes(workflow: dict) -> list[dict]:
     ]
 
 
+def _is_number(value: object) -> bool:
+    return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+
 def _c36_retry_violations(workflow: dict) -> list[str]:
-    """Nodos pagos que habilitan retryOnFail o un maxTries numerico."""
+    """Violaciones de la politica de reintento pago (c-58, D7).
+
+    - Nodo modelo (`...lm*`): prohibido `retryOnFail` y `maxTries`.
+    - Nodo agente: si reintenta, exige `maxTries` dentro del tope y
+      `waitBetweenTries` no menor al minimo; un `maxTries` sin `retryOnFail`
+      tambien es implicito y se rechaza.
+    """
     violations: list[str] = []
     for node in _c36_paid_nodes(workflow):
-        if node.get("retryOnFail") is True:
-            violations.append(f"{node['name']!r}: retryOnFail=true")
+        name = node["name"]
+        is_agent = node["type"] == C36_PAID_AGENT_TYPE
+        retry = node.get("retryOnFail")
         max_tries = node.get("maxTries")
-        if isinstance(max_tries, (int, float)) and not isinstance(max_tries, bool):
-            violations.append(f"{node['name']!r}: maxTries={max_tries!r}")
+        wait = node.get("waitBetweenTries")
+
+        if not is_agent:
+            if retry is True:
+                violations.append(f"{name!r}: retryOnFail=true en nodo de modelo")
+            if _is_number(max_tries):
+                violations.append(f"{name!r}: maxTries={max_tries!r} en nodo de modelo")
+            continue
+
+        if retry is True:
+            if not _is_number(max_tries) or max_tries > C36_AGENT_MAX_TRIES_CAP:
+                violations.append(
+                    f"{name!r}: maxTries ausente o fuera del tope "
+                    f"({max_tries!r} > {C36_AGENT_MAX_TRIES_CAP})"
+                )
+            if (
+                not _is_number(wait)
+                or wait < C36_AGENT_MIN_WAIT_BETWEEN_TRIES_MS
+            ):
+                violations.append(
+                    f"{name!r}: waitBetweenTries ausente o menor al minimo "
+                    f"({wait!r} < {C36_AGENT_MIN_WAIT_BETWEEN_TRIES_MS})"
+                )
+        elif _is_number(max_tries):
+            violations.append(f"{name!r}: maxTries={max_tries!r} sin retryOnFail")
     return violations
 
 
-def test_c36_no_paid_node_enables_retry_or_max_tries():
+def test_c36_no_paid_node_has_unbounded_or_implicit_retry():
     """
-    RED (5.1): ningun nodo pago del workflow declara retryOnFail ni maxTries.
-    Caracterizacion del workflow real: pasa desde el inicio y protege contra
-    la introduccion futura de reintentos pagos.
+    c-58: ningun nodo pago declara un reintento ilimitado o implicito. El agente,
+    si reintenta, lo hace acotado; los nodos de modelo nunca reintentan.
     """
     wf = load_workflow()
     paid = _c36_paid_nodes(wf)
     assert paid, "No se encontraron nodos pagos en el workflow"
     assert _c36_retry_violations(wf) == [], (
-        f"Nodos pagos con reintentos habilitados: {_c36_retry_violations(wf)}. "
-        "Un reintento multiplica llamadas pagas a Gemini."
+        f"Nodos pagos con reintentos fuera de politica: {_c36_retry_violations(wf)}."
     )
 
 
-def test_c36_retry_guard_detects_injected_retry_on_paid_agent(tmp_path):
+def test_c36_retry_guard_detects_retry_without_bounds_on_paid_agent(tmp_path):
     """
-    TRIANGULATE (5.1): inyectar retryOnFail=true en una copia temporal del JSON
-    hace que la guarda detecte la violacion (prueba que la guarda realmente guarda).
+    TRIANGULATE: inyectar `retryOnFail=true` SIN las cotas explicitas en el
+    agente hace que la guarda detecte la violacion (reintento implicito).
     """
     import copy
 
     wf = copy.deepcopy(load_workflow())
     agent = next(n for n in wf["nodes"] if n["type"] == C36_PAID_AGENT_TYPE)
     agent["retryOnFail"] = True
+    agent.pop("maxTries", None)
+    agent.pop("waitBetweenTries", None)
 
-    mutated_path = tmp_path / "workflow_mutado.json"
-    mutated_path.write_text(json.dumps(wf, ensure_ascii=False), encoding="utf-8")
-    mutated = json.loads(mutated_path.read_text(encoding="utf-8"))
-
-    violations = _c36_retry_violations(mutated)
-    assert any("retryOnFail" in v for v in violations), (
-        f"La guarda no detecto retryOnFail=true inyectado: {violations}"
+    violations = _c36_retry_violations(wf)
+    assert any("maxTries" in v for v in violations), (
+        f"La guarda no detecto retryOnFail sin cotas: {violations}"
     )
 
 
 def test_c36_retry_guard_detects_injected_max_tries_on_language_model(tmp_path):
     """
-    TRIANGULATE (5.1): inyectar maxTries en el modelo de lenguaje pago
+    TRIANGULATE: inyectar maxTries en el modelo de lenguaje pago
     tambien es detectado por la guarda.
     """
     import copy
@@ -2512,6 +2544,107 @@ def test_c36_retry_guard_detects_injected_max_tries_on_language_model(tmp_path):
     assert any("maxTries" in v for v in violations), (
         f"La guarda no detecto maxTries inyectado: {violations}"
     )
+
+
+def test_c36_retry_guard_detects_max_tries_above_cap(tmp_path):
+    """
+    TRIANGULATE: un `maxTries` del agente por encima del tope tambien es una
+    violacion, porque el peor caso de invocaciones pagas debe quedar acotado.
+    """
+    import copy
+
+    wf = copy.deepcopy(load_workflow())
+    agent = next(n for n in wf["nodes"] if n["type"] == C36_PAID_AGENT_TYPE)
+    agent["retryOnFail"] = True
+    agent["maxTries"] = C36_AGENT_MAX_TRIES_CAP + 1
+    agent["waitBetweenTries"] = C36_AGENT_MIN_WAIT_BETWEEN_TRIES_MS
+
+    violations = _c36_retry_violations(wf)
+    assert any("tope" in v for v in violations), (
+        f"La guarda no detecto maxTries fuera del tope: {violations}"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Grupo 19b — c-58: superficie Gemini explicita y reintento acotado del agente
+# ---------------------------------------------------------------------------
+
+GEMINI_MODEL_NODE_NAME = "Google Gemini Chat Model"
+GEMINI_MODEL_NODE_TYPE = "@n8n/n8n-nodes-langchain.lmChatGoogleGemini"
+
+
+def test_c58_gemini_model_node_pins_explicit_model():
+    """
+    c-58 (1.10a): el nodo `Google Gemini Chat Model` declara `parameters.modelName`
+    explicito e igual a `settings.gemini_model` (paridad con el backend).
+    """
+    from app.config.settings import get_settings
+
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    assert GEMINI_MODEL_NODE_NAME in by_name, (
+        f"No existe el nodo de modelo {GEMINI_MODEL_NODE_NAME!r}"
+    )
+    node = by_name[GEMINI_MODEL_NODE_NAME]
+    assert node.get("type") == GEMINI_MODEL_NODE_TYPE, (
+        f"{GEMINI_MODEL_NODE_NAME!r} debe ser {GEMINI_MODEL_NODE_TYPE!r}, "
+        f"got {node.get('type')!r}"
+    )
+    model_name = node.get("parameters", {}).get("modelName")
+    assert isinstance(model_name, str) and model_name, (
+        f"{GEMINI_MODEL_NODE_NAME!r} no declara un modelName explicito no vacio "
+        f"(modelName={model_name!r}); no debe depender del default del nodo"
+    )
+    assert model_name == get_settings().gemini_model, (
+        f"El modelName del nodo ({model_name!r}) no coincide con settings.gemini_model "
+        f"({get_settings().gemini_model!r})"
+    )
+
+
+def test_c58_ai_agent_declares_bounded_retry():
+    """
+    c-58 (1.10b): el nodo `AI Agent` declara un reintento acotado y explicito
+    (retryOnFail=true, maxTries y waitBetweenTries numericos y acotados).
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    assert AI_AGENT_NODE_NAME in by_name, "No existe el nodo 'AI Agent'"
+    agent = by_name[AI_AGENT_NODE_NAME]
+
+    assert agent.get("retryOnFail") is True, (
+        f"'{AI_AGENT_NODE_NAME}' no declara retryOnFail=true "
+        f"(retryOnFail={agent.get('retryOnFail')!r})"
+    )
+    max_tries = agent.get("maxTries")
+    assert _is_number(max_tries) and 2 <= max_tries <= C36_AGENT_MAX_TRIES_CAP, (
+        f"'{AI_AGENT_NODE_NAME}' no declara un maxTries acotado "
+        f"(maxTries={max_tries!r})"
+    )
+    wait = agent.get("waitBetweenTries")
+    assert _is_number(wait) and wait >= C36_AGENT_MIN_WAIT_BETWEEN_TRIES_MS, (
+        f"'{AI_AGENT_NODE_NAME}' no declara un waitBetweenTries no menor al minimo "
+        f"(waitBetweenTries={wait!r})"
+    )
+
+
+def test_c58_language_model_node_does_not_declare_retry():
+    """
+    TRIANGULATE (c-58, D5): el sub-nodo de modelo NO declara reintento propio; la
+    unica fuente de politica de transporte es el nodo agente.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    model = by_name[GEMINI_MODEL_NODE_NAME]
+
+    assert "retryOnFail" not in model or model.get("retryOnFail") is not True, (
+        f"{GEMINI_MODEL_NODE_NAME!r} declara retryOnFail propio"
+    )
+    assert not _is_number(model.get("maxTries")), (
+        f"{GEMINI_MODEL_NODE_NAME!r} declara maxTries propio"
+    )
+
 
 
 # ---------------------------------------------------------------------------
