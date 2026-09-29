@@ -15,6 +15,7 @@ from __future__ import annotations
 import json
 import os
 import pathlib
+import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -50,9 +51,20 @@ def _node(workflow: dict, name: str) -> dict:
 
 
 def _pop_json_body_key(workflow: dict, name: str, key: str) -> None:
-    """Quita una clave del `jsonBody` (string JSON) de un nodo httpRequest v4.4."""
+    """Quita una clave del `jsonBody` de un nodo httpRequest.
+
+    El body puede ser un JSON literal (template string historico) o una unica
+    expresion `={{ JSON.stringify({...}) }}` (fix C-55). En el segundo caso se
+    renombra la clave dentro de la expresion para simular su ausencia.
+    """
     parameters = _node(workflow, name)["parameters"]
-    body = json.loads(parameters["jsonBody"])
+    raw = parameters["jsonBody"]
+    if raw.startswith("="):
+        parameters["jsonBody"] = re.sub(
+            rf"\b{re.escape(key)}\b", "removed_key", raw
+        )
+        return
+    body = json.loads(raw)
     body.pop(key, None)
     parameters["jsonBody"] = json.dumps(body, ensure_ascii=False)
 

@@ -88,12 +88,115 @@ def index_nodes(workflow: dict) -> tuple[dict[str, dict], dict[str, list[dict]]]
     return by_name, by_type
 
 
+def _extract_braced(text: str) -> str:
+    """Contenido interno del primer bloque `{...}` con anidamiento balanceado.
+
+    Respeta strings entre comillas simples, dobles o backticks para no confundir
+    una llave dentro de un literal con un delimitador estructural.
+    """
+    depth = 0
+    in_string: str | None = None
+    start = -1
+    i = 0
+    while i < len(text):
+        ch = text[i]
+        if in_string is not None:
+            if ch == "\\":
+                i += 2
+                continue
+            if ch == in_string:
+                in_string = None
+            i += 1
+            continue
+        if ch in ("'", '"', "`"):
+            in_string = ch
+        elif ch == "{":
+            if depth == 0:
+                start = i
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                return text[start + 1 : i]
+        i += 1
+    raise AssertionError("bloque de objeto sin cerrar en el jsonBody")
+
+
+def _split_top_level_entries(inner: str) -> list[tuple[str, str]]:
+    """Separa las entradas `clave: valor` de un objeto JS por comas de nivel 0."""
+    parts: list[str] = []
+    depth = 0
+    in_string: str | None = None
+    start = 0
+    i = 0
+    while i < len(inner):
+        ch = inner[i]
+        if in_string is not None:
+            if ch == "\\":
+                i += 2
+                continue
+            if ch == in_string:
+                in_string = None
+            i += 1
+            continue
+        if ch in ("'", '"', "`"):
+            in_string = ch
+        elif ch in "([{":
+            depth += 1
+        elif ch in ")]}":
+            depth -= 1
+        elif ch == "," and depth == 0:
+            parts.append(inner[start:i])
+            start = i + 1
+        i += 1
+    parts.append(inner[start:])
+
+    entries: list[tuple[str, str]] = []
+    for part in parts:
+        if ":" not in part:
+            continue
+        key, _, value = part.partition(":")
+        entries.append((key.strip(), value.strip()))
+    return entries
+
+
+def _expression_json_body(raw: str) -> dict:
+    """Parsea un `jsonBody` expresion `={{ JSON.stringify({...}) }}`.
+
+    Devuelve `{clave: "={{ expresion }}"}`. Cada valor se re-envuelve en la
+    notacion de expresion N8N para preservar el contrato de los consumidores
+    (el campo se resuelve por expresion, no por constante); los tipos nativos
+    los garantiza `JSON.stringify` en runtime.
+    """
+    text = raw[1:].strip()  # quita el '=' inicial
+    assert text.startswith("{{") and text.endswith("}}"), (
+        f"jsonBody con prefijo '=' pero sin envoltorio '{{{{ ... }}}}': {raw[:80]!r}"
+    )
+    call = text[2:-2].strip()
+    assert call.startswith("JSON.stringify("), (
+        "El jsonBody de expresion debe construir el JSON con JSON.stringify; "
+        f"got: {call[:60]!r}"
+    )
+    obj_src = call[len("JSON.stringify(") :].strip()
+    assert obj_src.startswith("{"), (
+        f"JSON.stringify sin objeto literal: {obj_src[:40]!r}"
+    )
+    entries = _split_top_level_entries(_extract_braced(obj_src))
+    assert entries, "El objeto de JSON.stringify no declara claves"
+    return {key: f"={{{{ {value} }}}}" for key, value in entries}
+
+
 def http_json_body(node: dict) -> dict:
     """Devuelve el body de un nodo httpRequest parseado desde `jsonBody`.
 
     HTTP Request v4.4 con contentType=json solo envia el payload cuando
-    `specifyBody` es 'json' y el cuerpo viaja en `jsonBody` (un string JSON).
-    Un `body` objeto es ignorado por N8N y el POST llega vacio.
+    `specifyBody` es 'json' y el cuerpo viaja en `jsonBody`.
+
+    `jsonBody` admite dos formas (C-55, fix del `=` literal):
+      - Expresion unica `={{ JSON.stringify({...}) }}`: tipos nativos, sin
+        stringificacion. Se devuelve un dict con cada clave mapeada a su
+        expresion N8N.
+      - Template string historico con JSON literal: se parsea con `json.loads`.
     """
     parameters = node.get("parameters", {})
     assert parameters.get("specifyBody") == "json", (
@@ -104,6 +207,8 @@ def http_json_body(node: dict) -> dict:
     assert isinstance(raw, str) and raw, (
         f"{node.get('name')!r} no declara un jsonBody string no vacio"
     )
+    if raw.startswith("="):
+        return _expression_json_body(raw)
     return json.loads(raw)
 
 
@@ -4564,4 +4669,92 @@ def test_c55_email_trigger_wired_to_validator_and_normalizer():
     )
     assert _connections_reachable(wf, CODE_NODE_CORREO, NORMALIZER_NODE_NAME), (
         f"El validador {CODE_NODE_CORREO!r} no alcanza el normalizador"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Grupo 29 — C-55 (fix jsonBody): el cuerpo HTTP debe ser UNA sola expresion
+# `={{ JSON.stringify({...}) }}` con tipos nativos.
+#
+# Defecto: los `jsonBody` armados como template string con cada valor escrito
+# `"campo": "={{ ... }}"` hacen que n8n evalue los `{{ }}` pero emita el `=`
+# literal dentro de las comillas y stringifique todo. Resultado: el POST recibe
+# `prioridad="=media"`, `canal_origen_id="=1"`, `clasificacion="=null"` e
+# `ingresado_en="=2026-..."` -> 422 VALIDATION_ERROR y ningun incidente creado.
+# ---------------------------------------------------------------------------
+
+# Firma del defecto: un valor serializado como `"={{ ... }}"` deja la
+# subsecuencia `"=` (comilla seguida de igual) dentro del jsonBody.
+JSONBODY_BUG_SIGNATURE = '"='
+
+
+def _iter_jsonbodies(workflow: dict):
+    """Itera (nombre, jsonBody) de todos los nodos que declaran `jsonBody`."""
+    for node in workflow["nodes"]:
+        body = node.get("parameters", {}).get("jsonBody")
+        if body is not None:
+            yield node["name"], body
+
+
+def test_jsonbody_sin_firma_de_template_con_igual():
+    """
+    RED → GREEN: ningun `jsonBody` del workflow contiene la subsecuencia `"=`.
+    Esa firma es el bug: n8n evalua el `{{ }}` pero deja el `=` literal y
+    stringifica todos los valores.
+    """
+    wf = load_workflow()
+    offenders = [
+        name
+        for name, body in _iter_jsonbodies(wf)
+        if JSONBODY_BUG_SIGNATURE in body
+    ]
+    assert offenders == [], (
+        f"jsonBody con la firma del bug {JSONBODY_BUG_SIGNATURE!r} en: {offenders}. "
+        "El body debe ser una sola expresion JSON.stringify con tipos nativos."
+    )
+
+
+def test_incidentes_jsonbody_es_expresion_json_stringify():
+    """
+    RED → GREEN: el `jsonBody` de 'HTTP POST a MESA-AYUDAS' es una unica
+    expresion `={{ JSON.stringify({...}) }}` que transporta `canal_origen_id`
+    como clave nativa (no stringificada).
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    body = str(by_name[HTTP_NODE_CORREO].get("parameters", {}).get("jsonBody", ""))
+
+    assert body.startswith("={{"), (
+        f"El jsonBody de {HTTP_NODE_CORREO!r} debe ser una expresion n8n "
+        f"(comienza con '={{'), got: {body[:60]!r}"
+    )
+    assert "JSON.stringify" in body, (
+        "El jsonBody de 'HTTP POST a MESA-AYUDAS' debe construir el JSON con "
+        "JSON.stringify para conservar los tipos nativos"
+    )
+    assert "canal_origen_id:" in body, (
+        "El jsonBody de 'HTTP POST a MESA-AYUDAS' debe incluir la clave nativa "
+        "'canal_origen_id:'"
+    )
+
+
+def test_guard_jsonbody_es_expresion_json_stringify_sin_firma():
+    """
+    TRIANGULATE: el `jsonBody` de 'Guard de costo' tambien es una unica
+    expresion JSON.stringify (caller nativo, sin `"=` ni stringificacion).
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    body = str(by_name[GUARD_NODE_NAME].get("parameters", {}).get("jsonBody", ""))
+
+    assert JSONBODY_BUG_SIGNATURE not in body, (
+        f"El jsonBody de {GUARD_NODE_NAME!r} conserva la firma del bug "
+        f"{JSONBODY_BUG_SIGNATURE!r}"
+    )
+    assert body.startswith("={{") and "JSON.stringify" in body, (
+        f"El jsonBody de {GUARD_NODE_NAME!r} debe ser una expresion "
+        f"JSON.stringify, got: {body!r}"
+    )
+    assert "caller:" in body, (
+        f"El jsonBody de {GUARD_NODE_NAME!r} debe incluir la clave nativa 'caller:'"
     )
