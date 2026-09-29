@@ -921,7 +921,14 @@ def test_workflow_nodo_guarda_apunta_al_endpoint_de_reserva():
     node = next(n for n in wf["nodes"] if n["name"] == "Guard de costo")
     url = node["parameters"]["url"]
     assert "/api/v1/cost-guard/reserve" in url
-    assert json.loads(node["parameters"]["jsonBody"])["provider"] == "n8n_gemini"
+    raw_body = node["parameters"]["jsonBody"]
+    # C-55: el body es una unica expresion que construye el JSON con tipos
+    # nativos (`={{ JSON.stringify({...}) }}`); el proveedor viaja como literal
+    # dentro del objeto, no como JSON-string plano con valores "={{ ... }}".
+    if raw_body.startswith("={{"):
+        assert "provider: 'n8n_gemini'" in raw_body or 'provider: "n8n_gemini"' in raw_body
+    else:
+        assert json.loads(raw_body)["provider"] == "n8n_gemini"
 
 
 def test_twiml_xml_es_valido_y_graba_mono_con_callbacks():
