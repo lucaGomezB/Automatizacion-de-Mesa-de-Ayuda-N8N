@@ -125,3 +125,68 @@ def test_cache_version_es_unica_fuente_compartida() -> None:
 
     assert isinstance(HYBRID_CACHE_VERSION, str) and HYBRID_CACHE_VERSION
     assert HybridClassifier.CACHE_VERSION == HYBRID_CACHE_VERSION
+
+
+# ---------------------------------------------------------------------------
+# c-58 — Politica de reserva: una sola evaluacion dimensionada al peor caso
+# ---------------------------------------------------------------------------
+class _RecordingGuard:
+    """Guarda de costo falsa que registra cada evaluacion (provider + amount)."""
+
+    def __init__(self) -> None:
+        self.calls: list[dict] = []
+
+    async def evaluate(self, provider, caller=None, amount=1):
+        from app.cost_guard.decision import GuardDecision
+
+        self.calls.append({"provider": provider, "caller": caller, "amount": amount})
+        return GuardDecision(allowed=True, cause=None)
+
+
+@pytest.mark.asyncio
+async def test_guarda_recibe_amount_del_peor_caso_y_una_sola_evaluacion() -> None:
+    """
+    c-58 (D4): al escalar a Gemini, la guarda recibe `amount == gemini_max_retries + 1`
+    y se evalua UNA sola vez por clasificacion. Los reintentos no reservan de nuevo.
+    """
+    from app.config.settings import get_settings
+
+    guard = _RecordingGuard()
+    classifier = HybridClassifier(
+        deterministic=None,
+        gemini=None,
+        cost_guard=guard,
+    )
+    with patch.object(
+        classifier._deterministic,
+        "classify",
+        new_callable=AsyncMock,
+        return_value=_det_result("Sistemas", 0.55),
+    ), patch.object(
+        classifier._gemini,
+        "classify",
+        new_callable=AsyncMock,
+        return_value=_gemini_result("Sistemas", 0.88),
+    ):
+        result = await classifier.classify("Descripcion ambigua")
+
+    assert result.etapa == "gemini"
+    assert len(guard.calls) == 1, "la guarda debe evaluarse una sola vez"
+    assert guard.calls[0]["amount"] == get_settings().gemini_max_retries + 1
+
+
+@pytest.mark.asyncio
+async def test_guarda_no_reserva_en_el_cortocircuito_deterministico() -> None:
+    """c-58: el cortocircuito determinista no consulta la guarda (sin reserva)."""
+    guard = _RecordingGuard()
+    classifier = HybridClassifier(gemini=None, cost_guard=guard)
+    with patch.object(
+        classifier._deterministic,
+        "classify",
+        new_callable=AsyncMock,
+        return_value=_det_result("Sistemas", 0.98),
+    ):
+        result = await classifier.classify("Se cayo el servidor")
+
+    assert result.etapa == "deterministic"
+    assert guard.calls == []

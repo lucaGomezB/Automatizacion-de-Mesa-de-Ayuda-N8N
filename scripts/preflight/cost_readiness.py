@@ -54,6 +54,11 @@ PAID_AGENT_TYPE = "@n8n/n8n-nodes-langchain.agent"
 PAID_LM_TYPE_PREFIX = "@n8n/n8n-nodes-langchain.lm"
 WEBHOOK_NOTIF_URL = "/webhook/notificacion-clasificacion"
 
+# c-58 (D7): cotas del reintento acotado del nodo agente. El peor caso de
+# invocaciones pagas por incidente queda acotado por estos topes.
+PAID_AGENT_MAX_TRIES_CAP = 3
+PAID_AGENT_MIN_WAIT_BETWEEN_TRIES_MS = 500
+
 
 @dataclass
 class Check:
@@ -169,7 +174,7 @@ WORKFLOW_GUARD_NOTIF = (
     "creacion de incidentes"
 )
 WORKFLOW_GUARD_RETRY = (
-    "workflow: ningun nodo pago habilita reintentos (retryOnFail/maxTries)"
+    "workflow: reintentos pagos acotados y explicitos, prohibidos en nodos de modelo"
 )
 
 
@@ -281,17 +286,55 @@ def _check_notification_webhook(workflow: dict) -> Check:
 
 
 def _check_paid_retries(workflow: dict) -> Check:
+    """Politica de reintentos de nodos pagos (reformulada por c-58, D7).
+
+    - Nodo agente: si declara `retryOnFail` verdadero, exige `maxTries` numerico
+      dentro del tope y `waitBetweenTries` no menor al minimo. Un `maxTries`
+      numerico sin `retryOnFail` es un reintento implicito: FAIL.
+    - Nodo de modelo (`...lm*`): prohibido `retryOnFail` y `maxTries`.
+    """
     violations = []
     for node in workflow.get("nodes", []):
         if not _is_paid_node(node):
             continue
-        if node.get("retryOnFail") is True:
-            violations.append(f"{node['name']!r}: retryOnFail=true")
-        if _is_numeric(node.get("maxTries")):
-            violations.append(f"{node['name']!r}: maxTries={node['maxTries']!r}")
+        name = node["name"]
+        is_agent = str(node.get("type", "")) == PAID_AGENT_TYPE
+        retry = node.get("retryOnFail")
+        max_tries = node.get("maxTries")
+        wait = node.get("waitBetweenTries")
+
+        if not is_agent:
+            if retry is True:
+                violations.append(f"{name!r}: retryOnFail=true en nodo de modelo")
+            if _is_numeric(max_tries):
+                violations.append(
+                    f"{name!r}: maxTries={max_tries!r} en nodo de modelo"
+                )
+            continue
+
+        if retry is True:
+            if not _is_numeric(max_tries) or max_tries > PAID_AGENT_MAX_TRIES_CAP:
+                violations.append(
+                    f"{name!r}: maxTries ausente o fuera del tope de "
+                    f"{PAID_AGENT_MAX_TRIES_CAP} (maxTries={max_tries!r})"
+                )
+            if (
+                not _is_numeric(wait)
+                or wait < PAID_AGENT_MIN_WAIT_BETWEEN_TRIES_MS
+            ):
+                violations.append(
+                    f"{name!r}: waitBetweenTries ausente o menor al minimo de "
+                    f"{PAID_AGENT_MIN_WAIT_BETWEEN_TRIES_MS} ms (waitBetweenTries={wait!r})"
+                )
+        elif _is_numeric(max_tries):
+            violations.append(f"{name!r}: maxTries={max_tries!r} sin retryOnFail")
+
     if violations:
-        return _failing(WORKFLOW_GUARD_RETRY, "nodos pagos con reintentos: " + "; ".join(violations))
-    return _passing(WORKFLOW_GUARD_RETRY, "ningun nodo pago reintenta")
+        return _failing(
+            WORKFLOW_GUARD_RETRY,
+            "reintentos pagos fuera de politica: " + "; ".join(violations),
+        )
+    return _passing(WORKFLOW_GUARD_RETRY, "reintento pago acotado o ausente")
 
 
 def check_workflow(path: "pathlib.Path | str") -> List[Check]:

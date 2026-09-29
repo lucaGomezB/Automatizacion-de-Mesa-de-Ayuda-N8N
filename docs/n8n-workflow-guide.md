@@ -245,9 +245,9 @@ validar el smoke manual de IMAP. Esta decisión se registra para el Anexo E de l
 | 2d | Guard de costo | `httpRequest` | **[C-45]** `POST /api/v1/cost-guard/reserve` (`provider=n8n_gemini`). Salida de error → `Derivar a revision humana` (fail-closed). |
 | 2d-bis | Restaurar item telefonia | `code` (JS) | **[C-47]** Recupera el ítem sellado con `$('Sellar ingreso telefonia').first()` y le re-inyecta `allowed`; el `AI Agent` recupera el ítem sellado (no solo el cuerpo de la guarda). Preserva `pairedItem`. |
 | 2e | Guard permite? | `if` | **[C-45]** `$json.allowed == true`. Rama true → `AI Agent`; rama false → `Derivar a revision humana`. |
-| 3 | AI Agent | `agent` (LangChain) | **[C-52]** Clasifica la descripción PSEUDONIMIZADA del handoff (`$json.descripcion_pseudonimizada`); el transcript crudo nunca llega a n8n. |
+| 3 | AI Agent | `agent` (LangChain) | **[C-52]** Clasifica la descripción PSEUDONIMIZADA del handoff (`$json.descripcion_pseudonimizada`); el transcript crudo nunca llega a n8n. **[C-58]** Declara un reintento acotado de transporte (`retryOnFail=true`, `maxTries=2`, `waitBetweenTries=2000`) ante fallas transitorias del modelo, sin consumir refinamiento. |
 | 3b | Con el fin de enviar los datos... | `memoryRedisChat` | Memoria Redis para el AI Agent. |
-| 3c | Google Gemini Chat Model | `lmChatGoogleGemini` | Modelo de lenguaje del AI Agent. |
+| 3c | Google Gemini Chat Model | `lmChatGoogleGemini` | **[C-58]** Modelo de lenguaje del AI Agent con `modelName` explícito (`gemini-3.6-flash`, en paridad con `settings.gemini_model`); no declara reintento propio. |
 | 4 | Se verifica lo que trajo la IA | `code` (JS) | Valida los 5 pasos Anexo H §H.3 (JSON, campos `sector_predicho`/`sectores_adicionales`, set canónico de 5 sectores, rango confianza) e incrementa `intento_agente`. Emite `canal_raw = "telefonia"`. **[C-46]** Recupera el sello con `.first()` (no `.item`); ante sello ausente, WARN + revisión forzada. **[C-52]** Re-inyecta `call_sid` y `descripcion_pseudonimizada` desde el sello (el agente no propaga los campos del handoff). |
 | 5 | La clasificacion de la IA es valida | `if` | Gate de confianza del modelo: `confianza >= 0.70`. Rama true → `Normalizar`; rama false → `Tope de refinamiento alcanzado`. |
 | 6 | Tope de refinamiento alcanzado | `if` | **[C-33]** `intento_agente < 2`. Rama true → `AI Agent`; rama false → `Derivar a revision humana`. |
@@ -611,7 +611,7 @@ cd App/Backend
 python -m pytest tests/test_n8n_workflow.py -v
 ```
 
-Verifica 181 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40, C-46, C-47, C-52, C-53, C-55 y C-57).
+Verifica 185 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40, C-46, C-47, C-52, C-53, C-55, C-57 y C-58).
 
 ### Prueba manual del canal web (C-05)
 

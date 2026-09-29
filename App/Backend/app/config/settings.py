@@ -80,8 +80,23 @@ class Settings(BaseSettings):
     gemini_timeout_seconds: int = 30            # Límite de espera antes de activar fallback
     # Ruta al archivo de prompt. Vacío = autoresolver desde la raíz del repositorio
     # (docs/prompt_gemini.txt). El override es necesario en contenedores donde la
-    # estructura difiere del repo (ej. GEMINI_PROMPT_PATH=/app/docs/prompt_gemini.txt).
+    # estructura difiere del repo (ej. GEMINI_PROMPT_PATH=/app/docs/gemini_prompt.txt).
     gemini_prompt_path: str = ""
+
+    # ── Resiliencia de la clasificación con Gemini (c-58) ─────────────────────
+    # Reintento ACOTADO ante fallas TRANSITORIAS del proveedor (503/429/5xx y
+    # timeouts); los errores terminales (400/401/403 y JSON invalido) NO se
+    # reintentan. El peor caso de intentos es `gemini_max_retries + 1`; la guarda
+    # de costo reserva exactamente ese peor caso en UNA sola evaluacion (c-58 D4).
+    # `gemini_max_retries=0` restaura el comportamiento de UN solo intento.
+    gemini_max_retries: int = 2                     # reintentos ADICIONALES (peor caso = 3 intentos)
+    gemini_retry_base_delay_seconds: float = 0.5    # espera base del backoff exponencial
+    gemini_retry_max_delay_seconds: float = 8.0     # tope de la espera entre intentos
+    gemini_retry_jitter_ratio: float = 0.5          # fraccion de jitter [0,1) aplicada a la espera
+    # Presupuesto de reloj de pared para TODA la clasificacion (suma de intentos
+    # y esperas). Acota la latencia p99 por encima del limite por intento
+    # (`gemini_timeout_seconds`); el default es mayor que ese limite.
+    gemini_total_timeout_seconds: int = 60
 
     # ── Umbrales del clasificador híbrido ─────────────────────────────────────
     # Determinados empíricamente; documentados en docs/parameters_gemini.md.

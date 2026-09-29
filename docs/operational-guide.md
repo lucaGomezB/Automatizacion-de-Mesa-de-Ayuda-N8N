@@ -55,6 +55,17 @@ DATABASE_URL=postgresql+asyncpg://mesa:mesa_local_dev@postgres:5432/mesa_de_ayud
 # API Key de Google Gemini (obtener en https://aistudio.google.com/app/apikey)
 GEMINI_API_KEY=<tu-clave-real>
 
+# Resiliencia de la clasificacion con Gemini (c-58, opcional). Reintento
+# ACOTADO ante fallas transitorias (503/429/5xx y timeouts); los errores
+# terminales (400/401/403 y JSON invalido) no se reintentan. El peor caso de
+# intentos es GEMINI_MAX_RETRIES + 1 y la guarda de costo reserva ese peor caso
+# una sola vez. GEMINI_MAX_RETRIES=0 restaura un solo intento.
+# GEMINI_MAX_RETRIES=2
+# GEMINI_RETRY_BASE_DELAY_SECONDS=0.5
+# GEMINI_RETRY_MAX_DELAY_SECONDS=8.0
+# GEMINI_RETRY_JITTER_RATIO=0.5
+# GEMINI_TOTAL_TIMEOUT_SECONDS=60
+
 # Clave Fernet para cifrado at-rest de descripciones (base64url de 32 bytes)
 # Generar con: python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
 PSEUDONYMIZATION_ENCRYPTION_KEY=<clave-generada>
