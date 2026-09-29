@@ -2,8 +2,8 @@
 
 ## 1. Prerrequisitos de proveedor (manual)
 
-- [ ] 1.1 Documentar casilla Gmail dedicada con 2FA y App Password (IMAP `imap.gmail.com:993` SSL, SMTP `smtp.gmail.com:465` SSL); verificar IMAP habilitado en la cuenta.
-- [ ] 1.2 Crear en n8n las credenciales `imap` y `smtp` (host, usuario, App Password); verificar que ambas conectan al probarlas.
+- [x] 1.1 Documentar casilla Gmail dedicada con 2FA y App Password (IMAP `imap.gmail.com:993` SSL, SMTP `smtp.gmail.com:465` SSL); verificar IMAP habilitado en la cuenta. Satisfecho: la casilla y su operación quedaron documentadas en `docs/n8n-workflow-guide.md`; IMAP/SMTP funcionan en runtime.
+- [x] 1.2 Crear en n8n las credenciales `imap` y `smtp` (host, usuario, App Password); verificar que ambas conectan al probarlas. Satisfecho: credenciales `Mesa de Ayuda - IMAP` id `Shs4FcEo2YVhEXeZ` y `Mesa de Ayuda - SMTP` id `AzMbxBkG3wQ79k0s`; el correo real se recibió y la confirmación salió por SMTP.
 
 ## 2. Tests (RED)
 
@@ -31,4 +31,4 @@
 
 - [x] 6.1 Ejecutar `pytest tests/test_n8n_workflow.py` en `App/Backend` y verificar verde.
 - [x] 6.2 Ejecutar `pytest scripts/preflight/test_cost_readiness.py` y verificar verde offline.
-- [ ] 6.3 Smoke manual con el buzón Gmail real: un correo no leído de menos de 24 h crea incidente, dispara confirmación y queda leído (no reprocesa).
+- [x] 6.3 Smoke manual con el buzón Gmail real: un correo no leído de menos de 24 h crea incidente, dispara confirmación y queda leído (no reprocesa). Satisfecho: ejecución n8n #24 del workflow `JYizNfNZXuhCr8Z7` creó el incidente #9 el 2026-09-29T18:08:46Z; confirmación y notificación al operador enviadas; el trigger marcó leído y no reprocesó.
