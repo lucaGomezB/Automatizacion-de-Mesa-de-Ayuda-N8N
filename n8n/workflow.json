@@ -397,7 +397,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Registro de auditoria - C-05 (fix D-3/D-4 + B-14: shape real de backend, canal_origen upstream y resultado real)\n// Contrato del evento: { incidente_id, canal_origen, timestamp, sector_nombre, confianza, resultado, retencion_dias }\n// EXCLUSION DE PII: la descripcion cruda NO se incluye; solo metadatos y referencias.\n// Retencion: 30 dias - declarada aqui; el destino persistente (Docker logging con rotacion)\n// se configura en docker-compose.yml segun la guia operativa.\n//\n// Shape real del response 201 de POST /api/v1/incidentes:\n//   { id, sector: { id, nombre, ... }, requiere_revision_humana, ... }\n//   El campo 'sector.nombre' es la categoria asignada; no existe 'categoria' en la raiz.\n//\n// D-4: canal_origen y confianza se obtienen del nodo normalizador (aguas arriba),\n//   NO del item corriente. Tras el HTTP POST el item corriente es el response body\n//   del backend, que no incluye canal_origen ni confianza.\n//   En la rama de rechazo el item ya viene con canal_origen del normalizador.\n//\n// Ramas que llegan a este nodo:\n//   - Rama exitosa: response HTTP POST (id, sector.nombre, requiere_revision_humana)\n//   - Rama de rechazo: item del normalizador (canal_origen, es_valido=false)\nconst item = $input.item.json;\n\n// D-4: obtener canal_origen y confianza desde el nodo normalizador (fuente primaria).\n// En la rama exitosa el item corriente (response HTTP) no incluye esos campos.\n// En la rama de rechazo el item ya viene con canal_origen del normalizador.\nlet canalOrigen = null;\nlet confianza = null;\ntry {\n  const normItem = $('Normalizar entrada del incidente').item.json;\n  canalOrigen = normItem.canal_origen || null;\n  confianza = normItem.confianza ?? null;\n} catch (_) {\n  // Si el nodo upstream no esta disponible, fallback al item corriente\n  canalOrigen = item.canal_origen || item.canal_raw || null;\n  confianza = item.confianza ?? null;\n}\n\n// D-3: leer sector.nombre del response HTTP (campo real del backend).\n// El response 201 tiene: { id, sector: { nombre }, requiere_revision_humana, ... }\n// En la rama de rechazo no hay response HTTP; sector es null.\nconst sectorNombre = item.sector?.nombre || null;\n\n// B-14: distinguir creados de rechazados segun el resultado real del flujo.\n// El normalizador emite un id sintetico (string) tambien en la rama de rechazo,\n// por lo que 'item.id' NO alcanza para detectar un alta. El response del backend\n// tiene id numerico; la rama de rechazo llega con es_valido = false.\nconst resultado = item.resultado\n  || (item.error\n      ? 'error_backend'\n      : (item.es_valido === false\n          ? 'rechazado_datos_incompletos'\n          : (typeof item.id === 'number' ? 'creado' : 'rechazado_datos_incompletos')));\n\nconst evento = {\n  incidente_id: item.id || null,\n  canal_origen: canalOrigen,\n  timestamp: new Date().toISOString(),\n  sector_nombre: sectorNombre,\n  confianza: confianza,\n  resultado: resultado,\n  retencion_dias: 30\n};\nconsole.log('[AUDITORIA]', JSON.stringify(evento));\nreturn [{ json: evento }];\n"
+        "jsCode": "// Registro de auditoria - C-05 (fix D-3/D-4 + B-14: shape real de backend, canal_origen upstream y resultado real)\n// Contrato del evento: { incidente_id, canal_origen, timestamp, sector_nombre, confianza, resultado, retencion_dias }\n// EXCLUSION DE PII: la descripcion cruda NO se incluye; solo metadatos y referencias.\n// Retencion: 30 dias - declarada aqui; el destino persistente (Docker logging con rotacion)\n// se configura en docker-compose.yml segun la guia operativa.\n//\n// Shape real del response 201 de POST /api/v1/incidentes:\n//   { id, sector: { id, nombre, ... }, requiere_revision_humana, ... }\n//   El campo 'sector.nombre' es la categoria asignada; no existe 'categoria' en la raiz.\n//\n// D-4: canal_origen y confianza se obtienen del nodo normalizador (aguas arriba),\n//   NO del item corriente. Tras el HTTP POST el item corriente es el response body\n//   del backend, que no incluye canal_origen ni confianza.\n//   En la rama de rechazo el item ya viene con canal_origen del normalizador.\n//\n// Ramas que llegan a este nodo:\n//   - Rama exitosa sin revision: response HTTP POST (id, sector.nombre, requiere_revision_humana)\n//   - Rama exitosa con revision humana (C-57): response HTTP POST por el gate post-POST,\n//     NO el resultado SMTP del envio de notificacion (que no trae id numerico)\n//   - Rama de rechazo: item del normalizador (canal_origen, es_valido=false)\nconst item = $input.item.json;\n\n// D-4: obtener canal_origen y confianza desde el nodo normalizador (fuente primaria).\n// En la rama exitosa el item corriente (response HTTP) no incluye esos campos.\n// En la rama de rechazo el item ya viene con canal_origen del normalizador.\nlet canalOrigen = null;\nlet confianza = null;\ntry {\n  const normItem = $('Normalizar entrada del incidente').item.json;\n  canalOrigen = normItem.canal_origen || null;\n  confianza = normItem.confianza ?? null;\n} catch (_) {\n  // Si el nodo upstream no esta disponible, fallback al item corriente\n  canalOrigen = item.canal_origen || item.canal_raw || null;\n  confianza = item.confianza ?? null;\n}\n\n// D-3: leer sector.nombre del response HTTP (campo real del backend).\n// El response 201 tiene: { id, sector: { nombre }, requiere_revision_humana, ... }\n// En la rama de rechazo no hay response HTTP; sector es null.\nconst sectorNombre = item.sector?.nombre || null;\n\n// B-14: distinguir creados de rechazados segun el resultado real del flujo.\n// El normalizador emite un id sintetico (string) tambien en la rama de rechazo,\n// por lo que 'item.id' NO alcanza para detectar un alta. El response del backend\n// tiene id numerico; la rama de rechazo llega con es_valido = false.\nconst resultado = item.resultado\n  || (item.error\n      ? 'error_backend'\n      : (item.es_valido === false\n          ? 'rechazado_datos_incompletos'\n          : (typeof item.id === 'number' ? 'creado' : 'rechazado_datos_incompletos')));\n\nconst evento = {\n  incidente_id: item.id || null,\n  canal_origen: canalOrigen,\n  timestamp: new Date().toISOString(),\n  sector_nombre: sectorNombre,\n  confianza: confianza,\n  resultado: resultado,\n  retencion_dias: 30\n};\nconsole.log('[AUDITORIA]', JSON.stringify(evento));\nreturn [{ json: evento }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1052,6 +1052,11 @@
             "index": 0
           },
           {
+            "node": "Registro de auditoria",
+            "type": "main",
+            "index": 0
+          },
+          {
             "node": "Es correo?",
             "type": "main",
             "index": 0
@@ -1078,13 +1083,7 @@
     },
     "Notificar operador designado": {
       "main": [
-        [
-          {
-            "node": "Registro de auditoria",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Rutear por canal de origen": {

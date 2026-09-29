@@ -2706,12 +2706,21 @@ def test_revision_humana_false_branch_routes_and_audits():
 
 def test_notificar_operador_reaches_audit():
     """
-    TRIANGULATE: la notificacion al operador desemboca en auditoria para que el
-    evento quede registrado.
+    C-57 (contrato invertido, N8N-AUDIT-003/004): la auditoria NO es sucesora de
+    `Notificar operador designado`; en la rama de revision ambas cuelgan del gate
+    post-POST en paralelo y la auditoria recibe la respuesta del POST, no el
+    resultado SMTP (que no trae `id` numerico).
     """
     wf = load_workflow()
-    assert AUDIT_NODE_NAME in _get_successors(wf, NOTIFICAR_OPERADOR_NODE_NAME), (
-        f"{NOTIFICAR_OPERADOR_NODE_NAME!r} no desemboca en {AUDIT_NODE_NAME!r}"
+    assert AUDIT_NODE_NAME not in _get_successors(wf, NOTIFICAR_OPERADOR_NODE_NAME), (
+        f"{NOTIFICAR_OPERADOR_NODE_NAME!r} no debe desembocar en {AUDIT_NODE_NAME!r}: "
+        "esa arista le entrega el resultado SMTP sin id numerico"
+    )
+    assert AUDIT_NODE_NAME in _output_successors(
+        wf, IF_REVISION_HUMANA_NODE_NAME, 0
+    ), (
+        f"{AUDIT_NODE_NAME!r} debe ser sucesor directo de la rama true de "
+        f"{IF_REVISION_HUMANA_NODE_NAME!r}"
     )
 
 
@@ -3496,12 +3505,20 @@ def test_c40_notificar_operador_declares_on_error_continue():
 
 def test_c40_notificar_operador_still_reaches_audit():
     """
-    TRIANGULATE (N8N-AUDIT-003): aun con el manejo de error, la arista hacia
-    `Registro de auditoria` se conserva.
+    C-57 (N8N-AUDIT-003, contrato invertido): aun con el manejo de error, la
+    auditoria es hermana del gate post-POST y NO descendiente de
+    `Notificar operador designado`; el `onError` de continuacion del nodo de
+    notificacion se verifica por separado.
     """
     wf = load_workflow()
-    assert AUDIT_NODE_NAME in _get_successors(wf, NOTIFICAR_OPERADOR_NODE_NAME), (
-        f"'{NOTIFICAR_OPERADOR_NODE_NAME}' dejo de desembocar en {AUDIT_NODE_NAME!r}"
+    assert AUDIT_NODE_NAME not in _get_successors(wf, NOTIFICAR_OPERADOR_NODE_NAME), (
+        f"'{NOTIFICAR_OPERADOR_NODE_NAME}' no debe ser origen de {AUDIT_NODE_NAME!r}"
+    )
+    assert AUDIT_NODE_NAME in _output_successors(
+        wf, IF_REVISION_HUMANA_NODE_NAME, 0
+    ), (
+        f"{AUDIT_NODE_NAME!r} debe colgar directamente de "
+        f"{IF_REVISION_HUMANA_NODE_NAME!r} (main#0)"
     )
 
 
@@ -4757,4 +4774,73 @@ def test_guard_jsonbody_es_expresion_json_stringify_sin_firma():
     )
     assert "caller:" in body, (
         f"El jsonBody de {GUARD_NODE_NAME!r} debe incluir la clave nativa 'caller:'"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Grupo 30 — C-57 (auditoria en la rama de revision humana): la auditoria cuelga
+# del gate post-POST en paralelo con la notificacion y consume la respuesta del
+# POST; NO consume la salida SMTP (que no trae `id` numerico y provoca
+# `incidente_id: null` / `resultado: rechazado_datos_incompletos`).
+# ---------------------------------------------------------------------------
+
+
+def test_c57_audit_receives_post_response_on_review_branch():
+    """
+    RED (1.3, N8N-AUDIT-004): la rama true del gate post-POST alimenta
+    `Registro de auditoria` directamente, de modo que recibe la respuesta del
+    POST (id numerico, sector.nombre, requiere_revision_humana).
+    """
+    wf = load_workflow()
+
+    assert IF_REVISION_HUMANA_NODE_NAME in _output_successors(wf, HTTP_NODE_CORREO, 0), (
+        f"El gate {IF_REVISION_HUMANA_NODE_NAME!r} no cuelga de la salida exitosa "
+        f"de {HTTP_NODE_CORREO!r}: no recibiria la respuesta del POST"
+    )
+    assert AUDIT_NODE_NAME in _output_successors(
+        wf, IF_REVISION_HUMANA_NODE_NAME, 0
+    ), (
+        f"{AUDIT_NODE_NAME!r} debe ser sucesor directo de la rama true de "
+        f"{IF_REVISION_HUMANA_NODE_NAME!r} y por esa arista recibir la respuesta del POST"
+    )
+    assert _connections_reachable(wf, HTTP_NODE_CORREO, AUDIT_NODE_NAME), (
+        f"{AUDIT_NODE_NAME!r} debe seguir siendo alcanzable desde {HTTP_NODE_CORREO!r}"
+    )
+
+
+def test_c57_audit_does_not_depend_on_smtp_item():
+    """
+    RED (1.4, N8N-AUDIT-004): el `jsCode` de auditoria no referencia el nodo
+    `Notificar operador designado` y conserva la derivacion del resultado desde
+    la respuesta del backend (item.error / item.es_valido / item.id numerico).
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    code = _active_js_code(by_name[AUDIT_NODE_NAME])
+
+    assert NOTIFICAR_OPERADOR_NODE_NAME not in code, (
+        f"El jsCode de auditoria referencia {NOTIFICAR_OPERADOR_NODE_NAME!r}: "
+        "depende del item SMTP en vez de la respuesta del POST"
+    )
+    assert "item.error" in code and "error_backend" in code, (
+        "La auditoria no deriva 'error_backend' de item.error"
+    )
+    assert "item.es_valido === false" in code and "rechazado_datos_incompletos" in code, (
+        "La auditoria no deriva 'rechazado_datos_incompletos' de item.es_valido === false"
+    )
+    assert "typeof item.id === 'number'" in code and "creado" in code, (
+        "La auditoria no deriva 'creado' del id numerico de la respuesta del POST"
+    )
+
+
+def test_c57_audit_no_double_execution_on_review_branch():
+    """
+    RED (1.5, N8N-AUDIT-004): `Notificar operador designado` no figura como
+    origen de `Registro de auditoria` en las conexiones, de modo que la rama de
+    revision registra el evento una sola vez.
+    """
+    wf = load_workflow()
+    assert AUDIT_NODE_NAME not in _get_successors(wf, NOTIFICAR_OPERADOR_NODE_NAME), (
+        f"{NOTIFICAR_OPERADOR_NODE_NAME!r} no debe tener a {AUDIT_NODE_NAME!r} "
+        "como sucesor: la auditoria se ejecutaria dos veces en la rama de revision"
     )
