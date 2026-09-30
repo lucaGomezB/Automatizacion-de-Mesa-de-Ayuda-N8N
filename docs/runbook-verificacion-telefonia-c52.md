@@ -28,7 +28,7 @@ Llamada entrante
 
 La tarea 8.4 se marca como cumplida solo si la llamada de prueba produce TODOS estos resultados:
 
-- [ ] Existe un incidente creado a partir de la llamada, con `descripcion` pseudonimizada **no vacía**.
+- [ ] Existe un incidente creado a partir de la llamada, con `descripcion_pseudonimizada` **no vacía**.
 - [ ] El incidente tiene `origen_message_id` igual al `CallSid` de la llamada.
 - [ ] El ingreso persistió con `ingresado_en` (sellado por el backend al recibir el callback) **anterior** al trabajo de STT (es decir, `ingresado_en < persistido_en` en la fila de ingreso).
 - [ ] La latencia quedó registrada: `ingresado_en` y `persistido_en` poblados en el ingreso, y `latencia_e2e_ms` disponible/derivable para el incidente.
@@ -49,12 +49,14 @@ Referencia: `openspec/changes/c-52-telefonia-transcripcion-async/tasks.md` (8.4)
 
 Confirmar que cada variable tiene el valor real (no placeholder). Nombres EXACTOS:
 
+> **BLOQUEANTE**: `BACKEND_PUBLIC_BASE_URL`, `N8N_TELEFONIA_WEBHOOK_URL` y `N8N_WEBHOOK_SECRET` **NO están definidas** en `App/Backend/.env` ni en el compose del repo. Hay que **AGREGARLAS** antes de la llamada y reiniciar el backend (`docker compose -p mesa_local restart backend`). Sin `BACKEND_PUBLIC_BASE_URL` el `<Record>` emite callbacks relativos y Twilio no puede volver; sin `N8N_TELEFONIA_WEBHOOK_URL`/`N8N_WEBHOOK_SECRET` el handoff a n8n se OMITE y no se crea el incidente.
+
 - [ ] `TWILIO_ACCOUNT_SID` — usuario del HTTP Basic al descargar la grabación (`AccountSid:AuthToken`).
 - [ ] `TWILIO_AUTH_TOKEN` — valida `X-Twilio-Signature` (HMAC-SHA1) y completa el Basic auth de descarga. Sin él, los webhooks responden 401 fail-closed.
 - [ ] `TWILIO_PHONE_NUMBER` — número virtual comprado (referencia operativa; ver nota en §7).
-- [ ] `BACKEND_PUBLIC_BASE_URL` — base pública del backend tal como la ve Twilio; construye `recordingStatusCallback` y `action` del `<Record>`. Debe coincidir con la URL configurada en la consola Twilio (esquema, host y puerto).
-- [ ] `N8N_TELEFONIA_WEBHOOK_URL` — URL del webhook de handoff en n8n (p. ej. `http://n8n:5678/webhook/telefonia-handoff` desde el backend en compose).
-- [ ] `N8N_WEBHOOK_SECRET` — secreto compartido del handoff, se envía como header `X-N8N-Secret`. Sin él el handoff se OMITE (`HANDOFF_SKIPPED_NO_SECRET`).
+- [ ] `BACKEND_PUBLIC_BASE_URL` — base pública del backend tal como la ve Twilio; construye `recordingStatusCallback` y `action` del `<Record>`. Debe coincidir con la URL configurada en la consola Twilio (esquema, host y puerto). **Agregar (falta en el repo).**
+- [ ] `N8N_TELEFONIA_WEBHOOK_URL` — URL del webhook de handoff en n8n (p. ej. `http://n8n:5678/webhook/telefonia-handoff` desde el backend en compose). **Agregar (falta en el repo).**
+- [ ] `N8N_WEBHOOK_SECRET` — secreto compartido del handoff, se envía como header `X-N8N-Secret`. Sin él el handoff se OMITE (`HANDOFF_SKIPPED_NO_SECRET`). **Agregar (falta en el repo).**
 - [ ] `GEMINI_API_KEY` — clave de Google AI para el STT.
 - [ ] `GEMINI_STT_MODEL` — modelo de transcripción (default `gemini-3.5-transcribe`).
 - [ ] `PSEUDONYMIZATION_ENCRYPTION_KEY` — clave Fernet obligatoria; cifra `transcript_original` y `caller_cifrado` at-rest.
@@ -78,12 +80,13 @@ Confirmar que cada variable tiene el valor real (no placeholder). Nombres EXACTO
   - [ ] Copiar la URL pública (p. ej. `https://abc123.ngrok.io`).
   - [ ] Configurarla en la consola Twilio (voice webhook) y en `BACKEND_PUBLIC_BASE_URL`.
 - [ ] `FORWARDED_ALLOW_IPS` habilitado en el servicio `backend` del compose para que `request.url` reconstruya el esquema `https` y el host públicos (sin esto, la firma sobre la URL pública no valida y aparecen 401 falsos; ver §7.1).
+- [ ] **Nginx whitelistea el host del túnel** (`nginx/nginx.conf`): si el hostname de ngrok cambia, hay que actualizar el allowlist o la request se cierra con **444**. Confirmar que el host público está permitido antes de llamar.
 
 ### 3.5 n8n
 
 - [ ] Workflow importado desde `n8n/workflow.json`.
 - [ ] Workflow **activo** (toggle ON en la UI).
-- [ ] El nodo `Llamada telefonica` es un webhook `POST` en la ruta `/webhook/telefonia-handoff` con autenticación `headerAuth` (secreto `X-N8N-Secret`).
+- [ ] El nodo `Llamada telefonica` es un webhook `POST` en la ruta `/webhook/telefonia-handoff` con autenticación `headerAuth` (secreto `X-N8N-Secret`). **BLOQUEANTE**: en `n8n/workflow.json` la credencial es el placeholder `REPLACE_WITH_TELEFONIA_HANDOFF_CREDENTIAL_ID`; hay que crear la credencial Header Auth en la instancia (mismo valor que `N8N_WEBHOOK_SECRET`) y asignarla al nodo.
 - [ ] El nodo `Guard de costo` tiene configurado `COST_GUARD_SHARED_SECRET` (`$env.COST_GUARD_SHARED_SECRET`).
 - [ ] `BACKEND_URL` del workflow apunta al backend.
 
@@ -153,7 +156,7 @@ Verificaciones:
 - [ ] `descripcion_pseudonimizada` no vacía.
 - [ ] `ingresado_en` poblado.
 - [ ] `persistido_en` poblado y `persistido_en > ingresado_en` (el sello precede al trabajo de descarga/STT/persistencia).
-- [ ] `incidente_id` poblado (vínculo con el incidente creado).
+- [ ] `incidente_id` — hoy quedará **NULL**: `link_incidente()` existe pero no se invoca en runtime (fuera del alcance literal de 8.4; ver §5.5).
 - [ ] `call_sid` coincide con el CallSid de la llamada (visible en logs/Twilio).
 - [ ] `error_detalle` es NULL (si no, ver §7).
 
@@ -169,7 +172,7 @@ Comprobar la doble representación y el cifrado del crudo (el crudo NO debe apar
 SELECT
     id,
     canal_origen_id,
-    descripcion,
+    descripcion_pseudonimizada,
     origen_message_id,
     ingresado_en,
     persistido_en,
@@ -183,8 +186,8 @@ LIMIT 1;
 Verificaciones:
 
 - [ ] Existe exactamente UNA fila con `origen_message_id = <CallSid>` (índice único).
-- [ ] `descripcion` no vacía y coincide con la `descripcion_pseudonimizada` del ingreso.
-- [ ] `descripcion` NO contiene PII cruda: buscar explícitamente el nombre, el teléfono y el correo enunciados (p. ej. `juan.perez@empresa.com`, `Juan Pérez`, el número marcado). Deben estar enmascarados (`[EMAIL]`, `[PERSONA]`, `[TELEFONO]` o equivalentes).
+- [ ] `descripcion_pseudonimizada` no vacía y coincide con la del ingreso.
+- [ ] `descripcion_pseudonimizada` NO contiene PII cruda: buscar explícitamente el nombre, el teléfono y el correo enunciados (p. ej. `juan.perez@empresa.com`, `Juan Pérez`, el número marcado). Deben estar enmascarados (`[EMAIL]`, `[PERSONA]`, `[TELEFONO]` o equivalentes).
 - [ ] `canal_origen_id` corresponde al canal `telefonia`.
 - [ ] `ingresado_en` del incidente coincide con el `ingresado_en` del ingreso (propagado como passthrough por n8n, sin re-sellar).
 
@@ -205,6 +208,10 @@ Verificaciones:
   - [ ] `telefonia_handoff_sent` con `call_sid` (y NO `telefonia_handoff_skipped`/`telefonia_handoff_secret_missing`).
 - [ ] En n8n, la ejecución del workflow muestra `Guard de costo` permitido, `AI Agent` con clasificación y el POST a `/api/v1/incidentes` con `201 Created`.
 
+### 5.5 Vínculo `telefonia_ingreso.incidente_id` (fuera del alcance de la tarea 8.4)
+
+- [ ] Esperado en una corrida real: la columna queda **NULL**. `TelefoniaIngresoRepository.link_incidente()` existe pero **no se invoca en runtime** (`TelefoniaService` no lo llama). La tarea 8.4 NO exige este vínculo; el spec `telefonia-stt-intake` sí lo menciona. Decisión pendiente: cablearlo o excluirlo explícitamente.
+
 ## 6. Registro de eventos y valores esperados
 
 | Punto | Valor/estado esperado | Evento de log / columna |
@@ -214,7 +221,7 @@ Verificaciones:
 | Sello de ingreso | anterior a la STT | `ingresado_en < persistido_en` |
 | Handoff a n8n | enviado | `telefonia_handoff_sent` |
 | Incidente | única fila por CallSid | `incidente.origen_message_id = CallSid` |
-| PII | enmascarada | `incidente.descripcion` sin datos crudos |
+| PII | enmascarada | `incidente.descripcion_pseudonimizada` sin datos crudos |
 
 ## 7. Troubleshooting
 
@@ -293,13 +300,13 @@ Síntoma B (al transcribir): el ingreso queda con `transcripcion_estado = 'guard
 | Criterio | Resultado (SI/NO) | Evidencia |
 |----------|-------------------|-----------|
 | Incidente creado | | `incidente.id =` |
-| `descripcion` pseudonimizada no vacía | | texto de §8.2 |
+| `descripcion_pseudonimizada` no vacía | | texto de §8.2 |
 | `origen_message_id = CallSid` | | |
 | `ingresado_en < persistido_en` | | timestamps |
 | Latencia registrada/derivable | | `latencia_e2e_ms =` |
 | Sin PII cruda en el incidente | | |
 | `telefonia_ingreso.transcripcion_estado = 'transcrito'` | | |
-| `incidente_id` vinculado en el ingreso | | |
+| `incidente_id` vinculado en el ingreso | (fuera de 8.4; hoy NO) | |
 
 ### 8.4 Logs y observaciones
 
