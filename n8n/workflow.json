@@ -249,7 +249,7 @@
       "parameters": {
         "httpMethod": "POST",
         "path": "telefonia-handoff",
-        "responseMode": "onReceived",
+        "responseMode": "responseNode",
         "options": {},
         "authentication": "headerAuth"
       },
@@ -898,6 +898,21 @@
       ],
       "id": "c53-web-respuesta-0002-4000-8000-000000000002",
       "name": "Confirmacion web revision humana"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"received\": true\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        -360,
+        620
+      ],
+      "id": "774839d8-51ae-4ab3-b28e-a5af1861b7a1",
+      "name": "Responder handoff telefonia"
     }
   ],
   "pinData": {},
@@ -963,6 +978,11 @@
         [
           {
             "node": "Sellar ingreso telefonia",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Responder handoff telefonia",
             "type": "main",
             "index": 0
           }
