@@ -1,0 +1,5 @@
+# Dependencias del harness de ingesta del corpus.
+# El host ya trae pandas 3.x y requests, pero openpyxl NO viene instalado y es
+# imprescindible para leer/escribir el XLSX.
+requests>=2.31
+openpyxl>=3.1
