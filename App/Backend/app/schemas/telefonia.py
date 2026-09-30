@@ -56,7 +56,7 @@ class TelefoniaHandoffPayload(BaseModel):
 
     descripcion_pseudonimizada: str
     call_sid: str
-    caller: str | None = None
+    caller_number: str | None = None
     ingresado_en: str | None = None
 
 

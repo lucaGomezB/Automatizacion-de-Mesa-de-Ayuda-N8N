@@ -1,26 +1,75 @@
+COMANDOS PARA INICIAR / CONTROLAR EL PROYECTO
+=============================================
+
+Referencia completa y actualizada:
+  - "Comandos para controlar el estado del contenedor.txt"  (raiz del proyecto)
+Detalle operativo:
+  - docs/operational-guide.md
+  - docs/troubleshooting.md
+  - docs/n8n-workflow-guide.md
 
 
--- URLs una vez arranca todo:
-
-Backend: https://localhost/api/v1 (swagger: .../docs)
-Frontend: https://localhost/
-N8N: http://localhost:5678 (login: admin | n8n_local_dev — default local)
-
-
--- Sin Docker:
-
-Postgres: net start postgresql-x64-18
-Backend: alembic upgrade head uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-Frontend: npm run dev
+URLS UNA VEZ ARRANCA TODO
+-------------------------
+  Backend : https://localhost/api/v1   (swagger: https://localhost/api/v1/docs)
+  Frontend: https://localhost/
+  N8N     : http://localhost:5678      (usuario: admin | password: n8n_local_dev, default local)
 
 
--- Con Docker:
+PREPARACION (una vez por entorno)
+---------------------------------
+  # Backend .env (obligatorio): completar GEMINI_API_KEY, JWT_SECRET_KEY, PSEUDONYMIZATION_ENCRYPTION_KEY
+  cp App/Backend/.env.example App/Backend/.env
 
-docker compose up -d
+  # .env de la raiz (recomendado): definir COST_GUARD_SHARED_SECRET (misma variable para backend y n8n)
+  cp .env.example .env
 
-docker compose ps
+  # Dependencias del preflight de arranque
+  pip install -r scripts/preflight/requirements.txt
 
-docker compose logs -f backend
 
-docker compose down    #Los datos persisten.
-docker compose down -v #Borra todo, arranque limpio luego.
+CON DOCKER
+----------
+# Arranque recomendado (valida .env, corre preflight, genera certificados TLS,
+# levanta el stack y verifica salud):
+  bash scripts/up.sh        # Linux / macOS (stack solo, sin tunel)
+  .\scripts\up.ps1          # Windows (PowerShell) (stack solo, sin tunel)
+  make up                   # stack COMPLETO + tunel ngrok (requiere NGROK_AUTHTOKEN)
+  make up-core              # stack solo, sin tunel (equivalente a up.sh)
+
+# Arranque manual (equivalente):
+  bash openssl/generate-certs.sh
+  docker compose -p mesa_local up -d --build
+  docker compose -p mesa_local ps
+  curl -k -fsS https://localhost/api/v1/health
+  curl -k -fsS https://localhost/api/v1/health/db
+
+# Logs / estado:
+  docker compose -p mesa_local ps
+  docker compose -p mesa_local logs -f backend
+
+# Tunel publico (canal telefonia / Twilio): "make up" ya lo levanta.
+  make tunnel
+  # o bien:
+  docker compose -p mesa_local --profile tunnel up -d ngrok
+
+# Baja normal (los datos PERSISTEN):
+  make down                 # incluye el profile tunnel (detiene ngrok)
+  # o bien:
+  docker compose -p mesa_local --profile tunnel down
+
+# Baja total (borra los volumenes: base de datos y N8N limpios):
+  docker compose -p mesa_local --profile tunnel down -v
+
+
+SIN DOCKER (desarrollo local; ajustar los comandos segun tu sistema)
+--------------------------------------------------------------------
+# PostgreSQL (ejemplo Windows):
+  net start postgresql-x64-18
+# Backend:
+  cd App/Backend
+  alembic upgrade head
+  uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+# Frontend:
+  cd App/Frontend
+  npm run dev

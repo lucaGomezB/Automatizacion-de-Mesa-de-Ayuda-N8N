@@ -50,17 +50,17 @@ Cada trigger del workflow SHALL propagar el instante de ingreso antes de cualqui
 
 ### Requirement: N8N-GUARD-002 — El caller de la guarda usa el item corriente, sin referencia frágil
 
-El cuerpo del nodo `Guard de costo` SHALL resolver el número de origen llamante (`caller`) desde el item corriente del propio nodo (el payload del handoff, campo `caller`) y MUST NOT usar la referencia `$('Sellar ingreso telefonia').item`, que depende de la resolución de `pairedItem` y puede devolver `null` sin señal. Como el nodo de sellado es la entrada directa de la guarda, el item corriente YA contiene el `caller` entregado por el backend, por lo que no se requiere una referencia cruzada entre nodos. La ausencia del número de origen MUST NOT impedir la evaluación de la guarda: `caller` es opcional y la reserva SHALL continuar.
+El cuerpo del nodo `Guard de costo` SHALL resolver el número de origen llamante (`caller`) desde el item corriente del propio nodo (el payload del handoff, campo `caller_number`) y MUST NOT usar la referencia `$('Sellar ingreso telefonia').item`, que depende de la resolución de `pairedItem` y puede devolver `null` sin señal. Como el nodo de sellado es la entrada directa de la guarda, el item corriente YA contiene el `caller_number` entregado por el backend, por lo que no se requiere una referencia cruzada entre nodos. La ausencia del número de origen MUST NOT impedir la evaluación de la guarda: el origen es opcional y la reserva SHALL continuar. El campo del payload de salida hacia la guarda conserva la clave `caller` porque corresponde al schema `CostGuardRequest` del backend (no a una propiedad de expresión de n8n); `caller_number` es el nombre del campo del handoff porque `caller` es una propiedad bloqueada por el sandbox de expresiones de n8n.
 
 #### Scenario: El cuerpo de la guarda usa el item corriente y ninguna referencia cruzada
 
 - **WHEN** la suite estructural inspecciona el body del nodo `Guard de costo`
-- **THEN** el body resuelve `caller` desde `$json` y NO referencia `$('Sellar ingreso telefonia')` (ni por `.item` ni por `.first()`)
+- **THEN** el body resuelve `caller` desde `$json.caller_number` y NO referencia `$('Sellar ingreso telefonia')` (ni por `.item` ni por `.first()`)
 
 #### Scenario: La ausencia del caller no impide la guarda
 
 - **WHEN** el item sellado no expone un número de origen
-- **THEN** el body resuelve `caller` a `null` y la guarda igual evalúa la reserva, sin abortar el flujo
+- **THEN** el body resuelve `caller` a `null` (origen `caller_number` ausente) y la guarda igual evalúa la reserva, sin abortar el flujo
 
 ## ADDED Requirements
 

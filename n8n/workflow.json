@@ -271,7 +271,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// C-52 (N8N-PHONE-004): el instante de ingreso de telefonia lo sella el\n// BACKEND al recibir el callback de grabacion (design.md D4). n8n NO lo\n// regenera: este nodo PROPAGA el `ingresado_en` del handoff y normaliza la\n// descripcion pseudonimizada al campo `descripcion` del item corriente, de\n// modo que la latencia end-to-end incluya descarga, STT, pseudonimizacion y\n// handoff del backend.\nconst item = $input.item;\nconst ingresadoEn =\n  item.json.ingresado_en === undefined ? null : item.json.ingresado_en;\nreturn [\n  {\n    json: {\n      ...item.json,\n      ingresado_en: ingresadoEn,\n      descripcion:\n        item.json.descripcion_pseudonimizada || item.json.descripcion || '',\n      canal_raw: 'telefonia'\n    }\n  }\n];"
+        "jsCode": "// C-52 (N8N-PHONE-004): el instante de ingreso de telefonia lo sella el\n// BACKEND al recibir el callback de grabacion (design.md D4). n8n NO lo\n// regenera: este nodo PROPAGA el `ingresado_en` del handoff y normaliza la\n// descripcion pseudonimizada al campo `descripcion` del item corriente, de\n// modo que la latencia end-to-end incluya descarga, STT, pseudonimizacion y\n// handoff del backend.\n//\n// F1 (fix de llamada real): el webhook de n8n entrega el body HTTP NESTED bajo\n// `body` (item shape {headers, params, query, body, ...}). Se lee el payload\n// anidado y se aplana al item corriente (descripcion, ingresado_en, call_sid,\n// caller_number, canal_raw) para que los nodos aguas abajo sigan operando.\nconst item = $input.item;\nconst body =\n  item.json && typeof item.json.body === 'object' && item.json.body !== null\n    ? item.json.body\n    : {};\nconst ingresadoEn =\n  body.ingresado_en === undefined ? null : body.ingresado_en;\nreturn [\n  {\n    json: {\n      ...item.json,\n      descripcion:\n        body.descripcion_pseudonimizada || item.json.descripcion || '',\n      ingresado_en: ingresadoEn,\n      call_sid: body.call_sid || item.json.call_sid || null,\n      caller_number: body.caller_number || item.json.caller_number || null,\n      canal_raw: 'telefonia'\n    }\n  }\n];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -745,7 +745,7 @@
         "sendBody": true,
         "contentType": "json",
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ provider: 'n8n_gemini', caller: $json.caller || null }) }}",
+        "jsonBody": "={{ JSON.stringify({ provider: 'n8n_gemini', caller: $json.caller_number || null }) }}",
         "options": {},
         "sendHeaders": true,
         "headerParameters": {

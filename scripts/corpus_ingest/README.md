@@ -14,6 +14,8 @@ trazabilidad. NUNCA imprime ni loguea descripciones.
 |---------|-----|
 | `ingest_corpus.py` | Harness CLI + logica pura (mapeo de canal, payload, escritura XLSX/CSV). |
 | `test_ingest_corpus.py` | Tests unitarios offline (sin red, con fixtures temporales). |
+| `pseudonymize_corpus.py` | Genera una copia pseudonimizada del CSV del corpus (Ley 25.326). |
+| `test_pseudonymize_corpus.py` | Tests unitarios offline del pseudonimizador de corpus. |
 | `requirements.txt` | Dependencias (`requests`, `openpyxl`). |
 
 ## Instalacion
@@ -125,6 +127,51 @@ hibrido puede pegarle a Gemini y devolver 503 transitorios).
   loguea y no las escribe en el sidecar.
 - Ante error solo se reporta un label corto (`http502`, `timeout`, ...), nunca
   el cuerpo de la respuesta.
+
+## Pseudonimizacion del corpus (`pseudonymize_corpus.py`)
+
+Genera una copia PSEUDONIMIZADA del CSV del corpus para poder publicarlo
+(Ley 25.326 de Proteccion de Datos Personales). El unico campo de texto libre es
+`Descripcion`; ahi pueden venir nombres de personas, emails, telefonos y
+hostnames. La publicacion (destrackear `data/Corpus Tesis*` en `.gitignore` y
+commitear) es un paso MANUAL y separado que este script NO ejecuta.
+
+Reutiliza el pseudonimizador de PRODUCCION
+(`App/Backend/app/utils/pseudonymizer.py`) como unica fuente de verdad de los
+patrones; no reimplementa regexes. Solo necesita CSV + stdlib: `openpyxl` NO es
+requerido y el XLSX no se toca.
+
+```bash
+# 0) Smoke sin escritura: reporta conteos de reemplazo y PII residual.
+python3 scripts/corpus_ingest/pseudonymize_corpus.py --dry-run
+
+# 1) Corrida real: escribe data/Corpus Tesis - Hoja 1 (pseudonimizado).csv
+python3 scripts/corpus_ingest/pseudonymize_corpus.py
+```
+
+### Flags
+
+| Flag | Default | Descripcion |
+|------|---------|-------------|
+| `--csv` | `data/Corpus Tesis - Hoja 1.csv` | CSV de entrada (crudo). Nunca se sobrescribe. |
+| `--out` | `data/Corpus Tesis - Hoja 1 (pseudonimizado).csv` | CSV de salida. No puede ser igual a `--csv`. |
+| `--internal-domains` | env `PSEUDONYMIZATION_INTERNAL_DOMAINS` | Dominios corporativos a enmascarar como `[HOST]` (coma o lista JSON). |
+| `--dry-run` | off | Calcula y reporta, sin escribir archivos. |
+
+### Garantias
+
+- Enmascara SOLO la columna `Descripcion`; fila de titulo, encabezado y el resto
+  de las columnas se preservan. Row count y estilo (`\r\n`, quoting minimal)
+  intactos.
+- Reporta conteos AGREGADOS por categoria (email/telefono/host/persona). Nunca
+  imprime ni loguea texto de caso.
+- Escaneo residual post-enmascarado (email/telefono): si queda PII visible,
+  el proceso termina con exit code distinto de cero.
+- No sobrescribe el archivo de entrada (si `--out == --csv`, aborta con exit 2).
+
+Los dominios internos se derivan igual que produccion: de
+`PSEUDONYMIZATION_INTERNAL_DOMAINS` (JSON), con `--internal-domains` como
+override explicito. Hoy el default del proyecto es `[]`.
 
 ## Nota de versionado
 

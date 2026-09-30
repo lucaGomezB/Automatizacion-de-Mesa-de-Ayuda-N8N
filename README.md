@@ -32,7 +32,7 @@ bash scripts/up.sh        # Linux / macOS
 ```
 
 ```bash
-make up                   # alternativa si tenes make instalado
+make up                   # alternativa si tenes make instalado (incluye el tunel ngrok)
 ```
 
 Antes de ejecutarlo, prepara **una sola vez** `App/Backend/.env`:
@@ -89,14 +89,14 @@ imprime una advertencia audible. Es una excepcion deliberada, no el camino norma
 **Linux / macOS:**
 ```bash
 bash scripts/up.sh
-# Alternativa equivalente si make esta instalado:
+# Alternativa con make (incluye el tunel ngrok; `make up-core` = stack solo):
 make up
 ```
 
 **Windows (PowerShell):**
 ```powershell
 .\scripts\up.ps1
-# Alternativa equivalente si make esta instalado:
+# Alternativa con make (incluye el tunel ngrok; `make up-core` = stack solo):
 make up
 ```
 
@@ -104,6 +104,27 @@ make up
 ejecutar directamente. En Windows, para obtener `make` usar
 `choco install make` (requiere Chocolatey); si no se desea instalar `make`,
 ejecutar `.\scripts\up.ps1` directamente.
+
+#### Targets de make
+
+`make` es un atajo sobre los mismos scripts y comandos de Docker:
+
+| Target | Que hace |
+|--------|----------|
+| `make up` | Levanta el stack completo **incluyendo el tunel ngrok** (`scripts/up.sh` + `docker compose --profile tunnel up -d ngrok`). Requiere `NGROK_AUTHTOKEN` en el `.env` de la raiz. |
+| `make up-core` | Levanta solo el stack (los 6 servicios), sin tunel. Equivale a `bash scripts/up.sh`. |
+| `make tunnel` | Levanta solo el contenedor ngrok; el stack debe estar arriba. |
+| `make down` | Detiene y remueve el stack **incluyendo ngrok** (`docker compose --profile tunnel down`); los volumenes persisten. |
+| `make ps` | Estado y salud de los servicios. |
+| `make logs` | Sigue los logs de todos los servicios (`-f`). |
+| `make health` | Consulta los endpoints de salud por HTTPS. |
+| `make preflight` | Preflight de costo (read-only, sin Docker ni red). |
+| `make dry-run` / `make dry-run-email` | Harness de dry-run local (ver `docs/dry-run-harness.md`). |
+
+> El tunel ngrok **publica el stack a internet** a traves del dominio reservado de
+> ngrok, por eso el compose lo gatea en el profile `tunnel`. `make up` lo incluye
+> por comodidad; si no queres exponer el stack, usa `make up-core`. El token se
+> define en `NGROK_AUTHTOKEN` del `.env` de la raiz (ver `.env.example`).
 
 Al finalizar, el comando imprime las URLs de acceso y recuerda importar
 `n8n/workflow.json` y configurar las credenciales de Outlook, Twilio y Gemini en
@@ -229,7 +250,7 @@ Ambas respuestas deben devolver `{"status": "ok"}`.
 
 ### 6. Importar y activar el workflow N8N
 
-1. Abrir `http://localhost:5678` (usuario: `admin`, contraseña: `admin`)
+1. Abrir `http://localhost:5678` (usuario: `admin`, contraseña: `n8n_local_dev`; es el default local del `.env` de la raiz, sobreescribible con `N8N_BASIC_AUTH_USER` / `N8N_BASIC_AUTH_PASSWORD`)
 2. **Workflows → Import from file** → seleccionar `n8n/workflow.json`
 3. Configurar las credenciales de Outlook, Twilio y Gemini en N8N
 4. Activar el workflow con el toggle superior derecho

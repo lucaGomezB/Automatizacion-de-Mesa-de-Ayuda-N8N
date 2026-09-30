@@ -3949,9 +3949,9 @@ def test_c47_restauracion_fusiona_sello_y_fija_allowed():
 def test_c47_caller_usa_el_item_corriente_sin_referencia_cruzada():
     """
     RED (N8N-GUARD-002) MODIFICADO por C-52: el body de `Guard de costo`
-    resuelve `caller` desde el item corriente (`$json.caller`, campo del handoff
-    pseudonimizado del backend) y NO referencia `$('Sellar ingreso telefonia')`
-    (ni `.item` ni `.first()`).
+    resuelve `caller` desde el item corriente (`$json.caller_number`, campo del
+    handoff pseudonimizado del backend) y NO referencia `$('Sellar ingreso
+    telefonia')` (ni `.item` ni `.first()`).
     """
     wf = load_workflow()
     by_name, _ = index_nodes(wf)
@@ -3959,7 +3959,7 @@ def test_c47_caller_usa_el_item_corriente_sin_referencia_cruzada():
     caller = str(body.get("caller", ""))
     body_str = json.dumps(body)
 
-    assert "$json.caller" in caller, (
+    assert "$json.caller_number" in caller, (
         f"El body de {GUARD_NODE_NAME!r} no resuelve caller desde el item corriente "
         f"(caller={caller!r})"
     )
@@ -4013,7 +4013,7 @@ def test_c47_caller_ausente_resuelve_null_sin_abortar():
     params = node.get("parameters", {})
     caller = str(http_json_body(node).get("caller", ""))
 
-    assert "$json.caller" in caller, (
+    assert "$json.caller_number" in caller, (
         f"caller no resuelve el origen desde el item corriente (caller={caller!r})"
     )
     assert "|| null" in caller or "?? null" in caller, (
@@ -4191,8 +4191,9 @@ def test_c52_sello_telefonia_es_passthrough():
     active = _active_js_code(by_name[SELLO_NODE_NAME])
 
     assert "ingresado_en" in raw, "El sello no propaga 'ingresado_en'"
-    assert "item.json.ingresado_en" in raw, (
-        "El sello debe propagar el `ingresado_en` del handoff (item.json.ingresado_en)"
+    assert "item.json.body" in raw, (
+        "F1 (c-52): el sello debe leer el `ingresado_en` del handoff anidado bajo "
+        "`body` (item.json.body), forma que entrega el webhook de n8n"
     )
     assert "toISOString" not in active and "new Date" not in active, (
         "C-52 (N8N-PHONE-004): el sello NO debe regenerar el instante con el reloj "
@@ -4203,10 +4204,72 @@ def test_c52_sello_telefonia_es_passthrough():
     )
 
 
+def test_c52_f1_sello_lee_el_body_anidado_y_aplana_al_item():
+    """
+    RED (F1, defecto de llamada real): el webhook de n8n entrega el body HTTP
+    NESTED bajo `body` (item shape `{headers, params, query, body, ...}`). Dado un
+    item webhook-style, `Sellar ingreso telefonia` debe leer `item.json.body.*` y
+    aplanar en el item corriente `descripcion` (= body.descripcion_pseudonimizada),
+    `ingresado_en` (= body.ingresado_en), `call_sid` y `caller_number`, marcando
+    `canal_raw='telefonia'` para que los nodos aguas abajo sigan operando.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    raw = _js_code(by_name[SELLO_NODE_NAME])
+
+    assert "item.json.body" in raw, (
+        "F1: el sello debe leer el payload anidado del webhook (item.json.body)"
+    )
+    for campo in (
+        "descripcion_pseudonimizada",
+        "ingresado_en",
+        "call_sid",
+        "caller_number",
+    ):
+        assert campo in raw, (
+            f"F1: el sello no propaga '{campo}' del body al item corriente"
+        )
+    assert "descripcion:" in raw, (
+        "F1: el sello debe aplanar 'descripcion' en el item corriente"
+    )
+    assert "canal_raw: 'telefonia'" in raw, (
+        "F1: el sello debe marcar canal_raw='telefonia'"
+    )
+    assert "item.json.descripcion_pseudonimizada" not in raw, (
+        "F1: el sello no debe leer 'descripcion_pseudonimizada' del nivel superior: "
+        "el webhook anida el payload bajo `body`"
+    )
+    assert "item.json.ingresado_en" not in raw, (
+        "F1: el sello no debe leer 'ingresado_en' del nivel superior: "
+        "el webhook anida el payload bajo `body`"
+    )
+
+
+def test_c52_f1_sello_tolera_body_ausente_sin_abortar():
+    """
+    TRIANGULATE (F1): si el item no trae `body` (o no es un objeto), el sello
+    debe degradar a un objeto vacio en vez de lanzar, conservando los campos
+    originales del item (`...item.json`) y sellando `canal_raw='telefonia'`.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    raw = _js_code(by_name[SELLO_NODE_NAME])
+
+    assert "typeof item.json.body === 'object'" in raw, (
+        "F1: el sello debe validar que `body` sea un objeto antes de leerlo"
+    )
+    assert "item.json.body !== null" in raw, (
+        "F1: el sello debe tolerar `body` nulo sin abortar"
+    )
+    assert "...item.json" in raw, (
+        "F1: el sello debe conservar los campos originales del item (spread)"
+    )
+
+
 def test_c52_guard_caller_desde_json():
     """
     RED (7.3b): el `Guard de costo` resuelve `caller` desde el item corriente
-    (`$json.caller`, campo del handoff) sin referencia cruzada al sello.
+    (`$json.caller_number`, campo del handoff) sin referencia cruzada al sello.
     """
     wf = load_workflow()
     by_name, _ = index_nodes(wf)
@@ -4214,8 +4277,8 @@ def test_c52_guard_caller_desde_json():
     body = http_json_body(by_name[GUARD_NODE_NAME])
     caller = str(body.get("caller", ""))
 
-    assert "$json.caller" in caller, (
-        f"El Guard de costo no resuelve caller desde $json.caller (caller={caller!r})"
+    assert "$json.caller_number" in caller, (
+        f"El Guard de costo no resuelve caller desde $json.caller_number (caller={caller!r})"
     )
     assert SELLO_NODE_NAME not in json.dumps(body), (
         f"El Guard de costo referencia {SELLO_NODE_NAME!r}: referencia cruzada fragil"
@@ -4907,6 +4970,11 @@ def test_guard_jsonbody_es_expresion_json_stringify_sin_firma():
     )
     assert "caller:" in body, (
         f"El jsonBody de {GUARD_NODE_NAME!r} debe incluir la clave nativa 'caller:'"
+    )
+    assert "$json.caller_number" in body, (
+        f"El jsonBody de {GUARD_NODE_NAME!r} debe resolver el origen desde "
+        f"'$json.caller_number' (campo del handoff); 'caller' es propiedad bloqueada "
+        f"por el sandbox de expresiones de n8n"
     )
 
 

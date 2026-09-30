@@ -333,7 +333,7 @@ class TelefoniaService:
         payload = build_telefonia_handoff_payload(
             descripcion_pseudonimizada=resultado.texto,
             call_sid=ingreso.call_sid,
-            caller=callback.caller,
+            caller_number=callback.caller,
             ingresado_en=ingreso.ingresado_en,
         )
         _dispatch_handoff(self._notifier, payload)
