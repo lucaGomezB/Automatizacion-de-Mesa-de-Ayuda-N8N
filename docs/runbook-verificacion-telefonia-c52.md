@@ -84,11 +84,107 @@ Confirmar que cada variable tiene el valor real (no placeholder). Nombres EXACTO
 
 ### 3.5 n8n
 
-- [ ] Workflow importado desde `n8n/workflow.json`.
+- [ ] Workflow importado desde `n8n/workflow.json` (**solo en una instancia nueva**; en la instancia de desarrollo ya configurada NO reimportar: parchear en sitio, ver §3.5.1).
 - [ ] Workflow **activo** (toggle ON en la UI).
 - [ ] El nodo `Llamada telefonica` es un webhook `POST` en la ruta `/webhook/telefonia-handoff` con autenticación `headerAuth` (secreto `X-N8N-Secret`). **BLOQUEANTE**: en `n8n/workflow.json` la credencial es el placeholder `REPLACE_WITH_TELEFONIA_HANDOFF_CREDENTIAL_ID`; hay que crear la credencial Header Auth en la instancia (mismo valor que `N8N_WEBHOOK_SECRET`) y asignarla al nodo.
 - [ ] El nodo `Guard de costo` tiene configurado `COST_GUARD_SHARED_SECRET` (`$env.COST_GUARD_SHARED_SECRET`).
 - [ ] `BACKEND_URL` del workflow apunta al backend.
+
+#### 3.5.1 Actualizar el workflow de la instancia activa (parche en sitio)
+
+La instancia que corre tiene el workflow **activo** `JYizNfNZXuhCr8Z7`
+("Automatizacion Mesa de Ayuda - Gmail v2") con **credenciales reales**.
+`n8n/workflow.json` del repo tiene otro `id` (`P7w2iELDu7O3e8B0`, inactivo) y
+**credenciales placeholder**: importarlo NO actualiza el workflow activo, crea o
+sobrescribe el duplicado inactivo. Para aplicar cambios de nodos al workflow que
+realmente corre, se parchea **en sitio** (exportar -> sustituir los nodos -> importar ->
+activar/publicar -> reiniciar). El import hace *upsert* por `id`.
+
+1. Exportar el workflow activo y respaldarlo (el export del CLI devuelve un **array** de workflows, no un objeto):
+
+   ```bash
+   mkdir -p /tmp/opencode/n8n-patch
+   docker compose -p mesa_local exec -T n8n n8n export:workflow --id=JYizNfNZXuhCr8Z7 --output=/tmp/live.json
+   docker compose -p mesa_local cp n8n:/tmp/live.json /tmp/opencode/n8n-patch/live.json
+   ```
+
+2. Sustituir SOLO los nodos a actualizar con los del repo (`n8n/workflow.json`), sin tocar `id` ni credenciales. Ejecutar desde la raiz del repo:
+
+   ```bash
+   python3 - <<'PY'
+   import json, pathlib
+   live = json.loads(pathlib.Path("/tmp/opencode/n8n-patch/live.json").read_text(encoding="utf-8"))
+   if isinstance(live, dict):          # el export del CLI devuelve un array
+       live = [live]
+   wf = live[0]
+   repo = json.loads(pathlib.Path("n8n/workflow.json").read_text(encoding="utf-8"))
+   if isinstance(repo, list):
+       repo = repo[0]
+   repo_nodes = {n["name"]: n for n in repo["nodes"]}
+
+   # Nodos/claves a sincronizar (ajustar segun el cambio):
+   #   - "jsCode"/"jsonBody": reemplaza ESA clave dentro de `parameters`.
+   #   - None: reemplaza el bloque `parameters` COMPLETO. Se usa para el nodo de
+   #     memoria Redis (F3): quita el parametro obsoleto `sessionId` y fija
+   #     `sessionIdType: "customKey"` + `sessionKey`.
+   MEMORY_NODE = (
+       "Con el fin de enviar los datos que parsee la IA como JSON, "
+       "se guardaran en memoria por un momento"
+   )
+   targets = {
+       "Sellar ingreso telefonia": "jsCode",
+       "Guard de costo": "jsonBody",
+       MEMORY_NODE: None,
+   }
+   changed = []
+   for name, key in targets.items():
+       node = next(n for n in wf["nodes"] if n.get("name") == name)
+       if key is None:
+           new_val = repo_nodes[name].get("parameters", {})
+           if node.get("parameters") != new_val:
+               node["parameters"] = new_val
+               changed.append(f"{name}.parameters")
+           continue
+       new_val = repo_nodes[name]["parameters"][key]
+       if node.setdefault("parameters", {}).get(key) != new_val:
+           node["parameters"][key] = new_val
+           changed.append(f"{name}.{key}")
+
+   pathlib.Path("/tmp/opencode/n8n-patch/patched.json").write_text(
+       json.dumps(live, ensure_ascii=False, indent=2), encoding="utf-8")
+   print("Workflow:", wf.get("id"), "| active:", wf.get("active"), "| cambios:", changed or "ninguno")
+   PY
+   ```
+
+3. Importar, activar/publicar y reiniciar (n8n 2.x usa modelo *publish*; el import **desactiva** el workflow y los cambios del CLI no toman efecto con n8n corriendo):
+
+   ```bash
+   docker compose -p mesa_local cp /tmp/opencode/n8n-patch/patched.json n8n:/tmp/patched.json
+   docker compose -p mesa_local exec -T n8n n8n import:workflow --input=/tmp/patched.json
+   docker compose -p mesa_local exec -T n8n n8n update:workflow --id=JYizNfNZXuhCr8Z7 --active=true   # deprecado en 2.x; alias de publish
+   docker compose -p mesa_local exec -T n8n n8n publish:workflow --id=JYizNfNZXuhCr8Z7
+   docker compose -p mesa_local restart n8n
+   ```
+
+4. Verificar re-exportando y buscando el codigo nuevo:
+
+   ```bash
+   docker compose -p mesa_local exec -T n8n n8n export:workflow --id=JYizNfNZXuhCr8Z7 --output=/tmp/verify.json
+   docker compose -p mesa_local cp n8n:/tmp/verify.json /tmp/opencode/n8n-patch/verify.json
+
+   grep -c 'caller_number' /tmp/opencode/n8n-patch/verify.json                      # F2: esperado >= 1
+   grep -c 'body.descripcion_pseudonimizada' /tmp/opencode/n8n-patch/verify.json   # F1: esperado >= 1
+   grep -cE '\$json\.caller\b' /tmp/opencode/n8n-patch/verify.json                  # viejo: esperado 0
+   grep -c 'customKey' /tmp/opencode/n8n-patch/verify.json                          # F3: esperado >= 1
+   grep -c '"sessionId":' /tmp/opencode/n8n-patch/verify.json                       # F3 viejo: esperado 0
+   ```
+
+   - [ ] `docker compose ps n8n` muestra el contenedor arriba tras el restart.
+   - [ ] El log de n8n muestra `Activated workflow "Automatizacion Mesa de Ayuda - Gmail v2" (ID: JYizNfNZXuhCr8Z7)`.
+
+> **Privacidad**: `live.json`/`patched.json`/`verify.json` referencian credenciales de la instancia (ids/nombres, no secretos). No commitearlos ni compartirlos. `live.json` es el respaldo previo: reimportarlo revierte el parche.
+
+> **Nota**: los fixes de c-52 que suelen requerir este parche son F1 (`Sellar ingreso telefonia` debe leer `body.*`, por el body anidado del webhook), F2 (`Guard de costo` no debe tocar la propiedad bloqueada `caller`; usa `caller_number`) y F3 (el nodo de memoria Redis debe declarar `sessionIdType: "customKey"` y una `sessionKey`, y NO el parametro obsoleto `sessionId`: en typeVersion >= 1.2 `sessionId` se ignora, el nodo cae en `fromInput` y falla con "No session ID found").
 
 ### 3.6 Acceso a datos para inspección
 

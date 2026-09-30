@@ -284,7 +284,8 @@
     },
     {
       "parameters": {
-        "sessionId": "={{ $json.sessionId || $execution.id }}",
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.call_sid || $execution.id }}",
         "sessionTTL": 3600,
         "contextWindowLength": 10
       },

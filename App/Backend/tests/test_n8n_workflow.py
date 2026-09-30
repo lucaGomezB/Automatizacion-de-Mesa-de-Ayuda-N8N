@@ -3484,8 +3484,19 @@ def test_c40_memory_redis_node_declares_credentials_and_session_params():
     assert parameters, (
         f"{MEMORY_REDIS_NODE_NAME!r} no declara parametros de sesion: fallaria en runtime"
     )
-    assert "sessionId" in parameters, (
-        f"{MEMORY_REDIS_NODE_NAME!r} no declara la clave de sesion ('sessionId')"
+    # F3 (c-52): `sessionId` NO es un parametro real del nodo en typeVersion >= 1.2
+    # (se ignora; el nodo cae en `fromInput` y falla con "No session ID found").
+    # El contrato real es el selector `sessionIdType` + la `sessionKey`.
+    assert parameters.get("sessionIdType") == "customKey", (
+        f"{MEMORY_REDIS_NODE_NAME!r} no declara sessionIdType='customKey' "
+        f"(sessionIdType={parameters.get('sessionIdType')!r})"
+    )
+    assert str(parameters.get("sessionKey", "")).strip(), (
+        f"{MEMORY_REDIS_NODE_NAME!r} no declara una sessionKey no vacia "
+        f"(sessionKey={parameters.get('sessionKey')!r})"
+    )
+    assert "sessionId" not in parameters, (
+        f"{MEMORY_REDIS_NODE_NAME!r} conserva el parametro obsoleto 'sessionId'"
     )
     assert all(value not in (None, "") for value in parameters.values()), (
         f"{MEMORY_REDIS_NODE_NAME!r} tiene parametros vacios (parameters={parameters!r})"
@@ -3516,6 +3527,59 @@ def test_c40_memory_redis_credential_uses_placeholder():
     )
     assert "REPLACE_WITH" in json.dumps(redis_cred), (
         f"La credencial redis no usa un placeholder REPLACE_WITH_*: {redis_cred!r}"
+    )
+
+
+def test_c52_memory_node_uses_custom_key_session():
+    """
+    RED → GREEN (F3, c-52): el nodo de memoria Redis declara el selector
+    `sessionIdType = 'customKey'` y una `sessionKey` no vacia, y NO conserva
+    `sessionId`.
+
+    `sessionId` NO es un parametro real del nodo en typeVersion >= 1.2 (se
+    ignora). Sin `sessionIdType`, el nodo cae en `fromInput`, evalua
+    `$json.sessionId` —que el handoff no trae— y falla con
+    "No session ID found" (`getSessionId` / `MemoryRedisChat.supplyData`).
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    assert MEMORY_REDIS_NODE_NAME in by_name, (
+        f"No existe el nodo de memoria {MEMORY_REDIS_NODE_NAME!r}"
+    )
+    parameters = by_name[MEMORY_REDIS_NODE_NAME].get("parameters", {}) or {}
+
+    assert parameters.get("sessionIdType") == "customKey", (
+        f"{MEMORY_REDIS_NODE_NAME!r} no declara sessionIdType='customKey' "
+        f"(sessionIdType={parameters.get('sessionIdType')!r})"
+    )
+    session_key = parameters.get("sessionKey", "")
+    assert isinstance(session_key, str) and session_key.strip(), (
+        f"{MEMORY_REDIS_NODE_NAME!r} no declara una sessionKey no vacia "
+        f"(sessionKey={session_key!r})"
+    )
+    assert "sessionId" not in parameters, (
+        f"{MEMORY_REDIS_NODE_NAME!r} conserva el parametro obsoleto 'sessionId' "
+        "(ignorado por el nodo en typeVersion >= 1.2)"
+    )
+
+
+def test_c52_memory_node_session_key_prefers_call_sid():
+    """
+    TRIANGULATE (F3, c-52): la `sessionKey` se resuelve dinamicamente desde el
+    `CallSid` del handoff (`$json.call_sid`), con `$execution.id` como respaldo;
+    no es un valor constante.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    parameters = by_name[MEMORY_REDIS_NODE_NAME].get("parameters", {}) or {}
+    session_key = str(parameters.get("sessionKey", ""))
+
+    assert "$json.call_sid" in session_key or "$execution.id" in session_key, (
+        f"La sessionKey {session_key!r} no referencia $json.call_sid ni $execution.id"
+    )
+    assert session_key.startswith("="), (
+        f"La sessionKey {session_key!r} no esta declarada como expresion n8n"
     )
 
 
