@@ -4,7 +4,7 @@ Tests del handoff autenticado backend -> n8n del canal de telefonia (c-52).
 TDD: se escriben ANTES de la variante dedicada en `app/utils/n8n_webhook.py`.
 
 Cubren:
-    - Payload EXACTO {descripcion_pseudonimizada, call_sid, caller, ingresado_en}.
+    - Payload EXACTO {descripcion_pseudonimizada, call_sid, caller_number, ingresado_en}.
     - Secreto compartido en la invocacion (header `X-N8N-Secret`).
     - El payload NO expone el transcript crudo ni PII en claro.
     - La falta de URL o de secreto NO produce un handoff silencioso.
@@ -38,7 +38,7 @@ def _payload():
     return _module().build_telefonia_handoff_payload(
         descripcion_pseudonimizada="Hola, soy [PERSONA]",
         call_sid="CA-HANDOFF-1",
-        caller="+5492615551234",
+        caller_number="+5492615551234",
         ingresado_en=_NOW,
     )
 
@@ -51,11 +51,11 @@ def test_build_payload_tiene_exactamente_las_cuatro_claves():
     assert set(payload.keys()) == {
         "descripcion_pseudonimizada",
         "call_sid",
-        "caller",
+        "caller_number",
         "ingresado_en",
     }
     assert payload["call_sid"] == "CA-HANDOFF-1"
-    assert payload["caller"] == "+5492615551234"
+    assert payload["caller_number"] == "+5492615551234"
     assert payload["ingresado_en"] == _NOW.isoformat()
 
 
@@ -135,7 +135,7 @@ def test_payload_pseudonimizado_no_contiene_pii_cruda():
     payload = _module().build_telefonia_handoff_payload(
         descripcion_pseudonimizada=pseudonimizado,
         call_sid="CA-PII-2",
-        caller=None,
+        caller_number=None,
         ingresado_en=_NOW,
     )
     serializado = str(payload)

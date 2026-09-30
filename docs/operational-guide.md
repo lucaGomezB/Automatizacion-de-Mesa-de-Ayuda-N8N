@@ -117,14 +117,14 @@ los endpoints de salud por HTTPS.
 **Linux / macOS:**
 ```bash
 bash scripts/up.sh
-# Alternativa equivalente si make esta instalado:
+# Alternativa con make (incluye el tunel ngrok; `make up-core` = stack solo):
 make up
 ```
 
 **Windows (PowerShell):**
 ```powershell
 .\scripts\up.ps1
-# Alternativa equivalente si make esta instalado:
+# Alternativa con make (incluye el tunel ngrok; `make up-core` = stack solo):
 make up
 ```
 
@@ -134,6 +134,24 @@ bloquea y no se levanta ningun servicio. El bypass explicito es
 `UP_SKIP_COST_PREFLIGHT=1`; al usarlo el arranque continua, pero imprime una
 advertencia audible. Es una excepcion deliberada para escenarios controlados, no
 el camino normal.
+
+#### Targets de make
+
+Con `make` instalado, el arranque y el control tienen atajos sobre los mismos
+comandos de Docker:
+
+| Target | Que hace |
+|--------|----------|
+| `make up` | Stack completo **incluyendo el tunel ngrok** (`scripts/up.sh` + `docker compose --profile tunnel up -d ngrok`). Requiere `NGROK_AUTHTOKEN` en el `.env` de la raiz. |
+| `make up-core` | Solo el stack (6 servicios), sin tunel. Equivale a `bash scripts/up.sh`. |
+| `make tunnel` | Solo el contenedor ngrok (el stack debe estar arriba). |
+| `make down` | Baja el stack **incluyendo ngrok** (`docker compose --profile tunnel down`); los volumenes persisten. |
+| `make ps` / `make logs` / `make health` | Estado, logs y salud de los servicios. |
+| `make preflight` | Preflight de costo (read-only, sin Docker ni red). |
+
+> El tunel ngrok **publica el stack a internet** (dominio reservado de ngrok); el
+> compose lo gatea en el profile `tunnel` justamente por eso. Si no queres exponer
+> el stack, usa `make up-core`.
 
 #### Camino manual (alternativa)
 
@@ -216,7 +234,7 @@ Respuesta esperada:
 ### 1.5 Acceder a N8N e importar el workflow
 
 1. Abrir `http://localhost:5678` en el navegador.
-2. Autenticarse con usuario `admin` / contraseña `admin`.
+2. Autenticarse con usuario `admin` / contraseña `n8n_local_dev` (default local del `.env` de la raiz; sobreescribible con `N8N_BASIC_AUTH_USER` / `N8N_BASIC_AUTH_PASSWORD`).
 3. Importar el workflow: **Workflows → Import from file** → seleccionar
    `n8n/workflow.json` (ya montado en `/data/` del contenedor).
 4. Configurar las credenciales de Outlook, Twilio y Gemini en N8N.
@@ -255,11 +273,13 @@ sin TLS, util solo para desarrollo de la UI).
 ## 2. Detener y reiniciar los servicios
 
 ```bash
-# Detener todos los servicios (los volúmenes persisten)
-docker compose down
+# Detener todos los servicios, INCLUIDO ngrok (los volúmenes persisten)
+docker compose --profile tunnel down
+# o, con make:
+make down
 
 # Detener y borrar todos los volúmenes (base de datos limpia)
-docker compose down -v
+docker compose --profile tunnel down -v
 
 # Reiniciar un servicio específico
 docker compose restart backend
@@ -268,6 +288,13 @@ docker compose restart backend
 docker compose logs -f backend
 docker compose logs -f n8n
 ```
+
+> **Importante**: `docker compose down` SIN el flag `--profile tunnel` NO detiene el
+> contenedor `ngrok`; al quedar vivo, la red `mesa_local_default` no se elimina. Usa
+> siempre `--profile tunnel down` (o `make down`) para una baja completa.
+
+> Para levantar solo el tunel cuando el stack ya esta arriba: `make tunnel` (o
+> `docker compose --profile tunnel up -d ngrok`). Requiere `NGROK_AUTHTOKEN`.
 
 ---
 

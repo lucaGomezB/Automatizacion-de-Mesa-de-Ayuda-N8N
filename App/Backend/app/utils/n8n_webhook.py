@@ -114,7 +114,7 @@ def build_telefonia_handoff_payload(
     *,
     descripcion_pseudonimizada: str,
     call_sid: str,
-    caller: str | None,
+    caller_number: str | None,
     ingresado_en: object,
 ) -> dict:
     """
@@ -126,7 +126,11 @@ def build_telefonia_handoff_payload(
     Args:
         descripcion_pseudonimizada: texto operativo ya pseudonimizado.
         call_sid:                   identificador de la llamada (idempotencia).
-        caller:                     numero llamante o None.
+        caller_number:              numero llamante o None. El campo se llama
+                                    `caller_number` (no `caller`) porque `caller`
+                                    es una propiedad BLOQUEADA por el sandbox de
+                                    expresiones de n8n, de modo que `$json.caller`
+                                    lanzaria y abortaria la guarda de costo.
         ingresado_en:               instante sellado por el backend (datetime o str).
 
     Returns:
@@ -137,7 +141,7 @@ def build_telefonia_handoff_payload(
     return TelefoniaHandoffPayload(
         descripcion_pseudonimizada=descripcion_pseudonimizada,
         call_sid=call_sid,
-        caller=caller,
+        caller_number=caller_number,
         ingresado_en=ingresado_en if ingresado_en is None else str(ingresado_en),
     ).model_dump()
 

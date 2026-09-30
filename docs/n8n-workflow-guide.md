@@ -493,6 +493,11 @@ docker compose --project-name mesa_local ps
 docker compose --project-name mesa_local logs -f backend
 ```
 
+> Atajos con `make`: `make up-core` levanta el stack solo y `make up` levanta el
+> stack **mas el tunel ngrok**. El canal telefonico necesita el tunel publico:
+> `make tunnel` levanta solo ngrok (requiere `NGROK_AUTHTOKEN` en el `.env` de la
+> raiz). Ver `docs/operational-guide.md` §1.3.
+
 ### Importar el workflow en N8N
 
 ```bash
@@ -502,7 +507,7 @@ docker exec mesa_local-n8n-1 n8n import:workflow --input=/data/Automatizacion_Me
 # Resultado esperado: "Successfully imported 1 workflow."
 ```
 
-Acceder a la UI de N8N en http://localhost:5678 (usuario: `admin`, contraseña: `admin`).
+Acceder a la UI de N8N en http://localhost:5678 (usuario: `admin`, contraseña: `n8n_local_dev`; default local del `.env` de la raiz).
 
 ### Importar en N8N (modo UI)
 
@@ -514,12 +519,17 @@ Acceder a la UI de N8N en http://localhost:5678 (usuario: `admin`, contraseña: 
 ### Detener / limpiar
 
 ```bash
-# Detener (mantiene volumes = datos persisten)
-docker compose --project-name mesa_local down
+# Detener, INCLUIDO ngrok (mantiene volumes = datos persisten)
+docker compose --project-name mesa_local --profile tunnel down
+# o, con make:
+make down
 
 # Detener + borrar todo (base de datos limpia)
-docker compose --project-name mesa_local down -v
+docker compose --project-name mesa_local --profile tunnel down -v
 ```
+
+> `down` sin `--profile tunnel` no detiene `ngrok` y deja la red `mesa_local_default`
+> en uso.
 
 ---
 
@@ -611,7 +621,7 @@ cd App/Backend
 python -m pytest tests/test_n8n_workflow.py -v
 ```
 
-Verifica 187 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40, C-46, C-47, C-52, C-53, C-55, C-57 y C-58).
+Verifica 189 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40, C-46, C-47, C-52, C-53, C-55, C-57 y C-58).
 
 ### Prueba manual del canal web (C-05)
 
