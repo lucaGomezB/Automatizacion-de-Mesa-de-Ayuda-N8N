@@ -132,6 +132,22 @@ Los scripts `scripts/backup.sh` y `scripts/backup.ps1` existen pero requieren ej
 
 **Recomendacion**: Agregar un cron job en el host o un workflow N8N dedicado que ejecute el backup diariamente.
 
+### 4.5 Calidad de la transcripcion STT del canal telefonico (mejora futura)
+
+El canal telefonico transcribe la grabacion con Gemini (`GEMINI_STT_MODEL`, default `gemini-3.5-transcribe`), modo verbatim, `language_codes=["es-419"]` (`es-AR` no esta soportado), sobre audio de Twilio a **8 kHz mono** (techo de la red telefonica). Verificado en llamadas reales (2026-09-30): la calidad es variable; aparecen errores como "le pie" por "lo pisé". No es un fallo del pipeline — el transcript se genera, la pseudonimizacion opera y el incidente se crea — sino una limitacion de calidad del reconocimiento sobre audio telefonico mas acento rioplatense.
+
+**Estado**: mejora futura, **no bloqueante**. Registrada tambien como riesgo vivo en `docs/runbook-verificacion-telefonia-c52.md` §7.2.
+
+Palancas a evaluar (de menor a mayor esfuerzo):
+
+1. **Medir**: banco de ~10 frases tipicas con su texto esperado y calcular WER por modelo. Hoy **no existe metrica de calidad de STT**.
+2. **Config sin codigo**: `GEMINI_STT_MODEL` y los `language_codes` se ajustan por `.env`; permite A/B de modelos sin tocar codigo.
+3. **Audio**: agregar `trim="trim-silence"` al `<Record>` en `App/Backend/app/cost_guard/twiml.py` (recorta silencio inicial/final y reduce ruido).
+4. **Motor STT dedicado** (Google Cloud Speech-to-Text v2, Deepgram, Whisper): mayor salto esperado; requiere un change propio (nuevo proveedor, costo y dependencia).
+5. **Post-correccion controlada** del texto, con guarda anti-alucinacion y conservando el transcript crudo. Nota: hoy el AI Agent de n8n ya reescribe/normaliza la descripcion (sin guarda explicita).
+
+**Impacto**: calidad del texto que ve el operador. NO afecta la creacion del incidente ni la frontera de PII (la pseudonimizacion es posterior a la transcripcion).
+
 ---
 
 ## 5. Resumen de Prioridades
@@ -147,3 +163,4 @@ Los scripts `scripts/backup.sh` y `scripts/backup.ps1` existen pero requieren ej
 | **Media** | Backup automatico | Feature | Operacion prolongada |
 | — | Pinear version N8N | **Resuelto (C-34)** | — |
 | **Baja** | Build produccion frontend | Deuda tecnica | Rendimiento en prod |
+| **Baja** | Calidad de transcripcion STT (canal telefonia) | Mejora futura | — |
