@@ -228,6 +228,36 @@ services:
       frontend:
         condition: service_started
 
+  # ── ngrok (túnel público, OPCIONAL) ──────────────────────────────────────────
+  # Expone el stack a internet para que Twilio alcance los webhooks en pruebas
+  # locales (canal telefonía, C-52). NO arranca con un `up` normal: vive bajo el
+  # profile "tunnel", porque publicar el stack es una acción sensible.
+  #
+  # Uso:
+  #   docker compose -p mesa_local --profile tunnel up -d ngrok
+  #
+  # Configuración:
+  #   - NGROK_AUTHTOKEN se toma del .env de la raíz (gitignorado).
+  #   - El dominio reservado y el Host header deben coincidir con
+  #     BACKEND_PUBLIC_BASE_URL (App/Backend/.env) y con el whitelist de
+  #     nginx/nginx.conf. Si el dominio cambia, actualizar los tres lugares.
+  #   - El upstream es nginx:443 (TLS self-signed); ngrok no verifica el cert
+  #     upstream por defecto y usa HTTPS para el puerto 443.
+  ngrok:
+    image: ngrok/ngrok:latest
+    profiles: ["tunnel"]
+    restart: unless-stopped
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN:-}
+    command:
+      - http
+      - https://nginx:443
+      - --url=https://tameness-trilogy-unrefined.ngrok-free.dev
+      - --host-header=tameness-trilogy-unrefined.ngrok-free.dev
+    depends_on:
+      nginx:
+        condition: service_started
+
 volumes:
   postgres_data:   # Volume dedicado para este compose (prefijo mesa_local_ asignado por Docker)
   n8n_data:
