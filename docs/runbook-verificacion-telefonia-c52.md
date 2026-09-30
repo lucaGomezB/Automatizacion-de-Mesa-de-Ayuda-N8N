@@ -375,44 +375,44 @@ Síntoma B (al transcribir): el ingreso queda con `transcripcion_estado = 'guard
 
 ### 8.1 Datos de la ejecución
 
-- Fecha/hora de la llamada:
-- Operador:
-- Número Twilio (destino):
-- Número desde el que se llamó:
-- `CallSid`:
-- `RecordingSid`:
-- URL pública usada (`BACKEND_PUBLIC_BASE_URL`):
-- Modelo STT y código de idioma:
+- Fecha/hora de la llamada: 2026-09-30 (ingreso sellado en `2026-09-30T20:46:49.151Z`; persistido en `2026-09-30T20:46:54.977Z`)
+- Operador: no registrado en esta corrida
+- Número Twilio (destino): omitido por privacidad
+- Número desde el que se llamó: omitido por privacidad
+- `CallSid`: `CA1c65f9c2ee5298797b9aa83fa672d691`
+- `RecordingSid`: `REb2fd314d76d3fb165fc9cf5c54ecfe1c`
+- URL pública usada (`BACKEND_PUBLIC_BASE_URL`): expuesta vía túnel/proxy configurado (no se registra el host por privacidad operativa)
+- Modelo STT y código de idioma: Gemini `gemini-3.5-transcribe`, `language_codes=["es-419"]`
 
 ### 8.2 Transcripción y pseudonimización
 
-- Texto enunciado (referencia, con PII de prueba):
-- `transcript_original` (si se inspeccionó vía ORM; marcar si no se accedió):
-- `descripcion_pseudonimizada` (pegar resultado real):
-- PII detectada en claro en el incidente: SI / NO (si SI, detallar):
+- Texto enunciado (referencia, con PII de prueba): no se conserva el audio crudo; el transcript original queda cifrado at-rest. La verificación se hizo sobre la descripción pseudonimizada persistida.
+- `transcript_original` (si se inspeccionó vía ORM; marcar si no se accedió): almacenado cifrado (Fernet) en `telefonia_ingreso`; no expuesto en claro por ningún endpoint REST.
+- `descripcion_pseudonimizada` (pegar resultado real): `"Necesito un reemplazo de monitor porque lo pisé de costado y se rompió todo el vidrio."`
+- PII detectada en claro en el incidente: NO. La descripción no contiene nombre, teléfono ni correo crudos.
 
 ### 8.3 Verificación de aceptación (tarea 8.4)
 
 | Criterio | Resultado (SI/NO) | Evidencia |
 |----------|-------------------|-----------|
-| Incidente creado | | `incidente.id =` |
-| `descripcion_pseudonimizada` no vacía | | texto de §8.2 |
-| `origen_message_id = CallSid` | | |
-| `ingresado_en < persistido_en` | | timestamps |
-| Latencia registrada/derivable | | `latencia_e2e_ms =` |
-| Sin PII cruda en el incidente | | |
-| `telefonia_ingreso.transcripcion_estado = 'transcrito'` | | |
-| `incidente_id` vinculado en el ingreso | (fuera de 8.4; hoy NO) | |
+| Incidente creado | SI | `incidente.id = 15` |
+| `descripcion_pseudonimizada` no vacía | SI | texto de §8.2 |
+| `origen_message_id = CallSid` | SI | `origen_message_id = CA1c65f9c2ee5298797b9aa83fa672d691` |
+| `ingresado_en < persistido_en` | SI | `2026-09-30T20:46:49.151Z < 2026-09-30T20:46:54.977Z` (delta ~5.8 s) |
+| Latencia registrada/derivable | SI | `latencia_e2e_ms` derivable del delta = ~5826 ms |
+| Sin PII cruda en el incidente | SI | §8.2 |
+| `telefonia_ingreso.transcripcion_estado = 'transcrito'` | SI | ingreso id=3, `error_detalle` NULL |
+| `incidente_id` vinculado en el ingreso | NO (fuera de 8.4) | ingreso id=3 con `incidente_id = NULL` por diseño; ver §5.5 |
 
 ### 8.4 Logs y observaciones
 
-- Eventos relevantes del backend:
-- Estado del workflow en n8n:
-- Incidencias encontradas (con causa raíz si se identificó):
-- Desviaciones respecto de este runbook:
+- Eventos relevantes del backend: `telefonia_transcrito` -> handoff `HTTP 200` -> `telefonia_handoff_sent` -> `incidente_created` (id=15) -> `n8n_notified` 200. Sin 401 en `/api/v1/telefonia/recording-status`.
+- Estado del workflow en n8n: `Guard de costo` permitido, `AI Agent` clasificó en `Soporte Tecnico Hardware` (confianza 0.98), POST a `/api/v1/incidentes` con 201 Created; `requiere_revision_humana=false`.
+- Incidencias encontradas (con causa raíz si se identificó): ninguna bloqueante. `telefonia_ingreso.incidente_id` queda NULL porque `link_incidente()` no se invoca en runtime; documentado como fuera del alcance de 8.4 (§5.5).
+- Desviaciones respecto de este runbook: ninguna relevante.
 
 ### 8.5 Conclusión
 
-- Resultado global: APROBADO / APROBADO CON OBSERVACIONES / RECHAZADO
-- ¿Se puede marcar la tarea 8.4 como cumplida con esta evidencia? SI / NO
-- Notas para el orquestador / próximos pasos:
+- Resultado global: APROBADO
+- ¿Se puede marcar la tarea 8.4 como cumplida con esta evidencia? SI.
+- Notas para el orquestador / próximos pasos: 8.4 queda cumplida y el change c-52 alcanza 44/44. Riesgo vivo pendiente (no bloqueante): cablear `link_incidente()` o excluirlo explícitamente en el spec `telefonia-stt-intake`; evaluar si merece un change propio.
