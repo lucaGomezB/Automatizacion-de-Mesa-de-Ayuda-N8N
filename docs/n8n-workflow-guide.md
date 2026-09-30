@@ -30,7 +30,7 @@
 > y se elimina el nodo `Marcar correo como leido`.
 > C-57: auditoria-rama-revision — en la rama de revision humana la auditoria cuelga del gate
 > post-POST en paralelo con la notificacion y consume la respuesta del POST, no el resultado SMTP.
-> Estado: 37 nodos (34 operativos + 3 sticky notes); suite estructural `test_n8n_workflow.py` en verde.
+> Estado: 38 nodos (35 operativos + 3 sticky notes); suite estructural `test_n8n_workflow.py` en verde.
 
 ## Descripción general
 
@@ -302,7 +302,7 @@ recuperación aguas abajo usa referencias de nodo explícitas:
 
 Tres nodos `stickyNote` con documentación visual interna del workflow (se conservan intactos).
 
-**Total**: 34 nodos operativos + 3 `stickyNote` = 37, consistente con `n8n/workflow.json`. Las
+**Total**: 35 nodos operativos + 3 `stickyNote` = 38, consistente con `n8n/workflow.json`. Las
 tablas por canal repiten los nodos compartidos (`Normalizar entrada del incidente`,
 `Entrada valida`, `Login operador`, `HTTP POST a MESA-AYUDAS`, `Requiere revision humana`,
 `Notificar operador designado`, `Confirmar correo en revision?`, `Rutear por canal de origen`,
@@ -611,7 +611,7 @@ cd App/Backend
 python -m pytest tests/test_n8n_workflow.py -v
 ```
 
-Verifica 185 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40, C-46, C-47, C-52, C-53, C-55, C-57 y C-58).
+Verifica 187 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40, C-46, C-47, C-52, C-53, C-55, C-57 y C-58).
 
 ### Prueba manual del canal web (C-05)
 

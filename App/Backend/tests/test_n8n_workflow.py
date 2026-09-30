@@ -4629,11 +4629,11 @@ def test_c55_trigger_declares_imap_credentials():
     )
 
 
-def test_c55_no_outlook_artifacts_and_node_count_37():
+def test_c55_no_outlook_artifacts_and_node_count_38():
     """
     RED (2.1): no existe ningun nodo `microsoftOutlook*`, ninguna credencial
     `microsoftOutlookOAuth2Api` ni el nodo `Marcar correo como leido`; el conteo
-    total de nodos es 37.
+    total de nodos es 38.
     """
     wf = load_workflow()
     by_name, by_type = index_nodes(wf)
@@ -4652,8 +4652,8 @@ def test_c55_no_outlook_artifacts_and_node_count_37():
         assert "microsoftOutlookOAuth2Api" not in credentials, (
             f"El nodo {node['name']!r} declara credencial microsoftOutlookOAuth2Api"
         )
-    assert len(wf["nodes"]) == 37, (
-        f"Se esperaban 37 nodos, el JSON tiene {len(wf['nodes'])}"
+    assert len(wf["nodes"]) == 38, (
+        f"Se esperaban 38 nodos, el JSON tiene {len(wf['nodes'])}"
     )
 
 
@@ -4976,4 +4976,88 @@ def test_c57_audit_no_double_execution_on_review_branch():
     assert AUDIT_NODE_NAME not in _get_successors(wf, NOTIFICAR_OPERADOR_NODE_NAME), (
         f"{NOTIFICAR_OPERADOR_NODE_NAME!r} no debe tener a {AUDIT_NODE_NAME!r} "
         "como sucesor: la auditoria se ejecutaria dos veces en la rama de revision"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Grupo 31 — Fix del handoff telefonico: ack inmediato por responseNode.
+#
+# Defecto confirmado: el webhook `Llamada telefonica` (responseMode onReceived)
+# tiene un subgrafo transitivo que alcanza nodos respondToWebhook del canal web.
+# n8n 2.11.2 (checkResponseModeConfiguration) aborta ANTES de ejecutar con
+# `Unused Respond to Webhook node found in the workflow` (HTTP 500).
+# Fix: responseMode=responseNode + un respondToWebhook propio colgado como hijo
+# directo del trigger.
+# ---------------------------------------------------------------------------
+
+LLAMADA_TELEFONICA_NODE_NAME = "Llamada telefonica"
+RESPOND_HANDOFF_NODE_NAME = "Responder handoff telefonia"
+SELLAR_INGRESO_TELEFONIA_NODE_NAME = "Sellar ingreso telefonia"
+
+
+def test_handoff_telefonia_webhook_responds_via_response_node():
+    """
+    RED -> GREEN: el webhook `Llamada telefonica` declara
+    `parameters.responseMode == "responseNode"` y tiene un nodo
+    `n8n-nodes-base.respondToWebhook` llamado `Responder handoff telefonia`
+    como sucesor DIRECTO.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    assert LLAMADA_TELEFONICA_NODE_NAME in by_name, (
+        f"No existe el nodo webhook {LLAMADA_TELEFONICA_NODE_NAME!r}"
+    )
+    webhook = by_name[LLAMADA_TELEFONICA_NODE_NAME]
+    assert webhook["type"] == "n8n-nodes-base.webhook", (
+        f"{LLAMADA_TELEFONICA_NODE_NAME!r} debe ser un webhook, got {webhook['type']!r}"
+    )
+    assert webhook.get("parameters", {}).get("responseMode") == "responseNode", (
+        f"{LLAMADA_TELEFONICA_NODE_NAME!r} no declara responseMode=responseNode "
+        f"(responseMode={webhook.get('parameters', {}).get('responseMode')!r}). "
+        "Con onReceived, el subgrafo alcanza respondToWebhook del canal web y n8n "
+        "2.11.2 aborta con 'Unused Respond to Webhook node found in the workflow' "
+        "(HTTP 500) antes de ejecutar."
+    )
+
+    assert RESPOND_HANDOFF_NODE_NAME in by_name, (
+        f"No existe el nodo respondToWebhook {RESPOND_HANDOFF_NODE_NAME!r}"
+    )
+    responder = by_name[RESPOND_HANDOFF_NODE_NAME]
+    assert responder["type"] == "n8n-nodes-base.respondToWebhook", (
+        f"{RESPOND_HANDOFF_NODE_NAME!r} debe ser respondToWebhook, got {responder['type']!r}"
+    )
+
+    assert RESPOND_HANDOFF_NODE_NAME in _get_successors(
+        wf, LLAMADA_TELEFONICA_NODE_NAME
+    ), (
+        f"{RESPOND_HANDOFF_NODE_NAME!r} debe ser sucesor DIRECTO de "
+        f"{LLAMADA_TELEFONICA_NODE_NAME!r} para garantizar el ack en runtime"
+    )
+
+
+def test_handoff_telefonia_response_node_acks_and_preserves_existing_path():
+    """
+    TRIANGULATE: el responder declara un body JSON con `received: true` y la
+    arista existente hacia `Sellar ingreso telefonia` se conserva (el handoff
+    sigue su curso; el ack no reemplaza al procesamiento).
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    responder = by_name[RESPOND_HANDOFF_NODE_NAME]
+    params = responder.get("parameters", {})
+    assert params.get("respondWith") == "json", (
+        f"{RESPOND_HANDOFF_NODE_NAME!r} no responde con JSON (respondWith={params.get('respondWith')!r})"
+    )
+    body = str(params.get("responseBody", ""))
+    assert "received" in body, (
+        f"El responseBody de {RESPOND_HANDOFF_NODE_NAME!r} no declara un ack "
+        f"(se esperaba 'received: true'): {body!r}"
+    )
+
+    successors = _get_successors(wf, LLAMADA_TELEFONICA_NODE_NAME)
+    assert SELLAR_INGRESO_TELEFONIA_NODE_NAME in successors, (
+        f"{SELLAR_INGRESO_TELEFONIA_NODE_NAME!r} dejo de ser hijo directo de "
+        f"{LLAMADA_TELEFONICA_NODE_NAME!r}: se rompio el procesamiento del handoff"
     )
