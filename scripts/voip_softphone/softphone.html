@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Softphone VoIP (dev)</title>
+  <script src="https://cdn.jsdelivr.net/npm/@twilio/voice-sdk@2.12.0/dist/twilio.min.js"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; max-width: 32rem; }
+    #status { font-weight: 600; padding: .5rem .75rem; border-radius: .375rem;
+              background: #eee; display: inline-block; }
+    #status.registered { background: #cdeccd; }
+    #status.busy { background: #ffe6b3; }
+    #status.error { background: #f5c2c2; }
+    button { font-size: 1rem; padding: .5rem 1rem; margin-right: .5rem; }
+    button:disabled { opacity: .5; }
+    small { color: #666; }
+  </style>
+</head>
+<body>
+  <h1>Softphone VoIP (dev)</h1>
+  <p><span id="status">Estado: inicializando</span></p>
+  <p>
+    <button id="call" disabled>Call</button>
+    <button id="hangup" disabled>Hangup</button>
+  </p>
+  <p><small>
+    Herramienta de desarrollo. La voz del microfono entra al pipeline
+    telefonico existente. Identidad: <span id="identity">desconocida</span>.
+  </small></p>
+
+  <script>
+    // No build step: the Voice SDK loads from jsDelivr (pinned 2.12.0).
+    // Twilio's own CDN returned HTTP 403 on this environment, so jsDelivr is
+    // used instead; the UMD bundle still exposes the `Twilio` global.
+    // The page and the token are served from the SAME loopback origin,
+    // so there is no CORS configuration to manage.
+    (function () {
+      "use strict";
+
+      var statusEl = document.getElementById("status");
+      var identityEl = document.getElementById("identity");
+      var callButton = document.getElementById("call");
+      var hangupButton = document.getElementById("hangup");
+      var device = null;
+
+      function setStatus(text, cssClass) {
+        statusEl.textContent = "Estado: " + text;
+        statusEl.className = cssClass || "";
+      }
+
+      function setConnected(isConnected) {
+        callButton.disabled = isConnected;
+        hangupButton.disabled = !isConnected;
+      }
+
+      function tokenIdentity(token) {
+        try {
+          var payload = JSON.parse(
+            atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))
+          );
+          return (payload.grants && payload.grants.identity) || "desconocida";
+        } catch (err) {
+          return "desconocida";
+        }
+      }
+
+      function fetchToken() {
+        return fetch("/token", { cache: "no-store" }).then(function (res) {
+          if (!res.ok) { throw new Error("No se pudo obtener el token"); }
+          return res.json();
+        }).then(function (data) { return data.token; });
+      }
+
+      function register() {
+        return fetchToken().then(function (token) {
+          identityEl.textContent = tokenIdentity(token);
+          device = new Twilio.Device(token, { logLevel: 1 });
+
+          device.on("registered", function () {
+            setStatus("registrado", "registered");
+            callButton.disabled = false;
+          });
+          device.on("unregistered", function () {
+            setStatus("desconectado");
+            setConnected(false);
+          });
+          device.on("error", function (error) {
+            setStatus("error: " + (error && error.message ? error.message : error), "error");
+            setConnected(false);
+          });
+
+          return device.register();
+        }).catch(function (error) {
+          setStatus("error: " + error.message, "error");
+        });
+      }
+
+      callButton.addEventListener("click", function () {
+        if (!device) { return; }
+        setStatus("llamando...", "busy");
+        // Enable Hangup immediately; "accept" keeps it enabled once connected.
+        setConnected(true);
+        // Outgoing call to the TwiML App configured Voice URL.
+        // device.connect() returns a Promise<Call> in the Voice SDK v2; the
+        // lifecycle events live on the resolved Call, NOT on the Device (the
+        // Device never emits "disconnect").
+        device.connect().then(function (call) {
+          call.on("accept", function () {
+            setStatus("en llamada", "busy");
+            setConnected(true);
+          });
+          call.on("disconnect", function () {
+            setStatus("desconectado");
+            setConnected(false);
+          });
+        }).catch(function (error) {
+          setStatus("error: " + (error && error.message ? error.message : error), "error");
+          setConnected(false);
+        });
+      });
+
+      hangupButton.addEventListener("click", function () {
+        if (!device) { return; }
+        device.disconnectAll();
+        setConnected(false);
+      });
+
+      register();
+    })();
+  </script>
+</body>
+</html>
