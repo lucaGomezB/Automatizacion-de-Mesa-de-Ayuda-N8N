@@ -5193,3 +5193,99 @@ def test_handoff_telefonia_response_node_acks_and_preserves_existing_path():
         f"{SELLAR_INGRESO_TELEFONIA_NODE_NAME!r} dejo de ser hijo directo de "
         f"{LLAMADA_TELEFONICA_NODE_NAME!r}: se rompio el procesamiento del handoff"
     )
+
+
+# ---------------------------------------------------------------------------
+# Grupo c-69 — El normalizador construye `origen_message_id` para el canal web
+#
+# OQ-A resuelta: N8N es la fuente PRIMARIA del identificador web. La rama web
+# acepta un id determinístico del llamador (`webBody.origen_message_id` o
+# `webBody.case_id` → `corpus-<case_id>`) y, en su ausencia, genera un id único
+# por ejecución (`web-<execution.id>-<timestamp>`). Las ramas correo y telefonía
+# NO cambian.
+# ---------------------------------------------------------------------------
+
+
+def _normalizer_code() -> str:
+    """Devuelve el jsCode del nodo normalizador compartido."""
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    return by_name[NORMALIZER_NODE_NAME]["parameters"].get("jsCode", "")
+
+
+def _origen_message_id_expression() -> str:
+    """Extrae el ternario `const origenMessageId = ...;` del normalizador."""
+    code = _normalizer_code()
+    marker = "const origenMessageId ="
+    start = code.index(marker)
+    end = code.index(";", start)
+    return code[start:end]
+
+
+def test_c69_normalizer_web_branch_no_fuerza_null():
+    """
+    c-69 (3.2 RED → 3.3 GREEN): el normalizador construye un identificador no
+    nulo para web. La rama web ya no es el literal `null`.
+    """
+    code = _normalizer_code()
+    expr = _origen_message_id_expression()
+
+    # (a) id determinístico provisto por el llamador
+    assert "webBody.origen_message_id" in code, (
+        "La rama web no acepta el id determinístico del llamador "
+        "(webBody.origen_message_id)"
+    )
+    assert "case_id" in code and "corpus-" in code, (
+        "La rama web no deriva 'corpus-<case_id>' a partir del case_id del llamador"
+    )
+
+    # (b) id generado único por ejecución
+    assert "WEB_ORIGEN_PREFIX" in code and "'web-'" in code, (
+        "La rama web no declara el prefijo de generación 'web-'"
+    )
+    assert "$execution.id" in code and "Date.now" in code, (
+        "El id generado para web no deriva de la ejecución "
+        "(web-<execution.id>-<timestamp>)"
+    )
+
+    # la rama final (else) del ternario NO es null
+    rama_final = expr.rsplit(":", 1)[-1].strip()
+    assert rama_final != "null", (
+        "La rama web sigue forzando null en `origenMessageId`"
+    )
+
+
+def test_c69_normalizer_correo_y_telefonia_intactos():
+    """
+    c-69 (3.4 TRIANGULATE): las ramas correo (Message-ID/UID) y telefonía
+    (CallSid) permanecen sin cambios.
+    """
+    expr = _origen_message_id_expression()
+
+    assert "messageIdHeader || uidFallback" in expr, (
+        "La rama de correo del ternario cambió (Message-ID/UID)"
+    )
+    assert "item.json.call_sid" in expr, (
+        "La rama de telefonía del ternario cambió (CallSid)"
+    )
+    # La rama de correo conserva el fallback a null SOLO para correo/telefonía;
+    # el else de web ya no es null (verificado en el test anterior).
+    assert "canalOrigen === 'correo'" in expr
+    assert "canalOrigen === 'telefonia'" in expr
+
+
+def test_c69_post_envia_origen_message_id_del_normalizador():
+    """
+    c-69 (3.6): el body del HTTP POST de persistencia envía el
+    `origen_message_id` resuelto por el normalizador (no una constante null).
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    body = http_json_body(by_name[HTTP_NODE_CORREO])
+
+    assert "origen_message_id" in body, (
+        "El POST de persistencia no envía 'origen_message_id'"
+    )
+    assert NORMALIZER_NODE_NAME in body["origen_message_id"], (
+        "El POST no resuelve 'origen_message_id' desde el normalizador"
+    )

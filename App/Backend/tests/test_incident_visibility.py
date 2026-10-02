@@ -11,6 +11,7 @@ El filtrado se aplica en la capa de API/servicio; el frontend se difiere.
 """
 
 from contextlib import asynccontextmanager
+from unittest.mock import AsyncMock
 
 import pytest
 import pytest_asyncio
@@ -25,6 +26,8 @@ from app.models.catalog import Estado, Sector
 from app.models.empleado import Empleado, RolEmpleado
 from app.models.incidente import Incidente, PrioridadEnum
 from app.models.user import User
+from app.services.incident_visibility import AlcanceIncidentes
+from app.services.incidente_service import IncidenteService
 
 
 @pytest_asyncio.fixture
@@ -60,6 +63,7 @@ async def vis_env(engine):
                     prioridad=PrioridadEnum.media,
                     estado_id=estado.id,
                     sector_id=sector_a.id,
+                    origen_message_id="corpus-A",
                 ),
                 Incidente(
                     descripcion_original="incidente B",
@@ -67,6 +71,7 @@ async def vis_env(engine):
                     prioridad=PrioridadEnum.media,
                     estado_id=estado.id,
                     sector_id=sector_b.id,
+                    origen_message_id="corpus-B",
                 ),
             ]
         )
@@ -76,6 +81,8 @@ async def vis_env(engine):
             "admin_user": admin_user.id,
             "oper_a_user": oper_a_user.id,
             "sin_empleado_user": 888888,
+            "sector_a": sector_a.id,
+            "sector_b": sector_b.id,
         }
 
         # Identificar los incidentes por sector para las asserts.
@@ -230,3 +237,86 @@ async def test_acceso_puntual_sin_empleado_404(engine, vis_env):
     assert detalle.status_code == 404
     assert patch.status_code == 404
     assert patch.json()["error"]["code"] == "NOT_FOUND"
+
+
+# ── c-69: filtro exacto por origen_message_id respetando el alcance por rol ──
+
+
+@pytest.mark.asyncio
+async def test_no_admin_filtra_origen_fuera_de_sector_no_lo_ve(engine, vis_env):
+    """
+    c-69 (2.4/2.7 RED): un no administrador que filtra por el identificador de
+    un incidente fuera de su sector obtiene lista vacia (VIS-001).
+    """
+    async with _client(engine, vis_env["oper_a_user"]) as c:
+        resp = await c.get(
+            "/api/v1/incidentes/", params={"origen_message_id": "corpus-B"}
+        )
+    assert resp.status_code == 200
+    assert resp.json() == []
+
+
+@pytest.mark.asyncio
+async def test_no_admin_filtra_origen_dentro_de_su_sector(engine, vis_env):
+    """El control positivo: un no administrador si ve el id de su sector."""
+    async with _client(engine, vis_env["oper_a_user"]) as c:
+        resp = await c.get(
+            "/api/v1/incidentes/", params={"origen_message_id": "corpus-A"}
+        )
+    assert resp.status_code == 200
+    assert [i["id"] for i in resp.json()] == [vis_env["incidente_a"]]
+
+
+@pytest.mark.asyncio
+async def test_admin_filtra_origen_de_cualquier_sector(engine, vis_env):
+    """
+    c-69 (2.6 TRIANGULATE): el administrador ve el id de cualquier sector.
+    """
+    async with _client(engine, vis_env["admin_user"]) as c:
+        resp = await c.get(
+            "/api/v1/incidentes/", params={"origen_message_id": "corpus-B"}
+        )
+    assert resp.status_code == 200
+    assert [i["id"] for i in resp.json()] == [vis_env["incidente_b"]]
+
+
+@pytest.mark.asyncio
+async def test_cuenta_sin_empleado_filtro_origen_vacio(engine, vis_env):
+    """
+    c-69 (2.6 TRIANGULATE): una cuenta sin empleado devuelve vacio antes de
+    consultar, aun con un identificador existente.
+    """
+    async with _client(engine, vis_env["sin_empleado_user"]) as c:
+        resp = await c.get(
+            "/api/v1/incidentes/", params={"origen_message_id": "corpus-A"}
+        )
+    assert resp.status_code == 200
+    assert resp.json() == []
+
+
+@pytest.mark.asyncio
+async def test_service_list_incidentes_propaga_origen_y_alcance(engine, vis_env):
+    """
+    c-69 (2.4 RED → 2.5 GREEN): `IncidenteService.list_incidentes` propaga el
+    parametro `origen_message_id` al repositorio sin romper el alcance por rol.
+    """
+    factory = async_sessionmaker(engine, expire_on_commit=False)
+    async with factory() as session:
+        service = IncidenteService(session, classifier=AsyncMock())
+
+        admin = AlcanceIncidentes(ver_todos=True, sector_id=None)
+        encontrados = await service.list_incidentes(
+            origen_message_id="corpus-A", alcance=admin
+        )
+        assert [i.id for i in encontrados] == [vis_env["incidente_a"]]
+
+        oper = AlcanceIncidentes(ver_todos=False, sector_id=vis_env["sector_a"])
+        fuera = await service.list_incidentes(
+            origen_message_id="corpus-B", alcance=oper
+        )
+        assert fuera == []
+
+        dentro = await service.list_incidentes(
+            origen_message_id="corpus-A", alcance=oper
+        )
+        assert [i.id for i in dentro] == [vis_env["incidente_a"]]

@@ -313,6 +313,25 @@
             "description": "Fecha de creación máxima (ISO 8601)"
           },
           {
+            "name": "origen_message_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 255
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filtrar por identificador de origen (coincidencia exacta)",
+              "title": "Origen Message Id"
+            },
+            "description": "Filtrar por identificador de origen (coincidencia exacta)"
+          },
+          {
             "name": "limit",
             "in": "query",
             "required": false,
@@ -2233,6 +2252,17 @@
                 "type": "null"
               }
             ]
+          },
+          "origen_message_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origen Message Id"
           },
           "ingresado_en": {
             "anyOf": [

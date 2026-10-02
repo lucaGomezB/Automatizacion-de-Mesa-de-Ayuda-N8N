@@ -157,6 +157,7 @@ class IncidenteService:
         requiere_revision_humana: bool | None = None,
         desde: datetime | None = None,
         hasta: datetime | None = None,
+        origen_message_id: str | None = None,
         limit: int = 50,
         offset: int = 0,
         alcance: "AlcanceIncidentes | None" = None,
@@ -176,6 +177,7 @@ class IncidenteService:
             requiere_revision_humana: Filtrar por indicador de revisión pendiente.
             desde:                   Límite inferior de fecha de creación.
             hasta:                   Límite superior de fecha de creación.
+            origen_message_id:       Filtra por el identificador de origen (exacto).
             limit:                   Cantidad máxima de resultados.
             offset:                  Desplazamiento para paginación.
             alcance:                 Alcance de visibilidad por rol.
@@ -199,6 +201,7 @@ class IncidenteService:
             requiere_revision_humana=requiere_revision_humana,
             desde=desde,
             hasta=hasta,
+            origen_message_id=origen_message_id,
             limit=limit,
             offset=offset,
         )
