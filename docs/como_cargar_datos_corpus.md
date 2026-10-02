@@ -167,6 +167,31 @@ y se reporta con el intervalo de confianza de Wilson (95 %).
 
 ## 7. Proceso de carga (manual, por tandas)
 
+### 7.1 Tiempo automatizado por el flujo N8N real
+
+Los `tiempo_automatizado_s` de los canales **web** (53) y **correo** (66) los
+produce el harness `scripts/corpus_ingest/ingest_via_n8n.py`, que carga cada
+caso POR el flujo N8N real y deriva la metrica hibrida D:
+
+```
+t_pipeline_s = latencia_e2e_ms / 1000 = persistido_en - ingresado_en
+t_espera_s   = ingresado_en - t_envio
+t_e2e_s      = persistido_en - t_envio = t_espera_s + t_pipeline_s
+tiempo_automatizado_s = t_e2e_s   (web y correo; correo incluye el poller)
+```
+
+El harness hace merge de `tiempo_automatizado_s` numerico en este JSON por `id`
+(nunca escribe `null` sobre un valor no nulo) y reporta el conteo de casos aun
+nulos. El runbook de activacion de N8N y las credenciales esta en
+`scripts/corpus_ingest/README.md`.
+
+Los 81 casos de **`llamada telefonica`** quedan FUERA del harness: el autor los
+mide y los carga MANUALMENTE. El corpus solo es cargable por completo cuando
+esos 81 valores estan completos; hasta entonces `evaluation/corpus.py` lanza
+`CorpusError` ante los casos aun nulos (el validador NO se debilita).
+
+### 7.2 Proceso manual por tandas (resto de campos)
+
 1. Crear `data/corpus_evaluacion_pseudonimizado.json` con la estructura de la
    seccion 2 (`schema_version`, `metadata`, `casos: []`).
 2. Por cada ticket etiquetado:
