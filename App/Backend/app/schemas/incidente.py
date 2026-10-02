@@ -295,6 +295,12 @@ class IncidenteRead(BaseModel):
     estado: EstadoRead
     canal_origen: CanalOrigenRead | None
 
+    # c-69 (OQ-B): identificador de correlación del alta (Message-ID de correo,
+    # CallSid de telefonía o id determinístico/generado de web). Es un
+    # identificador de origen, NUNCA contiene la descripción ni PII. Nullable:
+    # las filas legacy sin identificador serializan el campo como null.
+    origen_message_id: str | None = None
+
     # Instrumentación temporal end-to-end (C-39). Ambos instantes son nullable:
     # las filas legacy y los clientes que no proveen `ingresado_en` los dejan nulos.
     ingresado_en: datetime | None = None

@@ -137,6 +137,11 @@ async def list_incidentes(
     ),
     desde: datetime | None = Query(None, description="Fecha de creación mínima (ISO 8601)"),
     hasta: datetime | None = Query(None, description="Fecha de creación máxima (ISO 8601)"),
+    origen_message_id: str | None = Query(
+        None,
+        max_length=255,
+        description="Filtrar por identificador de origen (coincidencia exacta)",
+    ),
     limit: int = Query(50, ge=1, le=200, description="Cantidad máxima de resultados"),
     offset: int = Query(0, ge=0, description="Desplazamiento para paginación"),
 ) -> list[IncidenteListItem]:
@@ -155,6 +160,7 @@ async def list_incidentes(
         requiere_revision_humana=requiere_revision_humana,
         desde=desde,
         hasta=hasta,
+        origen_message_id=origen_message_id,
         limit=limit,
         offset=offset,
         alcance=alcance,

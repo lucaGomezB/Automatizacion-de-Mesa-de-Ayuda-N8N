@@ -97,6 +97,7 @@ class IncidenteRepository(BaseRepository[Incidente]):
         requiere_revision_humana: bool | None = None,
         desde: datetime | None = None,
         hasta: datetime | None = None,
+        origen_message_id: str | None = None,
         limit: int = 50,
         offset: int = 0,
     ) -> list[Incidente]:
@@ -117,6 +118,7 @@ class IncidenteRepository(BaseRepository[Incidente]):
             requiere_revision_humana: Filtra por indicador de revisión pendiente.
             desde:                   Filtra incidentes creados desde esta fecha.
             hasta:                   Filtra incidentes creados hasta esta fecha.
+            origen_message_id:       Filtra por el identificador de origen (exacto).
             limit:                   Cantidad máxima de resultados (paginación).
             offset:                  Desplazamiento para paginación.
 
@@ -139,6 +141,10 @@ class IncidenteRepository(BaseRepository[Incidente]):
             conditions.append(Incidente.created_at >= desde)
         if hasta is not None:
             conditions.append(Incidente.created_at <= hasta)
+        if origen_message_id is not None:
+            # c-69: coincidencia EXACTA del identificador de origen para la
+            # correlacion determinista item-enviado ↔ incidente-persistido.
+            conditions.append(Incidente.origen_message_id == origen_message_id)
 
         # Consulta base con carga eager de relaciones para el listado
         stmt = (

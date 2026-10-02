@@ -964,3 +964,149 @@ async def test_c48_listado_expone_instantes_y_latencia(
     assert item["latencia_e2e_ms"] is not None
     assert item["latencia_e2e_ms"] >= 4000
     assert item["latencia_anomala"] is False
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Grupo c-69: filtro exacto por origen_message_id en el listado
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+@pytest.mark.asyncio
+async def test_get_incidentes_filtro_origen_message_id_exacto(
+    seed_catalogs, make_client_with_classifier
+):
+    """
+    c-69 (2.7 RED → 2.8 GREEN): GET /api/v1/incidentes/?origen_message_id=...
+    devuelve unicamente el incidente correlacionado por identidad exacta.
+    """
+    result = _make_result()
+    async with make_client_with_classifier(result) as client:
+        primero = await client.post(
+            "/api/v1/incidentes/",
+            json={**VALID_PAYLOAD, "origen_message_id": "corpus-R001"},
+        )
+        assert primero.status_code == 201, primero.text
+        correlacionado_id = primero.json()["id"]
+
+        await client.post(
+            "/api/v1/incidentes/",
+            json={
+                "descripcion": "Segundo incidente para correlacion exacta.",
+                "prioridad": "media",
+                "origen_message_id": "corpus-R002",
+            },
+        )
+
+        respuesta = await client.get(
+            "/api/v1/incidentes/", params={"origen_message_id": "corpus-R001"}
+        )
+
+    assert respuesta.status_code == 200, respuesta.text
+    items = respuesta.json()
+    assert [i["id"] for i in items] == [correlacionado_id]
+
+
+@pytest.mark.asyncio
+async def test_get_incidentes_filtro_origen_message_id_inexistente_vacio(
+    seed_catalogs, make_client_with_classifier
+):
+    """
+    c-69 (2.7 RED): un valor inexistente devuelve lista vacia, sin error.
+    """
+    result = _make_result()
+    async with make_client_with_classifier(result) as client:
+        await client.post(
+            "/api/v1/incidentes/",
+            json={**VALID_PAYLOAD, "origen_message_id": "corpus-R001"},
+        )
+        respuesta = await client.get(
+            "/api/v1/incidentes/", params={"origen_message_id": "no-existe"}
+        )
+
+    assert respuesta.status_code == 200, respuesta.text
+    assert respuesta.json() == []
+
+
+@pytest.mark.asyncio
+async def test_get_incidentes_filtro_origen_message_id_junto_a_sector(
+    seed_catalogs, make_client_with_classifier
+):
+    """
+    c-69 (2.9 TRIANGULATE): el filtro de origen se combina con AND logico con
+    los demas filtros del listado (por ejemplo sector_id).
+    """
+    sector_sistemas_id = seed_catalogs["sector_sistemas"].id
+
+    async with make_client_with_classifier(
+        _make_result(sector_predicho="Sistemas")
+    ) as client:
+        await client.post(
+            "/api/v1/incidentes/",
+            json={**VALID_PAYLOAD, "origen_message_id": "corpus-SIS"},
+        )
+
+    async with make_client_with_classifier(
+        _make_result(sector_predicho="Bases de Datos")
+    ) as client:
+        await client.post(
+            "/api/v1/incidentes/",
+            json={
+                "descripcion": "Incidente de bases de datos para AND.",
+                "prioridad": "media",
+                "origen_message_id": "corpus-BD",
+            },
+        )
+
+    async with make_client_with_classifier(_make_result()) as client:
+        coincide = await client.get(
+            "/api/v1/incidentes/",
+            params={"origen_message_id": "corpus-SIS", "sector_id": sector_sistemas_id},
+        )
+        cruza = await client.get(
+            "/api/v1/incidentes/",
+            params={"origen_message_id": "corpus-BD", "sector_id": sector_sistemas_id},
+        )
+
+    assert coincide.status_code == 200, coincide.text
+    assert len(coincide.json()) == 1
+    assert coincide.json()[0]["sector"]["id"] == sector_sistemas_id
+    assert cruza.status_code == 200, cruza.text
+    assert cruza.json() == []
+
+
+@pytest.mark.asyncio
+async def test_get_incidente_detalle_expone_origen_message_id(
+    seed_catalogs, make_client_with_classifier
+):
+    """
+    c-69 (spec incident-origin-correlation): el detalle GET /{id} expone el
+    identificador de origen persistido, y una fila legacy sin identificador lo
+    serializa como null.
+    """
+    result = _make_result()
+    async with make_client_with_classifier(result) as client:
+        con_id = await client.post(
+            "/api/v1/incidentes/",
+            json={**VALID_PAYLOAD, "origen_message_id": "corpus-DET"},
+        )
+        sin_id = await client.post(
+            "/api/v1/incidentes/",
+            json={
+                "descripcion": "Incidente legacy sin identificador de origen.",
+                "prioridad": "baja",
+            },
+        )
+        assert con_id.status_code == 201, con_id.text
+        assert sin_id.status_code == 201, sin_id.text
+
+        detalle_con = await client.get(
+            f"/api/v1/incidentes/{con_id.json()['id']}"
+        )
+        detalle_sin = await client.get(
+            f"/api/v1/incidentes/{sin_id.json()['id']}"
+        )
+
+    assert detalle_con.status_code == 200, detalle_con.text
+    assert detalle_con.json()["origen_message_id"] == "corpus-DET"
+    assert detalle_sin.status_code == 200, detalle_sin.text
+    assert detalle_sin.json()["origen_message_id"] is None

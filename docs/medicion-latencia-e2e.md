@@ -77,6 +77,12 @@ original y no se crea una segunda fila ni una segunda latencia. La exclusión es
 **por construcción** (la medición vive en la fila), no requiere una marca
 adicional en el workflow.
 
+La correlación entre un item enviado y su incidente persistido es **determinista
+por identidad exacta** (C-69): `GET /api/v1/incidentes/?origen_message_id=<valor>`
+devuelve la fila correlacionada sin heurísticas de ventana temporal, y el detalle
+(`IncidenteRead`) expone el campo `origen_message_id`. Un replay devuelve esa
+misma fila, de modo que la medición NO se repite.
+
 ## 7. Precisión y límites
 
 - `persistido_en` es el último instante de escritura de la transacción; el

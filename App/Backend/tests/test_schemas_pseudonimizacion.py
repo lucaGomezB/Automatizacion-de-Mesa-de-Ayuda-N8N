@@ -27,6 +27,37 @@ _TEXTO_CON_PII = "Juan Pérez reportó falla en juan.perez@empresa.com"
 _TEXTO_PSEUDO = "[PERSONA] reportó falla en [EMAIL]"
 
 
+def _mock_incidente(**overrides):
+    """
+    Construye un doble ORM minimo para validar IncidenteRead (c-69).
+
+    Setea TODOS los atributos requeridos —incluido `origen_message_id`— porque
+    un MagicMock auto-genera atributos y Pydantic fallaria al validar un
+    Mock donde espera `str | None`. Los overrides permiten cubrir los casos
+    de valor nulo, no nulo y demas.
+    """
+    from datetime import datetime
+
+    mock = MagicMock()
+    mock.id = 1
+    mock.descripcion_pseudonimizada = _TEXTO_PSEUDO
+    mock.prioridad = "media"
+    mock.requiere_revision_humana = False
+    mock.created_at = datetime(2026, 1, 1)
+    mock.updated_at = datetime(2026, 1, 1)
+    mock.sector = None
+    mock.estado = MagicMock(
+        id=1, nombre="nuevo", descripcion="Incidente recibido", es_terminal=False
+    )
+    mock.canal_origen = None
+    mock.ingresado_en = None
+    mock.persistido_en = None
+    mock.origen_message_id = None
+    for key, value in overrides.items():
+        setattr(mock, key, value)
+    return mock
+
+
 @pytest.fixture(autouse=True)
 def override_encryption_and_settings(monkeypatch):
     mock_settings = Settings(
@@ -100,6 +131,7 @@ class TestIncidenteReadSchema:
             id=1, nombre="nuevo", descripcion="Incidente recibido", es_terminal=False
         )
         mock_incidente.canal_origen = None
+        mock_incidente.origen_message_id = None
 
         schema = IncidenteRead.model_validate(mock_incidente)
         assert schema.descripcion_pseudonimizada == _TEXTO_PSEUDO
@@ -124,6 +156,7 @@ class TestIncidenteReadSchema:
             id=1, nombre="nuevo", descripcion="Incidente recibido", es_terminal=False
         )
         mock_incidente.canal_origen = None
+        mock_incidente.origen_message_id = None
 
         schema = IncidenteRead.model_validate(mock_incidente)
         json_str = schema.model_dump_json()
@@ -141,6 +174,38 @@ class TestIncidenteReadSchema:
         assert "descripcion" not in fields
         assert "descripcion_pseudonimizada" not in fields
         assert "descripcion_original" not in fields
+
+    # ── c-69: contrato de lectura del identificador de origen ────────────────
+
+    def test_incidente_read_expone_origen_message_id(self):
+        """
+        c-69 (1.1 RED → 1.2 GREEN):
+        IncidenteRead debe exponer 'origen_message_id' como identificador de
+        correlacion (nullable, sin PII).
+        """
+        fields = IncidenteRead.model_fields
+        assert "origen_message_id" in fields, (
+            "IncidenteRead debe exponer 'origen_message_id'"
+        )
+
+    def test_incidente_read_origen_message_id_nulo_serializa_null(self):
+        """
+        c-69 (1.3 TRIANGULATE b): una fila legacy sin identificador serializa
+        el campo como null sin error de validacion.
+        """
+        schema = IncidenteRead.model_validate(_mock_incidente(origen_message_id=None))
+        assert schema.origen_message_id is None
+        assert '"origen_message_id":null' in schema.model_dump_json()
+
+    def test_incidente_read_origen_message_id_no_nulo_desde_orm(self):
+        """
+        c-69 (1.3 TRIANGULATE a/c): un valor no nulo se resuelve desde el ORM
+        con from_attributes y se expone tal cual.
+        """
+        schema = IncidenteRead.model_validate(
+            _mock_incidente(origen_message_id="corpus-R001")
+        )
+        assert schema.origen_message_id == "corpus-R001"
 
 
 # ── 12.3: Endpoint de detalle no expone original ─────────────────────────────
