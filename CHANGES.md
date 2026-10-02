@@ -98,12 +98,33 @@ C-46 telefonia-ingreso-sellado (C-39, C-45)
  └── C-47 guard-costo-item (C-46, C-45)
  └── C-48 timing-en-listado (C-39)
 
---- FASE 18: Notificacion, directorio y canal de correo (2026-09-23 / 2026-09-25) — ACTIVOS ---
+--- FASE 18: Notificacion, directorio y canal de correo (2026-09-23 / 2026-09-25) — CERRADA ---
 
-C-52 telefonia-transcripcion-async (C-47, C-45)          [ACTIVO — 43/44]
- └── C-53 notificacion-numero-incidente (C-52, C-45)     [ACTIVO — 11/32]
-C-54 directorio-usuarios (C-53)                          [ACTIVO — 50/51]
-C-55 canal-correo-imap (ninguna)                         [ACTIVO — 0/15]
+C-52 telefonia-transcripcion-async (C-47, C-45)          [ARCHIVADO 2026-09-30 — 44/44]
+ └── C-53 notificacion-numero-incidente (C-52, C-45)     [ARCHIVADO 2026-10-01 — 12/12; SMS diferido -> C-67]
+C-54 directorio-usuarios (C-53)                          [ARCHIVADO 2026-10-01 — 51/51]
+C-55 canal-correo-imap (ninguna)                         [ARCHIVADO 2026-09-29 — 15/15]
+
+--- FASE 19: Endurecimiento, auditoria y herramientas (2026-09-28 / 2026-09-30) ---
+
+C-56 notificaciones-por-rol (C-54, C-55, C-53, C-38)    [ACTIVO — 0/27]
+C-57 auditoria-rama-revision (ninguna nueva; C-55)       [ARCHIVADO 2026-09-29 — 15/15]
+C-58 resiliencia-gemini (specs C-33/C-36/C-45)           [ARCHIVADO 2026-09-29 — 33/33]
+C-59 softphone-voip-pruebas (C-52, C-45)                 [ARCHIVADO 2026-10-01 — 23/23]
+C-60 directorio-endurecimiento (C-54, C-56)              [ACTIVO — 0/33]
+
+--- FASE 20: Notificacion SMS diferida (2026-10-01) ---
+
+C-67 notificacion-sms-llamante (C-53 archivado; C-66 futura) [ACTIVO — 0/24; bloqueado por OQ3 y C-66]
+
+--- FASE 21: Cumplimiento ISO/NIST/Ley 25.326 (2026-10-01) ---
+
+C-61 compliance-gobernanza (ninguna)                      [ARCHIVADO 2026-10-01 — 26/26; MEDIO; habilita C-63]
+ └── C-63 identidad-accesos-claves (C-61)                 [PLANIFICADO — sin crear]
+C-62 hardening-infra-red (ninguna)                        [PLANIFICADO — sin crear]
+C-64 vulnerabilidades-supply-chain (ninguna)              [PLANIFICADO — sin crear]
+C-65 backup-continuidad (ninguna)                         [PLANIFICADO — sin crear]
+C-66 privacidad-transferencias (C-53 alineacion; habilita C-67) [PLANIFICADO — sin crear]
 ```
 
 ### Paralelismo por fase
@@ -428,11 +449,19 @@ C-55 canal-correo-imap (ninguna)                         [ACTIVO — 0/15]
 | C-53 | notificacion-numero-incidente | 18 | C-52, C-45 | ALTO | — |
 | C-54 | directorio-usuarios | 18 | C-53 | ALTO | — |
 | C-55 | canal-correo-imap | 18 | ninguna | MEDIO | — |
+| C-56 | notificaciones-por-rol | 19 | C-54, C-55, C-53, C-38 | ALTO | — |
+| C-57 | auditoria-rama-revision | 19 | ninguna nueva (C-55) | MEDIO | — |
+| C-58 | resiliencia-gemini | 19 | C-33, C-36, C-45 | ALTO | — |
+| C-59 | softphone-voip-pruebas | 19 | C-52, C-45 | MEDIO | — |
+| C-60 | directorio-endurecimiento | 19 | C-54, C-56 | ALTO | — |
+| C-67 | notificacion-sms-llamante | 20 | C-53 (archivado); bloqueado por OQ3 y C-66 (futura) | ALTO | — |
+| C-61 | compliance-gobernanza | 21 | ninguna | MEDIO | — |
 
-**Total**: 52 changes documentados — 48 archivados (C-01..C-48, sin C-21, mas el mantenimiento sin numero `improve-dockerfiles`) y 4 ACTIVOS (C-52, C-53, C-54, C-55). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
+**Total**: 59 entradas creadas documentadas (58 numeradas + 1 de mantenimiento sin numero) — 56 archivadas (55 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59 y C-61; mas `improve-dockerfiles`) y 3 ACTIVOS (C-56, C-60, C-67). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
+**Planificadas (NO creadas)**: 5 entradas del plan de cumplimiento (FASE 21) — C-62 `hardening-infra-red` (ALTO), C-63 `identidad-accesos-claves` (CRITICO), C-64 `vulnerabilidades-supply-chain` (MEDIO), C-65 `backup-continuidad` (ALTO) y C-66 `privacidad-transferencias` (ALTO). No cuentan como creadas, archivadas ni activas. C-61 `compliance-gobernanza` (MEDIO) ya fue creado y quedo ARCHIVADO (2026-10-01, 26/26), con su spec `security-governance-docs` creada. Ver `docs/cumplimiento/plan-cambios-cumplimiento.md`.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
-**Fases**: 1-18 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa los changes activos post-roadmap).
+**Fases**: 1-21 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67, y la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, con C-61 archivado (2026-10-01) y C-62..C-66 planificados).
 
 ---
 
@@ -1112,13 +1141,13 @@ C-55 canal-correo-imap (ninguna)                         [ACTIVO — 0/15]
   - `openspec/changes/archive/2026-09-22-c-48-timing-en-listado/verify-report.md`
   - `openspec/specs/e2e-timing-instrumentation/spec.md`
 
-## FASE 18 — Notificacion, directorio y canal de correo (2026-09-23 / 2026-09-25) — ACTIVOS
+## FASE 18 — Notificacion, directorio y canal de correo (2026-09-23 / 2026-09-25)
 
-> Changes post-roadmap. C-52 continua el pipeline telefonico asincrono; C-53 entrega el numero de incidente en los tres canales; C-54 agrega el directorio de empleados; C-55 migra el canal de correo a IMAP/SMTP. Los cuatro siguen ACTIVOS.
+> Changes post-roadmap. C-52 continua el pipeline telefonico asincrono; C-53 entrega el numero de incidente en los tres canales; C-54 agrega el directorio de empleados; C-55 migra el canal de correo a IMAP/SMTP. C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51) y C-55 (2026-09-29) ya estan ARCHIVADOS; la FASE 18 queda CERRADA.
 
-### [C-52] `telefonia-transcripcion-async` — ACTIVO (implementado 43/44)
+### [C-52] `telefonia-transcripcion-async` — ARCHIVADO (2026-09-30, 44/44)
 
-- **Estado**: `[~]` en progreso (2026-09-23) — 43/44 tareas; falta la 8.4 (verificacion en vivo con una llamada real). Absorbe el change cancelado `c-51-twilio-payload-wiring`.
+- **Estado**: `[x]` completado y archivado (2026-09-30 — `openspec/changes/archive/2026-09-30-c-52-telefonia-transcripcion-async`; 44/44 tareas). Absorbe el change cancelado `c-51-twilio-payload-wiring`.
 - **Problema**: el canal de telefonia clasifica sobre una descripcion VACIA. El evento `com.twilio.voice.insights.call-summary.complete` no trae la transcripcion, y `<Record transcribe="true">` es solo ingles estadounidense. Ademas hay una fuga latente de PII (el `AI Agent` de n8n manda el transcript crudo a Gemini antes de pseudonimizar).
 - **Scope**:
   - STT EN EL BACKEND con Google Gemini (transcripcion dedicada, modelo `gemini-3.5-transcribe`, modo `verbatim`, via Interactions API, `store=False`) sobre la grabacion mono de Twilio. El backend es dueno de la descarga (`RecordingUrl`, Basic auth) y de la transcripcion; pseudonimiza INMEDIATAMENTE y entrega SOLO texto pseudonimizado a n8n.
@@ -1126,22 +1155,22 @@ C-55 canal-correo-imap (ninguna)                         [ACTIVO — 0/15]
   - Tabla `telefonia_ingreso` (transcript crudo cifrado Fernet + pseudonimizado), migracion Alembic `008`.
   - Nueva superficie paga `backend_stt` en la guarda de costo; `ingresado_en` sellado en el callback del backend; `origen_message_id = CallSid` para idempotencia.
   - n8n: el `twilioTrigger` se reemplaza por un webhook; sobreviven guarda/restauracion/agente/validador/normalizador.
-- **Preguntas abiertas (1-3 RESUELTAS; restan 4 de diseno)**: (1) `google-genai==2.8.0` no tipa `transcription_config` (upgrade vs dict sin tipar vs REST con httpx); (2) disponibilidad y precio real de `gemini-3.5-transcribe`; (3) si `language_codes=["es-AR"]` se acepta (fallback auto-detect o `es-MX`); (4) retencion del audio; (5) alta placeholder vs reintento ante fallo de STT; (6) drop de la suscripcion Event Streams; (7) reescritura del `<Say>`.
+- **Preguntas abiertas (estado al proponer; 1-3 resueltas)**: (1) `google-genai==2.8.0` no tipa `transcription_config` (upgrade vs dict sin tipar vs REST con httpx); (2) disponibilidad y precio real de `gemini-3.5-transcribe`; (3) si `language_codes=["es-AR"]` se acepta (fallback auto-detect o `es-MX`); (4) retencion del audio; (5) alta placeholder vs reintento ante fallo de STT; (6) drop de la suscripcion Event Streams; (7) reescritura del `<Say>`.
 - **Dependencias**: `C-47` (mismo flujo telefonico), `C-45` (guarda de costo)
 - **Governance**: CRITICO
 - **Leer antes**:
-  - `openspec/changes/c-52-telefonia-transcripcion-async/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-09-30-c-52-telefonia-transcripcion-async/{proposal,design,tasks}.md`
   - `openspec/specs/n8n-workflow/spec.md`, `openspec/specs/runtime-cost-guard/spec.md`
   - `openspec/changes/archive/2026-09-21-c-45-runtime-cost-guard/design.md` (limitacion de la transcripcion)
 
 ---
 
-### [C-53] `notificacion-numero-incidente` — ACTIVO (implementado 11/32)
+### [C-53] `notificacion-numero-incidente` — ARCHIVADO (2026-10-01, 12/12)
 
-- **Estado**: `[~]` en progreso (2026-09-23) — 11/32 tareas; las 21 restantes estan diferidas como `deferred pending AR SMS spike` (SMS a Argentina), incluida la notificacion telefonica. Los canales correo y web estan implementados.
+- **Estado**: `[x]` completado y archivado (2026-10-01 — `openspec/changes/archive/2026-10-01-c-53-notificacion-numero-incidente`; 12/12 tareas). Se archivo el alcance implementado (numero canonico, correo y web); el alcance SMS diferido se movio a `C-67`, bloqueado por OQ3 (entregabilidad SMS AR) y por `C-66` (privacidad-transferencias, aun sin crear).
 - **Problema**: el usuario final no recibe de forma garantizada el numero de incidente. El correo no confirma cuando `requiere_revision_humana=true` y su destinatario puede resolverse invalido (el `from` de Outlook es tipicamente un objeto `from.emailAddress.address`); el web responde `incidente_id: null` en revision humana; la telefonia no notifica (el `<Say>` de cierre no conoce el numero porque el alta es asincrona). No existe numero legible de incidente (solo el PK `id`).
 - **Scope**:
-  - Telefonia: SMS al numero llamante con el numero de incidente via Twilio Messaging; captura y persistencia cifrada del `From` en el webhook de VOZ (correlacion por `CallSid`); sin numero no se envia y se deja traza. Superficie de guarda nueva `twilio_sms`.
+  - Telefonia: SMS al numero llamante con el numero de incidente via Twilio Messaging; captura y persistencia cifrada del `From` en el webhook de VOZ (correlacion por `CallSid`); sin numero no se envia y se deja traza. Superficie de guarda nueva `twilio_sms`. (Diferido: este alcance SMS se movio a `C-67`.)
   - Correo: extraccion del remitente soportando `from` string y objeto `from.emailAddress.address`; confirmacion tambien en la rama de revision humana.
   - Web: la rama de revision humana responde con el `incidente_id` real (no `null`).
   - Numero de incidente: PK `id` como numero canonico (prefijo configurable diferido).
@@ -1149,14 +1178,14 @@ C-55 canal-correo-imap (ninguna)                         [ACTIVO — 0/15]
 - **Dependencias**: `C-52` (flujo telefonico asincrono), `C-45` (guarda de costo)
 - **Governance**: ALTO
 - **Leer antes**:
-  - `openspec/changes/c-53-notificacion-numero-incidente/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-10-01-c-53-notificacion-numero-incidente/{proposal,design,tasks}.md`
   - `openspec/specs/n8n-workflow/spec.md`, `openspec/specs/runtime-cost-guard/spec.md`
 
 ---
 
-### [C-54] `directorio-usuarios` — ACTIVO (implementado 50/51)
+### [C-54] `directorio-usuarios` — ARCHIVADO (2026-10-01, 51/51)
 
-- **Estado**: `[~]` en progreso (2026-09-23) — 50/51 tareas; falta la 7.5 (revision humana HIGH: politica de retencion/ARCO, visibilidad de incidentes por rol y ausencia de PII), que bloquea activar datos reales. La implementacion usa datos sinteticos.
+- **Estado**: `[x]` completado y archivado (2026-10-01 — `openspec/changes/archive/2026-10-01-c-54-directorio-usuarios`; 51/51 tareas). La tarea 7.5 (revision humana HIGH: politica de retencion/ARCO, visibilidad de incidentes por rol y ausencia de PII) quedo resuelta y aprobada; la profundizacion del endurecimiento se continua en `C-60`. La implementacion uso datos sinteticos.
 - **Problema**: la mesa de ayuda no sabe QUIEN reporta ni a QUIEN avisar; no existe directorio de empleados ni modelo de roles (`users` es solo autenticacion).
 - **Scope**:
   - Entidad `directorio_empleado` (migracion 009), separada de `users`, con vinculo opcional a una cuenta.
@@ -1168,14 +1197,14 @@ C-55 canal-correo-imap (ninguna)                         [ACTIVO — 0/15]
 - **Dependencias**: `C-53` (contrato de resolucion de contacto; no implementa notificaciones aqui)
 - **Governance**: ALTO
 - **Leer antes**:
-  - `openspec/changes/c-54-directorio-usuarios/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-10-01-c-54-directorio-usuarios/{proposal,design,tasks}.md`
   - `App/Backend/app/models/empleado.py`, `openspec/specs/employee-directory/spec.md`
 
 ---
 
-### [C-55] `canal-correo-imap` — ACTIVO (planificado, 0/15)
+### [C-55] `canal-correo-imap` — ARCHIVADO (2026-09-29, 15/15)
 
-- **Estado**: `[ ]` propuesto (2026-09-25) — planning completo (proposal, specs, design, tasks), `openspec validate --strict` pasa. Sin aplicar.
+- **Estado**: `[x]` completado y archivado (2026-09-29 — `openspec/changes/archive/2026-09-29-c-55-canal-correo-imap`; 15/15 tareas; migracion del canal de correo ejecutada y con smoke sobre casilla Gmail real).
 - **Problema**: el canal de correo depende de Microsoft Entra OAuth2 (`microsoftOutlookTrigger`, `microsoftOutlook`, credencial `microsoftOutlookOAuth2Api`), via no provisionable: la cuenta Microsoft disponible es personal y sin tenant.
 - **Scope**:
   - Migrar el trigger a `n8n-nodes-base.emailReadImap` (IMAP Gmail: `imap.gmail.com:993`, `UNSEEN` + `SINCE`/24 h, `postProcessAction=read`, `format=simple`).
@@ -1186,8 +1215,207 @@ C-55 canal-correo-imap (ninguna)                         [ACTIVO — 0/15]
 - **Dependencias**: ninguna
 - **Governance**: MEDIO
 - **Leer antes**:
-  - `openspec/changes/c-55-canal-correo-imap/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-09-29-c-55-canal-correo-imap/{proposal,design,tasks}.md`
   - `openspec/specs/n8n-workflow/spec.md`, `docs/n8n-workflow-guide.md`
+
+---
+
+## FASE 19 — Endurecimiento, auditoria y herramientas (2026-09-28 / 2026-09-30)
+
+> Changes post-roadmap que endurecen el directorio y las notificaciones, corrigen la auditoria de la rama de revision, agregan resiliencia a Gemini y suman una herramienta de pruebas de telefonia. C-57 y C-58 estan ARCHIVADOS (2026-09-29) y C-59 quedo ARCHIVADO (2026-10-01); C-56 y C-60 siguen ACTIVOS (planning completo, sin aplicar).
+
+### [C-56] `notificaciones-por-rol` — ACTIVO (planificado, 0/27)
+
+- **Estado**: `[ ]` propuesto (2026-09-28) — planning completo (proposal, specs, design, tasks), `openspec validate --strict` pasa. Sin aplicar.
+- **Problema**: el destinatario de la notificacion de revision humana esta fijado en N8N como una unica casilla (`$env.OPERATOR_EMAIL`). Aunque c-54 creo un directorio con roles y sector, nadie lo usa para enrutar; con mas de un operador no se puede avisar al operador del sector correcto.
+- **Scope**:
+  - El backend resuelve los destinatarios de la notificacion de revision desde `directorio_empleado`: empleados activos con `rol=operador` cuyo sector coincide con el sector predicho principal del incidente.
+  - La respuesta de alta (`POST /api/v1/incidentes`) expone `destinatarios_revision` (lista de emails), poblada solo cuando `requiere_revision_humana=true`.
+  - N8N `Preparar destinatarios de revision` (Code) emite un item por destinatario y `Notificar operador designado` envia una copia a cada uno; si la lista llega vacia, cae al fallback `$env.OPERATOR_EMAIL` (un unico destinatario). Un correo por destinatario, nunca `To`/`Cc` compartido.
+  - Fire-and-forget intacto: la resolucion es una lectura indexada acotada al caso de revision; sin migracion Alembic (reutiliza el directorio de c-54).
+- **Dependencias**: `C-54` (directorio, roles, sector y seam de resolucion), `C-55` (nodos `emailSend`/SMTP del operador), `C-53` (numero de incidente), `C-38` (gate `Requiere revision humana`)
+- **Governance**: ALTO
+- **Leer antes**:
+  - `openspec/changes/c-56-notificaciones-por-rol/{proposal,design,tasks}.md`
+  - `knowledge-base/05_reglas_de_negocio.md`, `knowledge-base/06_funcionalidades.md`
+  - `openspec/specs/n8n-workflow/spec.md`, `docs/n8n-workflow-guide.md`
+
+---
+
+### [C-57] `auditoria-rama-revision` — ARCHIVADO (2026-09-29, 15/15)
+
+- **Estado**: `[x]` completado y archivado (2026-09-29 — `openspec/changes/archive/2026-09-29-c-57-auditoria-rama-revision`; 15/15 tareas; spec `n8n-workflow` sincronizada).
+- **Problema**: el smoke de c-55 creo el incidente #9, pero `Registro de auditoria` quedo con `incidente_id: null` y `resultado: rechazado_datos_incompletos`. Causa raiz de cableado: en la rama de revision la auditoria era sucesora de `Notificar operador designado`, por lo que recibia el resultado SMTP (sin `id`) en vez de la respuesta del POST.
+- **Scope**:
+  - Rewiring: agregar `Requiere revision humana[main#0] -> Registro de auditoria` y quitar `Notificar operador designado[main#0] -> Registro de auditoria`; la notificacion queda terminal y la auditoria en paralelo (un fallo de notificacion no la omite).
+  - Sin cambios al `jsCode`: con el item correcto ya distingue `creado` / `rechazado_datos_incompletos` / `error_backend`.
+  - Tests estructurales: invertir las dos aserciones que fijaban la arista SMTP->auditoria y agregar las de la nueva topologia e independencia del item SMTP; actualizar `docs/n8n-workflow-guide.md`.
+- **Dependencias**: ninguna nueva (se apoya en el gate post-POST y en `Notificar operador designado` de c-55)
+- **Governance**: MEDIO
+- **Leer antes**:
+  - `openspec/changes/archive/2026-09-29-c-57-auditoria-rama-revision/{proposal,design,tasks}.md`
+  - `openspec/specs/n8n-workflow/spec.md` (N8N-AUDIT-001/003/004)
+
+---
+
+### [C-58] `resiliencia-gemini` — ARCHIVADO (2026-09-29, 33/33)
+
+- **Estado**: `[x]` completado y archivado (2026-09-29 — `openspec/changes/archive/2026-09-29-c-58-resiliencia-gemini`; 33/33 tareas; specs `classification-resilience`, `runtime-cost-guard`, `n8n-workflow` y `cost-readiness` sincronizadas).
+- **Problema**: un `HTTP 503` transitorio de `gemini-3.6-flash` hacia que la clasificacion cayera a `etapa=fallback` porque `GeminiClassifier.classify` hace un solo intento y trata la falla transitoria como dura. El canal telefonico tenia el mismo hueco (el `AI Agent` abortaba ante error del sub-nodo y el nodo de modelo ni fijaba `modelName`).
+- **Scope**:
+  - Reintento acotado propio en `GeminiClassifier` (backoff exponencial + jitter) SOLO para fallas transitorias (503/429/5xx y timeouts); los errores terminales (400/401/403, JSON invalido) no se reintentan. Se desactiva el auto-retry del SDK para tener una unica fuente de politica.
+  - Nuevas settings `gemini_max_retries` / `gemini_retry_*` / `gemini_total_timeout_seconds` con defaults seguros; presupuesto total de latencia.
+  - Guarda de costo: UNA reserva por clasificacion dimensionada al peor caso (`amount = gemini_max_retries + 1`); los reintentos no reservan de nuevo.
+  - N8N: `modelName` explicito en `Google Gemini Chat Model` (paridad con `settings.gemini_model`) + reintento acotado del `AI Agent`, reconciliado con N8N-REFINE-001; preflight `gemini_readiness` estatico y reforma de la guarda de reintentos de nodos pagos.
+- **Dependencias**: specs compartidas con `C-33` (cost-guards), `C-36` (credentialing-readiness) y `C-45` (runtime-cost-guard); sin dependencia nueva de changes
+- **Governance**: ALTO
+- **Leer antes**:
+  - `openspec/changes/archive/2026-09-29-c-58-resiliencia-gemini/{proposal,design,tasks}.md`
+  - `openspec/specs/classification-resilience/spec.md`, `openspec/specs/runtime-cost-guard/spec.md`
+  - `docs/n8n-workflow-guide.md`
+
+---
+
+### [C-59] `softphone-voip-pruebas` — ARCHIVADO (2026-10-01, 23/23)
+
+- **Estado**: `[x]` completado y archivado (2026-10-01 — `openspec/changes/archive/2026-10-01-c-59-softphone-voip-pruebas`; 23/23 tareas).
+- **Problema**: el canal telefónico no se puede probar de forma barata ni repetible: llamar al número Twilio de EE. UU. desde un celular argentino factura tarifa internacional, y la auto-llamada entre números de la MISMA cuenta Twilio está bloqueada (`21216`). El "truco" Twilio-a-Twilio con TTS no es viable.
+- **Scope**:
+  - Herramienta standalone de desarrollo en `scripts/voip_softphone/`: softphone VoIP de navegador (Twilio Voice SDK sobre WebRTC) que inyecta la voz del operador en el pipeline telefónico existente (`From = client:<identity>`, audio `client`, sin tramo PSTN ni auto-llamada).
+  - Acuñado local del Access Token de Twilio (JWT HS256 con `VoiceGrant`) con secretos EXCLUSIVAMENTE desde variables de entorno; identidad por defecto única por sesión y TTL acotado (defaults D7).
+  - Página HTML estática sin pasos de build + servidor local de loopback que sirve la página y un token fresco en el mismo origen (sin CORS).
+  - Configuración scriptable de Twilio por CLI (perfil `Luca`): API Key + TwiML App reutilizando `/api/v1/cost-guard/twilio/voice` como Voice URL; el backend de producción NO se modifica.
+  - Guía operativa paso a paso como entregable; tests offline de la forma del token y de la validación de configuración.
+- **Dependencias**: `C-52` (intake telefónico, archivado 2026-09-30; su defecto de sesión de `memoryRedisChat` ya fue corregido en `4946584`, por lo que el intake es funcional), `C-45` (guarda de costo que el flujo reutiliza)
+- **Governance**: MEDIO
+- **Leer antes**:
+  - `openspec/changes/archive/2026-10-01-c-59-softphone-voip-pruebas/{proposal,design,tasks}.md`
+  - `knowledge-base/07_flujos_principales.md`, `knowledge-base/08_arquitectura_propuesta.md`
+  - `docs/n8n-workflow-guide.md`, `docs/runbook-verificacion-telefonia-c52.md`
+
+---
+
+### [C-60] `directorio-endurecimiento` — ACTIVO (planificado, 0/33)
+
+- **Estado**: `[ ]` propuesto (2026-09-30) — planning completo (proposal, specs, design, tasks), `openspec validate --strict` pasa. Sin aplicar.
+- **Problema**: c-54 dejo abierto el endurecimiento del directorio, la visibilidad de incidentes y la retencion: la tarea 7.5 (revision humana HIGH) sigue pendiente y bloquea activar datos reales; la purga por retencion registra solo un conteo (sin los ids de lo borrado); la cola `revision-pendiente` es global multi-sector; no existe un rol que cubra la cola de revision; y el seed dev-only no tiene guardia de entorno.
+- **Scope**:
+  - Purga MANUAL disparada por un operador (`administrador_directorio`, via API y CLI), sin cron/scheduler; el registro incluye los ids de las filas eliminadas (sin datos personales).
+  - Acotar `revision-pendiente` por sector/rol; un no administrador solo ve la cola de su sector.
+  - Modelo de visibilidad por rol: `administrador_directorio` (ADMIN, ve todo), `mesa_de_ayuda` (rol NUEVO: incidentes sin sector o en revision) y `usuario_final`/`operador` (solo su sector); migracion Alembic append-only `011` que suma `mesa_de_ayuda` al CHECK de `rol`.
+  - Guardia de entorno SOLO en el seed (rechaza correr fuera de development/test); cierra las confirmaciones pendientes de c-54 7.5 (retencion/ARCO, visibilidad por rol, ausencia de PII real, sin clave de indice ciego).
+- **Dependencias**: `C-54` (directorio, roles y visibilidad base) — prerequisito; `C-56` (consume roles/sector) — compatible, no bloqueante
+- **Governance**: ALTO
+- **Leer antes**:
+  - `openspec/changes/c-60-directorio-endurecimiento/{proposal,design,tasks}.md`
+  - `knowledge-base/05_reglas_de_negocio.md`, `knowledge-base/04_modelo_de_datos.md`
+  - `openspec/changes/c-54-directorio-usuarios/design.md`, `docs/directorio-usuarios.md`
+
+---
+
+## FASE 20 — Notificacion SMS diferida (2026-10-01)
+
+> Change post-roadmap que retoma el alcance SMS del llamante que C-53 dejo diferido al archivarse. Queda bloqueado por una pregunta abierta (OQ3) y por un change futuro.
+
+### [C-67] `notificacion-sms-llamante` — ACTIVO (diferido, 0/24)
+
+- **Estado**: `[ ]` propuesto y diferido (2026-10-01) — 0/24 tareas. Diferido hasta resolver OQ3 (entregabilidad de SMS en Argentina) y contar con `C-66` (privacidad-transferencias, aun sin crear). No aplicar todavia.
+- **Problema**: el llamante no recibe de forma garantizada el numero de incidente por SMS. C-53 implemento el numero canonico, el correo y el web, pero al archivarse movio aqui el envio por mensajeria, que depende de la entregabilidad real de SMS en Argentina y del marco de privacidad para capturar y cifrar el numero del llamante.
+- **Scope**:
+  - SMS al llamante con el numero de incidente via Twilio Messaging.
+  - Nueva superficie `twilio_sms` en la guarda de costo runtime.
+  - Cliente Twilio Messaging dedicado.
+  - Captura y cifrado del numero del llamante (persistencia protegida).
+  - Servicio de notificacion SMS integrado al alta de incidente.
+- **Dependencias**: `C-53` (archivado 2026-10-01; origen del numero canonico y del seam de notificacion); **bloqueado** por OQ3 (entregabilidad SMS AR) y por `C-66` (privacidad-transferencias, aun no creado).
+- **Governance**: ALTO
+- **Leer antes**:
+  - `openspec/changes/c-67-notificacion-sms-llamante/{proposal,design,tasks}.md`
+  - `docs/cumplimiento/marco-legal-ar-2026.md`
+
+---
+
+## FASE 21 — Cumplimiento ISO/NIST/Ley 25.326 (planificado)
+
+> Plan de cumplimiento aprobado por el autor el 2026-10-01 para alinear el sistema (lo mas posible) con ISO/IEC 27001:2022 + 27002:2022, ISO/IEC 27701 (privacidad), NIST CSF 2.0 y el marco legal argentino vigente 2026 (Ley 25.326 + AAIP), y asi reforzar la defensa de la tesis. Plan completo en `docs/cumplimiento/plan-cambios-cumplimiento.md`, sobre los informes `docs/cumplimiento/gap-assessment-iso27001-27002-nist-csf2.md` y `docs/cumplimiento/marco-legal-ar-2026.md`. Regla de lenguaje: se usa "alineado con" / "controles mapeados a"; NO se declara "certificado" ni "compliant". Al 2026-10-01, C-61 quedo ARCHIVADO (2026-10-01, 26/26) y su spec `security-governance-docs` fue creada; la FASE 21 quedo parcialmente ejecutada. Los 5 changes restantes (C-62..C-66) siguen PLANIFICADOS y aun NO fueron creados.
+
+### [C-61] `compliance-gobernanza` — ARCHIVADO (2026-10-01, 26/26)
+
+- **Estado**: `[x]` ARCHIVADO (2026-10-01) — 26/26 tareas. Change archivado en `openspec/changes/archive/2026-10-01-c-61-compliance-gobernanza/`; su spec `security-governance-docs` fue creada. Prioridad 1. Governance MEDIO; habilita C-63.
+- **Scope** (D):
+  - Politica de seguridad de la informacion; clasificacion y etiquetado de la informacion.
+  - Roles y responsabilidades de seguridad (incl. responsable de datos); plan de respuesta a incidentes de seguridad y procedimiento de reporte de eventos.
+  - Inventario de activos y registro de requisitos legales; modelado de amenazas; politica de privacidad en runtime; registro de bases (ROPA).
+- **Dependencias**: ninguna
+- **Governance**: MEDIO
+- **Leer antes**:
+  - `docs/cumplimiento/plan-cambios-cumplimiento.md` §2-§3
+  - `docs/cumplimiento/gap-assessment-iso27001-27002-nist-csf2.md`
+  - `docs/cumplimiento/marco-legal-ar-2026.md`
+
+### [C-62] `hardening-infra-red` — PLANIFICADO
+
+- **Estado**: `[ ]` PENDIENTE — planificado, sin crear. Prioridad 2.
+- **Scope** (T):
+  - Quitar la publicacion al host de los puertos `5433`/`6379`/`5678`; contrasena en Redis; segmentacion de red Docker.
+  - Restringir el acceso a la UI de N8N; endurecer nginx.
+  - Separar entornos dev/test/prod.
+- **Dependencias**: ninguna
+- **Governance**: ALTO
+- **Leer antes**:
+  - `docs/cumplimiento/plan-cambios-cumplimiento.md` §2-§3
+  - `docs/cumplimiento/gap-assessment-iso27001-27002-nist-csf2.md`
+
+### [C-63] `identidad-accesos-claves` — PLANIFICADO
+
+- **Estado**: `[ ]` PENDIENTE — planificado, sin crear. Prioridad 4.
+- **Scope** (T):
+  - MFA para cuentas de operacion/administracion; politica de contrasenas; bloqueo por intentos fallidos.
+  - Expiracion/rotacion/revocacion de JWT (refresh o lista de revocacion); revision periodica de accesos.
+  - Gestion de claves (secret manager/KMS, rotacion de Fernet y del secreto JWT, CA real).
+- **Dependencias**: `C-61` (parametros de politica)
+- **Governance**: CRITICO
+- **Leer antes**:
+  - `docs/cumplimiento/plan-cambios-cumplimiento.md` §2-§3
+  - `docs/cumplimiento/gap-assessment-iso27001-27002-nist-csf2.md`
+
+### [C-64] `vulnerabilidades-supply-chain` — PLANIFICADO
+
+- **Estado**: `[ ]` PENDIENTE — planificado, sin crear. Prioridad 5.
+- **Scope** (T+D):
+  - Dependabot; `pip-audit`/`npm audit` en CI; escaneo de imagenes (trivy); SBOM; SAST (bandit/semgrep); pinning estricto de dependencias.
+  - Evaluacion de seguridad y clausulas con proveedores (Twilio, Gemini, Microsoft, N8N).
+- **Dependencias**: ninguna
+- **Governance**: MEDIO
+- **Leer antes**:
+  - `docs/cumplimiento/plan-cambios-cumplimiento.md` §2-§3
+  - `docs/cumplimiento/gap-assessment-iso27001-27002-nist-csf2.md`
+
+### [C-65] `backup-continuidad` — PLANIFICADO
+
+- **Estado**: `[ ]` PENDIENTE — planificado, sin crear. Prioridad 6.
+- **Scope** (T+D):
+  - Cifrado del backup; copia offsite; automatizacion; prueba de restauracion periodica.
+  - RTO/RPO; plan de continuidad; redundancia basica.
+- **Dependencias**: ninguna
+- **Governance**: ALTO
+- **Leer antes**:
+  - `docs/cumplimiento/plan-cambios-cumplimiento.md` §2-§3
+  - `docs/cumplimiento/gap-assessment-iso27001-27002-nist-csf2.md`
+
+### [C-66] `privacidad-transferencias` — PLANIFICADO
+
+- **Estado**: `[ ]` PENDIENTE — planificado, sin crear. Prioridad 3.
+- **Scope** (T+D):
+  - Quitar/pseudonimizar el numero llamante en logs (`cost_guard/guard.py:236,252`); cifrar o justificar por minimizacion el contacto del directorio (`models/empleado.py:16-18`).
+  - Instrumento de transferencia internacional para Gemini/Twilio (clausulas modelo o consentimiento); consentimiento e informacion al titular.
+  - Procedimiento ARCO con plazos; retencion de logs.
+- **Dependencias**: —
+- **Governance**: ALTO
+- **Leer antes**:
+  - `docs/cumplimiento/plan-cambios-cumplimiento.md` §2-§4
+  - `docs/cumplimiento/marco-legal-ar-2026.md`
+  - `docs/cumplimiento/gap-assessment-iso27001-27002-nist-csf2.md`
 
 ---
 
@@ -1197,7 +1425,7 @@ C-55 canal-correo-imap (ninguna)                         [ACTIVO — 0/15]
 
 | Componente | Estado | Observaciones |
 |------------|--------|---------------|
-| Backend: clasificadores | COMPLETO | DeterministicClassifier, GeminiClassifier, HybridClassifier implementados y documentados |
+| Backend: clasificadores | COMPLETO | DeterministicClassifier, GeminiClassifier, HybridClassifier implementados y documentados; reintento acotado con backoff+jitter y fallback tras agotar intentos (C-58) |
 | Backend: routes/endpoints | COMPLETO | CRUD incidentes, revision humana, auth, estadisticas, health |
 | Backend: servicios | COMPLETO | IncidenteService, ClasificacionService, EstadisticasService |
 | Backend: modelos ORM | COMPLETO | Tablas base (incidente, sector, estado, canal_origen, clasificacion_log) mas `users` (C-15) y columnas de timing (C-39, migracion 006) |
@@ -1206,10 +1434,10 @@ C-55 canal-correo-imap (ninguna)                         [ACTIVO — 0/15]
 | Backend: util n8n_webhook | EN USO | `notify_n8n()` fire-and-forget desde el servicio; apunta al webhook N8N dedicado (C-33) |
 | Backend: tests | COMPLETO | Suite offline SQLite (550 passed) + subconjunto de integracion PostgreSQL sobre base descartable (C-19/C-32/C-45) |
 | Backend: pseudonimizacion | COMPLETO | C-03; cifrado at-rest con Fernet |
-| Backend: migraciones | COMPLETO | Alembic; migraciones 001-009 (la 006 agrega timing e2e, C-39; la 007 agrega `costo_guarda_contador`, C-45; la 008 agrega `telefonia_ingreso`, C-52; la 009 agrega `directorio_empleado`, C-54) |
+| Backend: migraciones | COMPLETO | Alembic; migraciones 001-010 (la 006 agrega timing e2e, C-39; la 007 agrega `costo_guarda_contador`, C-45; la 008 agrega `telefonia_ingreso`, C-52; la 009 agrega `directorio_empleado` y la 010 `directorio_fecha_baja`, C-54). La 011 (rol `mesa_de_ayuda`) la introduce c-60, aun sin aplicar |
 | Backend: auth | COMPLETO | JWT Bearer (C-15) |
-| Costo runtime: guarda | COMPLETO | C-45 bolsa global USD 10/semana, rate global y por origen, PostgreSQL 007, webhook pre-llamada de Twilio y fail-closed (archivado) |
-| N8N workflow JSON | COMPLETO | Canales cableados (C-04/C-05), compuerta de confianza de dos capas (C-38), wiring corregido (C-40), recuperacion robusta del sello de ingreso de telefonia (C-46), item de telefonia preservado a traves de la guarda de costo (C-47) |
+| Costo runtime: guarda | COMPLETO | C-45 bolsa global USD 10/semana, rate global y por origen, PostgreSQL 007, webhook pre-llamada de Twilio y fail-closed (archivado); C-58 la dimensiona al peor caso de intentos por clasificacion |
+| N8N workflow JSON | COMPLETO | Canales cableados (C-04/C-05), compuerta de confianza de dos capas (C-38), wiring corregido (C-40), recuperacion robusta del sello de ingreso de telefonia (C-46), item de telefonia preservado a traves de la guarda de costo (C-47), auditoria de la rama de revision corregida (C-57) y modelo explicito + reintento acotado del agente (C-58) |
 | Frontend: paginas | COMPLETO | ReportarIncidente, Administracion, Dashboard (C-23), Login (C-15) |
 | Frontend: componentes | COMPLETO | shadcn/ui, badges, indicadores, tablas, dialogos |
 | Frontend: hooks/services | COMPLETO | React Query + Axios, todos los endpoints conectados |
@@ -1230,7 +1458,7 @@ C-55 canal-correo-imap (ninguna)                         [ACTIVO — 0/15]
 | Backup scripts: PostgreSQL | IMPLEMENTADO | C-26 — scripts/backup.sh y scripts/backup.ps1 con rotacion de 7 dias |
 | N8N retention: 30 dias | CONFIGURADO | C-26 — EXECUTIONS_DATA_PRUNE y EXECUTIONS_DATA_MAX_AGE en docker-compose.yml |
 
-Tabla reconciliada con el estado real el 2026-09-28: C-14..C-48 quedaron documentados en las FASE 12-17, y los changes activos C-52..C-55 en la FASE 18.
+Tabla reconciliada con el estado real el 2026-10-01: C-14..C-48 quedaron documentados en las FASE 12-17; C-52..C-55 en la FASE 18 (C-52, C-53, C-54 y C-55 archivados) y C-56..C-60 en la FASE 19 (C-57 y C-58 archivados). Actualizacion 2026-10-01: C-53 y C-59 quedaron archivados; C-67 quedo registrado (notificacion SMS diferida, FASE 20). Actualizacion 2026-10-01 (tarde): C-54 quedo ARCHIVADO (2026-10-01, 51/51) y la FASE 18 queda CERRADA; se aprobo el plan de cumplimiento ISO/NIST/Ley 25.326, registrado como planificado en la FASE 21 (C-61..C-66, aun sin crear). Actualizacion 2026-10-01 (noche): C-61 `compliance-gobernanza` quedo CREADO como change OPSX (FASE 21, 0/23, MEDIO, sin dependencias, habilita C-63); los totales se ajustan a 58 changes numeradas creadas (54 archivadas + 4 activos) y 5 planificadas sin crear (C-62..C-66); C-66 no depende de C-67 sino que C-67 depende de C-66. Actualizacion 2026-10-01 (noche, cierre): C-61 quedo ARCHIVADO (2026-10-01, 26/26) y su spec `security-governance-docs` fue creada; la FASE 21 quedo parcialmente ejecutada y los totales se ajustan a 58 changes numeradas creadas (55 archivadas + 3 activos) mas 1 de mantenimiento sin numero (56 archivadas en total) y 5 planificadas sin crear (C-62..C-66).
 
 Cambios que NO estan en el roadmap original porque se implementaron durante el desarrollo:
 - Clasificador hibrido (completo)
@@ -1248,17 +1476,16 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 
 ## Primer change recomendado
 
-Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22).
+Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01) y C-61 (2026-10-01, 26/26).
 
-Hay 4 changes ACTIVOS (post-roadmap, FASE 18):
-- **`c-52-telefonia-transcripcion-async`** — implementado 43/44 (falta la verificacion en vivo 8.4) — Governance CRITICA.
-- **`c-53-notificacion-numero-incidente`** — 11/32 (21 tareas diferidas por el spike AR SMS) — Governance ALTO.
-- **`c-54-directorio-usuarios`** — 50/51 (falta la revision humana 7.5) — Governance ALTO.
-- **`c-55-canal-correo-imap`** — 0/15 (planning completo, sin aplicar) — Governance MEDIO.
+Hay 3 changes ACTIVOS (post-roadmap, FASE 19 y FASE 20):
+- **`c-56-notificaciones-por-rol`** — 0/27 (planning completo, sin aplicar; FASE 19) — Governance ALTO.
+- **`c-60-directorio-endurecimiento`** — 0/33 (planning completo, sin aplicar; FASE 19) — Governance ALTO.
+- **`c-67-notificacion-sms-llamante`** — 0/24 (diferido; bloqueado por OQ3 y C-66; FASE 20) — Governance ALTO.
 
-C-01..C-48 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
+C-01..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59 y C-61 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
 
-**Detalle de `c-52-telefonia-transcripcion-async`** (Gobernanza CRITICA):
+**Detalle de `c-52-telefonia-transcripcion-async`** (Gobernanza CRITICA; ARCHIVADO 2026-09-30):
 
 - Cierra el gap del canal telefonico: la descripcion llegaba VACIA al `AI Agent` porque el evento
   `call-summary.complete` no trae la transcripcion y `<Record transcribe="true">` es solo ingles.
@@ -1267,12 +1494,12 @@ C-01..C-48 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51`
   es dueno de la descarga y de la transcripcion, pseudonimiza ANTES del handoff a n8n (cierra una
   fuga latente de PII), persiste una tabla intake cifrada, agrega la superficie de guarda
   `backend_stt` y sella `ingresado_en` en el callback del backend. Absorbe `c-51`.
-- **Preguntas abiertas 1-3 RESUELTAS**: (1) subir `google-genai` a `>=2.20.0` (el tipado de
+- **Preguntas abiertas 1-3 RESUELTAS en apply**: (1) subir `google-genai` a `>=2.20.0` (el tipado de
   `transcription_config` llega en `2.13.0`); (2) `gemini-3.5-transcribe` esta Stable, ~USD 0.005/min
   (por debajo de Whisper); (3) se usa `language_codes=["es-419"]` (es-AR no soportado), con fallback
-  a auto-detect o `es-MX`. Restan 4 preguntas de diseno (retencion del audio, comportamiento ante
-  fallo de STT/denegacion, drop de la suscripcion Event Streams, reescritura del `<Say>`).
-- **Leer antes**: `openspec/changes/c-52-telefonia-transcripcion-async/{proposal,design,tasks}.md`,
+  a auto-detect o `es-MX`. Las preguntas de diseno 4-7 (retencion del audio, comportamiento ante
+  fallo de STT/denegacion, drop de la suscripcion Event Streams, reescritura del `<Say>`) quedan registradas en el design del change archivado.
+- **Leer antes**: `openspec/changes/archive/2026-09-30-c-52-telefonia-transcripcion-async/{proposal,design,tasks}.md`,
   `openspec/specs/n8n-workflow/spec.md`, `openspec/specs/runtime-cost-guard/spec.md`.
 
 Pendientes planificados, en orden recomendado:
@@ -1296,7 +1523,7 @@ Deuda menor pendiente (no bloqueante):
 - Tesis post-pipeline: reconciliar cap. 7 con el corpus real y corregir 4.3/4.8/cap. 11.
 
 Para avanzar:
-- `c-52`: cerrar la verificacion en vivo 8.4 (requiere una llamada real) y resolver las preguntas de diseno 4-7.
-- `c-55`: aplicar las fases 2-5 (offline); el smoke 6.3 requiere una casilla Gmail real con App Password.
-- `c-54`: registrar la aprobacion de la revision humana 7.5 para poder archivar.
-- `c-53`: las tareas diferidas siguen bloqueadas por el spike AR SMS.
+- Workstream aprobado: el plan de cumplimiento ISO/NIST/Ley 25.326 (`docs/cumplimiento/plan-cambios-cumplimiento.md`), en la FASE 21. C-61 quedo ARCHIVADO (2026-10-01, 26/26) y su spec `security-governance-docs` fue creada; C-62..C-66 siguen planificados (sin crear). Proximo paso aprobado del workstream: C-62 `hardening-infra-red` (endurecimiento de infraestructura y red; Governance ALTO), seguido de C-63 dependiente de C-61 ya archivado.
+- `c-56`: aplicar ahora que c-54 y c-55 estan archivados; depende de sus nodos `emailSend`/SMTP y del seam de resolucion del directorio.
+- `c-60`: aplicar ahora que c-54 esta archivado (prerequisito); compatible con c-56.
+- `c-67`: no aplicar aun; bloqueado por OQ3 (entregabilidad SMS AR) y por C-66 (privacidad-transferencias, planificado en la FASE 21, aun sin crear).
