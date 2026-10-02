@@ -588,9 +588,21 @@ def select_cases(
 # ── Writing (idempotent, structure-preserving) ──────────────────────────────
 
 
+def _should_write_metric(result: CaseResult) -> bool:
+    """True only for a valid measurement: no error and not anomalous.
+
+    Mirrors ``merge_evaluation_json``: an error or anomalous replay must never
+    overwrite a prior valid cell with a negative/None value. The decomposition
+    columns follow the same rule (an anomalous replay overwrites nothing).
+    """
+    return result.error is None and not result.anomalo
+
+
 def _write_csv_columns(
     row: list[Any], cols: dict[str, int], result: CaseResult
 ) -> None:
+    if not _should_write_metric(result):
+        return
     if result.t_e2e_s is not None:
         row[cols["auto"]] = ic._format_seconds(result.t_e2e_s)
     if result.latencia_e2e_ms is not None:
@@ -681,6 +693,8 @@ def write_xlsx_results(path: str | Path, results: dict[str, CaseResult]) -> None
             continue
         result = results.get(str(case_id).strip())
         if result is None:
+            continue
+        if not _should_write_metric(result):
             continue
         if result.t_e2e_s is not None:
             ws.cell(row=row_idx, column=auto_col, value=round(float(result.t_e2e_s), 3))

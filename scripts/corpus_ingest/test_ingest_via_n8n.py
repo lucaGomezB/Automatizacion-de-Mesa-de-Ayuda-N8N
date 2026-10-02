@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import csv
 import json
+from dataclasses import replace
 from datetime import datetime, timezone
 
 import pytest
@@ -378,6 +379,51 @@ def _ok_result(case_id: str = "R001") -> ivn.CaseResult:
     )
 
 
+def _anomalo_result(case_id: str = "R001") -> ivn.CaseResult:
+    """Replay-shaped result: negative e2e, flagged anomalous, error None."""
+    return replace(
+        _ok_result(case_id),
+        t_pipeline_s=-1005.0,
+        t_espera_s=5.0,
+        t_e2e_s=-1000.0,
+        anomalo=True,
+    )
+
+
+def _error_with_metrics_result(case_id: str = "R001") -> ivn.CaseResult:
+    """Error case that nonetheless carries numeric metric fields."""
+    return replace(_ok_result(case_id), error="timeout_correlacion")
+
+
+def _read_csv_rows(path) -> list[list[str]]:
+    with open(path, encoding="utf-8", newline="") as fh:
+        return list(csv.reader(fh))
+
+
+def _csv_metric_indexes(header: list[str]) -> dict[str, int]:
+    return {
+        "auto": header.index(ivn.HEADER_AUTO_TIME),
+        "latencia": header.index(ivn.LATENCIA_COL),
+        "pipeline": header.index(ivn.PIPELINE_COL),
+        "espera": header.index(ivn.ESPERA_COL),
+    }
+
+
+_CSV_SENTINELS = {"auto": "4", "latencia": "4000", "pipeline": "99", "espera": "88"}
+
+
+def _seed_csv_metric_sentinels(path) -> dict[str, int]:
+    """Write valid metrics first, then stamp distinct sentinels in every cell."""
+    ivn.write_csv_results(path, {"R001": _ok_result()})
+    rows = _read_csv_rows(path)
+    idx = _csv_metric_indexes(rows[1])
+    for key, sentinel in _CSV_SENTINELS.items():
+        rows[2][idx[key]] = sentinel
+    with open(path, "w", encoding="utf-8", newline="") as fh:
+        csv.writer(fh, lineterminator="\r\n").writerows(rows)
+    return idx
+
+
 def test_write_csv_fills_auto_latency_and_decomposition_columns(tmp_path):
     path = tmp_path / "corpus.csv"
     _write_fixture_csv(path)
@@ -456,6 +502,56 @@ def test_write_csv_is_idempotent(tmp_path):
     assert len({len(r) for r in rows}) == 1
 
 
+def test_write_csv_anomalous_result_preserves_prior_values(tmp_path):
+    path = tmp_path / "corpus.csv"
+    _write_fixture_csv(path)
+    idx = _seed_csv_metric_sentinels(path)
+    ivn.write_csv_results(path, {"R001": _anomalo_result()})
+    row = _read_csv_rows(path)[2]
+    for key, sentinel in _CSV_SENTINELS.items():
+        assert row[idx[key]] == sentinel
+    # The negative value of the anomalous replay never lands in the corpus.
+    assert float(row[idx["auto"]]) > 0
+
+
+def test_write_csv_error_result_preserves_prior_values(tmp_path):
+    path = tmp_path / "corpus.csv"
+    _write_fixture_csv(path)
+    idx = _seed_csv_metric_sentinels(path)
+    ivn.write_csv_results(path, {"R001": _error_with_metrics_result()})
+    row = _read_csv_rows(path)[2]
+    for key, sentinel in _CSV_SENTINELS.items():
+        assert row[idx[key]] == sentinel
+
+
+def test_write_csv_valid_result_overwrites_prior_values(tmp_path):
+    path = tmp_path / "corpus.csv"
+    _write_fixture_csv(path)
+    idx = _seed_csv_metric_sentinels(path)
+    ivn.write_csv_results(path, {"R001": _ok_result()})
+    row = _read_csv_rows(path)[2]
+    assert row[idx["auto"]] == "7"
+    assert row[idx["latencia"]] == "2000"
+    assert row[idx["pipeline"]] == "2"
+    assert row[idx["espera"]] == "5"
+
+
+def test_write_csv_anomalous_result_leaves_blank_cell_blank(tmp_path):
+    path = tmp_path / "corpus.csv"
+    _write_fixture_csv(path)
+    ivn.write_csv_results(path, {"R001": _ok_result()})
+    rows = _read_csv_rows(path)
+    idx = _csv_metric_indexes(rows[1])
+    for key in idx:
+        rows[2][idx[key]] = ""
+    with open(path, "w", encoding="utf-8", newline="") as fh:
+        csv.writer(fh, lineterminator="\r\n").writerows(rows)
+    ivn.write_csv_results(path, {"R001": _anomalo_result()})
+    row = _read_csv_rows(path)[2]
+    for key in idx:
+        assert row[idx[key]] == ""
+
+
 # ── XLSX writer (tasks 4.1-4.3) ─────────────────────────────────────────────
 
 
@@ -498,6 +594,92 @@ def test_write_xlsx_fills_columns_and_is_idempotent(tmp_path):
     assert ws2.cell(row=3, column=pipe).value == pytest.approx(2.0)
     assert ws2.cell(row=3, column=wait).value == pytest.approx(5.0)
     assert ws2.cell(row=3, column=1).value == "R001"
+
+
+def _write_fixture_xlsx(path) -> None:
+    openpyxl = pytest.importorskip("openpyxl")
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.append(["Casos de incidentes registrados:"])
+    ws.append(
+        [
+            "ID",
+            "Descripcion",
+            "Canal de Origen",
+            "Sector Asignado",
+            "Sectores Adicionales",
+            "Tiempo de Registro Manual (segundos)",
+            "TIempo de Registro Automatico (Segundos)",
+        ]
+    )
+    ws.append(["R001", "Text", "Correo", "Sistemas", "", 75, None])
+    wb.save(path)
+
+
+_XLSX_SENTINELS = {"auto": 4, "latencia": 4000, "pipeline": 99, "espera": 88}
+
+
+def _xlsx_metric_columns(path) -> dict[str, int]:
+    openpyxl = pytest.importorskip("openpyxl")
+    wb = openpyxl.load_workbook(path)
+    ws = wb[wb.sheetnames[0]]
+    header = [ws.cell(row=2, column=c).value for c in range(1, ws.max_column + 1)]
+    return {
+        "auto": header.index(ivn.HEADER_AUTO_TIME) + 1,
+        "latencia": header.index(ivn.LATENCIA_COL) + 1,
+        "pipeline": header.index(ivn.PIPELINE_COL) + 1,
+        "espera": header.index(ivn.ESPERA_COL) + 1,
+    }
+
+
+def _seed_xlsx_metric_sentinels(path) -> dict[str, int]:
+    openpyxl = pytest.importorskip("openpyxl")
+    ivn.write_xlsx_results(path, {"R001": _ok_result()})
+    cols = _xlsx_metric_columns(path)
+    wb = openpyxl.load_workbook(path)
+    ws = wb[wb.sheetnames[0]]
+    for key, sentinel in _XLSX_SENTINELS.items():
+        ws.cell(row=3, column=cols[key], value=sentinel)
+    wb.save(path)
+    return cols
+
+
+def test_write_xlsx_anomalous_result_preserves_prior_values(tmp_path):
+    openpyxl = pytest.importorskip("openpyxl")
+    path = tmp_path / "corpus.xlsx"
+    _write_fixture_xlsx(path)
+    cols = _seed_xlsx_metric_sentinels(path)
+    ivn.write_xlsx_results(path, {"R001": _anomalo_result()})
+    wb = openpyxl.load_workbook(path)
+    ws = wb[wb.sheetnames[0]]
+    for key, sentinel in _XLSX_SENTINELS.items():
+        assert ws.cell(row=3, column=cols[key]).value == sentinel
+
+
+def test_write_xlsx_error_result_preserves_prior_values(tmp_path):
+    openpyxl = pytest.importorskip("openpyxl")
+    path = tmp_path / "corpus.xlsx"
+    _write_fixture_xlsx(path)
+    cols = _seed_xlsx_metric_sentinels(path)
+    ivn.write_xlsx_results(path, {"R001": _error_with_metrics_result()})
+    wb = openpyxl.load_workbook(path)
+    ws = wb[wb.sheetnames[0]]
+    for key, sentinel in _XLSX_SENTINELS.items():
+        assert ws.cell(row=3, column=cols[key]).value == sentinel
+
+
+def test_write_xlsx_valid_result_overwrites_prior_values(tmp_path):
+    openpyxl = pytest.importorskip("openpyxl")
+    path = tmp_path / "corpus.xlsx"
+    _write_fixture_xlsx(path)
+    cols = _seed_xlsx_metric_sentinels(path)
+    ivn.write_xlsx_results(path, {"R001": _ok_result()})
+    wb = openpyxl.load_workbook(path)
+    ws = wb[wb.sheetnames[0]]
+    assert ws.cell(row=3, column=cols["auto"]).value == pytest.approx(7.0)
+    assert ws.cell(row=3, column=cols["latencia"]).value == 2000
+    assert ws.cell(row=3, column=cols["pipeline"]).value == pytest.approx(2.0)
+    assert ws.cell(row=3, column=cols["espera"]).value == pytest.approx(5.0)
 
 
 # ── Sidecar (tasks 4.4-4.5) ─────────────────────────────────────────────────
