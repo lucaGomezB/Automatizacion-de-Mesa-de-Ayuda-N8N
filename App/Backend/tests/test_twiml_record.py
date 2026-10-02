@@ -72,6 +72,51 @@ def test_allowed_no_promete_ticket_inmediato():
     assert "numero de ticket" not in xml
 
 
+def test_allowed_say_indica_colgar_y_notificacion_posterior():
+    """El <Say> admitido pide colgar y anuncia la notificacion con el numero."""
+    root = _parse(twiml.render_twiml_allowed(base_url=_BASE))
+    say = root.find("Say")
+    assert say is not None, "el documento admitido debe contener un <Say>"
+    text = "".join(say.itertext())
+    assert "cuelga la llamada" in text
+    assert "notificación" in text
+    assert "número de incidente" in text
+    # El texto viejo de "presiona numeral" ya no debe existir.
+    assert "numeral" not in text.lower()
+
+
+def test_allowed_record_sin_cambios_de_comportamiento():
+    """El cambio es SOLO de texto: atributos y callbacks del <Record> intactos."""
+    root = _parse(twiml.render_twiml_allowed(base_url=_BASE))
+    record = root.find("Record")
+    assert record is not None
+    assert record.attrib == {
+        "maxLength": "45",
+        "finishOnKey": "#",
+        "playBeep": "true",
+        "channels": "mono",
+        "recordingStatusCallback": _STATUS_URL,
+        "action": _ACTION_URL,
+    }
+
+
+def test_cierre_y_denegado_no_tocados():
+    """El <Say> de cierre y la rama denegada conservan su texto original."""
+    complete = _parse(twiml.render_twiml_record_complete())
+    complete_say = complete.find("Say")
+    assert complete_say is not None
+    complete_text = "".join(complete_say.itertext())
+    assert "Gracias. Estamos procesando tu mensaje. " in complete_text
+    assert "Te vamos a contactar a la brevedad." in complete_text
+
+    denied = _parse(twiml.render_twiml_denied())
+    denied_say = denied.find("Say")
+    assert denied_say is not None
+    denied_text = "".join(denied_say.itertext())
+    assert denied_text == "El servicio no esta disponible en este momento. Intente mas tarde."
+    assert denied.find("Hangup") is not None
+
+
 # ── 2.1 RED — Documento `action` de cierre post-grabacion ────────────────────
 
 

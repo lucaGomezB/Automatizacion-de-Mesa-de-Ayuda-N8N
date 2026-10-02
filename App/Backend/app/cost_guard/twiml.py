@@ -49,9 +49,9 @@ def render_twiml_allowed(base_url: str | None = None) -> str:
         + "<Response>"
         + '<Say voice="Polly.Mia-Neural" language="es-US">'
         + "Bienvenido a la mesa de ayuda. "
-        + "Describi tu problema despues del tono. "
-        + "Cuando termines, presiona numeral. "
-        + "Tenes hasta cuarenta y cinco segundos."
+        + "Describí tu problema después del tono. "
+        + "Cuando termines, cuelga la llamada. "
+        + "En unos minutos vas a recibir una notificación con el número de incidente."
         + "</Say>"
         + '<Record maxLength="45" finishOnKey="#" playBeep="true" '
         + 'channels="mono" '
