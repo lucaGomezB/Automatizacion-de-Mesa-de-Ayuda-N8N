@@ -69,6 +69,7 @@
 - [x] 4.7 GREEN: implementar el merge idempotente y el reporte del conteo de nulos. Verificacion: el test de 4.6 pasa.
 - [x] 4.8 TRIANGULATE: caso ya cargado, caso sin medicion; `evaluation/corpus.py` NO fue modificado (`git status` sin cambios en `evaluation/`). Verificacion: casos en verde y sin diff en el validador.
 - [x] 4.9 REFACTOR: unificar el formato numerico y los nombres de columnas como constantes. Verificacion: suite del harness en verde.
+- [x] 4.10 FIX (consistencia con `merge_evaluation_json`): los escritores XLSX y CSV NO escriben la metrica cuando `error is not None` o `anomalo is True`. Un replay anomalo (p.ej. `t_e2e_s` negativo en R004/R010/R012, canal `Formulario Web`) o un caso con error deja la celda previa INTACTA (ni negativa, ni `None`, ni vacia); solo un resultado valido sobrescribe. Las columnas de descomposicion (`Tiempo pipeline (s)`, `Tiempo espera (s)`) y `Latencia e2e (ms)` siguen la MISMA regla. RED: tests `tmp_path` que pre-siembran un valor valido y verifican que un caso anomalo/con error no lo cambia, que un caso valido si sobrescribe y que una celda previa vacia queda vacia (CSV y XLSX). Verificacion: 7 tests nuevos; suite del harness `103 passed`.
 
 ## 5. Runbook y prerrequisitos de operacion
 

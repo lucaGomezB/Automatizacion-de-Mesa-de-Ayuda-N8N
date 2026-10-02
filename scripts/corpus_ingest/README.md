@@ -266,6 +266,8 @@ cuenta, o distinto host/usuario, se aceptan.
   (3 decimales); `Latencia e2e (ms)` = `latencia_e2e_ms`; columnas nuevas
   `Tiempo pipeline (s)` y `Tiempo espera (s)`. Re-ejecutar no duplica columnas
   ni sobrescribe un valor previo con vacio.
+  Un caso con `error` o `anomalo=True` NO escribe NINGUNA de estas columnas: la
+  celda previa queda intacta (nunca un valor negativo, `None` o vacio).
 - **JSON de evaluacion**: merge de `tiempo_automatizado_s` numerico por `id`.
   Nunca escribe `null` sobre un valor no nulo; no debilita
   `evaluation/corpus.py::_a_float`. Reporta el conteo de casos aun nulos
