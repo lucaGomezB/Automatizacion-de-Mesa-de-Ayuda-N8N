@@ -708,13 +708,60 @@ def write_xlsx_results(path: str | Path, results: dict[str, CaseResult]) -> None
     wb.save(path)
 
 
+def _load_sidecar_entries(path: Path) -> list[dict[str, Any]]:
+    """Read the existing sidecar list, falling back to ``[]`` when unusable.
+
+    Missing, unreadable, non-JSON or non-list content is treated as an empty
+    sidecar so a corrupt file never aborts a run. Non-dict entries are dropped;
+    dict entries are preserved (the merge only touches entries keyed by
+    ``case_id``).
+    """
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return []
+    if not isinstance(data, list):
+        return []
+    return [entry for entry in data if isinstance(entry, dict)]
+
+
 def write_sidecar_json(path: str | Path, results: Iterable[CaseResult]) -> None:
-    """Write the description-free traceability sidecar."""
-    payload = [asdict(r) for r in results]
+    """Write the description-free traceability sidecar, merging across runs.
+
+    Merge is keyed by ``case_id`` so a short re-measure never destroys the
+    traceability of a full prior run (the bug this fixes):
+
+    - entries for cases NOT in ``results`` are preserved;
+    - an EXISTING ``case_id`` is replaced only by a VALID result
+      (``error is None`` and not anomalous), mirroring ``_should_write_metric``;
+      an invalid replay keeps the previously stored valid entry;
+    - a NEW ``case_id`` is appended regardless of validity;
+    - existing entries keep their position, new ones are appended.
+
+    Still description-free by construction: only the ``CaseResult`` fields are
+    serialized.
+    """
     target = Path(path)
+    merged = _load_sidecar_entries(target)
+    index: dict[str, int] = {}
+    for position, entry in enumerate(merged):
+        cid = entry.get("case_id")
+        if cid is not None:
+            index.setdefault(str(cid), position)
+
+    for result in results:
+        key = str(result.case_id)
+        payload = asdict(result)
+        position = index.get(key)
+        if position is None:
+            index[key] = len(merged)
+            merged.append(payload)
+        elif _should_write_metric(result):
+            merged[position] = payload
+
     target.parent.mkdir(parents=True, exist_ok=True)
     with open(target, "w", encoding="utf-8") as fh:
-        json.dump(payload, fh, ensure_ascii=False, indent=2)
+        json.dump(merged, fh, ensure_ascii=False, indent=2)
         fh.write("\n")
 
 

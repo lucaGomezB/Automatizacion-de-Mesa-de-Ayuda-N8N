@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import csv
 import json
-from dataclasses import replace
+from dataclasses import asdict, replace
 from datetime import datetime, timezone
 
 import pytest
@@ -695,6 +695,98 @@ def test_sidecar_json_has_no_description_and_has_trace_fields(tmp_path):
     assert data[0]["confirmacion_recibida"] is True
     assert data[0]["t_confirmacion_s"] == pytest.approx(30.0)
     assert data[0]["t_e2e_s"] == pytest.approx(7.0)
+
+
+# ── Sidecar merge across runs (keyed by case_id) ────────────────────────────
+
+
+def _seed_sidecar(path, results: list[ivn.CaseResult]) -> None:
+    path.write_text(
+        json.dumps([asdict(r) for r in results], ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+
+def test_write_sidecar_missing_file_writes_current_results(tmp_path):
+    path = tmp_path / "missing.json"
+    ivn.write_sidecar_json(path, [_ok_result("R001")])
+    data = json.loads(path.read_text(encoding="utf-8"))
+    assert [d["case_id"] for d in data] == ["R001"]
+    assert data[0]["t_e2e_s"] == pytest.approx(7.0)
+
+
+def test_write_sidecar_corrupt_file_falls_back_to_current_results(tmp_path):
+    path = tmp_path / "corrupt.json"
+    path.write_text("{not valid json", encoding="utf-8")
+    ivn.write_sidecar_json(path, [_ok_result("R002")])
+    data = json.loads(path.read_text(encoding="utf-8"))
+    assert [d["case_id"] for d in data] == ["R002"]
+
+
+def test_write_sidecar_preserves_valid_entry_when_replay_is_anomalous(tmp_path):
+    path = tmp_path / "sidecar.json"
+    _seed_sidecar(path, [_ok_result("R001")])
+    ivn.write_sidecar_json(path, [_anomalo_result("R001")])
+    data = json.loads(path.read_text(encoding="utf-8"))
+    assert [d["case_id"] for d in data] == ["R001"]
+    assert data[0]["t_e2e_s"] == pytest.approx(7.0)
+    assert data[0]["anomalo"] is False
+
+
+def test_write_sidecar_preserves_valid_entry_when_replay_has_error(tmp_path):
+    path = tmp_path / "sidecar.json"
+    _seed_sidecar(path, [_ok_result("R001")])
+    ivn.write_sidecar_json(path, [_error_with_metrics_result("R001")])
+    data = json.loads(path.read_text(encoding="utf-8"))
+    assert data[0]["error"] is None
+    assert data[0]["t_e2e_s"] == pytest.approx(7.0)
+
+
+def test_write_sidecar_replaces_entry_on_valid_remeasure(tmp_path):
+    path = tmp_path / "sidecar.json"
+    _seed_sidecar(path, [_ok_result("R001")])
+    remeasured = replace(_ok_result("R001"), t_pipeline_s=4.0, t_e2e_s=9.0)
+    ivn.write_sidecar_json(path, [remeasured])
+    data = json.loads(path.read_text(encoding="utf-8"))
+    assert [d["case_id"] for d in data] == ["R001"]
+    assert data[0]["t_e2e_s"] == pytest.approx(9.0)
+    assert data[0]["t_pipeline_s"] == pytest.approx(4.0)
+
+
+def test_write_sidecar_appends_new_case_and_keeps_existing_in_order(tmp_path):
+    path = tmp_path / "sidecar.json"
+    _seed_sidecar(path, [_ok_result("R001")])
+    ivn.write_sidecar_json(path, [_ok_result("R002")])
+    data = json.loads(path.read_text(encoding="utf-8"))
+    assert [d["case_id"] for d in data] == ["R001", "R002"]
+    assert data[0]["t_e2e_s"] == pytest.approx(7.0)
+
+
+def test_write_sidecar_updates_existing_in_place_and_appends_new(tmp_path):
+    path = tmp_path / "sidecar.json"
+    _seed_sidecar(path, [_ok_result("R001"), _ok_result("R002"), _ok_result("R003")])
+    remeasured = replace(_ok_result("R002"), t_e2e_s=8.5)
+    ivn.write_sidecar_json(path, [remeasured, _ok_result("R004")])
+    data = json.loads(path.read_text(encoding="utf-8"))
+    assert [d["case_id"] for d in data] == ["R001", "R002", "R003", "R004"]
+    assert data[1]["t_e2e_s"] == pytest.approx(8.5)
+
+
+def test_write_sidecar_stores_new_invalid_case_regardless(tmp_path):
+    path = tmp_path / "sidecar.json"
+    _seed_sidecar(path, [_ok_result("R001")])
+    ivn.write_sidecar_json(path, [_anomalo_result("R002")])
+    data = json.loads(path.read_text(encoding="utf-8"))
+    assert [d["case_id"] for d in data] == ["R001", "R002"]
+    assert data[1]["anomalo"] is True
+
+
+def test_write_sidecar_merge_never_adds_description(tmp_path):
+    path = tmp_path / "sidecar.json"
+    _seed_sidecar(path, [_ok_result("R001")])
+    ivn.write_sidecar_json(path, [_anomalo_result("R001"), _ok_result("R002")])
+    raw = path.read_text(encoding="utf-8")
+    assert "descripcion" not in raw.lower()
 
 
 # ── Evaluation JSON merge (tasks 4.6-4.8) ───────────────────────────────────
