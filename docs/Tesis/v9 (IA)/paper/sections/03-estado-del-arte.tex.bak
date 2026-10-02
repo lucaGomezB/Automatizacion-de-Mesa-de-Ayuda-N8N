@@ -1,0 +1,60 @@
+%==============================================================================
+% Capitulo 3: Estado del Arte
+%==============================================================================
+\section{Estado del arte}
+
+Este capitulo revisa la literatura academica y las soluciones comerciales disponibles en tres areas relevantes para el presente trabajo: plataformas de mesa de ayuda, herramientas de orquestacion de flujos, y metodos de clasificacion automatica de tickets de soporte. El proposito es situar la contribucion de esta investigacion en el contexto de los desarrollos previos y fundamentar la brecha que motiva el trabajo.
+
+\subsection{Soluciones comerciales de mesa de ayuda}
+
+El segmento de soluciones comerciales para gestion de mesa de ayuda se encuentra dominado por plataformas integrales que cubren el ciclo completo de vida del ticket. Zendesk Suite ofrece funcionalidades de recepcion multicanal, automatizacion de flujos basicos y, mediante un modulo adicional, capacidades de inteligencia artificial para sugerencia de respuestas y defleccion de consultas frecuentes. Freshdesk propone una arquitectura comparable e incorpora el motor Freddy AI para clasificacion automatica y enrutamiento inteligente. Jira Service Management, parte del ecosistema de Atlassian, ofrece capacidades limitadas de automatizacion inteligente en su plan estandar; la edicion Data Center permite el despliegue autoalojado para organizaciones con requisitos de soberania sobre los datos. ServiceNow ITSM constituye la opcion de referencia en el segmento corporativo, con un modulo Predictive Intelligence que aplica aprendizaje automatico sobre el historico de tickets de la organizacion.
+
+La adopcion de capacidades de inteligencia artificial en plataformas comerciales de mesa de ayuda ha crecido de manera sostenida en los ultimos anos, particularmente en organizaciones medianas de mercados de habla inglesa. No obstante, estas plataformas presentan dos limitaciones relevantes para el contexto de la presente investigacion. La primera es el modelo de costos basado en agente y mes, que escala linealmente con el tamano del equipo de soporte. La segunda es que la mayoria de estas plataformas operan exclusivamente en modalidad de software como servicio (SaaS) con almacenamiento de datos en jurisdicciones extranjeras, lo que introduce consideraciones adicionales sobre transferencia internacional de datos personales bajo la Ley~25.326 \parencite{Ley25326_2000}.
+
+En el segmento de codigo abierto, osTicket constituye una alternativa de despliegue autoalojado sin costo de licencia, aunque carece de capacidades nativas de clasificacion automatica mediante procesamiento de lenguaje natural moderno. Esta brecha funcional motiva la busqueda de arquitecturas compositivas que integren componentes maduros de codigo abierto con servicios de inferencia bajo demanda.
+
+\subsection{Plataformas de orquestacion de flujos}
+
+Dentro del segmento de plataformas de orquestacion de flujos, las soluciones mas difundidas incluyen Zapier, Make (anteriormente Integromat), Microsoft Power Automate, Apache Airflow y N8N. Las primeras tres operan exclusivamente como SaaS, lo que las descarta como base para implementaciones donde el control sobre la infraestructura es un requisito explicito. Apache Airflow se orienta a flujos de trabajo programados de tipo procesamiento de datos por lotes, con un diseno centrado en grafos aciclicos dirigidos (DAG) definidos como codigo Python \parencite{Apache2024_airflow}; aunque potente, su paradigma de ejecucion programada resulta inadecuado para un caso de uso reactivo y orientado a eventos como el de una mesa de ayuda.
+
+N8N ofrece un modelo de construccion visual de flujos sobre nodos predefinidos, soporte nativo para webhooks y disparadores reactivos, ejecucion basada en eventos y posibilidad de despliegue completamente autoalojado bajo Docker \parencite{n8n2024_docs}. La disponibilidad de su codigo fuente bajo licencia Sustainable Use facilita la auditoria de seguridad y la adaptacion a requerimientos especificos sin generar dependencia exclusiva del proveedor. Estas caracteristicas confluyen para posicionar a N8N como la opcion mas adecuada para el escenario propuesto, donde la soberania sobre los datos y los flujos de procesamiento constituye un requisito no negociable.
+
+\subsection{Trabajos academicos previos sobre clasificacion de tickets}
+
+La literatura academica sobre clasificacion automatica de tickets de soporte ha experimentado un crecimiento considerable durante los ultimos anos. A continuacion se presentan los trabajos mas relevantes, organizados por enfoque metodologico y por orden cronologico.
+
+\textcite{Paramesh2019_it_service_desk} constituyen uno de los primeros trabajos exhaustivos en el area. Utilizando combinaciones de maquinas de vectores de soporte (SVM) y representaciones TF-IDF sobre un corpus en ingles de aproximadamente 10.000 tickets, reportan exactitudes cercanas al 87~\%. Su contribucion principal radica en la demostracion de que las tecnicas clasicas de aprendizaje supervisado, cuando se aplican sobre representaciones textuales adecuadas, pueden alcanzar niveles de desempeno operativamente utiles para la clasificacion automatica de tickets.
+
+\textcite{Revina2020_bert_tickets} extienden este enfoque incorporando arquitecturas basadas en BERT y reportan mejoras significativas, alcanzando exactitudes del orden del 91~\% sobre un corpus de tamano comparable. Su hallazgo mas relevante para el presente trabajo es la constatacion de que modelos preentrenados sobre grandes corpus de texto general pueden transferir conocimiento linguistico util al dominio especifico de los tickets de soporte, incluso sin ajuste fino sobre datos del dominio. Este resultado respalda la estrategia adoptada en la presente investigacion de utilizar un LLM de proposito general como motor de inferencia.
+
+La literatura reciente sobre evaluacion de modelos de lenguaje en escenarios de pocos ejemplos ha documentado que el rendimiento de clasificacion depende fuertemente del idioma del corpus, con resultados que favorecen a los idiomas mejor representados en los corpus de entrenamiento de los modelos contemporaneos. El espanol, y en particular sus variantes regionales como el rioplatense, ha recibido una atencion notablemente menor en las evaluaciones sistematicas publicadas. Esta brecha constituye una de las motivaciones academicas del presente trabajo, el cual aporta evidencia empirica sobre el desempeno del clasificador en espanol rioplatense aplicado a un dominio de mesa de ayuda de organizacion mediana.
+
+\subsection{Analisis comparativo y brecha identificada}
+
+La Tabla~\ref{tab:comparativa} presenta la comparacion sistematica de las principales soluciones revisadas frente a la propuesta del presente trabajo, considerando cuatro dimensiones relevantes: tipo de despliegue, capacidad de clasificacion automatica, soberania sobre los datos y modelo de costos.
+
+\begin{table}[htbp]
+\centering
+\caption{Comparacion de soluciones para gestion automatizada de mesa de ayuda}
+\label{tab:comparativa}
+\small
+\begin{tabular}{@{}p{2.6cm} p{2.8cm} >{\raggedright\arraybackslash}p{3.5cm} >{\raggedright\arraybackslash}p{3.8cm}@{}}
+\toprule
+\textbf{Solucion} & \textbf{Despliegue} & \textbf{Clasificacion automatica} & \textbf{Modelo de costo} \\
+\midrule
+Zendesk Suite     & SaaS comercial      & Si, modulo de IA                & Alto, por agente/mes \\
+Freshdesk         & SaaS comercial      & Si, motor Freddy AI             & Medio-alto, por agente \\
+Jira Service Mgmt & SaaS o autoalojado  & Limitada en plan estandar       & Medio, por agente \\
+ServiceNow ITSM   & SaaS comercial      & Si, Predictive Intelligence     & Muy alto, contrato anual \\
+osTicket          & Codigo abierto      & No nativa                       & Sin costo \\
+\addlinespace
+\textbf{Propuesta} & Hibrida (iPaaS + modulo propio) & Si, LLM + reglas deterministas & Bajo, costo por uso de API \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La sintesis comparativa evidencia que ninguna de las soluciones revisadas combina simultaneamente las cuatro propiedades que el contexto del trabajo demanda: despliegue autoalojado para resguardo de datos sensibles, costo bajo y predecible en el tiempo, capacidad nativa de clasificacion automatica mediante NLP moderno, y soporte especifico para canales multiples incluyendo telefonia con transcripcion automatica. La brecha identificada se sintetiza en la ausencia de soluciones de bajo costo, autoalojadas, con clasificacion basada en modelos de lenguaje grandes y validadas empiricamente sobre corpus en espanol rioplatense para el dominio especifico de mesas de ayuda empresariales medianas.
+
+La presente investigacion se ubica precisamente en esa interseccion y propone una arquitectura compositiva que reutiliza componentes maduros de codigo abierto y servicios de inferencia bajo demanda, manteniendo bajo control de la organizacion los datos sensibles y los flujos de orquestacion, y aportando evidencia empirica reproducible sobre el desempeno del enfoque en un contexto linguistico y organizacional escasamente documentado en la literatura.
+
+\newpage
