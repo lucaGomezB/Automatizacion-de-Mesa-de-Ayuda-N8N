@@ -272,8 +272,13 @@ cuenta, o distinto host/usuario, se aceptan.
   Nunca escribe `null` sobre un valor no nulo; no debilita
   `evaluation/corpus.py::_a_float`. Reporta el conteo de casos aun nulos
   (telefono pendiente).
-- **Sidecar** `data/corpus_resultados_n8n.json`: sin descripciones por
-  construccion (solo ids, instantes y tiempos).
+- **Sidecar** `data/corpus_resultados_n8n.json`: lista por caso, sin
+  descripciones por construccion (solo ids, instantes y tiempos). Hace MERGE
+  entre corridas por `case_id`: conserva los casos que no vinieron en la corrida
+  actual, actualiza en su posicion los que repitieron y agrega los nuevos al
+  final. Un replay INVALIDO (`error` no nulo o `anomalo=True`) NO sobrescribe la
+  entrada valida ya guardada; un replay VALIDO si reemplaza la entrada previa.
+  Un archivo faltante o corrupto se trata como sidecar vacio (no aborta).
 
 ### Runbook: activar N8N y cablear credenciales
 
