@@ -1,0 +1,5 @@
+# Dependencias aisladas de la herramienta de softphone VoIP de desarrollo.
+# NO agregar estas dependencias a App/Backend/requirements.txt: el backend de
+# produccion no las usa. Instalar con:
+#   pip install -r scripts/voip_softphone/requirements.txt
+twilio>=9.11,<10
