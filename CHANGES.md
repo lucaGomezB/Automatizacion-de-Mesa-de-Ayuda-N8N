@@ -1419,6 +1419,45 @@ C-66 privacidad-transferencias (C-53 alineacion; habilita C-67) [PLANIFICADO —
 
 ---
 
+## FASE 22 — Ingesta del corpus por el flujo N8N real (2026-10-02)
+
+> Change post-roadmap que desbloquea la carga del corpus de evaluacion: hoy los 200 casos tienen `tiempo_automatizado_s = null` y `evaluation/corpus.py` los rechaza. C-68 mide web y correo por el flujo N8N real y escribe de vuelta la metrica hibrida; telefonia queda a cargo manual del autor.
+
+### [C-69] `dedup-correlacion-altas` — ACTIVO (0/30)
+
+- **Estado**: `[ ]` propuesto (2026-10-02) — 0/30 tareas. Planning completo (proposal + design + specs + tasks); OQ-A..OQ-D RESUELTAS por el autor; sin aplicar. Governance MEDIO.
+- **Problema**: el canal web envia `origen_message_id = null`, esquivando el indice unico de la migracion 005 (dedup server-side) y duplicando incidentes al reingestar; y `IncidenteRead` no expone `origen_message_id` ni el listado filtra por el, forzando correlacion por ventana temporal. Cierra las OQ2 (dedup web) y OQ6 (correlacion) de C-68.
+- **Scope**:
+  - `IncidenteRead` expone `origen_message_id`; filtro exacto opcional `origen_message_id` en el listado (routes -> service -> repository).
+  - Rama web del normalizador N8N: acepta id deterministico del llamador (harness `corpus-<ID>`) y genera uno unico para el formulario real; correo/telefonia intactos.
+  - Sin migracion ni backfill (indice unico 005 ya existe; legacy web queda nulo).
+  - Tests TDD de schema, filtro, idempotencia web y estructura del workflow.
+- **Dependencias**: **PREREQUISITO de `c-68-corpus-ingesta-n8n`** (OQ2/OQ6 delegadas). Reutiliza `incident-intake-guards` (idempotencia por origen) y `e2e-timing-instrumentation` (§6, replays sin re-medir). OQ-A..OQ-D RESUELTAS por el autor: OQ-A n8n genera el id (deterministico del llamador o unico por ejecucion; UUID backend opcional); OQ-B exponer `origen_message_id` en `IncidenteRead` + filtro exacto en el listado; OQ-C el formulario real no envia id (sin cambio de frontend); OQ-D sin backfill. Sin preguntas abiertas bloqueantes: apply-ready.
+- **Governance**: MEDIO
+- **Leer antes**:
+  - `openspec/changes/c-69-dedup-correlacion-altas/{proposal,design,tasks}.md`
+  - `n8n/workflow.json` (nodo "Normalizar entrada del incidente")
+  - `docs/medicion-latencia-e2e.md`
+
+### [C-68] `corpus-ingesta-n8n` — ACTIVO (4/58)
+
+- **Estado**: `[ ]` propuesto (2026-10-02) — 4/58 tareas. Planning completo (proposal + design + specs + tasks); sin aplicar. Governance MEDIO.
+- **Problema**: el corpus de tesis no es cargable (`tiempo_automatizado_s` nulo en 200/200) y el harness existente mide un POST directo, no el flujo N8N real ni la espera del poller de correo.
+- **Scope**:
+  - Harness `scripts/corpus_ingest/ingest_via_n8n.py`: web por webhook + lectura por id; correo por SMTP + trigger IMAP + sondeo.
+  - Metrica hibrida (D): `t_pipeline_s`, `t_espera_s`, `t_e2e_s`; `tiempo_automatizado_s = t_e2e_s` (web y correo).
+  - Write-back a XLSX/CSV + sidecar sin descripciones + merge del JSON de evaluacion.
+  - Runbook de activacion de N8N y credenciales; login desde entorno.
+  - Tests offline (TDD) de la logica pura.
+- **Dependencias**: `docs/medicion-latencia-e2e.md` (contrato de timing, C-39/C-48); `dry-run-harness` (verificacion web/correo, sin modificar). OQs abiertas: OQ1 (canonico de correo), OQ2 (dedup web), OQ3 (descomposicion), OQ4 (confirmacion de correo), OQ5 (origen de telefonia), OQ6 (correlacion de correo).
+- **Governance**: MEDIO
+- **Leer antes**:
+  - `openspec/changes/c-68-corpus-ingesta-n8n/{proposal,design,tasks}.md`
+  - `docs/medicion-latencia-e2e.md`
+  - `docs/como_cargar_datos_corpus.md`
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo)
@@ -1478,10 +1517,12 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 
 Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01) y C-61 (2026-10-01, 26/26).
 
-Hay 3 changes ACTIVOS (post-roadmap, FASE 19 y FASE 20):
+Hay 5 changes ACTIVOS (post-roadmap, FASE 19, FASE 20 y FASE 22):
 - **`c-56-notificaciones-por-rol`** — 0/27 (planning completo, sin aplicar; FASE 19) — Governance ALTO.
 - **`c-60-directorio-endurecimiento`** — 0/33 (planning completo, sin aplicar; FASE 19) — Governance ALTO.
 - **`c-67-notificacion-sms-llamante`** — 0/24 (diferido; bloqueado por OQ3 y C-66; FASE 20) — Governance ALTO.
+- **`c-68-corpus-ingesta-n8n`** — 4/58 (planning completo, sin aplicar; FASE 22) — Governance MEDIO.
+- **`c-69-dedup-correlacion-altas`** — 0/30 (planning completo, OQ-A..OQ-D resueltas, sin aplicar; FASE 22) — Governance MEDIO. PREREQUISITO de `c-68`.
 
 C-01..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59 y C-61 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
 
