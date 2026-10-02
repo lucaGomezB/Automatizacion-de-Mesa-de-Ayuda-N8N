@@ -835,6 +835,158 @@ def test_ingest_email_confirmation_absent_keeps_primary():
     assert result.t_e2e_s == pytest.approx(7.0)
 
 
+def test_ingest_email_confirmation_observer_raises_is_non_blocking():
+    """D14: a raising confirmation observer must NOT abort the primary run."""
+    session = FakeSession(
+        [
+            FakeResponse(200, [{"id": 11, "ingresado_en": _dt(12, 0, 5).isoformat()}]),
+            FakeResponse(200, _detail_body()),
+        ]
+    )
+
+    def _boom(numero: str) -> datetime:
+        raise RuntimeError("boom")
+
+    result = ivn.ingest_email_case(
+        session=session,
+        token="t",
+        base_url="https://api.local",
+        case_id="R001",
+        descripcion="d" * 20,
+        domain="corpus.local",
+        sender="ingesta@corpus.local",
+        recipient="ingesta@corpus.local",
+        verify=True,
+        timeout=10,
+        poll_timeout=0,
+        poll_interval=0,
+        send_func=lambda m: None,
+        t_envio=_dt(12, 0, 0),
+        confirmation_observer=_boom,
+    )
+    # Absent secondary check, never an error.
+    assert result.error is None
+    assert result.confirmacion_recibida is False
+    assert result.t_confirmacion is None
+    assert result.t_confirmacion_s is None
+    # Primary measurement derived normally from the API instants.
+    assert result.t_pipeline_s == pytest.approx(2.0)
+    assert result.t_espera_s == pytest.approx(5.0)
+    assert result.t_e2e_s == pytest.approx(7.0)
+
+
+def test_confirmation_observer_exception_does_not_leak_message(capsys):
+    """The swallowed exception body (which may echo a secret) never hits output."""
+    session = FakeSession(
+        [
+            FakeResponse(200, [{"id": 11, "ingresado_en": _dt(12, 0, 5).isoformat()}]),
+            FakeResponse(200, _detail_body()),
+        ]
+    )
+
+    def _boom(numero: str) -> datetime:
+        raise RuntimeError("IMAP login failed for TOP_SECRET_PW")
+
+    result = ivn.ingest_email_case(
+        session=session,
+        token="t",
+        base_url="https://api.local",
+        case_id="R001",
+        descripcion="d" * 20,
+        domain="corpus.local",
+        sender="ingesta@corpus.local",
+        recipient="ingesta@corpus.local",
+        verify=True,
+        timeout=10,
+        poll_timeout=0,
+        poll_interval=0,
+        send_func=lambda m: None,
+        t_envio=_dt(12, 0, 0),
+        confirmation_observer=_boom,
+    )
+    assert result.confirmacion_recibida is False
+    assert result.error is None
+    captured = capsys.readouterr()
+    assert "TOP_SECRET_PW" not in captured.out
+    assert "TOP_SECRET_PW" not in captured.err
+
+
+def _write_two_email_cases_json(path) -> None:
+    doc = {
+        "schema_version": 1,
+        "metadata": {"descripcion": "synthetic", "total_casos": 2},
+        "casos": [
+            {
+                "id": "R001",
+                "descripcion": "d1",
+                "canal_origen": "correo electrónico",
+                "sector_asignado": "Sistemas",
+                "sectores_adicionales": [],
+                "tiempo_manual_s": 50,
+                "tiempo_automatizado_s": None,
+            },
+            {
+                "id": "R002",
+                "descripcion": "d2",
+                "canal_origen": "correo electrónico",
+                "sector_asignado": "Sistemas",
+                "sectores_adicionales": [],
+                "tiempo_manual_s": 60,
+                "tiempo_automatizado_s": None,
+            },
+        ],
+    }
+    path.write_text(json.dumps(doc, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def test_run_per_case_exception_is_reported_and_does_not_abort(tmp_path, monkeypatch):
+    """One unexpected per-case exception is reported as a case error, not fatal."""
+    json_path = tmp_path / "corpus.json"
+    _write_two_email_cases_json(json_path)
+    _set_operator_creds(monkeypatch)
+    _clear_confirmation_env(monkeypatch)
+
+    calls: list[str] = []
+
+    def flaky_ingest_email_case(**kwargs):
+        calls.append(kwargs["case_id"])
+        if len(calls) == 1:
+            raise RuntimeError("boom")
+        return _ok_result(case_id=kwargs["case_id"])
+
+    monkeypatch.setattr(ivn, "login", lambda *a, **k: "tok")
+    monkeypatch.setattr(ivn, "ingest_email_case", flaky_ingest_email_case)
+    monkeypatch.setattr(ivn, "write_csv_results", lambda *a, **k: None)
+    monkeypatch.setattr(ivn, "write_xlsx_results", lambda *a, **k: None)
+
+    sidecar = tmp_path / "sidecar.json"
+    code = ivn.run(
+        [
+            "--source",
+            "json",
+            "--json",
+            str(json_path),
+            "--sidecar",
+            str(sidecar),
+            "--csv",
+            str(tmp_path / "c.csv"),
+            "--xlsx",
+            str(tmp_path / "c.xlsx"),
+            "--only-channel",
+            "correo",
+        ]
+    )
+    # The second case still ran despite the first one raising.
+    assert calls == ["R001", "R002"]
+    data = json.loads(sidecar.read_text(encoding="utf-8"))
+    assert data[0]["case_id"] == "R001"
+    assert data[0]["error"] == "RuntimeError"
+    assert data[0]["t_e2e_s"] is None
+    assert data[1]["case_id"] == "R002"
+    assert data[1]["error"] is None
+    assert code == 1  # one failed case reported, run completed normally
+
+
 # ── Dry-run and privacy (task 6.1) ──────────────────────────────────────────
 
 
@@ -1181,3 +1333,187 @@ def test_run_leaves_observer_none_when_unconfigured(tmp_path, monkeypatch):
     )
     assert code == 0
     assert captured["observer"] is None
+
+
+# ── Bounded confirmation IMAP fetch (timeout + SUBJECT criterion) ────────────
+
+
+class FakeIMAPClient:
+    """Context-manager IMAP stand-in; records ctor kwargs and search args."""
+
+    def __init__(
+        self,
+        *,
+        host: str = "",
+        port: int = 993,
+        ssl_context=None,
+        timeout: float | None = None,
+        search_status: str = "OK",
+        uids: bytes = b"",
+        messages: dict | None = None,
+    ) -> None:
+        self.host = host
+        self.port = port
+        self.ssl_context = ssl_context
+        self.timeout = timeout
+        self.search_status = search_status
+        self.uids = uids
+        self.messages = messages or {}
+        self.search_calls: list[tuple] = []
+        self.logged_in: tuple | None = None
+        self.selected: tuple | None = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+    def login(self, user, password):
+        self.logged_in = (user, password)
+        return ("OK", [b"LOGIN completed"])
+
+    def select(self, folder, readonly=False):
+        self.selected = (folder, readonly)
+        return ("OK", [b"1"])
+
+    def search(self, *args):
+        self.search_calls.append(args)
+        return (self.search_status, [self.uids])
+
+    def fetch(self, number, spec):
+        return ("OK", [self.messages[number]])
+
+
+def _capturing_factory(client: FakeIMAPClient) -> tuple:
+    """Return (factory, captured) recording the IMAP constructor kwargs."""
+    captured: dict = {}
+
+    def factory(**kwargs):
+        captured.update(kwargs)
+        return client
+
+    return factory, captured
+
+
+def _raw_message(subject: str, internaldate: str) -> tuple:
+    prefix = f'1 (INTERNALDATE "{internaldate}" BODY[HEADER.FIELDS (SUBJECT)] {{0}}'.encode()
+    header = f"Subject: {subject}\r\n\r\n".encode()
+    return (prefix, header)
+
+
+def test_fetch_confirmation_messages_uses_timeout_and_bounded_search():
+    client = FakeIMAPClient(
+        uids=b"1",
+        messages={
+            b"1": _raw_message(
+                ivn.confirmation_subject("INC-000011"),
+                "29-Sep-2026 12:00:30 +0000",
+            )
+        },
+    )
+    factory, captured = _capturing_factory(client)
+    found = ivn._fetch_confirmation_messages(
+        host="imap.conf.local",
+        port=993,
+        user="confirm@local",
+        password="pw",
+        folder="Confirmaciones",
+        client_factory=factory,
+    )
+    # (a) The IMAP client is built with a positive timeout.
+    assert captured["timeout"] == ivn.DEFAULT_IMAP_TIMEOUT_S
+    assert captured["timeout"] > 0
+    assert captured["host"] == "imap.conf.local"
+    assert captured["port"] == 993
+    # (b) The search is bounded by SUBJECT, never a full-mailbox ALL scan.
+    assert client.search_calls
+    args = client.search_calls[0]
+    assert "SUBJECT" in args
+    assert "ALL" not in args
+    assert any(ivn.CONFIRMATION_SUBJECT_FILTER in str(a) for a in args)
+    # (c) The parsed messages are still returned and selectable.
+    assert found[0]["subject"] == ivn.confirmation_subject("INC-000011")
+    assert ivn.select_confirmation_instant(found, "INC-000011") == _dt(12, 0, 30)
+
+
+def test_fetch_confirmation_messages_empty_search_returns_empty():
+    client = FakeIMAPClient(uids=b"")
+    factory, _ = _capturing_factory(client)
+    found = ivn._fetch_confirmation_messages(
+        host="imap.conf.local",
+        port=993,
+        user="confirm@local",
+        password="pw",
+        folder="Confirmaciones",
+        client_factory=factory,
+    )
+    assert found == []
+    assert ivn.select_confirmation_instant(found, "INC-000011") is None
+
+
+def test_fetch_confirmation_messages_selects_only_matching_subject():
+    client = FakeIMAPClient(
+        uids=b"1 2",
+        messages={
+            b"1": _raw_message("Otro asunto", "29-Sep-2026 12:00:10 +0000"),
+            b"2": _raw_message(
+                ivn.confirmation_subject("INC-000011"),
+                "29-Sep-2026 12:00:30 +0000",
+            ),
+        },
+    )
+    factory, _ = _capturing_factory(client)
+    found = ivn._fetch_confirmation_messages(
+        host="imap.conf.local",
+        port=993,
+        user="confirm@local",
+        password="pw",
+        folder="Confirmaciones",
+        client_factory=factory,
+    )
+    assert len(found) == 2
+    assert ivn.select_confirmation_instant(found, "INC-000011") == _dt(12, 0, 30)
+
+
+def test_fetch_confirmation_messages_search_not_ok_returns_empty():
+    client = FakeIMAPClient(
+        search_status="NO",
+        uids=b"1",
+        messages={
+            b"1": _raw_message(
+                ivn.confirmation_subject("INC-000011"),
+                "29-Sep-2026 12:00:30 +0000",
+            )
+        },
+    )
+    factory, _ = _capturing_factory(client)
+    found = ivn._fetch_confirmation_messages(
+        host="imap.conf.local",
+        port=993,
+        user="confirm@local",
+        password="pw",
+        folder="Confirmaciones",
+        client_factory=factory,
+    )
+    assert found == []
+
+
+def test_build_confirmation_observer_plumbs_client_factory():
+    captured: dict = {}
+    sentinel = object()
+
+    def fake_fetch(**kwargs):
+        captured.update(kwargs)
+        return []
+
+    env = {
+        "INGEST_CONFIRMATION_IMAP_HOST": "imap.conf.local",
+        "INGEST_CONFIRMATION_IMAP_USER": "confirm@local",
+    }
+    observer = ivn.build_confirmation_observer(
+        env=env, fetch_messages=fake_fetch, client_factory=sentinel
+    )
+    assert observer is not None
+    assert observer("INC-000011") is None
+    assert captured["client_factory"] is sentinel

@@ -218,7 +218,11 @@ El correo de confirmacion al remitente es una verificacion END-TO-END
 por un camino de recepcion **SEPARADO** (carpeta/buzon dedicado que el trigger
 IMAP de ingesta NO lee) para que la confirmacion no se re-ingeste como un
 incidente espurio. Si no llega dentro del timeout, el caso queda con
-`confirmacion_recibida: false` sin invalidar `t_e2e_s`.
+`confirmacion_recibida: false` sin invalidar `t_e2e_s`. Si el observer FALLA
+(credenciales incorrectas, host inalcanzable, error de IMAP), la excepcion se
+captura y se trata igual que la ausencia: el chequeo es NO bloqueante, nunca
+marca el caso como error y el run continua. El cuerpo de la excepcion jamas se
+imprime, por lo que una credencial no puede filtrarse.
 
 El observer IMAP se construye SOLO si estan definidos el host y el usuario de
 confirmacion; si no, `confirmation_observer` queda en `None` (comportamiento no
@@ -229,6 +233,15 @@ buzon/carpeta (regla dura: la confirmacion nunca se lee de la bandeja que
 alimenta el trigger de ingesta). La lectura es IMAP de solo lectura
 (`IMAP4_SSL`, `select(readonly=True)`) y nunca imprime la descripcion ni un
 secreto.
+
+La lectura de confirmacion usa un **timeout de socket acotado**
+(`DEFAULT_IMAP_TIMEOUT_S = 20.0`, pasado a `IMAP4_SSL(timeout=...)`) y una
+**busqueda acotada por asunto** (`client.search(None, "SUBJECT",
+'"Incidente registrado"')`), de modo que un inbox grande NUNCA se recorre
+mensaje por mensaje (el viejo `search(None, "ALL")` sin timeout colgaba el
+harness). `select_confirmation_instant` sigue siendo el matcher exacto sobre los
+mensajes devueltos y el cliente IMAP es inyectable (`client_factory`) para
+testearlo offline.
 
 Variables de entorno (nombres exactos; tambien en `scripts/corpus_ingest/ingest.env`):
 

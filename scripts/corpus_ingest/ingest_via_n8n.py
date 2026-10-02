@@ -93,6 +93,10 @@ ENV_INGEST_IMAP_USER = "INGEST_INGEST_IMAP_USER"
 ENV_INGEST_IMAP_FOLDER = "INGEST_INGEST_IMAP_FOLDER"
 DEFAULT_IMAP_PORT = 993
 DEFAULT_IMAP_FOLDER = "INBOX"
+# Bounded confirmation fetch: a hard socket timeout plus a SUBJECT criterion so
+# the poll never scans the whole mailbox (the old ``ALL`` scan hung the harness).
+DEFAULT_IMAP_TIMEOUT_S = 20.0
+CONFIRMATION_SUBJECT_FILTER = "Incidente registrado"
 
 # ── Pure helpers (unit tested offline) ──────────────────────────────────────
 
@@ -351,31 +355,52 @@ def select_confirmation_instant(
     return None
 
 
-def _fetch_confirmation_messages(  # pragma: no cover - I/O
+def _default_imap_client_factory(  # pragma: no cover - I/O
+    *, host: str, port: int, ssl_context: Any, timeout: float
+) -> Any:
+    """Construct the real SSL IMAP client (injectable for offline tests)."""
+    import imaplib
+
+    return imaplib.IMAP4_SSL(host, port, ssl_context=ssl_context, timeout=timeout)
+
+
+def _fetch_confirmation_messages(
     *,
     host: str,
     port: int,
     user: str,
     password: str | None,
     folder: str,
+    client_factory: Callable[..., Any] | None = None,
 ) -> list[dict[str, Any]]:
     """Read-only IMAP fetch of ``(subject, received)`` from the separate path.
 
-    Never writes, never deletes and never reads the ingestion mailbox. Kept out
-    of unit tests; the observer accepts an injected fetcher instead.
+    Never writes, never deletes and never reads the ingestion mailbox. The
+    client is built with a hard socket timeout (``DEFAULT_IMAP_TIMEOUT_S``) and
+    the search is bounded by the deterministic confirmation subject, so a large
+    inbox is never scanned message-by-message (the previous ``ALL`` scan plus no
+    timeout hung the harness). ``client_factory`` is injectable for offline
+    tests; the default builds the real ``imaplib.IMAP4_SSL`` client.
     """
     import email
-    import imaplib
     import re
     import ssl
     from email.utils import parsedate_to_datetime
 
+    factory = client_factory or _default_imap_client_factory
     context = ssl.create_default_context()
     found: list[dict[str, Any]] = []
-    with imaplib.IMAP4_SSL(host, port, ssl_context=context) as client:
+    with factory(
+        host=host,
+        port=port,
+        ssl_context=context,
+        timeout=DEFAULT_IMAP_TIMEOUT_S,
+    ) as client:
         client.login(user, password or "")
         client.select(folder, readonly=True)
-        status, data = client.search(None, "ALL")
+        status, data = client.search(
+            None, "SUBJECT", f'"{CONFIRMATION_SUBJECT_FILTER}"'
+        )
         if status != "OK":
             return found
         for number in (data[0] or b"").split():
@@ -406,12 +431,13 @@ def _fetch_confirmation_messages(  # pragma: no cover - I/O
 def build_confirmation_observer(
     env: Mapping[str, str] | None = None,
     fetch_messages: Callable[..., list[dict[str, Any]]] | None = None,
+    client_factory: Callable[..., Any] | None = None,
 ) -> Callable[[str], datetime | None] | None:
     """Build the confirmation observer, or ``None`` when it is not configured.
 
     Only wired when both the IMAP host and user are present, so the default
     behavior stays non-blocking (``confirmacion_recibida = false``). The IMAP
-    client is injectable for offline tests.
+    client and the fetcher are injectable for offline tests.
     """
     source = os.environ if env is None else env
     host = (source.get(ENV_CONFIRMATION_IMAP_HOST) or "").strip()
@@ -428,7 +454,12 @@ def build_confirmation_observer(
 
     def observer(numero_incidente: str) -> datetime | None:
         messages = fetch(
-            host=host, port=port, user=user, password=password, folder=folder
+            host=host,
+            port=port,
+            user=user,
+            password=password,
+            folder=folder,
+            client_factory=client_factory,
         )
         return select_confirmation_instant(messages, numero_incidente)
 
@@ -949,12 +980,21 @@ def _observe_confirmation(
     timeout: float,
     interval: float,
 ) -> tuple[bool, datetime | None, float | None]:
-    """Secondary check via a SEPARATE receive path (never the ingest mailbox)."""
+    """Secondary check via a SEPARATE receive path (never the ingest mailbox).
+
+    NON-BLOCKING (D14): any exception raised by the observer (or the IMAP I/O
+    behind it) is treated as "confirmation not received" and swallowed whole —
+    the exception body is never logged, so no credential can leak. The primary
+    API-instants measurement is untouched and the run continues.
+    """
     if confirmation_observer is None or numero_incidente is None:
         return (False, None, None)
     deadline = time.monotonic() + max(timeout, 0.0)
     while True:
-        instant = confirmation_observer(numero_incidente)
+        try:
+            instant = confirmation_observer(numero_incidente)
+        except Exception:  # noqa: BLE001 - secondary check must never abort the run
+            return (False, None, None)
         if instant is not None:
             return (True, _to_utc(instant), None)
         if time.monotonic() >= deadline:
@@ -1179,37 +1219,42 @@ def run(argv: Sequence[str] | None = None) -> int:
         if index > 1 and args.sleep > 0:
             time.sleep(args.sleep)
         t_envio = datetime.now(UTC)
-        if canal == CANAL_WEB:
-            result = ingest_web_case(
-                session=session,
-                token=token,
-                base_url=base_url,
-                webhook_url=args.webhook_url,
-                case_id=case.case_id,
-                descripcion=case.descripcion,
-                verify=verify,
-                timeout=args.timeout,
-                t_envio=t_envio,
-            )
-        else:
-            result = ingest_email_case(
-                session=session,
-                token=token,
-                base_url=base_url,
-                case_id=case.case_id,
-                descripcion=case.descripcion,
-                domain=domain,
-                sender=sender or "",
-                recipient=recipient or "",
-                verify=verify,
-                timeout=args.timeout,
-                poll_timeout=args.poll_timeout,
-                poll_interval=args.poll_interval,
-                send_func=_send_email,
-                t_envio=t_envio,
-                confirmation_observer=confirmation_observer,
-                confirmation_timeout=args.confirmation_timeout,
-                confirmation_interval=args.confirmation_interval,
+        try:
+            if canal == CANAL_WEB:
+                result = ingest_web_case(
+                    session=session,
+                    token=token,
+                    base_url=base_url,
+                    webhook_url=args.webhook_url,
+                    case_id=case.case_id,
+                    descripcion=case.descripcion,
+                    verify=verify,
+                    timeout=args.timeout,
+                    t_envio=t_envio,
+                )
+            else:
+                result = ingest_email_case(
+                    session=session,
+                    token=token,
+                    base_url=base_url,
+                    case_id=case.case_id,
+                    descripcion=case.descripcion,
+                    domain=domain,
+                    sender=sender or "",
+                    recipient=recipient or "",
+                    verify=verify,
+                    timeout=args.timeout,
+                    poll_timeout=args.poll_timeout,
+                    poll_interval=args.poll_interval,
+                    send_func=_send_email,
+                    t_envio=t_envio,
+                    confirmation_observer=confirmation_observer,
+                    confirmation_timeout=args.confirmation_timeout,
+                    confirmation_interval=args.confirmation_interval,
+                )
+        except Exception as exc:  # noqa: BLE001 - one case must not abort the run
+            result = _error_result(
+                case.case_id, canal, t_envio, type(exc).__name__
             )
         results.append(result)
         if result.error:
