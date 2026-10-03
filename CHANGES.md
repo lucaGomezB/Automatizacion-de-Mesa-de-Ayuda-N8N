@@ -125,6 +125,15 @@ C-62 hardening-infra-red (ninguna)                        [PLANIFICADO — sin c
 C-64 vulnerabilidades-supply-chain (ninguna)              [PLANIFICADO — sin crear]
 C-65 backup-continuidad (ninguna)                         [PLANIFICADO — sin crear]
 C-66 privacidad-transferencias (C-53 alineacion; habilita C-67) [PLANIFICADO — sin crear]
+
+--- FASE 22: Ingesta del corpus por el flujo N8N real (2026-10-02) ---
+
+C-69 dedup-correlacion-altas (C-68)                       [ACTIVO — 0/30; MEDIO]
+C-68 corpus-ingesta-n8n (C-69)                            [ACTIVO — 4/58; MEDIO]
+
+--- FASE 23: Medicion del corpus por telefonia real (2026-10-02) ---
+
+C-70 softphone-corpus-telefonia (C-59, C-52, C-68)        [ACTIVO — 0/65; ALTO]
 ```
 
 ### Paralelismo por fase
@@ -1455,6 +1464,30 @@ C-66 privacidad-transferencias (C-53 alineacion; habilita C-67) [PLANIFICADO —
   - `openspec/changes/c-68-corpus-ingesta-n8n/{proposal,design,tasks}.md`
   - `docs/medicion-latencia-e2e.md`
   - `docs/como_cargar_datos_corpus.md`
+
+---
+
+## FASE 23 — Medicion del corpus por telefonia real (2026-10-02)
+
+> Change post-roadmap que cierra la carga manual que C-68 dejo para el canal telefonico. Mide los 81 casos de `llamada telefonica` por el flujo real (softphone -> Twilio -> backend C-52 -> n8n), con correlacion exacta llamada <-> caso del corpus y write-back de la metrica canonica, sobre una base descartable.
+
+### [C-70] `softphone-corpus-telefonia` — ACTIVO (0/65)
+
+- **Estado**: `[ ]` propuesto (2026-10-02) — 0/65 tareas. Planning completo (proposal + design + specs + tasks); `openspec validate --strict` pasa. OQ1..OQ6 abiertas para el autor. Sin aplicar. Governance ALTO.
+- **Problema**: el corpus tiene 81 casos de `llamada telefonica` con `tiempo_automatizado_s = null`; C-68 los dejo fuera de alcance para carga manual. No existe via reproducible para medirlos por el flujo real ni para correlacionar de forma exacta una llamada con su caso.
+- **Scope**:
+  - Softphone (extiende C-59): `<select>` con los casos telefonicos del corpus (default vacio); el modo `serve` expone la lista leida del JSON pseudonimizado; el autor RECITA el caso (sin playback).
+  - `telefonia_ingreso.corpus_case_id` nullable (migracion Alembic): el param custom viaja del softphone al webhook de voz y al `recordingStatusCallback`, y se persiste al sellar `ingresado_en`. NO toca `call_sid` ni `origen_message_id`.
+  - Script de recuperacion + write-back (`--replace`) reutilizando el merge/skip y la privacidad de `ingest_via_n8n.py`.
+  - Metrica canonica de telefonia: `tiempo_automatizado_s = latencia_e2e_ms/1000 = t_pipeline_s = t_e2e_s`; `t_espera_s` vacia/N-A (no medible).
+  - Perfil Compose `corpus` con base descartable y wipe; conmutacion manual de la Voice URL.
+  - Los 81 casos los mide el autor (sin muestreo).
+- **Dependencias**: `C-59` (softphone, archivado 2026-10-01; herramienta a extender); `C-52` (intake telefonico async, archivado 2026-09-30; flujo a preservar); `C-68` (write-back/merge/privacidad que reutiliza). OQs abiertas: OQ1 (propagacion del param), OQ2 (perfil `corpus`), OQ3 (listado/auth de la GUI), OQ4 (`t_espera_s`), OQ5 (auth/exposicion de lectura), OQ6 (`--replace` y FKs).
+- **Governance**: ALTO
+- **Leer antes**:
+  - `openspec/changes/c-70-softphone-corpus-telefonia/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-10-01-c-59-softphone-voip-pruebas/{proposal,design,tasks}.md`
+  - `docs/medicion-latencia-e2e.md` §5, `scripts/corpus_ingest/README.md`
 
 ---
 
