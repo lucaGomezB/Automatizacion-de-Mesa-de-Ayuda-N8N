@@ -62,3 +62,6 @@ data/Corpus Tesis*
 
 # Sidecars de resultados de los harness de ingesta (artefactos de corrida)
 data/corpus_resultados*.json
+
+# Locks transitorios de LibreOffice sobre los archivos del corpus
+data/.~lock*
