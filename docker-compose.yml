@@ -258,6 +258,126 @@ services:
       nginx:
         condition: service_started
 
+  # ══════════════════════════════════════════════════════════════════════════
+  # PERFIL corpus — stack AISLADO para la corrida de medicion de telefonia
+  # (c-70, D8). NO arranca con un `up` normal: todos los servicios viven bajo
+  # profiles: ["corpus"]. Corre el flujo telefonico real contra una base
+  # DESCARTABLE (mesa_de_ayuda_corpus) con volumenes propios, de modo que una
+  # corrida de medicion NO contamina la operativa.
+  #
+  # ARRANQUE ACOTADO: un `docker compose --profile corpus up` a secas tambien
+  # levanta los servicios SIN perfil del stack base (postgres, backend, nginx,
+  # frontend), porque los servicios sin `profiles` quedan siempre activos. Para
+  # arrancar SOLO el stack aislado, nombrar los servicios:
+  #   docker compose --profile corpus up -d postgres-corpus backend-corpus n8n-corpus
+  #
+  # WIPE SEGURO: `docker compose --profile corpus down -v` a secas borra TODOS
+  # los volumenes de nivel superior del proyecto, incluidos postgres_data y
+  # n8n_data del stack base (comportamiento verificado de Compose v2). Para
+  # limpiar SOLO lo descartable, acotar los servicios:
+  #   docker compose --profile corpus down -v postgres-corpus backend-corpus n8n-corpus
+  # Ver docs/runbook-corpus-telefonia.md.
+  #
+  # La Voice URL del TwiML App se conmuta MANUALMENTE a la URL publica de
+  # backend-corpus (tunel propio sobre el puerto 8001) y se restaura al terminar.
+  # ══════════════════════════════════════════════════════════════════════════
+
+  # ── PostgreSQL descartable (perfil corpus) ─────────────────────────────────
+  postgres-corpus:
+    image: postgres:15.5-alpine
+    profiles: ["corpus"]
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-mesa}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mesa_local_dev}
+      # Base DESCARTABLE: distinta de la base de la aplicacion (mesa_de_ayuda).
+      POSTGRES_DB: mesa_de_ayuda_corpus
+    ports:
+      - "5434:5432"           # Host 5434 para no colisionar con la base operativa (5433)
+    volumes:
+      - postgres_corpus_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mesa} -d mesa_de_ayuda_corpus"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Backend FastAPI aislado (perfil corpus) ────────────────────────────────
+  backend-corpus:
+    build:
+      context: ./App/Backend
+      dockerfile: Dockerfile
+    profiles: ["corpus"]
+    restart: unless-stopped
+    env_file: ./App/Backend/.env
+    environment:
+      # Apunta EXCLUSIVAMENTE al postgres descartable del perfil corpus.
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-mesa}:${POSTGRES_PASSWORD:-mesa_local_dev}@postgres-corpus:5432/mesa_de_ayuda_corpus
+      # Webhook de notificacion hacia el N8N aislado del corpus.
+      N8N_WEBHOOK_URL: http://n8n-corpus:5678/webhook/notificacion-clasificacion
+      GEMINI_PROMPT_PATH: /app/docs/prompt_gemini.txt
+      COST_GUARD_SHARED_SECRET: ${COST_GUARD_SHARED_SECRET:-}
+      # Necesario para reconstruir la URL publica detras del tunel y validar la
+      # firma X-Twilio-Signature durante la corrida.
+      FORWARDED_ALLOW_IPS: ${FORWARDED_ALLOW_IPS:-*}
+    ports:
+      - "8001:8000"           # Host 8001: punto de entrada del tunel propio del corpus
+    volumes:
+      - ./docs/prompt_gemini.txt:/app/docs/prompt_gemini.txt:ro
+    depends_on:
+      postgres-corpus:
+        condition: service_healthy
+    command: >
+      sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ── N8N aislado (perfil corpus) ────────────────────────────────────────────
+  n8n-corpus:
+    image: n8nio/n8n:2.11.2
+    profiles: ["corpus"]
+    restart: unless-stopped
+    ports:
+      - "5679:5678"           # Host 5679 para no colisionar con el N8N operativo (5678)
+    environment:
+      N8N_BASIC_AUTH_ACTIVE: "true"
+      N8N_BASIC_AUTH_USER: ${N8N_BASIC_AUTH_USER:-admin}
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_BASIC_AUTH_PASSWORD:-n8n_local_dev}
+      # BACKEND_URL -> backend-corpus (stack aislado).
+      BACKEND_URL: http://backend-corpus:8000
+      COST_GUARD_SHARED_SECRET: ${COST_GUARD_SHARED_SECRET:-}
+      OPERATOR_EMAIL: ${OPERATOR_EMAIL:-operador@example.com}
+      SMTP_FROM_EMAIL: ${SMTP_FROM_EMAIL:-Mesa de Ayuda <mesa-ayuda@example.com>}
+      # Redis SIN estado: se reutiliza el del stack base (no tiene volumen ni
+      # datos de negocio); el N8N aislado solo lo usa como memoria del agente.
+      QUEUE_BULL_REDIS_HOST: redis
+      QUEUE_BULL_REDIS_PORT: "6379"
+      N8N_PROTOCOL: http
+      N8N_HOST: 0.0.0.0
+      N8N_PORT: "5678"
+      WEBHOOK_URL: http://localhost:5679/
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "false"
+      N8N_DIAGNOSTICS_ENABLED: "false"
+      N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
+      EXECUTIONS_DATA_PRUNE: "true"
+      EXECUTIONS_DATA_MAX_AGE: "720"
+      EXECUTIONS_TIMEOUT: "300"
+      EXECUTIONS_TIMEOUT_MAX: "600"
+    volumes:
+      - n8n_corpus_data:/home/node/.n8n
+      - ./n8n/workflow.json:/data/Automatizacion_Mesa_de_Ayuda.json:ro
+    depends_on:
+      backend-corpus:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
 volumes:
   postgres_data:   # Volume dedicado para este compose (prefijo mesa_local_ asignado por Docker)
   n8n_data:
+  postgres_corpus_data:   # Volumen de la base DESCARTABLE del perfil corpus (c-70)
+  n8n_corpus_data:        # Volumen de datos del N8N aislado del perfil corpus (c-70)
