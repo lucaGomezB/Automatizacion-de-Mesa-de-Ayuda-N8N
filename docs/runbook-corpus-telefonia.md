@@ -278,3 +278,26 @@ Nota: en un entorno con `ENVIRONMENT=production` el seed queda como paso manual
 del runbook; el endurecimiento del seed (guardia de entorno) se planifica en
 `c-60-directorio-endurecimiento`.
 
+## 11. Rate de la guarda de costo para la corrida
+
+Los defaults de produccion de la guarda de costo (`c-45`) son **30 llamadas/hora
+globales** y **3/hora por llamante**. Con esos valores, una corrida de 81 casos
+desde el mismo softphone se bloquea a las 3 llamadas: la guarda deniega la
+pre-llamada y Twilio reproduce "servicio no disponible en este momento".
+
+El perfil `corpus` **relaja** el rate SOLO en `backend-corpus`
+(`docker-compose.yml`), sin tocar el stack operativo:
+
+```yaml
+COST_GUARD_RATE_LIMIT_CALLS: "200"
+COST_GUARD_CALLER_RATE_LIMIT_CALLS: "200"
+```
+
+- Se recrea el servicio con `docker compose --profile corpus up -d backend-corpus`.
+- La guarda sigue activa (presupuesto semanal, reserva por proveedor); solo cambia
+  el rate de admision. Presupuesto estimado de la corrida: ~USD 0.013 por llamada
+  x 81 = ~USD 1.1 (tope semanal default: USD 10).
+- Una llamada denegada por la guarda NO graba ni crea ingreso (se corta antes de
+  la grabacion), por lo que no contamina el corpus.
+
+
