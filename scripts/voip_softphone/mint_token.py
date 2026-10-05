@@ -16,10 +16,11 @@ import json
 import os
 import sys
 import time
+import unicodedata
 from dataclasses import dataclass
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from typing import Mapping, Optional, Sequence, TextIO
+from typing import Any, Mapping, Optional, Sequence, TextIO
 
 from twilio.jwt.access_token import AccessToken
 from twilio.jwt.access_token.grants import VoiceGrant
@@ -47,9 +48,26 @@ HTML_FILENAME = "softphone.html"
 DEFAULT_SERVE_HOST = "127.0.0.1"
 DEFAULT_SERVE_PORT = 8765
 
+# Pseudonymized corpus read by the case selector (c-70, design.md D3). The
+# path is configurable via ``--corpus-json``; this is only the default.
+DEFAULT_CORPUS_JSON = (
+    Path(__file__).resolve().parents[2]
+    / "data"
+    / "corpus_evaluacion_pseudonimizado.json"
+)
+
+# Channel labels tolerated for the telephone channel, normalized (accents
+# stripped, lowercased, trimmed). "llamada telefonica" collapses the JSON
+# ("llamada telefónica") and CSV spellings; "telefono" covers the short label.
+TELEPHONE_CHANNEL_ALIASES = frozenset({"llamada telefonica", "telefono"})
+
 
 class ConfigError(RuntimeError):
     """Raised when required environment variables are absent or empty."""
+
+
+class CorpusError(RuntimeError):
+    """Raised when the pseudonymized corpus cannot be read or parsed."""
 
 
 @dataclass(frozen=True)
@@ -118,6 +136,67 @@ def mint_access_token(
     return jwt_value
 
 
+# ── Corpus case listing (c-70, design.md D3) ────────────────────────────────
+
+
+def _strip_accents(value: str) -> str:
+    decomposed = unicodedata.normalize("NFKD", value)
+    return "".join(ch for ch in decomposed if not unicodedata.combining(ch))
+
+
+def _norm_channel(value: Any) -> str:
+    if value is None:
+        return ""
+    return _strip_accents(str(value)).strip().lower()
+
+
+def load_telephone_cases(corpus_json_path: Any) -> list[dict]:
+    """Return ``[{id, descripcion}]`` for the telephone cases of the corpus.
+
+    The corpus is read from ``corpus_json_path`` (pseudonymized copy) and the
+    channel label is matched tolerantly (accents, case and surrounding
+    whitespace). A missing or malformed corpus raises ``CorpusError`` with the
+    offending path so the failure is actionable. Descriptions are returned for
+    the operator to RECITE and MUST NOT be logged by callers.
+    """
+
+    path = Path(corpus_json_path)
+    try:
+        raw = path.read_text(encoding="utf-8")
+    except FileNotFoundError as exc:
+        raise CorpusError(
+            f"No se encontro el corpus pseudonimizado en '{path}'"
+        ) from exc
+    except OSError as exc:
+        raise CorpusError(f"No se pudo leer el corpus '{path}': {exc}") from exc
+
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise CorpusError(f"El corpus '{path}' no es JSON valido: {exc}") from exc
+
+    casos = data.get("casos") if isinstance(data, dict) else None
+    if not isinstance(casos, list):
+        raise CorpusError(f"El corpus '{path}' no contiene una lista 'casos'")
+
+    cases: list[dict] = []
+    for caso in casos:
+        if not isinstance(caso, dict):
+            continue
+        if _norm_channel(caso.get("canal_origen")) not in TELEPHONE_CHANNEL_ALIASES:
+            continue
+        case_id = caso.get("id")
+        if not case_id:
+            continue
+        cases.append(
+            {
+                "id": str(case_id),
+                "descripcion": str(caso.get("descripcion") or ""),
+            }
+        )
+    return cases
+
+
 # ── Local loopback server (serves the page and a fresh token) ───────────────
 
 
@@ -135,8 +214,15 @@ def make_handler(
     config: TokenConfig,
     identity: str,
     ttl_seconds: int,
+    corpus_json_path: Optional[Path] = None,
 ) -> type[BaseHTTPRequestHandler]:
     """Build a request handler bound to the page bytes and token settings."""
+
+    resolved_corpus = (
+        Path(corpus_json_path)
+        if corpus_json_path is not None
+        else DEFAULT_CORPUS_JSON
+    )
 
     class SoftphoneHandler(BaseHTTPRequestHandler):
         def log_message(self, *args) -> None:  # silence per-request logging
@@ -150,6 +236,20 @@ def make_handler(
             self.end_headers()
             self.wfile.write(body)
 
+        def _send_corpus_cases(self) -> None:
+            # Never log the descriptions: they are pseudonymized but still
+            # case content. Only the error path is surfaced, without cases.
+            try:
+                cases = load_telephone_cases(resolved_corpus)
+            except CorpusError as exc:
+                body = json.dumps(
+                    {"error": {"code": "corpus_unavailable", "message": str(exc)}}
+                ).encode("utf-8")
+                self._send(500, body, "application/json")
+                return
+            body = json.dumps(cases, ensure_ascii=False).encode("utf-8")
+            self._send(200, body, "application/json")
+
         def do_GET(self) -> None:  # noqa: N802 - stdlib hook name
             if self.path == "/":
                 self._send(200, html_bytes, "text/html; charset=utf-8")
@@ -157,6 +257,8 @@ def make_handler(
                 token = mint_access_token(config, identity, ttl_seconds=ttl_seconds)
                 body = json.dumps({"token": token}).encode("utf-8")
                 self._send(200, body, "application/json")
+            elif self.path == "/corpus-cases":
+                self._send_corpus_cases()
             else:
                 self._send(404, b"Not Found", "text/plain; charset=utf-8")
 
@@ -170,6 +272,7 @@ def build_server(
     identity: str,
     ttl_seconds: int = DEFAULT_TTL_SECONDS,
     html_path: Optional[Path] = None,
+    corpus_json_path: Optional[Path] = None,
 ) -> ThreadingHTTPServer:
     """Create (but do not start) the loopback server.
 
@@ -183,13 +286,21 @@ def build_server(
         )
 
     html_bytes = load_softphone_html(html_path)
-    handler = make_handler(html_bytes, config, identity, ttl_seconds)
+    resolved_corpus = (
+        Path(corpus_json_path)
+        if corpus_json_path is not None
+        else DEFAULT_CORPUS_JSON
+    )
+    handler = make_handler(
+        html_bytes, config, identity, ttl_seconds, corpus_json_path=resolved_corpus
+    )
     server = ThreadingHTTPServer((host, port), handler)
     # Expose state for handlers/tests; each attribute has a single owner.
     server.softphone_html = html_bytes  # type: ignore[attr-defined]
     server.token_config = config  # type: ignore[attr-defined]
     server.identity = identity  # type: ignore[attr-defined]
     server.ttl_seconds = ttl_seconds  # type: ignore[attr-defined]
+    server.corpus_json_path = resolved_corpus  # type: ignore[attr-defined]
     return server
 
 
@@ -233,6 +344,14 @@ def build_parser() -> argparse.ArgumentParser:
         default=DEFAULT_SERVE_PORT,
         help=f"Puerto local (default {DEFAULT_SERVE_PORT}).",
     )
+    serve_cmd.add_argument(
+        "--corpus-json",
+        default=None,
+        help=(
+            "Ruta al corpus pseudonimizado para el selector de casos "
+            f"(default: {DEFAULT_CORPUS_JSON})."
+        ),
+    )
     _add_token_options(serve_cmd)
 
     return parser
@@ -267,7 +386,12 @@ def run(
             )
             return 2
         httpd = build_server(
-            args.host, args.port, config, identity, ttl_seconds=args.ttl
+            args.host,
+            args.port,
+            config,
+            identity,
+            ttl_seconds=args.ttl,
+            corpus_json_path=args.corpus_json,
         )
         print(
             f"Softphone disponible en http://{args.host}:{args.port}/",

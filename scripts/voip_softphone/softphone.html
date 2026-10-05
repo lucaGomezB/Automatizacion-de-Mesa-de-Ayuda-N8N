@@ -24,9 +24,18 @@
     <button id="call" disabled>Call</button>
     <button id="hangup" disabled>Hangup</button>
   </p>
+  <p>
+    <label for="corpus-case">Caso del corpus (telefono):</label>
+    <select id="corpus-case">
+      <option value="">Sin caso (desarrollo)</option>
+    </select>
+  </p>
+  <p id="corpus-case-text" hidden></p>
   <p><small>
     Herramienta de desarrollo. La voz del microfono entra al pipeline
     telefonico existente. Identidad: <span id="identity">desconocida</span>.
+    Con un caso seleccionado, recite el texto mostrado; la herramienta no
+    reproduce audio.
   </small></p>
 
   <script>
@@ -42,6 +51,9 @@
       var identityEl = document.getElementById("identity");
       var callButton = document.getElementById("call");
       var hangupButton = document.getElementById("hangup");
+      var caseSelect = document.getElementById("corpus-case");
+      var caseTextEl = document.getElementById("corpus-case-text");
+      var corpusCases = [];
       var device = null;
 
       function setStatus(text, cssClass) {
@@ -96,6 +108,47 @@
         });
       }
 
+      function loadCorpusCases() {
+        // Single source of truth: the loopback endpoint reads the
+        // pseudonymized corpus. Descriptions are shown, never logged.
+        return fetch("/corpus-cases", { cache: "no-store" }).then(function (res) {
+          if (!res.ok) { throw new Error("No se pudo cargar el corpus"); }
+          return res.json();
+        }).then(function (cases) {
+          corpusCases = cases || [];
+          corpusCases.forEach(function (item) {
+            var option = document.createElement("option");
+            option.value = item.id;
+            option.textContent = item.id;
+            caseSelect.appendChild(option);
+          });
+        }).catch(function (error) {
+          setStatus("error corpus: " + error.message, "error");
+        });
+      }
+
+      function selectedCaseId() {
+        return caseSelect.value ? caseSelect.value : null;
+      }
+
+      function renderSelectedCase() {
+        // Show the case text for the operator to RECITE. No audio playback.
+        var id = selectedCaseId();
+        var found = null;
+        for (var i = 0; i < corpusCases.length; i++) {
+          if (corpusCases[i].id === id) { found = corpusCases[i]; break; }
+        }
+        if (found) {
+          caseTextEl.textContent = found.descripcion;
+          caseTextEl.hidden = false;
+        } else {
+          caseTextEl.textContent = "";
+          caseTextEl.hidden = true;
+        }
+      }
+
+      caseSelect.addEventListener("change", renderSelectedCase);
+
       callButton.addEventListener("click", function () {
         if (!device) { return; }
         setStatus("llamando...", "busy");
@@ -105,7 +158,13 @@
         // device.connect() returns a Promise<Call> in the Voice SDK v2; the
         // lifecycle events live on the resolved Call, NOT on the Device (the
         // Device never emits "disconnect").
-        device.connect().then(function (call) {
+        // With a case selected the id travels as a custom call parameter;
+        // without a selection the call is placed exactly as before (C-59).
+        var selected = selectedCaseId();
+        var connectPromise = selected
+          ? device.connect({ params: { corpus_case_id: selected } })
+          : device.connect();
+        connectPromise.then(function (call) {
           call.on("accept", function () {
             setStatus("en llamada", "busy");
             setConnected(true);
@@ -127,6 +186,7 @@
       });
 
       register();
+      loadCorpusCases();
     })();
   </script>
 </body>
