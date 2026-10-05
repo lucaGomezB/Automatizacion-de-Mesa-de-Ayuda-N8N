@@ -49,6 +49,7 @@ from app.cost_guard.constants import PROVIDER_BACKEND_STT
 from app.cost_guard.decision import GuardDecision
 from app.cost_guard.protocols import Clock
 from app.models.telefonia_ingreso import TelefoniaIngreso, TranscripcionEstado
+from app.repositories.incidente_repository import IncidenteRepository
 from app.repositories.telefonia_ingreso_repository import TelefoniaIngresoRepository
 from app.schemas.telefonia import RecordingStatusCallback
 from app.services.cost_guard_service import CostGuardService
@@ -146,6 +147,7 @@ class TelefoniaService:
         """
         self._session = session
         self._ingreso_repo = TelefoniaIngresoRepository(session)
+        self._incidente_repo = IncidenteRepository(session)
         self._settings = settings if settings is not None else get_settings()
         self._cost_guard = cost_guard
         self._stt = stt_client
@@ -189,6 +191,67 @@ class TelefoniaService:
 
         return await self._create_new(callback)
 
+    # ── Lectura y reemplazo por corpus_case_id (c-70, D5/D7) ────────────────
+
+    async def obtener_ultimo_ingreso_por_corpus_case_id(
+        self, corpus_case_id: str
+    ) -> TelefoniaIngreso | None:
+        """
+        Devuelve el ULTIMO ingreso de un caso del corpus, con su incidente.
+
+        Delega en el repositorio, que usa `selectinload(incidente)` explicito
+        para que el lector pueda derivar `latencia_e2e_ms` sin lazy-load.
+        """
+        return await self._ingreso_repo.get_latest_by_corpus_case_id(corpus_case_id)
+
+    async def eliminar_previos_por_corpus_case_id(
+        self, corpus_case_id: str, *, dry_run: bool = True
+    ) -> dict[str, int]:
+        """
+        Borra los ingresos previos de un caso, conservando el mas reciente.
+
+        Orden FK: se elimina primero el incidente (cuyo `clasificacion_log`
+        cascadea) y luego el ingreso (cuyo `incidente_id` es SET NULL en la FK).
+        El borrado esta acotado por `corpus_case_id`: JAMAS toca otros casos.
+
+        `dry_run=True` (por defecto) calcula y reporta sin borrar nada
+        (governance ALTO, D7).
+
+        Returns:
+            Diccionario con `ingresos_eliminados` e `incidentes_eliminados`.
+        """
+        ingresos = await self._ingreso_repo.list_by_corpus_case_id(corpus_case_id)
+        a_eliminar = ingresos[1:]  # conserva el mas reciente (primero)
+        incidente_ids = [
+            ingreso.incidente_id
+            for ingreso in a_eliminar
+            if ingreso.incidente_id is not None
+        ]
+
+        if dry_run:
+            return {
+                "ingresos_eliminados": len(a_eliminar),
+                "incidentes_eliminados": len(incidente_ids),
+            }
+
+        incidentes_eliminados = 0
+        for incidente_id in incidente_ids:
+            incidentes_eliminados += await self._incidente_repo.hard_delete(
+                incidente_id
+            )
+        for ingreso in a_eliminar:
+            await self._ingreso_repo.hard_delete(ingreso)
+
+        logger.info(
+            "telefonia_corpus_replace",
+            ingresos_eliminados=len(a_eliminar),
+            incidentes_eliminados=incidentes_eliminados,
+        )
+        return {
+            "ingresos_eliminados": len(a_eliminar),
+            "incidentes_eliminados": incidentes_eliminados,
+        }
+
     async def commit_error_state(self) -> None:
         """
         Confirma el estado de error persistido antes de responder 503 (W5).
@@ -221,6 +284,7 @@ class TelefoniaService:
                 transcripcion_estado=TranscripcionEstado.pendiente,
                 provider=_PROVIDER,
                 model=stt_client.model,
+                corpus_case_id=callback.corpus_case_id,
             )
         except IntegrityError:
             # Carrera de callbacks concurrentes: el UNIQUE de `call_sid` gana.
@@ -273,6 +337,10 @@ class TelefoniaService:
         Actualiza los datos aportados por el nuevo callback.
 
         MUST NOT tocar `ingresado_en`: es el sello de auditoria y se preserva.
+
+        El `corpus_case_id` se PRESERVA: si el ingreso ya lo tenia, no se pisa
+        con None; si estaba en None y el nuevo callback aporta uno, se completa
+        (c-70, D2).
         """
         if callback.recording_sid is not None:
             ingreso.recording_sid = callback.recording_sid
@@ -280,6 +348,8 @@ class TelefoniaService:
             ingreso.caller_cifrado = callback.caller
         if callback.recording_duration is not None:
             ingreso.duracion_segundos = callback.recording_duration
+        if ingreso.corpus_case_id is None and callback.corpus_case_id is not None:
+            ingreso.corpus_case_id = callback.corpus_case_id
 
     # ── Pipeline de procesamiento ───────────────────────────────────────────
 

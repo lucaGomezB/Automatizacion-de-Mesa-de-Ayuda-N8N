@@ -79,6 +79,14 @@ class TelefoniaIngreso(Base, TimestampMixin):
     # no informarse en algunos callbacks.
     recording_sid: Mapped[str | None] = mapped_column(String(64), nullable=True)
 
+    # Correlacion OPCIONAL con un caso del corpus de la tesis (c-70, D1). Nullable
+    # y SIN backfill: las llamadas de produccion quedan en None. Indexado para
+    # acelerar la recuperacion del ultimo ingreso por caso. NO reemplaza a
+    # `call_sid` (idempotencia) ni al `origen_message_id` del incidente.
+    corpus_case_id: Mapped[str | None] = mapped_column(
+        String(64), nullable=True, index=True
+    )
+
     # Numero llamante (`From`) CIFRADO at-rest. Nullable: el callback de estado
     # de grabacion NO provee `From` (design.md Contexto tecnico Twilio).
     caller_cifrado: Mapped[str | None] = mapped_column(EncryptedText, nullable=True)

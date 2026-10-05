@@ -17,7 +17,7 @@ Decisión de eager loading:
 
 from datetime import datetime
 
-from sqlalchemy import and_, select
+from sqlalchemy import and_, delete, select
 from sqlalchemy.orm import selectinload
 
 from app.models.incidente import Incidente, PrioridadEnum
@@ -192,6 +192,24 @@ class IncidenteRepository(BaseRepository[Incidente]):
         incidente.sectores_adicionales = sectores_adicionales
         self._session.add(incidente)
         await self._session.flush()
+
+    async def hard_delete(self, incidente_id: int) -> int:
+        """
+        Elimina fisicamente un incidente por su ID (c-70, D7).
+
+        Usa un DELETE Core (no el ORM) para delegar en las FK `ON DELETE
+        CASCADE` de la base: `clasificacion_log.incidente_id` y
+        `incidente_sector_adicional.incidente_id` cascadean, junto con las
+        tablas de union de clasificacion. Evita el lazy-load que dispararia el
+        cascade ORM en contexto async.
+
+        Returns:
+            Cantidad de filas eliminadas (0 o 1).
+        """
+        result = await self._session.execute(
+            delete(Incidente).where(Incidente.id == incidente_id)
+        )
+        return result.rowcount or 0
 
     async def update_fields(self, incidente_id: int, **kwargs) -> Incidente:
         """
