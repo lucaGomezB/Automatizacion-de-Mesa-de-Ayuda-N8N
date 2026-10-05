@@ -90,9 +90,11 @@ def test_page_does_not_listen_for_disconnect_on_the_device():
 def test_page_awaits_the_call_promise_from_connect():
     # In @twilio/voice-sdk v2, device.connect() returns a Promise<Call>, NOT a
     # Call. A synchronous `call = device.connect()` leaves `call` as a Promise
-    # and `call.on` is not a function, throwing before Hangup is enabled.
+    # and `call.on` is not a function, throwing before Hangup is enabled. The
+    # promise is captured in `connectPromise` so the connect call can carry the
+    # optional corpus param (c-70) while keeping the same awaited contract.
     html = _html()
-    assert "device.connect().then(" in html
+    assert "connectPromise.then(" in html
     assert ".catch(" in html
 
 
@@ -101,14 +103,14 @@ def test_page_enables_hangup_immediately_in_the_click_handler():
     # Hangup is enabled even while the connect promise is still pending.
     body = _handler_body(_html(), 'callButton.addEventListener("click"')
     assert "setConnected(true)" in body
-    assert body.index("setConnected(true)") < body.index("device.connect().then(")
+    assert body.index("setConnected(true)") < body.index("connectPromise.then(")
 
 
 def test_page_attaches_call_lifecycle_handlers_inside_the_then_callback():
     # Triangulation: the handlers must be registered on the Call resolved by the
-    # promise, i.e. inside the click handler, after `device.connect().then(`.
+    # promise, i.e. inside the click handler, after `connectPromise.then(`.
     body = _handler_body(_html(), 'callButton.addEventListener("click"')
-    assert body.index("device.connect().then(") < body.index('call.on("accept"')
+    assert body.index("connectPromise.then(") < body.index('call.on("accept"')
     assert 'call.on("accept"' in body
     assert 'call.on("disconnect"' in body
 
@@ -134,3 +136,45 @@ def test_identity_is_not_editable_from_the_page():
     # The identity is shown for feedback but there is no input control that
     # could supply an arbitrary value (design.md D7).
     assert "<input" not in html
+
+
+# ── 4.5 RED: corpus case selector (c-70) ────────────────────────────────────
+
+
+def test_page_has_corpus_case_select_defaulting_to_empty():
+    html = _html()
+    assert 'id="corpus-case"' in html
+    # Empty default: the only static option carries an empty value; the case
+    # options are appended at runtime from the loopback endpoint.
+    assert '<option value="">' in html
+    assert 'fetch("/corpus-cases"' in html
+
+
+def test_page_sends_corpus_case_id_only_when_selected():
+    html = _html()
+    # With a selection, the id travels as a custom call parameter...
+    assert "device.connect({ params: { corpus_case_id: selected } })" in html
+    # ...and without a selection the call is placed exactly as before (C-59).
+    assert "device.connect()" in html
+
+
+def test_page_select_has_no_preselected_case():
+    # Default empty: no option carries the `selected` attribute, so the call
+    # starts with `corpus_case_id` unset (retrocompatible with C-59).
+    select = _html().split('<select id="corpus-case">', 1)[1].split("</select>", 1)[0]
+    assert " selected" not in select
+    assert select.count("<option") == 1
+
+
+def test_page_shows_selected_case_for_recitation_without_playback():
+    html = _html()
+    assert 'id="corpus-case-text"' in html
+    # The operator RECITES the case; the tool never reproduces audio.
+    assert "<audio" not in html
+    assert "new Audio" not in html
+    assert ".play(" not in html
+    assert "SpeechSynthesis" not in html
+
+
+def test_page_never_logs_case_descriptions():
+    assert "console.log" not in _html()

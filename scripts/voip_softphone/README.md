@@ -121,10 +121,25 @@ otros dos SIDs en `TWILIO_API_KEY_SID` y `TWILIO_TWIML_APP_SID`.
 
 El servidor sirve la pagina y un **token fresco por request** desde el MISMO
 origen de loopback (`127.0.0.1:8765`), por lo que no hay que configurar CORS.
-Escucha EXCLUSIVAMENTE en loopback y emite tokens de vida corta.
+Escucha EXCLUSIVAMENTE en loopback y emite tokens de vida corta. En el mismo
+origen expone ademas el listado de casos telefonicos del corpus (c-70):
+
+- `GET /corpus-cases` -> `[{id, descripcion}]` de los casos de canal telefonico
+  del corpus pseudonimizado, con el rotulo de canal tolerante a tildes, mayusculas
+  y espacios (`llamada telefonica` / `llamada telefónica` / `telefono`).
+  Solo loopback, por lo que el listado no requiere auth adicional; las
+  descripciones nunca se loguean.
 
 ```bash
 python3 scripts/voip_softphone/mint_token.py serve
+```
+
+La ruta del corpus es configurable con `--corpus-json` (default:
+`data/corpus_evaluacion_pseudonimizado.json`). Si el archivo no existe o no es
+JSON valido, el endpoint responde `500` con un mensaje claro que incluye la ruta.
+
+```bash
+python3 scripts/voip_softphone/mint_token.py serve --corpus-json /ruta/corpus.json
 ```
 
 Para inspeccionar un token sin levantar el servidor:
@@ -134,20 +149,30 @@ python3 scripts/voip_softphone/mint_token.py token
 ```
 
 Tanto `token` como `serve` aceptan `--identity` y `--ttl` (segundos; default
-`1800`).
+`1800`). `--corpus-json` aplica solo a `serve`.
 
 ## 5. Colocar la llamada
 
 1. Con el servidor arriba, abrir `http://127.0.0.1:8765/`.
-2. La pagina obtiene el token, registra el `Twilio.Device` y habilita `Call`.
-3. Presionar **Call**: se establece la llamada saliente hacia el TwiML App.
+2. La pagina obtiene el token, registra el `Twilio.Device`, carga el listado de
+   casos telefonicos y habilita `Call`.
+3. (Opcional) En **Caso del corpus (telefono)** elegir un caso. La pagina muestra
+   el texto del caso para **recitarlo a mano**; la herramienta **NO reproduce
+   audio** (no hay TTS ni playback). El `<select>` arranca vacio por defecto.
+4. Presionar **Call**: se establece la llamada saliente hacia el TwiML App.
+   - Con un caso seleccionado, la llamada envia
+     `device.connect({ params: { corpus_case_id: <id> } })` para correlacionar
+     la llamada con el caso.
+   - Sin seleccion, la llamada se coloca igual que antes (sin
+     `corpus_case_id`): modo de desarrollo sin correlacion, retrocompatible con
+     C-59.
    El flujo de c-52 corre: `<Say>` + `<Record maxLength=45 finishOnKey=#>`.
-   Hablar por el microfono.
-4. Presionar **Hangup** para terminar la llamada. Al cortar, Twilio finaliza la
+   Recitar el texto del caso por el microfono.
+5. Presionar **Hangup** para terminar la llamada. Al cortar, Twilio finaliza la
    grabacion y dispara el `recordingStatusCallback`: el backend descarga el
    audio, hace STT, pseudonimiza y hace handoff a n8n, que crea el incidente.
    La grabacion tambien termina sola a los 45 s o tras ~5 s de silencio.
-5. La pagina queda lista para una nueva llamada.
+6. La pagina queda lista para una nueva llamada.
 
 > **Nota sobre `#`**: el canal telefonico real espera que el llamante presione
 > `#` (`finishOnKey`) para cerrar la grabacion sin colgar. El softphone NO tiene
