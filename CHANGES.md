@@ -128,12 +128,12 @@ C-66 privacidad-transferencias (C-53 alineacion; habilita C-67) [PLANIFICADO —
 
 --- FASE 22: Ingesta del corpus por el flujo N8N real (2026-10-02) ---
 
-C-69 dedup-correlacion-altas (C-68)                       [ACTIVO — 0/30; MEDIO]
-C-68 corpus-ingesta-n8n (C-69)                            [ACTIVO — 4/58; MEDIO]
+C-69 dedup-correlacion-altas (ninguna; habilita C-68)     [ARCHIVADO 2026-10-05 — 30/30; MEDIO]
+C-68 corpus-ingesta-n8n (C-69)                            [ACTIVO — 58/63; MEDIO]
 
 --- FASE 23: Medicion del corpus por telefonia real (2026-10-02) ---
 
-C-70 softphone-corpus-telefonia (C-59, C-52, C-68)        [ACTIVO — 0/65; ALTO]
+C-70 softphone-corpus-telefonia (C-59, C-52, C-68)        [ACTIVO — 62/65; ALTO]
 ```
 
 ### Paralelismo por fase
@@ -465,12 +465,15 @@ C-70 softphone-corpus-telefonia (C-59, C-52, C-68)        [ACTIVO — 0/65; ALTO
 | C-60 | directorio-endurecimiento | 19 | C-54, C-56 | ALTO | — |
 | C-67 | notificacion-sms-llamante | 20 | C-53 (archivado); bloqueado por OQ3 y C-66 (futura) | ALTO | — |
 | C-61 | compliance-gobernanza | 21 | ninguna | MEDIO | — |
+| C-68 | corpus-ingesta-n8n | 22 | C-69 | MEDIO | — |
+| C-69 | dedup-correlacion-altas | 22 | ninguna (habilita C-68) | MEDIO | — |
+| C-70 | softphone-corpus-telefonia | 23 | C-59, C-52, C-68 | ALTO | — |
 
-**Total**: 59 entradas creadas documentadas (58 numeradas + 1 de mantenimiento sin numero) — 56 archivadas (55 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59 y C-61; mas `improve-dockerfiles`) y 3 ACTIVOS (C-56, C-60, C-67). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
+**Total**: 62 entradas creadas documentadas (61 numeradas + 1 de mantenimiento sin numero) — 57 archivadas (56 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59, C-61 y C-69; mas `improve-dockerfiles`) y 5 ACTIVOS (C-56, C-60, C-67, C-68, C-70). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
 **Planificadas (NO creadas)**: 5 entradas del plan de cumplimiento (FASE 21) — C-62 `hardening-infra-red` (ALTO), C-63 `identidad-accesos-claves` (CRITICO), C-64 `vulnerabilidades-supply-chain` (MEDIO), C-65 `backup-continuidad` (ALTO) y C-66 `privacidad-transferencias` (ALTO). No cuentan como creadas, archivadas ni activas. C-61 `compliance-gobernanza` (MEDIO) ya fue creado y quedo ARCHIVADO (2026-10-01, 26/26), con su spec `security-governance-docs` creada. Ver `docs/cumplimiento/plan-cambios-cumplimiento.md`.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
-**Fases**: 1-21 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67, y la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, con C-61 archivado (2026-10-01) y C-62..C-66 planificados).
+**Fases**: 1-23 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67, la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, con C-61 archivado (2026-10-01) y C-62..C-66 planificados, la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 ya archivado (2026-10-05) y C-68 en aplicacion, y la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 propuesto).
 
 ---
 
@@ -1432,9 +1435,9 @@ C-70 softphone-corpus-telefonia (C-59, C-52, C-68)        [ACTIVO — 0/65; ALTO
 
 > Change post-roadmap que desbloquea la carga del corpus de evaluacion: hoy los 200 casos tienen `tiempo_automatizado_s = null` y `evaluation/corpus.py` los rechaza. C-68 mide web y correo por el flujo N8N real y escribe de vuelta la metrica hibrida; telefonia queda a cargo manual del autor.
 
-### [C-69] `dedup-correlacion-altas` — ACTIVO (0/30)
+### [C-69] `dedup-correlacion-altas` — ARCHIVADO (2026-10-05, 30/30)
 
-- **Estado**: `[ ]` propuesto (2026-10-02) — 0/30 tareas. Planning completo (proposal + design + specs + tasks); OQ-A..OQ-D RESUELTAS por el autor; sin aplicar. Governance MEDIO.
+- **Estado**: `[x]` completado y archivado (2026-10-05 — `openspec/changes/archive/2026-10-05-c-69-dedup-correlacion-altas`; 30/30 tareas). Apply, testeado y commiteado (`1d6601b`); specs sincronizadas (added 5: `incident-origin-correlation` creada; `incident-intake-guards` y `n8n-workflow` modificadas). Governance MEDIO.
 - **Problema**: el canal web envia `origen_message_id = null`, esquivando el indice unico de la migracion 005 (dedup server-side) y duplicando incidentes al reingestar; y `IncidenteRead` no expone `origen_message_id` ni el listado filtra por el, forzando correlacion por ventana temporal. Cierra las OQ2 (dedup web) y OQ6 (correlacion) de C-68.
 - **Scope**:
   - `IncidenteRead` expone `origen_message_id`; filtro exacto opcional `origen_message_id` en el listado (routes -> service -> repository).
@@ -1448,9 +1451,9 @@ C-70 softphone-corpus-telefonia (C-59, C-52, C-68)        [ACTIVO — 0/65; ALTO
   - `n8n/workflow.json` (nodo "Normalizar entrada del incidente")
   - `docs/medicion-latencia-e2e.md`
 
-### [C-68] `corpus-ingesta-n8n` — ACTIVO (4/58)
+### [C-68] `corpus-ingesta-n8n` — ACTIVO (58/63)
 
-- **Estado**: `[ ]` propuesto (2026-10-02) — 4/58 tareas. Planning completo (proposal + design + specs + tasks); sin aplicar. Governance MEDIO.
+- **Estado**: `[ ]` en aplicacion (2026-10-02) — 58/63 tareas. Planning completo (proposal + design + specs + tasks); harness de ingesta N8N operativo con fixes de observer no bloqueante, timeout IMAP/busqueda acotada, writers que saltan metricas anomalas y merge del sidecar por `case_id` (commits `69b5328`, `1d32538`, `3840246`, `24ab238`). Corpus web 53/53 y correo 66/66 medidos; telefonia 0/81 a cargo de C-70. Governance MEDIO.
 - **Problema**: el corpus de tesis no es cargable (`tiempo_automatizado_s` nulo en 200/200) y el harness existente mide un POST directo, no el flujo N8N real ni la espera del poller de correo.
 - **Scope**:
   - Harness `scripts/corpus_ingest/ingest_via_n8n.py`: web por webhook + lectura por id; correo por SMTP + trigger IMAP + sondeo.
@@ -1458,7 +1461,7 @@ C-70 softphone-corpus-telefonia (C-59, C-52, C-68)        [ACTIVO — 0/65; ALTO
   - Write-back a XLSX/CSV + sidecar sin descripciones + merge del JSON de evaluacion.
   - Runbook de activacion de N8N y credenciales; login desde entorno.
   - Tests offline (TDD) de la logica pura.
-- **Dependencias**: `docs/medicion-latencia-e2e.md` (contrato de timing, C-39/C-48); `dry-run-harness` (verificacion web/correo, sin modificar). OQs abiertas: OQ1 (canonico de correo), OQ2 (dedup web), OQ3 (descomposicion), OQ4 (confirmacion de correo), OQ5 (origen de telefonia), OQ6 (correlacion de correo).
+- **Dependencias**: `docs/medicion-latencia-e2e.md` (contrato de timing, C-39/C-48); `dry-run-harness` (verificacion web/correo, sin modificar). OQ1..OQ6 RESUELTAS/DELEGADAS: OQ1 canonico de correo (resuelta), OQ2 dedup web (delegada a c-69), OQ3 descomposicion (resuelta), OQ4 confirmacion de correo (resuelta), OQ5 telefonico (resuelta: carga manual del autor), OQ6 correlacion de correo (delegada a c-69).
 - **Governance**: MEDIO
 - **Leer antes**:
   - `openspec/changes/c-68-corpus-ingesta-n8n/{proposal,design,tasks}.md`
@@ -1471,9 +1474,9 @@ C-70 softphone-corpus-telefonia (C-59, C-52, C-68)        [ACTIVO — 0/65; ALTO
 
 > Change post-roadmap que cierra la carga manual que C-68 dejo para el canal telefonico. Mide los 81 casos de `llamada telefonica` por el flujo real (softphone -> Twilio -> backend C-52 -> n8n), con correlacion exacta llamada <-> caso del corpus y write-back de la metrica canonica, sobre una base descartable.
 
-### [C-70] `softphone-corpus-telefonia` — ACTIVO (0/65)
+### [C-70] `softphone-corpus-telefonia` — ACTIVO (62/65)
 
-- **Estado**: `[ ]` propuesto (2026-10-02) — 0/65 tareas. Planning completo (proposal + design + specs + tasks); `openspec validate --strict` pasa. OQ1..OQ6 abiertas para el autor. Sin aplicar. Governance ALTO.
+- **Estado**: `[ ]` en aplicacion (2026-10-05) — 62/65 tareas. Apply completo y verificado (READY TO ARCHIVE): backend (migracion `011` + `corpus_case_id` + tabla corta `telefonia_pending_call` + endpoints de lectura/borrado), softphone (`/corpus-cases` + selector), script `ingest_telefonia_corpus.py` (metrica + `--replace` con dry-run), perfil Compose `corpus` y runbook. Suites en verde: backend 920 offline + 37 integracion, softphone 69, corpus_ingest 153, ruff limpio. Pendientes 8.1-8.3: corrida real con Twilio y los 81 casos recitados por el autor. OQ1..OQ6 resueltas (OQ1=B store keyed-by-CallSid con tabla efimera en PostgreSQL; OQ2=stack completo aislado con wipe ACOTADO por servicio; OQ3=endpoint; OQ4=`t_espera_s` vacia/N-A; OQ5=endpoint dedicado + rol `administrador_directorio`; OQ6=`--replace` acotado con dry-run). Governance ALTO.
 - **Problema**: el corpus tiene 81 casos de `llamada telefonica` con `tiempo_automatizado_s = null`; C-68 los dejo fuera de alcance para carga manual. No existe via reproducible para medirlos por el flujo real ni para correlacionar de forma exacta una llamada con su caso.
 - **Scope**:
   - Softphone (extiende C-59): `<select>` con los casos telefonicos del corpus (default vacio); el modo `serve` expone la lista leida del JSON pseudonimizado; el autor RECITA el caso (sin playback).
@@ -1482,7 +1485,7 @@ C-70 softphone-corpus-telefonia (C-59, C-52, C-68)        [ACTIVO — 0/65; ALTO
   - Metrica canonica de telefonia: `tiempo_automatizado_s = latencia_e2e_ms/1000 = t_pipeline_s = t_e2e_s`; `t_espera_s` vacia/N-A (no medible).
   - Perfil Compose `corpus` con base descartable y wipe; conmutacion manual de la Voice URL.
   - Los 81 casos los mide el autor (sin muestreo).
-- **Dependencias**: `C-59` (softphone, archivado 2026-10-01; herramienta a extender); `C-52` (intake telefonico async, archivado 2026-09-30; flujo a preservar); `C-68` (write-back/merge/privacidad que reutiliza). OQs abiertas: OQ1 (propagacion del param), OQ2 (perfil `corpus`), OQ3 (listado/auth de la GUI), OQ4 (`t_espera_s`), OQ5 (auth/exposicion de lectura), OQ6 (`--replace` y FKs).
+- **Dependencias**: `C-59` (softphone, archivado 2026-10-01; herramienta a extender); `C-52` (intake telefonico async, archivado 2026-09-30; flujo a preservar); `C-68` (write-back/merge/privacidad que reutiliza). OQ1..OQ6 RESUELTAS por el autor: OQ1 store keyed-by-CallSid (tabla efimera en PostgreSQL), OQ2 perfil `corpus` completo aislado, OQ3 endpoint `/corpus-cases`, OQ4 `t_espera_s` vacia/N-A, OQ5 endpoint de lectura dedicado, OQ6 `--replace` acotado con dry-run. Apply-ready.
 - **Governance**: ALTO
 - **Leer antes**:
   - `openspec/changes/c-70-softphone-corpus-telefonia/{proposal,design,tasks}.md`
@@ -1525,12 +1528,12 @@ C-70 softphone-corpus-telefonia (C-59, C-52, C-68)        [ACTIVO — 0/65; ALTO
 | KB: knowledge-base | ACTUALIZADA | C-14 kb-sync-implementation-state |
 | Twilio: TwiML script | COMPLETO | C-16 twilio-twiml-script |
 | Seguridad: higiene de secretos | COMPLETO | C-37 (hook pre-commit + runbook + escaneo del lado GitHub) |
-| Corpus: JSON multietiqueta | PENDIENTE DATOS REALES | C-27 rediseno-sectores-json (sintetico de 200 casos eliminado; el corpus real aun no es cargable porque los tiempos automatizados estan nulos) |
+| Corpus: JSON multietiqueta | PARCIAL | C-27 rediseno-sectores-json (sintetico eliminado); C-68 midio web 53/53 y correo 66/66 por el flujo N8N real; telefonia 0/81 pendiente de C-70 |
 | Timing e2e | IMPLEMENTADO | C-39; `ingresado_en` / `persistido_en` / `latencia_e2e_ms`. C-46 elimina la perdida silenciosa del sello en el canal telefonico (verificacion de runtime en vivo pendiente) |
 | Backup scripts: PostgreSQL | IMPLEMENTADO | C-26 — scripts/backup.sh y scripts/backup.ps1 con rotacion de 7 dias |
 | N8N retention: 30 dias | CONFIGURADO | C-26 — EXECUTIONS_DATA_PRUNE y EXECUTIONS_DATA_MAX_AGE en docker-compose.yml |
 
-Tabla reconciliada con el estado real el 2026-10-01: C-14..C-48 quedaron documentados en las FASE 12-17; C-52..C-55 en la FASE 18 (C-52, C-53, C-54 y C-55 archivados) y C-56..C-60 en la FASE 19 (C-57 y C-58 archivados). Actualizacion 2026-10-01: C-53 y C-59 quedaron archivados; C-67 quedo registrado (notificacion SMS diferida, FASE 20). Actualizacion 2026-10-01 (tarde): C-54 quedo ARCHIVADO (2026-10-01, 51/51) y la FASE 18 queda CERRADA; se aprobo el plan de cumplimiento ISO/NIST/Ley 25.326, registrado como planificado en la FASE 21 (C-61..C-66, aun sin crear). Actualizacion 2026-10-01 (noche): C-61 `compliance-gobernanza` quedo CREADO como change OPSX (FASE 21, 0/23, MEDIO, sin dependencias, habilita C-63); los totales se ajustan a 58 changes numeradas creadas (54 archivadas + 4 activos) y 5 planificadas sin crear (C-62..C-66); C-66 no depende de C-67 sino que C-67 depende de C-66. Actualizacion 2026-10-01 (noche, cierre): C-61 quedo ARCHIVADO (2026-10-01, 26/26) y su spec `security-governance-docs` fue creada; la FASE 21 quedo parcialmente ejecutada y los totales se ajustan a 58 changes numeradas creadas (55 archivadas + 3 activos) mas 1 de mantenimiento sin numero (56 archivadas en total) y 5 planificadas sin crear (C-62..C-66).
+Tabla reconciliada con el estado real el 2026-10-01: C-14..C-48 quedaron documentados en las FASE 12-17; C-52..C-55 en la FASE 18 (C-52, C-53, C-54 y C-55 archivados) y C-56..C-60 en la FASE 19 (C-57 y C-58 archivados). Actualizacion 2026-10-01: C-53 y C-59 quedaron archivados; C-67 quedo registrado (notificacion SMS diferida, FASE 20). Actualizacion 2026-10-01 (tarde): C-54 quedo ARCHIVADO (2026-10-01, 51/51) y la FASE 18 queda CERRADA; se aprobo el plan de cumplimiento ISO/NIST/Ley 25.326, registrado como planificado en la FASE 21 (C-61..C-66, aun sin crear). Actualizacion 2026-10-01 (noche): C-61 `compliance-gobernanza` quedo CREADO como change OPSX (FASE 21, 0/23, MEDIO, sin dependencias, habilita C-63); los totales se ajustan a 58 changes numeradas creadas (54 archivadas + 4 activos) y 5 planificadas sin crear (C-62..C-66); C-66 no depende de C-67 sino que C-67 depende de C-66. Actualizacion 2026-10-01 (noche, cierre): C-61 quedo ARCHIVADO (2026-10-01, 26/26) y su spec `security-governance-docs` fue creada; la FASE 21 quedo parcialmente ejecutada y los totales se ajustan a 58 changes numeradas creadas (55 archivadas + 3 activos) mas 1 de mantenimiento sin numero (56 archivadas en total) y 5 planificadas sin crear (C-62..C-66). Actualizacion 2026-10-05: C-69 `dedup-correlacion-altas` quedo ARCHIVADO (2026-10-05, 30/30; specs sincronizadas: added 5 — `incident-origin-correlation` creada, `incident-intake-guards` y `n8n-workflow` modificadas) y C-68 quedo en 58/63 (apply avanzado; corpus web 53/53 y correo 66/66 medido por el flujo N8N real). Se registro C-70 `softphone-corpus-telefonia` (FASE 23, 0/65, ALTO, OQ1..OQ6 resueltas; apply-ready). Totales: 61 changes numeradas creadas (56 archivadas + 5 activas: C-56, C-60, C-67, C-68 y C-70) mas 1 de mantenimiento sin numero (57 archivadas en total) y 5 planificadas sin crear (C-62..C-66).
 
 Cambios que NO estan en el roadmap original porque se implementaron durante el desarrollo:
 - Clasificador hibrido (completo)
@@ -1548,16 +1551,16 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 
 ## Primer change recomendado
 
-Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01) y C-61 (2026-10-01, 26/26).
+Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01), C-61 (2026-10-01, 26/26) y C-69 (2026-10-05, 30/30).
 
-Hay 5 changes ACTIVOS (post-roadmap, FASE 19, FASE 20 y FASE 22):
+Hay 5 changes ACTIVOS (post-roadmap, FASE 19, FASE 20, FASE 22 y FASE 23):
 - **`c-56-notificaciones-por-rol`** — 0/27 (planning completo, sin aplicar; FASE 19) — Governance ALTO.
 - **`c-60-directorio-endurecimiento`** — 0/33 (planning completo, sin aplicar; FASE 19) — Governance ALTO.
 - **`c-67-notificacion-sms-llamante`** — 0/24 (diferido; bloqueado por OQ3 y C-66; FASE 20) — Governance ALTO.
-- **`c-68-corpus-ingesta-n8n`** — 4/58 (planning completo, sin aplicar; FASE 22) — Governance MEDIO.
-- **`c-69-dedup-correlacion-altas`** — 0/30 (planning completo, OQ-A..OQ-D resueltas, sin aplicar; FASE 22) — Governance MEDIO. PREREQUISITO de `c-68`.
+- **`c-68-corpus-ingesta-n8n`** — 58/63 (apply avanzado; corpus web/correo medido; FASE 22) — Governance MEDIO.
+- **`c-70-softphone-corpus-telefonia`** — 62/65 (apply completo y verificado; 8.1-8.3 operativas pendientes; FASE 23) — Governance ALTO.
 
-C-01..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59 y C-61 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
+C-01..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59, C-61 y C-69 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
 
 **Detalle de `c-52-telefonia-transcripcion-async`** (Gobernanza CRITICA; ARCHIVADO 2026-09-30):
 
@@ -1601,3 +1604,5 @@ Para avanzar:
 - `c-56`: aplicar ahora que c-54 y c-55 estan archivados; depende de sus nodos `emailSend`/SMTP y del seam de resolucion del directorio.
 - `c-60`: aplicar ahora que c-54 esta archivado (prerequisito); compatible con c-56.
 - `c-67`: no aplicar aun; bloqueado por OQ3 (entregabilidad SMS AR) y por C-66 (privacidad-transferencias, planificado en la FASE 21, aun sin crear).
+- `c-68`: cerrar las 5 tareas restantes del harness de ingesta (web/correo ya medidos) y verificar.
+- `c-70`: codigo aplicado; pendiente la corrida real de los 81 casos (8.1-8.3, requiere Twilio + recitacion del autor). Governance ALTO.
