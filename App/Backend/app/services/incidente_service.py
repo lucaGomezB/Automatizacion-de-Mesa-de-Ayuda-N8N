@@ -47,6 +47,7 @@ from app.repositories.clasificacion_repository import ClasificacionRepository
 from app.repositories.estado_repository import EstadoRepository
 from app.repositories.incidente_repository import IncidenteRepository
 from app.repositories.sector_repository import SectorRepository
+from app.repositories.telefonia_ingreso_repository import TelefoniaIngresoRepository
 from app.schemas.clasificacion import ClasificacionResult
 from app.schemas.incidente import ClasificacionPrecalculada, IncidenteCreate, IncidenteUpdate
 
@@ -112,6 +113,10 @@ class IncidenteService:
         self._estado_repo = EstadoRepository(session)
         self._canal_repo = CanalOrigenRepository(session)
         self._clasificacion_repo = ClasificacionRepository(session)
+        # c-70 (fix smoke): el alta de telefonia reutiliza el indice unico de
+        # `incidente.origen_message_id` con el `CallSid`; al resolverse el
+        # incidente hay que registrar el vinculo en el ingreso existente.
+        self._telefonia_ingreso_repo = TelefoniaIngresoRepository(session)
         self._classifier = classifier or HybridClassifier(cost_guard=cost_guard)
         # Referencia a la sesión para resolver colisiones de unicidad
         # (IntegrityError) en la idempotencia del alta (C-33, D4).
@@ -250,6 +255,12 @@ class IncidenteService:
                     origen_message_id=payload.origen_message_id,
                     incidente_id=existente.id,
                 )
+                # Auto-sanado (c-70, fix smoke): un reintento de un alta de
+                # telefonia debe enlazar el ingreso aunque el alta previa no lo
+                # haya hecho (por ejemplo, si el ingreso llego despues).
+                await self._link_telefonia_ingreso(
+                    payload.origen_message_id, existente.id
+                )
                 return existente
 
         # Paso 1: Resolver el estado inicial desde el catálogo
@@ -300,9 +311,17 @@ class IncidenteService:
                 origen_message_id=payload.origen_message_id,
                 incidente_id=existente.id,
             )
+            await self._link_telefonia_ingreso(payload.origen_message_id, existente.id)
             return existente
 
         logger.info("incidente_created", incidente_id=incidente.id)
+
+        # c-70 (fix smoke): si el alta corresponde a una llamada de telefonia
+        # (el n8n reutiliza el `CallSid` como `origen_message_id`), registrar el
+        # vinculo `telefonia_ingreso.incidente_id` que sustenta `latencia_e2e_ms`.
+        await self._link_telefonia_ingreso(
+            payload.origen_message_id, incidente.id
+        )
 
         # Pasos 5-7: Clasificar sobre la pseudonimizada y persistir el resultado.
         # La clasificación precalculada, si viene, omite el clasificador pago.
@@ -487,6 +506,38 @@ class IncidenteService:
         # ni propaga fallos (notify_n8n ya envuelve toda excepción en try/except).
         # La tarea conserva una referencia retenida hasta completar (BE B6).
         _dispatch_notification(incidente.id, result)
+
+    async def _link_telefonia_ingreso(
+        self, origen_message_id: str | None, incidente_id: int
+    ) -> None:
+        """
+        Enlaza el ingreso de telefonia con el incidente recien resuelto (c-70).
+
+        El alta del incidente de una llamada reutiliza el `CallSid` como
+        `origen_message_id`; si existe un `telefonia_ingreso` con ese `call_sid`
+        y aun sin `incidente_id`, se registra el vinculo. La operacion es un
+        no-op cuando no hay `origen_message_id`, cuando no hay ingreso
+        coincidente (altas genericas, correo o web) o cuando el ingreso ya esta
+        enlazado. Respeta la disciplina de capas: el servicio no manipula la
+        sesion directamente.
+
+        Args:
+            origen_message_id: identificador de origen del alta (CallSid o None).
+            incidente_id:      PK del incidente creado o recuperado.
+        """
+        if not origen_message_id:
+            return
+        ingreso = await self._telefonia_ingreso_repo.get_by_call_sid(
+            origen_message_id
+        )
+        if ingreso is None or ingreso.incidente_id is not None:
+            return
+        await self._telefonia_ingreso_repo.link_incidente(ingreso, incidente_id)
+        logger.info(
+            "telefonia_ingreso_enlazado",
+            call_sid=origen_message_id,
+            incidente_id=incidente_id,
+        )
 
     async def _resolve_estado(self, nombre: str) -> Estado:
         """

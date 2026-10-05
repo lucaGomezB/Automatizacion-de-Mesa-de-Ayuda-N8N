@@ -109,6 +109,13 @@ HANDOFF_SKIPPED_NO_URL = "skipped_no_url"
 HANDOFF_SKIPPED_NO_SECRET = "skipped_no_secret"
 HANDOFF_FAILED = "failed"
 
+# Timeout del cliente HTTP del handoff de telefonia (c-70, fix smoke).
+# El workflow de n8n (AI Agent) tarda ~11 s en crear el incidente; un timeout
+# de 5 s producia un `telefonia_handoff_failed` FALSO (ReadTimeout) que no
+# bloqueaba nada pero enmascaraba el exito. El handoff es fire-and-forget: un
+# margen amplio no penaliza la latencia de la respuesta HTTP.
+TELEFONIA_HANDOFF_TIMEOUT_S = 30.0
+
 
 def build_telefonia_handoff_payload(
     *,
@@ -183,7 +190,7 @@ async def notify_telefonia_handoff(
         if http_client is not None:
             response = await http_client.post(url, json=payload, headers=headers)
         else:
-            async with httpx.AsyncClient(timeout=5.0) as client:
+            async with httpx.AsyncClient(timeout=TELEFONIA_HANDOFF_TIMEOUT_S) as client:
                 response = await client.post(url, json=payload, headers=headers)
         response.raise_for_status()
     except Exception as exc:
