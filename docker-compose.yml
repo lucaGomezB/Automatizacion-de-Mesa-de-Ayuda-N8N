@@ -315,6 +315,10 @@ services:
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-mesa}:${POSTGRES_PASSWORD:-mesa_local_dev}@postgres-corpus:5432/mesa_de_ayuda_corpus
       # Webhook de notificacion hacia el N8N aislado del corpus.
       N8N_WEBHOOK_URL: http://n8n-corpus:5678/webhook/notificacion-clasificacion
+      # Handoff de telefonia hacia el N8N aislado. NO heredar el host `n8n` del
+      # stack base: en el perfil corpus el servicio es `n8n-corpus` (si se hereda
+      # `http://n8n:...`, el handoff falla con ConnectError).
+      N8N_TELEFONIA_WEBHOOK_URL: http://n8n-corpus:5678/webhook/telefonia-handoff
       GEMINI_PROMPT_PATH: /app/docs/prompt_gemini.txt
       COST_GUARD_SHARED_SECRET: ${COST_GUARD_SHARED_SECRET:-}
       # Necesario para reconstruir la URL publica detras del tunel y validar la
