@@ -245,3 +245,36 @@ TwiML App está en `TWILIO_TWIML_APP_SID` (formato `AP...`).
 - El comando a secas `docker compose --profile corpus down -v` se probó en un
   proyecto de prueba aislado y eliminó también el volumen del servicio sin
   perfil: por eso NO se usa sobre este repositorio.
+
+## 10. Operador administrador del corpus (para el write-back)
+
+El endpoint de lectura `GET /api/v1/telefonia/ingresos` y el de borrado
+(`DELETE ...&dry_run=`) exigen un operador con rol `administrador_directorio`
+(el rol se resuelve desde `directorio_empleado`, no desde `users`). La base
+descartable del corpus arranca **sin** empleados, así que un `admin` recién
+sembrado por la migración no tiene el rol y los endpoints responden 403.
+
+Provisionar el directorio en la base descartable (seed dev-only, datos
+sintéticos, dominio `.test`):
+
+```bash
+docker exec mesa_local-backend-corpus-1 python -m scripts.seed_directorio
+```
+
+Crea, entre otros, el operador `directorio.admin` (rol
+`administrador_directorio`) con la clave `cambiar-esta-clave-admin`.
+
+El script de write-back `scripts/corpus_ingest/ingest_telefonia_corpus.py` usa
+`INGEST_OPERATOR_USERNAME` / `INGEST_OPERATOR_PASSWORD`; para la corrida del
+corpus deben apuntar a ese operador admin (no a `admin`):
+
+```bash
+export INGEST_OPERATOR_USERNAME=directorio.admin
+export INGEST_OPERATOR_PASSWORD=cambiar-esta-clave-admin  # gitleaks:allow (password de desarrollo, usuario sintetico)
+python3 scripts/corpus_ingest/ingest_telefonia_corpus.py --base-url http://localhost:8001
+```
+
+Nota: en un entorno con `ENVIRONMENT=production` el seed queda como paso manual
+del runbook; el endurecimiento del seed (guardia de entorno) se planifica en
+`c-60-directorio-endurecimiento`.
+

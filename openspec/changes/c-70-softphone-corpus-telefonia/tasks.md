@@ -1,7 +1,7 @@
 # Tareas — c-70-softphone-corpus-telefonia
 
 > Estado: aplicado (2026-10-05). Governance: ALTO. Modo TDD estricto aplicado en todo el codigo.
-> Progress: 68/71. Pendientes: 8.1-8.3 (corrida real con Twilio + recitacion manual de los 81 casos por el autor) y 9.7 (re-smoke post-fix).
+> Progress: 70/72. Pendientes: 8.2 (corrida completa de los 81 por el autor) y 8.3 (carga del corpus).
 > Cada tarea de codigo que modifica un archivo existente arranco con una safety net (correr los tests actuales del area y registrar la linea base).
 
 ## 0. Prerequisitos y decisiones resueltas (sin gating)
@@ -92,7 +92,7 @@
 
 ## 8. Verificacion final
 
-- [ ] 8.1 Corrida acotada: 1-2 casos de telefono en el perfil `corpus`, con correlacion exacta y write-back verificado. — BLOCKED: requiere Twilio/ngrok + el autor recitando; no hay instancia ni tunel activos.
+- [x] 8.1 Corrida acotada: 1-2 casos de telefono en el perfil `corpus`, con correlacion exacta y write-back verificado. — REALIZADO con R002 (2026-10-05): correlacion exacta via `corpus_case_id`, ingreso enlazado (`incidente_id=2`), `latencia_e2e_ms=13012`, write-back `medidos=1` y `tiempo_automatizado_s=13.012` escrito en JSON/CSV/XLSX/sidecar.
 - [ ] 8.2 Corrida completa de los 81 casos por el autor (sin muestreo). — BLOCKED: trabajo manual del autor.
 - [ ] 8.3 Verificar la carga del corpus: `cd evaluation; pytest -q` sin `CorpusError` una vez cargados web + correo + los 81 telefonos. — BLOCKED by 8.2.
 - [x] 8.4 `openspec validate --strict --changes c-70-softphone-corpus-telefonia` en verde. — 5 passed, 0 failed.
@@ -108,7 +108,7 @@
 - [x] 9.4 (TRIANGULATE) Incidente sin ingreso coincidente (no-op), replay idempotente que enlaza, y el ingreso de otro `call_sid` no se toca. — 3 casos en verde.
 - [x] 9.5 (RED/GREEN) Subir el timeout del handoff (`app/utils/n8n_webhook.py`) de 5 s a 30 s para no loguear `handoff_failed` en falso cuando el workflow tarda ~11 s (es fire-and-forget). Ajustar aserciones existentes si las hubiera. — constante `TELEFONIA_HANDOFF_TIMEOUT_S=30.0` + test de captura; el `notify_n8n` generico se dejo en 5 s (justificado).
 - [x] 9.6 (REFACTOR) Limpiar; suite offline + integracion en verde; `ruff` limpio; `openspec validate --strict --changes c-70-softphone-corpus-telefonia` pasa. — 925 passed (+37 integracion); ruff limpio; validate 6/6.
-- [ ] 9.7 Re-smoke: con el fix, repetir R002 y confirmar `telefonia_ingreso.incidente_id` enlazado y que el write-back escribe `tiempo_automatizado_s`.
+- [x] 9.7 Re-smoke: con el fix, repetir R002 y confirmar `telefonia_ingreso.incidente_id` enlazado y que el write-back escribe `tiempo_automatizado_s`. — VERIFICADO: handoff HTTP 200 (sin falso fallo), ingreso 4 enlazado a incidente 2, endpoint devuelve `latencia_e2e_ms=13012`, write-back escribio `13.012`.
 
 ## Notas de desviacion
 
