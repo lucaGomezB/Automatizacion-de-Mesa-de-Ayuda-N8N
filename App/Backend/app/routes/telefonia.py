@@ -32,6 +32,7 @@ from fastapi import (
     Form,
     Header,
     HTTPException,
+    Query,
     Request,
     Response,
 )
@@ -44,11 +45,17 @@ from app.cost_guard.dependencies import get_cost_guard
 from app.cost_guard.guard import CostGuard
 from app.cost_guard.twilio_signature import verify_signature
 from app.cost_guard.twiml import TWIML_MEDIA_TYPE, render_twiml_record_complete
+from app.models.empleado import Empleado
+from app.routes.directorio import require_directorio_admin
+from app.schemas.incidente import _derivar_latencia_e2e_ms
 from app.schemas.telefonia import (
     RecordingStatusCallback,
+    TelefoniaCorpusDeleteResult,
+    TelefoniaIngresoRead,
     TelefoniaRecordingResponse,
 )
 from app.services.cost_guard_service import CostGuardService
+from app.services.telefonia_pending_call_service import TelefoniaPendingCallService
 from app.services.telefonia_service import TRANSIENT_ERROR_STATES, TelefoniaService
 
 router = APIRouter(prefix="/telefonia", tags=["Telefonia"])
@@ -57,6 +64,7 @@ _SIGNATURE_HEADER = "X-Twilio-Signature"
 
 SignatureHeader = Annotated[str | None, Header(alias=_SIGNATURE_HEADER)]
 SessionDep = Annotated[AsyncSession, Depends(get_db_session)]
+AdminDep = Annotated[Empleado, Depends(require_directorio_admin)]
 
 
 class TwimlResponse(Response):
@@ -84,6 +92,22 @@ def get_telefonia_service(
 
 
 ServiceDep = Annotated[TelefoniaService, Depends(get_telefonia_service)]
+
+
+def get_pending_call_service(session: SessionDep) -> TelefoniaPendingCallService:
+    """
+    Fabrica del servicio del store efimero de correlacion (c-70, D2).
+
+    Se expone como dependencia para que el webhook de voz (definido en el router
+    de la guarda) y el callback de grabacion compartan el mismo contrato sin
+    duplicar la construccion.
+    """
+    return TelefoniaPendingCallService(session)
+
+
+PendingServiceDep = Annotated[
+    TelefoniaPendingCallService, Depends(get_pending_call_service)
+]
 
 
 async def require_twilio_signature(
@@ -117,6 +141,20 @@ async def require_twilio_signature(
 SignatureDep = Annotated[None, Depends(require_twilio_signature)]
 
 
+async def _resolver_corpus_case_id(
+    pending: TelefoniaPendingCallService, call_sid: str
+) -> str | None:
+    """
+    Resuelve el `corpus_case_id` del `CallSid` y purga las filas vencidas (D2).
+
+    La resolucion BORRA la fila pendiente; la purga es oportunista. Ambos pasos
+    corren en la misma sesion/transaccion que el procesamiento del callback.
+    """
+    corpus_case_id = await pending.resolver_y_borrar(call_sid)
+    await pending.purgar_vencidas()
+    return corpus_case_id
+
+
 @router.post(
     "/recording-status",
     response_model=TelefoniaRecordingResponse,
@@ -140,6 +178,7 @@ SignatureDep = Annotated[None, Depends(require_twilio_signature)]
 async def recording_status(
     service: ServiceDep,
     _signature: SignatureDep,
+    pending: PendingServiceDep,
     account_sid: str | None = Form(None, alias="AccountSid"),
     call_sid: str = Form(..., alias="CallSid"),
     recording_sid: str | None = Form(None, alias="RecordingSid"),
@@ -173,6 +212,7 @@ async def recording_status(
         recording_channels=recording_channels,
         recording_source=recording_source,
         caller=from_number,
+        corpus_case_id=await _resolver_corpus_case_id(pending, call_sid),
     )
     ingreso = await service.process_recording(callback)
     if ingreso.transcripcion_estado in TRANSIENT_ERROR_STATES:
@@ -188,6 +228,102 @@ async def recording_status(
         status="accepted",
         call_sid=ingreso.call_sid,
         transcripcion_estado=ingreso.transcripcion_estado,
+    )
+
+
+def _ingreso_to_read(ingreso) -> TelefoniaIngresoRead:
+    """
+    Proyecta un ingreso a su representacion de lectura del corpus (D5).
+
+    Deriva la latencia end-to-end del incidente vinculado con la MISMA funcion
+    que `IncidenteRead`/`IncidenteListItem` (fuente unica de la metrica). El
+    incidente llega eager-loaded (`selectinload`) o None si el alta aun no se
+    resolvio.
+    """
+    incidente = ingreso.incidente
+    latencia = None
+    if incidente is not None:
+        latencia = _derivar_latencia_e2e_ms(
+            incidente.ingresado_en, incidente.persistido_en
+        )
+    return TelefoniaIngresoRead(
+        id=ingreso.id,
+        call_sid=ingreso.call_sid,
+        corpus_case_id=ingreso.corpus_case_id,
+        transcripcion_estado=ingreso.transcripcion_estado,
+        ingresado_en=ingreso.ingresado_en,
+        persistido_en=ingreso.persistido_en,
+        incidente_id=ingreso.incidente_id,
+        latencia_e2e_ms=latencia,
+    )
+
+
+@router.get(
+    "/ingresos",
+    response_model=TelefoniaIngresoRead,
+    summary="Ultimo ingreso de un caso del corpus (administrador)",
+    responses={
+        http_status.HTTP_403_FORBIDDEN: {
+            "description": "Se requiere el rol administrador_directorio."
+        },
+        http_status.HTTP_404_NOT_FOUND: {
+            "description": "No hay ningun ingreso para el corpus_case_id."
+        },
+    },
+)
+async def obtener_ingreso_corpus(
+    service: ServiceDep,
+    _admin: AdminDep,
+    corpus_case_id: str = Query(..., min_length=1),
+    latest: bool = True,
+) -> TelefoniaIngresoRead:
+    """
+    Recupera el ULTIMO ingreso de telefonia de un `corpus_case_id` (OQ5/D5).
+
+    Exige JWT de un operador `administrador_directorio`. Devuelve la metrica
+    end-to-end del incidente vinculado (`latencia_e2e_ms`), fuente unica de la
+    medicion de telefonia. `latest` documenta el contrato (`latest=true`); la
+    recuperacion siempre devuelve el ingreso mas reciente.
+    """
+    ingreso = await service.obtener_ultimo_ingreso_por_corpus_case_id(
+        corpus_case_id
+    )
+    if ingreso is None:
+        raise HTTPException(
+            status_code=http_status.HTTP_404_NOT_FOUND,
+            detail="No hay ingreso para el corpus_case_id indicado.",
+        )
+    return _ingreso_to_read(ingreso)
+
+
+@router.delete(
+    "/ingresos",
+    response_model=TelefoniaCorpusDeleteResult,
+    summary="Borrado acotado por corpus_case_id para --replace (administrador)",
+    responses={
+        http_status.HTTP_403_FORBIDDEN: {
+            "description": "Se requiere el rol administrador_directorio."
+        },
+    },
+)
+async def eliminar_ingresos_corpus(
+    service: ServiceDep,
+    _admin: AdminDep,
+    corpus_case_id: str = Query(..., min_length=1),
+    dry_run: bool = True,
+) -> TelefoniaCorpusDeleteResult:
+    """
+    Elimina los ingresos e incidentes PREVIOS de un caso, conservando el ultimo.
+
+    Destructivo con `dry_run=True` por defecto (governance ALTO): sin
+    `dry_run=false` explicito no borra nada, solo reporta. El borrado esta
+    acotado al `corpus_case_id` y respeta el orden FK (incidente -> ingreso).
+    """
+    counts = await service.eliminar_previos_por_corpus_case_id(
+        corpus_case_id, dry_run=dry_run
+    )
+    return TelefoniaCorpusDeleteResult(
+        corpus_case_id=corpus_case_id, dry_run=dry_run, **counts
     )
 
 
@@ -216,4 +352,4 @@ async def record_complete(
     return TwimlResponse(content=render_twiml_record_complete())
 
 
-__all__ = ["router", "get_telefonia_service"]
+__all__ = ["router", "get_telefonia_service", "get_pending_call_service"]

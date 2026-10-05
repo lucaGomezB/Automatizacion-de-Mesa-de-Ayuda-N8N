@@ -54,6 +54,8 @@ from app.schemas.cost_guard import (
     CostGuardReserveResponse,
 )
 from app.services.cost_guard_service import CostGuardService
+from app.routes.telefonia import get_pending_call_service
+from app.services.telefonia_pending_call_service import TelefoniaPendingCallService
 
 router = APIRouter(prefix="/cost-guard", tags=["Cost Guard"])
 
@@ -63,6 +65,11 @@ _SIGNATURE_HEADER = "X-Twilio-Signature"
 SecretHeader = Annotated[str | None, Header(alias=_SECRET_HEADER)]
 SignatureHeader = Annotated[str | None, Header(alias=_SIGNATURE_HEADER)]
 FromForm = Annotated[str | None, Form(alias="From")]
+CallSidForm = Annotated[str | None, Form(alias="CallSid")]
+CorpusCaseIdForm = Annotated[str | None, Form(alias="corpus_case_id")]
+PendingServiceDep = Annotated[
+    TelefoniaPendingCallService, Depends(get_pending_call_service)
+]
 
 
 class TwimlResponse(Response):
@@ -188,7 +195,10 @@ async def reserve_cost_guard(
 async def twilio_voice_webhook(
     request: Request,
     service: ServiceDep,
+    pending: PendingServiceDep,
     from_number: FromForm = None,
+    call_sid: CallSidForm = None,
+    corpus_case_id: CorpusCaseIdForm = None,
     x_twilio_signature: SignatureHeader = None,
 ) -> Response:
     """
@@ -199,12 +209,18 @@ async def twilio_voice_webhook(
     (fail-closed) para no quedar abierto. NO usa el header
     `X-Cost-Guard-Secret` porque Twilio no puede enviar headers personalizados.
 
+    Correlacion opcional (c-70, D2): si el softphone envia el parametro custom
+    `corpus_case_id` junto con `CallSid`, se persiste el mapeo efimero
+    `call_sid -> corpus_case_id` en `telefonia_pending_call` para que el callback
+    de grabacion lo resuelva. Sin `corpus_case_id` es un no-op (retrocompatible).
+
     Permite: responde TwiML con `<Record transcribe="true">`. Deniega: responde
     TwiML con `<Say>` + `<Hangup/>`, de modo que NO se grabe ni se transcriba.
     La reserva es de una unidad del costo unitario de transcripcion por llamada
     concedida (la duracion se desconoce al inicio).
     """
     await _require_twilio_signature(request, x_twilio_signature)
+    await pending.registrar(call_sid, corpus_case_id)
     decision = await service.reserve(PROVIDER_TWILIO, caller=from_number)
     twiml = render_twiml_allowed() if decision.allowed else render_twiml_denied()
     return TwimlResponse(content=twiml)

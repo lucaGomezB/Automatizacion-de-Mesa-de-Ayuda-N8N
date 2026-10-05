@@ -10,6 +10,7 @@ from app.models.costo_guarda_contador import CostoGuardaContador
 from app.models.empleado import Empleado, RolEmpleado
 from app.models.incidente import Incidente, PrioridadEnum
 from app.models.telefonia_ingreso import TelefoniaIngreso, TranscripcionEstado
+from app.models.telefonia_pending_call import TelefoniaPendingCall
 from app.models.user import User
 
 __all__ = [
@@ -26,6 +27,7 @@ __all__ = [
     "RolEmpleado",
     "TelefoniaIngreso",
     "TranscripcionEstado",
+    "TelefoniaPendingCall",
     "User",
     "incidente_sector_adicional",
     "clasificacion_sector_predicho",
