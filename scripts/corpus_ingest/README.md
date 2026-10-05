@@ -16,6 +16,8 @@ trazabilidad. NUNCA imprime ni loguea descripciones.
 | `test_ingest_corpus.py` | Tests unitarios offline (sin red, con fixtures temporales). |
 | `ingest_via_n8n.py` | Harness de ingesta POR el flujo N8N real (web + correo) con la metrica hibrida D. |
 | `test_ingest_via_n8n.py` | Tests offline de la logica pura, los caminos web/correo y los escritores. |
+| `ingest_telefonia_corpus.py` | Recupera y escribe de vuelta las mediciones del canal telefonia por `corpus_case_id` (c-70). |
+| `test_ingest_telefonia_corpus.py` | Tests offline de la metrica de telefonia, el write-back y el `--replace`. |
 | `pseudonymize_corpus.py` | Genera una copia pseudonimizada del CSV del corpus (Ley 25.326). |
 | `test_pseudonymize_corpus.py` | Tests unitarios offline del pseudonimizador de corpus. |
 | `requirements.txt` | Dependencias (`requests`, `openpyxl`). |
@@ -326,6 +328,112 @@ cuenta, o distinto host/usuario, se aceptan.
 - **Completado manual de los 81 telefono por el autor**: gatea la carga
   COMPLETA del JSON de evaluacion. Hasta entonces el harness reporta el conteo
   de nulos pendientes.
+
+## Recuperacion y write-back de telefonia (`ingest_telefonia_corpus.py`)
+
+`ingest_via_n8n.py` deja los 81 casos de **telefono** FUERA DE ALCANCE. El canal
+telefonico se mide por el flujo real (softphone -> TwiML App -> backend -> STT ->
+handoff N8N -> alta) y este script recupera cada medicion y la escribe de vuelta
+al corpus. NO reproduce audio ni inicia llamadas: solo LEE la medicion ya
+persistida y la carga.
+
+### Metrica canonica de telefonia (D4)
+
+En telefonia `ingresado_en` se sella en la **reception del callback** de estado
+de grabacion, no al inicio de la llamada, por lo que no hay espera del cliente:
+
+| Componente | Formula | Significado |
+|------------|---------|-------------|
+| `t_pipeline_s` | `latencia_e2e_ms / 1000` | Trabajo del canal tras el callback |
+| `t_espera_s` | **N-A** (`None`) | No medible: no hay espera del cliente |
+| `t_e2e_s` | `latencia_e2e_ms / 1000` = `t_pipeline_s` | Extremo a extremo |
+
+`tiempo_automatizado_s = t_e2e_s` (la MISMA metrica que web/correo; fuente unica:
+`latencia_e2e_ms` del incidente vinculado). La columna `Tiempo espera (s)` queda
+**VACIA/N-A** (se escribe `t_espera_s=None`, nunca `0`). Un caso con latencia
+nula, negativa o anomala se excluye sin recortarse a cero. Ver
+`docs/medicion-latencia-e2e.md` §5.
+
+### Recuperacion (D5)
+
+El script recupera el ULTIMO ingreso de cada `corpus_case_id` por el endpoint
+dedicado `GET /api/v1/telefonia/ingresos?corpus_case_id=X&latest=true`, que
+devuelve el ingreso con `latencia_e2e_ms` del incidente vinculado. El endpoint
+exige JWT de un operador `administrador_directorio`; las credenciales se leen
+SOLO del entorno (`INGEST_OPERATOR_USERNAME` / `INGEST_OPERATOR_PASSWORD`). Un
+caso sin ingreso se reporta como **pendiente** y NO se escribe.
+
+### Uso
+
+```bash
+# 0) Smoke sin red ni escritura: conteo de casos de telefonia.
+python3 scripts/corpus_ingest/ingest_telefonia_corpus.py --dry-run
+
+# 1) Corrida real (recupera y escribe; requiere el stack de corpus y un operador
+#    administrador_directorio; ver docs/runbook-corpus-telefonia.md).
+export INGEST_OPERATOR_USERNAME='<operador administrador_directorio>'
+export INGEST_OPERATOR_PASSWORD='<password>'
+python3 scripts/corpus_ingest/ingest_telefonia_corpus.py --insecure
+
+# 2) Re-medicion de un caso: primero SIEMPRE el dry-run del reemplazo.
+python3 scripts/corpus_ingest/ingest_telefonia_corpus.py --replace --limit 1
+# Solo con aprobacion explicita del autor, ejecuta el borrado destructivo:
+python3 scripts/corpus_ingest/ingest_telefonia_corpus.py --replace --confirm-replace
+```
+
+| Flag | Default | Descripcion |
+|------|---------|-------------|
+| `--base-url` | `https://localhost` | URL base del backend del corpus. |
+| `--insecure` | off | Acepta certificado autofirmado. |
+| `--source` | `json` | Fuente: `json` (evaluacion pseudonimizado), `csv` o `xlsx`. |
+| `--json` / `--csv` / `--xlsx` | corpus | Archivos de registro a actualizar. |
+| `--sidecar` | `data/corpus_resultados_telefonia.json` | Trazabilidad (sin descripciones). |
+| `--limit` | — | Procesa solo los primeros N casos. |
+| `--timeout` | `30` | Timeout HTTP por request. |
+| `--replace` | off | Modo reemplazo; **dry-run por defecto** (no borra ni escribe). |
+| `--confirm-replace` | off | Aprobacion explicita del borrado destructivo (requiere `--replace`). |
+| `--dry-run` | off | Solo parsea y reporta. Sin red, sin escritura. |
+
+### Write-back (idempotente)
+
+Reutiliza los escritores de `ingest_via_n8n.py` (`_should_write_metric`,
+`write_csv_results`, `write_xlsx_results`, `write_sidecar_json`,
+`merge_evaluation_json`), escribiendo SOLO resultados de telefonia para no pisar
+web/correo:
+
+- **XLSX y CSV**: `TIempo de Registro Automatico (Segundos)` = `t_e2e_s` (3
+  decimales); `Latencia e2e (ms)` = `latencia_e2e_ms`; `Tiempo pipeline (s)` =
+  `t_pipeline_s`; `Tiempo espera (s)` vacia/N-A. Re-ejecutar no duplica columnas
+  ni sobrescribe un valor previo con vacio.
+- **JSON de evaluacion**: merge de `tiempo_automatizado_s` numerico por `id`.
+  Nunca escribe `null` sobre un valor no nulo y no debilita
+  `evaluation/corpus.py::_a_float`.
+- **Sidecar**: descripcion-free por construccion (solo ids, instantes y tiempos).
+
+### `--replace` (D7, governance ALTO)
+
+Sin `--replace`, el script actualiza el valor con la ultima medicion y CONSERVA
+las filas previas. Con `--replace`:
+
+1. `--replace` solo (sin `--confirm-replace`) es un **dry-run**: llama al borrado
+   acotado con `dry_run=true`, reporta cuantas filas se reemplazarian y **no
+   borra ni escribe nada**.
+2. `--replace --confirm-replace` ejecuta el borrado destructivo
+   (`DELETE /api/v1/telefonia/ingresos?corpus_case_id=X&dry_run=false`), que
+   elimina SOLO las filas previas de ese caso (conserva el ingreso mas reciente)
+   y luego escribe el valor nuevo.
+
+El borrado esta acotado por `corpus_case_id` y respeta el orden FK
+(`clasificacion_log` CASCADE; `telefonia_ingreso.incidente_id` SET NULL); nunca
+toca filas de otros casos ni de otros canales. `--confirm-replace` sin `--replace`
+se rechaza con exit code 2.
+
+### Privacidad
+
+Las descripciones son texto interno real: el script no las imprime, no las
+loguea y no las escribe en el sidecar. Ante error solo reporta un label corto
+(`http403/forbidden`, `sin_ingreso`, `RuntimeError`). No hay secretos
+hardcodeados.
 
 ## Pseudonimizacion del corpus (`pseudonymize_corpus.py`)
 
