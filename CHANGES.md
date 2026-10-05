@@ -133,7 +133,7 @@ C-68 corpus-ingesta-n8n (C-69)                            [ACTIVO — 58/63; MED
 
 --- FASE 23: Medicion del corpus por telefonia real (2026-10-02) ---
 
-C-70 softphone-corpus-telefonia (C-59, C-52, C-68)        [ACTIVO — 62/65; ALTO]
+C-70 softphone-corpus-telefonia (C-59, C-52, C-68)        [ACTIVO — 70/72; ALTO]
 
 --- FASE 24: Endurecimiento del clasificador determinista (2026-10-05) ---
 
@@ -1479,9 +1479,9 @@ C-71 hardening-clasificador-determinista (ninguna nueva)  [ACTIVO — 0/43; MEDI
 
 > Change post-roadmap que cierra la carga manual que C-68 dejo para el canal telefonico. Mide los 81 casos de `llamada telefonica` por el flujo real (softphone -> Twilio -> backend C-52 -> n8n), con correlacion exacta llamada <-> caso del corpus y write-back de la metrica canonica, sobre una base descartable.
 
-### [C-70] `softphone-corpus-telefonia` — ACTIVO (62/65)
+### [C-70] `softphone-corpus-telefonia` — ACTIVO (70/72)
 
-- **Estado**: `[ ]` en aplicacion (2026-10-05) — 62/65 tareas. Apply completo y verificado (READY TO ARCHIVE): backend (migracion `011` + `corpus_case_id` + tabla corta `telefonia_pending_call` + endpoints de lectura/borrado), softphone (`/corpus-cases` + selector), script `ingest_telefonia_corpus.py` (metrica + `--replace` con dry-run), perfil Compose `corpus` y runbook. Suites en verde: backend 920 offline + 37 integracion, softphone 69, corpus_ingest 153, ruff limpio. Pendientes 8.1-8.3: corrida real con Twilio y los 81 casos recitados por el autor. OQ1..OQ6 resueltas (OQ1=B store keyed-by-CallSid con tabla efimera en PostgreSQL; OQ2=stack completo aislado con wipe ACOTADO por servicio; OQ3=endpoint; OQ4=`t_espera_s` vacia/N-A; OQ5=endpoint dedicado + rol `administrador_directorio`; OQ6=`--replace` acotado con dry-run). Governance ALTO.
+- **Estado**: `[ ]` en aplicacion (2026-10-05) — 70/72 tareas. Apply completo y verificado; **smoke 8.1 REALIZADO** con R002 (correlacion exacta por `corpus_case_id`, ingreso enlazado al incidente id 2, `latencia_e2e_ms=13012`, write-back `medidos=1` con `tiempo_automatizado_s=13.012` escrito en JSON/CSV/XLSX/sidecar). Fix post-smoke (seccion 9): enlace `telefonia_ingreso.incidente_id` en el alta del incidente + timeout del handoff 5->30 s. Suites: backend 925 offline + 37 integracion, softphone 69, corpus_ingest 153, ruff limpio. Pendientes 8.2-8.3: corrida completa de los 81 por el autor y carga del corpus. OQ1..OQ6 resueltas (OQ1=B store keyed-by-CallSid con tabla efimera en PostgreSQL; OQ2=stack completo aislado con wipe ACOTADO por servicio; OQ3=endpoint; OQ4=`t_espera_s` vacia/N-A; OQ5=endpoint dedicado + rol `administrador_directorio` (requiere sembrar el directorio admin en la base del corpus: `scripts/seed_directorio.py`); OQ6=`--replace` acotado con dry-run). Governance ALTO.
 - **Problema**: el corpus tiene 81 casos de `llamada telefonica` con `tiempo_automatizado_s = null`; C-68 los dejo fuera de alcance para carga manual. No existe via reproducible para medirlos por el flujo real ni para correlacionar de forma exacta una llamada con su caso.
 - **Scope**:
   - Softphone (extiende C-59): `<select>` con los casos telefonicos del corpus (default vacio); el modo `serve` expone la lista leida del JSON pseudonimizado; el autor RECITA el caso (sin playback).
@@ -1586,7 +1586,7 @@ Hay 6 changes ACTIVOS (post-roadmap, FASE 19, FASE 20, FASE 22, FASE 23 y FASE 2
 - **`c-60-directorio-endurecimiento`** — 0/33 (planning completo, sin aplicar; FASE 19) — Governance ALTO.
 - **`c-67-notificacion-sms-llamante`** — 0/24 (diferido; bloqueado por OQ3 y C-66; FASE 20) — Governance ALTO.
 - **`c-68-corpus-ingesta-n8n`** — 58/63 (apply avanzado; corpus web/correo medido; FASE 22) — Governance MEDIO.
-- **`c-70-softphone-corpus-telefonia`** — 62/65 (apply completo y verificado; 8.1-8.3 operativas pendientes; FASE 23) — Governance ALTO.
+- **`c-70-softphone-corpus-telefonia`** — 70/72 (apply completo; smoke 8.1 hecho con R002; 8.2-8.3 pendientes; FASE 23) — Governance ALTO.
 - **`c-71-hardening-clasificador-determinista`** — 0/43 (planning completo; OQ1..OQ5 abiertas; FASE 24) — Governance MEDIO.
 
 C-01..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59, C-61 y C-69 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
