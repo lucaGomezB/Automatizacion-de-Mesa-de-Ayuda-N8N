@@ -69,6 +69,27 @@ El sello de telefonía se captura en la recepción del callback del backend, de 
 latencia del canal incluye la descarga, la transcripción, la pseudonimización y el handoff
 (trabajo dominante del canal). n8n propaga el instante como passthrough y NO lo re-sella.
 
+### Telefonía: descomposición y espera N-A
+
+Como `ingresado_en` se sella en la **recepción del callback** y no al inicio de la
+llamada, en telefonía no existe un componente de espera del cliente. La
+descomposición canónica es:
+
+| Componente | Fórmula | Significado |
+|------------|---------|-------------|
+| `t_pipeline_s` | `latencia_e2e_ms / 1000` | Trabajo del canal tras el callback |
+| `t_espera_s` | **N-A** | No medible: no hay espera del cliente |
+| `t_e2e_s` | `latencia_e2e_ms / 1000` = `t_pipeline_s` | Extremo a extremo |
+
+`tiempo_automatizado_s = t_e2e_s` y coincide con la MISMA métrica de los otros
+canales (fuente única: `latencia_e2e_ms` del incidente vinculado). La columna
+`Tiempo espera (s)` queda **VACÍA/N-A** para telefonía: se escribe `t_espera_s =
+None`, NUNCA `0`, para no fabricar un valor inexistente. El script
+`scripts/corpus_ingest/ingest_telefonia_corpus.py` materializa esta regla al
+construir el resultado de cada caso y al escribir de vuelta al corpus. Un caso con
+latencia nula, negativa o marcada como anómala se excluye sin recortarse a cero
+(§4).
+
 ## 6. Exclusion de replays idempotentes
 
 Un reintento con el mismo `origen_message_id` devuelve el incidente existente
