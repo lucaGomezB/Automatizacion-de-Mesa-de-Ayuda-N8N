@@ -134,6 +134,10 @@ C-68 corpus-ingesta-n8n (C-69)                            [ACTIVO — 58/63; MED
 --- FASE 23: Medicion del corpus por telefonia real (2026-10-02) ---
 
 C-70 softphone-corpus-telefonia (C-59, C-52, C-68)        [ACTIVO — 62/65; ALTO]
+
+--- FASE 24: Endurecimiento del clasificador determinista (2026-10-05) ---
+
+C-71 hardening-clasificador-determinista (ninguna nueva)  [ACTIVO — 0/43; MEDIO]
 ```
 
 ### Paralelismo por fase
@@ -468,12 +472,13 @@ C-70 softphone-corpus-telefonia (C-59, C-52, C-68)        [ACTIVO — 62/65; ALT
 | C-68 | corpus-ingesta-n8n | 22 | C-69 | MEDIO | — |
 | C-69 | dedup-correlacion-altas | 22 | ninguna (habilita C-68) | MEDIO | — |
 | C-70 | softphone-corpus-telefonia | 23 | C-59, C-52, C-68 | ALTO | — |
+| C-71 | hardening-clasificador-determinista | 24 | ninguna nueva | MEDIO | — |
 
-**Total**: 62 entradas creadas documentadas (61 numeradas + 1 de mantenimiento sin numero) — 57 archivadas (56 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59, C-61 y C-69; mas `improve-dockerfiles`) y 5 ACTIVOS (C-56, C-60, C-67, C-68, C-70). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
+**Total**: 63 entradas creadas documentadas (62 numeradas + 1 de mantenimiento sin numero) — 57 archivadas (56 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59, C-61 y C-69; mas `improve-dockerfiles`) y 6 ACTIVOS (C-56, C-60, C-67, C-68, C-70, C-71). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
 **Planificadas (NO creadas)**: 5 entradas del plan de cumplimiento (FASE 21) — C-62 `hardening-infra-red` (ALTO), C-63 `identidad-accesos-claves` (CRITICO), C-64 `vulnerabilidades-supply-chain` (MEDIO), C-65 `backup-continuidad` (ALTO) y C-66 `privacidad-transferencias` (ALTO). No cuentan como creadas, archivadas ni activas. C-61 `compliance-gobernanza` (MEDIO) ya fue creado y quedo ARCHIVADO (2026-10-01, 26/26), con su spec `security-governance-docs` creada. Ver `docs/cumplimiento/plan-cambios-cumplimiento.md`.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
-**Fases**: 1-23 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67, la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, con C-61 archivado (2026-10-01) y C-62..C-66 planificados, la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 ya archivado (2026-10-05) y C-68 en aplicacion, y la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 propuesto).
+**Fases**: 1-24 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67, la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, con C-61 archivado (2026-10-01) y C-62..C-66 planificados, la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 ya archivado (2026-10-05) y C-68 en aplicacion, la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 aplicado, y la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 propuesto).
 
 ---
 
@@ -1494,6 +1499,29 @@ C-70 softphone-corpus-telefonia (C-59, C-52, C-68)        [ACTIVO — 62/65; ALT
 
 ---
 
+## FASE 24 — Endurecimiento del clasificador determinista (2026-10-05)
+
+> Change post-roadmap que corrige la debilidad MEDIDA del clasificador determinista. La cascada `REGEX -> Gemini -> humano` ya existe (Anexo H), pero la medicion offline sobre el corpus (sin llamar a Gemini) mostro: escalado a Gemini del **64%** (correo 66.7%, web 73.6%, telefono 55.6%); umbral 0.90 **degenerado** (el 100% de los cortocircuitos tiene confianza exactamente 1.0, o sea "un solo sector matcheo", no confiabilidad); el cortocircuito acierta la etiqueta primaria solo **~51%** (pertenencia multietiqueta 76%); sin matches, el desempate predice "Seguridad Informatica" por defecto (126 predicciones vs 31 reales); vocabulario (89 patrones) insuficiente para Hardware/Software. El F1 de Gemini/hibrido queda **pendiente** (sin cache `evaluation/predicciones.json`; Gemini con 429).
+
+### [C-71] `hardening-clasificador-determinista` — ACTIVO (0/43)
+
+- **Estado**: `[ ]` propuesto (2026-10-05) — 0/43 tareas. Planning completo (proposal + design + specs + tasks); `openspec validate --strict` pasa. OQ1..OQ5 abiertas para el autor. Sin aplicar. Governance MEDIO.
+- **Problema**: el clasificador determinista no esta a la altura de su rol en la cascada: no es ni confiable como atajo (cortocircuito ~51% estricto) ni amplio para evitar escalar (64% va a Gemini). El umbral de confianza no discrimina y el desempate sin señal inventa un sector.
+- **Scope**:
+  - No-match/empate: senal nula devuelve "sin prediccion" explicito (no un sector arbitrario); empate marca ambiguedad; ambos escalan.
+  - Vocabulario: ampliar sinonimos/frases por sector guiado por misclasificaciones del corpus; preservar `set(KEYWORD_MAP.keys()) == set(SECTORES_CANONICOS)`.
+  - Confianza/umbral: redefinir la medida (conteo minimo + margen) y recalibrar el cortocircuito con una curva precision/cobertura derivada del corpus.
+  - Re-medicion: subir `HYBRID_CACHE_VERSION` (`hybrid-v1` -> `hybrid-v2`) e invalidar cache; re-medir F1 determinista vs hibrido.
+- **Dependencias**: ninguna nueva. Reutiliza `sector-assignment`, `sector-taxonomy`, `classification-resilience` y el framework de `evaluation/`. Relacionado con C-70 (telefono) pero NO lo modifica (telefono sigue "siempre IA" en n8n; OQ4 fuera de alcance).
+- **Governance**: MEDIO
+- **OQs abiertas**: OQ1 piso de precision del cortocircuito vs cobertura; OQ2 no-match (Gemini vs humano); OQ3 umbral fijo vs derivado; OQ4 unificar telefono (fuera de alcance); OQ5 capturar baseline F1 Gemini/hibrido al restaurar la cuota.
+- **Leer antes**:
+  - `openspec/changes/c-71-hardening-clasificador-determinista/{proposal,design,tasks}.md`
+  - `App/Backend/app/classifiers/{deterministic.py,keywords.py,hybrid.py}`
+  - `docs/medicion-latencia-e2e.md`, `evaluation/README.md`
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo)
@@ -1533,7 +1561,7 @@ C-70 softphone-corpus-telefonia (C-59, C-52, C-68)        [ACTIVO — 62/65; ALT
 | Backup scripts: PostgreSQL | IMPLEMENTADO | C-26 — scripts/backup.sh y scripts/backup.ps1 con rotacion de 7 dias |
 | N8N retention: 30 dias | CONFIGURADO | C-26 — EXECUTIONS_DATA_PRUNE y EXECUTIONS_DATA_MAX_AGE en docker-compose.yml |
 
-Tabla reconciliada con el estado real el 2026-10-01: C-14..C-48 quedaron documentados en las FASE 12-17; C-52..C-55 en la FASE 18 (C-52, C-53, C-54 y C-55 archivados) y C-56..C-60 en la FASE 19 (C-57 y C-58 archivados). Actualizacion 2026-10-01: C-53 y C-59 quedaron archivados; C-67 quedo registrado (notificacion SMS diferida, FASE 20). Actualizacion 2026-10-01 (tarde): C-54 quedo ARCHIVADO (2026-10-01, 51/51) y la FASE 18 queda CERRADA; se aprobo el plan de cumplimiento ISO/NIST/Ley 25.326, registrado como planificado en la FASE 21 (C-61..C-66, aun sin crear). Actualizacion 2026-10-01 (noche): C-61 `compliance-gobernanza` quedo CREADO como change OPSX (FASE 21, 0/23, MEDIO, sin dependencias, habilita C-63); los totales se ajustan a 58 changes numeradas creadas (54 archivadas + 4 activos) y 5 planificadas sin crear (C-62..C-66); C-66 no depende de C-67 sino que C-67 depende de C-66. Actualizacion 2026-10-01 (noche, cierre): C-61 quedo ARCHIVADO (2026-10-01, 26/26) y su spec `security-governance-docs` fue creada; la FASE 21 quedo parcialmente ejecutada y los totales se ajustan a 58 changes numeradas creadas (55 archivadas + 3 activos) mas 1 de mantenimiento sin numero (56 archivadas en total) y 5 planificadas sin crear (C-62..C-66). Actualizacion 2026-10-05: C-69 `dedup-correlacion-altas` quedo ARCHIVADO (2026-10-05, 30/30; specs sincronizadas: added 5 — `incident-origin-correlation` creada, `incident-intake-guards` y `n8n-workflow` modificadas) y C-68 quedo en 58/63 (apply avanzado; corpus web 53/53 y correo 66/66 medido por el flujo N8N real). Se registro C-70 `softphone-corpus-telefonia` (FASE 23, 0/65, ALTO, OQ1..OQ6 resueltas; apply-ready). Totales: 61 changes numeradas creadas (56 archivadas + 5 activas: C-56, C-60, C-67, C-68 y C-70) mas 1 de mantenimiento sin numero (57 archivadas en total) y 5 planificadas sin crear (C-62..C-66).
+Tabla reconciliada con el estado real el 2026-10-01: C-14..C-48 quedaron documentados en las FASE 12-17; C-52..C-55 en la FASE 18 (C-52, C-53, C-54 y C-55 archivados) y C-56..C-60 en la FASE 19 (C-57 y C-58 archivados). Actualizacion 2026-10-01: C-53 y C-59 quedaron archivados; C-67 quedo registrado (notificacion SMS diferida, FASE 20). Actualizacion 2026-10-01 (tarde): C-54 quedo ARCHIVADO (2026-10-01, 51/51) y la FASE 18 queda CERRADA; se aprobo el plan de cumplimiento ISO/NIST/Ley 25.326, registrado como planificado en la FASE 21 (C-61..C-66, aun sin crear). Actualizacion 2026-10-01 (noche): C-61 `compliance-gobernanza` quedo CREADO como change OPSX (FASE 21, 0/23, MEDIO, sin dependencias, habilita C-63); los totales se ajustan a 58 changes numeradas creadas (54 archivadas + 4 activos) y 5 planificadas sin crear (C-62..C-66); C-66 no depende de C-67 sino que C-67 depende de C-66. Actualizacion 2026-10-01 (noche, cierre): C-61 quedo ARCHIVADO (2026-10-01, 26/26) y su spec `security-governance-docs` fue creada; la FASE 21 quedo parcialmente ejecutada y los totales se ajustan a 58 changes numeradas creadas (55 archivadas + 3 activos) mas 1 de mantenimiento sin numero (56 archivadas en total) y 5 planificadas sin crear (C-62..C-66). Actualizacion 2026-10-05: C-69 `dedup-correlacion-altas` quedo ARCHIVADO (2026-10-05, 30/30; specs sincronizadas: added 5 — `incident-origin-correlation` creada, `incident-intake-guards` y `n8n-workflow` modificadas) y C-68 quedo en 58/63 (apply avanzado; corpus web 53/53 y correo 66/66 medido por el flujo N8N real). Se registro C-70 `softphone-corpus-telefonia` (FASE 23, 0/65, ALTO, OQ1..OQ6 resueltas; apply-ready). Totales: 61 changes numeradas creadas (56 archivadas + 5 activas: C-56, C-60, C-67, C-68 y C-70) mas 1 de mantenimiento sin numero (57 archivadas en total) y 5 planificadas sin crear (C-62..C-66). Actualizacion 2026-10-05 (tarde): C-70 quedo en 62/65 (apply completo y verificado; 8.1-8.3 operativas pendientes) y se propuso C-71 `hardening-clasificador-determinista` (FASE 24, 0/43, MEDIO, OQ1..OQ5 abiertas) tras medir que el clasificador determinista escala el 64% y su cortocircuito acierta ~51% (estricto) / ~76% (multietiqueta). Totales: 62 changes numeradas creadas (56 archivadas + 6 activas: C-56, C-60, C-67, C-68, C-70 y C-71) mas 1 de mantenimiento sin numero (57 archivadas en total) y 5 planificadas sin crear (C-62..C-66).
 
 Cambios que NO estan en el roadmap original porque se implementaron durante el desarrollo:
 - Clasificador hibrido (completo)
@@ -1553,12 +1581,13 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 
 Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01), C-61 (2026-10-01, 26/26) y C-69 (2026-10-05, 30/30).
 
-Hay 5 changes ACTIVOS (post-roadmap, FASE 19, FASE 20, FASE 22 y FASE 23):
+Hay 6 changes ACTIVOS (post-roadmap, FASE 19, FASE 20, FASE 22, FASE 23 y FASE 24):
 - **`c-56-notificaciones-por-rol`** — 0/27 (planning completo, sin aplicar; FASE 19) — Governance ALTO.
 - **`c-60-directorio-endurecimiento`** — 0/33 (planning completo, sin aplicar; FASE 19) — Governance ALTO.
 - **`c-67-notificacion-sms-llamante`** — 0/24 (diferido; bloqueado por OQ3 y C-66; FASE 20) — Governance ALTO.
 - **`c-68-corpus-ingesta-n8n`** — 58/63 (apply avanzado; corpus web/correo medido; FASE 22) — Governance MEDIO.
 - **`c-70-softphone-corpus-telefonia`** — 62/65 (apply completo y verificado; 8.1-8.3 operativas pendientes; FASE 23) — Governance ALTO.
+- **`c-71-hardening-clasificador-determinista`** — 0/43 (planning completo; OQ1..OQ5 abiertas; FASE 24) — Governance MEDIO.
 
 C-01..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59, C-61 y C-69 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
 

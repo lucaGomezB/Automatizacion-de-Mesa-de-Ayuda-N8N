@@ -1,7 +1,7 @@
 # Tareas — c-70-softphone-corpus-telefonia
 
 > Estado: aplicado (2026-10-05). Governance: ALTO. Modo TDD estricto aplicado en todo el codigo.
-> Progress: 62/65. Pendientes: 8.1-8.3 (corrida real con Twilio + recitacion manual de los 81 casos por el autor).
+> Progress: 68/71. Pendientes: 8.1-8.3 (corrida real con Twilio + recitacion manual de los 81 casos por el autor) y 9.7 (re-smoke post-fix).
 > Cada tarea de codigo que modifica un archivo existente arranco con una safety net (correr los tests actuales del area y registrar la linea base).
 
 ## 0. Prerequisitos y decisiones resueltas (sin gating)
@@ -97,6 +97,18 @@
 - [ ] 8.3 Verificar la carga del corpus: `cd evaluation; pytest -q` sin `CorpusError` una vez cargados web + correo + los 81 telefonos. — BLOCKED by 8.2.
 - [x] 8.4 `openspec validate --strict --changes c-70-softphone-corpus-telefonia` en verde. — 5 passed, 0 failed.
 - [x] 8.5 Suite backend offline y tests del softphone/script en verde; `ruff check` sin hallazgos. — backend 920 passed (+ integracion 37 passed); softphone 69 passed; corpus_ingest 153 passed; openapi sync 5 passed; ruff All checks passed.
+
+## 9. Fix post-smoke (bugfix, 2026-10-05)
+
+> El smoke real de 8.1 (llamada R002) revelo dos defectos que el verify no detecto (los tests de integracion inyectaban el incidente ya enlazado). El incidente SI se creo (latencia 17.037 s) pero `telefonia_ingreso.incidente_id` quedo NULL porque `link_incidente` nunca se llama; y el handoff loguea `handoff_failed` en falso (timeout 5 s < workflow ~11 s).
+
+- [x] 9.1 Safety net: correr los tests de telefonia + incidentes y registrar la linea base. — baseline 920 passed.
+- [x] 9.2 (RED) Test: crear un incidente de telefonia (`origen_message_id = call_sid`) enlaza el `telefonia_ingreso` existente (`incidente_id` seteado) y el endpoint de lectura pasa a devolver `latencia_e2e_ms`. Debe fallar (hoy `link_incidente` no se llama). — RED confirmado.
+- [x] 9.3 (GREEN) Cablear `link_incidente` en el alta del incidente: con `TelefoniaIngresoRepository.get_by_call_sid(origen_message_id)`, setear `incidente_id`. Aplica al camino normal y al idempotente (auto-sanado). No toca otras capas ni casos. — `_link_telefonia_ingreso` en `IncidenteService` (normal + early-return + IntegrityError).
+- [x] 9.4 (TRIANGULATE) Incidente sin ingreso coincidente (no-op), replay idempotente que enlaza, y el ingreso de otro `call_sid` no se toca. — 3 casos en verde.
+- [x] 9.5 (RED/GREEN) Subir el timeout del handoff (`app/utils/n8n_webhook.py`) de 5 s a 30 s para no loguear `handoff_failed` en falso cuando el workflow tarda ~11 s (es fire-and-forget). Ajustar aserciones existentes si las hubiera. — constante `TELEFONIA_HANDOFF_TIMEOUT_S=30.0` + test de captura; el `notify_n8n` generico se dejo en 5 s (justificado).
+- [x] 9.6 (REFACTOR) Limpiar; suite offline + integracion en verde; `ruff` limpio; `openspec validate --strict --changes c-70-softphone-corpus-telefonia` pasa. — 925 passed (+37 integracion); ruff limpio; validate 6/6.
+- [ ] 9.7 Re-smoke: con el fix, repetir R002 y confirmar `telefonia_ingreso.incidente_id` enlazado y que el write-back escribe `tiempo_automatizado_s`.
 
 ## Notas de desviacion
 
