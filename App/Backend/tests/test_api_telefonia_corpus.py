@@ -196,12 +196,16 @@ async def _api_client(
     service_override=None,
     seed_empleado_rol: str | None = None,
     seed_user_id: int = 1,
+    incidente_result=None,
 ):
     """Cliente HTTP con DB de test, auth mock y firma Twilio controlada."""
+    from unittest.mock import AsyncMock, patch as _patch
+
     from app.main import create_app
     from app.core.security import get_current_user
     from app.cost_guard.dependencies import get_cost_guard
     from app.models.user import User
+    from app.routes.incidentes import get_service as get_incidente_service
     from app.routes.telefonia import get_telefonia_service
 
     app = create_app()
@@ -221,6 +225,16 @@ async def _api_client(
     app.dependency_overrides[get_telefonia_service] = (
         service_override or _build_service_override(notifier)
     )
+
+    if incidente_result is not None:
+        from app.services.incidente_service import IncidenteService
+
+        def _incidente_service_override(session: AsyncSession = Depends(get_db_session)):
+            fake = AsyncMock()
+            fake.classify = AsyncMock(return_value=incidente_result)
+            return IncidenteService(session, classifier=fake)
+
+        app.dependency_overrides[get_incidente_service] = _incidente_service_override
 
     async def override_auth():
         return User(id=seed_user_id, username="test_user", hashed_password="", is_active=True)
@@ -256,6 +270,8 @@ async def _api_client(
 
     with patch("app.routes.cost_guard.get_settings", return_value=_settings(token)), patch(
         "app.routes.telefonia.get_settings", return_value=_settings(token)
+    ), patch(
+        "app.services.incidente_service.notify_n8n", new_callable=AsyncMock
     ):
         async with AsyncClient(
             transport=ASGITransport(app=app), base_url="http://test"
@@ -732,3 +748,143 @@ async def test_delete_caso_inexistente_es_noop(engine):
     assert resp.status_code == 200, resp.text
     assert resp.json()["ingresos_eliminados"] == 0
     assert resp.json()["incidentes_eliminados"] == 0
+
+
+# ── 9.2 RED — El alta del incidente enlaza el ingreso (fix post-smoke) ───────
+#
+# El smoke real revelo que `telefonia_ingreso.incidente_id` quedaba NULL porque
+# `link_incidente` nunca se llamaba; el endpoint de lectura derivaba la latencia
+# del incidente vinculado (FK) y devolvia `None`. Estos tests cierran el gap.
+
+
+def _result_telefonia():
+    from app.schemas.clasificacion import ClasificacionResult
+
+    return ClasificacionResult(
+        sector_predicho="Sistemas",
+        sectores_adicionales=[],
+        confianza=0.9,
+        etapa="deterministic",
+        requiere_revision_humana=False,
+        respuesta_raw=None,
+    )
+
+
+def _payload_telefonico(origen_message_id: str) -> dict:
+    return {
+        "descripcion": "Falla reportada por un cliente durante la llamada telefonica.",
+        "prioridad": "media",
+        "origen_message_id": origen_message_id,
+        "ingresado_en": (
+            datetime.now(timezone.utc) - timedelta(seconds=17)
+        ).isoformat(),
+    }
+
+
+async def _seed_estado_nuevo(engine):
+    from app.models.catalog import Estado
+
+    factory = async_sessionmaker(engine, expire_on_commit=False)
+    async with factory() as session:
+        existente = (
+            await session.execute(select(Estado).where(Estado.nombre == "nuevo"))
+        ).scalar_one_or_none()
+        if existente is None:
+            session.add(
+                Estado(nombre="nuevo", descripcion="recibido", es_terminal=False)
+            )
+            await session.commit()
+
+
+async def test_alta_incidente_telefonico_enlaza_ingreso_y_endpoint_devuelve_latencia(
+    engine,
+):
+    """Crear el incidente con `origen_message_id = call_sid` enlaza el ingreso y
+    la lectura del corpus pasa a devolver `latencia_e2e_ms` no nula."""
+    await _seed_estado_nuevo(engine)
+    ingreso = await _seed_ingreso(
+        engine,
+        call_sid="CA-LINK-1",
+        transcripcion_estado="transcrito",
+        corpus_case_id="CASO-LINK",
+    )
+    assert ingreso.incidente_id is None
+
+    async with _api_client(
+        engine,
+        seed_empleado_rol="administrador_directorio",
+        incidente_result=_result_telefonia(),
+    ) as client:
+        resp = await client.post(
+            "/api/v1/incidentes/", json=_payload_telefonico("CA-LINK-1")
+        )
+        assert resp.status_code == 201, resp.text
+        inc_id = resp.json()["id"]
+
+        enlazado = await _get_ingreso(engine, "CA-LINK-1")
+        assert enlazado.incidente_id == inc_id
+
+        read = await client.get(
+            _INGRESOS_PATH,
+            params={"corpus_case_id": "CASO-LINK", "latest": "true"},
+        )
+
+    assert read.status_code == 200, read.text
+    body = read.json()
+    assert body["incidente_id"] == inc_id
+    assert body["latencia_e2e_ms"] is not None
+    assert body["latencia_e2e_ms"] > 0
+
+
+async def test_alta_sin_ingreso_coincidente_es_noop(engine):
+    """El alta generica (o de otro canal) no crea ni modifica ingresos."""
+    await _seed_estado_nuevo(engine)
+    async with _api_client(engine, incidente_result=_result_telefonia()) as client:
+        resp = await client.post(
+            "/api/v1/incidentes/", json=_payload_telefonico("CA-NO-INGRESO")
+        )
+    assert resp.status_code == 201, resp.text
+    assert await _get_ingreso(engine, "CA-NO-INGRESO") is None
+
+
+async def test_alta_no_toca_ingreso_de_otro_call_sid(engine):
+    """Un ingreso con otro `call_sid` queda intacto."""
+    await _seed_estado_nuevo(engine)
+    await _seed_ingreso(
+        engine,
+        call_sid="CA-OTRO-SID",
+        transcripcion_estado="transcrito",
+        corpus_case_id="CASO-OTRO-SID",
+    )
+    async with _api_client(engine, incidente_result=_result_telefonia()) as client:
+        resp = await client.post(
+            "/api/v1/incidentes/", json=_payload_telefonico("CA-DISTINTO")
+        )
+    assert resp.status_code == 201, resp.text
+    otro = await _get_ingreso(engine, "CA-OTRO-SID")
+    assert otro.incidente_id is None
+
+
+async def test_replay_idempotente_enlaza_ingreso_no_enlazado(engine):
+    """Auto-sanado: un reintento sobre un ingreso sin enlace lo vincula."""
+    await _seed_estado_nuevo(engine)
+    payload = _payload_telefonico("CA-HEAL-1")
+    async with _api_client(engine, incidente_result=_result_telefonia()) as client:
+        primera = await client.post("/api/v1/incidentes/", json=payload)
+        assert primera.status_code == 201, primera.text
+        inc_id = primera.json()["id"]
+
+        # El ingreso aparece DESPUES del alta y sin enlace (auto-sanado).
+        await _seed_ingreso(
+            engine,
+            call_sid="CA-HEAL-1",
+            transcripcion_estado="transcrito",
+            corpus_case_id="CASO-HEAL",
+        )
+        assert (await _get_ingreso(engine, "CA-HEAL-1")).incidente_id is None
+
+        replay = await client.post("/api/v1/incidentes/", json=payload)
+        assert replay.status_code == 201, replay.text
+        assert replay.json()["id"] == inc_id
+
+    assert (await _get_ingreso(engine, "CA-HEAL-1")).incidente_id == inc_id

@@ -127,6 +127,49 @@ async def test_url_no_configurada_no_envia_handoff(monkeypatch):
     assert called["n"] == 0
 
 
+# ── 9.5 RED — Timeout del handoff mayor al workflow (~11 s) ─────────────────
+
+
+async def test_handoff_usa_timeout_de_30s_sin_falso_failed(monkeypatch):
+    """
+    El handoff fire-and-forget no debe cortar antes de que el workflow termine
+    (~11 s): el timeout efectivo del cliente HTTP debe ser 30 s (c-70, fix smoke).
+    Se captura el `timeout` que la funcion pasa a `httpx.AsyncClient` sin red.
+    """
+    from types import SimpleNamespace
+
+    module = _module()
+    captured: dict = {}
+
+    class _StubResponse:
+        status_code = 200
+
+        def raise_for_status(self) -> None:
+            return None
+
+    class _StubClient:
+        def __init__(self, *args, **kwargs):
+            captured["timeout"] = kwargs.get("timeout")
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *exc):
+            return False
+
+        async def post(self, *args, **kwargs):
+            return _StubResponse()
+
+    monkeypatch.setattr(module, "httpx", SimpleNamespace(AsyncClient=_StubClient))
+    monkeypatch.setattr(module, "get_settings", lambda: _settings())
+
+    outcome = await module.notify_telefonia_handoff(_payload())
+
+    assert outcome == module.HANDOFF_SENT
+    assert captured["timeout"] == module.TELEFONIA_HANDOFF_TIMEOUT_S
+    assert captured["timeout"] == 30.0
+
+
 def test_payload_pseudonimizado_no_contiene_pii_cruda():
     crudo = "Juan Perez juan.perez@empresa.local 2615551234"
     from app.utils.pseudonymizer import pseudonymize
