@@ -61,6 +61,21 @@ export TWILIO_API_KEY_SECRET="..."   # capturado una vez al crear el API Key
 export TWILIO_TWIML_APP_SID="APxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
+Alternativa recomendada (no contamina `App/Backend/.env`, que es del backend):
+guardar `TWILIO_API_KEY_SID`, `TWILIO_API_KEY_SECRET` y `TWILIO_TWIML_APP_SID`
+en `scripts/voip_softphone/softphone.env` (GITIGNORED por la regla `*.env`) y
+cargarlas antes de `serve`:
+
+```bash
+set -a
+source App/Backend/.env                       # aporta TWILIO_ACCOUNT_SID
+source scripts/voip_softphone/softphone.env   # API Key + TwiML App SID
+set +a
+```
+
+`mint_token.py serve` NO lee `.env` por si solo; siempre hay que exportar las
+variables en la shell (o `source` los archivos) antes de arrancarlo.
+
 ## 3. Configuracion del lado Twilio
 
 ### 3.a Con el script (recomendado)
