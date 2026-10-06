@@ -2,14 +2,14 @@
 
 Ver `proposal.md — Why`. Restricciones verificadas que moldean el enfoque:
 
-- **`c-54` sin archivar.** Las capacidades `employee-directory` e `incident-visibility` viven solo como delta specs de `openspec/changes/c-54-directorio-usuarios/`; aun NO estan en `openspec/specs/`. Los deltas de c-60 se construyen sobre ese estado vigente (mismo patron que usan c-55/c-56 entre changes activos).
+- **`c-54` ARCHIVADO (2026-10-01).** Las capacidades `employee-directory` e `incident-visibility` YA existen como specs principales en `openspec/specs/employee-directory/spec.md` e `openspec/specs/incident-visibility/spec.md`; el change c-54 vive en `openspec/changes/archive/2026-10-01-c-54-directorio-usuarios/`. Los deltas de c-60 se construyen como **MODIFIED** sobre esas specs principales vigentes (no sobre delta specs de un change activo). `c-56` sigue activo (sin archivar) y es compatible, no bloqueante.
 - **Rol almacenado como texto con CHECK.** `App/Backend/app/models/empleado.py` define `RolEmpleado` (3 valores) y `CheckConstraint("rol IN ('usuario_final','operador','administrador_directorio')")`. Agregar un rol exige actualizar el enum Y el constraint (migracion).
 - **Visibilidad actual expresada solo por sector.** `app/services/incident_visibility.py` modela `AlcanceIncidentes(ver_todos, sector_id)` con `permite_sector(sector_id)`; `alcance_desde_empleado` distingue administrador (global), sector-bound y vacio. NO existe hoy un alcance que dependa de `requiere_revision_humana` ni de `sector_id IS NULL`: la regla actual no puede expresar "incidentes en revision".
 - **La cola de revision es global.** `GET /api/v1/clasificaciones/revision-pendiente` (`app/routes/clasificaciones.py`) exige solo autenticacion y devuelve la cola multi-sector via `ClasificacionService.list_pending_review` -> `ClasificacionRepository.list_pending_review` (`requiere_revision_humana == True AND sector_id_validado IS NULL`, FIFO). `c-54` D16 la dejo explicitamente FUERA de su alcance.
 - **La purga hoy no registra ids.** `DirectorioService.purgar_vencidos` (`app/services/directorio_service.py`) borra las filas vencidas y loguea SOLO `purgados=len(vencidos)`; `scripts/purgar_directorio.py` imprime solo el total. Es manual (script CLI), idempotente, sin cron.
 - **No existe guardia de entorno.** `settings.environment` existe (`app/config/settings.py`, default `"production"`) pero el seed (`scripts/seed_directorio.py`) no lo consulta: puede correr contra produccion.
 - **`administrador_directorio` es el ADMIN existente.** `app/routes/directorio.py` ya autoriza con `require_directorio_admin` (rol `administrador_directorio`).
-- **Convenciones.** Capas `routes -> services -> repositories -> models`; async SQLAlchemy con `selectinload()`; migraciones append-only en `App/Backend/alembic/versions/` (ultima `010`); identificadores de dominio en español; errores con envelope estandar; no-PII en logs (DIR-006).
+- **Convenciones.** Capas `routes -> services -> repositories -> models`; async SQLAlchemy con `selectinload()`; migraciones append-only en `App/Backend/alembic/versions/` (ultima `011`, de c-70; c-60 agrega `012`); identificadores de dominio en español; errores con envelope estandar; no-PII en logs (DIR-006).
 - **Governance HIGH.** Datos personales (Ley 25.326), visibilidad de incidentes, retencion/ARCO. No se implementa en esta fase.
 
 ## Goals / Non-Goals
@@ -33,7 +33,7 @@ Ver `proposal.md — Why`. Restricciones verificadas que moldean el enfoque:
 
 ### D1: Rol nuevo `mesa_de_ayuda`, sin sector
 
-Se agrega `mesa_de_ayuda` al enum `RolEmpleado` y al CHECK de `directorio_empleado` mediante una migracion append-only `011` (`down_revision = "010"`). El rol NO tiene sector (igual que `administrador_directorio`): es un revisor transversal de la cola de revision. Alternativa considerada: reutilizar `operador` sin sector — descartada porque DIR-004 exige sector a `operador` y romperlo debilitaria la regla. Alternativa considerada: `administrador_directorio` para revisar — descartada por minimo privilegio (el admin gestiona el directorio; no debe ser el unico revisor).
+Se agrega `mesa_de_ayuda` al enum `RolEmpleado` y al CHECK de `directorio_empleado` mediante una migracion append-only `012` (`down_revision = "011"`). El rol NO tiene sector (igual que `administrador_directorio`): es un revisor transversal de la cola de revision. Alternativa considerada: reutilizar `operador` sin sector — descartada porque DIR-004 exige sector a `operador` y romperlo debilitaria la regla. Alternativa considerada: `administrador_directorio` para revisar — descartada por minimo privilegio (el admin gestiona el directorio; no debe ser el unico revisor).
 
 ### D2: Modelo de visibilidad de incidentes (semantica por rol)
 
@@ -70,9 +70,9 @@ Se documentan y evidencian por tests/inspeccion:
 3. **Ausencia de PII real**: el seed usa datos sinteticos (`.test`); se agrega verificacion de que el repositorio/DB no contienen PII real (datos sinteticos y referencias estructurales).
 4. **Sin clave de indice ciego**: DIR-005 se mantiene; test/inspeccion de que no se agrego `directory_blind_index_key` ni columna de hash.
 
-### D8: Migracion append-only 011
+### D8: Migracion append-only 012
 
-`011_directorio_rol_mesa_ayuda.py` con `down_revision = "010"`: dropea el CHECK `ck_directorio_empleado_rol` y lo recrea con los cuatro valores. No edita `009`/`010`. Downgrade restaura el CHECK de tres valores (falla si existieran filas `mesa_de_ayuda`, comportamiento documentado y aceptable en rollback sin datos reales).
+`012_directorio_rol_mesa_ayuda.py` con `down_revision = "011"`: dropea el CHECK `ck_directorio_empleado_rol` y lo recrea con los cuatro valores. No edita `009`/`010`/`011`. La numeracion `012` es obligatoria porque c-70 ya publico `011_telefonia_corpus_case_id.py` (revision `011`, `down_revision = "010"`); una segunda `011` romperia Alembic (revision duplicada / multi-head). Downgrade restaura el CHECK de tres valores (falla si existieran filas `mesa_de_ayuda`, comportamiento documentado y aceptable en rollback sin datos reales).
 
 ### D9: Estrategia de tests
 
@@ -88,13 +88,13 @@ Gobierno **HIGH**: el rol nuevo, la visibilidad, la cola acotada y la purga afec
 
 - **[Fuga cross-sector con `mesa_de_ayuda`]** el revisor ve incidentes sin sector/revision de todos los sectores → Mitigacion: el conjunto es el minimo (sin sector o en revision), no "todos"; tests de aislamiento; revision humana HIGH.
 - **[Purga destructiva]** borrado fisico manual → Mitigacion: trigger explicito de operador, ids auditados, idempotencia, nunca por defecto.
-- **[Rol nuevo rompe el CHECK]** desalineacion modelo/migracion → Mitigacion: migracion 011 append-only + test de migracion + test integration del constraint.
+- **[Rol nuevo rompe el CHECK]** desalineacion modelo/migracion → Mitigacion: migracion 012 append-only (`down_revision = "011"`) + test de migracion + test integration del constraint.
 - **[Guardia mal ubicada]** frenar runtime normal → Mitigacion: guardia SOLO en la entrada del seed; test de que el runtime no se gatea.
-- **[Deltas sobre changes sin archivar]** c-54/c-56 → Mitigacion: deltas base sobre el estado vigente; orden de archivado c-54 -> c-60 y c-56 compatible.
+- **[Deltas sobre specs principales ya archivadas y c-56 activo]** `employee-directory`/`incident-visibility` ya son specs principales (c-54 archivado 2026-10-01); c-56 sigue activo → Mitigacion: deltas MODIFIED sobre las specs principales vigentes; c-56 compatible, no bloqueante.
 
 ## Migration Plan
 
-1. `models/empleado.py`: sumar `mesa_de_ayuda` al enum y al CHECK; migracion `011` append-only con tests de migracion.
+1. `models/empleado.py`: sumar `mesa_de_ayuda` al enum y al CHECK; migracion `012` append-only (`down_revision = "011"`) con tests de migracion.
 2. `services/incident_visibility.py`: modos de `AlcanceIncidentes` + `permite_incidente` + mapeo de rol; tests.
 3. `repositories/clasificacion_repository.py` + `services/clasificacion_service.py` + `routes/clasificaciones.py`: filtros de la cola por alcance; tests.
 4. `services/directorio_service.py` + `routes/directorio.py` + `schemas/directorio.py`: purga manual por operador con ids; `scripts/purgar_directorio.py` reporta ids; tests.
@@ -105,7 +105,9 @@ Gobierno **HIGH**: el rol nuevo, la visibilidad, la cola acotada y la purga afec
 
 ## Open Questions
 
-1. **Pertenencia sectorial de `mesa_de_ayuda`**: este design asume SIN sector (revisor transversal). Confirmar en la revision humana HIGH; si debiera tener sector, cambia D1/D2.
-2. **Conjunto exacto de `mesa_de_ayuda`**: asumido `sector_id IS NULL OR requiere_revision_humana = true`. Confirmar que un incidente sin sector y sin flag debe ser visible al revisor (hoy se incluye).
-3. **Confirmacion de la politica de retencion/ARCO** (tarea c-54 7.5): es una aprobacion HUMANA; el design no la resuelve por si mismo.
-4. **Valores permitidos de entorno para el seed**: se proponen `development`/`local`/`test` (default `production`); confirmar la lista exacta.
+Estado: **4 de 4 RESUELTAS** por decision del autor (adoptando los supuestos de este design). Son vinculantes para la implementacion.
+
+1. **RESUELTA — Pertenencia sectorial de `mesa_de_ayuda` (OQ1):** SIN sector. `mesa_de_ayuda` es un revisor transversal, igual que `administrador_directorio` (ver D1). Confirmado por el autor; no cambia D1/D2.
+2. **RESUELTA — Conjunto exacto visible para `mesa_de_ayuda` (OQ2):** incidentes con `sector_id IS NULL` OR `requiere_revision_humana = true` (ver D2). Incluye explicitamente el incidente sin sector y sin flag, que quedaria sin revisor de otro modo.
+3. **RESUELTA — Politica de retencion/ARCO (OQ3):** CONFIRMADA. Relacion activa + 1 año; la desactivacion NO es borrado; el borrado fisico ocurre solo por vencimiento manual o por solicitud ARCO. NOTA: la confirmacion de la politica NO habilita activar datos reales; esa activacion sigue siendo una aprobacion humana separada y la tarea 7.4 permanece PENDIENTE de aprobacion (no se marca resuelta).
+4. **RESUELTA — Valores permitidos de entorno para el seed (OQ4):** `development`/`local`/`test` (default de `settings.environment` = `production`), ver D6.
