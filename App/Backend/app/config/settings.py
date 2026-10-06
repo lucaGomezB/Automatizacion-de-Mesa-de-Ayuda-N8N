@@ -100,7 +100,11 @@ class Settings(BaseSettings):
 
     # ── Umbrales del clasificador híbrido ─────────────────────────────────────
     # Determinados empíricamente; documentados en docs/parameters_gemini.md.
-    deterministic_confidence_threshold: float = 0.90  # Por encima: se omite Gemini
+    # c-71: el umbral ya no es 0.90 degenerado; se re-deriva OFFLINE de la curva
+    # precision/cobertura del corpus (piso de precision >= 0.90) y se documenta
+    # en docs/deterministic_calibration.md. Sigue siendo un setting fijo (OQ3).
+    deterministic_confidence_threshold: float = 1.0  # Por encima: se omite Gemini (calibrado offline, c-71)
+    deterministic_min_matches: int = 2                # c-71: evidencia minima del ganador
     human_review_threshold: float = 0.70              # Por debajo: se requiere revisión humana
 
     # ── Integración con N8N ───────────────────────────────────────────────────

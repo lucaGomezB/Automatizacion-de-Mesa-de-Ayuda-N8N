@@ -180,15 +180,30 @@ def generar_reporte(
         Contenido del reporte como string.
     """
     reales = [p.sector_asignado for p in predicciones]
-    predichas = [p.sector_predicho for p in predicciones]
+    # c-71: un sector ausente (fallback sin estimacion) cuenta como error y se
+    # excluye de la matriz de confusion (que solo admite los 5 canonicos).
+    predichas = [(p.sector_predicho or "") for p in predicciones]
     adicionales_predichos = [p.sectores_adicionales for p in predicciones]
 
     conjuntos_verdad = [caso.conjunto_verdad for caso in corpus]
     conjuntos_predichos = [
-        frozenset({p.sector_predicho, *p.sectores_adicionales}) for p in predicciones
+        frozenset(
+            etiqueta
+            for etiqueta in (p.sector_predicho, *p.sectores_adicionales)
+            if etiqueta in CLASES
+        )
+        for p in predicciones
     ]
 
-    mc = matriz_confusion(reales, predichas)
+    pares_canonicos = [
+        (real, predicho)
+        for real, predicho in zip(reales, predichas)
+        if predicho in CLASES
+    ]
+    mc = matriz_confusion(
+        [real for real, _ in pares_canonicos],
+        [predicho for _, predicho in pares_canonicos],
+    )
     exactitud = exactitud_global(reales, predichos=predichas)
     aciertos = aciertos_estrictos(reales, predichas)
     lower_ic, upper_ic = intervalo_wilson(aciertos, len(reales))

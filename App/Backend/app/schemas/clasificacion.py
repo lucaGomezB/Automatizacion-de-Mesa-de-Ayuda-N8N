@@ -46,7 +46,16 @@ class ClasificacionResult(BaseModel):
 
     Contrato multietiqueta (C-27):
         sector_predicho        — sector principal asignado por el clasificador.
+                                 Admite ausencia (None) cuando la etapa
+                                 deterministica no encontro senal (c-71 ASG-007).
         sectores_adicionales   — sectores secundarios predichos (sin incluir el principal).
+
+    Estado de ausencia / ambiguedad (c-71, aditivo con default seguro):
+        sin_prediccion — True si la etapa deterministica no encontro ningun termino.
+                         Estado transitorio: el pipeline escala; no se persiste
+                         como sector canonico.
+        ambiguo        — True si dos o mas sectores empataron en el puntaje maximo
+                         (ASG-008). No cortocircuita; escala a la etapa siguiente.
 
     Invariantes del sistema:
         - Si etapa == "fallback": confianza == 0.0 y requiere_revision_humana == True.
@@ -54,12 +63,14 @@ class ClasificacionResult(BaseModel):
         - Si confianza >= 0.90 y etapa == "deterministic": Gemini no fue invocado.
     """
 
-    sector_predicho: str                                # Nombre del sector principal predicho
+    sector_predicho: str | None                         # Sector principal; None si no hay senal
     sectores_adicionales: list[str] = Field(default_factory=list)  # Sectores secundarios predichos
     confianza: float = Field(..., ge=0.0, le=1.0)       # Nivel de certeza normalizado
     etapa: ClasificacionEtapa                           # Componente que produjo el resultado
     requiere_revision_humana: bool                      # Alerta de revisión manual
     respuesta_raw: str | None = None                    # Texto crudo de Gemini (para auditoría)
+    sin_prediccion: bool = False                        # c-71: ausencia explicita de prediccion
+    ambiguo: bool = False                               # c-71: empate de puntaje maximo
 
 
 class ClasificacionLogRead(BaseModel):

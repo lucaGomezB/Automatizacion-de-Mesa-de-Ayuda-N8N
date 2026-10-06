@@ -9,18 +9,24 @@ Responsabilidad:
     el resultado se devuelve directamente sin invocar a Gemini, reduciendo
     la latencia y el costo de inferencia del LLM.
 
-Fórmula de confianza:
-    La confianza se calcula como:
+Fórmula de confianza (c-71 ASG-009):
+    La confianza deja de ser degenerada (1.0 con un unico match). Combina:
 
-        score(cat) = cantidad de patrones distintos que hicieron match
-        confianza  = score(ganador) / (score(ganador) + score(segundo) + ε)
+        min_matches      = cantidad minima de patrones que debe matchear el ganador
+        margin_ratio     = (winner - runner) / (winner + runner)
+        sufficiency      = min(1.0, winner / (min_matches + 2))
+        confianza        = 0.0 si winner < min_matches, hay empate o no hay senal
+                         = min(1.0, margin_ratio * sufficiency) en caso contrario
 
-    El denominador incluye al segundo candidato para penalizar los casos
-    ambiguos (donde múltiples categorías tienen scores similares). El término
-    ε = 1e-6 previene la división por cero cuando no hay ningún match.
+    Un unico match (winner < min_matches) o cualquier empate (margin 0) produce
+    confianza 0.0 y jamas alcanza el cortocircuito. El umbral concreto se
+    calibra offline contra el corpus (curva precision/cobertura, piso >= 0.90).
 
-    Esta fórmula produce valores en (0.0, 1.0) que reflejan qué tan
-    dominante es la categoría ganadora respecto a la segunda opción.
+No-match y empate (c-71 ASG-007/ASG-008):
+    Sin ningun match (`winner_score == 0`) el resultado senala `sin_prediccion=True`
+    con `sector_predicho=None` (NO la primera clave del mapa). Con dos o mas
+    sectores empatados en el puntaje maximo se marca `ambiguo=True`, sin elegir
+    ganador por el orden del mapa. Ambos estados escalan a la etapa semantica.
 
 Optimización:
     Los patrones regex se compilan una sola vez al inicio de la aplicación
@@ -86,11 +92,13 @@ class DeterministicClassifier(BaseClassifier):
 
     def __init__(self) -> None:
         """
-        Inicializa el clasificador cargando los patrones compilados y el umbral
-        de confianza configurado en Settings.
+        Inicializa el clasificador cargando los patrones compilados, el umbral
+        de confianza y el conteo minimo de matches configurados en Settings.
         """
         self._patterns = _compile_patterns()
-        self._threshold = get_settings().deterministic_confidence_threshold
+        settings = get_settings()
+        self._threshold = settings.deterministic_confidence_threshold
+        self._min_matches = settings.deterministic_min_matches
 
     async def classify(self, descripcion: str) -> ClasificacionResult:
         """
@@ -98,27 +106,47 @@ class DeterministicClassifier(BaseClassifier):
 
         Proceso:
             1. Calcula el score de cada categoría (matches sobre descripcion).
-            2. Ordena las categorías de mayor a menor score.
-            3. Calcula la confianza normalizada usando la fórmula ganador/(ganador+segundo+ε).
-            4. Retorna el resultado con etapa="deterministic".
+            2. Detecta ausencia de senal (score maximo == 0) -> sin_prediccion.
+            3. Detecta empate en el puntaje maximo -> ambiguo, sin ganador arbitrario.
+            4. Calcula la confianza con conteo minimo y margen sobre el segundo.
+            5. Retorna el resultado con etapa="deterministic".
 
         El campo requiere_revision_humana siempre es False en esta etapa;
         la evaluación de revisión humana la realiza el HybridClassifier
-        según el umbral de confianza de 0.70.
+        según el umbral de confianza.
 
         Args:
             descripcion: Texto del incidente a clasificar.
 
         Returns:
-            ClasificacionResult con la categoría dominante y su confianza.
+            ClasificacionResult con el sector dominante y su confianza, o el
+            estado explicito de ausencia/ambiguedad cuando no hay senal unica.
         """
         scores = self._score(descripcion)
+        max_score = max(scores.values()) if scores else 0.0
 
-        # Ordenar de mayor a menor score para identificar ganador y segundo lugar
-        sorted_cats = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+        # ── Ausencia de senal: no se inventa un sector (ASG-007) ──────────────
+        if max_score <= 0.0:
+            logger.debug("deterministic_no_match", scores=scores)
+            return ClasificacionResult(
+                sector_predicho=None,
+                sectores_adicionales=[],
+                confianza=0.0,
+                etapa="deterministic",
+                requiere_revision_humana=False,
+                respuesta_raw=None,
+                sin_prediccion=True,
+                ambiguo=False,
+            )
 
-        winner, winner_score = sorted_cats[0]
-        runner_up_score = sorted_cats[1][1] if len(sorted_cats) > 1 else 0
+        # ── Empate en el puntaje maximo: ambiguo, sin ganador por orden ───────
+        winners = [cat for cat, score in scores.items() if score == max_score]
+        ambiguo = len(winners) > 1
+        winner = winners[0] if not ambiguo else None
+        runner_up_score = max(
+            (score for score in scores.values() if score < max_score),
+            default=0.0,
+        )
 
         # Sectores secundarios con alguna señal (conjunto multietiqueta).
         sectores_adicionales = [
@@ -127,16 +155,13 @@ class DeterministicClassifier(BaseClassifier):
             if score > 0 and categoria != winner
         ]
 
-        # Fórmula de confianza normalizada: penaliza los casos con ambigüedad
-        confidence = winner_score / (winner_score + runner_up_score + self._EPS)
-
-        # Acotamiento a 1.0 para absorber posible ruido de punto flotante
-        confidence = min(confidence, 1.0)
+        confidence = self._confidence(max_score, runner_up_score, ambiguo)
 
         logger.debug(
             "deterministic_scores",
             scores=scores,
             winner=winner,
+            ambiguo=ambiguo,
             confidence=round(confidence, 4),
         )
 
@@ -147,7 +172,35 @@ class DeterministicClassifier(BaseClassifier):
             etapa="deterministic",
             requiere_revision_humana=False,  # Evaluado por el HybridClassifier
             respuesta_raw=None,              # Sin respuesta raw en etapa determinística
+            sin_prediccion=False,
+            ambiguo=ambiguo,
         )
+
+    def _confidence(
+        self,
+        winner_score: float,
+        runner_up_score: float,
+        ambiguo: bool,
+    ) -> float:
+        """
+        Calcula la confianza deterministica (c-71 ASG-009).
+
+        Un unico match (winner_score < min_matches) o un empate producen 0.0.
+        En caso contrario combina el margen sobre el segundo con un factor de
+        suficiencia creciente con la cantidad de matches del ganador. El valor
+        queda acotado a [0.0, 1.0].
+        """
+        if ambiguo or winner_score <= 0.0:
+            return 0.0
+        if winner_score < self._min_matches:
+            return 0.0
+
+        margin_ratio = (winner_score - runner_up_score) / (
+            winner_score + runner_up_score
+        )
+        sufficiency = min(1.0, winner_score / (self._min_matches + 2))
+        return min(1.0, margin_ratio * sufficiency)
+
 
     def _score(self, text: str) -> dict[str, float]:
         """
@@ -179,6 +232,7 @@ class DeterministicClassifier(BaseClassifier):
             result: Resultado producido por classify().
 
         Returns:
-            True si la confianza supera o iguala el umbral configurado (0.90 por defecto).
+            True si la confianza supera o iguala el umbral calibrado en Settings
+            (c-71; documentado en docs/deterministic_calibration.md).
         """
         return result.confianza >= self._threshold

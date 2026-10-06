@@ -30,7 +30,7 @@ _SECTORES_CANONICOS_SET: Final[frozenset[str]] = frozenset(SECTORES_CANONICOS)
 #: importar app.classifiers (que arrastra app.core.database -> get_settings) y
 #: asi un cache hit no exija credenciales (W-3). HybridClassifier la reutiliza
 #: como unica fuente de verdad.
-HYBRID_CACHE_VERSION: Final[str] = "hybrid-v1"
+HYBRID_CACHE_VERSION: Final[str] = "hybrid-v2"
 
 
 def es_sector_canonico(nombre: object) -> bool:
