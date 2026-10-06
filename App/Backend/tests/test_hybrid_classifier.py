@@ -47,7 +47,7 @@ async def test_short_circuit_when_deterministic_confident() -> None:
         classifier._deterministic,
         "classify",
         new_callable=AsyncMock,
-        return_value=_det_result("Sistemas", 0.95),
+        return_value=_det_result("Sistemas", 1.0),
     ), patch.object(
         classifier._gemini, "classify", new_callable=AsyncMock
     ) as mock_gemini:
@@ -184,9 +184,142 @@ async def test_guarda_no_reserva_en_el_cortocircuito_deterministico() -> None:
         classifier._deterministic,
         "classify",
         new_callable=AsyncMock,
-        return_value=_det_result("Sistemas", 0.98),
+        return_value=_det_result("Sistemas", 1.0),
     ):
         result = await classifier.classify("Se cayo el servidor")
 
     assert result.etapa == "deterministic"
     assert guard.calls == []
+
+
+# ---------------------------------------------------------------------------
+# c-71 §1 / §3 — Escalamiento por ausencia/ambiguedad y fallback sin fabricar
+# ---------------------------------------------------------------------------
+def _det_sin_prediccion() -> ClasificacionResult:
+    return ClasificacionResult(
+        sector_predicho=None,
+        confianza=0.0,
+        etapa="deterministic",
+        requiere_revision_humana=False,
+        sin_prediccion=True,
+    )
+
+
+def _det_ambiguo() -> ClasificacionResult:
+    return ClasificacionResult(
+        sector_predicho=None,
+        confianza=0.0,
+        etapa="deterministic",
+        requiere_revision_humana=False,
+        ambiguo=True,
+    )
+
+
+@pytest.mark.asyncio
+async def test_ausencia_de_prediccion_escala_a_gemini() -> None:
+    """ASG-007: sin senal el pipeline escala; no fabrica un sector canonico."""
+    classifier = HybridClassifier()
+    with patch.object(
+        classifier._deterministic,
+        "classify",
+        new_callable=AsyncMock,
+        return_value=_det_sin_prediccion(),
+    ), patch.object(
+        classifier._gemini,
+        "classify",
+        new_callable=AsyncMock,
+        return_value=_gemini_result("Sistemas", 0.90),
+    ) as mock_gemini:
+        result = await classifier.classify("Sin senal determinista")
+        assert result.etapa == "gemini"
+        assert result.sector_predicho == "Sistemas"
+        mock_gemini.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_ambiguedad_escala_a_gemini_aunque_la_confianza_sea_alta() -> None:
+    """ASG-008: un empate escala con independencia del umbral."""
+    classifier = HybridClassifier()
+    det_ambiguo = _det_ambiguo().model_copy(update={"confianza": 0.99})
+    with patch.object(
+        classifier._deterministic,
+        "classify",
+        new_callable=AsyncMock,
+        return_value=det_ambiguo,
+    ), patch.object(
+        classifier._gemini,
+        "classify",
+        new_callable=AsyncMock,
+        return_value=_gemini_result("Bases de Datos", 0.90),
+    ) as mock_gemini:
+        result = await classifier.classify("Empate")
+        assert result.etapa == "gemini"
+        mock_gemini.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_fallback_no_fabrica_sector_sin_estimacion_deterministica() -> None:
+    """El fallback preserva la ausencia y NO inventa un sector canonico."""
+    classifier = HybridClassifier()
+    with patch.object(
+        classifier._deterministic,
+        "classify",
+        new_callable=AsyncMock,
+        return_value=_det_sin_prediccion(),
+    ), patch.object(
+        classifier._gemini,
+        "classify",
+        new_callable=AsyncMock,
+        side_effect=GeminiUnavailableError("API down"),
+    ):
+        result = await classifier.classify("Sin senal y Gemini caido")
+        assert result.etapa == "fallback"
+        assert result.confianza == 0.0
+        assert result.requiere_revision_humana is True
+        assert result.sector_predicho is None
+        assert result.sin_prediccion is True
+
+
+@pytest.mark.asyncio
+async def test_senal_dominante_cortocircuita() -> None:
+    """Una senal dominante que supera el umbral omite Gemini."""
+    classifier = HybridClassifier()
+    with patch.object(
+        classifier._deterministic,
+        "classify",
+        new_callable=AsyncMock,
+        return_value=_det_result("Soporte Tecnico Hardware", 1.0),
+    ), patch.object(
+        classifier._gemini, "classify", new_callable=AsyncMock
+    ) as mock_gemini:
+        result = await classifier.classify("senal dominante")
+        assert result.etapa == "deterministic"
+        assert result.sector_predicho == "Soporte Tecnico Hardware"
+        mock_gemini.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_unico_match_no_cortocircuita_y_escala() -> None:
+    """ASG-009: un unico match (conf 0.0) no alcanza el umbral y escala."""
+    classifier = HybridClassifier()
+    with patch.object(
+        classifier._deterministic,
+        "classify",
+        new_callable=AsyncMock,
+        return_value=_det_result("Soporte Tecnico Hardware", 0.0),
+    ), patch.object(
+        classifier._gemini,
+        "classify",
+        new_callable=AsyncMock,
+        return_value=_gemini_result("Soporte Tecnico Hardware", 0.90),
+    ) as mock_gemini:
+        result = await classifier.classify("teclado")
+        assert result.etapa == "gemini"
+        mock_gemini.assert_called_once()
+
+
+def test_cache_version_es_hybrid_v2() -> None:
+    """c-71 (4.1/4.2): la version del cache sube a hybrid-v2."""
+    from app.constants import HYBRID_CACHE_VERSION
+
+    assert HYBRID_CACHE_VERSION == "hybrid-v2"

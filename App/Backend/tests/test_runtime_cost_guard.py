@@ -592,14 +592,14 @@ async def test_guarda_permite_y_gemini_se_invoca():
 
 
 async def test_cortocircuito_deterministico_no_consume_presupuesto():
-    """6.3 / 13.2: el cortocircuito determinista no consulta la guarda."""
+    """6.3 / 13.2: el cortocircuito determinista no consulta la guarda (c-71: umbral 1.0)."""
     store = InMemoryCounterStore()
     guard = make_guard(store=store)
     deterministic = AsyncMock()
     deterministic.classify = AsyncMock(
         return_value=ClasificacionResult(
             sector_predicho="Sistemas",
-            confianza=0.98,
+            confianza=1.0,
             etapa="deterministic",
             requiere_revision_humana=False,
         )

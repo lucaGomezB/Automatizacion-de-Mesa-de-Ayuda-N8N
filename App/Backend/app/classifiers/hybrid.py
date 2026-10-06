@@ -7,13 +7,16 @@ Responsabilidad:
     en el Anexo H de la tesis. Determina cuándo cada etapa es suficiente
     y cuándo escalar al siguiente nivel.
 
-Flujo de decisión (Anexo H):
+Flujo de decisión (Anexo H, c-71):
     1. Ejecutar DeterministicClassifier sobre la descripción.
-    2. Si confianza >= 0.90 → retornar resultado determinístico (omitir Gemini).
-    3. Si confianza <  0.90 → invocar GeminiClassifier.
+    2. Si senal dominante y confianza >= umbral calibrado (Settings) → retornar
+       resultado determinístico (omitir Gemini).
+    3. Si ausencia de predicción, ambigüedad o confianza insuficiente → invocar
+       GeminiClassifier.
     4. Si confianza de Gemini < 0.70 → marcar para revisión humana.
     5. Si Gemini falla (timeout / no disponible) → retornar fallback
-       preservando la categoría determinística pero con confianza=0.0.
+       preservando la mejor estimación determinística (o su ausencia) con
+       confianza=0.0, sin fabricar un sector.
 
 Principio de diseño:
     El HybridClassifier no conoce los detalles de implementación de ninguna
@@ -116,10 +119,11 @@ class HybridClassifier(BaseClassifier):
         Implementa el flujo de decisión de dos etapas documentado en el Anexo H:
 
         Etapa 1 – Filtro determinístico:
-            Si la confianza supera el umbral configurado (0.90 por defecto),
-            el resultado se retorna directamente sin llamar a Gemini.
-            Esto "cortocircuita" el pipeline para los casos más evidentes,
-            reduciendo latencia y consumo de tokens de la API.
+            Si la confianza supera el umbral calibrado (Settings, c-71) y hay
+            senal dominante (sin ausencia ni ambiguedad), el resultado se
+            retorna directamente sin llamar a Gemini. Esto "cortocircuita" el
+            pipeline para los casos más evidentes, reduciendo latencia y
+            consumo de tokens de la API.
 
         Etapa 2 – Clasificación con Gemini:
             Se invoca únicamente cuando el filtro determinístico no alcanzó
@@ -143,7 +147,16 @@ class HybridClassifier(BaseClassifier):
         # ── Etapa 1: Clasificador determinístico ──────────────────────────────
         det_result = await self._deterministic.classify(descripcion)
 
-        if det_result.confianza >= self._det_threshold:
+        # c-71: una ausencia de prediccion o un empate NUNCA cortocircuitan,
+        # con independencia del umbral (ASG-007/ASG-008). El cortocircuito solo
+        # ocurre con una senal dominante y una confianza calibrada.
+        causa_escalamiento: str | None = None
+        if det_result.sin_prediccion:
+            causa_escalamiento = "sin_prediccion"
+        elif det_result.ambiguo:
+            causa_escalamiento = "ambiguo"
+
+        if causa_escalamiento is None and det_result.confianza >= self._det_threshold:
             # Cortocircuito: confianza suficiente para omitir Gemini
             logger.info(
                 "classifier_short_circuit",
@@ -153,9 +166,10 @@ class HybridClassifier(BaseClassifier):
             )
             return det_result
 
-        # Confianza insuficiente: escalar al clasificador semántico
+        # Confianza insuficiente (o estado de ausencia/ambiguedad): escalar a Gemini
         logger.info(
             "classifier_escalate_to_gemini",
+            causa=causa_escalamiento,
             det_confianza=det_result.confianza,
             det_sector_predicho=det_result.sector_predicho,
         )
@@ -192,12 +206,14 @@ class HybridClassifier(BaseClassifier):
                 message=exc.message,
             )
             return ClasificacionResult(
-                sector_predicho=det_result.sector_predicho,  # Mejor estimación disponible
+                sector_predicho=det_result.sector_predicho,  # Mejor estimación disponible (o None)
                 sectores_adicionales=det_result.sectores_adicionales,
                 confianza=0.0,                   # Señal explícita de fallo
                 etapa="fallback",
                 requiere_revision_humana=True,
                 respuesta_raw=None,
+                sin_prediccion=det_result.sin_prediccion,  # c-71: no se fabrica sector
+                ambiguo=det_result.ambiguo,                # c-71: se preserva la ambiguedad
             )
         except (GeminiTimeoutError, GeminiUnavailableError) as exc:
             # Falla de Gemini: retornar fallback con la categoría del determinístico
@@ -208,12 +224,14 @@ class HybridClassifier(BaseClassifier):
                 message=exc.message,
             )
             return ClasificacionResult(
-                sector_predicho=det_result.sector_predicho,  # Mejor estimación disponible
+                sector_predicho=det_result.sector_predicho,  # Mejor estimación disponible (o None)
                 sectores_adicionales=det_result.sectores_adicionales,
                 confianza=0.0,                   # Señal explícita de fallo
                 etapa="fallback",
                 requiere_revision_humana=True,
                 respuesta_raw=None,
+                sin_prediccion=det_result.sin_prediccion,  # c-71: no se fabrica sector
+                ambiguo=det_result.ambiguo,                # c-71: se preserva la ambiguedad
             )
 
         # Segunda línea de defensa: garantizar que confianza baja active revisión humana
