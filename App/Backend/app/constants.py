@@ -25,6 +25,12 @@ SECTORES_CANONICOS: Final[tuple[str, ...]] = (
 #: Vista de conjunto para validaciones O(1).
 _SECTORES_CANONICOS_SET: Final[frozenset[str]] = frozenset(SECTORES_CANONICOS)
 
+#: Nombre canonico del canal de telefonia en el catalogo `canal_origen` (migracion
+#: 001). c-72: reconocer el canal por nombre evita acoplarse a su ID numerico. La
+#: clasificacion telefonica es propiedad del backend sobre la descripcion
+#: pseudonimizada; el nombre acentuado debe coincidir EXACTO con el seed.
+CANAL_TELEFONIA: Final[str] = "llamada telefónica"
+
 #: Clave de version del clasificador hibrido para el cache de evaluacion (C-34).
 #: Vive en este modulo liviano para que el runner de evaluacion la lea sin
 #: importar app.classifiers (que arrastra app.core.database -> get_settings) y
@@ -43,4 +49,20 @@ def es_sector_canonico(nombre: object) -> bool:
     return isinstance(nombre, str) and nombre in _SECTORES_CANONICOS_SET
 
 
-__all__ = ["SECTORES_CANONICOS", "HYBRID_CACHE_VERSION", "es_sector_canonico"]
+def es_canal_telefonia(nombre: object) -> bool:
+    """
+    Indica si el nombre del canal de origen corresponde a telefonia (c-72).
+
+    La comparacion es exacta contra el nombre sembrado en la migracion 001
+    ("llamada telefónica", con tilde). Un canal ausente (None) no es telefonia.
+    """
+    return nombre == CANAL_TELEFONIA
+
+
+__all__ = [
+    "SECTORES_CANONICOS",
+    "HYBRID_CACHE_VERSION",
+    "CANAL_TELEFONIA",
+    "es_sector_canonico",
+    "es_canal_telefonia",
+]

@@ -29,6 +29,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.classifiers.hybrid import HybridClassifier
 from app.config.settings import get_settings
+from app.constants import es_canal_telefonia
 from app.utils.n8n_webhook import notify_n8n
 from app.utils.pseudonymizer import pseudonymize
 from app.core.exceptions import (
@@ -324,8 +325,12 @@ class IncidenteService:
         )
 
         # Pasos 5-7: Clasificar sobre la pseudonimizada y persistir el resultado.
-        # La clasificación precalculada, si viene, omite el clasificador pago.
-        result = await self._resolve_classification(payload, resultado_pseudo.texto)
+        # La clasificacion precalculada, si viene, omite el clasificador pago
+        # para los canales que la conservan; telefonia SIEMPRE pasa por la
+        # cascada (c-72, D1/D2).
+        result = await self._resolve_classification(
+            payload, resultado_pseudo.texto, canal
+        )
         await self._apply_classification(incidente, result)
 
         # C-39 (D2): sellar `persistido_en` UNA sola vez, dentro de la transaccion
@@ -340,17 +345,30 @@ class IncidenteService:
         return await self._incidente_repo.get_with_relations(incidente.id)  # type: ignore[return-value]
 
     async def _resolve_classification(
-        self, payload: IncidenteCreate, texto_pseudonimizado: str
+        self,
+        payload: IncidenteCreate,
+        texto_pseudonimizado: str,
+        canal: CanalOrigen | None = None,
     ) -> ClasificacionResult:
         """
-        Resuelve el resultado de clasificación del alta (C-33, D5).
+        Resuelve el resultado de clasificación del alta (C-33, D5; c-72, D1/D2).
 
-        Si el payload trae un bloque `clasificacion` precalculado, se construye
-        el resultado a partir de él SIN invocar al clasificador híbrido (evita la
-        llamada paga). En caso contrario se conserva la clasificación
-        server-side como hasta ahora.
+        Para el canal de telefonia la clasificación es propiedad del backend
+        (c-72): SIEMPRE se resuelve por la cascada híbrida sobre la descripción
+        pseudonimizada, ignorando cualquier bloque `clasificacion` precalculado
+        que el canal pudiera enviar. Para el resto de los canales se conserva el
+        atajo precalculado por compatibilidad (D2): si el payload trae el bloque,
+        se construye el resultado a partir de él SIN invocar al clasificador
+        híbrido (evita la llamada paga).
+
+        Args:
+            payload:             Datos del incidente a crear.
+            texto_pseudonimizado: Descripción pseudonimizada (borde de PII
+                                  preservado); única entrada admitida por la cascada.
+            canal:               Canal de origen resuelto del catálogo, o None.
         """
-        if payload.clasificacion is not None:
+        es_telefonia = canal is not None and es_canal_telefonia(canal.nombre)
+        if payload.clasificacion is not None and not es_telefonia:
             return self._result_from_precalculated(payload.clasificacion)
         return await self._classifier.classify(texto_pseudonimizado)
 

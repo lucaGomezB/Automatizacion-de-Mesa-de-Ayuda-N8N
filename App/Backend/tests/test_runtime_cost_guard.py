@@ -890,8 +890,12 @@ def test_workflow_json_parsea_y_conexiones_referencian_nodos_existentes():
                 )
 
 
-def test_workflow_guarda_de_costo_entrega_al_ai_agent_y_deriva_al_denegar():
-    """7.2/7.3: la guarda se interpone entre el sello y el AI Agent."""
+def test_workflow_telefonia_no_pasa_por_guarda_de_costo():
+    """
+    c-72 (OQ2=A): la clasificacion telefonica ya no invoca la guarda de costo de
+    n8n. El sello de ingreso fluye directo al normalizador compartido y no queda
+    ningun nodo que reserve la superficie `n8n_gemini`.
+    """
     wf = _load_workflow()
     conns = wf["connections"]
 
@@ -902,33 +906,29 @@ def test_workflow_guarda_de_costo_entrega_al_ai_agent_y_deriva_al_denegar():
                 result.append(edge["node"])
         return result
 
-    assert "Guard de costo" in successors("Sellar ingreso telefonia")
-    # C-47: el nodo 'Restaurar item telefonia' se intercala entre la guarda y el
-    # IF para devolver el item sellado con la decision `allowed` re-inyectada.
-    # La guarda sigue alcanzando 'Guard permite?' a traves de ese nodo.
-    guard_successors = successors("Guard de costo")
-    assert "Guard permite?" in guard_successors or (
-        "Restaurar item telefonia" in guard_successors
-        and "Guard permite?" in successors("Restaurar item telefonia")
-    )
-    guard_if_outputs = conns["Guard permite?"]["main"]
-    assert "AI Agent" in [e["node"] for e in guard_if_outputs[0]]
-    assert "Derivar a revision humana" in [e["node"] for e in guard_if_outputs[1]]
+    assert "Guard de costo" not in successors("Sellar ingreso telefonia")
+    assert "Normalizar entrada del incidente" in successors("Sellar ingreso telefonia")
+    names = {n["name"] for n in wf["nodes"]}
+    assert "Guard de costo" not in names
+    assert "Guard permite?" not in names
+    assert "AI Agent" not in names
 
 
-def test_workflow_nodo_guarda_apunta_al_endpoint_de_reserva():
+def test_workflow_no_reserva_n8n_gemini():
+    """
+    c-72 (OQ2=A): ningun nodo del workflow reserva la superficie `n8n_gemini`;
+    la reserva paga de la clasificacion telefonica corresponde al backend
+    (`backend_gemini`) solo en escalacion.
+    """
     wf = _load_workflow()
-    node = next(n for n in wf["nodes"] if n["name"] == "Guard de costo")
-    url = node["parameters"]["url"]
-    assert "/api/v1/cost-guard/reserve" in url
-    raw_body = node["parameters"]["jsonBody"]
-    # C-55: el body es una unica expresion que construye el JSON con tipos
-    # nativos (`={{ JSON.stringify({...}) }}`); el proveedor viaja como literal
-    # dentro del objeto, no como JSON-string plano con valores "={{ ... }}".
-    if raw_body.startswith("={{"):
-        assert "provider: 'n8n_gemini'" in raw_body or 'provider: "n8n_gemini"' in raw_body
-    else:
-        assert json.loads(raw_body)["provider"] == "n8n_gemini"
+    blob = json.dumps(wf, ensure_ascii=False)
+    assert "n8n_gemini" not in blob
+    offenders = [
+        n["name"]
+        for n in wf["nodes"]
+        if "/api/v1/cost-guard/reserve" in str(n.get("parameters", {}).get("url", ""))
+    ]
+    assert offenders == []
 
 
 def test_twiml_xml_es_valido_y_graba_mono_con_callbacks():
@@ -960,13 +960,16 @@ def test_twiml_xml_es_valido_y_graba_mono_con_callbacks():
 _COMPOSE_FILE = Path(__file__).resolve().parents[3] / "docker-compose.yml"
 
 
-def test_workflow_nodo_guarda_envia_el_secreto_compartido_desde_env():
-    """B2: el nodo 'Guard de costo' toma el secreto de $env.COST_GUARD_SHARED_SECRET."""
+def test_workflow_no_referencia_el_secreto_de_la_guarda():
+    """
+    c-72 (OQ2=A): al retirar la guarda de costo de n8n, el workflow ya no
+    referencia el secreto compartido de la guarda; el secreto queda reservado
+    para el backend (que si evalua `backend_gemini`).
+    """
     wf = _load_workflow()
-    node = next(n for n in wf["nodes"] if n["name"] == "Guard de costo")
-    params = node["parameters"]["headerParameters"]["parameters"]
-    header = next(p for p in params if p["name"] == "X-Cost-Guard-Secret")
-    assert "$env.COST_GUARD_SHARED_SECRET" in header["value"]
+    blob = json.dumps(wf, ensure_ascii=False)
+    assert "COST_GUARD_SHARED_SECRET" not in blob
+    assert "X-Cost-Guard-Secret" not in blob
 
 
 def test_compose_n8n_define_el_secreto_compartido():
