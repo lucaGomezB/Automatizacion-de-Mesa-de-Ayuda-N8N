@@ -33,8 +33,9 @@ WORKFLOW_PATH = (
 
 # Nombres exactos de los nodos del workflow (inventariados de design.md)
 CODE_NODE_CORREO = "Se verifica que la informacion sea la necesaria para levantar un incidente"
-CODE_NODE_TELEFONIA = "Se verifica lo que trajo la IA"
-CODE_NODES = [CODE_NODE_CORREO, CODE_NODE_TELEFONIA]
+# c-72 (OQ1=A): el validador de telefonia en n8n ("Se verifica lo que trajo la
+# IA") se retiro junto con el AI Agent; la clasificacion telefonica es del backend.
+CODE_NODES = [CODE_NODE_CORREO]
 
 # "Entrada valida" es el gate de validacion de ENTRADA previo al POST:
 #   - correo/web: longitud de la descripcion (es_valido → confianza sintetizada)
@@ -65,6 +66,16 @@ VALID_SECTORS = {
     "Bases de Datos",
     "Sistemas",
 }
+
+# Nombres de nodos del gate post-POST y del ruteo por canal (compartidos por los
+# grupos de revision humana, web y correo).
+IF_REVISION_HUMANA_NODE_NAME = "Requiere revision humana"
+NOTIFICAR_OPERADOR_NODE_NAME = "Notificar operador designado"
+OLD_IF_NODE_NAME = "La informacion esta OK"
+OPERATOR_EMAIL_REF = "$env.OPERATOR_EMAIL"
+NUMERO_FIELD = "numero_incidente"
+WEB_INCIDENT_GUARD_NODE_NAME = "Web con incidente?"
+WEB_REVISION_RESPONDER_NODE_NAME = "Confirmacion web revision humana"
 
 
 def load_workflow() -> dict:
@@ -444,157 +455,20 @@ def test_correo_validator_invalid_routes_to_reenvio():
 # ---------------------------------------------------------------------------
 
 
-def test_telefonia_validator_parses_json():
-    """
-    RED → GREEN: el jsCode del nodo code de telefonía parsea JSON (JSON.parse).
-    Paso 1 del Anexo H: parseo JSON válido.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-    node = by_name[CODE_NODE_TELEFONIA]
-    code_body = node["parameters"].get("jsCode", "") or node["parameters"].get("pythonCode", "")
-
-    assert "JSON.parse" in code_body or "json.loads" in code_body, (
-        "El validador de telefonía no hace parseo JSON (falta JSON.parse o json.loads)"
-    )
 
 
-def test_telefonia_validator_sets_zero_confidence_on_malformed():
-    """
-    TRIANGULATE: cuando el JSON es malformado, fija confianza = 0.0 y marca revisión.
-    Paso 1 Anexo H: ante fallo → confianza = 0.0 + revisión humana.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-    node = by_name[CODE_NODE_TELEFONIA]
-    code_body = node["parameters"].get("jsCode", "") or node["parameters"].get("pythonCode", "")
-
-    assert "0.0" in code_body or "0" in code_body, (
-        "El validador de telefonía no fija confianza = 0.0 ante errores"
-    )
-    # Debe haber manejo de errores (try/catch)
-    assert "try" in code_body, (
-        "El validador de telefonía no tiene bloque try para capturar JSON malformado"
-    )
 
 
-def test_telefonia_validator_checks_required_fields():
-    """
-    TRIANGULATE: verifica presencia de 'sector_predicho', 'sectores_adicionales'
-    y 'confianza'.
-    Paso 2 Anexo H: presencia de campos requeridos.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-    node = by_name[CODE_NODE_TELEFONIA]
-    code_body = node["parameters"].get("jsCode", "") or node["parameters"].get("pythonCode", "")
-
-    assert "sector_predicho" in code_body, (
-        "El validador de telefonía no verifica la presencia del campo 'sector_predicho'"
-    )
-    assert "sectores_adicionales" in code_body, (
-        "El validador de telefonía no contempla el campo 'sectores_adicionales'"
-    )
-    assert "confianza" in code_body, (
-        "El validador de telefonía no verifica la presencia del campo 'confianza'"
-    )
 
 
-def test_telefonia_validator_checks_valid_category_set():
-    """
-    TRIANGULATE: verifica que el sector esté en el set exacto case-sensitive.
-    Paso 3 Anexo H: sector ∈ {los cinco sectores canonicos C-27}.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-    node = by_name[CODE_NODE_TELEFONIA]
-    code_body = node["parameters"].get("jsCode", "") or node["parameters"].get("pythonCode", "")
-
-    # Los cinco sectores canonicos exactos deben aparecer en el código
-    for sector in VALID_SECTORS:
-        assert sector in code_body, (
-            f"El validador de telefonía no menciona el sector canonico {sector!r}"
-        )
 
 
-def test_telefonia_validator_rejects_removed_vocabulary():
-    """
-    TRIANGULATE (5.3): el validador no admite el vocabulario eliminado.
-    'Operaciones' y 'Soporte Técnico' (con tilde) ya no pertenecen al dominio.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-    node = by_name[CODE_NODE_TELEFONIA]
-    code_body = node["parameters"].get("jsCode", "") or node["parameters"].get("pythonCode", "")
-
-    assert "Operaciones" not in code_body, (
-        "El validador no debe aceptar 'Operaciones' (sector eliminado del dominio)"
-    )
-    assert "Soporte Técnico" not in code_body, (
-        "El validador no debe aceptar 'Soporte Técnico' con tilde (variante invalida)"
-    )
 
 
-def test_telefonia_validator_accepts_valid_response():
-    """
-    TRIANGULATE: respuesta válida {sector_predicho: 'Sistemas', confianza: 0.95}
-    es aceptada. El código referencia los cinco sectores válidos (implica que
-    'Sistemas' es aceptada) y conserva el contrato multietiqueta.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-    node = by_name[CODE_NODE_TELEFONIA]
-    code_body = node["parameters"].get("jsCode", "") or node["parameters"].get("pythonCode", "")
-
-    # La lógica de aceptación conserva el sector principal, los adicionales y confianza
-    assert "sector_predicho" in code_body and "confianza" in code_body, (
-        "El validador de telefonía no parece conservar sector_predicho y confianza"
-    )
-    assert "sectores_adicionales" in code_body, (
-        "El validador de telefonía no conserva sectores_adicionales para respuestas válidas"
-    )
 
 
-def test_telefonia_validator_checks_confidence_range():
-    """
-    TRIANGULATE: verifica que confianza ∈ [0.0, 1.0].
-    Paso 4 Anexo H: confianza numérica en rango válido.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-    node = by_name[CODE_NODE_TELEFONIA]
-    code_body = node["parameters"].get("jsCode", "") or node["parameters"].get("pythonCode", "")
-
-    # Debe verificar que confianza esté en rango — buscar 1.0 o typeof
-    assert "1.0" in code_body or "1" in code_body, (
-        "El validador de telefonía no verifica el límite superior de confianza"
-    )
-    assert "typeof" in code_body or "isNaN" in code_body or "float" in code_body or "Number" in code_body, (
-        "El validador de telefonía no verifica que confianza sea numérica"
-    )
 
 
-def test_telefonia_validator_uses_js_language():
-    """
-    REFACTOR check: el nodo de telefonía fue convertido a JavaScript (jsCode)
-    para unificar el lenguaje con el nodo de correo y el normalizador.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-    node = by_name[CODE_NODE_TELEFONIA]
-    params = node.get("parameters", {})
-    # Debe tener jsCode (JS), no pythonCode
-    assert "jsCode" in params, (
-        f"El nodo de telefonía {CODE_NODE_TELEFONIA!r} debe usar jsCode (JavaScript), no pythonCode"
-    )
-    assert "pythonCode" not in params, (
-        f"El nodo de telefonía {CODE_NODE_TELEFONIA!r} no debe usar pythonCode"
-    )
-
-
-# ---------------------------------------------------------------------------
-# Grupo 5 — Ruteo por umbral de confianza en los nodos IF
-# ---------------------------------------------------------------------------
 
 
 def test_if_nodes_have_conditions():
@@ -1944,49 +1818,8 @@ def test_c29_switch_referenced_fields_are_usable_from_response_or_upstream():
     )
 
 
-def test_c29_agent_nodes_have_ai_language_model_connection():
-    """
-    (d) B-02: cada nodo agent tiene una conexión entrante `ai_languageModel` desde un
-    nodo de modelo de lenguaje. Hoy el AI Agent sólo tiene conexión `ai_memory`.
-    """
-    wf = load_workflow()
-    _, by_type = index_nodes(wf)
-
-    agents = by_type.get(AGENT_NODE_TYPE, [])
-    assert agents, "No se encontró ningún nodo AI Agent en el workflow"
-
-    sources = _ai_language_model_sources(wf)
-    for agent in agents:
-        agent_sources = sources.get(agent["name"], [])
-        assert agent_sources, (
-            f"El nodo {agent['name']!r} no tiene conexión ai_languageModel. "
-            "B-02: el agente sólo tiene conexión ai_memory y no puede ejecutar."
-        )
-        for source_type in agent_sources:
-            assert source_type.startswith(LANGUAGE_MODEL_TYPE_PREFIX), (
-                f"La conexión ai_languageModel del agente {agent['name']!r} proviene "
-                f"de un nodo {source_type!r} que no es un modelo de lenguaje."
-            )
 
 
-def test_c29_agent_prompt_interpolates_trigger_payload():
-    """
-    (e) B-03: el prompt del agente interpola el payload del trigger (`$json`/`$input`).
-    Hoy es un texto estático que no incluye la transcripción ni el correo.
-    """
-    wf = load_workflow()
-    _, by_type = index_nodes(wf)
-
-    agents = by_type.get(AGENT_NODE_TYPE, [])
-    assert agents, "No se encontró ningún nodo AI Agent en el workflow"
-
-    for agent in agents:
-        params = agent.get("parameters", {})
-        prompt = str(params.get("text") or params.get("prompt") or "")
-        assert "$json" in prompt or "$input" in prompt, (
-            f"El prompt del agente {agent['name']!r} es estático y no interpola el "
-            f"payload del trigger ($json/$input). B-03. Prompt actual: {prompt[:120]!r}"
-        )
 
 
 def test_c29_email_trigger_exposes_body_via_simple_format():
@@ -2190,99 +2023,10 @@ def _branch_reaches(wf: dict, if_node: str, branch_index: int, target: str) -> b
 # ── N8N-REFINE-001: tope de refinamiento ────────────────────────────────────
 
 
-def test_c33_agent_declares_explicit_iteration_cap():
-    """
-    RED (1.1): el nodo `AI Agent` declara un tope explicito de iteraciones
-    (options.maxIterations == 2) y el nodo validador incrementa un contador
-    explicito `intento_agente`.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-
-    assert AI_AGENT_NODE_NAME in by_name, "No existe el nodo 'AI Agent'"
-    agent = by_name[AI_AGENT_NODE_NAME]
-    options = agent.get("parameters", {}).get("options", {})
-    assert options.get("maxIterations") == 2, (
-        f"El nodo 'AI Agent' no declara options.maxIterations=2 (options={options!r})"
-    )
-
-    assert CODE_NODE_TELEFONIA in by_name
-    telefono_code = by_name[CODE_NODE_TELEFONIA]["parameters"].get("jsCode", "")
-    assert "intento_agente" in telefono_code, (
-        "El nodo 'Se verifica lo que trajo la IA' no contabiliza 'intento_agente'"
-    )
-    assert "+ 1" in telefono_code, (
-        "El contador 'intento_agente' no se incrementa en el validador de telefonia"
-    )
 
 
-def test_c33_topping_if_routes_to_terminal_not_back_to_agent():
-    """
-    RED (1.1): existe el IF 'Tope de refinamiento alcanzado' con condicion sobre
-    `intento_agente`; su rama false va al terminal y el terminal NO reingresa al
-    agente pago.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-
-    assert IF_TOPE_NODE_NAME in by_name, (
-        f"No existe el IF '{IF_TOPE_NODE_NAME}'"
-    )
-    topping = by_name[IF_TOPE_NODE_NAME]
-    assert topping["type"] == "n8n-nodes-base.if"
-    conditions_str = json.dumps(topping.get("parameters", {}).get("conditions", {}))
-    assert "intento_agente" in conditions_str, (
-        "El IF de tope no evalua el contador 'intento_agente'"
-    )
-
-    # La rama de agotamiento (false) desemboca en el terminal.
-    assert DERIVAR_NODE_NAME in _output_successors(wf, IF_TOPE_NODE_NAME, 1), (
-        f"La rama false de '{IF_TOPE_NODE_NAME}' no va a '{DERIVAR_NODE_NAME}'"
-    )
-    # El terminal no reingresa al agente pago.
-    assert not _connections_reachable(wf, DERIVAR_NODE_NAME, AI_AGENT_NODE_NAME), (
-        f"'{DERIVAR_NODE_NAME}' reingresa al AI Agent: gasto pago sin tope"
-    )
-
-    # El refinamiento dentro del tope se conserva (rama true -> AI Agent).
-    assert AI_AGENT_NODE_NAME in _output_successors(wf, IF_TOPE_NODE_NAME, 0), (
-        f"La rama de refinamiento de '{IF_TOPE_NODE_NAME}' no reingresa al AI Agent"
-    )
-    # La clasificacion invalida ya no va directo al agente.
-    assert AI_AGENT_NODE_NAME not in _output_successors(wf, IF_IA_VALIDA_NODE_NAME, 1), (
-        "La rama false de 'La clasificacion de la IA es valida' sigue yendo directo al agente"
-    )
 
 
-def test_c33_terminal_sets_forced_human_review_and_reaches_persistence():
-    """
-    RED (1.2): el nodo terminal fija confianza=0.0, requiere_revision_humana=true
-    y alcanza el HTTP de persistencia sin volver al agente.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-
-    assert DERIVAR_NODE_NAME in by_name, f"No existe '{DERIVAR_NODE_NAME}'"
-    node = by_name[DERIVAR_NODE_NAME]
-    assert node["type"] == "n8n-nodes-base.code"
-    code = node["parameters"].get("jsCode", "")
-
-    assert "0.0" in code, "El terminal no fija confianza=0.0"
-    assert "requiere_revision_humana" in code and "true" in code, (
-        "El terminal no marca requiere_revision_humana=true"
-    )
-    assert "revision_forzada" in code, (
-        "El terminal no marca revision_forzada para la persistencia"
-    )
-    assert "telefonia" in code, (
-        "El terminal no conserva canal_raw='telefonia'"
-    )
-    assert _connections_reachable(wf, DERIVAR_NODE_NAME, HTTP_NODE_CORREO), (
-        f"'{DERIVAR_NODE_NAME}' no alcanza '{HTTP_NODE_CORREO}'"
-    )
-
-
-# ── N8N-EMAIL-LIFECYCLE-001: marcado resuelto en el trigger ─────────────────
 
 
 def test_c33_reject_branch_keeps_channel_guard_without_mark_node():
@@ -2358,10 +2102,11 @@ def test_c33_email_trigger_has_24h_lookback():
 # ── N8N-INTAKE-001: payload enriquecido ─────────────────────────────────────
 
 
-def test_c33_http_body_sends_message_id_classification_and_origin_marker():
+def test_c33_http_body_sends_message_id_and_origin_marker_without_classification():
     """
-    RED (1.6): el body del HTTP POST incluye `origen_message_id`, el bloque de
-    clasificacion precalculada y un marcador explicito de origen/evento.
+    c-72 (N8N-INTAKE-002): el body del HTTP POST incluye `origen_message_id` y un
+    marcador explicito de origen/evento, y NO transporta una clasificacion
+    precalculada (ni `clasificacion` ni `sector_predicho`/`confianza`).
     """
     wf = load_workflow()
     _, by_type = index_nodes(wf)
@@ -2374,17 +2119,17 @@ def test_c33_http_body_sends_message_id_classification_and_origin_marker():
     assert "origen_message_id" in body_str, (
         "El body no envia 'origen_message_id' (Message-ID de Outlook)"
     )
-    assert "clasificacion" in body_str, (
-        "El body no envia el bloque de clasificacion precalculada"
-    )
-    assert "sector_predicho" in body_str and "confianza" in body_str, (
-        "El bloque de clasificacion no transporta sector_predicho/confianza"
-    )
     assert "origen_evento" in body_str, (
         "El body no envia un marcador explicito de origen/evento"
     )
     assert "creacion" in body_str or "incidente" in body_str, (
         "El marcador de origen no identifica un evento de creacion de incidente"
+    )
+    assert "clasificacion" not in body_str, (
+        "El body todavia envia el bloque de clasificacion precalculada"
+    )
+    assert "sector_predicho" not in body_str and "confianza" not in body_str, (
+        "El body todavia transporta sector_predicho/confianza producidos fuera del backend"
     )
 
 
@@ -2501,169 +2246,31 @@ def test_c36_no_paid_node_has_unbounded_or_implicit_retry():
     si reintenta, lo hace acotado; los nodos de modelo nunca reintentan.
     """
     wf = load_workflow()
+    # c-72 (OQ1=A): se retiraron la rama de clasificacion de n8n (AI Agent,
+    # modelo Gemini, memoria, guarda de costo, restauracion, validador de IA,
+    # IF de clasificacion, tope de refinamiento y terminal de refinamiento).
+    # El workflow quedo en 28 nodos (25 operativos + 3 sticky notes).
     paid = _c36_paid_nodes(wf)
-    assert paid, "No se encontraron nodos pagos en el workflow"
+    # c-72: sin nodos pagos en n8n, la politica de reintento pago es vacuamente
+    # satisfecha; la invocacion paga vive en el backend.
     assert _c36_retry_violations(wf) == [], (
         f"Nodos pagos con reintentos fuera de politica: {_c36_retry_violations(wf)}."
     )
-
-
-def test_c36_retry_guard_detects_retry_without_bounds_on_paid_agent(tmp_path):
-    """
-    TRIANGULATE: inyectar `retryOnFail=true` SIN las cotas explicitas en el
-    agente hace que la guarda detecte la violacion (reintento implicito).
-    """
-    import copy
-
-    wf = copy.deepcopy(load_workflow())
-    agent = next(n for n in wf["nodes"] if n["type"] == C36_PAID_AGENT_TYPE)
-    agent["retryOnFail"] = True
-    agent.pop("maxTries", None)
-    agent.pop("waitBetweenTries", None)
-
-    violations = _c36_retry_violations(wf)
-    assert any("maxTries" in v for v in violations), (
-        f"La guarda no detecto retryOnFail sin cotas: {violations}"
-    )
-
-
-def test_c36_retry_guard_detects_injected_max_tries_on_language_model(tmp_path):
-    """
-    TRIANGULATE: inyectar maxTries en el modelo de lenguaje pago
-    tambien es detectado por la guarda.
-    """
-    import copy
-
-    wf = copy.deepcopy(load_workflow())
-    model = next(
-        n for n in wf["nodes"] if n["type"].startswith(C36_PAID_LM_TYPE_PREFIX)
-    )
-    model["maxTries"] = 3
-
-    violations = _c36_retry_violations(wf)
-    assert any("maxTries" in v for v in violations), (
-        f"La guarda no detecto maxTries inyectado: {violations}"
-    )
-
-
-def test_c36_retry_guard_detects_max_tries_above_cap(tmp_path):
-    """
-    TRIANGULATE: un `maxTries` del agente por encima del tope tambien es una
-    violacion, porque el peor caso de invocaciones pagas debe quedar acotado.
-    """
-    import copy
-
-    wf = copy.deepcopy(load_workflow())
-    agent = next(n for n in wf["nodes"] if n["type"] == C36_PAID_AGENT_TYPE)
-    agent["retryOnFail"] = True
-    agent["maxTries"] = C36_AGENT_MAX_TRIES_CAP + 1
-    agent["waitBetweenTries"] = C36_AGENT_MIN_WAIT_BETWEEN_TRIES_MS
-
-    violations = _c36_retry_violations(wf)
-    assert any("tope" in v for v in violations), (
-        f"La guarda no detecto maxTries fuera del tope: {violations}"
-    )
-
-
-# ---------------------------------------------------------------------------
-# Grupo 19b — c-58: superficie Gemini explicita y reintento acotado del agente
-# ---------------------------------------------------------------------------
-
-GEMINI_MODEL_NODE_NAME = "Google Gemini Chat Model"
-GEMINI_MODEL_NODE_TYPE = "@n8n/n8n-nodes-langchain.lmChatGoogleGemini"
-
-
-def test_c58_gemini_model_node_pins_explicit_model():
-    """
-    c-58 (1.10a): el nodo `Google Gemini Chat Model` declara `parameters.modelName`
-    explicito e igual a `settings.gemini_model` (paridad con el backend).
-    """
-    from app.config.settings import get_settings
-
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-
-    assert GEMINI_MODEL_NODE_NAME in by_name, (
-        f"No existe el nodo de modelo {GEMINI_MODEL_NODE_NAME!r}"
-    )
-    node = by_name[GEMINI_MODEL_NODE_NAME]
-    assert node.get("type") == GEMINI_MODEL_NODE_TYPE, (
-        f"{GEMINI_MODEL_NODE_NAME!r} debe ser {GEMINI_MODEL_NODE_TYPE!r}, "
-        f"got {node.get('type')!r}"
-    )
-    model_name = node.get("parameters", {}).get("modelName")
-    assert isinstance(model_name, str) and model_name, (
-        f"{GEMINI_MODEL_NODE_NAME!r} no declara un modelName explicito no vacio "
-        f"(modelName={model_name!r}); no debe depender del default del nodo"
-    )
-    assert model_name == get_settings().gemini_model, (
-        f"El modelName del nodo ({model_name!r}) no coincide con settings.gemini_model "
-        f"({get_settings().gemini_model!r})"
-    )
-
-
-def test_c58_ai_agent_declares_bounded_retry():
-    """
-    c-58 (1.10b): el nodo `AI Agent` declara un reintento acotado y explicito
-    (retryOnFail=true, maxTries y waitBetweenTries numericos y acotados).
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-
-    assert AI_AGENT_NODE_NAME in by_name, "No existe el nodo 'AI Agent'"
-    agent = by_name[AI_AGENT_NODE_NAME]
-
-    assert agent.get("retryOnFail") is True, (
-        f"'{AI_AGENT_NODE_NAME}' no declara retryOnFail=true "
-        f"(retryOnFail={agent.get('retryOnFail')!r})"
-    )
-    max_tries = agent.get("maxTries")
-    assert _is_number(max_tries) and 2 <= max_tries <= C36_AGENT_MAX_TRIES_CAP, (
-        f"'{AI_AGENT_NODE_NAME}' no declara un maxTries acotado "
-        f"(maxTries={max_tries!r})"
-    )
-    wait = agent.get("waitBetweenTries")
-    assert _is_number(wait) and wait >= C36_AGENT_MIN_WAIT_BETWEEN_TRIES_MS, (
-        f"'{AI_AGENT_NODE_NAME}' no declara un waitBetweenTries no menor al minimo "
-        f"(waitBetweenTries={wait!r})"
-    )
-
-
-def test_c58_language_model_node_does_not_declare_retry():
-    """
-    TRIANGULATE (c-58, D5): el sub-nodo de modelo NO declara reintento propio; la
-    unica fuente de politica de transporte es el nodo agente.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-    model = by_name[GEMINI_MODEL_NODE_NAME]
-
-    assert "retryOnFail" not in model or model.get("retryOnFail") is not True, (
-        f"{GEMINI_MODEL_NODE_NAME!r} declara retryOnFail propio"
-    )
-    assert not _is_number(model.get("maxTries")), (
-        f"{GEMINI_MODEL_NODE_NAME!r} declara maxTries propio"
+    assert paid == [], (
+        f"c-72: no debe quedar ningun nodo pago en n8n, encontrados: {[n['name'] for n in paid]}"
     )
 
 
 
-# ---------------------------------------------------------------------------
-# Grupo 20 — Gate post-POST de revision humana + notificacion al operador
-#
-# El gate de ENTRADA previo al POST ("Entrada valida") NO es un gate de
-# confianza del modelo: para correo/web valida longitud de texto y para
-# telefonia valida la respuesta de la IA. El ruteo real por confianza vive en
-# el backend (`IncidenteService.create_and_classify` fija
-# `requiere_revision_humana = confianza < 0.70`), que devuelve ese booleano en
-# `IncidenteRead`. Este grupo verifica el gate REAL post-POST: cuando el
-# backend marca `requiere_revision_humana = true`, se notifica al operador
-# designado antes de continuar con el ruteo normal y la auditoria.
-# ---------------------------------------------------------------------------
 
-IF_REVISION_HUMANA_NODE_NAME = "Requiere revision humana"
-NOTIFICAR_OPERADOR_NODE_NAME = "Notificar operador designado"
-OLD_IF_NODE_NAME = "La informacion esta OK"
-OPERATOR_EMAIL_REF = "$env.OPERATOR_EMAIL"
+
+
+
+
+
+
+
+
 
 
 def test_entrada_valida_renamed_from_old_node_name():
@@ -3048,26 +2655,12 @@ def test_c39_telefonia_sella_ingreso_aguas_arriba_del_agente():
     assert _connections_reachable(wf, TELEFONIA_TRIGGER_NAME, SELLO_NODE_NAME), (
         "El sello debe ser alcanzable desde el webhook de telefonia"
     )
-    assert _connections_reachable(wf, SELLO_NODE_NAME, AI_AGENT_NODE_NAME), (
-        "El sello debe estar aguas arriba del AI Agent"
-    )
-    assert not _connections_reachable(wf, AI_AGENT_NODE_NAME, SELLO_NODE_NAME), (
-        "El sello no debe estar despues del AI Agent"
+    # c-72: tras retirar el AI Agent, el sello fluye directo al normalizador.
+    assert _connections_reachable(wf, SELLO_NODE_NAME, NORMALIZER_NODE_NAME), (
+        "El sello de telefonia debe alcanzar el normalizador compartido"
     )
 
 
-def test_c39_telefonia_preserva_ingreso_a_traves_del_agente():
-    """
-    TRIANGULATE (4.1): el validador de telefonia re-inyecta `ingresado_en`
-    porque el AI Agent no propaga los campos del item de entrada.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-    code = _js_code(by_name[CODE_NODE_TELEFONIA])
-    assert "ingresado_en" in code, (
-        "El validador de telefonia debe re-inyectar 'ingresado_en' leido del nodo "
-        "de sello aguas arriba: el AI Agent no propaga los campos del item"
-    )
 
 
 def test_c39_correo_sella_al_inicio_del_flujo_y_no_usa_received_date():
@@ -3454,53 +3047,6 @@ def test_c40_correo_branch_still_reaches_email_confirmation():
 # ── Defecto 4 — Memoria Redis configurada ───────────────────────────────────
 
 
-def test_c40_memory_redis_node_declares_credentials_and_session_params():
-    """
-    RED (N8N-MEMORY-001): el nodo de memoria Redis declara credencial `redis` no
-    vacia y parametros de sesion no vacios.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-
-    assert MEMORY_REDIS_NODE_NAME in by_name, (
-        f"No existe el nodo de memoria {MEMORY_REDIS_NODE_NAME!r}"
-    )
-    node = by_name[MEMORY_REDIS_NODE_NAME]
-    assert node.get("type") == MEMORY_REDIS_NODE_TYPE, (
-        f"{MEMORY_REDIS_NODE_NAME!r} debe ser {MEMORY_REDIS_NODE_TYPE!r}, "
-        f"got {node.get('type')!r}"
-    )
-
-    credentials = node.get("credentials", {}) or {}
-    assert credentials, (
-        f"{MEMORY_REDIS_NODE_NAME!r} no declara credencial: fallaria en runtime"
-    )
-    assert any("redis" in key.lower() for key in credentials), (
-        f"{MEMORY_REDIS_NODE_NAME!r} no declara una credencial 'redis' "
-        f"(credentials={list(credentials)!r})"
-    )
-
-    parameters = node.get("parameters", {}) or {}
-    assert parameters, (
-        f"{MEMORY_REDIS_NODE_NAME!r} no declara parametros de sesion: fallaria en runtime"
-    )
-    # F3 (c-52): `sessionId` NO es un parametro real del nodo en typeVersion >= 1.2
-    # (se ignora; el nodo cae en `fromInput` y falla con "No session ID found").
-    # El contrato real es el selector `sessionIdType` + la `sessionKey`.
-    assert parameters.get("sessionIdType") == "customKey", (
-        f"{MEMORY_REDIS_NODE_NAME!r} no declara sessionIdType='customKey' "
-        f"(sessionIdType={parameters.get('sessionIdType')!r})"
-    )
-    assert str(parameters.get("sessionKey", "")).strip(), (
-        f"{MEMORY_REDIS_NODE_NAME!r} no declara una sessionKey no vacia "
-        f"(sessionKey={parameters.get('sessionKey')!r})"
-    )
-    assert "sessionId" not in parameters, (
-        f"{MEMORY_REDIS_NODE_NAME!r} conserva el parametro obsoleto 'sessionId'"
-    )
-    assert all(value not in (None, "") for value in parameters.values()), (
-        f"{MEMORY_REDIS_NODE_NAME!r} tiene parametros vacios (parameters={parameters!r})"
-    )
 
 
 def test_c40_credential_requiring_types_include_memory_redis():
@@ -3514,76 +3060,10 @@ def test_c40_credential_requiring_types_include_memory_redis():
     )
 
 
-def test_c40_memory_redis_credential_uses_placeholder():
-    """
-    TRIANGULATE (N8N-MEMORY-001): la credencial usa un placeholder REPLACE_WITH_*
-    consistente con el resto del JSON exportado (no embebe un id real).
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-    credentials = by_name[MEMORY_REDIS_NODE_NAME].get("credentials", {}) or {}
-    redis_cred = next(
-        value for key, value in credentials.items() if "redis" in key.lower()
-    )
-    assert "REPLACE_WITH" in json.dumps(redis_cred), (
-        f"La credencial redis no usa un placeholder REPLACE_WITH_*: {redis_cred!r}"
-    )
 
 
-def test_c52_memory_node_uses_custom_key_session():
-    """
-    RED → GREEN (F3, c-52): el nodo de memoria Redis declara el selector
-    `sessionIdType = 'customKey'` y una `sessionKey` no vacia, y NO conserva
-    `sessionId`.
-
-    `sessionId` NO es un parametro real del nodo en typeVersion >= 1.2 (se
-    ignora). Sin `sessionIdType`, el nodo cae en `fromInput`, evalua
-    `$json.sessionId` —que el handoff no trae— y falla con
-    "No session ID found" (`getSessionId` / `MemoryRedisChat.supplyData`).
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-
-    assert MEMORY_REDIS_NODE_NAME in by_name, (
-        f"No existe el nodo de memoria {MEMORY_REDIS_NODE_NAME!r}"
-    )
-    parameters = by_name[MEMORY_REDIS_NODE_NAME].get("parameters", {}) or {}
-
-    assert parameters.get("sessionIdType") == "customKey", (
-        f"{MEMORY_REDIS_NODE_NAME!r} no declara sessionIdType='customKey' "
-        f"(sessionIdType={parameters.get('sessionIdType')!r})"
-    )
-    session_key = parameters.get("sessionKey", "")
-    assert isinstance(session_key, str) and session_key.strip(), (
-        f"{MEMORY_REDIS_NODE_NAME!r} no declara una sessionKey no vacia "
-        f"(sessionKey={session_key!r})"
-    )
-    assert "sessionId" not in parameters, (
-        f"{MEMORY_REDIS_NODE_NAME!r} conserva el parametro obsoleto 'sessionId' "
-        "(ignorado por el nodo en typeVersion >= 1.2)"
-    )
 
 
-def test_c52_memory_node_session_key_prefers_call_sid():
-    """
-    TRIANGULATE (F3, c-52): la `sessionKey` se resuelve dinamicamente desde el
-    `CallSid` del handoff (`$json.call_sid`), con `$execution.id` como respaldo;
-    no es un valor constante.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-    parameters = by_name[MEMORY_REDIS_NODE_NAME].get("parameters", {}) or {}
-    session_key = str(parameters.get("sessionKey", ""))
-
-    assert "$json.call_sid" in session_key or "$execution.id" in session_key, (
-        f"La sessionKey {session_key!r} no referencia $json.call_sid ni $execution.id"
-    )
-    assert session_key.startswith("="), (
-        f"La sessionKey {session_key!r} no esta declarada como expresion n8n"
-    )
-
-
-# ── Defecto 5 — Unico mecanismo de autenticacion ────────────────────────────
 
 
 def test_c40_incidentes_http_node_has_single_auth_mechanism():
@@ -3807,108 +3287,12 @@ SELLO_ITEM_REF = f"$('{SELLO_NODE_NAME}').item"
 SELLO_AUSENTE_MARKER = "ingreso_sellado_ausente"
 
 
-def test_c46_validador_referencia_sello_por_primer_item():
-    """
-    Scenario 1 (N8N-TIMING-003): el `jsCode` del validador referencia el sello
-    con `.first()` y NO con `.item`.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-    code = _js_code(by_name[CODE_NODE_TELEFONIA])
-
-    assert SELLO_FIRST_REF in code, (
-        f"El validador {CODE_NODE_TELEFONIA!r} no recupera el sello con "
-        f"{SELLO_FIRST_REF!r}: .item depende de pairedItem y se rompe a traves del AI Agent"
-    )
-    assert SELLO_ITEM_REF not in code, (
-        f"El validador {CODE_NODE_TELEFONIA!r} sigue usando "
-        f"{SELLO_ITEM_REF!r} (pairedItem fragil)"
-    )
 
 
-def test_c46_terminal_referencia_sello_por_primer_item():
-    """
-    Scenario 2 (N8N-TIMING-003): el `jsCode` del terminal referencia el sello
-    con `.first()` y NO con `.item`; ante sello ausente emite WARN y conserva
-    la revisión humana.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-    code = _js_code(by_name[DERIVAR_NODE_NAME])
-
-    assert SELLO_FIRST_REF in code, (
-        f"El terminal {DERIVAR_NODE_NAME!r} no recupera el sello con "
-        f"{SELLO_FIRST_REF!r}"
-    )
-    assert SELLO_ITEM_REF not in code, (
-        f"El terminal {DERIVAR_NODE_NAME!r} sigue usando {SELLO_ITEM_REF!r}"
-    )
-    assert "console.warn" in _active_js_code(by_name[DERIVAR_NODE_NAME]), (
-        f"El terminal {DERIVAR_NODE_NAME!r} no emite WARN ante sello ausente"
-    )
-    assert "requiere_revision_humana" in code and "true" in code, (
-        f"El terminal {DERIVAR_NODE_NAME!r} no conserva requiere_revision_humana=true"
-    )
 
 
-def test_c46_ausencia_sello_no_se_silencia():
-    """
-    Scenario 3 (N8N-TIMING-003): la ausencia del sello no se silencia mediante
-    un `catch`/`return null`; el validador emite un WARN estructurado y marca el
-    item (marcador `ingreso_sellado_ausente`) para forzar revisión.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-    code = _active_js_code(by_name[CODE_NODE_TELEFONIA])
-
-    assert "console.warn" in code, (
-        "El validador no emite WARN estructurado cuando el sello no resuelve"
-    )
-    assert SELLO_AUSENTE_MARKER in code, (
-        "El validador no marca 'ingreso_sellado_ausente' ante sello ausente"
-    )
-    assert "revision_forzada" in code, (
-        "El validador no fuerza la revision (revision_forzada) ante sello ausente"
-    )
-    assert "return null" not in code, (
-        "El validador sigue devolviendo null en silencio ante sello ausente"
-    )
 
 
-def test_c46_sello_ausente_deriva_revision_conservando_ticket():
-    """
-    Scenario 4 (N8N-TIMING-003): ante sello ausente el flujo marca revisión
-    humana y continúa hacia la persistencia (el ticket se crea y la ejecución no
-    aborta). El normalizador propaga el marcador/revisión y el terminal alcanza
-    el POST.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-
-    norm = _js_code(by_name[NORMALIZER_NODE_NAME])
-    assert SELLO_AUSENTE_MARKER in norm, (
-        "El normalizador no propaga el marcador 'ingreso_sellado_ausente'"
-    )
-    assert "revision_forzada" in norm, (
-        "El normalizador no propaga 'revision_forzada'"
-    )
-    assert "requiere_revision_humana" in norm, (
-        "El normalizador no propaga 'requiere_revision_humana'"
-    )
-
-    # El gate pre-POST satisface su rama OR con revision_forzada aunque
-    # confianza sea 0.0, por lo que el ticket se crea igualmente.
-    cond_str = json.dumps(by_name[IF_NODE_CORREO].get("parameters", {}).get("conditions", {}))
-    assert "revision_forzada" in cond_str, (
-        "El gate 'Entrada valida' no rutea por revision_forzada: un sello ausente "
-        "con confianza 0.0 no crearia el ticket"
-    )
-
-    # El terminal conserva la revision humana y alcanza la persistencia.
-    assert _connections_reachable(wf, DERIVAR_NODE_NAME, HTTP_NODE_CORREO), (
-        f"El terminal {DERIVAR_NODE_NAME!r} no alcanza {HTTP_NODE_CORREO!r}: "
-        "el ticket se perderia"
-    )
 
 
 def test_c46_contrato_persistencia_backend_sin_cambios():
@@ -3959,173 +3343,16 @@ GUARD_IF_NODE_NAME = "Guard permite?"
 RESTORE_NODE_NAME = "Restaurar item telefonia"
 
 
-def test_c47_nodo_restauracion_cablea_la_guarda():
-    """
-    RED (N8N-GUARD-001): existe un nodo code `Restaurar item telefonia`
-    intercalado entre `Guard de costo` (salida main) y `Guard permite?`, cuyo
-    `jsCode` recupera el item sellado con `$('Sellar ingreso telefonia').first()`.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-
-    assert RESTORE_NODE_NAME in by_name, (
-        f"No existe el nodo de restauracion {RESTORE_NODE_NAME!r}"
-    )
-    node = by_name[RESTORE_NODE_NAME]
-    assert node.get("type") == "n8n-nodes-base.code", (
-        f"{RESTORE_NODE_NAME!r} debe ser un nodo code, got {node.get('type')!r}"
-    )
-    assert RESTORE_NODE_NAME in _output_successors(wf, GUARD_NODE_NAME, 0), (
-        f"La salida main de {GUARD_NODE_NAME!r} no desemboca en {RESTORE_NODE_NAME!r}"
-    )
-    assert GUARD_IF_NODE_NAME in _output_successors(wf, RESTORE_NODE_NAME, 0), (
-        f"{RESTORE_NODE_NAME!r} no desemboca en {GUARD_IF_NODE_NAME!r}"
-    )
-    assert SELLO_FIRST_REF in _js_code(node), (
-        f"{RESTORE_NODE_NAME!r} no recupera el sello con {SELLO_FIRST_REF!r}"
-    )
 
 
-def test_c47_restauracion_fusiona_sello_y_fija_allowed():
-    """
-    RED (N8N-GUARD-001): el `jsCode` de restauracion fusiona el item sellado y
-    fija `allowed` desde el item corriente de la guarda, de modo que el
-    `AI Agent` vuelve a ser alcanzable con el item sellado.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-    code = _js_code(by_name[RESTORE_NODE_NAME])
-
-    assert "...sellado" in code, (
-        f"{RESTORE_NODE_NAME!r} no fusiona el item sellado (falta el spread '...sellado')"
-    )
-    assert "allowed" in code, (
-        f"{RESTORE_NODE_NAME!r} no fija 'allowed' para el ruteo de {GUARD_IF_NODE_NAME!r}"
-    )
-    assert "$input" in code, (
-        f"{RESTORE_NODE_NAME!r} no lee la decision desde el item corriente ($input)"
-    )
-    assert _connections_reachable(wf, RESTORE_NODE_NAME, AI_AGENT_NODE_NAME), (
-        f"El {AI_AGENT_NODE_NAME!r} no es alcanzable desde {RESTORE_NODE_NAME!r}"
-    )
 
 
-def test_c47_caller_usa_el_item_corriente_sin_referencia_cruzada():
-    """
-    RED (N8N-GUARD-002) MODIFICADO por C-52: el body de `Guard de costo`
-    resuelve `caller` desde el item corriente (`$json.caller_number`, campo del
-    handoff pseudonimizado del backend) y NO referencia `$('Sellar ingreso
-    telefonia')` (ni `.item` ni `.first()`).
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-    body = http_json_body(by_name[GUARD_NODE_NAME])
-    caller = str(body.get("caller", ""))
-    body_str = json.dumps(body)
-
-    assert "$json.caller_number" in caller, (
-        f"El body de {GUARD_NODE_NAME!r} no resuelve caller desde el item corriente "
-        f"(caller={caller!r})"
-    )
-    assert SELLO_NODE_NAME not in body_str, (
-        f"El body de {GUARD_NODE_NAME!r} sigue referenciando {SELLO_NODE_NAME!r}: "
-        "referencia cruzada fragil que depende de pairedItem"
-    )
-    assert SELLO_FIRST_REF not in body_str and SELLO_ITEM_REF not in body_str, (
-        f"El body de {GUARD_NODE_NAME!r} conserva una referencia .item/.first() al sello"
-    )
 
 
-def test_c47_terminal_no_regresa_c46():
-    """
-    No regresion (N8N-TIMING-003): el `jsCode` del terminal `Derivar a revision
-    humana` conserva la recuperacion con `.first()`, el WARN estructurado
-    `ingreso_sellado_ausente` y `requiere_revision_humana = true`. PASA contra el
-    workflow actual (guarda de no regresion).
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-    node = by_name[DERIVAR_NODE_NAME]
-    code = _js_code(node)
-
-    assert SELLO_FIRST_REF in code, (
-        f"{DERIVAR_NODE_NAME!r} perdio la recuperacion robusta {SELLO_FIRST_REF!r}"
-    )
-    assert SELLO_ITEM_REF not in code, (
-        f"{DERIVAR_NODE_NAME!r} regreso a {SELLO_ITEM_REF!r}"
-    )
-    assert "console.warn" in _active_js_code(node), (
-        f"{DERIVAR_NODE_NAME!r} perdio el WARN estructurado de C-46"
-    )
-    assert SELLO_AUSENTE_MARKER in code, (
-        f"{DERIVAR_NODE_NAME!r} perdio el marcador {SELLO_AUSENTE_MARKER!r}"
-    )
-    assert "requiere_revision_humana" in code and "true" in code, (
-        f"{DERIVAR_NODE_NAME!r} perdio requiere_revision_humana=true"
-    )
 
 
-def test_c47_caller_ausente_resuelve_null_sin_abortar():
-    """
-    TRIANGULATE (N8N-GUARD-002) MODIFICADO por C-52: sin numero de origen, el
-    body resuelve `caller` a `null` con un fallback tolerante y la guarda sigue
-    evaluando la reserva (POST al endpoint intacto).
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-    node = by_name[GUARD_NODE_NAME]
-    params = node.get("parameters", {})
-    caller = str(http_json_body(node).get("caller", ""))
-
-    assert "$json.caller_number" in caller, (
-        f"caller no resuelve el origen desde el item corriente (caller={caller!r})"
-    )
-    assert "|| null" in caller or "?? null" in caller, (
-        f"caller no tiene fallback tolerante: un origen ausente abortaria la guarda "
-        f"(caller={caller!r})"
-    )
-    assert params.get("method") == "POST", (
-        f"{GUARD_NODE_NAME!r} dejo de ser un POST"
-    )
-    assert "/api/v1/cost-guard/reserve" in str(params.get("url", "")), (
-        f"{GUARD_NODE_NAME!r} dejo de apuntar al endpoint de la guarda"
-    )
 
 
-def test_c47_rama_denegada_conserva_el_item_sellado():
-    """
-    TRIANGULATE (N8N-GUARD-001): la rama denegada de `Guard permite?` desemboca
-    en `Derivar a revision humana`, que fusiona el item sellado y conserva el
-    canal de telefonia (contenido preservado sin invocar al agente pago).
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-
-    assert DERIVAR_NODE_NAME in _output_successors(wf, GUARD_IF_NODE_NAME, 1), (
-        f"La rama denegada de {GUARD_IF_NODE_NAME!r} no desemboca en {DERIVAR_NODE_NAME!r}"
-    )
-    terminal_code = _js_code(by_name[DERIVAR_NODE_NAME])
-    assert "...sellado" in terminal_code, (
-        f"{DERIVAR_NODE_NAME!r} no fusiona el item sellado: la rama denegada perderia "
-        "el item sellado de telefonia"
-    )
-    assert "canal_raw: 'telefonia'" in terminal_code, (
-        f"{DERIVAR_NODE_NAME!r} no conserva el canal de telefonia en la rama denegada"
-    )
-
-
-# ---------------------------------------------------------------------------
-# Grupo 26 — C-52 (telefonia-transcripcion-async): el canal de telefonia deja
-# de depender del trigger de resumen de Twilio. Un webhook autenticado recibe
-# del backend el ingreso YA pseudonimizado; el sello de ingreso es passthrough
-# del valor sellado por el backend; no hay parsing de CloudEvent; el CallSid
-# viaja como `origen_message_id` para la idempotencia del alta.
-#
-# Referencias: specs/n8n-workflow (N8N-PHONE-003/004, N8N-GUARD-002, trigger
-# webhook), specs/data-pseudonymization, specs/e2e-timing-instrumentation.
-# ---------------------------------------------------------------------------
-
-TELEFONIA_HANDOFF_PATH_BASE = "telefonia-handoff"
 
 
 def test_c52_no_existe_twilio_trigger_de_resumen():
@@ -4146,7 +3373,7 @@ def test_c52_webhook_telefonia_existe_y_esta_autenticado():
     """
     RED (7.1b): existe un nodo `webhook` POST de telefonia, con ruta dedicada,
     autenticado con el secreto compartido del handoff, cuya salida fluye al
-    `AI Agent` y al normalizador.
+    normalizador compartido (c-72: ya no pasa por el AI Agent).
     """
     wf = load_workflow()
     by_name, _ = index_nodes(wf)
@@ -4180,9 +3407,6 @@ def test_c52_webhook_telefonia_existe_y_esta_autenticado():
         "El webhook autenticado de telefonia debe declarar su credencial"
     )
 
-    assert _connections_reachable(wf, TELEFONIA_TRIGGER_NAME, AI_AGENT_NODE_NAME), (
-        "La salida del webhook de telefonia debe fluir hacia el AI Agent"
-    )
     assert _connections_reachable(wf, TELEFONIA_TRIGGER_NAME, NORMALIZER_NODE_NAME), (
         "La salida del webhook de telefonia debe alcanzar el normalizador"
     )
@@ -4330,118 +3554,8 @@ def test_c52_f1_sello_tolera_body_ausente_sin_abortar():
     )
 
 
-def test_c52_guard_caller_desde_json():
-    """
-    RED (7.3b): el `Guard de costo` resuelve `caller` desde el item corriente
-    (`$json.caller_number`, campo del handoff) sin referencia cruzada al sello.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-
-    body = http_json_body(by_name[GUARD_NODE_NAME])
-    caller = str(body.get("caller", ""))
-
-    assert "$json.caller_number" in caller, (
-        f"El Guard de costo no resuelve caller desde $json.caller_number (caller={caller!r})"
-    )
-    assert SELLO_NODE_NAME not in json.dumps(body), (
-        f"El Guard de costo referencia {SELLO_NODE_NAME!r}: referencia cruzada fragil"
-    )
 
 
-def test_c52_ai_agent_consume_descripcion_pseudonimizada():
-    """
-    RED (7.3c): el AI Agent del canal de telefonia interpola la descripcion
-    pseudonimizada del handoff y NO un transcript crudo.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-
-    prompt = str(by_name[AI_AGENT_NODE_NAME].get("parameters", {}).get("text", ""))
-
-    assert "descripcion_pseudonimizada" in prompt, (
-        "C-52: el prompt del AI Agent debe interpolar la descripcion pseudonimizada "
-        "del handoff"
-    )
-    assert "transcript" not in prompt, (
-        "C-52: el prompt del AI Agent NO debe interpolar el transcript crudo"
-    )
-    assert "$json.body" not in prompt and "$json.text" not in prompt, (
-        "C-52: el prompt del AI Agent no debe leer campos crudos del payload"
-    )
-
-
-def test_c52_c46_no_regresa_en_telefonia():
-    """
-    TRIANGULATE (7.5): no regresion de C-46. El validador y el terminal siguen
-    recuperando el sello con `.first()` (no `.item`) y emitiendo el WARN de
-    sello ausente con revision forzada.
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-
-    for node_name in (CODE_NODE_TELEFONIA, DERIVAR_NODE_NAME):
-        raw = _js_code(by_name[node_name])
-        active = _active_js_code(by_name[node_name])
-        assert SELLO_FIRST_REF in raw, (
-            f"{node_name!r} perdio la recuperacion robusta con .first()"
-        )
-        assert SELLO_ITEM_REF not in raw, (
-            f"{node_name!r} regreso a la referencia fragil `.item`"
-        )
-        assert "console.warn" in active, (
-            f"{node_name!r} perdio el WARN estructurado de sello ausente"
-        )
-        assert SELLO_AUSENTE_MARKER in raw, (
-            f"{node_name!r} perdio el marcador {SELLO_AUSENTE_MARKER!r}"
-        )
-        assert "requiere_revision_humana" in raw and "true" in raw, (
-            f"{node_name!r} perdio requiere_revision_humana=true"
-        )
-
-
-def test_c52_c47_no_regresa_posicion_de_restauracion():
-    """
-    TRIANGULATE (7.5): no regresion de C-47. 'Restaurar item telefonia' sigue
-    intercalado entre el `Guard de costo` (salida main) y `Guard permite?`, y la
-    rama denegada sigue desembocando en el terminal.
-    """
-    wf = load_workflow()
-
-    assert RESTORE_NODE_NAME in _output_successors(wf, GUARD_NODE_NAME, 0), (
-        f"La salida main del {GUARD_NODE_NAME!r} no desemboca en {RESTORE_NODE_NAME!r}"
-    )
-    assert GUARD_IF_NODE_NAME in _output_successors(wf, RESTORE_NODE_NAME, 0), (
-        f"{RESTORE_NODE_NAME!r} no desemboca en {GUARD_IF_NODE_NAME!r}"
-    )
-    assert DERIVAR_NODE_NAME in _output_successors(wf, GUARD_IF_NODE_NAME, 1), (
-        f"La rama denegada de {GUARD_IF_NODE_NAME!r} no desemboca en {DERIVAR_NODE_NAME!r}"
-    )
-
-
-# ---------------------------------------------------------------------------
-# Grupo 27 — C-53 (notificacion-numero-incidente, partes NO-SMS)
-#
-# Contratos estructurales de la parte no-SMS del change:
-#   * N8N-EMAIL-002: el normalizador resuelve el remitente desde `from` string y
-#     desde el objeto `from.emailAddress.address`, con descarte observable del
-#     remitente invalido.
-#   * N8N-EMAIL-003: la confirmacion por correo tambien se dispara en la rama de
-#     revision humana del canal correo, tolerante a fallos.
-#   * N8N-WEBHOOK-004: el cierre web distingue una peticion con incidente (numero)
-#     de una sin alta (`sin_alta`, sin numero).
-#   * OQ1: los contratos consumen el numero normalizado `numero_incidente` (string),
-#     no el `id`/`$json.id` crudo.
-#   * N8N-DOC-001: la guia no afirma confirmacion telefonica por TwiML.
-# ---------------------------------------------------------------------------
-
-NUMERO_FIELD = "numero_incidente"
-CORREO_REVISION_GUARD_NODE_NAME = "Confirmar correo en revision?"
-WEB_INCIDENT_GUARD_NODE_NAME = "Web con incidente?"
-WEB_REVISION_RESPONDER_NODE_NAME = "Confirmacion web revision humana"
-
-
-# ── N8N-EMAIL-002: normalizacion del remitente ──────────────────────────────
 
 
 def test_c53_normalizer_remitente_soporta_string_y_objeto():
@@ -4756,11 +3870,11 @@ def test_c55_trigger_declares_imap_credentials():
     )
 
 
-def test_c55_no_outlook_artifacts_and_node_count_38():
+def test_c55_no_outlook_artifacts_and_node_count():
     """
     RED (2.1): no existe ningun nodo `microsoftOutlook*`, ninguna credencial
     `microsoftOutlookOAuth2Api` ni el nodo `Marcar correo como leido`; el conteo
-    total de nodos es 38.
+    total de nodos es 28 (c-72 retiro la rama de clasificacion de n8n).
     """
     wf = load_workflow()
     by_name, by_type = index_nodes(wf)
@@ -4779,8 +3893,8 @@ def test_c55_no_outlook_artifacts_and_node_count_38():
         assert "microsoftOutlookOAuth2Api" not in credentials, (
             f"El nodo {node['name']!r} declara credencial microsoftOutlookOAuth2Api"
         )
-    assert len(wf["nodes"]) == 38, (
-        f"Se esperaban 38 nodos, el JSON tiene {len(wf['nodes'])}"
+    assert len(wf["nodes"]) == 28, (
+        f"Se esperaban 28 nodos, el JSON tiene {len(wf['nodes'])}"
     )
 
 
@@ -5015,39 +4129,6 @@ def test_incidentes_jsonbody_es_expresion_json_stringify():
     )
 
 
-def test_guard_jsonbody_es_expresion_json_stringify_sin_firma():
-    """
-    TRIANGULATE: el `jsonBody` de 'Guard de costo' tambien es una unica
-    expresion JSON.stringify (caller nativo, sin `"=` ni stringificacion).
-    """
-    wf = load_workflow()
-    by_name, _ = index_nodes(wf)
-    body = str(by_name[GUARD_NODE_NAME].get("parameters", {}).get("jsonBody", ""))
-
-    assert JSONBODY_BUG_SIGNATURE not in body, (
-        f"El jsonBody de {GUARD_NODE_NAME!r} conserva la firma del bug "
-        f"{JSONBODY_BUG_SIGNATURE!r}"
-    )
-    assert body.startswith("={{") and "JSON.stringify" in body, (
-        f"El jsonBody de {GUARD_NODE_NAME!r} debe ser una expresion "
-        f"JSON.stringify, got: {body!r}"
-    )
-    assert "caller:" in body, (
-        f"El jsonBody de {GUARD_NODE_NAME!r} debe incluir la clave nativa 'caller:'"
-    )
-    assert "$json.caller_number" in body, (
-        f"El jsonBody de {GUARD_NODE_NAME!r} debe resolver el origen desde "
-        f"'$json.caller_number' (campo del handoff); 'caller' es propiedad bloqueada "
-        f"por el sandbox de expresiones de n8n"
-    )
-
-
-# ---------------------------------------------------------------------------
-# Grupo 30 — C-57 (auditoria en la rama de revision humana): la auditoria cuelga
-# del gate post-POST en paralelo con la notificacion y consume la respuesta del
-# POST; NO consume la salida SMTP (que no trae `id` numerico y provoca
-# `incidente_id: null` / `resultado: rechazado_datos_incompletos`).
-# ---------------------------------------------------------------------------
 
 
 def test_c57_audit_receives_post_response_on_review_branch():

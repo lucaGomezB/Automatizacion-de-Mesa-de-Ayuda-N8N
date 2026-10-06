@@ -30,7 +30,7 @@
 > y se elimina el nodo `Marcar correo como leido`.
 > C-57: auditoria-rama-revision — en la rama de revision humana la auditoria cuelga del gate
 > post-POST en paralelo con la notificacion y consume la respuesta del POST, no el resultado SMTP.
-> Estado: 38 nodos (35 operativos + 3 sticky notes); suite estructural `test_n8n_workflow.py` en verde.
+> Estado: 28 nodos (25 operativos + 3 sticky notes); suite estructural `test_n8n_workflow.py` en verde.
 
 ## Descripción general
 
@@ -621,7 +621,7 @@ cd App/Backend
 python -m pytest tests/test_n8n_workflow.py -v
 ```
 
-Verifica 194 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40, C-46, C-47, C-52, C-53, C-55, C-57, C-58 y C-69).
+Verifica 155 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40, C-52, C-53, C-55, C-57 y C-69).
 
 ### Prueba manual del canal web (C-05)
 

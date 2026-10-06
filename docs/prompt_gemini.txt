@@ -24,6 +24,18 @@ El incidente debe clasificarse en UNO de estos cinco sectores:
    Abarca: infraestructura, redes, servidores y servicios de plataforma
    Ejemplo: "Se cayó el servidor de correo. Error SMTP timeout en la red."
 
+REGLAS DE FRONTERA
+Usa estas reglas para desambiguar los casos de borde entre sectores adyacentes.
+Se aplican a los tres canales (correo, web y telefonía) y usan exclusivamente
+los cinco strings canónicos sin tildes.
+
+- Acciones sobre aplicaciones o sistemas operativos (acceder, iniciar sesion,
+  abrir una aplicación, no puedo entrar a un sistema) -> "Soporte Tecnico Software".
+- Dispositivos físicos y su digitalización (escaner, impresora, periférico,
+  error de digitalizacion) -> "Soporte Tecnico Hardware".
+- Infraestructura y servicios de plataforma (servidor, red, SMTP, VM o máquina
+  virtual) -> "Sistemas".
+
 FORMATO DE RESPUESTA
 Devuelve SIEMPRE un JSON válido con exactamente dos campos:
 {
