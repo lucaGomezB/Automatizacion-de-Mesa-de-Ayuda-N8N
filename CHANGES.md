@@ -111,7 +111,7 @@ C-56 notificaciones-por-rol (C-54, C-55, C-53, C-38)    [ACTIVO — 0/27]
 C-57 auditoria-rama-revision (ninguna nueva; C-55)       [ARCHIVADO 2026-09-29 — 15/15]
 C-58 resiliencia-gemini (specs C-33/C-36/C-45)           [ARCHIVADO 2026-09-29 — 33/33]
 C-59 softphone-voip-pruebas (C-52, C-45)                 [ARCHIVADO 2026-10-01 — 23/23]
-C-60 directorio-endurecimiento (C-54, C-56)              [ACTIVO — 0/33]
+C-60 directorio-endurecimiento (C-54, C-56)              [ACTIVO — 33/33 aplicado; aprobacion humana HIGH (7.4) pendiente]
 
 --- FASE 20: Notificacion SMS diferida (2026-10-01) ---
 
@@ -1244,7 +1244,7 @@ C-72 unificar-clasificacion-telefonica (C-71)             [ACTIVO — 37/37 apli
 
 ## FASE 19 — Endurecimiento, auditoria y herramientas (2026-09-28 / 2026-09-30)
 
-> Changes post-roadmap que endurecen el directorio y las notificaciones, corrigen la auditoria de la rama de revision, agregan resiliencia a Gemini y suman una herramienta de pruebas de telefonia. C-57 y C-58 estan ARCHIVADOS (2026-09-29) y C-59 quedo ARCHIVADO (2026-10-01); C-56 y C-60 siguen ACTIVOS (planning completo, sin aplicar).
+> Changes post-roadmap que endurecen el directorio y las notificaciones, corrigen la auditoria de la rama de revision, agregan resiliencia a Gemini y suman una herramienta de pruebas de telefonia. C-57 y C-58 estan ARCHIVADOS (2026-09-29) y C-59 quedo ARCHIVADO (2026-10-01); C-56 sigue ACTIVO (planning completo, sin aplicar) y C-60 quedo APLICADO (33/33, 2026-10-06; aprobacion humana HIGH 7.4 pendiente).
 
 ### [C-56] `notificaciones-por-rol` — ACTIVO (planificado, 0/27)
 
@@ -1317,16 +1317,16 @@ C-72 unificar-clasificacion-telefonica (C-71)             [ACTIVO — 37/37 apli
 
 ---
 
-### [C-60] `directorio-endurecimiento` — ACTIVO (planificado, 0/33)
+### [C-60] `directorio-endurecimiento` — ACTIVO (33/33 aplicado; aprobacion humana HIGH 7.4 pendiente)
 
-- **Estado**: `[ ]` propuesto (2026-09-30) — planning completo (proposal, specs, design, tasks), `openspec validate --strict` pasa. Sin aplicar.
+- **Estado**: `[x]` aplicado (2026-10-06) — 33/33 tareas; OQ1..OQ4 RESUELTAS por el autor (todas A); migracion renumerada a `012` (down_revision `011`). Implementado: rol `mesa_de_ayuda` sin sector (modelo + migracion + `_validar_sector_por_rol`), `AlcanceIncidentes` con modos GLOBAL/SECTOR/REVISION/VACIO y `permite_incidente`, cola `revision-pendiente` acotada por rol/sector, purga manual con ids auditados (`POST /directorio/purga`), guardia de entorno solo en el seed, evidencia de cierre 7.5. Suites: 988 offline + 39 integracion; ruff limpio; OpenAPI sincronizado; `openspec validate --strict` OK. **PENDIENTE**: aprobacion humana HIGH (tarea 7.4) — activar datos reales sigue bloqueado; implementacion con datos sinteticos, sin PII real.
 - **Problema**: c-54 dejo abierto el endurecimiento del directorio, la visibilidad de incidentes y la retencion: la tarea 7.5 (revision humana HIGH) sigue pendiente y bloquea activar datos reales; la purga por retencion registra solo un conteo (sin los ids de lo borrado); la cola `revision-pendiente` es global multi-sector; no existe un rol que cubra la cola de revision; y el seed dev-only no tiene guardia de entorno.
 - **Scope**:
   - Purga MANUAL disparada por un operador (`administrador_directorio`, via API y CLI), sin cron/scheduler; el registro incluye los ids de las filas eliminadas (sin datos personales).
   - Acotar `revision-pendiente` por sector/rol; un no administrador solo ve la cola de su sector.
-  - Modelo de visibilidad por rol: `administrador_directorio` (ADMIN, ve todo), `mesa_de_ayuda` (rol NUEVO: incidentes sin sector o en revision) y `usuario_final`/`operador` (solo su sector); migracion Alembic append-only `011` que suma `mesa_de_ayuda` al CHECK de `rol`.
+  - Modelo de visibilidad por rol: `administrador_directorio` (ADMIN, ve todo), `mesa_de_ayuda` (rol NUEVO: incidentes sin sector o en revision) y `usuario_final`/`operador` (solo su sector); migracion Alembic append-only `012` (`down_revision = "011"`) que suma `mesa_de_ayuda` al CHECK de `rol`.
   - Guardia de entorno SOLO en el seed (rechaza correr fuera de development/test); cierra las confirmaciones pendientes de c-54 7.5 (retencion/ARCO, visibilidad por rol, ausencia de PII real, sin clave de indice ciego).
-- **Dependencias**: `C-54` (directorio, roles y visibilidad base) — prerequisito; `C-56` (consume roles/sector) — compatible, no bloqueante
+- **Dependencias**: `C-54` (directorio, roles y visibilidad base) — prerequisito, ARCHIVADO 2026-10-01; `C-56` (consume roles/sector) — compatible, no bloqueante
 - **Governance**: ALTO
 - **Leer antes**:
   - `openspec/changes/c-60-directorio-endurecimiento/{proposal,design,tasks}.md`
@@ -1563,7 +1563,7 @@ C-72 unificar-clasificacion-telefonica (C-71)             [ACTIVO — 37/37 apli
 | Backend: util n8n_webhook | EN USO | `notify_n8n()` fire-and-forget desde el servicio; apunta al webhook N8N dedicado (C-33) |
 | Backend: tests | COMPLETO | Suite offline SQLite (550 passed) + subconjunto de integracion PostgreSQL sobre base descartable (C-19/C-32/C-45) |
 | Backend: pseudonimizacion | COMPLETO | C-03; cifrado at-rest con Fernet |
-| Backend: migraciones | COMPLETO | Alembic; migraciones 001-010 (la 006 agrega timing e2e, C-39; la 007 agrega `costo_guarda_contador`, C-45; la 008 agrega `telefonia_ingreso`, C-52; la 009 agrega `directorio_empleado` y la 010 `directorio_fecha_baja`, C-54). La 011 (rol `mesa_de_ayuda`) la introduce c-60, aun sin aplicar |
+| Backend: migraciones | COMPLETO | Alembic; migraciones 001-011 (la 006 agrega timing e2e, C-39; la 007 agrega `costo_guarda_contador`, C-45; la 008 agrega `telefonia_ingreso`, C-52; la 009 agrega `directorio_empleado` y la 010 `directorio_fecha_baja`, C-54; la 011 agrega `corpus_case_id`, C-70). La 012 (rol `mesa_de_ayuda`) la introduce c-60 (aplicado 2026-10-06) |
 | Backend: auth | COMPLETO | JWT Bearer (C-15) |
 | Costo runtime: guarda | COMPLETO | C-45 bolsa global USD 10/semana, rate global y por origen, PostgreSQL 007, webhook pre-llamada de Twilio y fail-closed (archivado); C-58 la dimensiona al peor caso de intentos por clasificacion |
 | N8N workflow JSON | COMPLETO | Canales cableados (C-04/C-05), compuerta de confianza de dos capas (C-38), wiring corregido (C-40), recuperacion robusta del sello de ingreso de telefonia (C-46), item de telefonia preservado a traves de la guarda de costo (C-47), auditoria de la rama de revision corregida (C-57) y modelo explicito + reintento acotado del agente (C-58) |
@@ -1609,7 +1609,7 @@ Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (
 
 Hay 6 changes ACTIVOS (post-roadmap, FASE 19, FASE 20, FASE 22, FASE 23 y FASE 25):
 - **`c-56-notificaciones-por-rol`** — 0/27 (planning completo, sin aplicar; FASE 19) — Governance ALTO.
-- **`c-60-directorio-endurecimiento`** — 0/33 (planning completo, sin aplicar; FASE 19) — Governance ALTO.
+- **`c-60-directorio-endurecimiento`** — 33/33 (aplicado 2026-10-06: rol `mesa_de_ayuda` sin sector, visibilidad por modos, cola `revision-pendiente` acotada, purga manual con ids, guardia del seed; migracion 012; **aprobacion humana HIGH (7.4) pendiente**; FASE 19) — Governance ALTO.
 - **`c-67-notificacion-sms-llamante`** — 0/24 (diferido; bloqueado por OQ3 y C-66; FASE 20) — Governance ALTO.
 - **`c-68-corpus-ingesta-n8n`** — 58/63 (apply avanzado; corpus web/correo medido; FASE 22) — Governance MEDIO.
 - **`c-70-softphone-corpus-telefonia`** — 70/72 (apply completo; smoke 8.1 hecho con R002; 8.2-8.3 pendientes; FASE 23) — Governance ALTO.
