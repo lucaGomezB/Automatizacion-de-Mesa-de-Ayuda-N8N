@@ -22,7 +22,7 @@
 
 ### New Capabilities
 
-- None — las capacidades ya fueron introducidas por c-54 (aun sin archivar); este change las endurece.
+- None — las capacidades ya fueron introducidas por c-54 (ARCHIVADO 2026-10-01) y ya existen como specs principales en `openspec/specs/`; este change las endurece con deltas MODIFIED.
 
 ### Modified Capabilities
 
@@ -34,7 +34,7 @@
 | Area | Impacto | Descripcion |
 |------|---------|-------------|
 | `App/Backend/app/models/empleado.py` | Modified | `RolEmpleado` + CheckConstraint suman `mesa_de_ayuda` |
-| `App/Backend/alembic/versions/011_*.py` | New | Migracion append-only: actualiza el CHECK de `rol` |
+| `App/Backend/alembic/versions/012_*.py` | New | Migracion append-only (`down_revision = "011"`): actualiza el CHECK de `rol` |
 | `App/Backend/app/services/incident_visibility.py` | Modified | `AlcanceIncidentes` suma el modo revision (`permite_incidente`) |
 | `App/Backend/app/routes/clasificaciones.py` (+ servicio/repo) | Modified | `revision-pendiente` acotado por sector/rol |
 | `App/Backend/app/services/directorio_service.py` | Modified | `purgar_vencidos` devuelve y audita ids |
@@ -54,9 +54,9 @@
 |------|------------|------------|
 | Fuga de incidentes entre sectores por el nuevo rol | Med | Alcance explicito por modo, tests de aislamiento, revision humana HIGH |
 | Purga destructiva irreversible | Med | Manual, idempotente, con ids auditados y confirmacion del operador; nunca el camino por defecto |
-| Rol nuevo rompe la restriccion CHECK existente | Med | Migracion append-only 011 sobre el constraint |
+| Rol nuevo rompe la restriccion CHECK existente | Med | Migracion append-only 012 (`down_revision = "011"`, tras c-70) sobre el constraint |
 | Guardia de entorno mal ubicada frena runtime | Low | Guardia SOLO en el seed; test que verifica que el runtime normal no se gatea |
-| Cruce con c-54/c-56 sin archivar | Med | Deltas sobre el estado vigente; orden de archivado documentado |
+| Cruce con specs principales archivadas (c-54) y c-56 activo | Med | Deltas MODIFIED sobre las specs principales vigentes; c-56 compatible, no bloqueante |
 
 ## Rollback Plan
 
@@ -64,7 +64,7 @@ Revertir el commit elimina el rol `mesa_de_ayuda`, el alcance por modo, el acota
 
 ## Dependencies
 
-- `c-54-directorio-usuarios` (directorio, roles, visibilidad base; sin archivar) — prerequisito.
+- `c-54-directorio-usuarios` (directorio, roles, visibilidad base; ARCHIVADO 2026-10-01) — prerequisito.
 - `c-56-notificaciones-por-rol` (consume roles/sector; sin archivar) — compatible, no bloqueante.
 
 ## Success Criteria
