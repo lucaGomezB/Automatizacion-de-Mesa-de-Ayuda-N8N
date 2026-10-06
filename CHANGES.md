@@ -137,11 +137,11 @@ C-70 softphone-corpus-telefonia (C-59, C-52, C-68)        [ACTIVO — 70/72; ALT
 
 --- FASE 24: Endurecimiento del clasificador determinista (2026-10-05) ---
 
-C-71 hardening-clasificador-determinista (ninguna nueva)  [ACTIVO — 43/43; MEDIO]
+C-71 hardening-clasificador-determinista (ninguna nueva)  [ARCHIVADO 2026-10-06 — 43/43; MEDIO; specs sincronizadas]
 
 --- FASE 25: Unificacion de la clasificacion telefonica a la cascada (2026-10-05) ---
 
-C-72 unificar-clasificacion-telefonica (C-71)             [ACTIVO — 0/37; ALTO]
+C-72 unificar-clasificacion-telefonica (C-71)             [ACTIVO — 37/37 aplicado; OQ1..OQ5 resueltas (A); delta n8n reconciliado (14 REMOVED + 5 MODIFIED + 4 ADDED); listo para archivar; ALTO]
 ```
 
 ### Paralelismo por fase
@@ -479,11 +479,11 @@ C-72 unificar-clasificacion-telefonica (C-71)             [ACTIVO — 0/37; ALTO
 | C-71 | hardening-clasificador-determinista | 24 | ninguna nueva | MEDIO | — |
 | C-72 | unificar-clasificacion-telefonica | 25 | C-71 | ALTO | — |
 
-**Total**: 64 entradas creadas documentadas (63 numeradas + 1 de mantenimiento sin numero) — 57 archivadas (56 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59, C-61 y C-69; mas `improve-dockerfiles`) y 7 ACTIVOS (C-56, C-60, C-67, C-68, C-70, C-71, C-72). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
+**Total**: 64 entradas creadas documentadas (63 numeradas + 1 de mantenimiento sin numero) — 58 archivadas (57 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59, C-61, C-69 y C-71; mas `improve-dockerfiles`) y 6 ACTIVOS (C-56, C-60, C-67, C-68, C-70, C-72). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
 **Planificadas (NO creadas)**: 5 entradas del plan de cumplimiento (FASE 21) — C-62 `hardening-infra-red` (ALTO), C-63 `identidad-accesos-claves` (CRITICO), C-64 `vulnerabilidades-supply-chain` (MEDIO), C-65 `backup-continuidad` (ALTO) y C-66 `privacidad-transferencias` (ALTO). No cuentan como creadas, archivadas ni activas. C-61 `compliance-gobernanza` (MEDIO) ya fue creado y quedo ARCHIVADO (2026-10-01, 26/26), con su spec `security-governance-docs` creada. Ver `docs/cumplimiento/plan-cambios-cumplimiento.md`.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
-**Fases**: 1-25 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67, la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, con C-61 archivado (2026-10-01) y C-62..C-66 planificados, la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 ya archivado (2026-10-05) y C-68 en aplicacion, la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 aplicado, la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 aplicado, y la FASE 25 agrupa la unificacion de la clasificacion telefonica con C-72 propuesto).
+**Fases**: 1-25 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67, la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, con C-61 archivado (2026-10-01) y C-62..C-66 planificados, la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 ya archivado (2026-10-05) y C-68 en aplicacion, la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 aplicado, la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 archivado (2026-10-06), y la FASE 25 agrupa la unificacion de la clasificacion telefonica con C-72 aplicado (37/37)).
 
 ---
 
@@ -1508,9 +1508,9 @@ C-72 unificar-clasificacion-telefonica (C-71)             [ACTIVO — 0/37; ALTO
 
 > Change post-roadmap que corrige la debilidad MEDIDA del clasificador determinista. La cascada `REGEX -> Gemini -> humano` ya existe (Anexo H), pero la medicion offline sobre el corpus (sin llamar a Gemini) mostro: escalado a Gemini del **64%** (correo 66.7%, web 73.6%, telefono 55.6%); umbral 0.90 **degenerado** (el 100% de los cortocircuitos tiene confianza exactamente 1.0, o sea "un solo sector matcheo", no confiabilidad); el cortocircuito acierta la etiqueta primaria solo **~51%** (pertenencia multietiqueta 76%); sin matches, el desempate predice "Seguridad Informatica" por defecto (126 predicciones vs 31 reales); vocabulario (89 patrones) insuficiente para Hardware/Software. El F1 de Gemini/hibrido queda **pendiente** (sin cache `evaluation/predicciones.json`; Gemini con 429).
 
-### [C-71] `hardening-clasificador-determinista` — ACTIVO (43/43)
+### [C-71] `hardening-clasificador-determinista` — ARCHIVADO (2026-10-06, 43/43)
 
-- **Estado**: `[x]` aplicado (2026-10-05) — 43/43 tareas. OQ1..OQ5 resueltas (OQ1 piso de precision 0.90; OQ2 escalar SIEMPRE a Gemini sin fabricar sector; OQ3 umbral fijo re-derivado offline; OQ4 derivado a C-72; OQ5 baseline capturado). Vocabulario ampliado, confianza (min_matches + margen) y calibracion offline; `HYBRID_CACHE_VERSION=hybrid-v2`. Determinista estricto 0.485->0.670, macro-F1 0.4196->0.4801; no-match 119->57. Suites: 955 offline + 37 integracion + 79 evaluation; ruff limpio. **Desviacion**: con el piso 0.90 el umbral calibrado es 1.0 y cortocircuita 1/200 (el hibrido escala ~99.5% a Gemini) -> desactiva el atajo barato; decision del autor pendiente (`docs/deterministic_calibration.md`). Governance MEDIO.
+- **Estado**: `[x]` aplicado (2026-10-05) y ARCHIVADO (2026-10-06; `openspec/changes/archive/2026-10-06-c-71-hardening-clasificador-determinista`) — 43/43 tareas; specs sincronizadas (classification-resilience +2/+1, sector-assignment +3, sector-taxonomy +1/+1; sin removals). OQ1..OQ5 resueltas (OQ1 piso de precision 0.90; OQ2 escalar SIEMPRE a Gemini sin fabricar sector; OQ3 umbral fijo re-derivado offline; OQ4 derivado a C-72; OQ5 baseline capturado). Vocabulario ampliado, confianza (min_matches + margen) y calibracion offline; `HYBRID_CACHE_VERSION=hybrid-v2`. Determinista estricto 0.485->0.670, macro-F1 0.4196->0.4801; no-match 119->57. Suites: 955 offline + 37 integracion + 79 evaluation; ruff limpio. **Desviacion**: con el piso 0.90 el umbral calibrado es 1.0 y cortocircuita 1/200 (el hibrido escala ~99.5% a Gemini) -> desactiva el atajo barato; decision del autor pendiente (`docs/deterministic_calibration.md`). Governance MEDIO.
 - **Problema**: el clasificador determinista no esta a la altura de su rol en la cascada: no es ni confiable como atajo (cortocircuito ~51% estricto) ni amplio para evitar escalar (64% va a Gemini). El umbral de confianza no discrimina y el desempate sin señal inventa un sector.
 - **Scope**:
   - No-match/empate: senal nula devuelve "sin prediccion" explicito (no un sector arbitrario); empate marca ambiguedad; ambos escalan.
@@ -1521,7 +1521,7 @@ C-72 unificar-clasificacion-telefonica (C-71)             [ACTIVO — 0/37; ALTO
 - **Governance**: MEDIO
 - **OQs abiertas**: OQ1 piso de precision del cortocircuito vs cobertura; OQ2 no-match (Gemini vs humano); OQ3 umbral fijo vs derivado; OQ4 unificar telefono (fuera de alcance); OQ5 capturar baseline F1 Gemini/hibrido al restaurar la cuota.
 - **Leer antes**:
-  - `openspec/changes/c-71-hardening-clasificador-determinista/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-10-06-c-71-hardening-clasificador-determinista/{proposal,design,tasks}.md`
   - `App/Backend/app/classifiers/{deterministic.py,keywords.py,hybrid.py}`
   - `docs/medicion-latencia-e2e.md`, `evaluation/README.md`
 
@@ -1531,9 +1531,9 @@ C-72 unificar-clasificacion-telefonica (C-71)             [ACTIVO — 0/37; ALTO
 
 > Change que unifica la clasificacion del canal telefonico a la MISMA cascada del backend que ya usan correo/web (deterministico -> Gemini -> humano), en lugar del `AI Agent` de n8n que hoy clasifica SIEMPRE con Gemini (via `clasificacion` precalculada en el handoff). Beneficio: un solo camino y un solo prompt (`docs/prompt_gemini.txt`), telefono cortocircuita barato y las reglas de frontera (p. ej. R002 "acceder al sistema" y R038 "digitalizar") se arreglan una vez para todos los canales. Depende de C-71.
 
-### [C-72] `unificar-clasificacion-telefonica` — ACTIVO (0/37)
+### [C-72] `unificar-clasificacion-telefonica` — ACTIVO (37/37 aplicado; delta reconciliado)
 
-- **Estado**: `[ ]` propuesto (2026-10-05) — 0/37 tareas. Planning completo (proposal + design + specs + tasks); `openspec validate --strict` pasa. OQ1..OQ5 abiertas para el autor. Sin aplicar. Governance ALTO.
+- **Estado**: `[x]` aplicado (2026-10-06) — 37/37 tareas; `openspec validate --strict` pasa. OQ1..OQ5 RESUELTAS por el autor (todas opcion A): OQ1 retirar el `AI Agent` de telefonia; OQ2 confirmar el traslado de costo a `backend_gemini`; OQ3 retirar el bucle de refinamiento con camino terminal con revision humana; OQ4 sin backfill (fuera de alcance); OQ5 adoptar las reglas minimas de frontera del design. Implementado: (S1) el backend resuelve telefonia por la cascada `HybridClassifier` ignorando la `clasificacion` precalculada y preservando el borde de pseudonimizacion (`constants.py` `CANAL_TELEFONIA`/`es_canal_telefonia()`, `incidente_service._resolve_classification`); (S2) `n8n/workflow.json` de 38 a 28 nodos: POST sin `clasificacion`, `AI Agent` + Gemini chat model + memoria + guarda `n8n_gemini` retirados, telefono `Sellar -> Normalizar`; (S3) `docs/prompt_gemini.txt` con las reglas de frontera compartidas; (S4) costo: telefonia no reserva `n8n_gemini`, la escalacion reserva `backend_gemini`; (S5) medicion offline + nota; (S6) Anexo H, narrativa de tesis y decision de backfill documentadas. Suites: 943 offline + 1 xfailed, ruff limpio; `openspec validate --strict` OK. **Delta reconciliado (2026-10-06)**: el delta `n8n-workflow` quedo con 14 `REMOVED`, 5 `MODIFIED` y 4 `ADDED` (sin solapamientos). `REMOVED`: los requisitos de nodos retirados (`N8N-INTAKE-001`, `Acoplamiento del AI Agent...`, `N8N-AGENT-001/002/003`, `N8N-MEMORY-001`, `N8N-TIMING-003`, `N8N-PHONE-001`, `N8N-VALID-001`, `N8N-GUARD-001/002`) mas `N8N-REFINE-001` (el bucle de refinamiento y el agente se retiran por completo, OQ1=A/OQ3=A). `MODIFIED`: `Normalizacion de canales`, `Trigger Webhook Twilio`, `Entrada valida`/ruteo, `Credenciales declaradas` y los cuerpos de timing/phone. `ADDED`: versiones renombradas de `N8N-TIMING-001` y `N8N-PHONE-003` (sufijo del heading ajustado para evitar colision ADDED/REMOVED) con titulos de escenario sin "agente" (`Telefonia captura antes de la cascada del backend`, `La cascada del backend consume la descripcion pseudonimizada`). Tras archivar, el spec principal no conservara ninguna mencion al `AI Agent` en requisitos vigentes; solo quedaran en los `Reason`/`Migration` de los REMOVED. `runtime-cost-guard` sin REMOVED (su unico requisito afectado ya esta en MODIFIED). 5.2 (F1 hibrido) PENDIENTE por cuota Gemini y corpus incompleto. Governance ALTO.
 - **Problema**: dos clasificadores y dos prompts divergentas; telefono paga Gemini siempre (sin atajo determinista) y muestra errores de frontera (medido: 25 casos, 92% pertenencia / 56% estricto).
 - **Scope**:
   - El handoff de telefono DEJA de mandar `clasificacion` precalculada; el backend clasifica con `HybridClassifier` como correo/web.
@@ -1605,18 +1605,17 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 
 ## Primer change recomendado
 
-Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01), C-61 (2026-10-01, 26/26) y C-69 (2026-10-05, 30/30).
+Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01), C-61 (2026-10-01, 26/26), C-69 (2026-10-05, 30/30) y C-71 (2026-10-06, 43/43).
 
-Hay 7 changes ACTIVOS (post-roadmap, FASE 19, FASE 20, FASE 22, FASE 23, FASE 24 y FASE 25):
+Hay 6 changes ACTIVOS (post-roadmap, FASE 19, FASE 20, FASE 22, FASE 23 y FASE 25):
 - **`c-56-notificaciones-por-rol`** — 0/27 (planning completo, sin aplicar; FASE 19) — Governance ALTO.
 - **`c-60-directorio-endurecimiento`** — 0/33 (planning completo, sin aplicar; FASE 19) — Governance ALTO.
 - **`c-67-notificacion-sms-llamante`** — 0/24 (diferido; bloqueado por OQ3 y C-66; FASE 20) — Governance ALTO.
 - **`c-68-corpus-ingesta-n8n`** — 58/63 (apply avanzado; corpus web/correo medido; FASE 22) — Governance MEDIO.
 - **`c-70-softphone-corpus-telefonia`** — 70/72 (apply completo; smoke 8.1 hecho con R002; 8.2-8.3 pendientes; FASE 23) — Governance ALTO.
-- **`c-71-hardening-clasificador-determinista`** — 43/43 (aplicado; calibracion pendiente de decision del autor; FASE 24) — Governance MEDIO.
-- **`c-72-unificar-clasificacion-telefonica`** — 0/37 (planning completo; OQ1..OQ5 abiertas; FASE 25) — Governance ALTO.
+- **`c-72-unificar-clasificacion-telefonica`** — 37/37 (aplicado: un solo clasificador, workflow 38->28 nodos, costo trasladado; OQ1..OQ5 resueltas A; delta n8n reconciliado: 14 REMOVED + 5 MODIFIED + 4 ADDED; listo para archivar; FASE 25) — Governance ALTO.
 
-C-01..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59, C-61 y C-69 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
+C-01..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59, C-61, C-69 y C-71 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
 
 **Detalle de `c-52-telefonia-transcripcion-async`** (Gobernanza CRITICA; ARCHIVADO 2026-09-30):
 

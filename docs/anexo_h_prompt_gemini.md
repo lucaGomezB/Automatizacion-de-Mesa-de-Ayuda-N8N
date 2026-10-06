@@ -37,6 +37,16 @@ Esta instrucción maneja el caso ambiguo de incidentes borderline que podrían c
 ### (5) Validación sintáctica
 **"Valida que tu respuesta JSON sea sintácticamente correcta antes de devolverla. Si no puedes clasificar con confianza >0.5, devuelve confianza menor."**
 
+### (6) Reglas de desambiguación de frontera entre sectores
+
+El prompt incorpora reglas explícitas para resolver los casos limítrofes entre sectores adyacentes de forma consistente en los tres canales. La redacción adoptada es la mínima del diseño de c-72 (decisión OQ5 = A):
+
+- Las acciones sobre aplicaciones o sistemas operativos (**acceder**, **iniciar sesión**, **abrir una aplicación**) se asignan a `Soporte Tecnico Software`.
+- Los dispositivos físicos y su digitalización (**escaner**, **impresora**, **periférico**, **error de digitalización**) se asignan a `Soporte Tecnico Hardware`.
+- La infraestructura y los servicios de plataforma (**servidor**, **red**, **SMTP**, **VM**) se asignan a `Sistemas`.
+
+Estas reglas usan exclusivamente los cinco strings canónicos sin tildes y no introducen sectores fuera del conjunto canónico. Corrigen casos de frontera medidos sobre el corpus, como R002 ("acceder al sistema" -> `Soporte Tecnico Software`, no `Sistemas`) y R038 ("error de digitalización" -> `Soporte Tecnico Hardware`, no `Soporte Tecnico Software`).
+
 ---
 
 ## H.2. Parámetros de configuración de Gemini 2.5 Flash
@@ -165,6 +175,18 @@ Si las métricas se degradan con cambios en el modelo Gemini, se recomienda:
 
 ---
 
+## H.6. Camino único de clasificación y traslado de la superficie de costo (c-72)
+
+A partir del change c-72, el sistema mantiene **un único camino de clasificación** para los tres canales de entrada (correo electrónico, formulario web y telefonía): la cascada híbrida del backend (filtro determinista -> Gemini -> revisión humana) descrita en H.2 y en el Capítulo 5. El canal telefónico dejó de clasificar mediante un agente LLM propio en N8N (su `AI Agent`): su clasificación es propiedad del backend y se resuelve sobre la descripción pseudonimizada, del mismo modo que los canales escritos (decisión OQ1 = A). En consecuencia:
+
+- Existe un solo prompt de clasificación del sistema, el documentado en este anexo (`docs/prompt_gemini.txt`); no hay un prompt divergente en N8N.
+- Las reglas de frontera de H.1, componente (6), se definen y corrigen una sola vez para todos los canales.
+- Traslado del puesto de costo (decisión OQ2 = A): la clasificación telefónica ya NO reserva la superficie `n8n_gemini`; cuando la cascada del backend escala a la etapa semántica, la reserva corresponde a `backend_gemini`. El atajo determinista, cuando aplica, no invoca al modelo externo y no consume cuota de Gemini.
+
+El alcance de c-72 es la **unificación del camino de clasificación**, no la corrección de datos ya persistidos. El backfill de incidentes telefónicos históricos creados con una clasificación precalculada queda explícitamente **fuera de alcance** (decisión OQ4 = A); los números de la evaluación determinista-primero son provisionales hasta que el corpus esté completo. Ver `docs/c-72-unificacion-clasificacion-telefonica.md`.
+
+---
+
 **Fecha de creación**: Marzo 2026  
-**Última actualización**: Septiembre 2026 (C-27)  
-**Estado**: Versión 1.1 del prompt — cinco sectores canónicos sin tildes, utilizada en evaluación de tesis
+**Última actualización**: Octubre 2026 (C-72)  
+**Estado**: Versión 1.1 del prompt — cinco sectores canónicos sin tildes, prompt único para los tres canales, utilizada en evaluación de tesis
