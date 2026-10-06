@@ -10,9 +10,9 @@ Decisiones (design.md D1-D6b):
     - D1: entidad propia; `user_id` es un vinculo opcional a `users` (FK nullable,
       ON DELETE SET NULL) para saber que cuenta corresponde a que empleado, sin
       fusionar el dominio de autenticacion con el de contacto.
-    - D2/D3: rol minimo de tres valores; `usuario_final`/`operador` requieren
-      sector; `administrador_directorio` no tiene sector. El sector referencia el
-      catalogo canonico `sector`.
+    - D2/D3: rol minimo de cuatro valores; `usuario_final`/`operador` requieren
+      sector; `administrador_directorio` y `mesa_de_ayuda` no tienen sector. El
+      sector referencia el catalogo canonico `sector`.
     - D4: email y telefono se almacenan en TEXTO PLANO (varchar), SIN cifrado de
       aplicacion ni indice ciego.
     - D6b: se almacenan EXACTAMENTE los campos definidos, nada mas.
@@ -41,11 +41,14 @@ class RolEmpleado(str, PyEnum):
         usuario_final:            reportante; requiere sector.
         operador:                 atiende y puede ser destino de enrutamiento; requiere sector.
         administrador_directorio: gestiona el directorio; sin sector y ve todos los incidentes.
+        mesa_de_ayuda:            revisor transversal de la cola de revision; sin sector,
+                                  ve incidentes sin sector o que requieren revision humana.
     """
 
     usuario_final = "usuario_final"
     operador = "operador"
     administrador_directorio = "administrador_directorio"
+    mesa_de_ayuda = "mesa_de_ayuda"
 
 
 class Empleado(Base, TimestampMixin):
@@ -105,7 +108,7 @@ class Empleado(Base, TimestampMixin):
 
     __table_args__ = (
         CheckConstraint(
-            "rol IN ('usuario_final', 'operador', 'administrador_directorio')",
+            "rol IN ('usuario_final', 'operador', 'administrador_directorio', 'mesa_de_ayuda')",
             name="ck_directorio_empleado_rol",
         ),
     )

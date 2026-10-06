@@ -25,6 +25,7 @@ from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config.settings import get_settings
 from app.core.logging import get_logger
 from app.models.empleado import RolEmpleado
 from app.repositories.user_repository import UserRepository
@@ -32,6 +33,43 @@ from app.services.auth_service import get_password_hash
 from app.services.directorio_service import DirectorioService
 
 logger = get_logger(__name__)
+
+# Entornos en los que el seed dev-only puede correr (OQ4). El default de
+# `settings.environment` es "production", por lo que fuera de este conjunto el
+# seed MUST abortar sin tocar la base.
+ENTORNOS_PERMITIDOS_SEED: frozenset[str] = frozenset({"development", "local", "test"})
+
+
+class SeedEnvironmentError(RuntimeError):
+    """El seed dev-only del directorio no puede ejecutarse fuera de dev/prueba."""
+
+
+def verificar_entorno_seed(environment: str | None = None) -> str:
+    """
+    Rechaza la ejecucion del seed fuera de los entornos de desarrollo/prueba.
+
+    Es un guard PURO (salvo la lectura del setting por defecto) que NO abre
+    transaccion ni toca la base: se ejecuta ANTES de cualquier acceso a datos.
+
+    Args:
+        environment: entorno explicito (inyectable para tests). Si es None se
+            lee `settings.environment` (default "production").
+
+    Returns:
+        El entorno efectivo si es valido.
+
+    Raises:
+        SeedEnvironmentError: si el entorno no pertenece al conjunto permitido.
+    """
+    entorno = environment if environment is not None else get_settings().environment
+    if entorno not in ENTORNOS_PERMITIDOS_SEED:
+        raise SeedEnvironmentError(
+            "El seed del directorio es dev-only y rechaza ejecutarse con "
+            f"environment='{entorno}'. Entornos permitidos: "
+            f"{sorted(ENTORNOS_PERMITIDOS_SEED)}."
+        )
+    return entorno
+
 
 # Un usuario sintetico por rol. `sector` es obligatorio para usuario_final y
 # operador; el administrador no tiene sector. Sin PII real (dominio .test).
@@ -70,19 +108,30 @@ PERSONAS_SINTETICAS: list[dict[str, Any]] = [
 
 
 async def seed_directorio(
-    session: AsyncSession, *, commit: bool = False, actor_id: int | None = None
+    session: AsyncSession,
+    *,
+    commit: bool = False,
+    actor_id: int | None = None,
+    environment: str | None = None,
 ) -> dict[str, int]:
     """
     Siembra (idempotentemente) un usuario sintetico por rol.
 
     Args:
-        session:  sesion async de SQLAlchemy.
-        commit:   si True, confirma la transaccion (uso del script CLI).
-        actor_id: actor de auditoria (opcional).
+        session:     sesion async de SQLAlchemy.
+        commit:      si True, confirma la transaccion (uso del script CLI).
+        actor_id:    actor de auditoria (opcional).
+        environment: entorno efectivo; si es None se lee `settings.environment`.
+                     La guardia (DIR-008) se aplica ANTES de tocar la base.
 
     Returns:
         Conteo de empleados creados y omitidos por ya existir.
+
+    Raises:
+        SeedEnvironmentError: si el entorno no es de desarrollo/prueba.
     """
+    verificar_entorno_seed(environment)
+
     from app.repositories.empleado_repository import EmpleadoRepository
 
     creados = 0
@@ -138,7 +187,10 @@ async def seed_directorio(
 
 
 async def _main() -> None:
-    """Punto de entrada CLI: abre una sesion y ejecuta el seed con commit."""
+    """Punto de entrada CLI: verifica el entorno y ejecuta el seed con commit."""
+    # Guardia dev-only ANTES de abrir cualquier sesion/transaccion (DIR-008).
+    verificar_entorno_seed()
+
     from sqlalchemy.ext.asyncio import async_sessionmaker
 
     from app.core.database import engine

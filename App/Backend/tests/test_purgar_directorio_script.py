@@ -20,7 +20,7 @@ _AHORA = datetime(2026, 9, 23, 12, 0, tzinfo=timezone.utc)
 
 @pytest.mark.asyncio
 async def test_purgar_directorio_borra_vencidos_y_conserva_activos(db_session):
-    """El script elimina las bajas > 1 año y deja intactas las activas."""
+    """El script elimina las bajas > 1 año, conserva activas y reporta los ids."""
     sector = Sector(nombre="Sistemas", descripcion="d")
     db_session.add(sector)
     await db_session.flush()
@@ -39,8 +39,11 @@ async def test_purgar_directorio_borra_vencidos_y_conserva_activos(db_session):
     db_session.add(viejo)
     await db_session.flush()
 
-    purgados = await purgar_directorio(db_session, ahora=_AHORA)
+    ids = await purgar_directorio(db_session, ahora=_AHORA)
 
-    assert purgados == 1
+    assert ids == [viejo.id]
     assert (await svc.obtener(activo.id)).legajo == "CLI-ACT"
     assert await EmpleadoRepository(db_session).get_or_none(viejo.id) is None
+
+    # Idempotencia: una segunda corrida del script no reporta ids.
+    assert await purgar_directorio(db_session, ahora=_AHORA) == []

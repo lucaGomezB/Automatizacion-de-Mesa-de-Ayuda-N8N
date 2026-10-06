@@ -23,7 +23,7 @@ from app.models.clasificacion_log import ClasificacionLog
 from app.repositories.clasificacion_repository import ClasificacionRepository
 from app.repositories.incidente_repository import IncidenteRepository
 from app.repositories.sector_repository import SectorRepository
-from app.services.incident_visibility import AlcanceIncidentes
+from app.services.incident_visibility import AlcanceIncidentes, ModoAlcance
 
 logger = get_logger(__name__)
 
@@ -83,7 +83,10 @@ class ClasificacionService:
         return await self._repo.list_by_incidente(incidente_id)
 
     async def list_pending_review(
-        self, limit: int = 50, offset: int = 0
+        self,
+        limit: int = 50,
+        offset: int = 0,
+        alcance: AlcanceIncidentes | None = None,
     ) -> list[ClasificacionLog]:
         """
         Retorna la cola de clasificaciones que requieren revisión humana.
@@ -95,13 +98,26 @@ class ClasificacionService:
         El orden FIFO garantiza que los incidentes más antiguos reciban
         atención prioritaria, evitando inanición en la cola de revisión.
 
+        Si se provee `alcance` (VIS-002), la cola se acota por rol:
+            - GLOBAL / REVISION: cola completa (administrador / mesa_de_ayuda).
+            - SECTOR: solo los pendientes cuyo incidente pertenece al sector.
+            - VACIO: lista vacía.
+
         Args:
-            limit:  Cantidad máxima de resultados para paginación.
-            offset: Desplazamiento para paginación.
+            limit:   Cantidad máxima de resultados para paginación.
+            offset:  Desplazamiento para paginación.
+            alcance: Alcance de visibilidad por rol (opcional).
 
         Returns:
             Lista de registros pendientes ordenados por antigüedad (FIFO).
         """
+        if alcance is not None:
+            if alcance.modo is ModoAlcance.VACIO:
+                return []
+            if alcance.modo is ModoAlcance.SECTOR:
+                return await self._repo.list_pending_review(
+                    limit=limit, offset=offset, sector_id=alcance.sector_id
+                )
         return await self._repo.list_pending_review(limit=limit, offset=offset)
 
     async def validate(
@@ -213,5 +229,5 @@ class ClasificacionService:
             EntityNotFoundError: Si el incidente no existe o queda fuera del alcance.
         """
         incidente = await self._incidente_repo.get_with_relations(incidente_id)
-        if incidente is None or not alcance.permite_sector(incidente.sector_id):
+        if incidente is None or not alcance.permite_incidente(incidente):
             raise EntityNotFoundError("Incidente", incidente_id)

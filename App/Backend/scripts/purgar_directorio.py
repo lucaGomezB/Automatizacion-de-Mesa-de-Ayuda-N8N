@@ -38,7 +38,7 @@ async def purgar_directorio(
     commit: bool = False,
     ahora: datetime | None = None,
     actor_id: int | None = None,
-) -> int:
+) -> list[int]:
     """
     Purgar las filas vencidas del directorio.
 
@@ -49,14 +49,15 @@ async def purgar_directorio(
         actor_id: actor de auditoria (opcional).
 
     Returns:
-        Cantidad de filas eliminadas fisicamente.
+        Lista de ids de las filas eliminadas fisicamente (vacia si no hubo
+        candidatos vencidos).
     """
-    purgados = await DirectorioService(session, actor_id=actor_id).purgar_vencidos(
-        ahora=ahora, actor_id=actor_id
-    )
+    ids_purgados = await DirectorioService(
+        session, actor_id=actor_id
+    ).purgar_vencidos(ahora=ahora, actor_id=actor_id)
     if commit:
         await session.commit()
-    return purgados
+    return ids_purgados
 
 
 async def _main() -> None:
@@ -68,8 +69,11 @@ async def _main() -> None:
     factory = async_sessionmaker(engine, expire_on_commit=False)
     try:
         async with factory() as session:
-            purgados = await purgar_directorio(session, commit=True)
-        print(f"Purga por retencion del directorio completada: {purgados} filas.")
+            ids_purgados = await purgar_directorio(session, commit=True)
+        print(
+            "Purga por retencion del directorio completada: "
+            f"{len(ids_purgados)} filas. ids={ids_purgados}"
+        )
     finally:
         await engine.dispose()
 

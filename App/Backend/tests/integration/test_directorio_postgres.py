@@ -127,3 +127,33 @@ async def test_indice_de_telefono_existe(pg_session, pg_engine, seed_pg_catalogs
         indices = await conn.run_sync(_indices)
 
     assert "ix_directorio_empleado_telefono" in indices
+
+
+# ── c-60 (2.5): CHECK real de `rol` con el cuarto valor ───────────────────────
+
+
+@pytest.mark.asyncio
+async def test_check_rol_acepta_mesa_de_ayuda_sin_sector(pg_session, seed_pg_catalogs):
+    """El CHECK real de PostgreSQL acepta `mesa_de_ayuda` con sector nulo."""
+    empleado = await _crear_empleado(
+        pg_session,
+        legajo="PG-MESA",
+        email="pgmesa@example.test",
+        rol=RolEmpleado.mesa_de_ayuda,
+        sector_id=None,
+    )
+    assert empleado.rol == RolEmpleado.mesa_de_ayuda
+    assert empleado.sector_id is None
+
+
+@pytest.mark.asyncio
+async def test_check_rol_rechaza_valor_fuera_de_vocabulario(pg_session, seed_pg_catalogs):
+    """El CHECK real de PostgreSQL rechaza un rol fuera del vocabulario."""
+    with pytest.raises(IntegrityError):
+        await _crear_empleado(
+            pg_session,
+            legajo="PG-BAD",
+            email="pgbad@example.test",
+            rol="supervisor",
+        )
+    await pg_session.rollback()

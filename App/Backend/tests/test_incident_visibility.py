@@ -26,7 +26,11 @@ from app.models.catalog import Estado, Sector
 from app.models.empleado import Empleado, RolEmpleado
 from app.models.incidente import Incidente, PrioridadEnum
 from app.models.user import User
-from app.services.incident_visibility import AlcanceIncidentes
+from app.services.incident_visibility import (
+    AlcanceIncidentes,
+    ModoAlcance,
+    alcance_desde_empleado,
+)
 from app.services.incidente_service import IncidenteService
 
 
@@ -43,7 +47,8 @@ async def vis_env(engine):
 
         admin_user = User(username="vis-admin", hashed_password="x", is_active=True)
         oper_a_user = User(username="vis-oper-a", hashed_password="x", is_active=True)
-        s.add_all([admin_user, oper_a_user])
+        mesa_user = User(username="vis-mesa", hashed_password="x", is_active=True)
+        s.add_all([admin_user, oper_a_user, mesa_user])
         await s.flush()
 
         s.add_all(
@@ -56,6 +61,10 @@ async def vis_env(engine):
                     legajo="V-OPE-A", nombre="Oper A", email="v.oper.a@example.test",
                     sector_id=sector_a.id, rol=RolEmpleado.operador,
                     user_id=oper_a_user.id,
+                ),
+                Empleado(
+                    legajo="V-MESA", nombre="Mesa de ayuda", email="v.mesa@example.test",
+                    rol=RolEmpleado.mesa_de_ayuda, user_id=mesa_user.id,
                 ),
                 Incidente(
                     descripcion_original="incidente A",
@@ -73,6 +82,25 @@ async def vis_env(engine):
                     sector_id=sector_b.id,
                     origen_message_id="corpus-B",
                 ),
+                # c-60 (3.1): incidente SIN sector, visible para `mesa_de_ayuda`.
+                Incidente(
+                    descripcion_original="incidente sin sector",
+                    descripcion_pseudonimizada="incidente sin sector",
+                    prioridad=PrioridadEnum.media,
+                    estado_id=estado.id,
+                    sector_id=None,
+                    origen_message_id="corpus-SIN",
+                ),
+                # c-60 (3.1): incidente CON sector que requiere revision humana.
+                Incidente(
+                    descripcion_original="incidente en revision",
+                    descripcion_pseudonimizada="incidente en revision",
+                    prioridad=PrioridadEnum.media,
+                    estado_id=estado.id,
+                    sector_id=sector_a.id,
+                    requiere_revision_humana=True,
+                    origen_message_id="corpus-REV",
+                ),
             ]
         )
         await s.commit()
@@ -80,21 +108,21 @@ async def vis_env(engine):
         ids = {
             "admin_user": admin_user.id,
             "oper_a_user": oper_a_user.id,
+            "mesa_user": mesa_user.id,
             "sin_empleado_user": 888888,
             "sector_a": sector_a.id,
             "sector_b": sector_b.id,
         }
 
-        # Identificar los incidentes por sector para las asserts.
+        # Identificar los incidentes por su origen_message_id (inequivoco).
         from sqlalchemy import select
 
         filas = (await s.execute(select(Incidente))).scalars().all()
-        ids["incidente_a"] = next(
-            f.id for f in filas if f.sector_id == sector_a.id
-        )
-        ids["incidente_b"] = next(
-            f.id for f in filas if f.sector_id == sector_b.id
-        )
+        por_origen = {f.origen_message_id: f.id for f in filas}
+        ids["incidente_a"] = por_origen["corpus-A"]
+        ids["incidente_b"] = por_origen["corpus-B"]
+        ids["incidente_sin_sector"] = por_origen["corpus-SIN"]
+        ids["incidente_revision"] = por_origen["corpus-REV"]
 
     yield ids
 
@@ -320,3 +348,112 @@ async def test_service_list_incidentes_propaga_origen_y_alcance(engine, vis_env)
             origen_message_id="corpus-A", alcance=oper
         )
         assert [i.id for i in dentro] == [vis_env["incidente_a"]]
+
+
+# ── c-60 (3.1/3.4): modos de alcance y `permite_incidente` ────────────────────
+
+
+class _IncidenteStub:
+    """Stub minimo: `permite_incidente` solo lee sector_id y requiere_revision_humana."""
+
+    def __init__(self, sector_id, requiere_revision_humana=False):
+        self.sector_id = sector_id
+        self.requiere_revision_humana = requiere_revision_humana
+
+
+def _empleado(rol, sector_id=None):
+    return Empleado(
+        legajo=f"E-{rol}", nombre="Sintetico", email=f"{rol}@example.test",
+        rol=rol, sector_id=sector_id,
+    )
+
+
+def test_alcance_desde_empleado_mapea_los_cuatro_modos():
+    """`alcance_desde_empleado` deriva GLOBAL/SECTOR/REVISION/VACIO por rol."""
+    assert alcance_desde_empleado(None).modo is ModoAlcance.VACIO
+    assert (
+        alcance_desde_empleado(_empleado(RolEmpleado.administrador_directorio)).modo
+        is ModoAlcance.GLOBAL
+    )
+    assert (
+        alcance_desde_empleado(_empleado(RolEmpleado.mesa_de_ayuda)).modo
+        is ModoAlcance.REVISION
+    )
+    assert (
+        alcance_desde_empleado(_empleado(RolEmpleado.operador, sector_id=7)).modo
+        is ModoAlcance.SECTOR
+    )
+    assert (
+        alcance_desde_empleado(_empleado(RolEmpleado.usuario_final)).modo
+        is ModoAlcance.VACIO
+    )
+
+
+def test_permite_incidente_revision_acepta_sin_sector_o_en_revision():
+    """En REVISION, `permite_incidente` acepta sin sector o con revision humana."""
+    revision = AlcanceIncidentes(revision=True)
+    assert revision.modo is ModoAlcance.REVISION
+    assert revision.permite_incidente(_IncidenteStub(None, False)) is True
+    assert revision.permite_incidente(_IncidenteStub(1, True)) is True
+    assert revision.permite_incidente(_IncidenteStub(1, False)) is False
+
+
+def test_permite_incidente_global_sector_y_vacio():
+    """GLOBAL permite todo; SECTOR solo su sector; VACIO nada."""
+    assert (
+        AlcanceIncidentes(ver_todos=True).permite_incidente(_IncidenteStub(1, False))
+        is True
+    )
+    sector = AlcanceIncidentes(sector_id=7)
+    assert sector.modo is ModoAlcance.SECTOR
+    assert sector.permite_incidente(_IncidenteStub(7, False)) is True
+    assert sector.permite_incidente(_IncidenteStub(8, False)) is False
+    vacio = AlcanceIncidentes()
+    assert vacio.modo is ModoAlcance.VACIO
+    assert vacio.permite_incidente(_IncidenteStub(None, True)) is False
+
+
+@pytest.mark.asyncio
+async def test_mesa_de_ayuda_ve_sin_sector_y_en_revision(engine, vis_env):
+    """`mesa_de_ayuda` lista solo incidentes sin sector o que requieren revision."""
+    async with _client(engine, vis_env["mesa_user"]) as c:
+        resp = await c.get("/api/v1/incidentes/")
+    assert resp.status_code == 200
+    ids = {i["id"] for i in resp.json()}
+    assert vis_env["incidente_sin_sector"] in ids
+    assert vis_env["incidente_revision"] in ids
+    assert vis_env["incidente_a"] not in ids
+    assert vis_env["incidente_b"] not in ids
+
+
+@pytest.mark.asyncio
+async def test_mesa_de_ayuda_acceso_puntual_respeta_revision(engine, vis_env):
+    """`mesa_de_ayuda` accede por ID solo a sin-sector/revision; 404 si ya asignado."""
+    async with _client(engine, vis_env["mesa_user"]) as c:
+        sin_sector = await c.get(
+            f"/api/v1/incidentes/{vis_env['incidente_sin_sector']}"
+        )
+        en_revision = await c.get(
+            f"/api/v1/incidentes/{vis_env['incidente_revision']}"
+        )
+        asignado = await c.get(f"/api/v1/incidentes/{vis_env['incidente_a']}")
+    assert sin_sector.status_code == 200
+    assert en_revision.status_code == 200
+    assert asignado.status_code == 404
+    assert asignado.json()["error"]["code"] == "NOT_FOUND"
+
+
+@pytest.mark.asyncio
+async def test_service_list_revision_filtra_el_conjunto_exacto(engine, vis_env):
+    """El servicio con alcance REVISION devuelve exactamente sin-sector + revision."""
+    factory = async_sessionmaker(engine, expire_on_commit=False)
+    async with factory() as session:
+        service = IncidenteService(session, classifier=AsyncMock())
+        encontrados = await service.list_incidentes(
+            alcance=AlcanceIncidentes(revision=True)
+        )
+    ids = {i.id for i in encontrados}
+    assert ids == {
+        vis_env["incidente_sin_sector"],
+        vis_env["incidente_revision"],
+    }

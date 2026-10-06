@@ -55,3 +55,15 @@ class EmpleadoRead(BaseModel):
     sector_id: int | None
     rol: RolEmpleado
     activo: bool
+
+
+class PurgaDirectorioRead(BaseModel):
+    """
+    Resultado del disparador MANUAL de purga por retencion (DIR-007).
+
+    Expone SOLO el conteo y los ids internos de las filas eliminadas: los ids no
+    son datos personales y permiten auditar que el borrado fisico fue acotado.
+    """
+
+    purgados: int
+    ids: list[int]

@@ -8,6 +8,8 @@ de tres valores (DIR-003).
 """
 
 import pytest
+from sqlalchemy import CheckConstraint
+from sqlalchemy.exc import IntegrityError
 
 from app.models.catalog import Sector
 from app.models.empleado import Empleado, RolEmpleado
@@ -93,13 +95,32 @@ def test_fecha_baja_nullable_para_retencion():
     assert col.type.timezone is True
 
 
-def test_vocabulario_de_roles_minimo():
-    """El rol admite exactamente usuario_final, operador y administrador_directorio."""
+def test_vocabulario_de_roles_incluye_mesa_de_ayuda():
+    """El rol admite los cuatro valores, incluido el revisor `mesa_de_ayuda` (DIR-003)."""
     assert {r.value for r in RolEmpleado} == {
         "usuario_final",
         "operador",
         "administrador_directorio",
+        "mesa_de_ayuda",
     }
+
+
+def test_check_rol_acepta_cuatro_valores():
+    """El CHECK de `rol` incluye explicitamente los cuatro valores del vocabulario."""
+    checks = [
+        c
+        for c in Empleado.__table__.constraints
+        if isinstance(c, CheckConstraint) and c.name == "ck_directorio_empleado_rol"
+    ]
+    assert checks, "Falta el CHECK ck_directorio_empleado_rol"
+    sqltext = str(checks[0].sqltext)
+    for valor in (
+        "usuario_final",
+        "operador",
+        "administrador_directorio",
+        "mesa_de_ayuda",
+    ):
+        assert valor in sqltext, f"El CHECK de rol no incluye {valor!r}"
 
 
 @pytest.mark.asyncio
@@ -137,3 +158,61 @@ async def test_persistencia_texto_plano_y_vinculo_opcional(db_session):
     await db_session.refresh(empleado)
     assert empleado.email == "empleado.sintetico@example.test"
     assert empleado.user_id == user.id
+
+
+# ── Rol `mesa_de_ayuda`: sin sector y vocabulario previo (c-60, 2.4) ─────────
+
+
+@pytest.mark.asyncio
+async def test_mesa_de_ayuda_persiste_sin_sector(db_session):
+    """`mesa_de_ayuda` NO requiere sector: se persiste con `sector_id` nulo."""
+    empleado = Empleado(
+        legajo="MA-1",
+        nombre="Revisor Sintetico",
+        email="revisor@example.test",
+        rol=RolEmpleado.mesa_de_ayuda,
+        sector_id=None,
+    )
+    db_session.add(empleado)
+    await db_session.flush()
+    await db_session.refresh(empleado)
+
+    assert empleado.rol == RolEmpleado.mesa_de_ayuda
+    assert empleado.sector_id is None
+
+
+@pytest.mark.asyncio
+async def test_vocabulario_previo_sigue_aceptado(db_session):
+    """El vocabulario previo sigue aceptado por el CHECK recreado."""
+    sector = Sector(nombre="Sistemas", descripcion="Infraestructura")
+    db_session.add(sector)
+    await db_session.flush()
+
+    operador = Empleado(
+        legajo="OP-1",
+        nombre="Operador Sintetico",
+        email="operador.previo@example.test",
+        sector_id=sector.id,
+        rol=RolEmpleado.operador,
+    )
+    db_session.add(operador)
+    await db_session.flush()
+    await db_session.refresh(operador)
+
+    assert operador.rol == RolEmpleado.operador
+    assert operador.sector_id == sector.id
+
+
+@pytest.mark.asyncio
+async def test_rol_fuera_de_vocabulario_rechazado_por_check(db_session):
+    """Un rol fuera del vocabulario viola el CHECK de la base (no se persiste)."""
+    invalido = Empleado(
+        legajo="XX-1",
+        nombre="Invalido Sintetico",
+        email="invalido@example.test",
+        rol="supervisor",
+    )
+    db_session.add(invalido)
+    with pytest.raises(IntegrityError):
+        await db_session.flush()
+    await db_session.rollback()
