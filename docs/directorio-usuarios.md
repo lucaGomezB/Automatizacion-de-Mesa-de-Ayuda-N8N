@@ -1,4 +1,4 @@
-# Directorio de empleados (c-54)
+# Directorio de empleados (c-54 / endurecimiento c-60)
 
 Guia operativa del directorio interno de empleados de la mesa de ayuda. Define la
 entidad de contacto, el modelo de roles, la resolucion de contactos, el manejo de
@@ -19,8 +19,8 @@ Campos EXACTOS (no se almacena ningun otro dato personal):
 | `nombre`     | varchar(200)   | NOT NULL.                                                     |
 | `email`      | varchar(254)   | NOT NULL, UNIQUE, indexado.                                   |
 | `telefono`   | varchar(20)    | NULL, indexado, PUEDE repetirse (mesa de area/casilla).       |
-| `sector_id`  | int (FK)       | FK a `sector`, NULL. Obligatorio para usuario_final/operador. |
-| `rol`        | varchar(30)    | `usuario_final` / `operador` / `administrador_directorio`.    |
+| `sector_id`  | int (FK)       | FK a `sector`, NULL. Obligatorio para usuario_final/operador; NULO para administrador_directorio/mesa_de_ayuda. |
+| `rol`        | varchar(30)    | `usuario_final` / `operador` / `administrador_directorio` / `mesa_de_ayuda`. |
 | `activo`     | bool           | Default `true`.                                               |
 | `fecha_baja` | timestamptz    | NULL; instante de desactivacion (base de la retencion).       |
 | `user_id`    | int (FK)       | FK nullable a `users`, ON DELETE SET NULL.                    |
@@ -34,6 +34,12 @@ Campos EXACTOS (no se almacena ningun otro dato personal):
 | `usuario_final`          | Obligatorio   | No                            | Solo su sector         |
 | `operador`               | Obligatorio   | No (solo consulta)            | Solo su sector         |
 | `administrador_directorio`| Nulo         | Si                            | Todos los sectores     |
+| `mesa_de_ayuda`          | Nulo          | No                            | Sin sector o en revision humana |
+
+El rol `mesa_de_ayuda` (c-60 D1/OQ1) es un revisor transversal de la cola de
+revision: NO tiene sector, igual que `administrador_directorio`. Su alcance es el
+minimo necesario para revisar (incidentes sin sector o que requieren revision
+humana), no el universo completo.
 
 El rol NO altera el resultado de clasificacion de incidentes.
 
@@ -78,28 +84,49 @@ ACTIVO, el resultado es `ambiguo` y NO se elige un contacto arbitrariamente.
 - Retencion: la fila se conserva mientras la relacion laboral este activa + 1 anio.
   Vencido `fecha_baja + 1 anio`, se ejecuta el borrado FISICO. La evaluacion del
   vencimiento es una funcion pura (`retencion_vencida`) y la purga es IDEMPOTENTE:
-  conserva activos y bajas recientes, y registra el conteo sin PII.
+  conserva activos y bajas recientes, y registra el CONTEO y los **ids** de las
+  filas eliminadas SIN PII (los ids son identificadores internos).
 - ARCO: ante una solicitud de supresion, un `administrador_directorio` ejecuta el
   borrado FISICO. No es el camino operativo por defecto.
 
-Purga programada/operativa por retencion (espeja el seed dev-only):
+Purga MANUAL por retencion (disparada por un operador, NO automatica):
 
 ```bash
+# Via CLI
 cd App/Backend
 python -m scripts.purgar_directorio
 ```
 
+```http
+POST /api/v1/directorio/purga   # rol administrador_directorio
+-> { "purgados": N, "ids": [...] }
+```
+
+NO existe cron, scheduler ni worker en background: el borrado por retencion solo
+ocurre ante una invocacion humana explicita. Una segunda corrida devuelve `ids=[]`.
+
 GOVERNANCE: la politica de retencion/ARCO es HIGH y requiere revision humana antes
-de activar datos reales.
+de activar datos reales. La evidencia de cumplimiento (retencion/ARCO, ausencia de
+PII real, sin clave de indice ciego) vive en `docs/directorio-evidencia-cumplimiento.md`.
 
 ## 6. Visibilidad de incidentes por rol (API)
 
 - `administrador_directorio`: ve TODOS los incidentes.
+- `mesa_de_ayuda`: ve UNICAMENTE los incidentes SIN sector (`sector_id` nulo) o que
+  requieren revision humana (`requiere_revision_humana` verdadero). No es "todos".
 - `usuario_final` / `operador` con sector S: ve solo los incidentes de S.
 - Cuenta sin empleado vinculado o sin sector: alcance VACIO (no ve incidentes por
   esta via).
-- El acceso puntual a un incidente fuera de sector responde 404 (no revela su
+- El acceso puntual a un incidente fuera de alcance responde 404 (no revela su
   existencia).
+
+La MISMA regla acota la cola de revision `GET /api/v1/clasificaciones/revision-pendiente`:
+
+- `administrador_directorio` y `mesa_de_ayuda`: ven la cola completa (FIFO).
+- `usuario_final` / `operador` con sector S: ven solo los pendientes de S.
+- Alcance vacio: lista vacia. Acceso anonimo: 401.
+- El orden FIFO y la definicion de "pendiente" (`requiere_revision_humana` verdadero
+  y sin validacion) se preservan.
 
 DECISION DE IMPLEMENTACION (sector efectivo): el sector se deriva del directorio
 via `user_id -> directorio_empleado.sector_id`. Una cuenta autenticada sin empleado
@@ -119,6 +146,7 @@ Prefijo `/api/v1/directorio`:
 | GET    | `/empleados/{id}`           | `operador` o `administrador`     |
 | PATCH  | `/empleados/{id}`           | `administrador_directorio`       |
 | DELETE | `/empleados/{id}`           | `administrador_directorio` (ARCO)|
+| POST   | `/purga`                    | `administrador_directorio`       |
 
 Sin token valido: 401. Con token sin empleado vinculado: 403.
 
@@ -129,9 +157,23 @@ real, dominio `.test`), creando la cuenta `users` (login) y la fila
 `directorio_empleado` enlazadas por `user_id`. Es idempotente por `legajo` y
 resuelve el bootstrap del primer administrador.
 
+GUARDIA DE ENTORNO (c-60 D6/DIR-008): el seed se NIEGA a ejecutar (exit no-cero,
+sin abrir transaccion) cuando `settings.environment` NO pertenece a
+`development` / `local` / `test`. La guardia aplica UNICAMENTE al seed: ninguna
+ruta, servicio o dependencia del runtime consulta el entorno para autorizar.
+
 ```bash
 cd App/Backend
 python -m scripts.seed_directorio
 ```
 
 Las contrasenas son de desarrollo y deben cambiarse antes de cualquier uso real.
+
+## 9. Evidencia de cumplimiento (c-54 7.5)
+
+La evidencia de las confirmaciones de la revision humana HIGH se documenta en
+`docs/directorio-evidencia-cumplimiento.md`: politica de retencion/ARCO (DIR-007),
+ausencia de PII real y de clave de indice ciego (DIR-005/DIR-009) y regla de
+visibilidad por rol (VIS-001/VIS-002). La aprobacion humana HIGH para ACTIVAR
+DATOS PERSONALES REALES sigue PENDIENTE: la implementacion opera solo con datos
+sinteticos.
