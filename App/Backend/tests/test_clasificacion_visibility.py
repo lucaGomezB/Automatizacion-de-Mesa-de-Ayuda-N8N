@@ -15,6 +15,7 @@ no duplica logica.
 """
 
 from contextlib import asynccontextmanager
+from datetime import datetime, timedelta, timezone
 
 import pytest
 import pytest_asyncio
@@ -45,7 +46,8 @@ async def clasif_vis_env(engine):
 
         admin_user = User(username="clv-admin", hashed_password="x", is_active=True)
         oper_a_user = User(username="clv-oper-a", hashed_password="x", is_active=True)
-        s.add_all([admin_user, oper_a_user])
+        mesa_user = User(username="clv-mesa", hashed_password="x", is_active=True)
+        s.add_all([admin_user, oper_a_user, mesa_user])
         await s.flush()
 
         s.add_all(
@@ -58,6 +60,10 @@ async def clasif_vis_env(engine):
                     legajo="CLV-OPE-A", nombre="Oper A", email="clv.oper.a@example.test",
                     sector_id=sector_a.id, rol=RolEmpleado.operador,
                     user_id=oper_a_user.id,
+                ),
+                Empleado(
+                    legajo="CLV-MESA", nombre="Mesa", email="clv.mesa@example.test",
+                    rol=RolEmpleado.mesa_de_ayuda, user_id=mesa_user.id,
                 ),
             ]
         )
@@ -79,7 +85,17 @@ async def clasif_vis_env(engine):
             sector_id=sector_b.id,
             requiere_revision_humana=True,
         )
-        s.add_all([inc_a, inc_b])
+        # c-60 (VIS-001): incidente del sector A SIN revision humana. Control
+        # negativo: `mesa_de_ayuda` (modo REVISION) NO debe verlo.
+        inc_plain = Incidente(
+            descripcion_original="incidente plain",
+            descripcion_pseudonimizada="incidente plain",
+            prioridad=PrioridadEnum.media,
+            estado_id=estado.id,
+            sector_id=sector_a.id,
+            requiere_revision_humana=False,
+        )
+        s.add_all([inc_a, inc_b, inc_plain])
         await s.flush()
 
         log_a = ClasificacionLog(
@@ -90,17 +106,31 @@ async def clasif_vis_env(engine):
             incidente_id=inc_b.id, sector_id_predicho=sector_b.id, confianza=0.55,
             etapa="gemini", requiere_revision_humana=True, respuesta_raw="{}",
         )
-        s.add_all([log_a, log_b])
+        # Log del incidente plano: NO requiere revision, por lo que nunca entra
+        # a la cola de pendientes (preserva las aserciones FIFO existentes).
+        log_plain = ClasificacionLog(
+            incidente_id=inc_plain.id, sector_id_predicho=sector_a.id, confianza=0.55,
+            etapa="gemini", requiere_revision_humana=False, respuesta_raw="{}",
+        )
+        # FIFO determinista: log_a es mas antiguo que log_b.
+        _ahora = datetime(2026, 9, 23, 12, 0, tzinfo=timezone.utc)
+        log_a.created_at = _ahora - timedelta(hours=2)
+        log_b.created_at = _ahora - timedelta(hours=1)
+        log_plain.created_at = _ahora
+        s.add_all([log_a, log_b, log_plain])
         await s.commit()
 
         ids = {
             "admin_user": admin_user.id,
             "oper_a_user": oper_a_user.id,
+            "mesa_user": mesa_user.id,
             "sin_empleado_user": 888888,
             "incidente_a": inc_a.id,
             "incidente_b": inc_b.id,
+            "incidente_plain": inc_plain.id,
             "log_a": log_a.id,
             "log_b": log_b.id,
+            "log_plain": log_plain.id,
             "sector_a": sector_a.id,
             "sector_b": sector_b.id,
         }
@@ -221,6 +251,25 @@ async def test_alcance_vacio_lee_404(engine, clasif_vis_env):
     assert resp.status_code == 404
 
 
+@pytest.mark.asyncio
+async def test_mesa_de_ayuda_lee_en_revision_y_no_plain_404(engine, clasif_vis_env):
+    """`mesa_de_ayuda` lee las clasificaciones de un incidente EN REVISION (200)
+    y NO las de un incidente de sector ya asignado sin revision humana (404)."""
+    async with _client(engine, clasif_vis_env["mesa_user"]) as c:
+        en_revision = await c.get(
+            f"/api/v1/clasificaciones/incidente/{clasif_vis_env['incidente_a']}"
+        )
+        plain = await c.get(
+            f"/api/v1/clasificaciones/incidente/{clasif_vis_env['incidente_plain']}"
+        )
+    # Positivo: inc_a tiene sector pero requiere_revision_humana=True.
+    assert en_revision.status_code == 200, en_revision.text
+    assert any(item["id"] == clasif_vis_env["log_a"] for item in en_revision.json())
+    # Negativo: inc_plain tiene sector y NO requiere revision => fuera de alcance.
+    assert plain.status_code == 404
+    assert plain.json()["error"]["code"] == "NOT_FOUND"
+
+
 # ── VALIDATE: PATCH /clasificaciones/{log_id}/validar ────────────────────────
 
 
@@ -305,3 +354,53 @@ async def test_anonimo_401(engine, clasif_vis_env):
         )
     assert lectura.status_code == 401
     assert validar.status_code == 401
+
+# ── c-60 (4.1/4.3): cola `revision-pendiente` acotada por sector y rol ────────
+
+
+@pytest.mark.asyncio
+async def test_revision_pendiente_admin_ve_cola_completa(engine, clasif_vis_env):
+    """El administrador ve los pendientes de todos los sectores, en FIFO."""
+    async with _client(engine, clasif_vis_env["admin_user"]) as c:
+        resp = await c.get("/api/v1/clasificaciones/revision-pendiente")
+    assert resp.status_code == 200
+    ids = [item["id"] for item in resp.json()]
+    assert ids == [clasif_vis_env["log_a"], clasif_vis_env["log_b"]]
+
+
+@pytest.mark.asyncio
+async def test_revision_pendiente_mesa_de_ayuda_ve_cola_completa(engine, clasif_vis_env):
+    """`mesa_de_ayuda` ve la cola completa (es la poblacion que debe revisar)."""
+    async with _client(engine, clasif_vis_env["mesa_user"]) as c:
+        resp = await c.get("/api/v1/clasificaciones/revision-pendiente")
+    assert resp.status_code == 200
+    ids = {item["id"] for item in resp.json()}
+    assert ids == {clasif_vis_env["log_a"], clasif_vis_env["log_b"]}
+
+
+@pytest.mark.asyncio
+async def test_revision_pendiente_sector_bound_ve_solo_su_cola(engine, clasif_vis_env):
+    """Un operador del sector A solo ve el pendiente de su sector."""
+    async with _client(engine, clasif_vis_env["oper_a_user"]) as c:
+        resp = await c.get("/api/v1/clasificaciones/revision-pendiente")
+    assert resp.status_code == 200
+    ids = {item["id"] for item in resp.json()}
+    assert ids == {clasif_vis_env["log_a"]}
+    assert clasif_vis_env["log_b"] not in ids
+
+
+@pytest.mark.asyncio
+async def test_revision_pendiente_alcance_vacio_ve_lista_vacia(engine, clasif_vis_env):
+    """Una cuenta sin empleado/sector ve una lista vacia (no la cola global)."""
+    async with _client(engine, clasif_vis_env["sin_empleado_user"]) as c:
+        resp = await c.get("/api/v1/clasificaciones/revision-pendiente")
+    assert resp.status_code == 200
+    assert resp.json() == []
+
+
+@pytest.mark.asyncio
+async def test_revision_pendiente_anonimo_401(engine, clasif_vis_env):
+    """Sin autenticacion la cola responde 401 (sin cambios)."""
+    async with _anon_client(engine) as c:
+        resp = await c.get("/api/v1/clasificaciones/revision-pendiente")
+    assert resp.status_code == 401

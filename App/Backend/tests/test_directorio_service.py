@@ -171,6 +171,110 @@ async def test_sector_inexistente_rechazado(db_session):
         )
 
 
+# ── Rol mesa_de_ayuda: sin sector (c-60 D1/OQ1) ───────────────────────────────
+
+
+@pytest.mark.asyncio
+async def test_mesa_de_ayuda_sin_sector_permitido(db_session):
+    """`mesa_de_ayuda` es sector-less como el admin: se persiste con sector nulo."""
+    svc = _svc(db_session)
+
+    empleado = await svc.crear_empleado(
+        legajo="MDA-1", nombre="Revisor Sintetico", email="mda1@example.test",
+        rol=RolEmpleado.mesa_de_ayuda,
+    )
+
+    assert empleado.rol == RolEmpleado.mesa_de_ayuda
+    assert empleado.sector_id is None
+    assert (await svc.obtener(empleado.id)).sector_id is None  # persistido
+
+
+@pytest.mark.asyncio
+async def test_mesa_de_ayuda_con_sector_rechazado(db_session):
+    """`mesa_de_ayuda` no debe tener sector asignado (es transversal)."""
+    sector = await _seed_sector(db_session)
+    svc = _svc(db_session)
+
+    with pytest.raises(DirectorioValidationError):
+        await svc.crear_empleado(
+            legajo="MDA-2", nombre="N", email="mda2@example.test",
+            sector_id=sector.id, rol=RolEmpleado.mesa_de_ayuda,
+        )
+
+
+@pytest.mark.asyncio
+async def test_actualizar_a_mesa_de_ayuda_limpia_sector(db_session):
+    """Cambiar a `mesa_de_ayuda` exige dejar el sector en nulo (queda None)."""
+    sector = await _seed_sector(db_session)
+    svc = _svc(db_session)
+    operador = await svc.crear_empleado(
+        legajo="MDA-3", nombre="N", email="mda3@example.test",
+        sector_id=sector.id, rol=RolEmpleado.operador,
+    )
+
+    actualizado = await svc.actualizar_empleado(
+        operador.id, rol=RolEmpleado.mesa_de_ayuda, sector_id=None,
+    )
+
+    assert actualizado.rol == RolEmpleado.mesa_de_ayuda
+    assert actualizado.sector_id is None
+
+
+@pytest.mark.asyncio
+async def test_actualizar_a_mesa_de_ayuda_con_sector_rechazado(db_session):
+    """No se puede pasar a `mesa_de_ayuda` conservando un sector no nulo."""
+    sector = await _seed_sector(db_session)
+    svc = _svc(db_session)
+    operador = await svc.crear_empleado(
+        legajo="MDA-4", nombre="N", email="mda4@example.test",
+        sector_id=sector.id, rol=RolEmpleado.operador,
+    )
+
+    with pytest.raises(DirectorioValidationError):
+        await svc.actualizar_empleado(operador.id, rol=RolEmpleado.mesa_de_ayuda)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "rol, requiere_sector",
+    [
+        (RolEmpleado.usuario_final, True),
+        (RolEmpleado.operador, True),
+        (RolEmpleado.administrador_directorio, False),
+        (RolEmpleado.mesa_de_ayuda, False),
+    ],
+)
+async def test_requerimiento_de_sector_por_rol(db_session, rol, requiere_sector):
+    """Triangula la coherencia rol/sector para los cuatro roles (DIR-004 + c-60)."""
+    sector = await _seed_sector(db_session)
+    svc = _svc(db_session)
+
+    if requiere_sector:
+        # Sin sector falla; con sector (existente) se persiste.
+        with pytest.raises(DirectorioValidationError):
+            await svc.crear_empleado(
+                legajo=f"RS-{rol.value}-0", nombre="N",
+                email=f"rs0.{rol.value}@example.test", rol=rol,
+            )
+        con_sector = await svc.crear_empleado(
+            legajo=f"RS-{rol.value}-1", nombre="N",
+            email=f"rs1.{rol.value}@example.test", sector_id=sector.id, rol=rol,
+        )
+        assert con_sector.sector_id == sector.id
+    else:
+        # Sin sector se persiste con nulo; con sector se rechaza.
+        sin_sector = await svc.crear_empleado(
+            legajo=f"RS-{rol.value}-0", nombre="N",
+            email=f"rs0.{rol.value}@example.test", rol=rol,
+        )
+        assert sin_sector.sector_id is None
+        with pytest.raises(DirectorioValidationError):
+            await svc.crear_empleado(
+                legajo=f"RS-{rol.value}-1", nombre="N",
+                email=f"rs1.{rol.value}@example.test", sector_id=sector.id, rol=rol,
+            )
+
+
 @pytest.mark.asyncio
 async def test_telefono_fuera_de_e164_rechazado(db_session):
     """Un telefono que no normaliza a E.164 es rechazado."""
@@ -362,9 +466,9 @@ async def test_purgar_vencidos_borra_solo_bajas_mayores_a_un_anio(db_session):
     db_session.add(viejo)
     await db_session.flush()
 
-    purgados = await svc.purgar_vencidos(ahora=_AHORA)
+    ids = await svc.purgar_vencidos(ahora=_AHORA)
 
-    assert purgados == 1
+    assert ids == [viejo.id]
     assert (await svc.obtener(activo.id)).activo is True
     assert (await svc.obtener(reciente.id)).activo is False
     with pytest.raises(EntityNotFoundError):
@@ -385,8 +489,8 @@ async def test_purgar_vencidos_es_idempotente(db_session):
     db_session.add(viejo)
     await db_session.flush()
 
-    assert await svc.purgar_vencidos(ahora=_AHORA) == 1
-    assert await svc.purgar_vencidos(ahora=_AHORA) == 0
+    assert await svc.purgar_vencidos(ahora=_AHORA) == [viejo.id]
+    assert await svc.purgar_vencidos(ahora=_AHORA) == []
 
 
 @pytest.mark.asyncio
@@ -406,11 +510,12 @@ async def test_purgar_vencidos_loggea_conteo_sin_pii(db_session):
     await db_session.flush()
 
     with capture_logs() as logs:
-        purgados = await svc.purgar_vencidos(ahora=_AHORA)
+        ids = await svc.purgar_vencidos(ahora=_AHORA)
 
-    assert purgados == 1
+    assert ids == [viejo.id]
     eventos = [e for e in logs if e.get("event") == "directorio_retencion"]
     assert eventos, "La purga debe dejar un evento auditable"
     assert eventos[-1].get("purgados") == 1
+    assert eventos[-1].get("ids") == [viejo.id]
     assert email not in repr(logs)
     assert telefono not in repr(logs)

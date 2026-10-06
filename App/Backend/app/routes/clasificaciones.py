@@ -63,6 +63,7 @@ ServiceDep = Annotated[ClasificacionService, Depends(get_service)]
 )
 async def list_pending_review(
     service: ServiceDep,
+    alcance: AlcanceDep,
     limit: int = Query(50, ge=1, le=200, description="Cantidad máxima de resultados"),
     offset: int = Query(0, ge=0, description="Desplazamiento para paginación"),
     current_user: User = Depends(get_current_user),
@@ -75,10 +76,16 @@ async def list_pending_review(
     su validación. El orden FIFO (más antiguo primero) garantiza que
     ningún incidente quede en espera indefinidamente.
 
+    La cola se acota por el alcance del usuario (VIS-002): un administrador o
+    `mesa_de_ayuda` ve la cola completa; un usuario sector-bound solo los
+    pendientes de su sector; una cuenta sin alcance ve una lista vacía.
+
     Returns:
         Lista de registros de auditoría pendientes, ordenados por antigüedad.
     """
-    logs = await service.list_pending_review(limit=limit, offset=offset)
+    logs = await service.list_pending_review(
+        limit=limit, offset=offset, alcance=alcance
+    )
     return [ClasificacionLogRead.model_validate(log) for log in logs]
 
 

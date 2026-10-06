@@ -27,8 +27,8 @@ async def test_seed_idempotente_crea_un_usuario_por_rol(db_session):
     """Ejecutar el seed dos veces no duplica filas ni cuentas."""
     await _seed_sector(db_session)
 
-    await seed_directorio(db_session)
-    await seed_directorio(db_session)
+    await seed_directorio(db_session, environment="test")
+    await seed_directorio(db_session, environment="test")
 
     legajos = {p["legajo"] for p in PERSONAS_SINTETICAS}
     empleados = (
@@ -50,7 +50,7 @@ async def test_seed_enlaza_users_y_empleado_y_deja_admin_operativo(db_session):
     """Cada empleado sintetico tiene una cuenta vinculada; el admin es operable."""
     await _seed_sector(db_session)
 
-    await seed_directorio(db_session)
+    await seed_directorio(db_session, environment="test")
 
     admin = (
         await db_session.execute(
@@ -82,7 +82,7 @@ def admin_user_username() -> str:
 async def test_seed_usa_datos_sinteticos(db_session):
     """El contacto sembrado es claramente sintetico (dominio .test)."""
     await _seed_sector(db_session)
-    await seed_directorio(db_session)
+    await seed_directorio(db_session, environment="test")
 
     emails = (
         await db_session.execute(select(Empleado.email))

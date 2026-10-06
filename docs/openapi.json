@@ -1108,6 +1108,28 @@
         "title": "PrioridadEnum",
         "type": "string"
       },
+      "PurgaDirectorioRead": {
+        "description": "Resultado del disparador MANUAL de purga por retencion (DIR-007).\n\nExpone SOLO el conteo y los ids internos de las filas eliminadas: los ids no\nson datos personales y permiten auditar que el borrado fisico fue acotado.",
+        "properties": {
+          "ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Ids",
+            "type": "array"
+          },
+          "purgados": {
+            "title": "Purgados",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "purgados",
+          "ids"
+        ],
+        "title": "PurgaDirectorioRead",
+        "type": "object"
+      },
       "ResumenResponse": {
         "description": "Respuesta del endpoint GET /api/v1/estadisticas/resumen.",
         "properties": {
@@ -1152,11 +1174,12 @@
         "type": "object"
       },
       "RolEmpleado": {
-        "description": "Vocabulario minimo de roles del directorio (DIR-003).\n\nHereda de `str` para almacenar el valor textual y serializarlo directamente.\n\nValores:\n    usuario_final:            reportante; requiere sector.\n    operador:                 atiende y puede ser destino de enrutamiento; requiere sector.\n    administrador_directorio: gestiona el directorio; sin sector y ve todos los incidentes.",
+        "description": "Vocabulario minimo de roles del directorio (DIR-003).\n\nHereda de `str` para almacenar el valor textual y serializarlo directamente.\n\nValores:\n    usuario_final:            reportante; requiere sector.\n    operador:                 atiende y puede ser destino de enrutamiento; requiere sector.\n    administrador_directorio: gestiona el directorio; sin sector y ve todos los incidentes.\n    mesa_de_ayuda:            revisor transversal de la cola de revision; sin sector,\n                              ve incidentes sin sector o que requieren revision humana.",
         "enum": [
           "usuario_final",
           "operador",
-          "administrador_directorio"
+          "administrador_directorio",
+          "mesa_de_ayuda"
         ],
         "title": "RolEmpleado",
         "type": "string"
@@ -1616,7 +1639,7 @@
     },
     "/api/v1/clasificaciones/revision-pendiente": {
       "get": {
-        "description": "Retorna la cola de clasificaciones pendientes de revisión humana.\n\nUn registro aparece en esta cola cuando el clasificador emitió\nuna confianza inferior al umbral (0.70) y el operador aún no registró\nsu validación. El orden FIFO (más antiguo primero) garantiza que\nningún incidente quede en espera indefinidamente.\n\nReturns:\n    Lista de registros de auditoría pendientes, ordenados por antigüedad.",
+        "description": "Retorna la cola de clasificaciones pendientes de revisión humana.\n\nUn registro aparece en esta cola cuando el clasificador emitió\nuna confianza inferior al umbral (0.70) y el operador aún no registró\nsu validación. El orden FIFO (más antiguo primero) garantiza que\nningún incidente quede en espera indefinidamente.\n\nLa cola se acota por el alcance del usuario (VIS-002): un administrador o\n`mesa_de_ayuda` ve la cola completa; un usuario sector-bound solo los\npendientes de su sector; una cuenta sin alcance ve una lista vacía.\n\nReturns:\n    Lista de registros de auditoría pendientes, ordenados por antigüedad.",
         "operationId": "list_pending_review_api_v1_clasificaciones_revision_pendiente_get",
         "parameters": [
           {
@@ -2103,6 +2126,33 @@
           }
         ],
         "summary": "Editar/activar/desactivar un empleado (administrador)",
+        "tags": [
+          "Directorio"
+        ]
+      }
+    },
+    "/api/v1/directorio/purga": {
+      "post": {
+        "description": "Dispara MANUALMENTE el borrado fisico por retencion (DIR-007).\n\nRequiere `administrador_directorio`. NO existe cron/scheduler: la unica via\nde disparo es esta invocacion humana explicita (o el script CLI equivalente).\nIdempotente; devuelve el conteo y los ids internos de las filas eliminadas.",
+        "operationId": "purgar_directorio_api_v1_directorio_purga_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PurgaDirectorioRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Purga manual por retencion (administrador)",
         "tags": [
           "Directorio"
         ]

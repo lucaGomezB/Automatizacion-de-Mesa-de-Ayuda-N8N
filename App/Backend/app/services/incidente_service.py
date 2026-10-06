@@ -51,6 +51,7 @@ from app.repositories.sector_repository import SectorRepository
 from app.repositories.telefonia_ingreso_repository import TelefoniaIngresoRepository
 from app.schemas.clasificacion import ClasificacionResult
 from app.schemas.incidente import ClasificacionPrecalculada, IncidenteCreate, IncidenteUpdate
+from app.services.incident_visibility import ModoAlcance
 
 if TYPE_CHECKING:
     from app.cost_guard.guard import CostGuard
@@ -147,11 +148,7 @@ class IncidenteService:
         instance = await self._incidente_repo.get_with_relations(incidente_id)
         if instance is None:
             raise EntityNotFoundError("Incidente", incidente_id)
-        if (
-            alcance is not None
-            and not alcance.ver_todos
-            and not alcance.permite_sector(instance.sector_id)
-        ):
+        if alcance is not None and not alcance.permite_incidente(instance):
             raise EntityNotFoundError("Incidente", incidente_id)
         return instance
 
@@ -173,8 +170,10 @@ class IncidenteService:
 
         Delega la construcción de la consulta al repositorio, que maneja
         la combinación dinámica de condiciones. Si se provee `alcance` (VIS-001),
-        la regla de rol INTERSECTA el filtro de sector: un no administrador solo
-        ve su sector; una cuenta sin sector no ve incidentes.
+        la regla de rol acota el resultado segun el modo: GLOBAL ve todo; SECTOR
+        intersecta el filtro de sector; REVISION solo los incidentes sin sector o
+        en revision; VACIO no ve incidentes. La decision final por incidente se
+        confirma con `permite_incidente`.
 
         Args:
             sector_id:               Filtrar por sector responsable.
@@ -191,16 +190,23 @@ class IncidenteService:
         Returns:
             Lista de incidentes que cumplen los criterios de filtrado.
         """
-        if alcance is not None and not alcance.ver_todos:
+        solo_revision = False
+        if alcance is not None:
+            modo = alcance.modo
             # Alcance vacio: una cuenta sin empleado/sector no ve incidentes.
-            if alcance.sector_id is None:
+            if modo is ModoAlcance.VACIO:
                 return []
-            # El sector pedido debe coincidir con el del usuario; si no, nada.
-            if sector_id is not None and sector_id != alcance.sector_id:
-                return []
-            sector_id = alcance.sector_id
+            if modo is ModoAlcance.SECTOR:
+                # El sector pedido debe coincidir con el del usuario; si no, nada.
+                if sector_id is not None and sector_id != alcance.sector_id:
+                    return []
+                sector_id = alcance.sector_id
+            elif modo is ModoAlcance.REVISION:
+                # La poblacion de revision (sin sector o en revision) se acota en
+                # el repositorio; se confirma por incidente al final.
+                solo_revision = True
 
-        return await self._incidente_repo.list_filtered(
+        incidentes = await self._incidente_repo.list_filtered(
             sector_id=sector_id,
             estado_id=estado_id,
             prioridad=prioridad,
@@ -208,9 +214,14 @@ class IncidenteService:
             desde=desde,
             hasta=hasta,
             origen_message_id=origen_message_id,
+            solo_revision=solo_revision,
             limit=limit,
             offset=offset,
         )
+        if alcance is not None:
+            # Defensa en profundidad: la decision final depende del incidente.
+            return [i for i in incidentes if alcance.permite_incidente(i)]
+        return incidentes
 
     # ── Operaciones de Escritura ──────────────────────────────────────────────
 

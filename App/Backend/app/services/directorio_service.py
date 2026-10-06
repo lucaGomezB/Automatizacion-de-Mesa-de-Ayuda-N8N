@@ -250,36 +250,42 @@ class DirectorioService:
         *,
         ahora: datetime | None = None,
         actor_id: int | None = None,
-    ) -> int:
+    ) -> list[int]:
         """
         Borra FISICAMENTE las bajas que superaron "fecha_baja + 1 año" (DIR-007).
 
-        Idempotente: una segunda corrida no encuentra candidatos vencidos y
-        devuelve 0. Solo considera filas con `activo=False` y `fecha_baja`
-        sellada; un empleado activo NUNCA se purga. Registra el conteo en un
-        evento de auditoria SIN datos personales.
+        Es una accion MANUAL y explicita: NO existe cron/scheduler/worker que la
+        dispare. Idempotente: una segunda corrida no encuentra candidatos vencidos
+        y devuelve una lista vacia. Solo considera filas con `activo=False` y
+        `fecha_baja` sellada; un empleado activo NUNCA se purga. Registra en un
+        evento de auditoria el conteo y los **ids** de las filas eliminadas (los
+        ids son identificadores internos, NO datos personales).
 
         Args:
             ahora:    instante de referencia (inyectable para tests); UTC por defecto.
             actor_id: actor de auditoria (opcional).
 
         Returns:
-            Cantidad de filas eliminadas fisicamente.
+            Lista de ids de las filas eliminadas fisicamente (vacia si no hubo
+            candidatos vencidos). El conteo se deriva con `len(...)`.
         """
         momento = _asegurar_utc(ahora) if ahora is not None else utcnow()
         candidatos = await self._repo.listar_inactivos()
         vencidos = [e for e in candidatos if retencion_vencida(e.fecha_baja, momento)]
 
+        ids_purgados: list[int] = []
         for empleado in vencidos:
+            ids_purgados.append(empleado.id)
             await self._repo.delete(empleado.id)
 
         logger.info(
             "directorio_retencion",
             operacion="purgar_vencidos",
-            purgados=len(vencidos),
+            purgados=len(ids_purgados),
+            ids=ids_purgados,
             actor_id=actor_id if actor_id is not None else self._actor_id,
         )
-        return len(vencidos)
+        return ids_purgados
 
     # ── Validaciones privadas ─────────────────────────────────────────────────
 
@@ -316,28 +322,33 @@ class DirectorioService:
         self, rol: RolEmpleado, sector_id: int | None
     ) -> int | None:
         """
-        Aplica la coherencia rol/sector (DIR-004) y valida la FK del catalogo.
+        Aplica la coherencia rol/sector (DIR-004 + c-60 D1/OQ1).
+
+        `usuario_final` y `operador` REQUIEREN sector y se valida la FK del
+        catalogo. `administrador_directorio` y `mesa_de_ayuda` son roles SIN
+        sector (el segundo es un revisor transversal de la cola de revision); un
+        `sector_id` no nulo para ellos es rechazado.
 
         Returns:
-            El `sector_id` normalizado a persistir (None para administrador).
+            El `sector_id` normalizado a persistir (None para roles sin sector).
         """
-        if rol == RolEmpleado.administrador_directorio:
-            if sector_id is not None:
+        if rol in _ROLES_CON_SECTOR:
+            if sector_id is None:
                 raise DirectorioValidationError(
-                    "El administrador del directorio no debe tener sector asignado."
+                    "El rol requiere un sector asignado."
                 )
-            return None
+            if await self._sector_repo.get_or_none(sector_id) is None:
+                raise SectorNotFoundError(
+                    f"Sector con id={sector_id} no encontrado en el catalogo."
+                )
+            return sector_id
 
-        # usuario_final / operador
-        if sector_id is None:
+        # administrador_directorio / mesa_de_ayuda: roles sin sector.
+        if sector_id is not None:
             raise DirectorioValidationError(
-                "El rol requiere un sector asignado."
+                "El rol no debe tener sector asignado."
             )
-        if await self._sector_repo.get_or_none(sector_id) is None:
-            raise SectorNotFoundError(
-                f"Sector con id={sector_id} no encontrado en el catalogo."
-            )
-        return sector_id
+        return None
 
     def _auditar(
         self,

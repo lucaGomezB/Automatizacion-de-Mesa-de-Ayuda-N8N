@@ -27,7 +27,12 @@ from app.core.security import get_current_user
 from app.models.empleado import Empleado, RolEmpleado
 from app.models.user import User
 from app.repositories.empleado_repository import EmpleadoRepository
-from app.schemas.directorio import EmpleadoCreate, EmpleadoRead, EmpleadoUpdate
+from app.schemas.directorio import (
+    EmpleadoCreate,
+    EmpleadoRead,
+    EmpleadoUpdate,
+    PurgaDirectorioRead,
+)
 from app.services.directorio_service import DirectorioService
 
 logger = get_logger(__name__)
@@ -180,3 +185,24 @@ async def borrar_empleado(
     await DirectorioService(session).borrar_empleado_arco(
         empleado_id, actor_id=actor.id
     )
+
+
+@router.post(
+    "/purga",
+    response_model=PurgaDirectorioRead,
+    summary="Purga manual por retencion (administrador)",
+)
+async def purgar_directorio(
+    session: SessionDep, actor: AdminDep
+) -> PurgaDirectorioRead:
+    """
+    Dispara MANUALMENTE el borrado fisico por retencion (DIR-007).
+
+    Requiere `administrador_directorio`. NO existe cron/scheduler: la unica via
+    de disparo es esta invocacion humana explicita (o el script CLI equivalente).
+    Idempotente; devuelve el conteo y los ids internos de las filas eliminadas.
+    """
+    ids_purgados = await DirectorioService(
+        session, actor_id=actor.id
+    ).purgar_vencidos(actor_id=actor.id)
+    return PurgaDirectorioRead(purgados=len(ids_purgados), ids=ids_purgados)

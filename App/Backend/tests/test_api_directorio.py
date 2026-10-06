@@ -124,6 +124,38 @@ async def test_escritura_admin_crea_201(engine, directorio_env):
 
 
 @pytest.mark.asyncio
+async def test_escritura_mesa_de_ayuda_sin_sector_201(engine, directorio_env):
+    """El admin crea un `mesa_de_ayuda` sin sector; se persiste con sector nulo."""
+    async with _client(engine, directorio_env["admin_user"]) as c:
+        resp = await c.post(
+            _ENDPOINT,
+            json=_payload(
+                legajo="MDA-API-1", rol="mesa_de_ayuda",
+                email="mda.api1@example.test",
+            ),
+        )
+    assert resp.status_code == 201, resp.text
+    body = resp.json()
+    assert body["rol"] == "mesa_de_ayuda"
+    assert body["sector_id"] is None
+
+
+@pytest.mark.asyncio
+async def test_escritura_mesa_de_ayuda_con_sector_422(engine, directorio_env):
+    """Un `mesa_de_ayuda` con sector es rechazado (422, sin PII)."""
+    async with _client(engine, directorio_env["admin_user"]) as c:
+        resp = await c.post(
+            _ENDPOINT,
+            json=_payload(
+                legajo="MDA-API-2", rol="mesa_de_ayuda",
+                email="mda.api2@example.test",
+                sector_id=directorio_env["sector_id"],
+            ),
+        )
+    assert resp.status_code == 422, resp.text
+
+
+@pytest.mark.asyncio
 async def test_escritura_otro_rol_403(engine, directorio_env):
     """Un rol distinto de administrador no puede escribir (403)."""
     async with _client(engine, directorio_env["oper_user"]) as c:
