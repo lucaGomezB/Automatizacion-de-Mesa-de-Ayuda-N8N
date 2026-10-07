@@ -79,7 +79,7 @@ Esperado: `postgres-corpus` y `backend-corpus` en `healthy`, `n8n-corpus` arriba
 y ningún contenedor base (`postgres`, `backend`, `n8n`, `nginx`, `frontend`).
 
 El `command` de `backend-corpus` ejecuta `alembic upgrade head` antes de uvicorn,
-de modo que la base descartable queda migrada al head vigente (hoy `010`) al
+de modo que la base descartable queda migrada al head vigente (`012`) al
 arrancar. Confirmar en logs:
 
 ```bash
@@ -96,7 +96,7 @@ docker logs mesa_local-backend-corpus-1 2>&1 | grep -E 'Running upgrade|Applicat
      -c "SELECT version_num FROM alembic_version;"
    ```
 
-   Esperado: `mesa_de_ayuda_corpus` y el head de Alembic (hoy `010`).
+   Esperado: `mesa_de_ayuda_corpus` y el head de Alembic (`012`).
 
 2. Los contenedores del corpus montan SOLO volúmenes del corpus (nunca
    `mesa_local_postgres_data` ni `mesa_local_n8n_data`):
@@ -233,9 +233,9 @@ TwiML App está en `TWILIO_TWIML_APP_SID` (formato `AP...`).
 - `docker compose --profile corpus up -d postgres-corpus backend-corpus
   n8n-corpus`: `postgres-corpus` y `backend-corpus` `healthy`, `n8n-corpus`
   arriba; ningún contenedor base arrancado (salvo `redis` como dependencia).
-- `backend-corpus` migró la base descartable hasta el head vigente (en la
-  verificación inicial de la infra, `010`; el change c-70 agrega después la
-  migración `011_telefonia_corpus_case_id`, por lo que el head actual es `011`);
+- `backend-corpus` migró la base descartable hasta el head vigente (`012`: c-52
+  agrega `telefonia_ingreso`, c-54 el directorio, c-70 `011_telefonia_corpus_case_id`
+  y c-60 `012_directorio_rol_mesa_ayuda`);
   la DB `mesa_de_ayuda_corpus` respondió con las tablas del esquema y aceptó
   escrituras.
 - `docker compose --profile corpus down -v postgres-corpus backend-corpus
