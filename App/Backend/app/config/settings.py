@@ -100,12 +100,49 @@ class Settings(BaseSettings):
 
     # ── Umbrales del clasificador híbrido ─────────────────────────────────────
     # Determinados empíricamente; documentados en docs/parameters_gemini.md.
-    # c-71: el umbral ya no es 0.90 degenerado; se re-deriva OFFLINE de la curva
-    # precision/cobertura del corpus (piso de precision >= 0.90) y se documenta
-    # en docs/deterministic_calibration.md. Sigue siendo un setting fijo (OQ3).
-    deterministic_confidence_threshold: float = 1.0  # Por encima: se omite Gemini (calibrado offline, c-71)
-    deterministic_min_matches: int = 2                # c-71: evidencia minima del ganador
+    # c-71: el umbral de confianza se re-derivo OFFLINE de la curva
+    # precision/cobertura. c-74: la confianza (fuerza de senal) YA NO gobierna el
+    # cortocircuito; la seleccion usa `deterministic_score_threshold` (score
+    # de correctitud: ordena la correctitud esperada y NO es una probabilidad
+    # calibrada; ASG-010). `deterministic_confidence_threshold`
+    # se conserva solo como umbral de FUERZA DE SENAL reportado por `is_confident`
+    # (no es criterio de seleccion).
+    deterministic_confidence_threshold: float = 1.0  # Fuerza de senal (NO selecciona el cortocircuito)
+    deterministic_min_matches: int = 2                # c-71: evidencia minima; c-74 (OQ4): FEATURE del score, no gate
     human_review_threshold: float = 0.70              # Por debajo: se requiere revisión humana
+
+    # ── Punto de operación del cortocircuito (c-74, OQ3 revisado, COMPARATIVO) ─
+    # Punto de operacion del cortocircuito: umbral tau sobre el score de
+    # correctitud. El sistema cortocircuita si `score_correctitud >= tau` y la
+    # senal es dominante (no sin_prediccion / no ambiguo). tau se DERIVA
+    # OUT-OF-FOLD (cross-fitting): se agregan los umbrales por fold de
+    # `calibrar_comparativo_out_of_fold(...).umbrales_por_fold` (regla documentada
+    # en `evaluation/deterministic_measurement.py::umbral_de_settings_oof`) y NO
+    # se elige in-sample sobre el corpus de test reportado. Cada fold maximiza
+    # cobertura sujeta al PISO COMPARATIVO `precision_det(S) >= precision_gem(S)`
+    # (Gemini cacheado). Sobre el corpus de 200 casos el piso se cumple en TODO el
+    # conjunto cortocircuitable (det 0.7405 vs gem 0.6769) y los 5 folds coinciden
+    # en 0.516666...; el tau se trunca hacia abajo a 4 decimales (0.5166) para
+    # incluir el conjunto no ambiguo completo (131/200, cobertura 0.6550). Se
+    # retira el piso ABSOLUTO 0.90/0.85 como criterio de operacion. Documentado en
+    # docs/deterministic_calibration.md.
+    deterministic_score_threshold: float = 0.5166  # tau comparativo OOF (c-74 OQ3)
+
+    # ── Score de correctitud del determinista (c-74, OQ1/OQ4) ──────────────────
+    # Peso relativo de cada feature en el score de correctitud (ASG-010). El
+    # score es una combinacion acotada a [0,1] del margen sobre el segundo, la
+    # evidencia del ganador y la densidad de senal (que penaliza textos largos).
+    # ORDENA la correctitud esperada (mayor = mas evidencia de acierto); NO es una
+    # probabilidad calibrada. Se normaliza por la suma de pesos, de modo que
+    # cualquier juego de pesos no negativos produce un valor en rango.
+    # `deterministic_min_matches` interviene como FEATURE (denominador de la
+    # evidencia), no como gate binario (OQ4). El punto de operacion del
+    # cortocircuito se calibra OFFLINE out-of-fold
+    # (evaluation/deterministic_measurement.py); estos pesos son a-priori.
+    deterministic_score_weight_margin: float = 0.5     # peso del margen sobre el segundo
+    deterministic_score_weight_evidence: float = 0.3   # peso de la evidencia del ganador
+    deterministic_score_weight_density: float = 0.2    # peso de la densidad de senal
+    deterministic_score_length_reference: float = 200.0  # longitud de referencia (density)
 
     # ── Integración con N8N ───────────────────────────────────────────────────
     # Si n8n_webhook_url está vacío, la notificación se omite silenciosamente.

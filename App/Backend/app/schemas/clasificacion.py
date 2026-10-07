@@ -71,6 +71,12 @@ class ClasificacionResult(BaseModel):
     respuesta_raw: str | None = None                    # Texto crudo de Gemini (para auditoría)
     sin_prediccion: bool = False                        # c-71: ausencia explicita de prediccion
     ambiguo: bool = False                               # c-71: empate de puntaje maximo
+    # c-74 (ASG-010): score de correctitud del determinista, acotado a [0,1].
+    # ORDENA la correctitud esperada de la prediccion a partir de features
+    # observables; NO es una probabilidad calibrada. Default 0.0 (aditivo): las
+    # etapas que no lo emiten (Gemini, fallback, tests heredados) conservan el
+    # contrato.
+    score_correctitud: float = Field(default=0.0, ge=0.0, le=1.0)
 
 
 class ClasificacionLogRead(BaseModel):

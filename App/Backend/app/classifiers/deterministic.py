@@ -32,10 +32,24 @@ Optimización:
     Los patrones regex se compilan una sola vez al inicio de la aplicación
     mediante lru_cache y se reutilizan en todas las clasificaciones posteriores,
     evitando el costo de compilación en cada solicitud.
+
+Score de correctitud (c-74 ASG-010, OQ1/OQ4):
+    La `confianza` mide FUERZA DE SENAL, no correctitud. El cortocircuito se
+    gobierna por un `score_correctitud` acotado a [0,1], derivado de features
+    observables en runtime (score del ganador, runner-up, margen, cantidad de
+    matches, longitud del texto y senales por sector). El score ORDENA la
+    correctitud esperada (mayor = mas evidencia de acierto); NO es una
+    probabilidad calibrada de acierto. Es puramente deterministico y a-priori:
+    su punto de operacion se calibra OFFLINE out-of-fold en
+    `evaluation/deterministic_measurement.py`. `min_matches` interviene como
+    FEATURE (denominador de la evidencia), NO como gate binario (OQ4): un unico
+    match conserva un score no nulo.
 """
 
 import re
+from dataclasses import dataclass
 from functools import lru_cache
+from typing import Mapping
 
 from app.classifiers.base import BaseClassifier
 from app.classifiers.keywords import KEYWORD_MAP
@@ -47,6 +61,98 @@ logger = get_logger(__name__)
 
 # Lista de categorías válidas derivada del diccionario de palabras clave
 CATEGORIES = list(KEYWORD_MAP.keys())
+
+
+@dataclass(frozen=True)
+class FeaturesDeterministas:
+    """
+    Features observables en runtime que alimentan el score de correctitud (ASG-010).
+
+    Se derivan SOLO de la descripcion y el vocabulario: no usan informacion no
+    disponible en runtime ni servicios externos (D7).
+    """
+
+    winner_score: float        # cantidad de patrones distintos que matchea el ganador
+    runner_up_score: float     # mayor puntaje entre los sectores no ganadores
+    margin: float              # winner_score - runner_up_score
+    margin_ratio: float        # margin / (winner + runner), en [0, 1]
+    total_matches: float       # suma de matches de todos los sectores
+    text_length: int           # longitud de la descripcion en caracteres
+    sectores_con_senal: int    # cantidad de sectores con al menos un match
+    min_matches: int           # parametro (c-74 OQ4): feature, no gate
+
+
+@dataclass(frozen=True)
+class PesosScore:
+    """Pesos a-priori y longitud de referencia del score de correctitud (ASG-010)."""
+
+    w_margin: float = 0.5
+    w_evidence: float = 0.3
+    w_density: float = 0.2
+    length_reference: float = 200.0
+
+
+def extraer_features(
+    scores: Mapping[str, float],
+    text_length: int,
+    min_matches: int,
+) -> FeaturesDeterministas:
+    """
+    Deriva las features observables del determinista a partir del mapa de scores.
+
+    Funcion pura: no hace I/O, no depende de servicios externos y no muta la
+    entrada. Ante ausencia de senal (todos los scores en 0) devuelve features
+    nulas sin dividir por cero.
+    """
+    valores = list(scores.values())
+    winner_score = max(valores) if valores else 0.0
+    runner_up_score = max((v for v in valores if v < winner_score), default=0.0)
+    margin = winner_score - runner_up_score
+    denominador = winner_score + runner_up_score
+    margin_ratio = margin / denominador if denominador > 0 else 0.0
+    return FeaturesDeterministas(
+        winner_score=winner_score,
+        runner_up_score=runner_up_score,
+        margin=margin,
+        margin_ratio=margin_ratio,
+        total_matches=float(sum(valores)),
+        text_length=text_length,
+        sectores_con_senal=sum(1 for v in valores if v > 0),
+        min_matches=min_matches,
+    )
+
+
+def score_correctitud(
+    features: FeaturesDeterministas,
+    pesos: PesosScore,
+) -> float:
+    """
+    Combina las features en un score acotado a [0.0, 1.0] (ASG-010).
+
+    El score crece con la evidencia del ganador y con el margen sobre el segundo,
+    y decrece con la longitud del texto (densidad de senal). ORDENA la correctitud
+    esperada; NO es una probabilidad calibrada. Es una funcion pura: misma
+    entrada, misma salida; sin proveedores pagos. `min_matches` entra como
+    denominador de la evidencia, de modo que NO anula el score (OQ4).
+    """
+    if features.winner_score <= 0.0:
+        return 0.0
+
+    evidence = features.winner_score / (
+        features.winner_score + features.min_matches
+    )
+    density = min(1.0, pesos.length_reference / max(features.text_length, 1))
+    peso_total = pesos.w_margin + pesos.w_evidence + pesos.w_density
+    if peso_total <= 0.0:
+        return 0.0
+
+    crudo = (
+        pesos.w_margin * features.margin_ratio
+        + pesos.w_evidence * evidence
+        + pesos.w_density * density
+    ) / peso_total
+    return max(0.0, min(1.0, crudo))
+
 
 
 @lru_cache(maxsize=1)
@@ -99,6 +205,13 @@ class DeterministicClassifier(BaseClassifier):
         settings = get_settings()
         self._threshold = settings.deterministic_confidence_threshold
         self._min_matches = settings.deterministic_min_matches
+        # c-74: pesos a-priori del score de correctitud (ASG-010).
+        self._pesos = PesosScore(
+            w_margin=settings.deterministic_score_weight_margin,
+            w_evidence=settings.deterministic_score_weight_evidence,
+            w_density=settings.deterministic_score_weight_density,
+            length_reference=settings.deterministic_score_length_reference,
+        )
 
     async def classify(self, descripcion: str) -> ClasificacionResult:
         """
@@ -143,9 +256,11 @@ class DeterministicClassifier(BaseClassifier):
         winners = [cat for cat, score in scores.items() if score == max_score]
         ambiguo = len(winners) > 1
         winner = winners[0] if not ambiguo else None
-        runner_up_score = max(
-            (score for score in scores.values() if score < max_score),
-            default=0.0,
+
+        # Features observables y score de correctitud (c-74 ASG-010). Se derivan
+        # una sola vez desde `scores`; el runner-up sale de las features.
+        features = extraer_features(
+            scores, text_length=len(descripcion), min_matches=self._min_matches
         )
 
         # Sectores secundarios con alguna señal (conjunto multietiqueta).
@@ -155,7 +270,12 @@ class DeterministicClassifier(BaseClassifier):
             if score > 0 and categoria != winner
         ]
 
-        confidence = self._confidence(max_score, runner_up_score, ambiguo)
+        confidence = self._confidence(
+            features.winner_score, features.runner_up_score, ambiguo
+        )
+
+        # Un empate no tiene ganador unico: su score es 0.0 (escala de todos modos).
+        score = 0.0 if ambiguo else score_correctitud(features, self._pesos)
 
         logger.debug(
             "deterministic_scores",
@@ -163,6 +283,7 @@ class DeterministicClassifier(BaseClassifier):
             winner=winner,
             ambiguo=ambiguo,
             confidence=round(confidence, 4),
+            score_correctitud=round(score, 4),
         )
 
         return ClasificacionResult(
@@ -174,6 +295,7 @@ class DeterministicClassifier(BaseClassifier):
             respuesta_raw=None,              # Sin respuesta raw en etapa determinística
             sin_prediccion=False,
             ambiguo=ambiguo,
+            score_correctitud=score,
         )
 
     def _confidence(

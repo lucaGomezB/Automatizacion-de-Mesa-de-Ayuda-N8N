@@ -474,6 +474,37 @@ async def test_cambio_en_classifier_version_invalida_cache(corpus_fixture_path, 
     )
 
 
+def test_version_de_cache_comparativa_es_hybrid_v3():
+    """c-74 (4.2/4.3): el cambio de senal de seleccion sube la version a hybrid-v3."""
+    from evaluation.run_evaluation import _version_clasificador_real
+
+    assert _version_clasificador_real() == "hybrid-v3"
+
+
+def test_cache_de_politica_previa_v2_es_invalido(tmp_path):
+    """c-74 (4.3): un cache hybrid-v2 deja de ser valido para el runner v3."""
+    import json
+
+    from evaluation.run_evaluation import _is_cache_valid
+
+    path = tmp_path / "predicciones.json"
+    path.write_text(
+        json.dumps(
+            {
+                "cache_meta": {
+                    "corpus_hash": "h",
+                    "corpus_count": 1,
+                    "classifier_version": "hybrid-v2",
+                },
+                "predictions": [],
+            }
+        ),
+        encoding="utf-8",
+    )
+    assert _is_cache_valid(path, "h", 1, "hybrid-v3") is False
+    assert _is_cache_valid(path, "h", 1, "hybrid-v2") is True
+
+
 # ---------------------------------------------------------------------------
 # C-34 TRIANGULATE (3.3): --force y --no-cache son equivalentes en el CLI
 # ---------------------------------------------------------------------------

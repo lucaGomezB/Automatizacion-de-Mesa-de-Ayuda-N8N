@@ -40,12 +40,18 @@ def load_workflow() -> dict:
         return json.load(fh)
 
 
-def _det_result(sector: str, confianza: float) -> ClasificacionResult:
+def _det_result(sector: str, confianza: float, *, score: float = 0.0) -> ClasificacionResult:
+    """Resultado determinista de prueba.
+
+    c-74: el cortocircuito se gobierna por `score_correctitud`, no por
+    `confianza`. Default 0.0 (escala); el cortocircuito pasa `score=1.0`.
+    """
     return ClasificacionResult(
         sector_predicho=sector,
         confianza=confianza,
         etapa="deterministic",
         requiere_revision_humana=False,
+        score_correctitud=score,
     )
 
 
@@ -138,7 +144,7 @@ async def test_4_3_cortocircuito_deterministico_no_reserva():
         classifier._deterministic,
         "classify",
         new_callable=AsyncMock,
-        return_value=_det_result("Sistemas", 1.0),
+        return_value=_det_result("Sistemas", 1.0, score=1.0),
     ):
         result = await classifier.classify("Se cayo el servidor")
 
