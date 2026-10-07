@@ -12,13 +12,15 @@ Responsabilidad:
 
 Categorías y etiquetas (en orden de aplicación):
     1. EMAIL   → [EMAIL]    (regex estructurado; alta especificidad)
-    2. TELEFONO → [TELEFONO] (formatos argentinos: +54, con área, separadores)
-    3. HOST    → [HOST]     (dominios configurados + fallback heurístico)
-    4. PERSONA → [PERSONA]  (heurística: palabras capitalizadas, última)
+    2. TARJETA → [TARJETA]  (16 dígitos con disparador contextual "tarjeta")
+    3. TELEFONO → [TELEFONO] (formatos argentinos: +54, con área, separadores)
+    4. HOST    → [HOST]     (dominios configurados + fallback heurístico)
+    5. PERSONA → [PERSONA]  (heurística: palabras capitalizadas, última)
 
-Orden fijo (email→telefono→host→persona) para evitar colisiones: p.ej.
+Orden fijo (email→tarjeta→telefono→host→persona) para evitar colisiones: p.ej.
 'juan.perez@empresa.com' colapsa a [EMAIL] antes de que el patrón de
-nombres intente capturar 'juan.perez'.
+nombres intente capturar 'juan.perez'; y el patrón de tarjeta corre antes
+que el de teléfono para que este no consuma la corrida de 16 dígitos.
 
 Referencias:
     design.md § Decisiones 7, 8, 9
@@ -41,7 +43,8 @@ class PseudonymizationResult:
     Atributos:
         texto:   Texto con los datos personales reemplazados por etiquetas.
         conteos: Diccionario {categoría: cantidad_de_reemplazos} para auditoría
-                 DEBUG sin PII. Las categorías son: email, telefono, host, persona.
+                 DEBUG sin PII. Las categorías son: email, telefono, tarjeta,
+                 host, persona.
     """
 
     texto: str
@@ -52,8 +55,16 @@ class PseudonymizationResult:
 
 _LABEL_EMAIL = "[EMAIL]"
 _LABEL_TELEFONO = "[TELEFONO]"
+_LABEL_TARJETA = "[TARJETA]"
 _LABEL_HOST = "[HOST]"
 _LABEL_PERSONA = "[PERSONA]"
+
+
+# ─── Parámetros de proximidad ─────────────────────────────────────────────────
+
+# Ventana de proximidad (en caracteres) entre la mención de "tarjeta" y el
+# número de tarjeta. Unidireccional (hacia adelante). Ver design.md § D3.
+_CARD_CONTEXT_WINDOW_CHARS = 40
 
 
 # ─── Patrones compilados ──────────────────────────────────────────────────────
@@ -63,6 +74,28 @@ _LABEL_PERSONA = "[PERSONA]"
 _RE_EMAIL = re.compile(
     r"[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}",
     re.IGNORECASE,
+)
+
+# TARJETA: corridas de 16 dígitos con disparador contextual.
+# Python `re` no soporta lookbehind de ancho variable. Además, un único
+# disparador puede cubrir VARIOS números dentro de su ventana; un `subn` sobre un
+# patrón combinado (disparador + ventana + número) solo reemplazaría el primero,
+# porque la búsqueda reanuda después del número. Por eso la detección se separa:
+#   1. `_RE_TRIGGER_TARJETA` localiza las menciones de "tarjeta"/"tarjetas".
+#   2. `_RE_NUMERO_TARJETA` localiza las corridas candidatas a número.
+#   3. Se enmascara cada corrida cuyo INICIO caiga en la ventana forward de
+#      `_CARD_CONTEXT_WINDOW_CHARS` caracteres de alguna mención.
+# Las ventanas se computan sobre el texto de entrada a este paso (mascarar un
+# número corre los offsets y ocultaría los siguientes). Ver design.md § D4.
+#
+#   - `\btarjetas?\b`      disparador singular/plural, case-insensitive.
+#   - `(?<!\d)\d{4}(?:[\s\-]\d{4}){3}(?!\d)`  forma 4-4-4-4 con espacio/guión.
+#   - `(?<!\d)\d{16}(?!\d)` forma contigua de 16 dígitos.
+_RE_TRIGGER_TARJETA = re.compile(r"\btarjetas?\b", re.IGNORECASE)
+
+_RE_NUMERO_TARJETA = re.compile(
+    r"(?<!\d)\d{4}(?:[\s\-]\d{4}){3}(?!\d)"
+    r"|(?<!\d)\d{16}(?!\d)"
 )
 
 # TELEFONO: formatos argentinos.
@@ -232,9 +265,10 @@ def pseudonymize(text: str, internal_domains: list[str]) -> PseudonymizationResu
 
     Orden de aplicación (fijo para evitar colisiones):
         1. EMAIL    → [EMAIL]
-        2. TELEFONO → [TELEFONO]
-        3. HOST     → [HOST]    (dominios configurados + fallback heurístico)
-        4. PERSONA  → [PERSONA] (heurística regex, con lista de exclusión)
+        2. TARJETA  → [TARJETA]  (16 dígitos con disparador contextual "tarjeta")
+        3. TELEFONO → [TELEFONO]
+        4. HOST     → [HOST]     (dominios configurados + fallback heurístico)
+        5. PERSONA  → [PERSONA]  (heurística regex, con lista de exclusión)
 
     Args:
         text:             Texto libre con posible PII.
@@ -244,27 +278,58 @@ def pseudonymize(text: str, internal_domains: list[str]) -> PseudonymizationResu
     Returns:
         PseudonymizationResult con el texto pseudonimizado y los conteos por categoría.
     """
-    conteos: dict[str, int] = {"email": 0, "telefono": 0, "host": 0, "persona": 0}
+    conteos: dict[str, int] = {
+        "email": 0,
+        "telefono": 0,
+        "tarjeta": 0,
+        "host": 0,
+        "persona": 0,
+    }
 
     # 1. EMAIL
     text, n = _RE_EMAIL.subn(_LABEL_EMAIL, text)
     conteos["email"] = n
 
-    # 2. TELEFONO
+    # 2. TARJETA — disparador contextual; ANTES de TELEFONO para que este no
+    #    consuma parcialmente la corrida de 16 dígitos. Un mismo disparador puede
+    #    cubrir VARIOS números dentro de su ventana forward: se enmascaran TODOS
+    #    (no solo el primero), preservando la frase del disparador. Las ventanas
+    #    y las corridas candidatas se computan sobre el mismo texto de entrada,
+    #    antes de reemplazar nada, para que los offsets no se corran.
+    ventanas_tarjeta = [
+        (m.end(), m.end() + _CARD_CONTEXT_WINDOW_CHARS)
+        for m in _RE_TRIGGER_TARJETA.finditer(text)
+    ]
+
+    tarjeta_reemplazos = 0
+
+    def _replace_numero_tarjeta(match: re.Match) -> str:
+        nonlocal tarjeta_reemplazos
+        inicio = match.start()
+        if any(ini <= inicio <= fin for ini, fin in ventanas_tarjeta):
+            tarjeta_reemplazos += 1
+            return _LABEL_TARJETA
+        return match.group(0)
+
+    if ventanas_tarjeta:
+        text = _RE_NUMERO_TARJETA.sub(_replace_numero_tarjeta, text)
+    conteos["tarjeta"] = tarjeta_reemplazos
+
+    # 3. TELEFONO
     text, n = _RE_TELEFONO.subn(_LABEL_TELEFONO, text)
     conteos["telefono"] = n
 
-    # 3. HOST — dominios corporativos configurados (si los hay)
+    # 4. HOST — dominios corporativos configurados (si los hay)
     re_corp = _build_host_pattern(internal_domains)
     if re_corp:
         text, n = re_corp.subn(_LABEL_HOST, text)
         conteos["host"] += n
 
-    # 3b. HOST — fallback heurístico (srv-*, pc-*, *.local, localhost)
+    # 4b. HOST — fallback heurístico (srv-*, pc-*, *.local, localhost)
     text, n = _RE_HOST_FALLBACK.subn(_LABEL_HOST, text)
     conteos["host"] += n
 
-    # 4. PERSONA — heurística regex con lista de exclusión
+    # 5. PERSONA — heurística regex con lista de exclusión
     def _replace_persona(match: re.Match) -> str:
         matched_text = match.group(0)
         if _is_excluded_persona(matched_text):

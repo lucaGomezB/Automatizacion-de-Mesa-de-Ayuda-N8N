@@ -17,7 +17,6 @@ Estrategia:
 """
 
 import asyncio
-import logging
 from unittest.mock import AsyncMock, MagicMock, patch, call
 
 import pytest
@@ -240,32 +239,63 @@ async def test_etapa_deterministica_opera_sobre_pseudonimizada(db_session):
 # ── 11.5: Log DEBUG de cobertura sin PII ─────────────────────────────────────
 
 @pytest.mark.asyncio
-async def test_log_debug_cobertura_sin_pii(db_session, caplog):
+async def test_log_debug_cobertura_sin_pii(db_session):
     """
-    11.5 TRIANGULATE:
-    El log DEBUG 'pseudonimizacion_cobertura' contiene conteos por categoría
-    y NO el texto original ni el pseudonimizado completo.
+    11.5 TRIANGULATE (reforzado en c-73 W2):
+    El evento DEBUG 'pseudonimizacion_cobertura' SE EMITE con los conteos por
+    categoría —incluyendo la clave 'tarjeta'— y SIN el texto original ni el
+    pseudonimizado completo.
+
+    Se usa `structlog.testing.capture_logs` (patrón del repo: ver
+    test_directorio_service.py / test_contact_resolution_service.py) porque los
+    eventos de la aplicación se emiten vía structlog; `caplog` no garantiza
+    verlos en este contexto y hacía que la aserción de ausencia de PII fuese
+    vacua.
     """
+    from structlog.testing import capture_logs
+
     await _seed_catalogs(db_session)
     classifier_mock = AsyncMock()
     classifier_mock.classify = AsyncMock(return_value=_make_clasificacion_result())
     payload = IncidenteCreate(descripcion=_TEXTO_CON_PII)
 
-    with patch("app.services.incidente_service.notify_n8n", new_callable=AsyncMock), \
-         caplog.at_level(logging.DEBUG):
+    with capture_logs() as logs, patch(
+        "app.services.incidente_service.notify_n8n", new_callable=AsyncMock
+    ):
         service = IncidenteService(session=db_session, classifier=classifier_mock)
         await service.create_and_classify(payload)
         await asyncio.sleep(0)
 
-    # Buscar el evento de cobertura en los logs capturados
-    # structlog puede emitir en format diferente; buscar en el mensaje serializado
-    log_messages = [r.getMessage() for r in caplog.records]
-    log_texts = " ".join(log_messages)
+    # El evento DEBUG de cobertura se emite y expone los conteos por categoría.
+    cobertura = [
+        evento
+        for evento in logs
+        if evento.get("event") == "pseudonimizacion_cobertura"
+    ]
+    assert cobertura, (
+        "Debe emitirse el evento DEBUG 'pseudonimizacion_cobertura'"
+    )
+    evento = cobertura[-1]
+    assert evento.get("log_level") == "debug", (
+        "El evento de cobertura debe ser de nivel DEBUG"
+    )
+    assert "tarjeta" in evento, (
+        "Los conteos de cobertura deben incluir la clave 'tarjeta'"
+    )
+    assert all(
+        categoria in evento
+        for categoria in ("email", "telefono", "tarjeta", "host", "persona")
+    ), "Los conteos de cobertura deben incluir las cinco categorías"
 
-    # El texto original NO debe aparecer en ningún log
-    assert "juan.perez@empresa.com" not in log_texts, (
+    # Ningún evento capturado debe exponer PII ni el texto crudo.
+    serializado = repr(logs)
+    assert "juan.perez@empresa.com" not in serializado, (
         "El email original NO debe aparecer en los logs"
     )
-    assert "+54 261 555-1234" not in log_texts, (
+    assert "+54 261 555-1234" not in serializado, (
         "El teléfono original NO debe aparecer en los logs"
     )
+    assert _TEXTO_CON_PII not in serializado, (
+        "El texto original completo NO debe aparecer en los logs"
+    )
+
