@@ -7,8 +7,7 @@ Specifies the end-to-end N8N workflow for automated help desk incident classific
 
 ### Requirement: Normalización de canales a estructura unificada
 
-El workflow N8N SHALL incluir un nodo de normalización que homogenice la entrada de cualquiera de los tres canales (correo electrónico, formulario web, telefonía con transcripción) en una estructura unificada con exactamente los campos `id`, `timestamp` (precisión al milisegundo), `canal_origen` (uno de `correo`, `web`, `telefonia`) y `descripcion`. Los nodos posteriores SHALL operar exclusivamente sobre esta estructura y no sobre la forma cruda de cada canal. Para el canal de correo, la normalización SHALL consumir los campos genéricos del mensaje IMAP (remitente, asunto, cuerpo de texto y fecha de recepción) y NO SHALL depender de campos propios de un proveedor.
-(Previously: el escenario de correo referenciaba el disparador de Outlook y campos específicos de ese proveedor.)
+El workflow N8N SHALL incluir un nodo de normalización que homogenice la entrada de cualquiera de los tres canales (correo electrónico, formulario web, telefonía con transcripción) en una estructura unificada con exactamente los campos `id`, `timestamp` (precisión al milisegundo), `canal_origen` (uno de `correo`, `web`, `telefonia`) y `descripcion`. Los nodos posteriores SHALL operar exclusivamente sobre esta estructura y no sobre la forma cruda de cada canal. Para el canal de correo, la normalización SHALL consumir los campos genéricos del mensaje IMAP (remitente, asunto, cuerpo de texto y fecha de recepción) y NO SHALL depender de campos propios de un proveedor. Para el canal de telefonía, la normalización SHALL consumir el ingreso pseudonimizado sellado por el backend a través del cableado `Sellar -> Normalizar` y MUST NOT depender de un nodo de clasificacion en n8n.
 
 #### Scenario: Correo electrónico normalizado
 
@@ -17,8 +16,8 @@ El workflow N8N SHALL incluir un nodo de normalización que homogenice la entrad
 
 #### Scenario: Transcripción telefónica normalizada
 
-- **WHEN** el AI Agent parsea la transcripción de una llamada Twilio y su salida pasa por el nodo de normalización
-- **THEN** la salida contiene los mismos cuatro campos con `canal_origen = "telefonia"`
+- **WHEN** la transcripción pseudonimizada de una llamada Twilio sellada por el backend atraviesa el cableado `Sellar -> Normalizar` hasta el nodo de normalización
+- **THEN** la salida contiene los mismos cuatro campos con `canal_origen = "telefonia"`, sin un nodo de clasificacion en n8n en la ruta
 
 #### Scenario: Canal de origen inválido rechazado
 
@@ -41,12 +40,12 @@ El nodo `code` del canal de correo SHALL reemplazar la lógica placeholder por u
 
 ### Requirement: Validación de la respuesta de clasificación según Anexo H §H.3
 
-El nodo `code` del canal telefónico SHALL validar la respuesta de clasificación aplicando, en orden, los pasos del Anexo H §H.3: (1) parseo JSON válido; (2) presencia de los campos `sector_predicho` y `confianza`; (3) `sector_predicho` exactamente en `{"Seguridad Informatica", "Soporte Tecnico Hardware", "Soporte Tecnico Software", "Bases de Datos", "Sistemas"}` (case-sensitive, sin tildes); (4) `confianza` numérica en el rango `[0.0, 1.0]`; (5) si el campo `sectores_adicionales` está presente, cada uno de sus valores MUST pertenecer al mismo conjunto canónico. Ante el fallo de cualquier paso, SHALL registrar el error, fijar `confianza = 0.0` y marcar el incidente para revisión humana, sin propagar estados inconsistentes.
+La clasificacion persistida del incidente SHALL provenir del backend, que valida su propia cascada conforme al contrato de resultado. Si el workflow conserva una validacion de una salida reducida de un modelo para un sub-caso (OQ1), esa validacion SHALL aplicar, en orden, los pasos del Anexo H §H.3: (1) parseo JSON válido; (2) presencia de los campos `sector_predicho` y `confianza`; (3) `sector_predicho` exactamente en `{"Seguridad Informatica", "Soporte Tecnico Hardware", "Soporte Tecnico Software", "Bases de Datos", "Sistemas"}` (case-sensitive, sin tildes); (4) `confianza` numérica en el rango `[0.0, 1.0]`; (5) si el campo `sectores_adicionales` está presente, cada uno de sus valores MUST pertenecer al mismo conjunto canónico. Ante el fallo de cualquier paso, SHALL registrar el error, fijar `confianza = 0.0` y marcar el incidente para revisión humana, sin propagar estados inconsistentes. La salida validada de un modelo reducido MUST NOT determinar el sector persistido del incidente.
 
 #### Scenario: Respuesta válida aceptada
 
 - **WHEN** la validación recibe `{"sector_predicho": "Soporte Tecnico Software", "confianza": 0.95, "sectores_adicionales": ["Bases de Datos"]}`
-- **THEN** la marca como válida y conserva el sector predicho, los sectores adicionales y la confianza para el ruteo por umbral
+- **THEN** la marca como válida y conserva el sector predicho, los sectores adicionales y la confianza para el ruteo por umbral, sin que esa salida determine el sector persistido
 
 #### Scenario: Categoría fuera del conjunto permitido
 
@@ -70,9 +69,9 @@ El nodo `code` del canal telefónico SHALL validar la respuesta de clasificació
 
 ### Requirement: Ruteo por umbral de confianza
 
-El gate de revisión humana del workflow SHALL ser de dos capas y NO SHALL evaluar la confianza del modelo antes de persistir el incidente.
+El gate de revision humana del workflow SHALL ser de dos capas y NO SHALL evaluar la confianza del modelo antes de persistir el incidente.
 
-La primera capa es el nodo `if` pre-POST `Entrada valida`, que es una validación de ENTRADA y no una compuerta de confianza: para los canales correo y web SHALL verificar la validez y longitud del texto de la descripción, y para el canal telefonía SHALL verificar la validez de la respuesta de clasificación del agente. Su condición SHALL ser `confianza >= 0.70 OR revision_forzada == true`, de modo que una entrada con revisión forzada por el tope de refinamiento del agente se persista aunque su confianza sea `0.0`. Cuando la condición es verdadera el flujo SHALL continuar hacia la persistencia; cuando es falsa SHALL derivar a revisión humana.
+La primera capa es el nodo `if` pre-POST `Entrada valida`, que es una validación de ENTRADA y no una compuerta de confianza: para los TRES canales (correo, web y telefonía) SHALL verificar la validez y longitud del texto de la descripción pseudonimizada. Para el canal telefonía el nodo MUST NOT evaluar una clasificación producida por un modelo de n8n, porque la clasificación la resuelve el backend. Su condición SHALL ser `confianza >= 0.70 OR revision_forzada == true`, de modo que una entrada con revisión forzada se persista aunque su confianza sea `0.0`. Cuando la condición es verdadera el flujo SHALL continuar hacia la persistencia; cuando es falsa SHALL derivar a revisión humana.
 
 La segunda capa es el nodo `if` post-POST `Requiere revision humana`, que SHALL evaluar el flag `requiere_revision_humana` devuelto por el backend en la respuesta de `POST /api/v1/incidentes/`. El backend SHALL fijar `requiere_revision_humana = confianza < 0.70` y la respuesta del POST NO SHALL incluir el campo `confianza`; por eso el gate post-POST SHALL leer el flag y NO SHALL intentar leer `confianza` del response. Cuando el flag es verdadero el flujo SHALL notificar al operador designado y registrar auditoría; cuando es falso SHALL continuar con las confirmaciones por canal. Las condiciones de los nodos `if` NO SHALL quedar vacías.
 
@@ -88,8 +87,13 @@ La segunda capa es el nodo `if` post-POST `Requiere revision humana`, que SHALL 
 
 #### Scenario: Entrada valida acepta revisión forzada aun con confianza baja
 
-- **WHEN** el nodo `if` pre-POST `Entrada valida` evalúa una entrada con `confianza = 0.0` y `revision_forzada = true` (por ejemplo, el tope de refinamiento del agente)
+- **WHEN** el nodo `if` pre-POST `Entrada valida` evalúa una entrada con `confianza = 0.0` y `revision_forzada = true`
 - **THEN** la condición es verdadera por la rama `revision_forzada == true` y el flujo rutea hacia la persistencia
+
+#### Scenario: Telefono valida su entrada como los demas canales
+
+- **WHEN** el nodo `if` pre-POST `Entrada valida` procesa una entrada del canal telefonía
+- **THEN** verifica la validez y longitud de la descripción pseudonimizada y NO evalúa una clasificación producida por un modelo de n8n
 
 #### Scenario: Confianza en el límite exacto
 
@@ -189,12 +193,12 @@ El workflow N8N SHALL incluir un nodo disparador `webhook` (método `POST`, con 
 
 ### Requirement: Trigger Webhook para la transcripción de Twilio
 
-El workflow N8N SHALL incluir un disparador `webhook` (método `POST`, con una ruta dedicada) que reciba del backend el ingreso telefónico YA pseudonimizado, como canal de telefonía. El disparador MUST NOT ser un `twilioTrigger` de resumen post-llamada y el workflow MUST NOT parsear CloudEvents de Twilio ni depender del evento `call-summary.complete`. La salida del webhook SHALL fluir hacia el `AI Agent` y, tras la validación de la respuesta de clasificación, hacia el nodo de normalización con `canal_raw = "telefonia"`, de modo que el normalizador asigne `canal_origen = "telefonia"`. El webhook SHALL estar autenticado con el secreto compartido del handoff.
+El workflow N8N SHALL incluir un disparador `webhook` (método `POST`, con una ruta dedicada) que reciba del backend el ingreso telefónico YA pseudonimizado, como canal de telefonía. El disparador MUST NOT ser un `twilioTrigger` de resumen post-llamada y el workflow MUST NOT parsear CloudEvents de Twilio ni depender del evento `call-summary.complete`. La salida del webhook SHALL fluir hacia la admisión (intake) del backend y, a través del cableado `Sellar -> Normalizar`, hacia el nodo de normalización con `canal_raw = "telefonia"`, de modo que el normalizador asigne `canal_origen = "telefonia"`. El webhook SHALL estar autenticado con el secreto compartido del handoff.
 
 #### Scenario: El disparador telefónico existe y alimenta el flujo
 
 - **WHEN** se inspecciona el workflow exportado
-- **THEN** existe un nodo `webhook` con método `POST` y ruta no vacía cuya salida fluye hacia el AI Agent, y no existe un nodo `twilioTrigger` de resumen post-llamada
+- **THEN** existe un nodo `webhook` con método `POST` y ruta no vacía cuya salida fluye hacia la admisión/normalización del backend, y no existe un nodo `twilioTrigger` de resumen post-llamada
 
 #### Scenario: No hay parsing de CloudEvent
 
@@ -272,40 +276,6 @@ El JSON exportado del workflow (`Automatizacion_Mesa_de_Ayuda.json`) SHALL ser v
 - **WHEN** la suite de pruebas inspecciona el workflow exportado
 - **THEN** existe un nodo de auditoría/log con los campos de metadatos esperados y la retención de 30 días declarada
 
-### Requirement: N8N-REFINE-001 — Tope de refinamiento del agente pago
-
-El canal telefonico SHALL limitar a un maximo de 2 el numero de intentos de clasificacion/refinamiento del `AI Agent`. El workflow SHALL contabilizar los intentos y, al agotarse el tope sin una clasificacion valida, SHALL derivar el incidente a un nodo terminal que lo persiste con `requiere_revision_humana=true` y `confianza=0.0`, MUST NOT volver a invocar al agente pago. El refinamiento dentro del tope SHALL conservarse. Ademas, el nodo `AI Agent` SHALL declarar un reintento acotado ante fallas transitorias del modelo de lenguaje (`retryOnFail` verdadero, con `maxTries` y `waitBetweenTries` explicitos y acotados), de modo que una indisponibilidad momentanea del modelo NO aborte la clasificacion telefonica. Los reintentos de transporte y los refinamientos por respuesta invalida son mecanismos distintos: un reintento de transporte MUST NOT consumir un intento de refinamiento, y la cantidad maxima de invocaciones pagas por incidente telefonico queda acotada por el producto entre los intentos de transporte y los intentos de refinamiento, ambos explicitos en el workflow exportado.
-
-#### Scenario: Un fallo dentro del tope reintenta una vez
-
-- **WHEN** la validacion de la respuesta del agente falla en el primer intento y el tope aun no se agoto
-- **THEN** el flujo reingresa al `AI Agent` para un unico intento adicional
-
-#### Scenario: Al agotar el tope no se reinvoca al agente pago
-
-- **WHEN** el refinamiento alcanza el tope de 2 intentos sin una clasificacion valida
-- **THEN** el flujo NO reingresa al `AI Agent`, persiste el incidente con `requiere_revision_humana=true` y termina
-
-#### Scenario: Clasificacion valida dentro del tope sigue el flujo normal
-
-- **WHEN** el agente produce una clasificacion valida dentro del tope
-- **THEN** el flujo continua hacia la normalizacion y el ruteo por umbral como hasta ahora
-
-#### Scenario: El tope es verificable en el workflow exportado
-
-- **WHEN** la suite estructural inspecciona el nodo `AI Agent` y sus conexiones de refinamiento
-- **THEN** existe un tope explicito de intentos (por ejemplo `maxIterations` o un contador) y una ruta terminal que no reinvoca al agente
-
-#### Scenario: Una falla transitoria del modelo se reintenta sin consumir refinamiento
-
-- **WHEN** el modelo de lenguaje del agente falla de forma transitoria en el primer intento de transporte
-- **THEN** el workflow reintenta la invocacion del agente segun su `maxTries` declarado, y ese reintento de transporte no cuenta como intento de refinamiento por respuesta invalida
-
-#### Scenario: El reintento de transporte esta acotado y es explicito
-
-- **WHEN** la suite estructural inspecciona el nodo `AI Agent`
-- **THEN** el nodo declara `retryOnFail` verdadero con `maxTries` y `waitBetweenTries` numericos y acotados, de modo que el peor caso de invocaciones pagas por incidente es finito y verificable
-
 ### Requirement: N8N-EMAIL-LIFECYCLE-001 — El correo se marca como leido en todas las ramas terminales
 
 Para el canal de correo, el disparador IMAP SHALL marcar el mensaje como leído al recolectarlo, de modo que el marcado quede garantizado en TODAS las ramas terminales alcanzables (éxito, rechazo por validación y error o fallo) sin depender de la rama ejecutada. El nodo dedicado `Marcar correo como leido` SHALL eliminarse del workflow. Un mensaje cuyo incidente no se creó MUST NOT permanecer sin leer de modo que el trigger lo reprocese automáticamente.
@@ -351,26 +321,6 @@ El disparador IMAP SHALL acotar los mensajes elegibles a los recibidos dentro de
 - **WHEN** la suite estructural inspecciona el trigger IMAP
 - **THEN** existe un filtro explicito con un lookback de 24 horas
 
-### Requirement: N8N-INTAKE-001 — El POST al backend envia Message-ID, clasificacion precalculada y origen
-
-El nodo HTTP de persistencia SHALL enviar al backend, ademas de la descripcion y el canal, la clasificacion ya producida por el agente cuando este disponible (sector predicho y confianza), el `Message-ID` del mensaje IMAP cuando el canal sea correo, y un marcador explicito de origen/evento. El workflow MUST NOT descartar la clasificacion ya producida cuando el backend puede aceptarla sin reclasificar.
-(Previously: el `Message-ID` se tomaba del mensaje de Outlook.)
-
-#### Scenario: El POST telefonico incluye la clasificacion precalculada
-
-- **WHEN** un incidente telefonico clasificado por el agente llega al nodo HTTP de persistencia
-- **THEN** el cuerpo enviado al backend incluye el sector predicho y la confianza producidos por el agente
-
-#### Scenario: El POST de correo incluye el Message-ID de origen
-
-- **WHEN** un incidente del canal correo llega al nodo HTTP de persistencia
-- **THEN** el cuerpo enviado al backend incluye el `origen_message_id` tomado del mensaje IMAP
-
-#### Scenario: El marcador de origen es explicito
-
-- **WHEN** se inspecciona el cuerpo que el nodo HTTP envia al backend
-- **THEN** contiene un marcador explicito de origen/evento que identifica al canal emisor
-
 ### Requirement: Contrato runtime del nodo HTTP de persistencia
 
 El nodo `httpRequest` que apunta a `POST /api/v1/incidentes` SHALL declarar autenticación configurada hacia el backend, y su cuerpo SHALL incluir `canal_origen_id` además de `descripcion` y `prioridad`, conforme al contrato `IncidenteCreate` que el backend resuelve por clave foránea. Las pruebas estructurales del workflow exportado SHALL verificar ambos extremos sin requerir una instancia N8N en ejecución.
@@ -403,27 +353,6 @@ Cada nodo `switch` en modo `expression` del workflow SHALL devolver un índice n
 - **THEN** cada campo referenciado existe en el schema de respuesta de `POST /api/v1/incidentes` o proviene de un nodo aguas arriba accesible por nombre
 - **AND** no hay referencias a campos inexistentes en ambos orígenes
 
-### Requirement: Acoplamiento del AI Agent a su modelo de lenguaje y al payload del trigger
-
-Cada nodo `@n8n/n8n-nodes-langchain.agent` SHALL tener una conexión entrante de tipo `ai_languageModel` desde un nodo de modelo de lenguaje. El nodo de modelo de lenguaje del agente SHALL declarar un modelo EXPLÍCITO (`modelName`) y NO SHALL depender del modelo por defecto del nodo. El `modelName` declarado SHALL ser igual al modelo configurado del backend (`settings.gemini_model`), de modo que la clasificación de n8n y la del backend no diverja por un default implícito. El prompt del agente SHALL interpolar el payload recibido del trigger (por ejemplo `$json` o `$input`), de modo que el contenido de la llamada o del correo sea la entrada efectiva del agente.
-
-#### Scenario: El agente tiene conexión ai_languageModel
-
-- **WHEN** la suite de pruebas inspecciona las conexiones del workflow
-- **THEN** cada nodo agente tiene al menos una conexión de tipo `ai_languageModel`
-- **AND** el nodo origen de esa conexión es un nodo de modelo de lenguaje
-
-#### Scenario: El prompt interpola el payload del trigger
-
-- **WHEN** la suite de pruebas inspecciona el texto (`text` o `prompt`) del nodo agente
-- **THEN** el texto contiene una expresión que referencia el payload de entrada del trigger (`$json` o `$input`)
-- **AND** el prompt no es un texto estático sin datos del incidente
-
-#### Scenario: El modelo del agente es explícito y en paridad con el backend
-
-- **WHEN** la suite de pruebas compara el `modelName` del nodo de modelo de lenguaje con el modelo configurado del backend
-- **THEN** el nodo declara un `modelName` no vacío y ambos valores coinciden, sin depender del default implícito del nodo
-
 ### Requirement: Cierre del ciclo del webhook con responseNode
 
 Todo nodo `webhook` configurado con `responseMode: responseNode` SHALL tener un nodo `respondToWebhook` alcanzable desde la rama exitosa de su flujo. La suite de pruebas SHALL verificar la alcanzabilidad estructural desde el webhook hasta el `respondToWebhook` sin requerir runtime N8N.
@@ -436,7 +365,8 @@ Todo nodo `webhook` configurado con `responseMode: responseNode` SHALL tener un 
 
 ### Requirement: Credenciales declaradas en nodos que las requieren
 
-Todo nodo del workflow que requiera credenciales para operar (por ejemplo los nodos de Outlook, el trigger de Twilio y el modelo de lenguaje del agente) SHALL declarar la credencial correspondiente en su configuración, de modo que el workflow exportado no dependa de credenciales implícitas o ausentes.
+Todo nodo del workflow que requiera credenciales para operar (por ejemplo los nodos de Outlook y el trigger de Twilio) SHALL declarar la credencial correspondiente en su configuración, de modo que el workflow exportado no dependa de credenciales implícitas o ausentes.
+(Previously: la enumeración de ejemplos incluía un nodo de modelo de lenguaje ya retirado del workflow.)
 
 #### Scenario: Los nodos que requieren credenciales las declaran
 
@@ -462,38 +392,6 @@ El workflow SHALL obtener el JWT con un nodo de login que invoque `POST /api/v1/
 
 - **WHEN** las credenciales de login son invalidas o el token esta ausente
 - **THEN** el nodo registra el error HTTP 401 y el workflow no continua como si hubiera creado el incidente
-
-### Requirement: N8N-AGENT-001 — AI Agent con Chat Model conectado
-
-El nodo `AI Agent` SHALL tener un Chat Model conectado y configurado, de modo que la ejecucion del agente produzca una salida real. Un nodo agente sin modelo MUST NOT considerarse configurado.
-
-#### Scenario: El agente produce salida con el modelo conectado
-
-- **WHEN** el workflow llega al nodo `AI Agent`
-- **THEN** el agente ejecuta contra el Chat Model conectado y devuelve una respuesta no vacia
-
-### Requirement: N8N-AGENT-002 — Prompt dinamico con el payload del trigger
-
-El prompt del `AI Agent` SHALL interpolar la descripcion del incidente proveniente del payload del trigger, en lugar de ser un texto estatico. La descripcion SHALL llegar pseudonimizada al agente cuando corresponda.
-
-#### Scenario: El prompt contiene la descripcion del trigger
-
-- **WHEN** el trigger recibe una entrada con descripcion `"Servidor de correo caido"`
-- **THEN** la ejecucion del agente incluye esa descripcion en el prompt, no un texto fijo
-
-### Requirement: N8N-AGENT-003 — Contrato JSON del agente compatible con el validador
-
-La salida del `AI Agent` SHALL solicitarse y validarse como un JSON con exactamente los campos `sector_predicho` (uno de los cinco sectores canonicos, sin tildes) y `confianza` (numero entre 0 y 1). El validador SHALL aceptar el contrato del agente y MUST NOT fallar por un formato incompatible.
-
-#### Scenario: Salida del agente validada correctamente
-
-- **WHEN** el agente responde con `{"sector_predicho": "Sistemas", "confianza": 0.82}`
-- **THEN** el validador acepta la respuesta y el flujo continua con ese sector y confianza
-
-#### Scenario: Salida con sector fuera del vocabulario es rechazada
-
-- **WHEN** el agente responde con un sector que no pertenece al conjunto canonico de cinco sectores
-- **THEN** el validador rechaza la respuesta y el flujo deriva a revision humana
 
 ### Requirement: N8N-ROUTE-001 — Switch de canal en modo reglas sobre el canal normalizado
 
@@ -561,15 +459,6 @@ La estructura normalizada enviada al backend SHALL incluir `canal_origen_id` cor
 - **WHEN** el workflow crea un incidente desde cualquiera de los tres canales
 - **THEN** el body enviado al backend incluye `canal_origen_id` y el incidente persistido tiene canal de origen distinto de `NULL`
 
-### Requirement: N8N-PHONE-001 — La rama falsa del telefono regresa al agente
-
-En el canal telefonico, la rama que no cumple la condicion del nodo de decision SHALL regresar al agente o a un camino que complete el flujo. MUST NOT quedar como rama terminal sin salida.
-
-#### Scenario: Condicion falsa del telefono no termina el flujo
-
-- **WHEN** una transcripcion telefonica no cumple la condicion evaluada
-- **THEN** el flujo reingresa al agente o a un camino que produce un resultado, sin terminar en un nodo sin continuacion
-
 ### Requirement: N8N-AUDIT-001 — La auditoria reporta rechazos como rechazos
 
 El registro de auditoria SHALL distinguir creados de rechazados segun el resultado real del flujo. Un incidente rechazado por validacion o por el validador IA MUST NOT registrarse como creado. El camino exitoso de la rama de revisión humana (incidente creado con `requiere_revision_humana = true`) SHALL registrarse como `creado` con el `incidente_id` numérico devuelto por el backend, porque el incidente existe y la revisión es un estado posterior al alta, no un rechazo. En la rama de rechazo por validación el resultado SHALL ser `rechazado_datos_incompletos`, y en la salida de error del POST SHALL ser `error_backend`.
@@ -593,15 +482,6 @@ El registro de auditoria SHALL distinguir creados de rechazados segun el resulta
 
 - **WHEN** la ejecución llega a la auditoría por la salida de error del POST de persistencia
 - **THEN** el registro de auditoría tiene `resultado = "error_backend"` y no `creado`
-
-### Requirement: N8N-VALID-001 — Los fallos del validador IA conservan su causa
-
-Cuando el validador IA rechaza una salida, el flujo SHALL conservar la causa del rechazo y MUST NOT reetiquetar el incidente con un canal distinto (por ejemplo `correo`) por el mero hecho de haber fallado la validacion.
-
-#### Scenario: Un fallo de validacion IA no cambia el canal
-
-- **WHEN** el validador IA rechaza la salida del agente para una entrada del canal web
-- **THEN** el canal registrado sigue siendo `web` y no se reetiqueta como `correo`
 
 ### Requirement: N8N-EXPR-001 — Expresiones de nodo validas y sin bucles vacios
 
@@ -679,35 +559,6 @@ Los nodos HTTP que invocan el backend SHALL resolver la URL base con la variable
 
 - **WHEN** se inspecciona `docker-compose.yml`
 - **THEN** el servicio N8N define `BACKEND_URL` y `OPERATOR_EMAIL` como variables de entorno disponibles para los nodos del workflow
-
-### Requirement: N8N-TIMING-001 — Captura del instante de ingreso en el borde del trigger
-
-Cada trigger del workflow SHALL propagar el instante de ingreso antes de cualquier procesamiento del canal. En el canal de telefonía el instante de ingreso SHALL ser el sellado por el BACKEND en la recepción del callback de grabación y SHALL propagarse SIN ser re-sellado por n8n, de modo que la latencia incluya la descarga, la transcripción, la pseudonimización y el handoff del backend. En el canal de correo la captura SHALL ocurrir al INICIO del flujo del trigger de Outlook, en el instante en que el poller recoge el mensaje, y MUST NOT usar el `receivedDateTime` del mensaje. En el canal web la captura SHALL usar el instante de recepción del webhook. El valor SHALL propagarse al normalizador y SHALL estar disponible para el nodo HTTP de persistencia.
-
-#### Scenario: Telefonia captura antes del agente
-
-- **WHEN** la suite estructural inspecciona el workflow
-- **THEN** el `ingresado_en` propagado para telefonía se sella en el backend y está aguas arriba del `AI Agent`
-
-#### Scenario: Telefonía propaga el sello del backend
-
-- **WHEN** el webhook de telefonía recibe el handoff del backend
-- **THEN** el `ingresado_en` propagado es el valor sellado por el backend y no un instante calculado en n8n
-
-#### Scenario: Correo sella al recoger el mensaje
-
-- **WHEN** el trigger de Outlook recoge un mensaje
-- **THEN** el ingreso capturado para ese mensaje es el instante de inicio del flujo del trigger (recogida del poller), no su `receivedDateTime`
-
-#### Scenario: Web usa el instante de recepcion
-
-- **WHEN** el webhook del formulario web recibe un envio
-- **THEN** el ingreso capturado es el instante de recepción del webhook
-
-#### Scenario: Propagacion al normalizador
-
-- **WHEN** una entrada atraviesa el nodo de normalizacion
-- **THEN** la estructura normalizada contiene el campo `ingresado_en`
 
 ### Requirement: N8N-TIMING-002 — El POST de persistencia envia el instante de ingreso
 
@@ -815,25 +666,6 @@ Las salidas de telefonía y fallback del switch `Rutear por canal de origen` MUS
 - **WHEN** se inspecciona el mecanismo de confirmación del canal de telefonía en el workflow
 - **THEN** no existe un cierre TwiML que presente el número de incidente como mecanismo de confirmación
 
-### Requirement: N8N-MEMORY-001 — El nodo de memoria Redis declara credencial y parámetros
-
-El nodo `memoryRedisChat` del `AI Agent` telefónico SHALL declarar una credencial `redis` no vacía y parámetros de sesión no vacíos, de modo que la memoria del agente no falle en runtime por configuración ausente. La suite estructural del workflow SHALL incluir el tipo `memoryRedisChat` entre los tipos de nodo que requieren credenciales.
-
-#### Scenario: El nodo de memoria declara su credencial
-
-- **WHEN** la suite estructural inspecciona el nodo `memoryRedisChat`
-- **THEN** el nodo declara una entrada de credencial no vacía en su configuración
-
-#### Scenario: El nodo de memoria declara parámetros de sesión
-
-- **WHEN** la suite estructural inspecciona los parámetros del nodo `memoryRedisChat`
-- **THEN** sus parámetros no están vacíos e incluyen la configuración de sesión requerida por el nodo
-
-#### Scenario: La suite cubre el tipo de nodo de memoria
-
-- **WHEN** la suite estructural clasifica los nodos que requieren credenciales por su tipo
-- **THEN** `memoryRedisChat` está incluido en el conjunto de tipos verificados
-
 ### Requirement: N8N-AUTH-002 — El nodo de persistencia autentica con un único mecanismo
 
 El nodo `HTTP POST a MESA-AYUDAS` SHALL declarar exactamente un mecanismo de autenticación hacia el backend. Cuando autentique con el header explícito `Authorization: Bearer` cuyo token se resuelve dinámicamente desde `Login operador`, MUST NOT declarar simultáneamente `authentication`/`genericAuthType` con `httpHeaderAuth` ni una credencial `httpHeaderAuth`, de modo que no se inyecten dos cabeceras `Authorization`. El token MUST NOT ser un valor estático.
@@ -920,72 +752,6 @@ El nodo `Notificar operador designado` SHALL declarar manejo de error (`onError:
 - **WHEN** se inspecciona la sección de notificación al usuario de la guía
 - **THEN** la guía no afirma que la confirmación telefónica ocurre en la respuesta TwiML ni en el `<Say>` de cierre
 
-### Requirement: N8N-TIMING-003 — Recuperación robusta del sello de ingreso de telefonía a través del AI Agent
-
-El workflow SHALL recuperar el instante de ingreso sellado por `Sellar ingreso telefonia` mediante una referencia de nodo que resuelva al primer item sellado (`$('Sellar ingreso telefonia').first().json.ingresado_en`), tanto en el validador `Se verifica lo que trajo la IA` como en el terminal `Derivar a revision humana`. La recuperación MUST NOT depender de la resolución de `pairedItem` implícita en `$('Sellar ingreso telefonia').item`, porque el item corriente proviene del `AI Agent` (y del bucle de refinamiento) y ese emparejamiento se rompe.
-
-El workflow MUST NOT silenciar la ausencia del sello: un `catch` o un `|| null` que devuelva `ingresado_en` nulo sin señal queda prohibido. Cuando el sello no pueda resolverse, el workflow SHALL emitir un WARN estructurado, SHALL marcar el item resultante con `requiere_revision_humana=true` y SHALL continuar hacia la persistencia creando igualmente el ticket. La ejecución MUST NOT abortarse y el incidente MUST NOT perderse. El backend MUST NOT cambiar su contrato: `ingresado_en` sigue siendo nullable y la revisión humana se rige por el flag explícito.
-
-#### Scenario: El validador referencia el sello por el primer item
-
-- **WHEN** la suite estructural inspecciona el `jsCode` del nodo `Se verifica lo que trajo la IA`
-- **THEN** el código referencia `$('Sellar ingreso telefonia').first()` y NO referencia `$('Sellar ingreso telefonia').item`
-
-#### Scenario: El terminal referencia el sello por el primer item
-
-- **WHEN** la suite estructural inspecciona el `jsCode` del nodo `Derivar a revision humana`
-- **THEN** el código referencia `$('Sellar ingreso telefonia').first()` y NO referencia `$('Sellar ingreso telefonia').item`
-
-#### Scenario: La ausencia del sello no se silencia
-
-- **WHEN** el sello de `Sellar ingreso telefonia` no puede resolverse en el validador
-- **THEN** el workflow emite un WARN estructurado y NO devuelve silenciosamente `null` mediante un `catch` o un `|| null`
-
-#### Scenario: Sello ausente deriva a revisión humana conservando el ticket
-
-- **WHEN** el sello de `Sellar ingreso telefonia` no puede resolverse
-- **THEN** el item resultante tiene `requiere_revision_humana=true` y el flujo continúa hacia la persistencia, de modo que el ticket se crea y la ejecución no se aborta
-
-#### Scenario: El contrato de persistencia del backend no cambia
-
-- **WHEN** se inspecciona el body del nodo `HTTP POST a MESA-AYUDAS` y el contrato del backend
-- **THEN** `ingresado_en` puede ser nulo y la revisión humana se resuelve por el flag explícito, sin cambios en el schema del backend
-
-### Requirement: N8N-GUARD-001 — La guarda de costo preserva el item del canal de telefonía
-
-El nodo `Guard de costo` del canal de telefonía SHALL consultar la guarda SIN destruir el item sellado de la entrada. Como el nodo es un `httpRequest` y su salida es la respuesta del backend, el workflow SHALL restaurar el item recuperado de `Sellar ingreso telefonia` aguas abajo de la guarda y re-inyectarle la decisión de la guarda, de modo que (a) el `AI Agent` reciba el item sellado completo cuando la guarda permite, y (b) el nodo `Guard permite?` conserve la decisión `allowed` para rutear. La consulta a la guarda y su política de costo MUST NOT cambiar.
-
-Alcance: este requisito cubre SOLO la propagación del item a través de la guarda. La presencia de un campo de transcripción/descripción en el payload del trigger de Twilio está FUERA de alcance: es una limitación heredada de C-45 (el evento `call-summary.complete` no expone la transcripción) y se rastrea por separado. C-47 garantiza que el `AI Agent` recibe el item sellado, no que ese item contenga una descripción no vacía.
-
-#### Scenario: El AI Agent recibe el item sellado, no solo el cuerpo de la guarda
-
-- **WHEN** el flujo de telefonía atraviesa el nodo `Guard de costo` y la guarda permite la invocación del `AI Agent`
-- **THEN** el item que llega al `AI Agent` proviene de `Sellar ingreso telefonia` (con `allowed` re-inyectado) y NO es únicamente el cuerpo de la respuesta de la guarda
-
-#### Scenario: La decisión de la guarda alimenta el ruteo
-
-- **WHEN** la guarda responde con su decisión
-- **THEN** el item restaurado aguas abajo expone `allowed` y el nodo `Guard permite?` rutea verdadero hacia el `AI Agent` y falso hacia `Derivar a revision humana`
-
-#### Scenario: La rama denegada conserva el item
-
-- **WHEN** la guarda deniega la invocación del `AI Agent`
-- **THEN** el item que llega a `Derivar a revision humana` conserva el contenido de telefonía y el flujo deriva a revisión humana con confianza cero, sin invocar al agente pago
-
-### Requirement: N8N-GUARD-002 — El caller de la guarda usa el item corriente, sin referencia frágil
-
-El cuerpo del nodo `Guard de costo` SHALL resolver el número de origen llamante (`caller`) desde el item corriente del propio nodo (el payload del handoff, campo `caller_number`) y MUST NOT usar la referencia `$('Sellar ingreso telefonia').item`, que depende de la resolución de `pairedItem` y puede devolver `null` sin señal. Como el nodo de sellado es la entrada directa de la guarda, el item corriente YA contiene el `caller_number` entregado por el backend, por lo que no se requiere una referencia cruzada entre nodos. La ausencia del número de origen MUST NOT impedir la evaluación de la guarda: el origen es opcional y la reserva SHALL continuar. El campo del payload de salida hacia la guarda conserva la clave `caller` porque corresponde al schema `CostGuardRequest` del backend (no a una propiedad de expresión de n8n); `caller_number` es el nombre del campo del handoff porque `caller` es una propiedad bloqueada por el sandbox de expresiones de n8n.
-
-#### Scenario: El cuerpo de la guarda usa el item corriente y ninguna referencia cruzada
-
-- **WHEN** la suite estructural inspecciona el body del nodo `Guard de costo`
-- **THEN** el body resuelve `caller` desde `$json.caller_number` y NO referencia `$('Sellar ingreso telefonia')` (ni por `.item` ni por `.first()`)
-
-#### Scenario: La ausencia del caller no impide la guarda
-
-- **WHEN** el item sellado no expone un número de origen
-- **THEN** el body resuelve `caller` a `null` (origen `caller_number` ausente) y la guarda igual evalúa la reserva, sin abortar el flujo
-
 ### Requirement: Envío de correo saliente por SMTP
 
 El workflow SHALL enviar tanto la confirmación al usuario (`Correo de confirmacion al usuario`) como la notificación al operador designado (`Notificar operador designado`) mediante nodos `n8n-nodes-base.emailSend` sobre SMTP, conservando los asuntos, los cuerpos y los destinatarios vigentes. Los nodos de envío MUST NOT depender de Microsoft Entra OAuth2 ni de un registro de aplicación en la nube.
@@ -1042,25 +808,6 @@ En el camino exitoso, la entrada del nodo `Registro de auditoria` SHALL ser el i
 
 - **WHEN** la suite estructural traza las entradas de `Registro de auditoria`
 - **THEN** `Notificar operador designado` no figura como origen de la auditoría, de modo que la rama de revisión registra el evento una sola vez
-
-### Requirement: N8N-PHONE-003 — La rama telefónica consume el handoff pseudonimizado del backend
-
-El webhook del canal de telefonía SHALL aceptar exactamente el payload del handoff del backend con la descripción pseudonimizada, el `CallSid`, el número llamante y el `ingresado_en` sellado. El `AI Agent` SHALL recibir como entrada la descripción pseudonimizada y MUST NOT recibir el transcript crudo. El nodo HTTP de persistencia SHALL enviar el `CallSid` como `origen_message_id`, de modo que reutilice el índice único existente para la idempotencia del alta. El workflow MUST NOT recalcular ni re-sellar el instante de ingreso.
-
-#### Scenario: El webhook recibe el payload del handoff
-
-- **WHEN** el backend invoca el webhook de telefonía
-- **THEN** el payload contiene la descripción pseudonimizada, el `CallSid`, el llamante y el `ingresado_en`
-
-#### Scenario: El AI Agent consume la descripción pseudonimizada
-
-- **WHEN** el flujo de telefonía alcanza el `AI Agent`
-- **THEN** el prompt del agente interpola la descripción pseudonimizada del handoff y no un transcript crudo
-
-#### Scenario: El CallSid se envía como identificador de origen
-
-- **WHEN** el nodo HTTP de persistencia envía el alta de un incidente telefónico
-- **THEN** el cuerpo incluye `origen_message_id` con el `CallSid` del handoff
 
 ### Requirement: N8N-PHONE-004 — El sello de ingreso de telefonía es un passthrough del backend
 
@@ -1149,3 +896,84 @@ La rama de correo (Message-ID/UID del header) y la rama de telefonia (CallSid de
 
 - **WHEN** se inspecciona el body del nodo HTTP de persistencia para una entrada web
 - **THEN** la expresion de `origen_message_id` resuelve al identificador construido (no a `null`) y no queda forzada a `null` por el ternario del canal
+
+### Requirement: N8N-INTAKE-002 — El POST al backend envia origen y no una clasificacion precalculada de telefonia
+
+El nodo HTTP de persistencia SHALL enviar al backend la descripción pseudonimizada, el canal, el `Message-ID` del mensaje IMAP cuando el canal sea correo, y un marcador explícito de origen/evento. Para el canal telefonía el nodo MUST NOT enviar una `clasificacion` precalculada, porque la clasificación la resuelve el backend con su cascada. El workflow MUST NOT descartar el `Message-ID` ni el marcador de origen.
+
+#### Scenario: El POST telefonico NO incluye clasificacion precalculada
+
+- **WHEN** un incidente telefonico llega al nodo HTTP de persistencia
+- **THEN** el cuerpo enviado al backend NO incluye el sector predicho ni la confianza producidos fuera del backend
+
+#### Scenario: El POST de correo incluye el Message-ID de origen
+
+- **WHEN** un incidente del canal correo llega al nodo HTTP de persistencia
+- **THEN** el cuerpo enviado al backend incluye el `origen_message_id` tomado del mensaje IMAP
+
+#### Scenario: El marcador de origen es explicito
+
+- **WHEN** se inspecciona el cuerpo que el nodo HTTP envia al backend
+- **THEN** contiene un marcador explicito de origen/evento que identifica al canal emisor
+
+### Requirement: N8N-UNIFY-001 — La clasificacion del incidente pertenece al backend
+
+El workflow de n8n MUST NOT ser el camino de clasificacion del incidente en ningun canal. La clasificacion persistida de los tres canales SHALL provenir de la cascada del backend sobre la descripcion pseudonimizada. Cualquier clasificacion producida dentro de n8n MUST NOT persistirse como la clasificacion del incidente ni omitir la cascada del backend. El canal telefonico MUST NOT enviar una clasificacion precalculada que el backend pueda usar para saltear su cascada.
+
+#### Scenario: Los tres canales clasifican en el backend
+
+- **WHEN** un incidente de cualquier canal (correo, web o telefonia) se persiste
+- **THEN** su sector proviene de la cascada del backend, no de n8n
+
+#### Scenario: n8n no saltea la cascada
+
+- **WHEN** se inspecciona el cuerpo que n8n envia al backend para un incidente telefonico
+- **THEN** no contiene una clasificacion precalculada que el backend pudiera usar para omitir la cascada
+
+### Requirement: N8N-TIMING-001 — Captura del instante de ingreso en el borde del trigger (sello del backend)
+
+Cada trigger del workflow SHALL propagar el instante de ingreso antes de cualquier procesamiento del canal. En el canal de telefonía el instante de ingreso SHALL ser el sellado por el BACKEND en la recepción del callback de grabación y SHALL propagarse SIN ser re-sellado por n8n, de modo que la latencia incluya la descarga, la transcripción, la pseudonimización y el handoff del backend. En el canal de correo la captura SHALL ocurrir al INICIO del flujo del trigger de Outlook, en el instante en que el poller recoge el mensaje, y MUST NOT usar el `receivedDateTime` del mensaje. En el canal web la captura SHALL usar el instante de recepción del webhook. El valor SHALL propagarse al normalizador y SHALL estar disponible para el nodo HTTP de persistencia.
+
+#### Scenario: Telefonia captura antes de la cascada del backend
+
+- **WHEN** la suite estructural inspecciona el workflow
+- **THEN** el `ingresado_en` propagado para telefonía se sella en el backend y está aguas arriba del nodo de normalización (`Sellar -> Normalizar`), sin depender de un clasificador en n8n
+
+#### Scenario: Telefonía propaga el sello del backend
+
+- **WHEN** el webhook de telefonía recibe el handoff del backend
+- **THEN** el `ingresado_en` propagado es el valor sellado por el backend y no un instante calculado en n8n
+
+#### Scenario: Correo sella al recoger el mensaje
+
+- **WHEN** el trigger de Outlook recoge un mensaje
+- **THEN** el ingreso capturado para ese mensaje es el instante de inicio del flujo del trigger (recogida del poller), no su `receivedDateTime`
+
+#### Scenario: Web usa el instante de recepcion
+
+- **WHEN** el webhook del formulario web recibe un envio
+- **THEN** el ingreso capturado es el instante de recepción del webhook
+
+#### Scenario: Propagacion al normalizador
+
+- **WHEN** una entrada atraviesa el nodo de normalizacion
+- **THEN** la estructura normalizada contiene el campo `ingresado_en`
+
+### Requirement: N8N-PHONE-003 — La rama telefónica consume el handoff pseudonimizado del backend (cascada del backend)
+
+El webhook del canal de telefonía SHALL aceptar exactamente el payload del handoff del backend con la descripción pseudonimizada, el `CallSid`, el número llamante y el `ingresado_en` sellado. La cascada del backend (`HybridClassifier`) SHALL recibir como entrada la descripción pseudonimizada y MUST NOT recibir el transcript crudo. El nodo HTTP de persistencia SHALL enviar el `CallSid` como `origen_message_id`, de modo que reutilice el índice único existente para la idempotencia del alta. El workflow MUST NOT recalcular ni re-sellar el instante de ingreso.
+
+#### Scenario: El webhook recibe el payload del handoff
+
+- **WHEN** el backend invoca el webhook de telefonía
+- **THEN** el payload contiene la descripción pseudonimizada, el `CallSid`, el llamante y el `ingresado_en`
+
+#### Scenario: La cascada del backend consume la descripción pseudonimizada
+
+- **WHEN** el backend recibe el handoff de telefonía con la descripción pseudonimizada
+- **THEN** la cascada del backend (`HybridClassifier`) clasifica esa descripción pseudonimizada y no un transcript crudo, sin un clasificador de n8n
+
+#### Scenario: El CallSid se envía como identificador de origen
+
+- **WHEN** el nodo HTTP de persistencia envía el alta de un incidente telefónico
+- **THEN** el cuerpo incluye `origen_message_id` con el `CallSid` del handoff

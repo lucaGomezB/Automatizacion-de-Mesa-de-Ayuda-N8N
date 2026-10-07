@@ -141,7 +141,7 @@ C-71 hardening-clasificador-determinista (ninguna nueva)  [ARCHIVADO 2026-10-06 
 
 --- FASE 25: Unificacion de la clasificacion telefonica a la cascada (2026-10-05) ---
 
-C-72 unificar-clasificacion-telefonica (C-71)             [ACTIVO — 37/37 aplicado; OQ1..OQ5 resueltas (A); delta n8n reconciliado (14 REMOVED + 5 MODIFIED + 4 ADDED); listo para archivar; ALTO]
+C-72 unificar-clasificacion-telefonica (C-71)             [ARCHIVADO 2026-10-07 — 37/37; ALTO; specs sincronizadas (classification-resilience, n8n-workflow, runtime-cost-guard, sector-assignment ASG-012, sector-taxonomy TAX-004, telefonia-stt-intake); 5.2 cerrada con hibrido oficial (global macro-F1 0.5207, telefonia 0.4783)]
 
 --- FASE 26: Pseudonimizacion de numeros de tarjeta hablados (2026-10-06) ---
 
@@ -488,7 +488,7 @@ C-74 calibracion-cortocircuito-determinista (C-71, C-72)   [ARCHIVADO 2026-10-07
 | C-72 | unificar-clasificacion-telefonica | 25 | C-71 | ALTO | — |
 | C-74 | calibracion-cortocircuito-determinista | 27 | C-71, C-72 | ALTO | — |
 
-**Total**: 66 entradas creadas documentadas (65 numeradas + 1 de mantenimiento sin numero) — 61 archivadas (60 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59, C-60, C-61, C-69, C-70, C-71 y C-74; mas `improve-dockerfiles`) y 5 ACTIVOS (C-56, C-67, C-68, C-72, C-73). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
+**Total**: 66 entradas creadas documentadas (65 numeradas + 1 de mantenimiento sin numero) — 62 archivadas (61 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59, C-60, C-61, C-69, C-70, C-71, C-72 y C-74; mas `improve-dockerfiles`) y 4 ACTIVOS (C-56, C-67, C-68, C-73). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
 **Planificadas (NO creadas)**: 5 entradas del plan de cumplimiento (FASE 21) — C-62 `hardening-infra-red` (ALTO), C-63 `identidad-accesos-claves` (CRITICO), C-64 `vulnerabilidades-supply-chain` (MEDIO), C-65 `backup-continuidad` (ALTO) y C-66 `privacidad-transferencias` (ALTO). No cuentan como creadas, archivadas ni activas. C-61 `compliance-gobernanza` (MEDIO) ya fue creado y quedo ARCHIVADO (2026-10-01, 26/26), con su spec `security-governance-docs` creada. Ver `docs/cumplimiento/plan-cambios-cumplimiento.md`.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
