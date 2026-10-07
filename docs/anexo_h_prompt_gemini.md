@@ -183,7 +183,7 @@ A partir del change c-72, el sistema mantiene **un único camino de clasificaci�
 - Las reglas de frontera de H.1, componente (6), se definen y corrigen una sola vez para todos los canales.
 - Traslado del puesto de costo (decisión OQ2 = A): la clasificación telefónica ya NO reserva la superficie `n8n_gemini`; cuando la cascada del backend escala a la etapa semántica, la reserva corresponde a `backend_gemini`. El atajo determinista, cuando aplica, no invoca al modelo externo y no consume cuota de Gemini.
 
-El alcance de c-72 es la **unificación del camino de clasificación**, no la corrección de datos ya persistidos. El backfill de incidentes telefónicos históricos creados con una clasificación precalculada queda explícitamente **fuera de alcance** (decisión OQ4 = A); los números de la evaluación determinista-primero son provisionales hasta que el corpus esté completo. Ver `docs/c-72-unificacion-clasificacion-telefonica.md`.
+El alcance de c-72 es la **unificación del camino de clasificación**, no la corrección de datos ya persistidos. El backfill de incidentes telefónicos históricos creados con una clasificación precalculada queda explícitamente **fuera de alcance** (decisión OQ4 = A). Los números de la evaluación determinista-primero son **finales** (corpus completo de 200 casos, 81 de telefonía) y están medidos bajo el punto de operación comparativo de c-74. Ver `docs/c-72-unificacion-clasificacion-telefonica.md`.
 
 ---
 
