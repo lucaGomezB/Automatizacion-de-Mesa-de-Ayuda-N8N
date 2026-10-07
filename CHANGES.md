@@ -146,6 +146,10 @@ C-72 unificar-clasificacion-telefonica (C-71)             [ACTIVO — 37/37 apli
 --- FASE 26: Pseudonimizacion de numeros de tarjeta hablados (2026-10-06) ---
 
 C-73 pseudonimizacion-tarjeta (ninguna)                   [ACTIVO — 0/23; HIGH; propuesto]
+
+--- FASE 27: Calibracion del cortocircuito determinista (2026-10-07) ---
+
+C-74 calibracion-cortocircuito-determinista (C-71, C-72)   [ARCHIVADO 2026-10-07 — 32/32; ALTO; specs sincronizadas (classification-resilience, sector-assignment, evaluation-framework); official macro-F1 0.5207]
 ```
 
 ### Paralelismo por fase
@@ -482,12 +486,13 @@ C-73 pseudonimizacion-tarjeta (ninguna)                   [ACTIVO — 0/23; HIGH
 | C-70 | softphone-corpus-telefonia | 23 | C-59, C-52, C-68 | ALTO | — |
 | C-71 | hardening-clasificador-determinista | 24 | ninguna nueva | MEDIO | — |
 | C-72 | unificar-clasificacion-telefonica | 25 | C-71 | ALTO | — |
+| C-74 | calibracion-cortocircuito-determinista | 27 | C-71, C-72 | ALTO | — |
 
-**Total**: 65 entradas creadas documentadas (64 numeradas + 1 de mantenimiento sin numero) — 60 archivadas (59 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59, C-60, C-61, C-69, C-70 y C-71; mas `improve-dockerfiles`) y 5 ACTIVOS (C-56, C-67, C-68, C-72, C-73). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
+**Total**: 66 entradas creadas documentadas (65 numeradas + 1 de mantenimiento sin numero) — 61 archivadas (60 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59, C-60, C-61, C-69, C-70, C-71 y C-74; mas `improve-dockerfiles`) y 5 ACTIVOS (C-56, C-67, C-68, C-72, C-73). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
 **Planificadas (NO creadas)**: 5 entradas del plan de cumplimiento (FASE 21) — C-62 `hardening-infra-red` (ALTO), C-63 `identidad-accesos-claves` (CRITICO), C-64 `vulnerabilidades-supply-chain` (MEDIO), C-65 `backup-continuidad` (ALTO) y C-66 `privacidad-transferencias` (ALTO). No cuentan como creadas, archivadas ni activas. C-61 `compliance-gobernanza` (MEDIO) ya fue creado y quedo ARCHIVADO (2026-10-01, 26/26), con su spec `security-governance-docs` creada. Ver `docs/cumplimiento/plan-cambios-cumplimiento.md`.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
-**Fases**: 1-25 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67, la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, con C-61 archivado (2026-10-01) y C-62..C-66 planificados, la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 ya archivado (2026-10-05) y C-68 en aplicacion, la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 archivado (2026-10-06), la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 archivado (2026-10-06), y la FASE 25 agrupa la unificacion de la clasificacion telefonica con C-72 aplicado (37/37), y la FASE 26 agrupa la pseudonimizacion de numeros de tarjeta hablados con C-73 propuesto).
+**Fases**: 1-27 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67, la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, con C-61 archivado (2026-10-01) y C-62..C-66 planificados, la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 ya archivado (2026-10-05) y C-68 en aplicacion, la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 archivado (2026-10-06), la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 archivado (2026-10-06), la FASE 25 agrupa la unificacion de la clasificacion telefonica con C-72 aplicado (37/37), la FASE 26 agrupa la pseudonimizacion de numeros de tarjeta hablados con C-73 propuesto, y la FASE 27 agrupa la calibracion del cortocircuito determinista con C-74 archivado (2026-10-07)).
 
 ---
 
