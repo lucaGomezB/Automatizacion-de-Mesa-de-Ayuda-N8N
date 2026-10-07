@@ -187,6 +187,22 @@ El alcance de c-72 es la **unificación del camino de clasificación**, no la co
 
 ---
 
+## H.7. Punto de operación comparativo del cortocircuito determinista (c-74)
+
+La decisión de cortocircuitar la etapa semántica deja de gobernarse por la `confianza` determinista (fuerza de señal, ASG-009) y pasa a gobernarse por un **score de correctitud** (ASG-010), que **ordena** la correctitud esperada (mayor = más evidencia de acierto) y **no es una probabilidad calibrada**. Está acotado a `[0, 1]` y derivado solo de features observables en runtime (score del ganador, runner-up, margen, cantidad de matches, longitud del texto y señales por sector). `deterministic_min_matches` interviene como **feature** del score, no como gate binario (ASG-011 / OQ4).
+
+El **punto de operación** es **comparativo** contra la etapa semántica: se maximiza la cobertura del subconjunto cortocircuitable `S` sujeta a
+
+```
+precision_det(S) >= precision_gem(S)
+```
+
+estimado **out-of-fold** y con las predicciones de Gemini **cacheadas** (sin invocar al proveedor). Sobre el corpus de 200 casos el piso se cumple en todo el conjunto no ambiguo (det 0.7405 >= gem 0.6769), por lo que el punto fijado en `Settings.deterministic_score_threshold = 0.5166` cortocircuita todo el conjunto con señal no ambigua (cobertura 0.6550, 131/200). Los disparadores `sin_prediccion` y `ambiguo` escalan con independencia del score (OQ5).
+
+El cambio de señal altera clasificaciones, por lo que `HYBRID_CACHE_VERSION` sube a `hybrid-v3` e invalida el cache de predicciones previo. Detalle numérico, procedencia anti-fuga y delta en `docs/deterministic_calibration.md`.
+
+---
+
 **Fecha de creación**: Marzo 2026  
-**Última actualización**: Octubre 2026 (C-72)  
+**Última actualización**: Octubre 2026 (C-74)  
 **Estado**: Versión 1.1 del prompt — cinco sectores canónicos sin tildes, prompt único para los tres canales, utilizada en evaluación de tesis

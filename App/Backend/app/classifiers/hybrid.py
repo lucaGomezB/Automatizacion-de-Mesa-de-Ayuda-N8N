@@ -7,16 +7,21 @@ Responsabilidad:
     en el Anexo H de la tesis. Determina cuándo cada etapa es suficiente
     y cuándo escalar al siguiente nivel.
 
-Flujo de decisión (Anexo H, c-71):
+Flujo de decisión (Anexo H, c-74):
     1. Ejecutar DeterministicClassifier sobre la descripción.
-    2. Si senal dominante y confianza >= umbral calibrado (Settings) → retornar
-       resultado determinístico (omitir Gemini).
-    3. Si ausencia de predicción, ambigüedad o confianza insuficiente → invocar
+    2. Si senal dominante y score de correctitud >= punto de operacion
+       (Settings) → retornar resultado determinístico (omitir Gemini).
+    3. Si ausencia de predicción, ambigüedad o score insuficiente → invocar
        GeminiClassifier.
     4. Si confianza de Gemini < 0.70 → marcar para revisión humana.
     5. Si Gemini falla (timeout / no disponible) → retornar fallback
        preservando la mejor estimación determinística (o su ausencia) con
        confianza=0.0, sin fabricar un sector.
+
+    c-74 (ASG-010/OQ4): la seleccion del cortocircuito se gobierna por el score
+    de correctitud (ordena la correctitud esperada; NO es una probabilidad
+    calibrada), NO por la `confianza` (fuerza de senal) ni por un gate de
+    cantidad minima de matches.
 
 Principio de diseño:
     El HybridClassifier no conoce los detalles de implementación de ninguna
@@ -102,8 +107,11 @@ class HybridClassifier(BaseClassifier):
             if degradation_policy is not None
             else get_settings().cost_guard_degradation_policy
         )
-        # Umbrales leídos de Settings para permitir ajuste sin recompilación
-        self._det_threshold = get_settings().deterministic_confidence_threshold
+        # Umbrales leídos de Settings para permitir ajuste sin recompilación.
+        # c-74: el cortocircuito se gobierna por el score de correctitud
+        # (ordena la correctitud esperada; NO es una probabilidad calibrada)
+        # (ASG-010), no por la confianza (fuerza de senal).
+        self._score_threshold = get_settings().deterministic_score_threshold
         self._human_threshold = get_settings().human_review_threshold
         # c-58 (D4): la reserva de la superficie backend_gemini se dimensiona al
         # PEOR CASO de intentos de UNA clasificacion (max_retries + 1) y se evalua
@@ -119,15 +127,16 @@ class HybridClassifier(BaseClassifier):
         Implementa el flujo de decisión de dos etapas documentado en el Anexo H:
 
         Etapa 1 – Filtro determinístico:
-            Si la confianza supera el umbral calibrado (Settings, c-71) y hay
-            senal dominante (sin ausencia ni ambiguedad), el resultado se
-            retorna directamente sin llamar a Gemini. Esto "cortocircuita" el
-            pipeline para los casos más evidentes, reduciendo latencia y
-            consumo de tokens de la API.
+            Si la senal es dominante (sin ausencia ni ambiguedad) y su score
+            de correctitud alcanza el punto de operacion (Settings,
+            c-74), el resultado se retorna directamente sin llamar a Gemini.
+            Esto "cortocircuita" el pipeline para los casos mas evidentes,
+            reduciendo latencia y consumo de tokens de la API. La `confianza`
+            (fuerza de senal) NO es criterio de seleccion.
 
         Etapa 2 – Clasificación con Gemini:
             Se invoca únicamente cuando el filtro determinístico no alcanzó
-            el umbral. Si Gemini falla (timeout o no disponible), se retorna
+            el punto de operación. Si Gemini falla (timeout o no disponible), se retorna
             un resultado de fallback con confianza=0.0 preservando la categoría
             que había estimado el clasificador determinístico.
 
@@ -147,30 +156,34 @@ class HybridClassifier(BaseClassifier):
         # ── Etapa 1: Clasificador determinístico ──────────────────────────────
         det_result = await self._deterministic.classify(descripcion)
 
-        # c-71: una ausencia de prediccion o un empate NUNCA cortocircuitan,
-        # con independencia del umbral (ASG-007/ASG-008). El cortocircuito solo
-        # ocurre con una senal dominante y una confianza calibrada.
+        # c-71/c-74: una ausencia de prediccion o un empate NUNCA cortocircuitan,
+        # con independencia del score (ASG-007/ASG-008/OQ5). El cortocircuito solo
+        # ocurre con una senal dominante y un score de correctitud suficiente.
         causa_escalamiento: str | None = None
         if det_result.sin_prediccion:
             causa_escalamiento = "sin_prediccion"
         elif det_result.ambiguo:
             causa_escalamiento = "ambiguo"
 
-        if causa_escalamiento is None and det_result.confianza >= self._det_threshold:
-            # Cortocircuito: confianza suficiente para omitir Gemini
+        if causa_escalamiento is None and det_result.score_correctitud >= self._score_threshold:
+            # Cortocircuito: score de correctitud suficiente para omitir Gemini
             logger.info(
                 "classifier_short_circuit",
                 stage="deterministic",
                 sector_predicho=det_result.sector_predicho,
                 confianza=det_result.confianza,
+                score_correctitud=det_result.score_correctitud,
+                punto_operacion=self._score_threshold,
             )
             return det_result
 
-        # Confianza insuficiente (o estado de ausencia/ambiguedad): escalar a Gemini
+        # Score insuficiente (o estado de ausencia/ambiguedad): escalar a Gemini
         logger.info(
             "classifier_escalate_to_gemini",
             causa=causa_escalamiento,
             det_confianza=det_result.confianza,
+            det_score_correctitud=det_result.score_correctitud,
+            punto_operacion=self._score_threshold,
             det_sector_predicho=det_result.sector_predicho,
         )
 

@@ -36,7 +36,11 @@ CANAL_TELEFONIA: Final[str] = "llamada telefónica"
 #: importar app.classifiers (que arrastra app.core.database -> get_settings) y
 #: asi un cache hit no exija credenciales (W-3). HybridClassifier la reutiliza
 #: como unica fuente de verdad.
-HYBRID_CACHE_VERSION: Final[str] = "hybrid-v2"
+#: c-74: sube a hybrid-v3 porque el cortocircuito pasa de `confianza` al score
+#: de correctitud (ordena la correctitud esperada; NO es una probabilidad
+#: calibrada); el cambio altera clasificaciones e invalida el cache de
+#: predicciones de la corrida previa (hybrid-v2).
+HYBRID_CACHE_VERSION: Final[str] = "hybrid-v3"
 
 
 def es_sector_canonico(nombre: object) -> bool:

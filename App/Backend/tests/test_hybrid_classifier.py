@@ -21,12 +21,24 @@ from app.core.exceptions import GeminiUnavailableError
 from app.schemas.clasificacion import ClasificacionResult
 
 
-def _det_result(sector_predicho: str, confianza: float) -> ClasificacionResult:
+def _det_result(
+    sector_predicho: str,
+    confianza: float,
+    *,
+    score: float = 0.0,
+) -> ClasificacionResult:
+    """Resultado determinista de prueba.
+
+    c-74: la seleccion del cortocircuito se gobierna por `score_correctitud`,
+    NO por `confianza`. Por defecto el score es 0.0 (escala); los casos de
+    cortocircuito pasan `score=1.0` explicitamente.
+    """
     return ClasificacionResult(
         sector_predicho=sector_predicho,
         confianza=confianza,
         etapa="deterministic",
         requiere_revision_humana=False,
+        score_correctitud=score,
     )
 
 
@@ -47,7 +59,7 @@ async def test_short_circuit_when_deterministic_confident() -> None:
         classifier._deterministic,
         "classify",
         new_callable=AsyncMock,
-        return_value=_det_result("Sistemas", 1.0),
+        return_value=_det_result("Sistemas", 1.0, score=1.0),
     ), patch.object(
         classifier._gemini, "classify", new_callable=AsyncMock
     ) as mock_gemini:
@@ -184,7 +196,7 @@ async def test_guarda_no_reserva_en_el_cortocircuito_deterministico() -> None:
         classifier._deterministic,
         "classify",
         new_callable=AsyncMock,
-        return_value=_det_result("Sistemas", 1.0),
+        return_value=_det_result("Sistemas", 1.0, score=1.0),
     ):
         result = await classifier.classify("Se cayo el servidor")
 
@@ -288,7 +300,7 @@ async def test_senal_dominante_cortocircuita() -> None:
         classifier._deterministic,
         "classify",
         new_callable=AsyncMock,
-        return_value=_det_result("Soporte Tecnico Hardware", 1.0),
+        return_value=_det_result("Soporte Tecnico Hardware", 1.0, score=1.0),
     ), patch.object(
         classifier._gemini, "classify", new_callable=AsyncMock
     ) as mock_gemini:
@@ -318,8 +330,147 @@ async def test_unico_match_no_cortocircuita_y_escala() -> None:
         mock_gemini.assert_called_once()
 
 
-def test_cache_version_es_hybrid_v2() -> None:
-    """c-71 (4.1/4.2): la version del cache sube a hybrid-v2."""
+def test_cache_version_es_hybrid_v3() -> None:
+    """c-74 (4.1/4.2): la senal de seleccion cambia las clasificaciones.
+
+    El cortocircuito pasa de `confianza` (hybrid-v2) al score calibrado
+    (hybrid-v3); el bump invalida el cache de predicciones de la corrida previa.
+    """
     from app.constants import HYBRID_CACHE_VERSION
 
-    assert HYBRID_CACHE_VERSION == "hybrid-v2"
+    assert HYBRID_CACHE_VERSION == "hybrid-v3"
+
+
+# ---------------------------------------------------------------------------
+# c-74 §3 — El cortocircuito se gobierna por el score calibrado (ASG-010/OQ4)
+# ---------------------------------------------------------------------------
+def _det_con_score(
+    sector_predicho: str | None,
+    *,
+    score: float,
+    confianza: float = 0.0,
+    sin_prediccion: bool = False,
+    ambiguo: bool = False,
+) -> ClasificacionResult:
+    return ClasificacionResult(
+        sector_predicho=sector_predicho,
+        confianza=confianza,
+        etapa="deterministic",
+        requiere_revision_humana=False,
+        sin_prediccion=sin_prediccion,
+        ambiguo=ambiguo,
+        score_correctitud=score,
+    )
+
+
+@pytest.mark.asyncio
+async def test_cortocircuito_por_score_alto_ignora_la_confianza() -> None:
+    """3.2: con score >= punto de operacion cortocircuita aunque confianza == 0."""
+    from app.config.settings import get_settings
+
+    umbral = get_settings().deterministic_score_threshold
+    classifier = HybridClassifier()
+    with patch.object(
+        classifier._deterministic,
+        "classify",
+        new_callable=AsyncMock,
+        return_value=_det_con_score("Sistemas", score=umbral, confianza=0.0),
+    ), patch.object(
+        classifier._gemini, "classify", new_callable=AsyncMock
+    ) as mock_gemini:
+        result = await classifier.classify("senal dominante con score alto")
+        assert result.etapa == "deterministic"
+        assert result.sector_predicho == "Sistemas"
+        mock_gemini.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_escala_por_score_bajo_ignora_la_confianza() -> None:
+    """3.2: senal dominante con score < punto de operacion escala, aun conf=1.0."""
+    from app.config.settings import get_settings
+
+    umbral = get_settings().deterministic_score_threshold
+    classifier = HybridClassifier()
+    with patch.object(
+        classifier._deterministic,
+        "classify",
+        new_callable=AsyncMock,
+        return_value=_det_con_score(
+            "Sistemas", score=umbral - 0.05, confianza=1.0
+        ),
+    ), patch.object(
+        classifier._gemini,
+        "classify",
+        new_callable=AsyncMock,
+        return_value=_gemini_result("Sistemas", 0.90),
+    ) as mock_gemini:
+        result = await classifier.classify("senal dominante con score bajo")
+        assert result.etapa == "gemini"
+        mock_gemini.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_sin_prediccion_escala_aunque_el_score_sea_alto() -> None:
+    """3.4: la ausencia de prediccion escala con independencia del score."""
+    classifier = HybridClassifier()
+    with patch.object(
+        classifier._deterministic,
+        "classify",
+        new_callable=AsyncMock,
+        return_value=_det_con_score(
+            None, score=1.0, confianza=1.0, sin_prediccion=True
+        ),
+    ), patch.object(
+        classifier._gemini,
+        "classify",
+        new_callable=AsyncMock,
+        return_value=_gemini_result("Sistemas", 0.90),
+    ) as mock_gemini:
+        result = await classifier.classify("sin senal con score alto")
+        assert result.etapa == "gemini"
+        mock_gemini.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_ambiguo_escala_aunque_el_score_sea_alto() -> None:
+    """3.4: la ambiguedad escala con independencia del score."""
+    classifier = HybridClassifier()
+    with patch.object(
+        classifier._deterministic,
+        "classify",
+        new_callable=AsyncMock,
+        return_value=_det_con_score(
+            None, score=1.0, confianza=1.0, ambiguo=True
+        ),
+    ), patch.object(
+        classifier._gemini,
+        "classify",
+        new_callable=AsyncMock,
+        return_value=_gemini_result("Bases de Datos", 0.90),
+    ) as mock_gemini:
+        result = await classifier.classify("empate con score alto")
+        assert result.etapa == "gemini"
+        mock_gemini.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_unico_match_con_score_suficiente_cortocircuita() -> None:
+    """3.6/OQ4: `min_matches` es feature, no gate de seleccion.
+
+    Un unico match con `confianza == 0.0` pero score suficiente cortocircuita.
+    """
+    from app.config.settings import get_settings
+
+    umbral = get_settings().deterministic_score_threshold
+    classifier = HybridClassifier()
+    with patch.object(
+        classifier._deterministic,
+        "classify",
+        new_callable=AsyncMock,
+        return_value=_det_con_score("Soporte Tecnico Hardware", score=umbral, confianza=0.0),
+    ), patch.object(
+        classifier._gemini, "classify", new_callable=AsyncMock
+    ) as mock_gemini:
+        result = await classifier.classify("teclado")
+        assert result.etapa == "deterministic"
+        mock_gemini.assert_not_called()

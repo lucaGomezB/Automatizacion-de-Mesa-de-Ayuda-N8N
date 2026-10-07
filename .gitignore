@@ -65,3 +65,8 @@ data/corpus_resultados*.json
 
 # Locks transitorios de LibreOffice sobre los archivos del corpus
 data/.~lock*
+
+# Salidas generadas por el framework de evaluacion (derivan del corpus real, PII)
+evaluation/predicciones.json
+evaluation/predicciones_calibracion.json
+evaluation/report.md
