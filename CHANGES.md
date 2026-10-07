@@ -133,7 +133,7 @@ C-68 corpus-ingesta-n8n (C-69)                            [ACTIVO — 58/63; MED
 
 --- FASE 23: Medicion del corpus por telefonia real (2026-10-02) ---
 
-C-70 softphone-corpus-telefonia (C-59, C-52, C-68)        [ACTIVO — 70/72; ALTO]
+C-70 softphone-corpus-telefonia (C-59, C-52, C-68)        [ARCHIVADO 2026-10-06 — 72/72; ALTO]
 
 --- FASE 24: Endurecimiento del clasificador determinista (2026-10-05) ---
 
@@ -142,6 +142,10 @@ C-71 hardening-clasificador-determinista (ninguna nueva)  [ARCHIVADO 2026-10-06 
 --- FASE 25: Unificacion de la clasificacion telefonica a la cascada (2026-10-05) ---
 
 C-72 unificar-clasificacion-telefonica (C-71)             [ACTIVO — 37/37 aplicado; OQ1..OQ5 resueltas (A); delta n8n reconciliado (14 REMOVED + 5 MODIFIED + 4 ADDED); listo para archivar; ALTO]
+
+--- FASE 26: Pseudonimizacion de numeros de tarjeta hablados (2026-10-06) ---
+
+C-73 pseudonimizacion-tarjeta (ninguna)                   [ACTIVO — 0/23; HIGH; propuesto]
 ```
 
 ### Paralelismo por fase
@@ -479,11 +483,11 @@ C-72 unificar-clasificacion-telefonica (C-71)             [ACTIVO — 37/37 apli
 | C-71 | hardening-clasificador-determinista | 24 | ninguna nueva | MEDIO | — |
 | C-72 | unificar-clasificacion-telefonica | 25 | C-71 | ALTO | — |
 
-**Total**: 64 entradas creadas documentadas (63 numeradas + 1 de mantenimiento sin numero) — 59 archivadas (58 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59, C-60, C-61, C-69 y C-71; mas `improve-dockerfiles`) y 5 ACTIVOS (C-56, C-67, C-68, C-70, C-72). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
+**Total**: 65 entradas creadas documentadas (64 numeradas + 1 de mantenimiento sin numero) — 60 archivadas (59 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59, C-60, C-61, C-69, C-70 y C-71; mas `improve-dockerfiles`) y 5 ACTIVOS (C-56, C-67, C-68, C-72, C-73). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
 **Planificadas (NO creadas)**: 5 entradas del plan de cumplimiento (FASE 21) — C-62 `hardening-infra-red` (ALTO), C-63 `identidad-accesos-claves` (CRITICO), C-64 `vulnerabilidades-supply-chain` (MEDIO), C-65 `backup-continuidad` (ALTO) y C-66 `privacidad-transferencias` (ALTO). No cuentan como creadas, archivadas ni activas. C-61 `compliance-gobernanza` (MEDIO) ya fue creado y quedo ARCHIVADO (2026-10-01, 26/26), con su spec `security-governance-docs` creada. Ver `docs/cumplimiento/plan-cambios-cumplimiento.md`.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
-**Fases**: 1-25 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67, la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, con C-61 archivado (2026-10-01) y C-62..C-66 planificados, la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 ya archivado (2026-10-05) y C-68 en aplicacion, la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 aplicado, la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 archivado (2026-10-06), y la FASE 25 agrupa la unificacion de la clasificacion telefonica con C-72 aplicado (37/37)).
+**Fases**: 1-25 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67, la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, con C-61 archivado (2026-10-01) y C-62..C-66 planificados, la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 ya archivado (2026-10-05) y C-68 en aplicacion, la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 archivado (2026-10-06), la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 archivado (2026-10-06), y la FASE 25 agrupa la unificacion de la clasificacion telefonica con C-72 aplicado (37/37), y la FASE 26 agrupa la pseudonimizacion de numeros de tarjeta hablados con C-73 propuesto).
 
 ---
 
@@ -1484,9 +1488,9 @@ C-72 unificar-clasificacion-telefonica (C-71)             [ACTIVO — 37/37 apli
 
 > Change post-roadmap que cierra la carga manual que C-68 dejo para el canal telefonico. Mide los 81 casos de `llamada telefonica` por el flujo real (softphone -> Twilio -> backend C-52 -> n8n), con correlacion exacta llamada <-> caso del corpus y write-back de la metrica canonica, sobre una base descartable.
 
-### [C-70] `softphone-corpus-telefonia` — ACTIVO (70/72)
+### [C-70] `softphone-corpus-telefonia` — ARCHIVADO (2026-10-06, 72/72)
 
-- **Estado**: `[ ]` en aplicacion (2026-10-05) — 70/72 tareas. Apply completo y verificado; **smoke 8.1 REALIZADO** con R002 (correlacion exacta por `corpus_case_id`, ingreso enlazado al incidente id 2, `latencia_e2e_ms=13012`, write-back `medidos=1` con `tiempo_automatizado_s=13.012` escrito en JSON/CSV/XLSX/sidecar). Fix post-smoke (seccion 9): enlace `telefonia_ingreso.incidente_id` en el alta del incidente + timeout del handoff 5->30 s. Suites: backend 925 offline + 37 integracion, softphone 69, corpus_ingest 153, ruff limpio. Pendientes 8.2-8.3: corrida completa de los 81 por el autor y carga del corpus. OQ1..OQ6 resueltas (OQ1=B store keyed-by-CallSid con tabla efimera en PostgreSQL; OQ2=stack completo aislado con wipe ACOTADO por servicio; OQ3=endpoint; OQ4=`t_espera_s` vacia/N-A; OQ5=endpoint dedicado + rol `administrador_directorio` (requiere sembrar el directorio admin en la base del corpus: `scripts/seed_directorio.py`); OQ6=`--replace` acotado con dry-run). Governance ALTO.
+- **Estado**: `[x]` aplicado, verificado y ARCHIVADO (2026-10-06; `openspec/changes/archive/2026-10-06-c-70-softphone-corpus-telefonia`) — 72/72 tareas; verify-report PASS WITH WARNINGS (0 CRITICAL; 31/35 escenarios; 4 infra/static manuales). **Corrida completa 8.2 REALIZADA (2026-10-06)**: 81/81 casos telefonicos cargados en la base descartable (duplicado R126 limpiado con `--replace` acotado); write-back `medidos=81 anomalos=0 pendientes=0 fallidos=0`. **8.3 REALIZADA**: `cd evaluation; pytest -q` -> 79 passed sin `CorpusError`; corpus 200/200 (81 telefono + 66 correo + 53 web). Specs sincronizadas al archivar: `telefonia-corpus-medicion` CREADA (8 reqs), `telefonia-stt-intake` (+1), `telephony-test-softphone` (+1). Suites: backend 991 offline + 39 integracion, evaluation 79, corpus_ingest 153, softphone 69, ruff limpio. OQ1..OQ6 resueltas. Governance ALTO. **Drift de entorno (no defecto)**: el stack operativo quedo en migracion 010 con imagen stale; se actualiza al reconstruir el backend base.
 - **Problema**: el corpus tiene 81 casos de `llamada telefonica` con `tiempo_automatizado_s = null`; C-68 los dejo fuera de alcance para carga manual. No existe via reproducible para medirlos por el flujo real ni para correlacionar de forma exacta una llamada con su caso.
 - **Scope**:
   - Softphone (extiende C-59): `<select>` con los casos telefonicos del corpus (default vacio); el modo `serve` expone la lista leida del JSON pseudonimizado; el autor RECITA el caso (sin playback).
@@ -1548,6 +1552,23 @@ C-72 unificar-clasificacion-telefonica (C-71)             [ACTIVO — 37/37 apli
 
 ---
 
+## FASE 26 — Pseudonimizacion de numeros de tarjeta hablados (2026-10-06)
+
+> Change que agrega la categoria `[TARJETA]` al pseudonimizador para censurar numeros de tarjeta de 16 digitos dictados por un llamante distraido. R169 (telefonia) es el caso tematico.
+
+### [C-73] `pseudonimizacion-tarjeta` — ACTIVO (propuesto, 0/23)
+
+- **Estado**: `[ ]` propuesto (2026-10-06) — planning completo (proposal + design + specs + tasks); `openspec validate --strict` pasa. Sin aplicar. Governance HIGH.
+- **Problema**: el pseudonimizador tiene 4 categorias (email, telefono, host, persona) y ninguna de tarjeta; el patron de TELEFONO consume parcialmente las corridas de 16 digitos y deja digitos en claro (p. ej. `4517 6712 3456 7890` -> `[TELEFONO] 7890`).
+- **Scope**: nueva categoria CARD -> `[TARJETA]` (mayusculas) aplicada ANTES de TELEFONO; disparador contextual (mencion de `tarjeta`) con ventana de 40 caracteres; tolerancia 4-4-4-4; no regresion del caso R067 (corrida de 16 digitos de un DLL, sin "tarjeta", NO debe censurarse). Fuera de alcance: Luhn y longitudes distintas de 16.
+- **Dependencias**: ninguna.
+- **Governance**: HIGH (PII financiera, Ley 25.326).
+- **Leer antes**:
+  - `openspec/changes/c-73-pseudonimizacion-tarjeta/{proposal,design,tasks}.md`
+  - `App/Backend/app/utils/pseudonymizer.py`, `openspec/specs/data-pseudonymization/spec.md`
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo)
@@ -1582,7 +1603,7 @@ C-72 unificar-clasificacion-telefonica (C-71)             [ACTIVO — 37/37 apli
 | KB: knowledge-base | ACTUALIZADA | C-14 kb-sync-implementation-state |
 | Twilio: TwiML script | COMPLETO | C-16 twilio-twiml-script |
 | Seguridad: higiene de secretos | COMPLETO | C-37 (hook pre-commit + runbook + escaneo del lado GitHub) |
-| Corpus: JSON multietiqueta | PARCIAL | C-27 rediseno-sectores-json (sintetico eliminado); C-68 midio web 53/53 y correo 66/66 por el flujo N8N real; telefonia 0/81 pendiente de C-70 |
+| Corpus: JSON multietiqueta | COMPLETO | C-27 rediseno-sectores-json (sintetico eliminado); corpus 200/200 con `tiempo_automatizado_s` (C-68 web 53/53 + correo 66/66; C-70 telefonia 81/81) |
 | Timing e2e | IMPLEMENTADO | C-39; `ingresado_en` / `persistido_en` / `latencia_e2e_ms`. C-46 elimina la perdida silenciosa del sello en el canal telefonico (verificacion de runtime en vivo pendiente) |
 | Backup scripts: PostgreSQL | IMPLEMENTADO | C-26 — scripts/backup.sh y scripts/backup.ps1 con rotacion de 7 dias |
 | N8N retention: 30 dias | CONFIGURADO | C-26 — EXECUTIONS_DATA_PRUNE y EXECUTIONS_DATA_MAX_AGE en docker-compose.yml |
@@ -1605,16 +1626,16 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 
 ## Primer change recomendado
 
-Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01), C-61 (2026-10-01, 26/26), C-69 (2026-10-05, 30/30), C-71 (2026-10-06, 43/43) y C-60 (2026-10-06, 33/33).
+Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01), C-61 (2026-10-01, 26/26), C-69 (2026-10-05, 30/30), C-71 (2026-10-06, 43/43), C-60 (2026-10-06, 33/33) y C-70 (2026-10-06, 72/72).
 
-Hay 5 changes ACTIVOS (post-roadmap, FASE 19, FASE 20, FASE 22, FASE 23 y FASE 25):
+Hay 5 changes ACTIVOS (post-roadmap, FASE 19, FASE 20, FASE 22, FASE 25 y FASE 26):
 - **`c-56-notificaciones-por-rol`** — 0/27 (planning completo, sin aplicar; FASE 19) — Governance ALTO.
 - **`c-67-notificacion-sms-llamante`** — 0/24 (diferido; bloqueado por OQ3 y C-66; FASE 20) — Governance ALTO.
 - **`c-68-corpus-ingesta-n8n`** — 58/63 (apply avanzado; corpus web/correo medido; FASE 22) — Governance MEDIO.
-- **`c-70-softphone-corpus-telefonia`** — 70/72 (apply completo; smoke 8.1 hecho con R002; 8.2-8.3 pendientes; FASE 23) — Governance ALTO.
 - **`c-72-unificar-clasificacion-telefonica`** — 37/37 (aplicado: un solo clasificador, workflow 38->28 nodos, costo trasladado; OQ1..OQ5 resueltas A; delta n8n reconciliado: 14 REMOVED + 5 MODIFIED + 4 ADDED; listo para archivar; FASE 25) — Governance ALTO.
+- **`c-73-pseudonimizacion-tarjeta`** — 0/23 (propuesto: categoria `[TARJETA]` con disparador contextual; planning completo; FASE 26) — Governance HIGH.
 
-C-01..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59, C-60, C-61, C-69 y C-71 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
+C-01..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59, C-60, C-61, C-69, C-70 y C-71 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
 
 **Detalle de `c-52-telefonia-transcripcion-async`** (Gobernanza CRITICA; ARCHIVADO 2026-09-30):
 
@@ -1659,4 +1680,4 @@ Para avanzar:
 - `c-60`: aplicar ahora que c-54 esta archivado (prerequisito); compatible con c-56.
 - `c-67`: no aplicar aun; bloqueado por OQ3 (entregabilidad SMS AR) y por C-66 (privacidad-transferencias, planificado en la FASE 21, aun sin crear).
 - `c-68`: cerrar las 5 tareas restantes del harness de ingesta (web/correo ya medidos) y verificar.
-- `c-70`: codigo aplicado; pendiente la corrida real de los 81 casos (8.1-8.3, requiere Twilio + recitacion del autor). Governance ALTO.
+- `c-70`: ARCHIVADO (2026-10-06, 72/72); corrida completa de los 81 casos y write-back realizados; corpus 200/200 cargable. Governance ALTO.

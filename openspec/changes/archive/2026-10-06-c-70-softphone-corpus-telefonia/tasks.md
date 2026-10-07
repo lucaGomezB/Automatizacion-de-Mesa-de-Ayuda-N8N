@@ -93,8 +93,8 @@
 ## 8. Verificacion final
 
 - [x] 8.1 Corrida acotada: 1-2 casos de telefono en el perfil `corpus`, con correlacion exacta y write-back verificado. — REALIZADO con R002 (2026-10-05): correlacion exacta via `corpus_case_id`, ingreso enlazado (`incidente_id=2`), `latencia_e2e_ms=13012`, write-back `medidos=1` y `tiempo_automatizado_s=13.012` escrito en JSON/CSV/XLSX/sidecar.
-- [ ] 8.2 Corrida completa de los 81 casos por el autor (sin muestreo). — BLOCKED: trabajo manual del autor.
-- [ ] 8.3 Verificar la carga del corpus: `cd evaluation; pytest -q` sin `CorpusError` una vez cargados web + correo + los 81 telefonos. — BLOCKED by 8.2.
+- [x] 8.2 Corrida completa de los 81 casos por el autor (sin muestreo). — REALIZADO (2026-10-06): 81/81 casos telefonicos cargados en la base del corpus (`mesa_de_ayuda_corpus`, 81 incidentes); duplicado R126 limpiado con el `--replace` acotado; write-back `medidos=81 anomalos=0 pendientes=0 fallidos=0`.
+- [x] 8.3 Verificar la carga del corpus: `cd evaluation; pytest -q` sin `CorpusError` una vez cargados web + correo + los 81 telefonos. — REALIZADO (2026-10-06): `pytest -q` -> 79 passed, sin `CorpusError`; corpus 200/200 (81 telefono + 66 correo + 53 web) con `tiempo_automatizado_s`.
 - [x] 8.4 `openspec validate --strict --changes c-70-softphone-corpus-telefonia` en verde. — 5 passed, 0 failed.
 - [x] 8.5 Suite backend offline y tests del softphone/script en verde; `ruff check` sin hallazgos. — backend 920 passed (+ integracion 37 passed); softphone 69 passed; corpus_ingest 153 passed; openapi sync 5 passed; ruff All checks passed.
 
