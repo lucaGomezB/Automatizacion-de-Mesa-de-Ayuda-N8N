@@ -2,7 +2,7 @@
 
 ## ADDED Requirements
 
-### Requirement: TAX-003 — Reglas de desambiguacion de frontera en el prompt compartido
+### Requirement: TAX-004 — Reglas de desambiguacion de frontera en el prompt compartido
 
 El prompt compartido de clasificacion (`docs/prompt_gemini.txt`) SHALL incluir reglas de desambiguacion de frontera entre sectores adyacentes, de modo que los casos de borde se resuelvan de forma consistente en los tres canales. Las reglas SHALL cubrir, al menos: las acciones sobre aplicaciones o sistemas operativos (acceder, iniciar sesion, abrir una aplicacion) se asignan a `Soporte Tecnico Software`; los dispositivos fisicos y su digitalizacion (escaner, impresora, periferico, error de digitalizacion) se asignan a `Soporte Tecnico Hardware`; la infraestructura y los servicios de plataforma (servidor, red, SMTP, VM) se asignan a `Sistemas`. Las reglas MUST usar exactamente los cinco strings canonicos sin tildes y MUST NOT introducir sectores fuera del conjunto canonico. El prompt compartido SHALL ser el unico prompt de clasificacion del sistema: el canal telefonico MUST NOT mantener un prompt divergente.
 

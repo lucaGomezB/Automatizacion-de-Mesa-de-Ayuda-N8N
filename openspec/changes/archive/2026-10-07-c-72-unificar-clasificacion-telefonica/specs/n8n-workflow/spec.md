@@ -138,7 +138,7 @@ Todo nodo del workflow que requiera credenciales para operar (por ejemplo los no
 ### Requirement: Acoplamiento del AI Agent a su modelo de lenguaje y al payload del trigger
 
 **Reason**: El nodo `AI Agent` y su nodo de modelo de lenguaje fueron retirados de `n8n/workflow.json`; la clasificacion telefonica la resuelve la cascada del backend y no queda agente de n8n cuyo modelo o prompt haya que acoplar.
-**Migration**: El contrato de clasificacion y el prompt unico viven en el backend (`docs/prompt_gemini.txt`, `HybridClassifier`). Ver N8N-UNIFY-001 y ASG-010.
+**Migration**: El contrato de clasificacion y el prompt unico viven en el backend (`docs/prompt_gemini.txt`, `HybridClassifier`). Ver N8N-UNIFY-001 y ASG-012.
 
 ### Requirement: N8N-AGENT-001 — AI Agent con Chat Model conectado
 
@@ -153,7 +153,7 @@ Todo nodo del workflow que requiera credenciales para operar (por ejemplo los no
 ### Requirement: N8N-AGENT-003 — Contrato JSON del agente compatible con el validador
 
 **Reason**: No hay salida JSON de un agente de n8n que validar; el validador telefonico fue retirado junto con el agente.
-**Migration**: El backend valida su propio contrato de resultado. Ver la MODIFIED "Validación de la respuesta de clasificación según Anexo H §H.3" y ASG-010.
+**Migration**: El backend valida su propio contrato de resultado. Ver la MODIFIED "Validación de la respuesta de clasificación según Anexo H §H.3" y ASG-012.
 
 ### Requirement: N8N-MEMORY-001 — El nodo de memoria Redis declara credencial y parámetros
 
@@ -173,7 +173,7 @@ Todo nodo del workflow que requiera credenciales para operar (por ejemplo los no
 ### Requirement: N8N-VALID-001 — Los fallos del validador IA conservan su causa
 
 **Reason**: El validador IA telefonico fue retirado; no hay salida de modelo dentro de n8n cuyo rechazo haya que conservar ni canal que reetiquetar.
-**Migration**: El backend distingue el canal y resuelve su propia cascada. Ver ASG-010 y N8N-UNIFY-001.
+**Migration**: El backend distingue el canal y resuelve su propia cascada. Ver ASG-012 y N8N-UNIFY-001.
 
 ### Requirement: N8N-GUARD-001 — La guarda de costo preserva el item del canal de telefonía
 
@@ -183,7 +183,7 @@ Todo nodo del workflow que requiera credenciales para operar (por ejemplo los no
 ### Requirement: N8N-GUARD-002 — El caller de la guarda usa el item corriente, sin referencia frágil
 
 **Reason**: Retirado junto con el nodo `Guard de costo`; no queda llamada de guarda en el flujo telefonico de n8n que resolver el numero de origen.
-**Migration**: El enforcement del gasto vive en el backend (runtime-cost-guard). Ver ASG-010.
+**Migration**: El enforcement del gasto vive en el backend (runtime-cost-guard). Ver ASG-012.
 
 ### Requirement: N8N-REFINE-001 — Tope de refinamiento del agente pago
 

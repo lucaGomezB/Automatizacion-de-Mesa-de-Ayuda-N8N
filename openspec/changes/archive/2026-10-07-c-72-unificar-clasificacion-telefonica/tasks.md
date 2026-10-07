@@ -49,9 +49,9 @@
 
 ## 5. Medicion del beneficio determinista-primero en telefonia
 
-- [x] 5.1 (Medicion offline) Correr la medicion determinista sobre el corpus filtrando telefonia: fraccion que cortocircuita, exactitud estricta del subconjunto y cobertura. Registrar valores y delta contra la linea base. Verificacion: reporte numerico. No invoca Gemini ni toca `_a_float`.
-- [x] 5.2 (Medicion hibrida, dependiente de c-71 OQ5) Re-correr `evaluation/run_evaluation.py` sobre telefonia cuando haya cuota de Gemini y registrar el delta de F1 hibrido vs determinista. Si no hay cuota, declarar PENDIENTE sin fabricar.
-- [x] 5.3 Documentar el beneficio medido (atajo determinista, Gemini evitado) en la nota de evaluacion. Verificacion: reporte documentado.
+- [x] 5.1 (Medicion offline) Corrida. Telefonia (81 casos) con el punto de operacion vigente (tau 0.5166, c-74): atajo 58/81 (0.7160), exactitud estricta del subconjunto 0.6207; determinista (subconjunto) estricta 0.4444, macro-F1 0.3810; cobertura de vocabulario 0.7407. Ver `docs/c-72-unificacion-clasificacion-telefonica.md` 4.2.
+- [x] 5.2 (Medicion hibrida) CERRADA 2026-10-07 con la corrida oficial hybrid-v3 (c-74). Telefonia (81): hibrido macro-F1 0.4783 vs determinista 0.3810 (delta +0.0974; estricta 0.6543); etapa 58 det / 23 gemini. Global (200): hibrido macro-F1 0.5207 vs determinista 0.4196 (delta +0.1011). Ver `docs/c-72-unificacion-clasificacion-telefonica.md` 4.3.
+- [x] 5.3 Documentado el beneficio medido (atajo determinista que evita Gemini) en la nota de evaluacion. Verificado; numeros finales (corpus completo).
 
 ## 6. Documentacion y backfill
 

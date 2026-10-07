@@ -2,7 +2,7 @@
 
 ## ADDED Requirements
 
-### Requirement: ASG-010 — Camino unico de clasificacion para los tres canales
+### Requirement: ASG-012 — Camino unico de clasificacion para los tres canales
 
 El sistema SHALL resolver la clasificacion del incidente por un UNICO camino: la cascada hibrida del backend (determinista primero, etapa semantica solo si la confianza es insuficiente, revision humana como ultimo recurso) sobre la descripcion pseudonimizada. Los canales correo, web y telefonia MUST usar ese mismo camino. La clasificacion final persistida SHALL provenir de la cascada o de un estado de revision humana. El canal de telefonia MUST NOT persistir como sector del incidente una clasificacion precalculada fuera del backend, y el backend MUST NOT usar una clasificacion precalculada de telefonia para omitir la cascada. El contrato multietiqueta persistido (ASG-001) no cambia.
 
