@@ -104,6 +104,14 @@
       "sessions": 1,
       "memories": 15,
       "prompts": 20
+    },
+    {
+      "id": "8630ad49",
+      "created_by": "skywalker",
+      "created_at": "2026-10-07T23:52:46Z",
+      "sessions": 0,
+      "memories": 5,
+      "prompts": 3
     }
   ]
 }
