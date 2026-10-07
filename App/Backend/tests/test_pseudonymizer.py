@@ -35,7 +35,13 @@ def test_pseudonymize_texto_sin_pii_devuelve_texto_intacto_y_conteos_en_cero() -
 
     assert isinstance(resultado, PseudonymizationResult)
     assert resultado.texto == texto
-    assert resultado.conteos == {"email": 0, "telefono": 0, "host": 0, "persona": 0}
+    assert resultado.conteos == {
+        "email": 0,
+        "telefono": 0,
+        "tarjeta": 0,
+        "host": 0,
+        "persona": 0,
+    }
 
 
 def test_pseudonymize_es_determinista() -> None:
@@ -334,4 +340,213 @@ def test_pseudonymize_nombre_real_junto_a_termino_tecnico() -> None:
     assert "Windows Server" in resultado.texto
     assert "Juan Pérez" not in resultado.texto
     assert resultado.conteos["persona"] >= 1
+
+
+# ─── Sección 8: TARJETA con disparador contextual (c-73) ─────────────────────
+
+def test_pseudonymize_reemplaza_tarjeta_agrupada_con_espacios() -> None:
+    """
+    Un número de tarjeta 4-4-4-4 con espacios, precedido por la mención
+    'tarjeta' dentro de la ventana, se reemplaza por [TARJETA] sin dejar
+    ningún dígito en claro y con conteo 1.
+    """
+    texto = "mi tarjeta numero 4517 6712 3456 7890 vencio"
+    resultado = pseudonymize(texto, [])
+
+    assert "[TARJETA]" in resultado.texto
+    assert "4517 6712 3456 7890" not in resultado.texto
+    assert "4517" not in resultado.texto
+    assert "7890" not in resultado.texto
+    assert resultado.conteos["tarjeta"] == 1
+
+
+def test_pseudonymize_reemplaza_tarjeta_contigua_de_16_digitos() -> None:
+    """
+    La forma contigua de 16 dígitos con contexto de 'tarjeta' se reemplaza
+    completa por [TARJETA] y el conteo es 1.
+    """
+    texto = "Hola, mi tarjeta es 0102301239999320 y no puedo operar"
+    resultado = pseudonymize(texto, [])
+
+    assert "[TARJETA]" in resultado.texto
+    assert "0102301239999320" not in resultado.texto
+    assert resultado.conteos["tarjeta"] == 1
+
+
+def test_pseudonymize_reemplaza_tarjeta_agrupada_con_guiones() -> None:
+    """
+    Un número de tarjeta agrupado con guiones, precedido por 'tarjeta'
+    dentro de la ventana, se reemplaza por [TARJETA] y el conteo es 1.
+    """
+    texto = "el numero de tarjeta 4517-6712-3456-7890 fue rechazado"
+    resultado = pseudonymize(texto, [])
+
+    assert "[TARJETA]" in resultado.texto
+    assert "4517-6712-3456-7890" not in resultado.texto
+    assert resultado.conteos["tarjeta"] == 1
+
+
+# ─── Sección 9: TRIANGULATE TARJETA — escenarios del spec (c-73) ─────────────
+
+def test_pseudonymize_etiqueta_tarjeta_es_exactamente_mayusculas() -> None:
+    """La etiqueta insertada es exactamente [TARJETA], sin variantes de casing."""
+    resultado = pseudonymize("mi tarjeta numero 4517 6712 3456 7890 vencio", [])
+
+    assert "[TARJETA]" in resultado.texto
+    assert "[Tarjeta]" not in resultado.texto
+    assert "[tarjeta]" not in resultado.texto
+
+
+@pytest.mark.parametrize(
+    "disparador",
+    [
+        "tarjeta de credito",
+        "tarjeta de debito",
+        "numero de tarjeta",
+        "tarjetas",
+    ],
+)
+def test_pseudonymize_variantes_de_disparador_activan_tarjeta(disparador: str) -> None:
+    """Cada variante del disparador activa el reemplazo de la corrida de 16 dígitos."""
+    texto = f"mi {disparador} 4517 6712 3456 7890 vencio"
+    resultado = pseudonymize(texto, [])
+
+    assert "[TARJETA]" in resultado.texto
+    assert "4517" not in resultado.texto
+    assert resultado.conteos["tarjeta"] == 1
+
+
+def test_pseudonymize_numero_a_mas_de_40_chars_no_se_enmascara() -> None:
+    """Una corrida a más de 40 caracteres del disparador (sin nueva mención) no se enmascara."""
+    relleno = "x" * 45
+    texto = f"mi tarjeta {relleno} 4517 6712 3456 7890"
+    resultado = pseudonymize(texto, [])
+
+    assert "[TARJETA]" not in resultado.texto
+    assert resultado.conteos["tarjeta"] == 0
+
+
+def test_pseudonymize_numero_a_40_chars_se_enmascara() -> None:
+    """La ventana incluye un número exactamente a 40 caracteres del disparador."""
+    relleno = "x" * 38  # " " + 38 + " " == 40 caracteres de ventana
+    texto = f"mi tarjeta {relleno} 4517 6712 3456 7890"
+    resultado = pseudonymize(texto, [])
+
+    assert "[TARJETA]" in resultado.texto
+    assert resultado.conteos["tarjeta"] == 1
+
+
+def test_pseudonymize_16_digitos_sin_mencion_no_se_enmascara() -> None:
+    """Sin mención de 'tarjeta' la regla no se activa aunque haya 16 dígitos."""
+    resultado = pseudonymize("el codigo 0102301239999320 fue registrado", [])
+
+    assert "[TARJETA]" not in resultado.texto
+    assert resultado.conteos["tarjeta"] == 0
+
+
+def test_pseudonymize_tarjeta_no_se_fragmenta_como_telefono() -> None:
+    """
+    El número de tarjeta con contexto se consume completo como [TARJETA]:
+    no queda ningún dígito en claro ni se fragmenta como [TELEFONO].
+    """
+    resultado = pseudonymize("mi tarjeta numero 4517 6712 3456 7890 vencio", [])
+
+    assert resultado.conteos["tarjeta"] == 1
+    assert resultado.conteos["telefono"] == 0
+    assert "[TELEFONO]" not in resultado.texto
+    assert not any(caracter.isdigit() for caracter in resultado.texto)
+
+
+def test_pseudonymize_determinista_con_tarjeta() -> None:
+    """Dos invocaciones con contexto de tarjeta devuelven texto y conteos idénticos."""
+    texto = "mi tarjeta es 4517 6712 3456 7890"
+    r1 = pseudonymize(texto, [])
+    r2 = pseudonymize(texto, [])
+
+    assert r1.texto == r2.texto
+    assert r1.conteos == r2.conteos
+    assert r1.conteos["tarjeta"] == 1
+
+
+def test_pseudonymize_combinacion_con_tarjeta() -> None:
+    """Texto con nombre, email, teléfono, tarjeta y host: cada etiqueta y conteo."""
+    texto = (
+        "Carlos García (carlos.garcia@empresa.com) llamó al +54 261 555-9876 "
+        "para reportar que su tarjeta numero 4517 6712 3456 7890 y srv-db01 no responde."
+    )
+    resultado = pseudonymize(texto, [])
+
+    assert "[EMAIL]" in resultado.texto
+    assert "[TELEFONO]" in resultado.texto
+    assert "[TARJETA]" in resultado.texto
+    assert "[HOST]" in resultado.texto
+    assert "[PERSONA]" in resultado.texto
+
+    assert "carlos.garcia@empresa.com" not in resultado.texto
+    assert "+54 261 555-9876" not in resultado.texto
+    assert "4517 6712 3456 7890" not in resultado.texto
+    assert "srv-db01" not in resultado.texto
+    assert "Carlos García" not in resultado.texto
+
+    assert resultado.conteos["email"] == 1
+    assert resultado.conteos["telefono"] == 1
+    assert resultado.conteos["tarjeta"] == 1
+    assert resultado.conteos["host"] == 1
+    assert resultado.conteos["persona"] >= 1
+
+
+def test_pseudonymize_multiples_tarjetas_con_un_solo_disparador() -> None:
+    """
+    Un único disparador 'tarjetas' cubre varios números de tarjeta dentro de la
+    ventana forward de 40 caracteres: TODOS se enmascaran (no solo el primero),
+    la frase del disparador se preserva y no queda ningún dígito visible.
+    """
+    texto = "mis tarjetas 1111 1111 1111 1111 y 2222 2222 2222 2222"
+    resultado = pseudonymize(texto, [])
+
+    assert resultado.texto == "mis tarjetas [TARJETA] y [TARJETA]"
+    assert resultado.texto.count("[TARJETA]") == 2
+    assert resultado.conteos["tarjeta"] == 2
+    assert not any(caracter.isdigit() for caracter in resultado.texto)
+
+
+def test_pseudonymize_multiples_tarjetas_contiguas_con_un_disparador() -> None:
+    """
+    TRIANGULATE: la cobertura múltiple funciona también con la forma contigua de
+    16 dígitos; ambos números comparten el disparador y se enmascaran los dos.
+    """
+    texto = "mi tarjeta 1111111111111111 y 2222222222222222"
+    resultado = pseudonymize(texto, [])
+
+    assert resultado.texto == "mi tarjeta [TARJETA] y [TARJETA]"
+    assert resultado.conteos["tarjeta"] == 2
+    assert not any(caracter.isdigit() for caracter in resultado.texto)
+
+
+# ─── Sección 10: No regresión de corridas sin contexto (c-73) ────────────────
+
+def test_pseudonymize_r067_dll_no_se_clasifica_como_tarjeta() -> None:
+    """
+    La corrida de 22 dígitos del DLL de R067 (sin la palabra 'tarjeta')
+    no se clasifica como [TARJETA] ni incrementa el conteo.
+    """
+    texto = (
+        'Le sale un cartel "Falta el dll axm0102301239999320002302" '
+        "al intentar iniciar el sistema principal"
+    )
+    resultado = pseudonymize(texto, [])
+
+    assert "[TARJETA]" not in resultado.texto
+    assert resultado.conteos["tarjeta"] == 0
+
+
+def test_pseudonymize_r169_mencion_sin_digitos_no_altera_texto() -> None:
+    """La mención de 'tarjeta' sin dígitos (R169) no modifica el texto ni los conteos."""
+    texto = "Tiene problemas al dar de alta una tarjeta"
+    resultado = pseudonymize(texto, [])
+
+    assert resultado.texto == texto
+    assert resultado.conteos["tarjeta"] == 0
+
+
 
