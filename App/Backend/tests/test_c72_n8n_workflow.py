@@ -281,3 +281,34 @@ def test_2_7_no_hay_nodos_ejecutables_huerfanos():
         if node["type"] not in NON_EXECUTABLE_TYPES and node["name"] not in reachable
     ]
     assert orphans == [], f"Nodos ejecutables huerfanos: {orphans}"
+
+
+# ---------------------------------------------------------------------------
+# N-3 — canal de origen invalido rechazado por el normalizador
+# ---------------------------------------------------------------------------
+
+
+def test_normalizer_rechaza_canal_de_origen_invalido():
+    """
+    N-3 (n8n-workflow, Normalizacion de canales): un `canal_raw` fuera de
+    {correo, web, telefonia} NO se propaga como canal valido. El normalizador lo
+    rechaza con `es_valido=false`, `canal_origen_id=null` y el marcador
+    observable `error_normalizacion='canal_invalido'`, de modo que el IF
+    compartido lo deriva a revision humana en lugar de persistir un canal nulo.
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    code = by_name[NORMALIZER_NODE_NAME]["parameters"].get("jsCode", "")
+
+    assert "CANALES_VALIDOS" in code, (
+        "El normalizador no define el conjunto de canales validos"
+    )
+    assert "error_normalizacion" in code and "canal_invalido" in code, (
+        "El normalizador no marca el canal invalido con error_normalizacion='canal_invalido'"
+    )
+    assert "canal_origen_id: null" in code, (
+        "La rama de canal invalido no anula canal_origen_id"
+    )
+    assert "es_valido: false" in code, (
+        "La rama de canal invalido no marca es_valido=false"
+    )
