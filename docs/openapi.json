@@ -1213,6 +1213,37 @@
         "title": "LoginRequest",
         "type": "object"
       },
+      "LogoutRequest": {
+        "description": "Payload del endpoint de logout: el refresh token a revocar.",
+        "properties": {
+          "refresh_token": {
+            "description": "Refresh token opaco",
+            "minLength": 1,
+            "title": "Refresh Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "refresh_token"
+        ],
+        "title": "LogoutRequest",
+        "type": "object"
+      },
+      "LogoutResponse": {
+        "description": "Confirmacion de logout (idempotente).",
+        "properties": {
+          "message": {
+            "description": "Mensaje de confirmacion",
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "title": "LogoutResponse",
+        "type": "object"
+      },
       "PeriodoInfo": {
         "description": "Metadatos del rango consultado en la respuesta de tendencias.",
         "properties": {
@@ -1271,6 +1302,22 @@
           "ids"
         ],
         "title": "PurgaDirectorioRead",
+        "type": "object"
+      },
+      "RefreshRequest": {
+        "description": "Payload del endpoint de refresco: el refresh token opaco rotativo.",
+        "properties": {
+          "refresh_token": {
+            "description": "Refresh token opaco",
+            "minLength": 1,
+            "title": "Refresh Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "refresh_token"
+        ],
+        "title": "RefreshRequest",
         "type": "object"
       },
       "ResumenResponse": {
@@ -1583,12 +1630,36 @@
         "type": "object"
       },
       "TokenResponse": {
-        "description": "Respuesta exitosa de autenticacion.\n\nContiene el token JWT firmado y el tipo de token (siempre \"bearer\").",
+        "description": "Respuesta exitosa de autenticacion.\n\nContrato aditivo (c-63a): `access_token` y `token_type` se conservan con la\nmisma semantica que antes; `refresh_token` y `expires_in` se agregan de\nforma opcional para no romper clientes existentes.",
         "properties": {
           "access_token": {
             "description": "Token JWT firmado",
             "title": "Access Token",
             "type": "string"
+          },
+          "expires_in": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Segundos hasta la expiracion del access token",
+            "title": "Expires In"
+          },
+          "refresh_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Refresh token opaco rotativo",
+            "title": "Refresh Token"
           },
           "token_type": {
             "default": "bearer",
@@ -1657,7 +1728,7 @@
   "paths": {
     "/api/v1/auth/login": {
       "post": {
-        "description": "Autentica al usuario con username y password, retornando un token JWT.\n\nEl token debe enviarse en el header Authorization de requests subsiguientes:\n    Authorization: Bearer <access_token>\n\nEl token expira segun la configuracion JWT_EXPIRE_MINUTES (24 horas por defecto).\n\nArgs:\n    payload: Credenciales de inicio de sesion (username + password).\n\nReturns:\n    TokenResponse con access_token y token_type \"bearer\" (HTTP 200).\n\nRaises:\n    JSONResponse 401: Si las credenciales son invalidas.",
+        "description": "Autentica al usuario con username y password.\n\nDevuelve un access token JWT de vida corta y un refresh token opaco\nrotativo. El access debe enviarse en `Authorization: Bearer <access_token>`.\n\nArgs:\n    payload: Credenciales de inicio de sesion (username + password).\n\nReturns:\n    TokenResponse con access_token, token_type, refresh_token y expires_in.\n\nRaises:\n    JSONResponse 401 INVALID_CREDENTIALS: credenciales invalidas.\n    JSONResponse 401 ACCOUNT_LOCKED: cuenta bloqueada por intentos fallidos.",
         "operationId": "login_api_v1_auth_login_post",
         "requestBody": {
           "content": {
@@ -1691,7 +1762,91 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Iniciar sesion y obtener token JWT",
+        "summary": "Iniciar sesion y obtener el par de tokens",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "description": "Revoca el refresh token del usuario (idempotente).\n\nEl access ya emitido conserva validez hasta su TTL (ventana residual\ndeclarada, IAH-004). Un refresh revocado no puede volver a refrescar.\n\nArgs:\n    payload: Refresh token a revocar.\n\nReturns:\n    LogoutResponse con un mensaje de confirmacion (HTTP 200).",
+        "operationId": "logout_api_v1_auth_logout_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogoutRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogoutResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Revocar el refresh token (logout)",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "description": "Rota un refresh token valido: invalida el anterior y emite un par nuevo.\n\nArgs:\n    payload: Refresh token opaco presentado por el cliente.\n\nReturns:\n    TokenResponse con el nuevo par de tokens.\n\nRaises:\n    JSONResponse 401 INVALID_REFRESH_TOKEN: token inexistente, ya rotado,\n        revocado o expirado (incluye la reutilizacion de un token rotado).",
+        "operationId": "refresh_api_v1_auth_refresh_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rotar el par de tokens con un refresh token valido",
         "tags": [
           "Auth"
         ]

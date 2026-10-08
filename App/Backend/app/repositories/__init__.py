@@ -5,6 +5,7 @@ from app.repositories.estadisticas_repository import EstadisticasRepository
 from app.repositories.incidente_repository import IncidenteRepository
 from app.repositories.sector_repository import SectorRepository
 from app.repositories.telefonia_ingreso_repository import TelefoniaIngresoRepository
+from app.repositories.token_repository import TokenRepository
 from app.repositories.user_repository import UserRepository
 
 __all__ = [
@@ -15,5 +16,6 @@ __all__ = [
     "IncidenteRepository",
     "SectorRepository",
     "TelefoniaIngresoRepository",
+    "TokenRepository",
     "UserRepository",
 ]

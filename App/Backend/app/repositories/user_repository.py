@@ -34,3 +34,26 @@ class UserRepository(BaseRepository[User]):
             select(User).where(User.username == username)
         )
         return result.scalar_one_or_none()
+
+    async def get_by_username_for_update(self, username: str) -> User | None:
+        """
+        Igual que `get_by_username` pero adquiere un lock de fila (W2).
+
+        Emite `SELECT ... FOR UPDATE`, serializando las lecturas concurrentes
+        de la misma cuenta (p. ej. el contador de intentos fallidos del bloqueo
+        por cuenta). En motores que no soportan FOR UPDATE (SQLite) la clausula
+        se ignora silenciosamente y el metodo se comporta como `get_by_username`.
+
+        El lock se mantiene hasta el commit/rollback de la transaccion (Unit of
+        Work gestionado por `get_db_session`).
+
+        Args:
+            username: Nombre de usuario a buscar y bloquear.
+
+        Returns:
+            Instancia de User o None si no existe ningun usuario con ese nombre.
+        """
+        result = await self._session.execute(
+            select(User).where(User.username == username).with_for_update()
+        )
+        return result.scalar_one_or_none()

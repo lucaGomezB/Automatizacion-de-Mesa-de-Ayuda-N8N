@@ -9,6 +9,7 @@ from app.models.clasificacion_log import ClasificacionLog
 from app.models.costo_guarda_contador import CostoGuardaContador
 from app.models.empleado import Empleado, RolEmpleado
 from app.models.incidente import Incidente, PrioridadEnum
+from app.models.refresh_token import RefreshToken
 from app.models.telefonia_ingreso import TelefoniaIngreso, TranscripcionEstado
 from app.models.telefonia_pending_call import TelefoniaPendingCall
 from app.models.user import User
@@ -25,6 +26,7 @@ __all__ = [
     "CostoGuardaContador",
     "Empleado",
     "RolEmpleado",
+    "RefreshToken",
     "TelefoniaIngreso",
     "TranscripcionEstado",
     "TelefoniaPendingCall",

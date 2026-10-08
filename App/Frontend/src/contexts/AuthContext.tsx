@@ -19,7 +19,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { setAuthToken, clearAuthToken } from '@/services/api';
+import { setAuthToken, clearAuthToken, setRefreshToken, clearRefreshToken, getRefreshToken } from '@/services/api';
 
 // ── Tipos ────────────────────────────────────────────────────────────────────
 
@@ -65,6 +65,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const response = await apiClient.post<{
         access_token: string;
         token_type: string;
+        refresh_token?: string;
       }>('/auth/login', {
         username,
         password,
@@ -72,6 +73,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       const token = response.data.access_token;
       setAuthToken(token);
+      setRefreshToken(response.data.refresh_token ?? null);
       setState({
         token,
         username,
@@ -84,7 +86,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const logout = useCallback(() => {
+    // Logout revocatorio (c-63a): revocar el refresh en el backend antes de
+    // limpiar el estado local. Fire-and-forget para no bloquear la UI; el access
+    // ya emitido conserva validez hasta su TTL (ventana residual declarada).
+    const refreshToken = getRefreshToken();
+    if (refreshToken) {
+      void import('@/services/api').then(({ apiClient }) =>
+        apiClient
+          .post('/auth/logout', { refresh_token: refreshToken })
+          .catch(() => undefined),
+      );
+    }
     clearAuthToken();
+    clearRefreshToken();
     setState({
       token: null,
       username: null,

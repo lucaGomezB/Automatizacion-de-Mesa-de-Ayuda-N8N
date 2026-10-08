@@ -41,7 +41,9 @@ async def seed_user(engine):
         dict con username, password_plain y el objeto User.
     """
     password_plain = "admin123"
-    hashed = get_password_hash(password_plain)
+    # Credencial sembrada de desarrollo: grandfather explicito de la politica
+    # (IAH-001). El login con admin/admin123 debe seguir funcionando en dev.
+    hashed = get_password_hash(password_plain, enforce_policy=False)
 
     factory = async_sessionmaker(engine, expire_on_commit=False)
     async with factory() as session:
@@ -269,7 +271,8 @@ async def test_incidentes_with_token_without_exp_returns_401(
 def test_create_access_token_defaults_to_configured_expiry():
     """
     create_access_token sin `expires_delta` debe emitir un token con claim `exp`
-    derivado de settings.jwt_expire_minutes (no puede emitir tokens sin expiracion).
+    derivado de settings.jwt_access_expire_minutes (vida corta, c-63a; no puede
+    emitir tokens sin expiracion).
     """
     from app.config.settings import get_settings
 
@@ -285,7 +288,7 @@ def test_create_access_token_defaults_to_configured_expiry():
     assert "exp" in payload
     exp = datetime.fromtimestamp(payload["exp"], tz=timezone.utc)
     expected = datetime.now(timezone.utc) + timedelta(
-        minutes=settings.jwt_expire_minutes
+        minutes=settings.jwt_access_expire_minutes
     )
     assert abs((exp - expected).total_seconds()) < 60
 

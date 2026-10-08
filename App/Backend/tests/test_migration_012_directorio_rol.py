@@ -133,9 +133,14 @@ def test_upgrade_head_acepta_mesa_de_ayuda_y_rechaza_fuera_de_vocabulario(db_fil
 
 
 def test_downgrade_restaura_check_de_tres_valores(db_file):
-    """El downgrade -1 revierte el CHECK y vuelve a rechazar `mesa_de_ayuda`."""
+    """El downgrade a 011 revierte el CHECK y vuelve a rechazar `mesa_de_ayuda`.
+
+    Se baja a "011" explicitamente (no "-1") porque el head del arbol de
+    revisiones avanzo con migraciones posteriores (013/014, c-63a): un `-1`
+    solo revertiria la ultima migracion, no la 012 bajo prueba.
+    """
     _run_alembic(["upgrade", "head"], db_file)
-    _run_alembic(["downgrade", "-1"], db_file)
+    _run_alembic(["downgrade", _DOWN_REVISION], db_file)
 
     with pytest.raises(IntegrityError):
         _insertar_rol(db_file, "mesa_de_ayuda", "MA-DOWN")

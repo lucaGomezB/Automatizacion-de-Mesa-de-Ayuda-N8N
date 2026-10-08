@@ -187,3 +187,18 @@ class IncidenteCerradoError(AppBaseException):
             {"incidente_id": incidente_id, "code": "INCIDENTE_CERRADO"},
         )
         self.incidente_id = incidente_id
+
+
+class AccountLockedError(AppBaseException):
+    """
+    La cuenta esta bloqueada temporalmente por intentos fallidos (IAH-002).
+
+    Es un codigo distinguible del envelope de error. NO confirma la validez de
+    las credenciales presentadas: solo indica que la cuenta esta bloqueada.
+    """
+
+    def __init__(self) -> None:
+        super().__init__(
+            "Cuenta bloqueada temporalmente por intentos fallidos.",
+            {"code": "ACCOUNT_LOCKED"},
+        )

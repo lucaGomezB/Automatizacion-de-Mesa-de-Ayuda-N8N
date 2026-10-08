@@ -20,7 +20,7 @@
  *   desarrollo local. La barra final se recorta y el prefijo `/api/v1` se agrega en
  *   un solo lugar para no duplicar el sufijo.
  */
-import axios, { type AxiosError } from 'axios';
+import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 
 const API_BASE_URL = (
   import.meta.env['VITE_API_BASE_URL'] ?? 'http://localhost:8000'
@@ -37,33 +37,82 @@ export const apiClient = axios.create({
   timeout: 20_000,
 });
 
-// ── Token JWT en memoria ─────────────────────────────────────────────────────
+// ── Tokens en memoria ────────────────────────────────────────────────────────
+// c-63a: ademas del access token, se mantiene el refresh token opaco para el
+// refresco silencioso (rotativo) ante un 401.
 
 let _authToken: string | null = null;
+let _refreshToken: string | null = null;
 let _onUnauthorized: (() => void) | null = null;
+let _refreshInFlight: Promise<string | null> | null = null;
 
-/**
- * Establece el token JWT que se inyectará en todas las requests subsiguientes.
- * Llamado por AuthContext.login().
- */
+/** Establece el access token que se inyecta en todas las requests. */
 export function setAuthToken(token: string): void {
   _authToken = token;
 }
 
-/**
- * Elimina el token JWT de memoria.
- * Llamado por AuthContext.logout().
- */
+/** Elimina el access token de memoria. */
 export function clearAuthToken(): void {
   _authToken = null;
 }
 
+/** Establece el refresh token que habilita el refresco silencioso. */
+export function setRefreshToken(token: string | null): void {
+  _refreshToken = token;
+}
+
+/** Devuelve el refresh token actual (o null). */
+export function getRefreshToken(): string | null {
+  return _refreshToken;
+}
+
+/** Elimina el refresh token de memoria. */
+export function clearRefreshToken(): void {
+  _refreshToken = null;
+}
+
 /**
- * Registra un callback que se ejecuta cuando el backend responde 401.
- * Usado por AuthContext para redirigir al login.
+ * Registra un callback que se ejecuta cuando el backend responde 401 y no es
+ * posible refrescar la sesion. Usado por AuthContext para redirigir al login.
  */
 export function onUnauthorized(callback: () => void): void {
   _onUnauthorized = callback;
+}
+
+// ── Refresco silencioso (single-flight) ──────────────────────────────────────
+
+/**
+ * Rota el par de tokens usando el refresh token en memoria.
+ *
+ * Usa una instancia cruda de axios (no `apiClient`) para no reingresar al
+ * interceptor de response. Es single-flight: varias respuestas 401 concurrentes
+ * comparten una unica rotacion.
+ *
+ * @returns El nuevo access token, o null si no hay refresh o fallo la rotacion.
+ */
+async function refreshAccessToken(): Promise<string | null> {
+  if (!_refreshToken) return null;
+  if (_refreshInFlight) return _refreshInFlight;
+
+  _refreshInFlight = axios
+    .post<{ access_token: string; refresh_token?: string }>(
+      `${API_BASE_URL}/api/v1/auth/refresh`,
+      { refresh_token: _refreshToken },
+      { headers: { 'Content-Type': 'application/json', Accept: 'application/json' } },
+    )
+    .then((response) => {
+      _authToken = response.data.access_token;  // gitleaks:allow (variable local, no un valor)
+      if (response.data.refresh_token) {
+        _refreshToken = response.data.refresh_token;  // gitleaks:allow (variable local, no un valor)
+      }
+      return _authToken;
+    })
+    .catch(() => null)
+    .finally(() => {
+      _refreshInFlight = null;
+    });
+
+  return _refreshInFlight;
 }
 
 // ── Interceptor de request: inyectar token ────────────────────────────────────
@@ -75,15 +124,31 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-// ── Interceptor de response: manejar 401 ──────────────────────────────────────
+// ── Interceptor de response: 401 + refresco silencioso ───────────────────────
+
+interface RetriableRequestConfig extends InternalAxiosRequestConfig {
+  _retry?: boolean;
+}
 
 apiClient.interceptors.response.use(
   (response) => response,
-  (error: unknown) => {
+  async (error: unknown) => {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
-      // Limpiar token local ante respuesta 401
+      const config = error.config as RetriableRequestConfig | undefined;
+
+      // Intentar refrescar una sola vez por request antes de cerrar sesion.
+      if (_refreshToken && config && !config._retry) {
+        config._retry = true;
+        const refreshed = await refreshAccessToken();
+        if (refreshed) {
+          config.headers.Authorization = `Bearer ${refreshed}`;
+          return apiClient.request(config);
+        }
+      }
+
+      // Sin refresh posible: limpiar tokens locales y notificar al AuthContext.
       _authToken = null;
-      // Notificar al AuthContext para que redirija al login
+      _refreshToken = null;
       if (_onUnauthorized) {
         _onUnauthorized();
       }
