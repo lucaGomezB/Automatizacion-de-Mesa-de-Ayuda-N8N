@@ -33,29 +33,29 @@
 - **Governance**: ALTO (Ley 25.326 — datos personales)
 - **Advertencia**: Perder esta clave hace permanentemente ilegible la columna `descripcion_original`.
 
-### 1.4 Credenciales Microsoft Outlook (Canal Correo)
+### 1.4 Credenciales IMAP/SMTP (Canal Correo)
 
-- **Donde**: N8N UI > nodo "Llega un email a Mesa de Ayuda" (Microsoft Outlook Trigger)
-- **Tipo**: OAuth2 con tenant Microsoft 365 corporativo
+- **Donde**: N8N UI > credenciales `imap` y `smtp`, usadas por el trigger `emailReadImap` y los nodos `emailSend`.
+- **Tipo**: casilla Gmail dedicada con 2FA y App Password (IMAP `imap.gmail.com:993` SSL, SMTP `smtp.gmail.com:465` SSL). Sin OAuth2 ni tenant Microsoft.
 - **Impacto si falta**: El canal de correo no funciona. Los usuarios no pueden reportar incidentes por email.
-- **Governance**: ALTO (dependencia organizacional)
-- **Nota**: El nodo es `microsoftOutlookTrigger`, no IMAP. La organizacion debe proveer credenciales OAuth2.
+- **Governance**: MEDIO (cuenta dedicada del operador)
+- **Nota**: C-55 migró el transporte de Microsoft Outlook OAuth2 a IMAP/SMTP; el workflow ya no usa `microsoftOutlookTrigger`.
 
-### 1.5 Credenciales Twilio (Canal Telefonico)
+### 1.5 Credenciales Twilio (Canal Telefonico — backend)
 
 - **Variables en `App/Backend/.env`**:
   - `TWILIO_ACCOUNT_SID`
   - `TWILIO_AUTH_TOKEN`
   - `TWILIO_PHONE_NUMBER`
-- **Donde en N8N**: nodo "Llamada telefonica" (Twilio Trigger)
+- **Donde**: backend FastAPI (webhook de voz `POST /api/v1/cost-guard/twilio/voice` y callback de grabación `POST /api/v1/telefonia/recording-status`). NO hay nodo Twilio en el workflow N8N: el workflow recibe del backend el handoff ya pseudonimizado vía `POST /webhook/telefonia-handoff`.
 - **Impacto si falta**: El canal telefonico no funciona. Sin numero Twilio no hay llamadas entrantes que transcribir.
 - **Governance**: ALTO (dependencia externa paga)
 
-### 1.6 URL Publica para Webhooks Twilio
+### 1.6 URL Publica del Backend para Webhooks Twilio
 
-- **Donde**: N8N UI > configuracion del Twilio Trigger
+- **Donde**: `BACKEND_PUBLIC_BASE_URL` de `App/Backend/.env`, coincidente con la URL configurada en la consola de Twilio.
 - **Requisito**: URL accesible desde internet. En desarrollo: ngrok o similar. En produccion: dominio con TLS.
-- **Impacto si falta**: Twilio no puede notificar transcripciones a N8N. El webhook no recibe eventos.
+- **Impacto si falta**: Twilio no puede notificar la grabación al backend. El handoff a N8N se omite y no se crea el incidente telefonico.
 - **Governance**: MEDIO (depende de entorno)
 
 ---
@@ -85,12 +85,8 @@ El archivo `n8n/workflow.json` esta montado en el contenedor como `/data/Automat
 
 1. Abrir `https://localhost:5678` (usuario: `admin`, clave: `admin`)
 2. Settings > Import from File > seleccionar el JSON
-3. Configurar credenciales de Outlook y Twilio en los nodos correspondientes
+3. Configurar las credenciales `imap`/`smtp` y el secreto del handoff telefonico en los nodos correspondientes
 4. Activar el workflow (toggle Active)
-
-### 2.4 Configuracion Redis Chat Memory
-
-El AI Agent del canal telefonico usa Redis para memoria de sesion. Verificar en N8N UI que el nodo "Con el fin de enviar los datos que parsee la IA como JSON, se guardaran en memoria por un momento" este correctamente conectado al servicio `redis:6379`.
 
 ---
 
@@ -100,9 +96,9 @@ El AI Agent del canal telefonico usa Redis para memoria de sesion. Verificar en 
 > - IN-04: Fernet (`utils/encryption.py`) ya provee AES-128-CBC con HMAC-SHA-256 integrado para `descripcion_original`. C-18 reescribio la seccion 11.4 de la tesis reemplazando "pgcrypto" por "Fernet a nivel de aplicacion".
 > - IN-05: La politica de retencion fue redefinida en C-18 como **conservacion indefinida** -- los incidentes cerrados se preservan permanentemente como registro auditable. La pseudonimizacion y el cifrado Fernet garantizan la proteccion incluso en periodos prolongados. No se requiere purga automatica.
 
-### 3.1 Notificaciones por Correo (Dependencia Outlook)
+### 3.1 Notificaciones por Correo (IMAP/SMTP)
 
-El workflow N8N tiene el nodo "Correo de confirmacion al usuario" que envia confirmacion via Microsoft Outlook. Si las credenciales Outlook no estan configuradas, este nodo falla. El sistema sigue funcionando (el incidente se registra) pero el usuario no recibe confirmacion por correo.
+El workflow N8N tiene los nodos `Correo de confirmacion al usuario` y `Notificar operador designado` (`emailSend`, SMTP) que envían la confirmación al usuario y la notificación por rol. Si las credenciales `smtp` no estan configuradas, esos nodos fallan. El sistema sigue funcionando (el incidente se registra) pero el usuario no recibe confirmacion por correo.
 
 ---
 
@@ -110,7 +106,7 @@ El workflow N8N tiene el nodo "Correo de confirmacion al usuario" que envia conf
 
 ### 4.1 N8N — imagen pinneada (Resuelto por C-34)
 
-Resuelto: `docker-compose.yml` fija `image: n8nio/n8n:2.11.2` (la version validada localmente, 2.11.2). Ya no se usa `latest`, por lo que no hay cambios silenciosos de version ni riesgo de romper los nodos del workflow (`@n8n/n8n-nodes-langchain`) sin rollback.
+Resuelto: `docker-compose.yml` fija `image: n8nio/n8n:2.11.2` (la version validada localmente, 2.11.2). Ya no se usa `latest`, por lo que no hay cambios silenciosos de version ni riesgo de romper los nodos del workflow sin rollback.
 
 ### 4.2 Frontend usa Vite Dev Server en Docker
 
@@ -122,7 +118,7 @@ El compose mapea el frontend como Vite dev server con HMR (hot module replacemen
 |----|------|------------|-------------|
 | IN-01 | Endpoint clasificacion | `POST /api/v1/clasificar` separado | Clasificacion embebida en `POST /api/v1/incidentes` |
 | IN-03 | Driver BD | psycopg2-binary | asyncpg + SQLAlchemy async |
-| IN-06 | Nodos workflow | 12 nodos | 16 nodos operativos + 3 sticky notes |
+| IN-06 | Nodos workflow | 12 nodos | 26 nodos operativos + 3 sticky notes (29 en total) |
 
 Estas divergencias ya estan documentadas en `knowledge-base/10_preguntas_abiertas.md`. La decision para IN-01 es definitiva: NO se agrega endpoint `/clasificar` separado. La tesis debe corregirse en revision futura.
 
@@ -144,7 +140,7 @@ Palancas a evaluar (de menor a mayor esfuerzo):
 2. **Config sin codigo**: `GEMINI_STT_MODEL` y los `language_codes` se ajustan por `.env`; permite A/B de modelos sin tocar codigo.
 3. **Audio**: agregar `trim="trim-silence"` al `<Record>` en `App/Backend/app/cost_guard/twiml.py` (recorta silencio inicial/final y reduce ruido).
 4. **Motor STT dedicado** (Google Cloud Speech-to-Text v2, Deepgram, Whisper): mayor salto esperado; requiere un change propio (nuevo proveedor, costo y dependencia).
-5. **Post-correccion controlada** del texto, con guarda anti-alucinacion y conservando el transcript crudo. Nota: hoy el AI Agent de n8n ya reescribe/normaliza la descripcion (sin guarda explicita).
+5. **Post-correccion controlada** del texto, con guarda anti-alucinacion y conservando el transcript crudo. Nota: con C-72 la clasificacion telefonica la resuelve el backend; n8n ya no reescribe ni normaliza la descripcion con un agente.
 
 **Impacto**: calidad del texto que ve el operador. NO afecta la creacion del incidente ni la frontera de PII (la pseudonimizacion es posterior a la transcripcion).
 
@@ -157,9 +153,9 @@ Palancas a evaluar (de menor a mayor esfuerzo):
 | **Critica** | Gemini API Key | Credencial | Clasificacion hibrida |
 | **Critica** | JWT Secret Key | Credencial | Autenticacion |
 | **Critica** | Fernet Encryption Key | Credencial | Cifrado at-rest |
-| **Alta** | Credenciales Outlook | Credencial | Canal correo |
-| **Alta** | Credenciales Twilio | Credencial | Canal telefonico |
-| **Media** | URL publica Twilio | Config | Webhook telefonico |
+| **Alta** | Credenciales IMAP/SMTP | Credencial | Canal correo |
+| **Alta** | Credenciales Twilio (backend) | Credencial | Canal telefonico |
+| **Media** | URL publica del backend para webhooks Twilio | Config | Webhook telefonico |
 | **Media** | Backup automatico | Feature | Operacion prolongada |
 | — | Pinear version N8N | **Resuelto (C-34)** | — |
 | **Baja** | Build produccion frontend | Deuda tecnica | Rendimiento en prod |

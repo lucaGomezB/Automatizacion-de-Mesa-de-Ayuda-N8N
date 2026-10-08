@@ -20,7 +20,7 @@ Llamada entrante
   -> <Say> + <Record mono, sin transcribe> con recordingStatusCallback y action
   -> POST /api/v1/telefonia/recording-status       (backend sella ingresado_en, idempotencia, reserva backend_stt, descarga, STT, pseudonimiza)
   -> POST /webhook/telefonia-handoff               (handoff, header X-N8N-Secret)
-  -> n8n: Guard de costo -> Restaurar item telefonia -> AI Agent -> normalizador
+  -> n8n: Llamada telefonica -> Sellar ingreso telefonia -> Normalizar entrada del incidente
   -> POST /api/v1/incidentes                       (alta con origen_message_id = CallSid)
 ```
 
@@ -49,14 +49,14 @@ Referencia: `openspec/changes/c-52-telefonia-transcripcion-async/tasks.md` (8.4)
 
 Confirmar que cada variable tiene el valor real (no placeholder). Nombres EXACTOS:
 
-> **BLOQUEANTE**: `BACKEND_PUBLIC_BASE_URL`, `N8N_TELEFONIA_WEBHOOK_URL` y `N8N_WEBHOOK_SECRET` **NO están definidas** en `App/Backend/.env` ni en el compose del repo. Hay que **AGREGARLAS** antes de la llamada y reiniciar el backend (`docker compose -p mesa_local restart backend`). Sin `BACKEND_PUBLIC_BASE_URL` el `<Record>` emite callbacks relativos y Twilio no puede volver; sin `N8N_TELEFONIA_WEBHOOK_URL`/`N8N_WEBHOOK_SECRET` el handoff a n8n se OMITE y no se crea el incidente.
+> **Nota**: `BACKEND_PUBLIC_BASE_URL`, `N8N_TELEFONIA_WEBHOOK_URL` y `N8N_WEBHOOK_SECRET` YA están declaradas en `App/Backend/.env.example` (y el backend las toma vía `env_file`), pero en la plantilla vienen vacías. Hay que darles el valor real antes de la llamada y reiniciar el backend (`docker compose -p mesa_local restart backend`). Sin `BACKEND_PUBLIC_BASE_URL` el `<Record>` emite callbacks relativos y Twilio no puede volver; sin `N8N_TELEFONIA_WEBHOOK_URL`/`N8N_WEBHOOK_SECRET` el handoff a n8n se OMITE y no se crea el incidente.
 
 - [ ] `TWILIO_ACCOUNT_SID` — usuario del HTTP Basic al descargar la grabación (`AccountSid:AuthToken`).
 - [ ] `TWILIO_AUTH_TOKEN` — valida `X-Twilio-Signature` (HMAC-SHA1) y completa el Basic auth de descarga. Sin él, los webhooks responden 401 fail-closed.
 - [ ] `TWILIO_PHONE_NUMBER` — número virtual comprado (referencia operativa; ver nota en §7).
-- [ ] `BACKEND_PUBLIC_BASE_URL` — base pública del backend tal como la ve Twilio; construye `recordingStatusCallback` y `action` del `<Record>`. Debe coincidir con la URL configurada en la consola Twilio (esquema, host y puerto). **Agregar (falta en el repo).**
-- [ ] `N8N_TELEFONIA_WEBHOOK_URL` — URL del webhook de handoff en n8n (p. ej. `http://n8n:5678/webhook/telefonia-handoff` desde el backend en compose). **Agregar (falta en el repo).**
-- [ ] `N8N_WEBHOOK_SECRET` — secreto compartido del handoff, se envía como header `X-N8N-Secret`. Sin él el handoff se OMITE (`HANDOFF_SKIPPED_NO_SECRET`). **Agregar (falta en el repo).**
+- [ ] `BACKEND_PUBLIC_BASE_URL` — base pública del backend tal como la ve Twilio; construye `recordingStatusCallback` y `action` del `<Record>`. Debe coincidir con la URL configurada en la consola Twilio (esquema, host y puerto). Completar el valor real (la clave ya está declarada en `App/Backend/.env.example`).
+- [ ] `N8N_TELEFONIA_WEBHOOK_URL` — URL del webhook de handoff en n8n (p. ej. `http://n8n:5678/webhook/telefonia-handoff` desde el backend en compose). Completar el valor real (la clave ya está declarada en la plantilla).
+- [ ] `N8N_WEBHOOK_SECRET` — secreto compartido del handoff, se envía como header `X-N8N-Secret`. Sin él el handoff se OMITE (`HANDOFF_SKIPPED_NO_SECRET`). Completar el valor real (mismo valor que la credencial Header Auth del nodo n8n).
 - [ ] `GEMINI_API_KEY` — clave de Google AI para el STT.
 - [ ] `GEMINI_STT_MODEL` — modelo de transcripción (default `gemini-3.5-transcribe`).
 - [ ] `PSEUDONYMIZATION_ENCRYPTION_KEY` — clave Fernet obligatoria; cifra `transcript_original` y `caller_cifrado` at-rest.
@@ -87,7 +87,7 @@ Confirmar que cada variable tiene el valor real (no placeholder). Nombres EXACTO
 - [ ] Workflow importado desde `n8n/workflow.json` (**solo en una instancia nueva**; en la instancia de desarrollo ya configurada NO reimportar: parchear en sitio, ver §3.5.1).
 - [ ] Workflow **activo** (toggle ON en la UI).
 - [ ] El nodo `Llamada telefonica` es un webhook `POST` en la ruta `/webhook/telefonia-handoff` con autenticación `headerAuth` (secreto `X-N8N-Secret`). **BLOQUEANTE**: en `n8n/workflow.json` la credencial es el placeholder `REPLACE_WITH_TELEFONIA_HANDOFF_CREDENTIAL_ID`; hay que crear la credencial Header Auth en la instancia (mismo valor que `N8N_WEBHOOK_SECRET`) y asignarla al nodo.
-- [ ] El nodo `Guard de costo` tiene configurado `COST_GUARD_SHARED_SECRET` (`$env.COST_GUARD_SHARED_SECRET`).
+- [ ] El workflow vigente ya NO reserva costo en n8n (C-72 retiró la rama IA y su guarda); la clasificación y las guardas de costo viven en el backend.
 - [ ] `BACKEND_URL` del workflow apunta al backend.
 
 #### 3.5.1 Actualizar el workflow de la instancia activa (parche en sitio)
@@ -124,17 +124,11 @@ activar/publicar -> reiniciar). El import hace *upsert* por `id`.
 
    # Nodos/claves a sincronizar (ajustar segun el cambio):
    #   - "jsCode"/"jsonBody": reemplaza ESA clave dentro de `parameters`.
-   #   - None: reemplaza el bloque `parameters` COMPLETO. Se usa para el nodo de
-   #     memoria Redis (F3): quita el parametro obsoleto `sessionId` y fija
-   #     `sessionIdType: "customKey"` + `sessionKey`.
-   MEMORY_NODE = (
-       "Con el fin de enviar los datos que parsee la IA como JSON, "
-       "se guardaran en memoria por un momento"
-   )
+   #   - None: reemplaza el bloque `parameters` COMPLETO.
+   # (C-72 retiro la guarda de costo y el nodo de memoria Redis del workflow; el
+   # target vigente del canal telefonia es `Sellar ingreso telefonia`.)
    targets = {
        "Sellar ingreso telefonia": "jsCode",
-       "Guard de costo": "jsonBody",
-       MEMORY_NODE: None,
    }
    changed = []
    for name, key in targets.items():
@@ -175,8 +169,6 @@ activar/publicar -> reiniciar). El import hace *upsert* por `id`.
    grep -c 'caller_number' /tmp/opencode/n8n-patch/verify.json                      # F2: esperado >= 1
    grep -c 'body.descripcion_pseudonimizada' /tmp/opencode/n8n-patch/verify.json   # F1: esperado >= 1
    grep -cE '\$json\.caller\b' /tmp/opencode/n8n-patch/verify.json                  # viejo: esperado 0
-   grep -c 'customKey' /tmp/opencode/n8n-patch/verify.json                          # F3: esperado >= 1
-   grep -c '"sessionId":' /tmp/opencode/n8n-patch/verify.json                       # F3 viejo: esperado 0
    ```
 
    - [ ] `docker compose ps n8n` muestra el contenedor arriba tras el restart.
@@ -184,7 +176,7 @@ activar/publicar -> reiniciar). El import hace *upsert* por `id`.
 
 > **Privacidad**: `live.json`/`patched.json`/`verify.json` referencian credenciales de la instancia (ids/nombres, no secretos). No commitearlos ni compartirlos. `live.json` es el respaldo previo: reimportarlo revierte el parche.
 
-> **Nota**: los fixes de c-52 que suelen requerir este parche son F1 (`Sellar ingreso telefonia` debe leer `body.*`, por el body anidado del webhook), F2 (`Guard de costo` no debe tocar la propiedad bloqueada `caller`; usa `caller_number`) y F3 (el nodo de memoria Redis debe declarar `sessionIdType: "customKey"` y una `sessionKey`, y NO el parametro obsoleto `sessionId`: en typeVersion >= 1.2 `sessionId` se ignora, el nodo cae en `fromInput` y falla con "No session ID found").
+> **Nota**: el fix de c-52 que suele requerir este parche es F1 (`Sellar ingreso telefonia` debe leer `body.*`, por el body anidado del webhook; expone `caller_number`, no `caller`, que es una propiedad bloqueada del sandbox de expresiones de n8n).
 
 ### 3.6 Acceso a datos para inspección
 
@@ -302,7 +294,7 @@ Verificaciones:
   - [ ] ausencia de 401 en `/api/v1/telefonia/recording-status` (si hay 401, ver §7.1),
   - [ ] `telefonia_transcrito` con `call_sid` e `ingreso_id`,
   - [ ] `telefonia_handoff_sent` con `call_sid` (y NO `telefonia_handoff_skipped`/`telefonia_handoff_secret_missing`).
-- [ ] En n8n, la ejecución del workflow muestra `Guard de costo` permitido, `AI Agent` con clasificación y el POST a `/api/v1/incidentes` con `201 Created`.
+- [ ] En n8n, la ejecución del workflow muestra `Sellar ingreso telefonia` → `Normalizar entrada del incidente` → `Entrada valida` y el POST a `/api/v1/incidentes` con `201 Created` (la clasificación del incidente la resuelve el backend).
 
 ### 5.5 Vínculo `telefonia_ingreso.incidente_id` (fuera del alcance de la tarea 8.4)
 
@@ -407,7 +399,7 @@ Síntoma B (al transcribir): el ingreso queda con `transcripcion_estado = 'guard
 ### 8.4 Logs y observaciones
 
 - Eventos relevantes del backend: `telefonia_transcrito` -> handoff `HTTP 200` -> `telefonia_handoff_sent` -> `incidente_created` (id=15) -> `n8n_notified` 200. Sin 401 en `/api/v1/telefonia/recording-status`.
-- Estado del workflow en n8n: `Guard de costo` permitido, `AI Agent` clasificó en `Soporte Tecnico Hardware` (confianza 0.98), POST a `/api/v1/incidentes` con 201 Created; `requiere_revision_humana=false`.
+- Estado del workflow en n8n: `Sellar ingreso telefonia` → `Normalizar entrada del incidente` → POST a `/api/v1/incidentes` con 201 Created. La clasificación del incidente (sector `Soporte Tecnico Hardware`) la resolvió el backend; `requiere_revision_humana=false`.
 - Incidencias encontradas (con causa raíz si se identificó): ninguna bloqueante. `telefonia_ingreso.incidente_id` queda NULL porque `link_incidente()` no se invoca en runtime; documentado como fuera del alcance de 8.4 (§5.5).
 - Desviaciones respecto de este runbook: ninguna relevante.
 

@@ -75,14 +75,16 @@ PSEUDONYMIZATION_ENCRYPTION_KEY=<clave-generada>
 JWT_SECRET_KEY=<clave-generada>
 
 # Guarda de costo en runtime (opcional; viene habilitada con defaults conservadores)
-# La bolsa es GLOBAL y compartida por las tres superficies pagas (Gemini backend,
-# AI Agent de n8n y transcripcion Twilio). Los costos unitarios son ESTIMACIONES.
+# La bolsa es GLOBAL y compartida por las superficies pagas vigentes (Gemini backend,
+# admision de voz Twilio y STT del backend; la rama IA de n8n se retiro en C-72).
+# Los costos unitarios son ESTIMACIONES.
 # COST_GUARD_ENABLED=true
 # COST_GUARD_BUDGET_USD=10.0
 # COST_GUARD_BUDGET_WINDOW_SECONDS=604800
 # COST_GUARD_UNIT_COST_BACKEND_GEMINI_USD=0.0005
-# COST_GUARD_UNIT_COST_N8N_GEMINI_USD=0.0015
-# COST_GUARD_UNIT_COST_TWILIO_TRANSCRIPTION_USD=0.05
+# COST_GUARD_UNIT_COST_N8N_GEMINI_USD=0.0015   # legado: la rama IA de n8n se retiro en C-72
+# COST_GUARD_UNIT_COST_TWILIO_TRANSCRIPTION_USD=0.0075
+# COST_GUARD_UNIT_COST_BACKEND_STT_USD=0.0038
 # COST_GUARD_RATE_LIMIT_CALLS=30
 # COST_GUARD_RATE_WINDOW_SECONDS=3600
 # COST_GUARD_CALLER_RATE_LIMIT_CALLS=3
@@ -237,7 +239,7 @@ Respuesta esperada:
 2. Autenticarse con usuario `admin` / contraseña `n8n_local_dev` (default local del `.env` de la raiz; sobreescribible con `N8N_BASIC_AUTH_USER` / `N8N_BASIC_AUTH_PASSWORD`).
 3. Importar el workflow: **Workflows → Import from file** → seleccionar
    `n8n/workflow.json` (ya montado en `/data/` del contenedor).
-4. Configurar las credenciales de Outlook, Twilio y Gemini en N8N.
+4. Configurar las credenciales `imap`/`smtp` (correo) y el secreto del handoff telefónico (`X-N8N-Secret`) en N8N.
 5. Activar el workflow (boton toggle en la esquina superior derecha).
 
 > **Nota**: N8N mantiene su acceso directo en el puerto 5678 (HTTP) por
@@ -581,6 +583,7 @@ Las variables son las mismas que documenta `README.md` (sección "Configurar las
 variables de entorno"): `COST_GUARD_ENABLED`, `COST_GUARD_BUDGET_USD`,
 `COST_GUARD_BUDGET_WINDOW_SECONDS`, `COST_GUARD_UNIT_COST_BACKEND_GEMINI_USD`,
 `COST_GUARD_UNIT_COST_N8N_GEMINI_USD`, `COST_GUARD_UNIT_COST_TWILIO_TRANSCRIPTION_USD`,
+`COST_GUARD_UNIT_COST_BACKEND_STT_USD`,
 `COST_GUARD_RATE_LIMIT_CALLS`, `COST_GUARD_RATE_WINDOW_SECONDS`,
 `COST_GUARD_CALLER_RATE_LIMIT_CALLS`, `COST_GUARD_CALLER_RATE_WINDOW_SECONDS`,
 `COST_GUARD_DEGRADATION_POLICY`, `COST_GUARD_STORE_FAILURE_POLICY`,
@@ -592,10 +595,9 @@ variables de entorno"): `COST_GUARD_ENABLED`, `COST_GUARD_BUDGET_USD`,
   el `HybridClassifier` degrada a determinístico con `requiere_revision_humana=true`
   y NUNCA invoca al proveedor pago. La clasificación precalculada y el cortocircuito
   determinístico no consultan la guarda ni consumen presupuesto ni tasa.
-- **n8n (AI Agent)**: el nodo `Guard de costo` llama a
-  `POST /api/v1/cost-guard/reserve`; el IF `Guard permite?` deriva a
-  `Derivar a revision humana` cuando la guarda deniega (confianza 0.0), sin invocar
-  al agente. Un error del endpoint deriva igual (fail-closed).
+- **n8n**: ya NO reserva costo propio. La rama IA de telefonía y su guarda se
+  retiraron en C-72; la clasificación y las reservas de `backend_gemini` y
+  `backend_stt` viven en el backend.
 - **Twilio (admisión de voz)**: la URL de voz del número debe apuntar a
   `POST /api/v1/cost-guard/twilio/voice`. Si la guarda permite, responde TwiML con
   `<Say>` de bienvenida + `<Record>` mono (SIN `transcribe`) con
@@ -654,8 +656,7 @@ distintas:
   - Con secreto configurado, un header ausente o distinto responde **HTTP 401**.
   - **Fuente única en el stack Docker**: `COST_GUARD_SHARED_SECRET` se define en
     el `.env` de la RAÍZ del repo. `docker-compose.yml` lo inyecta con la misma
-    interpolación tanto en el backend como en n8n (el nodo `Guard de costo` lo
-    envía como `$env.COST_GUARD_SHARED_SECRET`), de modo que ambos servicios no
+    interpolación tanto en el backend como en n8n, de modo que ambos servicios no
     pueden divergir. En el stack Docker este valor prevalece sobre el de
     `App/Backend/.env`, que se usa para correr el backend fuera de compose.
 - `POST /api/v1/cost-guard/twilio/voice` (webhook de voz de Twilio) se autentica
@@ -703,10 +704,9 @@ reconocimiento al inglés estadounidense. El backend pasó a ser dueño de la ST
    transcribe con Gemini (`gemini-3.5-transcribe`, verbatim).
 3. El backend pseudonimiza el texto y lo entrega a n8n vía el webhook de handoff
    `POST /webhook/telefonia-handoff` (header `X-N8N-Secret`) con
-   `{descripcion_pseudonimizada, call_sid, caller, ingresado_en}`.
+   `{descripcion_pseudonimizada, call_sid, caller_number, ingresado_en}`.
 
-El prompt del `AI Agent` interpola `{{ $json.descripcion_pseudonimizada || $json.descripcion || '' }}`;
-el transcript crudo NUNCA cruza el borde hacia n8n. No hay una cadena de fallback de campo de
+El transcript crudo NUNCA cruza el borde hacia n8n. No hay una cadena de fallback de campo de
 transcripción de Twilio que ajustar. Ver `docs/medicion-latencia-e2e.md` §5 y
 `docs/n8n-workflow-guide.md` (canal telefonía).
 

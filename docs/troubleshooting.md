@@ -197,11 +197,11 @@ El workflow está en estado `inactive` (por defecto al importar).
 2. Ir al workflow **Automatizacion_Mesa_de_Ayuda**.
 3. Activarlo con el toggle de la esquina superior derecha.
 
-**Causa probable B — Credenciales de Outlook o Twilio no configuradas**:
+**Causa probable B — Credenciales de correo o del handoff no configuradas**:
 
 **Remediación**:
 1. En N8N ir a **Settings → Credentials**.
-2. Verificar que existen credenciales para Microsoft Outlook y Twilio.
+2. Verificar que existen las credenciales `imap` y `smtp` (correo) y la credencial Header Auth `X-N8N-Secret` del handoff telefónico.
 3. Probar la conexión desde la pantalla de edición de cada credencial.
 
 **Causa probable C — El backend no es alcanzable desde N8N**:

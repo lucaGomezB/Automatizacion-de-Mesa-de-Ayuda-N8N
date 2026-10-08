@@ -2,20 +2,20 @@
 
 > C-04: n8n-workflow-validation — Implementado y verificado.
 > C-05: n8n-channel-triggers — Canal web agregado, notificaciones por canal y auditoría con retención de 30 días.
-> C-33: cost-guards — Tope de refinamiento del agente pago, ciclo de vida del correo en todas
-> las ramas terminales, lookback de 24 horas, payload enriquecido y webhook de notificación dedicado.
+> C-33: cost-guards — ciclo de vida del correo en todas las ramas terminales, lookback de 24 horas,
+> payload enriquecido y webhook de notificación dedicado. (Su tope de refinamiento del agente pago
+> quedó retirado con la rama IA de n8n en C-72.)
 > C-39: e2e-timing-instrumentation — Sello de ingreso por canal (`ingresado_en`) en el borde de cada trigger.
 > C-40: n8n-wiring-fixes — Cierre de las ramas terminales del webhook web, destinatario real de la
-> confirmación por correo, telefonía sin nodo de correo, memoria Redis configurada, autenticación
-> única del POST, auditoría en el camino de error y notificación que no omite la auditoría.
+> confirmación por correo, telefonía sin nodo de correo, autenticación única del POST, auditoría en el
+> camino de error y notificación que no omite la auditoría.
 > Gate post-POST de revisión humana — IF `Requiere revision humana` (evalúa la marca del backend)
 > + nodo `Notificar operador designado` (`$env.OPERATOR_EMAIL`); el gate pre-POST pasó a llamarse
 > `Entrada valida` (validación de entrada, no de confianza del modelo).
-> C-45: runtime-cost-guard — nodo `Guard de costo` + IF `Guard permite?` antes del `AI Agent`;
-> el agente NO se invoca cuando la guarda deniega (deriva a revisión humana).
-> C-47: guard-cost-item — la guarda de costo preserva el ítem del canal de telefonía mediante el
-> nodo `Restaurar item telefonia` (el `AI Agent` recupera el ítem sellado, no solo el cuerpo de la guarda) y el
-> `caller` del body pasa al ítem corriente (`$json`), sin la referencia frágil `.item`.
+> C-45: runtime-cost-guard — guarda de costo del agente pago de n8n. RETIRADO por C-72: la rama IA
+> de telefonía (`AI Agent`, `Guard de costo`, `Guard permite?`) ya no existe en el workflow.
+> C-47: guard-cost-item — preservación del ítem sellado del canal de telefonía entre la guarda y
+> el agente. RETIRADO por C-72 junto con la guarda de costo.
 > C-52: telefonia-transcripcion-async — el trigger de resumen de Twilio (`twilioTrigger`) se reemplaza
 > por un webhook `POST` autenticado que recibe del backend el ingreso YA pseudonimizado; el sello
 > `ingresado_en` es passthrough del valor sellado por el backend; no hay parsing de CloudEvent; el
@@ -33,6 +33,12 @@
 > C-56: notificaciones-por-rol — el backend resuelve `destinatarios_revision` (operadores activos
 > del sector) y el workflow emite un correo POR destinatario; `OPERATOR_EMAIL` pasa a ser el
 > RESPALDO cuando la lista viene vacia.
+> C-72: unificar-clasificacion-telefonica — se retira la rama de clasificación con IA de n8n:
+> `AI Agent`, `Google Gemini Chat Model`, `memoryRedisChat`, `Guard de costo`, `Guard permite?`,
+> `Restaurar item telefonia`, `Se verifica lo que trajo la IA`, `La clasificacion de la IA es valida`,
+> `Tope de refinamiento alcanzado` y `Derivar a revision humana`. La clasificación telefónica la
+> resuelve el backend con la cascada híbrida, igual que correo y web, y el POST ya no transporta
+> `clasificacion` precalculada.
 > Estado: 29 nodos (26 operativos + 3 sticky notes); suite estructural `test_n8n_workflow.py` en verde.
 
 ## Descripción general
@@ -62,74 +68,30 @@ producción editando el JSON** — activar desde la UI de N8N en el entorno de d
 > depende de credenciales reales: se verifica con la suite estructural del workflow y
 > los tests de contrato del backend.
 
-### 1. Tope de refinamiento del agente pago (HIGH-1)
+### 1. Guarda de costo retirada (C-33/C-45/C-47)
 
-El canal telefonía limita a **2 intentos** la clasificación/refinamiento del `AI Agent`:
+> C-33/C-45 acotaron históricamente el gasto pago del `AI Agent` de n8n (tope de
+> refinamiento y guarda de runtime). Con C-72 la rama de clasificación con IA de
+> telefonía se retiró: el workflow ya no invoca un agente pago ni reserva
+> `n8n_gemini`. La clasificación telefónica la resuelve el backend con la cascada
+> híbrida, igual que correo y web.
 
-- El nodo `AI Agent` declara `options.maxIterations = 2` como backstop del runtime.
-- El nodo `Se verifica lo que trajo la IA` incrementa un contador explícito
-  `intento_agente` en cada pasada (fallback a `$runIndex` para sobrevivir el ciclo).
-- El IF `Tope de refinamiento alcanzado` evalúa `intento_agente < 2`:
-  - **True** → `AI Agent` (se conserva un refinamiento dentro del tope).
-  - **False** → `Derivar a revision humana` (terminal).
-- `Derivar a revision humana` fija `confianza = 0.0`, `requiere_revision_humana = true`,
-  `revision_forzada = true`, conserva `canal_raw = 'telefonia'` y **no reingresa al agente**.
-  El normalizador propaga `revision_forzada` y el IF `Entrada valida` la acepta
-  (`confianza >= 0.70 OR revision_forzada == true`), de modo que el incidente se persiste
-  vía `Login operador → HTTP POST a MESA-AYUDAS` con sector nulo y revisión humana forzada.
-
-### 2. Guarda de costo en runtime del agente pago (C-45)
-
-> C-45 acota el gasto pago de las superficies compartidas (Gemini del backend, Gemini del `AI Agent`
-> y la admisión de voz de Twilio) con una bolsa GLOBAL compartida. C-52 agrega la superficie paga
-> `backend_stt` (transcripción del backend), reservada al recibir el callback de grabación. La guarda
-> se evalúa antes de cada llamada paga.
-
-En el canal telefonía, antes del `AI Agent`:
-
-- El nodo `Guard de costo` (`httpRequest`) llama a
-  `POST {{ $env.BACKEND_URL }}/api/v1/cost-guard/reserve` con `provider = "n8n_gemini"` y el
-  caller crudo si está disponible. Se autentica con el header
-  `X-Cost-Guard-Secret: {{ $env.COST_GUARD_SHARED_SECRET }}`. **Fuente única**:
-  `COST_GUARD_SHARED_SECRET` se define en el `.env` de la RAÍZ del repo;
-  `docker-compose.yml` lo inyecta en n8n (y en el backend) con la misma
-  interpolación, de modo que ambos comparten el valor y no pueden divergir. Si
-  queda vacío, el header llega vacío, el endpoint responde 401 y el nodo deriva a
-  revisión humana (degradación silenciosa, fail-closed).
-- El IF `Guard permite?` evalúa `$json.allowed`:
-  - **True** → `AI Agent` (flujo normal).
-  - **False** → `Derivar a revision humana` (terminal, `confianza = 0.0`), SIN re-invocar al agente.
-- **Fail-closed**: el nodo declara `onError: "continueErrorOutput"`; si el backend no responde,
-  el error va a la salida 1 y también deriva a revisión humana (nunca se invoca al agente sin
-  consultar la guarda).
-- **Preservación del ítem (C-47)**: la salida de un `httpRequest` es el cuerpo de la respuesta
-  (`{allowed, ...}`) y NO propaga el ítem de entrada. El nodo `Restaurar item telefonia`
-  (intercalado entre `Guard de costo` y `Guard permite?`) recupera el ítem sellado con
-  `$('Sellar ingreso telefonia').first()` —el patrón robusto de C-46— y le re-inyecta `allowed`,
-  de modo que el `AI Agent` vuelve a recibir el ítem sellado (no solo el cuerpo de la guarda) y `Guard permite?`
-  conserva el ruteo por `$json.allowed`. El nodo preserva `pairedItem` para que las referencias
-  aguas abajo sigan resolviendo. El `caller` del body de la guarda se resuelve desde el ítem
-  corriente (`$json.caller || null`, campo del handoff pseudonimizado de C-52), sin la referencia frágil
-  `$('Sellar ingreso telefonia').item` (dependiente de `pairedItem`); `caller` es opcional, por lo
-  que su ausencia resuelve `null` y no aborta la reserva.
-
-**Costo unitario `n8n_gemini` (estimación, no contabilidad exacta)**: se reserva UNA sola vez por
-ejecución de telefonía. La estimación cubre el número acotado de invocaciones del agente: hasta
-`options.maxIterations = 2` más la invocación del bucle de refinamiento. El valor por defecto
-(`COST_GUARD_UNIT_COST_N8N_GEMINI_USD = 0.0015`) es configurable y no está verificado contra
-precios vigentes; es un tope de seguridad, no una medición de tokens reales.
+Los nodos `Guard de costo`, `Guard permite?`, `Restaurar item telefonia` y el
+bucle de refinamiento (`Se verifica lo que trajo la IA`, `La clasificacion de la IA
+es valida`, `Tope de refinamiento alcanzado`, `Derivar a revision humana`), junto
+con el `AI Agent`, `Google Gemini Chat Model` y `memoryRedisChat`, fueron retirados
+por C-72 y NO forman parte del workflow vigente.
 
 > **Transcripción de telefonía delegada al backend (C-52)**: el workflow ya NO parsea el evento
 > `com.twilio.voice.insights.call-summary.complete` (Event Streams) ni depende de un campo de
 > transcripción de Twilio. El backend descarga la grabación, transcribe con Gemini
 > (`gemini-3.5-transcribe`, verbatim) y pseudonimiza ANTES de invocar el webhook
 > `POST /webhook/telefonia-handoff` con el payload
-> `{descripcion_pseudonimizada, call_sid, caller, ingresado_en}`. El prompt del `AI Agent`
-> interpola `{{ $json.descripcion_pseudonimizada || $json.descripcion || '' }}`: el transcript
+> `{descripcion_pseudonimizada, call_sid, caller_number, ingresado_en}`. El transcript
 > crudo NUNCA cruza el borde de n8n. Ver también `docs/operational-guide.md` §11.7 y
 > `docs/medicion-latencia-e2e.md` §5.
 
-### 3. Ciclo de vida del correo resuelto en el trigger (HIGH-4, C-55)
+### 2. Ciclo de vida del correo resuelto en el trigger (HIGH-4, C-55)
 
 El mensaje IMAP se marca como leído en el propio disparador, al recolectarlo:
 
@@ -171,11 +133,9 @@ historial no leído.
 
 - `origen_message_id`: `Message-ID` del mensaje IMAP (header `metadata['message-id']`, con
   fallback al UID del mensaje; solo canal correo; nulo en el resto).
-- `clasificacion`: bloque precalculado **solo para telefonía**
-  (`sector_predicho`, `sectores_adicionales`, `confianza`, `requiere_revision_humana`,
-  `origen: 'n8n'`). En web/correo se envía `null` para conservar la clasificación server-side.
-  Cuando viene presente y válida, el backend omite la reclasificación paga y registra
-  `etapa = "precalculada"`.
+- `clasificacion`: **[retirado por C-72]** el POST ya no envía una clasificación
+  precalculada; los tres canales resuelven el sector con la cascada híbrida del
+  backend. El campo dejó de poblarse en el workflow vigente.
 - `origen_evento: "creacion_incidente"`: marcador explícito de evento de creación.
 
 ### 5. Notificación a un webhook dedicado (MEDIUM-3)
@@ -199,8 +159,7 @@ debe a que la cuenta Microsoft disponible es personal y sin tenant, y no hay acc
 registros Azure: el canal quedaba indeployable. IMAP/SMTP con App Password de Gmail da
 equivalencia funcional sin registro de app en la nube. Autenticación: IMAP
 `imap.gmail.com:993` SSL y SMTP `smtp.gmail.com:465` SSL, con una casilla dedicada, 2FA y
-App Password (documentado, sin secretos versionados). La credencial Outlook se conserva hasta
-validar el smoke manual de IMAP. Esta decisión se registra para el Anexo E de la tesis.
+App Password (documentado, sin secretos versionados). Esta decisión se registra para el Anexo E de la tesis.
 
 ## Nodos del workflow
 
@@ -244,63 +203,35 @@ validar el smoke manual de IMAP. Esta decisión se registra para el Anexo E de l
 
 | Posición | Nombre | Tipo | Función |
 |----------|--------|------|---------|
-| 1 | Llamada telefonica | `webhook` | **[C-52]** `POST /webhook/telefonia-handoff`, autenticado con el secreto compartido del handoff (`headerAuth`). Recibe del backend el ingreso YA pseudonimizado `{descripcion_pseudonimizada, call_sid, caller, ingresado_en}`. |
-| 2 | Sellar ingreso telefonia | `code` (JS) | **[C-52]** Passthrough: propaga el `ingresado_en` sellado por el BACKEND (no regenera el instante) y normaliza `descripcion_pseudonimizada` → `descripcion` antes del agente. |
-| 2d | Guard de costo | `httpRequest` | **[C-45]** `POST /api/v1/cost-guard/reserve` (`provider=n8n_gemini`). Salida de error → `Derivar a revision humana` (fail-closed). |
-| 2d-bis | Restaurar item telefonia | `code` (JS) | **[C-47]** Recupera el ítem sellado con `$('Sellar ingreso telefonia').first()` y le re-inyecta `allowed`; el `AI Agent` recupera el ítem sellado (no solo el cuerpo de la guarda). Preserva `pairedItem`. |
-| 2e | Guard permite? | `if` | **[C-45]** `$json.allowed == true`. Rama true → `AI Agent`; rama false → `Derivar a revision humana`. |
-| 3 | AI Agent | `agent` (LangChain) | **[C-52]** Clasifica la descripción PSEUDONIMIZADA del handoff (`$json.descripcion_pseudonimizada`); el transcript crudo nunca llega a n8n. **[C-58]** Declara un reintento acotado de transporte (`retryOnFail=true`, `maxTries=2`, `waitBetweenTries=2000`) ante fallas transitorias del modelo, sin consumir refinamiento. |
-| 3b | Con el fin de enviar los datos... | `memoryRedisChat` | Memoria Redis para el AI Agent. |
-| 3c | Google Gemini Chat Model | `lmChatGoogleGemini` | **[C-58]** Modelo de lenguaje del AI Agent con `modelName` explícito (`gemini-3.6-flash`, en paridad con `settings.gemini_model`); no declara reintento propio. |
-| 4 | Se verifica lo que trajo la IA | `code` (JS) | Valida los 5 pasos Anexo H §H.3 (JSON, campos `sector_predicho`/`sectores_adicionales`, set canónico de 5 sectores, rango confianza) e incrementa `intento_agente`. Emite `canal_raw = "telefonia"`. **[C-46]** Recupera el sello con `.first()` (no `.item`); ante sello ausente, WARN + revisión forzada. **[C-52]** Re-inyecta `call_sid` y `descripcion_pseudonimizada` desde el sello (el agente no propaga los campos del handoff). |
-| 5 | La clasificacion de la IA es valida | `if` | Gate de confianza del modelo: `confianza >= 0.70`. Rama true → `Normalizar`; rama false → `Tope de refinamiento alcanzado`. |
-| 6 | Tope de refinamiento alcanzado | `if` | **[C-33]** `intento_agente < 2`. Rama true → `AI Agent`; rama false → `Derivar a revision humana`. |
-| 7 | Derivar a revision humana | `code` (JS) | **[C-33/C-45/C-46]** Terminal: `confianza = 0.0`, `revision_forzada = true`; reingresa al normalizador. Recupera el ítem sellado con `.first()` (no `.item`) para conservar la descripción; ante sello ausente, WARN sin abortar. |
-| 8 | Normalizar entrada del incidente | `code` (JS) | **[C-05/C-52]** Compartido — telefonia converge aquí antes del gate de entrada; para telefonia mapea el `CallSid` del handoff a `origen_message_id` (idempotencia del alta). |
-| 9 | Entrada valida | `if` | Compartido — gate de ENTRADA (no de confianza del modelo). |
-| 10 | Login operador | `httpRequest` | Compartido. |
-| 11 | HTTP POST a MESA-AYUDAS | `httpRequest` | Compartido. |
-| 12 | Requiere revision humana | `if` | Compartido — gate post-POST. |
-| 13 | Preparar destinatarios de revision + Notificar operador designado | `code` + `emailSend` | **[C-56]** Compartido — prepara los destinatarios (o el respaldo) y envía un correo por destinatario. |
-| 14 | Registro de auditoria | `code` (JS) | **[C-05]** Compartido — idem canal correo. |
+| 1 | Llamada telefonica | `webhook` | **[C-52]** `POST /webhook/telefonia-handoff`, autenticado con el secreto compartido del handoff (`headerAuth`). Recibe del backend el ingreso YA pseudonimizado `{descripcion_pseudonimizada, call_sid, caller_number, ingresado_en}`. |
+| 1b | Responder handoff telefonia | `respondToWebhook` | **[C-52]** Responde de inmediato al handoff del backend, en una rama paralela directa del webhook, para que la entrega no quede bloqueada mientras el workflow persiste el incidente. |
+| 2 | Sellar ingreso telefonia | `code` (JS) | **[C-52]** Passthrough: propaga el `ingresado_en` sellado por el BACKEND (no regenera el instante) y normaliza `descripcion_pseudonimizada` → `descripcion` antes del normalizador. |
+| 3 | Normalizar entrada del incidente | `code` (JS) | **[C-05/C-52]** Compartido — telefonía converge aquí antes del gate de entrada; para telefonía mapea el `CallSid` del handoff a `origen_message_id` (idempotencia del alta). |
+| 4 | Entrada valida | `if` | Compartido — gate de ENTRADA (no de confianza del modelo). |
+| 5 | Login operador | `httpRequest` | Compartido. |
+| 6 | HTTP POST a MESA-AYUDAS | `httpRequest` | Compartido. |
+| 7 | Requiere revision humana | `if` | Compartido — gate post-POST. |
+| 8 | Preparar destinatarios de revision + Notificar operador designado | `code` + `emailSend` | **[C-56]** Compartido — prepara los destinatarios (o el respaldo) y envía un correo por destinatario. |
+| 9 | Registro de auditoria | `code` (JS) | **[C-05]** Compartido — idem canal correo. |
 
 > **Nota sobre telefonía**: la confirmación al llamante NO se resuelve en la respuesta de voz
 > de la llamada. El webhook de n8n recibe el handoff pseudonimizado del backend de forma
 > asincrónica y no responde al llamante; la notificación con el número de incidente la realiza
 > el backend por SMS (C-53), **DIFERIDO** hasta el spike de entregabilidad a Argentina (+54).
 
-### Recuperación robusta del sello de ingreso (C-46)
+### Propagación del sello de ingreso (C-46, C-72)
 
-El canal de telefonía PROPAGA `ingresado_en` en `Sellar ingreso telefonia` (antes del
-`AI Agent`); el instante lo sella el backend en la recepción del callback de grabación (C-52)
-y n8n no lo regenera. El agente no propaga los campos del ítem de entrada, por lo que la
-recuperación aguas abajo usa referencias de nodo explícitas:
+El canal de telefonía PROPAGA `ingresado_en` en `Sellar ingreso telefonia`; el instante lo
+sella el backend en la recepción del callback de grabación (C-52) y n8n no lo regenera.
 
-- `Se verifica lo que trajo la IA` y `Derivar a revision humana` recuperan el sello con
-  `$('Sellar ingreso telefonia').first().json.ingresado_en`.
-- **No** se usa `.item`: esa resolución depende de `pairedItem` y se rompe cuando el ítem
-  corriente proviene del `AI Agent` (y del bucle de refinamiento), lo que devolvía
-  `ingresado_en = null` de forma silenciosa.
-- Si el sello no puede resolverse, el flujo **no se aborta ni pierde el ticket**: se emite un
-  `console.warn` estructurado con el evento `ingreso_sellado_ausente`, se marca el ítem con
-  `ingreso_sellado_ausente = true` y se fuerza `revision_forzada = true` +
-  `requiere_revision_humana = true`. El normalizador propaga el marcador y la revisión, el
-  gate pre-POST `Entrada valida` satisface su rama OR con `revision_forzada`, el POST se
-  ejecuta y el backend deriva el incidente a revisión humana.
-- El marcador `ingreso_sellado_ausente` es **interno**: nunca viaja en el body del POST.
-- El contrato del backend no cambia: `IncidenteCreate.ingresado_en` sigue siendo nullable.
+Con la retirada de la rama `AI Agent` por C-72 (OQ1=A), el ítem sellado fluye directo al
+normalizador compartido: ya no hay nodos intermedios que recuperen el sello con referencias
+de nodo explícitas ni el riesgo de perderlo por `pairedItem`. La recuperación robusta del
+sello que documentó C-46 (`.first()` vs `.item`, marcador `ingreso_sellado_ausente`) queda
+como registro histórico de una rama ya inexistente; la suite estructural vigente no exige
+esos nodos.
 
-> **Caveat de verificación**: la suite estructural (`test_n8n_workflow.py`) verifica el JSON,
-> no el runtime. Confirmar que `.first()` resuelve en N8N y que el incidente persiste con
-> revisión exige una ejecución N8N en vivo (importar el `workflow.json` y ejecutar el canal
-> telefónico). Las tareas 5.2/5.3 del change `c-46-telefonia-ingreso-sellado` quedan
-> pendientes de verificación manual.
-
-> **Caveat de verificación C-47**: la suite estructural verifica el cableado del JSON, no el
-> runtime. Confirmar que el `AI Agent` recibe el ítem sellado (no solo el cuerpo de la guarda) tras `Guard de costo`
-> y que el incidente telefónico se crea exige una ejecución N8N en vivo (importar el
-> `workflow.json` y disparar el canal telefónico). La tarea 5.4 del change
-> `c-47-guard-costo-item` queda pendiente de verificación manual.
+El contrato del backend no cambia: `IncidenteCreate.ingresado_en` sigue siendo nullable.
 
 ### Nodos decorativos
 
@@ -410,42 +341,39 @@ El nodo `Normalizar entrada del incidente` produce para todos los canales:
   (`remitente_invalido`) y NO se propaga como destinatario.
 - El canal `web` es soportado desde C-04; su trigger se cablea en C-05.
 
-## Validación de la respuesta de clasificación — Anexo H §H.3
+## Validación de la clasificación — Anexo H §H.3
 
-El nodo `Se verifica lo que trajo la IA` implementa 5 pasos en orden:
-
-1. **JSON válido**: `JSON.parse()` dentro de `try/catch`. Fallo → `confianza = 0.0`.
-2. **Campos presentes**: `sector_predicho` y `confianza` deben existir (`sectores_adicionales` se normaliza a `[]` si falta). Fallo → `confianza = 0.0`.
-3. **Sector principal exacto** (case-sensitive): debe ser uno de `{Seguridad Informatica, Soporte Tecnico Hardware, Soporte Tecnico Software, Bases de Datos, Sistemas}`; los `sectores_adicionales` también deben pertenecer al set. Fallo → `confianza = 0.0`.
-4. **Confianza numérica en [0.0, 1.0]**: `typeof === 'number'`, `!isNaN`, `>= 0`, `<= 1.0`. Fallo → `confianza = 0.0`.
-5. **Respuesta válida**: conserva `sector_predicho`, `sectores_adicionales` y `confianza` originales para el ruteo por umbral.
-
-En cualquier fallo: `confianza = 0.0`, `requiere_revision_humana = true`, `error_validacion = <código>`.
+**[Retirado por C-72]** La validación de 5 pasos de la respuesta del `AI Agent`
+(nodo `Se verifica lo que trajo la IA`) ya no existe en el workflow: n8n no
+clasifica. La validación del JSON de clasificación, el set canónico de sectores
+(`Seguridad Informatica`, `Soporte Tecnico Hardware`, `Soporte Tecnico Software`,
+`Bases de Datos`, `Sistemas`) y el rango de confianza los aplica el backend en la
+cascada híbrida (`HybridClassifier`), con revisión humana cuando la confianza es
+insuficiente. Ver `docs/anexo_h_prompt_gemini.md` §H.6.
 
 ## Ruteo por umbral de confianza (0.70 inclusivo)
 
-La confianza se evalúa en tres puntos distintos del flujo:
+La confianza se evalúa en dos puntos distintos del flujo:
 
-1. **Pre-normalización — `La clasificacion de la IA es valida`** (solo telefonía). Condición:
-   `$json.confianza >= 0.70` (operador `gte`, tipo `number`). Rama true → `Normalizar entrada
-   del incidente`; rama false → `Tope de refinamiento alcanzado`.
-2. **Pre-POST — `Entrada valida`** (gate de validación de ENTRADA, compartido por los tres
+1. **Pre-POST — `Entrada valida`** (gate de validación de ENTRADA, compartido por los tres
    canales). Condición: `$json.confianza >= 0.70 OR revision_forzada == true`. No es un gate
-   de confianza del modelo: para correo/web el normalizador sintetiza `confianza` desde
-   `es_valido` (1.0/0.0) y para telefonía valida la respuesta de la IA. Rama true → `Login
-   operador` → `HTTP POST a MESA-AYUDAS`; rama false → `Registro de auditoria` + `Es correo?`.
-3. **Post-POST — `Requiere revision humana`** (gate de confianza REAL, tras persistir).
+   de confianza del modelo: el normalizador sintetiza `confianza` desde `es_valido` (1.0/0.0)
+   para los tres canales (C-72). Rama true → `Login operador` → `HTTP POST a MESA-AYUDAS`;
+   rama false → `Registro de auditoria` + `Es correo?`.
+2. **Post-POST — `Requiere revision humana`** (gate de confianza REAL, tras persistir).
    Condición: `$json.requiere_revision_humana == true`, el booleano que el backend fija cuando
    la confianza de clasificación es menor a 0.70. Rama true → `Preparar destinatarios de revision`
    → `Notificar operador designado` + `Registro de auditoria` (en paralelo, C-57); rama false →
    `Rutear por canal de origen` + `Registro de auditoria`.
 
-- **Telefonía, refinamiento**: la rama false de `La clasificacion de la IA es valida` pasa por
-  `Tope de refinamiento alcanzado`; dentro del tope vuelve al `AI Agent` y, al agotarse, deriva
-  al terminal `Derivar a revision humana` (C-33), que reingresa al normalizador con
-  `revision_forzada = true` para persistirse vía `Entrada valida` (rama true).
+> **Refinamiento telefónico (retirado)**: el bucle `La clasificacion de la IA es valida` →
+> `Tope de refinamiento alcanzado` → `AI Agent` → `Derivar a revision humana` fue retirado
+> por C-72. La decisión de revisión humana de telefonía la toma el backend, y el gate
+> post-POST `Requiere revision humana` la re-evalúa igual que en correo y web.
+
 - **Rechazo de entrada**: la rama false de `Entrada valida` (datos incompletos) registra
-  auditoría y, si el canal es correo, marca el correo como leído.
+  auditoría; el mensaje IMAP ya fue marcado como leído por el propio trigger (C-55), de modo
+  que no hay nodo de marcado en ninguna rama.
 
 Nota: el backend es la fuente de verdad de `requiere_revision_humana`; el gate post-POST
 `Requiere revision humana` re-evalúa esa marca ya persistida para notificar al operador.
@@ -474,7 +402,7 @@ duplicaría lógica de seguridad crítica fuera de su módulo Python testeado (g
 
 | Variable | Descripción | Ejemplo |
 |----------|-------------|---------|
-| `BACKEND_URL` | URL base del backend FastAPI | `https://localhost/api/v1` |
+| `BACKEND_URL` | URL base del backend FastAPI, **solo el origen** (el workflow agrega `/api/v1`; no incluir el prefijo de versión) | `http://backend:8000` |
 | `SMTP_FROM_EMAIL` | Remitente de los correos salientes (nodos `emailSend`) | `mesa.ayuda@example.com` |
 | `OPERATOR_EMAIL` | Destinatario de RESPALDO de la notificación de revisión humana: `Preparar destinatarios de revision` lo usa solo cuando `destinatarios_revision` viene vacío (C-56) | `operador@example.com` |
 
@@ -483,8 +411,9 @@ Credenciales adicionales a configurar en la UI de N8N:
   Usada por el trigger `emailReadImap`.
 - `smtp` (C-55): misma casilla Gmail (`smtp.gmail.com:465` SSL, App Password). Usada por los
   nodos `emailSend`.
-- `TWILIO_*`: credenciales del webhook de voz
-- `REDIS_URL`: para el nodo de memoria del AI Agent
+- **Sin `TWILIO_*` ni `REDIS_URL` en el workflow**: la admisión de voz la maneja el backend
+  (webhook `POST /api/v1/cost-guard/twilio/voice`) y la memoria Redis del `AI Agent` se retiró
+  con la rama IA (C-72). El workflow no lee esas variables.
 
 ## Cómo importar y probar el workflow
 
@@ -499,9 +428,9 @@ El `docker-compose.yml` en la raíz del repo levanta 4 servicios con una sola l�
 | Servicio | Imagen | Puerto host | Descripción |
 |---------|--------|-------------|-------------|
 | `postgres` | `postgres:15.5-alpine` | 5433 (evita colisión con C-01) | Base de datos PostgreSQL |
-| `redis` | `redis:7.2-alpine` | 6379 | Memoria del AI Agent |
+| `redis` | `redis:7.2-alpine` | 6379 | Cola de trabajos de N8N (`QUEUE_BULL_REDIS_HOST`) |
 | `backend` | build `App/Backend/` | 8000 | FastAPI + alembic migrations |
-| `n8n` | `n8nio/n8n:latest` | 5678 | UI de N8N con workflow importado |
+| `n8n` | `n8nio/n8n:2.11.2` | 5678 | UI de N8N con workflow importado (imagen fijada por el compose) |
 
 **Prerequisito**: `App/Backend/.env` debe existir y tener todas las claves (ver `App/Backend/.env.example`).
 
@@ -568,7 +497,7 @@ n8n import:workflow --input=/data/Automatizacion_Mesa_de_Ayuda.json
 → 17 nodos, active=false, todos los nodos esperados presentes.
 ```
 
-**Nota**: N8N 1.62.0 no está disponible en Docker Hub; se usa `n8nio/n8n:latest` (comportamiento equivalente para importación y ejecución de nodos).
+**Nota histórica**: en esa verificación se usó una imagen `latest`; el compose vigente fija `n8nio/n8n:2.11.2` (pin C-34).
 
 #### 8.2 — Canal correo: VERIFICADO
 
@@ -611,9 +540,9 @@ Se ejecutaron 3 payloads representando distintos escenarios de confianza:
 
 Los siguientes ítems no se pueden verificar sin las credenciales de trigger:
 
-- Disparo real del trigger de Outlook (canal correo de punta a punta)
+- Disparo real del trigger IMAP `emailReadImap` (canal correo de punta a punta)
 - Disparo real del webhook de handoff telefónico del backend (canal telefonía de punta a punta)
-- Ciclo completo AI Agent → Redis memory → nodo validación → IF → HTTP
+- Persistencia del incidente telefónico vía `Sellar ingreso telefonia` → `Normalizar entrada del incidente` → `Entrada valida` → `HTTP POST a MESA-AYUDAS`
 
 El import, los nodos individuales y el backend están verificados. El entorno Docker está listo para cuando C-05 configure los triggers.
 
@@ -621,23 +550,24 @@ El import, los nodos individuales y el backend están verificados. El entorno Do
 
 ### Prueba manual de correo (canal correo — con triggers activos, C-05)
 
-1. Disparar el trigger de Outlook (o usar el botón "Test Workflow" con datos de prueba).
+1. Disparar el trigger IMAP `emailReadImap` (o usar el botón "Test Workflow" con datos de prueba).
 2. Observar que el nodo `Se verifica...` emite `es_valido: true` para descripción ≥10 chars.
 3. Observar que el normalizado produce `canal_origen: "correo"`.
 4. Verificar `201 Created` del backend.
 
-### Prueba manual de telefonía (canal telefonía — C-52)
+### Prueba manual de telefonía (canal telefonía — C-52, actualizada por C-72)
 
 1. Con el backend y n8n activos, realizar una llamada de prueba: Twilio graba, el backend
    descarga y transcribe (Gemini), pseudonimiza el texto y dispara el handoff
-   `POST /webhook/telefonia-handoff` con `{descripcion_pseudonimizada, call_sid, caller, ingresado_en}`
+   `POST /webhook/telefonia-handoff` con `{descripcion_pseudonimizada, call_sid, caller_number, ingresado_en}`
    y el header `X-N8N-Secret`.
-2. Observar que el AI Agent devuelve un JSON con `sector_predicho`, `sectores_adicionales` y `confianza`.
-3. Observar que el nodo `Se verifica lo que trajo la IA` valida la respuesta.
-4. Con `confianza ≥ 0.70`: verificar `201 Created` del backend y, en la respuesta, la descripción
-   pseudonimizada no vacía y `origen_message_id = CallSid`.
-5. Con `confianza < 0.70`: verificar que `La clasificacion de la IA es valida` deriva a
-   `Tope de refinamiento alcanzado` y que, dentro del tope, vuelve al `AI Agent`.
+2. Verificar `201 Created` del backend y, en la respuesta, la descripción pseudonimizada no
+   vacía y `origen_message_id = CallSid`.
+3. Verificar que la clasificación del incidente la resolvió el backend (cascada híbrida:
+   determinista → Gemini → revisión humana), no n8n.
+4. Si `requiere_revision_humana = true`, verificar que `Preparar destinatarios de revision` →
+   `Notificar operador designado` envía un correo por destinatario (o al respaldo
+   `$env.OPERATOR_EMAIL`).
 
 ### Suite de tests estructurales (sin runtime N8N)
 
@@ -759,7 +689,7 @@ entorno y queda fuera del scope de C-05. Se documenta como punto pendiente para 
 
 ### Resultados de verificación 7.1–7.6 (2026-06-11, C-05)
 
-> Entorno: `mesa_local` Docker Compose — N8N 2.25.7 (latest), FastAPI backend, PostgreSQL 15.5-alpine,
+> Entorno: `mesa_local` Docker Compose — N8N 2.25.7, FastAPI backend, PostgreSQL 15.5-alpine,
 > Redis 7.2-alpine. Todos los contenedores healthy. GEMINI_API_KEY operativa (verificada en esta sesión).
 
 #### 7.1 — Import del workflow C-05 (19 nodos): VERIFICADO
@@ -831,9 +761,9 @@ curl -X POST http://localhost:8000/api/v1/incidentes/ \
 antes del IF. Solo el canal telefonía lo setea (en `Se verifica lo que trajo la IA`).
 Correo (y web) siempre irían a la rama false (rechazo) aunque la descripción sea válida.
 
-#### 7.4 — Canal telefonía: PARCIAL (C-52; el intake depende del backend y del AI Agent)
+#### 7.4 — Canal telefonía: PARCIAL (C-52; el intake depende del backend)
 
-Se simuló el payload que el workflow enviaría al backend tras el ciclo AI Agent → validación:
+Se simuló el payload que el workflow envía al backend tras el normalizador:
 
 ```bash
 # Escenario 1: confianza alta (deterministic)
