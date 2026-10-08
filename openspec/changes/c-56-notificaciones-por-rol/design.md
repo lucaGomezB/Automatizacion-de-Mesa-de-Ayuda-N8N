@@ -89,7 +89,7 @@ Los deltas de `n8n-workflow` se basan en el estado vigente de la main spec; c-53
 
 ### D12 — Documentacion y conteos
 
-`docs/n8n-workflow-guide.md` y `N8N-DOC-001` exigen que los conteos de nodos y pruebas coincidan con el JSON y la suite. Se agrega 1 Code node (37 -> 38) y se actualiza la tabla de variables (`OPERATOR_EMAIL` pasa a ser fallback). Regenerar `docs/openapi.json`.
+`docs/n8n-workflow-guide.md` y `N8N-DOC-001` exigen que los conteos de nodos y pruebas coincidan con el JSON y la suite. Se agrega 1 Code node (28 -> 29; el conteo real del `workflow.json` vigente, corregido respecto del `37 -> 38` originalmente estimado) y se actualiza la tabla de variables (`OPERATOR_EMAIL` pasa a ser fallback). Regenerar `docs/openapi.json`.
 
 ## Risks / Trade-offs
 
@@ -112,8 +112,10 @@ Los deltas de `n8n-workflow` se basan en el estado vigente de la main spec; c-53
 
 ## Open Questions
 
-1. **Contrato (D2)**: confirmar la respuesta de alta como transporte de `destinatarios_revision` frente a mover la notificacion al webhook dedicado. Recomendacion: respuesta de alta (menor blast radius). El humano acepta el costo de PII en el body autenticado.
-2. **Frontera de PII (D8)**: confirmar que enviar emails de operadores a N8N en la respuesta de alta es consistente con `DIR-006`, dado que la alternativa implicaria mover SMTP al backend.
-3. **Alcance (D7)**: confirmar enrutamiento por sector principal unicamente (adicionales diferidos).
-4. **Fallback (D3)**: confirmar que el fallback sigue siendo `$env.OPERATOR_EMAIL` en N8N (un destinatario) y no una configuracion nueva del backend.
-5. **Smoke (D10)**: la verificacion en vivo necesita la casilla Gmail de c-55 y un operador real/sintetico en el directorio; confirmar disponibilidad para el cierre.
+RESUELTAS por el autor el 2026-10-07:
+
+1. **Contrato (D2)** — RESUELTA (A): los destinatarios viajan en la respuesta de alta `POST /api/v1/incidentes` como `destinatarios_revision`. Se acepta el costo de PII en el body autenticado (menor blast radius).
+2. **Frontera de PII (D8)** — RESUELTA (SI): enviar los emails de operadores a N8N en la respuesta de alta es consistente con `DIR-006` (no convierte al resolutor en un oraculo publico y no se registra en logs/auditoria). Aceptado explicitamente por el autor (governance ALTO).
+3. **Alcance (D7)** — RESUELTA (SI): enrutamiento por el sector PRINCIPAL predicho unicamente; los sectores adicionales quedan diferidos.
+4. **Fallback (D3)** — RESUELTA (SI): el fallback sigue siendo `$env.OPERATOR_EMAIL` en N8N (un unico destinatario); el backend emite lista vacia cuando no hay operador activo del sector.
+5. **Smoke (D10)** — RESUELTA: el autor confirma disponibilidad para el smoke manual con la casilla Gmail de c-55 y un operador cargado en el directorio.
