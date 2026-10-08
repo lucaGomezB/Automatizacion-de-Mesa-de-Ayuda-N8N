@@ -4,8 +4,16 @@
  * que axios.isAxiosError() los reconozca correctamente.
  */
 import { describe, it, expect } from 'vitest';
-import axios from 'axios';
-import { extractApiErrorMessage } from './api';
+import axios, { type AxiosAdapter } from 'axios';
+import {
+  apiClient,
+  clearAuthToken,
+  clearRefreshToken,
+  extractApiErrorMessage,
+  getRefreshToken,
+  setAuthToken,
+  setRefreshToken,
+} from './api';
 
 /** Construye un AxiosError sintético que pasa axios.isAxiosError() */
 function makeAxiosError(overrides: {
@@ -130,5 +138,39 @@ describe('extractApiErrorMessage', () => {
     expect(extractApiErrorMessage(null)).toBe(
       'Ocurrió un error inesperado. Intentá de nuevo.'
     );
+  });
+});
+
+describe('api: tokens en memoria (c-63a)', () => {
+  const adapter: AxiosAdapter = async (config) => ({
+    data: {},
+    status: 200,
+    statusText: 'OK',
+    headers: {},
+    config,
+  });
+
+  it('guarda y limpia el refresh token en memoria', () => {
+    setRefreshToken('refresh-abc');
+    expect(getRefreshToken()).toBe('refresh-abc');
+
+    clearRefreshToken();
+    expect(getRefreshToken()).toBeNull();
+  });
+
+  it('inyecta el access token en el header Authorization', async () => {
+    setAuthToken('access-xyz');
+
+    const response = await apiClient.get('/ping', { adapter });
+    expect(response.config.headers.Authorization).toBe('Bearer access-xyz');
+
+    clearAuthToken();
+  });
+
+  it('no inyecta Authorization cuando no hay access token', async () => {
+    clearAuthToken();
+
+    const response = await apiClient.get('/ping', { adapter });
+    expect(response.config.headers.Authorization).toBeUndefined();
   });
 });

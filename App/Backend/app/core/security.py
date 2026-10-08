@@ -81,6 +81,15 @@ async def get_current_user(
                 detail="Invalid token payload",
                 headers={"WWW-Authenticate": "Bearer"},
             )
+        # Version de token embebida (IAH-004). Los access emitidos antes de una
+        # revocacion administrativa llevan una version menor; los tokens sin el
+        # claim se tratan como version 0 (compatibilidad con tokens legados).
+        # Un `ver` no numerico se normaliza a -1: nunca coincide con una version
+        # valida (>= 0), de modo que el token se rechaza sin lanzar un 500.
+        try:
+            token_version = int(payload.get("ver", 0))
+        except (TypeError, ValueError):
+            token_version = -1
     except JWTError:
         logger.warning("auth_invalid_token")
         raise HTTPException(
@@ -104,6 +113,21 @@ async def get_current_user(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Inactive user",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    # Revocacion administrativa (IAH-004): un access con una version de token
+    # distinta a la de la cuenta deja de ser aceptado de inmediato.
+    if token_version != int(user.token_version or 0):
+        logger.warning(
+            "auth_token_version_mismatch",
+            username=username,
+            user_id=user.id,
+            token_version=token_version,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token revoked",
             headers={"WWW-Authenticate": "Bearer"},
         )
 

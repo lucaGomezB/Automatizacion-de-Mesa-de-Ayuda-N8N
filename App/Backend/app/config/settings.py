@@ -244,8 +244,37 @@ class Settings(BaseSettings):
     jwt_secret_key: str
     # Algoritmo de firma; HS256 es simétrico y suficiente para un backend monolítico.
     jwt_algorithm: str = "HS256"
-    # Tiempo de expiración del token en minutos (24 horas por defecto).
+    # Tiempo de expiración del token (legado). Se conserva por compatibilidad de
+    # configuración; el access token usa `jwt_access_expire_minutes` (c-63a).
     jwt_expire_minutes: int = 1440
+
+    # ── Identidad y accesos endurecidos (c-63a) ────────────────────────────────
+    # Access token de vida corta (15 min por defecto, configurable) + refresh
+    # rotativo persistido + revocacion (IAH-003).
+    jwt_access_expire_minutes: int = 15
+    # Vida del refresh token en minutos (7 días por defecto). El refresh se
+    # almacena SOLO como hash en PostgreSQL.
+    jwt_refresh_expire_minutes: int = 10080
+
+    # ── Politica de contrasenas (IAH-001) ──────────────────────────────────────
+    # Longitud minima configurable. Default 12 (NIST 800-63B); sin composicion
+    # obligatoria. Las credenciales sembradas de desarrollo quedan grandfathered
+    # y son dev-only.
+    password_min_length: int = 12
+    # Tamano de historial de reutilizacion (ultimas N hasheadas). En c-63a el
+    # historial no esta persistido: se difiere a c-63b (OQ-1=A).
+    password_history_size: int = 5
+
+    # ── Bloqueo por intentos fallidos (IAH-002) ────────────────────────────────
+    # Flag apagado por defecto (dev/test/CI no se bloquean). En produccion real
+    # debe habilitarse explicitamente.
+    account_lockout_enabled: bool = False
+    # Umbral de intentos fallidos consecutivos que dispara el bloqueo.
+    account_lockout_threshold: int = 5
+    # Ventana de conteo en minutos: intentos previos mas viejos se descartan.
+    account_lockout_window_minutes: int = 15
+    # Duracion del bloqueo en minutos.
+    account_lockout_duration_minutes: int = 15
 
 
 @lru_cache

@@ -25,6 +25,7 @@ from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.core.exceptions import (
+    AccountLockedError,
     AppBaseException,
     CanalOrigenNotFoundError,
     ClassificationError,
@@ -38,6 +39,7 @@ from app.core.exceptions import (
     SectorNotFoundError,
 )
 from app.core.logging import get_logger
+from app.utils.password_policy import PasswordPolicyViolation
 
 logger = get_logger(__name__)
 
@@ -266,6 +268,26 @@ def register_error_handlers(app: FastAPI) -> None:
         return JSONResponse(
             status_code=500,
             content=_error_body("CLASSIFICATION_ERROR", exc.message),
+        )
+
+    @app.exception_handler(PasswordPolicyViolation)
+    async def password_policy_handler(
+        request: Request, exc: PasswordPolicyViolation
+    ) -> JSONResponse:
+        """Rechaza una contrasena que incumple la politica con el envelope (IAH-001)."""
+        return JSONResponse(
+            status_code=422,
+            content=_error_body(exc.code, exc.message, exc.details),
+        )
+
+    @app.exception_handler(AccountLockedError)
+    async def account_locked_handler(
+        request: Request, exc: AccountLockedError
+    ) -> JSONResponse:
+        """Cuenta bloqueada por intentos fallidos: 401 con codigo distinguible (IAH-002)."""
+        return JSONResponse(
+            status_code=401,
+            content=_error_body("ACCOUNT_LOCKED", exc.message, exc.details),
         )
 
     @app.exception_handler(AppBaseException)
