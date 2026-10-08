@@ -121,7 +121,7 @@ C-67 notificacion-sms-llamante (C-53 archivado; C-66 futura) [ACTIVO — 0/24; b
 
 C-61 compliance-gobernanza (ninguna)                      [ARCHIVADO 2026-10-01 — 26/26; MEDIO; habilita C-63]
  └── C-63 identidad-accesos-claves (C-61)                 [PLANIFICADO — sin crear]
-C-62 hardening-infra-red (ninguna)                        [PLANIFICADO — sin crear]
+C-62 hardening-infra-red (ninguna)                        [ARCHIVADO 2026-10-08 — 33/33]
 C-64 vulnerabilidades-supply-chain (ninguna)              [PLANIFICADO — sin crear]
 C-65 backup-continuidad (ninguna)                         [PLANIFICADO — sin crear]
 C-66 privacidad-transferencias (C-53 alineacion; habilita C-67) [PLANIFICADO — sin crear]
@@ -481,6 +481,7 @@ C-74 calibracion-cortocircuito-determinista (C-71, C-72)   [ARCHIVADO 2026-10-07
 | C-60 | directorio-endurecimiento | 19 | C-54, C-56 | ALTO | — |
 | C-67 | notificacion-sms-llamante | 20 | C-53 (archivado); bloqueado por OQ3 y C-66 (futura) | ALTO | — |
 | C-61 | compliance-gobernanza | 21 | ninguna | MEDIO | — |
+| C-62 | hardening-infra-red | 21 | ninguna | ALTO | — |
 | C-68 | corpus-ingesta-n8n | 22 | C-69 | MEDIO | — |
 | C-69 | dedup-correlacion-altas | 22 | ninguna (habilita C-68) | MEDIO | — |
 | C-70 | softphone-corpus-telefonia | 23 | C-59, C-52, C-68 | ALTO | — |
@@ -490,11 +491,11 @@ C-74 calibracion-cortocircuito-determinista (C-71, C-72)   [ARCHIVADO 2026-10-07
 | C-74 | calibracion-cortocircuito-determinista | 27 | C-71, C-72 | ALTO | — |
 | C-75 | sincronizar-docs-n8n | 28 | ninguna (drift de C-72/C-55) | MEDIO | — |
 
-**Total**: 67 entradas creadas documentadas (66 numeradas + 1 de mantenimiento sin numero) — 65 archivadas (64 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-69, C-70, C-71, C-72, C-73, C-74 y C-75; mas `improve-dockerfiles`) y 2 ACTIVOS (C-67, C-68). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
-**Planificadas (NO creadas)**: 5 entradas del plan de cumplimiento (FASE 21) — C-62 `hardening-infra-red` (ALTO), C-63 `identidad-accesos-claves` (CRITICO), C-64 `vulnerabilidades-supply-chain` (MEDIO), C-65 `backup-continuidad` (ALTO) y C-66 `privacidad-transferencias` (ALTO). No cuentan como creadas, archivadas ni activas. C-61 `compliance-gobernanza` (MEDIO) ya fue creado y quedo ARCHIVADO (2026-10-01, 26/26), con su spec `security-governance-docs` creada. Ver `docs/cumplimiento/plan-cambios-cumplimiento.md`.
+**Total**: 68 entradas creadas documentadas (67 numeradas + 1 de mantenimiento sin numero) — 66 archivadas (65 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-62, C-69, C-70, C-71, C-72, C-73, C-74 y C-75; mas `improve-dockerfiles`) y 2 ACTIVOS (C-67, C-68). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
+**Planificadas (NO creadas)**: 4 entradas del plan de cumplimiento (FASE 21) — C-63 `identidad-accesos-claves` (CRITICO), C-64 `vulnerabilidades-supply-chain` (MEDIO), C-65 `backup-continuidad` (ALTO) y C-66 `privacidad-transferencias` (ALTO). No cuentan como creadas, archivadas ni activas. C-61 `compliance-gobernanza` (MEDIO) y C-62 `hardening-infra-red` (ALTO) ya fueron creados y quedaron ARCHIVADOS (2026-10-01 y 2026-10-08), con sus specs `security-governance-docs` e `infra-network-hardening`. Ver `docs/cumplimiento/plan-cambios-cumplimiento.md`.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
-**Fases**: 1-28 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67, la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, con C-61 archivado (2026-10-01) y C-62..C-66 planificados, la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 ya archivado (2026-10-05) y C-68 en aplicacion, la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 archivado (2026-10-06), la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 archivado (2026-10-06), la FASE 25 agrupa la unificacion de la clasificacion telefonica con C-72 archivado (2026-10-07), la FASE 26 agrupa la pseudonimizacion de numeros de tarjeta hablados con C-73 archivado (2026-10-07), la FASE 27 agrupa la calibracion del cortocircuito determinista con C-74 archivado (2026-10-07), y la FASE 28 agrupa la sincronizacion documental N8N con C-75 archivado (2026-10-08)).
+**Fases**: 1-28 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67, la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, con C-61 archivado (2026-10-01) y C-62 archivado (2026-10-08); C-63..C-66 planificados, la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 ya archivado (2026-10-05) y C-68 en aplicacion, la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 archivado (2026-10-06), la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 archivado (2026-10-06), la FASE 25 agrupa la unificacion de la clasificacion telefonica con C-72 archivado (2026-10-07), la FASE 26 agrupa la pseudonimizacion de numeros de tarjeta hablados con C-73 archivado (2026-10-07), la FASE 27 agrupa la calibracion del cortocircuito determinista con C-74 archivado (2026-10-07), y la FASE 28 agrupa la sincronizacion documental N8N con C-75 archivado (2026-10-08)).
 
 ---
 
@@ -1370,7 +1371,7 @@ C-74 calibracion-cortocircuito-determinista (C-71, C-72)   [ARCHIVADO 2026-10-07
 
 ## FASE 21 — Cumplimiento ISO/NIST/Ley 25.326 (planificado)
 
-> Plan de cumplimiento aprobado por el autor el 2026-10-01 para alinear el sistema (lo mas posible) con ISO/IEC 27001:2022 + 27002:2022, ISO/IEC 27701 (privacidad), NIST CSF 2.0 y el marco legal argentino vigente 2026 (Ley 25.326 + AAIP), y asi reforzar la defensa de la tesis. Plan completo en `docs/cumplimiento/plan-cambios-cumplimiento.md`, sobre los informes `docs/cumplimiento/gap-assessment-iso27001-27002-nist-csf2.md` y `docs/cumplimiento/marco-legal-ar-2026.md`. Regla de lenguaje: se usa "alineado con" / "controles mapeados a"; NO se declara "certificado" ni "compliant". Al 2026-10-01, C-61 quedo ARCHIVADO (2026-10-01, 26/26) y su spec `security-governance-docs` fue creada; la FASE 21 quedo parcialmente ejecutada. Los 5 changes restantes (C-62..C-66) siguen PLANIFICADOS y aun NO fueron creados.
+> Plan de cumplimiento aprobado por el autor el 2026-10-01 para alinear el sistema (lo mas posible) con ISO/IEC 27001:2022 + 27002:2022, ISO/IEC 27701 (privacidad), NIST CSF 2.0 y el marco legal argentino vigente 2026 (Ley 25.326 + AAIP), y asi reforzar la defensa de la tesis. Plan completo en `docs/cumplimiento/plan-cambios-cumplimiento.md`, sobre los informes `docs/cumplimiento/gap-assessment-iso27001-27002-nist-csf2.md` y `docs/cumplimiento/marco-legal-ar-2026.md`. Regla de lenguaje: se usa "alineado con" / "controles mapeados a"; NO se declara "certificado" ni "compliant". C-61 quedo ARCHIVADO (2026-10-01, 26/26; spec `security-governance-docs`) y C-62 quedo ARCHIVADO (2026-10-08, 33/33; spec `infra-network-hardening` creada + `foundation-environment` modificado). Los 4 changes restantes (C-63..C-66) siguen PLANIFICADOS y aun NO fueron creados.
 
 ### [C-61] `compliance-gobernanza` — ARCHIVADO (2026-10-01, 26/26)
 
@@ -1386,9 +1387,9 @@ C-74 calibracion-cortocircuito-determinista (C-71, C-72)   [ARCHIVADO 2026-10-07
   - `docs/cumplimiento/gap-assessment-iso27001-27002-nist-csf2.md`
   - `docs/cumplimiento/marco-legal-ar-2026.md`
 
-### [C-62] `hardening-infra-red` — PLANIFICADO
+### [C-62] `hardening-infra-red` — ARCHIVADO (2026-10-08, 33/33)
 
-- **Estado**: `[ ]` PENDIENTE — planificado, sin crear. Prioridad 2.
+- **Estado**: `[x]` creado, aplicado (33/33), verificado (PASS, 0 CRITICAL) y ARCHIVADO (2026-10-08; `openspec/changes/archive/2026-10-08-c-62-hardening-infra-red`); spec `infra-network-hardening` creada (INFRA-001..009) + `foundation-environment` modificado (ENV-001). OQ-1..OQ-8 resueltas por el autor (loopback de puertos, Redis retirado, redes edge/data/automation + soporte host_access, nginx endurecido, override `docker-compose.dev.yml`). Incluye el fix de un drift de c-72 en `scripts/preflight/` (el job de CI `backend-tests` estaba en ROJO). Prioridad 2.
 - **Scope** (T):
   - Quitar la publicacion al host de los puertos `5433`/`6379`/`5678`; contrasena en Redis; segmentacion de red Docker.
   - Restringir el acceso a la UI de N8N; endurecer nginx.
@@ -1673,7 +1674,7 @@ Hay 2 changes ACTIVOS (c-67, c-68):
 - **`c-67-notificacion-sms-llamante`** — 0/24 (diferido; bloqueado por OQ3 y C-66; FASE 20) — Governance ALTO.
 - **`c-68-corpus-ingesta-n8n`** — 58/63 (apply avanzado; corpus web/correo medido; FASE 22) — Governance MEDIO.
 
-C-01..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-69, C-70, C-71, C-72, C-73, C-74 y C-75 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
+C-01..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-62, C-69, C-70, C-71, C-72, C-73, C-74 y C-75 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
 
 **Detalle de `c-52-telefonia-transcripcion-async`** (Gobernanza CRITICA; ARCHIVADO 2026-09-30):
 
@@ -1713,7 +1714,7 @@ Deuda menor pendiente (no bloqueante):
 - Tesis post-pipeline: reconciliar cap. 7 con el corpus real y corregir 4.3/4.8/cap. 11.
 
 Para avanzar:
-- Workstream aprobado: el plan de cumplimiento ISO/NIST/Ley 25.326 (`docs/cumplimiento/plan-cambios-cumplimiento.md`), en la FASE 21. C-61 quedo ARCHIVADO (2026-10-01, 26/26) y su spec `security-governance-docs` fue creada; C-62..C-66 siguen planificados (sin crear). Proximo paso aprobado del workstream: C-62 `hardening-infra-red` (endurecimiento de infraestructura y red; Governance ALTO), seguido de C-63 dependiente de C-61 ya archivado.
+- Workstream aprobado: el plan de cumplimiento ISO/NIST/Ley 25.326 (`docs/cumplimiento/plan-cambios-cumplimiento.md`), en la FASE 21. C-61 (2026-10-01) y C-62 (2026-10-08) quedaron ARCHIVADOS; C-63..C-66 siguen planificados (sin crear). Proximo paso aprobado del workstream: C-66 `privacidad-transferencias` (desbloquea c-67) o C-63 `identidad-accesos-claves` (depende de C-61 ya archivado).
 - `c-56`: ARCHIVADO (2026-10-08, 27/27); smoke manual confirmado end-to-end (operador resuelto + fallback + auditoria); spec `notification-routing` creada.
 - `c-60`: ARCHIVADO (2026-10-06, 33/33).
 - `c-67`: no aplicar aun; bloqueado por OQ3 (entregabilidad SMS AR) y por C-66 (privacidad-transferencias, planificado en la FASE 21, aun sin crear).
