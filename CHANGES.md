@@ -1540,7 +1540,7 @@ C-74 calibracion-cortocircuito-determinista (C-71, C-72)   [ARCHIVADO 2026-10-07
 
 > Change que unifica la clasificacion del canal telefonico a la MISMA cascada del backend que ya usan correo/web (deterministico -> Gemini -> humano), en lugar del `AI Agent` de n8n que hoy clasifica SIEMPRE con Gemini (via `clasificacion` precalculada en el handoff). Beneficio: un solo camino y un solo prompt (`docs/prompt_gemini.txt`), telefono cortocircuita barato y las reglas de frontera (p. ej. R002 "acceder al sistema" y R038 "digitalizar") se arreglan una vez para todos los canales. Depende de C-71.
 
-### [C-72] `unificar-clasificacion-telefonica` — ACTIVO (37/37 aplicado; delta reconciliado)
+### [C-72] `unificar-clasificacion-telefonica` — ARCHIVADO (2026-10-07, 37/37)
 
 - **Estado**: `[x]` aplicado (2026-10-06) — 37/37 tareas; `openspec validate --strict` pasa. OQ1..OQ5 RESUELTAS por el autor (todas opcion A): OQ1 retirar el `AI Agent` de telefonia; OQ2 confirmar el traslado de costo a `backend_gemini`; OQ3 retirar el bucle de refinamiento con camino terminal con revision humana; OQ4 sin backfill (fuera de alcance); OQ5 adoptar las reglas minimas de frontera del design. Implementado: (S1) el backend resuelve telefonia por la cascada `HybridClassifier` ignorando la `clasificacion` precalculada y preservando el borde de pseudonimizacion (`constants.py` `CANAL_TELEFONIA`/`es_canal_telefonia()`, `incidente_service._resolve_classification`); (S2) `n8n/workflow.json` de 38 a 28 nodos: POST sin `clasificacion`, `AI Agent` + Gemini chat model + memoria + guarda `n8n_gemini` retirados, telefono `Sellar -> Normalizar`; (S3) `docs/prompt_gemini.txt` con las reglas de frontera compartidas; (S4) costo: telefonia no reserva `n8n_gemini`, la escalacion reserva `backend_gemini`; (S5) medicion offline + nota; (S6) Anexo H, narrativa de tesis y decision de backfill documentadas. Suites: 943 offline + 1 xfailed, ruff limpio; `openspec validate --strict` OK. **Delta reconciliado (2026-10-06)**: el delta `n8n-workflow` quedo con 14 `REMOVED`, 5 `MODIFIED` y 4 `ADDED` (sin solapamientos). `REMOVED`: los requisitos de nodos retirados (`N8N-INTAKE-001`, `Acoplamiento del AI Agent...`, `N8N-AGENT-001/002/003`, `N8N-MEMORY-001`, `N8N-TIMING-003`, `N8N-PHONE-001`, `N8N-VALID-001`, `N8N-GUARD-001/002`) mas `N8N-REFINE-001` (el bucle de refinamiento y el agente se retiran por completo, OQ1=A/OQ3=A). `MODIFIED`: `Normalizacion de canales`, `Trigger Webhook Twilio`, `Entrada valida`/ruteo, `Credenciales declaradas` y los cuerpos de timing/phone. `ADDED`: versiones renombradas de `N8N-TIMING-001` y `N8N-PHONE-003` (sufijo del heading ajustado para evitar colision ADDED/REMOVED) con titulos de escenario sin "agente" (`Telefonia captura antes de la cascada del backend`, `La cascada del backend consume la descripcion pseudonimizada`). Tras archivar, el spec principal no conservara ninguna mencion al `AI Agent` en requisitos vigentes; solo quedaran en los `Reason`/`Migration` de los REMOVED. `runtime-cost-guard` sin REMOVED (su unico requisito afectado ya esta en MODIFIED). 5.2 (F1 hibrido) PENDIENTE por cuota Gemini y corpus incompleto. Governance ALTO.
 - **Problema**: dos clasificadores y dos prompts divergentas; telefono paga Gemini siempre (sin atajo determinista) y muestra errores de frontera (medido: 25 casos, 92% pertenencia / 56% estricto).
@@ -1561,9 +1561,9 @@ C-74 calibracion-cortocircuito-determinista (C-71, C-72)   [ARCHIVADO 2026-10-07
 
 > Change que agrega la categoria `[TARJETA]` al pseudonimizador para censurar numeros de tarjeta de 16 digitos dictados por un llamante distraido. R169 (telefonia) es el caso tematico.
 
-### [C-73] `pseudonimizacion-tarjeta` — ACTIVO (propuesto, 0/23)
+### [C-73] `pseudonimizacion-tarjeta` — ARCHIVADO (2026-10-07, 23/23)
 
-- **Estado**: `[ ]` propuesto (2026-10-06) — planning completo (proposal + design + specs + tasks); `openspec validate --strict` pasa. Sin aplicar. Governance HIGH.
+- **Estado**: `[x]` aplicado (2026-10-06) y ARCHIVADO (2026-10-07, 23/23; `openspec/changes/archive/2026-10-07-c-73-pseudonimizacion-tarjeta`) — 23/23 tareas; verify PASS (16/16 escenarios) tras cerrar la mascara multi-tarjeta y el test de auditoria; spec `data-pseudonymization` sincronizada. Governance HIGH.
 - **Problema**: el pseudonimizador tiene 4 categorias (email, telefono, host, persona) y ninguna de tarjeta; el patron de TELEFONO consume parcialmente las corridas de 16 digitos y deja digitos en claro (p. ej. `4517 6712 3456 7890` -> `[TELEFONO] 7890`).
 - **Scope**: nueva categoria CARD -> `[TARJETA]` (mayusculas) aplicada ANTES de TELEFONO; disparador contextual (mencion de `tarjeta`) con ventana de 40 caracteres; tolerancia 4-4-4-4; no regresion del caso R067 (corrida de 16 digitos de un DLL, sin "tarjeta", NO debe censurarse). Fuera de alcance: Luhn y longitudes distintas de 16.
 - **Dependencias**: ninguna.
@@ -1571,6 +1571,40 @@ C-74 calibracion-cortocircuito-determinista (C-71, C-72)   [ARCHIVADO 2026-10-07
 - **Leer antes**:
   - `openspec/changes/c-73-pseudonimizacion-tarjeta/{proposal,design,tasks}.md`
   - `App/Backend/app/utils/pseudonymizer.py`, `openspec/specs/data-pseudonymization/spec.md`
+
+---
+
+## FASE 27 — Calibracion del cortocircuito determinista (2026-10-07)
+
+> Change que redisenia la senal de seleccion del cortocircuito determinista (criterio comparativo contra Gemini, piso de correctitud, conformal/cross-fitting) y fija la corrida oficial hybrid-v3 del capitulo 7. Depende de C-71/C-72.
+
+### [C-74] `calibracion-cortocircuito-determinista` — ARCHIVADO (2026-10-07, 32/32)
+
+- **Estado**: `[x]` aplicado, verificado (PASS, 18/18 escenarios) y ARCHIVADO (2026-10-07; `openspec/changes/archive/2026-10-07-c-74-calibracion-cortocircuito-determinista`) — 32/32 tareas. Corrida paga oficial (hybrid-v3) ejecutada: macro-F1 0.5207, estricta 0.7350. Convencion de dos caches de calibracion (`evaluation/predicciones.json` vs `evaluation/predicciones_calibracion.json`) desacoplada via `resolver_cache_calibracion`. Governance MEDIO.
+- **Problema**: la `confianza` determinista esta anti-correlacionada con el acierto; ningun piso absoluto (0.85) alcanza cobertura util (techo ~6%).
+- **Scope**: senal de seleccion comparativa (determinista 0.740 > Gemini 0.677), conformal/risk-controlled, cross-fitting, piso 0.85 y `min_matches` como feature; re-medicion oficial con el corpus real.
+- **Dependencias**: C-71 (determinista endurecido), C-72 (cascada unica).
+- **Governance**: MEDIO
+- **Leer antes**:
+  - `openspec/changes/archive/2026-10-07-c-74-calibracion-cortocircuito-determinista/{proposal,design,tasks}.md`
+  - `evaluation/deterministic_measurement.py`, `openspec/specs/classification-resilience/spec.md`, `openspec/specs/evaluation-framework/spec.md`
+
+---
+
+## FASE 28 — Sincronizacion documental N8N (2026-10-08)
+
+> Change de solo documentacion que sincroniza los docs operativos con la verdad vigente del workflow N8N tras C-72 (retiro de la rama IA telefonica) y C-55 (Outlook -> IMAP/SMTP). No toca runtime ni infraestructura.
+
+### [C-75] `sincronizar-docs-n8n` — ARCHIVADO (2026-10-08, 14/14)
+
+- **Estado**: `[x]` propuesto, aplicado (14/14), verificado (PASS, 15/15 escenarios) y ARCHIVADO (2026-10-08; `openspec/changes/archive/2026-10-08-c-75-sincronizar-docs-n8n`). Spec `n8n-workflow` sincronizada: +3 requirements (N8N-DOC-004/005/006). Suite de doc-sync 202 passed / 1 xfailed; `openspec validate --specs` 43/43. Governance MEDIUM.
+- **Problema**: la verdad del workflow se movio y la documentacion no: 10 docs describian nodos retirados (`AI Agent`, `Guard de costo`, `memoryRedisChat`, etc.), transporte Outlook/Twilio y credenciales inexistentes.
+- **Scope**: Tier 1 (guia N8N, `por_implementar.md`, runbook c-52, diagramas) y Tier 2 (`dry-run-harness.md`, `operational-guide.md`, `medicion-latencia-e2e.md`, `troubleshooting.md`). Fuera de alcance: `n8n/workflow.json`, `docker-compose.yml`, codigo de produccion.
+- **Dependencias**: ninguna (correccion de drift de C-72/C-55).
+- **Governance**: MEDIO
+- **Leer antes**:
+  - `openspec/changes/archive/2026-10-08-c-75-sincronizar-docs-n8n/{proposal,design,tasks,verify-report}.md`
+  - `n8n/workflow.json`, `docs/n8n-workflow-guide.md`, `openspec/specs/n8n-workflow/spec.md`
 
 ---
 
@@ -1631,16 +1665,14 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 
 ## Primer change recomendado
 
-Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01), C-61 (2026-10-01, 26/26), C-69 (2026-10-05, 30/30), C-71 (2026-10-06, 43/43), C-60 (2026-10-06, 33/33) y C-70 (2026-10-06, 72/72).
+Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01), C-61 (2026-10-01, 26/26), C-69 (2026-10-05, 30/30), C-71 (2026-10-06, 43/43), C-60 (2026-10-06, 33/33), C-70 (2026-10-06, 72/72), C-72 (2026-10-07, 37/37), C-73 (2026-10-07, 23/23), C-74 (2026-10-07, 32/32) y C-75 (2026-10-08, 14/14).
 
-Hay 5 changes ACTIVOS (post-roadmap, FASE 19, FASE 20, FASE 22, FASE 25 y FASE 26):
-- **`c-56-notificaciones-por-rol`** — 0/27 (planning completo, sin aplicar; FASE 19) — Governance ALTO.
+Hay 3 changes ACTIVOS (c-56, c-67, c-68):
+- **`c-56-notificaciones-por-rol`** — 26/27 (aplicado y verificado PASS WITH WARNINGS, 0 CRITICAL; pendiente solo el smoke manual 7.5; FASE 19) — Governance ALTO.
 - **`c-67-notificacion-sms-llamante`** — 0/24 (diferido; bloqueado por OQ3 y C-66; FASE 20) — Governance ALTO.
 - **`c-68-corpus-ingesta-n8n`** — 58/63 (apply avanzado; corpus web/correo medido; FASE 22) — Governance MEDIO.
-- **`c-72-unificar-clasificacion-telefonica`** — 37/37 (aplicado: un solo clasificador, workflow 38->28 nodos, costo trasladado; OQ1..OQ5 resueltas A; delta n8n reconciliado: 14 REMOVED + 5 MODIFIED + 4 ADDED; listo para archivar; FASE 25) — Governance ALTO.
-- **`c-73-pseudonimizacion-tarjeta`** — 0/23 (propuesto: categoria `[TARJETA]` con disparador contextual; planning completo; FASE 26) — Governance HIGH.
 
-C-01..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59, C-60, C-61, C-69, C-70 y C-71 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
+C-01..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59, C-60, C-61, C-69, C-70, C-71, C-72, C-73, C-74 y C-75 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
 
 **Detalle de `c-52-telefonia-transcripcion-async`** (Gobernanza CRITICA; ARCHIVADO 2026-09-30):
 
@@ -1681,8 +1713,8 @@ Deuda menor pendiente (no bloqueante):
 
 Para avanzar:
 - Workstream aprobado: el plan de cumplimiento ISO/NIST/Ley 25.326 (`docs/cumplimiento/plan-cambios-cumplimiento.md`), en la FASE 21. C-61 quedo ARCHIVADO (2026-10-01, 26/26) y su spec `security-governance-docs` fue creada; C-62..C-66 siguen planificados (sin crear). Proximo paso aprobado del workstream: C-62 `hardening-infra-red` (endurecimiento de infraestructura y red; Governance ALTO), seguido de C-63 dependiente de C-61 ya archivado.
-- `c-56`: aplicar ahora que c-54 y c-55 estan archivados; depende de sus nodos `emailSend`/SMTP y del seam de resolucion del directorio.
-- `c-60`: aplicar ahora que c-54 esta archivado (prerequisito); compatible con c-56.
+- `c-56`: aplicado y verificado (26/27; PASS WITH WARNINGS, 0 CRITICAL); pendiente solo el smoke manual 7.5 y el archive. Depende de c-54/c-55 (archivados).
+- `c-60`: ARCHIVADO (2026-10-06, 33/33).
 - `c-67`: no aplicar aun; bloqueado por OQ3 (entregabilidad SMS AR) y por C-66 (privacidad-transferencias, planificado en la FASE 21, aun sin crear).
 - `c-68`: cerrar las 5 tareas restantes del harness de ingesta (web/correo ya medidos) y verificar.
 - `c-70`: ARCHIVADO (2026-10-06, 72/72); corrida completa de los 81 casos y write-back realizados; corpus 200/200 cargable. Governance ALTO.
