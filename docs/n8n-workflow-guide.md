@@ -30,7 +30,10 @@
 > y se elimina el nodo `Marcar correo como leido`.
 > C-57: auditoria-rama-revision — en la rama de revision humana la auditoria cuelga del gate
 > post-POST en paralelo con la notificacion y consume la respuesta del POST, no el resultado SMTP.
-> Estado: 28 nodos (25 operativos + 3 sticky notes); suite estructural `test_n8n_workflow.py` en verde.
+> C-56: notificaciones-por-rol — el backend resuelve `destinatarios_revision` (operadores activos
+> del sector) y el workflow emite un correo POR destinatario; `OPERATOR_EMAIL` pasa a ser el
+> RESPALDO cuando la lista viene vacia.
+> Estado: 29 nodos (26 operativos + 3 sticky notes); suite estructural `test_n8n_workflow.py` en verde.
 
 ## Descripción general
 
@@ -211,8 +214,9 @@ validar el smoke manual de IMAP. Esta decisión se registra para el Anexo E de l
 | 4 | Entrada valida | `if` | Gate de validación de ENTRADA previo al POST. Condición: `confianza >= 0.70 OR revision_forzada == true`. Rama true → `Login operador`; rama false → `Registro de auditoria` + `Es correo?`. |
 | 5 | Login operador | `httpRequest` | `POST /api/v1/auth/login`; obtiene el token que autentica el POST de incidentes. Compartido. |
 | 6 | HTTP POST a MESA-AYUDAS | `httpRequest` | `POST /api/v1/incidentes/` al backend FastAPI. Compartido. |
-| 7 | Requiere revision humana | `if` | Gate post-POST. Evalúa `$json.requiere_revision_humana` del response. Rama true → `Notificar operador designado` + `Registro de auditoria` + `Confirmar correo en revision?`; rama false → `Rutear por canal de origen` + `Registro de auditoria`. Compartido. **[C-57]** La auditoría es hermana de la notificación y consume la respuesta del POST (no el resultado SMTP). |
-| 8 | Notificar operador designado | `emailSend` (SMTP) | **[C-55]** Envía correo al operador designado (`$env.OPERATOR_EMAIL`) con el número de incidente (`numero_incidente`). |
+| 7 | Requiere revision humana | `if` | Gate post-POST. Evalúa `$json.requiere_revision_humana` del response. Rama true → `Preparar destinatarios de revision` + `Registro de auditoria` + `Confirmar correo en revision?`; rama false → `Rutear por canal de origen` + `Registro de auditoria`. Compartido. **[C-57]** La auditoría es hermana de la notificación y consume la respuesta del POST (no el resultado SMTP). |
+| 7b | Preparar destinatarios de revision | `code` (JS) | **[C-56]** Lee `destinatarios_revision` de la respuesta del alta; si viene vacío o ausente, usa el respaldo `$env.OPERATOR_EMAIL`. Emite UN ítem por destinatario (`{destinatario, numero_incidente}`). |
+| 8 | Notificar operador designado | `emailSend` (SMTP) | **[C-55/C-56]** Envía UN correo por ítem al destinatario `{{ $json.destinatario }}` con el número de incidente (`numero_incidente`); nunca expone la lista completa en `To`/`Cc`/`Bcc`. |
 | 8b | Confirmar correo en revision? | `if` | **[C-53]** `canal_origen == 'correo'`. Rama true → `Correo de confirmacion al usuario`; la confirmación también se dispara en la rama de revisión humana. |
 | 9a | Correo de confirmacion al usuario | `emailSend` (SMTP) | **[C-05/C-53/C-55]** Envía correo de confirmación con el número de incidente al remitente. Resuelve `toEmail` desde el remitente normalizado (extraído del header IMAP `from` `"Nombre <addr>"`); declara `onError: continueRegularOutput` para no abortar auditoría. |
 | 9b | Registro de auditoria | `code` (JS) | **[C-05/C-57]** Registra metadatos de la ejecución (sin PII). Ver sección Auditoría. Compartido; consume la respuesta del POST en ambas ramas del gate post-POST. |
@@ -228,7 +232,7 @@ validar el smoke manual de IMAP. Esta decisión se registra para el Anexo E de l
 | 5 | Login operador | `httpRequest` | Compartido — idem canal correo. |
 | 6 | HTTP POST a MESA-AYUDAS | `httpRequest` | Compartido — idem canal correo. |
 | 7 | Requiere revision humana | `if` | Compartido — gate post-POST. |
-| 8 | Notificar operador designado | `emailSend` (SMTP) | Compartido — notifica al operador designado. |
+| 8 | Preparar destinatarios de revision + Notificar operador designado | `code` + `emailSend` | **[C-56]** Compartido — prepara los destinatarios (o el respaldo) y envía un correo por destinatario. |
 | 9a | Confirmacion web al usuario | `respondToWebhook` | **[C-05/C-53]** Responde al webhook con `{incidente_id, numero_incidente, mensaje}` (rama false de `Requiere revision humana`). |
 | 9b | Es web? | `if` | **[C-40]** Guarda de canal: `canal_origen == 'web'`. Rama true → `Web con incidente?`; rama false → sin respuesta. |
 | 9c | Web con incidente? | `if` | **[C-53]** Distingue el cierre con incidente (`requiere_revision_humana == true`) del cierre sin alta. Rama true → `Confirmacion web revision humana`; rama false → `Respuesta web de cierre`. |
@@ -257,7 +261,7 @@ validar el smoke manual de IMAP. Esta decisión se registra para el Anexo E de l
 | 10 | Login operador | `httpRequest` | Compartido. |
 | 11 | HTTP POST a MESA-AYUDAS | `httpRequest` | Compartido. |
 | 12 | Requiere revision humana | `if` | Compartido — gate post-POST. |
-| 13 | Notificar operador designado | `emailSend` (SMTP) | Compartido — notifica al operador designado. |
+| 13 | Preparar destinatarios de revision + Notificar operador designado | `code` + `emailSend` | **[C-56]** Compartido — prepara los destinatarios (o el respaldo) y envía un correo por destinatario. |
 | 14 | Registro de auditoria | `code` (JS) | **[C-05]** Compartido — idem canal correo. |
 
 > **Nota sobre telefonía**: la confirmación al llamante NO se resuelve en la respuesta de voz
@@ -302,10 +306,11 @@ recuperación aguas abajo usa referencias de nodo explícitas:
 
 Tres nodos `stickyNote` con documentación visual interna del workflow (se conservan intactos).
 
-**Total**: 35 nodos operativos + 3 `stickyNote` = 38, consistente con `n8n/workflow.json`. Las
+**Total**: 26 nodos operativos + 3 `stickyNote` = 29, consistente con `n8n/workflow.json`. Las
 tablas por canal repiten los nodos compartidos (`Normalizar entrada del incidente`,
 `Entrada valida`, `Login operador`, `HTTP POST a MESA-AYUDAS`, `Requiere revision humana`,
-`Notificar operador designado`, `Confirmar correo en revision?`, `Rutear por canal de origen`,
+`Preparar destinatarios de revision`, `Notificar operador designado`,
+`Confirmar correo en revision?`, `Rutear por canal de origen`,
 `Es correo?`, `Es web?`, `Web con incidente?`, `Respuesta web de cierre`,
 `Confirmacion web revision humana`, `Registro de auditoria`).
 
@@ -336,6 +341,7 @@ La URL del backend se inyecta a través de la variable de entorno N8N `$env.BACK
   "sector": {"nombre": "Sistemas"},
   "sectores_adicionales": [],
   "requiere_revision_humana": false,
+  "destinatarios_revision": [],
   ...
 }
 ```
@@ -343,6 +349,25 @@ La URL del backend se inyecta a través de la variable de entorno N8N `$env.BACK
 El backend (`IncidenteService.create_and_classify`) ejecuta el pipeline completo:
 clasificación híbrida (determinístico → Gemini → fallback) + persistencia. La respuesta
 incluye `sector`, `confianza` y `requiere_revision_humana`.
+
+### Destinatarios de revisión resueltos por el backend (C-56)
+
+La respuesta de alta expone `destinatarios_revision` **solo en el `POST`** (no en `GET`/list,
+para no ampliar la superficie de consulta de contactos). Es la lista de emails de los
+**operadores ACTIVOS del sector** del incidente, resuelta por el backend desde el directorio de
+empleados (c-54) cuando `requiere_revision_humana = true`. Es una **lista vacía** cuando el
+incidente no requiere revisión, cuando no hay sector resuelto o cuando el directorio no tiene
+operador activo del sector.
+
+Precedencia y respaldo (design D3): si la lista trae al menos un destinatario, el directorio
+toma precedencia; si viene vacía, el workflow usa el RESPALDO `$env.OPERATOR_EMAIL` (un único
+destinatario), preservando el camino de un solo destinatario. El enrutamiento es por el sector
+**principal** predicho (design D7); los sectores adicionales quedan diferidos.
+
+Frontera de PII (design D2/D8): el email del operador es dato personal y solo se expone en la
+respuesta de creación AUTENTICADA (JWT) que N8N necesita para direccionar la notificación; no
+se registra en logs ni en la auditoría, y `Notificar operador designado` envía **un correo por
+destinatario** (nunca la lista completa en un `To`/`Cc`/`Bcc` compartido).
 
 ## Discrepancia tesis vs implementación — 1 endpoint vs 2
 
@@ -411,9 +436,9 @@ La confianza se evalúa en tres puntos distintos del flujo:
    operador` → `HTTP POST a MESA-AYUDAS`; rama false → `Registro de auditoria` + `Es correo?`.
 3. **Post-POST — `Requiere revision humana`** (gate de confianza REAL, tras persistir).
    Condición: `$json.requiere_revision_humana == true`, el booleano que el backend fija cuando
-   la confianza de clasificación es menor a 0.70. Rama true → `Notificar operador designado` +
-   `Registro de auditoria` (en paralelo, C-57); rama false → `Rutear por canal de origen` +
-   `Registro de auditoria`.
+   la confianza de clasificación es menor a 0.70. Rama true → `Preparar destinatarios de revision`
+   → `Notificar operador designado` + `Registro de auditoria` (en paralelo, C-57); rama false →
+   `Rutear por canal de origen` + `Registro de auditoria`.
 
 - **Telefonía, refinamiento**: la rama false de `La clasificacion de la IA es valida` pasa por
   `Tope de refinamiento alcanzado`; dentro del tope vuelve al `AI Agent` y, al agotarse, deriva
@@ -451,7 +476,7 @@ duplicaría lógica de seguridad crítica fuera de su módulo Python testeado (g
 |----------|-------------|---------|
 | `BACKEND_URL` | URL base del backend FastAPI | `https://localhost/api/v1` |
 | `SMTP_FROM_EMAIL` | Remitente de los correos salientes (nodos `emailSend`) | `mesa.ayuda@example.com` |
-| `OPERATOR_EMAIL` | Destinatario de la notificación de revisión humana (nodo `Notificar operador designado`) | `operador@example.com` |
+| `OPERATOR_EMAIL` | Destinatario de RESPALDO de la notificación de revisión humana: `Preparar destinatarios de revision` lo usa solo cuando `destinatarios_revision` viene vacío (C-56) | `operador@example.com` |
 
 Credenciales adicionales a configurar en la UI de N8N:
 - `imap` (C-55): casilla Gmail dedicada con 2FA y App Password (`imap.gmail.com:993` SSL).
@@ -621,7 +646,7 @@ cd App/Backend
 python -m pytest tests/test_n8n_workflow.py -v
 ```
 
-Verifica 155 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40, C-52, C-53, C-55, C-57 y C-69).
+Verifica 163 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40, C-52, C-53, C-55, C-56, C-57 y C-69).
 
 ### Prueba manual del canal web (C-05)
 
@@ -640,12 +665,13 @@ Tras un alta exitosa (`201 Created` del backend), el gate `Requiere revision hum
 caminos:
 
 - **Rama false** (`requiere_revision_humana = false`): notificación al usuario por su canal.
-- **Rama true** (`requiere_revision_humana = true`): `Notificar operador designado` envía un
-  correo al operador designado (`$env.OPERATOR_EMAIL`) con el número de incidente
-  (`numero_incidente`); en el canal correo, `Confirmar correo en revision?` dispara ADEMÁS la
-  confirmación al usuario (C-53), porque el usuario SIEMPRE debe recibir su número. En paralelo,
-  `Registro de auditoria` registra el alta (`resultado: "creado"`) consumiendo la respuesta del
-  POST (C-57).
+- **Rama true** (`requiere_revision_humana = true`): `Preparar destinatarios de revision` lee
+  `destinatarios_revision` y emite un ítem por operador; si la lista viene vacía usa el respaldo
+  `$env.OPERATOR_EMAIL`. `Notificar operador designado` envía un correo por destinatario con el
+  número de incidente (`numero_incidente`); en el canal correo, `Confirmar correo en revision?`
+  dispara ADEMÁS la confirmación al usuario (C-53), porque el usuario SIEMPRE debe recibir su
+  número. En paralelo, `Registro de auditoria` registra el alta (`resultado: "creado"`)
+  consumiendo la respuesta del POST (C-57).
 
 | Canal | Nodo | Mecanismo |
 |-------|------|-----------|
@@ -653,13 +679,13 @@ caminos:
 | Web (revisión humana) | `Confirmacion web revision humana` (`respondToWebhook`) | **[C-53]** Responde al frontend con el número del incidente creado (`resultado: 'creado'`), no `null` |
 | Correo | `Correo de confirmacion al usuario` (`emailSend` SMTP) | Envía correo con el número de incidente al remitente original; se dispara también en la rama de revisión humana y resuelve el destinatario desde el remitente normalizado (`from` `"Nombre <addr>"` del trigger IMAP) |
 | Telefonía | — (sin nodo dedicado) | La notificación con el número la realiza el backend por SMS (C-53, **DIFERIDO** hasta el spike de entregabilidad a Argentina +54); NO se resuelve en la respuesta de voz de la llamada |
-| Revisión humana | `Notificar operador designado` (`emailSend` SMTP) | Notifica al operador designado (`$env.OPERATOR_EMAIL`) que el incidente requiere revisión |
+| Revisión humana | `Preparar destinatarios de revision` (`code`) + `Notificar operador designado` (`emailSend` SMTP) | **[C-56]** Envía UNA copia por destinatario resuelto (`destinatarios_revision`) o al respaldo `$env.OPERATOR_EMAIL` si la lista viene vacía |
 
 El gate `Requiere revision humana` se interpone entre el POST y el ruteo normal. En la rama
 false, `Rutear por canal de origen` y `Registro de auditoria` cuelgan en paralelo; en la rama
-true, `Notificar operador designado` y `Registro de auditoria` son hermanos (ambos cuelgan del
-gate, C-57), de modo que la auditoría consume la respuesta del POST y no el resultado SMTP del
-envío. La notificación no
+true, `Preparar destinatarios de revision` y `Registro de auditoria` son hermanos (ambos cuelgan
+del gate, C-57) y la preparación desemboca en `Notificar operador designado`, de modo que la
+auditoría consume la respuesta del POST y no el resultado SMTP del envío. La notificación no
 bloquea el registro de auditoría: los nodos declaran `onError: continueRegularOutput` (C-40/C-53),
 de modo que un fallo de envío no aborta la auditoría.
 

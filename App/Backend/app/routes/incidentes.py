@@ -34,6 +34,7 @@ from app.models.user import User
 from app.repositories.empleado_repository import EmpleadoRepository
 from app.schemas.incidente import (
     IncidenteCreate,
+    IncidenteCreateResponse,
     IncidenteListItem,
     IncidenteRead,
     IncidenteUpdate,
@@ -90,7 +91,7 @@ AlcanceDep = Annotated[AlcanceIncidentes, Depends(get_alcance_incidentes)]
 
 @router.post(
     "/",
-    response_model=IncidenteRead,
+    response_model=IncidenteCreateResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Crear y clasificar un incidente",
 )
@@ -98,7 +99,7 @@ async def create_incidente(
     payload: IncidenteCreate,
     service: ServiceDep,
     current_user: User = Depends(get_current_user),
-) -> IncidenteRead:
+) -> IncidenteCreateResponse:
     """
     Crea un nuevo incidente y ejecuta la clasificación automática.
 
@@ -117,7 +118,7 @@ async def create_incidente(
         Representación completa del incidente creado y clasificado (HTTP 201).
     """
     incidente = await service.create_and_classify(payload)
-    return IncidenteRead.model_validate(incidente)
+    return IncidenteCreateResponse.model_validate(incidente)
 
 
 @router.get(

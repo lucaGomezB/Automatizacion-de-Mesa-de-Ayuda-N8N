@@ -772,6 +772,149 @@
         "title": "IncidenteCreate",
         "type": "object"
       },
+      "IncidenteCreateResponse": {
+        "description": "Respuesta del alta `POST /api/v1/incidentes` (c-56, D2).\n\nExtiende `IncidenteRead` con `destinatarios_revision`: los emails de los\noperadores ACTIVOS del sector resueltos por el backend para enrutar la\nnotificacion de revision humana. El campo SOLO existe en la respuesta de\ncreacion (NO en `GET`/list), de modo que no amplia la superficie de consulta\nde contactos (NR-006). Es una lista vacia cuando el incidente no requiere\nrevision o cuando no hay operador activo del sector (N8N aplica entonces el\nrespaldo `$env.OPERATOR_EMAIL`).",
+        "properties": {
+          "canal_origen": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CanalOrigenRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "descripcion_pseudonimizada": {
+            "title": "Descripcion Pseudonimizada",
+            "type": "string"
+          },
+          "destinatarios_revision": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Destinatarios Revision",
+            "type": "array"
+          },
+          "estado": {
+            "$ref": "#/components/schemas/EstadoRead"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "ingresado_en": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ingresado En"
+          },
+          "latencia_anomala": {
+            "description": "True si la latencia derivada es negativa (C-39, D9).\n\nUna latencia negativa es físicamente inválida (por ejemplo, por un\ningreso futuro dentro de la tolerancia o por desalineación de relojes);\nse marca como anomalía para excluirla del corpus y del análisis.",
+            "readOnly": true,
+            "title": "Latencia Anomala",
+            "type": "boolean"
+          },
+          "latencia_e2e_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Latencia end-to-end derivada en milisegundos (C-39, D3/D9).\n\nEs `persistido_en - ingresado_en` en ms. Es nula si falta cualquiera de\nlos dos instantes. Una latencia negativa NUNCA se reporta como medición\nválida: se devuelve nulo y la anomalía queda marcada por\n`latencia_anomala` para su diagnóstico y exclusión del corpus.",
+            "readOnly": true,
+            "title": "Latencia E2E Ms"
+          },
+          "numero_incidente": {
+            "description": "Número de incidente canónico y legible (C-53, OQ1 / design D1).\n\nDeriva del PK `id` en un ÚNICO punto (`formatear_numero_incidente`), de modo\nque el prefijo de negocio futuro (`INC-{id:06d}`) sea un cambio de un solo\nlugar. El backend lo retorna en el alta y el workflow lo propaga en sus\nnotificaciones; no se expone el `id` crudo como número al usuario final.",
+            "readOnly": true,
+            "title": "Numero Incidente",
+            "type": "string"
+          },
+          "origen_message_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origen Message Id"
+          },
+          "persistido_en": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Persistido En"
+          },
+          "prioridad": {
+            "$ref": "#/components/schemas/PrioridadEnum"
+          },
+          "requiere_revision_humana": {
+            "title": "Requiere Revision Humana",
+            "type": "boolean"
+          },
+          "sector": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SectorRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sectores_adicionales": {
+            "items": {
+              "$ref": "#/components/schemas/SectorRead"
+            },
+            "title": "Sectores Adicionales",
+            "type": "array"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "descripcion_pseudonimizada",
+          "prioridad",
+          "requiere_revision_humana",
+          "created_at",
+          "updated_at",
+          "sector",
+          "estado",
+          "canal_origen",
+          "numero_incidente",
+          "latencia_e2e_ms",
+          "latencia_anomala"
+        ],
+        "title": "IncidenteCreateResponse",
+        "type": "object"
+      },
       "IncidenteListItem": {
         "description": "Proyección ligera de un incidente para endpoints de listado.\n\nOmite el campo 'descripcion' para reducir el tamaño de las respuestas\ncuando se listan múltiples incidentes. Los consumidores que necesiten\nel texto completo deben usar el endpoint de detalle individual.",
         "properties": {
@@ -2590,7 +2733,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/IncidenteRead"
+                  "$ref": "#/components/schemas/IncidenteCreateResponse"
                 }
               }
             },

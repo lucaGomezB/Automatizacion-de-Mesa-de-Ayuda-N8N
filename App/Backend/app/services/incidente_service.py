@@ -52,6 +52,7 @@ from app.repositories.telefonia_ingreso_repository import TelefoniaIngresoReposi
 from app.schemas.clasificacion import ClasificacionResult
 from app.schemas.incidente import ClasificacionPrecalculada, IncidenteCreate, IncidenteUpdate
 from app.services.incident_visibility import ModoAlcance
+from app.services.notification_recipient_service import NotificationRecipientService
 
 if TYPE_CHECKING:
     from app.cost_guard.guard import CostGuard
@@ -353,7 +354,12 @@ class IncidenteService:
         await self._session.flush()
 
         # Paso 7: Retornar el incidente completo con todas las relaciones
-        return await self._incidente_repo.get_with_relations(incidente.id)  # type: ignore[return-value]
+        final = await self._incidente_repo.get_with_relations(incidente.id)  # type: ignore[return-value]
+        # c-56 (D2/D6): el objeto plano `incidente` lleva la lista de
+        # destinatarios resuelta en `_apply_classification`; se propaga al objeto
+        # serializado por la ruta de alta. No se persiste ni se expone en GET/list.
+        final.destinatarios_revision = getattr(incidente, "destinatarios_revision", [])
+        return final
 
     async def _resolve_classification(
         self,
@@ -530,6 +536,19 @@ class IncidenteService:
             etapa=result.etapa,
             requiere_revision_humana=result.requiere_revision_humana,
         )
+
+        # c-56 (D2/D6/NR-002/NR-007): resolver los destinatarios de la notificacion
+        # de revision SOLO cuando el incidente requiere revision. Es una lectura
+        # indexada acotada al caso de revision; un fallo o directorio vacio NO es
+        # fatal (el servicio degrada a lista vacia) y N8N aplica el respaldo. La
+        # lista se adjunta al incidente para que la ruta de alta la serialice; NO
+        # se persiste ni se expone en GET/list (NR-006).
+        destinatarios_revision: list[str] = []
+        if result.requiere_revision_humana:
+            destinatarios_revision = await NotificationRecipientService(
+                self._session
+            ).resolver_destinatarios_revision(sector_id)
+        incidente.destinatarios_revision = destinatarios_revision
 
         # Notificar a N8N de forma fire-and-forget: no bloquea la respuesta HTTP
         # ni propaga fallos (notify_n8n ya envuelve toda excepción en try/except).

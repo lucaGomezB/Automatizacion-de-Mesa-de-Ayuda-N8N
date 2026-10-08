@@ -207,7 +207,8 @@ def test_2_5_existe_camino_terminal_con_revision_humana():
     """
     Existe un camino terminal, alcanzable desde el webhook telefonico, que
     resuelve la revision humana: el gate post-POST `Requiere revision humana`
-    lee el flag del backend y notifica al operador designado.
+    lee el flag del backend, prepara los destinatarios (c-56) y desemboca en la
+    notificacion al operador designado.
     """
     wf = load_workflow()
     reachable = reachable_from(wf, TELEFONIA_TRIGGER)
@@ -215,8 +216,13 @@ def test_2_5_existe_camino_terminal_con_revision_humana():
     assert "Requiere revision humana" in reachable, (
         "La ruta telefonica no alcanza el gate de revision humana post-POST"
     )
-    assert "Notificar operador designado" in output_successors(
+    assert "Preparar destinatarios de revision" in output_successors(
         wf, "Requiere revision humana", 0
+    ), (
+        "La rama de revision humana no prepara los destinatarios (c-56)"
+    )
+    assert "Notificar operador designado" in output_successors(
+        wf, "Preparar destinatarios de revision", 0
     ), (
         "La rama de revision humana no desemboca en el terminal de notificacion"
     )

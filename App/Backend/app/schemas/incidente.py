@@ -345,6 +345,22 @@ class IncidenteRead(BaseModel):
         return _es_latencia_anomala(self.ingresado_en, self.persistido_en)
 
 
+class IncidenteCreateResponse(IncidenteRead):
+    """
+    Respuesta del alta `POST /api/v1/incidentes` (c-56, D2).
+
+    Extiende `IncidenteRead` con `destinatarios_revision`: los emails de los
+    operadores ACTIVOS del sector resueltos por el backend para enrutar la
+    notificacion de revision humana. El campo SOLO existe en la respuesta de
+    creacion (NO en `GET`/list), de modo que no amplia la superficie de consulta
+    de contactos (NR-006). Es una lista vacia cuando el incidente no requiere
+    revision o cuando no hay operador activo del sector (N8N aplica entonces el
+    respaldo `$env.OPERATOR_EMAIL`).
+    """
+
+    destinatarios_revision: list[str] = Field(default_factory=list)
+
+
 class IncidenteListItem(BaseModel):
     """
     Proyección ligera de un incidente para endpoints de listado.

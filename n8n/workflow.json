@@ -156,8 +156,21 @@
     },
     {
       "parameters": {
+        "jsCode": "// C-56: prepara UN item por destinatario resuelto por el backend.\n// Lee `destinatarios_revision` de la respuesta del alta; si viene vacio o\n// ausente, usa el respaldo unico `$env.OPERATOR_EMAIL`. Emite un item por\n// destinatario para que emailSend envie una copia a cada uno, sin exponer la\n// lista completa en un To/Cc/Bcc compartido.\nconst respuesta = $input.first().json || {};\nconst numero = respuesta.numero_incidente || null;\nconst lista = Array.isArray(respuesta.destinatarios_revision)\n  ? respuesta.destinatarios_revision.filter((d) => typeof d === 'string' && d.trim())\n  : [];\nconst destinatarios = lista.length > 0 ? lista : [$env.OPERATOR_EMAIL].filter(Boolean);\nreturn destinatarios.map((destinatario) => ({\n  json: { destinatario, numero_incidente: numero }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1080,
+        -240
+      ],
+      "id": "c56-preparar-destinatarios-0003-4000-8000-000000000003",
+      "name": "Preparar destinatarios de revision"
+    },
+    {
+      "parameters": {
         "fromEmail": "={{ $env.SMTP_FROM_EMAIL }}",
-        "toEmail": "={{ $env.OPERATOR_EMAIL }}",
+        "toEmail": "={{ $json.destinatario }}",
         "subject": "=Incidente {{ $json.numero_incidente }} requiere revision humana",
         "emailFormat": "text",
         "text": "=El incidente {{ $json.numero_incidente }} fue clasificado con confianza por debajo del umbral y requiere revision humana. Un operador designado debe revisarlo en la mesa de ayuda.",
@@ -808,7 +821,7 @@
       "main": [
         [
           {
-            "node": "Notificar operador designado",
+            "node": "Preparar destinatarios de revision",
             "type": "main",
             "index": 0
           },
@@ -836,6 +849,17 @@
           },
           {
             "node": "Registro de auditoria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar destinatarios de revision": {
+      "main": [
+        [
+          {
+            "node": "Notificar operador designado",
             "type": "main",
             "index": 0
           }
