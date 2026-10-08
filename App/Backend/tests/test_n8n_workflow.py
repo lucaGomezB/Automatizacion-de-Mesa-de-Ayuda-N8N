@@ -74,6 +74,10 @@ NOTIFICAR_OPERADOR_NODE_NAME = "Notificar operador designado"
 OLD_IF_NODE_NAME = "La informacion esta OK"
 OPERATOR_EMAIL_REF = "$env.OPERATOR_EMAIL"
 NUMERO_FIELD = "numero_incidente"
+# c-56: nodo de preparacion y contrato de destinatario por item.
+PREPARAR_DESTINATARIOS_NODE_NAME = "Preparar destinatarios de revision"
+DESTINATARIO_ITEM_REF = "$json.destinatario"
+DESTINATARIOS_FIELD = "destinatarios_revision"
 WEB_INCIDENT_GUARD_NODE_NAME = "Web con incidente?"
 WEB_REVISION_RESPONDER_NODE_NAME = "Confirmacion web revision humana"
 
@@ -2249,7 +2253,7 @@ def test_c36_no_paid_node_has_unbounded_or_implicit_retry():
     # c-72 (OQ1=A): se retiraron la rama de clasificacion de n8n (AI Agent,
     # modelo Gemini, memoria, guarda de costo, restauracion, validador de IA,
     # IF de clasificacion, tope de refinamiento y terminal de refinamiento).
-    # El workflow quedo en 28 nodos (25 operativos + 3 sticky notes).
+    # El workflow quedo en 29 nodos (26 operativos + 3 sticky notes) tras c-56.
     paid = _c36_paid_nodes(wf)
     # c-72: sin nodos pagos en n8n, la politica de reintento pago es vacuamente
     # satisfecha; la invocacion paga vive en el backend.
@@ -2349,11 +2353,13 @@ def test_revision_humana_condition_references_flag():
     )
 
 
-def test_notificar_operador_node_exists_and_references_env():
+def test_notificar_operador_node_exists_and_uses_per_recipient():
     """
-    RED → GREEN adaptado a C-55: existe el nodo de notificacion
-    `n8n-nodes-base.emailSend` (SMTP), dirigido a la variable de entorno
-    `$env.OPERATOR_EMAIL`.
+    RED → GREEN adaptado a c-56: existe el nodo de notificacion
+    `n8n-nodes-base.emailSend` (SMTP), dirigido al destinatario POR ITEM
+    (`$json.destinatario`) que prepara `Preparar destinatarios de revision`.
+    Ya NO apunta a la variable de entorno: `$env.OPERATOR_EMAIL` pasa a ser el
+    respaldo del nodo de preparacion.
     """
     wf = load_workflow()
     by_name, _ = index_nodes(wf)
@@ -2367,10 +2373,13 @@ def test_notificar_operador_node_exists_and_references_env():
         f"got {node.get('type')!r}"
     )
     params = node.get("parameters", {})
-    params_str = json.dumps(params)
-    assert OPERATOR_EMAIL_REF in params_str, (
-        f"{NOTIFICAR_OPERADOR_NODE_NAME!r} no referencia {OPERATOR_EMAIL_REF!r} "
-        f"(params={params_str})"
+    assert DESTINATARIO_ITEM_REF in str(params.get("toEmail", "")), (
+        f"{NOTIFICAR_OPERADOR_NODE_NAME!r} debe enviar al destinatario por item "
+        f"(toEmail={params.get('toEmail')!r})"
+    )
+    assert OPERATOR_EMAIL_REF not in json.dumps(params), (
+        f"{NOTIFICAR_OPERADOR_NODE_NAME!r} no debe usar el respaldo del entorno; "
+        "ese respaldo vive en el nodo de preparacion (c-56)"
     )
     assert params.get("emailFormat") == "text", (
         f"{NOTIFICAR_OPERADOR_NODE_NAME!r} debe usar emailFormat='text', "
@@ -2418,14 +2427,20 @@ def test_http_post_reaches_revision_humana_gate():
 
 def test_revision_humana_true_branch_notifies_operator():
     """
-    RED → GREEN: la rama true (main#0) del gate post-POST notifica al operador
-    designado.
+    RED → GREEN adaptado a c-56: la rama true (main#0) del gate post-POST pasa
+    por `Preparar destinatarios de revision` y desemboca en la notificacion al
+    operador designado.
     """
     wf = load_workflow()
-    assert NOTIFICAR_OPERADOR_NODE_NAME in _output_successors(
+    assert PREPARAR_DESTINATARIOS_NODE_NAME in _output_successors(
         wf, IF_REVISION_HUMANA_NODE_NAME, 0
     ), (
-        f"La rama true de {IF_REVISION_HUMANA_NODE_NAME!r} no notifica al operador"
+        f"La rama true de {IF_REVISION_HUMANA_NODE_NAME!r} no prepara destinatarios"
+    )
+    assert _connections_reachable(
+        wf, IF_REVISION_HUMANA_NODE_NAME, NOTIFICAR_OPERADOR_NODE_NAME
+    ), (
+        f"La rama true de {IF_REVISION_HUMANA_NODE_NAME!r} no alcanza al operador"
     )
 
 
@@ -2559,13 +2574,15 @@ def test_revision_branch_requires_no_mark_read_node():
 
 def test_revision_true_branch_notifies_operator_and_channel_guard():
     """
-    TRIANGULATE (Fix 2): la rama true (main#0) conserva la notificacion al
-    operador y la guarda de canal 'Es correo?' en el mismo nivel.
+    TRIANGULATE (Fix 2, adaptado a c-56): la rama true (main#0) pasa por
+    `Preparar destinatarios de revision` y conserva la guarda de canal
+    'Es correo?' en el mismo nivel.
     """
     wf = load_workflow()
     true_successors = _output_successors(wf, IF_REVISION_HUMANA_NODE_NAME, 0)
-    assert NOTIFICAR_OPERADOR_NODE_NAME in true_successors, (
-        f"La rama true de {IF_REVISION_HUMANA_NODE_NAME!r} dejo de notificar al operador"
+    assert PREPARAR_DESTINATARIOS_NODE_NAME in true_successors, (
+        f"La rama true de {IF_REVISION_HUMANA_NODE_NAME!r} dejo de preparar "
+        "destinatarios"
     )
     assert IF_ES_CORREO_NODE_NAME in true_successors, (
         f"La rama true de {IF_REVISION_HUMANA_NODE_NAME!r} no pasa por "
@@ -3874,7 +3891,8 @@ def test_c55_no_outlook_artifacts_and_node_count():
     """
     RED (2.1): no existe ningun nodo `microsoftOutlook*`, ninguna credencial
     `microsoftOutlookOAuth2Api` ni el nodo `Marcar correo como leido`; el conteo
-    total de nodos es 28 (c-72 retiro la rama de clasificacion de n8n).
+    total de nodos es 29 (26 operativos + 3 sticky; c-56 agrega el Code node
+    `Preparar destinatarios de revision`).
     """
     wf = load_workflow()
     by_name, by_type = index_nodes(wf)
@@ -3893,8 +3911,8 @@ def test_c55_no_outlook_artifacts_and_node_count():
         assert "microsoftOutlookOAuth2Api" not in credentials, (
             f"El nodo {node['name']!r} declara credencial microsoftOutlookOAuth2Api"
         )
-    assert len(wf["nodes"]) == 28, (
-        f"Se esperaban 28 nodos, el JSON tiene {len(wf['nodes'])}"
+    assert len(wf["nodes"]) == 29, (
+        f"Se esperaban 29 nodos, el JSON tiene {len(wf['nodes'])}"
     )
 
 
@@ -3934,8 +3952,9 @@ def test_c55_confirmation_email_send_preserves_content():
 
 def test_c55_operator_email_send_preserves_content():
     """
-    RED (2.2): `Notificar operador designado` es `emailSend` y conserva asunto y
-    cuerpo con el numero de incidente, dirigido a `$env.OPERATOR_EMAIL`.
+    RED (2.2, adaptado a c-56): `Notificar operador designado` es `emailSend` y
+    conserva asunto y cuerpo con el numero de incidente; el destinatario se
+    resuelve POR ITEM desde `$json.destinatario` (preparado por c-56).
     """
     wf = load_workflow()
     by_name, _ = index_nodes(wf)
@@ -3952,8 +3971,8 @@ def test_c55_operator_email_send_preserves_content():
     assert "$json.numero_incidente" in str(params.get("text", "")), (
         "El cuerpo al operador no conserva el numero de incidente"
     )
-    assert OPERATOR_EMAIL_REF in str(params.get("toEmail", "")), (
-        f"La notificacion al operador no usa {OPERATOR_EMAIL_REF!r} "
+    assert DESTINATARIO_ITEM_REF in str(params.get("toEmail", "")), (
+        f"La notificacion al operador no usa el destinatario por item "
         f"(toEmail={params.get('toEmail')!r})"
     )
     assert params.get("emailFormat") == "text", (
@@ -4370,3 +4389,153 @@ def test_c69_post_envia_origen_message_id_del_normalizador():
     assert NORMALIZER_NODE_NAME in body["origen_message_id"], (
         "El POST no resuelve 'origen_message_id' desde el normalizador"
     )
+
+
+# ---------------------------------------------------------------------------
+# Grupo c-56 — Notificaciones por rol: destinatarios resueltos por el backend
+#
+# El backend resuelve `destinatarios_revision` (operadores activos del sector) y
+# lo entrega en la respuesta de alta. El Code node `Preparar destinatarios de
+# revision` emite un item por destinatario (o el respaldo `$env.OPERATOR_EMAIL`
+# si la lista viene vacia) y `Notificar operador designado` envia una copia por
+# item. La auditoria cuelga del gate en paralelo.
+# ---------------------------------------------------------------------------
+
+
+def test_c56_preparar_node_exists_and_is_code():
+    """RED (5.1a): existe el Code node `Preparar destinatarios de revision`."""
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+
+    assert PREPARAR_DESTINATARIOS_NODE_NAME in by_name, (
+        f"No existe el nodo {PREPARAR_DESTINATARIOS_NODE_NAME!r}"
+    )
+    node = by_name[PREPARAR_DESTINATARIOS_NODE_NAME]
+    assert node.get("type") == "n8n-nodes-base.code", (
+        f"{PREPARAR_DESTINATARIOS_NODE_NAME!r} debe ser un Code node, "
+        f"got {node.get('type')!r}"
+    )
+
+
+def test_c56_preparar_lee_destinatarios_y_respaldo():
+    """RED (5.1a): el jsCode lee `destinatarios_revision` y cae al respaldo del entorno."""
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    code = _js_code(by_name[PREPARAR_DESTINATARIOS_NODE_NAME])
+
+    assert DESTINATARIOS_FIELD in code, (
+        "El nodo de preparacion no lee el campo 'destinatarios_revision'"
+    )
+    assert OPERATOR_EMAIL_REF in code, (
+        "El nodo de preparacion no usa el respaldo $env.OPERATOR_EMAIL"
+    )
+    assert "Array.isArray" in code, (
+        "El nodo de preparacion no valida que la lista sea un arreglo"
+    )
+
+
+def test_c56_preparar_emite_un_item_por_destinatario():
+    """RED (5.1a): emite UN item por destinatario con el numero de incidente."""
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    code = _js_code(by_name[PREPARAR_DESTINATARIOS_NODE_NAME])
+
+    assert ".map(" in code, (
+        "El nodo de preparacion no emite un item por destinatario (falta .map)"
+    )
+    assert "destinatario" in code and "numero_incidente" in code, (
+        "Cada item debe llevar 'destinatario' y 'numero_incidente'"
+    )
+
+
+def test_c56_notificar_usa_destinatario_por_item():
+    """RED (5.1b): `toEmail` es el destinatario por item; NO la lista ni el respaldo."""
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    params = by_name[NOTIFICAR_OPERADOR_NODE_NAME].get("parameters", {})
+
+    assert DESTINATARIO_ITEM_REF in str(params.get("toEmail", "")), (
+        f"`toEmail` debe ser {DESTINATARIO_ITEM_REF!r}, got {params.get('toEmail')!r}"
+    )
+    serialized = json.dumps(params)
+    assert OPERATOR_EMAIL_REF not in serialized, (
+        "El nodo de envio no debe usar el respaldo del entorno (solo el de preparacion)"
+    )
+    assert DESTINATARIOS_FIELD not in serialized, (
+        "El nodo de envio no debe exponer la lista completa de destinatarios"
+    )
+
+
+def test_c56_respaldo_solo_en_el_nodo_de_preparacion():
+    """RED (5.1c): `$env.OPERATOR_EMAIL` aparece SOLO en el nodo de preparacion."""
+    wf = load_workflow()
+    con_respaldo = [
+        node["name"]
+        for node in wf["nodes"]
+        if OPERATOR_EMAIL_REF in json.dumps(node)
+    ]
+
+    assert con_respaldo == [PREPARAR_DESTINATARIOS_NODE_NAME], (
+        f"El respaldo debe vivir solo en el nodo de preparacion; se encontro en {con_respaldo}"
+    )
+
+
+def test_c56_gate_rutea_por_preparar():
+    """RED (5.1b): el gate true pasa por preparacion y no directo al envio."""
+    wf = load_workflow()
+
+    assert PREPARAR_DESTINATARIOS_NODE_NAME in _output_successors(
+        wf, IF_REVISION_HUMANA_NODE_NAME, 0
+    ), "La rama true del gate no pasa por el nodo de preparacion"
+    assert NOTIFICAR_OPERADOR_NODE_NAME not in _output_successors(
+        wf, IF_REVISION_HUMANA_NODE_NAME, 0
+    ), "El envio no debe colgar directo del gate (debe pasar por preparacion)"
+    assert NOTIFICAR_OPERADOR_NODE_NAME in _output_successors(
+        wf, PREPARAR_DESTINATARIOS_NODE_NAME, 0
+    ), "La preparacion no desemboca en el envio al operador"
+
+
+def test_c56_auditoria_en_paralelo_al_envio():
+    """RED (5.1d/e): la auditoria cuelga del gate, no del envio (no se omite si falla)."""
+    wf = load_workflow()
+
+    assert AUDIT_NODE_NAME in _output_successors(
+        wf, IF_REVISION_HUMANA_NODE_NAME, 0
+    ), "La auditoria no cuelga del gate en la rama de revision"
+    assert AUDIT_NODE_NAME not in _get_successors(
+        wf, PREPARAR_DESTINATARIOS_NODE_NAME
+    ), "La auditoria no debe depender del nodo de preparacion"
+    assert AUDIT_NODE_NAME not in _get_successors(
+        wf, NOTIFICAR_OPERADOR_NODE_NAME
+    ), "La auditoria no debe depender del resultado SMTP del envio"
+
+
+def test_c56_no_regresion_c38_c40_c53_c55():
+    """TRIANGULATE (5.3): invariantes de c-38/c-40/c-53/c-55 preservadas."""
+    wf = load_workflow()
+    by_name, by_type = index_nodes(wf)
+
+    # c-38: gate post-POST IF que evalua requiere_revision_humana.
+    gate = by_name[IF_REVISION_HUMANA_NODE_NAME]
+    assert gate.get("type") == "n8n-nodes-base.if", "El gate post-POST dejo de ser IF"
+    assert "requiere_revision_humana" in json.dumps(gate.get("parameters", {})), (
+        "El gate dejo de evaluar requiere_revision_humana"
+    )
+
+    # c-40: el envio declara onError de continuacion.
+    assert by_name[NOTIFICAR_OPERADOR_NODE_NAME].get("onError") == "continueRegularOutput", (
+        "El nodo de envio perdio onError=continueRegularOutput"
+    )
+
+    # c-53: la confirmacion al usuario en la rama de revision sigue presente.
+    assert "Confirmar correo en revision?" in by_name, (
+        "Se perdio el gate de confirmacion por correo en revision (c-53)"
+    )
+
+    # c-55: dos nodos emailSend con credencial smtp.
+    sends = by_type.get(EMAIL_SEND_NODE_TYPE, [])
+    assert len(sends) == 2, f"Se esperaban 2 nodos emailSend, got {len(sends)}"
+    for node in sends:
+        assert "smtp" in (node.get("credentials") or {}), (
+            f"El nodo {node['name']!r} perdio la credencial smtp"
+        )

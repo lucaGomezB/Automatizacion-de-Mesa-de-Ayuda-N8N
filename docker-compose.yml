@@ -134,9 +134,11 @@ services:
       # X-Cost-Guard-Secret. Si queda vacio, el endpoint de reserva responde 401 y
       # el workflow degrada a revision humana (fail-closed).
       COST_GUARD_SHARED_SECRET: ${COST_GUARD_SHARED_SECRET:-}
-      # Destinatario de la notificacion de revision humana (nodo
-      # 'Notificar operador designado'). Disponible en los nodos como
-      # $env.OPERATOR_EMAIL. El placeholder NO es una direccion real.
+      # Destinatario de RESPALDO de la notificacion de revision humana (nodo
+      # 'Preparar destinatarios de revision', c-56): se usa solo cuando el
+      # backend no resuelve destinatarios (`destinatarios_revision` vacio).
+      # Disponible en los nodos como $env.OPERATOR_EMAIL. El placeholder NO es
+      # una direccion real.
       OPERATOR_EMAIL: ${OPERATOR_EMAIL:-operador@example.com}
       # Remitente de los correos salientes (nodos emailSend). Disponible en los
       # nodos como $env.SMTP_FROM_EMAIL. Formato requerido: "Nombre <direccion>".

@@ -18,7 +18,7 @@ Decisiones:
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from app.models.empleado import Empleado
+from app.models.empleado import Empleado, RolEmpleado
 from app.repositories.base import BaseRepository
 
 
@@ -90,6 +90,32 @@ class EmpleadoRepository(BaseRepository[Empleado]):
             )
         )
         return result.scalars().first()
+
+    async def listar_operadores_por_sector(
+        self, sector_id: int | None
+    ) -> list[Empleado]:
+        """
+        Devuelve los operadores ACTIVOS del sector (c-56, NR-002).
+
+        Un destinatario valido de la notificacion de revision humana es un
+        empleado con `rol=operador`, `activo=true` y `sector_id` coincidente.
+        Un `sector_id` nulo no es un error: devuelve lista vacia. El orden por
+        `id` es deterministico. Carga eager de `sector` para serializacion async.
+        """
+        if sector_id is None:
+            return []
+        result = await self._session.execute(
+            self._con_sector(
+                select(Empleado)
+                .where(
+                    Empleado.sector_id == sector_id,
+                    Empleado.rol == RolEmpleado.operador.value,
+                    Empleado.activo.is_(True),
+                )
+                .order_by(Empleado.id)
+            )
+        )
+        return list(result.scalars().all())
 
     async def listar_inactivos(self) -> list[Empleado]:
         """
