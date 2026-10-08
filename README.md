@@ -223,14 +223,25 @@ docker compose up -d
 ```
 
 El compose levanta Nginx (puertos 80 y 443 — proxy TLS), PostgreSQL (5433),
-Redis (6379), el backend FastAPI y N8N (5678). El backend y el frontend
-NO publican puertos al host: todo el trafico HTTP/HTTPS pasa por Nginx.
-Las migraciones Alembic se aplican automaticamente al iniciar el backend.
+el backend FastAPI y N8N (5678). PostgreSQL y N8N publican SOLO en loopback
+(`127.0.0.1`): no son alcanzables desde la LAN. El backend y el frontend NO
+publican puertos al host: todo el trafico HTTP/HTTPS pasa por Nginx. Las
+migraciones Alembic se aplican automaticamente al iniciar el backend.
 
 Verificar que todos los servicios estan healthy:
 ```bash
 docker compose ps
 ```
+
+> **Postura de desarrollo opt-in (c-62)**: el `docker compose up -d` por defecto
+> aplica el endurecimiento (puertos en loopback + segmentacion de red). Para el
+> modo de aplicacion de desarrollo (`ENVIRONMENT=development`, logging de consola):
+>
+> ```bash
+> docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+> ```
+>
+> Este override NO re-expone puertos: solo cambia la postura del backend.
 
 ### 5. Verificar salud del sistema
 

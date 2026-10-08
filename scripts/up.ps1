@@ -58,7 +58,8 @@ if ($env:UP_HEALTH_TIMEOUT) { $HealthTimeout = [int]$env:UP_HEALTH_TIMEOUT } els
 if ($env:UP_HEALTH_INTERVAL) { $HealthInterval = [int]$env:UP_HEALTH_INTERVAL } else { $HealthInterval = 5 }
 
 # Services declared in docker-compose.yml (project name: mesa_local).
-$ExpectedServiceCount = 6
+# 5 servicios: postgres, backend, n8n, frontend, nginx. Redis se retiro en c-62.
+$ExpectedServiceCount = 5
 
 # Required secret variables. The values listed here are the placeholders from
 # App\Backend\.env.example; the template file is also parsed at runtime so this

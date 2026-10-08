@@ -181,7 +181,7 @@ docker compose up -d
 ```
 
 Este comando construye la imagen del backend (desde `App/Backend/Dockerfile`),
-descarga las imagenes de PostgreSQL, Redis, Nginx y N8N, aplica las migraciones
+descarga las imagenes de PostgreSQL, Nginx y N8N, aplica las migraciones
 Alembic (`alembic upgrade head`) y levanta todos los servicios en background.
 A diferencia del comando unico, este camino no ejecuta el preflight de entorno ni
 el de costo: la verificacion queda a cargo de quien lo ejecuta.
@@ -196,10 +196,9 @@ Salida esperada (todos en estado `healthy` o `running`):
 
 ```
 NAME                    STATUS          PORTS
-...-postgres-1          Up (healthy)    0.0.0.0:5433->5432/tcp
-...-redis-1             Up (healthy)    0.0.0.0:6379->6379/tcp
+...-postgres-1          Up (healthy)    127.0.0.1:5433->5432/tcp
 ...-backend-1           Up (healthy)    
-...-n8n-1               Up              0.0.0.0:5678->5678/tcp
+...-n8n-1               Up              127.0.0.1:5678->5678/tcp
 ...-frontend-1          Up              
 ...-nginx-1             Up              0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp
 ```
@@ -207,6 +206,12 @@ NAME                    STATUS          PORTS
 > **Nota**: el backend (puerto 8000) y el frontend (puerto 3000) ya NO se publican
 > en el host. Todo el trafico HTTP/HTTPS externo pasa a traves del proxy Nginx en
 > los puertos 80 (HTTP, redirige a HTTPS) y 443 (HTTPS con TLS 1.3).
+>
+> **Endurecimiento de red (c-62)**: PostgreSQL (5433) y N8N (5678) publican SOLO
+> en loopback (`127.0.0.1`), por lo que no son alcanzables desde la LAN. Redis
+> fue retirado del stack. La red Docker esta segmentada en `edge` (nginx,
+> frontend, backend), `data` (`internal: true`: postgres, backend) y
+> `automation` (n8n, backend, con egreso); N8N nunca comparte red con PostgreSQL.
 
 ### 1.4 Verificar salud del backend
 
@@ -243,8 +248,10 @@ Respuesta esperada:
 5. Activar el workflow (boton toggle en la esquina superior derecha).
 
 > **Nota**: N8N mantiene su acceso directo en el puerto 5678 (HTTP) por
-> limitaciones tecnicas con path-prefix en el proxy inverso. El backend
-> se comunica con N8N internamente via `http://n8n:5678/webhook`.
+> limitaciones tecnicas con path-prefix en el proxy inverso. Desde c-62 ese
+> puerto publica SOLO en loopback (`127.0.0.1:5678`): la UI y los webhooks
+> locales quedan accesibles unicamente desde la maquina. El backend se comunica
+> con N8N internamente via `http://n8n:5678/webhook`.
 
 **Retencion de datos de ejecucion**: N8N esta configurado para eliminar
 automaticamente los datos de ejecucion con una antiguedad mayor a 30 dias

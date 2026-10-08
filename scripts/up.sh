@@ -52,7 +52,8 @@ HEALTH_TIMEOUT="${UP_HEALTH_TIMEOUT:-600}"
 HEALTH_INTERVAL="${UP_HEALTH_INTERVAL:-5}"
 
 # Services declared in docker-compose.yml (project name: mesa_local).
-EXPECTED_SERVICE_COUNT=6
+# 5 servicios: postgres, backend, n8n, frontend, nginx. Redis se retiro en c-62.
+EXPECTED_SERVICE_COUNT=5
 
 # Required secret variables. The values listed here are the placeholders from
 # App/Backend/.env.example; the template file is also parsed at runtime so this

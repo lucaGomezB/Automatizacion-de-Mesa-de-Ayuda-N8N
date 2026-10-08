@@ -69,6 +69,52 @@ def _pop_json_body_key(workflow: dict, name: str, key: str) -> None:
     parameters["jsonBody"] = json.dumps(body, ensure_ascii=False)
 
 
+def _add_json_body_key(workflow: dict, name: str, key: str, value: str = "'x'") -> None:
+    """Inyecta una clave en el `jsonBody` de un nodo httpRequest.
+
+    Simula la REAPARICION de una clave retirada por c-72. Soporta el body literal
+    y la unica expresion `={{ JSON.stringify({...}) }}`.
+    """
+    parameters = _node(workflow, name)["parameters"]
+    raw = parameters["jsonBody"]
+    if raw.startswith("="):
+        marker = "JSON.stringify({"
+        injection = "JSON.stringify({ " + key + ": " + value + ","
+        parameters["jsonBody"] = raw.replace(marker, injection, 1)
+        return
+    body = json.loads(raw)
+    body[key] = value
+    parameters["jsonBody"] = json.dumps(body, ensure_ascii=False)
+
+
+def _ai_agent_node(max_iterations: int | None = 5, **retry) -> dict:
+    """Construye un nodo 'AI Agent' minimo para simular su reaparicion (c-72)."""
+    node = {
+        "name": "AI Agent",
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1,
+        "position": [0, 0],
+        "parameters": {"options": {}},
+    }
+    if max_iterations is not None:
+        node["parameters"]["options"]["maxIterations"] = max_iterations
+    node.update(retry)
+    return node
+
+
+def _language_model_node(**extra) -> dict:
+    """Construye un nodo de modelo langchain minimo (nodo pago prohibido)."""
+    node = {
+        "name": "Google Gemini Chat Model",
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1,
+        "position": [0, 0],
+        "parameters": {},
+    }
+    node.update(extra)
+    return node
+
+
 def _write_workflow(tmp_path, mutate) -> pathlib.Path:
     data = _load_workflow()
     mutate(data)
@@ -111,19 +157,36 @@ def _assert_single_named_fail(checks, needle: str) -> None:
 
 
 # ===========================================================================
-# 1.1 Tope del agente pago
+# 1.1 Tope del agente pago (neutralizado por c-72: el nodo se retiro)
 # ===========================================================================
 def test_valid_workflow_all_guards_pass(tmp_path):
-    """El workflow real satisface todas las guardas verificadas."""
+    """El workflow real (29 nodos, post-c-72) satisface todas las guardas."""
     checks = check_workflow(REAL_WORKFLOW_PATH)
     assert checks, "check_workflow debe devolver al menos un check"
     assert all(c.status == "PASS" for c in checks), _summary(checks)
 
 
-def test_missing_agent_max_iterations_fails_named(tmp_path):
-    """Un workflow sin options.maxIterations produce FAIL nombrando la guarda."""
+def test_agent_absent_passes_neutralized_guard():
+    """c-72 retiro el 'AI Agent': la guarda se neutraliza y PASA."""
+    checks = check_workflow(REAL_WORKFLOW_PATH)
+    agent_checks = [c for c in checks if "iteraciones" in c.name.lower()]
+    assert agent_checks, "No existe la guarda de iteraciones del agente"
+    assert all(c.status == "PASS" for c in agent_checks), _summary(checks)
+
+
+def test_agent_present_with_bounded_iterations_passes(tmp_path):
+    """Triangulacion: si el nodo reaparece BIEN configurado, la guarda pasa."""
     def mutate(wf):
-        _node(wf, "AI Agent")["parameters"]["options"].pop("maxIterations", None)
+        wf["nodes"].append(_ai_agent_node(max_iterations=5))
+
+    checks = check_workflow(_write_workflow(tmp_path, mutate))
+    assert all(c.status == "PASS" for c in checks), _summary(checks)
+
+
+def test_agent_present_without_max_iterations_fails_named(tmp_path):
+    """Si el nodo reaparece sin options.maxIterations, FAIL nombrando la guarda."""
+    def mutate(wf):
+        wf["nodes"].append(_ai_agent_node(max_iterations=None))
 
     checks = check_workflow(_write_workflow(tmp_path, mutate))
     _assert_single_named_fail(checks, "maxIterations")
@@ -199,20 +262,37 @@ def test_body_missing_origen_message_id_fails_named(tmp_path):
     _assert_single_named_fail(checks, "origen_message_id")
 
 
-def test_body_missing_classification_fails_named(tmp_path):
-    def mutate(wf):
-        _pop_json_body_key(wf, "HTTP POST a MESA-AYUDAS", "clasificacion")
-
-    checks = check_workflow(_write_workflow(tmp_path, mutate))
-    _assert_single_named_fail(checks, "clasificacion")
-
-
 def test_body_missing_origen_evento_fails_named(tmp_path):
     def mutate(wf):
         _pop_json_body_key(wf, "HTTP POST a MESA-AYUDAS", "origen_evento")
 
     checks = check_workflow(_write_workflow(tmp_path, mutate))
     _assert_single_named_fail(checks, "origen_evento")
+
+
+def test_body_forbids_clasificacion(tmp_path):
+    """c-72: la clasificacion ya NO viaja en el body; su reaparicion es FAIL."""
+    def mutate(wf):
+        _add_json_body_key(wf, "HTTP POST a MESA-AYUDAS", "clasificacion", "'x'")
+
+    checks = check_workflow(_write_workflow(tmp_path, mutate))
+    _assert_single_named_fail(checks, "clasificacion")
+
+
+def test_body_forbids_sector_predicho(tmp_path):
+    def mutate(wf):
+        _add_json_body_key(wf, "HTTP POST a MESA-AYUDAS", "sector_predicho", "'x'")
+
+    checks = check_workflow(_write_workflow(tmp_path, mutate))
+    _assert_single_named_fail(checks, "sector_predicho")
+
+
+def test_body_forbids_confianza(tmp_path):
+    def mutate(wf):
+        _add_json_body_key(wf, "HTTP POST a MESA-AYUDAS", "confianza", "0.5")
+
+    checks = check_workflow(_write_workflow(tmp_path, mutate))
+    _assert_single_named_fail(checks, "confianza")
 
 
 # ===========================================================================
@@ -242,20 +322,33 @@ def test_notification_webhook_connected_to_creation_fails(tmp_path):
 #    modelo y los reintentos implicitos/ilimitados siguen prohibidos.
 # ===========================================================================
 def test_paid_agent_bounded_retry_passes():
-    """El workflow real declara un reintento acotado del agente: la guarda pasa."""
+    """El workflow real no tiene nodos pagos: la guarda pasa."""
     checks = check_workflow(REAL_WORKFLOW_PATH)
     retry_checks = [c for c in checks if "reintento" in c.name.lower()]
     assert retry_checks, "No existe la guarda de reintentos pagos"
     assert all(c.status == "PASS" for c in retry_checks), _summary(checks)
 
 
+def test_paid_agent_bounded_retry_on_present_node_passes(tmp_path):
+    """Triangulacion: un AI Agent reaparecido con reintento acotado pasa."""
+    def mutate(wf):
+        wf["nodes"].append(
+            _ai_agent_node(
+                max_iterations=5,
+                retryOnFail=True,
+                maxTries=2,
+                waitBetweenTries=cost_readiness.PAID_AGENT_MIN_WAIT_BETWEEN_TRIES_MS,
+            )
+        )
+
+    checks = check_workflow(_write_workflow(tmp_path, mutate))
+    assert all(c.status == "PASS" for c in checks), _summary(checks)
+
+
 def test_paid_agent_retry_without_bounds_fails_named(tmp_path):
     """retryOnFail sin maxTries/waitBetweenTries es un reintento implicito: FAIL."""
     def mutate(wf):
-        agent = _node(wf, "AI Agent")
-        agent["retryOnFail"] = True
-        agent.pop("maxTries", None)
-        agent.pop("waitBetweenTries", None)
+        wf["nodes"].append(_ai_agent_node(max_iterations=5, retryOnFail=True))
 
     checks = check_workflow(_write_workflow(tmp_path, mutate))
     _assert_single_named_fail(checks, "maxTries")
@@ -264,10 +357,14 @@ def test_paid_agent_retry_without_bounds_fails_named(tmp_path):
 def test_paid_agent_retry_above_cap_fails_named(tmp_path):
     """Un maxTries por encima del tope deja el peor caso sin acotar: FAIL."""
     def mutate(wf):
-        agent = _node(wf, "AI Agent")
-        agent["retryOnFail"] = True
-        agent["maxTries"] = 99
-        agent["waitBetweenTries"] = cost_readiness.PAID_AGENT_MIN_WAIT_BETWEEN_TRIES_MS
+        wf["nodes"].append(
+            _ai_agent_node(
+                max_iterations=5,
+                retryOnFail=True,
+                maxTries=99,
+                waitBetweenTries=cost_readiness.PAID_AGENT_MIN_WAIT_BETWEEN_TRIES_MS,
+            )
+        )
 
     checks = check_workflow(_write_workflow(tmp_path, mutate))
     _assert_single_named_fail(checks, "tope")
@@ -275,7 +372,7 @@ def test_paid_agent_retry_above_cap_fails_named(tmp_path):
 
 def test_paid_language_model_max_tries_fails_named(tmp_path):
     def mutate(wf):
-        _node(wf, "Google Gemini Chat Model")["maxTries"] = 3
+        wf["nodes"].append(_language_model_node(maxTries=3))
 
     checks = check_workflow(_write_workflow(tmp_path, mutate))
     _assert_single_named_fail(checks, "maxTries")
@@ -283,7 +380,7 @@ def test_paid_language_model_max_tries_fails_named(tmp_path):
 
 def test_paid_language_model_retry_on_fail_fails_named(tmp_path):
     def mutate(wf):
-        _node(wf, "Google Gemini Chat Model")["retryOnFail"] = True
+        wf["nodes"].append(_language_model_node(retryOnFail=True))
 
     checks = check_workflow(_write_workflow(tmp_path, mutate))
     _assert_single_named_fail(checks, "retryOnFail")
@@ -308,9 +405,13 @@ def test_compose_latest_image_fails_named(tmp_path):
 
 def test_compose_webhook_url_other_route_fails_named(tmp_path):
     def mutate(data):
-        data["services"]["backend"]["environment"]["N8N_WEBHOOK_URL"] = (
-            "http://n8n:5678/webhook/incidente-web"
-        )
+        # Ambos servicios del stack (base y corpus) declaran N8N_WEBHOOK_URL.
+        # La guarda exige que AL MENOS UNO apunte a la ruta dedicada; para
+        # provocar el FAIL hay que desviarlos todos.
+        for service in ("backend", "backend-corpus"):
+            data["services"][service]["environment"]["N8N_WEBHOOK_URL"] = (
+                "http://n8n:5678/webhook/incidente-web"
+            )
 
     checks = check_compose(_write_compose(tmp_path, mutate))
     _assert_single_named_fail(checks, "N8N_WEBHOOK_URL")
@@ -376,7 +477,7 @@ def test_format_summary_names_each_check():
 def test_run_preflight_combines_workflow_and_compose(tmp_path):
     compose = _write_compose(tmp_path, lambda data: None)
     checks = run_preflight(REAL_WORKFLOW_PATH, compose)
-    assert any("AI Agent" in c.name for c in checks)
+    assert any(c.name.startswith("workflow:") for c in checks)
     assert any("EXECUTIONS_TIMEOUT" in c.name for c in checks)
     assert exit_code(checks) == 0
 

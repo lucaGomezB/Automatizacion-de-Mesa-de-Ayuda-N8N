@@ -52,6 +52,43 @@ def _write_workflow(tmp_path, mutate) -> pathlib.Path:
     return path
 
 
+_MISSING = object()
+
+
+def _gemini_model_node(model_name=_MISSING) -> dict:
+    """Construye un nodo de modelo Gemini minimo para simular su reaparicion."""
+    node = {
+        "name": GEMINI_MODEL_NODE_NAME,
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1,
+        "position": [0, 0],
+        "parameters": {},
+    }
+    if model_name is not _MISSING:
+        node["parameters"]["modelName"] = model_name
+    return node
+
+
+def _ai_agent_node(
+    retry_on_fail=None, max_tries=None, wait_between_tries=None
+) -> dict:
+    """Construye un nodo 'AI Agent' minimo para simular su reaparicion."""
+    node = {
+        "name": AI_AGENT_NODE_NAME,
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1,
+        "position": [0, 0],
+        "parameters": {},
+    }
+    if retry_on_fail is not None:
+        node["retryOnFail"] = retry_on_fail
+    if max_tries is not None:
+        node["maxTries"] = max_tries
+    if wait_between_tries is not None:
+        node["waitBetweenTries"] = wait_between_tries
+    return node
+
+
 def _summary(checks) -> str:
     return " || ".join(f"{c.status}:{c.name}:{c.detail}" for c in checks)
 
@@ -78,9 +115,26 @@ def test_workflow_real_pasa_todas_las_guardas():
     assert exit_code(checks) == 0
 
 
+def test_modelo_ausente_pasa_guarda_neutralizada():
+    """c-72 retiro el nodo de modelo Gemini: la guarda se neutraliza y PASA."""
+    checks = run_gemini_readiness(REAL_WORKFLOW_PATH)
+    model_checks = [c for c in checks if "modelName" in c.name]
+    assert model_checks, "No existe la guarda de modelName"
+    assert all(c.status == "PASS" for c in model_checks), _summary(checks)
+
+
+def test_modelo_presente_con_model_name_pineado_pasa(tmp_path):
+    """Triangulacion: si el nodo reaparece con modelName, la guarda pasa."""
+    def mutate(wf):
+        wf["nodes"].append(_gemini_model_node("gemini-3.5-flash"))
+
+    checks = run_gemini_readiness(_write_workflow(tmp_path, mutate))
+    assert all(c.status == "PASS" for c in checks), _summary(checks)
+
+
 def test_modelo_implicito_falla_nombrado(tmp_path):
     def mutate(wf):
-        _node(wf, GEMINI_MODEL_NODE_NAME)["parameters"].pop("modelName", None)
+        wf["nodes"].append(_gemini_model_node())
 
     checks = run_gemini_readiness(_write_workflow(tmp_path, mutate))
     _assert_fails_naming(checks, "modelName")
@@ -89,18 +143,38 @@ def test_modelo_implicito_falla_nombrado(tmp_path):
 
 def test_modelo_vacio_falla_nombrado(tmp_path):
     def mutate(wf):
-        _node(wf, GEMINI_MODEL_NODE_NAME)["parameters"]["modelName"] = ""
+        wf["nodes"].append(_gemini_model_node(""))
 
     checks = run_gemini_readiness(_write_workflow(tmp_path, mutate))
     _assert_fails_naming(checks, "modelName")
 
 
+def test_agente_ausente_pasa_guarda_neutralizada():
+    """c-72 retiro el 'AI Agent': la guarda de reintento se neutraliza y PASA."""
+    checks = run_gemini_readiness(REAL_WORKFLOW_PATH)
+    agent_checks = [c for c in checks if "reintento acotado" in c.name.lower()]
+    assert agent_checks, "No existe la guarda de reintento del agente"
+    assert all(c.status == "PASS" for c in agent_checks), _summary(checks)
+
+
+def test_agente_presente_con_reintento_acotado_pasa(tmp_path):
+    """Triangulacion: si el nodo reaparece bien configurado, la guarda pasa."""
+    def mutate(wf):
+        wf["nodes"].append(
+            _ai_agent_node(
+                retry_on_fail=True,
+                max_tries=2,
+                wait_between_tries=gemini_readiness.AGENT_MIN_WAIT_BETWEEN_TRIES_MS,
+            )
+        )
+
+    checks = run_gemini_readiness(_write_workflow(tmp_path, mutate))
+    assert all(c.status == "PASS" for c in checks), _summary(checks)
+
+
 def test_reintento_ausente_falla_nombrado(tmp_path):
     def mutate(wf):
-        agent = _node(wf, AI_AGENT_NODE_NAME)
-        agent.pop("retryOnFail", None)
-        agent.pop("maxTries", None)
-        agent.pop("waitBetweenTries", None)
+        wf["nodes"].append(_ai_agent_node())
 
     checks = run_gemini_readiness(_write_workflow(tmp_path, mutate))
     _assert_fails_naming(checks, "retryOnFail")
@@ -109,10 +183,7 @@ def test_reintento_ausente_falla_nombrado(tmp_path):
 
 def test_reintento_sin_cotas_falla_nombrado(tmp_path):
     def mutate(wf):
-        agent = _node(wf, AI_AGENT_NODE_NAME)
-        agent["retryOnFail"] = True
-        agent.pop("maxTries", None)
-        agent.pop("waitBetweenTries", None)
+        wf["nodes"].append(_ai_agent_node(retry_on_fail=True))
 
     checks = run_gemini_readiness(_write_workflow(tmp_path, mutate))
     _assert_fails_naming(checks, "maxTries")
@@ -120,10 +191,13 @@ def test_reintento_sin_cotas_falla_nombrado(tmp_path):
 
 def test_max_tries_fuera_del_tope_falla_nombrado(tmp_path):
     def mutate(wf):
-        agent = _node(wf, AI_AGENT_NODE_NAME)
-        agent["retryOnFail"] = True
-        agent["maxTries"] = gemini_readiness.AGENT_MAX_TRIES_CAP + 1
-        agent["waitBetweenTries"] = gemini_readiness.AGENT_MIN_WAIT_BETWEEN_TRIES_MS
+        wf["nodes"].append(
+            _ai_agent_node(
+                retry_on_fail=True,
+                max_tries=gemini_readiness.AGENT_MAX_TRIES_CAP + 1,
+                wait_between_tries=gemini_readiness.AGENT_MIN_WAIT_BETWEEN_TRIES_MS,
+            )
+        )
 
     checks = run_gemini_readiness(_write_workflow(tmp_path, mutate))
     _assert_fails_naming(checks, "tope")
