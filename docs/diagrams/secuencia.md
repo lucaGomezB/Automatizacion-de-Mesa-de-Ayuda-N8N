@@ -7,7 +7,7 @@ hasta la confirmación al usuario o la derivación a revisión humana.
 sequenceDiagram
     autonumber
 
-    participant Canal as Canal de Entrada<br/>(Outlook / Twilio)
+    participant Canal as Canal de Entrada<br/>(Correo IMAP / Web / Telefonía)
     participant N8N as N8N Workflow
     participant BE as Backend FastAPI<br/>POST /api/v1/incidentes
     participant CLAS as Clasificador Híbrido<br/>(determinístico + Gemini)
@@ -16,7 +16,7 @@ sequenceDiagram
     participant OP as Operador Humano<br/>PATCH /clasificaciones/{id}/validar
 
     %% ── Ingreso del incidente ──────────────────────────────────────────────
-    Canal->>N8N: Evento (correo / transcripción de llamada)
+    Canal->>N8N: Evento (correo IMAP / formulario web / handoff de telefonía)
     Note over N8N: Valida campos requeridos.<br/>Si faltan datos, solicita reintento.
     N8N->>BE: POST /api/v1/incidentes<br/>{ descripcion, prioridad, canal_origen_id }
 

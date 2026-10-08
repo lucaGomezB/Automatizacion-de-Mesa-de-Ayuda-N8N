@@ -52,7 +52,7 @@ una desalineación de relojes) **NUNCA** se reporta como medición válida:
 El análisis de latencias **debe reportarse por canal**: los puntos de ingreso no
 son homogéneos y mezclarlos rompería la comparabilidad.
 
-- **Correo**: el ingreso es el instante en que el **poller de Outlook recoge el
+- **Correo**: el ingreso es el instante en que el **poller IMAP (`emailReadImap`) recoge el
   mensaje**, NO la llegada al buzón. La latencia **excluye la espera previa a la
   recogida** (hasta ~60 s por `everyMinute`), por lo que **sub-mide** respecto de
   la llegada real al buzón y no es comparable caso a caso con web/telefonía.

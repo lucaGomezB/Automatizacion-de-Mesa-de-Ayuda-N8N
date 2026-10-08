@@ -57,10 +57,11 @@ nombres alternativos.
 2. **Fallback seguro ante escalada.** Si una descripción no alcanza el umbral
    determinístico, la escalada falla de forma segura con `confianza=0.0`; no se
    completa ninguna llamada paga.
-3. **Twilio nunca se toca.** El arnés elimina del workflow toda la rama de canales
-   pagos (incluido el trigger de Twilio) y no importa ni invoca el cliente de
-   Twilio en ninguna variante. El canal telefónico es solo un procedimiento manual
-   documentado (§7) y queda fuera del camino de costo cero.
+3. **Twilio nunca se toca.** El arnés elimina del workflow los nodos con
+   credenciales placeholder (incluido `Llamada telefonica`, entrada del canal
+   telefónico) y no importa ni invoca el cliente de Twilio en ninguna variante.
+   El canal telefónico es solo un procedimiento manual documentado (§7) y queda
+   fuera del camino de costo cero.
 
 > No debilitar estos guardarraíles. Si `guardrail:gemini-key` falla, el arnés no
 > envía incidentes.
@@ -124,7 +125,7 @@ siguiente paso concreto.
 
 ## 6. Canal correo (gratuito, opcional)
 
-Recibir correo es gratis: el trigger de Outlook en N8N hace *polling* al buzón,
+Recibir correo es gratis: el trigger IMAP `emailReadImap` en N8N hace *polling* al buzón,
 por lo que el canal correo **no tiene costo de uso** y queda fuera de los
 guardarraíles de servicios pagos. Aun así, es **opcional**: el camino mínimo
 obligatorio (recorrido web) se completa sin ninguna credencial de correo.
@@ -133,12 +134,12 @@ obligatorio (recorrido web) se completa sin ninguna credencial de correo.
 
 Reproducible sin credenciales reales para el camino mínimo: si no se dispone de
 credenciales de correo, ejecutar solo el recorrido web (§4). El procedimiento que
-sigue requiere credenciales reales de Outlook.
+sigue requiere credenciales reales `imap`/`smtp`.
 
 Credenciales requeridas:
 
-- Credencial OAuth2 de Microsoft Outlook en N8N (nombre sugerido
-  `Mesa de Ayuda - Outlook`), asociada al buzón que dispara el workflow.
+- Credenciales `imap` y `smtp` en N8N (casilla Gmail dedicada con 2FA y App
+  Password), asociadas al buzón que dispara el workflow y a los envíos `emailSend`.
 - El workflow con la rama de correo activa (nodo `Llega un email a Mesa de Ayuda`).
 
 Pasos:
@@ -146,7 +147,7 @@ Pasos:
 1. **Inducir el mensaje.** Enviar un correo al buzón monitoreado con un asunto
    cualquiera y un **cuerpo de al menos 10 caracteres** (el cuerpo se usa como
    `descripcion`). Por ejemplo: `La impresora del sector no enciende`.
-2. **Esperar el polling.** El trigger de Outlook consulta el buzón
+2. **Esperar el polling.** El trigger IMAP `emailReadImap` consulta el buzón
    periódicamente; dar unos minutos.
 3. **Verificar la persistencia** con `canal_origen_id == 1`:
 
@@ -190,7 +191,7 @@ Variables de entorno para la variante:
 |----------|-------------|---------|-------------|
 | `DRY_RUN_EMAIL_SMTP_HOST` | sí | — | Servidor SMTP que entrega al buzón monitoreado. |
 | `DRY_RUN_EMAIL_FROM` | sí | — | Remitente del correo de prueba. |
-| `DRY_RUN_EMAIL_TO` | sí | — | Buzón monitoreado por el trigger de Outlook. |
+| `DRY_RUN_EMAIL_TO` | sí | — | Buzón monitoreado por el trigger IMAP. |
 | `DRY_RUN_EMAIL_SMTP_PORT` | no | `587` | Puerto SMTP. |
 | `DRY_RUN_EMAIL_SMTP_USER` | no | vacío | Usuario SMTP (si requiere autenticación). |
 | `DRY_RUN_EMAIL_SMTP_PASSWORD` | no | vacío | Password SMTP (nunca se imprime). |
@@ -205,7 +206,7 @@ Comportamiento:
   operador pidió la variante y no la configuró.
 - Sin `--with-email`: cero checks de correo. El arnés completa sin credenciales.
 
-Prerrequisito para que la variante tenga éxito: la rama de Outlook del workflow
+Prerrequisito para que la variante tenga éxito: la rama de correo IMAP del workflow
 en N8N debe estar activa y con credenciales reales (§6.1).
 
 ---
@@ -224,8 +225,9 @@ Credenciales requeridas:
 
 - Twilio **Account SID** y **Auth Token**.
 - Número de Twilio habilitado para voz (número entrante).
-- Credencial de Twilio configurada en N8N (nodo `Llamada telefonica` / Twilio
-  Trigger) y el workflow completo activo con esa rama.
+- La credencial Header Auth `X-N8N-Secret` asignada al webhook `Llamada
+  telefonica` (`POST /webhook/telefonia-handoff`) y el workflow completo activo.
+  El handoff lo origina el backend; N8N no tiene ningún nodo de Twilio.
 
 Pasos:
 
@@ -234,8 +236,8 @@ Pasos:
 2. Realizar **una o dos llamadas** al número de Twilio. Hablar una descripción
    válida (al menos 10 caracteres), por ejemplo: `La impresora del sector no
    enciende`.
-3. Esperar a que Twilio genere la grabación/transcripción y el trigger dispare el
-   workflow.
+3. Esperar a que Twilio genere la grabación; el backend la descarga, transcribe,
+   pseudonimiza y dispara el handoff `POST /webhook/telefonia-handoff`.
 4. **Verificar la persistencia** con `canal_origen_id == 3`:
 
    ```bash
@@ -261,8 +263,8 @@ Pasos:
 El arnés **no marca, crea ni dispara** recursos ni llamadas de Twilio en ninguna
 variante:
 
-- La transformación de costo cero elimina del workflow toda la rama de canales
-  pagos, incluido el nodo `Llamada telefonica` (Twilio Trigger).
+- La transformación de costo cero elimina del workflow los nodos con credenciales
+  placeholder, incluido el nodo `Llamada telefonica` (entrada del canal telefónico).
 - El código del arnés no importa ni invoca el cliente de Twilio.
 - La variante de correo usa SMTP estándar y no toca Twilio.
 

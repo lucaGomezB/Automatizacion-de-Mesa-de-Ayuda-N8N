@@ -14,7 +14,7 @@ graph TD
             PG["PostgreSQL 15.5-alpine\npuerto host: 5433\nvolumen: postgres_data\nDB: mesa_de_ayuda"]
             RD["Redis 7.2-alpine\npuerto host: 6379"]
             BE["Backend FastAPI\n(sin puerto host)\nuvicorn app.main:app\nalembic upgrade head al iniciar"]
-            N8N["N8N latest\npuerto host: 5678\nBasic Auth: admin/n8n_local_dev (default local)\nvolumen: n8n_data"]
+            N8N["N8N 2.11.2\npuerto host: 5678\nBasic Auth: admin/n8n_local_dev (default local)\nvolumen: n8n_data"]
             FE["Frontend React 18 + Vite\n(sin puerto host)\nVite dev server :3000"]
             NGX["Nginx alpine\npuerto host: 80, 443\nTLS 1.3 termination\nHTTP → HTTPS redirect\nHSTS header"]
         end
@@ -27,8 +27,8 @@ graph TD
 
     subgraph External["Servicios Externos"]
         GEMINI["Google Gemini API\n(clasificacion LLM)"]
-        OUTLOOK["Microsoft Outlook\n(trigger de correo)"]
-        TWILIO["Twilio\n(webhook de llamadas)"]
+        IMAP["Gmail IMAP/SMTP\n(correo: trigger y envio)"]
+        TWILIO["Twilio\n(voz / callback de grabacion)"]
     end
 
     %% Dependencias de salud declaradas en el compose
@@ -40,7 +40,7 @@ graph TD
 
     %% Comunicacion entre servicios
     BE -- "asyncpg (PostgreSQL protocol)" --> PG
-    N8N -- "Redis (memoria AI Agent)" --> RD
+    N8N -- "Redis (cola de trabajos)" --> RD
     N8N -- "HTTP POST /api/v1/incidentes" --> BE
     BE -- "HTTPS (google-genai SDK)" --> GEMINI
 
@@ -49,8 +49,9 @@ graph TD
     NGX -- "/* → frontend:3000" --> FE
 
     %% Canales de entrada externos
-    OUTLOOK -- "trigger (email)" --> N8N
-    TWILIO -- "webhook (transcripcion)" --> N8N
+    IMAP -- "IMAP/SMTP (correo)" --> N8N
+    TWILIO -- "webhook de voz / callback" --> BE
+    BE -- "handoff pseudonimizado" --> N8N
 
     %% Volumenes y archivos
     ENV -. "env_file" .-> BE
