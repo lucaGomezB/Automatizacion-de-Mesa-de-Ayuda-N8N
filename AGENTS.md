@@ -244,6 +244,14 @@ Reglas duras de la memoria de Engram:
 - El guard es `scripts/security/scan_engram_secrets.py`, invocado con `python3 scripts/security/scan_engram_secrets.py .engram`. Esta cableado en el hook `.githooks/pre-commit` (seccion 4), que lo corre cuando hay archivos `.engram/` staged y bloquea el commit si encuentra hallazgos.
 - Si el guard marca un falso positivo (por ejemplo, una referencia a codigo como `api_key=settings.gemini_api_key`), NO se debilita el patron: se evalua el caso y, si corresponde, se documenta. La memoria no se publica con un hallazgo sin resolver. <!-- gitleaks:allow -->
 
+## External Sources (GitHub and Third-Party Code)
+
+- When you complement your work with information or code from GitHub, FIRST verify the project is the OFFICIAL and LEGITIMATE source. Repositories can be SPOOFED: a similar name, a fork, a mirror, or a re-uploaded copy is NOT the origin.
+- Verify ownership before trusting anything: the org/user and the repo URL must match the project's canonical home (the vendor's official org or the URL linked from its official docs site). A lookalike name (`n8n-io` vs `n8n_local`, `fastapi` vs `fast-api`) is a red flag, not a match.
+- Prefer the canonical URL and the vendor's own documentation (Context7) over search-engine results. Popularity signals (stars, forks, watchers) do NOT prove legitimacy — a spoofed or mirrored repo can fake them.
+- Do NOT copy code, install packages, or trust API/config guidance from an unverified repository. If provenance is uncertain, STOP and ask before proceeding.
+- For dependency and package decisions, confirm the published package resolves to the same official owner/repository as the GitHub project you vetted.
+
 ## What NOT to Do
 
 - Do NOT use emojis under any circumstance — not in code, not in comments, not in commit messages, not in chat responses, not in documentation. They degrade readability and professionalism.
