@@ -120,6 +120,22 @@
       "sessions": 0,
       "memories": 3,
       "prompts": 6
+    },
+    {
+      "id": "c6924e9b",
+      "created_by": "skywalker",
+      "created_at": "2026-10-08T19:07:21Z",
+      "sessions": 1,
+      "memories": 7,
+      "prompts": 14
+    },
+    {
+      "id": "71156c59",
+      "created_by": "skywalker",
+      "created_at": "2026-10-08T19:11:32Z",
+      "sessions": 0,
+      "memories": 1,
+      "prompts": 0
     }
   ]
 }
