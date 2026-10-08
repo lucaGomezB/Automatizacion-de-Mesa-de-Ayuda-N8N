@@ -72,8 +72,9 @@ def test_base_services_are_not_part_of_the_corpus_profile():
 def test_corpus_postgres_uses_its_own_database_and_port():
     service = _services()["postgres-corpus"]
     assert service["environment"]["POSTGRES_DB"] == "mesa_de_ayuda_corpus"
-    # Distinta de la base operativa (5433) para poder coexistir.
-    assert "5434:5432" in _ports(service)
+    # Distinta de la base operativa (5433) para poder coexistir y acotada a
+    # loopback (c-62, OQ-7).
+    assert "127.0.0.1:5434:5432" in _ports(service)
 
 
 def test_corpus_backend_points_only_to_the_corpus_database():
@@ -81,15 +82,16 @@ def test_corpus_backend_points_only_to_the_corpus_database():
     database_url = str(service["environment"]["DATABASE_URL"])
     assert "postgres-corpus" in database_url
     assert "mesa_de_ayuda_corpus" in database_url
-    # Distinto del backend operativo (8000) para el tunel propio del corpus.
-    assert "8001:8000" in _ports(service)
+    # Distinto del backend operativo (8000) para el tunel propio del corpus y
+    # acotado a loopback (c-62, OQ-7).
+    assert "127.0.0.1:8001:8000" in _ports(service)
 
 
 def test_corpus_n8n_is_isolated_and_bound_to_the_corpus_backend():
     service = _services()["n8n-corpus"]
     assert service["environment"]["BACKEND_URL"] == "http://backend-corpus:8000"
-    # Distinto del N8N operativo (5678).
-    assert "5679:5678" in _ports(service)
+    # Distinto del N8N operativo (5678) y acotado a loopback (c-62, OQ-7).
+    assert "127.0.0.1:5679:5678" in _ports(service)
 
 
 def test_corpus_services_never_mount_the_application_volumes():

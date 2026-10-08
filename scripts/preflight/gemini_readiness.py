@@ -1,4 +1,4 @@
-"""Preflight estatico de la superficie Gemini del workflow (c-58-resiliencia-gemini).
+"""Preflight estatico de la superficie Gemini del workflow (c-58).
 
 Verifica, leyendo UNICAMENTE artefactos del repositorio, que la superficie Gemini
 del workflow de n8n esta pineada y es resiliente:
@@ -8,6 +8,12 @@ del workflow de n8n esta pineada y es resiliente:
 - El nodo `AI Agent` declara un reintento acotado y explicito
   (`retryOnFail` verdadero con `maxTries` dentro del tope y `waitBetweenTries`
   no menor al minimo).
+
+NOTA (c-72): la rama IA de n8n (nodo de modelo Gemini y `AI Agent`) fue RETIRADA
+del workflow; la clasificacion vive en el backend. Estas guardas se conservan
+como verificacion de REGRESION: PASAN cuando el nodo esta ausente y FALLAN solo
+si el nodo reaparece mal configurado. El mismo patron neutralizado que usa
+`cost_readiness._check_mark_read_resolved_in_trigger` (c-55).
 
 NO accede a red, no requiere Docker ni credenciales y NO lee ni imprime la clave
 de API. La sonda viva de disponibilidad queda explicitamente fuera de este
@@ -107,10 +113,17 @@ def _find_agent_node(workflow: dict) -> Optional[dict]:
 
 
 def _check_model_pinned(workflow: dict) -> Check:
+    """Modelo Gemini pineado (neutralizado por c-72).
+
+    El nodo de modelo fue RETIRADO (la clasificacion vive en el backend); la
+    guarda PASA cuando esta ausente y solo FAIL si reaparece sin `modelName`.
+    """
     node = _find_gemini_model_node(workflow)
     if node is None:
-        return _failing(
-            GUARD_MODEL, "No existe el nodo de modelo Gemini en el workflow"
+        return _passing(
+            GUARD_MODEL,
+            "nodo de modelo Gemini ausente: superficie IA de n8n retirada por "
+            "c-72 (la clasificacion vive en el backend)",
         )
     model_name = node.get("parameters", {}).get("modelName")
     if not isinstance(model_name, str) or not model_name.strip():
@@ -123,10 +136,16 @@ def _check_model_pinned(workflow: dict) -> Check:
 
 
 def _check_agent_retry(workflow: dict) -> Check:
+    """Reintento acotado del AI Agent (neutralizado por c-72).
+
+    El nodo fue RETIRADO; la guarda PASA cuando esta ausente y solo FAIL si
+    reaparece con un reintento mal configurado.
+    """
     node = _find_agent_node(workflow)
     if node is None:
-        return _failing(
-            GUARD_AGENT_RETRY, f"No existe el nodo {AI_AGENT_NODE_NAME!r}"
+        return _passing(
+            GUARD_AGENT_RETRY,
+            f"nodo {AI_AGENT_NODE_NAME!r} ausente (retirado por c-72)",
         )
     retry = node.get("retryOnFail")
     max_tries = node.get("maxTries")

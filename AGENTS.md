@@ -163,7 +163,7 @@ cd evaluation; pytest              # Self-contained suite (FakeClassifier, no Ge
 ### Full Stack (Docker)
 
 ```bash
-# Start everything (PostgreSQL :5433, Redis :6379, backend :8000, N8N :5678)
+# Start everything (PostgreSQL :5433 y N8N :5678 en loopback 127.0.0.1; backend :8000 solo interno; sin Redis desde c-62)
 docker compose up -d
 
 # Verify all healthy
@@ -259,5 +259,5 @@ Reglas duras de la memoria de Engram:
 - Do NOT write production code that lazy-loads SQLAlchemy relationships in async context.
 - Do NOT change the five category strings — they are locked by domain spec and the evaluation corpus.
 - Do NOT remove or rename `CLAUDE.md` — it contains the Skill routing table used by other tooling.
-- Do NOT run `docker compose` without the fixed project name `mesa_local` — duplicate stacks will collide on ports 8000/5678/6379/5433.
+- Do NOT run `docker compose` without the fixed project name `mesa_local` — duplicate stacks will collide on the published ports 80/443/5433/5678.
 - Do NOT run tests from repo root expecting all suites to execute — backend, frontend, and evaluation each require their own working directory.

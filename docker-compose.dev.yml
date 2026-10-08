@@ -1,0 +1,19 @@
+# docker-compose.dev.yml — Override opt-in de DESARROLLO (c-62, OQ-5=B).
+#
+# Se aplica SOLO de forma explicita, encadenando los dos archivos:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+#
+# Postura: activa el modo de desarrollo del backend (`ENVIRONMENT=development`),
+# que cambia el formato de logging estructurado (consola en vez de JSON) y otros
+# comportamientos asociados al flag. El `docker compose up -d` a secas NO lee
+# este archivo: el estado por defecto queda endurecido (loopback + segmentacion).
+#
+# IMPORTANTE: este override NO re-expone puertos. La postura endurecida de
+# puertos y red del compose base se conserva tal cual; es un override de
+# postura de aplicacion, no un re-expositor de red.
+
+services:
+  backend:
+    environment:
+      ENVIRONMENT: development

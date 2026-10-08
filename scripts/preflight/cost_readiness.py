@@ -157,7 +157,8 @@ def _body_to_text(body: object) -> str:
 # Guardas del workflow
 # ---------------------------------------------------------------------------
 WORKFLOW_GUARD_AGENT = (
-    "workflow: AI Agent declara tope de iteraciones (options.maxIterations)"
+    "workflow: AI Agent ausente (retirado por c-72) o con tope de iteraciones "
+    "(options.maxIterations) acotado"
 )
 WORKFLOW_GUARD_IMAP = (
     "workflow: trigger IMAP filtra no leidos con lookback de 24h"
@@ -167,8 +168,14 @@ WORKFLOW_GUARD_MARK_READ = (
 )
 WORKFLOW_GUARD_BODY = (
     "workflow: body de 'HTTP POST a MESA-AYUDAS' con origen_message_id + "
-    "clasificacion + origen_evento"
+    "origen_evento y sin clasificacion (c-72)"
 )
+
+# Claves del body del HTTP POST a MESA-AYUDAS (postura post-c-72). La
+# clasificacion la resuelve el backend; las claves derivadas del modelo ya NO
+# viajan en el body de n8n. Se exigen los trazadores y se PROHIBE su reaparicion.
+REQUIRED_BODY_KEYS = ("origen_message_id", "origen_evento")
+FORBIDDEN_BODY_KEYS = ("clasificacion", "sector_predicho", "confianza")
 WORKFLOW_GUARD_NOTIF = (
     "workflow: webhook dedicado 'notificacion-clasificacion' aislado de la "
     "creacion de incidentes"
@@ -179,10 +186,18 @@ WORKFLOW_GUARD_RETRY = (
 
 
 def _check_agent_iterations(workflow: dict) -> Check:
+    """Tope de iteraciones del nodo pago (neutralizado por c-72).
+
+    El nodo 'AI Agent' fue RETIRADO (la clasificacion vive en el backend); la
+    guarda PASA cuando esta ausente y solo FAIL si reaparece con
+    ``options.maxIterations`` ausente o no acotado.
+    """
     by_name = _nodes_by_name(workflow)
     agent = by_name.get(AI_AGENT_NODE)
     if agent is None:
-        return _failing(WORKFLOW_GUARD_AGENT, f"No existe el nodo {AI_AGENT_NODE!r}")
+        return _passing(
+            WORKFLOW_GUARD_AGENT, "nodo 'AI Agent' ausente (retirado por c-72)"
+        )
     options = agent.get("parameters", {}).get("options", {})
     max_iterations = options.get("maxIterations")
     if not _is_numeric(max_iterations) or max_iterations <= 0:
@@ -233,24 +248,31 @@ def _check_mark_read_resolved_in_trigger(workflow: dict) -> Check:
 
 
 def _check_enriched_body(workflow: dict) -> Check:
+    """Contrato del body del HTTP POST a MESA-AYUDAS (postura post-c-72).
+
+    Exige los trazadores ``origen_message_id`` y ``origen_evento`` y PROHIBE las
+    claves derivadas del modelo (``clasificacion``, ``sector_predicho``,
+    ``confianza``): desde c-72 la clasificacion la resuelve el backend y no debe
+    volver a viajar en el body de n8n.
+    """
     by_name = _nodes_by_name(workflow)
     node = by_name.get(HTTP_NODE)
     if node is None:
         return _failing(WORKFLOW_GUARD_BODY, f"No existe el nodo {HTTP_NODE!r}")
     body_text = _body_to_text(node.get("parameters", {}).get("jsonBody"))
-    required = (
-        "origen_message_id",
-        "clasificacion",
-        "sector_predicho",
-        "confianza",
-        "origen_evento",
-    )
-    missing = [key for key in required if key not in body_text]
+    missing = [key for key in REQUIRED_BODY_KEYS if key not in body_text]
     if missing:
         return _failing(
             WORKFLOW_GUARD_BODY, f"faltan en el body: {', '.join(missing)}"
         )
-    return _passing(WORKFLOW_GUARD_BODY, "origen_message_id + clasificacion + evento")
+    forbidden = [key for key in FORBIDDEN_BODY_KEYS if key in body_text]
+    if forbidden:
+        return _failing(
+            WORKFLOW_GUARD_BODY,
+            "claves retiradas por c-72 presentes en el body: "
+            + ", ".join(forbidden),
+        )
+    return _passing(WORKFLOW_GUARD_BODY, "origen_message_id + origen_evento")
 
 
 def _check_notification_webhook(workflow: dict) -> Check:
