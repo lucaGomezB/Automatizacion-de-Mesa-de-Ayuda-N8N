@@ -107,7 +107,7 @@ C-55 canal-correo-imap (ninguna)                         [ARCHIVADO 2026-09-29 �
 
 --- FASE 19: Endurecimiento, auditoria y herramientas (2026-09-28 / 2026-09-30) ---
 
-C-56 notificaciones-por-rol (C-54, C-55, C-53, C-38)    [ACTIVO — 0/27]
+C-56 notificaciones-por-rol (C-54, C-55, C-53, C-38)    [ARCHIVADO 2026-10-08 — 27/27]
 C-57 auditoria-rama-revision (ninguna nueva; C-55)       [ARCHIVADO 2026-09-29 — 15/15]
 C-58 resiliencia-gemini (specs C-33/C-36/C-45)           [ARCHIVADO 2026-09-29 — 33/33]
 C-59 softphone-voip-pruebas (C-52, C-45)                 [ARCHIVADO 2026-10-01 — 23/23]
@@ -486,13 +486,15 @@ C-74 calibracion-cortocircuito-determinista (C-71, C-72)   [ARCHIVADO 2026-10-07
 | C-70 | softphone-corpus-telefonia | 23 | C-59, C-52, C-68 | ALTO | — |
 | C-71 | hardening-clasificador-determinista | 24 | ninguna nueva | MEDIO | — |
 | C-72 | unificar-clasificacion-telefonica | 25 | C-71 | ALTO | — |
+| C-73 | pseudonimizacion-tarjeta | 26 | ninguna | ALTO | — |
 | C-74 | calibracion-cortocircuito-determinista | 27 | C-71, C-72 | ALTO | — |
+| C-75 | sincronizar-docs-n8n | 28 | ninguna (drift de C-72/C-55) | MEDIO | — |
 
-**Total**: 66 entradas creadas documentadas (65 numeradas + 1 de mantenimiento sin numero) — 63 archivadas (62 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59, C-60, C-61, C-69, C-70, C-71, C-72, C-73 y C-74; mas `improve-dockerfiles`) y 3 ACTIVOS (C-56, C-67, C-68). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
+**Total**: 67 entradas creadas documentadas (66 numeradas + 1 de mantenimiento sin numero) — 65 archivadas (64 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-69, C-70, C-71, C-72, C-73, C-74 y C-75; mas `improve-dockerfiles`) y 2 ACTIVOS (C-67, C-68). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
 **Planificadas (NO creadas)**: 5 entradas del plan de cumplimiento (FASE 21) — C-62 `hardening-infra-red` (ALTO), C-63 `identidad-accesos-claves` (CRITICO), C-64 `vulnerabilidades-supply-chain` (MEDIO), C-65 `backup-continuidad` (ALTO) y C-66 `privacidad-transferencias` (ALTO). No cuentan como creadas, archivadas ni activas. C-61 `compliance-gobernanza` (MEDIO) ya fue creado y quedo ARCHIVADO (2026-10-01, 26/26), con su spec `security-governance-docs` creada. Ver `docs/cumplimiento/plan-cambios-cumplimiento.md`.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
-**Fases**: 1-27 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67, la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, con C-61 archivado (2026-10-01) y C-62..C-66 planificados, la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 ya archivado (2026-10-05) y C-68 en aplicacion, la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 archivado (2026-10-06), la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 archivado (2026-10-06), la FASE 25 agrupa la unificacion de la clasificacion telefonica con C-72 archivado (2026-10-07), la FASE 26 agrupa la pseudonimizacion de numeros de tarjeta hablados con C-73 archivado (2026-10-07), y la FASE 27 agrupa la calibracion del cortocircuito determinista con C-74 archivado (2026-10-07)).
+**Fases**: 1-28 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67, la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, con C-61 archivado (2026-10-01) y C-62..C-66 planificados, la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 ya archivado (2026-10-05) y C-68 en aplicacion, la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 archivado (2026-10-06), la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 archivado (2026-10-06), la FASE 25 agrupa la unificacion de la clasificacion telefonica con C-72 archivado (2026-10-07), la FASE 26 agrupa la pseudonimizacion de numeros de tarjeta hablados con C-73 archivado (2026-10-07), la FASE 27 agrupa la calibracion del cortocircuito determinista con C-74 archivado (2026-10-07), y la FASE 28 agrupa la sincronizacion documental N8N con C-75 archivado (2026-10-08)).
 
 ---
 
@@ -1253,9 +1255,9 @@ C-74 calibracion-cortocircuito-determinista (C-71, C-72)   [ARCHIVADO 2026-10-07
 
 ## FASE 19 — Endurecimiento, auditoria y herramientas (2026-09-28 / 2026-09-30)
 
-> Changes post-roadmap que endurecen el directorio y las notificaciones, corrigen la auditoria de la rama de revision, agregan resiliencia a Gemini y suman una herramienta de pruebas de telefonia. C-57 y C-58 estan ARCHIVADOS (2026-09-29) y C-59 quedo ARCHIVADO (2026-10-01); C-56 sigue ACTIVO (planning completo, sin aplicar) y C-60 quedo ARCHIVADO (33/33, 2026-10-06; aprobacion humana HIGH 7.4 pendiente).
+> Changes post-roadmap que endurecen el directorio y las notificaciones, corrigen la auditoria de la rama de revision, agregan resiliencia a Gemini y suman una herramienta de pruebas de telefonia. C-57 y C-58 estan ARCHIVADOS (2026-09-29) y C-59 quedo ARCHIVADO (2026-10-01); C-56 quedo APLICADO y ARCHIVADO (2026-10-08, 27/27; verify PASS con el smoke manual confirmado) y C-60 quedo ARCHIVADO (33/33, 2026-10-06; aprobacion humana HIGH 7.4 pendiente).
 
-### [C-56] `notificaciones-por-rol` — ACTIVO (planificado, 0/27)
+### [C-56] `notificaciones-por-rol` — ARCHIVADO (2026-10-08, 27/27)
 
 - **Estado**: `[ ]` propuesto (2026-09-28) — planning completo (proposal, specs, design, tasks), `openspec validate --strict` pasa. Sin aplicar.
 - **Problema**: el destinatario de la notificacion de revision humana esta fijado en N8N como una unica casilla (`$env.OPERATOR_EMAIL`). Aunque c-54 creo un directorio con roles y sector, nadie lo usa para enrutar; con mas de un operador no se puede avisar al operador del sector correcto.
@@ -1665,14 +1667,13 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 
 ## Primer change recomendado
 
-Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01), C-61 (2026-10-01, 26/26), C-69 (2026-10-05, 30/30), C-71 (2026-10-06, 43/43), C-60 (2026-10-06, 33/33), C-70 (2026-10-06, 72/72), C-72 (2026-10-07, 37/37), C-73 (2026-10-07, 23/23), C-74 (2026-10-07, 32/32) y C-75 (2026-10-08, 14/14).
+Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01), C-61 (2026-10-01, 26/26), C-69 (2026-10-05, 30/30), C-71 (2026-10-06, 43/43), C-60 (2026-10-06, 33/33), C-70 (2026-10-06, 72/72), C-72 (2026-10-07, 37/37), C-73 (2026-10-07, 23/23), C-74 (2026-10-07, 32/32), C-75 (2026-10-08, 14/14) y C-56 (2026-10-08, 27/27).
 
-Hay 3 changes ACTIVOS (c-56, c-67, c-68):
-- **`c-56-notificaciones-por-rol`** — 26/27 (aplicado y verificado PASS WITH WARNINGS, 0 CRITICAL; pendiente solo el smoke manual 7.5; FASE 19) — Governance ALTO.
+Hay 2 changes ACTIVOS (c-67, c-68):
 - **`c-67-notificacion-sms-llamante`** — 0/24 (diferido; bloqueado por OQ3 y C-66; FASE 20) — Governance ALTO.
 - **`c-68-corpus-ingesta-n8n`** — 58/63 (apply avanzado; corpus web/correo medido; FASE 22) — Governance MEDIO.
 
-C-01..C-48, C-52, C-53, C-54, C-55, C-57, C-58, C-59, C-60, C-61, C-69, C-70, C-71, C-72, C-73, C-74 y C-75 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
+C-01..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-69, C-70, C-71, C-72, C-73, C-74 y C-75 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
 
 **Detalle de `c-52-telefonia-transcripcion-async`** (Gobernanza CRITICA; ARCHIVADO 2026-09-30):
 
@@ -1713,7 +1714,7 @@ Deuda menor pendiente (no bloqueante):
 
 Para avanzar:
 - Workstream aprobado: el plan de cumplimiento ISO/NIST/Ley 25.326 (`docs/cumplimiento/plan-cambios-cumplimiento.md`), en la FASE 21. C-61 quedo ARCHIVADO (2026-10-01, 26/26) y su spec `security-governance-docs` fue creada; C-62..C-66 siguen planificados (sin crear). Proximo paso aprobado del workstream: C-62 `hardening-infra-red` (endurecimiento de infraestructura y red; Governance ALTO), seguido de C-63 dependiente de C-61 ya archivado.
-- `c-56`: aplicado y verificado (26/27; PASS WITH WARNINGS, 0 CRITICAL); pendiente solo el smoke manual 7.5 y el archive. Depende de c-54/c-55 (archivados).
+- `c-56`: ARCHIVADO (2026-10-08, 27/27); smoke manual confirmado end-to-end (operador resuelto + fallback + auditoria); spec `notification-routing` creada.
 - `c-60`: ARCHIVADO (2026-10-06, 33/33).
 - `c-67`: no aplicar aun; bloqueado por OQ3 (entregabilidad SMS AR) y por C-66 (privacidad-transferencias, planificado en la FASE 21, aun sin crear).
 - `c-68`: cerrar las 5 tareas restantes del harness de ingesta (web/correo ya medidos) y verificar.
