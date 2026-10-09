@@ -17,7 +17,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 
 import bcrypt
-from jose import jwt
+from jose import JWTError, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config.settings import Settings, get_settings
@@ -95,6 +95,7 @@ def create_access_token(
     secret: str,
     algorithm: str = "HS256",
     expires_delta: int | None = None,
+    key_id: str | None = None,
 ) -> str:
     """
     Crea un token JWT firmado con los datos proporcionados.
@@ -104,12 +105,18 @@ def create_access_token(
     c-63a). Esto evita emitir tokens sin expiracion, que serian validos
     indefinidamente.
 
+    Keyring `kid` (c-63c, IAH-008): cuando se pasa `key_id`, se agrega el `kid`
+    de la clave activa como header aditivo del token. Los llamadores de
+    produccion pasan `settings.jwt_key_id`; sin `key_id` el token no lleva el
+    header (compatibilidad con tokens / tests existentes).
+
     Args:
         data: Payload a incluir en el token (tipicamente {"sub": username}).
         secret: Clave secreta para firmar el token.
         algorithm: Algoritmo de firma (por defecto HS256).
         expires_delta: Minutos hasta la expiracion. Si es None, se usa
             settings.jwt_access_expire_minutes.
+        key_id: Identificador de la clave activa (`kid`) a incluir en el header.
 
     Returns:
         Token JWT codificado como string.
@@ -120,8 +127,74 @@ def create_access_token(
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + timedelta(minutes=expires_delta)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, secret, algorithm=algorithm)
+    headers = {"kid": key_id} if key_id else None
+    encoded_jwt = jwt.encode(
+        to_encode, secret, algorithm=algorithm, headers=headers
+    )
     return encoded_jwt
+
+
+# ── Ticket de segundo factor MFA (c-63b, IAH-007) ────────────────────────────
+
+# Scope dedicado del ticket: lo distingue del access token y hace que
+# `get_current_user` lo rechace en rutas protegidas.
+MFA_TICKET_SCOPE = "mfa"
+
+
+def create_mfa_ticket(
+    user: User,
+    settings: Settings,
+    *,
+    expires_delta_minutes: int | None = None,
+) -> str:
+    """Emite un ticket corto de segundo factor (JWT de scope `mfa`).
+
+    NO es un access token: no lleva `ver`, no usa el keyring de rotacion JWT
+    (c-63c) y `get_current_user` lo rechaza. Solo habilita
+    `POST /auth/mfa/verify` por una ventana corta (D-B6).
+
+    Desacople de c-63c (W1): el ticket se firma DIRECTAMENTE con el secreto JWT
+    activo (`settings.jwt_secret_key`, HS256), sin `kid`. Durante una rotacion de
+    claves, un ticket en vuelo emitido antes del cambio de clave PUEDE fallar la
+    verificacion; se acepta por su TTL corto (5 min por defecto). El keyring de
+    `kid`/solapamiento es exclusivo del access token (c-63c).
+    """
+    minutes = (
+        expires_delta_minutes
+        if expires_delta_minutes is not None
+        else settings.mfa_ticket_expire_minutes
+    )
+    return create_access_token(
+        data={"sub": user.username, "scope": MFA_TICKET_SCOPE},
+        secret=settings.jwt_secret_key,  # gitleaks:allow (referencia/fixture, no un valor real)
+        algorithm=settings.jwt_algorithm,
+        expires_delta=minutes,
+    )
+
+
+def decode_mfa_ticket(token: str, settings: Settings) -> str | None:
+    """Valida un ticket de segundo factor y devuelve el username, o None.
+
+    Rechaza tokens vencidos (exige `exp`), malformados o con un scope distinto
+    de `mfa`. Verifica DIRECTAMENTE con el secreto JWT activo
+    (`settings.jwt_secret_key`, HS256), sin keyring (W1): durante una rotacion de
+    claves un ticket en vuelo puede fallar, lo cual es aceptable por su TTL corto.
+    """
+    try:
+        payload = jwt.decode(
+            token,
+            settings.jwt_secret_key,
+            algorithms=[settings.jwt_algorithm],
+            options={"require_exp": True},
+        )
+    except JWTError:
+        return None
+
+    if payload.get("scope") != MFA_TICKET_SCOPE:
+        return None
+
+    sub = payload.get("sub")
+    return sub if isinstance(sub, str) else None
 
 
 @dataclass(frozen=True)

@@ -23,6 +23,7 @@ import ReportarIncidentePage from './pages/ReportarIncidente';
 import AdministracionPage from './pages/Administracion';
 import DashboardPage from './pages/Dashboard';
 import LoginPage from './pages/LoginPage';
+import MfaEnrollmentPage from './pages/MfaEnrollmentPage';
 import './index.css';
 
 // Cliente de React Query con reintentos reducidos para evitar saturar la API en errores temporales
@@ -70,6 +71,14 @@ function App() {
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/mfa/enroll"
+          element={
+            <ProtectedRoute>
+              <MfaEnrollmentPage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/"
           element={

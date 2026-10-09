@@ -60,3 +60,58 @@ class LogoutResponse(BaseModel):
     """Confirmacion de logout (idempotente)."""
 
     message: str = Field(..., description="Mensaje de confirmacion")
+
+
+# ── MFA / login en dos pasos (c-63b, IAH-007) ────────────────────────────────
+
+
+class LoginResponse(BaseModel):
+    """Respuesta del login, ADITIVA respecto del contrato previo (c-63b).
+
+    En el flujo de un paso conserva `access_token`/`token_type` (y agrega
+    `refresh_token`/`expires_in`). En el reto MFA, `mfa_required` es verdadero,
+    se entrega `mfa_ticket` y NO se emite access token NI `token_type` (los
+    campos nulos se omiten en la serializacion).
+    """
+
+    access_token: str | None = Field(
+        default=None, description="Token JWT firmado (ausente en el reto MFA)"
+    )
+    token_type: str | None = Field(
+        default=None,
+        description="Tipo de token (bearer); ausente en el reto MFA",
+    )
+    refresh_token: str | None = Field(
+        default=None, description="Refresh token opaco rotativo"
+    )
+    expires_in: int | None = Field(
+        default=None, description="Segundos hasta la expiracion del access token"
+    )
+    mfa_required: bool = Field(
+        default=False, description="True si se requiere el segundo factor"
+    )
+    mfa_ticket: str | None = Field(
+        default=None, description="Ticket corto para POST /auth/mfa/verify"
+    )
+
+
+class MfaVerifyRequest(BaseModel):
+    """Payload de POST /auth/mfa/verify: el ticket y el segundo factor."""
+
+    mfa_ticket: str = Field(..., min_length=1, description="Ticket de segundo factor")
+    code: str | None = Field(
+        default=None, description="Codigo TOTP de 6 digitos"
+    )
+    recovery_code: str | None = Field(
+        default=None, description="Codigo de recuperacion de un solo uso"
+    )
+
+
+class MfaEnrollResponse(BaseModel):
+    """Respuesta del enrollment: valores mostrados UNA sola vez."""
+
+    otpauth_uri: str = Field(..., description="URI otpauth:// para la app autenticadora")
+    secret: str = Field(..., description="Secreto TOTP (base32)")
+    recovery_codes: list[str] = Field(
+        ..., description="Codigos de recuperacion de un solo uso"
+    )

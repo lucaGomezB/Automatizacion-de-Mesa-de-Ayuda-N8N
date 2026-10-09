@@ -28,6 +28,7 @@ from app.models.base import utcnow
 from app.models.empleado import Empleado, RolEmpleado
 from app.repositories.empleado_repository import EmpleadoRepository
 from app.repositories.sector_repository import SectorRepository
+from app.services.privilege_service import sync_user_privilege
 from app.utils.contactos import normalizar_email, normalizar_telefono
 
 logger = get_logger(__name__)
@@ -155,6 +156,10 @@ class DirectorioService:
             user_id=user_id,
             activo=True,
         )
+        # OQ-B1: materializa el privilegio en la cuenta vinculada.
+        await sync_user_privilege(
+            self._session, user_id=empleado.user_id, rol=rol_norm, linked=True
+        )
         self._auditar("alta", "ok", empleado.id, actor_id)
         return empleado
 
@@ -170,6 +175,7 @@ class DirectorioService:
         (rol/sector combinados) y protege la unicidad de legajo/email.
         """
         empleado = await self.obtener(empleado_id)
+        previous_user_id = empleado.user_id
 
         if "legajo" in campos and campos["legajo"] is not None:
             legajo = self._validar_texto(campos["legajo"], "legajo")
@@ -206,6 +212,23 @@ class DirectorioService:
         self._session.add(empleado)
         await self._session.flush()
         await self._session.refresh(empleado)
+
+        # OQ-B1: sincroniza el privilegio al cambiar el vinculo o el rol.
+        new_user_id = empleado.user_id
+        if previous_user_id is not None and previous_user_id != new_user_id:
+            await sync_user_privilege(
+                self._session, user_id=previous_user_id, linked=False
+            )
+        if new_user_id is not None and (
+            "user_id" in campos or "rol" in campos
+        ):
+            await sync_user_privilege(
+                self._session,
+                user_id=new_user_id,
+                rol=empleado.rol,
+                linked=True,
+            )
+
         self._auditar("edicion", "ok", empleado.id, actor_id)
         return empleado
 

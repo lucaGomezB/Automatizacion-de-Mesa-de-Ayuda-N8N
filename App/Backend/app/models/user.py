@@ -14,10 +14,11 @@ Responsabilidad:
 
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, Integer, String
+from sqlalchemy import Boolean, DateTime, Integer, String, Text, false
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base, TimestampMixin
+from app.utils.encryption import EncryptedText
 
 
 class User(Base, TimestampMixin):
@@ -45,6 +46,15 @@ class User(Base, TimestampMixin):
                          administrativa la incrementa y los access tokens
                          emitidos con la version anterior dejan de validar
                          (IAH-004).
+        is_privileged:   Fuente de verdad del privilegio de la identidad
+                         (IAH-005). Por defecto falso; el seed `admin` y las
+                         cuentas vinculadas a un `Empleado` de rol privilegiado
+                         quedan en verdadero.
+        totp_secret:     Secreto TOTP del segundo factor, CIFRADO at-rest con
+                         Fernet (IAH-006). Nunca se persiste en claro.
+        totp_enabled:    Si el segundo factor esta activo para la cuenta.
+        mfa_recovery_codes: JSON con los hashes bcrypt de los codigos de
+                         recuperacion de un solo uso (IAH-006).
         created_at:      Timestamp de creacion (heredado de TimestampMixin).
         updated_at:      Timestamp de ultima modificacion (heredado de TimestampMixin).
     """
@@ -69,6 +79,14 @@ class User(Base, TimestampMixin):
     token_version: Mapped[int] = mapped_column(
         Integer, default=0, nullable=False, server_default="0"
     )
+    is_privileged: Mapped[bool] = mapped_column(
+        Boolean, default=False, nullable=False, server_default=false()
+    )
+    totp_secret: Mapped[str | None] = mapped_column(EncryptedText, nullable=True)
+    totp_enabled: Mapped[bool] = mapped_column(
+        Boolean, default=False, nullable=False, server_default=false()
+    )
+    mfa_recovery_codes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     def __repr__(self) -> str:
         return f"<User id={self.id} username={self.username!r}>"
