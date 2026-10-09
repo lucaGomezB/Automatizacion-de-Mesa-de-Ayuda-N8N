@@ -296,6 +296,26 @@ function Invoke-EnsureCertificates {
     return $true
 }
 
+# -- Post-failure diagnostics ------------------------------------------------
+# `docker compose up` fails with a raw "backend is unhealthy" message when the
+# backend cannot authenticate against PostgreSQL. The most common cause is a
+# password mismatch on a REUSED volume (project name fixed to mesa_local):
+# POSTGRES_PASSWORD from the ROOT .env only applies to a NEW volume, so a
+# pre-existing `mesa_local_postgres_data` keeps its original password. This
+# prints a targeted, actionable hint. It never prints secret values.
+function Write-StackFailureHint {
+    $backendLogs = (docker compose logs backend --tail 80 2>$null | Out-String)
+    if ($backendLogs -match 'InvalidPasswordError|password authentication failed') {
+        Write-Err "PostgreSQL rejected the backend credentials (authentication failed)."
+        Write-Err "Cause: the volume 'mesa_local_postgres_data' already exists and keeps the"
+        Write-Err "password it was initialized with; POSTGRES_PASSWORD only applies to a NEW volume."
+        Write-Err "compose reads POSTGRES_PASSWORD from the ROOT .env (default: mesa_local_dev)."
+        Write-Err "Fix (non-destructive): create/keep the root .env with the ORIGINAL password:"
+        Write-Err "  Copy-Item .env.example .env   # then set POSTGRES_PASSWORD to the volume's original value"
+        Write-Err "Fix (destructive, deletes the database): docker compose down -v  then re-run."
+    }
+}
+
 # -- Stack startup -----------------------------------------------------------
 # The compose project name is fixed to mesa_local in docker-compose.yml, so the
 # -p flag is intentionally omitted.
@@ -303,6 +323,7 @@ function Invoke-StartStack {
     Write-Info "Starting stack: docker compose up -d --build"
     docker compose up -d --build
     if ($LASTEXITCODE -ne 0) {
+        Write-StackFailureHint
         Write-Err "docker compose up failed. Aborting."
         return $false
     }

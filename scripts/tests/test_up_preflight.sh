@@ -466,6 +466,44 @@ fi
 assert_nonzero "$status" "bypass=0: the gate still runs and fails"
 assert_contains "$out" "Preflight RED" "bypass=0: the preflight output is printed"
 
+# ─ Stack failure diagnostics ────────────────────────────────────────────────
+# On a DB auth failure the script must print a targeted hint (root .env,
+# POSTGRES_PASSWORD, the volume name) and never a secret value. `docker` is
+# stubbed as a shell function so no real Docker is touched.
+printf 'Stack failure: DB auth hint\n'
+run_stack_failure_hint() {
+    (
+        set +e
+        docker() {
+            printf 'backend-1  | asyncpg.exceptions.InvalidPasswordError: password authentication failed for user "mesa"\n'
+        }
+        # shellcheck disable=SC1090
+        source "$UP_SH"
+        set +e
+        log_stack_failure_hint
+    ) 2>&1
+}
+out="$(run_stack_failure_hint)"
+assert_contains "$out" "POSTGRES_PASSWORD" "db auth hint: names POSTGRES_PASSWORD"
+assert_contains "$out" "mesa_local_postgres_data" "db auth hint: names the volume"
+assert_contains "$out" "down -v" "db auth hint: shows the destructive reset option"
+assert_not_contains "$out" "$SECRET_SENTINEL" "db auth hint: never prints a secret value"
+
+# A successful `docker compose logs` with no auth error must stay silent.
+printf 'Stack failure: no hint on unrelated logs\n'
+run_stack_failure_hint_clean() {
+    (
+        set +e
+        docker() { printf 'backend-1  | INFO: application startup complete\n'; }
+        # shellcheck disable=SC1090
+        source "$UP_SH"
+        set +e
+        log_stack_failure_hint
+    ) 2>&1
+}
+out="$(run_stack_failure_hint_clean)"
+assert_not_contains "$out" "POSTGRES_PASSWORD" "no auth error: prints no misleading hint"
+
 # ─ Windows parity (structural) ──────────────────────────────────────────────
 # No pwsh is available in this environment, so up.ps1 is verified structurally:
 # the required secret, the placeholder, the gate function, the operator bypass
@@ -484,6 +522,7 @@ assert_contains "$ps1_content" "Invoke-CostPreflight" "up.ps1 defines the cost g
 assert_contains "$ps1_content" "UP_SKIP_COST_PREFLIGHT" "up.ps1 supports the operator bypass"
 assert_contains "$ps1_content" "Write-EnvSetupGuide" "up.ps1 defines the env setup guide"
 assert_contains "$ps1_content" "aistudio.google.com" "up.ps1 points to the Gemini key"
+assert_contains "$ps1_content" "Write-StackFailureHint" "up.ps1 defines the stack failure hint"
 
 required_line="$(grep -n -F '$RequiredSecrets' "$UP_PS1" | head -n 1 | cut -d: -f1)"
 if [ -n "$required_line" ] && sed -n "${required_line}p" "$UP_PS1" | grep -q -F "JWT_SECRET_KEY"; then
