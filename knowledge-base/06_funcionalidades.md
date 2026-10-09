@@ -66,7 +66,7 @@ Organizadas por épica. Estado: ✅ implementado · 🔶 parcial · ❌ pendient
 ### US-011 — Framework de evaluación ✅ (C-08, rediseñado en C-27)
 **Como** equipo de investigación **quiero** ejecutar el clasificador sobre el corpus real JSON multietiqueta y calcular métricas **para** validar la hipótesis.
 - CA: exactitud primaria, matriz de confusión primaria 5x5, subset accuracy, pérdida de Hamming, F1 micro/macro, precision/recall/F1 por sector (one-vs-rest), IC Wilson 95% en las dos definiciones de acierto (igualdad estricta y pertenencia), Wilcoxon pareado con rank-biserial effect size. Reporte md + notebook con visualizaciones.
-- Estado: `evaluation/` con loader JSON (`schema_version`/`metadata`/`casos`), `metrics.py` multietiqueta, `run_evaluation.py`, tests y fixture JSON. **Corpus real (`data/corpus_evaluacion_pseudonimizado.json`) no versionado**; el corpus sintético de 200 casos fue descartado y eliminado. Ver [11_evaluacion_experimental.md](11_evaluacion_experimental.md).
+- Estado: `evaluation/` con loader JSON (`schema_version`/`metadata`/`casos`), `metrics.py` multietiqueta, `run_evaluation.py`, tests y fixture JSON. **Corpus real (`data/corpus_evaluacion_pseudonimizado.json`) versionado en su forma pseudonimizada**; el corpus sintético de 200 casos fue descartado y eliminado. Ver [11_evaluacion_experimental.md](11_evaluacion_experimental.md).
 
 ## Épica 7: Calidad e infraestructura
 

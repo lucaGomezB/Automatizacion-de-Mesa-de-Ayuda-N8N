@@ -326,7 +326,7 @@ El sistema puede ser replicado exactamente siguiendo:
 4. Código: `App/Backend/`
 5. Configuración: `docker-compose.yml`
 
-**Nota**: El corpus de validación (200 casos etiquetados) **NO se versiona en el repositorio** porque contiene datos personales (PII): la Ley 25.326 exige tratarlo por un canal aparte. `data/corpus_evaluacion_pseudonimizado.csv` / `.json` estan en `.gitignore` y se comparten fuera del repositorio. Sin el corpus, la suite de `evaluation/` no corre en un clon limpio.
+**Nota**: El corpus de validación (200 casos etiquetados) se versiona **solo en su versión pseudonimizada**: `data/corpus_evaluacion_pseudonimizado.json` y `data/Corpus Tesis - Hoja 1 (pseudonimizado).csv`. Los originales pre-pseudonimización contienen datos personales (PII) y NUNCA se versionan (Ley 25.326). Con el corpus pseudonimizado presente, la suite de `evaluation/` corre en un clon limpio.
 
 ## Hook anti-secretos (obligatorio al clonar)
 

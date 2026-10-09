@@ -14,9 +14,10 @@ data/corpus_evaluacion_pseudonimizado.json
 Este es el camino exacto que espera el framework de evaluacion
 (`evaluation/run_evaluation.py`, constante `CORPUS_REAL_PATH`).
 
-El archivo **NO se trackea en git** (esta en `.gitignore`). Contiene patrones
-de incidentes internos de la organizacion y, aunque este pseudonimizado, se
-mantiene fuera del repositorio por privacidad y cumplimiento de la Ley 25.326.
+La version **pseudonimizada** de este archivo **SI se versiona** en git. Lo que
+queda fuera del repositorio por privacidad y cumplimiento de la Ley 25.326 son
+los originales **pre-pseudonimizacion** (con PII) y los sidecars de resultados
+(`data/corpus_resultados*.json`).
 
 ---
 
@@ -226,17 +227,21 @@ inventa datos.
 
 ---
 
-## 9. Verificar que el archivo no se suba a git
+## 9. Verificar que los originales con PII no se suban a git
 
-El archivo esta en `.gitignore`, pero conviene confirmar antes de cada commit:
+La version pseudonimizada (`corpus_evaluacion_pseudonimizado.json`) SI se
+versiona. Lo que NUNCA debe entrar son los originales pre-pseudonimizacion
+(`Corpus Tesis.xlsx`, `Corpus Tesis - Hoja 1.csv`) y los sidecars
+(`data/corpus_resultados*.json`), que estan en `.gitignore`. Confirmar antes de
+cada commit:
 
 ```bash
-git status --short | grep corpus
+git status --short | grep -E "Corpus Tesis|corpus_resultados"
 ```
 
-Si aparece listado, NO agregarlo. Si se agrego por error, removerlo del indice
-sin borrarlo del disco:
+Si aparece un original crudo o un sidecar, NO agregarlo. Si se agrego por error,
+removerlo del indice sin borrarlo del disco:
 
 ```bash
-git rm --cached data/corpus_evaluacion_pseudonimizado.json
+git rm --cached "data/Corpus Tesis.xlsx" "data/Corpus Tesis - Hoja 1.csv"
 ```

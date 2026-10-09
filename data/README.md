@@ -2,15 +2,23 @@
 
 Esta carpeta contiene el corpus de evaluación del clasificador híbrido.
 
-## Archivos
+## Archivos versionados (solo la version pseudonimizada)
 
-### `corpus_evaluacion_pseudonimizado.json` — NO trackeado en git
+### `corpus_evaluacion_pseudonimizado.json`
 
-El corpus real de evaluación, pseudonimizado por el módulo de C-03.
+El corpus real de evaluación (200 casos), pseudonimizado por el módulo de C-03.
+**SI se versiona** (descripciones genéricas, sin PII residual).
 
-**No está en git por privacidad** (aunque está pseudonimizado, contiene
-patrones de incidentes internos de la organización). Se coloca manualmente
-antes de ejecutar la corrida real.
+### `Corpus Tesis - Hoja 1 (pseudonimizado).csv`
+
+Corpus de registro pseudonimizado (formato Hoja 1). **SI se versiona**.
+
+## Archivos NO versionados (Ley 25.326)
+
+- `Corpus Tesis.xlsx` y `Corpus Tesis - Hoja 1.csv` — originales
+  **pre-pseudonimización**; contienen PII y NUNCA se commitean.
+- `corpus_resultados_*.json` — sidecars de resultados de los harness de ingesta
+  (artefactos de corrida).
 
 El corpus sintético provisional de 200 casos (`corpus_sintetico_provisional.csv`)
 y su andamiaje de generación fueron **eliminados permanentemente** en C-27.

@@ -60,7 +60,7 @@ openspec list --json
 ├── .opencode/skills/  # OPSX workflow skills (explore/propose/apply/archive/sync)
 ├── n8n/workflow.json  # N8N workflow (import into N8N UI)
 ├── evaluation/               # Self-contained eval framework (own pytest.ini + requirements.txt)
-├── data/                     # Evaluation corpus (NOT tracked in git)
+├── data/                     # Corpus de evaluacion (solo la version pseudonimizada se versiona)
 └── docs/                     # Design docs, guides, OpenAPI spec, prompt
 ```
 
