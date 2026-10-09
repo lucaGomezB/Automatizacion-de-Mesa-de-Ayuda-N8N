@@ -30,12 +30,12 @@ La Fase B del workstream de identidad (`c-63-identidad-accesos-claves`) cierra l
 | `App/Backend/app/models/user.py` | Modified | `is_privileged` (bool, default false) |
 | `App/Backend/alembic/versions/` | New | Migracion de `is_privileged` y campos MFA (`totp_secret`, `totp_enabled`, codigos de recuperacion); marca `admin` privilegiado |
 | `App/Backend/app/services/mfa_service.py` | New | Enrollment TOTP, verificacion RFC 6238, codigos de recuperacion (bcrypt) |
-| `App/Backend/app/services/auth_service.py` | Modified | Derivacion/marcado del privilegio y emision del ticket de segundo factor |
+| `App/Backend/app/services/auth_service.py` | Modified | Emision/validacion del ticket corto de segundo factor (firma directa con el secreto activo, sin keyring) |
 | `App/Backend/app/routes/auth.py` | Modified | `/auth/login` en dos pasos, `/auth/mfa/verify`, `/auth/mfa/enroll` |
 | `App/Backend/app/schemas/auth.py` | Modified | Request/response de MFA y ticket (aditivo) |
 | `App/Backend/app/config/settings.py`, `.env.example` | Modified | `mfa_required_for_privileged` (default false), TTL del ticket, issuer, cantidad de codigos |
-| `App/Backend/app/models/empleado.py` / repositorios | Modified | Marcar privilegio al crear/actualizar el vinculo (segun OQ-B1) |
-| `App/Frontend/src/contexts/AuthContext.tsx`, `src/services/api.ts` | Modified | Reto MFA (enrollment y verificacion) |
+| `App/Backend/app/services/privilege_service.py`, `app/services/directorio_service.py` | New/Modified | Derivacion/marcado y sincronizacion del privilegio al crear/actualizar/desvincular (segun OQ-B1) |
+| `App/Frontend/src/contexts/AuthContext.tsx`, `src/pages/LoginPage/index.tsx`, `src/pages/MfaEnrollmentPage/**` | Modified/New | Reto MFA (enrollment y verificacion) |
 | `App/Backend/tests/*`, `App/Frontend/src/**/*.test.tsx` | Modified/New | Cobertura de flag privilegiado, MFA y login en dos pasos |
 
 ## Governance: CRITICO

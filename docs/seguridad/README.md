@@ -81,6 +81,8 @@ sugerida es anual, o ante cambio de alcance, normativa o infraestructura.
 | `modelado-amenazas-sdlc.md` | Modelado de amenazas y seguridad en el SDLC (8.26) | v1 (aprobada 2026-10-01) | Anual |
 | `politica-privacidad-runtime.md` | Politica de privacidad objetivo/norma (5.34) | v1 (aprobada 2026-10-01) | Anual |
 | `registro-actividades-tratamiento.md` | ROPA (Ley 25.326) y tratamientos T1/T2/T3 | v1 (aprobada 2026-10-01) | Anual |
+| `gestion-secretos-y-rotacion.md` | Gestion de secretos, inventario de columnas cifradas y runbook de rotacion (8.2, 8.24; IAH-008..010) | v1 (aprobada 2026-10-08) | Anual |
+| `ciclo-vida-identidades-y-revision-accesos.md` | Ciclo de vida de identidades y revision de accesos — control organizacional (5.16, 5.18; IAH-011) | v1 (aprobada 2026-10-08) | Anual |
 
 Anexo del cuerpo documental (no es uno de los 11 documentos de gobernanza):
 
@@ -105,6 +107,10 @@ Anexo del cuerpo documental (no es uno de los 11 documentos de gobernanza):
 | 5.27 Aprendizaje de incidentes | RS | `procedimiento-reporte-eventos.md`, `plan-respuesta-incidentes-seguridad.md` | SGD-005 |
 | 5.31 Requisitos legales y contractuales | GV | `registro-requisitos-legales.md` | SGD-007 |
 | 8.26 Requisitos de seguridad de aplicaciones | GV, ID | `modelado-amenazas-sdlc.md` | SGD-008 |
+| 8.2 Derechos de acceso privilegiado (gestion de claves) | PR | `gestion-secretos-y-rotacion.md` | IAH-008..010 |
+| 8.24 Uso de criptografia | PR | `gestion-secretos-y-rotacion.md` | IAH-008..010 |
+| 5.16 Gestion del ciclo de vida de la identidad | GV | `ciclo-vida-identidades-y-revision-accesos.md` | IAH-011 |
+| 5.18 Derechos de acceso | GV | `ciclo-vida-identidades-y-revision-accesos.md` | IAH-011 |
 | 5.34 Privacidad y proteccion de PII | GV, PR | `politica-privacidad-runtime.md` | SGD-009 |
 | ROPA (Ley 25.326) | GV | `registro-actividades-tratamiento.md` | SGD-010 |
 
@@ -129,11 +135,18 @@ C-67.
 | SGD-010 ROPA | `registro-actividades-tratamiento.md` |
 | SGD-011 Regla de lenguaje y encuadre | transversal (§2 y §3); aplica a todos |
 | SGD-012 Responsable y los tres tratamientos | `registro-actividades-tratamiento.md`, `registro-requisitos-legales.md`, `acta-consentimiento-t1.md` |
+| IAH-008 Rotacion del secreto JWT (keyring `kid`) | `gestion-secretos-y-rotacion.md` |
+| IAH-009 Rotacion de la clave Fernet | `gestion-secretos-y-rotacion.md` |
+| IAH-010 Higiene y gestion de secretos | `gestion-secretos-y-rotacion.md` |
+| IAH-011 Ciclo de vida de identidades y revision de accesos | `ciclo-vida-identidades-y-revision-accesos.md` |
 
 ## 7. Relaciones entre changes
 
 - C-61 **habilita C-63** (`identidad-accesos-claves`) fijando los parametros de politica
   (clasificacion, roles, requisitos) que C-63 consume.
+- El desglose de C-63 (`c-63a`, `c-63b`, `c-63c`) extiende este cuerpo documental:
+  `c-63c` agrega `gestion-secretos-y-rotacion.md` (8.2/8.24; IAH-008..010) y
+  `ciclo-vida-identidades-y-revision-accesos.md` (5.16/5.18; IAH-011).
 - **C-62** (`hardening-infra-red`), **C-64** (`vulnerabilidades-supply-chain`), **C-65**
   (`backup-continuidad`), **C-66** (`privacidad-transferencias`) y **C-67**
   (`notificacion-sms-llamante`) son **changes separados**. C-61 documenta el marco; ellos

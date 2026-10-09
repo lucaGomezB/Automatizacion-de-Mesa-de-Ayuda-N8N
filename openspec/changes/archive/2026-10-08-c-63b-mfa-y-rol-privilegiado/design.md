@@ -64,17 +64,18 @@ Ver `proposal.md — Why` y el design maestro `../c-63-identidad-accesos-claves/
 
 ### D-B6 — Ticket de segundo factor
 
-**Recomendado: JWT corto dedicado, con `scope` distinto del access token y `aud`/`sub` = usuario, TTL ~5 min, firmado con la misma clave (`kid` de la Fase A).**
+**Recomendado: JWT corto dedicado, con `scope` distinto del access token y `aud`/`sub` = usuario, TTL ~5 min, firmado DIRECTAMENTE con el secreto JWT activo (`settings.jwt_secret_key`, HS256), sin keyring ni `kid`.**
 
 - El ticket NO es un access token: `get_current_user` MUST NOT aceptarlo en rutas protegidas (se valida `scope`).
 - Alternativa considerada: token opaco persistido en servidor. Mas control de revocacion pero agrega almacen; el ticket corto y de un solo proposito acota la ventana.
+- **Desacople de c-63c (W1):** la firma/verificacion del ticket NO usa `app.core.jwt_keyring` ni `settings.jwt_key_id` (eso pertenece al access token, c-63c). Durante una rotacion de claves, un ticket en vuelo emitido antes del cambio PUEDE fallar la verificacion; se acepta por su TTL corto (5 min por defecto).
 
 ### D-B7 — Contrato aditivo del login
 
 **Recomendado: `POST /auth/login` devuelve `mfa_required: true` + `mfa_ticket` para cuenta privilegiada con MFA activo y bandera encendida; en todos los demas casos sigue devolviendo `access_token` y `token_type`.**
 
 - `POST /auth/mfa/verify` recibe `{mfa_ticket, code}` (o `recovery_code`) y devuelve la respuesta de token actual.
-- `POST /auth/mfa/enroll` inicia/confirma el enrollment (devuelve `otpauth_uri`, `secret`, `recovery_codes`).
+- `POST /auth/mfa/enroll` inicia/confirma el enrollment (devuelve `otpauth_uri`, `secret`, `recovery_codes`). Queda restringido a cuentas PRIVILEGIADAS (403 en caso contrario, S6): el gating no reintroduce el bloqueo circular, porque una cuenta privilegiada SIN MFA activo (`totp_enabled=False`) entra en un solo paso y obtiene el token para enrolar; el reto solo aparece cuando el MFA YA esta activo.
 - Los campos actuales (`access_token`, `token_type`) se preservan. La respuesta de login pasa a un modelo de union/discriminado o campos opcionales aditivos.
 
 ### D-B8 — Configuracion

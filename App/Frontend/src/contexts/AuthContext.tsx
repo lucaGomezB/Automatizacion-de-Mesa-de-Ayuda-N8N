@@ -4,8 +4,9 @@
  * Responsabilidad:
  *   Provee el estado de autenticacion global a toda la aplicacion:
  *     - Token JWT almacenado en memoria (no en localStorage por seguridad).
- *     - Funciones login() y logout() para gestionar la sesion.
+ *     - Funciones login(), verifyMfa(), enrollMfa() y logout().
  *     - Booleano isAuthenticated para control de acceso a rutas.
+ *     - mfaRequired: true cuando el backend exige el segundo factor.
  *
  *   Tambien sincroniza el token con el modulo de interceptor de Axios
  *   para que todas las requests incluyan el header Authorization.
@@ -16,6 +17,7 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -30,11 +32,34 @@ interface AuthState {
   username: string | null;
   /** true si hay un usuario autenticado con token valido. */
   isAuthenticated: boolean;
+  /** true si el backend respondio que se requiere el segundo factor. */
+  mfaRequired: boolean;
+}
+
+/** Respuesta del endpoint de login (aditiva: un paso o reto MFA). */
+interface LoginApiResponse {
+  access_token?: string | null;
+  token_type?: string;
+  refresh_token?: string | null;
+  expires_in?: number | null;
+  mfa_required?: boolean;
+  mfa_ticket?: string | null;
+}
+
+/** Datos del enrollment de MFA mostrados una sola vez. */
+export interface MfaEnrollmentData {
+  otpauthUri: string;
+  secret: string;
+  recoveryCodes: string[];
 }
 
 interface AuthContextValue extends AuthState {
-  /** Inicia sesion con username y password. Retorna true si fue exitoso. */
+  /** Inicia sesion. Retorna true si completo; false si requiere MFA o fallo. */
   login: (username: string, password: string) => Promise<boolean>;
+  /** Completa el login con el codigo de segundo factor. */
+  verifyMfa: (code: string) => Promise<boolean>;
+  /** Inicia el enrollment de MFA para la sesion autenticada. */
+  enrollMfa: () => Promise<MfaEnrollmentData>;
   /** Cierra la sesion, eliminando el token de memoria. */
   logout: () => void;
 }
@@ -57,32 +82,97 @@ export function AuthProvider({ children }: AuthProviderProps) {
     token: null,
     username: null,
     isAuthenticated: false,
+    mfaRequired: false,
   });
 
-  const login = useCallback(async (username: string, password: string): Promise<boolean> => {
-    try {
-      const { apiClient } = await import('@/services/api');
-      const response = await apiClient.post<{
-        access_token: string;
-        token_type: string;
-        refresh_token?: string;
-      }>('/auth/login', {
-        username,
-        password,
-      });
+  // Ticket y usuario pendientes del segundo factor (no se renderizan).
+  const mfaTicketRef = useRef<string | null>(null);
+  const mfaUsernameRef = useRef<string | null>(null);
 
-      const token = response.data.access_token;
+  /** Fija el par de tokens en memoria y marca la sesion como autenticada. */
+  const applyTokenResponse = useCallback(
+    (username: string, data: LoginApiResponse) => {
+      const token = data.access_token ?? '';
       setAuthToken(token);
-      setRefreshToken(response.data.refresh_token ?? null);
+      setRefreshToken(data.refresh_token ?? null);
+      mfaTicketRef.current = null;
+      mfaUsernameRef.current = null;
       setState({
         token,
         username,
         isAuthenticated: true,
+        mfaRequired: false,
       });
-      return true;
-    } catch {
-      return false;
-    }
+    },
+    [],
+  );
+
+  const login = useCallback(
+    async (username: string, password: string): Promise<boolean> => {
+      try {
+        const { apiClient } = await import('@/services/api');
+        const response = await apiClient.post<LoginApiResponse>('/auth/login', {
+          username,
+          password,
+        });
+
+        const data = response.data;
+        if (data.mfa_required && data.mfa_ticket) {
+          // Reto de segundo factor: NO se fija token todavia.
+          mfaTicketRef.current = data.mfa_ticket;
+          mfaUsernameRef.current = username;
+          setState({
+            token: null,
+            username,
+            isAuthenticated: false,
+            mfaRequired: true,
+          });
+          return false;
+        }
+
+        applyTokenResponse(username, data);
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [applyTokenResponse],
+  );
+
+  const verifyMfa = useCallback(
+    async (code: string): Promise<boolean> => {
+      const ticket = mfaTicketRef.current;
+      const username = mfaUsernameRef.current;
+      if (!ticket || !username) {
+        return false;
+      }
+      try {
+        const { apiClient } = await import('@/services/api');
+        const response = await apiClient.post<LoginApiResponse>(
+          '/auth/mfa/verify',
+          { mfa_ticket: ticket, code },
+        );
+        applyTokenResponse(username, response.data);
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [applyTokenResponse],
+  );
+
+  const enrollMfa = useCallback(async (): Promise<MfaEnrollmentData> => {
+    const { apiClient } = await import('@/services/api');
+    const response = await apiClient.post<{
+      otpauth_uri: string;
+      secret: string;
+      recovery_codes: string[];
+    }>('/auth/mfa/enroll');
+    return {
+      otpauthUri: response.data.otpauth_uri,
+      secret: response.data.secret,  // gitleaks:allow (referencia, no un valor real)
+      recoveryCodes: response.data.recovery_codes,
+    };
   }, []);
 
   const logout = useCallback(() => {
@@ -99,10 +189,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
     clearAuthToken();
     clearRefreshToken();
+    mfaTicketRef.current = null;
+    mfaUsernameRef.current = null;
     setState({
       token: null,
       username: null,
       isAuthenticated: false,
+      mfaRequired: false,
     });
   }, []);
 
@@ -110,9 +203,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     () => ({
       ...state,
       login,
+      verifyMfa,
+      enrollMfa,
       logout,
     }),
-    [state, login, logout],
+    [state, login, verifyMfa, enrollMfa, logout],
   );
 
   return (

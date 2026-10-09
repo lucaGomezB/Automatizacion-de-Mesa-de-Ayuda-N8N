@@ -15,10 +15,11 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
+from jose import JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config.settings import get_settings
+from app.core import jwt_keyring
 from app.core.database import get_db_session
 from app.core.logging import get_logger
 from app.models.user import User
@@ -68,12 +69,15 @@ async def get_current_user(
     settings = get_settings()
 
     try:
-        payload = jwt.decode(
-            token,
-            settings.jwt_secret_key,
-            algorithms=[settings.jwt_algorithm],
-            options={"require_exp": True},
-        )
+        payload = jwt_keyring.decode_token(token, settings)
+        # El ticket de segundo factor (scope `mfa`, c-63b) NO es un access token:
+        # se rechaza en cualquier ruta protegida.
+        if payload.get("scope") == "mfa":
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token payload",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
         username: str | None = payload.get("sub")
         if username is None:
             raise HTTPException(

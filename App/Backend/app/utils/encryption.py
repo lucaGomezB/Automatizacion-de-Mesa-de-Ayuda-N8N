@@ -25,43 +25,78 @@ Referencias:
     tasks.md  § 7
 """
 
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet, MultiFernet
 from sqlalchemy import Text, TypeDecorator
 
 from app.config.settings import get_settings
 
-# Instancia Fernet con inicialización lazy (None hasta el primer uso).
+# Instancia MultiFernet con inicialización lazy (None hasta el primer uso).
 # Esto evita que la importación del módulo falle en entornos sin clave configurada.
-# `_fernet_key` retiene la clave con la que se construyó la instancia: si la
-# configuración rota la clave, el cache se invalida y se reconstruye.
-_fernet_instance: Fernet | None = None
-_fernet_key: str | None = None
+# `_fernet_key` retiene el CONJUNTO de claves con el que se construyó la
+# instancia: si cambia la activa O la anterior (rotación, c-63c), el cache se
+# invalida y se reconstruye (design.md D-C3).
+_fernet_instance: MultiFernet | None = None
+_fernet_key: tuple[str, str | None] | None = None
 
 
-def _get_fernet() -> Fernet:
+def _as_key_str(value: object) -> str | None:
+    """Normaliza una clave configurada a str; vacio o no textual -> None."""
+    if isinstance(value, bytes):
+        value = value.decode("ascii")
+    if isinstance(value, str) and value:
+        return value
+    return None
+
+
+def _configured_keys() -> tuple[str, str | None]:
+    """Lee el par de claves del entorno: (activa, anterior o None).
+
+    La activa es OBLIGATORIA (`pseudonymization_encryption_key`); la anterior
+    (`pseudonymization_encryption_key_previous`) es opcional y vacia por defecto,
+    preservando el comportamiento actual (una sola clave).
     """
-    Retorna la instancia Fernet, construyéndola la primera vez o cuando la
-    clave configurada cambia.
+    settings = get_settings()
+    active_raw = settings.pseudonymization_encryption_key
+    active = (
+        active_raw.decode("ascii") if isinstance(active_raw, bytes) else active_raw
+    )
+    previous = _as_key_str(
+        getattr(settings, "pseudonymization_encryption_key_previous", "")
+    )
+    return active, previous
 
-    La clave se lee de `settings.pseudonymization_encryption_key` en cada
-    llamada y se compara con la clave del cache. Si difiere, la instancia se
-    reconstruye: esto hace que una rotación de clave en el entorno sea
-    efectiva sin reiniciar el proceso (evita el cache stale).
+
+def _get_fernet() -> MultiFernet:
+    """
+    Retorna la instancia MultiFernet, construyéndola la primera vez o cuando el
+    CONJUNTO de claves configurado cambia.
+
+    El conjunto se lee en cada llamada: `[activa, anterior?]`. Al cifrar,
+    MultiFernet usa siempre la primera clave (la activa); al descifrar, prueba
+    las claves del conjunto (permite leer datos cifrados con la clave anterior
+    durante la rotación). Si la activa o la anterior cambian, la instancia se
+    reconstruye: la rotación de clave es efectiva sin reiniciar el proceso.
 
     Returns:
-        Instancia Fernet lista para cifrar/descifrar.
+        Instancia MultiFernet lista para cifrar/descifrar.
 
     Raises:
-        ValueError: Si la clave no es una clave Fernet válida (base64 de 32 bytes).
+        ValueError: Si alguna clave no es una clave Fernet válida.
         pydantic_settings.ValidationError: Si `pseudonymization_encryption_key`
             no está configurada en el entorno.
     """
     global _fernet_instance, _fernet_key
-    key = get_settings().pseudonymization_encryption_key
-    key_str = key.decode("ascii") if isinstance(key, bytes) else key
-    if _fernet_instance is None or _fernet_key != key_str:
-        _fernet_instance = Fernet(key.encode() if isinstance(key, str) else key)
-        _fernet_key = key_str
+    active, previous = _configured_keys()
+    cache_key = (active, previous)
+    if _fernet_instance is None or _fernet_key != cache_key:
+        raw_keys = [active]
+        if previous is not None:
+            raw_keys.append(previous)
+        fernets = [
+            Fernet(k.encode() if isinstance(k, str) else k) for k in raw_keys
+        ]
+        _fernet_instance = MultiFernet(fernets)
+        _fernet_key = cache_key
     return _fernet_instance
 
 

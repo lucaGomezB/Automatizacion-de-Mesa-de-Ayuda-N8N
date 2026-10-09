@@ -1213,6 +1213,79 @@
         "title": "LoginRequest",
         "type": "object"
       },
+      "LoginResponse": {
+        "description": "Respuesta del login, ADITIVA respecto del contrato previo (c-63b).\n\nEn el flujo de un paso conserva `access_token`/`token_type` (y agrega\n`refresh_token`/`expires_in`). En el reto MFA, `mfa_required` es verdadero,\nse entrega `mfa_ticket` y NO se emite access token NI `token_type` (los\ncampos nulos se omiten en la serializacion).",
+        "properties": {
+          "access_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Token JWT firmado (ausente en el reto MFA)",
+            "title": "Access Token"
+          },
+          "expires_in": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Segundos hasta la expiracion del access token",
+            "title": "Expires In"
+          },
+          "mfa_required": {
+            "default": false,
+            "description": "True si se requiere el segundo factor",
+            "title": "Mfa Required",
+            "type": "boolean"
+          },
+          "mfa_ticket": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Ticket corto para POST /auth/mfa/verify",
+            "title": "Mfa Ticket"
+          },
+          "refresh_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Refresh token opaco rotativo",
+            "title": "Refresh Token"
+          },
+          "token_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Tipo de token (bearer); ausente en el reto MFA",
+            "title": "Token Type"
+          }
+        },
+        "title": "LoginResponse",
+        "type": "object"
+      },
       "LogoutRequest": {
         "description": "Payload del endpoint de logout: el refresh token a revocar.",
         "properties": {
@@ -1242,6 +1315,76 @@
           "message"
         ],
         "title": "LogoutResponse",
+        "type": "object"
+      },
+      "MfaEnrollResponse": {
+        "description": "Respuesta del enrollment: valores mostrados UNA sola vez.",
+        "properties": {
+          "otpauth_uri": {
+            "description": "URI otpauth:// para la app autenticadora",
+            "title": "Otpauth Uri",
+            "type": "string"
+          },
+          "recovery_codes": {
+            "description": "Codigos de recuperacion de un solo uso",
+            "items": {
+              "type": "string"
+            },
+            "title": "Recovery Codes",
+            "type": "array"
+          },
+          "secret": {
+            "description": "Secreto TOTP (base32)",
+            "title": "Secret",
+            "type": "string"
+          }
+        },
+        "required": [
+          "otpauth_uri",
+          "secret",
+          "recovery_codes"
+        ],
+        "title": "MfaEnrollResponse",
+        "type": "object"
+      },
+      "MfaVerifyRequest": {
+        "description": "Payload de POST /auth/mfa/verify: el ticket y el segundo factor.",
+        "properties": {
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Codigo TOTP de 6 digitos",
+            "title": "Code"
+          },
+          "mfa_ticket": {
+            "description": "Ticket de segundo factor",
+            "minLength": 1,
+            "title": "Mfa Ticket",
+            "type": "string"
+          },
+          "recovery_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Codigo de recuperacion de un solo uso",
+            "title": "Recovery Code"
+          }
+        },
+        "required": [
+          "mfa_ticket"
+        ],
+        "title": "MfaVerifyRequest",
         "type": "object"
       },
       "PeriodoInfo": {
@@ -1728,7 +1871,7 @@
   "paths": {
     "/api/v1/auth/login": {
       "post": {
-        "description": "Autentica al usuario con username y password.\n\nDevuelve un access token JWT de vida corta y un refresh token opaco\nrotativo. El access debe enviarse en `Authorization: Bearer <access_token>`.\n\nArgs:\n    payload: Credenciales de inicio de sesion (username + password).\n\nReturns:\n    TokenResponse con access_token, token_type, refresh_token y expires_in.\n\nRaises:\n    JSONResponse 401 INVALID_CREDENTIALS: credenciales invalidas.\n    JSONResponse 401 ACCOUNT_LOCKED: cuenta bloqueada por intentos fallidos.",
+        "description": "Autentica al usuario con username y password.\n\nDevuelve un access token JWT de vida corta y un refresh token opaco\nrotativo. Si la cuenta es privilegiada, tiene MFA activo y la bandera\n`mfa_required_for_privileged` esta encendida, devuelve un estado \"segundo\nfactor requerido\" con un ticket corto y SIN emitir token (IAH-007).\n\nArgs:\n    payload: Credenciales de inicio de sesion (username + password).\n\nReturns:\n    LoginResponse con access_token/token_type (y refresh_token/expires_in) en\n    el flujo de un paso, o con mfa_required/mfa_ticket en el reto MFA.\n\nRaises:\n    JSONResponse 401 INVALID_CREDENTIALS: credenciales invalidas.\n    JSONResponse 401 ACCOUNT_LOCKED: cuenta bloqueada por intentos fallidos.",
         "operationId": "login_api_v1_auth_login_post",
         "requestBody": {
           "content": {
@@ -1745,7 +1888,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TokenResponse"
+                  "$ref": "#/components/schemas/LoginResponse"
                 }
               }
             },
@@ -1762,7 +1905,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Iniciar sesion y obtener el par de tokens",
+        "summary": "Iniciar sesion (un paso, o reto de segundo factor)",
         "tags": [
           "Auth"
         ]
@@ -1805,6 +1948,75 @@
           }
         },
         "summary": "Revocar el refresh token (logout)",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/mfa/enroll": {
+      "post": {
+        "description": "Inicia/confirma el enrollment de MFA para la cuenta autenticada.\n\nDevuelve el URI `otpauth://`, el secreto y los codigos de recuperacion. El\nsecreto se persiste CIFRADO at-rest y los codigos como hashes bcrypt; el\nmaterial en claro se muestra UNA sola vez.\n\nAutorizacion (S6): restringido a cuentas PRIVILEGIADAS. El gating NO\nreintroduce el chicken-and-egg: una cuenta privilegiada SIN MFA activo\n(`totp_enabled=False`) inicia sesion en un solo paso, obtiene un access token\ny llega a este endpoint. El reto de segundo factor solo aparece cuando el MFA\nYA esta activo; si esa cuenta pierde el dispositivo Y los codigos, aplica el\nreset administrativo documentado (OQ-B2), no el enrollment.\n\nReturns:\n    MfaEnrollResponse con otpauth_uri, secret y recovery_codes.\n\nRaises:\n    HTTPException 403: si la cuenta autenticada no es privilegiada.",
+        "operationId": "mfa_enroll_api_v1_auth_mfa_enroll_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MfaEnrollResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Iniciar el enrollment del segundo factor TOTP",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/mfa/verify": {
+      "post": {
+        "description": "Completa el login validando el segundo factor (TOTP o recuperacion).\n\nPresenta el ticket corto emitido por `/auth/login` junto con un codigo TOTP\nvalido o un codigo de recuperacion no consumido; emite el par de tokens con\nlos campos actuales del contrato.\n\nRaises:\n    JSONResponse 401 INVALID_MFA_TICKET: ticket ausente, vencido o invalido.\n    JSONResponse 401 INVALID_MFA_CODE: segundo factor invalido.",
+        "operationId": "mfa_verify_api_v1_auth_mfa_verify_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MfaVerifyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Completar el login con el segundo factor",
         "tags": [
           "Auth"
         ]

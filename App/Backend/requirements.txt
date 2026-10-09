@@ -40,6 +40,11 @@ cryptography>=43.0.0
 python-jose[cryptography]>=3.3.0
 bcrypt>=4.0.0
 
+# Second factor TOTP (RFC 6238) for privileged accounts (c-63b, IAH-006).
+# pyotp is a third-party, pure-Python dependency: pin it and audit the package
+# (supply chain). It performs no network I/O and has no runtime data scope.
+pyotp==2.9.0
+
 # ── Development / Testing ──────────────────────────────────────────────────────
 pytest==8.3.3
 pytest-asyncio==0.24.0

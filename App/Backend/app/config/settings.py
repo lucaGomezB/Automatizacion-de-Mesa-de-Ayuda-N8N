@@ -18,8 +18,10 @@ Referencia técnica:
     Anexo H de la tesis.
 """
 
+from datetime import datetime
 from functools import lru_cache
 
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -237,6 +239,12 @@ class Settings(BaseSettings):
     # OBLIGATORIA antes de arrancar la app o correr migraciones que toquen incidentes.
     # Ejemplo .env: PSEUDONYMIZATION_ENCRYPTION_KEY=<resultado del comando anterior>
     pseudonymization_encryption_key: str
+    # Clave Fernet ANTERIOR (c-63c, IAH-009). Opcional: al rotar, la clave nueva
+    # pasa a `pseudonymization_encryption_key` y la vieja se conserva aqui para
+    # descifrar los datos existentes (MultiFernet: nueva primero, anterior de
+    # respaldo). Vacio = sin solapamiento (comportamiento actual). Se retira
+    # recien al confirmar el re-cifrado (scripts/rotate_fernet_key.py).
+    pseudonymization_encryption_key_previous: str = ""
 
     # ── Autenticación JWT ──────────────────────────────────────────────────────
     # Clave secreta para firmar tokens JWT (algoritmo HS256). OBLIGATORIA.
@@ -247,6 +255,21 @@ class Settings(BaseSettings):
     # Tiempo de expiración del token (legado). Se conserva por compatibilidad de
     # configuración; el access token usa `jwt_access_expire_minutes` (c-63a).
     jwt_expire_minutes: int = 1440
+
+    # ── Rotacion del secreto JWT — keyring `kid` (c-63c, IAH-008) ──────────────
+    # Keyring aditivo de a lo sumo DOS claves (activa + anterior) con ventana de
+    # solapamiento. La firma SIEMPRE usa la activa y su `kid`; la verificacion
+    # acepta la anterior (y los tokens legacy sin `kid`) hasta la ventana.
+    # `jwt_key_id` (default `v1`) es el `kid` de la clave activa.
+    jwt_key_id: str = "v1"
+    # Clave anterior (respaldo de rotacion). Vacio = sin solapamiento.
+    jwt_previous_secret_key: str = ""
+    # `kid` de la clave anterior. Debe diferir del activo cuando se configura.
+    jwt_previous_key_id: str = ""
+    # Instante ISO-8601 (UTC) hasta el que se acepta la clave anterior. Vacio =
+    # la anterior se acepta mientras este configurada (sin vencimiento).
+    # Ejemplo: 2026-11-01T00:00:00+00:00
+    jwt_previous_key_expires_at: str = ""
 
     # ── Identidad y accesos endurecidos (c-63a) ────────────────────────────────
     # Access token de vida corta (15 min por defecto, configurable) + refresh
@@ -275,6 +298,63 @@ class Settings(BaseSettings):
     account_lockout_window_minutes: int = 15
     # Duracion del bloqueo en minutos.
     account_lockout_duration_minutes: int = 15
+
+    # ── MFA TOTP para cuentas privilegiadas (c-63b, IAH-006/IAH-007) ───────────
+    # Flag APAGADO por defecto (dev/test/CI preservan el login de un paso). En
+    # produccion real MUST habilitarse para exigir el segundo factor a las
+    # cuentas privilegiadas (ver docs/seguridad/).
+    mfa_required_for_privileged: bool = False
+    # Vida del ticket de segundo factor (JWT corto de scope `mfa`) en minutos.
+    mfa_ticket_expire_minutes: int = 5
+    # Issuer mostrado por la app autenticadora en el URI otpauth.
+    mfa_issuer: str = "Gestion de Incidentes"
+    # Cantidad de codigos de recuperacion de un solo uso generados en el enrollment.
+    mfa_recovery_code_count: int = 10
+
+    # ── Validaciones del keyring JWT (c-63c, IAH-008; S1/S3 del verify) ────────
+
+    @field_validator("jwt_previous_key_expires_at")
+    @classmethod
+    def _validate_previous_expiry(cls, value: str) -> str:
+        """Rechaza un cierre de ventana ilegible (S3).
+
+        Un valor NO vacio debe ser un instante ISO-8601 parseable. Un typo NO
+        debe interpretarse silenciosamente como "sin vencimiento" (que dejaria
+        la clave anterior valida indefinidamente con governance CRITICO).
+        """
+        raw = (value or "").strip()
+        if not raw:
+            return value
+        candidate = raw[:-1] + "+00:00" if raw.endswith("Z") else raw
+        try:
+            datetime.fromisoformat(candidate)
+        except ValueError as exc:
+            raise ValueError(
+                "jwt_previous_key_expires_at debe ser un instante ISO-8601 valido "
+                "(ej. 2026-11-01T00:00:00+00:00). Un valor ilegible no abre una "
+                "ventana de solapamiento indefinida."
+            ) from exc
+        return value
+
+    @model_validator(mode="after")
+    def _validate_keyring_ids(self) -> "Settings":
+        """Fail-fast: con clave anterior, su `kid` debe diferir del activo (S1).
+
+        Con ids iguales la rotacion es ambigua: un token de la clave anterior se
+        resolveria solo contra la activa y se rechazaria (fallo silencioso).
+        """
+        previous_secret = (self.jwt_previous_secret_key or "").strip()
+        if not previous_secret:
+            return self
+        active_kid = (self.jwt_key_id or "").strip()
+        previous_kid = (self.jwt_previous_key_id or "").strip()
+        if previous_kid == active_kid:
+            raise ValueError(
+                "jwt_previous_key_id debe diferir de jwt_key_id cuando hay una "
+                "clave anterior configurada; ids iguales hacen la rotacion "
+                "ambigua y rechazan los tokens de la clave anterior."
+            )
+        return self
 
 
 @lru_cache
