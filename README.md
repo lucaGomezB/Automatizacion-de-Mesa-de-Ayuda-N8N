@@ -53,6 +53,20 @@ Antes de ejecutarlo, prepara **una sola vez** `App/Backend/.env`:
 Si falta el `.env` o alguno de esos secretos, el comando lo indica con los pasos
 exactos y **no levanta ningun servicio**.
 
+> **Sobre el `.env` de la raiz (postgres del stack)**: ademas de
+> `App/Backend/.env`, el stack core interpola `POSTGRES_USER`,
+> `POSTGRES_PASSWORD` y `POSTGRES_DB` desde el `.env` de la RAIZ del repo (con
+> defaults `mesa` / `mesa_local_dev` / `mesa_de_ayuda`). Ese archivo es opcional
+> en un arranque limpio, pero su valor importa cuando el volumen
+> `mesa_local_postgres_data` **ya existe**: el nombre de proyecto de compose esta
+> fijado a `mesa_local`, y un volumen reutilizado conserva la password con la que
+> se inicializo (las variables `POSTGRES_*` solo aplican en la primera
+> inicializacion). Un clon nuevo que no defina la MISMA `POSTGRES_PASSWORD` en el
+> `.env` de la raiz fallara al autenticar y el backend quedara `unhealthy`. Para
+> continuar un entorno existente, copia el `.env` de la raiz del entorno original
+> o define ahi la password original. Para partir de cero,
+> `docker compose down -v` recrea los volumenes y **borra los datos de la base**.
+
 ### Prerrequisitos
 
 - **Docker Engine 24+** y **Docker Compose v2** (plugin integrado en Docker Desktop)
@@ -195,6 +209,14 @@ sus variables son opcionales y se sobrescriben por `.env`:
 > se publica al host y Nginx sobreescribe el header. Al cargar `TWILIO_AUTH_TOKEN`, la URL pública
 > configurada en Twilio debe coincidir exactamente con
 > `https://<host>/api/v1/cost-guard/twilio/voice` (ver `docs/operational-guide.md` §11.6).
+
+> **`.env` de la raiz (postgres y secretos compartidos del compose)**:
+> `docker-compose.yml` tambien interpola `POSTGRES_USER` / `POSTGRES_PASSWORD` /
+> `POSTGRES_DB` y `COST_GUARD_SHARED_SECRET` desde el `.env` de la RAIZ del repo.
+> Copia `.env.example` a `.env` para fijarlos; si no existe, se usan los defaults
+> (`mesa` / `mesa_local_dev` / `mesa_de_ayuda`). Con el nombre de proyecto fijado a
+> `mesa_local`, un volumen `mesa_local_postgres_data` ya inicializado conserva su
+> password original: ver la nota de volumen en "Primera ejecucion".
 
 ### 3. Generar los certificados TLS
 
