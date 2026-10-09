@@ -47,7 +47,7 @@
 
 ## 8. B1 — Pregunta de investigación sobre el criterio humano
 
-- [ ] 8.1 Resolver la OQ B1 con el autor (medir la clasificación manual o retirar la sub-pregunta y reformular H1) y aplicar la decisión en `S/01-introduccion.tex:28,32-34`; verificar con `rg -n "criterio humano|comparable o superior" S/01-introduccion.tex` que la sub-pregunta queda medida o retirada.
+- [ ] 8.1 [RESUELTO — OQ2=c] Retirar la sub-pregunta sobre exactitud humana (`S/01-introduccion.tex:28`) y reformular `H1` (`S/01-introduccion.tex:32-34`) para contrastar contra el umbral objetivo (≥85 %), no contra el criterio humano. Verificar con `rg -n "criterio humano|comparable o superior|proceso manual" S/01-introduccion.tex` sin la comparación humana.
 
 ## 9. B2 — Tiempo preliminar vs experimental
 
@@ -63,11 +63,11 @@
 
 ## 12. C4 — Reintentos (OQ)
 
-- [ ] 12.1 Resolver la OQ C4 con el autor. Si "limitación + trabajo futuro": reescribir `S/06-implementacion.tex:60`; si "implementar": no tocar `App/**` sin aprobación. Verificar con `rg -n "retroceso exponencial|cola de respaldo|reintento" S/06-implementacion.tex` que la afirmación coincide con el código.
+- [ ] 12.1 [RESUELTO — OQ3=b] Reescribir `S/06-implementacion.tex:60` como limitación conocida + trabajo futuro (NO se implementa el reintento/cola). Verificar con `rg -n "retroceso exponencial|cola de respaldo" S/06-implementacion.tex` sin resultados.
 
 ## 13. C5 — Nginx/TLS (OQ)
 
-- [ ] 13.1 Resolver la OQ C5 con el autor y ajustar `S/05-arquitectura.tex:8`, `S/09-conclusiones.tex:10`, `S/11-aspectos-legales.tex:20` y `S/12-anexos.tex:10` según el estado (declarar TLS 1.2+1.3 si aplica); verificar con `rg -n "TLS" S/05-arquitectura.tex S/09-conclusiones.tex S/11-aspectos-legales.tex S/12-anexos.tex`.
+- [ ] 13.1 [RESUELTO — OQ4=a] Redacción condicional en `S/05-arquitectura.tex:8`, `S/09-conclusiones.tex:10`, `S/11-aspectos-legales.tex:20` y `S/12-anexos.tex:10`: distinguir el diseño (Nginx + TLS 1.2/1.3) del despliegue publicado que no lo incluía. No se despliega el proxy.
 
 ## 14. C6 — Residuos de C-18 y anexo del log
 
@@ -77,11 +77,11 @@
 
 ## 15. C7 — Sectores del prompt (OQ)
 
-- [ ] 15.1 Resolver la OQ C7 con el autor (recomendado: unificar la tesis a los 5 sectores canónicos de `docs/prompt_gemini.txt`); aplicar en `S/01-introduccion.tex`, `S/04-marco-metodologico.tex`, `S/05-arquitectura.tex` y Cap. 7; verificar `rg -ni "cuatro sector|4 sector|tres sectores" S/` sin resultados.
+- [ ] 15.1 [RESUELTO — OQ5=b] Alinear la TESIS a los 5 sectores canónicos de `docs/prompt_gemini.txt` (NO tocar el prompt). Aplicar en `S/01-introduccion.tex`, `S/04-marco-metodologico.tex`, `S/05-arquitectura.tex` y Cap. 7; coordinar con c-76; verificar `rg -ni "tres sectores|Operaciones" S/` sin resultados.
 
 ## 16. C8 — Tag inexistente (OQ)
 
-- [ ] 16.1 Resolver la OQ C8 con el autor. Si crear el tag: documentar el hash completo en `S/12-anexos.tex:19`; si corregir: apuntar al tag/ruta real. Verificar con `git tag` y `rg -n "v1\\.0\\.0" S/12-anexos.tex`.
+- [ ] 16.1 [RESUELTO — OQ6=diferido] NO crear tag ahora. Acción pendiente: al finalizar c-76+c-77, crear el tag `v1.0.0` sobre el commit entregado al jurado y consignar el hash completo en `S/12-anexos.tex:19`. Verificar con `git tag` y `rg -n "v1\.0\.0" S/12-anexos.tex`.
 
 ## 17. Verificación final y recompilación
 

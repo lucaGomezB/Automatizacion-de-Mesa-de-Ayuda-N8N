@@ -39,24 +39,21 @@ c-77 no debe tocar `App/**` salvo decisión explícita del autor.
 
 ## Decisions
 
-### D-A1 — Declarar la convención de `W` y reportar ambos estadísticos
+### D-A1 — Definir el tamaño del efecto directamente; reportar `T+` y `T−` (OQ1 = c)
 
-Se declara explícitamente la convención: `W = min(T+, T−)` (equivalente al
-estadístico de dos colas de `scipy.stats.wilcoxon`). Se reportan `T+` y `T−`, no
-un único `W` sin definición. **Alternativas**: (a) `W=T+` (suma de rangos
-positivos), (b) `W=min(T+,T−)`. Se elige (b) por ser la que el código y scipy ya
-producen y por ser invariante al signo del contraste. La tesis SHALL enunciar la
-convención antes de citarla.
+**Decisión del autor (OQ1 = c):** no se usa un `W` ambiguo. La tesis SHALL reportar
+explícitamente `T+` (suma de rangos positivos = 19765) y `T−` (suma de rangos
+negativos = 335), y definir el tamaño del efecto directamente como el
+rank-biserial `r = (T+ − T−)/(n(n+1)/2)`, con rango real `[−1,+1]`. Se menciona
+que `scipy.stats.wilcoxon` (dos colas) devuelve `335`, para trazabilidad.
 
 ### D-A2 — Corregir fórmula, rango y recálculo del tamaño del efecto
 
-Fórmula correcta: `r = (T+ − T−) / (n(n+1)/2)`, equivalente a
-`1 − 4W/(n(n+1))` cuando `W=T−=min`. Rango real `[0,1]` para un contraste
-unidireccional con esa normalización (la forma que admite `[-1,+1]` es
-`(T+−T−)/(T++T−)`, que también da 0,9667 aquí). Recálculo sobre el corpus real:
-`r=0,9667` (no `1,00`). Cotejo del código: `evaluation/stats.py:78` calcula
-`(concordantes−discordantes)/total = 188−12/200 = 0,88`, que no coincide ni con
-la tesis ni con la fórmula corregida → el código MUST alinearse.
+Fórmula correcta: `r = (T+ − T−) / (n(n+1)/2)` = `(T+ − T−)/(T+ + T−)`, rango
+real `[−1,+1]`. Recálculo sobre el corpus real: `r = 19430/20100 = 0,9667`
+(no `1,00`). Cotejo del código: `evaluation/stats.py:78` calcula
+`(concordantes−discordantes)/total = (188−12)/200 = 0,88`, que no coincide ni con
+la tesis ni con la fórmula corregida → el código MUST alinearse a `r=0,9667`.
 
 ### D-A3 — Rótulo de dispersión
 
@@ -108,19 +105,21 @@ El backend SÍ recibe el canal (`App/Backend/app/schemas/incidente.py:162`,
 campo stale del Cap. 5 (`id_canal` → `canal_origen_id`). **Decisión**: documentar
 que el canal es entrada opcional del backend, no reescribir la arquitectura.
 
-### D-C4 — Reintentos (OQ)
+### D-C4 — Reintentos (RESUELTO: OQ3 = b)
 
 Código real: sin `retryOnFail`/`maxTries` en `n8n/workflow.json`; la única
 lógica de reintento es idempotencia de telefonía
-(`App/Backend/app/services/telefonia_service.py`). Se reescribe `06:60` como
-limitación conocida + trabajo futuro (recomendado) o se implementa. OQ.
+(`App/Backend/app/services/telefonia_service.py`). **Decisión del autor (OQ3=b):**
+se reescribe `06:60` como **limitación conocida + trabajo futuro**; NO se
+implementa el reintento/cola en el código.
 
-### D-C5 — Nginx/TLS (OQ)
+### D-C5 — Nginx/TLS (RESUELTO: OQ4 = a)
 
 `nginx/nginx.conf:70` habilita `TLSv1.2 TLSv1.3`; el servicio `nginx` no está
-bajo profile (`docker-compose.yml:234`); C-20 (2026-07-03). Se reconcilia la
-redacción condicional de 5.1/9.1/11.4/Anexo A (declarar TLS 1.2+1.3, no solo
-1.3) o se reafirma el estado publicado. OQ.
+bajo profile (`docker-compose.yml:234`); C-20 (2026-07-03). **Decisión del autor
+(OQ4=a):** redacción **condicional** de 5.1/9.1/11.4/Anexo A — distinguir el
+diseño (proxy Nginx + TLS 1.2/1.3) del despliegue efectivamente publicado, que no
+lo incluía. No se despliega el proxy en esta ronda.
 
 ### D-C6 — Residuos de C-18 + anexo de log
 
@@ -130,25 +129,31 @@ decisiones `docs/Tesis/Correcciones/dictamen-correcciones.md` como Anexo. Los
 otros 4 gaps de C-18 (pgcrypto, HMAC, retención, `/clasificar`) ya están
 alineados en el árbol.
 
-### D-C7 — Sectores del prompt (OQ)
+### D-C7 — Sectores del prompt (RESUELTO: OQ5 = b)
 
 `docs/prompt_gemini.txt:5-25` define 5 sectores canónicos (c-27); la tesis
-declara 3 (`01:46,68`; `04:33,36`; `05:76,78`; Cap. 7). Se unifica a los 5
-canónicos. **Alternativas**: (a) alinear tesis a 5; (b) justificar/documentar la
-discrepancia. OQ (se recomienda (a)).
+declara 3 (`01:46,68`; `04:33,36`; `05:76,78`; Cap. 7). **Decisión del autor
+(OQ5=b):** alinear la TESIS a los **5 sectores canónicos** (no unificar el prompt
+a 3). Debe quedar consistente con c-76.
 
-### D-C8 — Tag (OQ)
+### D-C8 — Tag (RESUELTO: OQ6 = diferido)
 
-`12:19` referencia el tag `v1.0.0`; `git tag` no devuelve ninguno. Crear el tag
-con el hash completo en el Anexo B o corregir el Anexo al tag/hash real. OQ
-(crear un tag es acción del autor).
+`12:19` referencia el tag `v1.0.0`; `git tag` no devuelve ninguno. **Decisión del
+autor (OQ6):** **diferir** la creación del tag: se hará como **v1.0.0 al terminar
+estas correcciones** (c-76 + c-77), sobre el commit entregado, y entonces se
+consignará el **hash completo** en el Anexo B. Se deja constancia de la acción
+pendiente (ver `docs/Tesis/Correcciones/dictamen-correcciones.md`).
 
-### D-B1 / D-B2 — Pregunta de investigación humana (OQ)
+### D-B1 / D-B2 — Pregunta de investigación humana (RESUELTO: OQ2 = c)
 
-B1: medir la clasificación manual sobre el mismo corpus o retirar la
-sub-pregunta y reformular H1. B2: explicar la relación entre la medición
-preliminar (165 s) y la experimental (ahora 61,6 s), mostrando el registro que
-sostiene el tiempo. OQ.
+**Decisión del autor (OQ2=c):** se **retira** la sub-pregunta sobre la exactitud
+humana (`01:28`) y se **reformula `H1`** (`01:32-34`) para quitar la comparación
+con el criterio humano; la exactitud se contrasta contra el umbral objetivo
+(≥85 %), no contra el operador. Motivo: no existen los etiquetados por analista
+necesarios para medirla y no se agrega fieldwork.
+B2 (independiente, no OQ): explicar la relación entre la medición preliminar
+(165 s) y la experimental (ahora 61,6 s), mostrando el registro que sostiene el
+tiempo.
 
 ## Risks / Trade-offs
 
@@ -168,15 +173,5 @@ sostiene el tiempo. OQ.
 
 ## Open Questions
 
-- **A1/A2**: ¿qué convención de `W` prefiere el autor declarar (`min(T+,T−)`
-  recomendado, o `T+`)? ¿Se adopta `r=(T+−T−)/(n(n+1)/2)=0,9667` o la variante
-  `(T+−T−)/(T++T−)`?
-- **B1**: ¿medir el criterio humano o retirar la sub-pregunta y reformular H1?
-- **C4**: ¿reescribir `06.5` como limitación + trabajo futuro, o implementar el
-  reintento/cola?
-- **C5**: ¿redacción condicional en la tesis o agregar el proxy (ya presente) al
-  compose publicado?
-- **C7**: ¿unificar la tesis a 5 sectores canónicos (recomendado) o
-  justificar/documentar los 3?
-- **C8**: ¿crear el tag `v1.0.0` (acción del autor) o corregir el Anexo B al
-  tag/hash real?
+Ninguna abierta. Todas resueltas por el autor (2026-10-09): OQ1=c (D-A1/D-A2),
+OQ2=c (D-B1), OQ3=b (D-C4), OQ4=a (D-C5), OQ5=b (D-C7), OQ6=diferido (D-C8).
