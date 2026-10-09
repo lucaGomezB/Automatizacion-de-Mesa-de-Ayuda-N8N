@@ -278,3 +278,166 @@ None. The canonical deliverable (corpus loadable, reproducible harness, regressi
 All 63 tasks are complete; the c-68 harness suite (86/86), evaluation (118/118), and backend regression (1217 passed) are green; the dry-run is exit 0 with zero data side effects; `App/**` is untouched; `openspec validate --strict` passes. The corpus is independently confirmed at 200/200 with per-channel values and the write-back columns are present in both CSV and XLSX. Residual gaps are evidence-quality/traceability items and one untested (but statically implemented) credential guard — none block archive.
 
 **CRITICAL count**: 0
+
+---
+
+## Addendum (2026-10-09) — Post-verify fixes
+
+Re-ejecucion tras corregir los warnings. Cambios SOLO en archivos de test (sin produccion, sin `App/**`).
+
+| Issue | Estado | Evidencia |
+|-------|--------|-----------|
+| W1 (guard de credenciales sin test) | RESUELTO | Nuevo `test_run_missing_credentials_aborts_without_network` (`test_ingest_via_n8n.py`). Coverage de `ingest_via_n8n.py` 93% (lineas 1236-1242 cubiertas). |
+| W2 (trazabilidad sidecar 4/119) | ACEPTADO | Irrecuperable: la corrida real del 2026-10-02 no es re-ejecutable y la evidencia per-case perdida no se puede reconstruir. El corpus canonico 200/200 esta intacto y verificado. Gap de trazabilidad historica documentado. |
+| W3 (test rojo de c-73 en `corpus_ingest`) | RESUELTO | `test_pseudonymize_corpus.py` alineado a 5 categorias (`tarjeta`). `scripts/corpus_ingest` = `162 passed`, `0 failed`. |
+| SUGGESTION-1 (textos stale) | RESUELTO | `tasks.md` 6.1 y 6.5 actualizadas a `pendientes_nulos=0`. |
+
+Comandos exactos:
+
+```
+$ cd scripts/corpus_ingest && python3 -m pytest -q
+162 passed in 3.93s
+
+$ python3 scripts/corpus_ingest/ingest_via_n8n.py --dry-run
+DRY-RUN: ingesta=119 telefono_omitido=81 sin_mapear=0 pendientes_nulos=0. No se ejecuto red ni escritura.
+(exit 0)
+
+$ git status --porcelain
+ M scripts/corpus_ingest/test_ingest_via_n8n.py
+ M scripts/corpus_ingest/test_pseudonymize_corpus.py
+```
+
+Lint resuelto (2026-10-09): los 5 errores preexistentes de `ruff check .` en `scripts/corpus_ingest` (E402/F401/F841) en `ingest_telefonia_corpus.py` y `test_ingest_telefonia_corpus.py` fueron corregidos; `ruff check .` -> `All checks passed!`.
+
+**Verdict post-fix**: PASS (0 CRITICAL; W1 y W3 resueltos; W2 aceptado como gap de trazabilidad historica no reparable).
+
+---
+
+## Independent Re-verification (2026-10-09)
+
+Independent verifier re-run on the CURRENT working tree (includes post-verify fixes). All commands executed by the verifier; no prior claim was trusted. Host has no `python` binary — `python3` used throughout.
+
+### Exact command outputs
+
+**1. `cd scripts/corpus_ingest && ruff check .`** — exit 0
+
+```
+All checks passed!
+```
+
+**2. `cd scripts/corpus_ingest && python3 -m pytest -q`** — exit 0
+
+```
+162 passed in 7.88s
+```
+
+Old W3 failure (`test_pseudonymize_corpus.py::test_no_pii_produces_zero_counts_and_unchanged_text`) is GONE. Suite is fully green.
+
+**3. `cd scripts/corpus_ingest && python3 -m pytest test_ingest_via_n8n.py -q`** — exit 0
+
+```
+87 passed in 5.47s
+```
+
+(was 86 before W1; +1 = the new guard test). The test `test_run_missing_credentials_aborts_without_network` EXISTS at `test_ingest_via_n8n.py:1489` and passes.
+
+**4. Coverage of the W1 guard** — exit 0
+
+```
+Name                Stmts   Miss  Cover   Missing
+-------------------------------------------------
+ingest_via_n8n.py     622     45    93%   122, 124, 127, 129, 236, 263, 284, 292, 411, 419, 554, 638, 682, 693, 696, 724, 781, 801-802, 883-893, 959-960, 962, 1020-1021, 1023, 1032, 1035, 1063, 1102-1103, 1189-1190, 1202, 1259-1264, 1273, 1279, 1285
+-------------------------------------------------
+TOTAL                 622     45    93%
+87 passed in 11.95s
+```
+
+Lines 1236-1242 are NO LONGER in the missing list (previous missing list included `1236-1242`). Coverage rose 92% -> 93%. The guard `run()` exit 2 (L1233-1242) is now exercised.
+
+**5. `python3 scripts/corpus_ingest/ingest_via_n8n.py --dry-run`** — exit 0
+
+```
+Casos en el corpus: 200 | seleccionados: 200
+  canal 'correo': 66
+  canal 'telefono': 81
+  canal 'web': 53
+DRY-RUN: ingesta=119 telefono_omitido=81 sin_mapear=0 pendientes_nulos=0. No se ejecuto red ni escritura.
+```
+
+`pendientes_nulos=0` confirmed.
+
+**6. `cd evaluation && pytest -q`** — exit 0
+
+```
+118 passed in 12.08s
+```
+
+No `CorpusError`.
+
+**7. `git status --porcelain` / `git --no-pager diff --stat`**
+
+```
+ M README.md
+ M openspec/changes/c-68-corpus-ingesta-n8n/tasks.md
+ M openspec/changes/c-68-corpus-ingesta-n8n/verify-report.md
+ M scripts/corpus_ingest/ingest_telefonia_corpus.py
+ M scripts/corpus_ingest/test_ingest_telefonia_corpus.py
+ M scripts/corpus_ingest/test_ingest_via_n8n.py
+ M scripts/corpus_ingest/test_pseudonymize_corpus.py
+```
+
+```
+ README.md                                          |  7 ++++-
+ openspec/changes/c-68-corpus-ingesta-n8n/tasks.md  | 16 +++++++++--
+ .../c-68-corpus-ingesta-n8n/verify-report.md       | 32 ++++++++++++++++++++++
+ scripts/corpus_ingest/ingest_telefonia_corpus.py   |  2 +-
+ .../corpus_ingest/test_ingest_telefonia_corpus.py  |  5 ++--
+ scripts/corpus_ingest/test_ingest_via_n8n.py       | 28 +++++++++++++++++++
+ scripts/corpus_ingest/test_pseudonymize_corpus.py  |  8 +++++-
+ 7 files changed, 89 insertions(+), 9 deletions(-)
+```
+
+**CONFIRMED: NO file under `App/**` is modified.** The two c-68 deliverables are `test_ingest_via_n8n.py` (+28) and `test_pseudonymize_corpus.py` (+8). TANGENTIAL (not c-68): `README.md` (clone-readiness docs), `ingest_telefonia_corpus.py` + `test_ingest_telefonia_corpus.py` (pre-existing ruff lint fixes: F841 `exc` removed, F401 unused `ic` import removed, E402 noqa added). `tasks.md` and `verify-report.md` are the change's own post-verify records.
+
+**8. `openspec validate c-68-corpus-ingesta-n8n --strict`** — exit 0
+
+```
+Change 'c-68-corpus-ingesta-n8n' is valid
+```
+
+**9. Backend regression `cd App/Backend && python3 -m pytest -m "not integration" -q`** — exit 0 (216.26s)
+
+```
+1217 passed, 42 deselected, 1 xfailed, 331 warnings in 216.26s (0:03:36)
+```
+
+Matches the prior verify exactly (1217/42/1). Consistent with `App/**` being untouched.
+
+### Additional independent checks
+
+- Sidecar `data/corpus_resultados_n8n.json`: independently parsed = **4 cases** (`R004, R010, R012, R001`). W2 claim of 4/119 holds.
+- Corpus `data/corpus_evaluacion_pseudonimizado.json`: **200 cases, 0 null/non-numeric `tiempo_automatizado_s`**. Corpus is 200/200 complete, consistent with `pendientes_nulos=0`.
+- Guard code inspected at `ingest_via_n8n.py:1233-1242`: reads `INGEST_OPERATOR_USERNAME`/`INGEST_OPERATOR_PASSWORD`, prints a credential-free ERROR to stderr, returns 2. The new test monkeypatches `login` to raise and asserts `run(...) == 2` and no `None` leakage.
+- W3 fix inspected: expected dict now has 5 keys (`email/telefono/host/persona/tarjeta`), aligned with c-73.
+- tasks.md diff inspected: 6.1/6.5 changed `pendientes_nulos=200` -> `pendientes_nulos=0`; 6.7 updated to `87 passed` / `162 passed` / `1217 passed`.
+
+### Per-issue status
+
+| Issue | Status | Independent evidence |
+|-------|--------|----------------------|
+| W1 — credentials guard UNTESTED | **RESOLVED** | `test_run_missing_credentials_aborts_without_network` exists + passes; coverage L1236-1242 no longer missing; 86 -> 87 harness tests |
+| W2 — historical sidecar 4/119 | **ACCEPTED** | Sidecar independently parsed = 4 cases; real run not replayable; canonical corpus 200/200 intact and verified |
+| W3 — red c-73 test in corpus_ingest | **RESOLVED** | `scripts/corpus_ingest` = `162 passed, 0 failed` with exact `pytest -q`; expected dict aligned to 5 categories |
+| SUGGESTION-1 — stale `pendientes_nulos=200` | **RESOLVED** | tasks.md 6.1/6.5 now record `pendientes_nulos=0`; dry-run confirms 0 |
+
+### New issue found (non-blocking, documentation only)
+
+The "Post-verify (2026-10-09)" notes in `tasks.md` and the prior Addendum state that `ruff check .` in `scripts/corpus_ingest` still reports 5 errors (E402/F401/F841). This is STALE: the tangential telefonia lint fixes are now in the tree and an independent `ruff check .` returns `All checks passed!` (exit 0). The note describes a pre-existing debt that has since been resolved by changes outside c-68. It does not affect c-68 and requires no action; recorded for accuracy.
+
+### Independent verdict
+
+**PASS**
+
+**CRITICAL count**: 0
+
+Every reproducible claim holds under independent execution: harness 87/87, full corpus_ingest 162/162 (W3 gone), evaluation 118/118 without `CorpusError`, backend regression 1217 passed identical to prior, dry-run exit 0 with `pendientes_nulos=0`, sidecar 4 cases, corpus 200/200 with zero nulls, `openspec validate --strict` valid, and `App/**` untouched. W1 and W3 are RESOLVED, SUGGESTION-1 is DONE, W2 is ACCEPTED as an unrecoverable historical traceability gap. The only new finding is a stale documentation note (no impact).
