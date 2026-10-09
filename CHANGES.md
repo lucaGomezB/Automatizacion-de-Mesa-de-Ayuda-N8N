@@ -1669,13 +1669,12 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 
 ## Primer change recomendado
 
-Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01), C-61 (2026-10-01, 26/26), C-69 (2026-10-05, 30/30), C-71 (2026-10-06, 43/43), C-60 (2026-10-06, 33/33), C-70 (2026-10-06, 72/72), C-72 (2026-10-07, 37/37), C-73 (2026-10-07, 23/23), C-74 (2026-10-07, 32/32), C-75 (2026-10-08, 14/14) y C-56 (2026-10-08, 27/27).
+Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01), C-61 (2026-10-01, 26/26), C-69 (2026-10-05, 30/30), C-71 (2026-10-06, 43/43), C-60 (2026-10-06, 33/33), C-70 (2026-10-06, 72/72), C-72 (2026-10-07, 37/37), C-73 (2026-10-07, 23/23), C-74 (2026-10-07, 32/32), C-75 (2026-10-08, 14/14), C-56 (2026-10-08, 27/27) y C-68 (2026-10-09, 63/63).
 
-Hay 2 changes ACTIVOS (c-67, c-68):
+Hay 1 change ACTIVO (c-67):
 - **`c-67-notificacion-sms-llamante`** — 0/24 (diferido; bloqueado por OQ3 y C-66; FASE 20) — Governance ALTO.
-- **`c-68-corpus-ingesta-n8n`** — 58/63 (apply avanzado; corpus web/correo medido; FASE 22) — Governance MEDIO.
 
-C-01..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-62, C-63, C-69, C-70, C-71, C-72, C-73, C-74 y C-75 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
+C-01..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-62, C-63, C-68, C-69, C-70, C-71, C-72, C-73, C-74 y C-75 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
 
 **Detalle de `c-52-telefonia-transcripcion-async`** (Gobernanza CRITICA; ARCHIVADO 2026-09-30):
 
@@ -1719,5 +1718,5 @@ Para avanzar:
 - `c-56`: ARCHIVADO (2026-10-08, 27/27); smoke manual confirmado end-to-end (operador resuelto + fallback + auditoria); spec `notification-routing` creada.
 - `c-60`: ARCHIVADO (2026-10-06, 33/33).
 - `c-67`: no aplicar aun; bloqueado por OQ3 (entregabilidad SMS AR) y por C-66 (privacidad-transferencias, planificado en la FASE 21, aun sin crear).
-- `c-68`: cerrar las 5 tareas restantes del harness de ingesta (web/correo ya medidos) y verificar.
+- `c-68`: ARCHIVADO (2026-10-09, 63/63); harness de ingesta web/correo verificado (PASS, 0 CRITICAL), W1/W3 resueltos, W2 aceptado, corpus 200/200; spec `corpus-n8n-ingest` creada.
 - `c-70`: ARCHIVADO (2026-10-06, 72/72); corrida completa de los 81 casos y write-back realizados; corpus 200/200 cargable. Governance ALTO.

@@ -83,13 +83,13 @@
 
 ## 6. Verificacion final
 
-- [x] 6.1 Smoke sin red ni escritura: `python3 scripts/corpus_ingest/ingest_via_n8n.py --dry-run` reporta `200 casos | correo=66 web=53 telefono=81 | ingesta=119 telefono_omitido=81 pendientes_nulos=200`, exit 0 y `git status` sin cambios en `data/`. Verificacion: exit 0 y `data/` intacto.
+- [x] 6.1 Smoke sin red ni escritura: `python3 scripts/corpus_ingest/ingest_via_n8n.py --dry-run` reporta `200 casos | correo=66 web=53 telefono=81 | ingesta=119 telefono_omitido=81 pendientes_nulos=0`, exit 0 y `git status` sin cambios en `data/`. Verificacion (actualizado 2026-10-09): exit 0 y `data/` intacto; `pendientes_nulos=0` porque el corpus esta 200/200 completo (el `200` registrado originalmente era el estado previo a la corrida real).
 - [x] 6.2 Corrida acotada web: `--only-channel web --limit 2` con el workflow activo y credenciales de entorno. Verificacion: cubierta por la corrida completa (6.4); corrida real ejecutada 2026-10-02 (Engram #1143).
 - [x] 6.3 Corrida acotada correo: `--only-channel correo --limit 2`. Verificacion: cubierta por la corrida completa (6.4); corrida real ejecutada 2026-10-02 (Engram #1143).
 - [x] 6.4 Corrida completa de web y correo (119 casos). **EJECUTADA (2026-10-02, sesion previa; Engram #1143): "web 53/53 con valor, correo 66/66"**, con el workflow N8N real activo y credenciales reales. El corpus final quedo 200/200 con `tiempo_automatizado_s` para web+correo (verificado 2026-10-08). Nota de trazabilidad: el sidecar `data/corpus_resultados_n8n.json` quedo reducido a 4 casos por el bug de sobrescritura (arreglado en la tarea 4.11, con merge por `case_id`); el corpus conserva los valores medidos.
-- [x] 6.5 Reportar el conteo de casos aun nulos (81 telefono pendientes) en el resumen del harness. Verificacion: `--dry-run` reporta `pendientes_nulos=200` y el `run` real imprime `telefono_pendiente`; ningun valor no nulo se sobrescribe con null (testeado).
+- [x] 6.5 Reportar el conteo de casos aun nulos (81 telefono pendientes) en el resumen del harness. Verificacion (actualizado 2026-10-09): `--dry-run` reporta `pendientes_nulos=0` (el corpus esta 200/200 completo; el `200` original correspondia al estado previo a la corrida) y el `run` real imprime `telefono_pendiente`; ningun valor no nulo se sobrescribe con null (testeado).
 - [x] 6.6 Verificar la carga COMPLETA del corpus: `cd evaluation; pytest -q` sin `CorpusError`. **VERIFICADO (2026-10-08):** el corpus esta 200/200 sin nulos (81 telefonia + 66 correo + 53 web) y `cd evaluation; pytest -q` -> **118 passed**, sin `CorpusError`; validador `_a_float` intacto.
-- [x] 6.7 Correr la suite offline: harness `48 passed`; `cd App/Backend; pytest -m "not integration"` = `878 passed, 37 deselected, 1 xfailed`. Sin fallos nuevos respecto del baseline (no hubo cambios en `App/**`). Verificacion: conteos en verde.
+- [x] 6.7 Correr la suite offline: harness `test_ingest_via_n8n.py` = `87 passed` y `scripts/corpus_ingest` completo = `162 passed`; `cd App/Backend; pytest -m "not integration"` = `1217 passed, 42 deselected, 1 xfailed`. Sin fallos nuevos respecto del baseline (no hubo cambios en `App/**`). Verificacion (actualizado 2026-10-09 tras el fix de W1/W3): conteos en verde.
 - [x] 6.8 `openspec validate --strict --changes c-68-corpus-ingesta-n8n` pasa. Verificacion: validacion estricta sin errores.
 
 ## Notas de desviacion
@@ -97,3 +97,13 @@
 - **D2 (design) vs c-69 implementado**: D2 decia que el canal web no envia `origen_message_id` y que el dedup lo aportaba c-69. c-69 ya implementado admite un id deterministico provisto por el llamador (`webBody.origen_message_id`, precedencia D1 de c-69). El harness envia `origen_message_id = corpus-<ID>` para hacer el re-run idempotente, alineado con el prompt de la tarea y con c-69. Se documenta aqui.
 - **Fallback temporal (3.4)**: se implementa como funcion pura documentada (`select_incident_by_window`) y testeada, pero NO es el mecanismo primario; la correlacion exacta via filtro `origen_message_id` de c-69 es la primaria.
 - **openpyxl**: no venia instalado en el host; se instalo (`pip install --user --break-system-packages openpyxl`, 3.1.5) para poder validar el writer XLSX en lugar de omitir su test.
+
+## Post-verify (2026-10-09)
+
+Solo tests; `App/**` sin cambios (`git status --porcelain` = los dos archivos de test).
+
+- **W1 RESUELTO**: se agrego `test_run_missing_credentials_aborts_without_network` en `test_ingest_via_n8n.py` que cubre el guard de `run()` (exit 2 con `INGEST_OPERATOR_USERNAME`/`INGEST_OPERATOR_PASSWORD` ausentes, `ingest_via_n8n.py:1233-1242`). Coverage del harness 93% (las lineas 1236-1242 ya estan cubiertas).
+- **W3 RESUELTO**: `test_pseudonymize_corpus.py::test_no_pii_produces_zero_counts_and_unchanged_text` esperaba 4 categorias; c-73 agrego `tarjeta` al pseudonimizador. Expectativa corregida a 5 claves. `scripts/corpus_ingest` completo: `162 passed` (antes `160 passed, 1 failed`).
+- **W2 ACEPTADO (no reparable)**: el sidecar `data/corpus_resultados_n8n.json` conserva solo 4/119 casos por el bug de sobrescritura previo (arreglado en 4.11). La corrida real (2026-10-02) no es re-ejecutable y la evidencia per-case perdida es irrecuperable; el corpus canonico (200/200) esta intacto y verificado. Queda documentado como gap de trazabilidad historica.
+- **SUGGESTION-1 HECHA**: tareas 6.1 y 6.5 actualizadas a `pendientes_nulos=0`.
+- **Lint resuelto (2026-10-09)**: los 5 errores preexistentes de `ruff check .` en `scripts/corpus_ingest` (E402/F401/F841 en `ingest_telefonia_corpus.py` y `test_ingest_telefonia_corpus.py`) fueron corregidos: import sin usar eliminado, `# noqa: E402` en los imports posteriores a `sys.path`, y `except Exception` sin binding. `ruff check .` -> `All checks passed!`.
