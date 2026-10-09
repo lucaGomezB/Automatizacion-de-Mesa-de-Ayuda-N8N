@@ -57,6 +57,7 @@ exactos y **no levanta ningun servicio**.
 
 - **Docker Engine 24+** y **Docker Compose v2** (plugin integrado en Docker Desktop)
 - **Git 2.x**
+- **Python 3** con **PyYAML** (lo necesita el preflight de costo que ejecutan `scripts/up.sh` / `scripts/up.ps1`; ver nota abajo)
 - **OpenSSL** (para generar los certificados TLS de desarrollo)
 - **curl** (para las verificaciones de salud por HTTPS)
 - **make** (opcional, solo como alias de conveniencia)
@@ -65,12 +66,16 @@ Verificar:
 ```bash
 docker --version
 docker compose version
+python3 --version
+python3 -c "import yaml; print('PyYAML', yaml.__version__)"
 openssl version
 curl --version
 make --version   # opcional
 ```
 
 > **Nota sobre Windows**: si `openssl` no esta disponible en el PATH, Git for Windows lo incluye en `C:\Program Files\Git\usr\bin\`. El script `openssl\generate-certs.ps1` lo detecta automaticamente.
+
+> **Nota sobre Python y el preflight de costo**: el camino recomendado (`scripts/up.sh` / `scripts/up.ps1`) ejecuta `scripts/preflight/cost_readiness.py` con el Python del host, y ese script importa `PyYAML`. Si falta, el preflight devuelve FAIL y **no se levanta ningun servicio**. Instalar las dependencias del preflight con `pip install -r scripts/preflight/requirements.txt` (usar un virtualenv si el sistema lo exige). Alternativas que no requieren el Python del host: saltear el preflight con `UP_SKIP_COST_PREFLIGHT=1`, o usar el camino manual (`bash openssl/generate-certs.sh` y luego `docker compose up -d`).
 
 ### Camino recomendado: un solo comando
 
@@ -299,7 +304,7 @@ El sistema puede ser replicado exactamente siguiendo:
 4. Código: `App/Backend/`
 5. Configuración: `docker-compose.yml`
 
-**Nota**: El corpus de validación está disponible bajo `data/corpus_evaluacion_pseudonimizado.csv` con 200 casos etiquetados.
+**Nota**: El corpus de validación (200 casos etiquetados) **NO se versiona en el repositorio** porque contiene datos personales (PII): la Ley 25.326 exige tratarlo por un canal aparte. `data/corpus_evaluacion_pseudonimizado.csv` / `.json` estan en `.gitignore` y se comparten fuera del repositorio. Sin el corpus, la suite de `evaluation/` no corre en un clon limpio.
 
 ## Hook anti-secretos (obligatorio al clonar)
 
