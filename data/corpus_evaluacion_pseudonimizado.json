@@ -1,0 +1,2051 @@
+{
+  "schema_version": 1,
+  "metadata": {
+    "descripcion": "Corpus de evaluacion pseudonimizado (mesa de ayuda) — 200 casos reales; tiempos automatizados pendientes de medicion end-to-end",
+    "total_casos": 200
+  },
+  "casos": [
+    {
+      "id": "R001",
+      "descripcion": "No puede ingresar al sistema principal",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 75.0,
+      "tiempo_automatizado_s": 21.009
+    },
+    {
+      "id": "R002",
+      "descripcion": "No se puede acceder al ambiente de prueba del sistema secundario",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 110.0,
+      "tiempo_automatizado_s": 13.012
+    },
+    {
+      "id": "R003",
+      "descripcion": "No se puede acceder a las planillas de excel en un recurso compartido, se necesita la habilitacion de botones de ordenar y filtros, la planilla esta lenta",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Seguridad Informatica",
+        "Bases de Datos"
+      ],
+      "tiempo_manual_s": 220.0,
+      "tiempo_automatizado_s": 11.647
+    },
+    {
+      "id": "R004",
+      "descripcion": "No se puede conectar a las redes en su PC, se desconecta el telefono",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 100.0,
+      "tiempo_automatizado_s": 0.6
+    },
+    {
+      "id": "R005",
+      "descripcion": "No puede abrir archivos excel ni word",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 10.445
+    },
+    {
+      "id": "R006",
+      "descripcion": "Su telefono deriva llamadas a cualquier lado",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 60.0,
+      "tiempo_automatizado_s": 14.497
+    },
+    {
+      "id": "R007",
+      "descripcion": "No puede atender llamadas externas",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 70.0,
+      "tiempo_automatizado_s": 21.554
+    },
+    {
+      "id": "R008",
+      "descripcion": "El sistema principal se cierra solo al intentar hacer una consulta de una cuenta",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 105.0,
+      "tiempo_automatizado_s": 11.95
+    },
+    {
+      "id": "R009",
+      "descripcion": "No puede acceder al ambiente de consulta del sistema principal",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [
+        "Seguridad Informatica",
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 170.0,
+      "tiempo_automatizado_s": 11.674
+    },
+    {
+      "id": "R010",
+      "descripcion": "Hay 2 maquinas que se tildan al entrar al sistema principal",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Soporte Tecnico Hardware"
+      ],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 0.525
+    },
+    {
+      "id": "R011",
+      "descripcion": "Un usuario confirma que no puede generar el PDF que recibe al hacer el reporte del sistema principal en estados de cuenta",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 200.0,
+      "tiempo_automatizado_s": 12.348
+    },
+    {
+      "id": "R012",
+      "descripcion": "No puede acceder al correo",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 30.0,
+      "tiempo_automatizado_s": 0.759
+    },
+    {
+      "id": "R013",
+      "descripcion": "Solicitud de instalacion del navegador Google Chrome",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 60.0,
+      "tiempo_automatizado_s": 36.163
+    },
+    {
+      "id": "R014",
+      "descripcion": "No puede recibir respuestas de correo",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 9.909
+    },
+    {
+      "id": "R015",
+      "descripcion": "No le salen correos por flujo del sistema principal y no le llegan las instancias",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 25.221
+    },
+    {
+      "id": "R016",
+      "descripcion": "El modem que atiende una entidad y da servicio a los clientes no funciona. Tiene 2 leds rojos. Se adjunta una imagen.",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 100.0,
+      "tiempo_automatizado_s": 19.592
+    },
+    {
+      "id": "R017",
+      "descripcion": "Una impresora no tiene toner debe ser redirigida",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 72.0,
+      "tiempo_automatizado_s": 8.326
+    },
+    {
+      "id": "R018",
+      "descripcion": "Solicitud de auriculares nuevo",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 3.623
+    },
+    {
+      "id": "R019",
+      "descripcion": "Un telefono no recibe llamadas externas pero si puede realizarlas",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 30.0,
+      "tiempo_automatizado_s": 2.868
+    },
+    {
+      "id": "R020",
+      "descripcion": "Un sistema de terceros no levanta",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas",
+        "Soporte Tecnico Hardware"
+      ],
+      "tiempo_manual_s": 190.0,
+      "tiempo_automatizado_s": 10.027
+    },
+    {
+      "id": "R021",
+      "descripcion": "La hora de los telefonos fijos esta corrida 8 minutos",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 80.0,
+      "tiempo_automatizado_s": 12.396
+    },
+    {
+      "id": "R022",
+      "descripcion": "No funciona un sistema de terceros y hay un error de conexion en el web service del sistema principal",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 300.0,
+      "tiempo_automatizado_s": 35.82
+    },
+    {
+      "id": "R023",
+      "descripcion": "No se escuchan los auriculares",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 2.764
+    },
+    {
+      "id": "R024",
+      "descripcion": "No puede acceder al sistema secundario",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 15.892
+    },
+    {
+      "id": "R025",
+      "descripcion": "El escaner le tira error 2019",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 9.981
+    },
+    {
+      "id": "R026",
+      "descripcion": "El teclado no funciona",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 2.837
+    },
+    {
+      "id": "R027",
+      "descripcion": "No puede hablar en las reuniones",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 60.0,
+      "tiempo_automatizado_s": 58.384
+    },
+    {
+      "id": "R028",
+      "descripcion": "No puede hacer llamadas al exterior, se le cortan las llamadas",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 3.099
+    },
+    {
+      "id": "R029",
+      "descripcion": "Se solicita revisar un rack viejo en la cocina de gerencia",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 70.0,
+      "tiempo_automatizado_s": 13.576
+    },
+    {
+      "id": "R030",
+      "descripcion": "Se tilda y apaga su maquina sola, necesitando un reseteo manual",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 80.0,
+      "tiempo_automatizado_s": 40.867
+    },
+    {
+      "id": "R031",
+      "descripcion": "Se le han desaparecido Office, Outlook y Chrome",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software",
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 10.336
+    },
+    {
+      "id": "R032",
+      "descripcion": "Su PC se reinicia a cada rato, sospecha que son los cables de la computadora.",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Soporte Tecnico Hardware"
+      ],
+      "tiempo_manual_s": 90.0,
+      "tiempo_automatizado_s": 11.017
+    },
+    {
+      "id": "R033",
+      "descripcion": "No puede ingresar al sistema principal, le sale un cartel \"Usuario no hablitado para operar desde este puesto de trabajo\"",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 110.0,
+      "tiempo_automatizado_s": 11.208
+    },
+    {
+      "id": "R034",
+      "descripcion": "Su PC se apaga sola por problema con termica",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 8.942
+    },
+    {
+      "id": "R035",
+      "descripcion": "Cuando trata de traer un documento en formato .jpg del menu de digitalizacion se cierra su sesion",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas",
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 80.0,
+      "tiempo_automatizado_s": 17.658
+    },
+    {
+      "id": "R036",
+      "descripcion": "A todo su sector de vuelta no les funciona el telefono",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 60.0,
+      "tiempo_automatizado_s": 35.161
+    },
+    {
+      "id": "R037",
+      "descripcion": "Solicitud de cambio de cable VGA defectuoso",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 10.0,
+      "tiempo_automatizado_s": 3.016
+    },
+    {
+      "id": "R038",
+      "descripcion": "Reporta error de digitalizacion en el sistema principal",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 85.0,
+      "tiempo_automatizado_s": 11.085
+    },
+    {
+      "id": "R039",
+      "descripcion": "Solicitud de revision de lineas telefonicas",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 26.848
+    },
+    {
+      "id": "R040",
+      "descripcion": "No funcionan las lineas telefonicas",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 25.0,
+      "tiempo_automatizado_s": 32.904
+    },
+    {
+      "id": "R041",
+      "descripcion": "Se le han borrado todos los datos del perfil de consulta de SQL",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Bases de Datos"
+      ],
+      "tiempo_manual_s": 90.0,
+      "tiempo_automatizado_s": 10.837
+    },
+    {
+      "id": "R042",
+      "descripcion": "No funciona una macro en su computadora",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 30.0,
+      "tiempo_automatizado_s": 0.81
+    },
+    {
+      "id": "R043",
+      "descripcion": "Reloj de fichadas sucursal x no marca la huella dactilar",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 70.0,
+      "tiempo_automatizado_s": 4.162
+    },
+    {
+      "id": "R044",
+      "descripcion": "No puede ingresar a una parte del sistema principal",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 23.17
+    },
+    {
+      "id": "R045",
+      "descripcion": "Solicita un desbloqueo de usuario de dominio",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 30.0,
+      "tiempo_automatizado_s": 12.618
+    },
+    {
+      "id": "R046",
+      "descripcion": "Tiene problemas para ingresar al S.O. con la autenticación de doble factor",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Sistemas",
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 70.0,
+      "tiempo_automatizado_s": 9.508
+    },
+    {
+      "id": "R047",
+      "descripcion": "Le sale un error de \"Cuenta suspendida por inactividad / fin de contrato o licencia\"",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Sistemas",
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 60.0,
+      "tiempo_automatizado_s": 11.56
+    },
+    {
+      "id": "R048",
+      "descripcion": "Solicita un reseteo de contraseña de usuario de dominio porque al reestablecerla la puso mal",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 30.0,
+      "tiempo_automatizado_s": 11.433
+    },
+    {
+      "id": "R049",
+      "descripcion": "Al intentar iniciar sesion en el sistema secundario, le hace un bucle de redireccion infinito al intentar iniciar sesion",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software",
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 80.0,
+      "tiempo_automatizado_s": 33.833
+    },
+    {
+      "id": "R050",
+      "descripcion": "Gerencia perdió su llave física de seguridad FIDO",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 220.0,
+      "tiempo_automatizado_s": 11.813
+    },
+    {
+      "id": "R051",
+      "descripcion": "Su clave del sistema secundario almacenada en el gestor de contraseñas se aplica automática y erroneamente en el navegador, causando un bucle infinito de redirección.",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software",
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 90.0,
+      "tiempo_automatizado_s": 14.256
+    },
+    {
+      "id": "R052",
+      "descripcion": "Tiene una pérdida total de conexión a la red wifi corporativa",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 45.0,
+      "tiempo_automatizado_s": 9.639
+    },
+    {
+      "id": "R053",
+      "descripcion": "Le ocurren desconexiones intermitentes a la red inalámbrica, con señal débil.",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 0.613
+    },
+    {
+      "id": "R054",
+      "descripcion": "Tiene una conexión actual activa pero \"Sin acceso a internet\"",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 60.0,
+      "tiempo_automatizado_s": 11.326
+    },
+    {
+      "id": "R055",
+      "descripcion": "Tiene el cable de internet (RJ45) dañado, solicita un reemplazo de 5 metros.",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 2.899
+    },
+    {
+      "id": "R056",
+      "descripcion": "Le sale el error \"conflicto de dirección IP (estática o duplicada)\"",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas",
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 10.807
+    },
+    {
+      "id": "R057",
+      "descripcion": "Le sale el error \"fallo en la asignación de dirección IP por parte del servidor DHCP\"",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas",
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 19.347
+    },
+    {
+      "id": "R058",
+      "descripcion": "Lentitud extrema en la navegación / descarga de archivos",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Soporte Tecnico Hardware"
+      ],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 37.391
+    },
+    {
+      "id": "R059",
+      "descripcion": "La red wifi corporativa no le aparece dentro de la lista de conexiones disponibles",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas",
+        "Seguridad Informatica",
+        "Soporte Tecnico Hardware"
+      ],
+      "tiempo_manual_s": 120.0,
+      "tiempo_automatizado_s": 12.966
+    },
+    {
+      "id": "R060",
+      "descripcion": "Tiene bloqueados algunos sitios web o puertos necesarios por la configuracion del firewall",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 30.0,
+      "tiempo_automatizado_s": 30.581
+    },
+    {
+      "id": "R061",
+      "descripcion": "Tiene fallos de roaming wifi al desplazarse entre distintos puntos de acceso",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 15.0,
+      "tiempo_automatizado_s": 3.516
+    },
+    {
+      "id": "R062",
+      "descripcion": "Le sale \"error 2024\" al intentar ingresar al sistema principal",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 70.0,
+      "tiempo_automatizado_s": 39.061
+    },
+    {
+      "id": "R063",
+      "descripcion": "Se le cierra inesperadamente el sistema principal al intentar realizar la operación NQ14",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 3.411
+    },
+    {
+      "id": "R064",
+      "descripcion": "Al intentar ingresar al sistema principal, le sale el error \"Licencia expirada / no valida\"",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 30.0,
+      "tiempo_automatizado_s": 3.209
+    },
+    {
+      "id": "R065",
+      "descripcion": "No puede ingresar a las aplicaciones (sistemas) principales. Solicita una reinstalación.",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 12.825
+    },
+    {
+      "id": "R066",
+      "descripcion": "Desde la ultima actualizacion a su sistema operativo perdió acceso a algunas aplicaciones. Solicita rehabilitación",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas",
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 80.0,
+      "tiempo_automatizado_s": 32.493
+    },
+    {
+      "id": "R067",
+      "descripcion": "Le sale un cartel \"Falta el dll axm0102301239999320002302\" al intentar iniciar el sistema principal",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 3.208
+    },
+    {
+      "id": "R068",
+      "descripcion": "Reporta lentitud en el sistema principal a la hora de realizar consultas al estado de las adquisiciones más recientes",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 13.318
+    },
+    {
+      "id": "R069",
+      "descripcion": "Al intentar iniciar sesión en el sistema principal, le sale un error \"Es necesario Visual C++ 2015-2022 (x86 y x64) Redistributables\"",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 30.0,
+      "tiempo_automatizado_s": 19.036
+    },
+    {
+      "id": "R070",
+      "descripcion": "Tocó algo y accidentalmente ahora tiene Adobe PDF Reader en ruso",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 10.153
+    },
+    {
+      "id": "R071",
+      "descripcion": "No puede actualizar Firefox a la última versión",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 15.0,
+      "tiempo_automatizado_s": 0.632
+    },
+    {
+      "id": "R072",
+      "descripcion": "Dentro del sistema principal no puede registrar insumos porque su nombre de usuario se muestra roto",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 0.614
+    },
+    {
+      "id": "R073",
+      "descripcion": "Crashea su instancia del sistema secundario al intentar exportar los datos del cliente al formato de excel",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 60.0,
+      "tiempo_automatizado_s": 14.056
+    },
+    {
+      "id": "R074",
+      "descripcion": "Se le está llenando el disco de su PC al gerente de sucursal Rio Negro. Solicita un backup y limpieza",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 30.0,
+      "tiempo_automatizado_s": 0.657
+    },
+    {
+      "id": "R075",
+      "descripcion": "Puede recibir correos, pero no enviarlos",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 80.0,
+      "tiempo_automatizado_s": 12.465
+    },
+    {
+      "id": "R076",
+      "descripcion": "Puede enviar correos, pero no recibirlos",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 70.0,
+      "tiempo_automatizado_s": 13.287
+    },
+    {
+      "id": "R077",
+      "descripcion": "Recibe varios correos directamente a la carpeta de spam, en vez de al buzón de entrada",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 30.0,
+      "tiempo_automatizado_s": 0.762
+    },
+    {
+      "id": "R078",
+      "descripcion": "Recibe los archivos por correo, de manera corrupta.",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 1.265
+    },
+    {
+      "id": "R079",
+      "descripcion": "No puede acceder a su correo electrónico empresarial desde un dispositivo personal.",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 55.0,
+      "tiempo_automatizado_s": 22.206
+    },
+    {
+      "id": "R080",
+      "descripcion": "No puede enviar archivos por correo que pesen menos de 1kb",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 100.0,
+      "tiempo_automatizado_s": 14.392
+    },
+    {
+      "id": "R081",
+      "descripcion": "No puede proporcionar los permisos de cámara y sonido para una reunión",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 70.0,
+      "tiempo_automatizado_s": 12.698
+    },
+    {
+      "id": "R082",
+      "descripcion": "Se le ha roto el formato de su firma electronica",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 30.0,
+      "tiempo_automatizado_s": 0.756
+    },
+    {
+      "id": "R083",
+      "descripcion": "No puede enviar ni recibir comprimidos cifrados por adjunto en el correo",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 60.0,
+      "tiempo_automatizado_s": 19.945
+    },
+    {
+      "id": "R084",
+      "descripcion": "No enciende la computadora",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 95.0,
+      "tiempo_automatizado_s": 10.382
+    },
+    {
+      "id": "R085",
+      "descripcion": "No le enciende la webcam",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 110.0,
+      "tiempo_automatizado_s": 12.035
+    },
+    {
+      "id": "R086",
+      "descripcion": "La batería de su laptop no carga o se descarga rápidamente estando enchufada.",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 200.0,
+      "tiempo_automatizado_s": 9.892
+    },
+    {
+      "id": "R087",
+      "descripcion": "La computadora hace un ruido fuerte al encender",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 180.0,
+      "tiempo_automatizado_s": 11.975
+    },
+    {
+      "id": "R088",
+      "descripcion": "La computadora le tira un pantallazo azul al hacer tareas pesadas",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 12.532
+    },
+    {
+      "id": "R089",
+      "descripcion": "Antes de encender, el monitor parpadea un par de veces una luz ténue y luego se apaga",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 70.0,
+      "tiempo_automatizado_s": 11.075
+    },
+    {
+      "id": "R090",
+      "descripcion": "A cada rato la computadora hace ruido y se apaga",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 10.712
+    },
+    {
+      "id": "R091",
+      "descripcion": "El monitor le dice \"no signal\", el cable está bien enchufado",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 10.815
+    },
+    {
+      "id": "R092",
+      "descripcion": "No le funciona el ratón",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 10.023
+    },
+    {
+      "id": "R093",
+      "descripcion": "No le funciona el teclado",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 12.504
+    },
+    {
+      "id": "R094",
+      "descripcion": "Los programas se tardan un montón en cargar. La luz de la PC está prendida permanente",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 0.654
+    },
+    {
+      "id": "R095",
+      "descripcion": "No se puede seleccionar la cámara web de la laptop para una videollamada",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 17.234
+    },
+    {
+      "id": "R096",
+      "descripcion": "La docking station no reconoce a todos los monitores conectados.",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 25.0,
+      "tiempo_automatizado_s": 0.686
+    },
+    {
+      "id": "R097",
+      "descripcion": "No le sale sonido desde los auriculares",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 0.719
+    },
+    {
+      "id": "R098",
+      "descripcion": "No funciona la radio de la oficina",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 0.619
+    },
+    {
+      "id": "R099",
+      "descripcion": "Un puerto USB de la PC no reconoce ni teclado, ni ratón, ni pendrive",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 15.0,
+      "tiempo_automatizado_s": 0.807
+    },
+    {
+      "id": "R100",
+      "descripcion": "Se le cayó un monitor, la pantalla ahora está partida y no se ve nada",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 30.0,
+      "tiempo_automatizado_s": 0.584
+    },
+    {
+      "id": "R101",
+      "descripcion": "Un trafo de monitor tira olor a quemado, no prende el monitor.",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 9.067
+    },
+    {
+      "id": "R102",
+      "descripcion": "Se le cayó una pc y ahor está abollada la carcaza, al parecer los programas ahora se tardan más en cargar",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 80.0,
+      "tiempo_automatizado_s": 11.886
+    },
+    {
+      "id": "R103",
+      "descripcion": "El reloj de entrada de la sucursal de Maipú no toma las huellas dactilares",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 70.0,
+      "tiempo_automatizado_s": 12.648
+    },
+    {
+      "id": "R104",
+      "descripcion": "La impresora se muestra en estado \"offline\"",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 60.0,
+      "tiempo_automatizado_s": 12.009
+    },
+    {
+      "id": "R105",
+      "descripcion": "Se atascaron unos papeles en la impresora y tratando de sacarlos, se arrancaron unos piñones de la impresora",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 110.0,
+      "tiempo_automatizado_s": 13.109
+    },
+    {
+      "id": "R106",
+      "descripcion": "Se le está acabando el toner",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 45.0,
+      "tiempo_automatizado_s": 11.408
+    },
+    {
+      "id": "R107",
+      "descripcion": "Necesita un cambio de tambor de imagen",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 0.684
+    },
+    {
+      "id": "R108",
+      "descripcion": "Necesita un reemplazo de fusor",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 0.66
+    },
+    {
+      "id": "R109",
+      "descripcion": "Necesita un cambio de unidad de tinta",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 25.0,
+      "tiempo_automatizado_s": 0.75
+    },
+    {
+      "id": "R110",
+      "descripcion": "Se ve el texto borroso al imprimir",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 27.765
+    },
+    {
+      "id": "R111",
+      "descripcion": "El papel sale como desgastado al imprimir",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 11.85
+    },
+    {
+      "id": "R112",
+      "descripcion": "Los drivers de la impresora están desactualizados y no permiten usar una funcionalidad específica de un driver posterior",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 19.676
+    },
+    {
+      "id": "R113",
+      "descripcion": "Está desalineada la configuración estándar de la impresora, imprime chueco",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 80.0,
+      "tiempo_automatizado_s": 14.741
+    },
+    {
+      "id": "R114",
+      "descripcion": "La dirección IP por defecto de la impresora se ha perdido, está \"huérfana\"",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 60.0,
+      "tiempo_automatizado_s": 18.197
+    },
+    {
+      "id": "R115",
+      "descripcion": "La computadora enciende extremadamente lenta",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Seguridad Informatica",
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 115.0,
+      "tiempo_automatizado_s": 13.344
+    },
+    {
+      "id": "R116",
+      "descripcion": "Algunos procesos están consumiendo más recursos que de lo usual, reduciendo la eficiencia del equipo.",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 120.0,
+      "tiempo_automatizado_s": 11.49
+    },
+    {
+      "id": "R117",
+      "descripcion": "Falta espacio en el disco de su máquina, solicita una limpieza",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 160.0,
+      "tiempo_automatizado_s": 14.339
+    },
+    {
+      "id": "R118",
+      "descripcion": "Hay actualizaciones del S.O. atascadas o que fallan reiteradamente",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [
+        "Seguridad Informatica",
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 80.0,
+      "tiempo_automatizado_s": 11.349
+    },
+    {
+      "id": "R119",
+      "descripcion": "Hay un perfil de usuario temporal cargado en lugar del perfil de usuario completo.",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 130.0,
+      "tiempo_automatizado_s": 12.189
+    },
+    {
+      "id": "R120",
+      "descripcion": "El sistema principal se ha congelado completamente, se solicita un reinicio urgente",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [
+        "Seguridad Informatica",
+        "Soporte Tecnico Hardware",
+        "Soporte Tecnico Software",
+        "Bases de Datos"
+      ],
+      "tiempo_manual_s": 220.0,
+      "tiempo_automatizado_s": 12.604
+    },
+    {
+      "id": "R121",
+      "descripcion": "Se han desaparecido sus aplicaciones y se han desvinculado sus accesos directos",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Sistemas",
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 140.0,
+      "tiempo_automatizado_s": 11.155
+    },
+    {
+      "id": "R122",
+      "descripcion": "Los controladores de su webcam se han vuelto incompatibles tras una actualización del sistema.",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Seguridad Informatica",
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 80.0,
+      "tiempo_automatizado_s": 16.61
+    },
+    {
+      "id": "R123",
+      "descripcion": "Se han corrompido unos archivos del sistema, impidiendo su funcionamiento básico.",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 47.414
+    },
+    {
+      "id": "R124",
+      "descripcion": "Se han desconfigurado el día y la zona horaria de su PC",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 30.0,
+      "tiempo_automatizado_s": 39.541
+    },
+    {
+      "id": "R125",
+      "descripcion": "Le sale un mensaje de \"Acceso Denegado\" al intentar abrir archivos o carpetas compartidas",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 0.538
+    },
+    {
+      "id": "R126",
+      "descripcion": "Se emiten alertas de malware desde la pc del usuario por el antivirus corporativo",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 95.0,
+      "tiempo_automatizado_s": 14.15
+    },
+    {
+      "id": "R127",
+      "descripcion": "El usuario reporta sospechas sobre un correo de phishing",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 30.0,
+      "tiempo_automatizado_s": 20.59
+    },
+    {
+      "id": "R128",
+      "descripcion": "Se ha perdido el acceso a unos archivos en la red tras cambios en Active Directory",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 16.271
+    },
+    {
+      "id": "R129",
+      "descripcion": "Se han encontrado unos archivos dudosos con extensiones no especificadas",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 0.705
+    },
+    {
+      "id": "R130",
+      "descripcion": "Se han restringido unas funciones del sistema, aplicadas por políticas de grupo (GPO)",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 55.0,
+      "tiempo_automatizado_s": 11.441
+    },
+    {
+      "id": "R131",
+      "descripcion": "No puede ejecutar unos ejecutables o scripts debido a las políticas de control de aplicaciones",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 60.0,
+      "tiempo_automatizado_s": 13.854
+    },
+    {
+      "id": "R132",
+      "descripcion": "No puede conectar unidades USB por políticas de prevención de pérdida de datos.",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 49.305
+    },
+    {
+      "id": "R133",
+      "descripcion": "No se puede conectar a la VPN corporativa debido a un fallo de autenticación",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 30.0,
+      "tiempo_automatizado_s": 19.349
+    },
+    {
+      "id": "R134",
+      "descripcion": "Le da error de protocolo al intentar econectarse a la VPN corporativa",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 16.898
+    },
+    {
+      "id": "R135",
+      "descripcion": "Durante la jornada laboral, se le desconecta varias veces la VPN",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 60.0,
+      "tiempo_automatizado_s": 14.662
+    },
+    {
+      "id": "R136",
+      "descripcion": "No se puede conectar por escritorio remoto (RDP) al equipo de la oficina",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 15.315
+    },
+    {
+      "id": "R137",
+      "descripcion": "Siente una lentitud acentuada en el acceso a recursos locales al estar conectado por VPN",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 80.0,
+      "tiempo_automatizado_s": 15.123
+    },
+    {
+      "id": "R138",
+      "descripcion": "Hay un conflicto entre la subred del hogar del usuario y el rango de red de la empresa",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 90.0,
+      "tiempo_automatizado_s": 15.185
+    },
+    {
+      "id": "R139",
+      "descripcion": "Eliminó accidentalmente unos archivos y carpetas importantes",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 120.0,
+      "tiempo_automatizado_s": 12.047
+    },
+    {
+      "id": "R140",
+      "descripcion": "Se tienen unidades de red mapeadas que no se reconectan al iniciar sesión",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 30.0,
+      "tiempo_automatizado_s": 38.404
+    },
+    {
+      "id": "R141",
+      "descripcion": "Ocurren fallos de sincronización de archivos en la nube",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 70.0,
+      "tiempo_automatizado_s": 19.16
+    },
+    {
+      "id": "R142",
+      "descripcion": "El usuario solicita la restauración de su copia de seguridad debido a una corrupción de información",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 60.0,
+      "tiempo_automatizado_s": 13.887
+    },
+    {
+      "id": "R143",
+      "descripcion": "No puede exceder a archivos excel o word",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas",
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 80.0,
+      "tiempo_automatizado_s": 12.598
+    },
+    {
+      "id": "R144",
+      "descripcion": "Le figura un error en la licencia Microsoft Office 365",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas",
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 60.0,
+      "tiempo_automatizado_s": 11.171
+    },
+    {
+      "id": "R145",
+      "descripcion": "No se puede conectar a la red corporativa via Ethernet",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software",
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 36.934
+    },
+    {
+      "id": "R146",
+      "descripcion": "Su instancia del sistema principal se tarda un montón al navegar entre las páginas",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 40.792
+    },
+    {
+      "id": "R147",
+      "descripcion": "Solicita un cambio de cable HDMI defectuoso",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 3.317
+    },
+    {
+      "id": "R148",
+      "descripcion": "Tiene bloqueado el puerto del middleware que permite el acceso al sistema secundario",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Sistemas",
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 59.228
+    },
+    {
+      "id": "R149",
+      "descripcion": "Solicita un cambio de ratón",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 3.224
+    },
+    {
+      "id": "R150",
+      "descripcion": "Solicita un cambio de ratón",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 15.0,
+      "tiempo_automatizado_s": 3.157
+    },
+    {
+      "id": "R151",
+      "descripcion": "Solicita un cambio de auriculares",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 3.209
+    },
+    {
+      "id": "R152",
+      "descripcion": "Solicita un cambio de auriculares",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 3.107
+    },
+    {
+      "id": "R153",
+      "descripcion": "Solicita un cambio de auriculares",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 2.953
+    },
+    {
+      "id": "R154",
+      "descripcion": "No le inicia la computadora",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 37.764
+    },
+    {
+      "id": "R155",
+      "descripcion": "No le funciona la webcam",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 60.0,
+      "tiempo_automatizado_s": 11.541
+    },
+    {
+      "id": "R156",
+      "descripcion": "No recibe archivos por correo",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Seguridad Informatica",
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 30.0,
+      "tiempo_automatizado_s": 3.32
+    },
+    {
+      "id": "R157",
+      "descripcion": "No le carga su laptop",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 27.609
+    },
+    {
+      "id": "R158",
+      "descripcion": "Solicita un cambio de display de nombre en su telefono",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 39.771
+    },
+    {
+      "id": "R159",
+      "descripcion": "Quiere actualizar sus botones de derivación en su teléfono, porque derivan a teléfonos ahora inexistentes",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 80.0,
+      "tiempo_automatizado_s": 12.953
+    },
+    {
+      "id": "R160",
+      "descripcion": "Las llamadas externas dan estado \" ocupado \" hasta en teléfonos desocupados",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 90.0,
+      "tiempo_automatizado_s": 31.997
+    },
+    {
+      "id": "R161",
+      "descripcion": "Solicita la reinstalación de Microsoft Vision",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas",
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 30.0,
+      "tiempo_automatizado_s": 3.1
+    },
+    {
+      "id": "R162",
+      "descripcion": "No funcionan las salidas ni entradas de audio",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 14.036
+    },
+    {
+      "id": "R163",
+      "descripcion": "El sistema secundario le dice que \" no tiene menu asignado \"",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 30.0,
+      "tiempo_automatizado_s": 27.385
+    },
+    {
+      "id": "R164",
+      "descripcion": "El sistema secundario le da error cuando vaa a dar de alta una tarjeta",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 13.937
+    },
+    {
+      "id": "R165",
+      "descripcion": "No puede ver los datos del cliente en el sistema principal",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 65.834
+    },
+    {
+      "id": "R166",
+      "descripcion": "El sistema principal se queda colgado con una pantalla gris al hacerse un reporte o estado de cuenta.",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 70.0,
+      "tiempo_automatizado_s": 32.604
+    },
+    {
+      "id": "R167",
+      "descripcion": "El reloj de entrada de la sucursal de Cordoba Capital no toma las huellas dactilares",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 45.0,
+      "tiempo_automatizado_s": 31.676
+    },
+    {
+      "id": "R168",
+      "descripcion": "No le llegan correos de \" workflow \"",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 61.074
+    },
+    {
+      "id": "R169",
+      "descripcion": "Tiene problemas al dar de alta una tarjeta",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 12.815
+    },
+    {
+      "id": "R170",
+      "descripcion": "La máquina de fax no funciona",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 60.0,
+      "tiempo_automatizado_s": 1.547
+    },
+    {
+      "id": "R171",
+      "descripcion": "La conexión entre el sistema principal y su escaner no funciona",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 3.204
+    },
+    {
+      "id": "R172",
+      "descripcion": "No le llegan correos de instancias de ventas, solicita ser agregado al correo generico de Neuquen",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 60.0,
+      "tiempo_automatizado_s": 14.062
+    },
+    {
+      "id": "R173",
+      "descripcion": "Solicitud de revisión de 3 monitores en el sector de cobranzas",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 70.0,
+      "tiempo_automatizado_s": 35.831
+    },
+    {
+      "id": "R174",
+      "descripcion": "El sistema secundario se traba al intentar cargar unas altas de tarjeta",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 90.0,
+      "tiempo_automatizado_s": 14.141
+    },
+    {
+      "id": "R175",
+      "descripcion": "No se puede conectar al WIFI corporativo",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 2.9
+    },
+    {
+      "id": "R176",
+      "descripcion": "No puede acceder al drive proporcionado por marketing",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 14.361
+    },
+    {
+      "id": "R177",
+      "descripcion": "Se desconecta el escaner y figura error 2019",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 30.0,
+      "tiempo_automatizado_s": 0.716
+    },
+    {
+      "id": "R178",
+      "descripcion": "Pierde acceso a internet desde su PC intermitentemente. Sus compañeros tienen.",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Soporte Tecnico Hardware"
+      ],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 0.664
+    },
+    {
+      "id": "R179",
+      "descripcion": "Al intentar entrar al sistema web, salir, y volver a intentar entrar, la página no vuelve a cargar.",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 26.415
+    },
+    {
+      "id": "R180",
+      "descripcion": "Le llaman los clientes y el teléfono les responde \"esta línea está fuera de servicio\"",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 3.211
+    },
+    {
+      "id": "R181",
+      "descripcion": "El usuario informa que al querer abrir archivos excel o pdf, la PC se queda cargando y no respode",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 70.0,
+      "tiempo_automatizado_s": 14.61
+    },
+    {
+      "id": "R182",
+      "descripcion": "El usuario no puede imprimir transferencias del sistema principal",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 13.982
+    },
+    {
+      "id": "R183",
+      "descripcion": "El usuario no puede acceder al sistema secundario, pero si a los otros",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software",
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 80.0,
+      "tiempo_automatizado_s": 12.827
+    },
+    {
+      "id": "R184",
+      "descripcion": "Reportan desde la sucursal Guaymallén que el cartel de cotizaciones no funciona correctamente",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 60.0,
+      "tiempo_automatizado_s": 12.464
+    },
+    {
+      "id": "R185",
+      "descripcion": "Solicitud de 3 mouses",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 20.0,
+      "tiempo_automatizado_s": 64.347
+    },
+    {
+      "id": "R186",
+      "descripcion": "Le anda la PC muy lenta",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Soporte Tecnico Hardware"
+      ],
+      "tiempo_manual_s": 10.0,
+      "tiempo_automatizado_s": 0.635
+    },
+    {
+      "id": "R187",
+      "descripcion": "Solicita un ratón nuevo",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 10.0,
+      "tiempo_automatizado_s": 3.343
+    },
+    {
+      "id": "R188",
+      "descripcion": "Solicita una limpieza de disco duro",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 55.0,
+      "tiempo_automatizado_s": 14.631
+    },
+    {
+      "id": "R189",
+      "descripcion": "Solicita que le revisen la PC porque le anda muy lenta",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Soporte Tecnico Hardware"
+      ],
+      "tiempo_manual_s": 60.0,
+      "tiempo_automatizado_s": 0.689
+    },
+    {
+      "id": "R190",
+      "descripcion": "El usuario solicita que se le actualice el índice telefónico",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 40.0,
+      "tiempo_automatizado_s": 28.764
+    },
+    {
+      "id": "R191",
+      "descripcion": "Le anda lento el gestor de archivos",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 30.0,
+      "tiempo_automatizado_s": 24.455
+    },
+    {
+      "id": "R192",
+      "descripcion": "Le anda muy lenta la PC",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": 70.0,
+      "tiempo_automatizado_s": 8.97
+    },
+    {
+      "id": "R193",
+      "descripcion": "La PC no le responde",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Soporte Tecnico Hardware"
+      ],
+      "tiempo_manual_s": 50.0,
+      "tiempo_automatizado_s": 16.194
+    },
+    {
+      "id": "R194",
+      "descripcion": "Al dar de alta una tarjeta de cliente no les entega la edad correcta y no pueden avanzar",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 100.0,
+      "tiempo_automatizado_s": 13.529
+    },
+    {
+      "id": "R195",
+      "descripcion": "No se pueden visualizar los correos anteriores a la migración",
+      "canal_origen": "correo electrónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": 60.0,
+      "tiempo_automatizado_s": 31.165
+    },
+    {
+      "id": "R196",
+      "descripcion": "Se queda procesando infinitamente la descarga de billeteras",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 120.0,
+      "tiempo_automatizado_s": 11.652
+    },
+    {
+      "id": "R197",
+      "descripcion": "El sistema principal le anda lento",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Soporte Tecnico Hardware"
+      ],
+      "tiempo_manual_s": 130.0,
+      "tiempo_automatizado_s": 11.594
+    },
+    {
+      "id": "R198",
+      "descripcion": "Solicita un cambio de impresora",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 10.0,
+      "tiempo_automatizado_s": 0.538
+    },
+    {
+      "id": "R199",
+      "descripcion": "Solicita la reparación de unas tomas de corriente rotas",
+      "canal_origen": "formulario web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": 30.0,
+      "tiempo_automatizado_s": 2.919
+    },
+    {
+      "id": "R200",
+      "descripcion": "No puede operar con su computadora, al ingresar a su computadora con su cuenta, muestra una pantalla en negro, pero al ingresar otro usuario a la misma computadora, no le hace problemas.",
+      "canal_origen": "llamada telefónica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": 180.0,
+      "tiempo_automatizado_s": 14.963
+    }
+  ]
+}

@@ -11,11 +11,11 @@ Síntesis del marco metodológico (tesis §4) y resultados esperados (§7) para 
 - Observación naturalista (sin efecto Hawthorne): operadores no informados del cronometraje.
 - **Anti data-leakage**: keywords y prompt se construyeron SIN acceso al corpus de validación; la evaluación sobre el corpus real es estrictamente held-out.
 
-## Corpus (Anexo F — JSON no versionado)
+## Corpus (Anexo F — JSON pseudonimizado, versionado)
 
 El corpus es un documento JSON con `schema_version`, `metadata` (`descripcion`, `total_casos`) y `casos`. Cada caso expone `id`, `descripcion`, `canal_origen`, `sector_asignado`, `sectores_adicionales` (requerido; `[]` cuando no hay), `tiempo_manual_s` y `tiempo_automatizado_s`. La verdad es multietiqueta: `{sector_asignado} ∪ sectores_adicionales`.
 
-- Ruta canónica: `data/corpus_evaluacion_pseudonimizado.json` (gitignorada, provista externamente).
+- Ruta canónica: `data/corpus_evaluacion_pseudonimizado.json` (versionado en su forma pseudonimizada; los originales pre-pseudonimizacion quedan fuera, Ley 25.326).
 - Las cinco categorías canónicas, exactas y sin tildes: `Seguridad Informatica`, `Soporte Tecnico Hardware`, `Soporte Tecnico Software`, `Bases de Datos`, `Sistemas`.
 - La distribución por sector se calcula dinámicamente a partir del corpus real; no hay proporciones fijas heredadas.
 - Doble etiquetado independiente; discrepancias resueltas por consenso.

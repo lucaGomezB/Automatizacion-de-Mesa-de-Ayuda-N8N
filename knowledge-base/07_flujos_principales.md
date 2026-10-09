@@ -55,7 +55,7 @@ Usuario → React → POST /incidentes → Service → Classifier ─┬─ dete
 
 ## Flujo 5: Evaluación experimental (C-08, rediseñado en C-27)
 
-1. Cargar corpus JSON multietiqueta (no versionado en git — pseudonimizado).
+1. Cargar corpus JSON multietiqueta (versionado en su forma pseudonimizada).
 2. Clasificar cada caso; registrar sector predicho, sectores adicionales, confianza y etapa.
 3. Calcular: exactitud primaria, matriz de confusión primaria 5×5, subset accuracy, pérdida de Hamming, precision/recall/F1 por sector, F1 micro/macro, IC Wilson 95 % (igualdad estricta y pertenencia), Wilcoxon pareado para tiempos.
 4. Emitir `evaluation/report.md` + notebook con visualizaciones.

@@ -56,10 +56,11 @@ venv/
 backups/*
 !backups/.gitkeep
 
-# Corpus de evaluacion real (PII — Ley 25.326)
-data/corpus_evaluacion_pseudonimizado.csv
-data/corpus_evaluacion_pseudonimizado.json
-data/Corpus Tesis*
+# Corpus de evaluacion (Ley 25.326): se versiona SOLO la version pseudonimizada
+# (`corpus_evaluacion_pseudonimizado.json` y `Corpus Tesis - Hoja 1 (pseudonimizado).csv`).
+# El original pre-pseudonimizacion (crudo) NUNCA se versiona.
+data/Corpus Tesis.xlsx
+data/Corpus Tesis - Hoja 1.csv
 
 # Sidecars de resultados de los harness de ingesta (artefactos de corrida)
 data/corpus_resultados*.json

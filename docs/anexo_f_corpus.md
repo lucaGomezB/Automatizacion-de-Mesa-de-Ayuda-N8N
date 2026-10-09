@@ -167,7 +167,8 @@ El corpus real se obtendrá mediante el siguiente procedimiento:
    (`sector_id_validado`) y los sectores adicionales
    (`clasificacion_sector_validado`), constituyendo el ground truth.
 4. **Almacenamiento**: el corpus real se guarda como
-   `data/corpus_evaluacion_pseudonimizado.json` (gitignorado por privacidad).
+   `data/corpus_evaluacion_pseudonimizado.json`. La version pseudonimizada **si se
+   versiona** en el repo; los originales pre-pseudonimizacion nunca (Ley 25.326).
 
 El framework de evaluación lee el corpus real con `cargar_corpus()`. Si el
 archivo no está presente, el runner termina con un error claro y no inventa

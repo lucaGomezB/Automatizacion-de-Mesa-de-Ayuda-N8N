@@ -44,6 +44,7 @@
 **Origen**: tesis Anexo F; `data/corpus_evaluacion_pseudonimizado.csv` no esta en git.
 **Estado (2026-07-02)**: corpus real NO existe. Se construira corpus simulado en C-17 (evaluation-corpus-simulado) con distribucion 82/64/54.
 **SUPERADO (C-27, 2026-09-11)**: el corpus simulado de 200 casos fue descartado y eliminado; la unica fuente de evaluacion es el corpus real JSON multietiqueta (`data/corpus_evaluacion_pseudonimizado.json`).
+**ACTUALIZADO (2026-10-09)**: la version pseudonimizada (`data/corpus_evaluacion_pseudonimizado.json` y `data/Corpus Tesis - Hoja 1 (pseudonimizado).csv`) YA se versiona en el repo. Los originales pre-pseudonimizacion y los sidecars (`data/corpus_resultados*.json`) siguen fuera (Ley 25.326).
 
 ### SU-02 — Las metricas de la tesis son resultados esperados a reproducir
 **Origen**: el capitulo 7 reporta resultados completos. Framework de evaluacion (C-08) completado y archivado.
