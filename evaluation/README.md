@@ -57,14 +57,14 @@ Si `metadata.total_casos` no coincide con la cantidad real de `casos`, el loader
 lo normaliza a `len(casos)` y lo persiste en disco antes de validar y usar el
 corpus. Si ya coincide, la escritura es idempotente (no reescribe el archivo).
 
-## Dónde Colocar el Corpus Real
+## Ubicación del Corpus Real
 
-El corpus de evaluación (`corpus_evaluacion_pseudonimizado.json`) **no está
-trackeado en git** por privacidad. Para ejecutar la evaluación real:
+El corpus de evaluación (`corpus_evaluacion_pseudonimizado.json`) está
+**versionado en git** en su forma pseudonimizada (los originales
+pre-pseudonimización no, por privacidad). Reside en:
 
 ```
-data/
-└── corpus_evaluacion_pseudonimizado.json   ← colocar aquí
+data/corpus_evaluacion_pseudonimizado.json
 ```
 
 ## Comando Único de Corrida

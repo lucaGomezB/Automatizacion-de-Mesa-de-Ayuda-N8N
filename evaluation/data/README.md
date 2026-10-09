@@ -6,7 +6,7 @@ script de generación fueron **eliminados permanentemente** en C-27.
 ## Estado actual
 
 - **Corpus real**: `data/corpus_evaluacion_pseudonimizado.json` (raíz del repo,
-  no trackeado en git por privacidad). Ver `data/README.md`.
+  versionado en su forma pseudonimizada). Ver `data/README.md`.
 - **Fixture de tests**: `evaluation/tests/fixtures/corpus_fixture.json`
   (sintético, mínimo, trackeado). Ver `evaluation/tests/fixtures/README.md`.
 - **Esquema y contrato**: `evaluation/README.md`.

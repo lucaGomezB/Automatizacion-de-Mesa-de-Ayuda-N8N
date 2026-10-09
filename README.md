@@ -314,7 +314,7 @@ npm run dev
 ### Clasificación Automática
 - **Modelo**: Google Gemini 3.6 Flash
 - **Enfoque**: Híbrido (filtrado determinístico + LLM)
-- **Documentación completa**: `docs/parameters_gemini.md` y `docs/ANEXO_H_Especificacion_Completa.md`
+- **Documentación completa**: `docs/parameters_gemini.md` y `docs/anexo_h_prompt_gemini.md`
 - **Prompt exacto**: `docs/prompt_gemini.txt`
 - **Parámetros**: temperature=0.3, top_p=0.9, max_tokens=100, timeout=30s
 

@@ -4,21 +4,23 @@
 
 ## Declaración de integridad académica
 
-> **El corpus sintético de 200 casos fue descartado por los revisores de la tesis
-> y eliminado del repositorio.**
+> **La evaluación experimental del sistema se realiza sobre el corpus real: 200
+> casos pseudonimizados, extraídos de incidentes reales de una mesa de ayuda.**
+> Es la fuente de evidencia del desempeño reportado en el Capítulo 7, no un
+> artefacto de trabajo futuro.
 >
-> Existió como artefacto provisional (`data/corpus_sintetico_provisional.csv`) para
-> verificar el funcionamiento del framework de evaluación durante el desarrollo.
-> **No representaba datos reales de una mesa de ayuda y no constituye evidencia
-> experimental del desempeño del sistema.** Fue retirado junto con su generador y
-> su andamiaje (`generate_corpus.py`, `FakeClassifier` calibrado, columna
-> `categoria_real`). Ninguno de sus números (82/64/54, exactitud 92 %, F1 0,919,
-> Tabla 7) puede citarse como resultado vigente.
+> El corpus está disponible y **versionado en el repositorio en su forma
+> pseudonimizada** (`data/corpus_evaluacion_pseudonimizado.json` y
+> `data/Corpus Tesis - Hoja 1 (pseudonimizado).csv`). Los originales
+> pre-pseudonimización no se versionan por privacidad y cumplimiento de la Ley
+> 25.326 (Protección de Datos Personales de la República Argentina).
 >
-> El corpus real, pseudonimizado y extraído de incidentes reales de una
-> organización, es **trabajo de campo futuro** de la etapa de evaluación
-> experimental. No está versionado en git por privacidad y cumplimiento de la
-> Ley 25.326 (Protección de Datos Personales de la República Argentina).
+> **Nota histórica.** El corpus sintético de 200 casos usado durante el
+> desarrollo (`data/corpus_sintetico_provisional.csv`) fue descartado por los
+> revisores y eliminado del repositorio en C-27, junto con su generador y su
+> andamiaje (`generate_corpus.py`, `FakeClassifier` calibrado, columna
+> `categoria_real`). Sus números (82/64/54, exactitud 92 %, F1 0,919, Tabla 7)
+> están superados y no deben citarse como resultado vigente.
 
 ---
 
@@ -155,9 +157,9 @@ cinco categorías exactas.
 
 ---
 
-## Corpus real (trabajo de campo futuro)
+## Corpus de evaluación (real, pseudonimizado)
 
-El corpus real se obtendrá mediante el siguiente procedimiento:
+El corpus de evaluación se obtuvo mediante el siguiente procedimiento:
 
 1. **Recolección**: exportar registros de `clasificacion_log` de la base de datos
    en producción, seleccionando los casos representativos por sector.
@@ -170,6 +172,6 @@ El corpus real se obtendrá mediante el siguiente procedimiento:
    `data/corpus_evaluacion_pseudonimizado.json`. La version pseudonimizada **si se
    versiona** en el repo; los originales pre-pseudonimizacion nunca (Ley 25.326).
 
-El framework de evaluación lee el corpus real con `cargar_corpus()`. Si el
-archivo no está presente, el runner termina con un error claro y no inventa
-datos.
+El framework de evaluación lee el corpus con `cargar_corpus()` y produce las
+métricas del Capítulo 7 en `evaluation/report.md`. Si el archivo no está
+presente, el runner termina con un error claro y no inventa datos.
