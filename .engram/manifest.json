@@ -168,6 +168,14 @@
       "sessions": 0,
       "memories": 6,
       "prompts": 3
+    },
+    {
+      "id": "d34c7685",
+      "created_by": "skywalker",
+      "created_at": "2026-10-09T00:47:18Z",
+      "sessions": 0,
+      "memories": 2,
+      "prompts": 5
     }
   ]
 }
