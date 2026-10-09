@@ -1486,6 +1486,34 @@ def _clear_confirmation_env(monkeypatch) -> None:
         monkeypatch.delenv(key, raising=False)
 
 
+def test_run_missing_credentials_aborts_without_network(tmp_path, monkeypatch, capsys):
+    json_path = tmp_path / "corpus.json"
+    _write_fixture_json(json_path)
+    monkeypatch.delenv("INGEST_OPERATOR_USERNAME", raising=False)
+    monkeypatch.delenv("INGEST_OPERATOR_PASSWORD", raising=False)
+
+    def _boom(*args, **kwargs):
+        raise AssertionError("login must not run without credentials")
+
+    monkeypatch.setattr(ivn, "login", _boom)
+    code = ivn.run(
+        [
+            "--source",
+            "json",
+            "--json",
+            str(json_path),
+            "--sidecar",
+            str(tmp_path / "sidecar.json"),
+        ]
+    )
+    assert code == 2
+    err = capsys.readouterr().err
+    assert "ERROR" in err
+    # The missing env values resolve to None; the guard must never echo a
+    # credential value (there is none, but a naive print would leak it).
+    assert "None" not in err
+
+
 def test_run_aborts_when_confirmation_path_equals_ingestion(
     tmp_path, monkeypatch, capsys
 ):
