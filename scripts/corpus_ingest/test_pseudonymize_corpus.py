@@ -101,7 +101,13 @@ def test_no_pii_produces_zero_counts_and_unchanged_text():
     ]]
     outcome = pc.pseudonymize_rows(rows, [])
     assert outcome.rows[2][1] == "No abre el explorador de archivos"
-    assert outcome.conteos == {"email": 0, "telefono": 0, "host": 0, "persona": 0}
+    assert outcome.conteos == {
+        "email": 0,
+        "telefono": 0,
+        "host": 0,
+        "persona": 0,
+        "tarjeta": 0,
+    }
 
 
 def test_preserves_canonical_sectors_and_technical_terms():
