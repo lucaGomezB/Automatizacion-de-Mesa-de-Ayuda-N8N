@@ -369,7 +369,7 @@ def run(argv: Sequence[str] | None = None) -> int:
                     timeout=args.timeout,
                     dry_run=not args.confirm_replace,
                 )
-            except Exception as exc:  # noqa: BLE001 - never leak body/description
+            except Exception:  # noqa: BLE001 - never leak body/description
                 counts = None
             if args.confirm_replace:
                 print(f"replace {case.case_id}: {counts}")

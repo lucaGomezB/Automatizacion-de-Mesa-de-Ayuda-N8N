@@ -23,9 +23,8 @@ _REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
-import ingest_corpus as ic
-import ingest_telefonia_corpus as itc
-import ingest_via_n8n as ivn
+import ingest_telefonia_corpus as itc  # noqa: E402
+import ingest_via_n8n as ivn  # noqa: E402
 
 UTC = timezone.utc
 
