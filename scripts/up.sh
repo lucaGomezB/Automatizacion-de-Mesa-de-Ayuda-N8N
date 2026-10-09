@@ -321,12 +321,38 @@ ensure_certificates() {
     fi
 }
 
+# ── Post-failure diagnostics ─────────────────────────────────────────────────
+# `docker compose up` fails with a raw "backend is unhealthy" message when the
+# backend cannot authenticate against PostgreSQL. The most common cause is a
+# password mismatch on a REUSED volume: the compose project name is fixed
+# (mesa_local), so a pre-existing `mesa_local_postgres_data` keeps the password
+# it was first initialized with, while compose reads POSTGRES_PASSWORD from the
+# ROOT .env (default `mesa_local_dev`). POSTGRES_PASSWORD only applies to a NEW
+# volume. This prints a targeted, actionable hint instead of the cryptic error.
+# It never prints secret values.
+log_stack_failure_hint() {
+    local backend_logs=""
+    backend_logs="$(docker compose logs backend --tail 80 2>/dev/null || true)"
+    case "$backend_logs" in
+        *InvalidPasswordError* | *"password authentication failed"*)
+            log_error "PostgreSQL rejected the backend credentials (authentication failed)."
+            log_error "Cause: the volume 'mesa_local_postgres_data' already exists and keeps the"
+            log_error "password it was initialized with; POSTGRES_PASSWORD only applies to a NEW volume."
+            log_error "compose reads POSTGRES_PASSWORD from the ROOT .env (default: mesa_local_dev)."
+            log_error "Fix (non-destructive): create/keep the root .env with the ORIGINAL password:"
+            log_error "  cp .env.example .env   # then set POSTGRES_PASSWORD to the volume's original value"
+            log_error "Fix (destructive, deletes the database): docker compose down -v  then re-run."
+            ;;
+    esac
+}
+
 # ── Stack startup ────────────────────────────────────────────────────────────
 # The compose project name is fixed to mesa_local in docker-compose.yml, so the
 # -p flag is intentionally omitted.
 start_stack() {
     log_info "Starting stack: docker compose up -d --build"
     if ! docker compose up -d --build; then
+        log_stack_failure_hint
         log_error "docker compose up failed. Aborting."
         return 1
     fi
