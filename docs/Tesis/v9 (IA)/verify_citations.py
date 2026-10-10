@@ -2,13 +2,25 @@
 """
 Citation Cross-Reference Verification Script
 =============================================
-Extracts all \\cite{}, \\textcite{}, and \\parencite{} keys from the 14 section
-.tex files and cross-references them against @entry keys in Bibliography_base.bib.
+Extracts all \\cite{}, \\textcite{}, and \\parencite{} keys from the section
+.tex files under paper/sections/ and cross-references them against @entry keys
+in Bibliography_base.bib.
 
-Reports:
-  - Orphan citations (cited in .tex but missing from .bib)
-  - Unused bibliography entries (present in .bib but never cited)
-  - Citation counts per entry
+QUE HACE ESTE SCRIPT (alcance):
+  - Citas huerfanas: claves citadas en los .tex que NO tienen @entry en el .bib.
+  - Entradas sin usar: @entry presentes en el .bib que NUNCA se citan.
+  - Frecuencia: en cuantos archivos se cita cada clave.
+  - STATUS global: PASS solo si ambos conjuntos (huerfanas y sin usar) estan vacios.
+
+QUE NO HACE ESTE SCRIPT (LIMITE IMPORTANTE):
+  - NO verifica que la fuente citada EXISTA. Una referencia fabricada (una clave
+    con su @entry en el .bib, pero sin publicacion real) pasa este chequeo en
+    silencio. Dos citas fabricadas (Karchhud et al., 2024; Mehdi et al., 2023)
+    pasaban este check en la version v7 de la tesis.
+  - NO valida los metadatos bibliograficos (autores, venue, anio, DOI).
+  - La existencia y los metadatos deben verificarse por separado, resolviendo
+    cada entrada contra un DOI o pagina de aterrizaje (ver change c-78, guard de
+    integridad de citas).
 
 Usage:
   python verify_citations.py
