@@ -216,6 +216,22 @@
       "sessions": 1,
       "memories": 5,
       "prompts": 8
+    },
+    {
+      "id": "6fccc0fd",
+      "created_by": "skywalker",
+      "created_at": "2026-10-12T14:41:41Z",
+      "sessions": 0,
+      "memories": 1,
+      "prompts": 1
+    },
+    {
+      "id": "b59aedf7",
+      "created_by": "skywalker",
+      "created_at": "2026-10-12T23:25:19Z",
+      "sessions": 1,
+      "memories": 6,
+      "prompts": 13
     }
   ]
 }
