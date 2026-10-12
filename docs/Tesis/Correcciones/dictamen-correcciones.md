@@ -4,7 +4,7 @@
 > `Prompt2.docx`). Se aplican a medida que el autor las provee. Lo que no se puede
 > resolver todavía se anota abajo para incorporarlo luego al proyecto / tesis.
 >
-> Estado: 2026-10-09.
+> Estado: 2026-10-12.
 
 ---
 
@@ -196,3 +196,82 @@ Correcciones del plan de auditoria §16.3, items 22-24. Change propuesto: **c-78
 - **Fuera de alcance**: item 25 (legal, §11.2) NO pertenece a este grupo.
 
 **Re-verificacion de integridad (2026-10-10)**: se re-verificaron por DOI/landing page las 33 entradas de `docs/Tesis/v9 (IA)/Bibliography_base.bib`. Resultado: **31 REAL, 2 metadatos erroneos, 0 fabricadas**. Las 2 con metadatos erroneos son `Stallings2017_computer_security` (falta el co-autor Lawrie Brown) y `Jurafsky2023_speech_language` (sobra `publisher = {Pearson}`), exactamente las dos ya en alcance de c-78. Las 2 fabricadas de v7 (Karchhud 2024, Mehdi 2023) estan ausentes en v9. `OGC2011_itil` es correcto como esta escrito (ITIL 2011 fue OGC/TSO; AXELOS asumio recien en 2013); el DOI de Landis & Koch (10.2307/2529310) resuelve correctamente.
+
+---
+
+## Item 25 (plan de auditoria) — Aspectos legales (11.1-11.3)
+
+Change propuesto: **c-79-tesis-aspectos-legales** (governance HIGH). Verificado contra `docs/Tesis/v9 (IA)/paper/sections/11-aspectos-legales.tex`, `docs/cumplimiento/marco-legal-ar-2026.md` y `docs/runbook-verificacion-telefonia-c52.md` el 2026-10-12.
+
+### L1 (item 25) — Plazo de conservacion contradictorio
+- `11-aspectos-legales.tex:12` (§11.2) anuncia "el principio de limitacion del plazo de conservacion" y acto seguido afirma **"conservacion indefinida"** para incidentes: autocontradictorio, sin plazo concreto.
+- Inconsistencia con `05-arquitectura.tex:44` ("30 dias" para logs de ejecucion). Historia: `11-aspectos-legales.tex.bak:12` y `knowledge-base/10_preguntas_abiertas.md` (IN-05) documentan la politica previa "90 dias / 1 ano" reemplazada por C-18.
+- El bloqueo de escritura de tickets cerrados (PATCH 409, C-23) es control de integridad, no politica de retencion.
+- **Accion**: fijar UN plazo concreto y justificado, consistente entre §11.2 y 05-arquitectura. El valor exacto es decision del autor (OQ-L1).
+
+### L2 (item 25) — Base legal: art. 5 inc. 2 Ley 25.326
+- `11-aspectos-legales.tex:12` funda el tratamiento en el **"legitimo interes de la organizacion"**. "Legitimo interes" es concepto GDPR (art. 6.1.f) que **NO existe** como base autonoma en la Ley 25.326.
+- Base correcta (investigacion propia del proyecto): art. 5 inc. 2, apartado b) (obligacion legal / funciones del Estado) o d) (relacion contractual/cientifica/profesional) — `marco-legal-ar-2026.md:552-554`, `docs/seguridad/registro-requisitos-legales.md:25`. La tesis nunca cita art. 5 inc. 2.
+- **Accion**: reemplazar "legitimo interes" por la base del art. 5 inc. 2 (apartado exacto = OQ-L2).
+
+### L3 (item 25) — Decision de adecuacion europea
+- `11-aspectos-legales.tex:8` (§11.1) dice "Argentina mantiene un regimen de adecuacion ... lo cual facilita los flujos transfronterizos **bidireccionales**": sin cita y enganoso.
+- Correcto: **Decision 2003/490/CE** (30/06/2003) + revalidacion **enero 2024**; cubre **UE→AR SOLO**, no habilita **AR→EE.UU.** (transferencia real via Gemini/Twilio) — `marco-legal-ar-2026.md:37-39, 369-391, 538-542`.
+
+### L4 (item 25) — Transferencia telefonica pre-pseudonimizacion
+- `11-aspectos-legales.tex:16` (§11.3) afirma "pseudonimizacion previa a la transmision" y **solo** trata Gemini; **nunca menciona Twilio**.
+- Es **falso** para telefonia: el **audio crudo** y el numero del llamante cruzan a EE.UU. (Twilio) **antes** de pseudonimizar (el pseudonimizador es un regex de texto en el backend, posterior) — `docs/runbook-verificacion-telefonia-c52.md:13`.
+- El DPA ("acuerdo de procesamiento de datos") **no sustituye** el instrumento del art. 12 (consentimiento o Clausulas Contractuales Modelo, DNPDP 60/2016 / Res. AAIP 198/2023).
+- **Accion**: nombrar Twilio, declarar la transferencia pre-pseudonimizacion del audio + numero, y citar el instrumento del art. 12.
+
+### L5 (item 25) — (opcional) Plazo ARCO
+- La tesis no fija plazo para rectificacion/supresion. El art. 16 exige **CINCO DIAS HABILES** — `marco-legal-ar-2026.md:230-232, 550-551` (OQ-L5).
+
+---
+
+## Grupo: Forma y evidencia visual (Bloque 4, items 26-32)
+
+Change propuesto: **c-80-tesis-forma-evidencia-visual** (governance BAJO). Verificado contra `docs/Tesis/v9 (IA)/paper/sections/` el 2026-10-12. **Depende de c-76/c-77/c-78** (comparte `08-discusion.tex` y `09-conclusiones.tex`; aplicar despues).
+
+### F1 (item 26) — Ortografia
+- 52 ocurrencias de 4 formas; **50 son errores**. `desarrolló` aparece 11 veces pero **2 son verbos legitimos** (`00-resumen.tex:11`, `06-implementacion.tex:87`) — sustitucion **contextual**, no ciega. La forma real es `diseñó` (con ñ), no `disenó`.
+- Portada (`00-portada.tex`) y titulos de seccion sin tildes (TECNOLOGICA, Programacion, Automatizacion, Tecnico, Republica, Introduccion, etc.).
+
+### F2 (item 27) — Figuras
+- Hoy hay **1 sola** figura (`05-arquitectura.tex:31-36`). Faltan las **8** pedidas: despliegue, secuencia correo, ER, captura flujo N8N, captura panel admin, captura dashboard, boxplot de tiempos, matriz de confusion.
+- Fuentes Mermaid sin embeber: `docs/diagrams/despliegue.md`, `secuencia.md`, `componentes.md`.
+
+### F3 (item 28) — Anexos
+- `12-anexos.tex`: 7 `\section` = Anexos A-G, **todos descriptivos/placeholder** sin contenido embebido (hay `docs/anexo_c_esquema_bd.md`, `docs/openapi.json`, el export N8N, el corpus JSON, la doc operativa, pero no se incluyen).
+- **Anexo H** (`docs/anexo_h_prompt_gemini.md`, 208 lineas) **no esta en la tesis** (0 referencias en `.tex`).
+
+### F4 (item 29) — Fuente de tablas
+- 9 tablas; `\small` en **4/9** (si: tab:comparativa, tab:variables, tab:entidades, tab:errores; no: tab:capas, tab:api, tab:tiempos, tab:matriz, tab:metricas). Tablas 1 (`03-estado-del-arte.tex:36`) y 3 (`05-arquitectura.tex:12`) difieren en fuente y composicion de columnas.
+
+### F5 (item 30) — Duplicaciones (~900 palabras)
+- 1.1/2.1 (`01-introduccion.tex:8,10` ↔ `02-marco-teorico.tex:10,12`), 5.3/6.3 (`05-arquitectura.tex:44,60` ↔ `06-implementacion.tex:39,41,44`), 8.1/9.1 (`08-discusion.tex:8,10,14` ↔ `09-conclusiones.tex:12,24`).
+
+### F6 (item 31) — Nota obsoleta N8N "1.62 / Docker Hub"
+- `05-arquitectura.tex:21` y `06-implementacion.tex:10`. Contradice "N8N 2.11.2" de `12-anexos.tex:37` y `docs/diagrams/despliegue.md`. Retirar y reconciliar la version.
+
+### F7 (item 32) — Afirmaciones valorativas sin respaldo
+- `08-discusion.tex:8-16` ("superan ampliamente", "valida la hipotesis subsidiaria", "consecuencia deseable", "garantia metodologica que no todos los trabajos...").
+- `09-conclusiones.tex:6-18` ("cumplido satisfactoriamente", "supero con holgura", "no deja espacio para la duda razonable", "resultado poco frecuente en la investigacion aplicada", "trasciende lo meramente estadistico").
+- Rebajar a formulaciones respaldadas por la evidencia de `07-resultados.tex`.
+
+---
+
+## Plan de auditoria — cobertura por change (actualizado 2026-10-12)
+
+Con c-79 y c-80, **los 32 items del plan de auditoria quedan cubiertos por un change**:
+
+| Bloque del plan | Items | Change | Governance |
+|---|---|---|---|
+| 1 (brecha probatoria) | 1-6 | c-76 | — |
+| 2 (estadistica/metodologia) | 7-14 | c-77 (+ c-76 T1-T7) | — |
+| 3 (documento/artefacto) | 15-21 | c-76 / c-77 | — |
+| 3 (bibliografia y atribucion) | 22-24 | c-78 | HIGH |
+| 3 (legal, §11.2) | 25 | **c-79** | HIGH |
+| 4 (forma y evidencia visual) | 26-32 | **c-80** | BAJO |
+
+Ninguno de los seis changes esta aplicado todavia (0 tareas). Orden recomendado de aplicacion: c-76 -> c-77 -> c-78 -> c-79 -> c-80 (c-80 al final por compartir archivos con c-76/c-77).
