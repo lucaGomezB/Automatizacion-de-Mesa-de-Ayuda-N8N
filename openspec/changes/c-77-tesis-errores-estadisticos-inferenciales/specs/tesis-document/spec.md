@@ -147,3 +147,23 @@ relación entre las mediciones preliminares y experimentales de tiempo.
 - **WHEN** se lee el tiempo de registro manual reportado en la introducción y en los resultados
 - **THEN** se explica la relación entre la medición preliminar y la medición experimental
 - **AND** se identifica el registro que respalda el tiempo declarado, de modo que la coincidencia no quede sin justificar
+
+### Requirement: Declaración del tiempo automatizado telefónico como cota inferior
+
+El documento SHALL declarar que el tiempo automatizado del canal telefónico se deriva
+sumando la duración de la llamada/grabación a la latencia end-to-end, y SHALL explicitar
+que esa medición es una COTA INFERIOR de la duración real de la llamada por el tope de
+45 s de la grabación. Los tiempos automatizados de los canales web y correo MUST NOT
+presentarse como afectados por esta corrección.
+
+#### Scenario: Cota inferior declarada
+
+- **WHEN** se lee el tiempo automatizado del canal telefónico en resultados o en metodología
+- **THEN** el texto declara que incorpora la duración de la llamada/grabación
+- **AND** declara que es una cota inferior por el tope de 45 s de la grabación
+
+#### Scenario: Web y correo sin cambio
+
+- **WHEN** se leen los tiempos automatizados de web y correo
+- **THEN** no se afirma que hayan cambiado por esta corrección
+- **AND** la comparación manual/automatizada de esos canales permanece igual

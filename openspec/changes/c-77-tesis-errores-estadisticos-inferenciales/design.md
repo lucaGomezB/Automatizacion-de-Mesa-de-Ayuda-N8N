@@ -155,6 +155,88 @@ B2 (independiente, no OQ): explicar la relación entre la medición preliminar
 (165 s) y la experimental (ahora 61,6 s), mostrando el registro que sostiene el
 tiempo.
 
+### D-D1 — Descripción de metadata del corpus fiel a los datos
+
+La descripción `metadata.descripcion` de `data/corpus_evaluacion_pseudonimizado.json`
+declara "tiempos automatizados pendientes de medicion end-to-end", pero los 200/200
+valores de `tiempo_automatizado_s` están medidos end-to-end (derivados de timestamps
+de la base). Se corrige la cadena para eliminar la cláusula falsa y declarar que los
+tiempos automatizados están medidos (y que los tiempos manuales son los de
+clasificación manual). **Restricción**: la corrección es solo textual; no altera
+ningún valor numérico ni el total de casos (200) y no duplica el alcance de c-76
+(números/redondeo).
+
+## Grupo E — Tiempo automatizado telefónico comparable (Opción A)
+
+### D-E0 — Asimetría de medición y decisión del autor (Opción A)
+
+El tiempo manual telefónico incluye escuchar la llamada (media ≈87,25 s); el
+automatizado mide solo `persistido_en − ingresado_en` (media ≈12,83 s), porque
+`ingresado_en` se fija en el callback de grabación de Twilio, que dispara AL COLGAR
+(`App/Backend/app/services/telefonia_service.py:272-273,399`), excluyendo la duración
+de la llamada (`docs/medicion-latencia-e2e.md:59-65`). **Decisión del autor
+(2026-10-12):** implementar la **Opción A** dentro de c-77 — sumar la duración de la
+grabación para igualar conceptualmente la base de comparación:
+
+`tiempo_automatizado_s(telefono) = duracion_segundos + latencia_e2e_ms/1000`
+
+### D-E1 — Exponer `duracion_segundos` en la API de lectura
+
+`duracion_segundos` existe en `App/Backend/app/models/telefonia_ingreso.py:94-96`
+(Twilio `RecordingDuration`) pero no se expone: `TelefoniaIngresoRead`
+(`App/Backend/app/schemas/telefonia.py:69-87`) lo omite y `_ingreso_to_read`
+(`App/Backend/app/routes/telefonia.py:249-258`) no lo proyecta. Se agrega el campo
+(opcional) y la proyección. Como cambia el contrato de la API, **MUST** regenerarse
+`docs/openapi.json`; el test `tests/test_openapi_sync.py` lo verifica.
+
+### D-E2 — Derivación y recomputo de los 81 casos telefónicos
+
+`scripts/corpus_ingest/ingest_telefonia_corpus.py` (`derive_telefonia_metric` /
+`build_telefonia_result`, ~:85-134) se extiende para sumar `duracion_segundos` a la
+latencia end-to-end y recomputar los 81 casos telefónicos del corpus. **Prerrequisito
+de datos:** `duracion_segundos` no está en el sidecar
+`data/corpus_resultados_telefonia.json`; las 81 filas viven en el backup del volumen
+`backups/vol_mesa_local_postgres_corpus_data_20261009T141330.tgz`, que debe restaurarse
+en una instancia Postgres para leer la columna.
+
+### D-E3 — Datos corregidos
+
+Se actualizan las 81 filas telefónicas de
+`data/corpus_evaluacion_pseudonimizado.json` y el sidecar
+`data/corpus_resultados_telefonia.json`. Los 119 casos de web/correo **MUST NOT**
+modificarse (su tiempo automatizado sigue siendo la latencia end-to-end).
+
+### D-E4 — Pruebas (TDD, test-first)
+
+Se escriben primero los tests: (a) `TelefoniaIngresoRead` expone `duracion_segundos` y
+`_ingreso_to_read` lo proyecta; (b) `derive_telefonia_metric` devuelve
+`duracion_segundos + latencia_e2e_ms/1000`; (c) un caso sin duración no rompe la
+derivación; (d) web/correo no se ven afectados. Seguir el ciclo RED → GREEN →
+TRIANGULATE descrito en `tasks.md`.
+
+### D-E5 — Reconciliación del texto de la tesis y cota inferior
+
+`docs/Tesis/v9 (IA)/paper/sections/07-resultados.tex` (tabla de tiempos por canal) y,
+si describe el tiempo automatizado telefónico, `04-marco-metodologico.tex` se
+reconcilian con la métrica corregida. **Cota inferior (registro explícito):** la
+grabación está acotada a 45 s por `<Record maxLength="45">` (`n8n/twilio/twiml.xml`),
+por lo que `duracion_segundos` es una cota inferior de la duración real de la llamada
+y el tiempo automatizado telefónico resultante es una **cota inferior** del tiempo
+automatizado comparable. El texto MUST declararlo.
+
+### D-E6 — Delta spec
+
+Se extiende `specs/evaluation-framework/spec.md` con un requerimiento/escenario que
+exige que el tiempo automatizado telefónico incluya la duración de llamada/grabación y
+que web/correo queden sin cambio, más la cota inferior por el tope de 45 s.
+`specs/tesis-document/spec.md` recibe el escenario de la declaración de cota inferior en
+el documento.
+
+### D-E7 — Cross-reference con c-80
+
+La figura 7 de c-80 (boxplot por canal) consume esta métrica corregida. El orden de
+aplicación es duro: c-76 → c-77 → c-78 → c-79 → c-80; c-80 aplica **después** de c-77.
+
 ## Risks / Trade-offs
 
 - Tocar `.tex` sin compilador local → mitigar con `openspec validate` + revisión
@@ -163,6 +245,14 @@ tiempo.
   inferencial/aritmético/técnico; los números del corpus se referencian a c-76.
 - Cambiar la fórmula del efecto altera el claim `r=1,00` → mitigado con el
   recálculo explícito y el reporte de ambos estadísticos.
+- **Cota inferior del tiempo telefónico (Riesgo E):** el tope de 45 s de la grabación
+  (`<Record maxLength="45">`) hace que `duracion_segundos` sea una cota inferior de la
+  duración real; el tiempo automatizado telefónico corregido SUBESTIMA el tiempo
+  comparable. Mitigación: declarar la cota explícitamente en tesis, diseño y spec, y no
+  presentar el valor como igualación exacta.
+- **Dependencia de datos (Riesgo E):** `duracion_segundos` solo está en el backup del
+  volumen Postgres; sin restaurarlo no hay insumo. Mitigación: el prerrequisito queda
+  como tarea explícita (E2.1) y el resultado se marca bloqueado hasta disponer de él.
 
 ## Migration Plan
 
@@ -175,3 +265,8 @@ tiempo.
 
 Ninguna abierta. Todas resueltas por el autor (2026-10-09): OQ1=c (D-A1/D-A2),
 OQ2=c (D-B1), OQ3=b (D-C4), OQ4=a (D-C5), OQ5=b (D-C7), OQ6=diferido (D-C8).
+
+Grupo E (2026-10-12): la decisión es la Opción A. **OQ-E1 (no bloqueante):** forma de
+presentación de la cota inferior en la tabla de resultados del canal telefónico
+(nota al pie vs. columna rotulada). Se prefija la nota al pie en D-E5; si el autor la
+prefiere rotulada, no altera el cálculo. No hay OQ bloqueante para planificar.

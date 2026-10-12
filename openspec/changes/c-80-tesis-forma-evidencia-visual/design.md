@@ -109,13 +109,16 @@ El punto duro del change. El preambulo solo carga `graphicx` con `graphicspath
 base. Se generan **fuera** del arbol LaTeX (en `docs/` o `scripts/figures/`) y se
 versionan los artefactos finales en `F/`.
 
-**Herramienta Mermaid -> imagen:** `@mermaid-js/mermaid-cli` (`mmdc`) via
-`npx -p @mermaid-js/mermaid-cli mmdc`. Requiere Node + Chromium (puppeteer).
-Comando tipico: `mmdc -i D/despliegue.md -o F/despliegue.png -b white -s 2`
-(`-s 2` escala 2x para nitidez). Si Chromium no esta disponible, fallback manual
-exportando PNG desde mermaid.live o incrustando el bloque `mermaid` como
-`lstlisting` (peor calidad, solo ultimo recurso). **No** se usa el servicio
-mermaid.ink en linea (rompe reproducibilidad/offline).
+**Herramienta Mermaid -> imagen (OQ-F2-1 resuelta 2026-10-12):**
+`@mermaid-js/mermaid-cli` (`mmdc`) via `npx -p @mermaid-js/mermaid-cli mmdc`.
+Node.js v22.23.2 esta disponible en la maquina del autor (nvm); `mmdc` no requiere
+instalacion global (se invoca via `npx`). Requiere Chromium (puppeteer lo descarga
+en la primera ejecucion). Comando tipico:
+`mmdc -i D/despliegue.md -o F/despliegue.png -b white -s 2` (`-s 2` escala 2x para
+nitidez). Si Chromium no se puede obtener sin conexion, fallback manual exportando
+PNG desde mermaid.live o incrustando el bloque `mermaid` como `lstlisting` (peor
+calidad, solo ultimo recurso). **No** se usa el servicio mermaid.ink en linea
+(rompe reproducibilidad/offline).
 
 **Decodificacion de `use` de Mermaid (`\[\n`):** los `.md` traen `\n` literales
 para saltos de linea; se conservan (Mermaid los interpreta) o se limpian en la
@@ -132,13 +135,32 @@ Distribucion de las 8 figuras (detalle en **Anexo A**):
 | 4 | Flujo N8N | 6.3 / Anexo E | `n8n/workflow.json` (29 nodos) | captura manual desde la UI N8N (`:5678`) -> `F/flujo_n8n.png` |
 | 5 | Panel admin | 6.8 | `App/Frontend` (panel de administracion) | captura manual -> `F/panel_admin.png` |
 | 6 | Dashboard | 6.8 | `App/Frontend` (dashboard ReCharts) | captura manual -> `F/dashboard.png` |
-| 7 | Boxplot tiempos | 7.1 | `data/corpus_evaluacion_pseudonimizado.json` (`tiempo_manual_s`, `tiempo_automatizado_s`, 200 casos) | script `scripts/figures/boxplot_tiempos.py` (matplotlib) -> `F/boxplot_tiempos.pdf` |
+| 7 | Boxplot de latencias POR CANAL | 7.1 | `data/corpus_evaluacion_pseudonimizado.json` (`tiempo_manual_s`, `tiempo_automatizado_s`, 200 casos) segmentado por canal | script `scripts/figures/boxplot_tiempos.py` (matplotlib) -> `F/boxplot_tiempos.pdf` (3 paneles / layout agrupado: web, correo, telefonia) |
 | 8 | Matriz de confusion | 7.2 | `S/07-resultados.tex:50-52` (matriz 3x3) | script `scripts/figures/matriz_confusion.py` (matplotlib) -> `F/matriz_confusion.pdf` |
 
 **Decisiones de formato:** para las figuras de datos (7 y 8) se emite **PDF
 vectorial** (mejor nitidez en el PDF final); para diagramas y capturas, **PNG** a
 2x. Ambas extensiones resuelven con `\includegraphics{nombre}` gracias a
 `graphicspath`.
+
+**Figura 7 — reporte POR CANAL (regla dura):** `docs/medicion-latencia-e2e.md:50-53`
+exige reportar el analisis de latencias POR CANAL porque los puntos de ingreso no
+son homogeneos y mezclarlos rompe la comparabilidad. Por eso la figura 7 NO es un
+boxplot unico agrupado, sino un boxplot por canal: 3 paneles o layout agrupado
+(`formulario web`, `correo`, `telefonia`). Cada panel compara manual vs
+automatizado dentro del mismo canal. El script MUST segmentar por canal y emitir
+los tres paneles; nunca un boxplot que mezcle los tres ingresos.
+
+**Figura 7 — dependencia de la metrica de telefonia (c-77):** el panel de
+telefonia usa la metrica CORREGIDA de `tiempo_automatizado_s`, que incluye la
+duracion de la llamada/grabacion; esa correccion se agrega en c-77 como "Opcion A"
+y c-80 se aplica DESPUES de c-77. Si c-77 no esta aplicado, el panel de telefonia
+MUST anotarse como "automatizado = solo post-procesamiento de la llamada (cota
+inferior)". Se prefiere depender de la metrica corregida.
+
+**Figura 7 — verificacion contra cifras corregidas (c-76):** la verificacion de
+`n` y medianas ("coherentes con `07:10`") MUST hacerse contra las cifras CORREGIDAS
+de `S/07-resultados.tex` (owned by c-76), NO contra los numeros obsoletos actuales.
 
 **Ubicacion LaTeX:** cada figura se incrusta en un `figure[htbp]` con `\centering`,
 `\includegraphics[width=...]`, `\caption` y `\label`. Las figuras de diagramas de
@@ -148,14 +170,15 @@ hace `S/05-arquitectura.tex:34`).
 
 **Alternativa:** incrustar las fuentes Mermaid como bloques `lstlisting` — se
 descarta como solucion principal (la consigna pide figuras reales); se admite solo
-como contingencia si `mmdc` no esta disponible y no se consigue el PNG.
+como contingencia si Chromium no se puede obtener sin conexion y no se consigue el
+PNG (ver OQ-F2-1).
 
-**Riesgo de datos:** el `metadata` del corpus dice "tiempos automatizados
-pendientes de medicion end-to-end" aunque el campo existe. El apply MUST
-verificar que `tiempo_automatizado_s` tiene valores reales antes de fijar el
-boxplot; si estuvieran vacios, usar los 4 registros de `data/corpus_resultados_n8n.json`
-y los 81 de `corpus_resultados_telefonia.json`, o los descriptivos de `07:10`
-(media/mediana/sd/min/max) documentando la simplificacion.
+**Riesgo de datos (resuelto, OQ-F2-2):** el `metadata` del corpus dice "tiempos
+automatizados pendientes de medicion end-to-end", pero esa nota es obsoleta y su
+correccion pertenece a c-77 (item D1), NO a este change. `tiempo_automatizado_s`
+contiene mediciones end-to-end reales (ver OQ-F2-2); NO se requiere remedicion y
+el boxplot usa directamente esos valores. El apply MUST NOT editar el `metadata`
+del corpus.
 
 ### D-F3 — Anexos con contenido real
 
@@ -170,8 +193,10 @@ prosa introductoria + artefacto embebido:
   directorios (o la salida de `tree`), y la tabla de tags/releases.
 - **Anexo C** (esquema BD): embeber la figura 3 (ER) y/o una tabla con las siete
   entidades y sus atributos derivada de `docs/anexo_c_esquema_bd.md`.
-- **Anexo D** (OpenAPI): incluir un extracto representativo de `docs/openapi.json`
-  o el conteo de rutas/esquemas; NO pegar los 115 KB completos.
+- **Anexo D** (OpenAPI, OQ-F3-1 resuelta 2026-10-12): incluir una tabla de las 25
+  rutas agrupadas por recurso (de `docs/openapi.json`: 25 rutas / 31 metodos / 40
+  esquemas, 115 KB) MAS 1 esquema representativo (p. ej. `IncidenteRead`); NO pegar
+  los 115 KB completos.
 - **Anexo E** (flujo N8N): embeber la figura 4 (captura) y una tabla con los 29
   nodos agrupados por etapa (Recepción, Normalización, Clasificación y
   persistencia, Evaluación, Notificación).
@@ -283,8 +308,13 @@ consigna exige respaldo evidenciario.
 Este change comparte archivos con tres changes en vuelo. Se declara la
 dependencia de orden:
 
-- **c-76** reescribe numeros en 08/09 y la ventana temporal en 11.
-- **c-77** toca la estadistica (07 y afirmaciones estadisticas).
+- **c-76** reescribe numeros en 08/09, la ventana temporal en 11 y las cifras de
+  `07-resultados.tex`. La verificacion "n y medianas coherentes con `07:10`" de la
+  figura 7 MUST hacerse contra las cifras CORREGIDAS de c-76, no contra las obsoletas.
+- **c-77** toca la estadistica (07 y afirmaciones estadisticas) y agrega como
+  "Opcion A" la correccion de `tiempo_automatizado_s` de telefonia (incluye la
+  duracion de la llamada/grabacion). El panel de telefonia de la figura 7 depende
+  de esa metrica corregida; sin c-77, ese panel se anota como cota inferior.
 - **c-78** toca 03/08 y la bibliografia/atribucion.
 
 **Regla:** c-80 MUST aplicarse **despues** de c-76, c-77 y c-78. Motivo: F5
@@ -302,11 +332,17 @@ numeros.
   (`docker compose up -d`) y de que la UI este operativa -> mitigar documentando
   el procedimiento; si el stack no se puede levantar, sustituir por un diagrama
   esquematico de los nodos extraido de `n8n/workflow.json` y rotularlo como tal.
-- `mmdc` puede no estar disponible o fallar con Chromium -> mitigar con el
-  fallback documentado (mermaid.live manual o `lstlisting`); validar el PNG antes
-  de incrustar.
-- El corpus declara tiempos automatizados "pendientes" -> mitigar verificando los
-  valores antes del boxplot (ver D-F2); documentar cualquier simplificacion.
+- `mmdc` se ejecuta via `npx` sobre Node.js v22.23.2 (nvm); el riesgo residual es
+  que Chromium no se pueda descargar sin conexion -> mitigar con el fallback
+  documentado (mermaid.live manual o `lstlisting`); validar el PNG antes de
+  incrustar.
+- El `metadata` del corpus declara tiempos automatizados "pendientes" (nota
+  obsoleta; su correccion es de c-77 item D1) -> los valores son mediciones
+  end-to-end reales (OQ-F2-2); el boxplot los usa directamente y este change NO
+  edita el `metadata`.
+- Figura 7 por canal depende de la numeracion CORREGIDA de `07-resultados.tex`
+  (c-76) y, para telefonia, de la metrica corregida de `tiempo_automatizado_s`
+  (c-77 "Opcion A") -> mitigado por D-ORDER (c-80 se aplica despues de c-76/c-77).
 - Colision de edicion con c-76/c-77/c-78 -> mitigado por D-ORDER.
 - `D/despliegue.md` puede estar desactualizado (Redis, conteo de nodos) -> el
   apply reconcilia el diagrama con el stack vigente antes de renderizar.
@@ -334,15 +370,27 @@ numeros.
 
 ## Open Questions
 
-- OQ-F2-1 (ABIERTA): disponibilidad de `mmdc`/Node en la maquina del autor. Si no
-  esta, se decide entre instalar Node o usar el fallback manual. No cambia specs ni
-  el desglose de tareas.
-- OQ-F2-2 (ABIERTA): validez de `tiempo_automatizado_s` en el corpus (ver D-F2).
-  Si estan vacios, se elige la fuente alternativa del boxplot sin cambiar el
-  contrato de la spec.
-- OQ-F3-1 (ABIERTA): cuan extenso debe ser el extracto de `docs/openapi.json` en el
-  Anexo D (resumen vs. ruta+esquema representativo). Se resuelve en el apply, sin
-  impacto en las specs.
+- OQ-F2-1 (RESUELTA 2026-10-12): Node.js v22.23.2 esta disponible en la maquina
+  del autor (nvm); `mmdc` no esta instalado pero se resuelve via
+  `npx -p @mermaid-js/mermaid-cli mmdc`; puppeteer descarga Chromium en la primera
+  ejecucion. La exportacion manual de PNG queda SOLO como contingencia si Chromium
+  no se puede obtener sin conexion. No cambia specs ni el desglose de tareas.
+- OQ-F2-2 (RESUELTA 2026-10-12): `tiempo_automatizado_s` es una medicion
+  end-to-end REAL derivada de timestamps de la base (`t_e2e_s`), NO un valor
+  cargado a mano. Verificado contra el backup de la base: los 119 casos de
+  web+correo recomputados coinciden (diferencia maxima 0,00099 s) y los 81 de
+  telefonia coinciden con su sidecar. Los 26 valores sub-1 s son GENUINOS y
+  pertenecen TODOS al canal `formulario web` (webhook sincronico, sin espera IMAP
+  ni STT); web min 0,525 s, mediana 1,26 s. Correo (min 8,97 s) y telefonia
+  (min 8,33 s) no tienen ninguno. Conclusion: los valores del corpus son validos
+  y NO se requiere remedicion. La correccion del `metadata` descriptivo del
+  corpus pertenece a c-77 (item D1), NO a este change. Sin cambio del contrato de
+  la spec.
+- OQ-F3-1 (RESUELTA 2026-10-12): opcion elegida = Opcion 2 (extracto
+  representativo). El Anexo D MUST incluir una tabla de las 25 rutas agrupadas por
+  recurso (de `docs/openapi.json`: 25 rutas / 31 metodos / 40 esquemas, 115 KB) MAS
+  1 esquema representativo (p. ej. `IncidenteRead`); MUST NOT pegar los 115 KB
+  completos. Sin impacto en las specs.
 
 ---
 
@@ -383,12 +431,17 @@ revision humana) corriendo en local. Accion: captura manual -> `F/`. Destino: 6.
 Fuente: `App/Frontend` (dashboard ReCharts) con datos de ejemplo o reales.
 Accion: captura manual -> `F/`. Destino: 6.8.
 
-**7. `boxplot_tiempos.pdf` — Boxplot de tiempos manual vs automatico.**
+**7. `boxplot_tiempos.pdf` — Boxplot de latencias manual vs automatico, POR CANAL.**
 Fuente: `data/corpus_evaluacion_pseudonimizado.json` (200 casos, campos
 `tiempo_manual_s` y `tiempo_automatizado_s`). Accion: script nuevo
-`scripts/figures/boxplot_tiempos.py` (matplotlib, sin Seaborn) que lee el JSON y
-emite un boxplot comparativo a PDF vectorial en `F/`. Destino: 7.1. Verificacion:
-el script MUST reportar `n` y medianas; deben ser coherentes con `07:10`.
+`scripts/figures/boxplot_tiempos.py` (matplotlib, sin Seaborn) que lee el JSON,
+SEGMENTA por canal (`formulario web`, `correo`, `telefonia`) y emite un boxplot con
+3 paneles / layout agrupado a PDF vectorial en `F/`. Destino: 7.1. El panel de
+telefonia depende de la metrica corregida de c-77 (ver D-F2); si c-77 no esta
+aplicado, anotar "automatizado = solo post-procesamiento (cota inferior)".
+Verificacion: el script MUST reportar `n` y medianas POR CANAL; deben ser
+coherentes con las cifras CORREGIDAS de `07:10` (owned by c-76), NO con las cifras
+obsoletas actuales.
 
 **8. `matriz_confusion.pdf` — Matriz de confusion.**
 Fuente: matriz 3x3 de `S/07-resultados.tex:50-52`
