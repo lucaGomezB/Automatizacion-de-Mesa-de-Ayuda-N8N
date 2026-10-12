@@ -129,7 +129,7 @@ C-66 privacidad-transferencias (C-53 alineacion; habilita C-67) [PLANIFICADO —
 --- FASE 22: Ingesta del corpus por el flujo N8N real (2026-10-02) ---
 
 C-69 dedup-correlacion-altas (ninguna; habilita C-68)     [ARCHIVADO 2026-10-05 — 30/30; MEDIO]
-C-68 corpus-ingesta-n8n (C-69)                            [ACTIVO — 58/63; MEDIO]
+C-68 corpus-ingesta-n8n (C-69)                            [ARCHIVADO 2026-10-09 — 63/63; MEDIO; spec corpus-n8n-ingest creada]
 
 --- FASE 23: Medicion del corpus por telefonia real (2026-10-02) ---
 
@@ -150,6 +150,19 @@ C-73 pseudonimizacion-tarjeta (ninguna)                   [ARCHIVADO 2026-10-07 
 --- FASE 27: Calibracion del cortocircuito determinista (2026-10-07) ---
 
 C-74 calibracion-cortocircuito-determinista (C-71, C-72)   [ARCHIVADO 2026-10-07 — 32/32; ALTO; specs sincronizadas (classification-resilience, sector-assignment, evaluation-framework); official macro-F1 0.5207]
+
+--- FASE 28: Sincronizacion documental N8N (2026-10-08) ---
+
+C-75 sincronizar-docs-n8n (ninguna — drift de C-72/C-55)   [ARCHIVADO 2026-10-08 — 14/14; MEDIO; spec n8n-workflow +3 requirements]
+
+--- FASE 29: Correcciones de la tesis por el dictamen CONEAU (2026-10-09 / 2026-10-12) ---
+(independientes del software; se aplican en secuencia porque comparten .tex)
+
+C-76 tesis-correcciones-dictamen (ninguna — documento de tesis)          [ACTIVO — 0/46; MEDIO]
+ └── C-77 tesis-errores-estadisticos-inferenciales (aplicar tras C-76)   [ACTIVO — 0/34; MEDIO]
+      └── C-78 tesis-bibliografia-atribucion (aplicar tras C-77)         [ACTIVO — 0/25; HIGH]
+           └── C-79 tesis-aspectos-legales (aplicar tras C-78)           [ACTIVO — 0/21; HIGH]
+                └── C-80 tesis-forma-evidencia-visual (aplicar tras C-79) [ACTIVO — 0/45; BAJO]
 ```
 
 ### Paralelismo por fase
@@ -491,12 +504,17 @@ C-74 calibracion-cortocircuito-determinista (C-71, C-72)   [ARCHIVADO 2026-10-07
 | C-73 | pseudonimizacion-tarjeta | 26 | ninguna | ALTO | — |
 | C-74 | calibracion-cortocircuito-determinista | 27 | C-71, C-72 | ALTO | — |
 | C-75 | sincronizar-docs-n8n | 28 | ninguna (drift de C-72/C-55) | MEDIO | — |
+| C-76 | tesis-correcciones-dictamen | 29 | ninguna (documento de tesis) | MEDIO | — |
+| C-77 | tesis-errores-estadisticos-inferenciales | 29 | aplicar tras C-76 | MEDIO | — |
+| C-78 | tesis-bibliografia-atribucion | 29 | aplicar tras C-77 | ALTO | — |
+| C-79 | tesis-aspectos-legales | 29 | aplicar tras C-78 | ALTO | — |
+| C-80 | tesis-forma-evidencia-visual | 29 | aplicar tras C-79 | BAJO | — |
 
-**Total**: 69 entradas creadas documentadas (68 numeradas + 1 de mantenimiento sin numero) — 67 archivadas (66 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-62, C-63, C-69, C-70, C-71, C-72, C-73, C-74 y C-75; mas `improve-dockerfiles`) y 2 ACTIVOS (C-67, C-68). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
+**Total**: 74 entradas creadas documentadas (73 numeradas + 1 de mantenimiento sin numero) — 68 archivadas (67 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-62, C-63, C-68, C-69, C-70, C-71, C-72, C-73, C-74 y C-75; mas `improve-dockerfiles`) y 6 ACTIVOS (C-67, C-76, C-77, C-78, C-79, C-80). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
 **Planificadas (NO creadas)**: 3 entradas del plan de cumplimiento (FASE 21) — C-64 `vulnerabilidades-supply-chain` (MEDIO), C-65 `backup-continuidad` (ALTO) y C-66 `privacidad-transferencias` (ALTO). No cuentan como creadas, archivadas ni activas. C-61 `compliance-gobernanza` (MEDIO), C-62 `hardening-infra-red` (ALTO) y C-63 `identidad-accesos-claves` (CRITICO, split en c-63a/b/c) ya fueron creados y quedaron ARCHIVADOS (2026-10-01, 2026-10-08 y 2026-10-08), con sus specs `security-governance-docs`, `infra-network-hardening` e `identity-access-hardening`. Ver `docs/cumplimiento/plan-cambios-cumplimiento.md`.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
-**Fases**: 1-28 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67, la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, con C-61 archivado (2026-10-01), C-62 archivado (2026-10-08) y C-63a/b/c archivados (2026-10-08); C-64..C-66 planificados, la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 ya archivado (2026-10-05) y C-68 en aplicacion, la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 archivado (2026-10-06), la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 archivado (2026-10-06), la FASE 25 agrupa la unificacion de la clasificacion telefonica con C-72 archivado (2026-10-07), la FASE 26 agrupa la pseudonimizacion de numeros de tarjeta hablados con C-73 archivado (2026-10-07), la FASE 27 agrupa la calibracion del cortocircuito determinista con C-74 archivado (2026-10-07), y la FASE 28 agrupa la sincronizacion documental N8N con C-75 archivado (2026-10-08)).
+**Fases**: 1-29 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67, la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, con C-61 archivado (2026-10-01), C-62 archivado (2026-10-08) y C-63a/b/c archivados (2026-10-08); C-64..C-66 planificados, la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 archivado (2026-10-05) y C-68 archivado (2026-10-09), la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 archivado (2026-10-06), la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 archivado (2026-10-06), la FASE 25 agrupa la unificacion de la clasificacion telefonica con C-72 archivado (2026-10-07), la FASE 26 agrupa la pseudonimizacion de numeros de tarjeta hablados con C-73 archivado (2026-10-07), la FASE 27 agrupa la calibracion del cortocircuito determinista con C-74 archivado (2026-10-07), y la FASE 28 agrupa la sincronizacion documental N8N con C-75 archivado (2026-10-08), y la FASE 29 agrupa las correcciones de la tesis por el dictamen CONEAU (C-76..C-80), cinco changes ACTIVOS (0 tareas), independientes del software, aplicables en secuencia).
 
 ---
 
@@ -1612,6 +1630,70 @@ C-74 calibracion-cortocircuito-determinista (C-71, C-72)   [ARCHIVADO 2026-10-07
 
 ---
 
+## FASE 29 — Correcciones de la tesis por el dictamen CONEAU (2026-10-09 / 2026-10-12)
+
+> Changes sobre el documento academico (LaTeX, `docs/Tesis/v9 (IA)/paper/`), independientes del software. Se aplican EN SECUENCIA porque comparten archivos `.tex` (en especial `08-discusion.tex` y `09-conclusiones.tex`). Ninguno esta aplicado (0 tareas); todos con planning OPSX completo y `openspec validate --strict` OK. El registro acumulativo del dictamen vive en `docs/Tesis/Correcciones/dictamen-correcciones.md`. El plan de auditoria (4 bloques, 32 items) queda cubierto por C-76..C-80; el mapeo item -> change esta al final de ese registro.
+
+### [C-76] `tesis-correcciones-dictamen` — ACTIVO (0/46)
+
+- **Estado**: `[ ]` propuesto (planning completo). Sin aplicar.
+- **Problema**: la tesis todavia reporta numeros del corpus sintetico descartado en C-27 (3 clases con "Operaciones", exactitud 92 %, F1 0,919, Wilcoxon W=0 falso).
+- **Scope**: alinear Cap. 4/7/8 y los capitulos que citan numeros con el corpus real de 200 casos; grupo T1-T7 (trazabilidad y existencia de datos experimentales, ventana temporal, instrumento manual); Anexos F/H y `main.pdf`.
+- **Dependencias**: ninguna (documento de tesis).
+- **Governance**: MEDIO
+- **Leer antes**:
+  - `openspec/changes/c-76-tesis-correcciones-dictamen/{proposal,design,tasks}.md`
+  - `docs/Tesis/Correcciones/dictamen-correcciones.md` (P1.0/P1, T1-T7)
+  - `data/corpus_evaluacion_pseudonimizado.json`, `evaluation/report.md`
+
+### [C-77] `tesis-errores-estadisticos-inferenciales` — ACTIVO (0/34)
+
+- **Estado**: `[ ]` propuesto (planning completo; OQ1-OQ6 resueltas). Sin aplicar.
+- **Problema**: errores estadisticos e inferenciales (formula del tamano del efecto, convencion de W, W+/W-, calibracion, "varianza casi diez veces menor", horas-persona, universo 3.700).
+- **Scope**: reparar la estadistica y la coherencia metodologica; alinear `evaluation/stats.py`; cruce confianza x acierto; calculo del tamano muestral.
+- **Dependencias**: aplicar tras C-76.
+- **Governance**: MEDIO
+- **Leer antes**:
+  - `openspec/changes/c-77-tesis-errores-estadisticos-inferenciales/{proposal,design,tasks}.md`
+  - `evaluation/stats.py`, `evaluation/report.md`
+
+### [C-78] `tesis-bibliografia-atribucion` — ACTIVO (0/25)
+
+- **Estado**: `[ ]` propuesto (planning completo; enmendado a min. 12 refs). Sin aplicar.
+- **Problema**: misatribucion a Revina et al. (2020) (BERT/91 %/transferencia: falso); 2 citas fabricadas de v7 ya retiradas; claims sin cita (88-94 %); higiene de citas (Landis & Koch, Stallings/Brown, Jurafsky, et al.).
+- **Scope**: reescribir 3.3 y 8.2 con la conclusion real de Revina; incorporar 12 refs arbitradas 2023-2026; corregir metadatos del `.bib`; re-verificacion por DOI.
+- **Dependencias**: aplicar tras C-77.
+- **Governance**: ALTO (integridad academica)
+- **Leer antes**:
+  - `openspec/changes/c-78-tesis-bibliografia-atribucion/{proposal,design,tasks}.md`
+  - `docs/Tesis/v9 (IA)/Bibliography_base.bib`, `docs/Tesis/v9 (IA)/verify_citations.py`
+
+### [C-79] `tesis-aspectos-legales` — ACTIVO (0/21)
+
+- **Estado**: `[ ]` propuesto (planning completo; OQ-L1/L2/L5 abiertas). Sin aplicar.
+- **Problema**: capitulo legal con 4 defectos: retencion contradictoria ("indefinida" vs "30 dias"), base legal "legitimo interes" (GDPR, no existe en Ley 25.326), adecuacion europea mal explicada (bidireccional), transferencia telefonica pre-pseudonimizacion no declarada (Twilio).
+- **Scope**: reescribir 11.1-11.3; base art. 5 inc. 2 ap. b/d; Decision 2003/490/CE + revalidacion 2024; audio crudo + numero a EE.UU. antes de pseudonimizar; instrumento del art. 12.
+- **Dependencias**: aplicar tras C-78.
+- **Governance**: ALTO (legal / privacidad)
+- **Leer antes**:
+  - `openspec/changes/c-79-tesis-aspectos-legales/{proposal,design,tasks}.md`
+  - `docs/cumplimiento/marco-legal-ar-2026.md`, `docs/seguridad/registro-requisitos-legales.md`
+  - `docs/runbook-verificacion-telefonia-c52.md`
+
+### [C-80] `tesis-forma-evidencia-visual` — ACTIVO (0/45)
+
+- **Estado**: `[ ]` propuesto (planning completo; 3 OQ documentadas). Sin aplicar.
+- **Problema**: Bloque 4 del dictamen (items 26-32): 52 errores ortograficos, 8 figuras faltantes (hay 1 sola), 7 anexos A-G descriptivos + Anexo H fuera de la tesis, fuente de tablas inconsistente, ~900 palabras duplicadas, nota obsoleta "N8N 1.62", afirmaciones valorativas sin respaldo.
+- **Scope**: sustitucion ortografica contextual; 8 figuras (Mermaid->PNG, screenshots, matplotlib); anexos con contenido + Anexo H; unificar tablas; deduplicar 1.1/2.1, 5.3/6.3, 8.1/9.1; retirar la nota 1.62; rebajar claims de 8.1/9.1.
+- **Dependencias**: aplicar tras C-79 (al final: comparte 08/09 con C-76/C-77).
+- **Governance**: BAJO
+- **Leer antes**:
+  - `openspec/changes/c-80-tesis-forma-evidencia-visual/{proposal,design,tasks}.md`
+  - `docs/diagrams/despliegue.md`, `docs/diagrams/secuencia.md`
+  - `docs/anexo_h_prompt_gemini.md`, `docs/anexo_c_esquema_bd.md`
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo)
@@ -1653,6 +1735,8 @@ C-74 calibracion-cortocircuito-determinista (C-71, C-72)   [ARCHIVADO 2026-10-07
 
 Tabla reconciliada con el estado real el 2026-10-01: C-14..C-48 quedaron documentados en las FASE 12-17; C-52..C-55 en la FASE 18 (C-52, C-53, C-54 y C-55 archivados) y C-56..C-60 en la FASE 19 (C-57 y C-58 archivados). Actualizacion 2026-10-01: C-53 y C-59 quedaron archivados; C-67 quedo registrado (notificacion SMS diferida, FASE 20). Actualizacion 2026-10-01 (tarde): C-54 quedo ARCHIVADO (2026-10-01, 51/51) y la FASE 18 queda CERRADA; se aprobo el plan de cumplimiento ISO/NIST/Ley 25.326, registrado como planificado en la FASE 21 (C-61..C-66, aun sin crear). Actualizacion 2026-10-01 (noche): C-61 `compliance-gobernanza` quedo CREADO como change OPSX (FASE 21, 0/23, MEDIO, sin dependencias, habilita C-63); los totales se ajustan a 58 changes numeradas creadas (54 archivadas + 4 activos) y 5 planificadas sin crear (C-62..C-66); C-66 no depende de C-67 sino que C-67 depende de C-66. Actualizacion 2026-10-01 (noche, cierre): C-61 quedo ARCHIVADO (2026-10-01, 26/26) y su spec `security-governance-docs` fue creada; la FASE 21 quedo parcialmente ejecutada y los totales se ajustan a 58 changes numeradas creadas (55 archivadas + 3 activos) mas 1 de mantenimiento sin numero (56 archivadas en total) y 5 planificadas sin crear (C-62..C-66). Actualizacion 2026-10-05: C-69 `dedup-correlacion-altas` quedo ARCHIVADO (2026-10-05, 30/30; specs sincronizadas: added 5 — `incident-origin-correlation` creada, `incident-intake-guards` y `n8n-workflow` modificadas) y C-68 quedo en 58/63 (apply avanzado; corpus web 53/53 y correo 66/66 medido por el flujo N8N real). Se registro C-70 `softphone-corpus-telefonia` (FASE 23, 0/65, ALTO, OQ1..OQ6 resueltas; apply-ready). Totales: 61 changes numeradas creadas (56 archivadas + 5 activas: C-56, C-60, C-67, C-68 y C-70) mas 1 de mantenimiento sin numero (57 archivadas en total) y 5 planificadas sin crear (C-62..C-66). Actualizacion 2026-10-05 (tarde): C-70 quedo en 62/65 (apply completo y verificado; 8.1-8.3 operativas pendientes) y se propuso C-71 `hardening-clasificador-determinista` (FASE 24, 0/43, MEDIO, OQ1..OQ5 abiertas) tras medir que el clasificador determinista escala el 64% y su cortocircuito acierta ~51% (estricto) / ~76% (multietiqueta). Totales: 62 changes numeradas creadas (56 archivadas + 6 activas: C-56, C-60, C-67, C-68, C-70 y C-71) mas 1 de mantenimiento sin numero (57 archivadas en total) y 5 planificadas sin crear (C-62..C-66). Actualizacion 2026-10-05 (noche): C-71 `hardening-clasificador-determinista` quedo APLICADO (43/43; vocabulario+calibracion, `hybrid-v2`; calibracion pendiente de decision) y se propuso C-72 `unificar-clasificacion-telefonica` (FASE 25, 0/37, ALTO) para unificar la clasificacion telefonica a la cascada. Totales: 63 changes numeradas creadas (56 archivadas + 7 activas: C-56, C-60, C-67, C-68, C-70, C-71 y C-72) mas 1 de mantenimiento sin numero (57 archivadas en total) y 5 planificadas sin crear (C-62..C-66).
 
+Actualizacion 2026-10-12: C-68 `corpus-ingesta-n8n` quedo ARCHIVADO (2026-10-09, 63/63; spec `corpus-n8n-ingest` creada) y se registraron los cinco changes de correccion de la tesis por el dictamen CONEAU (nueva FASE 29): C-76 `tesis-correcciones-dictamen` (0/46), C-77 `tesis-errores-estadisticos-inferenciales` (0/34), C-78 `tesis-bibliografia-atribucion` (0/25), C-79 `tesis-aspectos-legales` (0/21) y C-80 `tesis-forma-evidencia-visual` (0/45), todos ACTIVOS. Totales: 74 entradas creadas documentadas (73 numeradas + 1 de mantenimiento sin numero) — 68 archivadas y 6 activas. El plan de auditoria (4 bloques, 32 items) queda cubierto por C-76..C-80.
+
 Cambios que NO estan en el roadmap original porque se implementaron durante el desarrollo:
 - Clasificador hibrido (completo)
 - CRUD de incidentes (completo)
@@ -1671,8 +1755,15 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 
 Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01), C-61 (2026-10-01, 26/26), C-69 (2026-10-05, 30/30), C-71 (2026-10-06, 43/43), C-60 (2026-10-06, 33/33), C-70 (2026-10-06, 72/72), C-72 (2026-10-07, 37/37), C-73 (2026-10-07, 23/23), C-74 (2026-10-07, 32/32), C-75 (2026-10-08, 14/14), C-56 (2026-10-08, 27/27) y C-68 (2026-10-09, 63/63).
 
-Hay 1 change ACTIVO (c-67):
+Hay 6 changes ACTIVOS:
 - **`c-67-notificacion-sms-llamante`** — 0/24 (diferido; bloqueado por OQ3 y C-66; FASE 20) — Governance ALTO.
+- **`c-76-tesis-correcciones-dictamen`** — 0/46 (FASE 29) — Governance MEDIO.
+- **`c-77-tesis-errores-estadisticos-inferenciales`** — 0/34 (FASE 29) — Governance MEDIO.
+- **`c-78-tesis-bibliografia-atribucion`** — 0/25 (FASE 29) — Governance ALTO.
+- **`c-79-tesis-aspectos-legales`** — 0/21 (FASE 29) — Governance ALTO.
+- **`c-80-tesis-forma-evidencia-visual`** — 0/45 (FASE 29) — Governance BAJO.
+
+Los cinco changes de la FASE 29 son correcciones del documento de tesis (independientes del software) y se aplican en secuencia, en el orden C-76 -> C-77 -> C-78 -> C-79 -> C-80.
 
 C-01..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-62, C-63, C-68, C-69, C-70, C-71, C-72, C-73, C-74 y C-75 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
 
