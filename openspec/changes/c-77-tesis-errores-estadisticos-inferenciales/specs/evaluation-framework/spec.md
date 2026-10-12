@@ -60,3 +60,54 @@ cálculo SHALL ser una función pura sobre las predicciones ya recolectadas.
 - **WHEN** se agrega el reporte de calibración
 - **THEN** las métricas primarias de clasificación (exactitud, F1 macro/micro, matriz 5x5) no cambian de valor
 - **AND** la calibración se calcula como salida adicional sobre las mismas predicciones
+
+### Requirement: Veracidad de la descripción del corpus de evaluación
+
+La descripción de metadata del corpus de evaluación (`metadata.descripcion` en
+`data/corpus_evaluacion_pseudonimizado.json`) SHALL describir fielmente su
+contenido medido. Cuando los tiempos automatizados estén medidos end-to-end, la
+descripción MUST NOT declararlos pendientes de medición; SHOULD distinguir los
+tiempos automatizados (medidos) de los tiempos manuales (de clasificación manual).
+La corrección SHALL limitarse a la cadena descriptiva y MUST NOT alterar ningún
+valor numérico del corpus.
+
+#### Scenario: Descripción sin cláusulas falsas
+
+- **WHEN** se lee `metadata.descripcion` del corpus de evaluación
+- **THEN** no declara los tiempos automatizados como pendientes de medición
+- **AND** declara que los 200 tiempos automatizados están medidos end-to-end y que los tiempos manuales son los de clasificación manual
+
+#### Scenario: Corrección sin alterar los datos
+
+- **WHEN** se corrige la descripción de metadata
+- **THEN** ningún valor numérico del corpus (tiempos, total de casos) cambia
+- **AND** el archivo sigue siendo un JSON válido con los mismos 200 casos
+
+### Requirement: Medición comparable del tiempo automatizado telefónico
+
+El framework SHALL derivar el tiempo automatizado del canal telefónico de forma
+comparable con el tiempo manual del mismo canal, incorporando la duración de la
+llamada/grabación. La derivación MUST ser
+`tiempo_automatizado_s = duracion_segundos + latencia_e2e_ms/1000`, donde
+`duracion_segundos` es la duración de la grabación provista por Twilio. El framework
+MUST declarar explícitamente que este valor es una COTA INFERIOR de la duración real de
+la llamada, porque la grabación está acotada a 45 s (`<Record maxLength="45">`). Los
+tiempos automatizados de los canales web y correo MUST NOT modificarse.
+
+#### Scenario: Tiempo telefónico incluye la duración de la llamada
+
+- **WHEN** se deriva el tiempo automatizado de un caso telefónico
+- **THEN** el valor es `duracion_segundos + latencia_e2e_ms/1000`
+- **AND** se declara que es una cota inferior de la duración real por el tope de 45 s de la grabación
+
+#### Scenario: Web y correo sin cambio
+
+- **WHEN** se deriva el tiempo automatizado de un caso de web o de correo
+- **THEN** el valor permanece igual al de la medición end-to-end previa
+- **AND** no se suma ninguna duración de llamada
+
+#### Scenario: Duración de grabación ausente
+
+- **WHEN** un caso telefónico no tiene `duracion_segundos`
+- **THEN** la derivación maneja el ausente sin romperse ni sumar un valor ficticio
+- **AND** el caso queda identificable para su revisión

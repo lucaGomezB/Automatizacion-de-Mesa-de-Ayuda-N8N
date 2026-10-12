@@ -118,10 +118,12 @@ definicion del coeficiente.
   `publisher = {Stanford University}` con `note = {Borrador de la 3ra edicion,
   disponible en el sitio de los autores}` (la 2da edicion si fue Pearson).
 
-**Estilo "et al.":** el preambulo usa `style=apa`, que ya separa con coma; la cita
-`\textcite` produce "Autor et al. (ano)". La tarea es auditar el PDF compilado y,
-si algun pasaje manual escribe "et al. 2020" sin coma, normalizarlo. No se edita
-el preambulo salvo que la auditoria del PDF lo exija.
+**Estilo "et al." (2026-10-12):** el preambulo (`preambles/preamble.tex:92`) usa
+`biblatex` con `style=apa`, que ya separa con coma; la variante `biblatex-apa`
+aplica la coma antes del ano por diseno. La cita `\textcite` produce "Autor et al.
+(ano)". NO se edita el preambulo. La tarea se reduce a auditar el PDF compilado y
+normalizar cualquier pasaje manual que escriba "et al. 2020" sin coma; esto se
+confirma visualmente en la recompilacion de Overleaf.
 
 **Citas huerfanas (resuelto 2026-10-10):** las dos citas huerfanas que reportaba
 la auditoria estaban en la version **v7** (la version auditada) y eran **Karchhud,
@@ -178,9 +180,13 @@ candidatas para "cerrar" el item — se rechaza por integridad.
   `razma2026aibased` (Systems, 2026) se agrega solo si la longitud final lo
   permite y previa re-verificacion de su DOI. El contrato de la spec pasa a
   "al menos 12".
-- OQ-B3-1 (ABIERTA): si el PDF compilado confirma que `style=apa` ya aplica la
-  coma antes del ano en todas las citas, el item de estilo se cierra sin editar
-  el preambulo. Verificacion manual del autor en tiempo de compilacion.
+- OQ-B3-1 (RESUELTA 2026-10-12): el preambulo
+  `docs/Tesis/v9 (IA)/paper/preambles/preamble.tex:92` ya carga
+  `\usepackage[style=apa,backend=biber,sorting=nyt,language=spanish]{biblatex}`;
+  `biblatex-apa` aplica la coma antes del ano por diseno, por lo que NO se requiere
+  editar el preambulo. El unico paso restante es la confirmacion visual final en la
+  recompilacion de Overleaf (ya parte de la tarea de recompilacion de c-78), no una
+  pregunta abierta.
 
 ---
 

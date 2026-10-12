@@ -6,12 +6,15 @@ La seccion 11.2 del Capitulo 11 (`11-aspectos-legales.tex`) SHALL declarar un pl
 conservacion unico, explicito y justificado para los incidentes, coherente con la
 retencion de logs de ejecucion declarada en `05-arquitectura.tex:44`. El documento MUST
 NOT declarar "conservacion indefinida" para los incidentes ni presentar el bloqueo de
-escritura sobre tickets cerrados como una politica de retencion.
+escritura sobre tickets cerrados como una politica de retencion. La seccion SHALL declarar
+ademas una politica explicita de supresion/disposicion al vencer el plazo de conservacion
+(borrado irreversible o anonimizacion).
 
 #### Scenario: Sin conservacion indefinida
 
 - **WHEN** se lee la seccion 11.2 en busca de la politica de retencion de incidentes
-- **THEN** el texto declara un plazo de conservacion concreto (expresado en dias, meses o anos)
+- **THEN** el texto declara un plazo de conservacion de 12 meses rodantes desde la creacion del
+  incidente
 - **AND** no declara "conservacion indefinida" ni "conservacion permanente" para los incidentes
 
 #### Scenario: Consistencia con la retencion de logs
@@ -26,6 +29,12 @@ escritura sobre tickets cerrados como una politica de retencion.
 - **THEN** el bloqueo de escritura (PATCH que devuelve 409, C-23) se presenta como control de integridad de auditoria
 - **AND** no se presenta como la politica de conservacion ni como sustituto de un plazo de retencion
 
+#### Scenario: Politica de supresion declarada
+
+- **WHEN** se lee la politica de conservacion de incidentes en 11.2
+- **THEN** el texto declara de forma explicita que los datos se anonimizan (anonimizacion irreversible) al vencer el plazo de 12 meses
+- **AND** la afirmacion "registro auditable permanente" no se presenta como una retencion indefinida ni como una excepcion permanente al vencimiento del plazo
+
 ### Requirement: Base de licitud conforme a la Ley 25.326
 
 La seccion 11.2 SHALL fundar la licitud del tratamiento operativo de los datos de
@@ -37,7 +46,7 @@ que no existe como tal en la Ley 25.326.
 #### Scenario: Base legal citada
 
 - **WHEN** se lee el pasaje que enuncia el principio de licitud en 11.2
-- **THEN** el texto cita la Ley 25.326 articulo 5 inciso 2 como base del tratamiento de datos de empleados
+- **THEN** el texto cita la Ley 25.326 articulo 5 inciso 2, apartado d) (relacion contractual/laboral), como base del tratamiento de datos de empleados
 - **AND** el pasaje distingue la base de licitud operativa del consentimiento que se discute para el corpus de investigacion en 11.5
 
 #### Scenario: Sin legitimo interes como base autonoma
@@ -106,3 +115,23 @@ corridos".
 - **WHEN** se lee el pasaje que describe los plazos de respuesta a los derechos ARCO
 - **THEN** el plazo de rectificacion, actualizacion o supresion se expresa como cinco dias habiles
 - **AND** no se expresa como cinco dias corridos
+
+### Requirement: Vigencia de las fuentes juridicas citadas
+
+Las secciones 11.1-11.3 SHALL citar unicamente normas vigentes a la fecha de revision.
+SHALL revisarse la vigencia de la Ley 25.326 y su decreto reglamentario, de las
+disposiciones/resoluciones vigentes de la AAIP, del Reglamento General de Proteccion de
+Datos (RGPD), del estado de la Decision 2003/490/CE y de los instrumentos de transferencia
+del articulo 12. El documento MUST NOT citar normas superadas o derogadas y MUST registrar
+la fecha de la revision legal.
+
+#### Scenario: Fuentes vigentes y sin normas superadas
+
+- **WHEN** se revisan las referencias legales de las secciones 11.1-11.3
+- **THEN** cada norma citada esta vigente a la fecha de revision declarada
+- **AND** no se cita ninguna norma superada o derogada
+
+#### Scenario: Fecha de revision registrada
+
+- **WHEN** se revisa el registro de la revision legal del Capitulo 11
+- **THEN** queda registrada la fecha en que se verifico la vigencia de las fuentes

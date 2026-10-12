@@ -60,11 +60,13 @@ El requisito L4 exige citar el instrumento, no solo el numero de articulo.
 
 - Declarar UNA politica de retencion concreta y no contradictoria (11.2 vs 05:44),
   separando el bloqueo de integridad del concepto de retencion.
+- Declarar una politica explicita de supresion/disposicion al vencer el plazo de retencion.
 - Sustituir "legitimo interes" por la base de licitud del art. 5 inc. 2 de la Ley 25.326.
 - Citar el instrumento de adecuacion europea y corregir su direccion (UE -> AR).
 - Divulgar la transferencia telefonica pre-pseudonimizacion (Twilio, audio crudo +
   numero) y citar el instrumento del art. 12.
-- Registrar el plazo ARCO (cinco dias habiles, art. 16) sin inventar.
+- Revisar la vigencia de todas las fuentes juridicas citadas y registrar la fecha de revision.
+- Declarar el plazo ARCO (cinco dias habiles, art. 16).
 
 **Non-Goals:**
 
@@ -73,7 +75,10 @@ El requisito L4 exige citar el instrumento, no solo el numero de articulo.
 - No modificar `App/**`, el `.bib`, ni los numeros del corpus.
 - No emitir una conclusion juridica vinculante: el documento sigue siendo un relevamiento
   informativo, no asesoramiento juridico.
-- No inventar el valor exacto de retencion, el apartado del art. 5 ni el plazo ARCO.
+- No fijar una fecha de revision legal (depende del momento de la revision del autor). Los
+  valores de retencion, mecanismo de supresion, apartado del art. 5 y plazo ARCO estan
+  resueltos (OQ-L1/L1b/L2/L5, 2026-10-12) y se registran tal cual; no se inventan valores
+  fuera de esas decisiones.
 
 ## Decisions
 
@@ -85,30 +90,42 @@ El diseño separa DOS conjuntos de datos con finalidades distintas:
 - **Logs de ejecucion** (`05-arquitectura.tex:44`): 30 dias, finalidad de auditoria y
   diagnostico operativo. Se mantiene.
 - **Incidentes**: registro con valor operativo, historico y estadistico. Se les asigna un
-  plazo acotado (el valor exacto es OQ-L1).
+  plazo de **12 meses rodantes desde la creacion del incidente** (OQ-L1, resuelta
+  2026-10-12). El ciclo estadistico anual de la tesis (12/02/2026 -> 12/02/2027) justifica la
+  longitud; el texto declara el PERIODO (12 meses), no las fechas calendario.
 
 La reconciliacion consiste en declarar explicitamente que son conjuntos distintos con
 finalidades distintas, de modo que 11.2 y 05:44 no se contradigan. El bloqueo de escritura
 sobre tickets cerrados (C-23, 409) se presenta como control de integridad de auditoria,
 no como politica de retencion.
 
+Adicionalmente, la politica de retencion MUST incluir una declaracion explicita de
+supresion/disposicion: al vencer el plazo, los datos de incidentes se **anonimizan**
+(anonimizacion irreversible: se eliminan los identificadores de modo que los datos ya no
+puedan vincularse a una persona; OQ-L1b, resuelta 2026-10-12). La afirmacion "registro
+auditable permanente" se conserva unicamente como control de integridad de auditoria
+(bloqueo de escritura, 409, C-23) y MUST NOT presentarse como una politica de retencion ni
+como una excepcion permanente al vencimiento del plazo.
+
 **Racional:** "conservacion indefinida" contradice el principio de limitacion temporal que
-el propio parrafo enuncia; un plazo concreto y justificado es lo que el principio exige.
-El valor no se inventa porque es una decision del autor con consecuencias operativas
-(volumen de datos, requisitos de la organizacion adoptante).
+el propio parrafo enuncia; un plazo concreto y justificado es lo que el principio exige. El
+valor (12 meses rodantes) responde al ciclo estadistico anual de la tesis y no debe
+escribirse como fecha calendario fija dentro de la regla de retencion.
 
 **Alternativas:** (a) mantener indefinida con justificacion estadistica — se descarta por
-autocontradiccion; (b) fijar un valor arbitrario en el design — se descarta, el autor debe
-decidirlo (OQ-L1).
+autocontradiccion; (b) fijar un valor arbitrario — se descarta; el valor decidido (12 meses
+rodantes) esta justificado por el ciclo anual de la tesis.
 
 ### D-L2 — Base de licitud: Ley 25.326 art. 5 inc. 2
 
 **Decision:** sustituir "el legitimo interes de la organizacion" por la Ley 25.326 art. 5
-inc. 2 como base de licitud del tratamiento operativo de datos de empleados. Los apartados
-candidatos son b) (obligacion legal / funciones del Estado) y d) (relacion contractual,
-cientifica o profesional cuando resulte necesaria para su cumplimiento), segun
-`marco-legal-ar-2026.md:552-554`. Se distingue esta base operativa del consentimiento que
-§11.5 discute solo para el corpus de investigacion academica.
+inc. 2, **apartado d) relacion contractual/laboral** (NO apartado b), como base de licitud
+del tratamiento operativo de datos de empleados (OQ-L2, resuelta 2026-10-12; candidatos
+segun `marco-legal-ar-2026.md:552-554`). La organizacion es empleadora y trata datos de sus
+propios empleados para gestionar incidentes internos de TI; el tratamiento es necesario para
+cumplir la relacion laboral. Se distingue esta base operativa del consentimiento que §11.5
+discute solo para el corpus de investigacion academica. Salvedad: el deber de informacion
+del art. 6 subsiste y NO queda dispensado por usar el art. 5 inc. 2.
 
 **Racional:** "legitimo interes" es la base del art. 6.1.f del RGPD y no existe como base
 autonoma en la Ley 25.326; citarla como tal es juridicamente incorrecto para el derecho
@@ -155,27 +172,47 @@ es factualmente falso.
 
 ### D-L5 — Plazo ARCO (cinco dias habiles)
 
-**Decision:** si el Capitulo 11 declara un plazo para rectificacion/actualizacion/
-supresion, expresarlo como cinco dias habiles conforme al art. 16 (`marco-legal-ar-2026.md:230-232,550-551`).
-No se declara "cinco dias corridos". Si el autor prefiere no declarar plazo, el requisito
-de spec se cumple por vacuidad; se registra como OQ-L5.
+**Decision:** el Capitulo 11 SI declara el plazo ARCO, expresado como **cinco dias habiles**
+conforme al art. 16 (`marco-legal-ar-2026.md:230-232,550-551`). No se declara "cinco dias
+corridos". OQ-L5 resuelta el 2026-10-12.
 
 **Racional:** la fuente corrige explicitamente el plazo (la v7 decia "cinco dias
-corridos"). Es un item opcional del mismo bloque legal.
+corridos"). Es un item del mismo bloque legal.
+
+### D-L6 — Revision de vigencia de las fuentes juridicas
+
+**Decision:** incorporar una revision explicita de vigencia de TODAS las fuentes legales
+citadas en el Capitulo 11, realizada a una fecha declarada. El alcance cubre la Ley 25.326
+y su decreto reglamentario, las disposiciones/resoluciones vigentes de la AAIP, el RGPD y
+su base normativa, el estado de la Decision 2003/490/CE (revalidada en enero de 2024) y los
+instrumentos de transferencia del art. 12. La revision MUST confirmar que cada norma citada
+esta vigente, MUST descartar toda norma superada o derogada, y MUST registrar la fecha de la
+revision legal en el Capitulo 11 o en el registro del dictamen.
+
+**Racional:** hoy el change solo corrige UN instrumento (L3). Sin un control de vigencia,
+una norma superada puede permanecer citada (por ejemplo, un decreto reglamentario o una
+resolucion de la AAIP reemplazados). La vigencia es verificable y no requiere inventar
+valores; es una tarea de control, distinta de la correccion puntual de L3.
+
+**Alternativas:** (a) limitar la revision a la adecuacion europea (L3) — se descarta, deja
+sin control al resto de las fuentes; (b) fijar una fecha de vigencia en el design — se
+descarta, la fecha depende del momento de la revision del autor.
 
 ## Risks / Trade-offs
 
 - Tocar `.tex` sin compilador local -> mitigar con `openspec validate` + revision en
   Overleaf + `rg` de control.
-- Elegir un apartado del art. 5 inc. 2 (b o d) sin el autor -> mitigado dejandolo como
-  OQ-L2; el texto puede citar "art. 5 inc. 2" y el apartado se precisa al aplicar.
-- Fijar un plazo de retencion sin decision del autor -> mitigado con OQ-L1; el design no
-  inventa el valor.
+- Apartado del art. 5 inc. 2 (b o d) -> resuelto en OQ-L2 (2026-10-12): apartado d)
+  relacion contractual/laboral; el texto cita "art. 5 inc. 2, apartado d)".
+- Plazo de retencion -> resuelto en OQ-L1/L1b (2026-10-12): 12 meses rodantes desde la
+  creacion del incidente, con anonimizacion irreversible al vencimiento.
 - Solapamiento con c-76/c-77 -> mitigado: este change solo toca 11.1-11.3; 11.5 y los
   numeros quedan fuera.
 - El ground truth afirmaba "nunca se cita el art. 12"; el texto si lo menciona en 11.1 ->
   mitigado explicitando en design y tareas que el requisito es citar el INSTRUMENTO, no
   solo el numero.
+- Citar una norma superada (decreto reglamentario, resolucion AAIP, RGPD) sin revisar su
+  vigencia -> mitigado con el grupo L6 y la fecha de revision registrada.
 
 ## Migration Plan
 
@@ -189,15 +226,23 @@ corridos"). Es un item opcional del mismo bloque legal.
 
 ## Open Questions
 
-- **OQ-L1 (ABIERTA):** valor exacto del plazo de conservacion de incidentes. Candidatos a
-  evaluar por el autor: alinear con un periodo acotado (p. ej. el ciclo estadistico de la
-  tesis) o un plazo fijo de retencion con anonimizacion posterior. El design NO fija el
-  valor.
-- **OQ-L2 (ABIERTA):** apartado exacto del art. 5 inc. 2 (b obligacion legal / d relacion
-  laboral). El autor debe elegir; el texto puede citar el inciso y precisar el apartado al
-  aplicar.
-- **OQ-L5 (ABIERTA):** si el Capitulo 11 declara o no el plazo ARCO. Si lo declara, el
-  valor correcto es cinco dias habiles (art. 16).
+- **OQ-L1 (RESUELTA, 2026-10-12):** plazo de conservacion de incidentes = **12 meses
+  rodantes desde la creacion del incidente**. El ciclo estadistico de la tesis es anual
+  (12/02/2026 -> 12/02/2027), lo que JUSTIFICA la longitud (12 meses); el texto de retencion
+  declara el PERIODO (12 meses), NO las fechas calendario. Coherente con
+  `05-arquitectura.tex:44` (los 30 dias son LOGS de ejecucion, un conjunto de datos distinto
+  ya separado por la tarea 1.3). No se escriben fechas fijas en la regla de retencion.
+- **OQ-L1b (RESUELTA, 2026-10-12):** mecanismo de supresion/disposicion al vencer el plazo =
+  **anonimizacion** (anonimizacion irreversible: se eliminan los identificadores de modo que
+  los datos ya no puedan vincularse a una persona). Es el mecanismo decidido.
+- **OQ-L2 (RESUELTA, 2026-10-12):** apartado del art. 5 inc. 2 = **apartado d) relacion
+  contractual/laboral** (NO apartado b). La organizacion es empleadora y trata datos de sus
+  propios empleados para gestionar incidentes internos de TI; el tratamiento es necesario
+  para cumplir la relacion laboral. Salvedades que se mantienen: (1) el deber de informacion
+  del art. 6 subsiste y NO queda dispensado por usar el art. 5 inc. 2; (2) el consentimiento
+  solo se discute para el corpus de investigacion (§11.5), NO para el tratamiento operativo.
+- **OQ-L5 (RESUELTA, 2026-10-12):** el Capitulo 11 SI declara el plazo ARCO, expresado como
+  **cinco dias habiles** (art. 16); nunca "cinco dias corridos".
 
 ---
 

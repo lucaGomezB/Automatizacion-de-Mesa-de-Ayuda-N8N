@@ -73,6 +73,17 @@ La tesis SHALL incluir las 8 figuras requeridas, embebidas mediante `\includegra
 - **AND** las figuras de resultados (boxplot y matriz) fueron generadas por un script reproducible a partir de los datos del corpus o de la matriz reportada
 - **AND** las capturas de interfaz se identifican como tales en el texto
 
+#### Scenario: Boxplot de latencias reportado por canal
+- **WHEN** se inspecciona la figura del boxplot de tiempos (seccion 7.1)
+- **THEN** la figura reporta las latencias POR CANAL (formulario web, correo y telefonia) en paneles separados o en un layout agrupado por canal, en lugar de un unico boxplot que mezcle los tres puntos de ingreso
+- **AND** cada canal compara `tiempo_manual_s` contra `tiempo_automatizado_s` dentro del mismo canal
+- **AND** la separacion por canal es consistente con la regla de comparabilidad de `docs/medicion-latencia-e2e.md` (los puntos de ingreso no son homogeneos)
+
+#### Scenario: Panel de telefonia con metrica corregida
+- **WHEN** se inspecciona el panel de telefonia del boxplot
+- **THEN** el valor automatizado usa la metrica corregida de `tiempo_automatizado_s` que incluye la duracion de la llamada/grabacion (correccion de c-77 "Opcion A")
+- **AND** si la correccion de c-77 no esta aplicada, el panel se rotula "automatizado = solo post-procesamiento de la llamada (cota inferior)"
+
 ### Requirement: Anexos con contenido real
 
 Los anexos A a G SHALL contener contenido real embebido (figura, tabla, listado de codigo o bloque de datos) en lugar de unicamente describirlo en prosa. El Anexo H (especificacion del prompt de Gemini) SHALL incorporarse al documento como una seccion de anexo.

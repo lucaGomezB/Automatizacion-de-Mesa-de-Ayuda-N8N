@@ -81,7 +81,36 @@
 
 ## 16. C8 — Tag inexistente (OQ)
 
-- [ ] 16.1 [RESUELTO — OQ6=diferido] NO crear tag ahora. Acción pendiente: al finalizar c-76+c-77, crear el tag `v1.0.0` sobre el commit entregado al jurado y consignar el hash completo en `S/12-anexos.tex:19`. Verificar con `git tag` y `rg -n "v1\.0\.0" S/12-anexos.tex`.
+- [ ] 16.1 [RESUELTO — OQ6=diferido] NO crear tag ahora. Acción pendiente: al finalizar c-76+c-77, crear el tag `v1.0.0`   sobre el commit entregado al jurado y consignar el hash completo en `S/12-anexos.tex:19`. Verificar con `git tag` y `rg -n "v1\.0\.0" S/12-anexos.tex`.
+
+## D1 — Descripción de metadata del corpus
+
+- [ ] D1.1 En `data/corpus_evaluacion_pseudonimizado.json`, en `metadata.descripcion`, eliminar la cláusula falsa "tiempos automatizados pendientes de medicion end-to-end" y declarar que los 200 tiempos automatizados están medidos end-to-end (los tiempos manuales son los de clasificación manual); corregir solo la cadena, sin alterar valores numéricos ni el total de casos. Verificar con `rg -n "pendientes de medicion" data/corpus_evaluacion_pseudonimizado.json` sin resultados y con `python3 -c "import json; json.load(open('data/corpus_evaluacion_pseudonimizado.json'))"` confirmando JSON válido.
+
+## Grupo E — Tiempo automatizado telefónico comparable (Opción A)
+
+> Decisión del autor (2026-10-12): implementar la Opción A dentro de c-77. Este grupo es
+> SOLO planificación en esta ronda: c-77 no se aplica aquí.
+> Fórmula: `tiempo_automatizado_s(telefono) = duracion_segundos + latencia_e2e_ms/1000`.
+> COTA INFERIOR: la grabación está acotada a 45 s (`<Record maxLength="45">`,
+> `n8n/twilio/twiml.xml`), así que `duracion_segundos` subestima la duración real.
+> Cross-reference: la figura 7 de c-80 (boxplot por canal) consume esta métrica y c-80
+> aplica AFTER c-77 (orden c-76 -> c-77 -> c-78 -> c-79 -> c-80).
+
+- [ ] E1.1 **RED** — en `App/Backend/tests/` agregar un test que exija `duracion_segundos` en `TelefoniaIngresoRead` (`App/Backend/app/schemas/telefonia.py:69-87`) y su proyección en `_ingreso_to_read` (`App/Backend/app/routes/telefonia.py:249-258`); ejecutar `cd App/Backend && pytest -m "not integration"` y confirmar que FALLA.
+- [ ] E1.2 **GREEN** — agregar el campo opcional `duracion_segundos` al schema y proyectarlo en `_ingreso_to_read`; ejecutar `pytest -m "not integration"` y confirmar que PASA.
+- [ ] E1.3 Regenerar `docs/openapi.json` con el comando canónico del proyecto y verificar `cd App/Backend && pytest tests/test_openapi_sync.py -v` verde.
+- [ ] E2.1 Prerrequisito de datos: restaurar `backups/vol_mesa_local_postgres_corpus_data_20261009T141330.tgz` en una instancia Postgres desechable y confirmar que `duracion_segundos` es legible para los 81 casos telefónicos. Registrar la evidencia (los 119 casos de web/correo no se leen para este cálculo).
+- [ ] E2.2 **RED** — en `scripts/corpus_ingest/` (o su suite de tests) agregar un test que exija `derive_telefonia_metric`/`build_telefonia_result` (~:85-134) devolviendo `duracion_segundos + latencia_e2e_ms/1000`; ejecutar y confirmar que FALLA.
+- [ ] E2.3 **GREEN** — implementar la derivación en `scripts/corpus_ingest/ingest_telefonia_corpus.py` y recomputar los 81 casos; ejecutar y confirmar que PASA.
+- [ ] E2.4 **TRIANGULATE** — agregar un caso con `duracion_segundos` ausente/nulo (no debe romper ni sumar un valor ficticio) y un caso con duración en el tope (45 s) para verificar la cota inferior; ejecutar y confirmar verde.
+- [ ] E3.1 Actualizar las 81 filas telefónicas en `data/corpus_evaluacion_pseudonimizado.json` y el sidecar `data/corpus_resultados_telefonia.json`; verificar JSON válido y el total de 200 casos con `python3 -c "import json; json.load(open('data/corpus_evaluacion_pseudonimizado.json'))"`.
+- [ ] E4.1 Confirmar con un test/aserción que los tiempos de web y correo NO cambian (siguen siendo la latencia end-to-end previa); registrar la salida.
+- [ ] E5.1 Reconciliar `S/07-resultados.tex` (tabla de tiempos por canal) con el valor telefónico corregido y declarar la cota inferior; si `S/04-marco-metodologico.tex` describe el tiempo automatizado telefónico, alinearlo. Verificar con `rg -n "duracion|grabacion|llamada|cota inferior|45" S/07-resultados.tex S/04-marco-metodologico.tex`.
+- [ ] E5.2 Registrar explícitamente el tope de 45 s y la cota inferior en la nota metodológica de la tesis (y en `design.md` como riesgo, ya registrado).
+- [ ] E6.1 Extender `specs/evaluation-framework/spec.md` con el requerimiento/escenario del tiempo automatizado telefónico (incluye duración de llamada/grabación; web/correo sin cambio; cota inferior) y `specs/tesis-document/spec.md` con el escenario de declaración de cota inferior.
+- [ ] E6.2 Verificar que el corpus de web/correo (119 casos) no fue tocado y que no se modificó el `metadata.descripcion` por encima de D1; `rg`/`git diff --stat` sobre `data/`.
+- [ ] E7.1 Verificación del grupo: `cd App/Backend && pytest -m "not integration"` + `pytest tests/test_openapi_sync.py -v` verde; `openspec validate c-77-tesis-errores-estadisticos-inferenciales --strict` verde.
 
 ## 17. Verificación final y recompilación
 

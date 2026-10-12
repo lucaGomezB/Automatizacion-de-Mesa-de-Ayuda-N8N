@@ -32,7 +32,7 @@
 - [ ] 3.5 En `B`, `Stallings2017_computer_security`: agregar `Brown, Lawrie` como co-autor. Verificar con `rg -n "Stallings, William and Brown" B`.
 - [ ] 3.6 En `B`, `OGC2011_itil`: quitar `edition = {2011}`; dejar `publisher = {The Stationery Office}` y agregar `note` sobre la titularidad AXELOS/PeopleCert. Verificar con `rg -n "OGC2011_itil|Office of Government Commerce|The Stationery Office" B`.
 - [ ] 3.7 En `B`, `Jurafsky2023_speech_language`: cambiar `publisher = {Pearson}` por `publisher = {Stanford University}` con `note` de borrador de la 3ra edicion. Verificar con `rg -n "Jurafsky2023_speech_language|Stanford" B` y sin "Pearson" en esa entrada.
-- [ ] 3.8 Auditar el PDF compilado o el fuente de las citas "et al." para la coma antes del ano (APA: "Revina et al., 2020"). Si `style=apa` ya la aplica en todas, cerrar el item sin editar el preambulo; si hay una cita manual sin coma, normalizarla. Verificar con `rg -n "et al\.? [0-9]{4}" S/` sin coincidencias.
+- [ ] 3.8 Coma antes del ano en las citas "et al." (APA: "Revina et al., 2020"): el preambulo (`preambles/preamble.tex:92`) ya carga `biblatex` con `style=apa`, que aplica la coma por diseno, por lo que NO se edita el preambulo. Auditar el fuente/PDF y normalizar solo cualquier pasaje manual sin coma. Verificar con `rg -n "et al\.? [0-9]{4}" S/` sin coincidencias.
 
 ## 4. Estado de citas huerfanas (resuelto) y guardia contra fabricaciones
 

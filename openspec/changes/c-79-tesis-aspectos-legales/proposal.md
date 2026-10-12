@@ -28,28 +28,36 @@ inferencial y 11.5 TLS/supervision humana): este change cubre 11.1-11.3.
 
 ## What Changes
 
-### Grupo Aspectos legales (L1-L4) — plan de auditoria item 25
+### Grupo Aspectos legales (L1-L6) — plan de auditoria item 25
 
 | Id | Punto | Correccion |
 |----|-------|-----------|
-| L1 | Plazo de conservacion | Reemplazar "conservacion indefinida" por UNA politica de retencion concreta y justificada, consistente entre 11.2 y `05-arquitectura.tex:44` (30 dias de logs). El valor exacto es decision del autor: se registra como Open Question, no se inventa. |
-| L2 | Base legal | Reemplazar "legitimo interes de la organizacion" por la base correcta de la Ley 25.326 art. 5 inc. 2 (apartado b) obligacion legal/funciones del Estado o d) relacion contractual/laboral), citando el articulo. El apartado exacto es Open Question. |
+| L1 | Plazo de conservacion y politica de supresion | Reemplazar "conservacion indefinida" por UNA politica de retencion concreta y justificada, consistente entre 11.2 y `05-arquitectura.tex:44` (30 dias de logs). Plazo decidido: **12 meses rodantes desde la creacion del incidente** (OQ-L1, resuelta 2026-10-12; el ciclo estadistico anual de la tesis justifica la longitud, pero el texto declara el periodo, NO las fechas). Al vencer el plazo, los datos de incidentes se **anonimizan** (anonimizacion irreversible; OQ-L1b, resuelta 2026-10-12). Reconciliar la contradiccion con "registro auditable permanente". |
+| L2 | Base legal | Reemplazar "legitimo interes de la organizacion" por la Ley 25.326 art. 5 inc. 2, **apartado d) relacion contractual/laboral** (OQ-L2, resuelta 2026-10-12; NO apartado b), citando el articulo. El deber de informacion del art. 6 subsiste y no queda dispensado; el consentimiento solo se discute para el corpus de investigacion (§11.5). |
 | L3 | Adecuacion europea | Nombrar el instrumento (Decision 2003/490/CE, 30 de junio de 2003) y su revalidacion de enero de 2024; corregir la direccion: la adecuacion cubre UE -> Argentina unicamente y NO autoriza Argentina -> Estados Unidos. |
 | L4 | Transferencia previa | Nombrar a Twilio y revelar la transferencia de audio crudo + numero del llamante a EE. UU. ANTES de la pseudonimizacion; citar el instrumento de transferencia del art. 12 (consentimiento o clausulas contractuales modelo). |
-| L5 | ARCO (opcional) | El plazo de rectificacion/supresion: la ley exige CINCO DIAS HABILES (art. 16); la tesis no declara plazo. Registrar como Open Question; no inventar. |
+| L5 | ARCO | El Capitulo 11 SI declara el plazo de rectificacion/supresion, expresado como **cinco dias habiles** (art. 16; OQ-L5, resuelta 2026-10-12); nunca "cinco dias corridos". |
+| L6 | Revision de vigencia de fuentes | Verificar que TODAS las normas citadas en el Capitulo 11 estan vigentes a la fecha de revision (Ley 25.326 y su decreto reglamentario, disposiciones/resoluciones vigentes de la AAIP, RGPD, estado de la Decision 2003/490/CE, instrumentos de transferencia del art. 12); que no se cite ninguna norma superada; y registrar la fecha de la revision legal. No se inventa ningun valor: es una tarea de verificacion. |
 
 Detalle de cada item:
 
-- **L1 — Conservacion**: el texto MUST dejar de declarar "conservacion indefinida"
-  para los incidentes y MUST declarar un plazo unico y explicito, coherente con
-  `05-arquitectura.tex:44` (logs de ejecucion: 30 dias). El bloqueo de escritura
-  sobre tickets cerrados (PATCH -> 409, C-23) es un control de integridad de
-  auditoria, NO una politica de retencion: no debe presentarse como tal. El valor
-  concreto queda como Open Question (L1 en `design.md`).
-- **L2 — Base legal**: el texto MUST citar la Ley 25.326 art. 5 inc. 2 como base de
-  licitud del tratamiento operativo de datos de empleados, y MUST dejar de usar
-  "legitimo interes" como base autonoma. Se reconoce que el consentimiento solo se
-  discute para el corpus de investigacion (11.5), no para el tratamiento operativo.
+- **L1 — Conservacion y supresion**: el texto MUST dejar de declarar "conservacion
+  indefinida" para los incidentes y MUST declarar un plazo unico y explicito,
+  coherente con `05-arquitectura.tex:44` (logs de ejecucion: 30 dias). Plazo decidido:
+  **12 meses rodantes desde la creacion del incidente** (OQ-L1, resuelta 2026-10-12);
+  el ciclo estadistico anual de la tesis justifica la longitud, pero el texto declara
+  el periodo (12 meses), NO las fechas calendario. Al vencer el plazo, los datos de
+  incidentes se **anonimizan** (anonimizacion irreversible; OQ-L1b, resuelta
+  2026-10-12). El texto MUST presentar "registro auditable permanente" (bloqueo de
+  escritura sobre tickets cerrados, PATCH -> 409, C-23) como control de integridad de
+  auditoria, NO como politica de retencion.
+- **L2 — Base legal**: el texto MUST citar la Ley 25.326 art. 5 inc. 2, **apartado d)
+  relacion contractual/laboral** (OQ-L2, resuelta 2026-10-12; NO apartado b), como base
+  de licitud del tratamiento operativo de datos de empleados (la organizacion es
+  empleadora y trata datos de sus propios empleados), y MUST dejar de usar "legitimo
+  interes" como base autonoma. El deber de informacion del art. 6 subsiste. El
+  consentimiento solo se discute para el corpus de investigacion (11.5), no para el
+  tratamiento operativo.
 - **L3 — Adecuacion**: el texto MUST citar la Decision 2003/490/CE y su revalidacion
   de enero de 2024, y MUST dejar de describir los flujos como "bidireccionales". La
   adecuacion habilita UE -> Argentina; la transferencia Argentina -> Estados Unidos
@@ -59,6 +67,12 @@ Detalle de cada item:
   EE. UU. antes de la pseudonimizacion (orden: grabar -> transferir/transcribir ->
   pseudonimizar), y MUST citar el instrumento del art. 12. El acuerdo de
   procesamiento de datos (DPA) NO sustituye ese instrumento.
+- **L6 — Vigencia de fuentes**: el texto MUST basarse solo en normas vigentes a la
+  fecha de revision. Debe revisarse la vigencia de la Ley 25.326 y su decreto
+  reglamentario, de las disposiciones/resoluciones vigentes de la AAIP, del RGPD, del
+  estado de la Decision 2003/490/CE y de los instrumentos de transferencia del art. 12,
+  sin citar normas superadas, y MUST registrarse la fecha de la revision legal. Es una
+  tarea de verificacion: no introduce valores nuevos.
 
 ## Capabilities
 
@@ -69,10 +83,11 @@ Detalle de cada item:
 ### Modified Capabilities
 
 - `tesis-document`: se agregan requisitos de correccion legal para las secciones
-  11.1-11.3 del Capitulo 11 (plazo de conservacion unico y consistente, base de
-  licitud conforme a la Ley 25.326 art. 5 inc. 2, adecuacion europea citada y
-  direccionada, y divulgacion de la transferencia telefonica pre-pseudonimizacion
-  con el instrumento del art. 12). Se actualiza el requisito de calidad de
+  11.1-11.3 del Capitulo 11 (plazo de conservacion unico y consistente con una
+  politica explicita de supresion/disposicion, base de licitud conforme a la Ley
+  25.326 art. 5 inc. 2, adecuacion europea citada y direccionada, divulgacion de la
+  transferencia telefonica pre-pseudonimizacion con el instrumento del art. 12, y
+  vigencia de las fuentes juridicas citadas). Se actualiza el requisito de calidad de
   referencias legales del capitulo. `evaluation-framework` NO se modifica.
 
 ## Impact
@@ -95,16 +110,25 @@ directorio del change.
 ## Success Criteria
 
 - [ ] §11.2 declara un plazo de conservacion unico y explicito para los incidentes
-      (no "indefinida"), consistente con `05-arquitectura.tex:44`; el bloqueo de
-      tickets cerrados no se presenta como politica de retencion.
-- [ ] §11.2 funda la licitud en la Ley 25.326 art. 5 inc. 2 y NO usa "legitimo
-      interes" como base autonoma.
+      (12 meses rodantes desde la creacion del incidente), consistente con
+      `05-arquitectura.tex:44`, y una politica explicita de supresion/disposicion al
+      vencer el plazo (anonimizacion irreversible); el bloqueo de tickets cerrados no se
+      presenta como politica de retencion.
+- [ ] §11.2 funda la licitud en la Ley 25.326 art. 5 inc. 2, apartado d) relacion
+      contractual/laboral, y NO usa "legitimo interes" como base autonoma; el deber de
+      informacion del art. 6 subsiste.
 - [ ] §11.1 cita la Decision 2003/490/CE y su revalidacion de enero de 2024, y
       afirma que la adecuacion cubre UE -> Argentina, no Argentina -> Estados Unidos.
 - [ ] §11.3 nombra a Twilio, declara la transferencia de audio crudo + numero del
       llamante antes de la pseudonimizacion y cita el instrumento del art. 12.
-- [ ] Las Open Questions L1 (valor de retencion), L2 (apartado del art. 5 inc. 2) y
-      L5 (plazo ARCO) quedan registradas y no se inventan.
+- [ ] §11.1-11.3 solo citan normas vigentes a la fecha de revision (Ley 25.326 y su
+      decreto reglamentario, disposiciones/resoluciones de la AAIP, RGPD, Decision
+      2003/490/CE, instrumentos del art. 12), sin normas superadas, y queda registrada
+      la fecha de la revision legal.
+- [ ] §11.1-11.3 declaran el plazo ARCO como cinco dias habiles (art. 16); no usan
+      "cinco dias corridos".
+- [ ] Las Open Questions L1 (12 meses rodantes), L1b (anonimizacion), L2 (art. 5 inc. 2,
+      apartado d) y L5 (cinco dias habiles) quedan resueltas y registradas (2026-10-12).
 - [ ] `openspec validate c-79-tesis-aspectos-legales --strict` pasa.
 - [ ] El PDF se recompila en Overleaf sin errores fatales (tarea posterior; no hay
       toolchain LaTeX local).
