@@ -33,6 +33,11 @@ export interface IncidenteRead {
   created_at: string;
   updated_at: string;
   sector: SectorRead | null;
+  /**
+   * Sectores secundarios del incidente (sin incluir el principal) — C-27.
+   * La API siempre los devuelve; opcional para no romper mocks previos a c-83.
+   */
+  sectores_adicionales?: SectorRead[];
   estado: EstadoRead;
   canal_origen: CanalOrigenRead | null;
 }

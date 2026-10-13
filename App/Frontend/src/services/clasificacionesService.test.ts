@@ -100,14 +100,17 @@ describe('clasificacionesService', () => {
   // ---------- validarClasificacion ----------
 
   describe('validarClasificacion', () => {
-    it('hace PATCH a /clasificaciones/{logId}/validar con el payload y devuelve el resultado', async () => {
+    it('hace PATCH a /clasificaciones/{logId}/validar con el payload multi-etiqueta y devuelve el resultado', async () => {
       const validadoSector: SectorRead = { id: 1, nombre: 'Sistemas', descripcion: null };
       const mockValidado: ClasificacionLogRead = {
         ...mockClasificacion,
         sector_validado: validadoSector,
         requiere_revision_humana: false,
       };
-      const payload: ClasificacionValidar = { sector_id_validado: 1 };
+      const payload: ClasificacionValidar = {
+        sector_validado: 'Sistemas',
+        sectores_adicionales: [],
+      };
       vi.mocked(mockedApiClient.patch).mockResolvedValueOnce({ data: mockValidado });
 
       const result = await validarClasificacion(10, payload);
@@ -119,15 +122,42 @@ describe('clasificacionesService', () => {
       expect(result).toEqual(mockValidado);
     });
 
+    it('reenvia un unico sector adicional por nombre canonico', async () => {
+      vi.mocked(mockedApiClient.patch).mockResolvedValueOnce({ data: mockClasificacion });
+
+      const payload: ClasificacionValidar = {
+        sector_validado: 'Sistemas',
+        sectores_adicionales: ['Bases de Datos'],
+      };
+      await validarClasificacion(7, payload);
+
+      expect(mockedApiClient.patch).toHaveBeenCalledWith('/clasificaciones/7/validar', payload);
+    });
+
+    it('reenvia varios sectores adicionales por nombre canonico', async () => {
+      vi.mocked(mockedApiClient.patch).mockResolvedValueOnce({ data: mockClasificacion });
+
+      const payload: ClasificacionValidar = {
+        sector_validado: 'Soporte Tecnico Software',
+        sectores_adicionales: ['Bases de Datos', 'Seguridad Informatica'],
+      };
+      await validarClasificacion(8, payload);
+
+      expect(mockedApiClient.patch).toHaveBeenCalledWith('/clasificaciones/8/validar', payload);
+    });
+
     it('construye la ruta correctamente para distintos logIds', async () => {
       vi.mocked(mockedApiClient.patch).mockResolvedValueOnce({ data: mockClasificacion });
 
-      await validarClasificacion(99, { sector_id_validado: 3 });
+      await validarClasificacion(99, {
+        sector_validado: 'Bases de Datos',
+        sectores_adicionales: [],
+      });
 
-      expect(mockedApiClient.patch).toHaveBeenCalledWith(
-        '/clasificaciones/99/validar',
-        { sector_id_validado: 3 }
-      );
+      expect(mockedApiClient.patch).toHaveBeenCalledWith('/clasificaciones/99/validar', {
+        sector_validado: 'Bases de Datos',
+        sectores_adicionales: [],
+      });
     });
   });
 });

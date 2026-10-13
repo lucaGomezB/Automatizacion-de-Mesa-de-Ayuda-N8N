@@ -32,11 +32,26 @@ export interface ClasificacionLogRead {
   sector_predicho: SectorRead | null;
   /** Corrección del operador humano; null mientras no haya sido revisado */
   sector_validado: SectorRead | null;
+  /**
+   * Sectores secundarios predichos por el clasificador (sin incluir el principal).
+   * La API siempre los devuelve; opcional para no romper mocks previos a c-83.
+   */
+  sectores_predichos?: SectorRead[];
+  /**
+   * Sectores secundarios validados por el operador humano (sin incluir el principal).
+   * La API siempre los devuelve; opcional para no romper mocks previos a c-83.
+   */
+  sectores_validados?: SectorRead[];
 }
 
-// Payload enviado al endpoint PATCH /api/v1/clasificaciones/{id}/validar
+// Payload enviado al endpoint PATCH /api/v1/clasificaciones/{id}/validar.
+// c-83 (D5): el conjunto multi-etiqueta se codifica por NOMBRES CANÓNICOS, un
+// único esquema de identificador para principal y adicionales. El backend acepta
+// `sector_validado` (nombre) y `sectores_adicionales` (nombres); `sectores_adicionales`
+// viaja como lista vacía cuando el operador no marca adicionales.
 export interface ClasificacionValidar {
-  sector_id_validado: number;
+  sector_validado: string;
+  sectores_adicionales: string[];
 }
 
 // Parámetros de paginación para la cola de revisión pendiente
