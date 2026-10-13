@@ -27,6 +27,23 @@ vi.mock('@/hooks/useHealthCheck', () => ({
   useHealthCheck: () => ({ data: undefined, isError: false, isPending: true }),
 }));
 
+// El Header (via PageWrapper) consume el contexto de auth (c-81).
+vi.mock('@/contexts/AuthContext', () => ({
+  useAuth: () => ({
+    token: 't',
+    username: 'admin',
+    isAuthenticated: true,
+    mfaRequired: false,
+    rol: 'administrador_directorio',
+    alcance: { modo: 'GLOBAL' },
+    login: vi.fn(),
+    verifyMfa: vi.fn(),
+    enrollMfa: vi.fn(),
+    refreshIdentidad: vi.fn(),
+    logout: vi.fn(),
+  }),
+}));
+
 function makePendiente(id: number): ClasificacionLogRead {
   return {
     id,

@@ -41,13 +41,14 @@ async def _make_sector(session: AsyncSession, nombre: str = "Sistemas") -> Secto
 
 
 def test_privileged_role_catalog():
-    """Solo operador, administrador_directorio y mesa_de_ayuda son privilegiados."""
-    assert is_privileged_role(RolEmpleado.operador) is True
+    """Solo administrador_directorio y mesa_de_ayuda son privilegiados (c-82)."""
     assert is_privileged_role(RolEmpleado.administrador_directorio) is True
     assert is_privileged_role(RolEmpleado.mesa_de_ayuda) is True
     assert is_privileged_role(RolEmpleado.usuario_final) is False
     assert is_privileged_role("usuario_final") is False
-    assert is_privileged_role("operador") is True
+    assert is_privileged_role("mesa_de_ayuda") is True
+    # `operador` ya no existe en el vocabulario: no confiere privilegio.
+    assert is_privileged_role("operador") is False
 
 
 async def test_new_user_defaults_to_not_privileged(db_session: AsyncSession):
@@ -64,15 +65,13 @@ async def test_new_user_defaults_to_not_privileged(db_session: AsyncSession):
 async def test_linking_privileged_role_marks_user_privileged(db_session: AsyncSession):
     """Escenario: cuenta vinculada a empleado privilegiado queda privilegiada."""
     user = await _make_user(db_session, "operador_user")
-    sector = await _make_sector(db_session, "Sistemas")
 
     service = DirectorioService(db_session)
     empleado = await service.crear_empleado(
         legajo="LEG-100",
-        nombre="Operador Uno",
-        email="operador1@example.com",
-        rol=RolEmpleado.operador,
-        sector_id=sector.id,
+        nombre="Mesa de ayuda Uno",
+        email="mesa1@example.com",
+        rol=RolEmpleado.mesa_de_ayuda,
         user_id=user.id,
     )
 
@@ -108,15 +107,13 @@ async def test_linking_usuario_final_does_not_mark_privileged(
 async def test_degrade_role_to_usuario_final_clears_flag(db_session: AsyncSession):
     """Al degradar un rol privilegiado a usuario_final, el flag se apaga."""
     user = await _make_user(db_session, "degrade_user")
-    sector = await _make_sector(db_session, "Soporte Tecnico Software")
 
     service = DirectorioService(db_session)
     empleado = await service.crear_empleado(
         legajo="LEG-102",
         nombre="Degradado",
         email="degradado@example.com",
-        rol=RolEmpleado.operador,
-        sector_id=sector.id,
+        rol=RolEmpleado.mesa_de_ayuda,
         user_id=user.id,
     )
     assert (await db_session.get(User, user.id)).is_privileged is True
@@ -178,7 +175,6 @@ async def test_relink_moves_privilege_between_users(db_session: AsyncSession):
 async def test_defensive_derivation_uses_linked_empleado(db_session: AsyncSession):
     """Si el flag esta apagado pero hay vinculo privilegiado, se deriva true."""
     user = await _make_user(db_session, "defensive_user", is_privileged=False)
-    sector = await _make_sector(db_session, "Sistemas")
 
     # Vinculo creado por fuera del servicio: el flag NO se materializa.
     service = DirectorioService(db_session)
@@ -187,8 +183,8 @@ async def test_defensive_derivation_uses_linked_empleado(db_session: AsyncSessio
         nombre="Defensivo",
         email="defensivo@example.com",
         telefono=None,
-        sector_id=sector.id,
-        rol=RolEmpleado.operador,
+        sector_id=None,
+        rol=RolEmpleado.mesa_de_ayuda,
         user_id=user.id,
         activo=True,
     )

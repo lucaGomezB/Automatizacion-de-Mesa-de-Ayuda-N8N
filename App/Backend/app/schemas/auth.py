@@ -11,6 +11,8 @@ Responsabilidad:
     RefreshRequest/LogoutRequest reciben el refresh token opaco.
 """
 
+from typing import Literal
+
 from pydantic import BaseModel, Field
 
 
@@ -114,4 +116,37 @@ class MfaEnrollResponse(BaseModel):
     secret: str = Field(..., description="Secreto TOTP (base32)")
     recovery_codes: list[str] = Field(
         ..., description="Codigos de recuperacion de un solo uso"
+    )
+
+
+# ── Identidad y alcance de la sesion (c-81, IAH-012) ─────────────────────────
+
+
+class AlcanceResponse(BaseModel):
+    """Alcance de incidentes de la sesion (c-81, IAH-012).
+
+    Contiene SOLO el modo vigente del modelo c-82. NO expone `sector_id`,
+    `ver_todos` ni conceptos del RBAC anterior (los modos SECTOR y REVISION no
+    existen).
+    """
+
+    modo: Literal["PROPIO", "GLOBAL", "VACIO"] = Field(
+        ..., description="Modo de alcance de incidentes derivado del rol"
+    )
+
+
+class IdentidadActualResponse(BaseModel):
+    """Identidad efectiva de la sesion y su alcance derivado (c-81, IAH-012).
+
+    Aditivo y de solo lectura. `rol` es el rol del empleado activo vinculado
+    (o nulo si no hay empleado). El alcance se recomputa por request desde el
+    directorio.
+    """
+
+    username: str = Field(..., description="Nombre de usuario autenticado")
+    rol: str | None = Field(
+        default=None, description="Rol del empleado vinculado (nulo si no hay)"
+    )
+    alcance: AlcanceResponse = Field(
+        ..., description="Alcance de incidentes derivado (modo PROPIO/GLOBAL/VACIO)"
     )

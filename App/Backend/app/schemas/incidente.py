@@ -179,6 +179,14 @@ class IncidenteCreate(BaseModel):
     # latencias negativas. Nullable: la ausencia no bloquea el alta.
     ingresado_en: datetime | None = None
 
+    # Contacto IMPLICITO del canal para resolver el reportante (c-82, VIS-004).
+    # N8N los transporta desde el remitente (correo) o el llamante (telefonia);
+    # NUNCA los tipea el usuario final. Para el formulario web se ignora el
+    # contacto y se resuelve por la cuenta autenticada. Opcionales: su ausencia
+    # deriva a revision humana sin bloquear el alta (VIS-005).
+    reportante_email: str | None = Field(default=None, max_length=254)
+    reportante_telefono: str | None = Field(default=None, max_length=20)
+
     @field_validator("ingresado_en")
     @classmethod
     def ingresado_en_con_zona_y_no_futuro(cls, v: datetime | None) -> datetime | None:
@@ -300,6 +308,11 @@ class IncidenteRead(BaseModel):
     # identificador de origen, NUNCA contiene la descripción ni PII. Nullable:
     # las filas legacy sin identificador serializan el campo como null.
     origen_message_id: str | None = None
+
+    # c-82 (VIS-003): vinculo de reportante (FK nullable al directorio). Es la
+    # base del alcance PROPIO del rol `usuario_final`. Nullable: un reportante no
+    # identificado serializa null. Solo se expone en el detalle (no en el listado).
+    reportante_empleado_id: int | None = None
 
     # Instrumentación temporal end-to-end (C-39). Ambos instantes son nullable:
     # las filas legacy y los clientes que no proveen `ingresado_en` los dejan nulos.

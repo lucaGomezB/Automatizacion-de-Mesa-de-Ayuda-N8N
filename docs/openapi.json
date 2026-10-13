@@ -10,6 +10,26 @@
         "title": "AgruparPorEnum",
         "type": "string"
       },
+      "AlcanceResponse": {
+        "description": "Alcance de incidentes de la sesion (c-81, IAH-012).\n\nContiene SOLO el modo vigente del modelo c-82. NO expone `sector_id`,\n`ver_todos` ni conceptos del RBAC anterior (los modos SECTOR y REVISION no\nexisten).",
+        "properties": {
+          "modo": {
+            "description": "Modo de alcance de incidentes derivado del rol",
+            "enum": [
+              "PROPIO",
+              "GLOBAL",
+              "VACIO"
+            ],
+            "title": "Modo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "modo"
+        ],
+        "title": "AlcanceResponse",
+        "type": "object"
+      },
       "Body_recording_status_api_v1_telefonia_recording_status_post": {
         "properties": {
           "account_sid": {
@@ -695,6 +715,38 @@
         "title": "HTTPValidationError",
         "type": "object"
       },
+      "IdentidadActualResponse": {
+        "description": "Identidad efectiva de la sesion y su alcance derivado (c-81, IAH-012).\n\nAditivo y de solo lectura. `rol` es el rol del empleado activo vinculado\n(o nulo si no hay empleado). El alcance se recomputa por request desde el\ndirectorio.",
+        "properties": {
+          "alcance": {
+            "$ref": "#/components/schemas/AlcanceResponse",
+            "description": "Alcance de incidentes derivado (modo PROPIO/GLOBAL/VACIO)"
+          },
+          "rol": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Rol del empleado vinculado (nulo si no hay)",
+            "title": "Rol"
+          },
+          "username": {
+            "description": "Nombre de usuario autenticado",
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "alcance"
+        ],
+        "title": "IdentidadActualResponse",
+        "type": "object"
+      },
       "IncidenteCreate": {
         "description": "Payload de creación de un incidente.\n\nAceptado por el endpoint POST /api/v1/incidentes. Puede provenir de:\n    - El webhook de N8N tras recibir un correo electrónico en Outlook.\n    - El webhook de N8N tras procesar la transcripción de una llamada en Twilio.\n    - Una llamada directa a la API desde un cliente externo.\n\nValidaciones de negocio:\n    - La descripción no puede estar en blanco ni ser solo espacios.\n    - La longitud mínima de 10 caracteres evita incidentes vacíos de contenido.\n    - La longitud máxima de 5000 caracteres previene abusos de almacenamiento.\n\nGuardas de costo (C-33):\n    - `origen_message_id`: idempotencia del alta por Message-ID de Outlook.\n    - `clasificacion`: clasificación precalculada que omite la llamada paga.\n    - `origen_evento`: marcador de evento; un evento de notificación se\n      rechaza con error de validación para no crear incidentes.",
         "properties": {
@@ -764,6 +816,30 @@
           "prioridad": {
             "$ref": "#/components/schemas/PrioridadEnum",
             "default": "media"
+          },
+          "reportante_email": {
+            "anyOf": [
+              {
+                "maxLength": 254,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reportante Email"
+          },
+          "reportante_telefono": {
+            "anyOf": [
+              {
+                "maxLength": 20,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reportante Telefono"
           }
         },
         "required": [
@@ -870,6 +946,17 @@
           },
           "prioridad": {
             "$ref": "#/components/schemas/PrioridadEnum"
+          },
+          "reportante_empleado_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reportante Empleado Id"
           },
           "requiere_revision_humana": {
             "title": "Requiere Revision Humana",
@@ -1095,6 +1182,17 @@
           },
           "prioridad": {
             "$ref": "#/components/schemas/PrioridadEnum"
+          },
+          "reportante_empleado_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reportante Empleado Id"
           },
           "requiere_revision_humana": {
             "title": "Requiere Revision Humana",
@@ -1507,12 +1605,11 @@
         "type": "object"
       },
       "RolEmpleado": {
-        "description": "Vocabulario minimo de roles del directorio (DIR-003).\n\nHereda de `str` para almacenar el valor textual y serializarlo directamente.\n\nValores:\n    usuario_final:            reportante; requiere sector.\n    operador:                 atiende y puede ser destino de enrutamiento; requiere sector.\n    administrador_directorio: gestiona el directorio; sin sector y ve todos los incidentes.\n    mesa_de_ayuda:            revisor transversal de la cola de revision; sin sector,\n                              ve incidentes sin sector o que requieren revision humana.",
+        "description": "Vocabulario minimo de roles del directorio (DIR-003, c-82).\n\nHereda de `str` para almacenar el valor textual y serializarlo directamente.\nEl conocimiento de politica de cada rol vive en `app.services.role_policy`\n(fuente unica de verdad); este enum solo fija el VOCABULARIO.\n\nValores (EXACTAMENTE TRES):\n    usuario_final:            reportante; alcance PROPIO (solo lo que reporto).\n    mesa_de_ayuda:            rol transversal; alcance GLOBAL, privilegiado y\n                              destinatario de la notificacion de revision.\n    administrador_directorio: alcance GLOBAL, privilegiado y gestiona el directorio.",
         "enum": [
           "usuario_final",
-          "operador",
-          "administrador_directorio",
-          "mesa_de_ayuda"
+          "mesa_de_ayuda",
+          "administrador_directorio"
         ],
         "title": "RolEmpleado",
         "type": "string"
@@ -1948,6 +2045,33 @@
           }
         },
         "summary": "Revocar el refresh token (logout)",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "description": "Devuelve la identidad efectiva de la sesion y su alcance DERIVADO.\n\nADITIVO y de SOLO LECTURA. No modifica el contrato de login/refresh/logout.\nRecomputa el alcance por request reutilizando la derivacion existente\n(`EmpleadoRepository.get_by_user_id` + `alcance_desde_empleado`, que lee el\nregistro unico de politica de rol) SIN duplicar el mapeo rol -> alcance. La\nruta solo orquesta: route -> (repositorio + servicio) -> models.\n\nReturns:\n    IdentidadActualResponse con username, rol (o nulo) y alcance.modo\n    (PROPIO | GLOBAL | VACIO).\n\nRaises:\n    HTTPException 401: si la solicitud no esta autenticada.",
+        "operationId": "me_api_v1_auth_me_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentidadActualResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Identidad efectiva y alcance de la sesion actual",
         "tags": [
           "Auth"
         ]
@@ -3083,7 +3207,7 @@
         ]
       },
       "post": {
-        "description": "Crea un nuevo incidente y ejecuta la clasificación automática.\n\nInvocado por N8N tras recibir un correo electrónico en Outlook o una\ntranscripción de llamada de Twilio, o directamente desde un cliente HTTP.\n\nEl incidente se persiste en estado \"nuevo\" y es clasificado inmediatamente\npor el pipeline híbrido (determinístico + Gemini). El resultado incluye\nel sector asignado, la confianza de la clasificación y el indicador\nde revisión humana si la confianza fue insuficiente.\n\nArgs:\n    payload: Descripción pseudonimizada del incidente, prioridad y canal.\n\nReturns:\n    Representación completa del incidente creado y clasificado (HTTP 201).",
+        "description": "Crea un nuevo incidente y ejecuta la clasificación automática.\n\nInvocado por N8N tras recibir un correo electrónico en Outlook o una\ntranscripción de llamada de Twilio, o directamente desde un cliente HTTP.\n\nEl incidente se persiste en estado \"nuevo\" y es clasificado inmediatamente\npor el pipeline híbrido (determinístico + Gemini). El resultado incluye\nel sector asignado, la confianza de la clasificación y el indicador\nde revisión humana si la confianza fue insuficiente.\n\nEl VINCULO DE REPORTANTE (VIS-003/VIS-004) se resuelve por canal antes de\ncrear: la ruta orquesta la resolucion y le pasa el id al servicio. Un\nreportante no identificado persiste NULL y deriva a revision humana (VIS-005).\n\nArgs:\n    payload: Descripción pseudonimizada del incidente, prioridad y canal.\n\nReturns:\n    Representación completa del incidente creado y clasificado (HTTP 201).",
         "operationId": "create_incidente_api_v1_incidentes__post",
         "requestBody": {
           "content": {

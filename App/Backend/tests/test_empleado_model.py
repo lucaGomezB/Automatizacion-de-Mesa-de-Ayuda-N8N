@@ -95,18 +95,18 @@ def test_fecha_baja_nullable_para_retencion():
     assert col.type.timezone is True
 
 
-def test_vocabulario_de_roles_incluye_mesa_de_ayuda():
-    """El rol admite los cuatro valores, incluido el revisor `mesa_de_ayuda` (DIR-003)."""
+def test_vocabulario_de_roles_exactamente_tres():
+    """El rol admite EXACTAMENTE tres valores; `operador` ya no existe (DIR-003)."""
     assert {r.value for r in RolEmpleado} == {
         "usuario_final",
-        "operador",
-        "administrador_directorio",
         "mesa_de_ayuda",
+        "administrador_directorio",
     }
+    assert "operador" not in {r.value for r in RolEmpleado}
 
 
-def test_check_rol_acepta_cuatro_valores():
-    """El CHECK de `rol` incluye explicitamente los cuatro valores del vocabulario."""
+def test_check_rol_acepta_tres_valores():
+    """El CHECK de `rol` incluye exactamente los tres valores del vocabulario."""
     checks = [
         c
         for c in Empleado.__table__.constraints
@@ -114,13 +114,9 @@ def test_check_rol_acepta_cuatro_valores():
     ]
     assert checks, "Falta el CHECK ck_directorio_empleado_rol"
     sqltext = str(checks[0].sqltext)
-    for valor in (
-        "usuario_final",
-        "operador",
-        "administrador_directorio",
-        "mesa_de_ayuda",
-    ):
+    for valor in ("usuario_final", "mesa_de_ayuda", "administrador_directorio"):
         assert valor in sqltext, f"El CHECK de rol no incluye {valor!r}"
+    assert "operador" not in sqltext
 
 
 @pytest.mark.asyncio
@@ -182,25 +178,18 @@ async def test_mesa_de_ayuda_persiste_sin_sector(db_session):
 
 
 @pytest.mark.asyncio
-async def test_vocabulario_previo_sigue_aceptado(db_session):
-    """El vocabulario previo sigue aceptado por el CHECK recreado."""
-    sector = Sector(nombre="Sistemas", descripcion="Infraestructura")
-    db_session.add(sector)
-    await db_session.flush()
-
+async def test_rol_operador_rechazado_por_check(db_session):
+    """`operador` ya no pertenece al vocabulario: viola el CHECK (DIR-003)."""
     operador = Empleado(
         legajo="OP-1",
         nombre="Operador Sintetico",
         email="operador.previo@example.test",
-        sector_id=sector.id,
-        rol=RolEmpleado.operador,
+        rol="operador",
     )
     db_session.add(operador)
-    await db_session.flush()
-    await db_session.refresh(operador)
-
-    assert operador.rol == RolEmpleado.operador
-    assert operador.sector_id == sector.id
+    with pytest.raises(IntegrityError):
+        await db_session.flush()
+    await db_session.rollback()
 
 
 @pytest.mark.asyncio

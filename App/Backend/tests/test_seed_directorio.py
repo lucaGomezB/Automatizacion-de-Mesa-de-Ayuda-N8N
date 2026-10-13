@@ -40,7 +40,7 @@ async def test_seed_idempotente_crea_un_usuario_por_rol(db_session):
     assert len(empleados) == len(PERSONAS_SINTETICAS)
     assert {e.rol for e in empleados} == {
         RolEmpleado.usuario_final,
-        RolEmpleado.operador,
+        RolEmpleado.mesa_de_ayuda,
         RolEmpleado.administrador_directorio,
     }
 

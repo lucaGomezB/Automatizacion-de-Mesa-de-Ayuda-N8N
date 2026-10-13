@@ -36,7 +36,7 @@ async def test_rol_no_afecta_la_clasificacion(db_session):
     )
     await svc.crear_empleado(
         legajo="CL-2", nombre="N", email="cl2@example.test",
-        sector_id=sector.id, rol="operador",
+        sector_id=sector.id, rol="mesa_de_ayuda",
     )
     await svc.crear_empleado(
         legajo="CL-3", nombre="N", email="cl3@example.test",

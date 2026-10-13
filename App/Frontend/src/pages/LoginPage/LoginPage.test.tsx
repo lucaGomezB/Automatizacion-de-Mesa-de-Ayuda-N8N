@@ -36,9 +36,12 @@ function baseAuth() {
     username: null,
     isAuthenticated: false,
     mfaRequired: false,
+    rol: null,
+    alcance: { modo: 'VACIO' as const },
     login: vi.fn().mockResolvedValue(true),
     verifyMfa: vi.fn().mockResolvedValue(true),
     enrollMfa: vi.fn(),
+    refreshIdentidad: vi.fn().mockResolvedValue(undefined),
     logout: vi.fn(),
   };
 }

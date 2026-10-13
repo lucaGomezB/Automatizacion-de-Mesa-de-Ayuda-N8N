@@ -10,9 +10,10 @@ Decisiones (design.md D1-D6b):
     - D1: entidad propia; `user_id` es un vinculo opcional a `users` (FK nullable,
       ON DELETE SET NULL) para saber que cuenta corresponde a que empleado, sin
       fusionar el dominio de autenticacion con el de contacto.
-    - D2/D3: rol minimo de cuatro valores; `usuario_final`/`operador` requieren
-      sector; `administrador_directorio` y `mesa_de_ayuda` no tienen sector. El
-      sector referencia el catalogo canonico `sector`.
+    - D2/D3 (c-82): rol minimo de TRES valores (`usuario_final`, `mesa_de_ayuda`,
+      `administrador_directorio`). El `sector_id` es dato organizacional OPCIONAL
+      sin efecto en la autorizacion. La politica de cada rol vive en
+      `app.services.role_policy`.
     - D4: email y telefono se almacenan en TEXTO PLANO (varchar), SIN cifrado de
       aplicacion ni indice ciego.
     - D6b: se almacenan EXACTAMENTE los campos definidos, nada mas.
@@ -33,22 +34,22 @@ from app.models.base import Base, TimestampMixin
 
 class RolEmpleado(str, PyEnum):
     """
-    Vocabulario minimo de roles del directorio (DIR-003).
+    Vocabulario minimo de roles del directorio (DIR-003, c-82).
 
     Hereda de `str` para almacenar el valor textual y serializarlo directamente.
+    El conocimiento de politica de cada rol vive en `app.services.role_policy`
+    (fuente unica de verdad); este enum solo fija el VOCABULARIO.
 
-    Valores:
-        usuario_final:            reportante; requiere sector.
-        operador:                 atiende y puede ser destino de enrutamiento; requiere sector.
-        administrador_directorio: gestiona el directorio; sin sector y ve todos los incidentes.
-        mesa_de_ayuda:            revisor transversal de la cola de revision; sin sector,
-                                  ve incidentes sin sector o que requieren revision humana.
+    Valores (EXACTAMENTE TRES):
+        usuario_final:            reportante; alcance PROPIO (solo lo que reporto).
+        mesa_de_ayuda:            rol transversal; alcance GLOBAL, privilegiado y
+                                  destinatario de la notificacion de revision.
+        administrador_directorio: alcance GLOBAL, privilegiado y gestiona el directorio.
     """
 
     usuario_final = "usuario_final"
-    operador = "operador"
-    administrador_directorio = "administrador_directorio"
     mesa_de_ayuda = "mesa_de_ayuda"
+    administrador_directorio = "administrador_directorio"
 
 
 class Empleado(Base, TimestampMixin):
@@ -107,8 +108,11 @@ class Empleado(Base, TimestampMixin):
     sector: Mapped["Sector | None"] = relationship("Sector", lazy="select")  # type: ignore[name-defined]
 
     __table_args__ = (
+        # El CHECK enumera el vocabulario porque la base no lee codigo; debe
+        # coincidir con `ROLES_VALIDOS` de `app.services.role_policy` (RP-003,
+        # verificado por tests/test_role_policy.py).
         CheckConstraint(
-            "rol IN ('usuario_final', 'operador', 'administrador_directorio', 'mesa_de_ayuda')",
+            "rol IN ('usuario_final', 'mesa_de_ayuda', 'administrador_directorio')",
             name="ck_directorio_empleado_rol",
         ),
     )

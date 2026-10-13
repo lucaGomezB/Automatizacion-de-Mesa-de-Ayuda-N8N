@@ -4,20 +4,25 @@
  * Responsabilidad:
  *   Presenta tres columnas en un grid de 3 columnas:
  *   1. Identidad institucional: logotipo y nombre del sistema.
- *   2. Navegación principal: enlaces a Portal ("/") y Administración ("/admin").
- *   3. Indicador de salud de la API: solo visible en la ruta /admin; usa `useHealthCheck`
+ *   2. Navegación principal: enlaces renderizados por `alcance.modo` (c-81):
+ *      Portal ("/") para todo autenticado, Administración ("/admin") solo GLOBAL,
+ *      "Mis incidentes" ("/mis-incidentes") solo PROPIO, Dashboard sin cambios.
+ *   3. Indicador de salud de la API: visible con alcance GLOBAL; usa `useHealthCheck`
  *      para mostrar un punto color verde/amarillo/rojo según el estado del backend.
  *
  *   El estilo active de los NavLinks se aplica dinámicamente para reflejar la ruta actual.
  */
-import { NavLink, useLocation } from 'react-router-dom';
-import { BarChart3, TicketCheck } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
+import { BarChart3, ClipboardList, TicketCheck } from 'lucide-react';
 import { useHealthCheck } from '@/hooks/useHealthCheck';
+import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 
 export function Header() {
-  const location = useLocation();
-  const isAdmin = location.pathname.startsWith('/admin');
+  // Navegacion por ALCANCE, no por pathname (c-81, FR-RBAC-003).
+  const { alcance } = useAuth();
+  const esGlobal = alcance.modo === 'GLOBAL';
+  const esPropio = alcance.modo === 'PROPIO';
   const { data: health, isError: healthError, isPending: healthPending } = useHealthCheck();
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
@@ -55,14 +60,24 @@ export function Header() {
             <BarChart3 className="h-3.5 w-3.5 mr-1 inline" />
             Dashboard
           </NavLink>
-          <NavLink to="/admin" className={navLinkClass}>
-            Administración
-          </NavLink>
+          {/* Enlace operativo: solo alcance GLOBAL */}
+          {esGlobal && (
+            <NavLink to="/admin" className={navLinkClass}>
+              Administración
+            </NavLink>
+          )}
+          {/* Vista de incidentes propios: solo alcance PROPIO */}
+          {esPropio && (
+            <NavLink to="/mis-incidentes" className={navLinkClass}>
+              <ClipboardList className="h-3.5 w-3.5 mr-1 inline" />
+              Mis incidentes
+            </NavLink>
+          )}
         </nav>
 
         {/* Columna derecha: indicador de salud de la API (solo en /admin) */}
         <div className="flex justify-end">
-          {isAdmin && (
+          {esGlobal && (
             <div className="flex items-center gap-2 text-sm">
               <span
                 className={cn(

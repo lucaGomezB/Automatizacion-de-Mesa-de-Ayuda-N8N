@@ -34,29 +34,29 @@ async def directorio_env(engine):
         await s.flush()
 
         admin_user = User(username="dir-admin", hashed_password="x", is_active=True)
-        oper_user = User(username="dir-oper", hashed_password="x", is_active=True)
+        mesa_user = User(username="dir-mesa", hashed_password="x", is_active=True)
         final_user = User(username="dir-final", hashed_password="x", is_active=True)
-        s.add_all([admin_user, oper_user, final_user])
+        s.add_all([admin_user, mesa_user, final_user])
         await s.flush()
 
         admin = Empleado(
             legajo="DIR-ADM", nombre="Admin Sintetico", email="dir.admin@example.test",
             rol=RolEmpleado.administrador_directorio, user_id=admin_user.id,
         )
-        oper = Empleado(
-            legajo="DIR-OPE", nombre="Oper Sintetico", email="dir.oper@example.test",
-            sector_id=sector.id, rol=RolEmpleado.operador, user_id=oper_user.id,
+        mesa = Empleado(
+            legajo="DIR-MESA", nombre="Mesa Sintetica", email="dir.mesa@example.test",
+            sector_id=sector.id, rol=RolEmpleado.mesa_de_ayuda, user_id=mesa_user.id,
         )
         final = Empleado(
             legajo="DIR-FIN", nombre="Final Sintetico", email="dir.final@example.test",
             sector_id=sector.id, rol=RolEmpleado.usuario_final, user_id=final_user.id,
         )
-        s.add_all([admin, oper, final])
+        s.add_all([admin, mesa, final])
         await s.commit()
         ids = {
             "sector_id": sector.id,
             "admin_user": admin_user.id,
-            "oper_user": oper_user.id,
+            "mesa_user": mesa_user.id,
             "final_user": final_user.id,
         }
 
@@ -141,8 +141,8 @@ async def test_escritura_mesa_de_ayuda_sin_sector_201(engine, directorio_env):
 
 
 @pytest.mark.asyncio
-async def test_escritura_mesa_de_ayuda_con_sector_422(engine, directorio_env):
-    """Un `mesa_de_ayuda` con sector es rechazado (422, sin PII)."""
+async def test_escritura_mesa_de_ayuda_con_sector_201(engine, directorio_env):
+    """Un `mesa_de_ayuda` con sector es aceptado (sector opcional, DIR-004)."""
     async with _client(engine, directorio_env["admin_user"]) as c:
         resp = await c.post(
             _ENDPOINT,
@@ -152,13 +152,16 @@ async def test_escritura_mesa_de_ayuda_con_sector_422(engine, directorio_env):
                 sector_id=directorio_env["sector_id"],
             ),
         )
-    assert resp.status_code == 422, resp.text
+    assert resp.status_code == 201, resp.text
+    body = resp.json()
+    assert body["rol"] == "mesa_de_ayuda"
+    assert body["sector_id"] == directorio_env["sector_id"]
 
 
 @pytest.mark.asyncio
 async def test_escritura_otro_rol_403(engine, directorio_env):
     """Un rol distinto de administrador no puede escribir (403)."""
-    async with _client(engine, directorio_env["oper_user"]) as c:
+    async with _client(engine, directorio_env["mesa_user"]) as c:
         resp = await c.post(
             _ENDPOINT,
             json=_payload(sector_id=directorio_env["sector_id"]),
@@ -179,14 +182,27 @@ async def test_acceso_anonimo_401(engine, directorio_env):
 
 
 @pytest.mark.asyncio
-async def test_lectura_autorizada_admin_y_operador(engine, directorio_env):
-    """Administrador y operador pueden listar el directorio (200)."""
+async def test_lectura_autorizada_admin_y_mesa_de_ayuda(engine, directorio_env):
+    """Administrador y `mesa_de_ayuda` pueden listar el directorio (200)."""
     async with _client(engine, directorio_env["admin_user"]) as c:
         assert (await c.get(_ENDPOINT)).status_code == 200
-    async with _client(engine, directorio_env["oper_user"]) as c:
+    async with _client(engine, directorio_env["mesa_user"]) as c:
         resp = await c.get(_ENDPOINT)
         assert resp.status_code == 200
         assert isinstance(resp.json(), list)
+
+
+@pytest.mark.asyncio
+async def test_conjunto_de_lectura_del_directorio(engine, directorio_env):
+    """OQ-4/RP-004: mesa y admin leen (200); usuario_final y sin empleado no (403)."""
+    async with _client(engine, directorio_env["admin_user"]) as c:
+        assert (await c.get(_ENDPOINT)).status_code == 200
+    async with _client(engine, directorio_env["mesa_user"]) as c:
+        assert (await c.get(_ENDPOINT)).status_code == 200
+    async with _client(engine, directorio_env["final_user"]) as c:
+        assert (await c.get(_ENDPOINT)).status_code == 403
+    async with _client(engine, 999999) as c:
+        assert (await c.get(_ENDPOINT)).status_code == 403
 
 
 @pytest.mark.asyncio

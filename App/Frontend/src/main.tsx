@@ -6,8 +6,9 @@
  *   1. `QueryClientProvider` — cliente de React Query con política de reintentos reducidos
  *      para evitar saturar la API ante errores transitorios.
  *   2. `AuthProvider` — estado de autenticación JWT (token en memoria, no en localStorage).
- *   3. `BrowserRouter` — enrutador HTML5 con tres rutas: "/" (portal), "/admin" (panel)
- *      y "/login" (inicio de sesión). Las rutas "/" y "/admin" son protegidas.
+ *   3. `BrowserRouter` — enrutador HTML5 con rutas protegidas por alcance (c-81):
+ *      "/" (portal), "/admin" (superficie operativa, exige GLOBAL), "/mis-incidentes"
+ *      (exige PROPIO), "/dashboard" y "/login". Las rutas montan `ProtectedRoute`.
  *   4. `ReactQueryDevtools` — panel de depuración de caché, activo solo en desarrollo.
  *
  *   Cualquier ruta no definida redirige a "/" para evitar páginas en blanco.
@@ -17,13 +18,14 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { onUnauthorized } from './services/api';
+import { AuthProvider } from './contexts/AuthContext';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import ReportarIncidentePage from './pages/ReportarIncidente';
 import AdministracionPage from './pages/Administracion';
 import DashboardPage from './pages/Dashboard';
 import LoginPage from './pages/LoginPage';
 import MfaEnrollmentPage from './pages/MfaEnrollmentPage';
+import MisIncidentesPage from './pages/MisIncidentes';
 import './index.css';
 
 // Cliente de React Query con reintentos reducidos para evitar saturar la API en errores temporales
@@ -36,33 +38,6 @@ const queryClient = new QueryClient({
     },
   },
 });
-
-// ── ProtectedRoute ────────────────────────────────────────────────────────────
-
-/**
- * Wrapper que redirige a /login si el usuario no está autenticado.
- *
- * También registra el callback onUnauthorized para que el interceptor
- * de Axios pueda redirigir al login cuando el backend responde 401.
- */
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, logout } = useAuth();
-
-  // Registrar el callback de logout para respuestas 401 del backend.
-  // Se usa useEffect en producción; aquí usamos un registro directo
-  // que es idempotente (sobrescribe el callback anterior).
-  React.useEffect(() => {
-    onUnauthorized(() => {
-      logout();
-    });
-  }, [logout]);
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return <>{children}</>;
-}
 
 // ── App ───────────────────────────────────────────────────────────────────────
 
@@ -98,8 +73,16 @@ function App() {
         <Route
           path="/admin"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiere="GLOBAL">
               <AdministracionPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/mis-incidentes"
+          element={
+            <ProtectedRoute requiere="PROPIO">
+              <MisIncidentesPage />
             </ProtectedRoute>
           }
         />

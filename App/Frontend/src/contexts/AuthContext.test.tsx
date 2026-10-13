@@ -11,7 +11,7 @@ import { renderHook, act } from '@testing-library/react';
 import type { ReactNode } from 'react';
 
 vi.mock('@/services/api', () => ({
-  apiClient: { post: vi.fn() },
+  apiClient: { post: vi.fn(), get: vi.fn() },
   setAuthToken: vi.fn(),
   clearAuthToken: vi.fn(),
   setRefreshToken: vi.fn(),
@@ -24,6 +24,12 @@ import { apiClient } from '@/services/api';
 import { AuthProvider, useAuth } from './AuthContext';
 
 const postMock = apiClient.post as unknown as ReturnType<typeof vi.fn>;
+const getMock = apiClient.get as unknown as ReturnType<typeof vi.fn>;
+
+/** Respuesta por defecto de GET /auth/me para la sesion (identidad sin empleado). */
+function identidadVacia() {
+  return { data: { username: 'user', rol: null, alcance: { modo: 'VACIO' } } };
+}
 
 function wrapper({ children }: { children: ReactNode }) {
   return <AuthProvider>{children}</AuthProvider>;
@@ -32,6 +38,8 @@ function wrapper({ children }: { children: ReactNode }) {
 describe('AuthContext (MFA)', () => {
   beforeEach(() => {
     postMock.mockReset();
+    getMock.mockReset();
+    getMock.mockResolvedValue(identidadVacia());
   });
 
   it('login de un paso autentica la sesion', async () => {
@@ -131,5 +139,99 @@ describe('AuthContext (MFA)', () => {
       secret: 'ABC',
       recoveryCodes: ['AAAAA-11111', 'BBBBB-22222'],
     });
+  });
+});
+
+// ── c-81 FR-RBAC-001: la sesion conoce rol y alcance (GET /auth/me) ────────────
+
+describe('AuthContext (rol y alcance, c-81)', () => {
+  beforeEach(() => {
+    postMock.mockReset();
+    getMock.mockReset();
+  });
+
+  it('tras login de un paso expone el rol y el modo de alcance del backend', async () => {
+    postMock.mockResolvedValueOnce({
+      data: { access_token: 'a', token_type: 'bearer', refresh_token: 'r' },
+    });
+    getMock.mockResolvedValueOnce({
+      data: {
+        username: 'user',
+        rol: 'usuario_final',
+        alcance: { modo: 'PROPIO' },
+      },
+    });
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    await act(async () => {
+      expect(await result.current.login('user', 'pass')).toBe(true);
+    });
+
+    expect(getMock).toHaveBeenCalledWith('/auth/me');
+    expect(result.current.rol).toBe('usuario_final');
+    expect(result.current.alcance.modo).toBe('PROPIO');
+  });
+
+  it('una cuenta sin empleado vinculado expone alcance VACIO', async () => {
+    postMock.mockResolvedValueOnce({
+      data: { access_token: 'a', token_type: 'bearer' },
+    });
+    getMock.mockResolvedValueOnce({
+      data: { username: 'user', rol: null, alcance: { modo: 'VACIO' } },
+    });
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    await act(async () => {
+      await result.current.login('user', 'pass');
+    });
+
+    expect(result.current.rol).toBeNull();
+    expect(result.current.alcance.modo).toBe('VACIO');
+  });
+
+  it('re-resuelve el alcance sin re-login cuando cambia el modo (triangulacion)', async () => {
+    postMock.mockResolvedValueOnce({
+      data: { access_token: 'a', token_type: 'bearer' },
+    });
+    getMock.mockResolvedValueOnce({
+      data: { username: 'u', rol: 'mesa_de_ayuda', alcance: { modo: 'GLOBAL' } },
+    });
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    await act(async () => {
+      await result.current.login('u', 'pass');
+    });
+    expect(result.current.alcance.modo).toBe('GLOBAL');
+
+    // El directorio cambia el rol; la identidad se re-resuelve sin re-login.
+    getMock.mockResolvedValueOnce({
+      data: { username: 'u', rol: 'usuario_final', alcance: { modo: 'PROPIO' } },
+    });
+    await act(async () => {
+      await result.current.refreshIdentidad();
+    });
+
+    expect(result.current.rol).toBe('usuario_final');
+    expect(result.current.alcance.modo).toBe('PROPIO');
+  });
+
+  it('degrada a VACIO si GET /auth/me falla (no habilita superficies)', async () => {
+    postMock.mockResolvedValueOnce({
+      data: { access_token: 'a', token_type: 'bearer' },
+    });
+    getMock.mockRejectedValueOnce(new Error('network'));
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    await act(async () => {
+      expect(await result.current.login('u', 'pass')).toBe(true);
+    });
+
+    expect(result.current.isAuthenticated).toBe(true);
+    expect(result.current.rol).toBeNull();
+    expect(result.current.alcance.modo).toBe('VACIO');
   });
 });

@@ -17,7 +17,7 @@ Decisión de eager loading:
 
 from datetime import datetime
 
-from sqlalchemy import and_, delete, or_, select
+from sqlalchemy import and_, delete, select
 from sqlalchemy.orm import selectinload
 
 from app.models.incidente import Incidente, PrioridadEnum
@@ -98,7 +98,7 @@ class IncidenteRepository(BaseRepository[Incidente]):
         desde: datetime | None = None,
         hasta: datetime | None = None,
         origen_message_id: str | None = None,
-        solo_revision: bool = False,
+        reportante_empleado_id: int | None = None,
         limit: int = 50,
         offset: int = 0,
     ) -> list[Incidente]:
@@ -120,9 +120,8 @@ class IncidenteRepository(BaseRepository[Incidente]):
             desde:                   Filtra incidentes creados desde esta fecha.
             hasta:                   Filtra incidentes creados hasta esta fecha.
             origen_message_id:       Filtra por el identificador de origen (exacto).
-            solo_revision:           Acota a la poblacion de revision (sin sector
-                                     o requiere_revision_humana), para el rol
-                                     `mesa_de_ayuda` (c-60 D3).
+            reportante_empleado_id:  Acota a los incidentes reportados por el
+                                     empleado dado (alcance PROPIO, c-82).
             limit:                   Cantidad máxima de resultados (paginación).
             offset:                  Desplazamiento para paginación.
 
@@ -149,14 +148,10 @@ class IncidenteRepository(BaseRepository[Incidente]):
             # c-69: coincidencia EXACTA del identificador de origen para la
             # correlacion determinista item-enviado ↔ incidente-persistido.
             conditions.append(Incidente.origen_message_id == origen_message_id)
-        if solo_revision:
-            # c-60 (D3): poblacion de la cola de revision: incidentes sin sector
-            # o que requieren revision humana.
+        if reportante_empleado_id is not None:
+            # c-82 (VIS-001): base del alcance PROPIO del rol `usuario_final`.
             conditions.append(
-                or_(
-                    Incidente.sector_id.is_(None),
-                    Incidente.requiere_revision_humana.is_(True),
-                )
+                Incidente.reportante_empleado_id == reportante_empleado_id
             )
 
         # Consulta base con carga eager de relaciones para el listado

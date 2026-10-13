@@ -22,6 +22,8 @@ import {
   type ReactNode,
 } from 'react';
 import { setAuthToken, clearAuthToken, setRefreshToken, clearRefreshToken, getRefreshToken } from '@/services/api';
+import { obtenerIdentidad } from '@/services/authService';
+import { ALCANCE_VACIO, type Alcance } from '@/types/auth';
 
 // ── Tipos ────────────────────────────────────────────────────────────────────
 
@@ -34,6 +36,10 @@ interface AuthState {
   isAuthenticated: boolean;
   /** true si el backend respondio que se requiere el segundo factor. */
   mfaRequired: boolean;
+  /** Rol del empleado vinculado (null si no hay empleado / no resuelto). */
+  rol: string | null;
+  /** Alcance de incidentes derivado (PROPIO | GLOBAL | VACIO). */
+  alcance: Alcance;
 }
 
 /** Respuesta del endpoint de login (aditiva: un paso o reto MFA). */
@@ -60,6 +66,8 @@ interface AuthContextValue extends AuthState {
   verifyMfa: (code: string) => Promise<boolean>;
   /** Inicia el enrollment de MFA para la sesion autenticada. */
   enrollMfa: () => Promise<MfaEnrollmentData>;
+  /** Re-resuelve el rol y el alcance desde el backend (sin re-login). */
+  refreshIdentidad: () => Promise<void>;
   /** Cierra la sesion, eliminando el token de memoria. */
   logout: () => void;
 }
@@ -83,28 +91,52 @@ export function AuthProvider({ children }: AuthProviderProps) {
     username: null,
     isAuthenticated: false,
     mfaRequired: false,
+    rol: null,
+    alcance: ALCANCE_VACIO,
   });
 
   // Ticket y usuario pendientes del segundo factor (no se renderizan).
   const mfaTicketRef = useRef<string | null>(null);
   const mfaUsernameRef = useRef<string | null>(null);
 
-  /** Fija el par de tokens en memoria y marca la sesion como autenticada. */
+  /**
+   * Resuelve la identidad (rol + alcance) desde el backend.
+   *
+   * Degrada de forma segura: si `/auth/me` falla, devuelve rol nulo y alcance
+   * VACIO, de modo que no se habilita ninguna superficie operativa (el backend
+   * sigue siendo el limite de seguridad).
+   */
+  const resolverIdentidad = useCallback(async (): Promise<{
+    rol: string | null;
+    alcance: Alcance;
+  }> => {
+    try {
+      const identidad = await obtenerIdentidad();
+      return { rol: identidad.rol, alcance: identidad.alcance };
+    } catch {
+      return { rol: null, alcance: ALCANCE_VACIO };
+    }
+  }, []);
+
+  /** Fija el par de tokens en memoria, resuelve la identidad y autentica. */
   const applyTokenResponse = useCallback(
-    (username: string, data: LoginApiResponse) => {
+    async (username: string, data: LoginApiResponse) => {
       const token = data.access_token ?? '';
       setAuthToken(token);
       setRefreshToken(data.refresh_token ?? null);
       mfaTicketRef.current = null;
       mfaUsernameRef.current = null;
+      const { rol, alcance } = await resolverIdentidad();
       setState({
         token,
         username,
         isAuthenticated: true,
         mfaRequired: false,
+        rol,
+        alcance,
       });
     },
-    [],
+    [resolverIdentidad],
   );
 
   const login = useCallback(
@@ -126,11 +158,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
             username,
             isAuthenticated: false,
             mfaRequired: true,
+            rol: null,
+            alcance: ALCANCE_VACIO,
           });
           return false;
         }
 
-        applyTokenResponse(username, data);
+        await applyTokenResponse(username, data);
         return true;
       } catch {
         return false;
@@ -152,7 +186,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           '/auth/mfa/verify',
           { mfa_ticket: ticket, code },
         );
-        applyTokenResponse(username, response.data);
+        await applyTokenResponse(username, response.data);
         return true;
       } catch {
         return false;
@@ -175,6 +209,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
     };
   }, []);
 
+  /**
+   * Re-resuelve rol y alcance desde el backend SIN re-login (c-81, FR-RBAC-001).
+   *
+   * Se usa para reflejar cambios del directorio (rol nuevo, empleado
+   * desactivado) en la siguiente resolucion de identidad. Si la sesion no esta
+   * autenticada, no hace nada.
+   */
+  const refreshIdentidad = useCallback(async (): Promise<void> => {
+    const { rol, alcance } = await resolverIdentidad();
+    setState((prev) =>
+      prev.isAuthenticated ? { ...prev, rol, alcance } : prev,
+    );
+  }, [resolverIdentidad]);
+
   const logout = useCallback(() => {
     // Logout revocatorio (c-63a): revocar el refresh en el backend antes de
     // limpiar el estado local. Fire-and-forget para no bloquear la UI; el access
@@ -196,6 +244,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       username: null,
       isAuthenticated: false,
       mfaRequired: false,
+      rol: null,
+      alcance: ALCANCE_VACIO,
     });
   }, []);
 
@@ -205,9 +255,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
       login,
       verifyMfa,
       enrollMfa,
+      refreshIdentidad,
       logout,
     }),
-    [state, login, verifyMfa, enrollMfa, logout],
+    [state, login, verifyMfa, enrollMfa, refreshIdentidad, logout],
   );
 
   return (

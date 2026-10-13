@@ -71,8 +71,8 @@ def verificar_entorno_seed(environment: str | None = None) -> str:
     return entorno
 
 
-# Un usuario sintetico por rol. `sector` es obligatorio para usuario_final y
-# operador; el administrador no tiene sector. Sin PII real (dominio .test).
+# Un usuario sintetico por rol. El sector es dato organizacional OPCIONAL sin
+# efecto en la autorizacion (c-82). Sin PII real (dominio .test).
 PERSONAS_SINTETICAS: list[dict[str, Any]] = [
     {
         "username": "directorio.admin",
@@ -85,13 +85,13 @@ PERSONAS_SINTETICAS: list[dict[str, Any]] = [
         "sector": None,
     },
     {
-        "username": "directorio.operador",
-        "password": "cambiar-esta-clave-operador",  # gitleaks:allow (password de desarrollo, usuario sintetico)
-        "legajo": "DIR-OPERADOR",
-        "nombre": "Operador Sistemas (sintetico)",
-        "email": "directorio.operador@example.test",
+        "username": "directorio.mesa",
+        "password": "cambiar-esta-clave-mesa",  # gitleaks:allow (password de desarrollo, usuario sintetico)
+        "legajo": "DIR-MESA",
+        "nombre": "Mesa de ayuda (sintetico)",
+        "email": "directorio.mesa@example.test",
         "telefono": "+5491100000002",
-        "rol": RolEmpleado.operador.value,
+        "rol": RolEmpleado.mesa_de_ayuda.value,
         "sector": "Sistemas",
     },
     {

@@ -28,8 +28,11 @@ from app.core.database import get_db_session
 from app.core.exceptions import AccountLockedError
 from app.core.security import get_current_user
 from app.models.user import User
+from app.repositories.empleado_repository import EmpleadoRepository
 from app.repositories.user_repository import UserRepository
 from app.schemas.auth import (
+    AlcanceResponse,
+    IdentidadActualResponse,
     LoginRequest,
     LoginResponse,
     LogoutRequest,
@@ -40,6 +43,7 @@ from app.schemas.auth import (
     TokenResponse,
 )
 from app.services import mfa_service
+from app.services.incident_visibility import alcance_desde_empleado
 from app.services.auth_service import (
     LockoutSettings,
     authenticate_user,
@@ -218,6 +222,48 @@ async def logout(payload: LogoutRequest, session: SessionDep):
     """
     await revoke_refresh_token(session, provided_value=payload.refresh_token)
     return LogoutResponse(message="Sesion cerrada")
+
+
+# ── Identidad y alcance de la sesion (c-81, IAH-012) ─────────────────────────
+
+
+@router.get(
+    "/me",
+    response_model=IdentidadActualResponse,
+    summary="Identidad efectiva y alcance de la sesion actual",
+)
+async def me(
+    session: SessionDep, current_user: CurrentUserDep
+) -> IdentidadActualResponse:
+    """
+    Devuelve la identidad efectiva de la sesion y su alcance DERIVADO.
+
+    ADITIVO y de SOLO LECTURA. No modifica el contrato de login/refresh/logout.
+    Recomputa el alcance por request reutilizando la derivacion existente
+    (`EmpleadoRepository.get_by_user_id` + `alcance_desde_empleado`, que lee el
+    registro unico de politica de rol) SIN duplicar el mapeo rol -> alcance. La
+    ruta solo orquesta: route -> (repositorio + servicio) -> models.
+
+    Returns:
+        IdentidadActualResponse con username, rol (o nulo) y alcance.modo
+        (PROPIO | GLOBAL | VACIO).
+
+    Raises:
+        HTTPException 401: si la solicitud no esta autenticada.
+    """
+    empleado = await EmpleadoRepository(session).get_by_user_id(current_user.id)
+    alcance = alcance_desde_empleado(empleado)
+    # `Empleado.rol` es una columna String: se serializa su valor textual (la
+    # normalizacion de enum vive en `politica_de_rol`, ya consumida por el
+    # servicio de alcance; la ruta no duplica ese mapeo).
+    rol = None
+    if empleado is not None:
+        rol = getattr(empleado.rol, "value", empleado.rol)
+    return IdentidadActualResponse(
+        username=current_user.username,
+        rol=rol,
+        alcance=AlcanceResponse(modo=alcance.modo.value),
+    )
 
 
 # ── MFA: enrollment y verificacion del segundo factor (c-63b, IAH-006/007) ────

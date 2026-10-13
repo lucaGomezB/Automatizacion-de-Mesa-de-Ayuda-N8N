@@ -91,31 +91,36 @@ class EmpleadoRepository(BaseRepository[Empleado]):
         )
         return result.scalars().first()
 
-    async def listar_operadores_por_sector(
-        self, sector_id: int | None
-    ) -> list[Empleado]:
+    async def listar_activos_por_rol(self, rol: str) -> list[Empleado]:
         """
-        Devuelve los operadores ACTIVOS del sector (c-56, NR-002).
+        Devuelve los empleados ACTIVOS del rol dado, sin filtro de sector.
 
-        Un destinatario valido de la notificacion de revision humana es un
-        empleado con `rol=operador`, `activo=true` y `sector_id` coincidente.
-        Un `sector_id` nulo no es un error: devuelve lista vacia. El orden por
-        `id` es deterministico. Carga eager de `sector` para serializacion async.
+        Es la consulta generica que usa la resolucion de destinatarios: el ROL
+        concreto lo decide el registro unico de politica de rol (RP-002) y se
+        pasa como parametro para no duplicar el conocimiento de rol. El orden
+        por `id` es deterministico. Carga eager de `sector`.
         """
-        if sector_id is None:
-            return []
         result = await self._session.execute(
             self._con_sector(
                 select(Empleado)
                 .where(
-                    Empleado.sector_id == sector_id,
-                    Empleado.rol == RolEmpleado.operador.value,
+                    Empleado.rol == rol,
                     Empleado.activo.is_(True),
                 )
                 .order_by(Empleado.id)
             )
         )
         return list(result.scalars().all())
+
+    async def listar_mesa_de_ayuda_activos(self) -> list[Empleado]:
+        """
+        Devuelve los `mesa_de_ayuda` ACTIVOS (c-82, NR-002).
+
+        Conveniencia sobre `listar_activos_por_rol` para el rol destinatario de
+        la notificacion de revision. Un destinatario valido es un empleado con
+        `rol=mesa_de_ayuda` y `activo=true`, CON INDEPENDENCIA DEL SECTOR.
+        """
+        return await self.listar_activos_por_rol(RolEmpleado.mesa_de_ayuda.value)
 
     async def listar_inactivos(self) -> list[Empleado]:
         """

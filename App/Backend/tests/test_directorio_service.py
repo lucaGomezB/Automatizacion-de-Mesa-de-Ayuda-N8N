@@ -55,7 +55,7 @@ async def test_alta_valida_con_y_sin_telefono(db_session):
         nombre="Beto Sintetico",
         email="beto@example.test",
         sector_id=sector.id,
-        rol=RolEmpleado.operador,
+        rol=RolEmpleado.mesa_de_ayuda,
     )
 
     assert con_tel.email == "ana@example.test"  # normalizado
@@ -94,7 +94,7 @@ async def test_telefono_repetido_permitido(db_session):
     )
     await svc.crear_empleado(
         legajo="C-2", nombre="Dos", email="c2@example.test",
-        telefono="+5491100000010", sector_id=sector.id, rol="operador",
+        telefono="+5491100000010", sector_id=sector.id, rol="mesa_de_ayuda",
     )
 
     registro = await svc.listar()
@@ -135,28 +135,39 @@ async def test_rol_invalido_rechazado(db_session):
 
 
 @pytest.mark.asyncio
-async def test_usuario_final_y_operador_requieren_sector(db_session):
-    """Sin sector, usuario_final y operador son rechazados."""
-    svc = _svc(db_session)
-
-    for rol in ("usuario_final", "operador"):
-        with pytest.raises(DirectorioValidationError):
-            await svc.crear_empleado(
-                legajo=f"E-{rol}", nombre="N", email=f"{rol}@example.test", rol=rol,
-            )
-
-
-@pytest.mark.asyncio
-async def test_administrador_con_sector_rechazado(db_session):
-    """El administrador no puede tener sector asignado."""
+async def test_sector_opcional_para_cualquier_rol(db_session):
+    """Ningun rol exige sector: cualquier rol con o sin sector se persiste (DIR-004)."""
     sector = await _seed_sector(db_session)
     svc = _svc(db_session)
 
-    with pytest.raises(DirectorioValidationError):
-        await svc.crear_empleado(
-            legajo="F-1", nombre="N", email="f1@example.test",
-            sector_id=sector.id, rol="administrador_directorio",
-        )
+    con_sector = await svc.crear_empleado(
+        legajo="E-1", nombre="N", email="e1@example.test",
+        sector_id=sector.id, rol="usuario_final",
+    )
+    sin_sector = await svc.crear_empleado(
+        legajo="E-2", nombre="N", email="e2@example.test",
+        rol="usuario_final",
+    )
+    assert con_sector.sector_id == sector.id
+    assert sin_sector.sector_id is None
+
+
+@pytest.mark.asyncio
+async def test_administrador_con_o_sin_sector(db_session):
+    """El administrador puede tener o no sector (dato organizacional opcional)."""
+    sector = await _seed_sector(db_session)
+    svc = _svc(db_session)
+
+    con_sector = await svc.crear_empleado(
+        legajo="F-1", nombre="N", email="f1@example.test",
+        sector_id=sector.id, rol="administrador_directorio",
+    )
+    sin_sector = await svc.crear_empleado(
+        legajo="F-2", nombre="N", email="f2@example.test",
+        rol="administrador_directorio",
+    )
+    assert con_sector.sector_id == sector.id
+    assert sin_sector.sector_id is None
 
 
 @pytest.mark.asyncio
@@ -171,12 +182,12 @@ async def test_sector_inexistente_rechazado(db_session):
         )
 
 
-# ── Rol mesa_de_ayuda: sin sector (c-60 D1/OQ1) ───────────────────────────────
+# ── Rol mesa_de_ayuda: sector opcional (c-82 D6) ──────────────────────────────
 
 
 @pytest.mark.asyncio
 async def test_mesa_de_ayuda_sin_sector_permitido(db_session):
-    """`mesa_de_ayuda` es sector-less como el admin: se persiste con sector nulo."""
+    """`mesa_de_ayuda` sin sector: se persiste con sector nulo."""
     svc = _svc(db_session)
 
     empleado = await svc.crear_empleado(
@@ -190,89 +201,62 @@ async def test_mesa_de_ayuda_sin_sector_permitido(db_session):
 
 
 @pytest.mark.asyncio
-async def test_mesa_de_ayuda_con_sector_rechazado(db_session):
-    """`mesa_de_ayuda` no debe tener sector asignado (es transversal)."""
+async def test_mesa_de_ayuda_con_sector_permitido(db_session):
+    """`mesa_de_ayuda` con sector: el sector es dato opcional sin coherencia."""
     sector = await _seed_sector(db_session)
     svc = _svc(db_session)
 
-    with pytest.raises(DirectorioValidationError):
-        await svc.crear_empleado(
-            legajo="MDA-2", nombre="N", email="mda2@example.test",
-            sector_id=sector.id, rol=RolEmpleado.mesa_de_ayuda,
-        )
+    empleado = await svc.crear_empleado(
+        legajo="MDA-2", nombre="N", email="mda2@example.test",
+        sector_id=sector.id, rol=RolEmpleado.mesa_de_ayuda,
+    )
+
+    assert empleado.sector_id == sector.id
 
 
 @pytest.mark.asyncio
-async def test_actualizar_a_mesa_de_ayuda_limpia_sector(db_session):
-    """Cambiar a `mesa_de_ayuda` exige dejar el sector en nulo (queda None)."""
+async def test_actualizar_rol_conserva_sector_sin_coherencia(db_session):
+    """Cambiar el rol no borra ni exige el sector (no hay coherencia rol/sector)."""
     sector = await _seed_sector(db_session)
     svc = _svc(db_session)
-    operador = await svc.crear_empleado(
+    empleado = await svc.crear_empleado(
         legajo="MDA-3", nombre="N", email="mda3@example.test",
-        sector_id=sector.id, rol=RolEmpleado.operador,
+        sector_id=sector.id, rol=RolEmpleado.usuario_final,
     )
 
     actualizado = await svc.actualizar_empleado(
-        operador.id, rol=RolEmpleado.mesa_de_ayuda, sector_id=None,
+        empleado.id, rol=RolEmpleado.mesa_de_ayuda,
     )
 
     assert actualizado.rol == RolEmpleado.mesa_de_ayuda
-    assert actualizado.sector_id is None
-
-
-@pytest.mark.asyncio
-async def test_actualizar_a_mesa_de_ayuda_con_sector_rechazado(db_session):
-    """No se puede pasar a `mesa_de_ayuda` conservando un sector no nulo."""
-    sector = await _seed_sector(db_session)
-    svc = _svc(db_session)
-    operador = await svc.crear_empleado(
-        legajo="MDA-4", nombre="N", email="mda4@example.test",
-        sector_id=sector.id, rol=RolEmpleado.operador,
-    )
-
-    with pytest.raises(DirectorioValidationError):
-        await svc.actualizar_empleado(operador.id, rol=RolEmpleado.mesa_de_ayuda)
+    assert actualizado.sector_id == sector.id
 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "rol, requiere_sector",
+    "rol",
     [
-        (RolEmpleado.usuario_final, True),
-        (RolEmpleado.operador, True),
-        (RolEmpleado.administrador_directorio, False),
-        (RolEmpleado.mesa_de_ayuda, False),
+        RolEmpleado.usuario_final,
+        RolEmpleado.mesa_de_ayuda,
+        RolEmpleado.administrador_directorio,
     ],
 )
-async def test_requerimiento_de_sector_por_rol(db_session, rol, requiere_sector):
-    """Triangula la coherencia rol/sector para los cuatro roles (DIR-004 + c-60)."""
+async def test_sector_opcional_para_los_tres_roles(db_session, rol):
+    """Triangula la opcionalidad del sector para los tres roles (DIR-004)."""
     sector = await _seed_sector(db_session)
     svc = _svc(db_session)
 
-    if requiere_sector:
-        # Sin sector falla; con sector (existente) se persiste.
-        with pytest.raises(DirectorioValidationError):
-            await svc.crear_empleado(
-                legajo=f"RS-{rol.value}-0", nombre="N",
-                email=f"rs0.{rol.value}@example.test", rol=rol,
-            )
-        con_sector = await svc.crear_empleado(
-            legajo=f"RS-{rol.value}-1", nombre="N",
-            email=f"rs1.{rol.value}@example.test", sector_id=sector.id, rol=rol,
-        )
-        assert con_sector.sector_id == sector.id
-    else:
-        # Sin sector se persiste con nulo; con sector se rechaza.
-        sin_sector = await svc.crear_empleado(
-            legajo=f"RS-{rol.value}-0", nombre="N",
-            email=f"rs0.{rol.value}@example.test", rol=rol,
-        )
-        assert sin_sector.sector_id is None
-        with pytest.raises(DirectorioValidationError):
-            await svc.crear_empleado(
-                legajo=f"RS-{rol.value}-1", nombre="N",
-                email=f"rs1.{rol.value}@example.test", sector_id=sector.id, rol=rol,
-            )
+    sin_sector = await svc.crear_empleado(
+        legajo=f"RS-{rol.value}-0", nombre="N",
+        email=f"rs0.{rol.value}@example.test", rol=rol,
+    )
+    assert sin_sector.sector_id is None
+
+    con_sector = await svc.crear_empleado(
+        legajo=f"RS-{rol.value}-1", nombre="N",
+        email=f"rs1.{rol.value}@example.test", sector_id=sector.id, rol=rol,
+    )
+    assert con_sector.sector_id == sector.id
 
 
 @pytest.mark.asyncio
