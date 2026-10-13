@@ -2,8 +2,11 @@
  * Diálogo de validación humana para clasificaciones de baja confianza.
  *
  * Responsabilidad:
- *   Permite al operador revisar la predicción del pipeline (sector y confianza) y
- *   seleccionar el sector correcto antes de confirmar. Invoca PATCH /api/v1/clasificaciones/{id}/validar
+ *   Permite al operador revisar TODA la información disponible del incidente y su
+ *   clasificación antes de decidir el sector correcto. Consulta el detalle del
+ *   incidente y su historial de clasificaciones (mismas query keys que
+ *   `TicketDetailDialog`) y los presenta con el componente compartido
+ *   `DetalleIncidente` (solo lectura). Invoca PATCH /api/v1/clasificaciones/{id}/validar
  *   y, ante éxito, invalida las cachés de `revision-pendiente` e `incidentes` para que
  *   ambas listas reflejen el cambio sin necesidad de recargar la página.
  *
@@ -15,8 +18,8 @@
  *   - `resetMutation()` al abrir asegura que errores de intentos previos no persistan.
  */
 import { useState, useEffect } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { CheckCheck, Loader2, AlertCircle, Brain, User } from 'lucide-react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { CheckCheck, Loader2, AlertCircle, User } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -35,9 +38,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { SectorBadge } from '@/components/shared/SectorBadge';
-import { ConfianzaIndicator } from '@/components/shared/ConfianzaIndicator';
-import { validarClasificacion } from '@/services/clasificacionesService';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { ErrorAlert } from '@/components/shared/ErrorAlert';
+import { DetalleIncidente } from './DetalleIncidente';
+import { validarClasificacion, listarClasificacionesPorIncidente } from '@/services/clasificacionesService';
+import { obtenerIncidente } from '@/services/incidentesService';
 import { extractApiErrorMessage } from '@/services/api';
 import { useSectores } from '@/hooks/useSectores';
 import { REVISION_PENDIENTE_QUERY_KEY } from '@/hooks/useRevisionPendiente';
@@ -56,13 +61,57 @@ export function ValidarClasificacionDialog({
   onClose,
 }: ValidarClasificacionDialogProps) {
   const queryClient = useQueryClient();
-  const [sectorIdSeleccionado, setSectorIdSeleccionado] = useState<string>('');
+  // c-83 (D5): el conjunto multi-etiqueta se edita por NOMBRES CANONICOS, un unico
+  // esquema de identificador para principal y adicionales.
+  const [sectorPrincipalNombre, setSectorPrincipalNombre] = useState<string>('');
+  const [sectoresAdicionales, setSectoresAdicionales] = useState<string[]>([]);
   // Opciones de sector obtenidas en runtime desde el catálogo (sin IDs numéricos fijos)
   const { data: sectores } = useSectores();
 
+  const incidenteId = clasificacion?.incidente_id ?? null;
+  const habilitado = open && incidenteId !== null;
+
+  // Detalle del incidente — misma query key que TicketDetailDialog (cache compartida)
+  const {
+    data: incidente,
+    isLoading: cargandoIncidente,
+    isError: errorIncidente,
+    error: errorIncidenteObj,
+    refetch: refetchIncidente,
+  } = useQuery({
+    queryKey: ['incidente-detalle', incidenteId],
+    queryFn: () => obtenerIncidente(incidenteId!),
+    enabled: habilitado,
+    staleTime: 30_000,
+  });
+
+  // Historial de clasificaciones del incidente — misma query key que TicketDetailDialog
+  const { data: clasificaciones, isLoading: cargandoClasif } = useQuery({
+    queryKey: ['clasificaciones-historial', incidenteId],
+    queryFn: () => listarClasificacionesPorIncidente(incidenteId!),
+    enabled: habilitado,
+    staleTime: 30_000,
+  });
+
+  const clasificacionMostrada = clasificaciones?.[0] ?? clasificacion;
+  // Estado de carga compuesto (FRH-005): la vista espera a que AMBAS consultas resuelvan
+  // para no mostrar datos parciales.
+  const cargando = cargandoIncidente || cargandoClasif;
+
   const { mutate, isPending, error, reset: resetMutation } = useMutation({
-    mutationFn: ({ logId, sectorId }: { logId: number; sectorId: number }) =>
-      validarClasificacion(logId, { sector_id_validado: sectorId }),
+    mutationFn: ({
+      logId,
+      sectorValidado,
+      sectoresAdicionales: adicionales,
+    }: {
+      logId: number;
+      sectorValidado: string;
+      sectoresAdicionales: string[];
+    }) =>
+      validarClasificacion(logId, {
+        sector_validado: sectorValidado,
+        sectores_adicionales: adicionales,
+      }),
     onSuccess: (clasificacionActualizada) => {
       // Invalida la cola de revisión y la lista de incidentes para reflejar el cambio
       void queryClient.invalidateQueries({ queryKey: [REVISION_PENDIENTE_QUERY_KEY] });
@@ -84,28 +133,50 @@ export function ValidarClasificacionDialog({
   useEffect(() => {
     if (open && clasificacion) {
       // Pre-seleccionar el sector predicho como valor por defecto
-      setSectorIdSeleccionado(
-        clasificacion.sector_predicho?.id.toString() ?? ''
+      const principal = clasificacion.sector_predicho?.nombre ?? '';
+      setSectorPrincipalNombre(principal);
+      // Pre-seleccionar los adicionales predichos, sin repetir el principal (FRH-006)
+      setSectoresAdicionales(
+        (clasificacion.sectores_predichos ?? [])
+          .map((sector) => sector.nombre)
+          .filter((nombre) => nombre !== principal)
       );
       resetMutation();
     }
   }, [open, clasificacion, resetMutation]);
 
+  /** Cambia el sector principal y elimina cualquier duplicado del conjunto adicional (FRH-006). */
+  const handlePrincipalChange = (nombre: string) => {
+    setSectorPrincipalNombre(nombre);
+    setSectoresAdicionales((prev) => prev.filter((n) => n !== nombre));
+  };
+
+  /** Agrega o quita un sector adicional del conjunto editable (FRH-006). */
+  const toggleAdicional = (nombre: string) => {
+    setSectoresAdicionales((prev) =>
+      prev.includes(nombre) ? prev.filter((n) => n !== nombre) : [...prev, nombre]
+    );
+  };
+
   const handleValidar = () => {
-    if (!clasificacion || !sectorIdSeleccionado) return;
-    mutate({ logId: clasificacion.id, sectorId: Number(sectorIdSeleccionado) });
+    if (!clasificacion || !sectorPrincipalNombre) return;
+    mutate({
+      logId: clasificacion.id,
+      sectorValidado: sectorPrincipalNombre,
+      sectoresAdicionales,
+    });
   };
 
   const sectorPredicho = clasificacion?.sector_predicho;
-  const sectorSeleccionadoNombre = sectores?.find(
-    (s) => s.id.toString() === sectorIdSeleccionado
-  )?.nombre;
-
-  const esConfirmacion = sectorSeleccionadoNombre === sectorPredicho?.nombre;
+  const esConfirmacion = sectorPrincipalNombre === sectorPredicho?.nombre;
+  // Las opciones adicionales EXCLUYEN el principal elegido (FRH-006).
+  const opcionesAdicionales = (sectores ?? []).filter(
+    (sector) => sector.nombre !== sectorPrincipalNombre
+  );
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <User className="h-5 w-5 text-primary" />
@@ -118,64 +189,89 @@ export function ValidarClasificacionDialog({
         </DialogHeader>
 
         <div className="space-y-4 py-1">
-          {/* Predicción del modelo */}
-          <div className="bg-muted/50 rounded-md p-3 space-y-2.5">
-            <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wide">
-              <Brain className="h-3.5 w-3.5" />
-              Predicción del clasificador
-            </div>
-            <div className="flex items-center gap-3 flex-wrap">
-              <SectorBadge nombre={sectorPredicho?.nombre} />
-              {clasificacion && (
-                <ConfianzaIndicator confianza={clasificacion.confianza} size="sm" />
+          {/* Estado de carga compuesto: no se muestran datos parciales (FRH-005) */}
+          {cargando && <LoadingSpinner texto="Cargando información del incidente…" />}
+
+          {/* Error de carga del recurso (403/404): no se renderiza el recurso (FRH-005) */}
+          {!cargando && errorIncidente && (
+            <ErrorAlert
+              mensaje={extractApiErrorMessage(errorIncidenteObj)}
+              onReintentar={() => void refetchIncidente()}
+            />
+          )}
+
+          {/* Información completa del incidente y su clasificación (solo lectura) */}
+          {!cargando && !errorIncidente && incidente && (
+            <DetalleIncidente incidente={incidente} clasificacion={clasificacionMostrada} />
+          )}
+
+          {/* Controles de validación — solo cuando el detalle está disponible */}
+          {!cargando && !errorIncidente && (
+            <>
+              <Separator />
+
+              {/* Selector de sector correcto */}
+              <div className="space-y-2">
+                <Label htmlFor="sector-validado">
+                  Sector correcto según tu criterio{' '}
+                  <span className="text-destructive">*</span>
+                </Label>
+                <Select value={sectorPrincipalNombre} onValueChange={handlePrincipalChange}>
+                  <SelectTrigger id="sector-validado">
+                    <SelectValue placeholder="Seleccioná el sector correcto" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sectores?.map((sector) => (
+                      <SelectItem key={sector.id} value={sector.nombre}>
+                        {sector.nombre}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {sectorPrincipalNombre && (
+                  <p
+                    className={`text-xs ${esConfirmacion ? 'text-green-600' : 'text-amber-600'}`}
+                  >
+                    {esConfirmacion
+                      ? '✓ Confirmás la predicción del clasificador.'
+                      : `✎ Estás corrigiendo: "${sectorPredicho?.nombre ?? 'Sin clasificar'}" → "${sectorPrincipalNombre}". Este dato alimentará el corpus de evaluación.`}
+                  </p>
+                )}
+              </div>
+
+              {/* Multi-select de sectores adicionales (FRH-006): el conjunto completo es editable */}
+              <div className="space-y-2" role="group" aria-label="Sectores adicionales">
+                <span className="text-sm font-medium leading-none">
+                  Sectores adicionales (opcional)
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {opcionesAdicionales.map((sector) => {
+                    const seleccionado = sectoresAdicionales.includes(sector.nombre);
+                    return (
+                      <Button
+                        key={sector.id}
+                        type="button"
+                        variant={seleccionado ? 'default' : 'outline'}
+                        size="sm"
+                        aria-pressed={seleccionado}
+                        onClick={() => toggleAdicional(sector.nombre)}
+                      >
+                        {sector.nombre}
+                      </Button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Error de API */}
+              {error && (
+                <div className="flex items-start gap-2 p-3 bg-destructive/10 border border-destructive/30 rounded-md text-destructive text-sm">
+                  <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                  <span>{extractApiErrorMessage(error)}</span>
+                </div>
               )}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Etapa:{' '}
-              {clasificacion?.etapa === 'deterministic'
-                ? 'Determinístico'
-                : clasificacion?.etapa === 'gemini'
-                ? 'Gemini 2.5 Flash'
-                : 'Sin clasificar'}
-            </p>
-          </div>
-
-          <Separator />
-
-          {/* Selector de sector correcto */}
-          <div className="space-y-2">
-            <Label htmlFor="sector-validado">
-              Sector correcto según tu criterio{' '}
-              <span className="text-destructive">*</span>
-            </Label>
-            <Select value={sectorIdSeleccionado} onValueChange={setSectorIdSeleccionado}>
-              <SelectTrigger id="sector-validado">
-                <SelectValue placeholder="Seleccioná el sector correcto" />
-              </SelectTrigger>
-              <SelectContent>
-                {sectores?.map((sector) => (
-                  <SelectItem key={sector.id} value={sector.id.toString()}>
-                    {sector.nombre}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {sectorIdSeleccionado && (
-              <p className={`text-xs ${esConfirmacion ? 'text-green-600' : 'text-amber-600'}`}>
-                {esConfirmacion
-                  ? '✓ Confirmás la predicción del clasificador.'
-                  : `✎ Estás corrigiendo: "${sectorPredicho?.nombre ?? 'Sin clasificar'}" → "${sectorSeleccionadoNombre}". Este dato alimentará el corpus de evaluación.`}
-              </p>
-            )}
-          </div>
-
-          {/* Error de API */}
-          {error && (
-            <div className="flex items-start gap-2 p-3 bg-destructive/10 border border-destructive/30 rounded-md text-destructive text-sm">
-              <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-              <span>{extractApiErrorMessage(error)}</span>
-            </div>
+            </>
           )}
         </div>
 
@@ -183,22 +279,21 @@ export function ValidarClasificacionDialog({
           <Button variant="outline" onClick={onClose} disabled={isPending}>
             Cancelar
           </Button>
-          <Button
-            onClick={handleValidar}
-            disabled={isPending || !sectorIdSeleccionado}
-          >
-            {isPending ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Guardando…
-              </>
-            ) : (
-              <>
-                <CheckCheck className="h-4 w-4" />
-                {esConfirmacion ? 'Confirmar predicción' : 'Guardar corrección'}
-              </>
-            )}
-          </Button>
+          {!errorIncidente && (
+            <Button onClick={handleValidar} disabled={isPending || !sectorPrincipalNombre}>
+              {isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Guardando…
+                </>
+              ) : (
+                <>
+                  <CheckCheck className="h-4 w-4" />
+                  {esConfirmacion ? 'Confirmar predicción' : 'Guardar corrección'}
+                </>
+              )}
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
