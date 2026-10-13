@@ -26,7 +26,8 @@ Cada regla tiene código único `RN-{DOMINIO}-{NN}`. Fuente: tesis §5.5, §11, 
 - **RN-RH-02**: Orden FIFO estricto (created_at ascendente) — ningún incidente espera indefinidamente.
 - **RN-RH-03**: La validación humana asigna `sector_id_validado`; el sector debe existir (verificación previa contra catálogo).
 - **RN-RH-04**: La validación es el cierre del ciclo: el registro sale de la cola y se convierte en etiqueta de verdad del corpus de evaluación.
-- **RN-RH-05**: El sector receptor puede corregir cualquier derivación, no solo las de baja confianza (supervisión humana significativa, §11.5).
+- **RN-RH-05**: La mesa de ayuda (rol `mesa_de_ayuda`, alcance GLOBAL) puede corregir cualquier derivación, no solo las de baja confianza (supervisión humana significativa, §11.5). El `usuario_final` solo puede validar las clasificaciones de sus propios incidentes.
+- **RN-RH-06**: Un incidente cuyo reportante no se pudo identificar (sin contacto de canal, contacto no resoluble a un empleado activo, o cuenta web sin empleado) se deriva a revisión humana (`requiere_revision_humana = true`) y persiste el vínculo de reportante nulo, sin bloquear el alta (VIS-005). La condición se combina por OR con la de baja confianza: un caso ya marcado por el clasificador nunca deja de requerir revisión.
 
 ## Dominio: Privacidad y datos personales (RN-PR) — Ley 25.326
 

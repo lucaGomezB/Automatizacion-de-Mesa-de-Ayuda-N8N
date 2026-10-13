@@ -68,6 +68,6 @@ Principios: cohesión alta / acoplamiento bajo; cada capa reemplazable de forma 
 | PATCH | `/api/v1/clasificaciones/{log_id}/validar` | 200 | Registrar validación humana |
 | GET | `/health` · `/health/db` (también bajo `/api/v1`) | 200 | Liveness / readiness |
 
-> ⚠️ La tesis (§5.7, Tabla 5) define `POST /api/v1/clasificar` como endpoint separado que N8N invoca antes de persistir. El código actual clasifica dentro de `POST /incidentes`. Ver [10_preguntas_abiertas.md](10_preguntas_abiertas.md) IN-01.
+> Nota: la tesis (§5.7, Tabla 5) define `POST /api/v1/clasificar` como endpoint separado que N8N invoca antes de persistir. El código actual clasifica dentro de `POST /incidentes`. Ver [10_preguntas_abiertas.md](10_preguntas_abiertas.md) IN-01.
 
 Documentación interactiva: `/docs` (Swagger UI) solo con `DEBUG=true`.

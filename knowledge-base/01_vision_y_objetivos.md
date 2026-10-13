@@ -11,7 +11,7 @@ Contexto: organización mediana del sector servicios (Mendoza, Argentina), ~120 
 | Actor | Objetivo principal | Objetivos secundarios |
 |---|---|---|
 | Usuario interno | Reportar un incidente en segundos por el canal que prefiera | Recibir confirmación con número de ticket; corregir datos antes de persistir |
-| Operador de mesa de ayuda | Dejar de cargar tickets manualmente | Revisar solo la cola de baja confianza (< 0,70) |
+| Mesa de ayuda (función organizacional) | Dejar de cargar tickets manualmente | Revisar solo la cola de baja confianza (< 0,70) |
 | Sector responsable (Seguridad Informatica / Soporte Tecnico Hardware / Soporte Tecnico Software / Bases de Datos / Sistemas) | Recibir tickets bien derivados | Corregir clasificaciones erróneas (validación → corpus) |
 | Organización | Liberar ~200 horas-persona/trimestre | Trazabilidad completa; cumplimiento Ley 25.326 |
 | Equipo de investigación | Validar empíricamente la hipótesis | Corpus etiquetado multietiqueta (JSON); métricas reproducibles |

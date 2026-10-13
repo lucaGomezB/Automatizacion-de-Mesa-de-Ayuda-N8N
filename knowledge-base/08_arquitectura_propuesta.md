@@ -46,12 +46,12 @@ Automatizacion-de-Mesa-de-Ayuda-N8N/
 | Aspecto | Tesis (objetivo) | Estado actual |
 |---|---|---|---|
 | Cifrado en transito | TLS 1.3 entre todos los componentes | HTTP local en dev; TLS pendiente para despliegue |
-| Autenticacion API | Tokens portadores firmados, clave compartida con N8N | ✅ JWT Bearer token (C-15) |
-| Integridad | HMAC-SHA-256 en identificadores; validacion Pydantic | Pydantic ✅; HMAC integrado en Fernet ✅ |
-| Cifrado en reposo | pgcrypto para campos sensibles | ✅ Fernet a nivel aplicación (EncryptedText) |
-| Secrets | Solo variables de entorno (12-Factor) | ✅ `.env` + pydantic-settings (.env fuera de git) |
-| Auditoria | Registro de actor + timestamp + delta por modificacion | Parcial: `clasificacion_log` ✅; audit general ❌ |
-| Pseudonimizacion pre-LLM | Regex PERSONA/EMAIL/TELEFONO/HOST + tests | ✅ implementado (C-03). 4 categorias PII. Double representation. |
+| Autenticacion API | Tokens portadores firmados, clave compartida con N8N | JWT Bearer token (C-15) |
+| Integridad | HMAC-SHA-256 en identificadores; validacion Pydantic | Pydantic si; HMAC integrado en Fernet si |
+| Cifrado en reposo | pgcrypto para campos sensibles | Fernet a nivel aplicación (EncryptedText) |
+| Secrets | Solo variables de entorno (12-Factor) | `.env` + pydantic-settings (.env fuera de git) |
+| Auditoria | Registro de actor + timestamp + delta por modificacion | Parcial: `clasificacion_log` si; audit general no |
+| Pseudonimizacion pre-LLM | Regex PERSONA/EMAIL/TELEFONO/HOST + tests | implementado (C-03). 4 categorias PII. Double representation. |
 | CORS | Restringir origenes en produccion | Permisivo (`*`) en dev; configurable via `CORS_ALLOW_ORIGINS` |
 
 ## Variables de entorno (settings.py)

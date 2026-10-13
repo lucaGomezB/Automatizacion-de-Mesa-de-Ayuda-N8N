@@ -8,7 +8,7 @@ KB generada por ingesta desde `docs/Tesis/tesis_para_agente.md` (tesis completa 
 |---|---|
 | [01_vision_y_objetivos.md](01_vision_y_objetivos.md) | Propósito, objetivos por actor, alcance v1.0, métricas de éxito |
 | [02_descripcion_general.md](02_descripcion_general.md) | Stack, arquitectura de 5 capas, integraciones, API REST |
-| [03_actores_y_roles.md](03_actores_y_roles.md) | Actores, RBAC objetivo, human in the loop |
+| [03_actores_y_roles.md](03_actores_y_roles.md) | Actores, roles del sistema (RBAC implementado), human in the loop |
 | [04_modelo_de_datos.md](04_modelo_de_datos.md) | 5 entidades, ERD, seed data, retención |
 | [05_reglas_de_negocio.md](05_reglas_de_negocio.md) | RN-CL, RN-VA, RN-RH, RN-PR (Ley 25.326), RN-RE, RN-EX |
 | [06_funcionalidades.md](06_funcionalidades.md) | 15 US por épica con estado y referencia a changes |
