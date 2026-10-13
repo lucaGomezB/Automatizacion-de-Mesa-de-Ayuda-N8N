@@ -45,11 +45,11 @@ Usuario → React → POST /incidentes → Service → Classifier ─┬─ dete
 
 ## Flujo 4: Revisión y validación humana (implementado)
 
-**Disparador**: clasificación con confianza < 0,70. **Actor**: operador / sector.
+**Disparador**: clasificación con confianza < 0,70 o reportante no identificado (VIS-005). **Actor**: mesa de ayuda (revisor); usuario_final (reportante).
 
 1. El registro entra a la cola (`requiere_revision_humana=true`, `sector_id_validado IS NULL`).
-2. Operador abre Administración → cola FIFO (`GET /clasificaciones/revision-pendiente`).
-3. Modal "Validación Humana": muestra predicción + confianza + etapa; operador elige sector correcto.
+2. La mesa de ayuda abre Administración → cola FIFO (`GET /clasificaciones/revision-pendiente`); el `usuario_final` ve solo los pendientes de sus propios incidentes.
+3. Modal "Validación Humana": muestra predicción + confianza + etapa; mesa de ayuda elige el sector correcto.
 4. `PATCH /clasificaciones/{log_id}/validar` → verifica que el sector exista → asigna `sector_id_validado`.
 5. El registro sale de la cola y se vuelve etiqueta de verdad del corpus (RN-RH-04).
 

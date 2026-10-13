@@ -24,7 +24,7 @@
  clasificacion_log N───N sector  (clasificacion_sector_validado: adicionales validados)
 ```
 
-> ⚠️ `clasificacion_log` tiene **dos FK** hacia `sector.id`. Ambos lados de cada relationship llevan `foreign_keys` explícito — sin él, SQLAlchemy lanza `AmbiguousForeignKeysError` (bug ya corregido; ver [09](09_decisiones_y_supuestos.md) DD-09).
+> Nota: `clasificacion_log` tiene **dos FK** hacia `sector.id`. Ambos lados de cada relationship llevan `foreign_keys` explícito — sin él, SQLAlchemy lanza `AmbiguousForeignKeysError` (bug ya corregido; ver [09](09_decisiones_y_supuestos.md) DD-09).
 
 ## Entidades (implementación real en `App/Backend/app/models/`)
 
@@ -65,7 +65,7 @@
 |---|---|---|---|---|
 | `incidente_sector_adicional` | `(incidente_id, sector_id)` | `incidente_id` → `incidente(id)` CASCADE | `sector_id` → `sector(id)` RESTRICT | Sectores adicionales del incidente |
 | `clasificacion_sector_predicho` | `(clasificacion_log_id, sector_id)` | `clasificacion_log_id` → `clasificacion_log(id)` CASCADE | `sector_id` → `sector(id)` RESTRICT | Adicionales predichos por el clasificador |
-| `clasificacion_sector_validado` | `(clasificacion_log_id, sector_id)` | `clasificacion_log_id` → `clasificacion_log(id)` CASCADE | `sector_id` → `sector(id)` RESTRICT | Adicionales validados por el operador |
+| `clasificacion_sector_validado` | `(clasificacion_log_id, sector_id)` | `clasificacion_log_id` → `clasificacion_log(id)` CASCADE | `sector_id` → `sector(id)` RESTRICT | Adicionales validados por la mesa de ayuda |
 
 La PK compuesta impide duplicar el mismo sector adicional dentro de una entidad. El sector principal nunca se repite en estas tablas. Creadas por la migración `004_sectores_multietiqueta.py` con `downgrade` funcional.
 
