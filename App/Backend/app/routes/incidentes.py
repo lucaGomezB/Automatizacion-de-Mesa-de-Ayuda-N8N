@@ -25,12 +25,14 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.constants import es_canal_correo, es_canal_telefonia
 from app.core.database import get_db_session
 from app.core.security import get_current_user
 from app.cost_guard.dependencies import get_cost_guard
 from app.cost_guard.guard import CostGuard
 from app.models.incidente import PrioridadEnum
 from app.models.user import User
+from app.repositories.canal_origen_repository import CanalOrigenRepository
 from app.repositories.empleado_repository import EmpleadoRepository
 from app.schemas.incidente import (
     IncidenteCreate,
@@ -39,6 +41,7 @@ from app.schemas.incidente import (
     IncidenteRead,
     IncidenteUpdate,
 )
+from app.services.contact_resolution_service import ContactResolutionService
 from app.services.incident_visibility import (
     AlcanceIncidentes,
     alcance_desde_empleado,
@@ -89,6 +92,44 @@ async def get_alcance_incidentes(
 AlcanceDep = Annotated[AlcanceIncidentes, Depends(get_alcance_incidentes)]
 
 
+async def resolver_reportante(
+    payload: IncidenteCreate, current_user: User, session: AsyncSession
+) -> int | None:
+    """
+    Resuelve el `reportante_empleado_id` segun el canal de ingreso (c-82, VIS-004).
+
+    La ruta solo orquesta la dependencia (no ejecuta reglas de negocio): resuelve
+    el contacto IMPLICITO del canal y delega en `ContactResolutionService`,
+    reutilizando el servicio de resolucion existente. El contacto nunca lo tipea
+    el usuario final.
+
+    - Formulario web (o canal ausente/desconocido): la cuenta autenticada
+      (`resolver_por_usuario`); si no tiene empleado vinculado, no se identifica.
+    - Correo: el email del remitente (`reportante_email`).
+    - Telefonia: el telefono del llamante (`reportante_telefono`).
+
+    Devuelve el id del empleado cuando la resolucion es ENCONTRADO; NULL ante
+    NO ENCONTRADO, AMBIGUO o contacto de canal ausente. Nunca lanza ni bloquea el
+    alta (VIS-005).
+    """
+    canal = None
+    if payload.canal_origen_id is not None:
+        canal = await CanalOrigenRepository(session).get_or_none(
+            payload.canal_origen_id
+        )
+    canal_nombre = canal.nombre if canal is not None else None
+
+    resolucion = ContactResolutionService(session)
+    if es_canal_telefonia(canal_nombre):
+        resultado = await resolucion.resolver_por_telefono(payload.reportante_telefono)
+    elif es_canal_correo(canal_nombre):
+        resultado = await resolucion.resolver_por_email(payload.reportante_email)
+    else:
+        resultado = await resolucion.resolver_por_usuario(current_user.id)
+
+    return resultado.empleado.id if resultado.encontrado else None
+
+
 @router.post(
     "/",
     response_model=IncidenteCreateResponse,
@@ -98,6 +139,7 @@ AlcanceDep = Annotated[AlcanceIncidentes, Depends(get_alcance_incidentes)]
 async def create_incidente(
     payload: IncidenteCreate,
     service: ServiceDep,
+    session: SessionDep,
     current_user: User = Depends(get_current_user),
 ) -> IncidenteCreateResponse:
     """
@@ -111,13 +153,20 @@ async def create_incidente(
     el sector asignado, la confianza de la clasificación y el indicador
     de revisión humana si la confianza fue insuficiente.
 
+    El VINCULO DE REPORTANTE (VIS-003/VIS-004) se resuelve por canal antes de
+    crear: la ruta orquesta la resolucion y le pasa el id al servicio. Un
+    reportante no identificado persiste NULL y deriva a revision humana (VIS-005).
+
     Args:
         payload: Descripción pseudonimizada del incidente, prioridad y canal.
 
     Returns:
         Representación completa del incidente creado y clasificado (HTTP 201).
     """
-    incidente = await service.create_and_classify(payload)
+    reportante_empleado_id = await resolver_reportante(payload, current_user, session)
+    incidente = await service.create_and_classify(
+        payload, reportante_empleado_id=reportante_empleado_id
+    )
     return IncidenteCreateResponse.model_validate(incidente)
 
 

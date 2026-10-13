@@ -98,9 +98,9 @@ class ClasificacionService:
         El orden FIFO garantiza que los incidentes más antiguos reciban
         atención prioritaria, evitando inanición en la cola de revisión.
 
-        Si se provee `alcance` (VIS-002), la cola se acota por rol:
-            - GLOBAL / REVISION: cola completa (administrador / mesa_de_ayuda).
-            - SECTOR: solo los pendientes cuyo incidente pertenece al sector.
+        Si se provee `alcance` (VIS-002), la cola se acota por alcance:
+            - GLOBAL: cola completa (administrador / mesa_de_ayuda).
+            - PROPIO: solo los pendientes cuyo incidente reportó el empleado.
             - VACIO: lista vacía.
 
         Args:
@@ -111,14 +111,17 @@ class ClasificacionService:
         Returns:
             Lista de registros pendientes ordenados por antigüedad (FIFO).
         """
+        reportante_filtro: int | None = None
         if alcance is not None:
             if alcance.modo is ModoAlcance.VACIO:
                 return []
-            if alcance.modo is ModoAlcance.SECTOR:
-                return await self._repo.list_pending_review(
-                    limit=limit, offset=offset, sector_id=alcance.sector_id
-                )
-        return await self._repo.list_pending_review(limit=limit, offset=offset)
+            if alcance.modo is ModoAlcance.PROPIO:
+                if alcance.reportante_empleado_id is None:
+                    return []
+                reportante_filtro = alcance.reportante_empleado_id
+        return await self._repo.list_pending_review(
+            limit=limit, offset=offset, reportante_empleado_id=reportante_filtro
+        )
 
     async def validate(
         self,

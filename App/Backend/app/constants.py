@@ -31,6 +31,11 @@ _SECTORES_CANONICOS_SET: Final[frozenset[str]] = frozenset(SECTORES_CANONICOS)
 #: pseudonimizada; el nombre acentuado debe coincidir EXACTO con el seed.
 CANAL_TELEFONIA: Final[str] = "llamada telefónica"
 
+#: Nombre canonico del canal de correo en el catalogo `canal_origen` (migracion
+#: 001). c-82: reconocer el canal de correo por nombre evita acoplarse a su ID
+#: numerico al resolver el reportante por el email del remitente (VIS-004).
+CANAL_CORREO: Final[str] = "correo electrónico"
+
 #: Clave de version del clasificador hibrido para el cache de evaluacion (C-34).
 #: Vive en este modulo liviano para que el runner de evaluacion la lea sin
 #: importar app.classifiers (que arrastra app.core.database -> get_settings) y
@@ -63,10 +68,17 @@ def es_canal_telefonia(nombre: object) -> bool:
     return nombre == CANAL_TELEFONIA
 
 
+def es_canal_correo(nombre: object) -> bool:
+    """Indica si el nombre del canal de origen corresponde a correo (c-82)."""
+    return nombre == CANAL_CORREO
+
+
 __all__ = [
     "SECTORES_CANONICOS",
     "HYBRID_CACHE_VERSION",
     "CANAL_TELEFONIA",
+    "CANAL_CORREO",
     "es_sector_canonico",
     "es_canal_telefonia",
+    "es_canal_correo",
 ]

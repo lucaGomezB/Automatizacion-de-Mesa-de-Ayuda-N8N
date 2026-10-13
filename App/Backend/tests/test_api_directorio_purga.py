@@ -46,8 +46,8 @@ async def purga_env(engine):
             rol=RolEmpleado.administrador_directorio, user_id=admin_user.id,
         )
         oper = Empleado(
-            legajo="PUR-OPE", nombre="Oper Sintetico", email="pur.oper@example.test",
-            sector_id=sector.id, rol=RolEmpleado.operador, user_id=oper_user.id,
+            legajo="PUR-OPE", nombre="Mesa Sintetica", email="pur.oper@example.test",
+            sector_id=sector.id, rol=RolEmpleado.mesa_de_ayuda, user_id=oper_user.id,
         )
         viejo = Empleado(
             legajo="PUR-VIE", nombre="Viejo Sintetico", email="pur.viejo@example.test",

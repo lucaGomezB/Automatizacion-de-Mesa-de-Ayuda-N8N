@@ -84,7 +84,10 @@ class ClasificacionRepository(BaseRepository[ClasificacionLog]):
         return list(result.scalars().all())
 
     async def list_pending_review(
-        self, limit: int = 50, offset: int = 0, sector_id: int | None = None
+        self,
+        limit: int = 50,
+        offset: int = 0,
+        reportante_empleado_id: int | None = None,
     ) -> list[ClasificacionLog]:
         """
         Lista las clasificaciones que requieren revisión humana y aún no fueron validadas.
@@ -97,11 +100,12 @@ class ClasificacionRepository(BaseRepository[ClasificacionLog]):
         los incidentes más antiguos tienen mayor prioridad de atención.
 
         Args:
-            limit:     Cantidad máxima de registros a retornar.
-            offset:    Desplazamiento para paginación.
-            sector_id: Filtro opcional por el sector del INCIDENTE del log (c-60
-                       D4): un usuario sector-bound solo ve la cola de su sector.
-                       None = cola completa (administrador / mesa_de_ayuda).
+            limit:                  Cantidad máxima de registros a retornar.
+            offset:                 Desplazamiento para paginación.
+            reportante_empleado_id: Filtro opcional por el reportante del INCIDENTE
+                                    del log (c-82, VIS-002): un `usuario_final`
+                                    (alcance PROPIO) solo ve la cola de lo que
+                                    reportó. None = cola completa (GLOBAL).
 
         Returns:
             Lista de registros pendientes de revisión ordenados por antigüedad.
@@ -120,10 +124,12 @@ class ClasificacionRepository(BaseRepository[ClasificacionLog]):
             .limit(limit)
             .offset(offset)
         )
-        if sector_id is not None:
-            # Acota por el sector del incidente asociado, sin alterar FIFO.
+        if reportante_empleado_id is not None:
+            # Acota por el reportante del incidente asociado, sin alterar FIFO.
             stmt = stmt.where(
-                ClasificacionLog.incidente.has(Incidente.sector_id == sector_id)
+                ClasificacionLog.incidente.has(
+                    Incidente.reportante_empleado_id == reportante_empleado_id
+                )
             )
         result = await self._session.execute(stmt)
         return list(result.scalars().all())

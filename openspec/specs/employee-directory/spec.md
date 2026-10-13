@@ -58,13 +58,19 @@ El directorio SHALL almacenar EXACTAMENTE los siguientes campos y NINGUNO mas: `
 - **WHEN** se inspecciona el esquema de `directorio_empleado`
 - **THEN** sus columnas son exactamente las de este requisito (incluida `fecha_baja`), sin datos personales extra
 
-### Requirement: DIR-003 — Modelo de roles minimo
+### Requirement: DIR-003 — Modelo de roles canonico de tres valores
 
-El sistema SHALL modelar el rol del empleado con un vocabulario minimo de exactamente tres valores: `usuario_final`, `operador` y `administrador_directorio`. El rol SHALL gobernar la autorizacion sobre el directorio y la elegibilidad como destino de enrutamiento, y MUST NOT alterar el resultado de clasificacion del incidente. Un `usuario_final` MUST NOT poder administrar el directorio; un `operador` MAY ser destino de enrutamiento de su sector; un `administrador_directorio` MAY gestionar el directorio.
+El sistema SHALL modelar el rol del empleado con un vocabulario minimo de EXACTAMENTE TRES valores: `usuario_final`, `mesa_de_ayuda` y `administrador_directorio`. El rol `operador` NO SHALL existir. El rol SHALL gobernar la autorizacion sobre el directorio, el alcance de visibilidad de incidentes y la elegibilidad como destino de enrutamiento de notificaciones, y MUST NOT alterar el resultado de clasificacion del incidente.
+
+- `usuario_final` es el reportante: alcance PROPIO (solo los incidentes que reporto), NO privilegiado y MUST NOT gestionar el directorio.
+- `mesa_de_ayuda` es el rol transversal de mesa de ayuda: alcance GLOBAL (ve todos los incidentes), privilegiado, elegible como destinatario de la notificacion de revision y MUST NOT gestionar el directorio. Absorbe al antiguo `operador`.
+- `administrador_directorio` tiene alcance GLOBAL, es privilegiado y MAY gestionar el directorio.
+
+El conocimiento de rol SHALL provenir de un unico registro de politica de rol, sin duplicarse entre el enum, el CHECK de la base y los servicios.
 
 #### Scenario: Rol valido aceptado
 
-- **WHEN** se registra un empleado con rol `usuario_final`, `operador` o `administrador_directorio`
+- **WHEN** se registra un empleado con rol `usuario_final`, `mesa_de_ayuda` o `administrador_directorio`
 - **THEN** el sistema acepta el rol
 
 #### Scenario: Rol invalido rechazado
@@ -72,29 +78,46 @@ El sistema SHALL modelar el rol del empleado con un vocabulario minimo de exacta
 - **WHEN** se intenta registrar un empleado con un rol fuera del vocabulario de tres valores
 - **THEN** el sistema rechaza el registro con un error de validacion
 
+#### Scenario: Rol operador ya no existe
+
+- **WHEN** se intenta registrar un empleado con rol `operador`
+- **THEN** el sistema rechaza el registro con un error de validacion
+
+#### Scenario: Filas legacy con rol operador migradas
+
+- **WHEN** se aplica la migracion sobre datos existentes con filas de rol `operador`
+- **THEN** esas filas quedan con rol `mesa_de_ayuda` (backfill ANTES de crearse el CHECK de tres valores), de forma append-only
+
+#### Scenario: El downgrade no re-marca filas
+
+- **WHEN** se revierte la migracion
+- **THEN** el vocabulario restaura los cuatro valores, pero las filas migradas NO se re-marcan como `operador`
+
 #### Scenario: El rol no afecta la clasificacion
 
 - **WHEN** se clasifica un incidente
-- **THEN** el sector y la confianza resultantes son independientes del rol del empleado reportante o asignado
+- **THEN** el sector y la confianza resultantes son independientes del rol del empleado reportante o vinculado
 
-### Requirement: DIR-004 — Vinculo al catalogo canonico de sectores y sector por rol
+### Requirement: DIR-004 — Vinculo al catalogo canonico de sectores y sector opcional
 
-El directorio SHALL referenciar el sector del empleado mediante una clave foranea al catalogo `sector` existente, cuyo vocabulario canonico es exactamente los cinco strings vigentes. El directorio MUST NOT introducir un vocabulario paralelo de sectores ni reutilizar un conjunto reducido de tres sectores. El `sector_id` SHALL ser obligatorio cuando el rol sea `usuario_final` o `operador` (cada usuario pertenece a su sector) y SHALL ser nulo cuando el rol sea `administrador_directorio`.
+El directorio SHALL referenciar el sector del empleado mediante una clave foranea nullable al catalogo `sector` existente, cuyo vocabulario canonico es exactamente los cinco strings vigentes. El directorio MUST NOT introducir un vocabulario paralelo de sectores ni reutilizar un conjunto reducido de tres sectores.
+
+El `sector_id` SHALL ser OPCIONAL para TODOS los roles y MUST NOT condicionar la autorizacion, la visibilidad ni la elegibilidad como destinatario de notificacion. Ningun rol SHALL requerir sector. El sistema MUST NOT aplicar una regla de coherencia entre rol y sector (por ejemplo, exigir sector a un rol o prohibirlo a otro). El sector queda como dato organizacional de RR.HH., sin efecto en el control de acceso.
 
 #### Scenario: Sector tomado del catalogo existente
 
 - **WHEN** se asigna sector a un empleado
 - **THEN** el valor referenciado pertenece al catalogo `sector` canonico y no a una lista propia del directorio
 
-#### Scenario: Usuario final y operador requieren sector
+#### Scenario: Sector opcional para cualquier rol
 
-- **WHEN** se registra un empleado con rol `usuario_final` o `operador` sin sector
-- **THEN** el sistema rechaza el registro con un error de validacion
+- **WHEN** se registra un empleado de cualquier rol, con o sin sector
+- **THEN** el sistema lo persiste; ningun rol exige un sector
 
-#### Scenario: Administrador sin sector
+#### Scenario: El sector no cambia la autorizacion
 
-- **WHEN** se registra un empleado con rol `administrador_directorio` sin sector
-- **THEN** el empleado se persiste con `sector` nulo y su visibilidad alcanza a todos los sectores
+- **WHEN** dos empleados con el mismo rol y distinto sector (o sin sector) operan el sistema
+- **THEN** su alcance de incidentes y su autorizacion sobre el directorio son identicos
 
 #### Scenario: Sector inexistente rechazado
 

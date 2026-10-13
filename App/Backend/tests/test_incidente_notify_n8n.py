@@ -278,9 +278,11 @@ async def test_incidente_persists_in_db_when_notify_n8n_raises(db_session):
         incidente = await service.create_and_classify(payload)
         await asyncio.sleep(0)
 
-    # Assert (b) — el incidente existe y fue clasificado correctamente
+    # Assert (b) — el incidente existe y fue clasificado correctamente.
+    # c-82 (VIS-005): sin reportante resuelto, el incidente deriva a revision
+    # humana por OR con el clasificador.
     assert incidente.id is not None
-    assert incidente.requiere_revision_humana is False
+    assert incidente.requiere_revision_humana is True
     # Verificar que el incidente persiste en la sesión
     from sqlalchemy import select
     from app.models.incidente import Incidente

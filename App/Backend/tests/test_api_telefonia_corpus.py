@@ -585,7 +585,7 @@ async def test_get_ingresos_404_sin_resultados(engine):
 
 
 async def test_get_ingresos_requiere_rol_administrador(engine):
-    async with _api_client(engine, seed_empleado_rol="operador") as client:
+    async with _api_client(engine, seed_empleado_rol="mesa_de_ayuda") as client:
         resp = await client.get(
             _INGRESOS_PATH, params={"corpus_case_id": "CASO-X"}
         )

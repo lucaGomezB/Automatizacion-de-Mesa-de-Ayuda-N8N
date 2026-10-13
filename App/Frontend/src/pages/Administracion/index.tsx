@@ -14,6 +14,13 @@
  *   useRevisionPendiente  → GET /api/v1/clasificaciones/revision-pendiente
  *   TicketDetailDialog    → GET /api/v1/incidentes/{id}  (lazy, al abrir el diálogo)
  *   ValidarClasificacionDialog → PATCH /api/v1/clasificaciones/{id}/validar
+ *
+ * Frontera de seguridad (c-81, FR-RBAC-004/005):
+ *   El filtro de sector de esta pantalla es una CONVENIENCIA de la interfaz, NO
+ *   un control de acceso. El sector dejo de ser limite de alcance en el modelo
+ *   c-82. La visibilidad de los incidentes la determina EXCLUSIVAMENTE el
+ *   backend; el cliente nunca acota datos por su cuenta. Ante una denegacion del
+ *   backend (403/404), la UI muestra un estado de error sin exponer el recurso.
  */
 import type { ReactNode } from 'react';
 import { useState, useCallback } from 'react';
@@ -125,6 +132,10 @@ export default function AdministracionPage() {
    * La aserción `as IncidenteListParams` es necesaria porque TypeScript no puede
    * verificar estáticamente que el valor dinámico `[campo]` sea compatible con
    * el tipo exacto del campo correspondiente en la interfaz.
+   *
+   * NOTA (FR-RBAC-004): el filtro de sector es solo conveniencia de UX. Se
+   * delega al backend (params de la consulta); el cliente NO acota el conjunto
+   * autorizado por su cuenta.
    */
   const handleFiltroChange = useCallback(
     (campo: keyof IncidenteListParams, valor: string | undefined) => {

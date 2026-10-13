@@ -40,6 +40,8 @@ describe('MfaEnrollmentPage', () => {
       username: 'admin',
       isAuthenticated: true,
       mfaRequired: false,
+      rol: 'administrador_directorio',
+      alcance: { modo: 'GLOBAL' as const },
       login: vi.fn(),
       verifyMfa: vi.fn(),
       enrollMfa: vi.fn().mockResolvedValue({
@@ -47,6 +49,7 @@ describe('MfaEnrollmentPage', () => {
         secret: 'SECRET123',
         recoveryCodes: ['AAAAA-11111', 'BBBBB-22222'],
       }),
+      refreshIdentidad: vi.fn().mockResolvedValue(undefined),
       logout: vi.fn(),
     });
 
@@ -67,9 +70,12 @@ describe('MfaEnrollmentPage', () => {
       username: 'admin',
       isAuthenticated: true,
       mfaRequired: false,
+      rol: 'administrador_directorio',
+      alcance: { modo: 'GLOBAL' as const },
       login: vi.fn(),
       verifyMfa: vi.fn(),
       enrollMfa: vi.fn().mockRejectedValue(new Error('fail')),
+      refreshIdentidad: vi.fn().mockResolvedValue(undefined),
       logout: vi.fn(),
     });
 

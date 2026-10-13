@@ -1,81 +1,78 @@
 """
-Servicio de resolucion de destinatarios de notificacion (c-56).
+Servicio de resolucion de destinatarios de notificacion (c-82, NR-002).
 
 Responsabilidad:
     Resolver los destinatarios de la notificacion de revision humana a partir
-    del directorio de empleados (c-54): empleados ACTIVOS con rol `operador`
-    cuyo sector coincide con el sector predicho principal del incidente.
+    del directorio de empleados: TODOS los empleados ACTIVOS con rol
+    `mesa_de_ayuda`, con independencia del sector (c-82 D4).
 
-Diseno (design.md D1, D5, D6):
-    - Reutiliza el directorio y su seam de resolucion (c-54) SIN duplicar la
-      logica de resolucion de identidad: la enumeracion por rol/sector es una
-      consulta nueva (`EmpleadoRepository.listar_operadores_por_sector`).
+Diseno:
+    - El rol destinatario se deriva del registro unico de politica de rol
+      (RP-002); la consulta concreta la hace
+      `EmpleadoRepository.listar_mesa_de_ayuda_activos` (sin filtro de sector).
     - Es in-process: no expone contactos por HTTP, no envia notificaciones.
     - Un fallo del repositorio o un directorio vacio NO es fatal: degrada a
       lista vacia (NR-002, NR-007); N8N aplica el respaldo `OPERATOR_EMAIL`.
     - Normaliza cada email con `normalizar_email` y descarta los invalidos.
 
-Privacidad (NR-006 / c-54 DIR-006 / RES-006):
-    La trazabilidad registra el sector y la CANTIDAD de destinatarios, NUNCA
-    los emails en claro.
+Privacidad (NR-006):
+    La trazabilidad registra la CANTIDAD de destinatarios, NUNCA los emails en
+    claro.
 """
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.logging import get_logger
 from app.repositories.empleado_repository import EmpleadoRepository
+from app.services.role_policy import rol_destinatario_notificacion
 from app.utils.contactos import normalizar_email
 
 logger = get_logger(__name__)
 
 
 class NotificationRecipientService:
-    """Resolucion in-process de destinatarios de notificacion por rol y sector."""
+    """Resolucion in-process de destinatarios de notificacion (rol mesa_de_ayuda)."""
 
     def __init__(self, session: AsyncSession) -> None:
         self._repo = EmpleadoRepository(session)
 
-    async def resolver_destinatarios_revision(
-        self, sector_id: int | None
-    ) -> list[str]:
+    async def resolver_destinatarios_revision(self) -> list[str]:
         """
-        Devuelve los emails normalizados de los operadores activos del sector.
+        Devuelve los emails normalizados de los `mesa_de_ayuda` activos.
 
-        Args:
-            sector_id: ID del sector predicho principal del incidente, o None.
+        El rol destinatario se DERIVA del registro unico de politica de rol
+        (RP-002), sin duplicar el criterio.
 
         Returns:
             Lista de emails (posiblemente vacia). Nunca lanza excepcion: ante un
-            sector nulo, un directorio vacio o un fallo de acceso, devuelve [].
+            directorio vacio o un fallo de acceso, devuelve [].
         """
-        if sector_id is None:
-            self._log(sector_id=None, cantidad=0)
+        rol = rol_destinatario_notificacion()
+        if rol is None:
+            self._log(cantidad=0)
             return []
 
         try:
-            operadores = await self._repo.listar_operadores_por_sector(sector_id)
+            mesas = await self._repo.listar_activos_por_rol(rol)
         except Exception:  # noqa: BLE001 - degradacion explicita (NR-007)
-            logger.warning("destinatarios_revision_error", sector_id=sector_id)
+            logger.warning("destinatarios_revision_error")
             return []
 
         destinatarios: list[str] = []
-        for empleado in operadores:
+        for empleado in mesas:
             try:
                 destinatarios.append(normalizar_email(empleado.email))
             except ValueError:
                 # Un email invalido en el directorio no rompe la resolucion.
-                logger.warning(
-                    "destinatario_revision_email_invalido", sector_id=sector_id
-                )
+                logger.warning("destinatario_revision_email_invalido")
 
-        self._log(sector_id=sector_id, cantidad=len(destinatarios))
+        self._log(cantidad=len(destinatarios))
         return destinatarios
 
     @staticmethod
-    def _log(*, sector_id: int | None, cantidad: int) -> None:
+    def _log(*, cantidad: int) -> None:
         """Emite la trazabilidad SIN emails en claro (NR-006)."""
         logger.info(
             "destinatarios_revision_resueltos",
-            sector_id=sector_id,
             cantidad=cantidad,
         )

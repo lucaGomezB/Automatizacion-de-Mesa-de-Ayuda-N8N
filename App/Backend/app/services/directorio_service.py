@@ -33,9 +33,6 @@ from app.utils.contactos import normalizar_email, normalizar_telefono
 
 logger = get_logger(__name__)
 
-# Roles que EXIGEN sector (DIR-004).
-_ROLES_CON_SECTOR = (RolEmpleado.usuario_final, RolEmpleado.operador)
-
 
 def _asegurar_utc(valor: datetime) -> datetime:
     """Interpreta un instante naive como UTC (SQLite no preserva tzinfo)."""
@@ -131,7 +128,7 @@ class DirectorioService:
 
         Raises:
             DirectorioValidationError: campos obligatorios, email duplicado,
-                rol invalido, telefono fuera de E.164 o incoherencia rol/sector.
+                rol invalido o telefono fuera de E.164.
             SectorNotFoundError: si el sector indicado no existe en el catalogo.
         """
         legajo_norm = self._validar_texto(legajo, "legajo")
@@ -139,7 +136,7 @@ class DirectorioService:
         email_norm = self._normalizar_email(email)
         telefono_norm = self._normalizar_telefono(telefono)
         rol_norm = _normalizar_rol(rol)
-        sector_norm = await self._validar_sector_por_rol(rol_norm, sector_id)
+        sector_norm = await self._validar_sector_opcional(sector_id)
 
         if await self._repo.get_by_legajo(legajo_norm) is not None:
             raise DirectorioValidationError("El legajo ya existe en el directorio.")
@@ -199,11 +196,12 @@ class DirectorioService:
         if "telefono" in campos:
             empleado.telefono = self._normalizar_telefono(campos["telefono"])
 
-        # Rol y sector se validan en conjunto sobre el estado resultante.
+        # Rol y sector se validan sobre el estado resultante. El sector es
+        # OPCIONAL para todos los roles y NO hay coherencia rol/sector (c-82 D6).
         if "rol" in campos or "sector_id" in campos:
             rol = _normalizar_rol(campos.get("rol", empleado.rol))
             sector_id = campos.get("sector_id", empleado.sector_id)
-            empleado.sector_id = await self._validar_sector_por_rol(rol, sector_id)
+            empleado.sector_id = await self._validar_sector_opcional(sector_id)
             empleado.rol = rol
 
         if "user_id" in campos:
@@ -341,37 +339,28 @@ class DirectorioService:
                 "El telefono no tiene un formato E.164 valido."
             ) from exc
 
-    async def _validar_sector_por_rol(
-        self, rol: RolEmpleado, sector_id: int | None
-    ) -> int | None:
+    async def _validar_sector_opcional(self, sector_id: int | None) -> int | None:
         """
-        Aplica la coherencia rol/sector (DIR-004 + c-60 D1/OQ1).
+        Valida el `sector_id` como FK OPCIONAL al catalogo (c-82 D6, DIR-004).
 
-        `usuario_final` y `operador` REQUIEREN sector y se valida la FK del
-        catalogo. `administrador_directorio` y `mesa_de_ayuda` son roles SIN
-        sector (el segundo es un revisor transversal de la cola de revision); un
-        `sector_id` no nulo para ellos es rechazado.
+        El sector es dato organizacional OPCIONAL para TODOS los roles y NO
+        condiciona la autorizacion. Un `sector_id` nulo se persiste como nulo; un
+        `sector_id` no nulo debe existir en el catalogo canonico. No se aplica
+        ninguna regla de coherencia rol/sector.
 
         Returns:
-            El `sector_id` normalizado a persistir (None para roles sin sector).
-        """
-        if rol in _ROLES_CON_SECTOR:
-            if sector_id is None:
-                raise DirectorioValidationError(
-                    "El rol requiere un sector asignado."
-                )
-            if await self._sector_repo.get_or_none(sector_id) is None:
-                raise SectorNotFoundError(
-                    f"Sector con id={sector_id} no encontrado en el catalogo."
-                )
-            return sector_id
+            El `sector_id` normalizado a persistir (None si no se indico).
 
-        # administrador_directorio / mesa_de_ayuda: roles sin sector.
-        if sector_id is not None:
-            raise DirectorioValidationError(
-                "El rol no debe tener sector asignado."
+        Raises:
+            SectorNotFoundError: si el sector indicado no existe en el catalogo.
+        """
+        if sector_id is None:
+            return None
+        if await self._sector_repo.get_or_none(sector_id) is None:
+            raise SectorNotFoundError(
+                f"Sector con id={sector_id} no encontrado en el catalogo."
             )
-        return None
+        return sector_id
 
     def _auditar(
         self,

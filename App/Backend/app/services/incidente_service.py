@@ -171,13 +171,13 @@ class IncidenteService:
 
         Delega la construcción de la consulta al repositorio, que maneja
         la combinación dinámica de condiciones. Si se provee `alcance` (VIS-001),
-        la regla de rol acota el resultado segun el modo: GLOBAL ve todo; SECTOR
-        intersecta el filtro de sector; REVISION solo los incidentes sin sector o
-        en revision; VACIO no ve incidentes. La decision final por incidente se
-        confirma con `permite_incidente`.
+        la regla de rol acota el resultado segun el modo: GLOBAL ve todo; PROPIO
+        solo los incidentes cuyo reportante es el propio empleado; VACIO no ve
+        incidentes. El sector NO acota la visibilidad. La decision final por
+        incidente se confirma con `permite_incidente`.
 
         Args:
-            sector_id:               Filtrar por sector responsable.
+            sector_id:               Filtrar por sector responsable (organizacional).
             estado_id:               Filtrar por estado del ciclo de vida.
             prioridad:               Filtrar por nivel de prioridad.
             requiere_revision_humana: Filtrar por indicador de revisión pendiente.
@@ -191,21 +191,16 @@ class IncidenteService:
         Returns:
             Lista de incidentes que cumplen los criterios de filtrado.
         """
-        solo_revision = False
+        reportante_filtro: int | None = None
         if alcance is not None:
             modo = alcance.modo
-            # Alcance vacio: una cuenta sin empleado/sector no ve incidentes.
+            # Alcance vacio: una cuenta sin empleado no ve incidentes.
             if modo is ModoAlcance.VACIO:
                 return []
-            if modo is ModoAlcance.SECTOR:
-                # El sector pedido debe coincidir con el del usuario; si no, nada.
-                if sector_id is not None and sector_id != alcance.sector_id:
+            if modo is ModoAlcance.PROPIO:
+                if alcance.reportante_empleado_id is None:
                     return []
-                sector_id = alcance.sector_id
-            elif modo is ModoAlcance.REVISION:
-                # La poblacion de revision (sin sector o en revision) se acota en
-                # el repositorio; se confirma por incidente al final.
-                solo_revision = True
+                reportante_filtro = alcance.reportante_empleado_id
 
         incidentes = await self._incidente_repo.list_filtered(
             sector_id=sector_id,
@@ -215,7 +210,7 @@ class IncidenteService:
             desde=desde,
             hasta=hasta,
             origen_message_id=origen_message_id,
-            solo_revision=solo_revision,
+            reportante_empleado_id=reportante_filtro,
             limit=limit,
             offset=offset,
         )
@@ -226,7 +221,11 @@ class IncidenteService:
 
     # ── Operaciones de Escritura ──────────────────────────────────────────────
 
-    async def create_and_classify(self, payload: IncidenteCreate) -> Incidente:
+    async def create_and_classify(
+        self,
+        payload: IncidenteCreate,
+        reportante_empleado_id: int | None = None,
+    ) -> Incidente:
         """
         Crea un nuevo incidente y ejecuta la clasificación automática.
 
@@ -247,6 +246,10 @@ class IncidenteService:
 
         Args:
             payload: Datos del incidente a crear (descripción, prioridad, canal).
+            reportante_empleado_id: id del empleado reportante resuelto por la
+                ruta segun el canal (VIS-003/VIS-004), o None si no se identifico.
+                Un reportante no identificado persiste NULL y deriva a revision
+                humana (VIS-005).
 
         Returns:
             Instancia completa del incidente creado y clasificado.
@@ -308,6 +311,7 @@ class IncidenteService:
                 origen_message_id=payload.origen_message_id,
                 origen_evento=payload.origen_evento,
                 ingresado_en=payload.ingresado_en,  # C-39: instante de ingreso al sistema
+                reportante_empleado_id=reportante_empleado_id,  # c-82: vinculo reportante
                 requiere_revision_humana=False,  # Se actualizará tras la clasificación
             )
         except IntegrityError:
@@ -343,7 +347,16 @@ class IncidenteService:
         result = await self._resolve_classification(
             payload, resultado_pseudo.texto, canal
         )
-        await self._apply_classification(incidente, result)
+        # c-82 (VIS-005, D10): derivacion a revision humana ante reportante no
+        # identificado, combinada por OR con la condicion del clasificador. Un
+        # incidente ya marcado NUNCA deja de requerir revision; identificar al
+        # reportante no fuerza revision por si mismo.
+        requiere_revision = bool(result.requiere_revision_humana) or (
+            reportante_empleado_id is None
+        )
+        await self._apply_classification(
+            incidente, result, requiere_revision_humana=requiere_revision
+        )
 
         # C-39 (D2): sellar `persistido_en` UNA sola vez, dentro de la transaccion
         # de alta y clasificacion, en el punto en que finalizan las escrituras del
@@ -481,7 +494,11 @@ class IncidenteService:
     # ── Métodos Auxiliares Privados ───────────────────────────────────────────
 
     async def _apply_classification(
-        self, incidente: Incidente, result: ClasificacionResult
+        self,
+        incidente: Incidente,
+        result: ClasificacionResult,
+        *,
+        requiere_revision_humana: bool | None = None,
     ) -> None:
         """
         Aplica el resultado del clasificador al incidente y crea el log de auditoría.
@@ -490,9 +507,17 @@ class IncidenteService:
         y crea el registro de clasificacion_log dentro de la misma transacción.
 
         Args:
-            incidente: Instancia del incidente recién creado.
-            result:    Resultado producido por el clasificador híbrido.
+            incidente:   Instancia del incidente recién creado.
+            result:      Resultado producido por el clasificador híbrido.
+            requiere_revision_humana: bandera efectiva de revision humana. Si es
+                         None se usa la del clasificador; la ruta de alta la
+                         combina con el reportante no identificado (VIS-005).
         """
+        revision = (
+            result.requiere_revision_humana
+            if requiere_revision_humana is None
+            else requiere_revision_humana
+        )
         # Resolver sector principal (string) → sector (registro ORM con ID).
         # Un sector ausente (clasificación precalculada forzada a revisión) se
         # persiste como `sector_id` nulo (C-33, D5).
@@ -512,7 +537,7 @@ class IncidenteService:
             incidente,
             sector_id=sector_id,
             sectores_adicionales=adicionales_objs,
-            requiere_revision_humana=result.requiere_revision_humana,
+            requiere_revision_humana=revision,
         )
 
         # Crear el registro de auditoría con todos los detalles de la clasificación
@@ -521,7 +546,7 @@ class IncidenteService:
             sector_id_predicho=sector_id,
             confianza=result.confianza,
             etapa=result.etapa,
-            requiere_revision_humana=result.requiere_revision_humana,
+            requiere_revision_humana=revision,
             respuesta_raw=result.respuesta_raw,
         )
         # Conjunto predicho adicional (el principal vive en sector_id_predicho)
@@ -534,7 +559,7 @@ class IncidenteService:
             sectores_adicionales=result.sectores_adicionales,
             confianza=result.confianza,
             etapa=result.etapa,
-            requiere_revision_humana=result.requiere_revision_humana,
+            requiere_revision_humana=revision,
         )
 
         # c-56 (D2/D6/NR-002/NR-007): resolver los destinatarios de la notificacion
@@ -544,10 +569,10 @@ class IncidenteService:
         # lista se adjunta al incidente para que la ruta de alta la serialice; NO
         # se persiste ni se expone en GET/list (NR-006).
         destinatarios_revision: list[str] = []
-        if result.requiere_revision_humana:
+        if revision:
             destinatarios_revision = await NotificationRecipientService(
                 self._session
-            ).resolver_destinatarios_revision(sector_id)
+            ).resolver_destinatarios_revision()
         incidente.destinatarios_revision = destinatarios_revision
 
         # Notificar a N8N de forma fire-and-forget: no bloquea la respuesta HTTP

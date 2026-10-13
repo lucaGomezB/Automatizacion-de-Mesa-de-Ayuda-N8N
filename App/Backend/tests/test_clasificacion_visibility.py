@@ -1,12 +1,13 @@
 """
-Tests de visibilidad de clasificaciones por rol (c-54, NIT-1).
+Tests de visibilidad de clasificaciones por alcance (c-82, VIS-001/VIS-002).
 
 VIS-001 extendido a los endpoints de clasificaciones:
-    - `administrador_directorio` accede a las clasificaciones de CUALQUIER sector.
-    - `usuario_final`/`operador` con sector S solo accede a las clasificaciones
-      de incidentes del sector S.
+    - `administrador_directorio` y `mesa_de_ayuda` (GLOBAL) acceden a las
+      clasificaciones de CUALQUIER incidente.
+    - `usuario_final` (PROPIO) solo accede a las clasificaciones de los
+      incidentes que reportó (`reportante_empleado_id`).
     - Acceso fuera de alcance => 404 (NOT_FOUND), sin revelar la existencia.
-    - Cuenta sin empleado/sector (alcance VACIO) => 404.
+    - Cuenta sin empleado (alcance VACIO) => 404.
     - Anonimo => 401.
     - El PATCH de validacion NUNCA muta una fila fuera de alcance.
 
@@ -35,7 +36,7 @@ from app.models.user import User
 
 @pytest_asyncio.fixture
 async def clasif_vis_env(engine):
-    """Siembra sectores, cuentas/empleados por rol, dos incidentes y sus logs."""
+    """Siembra sectores, cuentas/empleados por rol, tres incidentes y sus logs."""
     factory = async_sessionmaker(engine, expire_on_commit=False)
     async with factory() as s:
         sector_a = Sector(nombre="Sistemas", descripcion="A")
@@ -45,28 +46,29 @@ async def clasif_vis_env(engine):
         await s.flush()
 
         admin_user = User(username="clv-admin", hashed_password="x", is_active=True)
-        oper_a_user = User(username="clv-oper-a", hashed_password="x", is_active=True)
         mesa_user = User(username="clv-mesa", hashed_password="x", is_active=True)
-        s.add_all([admin_user, oper_a_user, mesa_user])
+        e1_user = User(username="clv-e1", hashed_password="x", is_active=True)
+        e2_user = User(username="clv-e2", hashed_password="x", is_active=True)
+        s.add_all([admin_user, mesa_user, e1_user, e2_user])
         await s.flush()
 
-        s.add_all(
-            [
-                Empleado(
-                    legajo="CLV-ADM", nombre="Admin", email="clv.admin@example.test",
-                    rol=RolEmpleado.administrador_directorio, user_id=admin_user.id,
-                ),
-                Empleado(
-                    legajo="CLV-OPE-A", nombre="Oper A", email="clv.oper.a@example.test",
-                    sector_id=sector_a.id, rol=RolEmpleado.operador,
-                    user_id=oper_a_user.id,
-                ),
-                Empleado(
-                    legajo="CLV-MESA", nombre="Mesa", email="clv.mesa@example.test",
-                    rol=RolEmpleado.mesa_de_ayuda, user_id=mesa_user.id,
-                ),
-            ]
+        admin = Empleado(
+            legajo="CLV-ADM", nombre="Admin", email="clv.admin@example.test",
+            rol=RolEmpleado.administrador_directorio, user_id=admin_user.id,
         )
+        mesa = Empleado(
+            legajo="CLV-MESA", nombre="Mesa", email="clv.mesa@example.test",
+            rol=RolEmpleado.mesa_de_ayuda, user_id=mesa_user.id,
+        )
+        e1 = Empleado(
+            legajo="CLV-E1", nombre="Reportante E1", email="clv.e1@example.test",
+            sector_id=sector_a.id, rol=RolEmpleado.usuario_final, user_id=e1_user.id,
+        )
+        e2 = Empleado(
+            legajo="CLV-E2", nombre="Reportante E2", email="clv.e2@example.test",
+            sector_id=sector_b.id, rol=RolEmpleado.usuario_final, user_id=e2_user.id,
+        )
+        s.add_all([admin, mesa, e1, e2])
         await s.flush()
 
         inc_a = Incidente(
@@ -75,6 +77,7 @@ async def clasif_vis_env(engine):
             prioridad=PrioridadEnum.media,
             estado_id=estado.id,
             sector_id=sector_a.id,
+            reportante_empleado_id=e1.id,
             requiere_revision_humana=True,
         )
         inc_b = Incidente(
@@ -83,16 +86,17 @@ async def clasif_vis_env(engine):
             prioridad=PrioridadEnum.media,
             estado_id=estado.id,
             sector_id=sector_b.id,
+            reportante_empleado_id=e2.id,
             requiere_revision_humana=True,
         )
-        # c-60 (VIS-001): incidente del sector A SIN revision humana. Control
-        # negativo: `mesa_de_ayuda` (modo REVISION) NO debe verlo.
+        # Incidente de E1 SIN revision humana: control negativo para la cola.
         inc_plain = Incidente(
             descripcion_original="incidente plain",
             descripcion_pseudonimizada="incidente plain",
             prioridad=PrioridadEnum.media,
             estado_id=estado.id,
             sector_id=sector_a.id,
+            reportante_empleado_id=e1.id,
             requiere_revision_humana=False,
         )
         s.add_all([inc_a, inc_b, inc_plain])
@@ -106,8 +110,7 @@ async def clasif_vis_env(engine):
             incidente_id=inc_b.id, sector_id_predicho=sector_b.id, confianza=0.55,
             etapa="gemini", requiere_revision_humana=True, respuesta_raw="{}",
         )
-        # Log del incidente plano: NO requiere revision, por lo que nunca entra
-        # a la cola de pendientes (preserva las aserciones FIFO existentes).
+        # El log del incidente plano NO requiere revision: nunca entra a la cola.
         log_plain = ClasificacionLog(
             incidente_id=inc_plain.id, sector_id_predicho=sector_a.id, confianza=0.55,
             etapa="gemini", requiere_revision_humana=False, respuesta_raw="{}",
@@ -122,8 +125,9 @@ async def clasif_vis_env(engine):
 
         ids = {
             "admin_user": admin_user.id,
-            "oper_a_user": oper_a_user.id,
             "mesa_user": mesa_user.id,
+            "e1_user": e1_user.id,
+            "e2_user": e2_user.id,
             "sin_empleado_user": 888888,
             "incidente_a": inc_a.id,
             "incidente_b": inc_b.id,
@@ -210,7 +214,7 @@ async def _leer_filas(engine, incidente_id: int, log_id: int):
 
 @pytest.mark.asyncio
 async def test_admin_lee_clasificaciones_de_cualquier_sector(engine, clasif_vis_env):
-    """El administrador lee el historial de un incidente ajeno (sector B)."""
+    """El administrador lee el historial de un incidente ajeno."""
     async with _client(engine, clasif_vis_env["admin_user"]) as c:
         resp = await c.get(
             f"/api/v1/clasificaciones/incidente/{clasif_vis_env['incidente_b']}"
@@ -220,9 +224,23 @@ async def test_admin_lee_clasificaciones_de_cualquier_sector(engine, clasif_vis_
 
 
 @pytest.mark.asyncio
-async def test_no_admin_lee_clasificaciones_de_su_sector(engine, clasif_vis_env):
-    """El operador del sector A lee el historial de un incidente de A."""
-    async with _client(engine, clasif_vis_env["oper_a_user"]) as c:
+async def test_mesa_de_ayuda_lee_cualquier_incidente(engine, clasif_vis_env):
+    """`mesa_de_ayuda` (GLOBAL) lee el historial de cualquier incidente."""
+    async with _client(engine, clasif_vis_env["mesa_user"]) as c:
+        en_revision = await c.get(
+            f"/api/v1/clasificaciones/incidente/{clasif_vis_env['incidente_a']}"
+        )
+        plain = await c.get(
+            f"/api/v1/clasificaciones/incidente/{clasif_vis_env['incidente_plain']}"
+        )
+    assert en_revision.status_code == 200, en_revision.text
+    assert plain.status_code == 200, plain.text
+
+
+@pytest.mark.asyncio
+async def test_usuario_final_lee_su_incidente(engine, clasif_vis_env):
+    """El `usuario_final` de E1 lee el historial de un incidente que reporto."""
+    async with _client(engine, clasif_vis_env["e1_user"]) as c:
         resp = await c.get(
             f"/api/v1/clasificaciones/incidente/{clasif_vis_env['incidente_a']}"
         )
@@ -231,9 +249,9 @@ async def test_no_admin_lee_clasificaciones_de_su_sector(engine, clasif_vis_env)
 
 
 @pytest.mark.asyncio
-async def test_no_admin_lee_fuera_de_sector_404(engine, clasif_vis_env):
-    """Un no administrador lee un incidente fuera de su sector: 404 (no 403)."""
-    async with _client(engine, clasif_vis_env["oper_a_user"]) as c:
+async def test_usuario_final_lee_ajeno_404(engine, clasif_vis_env):
+    """Un `usuario_final` lee un incidente ajeno: 404 (no 403)."""
+    async with _client(engine, clasif_vis_env["e1_user"]) as c:
         resp = await c.get(
             f"/api/v1/clasificaciones/incidente/{clasif_vis_env['incidente_b']}"
         )
@@ -243,7 +261,7 @@ async def test_no_admin_lee_fuera_de_sector_404(engine, clasif_vis_env):
 
 @pytest.mark.asyncio
 async def test_alcance_vacio_lee_404(engine, clasif_vis_env):
-    """Una cuenta sin empleado/sector no lee clasificaciones (404)."""
+    """Una cuenta sin empleado no lee clasificaciones (404)."""
     async with _client(engine, clasif_vis_env["sin_empleado_user"]) as c:
         resp = await c.get(
             f"/api/v1/clasificaciones/incidente/{clasif_vis_env['incidente_a']}"
@@ -251,31 +269,12 @@ async def test_alcance_vacio_lee_404(engine, clasif_vis_env):
     assert resp.status_code == 404
 
 
-@pytest.mark.asyncio
-async def test_mesa_de_ayuda_lee_en_revision_y_no_plain_404(engine, clasif_vis_env):
-    """`mesa_de_ayuda` lee las clasificaciones de un incidente EN REVISION (200)
-    y NO las de un incidente de sector ya asignado sin revision humana (404)."""
-    async with _client(engine, clasif_vis_env["mesa_user"]) as c:
-        en_revision = await c.get(
-            f"/api/v1/clasificaciones/incidente/{clasif_vis_env['incidente_a']}"
-        )
-        plain = await c.get(
-            f"/api/v1/clasificaciones/incidente/{clasif_vis_env['incidente_plain']}"
-        )
-    # Positivo: inc_a tiene sector pero requiere_revision_humana=True.
-    assert en_revision.status_code == 200, en_revision.text
-    assert any(item["id"] == clasif_vis_env["log_a"] for item in en_revision.json())
-    # Negativo: inc_plain tiene sector y NO requiere revision => fuera de alcance.
-    assert plain.status_code == 404
-    assert plain.json()["error"]["code"] == "NOT_FOUND"
-
-
 # ── VALIDATE: PATCH /clasificaciones/{log_id}/validar ────────────────────────
 
 
 @pytest.mark.asyncio
 async def test_admin_valida_cualquier_log(engine, clasif_vis_env):
-    """El administrador valida un log de un incidente ajeno (sector B)."""
+    """El administrador valida un log de un incidente ajeno."""
     async with _client(engine, clasif_vis_env["admin_user"]) as c:
         resp = await c.patch(
             f"/api/v1/clasificaciones/{clasif_vis_env['log_b']}/validar",
@@ -286,9 +285,9 @@ async def test_admin_valida_cualquier_log(engine, clasif_vis_env):
 
 
 @pytest.mark.asyncio
-async def test_no_admin_valida_dentro_de_sector_200(engine, clasif_vis_env):
-    """El operador del sector A valida un log de un incidente de A."""
-    async with _client(engine, clasif_vis_env["oper_a_user"]) as c:
+async def test_usuario_final_valida_su_incidente_200(engine, clasif_vis_env):
+    """El `usuario_final` de E1 valida un log de un incidente que reporto."""
+    async with _client(engine, clasif_vis_env["e1_user"]) as c:
         resp = await c.patch(
             f"/api/v1/clasificaciones/{clasif_vis_env['log_a']}/validar",
             json={"sector_id_validado": clasif_vis_env["sector_a"]},
@@ -296,7 +295,6 @@ async def test_no_admin_valida_dentro_de_sector_200(engine, clasif_vis_env):
     assert resp.status_code == 200, resp.text
     assert resp.json()["sector_validado"]["id"] == clasif_vis_env["sector_a"]
 
-    # Triangulacion: dentro de alcance la mutacion SI se aplica (log + incidente).
     filas = await _leer_filas(
         engine, clasif_vis_env["incidente_a"], clasif_vis_env["log_a"]
     )
@@ -305,9 +303,9 @@ async def test_no_admin_valida_dentro_de_sector_200(engine, clasif_vis_env):
 
 
 @pytest.mark.asyncio
-async def test_no_admin_valida_fuera_de_sector_404_y_no_muta(engine, clasif_vis_env):
+async def test_usuario_final_valida_ajeno_404_y_no_muta(engine, clasif_vis_env):
     """Fuera de alcance: 404 y la fila NO se modifica (incidente ni log)."""
-    async with _client(engine, clasif_vis_env["oper_a_user"]) as c:
+    async with _client(engine, clasif_vis_env["e1_user"]) as c:
         resp = await c.patch(
             f"/api/v1/clasificaciones/{clasif_vis_env['log_b']}/validar",
             json={"sector_id_validado": clasif_vis_env["sector_a"]},
@@ -355,7 +353,8 @@ async def test_anonimo_401(engine, clasif_vis_env):
     assert lectura.status_code == 401
     assert validar.status_code == 401
 
-# ── c-60 (4.1/4.3): cola `revision-pendiente` acotada por sector y rol ────────
+
+# ── Cola `revision-pendiente` acotada por alcance (VIS-002) ───────────────────
 
 
 @pytest.mark.asyncio
@@ -379,9 +378,11 @@ async def test_revision_pendiente_mesa_de_ayuda_ve_cola_completa(engine, clasif_
 
 
 @pytest.mark.asyncio
-async def test_revision_pendiente_sector_bound_ve_solo_su_cola(engine, clasif_vis_env):
-    """Un operador del sector A solo ve el pendiente de su sector."""
-    async with _client(engine, clasif_vis_env["oper_a_user"]) as c:
+async def test_revision_pendiente_usuario_final_ve_solo_sus_pendientes(
+    engine, clasif_vis_env
+):
+    """Un `usuario_final` de E1 solo ve el pendiente de un incidente que reporto."""
+    async with _client(engine, clasif_vis_env["e1_user"]) as c:
         resp = await c.get("/api/v1/clasificaciones/revision-pendiente")
     assert resp.status_code == 200
     ids = {item["id"] for item in resp.json()}
@@ -391,7 +392,7 @@ async def test_revision_pendiente_sector_bound_ve_solo_su_cola(engine, clasif_vi
 
 @pytest.mark.asyncio
 async def test_revision_pendiente_alcance_vacio_ve_lista_vacia(engine, clasif_vis_env):
-    """Una cuenta sin empleado/sector ve una lista vacia (no la cola global)."""
+    """Una cuenta sin empleado ve una lista vacia (no la cola global)."""
     async with _client(engine, clasif_vis_env["sin_empleado_user"]) as c:
         resp = await c.get("/api/v1/clasificaciones/revision-pendiente")
     assert resp.status_code == 200

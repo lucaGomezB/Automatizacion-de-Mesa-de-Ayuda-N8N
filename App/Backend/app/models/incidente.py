@@ -127,6 +127,19 @@ class Incidente(Base, TimestampMixin):
         "CanalOrigen", back_populates="incidentes"
     )
 
+    # Vinculo de REPORTANTE (c-82, VIS-003): FK nullable al directorio de
+    # empleados. Es la base del alcance PROPIO del rol `usuario_final` (solo ve
+    # los incidentes que reporto). Nullable: un reportante no identificado
+    # persiste NULL sin bloquear el alta. ON DELETE SET NULL: borrar un empleado
+    # (ARCO) no elimina el incidente. Indexada para el filtrado por reportante.
+    # NO altera la clasificacion ni el alcance de los roles GLOBAL.
+    reportante_empleado_id: Mapped[int | None] = mapped_column(
+        Integer,
+        ForeignKey("directorio_empleado.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+
     # Identificador del mensaje de origen (Message-ID de Outlook) usado para la
     # idempotencia de alta (C-33, HIGH-4). Nullable: los emisores que no lo
     # proveen (formulario web, clientes API) crean el incidente normalmente.

@@ -66,6 +66,10 @@ async def test_post_incidente_creacion_exitosa_201(
     2.1 / 2.2 RED + GREEN
     Payload válido + clasificador doble (Sistemas, 0.95, sin revisión) →
     201 con contrato IncidenteRead, sector "Sistemas", estado "nuevo".
+
+    c-82 (VIS-005): la cuenta del cliente de pruebas no tiene empleado vinculado,
+    por lo que el reportante NO se identifica y el incidente se deriva a revision
+    humana (OR con el clasificador), aunque el clasificador no la exija.
     """
     # Arrange
     result = _make_result(sector_predicho="Sistemas", confianza=0.95, requiere_revision_humana=False)
@@ -79,7 +83,8 @@ async def test_post_incidente_creacion_exitosa_201(
     body = response.json()
     assert "id" in body
     assert "descripcion_pseudonimizada" in body
-    assert body["requiere_revision_humana"] is False
+    assert body["requiere_revision_humana"] is True  # reportante no identificado (VIS-005)
+    assert body["reportante_empleado_id"] is None
     assert body["sector"]["nombre"] == "Sistemas"
     assert body["estado"]["nombre"] == "nuevo"
 

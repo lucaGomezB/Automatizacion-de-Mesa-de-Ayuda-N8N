@@ -1,14 +1,11 @@
 """
-Tests de integracion PostgreSQL de la resolucion de destinatarios (c-56, 2.4).
+Tests de integracion PostgreSQL de la resolucion de destinatarios (c-82, NR-002).
 
 Requieren un PostgreSQL alcanzable (base DESCARTABLE `mesa_de_ayuda_test`).
 Marcados `@pytest.mark.integration`. Verifican el comportamiento real de:
-    - La FK a `sector` del directorio (el operador referencia un sector real).
-    - La existencia del indice de `sector_id` (base de la lectura acotada D6).
-    - La igualdad real de la enumeracion de operadores por sector.
-
-NOTA: este archivo se entrega ESCRITO pero NO se ejecuta en el entorno del
-apply (PostgreSQL no alcanzable). Queda pendiente `pytest -m integration`.
+    - La FK a `sector` del directorio (opcional para cualquier rol).
+    - La existencia del indice de `sector_id` del directorio.
+    - La enumeracion real de los `mesa_de_ayuda` activos, sin filtro de sector.
 """
 
 import pytest
@@ -22,7 +19,7 @@ pytestmark = pytest.mark.integration
 
 
 async def _crear_empleado(
-    session, *, legajo: str, email: str, sector_id: int | None, rol=RolEmpleado.operador
+    session, *, legajo: str, email: str, sector_id: int | None, rol=RolEmpleado.mesa_de_ayuda
 ) -> Empleado:
     empleado = Empleado(
         legajo=legajo,
@@ -38,13 +35,13 @@ async def _crear_empleado(
 
 
 @pytest.mark.asyncio
-async def test_fk_a_sector_del_operador(pg_session, seed_pg_catalogs):
-    """Un operador referencia un sector real del catalogo canonico."""
+async def test_fk_a_sector_del_directorio(pg_session, seed_pg_catalogs):
+    """Un empleado puede referenciar un sector real del catalogo canonico."""
     sector = seed_pg_catalogs["sector_sistemas"]
     empleado = await _crear_empleado(
         pg_session,
-        legajo="C56-FK",
-        email="c56-fk@example.test",
+        legajo="C82-FK",
+        email="c82-fk@example.test",
         sector_id=sector.id,
     )
 
@@ -53,7 +50,7 @@ async def test_fk_a_sector_del_operador(pg_session, seed_pg_catalogs):
 
 @pytest.mark.asyncio
 async def test_indice_de_sector_id_existe(pg_session, pg_engine, seed_pg_catalogs):
-    """La base PostgreSQL tiene el indice de `sector_id` del directorio (D6)."""
+    """La base PostgreSQL tiene el indice de `sector_id` del directorio."""
 
     def _indices(conn):
         return {
@@ -68,28 +65,39 @@ async def test_indice_de_sector_id_existe(pg_session, pg_engine, seed_pg_catalog
 
 
 @pytest.mark.asyncio
-async def test_enumeracion_real_por_sector(pg_session, seed_pg_catalogs):
-    """La enumeracion real devuelve solo los operadores activos del sector."""
+async def test_enumeracion_real_de_mesa_de_ayuda(pg_session, seed_pg_catalogs):
+    """La enumeracion real devuelve todos los mesa_de_ayuda activos, sin sector."""
     sistemas = seed_pg_catalogs["sector_sistemas"]
     bd = seed_pg_catalogs["sector_bases_datos"]
 
     await _crear_empleado(
-        pg_session, legajo="C56-S1", email="c56-s1@example.test", sector_id=sistemas.id
+        pg_session, legajo="C82-S1", email="c82-s1@example.test", sector_id=sistemas.id
     )
     await _crear_empleado(
-        pg_session, legajo="C56-S2", email="c56-s2@example.test", sector_id=sistemas.id
+        pg_session, legajo="C82-S2", email="c82-s2@example.test", sector_id=bd.id
     )
-    # Otro sector NO debe aparecer.
     await _crear_empleado(
-        pg_session, legajo="C56-BD", email="c56-bd@example.test", sector_id=bd.id
+        pg_session, legajo="C82-SIN", email="c82-sin@example.test", sector_id=None
+    )
+    # Un usuario_final NO debe aparecer.
+    await _crear_empleado(
+        pg_session,
+        legajo="C82-UF",
+        email="c82-uf@example.test",
+        sector_id=sistemas.id,
+        rol=RolEmpleado.usuario_final,
     )
 
     repo = EmpleadoRepository(pg_session)
-    operadores = await repo.listar_operadores_por_sector(sistemas.id)
+    mesas = await repo.listar_mesa_de_ayuda_activos()
 
-    assert sorted(e.legajo for e in operadores) == ["C56-S1", "C56-S2"]
+    assert sorted(e.legajo for e in mesas) == ["C82-S1", "C82-S2", "C82-SIN"]
 
     destinatarios = await NotificationRecipientService(
         pg_session
-    ).resolver_destinatarios_revision(sistemas.id)
-    assert sorted(destinatarios) == ["c56-s1@example.test", "c56-s2@example.test"]
+    ).resolver_destinatarios_revision()
+    assert sorted(destinatarios) == [
+        "c82-s1@example.test",
+        "c82-s2@example.test",
+        "c82-sin@example.test",
+    ]

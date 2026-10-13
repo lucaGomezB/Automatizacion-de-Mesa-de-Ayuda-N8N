@@ -7,8 +7,10 @@ Responsabilidad:
     derivacion defensiva usada por el chequeo de MFA.
 
 Decisiones (design.md OQ-B1):
-    - Roles privilegiados: `operador`, `administrador_directorio` y
-      `mesa_de_ayuda`. `usuario_final` no lo es.
+    - Roles privilegiados (c-82): se DERIVAN del registro unico de politica de
+      rol (`roles_privilegiados()`); son `mesa_de_ayuda` y
+      `administrador_directorio`. `usuario_final` no lo es y `operador` ya no
+      existe.
     - Al vincular/actualizar un empleado privilegiado, el flag del usuario se
       enciende; al desvincular (`user_id = NULL`) o degradar a `usuario_final`,
       se apaga.
@@ -23,17 +25,13 @@ from app.core.logging import get_logger
 from app.models.empleado import RolEmpleado
 from app.repositories.empleado_repository import EmpleadoRepository
 from app.repositories.user_repository import UserRepository
+from app.services.role_policy import roles_privilegiados
 
 logger = get_logger(__name__)
 
 # Roles del directorio que confieren privilegio a la cuenta vinculada (IAH-005).
-PRIVILEGED_ROLE_VALUES = frozenset(
-    {
-        RolEmpleado.operador.value,
-        RolEmpleado.administrador_directorio.value,
-        RolEmpleado.mesa_de_ayuda.value,
-    }
-)
+# Derivado del registro unico de politica de rol (RP-002): no se duplica la lista.
+PRIVILEGED_ROLE_VALUES = roles_privilegiados()
 
 # Username del seed sembrado por la migracion 003: nunca se degrada.
 SEEDED_PRIVILEGED_USERNAME = "admin"

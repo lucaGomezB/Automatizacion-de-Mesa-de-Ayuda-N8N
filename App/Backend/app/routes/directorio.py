@@ -6,10 +6,12 @@ Responsabilidad:
     autenticar/autorizar (por rol del empleado vinculado) y de delegar la logica
     al `DirectorioService`.
 
-Autorizacion (DIR-006):
-    - Escritura (alta/edicion/desactivacion/borrado ARCO): rol `administrador_directorio`.
-    - Consulta (listado/detalle): roles `operador` o `administrador_directorio`.
-    - Sin token: 401. Con token sin empleado vinculado: 403.
+Autorizacion (DIR-006 / RP-004):
+    - Escritura (alta/edicion/desactivacion/borrado ARCO): `manages_directory`
+      del registro de politica (solo `administrador_directorio`).
+    - Consulta (listado/detalle): `can_read_directory` del registro (LISTA
+      BLANCA: `mesa_de_ayuda` y `administrador_directorio`).
+    - Sin token: 401. Con token sin empleado vinculado o rol no autorizado: 403.
 
 Privacidad:
     La auditoria de las consultas registra solo el actor y la operacion; NUNCA
@@ -24,7 +26,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db_session
 from app.core.logging import get_logger
 from app.core.security import get_current_user
-from app.models.empleado import Empleado, RolEmpleado
+from app.models.empleado import Empleado
 from app.models.user import User
 from app.repositories.empleado_repository import EmpleadoRepository
 from app.schemas.directorio import (
@@ -34,6 +36,7 @@ from app.schemas.directorio import (
     PurgaDirectorioRead,
 )
 from app.services.directorio_service import DirectorioService
+from app.services.role_policy import politica_de_rol
 
 logger = get_logger(__name__)
 
@@ -59,8 +62,9 @@ EmpleadoActualDep = Annotated[Empleado | None, Depends(get_empleado_actual)]
 
 
 async def require_directorio_admin(empleado: EmpleadoActualDep) -> Empleado:
-    """Exige un empleado vinculado con rol `administrador_directorio`."""
-    if empleado is None or empleado.rol != RolEmpleado.administrador_directorio:
+    """Exige un empleado vinculado cuyo rol GESTIONE el directorio (RP-002)."""
+    politica = politica_de_rol(empleado.rol) if empleado is not None else None
+    if politica is None or not politica.manages_directory:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Se requiere el rol administrador_directorio.",
@@ -69,8 +73,16 @@ async def require_directorio_admin(empleado: EmpleadoActualDep) -> Empleado:
 
 
 async def require_directorio_lectura(empleado: EmpleadoActualDep) -> Empleado:
-    """Exige un empleado vinculado con rol `operador` o `administrador_directorio`."""
-    if empleado is None or empleado.rol == RolEmpleado.usuario_final:
+    """
+    Exige un empleado vinculado autorizado a LEER el directorio (RP-004).
+
+    Es una LISTA BLANCA derivada de `can_read_directory` del registro de
+    politica: ningun rol queda habilitado por omision. `mesa_de_ayuda` y
+    `administrador_directorio` pueden consultar; `usuario_final` y toda cuenta
+    sin empleado reciben 403.
+    """
+    politica = politica_de_rol(empleado.rol) if empleado is not None else None
+    if politica is None or not politica.can_read_directory:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Rol no autorizado para consultar el directorio.",
