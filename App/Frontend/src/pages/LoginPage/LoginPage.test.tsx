@@ -8,6 +8,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import LoginPage from './index';
 import { useAuth } from '@/contexts/AuthContext';
@@ -75,6 +76,70 @@ describe('LoginPage (MFA)', () => {
 
     await waitFor(() => {
       expect(auth.verifyMfa).toHaveBeenCalledWith('123456');
+    });
+  });
+});
+
+describe('LoginPage (visibilidad de contraseña, FSU-002)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('la contraseña está oculta por defecto y existe el control de visibilidad', () => {
+    useAuthMock.mockReturnValue(baseAuth());
+    renderPage();
+
+    expect(screen.getByLabelText('Contraseña')).toHaveAttribute('type', 'password');
+    expect(screen.getByRole('button', { name: 'Mostrar contraseña' })).toBeInTheDocument();
+  });
+
+  it('al accionar el control la contraseña pasa a texto y el aria-label cambia', async () => {
+    const user = userEvent.setup();
+    useAuthMock.mockReturnValue(baseAuth());
+    renderPage();
+
+    await user.click(screen.getByRole('button', { name: 'Mostrar contraseña' }));
+
+    expect(screen.getByLabelText('Contraseña')).toHaveAttribute('type', 'text');
+    expect(screen.getByRole('button', { name: 'Ocultar contraseña' })).toBeInTheDocument();
+  });
+
+  it('al accionar de nuevo la contraseña vuelve a ocultarse', async () => {
+    const user = userEvent.setup();
+    useAuthMock.mockReturnValue(baseAuth());
+    renderPage();
+
+    await user.click(screen.getByRole('button', { name: 'Mostrar contraseña' }));
+    await user.click(screen.getByRole('button', { name: 'Ocultar contraseña' }));
+
+    expect(screen.getByLabelText('Contraseña')).toHaveAttribute('type', 'password');
+    expect(screen.getByRole('button', { name: 'Mostrar contraseña' })).toBeInTheDocument();
+  });
+
+  it('el control es operable por teclado', async () => {
+    const user = userEvent.setup();
+    useAuthMock.mockReturnValue(baseAuth());
+    renderPage();
+
+    screen.getByRole('button', { name: 'Mostrar contraseña' }).focus();
+    await user.keyboard('{Enter}');
+
+    expect(screen.getByRole('button', { name: 'Ocultar contraseña' })).toBeInTheDocument();
+  });
+
+  it('el valor enviado a login() es la contraseña tipeada, sin transformaciones', async () => {
+    const user = userEvent.setup();
+    const auth = baseAuth();
+    useAuthMock.mockReturnValue(auth);
+    renderPage();
+
+    await user.type(screen.getByLabelText('Usuario'), 'operador');
+    await user.type(screen.getByLabelText('Contraseña'), 'Secreta123');
+    await user.click(screen.getByRole('button', { name: 'Mostrar contraseña' }));
+    await user.click(screen.getByRole('button', { name: 'Ingresar' }));
+
+    await waitFor(() => {
+      expect(auth.login).toHaveBeenCalledWith('operador', 'Secreta123');
     });
   });
 });
