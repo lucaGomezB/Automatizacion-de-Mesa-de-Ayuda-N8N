@@ -220,10 +220,10 @@ Triggers: push to `main`, all pull requests. Three parallel jobs:
 
 The `secret-scan` job backs up the local pre-commit hook in CI: it installs a pinned gitleaks, scans the full history (allowlist in `.gitleaks.toml`), and runs `scripts/security/scan_engram_secrets.py` over the gzip chunks that GitHub's native scanning cannot read.
 
-The OpenAPI sync check (`test_openapi_sync.py`) regenerates the spec in-memory and compares against `docs/openapi.json`. If you add/change endpoints, regenerate the static file:
+The OpenAPI sync check (`test_openapi_sync.py`) regenerates the spec in-memory and compares against `docs/openapi.json`. If you add/change endpoints, regenerate the static file with the canonical generator (it serializes with `sort_keys=True`, so diffs stay minimal and deterministic; a hand-rolled `json.dumps` without `sort_keys` reorders every key and produces a huge spurious diff):
 
 ```bash
-cd App/Backend; python -c "from app.main import app; import json; open('../../docs/openapi.json','w').write(json.dumps(app.openapi(), indent=2, ensure_ascii=False))"
+cd App/Backend; python scripts/export_openapi.py
 ```
 
 ## Engram Memory
