@@ -12,16 +12,27 @@ import { TicketDetailDialog } from './TicketDetailDialog';
 import { createTestQueryClient } from '@/test/utils';
 import * as incidentesService from '@/services/incidentesService';
 import * as clasificacionesService from '@/services/clasificacionesService';
+import { useAuth } from '@/contexts/AuthContext';
 import type { IncidenteRead } from '@/types/incidente';
 import type { ClasificacionLogRead } from '@/types/clasificacion';
 
 vi.mock('@/services/incidentesService', () => ({
   obtenerIncidente: vi.fn(),
+  listarComentarios: vi.fn(),
+  agregarComentario: vi.fn(),
+  cerrarPorSector: vi.fn(),
+  cerrarGlobal: vi.fn(),
+  rehabilitarIncidente: vi.fn(),
+  editarEstadoIncidente: vi.fn(),
 }));
 
 vi.mock('@/services/clasificacionesService', () => ({
   listarClasificacionesPorIncidente: vi.fn(),
 }));
+
+vi.mock('@/contexts/AuthContext', () => ({ useAuth: vi.fn() }));
+
+const useAuthMock = vi.mocked(useAuth);
 
 const mockIncidente: IncidenteRead = {
   id: 12,
@@ -61,6 +72,20 @@ function renderDialog() {
 describe('TicketDetailDialog', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    useAuthMock.mockReturnValue({
+      token: 't',
+      username: 'u',
+      isAuthenticated: true,
+      mfaRequired: false,
+      rol: 'mesa_de_ayuda',
+      alcance: { modo: 'GLOBAL' },
+      login: vi.fn(),
+      verifyMfa: vi.fn(),
+      enrollMfa: vi.fn(),
+      refreshIdentidad: vi.fn(),
+      logout: vi.fn(),
+    });
+    vi.mocked(incidentesService.listarComentarios).mockResolvedValue([]);
   });
 
   it('muestra los campos del detalle compartido (descripcion, metadatos y clasificacion)', async () => {

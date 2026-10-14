@@ -1,13 +1,14 @@
 /**
- * Tipos de identidad y alcance de la sesion (c-81, FR-RBAC-001).
+ * Tipos de identidad y alcance de la sesion (c-81, FR-RBAC-001; c-86 FR-RBAC-001).
  *
  * Espejo del contrato de `GET /api/v1/auth/me` (IAH-012): el rol del empleado
  * vinculado (o nulo) y el modo de alcance derivado, con EXACTAMENTE los valores
- * PROPIO | GLOBAL | VACIO. NO modela sector ni conceptos del RBAC anterior.
+ * PROPIO | GLOBAL | SECTOR | VACIO. NO modela sector_id ni conceptos del RBAC
+ * anterior: el alcance se obtiene del backend y nunca se infiere en el cliente.
  */
 
 /** Modo de alcance de incidentes derivado del rol. */
-export type ModoAlcance = 'PROPIO' | 'GLOBAL' | 'VACIO';
+export type ModoAlcance = 'PROPIO' | 'GLOBAL' | 'SECTOR' | 'VACIO';
 
 /** Alcance de incidentes de la sesion; solo expone el modo. */
 export interface Alcance {

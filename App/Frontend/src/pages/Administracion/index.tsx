@@ -32,6 +32,7 @@ import { useState, useCallback, useEffect } from 'react';
 import {
   LayoutList,
   ClipboardCheck,
+  History,
   ChevronLeft,
   ChevronRight,
   SlidersHorizontal,
@@ -47,14 +48,17 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/contexts/AuthContext';
 import { useIncidentes } from '@/hooks/useIncidentes';
 import {
   useRevisionPendiente,
   useRevisionPendienteCount,
 } from '@/hooks/useRevisionPendiente';
+import { useHistorialCerrados } from '@/hooks/useHistorialCerrados';
 import { useSectores } from '@/hooks/useSectores';
 import { TicketsTable } from './TicketsTable';
 import { RevisionHumanaTable } from './RevisionHumanaTable';
+import { HistorialTable } from './HistorialTable';
 import { TicketDetailDialog } from './TicketDetailDialog';
 import { ValidarClasificacionDialog } from './ValidarClasificacionDialog';
 import { ESTADOS_OPCIONES } from '@/types/catalog';
@@ -63,8 +67,12 @@ import type { ClasificacionLogRead } from '@/types/clasificacion';
 
 // ── Tipos internos ───────────────────────────────────────────────────────────
 
-/** Pestañas disponibles en el panel de administración. */
-type TabActiva = 'tickets' | 'revision';
+/**
+ * Pestañas disponibles en el panel de administración (c-86, D11).
+ * "Revisión Humana" queda GLOBAL-only; "Historial de Incidentes Cerrados" está
+ * disponible para GLOBAL y SECTOR.
+ */
+type TabActiva = 'tickets' | 'revision' | 'historial';
 
 // ── Constantes ───────────────────────────────────────────────────────────────
 
@@ -86,6 +94,10 @@ const FILTROS_VACIOS: IncidenteListParams = {
 // ── Componente principal ─────────────────────────────────────────────────────
 
 export default function AdministracionPage() {
+  // ── Alcance (c-86, FR-RBAC-002): la cola de revisión es GLOBAL-only ─────────
+  const { alcance } = useAuth();
+  const esGlobal = alcance.modo === 'GLOBAL';
+
   // ── Estado de navegación ────────────────────────────────────────────────────
   const [tabActiva, setTabActiva] = useState<TabActiva>('tickets');
 
@@ -93,6 +105,7 @@ export default function AdministracionPage() {
   const [filtros, setFiltros] = useState<IncidenteListParams>(FILTROS_VACIOS);
   const [paginaTickets, setPaginaTickets] = useState(0);
   const [paginaRevision, setPaginaRevision] = useState(0);
+  const [paginaHistorial, setPaginaHistorial] = useState(0);
 
   // ── Estado de diálogos ──────────────────────────────────────────────────────
   const [incidenteIdSeleccionado, setIncidenteIdSeleccionado] = useState<number | null>(null);
@@ -131,16 +144,41 @@ export default function AdministracionPage() {
     isError: errorRevision,
     error: errorRevisionObj,
     refetch: refetchRevision,
-  } = useRevisionPendiente({
-    limit: PAGE_SIZE,
-    offset: paginaRevision * PAGE_SIZE,
-  });
+  } = useRevisionPendiente(
+    {
+      limit: PAGE_SIZE,
+      offset: paginaRevision * PAGE_SIZE,
+    },
+    // La cola de revisión es GLOBAL-only (c-86, FR-RBAC-002): no se consulta
+    // fuera de ese alcance. Para GLOBAL conserva el comportamiento previo
+    // (consulta al montar; el badge usa el conteo aunque no esté la pestaña activa).
+    esGlobal
+  );
 
   /**
    * Total real de pendientes del alcance (FRH-008). Alimenta el badge de la
    * pestaña y la detección de páginas adicionales de la tabla de revisión.
    */
-  const { data: totalRevision = 0 } = useRevisionPendienteCount();
+  const { data: totalRevision = 0 } = useRevisionPendienteCount(esGlobal);
+
+  /**
+   * Historial de incidentes cerrados (c-86, FIH-001). El backend acota el
+   * conjunto por alcance (GLOBAL, SECTOR o PROPIO) y excluye los eliminados; la
+   * UI solo presenta lo devuelto. Se consulta únicamente con la pestaña activa.
+   */
+  const {
+    data: historialCerrados,
+    isLoading: cargandoHistorial,
+    isError: errorHistorial,
+    error: errorHistorialObj,
+    refetch: refetchHistorial,
+  } = useHistorialCerrados(
+    {
+      limit: PAGE_SIZE,
+      offset: paginaHistorial * PAGE_SIZE,
+    },
+    tabActiva === 'historial'
+  );
 
   /**
    * Mantiene coherente la paginación tras un refetch (FRH-009, D7): si la página
@@ -238,12 +276,21 @@ export default function AdministracionPage() {
             etiqueta="Lista de Tickets"
             onClick={() => setTabActiva('tickets')}
           />
+          {/* La cola de revisión queda fuera del alcance SECTOR (FR-RBAC-002). */}
+          {esGlobal && (
+            <TabButton
+              activa={tabActiva === 'revision'}
+              icono={<ClipboardCheck className="h-4 w-4" />}
+              etiqueta="Revisión Humana"
+              badge={totalPendientes > 0 ? totalPendientes : undefined}
+              onClick={() => setTabActiva('revision')}
+            />
+          )}
           <TabButton
-            activa={tabActiva === 'revision'}
-            icono={<ClipboardCheck className="h-4 w-4" />}
-            etiqueta="Revisión Humana"
-            badge={totalPendientes > 0 ? totalPendientes : undefined}
-            onClick={() => setTabActiva('revision')}
+            activa={tabActiva === 'historial'}
+            icono={<History className="h-4 w-4" />}
+            etiqueta="Historial de Incidentes Cerrados"
+            onClick={() => setTabActiva('historial')}
           />
         </div>
 
@@ -371,6 +418,29 @@ export default function AdministracionPage() {
               pageSize={PAGE_SIZE}
               total={totalRevision}
               onChange={setPaginaRevision}
+            />
+          </section>
+        )}
+
+        {/* ── Pestaña: Historial de Incidentes Cerrados (c-86, FIH-001) ──── */}
+        {tabActiva === 'historial' && (
+          <section className="space-y-4 animate-fade-in">
+            {/* Tabla del historial; el alcance y la exclusión de eliminados los
+                determina el backend (la UI no acota ni amplía el conjunto). */}
+            <HistorialTable
+              incidentes={historialCerrados}
+              isLoading={cargandoHistorial}
+              isError={errorHistorial}
+              error={errorHistorialObj}
+              onRefetch={() => void refetchHistorial()}
+            />
+
+            {/* Control de paginación del historial */}
+            <Paginacion
+              pagina={paginaHistorial}
+              totalEnPagina={historialCerrados?.length ?? 0}
+              pageSize={PAGE_SIZE}
+              onChange={setPaginaHistorial}
             />
           </section>
         )}

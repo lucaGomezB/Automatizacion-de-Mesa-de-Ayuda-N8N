@@ -9,6 +9,13 @@ import {
   listarIncidentes,
   obtenerIncidente,
   verificarSaludApi,
+  listarHistorialCerrados,
+  cerrarPorSector,
+  cerrarGlobal,
+  rehabilitarIncidente,
+  editarEstadoIncidente,
+  listarComentarios,
+  agregarComentario,
 } from './incidentesService';
 import type { IncidenteCreate, IncidenteRead, IncidenteListItem } from '../types/incidente';
 import type { EstadoRead, SectorRead, CanalOrigenRead } from '../types/catalog';
@@ -140,6 +147,31 @@ describe('incidentesService', () => {
     });
   });
 
+  // ---------- listarHistorialCerrados (c-86, FIH-001) ----------
+
+  describe('listarHistorialCerrados', () => {
+    it('hace GET a /incidentes/historial-cerrados con la paginacion recibida', async () => {
+      vi.mocked(mockedApiClient.get).mockResolvedValueOnce({ data: [mockListItem] });
+
+      const result = await listarHistorialCerrados({ limit: 20, offset: 40 });
+
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/incidentes/historial-cerrados', {
+        params: { limit: 20, offset: 40 },
+      });
+      expect(result).toEqual([mockListItem]);
+    });
+
+    it('usa params vacios cuando no se pasa paginacion', async () => {
+      vi.mocked(mockedApiClient.get).mockResolvedValueOnce({ data: [] });
+
+      await listarHistorialCerrados();
+
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/incidentes/historial-cerrados', {
+        params: {},
+      });
+    });
+  });
+
   // ---------- verificarSaludApi ----------
 
   describe('verificarSaludApi', () => {
@@ -151,6 +183,83 @@ describe('incidentesService', () => {
 
       expect(mockedApiClient.get).toHaveBeenCalledWith('/health');
       expect(result).toEqual(mockHealth);
+    });
+  });
+
+  // ---------- ciclo de cierre (c-86) ----------
+
+  describe('ciclo de cierre', () => {
+    it('cerrarPorSector hace POST a /incidentes/{id}/cierre-sector', async () => {
+      vi.mocked(mockedApiClient.post).mockResolvedValueOnce({ data: mockIncidenteRead });
+
+      const result = await cerrarPorSector(42);
+
+      expect(mockedApiClient.post).toHaveBeenCalledWith('/incidentes/42/cierre-sector');
+      expect(result).toEqual(mockIncidenteRead);
+    });
+
+    it('cerrarGlobal hace POST a /incidentes/{id}/cierre-global', async () => {
+      vi.mocked(mockedApiClient.post).mockResolvedValueOnce({ data: mockIncidenteRead });
+
+      await cerrarGlobal(42);
+
+      expect(mockedApiClient.post).toHaveBeenCalledWith('/incidentes/42/cierre-global');
+    });
+
+    it('rehabilitarIncidente hace POST a /incidentes/{id}/rehabilitar', async () => {
+      vi.mocked(mockedApiClient.post).mockResolvedValueOnce({ data: mockIncidenteRead });
+
+      await rehabilitarIncidente(42);
+
+      expect(mockedApiClient.post).toHaveBeenCalledWith('/incidentes/42/rehabilitar');
+    });
+
+    it('editarEstadoIncidente hace PATCH a /incidentes/{id}/estado con el estado', async () => {
+      vi.mocked(mockedApiClient.patch).mockResolvedValueOnce({ data: mockIncidenteRead });
+
+      await editarEstadoIncidente(42, 'resuelto');
+
+      expect(mockedApiClient.patch).toHaveBeenCalledWith('/incidentes/42/estado', {
+        estado: 'resuelto',
+      });
+    });
+  });
+
+  // ---------- comentarios (c-86) ----------
+
+  describe('comentarios', () => {
+    it('listarComentarios hace GET a /incidentes/{id}/comentarios', async () => {
+      const comentario = {
+        id: 1,
+        incidente_id: 42,
+        autor_empleado_id: 3,
+        texto: 'En revision',
+        created_at: '2026-06-11T10:00:00Z',
+      };
+      vi.mocked(mockedApiClient.get).mockResolvedValueOnce({ data: [comentario] });
+
+      const result = await listarComentarios(42);
+
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/incidentes/42/comentarios');
+      expect(result).toEqual([comentario]);
+    });
+
+    it('agregarComentario hace POST a /incidentes/{id}/comentarios con el texto', async () => {
+      const comentario = {
+        id: 2,
+        incidente_id: 42,
+        autor_empleado_id: 3,
+        texto: 'Nuevo',
+        created_at: '2026-06-11T11:00:00Z',
+      };
+      vi.mocked(mockedApiClient.post).mockResolvedValueOnce({ data: comentario });
+
+      const result = await agregarComentario(42, 'Nuevo');
+
+      expect(mockedApiClient.post).toHaveBeenCalledWith('/incidentes/42/comentarios', {
+        texto: 'Nuevo',
+      });
+      expect(result).toEqual(comentario);
     });
   });
 });

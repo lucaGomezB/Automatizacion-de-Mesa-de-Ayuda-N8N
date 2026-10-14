@@ -25,7 +25,7 @@ vi.mock('@/hooks/useHealthCheck', () => ({
 
 const useAuthMock = vi.mocked(useAuth);
 
-function authState(modo: 'PROPIO' | 'GLOBAL' | 'VACIO') {
+function authState(modo: 'PROPIO' | 'GLOBAL' | 'SECTOR' | 'VACIO') {
   return {
     token: 't',
     username: 'u',
@@ -41,7 +41,7 @@ function authState(modo: 'PROPIO' | 'GLOBAL' | 'VACIO') {
   };
 }
 
-function renderHeader(modo: 'PROPIO' | 'GLOBAL' | 'VACIO') {
+function renderHeader(modo: 'PROPIO' | 'GLOBAL' | 'SECTOR' | 'VACIO') {
   useAuthMock.mockReturnValue(authState(modo));
   return render(
     <MemoryRouter>
@@ -66,6 +66,14 @@ describe('Header - navegacion por alcance', () => {
     renderHeader('PROPIO');
     expect(screen.getByRole('link', { name: /mis incidentes/i })).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: /administraci/i })).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /portal/i })).toBeInTheDocument();
+  });
+
+  // c-86 FR-RBAC-003: el alcance SECTOR tambien ve el enlace operativo.
+  it('SECTOR muestra el enlace operativo y no el de Mis incidentes', () => {
+    renderHeader('SECTOR');
+    expect(screen.getByRole('link', { name: /administraci/i })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /mis incidentes/i })).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: /portal/i })).toBeInTheDocument();
   });
 
