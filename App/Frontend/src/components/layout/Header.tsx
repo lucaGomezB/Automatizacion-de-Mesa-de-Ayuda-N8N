@@ -5,8 +5,9 @@
  *   Presenta tres columnas en un grid de 3 columnas:
  *   1. Identidad institucional: logotipo y nombre del sistema.
  *   2. Navegación principal: enlaces renderizados por `alcance.modo` (c-81):
- *      Portal ("/") para todo autenticado, Administración ("/admin") solo GLOBAL,
- *      "Mis incidentes" ("/mis-incidentes") solo PROPIO, Dashboard sin cambios.
+ *      Portal ("/") para todo autenticado, Administración ("/admin") para GLOBAL
+ *      y SECTOR (c-86 FR-RBAC-003), "Mis incidentes" ("/mis-incidentes") solo
+ *      PROPIO, Dashboard sin cambios.
  *   3. Indicador de salud de la API: visible con alcance GLOBAL; usa `useHealthCheck`
  *      para mostrar un punto color verde/amarillo/rojo según el estado del backend.
  *
@@ -24,6 +25,8 @@ export function Header() {
   const navigate = useNavigate();
   const esGlobal = alcance.modo === 'GLOBAL';
   const esPropio = alcance.modo === 'PROPIO';
+  // La superficie operativa admite GLOBAL y SECTOR (c-86, FR-RBAC-002/003).
+  const esOperativo = alcance.modo === 'GLOBAL' || alcance.modo === 'SECTOR';
   const { data: health, isError: healthError, isPending: healthPending } = useHealthCheck();
 
   // Cierre de sesion (FSU-001): reutiliza logout() del contexto y navega al login.
@@ -67,8 +70,8 @@ export function Header() {
             <BarChart3 className="h-3.5 w-3.5 mr-1 inline" />
             Dashboard
           </NavLink>
-          {/* Enlace operativo: solo alcance GLOBAL */}
-          {esGlobal && (
+          {/* Enlace operativo: alcance GLOBAL o SECTOR (c-86) */}
+          {esOperativo && (
             <NavLink to="/admin" className={navLinkClass}>
               Administración
             </NavLink>

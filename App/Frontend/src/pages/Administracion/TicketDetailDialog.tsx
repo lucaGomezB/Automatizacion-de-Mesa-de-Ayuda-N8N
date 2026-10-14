@@ -23,6 +23,8 @@ import {
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { ErrorAlert } from '@/components/shared/ErrorAlert';
 import { DetalleIncidente } from './DetalleIncidente';
+import { AccionesCiclo } from './AccionesCiclo';
+import { ComentariosIncidente } from './ComentariosIncidente';
 import { extractApiErrorMessage } from '@/services/api';
 import { obtenerIncidente } from '@/services/incidentesService';
 import { listarClasificacionesPorIncidente } from '@/services/clasificacionesService';
@@ -87,7 +89,19 @@ export function TicketDetailDialog({ open, incidenteId, onClose }: TicketDetailD
 
         {/* Contenido del incidente (vista compartida de solo lectura) */}
         {incidente && (
-          <DetalleIncidente incidente={incidente} clasificacion={clasificacionPrincipal} />
+          <>
+            <DetalleIncidente incidente={incidente} clasificacion={clasificacionPrincipal} />
+
+            {/* Acciones del ciclo de cierre segun el rol (c-86, D11).
+                El backend sigue siendo el limite de seguridad (FIH-004). */}
+            <AccionesCiclo
+              incidente={incidente}
+              onMutated={() => void refetchIncidente()}
+            />
+
+            {/* Comentarios append-only del incidente (c-86, FIH-003) */}
+            <ComentariosIncidente incidenteId={incidente.id} />
+          </>
         )}
       </DialogContent>
     </Dialog>

@@ -173,6 +173,29 @@ describe('AuthContext (rol y alcance, c-81)', () => {
     expect(result.current.alcance.modo).toBe('PROPIO');
   });
 
+  // c-86 FR-RBAC-001: la sesion expone el alcance SECTOR del backend (sin inferirlo).
+  it('tras login expone el modo SECTOR y el rol gestion_incidentes del backend', async () => {
+    postMock.mockResolvedValueOnce({
+      data: { access_token: 'a', token_type: 'bearer', refresh_token: 'r' },
+    });
+    getMock.mockResolvedValueOnce({
+      data: {
+        username: 'gestion',
+        rol: 'gestion_incidentes',
+        alcance: { modo: 'SECTOR' },
+      },
+    });
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    await act(async () => {
+      expect(await result.current.login('gestion', 'pass')).toBe(true);
+    });
+
+    expect(result.current.rol).toBe('gestion_incidentes');
+    expect(result.current.alcance.modo).toBe('SECTOR');
+  });
+
   it('una cuenta sin empleado vinculado expone alcance VACIO', async () => {
     postMock.mockResolvedValueOnce({
       data: { access_token: 'a', token_type: 'bearer' },

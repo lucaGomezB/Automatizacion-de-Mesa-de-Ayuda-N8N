@@ -77,3 +77,45 @@ export function truncar(texto: string, maxCaracteres = 80): string {
   if (texto.length <= maxCaracteres) return texto;
   return `${texto.slice(0, maxCaracteres)}…`;
 }
+
+// ── Comentarios de incidente (c-86, FIH-003 / D7) ────────────────────────────
+
+/** Separador canonico entre entradas de comentario. */
+export const SEPARADOR_COMENTARIO = '----------';
+
+/** Zona horaria institucional de presentacion (UTC-3). */
+const ZONA_HORARIA = 'America/Argentina/Buenos_Aires';
+
+/**
+ * Formatea una marca temporal ISO 8601 como "HH:MM:SS DD/MM/AAAA" en la zona
+ * `America/Argentina/Buenos_Aires`, con independencia de la zona del servidor.
+ *
+ * Se usa `hourCycle: 'h23'` para evitar el "24:00" de algunos entornos.
+ */
+export function formatearMarcaTemporal(isoString: string): string {
+  const partes = new Intl.DateTimeFormat('es-AR', {
+    timeZone: ZONA_HORARIA,
+    hourCycle: 'h23',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }).formatToParts(new Date(isoString));
+
+  const valor = (tipo: Intl.DateTimeFormatPartTypes): string =>
+    partes.find((p) => p.type === tipo)?.value ?? '';
+
+  return (
+    `${valor('hour')}:${valor('minute')}:${valor('second')} ` +
+    `${valor('day')}/${valor('month')}/${valor('year')}`
+  );
+}
+
+/**
+ * Compone la entrada de comentario en el formato `HH:MM:SS DD/MM/AAAA : {texto}`.
+ */
+export function formatearComentario(texto: string, createdAt: string): string {
+  return `${formatearMarcaTemporal(createdAt)} : ${texto}`;
+}

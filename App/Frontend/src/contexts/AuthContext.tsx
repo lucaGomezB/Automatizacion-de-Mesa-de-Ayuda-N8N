@@ -38,7 +38,7 @@ interface AuthState {
   mfaRequired: boolean;
   /** Rol del empleado vinculado (null si no hay empleado / no resuelto). */
   rol: string | null;
-  /** Alcance de incidentes derivado (PROPIO | GLOBAL | VACIO). */
+  /** Alcance de incidentes derivado (PROPIO | GLOBAL | SECTOR | VACIO). */
   alcance: Alcance;
 }
 

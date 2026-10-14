@@ -16,6 +16,14 @@ import type { CanalOrigenRead, EstadoRead, SectorRead } from './catalog';
 
 export type PrioridadEnum = 'baja' | 'media' | 'alta';
 
+/**
+ * Estados NO terminales editables por subrecurso (c-86, ILC-005).
+ *
+ * Espejo del `IncidenteEstadoUpdate` del backend: 'cerrado' se rechaza con 422
+ * porque el estado terminal solo se alcanza por el modelo de cierre.
+ */
+export type EstadoEditable = 'en proceso' | 'en espera' | 'resuelto';
+
 // Payload enviado al endpoint POST /api/v1/incidentes
 export interface IncidenteCreate {
   descripcion: string;

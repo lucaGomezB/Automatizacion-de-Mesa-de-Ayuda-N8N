@@ -73,7 +73,7 @@ function App() {
         <Route
           path="/admin"
           element={
-            <ProtectedRoute requiere="GLOBAL">
+            <ProtectedRoute requiere={['GLOBAL', 'SECTOR']}>
               <AdministracionPage />
             </ProtectedRoute>
           }

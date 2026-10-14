@@ -188,6 +188,7 @@ export function extractApiErrorMessage(error: unknown): string {
     if (axiosError.response?.data?.error?.message) return axiosError.response.data.error.message;
 
     const status = axiosError.response?.status;
+    if (status === 403) return 'No tenés permiso para realizar esta acción.';
     if (status === 404) return 'El recurso solicitado no existe.';
     if (status === 422) return 'Los datos enviados no son válidos.';
     if (status === 500) return 'Error interno del servidor. Verificá que la base de datos esté accesible.';

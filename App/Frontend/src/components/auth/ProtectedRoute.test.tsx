@@ -33,6 +33,23 @@ describe('resolverRedireccion (funcion pura)', () => {
     ).toBeNull();
   });
 
+  // c-86 FR-RBAC-002: la superficie operativa admite GLOBAL Y SECTOR.
+  it('SECTOR accede a la superficie operativa cuando se exige [GLOBAL, SECTOR]', () => {
+    expect(
+      resolverRedireccion({
+        isAuthenticated: true,
+        modo: 'SECTOR',
+        requiere: ['GLOBAL', 'SECTOR'],
+      })
+    ).toBeNull();
+  });
+
+  it('SECTOR no accede a la cola de revision (exige GLOBAL)', () => {
+    expect(
+      resolverRedireccion({ isAuthenticated: true, modo: 'SECTOR', requiere: 'GLOBAL' })
+    ).toBe('/');
+  });
+
   it('PROPIO accede a Mis incidentes (sin redireccion)', () => {
     expect(
       resolverRedireccion({ isAuthenticated: true, modo: 'PROPIO', requiere: 'PROPIO' })
@@ -61,7 +78,7 @@ describe('resolverRedireccion (funcion pura)', () => {
   });
 });
 
-function renderGuard(modo: 'PROPIO' | 'GLOBAL' | 'VACIO', autenticado = true) {
+function renderGuard(modo: 'PROPIO' | 'GLOBAL' | 'SECTOR' | 'VACIO', autenticado = true) {
   useAuthMock.mockReturnValue({
     token: 't',
     username: 'u',
@@ -81,7 +98,8 @@ function renderGuard(modo: 'PROPIO' | 'GLOBAL' | 'VACIO', autenticado = true) {
         <Route
           path="/admin"
           element={
-            <ProtectedRoute requiere="GLOBAL">
+            // La superficie operativa admite GLOBAL y SECTOR (c-86, FR-RBAC-002).
+            <ProtectedRoute requiere={['GLOBAL', 'SECTOR']}>
               <div>SUPERFICIE_OPS</div>
             </ProtectedRoute>
           }
@@ -100,6 +118,11 @@ describe('ProtectedRoute (comportamiento observable)', () => {
 
   it('GLOBAL ve la superficie operativa', () => {
     renderGuard('GLOBAL');
+    expect(screen.getByText('SUPERFICIE_OPS')).toBeInTheDocument();
+  });
+
+  it('SECTOR ve la superficie operativa acotada', () => {
+    renderGuard('SECTOR');
     expect(screen.getByText('SUPERFICIE_OPS')).toBeInTheDocument();
   });
 

@@ -28,12 +28,18 @@ export const REVISION_PENDIENTE_QUERY_KEY = 'revision-pendiente' as const;
  * Obtiene la cola de clasificaciones pendientes de revisión con refresco periódico.
  *
  * @param params - Parámetros opcionales de paginación (limit/offset).
+ * @param enabled - Si es false, la consulta no se dispara (p. ej. fuera del
+ *   alcance GLOBAL: la cola de revisión es GLOBAL-only, c-86 FR-RBAC-002).
  * @returns Objeto de React Query con `data: ClasificacionLogRead[]`.
  */
-export function useRevisionPendiente(params: RevisionPendienteParams = {}) {
+export function useRevisionPendiente(
+  params: RevisionPendienteParams = {},
+  enabled = true,
+) {
   return useQuery({
     queryKey: [REVISION_PENDIENTE_QUERY_KEY, params],
     queryFn: () => listarRevisionPendiente(params),
+    enabled,
     staleTime: 15_000,
     refetchInterval: 60_000,
     placeholderData: (previousData) => previousData,
@@ -47,12 +53,14 @@ export function useRevisionPendiente(params: RevisionPendienteParams = {}) {
  * `invalidateQueries({ queryKey: [REVISION_PENDIENTE_QUERY_KEY] })` ya existente
  * en el diálogo de validación invalida también el conteo, sin tocar el diálogo.
  *
+ * @param enabled - Si es false, no se consulta el conteo (alcance no GLOBAL).
  * @returns Objeto de React Query con `data: number` (total de pendientes).
  */
-export function useRevisionPendienteCount() {
+export function useRevisionPendienteCount(enabled = true) {
   return useQuery({
     queryKey: [REVISION_PENDIENTE_QUERY_KEY, 'count'],
     queryFn: contarRevisionPendiente,
+    enabled,
     staleTime: 15_000,
     refetchInterval: 60_000,
     placeholderData: (previousData) => previousData,
