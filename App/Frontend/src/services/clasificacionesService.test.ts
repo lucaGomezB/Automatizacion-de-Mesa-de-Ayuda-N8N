@@ -8,6 +8,7 @@ import {
   listarRevisionPendiente,
   listarClasificacionesPorIncidente,
   validarClasificacion,
+  contarRevisionPendiente,
 } from './clasificacionesService';
 import type { ClasificacionLogRead, ClasificacionValidar } from '../types/clasificacion';
 import type { SectorRead } from '../types/catalog';
@@ -94,6 +95,29 @@ describe('clasificacionesService', () => {
       await listarClasificacionesPorIncidente(99);
 
       expect(mockedApiClient.get).toHaveBeenCalledWith('/clasificaciones/incidente/99');
+    });
+  });
+
+  // ---------- contarRevisionPendiente ----------
+
+  describe('contarRevisionPendiente', () => {
+    it('hace GET a /clasificaciones/revision-pendiente/count y devuelve data.total', async () => {
+      vi.mocked(mockedApiClient.get).mockResolvedValueOnce({ data: { total: 137 } });
+
+      const result = await contarRevisionPendiente();
+
+      expect(mockedApiClient.get).toHaveBeenCalledWith(
+        '/clasificaciones/revision-pendiente/count'
+      );
+      expect(result).toBe(137);
+    });
+
+    it('devuelve 0 cuando el alcance no tiene pendientes', async () => {
+      vi.mocked(mockedApiClient.get).mockResolvedValueOnce({ data: { total: 0 } });
+
+      const result = await contarRevisionPendiente();
+
+      expect(result).toBe(0);
     });
   });
 

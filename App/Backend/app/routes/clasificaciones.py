@@ -14,6 +14,7 @@ Responsabilidad:
 
 Rutas expuestas (prefijo /api/v1/clasificaciones):
     GET   /revision-pendiente          → Cola de clasificaciones sin revisar (FIFO).
+    GET   /revision-pendiente/count    → Total de pendientes del alcance (VIS-006).
     GET   /incidente/{id}              → Historial de clasificaciones de un incidente.
     PATCH /{log_id}/validar            → Registrar la decisión del operador humano.
 """
@@ -27,7 +28,11 @@ from app.core.database import get_db_session
 from app.core.security import get_current_user
 from app.models.user import User
 from app.routes.incidentes import get_alcance_incidentes
-from app.schemas.clasificacion import ClasificacionLogRead, ClasificacionValidar
+from app.schemas.clasificacion import (
+    ClasificacionLogRead,
+    ClasificacionValidar,
+    RevisionPendienteCount,
+)
 from app.services.clasificacion_service import ClasificacionService
 from app.services.incident_visibility import AlcanceIncidentes
 
@@ -87,6 +92,35 @@ async def list_pending_review(
         limit=limit, offset=offset, alcance=alcance
     )
     return [ClasificacionLogRead.model_validate(log) for log in logs]
+
+
+@router.get(
+    "/revision-pendiente/count",
+    response_model=RevisionPendienteCount,
+    summary="Contar clasificaciones que requieren revisión humana",
+)
+async def count_pending_review(
+    service: ServiceDep,
+    alcance: AlcanceDep,
+    current_user: User = Depends(get_current_user),
+) -> RevisionPendienteCount:
+    """
+    Retorna el TOTAL de clasificaciones pendientes de revisión del alcance.
+
+    Recurso aditivo y liviano (D1): no envuelve el listado ni rompe su contrato
+    de array. El total coincide exactamente con la cantidad de elementos de
+    `GET /revision-pendiente` sin paginar para el mismo alcance (VIS-006), porque
+    comparte la derivación de alcance y la definición de "pendiente".
+
+    El conteo se acota por el mismo alcance que la cola (VIS-002): un
+    administrador o `mesa_de_ayuda` cuenta la cola completa; un `usuario_final`
+    cuenta solo los pendientes que reportó; una cuenta sin alcance cuenta cero.
+
+    Returns:
+        Objeto `RevisionPendienteCount` con el total de pendientes del alcance.
+    """
+    total = await service.count_pending_review(alcance=alcance)
+    return RevisionPendienteCount(total=total)
 
 
 @router.get(

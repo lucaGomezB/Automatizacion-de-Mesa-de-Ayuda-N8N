@@ -7,7 +7,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
-import { useRevisionPendiente } from './useRevisionPendiente';
+import { useRevisionPendiente, useRevisionPendienteCount, REVISION_PENDIENTE_QUERY_KEY } from './useRevisionPendiente';
 import * as clasificacionesService from '../services/clasificacionesService';
 import { createTestQueryClient } from '../test/utils';
 import type { ClasificacionLogRead } from '../types/clasificacion';
@@ -81,5 +81,23 @@ describe('useRevisionPendiente', () => {
       limit: 5,
       offset: 10,
     });
+  });
+
+  it('useRevisionPendienteCount expone el total y usa una queryKey prefijada por REVISION_PENDIENTE_QUERY_KEY', async () => {
+    vi.mocked(clasificacionesService.contarRevisionPendiente).mockResolvedValueOnce(137);
+    const client = createTestQueryClient();
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <QueryClientProvider client={client}>{children}</QueryClientProvider>
+    );
+
+    const { result } = renderHook(() => useRevisionPendienteCount(), { wrapper });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(clasificacionesService.contarRevisionPendiente).toHaveBeenCalledTimes(1);
+    expect(result.current.data).toBe(137);
+    // La clave prefijada por REVISION_PENDIENTE_QUERY_KEY permite que la
+    // invalidación por prefijo del diálogo de validación alcance el conteo.
+    expect(client.getQueryData([REVISION_PENDIENTE_QUERY_KEY, 'count'])).toBe(137);
   });
 });

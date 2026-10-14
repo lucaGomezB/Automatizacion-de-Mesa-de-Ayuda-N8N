@@ -14,7 +14,7 @@ Responsabilidad:
     200 casos etiquetados utilizado para calcular accuracy y F1 por categoría.
 """
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import selectinload
 
 from app.models.clasificacion_log import ClasificacionLog
@@ -133,6 +133,47 @@ class ClasificacionRepository(BaseRepository[ClasificacionLog]):
             )
         result = await self._session.execute(stmt)
         return list(result.scalars().all())
+
+    async def count_pending_review(
+        self, reportante_empleado_id: int | None = None
+    ) -> int:
+        """
+        Cuenta las clasificaciones pendientes de revisión dentro de un alcance.
+
+        Aplica EXACTAMENTE los mismos filtros de "pendiente" que
+        `list_pending_review`:
+            - requiere_revision_humana == True (el clasificador no tuvo confianza).
+            - sector_id_validado IS NULL (el operador aún no corrigió la categoría).
+
+        No carga relationships ni ordena: un COUNT(*) escalar no serializa
+        relaciones, por lo que no aplica el requisito de selectinload (D5).
+
+        Args:
+            reportante_empleado_id: Filtro opcional por el reportante del INCIDENTE
+                                    del log (VIS-002): un `usuario_final` (alcance
+                                    PROPIO) solo cuenta la cola de lo que reportó.
+                                    None = cola completa (GLOBAL).
+
+        Returns:
+            Cantidad total de registros pendientes de revisión en el alcance.
+        """
+        stmt = (
+            select(func.count())
+            .select_from(ClasificacionLog)
+            # Filtro 1: el clasificador marcó el caso como de baja confianza
+            .where(ClasificacionLog.requiere_revision_humana == True)  # noqa: E712
+            # Filtro 2: el operador aún no validó la categoría
+            .where(ClasificacionLog.sector_id_validado == None)  # noqa: E711
+        )
+        if reportante_empleado_id is not None:
+            # Acota por el reportante del incidente asociado, igual que el listado.
+            stmt = stmt.where(
+                ClasificacionLog.incidente.has(
+                    Incidente.reportante_empleado_id == reportante_empleado_id
+                )
+            )
+        result = await self._session.execute(stmt)
+        return int(result.scalar_one())
 
     async def set_sectores_predichos(
         self, log: ClasificacionLog, sectores: list

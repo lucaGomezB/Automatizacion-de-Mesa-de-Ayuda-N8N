@@ -405,3 +405,54 @@ async def test_revision_pendiente_anonimo_401(engine, clasif_vis_env):
     async with _anon_client(engine) as c:
         resp = await c.get("/api/v1/clasificaciones/revision-pendiente")
     assert resp.status_code == 401
+
+
+# ── Conteo `revision-pendiente/count` acotado por alcance (VIS-006) ───────────
+
+
+@pytest.mark.asyncio
+async def test_count_revision_pendiente_admin_cola_completa(engine, clasif_vis_env):
+    """El administrador cuenta la cola completa (log_a + log_b)."""
+    async with _client(engine, clasif_vis_env["admin_user"]) as c:
+        resp = await c.get("/api/v1/clasificaciones/revision-pendiente/count")
+    assert resp.status_code == 200
+    assert resp.json() == {"total": 2}
+
+
+@pytest.mark.asyncio
+async def test_count_revision_pendiente_mesa_de_ayuda_cola_completa(
+    engine, clasif_vis_env
+):
+    """`mesa_de_ayuda` cuenta la cola completa (es la poblacion que debe revisar)."""
+    async with _client(engine, clasif_vis_env["mesa_user"]) as c:
+        resp = await c.get("/api/v1/clasificaciones/revision-pendiente/count")
+    assert resp.status_code == 200
+    assert resp.json() == {"total": 2}
+
+
+@pytest.mark.asyncio
+async def test_count_revision_pendiente_usuario_final_solo_propios(
+    engine, clasif_vis_env
+):
+    """El `usuario_final` de E1 cuenta solo el pendiente de un incidente que reporto."""
+    async with _client(engine, clasif_vis_env["e1_user"]) as c:
+        resp = await c.get("/api/v1/clasificaciones/revision-pendiente/count")
+    assert resp.status_code == 200
+    assert resp.json() == {"total": 1}
+
+
+@pytest.mark.asyncio
+async def test_count_revision_pendiente_alcance_vacio_cero(engine, clasif_vis_env):
+    """Una cuenta sin empleado cuenta cero (no la cola global)."""
+    async with _client(engine, clasif_vis_env["sin_empleado_user"]) as c:
+        resp = await c.get("/api/v1/clasificaciones/revision-pendiente/count")
+    assert resp.status_code == 200
+    assert resp.json() == {"total": 0}
+
+
+@pytest.mark.asyncio
+async def test_count_revision_pendiente_anonimo_401(engine, clasif_vis_env):
+    """Sin autenticacion el conteo responde 401."""
+    async with _anon_client(engine) as c:
+        resp = await c.get("/api/v1/clasificaciones/revision-pendiente/count")
+    assert resp.status_code == 401

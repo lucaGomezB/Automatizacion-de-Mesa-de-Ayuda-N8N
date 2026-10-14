@@ -2,10 +2,10 @@
  * Tabla de la cola de revisión humana del panel de administración.
  *
  * Responsabilidad:
- *   Presenta las clasificaciones cuya confianza fue inferior al umbral de 0.70 definido
- *   en `parameters_gemini.md`. El operador puede verificar la predicción de Gemini y,
- *   mediante el botón "Validar", abrir `ValidarClasificacionDialog` para confirmar o
- *   corregir el sector asignado.
+ *   Presenta las clasificaciones cuya confianza fue inferior al umbral de revisión
+ *   humana del clasificador (0.70). El operador puede verificar la predicción del
+ *   clasificador y, mediante el botón "Validar", abrir `ValidarClasificacionDialog`
+ *   para confirmar o corregir el sector asignado.
  *
  *   Una vez validado un registro (`sector_validado !== null`), el botón se reemplaza por
  *   el texto "✓ Validado" para evitar doble validación sobre la misma clasificación.

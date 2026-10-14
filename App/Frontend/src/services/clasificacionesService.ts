@@ -8,6 +8,7 @@
  *
  * Contratos de API relevantes:
  *   - GET   /clasificaciones/revision-pendiente       → cola FIFO de baja confianza
+ *   - GET   /clasificaciones/revision-pendiente/count → total de pendientes del alcance
  *   - GET   /clasificaciones/incidente/{id}           → historial de un incidente
  *   - PATCH /clasificaciones/{id}/validar             → decisión del operador humano
  */
@@ -15,6 +16,7 @@ import { apiClient } from './api';
 import type {
   ClasificacionLogRead,
   ClasificacionValidar,
+  RevisionPendienteCount,
   RevisionPendienteParams,
 } from '../types/clasificacion';
 
@@ -27,6 +29,19 @@ export async function listarRevisionPendiente(
     { params }
   );
   return data;
+}
+
+/**
+ * Retorna el TOTAL de clasificaciones pendientes de revisión del alcance del usuario.
+ *
+ * Complementa al listado paginado: el contador de la pestaña no debe quedar
+ * acotado al tamaño de una página (FRH-008, VIS-006).
+ */
+export async function contarRevisionPendiente(): Promise<number> {
+  const { data } = await apiClient.get<RevisionPendienteCount>(
+    '/clasificaciones/revision-pendiente/count'
+  );
+  return data.total;
 }
 
 /** Obtiene el historial completo de clasificaciones de un incidente específico. */

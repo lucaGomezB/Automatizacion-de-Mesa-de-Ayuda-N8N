@@ -28,6 +28,20 @@ from app.services.incident_visibility import AlcanceIncidentes, ModoAlcance
 logger = get_logger(__name__)
 
 
+class _AlcanceVacio:
+    """Sentinela de alcance VACIO para `_reportante_filtro` (D4).
+
+    Distingue "cola completa" (None, alcance GLOBAL) de "cola vacia por alcance"
+    (esta sentinela). Sin ella, un None ambiguo no permitiria decidir si el
+    servicio debe devolver una lista vacia/0 sin consultar la base.
+    """
+
+
+# Instancia unica del sentinela: la comparacion es por identidad.
+_VACIO = _AlcanceVacio()
+
+
+
 class ClasificacionService:
     """
     Servicio de lógica de negocio para la gestión de registros de clasificación.
@@ -111,17 +125,64 @@ class ClasificacionService:
         Returns:
             Lista de registros pendientes ordenados por antigüedad (FIFO).
         """
-        reportante_filtro: int | None = None
-        if alcance is not None:
-            if alcance.modo is ModoAlcance.VACIO:
-                return []
-            if alcance.modo is ModoAlcance.PROPIO:
-                if alcance.reportante_empleado_id is None:
-                    return []
-                reportante_filtro = alcance.reportante_empleado_id
+        reportante_filtro = self._reportante_filtro(alcance)
+        if reportante_filtro is _VACIO:
+            return []
         return await self._repo.list_pending_review(
             limit=limit, offset=offset, reportante_empleado_id=reportante_filtro
         )
+
+    async def count_pending_review(
+        self, alcance: AlcanceIncidentes | None = None
+    ) -> int:
+        """
+        Cuenta la cola de clasificaciones que requieren revisión humana (VIS-006).
+
+        Reutiliza la MISMA derivación de alcance que `list_pending_review` (D4):
+            - GLOBAL: cuenta toda la cola.
+            - PROPIO: cuenta solo los pendientes cuyo incidente reportó el empleado.
+            - VACIO:  devuelve 0 SIN consultar la base de datos.
+
+        El total coincide con la cantidad de elementos del listado equivalente
+        sin paginar, porque repositorio, listado y conteo comparten la definición
+        de "pendiente" (requiere_revision_humana == True Y sector_id_validado IS NULL).
+
+        Args:
+            alcance: Alcance de visibilidad por rol (opcional).
+
+        Returns:
+            Cantidad total de registros pendientes dentro del alcance.
+        """
+        reportante_filtro = self._reportante_filtro(alcance)
+        if reportante_filtro is _VACIO:
+            return 0
+        return await self._repo.count_pending_review(
+            reportante_empleado_id=reportante_filtro
+        )
+
+    def _reportante_filtro(
+        self, alcance: AlcanceIncidentes | None
+    ) -> int | None | _AlcanceVacio:
+        """
+        Traduce el alcance a un filtro `reportante_empleado_id` (D4).
+
+        Compartido por `list_pending_review` y `count_pending_review` para que
+        listado y conteo NO divergan. La derivación rol -> alcance vive en
+        `incident_visibility` (VIS-002); este método solo la proyecta:
+
+            - None         → sin filtro (alcance GLOBAL o ausente): cola completa.
+            - int          → alcance PROPIO: solo lo reportado por ese empleado.
+            - _VACIO       → alcance VACIO (o PROPIO sin empleado): sin resultados.
+        """
+        if alcance is None:
+            return None
+        if alcance.modo is ModoAlcance.VACIO:
+            return _VACIO
+        if alcance.modo is ModoAlcance.PROPIO:
+            if alcance.reportante_empleado_id is None:
+                return _VACIO
+            return alcance.reportante_empleado_id
+        return None
 
     async def validate(
         self,
