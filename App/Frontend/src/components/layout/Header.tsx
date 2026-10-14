@@ -12,18 +12,25 @@
  *
  *   El estilo active de los NavLinks se aplica dinámicamente para reflejar la ruta actual.
  */
-import { NavLink } from 'react-router-dom';
-import { BarChart3, ClipboardList, TicketCheck } from 'lucide-react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { BarChart3, ClipboardList, LogOut, TicketCheck } from 'lucide-react';
 import { useHealthCheck } from '@/hooks/useHealthCheck';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 
 export function Header() {
   // Navegacion por ALCANCE, no por pathname (c-81, FR-RBAC-003).
-  const { alcance } = useAuth();
+  const { alcance, logout } = useAuth();
+  const navigate = useNavigate();
   const esGlobal = alcance.modo === 'GLOBAL';
   const esPropio = alcance.modo === 'PROPIO';
   const { data: health, isError: healthError, isPending: healthPending } = useHealthCheck();
+
+  // Cierre de sesion (FSU-001): reutiliza logout() del contexto y navega al login.
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     cn(
@@ -75,8 +82,8 @@ export function Header() {
           )}
         </nav>
 
-        {/* Columna derecha: indicador de salud de la API (solo en /admin) */}
-        <div className="flex justify-end">
+        {/* Columna derecha: indicador de salud (solo GLOBAL) + cierre de sesion (siempre, FSU-001) */}
+        <div className="flex items-center justify-end gap-2 sm:gap-4">
           {esGlobal && (
             <div className="flex items-center gap-2 text-sm">
               <span
@@ -95,6 +102,19 @@ export function Header() {
               </span>
             </div>
           )}
+          {/* Accion de sesion: visible para TODO autenticado, sin depender del alcance */}
+          <button
+            type="button"
+            onClick={handleLogout}
+            className={cn(
+              'inline-flex items-center gap-1.5 px-2.5 py-2 sm:px-4 rounded-md',
+              'text-xs sm:text-sm font-medium transition-colors whitespace-nowrap',
+              'text-white/75 hover:bg-white/10 hover:text-white'
+            )}
+          >
+            <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
+            Cerrar sesión
+          </button>
         </div>
       </div>
     </header>
