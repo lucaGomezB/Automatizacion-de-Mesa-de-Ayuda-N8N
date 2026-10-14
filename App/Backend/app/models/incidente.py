@@ -32,7 +32,7 @@ from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, String, Te
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.asociaciones import incidente_sector_adicional
-from app.models.base import Base, TimestampMixin
+from app.models.base import Base, TimestampMixin, utcnow
 from app.models.catalog import CanalOrigen, Estado, Sector
 from app.utils.encryption import EncryptedText
 
@@ -189,6 +189,27 @@ class Incidente(Base, TimestampMixin):
         lazy="selectin",
     )
 
+    # Cierres por sector (c-86, D4). Se cargan eagerly (selectin) para que la
+    # decision de visibilidad SECTOR (`sectores_cerrados`) nunca dispare un
+    # lazy-load en contexto async. El borrado del incidente cascadea por FK.
+    cierres_sector: Mapped[list["IncidenteCierreSector"]] = relationship(
+        "IncidenteCierreSector",
+        lazy="selectin",
+    )
+
+    @property
+    def sector_ids(self) -> frozenset[int]:
+        """Conjunto de sectores del incidente: principal + adicionales (c-86, D3)."""
+        ids = {s.id for s in self.sectores_adicionales}
+        if self.sector_id is not None:
+            ids.add(self.sector_id)
+        return frozenset(ids)
+
+    @property
+    def sectores_cerrados(self) -> frozenset[int]:
+        """Sectores con un cierre registrado para este incidente (c-86, D4)."""
+        return frozenset(c.sector_id for c in self.cierres_sector)
+
     # Indicador de alerta: True cuando el clasificador no alcanzó el umbral de
     # confianza de 0.70 o cuando Gemini falló. El operador humano debe revisar
     # y corregir la categoría asignada.
@@ -217,4 +238,132 @@ class Incidente(Base, TimestampMixin):
         return (
             f"<Incidente id={self.id} prioridad={self.prioridad} "
             f"estado_id={self.estado_id}>"
+        )
+
+
+class IncidenteCierreSector(Base):
+    """
+    Cierre de un incidente para UN sector (c-86, D4).
+
+    Modela el cierre por sector que sostiene la vista activa (VIS-007) y el
+    historial inmediato por sector (VIS-008). La PK compuesta
+    `(incidente_id, sector_id)` da idempotencia natural: un segundo cierre del
+    mismo sector no duplica la fila.
+
+    FKs:
+        incidente_id: CASCADE (borrar el incidente limpia sus cierres).
+        sector_id:    RESTRICT (no se elimina un sector con cierres).
+        cerrado_por:  SET NULL (el borrado ARCO del empleado preserva la fila,
+                      sin PII: solo se anula el actor).
+    """
+
+    __tablename__ = "incidente_cierre_sector"
+
+    incidente_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("incidente.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    sector_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("sector.id", ondelete="RESTRICT"),
+        primary_key=True,
+        index=True,
+    )
+    cerrado_por: Mapped[int | None] = mapped_column(
+        Integer,
+        ForeignKey("directorio_empleado.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    cerrado_en: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, nullable=False
+    )
+
+    def __repr__(self) -> str:
+        return (
+            f"<IncidenteCierreSector incidente_id={self.incidente_id} "
+            f"sector_id={self.sector_id}>"
+        )
+
+
+class IncidenteEvento(Base):
+    """
+    Evento de auditoria del ciclo de vida de un incidente (c-86, D8).
+
+    Es el registro durable del actor y el instante de cada operacion de ciclo
+    (cierre por sector, cierre global, reapertura y cambio de estado). Como los
+    cierres se borran en la reapertura, esta tabla es la unica traza persistente
+    del actor (ILC-006). Sin PII: solo identificadores internos.
+
+    Tipos validos: `cierre_sector`, `cierre_global`, `reapertura`, `cambio_estado`.
+    """
+
+    __tablename__ = "incidente_evento"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    incidente_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("incidente.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    tipo: Mapped[str] = mapped_column(String(30), nullable=False)
+    actor_empleado_id: Mapped[int | None] = mapped_column(
+        Integer,
+        ForeignKey("directorio_empleado.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    sector_id: Mapped[int | None] = mapped_column(
+        Integer,
+        ForeignKey("sector.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    estado_anterior: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    estado_nuevo: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, nullable=False, index=True
+    )
+
+    def __repr__(self) -> str:
+        return (
+            f"<IncidenteEvento id={self.id} incidente_id={self.incidente_id} "
+            f"tipo={self.tipo!r}>"
+        )
+
+
+class IncidenteComentario(Base):
+    """
+    Comentario APPEND-ONLY sobre un incidente (c-86, D7).
+
+    Conserva por entrada el incidente, el empleado autor (SET NULL si el
+    empleado se borra, sin PII), el texto y el instante de creacion. No existe
+    endpoint de edicion ni de borrado (ICM-001).
+    """
+
+    __tablename__ = "incidente_comentario"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    incidente_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("incidente.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    autor_empleado_id: Mapped[int | None] = mapped_column(
+        Integer,
+        ForeignKey("directorio_empleado.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    texto: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, nullable=False, index=True
+    )
+
+    def __repr__(self) -> str:
+        return (
+            f"<IncidenteComentario id={self.id} "
+            f"incidente_id={self.incidente_id}>"
         )

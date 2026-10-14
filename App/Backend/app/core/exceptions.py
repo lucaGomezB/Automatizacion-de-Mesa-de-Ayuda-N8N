@@ -160,6 +160,23 @@ class SectorNotFoundError(AppBaseException):
     """El sector referenciado no existe en el catálogo de sectores."""
 
 
+class PermisoDenegadoError(AppBaseException):
+    """
+    La politica del rol del actor no autoriza la operacion solicitada (c-86).
+
+    Se traduce a HTTP 403 con el envelope estandar. Es distinta del 404 por
+    fuera-de-alcance: aca el actor SI esta autenticado pero su rol no posee el
+    permiso (`cierra_sector`, `cierra_global`, `reabre` o `edita_estado`).
+    """
+
+    def __init__(self, permiso: str) -> None:
+        super().__init__(
+            "La operacion no esta autorizada para el rol del usuario.",
+            {"permiso": permiso},
+        )
+        self.permiso = permiso
+
+
 class EstadoNotFoundError(AppBaseException):
     """
     El estado referenciado no existe en el catálogo de estados del ciclo de vida.

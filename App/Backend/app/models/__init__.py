@@ -8,7 +8,13 @@ from app.models.catalog import CanalOrigen, Estado, Sector
 from app.models.clasificacion_log import ClasificacionLog
 from app.models.costo_guarda_contador import CostoGuardaContador
 from app.models.empleado import Empleado, RolEmpleado
-from app.models.incidente import Incidente, PrioridadEnum
+from app.models.incidente import (
+    Incidente,
+    IncidenteCierreSector,
+    IncidenteComentario,
+    IncidenteEvento,
+    PrioridadEnum,
+)
 from app.models.refresh_token import RefreshToken
 from app.models.telefonia_ingreso import TelefoniaIngreso, TranscripcionEstado
 from app.models.telefonia_pending_call import TelefoniaPendingCall
@@ -22,6 +28,9 @@ __all__ = [
     "CanalOrigen",
     "Incidente",
     "PrioridadEnum",
+    "IncidenteCierreSector",
+    "IncidenteEvento",
+    "IncidenteComentario",
     "ClasificacionLog",
     "CostoGuardaContador",
     "Empleado",

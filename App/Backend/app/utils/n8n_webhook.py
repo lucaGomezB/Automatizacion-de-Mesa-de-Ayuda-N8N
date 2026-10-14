@@ -100,6 +100,72 @@ async def notify_n8n(incidente_id: int, result: ClasificacionResult) -> None:
         )
 
 
+# Marcador de evento del aviso post-revision (c-86, NR-008).
+EVENTO_POST_REVISION = "incidente_validado_gestion"
+
+
+def build_post_revision_payload(
+    *, incidente_id: int, sectores: list[int], destinatarios: list[str]
+) -> dict:
+    """
+    Construye el payload EXACTO del aviso post-revision (c-86, NR-008).
+
+    El backend RESUELVE los destinatarios y los expone como lista (vacia cuando
+    no hay coincidencia); N8N no los resuelve por su cuenta. Se acompanan el id
+    del incidente, los sectores validados y el marcador de evento.
+    """
+    return {
+        "evento": EVENTO_POST_REVISION,
+        "incidente_id": incidente_id,
+        "sectores": list(sectores),
+        "destinatarios_gestion": list(destinatarios),
+    }
+
+
+async def notify_n8n_post_revision(
+    incidente_id: int,
+    sectores: list[int],
+    destinatarios: list[str],
+) -> None:
+    """
+    Notifica a N8N el aviso post-revision a `gestion_incidentes` (fire-and-forget).
+
+    Si N8N_WEBHOOK_URL no esta configurado, retorna silenciosamente (entornos sin
+    N8N). Mismo URL/secreto que `notify_n8n`. Un fallo se registra como advertencia
+    con la cantidad de destinatarios, SIN emails en claro (NR-008); nunca se
+    propaga al llamador, de modo que la validacion no depende del aviso.
+    """
+    settings = get_settings()
+    if not settings.n8n_webhook_url:
+        return
+
+    payload = build_post_revision_payload(
+        incidente_id=incidente_id, sectores=sectores, destinatarios=destinatarios
+    )
+    headers = {}
+    if settings.n8n_webhook_secret:
+        headers["X-N8N-Secret"] = settings.n8n_webhook_secret
+
+    try:
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            response = await client.post(
+                settings.n8n_webhook_url, json=payload, headers=headers
+            )
+            response.raise_for_status()
+            logger.info(
+                "n8n_post_revision_notified",
+                incidente_id=incidente_id,
+                cantidad_destinatarios=len(destinatarios),
+                status_code=response.status_code,
+            )
+    except Exception:
+        logger.warning(
+            "n8n_post_revision_failed",
+            incidente_id=incidente_id,
+            cantidad_destinatarios=len(destinatarios),
+        )
+
+
 # ── Handoff del canal de telefonía (c-52) ───────────────────────────────────
 
 # Resultados observables del handoff. La falta de URL o de secreto NO es un

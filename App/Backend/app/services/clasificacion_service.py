@@ -24,8 +24,27 @@ from app.repositories.clasificacion_repository import ClasificacionRepository
 from app.repositories.incidente_repository import IncidenteRepository
 from app.repositories.sector_repository import SectorRepository
 from app.services.incident_visibility import AlcanceIncidentes, ModoAlcance
+from app.services.notification_recipient_service import NotificationRecipientService
+from app.utils.n8n_webhook import notify_n8n_post_revision
 
 logger = get_logger(__name__)
+
+# Tareas fire-and-forget del aviso post-revision; se retienen hasta completar
+# (un `asyncio.create_task` sin referencia puede ser recolectado por el GC).
+_post_revision_tasks: set = set()
+
+
+def _dispatch_post_revision(
+    incidente_id: int, sectores: list[int], destinatarios: list[str]
+) -> None:
+    """Programa el aviso post-revision fire-and-forget conservando su referencia."""
+    import asyncio
+
+    task = asyncio.create_task(
+        notify_n8n_post_revision(incidente_id, sectores, destinatarios)
+    )
+    _post_revision_tasks.add(task)
+    task.add_done_callback(_post_revision_tasks.discard)
 
 
 class _AlcanceVacio:
@@ -66,6 +85,9 @@ class ClasificacionService:
         self._sector_repo = SectorRepository(session)
         # IncidenteRepository para propagar la validación al incidente (misma transacción)
         self._incidente_repo = IncidenteRepository(session)
+        # Sesión retenida: la resolucion de destinatarios post-revision (NR-008)
+        # construye su servicio con la misma sesion/transaccion.
+        self._session = session
 
     async def list_by_incidente(
         self, incidente_id: int, alcance: AlcanceIncidentes | None = None
@@ -245,6 +267,19 @@ class ClasificacionService:
             log.incidente_id,
             sector_id=sector_id,
             requiere_revision_humana=False,
+        )
+
+        # c-86 (NR-008): una vez que el incidente paso la revision humana, se
+        # resuelve y avisa (fire-and-forget) a los `gestion_incidentes` ACTIVOS
+        # de los sectores validados. No bloquea ni altera la respuesta.
+        sector_ids = {sector_id}
+        if sectores_adicionales:
+            sector_ids |= {s.id for s in adjuntos.values()}
+        destinatarios = await NotificationRecipientService(
+            self._session
+        ).resolver_destinatarios_gestion(sorted(sector_ids))
+        _dispatch_post_revision(
+            log.incidente_id, sorted(sector_ids), destinatarios
         )
 
         logger.info(

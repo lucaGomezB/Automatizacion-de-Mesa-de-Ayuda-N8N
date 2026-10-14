@@ -387,3 +387,85 @@ async def test_admin_filtra_origen_de_cualquier_sector(engine, vis_env):
         )
     assert resp.status_code == 200
     assert [i["id"] for i in resp.json()] == [vis_env["incidente_b"]]
+
+
+# ── c-86: alcance SECTOR (VIS-007) ────────────────────────────────────────────
+
+
+class _SectorRef:
+    """Referencia minima a un sector (solo expone `id`)."""
+
+    def __init__(self, sector_id: int) -> None:
+        self.id = sector_id
+
+
+class _IncidenteSectorStub:
+    """Stub de incidente con el contrato que `permite_incidente` SECTOR necesita."""
+
+    def __init__(
+        self,
+        sector_id=None,
+        adicionales=(),
+        cerrados=(),
+        reportante_empleado_id=None,
+    ) -> None:
+        self.sector_id = sector_id
+        self.sectores_adicionales = [_SectorRef(i) for i in adicionales]
+        self.sectores_cerrados = frozenset(cerrados)
+        self.reportante_empleado_id = reportante_empleado_id
+
+
+def _empleado_de_sector(rol, sector_id):
+    e = _empleado(rol)
+    e.sector_id = sector_id
+    return e
+
+
+def test_alcance_desde_empleado_sector_con_y_sin_sector():
+    """`gestion_incidentes` con sector -> SECTOR con `sector_id`; sin sector -> VACIO."""
+    con = alcance_desde_empleado(
+        _empleado_de_sector(RolEmpleado.gestion_incidentes, 5)
+    )
+    assert con.modo is ModoAlcance.SECTOR
+    assert con.sector_id == 5
+
+    sin = alcance_desde_empleado(
+        _empleado_de_sector(RolEmpleado.gestion_incidentes, None)
+    )
+    assert sin.modo is ModoAlcance.VACIO
+
+
+def test_permite_incidente_sector_pertenencia_y_cierre():
+    """SECTOR: pertenece por principal o adicional; no cerrado para el sector."""
+    alcance = AlcanceIncidentes(ModoAlcance.SECTOR, sector_id=5)
+
+    # Pertenece por sector principal.
+    assert alcance.permite_incidente(_IncidenteSectorStub(sector_id=5)) is True
+    # Pertenece por sector adicional.
+    assert (
+        alcance.permite_incidente(
+            _IncidenteSectorStub(sector_id=1, adicionales=[5])
+        )
+        is True
+    )
+    # No pertenece al conjunto.
+    assert (
+        alcance.permite_incidente(
+            _IncidenteSectorStub(sector_id=1, adicionales=[2])
+        )
+        is False
+    )
+    # Sin sector asignado.
+    assert alcance.permite_incidente(_IncidenteSectorStub(sector_id=None)) is False
+    # Cerrado para el sector: sale de la vista activa.
+    assert (
+        alcance.permite_incidente(_IncidenteSectorStub(sector_id=5, cerrados=[5]))
+        is False
+    )
+
+
+def test_permite_incidente_sector_sin_sector_es_falso():
+    """Un alcance SECTOR sin `sector_id` no permite ningun incidente."""
+    alcance = AlcanceIncidentes(ModoAlcance.SECTOR, sector_id=None)
+    assert alcance.permite_incidente(_IncidenteSectorStub(sector_id=None)) is False
+    assert alcance.permite_incidente(_IncidenteSectorStub(sector_id=1)) is False

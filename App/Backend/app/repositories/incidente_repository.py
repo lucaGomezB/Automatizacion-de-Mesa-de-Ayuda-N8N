@@ -17,10 +17,12 @@ Decisión de eager loading:
 
 from datetime import datetime
 
-from sqlalchemy import and_, delete, select
+from sqlalchemy import and_, delete, or_, select
 from sqlalchemy.orm import selectinload
 
-from app.models.incidente import Incidente, PrioridadEnum
+from app.models.catalog import Estado
+from app.models.asociaciones import incidente_sector_adicional
+from app.models.incidente import Incidente, IncidenteCierreSector, PrioridadEnum
 from app.repositories.base import BaseRepository
 
 
@@ -99,6 +101,7 @@ class IncidenteRepository(BaseRepository[Incidente]):
         hasta: datetime | None = None,
         origen_message_id: str | None = None,
         reportante_empleado_id: int | None = None,
+        sector_scope_id: int | None = None,
         limit: int = 50,
         offset: int = 0,
     ) -> list[Incidente]:
@@ -153,6 +156,26 @@ class IncidenteRepository(BaseRepository[Incidente]):
             conditions.append(
                 Incidente.reportante_empleado_id == reportante_empleado_id
             )
+        if sector_scope_id is not None:
+            # c-86 (VIS-007, D3): vista activa del alcance SECTOR. Pertenece al
+            # conjunto (sector principal o adicional), NO esta globalmente cerrado
+            # y NO tiene un cierre por sector para S. Todo server-side.
+            adicionales = select(incidente_sector_adicional.c.incidente_id).where(
+                incidente_sector_adicional.c.sector_id == sector_scope_id
+            )
+            cierre = select(IncidenteCierreSector.incidente_id).where(
+                IncidenteCierreSector.incidente_id == Incidente.id,
+                IncidenteCierreSector.sector_id == sector_scope_id,
+            )
+            terminales = select(Estado.id).where(Estado.es_terminal.is_(True))
+            conditions.append(
+                or_(
+                    Incidente.sector_id == sector_scope_id,
+                    Incidente.id.in_(adicionales),
+                )
+            )
+            conditions.append(~Incidente.estado_id.in_(terminales))
+            conditions.append(~cierre.exists())
 
         # Consulta base con carga eager de relaciones para el listado
         stmt = (
@@ -171,6 +194,59 @@ class IncidenteRepository(BaseRepository[Incidente]):
         if conditions:
             stmt = stmt.where(and_(*conditions))
 
+        result = await self._session.execute(stmt)
+        return list(result.scalars().all())
+
+    async def list_historial(
+        self,
+        *,
+        sector_scope_id: int | None = None,
+        reportante_empleado_id: int | None = None,
+        limit: int = 50,
+        offset: int = 0,
+    ) -> list[Incidente]:
+        """
+        Lista el historial de incidentes cerrados acotado por alcance (c-86, VIS-008).
+
+        Modos:
+            - (sin filtros): GLOBAL: incidentes en estado terminal `cerrado`.
+            - `sector_scope_id`: SECTOR: incidentes con un cierre por sector para
+              ESE sector (incluidos los cerrados solo por su sector, aun no
+              globalmente).
+            - `reportante_empleado_id`: PROPIO: incidentes cerrados del reportante.
+
+        Excluye los incidentes eliminados (hoy el borrado es fisico, de modo que
+        ya estan ausentes). Orden por `created_at` descendente.
+        """
+        terminales = select(Estado.id).where(Estado.es_terminal.is_(True))
+        conditions = []
+        if reportante_empleado_id is not None:
+            conditions.append(
+                Incidente.reportante_empleado_id == reportante_empleado_id
+            )
+            conditions.append(Incidente.estado_id.in_(terminales))
+        elif sector_scope_id is not None:
+            cierre = select(IncidenteCierreSector.incidente_id).where(
+                IncidenteCierreSector.incidente_id == Incidente.id,
+                IncidenteCierreSector.sector_id == sector_scope_id,
+            )
+            conditions.append(cierre.exists())
+        else:
+            conditions.append(Incidente.estado_id.in_(terminales))
+
+        stmt = (
+            select(Incidente)
+            .options(
+                selectinload(Incidente.sector),
+                selectinload(Incidente.estado),
+                selectinload(Incidente.canal_origen),
+            )
+            .order_by(Incidente.created_at.desc())
+            .limit(limit)
+            .offset(offset)
+        )
+        if conditions:
+            stmt = stmt.where(and_(*conditions))
         result = await self._session.execute(stmt)
         return list(result.scalars().all())
 

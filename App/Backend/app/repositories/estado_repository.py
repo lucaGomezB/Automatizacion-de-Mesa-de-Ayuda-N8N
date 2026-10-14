@@ -37,3 +37,16 @@ class EstadoRepository(BaseRepository[Estado]):
             select(Estado).where(Estado.nombre == nombre)
         )
         return result.scalar_one_or_none()
+
+    async def get_terminal(self) -> Estado | None:
+        """
+        Devuelve el estado TERMINAL del ciclo de vida (c-86).
+
+        Es el estado con `es_terminal=True` (hoy `cerrado`). Se resuelve por el
+        flag y no por el nombre hardcodeado, de modo que el modelo de cierre no
+        dependa de una cadena (D3/D12).
+        """
+        result = await self._session.execute(
+            select(Estado).where(Estado.es_terminal.is_(True)).order_by(Estado.id)
+        )
+        return result.scalars().first()

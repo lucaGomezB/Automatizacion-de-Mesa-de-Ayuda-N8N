@@ -40,16 +40,21 @@ class RolEmpleado(str, PyEnum):
     El conocimiento de politica de cada rol vive en `app.services.role_policy`
     (fuente unica de verdad); este enum solo fija el VOCABULARIO.
 
-    Valores (EXACTAMENTE TRES):
+    Valores (EXACTAMENTE CUATRO):
         usuario_final:            reportante; alcance PROPIO (solo lo que reporto).
         mesa_de_ayuda:            rol transversal; alcance GLOBAL, privilegiado y
                                   destinatario de la notificacion de revision.
         administrador_directorio: alcance GLOBAL, privilegiado y gestiona el directorio.
+        gestion_incidentes:       rol operativo por sector (c-86); alcance SECTOR,
+                                  NO privilegiado, cierra y edita el estado de los
+                                  incidentes de su sector y es destinatario del aviso
+                                  post-revision.
     """
 
     usuario_final = "usuario_final"
     mesa_de_ayuda = "mesa_de_ayuda"
     administrador_directorio = "administrador_directorio"
+    gestion_incidentes = "gestion_incidentes"
 
 
 class Empleado(Base, TimestampMixin):
@@ -112,7 +117,8 @@ class Empleado(Base, TimestampMixin):
         # coincidir con `ROLES_VALIDOS` de `app.services.role_policy` (RP-003,
         # verificado por tests/test_role_policy.py).
         CheckConstraint(
-            "rol IN ('usuario_final', 'mesa_de_ayuda', 'administrador_directorio')",
+            "rol IN ('usuario_final', 'mesa_de_ayuda', 'administrador_directorio', "
+            "'gestion_incidentes')",
             name="ck_directorio_empleado_rol",
         ),
     )

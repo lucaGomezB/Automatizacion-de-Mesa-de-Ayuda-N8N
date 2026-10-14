@@ -31,16 +31,21 @@ from app.core.security import get_current_user
 from app.cost_guard.dependencies import get_cost_guard
 from app.cost_guard.guard import CostGuard
 from app.models.incidente import PrioridadEnum
+from app.models.empleado import Empleado
 from app.models.user import User
 from app.repositories.canal_origen_repository import CanalOrigenRepository
 from app.repositories.empleado_repository import EmpleadoRepository
+from app.schemas.comentario import ComentarioCreate, ComentarioRead
 from app.schemas.incidente import (
     IncidenteCreate,
     IncidenteCreateResponse,
+    IncidenteEstadoUpdate,
     IncidenteListItem,
     IncidenteRead,
     IncidenteUpdate,
 )
+from app.services.ciclo_incidente_service import CicloIncidenteService
+from app.services.comentario_service import ComentarioService
 from app.services.contact_resolution_service import ContactResolutionService
 from app.services.incident_visibility import (
     AlcanceIncidentes,
@@ -90,6 +95,42 @@ async def get_alcance_incidentes(
 
 # Alias de tipo para inyección del alcance como dependencia
 AlcanceDep = Annotated[AlcanceIncidentes, Depends(get_alcance_incidentes)]
+
+
+async def get_empleado_actual(
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: SessionDep,
+) -> Empleado | None:
+    """
+    Resuelve el empleado vinculado a la cuenta autenticada (c-86).
+
+    Es el ACTOR de las operaciones de ciclo de vida. Devuelve None cuando la
+    cuenta no tiene empleado activo vinculado; el servicio de ciclo lo trata
+    como rol desconocido y responde 403.
+    """
+    return await EmpleadoRepository(session).get_by_user_id(current_user.id)
+
+
+# Alias de tipo para inyección del actor como dependencia
+EmpleadoDep = Annotated[Empleado | None, Depends(get_empleado_actual)]
+
+
+def get_ciclo_service(session: SessionDep) -> CicloIncidenteService:
+    """Fábrica del servicio de ciclo de cierre para la inyección de dependencias."""
+    return CicloIncidenteService(session)
+
+
+# Alias de tipo para inyección del servicio de ciclo como dependencia
+CicloServiceDep = Annotated[CicloIncidenteService, Depends(get_ciclo_service)]
+
+
+def get_comentario_service(session: SessionDep) -> ComentarioService:
+    """Fábrica del servicio de comentarios para la inyección de dependencias."""
+    return ComentarioService(session)
+
+
+# Alias de tipo para inyección del servicio de comentarios
+ComentarioServiceDep = Annotated[ComentarioService, Depends(get_comentario_service)]
 
 
 async def resolver_reportante(
@@ -219,6 +260,32 @@ async def list_incidentes(
 
 
 @router.get(
+    "/historial-cerrados",
+    response_model=list[IncidenteListItem],
+    summary="Historial de incidentes cerrados acotado por alcance",
+)
+async def list_historial_cerrados(
+    service: ServiceDep,
+    alcance: AlcanceDep,
+    current_user: User = Depends(get_current_user),
+    limit: int = Query(50, ge=1, le=200, description="Cantidad máxima de resultados"),
+    offset: int = Query(0, ge=0, description="Desplazamiento para paginación"),
+) -> list[IncidenteListItem]:
+    """
+    Lista el historial de incidentes cerrados acotado por el alcance (VIS-008).
+
+    Declarada ANTES de `GET /{incidente_id}` para evitar el conflicto de path
+    (D10). GLOBAL ve los globalmente cerrados; SECTOR ve los incidentes con un
+    cierre de su sector (incluidos los cerrados solo por su sector); PROPIO ve
+    los propios cerrados. Excluye los incidentes eliminados.
+    """
+    incidentes = await service.list_historial_cerrados(
+        alcance=alcance, limit=limit, offset=offset
+    )
+    return [IncidenteListItem.model_validate(i) for i in incidentes]
+
+
+@router.get(
     "/{incidente_id}",
     response_model=IncidenteRead,
     summary="Obtener el detalle completo de un incidente",
@@ -283,3 +350,146 @@ async def update_incidente(
     """
     incidente = await service.update_incidente(incidente_id, payload, alcance=alcance)
     return IncidenteRead.model_validate(incidente)
+
+
+@router.post(
+    "/{incidente_id}/cierre-sector",
+    response_model=IncidenteRead,
+    summary="Cerrar el incidente para el sector del gestion",
+)
+async def cerrar_sector(
+    incidente_id: int,
+    service: CicloServiceDep,
+    alcance: AlcanceDep,
+    actor: EmpleadoDep,
+    current_user: User = Depends(get_current_user),
+) -> IncidenteRead:
+    """
+    Cierra el incidente para el PROPIO sector del actor `gestion_incidentes`.
+
+    Idempotente por el par (incidente, sector). Tras el cierre, si todos los
+    sectores del incidente cerraron, el incidente pasa al estado terminal
+    `cerrado` (ILC-001/ILC-003).
+
+    Autorizacion: el rol debe tener `cierra_sector` (403 si no). El incidente
+    debe estar dentro del alcance SECTOR del actor (404 si no).
+    """
+    incidente = await service.cerrar_sector(incidente_id, actor, alcance)
+    return IncidenteRead.model_validate(incidente)
+
+
+@router.post(
+    "/{incidente_id}/cierre-global",
+    response_model=IncidenteRead,
+    summary="Cerrar globalmente el incidente (mesa de ayuda)",
+)
+async def cerrar_global(
+    incidente_id: int,
+    service: CicloServiceDep,
+    alcance: AlcanceDep,
+    actor: EmpleadoDep,
+    current_user: User = Depends(get_current_user),
+) -> IncidenteRead:
+    """
+    Cierra GLOBALMENTE el incidente: registra el cierre de TODOS sus sectores y
+    lo lleva al estado terminal `cerrado` (ILC-002). Idempotente.
+
+    Autorizacion: solo el rol con `cierra_global` (mesa de ayuda); 403 en otro caso.
+    """
+    incidente = await service.cerrar_global(incidente_id, actor, alcance)
+    return IncidenteRead.model_validate(incidente)
+
+
+@router.post(
+    "/{incidente_id}/rehabilitar",
+    response_model=IncidenteRead,
+    summary="Rehabilitar (reabrir) un incidente cerrado",
+)
+async def rehabilitar_incidente(
+    incidente_id: int,
+    service: CicloServiceDep,
+    alcance: AlcanceDep,
+    actor: EmpleadoDep,
+    current_user: User = Depends(get_current_user),
+) -> IncidenteRead:
+    """
+    Rehabilita un incidente cerrado (ILC-004): limpia sus cierres por sector, lo
+    devuelve a `en proceso` y registra el evento de reapertura.
+
+    Autorizacion: solo el rol con `reabre` (mesa de ayuda); 403 en otro caso.
+    Reabrir un incidente no cerrado produce 422.
+    """
+    incidente = await service.rehabilitar(incidente_id, actor, alcance)
+    return IncidenteRead.model_validate(incidente)
+
+
+@router.patch(
+    "/{incidente_id}/estado",
+    response_model=IncidenteRead,
+    summary="Editar el estado no terminal del incidente",
+)
+async def editar_estado_incidente(
+    incidente_id: int,
+    payload: IncidenteEstadoUpdate,
+    service: CicloServiceDep,
+    alcance: AlcanceDep,
+    actor: EmpleadoDep,
+    current_user: User = Depends(get_current_user),
+) -> IncidenteRead:
+    """
+    Fija el estado del incidente entre `en proceso`, `en espera` y `resuelto`
+    (ILC-005). `cerrado` se rechaza con 422 (el estado terminal solo se alcanza
+    por el modelo de cierre).
+
+    Autorizacion: rol con `edita_estado` (403 si no); el incidente debe estar
+    dentro del alcance del actor (gestion: su sector; 404 si no).
+    """
+    incidente = await service.editar_estado(
+        incidente_id, payload.estado, actor, alcance
+    )
+    return IncidenteRead.model_validate(incidente)
+
+
+@router.get(
+    "/{incidente_id}/comentarios",
+    response_model=list[ComentarioRead],
+    summary="Listar los comentarios de un incidente",
+)
+async def listar_comentarios(
+    incidente_id: int,
+    service: ComentarioServiceDep,
+    alcance: AlcanceDep,
+    current_user: User = Depends(get_current_user),
+) -> list[ComentarioRead]:
+    """
+    Devuelve las entradas de comentario en orden cronologico ascendente (ICM-003).
+
+    Permiso derivado de la visibilidad (ICM-002): un incidente fuera del alcance
+    del usuario responde 404, sin revelar su existencia ni sus comentarios.
+    """
+    comentarios = await service.listar(incidente_id, alcance)
+    return [ComentarioRead.model_validate(c) for c in comentarios]
+
+
+@router.post(
+    "/{incidente_id}/comentarios",
+    response_model=ComentarioRead,
+    status_code=status.HTTP_201_CREATED,
+    summary="Agregar un comentario append-only a un incidente",
+)
+async def agregar_comentario(
+    incidente_id: int,
+    payload: ComentarioCreate,
+    service: ComentarioServiceDep,
+    alcance: AlcanceDep,
+    actor: EmpleadoDep,
+    current_user: User = Depends(get_current_user),
+) -> ComentarioRead:
+    """
+    Persiste un comentario del actor autenticado sobre el incidente (ICM-001).
+
+    Permiso derivado de la visibilidad (ICM-002): un incidente fuera del alcance
+    responde 404. No existe edicion ni borrado de entradas.
+    """
+    comentario = await service.agregar(incidente_id, payload.texto, actor, alcance)
+    return ComentarioRead.model_validate(comentario)

@@ -17,6 +17,7 @@ Responsabilidad:
 """
 
 from datetime import datetime, timedelta, timezone
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validator
 
@@ -275,6 +276,18 @@ class IncidenteUpdate(BaseModel):
     estado_id: int | None = None
     sector_id: int | None = None
     requiere_revision_humana: bool | None = None
+
+
+class IncidenteEstadoUpdate(BaseModel):
+    """
+    Payload de edición de estado del incidente (c-86, ILC-005).
+
+    Solo admite los estados NO terminales `en proceso`, `en espera` y `resuelto`.
+    El valor `cerrado` (y cualquier otro) produce un error de validación (422):
+    el estado terminal solo se alcanza por el modelo de cierre (ILC-003).
+    """
+
+    estado: Literal["en proceso", "en espera", "resuelto"]
 
 
 class IncidenteRead(BaseModel):

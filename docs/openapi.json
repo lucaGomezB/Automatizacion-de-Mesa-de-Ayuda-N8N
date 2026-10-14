@@ -379,6 +379,63 @@
         "title": "ClasificacionValidar",
         "type": "object"
       },
+      "ComentarioCreate": {
+        "description": "Payload de alta de un comentario (append-only, sin edicion ni borrado).",
+        "properties": {
+          "texto": {
+            "maxLength": 5000,
+            "minLength": 1,
+            "title": "Texto",
+            "type": "string"
+          }
+        },
+        "required": [
+          "texto"
+        ],
+        "title": "ComentarioCreate",
+        "type": "object"
+      },
+      "ComentarioRead": {
+        "description": "Representacion de salida de un comentario.",
+        "properties": {
+          "autor_empleado_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Autor Empleado Id"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "incidente_id": {
+            "title": "Incidente Id",
+            "type": "integer"
+          },
+          "texto": {
+            "title": "Texto",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "incidente_id",
+          "texto",
+          "created_at"
+        ],
+        "title": "ComentarioRead",
+        "type": "object"
+      },
       "CostGuardReserveRequest": {
         "description": "Solicitud de reserva de una llamada paga de la superficie n8n.",
         "properties": {
@@ -1002,6 +1059,25 @@
         "title": "IncidenteCreateResponse",
         "type": "object"
       },
+      "IncidenteEstadoUpdate": {
+        "description": "Payload de edición de estado del incidente (c-86, ILC-005).\n\nSolo admite los estados NO terminales `en proceso`, `en espera` y `resuelto`.\nEl valor `cerrado` (y cualquier otro) produce un error de validación (422):\nel estado terminal solo se alcanza por el modelo de cierre (ILC-003).",
+        "properties": {
+          "estado": {
+            "enum": [
+              "en proceso",
+              "en espera",
+              "resuelto"
+            ],
+            "title": "Estado",
+            "type": "string"
+          }
+        },
+        "required": [
+          "estado"
+        ],
+        "title": "IncidenteEstadoUpdate",
+        "type": "object"
+      },
       "IncidenteListItem": {
         "description": "Proyección ligera de un incidente para endpoints de listado.\n\nOmite el campo 'descripcion' para reducir el tamaño de las respuestas\ncuando se listan múltiples incidentes. Los consumidores que necesiten\nel texto completo deben usar el endpoint de detalle individual.",
         "properties": {
@@ -1619,11 +1695,12 @@
         "type": "object"
       },
       "RolEmpleado": {
-        "description": "Vocabulario minimo de roles del directorio (DIR-003, c-82).\n\nHereda de `str` para almacenar el valor textual y serializarlo directamente.\nEl conocimiento de politica de cada rol vive en `app.services.role_policy`\n(fuente unica de verdad); este enum solo fija el VOCABULARIO.\n\nValores (EXACTAMENTE TRES):\n    usuario_final:            reportante; alcance PROPIO (solo lo que reporto).\n    mesa_de_ayuda:            rol transversal; alcance GLOBAL, privilegiado y\n                              destinatario de la notificacion de revision.\n    administrador_directorio: alcance GLOBAL, privilegiado y gestiona el directorio.",
+        "description": "Vocabulario minimo de roles del directorio (DIR-003, c-82).\n\nHereda de `str` para almacenar el valor textual y serializarlo directamente.\nEl conocimiento de politica de cada rol vive en `app.services.role_policy`\n(fuente unica de verdad); este enum solo fija el VOCABULARIO.\n\nValores (EXACTAMENTE CUATRO):\n    usuario_final:            reportante; alcance PROPIO (solo lo que reporto).\n    mesa_de_ayuda:            rol transversal; alcance GLOBAL, privilegiado y\n                              destinatario de la notificacion de revision.\n    administrador_directorio: alcance GLOBAL, privilegiado y gestiona el directorio.\n    gestion_incidentes:       rol operativo por sector (c-86); alcance SECTOR,\n                              NO privilegiado, cierra y edita el estado de los\n                              incidentes de su sector y es destinatario del aviso\n                              post-revision.",
         "enum": [
           "usuario_final",
           "mesa_de_ayuda",
-          "administrador_directorio"
+          "administrador_directorio",
+          "gestion_incidentes"
         ],
         "title": "RolEmpleado",
         "type": "string"
@@ -3293,6 +3370,76 @@
         ]
       }
     },
+    "/api/v1/incidentes/historial-cerrados": {
+      "get": {
+        "description": "Lista el historial de incidentes cerrados acotado por el alcance (VIS-008).\n\nDeclarada ANTES de `GET /{incidente_id}` para evitar el conflicto de path\n(D10). GLOBAL ve los globalmente cerrados; SECTOR ve los incidentes con un\ncierre de su sector (incluidos los cerrados solo por su sector); PROPIO ve\nlos propios cerrados. Excluye los incidentes eliminados.",
+        "operationId": "list_historial_cerrados_api_v1_incidentes_historial_cerrados_get",
+        "parameters": [
+          {
+            "description": "Cantidad máxima de resultados",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "description": "Cantidad máxima de resultados",
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Desplazamiento para paginación",
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "description": "Desplazamiento para paginación",
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/IncidenteListItem"
+                  },
+                  "title": "Response List Historial Cerrados Api V1 Incidentes Historial Cerrados Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Historial de incidentes cerrados acotado por alcance",
+        "tags": [
+          "Incidentes"
+        ]
+      }
+    },
     "/api/v1/incidentes/{incidente_id}": {
       "get": {
         "description": "Retorna la representación completa de un incidente, incluyendo relaciones.\n\nA diferencia del listado, esta respuesta incluye la descripción completa\ndel incidente y los objetos de catálogo completos (sector, estado, canal).\n\nArgs:\n    incidente_id: ID del incidente a recuperar.\n\nReturns:\n    Detalle completo del incidente (HTTP 200) o error 404 si no existe.",
@@ -3392,6 +3539,316 @@
           }
         ],
         "summary": "Actualizar parcialmente un incidente",
+        "tags": [
+          "Incidentes"
+        ]
+      }
+    },
+    "/api/v1/incidentes/{incidente_id}/cierre-global": {
+      "post": {
+        "description": "Cierra GLOBALMENTE el incidente: registra el cierre de TODOS sus sectores y\nlo lleva al estado terminal `cerrado` (ILC-002). Idempotente.\n\nAutorizacion: solo el rol con `cierra_global` (mesa de ayuda); 403 en otro caso.",
+        "operationId": "cerrar_global_api_v1_incidentes__incidente_id__cierre_global_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incidente_id",
+            "required": true,
+            "schema": {
+              "title": "Incidente Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidenteRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Cerrar globalmente el incidente (mesa de ayuda)",
+        "tags": [
+          "Incidentes"
+        ]
+      }
+    },
+    "/api/v1/incidentes/{incidente_id}/cierre-sector": {
+      "post": {
+        "description": "Cierra el incidente para el PROPIO sector del actor `gestion_incidentes`.\n\nIdempotente por el par (incidente, sector). Tras el cierre, si todos los\nsectores del incidente cerraron, el incidente pasa al estado terminal\n`cerrado` (ILC-001/ILC-003).\n\nAutorizacion: el rol debe tener `cierra_sector` (403 si no). El incidente\ndebe estar dentro del alcance SECTOR del actor (404 si no).",
+        "operationId": "cerrar_sector_api_v1_incidentes__incidente_id__cierre_sector_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incidente_id",
+            "required": true,
+            "schema": {
+              "title": "Incidente Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidenteRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Cerrar el incidente para el sector del gestion",
+        "tags": [
+          "Incidentes"
+        ]
+      }
+    },
+    "/api/v1/incidentes/{incidente_id}/comentarios": {
+      "get": {
+        "description": "Devuelve las entradas de comentario en orden cronologico ascendente (ICM-003).\n\nPermiso derivado de la visibilidad (ICM-002): un incidente fuera del alcance\ndel usuario responde 404, sin revelar su existencia ni sus comentarios.",
+        "operationId": "listar_comentarios_api_v1_incidentes__incidente_id__comentarios_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incidente_id",
+            "required": true,
+            "schema": {
+              "title": "Incidente Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ComentarioRead"
+                  },
+                  "title": "Response Listar Comentarios Api V1 Incidentes  Incidente Id  Comentarios Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Listar los comentarios de un incidente",
+        "tags": [
+          "Incidentes"
+        ]
+      },
+      "post": {
+        "description": "Persiste un comentario del actor autenticado sobre el incidente (ICM-001).\n\nPermiso derivado de la visibilidad (ICM-002): un incidente fuera del alcance\nresponde 404. No existe edicion ni borrado de entradas.",
+        "operationId": "agregar_comentario_api_v1_incidentes__incidente_id__comentarios_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incidente_id",
+            "required": true,
+            "schema": {
+              "title": "Incidente Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ComentarioCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComentarioRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Agregar un comentario append-only a un incidente",
+        "tags": [
+          "Incidentes"
+        ]
+      }
+    },
+    "/api/v1/incidentes/{incidente_id}/estado": {
+      "patch": {
+        "description": "Fija el estado del incidente entre `en proceso`, `en espera` y `resuelto`\n(ILC-005). `cerrado` se rechaza con 422 (el estado terminal solo se alcanza\npor el modelo de cierre).\n\nAutorizacion: rol con `edita_estado` (403 si no); el incidente debe estar\ndentro del alcance del actor (gestion: su sector; 404 si no).",
+        "operationId": "editar_estado_incidente_api_v1_incidentes__incidente_id__estado_patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incidente_id",
+            "required": true,
+            "schema": {
+              "title": "Incidente Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncidenteEstadoUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidenteRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Editar el estado no terminal del incidente",
+        "tags": [
+          "Incidentes"
+        ]
+      }
+    },
+    "/api/v1/incidentes/{incidente_id}/rehabilitar": {
+      "post": {
+        "description": "Rehabilita un incidente cerrado (ILC-004): limpia sus cierres por sector, lo\ndevuelve a `en proceso` y registra el evento de reapertura.\n\nAutorizacion: solo el rol con `reabre` (mesa de ayuda); 403 en otro caso.\nReabrir un incidente no cerrado produce 422.",
+        "operationId": "rehabilitar_incidente_api_v1_incidentes__incidente_id__rehabilitar_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incidente_id",
+            "required": true,
+            "schema": {
+              "title": "Incidente Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidenteRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Rehabilitar (reabrir) un incidente cerrado",
         "tags": [
           "Incidentes"
         ]

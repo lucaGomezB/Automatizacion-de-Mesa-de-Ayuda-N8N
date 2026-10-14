@@ -24,7 +24,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.logging import get_logger
 from app.repositories.empleado_repository import EmpleadoRepository
-from app.services.role_policy import rol_destinatario_notificacion
+from app.services.role_policy import (
+    rol_destinatario_notificacion,
+    rol_destinatario_post_revision,
+)
 from app.utils.contactos import normalizar_email
 
 logger = get_logger(__name__)
@@ -69,10 +72,61 @@ class NotificationRecipientService:
         self._log(cantidad=len(destinatarios))
         return destinatarios
 
+    async def resolver_destinatarios_gestion(
+        self, sector_ids: list[int]
+    ) -> list[str]:
+        """
+        Resuelve los destinatarios del aviso post-revision (c-86, NR-008).
+
+        Son los empleados ACTIVOS con rol `gestion_incidentes` cuyo sector
+        pertenece al CONJUNTO de sectores validados. El rol destinatario se
+        DERIVA del registro unico de politica de rol (RP-002), sin listas fijas.
+
+        Returns:
+            Lista de emails (posiblemente vacia), SIN duplicados. Nunca lanza:
+            un directorio vacio o un fallo de acceso degrada a lista vacia.
+        """
+        rol = rol_destinatario_post_revision()
+        if rol is None:
+            self._log_post_revision(cantidad=0)
+            return []
+
+        try:
+            empleados = await self._repo.listar_activos_por_rol_y_sectores(
+                rol, list(sector_ids or [])
+            )
+        except Exception:  # noqa: BLE001 - degradacion explicita (NR-008)
+            logger.warning("destinatarios_post_revision_error")
+            return []
+
+        destinatarios: list[str] = []
+        vistos: set[str] = set()
+        for empleado in empleados:
+            try:
+                email = normalizar_email(empleado.email)
+            except ValueError:
+                logger.warning("destinatario_post_revision_email_invalido")
+                continue
+            if email in vistos:
+                continue
+            vistos.add(email)
+            destinatarios.append(email)
+
+        self._log_post_revision(cantidad=len(destinatarios))
+        return destinatarios
+
     @staticmethod
     def _log(*, cantidad: int) -> None:
         """Emite la trazabilidad SIN emails en claro (NR-006)."""
         logger.info(
             "destinatarios_revision_resueltos",
+            cantidad=cantidad,
+        )
+
+    @staticmethod
+    def _log_post_revision(*, cantidad: int) -> None:
+        """Trazabilidad del aviso post-revision SIN emails en claro (NR-008)."""
+        logger.info(
+            "destinatarios_post_revision_resueltos",
             cantidad=cantidad,
         )

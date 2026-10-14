@@ -73,3 +73,43 @@ def business_range_to_utc(desde: date, hasta: date) -> tuple[datetime, datetime]
     )
 
     return lower.astimezone(timezone.utc), upper_exclusive.astimezone(timezone.utc)
+
+
+# Separador canonico entre entradas consecutivas de comentarios (ICM-003).
+SEPARADOR_COMENTARIOS = "----------"
+
+
+def formatear_comentario(created_at: datetime, texto: str) -> str:
+    """
+    Formatea una entrada de comentario (c-86, ICM-003).
+
+    Formato exacto `HH:MM:SS DD/MM/AAAA : {texto}`, con el instante resuelto en
+    `America/Argentina/Buenos_Aires` (no depende de la zona del servidor). Un
+    instante naive se interpreta como UTC (lo que garantizan las columnas).
+
+    Args:
+        created_at: instante de creacion del comentario (UTC o aware).
+        texto:      texto del comentario.
+
+    Returns:
+        Cadena `HH:MM:SS DD/MM/AAAA : {texto}`.
+    """
+    momento = created_at
+    if momento.tzinfo is None:
+        momento = momento.replace(tzinfo=timezone.utc)
+    local = momento.astimezone(BUSINESS_TZ)
+    return f"{local.strftime('%H:%M:%S %d/%m/%Y')} : {texto}"
+
+
+def formatear_hilo_comentarios(
+    entradas: list[tuple[datetime, str]],
+) -> str:
+    """
+    Compone el hilo completo de comentarios en orden cronologico ascendente.
+
+    Separa las entradas con una linea `----------` (ICM-003). Las entradas se
+    presentan tal cual se reciben (el repositorio las ordena ascendentemente).
+    """
+    return f"\n{SEPARADOR_COMENTARIOS}\n".join(
+        formatear_comentario(instante, texto) for instante, texto in entradas
+    )

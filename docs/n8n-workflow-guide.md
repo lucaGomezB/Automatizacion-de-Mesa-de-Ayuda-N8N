@@ -39,7 +39,7 @@
 > `Tope de refinamiento alcanzado` y `Derivar a revision humana`. La clasificación telefónica la
 > resuelve el backend con la cascada híbrida, igual que correo y web, y el POST ya no transporta
 > `clasificacion` precalculada.
-> Estado: 29 nodos (26 operativos + 3 sticky notes); suite estructural `test_n8n_workflow.py` en verde.
+> Estado: 32 nodos (29 operativos + 3 sticky notes); suite estructural `test_n8n_workflow.py` en verde.
 
 ## Descripción general
 
@@ -237,13 +237,21 @@ El contrato del backend no cambia: `IncidenteCreate.ingresado_en` sigue siendo n
 
 Tres nodos `stickyNote` con documentación visual interna del workflow (se conservan intactos).
 
-**Total**: 26 nodos operativos + 3 `stickyNote` = 29, consistente con `n8n/workflow.json`. Las
-tablas por canal repiten los nodos compartidos (`Normalizar entrada del incidente`,
+**Total**: 29 nodos operativos + 3 `stickyNote` = 32, consistente con `n8n/workflow.json`. Lastablas por canal repiten los nodos compartidos (`Normalizar entrada del incidente`,
 `Entrada valida`, `Login operador`, `HTTP POST a MESA-AYUDAS`, `Requiere revision humana`,
 `Preparar destinatarios de revision`, `Notificar operador designado`,
 `Confirmar correo en revision?`, `Rutear por canal de origen`,
 `Es correo?`, `Es web?`, `Web con incidente?`, `Respuesta web de cierre`,
 `Confirmacion web revision humana`, `Registro de auditoria`).
+
+### Aviso post-revision a `gestion_incidentes` (c-86, NR-008)
+
+El webhook `notificacion-clasificacion` recibe tambien el aviso post-revision del
+backend, con el marcador de evento `incidente_validado_gestion`. El nodo IF
+`Es aviso post-revision?` rutea esa rama; `Preparar destinatarios gestion` emite un
+item por cada entrada de `destinatarios_gestion` (la lista la resuelve el backend,
+no N8N) y `Notificar gestion post-revision` envia el correo por SMTP. Una lista
+vacia (sin `gestion_incidentes` activo en los sectores) no envia correo.
 
 ## Contrato: `POST /api/v1/incidentes`
 

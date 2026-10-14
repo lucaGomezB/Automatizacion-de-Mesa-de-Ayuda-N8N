@@ -95,18 +95,19 @@ def test_fecha_baja_nullable_para_retencion():
     assert col.type.timezone is True
 
 
-def test_vocabulario_de_roles_exactamente_tres():
-    """El rol admite EXACTAMENTE tres valores; `operador` ya no existe (DIR-003)."""
+def test_vocabulario_de_roles_exactamente_cuatro():
+    """El rol admite EXACTAMENTE cuatro valores; `operador` ya no existe (DIR-003)."""
     assert {r.value for r in RolEmpleado} == {
         "usuario_final",
         "mesa_de_ayuda",
         "administrador_directorio",
+        "gestion_incidentes",
     }
     assert "operador" not in {r.value for r in RolEmpleado}
 
 
-def test_check_rol_acepta_tres_valores():
-    """El CHECK de `rol` incluye exactamente los tres valores del vocabulario."""
+def test_check_rol_acepta_cuatro_valores():
+    """El CHECK de `rol` incluye exactamente los cuatro valores del vocabulario."""
     checks = [
         c
         for c in Empleado.__table__.constraints
@@ -114,7 +115,12 @@ def test_check_rol_acepta_tres_valores():
     ]
     assert checks, "Falta el CHECK ck_directorio_empleado_rol"
     sqltext = str(checks[0].sqltext)
-    for valor in ("usuario_final", "mesa_de_ayuda", "administrador_directorio"):
+    for valor in (
+        "usuario_final",
+        "mesa_de_ayuda",
+        "administrador_directorio",
+        "gestion_incidentes",
+    ):
         assert valor in sqltext, f"El CHECK de rol no incluye {valor!r}"
     assert "operador" not in sqltext
 

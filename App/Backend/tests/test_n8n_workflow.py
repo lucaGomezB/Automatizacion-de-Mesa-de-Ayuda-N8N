@@ -3911,8 +3911,8 @@ def test_c55_no_outlook_artifacts_and_node_count():
         assert "microsoftOutlookOAuth2Api" not in credentials, (
             f"El nodo {node['name']!r} declara credencial microsoftOutlookOAuth2Api"
         )
-    assert len(wf["nodes"]) == 29, (
-        f"Se esperaban 29 nodos, el JSON tiene {len(wf['nodes'])}"
+    assert len(wf["nodes"]) == 32, (
+        f"Se esperaban 32 nodos, el JSON tiene {len(wf['nodes'])}"
     )
 
 
@@ -3989,7 +3989,7 @@ def test_c55_email_send_nodes_declare_smtp_credentials():
     by_name, by_type = index_nodes(wf)
     sends = by_type.get(EMAIL_SEND_NODE_TYPE, [])
 
-    assert len(sends) == 2, f"Se esperaban 2 nodos emailSend, got {len(sends)}"
+    assert len(sends) == 3, f"Se esperaban 3 nodos emailSend, got {len(sends)}"
     for node in sends:
         credentials = node.get("credentials", {}) or {}
         assert "smtp" in credentials, (
@@ -4532,9 +4532,9 @@ def test_c56_no_regresion_c38_c40_c53_c55():
         "Se perdio el gate de confirmacion por correo en revision (c-53)"
     )
 
-    # c-55: dos nodos emailSend con credencial smtp.
+    # c-55 / c-86: tres nodos emailSend con credencial smtp.
     sends = by_type.get(EMAIL_SEND_NODE_TYPE, [])
-    assert len(sends) == 2, f"Se esperaban 2 nodos emailSend, got {len(sends)}"
+    assert len(sends) == 3, f"Se esperaban 3 nodos emailSend, got {len(sends)}"
     for node in sends:
         assert "smtp" in (node.get("credentials") or {}), (
             f"El nodo {node['name']!r} perdio la credencial smtp"

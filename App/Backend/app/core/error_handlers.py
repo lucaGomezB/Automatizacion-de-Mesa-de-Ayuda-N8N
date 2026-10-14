@@ -36,6 +36,7 @@ from app.core.exceptions import (
     GeminiUnavailableError,
     IncidentValidationError,
     IncidenteCerradoError,
+    PermisoDenegadoError,
     SectorNotFoundError,
 )
 from app.core.logging import get_logger
@@ -254,6 +255,16 @@ def register_error_handlers(app: FastAPI) -> None:
         return JSONResponse(
             status_code=409,
             content=_error_body("INCIDENTE_CERRADO", exc.message, exc.details),
+        )
+
+    @app.exception_handler(PermisoDenegadoError)
+    async def permiso_denegado_handler(
+        request: Request, exc: PermisoDenegadoError
+    ) -> JSONResponse:
+        """Convierte PermisoDenegadoError en respuesta 403 (c-86, RBAC)."""
+        return JSONResponse(
+            status_code=403,
+            content=_error_body("FORBIDDEN", exc.message, exc.details),
         )
 
     @app.exception_handler(ClassificationError)
