@@ -608,6 +608,78 @@
           },
           "conditions": [
             {
+              "id": "c86-aviso-post-0001-4000-8000-000000000001",
+              "leftValue": "={{ $json.evento }}",
+              "rightValue": "incidente_validado_gestion",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        160,
+        1040
+      ],
+      "id": "c86-aviso-post-0001-4000-8000-000000000001",
+      "name": "Es aviso post-revision?"
+    },
+    {
+      "parameters": {
+        "jsCode": "// c-86 (NR-008): aviso post-revision a `gestion_incidentes`.\n// El backend resuelve los destinatarios y los expone en `destinatarios_gestion`\n// (lista vacia cuando no hay coincidencia). Se emite UN item por destinatario\n// para enviar una copia individual; con lista vacia no se envia correo.\nconst data = $input.first().json || {};\nconst lista = Array.isArray(data.destinatarios_gestion)\n  ? data.destinatarios_gestion.filter((d) => typeof d === 'string' && d.trim())\n  : [];\nconst numero = data.incidente_id != null ? String(data.incidente_id) : null;\nconst sectores = Array.isArray(data.sectores) ? data.sectores.join(', ') : '';\nreturn lista.map((destinatario) => ({\n  json: { destinatario, numero_incidente: numero, sectores }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        320,
+        1040
+      ],
+      "id": "c86-aviso-post-0002-4000-8000-000000000002",
+      "name": "Preparar destinatarios gestion"
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $env.SMTP_FROM_EMAIL }}",
+        "toEmail": "={{ $json.destinatario }}",
+        "subject": "=Incidente {{ $json.numero_incidente }} validado: aviso a gestion de incidentes",
+        "emailFormat": "text",
+        "text": "=El incidente {{ $json.numero_incidente }} paso la revision humana y quedo asignado a los sectores: {{ $json.sectores }}. Como gestion de incidentes de esos sectores, debe cerrarse segun corresponda.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        480,
+        1040
+      ],
+      "id": "c86-aviso-post-0003-4000-8000-000000000003",
+      "name": "Notificar gestion post-revision",
+      "credentials": {
+        "smtp": {
+          "id": "REPLACE_WITH_SMTP_CREDENTIAL_ID",
+          "name": "Mesa de Ayuda - SMTP"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
               "id": "c53-correo-alta-0001-4000-8000-000000000001",
               "leftValue": "={{ $('Normalizar entrada del incidente').item.json.canal_origen }}",
               "rightValue": "correo",
@@ -929,7 +1001,36 @@
       "main": [
         [
           {
+            "node": "Es aviso post-revision?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es aviso post-revision?": {
+      "main": [
+        [
+          {
+            "node": "Preparar destinatarios gestion",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
             "node": "Auditar notificacion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar destinatarios gestion": {
+      "main": [
+        [
+          {
+            "node": "Notificar gestion post-revision",
             "type": "main",
             "index": 0
           }

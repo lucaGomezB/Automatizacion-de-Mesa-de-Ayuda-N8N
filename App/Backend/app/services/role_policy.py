@@ -31,10 +31,11 @@ from app.models.empleado import RolEmpleado
 
 
 class ModoAlcance(str, PyEnum):
-    """Modos de alcance de incidentes por rol (c-82, D1)."""
+    """Modos de alcance de incidentes por rol (c-82 D1; c-86 D1)."""
 
     PROPIO = "PROPIO"
     GLOBAL = "GLOBAL"
+    SECTOR = "SECTOR"
     VACIO = "VACIO"
 
 
@@ -44,12 +45,17 @@ class PoliticaRol:
     Politica de autorizacion/visibilidad de un rol (RP-001).
 
     Atributos:
-        requires_sector:         si el rol exige un sector (falso para todos).
-        visibilidad:             modo de alcance de incidentes (PROPIO/GLOBAL).
+        requires_sector:         si el rol exige un sector (c-86: solo gestion).
+        visibilidad:             modo de alcance (PROPIO/GLOBAL/SECTOR/VACIO).
         privileged:              si confiere privilegio de identidad (MFA).
         manages_directory:       si puede gestionar (escribir) el directorio.
         can_read_directory:      si puede consultar el directorio.
         notification_recipient:  si es destinatario de la notificacion de revision.
+        post_review_recipient:   si es destinatario del aviso post-revision (c-86).
+        edita_estado:            si puede editar el estado no terminal (c-86, ILC-005).
+        cierra_sector:           si puede cerrar por su sector (c-86, ILC-001).
+        cierra_global:           si puede cerrar globalmente (c-86, ILC-002).
+        reabre:                  si puede rehabilitar un incidente cerrado (c-86, ILC-004).
     """
 
     requires_sector: bool
@@ -58,6 +64,11 @@ class PoliticaRol:
     manages_directory: bool
     can_read_directory: bool
     notification_recipient: bool
+    post_review_recipient: bool = False
+    edita_estado: bool = False
+    cierra_sector: bool = False
+    cierra_global: bool = False
+    reabre: bool = False
 
 
 #: Vocabulario canonico del rol, derivado del enum (RP-002). El CHECK de la base
@@ -81,6 +92,10 @@ ROLE_POLICY: Final[Mapping[RolEmpleado, PoliticaRol]] = {
         manages_directory=False,
         can_read_directory=True,
         notification_recipient=True,
+        # c-86 (D1): mesa de ayuda edita el estado, cierra globalmente y reabre.
+        edita_estado=True,
+        cierra_global=True,
+        reabre=True,
     ),
     RolEmpleado.administrador_directorio: PoliticaRol(
         requires_sector=False,
@@ -89,6 +104,20 @@ ROLE_POLICY: Final[Mapping[RolEmpleado, PoliticaRol]] = {
         manages_directory=True,
         can_read_directory=True,
         notification_recipient=False,
+    ),
+    RolEmpleado.gestion_incidentes: PoliticaRol(
+        # c-86 (D1): rol operativo por sector. Exige sector, alcance SECTOR, NO
+        # privilegiado, NO accede al directorio; cierra por sector, edita el
+        # estado y es destinatario del aviso post-revision.
+        requires_sector=True,
+        visibilidad=ModoAlcance.SECTOR,
+        privileged=False,
+        manages_directory=False,
+        can_read_directory=False,
+        notification_recipient=False,
+        post_review_recipient=True,
+        edita_estado=True,
+        cierra_sector=True,
     ),
 }
 
@@ -137,6 +166,43 @@ def rol_destinatario_notificacion() -> str | None:
     return None
 
 
+def rol_destinatario_post_revision() -> str | None:
+    """Valor del rol destinatario del aviso post-revision (o None, c-86 NR-008)."""
+    for rol, politica in ROLE_POLICY.items():
+        if politica.post_review_recipient:
+            return rol.value
+    return None
+
+
+def roles_con_visibilidad_sector() -> frozenset[str]:
+    """Valores de rol cuyo alcance de incidentes es SECTOR (c-86, VIS-007)."""
+    return frozenset(
+        r.value
+        for r, p in ROLE_POLICY.items()
+        if p.visibilidad is ModoAlcance.SECTOR
+    )
+
+
+def roles_que_cierran_sector() -> frozenset[str]:
+    """Valores de rol autorizados a cerrar por su sector (c-86, ILC-001)."""
+    return frozenset(r.value for r, p in ROLE_POLICY.items() if p.cierra_sector)
+
+
+def roles_que_cierran_global() -> frozenset[str]:
+    """Valores de rol autorizados a cerrar globalmente (c-86, ILC-002)."""
+    return frozenset(r.value for r, p in ROLE_POLICY.items() if p.cierra_global)
+
+
+def roles_que_reabren() -> frozenset[str]:
+    """Valores de rol autorizados a rehabilitar un incidente (c-86, ILC-004)."""
+    return frozenset(r.value for r, p in ROLE_POLICY.items() if p.reabre)
+
+
+def roles_que_editan_estado() -> frozenset[str]:
+    """Valores de rol autorizados a editar el estado (c-86, ILC-005)."""
+    return frozenset(r.value for r, p in ROLE_POLICY.items() if p.edita_estado)
+
+
 __all__ = [
     "ModoAlcance",
     "PoliticaRol",
@@ -147,4 +213,10 @@ __all__ = [
     "roles_con_lectura_directorio",
     "roles_gestion_directorio",
     "rol_destinatario_notificacion",
+    "rol_destinatario_post_revision",
+    "roles_con_visibilidad_sector",
+    "roles_que_cierran_sector",
+    "roles_que_cierran_global",
+    "roles_que_reabren",
+    "roles_que_editan_estado",
 ]

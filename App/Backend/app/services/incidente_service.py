@@ -192,6 +192,7 @@ class IncidenteService:
             Lista de incidentes que cumplen los criterios de filtrado.
         """
         reportante_filtro: int | None = None
+        sector_filtro: int | None = None
         if alcance is not None:
             modo = alcance.modo
             # Alcance vacio: una cuenta sin empleado no ve incidentes.
@@ -201,6 +202,11 @@ class IncidenteService:
                 if alcance.reportante_empleado_id is None:
                     return []
                 reportante_filtro = alcance.reportante_empleado_id
+            if modo is ModoAlcance.SECTOR:
+                # c-86 (VIS-007): un `gestion_incidentes` sin sector no ve nada.
+                if alcance.sector_id is None:
+                    return []
+                sector_filtro = alcance.sector_id
 
         incidentes = await self._incidente_repo.list_filtered(
             sector_id=sector_id,
@@ -211,6 +217,7 @@ class IncidenteService:
             hasta=hasta,
             origen_message_id=origen_message_id,
             reportante_empleado_id=reportante_filtro,
+            sector_scope_id=sector_filtro,
             limit=limit,
             offset=offset,
         )
@@ -218,6 +225,46 @@ class IncidenteService:
             # Defensa en profundidad: la decision final depende del incidente.
             return [i for i in incidentes if alcance.permite_incidente(i)]
         return incidentes
+
+    async def list_historial_cerrados(
+        self,
+        alcance: "AlcanceIncidentes | None" = None,
+        limit: int = 50,
+        offset: int = 0,
+    ) -> list[Incidente]:
+        """
+        Lista el historial de incidentes cerrados acotado por alcance (VIS-008).
+
+        Modos: GLOBAL ve los globalmente cerrados; SECTOR ve los que tienen un
+        cierre para su sector (incluidos los cerrados solo por su sector);
+        PROPIO ve los propios cerrados; VACIO no ve nada. Excluye eliminados.
+        """
+        if alcance is None:
+            return await self._incidente_repo.list_historial(
+                limit=limit, offset=offset
+            )
+        modo = alcance.modo
+        if modo is ModoAlcance.VACIO:
+            return []
+        if modo is ModoAlcance.GLOBAL:
+            return await self._incidente_repo.list_historial(
+                limit=limit, offset=offset
+            )
+        if modo is ModoAlcance.SECTOR:
+            if alcance.sector_id is None:
+                return []
+            return await self._incidente_repo.list_historial(
+                sector_scope_id=alcance.sector_id, limit=limit, offset=offset
+            )
+        if modo is ModoAlcance.PROPIO:
+            if alcance.reportante_empleado_id is None:
+                return []
+            return await self._incidente_repo.list_historial(
+                reportante_empleado_id=alcance.reportante_empleado_id,
+                limit=limit,
+                offset=offset,
+            )
+        return []
 
     # ── Operaciones de Escritura ──────────────────────────────────────────────
 

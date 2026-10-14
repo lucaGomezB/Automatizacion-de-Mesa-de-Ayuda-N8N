@@ -122,6 +122,32 @@ class EmpleadoRepository(BaseRepository[Empleado]):
         """
         return await self.listar_activos_por_rol(RolEmpleado.mesa_de_ayuda.value)
 
+    async def listar_activos_por_rol_y_sectores(
+        self, rol: str, sector_ids: list[int]
+    ) -> list[Empleado]:
+        """
+        Devuelve los empleados ACTIVOS del rol dado cuyo sector esta en el conjunto.
+
+        Es la consulta del aviso post-revision (c-86, NR-008): los
+        `gestion_incidentes` activos de los sectores validados. El ROL concreto
+        lo decide el registro unico de politica de rol (RP-002). Una lista de
+        sectores vacia no coincide con nadie (devuelve []).
+        """
+        if not sector_ids:
+            return []
+        result = await self._session.execute(
+            self._con_sector(
+                select(Empleado)
+                .where(
+                    Empleado.rol == rol,
+                    Empleado.activo.is_(True),
+                    Empleado.sector_id.in_(list(sector_ids)),
+                )
+                .order_by(Empleado.id)
+            )
+        )
+        return list(result.scalars().all())
+
     async def listar_inactivos(self) -> list[Empleado]:
         """
         Devuelve TODOS los empleados inactivos (base de la retencion, DIR-007).
