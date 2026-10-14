@@ -59,3 +59,9 @@ export interface RevisionPendienteParams {
   limit?: number;
   offset?: number;
 }
+
+// Respuesta del recurso de conteo de la cola de revisión pendiente (c-85, VIS-006).
+// Devuelve el TOTAL de pendientes del alcance del usuario, sin tope de página.
+export interface RevisionPendienteCount {
+  total: number;
+}

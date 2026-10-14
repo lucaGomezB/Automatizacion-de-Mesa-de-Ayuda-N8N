@@ -1604,6 +1604,20 @@
         "title": "ResumenResponse",
         "type": "object"
       },
+      "RevisionPendienteCount": {
+        "description": "Respuesta del recurso de conteo de la cola de revisión pendiente (VIS-006).\n\nExpone el TOTAL de clasificaciones pendientes de revisión dentro del alcance\ndel usuario. A diferencia del listado (que es un array paginado), este\ncontrato devuelve un único entero tipado, de modo que el contador de la\npestaña no quede acotado al tamaño de una página (FRH-008).\n\nEl total coincide exactamente con la cantidad de elementos del listado\n`GET /api/v1/clasificaciones/revision-pendiente` sin paginar para el mismo\nalcance: comparte la derivación de alcance y la definición de \"pendiente\".",
+        "properties": {
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total"
+        ],
+        "title": "RevisionPendienteCount",
+        "type": "object"
+      },
       "RolEmpleado": {
         "description": "Vocabulario minimo de roles del directorio (DIR-003, c-82).\n\nHereda de `str` para almacenar el valor textual y serializarlo directamente.\nEl conocimiento de politica de cada rol vive en `app.services.role_policy`\n(fuente unica de verdad); este enum solo fija el VOCABULARIO.\n\nValores (EXACTAMENTE TRES):\n    usuario_final:            reportante; alcance PROPIO (solo lo que reporto).\n    mesa_de_ayuda:            rol transversal; alcance GLOBAL, privilegiado y\n                              destinatario de la notificacion de revision.\n    administrador_directorio: alcance GLOBAL, privilegiado y gestiona el directorio.",
         "enum": [
@@ -2336,6 +2350,33 @@
           }
         ],
         "summary": "Listar clasificaciones que requieren revisión humana",
+        "tags": [
+          "Clasificaciones"
+        ]
+      }
+    },
+    "/api/v1/clasificaciones/revision-pendiente/count": {
+      "get": {
+        "description": "Retorna el TOTAL de clasificaciones pendientes de revisión del alcance.\n\nRecurso aditivo y liviano (D1): no envuelve el listado ni rompe su contrato\nde array. El total coincide exactamente con la cantidad de elementos de\n`GET /revision-pendiente` sin paginar para el mismo alcance (VIS-006), porque\ncomparte la derivación de alcance y la definición de \"pendiente\".\n\nEl conteo se acota por el mismo alcance que la cola (VIS-002): un\nadministrador o `mesa_de_ayuda` cuenta la cola completa; un `usuario_final`\ncuenta solo los pendientes que reportó; una cuenta sin alcance cuenta cero.\n\nReturns:\n    Objeto `RevisionPendienteCount` con el total de pendientes del alcance.",
+        "operationId": "count_pending_review_api_v1_clasificaciones_revision_pendiente_count_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevisionPendienteCount"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Contar clasificaciones que requieren revisión humana",
         "tags": [
           "Clasificaciones"
         ]

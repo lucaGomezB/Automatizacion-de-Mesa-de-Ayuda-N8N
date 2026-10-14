@@ -22,6 +22,7 @@ vi.mock('@/services/incidentesService', () => ({
 }));
 vi.mock('@/services/clasificacionesService', () => ({
   listarRevisionPendiente: vi.fn(),
+  contarRevisionPendiente: vi.fn(),
   validarClasificacion: vi.fn(),
 }));
 vi.mock('@/services/catalogosService', () => ({
@@ -71,6 +72,7 @@ describe('AdministracionPage - filtro de sector como conveniencia', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(clasificacionesService.listarRevisionPendiente).mockResolvedValue([]);
+    vi.mocked(clasificacionesService.contarRevisionPendiente).mockResolvedValue(0);
     vi.mocked(catalogosService.listarSectores).mockResolvedValue([sectorSistemas, sectorBd]);
     // El backend IGNORA el filtro de sector: devuelve siempre el conjunto autorizado.
     vi.mocked(incidentesService.listarIncidentes).mockResolvedValue(autorizados);
@@ -130,6 +132,7 @@ describe('AdministracionPage - denegaciones del backend', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(clasificacionesService.listarRevisionPendiente).mockResolvedValue([]);
+    vi.mocked(clasificacionesService.contarRevisionPendiente).mockResolvedValue(0);
     vi.mocked(catalogosService.listarSectores).mockResolvedValue([sectorSistemas]);
   });
 

@@ -104,6 +104,23 @@ class ClasificacionLogRead(BaseModel):
     sectores_validados: list[SectorRead] = Field(default_factory=list)   # Secundarios validados
 
 
+class RevisionPendienteCount(BaseModel):
+    """
+    Respuesta del recurso de conteo de la cola de revisión pendiente (VIS-006).
+
+    Expone el TOTAL de clasificaciones pendientes de revisión dentro del alcance
+    del usuario. A diferencia del listado (que es un array paginado), este
+    contrato devuelve un único entero tipado, de modo que el contador de la
+    pestaña no quede acotado al tamaño de una página (FRH-008).
+
+    El total coincide exactamente con la cantidad de elementos del listado
+    `GET /api/v1/clasificaciones/revision-pendiente` sin paginar para el mismo
+    alcance: comparte la derivación de alcance y la definición de "pendiente".
+    """
+
+    total: int
+
+
 class ClasificacionValidar(BaseModel):
     """
     Payload enviado por el operador humano para validar o corregir una clasificación.

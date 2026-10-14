@@ -10,10 +10,15 @@
  *   - Paginacion : control de páginas offset-based para ambas listas.
  *
  * Flujo de datos:
- *   useIncidentes         → GET /api/v1/incidentes (filtros + paginación)
- *   useRevisionPendiente  → GET /api/v1/clasificaciones/revision-pendiente
+ *   useIncidentes             → GET /api/v1/incidentes (filtros + paginación)
+ *   useRevisionPendiente      → GET /api/v1/clasificaciones/revision-pendiente (paginado)
+ *   useRevisionPendienteCount → GET /api/v1/clasificaciones/revision-pendiente/count (badge)
  *   TicketDetailDialog    → GET /api/v1/incidentes/{id}  (lazy, al abrir el diálogo)
  *   ValidarClasificacionDialog → PATCH /api/v1/clasificaciones/{id}/validar
+ *
+ * El badge de la pestaña usa el TOTAL del recurso de conteo (FRH-008), de modo
+ * que no quede acotado al tamaño de una página. La cola se pagina con
+ * limit/offset y el total del conteo determina si hay página siguiente (FRH-009).
  *
  * Frontera de seguridad (c-81, FR-RBAC-004/005):
  *   El filtro de sector de esta pantalla es una CONVENIENCIA de la interfaz, NO
@@ -23,7 +28,7 @@
  *   backend (403/404), la UI muestra un estado de error sin exponer el recurso.
  */
 import type { ReactNode } from 'react';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   LayoutList,
   ClipboardCheck,
@@ -43,7 +48,10 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { useIncidentes } from '@/hooks/useIncidentes';
-import { useRevisionPendiente } from '@/hooks/useRevisionPendiente';
+import {
+  useRevisionPendiente,
+  useRevisionPendienteCount,
+} from '@/hooks/useRevisionPendiente';
 import { useSectores } from '@/hooks/useSectores';
 import { TicketsTable } from './TicketsTable';
 import { RevisionHumanaTable } from './RevisionHumanaTable';
@@ -84,6 +92,7 @@ export default function AdministracionPage() {
   // ── Estado de filtros y paginación ─────────────────────────────────────────
   const [filtros, setFiltros] = useState<IncidenteListParams>(FILTROS_VACIOS);
   const [paginaTickets, setPaginaTickets] = useState(0);
+  const [paginaRevision, setPaginaRevision] = useState(0);
 
   // ── Estado de diálogos ──────────────────────────────────────────────────────
   const [incidenteIdSeleccionado, setIncidenteIdSeleccionado] = useState<number | null>(null);
@@ -112,10 +121,9 @@ export default function AdministracionPage() {
   });
 
   /**
-   * Cola de clasificaciones pendientes de revisión humana.
-   * Se consulta SIN paginación: el contador de la pestaña debe reflejar el total
-   * de pendientes del backend, no el tamaño de una página (FE 4). Se refresca
-   * automáticamente cada 60 s (configurado en el hook).
+   * Cola de clasificaciones pendientes de revisión humana, PAGINADA (FRH-009).
+   * El badge de la pestaña NO se deriva de esta página: usa el total del recurso
+   * de conteo (ver `useRevisionPendienteCount`). Se refresca cada 60 s (hook).
    */
   const {
     data: clasificacionesPendientes,
@@ -123,7 +131,30 @@ export default function AdministracionPage() {
     isError: errorRevision,
     error: errorRevisionObj,
     refetch: refetchRevision,
-  } = useRevisionPendiente();
+  } = useRevisionPendiente({
+    limit: PAGE_SIZE,
+    offset: paginaRevision * PAGE_SIZE,
+  });
+
+  /**
+   * Total real de pendientes del alcance (FRH-008). Alimenta el badge de la
+   * pestaña y la detección de páginas adicionales de la tabla de revisión.
+   */
+  const { data: totalRevision = 0 } = useRevisionPendienteCount();
+
+  /**
+   * Mantiene coherente la paginación tras un refetch (FRH-009, D7): si la página
+   * actual queda fuera de rango (p. ej. al validar la última fila), retrocede a la
+   * última página con resultados; si la cola quedó vacía, vuelve a la primera.
+   */
+  useEffect(() => {
+    if (totalRevision <= 0) {
+      if (paginaRevision !== 0) setPaginaRevision(0);
+      return;
+    }
+    const ultimaPagina = Math.ceil(totalRevision / PAGE_SIZE) - 1;
+    if (paginaRevision > ultimaPagina) setPaginaRevision(ultimaPagina);
+  }, [totalRevision, paginaRevision]);
 
   // ── Handlers ────────────────────────────────────────────────────────────────
 
@@ -179,10 +210,11 @@ export default function AdministracionPage() {
   }, []);
 
   /**
-   * Total de clasificaciones pendientes: se muestra como badge en la pestaña
-   * "Revisión Humana" para alertar al operador sin que necesite cambiar de pestaña.
+   * Total de clasificaciones pendientes del alcance (FRH-008): se muestra como
+   * badge en la pestaña "Revisión Humana". Proviene del recurso de conteo, por
+   * lo que NO queda acotado al tamaño de una página de la cola.
    */
-  const totalPendientes = clasificacionesPendientes?.length ?? 0;
+  const totalPendientes = totalRevision;
 
   // ── Renderizado ─────────────────────────────────────────────────────────────
 
@@ -313,17 +345,16 @@ export default function AdministracionPage() {
         {tabActiva === 'revision' && (
           <section className="space-y-4 animate-fade-in">
 
-            {/* Aviso explicativo del criterio de revisión */}
+            {/* Aviso explicativo del criterio de revisión (agnóstico al modelo, FRH-010) */}
             <div className="flex items-start gap-2 p-4 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
               <ClipboardCheck className="h-4 w-4 flex-shrink-0 mt-0.5 text-amber-600" />
               <p>
-                Estos incidentes fueron clasificados con una confianza inferior al{' '}
-                <strong>70%</strong> (umbral definido en la especificación Gemini 2.5 Flash).
-                Revisá y confirmá el sector correcto para cada uno.
+                Estos incidentes fueron clasificados con una confianza inferior al 70%, umbral de
+                revisión humana del clasificador. Revisá y confirmá el sector correcto para cada uno.
               </p>
             </div>
 
-            {/* Cola de revisión humana */}
+            {/* Cola de revisión humana (paginada) */}
             <RevisionHumanaTable
               clasificaciones={clasificacionesPendientes}
               isLoading={cargandoRevision}
@@ -331,6 +362,15 @@ export default function AdministracionPage() {
               error={errorRevisionObj}
               onValidar={handleValidar}
               onRefetch={() => void refetchRevision()}
+            />
+
+            {/* Control de paginación de la cola, con el total exacto del conteo */}
+            <Paginacion
+              pagina={paginaRevision}
+              totalEnPagina={clasificacionesPendientes?.length ?? 0}
+              pageSize={PAGE_SIZE}
+              total={totalRevision}
+              onChange={setPaginaRevision}
             />
           </section>
         )}
@@ -401,19 +441,35 @@ interface PaginacionProps {
   totalEnPagina: number;
   /** Tamaño configurado de página (para detectar si puede haber una página siguiente). */
   pageSize: number;
+  /**
+   * Total exacto del conjunto (opcional). Cuando se provee, la existencia de una
+   * página siguiente se deriva de `(pagina + 1) * pageSize < total` (exacto, FRH-009).
+   * Sin él se conserva la heurística `totalEnPagina === pageSize` (pestaña de tickets).
+   */
+  total?: number;
   /** Callback que recibe el nuevo índice de página al navegar. */
   onChange: (pagina: number) => void;
 }
 
 /**
  * Control de paginación offset-based.
- * La existencia de una página siguiente se infiere por comparación:
- * si la página actual tiene exactamente `pageSize` elementos, probablemente haya más.
- * Este enfoque evita una consulta extra de conteo al backend.
+ *
+ * Con `total` provisto (cola de revisión), la página siguiente existe si y solo si
+ * `(pagina + 1) * pageSize < total`: es la detección exacta que habilita el total
+ * del recurso de conteo. Sin `total` (pestaña de tickets), se conserva la
+ * heurística previa: si la página actual tiene exactamente `pageSize` elementos,
+ * probablemente haya más.
  */
-function Paginacion({ pagina, totalEnPagina, pageSize, onChange }: PaginacionProps) {
+export function Paginacion({
+  pagina,
+  totalEnPagina,
+  pageSize,
+  total,
+  onChange,
+}: PaginacionProps) {
   const hayAnterior = pagina > 0;
-  const haySiguiente = totalEnPagina === pageSize;
+  const haySiguiente =
+    total !== undefined ? (pagina + 1) * pageSize < total : totalEnPagina === pageSize;
 
   if (!hayAnterior && !haySiguiente) return null;
 

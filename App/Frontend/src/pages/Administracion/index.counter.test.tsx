@@ -1,6 +1,7 @@
 /**
- * FE 4: el contador de revision humana debe reflejar el total de pendientes del
- * backend, no el tamano de la pagina visible. La cola se consulta sin paginar.
+ * FE 4 / FRH-008: el contador de la pestaña "Revisión Humana" debe reflejar el
+ * TOTAL REAL de pendientes del alcance (endpoint de conteo), no el tamaño de la
+ * página visible de la cola.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -18,6 +19,7 @@ vi.mock('@/services/incidentesService', () => ({
 }));
 vi.mock('@/services/clasificacionesService', () => ({
   listarRevisionPendiente: vi.fn(),
+  contarRevisionPendiente: vi.fn(),
   validarClasificacion: vi.fn(),
 }));
 vi.mock('@/services/catalogosService', () => ({
@@ -62,13 +64,14 @@ function renderPage() {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
-  return render(
+  render(
     <QueryClientProvider client={queryClient}>
       <MemoryRouter>
         <AdministracionPage />
       </MemoryRouter>
     </QueryClientProvider>
   );
+  return { queryClient };
 }
 
 describe('AdministracionPage - contador de revision humana', () => {
@@ -76,23 +79,45 @@ describe('AdministracionPage - contador de revision humana', () => {
     vi.clearAllMocks();
     vi.mocked(incidentesService.listarIncidentes).mockResolvedValue([]);
     vi.mocked(catalogosService.listarSectores).mockResolvedValue([]);
+    vi.mocked(clasificacionesService.listarRevisionPendiente).mockResolvedValue([]);
+    vi.mocked(clasificacionesService.contarRevisionPendiente).mockResolvedValue(0);
   });
 
-  it('muestra el total de pendientes aunque exceda el tamano de pagina', async () => {
-    // 25 pendientes > PAGE_SIZE (20): el contador debe mostrar 25.
+  it('muestra el total del conteo aunque exceda el tamano de pagina', async () => {
+    // El conteo devuelve 137 (mucho mayor que PAGE_SIZE); la lista solo trae 20.
+    vi.mocked(clasificacionesService.contarRevisionPendiente).mockResolvedValue(137);
     vi.mocked(clasificacionesService.listarRevisionPendiente).mockResolvedValue(
-      Array.from({ length: 25 }, (_, i) => makePendiente(i + 1))
+      Array.from({ length: 20 }, (_, i) => makePendiente(i + 1))
     );
 
     renderPage();
 
     await waitFor(() => {
-      expect(screen.getByText('25')).toBeInTheDocument();
+      expect(screen.getByText('137')).toBeInTheDocument();
     });
+    // El badge NO se deriva del tamano de la pagina (20).
+    expect(screen.queryByText('20')).not.toBeInTheDocument();
+  });
 
-    // La consulta no debe paginar: sin limit/offset que recorten el total.
-    expect(clasificacionesService.listarRevisionPendiente).toHaveBeenCalled();
-    const args = vi.mocked(clasificacionesService.listarRevisionPendiente).mock.calls[0][0];
-    expect(args).toEqual({});
+  it('oculta el badge cuando el total del conteo es cero', async () => {
+    vi.mocked(clasificacionesService.contarRevisionPendiente).mockResolvedValue(0);
+
+    renderPage();
+
+    await waitFor(() => expect(incidentesService.listarIncidentes).toHaveBeenCalled());
+    expect(screen.getByText('Revisión Humana')).toBeInTheDocument();
+    // Sin pendientes no se muestra ningun badge (ni un "0").
+    expect(screen.queryByText('0')).not.toBeInTheDocument();
+  });
+
+  it('muestra el total del alcance propio cuando es menor que una pagina', async () => {
+    // Alcance PROPIO: el backend devuelve el total acotado (3), no la cola global.
+    vi.mocked(clasificacionesService.contarRevisionPendiente).mockResolvedValue(3);
+
+    renderPage();
+
+    await waitFor(() => {
+      expect(screen.getByText('3')).toBeInTheDocument();
+    });
   });
 });
