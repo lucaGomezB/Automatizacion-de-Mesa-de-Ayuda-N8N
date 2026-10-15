@@ -56,6 +56,7 @@ class PoliticaRol:
         cierra_sector:           si puede cerrar por su sector (c-86, ILC-001).
         cierra_global:           si puede cerrar globalmente (c-86, ILC-002).
         reabre:                  si puede rehabilitar un incidente cerrado (c-86, ILC-004).
+        can_delete_incident:     si puede borrar logicamente un incidente (c-87, RP-005).
     """
 
     requires_sector: bool
@@ -69,6 +70,7 @@ class PoliticaRol:
     cierra_sector: bool = False
     cierra_global: bool = False
     reabre: bool = False
+    can_delete_incident: bool = False
 
 
 #: Vocabulario canonico del rol, derivado del enum (RP-002). El CHECK de la base
@@ -84,6 +86,7 @@ ROLE_POLICY: Final[Mapping[RolEmpleado, PoliticaRol]] = {
         manages_directory=False,
         can_read_directory=False,
         notification_recipient=False,
+        can_delete_incident=False,
     ),
     RolEmpleado.mesa_de_ayuda: PoliticaRol(
         requires_sector=False,
@@ -96,6 +99,7 @@ ROLE_POLICY: Final[Mapping[RolEmpleado, PoliticaRol]] = {
         edita_estado=True,
         cierra_global=True,
         reabre=True,
+        can_delete_incident=False,
     ),
     RolEmpleado.administrador_directorio: PoliticaRol(
         requires_sector=False,
@@ -104,6 +108,8 @@ ROLE_POLICY: Final[Mapping[RolEmpleado, PoliticaRol]] = {
         manages_directory=True,
         can_read_directory=True,
         notification_recipient=False,
+        # c-87 (RP-005): unico rol autorizado al borrado logico de incidentes.
+        can_delete_incident=True,
     ),
     RolEmpleado.gestion_incidentes: PoliticaRol(
         # c-86 (D1): rol operativo por sector. Exige sector, alcance SECTOR, NO
@@ -118,6 +124,7 @@ ROLE_POLICY: Final[Mapping[RolEmpleado, PoliticaRol]] = {
         post_review_recipient=True,
         edita_estado=True,
         cierra_sector=True,
+        can_delete_incident=False,
     ),
 }
 
@@ -203,6 +210,13 @@ def roles_que_editan_estado() -> frozenset[str]:
     return frozenset(r.value for r, p in ROLE_POLICY.items() if p.edita_estado)
 
 
+def roles_con_borrado_incidentes() -> frozenset[str]:
+    """Valores de rol autorizados al borrado logico de incidentes (c-87, RP-005)."""
+    return frozenset(
+        r.value for r, p in ROLE_POLICY.items() if p.can_delete_incident
+    )
+
+
 __all__ = [
     "ModoAlcance",
     "PoliticaRol",
@@ -219,4 +233,5 @@ __all__ = [
     "roles_que_cierran_global",
     "roles_que_reabren",
     "roles_que_editan_estado",
+    "roles_con_borrado_incidentes",
 ]

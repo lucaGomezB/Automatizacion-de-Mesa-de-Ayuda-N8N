@@ -16,6 +16,7 @@ import {
   editarEstadoIncidente,
   listarComentarios,
   agregarComentario,
+  borrarIncidente,
 } from './incidentesService';
 import type { IncidenteCreate, IncidenteRead, IncidenteListItem } from '../types/incidente';
 import type { EstadoRead, SectorRead, CanalOrigenRead } from '../types/catalog';
@@ -29,6 +30,7 @@ vi.mock('./api', async (importOriginal) => {
       post: vi.fn(),
       get: vi.fn(),
       patch: vi.fn(),
+      delete: vi.fn(),
     },
   };
 });
@@ -222,6 +224,26 @@ describe('incidentesService', () => {
       expect(mockedApiClient.patch).toHaveBeenCalledWith('/incidentes/42/estado', {
         estado: 'resuelto',
       });
+    });
+  });
+
+  // ---------- borrado logico (c-87) ----------
+
+  describe('borrarIncidente', () => {
+    it('hace DELETE a /incidentes/{id} y no devuelve cuerpo', async () => {
+      vi.mocked(mockedApiClient.delete).mockResolvedValueOnce({ data: undefined });
+
+      const result = await borrarIncidente(42);
+
+      expect(mockedApiClient.delete).toHaveBeenCalledWith('/incidentes/42');
+      expect(result).toBeUndefined();
+    });
+
+    it('propaga los errores (403/404) tal cual', async () => {
+      const error = { isAxiosError: true, response: { status: 403 } };
+      vi.mocked(mockedApiClient.delete).mockRejectedValueOnce(error);
+
+      await expect(borrarIncidente(7)).rejects.toEqual(error);
     });
   });
 

@@ -11,8 +11,9 @@
  * `DetalleIncidente` (solo lectura), que también usa la validación humana, para no
  * duplicar la vista rica ni divergir entre ambas superficies (FRH-004).
  */
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Hash } from 'lucide-react';
+import { AlertCircle, Hash, Loader2, Trash2 } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -20,11 +21,15 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { ErrorAlert } from '@/components/shared/ErrorAlert';
 import { DetalleIncidente } from './DetalleIncidente';
 import { AccionesCiclo } from './AccionesCiclo';
 import { ComentariosIncidente } from './ComentariosIncidente';
+import { useAuth } from '@/contexts/AuthContext';
+import { useBorradoIncidente } from '@/hooks/useBorradoIncidente';
 import { extractApiErrorMessage } from '@/services/api';
 import { obtenerIncidente } from '@/services/incidentesService';
 import { listarClasificacionesPorIncidente } from '@/services/clasificacionesService';
@@ -37,6 +42,14 @@ interface TicketDetailDialogProps {
 
 export function TicketDetailDialog({ open, incidenteId, onClose }: TicketDetailDialogProps) {
   const habilitado = open && incidenteId !== null;
+
+  // Accion de borrado logico (c-87, FR-RBAC-006): solo visible/ejecutable para
+  // el rol administrador del directorio. El backend sigue siendo el limite de
+  // seguridad (403/404 se manejan sin asumir exito ni exponer el recurso).
+  const { rol } = useAuth();
+  const esAdmin = rol === 'administrador_directorio';
+  const [confirmandoBorrado, setConfirmandoBorrado] = useState(false);
+  const borrado = useBorradoIncidente(incidenteId ?? 0);
 
   const {
     data: incidente,
@@ -101,6 +114,67 @@ export function TicketDetailDialog({ open, incidenteId, onClose }: TicketDetailD
 
             {/* Comentarios append-only del incidente (c-86, FIH-003) */}
             <ComentariosIncidente incidenteId={incidente.id} />
+
+            {/* Zona de administracion: borrado logico exclusivo del administrador
+                del directorio, con confirmacion (c-87, FR-RBAC-006). */}
+            {esAdmin && (
+              <div className="space-y-3">
+                <Separator />
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Zona de administración
+                </p>
+
+                {/* Denegacion del backend (403/404): estado de error sin asumir exito. */}
+                {borrado.error != null && (
+                  <div className="flex items-start gap-2 p-3 bg-destructive/10 border border-destructive/30 rounded-md text-destructive text-sm">
+                    <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <span>{extractApiErrorMessage(borrado.error)}</span>
+                  </div>
+                )}
+
+                {!confirmandoBorrado ? (
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    disabled={borrado.isPending}
+                    onClick={() => setConfirmandoBorrado(true)}
+                  >
+                    <Trash2 className="h-3.5 w-3.5 mr-1" />
+                    Eliminar incidente
+                  </Button>
+                ) : (
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">
+                      ¿Confirmás el borrado lógico del incidente? Se retirará de todas las
+                      vistas.
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={borrado.isPending}
+                        onClick={() => setConfirmandoBorrado(false)}
+                      >
+                        Cancelar
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        disabled={borrado.isPending}
+                        onClick={() =>
+                          borrado.mutate(undefined, { onSuccess: () => onClose() })
+                        }
+                      >
+                        {borrado.isPending && (
+                          <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
+                        )}
+                        Confirmar borrado
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </>
         )}
       </DialogContent>

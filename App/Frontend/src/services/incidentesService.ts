@@ -121,6 +121,20 @@ export async function editarEstadoIncidente(
   return data;
 }
 
+// ── Borrado logico (c-87, incident-soft-delete) ──────────────────────────────
+
+/**
+ * Borra LOGICAMENTE un incidente (DELETE /incidentes/{id}).
+ *
+ * Exclusivo del rol `administrador_directorio` (el backend responde 403 en otro
+ * caso). Responde 204 sin cuerpo; el incidente se retira de todas las vistas de
+ * lectura. Un 403 o 404 se propaga al llamador para que lo maneje sin exponer el
+ * recurso (FR-RBAC-005/FR-RBAC-006).
+ */
+export async function borrarIncidente(id: number): Promise<void> {
+  await apiClient.delete(`/incidentes/${id}`);
+}
+
 // ── Comentarios append-only (c-86, incident-comments) ────────────────────────
 
 /** Lista los comentarios del incidente en orden cronológico ascendente. */

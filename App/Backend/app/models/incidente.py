@@ -181,6 +181,26 @@ class Incidente(Base, TimestampMixin):
         nullable=True,
     )
 
+    # Marcador de BORRADO LOGICO (c-87, SD-001). NULL = incidente activo; un
+    # instante no nulo lo retira de TODAS las superficies de lectura. La fila y
+    # sus relaciones NUNCA se eliminan fisicamente por esta via (reversible por
+    # diseño). La exclusion se concentra en el repositorio (punto unico, D2).
+    deleted_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
+
+    # Atribucion del actor del borrado logico (c-87, SD-001): FK nullable al
+    # directorio de empleados, patron de `reportante_empleado_id`. ON DELETE SET
+    # NULL: el borrado ARCO del actor anula la referencia sin eliminar el
+    # incidente. Indexada para el filtrado por actor.
+    deleted_by: Mapped[int | None] = mapped_column(
+        Integer,
+        ForeignKey("directorio_empleado.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+
     # Sectores adicionales (N-a-N): el sector principal vive en sector_id; esta
     # coleccion guarda el resto del conjunto multietiqueta del incidente.
     sectores_adicionales: Mapped[list[Sector]] = relationship(

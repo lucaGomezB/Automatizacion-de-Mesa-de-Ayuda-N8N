@@ -6,7 +6,8 @@
  * error (403/404) sin exponer el recurso.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { TicketDetailDialog } from './TicketDetailDialog';
 import { createTestQueryClient } from '@/test/utils';
@@ -24,6 +25,7 @@ vi.mock('@/services/incidentesService', () => ({
   cerrarGlobal: vi.fn(),
   rehabilitarIncidente: vi.fn(),
   editarEstadoIncidente: vi.fn(),
+  borrarIncidente: vi.fn(),
 }));
 
 vi.mock('@/services/clasificacionesService', () => ({
@@ -61,12 +63,32 @@ const mockClasificacion: ClasificacionLogRead = {
   sectores_validados: [],
 };
 
-function renderDialog() {
-  return render(
-    <QueryClientProvider client={createTestQueryClient()}>
-      <TicketDetailDialog open incidenteId={12} onClose={vi.fn()} />
+function renderDialog(
+  client = createTestQueryClient(),
+  onClose = vi.fn()
+) {
+  render(
+    <QueryClientProvider client={client}>
+      <TicketDetailDialog open incidenteId={12} onClose={onClose} />
     </QueryClientProvider>
   );
+  return { client, onClose };
+}
+
+function authConRol(rol: string) {
+  return {
+    token: 't',
+    username: 'u',
+    isAuthenticated: true,
+    mfaRequired: false,
+    rol,
+    alcance: { modo: 'GLOBAL' as const },
+    login: vi.fn(),
+    verifyMfa: vi.fn(),
+    enrollMfa: vi.fn(),
+    refreshIdentidad: vi.fn(),
+    logout: vi.fn(),
+  };
 }
 
 describe('TicketDetailDialog', () => {
@@ -127,5 +149,117 @@ describe('TicketDetailDialog', () => {
     expect(await screen.findByText(/el recurso solicitado no existe/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /reintentar/i })).toBeInTheDocument();
     expect(screen.queryByText(/no puedo acceder al sistema/i)).not.toBeInTheDocument();
+  });
+});
+
+describe('TicketDetailDialog - accion de borrado logico (c-87, FR-RBAC-006)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(incidentesService.listarComentarios).mockResolvedValue([]);
+    vi.mocked(incidentesService.obtenerIncidente).mockResolvedValue(mockIncidente);
+    vi.mocked(clasificacionesService.listarClasificacionesPorIncidente).mockResolvedValue([
+      mockClasificacion,
+    ]);
+  });
+
+  it('el administrador ve la accion de borrado', async () => {
+    useAuthMock.mockReturnValue(authConRol('administrador_directorio'));
+    renderDialog();
+
+    expect(
+      await screen.findByRole('button', { name: /eliminar incidente/i })
+    ).toBeInTheDocument();
+  });
+
+  it('mesa_de_ayuda no ve la accion de borrado', async () => {
+    useAuthMock.mockReturnValue(authConRol('mesa_de_ayuda'));
+    renderDialog();
+
+    await screen.findByText(/no puedo acceder al sistema/i);
+    expect(
+      screen.queryByRole('button', { name: /eliminar incidente/i })
+    ).not.toBeInTheDocument();
+  });
+
+  it('usuario_final no ve la accion de borrado', async () => {
+    useAuthMock.mockReturnValue(authConRol('usuario_final'));
+    renderDialog();
+
+    await screen.findByText(/no puedo acceder al sistema/i);
+    expect(
+      screen.queryByRole('button', { name: /eliminar incidente/i })
+    ).not.toBeInTheDocument();
+  });
+
+  it('exige confirmacion antes de invocar el backend', async () => {
+    const user = userEvent.setup();
+    useAuthMock.mockReturnValue(authConRol('administrador_directorio'));
+    renderDialog();
+
+    await user.click(await screen.findByRole('button', { name: /eliminar incidente/i }));
+
+    expect(screen.getByRole('button', { name: /confirmar borrado/i })).toBeInTheDocument();
+    expect(incidentesService.borrarIncidente).not.toHaveBeenCalled();
+  });
+
+  it('cancelar no invoca el backend y el incidente permanece visible', async () => {
+    const user = userEvent.setup();
+    useAuthMock.mockReturnValue(authConRol('administrador_directorio'));
+    renderDialog();
+
+    await user.click(await screen.findByRole('button', { name: /eliminar incidente/i }));
+    await user.click(screen.getByRole('button', { name: /cancelar/i }));
+
+    expect(incidentesService.borrarIncidente).not.toHaveBeenCalled();
+    expect(screen.getByRole('button', { name: /eliminar incidente/i })).toBeInTheDocument();
+  });
+
+  it('confirmar invoca el borrado, invalida listados y cierra el dialogo', async () => {
+    const user = userEvent.setup();
+    useAuthMock.mockReturnValue(authConRol('administrador_directorio'));
+    vi.mocked(incidentesService.borrarIncidente).mockResolvedValue(undefined);
+    const { client, onClose } = renderDialog();
+    const invalidar = vi.spyOn(client, 'invalidateQueries');
+
+    await user.click(await screen.findByRole('button', { name: /eliminar incidente/i }));
+    await user.click(screen.getByRole('button', { name: /confirmar borrado/i }));
+
+    await waitFor(() =>
+      expect(incidentesService.borrarIncidente).toHaveBeenCalledWith(12)
+    );
+    await waitFor(() => expect(invalidar).toHaveBeenCalled());
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
+  });
+
+  it('un 403 se maneja como acceso denegado sin asumir exito', async () => {
+    const user = userEvent.setup();
+    useAuthMock.mockReturnValue(authConRol('administrador_directorio'));
+    vi.mocked(incidentesService.borrarIncidente).mockRejectedValue({
+      isAxiosError: true,
+      response: { status: 403, data: {} },
+    });
+    const { onClose } = renderDialog();
+
+    await user.click(await screen.findByRole('button', { name: /eliminar incidente/i }));
+    await user.click(screen.getByRole('button', { name: /confirmar borrado/i }));
+
+    expect(await screen.findByText(/no tenés permiso/i)).toBeInTheDocument();
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it('un 404 se maneja como no encontrado sin asumir exito', async () => {
+    const user = userEvent.setup();
+    useAuthMock.mockReturnValue(authConRol('administrador_directorio'));
+    vi.mocked(incidentesService.borrarIncidente).mockRejectedValue({
+      isAxiosError: true,
+      response: { status: 404, data: {} },
+    });
+    const { onClose } = renderDialog();
+
+    await user.click(await screen.findByRole('button', { name: /eliminar incidente/i }));
+    await user.click(screen.getByRole('button', { name: /confirmar borrado/i }));
+
+    expect(await screen.findByText(/no existe/i)).toBeInTheDocument();
+    expect(onClose).not.toHaveBeenCalled();
   });
 });
