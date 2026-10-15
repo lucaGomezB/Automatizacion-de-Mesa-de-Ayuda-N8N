@@ -206,7 +206,7 @@ PSEUDONYMIZATION_ENCRYPTION_KEY=MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA= # g
 - **Frontend coverage exclusions**: `src/components/ui/**` and `src/components/layout/**` are shadcn primitives — excluded from coverage.
 - **Frontend test setup**: `globalThis.jest = null` in `src/test/setup.ts` prevents jest-dom from conflicting with vitest's `expect`.
 - **evaluation/ has its own pytest.ini** — running `pytest` from repo root will NOT pick it up. Must run from `evaluation/` directory.
-- **Flaky tests**: none are known flaky. If something fails in CI but passes locally, check Python/pip version skew (the project pins exact versions in requirements.txt).
+- **Flaky tests**: none are currently known flaky. One `flaky-under-load` case was found and fixed during c-86: the frontend `IncidenteForm.test.tsx` timed out at the default 5000ms ONLY when the full backend suite ran concurrently. Mitigations now in place: `userEvent.setup({ delay: null })` in that file and a global `testTimeout: 15000` in `App/Frontend/vitest.config.ts`. If something fails in CI but passes locally, first rule out a heavy suite running concurrently, then check Python/pip version skew (the project pins exact versions in requirements.txt).
 
 ## CI Pipeline (.github/workflows/ci.yml)
 
