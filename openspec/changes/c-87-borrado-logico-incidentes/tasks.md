@@ -41,8 +41,8 @@
 
 ## 7. Verificación integral
 
-- [ ] 7.1 Ejecutar `pytest -m "not integration"` en `App/Backend/` y confirmar que pasa el subconjunto SQLite
-  - NO ejecutado: el alcance de verificación acordado prohíbe la suite completa. Se corrieron los archivos directamente afectados (safety net) y los nuevos tests c-87, todos verdes.
-- [ ] 7.2 Ejecutar `pytest -m integration` en `App/Backend/` con PostgreSQL disponible y confirmar que pasa el subconjunto de integración (incluida la migración)
-  - NO ejecutado: el alcance de verificación acordado prohíbe la suite de integración completa. La migración 019 se aplicó y revirtió contra PostgreSQL (`alembic upgrade head` → `downgrade -1` → `upgrade head`) y sus columnas/FK/índice se verificaron con `psql`.
+- [x] 7.1 Ejecutar `pytest -m "not integration"` en `App/Backend/` y confirmar que pasa el subconjunto SQLite
+  - Ejecutado durante el cierre de c-86 (misma suite, mismo estado de código, c-87 ya commiteado): 1379 passed, 46 deselected, 1 xfailed.
+- [x] 7.2 Ejecutar `pytest -m integration` en `App/Backend/` con PostgreSQL disponible y confirmar que pasa el subconjunto de integración (incluida la migración)
+  - Ejecutado durante el cierre de c-86: 46 passed con PostgreSQL (base descartable provisionada y eliminada). Adicionalmente la migración 019 se había verificado con `upgrade`/`downgrade` contra PostgreSQL en la fase de apply.
 - [x] 7.3 Ejecutar `openspec validate c-87-borrado-logico-incidentes --strict` y confirmar que pasa sin errores
