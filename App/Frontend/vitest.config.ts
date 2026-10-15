@@ -20,6 +20,9 @@ export default defineConfig({
     environment: 'happy-dom',
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
+    // Headroom para tests de componentes pesados bajo carga concurrente
+    // (el default de 5000ms resulto insuficiente; ver c-86 seccion 12.4).
+    testTimeout: 15000,
     coverage: {
       provider: 'v8',
       include: [

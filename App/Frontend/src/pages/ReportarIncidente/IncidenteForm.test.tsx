@@ -16,6 +16,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+
+/**
+ * userEvent con `delay: null`: sin el macrotask por keystroke, el tipeo de
+ * descripciones largas deja de ser el cuello de botella. Bajo carga concurrente
+ * (suite backend corriendo en paralelo) los tests superaban el testTimeout
+ * default de 5000ms; esto elimina la causa raiz, no solo el sintoma.
+ * Ver c-86 seccion 12.4.
+ */
+const setupUser = () => userEvent.setup({ delay: null });
 import { QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { IncidenteForm } from './IncidenteForm';
@@ -106,7 +115,7 @@ describe('IncidenteForm', () => {
       makeMockMutation()
     );
 
-    const user = userEvent.setup();
+    const user = setupUser();
     renderForm();
     await abrirSelectSector(user);
 
@@ -124,7 +133,7 @@ describe('IncidenteForm', () => {
       makeMockMutation()
     );
 
-    const user = userEvent.setup();
+    const user = setupUser();
     renderForm();
     await abrirSelectSector(user);
 
@@ -140,7 +149,7 @@ describe('IncidenteForm', () => {
       makeMockMutation({ mutate: mutateMock })
     );
 
-    const user = userEvent.setup();
+    const user = setupUser();
     renderForm();
 
     // Completar nombre (campo requerido)
@@ -172,7 +181,7 @@ describe('IncidenteForm', () => {
       makeMockMutation({ mutate: mutateMock })
     );
 
-    const user = userEvent.setup();
+    const user = setupUser();
     renderForm();
 
     // No completar nombre, completar descripción válida
@@ -198,7 +207,7 @@ describe('IncidenteForm', () => {
       makeMockMutation({ mutate: mutateMock })
     );
 
-    const user = userEvent.setup();
+    const user = setupUser();
     renderForm();
 
     // Completar nombre
@@ -230,7 +239,7 @@ describe('IncidenteForm', () => {
       makeMockMutation({ mutate: mutateMock })
     );
 
-    const user = userEvent.setup();
+    const user = setupUser();
     renderForm();
 
     await user.type(screen.getByLabelText(/nombre completo/i), 'Ana García');
