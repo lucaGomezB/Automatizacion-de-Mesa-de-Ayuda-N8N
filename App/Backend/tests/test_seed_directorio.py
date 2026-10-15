@@ -42,6 +42,7 @@ async def test_seed_idempotente_crea_un_usuario_por_rol(db_session):
         RolEmpleado.usuario_final,
         RolEmpleado.mesa_de_ayuda,
         RolEmpleado.administrador_directorio,
+        RolEmpleado.gestion_incidentes,
     }
 
 
@@ -76,6 +77,23 @@ def admin_user_username() -> str:
         for p in PERSONAS_SINTETICAS
         if p["rol"] == "administrador_directorio"
     )
+
+
+@pytest.mark.asyncio
+async def test_seed_gestion_incidentes_con_sector_obligatorio(db_session):
+    """El sintetico de gestion_incidentes (requires_sector) nace con sector."""
+    await _seed_sector(db_session)
+
+    await seed_directorio(db_session, environment="test")
+
+    gestion = (
+        await db_session.execute(
+            select(Empleado).where(Empleado.rol == RolEmpleado.gestion_incidentes)
+        )
+    ).scalar_one()
+
+    assert gestion.legajo == "DIR-GESTION"
+    assert gestion.sector_id is not None, "gestion_incidentes exige sector"
 
 
 @pytest.mark.asyncio

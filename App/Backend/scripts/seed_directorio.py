@@ -104,6 +104,16 @@ PERSONAS_SINTETICAS: list[dict[str, Any]] = [
         "rol": RolEmpleado.usuario_final.value,
         "sector": "Sistemas",
     },
+    {
+        "username": "directorio.gestion",
+        "password": "cambiar-esta-clave-gestion",  # gitleaks:allow (password de desarrollo, usuario sintetico)
+        "legajo": "DIR-GESTION",
+        "nombre": "Gestion de incidentes (sintetico)",
+        "email": "directorio.gestion@example.test",
+        "telefono": "+5491100000004",
+        "rol": RolEmpleado.gestion_incidentes.value,
+        "sector": "Sistemas",
+    },
 ]
 
 
