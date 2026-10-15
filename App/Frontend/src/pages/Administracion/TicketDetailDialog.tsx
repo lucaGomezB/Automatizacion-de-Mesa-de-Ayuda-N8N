@@ -27,6 +27,7 @@ import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { ErrorAlert } from '@/components/shared/ErrorAlert';
 import { DetalleIncidente } from './DetalleIncidente';
 import { AccionesCiclo } from './AccionesCiclo';
+import { AsignarPrioridad } from './AsignarPrioridad';
 import { ComentariosIncidente } from './ComentariosIncidente';
 import { useAuth } from '@/contexts/AuthContext';
 import { useBorradoIncidente } from '@/hooks/useBorradoIncidente';
@@ -104,6 +105,13 @@ export function TicketDetailDialog({ open, incidenteId, onClose }: TicketDetailD
         {incidente && (
           <>
             <DetalleIncidente incidente={incidente} clasificacion={clasificacionPrincipal} />
+
+            {/* Control de asignacion de prioridad segun el rol (c-90, FR-RBAC-009).
+                El backend sigue siendo el limite de seguridad (403 en otro caso). */}
+            <AsignarPrioridad
+              incidente={incidente}
+              onMutated={() => void refetchIncidente()}
+            />
 
             {/* Acciones del ciclo de cierre segun el rol (c-86, D11).
                 El backend sigue siendo el limite de seguridad (FIH-004). */}

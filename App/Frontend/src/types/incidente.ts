@@ -14,7 +14,7 @@
  */
 import type { CanalOrigenRead, EstadoRead, SectorRead } from './catalog';
 
-export type PrioridadEnum = 'baja' | 'media' | 'alta';
+export type PrioridadEnum = 'baja' | 'media' | 'alta' | 'critica';
 
 /**
  * Estados NO terminales editables por subrecurso (c-86, ILC-005).

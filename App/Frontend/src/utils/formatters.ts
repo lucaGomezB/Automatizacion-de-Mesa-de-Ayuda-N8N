@@ -46,6 +46,7 @@ export function formatearPrioridad(prioridad: string): string {
     baja: 'Baja',
     media: 'Media',
     alta: 'Alta',
+    critica: 'Crítica',
   };
   return mapa[prioridad] ?? prioridad;
 }

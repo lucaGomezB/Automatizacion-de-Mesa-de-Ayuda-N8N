@@ -19,6 +19,7 @@ import type {
   IncidenteListItem,
   IncidenteListParams,
   IncidenteRead,
+  PrioridadEnum,
 } from '../types/incidente';
 import type { ComentarioRead } from '../types/comentario';
 
@@ -47,6 +48,23 @@ export async function listarIncidentes(
 /** Obtiene la representación completa de un incidente, incluida la descripción. */
 export async function obtenerIncidente(id: number): Promise<IncidenteRead> {
   const { data } = await apiClient.get<IncidenteRead>(`/incidentes/${id}`);
+  return data;
+}
+
+// ── Asignacion de prioridad (c-90, FR-RBAC-009 / RP-006) ──────────────────────
+
+/**
+ * Asigna la prioridad de un incidente (PATCH /incidentes/{id}).
+ *
+ * La prioridad `critica` esta restringida a los roles autorizados (`mesa_de_ayuda`
+ * y `administrador_directorio`); el backend responde 403 en otro caso. Un 403 se
+ * propaga al llamador para que lo maneje sin asumir exito (FR-RBAC-005).
+ */
+export async function actualizarPrioridadIncidente(
+  id: number,
+  prioridad: PrioridadEnum
+): Promise<IncidenteRead> {
+  const { data } = await apiClient.patch<IncidenteRead>(`/incidentes/${id}`, { prioridad });
   return data;
 }
 

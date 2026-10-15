@@ -164,4 +164,18 @@ describe('DetalleIncidente', () => {
 
     expect(screen.getByText(/sin descripción disponible/i)).toBeInTheDocument();
   });
+
+  // ---- Indicador de prioridad critica (c-90, FR-RBAC-009) ----
+
+  it('representa la prioridad critica de forma distinguible', () => {
+    render(
+      <DetalleIncidente
+        incidente={{ ...mockIncidente, prioridad: 'critica' }}
+        clasificacion={null}
+      />
+    );
+
+    expect(screen.getByText('Crítica')).toBeInTheDocument();
+    expect(screen.queryByText('critica')).not.toBeInTheDocument();
+  });
 });

@@ -104,4 +104,19 @@ describe('MisIncidentesPage', () => {
       expect(screen.getByText(/error al cargar/i)).toBeInTheDocument();
     });
   });
+
+  // ---- Indicador de prioridad critica (c-90, FR-RBAC-009) ----
+
+  it('representa la prioridad critica de forma distinguible', async () => {
+    vi.mocked(incidentesService.listarIncidentes).mockResolvedValue([
+      { ...makeItem(11), prioridad: 'critica' },
+    ]);
+
+    renderPage();
+
+    await waitFor(() => {
+      expect(screen.getByText('Crítica')).toBeInTheDocument();
+    });
+    expect(screen.queryByText('critica')).not.toBeInTheDocument();
+  });
 });

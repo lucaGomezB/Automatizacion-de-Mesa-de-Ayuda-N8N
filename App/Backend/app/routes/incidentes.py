@@ -116,6 +116,54 @@ async def get_empleado_actual(
 EmpleadoDep = Annotated[Empleado | None, Depends(get_empleado_actual)]
 
 
+def exigir_permiso_prioridad_critica(
+    empleado: Empleado | None, prioridad: PrioridadEnum | None
+) -> None:
+    """
+    Guard de asignacion de la prioridad `critica` (c-90, RP-006).
+
+    El permiso se DERIVA del registro canonico de politica de rol
+    (`puede_asignar_prioridad_critica`): `mesa_de_ayuda` y
+    `administrador_directorio` lo declaran verdadero; el resto, no. No existe
+    lista de roles duplicada en la ruta.
+
+    Dispara UNICAMENTE cuando el payload pide EXPLICITAMENTE `critica` (D3): un
+    alta con el default `media` o un PATCH que no toca la prioridad nunca es
+    rechazado por este guard, aunque el incidente ya este en `critica`. Un rol
+    sin permiso, un rol desconocido o una cuenta sin empleado vinculado reciben
+    403 (envelope FORBIDDEN), sin persistir ningun cambio.
+    """
+    if prioridad != PrioridadEnum.critica:
+        return
+    politica = politica_de_rol(empleado.rol) if empleado is not None else None
+    if politica is None or not politica.puede_asignar_prioridad_critica:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Se requiere un rol autorizado para asignar la prioridad critica.",
+        )
+
+
+async def require_prioridad_critica_create(
+    payload: IncidenteCreate,
+    empleado: EmpleadoDep,
+) -> None:
+    """Guard del alta: rechaza `critica` sin permiso antes de clasificar (c-90)."""
+    exigir_permiso_prioridad_critica(empleado, payload.prioridad)
+
+
+async def require_prioridad_critica_update(
+    payload: IncidenteUpdate,
+    empleado: EmpleadoDep,
+) -> None:
+    """Guard de la edicion: rechaza fijar/cambiar a `critica` sin permiso (c-90)."""
+    exigir_permiso_prioridad_critica(empleado, payload.prioridad)
+
+
+# Alias de tipo para inyección de los guards de prioridad critica
+GuardPrioridadCriticaCreate = Annotated[None, Depends(require_prioridad_critica_create)]
+GuardPrioridadCriticaUpdate = Annotated[None, Depends(require_prioridad_critica_update)]
+
+
 async def require_borrado_incidentes(empleado: EmpleadoDep) -> Empleado:
     """
     Exige un empleado vinculado autorizado al borrado logico de incidentes (c-87, RP-005).
@@ -204,6 +252,7 @@ async def create_incidente(
     payload: IncidenteCreate,
     service: ServiceDep,
     session: SessionDep,
+    _guard: GuardPrioridadCriticaCreate,
     current_user: User = Depends(get_current_user),
 ) -> IncidenteCreateResponse:
     """
@@ -354,6 +403,7 @@ async def update_incidente(
     payload: IncidenteUpdate,
     service: ServiceDep,
     alcance: AlcanceDep,
+    _guard: GuardPrioridadCriticaUpdate,
     current_user: User = Depends(get_current_user),
 ) -> IncidenteRead:
     """
