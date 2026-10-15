@@ -16,7 +16,7 @@ La prioridad `critica` no se ofrece en el formulario web, pero el backend la ace
 - None: no se introduce ninguna capability nueva.
 
 ### Modified Capabilities
-- `role-policy`: nuevo requisito **RP-006** — permiso `puede_asignar_prioridad_critica` en el registro canónico (ADD; NO toca RP-001/002/003 que modifica `c-86`).
+- `role-policy`: nuevo requisito **RP-006** — permiso `puede_asignar_prioridad_critica` en el registro canónico (ADD; NO toca RP-001/002/003 que modificó `c-86`, ya archivado).
 - `frontend-rbac`: nuevo requisito **FR-RBAC-009** — control de asignación de prioridad visible/ejecutable solo para los roles autorizados (`mesa_de_ayuda` y `administrador_directorio`).
 
 ## Impact
@@ -24,4 +24,4 @@ La prioridad `critica` no se ofrece en el formulario web, pero el backend la ace
 - Backend: `app/services/role_policy.py`, `app/routes/incidentes.py`, `app/services/incidente_service.py`, `app/schemas/incidente.py` (si aplica validación), `app/core/error_handlers.py` (403 ya existente).
 - Frontend: `App/Frontend/src/pages/Administracion/` (`TicketsTable.tsx`, `TicketDetailDialog.tsx`, `DetalleIncidente.tsx`), equivalente en `MisIncidentes`, `src/types/incidente.ts`, `src/utils/formatters.ts`.
 - Contrato: `docs/openapi.json` se regenera solo si cambia el contrato HTTP (nuevo 403 documentado), guardado por `tests/test_openapi_sync.py`.
-- Sin migración Alembic. Sibling `c-86` (pendiente) no se clobbea: RP-006 es un requisito ADICIONAL.
+- Sin migración Alembic. El change hermano `c-86` (aplicado y archivado el 2026-10-15) no se clobbea: RP-006 es un requisito ADICIONAL.

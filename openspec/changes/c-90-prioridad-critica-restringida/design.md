@@ -5,7 +5,7 @@ Ver `proposal.md` (Why). Estado actual verificado:
 - `PrioridadEnum` = `baja | media | alta | critica` (columna con default `media`). El formulario web (`IncidenteForm.tsx`) solo ofrece `baja|media|alta`.
 - El backend NO restringe `critica` en `POST /api/v1/incidentes` (`IncidenteCreate`) ni `PATCH /api/v1/incidentes/{id}` (`IncidenteUpdate`).
 - Registro canónico: `app/services/role_policy.py` (`PoliticaRol`, `ROLE_POLICY`, `politica_de_rol`). El guard del directorio (`routes/directorio.py`) ya sigue el patrón lista-blanca derivada de un atributo de política y lanza 403 con el envelope `FORBIDDEN`.
-- `c-86` (pendiente) modifica RP-001/002/003; por eso este cambio solo AGREGA RP-006.
+- `c-86` (APLICADO Y ARCHIVADO el 2026-10-15) modificó RP-001/002/003 e introdujo el rol `gestion_incidentes`; por eso este cambio solo AGREGA RP-006.
 
 ## Goals / Non-Goals
 
@@ -49,6 +49,6 @@ Sin migración de datos. Despliegue: cambio de código backend + frontend. Rollb
 
 ## Open Questions
 
-- **OQ-1 (RESUELTA el 2026-10-14):** ¿`administrador_directorio` también puede asignar `critica`? Decisión humana confirmada: SÍ. `puede_asignar_prioridad_critica` es verdadero para `mesa_de_ayuda` y `administrador_directorio`; es falso para `usuario_final` y para el futuro rol `gestion_incidentes` (introducido por el pendiente `c-86`), que NO puede asignar `critica`. El autor había dicho inicialmente "solo mesa_de_ayuda"; el diseño queda ahora en la regla de dos roles.
+- **OQ-1 (RESUELTA el 2026-10-14):** ¿`administrador_directorio` también puede asignar `critica`? Decisión humana confirmada: SÍ. `puede_asignar_prioridad_critica` es verdadero para `mesa_de_ayuda` y `administrador_directorio`; es falso para `usuario_final` y para el rol `gestion_incidentes` (introducido por `c-86`, ya aplicado y archivado), que NO puede asignar `critica`. El autor había dicho inicialmente "solo mesa_de_ayuda"; el diseño queda ahora en la regla de dos roles.
 - OQ-2 (resuelto en D3): "set/keep" se interpreta como payload explícito `critica`.
 - OQ-3 (resuelto en D5): n8n no envía `critica`; regla segura = guard por rol con denegación por defecto.
