@@ -25,13 +25,13 @@ vi.mock('@/hooks/useHealthCheck', () => ({
 
 const useAuthMock = vi.mocked(useAuth);
 
-function authState(modo: 'PROPIO' | 'GLOBAL' | 'SECTOR' | 'VACIO') {
+function authState(modo: 'PROPIO' | 'GLOBAL' | 'SECTOR' | 'VACIO', rol: string | null = null) {
   return {
     token: 't',
     username: 'u',
     isAuthenticated: true,
     mfaRequired: false,
-    rol: null,
+    rol,
     alcance: { modo },
     login: vi.fn(),
     verifyMfa: vi.fn(),
@@ -41,8 +41,8 @@ function authState(modo: 'PROPIO' | 'GLOBAL' | 'SECTOR' | 'VACIO') {
   };
 }
 
-function renderHeader(modo: 'PROPIO' | 'GLOBAL' | 'SECTOR' | 'VACIO') {
-  useAuthMock.mockReturnValue(authState(modo));
+function renderHeader(modo: 'PROPIO' | 'GLOBAL' | 'SECTOR' | 'VACIO', rol: string | null = null) {
+  useAuthMock.mockReturnValue(authState(modo, rol));
   return render(
     <MemoryRouter>
       <Header />
@@ -129,5 +129,31 @@ describe('Header - cierre de sesion (FSU-001)', () => {
     await waitFor(() => {
       expect(screen.getByText('Pantalla de login')).toBeInTheDocument();
     });
+  });
+});
+
+// c-89 FR-RBAC-007: el enlace del directorio se decide por ROL, no por alcance.
+describe('Header - navegacion por rol del directorio (c-89)', () => {
+  beforeEach(() => {
+    useAuthMock.mockReset();
+  });
+
+  it('muestra el enlace a /directorio al administrador del directorio', () => {
+    renderHeader('GLOBAL', 'administrador_directorio');
+    const enlace = screen.getByRole('link', { name: /directorio/i });
+    expect(enlace).toBeInTheDocument();
+    expect(enlace).toHaveAttribute('href', '/directorio');
+  });
+
+  it('NO muestra el enlace a un rol GLOBAL distinto (mesa_de_ayuda)', () => {
+    renderHeader('GLOBAL', 'mesa_de_ayuda');
+    expect(screen.queryByRole('link', { name: /directorio/i })).not.toBeInTheDocument();
+    // Los enlaces existentes por alcance no cambian.
+    expect(screen.getByRole('link', { name: /administraci/i })).toBeInTheDocument();
+  });
+
+  it('NO muestra el enlace a usuario_final (PROPIO)', () => {
+    renderHeader('PROPIO', 'usuario_final');
+    expect(screen.queryByRole('link', { name: /directorio/i })).not.toBeInTheDocument();
   });
 });
