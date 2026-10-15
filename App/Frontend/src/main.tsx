@@ -26,6 +26,7 @@ import DashboardPage from './pages/Dashboard';
 import LoginPage from './pages/LoginPage';
 import MfaEnrollmentPage from './pages/MfaEnrollmentPage';
 import MisIncidentesPage from './pages/MisIncidentes';
+import DirectorioPage from './pages/Directorio';
 import './index.css';
 
 // Cliente de React Query con reintentos reducidos para evitar saturar la API en errores temporales
@@ -83,6 +84,16 @@ function App() {
           element={
             <ProtectedRoute requiere="PROPIO">
               <MisIncidentesPage />
+            </ProtectedRoute>
+          }
+        />
+        {/* Directorio: guard ADITIVO por ROL (c-89, FR-RBAC-008). El modo GLOBAL
+            tambien incluye a mesa_de_ayuda, por eso no basta el alcance. */}
+        <Route
+          path="/directorio"
+          element={
+            <ProtectedRoute requiereRol="administrador_directorio">
+              <DirectorioPage />
             </ProtectedRoute>
           }
         />

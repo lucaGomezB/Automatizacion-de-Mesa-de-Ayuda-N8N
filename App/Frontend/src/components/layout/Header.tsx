@@ -14,19 +14,22 @@
  *   El estilo active de los NavLinks se aplica dinámicamente para reflejar la ruta actual.
  */
 import { NavLink, useNavigate } from 'react-router-dom';
-import { BarChart3, ClipboardList, LogOut, TicketCheck } from 'lucide-react';
+import { BarChart3, ClipboardList, LogOut, TicketCheck, Users } from 'lucide-react';
 import { useHealthCheck } from '@/hooks/useHealthCheck';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 
 export function Header() {
   // Navegacion por ALCANCE, no por pathname (c-81, FR-RBAC-003).
-  const { alcance, logout } = useAuth();
+  const { alcance, rol, logout } = useAuth();
   const navigate = useNavigate();
   const esGlobal = alcance.modo === 'GLOBAL';
   const esPropio = alcance.modo === 'PROPIO';
   // La superficie operativa admite GLOBAL y SECTOR (c-86, FR-RBAC-002/003).
   const esOperativo = alcance.modo === 'GLOBAL' || alcance.modo === 'SECTOR';
+  // El directorio se decide por ROL, no por alcance: GLOBAL incluye a mesa_de_ayuda
+  // (c-89, FR-RBAC-007).
+  const esAdminDirectorio = rol === 'administrador_directorio';
   const { data: health, isError: healthError, isPending: healthPending } = useHealthCheck();
 
   // Cierre de sesion (FSU-001): reutiliza logout() del contexto y navega al login.
@@ -81,6 +84,13 @@ export function Header() {
             <NavLink to="/mis-incidentes" className={navLinkClass}>
               <ClipboardList className="h-3.5 w-3.5 mr-1 inline" />
               Mis incidentes
+            </NavLink>
+          )}
+          {/* Directorio: solo el ROL administrador_directorio (c-89, FR-RBAC-007) */}
+          {esAdminDirectorio && (
+            <NavLink to="/directorio" className={navLinkClass}>
+              <Users className="h-3.5 w-3.5 mr-1 inline" />
+              Directorio
             </NavLink>
           )}
         </nav>
