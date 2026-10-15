@@ -3261,6 +3261,25 @@
             }
           },
           {
+            "description": "Buscar por texto libre en la descripcion, o por numero de incidente cuando el termino es numerico",
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Buscar por texto libre en la descripcion, o por numero de incidente cuando el termino es numerico",
+              "title": "Q"
+            }
+          },
+          {
             "description": "Cantidad máxima de resultados",
             "in": "query",
             "name": "limit",

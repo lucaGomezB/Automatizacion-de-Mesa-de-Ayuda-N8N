@@ -25,6 +25,34 @@ from app.models.asociaciones import incidente_sector_adicional
 from app.models.incidente import Incidente, IncidenteCierreSector, PrioridadEnum
 from app.repositories.base import BaseRepository
 
+# Longitud minima (tras recortar) para que un termino de busqueda libre aplique
+# (c-88, IS-001, D2). Un termino mas corto se comporta como si no se hubiera
+# provisto. Se mantiene como constante para documentar el umbral.
+MIN_LONGITUD_BUSQUEDA = 2
+
+
+def escapar_like(termino: str) -> str:
+    """
+    Escapa los comodines de LIKE y el caracter de escape (c-88, IS-002, D4).
+
+    `%` y `_` son comodines de patron en LIKE/ILIKE; el backslash es el caracter
+    de escape declarado con `escape='\\'`. Si un termino de busqueda los contiene,
+    deben tratarse como literales: `%` no debe matchear "cualquier secuencia" ni
+    `_` "cualquier caracter". El backslash se escapa PRIMERO para no volver a
+    escapar los backslashes introducidos al escapar `%` y `_`.
+
+    Args:
+        termino: texto crudo provisto por el usuario.
+
+    Returns:
+        El termino con `\\`, `%` y `_` escapados para uso literal en LIKE.
+    """
+    return (
+        termino.replace("\\", "\\\\")
+        .replace("%", "\\%")
+        .replace("_", "\\_")
+    )
+
 
 class IncidenteRepository(BaseRepository[Incidente]):
     """
@@ -116,6 +144,7 @@ class IncidenteRepository(BaseRepository[Incidente]):
         desde: datetime | None = None,
         hasta: datetime | None = None,
         origen_message_id: str | None = None,
+        q: str | None = None,
         reportante_empleado_id: int | None = None,
         sector_scope_id: int | None = None,
         limit: int = 50,
@@ -139,6 +168,13 @@ class IncidenteRepository(BaseRepository[Incidente]):
             desde:                   Filtra incidentes creados desde esta fecha.
             hasta:                   Filtra incidentes creados hasta esta fecha.
             origen_message_id:       Filtra por el identificador de origen (exacto).
+            q:                       Busqueda libre (c-88, IS-001): coincidencia
+                                     parcial case-insensitive contra
+                                     `descripcion_pseudonimizada` OR coincidencia
+                                     exacta por `id` cuando el termino es numerico.
+                                     Un termino de menos de 2 caracteres tras
+                                     recortar se ignora. Nunca consulta
+                                     `descripcion_original` (IS-002).
             reportante_empleado_id:  Acota a los incidentes reportados por el
                                      empleado dado (alcance PROPIO, c-82).
             limit:                   Cantidad máxima de resultados (paginación).
@@ -167,6 +203,23 @@ class IncidenteRepository(BaseRepository[Incidente]):
             # c-69: coincidencia EXACTA del identificador de origen para la
             # correlacion determinista item-enviado ↔ incidente-persistido.
             conditions.append(Incidente.origen_message_id == origen_message_id)
+        if q is not None:
+            # c-88 (IS-001/IS-002, D1/D4/D5): busqueda libre parametrizada. Se
+            # combina como una condicion AND mas; el alcance por rol se sigue
+            # derivando en el servicio (ortogonal). El patron se construye con
+            # bind de parametros (nunca interpolacion) y los comodines del
+            # termino se escapan. NUNCA se referencia `descripcion_original`.
+            termino = q.strip()
+            if len(termino) >= MIN_LONGITUD_BUSQUEDA:
+                patron = f"%{escapar_like(termino)}%"
+                busqueda = Incidente.descripcion_pseudonimizada.ilike(
+                    patron, escape="\\"
+                )
+                if termino.isdigit():
+                    # Termino numerico: ademas de la descripcion, coincide con el
+                    # numero de incidente (OR logico), c-88 IS-001.
+                    busqueda = or_(busqueda, Incidente.id == int(termino))
+                conditions.append(busqueda)
         if reportante_empleado_id is not None:
             # c-82 (VIS-001): base del alcance PROPIO del rol `usuario_final`.
             conditions.append(
