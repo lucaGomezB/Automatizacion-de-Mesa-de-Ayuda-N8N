@@ -3441,6 +3441,45 @@
       }
     },
     "/api/v1/incidentes/{incidente_id}": {
+      "delete": {
+        "description": "Ejecuta el borrado LOGICO de un incidente (c-87, SD-002).\n\nAutorizacion: solo el rol con `can_delete_incident` (administrador del\ndirectorio); 403 en otro caso. Un incidente fuera del alcance del llamante,\ninexistente o ya borrado responde 404 sin revelar su existencia. La fila y\nsus relaciones persisten; solo se setean `deleted_at`/`deleted_by` (SD-001).",
+        "operationId": "borrar_incidente_api_v1_incidentes__incidente_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incidente_id",
+            "required": true,
+            "schema": {
+              "title": "Incidente Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Borrado lógico de un incidente (administrador del directorio)",
+        "tags": [
+          "Incidentes"
+        ]
+      },
       "get": {
         "description": "Retorna la representación completa de un incidente, incluyendo relaciones.\n\nA diferencia del listado, esta respuesta incluye la descripción completa\ndel incidente y los objetos de catálogo completos (sector, estado, canal).\n\nArgs:\n    incidente_id: ID del incidente a recuperar.\n\nReturns:\n    Detalle completo del incidente (HTTP 200) o error 404 si no existe.",
         "operationId": "get_incidente_api_v1_incidentes__incidente_id__get",

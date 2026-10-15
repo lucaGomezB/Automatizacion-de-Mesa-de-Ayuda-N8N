@@ -538,8 +538,39 @@ class IncidenteService:
         await self._incidente_repo.update_fields(incidente_id, **updates)
         return await self.get_by_id(incidente_id, alcance=alcance)
 
-    # ── Métodos Auxiliares Privados ───────────────────────────────────────────
+    async def soft_delete_incidente(
+        self,
+        incidente_id: int,
+        *,
+        actor_empleado_id: int | None,
+        alcance: "AlcanceIncidentes | None" = None,
+    ) -> None:
+        """
+        Ejecuta el borrado LOGICO de un incidente (c-87, D6/SD-001/SD-002).
 
+        Valida existencia y alcance reutilizando `get_by_id(..., alcance=...)`:
+        un incidente inexistente, ya borrado o fuera del alcance del llamante se
+        comporta como no encontrado (404) sin modificar ninguna fila. Luego marca
+        `deleted_at` con un instante UTC y `deleted_by` con el actor, delegando en
+        el repositorio (camino NUEVO; nunca `hard_delete`).
+
+        Args:
+            incidente_id:     ID del incidente a borrar logicamente.
+            actor_empleado_id: id del empleado que ejecuta el borrado (atribucion).
+            alcance:          Alcance de visibilidad por rol (VIS-001).
+
+        Raises:
+            EntityNotFoundError: Si el incidente no existe, esta borrado o queda
+                                 fuera del alcance del usuario.
+        """
+        await self.get_by_id(incidente_id, alcance=alcance)
+        await self._incidente_repo.soft_delete(
+            incidente_id,
+            deleted_by=actor_empleado_id,
+            deleted_at=utcnow(),
+        )
+
+    # ── Métodos Auxiliares Privados ───────────────────────────────────────────
     async def _apply_classification(
         self,
         incidente: Incidente,

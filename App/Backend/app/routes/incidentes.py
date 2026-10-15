@@ -22,7 +22,7 @@ Rutas expuestas (prefijo /api/v1/incidentes):
 from datetime import datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.constants import es_canal_correo, es_canal_telefonia
@@ -52,6 +52,7 @@ from app.services.incident_visibility import (
     alcance_desde_empleado,
 )
 from app.services.incidente_service import IncidenteService
+from app.services.role_policy import politica_de_rol
 
 # Prefijo /incidentes; el prefijo /api/v1 lo agrega register_routes() en routes/__init__.py
 router = APIRouter(prefix="/incidentes", tags=["Incidentes"])
@@ -113,6 +114,28 @@ async def get_empleado_actual(
 
 # Alias de tipo para inyección del actor como dependencia
 EmpleadoDep = Annotated[Empleado | None, Depends(get_empleado_actual)]
+
+
+async def require_borrado_incidentes(empleado: EmpleadoDep) -> Empleado:
+    """
+    Exige un empleado vinculado autorizado al borrado logico de incidentes (c-87, RP-005).
+
+    El permiso se DERIVA del registro canonico de politica de rol
+    (`can_delete_incident`): unicamente `administrador_directorio` lo declara
+    verdadero. Un rol no autorizado o una cuenta sin empleado vinculado recibe
+    403. No existe lista de roles duplicada en la ruta.
+    """
+    politica = politica_de_rol(empleado.rol) if empleado is not None else None
+    if politica is None or not politica.can_delete_incident:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Se requiere el rol administrador_directorio.",
+        )
+    return empleado
+
+
+# Alias de tipo para inyección del actor autorizado al borrado logico
+BorradoDep = Annotated[Empleado, Depends(require_borrado_incidentes)]
 
 
 def get_ciclo_service(session: SessionDep) -> CicloIncidenteService:
@@ -350,6 +373,31 @@ async def update_incidente(
     """
     incidente = await service.update_incidente(incidente_id, payload, alcance=alcance)
     return IncidenteRead.model_validate(incidente)
+
+
+@router.delete(
+    "/{incidente_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Borrado lógico de un incidente (administrador del directorio)",
+)
+async def borrar_incidente(
+    incidente_id: int,
+    service: ServiceDep,
+    alcance: AlcanceDep,
+    actor: BorradoDep,
+    current_user: User = Depends(get_current_user),
+) -> None:
+    """
+    Ejecuta el borrado LOGICO de un incidente (c-87, SD-002).
+
+    Autorizacion: solo el rol con `can_delete_incident` (administrador del
+    directorio); 403 en otro caso. Un incidente fuera del alcance del llamante,
+    inexistente o ya borrado responde 404 sin revelar su existencia. La fila y
+    sus relaciones persisten; solo se setean `deleted_at`/`deleted_by` (SD-001).
+    """
+    await service.soft_delete_incidente(
+        incidente_id, actor_empleado_id=actor.id, alcance=alcance
+    )
 
 
 @router.post(

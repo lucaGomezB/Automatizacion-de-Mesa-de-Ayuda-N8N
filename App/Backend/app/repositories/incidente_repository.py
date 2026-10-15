@@ -17,7 +17,7 @@ Decisión de eager loading:
 
 from datetime import datetime
 
-from sqlalchemy import and_, delete, or_, select
+from sqlalchemy import and_, delete, or_, select, update
 from sqlalchemy.orm import selectinload
 
 from app.models.catalog import Estado
@@ -37,6 +37,17 @@ class IncidenteRepository(BaseRepository[Incidente]):
 
     model = Incidente
 
+    @staticmethod
+    def _excluir_borrados():
+        """
+        Condicion por defecto de exclusion del borrado logico (c-87, D2/VIS-009).
+
+        Un incidente con `deleted_at` no nulo se comporta como inexistente en
+        TODAS las superficies de lectura. Se concentra aqui (punto unico de la
+        capa de datos) para que ninguna consulta nueva omita el filtro.
+        """
+        return Incidente.deleted_at.is_(None)
+
     async def get_with_relations(self, incidente_id: int) -> Incidente | None:
         """
         Recupera un incidente con todas sus relaciones cargadas en una sola consulta.
@@ -45,15 +56,20 @@ class IncidenteRepository(BaseRepository[Incidente]):
         clasificaciones. Esto evita el problema N+1 que ocurriría si SQLAlchemy
         lazily cargara cada relación al acceder a ella dentro del contexto de sesión.
 
+        Excluye los incidentes borrados logicamente (c-87, VIS-009): un incidente
+        con `deleted_at` no nulo se comporta como inexistente (None).
+
         Args:
             incidente_id: ID del incidente a recuperar.
 
         Returns:
-            Instancia de Incidente con relaciones cargadas, o None si no existe.
+            Instancia de Incidente con relaciones cargadas, o None si no existe
+            o esta borrado logicamente.
         """
         result = await self._session.execute(
             select(Incidente)
             .where(Incidente.id == incidente_id)
+            .where(self._excluir_borrados())
             .options(
                 selectinload(Incidente.sector),
                 selectinload(Incidente.sectores_adicionales),
@@ -177,9 +193,11 @@ class IncidenteRepository(BaseRepository[Incidente]):
             conditions.append(~Incidente.estado_id.in_(terminales))
             conditions.append(~cierre.exists())
 
-        # Consulta base con carga eager de relaciones para el listado
+        # Consulta base con carga eager de relaciones para el listado.
+        # Excluye SIEMPRE los borrados logicamente (c-87, VIS-009).
         stmt = (
             select(Incidente)
+            .where(self._excluir_borrados())
             .options(
                 selectinload(Incidente.sector),
                 selectinload(Incidente.estado),
@@ -236,6 +254,7 @@ class IncidenteRepository(BaseRepository[Incidente]):
 
         stmt = (
             select(Incidente)
+            .where(self._excluir_borrados())
             .options(
                 selectinload(Incidente.sector),
                 selectinload(Incidente.estado),
@@ -276,6 +295,36 @@ class IncidenteRepository(BaseRepository[Incidente]):
         incidente.sectores_adicionales = sectores_adicionales
         self._session.add(incidente)
         await self._session.flush()
+
+    async def soft_delete(
+        self,
+        incidente_id: int,
+        *,
+        deleted_by: int | None,
+        deleted_at: datetime,
+    ) -> int:
+        """
+        Marca logicamente un incidente como borrado (c-87, D3/SD-001).
+
+        Ejecuta un UPDATE Core seteando `deleted_at` y `deleted_by`. NO elimina
+        fisicamente la fila ni sus relaciones (clasificaciones, sectores
+        adicionales): el borrado es reversible por diseño. El UPDATE Core evita
+        el lazy-load que dispararia el ORM en contexto async.
+
+        Args:
+            incidente_id: PK del incidente a marcar.
+            deleted_by:   id del empleado actor (o None si no aplica).
+            deleted_at:   instante UTC del borrado.
+
+        Returns:
+            Cantidad de filas afectadas (0 si no existe; 1 en exito).
+        """
+        result = await self._session.execute(
+            update(Incidente)
+            .where(Incidente.id == incidente_id)
+            .values(deleted_at=deleted_at, deleted_by=deleted_by)
+        )
+        return result.rowcount or 0
 
     async def hard_delete(self, incidente_id: int) -> int:
         """
