@@ -17,22 +17,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { SectorBadge } from '@/components/shared/SectorBadge';
 import { EstadoBadge } from '@/components/shared/EstadoBadge';
+import { PrioridadBadge } from '@/components/shared/PrioridadBadge';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { ErrorAlert } from '@/components/shared/ErrorAlert';
 import { useIncidentes } from '@/hooks/useIncidentes';
 import { extractApiErrorMessage } from '@/services/api';
-import { formatearFecha, formatearPrioridad } from '@/utils/formatters';
-
-/** Badge de prioridad acotado a la vista de incidentes propios. */
-function PrioridadBadge({ prioridad }: { prioridad: string }) {
-  const variant =
-    prioridad === 'alta' ? 'destructive' : prioridad === 'media' ? 'warning' : 'muted';
-  return <Badge variant={variant}>{formatearPrioridad(prioridad)}</Badge>;
-}
+import { formatearFecha } from '@/utils/formatters';
 
 export default function MisIncidentesPage() {
   // Sin parametros: el backend decide que incidentes son visibles (alcance PROPIO).

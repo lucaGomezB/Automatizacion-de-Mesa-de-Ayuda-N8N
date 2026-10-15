@@ -29,11 +29,11 @@ import {
   Tag,
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
 import { SectorBadge } from '@/components/shared/SectorBadge';
 import { EstadoBadge } from '@/components/shared/EstadoBadge';
+import { PrioridadBadge } from '@/components/shared/PrioridadBadge';
 import { ConfianzaIndicator } from '@/components/shared/ConfianzaIndicator';
-import { formatearFecha, formatearPrioridad, formatearEtapa } from '@/utils/formatters';
+import { formatearFecha, formatearEtapa } from '@/utils/formatters';
 import type { IncidenteRead } from '@/types/incidente';
 import type { ClasificacionLogRead } from '@/types/clasificacion';
 
@@ -104,17 +104,7 @@ export function DetalleIncidente({ incidente, clasificacion }: DetalleIncidenteP
         </CampoDetalle>
 
         <CampoDetalle icono={<FileText className="h-3.5 w-3.5" />} etiqueta="Prioridad">
-          <Badge
-            variant={
-              incidente.prioridad === 'alta'
-                ? 'destructive'
-                : incidente.prioridad === 'media'
-                ? 'warning'
-                : 'muted'
-            }
-          >
-            {formatearPrioridad(incidente.prioridad)}
-          </Badge>
+          <PrioridadBadge prioridad={incidente.prioridad} />
         </CampoDetalle>
 
         <CampoDetalle icono={<Mail className="h-3.5 w-3.5" />} etiqueta="Canal de Origen">

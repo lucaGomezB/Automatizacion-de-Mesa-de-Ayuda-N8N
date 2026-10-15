@@ -26,13 +26,13 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { SectorBadge } from '@/components/shared/SectorBadge';
 import { EstadoBadge } from '@/components/shared/EstadoBadge';
+import { PrioridadBadge } from '@/components/shared/PrioridadBadge';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { ErrorAlert } from '@/components/shared/ErrorAlert';
-import { formatearFecha, formatearPrioridad } from '@/utils/formatters';
+import { formatearFecha } from '@/utils/formatters';
 import { extractApiErrorMessage } from '@/services/api';
 import type { IncidenteListItem } from '@/types/incidente';
 
@@ -43,12 +43,6 @@ interface TicketsTableProps {
   error: unknown;
   onSelectIncidente: (id: number) => void;
   onRefetch: () => void;
-}
-
-function PrioridadBadge({ prioridad }: { prioridad: string }) {
-  const variant =
-    prioridad === 'alta' ? 'destructive' : prioridad === 'media' ? 'warning' : 'muted';
-  return <Badge variant={variant}>{formatearPrioridad(prioridad)}</Badge>;
 }
 
 export function TicketsTable({

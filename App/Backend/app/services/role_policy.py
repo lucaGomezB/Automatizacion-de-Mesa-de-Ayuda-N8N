@@ -57,6 +57,8 @@ class PoliticaRol:
         cierra_global:           si puede cerrar globalmente (c-86, ILC-002).
         reabre:                  si puede rehabilitar un incidente cerrado (c-86, ILC-004).
         can_delete_incident:     si puede borrar logicamente un incidente (c-87, RP-005).
+        puede_asignar_prioridad_critica: si puede asignar/fijar la prioridad
+                                 `critica` de un incidente (c-90, RP-006).
     """
 
     requires_sector: bool
@@ -71,6 +73,7 @@ class PoliticaRol:
     cierra_global: bool = False
     reabre: bool = False
     can_delete_incident: bool = False
+    puede_asignar_prioridad_critica: bool = False
 
 
 #: Vocabulario canonico del rol, derivado del enum (RP-002). El CHECK de la base
@@ -87,6 +90,8 @@ ROLE_POLICY: Final[Mapping[RolEmpleado, PoliticaRol]] = {
         can_read_directory=False,
         notification_recipient=False,
         can_delete_incident=False,
+        # c-90 (RP-006): el usuario final NO puede asignar la prioridad `critica`.
+        puede_asignar_prioridad_critica=False,
     ),
     RolEmpleado.mesa_de_ayuda: PoliticaRol(
         requires_sector=False,
@@ -100,6 +105,8 @@ ROLE_POLICY: Final[Mapping[RolEmpleado, PoliticaRol]] = {
         cierra_global=True,
         reabre=True,
         can_delete_incident=False,
+        # c-90 (RP-006): puede asignar/fijar la prioridad `critica`.
+        puede_asignar_prioridad_critica=True,
     ),
     RolEmpleado.administrador_directorio: PoliticaRol(
         requires_sector=False,
@@ -110,6 +117,8 @@ ROLE_POLICY: Final[Mapping[RolEmpleado, PoliticaRol]] = {
         notification_recipient=False,
         # c-87 (RP-005): unico rol autorizado al borrado logico de incidentes.
         can_delete_incident=True,
+        # c-90 (RP-006): el administrador del directorio tambien asigna `critica`.
+        puede_asignar_prioridad_critica=True,
     ),
     RolEmpleado.gestion_incidentes: PoliticaRol(
         # c-86 (D1): rol operativo por sector. Exige sector, alcance SECTOR, NO
@@ -125,6 +134,8 @@ ROLE_POLICY: Final[Mapping[RolEmpleado, PoliticaRol]] = {
         edita_estado=True,
         cierra_sector=True,
         can_delete_incident=False,
+        # c-90 (RP-006): gestion_incidentes NO puede asignar la prioridad `critica`.
+        puede_asignar_prioridad_critica=False,
     ),
 }
 
@@ -217,6 +228,25 @@ def roles_con_borrado_incidentes() -> frozenset[str]:
     )
 
 
+def roles_con_asignacion_prioridad_critica() -> frozenset[str]:
+    """Valores de rol autorizados a asignar la prioridad `critica` (c-90, RP-006)."""
+    return frozenset(
+        r.value for r, p in ROLE_POLICY.items() if p.puede_asignar_prioridad_critica
+    )
+
+
+def puede_asignar_prioridad_critica(rol: str | RolEmpleado | None) -> bool:
+    """
+    Indica si un rol puede asignar/fijar la prioridad `critica` (c-90, RP-006).
+
+    Normaliza enum o string y DENIEGA POR DEFECTO: un rol desconocido, fuera del
+    registro, o nulo devuelve False. Es el unico predicado que consumen los
+    guards de las rutas; ninguna lista de rol se duplica.
+    """
+    politica = politica_de_rol(rol)
+    return bool(politica is not None and politica.puede_asignar_prioridad_critica)
+
+
 __all__ = [
     "ModoAlcance",
     "PoliticaRol",
@@ -234,4 +264,6 @@ __all__ = [
     "roles_que_reabren",
     "roles_que_editan_estado",
     "roles_con_borrado_incidentes",
+    "roles_con_asignacion_prioridad_critica",
+    "puede_asignar_prioridad_critica",
 ]

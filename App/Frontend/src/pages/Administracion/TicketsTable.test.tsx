@@ -166,4 +166,15 @@ describe('TicketsTable', () => {
 
     expect(screen.queryByText('Solo lectura')).not.toBeInTheDocument();
   });
+
+  // ---- Indicador de prioridad critica (c-90, FR-RBAC-009) ----
+
+  it('renderiza la prioridad critica de forma distinguible (etiqueta formateada)', () => {
+    const incidentes = [makeItem(1, { prioridad: 'critica' })];
+
+    render(<TicketsTable {...defaultProps} incidentes={incidentes} />);
+
+    expect(screen.getByText('Crítica')).toBeInTheDocument();
+    expect(screen.queryByText('critica')).not.toBeInTheDocument();
+  });
 });
