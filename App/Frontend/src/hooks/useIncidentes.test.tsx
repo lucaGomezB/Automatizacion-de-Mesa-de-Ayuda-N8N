@@ -76,4 +76,17 @@ describe('useIncidentes', () => {
 
     expect(result.current.data).toEqual([]);
   });
+
+  it('reenvia el termino de busqueda `q` a listarIncidentes (c-88, FIS-001)', async () => {
+    vi.mocked(incidentesService.listarIncidentes).mockResolvedValueOnce([mockItem]);
+
+    const { result } = renderHook(
+      () => useIncidentes({ q: 'correo', limit: 20 }),
+      { wrapper: makeWrapper() }
+    );
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(incidentesService.listarIncidentes).toHaveBeenCalledWith({ q: 'correo', limit: 20 });
+  });
 });

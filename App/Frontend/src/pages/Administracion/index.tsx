@@ -36,10 +36,12 @@ import {
   ChevronLeft,
   ChevronRight,
   SlidersHorizontal,
+  Search,
   X,
 } from 'lucide-react';
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -50,6 +52,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
 import { useIncidentes } from '@/hooks/useIncidentes';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import {
   useRevisionPendiente,
   useRevisionPendienteCount,
@@ -79,6 +82,12 @@ type TabActiva = 'tickets' | 'revision' | 'historial';
 /** Cantidad de registros por página en ambas tablas. */
 const PAGE_SIZE = 20;
 
+/** Retraso del debounce de la barra de búsqueda (c-88, D3). */
+const BUSQUEDA_DEBOUNCE_MS = 300;
+
+/** Longitud mínima del término de búsqueda tras recortar (c-88, D2). */
+const BUSQUEDA_MIN_CARACTERES = 2;
+
 /**
  * Estado inicial de filtros: todos los campos indefinidos equivale a "sin filtro activo".
  * Se utiliza para resetear la barra de filtros sin perder la estructura del tipo.
@@ -106,6 +115,13 @@ export default function AdministracionPage() {
   const [paginaTickets, setPaginaTickets] = useState(0);
   const [paginaRevision, setPaginaRevision] = useState(0);
   const [paginaHistorial, setPaginaHistorial] = useState(0);
+
+  // ── Estado de búsqueda por texto libre (c-88, FIS-001) ─────────────────────
+  // El texto crudo del input se debounce 300 ms; el valor efectivo se refleja en
+  // `filtros.q` (mínimo 2 caracteres tras recortar) y viaja por la cadena
+  // IncidenteListParams -> useIncidentes -> listarIncidentes.
+  const [terminoBusqueda, setTerminoBusqueda] = useState('');
+  const terminoDebounced = useDebouncedValue(terminoBusqueda, BUSQUEDA_DEBOUNCE_MS);
 
   // ── Estado de diálogos ──────────────────────────────────────────────────────
   const [incidenteIdSeleccionado, setIncidenteIdSeleccionado] = useState<number | null>(null);
@@ -197,6 +213,21 @@ export default function AdministracionPage() {
   // ── Handlers ────────────────────────────────────────────────────────────────
 
   /**
+   * Refleja el término de búsqueda (ya debounced) en `filtros.q` y reinicia la
+   * paginación a la primera página (FIS-001). Un término de menos de 2
+   * caracteres tras recortar se trata como búsqueda vacía (sin `q`). Si el valor
+   * efectivo no cambia, el updater devuelve el mismo objeto para evitar un
+   * refetch espurio.
+   */
+  useEffect(() => {
+    const normalizado = terminoDebounced.trim();
+    const q =
+      normalizado.length >= BUSQUEDA_MIN_CARACTERES ? normalizado : undefined;
+    setFiltros((prev) => (prev.q === q ? prev : { ...prev, q }));
+    setPaginaTickets(0);
+  }, [terminoDebounced]);
+
+  /**
    * Actualiza un campo de filtro y reinicia la paginación a la primera página.
    * La aserción `as IncidenteListParams` es necesaria porque TypeScript no puede
    * verificar estáticamente que el valor dinámico `[campo]` sea compatible con
@@ -225,17 +256,19 @@ export default function AdministracionPage() {
     []
   );
 
-  /** Resetea todos los filtros y vuelve a la primera página. */
+  /** Resetea todos los filtros y el término de búsqueda, y vuelve a la primera página. */
   const handleLimpiarFiltros = useCallback(() => {
     setPaginaTickets(0);
     setFiltros(FILTROS_VACIOS);
+    setTerminoBusqueda('');
   }, []);
 
-  /** Indica si hay al menos un filtro activo (para mostrar el botón "Limpiar"). */
+  /** Indica si hay al menos un filtro o término de búsqueda activo (para el botón "Limpiar"). */
   const hayFiltrosActivos =
     filtros.sector_id !== undefined ||
     filtros.estado_id !== undefined ||
-    filtros.prioridad !== undefined;
+    filtros.prioridad !== undefined ||
+    filtros.q !== undefined;
 
   /** Abre el diálogo de detalle para el incidente seleccionado. */
   const handleSelectIncidente = useCallback((id: number) => {
@@ -303,6 +336,19 @@ export default function AdministracionPage() {
               <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                 <SlidersHorizontal className="h-4 w-4" />
                 Filtros:
+              </div>
+
+              {/* Barra de búsqueda por texto libre (c-88, FIS-001) */}
+              <div className="relative">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  aria-label="Buscar incidentes"
+                  placeholder="Buscar por descripción o número…"
+                  value={terminoBusqueda}
+                  onChange={(e) => setTerminoBusqueda(e.target.value)}
+                  className="h-9 w-64 pl-8 text-sm"
+                />
               </div>
 
               {/* Filtro por Estado del ciclo de vida */}

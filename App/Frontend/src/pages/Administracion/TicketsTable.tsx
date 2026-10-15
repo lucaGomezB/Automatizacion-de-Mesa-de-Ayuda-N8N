@@ -74,7 +74,7 @@ export function TicketsTable({
     return (
       <EmptyState
         titulo="Sin tickets"
-        descripcion="No hay incidentes que coincidan con los filtros seleccionados."
+        descripcion="No hay incidentes que coincidan con la búsqueda o los filtros seleccionados."
       />
     );
   }

@@ -162,6 +162,7 @@ class IncidenteService:
         desde: datetime | None = None,
         hasta: datetime | None = None,
         origen_message_id: str | None = None,
+        q: str | None = None,
         limit: int = 50,
         offset: int = 0,
         alcance: "AlcanceIncidentes | None" = None,
@@ -184,6 +185,8 @@ class IncidenteService:
             desde:                   Límite inferior de fecha de creación.
             hasta:                   Límite superior de fecha de creación.
             origen_message_id:       Filtra por el identificador de origen (exacto).
+            q:                       Busqueda por texto libre (c-88, IS-001). Se
+                                     aplica como condicion ortogonal al alcance.
             limit:                   Cantidad máxima de resultados.
             offset:                  Desplazamiento para paginación.
             alcance:                 Alcance de visibilidad por rol.
@@ -216,6 +219,7 @@ class IncidenteService:
             desde=desde,
             hasta=hasta,
             origen_message_id=origen_message_id,
+            q=q,
             reportante_empleado_id=reportante_filtro,
             sector_scope_id=sector_filtro,
             limit=limit,

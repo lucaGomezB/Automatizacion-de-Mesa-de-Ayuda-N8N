@@ -68,6 +68,13 @@ export interface IncidenteListParams {
   requiere_revision_humana?: boolean;
   desde?: string;
   hasta?: string;
+  /**
+   * Búsqueda por texto libre (c-88, IS-001). El backend la trata como
+   * coincidencia parcial case-insensitive de la descripción, o como número de
+   * incidente cuando el término es numérico. Un término de menos de 2 caracteres
+   * se comporta como búsqueda vacía.
+   */
+  q?: string;
   limit?: number;
   offset?: number;
 }

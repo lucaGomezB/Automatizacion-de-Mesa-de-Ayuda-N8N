@@ -256,6 +256,14 @@ async def list_incidentes(
         max_length=255,
         description="Filtrar por identificador de origen (coincidencia exacta)",
     ),
+    q: str | None = Query(
+        None,
+        max_length=200,
+        description=(
+            "Buscar por texto libre en la descripcion, o por numero de incidente "
+            "cuando el termino es numerico"
+        ),
+    ),
     limit: int = Query(50, ge=1, le=200, description="Cantidad máxima de resultados"),
     offset: int = Query(0, ge=0, description="Desplazamiento para paginación"),
 ) -> list[IncidenteListItem]:
@@ -275,6 +283,7 @@ async def list_incidentes(
         desde=desde,
         hasta=hasta,
         origen_message_id=origen_message_id,
+        q=q,
         limit=limit,
         offset=offset,
         alcance=alcance,
