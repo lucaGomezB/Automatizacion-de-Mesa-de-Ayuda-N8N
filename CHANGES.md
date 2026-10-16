@@ -163,6 +163,20 @@ C-76 tesis-correcciones-dictamen (ninguna — documento de tesis)          [ACTI
       └── C-78 tesis-bibliografia-atribucion (aplicar tras C-77)         [ACTIVO — 0/25; HIGH]
             └── C-79 tesis-aspectos-legales (aplicar tras C-78)           [ACTIVO — 0/25; HIGH]
                 └── C-80 tesis-forma-evidencia-visual (aplicar tras C-79) [ACTIVO — 0/45; BAJO]
+
+--- FASE 30: RBAC, ciclo de cierre y sesion (2026-10-13 / 2026-10-15) ---
+
+C-81 frontend-rbac (C-82)                                [ARCHIVADO 2026-10-13 — 24/24; CRITICO]
+C-82 rbac-redesign (ninguna; habilita C-81)              [ARCHIVADO 2026-10-13 — 36/36; CRITICO]
+C-83 revision-humana-info-completa (ninguna)             [ARCHIVADO 2026-10-13 — 18/18; MEDIO]
+C-84 logout-navbar-y-toggle-password (ninguna)           [ARCHIVADO 2026-10-15 — 15/15; BAJO]
+C-85 revision-humana-contador-y-mensaje (ninguna)        [ARCHIVADO 2026-10-15 — 34/34; MEDIO]
+C-86 rol-gestion-incidentes-ciclo-cierre (ninguna)       [ARCHIVADO 2026-10-15 — 61/61; ALTO]
+ └── C-87 borrado-logico-incidentes (C-86)               [ARCHIVADO 2026-10-15 — 25/25; ALTO]
+ └── C-88 busqueda-incidentes-panel (ninguna; c-86)       [ARCHIVADO 2026-10-15 — 19/19; MEDIO]
+C-89 ui-directorio-administrador (C-86)                  [ARCHIVADO 2026-10-15 — 19/19; MEDIO]
+C-90 prioridad-critica-restringida (C-86)                [ARCHIVADO 2026-10-15 — 17/17; ALTO]
+C-91 sesion-jwt-cookie-rotativa (ninguna)                [ARCHIVADO 2026-10-15 — 48/48; CRITICO]
 ```
 
 ### Paralelismo por fase
@@ -509,12 +523,23 @@ C-76 tesis-correcciones-dictamen (ninguna — documento de tesis)          [ACTI
 | C-78 | tesis-bibliografia-atribucion | 29 | aplicar tras C-77 | ALTO | — |
 | C-79 | tesis-aspectos-legales | 29 | aplicar tras C-78 | ALTO | — |
 | C-80 | tesis-forma-evidencia-visual | 29 | aplicar tras C-79 | BAJO | — |
+| C-81 | frontend-rbac | 30 | C-82 (archivado) | CRITICO | — |
+| C-82 | rbac-redesign | 30 | ninguna (habilita C-81) | CRITICO | — |
+| C-83 | revision-humana-info-completa | 30 | ninguna (frontend) | MEDIO | — |
+| C-84 | logout-navbar-y-toggle-password | 30 | ninguna (frontend) | BAJO | — |
+| C-85 | revision-humana-contador-y-mensaje | 30 | ninguna (frontend + conteo) | MEDIO | — |
+| C-86 | rol-gestion-incidentes-ciclo-cierre | 30 | ninguna nueva | ALTO | — |
+| C-87 | borrado-logico-incidentes | 30 | C-86 | ALTO | — |
+| C-88 | busqueda-incidentes-panel | 30 | ninguna (ortogonal a C-86) | MEDIO | — |
+| C-89 | ui-directorio-administrador | 30 | C-86 | MEDIO | — |
+| C-90 | prioridad-critica-restringida | 30 | C-86 | ALTO | — |
+| C-91 | sesion-jwt-cookie-rotativa | 30 | ninguna nueva | CRITICO | — |
 
-**Total**: 74 entradas creadas documentadas (73 numeradas + 1 de mantenimiento sin numero) — 68 archivadas (67 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-62, C-63, C-68, C-69, C-70, C-71, C-72, C-73, C-74 y C-75; mas `improve-dockerfiles`) y 6 ACTIVOS (C-67, C-76, C-77, C-78, C-79, C-80). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
+**Total**: 85 entradas creadas documentadas (84 numeradas + 1 de mantenimiento sin numero) — 79 archivadas (78 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-62, C-63, C-68, C-69, C-70, C-71, C-72, C-73, C-74, C-75 y C-81..C-91; mas `improve-dockerfiles`) y 6 ACTIVOS (C-67, C-76, C-77, C-78, C-79, C-80). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
 **Planificadas (NO creadas)**: 3 entradas del plan de cumplimiento (FASE 21) — C-64 `vulnerabilidades-supply-chain` (MEDIO), C-65 `backup-continuidad` (ALTO) y C-66 `privacidad-transferencias` (ALTO). No cuentan como creadas, archivadas ni activas. C-61 `compliance-gobernanza` (MEDIO), C-62 `hardening-infra-red` (ALTO) y C-63 `identidad-accesos-claves` (CRITICO, split en c-63a/b/c) ya fueron creados y quedaron ARCHIVADOS (2026-10-01, 2026-10-08 y 2026-10-08), con sus specs `security-governance-docs`, `infra-network-hardening` e `identity-access-hardening`. Ver `docs/cumplimiento/plan-cambios-cumplimiento.md`.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
-**Fases**: 1-29 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67, la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, con C-61 archivado (2026-10-01), C-62 archivado (2026-10-08) y C-63a/b/c archivados (2026-10-08); C-64..C-66 planificados, la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 archivado (2026-10-05) y C-68 archivado (2026-10-09), la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 archivado (2026-10-06), la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 archivado (2026-10-06), la FASE 25 agrupa la unificacion de la clasificacion telefonica con C-72 archivado (2026-10-07), la FASE 26 agrupa la pseudonimizacion de numeros de tarjeta hablados con C-73 archivado (2026-10-07), la FASE 27 agrupa la calibracion del cortocircuito determinista con C-74 archivado (2026-10-07), y la FASE 28 agrupa la sincronizacion documental N8N con C-75 archivado (2026-10-08), y la FASE 29 agrupa las correcciones de la tesis por el dictamen CONEAU (C-76..C-80), cinco changes ACTIVOS (0 tareas), independientes del software, aplicables en secuencia).
+**Fases**: 1-30 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67, la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, con C-61 archivado (2026-10-01), C-62 archivado (2026-10-08) y C-63a/b/c archivados (2026-10-08); C-64..C-66 planificados, la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 archivado (2026-10-05) y C-68 archivado (2026-10-09), la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 archivado (2026-10-06), la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 archivado (2026-10-06), la FASE 25 agrupa la unificacion de la clasificacion telefonica con C-72 archivado (2026-10-07), la FASE 26 agrupa la pseudonimizacion de numeros de tarjeta hablados con C-73 archivado (2026-10-07), la FASE 27 agrupa la calibracion del cortocircuito determinista con C-74 archivado (2026-10-07), y la FASE 28 agrupa la sincronizacion documental N8N con C-75 archivado (2026-10-08), y la FASE 29 agrupa las correcciones de la tesis por el dictamen CONEAU (C-76..C-80), cinco changes ACTIVOS (0 tareas), independientes del software, aplicables en secuencia; y la FASE 30 agrupa el RBAC, el ciclo de cierre y la sesion (C-81..C-91), once changes ARCHIVADOS — C-81..C-83 el 2026-10-13 y C-84..C-91 el 2026-10-15).
 
 ---
 
@@ -1492,9 +1517,9 @@ C-76 tesis-correcciones-dictamen (ninguna — documento de tesis)          [ACTI
   - `n8n/workflow.json` (nodo "Normalizar entrada del incidente")
   - `docs/medicion-latencia-e2e.md`
 
-### [C-68] `corpus-ingesta-n8n` — ACTIVO (58/63)
+### [C-68] `corpus-ingesta-n8n` — ARCHIVADO (2026-10-09, 63/63)
 
-- **Estado**: `[ ]` en aplicacion (2026-10-02) — 58/63 tareas. Planning completo (proposal + design + specs + tasks); harness de ingesta N8N operativo con fixes de observer no bloqueante, timeout IMAP/busqueda acotada, writers que saltan metricas anomalas y merge del sidecar por `case_id` (commits `69b5328`, `1d32538`, `3840246`, `24ab238`). Corpus web 53/53 y correo 66/66 medidos; telefonia 0/81 a cargo de C-70. Governance MEDIO.
+- **Estado**: `[x]` completado y ARCHIVADO (2026-10-09 — `openspec/changes/archive/2026-10-09-c-68-corpus-ingesta-n8n`; 63/63 tareas). Harness de ingesta N8N operativo (observer no bloqueante, timeout IMAP/busqueda acotada, writers que saltan metricas anomalas y merge del sidecar por `case_id`); corpus web 53/53 y correo 66/66 medidos por el flujo N8N real (telefonia 81/81 medida por C-70); spec `corpus-n8n-ingest` creada. Governance MEDIO.
 - **Problema**: el corpus de tesis no es cargable (`tiempo_automatizado_s` nulo en 200/200) y el harness existente mide un POST directo, no el flujo N8N real ni la espera del poller de correo.
 - **Scope**:
   - Harness `scripts/corpus_ingest/ingest_via_n8n.py`: web por webhook + lectura por id; correo por SMTP + trigger IMAP + sondeo.
@@ -1505,7 +1530,7 @@ C-76 tesis-correcciones-dictamen (ninguna — documento de tesis)          [ACTI
 - **Dependencias**: `docs/medicion-latencia-e2e.md` (contrato de timing, C-39/C-48); `dry-run-harness` (verificacion web/correo, sin modificar). OQ1..OQ6 RESUELTAS/DELEGADAS: OQ1 canonico de correo (resuelta), OQ2 dedup web (delegada a c-69), OQ3 descomposicion (resuelta), OQ4 confirmacion de correo (resuelta), OQ5 telefonico (resuelta: carga manual del autor), OQ6 correlacion de correo (delegada a c-69).
 - **Governance**: MEDIO
 - **Leer antes**:
-  - `openspec/changes/c-68-corpus-ingesta-n8n/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-10-09-c-68-corpus-ingesta-n8n/{proposal,design,tasks}.md`
   - `docs/medicion-latencia-e2e.md`
   - `docs/como_cargar_datos_corpus.md`
 
@@ -1694,6 +1719,133 @@ C-76 tesis-correcciones-dictamen (ninguna — documento de tesis)          [ACTI
 
 ---
 
+## FASE 30 — RBAC, ciclo de cierre y sesion (2026-10-13 / 2026-10-15)
+
+> Changes post-roadmap sobre el RBAC, el ciclo de vida del incidente, la operacion del panel y el ciclo de sesion. Se dividen en la reelaboracion del RBAC y las pantallas de revision (C-81..C-83, archivados 2026-10-13) y el ciclo de cierre, borrado logico, busqueda, directorio, prioridad y ciclo de sesion (C-84..C-91, archivados 2026-10-15). Todos quedan ARCHIVADOS.
+
+### [C-81] `frontend-rbac` — ARCHIVADO (2026-10-13, 24/24)
+
+- **Estado**: `[x]` completado y archivado (2026-10-13 — `openspec/changes/archive/2026-10-13-c-81-frontend-rbac`; 24/24 tareas). Endpoint aditivo `GET /api/v1/auth/me` (identidad + `alcance.modo`), guard de rutas por modo, navegacion del `Header` por modo y vista "Mis incidentes". Specs sincronizadas: `frontend-rbac` creada, `identity-access-hardening` +IAH-012.
+- **Problema**: la GUI de incidentes era role-blind: el RBAC vivia SOLO en el backend y el frontend no conocia ni reflejaba rol/alcance. Tras C-82 (tres roles, modos PROPIO/GLOBAL/VACIO, sin aislamiento por sector) los artefactos originales asumian cuatro roles y modos SECTOR/REVISION inexistentes.
+- **Scope**: `GET /api/v1/auth/me` aditivo (recomputado por request desde el directorio); `AuthContext` consume `rol` + `alcance.modo`; guard de rutas (GLOBAL -> superficie operativa; PROPIO -> "Mis incidentes"; VACIO -> portal); navegacion por `alcance.modo`; filtro de sector como conveniencia de UI (no frontera). El backend NO cambia su enforcement (`incident_visibility`/`role_policy` siguen siendo la unica fuente).
+- **Dependencias**: `C-82` (RBAC backend, archivado 2026-10-13).
+- **Governance**: CRITICO (superficie auth/RBAC; la porcion frontend es MEDIA).
+- **Leer antes**:
+  - `openspec/changes/archive/2026-10-13-c-81-frontend-rbac/{proposal,design,tasks}.md`
+  - `openspec/specs/frontend-rbac/spec.md`, `openspec/specs/identity-access-hardening/spec.md`
+
+### [C-82] `rbac-redesign` — ARCHIVADO (2026-10-13, 36/36)
+
+- **Estado**: `[x]` completado y archivado (2026-10-13 — `openspec/changes/archive/2026-10-13-c-82-rbac-redesign`; 36/36 tareas). Specs sincronizadas: `role-policy` creada; `incident-visibility`, `employee-directory`, `notification-routing` e `identity-access-hardening` modificadas. Migracion Alembic 017.
+- **Problema**: el RBAC estaba inconsistente: cuatro roles con el conocimiento duplicado en cinco lugares, `operador` y `mesa_de_ayuda` solapados, el sector a la vez frontera de acceso y categoria de clasificacion, y un `usuario_final` que no podia ver los incidentes que el mismo reporto.
+- **Scope** (BREAKING): vocabulario a EXACTAMENTE tres roles (`usuario_final` PROPIO, `mesa_de_ayuda` GLOBAL privilegiado sin directorio, `administrador_directorio` GLOBAL privilegiado); se ELIMINA `operador` y el aislamiento por sector (el sector queda solo como categoria de clasificacion); vinculo de reportante (FK nullable) poblado por canal; destinatarios de revision = todos los `mesa_de_ayuda` activos; registro canonico `role-policy` como fuente unica; migracion 017 (CHECK del rol + reportante + backfill `operador -> mesa_de_ayuda`).
+- **Dependencias**: ninguna (habilita `C-81`).
+- **Governance**: CRITICO/ALTO (auth/RBAC, directorio, datos personales y visibilidad).
+- **Leer antes**:
+  - `openspec/changes/archive/2026-10-13-c-82-rbac-redesign/{proposal,design,tasks}.md`
+  - `openspec/specs/role-policy/spec.md`, `openspec/specs/incident-visibility/spec.md`
+
+### [C-83] `revision-humana-info-completa` — ARCHIVADO (2026-10-13, 18/18)
+
+- **Estado**: `[x]` completado y archivado (2026-10-13 — `openspec/changes/archive/2026-10-13-c-83-revision-humana-info-completa`; 18/18 tareas). Spec `frontend-revision-humana` creada. Frontend unicamente.
+- **Problema**: en "Revision Humana" el operador validaba a ciegas: ni la tabla ni el dialogo mostraban la descripcion ni la clasificacion, forzando a abandonar la pestana y abrir el ticket en "Lista de Tickets".
+- **Scope**: el dialogo de validacion muestra descripcion pseudonimizada, metadatos, clasificacion (sector predicho, confianza, etapa, respuesta raw) y sectores multietiqueta editables (principal + adicionales); se extrae una vista de detalle de solo lectura compartida con `TicketDetailDialog`; `ClasificacionLogRead` expone `sectores_predichos`/`sectores_validados`; sin cambios de backend.
+- **Dependencias**: ninguna nueva (reutiliza `obtenerIncidente` y `listarClasificacionesPorIncidente`).
+- **Governance**: MEDIO (frontend; flujo de revision humana).
+- **Leer antes**:
+  - `openspec/changes/archive/2026-10-13-c-83-revision-humana-info-completa/{proposal,design,tasks}.md`
+  - `openspec/specs/frontend-revision-humana/spec.md`
+
+### [C-84] `logout-navbar-y-toggle-password` — ARCHIVADO (2026-10-15, 15/15)
+
+- **Estado**: `[x]` completado y archivado (2026-10-15 — `openspec/changes/archive/2026-10-15-c-84-logout-navbar-y-toggle-password`; 15/15 tareas). Spec `frontend-session-ui` creada. Frontend unicamente.
+- **Problema**: dos huecos de usabilidad: el Header no ofrecia cerrar sesion (la sesion quedaba atrapada hasta expirar el token) y el campo de contrasena del login no tenia confirmacion visual de lo tipeado.
+- **Scope**: boton "Cerrar sesion" en el Header para todo autenticado (invoca el `logout()` existente y navega a `/login`); toggle ojo `Eye`/`EyeOff` en el input de contrasena con `aria-label` dinamico y operable por teclado. Sin cambios de logica de auth, endpoints ni schemas.
+- **Dependencias**: ninguna nueva.
+- **Governance**: BAJO (chrome de sesion del frontend, sin logica de autenticacion).
+- **Leer antes**:
+  - `openspec/changes/archive/2026-10-15-c-84-logout-navbar-y-toggle-password/{proposal,design,tasks}.md`
+  - `openspec/specs/frontend-session-ui/spec.md`
+
+### [C-85] `revision-humana-contador-y-mensaje` — ARCHIVADO (2026-10-15, 34/34)
+
+- **Estado**: `[x]` completado y archivado (2026-10-15 — `openspec/changes/archive/2026-10-15-c-85-revision-humana-contador-y-mensaje`; 34/34 tareas). Specs sincronizadas: `frontend-revision-humana` (+FRH-008/009/010), `incident-visibility` (+VIS-006).
+- **Problema**: el badge de "Revision Humana" se calculaba sobre una consulta topeada a 50 filas (contador congelado en 50 y tabla truncada en silencio); el aviso ambar referenciaba el modelo retirado "Gemini 2.5 Flash".
+- **Scope**: nuevo endpoint aditivo `GET /clasificaciones/revision-pendiente/count` con el mismo alcance que el listado; el badge consume el total real; la cola se pagina (`limit`/`offset`) sin truncamiento; aviso reescrito agnostico al modelo (umbral 70%).
+- **Dependencias**: ninguna nueva.
+- **Governance**: MEDIO (endpoint + frontend; logica de alcance de la cola).
+- **Leer antes**:
+  - `openspec/changes/archive/2026-10-15-c-85-revision-humana-contador-y-mensaje/{proposal,design,tasks}.md`
+  - `openspec/specs/frontend-revision-humana/spec.md`, `openspec/specs/incident-visibility/spec.md`
+
+### [C-86] `rol-gestion-incidentes-ciclo-cierre` — ARCHIVADO (2026-10-15, 61/61)
+
+- **Estado**: `[x]` completado y archivado (2026-10-15 — `openspec/changes/archive/2026-10-15-c-86-rol-gestion-incidentes-ciclo-cierre`; 61/61 tareas). Specs: `incident-lifecycle`, `incident-comments` y `frontend-incidentes-historial` creadas; `employee-directory`, `role-policy`, `incident-visibility`, `notification-routing` y `frontend-rbac` modificadas. Migracion Alembic 018.
+- **Problema**: faltaba el rol operativo `gestion_incidentes` (atiende y cierra los incidentes de SU sector) y todo el ciclo de cierre: cierre por sector, reapertura, historial de cerrados, comentarios duraderos y registro de QUIEN cierra o cambia de estado.
+- **Scope** (BREAKING): cuarto rol `gestion_incidentes` (requiere sector, alcance nuevo `SECTOR`, no privilegiado, no gestiona directorio; cierra y edita estado de su sector, no crea/borra/valida); alcance `SECTOR` acotado server-side por pertenencia al conjunto de sectores y no-cerrado; ciclo de cierre (`incidente_cierre_sector`, cierre GLOBAL de `mesa_de_ayuda`, transicion terminal a `cerrado`, `REHABILITAR` exclusivo de `mesa_de_ayuda`); comentarios append-only `incidente_comentario`; auditoria de ciclo de vida `incidente_evento`; notificacion post-revision a los `gestion_incidentes` del sector; pestana "Historial de Incidentes Cerrados"; migracion 018.
+- **Dependencias**: ninguna nueva (reelabora el modelo de `C-82`, archivado).
+- **Governance**: ALTO (politica de autorizacion/rol + ciclo de vida + migracion de datos).
+- **Leer antes**:
+  - `openspec/changes/archive/2026-10-15-c-86-rol-gestion-incidentes-ciclo-cierre/{proposal,design,tasks}.md`
+  - `openspec/specs/incident-lifecycle/spec.md`, `openspec/specs/role-policy/spec.md`, `openspec/specs/incident-visibility/spec.md`
+
+### [C-87] `borrado-logico-incidentes` — ARCHIVADO (2026-10-15, 25/25)
+
+- **Estado**: `[x]` completado y archivado (2026-10-15 — `openspec/changes/archive/2026-10-15-c-87-borrado-logico-incidentes`; 25/25 tareas). Specs: `incident-soft-delete` creada; `role-policy` (+RP-005), `incident-visibility` (+VIS-009) y `frontend-rbac` (+FR-RBAC-006) modificadas. Migracion Alembic 019.
+- **Problema**: no existia forma de retirar un incidente erroneo o duplicado; el unico borrado era fisico (`hard_delete`, herramienta interna sin control de rol), y el historial de cerrados mostraria filas retiradas.
+- **Scope**: columnas nullable `deleted_at`/`deleted_by` (FK a `directorio_empleado.id`, `ON DELETE SET NULL`); `DELETE /api/v1/incidentes/{id}` con borrado LOGICO 204 y autorizacion exclusiva de `administrador_directorio` (403 el resto; fuera de alcance 404); exclusion de los incidentes borrados de todas las superficies de lectura (listado, detalle, colas e historial); accion de UI solo para el administrador con confirmacion; migracion 019 aditiva.
+- **Dependencias**: `C-86` (pestana de historial que la exclusion condiciona).
+- **Governance**: ALTO (autorizacion + retencion/auditoria Ley 25.326).
+- **Leer antes**:
+  - `openspec/changes/archive/2026-10-15-c-87-borrado-logico-incidentes/{proposal,design,tasks}.md`
+  - `openspec/specs/incident-soft-delete/spec.md`, `openspec/specs/role-policy/spec.md`
+
+### [C-88] `busqueda-incidentes-panel` — ARCHIVADO (2026-10-15, 19/19)
+
+- **Estado**: `[x]` completado y archivado (2026-10-15 — `openspec/changes/archive/2026-10-15-c-88-busqueda-incidentes-panel`; 19/19 tareas). Specs: `incident-search` y `frontend-incident-search` creadas. Migracion Alembic 020.
+- **Problema**: el Panel solo filtraba por listas cerradas (estado, sector, prioridad); hallar un incidente por su contenido obligaba a recorrer paginas a mano.
+- **Scope**: parametro `q` en `GET /api/v1/incidentes` (ILIKE parcial case-insensitive sobre `descripcion_pseudonimizada`, coincidencia exacta por `id` cuando es numerico, escape de comodines LIKE, composicion AND con los filtros y el alcance); migracion 020 (`pg_trgm` + indice GIN trigram); barra de busqueda en el Panel con debounce 300 ms, minimo 2 caracteres y reinicio de pagina; sin cambios rupturistas (`q` opcional).
+- **Dependencias**: ninguna nueva (ortogonal al alcance de `C-86`).
+- **Governance**: MEDIO (busqueda + migracion de indice + frontend).
+- **Leer antes**:
+  - `openspec/changes/archive/2026-10-15-c-88-busqueda-incidentes-panel/{proposal,design,tasks}.md`
+  - `openspec/specs/incident-search/spec.md`, `openspec/specs/frontend-incident-search/spec.md`
+
+### [C-89] `ui-directorio-administrador` — ARCHIVADO (2026-10-15, 19/19)
+
+- **Estado**: `[x]` completado y archivado (2026-10-15 — `openspec/changes/archive/2026-10-15-c-89-ui-directorio-administrador`; 19/19 tareas). Specs: `frontend-directorio` creada; `frontend-rbac` modificada. Sin cambios de backend.
+- **Problema**: el backend ya exponia la API completa del directorio (`/api/v1/directorio`), pero no habia superficie en el frontend: solo se podia gestionar por API/CLI.
+- **Scope**: nueva pagina `/directorio` sobre los endpoints existentes (listar, crear, editar, activar/desactivar, borrado ARCO y purga por retencion); guard de ruta por ROL `administrador_directorio` (ademas del modo `GLOBAL`); entrada de navegacion en el `Header` solo para ese rol; formulario con seleccion de rol (incluye `gestion_incidentes` y sector condicional); confirmaciones para acciones destructivas. Sin migraciones ni regeneracion de OpenAPI.
+- **Dependencias**: `C-86` (rol `gestion_incidentes` en enum/CHECK/policy).
+- **Governance**: MEDIO (frontend de administracion del directorio; acciones destructivas con confirmacion).
+- **Leer antes**:
+  - `openspec/changes/archive/2026-10-15-c-89-ui-directorio-administrador/{proposal,design,tasks}.md`
+  - `openspec/specs/frontend-directorio/spec.md`, `openspec/specs/frontend-rbac/spec.md`
+
+### [C-90] `prioridad-critica-restringida` — ARCHIVADO (2026-10-15, 17/17)
+
+- **Estado**: `[x]` completado y archivado (2026-10-15 — `openspec/changes/archive/2026-10-15-c-90-prioridad-critica-restringida`; 17/17 tareas). Specs: `role-policy` (+RP-006) y `frontend-rbac` (+FR-RBAC-009) modificadas. Sin migracion.
+- **Problema**: la prioridad `critica` no se ofrecia en el formulario web, pero el backend la aceptaba sin restriccion de rol; un llamante no autorizado podia fijarla o conservarla con una llamada directa a la API.
+- **Scope**: permiso `puede_asignar_prioridad_critica` en el registro de politica (verdadero para `mesa_de_ayuda` y `administrador_directorio`); `POST`/`PATCH /incidentes` rechazan con 403 cuando un llamante sin permiso asigna o conserva `critica`; `baja|media|alta` sin restriccion; frontend alinea el control de prioridad y los badges, sin ofrecer `critica` en el reporte publico.
+- **Dependencias**: `C-86` (RP-001/002/003 no se tocan; RP-006 es adicional).
+- **Governance**: ALTO (enforcement de autorizacion server-side).
+- **Leer antes**:
+  - `openspec/changes/archive/2026-10-15-c-90-prioridad-critica-restringida/{proposal,design,tasks}.md`
+  - `openspec/specs/role-policy/spec.md`, `openspec/specs/frontend-rbac/spec.md`
+
+### [C-91] `sesion-jwt-cookie-rotativa` — ARCHIVADO (2026-10-15, 48/48)
+
+- **Estado**: `[x]` completado y archivado (2026-10-15 — `openspec/changes/archive/2026-10-15-c-91-sesion-jwt-cookie-rotativa`; 48/48 tareas). Specs: `frontend-session-lifecycle` creada; `identity-access-hardening` modificada (IAH-003/004 + IAH-013/014). Gate CRITICAL satisfecho (aprobacion humana explicita "Aplica", 2026-10-15).
+- **Problema**: la sesion no sobrevivia un reload (tokens solo en memoria), el access duraba 15 min, la regla "7 dias sin acceso" existia de hecho pero no estaba declarada en ninguna spec, y no habia aviso proactivo de expiracion.
+- **Scope** (BREAKING en el transporte del refresh): access 15 -> 30 min; inactividad de 7 dias con refresh deslizante (sin migracion, sin tope absoluto de vida); refresh token en cookie `HttpOnly`+`Secure`+`SameSite` (login/refresh/logout; rehidratacion silenciosa al arranque); UX de expiracion con modal "continuar/cerrar" y ventana de gracia de 30 s; coherencia multipestana con `BroadcastChannel`; CSRF `SameSite=Strict` + verificacion de `Origin`; CORS con credenciales y origenes exactos.
+- **Dependencias**: ninguna nueva de runtime (reutiliza `RefreshToken`, `auth_service` y la rotacion existentes).
+- **Governance**: CRITICO (auth/seguridad — requiere aprobacion humana antes de escribir codigo).
+- **Leer antes**:
+  - `openspec/changes/archive/2026-10-15-c-91-sesion-jwt-cookie-rotativa/{proposal,design,tasks}.md`
+  - `openspec/specs/identity-access-hardening/spec.md`, `openspec/specs/frontend-session-lifecycle/spec.md`
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo)
@@ -1737,6 +1889,8 @@ Tabla reconciliada con el estado real el 2026-10-01: C-14..C-48 quedaron documen
 
 Actualizacion 2026-10-12: C-68 `corpus-ingesta-n8n` quedo ARCHIVADO (2026-10-09, 63/63; spec `corpus-n8n-ingest` creada) y se registraron los cinco changes de correccion de la tesis por el dictamen CONEAU (nueva FASE 29): C-76 `tesis-correcciones-dictamen` (0/46), C-77 `tesis-errores-estadisticos-inferenciales` (0/49), C-78 `tesis-bibliografia-atribucion` (0/25), C-79 `tesis-aspectos-legales` (0/25) y C-80 `tesis-forma-evidencia-visual` (0/45), todos ACTIVOS. Totales: 74 entradas creadas documentadas (73 numeradas + 1 de mantenimiento sin numero) — 68 archivadas y 6 activas. El plan de auditoria (4 bloques, 32 items) queda cubierto por C-76..C-80.
 
+Actualizacion 2026-10-15 (reconciliacion con el estado real de OpenSpec): se registraron como ARCHIVADOS los once changes de la FASE 30 — C-81 `frontend-rbac` (2026-10-13, 24/24), C-82 `rbac-redesign` (2026-10-13, 36/36), C-83 `revision-humana-info-completa` (2026-10-13, 18/18), C-84 `logout-navbar-y-toggle-password` (2026-10-15, 15/15), C-85 `revision-humana-contador-y-mensaje` (2026-10-15, 34/34), C-86 `rol-gestion-incidentes-ciclo-cierre` (2026-10-15, 61/61), C-87 `borrado-logico-incidentes` (2026-10-15, 25/25), C-88 `busqueda-incidentes-panel` (2026-10-15, 19/19), C-89 `ui-directorio-administrador` (2026-10-15, 19/19), C-90 `prioridad-critica-restringida` (2026-10-15, 17/17) y C-91 `sesion-jwt-cookie-rotativa` (2026-10-15, 48/48) — y se corrigio el ESTADO de C-68, que figuraba ACTIVO (58/63) y quedo ARCHIVADO (2026-10-09, 63/63). El conjunto ACTIVO sigue siendo de seis: C-67 (diferido), C-76, C-77, C-78, C-79 y C-80. Totales: 85 entradas creadas documentadas (84 numeradas + 1 de mantenimiento sin numero) — 79 archivadas y 6 activas.
+
 Cambios que NO estan en el roadmap original porque se implementaron durante el desarrollo:
 - Clasificador hibrido (completo)
 - CRUD de incidentes (completo)
@@ -1753,7 +1907,7 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 
 ## Primer change recomendado
 
-Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01), C-61 (2026-10-01, 26/26), C-69 (2026-10-05, 30/30), C-71 (2026-10-06, 43/43), C-60 (2026-10-06, 33/33), C-70 (2026-10-06, 72/72), C-72 (2026-10-07, 37/37), C-73 (2026-10-07, 23/23), C-74 (2026-10-07, 32/32), C-75 (2026-10-08, 14/14), C-56 (2026-10-08, 27/27) y C-68 (2026-10-09, 63/63).
+Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01), C-61 (2026-10-01, 26/26), C-69 (2026-10-05, 30/30), C-71 (2026-10-06, 43/43), C-60 (2026-10-06, 33/33), C-70 (2026-10-06, 72/72), C-72 (2026-10-07, 37/37), C-73 (2026-10-07, 23/23), C-74 (2026-10-07, 32/32), C-75 (2026-10-08, 14/14), C-56 (2026-10-08, 27/27), C-68 (2026-10-09, 63/63), C-81 (2026-10-13, 24/24), C-82 (2026-10-13, 36/36), C-83 (2026-10-13, 18/18), C-84 (2026-10-15, 15/15), C-85 (2026-10-15, 34/34), C-86 (2026-10-15, 61/61), C-87 (2026-10-15, 25/25), C-88 (2026-10-15, 19/19), C-89 (2026-10-15, 19/19), C-90 (2026-10-15, 17/17) y C-91 (2026-10-15, 48/48).
 
 Hay 6 changes ACTIVOS:
 - **`c-67-notificacion-sms-llamante`** — 0/24 (diferido; bloqueado por OQ3 y C-66; FASE 20) — Governance ALTO.
@@ -1765,7 +1919,7 @@ Hay 6 changes ACTIVOS:
 
 Los cinco changes de la FASE 29 son correcciones del documento de tesis (independientes del software) y se aplican en secuencia, en el orden C-76 -> C-77 -> C-78 -> C-79 -> C-80.
 
-C-01..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-62, C-63, C-68, C-69, C-70, C-71, C-72, C-73, C-74 y C-75 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
+C-01..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-62, C-63, C-68, C-69, C-70, C-71, C-72, C-73, C-74, C-75 y C-81..C-91 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
 
 **Detalle de `c-52-telefonia-transcripcion-async`** (Gobernanza CRITICA; ARCHIVADO 2026-09-30):
 
