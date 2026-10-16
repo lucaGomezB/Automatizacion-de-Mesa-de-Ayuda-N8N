@@ -59,9 +59,9 @@ def test_lockout_default_is_disabled_and_conservative():
 
 
 def test_short_access_token_default_and_refresh_lifetime():
-    """El access por defecto es de vida corta y el refresh de vida mas larga."""
+    """El access por defecto dura 30 min (IAH-003, c-91) y el refresh mas."""
     settings = get_settings()
-    assert settings.jwt_access_expire_minutes == 15
+    assert settings.jwt_access_expire_minutes == 30
     assert settings.jwt_refresh_expire_minutes > settings.jwt_access_expire_minutes
 
 

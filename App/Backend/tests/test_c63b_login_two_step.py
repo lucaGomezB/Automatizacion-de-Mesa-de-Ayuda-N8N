@@ -157,8 +157,13 @@ async def test_challenge_and_verify_flow(
     verified = response.json()
     assert verified["access_token"]
     assert verified["token_type"] == "bearer"
-    assert verified["refresh_token"]
-    assert verified["expires_in"] == 15 * 60
+    # c-91 (IAH-014): el refresh ya NO viaja en el cuerpo; se entrega en cookie.
+    assert "refresh_token" not in verified
+    assert verified["expires_in"] == 30 * 60
+    set_cookie = "; ".join(response.headers.get_list("set-cookie")).lower()
+    assert "refresh_token=" in set_cookie
+    assert "httponly" in set_cookie
+    assert "samesite=strict" in set_cookie
 
 
 async def test_verify_rejects_invalid_code(

@@ -10,11 +10,16 @@
  *   Es UX y least-surprise: NO es el limite de seguridad. El backend sigue
  *   denegando cualquier recurso fuera de alcance (FR-RBAC-005). La cola de
  *   revision NO se gatea aqui: queda GLOBAL-only dentro del panel (FR-RBAC-002).
+ *
+ *   c-91 FSL-001: mientras la app rehidrata la sesion al arrancar, el guard NO
+ *   decide (evita el parpadeo de "no autenticado"): muestra un estado de carga
+ *   hasta que la rehidratacion resuelve.
  */
 import { useEffect, type ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth, useSessionLifecycle } from '@/contexts/AuthContext';
 import { onUnauthorized } from '@/services/api';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import type { ModoAlcance } from '@/types/auth';
 
 /**
@@ -74,12 +79,18 @@ interface ProtectedRouteProps {
  */
 export function ProtectedRoute({ children, requiere, requiereRol }: ProtectedRouteProps) {
   const { isAuthenticated, alcance, rol, logout } = useAuth();
+  const { isHydrating } = useSessionLifecycle();
 
   useEffect(() => {
     onUnauthorized(() => {
       logout();
     });
   }, [logout]);
+
+  // c-91 FSL-001: no resolver el guard hasta que la rehidratacion termine.
+  if (isHydrating) {
+    return <LoadingSpinner texto="Restaurando sesión…" />;
+  }
 
   const destino = resolverRedireccion({
     isAuthenticated,

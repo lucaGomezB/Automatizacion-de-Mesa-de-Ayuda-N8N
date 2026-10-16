@@ -379,6 +379,11 @@ async def issue_refresh_token(
 ) -> tuple[RefreshToken, str]:
     """Emite y persiste (hasheado) un refresh token para el usuario.
 
+    IAH-013 (c-91): `expires_at` fija la ventana de INACTIVIDAD de la sesion
+    (`jwt_refresh_expire_minutes`, 7 dias por defecto). La rotacion es
+    DESLIZANTE: cada rotacion exitosa re-emite la ventana completa desde `now`.
+    NO se define un tope absoluto de vida de la sesion.
+
     Returns:
         Tupla (fila persistida, valor opaco en claro) — el valor en claro solo
         se devuelve al cliente y nunca se persiste.
@@ -403,6 +408,10 @@ async def rotate_refresh_token(
     now: datetime | None = None,
 ) -> tuple[User, str] | None:
     """Rota un refresh token valido: invalida el anterior y emite uno nuevo.
+
+    IAH-013 (c-91): la rotacion RENUEVA la ventana de inactividad — el nuevo
+    refresh vence `jwt_refresh_expire_minutes` despues de `now`. Un refresh con
+    la ventana vencida se rechaza y se revoca (sesion cerrada, sin tope absoluto).
 
     Returns:
         Tupla (usuario, nuevo valor opaco) si el token es valido; None si el
