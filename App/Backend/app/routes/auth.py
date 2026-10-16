@@ -6,10 +6,12 @@ Responsabilidad:
     recibe/deserializa el payload, delega la logica al auth_service y serializa
     la respuesta. No contiene logica de dominio.
 
-Contrato aditivo (D6):
-    El login conserva `access_token` y `token_type` y agrega `refresh_token` y
-    `expires_in`. El access es de vida corta (15 min por defecto); el refresh
-    rota en cada uso y se persiste hasheado.
+Contrato de tokens (c-91, IAH-014):
+    El login conserva `access_token`, `token_type` y `expires_in` (access de 30
+    min por defecto, IAH-003). El REFRESH ya NO viaja en el cuerpo: se entrega en
+    una cookie `HttpOnly` + `Secure` + `SameSite` que setean `login`, `mfa/verify`
+    y `refresh`, y que `logout` limpia. `/refresh` y `/logout` leen el refresh de
+    la cookie y verifican el `Origin` (CSRF).
 
 Ventana residual (IAH-004):
     El logout revoca el refresh; el access ya emitido sigue valido hasta su TTL.
@@ -19,11 +21,17 @@ Ventana residual (IAH-004):
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config.settings import get_settings
+from app.core.auth_cookies import (
+    clear_refresh_cookie,
+    origin_is_trusted,
+    read_refresh_cookie,
+    set_refresh_cookie,
+)
 from app.core.database import get_db_session
 from app.core.exceptions import AccountLockedError
 from app.core.security import get_current_user
@@ -35,11 +43,9 @@ from app.schemas.auth import (
     IdentidadActualResponse,
     LoginRequest,
     LoginResponse,
-    LogoutRequest,
     LogoutResponse,
     MfaEnrollResponse,
     MfaVerifyRequest,
-    RefreshRequest,
     TokenResponse,
 )
 from app.services import mfa_service
@@ -68,34 +74,34 @@ def _error_body(code: str, message: str) -> dict:
     return {"error": {"code": code, "message": message}}
 
 
-def _build_token_response(user, refresh_value: str) -> TokenResponse:
-    """Emite el access token (con `ver`) y arma la respuesta aditiva del login."""
-    settings = get_settings()
-    access_token = create_access_token(
+def _error_response(status_code: int, code: str, message: str) -> JSONResponse:
+    """Respuesta de error con el envelope estandar `{"error": {...}}`."""
+    return JSONResponse(status_code=status_code, content=_error_body(code, message))
+
+
+def _create_access_token_for(user, settings) -> str:
+    """Emite el access token del usuario (con `ver` y el `kid` activo)."""
+    return create_access_token(
         data={"sub": user.username, "ver": int(user.token_version or 0)},
         secret=settings.jwt_secret_key,  # gitleaks:allow (referencia a settings, no un valor)
         algorithm=settings.jwt_algorithm,
         expires_delta=settings.jwt_access_expire_minutes,
         key_id=settings.jwt_key_id,
     )
+
+
+def _token_response_body(user, settings) -> TokenResponse:
+    """Cuerpo del contrato de tokens SIN el refresh (viaja en cookie, IAH-014)."""
     return TokenResponse(
-        access_token=access_token,
+        access_token=_create_access_token_for(user, settings),  # gitleaks:allow (resultado de una llamada, no un secreto)
         token_type="bearer",
-        refresh_token=refresh_value,
         expires_in=settings.jwt_access_expire_minutes * 60,
     )
 
 
-def _build_login_response(user, refresh_value: str) -> LoginResponse:
-    """Arma la respuesta aditiva del login en el flujo de un paso (c-63b)."""
-    token = _build_token_response(user, refresh_value)  # gitleaks:allow (referencia/fixture, no un valor real)
-    return LoginResponse(
-        access_token=token.access_token,
-        token_type=token.token_type,
-        refresh_token=token.refresh_token,
-        expires_in=token.expires_in,
-        mfa_required=False,
-    )
+def _refresh_cookie_max_age(settings) -> int:
+    """Segundos de vigencia de la cookie de refresh (ventana deslizante)."""
+    return settings.jwt_refresh_expire_minutes * 60
 
 
 @router.post(
@@ -104,21 +110,22 @@ def _build_login_response(user, refresh_value: str) -> LoginResponse:
     response_model_exclude_none=True,
     summary="Iniciar sesion (un paso, o reto de segundo factor)",
 )
-async def login(payload: LoginRequest, session: SessionDep):
+async def login(payload: LoginRequest, session: SessionDep, response: Response):
     """
     Autentica al usuario con username y password.
 
-    Devuelve un access token JWT de vida corta y un refresh token opaco
-    rotativo. Si la cuenta es privilegiada, tiene MFA activo y la bandera
-    `mfa_required_for_privileged` esta encendida, devuelve un estado "segundo
-    factor requerido" con un ticket corto y SIN emitir token (IAH-007).
+    Devuelve un access token JWT (30 min por defecto) y entrega el refresh opaco
+    en una cookie HttpOnly (IAH-014). Si la cuenta es privilegiada, tiene MFA
+    activo y la bandera `mfa_required_for_privileged` esta encendida, devuelve un
+    estado "segundo factor requerido" con un ticket corto y SIN emitir token.
 
     Args:
         payload: Credenciales de inicio de sesion (username + password).
+        response: Respuesta inyectada donde se setea la cookie de refresh.
 
     Returns:
-        LoginResponse con access_token/token_type (y refresh_token/expires_in) en
-        el flujo de un paso, o con mfa_required/mfa_ticket en el reto MFA.
+        LoginResponse con access_token/token_type/expires_in en el flujo de un
+        paso, o con mfa_required/mfa_ticket en el reto MFA.
 
     Raises:
         JSONResponse 401 INVALID_CREDENTIALS: credenciales invalidas.
@@ -163,64 +170,113 @@ async def login(payload: LoginRequest, session: SessionDep):
     _token, refresh_value = await issue_refresh_token(
         session, user_id=user.id, settings=settings
     )
-    return _build_login_response(user, refresh_value)
+    set_refresh_cookie(
+        response,
+        refresh_value,
+        settings,
+        max_age_seconds=_refresh_cookie_max_age(settings),
+    )
+    return LoginResponse(
+        access_token=_create_access_token_for(user, settings),  # gitleaks:allow (resultado de una llamada, no un secreto)
+        token_type="bearer",
+        expires_in=settings.jwt_access_expire_minutes * 60,
+        mfa_required=False,
+    )
 
 
 
 @router.post(
     "/refresh",
     response_model=TokenResponse,
-    summary="Rotar el par de tokens con un refresh token valido",
+    response_model_exclude_none=True,
+    summary="Rotar el refresh (por cookie) y emitir un access nuevo",
 )
-async def refresh(payload: RefreshRequest, session: SessionDep):
+async def refresh(request: Request, session: SessionDep, response: Response):
     """
-    Rota un refresh token valido: invalida el anterior y emite un par nuevo.
+    Rota el refresh presentado en la cookie HttpOnly y renueva la cookie.
 
-    Args:
-        payload: Refresh token opaco presentado por el cliente.
+    Lee el refresh SOLO de la cookie (IAH-014). Verifica el `Origin` para mitigar
+    CSRF (solo estos endpoints operan sobre la cookie). El cuerpo devuelve un
+    access nuevo sin exponer el refresh.
 
     Returns:
-        TokenResponse con el nuevo par de tokens.
+        TokenResponse con el access nuevo (el refresh viaja en la cookie rotada).
 
     Raises:
-        JSONResponse 401 INVALID_REFRESH_TOKEN: token inexistente, ya rotado,
-            revocado o expirado (incluye la reutilizacion de un token rotado).
+        JSONResponse 403 CSRF_ORIGIN_REJECTED: origen no confiable.
+        JSONResponse 401 INVALID_REFRESH_TOKEN: sin cookie, o token inexistente,
+            ya rotado, revocado o expirado (reutilizacion incluida).
     """
     settings = get_settings()
+
+    if not origin_is_trusted(request.headers.get("origin"), settings):
+        return _error_response(
+            status.HTTP_403_FORBIDDEN,
+            "CSRF_ORIGIN_REJECTED",
+            "Origen no confiable para operar sobre la sesion.",
+        )
+
+    provided = read_refresh_cookie(request, settings)
+    if not provided:
+        return _error_response(
+            status.HTTP_401_UNAUTHORIZED,
+            "INVALID_REFRESH_TOKEN",
+            "Refresh token invalido o revocado",
+        )
+
     result = await rotate_refresh_token(
-        session, provided_value=payload.refresh_token, settings=settings
+        session, provided_value=provided, settings=settings
     )
     if result is None:
-        return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content=_error_body(
-                "INVALID_REFRESH_TOKEN", "Refresh token invalido o revocado"
-            ),
+        return _error_response(
+            status.HTTP_401_UNAUTHORIZED,
+            "INVALID_REFRESH_TOKEN",
+            "Refresh token invalido o revocado",
         )
 
     user, new_refresh_value = result
-    return _build_token_response(user, new_refresh_value)
+    set_refresh_cookie(
+        response,
+        new_refresh_value,
+        settings,
+        max_age_seconds=_refresh_cookie_max_age(settings),
+    )
+    return _token_response_body(user, settings)
 
 
 @router.post(
     "/logout",
     response_model=LogoutResponse,
-    summary="Revocar el refresh token (logout)",
+    summary="Revocar el refresh (por cookie) y limpiar la cookie (logout)",
 )
-async def logout(payload: LogoutRequest, session: SessionDep):
+async def logout(request: Request, session: SessionDep, response: Response):
     """
-    Revoca el refresh token del usuario (idempotente).
+    Revoca el refresh presentado en la cookie y la limpia (idempotente).
 
-    El access ya emitido conserva validez hasta su TTL (ventana residual
-    declarada, IAH-004). Un refresh revocado no puede volver a refrescar.
-
-    Args:
-        payload: Refresh token a revocar.
+    Verifica el `Origin` (CSRF). El access ya emitido conserva validez hasta su
+    TTL (ventana residual declarada, IAH-004). Un refresh revocado no puede
+    volver a refrescar.
 
     Returns:
         LogoutResponse con un mensaje de confirmacion (HTTP 200).
+
+    Raises:
+        JSONResponse 403 CSRF_ORIGIN_REJECTED: origen no confiable.
     """
-    await revoke_refresh_token(session, provided_value=payload.refresh_token)
+    settings = get_settings()
+
+    if not origin_is_trusted(request.headers.get("origin"), settings):
+        return _error_response(
+            status.HTTP_403_FORBIDDEN,
+            "CSRF_ORIGIN_REJECTED",
+            "Origen no confiable para operar sobre la sesion.",
+        )
+
+    provided = read_refresh_cookie(request, settings)
+    if provided:
+        await revoke_refresh_token(session, provided_value=provided)
+
+    clear_refresh_cookie(response, settings)
     return LogoutResponse(message="Sesion cerrada")
 
 
@@ -312,15 +368,18 @@ async def mfa_enroll(session: SessionDep, current_user: CurrentUserDep):
 @router.post(
     "/mfa/verify",
     response_model=TokenResponse,
+    response_model_exclude_none=True,
     summary="Completar el login con el segundo factor",
 )
-async def mfa_verify(payload: MfaVerifyRequest, session: SessionDep):
+async def mfa_verify(
+    payload: MfaVerifyRequest, session: SessionDep, response: Response
+):
     """
     Completa el login validando el segundo factor (TOTP o recuperacion).
 
     Presenta el ticket corto emitido por `/auth/login` junto con un codigo TOTP
-    valido o un codigo de recuperacion no consumido; emite el par de tokens con
-    los campos actuales del contrato.
+    valido o un codigo de recuperacion no consumido; emite el access y entrega el
+    refresh en la cookie HttpOnly (IAH-014).
 
     Raises:
         JSONResponse 401 INVALID_MFA_TICKET: ticket ausente, vencido o invalido.
@@ -364,4 +423,10 @@ async def mfa_verify(payload: MfaVerifyRequest, session: SessionDep):
     _token, refresh_value = await issue_refresh_token(
         session, user_id=user.id, settings=settings
     )
-    return _build_token_response(user, refresh_value)
+    set_refresh_cookie(
+        response,
+        refresh_value,
+        settings,
+        max_age_seconds=_refresh_cookie_max_age(settings),
+    )
+    return _token_response_body(user, settings)

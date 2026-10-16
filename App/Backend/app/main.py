@@ -184,12 +184,14 @@ def create_app() -> FastAPI:
     app.add_middleware(_InternalErrorMiddleware)
 
     # Paso 2: agregar CORSMiddleware ÚLTIMO → quedará más EXTERNO.
-    #         allow_credentials=False es obligatorio con allow_origins=["*"].
-    #         En producción: reemplazar ["*"] por ["https://mi-frontend.com"].
+    #         allow_credentials=True exige orígenes EXACTOS (nunca "*"): la cookie
+    #         del refresh viaja con credenciales (c-91, IAH-014). En prod (nginx
+    #         same-origin) no hay CORS cross-origin; en dev el origen exacto es
+    #         http://localhost:3000 (settings.cors_allow_origins).
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_allow_origins,
-        allow_credentials=False,
+        allow_credentials=True,
         allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
         allow_headers=["Content-Type", "Accept", "Authorization"],
         expose_headers=["X-Request-ID"],

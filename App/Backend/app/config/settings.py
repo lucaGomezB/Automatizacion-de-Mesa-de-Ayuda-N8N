@@ -52,10 +52,13 @@ class Settings(BaseSettings):
     environment: str = "production"
 
     # ── CORS ──────────────────────────────────────────────────────────────────
-    # Lista de orígenes permitidos. En desarrollo se usa ["*"] para simplicidad.
-    # En producción reemplazar por los dominios reales del frontend.
-    # Ejemplo .env: CORS_ALLOW_ORIGINS=["https://mi-app.com","http://localhost:3000"]
-    cors_allow_origins: list[str] = ["*"]
+    # Origenes EXACTOS permitidos (NUNCA ["*"]): las cookies del refresh viajan
+    # con `allow_credentials=True` (c-91, IAH-014). Dev cross-origin:
+    # http://localhost:3000. En prod el trafico es same-origin via nginx (no hay
+    # CORS cross-origin), pero conviene listar el origen propio para la
+    # verificacion de `Origin` de /refresh y /logout.
+    # Ejemplo .env: CORS_ALLOW_ORIGINS=["https://mesa.local","http://localhost:3000"]
+    cors_allow_origins: list[str] = ["http://localhost:3000"]
 
     # ── Base de datos PostgreSQL ───────────────────────────────────────────────
     # URL completa con driver asyncpg para operaciones no bloqueantes.
@@ -252,8 +255,9 @@ class Settings(BaseSettings):
     jwt_secret_key: str
     # Algoritmo de firma; HS256 es simétrico y suficiente para un backend monolítico.
     jwt_algorithm: str = "HS256"
-    # Tiempo de expiración del token (legado). Se conserva por compatibilidad de
-    # configuración; el access token usa `jwt_access_expire_minutes` (c-63a).
+    # DEPRECADA (c-91): setting muerta por compatibilidad de configuracion. NO se
+    # lee en runtime; el access token usa `jwt_access_expire_minutes`. Se conserva
+    # (no se elimina) para no romper .env existentes. No reactivar.
     jwt_expire_minutes: int = 1440
 
     # ── Rotacion del secreto JWT — keyring `kid` (c-63c, IAH-008) ──────────────
@@ -271,13 +275,25 @@ class Settings(BaseSettings):
     # Ejemplo: 2026-11-01T00:00:00+00:00
     jwt_previous_key_expires_at: str = ""
 
-    # ── Identidad y accesos endurecidos (c-63a) ────────────────────────────────
-    # Access token de vida corta (15 min por defecto, configurable) + refresh
-    # rotativo persistido + revocacion (IAH-003).
-    jwt_access_expire_minutes: int = 15
-    # Vida del refresh token en minutos (7 días por defecto). El refresh se
-    # almacena SOLO como hash en PostgreSQL.
+    # ── Identidad y accesos endurecidos (c-63a, c-91) ──────────────────────────
+    # Access token de vida corta (30 min por defecto, configurable; IAH-003) +
+    # refresh rotativo persistido + revocacion.
+    jwt_access_expire_minutes: int = 30
+    # Ventana de vigencia del refresh token en minutos (7 dias por defecto;
+    # IAH-013). Es la ventana de INACTIVIDAD de la sesion: la rotacion es
+    # deslizante, de modo que cada rotacion exitosa renueva la ventana. NO hay
+    # tope absoluto de vida de la sesion. El refresh se almacena SOLO como hash.
     jwt_refresh_expire_minutes: int = 10080
+
+    # ── Transporte del refresh en cookie (c-91, IAH-014) ───────────────────────
+    # La cookie de refresh viaja HttpOnly; el access sigue en memoria del
+    # frontend (Authorization: Bearer). `Secure` y `SameSite` son configurables
+    # para el modo dev local sobre HTTP (dev-only): en produccion usar
+    # secure=True y samesite="strict".
+    auth_refresh_cookie_name: str = "refresh_token"
+    auth_refresh_cookie_path: str = "/api/v1/auth"
+    auth_refresh_cookie_secure: bool = True
+    auth_refresh_cookie_samesite: str = "strict"
 
     # ── Politica de contrasenas (IAH-001) ──────────────────────────────────────
     # Longitud minima configurable. Default 12 (NIST 800-63B); sin composicion

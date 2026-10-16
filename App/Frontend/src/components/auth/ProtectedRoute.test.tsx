@@ -11,11 +11,20 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { resolverRedireccion, ProtectedRoute } from './ProtectedRoute';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth, useSessionLifecycle } from '@/contexts/AuthContext';
 
-vi.mock('@/contexts/AuthContext', () => ({ useAuth: vi.fn() }));
+vi.mock('@/contexts/AuthContext', () => ({
+  useAuth: vi.fn(),
+  useSessionLifecycle: vi.fn(),
+}));
 
 const useAuthMock = vi.mocked(useAuth);
+const useSessionLifecycleMock = vi.mocked(useSessionLifecycle);
+
+/** Ciclo de vida por defecto para los guards (rehidratacion ya resuelta). */
+function lifecycle(isHydrating = false) {
+  return { isHydrating, expirationPromptVisible: false, continueSession: vi.fn() };
+}
 
 describe('resolverRedireccion (funcion pura)', () => {
   it('anonimo siempre va a /login', () => {
@@ -112,7 +121,11 @@ describe('resolverRedireccion (funcion pura)', () => {
   });
 });
 
-function renderGuard(modo: 'PROPIO' | 'GLOBAL' | 'SECTOR' | 'VACIO', autenticado = true) {
+function renderGuard(
+  modo: 'PROPIO' | 'GLOBAL' | 'SECTOR' | 'VACIO',
+  autenticado = true,
+  isHydrating = false
+) {
   useAuthMock.mockReturnValue({
     token: 't',
     username: 'u',
@@ -126,6 +139,7 @@ function renderGuard(modo: 'PROPIO' | 'GLOBAL' | 'SECTOR' | 'VACIO', autenticado
     refreshIdentidad: vi.fn(),
     logout: vi.fn(),
   });
+  useSessionLifecycleMock.mockReturnValue(lifecycle(isHydrating));
   return render(
     <MemoryRouter initialEntries={['/admin']}>
       <Routes>
@@ -148,6 +162,7 @@ function renderGuard(modo: 'PROPIO' | 'GLOBAL' | 'SECTOR' | 'VACIO', autenticado
 describe('ProtectedRoute (comportamiento observable)', () => {
   beforeEach(() => {
     useAuthMock.mockReset();
+    useSessionLifecycleMock.mockReset();
   });
 
   it('GLOBAL ve la superficie operativa', () => {
@@ -175,6 +190,15 @@ describe('ProtectedRoute (comportamiento observable)', () => {
     renderGuard('VACIO', false);
     expect(screen.getByText('LOGIN')).toBeInTheDocument();
   });
+
+  // c-91 FSL-001: durante la rehidratacion NO se muestra la pantalla protegida
+  // ni se redirige al login (evita el parpadeo de "no autenticado").
+  it('mientras rehidrata no muestra la pantalla protegida ni redirige al login', () => {
+    renderGuard('VACIO', false, true);
+    expect(screen.queryByText('SUPERFICIE_OPS')).not.toBeInTheDocument();
+    expect(screen.queryByText('LOGIN')).not.toBeInTheDocument();
+    expect(screen.getByText(/restaurando sesión/i)).toBeInTheDocument();
+  });
 });
 
 // c-89 FR-RBAC-008: guard por ROL. El rol es independiente del modo de alcance:
@@ -197,6 +221,7 @@ function renderGuardRol(
     refreshIdentidad: vi.fn(),
     logout: vi.fn(),
   });
+  useSessionLifecycleMock.mockReturnValue(lifecycle(false));
   return render(
     <MemoryRouter initialEntries={['/directorio']}>
       <Routes>
@@ -218,6 +243,7 @@ function renderGuardRol(
 describe('ProtectedRoute - guard por rol (c-89)', () => {
   beforeEach(() => {
     useAuthMock.mockReset();
+    useSessionLifecycleMock.mockReset();
   });
 
   it('el administrador del directorio accede a /directorio', () => {

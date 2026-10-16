@@ -3,15 +3,22 @@
  *
  * Responsabilidad:
  *   Provee una instancia única de Axios (`apiClient`) preconfigurada con la URL base,
- *   cabeceras JSON y un timeout mayor al de Gemini (10 s) para permitir que el backend
- *   maneje su propio timeout antes de que el cliente desista.
+ *   cabeceras JSON, `withCredentials` (para adjuntar la cookie de refresh HttpOnly)
+ *   y un timeout mayor al de Gemini (10 s) para permitir que el backend maneje su
+ *   propio timeout antes de que el cliente desista.
  *
  *   También exporta `extractApiErrorMessage`, función utilitaria que normaliza cualquier
  *   tipo de error de Axios a un mensaje legible en español para mostrar al usuario final.
  *
- *   El interceptor de request inyecta automáticamente el token JWT en el header
+ *   El interceptor de request inyecta automáticamente el access token JWT en el header
  *   Authorization si hay una sesión activa. El interceptor de response captura
- *   errores 401 y dispara el callback de logout.
+ *   errores 401 y dispara el refresco silencioso de RESPALDO (c-91, FSL-005).
+ *
+ * Transporte del refresh (c-91, IAH-014):
+ *   El refresh token YA NO vive en memoria ni viaja por el cuerpo: el backend lo
+ *   entrega en una cookie `HttpOnly` + `Secure` + `SameSite=Strict`. Este módulo
+ *   sólo necesita `withCredentials` para que el navegador adjunte la cookie; nunca
+ *   lee ni persiste el refresh en un medio accesible por JavaScript.
  *
  * Configuración:
  *   La URL base se toma de la variable de entorno `VITE_API_BASE_URL` (única fuente
@@ -35,16 +42,30 @@ export const apiClient = axios.create({
   // El timeout del cliente supera el timeout de Gemini (10 s) para permitir
   // que la API maneje su propio fallback antes de que el cliente desista.
   timeout: 20_000,
+  // c-91 (IAH-014): las requests deben enviar credenciales para que el navegador
+  // adjunte la cookie de refresh HttpOnly (login/rehidratacion/refresh).
+  withCredentials: true,
 });
 
-// ── Tokens en memoria ────────────────────────────────────────────────────────
-// c-63a: ademas del access token, se mantiene el refresh token opaco para el
-// refresco silencioso (rotativo) ante un 401.
+// ── Estado en memoria ────────────────────────────────────────────────────────
+// El access token vive SOLO en memoria (c-91). El refresh NO se guarda: viaja en
+// una cookie HttpOnly que JavaScript no puede leer.
 
 let _authToken: string | null = null;
-let _refreshToken: string | null = null;
 let _onUnauthorized: (() => void) | null = null;
-let _refreshInFlight: Promise<string | null> | null = null;
+let _refreshInFlight: Promise<SessionTokens | null> | null = null;
+// c-91 (FSL-005): el refresco silencioso ante 401 es RESPALDO. Cuando el aviso
+// proactivo de expiracion esta pendiente se deshabilita, para no extender la
+// sesion (ni cerrarla) sin el consentimiento del usuario.
+let _silentRefreshEnabled = true;
+
+/** Resultado de una rotacion de sesion por cookie. */
+export interface SessionTokens {
+  /** Nuevo access token de memoria. */
+  accessToken: string;
+  /** Segundos hasta la expiracion del access token (puede faltar). */
+  expiresIn: number | null;
+}
 
 /** Establece el access token que se inyecta en todas las requests. */
 export function setAuthToken(token: string): void {
@@ -56,62 +77,65 @@ export function clearAuthToken(): void {
   _authToken = null;
 }
 
-/** Establece el refresh token que habilita el refresco silencioso. */
-export function setRefreshToken(token: string | null): void {
-  _refreshToken = token;
-}
-
-/** Devuelve el refresh token actual (o null). */
-export function getRefreshToken(): string | null {
-  return _refreshToken;
-}
-
-/** Elimina el refresh token de memoria. */
-export function clearRefreshToken(): void {
-  _refreshToken = null;
-}
-
 /**
  * Registra un callback que se ejecuta cuando el backend responde 401 y no es
- * posible refrescar la sesion. Usado por AuthContext para redirigir al login.
+ * posible refrescar la sesion (respaldo agotado). Usado por AuthContext.
  */
 export function onUnauthorized(callback: () => void): void {
   _onUnauthorized = callback;
 }
 
-// ── Refresco silencioso (single-flight) ──────────────────────────────────────
+/**
+ * Habilita o deshabilita el refresco silencioso de respaldo.
+ *
+ * El aviso proactivo de expiracion (FSL-002) es el mecanismo PRIMARIO; mientras
+ * esta visible se deshabilita el respaldo para que un 401 de carrera no extienda
+ * la sesion sin consentimiento (FSL-005).
+ */
+export function setSilentRefreshEnabled(enabled: boolean): void {
+  _silentRefreshEnabled = enabled;
+}
+
+// ── Rotacion de sesion por cookie (single-flight) ────────────────────────────
 
 /**
- * Rota el par de tokens usando el refresh token en memoria.
+ * Rota la sesion usando la cookie de refresh (no hay cuerpo: el refresh es
+ * `HttpOnly`). Usa una instancia cruda de axios (no `apiClient`) para no
+ * reingresar al interceptor de response. Es single-flight: arranque, "continuar"
+ * y el respaldo 401 comparten una unica rotacion.
  *
- * Usa una instancia cruda de axios (no `apiClient`) para no reingresar al
- * interceptor de response. Es single-flight: varias respuestas 401 concurrentes
- * comparten una unica rotacion.
- *
- * @returns El nuevo access token, o null si no hay refresh o fallo la rotacion.
+ * @returns El access token nuevo y su expiracion, o null si no hay cookie
+ *   vigente o la rotacion fallo.
  */
-async function refreshAccessToken(): Promise<string | null> {
-  if (!_refreshToken) return null;
-  if (_refreshInFlight) return _refreshInFlight;
-
-  _refreshInFlight = axios
-    .post<{ access_token: string; refresh_token?: string }>(
+async function rotateSession(): Promise<SessionTokens | null> {
+  try {
+    const response = await axios.post<{
+      access_token: string;
+      expires_in?: number | null;
+    }>(
       `${API_BASE_URL}/api/v1/auth/refresh`,
-      { refresh_token: _refreshToken },
-      { headers: { 'Content-Type': 'application/json', Accept: 'application/json' } },
-    )
-    .then((response) => {
-      _authToken = response.data.access_token;  // gitleaks:allow (variable local, no un valor)
-      if (response.data.refresh_token) {
-        _refreshToken = response.data.refresh_token;  // gitleaks:allow (variable local, no un valor)
-      }
-      return _authToken;
-    })
-    .catch(() => null)
-    .finally(() => {
-      _refreshInFlight = null;
-    });
+      undefined,
+      {
+        withCredentials: true,
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      },
+    );
+    _authToken = response.data.access_token;  // gitleaks:allow (variable local, no un valor)
+    return {
+      accessToken: response.data.access_token,  // gitleaks:allow (variable local, no un valor)
+      expiresIn: response.data.expires_in ?? null,
+    };
+  } catch {
+    return null;
+  }
+}
 
+/** Rota la sesion por cookie una sola vez por ventana concurrente. */
+export function refreshSession(): Promise<SessionTokens | null> {
+  if (_refreshInFlight) return _refreshInFlight;
+  _refreshInFlight = rotateSession().finally(() => {
+    _refreshInFlight = null;
+  });
   return _refreshInFlight;
 }
 
@@ -124,7 +148,7 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-// ── Interceptor de response: 401 + refresco silencioso ───────────────────────
+// ── Interceptor de response: 401 + refresco silencioso de respaldo ────────────
 
 interface RetriableRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -136,22 +160,25 @@ apiClient.interceptors.response.use(
     if (axios.isAxiosError(error) && error.response?.status === 401) {
       const config = error.config as RetriableRequestConfig | undefined;
 
-      // Intentar refrescar una sola vez por request antes de cerrar sesion.
-      if (_refreshToken && config && !config._retry) {
+      // Respaldo: intentar refrescar una sola vez por request (FSL-005).
+      if (_silentRefreshEnabled && config && !config._retry) {
         config._retry = true;
-        const refreshed = await refreshAccessToken();
+        const refreshed = await refreshSession();
         if (refreshed) {
-          config.headers.Authorization = `Bearer ${refreshed}`;
+          config.headers.Authorization = `Bearer ${refreshed.accessToken}`;
           return apiClient.request(config);
         }
       }
 
-      // Sin refresh posible: limpiar tokens locales y notificar al AuthContext.
-      _authToken = null;
-      _refreshToken = null;
-      if (_onUnauthorized) {
-        _onUnauthorized();
+      if (_silentRefreshEnabled) {
+        // Respaldo agotado: limpiar el access de memoria y notificar al AuthContext.
+        _authToken = null;
+        if (_onUnauthorized) {
+          _onUnauthorized();
+        }
       }
+      // Con el respaldo deshabilitado (aviso proactivo pendiente) NO se cierra la
+      // sesion aqui: la decision de continuar o cerrar es del usuario (FSL-004).
     }
     return Promise.reject(error);
   },

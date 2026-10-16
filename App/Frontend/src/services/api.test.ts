@@ -3,16 +3,20 @@
  * Los errores Axios se construyen como objetos con { isAxiosError: true } para
  * que axios.isAxiosError() los reconozca correctamente.
  */
-import { describe, it, expect } from 'vitest';
-import axios, { type AxiosAdapter } from 'axios';
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import axios, {
+  type AxiosAdapter,
+  type AxiosError,
+  type InternalAxiosRequestConfig,
+} from 'axios';
 import {
   apiClient,
   clearAuthToken,
-  clearRefreshToken,
   extractApiErrorMessage,
-  getRefreshToken,
+  onUnauthorized,
+  refreshSession,
   setAuthToken,
-  setRefreshToken,
+  setSilentRefreshEnabled,
 } from './api';
 
 /** Construye un AxiosError sintético que pasa axios.isAxiosError() */
@@ -141,8 +145,8 @@ describe('extractApiErrorMessage', () => {
   });
 });
 
-describe('api: tokens en memoria (c-63a)', () => {
-  const adapter: AxiosAdapter = async (config) => ({
+describe('api: transporte del refresh por cookie (c-91, IAH-014)', () => {
+  const adapterOk: AxiosAdapter = async (config) => ({
     data: {},
     status: 200,
     statusText: 'OK',
@@ -150,18 +154,58 @@ describe('api: tokens en memoria (c-63a)', () => {
     config,
   });
 
-  it('guarda y limpia el refresh token en memoria', () => {
-    setRefreshToken('refresh-abc');
-    expect(getRefreshToken()).toBe('refresh-abc');
+  afterEach(() => {
+    vi.restoreAllMocks();
+    setSilentRefreshEnabled(true);
+    clearAuthToken();
+    onUnauthorized(() => undefined);
+  });
 
-    clearRefreshToken();
-    expect(getRefreshToken()).toBeNull();
+  it('apiClient envia credenciales para adjuntar la cookie de refresh', () => {
+    expect(apiClient.defaults.withCredentials).toBe(true);
+  });
+
+  it('refreshSession postea a /auth/refresh con credenciales y SIN cuerpo', async () => {
+    const postSpy = vi
+      .spyOn(axios, 'post')
+      .mockResolvedValue({ data: { access_token: 'nuevo', expires_in: 1800 } } as never);
+
+    const tokens = await refreshSession();
+
+    expect(tokens).toEqual({ accessToken: 'nuevo', expiresIn: 1800 });
+    expect(postSpy).toHaveBeenCalledWith(
+      expect.stringContaining('/auth/refresh'),
+      undefined,
+      expect.objectContaining({ withCredentials: true }),
+    );
+  });
+
+  it('refreshSession comparte una unica rotacion concurrente (single-flight)', async () => {
+    let resolvePost: (value: unknown) => void = () => undefined;
+    const postSpy = vi.spyOn(axios, 'post').mockReturnValue(
+      new Promise((resolve) => {
+        resolvePost = resolve;
+      }) as never,
+    );
+
+    const primero = refreshSession();
+    const segundo = refreshSession();
+    expect(postSpy).toHaveBeenCalledTimes(1);
+
+    resolvePost({ data: { access_token: 'x', expires_in: 60 } });
+    await expect(primero).resolves.toEqual({ accessToken: 'x', expiresIn: 60 });
+    await expect(segundo).resolves.toEqual({ accessToken: 'x', expiresIn: 60 });
+  });
+
+  it('refreshSession devuelve null cuando el refresco falla (sin cookie o invalida)', async () => {
+    vi.spyOn(axios, 'post').mockRejectedValue(new Error('sin cookie'));
+    await expect(refreshSession()).resolves.toBeNull();
   });
 
   it('inyecta el access token en el header Authorization', async () => {
     setAuthToken('access-xyz');
 
-    const response = await apiClient.get('/ping', { adapter });
+    const response = await apiClient.get('/ping', { adapter: adapterOk });
     expect(response.config.headers.Authorization).toBe('Bearer access-xyz');
 
     clearAuthToken();
@@ -170,7 +214,81 @@ describe('api: tokens en memoria (c-63a)', () => {
   it('no inyecta Authorization cuando no hay access token', async () => {
     clearAuthToken();
 
-    const response = await apiClient.get('/ping', { adapter });
+    const response = await apiClient.get('/ping', { adapter: adapterOk });
     expect(response.config.headers.Authorization).toBeUndefined();
+  });
+});
+
+describe('api: refresco silencioso 401 como respaldo (c-91, FSL-005)', () => {
+  interface RetriableConfig extends InternalAxiosRequestConfig {
+    _retry?: boolean;
+  }
+
+  function make401(config: InternalAxiosRequestConfig): AxiosError {
+    return new axios.AxiosError('Unauthorized', 'ERR_BAD_REQUEST', config, undefined, {
+      status: 401,
+      data: {},
+      headers: {},
+      config,
+      statusText: 'Unauthorized',
+    } as never);
+  }
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    setSilentRefreshEnabled(true);
+    clearAuthToken();
+    onUnauthorized(() => undefined);
+  });
+
+  it('ante un 401 refresca una vez y reintenta la request (fallback)', async () => {
+    const adapter: AxiosAdapter = async (config) => {
+      if ((config as RetriableConfig)._retry) {
+        return { data: { ok: true }, status: 200, statusText: 'OK', headers: {}, config };
+      }
+      throw make401(config);
+    };
+    const postSpy = vi
+      .spyOn(axios, 'post')
+      .mockResolvedValue({ data: { access_token: 'nuevo', expires_in: 1800 } } as never);
+    setAuthToken('viejo');
+
+    const response = await apiClient.get('/ping', { adapter });
+
+    expect(response.data).toEqual({ ok: true });
+    expect(response.config.headers.Authorization).toBe('Bearer nuevo');
+    expect(postSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('NO extiende la sesion sin consentimiento cuando el aviso proactivo esta pendiente', async () => {
+    // El aviso proactivo deshabilita el respaldo: la decision es del usuario.
+    setSilentRefreshEnabled(false);
+    const adapter: AxiosAdapter = async (config) => {
+      throw make401(config);
+    };
+    const postSpy = vi.spyOn(axios, 'post');
+    const unauthorized = vi.fn();
+    onUnauthorized(unauthorized);
+    setAuthToken('viejo');
+
+    await expect(apiClient.get('/ping', { adapter })).rejects.toBeTruthy();
+
+    expect(postSpy).not.toHaveBeenCalled();
+    // No se cierra la sesion por detras: el prompt conserva la decision.
+    expect(unauthorized).not.toHaveBeenCalled();
+  });
+
+  it('cierra la sesion cuando el respaldo esta habilitado pero no puede refrescar', async () => {
+    const adapter: AxiosAdapter = async (config) => {
+      throw make401(config);
+    };
+    vi.spyOn(axios, 'post').mockRejectedValue(new Error('refresh invalido'));
+    const unauthorized = vi.fn();
+    onUnauthorized(unauthorized);
+    setAuthToken('viejo');
+
+    await expect(apiClient.get('/ping', { adapter })).rejects.toBeTruthy();
+
+    expect(unauthorized).toHaveBeenCalledTimes(1);
   });
 });

@@ -1388,7 +1388,7 @@
         "type": "object"
       },
       "LoginResponse": {
-        "description": "Respuesta del login, ADITIVA respecto del contrato previo (c-63b).\n\nEn el flujo de un paso conserva `access_token`/`token_type` (y agrega\n`refresh_token`/`expires_in`). En el reto MFA, `mfa_required` es verdadero,\nse entrega `mfa_ticket` y NO se emite access token NI `token_type` (los\ncampos nulos se omiten en la serializacion).",
+        "description": "Respuesta del login (un paso, o reto de segundo factor; c-63b).\n\nEn el flujo de un paso conserva `access_token`/`token_type` (y agrega\n`expires_in`); el refresh viaja en cookie (IAH-014), NO en el cuerpo. En el\nreto MFA, `mfa_required` es verdadero, se entrega `mfa_ticket` y NO se emite\naccess token NI `token_type` (los campos nulos se omiten en la serializacion).",
         "properties": {
           "access_token": {
             "anyOf": [
@@ -1432,18 +1432,6 @@
             "description": "Ticket corto para POST /auth/mfa/verify",
             "title": "Mfa Ticket"
           },
-          "refresh_token": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Refresh token opaco rotativo",
-            "title": "Refresh Token"
-          },
           "token_type": {
             "anyOf": [
               {
@@ -1458,22 +1446,6 @@
           }
         },
         "title": "LoginResponse",
-        "type": "object"
-      },
-      "LogoutRequest": {
-        "description": "Payload del endpoint de logout: el refresh token a revocar.",
-        "properties": {
-          "refresh_token": {
-            "description": "Refresh token opaco",
-            "minLength": 1,
-            "title": "Refresh Token",
-            "type": "string"
-          }
-        },
-        "required": [
-          "refresh_token"
-        ],
-        "title": "LogoutRequest",
         "type": "object"
       },
       "LogoutResponse": {
@@ -1619,22 +1591,6 @@
           "ids"
         ],
         "title": "PurgaDirectorioRead",
-        "type": "object"
-      },
-      "RefreshRequest": {
-        "description": "Payload del endpoint de refresco: el refresh token opaco rotativo.",
-        "properties": {
-          "refresh_token": {
-            "description": "Refresh token opaco",
-            "minLength": 1,
-            "title": "Refresh Token",
-            "type": "string"
-          }
-        },
-        "required": [
-          "refresh_token"
-        ],
-        "title": "RefreshRequest",
         "type": "object"
       },
       "ResumenResponse": {
@@ -1961,7 +1917,7 @@
         "type": "object"
       },
       "TokenResponse": {
-        "description": "Respuesta exitosa de autenticacion.\n\nContrato aditivo (c-63a): `access_token` y `token_type` se conservan con la\nmisma semantica que antes; `refresh_token` y `expires_in` se agregan de\nforma opcional para no romper clientes existentes.",
+        "description": "Respuesta exitosa de autenticacion (access token).\n\nEl refresh token NO se expone en el cuerpo (c-91, IAH-014): viaja en una\ncookie HttpOnly seteada por el servidor.",
         "properties": {
           "access_token": {
             "description": "Token JWT firmado",
@@ -1979,18 +1935,6 @@
             ],
             "description": "Segundos hasta la expiracion del access token",
             "title": "Expires In"
-          },
-          "refresh_token": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Refresh token opaco rotativo",
-            "title": "Refresh Token"
           },
           "token_type": {
             "default": "bearer",
@@ -2059,7 +2003,7 @@
   "paths": {
     "/api/v1/auth/login": {
       "post": {
-        "description": "Autentica al usuario con username y password.\n\nDevuelve un access token JWT de vida corta y un refresh token opaco\nrotativo. Si la cuenta es privilegiada, tiene MFA activo y la bandera\n`mfa_required_for_privileged` esta encendida, devuelve un estado \"segundo\nfactor requerido\" con un ticket corto y SIN emitir token (IAH-007).\n\nArgs:\n    payload: Credenciales de inicio de sesion (username + password).\n\nReturns:\n    LoginResponse con access_token/token_type (y refresh_token/expires_in) en\n    el flujo de un paso, o con mfa_required/mfa_ticket en el reto MFA.\n\nRaises:\n    JSONResponse 401 INVALID_CREDENTIALS: credenciales invalidas.\n    JSONResponse 401 ACCOUNT_LOCKED: cuenta bloqueada por intentos fallidos.",
+        "description": "Autentica al usuario con username y password.\n\nDevuelve un access token JWT (30 min por defecto) y entrega el refresh opaco\nen una cookie HttpOnly (IAH-014). Si la cuenta es privilegiada, tiene MFA\nactivo y la bandera `mfa_required_for_privileged` esta encendida, devuelve un\nestado \"segundo factor requerido\" con un ticket corto y SIN emitir token.\n\nArgs:\n    payload: Credenciales de inicio de sesion (username + password).\n    response: Respuesta inyectada donde se setea la cookie de refresh.\n\nReturns:\n    LoginResponse con access_token/token_type/expires_in en el flujo de un\n    paso, o con mfa_required/mfa_ticket en el reto MFA.\n\nRaises:\n    JSONResponse 401 INVALID_CREDENTIALS: credenciales invalidas.\n    JSONResponse 401 ACCOUNT_LOCKED: cuenta bloqueada por intentos fallidos.",
         "operationId": "login_api_v1_auth_login_post",
         "requestBody": {
           "content": {
@@ -2101,18 +2045,8 @@
     },
     "/api/v1/auth/logout": {
       "post": {
-        "description": "Revoca el refresh token del usuario (idempotente).\n\nEl access ya emitido conserva validez hasta su TTL (ventana residual\ndeclarada, IAH-004). Un refresh revocado no puede volver a refrescar.\n\nArgs:\n    payload: Refresh token a revocar.\n\nReturns:\n    LogoutResponse con un mensaje de confirmacion (HTTP 200).",
+        "description": "Revoca el refresh presentado en la cookie y la limpia (idempotente).\n\nVerifica el `Origin` (CSRF). El access ya emitido conserva validez hasta su\nTTL (ventana residual declarada, IAH-004). Un refresh revocado no puede\nvolver a refrescar.\n\nReturns:\n    LogoutResponse con un mensaje de confirmacion (HTTP 200).\n\nRaises:\n    JSONResponse 403 CSRF_ORIGIN_REJECTED: origen no confiable.",
         "operationId": "logout_api_v1_auth_logout_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LogoutRequest"
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "200": {
             "content": {
@@ -2123,19 +2057,9 @@
               }
             },
             "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
           }
         },
-        "summary": "Revocar el refresh token (logout)",
+        "summary": "Revocar el refresh (por cookie) y limpiar la cookie (logout)",
         "tags": [
           "Auth"
         ]
@@ -2197,7 +2121,7 @@
     },
     "/api/v1/auth/mfa/verify": {
       "post": {
-        "description": "Completa el login validando el segundo factor (TOTP o recuperacion).\n\nPresenta el ticket corto emitido por `/auth/login` junto con un codigo TOTP\nvalido o un codigo de recuperacion no consumido; emite el par de tokens con\nlos campos actuales del contrato.\n\nRaises:\n    JSONResponse 401 INVALID_MFA_TICKET: ticket ausente, vencido o invalido.\n    JSONResponse 401 INVALID_MFA_CODE: segundo factor invalido.",
+        "description": "Completa el login validando el segundo factor (TOTP o recuperacion).\n\nPresenta el ticket corto emitido por `/auth/login` junto con un codigo TOTP\nvalido o un codigo de recuperacion no consumido; emite el access y entrega el\nrefresh en la cookie HttpOnly (IAH-014).\n\nRaises:\n    JSONResponse 401 INVALID_MFA_TICKET: ticket ausente, vencido o invalido.\n    JSONResponse 401 INVALID_MFA_CODE: segundo factor invalido.",
         "operationId": "mfa_verify_api_v1_auth_mfa_verify_post",
         "requestBody": {
           "content": {
@@ -2239,18 +2163,8 @@
     },
     "/api/v1/auth/refresh": {
       "post": {
-        "description": "Rota un refresh token valido: invalida el anterior y emite un par nuevo.\n\nArgs:\n    payload: Refresh token opaco presentado por el cliente.\n\nReturns:\n    TokenResponse con el nuevo par de tokens.\n\nRaises:\n    JSONResponse 401 INVALID_REFRESH_TOKEN: token inexistente, ya rotado,\n        revocado o expirado (incluye la reutilizacion de un token rotado).",
+        "description": "Rota el refresh presentado en la cookie HttpOnly y renueva la cookie.\n\nLee el refresh SOLO de la cookie (IAH-014). Verifica el `Origin` para mitigar\nCSRF (solo estos endpoints operan sobre la cookie). El cuerpo devuelve un\naccess nuevo sin exponer el refresh.\n\nReturns:\n    TokenResponse con el access nuevo (el refresh viaja en la cookie rotada).\n\nRaises:\n    JSONResponse 403 CSRF_ORIGIN_REJECTED: origen no confiable.\n    JSONResponse 401 INVALID_REFRESH_TOKEN: sin cookie, o token inexistente,\n        ya rotado, revocado o expirado (reutilizacion incluida).",
         "operationId": "refresh_api_v1_auth_refresh_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RefreshRequest"
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "200": {
             "content": {
@@ -2261,19 +2175,9 @@
               }
             },
             "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
           }
         },
-        "summary": "Rotar el par de tokens con un refresh token valido",
+        "summary": "Rotar el refresh (por cookie) y emitir un access nuevo",
         "tags": [
           "Auth"
         ]

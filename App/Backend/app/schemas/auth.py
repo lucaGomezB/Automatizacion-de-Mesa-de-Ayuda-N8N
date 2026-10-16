@@ -4,11 +4,9 @@ Schemas Pydantic para el flujo de autenticacion JWT.
 Responsabilidad:
     Define los contratos de datos de entrada y salida para los endpoints de
     login, refresco y logout. LoginRequest recibe las credenciales; TokenResponse
-    devuelve el par de tokens de forma ADITIVA respecto del contrato previo
-    (c-63a): conserva `access_token` y `token_type` y agrega `refresh_token` y
-    `expires_in` opcionales.
-
-    RefreshRequest/LogoutRequest reciben el refresh token opaco.
+    devuelve el access token y su expiracion. El refresco NO viaja en el cuerpo
+    (c-91, IAH-014): se entrega y se lee desde una cookie HttpOnly, por lo que
+    los schemas de cuerpo para /refresh y /logout ya no existen.
 """
 
 from typing import Literal
@@ -29,33 +27,17 @@ class LoginRequest(BaseModel):
 
 class TokenResponse(BaseModel):
     """
-    Respuesta exitosa de autenticacion.
+    Respuesta exitosa de autenticacion (access token).
 
-    Contrato aditivo (c-63a): `access_token` y `token_type` se conservan con la
-    misma semantica que antes; `refresh_token` y `expires_in` se agregan de
-    forma opcional para no romper clientes existentes.
+    El refresh token NO se expone en el cuerpo (c-91, IAH-014): viaja en una
+    cookie HttpOnly seteada por el servidor.
     """
 
     access_token: str = Field(..., description="Token JWT firmado")
     token_type: str = Field(default="bearer", description="Tipo de token (bearer)")
-    refresh_token: str | None = Field(
-        default=None, description="Refresh token opaco rotativo"
-    )
     expires_in: int | None = Field(
         default=None, description="Segundos hasta la expiracion del access token"
     )
-
-
-class RefreshRequest(BaseModel):
-    """Payload del endpoint de refresco: el refresh token opaco rotativo."""
-
-    refresh_token: str = Field(..., min_length=1, description="Refresh token opaco")
-
-
-class LogoutRequest(BaseModel):
-    """Payload del endpoint de logout: el refresh token a revocar."""
-
-    refresh_token: str = Field(..., min_length=1, description="Refresh token opaco")
 
 
 class LogoutResponse(BaseModel):
@@ -68,12 +50,12 @@ class LogoutResponse(BaseModel):
 
 
 class LoginResponse(BaseModel):
-    """Respuesta del login, ADITIVA respecto del contrato previo (c-63b).
+    """Respuesta del login (un paso, o reto de segundo factor; c-63b).
 
     En el flujo de un paso conserva `access_token`/`token_type` (y agrega
-    `refresh_token`/`expires_in`). En el reto MFA, `mfa_required` es verdadero,
-    se entrega `mfa_ticket` y NO se emite access token NI `token_type` (los
-    campos nulos se omiten en la serializacion).
+    `expires_in`); el refresh viaja en cookie (IAH-014), NO en el cuerpo. En el
+    reto MFA, `mfa_required` es verdadero, se entrega `mfa_ticket` y NO se emite
+    access token NI `token_type` (los campos nulos se omiten en la serializacion).
     """
 
     access_token: str | None = Field(
@@ -82,9 +64,6 @@ class LoginResponse(BaseModel):
     token_type: str | None = Field(
         default=None,
         description="Tipo de token (bearer); ausente en el reto MFA",
-    )
-    refresh_token: str | None = Field(
-        default=None, description="Refresh token opaco rotativo"
     )
     expires_in: int | None = Field(
         default=None, description="Segundos hasta la expiracion del access token"

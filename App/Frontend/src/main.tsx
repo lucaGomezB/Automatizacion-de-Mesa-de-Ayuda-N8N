@@ -20,6 +20,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { SessionExpiryDialog } from './components/auth/SessionExpiryDialog';
 import ReportarIncidentePage from './pages/ReportarIncidente';
 import AdministracionPage from './pages/Administracion';
 import DashboardPage from './pages/Dashboard';
@@ -110,6 +111,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <App />
+        {/* Aviso proactivo de expiracion (c-91, FSL-002): global a la app. */}
+        <SessionExpiryDialog />
       </AuthProvider>
       {/* Devtools disponibles únicamente en entorno de desarrollo */}
       <ReactQueryDevtools initialIsOpen={false} />
