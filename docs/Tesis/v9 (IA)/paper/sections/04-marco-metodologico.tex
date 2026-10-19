@@ -1,21 +1,21 @@
 %==============================================================================
 % Capitulo 4: Marco Metodologico
 %==============================================================================
-\section{Marco metodologico}
+\section{Marco metodológico}
 
-\subsection{Enfoque y tipo de investigacion}
+\subsection{Enfoque y tipo de investigación}
 
-La investigación se enmarca dentro del enfoque cuantitativo aplicado, dado que propone el desarrolló de una solución informatica orientada a mejorar el funcionamiento de un proceso organizacional concreto y mide su impacto mediante indicadores numericos. \textcite{HernandezSampieri2018_metodologia} ubican este tipo de estudios dentro de la investigación tecnologica de carácter aplicado, donde el conocimiento producido se orienta a la transformación práctica de la realidad antes que a la generación de teoría general. El trabajo posee adicionalmente carácter experimental, en la medida en que disena, implementa y evalua un artefacto tecnologico bajo condiciones controladas.
+La investigación se enmarca dentro del enfoque cuantitativo aplicado, dado que propone el desarrollo de una solución informatica orientada a mejorar el funcionamiento de un proceso organizacional concreto y mide su impacto mediante indicadores numericos. \textcite{HernandezSampieri2018_metodologia} ubican este tipo de estudios dentro de la investigación tecnologica de carácter aplicado, donde el conocimiento producido se orienta a la transformación práctica de la realidad antes que a la generación de teoría general. El trabajo posee adicionalmente carácter experimental, en la medida en que disena, implementa y evalua un artefacto tecnologico bajo condiciones controladas.
 
-\subsection{Diseno experimental}
+\subsection{Diseño experimental}
 
-El diseñó experimental adoptado es de tipo cuasiexperimental con muestras pareadas y mediciones repetidas. La unidad de observación es el incidente individual, y cada uno se procesa secuencialmente bajo dos condiciones: la condicion manual y la condicion automatizada. Esta estrategia ---procesar el mismo conjunto de incidentes por ambas vias--- reduce sustancialmente la variabilidad asociada a las caracteristicas intrínsecas de cada caso, lo que aumenta la potencia estadística del contraste entre flujos.
+El diseño experimental adoptado es de tipo cuasiexperimental con muestras pareadas y mediciones repetidas. La unidad de observación es el incidente individual, y cada uno se procesa secuencialmente bajo dos condiciones: la condicion manual y la condicion automatizada. Esta estrategia ---procesar el mismo conjunto de incidentes por ambas vias--- reduce sustancialmente la variabilidad asociada a las caracteristicas intrínsecas de cada caso, lo que aumenta la potencia estadística del contraste entre flujos.
 
-Para mitigar el efecto de aprendizaje del operador humano sobre el corpus, se aplicó contrabalanceo del orden de procesamiento: el corpus de 200 casos se dividio en dos mitades equilibradas de 100 incidentes cada una, procesandose la primera mitad por la via manual seguida de la via automatizada, y la segunda mitad en orden inverso. Este contrabalanceo distribuye simetricamente cualquier posible ventaja derivada del orden de exposición al corpus.
+Para acotar el efecto de aprendizaje del operador humano sobre el corpus, el diseño adoptó una ejecución secuencial pareada: los mismos 200 casos se procesaron primero por el flujo manual (junio a agosto de 2026) y luego por el flujo automatizado (septiembre a octubre de 2026). Como el procesamiento automatizado es independiente del operador, no introduce efecto de aprendizaje humano; el procesamiento manual, en cambio, se distribuyó entre dos operadores y su asignación se rotó entre las dos mitades del corpus para acotar el efecto de operador.
 
-La investigación se desenvolvio bajo un protocolo de observación naturalista: los operadores sabían que se estaba utilizando el nuevo sistema para el procesamiento de incidentes, pero el operador cuyo tiempo se registraba no fue informado de que sería cronometrado. De este modo su desempeño permaneció indistinguible de la práctica laboral regular y se evita el efecto Hawthorne ---la alteracion del comportamiento de los sujetos cuando saben que estan siendo observados--- \parencite{HernandezSampieri2018_metodologia}. La medición del tiempo se realizó de forma diferenciada según el flujo. En el flujo automatizado se utilizaron registros automáticos del propio sistema (marcas de tiempo de entrada y salida en la base de datos, con precision al milisegundo). En el flujo manual, los operadores trabajaron en pares y el tiempo lo cronometró en vivo el compañero que no estaba registrando el incidente, consignándolo en una planilla de cronometraje: se registró el tiempo total de registro de cada incidente en segundos, con la mayoría de los valores estimados y redondeados a múltiplos de 5~s y unos pocos conservados con exactitud al segundo, sin fracciones de segundo.
+La investigación se desenvolvio bajo un protocolo de medición en vivo. Para mitigar el efecto Hawthorne ---la alteracion del comportamiento de los sujetos cuando saben que estan siendo observados--- \parencite{HernandezSampieri2018_metodologia}, el cronometraje no fue anunciado en tiempo real al operador cuyo tiempo se registraba; sin embargo, su conocimiento fue diferido: al concluir la campaña se realizó una sesión de esclarecimiento (\emph{debriefing}) en la que los operadores fueron informados del propósito del estudio y del procedimiento de medición empleado. La medición del tiempo se realizó de forma diferenciada según el flujo. En el flujo automatizado se utilizaron registros automáticos del propio sistema (marcas de tiempo de entrada y salida en la base de datos, con precision al milisegundo). En el flujo manual, los operadores trabajaron en pares y el tiempo lo cronometró en vivo el compañero que no estaba registrando el incidente, consignándolo en una planilla de cronometraje: se registró el tiempo total de registro de cada incidente en segundos, con redondeo hacia arriba. El redondeo al alza constituye un sesgo de medición sistemático que infla el tiempo manual y su efecto se acota mediante el análisis de sensibilidad reportado en el Capítulo~7.
 
-\subsection{Operacionalizacion de variables}
+\subsection{Operacionalización de variables}
 
 La Tabla~\ref{tab:variables} presenta la operacionalizacion de las variables del estudio, distinguiendo entre variables cuantitativas continuas, cuantitativas proporcionales y cualitativas nominales. Cada variable se acompana de su unidad de medida y de la definición operacional aplicada durante la captura, garantizando la trazabilidad entre la definición conceptual y el procedimiento de medición efectivo.
 
@@ -24,49 +24,49 @@ La Tabla~\ref{tab:variables} presenta la operacionalizacion de las variables del
 \caption{Operacionalizacion de variables del estudio}
 \label{tab:variables}
 \small
-\begin{tabular}{@{}p{2.5cm} >{\raggedright\arraybackslash}p{3.2cm} >{\raggedright\arraybackslash}p{2.3cm} >{\raggedright\arraybackslash}p{5.4cm}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.5cm} >{\raggedright\arraybackslash}p{3.2cm} >{\raggedright\arraybackslash}p{2.3cm} >{\raggedright\arraybackslash}p{5.4cm}@{}}
 \toprule
 \textbf{Variable} & \textbf{Tipo} & \textbf{Unidad} & \textbf{Definicion operacional} \\
 \midrule
 Tiempo de registro & Cuantitativa continua & Segundos (s) & Lapso entre la recepción del incidente en el canal de entrada y la persistencia confirmada del ticket en la base de datos. \\
 Exactitud de clasificación & Cuantitativa proporcional & Porcentaje [0; 100] & Cociente entre incidentes correctamente clasificados y total de incidentes evaluados. \\
-F1 macro promediado & Cuantitativa proporcional & Adimensional [0; 1] & Promedio aritmetico del valor F1 calculado de forma independiente para cada una de las tres clases objetivo. \\
-Intervencion humana & Cuantitativa proporcional & Porcentaje [0; 100] & Proporcion del tiempo total del proceso que requiere accion manual de un operador humano. \\
+F1 macro promediado & Cuantitativa proporcional & Adimensional [0; 1] & Promedio aritmetico del valor F1 calculado de forma independiente para cada uno de los cinco sectores objetivo. \\
+Intervencion humana & Cuantitativa proporcional & Porcentaje [0; 100] & Se reporta de dos formas rotuladas: proporcion de casos que requieren accion manual de un operador humano y proporcion del tiempo total del proceso dedicado a esa accion. \\
 Canal de origen & Cualitativa nominal & Categoria & Via de entrada: correo electrónico, formulario web o llamada telefonica. \\
-Categoria asignada & Cualitativa nominal & Categoria & Sector responsable: Sistemas, Operaciones o Soporte Tecnico. \\
+Categoria asignada & Cualitativa nominal & Categoria & Sector responsable, uno de los cinco sectores canónicos: Seguridad Informática, Soporte Técnico Hardware, Soporte Técnico Software, Bases de Datos o Sistemas. \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{Poblacion, muestra y corpus}
+\subsection{Población, muestra y corpus}
 
-La poblacion de referencia esta constituida por la totalidad de incidentes informaticos reportados a la mesa de ayuda de la organización analizada durante un trimestre representativo (julio a septiembre de 2025). A partir de un universo aproximado de 3.700 incidentes registrados durante ese período, se construyó por muestreo estratificado proporcional un corpus de 200 casos distribuidos entre las tres categorías objetivo en la misma proporción que la poblacion original: 82 casos para Sistemas, 64 casos para Operaciones y 54 casos para Soporte Tecnico.
+La población de referencia está constituida por la totalidad de los incidentes informáticos reportados a la mesa de ayuda de la organización analizada. A partir de un universo aproximado de 3.700 incidentes ---proyectado como 42 incidentes diarios sobre los 88 días de calendario del período relevado (\(42 \times 88 \approx 3.700\))---, se construyó por muestreo estratificado proporcional un corpus de 200 casos pseudonimizados distribuidos entre los cinco sectores canónicos: Soporte Técnico Hardware 85, Soporte Técnico Software 67, Seguridad Informática 31, Sistemas 16 y Bases de Datos 1. Los casos provienen de tres canales de origen: llamada telefónica 81, correo electrónico 66 y formulario web 53. El flujo manual se cronometró entre junio y agosto de 2026; sobre los mismos 200 casos, el flujo automatizado se ejecutó entre septiembre y octubre de 2026.
 
 El tamaño muestral se determinó con un nivel de confianza del 95~\% y un margen de error del 6,5~\%, valores razonables para un estudio piloto orientado a evaluar viabilidad tecnica antes de un despliegue definitivo. El calculo siguio la fórmula clasica para muestreo aleatorio simple en poblaciones finitas, con corrección por finitud aplicada al universo trimestral observado.
 
-Cada incidente del corpus fue revisado y etiquetado de forma independiente por dos analistas con experiencia en la mesa de ayuda, y las discrepancias fueron resueltas por consenso bajo la supervisión del director del trabajo. El acuerdo entre evaluadores, calculado mediante el coeficiente Kappa de Cohen \parencite{Cohen1960_kappa}, alcanzó un valor de \(\kappa = 0{,}87\), considerado sustancial según los rangos de interpretación habitualmente aceptados (\(\kappa > 0{,}80\) indica acuerdo casi perfecto). Este valor respalda la confiabilidad de la categoría de referencia utilizada como verdad fundamental (\emph{ground truth}) para evaluar el clasificador automático.
+Cada incidente del corpus fue revisado y etiquetado de forma independiente por dos analistas con experiencia en la mesa de ayuda, y las discrepancias fueron resueltas por consenso bajo la supervisión del director del trabajo. El acuerdo entre evaluadores se calculó mediante el coeficiente Kappa de Cohen \parencite{Cohen1960_kappa}; el valor obtenido (\(\kappa = 0{,}87\)) se interpreta como casi perfecto según los rangos habitualmente aceptados, que sitúan el acuerdo casi perfecto por encima de \(\kappa > 0{,}80\) \parencite{Landis1977_kappa}. Este valor respalda la confiabilidad de la categoría de referencia utilizada como verdad fundamental (\emph{ground truth}) para evaluar el clasificador automático.
 
 \subsection{Protocolo de pruebas}
 
 El protocolo de pruebas se ejecuto en dos fases sucesivas. La primera fase consistio en una validación funcional del sistema, en la cual se verificó la correcta integración de los componentes mediante: (a)~pruebas unitarias del modulo Python con cobertura superior al 80~\%, (b)~pruebas de integración del flujo N8N orientadas a verificar el comportamiento extremo a extremo de cada canal, y (c)~pruebas de aceptacion simuladas con incidentes sinteticos representativos de cada categoría.
 
-La segunda fase consistio en la validación experimental propiamente dicha, en la cual los 200 incidentes del corpus se procesaron bajo ambas condiciones operativas y se registraron las variables descritas en la Seccion~4.3. El procesamiento manual fue realizado por dos operadores experimentados con mas de tres anos de antiguedad en la mesa de ayuda, ambos capacitados previamente en el uso del sistema de gestión de tickets utilizado como referencia. El procesamiento automatizado se ejecuto sobre la misma infraestructura, sin intervención humana, durante una ventana operativa controlada de tres días habiles consecutivos y con monitoreo continuo de los tiempos de respuesta.
+La segunda fase consistio en la validación experimental propiamente dicha, en la cual los 200 incidentes del corpus se procesaron bajo ambas condiciones operativas y se registraron las variables descritas en la Seccion~4.3. El procesamiento manual fue realizado por dos operadores experimentados con mas de tres anos de antiguedad en la mesa de ayuda, ambos capacitados previamente en el uso del sistema de gestión de tickets utilizado como referencia. El procesamiento automatizado se ejecuto sobre la misma infraestructura, sin intervención humana, durante la ventana de septiembre a octubre de 2026 y con monitoreo continuo de los tiempos de respuesta.
 
-\subsection{Metricas e instrumentos}
+\subsection{Métricas e instrumentos}
 
-La evaluación del sistema se sustenta en cuatro metricas principales. La primera es el tiempo medio de registro, calculado como la media aritmetica y la mediana de los tiempos individuales bajo cada condicion, junto con su desvio estandar e intervalo de confianza al 95~\%. La segunda es la exactitud global de clasificación, calculada como la proporción de incidentes correctamente derivados al sector responsable. La tercera es el valor F1 macro promediado, calculado como la media aritmetica de los valores F1 obtenidos por cada clase, con el fin de neutralizar el efecto del desbalanceo de clases observado en el corpus \parencite{Sokolova2009_performance_measures}. La cuarta es la proporción de intervención humana, calculada como el cociente entre el tiempo dedicado a tareas manuales y el tiempo total del proceso.
+La evaluación del sistema se sustenta en cuatro metricas principales. La primera es el tiempo medio de registro, calculado como la media aritmetica y la mediana de los tiempos individuales bajo cada condicion, junto con su desvio estandar e intervalo de confianza al 95~\%. La segunda es la exactitud global de clasificación, calculada como la proporción de incidentes correctamente derivados al sector responsable. La tercera es el valor F1 macro promediado, calculado como la media aritmetica de los valores F1 obtenidos por cada clase, con el fin de neutralizar el efecto del desbalanceo de clases observado en el corpus \parencite{Sokolova2009_performance_measures}. La cuarta es la proporción de intervención humana, que se reporta de forma rotulada en dos dimensiones complementarias: la proporción de casos que requieren intervención (cociente entre los casos con intervención manual y el total de casos) y la proporción del tiempo dedicado a tareas manuales sobre el tiempo total del proceso.
 
-Como instrumentos de captura se utilizaron: (a)~registros automáticos generados por el propio sistema con marcas de tiempo precisas al milisegundo para el flujo automatizado, (b)~una planilla de cronometraje observacional, completada en vivo por el compañero de par que no estaba registrando el incidente, que consigna el tiempo total de registro por incidente en segundos (la mayoría de los valores redondeados a múltiplos de 5~s, sin fracciones de segundo) para el flujo manual, y (c)~matrices de confusion generadas mediante la biblioteca scikit-learn \parencite{Pedregosa2011_scikit_learn}.
+Como instrumentos de captura se utilizaron: (a)~registros automáticos generados por el propio sistema con marcas de tiempo precisas al milisegundo para el flujo automatizado, (b)~una planilla de cronometraje observacional, completada en vivo por el compañero de par que no estaba registrando el incidente, que consigna el tiempo total de registro por incidente en segundos, con redondeo hacia arriba, para el flujo manual, y (c)~matrices de confusion generadas mediante la biblioteca scikit-learn \parencite{Pedregosa2011_scikit_learn}. En el flujo automatizado, el tiempo de registro del canal telefónico comprende tanto la duración de la llamada grabada como la latencia de procesamiento posterior al cuelgue, mientras que los canales de correo electrónico y formulario web se miden como latencia de extremo a extremo de su procesamiento. Dado que la grabación telefónica está acotada a un máximo de 45~s (véase el Capítulo~6), la duración de la llamada registrada ---y por lo tanto el tiempo automatizado telefónico--- constituye una cota inferior de la duración real de la llamada.
 
-\subsection{Analisis estadistico}
+\subsection{Análisis estadístico}
 
-Para la comparación de los tiempos de registro entre ambas condiciones se aplicó la prueba de Wilcoxon de rangos con signo, prueba no parametrica para muestras pareadas, dado que la prueba previa de normalidad de Shapiro-Wilk rechazo la hipotesis de normalidad en ambos grupos con valores \(p < 0{,}01\). El nivel de significancia se fijo en \(\alpha = 0{,}05\).
+Para la comparación de los tiempos de registro entre ambas condiciones se aplicó la prueba de Wilcoxon de rangos con signo, prueba no parametrica para muestras pareadas, dado que la prueba previa de normalidad de Shapiro-Wilk rechazo la hipotesis de normalidad en ambos grupos con valores \(p < 0{,}01\). El nivel de significancia se fijo en \(\alpha = 0{,}05\). En lo que sigue se denotan \(T^{+}\) y \(T^{-}\) la suma de los rangos de las diferencias positivas y negativas, respectivamente. La implementación de referencia (\texttt{scipy.stats.wilcoxon} en su variante de dos colas) devuelve como estadístico de contraste el menor de ambos, es decir \(W = \min(T^{+}, T^{-})\); por lo tanto \(W = T^{-}\) cuando el flujo automatizado resulta más rápido que el manual en la mayoría de los pares, que es el caso del corpus analizado.
 
-Para cuantificar la magnitud práctica de la diferencia se calculo el coeficiente \(r\) de correlacion rank-biserial, indicador de tamaño del efecto para pruebas no parametricas cuyo rango oscila entre \(-1\) y \(+1\). El calculo sigue la fórmula:
+Para cuantificar la magnitud práctica de la diferencia se calculo el coeficiente \(r\) de correlacion rank-biserial, indicador de tamaño del efecto para pruebas no parametricas. El cálculo se define directamente a partir de los dos estadísticos de rango:
 \[
-r = 1 - \frac{2W}{n(n+1)}
+r = \frac{T^{+} - T^{-}}{n(n+1)/2}
 \]
-donde \(W\) es el estadístico de Wilcoxon y \(n\) el número de pares.
+donde \(T^{+}\) y \(T^{-}\) son las sumas de rangos positivos y negativos y \(n\) el número de pares. La expresión equivale a \(1 - \frac{4W}{n(n+1)}\) cuando \(W = T^{-} = \min(T^{+}, T^{-})\), y su rango teórico es \([-1, +1]\). La definición anterior, que solo abarcaba el intervalo \([0, 1]\), queda reemplazada por esta formulación directa.
 
 Para el análisis de la clasificación se construyó la matriz de confusion global y se calcularon los valores de precision, sensibilidad (recall) y F1 por cada clase, así como su promedio macro. Los intervalos de confianza para las proporciones se estimaron mediante el método de Wilson, recomendado para muestras moderadas \parencite{Wilson1927_probable_inference}. Todos los calculos se realizaron mediante la biblioteca SciPy del ecosistema Python \parencite{Virtanen2020_scipy}.
 
@@ -74,20 +74,20 @@ Para el análisis de la clasificación se construyó la matriz de confusion glob
 
 Se identificaron y trataron explicitamente cuatro amenazas a la validez del estudio.
 
-La primera, una amenaza a la validez interna por efecto de aprendizaje del operador humano sobre el corpus, se mitigo mediante el contrabalanceo del orden de procesamiento descrito en la Seccion~4.2 y mediante la rotacion de operadores entre las dos mitades del corpus.
+La primera, una amenaza a la validez interna por efecto de aprendizaje del operador humano sobre el corpus, se acotó mediante la ejecución secuencial pareada descrita en la Sección~4.2 y mediante la rotación de operadores entre las dos mitades del corpus.
 
-La segunda, una amenaza a la validez de constructo por la subjetividad inherente a la categorizacion de los incidentes, se mitigo mediante el doble etiquetado independiente, el calculo del coeficiente Kappa de Cohen y la resolución de discrepancias por consenso supervisado. El valor obtenido (\(\kappa = 0{,}87\)) respalda la solidez del constructo de medición.
+La segunda, una amenaza a la validez de constructo por la subjetividad inherente a la categorizacion de los incidentes, se mitigo mediante el doble etiquetado independiente, el calculo del coeficiente Kappa de Cohen y la resolución de discrepancias por consenso supervisado. El valor obtenido (\(\kappa = 0{,}87\)) corresponde a un acuerdo casi perfecto según los rangos de Landis y Koch \parencite{Landis1977_kappa} y respalda la solidez del constructo de medición.
 
 La tercera, una amenaza a la validez externa derivada del idioma y del dominio organizacional, se reconoce como limitación explicita del estudio: los resultados no son extrapolables sin nuevas validaciones a corpus en otros idiomas, en otras organizaciones o en otros sectores de la economia.
 
 La cuarta, una amenaza a la validez de conclusión derivada del tamaño moderado de la muestra (\(n = 200\)), se trato mediante el reporte de intervalos de confianza y la eleccion de pruebas no parametricas robustas frente a tamaños muestrales pequeños y a desviaciones de la normalidad \parencite{HernandezSampieri2018_metodologia}.
 
-\subsection{Gestion del proyecto bajo enfoque Scrumban}
+\subsection{Gestión del proyecto bajo enfoque Scrumban}
 
-La construcción del sistema se organizo bajo un esquema Scrumban, combinando la planificación por iteraciones propia de Scrum con la gestión continua del flujo de trabajo caracteristica del método Kanban \parencite{Ladas2009_scrumban}. Se ejecutaron seis iteraciones de dos semanas cada una, totalizando 12 semanas de desarrolló efectivo:
+La construcción del sistema se organizo bajo un esquema Scrumban, combinando la planificación por iteraciones propia de Scrum con la gestión continua del flujo de trabajo caracteristica del método Kanban \parencite{Ladas2009_scrumban}. Se ejecutaron seis iteraciones de dos semanas cada una, totalizando 12 semanas de desarrollo efectivo:
 
 \begin{enumerate}[label=Iteracion \arabic*:, leftmargin=*]
-  \item Elicitacion de requisitos y diseñó preliminar de la arquitectura.
+  \item Elicitacion de requisitos y diseño preliminar de la arquitectura.
   \item Construccion del modulo Python: modelo de datos, repositorios y servicios.
   \item Configuracion inicial del flujo N8N y primeras integraciones.
   \item Integracion del canal de telefonia y persistencia en PostgreSQL.
@@ -95,7 +95,7 @@ La construcción del sistema se organizo bajo un esquema Scrumban, combinando la
   \item Validacion experimental y documentación final del sistema.
 \end{enumerate}
 
-La distribucion de roles asigno la coordinacion general y la integración de componentes a Luca Gomez, el desarrolló del modulo Python y el modelado de la base de datos a Carla Bustos, y la configuración del flujo N8N junto con la integración telefonica mediante Twilio a Gonzalo Sevilla, bajo supervisión académica continua del director del trabajo, Prof. Alberto Cortez.
+La distribucion de roles asigno la coordinacion general y la integración de componentes a Luca Gomez, el desarrollo del modulo Python y el modelado de la base de datos a Carla Bustos, y la configuración del flujo N8N junto con la integración telefonica mediante Twilio a Gonzalo Sevilla, bajo supervisión académica continua del director del trabajo, Prof. Alberto Cortez.
 
 El tablero Kanban se gestiono mediante GitHub Projects, con seguimiento diario del estado de las tareas y reuniones de planificación al inicio de cada iteracion. Las definiciones de terminado (\emph{Definition of Done}) incluyeron, para cada tarea, la aprobacion de las pruebas unitarias correspondientes, la revisión de código por pares y la actualizacion de la documentación asociada.
 
