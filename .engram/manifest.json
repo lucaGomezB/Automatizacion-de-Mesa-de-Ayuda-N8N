@@ -280,6 +280,14 @@
       "sessions": 2,
       "memories": 20,
       "prompts": 72
+    },
+    {
+      "id": "7049699c",
+      "created_by": "skywalker",
+      "created_at": "2026-10-19T13:30:51Z",
+      "sessions": 0,
+      "memories": 1,
+      "prompts": 1
     }
   ]
 }
