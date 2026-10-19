@@ -17,7 +17,8 @@ Definiciones:
 
 from __future__ import annotations
 
-from typing import Dict, Iterable, List, Set, Tuple
+from dataclasses import dataclass
+from typing import Dict, Iterable, List, Sequence, Set, Tuple
 
 from evaluation.corpus import SECTORES_CANONICOS
 
@@ -250,3 +251,115 @@ def jaccard_promedio(
     if not pares:
         return 0.0
     return sum(jaccard_por_caso(v, p) for v, p in pares) / len(pares)
+
+
+# ---------------------------------------------------------------------------
+# Grupo 6 — Calibracion de la confianza (c-77, A6)
+# ---------------------------------------------------------------------------
+# Convencion de bandas: intervalo semiabierto [limite_inferior, limite_superior),
+# salvo la ultima banda, cerrada en 1.0. Contiguas y sin solapamiento.
+BANDAS_CALIBRACION_DEFECTO: Tuple[Tuple[float, float], ...] = (
+    (0.0, 0.5),
+    (0.5, 0.7),
+    (0.7, 0.85),
+    (0.85, 0.95),
+    (0.95, 1.0),
+)
+
+
+@dataclass(frozen=True)
+class BandaCalibracion:
+    """Exactitud observada dentro de una banda de confianza declarada."""
+
+    limite_inferior: float
+    limite_superior: float
+    total: int
+    aciertos: int
+    exactitud: float
+
+
+@dataclass(frozen=True)
+class ContingenciaConfianza:
+    """Contingencia 2x2 en torno al umbral del gate de revision humana."""
+
+    umbral: float
+    alta_total: int
+    alta_aciertos: int
+    alta_exactitud: float
+    baja_total: int
+    baja_aciertos: int
+    baja_exactitud: float
+
+
+def _acierto(real: str, predicho: str) -> int:
+    return 1 if real == predicho else 0
+
+
+def calibracion_por_bandas(
+    confianzas: Sequence[float],
+    reales: Sequence[str],
+    predichos: Sequence[str],
+    bandas: Sequence[Tuple[float, float]] = BANDAS_CALIBRACION_DEFECTO,
+) -> List[BandaCalibracion]:
+    """
+    Exactitud por banda de confianza declarada.
+
+    Cada banda es `[limite_inferior, limite_superior)`, salvo la ultima, cerrada
+    en 1.0. Bandas vacias devuelven `exactitud = 0.0` (denominador cero).
+    """
+    resultado: List[BandaCalibracion] = []
+    for indice, (inferior, superior) in enumerate(bandas):
+        es_ultima = indice == len(bandas) - 1
+        aciertos = total = 0
+        for confianza, real, predicho in zip(confianzas, reales, predichos):
+            dentro = (
+                inferior <= confianza <= superior
+                if es_ultima
+                else inferior <= confianza < superior
+            )
+            if not dentro:
+                continue
+            total += 1
+            aciertos += _acierto(real, predicho)
+        resultado.append(
+            BandaCalibracion(
+                limite_inferior=inferior,
+                limite_superior=superior,
+                total=total,
+                aciertos=aciertos,
+                exactitud=_dividir_seguro(aciertos, total),
+            )
+        )
+    return resultado
+
+
+def contingencia_confianza(
+    confianzas: Sequence[float],
+    reales: Sequence[str],
+    predichos: Sequence[str],
+    umbral: float = 0.70,
+) -> ContingenciaConfianza:
+    """
+    Contingencia alta/baja en torno al umbral (por defecto 0,70, el gate).
+
+    Alta = confianza >= umbral (el sistema no escala a revision humana);
+    baja = confianza < umbral (el sistema escala).
+    """
+    alta_total = alta_aciertos = baja_total = baja_aciertos = 0
+    for confianza, real, predicho in zip(confianzas, reales, predichos):
+        acierto = _acierto(real, predicho)
+        if confianza >= umbral:
+            alta_total += 1
+            alta_aciertos += acierto
+        else:
+            baja_total += 1
+            baja_aciertos += acierto
+    return ContingenciaConfianza(
+        umbral=umbral,
+        alta_total=alta_total,
+        alta_aciertos=alta_aciertos,
+        alta_exactitud=_dividir_seguro(alta_aciertos, alta_total),
+        baja_total=baja_total,
+        baja_aciertos=baja_aciertos,
+        baja_exactitud=_dividir_seguro(baja_aciertos, baja_total),
+    )

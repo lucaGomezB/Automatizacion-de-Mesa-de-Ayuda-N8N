@@ -1787,6 +1787,17 @@
             ],
             "title": "Corpus Case Id"
           },
+          "duracion_segundos": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duracion Segundos"
+          },
           "id": {
             "title": "Id",
             "type": "integer"
