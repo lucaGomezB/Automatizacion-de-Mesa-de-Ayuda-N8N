@@ -15,7 +15,7 @@
 
 - **Variable**: `GEMINI_API_KEY` en `App/Backend/.env`
 - **Origen**: https://aistudio.google.com/app/apikey
-- **Impacto si falta**: El clasificador hibrido no puede invocar a Gemini 2.5 Flash. Solo funciona el clasificador deterministico por keywords. Los incidentes con confianza < 0.90 quedan sin clasificar o van directo a revision humana.
+- **Impacto si falta**: El clasificador hibrido no puede invocar a Gemini 3.6 Flash. Solo funciona el clasificador deterministico por keywords. Los incidentes con confianza < 0.90 quedan sin clasificar o van directo a revision humana.
 - **Governance**: ALTO (dependencia externa paga)
 
 ### 1.2 JWT Secret Key
@@ -94,7 +94,7 @@ El archivo `n8n/workflow.json` esta montado en el contenedor como `/data/Automat
 
 > **IN-04 e IN-05 fueron resueltos por C-18 (alineacion tecnologica de la tesis) y el diseno existente:**
 > - IN-04: Fernet (`utils/encryption.py`) ya provee AES-128-CBC con HMAC-SHA-256 integrado para `descripcion_original`. C-18 reescribio la seccion 11.4 de la tesis reemplazando "pgcrypto" por "Fernet a nivel de aplicacion".
-> - IN-05: La politica de retencion fue redefinida en C-18 como **conservacion indefinida** -- los incidentes cerrados se preservan permanentemente como registro auditable. La pseudonimizacion y el cifrado Fernet garantizan la proteccion incluso en periodos prolongados. No se requiere purga automatica.
+> - IN-05: La politica de retencion quedo definida, coincidente con el capitulo 11 corregido de la tesis y con el ROPA (reconciliado por C-66), como **12 meses rodantes** desde la creacion del incidente y luego **anonimizacion irreversible**; los registros de ejecucion del sistema se conservan 30 dias. La pseudonimizacion y el cifrado Fernet protegen los datos durante el plazo de conservacion vigente.
 
 ### 3.1 Notificaciones por Correo (IMAP/SMTP)
 
@@ -108,9 +108,9 @@ El workflow N8N tiene los nodos `Correo de confirmacion al usuario` y `Notificar
 
 Resuelto: `docker-compose.yml` fija `image: n8nio/n8n:2.11.2` (la version validada localmente, 2.11.2). Ya no se usa `latest`, por lo que no hay cambios silenciosos de version ni riesgo de romper los nodos del workflow sin rollback.
 
-### 4.2 Frontend usa Vite Dev Server en Docker
+### 4.2 Build de produccion del frontend (Resuelto)
 
-El compose mapea el frontend como Vite dev server con HMR (hot module replacement). En produccion real deberia usarse el build estatico servido por nginx. El `Dockerfile` multi-stage de `App/Frontend/` ya esta preparado para build de produccion, pero el compose actual no lo usa.
+Resuelto: el servicio `frontend` de `docker-compose.yml` construye su imagen desde `App/Frontend/Dockerfile` (build multi-stage) con `VITE_API_BASE_URL` como build arg, y nginx sirve el bundle compilado. Ya no se usa el Vite dev server dentro del contenedor. La spec `frontend-production-build` cubre el build de produccion y la resolucion de la URL base de la API.
 
 ### 4.3 Divergencias Documentadas Tesis vs Codigo
 
@@ -118,15 +118,13 @@ El compose mapea el frontend como Vite dev server con HMR (hot module replacemen
 |----|------|------------|-------------|
 | IN-01 | Endpoint clasificacion | `POST /api/v1/clasificar` separado | Clasificacion embebida en `POST /api/v1/incidentes` |
 | IN-03 | Driver BD | psycopg2-binary | asyncpg + SQLAlchemy async |
-| IN-06 | Nodos workflow | 12 nodos | 26 nodos operativos + 3 sticky notes (29 en total) |
+| IN-06 | Nodos workflow | 29 nodos (26 operativos + 3 notas adhesivas) | 29 nodos operativos + 3 stickyNote (32 en total) |
 
 Estas divergencias ya estan documentadas en `knowledge-base/10_preguntas_abiertas.md`. La decision para IN-01 es definitiva: NO se agrega endpoint `/clasificar` separado. La tesis debe corregirse en revision futura.
 
-### 4.4 Sin Job de Backup Automatico
+### 4.4 Backup automatico (Resuelto por C-65)
 
-Los scripts `scripts/backup.sh` y `scripts/backup.ps1` existen pero requieren ejecucion manual. No hay cron, systemd timer, ni scheduler N8N que los dispare automaticamente.
-
-**Recomendacion**: Agregar un cron job en el host o un workflow N8N dedicado que ejecute el backup diariamente.
+Resuelto: C-65 agrego un programador versionado (cron y/o unidad systemd timer) que dispara el backup diario, cifra el dump en reposo (AES-256) y agrega una prueba de restauracion reproducible. Queda documentado en `openspec/specs/backup-scripts/spec.md` (BACKUP-005..008) y `docs/seguridad/plan-continuidad.md`. La copia offsite y la redundancia real se documentan como accion de la organizacion adoptante.
 
 ### 4.5 Calidad de la transcripcion STT del canal telefonico (mejora futura)
 
@@ -156,7 +154,7 @@ Palancas a evaluar (de menor a mayor esfuerzo):
 | **Alta** | Credenciales IMAP/SMTP | Credencial | Canal correo |
 | **Alta** | Credenciales Twilio (backend) | Credencial | Canal telefonico |
 | **Media** | URL publica del backend para webhooks Twilio | Config | Webhook telefonico |
-| **Media** | Backup automatico | Feature | Operacion prolongada |
+| — | Backup automatico | **Resuelto (C-65)** | — |
 | — | Pinear version N8N | **Resuelto (C-34)** | — |
-| **Baja** | Build produccion frontend | Deuda tecnica | Rendimiento en prod |
+| — | Build produccion frontend | **Resuelto** | — |
 | **Baja** | Calidad de transcripcion STT (canal telefonia) | Mejora futura | — |
