@@ -26,6 +26,7 @@ import userEvent from '@testing-library/user-event';
  */
 const setupUser = () => userEvent.setup({ delay: null });
 import { QueryClientProvider } from '@tanstack/react-query';
+import { MemoryRouter } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { IncidenteForm } from './IncidenteForm';
 import * as useReportarIncidenteHook from '@/hooks/useReportarIncidente';
@@ -66,7 +67,9 @@ const mockIncidenteRead: IncidenteRead = {
 function renderForm(onSuccess = vi.fn()) {
   const client = createTestQueryClient();
   const Wrapper = ({ children }: { children: ReactNode }) => (
-    <QueryClientProvider client={client}>{children}</QueryClientProvider>
+    <MemoryRouter>
+      <QueryClientProvider client={client}>{children}</QueryClientProvider>
+    </MemoryRouter>
   );
   return render(<IncidenteForm onSuccess={onSuccess} />, { wrapper: Wrapper });
 }

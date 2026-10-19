@@ -43,6 +43,11 @@ class CostGuardConfig:
     alert_enabled: bool = True
     shared_secret_configured: bool = False
     twilio_auth_token_configured: bool = False
+    # c-66: clave DEDICADA para derivar el identificador de origen no reversible
+    # que se emite en los eventos (HMAC-SHA-256). Independiente de la clave de
+    # pseudonimizacion. Default vacio solo para construcciones directas de tests;
+    # `from_settings` la toma del setting requerido `cost_guard_caller_hmac_key`.
+    caller_hmac_key: str = ""
 
     def unit_cost(self, provider: str) -> Decimal:
         """Costo unitario configurado para la superficie paga indicada."""
@@ -109,6 +114,9 @@ class CostGuardConfig:
             ),
             twilio_auth_token_configured=bool(
                 getattr(settings, "twilio_auth_token")
+            ),
+            caller_hmac_key=str(
+                getattr(settings, "cost_guard_caller_hmac_key", "")
             ),
         )
 

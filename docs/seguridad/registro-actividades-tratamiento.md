@@ -35,7 +35,7 @@ organizacion adoptante.
 | Categorias de titulares | Empleados/usuarios internos; llamantes |
 | Destinatarios/encargados | N8N (orquestacion), Google Gemini (inferencia, solo texto pseudonimizado) |
 | Transferencia internacional | Gemini (EE. UU. — pais NO adecuado) |
-| Conservacion | Incidentes: conservacion indefinida por decision de diseno (revisar contra minimizacion); logs N8N podados a 30 dias |
+| Conservacion | Incidentes: 12 meses rodantes desde su creacion y luego anonimizacion irreversible; registros de ejecucion del sistema podados a 30 dias |
 
 ### 3.2 Directorio de empleados
 
@@ -67,7 +67,11 @@ organizacion adoptante.
   contractuales modelo** (Disposicion DNPDP 60/2016; Resolucion AAIP 198/2023) o normas
   corporativas vinculantes (Resolucion AAIP 159/2018).
 - La **pseudonimizacion** previa mitiga el riesgo, pero **no sustituye** el instrumento.
-- El instrumento y su documentacion se abordan en el change **C-66**.
+- El instrumento y su documentacion se abordan en el change **C-66**; el mecanismo
+  (incluida la transcripcion de audio CRUDO previa a la pseudonimizacion en Gemini y el audio
+  crudo + numero del llamante en Twilio) se detalla en
+  `instrumento-transferencia-internacional.md`, que **documenta** el mecanismo y **no**
+  declara el instrumento como suscrito.
 
 ## 5. Responsable del tratamiento y los tres tratamientos
 
@@ -100,11 +104,13 @@ organizacion adoptante.
 
 ## 6. Conservacion y minimizacion
 
-- Incidentes: sin politica de borrado definida (brecha mapeada a ISO 8.10).
+- Incidentes: **12 meses rodantes** desde su creacion y luego **anonimizacion irreversible**
+  (alineado con el capitulo 11 de la tesis).
 - Directorio: purga de bajas a 1 ano.
 - N8N: poda de ejecuciones a 30 dias.
-- Logs: sin retencion documentada; el numero llamante crudo en logs es una brecha mapeada a
-  ISO 8.12/8.15 (change C-66).
+- Logs: retencion por clase de registro en `politica-retencion-logs.md`; el numero de origen
+  NO se registra crudo (identificador derivado no reversible). La centralizacion y el SIEM
+  quedan fuera de alcance (brechas 8.15/8.16, changes separados).
 
 ## 7. Inscripcion de bases (arts. 21/24) — template/checklist para el adoptante
 

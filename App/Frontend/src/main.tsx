@@ -8,7 +8,8 @@
  *   2. `AuthProvider` — estado de autenticación JWT (token en memoria, no en localStorage).
  *   3. `BrowserRouter` — enrutador HTML5 con rutas protegidas por alcance (c-81):
  *      "/" (portal), "/admin" (superficie operativa, exige GLOBAL), "/mis-incidentes"
- *      (exige PROPIO), "/dashboard" y "/login". Las rutas montan `ProtectedRoute`.
+ *      (exige PROPIO), "/dashboard", "/login" y "/privacidad" (publica, c-66). Las
+ *      rutas protegidas montan `ProtectedRoute`.
  *   4. `ReactQueryDevtools` — panel de depuración de caché, activo solo en desarrollo.
  *
  *   Cualquier ruta no definida redirige a "/" para evitar páginas en blanco.
@@ -28,6 +29,7 @@ import LoginPage from './pages/LoginPage';
 import MfaEnrollmentPage from './pages/MfaEnrollmentPage';
 import MisIncidentesPage from './pages/MisIncidentes';
 import DirectorioPage from './pages/Directorio';
+import PrivacidadPage from './pages/Privacidad';
 import './index.css';
 
 // Cliente de React Query con reintentos reducidos para evitar saturar la API en errores temporales
@@ -43,79 +45,95 @@ const queryClient = new QueryClient({
 
 // ── App ───────────────────────────────────────────────────────────────────────
 
+/**
+ * Tabla de rutas de la aplicacion. Se exporta para poder probarla en aislamiento
+ * (con un `MemoryRouter`) sin montar el `BrowserRouter` real.
+ */
+export function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      {/* c-66 (PRIV-001): aviso de privacidad publico, FUERA de ProtectedRoute.
+          Debe declararse explicitamente porque `path="*"` redirige a "/". */}
+      <Route path="/privacidad" element={<PrivacidadPage />} />
+      <Route
+        path="/mfa/enroll"
+        element={
+          <ProtectedRoute>
+            <MfaEnrollmentPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <ReportarIncidentePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute requiere={['GLOBAL', 'SECTOR']}>
+            <AdministracionPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mis-incidentes"
+        element={
+          <ProtectedRoute requiere="PROPIO">
+            <MisIncidentesPage />
+          </ProtectedRoute>
+        }
+      />
+      {/* Directorio: guard ADITIVO por ROL (c-89, FR-RBAC-008). El modo GLOBAL
+          tambien incluye a mesa_de_ayuda, por eso no basta el alcance. */}
+      <Route
+        path="/directorio"
+        element={
+          <ProtectedRoute requiereRol="administrador_directorio">
+            <DirectorioPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
+
 function App() {
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route
-          path="/mfa/enroll"
-          element={
-            <ProtectedRoute>
-              <MfaEnrollmentPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <ReportarIncidentePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <DashboardPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute requiere={['GLOBAL', 'SECTOR']}>
-              <AdministracionPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/mis-incidentes"
-          element={
-            <ProtectedRoute requiere="PROPIO">
-              <MisIncidentesPage />
-            </ProtectedRoute>
-          }
-        />
-        {/* Directorio: guard ADITIVO por ROL (c-89, FR-RBAC-008). El modo GLOBAL
-            tambien incluye a mesa_de_ayuda, por eso no basta el alcance. */}
-        <Route
-          path="/directorio"
-          element={
-            <ProtectedRoute requiereRol="administrador_directorio">
-              <DirectorioPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <AppRoutes />
     </BrowserRouter>
   );
 }
 
 // ── Mount ─────────────────────────────────────────────────────────────────────
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <App />
-        {/* Aviso proactivo de expiracion (c-91, FSL-002): global a la app. */}
-        <SessionExpiryDialog />
-      </AuthProvider>
-      {/* Devtools disponibles únicamente en entorno de desarrollo */}
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
-  </React.StrictMode>,
-);
+const rootElement = document.getElementById('root');
+if (rootElement) {
+  ReactDOM.createRoot(rootElement).render(
+    <React.StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <App />
+          {/* Aviso proactivo de expiracion (c-91, FSL-002): global a la app. */}
+          <SessionExpiryDialog />
+        </AuthProvider>
+        {/* Devtools disponibles únicamente en entorno de desarrollo */}
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </React.StrictMode>,
+  );
+}

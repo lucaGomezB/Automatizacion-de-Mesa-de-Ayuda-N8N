@@ -187,6 +187,13 @@ export default function LoginPage() {
                 </p>
               </form>
             )}
+
+            {/* Aviso en el punto de recolección (c-66, PRIV-001): enlace visible a la política */}
+            <p className="text-center text-sm text-muted-foreground mt-4">
+              <Link to="/privacidad" className="underline underline-offset-4">
+                Política de Privacidad
+              </Link>
+            </p>
           </CardContent>
         </Card>
       </div>

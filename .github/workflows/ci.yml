@@ -46,6 +46,7 @@ jobs:
       GEMINI_API_KEY: ci-dummy-key
       PSEUDONYMIZATION_ENCRYPTION_KEY: MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA= # gitleaks:allow (dummy: base64url de 32 bytes '0')
       JWT_SECRET_KEY: ci-dummy-jwt-secret-key-for-testing-only # gitleaks:allow (dummy)
+      COST_GUARD_CALLER_HMAC_KEY: ci-dummy-cost-guard-caller-hmac-key # gitleaks:allow (dummy)
 
     steps:
       - name: Checkout

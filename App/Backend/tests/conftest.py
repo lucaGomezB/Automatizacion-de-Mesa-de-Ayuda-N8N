@@ -72,6 +72,22 @@ from app.models import *  # noqa: F401,F403
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
 
 
+@pytest.fixture(scope="session", autouse=True)
+def _required_cost_guard_caller_hmac_key():
+    """Aporta la clave HMAC dedicada requerida por `Settings` (c-66).
+
+    `Settings` exige `COST_GUARD_CALLER_HMAC_KEY`. En local sale del `.env` y en
+    CI del entorno del job; este default defensivo garantiza que la suite offline
+    pueda construir `Settings` aun sin la variable. NO altera el comportamiento
+    de la guarda: los tests inyectan su propia clave de forma explicita.
+    """
+    os.environ.setdefault(
+        "COST_GUARD_CALLER_HMAC_KEY",
+        "test-cost-guard-caller-hmac-key-conftest",
+    )
+    yield
+
+
 # ── PostgreSQL Integration Test Helpers (C-19, c-32) ───────────────────────
 
 # Disposable test database used by the integration suite (c-32). It is

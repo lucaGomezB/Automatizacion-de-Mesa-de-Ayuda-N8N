@@ -18,6 +18,7 @@
  *   Un indicador de progreso visual facilita esta restricción al usuario.
  */
 import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { Send, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -225,6 +226,15 @@ export function IncidenteForm({ onSuccess }: IncidenteFormProps) {
           </>
         )}
       </Button>
+
+      {/* Aviso en el punto de recolección (c-66, PRIV-001): enlace visible a la política */}
+      <p className="text-xs text-muted-foreground">
+        Al enviar, los datos se tratan según la{' '}
+        <Link to="/privacidad" className="underline underline-offset-4">
+          Política de Privacidad
+        </Link>
+        .
+      </p>
     </form>
   );
 }

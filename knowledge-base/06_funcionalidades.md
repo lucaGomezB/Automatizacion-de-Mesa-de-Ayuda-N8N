@@ -31,7 +31,7 @@ Organizadas por épica. Estado de cada historia: implementado / parcial / pendie
 ### US-005 — Pseudonimización pre-Gemini (implementado, C-03)
 **Como** responsable de datos **quiero** que ningún dato personal salga hacia Gemini **para** cumplir la Ley 25.326.
 - CA: 4 categorias PII detectadas y reemplazadas (EMAIL, TELEFONO, HOST, PERSONA) en orden fijo. Double representation: original encriptado via Fernet + pseudonimizado en claro. Clasificador solo recibe texto pseudonimizado.
-- Implementacion: `app/utils/pseudonymizer.py` (220 lineas, funcion pura) + `app/utils/encryption.py` (EncryptedText TypeDecorator). Tests unitarios por categoria. Ley 25.326 compliant.
+- Implementacion: `app/utils/pseudonymizer.py` (220 lineas, funcion pura) + `app/utils/encryption.py` (EncryptedText TypeDecorator). Tests unitarios por categoria. Alineado con la Ley 25.326.
 
 ## Épica 3: Registro y persistencia
 
