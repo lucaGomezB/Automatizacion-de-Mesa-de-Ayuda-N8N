@@ -4,13 +4,15 @@
 # reason. Blank lines and lines starting with `#` are ignored. The
 # `security-scan` CI job turns each ID into an explicit `--ignore-vuln <ID>`.
 #
-# These are PRE-EXISTING findings accepted by the author in this iteration.
-# Each is either:
-#   - NON-FIXABLE (no correction published upstream), or
-#   - FIXABLE only through a BREAKING major upgrade that is out of scope for
-#     this change (tracked as a follow-up, not a silent threshold change).
-# Exceptions are explicit and auditable; there is NEVER a global
-# `continue-on-error`. Any new finding not listed here fails the job.
+# POLITICA REAL DE BLOQUEO: la auditoria del backend BLOQUEA ante
+# vulnerabilidades conocidas que tengan una correccion NO rompiente
+# (non-breaking fix) disponible. Se exceptuan de forma EXPLICITA y por ID,
+# aqui, unicamente:
+#   - hallazgos SIN correccion publicada upstream, o
+#   - hallazgos corregibles SOLO mediante una actualizacion mayor ROMPIENTE
+#     (breaking major), registrada como seguimiento pendiente (ver FOLLOW-UP).
+# Excepciones explicitas y auditables; NUNCA un `continue-on-error` global.
+# Cualquier hallazgo nuevo que no figure en esta lista hace fallar el job.
 #
 # Re-audit with:
 #   pip-audit -r App/Backend/requirements.txt --desc
@@ -25,3 +27,18 @@ PYSEC-2026-1943  # starlette 0.38.6: fix 0.40.0 is outside fastapi 0.115's <0.39
 PYSEC-2026-1941  # starlette 0.38.6: fix 0.47.2 needs fastapi major upgrade; follow-up
 PYSEC-2026-2281  # starlette 0.38.6: fix 1.1.0 needs fastapi major upgrade; follow-up
 PYSEC-2026-2280  # starlette 0.38.6: fix 1.1.0 needs fastapi major upgrade; follow-up
+
+# ------------------------------------------------------------------------------
+# FOLLOW-UP (seguimiento pendiente; NO aceptado en silencio)
+#
+# Las siguientes actualizaciones mayores rompientes quedarian resueltas al
+# ejecutarlas. Se registran aqui para que la excepcion no se convierta en un
+# mute permanente: son deuda tecnica trackeada, no una aceptacion silenciosa.
+#
+#   (i)  fastapi: actualizacion mayor (fastapi 0.115 -> 1.x) para limpiar las 7
+#        advisories de starlette 0.38.6 (PYSEC-2026-161/249/248/1943/1941/
+#        2281/2280), hoy dentro del cap <0.39 declarado por fastapi 0.115.
+#
+#   (ii) pytest: actualizacion a 9.x para limpiar PYSEC-2026-1845; rompiente
+#        respecto de pytest-asyncio 0.24 (requiere revisar esa integracion).
+# ------------------------------------------------------------------------------

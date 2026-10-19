@@ -99,7 +99,7 @@ El `README.md` del repositorio SHALL mostrar un badge que refleje el estado del 
 
 El workflow de integracion continua SHALL ejecutar un job de escaneo de seguridad, en paralelo a los jobs de pruebas existentes, que corra sobre Python 3.12 y Node 20 y cubra: auditoria de vulnerabilidades conocidas de las dependencias del backend (`pip-audit` sobre `App/Backend/requirements.txt`), analisis estatico de seguridad del codigo del backend (SAST) y auditoria de dependencias del frontend (`npm audit` sobre `App/Frontend/package-lock.json`). El job MUST declarar de forma explicita su politica de bloqueo (que hallazgos hacen fallar la corrida) y MUST poder completarse sin secretos del repositorio. El job MUST NOT modificar el arbol de dependencias instalado por los jobs de pruebas.
 
-La politica de bloqueo SHALL ser conservadora y estar justificada: el SAST MUST bloquear ante hallazgos de severidad alta en el codigo del backend; la auditoria de dependencias del backend MUST bloquear ante vulnerabilidades conocidas con correccion disponible, con una via documentada para exceptuar las que no la tengan; la auditoria de dependencias del frontend MUST operar en modo reporte (no bloqueante) en esta primera iteracion, con su justificacion registrada.
+La politica de bloqueo SHALL ser conservadora y estar justificada: el SAST MUST bloquear ante hallazgos de severidad alta en el codigo del backend; la auditoria de dependencias del backend MUST bloquear ante vulnerabilidades conocidas con una correccion NO rompiente disponible, y MUST ofrecer una via documentada para exceptuar de forma explicita y por ID (a) los hallazgos sin correccion publicada y (b) los hallazgos corregibles solo mediante una actualizacion mayor rompiente (breaking major), registrada como seguimiento pendiente; la auditoria de dependencias del frontend MUST operar en modo reporte (no bloqueante) en esta primera iteracion, con su justificacion registrada. Las excepciones MUST ser explicitas y auditables por ID; NO MUST existir un mecanismo global de omision (por ejemplo `continue-on-error`) que suprima el bloqueo de forma silenciosa.
 
 #### Scenario: El job corre los tres escaneos
 
@@ -109,7 +109,12 @@ La politica de bloqueo SHALL ser conservadora y estar justificada: el SAST MUST 
 #### Scenario: El job declara su politica de bloqueo
 
 - **WHEN** se inspecciona el job de escaneo de seguridad en `.github/workflows/ci.yml`
-- **THEN** deja explicito que el SAST bloquea ante severidad alta, que la auditoria del backend bloquea ante vulnerabilidades corregibles y que la auditoria del frontend es no bloqueante en esta iteracion
+- **THEN** deja explicito que el SAST bloquea ante severidad alta, que la auditoria del backend bloquea ante vulnerabilidades con correccion NO rompiente (exceptuando de forma explicita y por ID los hallazgos sin correccion o corregibles solo con una actualizacion mayor rompiente) y que la auditoria del frontend es no bloqueante en esta iteracion
+
+#### Scenario: Las excepciones de la auditoria del backend son explicitas y auditables
+
+- **WHEN** se inspecciona la politica de bloqueo de la auditoria de dependencias del backend en `.github/workflows/ci.yml` junto con la lista de excepciones versionada en `scripts/security/pip_audit_exceptions.txt`
+- **THEN** cada hallazgo exceptuado figura de forma explicita por ID con su motivo y su seguimiento pendiente, y no existe ningun `continue-on-error` global que suprima de forma silenciosa el bloqueo
 
 #### Scenario: El job no requiere secretos
 
