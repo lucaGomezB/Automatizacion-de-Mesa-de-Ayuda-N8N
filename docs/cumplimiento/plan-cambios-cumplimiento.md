@@ -41,7 +41,7 @@ Consecuencia: **no** se agrega un capitulo extenso de cumplimiento. Se agrega un
 | C-63 | `identidad-accesos-claves` | (T) MFA para cuentas de operacion/administracion; politica de contrasenas; bloqueo por intentos fallidos; expiracion/rotacion/revocacion de JWT (refresh o lista de revocacion); revision periodica de accesos; gestion de claves (secret manager/KMS, rotacion de Fernet y del secreto JWT, CA real). | 5.15, 5.16, 5.17, 5.18, 8.2, 8.5, 8.24 | CRITICO | C-61 (parametros de politica) | 4 |
 | C-64 | `vulnerabilidades-supply-chain` | (T) Dependabot; `pip-audit`/`npm audit` en CI; escaneo de imagenes (trivy); SBOM; SAST (bandit/semgrep); pinning estricto de dependencias; (D) evaluacion de seguridad y clausulas con proveedores (Twilio, Gemini, Microsoft, N8N). | 8.8, 8.28, 8.29, 5.19-5.23 | MEDIO | — | 5 |
 | C-65 | `backup-continuidad` | (T+D) Cifrado del backup; copia offsite; automatizacion; prueba de restauracion periodica; RTO/RPO; plan de continuidad; redundancia basica. | 8.13, 8.14, 5.29, 5.30, 5.33 | ALTO | — | 6 |
-| C-66 | `privacidad-transferencias` | (T+D) Quitar/seudonimizar el numero llamante en logs (`cost_guard/guard.py:236,252`); cifrar o justificar por minimizacion el contacto del directorio (`models/empleado.py:16-18`); instrumento de transferencia internacional para Gemini/Twilio (clausulas modelo o consentimiento); consentimiento e informacion al titular; procedimiento ARCO con plazos; retencion de logs. **Se alinea con C-53.** | 5.34, 8.12, 8.15, 5.31 | ALTO | — (C-67 depende de C-66) | 3 |
+| C-66 | `privacidad-transferencias` | (T+D) Quitar/seudonimizar el numero llamante en logs (`cost_guard/guard.py:236,252`); cifrar o justificar por minimizacion el contacto del directorio (`models/empleado.py:16-18`); instrumento de transferencia internacional para Gemini/Twilio (clausulas modelo o consentimiento); consentimiento e informacion al titular; procedimiento ARCO con plazos; retencion de logs. **Se alinea con C-53.** | 5.34, 8.12, 8.15, 5.31 | ALTO | — (C-66 alinea con C-53; C-67 cerrado NO REALIZADO) | 3 |
 
 Notas:
 - La **prioridad** es sugerida por valor para la defensa y relacion riesgo/esfuerzo; es ajustable.
@@ -66,6 +66,8 @@ Notas:
 - Consentimiento e instrumento de transferencia internacional hacia Twilio (EE. UU., pais NO adecuado).
 
 Recomendacion (aprobada): **C-66 define el tratamiento del llamante y el marco de consentimiento/transferencia; C-67 los consume**. C-67 no se inicia hasta resolver OQ3 y C-66.
+
+**Estado (2026-10-19):** `C-67-notificacion-sms-llamante` quedó **CERRADO Y ARCHIVADO como NO REALIZADO** (0/24, nunca implementado; archivado con `--skip-specs`, de modo que los specs principales no se tocaron). Motivos: (1) el spike de OQ3 cerró el 2026-09-23 con veredicto GO-WITH-CONSTRAINTS (SMS best-effort, correo como canal primario), por lo que OQ3 ya no está abierta; (2) su dependencia dura `C-66 privacidad-transferencias` nunca fue creada; (3) la cadena "SMS" no aparece en la tesis (`docs/Tesis/v9 (IA)/paper/sections/`) ni en `knowledge-base/`, por lo que es backlog de completitud de software y no un entregable de la tesis.
 
 **OQ3 (accion del autor):** configurar Twilio para SMS (registrar remitente) y hacer una prueba real de entrega a un movil argentino.
 
