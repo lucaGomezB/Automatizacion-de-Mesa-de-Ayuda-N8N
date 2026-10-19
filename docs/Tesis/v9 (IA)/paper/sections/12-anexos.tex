@@ -12,13 +12,45 @@ El Anexo~A reune los diagramas de la arquitectura propuesta en notación UML. In
   \item \textbf{Diagrama de componentes}: organización interna del modulo Python por capas (routes, services, repositories, models, classifiers), con sus dependencias y relaciones.
 \end{itemize}
 
-Los diagramas se mantienen en formato editable (\texttt{.drawio}) en el repositorio del proyecto para facilitar su actualizacion futura. La versión en alta resolución se encuentra disponible en el directorio \texttt{docs/} del repositorio \parencite{Gomez2026_repositorio}.
+Los diagramas se generan a partir de fuentes Mermaid versionadas en formato \texttt{.md} en el directorio \texttt{docs/diagrams/} del repositorio y se renderizan a imágenes PNG para su inclusion en este documento \parencite{Gomez2026_repositorio}. Las Figuras~\ref{fig:anexo_despliegue} y~\ref{fig:anexo_secuencia} reproducen el diagrama de despliegue y el de secuencia, respectivamente.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{despliegue}
+\caption{Diagrama de despliegue del sistema: componentes principales, red de contenedores y relaciones de comunicación.}
+\label{fig:anexo_despliegue}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{secuencia}
+\caption{Diagrama de secuencia del flujo extremo a extremo de un incidente, desde la recepción en el canal de entrada hasta la confirmación al usuario o la derivación a revisión humana.}
+\label{fig:anexo_secuencia}
+\end{figure}
 
 \section{Repositorio de código fuente}
 
 El código fuente del modulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio publico del proyecto \parencite{Gomez2026_repositorio}. El commit de referencia para la versión entregada al jurado se consigna mediante el tag \texttt{v1.0.0}. La creación de dicho tag sobre el commit definitivo entregado al jurado queda como acción pendiente al cierre de los changes c-76 y c-77; una vez creado, se registrará en este mismo apartado el hash completo del commit etiquetado como referencia verificable de la versión evaluada.
 
-La estructura del repositorio sigue el patron estandar con directorios separados para el modulo de procesamiento (\texttt{Gestion\_Incidentes/}), la definición del flujo de orquestación (\texttt{Automatizacion\_Mesa\_de\_Ayuda.json}), las migraciones de base de datos (\texttt{alembic/}), las pruebas automatizadas (\texttt{tests/}), los artefactos de evaluación (\texttt{evaluation/}) y la documentación operativa (\texttt{docs/}). El archivo \texttt{README.md} incluye instrucciones detalladas para el despliegue local en menos de 15 minutos.
+La estructura del repositorio separa el módulo de procesamiento (\texttt{App/Backend/}), la interfaz de usuario (\texttt{App/Frontend/}), la definición del flujo de orquestación (\texttt{n8n/workflow.json}), los artefactos de evaluación (\texttt{evaluation/}), el corpus pseudonimizado (\texttt{data/}), los scripts auxiliares (\texttt{scripts/}), la documentación (\texttt{docs/}) y las especificaciones de los changes (\texttt{openspec/}). El archivo \texttt{README.md} incluye instrucciones detalladas para el despliegue local en menos de 15 minutos. El Listado~\ref{lst:repo-tree} presenta un extracto del árbol de directorios.
+
+\begin{lstlisting}[caption={Árbol de directorios del repositorio (extracto).},label={lst:repo-tree}]
+repositorio/
+|-- App/
+|   |-- Backend/        (FastAPI: app/, alembic/, tests/)
+|   `-- Frontend/       (React + TypeScript: src/)
+|-- n8n/
+|   `-- workflow.json
+|-- evaluation/
+|-- data/
+|-- scripts/
+|   `-- figures/
+|-- docs/
+|-- openspec/
+|-- docker-compose.yml
+|-- Makefile
+`-- README.md
+\end{lstlisting}
 
 \section{Esquema de base de datos}
 
@@ -26,25 +58,264 @@ El esquema completo de la base de datos PostgreSQL se documenta mediante scripts
 
 La migración inicial incluye la creacion de las tablas de catalogo (\texttt{sector}, \texttt{estado}, \texttt{canal\_origen}) con sus valores semilla, garantizando que un despliegue nuevo del sistema comience con los datos de referencia correctos. Las migraciones subsiguientes documentan la evolucion del esquema durante las seis iteraciones de desarrollo descritas en el Capitulo~4.
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{er_modelo_datos}
+\caption{Diagrama entidad-relación de las siete entidades del modelo de datos.}
+\label{fig:anexo_er_modelo_datos}
+\end{figure}
+
+La Tabla~\ref{tab:anexo_entidades} sintetiza las siete entidades del modelo y su rol dentro del esquema.
+
+\begin{table}[htbp]
+\small
+\centering
+\caption{Entidades del modelo de datos y su rol en el esquema.}
+\label{tab:anexo_entidades}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.6cm} >{\raggedright\arraybackslash}p{10.4cm}@{}}
+\toprule
+Entidad & Rol en el esquema \\
+\midrule
+\texttt{incidente} & Entidad central del sistema: almacena cada ticket con la descripción original cifrada y su versión pseudonimizada, la prioridad y las referencias a los catálogos de \texttt{sector}, \texttt{estado} y \texttt{canal\_origen}. \\
+\texttt{clasificacion\_log} & Registro de auditoría de cada decisión del clasificador híbrido: sector predicho, confianza, etapa del pipeline y validación humana posterior. \\
+\texttt{sector} & Catálogo de sectores responsables de atender los incidentes (cinco valores canónicos sin tildes). \\
+\texttt{estado} & Catálogo de estados del ciclo de vida del incidente (\texttt{nuevo}, \texttt{en proceso}, \texttt{en espera}, \texttt{resuelto}, \texttt{cerrado}). \\
+\texttt{canal\_origen} & Catálogo de canales de ingreso (correo electrónico, formulario web y llamada telefónica). \\
+\texttt{users} & Credenciales de acceso al sistema: nombre de usuario único y secreto para la autenticación. \\
+\texttt{directorio\_empleado} & Directorio organizacional de empleados; vincula opcionalmente un usuario (\texttt{user\_id}) y un sector (\texttt{sector\_id}), y define el rol del empleado. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{Especificación OpenAPI de la interfaz REST}
 
 La especificación completa de la interfaz REST se genera automáticamente mediante FastAPI conforme a la versión~3.1 de la especificación OpenAPI \parencite{Tiangolo2024_fastapi}. El documento resultante describe los puntos de entrada listados en la Tabla~5 del Capitulo~5, los esquemas de los cuerpos de solicitud y respuesta validados mediante Pydantic~v2, los códigos de estado posibles para cada método HTTP, y ejemplos representativos para cada caso de uso.
 
 La interfaz se encuentra disponible adicionalmente en formato interactivo a través del componente Swagger UI integrado en el servidor, accesible bajo la ruta \texttt{/docs} durante la ejecución, y en formato estatico como archivo \texttt{openapi.json} en el directorio \texttt{docs/} del repositorio. La sincronización entre el código y la especificación estatica se verifica automáticamente en el pipeline de integración continua.
 
+La especificación OpenAPI vigente describe 33 puntos de entrada que exponen 41 métodos HTTP y 44 esquemas de datos. La Tabla~\ref{tab:anexo_rutas} agrupa los puntos de entrada por recurso.
+
+\begin{table}[htbp]
+\small
+\centering
+\caption{Puntos de entrada de la interfaz REST (33 rutas, 41 métodos) agrupados por recurso, según \texttt{docs/openapi.json}.}
+\label{tab:anexo_rutas}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{9.2cm} p{2.0cm}@{}}
+\toprule
+Recurso & Puntos de entrada & Métodos \\
+\midrule
+Autenticación & \texttt{/api/v1/auth/} (login, logout, me, mfa/enroll, mfa/verify, refresh) & 5 POST, 1 GET \\
+Catálogos & \texttt{/api/v1/catalogos/sectores} & 1 GET \\
+Clasificaciones & \texttt{/api/v1/clasificaciones/} (incidente/\{id\}, revision-pendiente, revision-pendiente/count, \{log\_id\}/validar) & 3 GET, 1 PATCH \\
+Incidentes & \texttt{/api/v1/incidentes/} (raíz, historial-cerrados, \{id\}, \{id\}/cierre-global, \{id\}/cierre-sector, \{id\}/comentarios, \{id\}/estado, \{id\}/rehabilitar) & 4 GET, 5 POST, 2 PATCH, 1 DELETE \\
+Directorio & \texttt{/api/v1/directorio/} (empleados, empleados/\{id\}, purga) & 2 GET, 2 POST, 1 PATCH, 1 DELETE \\
+Estadísticas & \texttt{/api/v1/estadisticas/} (resumen, tendencias) & 2 GET \\
+Telefonía & \texttt{/api/v1/telefonia/} (ingresos, record-complete, recording-status) & 1 GET, 2 POST, 1 DELETE \\
+Control de costo & \texttt{/api/v1/cost-guard/} (reserve, twilio/voice) & 2 POST \\
+Salud & \texttt{/health}, \texttt{/health/db}, \texttt{/api/v1/health}, \texttt{/api/v1/health/db} & 4 GET \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A modo de ejemplo representativo, el Listado~\ref{lst:incidente-read} resume el esquema \texttt{IncidenteRead} empleado por el punto de entrada de detalle de incidente, con sus atributos y tipos.
+
+\begin{lstlisting}[caption={Esquema IncidenteRead (resumen de atributos y tipos).},label={lst:incidente-read}]
+IncidenteRead: object
+  required: id, descripcion_pseudonimizada, prioridad,
+            requiere_revision_humana, created_at, updated_at,
+            sector, estado, canal_origen, numero_incidente,
+            latencia_e2e_ms, latencia_anomala
+  properties:
+    id                        : integer
+    numero_incidente          : string   (readOnly)
+    descripcion_pseudonimizada: string
+    prioridad                 : PrioridadEnum
+    requiere_revision_humana  : boolean
+    sector                    : SectorRead | null
+    sectores_adicionales      : SectorRead[]
+    estado                    : EstadoRead
+    canal_origen              : CanalOrigenRead | null
+    reportante_empleado_id    : integer | null
+    origen_message_id         : string | null
+    ingresado_en              : date-time | null
+    persistido_en             : date-time | null
+    latencia_e2e_ms           : integer | null   (readOnly)
+    latencia_anomala          : boolean           (readOnly)
+    created_at                : date-time
+    updated_at                : date-time
+\end{lstlisting}
+
 \section{Configuración del flujo N8N}
 
-La exportación del flujo de orquestación en formato JSON incluye la totalidad de los 29 nodos configurados, sus parámetros operativos, las credenciales referenciadas mediante identificadores opacos sin exposición de valores, y los conectores entre nodos. El archivo \texttt{Automatizacion\_Mesa\_de\_Ayuda.json} en la raíz del repositorio contiene esta exportación. La importación de este artefacto en una instancia limpia de N8N~2.11.2 reproduce integramente el comportamiento operativo del sistema, sujeta únicamente a la provisión de las credenciales correspondientes a los servicios externos integrados (servidor IMAP de correo, cuenta Twilio y clave de API de Gemini) mediante el sistema de credenciales nativo de la plataforma.
+La exportación del flujo de orquestación en formato JSON incluye la totalidad de los 29 nodos configurados, sus parámetros operativos, las credenciales referenciadas mediante identificadores opacos sin exposición de valores, y los conectores entre nodos. El archivo \texttt{n8n/workflow.json} contiene esta exportación. La importación de este artefacto en una instancia limpia de N8N~2.11.2 reproduce íntegramente el comportamiento operativo del sistema, sujeta únicamente a la provisión de las credenciales correspondientes a los servicios externos integrados (servidor IMAP de correo, cuenta Twilio y clave de API de Gemini) mediante el sistema de credenciales nativo de la plataforma.
+
+La Figura~\ref{fig:anexo_flujo_n8n} presenta una reconstrucción esquemática del flujo, derivada de la exportación JSON y agrupada por etapa funcional. La Tabla~\ref{tab:anexo_nodos_n8n} enumera los 29 nodos operativos clasificados según su etapa.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{flujo_n8n}
+\caption[Reconstrucción esquemática del flujo de orquestación N8N]{Reconstrucción esquemática del flujo de orquestación N8N, derivada de la exportación \texttt{n8n/workflow.json}. No es una captura de la interfaz: los 29 nodos operativos se agrupan por etapa funcional.}
+\label{fig:anexo_flujo_n8n}
+\end{figure}
+
+\begin{table}[htbp]
+\small
+\centering
+\caption{Los 29 nodos operativos del flujo N8N agrupados por etapa funcional.}
+\label{tab:anexo_nodos_n8n}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{11.2cm}@{}}
+\toprule
+Etapa & Nodos operativos (tipo) \\
+\midrule
+Entrada (triggers) & Llega un email a Mesa de Ayuda (IMAP) \newline Llamada telefónica (Webhook) \newline Webhook formulario web \newline notificación-clasificación (Webhook) \\
+Validación y normalización & Se verifica que la información sea la necesaria (Code) \newline Sellar ingreso telefonía (Code) \newline Marcar canal web (Code) \newline Normalizar entrada del incidente (Code) \newline Entrada válida (IF) \\
+Envío al backend & Login operador (HTTP Request) \newline HTTP POST a MESA-AYUDAS (HTTP Request) \\
+Ruteo por canal de origen & Rutear por canal de origen (Switch) \newline Es correo? (IF) \newline Es web? (IF) \newline Web con incidente? (IF) \\
+Revisión humana & Requiere revisión humana (IF) \newline Preparar destinatarios de revisión (Code) \newline Notificar operador designado (Email Send) \newline Confirmar correo en revisión? (IF) \newline Confirmación web de revisión humana (Respond to Webhook) \newline Responder handoff telefonía (Respond to Webhook) \\
+Respuesta y auditoría & Confirmación web al usuario (Respond to Webhook) \newline Correo de confirmación al usuario (Email Send) \newline Registro de auditoría (Code) \newline Respuesta web de cierre (Respond to Webhook) \\
+Aviso post-revisión & Auditar notificación (Code) \newline Es aviso post-revisión? (IF) \newline Preparar destinatarios de gestión (Code) \newline Notificar gestión post-revisión (Email Send) \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Corpus de validación}
 
-El corpus de 200 incidentes utilizado para la validación experimental reside en el repositorio en formato JSON, en su forma pseudonimizada y versionada, bajo la ruta \texttt{data/corpus\_evaluacion\_pseudonimizado.json}. Cada caso incluye el identificador anonimo, la descripción cruda pseudonimizada, el canal de origen, el sector asignado por consenso humano, los sectores adicionales de verdad y el tiempo de registro medido en cada flujo. La categoría predicha por el clasificador y la confianza asociada no forman parte del corpus: se conservan en \texttt{evaluation/predicciones.json}, generado por el framework de evaluación. Se incluyen además las planillas de cronometraje del flujo manual y los registros automáticos generados por el flujo automatizado.
+El corpus de 200 incidentes utilizado para la validación experimental reside en el repositorio en formato JSON, en su forma pseudonimizada y versionada, bajo la ruta \texttt{data/corpus\_evaluacion\_pseudonimizado.json}. Cada caso incluye el identificador anónimo, la descripción cruda pseudonimizada, el canal de origen, el sector asignado por consenso humano, los sectores adicionales de verdad y el tiempo de registro medido en cada flujo. La categoría predicha por el clasificador y la confianza asociada no forman parte del corpus: se conservan en \texttt{evaluation/predicciones.json}, generado por el framework de evaluación. Se incluyen además las planillas de cronometraje del flujo manual y los registros automáticos generados por el flujo automatizado.
+
+La Tabla~\ref{tab:anexo_corpus} describe los campos que componen cada uno de los 200 casos del corpus.
+
+\begin{table}[htbp]
+\small
+\centering
+\caption{Campos de cada caso del corpus de validación (200 casos pseudonimizados).}
+\label{tab:anexo_corpus}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{1.9cm} >{\raggedright\arraybackslash}p{8.9cm}@{}}
+\toprule
+Campo & Tipo & Descripción \\
+\midrule
+\texttt{id} & string & Identificador único del caso (por ejemplo, \texttt{R001}). \\
+\texttt{descripcion} & string & Texto del incidente pseudonimizado; los identificadores personales se reemplazan por etiquetas genéricas (\texttt{[EMAIL]}, \texttt{[TELEFONO]}, \texttt{[HOST]}, \texttt{[PERSONA]}). \\
+\texttt{canal\_origen} & string & Canal de ingreso: \texttt{correo electrónico}, \texttt{formulario web} o \texttt{llamada telefónica}. \\
+\texttt{sector\_asignado} & string & Sector principal de verdad, exactamente uno de los cinco sectores canónicos. \\
+\texttt{sectores\_adicionales} & arreglo & Sectores adicionales de verdad; vacío cuando no hay, sin repetir el sector asignado. \\
+\texttt{tiempo\_manual\_s} & number & Tiempo de clasificación manual, en segundos. \\
+\texttt{tiempo\_automatizado\_s} & number & Tiempo del sistema automatizado, en segundos. \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 Por razones de privacidad y en cumplimiento de la Ley~25.326 \parencite{Ley25326_2000}, las descripciones textuales han sido pseudonimizadas previamente a su inclusion en el repositorio publico, reemplazando nombres propios, direcciones de correo y otros identificadores personales por etiquetas genericas.
 
 \section{Documentación operativa}
 
-La documentación operativa del sistema describe los procedimientos de despliegue inicial, configuración recurrente, respaldo y restauración, monitoreo activo y respuesta ante incidentes operativos. Se incluyen instrucciones detalladas para los entornos de desarrollo, preproduccion y produccion, así como una guia de resolución de incidencias frecuentes orientada al personal de operaciones de la organización adoptante. La documentación se mantiene actualizada en el repositorio del proyecto y se versiona conjuntamente con el código fuente, garantizando coherencia entre la versión desplegada y los procedimientos vigentes en cada momento del ciclo de vida del sistema.
+La documentación operativa del sistema describe los procedimientos de despliegue inicial, configuración recurrente, respaldo y restauración, monitoreo activo y respuesta ante incidentes operativos. Se incluyen instrucciones detalladas para los entornos de desarrollo, preproducción y producción, así como una guía de resolución de incidencias frecuentes orientada al personal de operaciones de la organización adoptante. La documentación se mantiene actualizada en el repositorio del proyecto y se versiona conjuntamente con el código fuente, garantizando coherencia entre la versión desplegada y los procedimientos vigentes en cada momento del ciclo de vida del sistema.
+
+La Tabla~\ref{tab:anexo_runbook} resume el índice del runbook operativo (\texttt{docs/operational-guide.md}).
+
+\begin{table}[htbp]
+\small
+\centering
+\caption{Índice de la guía operativa (Anexo G).}
+\label{tab:anexo_runbook}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{6.2cm} >{\raggedright\arraybackslash}p{8.0cm}@{}}
+\toprule
+Sección & Contenido \\
+\midrule
+Prerequisitos & Herramientas y versiones mínimas requeridas; recursos de hardware recomendados. \\
+1. Despliegue & Clonado del repositorio, configuración de variables de entorno, certificados TLS y arranque del stack, verificación de salud, importación del flujo N8N y acceso al frontend. \\
+2. Detener y reiniciar los servicios & Comandos de parada y reinicio del stack en contenedores. \\
+3. Backup y restauración de PostgreSQL & Respaldo automatizado y manual, restauración, instantáneas de volúmenes y prueba de restauración reproducible. \\
+4. Monitoreo de salud & Endpoints de salud, estado de los contenedores, logs estructurados y cola de revisión humana. \\
+5. Regenerar la especificación OpenAPI & Generación de la especificación estática sincronizada con el código. \\
+6. Actualizar dependencias del backend & Procedimiento de actualización controlada de dependencias. \\
+7. Aplicar migraciones Alembic manualmente & Ejecución manual de migraciones de esquema. \\
+8. Evaluación del clasificador & Ejecución de la evaluación, gate de corrida paga, tests de evaluación y preparación del corpus real. \\
+9. Arnés de ejecución en seco (dry-run) & Validación local de costo cero. \\
+10. Medición de latencia end-to-end & Procedimiento de medición de latencia del flujo completo. \\
+11. Guarda de costo en runtime & Postura al arranque, enforcement y degradación, política fail-closed, autenticación de endpoints, transcripción de telefonía y reproducibilidad de la suite de integración. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Especificación del prompt de Gemini 3.6 Flash}
+\label{anexo:H}
+
+Este anexo documenta la especificación del prompt enviado al modelo \texttt{gemini-3.6-flash} (Gemini~3.6 Flash en el texto) y los parámetros de configuración de la inferencia. El prompt se mantiene en el repositorio bajo \texttt{docs/prompt\_gemini.txt} y es único para los tres canales de entrada.
+
+\subsection{Estructura y contenido del prompt}
+
+El prompt sigue una estructura fija en español organizada en cinco componentes funcionales y un conjunto de reglas de desambiguación:
+
+\begin{enumerate}
+  \item \textbf{Instrucción de rol}: define que el modelo actúa como agente especializado en clasificación de incidentes técnicos en español rioplatense, lo que ancla el comportamiento en el dominio y el dialecto del estudio.
+  \item \textbf{Definición de categorías}: presenta los cinco sectores canónicos con sus \emph{strings} exactos (sensibles a mayúsculas y sin tildes), un ámbito descriptivo por sector y un ejemplo representativo extraído del dominio real por cada uno.
+  \item \textbf{Formato de respuesta}: solicita un JSON válido con exactamente dos campos, \texttt{categoría} (uno de los cinco valores canónicos) y \texttt{confianza} (número entre 0,0 y 1,0), sin texto adicional, comentarios ni explicaciones.
+  \item \textbf{Lógica de decisión}: indica analizar la descripción y asignar una categoría única entre las cinco opciones; ante elementos de múltiples categorías, elegir la dominante.
+  \item \textbf{Validación sintáctica}: exige validar la corrección sintáctica del JSON antes de devolverlo y reducir la confianza cuando no sea posible clasificar con seguridad.
+  \item \textbf{Reglas de desambiguación de frontera}: las acciones sobre aplicaciones o sistemas operativos (acceder, iniciar sesión, abrir una aplicación) se orientan a \texttt{Soporte Tecnico Software}; los dispositivos físicos y su digitalización (escáner, impresora, periférico, error de digitalización) a \texttt{Soporte Tecnico Hardware}; y la infraestructura y los servicios de plataforma (servidor, red, SMTP, VM) a \texttt{Sistemas}. Estas reglas corrigen casos de frontera medidos sobre el corpus.
+\end{enumerate}
+
+\subsection{Parámetros de configuración}
+
+La invocación del modelo se realiza mediante la API \texttt{google-generativeai} versión~0.8, con los hiperparámetros que resume la Tabla~\ref{tab:anexo_gemini_params}, optimizados para equilibrar exactitud, latencia y costo de inferencia.
+
+\begin{table}[htbp]
+\small
+\centering
+\caption{Parámetros de configuración de la inferencia con \texttt{gemini-3.6-flash}.}
+\label{tab:anexo_gemini_params}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{8.4cm}@{}}
+\toprule
+Parámetro & Valor & Justificación \\
+\midrule
+\texttt{temperature} & 0,3 & Valor bajo que reduce la variabilidad de la generación y mejora la consistencia en tareas de clasificación determinística. \\
+\texttt{top\_p} & 0,9 & \emph{Nucleus sampling} que admite variantes léxicas válidas en español rioplatense sin sacrificar coherencia. \\
+\texttt{max\_tokens} & 100 & Límite suficiente para la respuesta JSON, con margen ante variaciones y sin truncamiento. \\
+\texttt{candidate\_count} & 1 & Respuesta única sin remuestreo; optimiza la latencia para el procesamiento en tiempo real. \\
+\texttt{safety\_settings} & Parcialmente desactivados & Desactiva filtros que podrían rechazar descripciones legítimas de incidentes, manteniendo los filtros contra contenido verdaderamente tóxico. \\
+\texttt{timeout} & 10 segundos & Límite máximo de latencia; al excederse, el clasificador devuelve confianza 0,0 y marca el caso para revisión humana. \\
+API & \texttt{google-generativeai} 0.8 & Versión vigente al momento del estudio, documentada para reproducibilidad. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Validación de la respuesta}
+
+Antes de aceptar la respuesta del modelo, el módulo de clasificación valida que el texto sea JSON parseable, que contenga exactamente las claves \texttt{categoría} y \texttt{confianza}, que la categoría sea uno de los cinco valores canónicos y que la confianza sea un número en el intervalo \([0{,}0, 1{,}0]\). Si cualquiera de estas condiciones falla, se registra la excepción, se asigna confianza 0,0, se marca el incidente para revisión humana y no se propagan estados inconsistentes a la base de datos. Este procedimiento garantiza la confiabilidad operativa frente a errores de formato o alucinaciones del modelo. El Listado~\ref{lst:validar-gemini} resume la rutina de validación.
+
+\begin{lstlisting}[caption={Validación de la respuesta de Gemini (resumen).},label={lst:validar-gemini}]
+def validar_respuesta_gemini(response_text: str) -> tuple[bool, dict]:
+    try:
+        data = json.loads(response_text)
+    except json.JSONDecodeError as e:
+        return False, {"error": f"JSON invalido: {e}"}
+    if "categoria" not in data:
+        return False, {"error": "Falta campo 'categoria'"}
+    if data["categoria"] not in SECTORES_CANONICOS:
+        return False, {"error": f"Categoria invalida: {data['categoria']}"}
+    if "confianza" not in data:
+        return False, {"error": "Falta campo 'confianza'"}
+    if not isinstance(data["confianza"], (int, float)) \
+            or not (0.0 <= data["confianza"] <= 1.0):
+        return False, {"error": f"Confianza invalida: {data['confianza']}"}
+    return True, data
+\end{lstlisting}
+
+\subsection{Iteración y mejora del prompt}
+
+El prompt se validó y ajustó de forma iterativa sobre un conjunto de aproximadamente 100 incidentes representativos en entornos de preproducción, sin exposición al corpus de validación de 200 casos. Las versiones históricas del prompt se conservan en el repositorio bajo \texttt{docs/prompt\_gemini\_history/} para auditoría y eventual reversión.
+
+\subsection{Recomendaciones para futuras iteraciones}
+
+Ante una degradación de las métricas por cambios en el modelo, se recomienda profundizar los ejemplos por clase (de dos a cuatro o cinco), agregar contraejemplos de incidentes limítrofes, especificar umbrales de confianza explícitos, incluir un diccionario de términos clave por categoría y, una vez acumulado un corpus del orden de 5.000 casos etiquetados, migrar a un modelo ajustado específicamente al dominio.
+
+\subsection{Camino único de clasificación}
+
+El sistema mantiene un único camino de clasificación para los tres canales de entrada: la cascada híbrida del backend (filtro determinístico, modelo Gemini y revisión humana). El canal telefónico dejó de clasificar mediante un agente de lenguaje propio en N8N: su clasificación es propiedad del backend y se resuelve sobre la descripción pseudonimizada, del mismo modo que los canales escritos (decisión OQ1 = A de c-72). En consecuencia, existe un solo prompt de clasificación del sistema, las reglas de frontera se definen y corrigen una sola vez para todos los canales, y la reserva de costo de la clasificación telefónica ya no grava la superficie \texttt{n8n\_gemini} sino la superficie del backend cuando la cascada escala a la etapa semántica (decisión OQ2 = A): el atajo determinístico, cuando aplica, no invoca al modelo externo ni consume cuota de Gemini.
+
+\subsection{Punto de operación comparativo del cortocircuito determinístico}
+
+El cortocircuito de la etapa semántica se gobierna mediante un \emph{score de correctitud} (ASG-010), que ordena la correctitud esperada y no constituye una probabilidad calibrada: está acotado a \([0, 1]\) y se deriva únicamente de señales observables en tiempo de ejecución (score del ganador, margen respecto del segundo, cantidad de coincidencias, longitud del texto y señales por sector). El punto de operación es comparativo contra la etapa semántica y se fija maximizando la cobertura del subconjunto cortocircuitable sujeta a que la precisión determinística no sea inferior a la del modelo semántico, estimada fuera de la muestra y con las predicciones de Gemini en caché. Sobre el corpus de 200 casos, el umbral fijado en \texttt{Settings.deterministic\_score\_threshold} cortocircuita todo el conjunto con señal no ambigua (cobertura 0,6550, 131 de 200 casos); los disparadores de ausencia de predicción y de ambigüedad escalan con independencia del score. El cambio de señal altera clasificaciones, por lo que se incrementó la versión del caché híbrido de predicciones.
 
 \section{Trazabilidad de las correcciones del dictamen}
 

@@ -207,8 +207,8 @@ prosa introductoria + artefacto embebido:
   directorios (o la salida de `tree`), y la tabla de tags/releases.
 - **Anexo C** (esquema BD): embeber la figura 3 (ER) y/o una tabla con las siete
   entidades y sus atributos derivada de `docs/anexo_c_esquema_bd.md`.
-- **Anexo D** (OpenAPI, OQ-F3-1 resuelta 2026-10-12): incluir una tabla de las 25
-  rutas agrupadas por recurso (de `docs/openapi.json`: 25 rutas / 31 metodos / 40
+- **Anexo D** (OpenAPI, OQ-F3-1 resuelta 2026-10-12): incluir una tabla de las 33
+  rutas agrupadas por recurso (de `docs/openapi.json`: 33 rutas / 41 metodos / 44
   esquemas, 115 KB) MAS 1 esquema representativo (p. ej. `IncidenteRead`); NO pegar
   los 115 KB completos.
 - **Anexo E** (flujo N8N): embeber la figura 4 (captura) y una tabla con los 29
@@ -410,8 +410,8 @@ numeros.
   corpus pertenece a c-77 (item D1), NO a este change. Sin cambio del contrato de
   la spec.
 - OQ-F3-1 (RESUELTA 2026-10-12): opcion elegida = Opcion 2 (extracto
-  representativo). El Anexo D MUST incluir una tabla de las 25 rutas agrupadas por
-  recurso (de `docs/openapi.json`: 25 rutas / 31 metodos / 40 esquemas, 115 KB) MAS
+  representativo). El Anexo D MUST incluir una tabla de las 33 rutas agrupadas por
+  recurso (de `docs/openapi.json`: 33 rutas / 41 metodos / 44 esquemas, 115 KB) MAS
   1 esquema representativo (p. ej. `IncidenteRead`); MUST NOT pegar los 115 KB
   completos. Sin impacto en las specs.
 

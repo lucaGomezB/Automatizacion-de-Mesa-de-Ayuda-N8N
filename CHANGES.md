@@ -162,7 +162,7 @@ C-76 tesis-correcciones-dictamen (ninguna — documento de tesis)          [ACTI
  └── C-77 tesis-errores-estadisticos-inferenciales (aplicar tras C-76)   [ACTIVO — 0/49; MEDIO]
       └── C-78 tesis-bibliografia-atribucion (aplicar tras C-77)         [ACTIVO — 0/25; HIGH]
             └── C-79 tesis-aspectos-legales (aplicar tras C-78)           [ACTIVO — 0/25; HIGH]
-                └── C-80 tesis-forma-evidencia-visual (aplicar tras C-79) [ACTIVO — 0/45; BAJO]
+                └── C-80 tesis-forma-evidencia-visual (aplicar tras C-79) [ACTIVO — 40/45; BAJO]
 
 --- FASE 30: RBAC, ciclo de cierre y sesion (2026-10-13 / 2026-10-15) ---
 
@@ -1725,7 +1725,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
   - `docs/cumplimiento/marco-legal-ar-2026.md`, `docs/seguridad/registro-requisitos-legales.md`
   - `docs/runbook-verificacion-telefonia-c52.md`
 
-### [C-80] `tesis-forma-evidencia-visual` — ACTIVO (0/45)
+### [C-80] `tesis-forma-evidencia-visual` — ACTIVO (40/45)
 
 - **Estado**: `[ ]` propuesto (planning completo; OQ-F2-1/F2-2/F3-1 resueltas 2026-10-12; figura 7 por canal; apply-ready). Sin aplicar.
 - **Problema**: Bloque 4 del dictamen (items 26-32): 52 errores ortograficos, 8 figuras faltantes (hay 1 sola), 7 anexos A-G descriptivos + Anexo H fuera de la tesis, fuente de tablas inconsistente, ~900 palabras duplicadas, nota obsoleta "N8N 1.62", afirmaciones valorativas sin respaldo.
@@ -2031,7 +2031,7 @@ Hay 10 changes ACTIVOS:
 - **`c-77-tesis-errores-estadisticos-inferenciales`** — 0/49 (FASE 29) — Governance MEDIO.
 - **`c-78-tesis-bibliografia-atribucion`** — 0/25 (FASE 29) — Governance ALTO.
 - **`c-79-tesis-aspectos-legales`** — 0/25 (FASE 29) — Governance ALTO.
-- **`c-80-tesis-forma-evidencia-visual`** — 0/45 (FASE 29) — Governance BAJO.
+- **`c-80-tesis-forma-evidencia-visual`** — 40/45 (FASE 29) — Governance BAJO.
 - **`c-92-tesis-marco-teorico-profundidad`** — 0/29 (FASE 31) — Governance MEDIO.
 - **`c-93-tesis-metodologia-rigor`** — 0/29 (FASE 31) — Governance MEDIO.
 - **`c-94-tesis-implementacion-verificabilidad`** — 0/19 (FASE 31) — Governance MEDIO.

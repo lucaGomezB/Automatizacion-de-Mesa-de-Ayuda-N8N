@@ -15,6 +15,10 @@
 > corregida de `tiempo_automatizado_s` (c-77, Opcion A). OQ-F2-2 resuelta: los
 > valores del corpus son validos, no requieren remedicion; el fix del `metadata`
 > del corpus es de c-77 (item D1), NO de este change.
+>
+> **Estado de aplicacion:** las tareas abiertas (6.4, 6.5, 6.6, 8.2 y 8.3) son
+> ACCIONES DEL AUTOR (captura de UI y recompilacion en Overleaf). El trabajo del
+> agente esta completo; el change queda "agent-work complete, pending author".
 
 ## 1. F1 — Ortografia y portada
 
@@ -60,27 +64,27 @@
 - [x] 6.1 Figura 1 (despliegue): renderizar `D/despliegue.md` con `mmdc -i ... -o F/despliegue.png -b white -s 2`. Verificar que `F/despliegue.png` existe y no muestra `\n` visibles.
 - [x] 6.2 Figura 2 (secuencia): renderizar `D/secuencia.md` a `F/secuencia.png`. Verificar existencia y legibilidad.
 - [x] 6.3 Figura 3 (ER): crear `D/er_modelo_datos.md` con `erDiagram` de las 7 entidades (`incidente`, `sector`, `estado`, `canal_origen`, `clasificacion_log`, `users`, `directorio_empleado`; verificado contra `App/Backend/app/models/` y la Tabla~4) y renderizar a `F/er_modelo_datos.png`. Verificar que las 7 entidades y sus relaciones figuran.
-- [ ] 6.4 Figura 4 (flujo N8N): capturar la UI N8N (`:5678`) con `n8n/workflow.json` importado y guardar `F/flujo_n8n.png`. Contingencia: diagrama esquematico rotulado como reconstruccion.
-- [ ] 6.5 Figura 5 (panel admin): capturar `App/Frontend` (panel de administracion) a `F/panel_admin.png`. Verificar que se distingue listado/cola de revision.
-- [ ] 6.6 Figura 6 (dashboard): capturar el dashboard ReCharts de `App/Frontend` a `F/dashboard.png`. Verificar que se ven las visualizaciones.
+- [ ] 6.4 Figura 4 (flujo N8N): capturar la UI N8N (`:5678`) con `n8n/workflow.json` importado y guardar `F/flujo_n8n.png`. Contingencia: diagrama esquematico rotulado como reconstruccion. (ACCION DEL AUTOR: captura de UI pendiente)
+- [ ] 6.5 Figura 5 (panel admin): capturar `App/Frontend` (panel de administracion) a `F/panel_admin.png`. Verificar que se distingue listado/cola de revision. (ACCION DEL AUTOR: captura de UI pendiente)
+- [ ] 6.6 Figura 6 (dashboard): capturar el dashboard ReCharts de `App/Frontend` a `F/dashboard.png`. Verificar que se ven las visualizaciones. (ACCION DEL AUTOR: captura de UI pendiente)
 - [x] 6.7 Figura 7 (boxplot POR CANAL): crear `scripts/figures/boxplot_tiempos.py` que lea `data/corpus_evaluacion_pseudonimizado.json` (`tiempo_manual_s`, `tiempo_automatizado_s`), SEGMENTE por canal (`formulario web`, `correo`, `telefonia`) y emita `F/boxplot_tiempos.pdf` con 3 paneles / layout agrupado (nunca un boxplot unico que mezcle canales; regla `docs/medicion-latencia-e2e.md:50-53`). El panel de telefonia usa la metrica CORREGIDA de c-77 (Opcion A); si c-77 no esta aplicado, anotar ese panel como "automatizado = solo post-procesamiento (cota inferior)". Verificar que `n` y medianas POR CANAL son coherentes con las cifras CORREGIDAS de `07:10` (owned by c-76), NO con las obsoletas.
 - [x] 6.8 Figura 8 (matriz de confusion): crear `scripts/figures/matriz_confusion.py` que derive la matriz 5x5 real de `evaluation/report.md` (owned by c-76), en el orden canonico de sectores, y la grafique a `F/matriz_confusion.pdf`; verificar totales por fila 31/85/67/1/16 y 200 casos, exactitud 73,5~% (147/200). Matriz de referencia (MUST NOT hardcodearse en el script): `[[15,2,11,2,1],[1,77,3,0,4],[0,11,48,1,7],[0,0,1,0,0],[2,0,5,2,7]]`.
 - [x] 6.9 Incrustar las 8 figuras con entornos `figure` (`\includegraphics`, `\caption`, `\label`) en sus ubicaciones: 1-2 -> 5.1/Anexo A; 3 -> 5.6/Anexo C; 4 -> 6.3/Anexo E; 5-6 -> 6.8; 7 -> 7.1; 8 -> 7.2. Verificar con `rg -c "includegraphics" S` (>= 9: 1 previa + 8 nuevas, segun reutilizacion).
 
 ## 7. F3 — Anexos con contenido real
 
-- [ ] 7.1 Anexo A (`S/12-anexos.tex:5`): embeber las figuras de despliegue y secuencia; corregir la nota falsa "se mantienen en formato editable (.drawio)" (son Mermaid en `D/`). Verificar con `rg -n "includegraphics|drawio" S/12-anexos.tex`.
-- [ ] 7.2 Anexo B (`:17`): agregar un `lstlisting`/`verbatim` con el arbol de directorios del repositorio. Verificar con `rg -n "lstlisting|verbatim|tree" S/12-anexos.tex`.
-- [ ] 7.3 Anexo C (`:23`): embeber la figura ER y/o una `table` con las 7 entidades (`incidente`, `sector`, `estado`, `canal_origen`, `clasificacion_log`, `users`, `directorio_empleado`) derivada de `docs/anexo_c_esquema_bd.md`. Verificar con `rg -n "er_modelo_datos|begin\{table\}" S/12-anexos.tex`.
-- [ ] 7.4 Anexo D (`:29`): incluir una tabla de las 25 rutas agrupadas por recurso (de `docs/openapi.json`: 25 rutas / 31 metodos / 40 esquemas) MAS 1 esquema representativo (`IncidenteRead`), no el archivo completo (115 KB). Verificar con `rg -n "openapi|OpenAPI" S/12-anexos.tex`.
-- [ ] 7.5 Anexo E (`:35`): embeber la figura 4 y una `table` con los 29 nodos agrupados por etapa. Verificar con `rg -n "flujo_n8n|begin\{table\}" S/12-anexos.tex`.
-- [ ] 7.6 Anexo F (`:39`): embeber la tabla de campos del corpus (derivada de `docs/anexo_f_corpus.md`) o un extracto JSON y declarar los 200 casos. Verificar con `rg -n "begin\{table\}|200" S/12-anexos.tex`.
-- [ ] 7.7 Anexo G (`:45`): incluir tabla de contenidos o extracto del runbook (`docs/operational-guide.md`). Verificar con `rg -n "verbatim|lstlisting|begin\{table\}" S/12-anexos.tex`.
-- [ ] 7.8 Anexo H (NUEVO): incorporar `docs/anexo_h_prompt_gemini.md` (H.1-H.7) como `\section{Especificacion del prompt de Gemini 2.5 Flash}` y referenciarlo desde el texto principal. Verificar con `rg -n "prompt de Gemini|Anexo~H|Anexo H" S`.
+- [x] 7.1 Anexo A (`S/12-anexos.tex:5`): embeber las figuras de despliegue y secuencia; corregir la nota falsa "se mantienen en formato editable (.drawio)" (son Mermaid en `D/`). Verificar con `rg -n "includegraphics|drawio" S/12-anexos.tex`.
+- [x] 7.2 Anexo B (`:17`): agregar un `lstlisting`/`verbatim` con el arbol de directorios del repositorio. Verificar con `rg -n "lstlisting|verbatim|tree" S/12-anexos.tex`.
+- [x] 7.3 Anexo C (`:23`): embeber la figura ER y/o una `table` con las 7 entidades (`incidente`, `sector`, `estado`, `canal_origen`, `clasificacion_log`, `users`, `directorio_empleado`) derivada de `docs/anexo_c_esquema_bd.md`. Verificar con `rg -n "er_modelo_datos|begin\{table\}" S/12-anexos.tex`.
+- [x] 7.4 Anexo D (`:29`): incluir una tabla de las 33 rutas agrupadas por recurso (de `docs/openapi.json`: 33 rutas / 41 metodos / 44 esquemas) MAS 1 esquema representativo (`IncidenteRead`), no el archivo completo (115 KB). Verificar con `rg -n "openapi|OpenAPI" S/12-anexos.tex`.
+- [x] 7.5 Anexo E (`:35`): embeber la figura 4 y una `table` con los 29 nodos agrupados por etapa. Verificar con `rg -n "flujo_n8n|begin\{table\}" S/12-anexos.tex`.
+- [x] 7.6 Anexo F (`:39`): embeber la tabla de campos del corpus (derivada de `docs/anexo_f_corpus.md`) o un extracto JSON y declarar los 200 casos. Verificar con `rg -n "begin\{table\}|200" S/12-anexos.tex`.
+- [x] 7.7 Anexo G (`:45`): incluir tabla de contenidos o extracto del runbook (`docs/operational-guide.md`). Verificar con `rg -n "verbatim|lstlisting|begin\{table\}" S/12-anexos.tex`.
+- [x] 7.8 Anexo H (NUEVO): incorporar `docs/anexo_h_prompt_gemini.md` (H.1-H.7) como `\section{Especificacion del prompt de Gemini 2.5 Flash}` y referenciarlo desde el texto principal. Verificar con `rg -n "prompt de Gemini|Anexo~H|Anexo H" S`.
 
 ## 8. Verificacion final y recompilacion
 
 - [x] 8.1 Barrido de control: `rg -ni "diseñó|completó|aquéllos|1\.62|superan ampliamente|con holgura|duda razonable" S` sin residuos (salvo los 2 `desarrolló` legitimos).
 - [ ] 8.2 Confirmar que las 8 figuras existen en `F/` y que cada una tiene su `\includegraphics`; listar los archivos agregados. Para la figura 7, verificar que `F/boxplot_tiempos.pdf` tiene 3 paneles por canal (web/correo/telefonia) y que el panel de telefonia usa la metrica corregida de c-77 o esta anotado como cota inferior.
-- [ ] 8.3 Recompilar la tesis en Overleaf (`main.tex`, XeLaTeX): PDF sin errores fatales, las 8 figuras renderizan, los anexos A-H aparecen completos, y la longitud no supera las 100 paginas. Registrar el conteo de paginas.
+- [ ] 8.3 Recompilar la tesis en Overleaf (`main.tex`, XeLaTeX): PDF sin errores fatales, las 8 figuras renderizan, los anexos A-H aparecen completos, y la longitud no supera las 100 paginas. Registrar el conteo de paginas. (ACCION DEL AUTOR: Overleaf)
 - [x] 8.4 Ejecutar `openspec validate c-80-tesis-forma-evidencia-visual --strict` y confirmar que pasa.
