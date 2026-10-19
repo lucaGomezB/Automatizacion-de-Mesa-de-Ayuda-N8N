@@ -2,7 +2,7 @@
 
 Proyecto: Automatizacion de Mesa de Ayuda N8N (tesis UTN-FRM 2026)
 Fecha: 2026-10-01
-Estado: PROPUESTA — pendiente de revision y aprobacion del autor.
+Estado: APROBADO Y TOTALMENTE EJECUTADO (2026-10-19) — los seis changes del plan (C-61..C-66) quedaron IMPLEMENTADOS Y ARCHIVADOS; no quedan changes planificados.
 Insumos: `docs/cumplimiento/gap-assessment-iso27001-27002-nist-csf2.md` y `docs/cumplimiento/marco-legal-ar-2026.md`.
 
 ## 1. Objetivo y encuadre
@@ -48,7 +48,9 @@ Notas:
 - C-62 y C-66 tienen hallazgos de **bajo esfuerzo y alto impacto**; C-61 es documental y estructura el capitulo. (C-62 quedo ARCHIVADO el 2026-10-08; C-66 quedo IMPLEMENTADO Y ARCHIVADO el 2026-10-19.)
 - Los controles del tema Personas (6.x) y Fisico (7.x), y los organizacionales (5.2, 5.18, 6.5, 8.1, 8.4), se documentan como **(O)** en la tesis, no como change.
 
-**Estado (2026-10-19):** `C-66 privacidad-transferencias` quedó **IMPLEMENTADO Y ARCHIVADO** (2026-10-19, 36/36; `openspec/changes/archive/2026-10-19-c-66-privacidad-transferencias`). Governance ALTO. Entregó la pseudonimización del número llamante en los logs del guarda de costo con una clave HMAC **dedicada** (`cost_guard_caller_hmac_key`, independiente de la clave de pseudonimización Fernet), la superficie de privacidad en runtime (`/privacidad`), el procedimiento ARCO con plazos, la política de retención de logs, la justificación por minimización del directorio y el instrumento de transferencia internacional (documentado, no firmado); corrigió dos inconsistencias documentales. Cierra los controles 5.34, 8.12, 8.15 y 5.31. Specs sincronizadas: `privacy-runtime-surface` creada (capability nueva) y `runtime-cost-guard`, `security-governance-docs` y `employee-directory` modificadas. De los changes de este plan, quedan **sin crear solo C-64 `vulnerabilidades-supply-chain` y C-65 `backup-continuidad`**.
+**Estado (2026-10-19):** `C-66 privacidad-transferencias` quedó **IMPLEMENTADO Y ARCHIVADO** (2026-10-19, 36/36; `openspec/changes/archive/2026-10-19-c-66-privacidad-transferencias`). Governance ALTO. Entregó la pseudonimización del número llamante en los logs del guarda de costo con una clave HMAC **dedicada** (`cost_guard_caller_hmac_key`, independiente de la clave de pseudonimización Fernet), la superficie de privacidad en runtime (`/privacidad`), el procedimiento ARCO con plazos, la política de retención de logs, la justificación por minimización del directorio y el instrumento de transferencia internacional (documentado, no firmado); corrigió dos inconsistencias documentales. Cierra los controles 5.34, 8.12, 8.15 y 5.31. Specs sincronizadas: `privacy-runtime-surface` creada (capability nueva) y `runtime-cost-guard`, `security-governance-docs` y `employee-directory` modificadas. Con C-64 y C-65 también **IMPLEMENTADOS Y ARCHIVADOS** (2026-10-19; ver el cierre del plan más abajo), el plan queda **TOTALMENTE EJECUTADO**: los seis changes (C-61..C-66) están implementados y archivados y **no queda ningún change planificado**.
+
+**Estado (2026-10-19, cierre del plan):** `C-64 vulnerabilidades-supply-chain` quedó **IMPLEMENTADO Y ARCHIVADO** (2026-10-19, 33/33; `openspec/changes/archive/2026-10-19-c-64-vulnerabilidades-supply-chain`). Governance MEDIO. Entregó `.github/dependabot.yml`, el job `security-scan` en CI (pip-audit + bandit + npm audit), el pinning de imágenes Docker (nginx:1.31.7-alpine, ngrok/ngrok:3.39.8-debian), cotas superiores de dependencias y el documento de evaluación de seguridad de proveedores; cierra los controles 8.8, 8.28, 8.29 y 5.19-5.23 (trivy/SBOM evaluados y diferidos). `C-65 backup-continuidad` quedó **IMPLEMENTADO Y ARCHIVADO** (2026-10-19, 31/31; `openspec/changes/archive/2026-10-19-c-65-backup-continuidad`). Governance ALTO. Entregó el backup cifrado (openssl AES-256-CBC, `BACKUP_ENCRYPTION_PASSPHRASE`), el scheduler versionado (cron + systemd timer), la prueba de restauración reproducible, `docs/seguridad/plan-continuidad.md` (RTO/RPO 24h; offsite/redundancia como acción del adoptante), la corrección del gap assessment y el Purpose real para `backup-scripts`; cierra los controles 8.13, 8.14, 5.29, 5.30 y 5.33. Specs sincronizadas (commit previo al archive, `--skip-specs`): `supply-chain-security` y `continuity-planning` creadas (capabilities nuevas); `ci-pipeline`, `security-governance-docs` (SGD-001 + SGD-016) y `backup-scripts` (BACKUP-005..008) modificadas. Con esto el plan de cumplimiento queda **TOTALMENTE EJECUTADO**: los seis changes (C-61..C-66) están implementados y archivados; **no queda ningún change planificado**.
 
 ## 3. Orden recomendado
 
@@ -56,8 +58,8 @@ Notas:
 2. **C-62** (hardening): quick win, alto impacto, acotado a `docker-compose.yml`/`nginx`.
 3. **C-66** (privacidad/transferencias): alto valor legal y alinea C-53. **IMPLEMENTADO Y ARCHIVADO 2026-10-19 (36/36).**
 4. **C-63** (identidad/accesos/claves): mayor esfuerzo, gobernanza CRITICO.
-5. **C-64** (vulnerabilidades/supply chain).
-6. **C-65** (backup/continuidad).
+5. **C-64** (vulnerabilidades/supply chain). **IMPLEMENTADO Y ARCHIVADO 2026-10-19 (33/33).**
+6. **C-65** (backup/continuidad). **IMPLEMENTADO Y ARCHIVADO 2026-10-19 (31/31).**
 
 ## 4. Relacion con C-53 / C-67 (notificacion del numero de incidente)
 
@@ -96,3 +98,4 @@ Seleccion y formacion de personal (6.1, 6.3), sanciones (6.4), NDA (6.6), respon
 2. Para cada change aprobado: `/opsx:propose` (artefactos) → revision → `/opsx:apply` (con TDD) → `/opsx:archive`.
 3. Redactar el capitulo de cumplimiento en v9 a partir de los informes y del avance de los changes.
 4. Alinear C-53 con C-66 (cumplido: **C-66 IMPLEMENTADO Y ARCHIVADO 2026-10-19**, 36/36).
+5. **Estado del plan: TOTALMENTE EJECUTADO (2026-10-19).** Los seis changes (C-61..C-66) quedaron implementados y archivados; **no quedan changes planificados**. El paso 2 ya no tiene changes pendientes; solo resta el paso 3 (redacción del capítulo de cumplimiento en v9).
