@@ -1,3 +1,7 @@
+## Estado: CERRADO NO REALIZADO (2026-10-19)
+
+Este change permaneció diferido y nunca se implementó (0/24 tareas; sólo existen los artefactos de planificación). El spike de OQ3 (entregabilidad de Twilio SMS a Argentina) cerró el 2026-09-23 con veredicto GO-WITH-CONSTRAINTS (SMS best-effort, correo como canal primario), por lo que la declaración de OQ3 como abierta en este artefacto quedó desactualizada. Su dependencia dura `C-66 privacidad-transferencias` nunca fue creada (no existe artefacto bajo `openspec/changes`). Además, la cadena "SMS" no aparece ni en la tesis (`docs/Tesis/v9 (IA)/paper/sections/`) ni en `knowledge-base/`, por lo que este alcance es backlog de completitud de software y NO un entregable de la tesis. En consecuencia se archiva como NO REALIZADO con `--skip-specs`: los delta specs describen comportamiento nunca construido, de modo que los specs principales NO se actualizaron de forma intencional. El contenido original de este documento se conserva tal cual como registro del alcance previsto.
+
 ## Why
 
 El canal de telefonía NO notifica al llamante el número de incidente. El `<Say>` de cierre del TwiML desconoce el número porque el alta del incidente es asíncrona y la salida de telefonía del workflow no tiene sucesor de notificación. Además, el webhook de VOZ es el único punto donde el proveedor provee el `From`; el callback de estado de grabación NO lo trae, de modo que hoy el número llamante no se persiste y no hay forma de notificar al llamante.

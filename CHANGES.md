@@ -101,7 +101,7 @@ C-46 telefonia-ingreso-sellado (C-39, C-45)
 --- FASE 18: Notificacion, directorio y canal de correo (2026-09-23 / 2026-09-25) — CERRADA ---
 
 C-52 telefonia-transcripcion-async (C-47, C-45)          [ARCHIVADO 2026-09-30 — 44/44]
- └── C-53 notificacion-numero-incidente (C-52, C-45)     [ARCHIVADO 2026-10-01 — 12/12; SMS diferido -> C-67]
+ └── C-53 notificacion-numero-incidente (C-52, C-45)     [ARCHIVADO 2026-10-01 — 12/12; SMS diferido -> C-67, cerrado NO REALIZADO 2026-10-19]
 C-54 directorio-usuarios (C-53)                          [ARCHIVADO 2026-10-01 — 51/51]
 C-55 canal-correo-imap (ninguna)                         [ARCHIVADO 2026-09-29 — 15/15]
 
@@ -113,9 +113,9 @@ C-58 resiliencia-gemini (specs C-33/C-36/C-45)           [ARCHIVADO 2026-09-29 �
 C-59 softphone-voip-pruebas (C-52, C-45)                 [ARCHIVADO 2026-10-01 — 23/23]
 C-60 directorio-endurecimiento (C-54, C-56)              [ARCHIVADO 2026-10-06 — 33/33; aprobacion humana HIGH (7.4) pendiente]
 
---- FASE 20: Notificacion SMS diferida (2026-10-01) ---
+--- FASE 20: Notificacion SMS diferida (2026-10-01) — CERRADA (NO REALIZADO) ---
 
-C-67 notificacion-sms-llamante (C-53 archivado; C-66 futura) [ACTIVO — 0/24; bloqueado por OQ3 y C-66]
+C-67 notificacion-sms-llamante (C-53 archivado; C-66 nunca creado) [ARCHIVADO 2026-10-19 — NO REALIZADO, 0/24; OQ3 cerrado GO-WITH-CONSTRAINTS]
 
 --- FASE 21: Cumplimiento ISO/NIST/Ley 25.326 (2026-10-01) ---
 
@@ -124,7 +124,7 @@ C-61 compliance-gobernanza (ninguna)                      [ARCHIVADO 2026-10-01 
 C-62 hardening-infra-red (ninguna)                        [ARCHIVADO 2026-10-08 — 33/33]
 C-64 vulnerabilidades-supply-chain (ninguna)              [PLANIFICADO — sin crear]
 C-65 backup-continuidad (ninguna)                         [PLANIFICADO — sin crear]
-C-66 privacidad-transferencias (C-53 alineacion; habilita C-67) [PLANIFICADO — sin crear]
+C-66 privacidad-transferencias (C-53 alineacion)         [PLANIFICADO — sin crear]
 
 --- FASE 22: Ingesta del corpus por el flujo N8N real (2026-10-02) ---
 
@@ -515,7 +515,7 @@ C-92 tesis-marco-teorico-profundidad (aplicar tras C-80)         [ACTIVO — 0/2
 | C-58 | resiliencia-gemini | 19 | C-33, C-36, C-45 | ALTO | — |
 | C-59 | softphone-voip-pruebas | 19 | C-52, C-45 | MEDIO | — |
 | C-60 | directorio-endurecimiento | 19 | C-54, C-56 | ALTO | — |
-| C-67 | notificacion-sms-llamante | 20 | C-53 (archivado); bloqueado por OQ3 y C-66 (futura) | ALTO | — |
+| C-67 | notificacion-sms-llamante | 20 | C-53 (archivado); C-66 nunca creado (ARCHIVADO 2026-10-19, NO REALIZADO) | ALTO | — |
 | C-61 | compliance-gobernanza | 21 | ninguna | MEDIO | — |
 | C-62 | hardening-infra-red | 21 | ninguna | ALTO | — |
 | C-63 | identidad-accesos-claves (c-63a/b/c) | 21 | C-61 | CRITICO | — |
@@ -549,11 +549,11 @@ C-92 tesis-marco-teorico-profundidad (aplicar tras C-80)         [ACTIVO — 0/2
 | C-95 | tesis-resultados-discusion-rigor | 31 | aplicar tras C-94 | MEDIO | — |
 | C-96 | tesis-citas-tablas-evidencia | 31 | aplicar tras C-95 | BAJO | — |
 
-**Total**: 90 entradas creadas documentadas (89 numeradas + 1 de mantenimiento sin numero) — 79 archivadas (78 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-62, C-63, C-68, C-69, C-70, C-71, C-72, C-73, C-74, C-75 y C-81..C-91; mas `improve-dockerfiles`) y 11 ACTIVOS (C-67, C-76, C-77, C-78, C-79, C-80, C-92, C-93, C-94, C-95, C-96). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
+**Total**: 90 entradas creadas documentadas (89 numeradas + 1 de mantenimiento sin numero) — 80 archivadas (79 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-62, C-63, C-67, C-68, C-69, C-70, C-71, C-72, C-73, C-74, C-75 y C-81..C-91; mas `improve-dockerfiles`) y 10 ACTIVOS (C-76, C-77, C-78, C-79, C-80, C-92, C-93, C-94, C-95, C-96). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
 **Planificadas (NO creadas)**: 3 entradas del plan de cumplimiento (FASE 21) — C-64 `vulnerabilidades-supply-chain` (MEDIO), C-65 `backup-continuidad` (ALTO) y C-66 `privacidad-transferencias` (ALTO). No cuentan como creadas, archivadas ni activas. C-61 `compliance-gobernanza` (MEDIO), C-62 `hardening-infra-red` (ALTO) y C-63 `identidad-accesos-claves` (CRITICO, split en c-63a/b/c) ya fueron creados y quedaron ARCHIVADOS (2026-10-01, 2026-10-08 y 2026-10-08), con sus specs `security-governance-docs`, `infra-network-hardening` e `identity-access-hardening`. Ver `docs/cumplimiento/plan-cambios-cumplimiento.md`.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
-**Fases**: 1-31 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67, la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, con C-61 archivado (2026-10-01), C-62 archivado (2026-10-08) y C-63a/b/c archivados (2026-10-08); C-64..C-66 planificados, la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 archivado (2026-10-05) y C-68 archivado (2026-10-09), la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 archivado (2026-10-06), la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 archivado (2026-10-06), la FASE 25 agrupa la unificacion de la clasificacion telefonica con C-72 archivado (2026-10-07), la FASE 26 agrupa la pseudonimizacion de numeros de tarjeta hablados con C-73 archivado (2026-10-07), la FASE 27 agrupa la calibracion del cortocircuito determinista con C-74 archivado (2026-10-07), y la FASE 28 agrupa la sincronizacion documental N8N con C-75 archivado (2026-10-08), y la FASE 29 agrupa las correcciones de la tesis por el dictamen CONEAU (C-76..C-80), cinco changes ACTIVOS (0 tareas), independientes del software, aplicables en secuencia; y la FASE 30 agrupa el RBAC, el ciclo de cierre y la sesion (C-81..C-91), once changes ARCHIVADOS — C-81..C-83 el 2026-10-13 y C-84..C-91 el 2026-10-15; y la FASE 31 agrupa las correcciones de la tesis por la nueva auditoria (C-92..C-96), cinco changes ACTIVOS (0 tareas), independientes del software, aplicables en secuencia despues de la FASE 29).
+**Fases**: 1-31 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67 (archivado 2026-10-19 como NO REALIZADO), la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, con C-61 archivado (2026-10-01), C-62 archivado (2026-10-08) y C-63a/b/c archivados (2026-10-08); C-64..C-66 planificados, la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 archivado (2026-10-05) y C-68 archivado (2026-10-09), la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 archivado (2026-10-06), la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 archivado (2026-10-06), la FASE 25 agrupa la unificacion de la clasificacion telefonica con C-72 archivado (2026-10-07), la FASE 26 agrupa la pseudonimizacion de numeros de tarjeta hablados con C-73 archivado (2026-10-07), la FASE 27 agrupa la calibracion del cortocircuito determinista con C-74 archivado (2026-10-07), y la FASE 28 agrupa la sincronizacion documental N8N con C-75 archivado (2026-10-08), y la FASE 29 agrupa las correcciones de la tesis por el dictamen CONEAU (C-76..C-80), cinco changes ACTIVOS (0 tareas), independientes del software, aplicables en secuencia; y la FASE 30 agrupa el RBAC, el ciclo de cierre y la sesion (C-81..C-91), once changes ARCHIVADOS — C-81..C-83 el 2026-10-13 y C-84..C-91 el 2026-10-15; y la FASE 31 agrupa las correcciones de la tesis por la nueva auditoria (C-92..C-96), cinco changes ACTIVOS (0 tareas), independientes del software, aplicables en secuencia despues de la FASE 29).
 
 ---
 
@@ -1259,10 +1259,10 @@ C-92 tesis-marco-teorico-profundidad (aplicar tras C-80)         [ACTIVO — 0/2
 
 ### [C-53] `notificacion-numero-incidente` — ARCHIVADO (2026-10-01, 12/12)
 
-- **Estado**: `[x]` completado y archivado (2026-10-01 — `openspec/changes/archive/2026-10-01-c-53-notificacion-numero-incidente`; 12/12 tareas). Se archivo el alcance implementado (numero canonico, correo y web); el alcance SMS diferido se movio a `C-67`, bloqueado por OQ3 (entregabilidad SMS AR) y por `C-66` (privacidad-transferencias, aun sin crear).
+- **Estado**: `[x]` completado y archivado (2026-10-01 — `openspec/changes/archive/2026-10-01-c-53-notificacion-numero-incidente`; 12/12 tareas). Se archivo el alcance implementado (numero canonico, correo y web); el alcance SMS diferido se movio a `C-67`, bloqueado por OQ3 (entregabilidad SMS AR) y por `C-66` (privacidad-transferencias, aun sin crear); `C-67` quedo CERRADO NO REALIZADO y archivado el 2026-10-19 (`--skip-specs`).
 - **Problema**: el usuario final no recibe de forma garantizada el numero de incidente. El correo no confirma cuando `requiere_revision_humana=true` y su destinatario puede resolverse invalido (el `from` de Outlook es tipicamente un objeto `from.emailAddress.address`); el web responde `incidente_id: null` en revision humana; la telefonia no notifica (el `<Say>` de cierre no conoce el numero porque el alta es asincrona). No existe numero legible de incidente (solo el PK `id`).
 - **Scope**:
-  - Telefonia: SMS al numero llamante con el numero de incidente via Twilio Messaging; captura y persistencia cifrada del `From` en el webhook de VOZ (correlacion por `CallSid`); sin numero no se envia y se deja traza. Superficie de guarda nueva `twilio_sms`. (Diferido: este alcance SMS se movio a `C-67`.)
+  - Telefonia: SMS al numero llamante con el numero de incidente via Twilio Messaging; captura y persistencia cifrada del `From` en el webhook de VOZ (correlacion por `CallSid`); sin numero no se envia y se deja traza. Superficie de guarda nueva `twilio_sms`. (Diferido: este alcance SMS se movio a `C-67`, cerrado NO REALIZADO y archivado el 2026-10-19; los specs principales no se tocaron.)
   - Correo: extraccion del remitente soportando `from` string y objeto `from.emailAddress.address`; confirmacion tambien en la rama de revision humana.
   - Web: la rama de revision humana responde con el `incidente_id` real (no `null`).
   - Numero de incidente: PK `id` como numero canonico (prefijo configurable diferido).
@@ -1407,11 +1407,11 @@ C-92 tesis-marco-teorico-profundidad (aplicar tras C-80)         [ACTIVO — 0/2
 
 ## FASE 20 — Notificacion SMS diferida (2026-10-01)
 
-> Change post-roadmap que retoma el alcance SMS del llamante que C-53 dejo diferido al archivarse. Queda bloqueado por una pregunta abierta (OQ3) y por un change futuro.
+> Change post-roadmap que retomaba el alcance SMS del llamante que C-53 dejo diferido al archivarse. Permanecio en estado diferido y nunca se implemento; se archivo el 2026-10-19 como NO REALIZADO.
 
-### [C-67] `notificacion-sms-llamante` — ACTIVO (diferido, 0/24)
+### [C-67] `notificacion-sms-llamante` — ARCHIVADO (NO REALIZADO, 0/24)
 
-- **Estado**: `[ ]` propuesto y diferido (2026-10-01) — 0/24 tareas. Diferido hasta resolver OQ3 (entregabilidad de SMS en Argentina) y contar con `C-66` (privacidad-transferencias, aun sin crear). No aplicar todavia.
+- **Estado**: `[ ]` propuesto y diferido (2026-10-01) — 0/24 tareas; nunca implementado. Dependia de resolver OQ3 (entregabilidad de SMS en Argentina) y de contar con `C-66` (privacidad-transferencias, nunca creado). CERRADO Y ARCHIVADO como NO REALIZADO (2026-10-19) con `--skip-specs`; los specs principales no se tocaron.
 - **Problema**: el llamante no recibe de forma garantizada el numero de incidente por SMS. C-53 implemento el numero canonico, el correo y el web, pero al archivarse movio aqui el envio por mensajeria, que depende de la entregabilidad real de SMS en Argentina y del marco de privacidad para capturar y cifrar el numero del llamante.
 - **Scope**:
   - SMS al llamante con el numero de incidente via Twilio Messaging.
@@ -1419,10 +1419,10 @@ C-92 tesis-marco-teorico-profundidad (aplicar tras C-80)         [ACTIVO — 0/2
   - Cliente Twilio Messaging dedicado.
   - Captura y cifrado del numero del llamante (persistencia protegida).
   - Servicio de notificacion SMS integrado al alta de incidente.
-- **Dependencias**: `C-53` (archivado 2026-10-01; origen del numero canonico y del seam de notificacion); **bloqueado** por OQ3 (entregabilidad SMS AR) y por `C-66` (privacidad-transferencias, aun no creado).
+- **Dependencias**: `C-53` (archivado 2026-10-01; origen del numero canonico y del seam de notificacion); dependia de OQ3 (entregabilidad SMS AR; cerrado 2026-09-23 con veredicto GO-WITH-CONSTRAINTS) y de `C-66` (privacidad-transferencias, nunca creado).
 - **Governance**: ALTO
 - **Leer antes**:
-  - `openspec/changes/c-67-notificacion-sms-llamante/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-10-19-c-67-notificacion-sms-llamante/{proposal,design,tasks}.md`
   - `docs/cumplimiento/marco-legal-ar-2026.md`
 
 ---
@@ -1971,7 +1971,9 @@ Actualizacion 2026-10-12: C-68 `corpus-ingesta-n8n` quedo ARCHIVADO (2026-10-09,
 
 Actualizacion 2026-10-15 (reconciliacion con el estado real de OpenSpec): se registraron como ARCHIVADOS los once changes de la FASE 30 — C-81 `frontend-rbac` (2026-10-13, 24/24), C-82 `rbac-redesign` (2026-10-13, 36/36), C-83 `revision-humana-info-completa` (2026-10-13, 18/18), C-84 `logout-navbar-y-toggle-password` (2026-10-15, 15/15), C-85 `revision-humana-contador-y-mensaje` (2026-10-15, 34/34), C-86 `rol-gestion-incidentes-ciclo-cierre` (2026-10-15, 61/61), C-87 `borrado-logico-incidentes` (2026-10-15, 25/25), C-88 `busqueda-incidentes-panel` (2026-10-15, 19/19), C-89 `ui-directorio-administrador` (2026-10-15, 19/19), C-90 `prioridad-critica-restringida` (2026-10-15, 17/17) y C-91 `sesion-jwt-cookie-rotativa` (2026-10-15, 48/48) — y se corrigio el ESTADO de C-68, que figuraba ACTIVO (58/63) y quedo ARCHIVADO (2026-10-09, 63/63). El conjunto ACTIVO sigue siendo de seis: C-67 (diferido), C-76, C-77, C-78, C-79 y C-80. Totales: 85 entradas creadas documentadas (84 numeradas + 1 de mantenimiento sin numero) — 79 archivadas y 6 activas.
 
-Actualizacion 2026-10-19 (nueva auditoria): se registraron los cinco changes de correccion de la tesis por la NUEVA auditoria capitulo por capitulo (nueva FASE 31): C-92 `tesis-marco-teorico-profundidad` (0/29), C-93 `tesis-metodologia-rigor` (0/29), C-94 `tesis-implementacion-verificabilidad` (0/19), C-95 `tesis-resultados-discusion-rigor` (0/35) y C-96 `tesis-citas-tablas-evidencia` (0/28), todos ACTIVOS (planning completo, `openspec validate --strict` OK, sin aplicar). C-76..C-80 (FASE 29) siguen siendo los duenios del corpus, la estadistica/inferencia, la bibliografia, lo legal y la forma; C-92..C-96 cubren los hallazgos NUEVOS A/M/B de la re-auditoria (`docs/Tesis/Correcciones/auditoria-capitulos.md` + informe completo en `auditorias/`; cruce en `reconciliacion-cobertura.md`). C-18 queda STALE (el artefacto N8N ya fue corregido por c-29, commit ef656ac; residuo textual en c-77 C3). Orden recomendado de aplicacion: c-76 -> c-77 -> c-78 -> c-79 -> c-80 -> c-92 -> c-93 -> c-94 -> c-95 -> c-96. Totales: 90 entradas creadas documentadas (89 numeradas + 1 de mantenimiento sin numero) — 79 archivadas y 11 activas (C-67, C-76..C-80, C-92..C-96).
+Actualizacion 2026-10-19 (nueva auditoria): se registraron los cinco changes de correccion de la tesis por la NUEVA auditoria capitulo por capitulo (nueva FASE 31): C-92 `tesis-marco-teorico-profundidad` (0/29), C-93 `tesis-metodologia-rigor` (0/29), C-94 `tesis-implementacion-verificabilidad` (0/19), C-95 `tesis-resultados-discusion-rigor` (0/35) y C-96 `tesis-citas-tablas-evidencia` (0/28), todos ACTIVOS (planning completo, `openspec validate --strict` OK, sin aplicar). C-76..C-80 (FASE 29) siguen siendo los duenios del corpus, la estadistica/inferencia, la bibliografia, lo legal y la forma; C-92..C-96 cubren los hallazgos NUEVOS A/M/B de la re-auditoria (`docs/Tesis/Correcciones/auditoria-capitulos.md` + informe completo en `auditorias/`; cruce en `reconciliacion-cobertura.md`). C-18 queda STALE (el artefacto N8N ya fue corregido por c-29, commit ef656ac; residuo textual en c-77 C3). Orden recomendado de aplicacion: c-76 -> c-77 -> c-78 -> c-79 -> c-80 -> c-92 -> c-93 -> c-94 -> c-95 -> c-96. Totales: 90 entradas creadas documentadas (89 numeradas + 1 de mantenimiento sin numero) — 79 archivadas y 11 activas (C-67, C-76..C-80, C-92..C-96); instantanea previa al cierre de C-67, que queda archivado en la Actualizacion 2026-10-19 (cierre C-67) siguiente.
+
+Actualizacion 2026-10-19 (cierre C-67): C-67 `notificacion-sms-llamante` quedo ARCHIVADO como NO REALIZADO (2026-10-19; 0/24; `--skip-specs`, specs principales sin tocar). Motivos: el spike de OQ3 cerro el 2026-09-23 con veredicto GO-WITH-CONSTRAINTS (SMS best-effort, correo como canal primario), `C-66 privacidad-transferencias` nunca fue creado, y la cadena "SMS" no aparece en la tesis (`docs/Tesis/v9 (IA)/paper/sections/`) ni en `knowledge-base/` (es backlog de completitud de software, no un entregable de la tesis). Totales: 90 entradas creadas documentadas (89 numeradas + 1 de mantenimiento sin numero) — 80 archivadas y 10 activas (C-76..C-80, C-92..C-96).
 
 Cambios que NO estan en el roadmap original porque se implementaron durante el desarrollo:
 - Clasificador hibrido (completo)
@@ -1991,8 +1993,7 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 
 Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01), C-61 (2026-10-01, 26/26), C-69 (2026-10-05, 30/30), C-71 (2026-10-06, 43/43), C-60 (2026-10-06, 33/33), C-70 (2026-10-06, 72/72), C-72 (2026-10-07, 37/37), C-73 (2026-10-07, 23/23), C-74 (2026-10-07, 32/32), C-75 (2026-10-08, 14/14), C-56 (2026-10-08, 27/27), C-68 (2026-10-09, 63/63), C-81 (2026-10-13, 24/24), C-82 (2026-10-13, 36/36), C-83 (2026-10-13, 18/18), C-84 (2026-10-15, 15/15), C-85 (2026-10-15, 34/34), C-86 (2026-10-15, 61/61), C-87 (2026-10-15, 25/25), C-88 (2026-10-15, 19/19), C-89 (2026-10-15, 19/19), C-90 (2026-10-15, 17/17) y C-91 (2026-10-15, 48/48).
 
-Hay 11 changes ACTIVOS:
-- **`c-67-notificacion-sms-llamante`** — 0/24 (diferido; bloqueado por OQ3 y C-66; FASE 20) — Governance ALTO.
+Hay 10 changes ACTIVOS:
 - **`c-76-tesis-correcciones-dictamen`** — 0/46 (FASE 29) — Governance MEDIO.
 - **`c-77-tesis-errores-estadisticos-inferenciales`** — 0/49 (FASE 29) — Governance MEDIO.
 - **`c-78-tesis-bibliografia-atribucion`** — 0/25 (FASE 29) — Governance ALTO.
@@ -2006,7 +2007,7 @@ Hay 11 changes ACTIVOS:
 
 Los cinco changes de la FASE 29 son correcciones del documento de tesis (independientes del software) y se aplican en secuencia, en el orden C-76 -> C-77 -> C-78 -> C-79 -> C-80. Los cinco changes de la FASE 31 (C-92..C-96) cubren los hallazgos NUEVOS de la re-auditoria y se aplican a continuacion, en el orden C-92 -> C-93 -> C-94 -> C-95 -> C-96 (tras la FASE 29).
 
-C-01..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-62, C-63, C-68, C-69, C-70, C-71, C-72, C-73, C-74, C-75 y C-81..C-91 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
+C-01..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-62, C-63, C-67, C-68, C-69, C-70, C-71, C-72, C-73, C-74, C-75 y C-81..C-91 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
 
 **Detalle de `c-52-telefonia-transcripcion-async`** (Gobernanza CRITICA; ARCHIVADO 2026-09-30):
 
@@ -2046,9 +2047,9 @@ Deuda menor pendiente (no bloqueante):
 - Tesis post-pipeline: reconciliar cap. 7 con el corpus real y corregir 4.3/4.8/cap. 11.
 
 Para avanzar:
-- Workstream aprobado: el plan de cumplimiento ISO/NIST/Ley 25.326 (`docs/cumplimiento/plan-cambios-cumplimiento.md`), en la FASE 21. C-61 (2026-10-01), C-62 (2026-10-08) y C-63a/b/c (2026-10-08) quedaron ARCHIVADOS; C-64..C-66 siguen planificados (sin crear). Proximo paso aprobado del workstream: C-66 `privacidad-transferencias` (desbloquea c-67) o C-64 `vulnerabilidades-supply-chain` / C-65 `backup-continuidad`.
+- Workstream aprobado: el plan de cumplimiento ISO/NIST/Ley 25.326 (`docs/cumplimiento/plan-cambios-cumplimiento.md`), en la FASE 21. C-61 (2026-10-01), C-62 (2026-10-08) y C-63a/b/c (2026-10-08) quedaron ARCHIVADOS; C-64..C-66 siguen planificados (sin crear). Proximo paso aprobado del workstream: C-66 `privacidad-transferencias` (alinea con C-53) o C-64 `vulnerabilidades-supply-chain` / C-65 `backup-continuidad`.
 - `c-56`: ARCHIVADO (2026-10-08, 27/27); smoke manual confirmado end-to-end (operador resuelto + fallback + auditoria); spec `notification-routing` creada.
 - `c-60`: ARCHIVADO (2026-10-06, 33/33).
-- `c-67`: no aplicar aun; bloqueado por OQ3 (entregabilidad SMS AR) y por C-66 (privacidad-transferencias, planificado en la FASE 21, aun sin crear).
+- `c-67`: CERRADO NO REALIZADO y ARCHIVADO (2026-10-19, `--skip-specs`, 0/24). El spike de OQ3 cerro el 2026-09-23 con veredicto GO-WITH-CONSTRAINTS (SMS best-effort, correo primario); `C-66 privacidad-transferencias` nunca se creo; SMS no es entregable de la tesis. No hay nada que aplicar.
 - `c-68`: ARCHIVADO (2026-10-09, 63/63); harness de ingesta web/correo verificado (PASS, 0 CRITICAL), W1/W3 resueltos, W2 aceptado, corpus 200/200; spec `corpus-n8n-ingest` creada.
 - `c-70`: ARCHIVADO (2026-10-06, 72/72); corrida completa de los 81 casos y write-back realizados; corpus 200/200 cargable. Governance ALTO.
