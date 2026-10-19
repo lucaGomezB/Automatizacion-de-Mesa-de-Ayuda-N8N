@@ -472,3 +472,65 @@ documento.
 Ademas hay conflictos internos entre changes a resolver antes de aplicar (c-80
 debe usar la matriz 5x5 real de c-76 y fijar el numero real de entidades), ver
 `reconciliacion-cobertura.md` seccion 4.
+
+---
+
+## Grupo: Resultados y Discusión (c-95) — APLICADO (2026-10-19)
+
+Change **c-95-tesis-resultados-discusion-rigor** (governance MEDIO). Aplicado sobre
+`docs/Tesis/v9 (IA)/paper/sections/04-marco-metodologico.tex`, `07-resultados.tex`,
+`08-discusion.tex`, `09-conclusiones.tex` y `evaluation/report.md`. Se aplico
+**despues** de c-76, c-77, c-78 y c-80 (D-ORDER): comparte `04`, `07`, `08` y `09`
+con esos changes.
+
+### Mapeo de hallazgos y corrección aplicada
+
+| Código | Corrección aplicada | Archivos | Fecha |
+|---|---|---|---|
+| A-15 | Shapiro-Wilk reportado con \(W\) y \(p\) para los tres conjuntos (\(n=200\)): manual \(W=0{,}803\), \(p=3{,}71\times10^{-15}\); automatizado \(W=0{,}902\), \(p=3{,}47\times10^{-10}\); diferencias \(W=0{,}822\), \(p=2{,}37\times10^{-14}\). Justifica Wilcoxon con \(\alpha=0{,}05\). | `04:69`, `evaluation/report.md` (§Normalidad), ref. breve en `07:50` | 2026-10-19 |
+| A-20 | §8.1 ya no interpreta sin interrogar: agrega explicaciones rivales (asimetría del instrumento, mezcla de canales, Hawthorne/aprendizaje, selección muestral) con evidencia, debilidad y condición de descarte; nota de confusión de Sistemas con métricas reales y \(n=1\) en Bases de Datos; cierre que distingue "consistente con la hipótesis" de "confirmación concluyente". | `08:20`, `08:22`, `08:24` | 2026-10-19 |
+| A-21 | El baseline TF-IDF+SVM de §8.3 se declara chequeo exploratorio no reproducible (partición y \(n\) no preservados) y NO se reporta como comparación válida; la cifra 78~\%/0,764 se retira como resultado y la comparación sistemática queda como trabajo futuro. | `08:48` | 2026-10-19 |
+| M-10 | §7.4 incorpora tres ejemplos textuales anonimizados de casos mal clasificados (descripción corta, mezcla de categorías, jerga local), con sector asignado, predicho y confianza. | `07:198` | 2026-10-19 |
+| M-16 | §8.4 reemplaza las cifras desnudas (50--100 USD/mes; 0,02 USD/invocación) por cotas con fuente y fecha: infraestructura 24--32 USD/mes (precio de lista DigitalOcean, 19-10-2026) e inferencia \(\approx 7\times10^{-4}\) USD por invocación con `gemini-3.6-flash`. | `08:56` | 2026-10-19 |
+| A-23 | §9.2 acota la afirmación general: la conclusión se limita "a este corpus" y "a este dominio", se conserva el aporte real (arquitectura híbrida, español rioplatense, dominio de mesa de ayuda) y se remite a la limitación de §8.3. Se retira la superioridad general de LLM sobre clasificadores supervisados entrenados sobre representaciones estáticas. | `09:22` | 2026-10-19 |
+| A-25 | §9.1 mantiene solo una referencia breve al resultado (188/200 pares; 9,5~\% de intervención humana) y remite a §7.1/§8.1. Se retira la lectura "merece ser interpretada con cautela" y no se introducen estadísticos ausentes del Capítulo 7. | `09:16` | 2026-10-19 |
+
+Verificación (2026-10-19): `rg` de control en `S/` sin las formulaciones
+retiradas (salvo el \(W=0{,}803\) de Shapiro, que es un estadístico lícito);
+`openspec validate c-95-tesis-resultados-discusion-rigor --strict` OK.
+
+### D3 — Decisión: baseline TF-IDF+SVM exploratorio, no reproducible (no reconstruido)
+
+- **Decisión**: el chequeo exploratorio con un clasificador TF-IDF+SVM (78~\%, F1
+  0,764) **no se reconstruye** y **no se reporta** como comparación válida. La
+  partición, el tamaño del subconjunto y el código no quedaron preservados, por lo
+  que la cifra no es reproducible ni comparable con las métricas del Capítulo 7.
+- **Justificación**: confirmado por barrido que **no existen artefactos** del
+  baseline (script, partición, predicciones ni fixtures) en `evaluation/`,
+  `scripts/` ni `data/`; la única coincidencia en código es la tabla interna
+  "Baseline / policy-B" de `evaluation/deterministic_measurement.py` (delta de
+  c-74), ajena al clasificador supervisado clásico. Sin artefactos, presentar la
+  cifra como resultado sería una afirmación no reproducible.
+- **Consecuencia**: §8.3 (Limitaciones) declara el chequeo como exploratorio y deja
+  la comparación sistemática contra clasificadores supervisados sobre el corpus
+  completo como trabajo futuro, sin prometer resultados.
+
+### Coordinación con c-76, c-77, c-78 y c-80
+
+- **c-76** (números y encuadre honesto): c-95 consume los valores ya corregidos
+  (exactitud 73,5~\%, F1 macro 0,5207, reducción 71,2~\%, segundo objetivo NO
+  alcanzado) y no los redefine. A-15 solo agrega el reporte de Shapiro.
+- **c-77** (\(W=0\), calibración): c-95 **no reintroduce \(W=0\)**. El valor vivo es
+  \(W=363\), \(p=3{,}08\times10^{-32}\), \(r=0{,}9639\) (§7.1/§0-resumen). §9.1 ya no
+  reinterpreta el \(W\); su lectura queda en §7.1 y §8.1. La tabla
+  `tab:tiempos-canal` de c-77 se conserva en §7.1.
+- **c-78** (Revina y atribución): c-95 **no reintroduce ni la atribución de BERT/91~\%**
+  **a Revina** ni la tensión bibliográfica B1; §9.2 no menciona "Revina", "BERT" ni
+  "evidencia contraria". La única mención a Revina en el texto vivo es la correcta
+  de §8.2, propiedad de c-78.
+- **c-80** (deduplicación 8.1/9.1 y rebaja de juicios): c-95 respeta la rebaja de
+  c-80 F7 y no duplica frases valorativas; A-25 elimina la última lectura
+  interpretativo-estadística que quedaba en §9.1.
+
+**Estado**: grupo aplicado. Recompilación final en Overleaf (XeLaTeX) diferida
+(ver tarea 10.3 del change).

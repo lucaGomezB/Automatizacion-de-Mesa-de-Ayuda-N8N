@@ -33,7 +33,7 @@ La evaluacion de modelos de lenguaje en escenarios de pocos ejemplos ha document
 
 \subsection{Análisis comparativo y brecha identificada}
 
-La Tabla~\ref{tab:comparativa} presenta la comparación sistematica de las principales soluciones revisadas frente a la propuesta del presente trabajo, considerando cuatro dimensiones relevantes: tipo de despliegue, capacidad de clasificación automática, soberanía sobre los datos y modelo de costos.
+La Tabla~\ref{tab:comparativa} presenta la comparación sistematica de las principales soluciones revisadas, considerando cuatro dimensiones relevantes: tipo de despliegue, capacidad de clasificación automática, soberanía sobre los datos y modelo de costos.
 
 \begin{table}[htbp]
 \centering
@@ -49,10 +49,10 @@ Freshdesk         & SaaS comercial      & Si, motor Freddy AI             & Medi
 Jira Service Mgmt & SaaS o autoalojado  & Limitada en plan estandar       & Medio, por agente \\
 ServiceNow ITSM   & SaaS comercial      & Si, Predictive Intelligence     & Muy alto, contrato anual \\
 osTicket          & Codigo abierto      & No nativa                       & Sin costo \\
-\addlinespace
-\textbf{Propuesta} & Hibrida (iPaaS + modulo propio) & Si, LLM + reglas deterministas & Bajo, costo por uso de API \\
 \bottomrule
 \end{tabular}
+\par\smallskip
+{\footnotesize\textit{Fuente:} elaboración propia a partir de la documentación oficial de cada plataforma: Zendesk Suite (https://www.zendesk.com/service/help-desk-software/), Freshdesk (https://www.freshworks.com/freshdesk/), Jira Service Management (https://www.atlassian.com/software/jira/service-management), ServiceNow ITSM (https://www.servicenow.com/products/itsm.html) y osTicket (https://osticket.com/), consultadas el 19 de octubre de 2026.\par}
 \end{table}
 
 La sintesis comparativa evidencia que ninguna de las soluciones revisadas combina simultaneamente las cuatro propiedades que el contexto del trabajo demanda: despliegue autoalojado para resguardo de datos sensibles, costo bajo y predecible en el tiempo, capacidad nativa de clasificación automática mediante NLP moderno, y soporte específico para canales multiples incluyendo telefonia con transcripción automática. La brecha identificada se sintetiza en la ausencia de soluciones de bajo costo, autoalojadas, con clasificación basada en modelos de lenguaje grandes y validadas empíricamente sobre corpus en espanol rioplatense para el dominio específico de mesas de ayuda empresariales medianas.

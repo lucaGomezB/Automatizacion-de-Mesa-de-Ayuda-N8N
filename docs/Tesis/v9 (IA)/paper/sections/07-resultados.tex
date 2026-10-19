@@ -25,6 +25,8 @@ Minimo (s)                & 10     & 0,525   & --- \\
 Maximo (s)                & 300    & 65,834  & --- \\
 \bottomrule
 \end{tabular}
+\par\smallskip
+{\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)).\par}
 \end{table}
 
 El tiempo automatizado de registro desagregado por canal de origen se presenta en la Tabla~\ref{tab:tiempos-canal}. El canal telefonico incorpora, ademas de la latencia de procesamiento, la duracion de la llamada grabada, de modo que su valor es comparable en su base de medicion con el flujo manual; como la grabacion esta acotada a un maximo de 45~s (véase la Sección~4.4), ese valor constituye una cota inferior de la duracion real de la llamada.
@@ -47,7 +49,7 @@ Formulario web                     & 53 & 1,88  & 1,26  \\
 \end{tabular}
 \end{table}
 
-La prueba de Wilcoxon de rangos con signo aplicada sobre las mediciones pareadas arrojo un estadístico de contraste \(W = \min(T^{+}, T^{-}) = 363\), con una suma de rangos positivos \(T^{+} = 19.737\), una suma de rangos negativos \(T^{-} = 363\) y \(n = 200\) pares validos, junto con un valor \(p = 3{,}08 \times 10^{-32}\), lo que permite rechazar la hipotesis nula de igualdad de medianas con un nivel de confianza superior al 99,9~\%. El estadístico incorpora la corrección por empates y refleja que en 188 de los 200 pares el flujo automatizado fue mas veloz que el manual; en los 12 pares restantes (6,0~\%) el flujo automatizado no fue mas rápido, resultado coherente con la diferencia de aproximadamente 32,5~s entre medianas.
+La prueba de Wilcoxon de rangos con signo aplicada sobre las mediciones pareadas \parencite{Virtanen2020_scipy} arrojo un estadístico de contraste \(W = \min(T^{+}, T^{-}) = 363\), con una suma de rangos positivos \(T^{+} = 19.737\), una suma de rangos negativos \(T^{-} = 363\) y \(n = 200\) pares validos, junto con un valor \(p = 3{,}08 \times 10^{-32}\), lo que permite rechazar la hipotesis nula de igualdad de medianas con un nivel de confianza superior al 99,9~\%. El estadístico incorpora la corrección por empates y refleja que en 188 de los 200 pares el flujo automatizado fue mas veloz que el manual; en los 12 pares restantes (6,0~\%) el flujo automatizado no fue mas rápido, resultado coherente con la diferencia de aproximadamente 32,5~s entre medianas. La elección de esta prueba no parametrica responde al rechazo de la hipotesis de normalidad en los tres conjuntos de tiempos, cuyo reporte completo se presenta en la Sección~4.7.
 
 Para cuantificar la magnitud práctica de la diferencia, se calculo el coeficiente \(r\) de correlacion rank-biserial a partir de los dos estadísticos de rango:
 \[
@@ -89,9 +91,11 @@ Sistemas & 2 & 0 & 5 & 2 & \textbf{7} & \textbf{16} \\
 \textbf{Total} & \textbf{18} & \textbf{90} & \textbf{68} & \textbf{5} & \textbf{19} & \textbf{200} \\
 \bottomrule
 \end{tabular}
+\par\smallskip
+{\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)).\par}
 \end{table}
 
-Los valores de precision, sensibilidad (\emph{recall}) y F1 calculados por clase se presentan en la Tabla~\ref{tab:metricas}. El mejor desempeño correspondió a Soporte Tecnico Hardware (F1 = 0,8800), seguido por Soporte Tecnico Software (0,7111) y Seguridad Informatica (0,6122); Sistemas (0,4000) y Bases de Datos (0,0000, con un único caso de soporte) fueron las clases mas difíciles. El promedio macro de F1 fue de 0,5207 y el micro-F1 de 0,6654. La exactitud estricta del 73,5~\% (147/200) presenta un intervalo de confianza al 95~\%, estimado por el método de Wilson, de [67,0~\%, 79,1~\%]. En cuanto al desempeño de conjunto, el \emph{subset accuracy} (proporción de casos en que el conjunto completo de sectores resultó correcto) fue de 0,43 y el \emph{Hamming loss} de 0,3586. De los 200 casos, 131 fueron resueltos por la etapa determinística del clasificador y 69 requirieron la etapa Gemini.
+Los valores de precision, sensibilidad (\emph{recall}) y F1 calculados por clase \parencite{Sokolova2009_performance_measures} se presentan en la Tabla~\ref{tab:metricas}. El mejor desempeño correspondió a Soporte Tecnico Hardware (F1 = 0,8800), seguido por Soporte Tecnico Software (0,7111) y Seguridad Informatica (0,6122); Sistemas (0,4000) y Bases de Datos (0,0000, con un único caso de soporte) fueron las clases mas difíciles. El promedio macro de F1 fue de 0,5207 y el micro-F1 de 0,6654. La exactitud estricta del 73,5~\% (147/200) presenta un intervalo de confianza al 95~\%, estimado por el método de Wilson \parencite{Wilson1927_probable_inference}, de [67,0~\%, 79,1~\%]. En cuanto al desempeño de conjunto, el \emph{subset accuracy} (proporción de casos en que el conjunto completo de sectores resultó correcto) fue de 0,43 y el \emph{Hamming loss} de 0,3586. De los 200 casos, 131 fueron resueltos por la etapa determinística del clasificador y 69 requirieron la etapa Gemini.
 
 \begin{table}[htbp]
 \centering
@@ -109,9 +113,11 @@ Sistemas                  & 0,3684 & 0,4375 & 0,4000 \\
 Bases de Datos            & 0,0000 & 0,0000 & 0,0000 \\
 \bottomrule
 \end{tabular}
+\par\smallskip
+{\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)).\par}
 \end{table}
 
-Estas metricas confirman que el clasificador exhibe un desempeño desigual entre las cinco clases objetivo. La clase mayoritaria (Soporte Tecnico Hardware, con 85 casos) obtuvo el mejor resultado, mientras que Sistemas y Bases de Datos presentaron los valores mas bajos. Este desequilibrio es particularmente relevante en el contexto operativo: un clasificador que concentra sus errores en una clase minoritaria genera derivaciones erroneas en un sector específico, lo que erosiona la confianza de ese equipo en el sistema y puede llevar al rechazo operativo de la herramienta, independientemente de sus metricas agregadas.
+Estas metricas confirman que el clasificador exhibe un desempeño desigual entre las cinco clases objetivo \parencite{Sokolova2009_performance_measures}. La clase mayoritaria (Soporte Tecnico Hardware, con 85 casos) obtuvo el mejor resultado, mientras que Sistemas y Bases de Datos presentaron los valores mas bajos. Este desequilibrio es particularmente relevante en el contexto operativo: un clasificador que concentra sus errores en una clase minoritaria genera derivaciones erroneas en un sector específico, lo que erosiona la confianza de ese equipo en el sistema y puede llevar al rechazo operativo de la herramienta, independientemente de sus metricas agregadas.
 
 La inspeccion de la matriz de confusion revela que los 53 errores totales se concentran en fronteras entre sectores lexicamente proximos, con Soporte Tecnico Software como categoría central. La confusión dominante es entre Soporte Tecnico Hardware y Soporte Tecnico Software (14 casos: 11 derivaciones de Software a Hardware y 3 en sentido inverso), asociada a incidentes en que una falla física de un equipo compromete una aplicación o en que una tarea sobre una aplicación se describe con terminos de equipamiento. La segunda frontera es entre Sistemas y Soporte Tecnico Software (12 casos: 7 derivaciones de Software a Sistemas y 5 inversas), vinculada a acciones sobre servidores y servicios de plataforma. La tercera es entre Seguridad Informatica y Soporte Tecnico Software (11 casos), asociada a incidentes de acceso, credenciales y permisos. El resto de los errores (16 casos) se reparte entre las demas fronteras. En ausencia de información contextual que un usuario no siempre incluye en la descripción inicial, el clasificador enfrenta una ambiguedad estructural que no se resuelve con mejoras incrementales del modelo sino con un enriquecimiento del protocolo de captura del incidente. Esta observación orienta una de las recomendaciones presentadas en el Capitulo~10: incorporar preguntas de refinamiento tempranas que permitan al clasificador reducir la zona de ambiguedad entre los sectores mas propensos a confusion.
 
@@ -191,9 +197,13 @@ Otras fronteras & 16 & 30,2~\% \\
 \textbf{Total} & \textbf{53} & \textbf{100~\%} \\
 \bottomrule
 \end{tabular}
+\par\smallskip
+{\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)).\par}
 \end{table}
 
 El patron dominante, presente en 14 casos (26,4~\% de los errores), corresponde a la frontera entre Soporte Tecnico Hardware y Soporte Tecnico Software: incidentes en que una falla física de un equipo afecta a una aplicación, o en que una tarea sobre una aplicación se describe con terminos de equipamiento, de modo que la decision correcta depende del juicio humano sobre que aspecto prevalece. El segundo patron, presente en 12 casos (22,6~\%), corresponde a la frontera entre Sistemas y Soporte Tecnico Software, asociada a acciones sobre servidores y servicios de plataforma descritas como problemas de una aplicación. El tercer patron, presente en 11 casos (20,8~\%), corresponde a la frontera entre Seguridad Informatica y Soporte Tecnico Software, vinculada a incidentes de acceso y credenciales. El 30,2~\% restante se reparte entre las demas fronteras, incluidas las confusiones que involucran a Bases de Datos, con un único caso de soporte.
+
+Los patrones anteriores se ilustran con tres casos mal clasificados del corpus. Las descripciones se reproducen anonimizadas ---se eliminaron nombres de personas, correos, teléfonos, direcciones y denominaciones internas de sistemas--- y se acompañan con el sector asignado, el sector predicho y la confianza declarada por el clasificador. El primer caso corresponde al patrón de descripción corta: la entrada ``No puede ingresar al sistema central'' fue asignada a Seguridad Informatica y predicha como Soporte Tecnico Software con una confianza de 0,95; su brevedad no aporta contexto sobre el recurso ni sobre la naturaleza del acceso fallido, de modo que la frontera resulta indistinguible sin información adicional. El segundo ilustra la mezcla de categorías: ``Su equipo se reinicia de forma reiterada; el usuario sospecha de los cables'' fue asignada a Soporte Tecnico Software y predicha como Soporte Tecnico Hardware con 0,50 de confianza, y combina un síntoma de nivel de aplicación con una hipótesis de causa física cuyo peso relativo no queda determinado por el texto. El tercero ejemplifica la jerga local: ``No le salen los correos por el flujo interno y no le llegan las instancias'' fue asignada a Sistemas y predicha como Soporte Tecnico Software con 0,85 de confianza, y apela a términos organizacionales (``flujo'', ``instancias'') cuyo significado no está disponible para el clasificador. En los tres casos la confianza declarada es alta pese al error, lo que refuerza el problema de calibración descrito en la Sección~\ref{subsec:calibracion}.
 
 Esta tipologia orienta directamente las recomendaciones presentadas en el Capitulo~10, particularmente la incorporacion de un clasificador supervisado entrenado con el corpus etiquetado generado por el propio sistema y la inclusion de un glosario de terminos organizacionales en el prompt del modelo.
 
