@@ -1,11 +1,11 @@
 # Web framework
 # c-97: 0.135.0 es la primera version que levanta el cap starlette<0.39 y
 # admite starlette 1.x, habilitando el fix de las advisories PYSEC-2026-*.
-fastapi==0.135.0
+fastapi==0.143.3
 # starlette se importa directo (app/core/error_handlers.py, app/main.py,
 # tests CORS); pin explicito a la minima que limpia las 7 advisories (c-97).
-starlette==1.3.1
-uvicorn[standard]==0.30.6
+starlette==1.8.0
+uvicorn[standard]==0.54.0
 
 # Form parsing: FastAPI Form/File endpoints (e.g. /twilio/voice FromForm).
 # Import-time requirement of app/routes/cost_guard.py. Undeclared since c-45;
@@ -13,14 +13,14 @@ uvicorn[standard]==0.30.6
 python-multipart==0.0.32
 
 # Async PostgreSQL driver
-asyncpg==0.29.0
-sqlalchemy[asyncio]==2.0.36
-alembic==1.13.3
+asyncpg==0.32.0
+sqlalchemy[asyncio]==2.1.5
+alembic==1.20.0
 
 # Pydantic v2 + settings
 # Piso 2.12.5: google-genai>=2.20.0 lo exige (resolución de dependencias).
-pydantic>=2.12.5,<3
-pydantic-settings==2.5.2
+pydantic>=2.14.1,<3
+pydantic-settings==2.16.0
 
 # Google Gemini (SDK nuevo; reemplaza al deprecado google-generativeai)
 # Piso 2.0: ThinkingConfig(thinking_budget=...) no existe en 1.x — con >=1.0,
@@ -31,28 +31,28 @@ pydantic-settings==2.5.2
 # la API de Interactions y VerbatimTranscriptionMode se consolidan en >=2.20.0.
 # Última verificada: 2.25.0.
 # Cota superior <3 (c-64, D6): la major 3 es la frontera de compatibilidad de la API.
-google-genai>=2.20.0,<3
+google-genai>=2.31.0,<3
 
 # HTTP client (N8N webhook notifications). 0.28.1 es requisito de google-genai 2.x.
 httpx==0.28.1
 
 # Structured logging
-structlog==24.4.0
+structlog==26.1.0
 
 # Encryption (Fernet, for EncryptedText TypeDecorator — Ley 25.326)
 # Sin cota superior a proposito (c-64, D6): los parches llegan en releases menores
 # y una cota impediria adoptarlos a tiempo. Justificado con el marcador inline.
-cryptography>=43.0.0  # no-upper-bound-ok: excepcion documentada arriba (D6)
+cryptography>=50.0.2  # no-upper-bound-ok: excepcion documentada arriba (D6)
 
 # JWT Authentication
 # Cotas superiores <4 / <5 (c-64, D6): fronteras de major reales; evitan un salto incompatible.
-python-jose[cryptography]>=3.3.0,<4
-bcrypt>=4.0.0,<5
+python-jose[cryptography]>=3.5.0,<4
+bcrypt>=5.0.0,<6
 
 # Second factor TOTP (RFC 6238) for privileged accounts (c-63b, IAH-006).
 # pyotp is a third-party, pure-Python dependency: pin it and audit the package
 # (supply chain). It performs no network I/O and has no runtime data scope.
-pyotp==2.9.0
+pyotp==2.10.0
 
 # ── Development / Testing ──────────────────────────────────────────────────────
 # c-97: pytest 9.x resuelve PYSEC-2026-1845 (excepcion eliminada en c-97;
@@ -60,5 +60,5 @@ pyotp==2.9.0
 # declaran pytest<9).
 pytest==9.1.1
 pytest-asyncio==1.4.0
-aiosqlite==0.20.0          # in-memory SQLite for tests
-pytest-cov==5.0.0          # coverage measurement for routes/services/repositories
+aiosqlite==0.22.1          # in-memory SQLite for tests
+pytest-cov==7.1.0          # coverage measurement for routes/services/repositories
