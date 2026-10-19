@@ -21,6 +21,8 @@ Strict TDD: este modulo se escribe ANTES de la implementacion.
 from __future__ import annotations
 
 import dataclasses
+import hashlib
+import hmac
 import importlib.util
 import json
 import logging
@@ -111,6 +113,7 @@ def make_config(**overrides: Any) -> CostGuardConfig:
         },
         degradation_policy="deterministic_review",
         store_failure_policy="fail_closed",
+        caller_hmac_key=_HMAC_KEY,
     )
     base.update(overrides)
     return CostGuardConfig(**base)
@@ -391,7 +394,9 @@ async def test_store_inalcanzable_fail_closed_y_notificacion():
     kwargs = asserted[0].kwargs
     assert kwargs["cause"] == CAUSE_STORE_UNAVAILABLE
     assert kwargs["provider"] == PROVIDER_BACKEND_GEMINI
-    assert kwargs["caller"] == "+5492615551234"
+    # c-66: el evento NO lleva el numero crudo; lleva el identificador derivado.
+    assert kwargs["caller"] == _expected_caller_id("+5492615551234")
+    assert kwargs["caller"] != "+5492615551234"
     assert kwargs["error_class"] == "RuntimeError"
     assert "secret" not in json.dumps(kwargs, default=str).lower()
 
@@ -428,7 +433,9 @@ async def test_disparo_emite_evento_estructurado():
     kwargs = asserted[0].kwargs
     assert kwargs["cause"] == CAUSE_BUDGET
     assert kwargs["provider"] == PROVIDER_N8N_GEMINI
-    assert kwargs["caller"] == "+5492615551234"
+    # c-66: identificador derivado, nunca el numero crudo.
+    assert kwargs["caller"] == _expected_caller_id("+5492615551234")
+    assert kwargs["caller"] != "+5492615551234"
     assert kwargs["window"] and kwargs["limit"] is not None
 
 
@@ -810,21 +817,22 @@ async def test_webhook_twilio_reserva_una_unidad_por_llamada():
     assert store.snapshot(caller_key("+5492615551234")).llamadas == 2
 
 
-# ── 1.12 / 9.x — Numero de origen crudo y exclusion del corpus ──────────────
+# ── 1.12 / 9.x / c-66 — Seudonimizacion del origen y exclusion del corpus ───
 
 
-async def test_caller_crudo_aparece_en_eventos_de_guarda():
-    """1.12 / 9.1: el numero crudo se emite en los eventos de la guarda."""
+async def test_evento_de_guarda_emite_identificador_derivado_no_crudo():
+    """1.12 / 9.1 / c-66: el evento lleva el identificador derivado, no el crudo."""
     store = InMemoryCounterStore()
-    store.seed(caller_key("+5492615551234"), llamadas=_CALLER_RATE_LIMIT + 1)
+    caller = "+5492615551234"
+    store.seed(caller_key(caller), llamadas=_CALLER_RATE_LIMIT + 1)
     guard = make_guard(store=store)
     with patch("app.cost_guard.guard.logger") as mock_logger:
-        await guard.evaluate(PROVIDER_TWILIO, caller="+5492615551234")
+        await guard.evaluate(PROVIDER_TWILIO, caller=caller)
 
-    asserted = [c for c in mock_logger.warning.call_args_list if c.args and c.args[0] == EVENT_COST_GUARD_TRIPPED]
-    assert asserted
-    assert asserted[0].kwargs["caller"] == "+5492615551234"
-    assert asserted[0].kwargs["cause"] == CAUSE_CALLER_RATE
+    kwargs = _event_kwargs(mock_logger, EVENT_COST_GUARD_TRIPPED)
+    assert kwargs["cause"] == CAUSE_CALLER_RATE
+    assert kwargs["caller"] == _expected_caller_id(caller)
+    assert caller not in json.dumps(kwargs, default=str)
 
 
 def test_corpus_de_evaluacion_no_incorpora_el_caller():
@@ -843,6 +851,146 @@ def test_corpus_de_evaluacion_no_incorpora_el_caller():
     assert not (fields & prohibidos), (
         f"El corpus de evaluacion no debe incorporar el caller crudo: {fields & prohibidos}"
     )
+
+
+# ── c-66 — Seudonimizacion del numero de origen en los eventos del guarda ───
+#
+# El numero CRUDO deja de emitirse en los eventos estructurados. En su lugar se
+# emite un identificador DERIVADO no reversible (HMAC-SHA-256 con la clave
+# DEDICADA `cost_guard_caller_hmac_key`, truncado). La clave del contador por
+# origen en el almacen sigue siendo el numero CRUDO (rate por origen intacto).
+
+_HMAC_KEY = "test-cost-guard-caller-hmac-key"
+
+
+async def test_evento_de_disparo_no_contiene_el_numero_crudo():
+    """c-66 / 2.1a: el evento de disparo NO emite el numero de origen crudo."""
+    store = InMemoryCounterStore()
+    caller = "+5492615551234"
+    store.seed(caller_key(caller), llamadas=_CALLER_RATE_LIMIT + 1)
+    guard = make_guard(store=store)
+    with patch("app.cost_guard.guard.logger") as mock_logger:
+        await guard.evaluate(PROVIDER_TWILIO, caller=caller)
+
+    kwargs = _event_kwargs(mock_logger, EVENT_COST_GUARD_TRIPPED)
+    serializado = json.dumps(kwargs, default=str)
+    assert caller not in serializado, "el numero crudo NO debe aparecer en el evento"
+    assert isinstance(kwargs["caller"], str) and kwargs["caller"]
+    assert kwargs["caller"] != caller
+
+
+async def test_evento_de_almacen_no_disponible_no_contiene_el_numero_crudo():
+    """c-66 / 2.1b: el evento de almacen caido NO emite el numero crudo."""
+    caller = "+5492615551234"
+    guard = make_guard(store=_UnavailableStore())  # type: ignore[arg-type]
+    with patch("app.cost_guard.guard.logger") as mock_logger:
+        await guard.evaluate(PROVIDER_TWILIO, caller=caller)
+
+    kwargs = _event_kwargs(
+        mock_logger, EVENT_COST_GUARD_STORE_UNAVAILABLE, method="error"
+    )
+    serializado = json.dumps(kwargs, default=str)
+    assert caller not in serializado, "el numero crudo NO debe aparecer en el evento"
+    assert isinstance(kwargs["caller"], str) and kwargs["caller"]
+    assert kwargs["caller"] != caller
+
+
+async def test_mismo_origen_en_la_ventana_correlaciona():
+    """c-66 / 2.3a: el mismo origen produce el mismo identificador derivado."""
+    caller = "+5492615551234"
+    primero = await _captured_caller_identifier(caller)
+    segundo = await _captured_caller_identifier(caller)
+    assert primero == segundo
+    assert primero != caller
+
+
+async def test_origenes_distintos_producen_identificadores_distintos():
+    """c-66 / 2.3b: dos origenes distintos no comparten identificador."""
+    uno = await _captured_caller_identifier("+5492615550001")
+    otro = await _captured_caller_identifier("+5492615550002")
+    assert uno != otro
+
+
+async def test_limitacion_por_origen_sigue_operando_sobre_el_numero_crudo():
+    """c-66 / 2.3c: el rate por origen sigue decidiendose sobre el numero CRUDO."""
+    store = InMemoryCounterStore()
+    abusivo = "+5492615550000"
+    store.seed(caller_key(abusivo), llamadas=_CALLER_RATE_LIMIT + 1)
+    guard = make_guard(store=store)
+    with patch("app.cost_guard.guard.logger"):
+        decision = await guard.evaluate(PROVIDER_TWILIO, caller=abusivo)
+    assert decision.allowed is False
+    assert decision.cause == CAUSE_CALLER_RATE
+    # La clave del contador sigue siendo el numero CRUDO (reserva revertida).
+    assert store.snapshot(caller_key(abusivo)).llamadas == _CALLER_RATE_LIMIT + 1
+
+
+def test_corpus_de_evaluacion_no_incluye_numero_de_origen():
+    """c-66 / 2.3d: el corpus de evaluacion no incorpora ningun telefono."""
+    corpus_path = (
+        Path(__file__).resolve().parents[3]
+        / "data"
+        / "corpus_evaluacion_pseudonimizado.json"
+    )
+    texto = corpus_path.read_text(encoding="utf-8")
+    assert re.search(r"\+\d{8,}", texto) is None, (
+        "el corpus no debe incorporar numeros de origen (formato internacional)"
+    )
+
+
+# ── c-66 — Clave DEDICADA (no la de pseudonimizacion) ───────────────────────
+
+
+async def test_derivacion_usa_la_clave_dedicada_y_no_la_de_pseudonimizacion():
+    """c-66 / 2.6: la derivacion usa `cost_guard_caller_hmac_key`, no la Fernet."""
+    dedicada = "clave-dedicada-para-identificador-de-origen"
+    fernet = "clave-fernet-de-pseudonimizacion"
+    settings = _settings(
+        pseudonymization_encryption_key=fernet,
+        cost_guard_caller_hmac_key=dedicada,
+    )
+    config = CostGuardConfig.from_settings(settings)
+    assert config.caller_hmac_key == dedicada
+    assert config.caller_hmac_key != fernet
+
+    caller = "+5492615551234"
+    identificador = await _captured_caller_identifier(
+        caller, hmac_key=config.caller_hmac_key
+    )
+    esperado = hmac.new(
+        dedicada.encode("utf-8"), caller.encode("utf-8"), hashlib.sha256
+    ).hexdigest()[:12]
+    con_fernet = hmac.new(
+        fernet.encode("utf-8"), caller.encode("utf-8"), hashlib.sha256
+    ).hexdigest()[:12]
+    assert identificador == esperado
+    assert identificador != con_fernet
+
+
+async def test_rotacion_de_clave_cambia_el_identificador_sin_exponer_el_numero():
+    """c-66 / 2.8: rotar la clave dedicada cambia el identificador; el crudo no se expone."""
+    caller = "+5492615551234"
+    clave_rotada = _HMAC_KEY + "-rotada"
+
+    # (c) con la MISMA clave el identificador es estable dentro de la ventana.
+    estable_1 = await _captured_caller_identifier(caller, hmac_key=_HMAC_KEY)
+    estable_2 = await _captured_caller_identifier(caller, hmac_key=_HMAC_KEY)
+    assert estable_1 == estable_2
+
+    # (a) reemplazar/rotar la clave cambia el identificador para el MISMO numero.
+    rotada = await _captured_caller_identifier(caller, hmac_key=clave_rotada)
+    assert rotada != estable_1
+    assert rotada == _expected_caller_id(caller, clave_rotada)
+
+    # (b) el numero crudo nunca aparece en el identificador ni en el evento emitido.
+    assert caller not in estable_1 and caller not in rotada
+    guard = make_guard(store=_UnavailableStore(), caller_hmac_key=_HMAC_KEY)  # type: ignore[arg-type]
+    with patch("app.cost_guard.guard.logger") as mock_logger:
+        await guard.evaluate(PROVIDER_TWILIO, caller=caller)
+    kwargs = _event_kwargs(
+        mock_logger, EVENT_COST_GUARD_STORE_UNAVAILABLE, method="error"
+    )
+    assert caller not in json.dumps(kwargs, default=str)
 
 
 # ── 5.4 — Construccion perezosa del adaptador PostgreSQL ────────────────────
@@ -1285,6 +1433,32 @@ async def test_twilio_webhook_rechaza_firma_de_otra_url():
 
 
 # ── Helpers de test ─────────────────────────────────────────────────────────
+
+
+def _event_kwargs(mock_logger: MagicMock, event: str, method: str = "warning") -> dict:
+    """Extrae los kwargs del primer evento estructurado con el nombre dado."""
+    calls = getattr(mock_logger, method).call_args_list
+    asserted = [c for c in calls if c.args and c.args[0] == event]
+    assert asserted, f"debe emitirse {event}"
+    return asserted[0].kwargs
+
+
+def _expected_caller_id(caller: str, key: str = _HMAC_KEY) -> str:
+    """Identificador derivado esperado (calculado con la primitiva estandar)."""
+    return hmac.new(key.encode("utf-8"), caller.encode("utf-8"), hashlib.sha256).hexdigest()[:12]
+
+
+async def _captured_caller_identifier(
+    caller: str, *, hmac_key: str = _HMAC_KEY
+) -> str:
+    """Identificador derivado emitido en el evento de almacen caido."""
+    guard = make_guard(store=_UnavailableStore(), caller_hmac_key=hmac_key)  # type: ignore[arg-type]
+    with patch("app.cost_guard.guard.logger") as mock_logger:
+        await guard.evaluate(PROVIDER_TWILIO, caller=caller)
+    kwargs = _event_kwargs(
+        mock_logger, EVENT_COST_GUARD_STORE_UNAVAILABLE, method="error"
+    )
+    return kwargs["caller"]
 
 
 def _settings(**overrides: Any) -> Settings:

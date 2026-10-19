@@ -81,6 +81,10 @@ sugerida es anual, o ante cambio de alcance, normativa o infraestructura.
 | `modelado-amenazas-sdlc.md` | Modelado de amenazas y seguridad en el SDLC (8.26) | v1 (aprobada 2026-10-01) | Anual |
 | `politica-privacidad-runtime.md` | Politica de privacidad objetivo/norma (5.34) | v1 (aprobada 2026-10-01) | Anual |
 | `registro-actividades-tratamiento.md` | ROPA (Ley 25.326) y tratamientos T1/T2/T3 | v1 (aprobada 2026-10-01) | Anual |
+| `justificacion-minimizacion-directorio.md` | Justificacion por minimizacion del contacto del directorio en texto plano (5.34/8.12; C-66) | v1 (aprobada 2026-10-19) | Anual |
+| `instrumento-transferencia-internacional.md` | Instrumento de transferencia internacional a Gemini/Twilio documentado, no suscrito (5.34/5.31; SGD-014; C-66) | v1 (aprobada 2026-10-19) | Anual |
+| `procedimiento-arco.md` | Procedimiento ARCO con canal informado, plazos y constancia auditable (5.34; SGD-013; C-66) | v1 (aprobada 2026-10-19) | Anual |
+| `politica-retencion-logs.md` | Politica de retencion de logs por clase de registro y no-PII (8.12/8.15; SGD-015; C-66) | v1 (aprobada 2026-10-19) | Anual |
 | `gestion-secretos-y-rotacion.md` | Gestion de secretos, inventario de columnas cifradas y runbook de rotacion (8.2, 8.24; IAH-008..010) | v1 (aprobada 2026-10-08) | Anual |
 | `ciclo-vida-identidades-y-revision-accesos.md` | Ciclo de vida de identidades y revision de accesos — control organizacional (5.16, 5.18; IAH-011) | v1 (aprobada 2026-10-08) | Anual |
 
@@ -105,13 +109,15 @@ Anexo del cuerpo documental (no es uno de los 11 documentos de gobernanza):
 | 5.25 Evaluacion de eventos de seguridad | RS | `procedimiento-reporte-eventos.md` | SGD-005 |
 | 5.26 Respuesta a incidentes de seguridad | RS | `plan-respuesta-incidentes-seguridad.md` | SGD-005 |
 | 5.27 Aprendizaje de incidentes | RS | `procedimiento-reporte-eventos.md`, `plan-respuesta-incidentes-seguridad.md` | SGD-005 |
-| 5.31 Requisitos legales y contractuales | GV | `registro-requisitos-legales.md` | SGD-007 |
+| 5.31 Requisitos legales y contractuales | GV | `registro-requisitos-legales.md`, `instrumento-transferencia-internacional.md` | SGD-007, SGD-014 |
 | 8.26 Requisitos de seguridad de aplicaciones | GV, ID | `modelado-amenazas-sdlc.md` | SGD-008 |
 | 8.2 Derechos de acceso privilegiado (gestion de claves) | PR | `gestion-secretos-y-rotacion.md` | IAH-008..010 |
 | 8.24 Uso de criptografia | PR | `gestion-secretos-y-rotacion.md` | IAH-008..010 |
 | 5.16 Gestion del ciclo de vida de la identidad | GV | `ciclo-vida-identidades-y-revision-accesos.md` | IAH-011 |
 | 5.18 Derechos de acceso | GV | `ciclo-vida-identidades-y-revision-accesos.md` | IAH-011 |
-| 5.34 Privacidad y proteccion de PII | GV, PR | `politica-privacidad-runtime.md` | SGD-009 |
+| 5.34 Privacidad y proteccion de PII | GV, PR | `politica-privacidad-runtime.md`, `justificacion-minimizacion-directorio.md`, `instrumento-transferencia-internacional.md`, `procedimiento-arco.md`, `politica-retencion-logs.md` | SGD-009, SGD-013, SGD-014, SGD-015 |
+| 8.12 Prevencion de fuga de datos | PR | `justificacion-minimizacion-directorio.md`, `politica-retencion-logs.md` | SGD-015 |
+| 8.15 Registro de eventos | DE, PR | `politica-retencion-logs.md` | SGD-015 |
 | ROPA (Ley 25.326) | GV | `registro-actividades-tratamiento.md` | SGD-010 |
 
 Funciones NIST CSF 2.0 cubiertas: **Govern (GV)** — 5.1, 5.2, 5.31, 8.26, 5.34, ROPA;
@@ -135,6 +141,9 @@ C-67.
 | SGD-010 ROPA | `registro-actividades-tratamiento.md` |
 | SGD-011 Regla de lenguaje y encuadre | transversal (§2 y §3); aplica a todos |
 | SGD-012 Responsable y los tres tratamientos | `registro-actividades-tratamiento.md`, `registro-requisitos-legales.md`, `acta-consentimiento-t1.md` |
+| SGD-013 Procedimiento ARCO documentado con plazos | `procedimiento-arco.md` |
+| SGD-014 Instrumento de transferencia internacional documentado | `instrumento-transferencia-internacional.md` |
+| SGD-015 Politica de retencion de logs | `politica-retencion-logs.md` |
 | IAH-008 Rotacion del secreto JWT (keyring `kid`) | `gestion-secretos-y-rotacion.md` |
 | IAH-009 Rotacion de la clave Fernet | `gestion-secretos-y-rotacion.md` |
 | IAH-010 Higiene y gestion de secretos | `gestion-secretos-y-rotacion.md` |
@@ -153,6 +162,12 @@ C-67.
   implementan y extienden. Ver `docs/cumplimiento/plan-cambios-cumplimiento.md` §2-§4.
 - La politica de privacidad en runtime y el ROPA documentan el marco legal; el tratamiento
   del numero llamante y los instrumentos de transferencia son de C-66.
+- **C-66** (`privacidad-transferencias`) extiende este cuerpo documental con
+  `justificacion-minimizacion-directorio.md` (5.34/8.12),
+  `instrumento-transferencia-internacional.md` (5.34/5.31; SGD-014),
+  `procedimiento-arco.md` (5.34; SGD-013) y `politica-retencion-logs.md`
+  (8.12/8.15; SGD-015), y alinea la conservacion de incidentes (12 meses rodantes +
+  anonimizacion irreversible) con el capitulo 11 de la tesis.
 
 ## 8. Verificacion y estado de aprobacion
 

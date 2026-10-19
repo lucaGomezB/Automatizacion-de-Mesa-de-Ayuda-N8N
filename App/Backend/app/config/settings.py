@@ -209,6 +209,14 @@ class Settings(BaseSettings):
     # no existe configuracion con la guarda habilitada y los endpoints abiertos.
     # El secreto NUNCA se acepta por query string (se registraria en los logs).
     cost_guard_shared_secret: str = ""
+    # c-66: clave DEDICADA para derivar el identificador de origen no reversible
+    # que se emite en los eventos estructurados de la guarda (HMAC-SHA-256,
+    # truncado). OBLIGATORIA. Es INDEPENDIENTE de la clave Fernet de
+    # pseudonimizacion: NO se reutiliza ni se deriva material de ella, y rotarla
+    # no afecta los datos persistidos (los identificadores de log son efimeros).
+    # Generar con: python -c "import secrets; print(secrets.token_hex(32))"
+    # Ejemplo .env: COST_GUARD_CALLER_HMAC_KEY=<resultado del comando anterior>
+    cost_guard_caller_hmac_key: str
     # Auth token de la cuenta de Twilio. Cuando esta configurado, el webhook de
     # voz exige la firma `X-Twilio-Signature` (HMAC-SHA1, ver
     # app/cost_guard/twilio_signature.py). Cuando falta (credencial pendiente),

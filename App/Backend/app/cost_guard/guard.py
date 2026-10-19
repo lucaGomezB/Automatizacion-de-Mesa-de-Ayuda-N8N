@@ -22,6 +22,7 @@ from decimal import Decimal
 
 from app.core.logging import get_logger
 from app.cost_guard.alerts import AlertNotifier
+from app.cost_guard.caller_identity import derive_caller_identifier
 from app.cost_guard.config import CostGuardConfig
 from app.cost_guard.constants import (
     AMBITO_CALLER,
@@ -93,6 +94,8 @@ class CostGuard:
         Args:
             provider: superficie paga (una de `PAID_PROVIDERS`).
             caller: numero de origen CRUDO cuando esta disponible (telefonia).
+                NUNCA se emite CRUDO en los eventos: se seudonimiza con el
+                identificador derivado (c-66, ver `_caller_identifier`).
             amount: cantidad de unidades del costo unitario a reservar. Por
                 defecto una unidad (comportamiento historico). La superficie
                 `backend_stt` lo usa para estimar la reserva por duracion
@@ -110,12 +113,15 @@ class CostGuard:
         reservations, roles, windows = self._build_reservations(
             provider, caller, now, unit_cost * factor
         )
+        # Seudonimizacion del origen para observabilidad (c-66): el numero CRUDO
+        # nunca se emite; los eventos llevan el identificador derivado.
+        caller_identifier = self._caller_identifier(caller)
 
         try:
             snapshots = await self._store.reserve_many(reservations)
         except Exception as exc:  # politica configurable; default fail-closed
             await self._safe_rollback()
-            self._log_store_unavailable(provider, caller, windows, exc)
+            self._log_store_unavailable(provider, caller_identifier, windows, exc)
             await self._notify_store_unavailable(provider, windows, exc)
             if self._config.store_failure_policy == _POLICY_FAIL_OPEN:
                 return GuardDecision(allowed=True, cause=None)
@@ -128,7 +134,7 @@ class CostGuard:
             await self._store.commit()
         else:
             await self._store.rollback()
-            self._log_tripped(decision.cause, provider, caller, windows)
+            self._log_tripped(decision.cause, provider, caller_identifier, windows)
 
         await self._purge_expired_windows(now)
         return decision
@@ -219,11 +225,23 @@ class CostGuard:
 
     # ── Observabilidad ───────────────────────────────────────────────────────
 
+    def _caller_identifier(self, caller: str | None) -> str | None:
+        """
+        Identificador DERIVADO y no reversible del numero de origen (c-66).
+
+        Sustituye al numero CRUDO en los eventos estructurados. Es determinista
+        bajo la misma clave dedicada dentro de la ventana (correlaciona el mismo
+        origen sin exponerlo). Sin origen disponible no hay identificador.
+        """
+        if not caller:
+            return None
+        return derive_caller_identifier(caller, self._config.caller_hmac_key)
+
     def _log_tripped(
         self,
         cause: str | None,
         provider: str,
-        caller: str | None,
+        caller_identifier: str | None,
         windows: dict[str, datetime],
     ) -> None:
         limit, window = self._limit_and_window(cause, windows)
@@ -233,13 +251,13 @@ class CostGuard:
             provider=provider,
             window=window.isoformat(),
             limit=limit,
-            caller=caller,
+            caller=caller_identifier,
         )
 
     def _log_store_unavailable(
         self,
         provider: str,
-        caller: str | None,
+        caller_identifier: str | None,
         windows: dict[str, datetime],
         exc: Exception,
     ) -> None:
@@ -249,7 +267,7 @@ class CostGuard:
             provider=provider,
             window=windows["budget"].isoformat(),
             limit=str(self._config.budget_usd),
-            caller=caller,
+            caller=caller_identifier,
             error_class=type(exc).__name__,
         )
 

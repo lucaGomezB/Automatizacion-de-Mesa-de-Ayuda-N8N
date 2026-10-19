@@ -41,18 +41,20 @@ Consecuencia: **no** se agrega un capitulo extenso de cumplimiento. Se agrega un
 | C-63 | `identidad-accesos-claves` | (T) MFA para cuentas de operacion/administracion; politica de contrasenas; bloqueo por intentos fallidos; expiracion/rotacion/revocacion de JWT (refresh o lista de revocacion); revision periodica de accesos; gestion de claves (secret manager/KMS, rotacion de Fernet y del secreto JWT, CA real). | 5.15, 5.16, 5.17, 5.18, 8.2, 8.5, 8.24 | CRITICO | C-61 (parametros de politica) | 4 |
 | C-64 | `vulnerabilidades-supply-chain` | (T) Dependabot; `pip-audit`/`npm audit` en CI; escaneo de imagenes (trivy); SBOM; SAST (bandit/semgrep); pinning estricto de dependencias; (D) evaluacion de seguridad y clausulas con proveedores (Twilio, Gemini, Microsoft, N8N). | 8.8, 8.28, 8.29, 5.19-5.23 | MEDIO | — | 5 |
 | C-65 | `backup-continuidad` | (T+D) Cifrado del backup; copia offsite; automatizacion; prueba de restauracion periodica; RTO/RPO; plan de continuidad; redundancia basica. | 8.13, 8.14, 5.29, 5.30, 5.33 | ALTO | — | 6 |
-| C-66 | `privacidad-transferencias` | (T+D) Quitar/seudonimizar el numero llamante en logs (`cost_guard/guard.py:236,252`); cifrar o justificar por minimizacion el contacto del directorio (`models/empleado.py:16-18`); instrumento de transferencia internacional para Gemini/Twilio (clausulas modelo o consentimiento); consentimiento e informacion al titular; procedimiento ARCO con plazos; retencion de logs. **Se alinea con C-53.** | 5.34, 8.12, 8.15, 5.31 | ALTO | — (C-66 alinea con C-53; C-67 cerrado NO REALIZADO) | 3 |
+| C-66 | `privacidad-transferencias` | (T+D) Quitar/seudonimizar el numero llamante en logs (`cost_guard/guard.py:236,252`); cifrar o justificar por minimizacion el contacto del directorio (`models/empleado.py:16-18`); instrumento de transferencia internacional para Gemini/Twilio (clausulas modelo o consentimiento); consentimiento e informacion al titular; procedimiento ARCO con plazos; retencion de logs. **Se alinea con C-53.** | 5.34, 8.12, 8.15, 5.31 | ALTO | — (C-66 alinea con C-53; C-67 cerrado NO REALIZADO; C-66 IMPLEMENTADO Y ARCHIVADO 2026-10-19) | 3 |
 
 Notas:
 - La **prioridad** es sugerida por valor para la defensa y relacion riesgo/esfuerzo; es ajustable.
-- C-62 y C-66 tienen hallazgos de **bajo esfuerzo y alto impacto**; C-61 es documental y estructura el capitulo.
+- C-62 y C-66 tienen hallazgos de **bajo esfuerzo y alto impacto**; C-61 es documental y estructura el capitulo. (C-62 quedo ARCHIVADO el 2026-10-08; C-66 quedo IMPLEMENTADO Y ARCHIVADO el 2026-10-19.)
 - Los controles del tema Personas (6.x) y Fisico (7.x), y los organizacionales (5.2, 5.18, 6.5, 8.1, 8.4), se documentan como **(O)** en la tesis, no como change.
+
+**Estado (2026-10-19):** `C-66 privacidad-transferencias` quedó **IMPLEMENTADO Y ARCHIVADO** (2026-10-19, 36/36; `openspec/changes/archive/2026-10-19-c-66-privacidad-transferencias`). Governance ALTO. Entregó la pseudonimización del número llamante en los logs del guarda de costo con una clave HMAC **dedicada** (`cost_guard_caller_hmac_key`, independiente de la clave de pseudonimización Fernet), la superficie de privacidad en runtime (`/privacidad`), el procedimiento ARCO con plazos, la política de retención de logs, la justificación por minimización del directorio y el instrumento de transferencia internacional (documentado, no firmado); corrigió dos inconsistencias documentales. Cierra los controles 5.34, 8.12, 8.15 y 5.31. Specs sincronizadas: `privacy-runtime-surface` creada (capability nueva) y `runtime-cost-guard`, `security-governance-docs` y `employee-directory` modificadas. De los changes de este plan, quedan **sin crear solo C-64 `vulnerabilidades-supply-chain` y C-65 `backup-continuidad`**.
 
 ## 3. Orden recomendado
 
 1. **C-61** (gobernanza documental): bajo esfuerzo, da estructura y el marco que los demas changes referencian.
 2. **C-62** (hardening): quick win, alto impacto, acotado a `docker-compose.yml`/`nginx`.
-3. **C-66** (privacidad/transferencias): alto valor legal y alinea C-53.
+3. **C-66** (privacidad/transferencias): alto valor legal y alinea C-53. **IMPLEMENTADO Y ARCHIVADO 2026-10-19 (36/36).**
 4. **C-63** (identidad/accesos/claves): mayor esfuerzo, gobernanza CRITICO.
 5. **C-64** (vulnerabilidades/supply chain).
 6. **C-65** (backup/continuidad).
@@ -61,13 +63,13 @@ Notas:
 
 **Estado (2026-10-01):** `C-53` quedo **ARCHIVADO** con la parte ya implementada (correo/web/numero canonico, 12/12). El **SMS al llamante** se dividio a un change propio, **`C-67-notificacion-sms-llamante`** (0/24, governance ALTO), **bloqueado por OQ3** (entregabilidad de Twilio SMS a Argentina +54) **y por C-66**.
 
-`C-67` toca dos brechas que C-66 debe definir:
+`C-67` tocaba dos brechas que C-66 definió (hoy implementadas y archivadas):
 - Captura y cifrado del numero llamante (hoy crudo en logs, `cost_guard/guard.py:236,252`).
 - Consentimiento e instrumento de transferencia internacional hacia Twilio (EE. UU., pais NO adecuado).
 
 Recomendacion (aprobada): **C-66 define el tratamiento del llamante y el marco de consentimiento/transferencia; C-67 los consume**. C-67 no se inicia hasta resolver OQ3 y C-66.
 
-**Estado (2026-10-19):** `C-67-notificacion-sms-llamante` quedó **CERRADO Y ARCHIVADO como NO REALIZADO** (0/24, nunca implementado; archivado con `--skip-specs`, de modo que los specs principales no se tocaron). Motivos: (1) el spike de OQ3 cerró el 2026-09-23 con veredicto GO-WITH-CONSTRAINTS (SMS best-effort, correo como canal primario), por lo que OQ3 ya no está abierta; (2) su dependencia dura `C-66 privacidad-transferencias` nunca fue creada; (3) la cadena "SMS" no aparece en la tesis (`docs/Tesis/v9 (IA)/paper/sections/`) ni en `knowledge-base/`, por lo que es backlog de completitud de software y no un entregable de la tesis.
+**Estado (2026-10-19):** `C-67-notificacion-sms-llamante` quedó **CERRADO Y ARCHIVADO como NO REALIZADO** (0/24, nunca implementado; archivado con `--skip-specs`, de modo que los specs principales no se tocaron). Motivos: (1) el spike de OQ3 cerró el 2026-09-23 con veredicto GO-WITH-CONSTRAINTS (SMS best-effort, correo como canal primario), por lo que OQ3 ya no está abierta; (2) su dependencia dura `C-66 privacidad-transferencias` no existía al momento del cierre (se creó y archivó después, 2026-10-19); (3) la cadena "SMS" no aparece en la tesis (`docs/Tesis/v9 (IA)/paper/sections/`) ni en `knowledge-base/`, por lo que es backlog de completitud de software y no un entregable de la tesis.
 
 **OQ3 (accion del autor):** configurar Twilio para SMS (registrar remitente) y hacer una prueba real de entrega a un movil argentino.
 
@@ -93,4 +95,4 @@ Seleccion y formacion de personal (6.1, 6.3), sanciones (6.4), NDA (6.6), respon
 1. Revision y aprobacion de esta estructura por el autor.
 2. Para cada change aprobado: `/opsx:propose` (artefactos) → revision → `/opsx:apply` (con TDD) → `/opsx:archive`.
 3. Redactar el capitulo de cumplimiento en v9 a partir de los informes y del avance de los changes.
-4. Alinear C-53 con C-66.
+4. Alinear C-53 con C-66 (cumplido: **C-66 IMPLEMENTADO Y ARCHIVADO 2026-10-19**, 36/36).

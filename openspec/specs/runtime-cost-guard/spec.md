@@ -163,20 +163,6 @@ El sistema SHALL exponer un webhook de voz que Twilio consulta ANTES de grabar. 
 - **WHEN** la guarda concede una llamada en el webhook de voz
 - **THEN** la superficie de transcripción del backend no se reserva todavía, sino al recibir el callback de grabación
 
-### Requirement: Captura y registro del número de origen crudo con exclusión del corpus
-
-El sistema SHALL capturar el número de origen provisto por el proveedor de telefonía y SHALL registrarlo de forma CRUDA en los eventos estructurados de la guarda y usarlo como clave del contador de tasa por origen. El número crudo MUST NOT incorporarse a las tablas de negocio del incidente ni al corpus de evaluación de la tesis. Su retención SHALL quedar acotada a la ventana del contador de origen.
-
-#### Scenario: El número de origen se registra crudo en la guarda
-
-- **WHEN** la guarda evalúa una llamada de telefonía con un número de origen disponible
-- **THEN** el número crudo queda disponible para la atribución en los eventos de la guarda y como clave del contador por origen
-
-#### Scenario: El número de origen no entra al corpus de evaluación
-
-- **WHEN** se genera o actualiza el corpus de evaluación de la tesis
-- **THEN** el corpus NO incluye el número de origen registrado por la guarda
-
 ### Requirement: Degradación segura al excederse el presupuesto o la tasa
 
 Cuando la guarda se dispara, el sistema SHALL aplicar una política de degradación configurable y MUST NOT invocar al proveedor pago. La política por defecto SHALL ser degradar al clasificador determinístico marcando revisión humana. La degradación SHALL conservar la mejor estimación determinística disponible cuando exista y MUST NOT propagar un estado inconsistente.
@@ -299,3 +285,52 @@ El sistema SHALL declarar la transcripción del backend como una superficie paga
 
 - **WHEN** se configura el costo unitario de la superficie de admisión de voz de Twilio
 - **THEN** ese costo ya no representa una transcripción de Twilio, que dejó de usarse
+
+### Requirement: Seudonimizacion del numero de origen en logs con exclusion del corpus
+
+El sistema SHALL capturar el numero de origen provisto por el proveedor de telefonia y SHALL usarlo como clave del contador de tasa por origen en el almacen de contadores. El sistema MUST NOT emitir el numero de origen CRUDO en los eventos estructurados de la guarda ni en la notificacion externa; en su lugar SHALL emitir un identificador DERIVADO y no reversible, apto para correlacionar llamadas del mismo origen dentro de la ventana de conteo. El identificador derivado SHALL derivarse con HMAC-SHA-256 usando una clave de configuracion DEDICADA al proposito, independiente de la clave de pseudonimizacion (Fernet): la derivacion MUST NOT reutilizar la clave de pseudonimizacion ni derivar material de ella, y MUST NOT acoplar la rotacion de la pseudonimizacion. El identificador derivado SHALL ser determinista bajo la misma clave dentro de la ventana y MUST NOT permitir recuperar el numero CRUDO con la informacion disponible para quien lee los logs. El numero CRUDO MUST NOT incorporarse a las tablas de negocio del incidente ni al corpus de evaluacion de la tesis. La retencion del numero CRUDO en el almacen SHALL quedar acotada a la ventana del contador de origen. La limitacion de tasa por origen SHALL preservarse sin cambios: el disparo por origen sigue decidiendose sobre el numero CRUDO como clave del contador.
+
+#### Scenario: El numero crudo no aparece en el evento de disparo
+
+- **WHEN** la guarda evalua una llamada de telefonia con un numero de origen disponible y se dispara
+- **THEN** el evento estructurado emitido contiene un identificador derivado no reversible y NO contiene el numero de origen crudo
+
+#### Scenario: El numero crudo no aparece en el evento de almacen no disponible
+
+- **WHEN** el almacen de contadores no responde durante una evaluacion con un numero de origen disponible
+- **THEN** el evento estructurado de indisponibilidad contiene un identificador derivado no reversible y NO contiene el numero de origen crudo
+
+#### Scenario: La limitacion de tasa por origen se preserva
+
+- **WHEN** un numero de origen alcanza o supera el limite configurado en la ventana vigente
+- **THEN** la guarda se dispara e impide llamadas pagas adicionales de ese origen, sin impedir por si sola las de otros origenes por debajo de su limite
+
+#### Scenario: El identificador derivado correlaciona el mismo origen en la ventana
+
+- **WHEN** se evaluan dos llamadas del mismo numero de origen dentro de la misma ventana
+- **THEN** ambos eventos muestran el mismo identificador derivado, permitiendo correlacionar las llamadas sin exponer el numero crudo
+
+#### Scenario: El identificador derivado no es el numero crudo
+
+- **WHEN** un actor con acceso a los logs aplica al identificador derivado la operacion inversa conocida
+- **THEN** no obtiene el numero de origen crudo (la derivacion no es reversible con la informacion del log)
+
+#### Scenario: La derivacion usa una clave dedicada, no la de pseudonimizacion
+
+- **WHEN** se inspecciona como se deriva el identificador de origen
+- **THEN** la derivacion usa HMAC-SHA-256 con la clave de configuracion dedicada al proposito y NO reutiliza ni deriva material de la clave de pseudonimizacion (Fernet)
+
+#### Scenario: Rotar la clave dedicada cambia el identificador derivado
+
+- **WHEN** se reemplaza la clave dedicada por otra y se deriva el identificador del mismo numero de origen
+- **THEN** el identificador derivado cambia y sigue sin ser reversible al numero crudo
+
+#### Scenario: La retencion del numero crudo queda acotada a la ventana
+
+- **WHEN** transcurre la ventana del contador de origen y comienza una ventana nueva
+- **THEN** el numero crudo como clave del contador de origen se purga y deja de conservarse
+
+#### Scenario: El numero de origen no entra al corpus de evaluacion
+
+- **WHEN** se genera o actualiza el corpus de evaluacion de la tesis
+- **THEN** el corpus NO incluye el numero de origen

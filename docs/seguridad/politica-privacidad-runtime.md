@@ -27,6 +27,20 @@ El sistema debe presentar al titular, de forma expresa y clara, antes de tratar 
 
 La exhibicion de esta informacion en sitio visible es objeto de la Resolucion AAIP 14/2018.
 
+### 1.1 Aviso por canal telefonico (documentado, no implementado)
+
+El sistema preve informar al titular **tambien en el canal telefonico**: el llamante debe
+recibir, en el punto de recoleccion, la informacion de privacidad aplicable (finalidad,
+responsable, transferencia internacional y canal para ejercer derechos), del mismo modo que
+en el canal web. **Este requisito se DOCUMENTA y NO se implementa** en este change (no se
+agrega greeting de voz ni TwiML).
+
+Aclaracion de alcance: este **aviso de privacidad por voz al llamante** es **DISTINTO** de la
+**notificacion por SMS del numero de incidente**, que correspondia al change **C-67**
+(archivado como **NO REALIZADO**). C-67 **no se reintroduce**: no se construye ni el flujo SMS
+ni el greeting de voz; solo queda documentado el requisito del aviso de privacidad. Ver
+`registro-actividades-tratamiento.md` y `procedimiento-arco.md`.
+
 ## 2. Bases de licitud
 
 | Tratamiento | Datos | Base de licitud |
