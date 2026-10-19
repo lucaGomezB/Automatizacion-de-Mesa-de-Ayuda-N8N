@@ -5,8 +5,9 @@ Change: `c-61-compliance-gobernanza` (categoria D — documental; governance MED
 Fecha del cuerpo documental: 2026-10-01.
 
 > **Control mapeado**: transversal. Cubre el mapa de trazabilidad de los controles
-> ISO/IEC 27002:2022 5.1, 5.2, 5.9, 5.12, 5.13, 5.24, 5.25, 5.26, 5.27, 5.31, 8.26
-> y las funciones NIST CSF 2.0 Govern (GV) e Identify (ID). Requisito: SGD-001.
+> ISO/IEC 27002:2022 5.1, 5.2, 5.9, 5.12, 5.13, 5.19, 5.20, 5.21, 5.22, 5.23, 5.24, 5.25,
+> 5.26, 5.27, 5.31, 8.26 y las funciones NIST CSF 2.0 Govern (GV) e Identify (ID).
+> Requisito: SGD-001.
 > **Estado**: v1 — aprobada por el autor el 2026-10-01 (governance MEDIO).
 > **Alcance**: documentos de gobernanza de seguridad y privacidad del sistema, en
 > `docs/seguridad/`. No cubre implementacion tecnica de controles.
@@ -88,6 +89,7 @@ sugerida es anual, o ante cambio de alcance, normativa o infraestructura.
 | `gestion-secretos-y-rotacion.md` | Gestion de secretos, inventario de columnas cifradas y runbook de rotacion (8.2, 8.24; IAH-008..010) | v1 (aprobada 2026-10-08) | Anual |
 | `ciclo-vida-identidades-y-revision-accesos.md` | Ciclo de vida de identidades y revision de accesos — control organizacional (5.16, 5.18; IAH-011) | v1 (aprobada 2026-10-08) | Anual |
 | `plan-continuidad.md` | Plan de continuidad: RTO/RPO, restauracion desde el dump cifrado, offsite y redundancia como accion del adoptante (5.29, 5.30, 8.13, 8.14; CONT-001/CONT-002; C-65) | v1 (aprobada 2026-10-19) | Anual |
+| `evaluacion-seguridad-proveedores.md` | Evaluacion de seguridad de proveedores: postura observable publicamente y clausulas a evaluar de Twilio, Gemini/Google, Microsoft y N8N, con las garantias no suscritas como accion del adoptante (5.19-5.23; SGD-016; C-64) | v1 (aprobada 2026-10-19) | Anual |
 
 Anexo del cuerpo documental (no es uno de los 11 documentos de gobernanza):
 
@@ -116,6 +118,11 @@ Anexo del cuerpo documental (no es uno de los 11 documentos de gobernanza):
 | 8.24 Uso de criptografia | PR | `gestion-secretos-y-rotacion.md` | IAH-008..010 |
 | 5.16 Gestion del ciclo de vida de la identidad | GV | `ciclo-vida-identidades-y-revision-accesos.md` | IAH-011 |
 | 5.18 Derechos de acceso | GV | `ciclo-vida-identidades-y-revision-accesos.md` | IAH-011 |
+| 5.19 Seguridad en relaciones con proveedores | GV | `evaluacion-seguridad-proveedores.md` | SGD-016 |
+| 5.20 Acuerdos con proveedores | GV | `evaluacion-seguridad-proveedores.md` | SGD-016 |
+| 5.21 Cadena de suministro TIC | GV, ID | `evaluacion-seguridad-proveedores.md` | SGD-016 |
+| 5.22 Monitoreo de servicios de proveedores | GV, DE | `evaluacion-seguridad-proveedores.md` | SGD-016 |
+| 5.23 Seguridad en uso de servicios en la nube | GV, PR | `evaluacion-seguridad-proveedores.md` | SGD-016 |
 | 5.29 Seguridad de la informacion durante la disrupcion | RC | `plan-continuidad.md` | CONT-001, CONT-002 |
 | 5.30 Preparacion de las TIC para la continuidad | RC | `plan-continuidad.md` | CONT-001, CONT-002 |
 | 8.13 Respaldo de informacion | RC | `plan-continuidad.md` | CONT-001, CONT-002 |
@@ -149,6 +156,7 @@ C-67.
 | SGD-013 Procedimiento ARCO documentado con plazos | `procedimiento-arco.md` |
 | SGD-014 Instrumento de transferencia internacional documentado | `instrumento-transferencia-internacional.md` |
 | SGD-015 Politica de retencion de logs | `politica-retencion-logs.md` |
+| SGD-016 Evaluacion de seguridad de proveedores | `evaluacion-seguridad-proveedores.md` |
 | IAH-008 Rotacion del secreto JWT (keyring `kid`) | `gestion-secretos-y-rotacion.md` |
 | IAH-009 Rotacion de la clave Fernet | `gestion-secretos-y-rotacion.md` |
 | IAH-010 Higiene y gestion de secretos | `gestion-secretos-y-rotacion.md` |
@@ -179,6 +187,12 @@ C-67.
   `plan-continuidad.md` (5.29/5.30/8.13/8.14; CONT-001/CONT-002), que define
   RTO/RPO, el procedimiento de restauracion desde el dump cifrado y el encuadre
   de la copia offsite y la redundancia como accion del adoptante.
+- **C-64** (`vulnerabilidades-supply-chain`) extiende este cuerpo documental con
+  `evaluacion-seguridad-proveedores.md` (5.19-5.23; SGD-016), que separa la postura
+  de seguridad observable publicamente de los proveedores de las clausulas
+  contractuales a evaluar por la organizacion adoptante, con las garantias no
+  suscritas como accion pendiente. Los controles 5.19 a 5.23 se agregan al mapa de
+  trazabilidad (§6.1).
 
 ## 8. Verificacion y estado de aprobacion
 

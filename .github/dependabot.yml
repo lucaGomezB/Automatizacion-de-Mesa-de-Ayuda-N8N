@@ -1,0 +1,42 @@
+# dependabot.yml — actualizaciones automatizadas de dependencias (C-64, D9).
+#
+# Tres ecosistemas, todos con cadencia semanal y actualizaciones agrupadas para
+# evitar una avalancha de PRs. Sin fusion automatica ni aprobacion automatica:
+# cada grupo queda sujeto a revision humana antes de fusionarse.
+#
+# Nota: Dependabot solo propone la subida de version; no la aplica.
+
+version: 2
+
+updates:
+  # Backend — dependencias Python declaradas en App/Backend/requirements.txt.
+  - package-ecosystem: pip
+    directory: /App/Backend
+    schedule:
+      interval: weekly
+    groups:
+      backend-python:
+        patterns:
+          - "*"
+
+  # Frontend — dependencias JavaScript declaradas en App/Frontend/package.json.
+  # El lockfile (App/Frontend/package-lock.json) sigue versionado y la CI
+  # instala con `npm ci`; la reproducibilidad no depende de los rangos `^`.
+  - package-ecosystem: npm
+    directory: /App/Frontend
+    schedule:
+      interval: weekly
+    groups:
+      frontend-npm:
+        patterns:
+          - "*"
+
+  # GitHub Actions — versiones de las actions usadas en .github/workflows/.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      github-actions:
+        patterns:
+          - "*"
