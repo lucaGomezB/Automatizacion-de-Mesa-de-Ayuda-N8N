@@ -6,11 +6,14 @@ Recover the measurement of each telephony corpus case by ``corpus_case_id`` from
 the dedicated read endpoint ``GET /api/v1/telefonia/ingresos`` (D5) and write it
 back to the corpus with the SAME harness guarantees as ``ingest_via_n8n`` (D6):
 
-    t_pipeline_s = t_e2e_s = latencia_e2e_ms / 1000
+    t_pipeline_s = t_e2e_s = duracion_segundos + latencia_e2e_ms / 1000
     t_espera_s   = None   (empty/N-A: there is no client wait in telephony, D4)
 
 The canonical ``tiempo_automatizado_s`` is ``t_e2e_s`` and matches the other
-channels (single source of truth: the linked incident's ``latencia_e2e_ms``).
+channels. Grupo E (c-77, D-E2, Opción A) sums the recording/call duration
+(``duracion_segundos``) so the telephony base of comparison is conceptually
+comparable to the manual time. The recording is capped at 45 s
+(``<Record maxLength="45">``), so the value is a LOWER BOUND of the real time.
 
 ``--replace`` (D7) removes the PRIOR rows of a case, keeping only the latest
 ingreso. It is destructive (governance ALTO): ``--replace`` alone is a dry-run
@@ -83,9 +86,19 @@ class TelefoniaMetric:
 
 
 def derive_telefonia_metric(
-    latencia_e2e_ms: int | None, *, latencia_anomala: bool = False
+    latencia_e2e_ms: int | None,
+    *,
+    duracion_segundos: int | None = None,
+    latencia_anomala: bool = False,
 ) -> TelefoniaMetric:
-    """Derive ``t_pipeline_s = t_e2e_s = latencia_e2e_ms / 1000`` for one case.
+    """Derive the comparable automated time for one telephony case (c-77, D-E2).
+
+    Grupo E (Opción A): the corrected telephony automated time is
+    ``tiempo_automatizado_s = duracion_segundos + latencia_e2e_ms / 1000`` — the
+    recording/call duration plus the end-to-end pipeline latency. A missing
+    duration contributes nothing (no fictitious value is fabricated). The
+    recording is capped at 45 s (``<Record maxLength="45">``), so the result is a
+    LOWER BOUND of the real comparable time.
 
     A case is anomalous (excluded from the corpus and analysis) when the latency
     is missing, non-positive or explicitly flagged. Anomalies are reported, NOT
@@ -94,6 +107,8 @@ def derive_telefonia_metric(
     if latencia_anomala or latencia_e2e_ms is None or latencia_e2e_ms <= 0:
         return TelefoniaMetric(None, None, None, True)
     seconds = round(float(latencia_e2e_ms) / 1000.0, 3)
+    if duracion_segundos is not None:
+        seconds = round(seconds + float(duracion_segundos), 3)
     return TelefoniaMetric(seconds, None, seconds, False)
 
 
@@ -103,11 +118,15 @@ def build_telefonia_result(
     """Build a description-free ``CaseResult`` from the endpoint payload.
 
     ``t_espera_s`` is always ``None`` so the existing writers omit the wait cell
-    without touching it (D4).
+    without touching it (D4). ``duracion_segundos`` (Twilio ``RecordingDuration``,
+    exposed by the read endpoint in D-E1) is summed into the comparable time.
     """
     latencia = detail.get("latencia_e2e_ms")
+    duracion = detail.get("duracion_segundos")
     metric = derive_telefonia_metric(
-        latencia, latencia_anomala=bool(detail.get("latencia_anomala", False))
+        latencia,
+        duracion_segundos=duracion if isinstance(duracion, int) and not isinstance(duracion, bool) else None,
+        latencia_anomala=bool(detail.get("latencia_anomala", False)),
     )
     ingresado_en = ivn._to_utc(detail.get("ingresado_en"))
     persistido_en = ivn._to_utc(detail.get("persistido_en"))

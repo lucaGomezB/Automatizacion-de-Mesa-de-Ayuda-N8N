@@ -255,6 +255,7 @@ def _ingreso_to_read(ingreso) -> TelefoniaIngresoRead:
         persistido_en=ingreso.persistido_en,
         incidente_id=ingreso.incidente_id,
         latencia_e2e_ms=latencia,
+        duracion_segundos=ingreso.duracion_segundos,
     )
 
 

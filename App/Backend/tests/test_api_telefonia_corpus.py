@@ -888,3 +888,51 @@ async def test_replay_idempotente_enlaza_ingreso_no_enlazado(engine):
         assert replay.json()["id"] == inc_id
 
     assert (await _get_ingreso(engine, "CA-HEAL-1")).incidente_id == inc_id
+
+
+# ── c-77 E1 — duracion_segundos expuesta en la lectura del corpus ───────────
+
+
+async def test_get_ingresos_expone_duracion_segundos(engine):
+    """c-77 E1: la lectura del corpus expone la `duracion_segundos` cruda de
+    Twilio (RecordingDuration) junto a la latencia end-to-end."""
+    await _seed_ingreso(
+        engine,
+        call_sid="CA-DUR-1",
+        transcripcion_estado="transcrito",
+        corpus_case_id="CASO-DUR",
+        duracion_segundos=33,
+    )
+
+    async with _api_client(
+        engine, seed_empleado_rol="administrador_directorio"
+    ) as client:
+        resp = await client.get(
+            _INGRESOS_PATH, params={"corpus_case_id": "CASO-DUR", "latest": "true"}
+        )
+
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["duracion_segundos"] == 33
+
+
+async def test_get_ingresos_duracion_segundos_nula_es_none(engine):
+    """c-77 E1 triangulacion: sin grabacion informada el campo es None, no 0."""
+    await _seed_ingreso(
+        engine,
+        call_sid="CA-DUR-2",
+        transcripcion_estado="transcrito",
+        corpus_case_id="CASO-DUR-NULL",
+    )
+
+    async with _api_client(
+        engine, seed_empleado_rol="administrador_directorio"
+    ) as client:
+        resp = await client.get(
+            _INGRESOS_PATH,
+            params={"corpus_case_id": "CASO-DUR-NULL", "latest": "true"},
+        )
+
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["duracion_segundos"] is None

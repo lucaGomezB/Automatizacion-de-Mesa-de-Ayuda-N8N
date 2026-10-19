@@ -85,6 +85,7 @@ class TelefoniaIngresoRead(BaseModel):
     persistido_en: datetime | None = None
     incidente_id: int | None = None
     latencia_e2e_ms: int | None = None
+    duracion_segundos: int | None = None
 
 
 class TelefoniaCorpusDeleteResult(BaseModel):

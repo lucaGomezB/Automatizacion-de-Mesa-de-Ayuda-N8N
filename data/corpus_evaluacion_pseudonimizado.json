@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "metadata": {
-    "descripcion": "Corpus de evaluacion pseudonimizado (mesa de ayuda) — 200 casos reales; tiempos automatizados pendientes de medicion end-to-end",
+    "descripcion": "Corpus de evaluacion pseudonimizado (mesa de ayuda) — 200 casos reales; los 200 tiempos automatizados estan medidos end-to-end (los tiempos manuales corresponden a la clasificacion manual)",
     "total_casos": 200
   },
   "casos": [
@@ -23,7 +23,7 @@
       "sector_asignado": "Soporte Tecnico Software",
       "sectores_adicionales": [],
       "tiempo_manual_s": 110.0,
-      "tiempo_automatizado_s": 13.012
+      "tiempo_automatizado_s": 19.012
     },
     {
       "id": "R003",
@@ -35,7 +35,7 @@
         "Bases de Datos"
       ],
       "tiempo_manual_s": 220.0,
-      "tiempo_automatizado_s": 11.647
+      "tiempo_automatizado_s": 22.647
     },
     {
       "id": "R004",
@@ -55,7 +55,7 @@
       "sector_asignado": "Soporte Tecnico Software",
       "sectores_adicionales": [],
       "tiempo_manual_s": 50.0,
-      "tiempo_automatizado_s": 10.445
+      "tiempo_automatizado_s": 15.445
     },
     {
       "id": "R006",
@@ -84,7 +84,7 @@
         "Sistemas"
       ],
       "tiempo_manual_s": 105.0,
-      "tiempo_automatizado_s": 11.95
+      "tiempo_automatizado_s": 17.95
     },
     {
       "id": "R009",
@@ -96,7 +96,7 @@
         "Soporte Tecnico Software"
       ],
       "tiempo_manual_s": 170.0,
-      "tiempo_automatizado_s": 11.674
+      "tiempo_automatizado_s": 16.674
     },
     {
       "id": "R010",
@@ -118,7 +118,7 @@
         "Soporte Tecnico Software"
       ],
       "tiempo_manual_s": 200.0,
-      "tiempo_automatizado_s": 12.348
+      "tiempo_automatizado_s": 24.348
     },
     {
       "id": "R012",
@@ -149,7 +149,7 @@
         "Seguridad Informatica"
       ],
       "tiempo_manual_s": 40.0,
-      "tiempo_automatizado_s": 9.909
+      "tiempo_automatizado_s": 16.909
     },
     {
       "id": "R015",
@@ -180,7 +180,7 @@
       "sector_asignado": "Soporte Tecnico Hardware",
       "sectores_adicionales": [],
       "tiempo_manual_s": 72.0,
-      "tiempo_automatizado_s": 8.326
+      "tiempo_automatizado_s": 15.326
     },
     {
       "id": "R018",
@@ -210,7 +210,7 @@
         "Soporte Tecnico Hardware"
       ],
       "tiempo_manual_s": 190.0,
-      "tiempo_automatizado_s": 10.027
+      "tiempo_automatizado_s": 14.027
     },
     {
       "id": "R021",
@@ -221,7 +221,7 @@
         "Sistemas"
       ],
       "tiempo_manual_s": 80.0,
-      "tiempo_automatizado_s": 12.396
+      "tiempo_automatizado_s": 21.396
     },
     {
       "id": "R022",
@@ -261,7 +261,7 @@
       "sector_asignado": "Soporte Tecnico Hardware",
       "sectores_adicionales": [],
       "tiempo_manual_s": 40.0,
-      "tiempo_automatizado_s": 9.981
+      "tiempo_automatizado_s": 17.981
     },
     {
       "id": "R026",
@@ -320,7 +320,7 @@
         "Sistemas"
       ],
       "tiempo_manual_s": 40.0,
-      "tiempo_automatizado_s": 10.336
+      "tiempo_automatizado_s": 16.336
     },
     {
       "id": "R032",
@@ -331,7 +331,7 @@
         "Soporte Tecnico Hardware"
       ],
       "tiempo_manual_s": 90.0,
-      "tiempo_automatizado_s": 11.017
+      "tiempo_automatizado_s": 18.017
     },
     {
       "id": "R033",
@@ -342,7 +342,7 @@
         "Sistemas"
       ],
       "tiempo_manual_s": 110.0,
-      "tiempo_automatizado_s": 11.208
+      "tiempo_automatizado_s": 23.208
     },
     {
       "id": "R034",
@@ -351,7 +351,7 @@
       "sector_asignado": "Soporte Tecnico Hardware",
       "sectores_adicionales": [],
       "tiempo_manual_s": 50.0,
-      "tiempo_automatizado_s": 8.942
+      "tiempo_automatizado_s": 14.942
     },
     {
       "id": "R035",
@@ -392,7 +392,7 @@
       "sector_asignado": "Soporte Tecnico Hardware",
       "sectores_adicionales": [],
       "tiempo_manual_s": 85.0,
-      "tiempo_automatizado_s": 11.085
+      "tiempo_automatizado_s": 16.085
     },
     {
       "id": "R039",
@@ -425,7 +425,7 @@
         "Bases de Datos"
       ],
       "tiempo_manual_s": 90.0,
-      "tiempo_automatizado_s": 10.837
+      "tiempo_automatizado_s": 16.837
     },
     {
       "id": "R042",
@@ -465,7 +465,7 @@
       "sector_asignado": "Seguridad Informatica",
       "sectores_adicionales": [],
       "tiempo_manual_s": 30.0,
-      "tiempo_automatizado_s": 12.618
+      "tiempo_automatizado_s": 17.618
     },
     {
       "id": "R046",
@@ -477,7 +477,7 @@
         "Soporte Tecnico Software"
       ],
       "tiempo_manual_s": 70.0,
-      "tiempo_automatizado_s": 9.508
+      "tiempo_automatizado_s": 16.508
     },
     {
       "id": "R047",
@@ -489,7 +489,7 @@
         "Soporte Tecnico Software"
       ],
       "tiempo_manual_s": 60.0,
-      "tiempo_automatizado_s": 11.56
+      "tiempo_automatizado_s": 18.56
     },
     {
       "id": "R048",
@@ -498,7 +498,7 @@
       "sector_asignado": "Seguridad Informatica",
       "sectores_adicionales": [],
       "tiempo_manual_s": 30.0,
-      "tiempo_automatizado_s": 11.433
+      "tiempo_automatizado_s": 18.433
     },
     {
       "id": "R049",
@@ -521,7 +521,7 @@
         "Seguridad Informatica"
       ],
       "tiempo_manual_s": 220.0,
-      "tiempo_automatizado_s": 11.813
+      "tiempo_automatizado_s": 20.813
     },
     {
       "id": "R051",
@@ -544,7 +544,7 @@
         "Sistemas"
       ],
       "tiempo_manual_s": 45.0,
-      "tiempo_automatizado_s": 9.639
+      "tiempo_automatizado_s": 15.639
     },
     {
       "id": "R053",
@@ -566,7 +566,7 @@
         "Sistemas"
       ],
       "tiempo_manual_s": 60.0,
-      "tiempo_automatizado_s": 11.326
+      "tiempo_automatizado_s": 17.326
     },
     {
       "id": "R055",
@@ -587,7 +587,7 @@
         "Seguridad Informatica"
       ],
       "tiempo_manual_s": 50.0,
-      "tiempo_automatizado_s": 10.807
+      "tiempo_automatizado_s": 17.807
     },
     {
       "id": "R057",
@@ -599,7 +599,7 @@
         "Seguridad Informatica"
       ],
       "tiempo_manual_s": 50.0,
-      "tiempo_automatizado_s": 19.347
+      "tiempo_automatizado_s": 27.347
     },
     {
       "id": "R058",
@@ -623,7 +623,7 @@
         "Soporte Tecnico Hardware"
       ],
       "tiempo_manual_s": 120.0,
-      "tiempo_automatizado_s": 12.966
+      "tiempo_automatizado_s": 18.966
     },
     {
       "id": "R060",
@@ -721,7 +721,7 @@
         "Soporte Tecnico Software"
       ],
       "tiempo_manual_s": 50.0,
-      "tiempo_automatizado_s": 13.318
+      "tiempo_automatizado_s": 22.318
     },
     {
       "id": "R069",
@@ -741,7 +741,7 @@
       "sector_asignado": "Soporte Tecnico Software",
       "sectores_adicionales": [],
       "tiempo_manual_s": 40.0,
-      "tiempo_automatizado_s": 10.153
+      "tiempo_automatizado_s": 18.153
     },
     {
       "id": "R071",
@@ -772,7 +772,7 @@
         "Sistemas"
       ],
       "tiempo_manual_s": 60.0,
-      "tiempo_automatizado_s": 14.056
+      "tiempo_automatizado_s": 23.056
     },
     {
       "id": "R074",
@@ -792,7 +792,7 @@
         "Seguridad Informatica"
       ],
       "tiempo_manual_s": 80.0,
-      "tiempo_automatizado_s": 12.465
+      "tiempo_automatizado_s": 16.465
     },
     {
       "id": "R076",
@@ -803,7 +803,7 @@
         "Seguridad Informatica"
       ],
       "tiempo_manual_s": 70.0,
-      "tiempo_automatizado_s": 13.287
+      "tiempo_automatizado_s": 17.287
     },
     {
       "id": "R077",
@@ -841,7 +841,7 @@
       "sector_asignado": "Soporte Tecnico Software",
       "sectores_adicionales": [],
       "tiempo_manual_s": 100.0,
-      "tiempo_automatizado_s": 14.392
+      "tiempo_automatizado_s": 19.392
     },
     {
       "id": "R081",
@@ -852,7 +852,7 @@
         "Seguridad Informatica"
       ],
       "tiempo_manual_s": 70.0,
-      "tiempo_automatizado_s": 12.698
+      "tiempo_automatizado_s": 18.698
     },
     {
       "id": "R082",
@@ -881,7 +881,7 @@
         "Sistemas"
       ],
       "tiempo_manual_s": 95.0,
-      "tiempo_automatizado_s": 10.382
+      "tiempo_automatizado_s": 14.382
     },
     {
       "id": "R085",
@@ -890,7 +890,7 @@
       "sector_asignado": "Soporte Tecnico Hardware",
       "sectores_adicionales": [],
       "tiempo_manual_s": 110.0,
-      "tiempo_automatizado_s": 12.035
+      "tiempo_automatizado_s": 16.035
     },
     {
       "id": "R086",
@@ -899,7 +899,7 @@
       "sector_asignado": "Soporte Tecnico Hardware",
       "sectores_adicionales": [],
       "tiempo_manual_s": 200.0,
-      "tiempo_automatizado_s": 9.892
+      "tiempo_automatizado_s": 16.892
     },
     {
       "id": "R087",
@@ -908,7 +908,7 @@
       "sector_asignado": "Soporte Tecnico Hardware",
       "sectores_adicionales": [],
       "tiempo_manual_s": 180.0,
-      "tiempo_automatizado_s": 11.975
+      "tiempo_automatizado_s": 18.975
     },
     {
       "id": "R088",
@@ -926,7 +926,7 @@
       "sector_asignado": "Soporte Tecnico Hardware",
       "sectores_adicionales": [],
       "tiempo_manual_s": 70.0,
-      "tiempo_automatizado_s": 11.075
+      "tiempo_automatizado_s": 18.075
     },
     {
       "id": "R090",
@@ -935,7 +935,7 @@
       "sector_asignado": "Soporte Tecnico Hardware",
       "sectores_adicionales": [],
       "tiempo_manual_s": 40.0,
-      "tiempo_automatizado_s": 10.712
+      "tiempo_automatizado_s": 15.712
     },
     {
       "id": "R091",
@@ -944,7 +944,7 @@
       "sector_asignado": "Soporte Tecnico Hardware",
       "sectores_adicionales": [],
       "tiempo_manual_s": 40.0,
-      "tiempo_automatizado_s": 10.815
+      "tiempo_automatizado_s": 16.815
     },
     {
       "id": "R092",
@@ -980,7 +980,7 @@
       "sector_asignado": "Soporte Tecnico Hardware",
       "sectores_adicionales": [],
       "tiempo_manual_s": 50.0,
-      "tiempo_automatizado_s": 17.234
+      "tiempo_automatizado_s": 23.234
     },
     {
       "id": "R096",
@@ -1043,7 +1043,7 @@
       "sector_asignado": "Soporte Tecnico Hardware",
       "sectores_adicionales": [],
       "tiempo_manual_s": 80.0,
-      "tiempo_automatizado_s": 11.886
+      "tiempo_automatizado_s": 20.886
     },
     {
       "id": "R103",
@@ -1052,7 +1052,7 @@
       "sector_asignado": "Soporte Tecnico Hardware",
       "sectores_adicionales": [],
       "tiempo_manual_s": 70.0,
-      "tiempo_automatizado_s": 12.648
+      "tiempo_automatizado_s": 18.648
     },
     {
       "id": "R104",
@@ -1061,7 +1061,7 @@
       "sector_asignado": "Soporte Tecnico Hardware",
       "sectores_adicionales": [],
       "tiempo_manual_s": 60.0,
-      "tiempo_automatizado_s": 12.009
+      "tiempo_automatizado_s": 16.009
     },
     {
       "id": "R105",
@@ -1070,7 +1070,7 @@
       "sector_asignado": "Soporte Tecnico Hardware",
       "sectores_adicionales": [],
       "tiempo_manual_s": 110.0,
-      "tiempo_automatizado_s": 13.109
+      "tiempo_automatizado_s": 21.109
     },
     {
       "id": "R106",
@@ -1079,7 +1079,7 @@
       "sector_asignado": "Soporte Tecnico Hardware",
       "sectores_adicionales": [],
       "tiempo_manual_s": 45.0,
-      "tiempo_automatizado_s": 11.408
+      "tiempo_automatizado_s": 15.408
     },
     {
       "id": "R107",
@@ -1124,7 +1124,7 @@
       "sector_asignado": "Soporte Tecnico Hardware",
       "sectores_adicionales": [],
       "tiempo_manual_s": 40.0,
-      "tiempo_automatizado_s": 11.85
+      "tiempo_automatizado_s": 15.85
     },
     {
       "id": "R112",
@@ -1144,7 +1144,7 @@
       "sector_asignado": "Soporte Tecnico Hardware",
       "sectores_adicionales": [],
       "tiempo_manual_s": 80.0,
-      "tiempo_automatizado_s": 14.741
+      "tiempo_automatizado_s": 20.741
     },
     {
       "id": "R114",
@@ -1165,7 +1165,7 @@
         "Soporte Tecnico Software"
       ],
       "tiempo_manual_s": 115.0,
-      "tiempo_automatizado_s": 13.344
+      "tiempo_automatizado_s": 17.344
     },
     {
       "id": "R116",
@@ -1176,7 +1176,7 @@
         "Soporte Tecnico Software"
       ],
       "tiempo_manual_s": 120.0,
-      "tiempo_automatizado_s": 11.49
+      "tiempo_automatizado_s": 18.49
     },
     {
       "id": "R117",
@@ -1185,7 +1185,7 @@
       "sector_asignado": "Soporte Tecnico Software",
       "sectores_adicionales": [],
       "tiempo_manual_s": 160.0,
-      "tiempo_automatizado_s": 14.339
+      "tiempo_automatizado_s": 19.339
     },
     {
       "id": "R118",
@@ -1208,7 +1208,7 @@
         "Sistemas"
       ],
       "tiempo_manual_s": 130.0,
-      "tiempo_automatizado_s": 12.189
+      "tiempo_automatizado_s": 20.189
     },
     {
       "id": "R120",
@@ -1222,7 +1222,7 @@
         "Bases de Datos"
       ],
       "tiempo_manual_s": 220.0,
-      "tiempo_automatizado_s": 12.604
+      "tiempo_automatizado_s": 19.604
     },
     {
       "id": "R121",
@@ -1234,7 +1234,7 @@
         "Soporte Tecnico Software"
       ],
       "tiempo_manual_s": 140.0,
-      "tiempo_automatizado_s": 11.155
+      "tiempo_automatizado_s": 17.155
     },
     {
       "id": "R122",
@@ -1286,7 +1286,7 @@
       "sector_asignado": "Seguridad Informatica",
       "sectores_adicionales": [],
       "tiempo_manual_s": 95.0,
-      "tiempo_automatizado_s": 14.15
+      "tiempo_automatizado_s": 59.15
     },
     {
       "id": "R127",
@@ -1355,7 +1355,7 @@
         "Sistemas"
       ],
       "tiempo_manual_s": 30.0,
-      "tiempo_automatizado_s": 19.349
+      "tiempo_automatizado_s": 26.349
     },
     {
       "id": "R134",
@@ -1366,7 +1366,7 @@
         "Sistemas"
       ],
       "tiempo_manual_s": 50.0,
-      "tiempo_automatizado_s": 16.898
+      "tiempo_automatizado_s": 23.898
     },
     {
       "id": "R135",
@@ -1377,7 +1377,7 @@
         "Seguridad Informatica"
       ],
       "tiempo_manual_s": 60.0,
-      "tiempo_automatizado_s": 14.662
+      "tiempo_automatizado_s": 22.662
     },
     {
       "id": "R136",
@@ -1388,7 +1388,7 @@
         "Seguridad Informatica"
       ],
       "tiempo_manual_s": 50.0,
-      "tiempo_automatizado_s": 15.315
+      "tiempo_automatizado_s": 24.315
     },
     {
       "id": "R137",
@@ -1399,7 +1399,7 @@
         "Seguridad Informatica"
       ],
       "tiempo_manual_s": 80.0,
-      "tiempo_automatizado_s": 15.123
+      "tiempo_automatizado_s": 26.123
     },
     {
       "id": "R138",
@@ -1410,7 +1410,7 @@
         "Seguridad Informatica"
       ],
       "tiempo_manual_s": 90.0,
-      "tiempo_automatizado_s": 15.185
+      "tiempo_automatizado_s": 24.185
     },
     {
       "id": "R139",
@@ -1421,7 +1421,7 @@
         "Seguridad Informatica"
       ],
       "tiempo_manual_s": 120.0,
-      "tiempo_automatizado_s": 12.047
+      "tiempo_automatizado_s": 19.047
     },
     {
       "id": "R140",
@@ -1454,7 +1454,7 @@
         "Soporte Tecnico Software"
       ],
       "tiempo_manual_s": 60.0,
-      "tiempo_automatizado_s": 13.887
+      "tiempo_automatizado_s": 20.887
     },
     {
       "id": "R143",
@@ -1466,7 +1466,7 @@
         "Seguridad Informatica"
       ],
       "tiempo_manual_s": 80.0,
-      "tiempo_automatizado_s": 12.598
+      "tiempo_automatizado_s": 17.598
     },
     {
       "id": "R144",
@@ -1585,7 +1585,7 @@
       "sector_asignado": "Soporte Tecnico Hardware",
       "sectores_adicionales": [],
       "tiempo_manual_s": 60.0,
-      "tiempo_automatizado_s": 11.541
+      "tiempo_automatizado_s": 15.541
     },
     {
       "id": "R156",
@@ -1626,7 +1626,7 @@
       "sector_asignado": "Soporte Tecnico Hardware",
       "sectores_adicionales": [],
       "tiempo_manual_s": 80.0,
-      "tiempo_automatizado_s": 12.953
+      "tiempo_automatizado_s": 20.953
     },
     {
       "id": "R160",
@@ -1658,7 +1658,7 @@
       "sector_asignado": "Soporte Tecnico Hardware",
       "sectores_adicionales": [],
       "tiempo_manual_s": 40.0,
-      "tiempo_automatizado_s": 14.036
+      "tiempo_automatizado_s": 17.036
     },
     {
       "id": "R163",
@@ -1676,7 +1676,7 @@
       "sector_asignado": "Soporte Tecnico Software",
       "sectores_adicionales": [],
       "tiempo_manual_s": 50.0,
-      "tiempo_automatizado_s": 13.937
+      "tiempo_automatizado_s": 22.937
     },
     {
       "id": "R165",
@@ -1727,7 +1727,7 @@
       "sector_asignado": "Soporte Tecnico Software",
       "sectores_adicionales": [],
       "tiempo_manual_s": 40.0,
-      "tiempo_automatizado_s": 12.815
+      "tiempo_automatizado_s": 26.815
     },
     {
       "id": "R170",
@@ -1758,7 +1758,7 @@
         "Seguridad Informatica"
       ],
       "tiempo_manual_s": 60.0,
-      "tiempo_automatizado_s": 14.062
+      "tiempo_automatizado_s": 22.062
     },
     {
       "id": "R173",
@@ -1769,7 +1769,7 @@
         "Sistemas"
       ],
       "tiempo_manual_s": 70.0,
-      "tiempo_automatizado_s": 35.831
+      "tiempo_automatizado_s": 41.831
     },
     {
       "id": "R174",
@@ -1780,7 +1780,7 @@
         "Sistemas"
       ],
       "tiempo_manual_s": 90.0,
-      "tiempo_automatizado_s": 14.141
+      "tiempo_automatizado_s": 21.141
     },
     {
       "id": "R175",
@@ -1860,7 +1860,7 @@
         "Soporte Tecnico Software"
       ],
       "tiempo_manual_s": 40.0,
-      "tiempo_automatizado_s": 13.982
+      "tiempo_automatizado_s": 18.982
     },
     {
       "id": "R183",
@@ -1872,7 +1872,7 @@
         "Seguridad Informatica"
       ],
       "tiempo_manual_s": 80.0,
-      "tiempo_automatizado_s": 12.827
+      "tiempo_automatizado_s": 18.827
     },
     {
       "id": "R184",
@@ -1883,7 +1883,7 @@
         "Sistemas"
       ],
       "tiempo_manual_s": 60.0,
-      "tiempo_automatizado_s": 12.464
+      "tiempo_automatizado_s": 20.464
     },
     {
       "id": "R185",
@@ -1974,7 +1974,7 @@
         "Soporte Tecnico Hardware"
       ],
       "tiempo_manual_s": 50.0,
-      "tiempo_automatizado_s": 16.194
+      "tiempo_automatizado_s": 20.194
     },
     {
       "id": "R194",
@@ -1985,7 +1985,7 @@
         "Sistemas"
       ],
       "tiempo_manual_s": 100.0,
-      "tiempo_automatizado_s": 13.529
+      "tiempo_automatizado_s": 22.529
     },
     {
       "id": "R195",
@@ -2005,7 +2005,7 @@
       "sector_asignado": "Soporte Tecnico Software",
       "sectores_adicionales": [],
       "tiempo_manual_s": 120.0,
-      "tiempo_automatizado_s": 11.652
+      "tiempo_automatizado_s": 16.652
     },
     {
       "id": "R197",
@@ -2016,7 +2016,7 @@
         "Soporte Tecnico Hardware"
       ],
       "tiempo_manual_s": 130.0,
-      "tiempo_automatizado_s": 11.594
+      "tiempo_automatizado_s": 15.594
     },
     {
       "id": "R198",
@@ -2045,7 +2045,7 @@
         "Seguridad Informatica"
       ],
       "tiempo_manual_s": 180.0,
-      "tiempo_automatizado_s": 14.963
+      "tiempo_automatizado_s": 28.963
     }
   ]
 }

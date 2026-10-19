@@ -121,6 +121,46 @@ def test_derive_telefonia_metric_explicit_anomaly_flag():
     assert metric.anomalo is True
 
 
+# ── Grupo E (c-77): duracion de llamada + latencia e2e ──────────────────────
+
+
+def test_derive_telefonia_metric_adds_call_duration():
+    # tiempo_automatizado_s = duracion_segundos + latencia_e2e_ms/1000 (D-E2).
+    metric = itc.derive_telefonia_metric(2000, duracion_segundos=6)
+    assert metric.t_e2e_s == pytest.approx(8.0)
+    assert metric.t_pipeline_s == pytest.approx(8.0)
+    assert metric.anomalo is False
+
+
+def test_derive_telefonia_metric_duration_none_adds_nothing():
+    # Sin duracion no se fabrica un valor: la metrica queda igual a la latencia.
+    metric = itc.derive_telefonia_metric(2000, duracion_segundos=None)
+    assert metric.t_e2e_s == pytest.approx(2.0)
+    assert metric.anomalo is False
+
+
+def test_derive_telefonia_metric_cap_45s_lower_bound():
+    # Cota inferior: la grabacion esta acotada a 45 s (<Record maxLength="45">).
+    metric = itc.derive_telefonia_metric(1000, duracion_segundos=45)
+    assert metric.t_e2e_s == pytest.approx(46.0)
+    assert metric.anomalo is False
+
+
+def test_build_telefonia_result_adds_call_duration():
+    result = itc.build_telefonia_result(
+        case_id="R002", detail=_detail(13012, duracion_segundos=6)
+    )
+    assert result.t_e2e_s == pytest.approx(19.012)
+    assert result.t_pipeline_s == pytest.approx(19.012)
+    assert result.latencia_e2e_ms == 13012
+
+
+def test_build_telefonia_result_without_duration_adds_nothing():
+    result = itc.build_telefonia_result(case_id="R002", detail=_detail(2000))
+    assert result.t_e2e_s == pytest.approx(2.0)
+    assert result.anomalo is False
+
+
 # ── Result construction (tasks 5.1-5.3) ─────────────────────────────────────
 
 
