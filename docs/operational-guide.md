@@ -329,19 +329,38 @@ bash scripts/backup.sh
 
 Ambos scripts son idempotentes:
 - Crean el directorio `backups/` si no existe.
-- Generan un archivo `backups/backup_YYYY-MM-DD.sql`.
-- Conservan los 7 backups mas recientes y eliminan los mas antiguos.
+- Generan un archivo cifrado en reposo `backups/backup_YYYY-MM-DD.sql.enc` (AES-256-CBC + pbkdf2).
+- Conservan los 7 backups cifrados mas recientes y eliminan los mas antiguos.
+- Abortan sin persistir un dump en claro si falta `BACKUP_ENCRYPTION_PASSPHRASE`.
 - Emiten un mensaje de error claro si el contenedor PostgreSQL no esta corriendo.
 
 #### Programacion automatica diaria
 
+El programador esta VERSIONADO en el repositorio: `scripts/backup-schedule.cron`.
+Ese archivo es la fuente de verdad de la cadencia diaria e invoca `scripts/backup.sh`
+registrando la salida en `backups/backup.log`. No contiene secretos: la passphrase
+`BACKUP_ENCRYPTION_PASSPHRASE` se aporta por el entorno del host al ejecutar.
+
 **Linux / macOS (cron):**
 
-Agregar al crontab (reemplazar `/ruta/al/repo` con la ruta real):
-
-```cron
-0 3 * * * cd /ruta/al/repo && bash scripts/backup.sh >> /var/log/mesa_backup.log 2>&1
+```bash
+# Ajustar la ruta del repo dentro del archivo si hace falta y luego instalarlo:
+( crontab -l 2>/dev/null; cat scripts/backup-schedule.cron ) | crontab -
 ```
+
+**Linux (systemd, alternativa equivalente):**
+
+El propio `scripts/backup-schedule.cron` documenta la unidad `service` + `timer`
+equivalente. Instalacion resumida (ver el encabezado del archivo para el contenido):
+
+```bash
+# Crear /etc/systemd/system/mesa-backup.service y mesa-backup.timer con el
+# contenido documentado en scripts/backup-schedule.cron, y luego:
+sudo systemctl daemon-reload && sudo systemctl enable --now mesa-backup.timer
+```
+
+La passphrase se inyecta con un `EnvironmentFile` externo al repositorio (por
+ejemplo `/etc/mesa/backup.env`), nunca dentro del archivo versionado.
 
 **Windows (Task Scheduler):**
 
@@ -372,23 +391,83 @@ docker compose exec -T postgres psql -U mesa mesa_de_ayuda < backup_20260101_030
 > **Precaución**: la restauración sobreescribe los datos existentes. Crear un
 > backup previo antes de restaurar en un entorno con datos.
 
-### 3.3 Backup del volumen Docker (alternativa)
+### 3.3 Snapshot de volumenes Docker (alternativa, accion del adoptante - BACKUP-008)
+
+El snapshot de los volumenes Docker (`postgres` y `n8n`) es una **accion de la
+organizacion adoptante**: el repositorio DOCUMENTA el procedimiento, pero **NO
+existe un generador versionado** de esos snapshots (no hay un
+`scripts/backup-volumes.sh`). El respaldo **canonico y restaurable** es el **dump
+logico de `pg_dump`** cubierto por las secciones 3.1, 3.2 y 3.4 (BACKUP-001,
+BACKUP-005 y BACKUP-007); el snapshot de volumenes es un complemento opcional de
+nivel host.
+
+> **Encuadre**: el snapshot de volumenes no aporta una garantia de restauracion
+> adicional frente al dump logico y depende del host del adoptante; por eso no se
+> versiona un generador. Si el adoptante decide usarlo, asume su generacion manual
+> y su custodia.
+
+Exportar y restaurar el volumen de PostgreSQL (`mesa_local_postgres_data`) y el de
+N8N (`mesa_local_n8n_data`):
 
 ```bash
-# Exportar el volumen completo a un tar
+# Exportar el volumen de PostgreSQL a un tar
 docker run --rm \
-  -v automatizacion-de-mesa-de-ayuda-n8n_postgres_data:/data \
+  -v mesa_local_postgres_data:/data \
   -v $(pwd):/backup \
-  alpine tar czf /backup/postgres_volume_$(date +%Y%m%d).tar.gz -C /data .
+  alpine tar czf /backup/vol_postgres_$(date +%Y%m%d).tgz -C /data .
 
-# Restaurar el volumen desde el tar
+# Exportar el volumen de N8N (configuracion y credenciales del motor) a un tar
 docker run --rm \
-  -v automatizacion-de-mesa-de-ayuda-n8n_postgres_data:/data \
+  -v mesa_local_n8n_data:/data \
   -v $(pwd):/backup \
-  alpine tar xzf /backup/postgres_volume_20260101.tar.gz -C /data
+  alpine tar czf /backup/vol_n8n_$(date +%Y%m%d).tgz -C /data .
+
+# Restaurar el volumen de PostgreSQL desde el tar
+docker run --rm \
+  -v mesa_local_postgres_data:/data \
+  -v $(pwd):/backup \
+  alpine tar xzf /backup/vol_postgres_20260101.tgz -C /data
+
+# Restaurar el volumen de N8N desde el tar
+docker run --rm \
+  -v mesa_local_n8n_data:/data \
+  -v $(pwd):/backup \
+  alpine tar xzf /backup/vol_n8n_20260101.tgz -C /data
 ```
 
-> **Nota**: verificar el nombre real del volumen con `docker volume ls | grep postgres`.
+> **Nota**: verificar el nombre real de cada volumen con
+> `docker volume ls | grep -E 'postgres_data|n8n_data'`. Los `.tgz` de volumenes
+> viven en `backups/`, que esta excluido de git.
+
+### 3.4 Prueba de restauración reproducible (BACKUP-007)
+
+`scripts/backup-restore-test.sh` descifra el dump cifrado mas reciente, lo restaura
+en una base DESCARTABLE y verifica que las tablas esperadas y sus conteos de filas
+sean plausibles. Prueba que el respaldo es realmente restaurable, no solo que existe.
+
+Crear y usar la base descartable (nunca la base de la aplicacion `mesa_de_ayuda`):
+
+```bash
+# 1. Asegurar PostgreSQL
+docker compose up -d postgres
+
+# 2. Ejecutar la prueba de restauracion
+BACKUP_ENCRYPTION_PASSPHRASE="<secreto-de-despliegue>" \
+DATABASE_URL="postgresql+asyncpg://mesa:<password>@postgres:5432/mesa_de_ayuda" \
+RESTORE_DB_NAME="mesa_de_ayuda_restore_test" \
+bash scripts/backup-restore-test.sh
+```
+
+El script crea `mesa_de_ayuda_restore_test`, restaura el dump, verifica tablas y
+filas, y elimina la base descartable al finalizar.
+
+**Guarda por nombre**: antes de cualquier operacion destructiva el script compara
+el nombre de la base destino contra el de la aplicacion (derivado de `DATABASE_URL`)
+y aborta si coinciden. `TEST_PG_ALLOW_APP_DB=1` es el UNICO escape hatch y se reserva
+a entornos efimeros dedicados; nunca contra una base con datos reales.
+
+La prueba se puede ejecutar periodicamente para evidenciar que la cadena
+backup -> cifrado -> restauracion sigue funcionando.
 
 ---
 

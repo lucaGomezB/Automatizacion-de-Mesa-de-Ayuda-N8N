@@ -1,0 +1,44 @@
+# ==============================================================================
+# Versioned backup schedule for Automatizacion-Mesa-de-Ayuda-N8N (BACKUP-006).
+#
+# This is a TEMPLATE. Replace /path/to/repo with the real checkout path before
+# installing. It invokes scripts/backup.sh and appends its output to
+# backups/backup.log so every run leaves an auditable trace.
+#
+# This file MUST NOT contain secrets. The encryption passphrase is a deployment
+# secret provided by the host execution environment at run time; it is never
+# stored in this file nor inside backups/.
+#
+# --- Install with cron (primary mechanism) ----------------------------------
+#   ( crontab -l 2>/dev/null; cat scripts/backup-schedule.cron ) | crontab -
+# The cron daemon must already run the passphrase in the backup environment
+# (for example, export it from a root-owned file outside the repository).
+#
+# --- Equivalent alternative: systemd service + timer ------------------------
+# When cron is unavailable, install the two units below. The passphrase is
+# injected through an EnvironmentFile kept OUTSIDE the repository (for example
+# /etc/mesa/backup.env) that declares the BACKUP_ENCRYPTION_PASSPHRASE variable.
+#
+#   /etc/systemd/system/mesa-backup.service
+#     [Unit]
+#     Description=PostgreSQL backup for mesa_de_ayuda
+#     [Service]
+#     Type=oneshot
+#     EnvironmentFile=/etc/mesa/backup.env
+#     WorkingDirectory=/path/to/repo
+#     ExecStart=/usr/bin/env bash scripts/backup.sh
+#
+#   /etc/systemd/system/mesa-backup.timer
+#     [Unit]
+#     Description=Daily PostgreSQL backup for mesa_de_ayuda
+#     [Timer]
+#     OnCalendar=*-*-* 03:00:00
+#     Persistent=true
+#     [Install]
+#     WantedBy=timers.target
+#
+#   Install: systemctl daemon-reload && systemctl enable --now mesa-backup.timer
+# ==============================================================================
+
+# m   h  dom mon dow   command
+0     3  *   *   *     cd /path/to/repo && bash scripts/backup.sh >> backups/backup.log 2>&1
