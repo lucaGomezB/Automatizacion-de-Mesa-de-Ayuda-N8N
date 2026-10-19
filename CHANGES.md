@@ -186,6 +186,10 @@ C-92 tesis-marco-teorico-profundidad (aplicar tras C-80)         [ACTIVO — 0/2
       └── C-94 tesis-implementacion-verificabilidad (tras C-93)  [ACTIVO — 0/19; MEDIO]
            └── C-95 tesis-resultados-discusion-rigor (tras C-94) [ACTIVO — 0/35; MEDIO]
                 └── C-96 tesis-citas-tablas-evidencia (tras C-95)[ACTIVO — 0/28; BAJO]
+
+--- FASE 32: Seguimiento de dependencias de seguridad (2026-10-19) ---
+
+C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 — 14/14; MEDIO; ejecuta el FOLLOW-UP de pip-audit de C-64; specs: supply-chain-security y ci-pipeline modificadas]
 ```
 
 ### Paralelismo por fase
@@ -549,8 +553,9 @@ C-92 tesis-marco-teorico-profundidad (aplicar tras C-80)         [ACTIVO — 0/2
 | C-94 | tesis-implementacion-verificabilidad | 31 | aplicar tras C-93 | MEDIO | — |
 | C-95 | tesis-resultados-discusion-rigor | 31 | aplicar tras C-94 | MEDIO | — |
 | C-96 | tesis-citas-tablas-evidencia | 31 | aplicar tras C-95 | BAJO | — |
+| C-97 | actualizar-dependencias-seguridad | 32 | C-64 | MEDIO | — |
 
-**Total**: 93 entradas creadas documentadas (92 numeradas + 1 de mantenimiento sin numero) — 83 archivadas (82 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-62, C-63, C-64, C-65, C-66, C-67, C-68, C-69, C-70, C-71, C-72, C-73, C-74, C-75 y C-81..C-91; mas `improve-dockerfiles`) y 10 ACTIVOS (C-76, C-77, C-78, C-79, C-80, C-92, C-93, C-94, C-95, C-96). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
+**Total**: 94 entradas creadas documentadas (93 numeradas + 1 de mantenimiento sin numero) — 84 archivadas (83 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-62, C-63, C-64, C-65, C-66, C-67, C-68, C-69, C-70, C-71, C-72, C-73, C-74, C-75, C-81..C-91 y C-97; mas `improve-dockerfiles`) y 10 ACTIVOS (C-76, C-77, C-78, C-79, C-80, C-92, C-93, C-94, C-95, C-96). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
 **Planificadas (NO creadas)**: ninguna. El plan de cumplimiento (FASE 21) quedo TOTALMENTE EJECUTADO: C-61 `compliance-gobernanza` (MEDIO), C-62 `hardening-infra-red` (ALTO) y C-63 `identidad-accesos-claves` (CRITICO, split en c-63a/b/c) quedaron ARCHIVADOS (2026-10-01, 2026-10-08 y 2026-10-08), con sus specs `security-governance-docs`, `infra-network-hardening` e `identity-access-hardening`; C-64 `vulnerabilidades-supply-chain` (MEDIO) quedo ARCHIVADO (2026-10-19, 33/33), con su spec `supply-chain-security` creada y `ci-pipeline` y `security-governance-docs` modificadas; C-65 `backup-continuidad` (ALTO) quedo ARCHIVADO (2026-10-19, 31/31), con su spec `continuity-planning` creada y `backup-scripts` modificada; y C-66 `privacidad-transferencias` (ALTO) quedo creado y ARCHIVADO (2026-10-19, 36/36), con su spec `privacy-runtime-surface` creada y `runtime-cost-guard`, `security-governance-docs` y `employee-directory` modificadas. Ver `docs/cumplimiento/plan-cambios-cumplimiento.md`.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
@@ -1927,6 +1932,27 @@ C-92 tesis-marco-teorico-profundidad (aplicar tras C-80)         [ACTIVO — 0/2
 
 ---
 
+## FASE 32 — Seguimiento de dependencias de seguridad (2026-10-19)
+
+> Change post-roadmap de seguimiento: ejecuta el FOLLOW-UP de `pip-audit` que C-64 (vulnerabilidades-supply-chain, FASE 21) dejo declarado como deuda tecnica. NO forma parte del plan de cumplimiento ISO/NIST/Ley 25.326 (ya TOTALMENTE EJECUTADO); es una tarea de saneamiento posterior al roadmap.
+
+### [C-97] `actualizar-dependencias-seguridad` — ARCHIVADO (2026-10-19, 14/14)
+
+- **Estado**: `[x]` CREADO, APLICADO (14/14) y ARCHIVADO (2026-10-19; `openspec/changes/archive/2026-10-19-c-97-actualizar-dependencias-seguridad`). Governance MEDIO. Ejecuta el FOLLOW-UP de `pip-audit` declarado por `C-64` (FASE 21); NO forma parte del plan de cumplimiento, que ya quedo TOTALMENTE EJECUTADO. Specs sincronizadas: `supply-chain-security` y `ci-pipeline` modificadas.
+- **Problema**: la lista de excepciones de `pip-audit` de C-64 registraba 10 hallazgos, 8 de ellos corregibles solo mediante una actualizacion mayor rompiente (7 advisories de `starlette 0.38.6` via `fastapi 0.115` y `PYSEC-2026-1845` de `pytest 8.3.3`), declarados como deuda tecnica pendiente (FOLLOW-UP). Mantener esa deuda engrosaba la superficie mitigada solo por excepcion.
+- **Scope**:
+  - Subir los pins de `App/Backend/requirements.txt`: `fastapi` 0.115.0 -> 0.135.0 (levanta el cap `starlette<0.39`), `starlette` 1.3.1 (pin explicito nuevo), `pytest` 9.1.1 y `pytest-asyncio` 1.4.0.
+  - Podar 8 IDs de `scripts/security/pip_audit_exceptions.txt` (7 advisories de `starlette` + `PYSEC-2026-1845` de `pytest`), dejando solo los 2 hallazgos sin correccion publicada (`python-jose` PYSEC-2026-4298 y `ecdsa` PYSEC-2026-1325); eliminar el bloque FOLLOW-UP y ajustar el encabezado.
+  - Regenerar `docs/openapi.json` con el generador canonico `scripts/export_openapi.py` (unico fallout de FastAPI 0.135: el schema OpenAPI); sin cambios en codigo de aplicacion.
+  - Sin rotura de la suite: 1449 passed (baseline igual, 48 deselected, 1 xfailed); subconjunto de integracion PostgreSQL 48 passed.
+- **Dependencias**: `C-64` (vulnerabilidades-supply-chain, FASE 21; ejecuta su FOLLOW-UP de `pip-audit`).
+- **Governance**: MEDIO
+- **Leer antes**:
+  - `openspec/changes/archive/2026-10-19-c-97-actualizar-dependencias-seguridad/{proposal,design,tasks}.md`
+  - `openspec/specs/supply-chain-security/spec.md`, `openspec/specs/ci-pipeline/spec.md`
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo)
@@ -1980,6 +2006,8 @@ Actualizacion 2026-10-19 (c-66 archivado): C-66 `privacidad-transferencias` qued
 
 Actualizacion 2026-10-19 (c-64 y c-65 archivados): C-64 `vulnerabilidades-supply-chain` (MEDIO) y C-65 `backup-continuidad` (ALTO) quedaron CREADOS, APLICADOS y ARCHIVADOS (2026-10-19; `openspec/changes/archive/2026-10-19-c-64-vulnerabilidades-supply-chain` y `openspec/changes/archive/2026-10-19-c-65-backup-continuidad`). C-64 (33/33) entrego `.github/dependabot.yml`, el job `security-scan` en CI (pip-audit + bandit + npm audit), pinning de imagenes Docker (nginx:1.31.7-alpine, ngrok/ngrok:3.39.8-debian), cotas superiores de dependencias y el documento de evaluacion de seguridad de proveedores; cierra los controles ISO 8.8, 8.28, 8.29 y 5.19-5.23 (trivy/SBOM evaluados y diferidos). C-65 (31/31; revision humana firmada, tarea 9.4) entrego el backup cifrado (openssl AES-256-CBC, `BACKUP_ENCRYPTION_PASSPHRASE`), el scheduler versionado (cron + systemd timer), la prueba de restauracion reproducible, `docs/seguridad/plan-continuidad.md` (RTO/RPO 24h; offsite/redundancia como accion del adoptante), la correccion del gap assessment y el Purpose real para `backup-scripts`; cierra los controles ISO 8.13, 8.14, 5.29, 5.30 y 5.33. Specs sincronizadas en el commit previo al archive (`--skip-specs`): `supply-chain-security` y `continuity-planning` creadas (capabilities nuevas); `ci-pipeline`, `security-governance-docs` (SGD-001 + SGD-016) y `backup-scripts` (BACKUP-005..008) modificadas. Con esto la FASE 21 del plan de cumplimiento ISO/NIST/Ley 25.326 queda TOTALMENTE EJECUTADA (C-61, C-62, C-63a/b/c, C-64, C-65 y C-66 archivados; no queda nada planificado). Totales: 93 entradas creadas documentadas (92 numeradas + 1 de mantenimiento sin numero) — 83 archivadas y 10 activas (C-76..C-80, C-92..C-96).
 
+Actualizacion 2026-10-19 (c-97 archivado): C-97 `actualizar-dependencias-seguridad` (MEDIO) quedo CREADO, APLICADO (14/14) y ARCHIVADO (2026-10-19; `openspec/changes/archive/2026-10-19-c-97-actualizar-dependencias-seguridad`). Es un change post-roadmap que ejecuta el FOLLOW-UP de `pip-audit` declarado por C-64 (FASE 21), NO parte del plan de cumplimiento ISO/NIST/Ley 25.326 (ya TOTALMENTE EJECUTADO). Entrego: `fastapi` 0.115.0 -> 0.135.0 (levanta el cap `starlette<0.39`), `starlette` 1.3.1 (pin explicito nuevo), `pytest` 9.1.1 y `pytest-asyncio` 1.4.0; podo 8 IDs de `scripts/security/pip_audit_exceptions.txt` (7 advisories de `starlette` + `PYSEC-2026-1845` de `pytest`), dejando solo los 2 hallazgos sin correccion publicada (`python-jose` PYSEC-2026-4298 y `ecdsa` PYSEC-2026-1325); regenero `docs/openapi.json` (unico fallout de FastAPI 0.135); sin rotura de codigo de aplicacion (suite 1449 passed, baseline igual; integracion PostgreSQL 48 passed). Specs sincronizadas: `supply-chain-security` y `ci-pipeline` modificadas. Totales: 94 entradas creadas documentadas (93 numeradas + 1 de mantenimiento sin numero) — 84 archivadas y 10 activas (C-76..C-80, C-92..C-96).
+
 Cambios que NO estan en el roadmap original porque se implementaron durante el desarrollo:
 - Clasificador hibrido (completo)
 - CRUD de incidentes (completo)
@@ -1996,7 +2024,7 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 
 ## Primer change recomendado
 
-Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01), C-61 (2026-10-01, 26/26), C-69 (2026-10-05, 30/30), C-71 (2026-10-06, 43/43), C-60 (2026-10-06, 33/33), C-70 (2026-10-06, 72/72), C-72 (2026-10-07, 37/37), C-73 (2026-10-07, 23/23), C-74 (2026-10-07, 32/32), C-75 (2026-10-08, 14/14), C-56 (2026-10-08, 27/27), C-68 (2026-10-09, 63/63), C-81 (2026-10-13, 24/24), C-82 (2026-10-13, 36/36), C-83 (2026-10-13, 18/18), C-84 (2026-10-15, 15/15), C-85 (2026-10-15, 34/34), C-86 (2026-10-15, 61/61), C-87 (2026-10-15, 25/25), C-88 (2026-10-15, 19/19), C-89 (2026-10-15, 19/19), C-90 (2026-10-15, 17/17) y C-91 (2026-10-15, 48/48).
+Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01), C-61 (2026-10-01, 26/26), C-69 (2026-10-05, 30/30), C-71 (2026-10-06, 43/43), C-60 (2026-10-06, 33/33), C-70 (2026-10-06, 72/72), C-72 (2026-10-07, 37/37), C-73 (2026-10-07, 23/23), C-74 (2026-10-07, 32/32), C-75 (2026-10-08, 14/14), C-56 (2026-10-08, 27/27), C-68 (2026-10-09, 63/63), C-81 (2026-10-13, 24/24), C-82 (2026-10-13, 36/36), C-83 (2026-10-13, 18/18), C-84 (2026-10-15, 15/15), C-85 (2026-10-15, 34/34), C-86 (2026-10-15, 61/61), C-87 (2026-10-15, 25/25), C-88 (2026-10-15, 19/19), C-89 (2026-10-15, 19/19), C-90 (2026-10-15, 17/17) y C-91 (2026-10-15, 48/48); y C-97 `actualizar-dependencias-seguridad` (2026-10-19, 14/14, post-roadmap, seguimiento de C-64).
 
 Hay 10 changes ACTIVOS:
 - **`c-76-tesis-correcciones-dictamen`** — 0/46 (FASE 29) — Governance MEDIO.
@@ -2012,7 +2040,7 @@ Hay 10 changes ACTIVOS:
 
 Los cinco changes de la FASE 29 son correcciones del documento de tesis (independientes del software) y se aplican en secuencia, en el orden C-76 -> C-77 -> C-78 -> C-79 -> C-80. Los cinco changes de la FASE 31 (C-92..C-96) cubren los hallazgos NUEVOS de la re-auditoria y se aplican a continuacion, en el orden C-92 -> C-93 -> C-94 -> C-95 -> C-96 (tras la FASE 29).
 
-C-01..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-62, C-63, C-64, C-65, C-66, C-67, C-68, C-69, C-70, C-71, C-72, C-73, C-74, C-75 y C-81..C-91 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
+C-01..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-62, C-63, C-64, C-65, C-66, C-67, C-68, C-69, C-70, C-71, C-72, C-73, C-74, C-75, C-81..C-91 y C-97 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
 
 **Detalle de `c-52-telefonia-transcripcion-async`** (Gobernanza CRITICA; ARCHIVADO 2026-09-30):
 
