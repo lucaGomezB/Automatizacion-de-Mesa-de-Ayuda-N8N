@@ -32,7 +32,7 @@
       },
       "Body_recording_status_api_v1_telefonia_recording_status_post": {
         "properties": {
-          "account_sid": {
+          "AccountSid": {
             "anyOf": [
               {
                 "type": "string"
@@ -41,13 +41,13 @@
                 "type": "null"
               }
             ],
-            "title": "Account Sid"
+            "title": "Accountsid"
           },
-          "call_sid": {
-            "title": "Call Sid",
+          "CallSid": {
+            "title": "Callsid",
             "type": "string"
           },
-          "from_number": {
+          "From": {
             "anyOf": [
               {
                 "type": "string"
@@ -56,9 +56,9 @@
                 "type": "null"
               }
             ],
-            "title": "From Number"
+            "title": "From"
           },
-          "recording_channels": {
+          "RecordingChannels": {
             "anyOf": [
               {
                 "type": "integer"
@@ -67,9 +67,9 @@
                 "type": "null"
               }
             ],
-            "title": "Recording Channels"
+            "title": "Recordingchannels"
           },
-          "recording_duration": {
+          "RecordingDuration": {
             "anyOf": [
               {
                 "type": "integer"
@@ -78,9 +78,9 @@
                 "type": "null"
               }
             ],
-            "title": "Recording Duration"
+            "title": "Recordingduration"
           },
-          "recording_sid": {
+          "RecordingSid": {
             "anyOf": [
               {
                 "type": "string"
@@ -89,9 +89,9 @@
                 "type": "null"
               }
             ],
-            "title": "Recording Sid"
+            "title": "Recordingsid"
           },
-          "recording_source": {
+          "RecordingSource": {
             "anyOf": [
               {
                 "type": "string"
@@ -100,9 +100,9 @@
                 "type": "null"
               }
             ],
-            "title": "Recording Source"
+            "title": "Recordingsource"
           },
-          "recording_status": {
+          "RecordingStatus": {
             "anyOf": [
               {
                 "type": "string"
@@ -111,23 +111,23 @@
                 "type": "null"
               }
             ],
-            "title": "Recording Status"
+            "title": "Recordingstatus"
           },
-          "recording_url": {
-            "title": "Recording Url",
+          "RecordingUrl": {
+            "title": "Recordingurl",
             "type": "string"
           }
         },
         "required": [
-          "call_sid",
-          "recording_url"
+          "CallSid",
+          "RecordingUrl"
         ],
         "title": "Body_recording_status_api_v1_telefonia_recording_status_post",
         "type": "object"
       },
       "Body_twilio_voice_webhook_api_v1_cost_guard_twilio_voice_post": {
         "properties": {
-          "call_sid": {
+          "CallSid": {
             "anyOf": [
               {
                 "type": "string"
@@ -136,7 +136,18 @@
                 "type": "null"
               }
             ],
-            "title": "Call Sid"
+            "title": "Callsid"
+          },
+          "From": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From"
           },
           "corpus_case_id": {
             "anyOf": [
@@ -148,17 +159,6 @@
               }
             ],
             "title": "Corpus Case Id"
-          },
-          "from_number": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "From Number"
           }
         },
         "title": "Body_twilio_voice_webhook_api_v1_cost_guard_twilio_voice_post",
@@ -1962,6 +1962,13 @@
       },
       "ValidationError": {
         "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
           "loc": {
             "items": {
               "anyOf": [
