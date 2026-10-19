@@ -19,7 +19,8 @@
 #   - it targets Python 3.12 and Node 20
 #   - it pins its scanning tools (pip-audit==, bandit==)
 #   - it declares its blocking policy explicitly (SAST `-lll`, backend audit
-#     fails on fixable vulns, frontend audit report-only `--audit-level=high`)
+#     fails on NON-BREAKING fixable vulns, frontend audit report-only
+#     `--audit-level=high`)
 #   - it uses NO `secrets.*` references
 #   - it does not mutate the test jobs' dependency trees (own env / no
 #     writes to App/Backend/requirements.txt or App/Frontend/package*.json)
@@ -206,10 +207,10 @@ else:
 
 audit_runs = [r for r in step_runs if re.search(r"\bpip-audit\s+-r\b", r)]
 audit_blob = "\n".join(audit_runs)
-if audit_runs and re.search(r"fixable", audit_blob, re.I):
-    ok("backend audit step documents the blocks-on-fixable policy")
+if audit_runs and re.search(r"non-breaking|no rompiente", audit_blob, re.I):
+    ok("backend audit step documents the blocks-on-non-breaking-fixable policy")
 else:
-    fail("backend audit step must document the blocks-on-fixable policy")
+    fail("backend audit step must document the blocks-on-non-breaking-fixable policy")
 
 if audit_runs and re.search(r"pip_audit_exceptions\.txt", audit_blob):
     ok("backend audit step references the versioned exceptions file")
