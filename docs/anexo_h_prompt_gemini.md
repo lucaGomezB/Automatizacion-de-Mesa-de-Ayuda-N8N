@@ -1,8 +1,8 @@
-# ANEXO H: Especificación del Prompt de Gemini 2.5 Flash y Parámetros de Configuración
+# ANEXO H: Especificación del Prompt de gemini-3.6-flash y Parámetros de Configuración
 
 ## H.1. Estructura y contenido del prompt
 
-El prompt enviado al modelo Gemini 2.5 Flash sigue una estructura fija en lenguaje natural español organizada en cinco componentes funcionales:
+El prompt enviado al modelo gemini-3.6-flash sigue una estructura fija en lenguaje natural español organizada en cinco componentes funcionales:
 
 ### (1) Instrucción de rol
 Define explícitamente que el modelo actúa como **"agente especializado en clasificación de incidentes técnicos en español rioplatense"**. Esta instrucción ancla el comportamiento del modelo en el dominio y el dialecto específico del estudio.
@@ -49,7 +49,7 @@ Estas reglas usan exclusivamente los cinco strings canónicos sin tildes y no in
 
 ---
 
-## H.2. Parámetros de configuración de Gemini 2.5 Flash
+## H.2. Parámetros de configuración de gemini-3.6-flash
 
 La invocación del modelo se realiza mediante la API `google-generativeai` versión 0.8, con la siguiente configuración de hiperparámetros optimizada para equilibrar exactitud, latencia y costo de inferencia:
 
@@ -69,7 +69,7 @@ La invocación del modelo se realiza mediante la API `google-generativeai` versi
 import google.generativeai as genai
 
 def clasificar_con_gemini(descripcion: str) -> dict:
-    model = genai.GenerativeModel('gemini-2.5-flash')
+    model = genai.GenerativeModel('gemini-3.6-flash')
     
     response = model.generate_content(
         prompt + descripcion,
