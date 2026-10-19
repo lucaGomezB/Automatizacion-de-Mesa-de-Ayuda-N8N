@@ -40,14 +40,28 @@ Hechos verificados que condicionan el diseno:
   citan "la version 1.62 no se encuentra disponible en Docker Hub"; contradicen
   `S/12-anexos.tex:37` y `D/despliegue.md` ("N8N 2.11.2").
 - **Valorativas (F7)**: `S/08-discusion.tex:8-16` y `S/09-conclusiones.tex:6-18`.
-  Evidencia disponible para rebajar: `07-resultados.tex:10` (89,0~%),
-  `07:30` (Wilcoxon \(W=0\), \(p<0{,}001\)), `07:34` (\(r=1{,}00\)), `07:40`
-  (exactitud 92,0~%), `07:59` (F1 macro 0,919), `07:86` (intervencion 9,5~%).
+  Evidencia disponible para rebajar (cifras corregidas por c-76 en
+  `07-resultados.tex` / `evaluation/report.md`): reduccion de tiempo 75,9~%
+  (cota conservadora >= 71,3~%, `07:10`), Wilcoxon \(W=335\),
+  \(p=2{,}05\cdot10^{-32}\), \(r=0{,}983\), exactitud 73,5~% (147/200, `07:40`),
+  macro-F1 0,5207 (`07:59`), `07:86` (intervencion 9,5~%).
 
 Restriccion dura: la tesis se compila en Overleaf (sin toolchain LaTeX local). No
 se toca `App/**`. Existen `.bak` de cada seccion; el barrido y los conteos se
 hacen sobre los `.tex` activos (los `.bak` son respaldos obsoletos y no se editan
 ni cuentan).
+
+### Correccion de trazabilidad (2026-10-19)
+
+Las cifras de evaluacion de este change provenian del corpus sintetico de 3
+clases descartado en C-27. Se corrigen a los valores reales del corpus de 200
+casos, cuya fuente de verdad es `evaluation/report.md` y
+`data/corpus_evaluacion_pseudonimizado.json`, consolidados por c-76 en el
+Capitulo 7. Motivo: c-80 se autorio antes de reconciliar el corpus; conservar los
+numeros sinteticos habria dejado la figura de matriz de confusion y las
+afirmaciones de 8.1/9.1 inconsistentes con el Capitulo 7 corregido. Regla: toda
+cifra de evaluacion citada en este change MUST coincidir con `evaluation/report.md`
+(via c-76); no se inventan valores y no se hardcodean celdas de la matriz.
 
 ## Goals / Non-Goals
 
@@ -136,7 +150,7 @@ Distribucion de las 8 figuras (detalle en **Anexo A**):
 | 5 | Panel admin | 6.8 | `App/Frontend` (panel de administracion) | captura manual -> `F/panel_admin.png` |
 | 6 | Dashboard | 6.8 | `App/Frontend` (dashboard ReCharts) | captura manual -> `F/dashboard.png` |
 | 7 | Boxplot de latencias POR CANAL | 7.1 | `data/corpus_evaluacion_pseudonimizado.json` (`tiempo_manual_s`, `tiempo_automatizado_s`, 200 casos) segmentado por canal | script `scripts/figures/boxplot_tiempos.py` (matplotlib) -> `F/boxplot_tiempos.pdf` (3 paneles / layout agrupado: web, correo, telefonia) |
-| 8 | Matriz de confusion | 7.2 | `S/07-resultados.tex:50-52` (matriz 3x3) | script `scripts/figures/matriz_confusion.py` (matplotlib) -> `F/matriz_confusion.pdf` |
+| 8 | Matriz de confusion | 7.2 | `evaluation/report.md` (matriz 5x5 real, owned by c-76) | script `scripts/figures/matriz_confusion.py` (matplotlib) -> `F/matriz_confusion.pdf` |
 
 **Decisiones de formato:** para las figuras de datos (7 y 8) se emite **PDF
 vectorial** (mejor nitidez en el PDF final); para diagramas y capturas, **PNG** a
@@ -209,9 +223,16 @@ prosa introductoria + artefacto embebido:
   (estructura del prompt, categorias, formato de respuesta, parametros). Se
   referencia desde el texto principal (por ejemplo desde 05.5 o el Anexo E).
 
-**Nota:** el Anexo C actual afirma "siete entidades" y `05:76` (tabla de
-entidades) aun lista "Operaciones"; esa inconsistencia de catalogo pertenece a
-c-72/c-76 y NO se resuelve aqui. El change solo convierte la composicion de los
+**Nota (Correccion de trazabilidad 2026-10-19):** verificado contra
+`App/Backend/app/models/` (clases mapeadas reales) y la Tabla~4 de la tesis
+(`05-arquitectura.tex`, `tab:entidades`), el modelo de datos comprende SIETE
+entidades principales: `incidente`, `sector`, `estado`, `canal_origen`,
+`clasificacion_log`, `users` y `directorio_empleado`. El numero 7 es correcto y
+se conserva; el ER diagrama del Anexo~C y su tabla MUST listar esas siete
+entidades (no seis). El modelo ejecutable tiene ademas tablas auxiliares y de
+auditoria posteriores (por ejemplo `incidente_evento`, `telefonia_ingreso`),
+fuera del alcance de la Tabla~4. La categoria retirada "Operaciones" pertenece a
+c-76 y NO se resuelve aqui. El change solo convierte la composicion de los
 anexos.
 
 ### D-F4 — Composicion uniforme de tablas
@@ -280,8 +301,9 @@ una figura obsoleta. El apply MUST reconciliar el diagrama con el stack vigente.
 **Decision:** clasificar cada expresion en (a) retirar, (b) rebajar a descripcion
 de la evidencia, (c) conservar si esta respaldada.
 
-- `08:8` "superan ampliamente los umbrales" -> "superan los umbrales (89~% de
-  reduccion de tiempo y 92~% de exactitud, `07:10,40`)".
+- `08:8` "superan ampliamente los umbrales" -> "superan los umbrales (reduccion
+  de tiempo 75,9~% —cota conservadora >= 71,3~%— y exactitud 73,5~%, cifras
+  corregidas por c-76 en `07-resultados.tex` / `evaluation/report.md`)".
 - `08:10` "valida la hipotesis subsidiaria" -> "es consistente con la hipotesis
   subsidiaria" (la hipotesis no se "valida", se obtiene evidencia a favor).
 - `08:12` "consecuencia deseable" -> "consecuencia observada de la automatizacion".
@@ -291,12 +313,13 @@ de la evidencia, (c) conservar si esta respaldada.
   -> describir la practica propia (aislamiento del corpus) sin comparar con
   terceros no medidos.
 - `09:6` "cumplido satisfactoriamente" -> "el trabajo alcanzo el objetivo general".
-- `09:12` "supero con holgura" -> "supero los umbrales establecidos (92~% y F1
-  0,919 frente a las cotas fijadas)".
+- `09:12` "supero con holgura" -> "supero los umbrales establecidos (exactitud
+  73,5~% y macro-F1 0,5207 frente a las cotas fijadas, cifras corregidas por
+  c-76)".
 - `09:16` "no deja espacio para la duda razonable", "resultado poco frecuente",
   "trasciende lo meramente estadistico" -> reformular en terminos de la prueba
-  (Wilcoxon \(W=0\), \(p<0{,}001\), \(r=1{,}00\), `07:30,34`) sin los giros
-  valorativos.
+  (Wilcoxon \(W=335\), \(p=2{,}05\cdot10^{-32}\), \(r=0{,}983\), cifras
+  corregidas por c-76) sin los giros valorativos.
 - `09:18` "activo que excede el cumplimiento del quinto objetivo" -> "los
   artefactos documentados cubren el quinto objetivo".
 
@@ -443,12 +466,16 @@ Verificacion: el script MUST reportar `n` y medianas POR CANAL; deben ser
 coherentes con las cifras CORREGIDAS de `07:10` (owned by c-76), NO con las cifras
 obsoletas actuales.
 
-**8. `matriz_confusion.pdf` — Matriz de confusion.**
-Fuente: matriz 3x3 de `S/07-resultados.tex:50-52`
-(`[[76,4,2],[3,58,3],[2,2,50]]`). Accion: script nuevo
-`scripts/figures/matriz_confusion.py` (matplotlib `imshow`) que grafica la matriz
-anotada a PDF vectorial en `F/`. Destino: 7.2. Verificacion: los totales
-(82/64/54 filas, 81/64/55 columnas, 200 total) coinciden con `07:40`.
+**8. `matriz_confusion.pdf` — Matriz de confusion (5x5 real).**
+Fuente: matriz 5x5 real derivada de `evaluation/report.md` (owned by c-76), en el
+orden canonico de sectores (`Seguridad Informatica`, `Soporte Tecnico Hardware`,
+`Soporte Tecnico Software`, `Bases de Datos`, `Sistemas`). Matriz de referencia
+(MUST NOT hardcodearse en el script): `[[15,2,11,2,1],[1,77,3,0,4],[0,11,48,1,7],
+[0,0,1,0,0],[2,0,5,2,7]]`. Accion: script nuevo
+`scripts/figures/matriz_confusion.py` (matplotlib `imshow`) que lee la matriz de
+`evaluation/report.md` y la grafica anotada a PDF vectorial en `F/`. Destino: 7.2.
+Verificacion: totales por fila 31/85/67/1/16 y 200 casos; exactitud 73,5~%
+(diagonal 147/200).
 
 **Convencion de incrustacion (verbatim sugerido):**
 

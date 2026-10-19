@@ -4,7 +4,7 @@
 > `Prompt2.docx`). Se aplican a medida que el autor las provee. Lo que no se puede
 > resolver todavía se anota abajo para incorporarlo luego al proyecto / tesis.
 >
-> Estado: 2026-10-12.
+> Estado: 2026-10-19.
 
 ---
 
@@ -43,7 +43,7 @@
 
 ## Pendientes (backlog)
 
-### P1.0 — `tiempo_manual_s`: medición real redondeada al alza (declarar + acotar)
+### P1.0 — `tiempo_manual_s`: medición real redondeada al alza (declarar + acotar) — APLICADO por c-76 (2026-10-19)
 Verificación de los datos de tiempo del corpus (JSON, `Corpus Tesis.xlsx` y ambos CSV).
 
 - `tiempo_manual_s`: **medición real en vivo** durante la atención de usuarios,
@@ -73,7 +73,7 @@ Verificación de los datos de tiempo del corpus (JSON, `Corpus Tesis.xlsx` y amb
 - Re-medir solo si se necesita una media/IC precisa o si el redondeo fuera a
   minutos enteros en la mayoría de los casos.
 
-### P1. Reconciliar el Cap. 7 (Resultados) y la metodología con el corpus real
+### P1. Reconciliar el Cap. 7 (Resultados) y la metodología con el corpus real — APLICADO por c-76 (2026-10-19)
 El cuerpo de la tesis todavía reporta los **números y la distribución del corpus
 sintético descartado en C-27**.
 
@@ -105,11 +105,34 @@ sintético descartado en C-27**.
   deterministic 131 / Gemini 69.
 - Fuentes: `data/corpus_evaluacion_pseudonimizado.json`, `evaluation/report.md`.
 
-### P2. Anexo H — versión del modelo
+### P2. Anexo H — versión del modelo — APLICADO por c-76 (2026-10-19)
 El título de `docs/anexo_h_prompt_gemini.md` dice "Gemini 2.5 Flash" mientras
 `README.md` y el código usan `gemini-3.6-flash`. Alinear.
 
-### P3. (a completar)
+### P3. Coherencia del encuadre honesto del objetivo no alcanzado — APLICADO por c-76 (2026-10-19)
+Al completar P1/P1.0 quedó una tensión interna en las conclusiones: el
+reconocimiento del incumplimiento del segundo objetivo específico (exactitud
+73,5~\% / F1 macro 0,5207 frente a las cotas 85~\% / 0,85) coexistía con la
+afirmación de que el trabajo "ha cumplido satisfactoriamente con el objetivo
+general", sin calificar la meta no alcanzada.
+
+- **Decisión del autor**: mantener el encuadre honesto (declarar la meta de
+  exactitud NO alcanzada), sin re-medir.
+- **Fix**:
+  - `09-conclusiones.tex` (l.6): el objetivo general (construir y validar el
+    sistema) se declara cumplido, pero se explicita que el segundo objetivo
+    específico NO se alcanza; la reducción de tiempo del 75,9~\% se mantiene como
+    resultado central sostenido (\(W = 335\)).
+  - `09-conclusiones.tex` (l.12, §Cumplimiento de los objetivos): "brecha que se
+    analiza" → "ese objetivo no se alcanza; la brecha se analiza en el Cap. 8",
+    consistente con §8.1/§8.3.
+- **Sin números nuevos**: solo 73,5~\%, 0,5207, 75,9~\%, \(W = 335\), IC
+  [67,0~\%, 79,1~\%].
+- **Verificación**: `rg "cumplido satisfactoriamente|supero con holgura|superó los
+  umbrales|no deja espacio"` en las secciones devuelve CERO coincidencias en el
+  `.tex` vivo (residuo solo en `.tex.bak` trackeados, fuera de alcance).
+
+### P4. (a completar)
 Items restantes del dictamen a medida que el autor los provea.
 
 ---
@@ -139,6 +162,7 @@ Anexo F ya corregido (A1). El Cap. 7 (`07-resultados.tex`) reporta (números sta
 
 ### T5. Caps 7.1, 4.6, 4.7 — datos de tiempo
 Cubierto por P1.0/P1 (declarar redondeo al alza + cota de sensibilidad; números reales).
+**Constancia (2026-10-19)**: T5 queda cubierto por las tareas 2.1, 2.2 y 3.2 de c-76 (P1.0/P1); no requiere requisito nuevo, solo referencia.
 
 ### T6. Caps 4.2, 4.4, 4.5, 11.5 — anti-Hawthorne incompatible con la ventana temporal
 - 4.2 (l.16): observación naturalista, operador no informado de ser cronometrado.
@@ -197,6 +221,15 @@ Correcciones del plan de auditoria §16.3, items 22-24. Change propuesto: **c-78
 
 **Re-verificacion de integridad (2026-10-10)**: se re-verificaron por DOI/landing page las 33 entradas de `docs/Tesis/v9 (IA)/Bibliography_base.bib`. Resultado: **31 REAL, 2 metadatos erroneos, 0 fabricadas**. Las 2 con metadatos erroneos son `Stallings2017_computer_security` (falta el co-autor Lawrie Brown) y `Jurafsky2023_speech_language` (sobra `publisher = {Pearson}`), exactamente las dos ya en alcance de c-78. Las 2 fabricadas de v7 (Karchhud 2024, Mehdi 2023) estan ausentes en v9. `OGC2011_itil` es correcto como esta escrito (ITIL 2011 fue OGC/TSO; AXELOS asumio recien en 2013); el DOI de Landis & Koch (10.2307/2529310) resuelve correctamente.
 
+**Estado de aplicacion de c-78 (2026-10-19)**: change **c-78-tesis-bibliografia-atribucion** APLICADO (grupos 1-3 y 4-6). El `.bib` paso de **33 a 46 entradas**. Evidencia:
+
+- **B1 (item 22) — Revina, Buza & Meister (2020)**: corregido. La clave se renombro `Revina2020_bert_tickets` → **`Revina2020_it_tickets`**. §3.3 (`03-estado-del-arte.tex`) y §8.2 (`08-discusion.tex`) reescritos con la conclusion real: los metodos simples y explicables con rasgos linguisticos del dominio son competitivos y los embeddings preentrenados pueden rendir peor por vocabulario especifico del dominio. El titulo real ("IT Ticket Classification: The Simpler, the Better") y el DOI **10.1109/ACCESS.2020.3032840** se conservan (resuelven en Crossref). Ya no queda "BERT" ni "91 %" atribuido a Revina.
+- **B2 (item 23) — Modernizacion del estado del arte**: 12 entradas arbitradas 2023-2026 agregadas al `.bib`, cubriendo clasificacion de tickets/mesa de servicio con LLM, evaluacion zero-shot/few-shot multilingue y LLM en espanol/Iberoamerica. Claves agregadas: **`ahuja2023mega`, `lai2023okapi`, `zhang2023multilingual`, `xuan2025mmluprox`, `grandury2025laleaderboard`, `mayorrocher2026spanish`, `bernalbeltran2025mexicanspanish`, `ramonferrer2026tripletotext`, `paket2024itservice`, `liu2025tickit`, `zangari2023ticket`, `colavito2025benchmarking`**. Todas con DOI verificado por Crossref (ACL Anthology para las de `10.18653/*`). Los dos claims sin cita ("88 % a 94 %" en `08:20`; literatura few-shot en `03:30`) fueron reemplazados por citas concretas. La brecha declarada (no existe articulo arbitrado 2023-2026 que evalue Gemini sobre tickets de soporte en espanol) quedo asentada, sin fabricar referencia.
+- **B3 (item 24) — Higiene de citas**: `Landis1977_kappa` agregada (DOI **10.2307/2529310**, Biometrics 33(1), 159-174); los rangos interpretativos de kappa se citan a Landis & Koch y \(\kappa = 0{,}87\) se rotula **"casi perfecto"** (ya no "sustancial"). `Cohen1960_kappa` queda solo para la definicion del coeficiente. `Stallings2017_computer_security` con co-autor **Lawrie Brown**; `OGC2011_itil` sin `edition = {2011}` con nota de titularidad AXELOS/PeopleCert; `Jurafsky2023_speech_language` con `publisher = {Stanford University}` y nota de borrador de 3ra edicion.
+- **Citas huerfanas fabricadas — retiradas**: **Karchhud 2024** y **Mehdi 2023** estan ausentes del arbol v9 (`B` y `S`); la unica mencion en el arbol es el docstring de `verify_citations.py` que advierte sobre ellas. Guardia de no reintroduccion verificada.
+- **Re-verificacion de las 46 entradas (2026-10-19)**: 22 con DOI resueltas (21 Crossref + `Touvron2023_llama2` via DataCite); 24 sin DOI verificadas por landing de editorial/ACL (URLs HTTP 200; unica excepcion `Ley25326_2000` con HTTP 403 = bloqueo anti-bot de InfoLeg, no enlace muerto). **46/46 resuelven, 0 fabricadas, 0 sin resolver.**
+- **Verificacion de citas**: `verify_citations.py` → `46 bib entries, 46 unique keys cited, 76 total citation commands, Orphan citations: 0, Unused entries: 0, STATUS: PASS`. El `.bcf` en repo es un artefacto obsoleto (julio) y solo se regenera al recompilar (diferido a Overleaf, XeLaTeX).
+
 ---
 
 ## Item 25 (plan de auditoria) — Aspectos legales (11.1-11.3)
@@ -226,6 +259,73 @@ Change propuesto: **c-79-tesis-aspectos-legales** (governance HIGH). Verificado 
 
 ### L5 (item 25) — (opcional) Plazo ARCO
 - La tesis no fija plazo para rectificacion/supresion. El art. 16 exige **CINCO DIAS HABILES** — `marco-legal-ar-2026.md:230-232, 550-551` (OQ-L5).
+
+---
+
+## Grupo: Aspectos legales (L1-L6) — APLICADO (revision legal 2026-10-19)
+
+Change **c-79-tesis-aspectos-legales** (governance HIGH). Aplicado sobre
+`docs/Tesis/v9 (IA)/paper/sections/11-aspectos-legales.tex` (§11.1-§11.3),
+`05-arquitectura.tex:44` y este registro. Los valores de OQ-L1/L1b/L2/L5
+(resueltos 2026-10-12) se aplicaron tal cual; la revision de vigencia de fuentes
+(L6) se realizo el **2026-10-19**.
+
+### L1 — Plazo de conservacion y politica de supresion
+- §11.2: "conservacion indefinida" → **12 meses rodantes desde la creacion del
+  incidente**, justificado por el ciclo estadistico anual. El texto declara el
+  periodo, no fechas calendario.
+- Reconciliacion con `05-arquitectura.tex:44`: se declara de forma explicita que
+  los registros de ejecucion (30 dias, auditoria/diagnostico) y los incidentes
+  (12 meses) son **conjuntos de datos distintos** con finalidades distintas y
+  plazos propios; se agrego la remision a §11.2 en 05:44.
+- Bloqueo de escritura sobre tickets cerrados (PATCH → 409, C-23): presentado como
+  **control de integridad de auditoria**, NO como politica de retencion ni
+  excepcion permanente al vencimiento.
+- Disposicion al vencimiento: **anonimizacion irreversible**.
+- Verificacion: `rg -ni "conservaci[oó]n indefinida"` en el `.tex` vivo → 0
+  coincidencias en 11.1-11.3.
+
+### L2 — Base de licitud (Ley 25.326 art. 5 inc. 2)
+- §11.2: "legitimo interes de la organizacion" → **Ley 25.326, art. 5, inc. 2,
+  apartado d)** (relacion contractual/cientifica/profesional; la organizacion es
+  la empleadora). NO apartado b).
+- Se dejo constancia de que el deber de informacion del art. 6 subsiste y que el
+  consentimiento solo se discute para el corpus de investigacion (§11.5).
+- Verificacion: `rg -ni "leg[ií]timo inter[eé]s"` → 0 coincidencias.
+
+### L3 — Adecuacion europea (instrumento y direccion)
+- §11.1: cita **Decision 2003/490/CE (30 de junio de 2003)** y su **revalidacion de
+  enero de 2024**; direccion corregida: **UE -> Argentina unicamente**; se elimino
+  "bidireccionales".
+- Se declara que **EE. UU. no es pais adecuado** y que la transferencia hacia
+  EE. UU. (Gemini, Twilio) requiere instrumento del art. 12.
+- Verificacion: `rg -ni "bidireccional"` → 0 coincidencias.
+
+### L4 — Transferencia telefonica previa a la pseudonimizacion
+- §11.3: se nombra a **Twilio** (EE. UU.) y se declara que el **audio crudo del
+  llamante y su numero** se transfieren a EE. UU. **antes** de cualquier
+  pseudonimizacion (orden: grabar -> transferir/transcribir -> pseudonimizar).
+- Se cita el instrumento del art. 12 (consentimiento o clausulas contractuales
+  modelo) y se aclara que el DPA es **complemento, no sustituto**.
+- Verificacion: `rg -ni "pseudonimizaci[oó]n previa a la transmisi[oó]n"` → 0
+  coincidencias.
+
+### L5 — Plazo ARCO
+- §11.2: el plazo de rectificacion/actualizacion/supresion se declara como **cinco
+  dias habiles** (art. 16). No se usa "cinco dias corridos".
+- Nota de alcance: el plazo se declaro en §11.2 (dentro del alcance 11.1-11.3);
+  §11.5 (c-76/c-77) no se modifico.
+- Verificacion: `rg -ni "d[ií]as corridos"` → 0 coincidencias.
+
+### L6 — Revision de vigencia de fuentes juridicas (2026-10-19)
+- Normas revisadas y vigentes a la fecha: Ley 25.326 (2000) y su decreto
+  reglamentario; AAIP como autoridad de aplicacion; RGPD (UE 2016/679); Decision
+  2003/490/CE (revalidada en enero de 2024); instrumentos de transferencia del art.
+  12 (Disposicion DNPDP 60/2016, Resolucion AAIP 198/2023, Resolucion AAIP
+  159/2018). Fuente: `docs/cumplimiento/marco-legal-ar-2026.md` (la Ley 25.326
+  sigue vigente en 2026; no se sanciono reforma integral).
+- **No se cita ninguna norma superada o derogada** en 11.1-11.3.
+- **Fecha de la revision legal: 2026-10-19.** Resultado: control de vigencia OK.
 
 ---
 
@@ -275,3 +375,100 @@ Con c-79 y c-80, **los 32 items del plan de auditoria quedan cubiertos por un ch
 | 4 (forma y evidencia visual) | 26-32 | **c-80** | BAJO |
 
 Ninguno de los seis changes esta aplicado todavia (0 tareas). Orden recomendado de aplicacion: c-76 -> c-77 -> c-78 -> c-79 -> c-80 (c-80 al final por compartir archivos con c-76/c-77).
+
+---
+
+## Nueva auditoria (2026-10-19) — cobertura por change (FASE 31)
+
+La nueva auditoria es capitulo por capitulo: el texto vivo esta en
+`docs/Tesis/Correcciones/auditoria-capitulos.md` y el informe completo, en
+`auditorias/Auditoria_Tesis_Gomez_Bustos_Sevilla_040802026.pdf`. Reporta **105
+hallazgos: 28 criticos / 34 altos / 29 medios / 14 bajos**. El cruce con los
+changes existentes esta en `docs/Tesis/Correcciones/reconciliacion-cobertura.md`.
+Cinco changes nuevos (FASE 31) cubren los hallazgos A/M/B que C-76..C-80 no
+abordan; todos `openspec validate --strict` OK y sin aplicar (0 tareas).
+
+### Cobertura de los hallazgos NUEVOS (A/M/B) por change
+
+| Change | Governance | Capitulo | Hallazgos cubiertos |
+|---|---|---|---|
+| `c-92-tesis-marco-teorico-profundidad` | MEDIO | Cap 2 | A-04, A-05, M-03, M-04 (+ M-02 y A-06 parciales) |
+| `c-93-tesis-metodologia-rigor` | MEDIO | Cap 4 | A-07, A-08, A-09, A-10, M-05, M-06, M-07, A-03 |
+| `c-94-tesis-implementacion-verificabilidad` | MEDIO | Caps 5-6 | A-11, A-12, A-13, M-08, M-09, M-12, M-13 |
+| `c-95-tesis-resultados-discusion-rigor` | MEDIO | Caps 7-8 | A-15, A-20, A-21, M-10, M-16 (+ A-23 y A-25 parciales) |
+| `c-96-tesis-citas-tablas-evidencia` | BAJO | Cap 3 / transversal | A-26, M-01 + cita huerfana APA 2017, A-27, B-01 (+ fuente de las 9 tablas, densidad de citas) |
+
+Detalle por hallazgo:
+
+| Codigo | Hallazgo | Change |
+|---|---|---|
+| A-03 | Tercer criterio del umbral 85 % de §1.6 (zona de rechazo inexistente) | c-93 |
+| A-04 | §2.4 eje LLM en cuatro parrafos; sin prompting/calibracion/alucinacion/idioma/evaluacion | c-92 |
+| A-05 | §2.7 define exactitud con formula binaria y la corrige al lado | c-92 |
+| A-06 | §2.2 atribucion editorial de ITIL Service Operation 2011 (parcial; `.bib` en c-78 B3) | c-92 |
+| A-07 | §4.4 margen/tamaño muestral no reproduce n=200 | c-93 |
+| A-08 | §4.5/§6.7 cobertura de pruebas sin informe ni comando | c-93 |
+| A-09 | Sin analisis de potencia a priori | c-93 |
+| A-10 | §4.2 rotacion de operadores confundida con el efecto de operador | c-93 |
+| A-11 | §6.7 pruebas e2e de N8N inexistentes | c-94 |
+| A-12 | §6.7 recuento/cobertura de la suite frontend no reproducibles | c-94 |
+| A-13 | §6.4 latencia telefonica 12-15 s no atribuible (C-17) | c-94 |
+| A-15 | Sin estadistico ni p de Shapiro-Wilk (§4.7) | c-95 |
+| A-20 | §8.1 interpreta y no interroga; sin hipotesis alternativa | c-95 |
+| A-21 | §8.3 baseline TF-IDF+SVM sin procedimiento ni codigo | c-95 |
+| A-23 | §9.2 generaliza superioridad de LLM sobre clasificadores supervisados (parcial) | c-95 |
+| A-25 | §9.1 interpretacion estadistica (Wilcoxon) en conclusiones (parcial) | c-95 |
+| A-26 | Tabla 1 (Cap 3) sin fuente, citas ni fecha; fila "Propuesta" autoevaluada | c-96 |
+| A-27 | §1.7 y §6.1 rotulan a N8N como "codigo abierto" | c-96 |
+| M-01 | §1.1 cita huerfana: SEPyME define "empresa mediana" | c-96 |
+| M-02 | §1.7 corpus EN/DE/PT sin respaldo (parcial; reutiliza refs de c-78) | c-92 |
+| M-03 | §2.5 Whisper detallado sin correlato en el artefacto (usa Twilio) | c-92 |
+| M-04 | §2.6 justifica PostgreSQL sin alternativas concretas | c-92 |
+| M-05 | Sin criterios de exclusion de incidentes del corpus | c-93 |
+| M-06 | §4.9 Scrumban es gestion de proyecto, no metodologia | c-93 |
+| M-07 | No se declaran los dos analistas etiquetadores del corpus | c-93 |
+| M-08 | §6.8 ejemplo hipotetico presentado como "caso concreto" (parcial) | c-94 |
+| M-09 | §6.1 "migracion a Kubernetes 1.30" sin manifiesto | c-94 |
+| M-10 | §7.4 tipifica 16 errores sin un ejemplo textual | c-95 |
+| M-12 | §5.4 parametros de inferencia "optimizados" sin procedimiento | c-94 |
+| M-13 | Tabla 5 incompleta vs API real | c-94 |
+| M-16 | §8.4 costos (50-100 USD/mes; 0,02 USD/invocacion) sin fuente | c-95 |
+| B-01 | §1.2/§1.8 organizacion adoptante inconsistente | c-96 |
+| — | Cita huerfana "(APA, 2017)" en §11.5 | c-96 |
+| — | Fuente APA 7 ausente en las 9 tablas; densidad de citas desigual | c-96 |
+
+### Criticos C-01..C-28
+
+Los 28 criticos del informe completo ya tienen owner en C-76..C-80 (26 CUBIERTO,
+2 PARCIAL: C-17 y C-21); no quedan criticos huerfanos. El mapeo detallado esta en
+`reconciliacion-cobertura.md` (seccion 2).
+
+### C-18 — STALE
+
+C-18 (el canal de origen nunca llega al backend) describia el flujo PREVIO a
+c-29. El artefacto ya fue corregido por c-29 (commit `ef656ac`, 2026-09-17): el
+POST envia seis campos incluido `canal_origen_id` y el Switch esta en modo
+`rules`. Es un hallazgo stale de software. Residuo: solo el texto de la tesis
+(Tabla 4 usa `id_canal`; §5.3 describe dos llamadas), ya asignado a **c-77 C3**.
+No requiere change de software.
+
+### Drift del HEAD
+
+La auditoria se hizo sobre el commit `d7df92c` (2026-07-02); el repositorio
+evoluciono. Los conteos del informe estan stale respecto del HEAD (136 archivos
+`test_*.py` en backend, 56 archivos de prueba frontend con 340 `it(`, 33 rutas
+en `docs/openapi.json`). Las tareas de c-94 exigen re-medir en HEAD, no
+hardcodear (A-11, A-12, M-13).
+
+### A-19 — requiere re-verificacion
+
+La auditoria afirma que §5.6 anuncia "seis entidades" frente a "cinco tablas" del
+Anexo C. El `.tex` en HEAD (`05-arquitectura.tex:64`) dice **"siete entidades
+principales"** y la `tab:entidades` (Tabla 4) lista **siete**, incluida
+`directorio_empleado`. La premisa "seis vs cinco" no coincide con el `.tex`
+actual: requiere re-verificacion antes de corregir. c-80 mantuvo 7 y lo
+documento.
+
+Ademas hay conflictos internos entre changes a resolver antes de aplicar (c-80
+debe usar la matriz 5x5 real de c-76 y fijar el numero real de entidades), ver
+`reconciliacion-cobertura.md` seccion 4.
