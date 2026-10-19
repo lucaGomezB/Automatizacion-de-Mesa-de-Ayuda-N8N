@@ -25,7 +25,8 @@ pydantic-settings==2.5.2
 # transcription_config=...))`. El tipado de transcription_config llega en 2.13.0;
 # la API de Interactions y VerbatimTranscriptionMode se consolidan en >=2.20.0.
 # Última verificada: 2.25.0.
-google-genai>=2.20.0
+# Cota superior <3 (c-64, D6): la major 3 es la frontera de compatibilidad de la API.
+google-genai>=2.20.0,<3
 
 # HTTP client (N8N webhook notifications). 0.28.1 es requisito de google-genai 2.x.
 httpx==0.28.1
@@ -34,11 +35,14 @@ httpx==0.28.1
 structlog==24.4.0
 
 # Encryption (Fernet, for EncryptedText TypeDecorator — Ley 25.326)
-cryptography>=43.0.0
+# Sin cota superior a proposito (c-64, D6): los parches llegan en releases menores
+# y una cota impediria adoptarlos a tiempo. Justificado con el marcador inline.
+cryptography>=43.0.0  # no-upper-bound-ok: excepcion documentada arriba (D6)
 
 # JWT Authentication
-python-jose[cryptography]>=3.3.0
-bcrypt>=4.0.0
+# Cotas superiores <4 / <5 (c-64, D6): fronteras de major reales; evitan un salto incompatible.
+python-jose[cryptography]>=3.3.0,<4
+bcrypt>=4.0.0,<5
 
 # Second factor TOTP (RFC 6238) for privileged accounts (c-63b, IAH-006).
 # pyotp is a third-party, pure-Python dependency: pin it and audit the package

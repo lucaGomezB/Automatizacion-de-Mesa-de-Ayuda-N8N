@@ -1,8 +1,10 @@
-# ci.yml — GitHub Actions CI workflow (C-09, C-19)
-# Tres jobs paralelos: backend-tests, frontend-tests y secret-scan.
+# ci.yml — GitHub Actions CI workflow (C-09, C-19, C-64)
+# Cuatro jobs paralelos: backend-tests, frontend-tests, secret-scan y
+# security-scan.
 # Triggers: push a main y pull_request.
 # C-19: PostgreSQL service container + integration test step.
 # secret-scan: gitleaks sobre el historial git + escaneo de la memoria de Engram.
+# security-scan: auditoria de dependencias (pip-audit/npm audit) + SAST (bandit).
 # Sin secretos: toda la suite corre 100% offline (Gemini/N8N mockeados).
 
 name: CI
@@ -190,3 +192,76 @@ jobs:
 
       - name: Scan Engram memory (.engram) for secrets
         run: python3 scripts/security/scan_engram_secrets.py .engram
+
+  # -----------------------------------------------------------------------
+  # Job 4: security-scan — auditoria de dependencias + SAST, en paralelo (C-64)
+  # -----------------------------------------------------------------------
+  # Cubre los tres escaneos requeridos por el delta spec de ci-pipeline.
+  # Parametros centralizados (rutas + umbral de severidad):
+  #   - objetivo SAST ............ App/Backend/app  (excluye tests/ y alembic/)
+  #   - objetivo deps backend .... App/Backend/requirements.txt
+  #   - objetivo deps frontend ... App/Frontend
+  #   - umbral de bloqueo (SAST) . -lll   (severidad ALTA unicamente)
+  #   - umbral (deps frontend) ... --audit-level=high (modo reporte)
+  # Politica de bloqueo por escaneo:
+  #   1. SAST backend       -> bandit: bloquea solo severidad ALTA (-lll).
+  #   2. auditoria deps BE  -> pip-audit: bloquea ante vulnerabilidades
+  #                            CORREGIBLES; excepciones explicitas por ID.
+  #   3. auditoria deps FE  -> npm audit: NO bloqueante (reporte) en esta
+  #                            iteracion (--audit-level=high + `|| true`).
+  # Design D1: job dedicado en paralelo, con las herramientas FIJADAS e
+  # instaladas en el entorno de ESTE job. No ejecuta
+  # `pip install -r requirements.txt` ni `npm ci`, de modo que NO altera el
+  # arbol de dependencias instalado por los jobs de pruebas.
+  # Sin secretos: lee solo los archivos de dependencias y el codigo versionados.
+  security-scan:
+    name: Security scan (deps + SAST)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # Herramientas de escaneo FIJADAS (mismo patron que ruff==0.8.4 y el
+      # gitleaks fijado): corridas reproducibles. Se instalan en el entorno de
+      # este job; no tocan el requirements.txt del backend ni el
+      # package-lock.json del frontend.
+      - name: Install pinned scanners (pip-audit, bandit)
+        run: python -m pip install pip-audit==2.7.3 bandit==1.7.10
+
+      # Escaneo 1/3 - SAST backend. Politica de bloqueo (D2): bandit falla ante
+      # hallazgos de severidad ALTA (`-lll`); media y baja se reportan sin
+      # bloquear, para no frenar el pipeline por deuda preexistente.
+      - name: Backend SAST (bandit, blocks HIGH only)
+        run: bandit -r App/Backend/app -lll
+
+      # Escaneo 2/3 - auditoria de dependencias del backend (politica en el run).
+      - name: Backend dependency audit (pip-audit, blocks on fixable)
+        run: |
+          # Politica de bloqueo (D3): pip-audit falla ante vulnerabilidades
+          # conocidas que tengan correccion disponible ("fixable"). Los
+          # hallazgos preexistentes se exceptuan de forma EXPLICITA por ID
+          # (con motivo por linea) en scripts/security/pip_audit_exceptions.txt;
+          # nunca un continue-on-error global.
+          EXC="scripts/security/pip_audit_exceptions.txt"
+          IGNORE=$(grep -vE '^[[:space:]]*(#|$)' "$EXC" | awk '{print "--ignore-vuln "$1}')
+          pip-audit -r App/Backend/requirements.txt --desc $IGNORE
+
+      # Escaneo 3/3 - auditoria de dependencias del frontend. Politica de
+      # bloqueo (D4/OQ1): NO bloqueante en esta iteracion (modo reporte). Se
+      # corre con --audit-level=high y `|| true` para que los avisos de dev
+      # transitivos (sin correccion simple) no rompan la CI; la justificacion
+      # queda registrada en design.md (D4).
+      - name: Frontend dependency audit (npm audit, report-only)
+        working-directory: App/Frontend
+        run: npm audit --audit-level=high || true
