@@ -3,18 +3,20 @@
 # PostgreSQL backup script for Automatizacion-Mesa-de-Ayuda-N8N
 #
 # Runs pg_dump from the postgres Docker container (project name: mesa_local).
-# Saves timestamped SQL dumps to backups/ and keeps the last 7 daily backups.
+# Encrypts the dump at rest (AES-256-CBC, pbkdf2) and saves it to backups/ as
+# backup_YYYY-MM-DD.sql.enc, keeping the last 7 daily encrypted backups.
 #
 # Usage:
-#   bash scripts/backup.sh
+#   BACKUP_ENCRYPTION_PASSPHRASE=... bash scripts/backup.sh
 #
 # Prerequisites:
 #   - Docker and Docker Compose installed
 #   - The postgres container is running (docker compose up -d postgres)
+#   - BACKUP_ENCRYPTION_PASSPHRASE set to the deployment secret
 #
 # Exit codes:
 #   0 — backup completed successfully
-#   1 — error (container not running, dump failed, etc.)
+#   1 — error (missing passphrase, container not running, dump failed, etc.)
 # ==============================================================================
 
 set -euo pipefail
@@ -29,6 +31,49 @@ COMPOSE_PROJECT_NAME="mesa_local"
 SERVICE_NAME="postgres"
 DB_USER="mesa"
 DB_NAME="mesa_de_ayuda"
+
+# ── Helpers ─────────────────────────────────────────────────────────────────
+# The dump MUST NOT be persisted in plaintext. Abort before pg_dump if the
+# deployment secret is missing, so no clear-text dump is ever written.
+require_passphrase() {
+    if [ -z "${BACKUP_ENCRYPTION_PASSPHRASE:-}" ]; then
+        echo "ERROR: BACKUP_ENCRYPTION_PASSPHRASE is not set."
+        echo "Set it to a deployment secret before running the backup."
+        exit 1
+    fi
+}
+
+encrypt_dump() {
+    local plaintext="$1"
+    local out="$2"
+    if ! openssl enc -aes-256-cbc -pbkdf2 -salt \
+            -pass env:BACKUP_ENCRYPTION_PASSPHRASE \
+            -in "$plaintext" -out "$out"; then
+        echo "ERROR: backup encryption failed."
+        rm -f "$out"
+        exit 1
+    fi
+}
+
+rotate_backups() {
+    cd "$BACKUP_DIR"
+    local backup_files total
+    backup_files=($(ls -1t backup_*.sql.enc 2>/dev/null || true))
+    total=${#backup_files[@]}
+    if [ "$total" -gt "$RETENTION_COUNT" ]; then
+        local old_backups=("${backup_files[@]:$RETENTION_COUNT}")
+        echo "Rotating: removing ${#old_backups[@]} old backup(s)..."
+        for old_file in "${old_backups[@]}"; do
+            echo "  Deleting: $old_file"
+            rm -f "$old_file"
+        done
+        echo "Rotation complete. Kept $RETENTION_COUNT most recent backups."
+    else
+        echo "No rotation needed ($total backups, retention=$RETENTION_COUNT)."
+    fi
+}
+
+require_passphrase
 
 # ── Idempotent: ensure backup directory exists ───────────────────────────────
 mkdir -p "$BACKUP_DIR"
@@ -63,12 +108,15 @@ else
     # BSD date (macOS) fallback
     TIMESTAMP=$(date "+%Y-%m-%d")
 fi
-BACKUP_FILE="${BACKUP_DIR}/backup_${TIMESTAMP}.sql"
+BACKUP_FILE="${BACKUP_DIR}/backup_${TIMESTAMP}.sql.enc"
+PLAINTEXT_DUMP="$(mktemp "${TMPDIR:-/tmp}/backup_plain.XXXXXX")"
+remove_plaintext_dump() { rm -f "$PLAINTEXT_DUMP" 2>/dev/null || true; }
+trap remove_plaintext_dump EXIT
 
 # ── Run pg_dump ──────────────────────────────────────────────────────────────
 echo "Backing up PostgreSQL to: $BACKUP_FILE"
 
-if ! docker exec "$CONTAINER_ID" pg_dump -U "$DB_USER" "$DB_NAME" > "$BACKUP_FILE" 2>/tmp/backup_error.log; then
+if ! docker exec "$CONTAINER_ID" pg_dump -U "$DB_USER" "$DB_NAME" > "$PLAINTEXT_DUMP" 2>/tmp/backup_error.log; then
     echo "ERROR: pg_dump failed."
     cat /tmp/backup_error.log
     rm -f /tmp/backup_error.log
@@ -77,25 +125,16 @@ fi
 
 rm -f /tmp/backup_error.log 2>/dev/null || true
 
+# ── Encrypt the dump at rest ─────────────────────────────────────────────────
+encrypt_dump "$PLAINTEXT_DUMP" "$BACKUP_FILE"
+
+remove_plaintext_dump
+
 SIZE=$(du -h "$BACKUP_FILE" 2>/dev/null | cut -f1 || echo "unknown")
 echo "Backup completed: $BACKUP_FILE ($SIZE)"
 
 # ── Rotate: keep only the $RETENTION_COUNT most recent backups ────────────────
-cd "$BACKUP_DIR"
-BACKUP_FILES=($(ls -1t backup_*.sql 2>/dev/null || true))
-TOTAL_BACKUPS=${#BACKUP_FILES[@]}
-
-if [ "$TOTAL_BACKUPS" -gt "$RETENTION_COUNT" ]; then
-    OLD_BACKUPS=("${BACKUP_FILES[@]:$RETENTION_COUNT}")
-    echo "Rotating: removing ${#OLD_BACKUPS[@]} old backup(s)..."
-    for old_file in "${OLD_BACKUPS[@]}"; do
-        echo "  Deleting: $old_file"
-        rm -f "$old_file"
-    done
-    echo "Rotation complete. Kept $RETENTION_COUNT most recent backups."
-else
-    echo "No rotation needed ($TOTAL_BACKUPS backups, retention=$RETENTION_COUNT)."
-fi
+rotate_backups
 
 echo "Done."
 exit 0

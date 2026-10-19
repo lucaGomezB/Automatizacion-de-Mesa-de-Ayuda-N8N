@@ -38,6 +38,15 @@ $ServiceName = "postgres"
 $DbUser = "mesa"
 $DbName = "mesa_de_ayuda"
 
+# ── Require the encryption passphrase before touching anything ──────────────
+# The dump MUST NOT be persisted in plaintext. Abort before pg_dump if the
+# deployment secret is missing, so no clear-text dump is ever written.
+if (-not $env:BACKUP_ENCRYPTION_PASSPHRASE) {
+    Write-Host "ERROR: BACKUP_ENCRYPTION_PASSPHRASE is not set." -ForegroundColor Red
+    Write-Host "Set it to a deployment secret before running the backup."
+    exit 1
+}
+
 # ── Idempotent: ensure backup directory exists ──────────────────────────────
 if (-not (Test-Path $BackupDir)) {
     New-Item -ItemType Directory -Path $BackupDir -Force | Out-Null
@@ -71,15 +80,16 @@ Write-Host "Found running container: $ContainerId"
 
 # ── Generate timestamped filename ────────────────────────────────────────────
 $Timestamp = Get-Date -Format "yyyy-MM-dd"
-$BackupFile = Join-Path $BackupDir "backup_${Timestamp}.sql"
+$BackupFile = Join-Path $BackupDir "backup_${Timestamp}.sql.enc"
+$PlaintextFile = Join-Path $env:TEMP "backup_plain_$(Get-Date -Format 'yyyyMMddHHmmss').txt"
 
-# ── Run pg_dump ──────────────────────────────────────────────────────────────
+# ── Run pg_dump (to a temporary plaintext file, never inside backups/) ──────
 Write-Host "Backing up PostgreSQL to: $BackupFile"
 
 $tempErrorFile = Join-Path $env:TEMP "backup_error_$(Get-Date -Format 'yyyyMMddHHmmss').txt"
 
 try {
-    docker exec $ContainerId pg_dump -U $DbUser $DbName 2>$tempErrorFile | Out-File -FilePath $BackupFile -Encoding utf8NoBOM
+    docker exec $ContainerId pg_dump -U $DbUser $DbName 2>$tempErrorFile | Out-File -FilePath $PlaintextFile -Encoding utf8NoBOM
 
     if ($LASTEXITCODE -ne 0) {
         Write-Host "ERROR: pg_dump failed." -ForegroundColor Red
@@ -89,7 +99,20 @@ try {
         }
         exit 1
     }
+
+    # ── Encrypt the dump at rest ─────────────────────────────────────────────
+    & openssl enc -aes-256-cbc -pbkdf2 -salt `
+        -pass env:BACKUP_ENCRYPTION_PASSPHRASE `
+        -in $PlaintextFile -out $BackupFile
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "ERROR: backup encryption failed." -ForegroundColor Red
+        if (Test-Path $BackupFile) { Remove-Item $BackupFile -Force }
+        exit 1
+    }
 } finally {
+    if (Test-Path $PlaintextFile) {
+        Remove-Item $PlaintextFile -Force -ErrorAction SilentlyContinue
+    }
     if (Test-Path $tempErrorFile) {
         Remove-Item $tempErrorFile -Force -ErrorAction SilentlyContinue
     }
@@ -100,7 +123,7 @@ $backupSizeKB = [math]::Round($backupSize / 1KB, 2)
 Write-Host "Backup completed: $BackupFile (${backupSizeKB} KB)"
 
 # ── Rotate: keep only the $RetentionCount most recent backups ────────────────
-$existingBackups = Get-ChildItem -Path $BackupDir -Filter "backup_*.sql" |
+$existingBackups = Get-ChildItem -Path $BackupDir -Filter "backup_*.sql.enc" |
     Sort-Object LastWriteTime -Descending
 
 $totalBackups = $existingBackups.Count

@@ -87,6 +87,7 @@ sugerida es anual, o ante cambio de alcance, normativa o infraestructura.
 | `politica-retencion-logs.md` | Politica de retencion de logs por clase de registro y no-PII (8.12/8.15; SGD-015; C-66) | v1 (aprobada 2026-10-19) | Anual |
 | `gestion-secretos-y-rotacion.md` | Gestion de secretos, inventario de columnas cifradas y runbook de rotacion (8.2, 8.24; IAH-008..010) | v1 (aprobada 2026-10-08) | Anual |
 | `ciclo-vida-identidades-y-revision-accesos.md` | Ciclo de vida de identidades y revision de accesos — control organizacional (5.16, 5.18; IAH-011) | v1 (aprobada 2026-10-08) | Anual |
+| `plan-continuidad.md` | Plan de continuidad: RTO/RPO, restauracion desde el dump cifrado, offsite y redundancia como accion del adoptante (5.29, 5.30, 8.13, 8.14; CONT-001/CONT-002; C-65) | v1 (aprobada 2026-10-19) | Anual |
 
 Anexo del cuerpo documental (no es uno de los 11 documentos de gobernanza):
 
@@ -115,6 +116,10 @@ Anexo del cuerpo documental (no es uno de los 11 documentos de gobernanza):
 | 8.24 Uso de criptografia | PR | `gestion-secretos-y-rotacion.md` | IAH-008..010 |
 | 5.16 Gestion del ciclo de vida de la identidad | GV | `ciclo-vida-identidades-y-revision-accesos.md` | IAH-011 |
 | 5.18 Derechos de acceso | GV | `ciclo-vida-identidades-y-revision-accesos.md` | IAH-011 |
+| 5.29 Seguridad de la informacion durante la disrupcion | RC | `plan-continuidad.md` | CONT-001, CONT-002 |
+| 5.30 Preparacion de las TIC para la continuidad | RC | `plan-continuidad.md` | CONT-001, CONT-002 |
+| 8.13 Respaldo de informacion | RC | `plan-continuidad.md` | CONT-001, CONT-002 |
+| 8.14 Redundancia | RC | `plan-continuidad.md` | CONT-002 |
 | 5.34 Privacidad y proteccion de PII | GV, PR | `politica-privacidad-runtime.md`, `justificacion-minimizacion-directorio.md`, `instrumento-transferencia-internacional.md`, `procedimiento-arco.md`, `politica-retencion-logs.md` | SGD-009, SGD-013, SGD-014, SGD-015 |
 | 8.12 Prevencion de fuga de datos | PR | `justificacion-minimizacion-directorio.md`, `politica-retencion-logs.md` | SGD-015 |
 | 8.15 Registro de eventos | DE, PR | `politica-retencion-logs.md` | SGD-015 |
@@ -148,6 +153,8 @@ C-67.
 | IAH-009 Rotacion de la clave Fernet | `gestion-secretos-y-rotacion.md` |
 | IAH-010 Higiene y gestion de secretos | `gestion-secretos-y-rotacion.md` |
 | IAH-011 Ciclo de vida de identidades y revision de accesos | `ciclo-vida-identidades-y-revision-accesos.md` |
+| CONT-001 Objetivos de recuperacion (RTO/RPO) | `plan-continuidad.md` |
+| CONT-002 Plan de continuidad con restauracion y encuadre del adoptante | `plan-continuidad.md` |
 
 ## 7. Relaciones entre changes
 
@@ -168,6 +175,10 @@ C-67.
   `procedimiento-arco.md` (5.34; SGD-013) y `politica-retencion-logs.md`
   (8.12/8.15; SGD-015), y alinea la conservacion de incidentes (12 meses rodantes +
   anonimizacion irreversible) con el capitulo 11 de la tesis.
+- **C-65** (`backup-continuidad`) extiende este cuerpo documental con
+  `plan-continuidad.md` (5.29/5.30/8.13/8.14; CONT-001/CONT-002), que define
+  RTO/RPO, el procedimiento de restauracion desde el dump cifrado y el encuadre
+  de la copia offsite y la redundancia como accion del adoptante.
 
 ## 8. Verificacion y estado de aprobacion
 

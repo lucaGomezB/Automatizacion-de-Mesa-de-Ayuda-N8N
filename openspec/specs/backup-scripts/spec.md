@@ -1,7 +1,9 @@
 # backup-scripts Specification
 
 ## Purpose
-TBD - created by archiving change c-26-corpus-simulado-backup-retencion. Update Purpose after archive.
+
+Define el respaldo de PostgreSQL mediante `pg_dump` desde el contenedor Docker, su cifrado en reposo (AES-256) con una passphrase de despliegue, su rotacion a 7 archivos y su verificacion de restauracion reproducible, con paridad funcional entre los scripts Bash y PowerShell.
+
 ## Requirements
 ### Requirement: BACKUP-001 — PostgreSQL backup desde contenedor Docker
 
