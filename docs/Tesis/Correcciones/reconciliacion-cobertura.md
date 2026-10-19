@@ -74,7 +74,7 @@ resolver antes de aplicar.
 | A-16 | Sin tiempos desagregados por canal | c-77 E5.1 (tabla por canal) + c-80 F2 (boxplot por canal) | CUBIERTO |
 | A-17 | Figura 1 a mano alzada; no representa las 5 capas ni nombra componentes | c-80 F2 (6.1, 6.9) | CUBIERTO |
 | A-18 | Tabla 3 con nota interna "N8N 1.62 no en Docker Hub" | c-80 F6 (2.1, 2.2) | CUBIERTO |
-| A-19 | §5.6 "seis entidades" vs Anexo C "cinco tablas" | c-80 F3 (7.3) toca Anexo C pero introduce "7 entidades" | PARCIAL |
+| A-19 | §5.6 "seis entidades" vs Anexo C "cinco tablas" | No reproduce (STALE): el `.tex` dice "siete" en cuerpo y anexo desde `8466cbe`; coincide con el modelo real (7 principales) | CUBIERTO (stale) |
 | A-20 | §8.1 interpreta y no interroga; sin hipotesis alternativa | c-80 F7 baja valorativos, no agrega hipotesis rival | PARCIAL |
 | A-21 | §8.3 baseline TF-IDF+SVM (78 %, F1 0,764) en una sola oracion, sin procedimiento ni codigo | — | NUEVO |
 | A-22 | §8.1 "garantia metodologica" justo lo que el repo no permite verificar (C-01) | c-80 F7 (5.5) | CUBIERTO |
@@ -317,12 +317,15 @@ Chequeo del `.tex` en HEAD: `92~` (14), `165,3` (8), `0,919` (12), `Operaciones`
 `tres sectores` (8), `W = 0` (4). La tesis fuente sigue con los numeros sinteticos: la
 correccion es necesaria. PERO hay divergencia con el PDF auditado en un punto:
 
-- **A-19**: el PDF/auditoria dice "§5.6 anuncia seis entidades" y "Anexo C dice cinco".
-  El `.tex` en HEAD (`05-arquitectura.tex:64`) dice **"siete entidades principales"** y
-  `tab:entidades` lista **siete** (incluye `directorio_empleado`, verificado en
-  `App/Backend/app/models/empleado.py`). La premisa "seis vs cinco" **no coincide con el
-  `.tex` actual**: requiere re-verificacion antes de corregir. `c-80` mantuvo 7 y lo
-  documento.
+- **A-19 — VERIFICADO (2026-10-19): no reproduce, STALE.** El `.tex` dice "siete
+  entidades" de forma consistente: §5.6 (`05-arquitectura.tex:79`), el pie del ER
+  (`:106`) y el Anexo C (`12-anexos.tex:25`). `tab:entidades` lista las 7 principales
+  (`incidente`, `sector`, `estado`, `canal_origen`, `clasificacion_log`, `users`,
+  `directorio_empleado`), coincidentes con `App/Backend/app/models/`. El texto "siete"
+  precede a esta sesion (commit `8466cbe`). La contradiccion "seis vs cinco" del informe
+  auditado corresponde a una revision anterior (el PDF). Residuo menor: `06-implementacion.tex:72`
+  dice "seis entidades" al describir la iteracion de Semanas 3-4 (posible dato historico
+  legitimo); alinear o marcar como historico al aplicar c-93.
 
 ### Matiz 2 — el repositorio evoluciono desde el commit auditado
 
