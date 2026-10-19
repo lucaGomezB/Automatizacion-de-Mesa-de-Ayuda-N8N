@@ -143,12 +143,12 @@ Las afirmaciones de la discusion (8.1) y de las conclusiones (9.1) SHALL estar s
 #### Scenario: Juicios de valor sin respaldo retirados de la discusion
 - **WHEN** se lee la seccion 8.1 de `08-discusion.tex`
 - **THEN** expresiones como "superan ampliamente", "valida la hipotesis subsidiaria", "consecuencia deseable" y "materializa el esquema human in the loop buscado" no se presentan como hechos no medidos
-- **AND** toda magnitud afirmada remite a los valores del Capitulo 7 (por ejemplo, la reduccion del 89~% y la exactitud del 92~%)
+- **AND** toda magnitud afirmada remite a los valores corregidos del Capitulo 7 (reduccion de tiempo 75,9~% con cota conservadora >= 71,3~%, y exactitud 73,5~%)
 
 #### Scenario: Juicios de valor sin respaldo retirados de las conclusiones
 - **WHEN** se lee la seccion 9.1 de `09-conclusiones.tex`
 - **THEN** expresiones como "cumplido satisfactoriamente", "supero con holgura", "no deja espacio para la duda razonable", "resultado poco frecuente", "trasciende lo meramente estadistico" y "activo que excede" fueron retiradas o reformuladas
-- **AND** las conclusiones se sustentan en los resultados de la prueba de Wilcoxon (\(W = 0\), \(p < 0{,}001\), \(r = 1{,}00\)) y en las metricas de clasificacion reportadas
+- **AND** las conclusiones se sustentan en los resultados de la prueba de Wilcoxon (\(W = 335\), \(p = 2{,}05 \times 10^{-32}\), \(r = 0{,}983\), cifras corregidas por c-76) y en las metricas de clasificacion reportadas (exactitud 73,5~%, macro-F1 0,5207)
 
 #### Scenario: La afirmacion de garantia metodologica queda acotada
 - **WHEN** se lee el parrafo de rigor metodologico en `08-discusion.tex:16`
