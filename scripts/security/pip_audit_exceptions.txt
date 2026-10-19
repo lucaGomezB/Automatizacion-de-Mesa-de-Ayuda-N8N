@@ -1,16 +1,14 @@
-# pip-audit exception list (c-64, D3 / OQ3).
+# pip-audit exception list (c-64 D3 / OQ3; pruned by c-97).
 #
 # One vulnerability ID per line; the trailing `# ...` comment carries the
 # reason. Blank lines and lines starting with `#` are ignored. The
 # `security-scan` CI job turns each ID into an explicit `--ignore-vuln <ID>`.
 #
 # POLITICA REAL DE BLOQUEO: la auditoria del backend BLOQUEA ante
-# vulnerabilidades conocidas que tengan una correccion NO rompiente
-# (non-breaking fix) disponible. Se exceptuan de forma EXPLICITA y por ID,
-# aqui, unicamente:
-#   - hallazgos SIN correccion publicada upstream, o
-#   - hallazgos corregibles SOLO mediante una actualizacion mayor ROMPIENTE
-#     (breaking major), registrada como seguimiento pendiente (ver FOLLOW-UP).
+# vulnerabilidades conocidas que tengan una correccion disponible. Se
+# exceptuan de forma EXPLICITA y por ID, aqui, unicamente los hallazgos SIN
+# correccion publicada upstream. No hay excepciones por actualizaciones
+# mayores rompientes: c-97 ejecuto esos upgrades y elimino sus excepciones.
 # Excepciones explicitas y auditables; NUNCA un `continue-on-error` global.
 # Cualquier hallazgo nuevo que no figure en esta lista hace fallar el job.
 #
@@ -19,26 +17,3 @@
 
 PYSEC-2026-4298  # python-jose 3.5.0: no fix published (incomplete fix of CVE-2024-33663)
 PYSEC-2026-1325  # ecdsa 0.19.2 (via python-jose): no fix; Minerva side-channel out of scope upstream
-PYSEC-2026-1845  # pytest 8.3.3: fix is 9.x (breaking vs pytest-asyncio 0.24); follow-up
-PYSEC-2026-161   # starlette 0.38.6 (via fastapi 0.115): fix 1.0.1 needs fastapi major upgrade; follow-up
-PYSEC-2026-249   # starlette 0.38.6: fix 1.3.1 needs fastapi major upgrade; follow-up
-PYSEC-2026-248   # starlette 0.38.6: fix 1.3.0 needs fastapi major upgrade; follow-up
-PYSEC-2026-1943  # starlette 0.38.6: fix 0.40.0 is outside fastapi 0.115's <0.39 cap; follow-up
-PYSEC-2026-1941  # starlette 0.38.6: fix 0.47.2 needs fastapi major upgrade; follow-up
-PYSEC-2026-2281  # starlette 0.38.6: fix 1.1.0 needs fastapi major upgrade; follow-up
-PYSEC-2026-2280  # starlette 0.38.6: fix 1.1.0 needs fastapi major upgrade; follow-up
-
-# ------------------------------------------------------------------------------
-# FOLLOW-UP (seguimiento pendiente; NO aceptado en silencio)
-#
-# Las siguientes actualizaciones mayores rompientes quedarian resueltas al
-# ejecutarlas. Se registran aqui para que la excepcion no se convierta en un
-# mute permanente: son deuda tecnica trackeada, no una aceptacion silenciosa.
-#
-#   (i)  fastapi: actualizacion mayor (fastapi 0.115 -> 1.x) para limpiar las 7
-#        advisories de starlette 0.38.6 (PYSEC-2026-161/249/248/1943/1941/
-#        2281/2280), hoy dentro del cap <0.39 declarado por fastapi 0.115.
-#
-#   (ii) pytest: actualizacion a 9.x para limpiar PYSEC-2026-1845; rompiente
-#        respecto de pytest-asyncio 0.24 (requiere revisar esa integracion).
-# ------------------------------------------------------------------------------

@@ -205,10 +205,10 @@ jobs:
   #   - umbral (deps frontend) ... --audit-level=high (modo reporte)
   # Politica de bloqueo por escaneo:
   #   1. SAST backend       -> bandit: bloquea solo severidad ALTA (-lll).
-  #   2. auditoria deps BE  -> pip-audit: bloquea ante vulnerabilidades con
-  #                            correccion NO rompiente; excepciones explicitas
-  #                            por ID (sin correccion o solo con upgrade mayor
-  #                            rompiente, con seguimiento registrado).
+  #   2. auditoria deps BE  -> pip-audit: bloquea ante toda vulnerabilidad
+  #                            con correccion disponible; excepciones
+  #                            explicitas por ID, solo para hallazgos SIN
+  #                            correccion publicada upstream.
   #   3. auditoria deps FE  -> npm audit: NO bloqueante (reporte) en esta
   #                            iteracion (--audit-level=high + `|| true`).
   # Design D1: job dedicado en paralelo, con las herramientas FIJADAS e
@@ -251,12 +251,11 @@ jobs:
       - name: Backend dependency audit (pip-audit, blocks on fixable)
         run: |
           # Politica de bloqueo (D3): pip-audit falla ante vulnerabilidades
-          # conocidas que tengan una correccion NO rompiente (non-breaking fix)
-          # disponible. Los hallazgos preexistentes se exceptuan de forma
-          # EXPLICITA por ID, con motivo por linea y seguimiento registrado, en
-          # scripts/security/pip_audit_exceptions.txt: unicamente hallazgos SIN
-          # correccion publicada o corregibles SOLO con una actualizacion mayor
-          # rompiente (breaking major); nunca un continue-on-error global.
+          # conocidas que tengan una correccion disponible. Los hallazgos
+          # preexistentes se exceptuan de forma EXPLICITA por ID, con motivo
+          # por linea, en scripts/security/pip_audit_exceptions.txt:
+          # unicamente hallazgos SIN correccion publicada upstream; nunca un
+          # continue-on-error global.
           EXC="scripts/security/pip_audit_exceptions.txt"
           IGNORE=$(grep -vE '^[[:space:]]*(#|$)' "$EXC" | awk '{print "--ignore-vuln "$1}')
           pip-audit -r App/Backend/requirements.txt --desc $IGNORE
