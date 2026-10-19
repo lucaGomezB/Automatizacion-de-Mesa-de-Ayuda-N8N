@@ -1955,7 +1955,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ## Notas del analisis
 
-### Estado actual del proyecto (verificado contra el codigo)
+### Estado actual del proyecto (verificado contra el codigo; actualizado 2026-10-19)
 
 | Componente | Estado | Observaciones |
 |------------|--------|---------------|
@@ -1966,16 +1966,16 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 | Backend: repositorios | COMPLETO | Patron repositorio con sesion compartida, filtros dinamicos |
 | Backend: keywords | COMPLETO | Mapa redistribuido en los 5 sectores canonicos (C-27) |
 | Backend: util n8n_webhook | EN USO | `notify_n8n()` fire-and-forget desde el servicio; apunta al webhook N8N dedicado (C-33) |
-| Backend: tests | COMPLETO | Suite offline SQLite (550 passed) + subconjunto de integracion PostgreSQL sobre base descartable (C-19/C-32/C-45) |
+| Backend: tests | COMPLETO | Suite offline SQLite (1449 passed, 48 deselected, 1 xfailed) + subconjunto de integracion PostgreSQL sobre base descartable (48 tests; C-19/C-32/C-45) |
 | Backend: pseudonimizacion | COMPLETO | C-03; cifrado at-rest con Fernet |
 | Backend: migraciones | COMPLETO | Alembic; migraciones 001-011 (la 006 agrega timing e2e, C-39; la 007 agrega `costo_guarda_contador`, C-45; la 008 agrega `telefonia_ingreso`, C-52; la 009 agrega `directorio_empleado` y la 010 `directorio_fecha_baja`, C-54; la 011 agrega `corpus_case_id`, C-70). La 012 (rol `mesa_de_ayuda`) la introduce c-60 (archivado 2026-10-06) |
 | Backend: auth | COMPLETO | JWT Bearer (C-15) |
 | Costo runtime: guarda | COMPLETO | C-45 bolsa global USD 10/semana, rate global y por origen, PostgreSQL 007, webhook pre-llamada de Twilio y fail-closed (archivado); C-58 la dimensiona al peor caso de intentos por clasificacion |
 | N8N workflow JSON | COMPLETO | Canales cableados (C-04/C-05), compuerta de confianza de dos capas (C-38), wiring corregido (C-40), recuperacion robusta del sello de ingreso de telefonia (C-46), item de telefonia preservado a traves de la guarda de costo (C-47), auditoria de la rama de revision corregida (C-57) y modelo explicito + reintento acotado del agente (C-58) |
-| Frontend: paginas | COMPLETO | ReportarIncidente, Administracion, Dashboard (C-23), Login (C-15) |
+| Frontend: paginas | COMPLETO | ReportarIncidente, Administracion, Dashboard (C-23), Login (C-15), MisIncidentes, Directorio (C-89), MfaEnrollment (C-63b), Privacidad (c-66) |
 | Frontend: componentes | COMPLETO | shadcn/ui, badges, indicadores, tablas, dialogos |
 | Frontend: hooks/services | COMPLETO | React Query + Axios, todos los endpoints conectados |
-| Frontend: tests | COMPLETO | Vitest + Testing Library (C-07) |
+| Frontend: tests | COMPLETO | Vitest + Testing Library (C-07); 365 tests en 57 archivos |
 | Infra: Docker | COMPLETO | docker-compose.yml + nginx TLS (C-20); Dockerfiles multi-stage non-root (improve-dockerfiles) |
 | Infra: CI/CD | COMPLETO | .github/workflows/ci.yml (C-09); incluye la suite y el CLI del preflight (C-41) |
 | Infra: arranque | COMPLETO | scripts/up.sh / up.ps1 + Makefile (C-28); preflight de entorno y de costo (C-41) |
@@ -1989,7 +1989,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 | Seguridad: higiene de secretos | COMPLETO | C-37 (hook pre-commit + runbook + escaneo del lado GitHub) |
 | Corpus: JSON multietiqueta | COMPLETO | C-27 rediseno-sectores-json (sintetico eliminado); corpus 200/200 con `tiempo_automatizado_s` (C-68 web 53/53 + correo 66/66; C-70 telefonia 81/81) |
 | Timing e2e | IMPLEMENTADO | C-39; `ingresado_en` / `persistido_en` / `latencia_e2e_ms`. C-46 elimina la perdida silenciosa del sello en el canal telefonico (verificacion de runtime en vivo pendiente) |
-| Backup scripts: PostgreSQL | IMPLEMENTADO | C-26 — scripts/backup.sh y scripts/backup.ps1 con rotacion de 7 dias |
+| Backup scripts: PostgreSQL | COMPLETO | C-26 (pg_dump + rotacion de 7 dias) + c-65 (cifrado AES-256 en reposo, scheduler cron/systemd versionado, prueba de restauracion reproducible; plan de continuidad con RTO/RPO 24h) |
 | N8N retention: 30 dias | CONFIGURADO | C-26 — EXECUTIONS_DATA_PRUNE y EXECUTIONS_DATA_MAX_AGE en docker-compose.yml |
 
 Tabla reconciliada con el estado real el 2026-10-01: C-14..C-48 quedaron documentados en las FASE 12-17; C-52..C-55 en la FASE 18 (C-52, C-53, C-54 y C-55 archivados) y C-56..C-60 en la FASE 19 (C-57 y C-58 archivados). Actualizacion 2026-10-01: C-53 y C-59 quedaron archivados; C-67 quedo registrado (notificacion SMS diferida, FASE 20). Actualizacion 2026-10-01 (tarde): C-54 quedo ARCHIVADO (2026-10-01, 51/51) y la FASE 18 queda CERRADA; se aprobo el plan de cumplimiento ISO/NIST/Ley 25.326, registrado como planificado en la FASE 21 (C-61..C-66, aun sin crear). Actualizacion 2026-10-01 (noche): C-61 `compliance-gobernanza` quedo CREADO como change OPSX (FASE 21, 0/23, MEDIO, sin dependencias, habilita C-63); los totales se ajustan a 58 changes numeradas creadas (54 archivadas + 4 activos) y 5 planificadas sin crear (C-62..C-66); C-66 no depende de C-67 sino que C-67 depende de C-66. Actualizacion 2026-10-01 (noche, cierre): C-61 quedo ARCHIVADO (2026-10-01, 26/26) y su spec `security-governance-docs` fue creada; la FASE 21 quedo parcialmente ejecutada y los totales se ajustan a 58 changes numeradas creadas (55 archivadas + 3 activos) mas 1 de mantenimiento sin numero (56 archivadas en total) y 5 planificadas sin crear (C-62..C-66). Actualizacion 2026-10-05: C-69 `dedup-correlacion-altas` quedo ARCHIVADO (2026-10-05, 30/30; specs sincronizadas: added 5 — `incident-origin-correlation` creada, `incident-intake-guards` y `n8n-workflow` modificadas) y C-68 quedo en 58/63 (apply avanzado; corpus web 53/53 y correo 66/66 medido por el flujo N8N real). Se registro C-70 `softphone-corpus-telefonia` (FASE 23, 0/65, ALTO, OQ1..OQ6 resueltas; apply-ready). Totales: 61 changes numeradas creadas (56 archivadas + 5 activas: C-56, C-60, C-67, C-68 y C-70) mas 1 de mantenimiento sin numero (57 archivadas en total) y 5 planificadas sin crear (C-62..C-66). Actualizacion 2026-10-05 (tarde): C-70 quedo en 62/65 (apply completo y verificado; 8.1-8.3 operativas pendientes) y se propuso C-71 `hardening-clasificador-determinista` (FASE 24, 0/43, MEDIO, OQ1..OQ5 abiertas) tras medir que el clasificador determinista escala el 64% y su cortocircuito acierta ~51% (estricto) / ~76% (multietiqueta). Totales: 62 changes numeradas creadas (56 archivadas + 6 activas: C-56, C-60, C-67, C-68, C-70 y C-71) mas 1 de mantenimiento sin numero (57 archivadas en total) y 5 planificadas sin crear (C-62..C-66). Actualizacion 2026-10-05 (noche): C-71 `hardening-clasificador-determinista` quedo APLICADO (43/43; vocabulario+calibracion, `hybrid-v2`; calibracion pendiente de decision) y se propuso C-72 `unificar-clasificacion-telefonica` (FASE 25, 0/37, ALTO) para unificar la clasificacion telefonica a la cascada. Totales: 63 changes numeradas creadas (56 archivadas + 7 activas: C-56, C-60, C-67, C-68, C-70, C-71 y C-72) mas 1 de mantenimiento sin numero (57 archivadas en total) y 5 planificadas sin crear (C-62..C-66). (Instantaneas historicas fechadas; para el estado actual de la FASE 21 ver la Actualizacion 2026-10-19 (c-64 y c-65 archivados) mas abajo, donde C-64, C-65 y C-66 quedan creados y archivados y la FASE 21 queda TOTALMENTE EJECUTADA.)
