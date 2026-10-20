@@ -47,6 +47,8 @@ Formulario web                     & 53 & 1,88  & 1,26  \\
 \textbf{Global}                    & \textbf{200} & \textbf{17,76} & \textbf{17,47} \\
 \bottomrule
 \end{tabular}
+\par\smallskip
+{\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)).\par}
 \end{table}
 
 La prueba de Wilcoxon de rangos con signo aplicada sobre las mediciones pareadas \parencite{Virtanen2020_scipy} arrojo un estadístico de contraste \(W = \min(T^{+}, T^{-}) = 363\), con una suma de rangos positivos \(T^{+} = 19.737\), una suma de rangos negativos \(T^{-} = 363\) y \(n = 200\) pares validos, junto con un valor \(p = 3{,}08 \times 10^{-32}\), lo que permite rechazar la hipotesis nula de igualdad de medianas con un nivel de confianza superior al 99,9~\%. El estadístico incorpora la corrección por empates y refleja que en 188 de los 200 pares el flujo automatizado fue mas veloz que el manual; en los 12 pares restantes (6,0~\%) el flujo automatizado no fue mas rápido, resultado coherente con la diferencia de aproximadamente 32,5~s entre medianas. La elección de esta prueba no parametrica responde al rechazo de la hipotesis de normalidad en los tres conjuntos de tiempos, cuyo reporte completo se presenta en la Sección~4.7.
@@ -62,7 +64,7 @@ Cabe señalar que el tiempo manual se registró con redondeo hacia arriba (véas
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{boxplot_tiempos}
-\caption{Distribucion del tiempo de registro por canal de origen (manual frente a automatizado). El panel de telefonia incorpora la duracion de la llamada grabada, por lo que su valor automatizado constituye una cota inferior.}
+\caption{Distribucion del tiempo de registro por canal de origen (manual frente a automatizado). El panel de telefonia incorpora la duracion de la llamada grabada.}
 \label{fig:boxplot_tiempos}
 \end{figure}
 
@@ -70,7 +72,7 @@ Cabe señalar que el tiempo manual se registró con redondeo hacia arriba (véas
 
 La evaluación de clasificación se realizó sobre el corpus real de 200 casos pseudonimizados. Su distribución por sector asignado es la siguiente: Soporte Técnico Hardware 85, Soporte Técnico Software 67, Seguridad Informática 31, Sistemas 16 y Bases de Datos 1. Por canal de origen, 81 casos provienen de llamada telefónica, 66 de correo electrónico y 53 de formulario web.
 
-La matriz de confusion obtenida se presenta en la Tabla~\ref{tab:matriz}. De los 85 casos de Soporte Tecnico Hardware, 77 fueron correctamente clasificados; de los 67 de Soporte Tecnico Software, 48; de los 31 de Seguridad Informatica, 15; de los 16 de Sistemas, 7; y del único caso de Bases de Datos, ninguno. La exactitud estricta resultante asciende al 73,5~\% (147 casos correctos sobre 200).
+La matriz de confusion obtenida se presenta en la Tabla~\ref{tab:matriz} y en la Figura~\ref{fig:matriz_confusion}. De los 85 casos de Soporte Tecnico Hardware, 77 fueron correctamente clasificados; de los 67 de Soporte Tecnico Software, 48; de los 31 de Seguridad Informatica, 15; de los 16 de Sistemas, 7; y del único caso de Bases de Datos, ninguno. La exactitud estricta resultante asciende al 73,5~\% (147 casos correctos sobre 200).
 
 \begin{table}[htbp]
 \centering
@@ -94,6 +96,13 @@ Sistemas & 2 & 0 & 5 & 2 & \textbf{7} & \textbf{16} \\
 \par\smallskip
 {\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)).\par}
 \end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{matriz_confusion}
+\caption{Matriz de confusion del clasificador (\(n = 200\)). Filas: sector asignado (verdad); columnas: sector predicho principal.}
+\label{fig:matriz_confusion}
+\end{figure}
 
 Los valores de precision, sensibilidad (\emph{recall}) y F1 calculados por clase \parencite{Sokolova2009_performance_measures} se presentan en la Tabla~\ref{tab:metricas}. El mejor desempeño correspondió a Soporte Tecnico Hardware (F1 = 0,8800), seguido por Soporte Tecnico Software (0,7111) y Seguridad Informatica (0,6122); Sistemas (0,4000) y Bases de Datos (0,0000, con un único caso de soporte) fueron las clases mas difíciles. El promedio macro de F1 fue de 0,5207 y el micro-F1 de 0,6654. La exactitud estricta del 73,5~\% (147/200) presenta un intervalo de confianza al 95~\%, estimado por el método de Wilson \parencite{Wilson1927_probable_inference}, de [67,0~\%, 79,1~\%]. En cuanto al desempeño de conjunto, el \emph{subset accuracy} (proporción de casos en que el conjunto completo de sectores resultó correcto) fue de 0,43 y el \emph{Hamming loss} de 0,3586. De los 200 casos, 131 fueron resueltos por la etapa determinística del clasificador y 69 requirieron la etapa Gemini.
 
@@ -119,14 +128,7 @@ Bases de Datos            & 0,0000 & 0,0000 & 0,0000 \\
 
 Estas metricas confirman que el clasificador exhibe un desempeño desigual entre las cinco clases objetivo \parencite{Sokolova2009_performance_measures}. La clase mayoritaria (Soporte Tecnico Hardware, con 85 casos) obtuvo el mejor resultado, mientras que Sistemas y Bases de Datos presentaron los valores mas bajos. Este desequilibrio es particularmente relevante en el contexto operativo: un clasificador que concentra sus errores en una clase minoritaria genera derivaciones erroneas en un sector específico, lo que erosiona la confianza de ese equipo en el sistema y puede llevar al rechazo operativo de la herramienta, independientemente de sus metricas agregadas.
 
-La inspeccion de la matriz de confusion revela que los 53 errores totales se concentran en fronteras entre sectores lexicamente proximos, con Soporte Tecnico Software como categoría central. La confusión dominante es entre Soporte Tecnico Hardware y Soporte Tecnico Software (14 casos: 11 derivaciones de Software a Hardware y 3 en sentido inverso), asociada a incidentes en que una falla física de un equipo compromete una aplicación o en que una tarea sobre una aplicación se describe con terminos de equipamiento. La segunda frontera es entre Sistemas y Soporte Tecnico Software (12 casos: 7 derivaciones de Software a Sistemas y 5 inversas), vinculada a acciones sobre servidores y servicios de plataforma. La tercera es entre Seguridad Informatica y Soporte Tecnico Software (11 casos), asociada a incidentes de acceso, credenciales y permisos. El resto de los errores (16 casos) se reparte entre las demas fronteras. En ausencia de información contextual que un usuario no siempre incluye en la descripción inicial, el clasificador enfrenta una ambiguedad estructural que no se resuelve con mejoras incrementales del modelo sino con un enriquecimiento del protocolo de captura del incidente. Esta observación orienta una de las recomendaciones presentadas en el Capitulo~10: incorporar preguntas de refinamiento tempranas que permitan al clasificador reducir la zona de ambiguedad entre los sectores mas propensos a confusion.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.85\textwidth]{matriz_confusion}
-\caption{Matriz de confusion del clasificador (\(n = 200\)). Filas: sector asignado (verdad); columnas: sector predicho principal.}
-\label{fig:matriz_confusion}
-\end{figure}
+La inspeccion de la matriz de confusion revela que los 53 errores totales se concentran en fronteras entre sectores lexicamente proximos, con Soporte Tecnico Software como categoría central. El análisis cualitativo de esos patrones de error, agrupados por frontera de confusion, se desarrolla en la Sección~7.5.
 
 \subsection{Reducción de la intervención humana}
 
@@ -137,24 +139,7 @@ La proporción de casos con intervención humana en el flujo automatizado se ubi
 \subsection{Calibración de la confianza}
 \label{subsec:calibracion}
 
-La confianza declarada por el clasificador solo resulta útil como criterio de derivación si guarda relación con la exactitud real. Para verificar esa relación se contrastó, sobre los 200 casos del corpus, la confianza devuelta en cada predicción contra la corrección de la clasificación. La Tabla~\ref{tab:contingencia} resume la contingencia en torno al umbral del 70~\% que gobierna el gate de revisión humana, y la Tabla~\ref{tab:bandas} desagrega la exactitud por bandas de confianza.
-
-\begin{table}[htbp]
-\centering
-\caption{Contingencia entre la confianza declarada y la exactitud, umbral 70~\%}
-\label{tab:contingencia}
-\small
-\begin{tabular}{@{}l c c c@{}}
-\toprule
-\textbf{Banda} & \textbf{Casos} & \textbf{Aciertos} & \textbf{Exactitud} \\
-\midrule
-Alta (\(\ge 0{,}70\)) & 76 & 53 & 0,697 \\
-Baja (\(< 0{,}70\))  & 124 & 94 & 0,758 \\
-\midrule
-\textbf{Total}       & \textbf{200} & \textbf{147} & \textbf{0,735} \\
-\bottomrule
-\end{tabular}
-\end{table}
+La confianza declarada por el clasificador solo resulta útil como criterio de derivación si guarda relación con la exactitud real. Para verificar esa relación se contrastó, sobre los 200 casos del corpus, la confianza devuelta en cada predicción contra la corrección de la clasificación. La Tabla~\ref{tab:bandas} desagrega la exactitud por bandas de confianza en torno al umbral del 70~\% que gobierna el gate de revisión humana.
 
 \begin{table}[htbp]
 \centering
@@ -172,6 +157,8 @@ Baja (\(< 0{,}70\))  & 124 & 94 & 0,758 \\
 \([0{,}95\,;\,1{,}00]\) & 39 & 29 & 0,744 \\
 \bottomrule
 \end{tabular}
+\par\smallskip
+{\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)).\par}
 \end{table}
 
 Los datos revelan una calibración invertida o anti-calibrada: los casos de confianza alta (\(\ge 0{,}70\)) fueron menos exactos (0,697) que los de confianza baja (\(< 0{,}70\), 0,758). La tendencia se acentúa en el extremo superior de la escala: dentro de los 46 casos con confianza igual o superior a 0,90 se registraron 13 errores (28,3~\%), y la banda \([0{,}70\,;\,0{,}85)\) alcanzó apenas 0,333 de exactitud. En otras palabras, el clasificador no solo no discrimina mejor cuando declara mayor certeza, sino que en los tramos de confianza mas alta la exactitud se degrada. La consecuencia operativa es directa: el gate del 70~\% ---el mecanismo previsto para derivar a revisión humana los casos dudosos--- no aisló los errores, porque estos se distribuyen también en las bandas de confianza alta. La supervisión humana no puede apoyarse en la confianza declarada como único disparador; requiere complementarse con señales independientes del propio puntaje (por ejemplo, la proximidad léxica entre las categorías candidatas), tal como se discute en el Capitulo~8.
