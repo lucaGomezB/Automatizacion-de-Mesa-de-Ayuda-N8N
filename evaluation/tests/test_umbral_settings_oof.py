@@ -175,6 +175,9 @@ async def test_settings_tau_deriva_del_oof_del_corpus(monkeypatch):
         "MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA=",
     )
     monkeypatch.setenv("JWT_SECRET_KEY", "dummy-jwt")
+    monkeypatch.setenv(
+        "COST_GUARD_CALLER_HMAC_KEY", "dummy-cost-guard-caller-hmac-key"
+    )
 
     from evaluation.deterministic_measurement import (
         _cargar_corpus_real,
