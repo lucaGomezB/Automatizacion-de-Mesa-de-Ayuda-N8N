@@ -111,7 +111,7 @@ El servicio N8N en `docker-compose.yml` SHALL incluir variables de entorno que c
 #### Scenario: Resto de la configuracion N8N sin cambios
 
 - **WHEN** se inspeccionan el resto de las variables de entorno del servicio N8N
-- **THEN** las variables de negocio (`BACKEND_URL`, `N8N_BASIC_AUTH_ACTIVE`, `COST_GUARD_SHARED_SECRET`, etc.) permanecen sin modificacion
+- **THEN** las variables de negocio (`BACKEND_URL`, `COST_GUARD_SHARED_SECRET`, etc.) permanecen sin modificacion
 - **AND** los volumes del servicio N8N no se alteran
 
 #### Scenario: La exposicion de red puede cambiar sin afectar la retencion
