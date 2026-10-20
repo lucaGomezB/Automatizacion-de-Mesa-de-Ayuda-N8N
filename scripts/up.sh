@@ -412,11 +412,11 @@ print_access_info() {
     log_info "Stack is up and healthy."
     printf 'Access URLs:\n'
     printf '  Web UI : https://localhost/\n'
-    printf '  N8N    : http://localhost:5678  (admin / n8n_local_dev, default local)\n'
+    printf '  N8N    : http://localhost:5678  (sign in with the owner account created at first run)\n'
     printf '\n'
     printf 'Manual N8N setup (required, not automated):\n'
     printf '  1. Open N8N and import n8n/workflow.json via Workflows -> Import from file.\n'
-    printf '  2. Configure the Outlook, Twilio, and Gemini credentials in N8N.\n'
+    printf '  2. Configure the email (IMAP/SMTP), Twilio, and Gemini credentials in N8N.\n'
     printf '  3. Activate the workflow.\n'
     printf '\n'
     printf 'Note: the workflow is NOT imported automatically; do it manually.\n'
