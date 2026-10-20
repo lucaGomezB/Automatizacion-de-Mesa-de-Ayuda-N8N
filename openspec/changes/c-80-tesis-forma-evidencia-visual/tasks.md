@@ -51,13 +51,13 @@
 
 ## 5. F7 — Afirmaciones respaldadas por la evidencia
 
-- [x] 5.1 En `S/08-discusion.tex:8` rebajar "superan ampliamente" a la evidencia (reduccion de tiempo 75,9~% con cota conservadora >= 71,3~% y exactitud 73,5~%; cifras corregidas por c-76 en `07-resultados.tex` / `evaluation/report.md`). Verificar con `rg -ni "superan ampliamente" S/08-discusion.tex` sin coincidencias.
+- [x] 5.1 En `S/08-discusion.tex:8` rebajar "superan ampliamente" a la evidencia (reduccion de tiempo 71,2~% con cota conservadora 65,6~% con -10~s y 68,6~% con -5~s y exactitud 73,5~%; cifras corregidas por c-76 en `07-resultados.tex` / `evaluation/report.md`). Verificar con `rg -ni "superan ampliamente" S/08-discusion.tex` sin coincidencias.
 - [x] 5.2 En `S/08-discusion.tex:10` reformular "valida la hipotesis subsidiaria" -> "es consistente con la hipotesis subsidiaria". Verificar con `rg -ni "valida la hipotesis" S/08-discusion.tex` sin coincidencias.
 - [x] 5.3 En `S/08-discusion.tex:12` reformular "consecuencia deseable" -> "consecuencia observada de la automatizacion". Verificar con `rg -ni "consecuencia deseable" S/08-discusion.tex` sin coincidencias.
 - [x] 5.4 En `S/08-discusion.tex:14` reformular "materializa el esquema human in the loop buscado" -> "es consistente con el esquema human in the loop" (9,5~%, `07:86`). Verificar con `rg -ni "materializa el esquema" S/08-discusion.tex` sin coincidencias.
 - [x] 5.5 En `S/08-discusion.tex:16` reformular "garantia metodologica que no todos los trabajos del area documentan..." a la practica propia sin comparar con terceros. Verificar con `rg -ni "no todos los trabajos" S/08-discusion.tex` sin coincidencias.
 - [x] 5.6 En `S/09-conclusiones.tex:6,12,16,18` retirar/rebajar "cumplido satisfactoriamente", "supero con holgura", "no deja espacio para la duda razonable", "resultado poco frecuente", "trasciende lo meramente estadistico" y "activo que excede" a formulaciones sostenidas por `07:30,34,40,59,86`. Verificar con `rg -ni "satisfactoriamente|con holgura|duda razonable|poco frecuente|trasciende lo meramente|activo que excede" S/09-conclusiones.tex` sin coincidencias.
-- [x] 5.7 Confirmar que las cifras y citas conservadas son exactas (75,9~%, 73,5~%, 0,5207, W=335) y que no se introducen referencias nuevas (eso es c-78). Verificar con `rg -n "92~\\\\?%|89~\\\\?%|0,919|165,3" S/08-discusion.tex S/09-conclusiones.tex` sin residuos sinteticos.
+- [x] 5.7 Confirmar que las cifras y citas conservadas son exactas (71,2~%, 73,5~%, 0,5207, W=363) y que no se introducen referencias nuevas (eso es c-78). Verificar con `rg -n "92~\\\\?%|89~\\\\?%|0,919|165,3" S/08-discusion.tex S/09-conclusiones.tex` sin residuos sinteticos.
 
 ## 6. F2 — Figuras (las 8)
 

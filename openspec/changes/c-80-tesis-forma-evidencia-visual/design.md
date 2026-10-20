@@ -41,9 +41,9 @@ Hechos verificados que condicionan el diseno:
   `S/12-anexos.tex:37` y `D/despliegue.md` ("N8N 2.11.2").
 - **Valorativas (F7)**: `S/08-discusion.tex:8-16` y `S/09-conclusiones.tex:6-18`.
   Evidencia disponible para rebajar (cifras corregidas por c-76 en
-  `07-resultados.tex` / `evaluation/report.md`): reduccion de tiempo 75,9~%
-  (cota conservadora >= 71,3~%, `07:10`), Wilcoxon \(W=335\),
-  \(p=2{,}05\cdot10^{-32}\), \(r=0{,}983\), exactitud 73,5~% (147/200, `07:40`),
+  `07-resultados.tex` / `evaluation/report.md`): reduccion de tiempo 71,2~%
+  (cota conservadora 65,6~% con -10~s y 68,6~% con -5~s, `07:10,62`), Wilcoxon
+  \(W=363\), \(p=3{,}08\cdot10^{-32}\), \(r=0{,}9639\), exactitud 73,5~% (147/200, `07:40`),
   macro-F1 0,5207 (`07:59`), `07:86` (intervencion 9,5~%).
 
 Restriccion dura: la tesis se compila en Overleaf (sin toolchain LaTeX local). No
@@ -302,8 +302,9 @@ una figura obsoleta. El apply MUST reconciliar el diagrama con el stack vigente.
 de la evidencia, (c) conservar si esta respaldada.
 
 - `08:8` "superan ampliamente los umbrales" -> "superan los umbrales (reduccion
-  de tiempo 75,9~% —cota conservadora >= 71,3~%— y exactitud 73,5~%, cifras
-  corregidas por c-76 en `07-resultados.tex` / `evaluation/report.md`)".
+  de tiempo 71,2~% —cota conservadora 65,6~% con -10~s y 68,6~% con -5~s— y
+  exactitud 73,5~%, cifras corregidas por c-76 en `07-resultados.tex` /
+  `evaluation/report.md`)".
 - `08:10` "valida la hipotesis subsidiaria" -> "es consistente con la hipotesis
   subsidiaria" (la hipotesis no se "valida", se obtiene evidencia a favor).
 - `08:12` "consecuencia deseable" -> "consecuencia observada de la automatizacion".
@@ -318,7 +319,7 @@ de la evidencia, (c) conservar si esta respaldada.
   c-76)".
 - `09:16` "no deja espacio para la duda razonable", "resultado poco frecuente",
   "trasciende lo meramente estadistico" -> reformular en terminos de la prueba
-  (Wilcoxon \(W=335\), \(p=2{,}05\cdot10^{-32}\), \(r=0{,}983\), cifras
+  (Wilcoxon \(W=363\), \(p=3{,}08\cdot10^{-32}\), \(r=0{,}9639\), cifras
   corregidas por c-76) sin los giros valorativos.
 - `09:18` "activo que excede el cumplimiento del quinto objetivo" -> "los
   artefactos documentados cubren el quinto objetivo".
