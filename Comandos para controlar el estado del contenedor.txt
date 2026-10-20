@@ -81,9 +81,8 @@ VERIFICAR ESTADO
 ACCESO (una vez arriba)
 -----------------------
       Web UI   : https://localhost/
-      N8N      : http://localhost:5678   (usuario/password: default del compose
-                 "admin" / "n8n_local_dev", o los que hayas puesto en
-                 N8N_BASIC_AUTH_USER / N8N_BASIC_AUTH_PASSWORD del .env raiz)
+      N8N      : http://localhost:5678   (cuenta owner creada en el primer
+                 arranque; persistida en el volumen n8n_data)
       Postgres : localhost:5433  (db: mesa_de_ayuda, user: mesa, pass: mesa_local_dev)
       Redis    : localhost:6379
 

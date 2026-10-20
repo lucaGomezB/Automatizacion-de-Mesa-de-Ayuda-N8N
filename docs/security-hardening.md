@@ -191,6 +191,11 @@ Cuando una credencial se filtra, seguir los pasos en este orden:
   (`POSTGRES_PASSWORD` y `N8N_BASIC_AUTH_PASSWORD` parametrizados por entorno,
   sin defaults adivinables) y el destrackeo de archivos de settings locales en
   `2784b1b`.
+  - Nota (c-98): `N8N_BASIC_AUTH_PASSWORD` se removio por vestigial. n8n elimino
+    Basic Auth en su version 1.0 (imagen fijada `n8nio/n8n:2.11.2`), por lo que la
+    variable era inerte. El acceso real a la UI es la cuenta owner creada en el
+    primer arranque y persistida en el volumen `n8n_data`. El registro historico
+    del commit `597c03e` se conserva como evidencia.
 
 Este caso es la razon por la que el hook pre-commit existe: es la barrera
 automatica para que no vuelva a pasar.

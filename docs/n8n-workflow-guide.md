@@ -469,7 +469,7 @@ docker exec mesa_local-n8n-1 n8n import:workflow --input=/data/Automatizacion_Me
 # Resultado esperado: "Successfully imported 1 workflow."
 ```
 
-Acceder a la UI de N8N en http://localhost:5678 (usuario: `admin`, contraseña: `n8n_local_dev`; default local del `.env` de la raiz).
+Acceder a la UI de N8N en http://localhost:5678 con la cuenta owner creada en el primer arranque (email + contraseña), persistida de forma hasheada en el volumen `n8n_data` (`/home/node/.n8n/database.sqlite`).
 
 ### Importar en N8N (modo UI)
 

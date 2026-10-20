@@ -137,10 +137,6 @@ services:
       # maquina (c-62, OQ-1=A / OQ-4=A), nunca en 0.0.0.0.
       - "127.0.0.1:5678:5678"
     environment:
-      # Autenticacion basica de N8N
-      N8N_BASIC_AUTH_ACTIVE: "true"
-      N8N_BASIC_AUTH_USER: ${N8N_BASIC_AUTH_USER:-admin}
-      N8N_BASIC_AUTH_PASSWORD: ${N8N_BASIC_AUTH_PASSWORD:-n8n_local_dev}
       # Variable de entorno disponible en los nodos del workflow como $env.BACKEND_URL
       BACKEND_URL: http://backend:8000
       # Secreto compartido de la guarda de costo en runtime (c-45). MISMA variable
@@ -388,9 +384,6 @@ services:
       # Loopback (c-62, OQ-7): host 5679, no colisiona con el N8N operativo.
       - "127.0.0.1:5679:5678"
     environment:
-      N8N_BASIC_AUTH_ACTIVE: "true"
-      N8N_BASIC_AUTH_USER: ${N8N_BASIC_AUTH_USER:-admin}
-      N8N_BASIC_AUTH_PASSWORD: ${N8N_BASIC_AUTH_PASSWORD:-n8n_local_dev}
       # BACKEND_URL -> backend-corpus (stack aislado).
       BACKEND_URL: http://backend-corpus:8000
       COST_GUARD_SHARED_SECRET: ${COST_GUARD_SHARED_SECRET:-}
