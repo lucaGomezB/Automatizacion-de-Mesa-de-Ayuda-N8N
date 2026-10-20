@@ -99,3 +99,97 @@ def test_wilcoxon_detallado_efecto_no_es_uno_con_invertidos():
     assert res.t_positivos > res.t_negativos
     assert res.r == pytest.approx(0.88)
     assert res.r != pytest.approx(1.0)
+
+
+# ===========================================================================
+# c-99 — Normalidad (Shapiro-Wilk) y reducción de tiempos como funciones puras
+# ===========================================================================
+def test_shapiro_normalidad_serie_normal_no_rechaza():
+    """Una serie aproximadamente normal devuelve W, p y n sin rechazar H0."""
+    from evaluation.stats import shapiro_normalidad
+
+    datos = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
+
+    res = shapiro_normalidad(datos)
+
+    assert res.aplicable is True
+    assert res.n == 9
+    assert 0.0 <= res.w <= 1.0
+    assert res.p > 0.05, f"Se esperaba no rechazar la normalidad, p={res.p}"
+
+
+def test_shapiro_normalidad_serie_sesgada_rechaza():
+    """Una serie fuertemente sesgada (exponencial) rechaza la normalidad."""
+    from evaluation.stats import shapiro_normalidad
+
+    datos = [0.1, 0.2, 0.3, 0.5, 0.8, 1.3, 2.1, 3.4, 5.5, 8.9, 14.4, 23.3, 37.7]
+
+    res = shapiro_normalidad(datos)
+
+    assert res.aplicable is True
+    assert res.n == 13
+    assert res.p < 0.05, f"Se esperaba rechazar la normalidad, p={res.p}"
+
+
+def test_shapiro_normalidad_n_insuficiente_declara_no_aplicable():
+    """Con menos del mínimo de pares (n<3) no produce W/p: no aplicable."""
+    from evaluation.stats import shapiro_normalidad
+
+    for datos in ([], [1.0], [1.0, 2.0]):
+        res = shapiro_normalidad(datos)
+        assert res.aplicable is False, f"n={len(datos)} debería ser no aplicable"
+        assert res.n == len(datos)
+        assert res.w is None
+        assert res.p is None
+
+
+def test_reduccion_tiempos_reportada_y_conservadora():
+    """
+    Reducción reportada = manual - automatizado; conservadora descuenta 1 s
+    al manual por su redondeo al alza. Pares no más rápidos = aut >= manual.
+    """
+    from evaluation.stats import reduccion_tiempos
+
+    manual = [110.0, 120.0, 130.0, 140.0, 10.0]
+    automatizado = [100.0, 100.0, 100.0, 100.0, 60.0]
+
+    res = reduccion_tiempos(manual, automatizado)
+
+    assert res.n == 5
+    assert res.reduccion_media_reportada == pytest.approx(10.0)
+    assert res.reduccion_mediana_reportada == pytest.approx(20.0)
+    assert res.reduccion_media_conservadora == pytest.approx(9.0)
+    assert res.reduccion_mediana_conservadora == pytest.approx(19.0)
+    assert res.pares_no_mas_rapidos == 1
+
+
+def test_shapiro_normalidad_triangulate_con_empates_rechaza():
+    """TRIANGULATE: una serie bipartita con empates fuertes rechaza la normalidad."""
+    from evaluation.stats import shapiro_normalidad
+
+    datos = [3.0] * 5 + [7.0] * 5
+
+    res = shapiro_normalidad(datos)
+
+    assert res.aplicable is True
+    assert res.n == 10
+    assert res.p < 0.05
+
+
+def test_reduccion_tiempos_triangulate_con_empates_e_invertidos():
+    """TRIANGULATE: empates y pares invertidos con valores conocidos."""
+    from evaluation.stats import reduccion_tiempos
+
+    manual = [100.0, 100.0, 100.0, 100.0]
+    automatizado = [100.0, 50.0, 150.0, 80.0]
+
+    res = reduccion_tiempos(manual, automatizado)
+
+    # Diferencias reportadas: 0, 50, -50, 20 -> media 5, mediana 10.
+    assert res.reduccion_media_reportada == pytest.approx(5.0)
+    assert res.reduccion_mediana_reportada == pytest.approx(10.0)
+    # Conservadora (manual - 1): -1, 49, -51, 19 -> media 4, mediana 9.
+    assert res.reduccion_media_conservadora == pytest.approx(4.0)
+    assert res.reduccion_mediana_conservadora == pytest.approx(9.0)
+    # No más rápidos: 100>=100 (sí), 50>=100 (no), 150>=100 (sí), 80>=100 (no).
+    assert res.pares_no_mas_rapidos == 2
