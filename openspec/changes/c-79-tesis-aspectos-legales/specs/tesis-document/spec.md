@@ -105,8 +105,7 @@ como sustituto de ese instrumento.
 
 ### Requirement: Plazo de respuesta ARCO
 
-Si el Capitulo 11 declara un plazo para el ejercicio de los derechos de rectificacion,
-actualizacion o supresion, ese plazo SHALL corresponder a cinco dias habiles conforme al
+Si el Capitulo 11 declara un plazo para el ejercicio de los derechos de rectificacion, actualizacion o supresion, ese plazo SHALL corresponder a cinco dias habiles conforme al
 articulo 16 de la Ley 25.326. El documento MUST NOT declarar el plazo como "cinco dias
 corridos".
 

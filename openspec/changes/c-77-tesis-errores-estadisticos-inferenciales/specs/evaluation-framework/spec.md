@@ -63,8 +63,7 @@ cálculo SHALL ser una función pura sobre las predicciones ya recolectadas.
 
 ### Requirement: Veracidad de la descripción del corpus de evaluación
 
-La descripción de metadata del corpus de evaluación (`metadata.descripcion` en
-`data/corpus_evaluacion_pseudonimizado.json`) SHALL describir fielmente su
+La descripción de metadata del corpus de evaluación (`metadata.descripcion` en `data/corpus_evaluacion_pseudonimizado.json`) SHALL describir fielmente su
 contenido medido. Cuando los tiempos automatizados estén medidos end-to-end, la
 descripción MUST NOT declararlos pendientes de medición; SHOULD distinguir los
 tiempos automatizados (medidos) de los tiempos manuales (de clasificación manual).

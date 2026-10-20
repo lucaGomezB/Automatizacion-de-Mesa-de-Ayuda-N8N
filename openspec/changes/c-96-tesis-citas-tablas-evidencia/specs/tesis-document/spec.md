@@ -26,8 +26,7 @@ autoevaluar la propuesta del trabajo dentro de la misma grilla comparativa.
 
 ### Requirement: Atribucion de la definicion de empresa mediana y del marco etico
 
-Las afirmaciones que atribuyen una definicion o un marco normativo a una fuente
-externa SHALL citar esa fuente y contar con la entrada bibliografica
+Las afirmaciones que atribuyen una definicion o un marco normativo a una fuente externa SHALL citar esa fuente y contar con la entrada bibliografica
 correspondiente. En particular, la definicion de empresa mediana atribuida a la
 Secretaria de la Pequena y Mediana Empresa en la seccion 1.1 y la justificacion
 etica del debriefing en la seccion 11.5 SHALL quedar respaldadas o reformuladas

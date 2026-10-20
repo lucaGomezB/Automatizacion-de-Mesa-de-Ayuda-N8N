@@ -50,8 +50,7 @@ de 0,70.
 
 ### Requirement: Aritmética metodológica verificable
 
-Toda proyección numérica del documento (horas-persona liberadas, universo
-trimestral, tiempos de registro) SHALL ser reproducible a partir de los datos
+Toda proyección numérica del documento (horas-persona liberadas, universo trimestral, tiempos de registro) SHALL ser reproducible a partir de los datos
 declarados. Cuando una proyección derive de una multiplicación o división, el
 documento MUST mostrar el cálculo explícito (en el cuerpo o en una nota al pie).
 
