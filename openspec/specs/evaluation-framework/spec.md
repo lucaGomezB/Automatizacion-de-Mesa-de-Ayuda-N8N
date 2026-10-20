@@ -2,9 +2,7 @@
 
 ## Purpose
 TBD - created by archiving change c-08-evaluation-framework. Update Purpose after archive.
-
 ## Requirements
-
 ### Requirement: Contrato y carga del corpus de evaluación
 
 El framework SHALL definir un esquema explícito para el corpus de evaluación y cargarlo desde un archivo JSON. El esquema SHALL incluir, como mínimo, el `id` (identificador del caso), la `descripcion` (texto pseudonimizado del incidente), `sector_asignado` (etiqueta principal de verdad fundamental) y `sectores_adicionales` (arreglo de etiquetas adicionales, requerido). El sector asignado y cada sector adicional MUST pertenecer al conjunto exacto, sensible a mayúsculas y sin tildes, `{"Seguridad Informatica", "Soporte Tecnico Hardware", "Soporte Tecnico Software", "Bases de Datos", "Sistemas"}`. La carga MUST fallar con un error claro y accionable cuando el archivo no exista, falte un campo requerido, se viole una invariante multietiqueta, o un sector sea inválido; nunca SHALL continuar con datos malformados de forma silenciosa.
@@ -88,17 +86,35 @@ El framework SHALL calcular, sobre la definición de acierto primaria (igualdad 
 
 ### Requirement: Análisis estadístico de tiempos
 
-El framework SHALL aplicar la prueba de Wilcoxon de rangos con signo sobre los pares (tiempo_manual, tiempo_automatizado) para contrastar la igualdad de medianas entre ambos flujos, y SHALL reportar el tamaño del efecto rank-biserial asociado, conforme a §4.7 y §7.1 de la tesis. El cálculo SHALL ser una función pura que recibe las dos series pareadas y devuelve el estadístico, el valor p y el tamaño del efecto.
+El framework SHALL aplicar la prueba de Wilcoxon de rangos con signo sobre los pares (tiempo_manual, tiempo_automatizado) para contrastar la igualdad de medianas entre ambos flujos, y SHALL reportar el tamaño del efecto rank-biserial asociado, conforme a §4.7 y §7.1 de la tesis. El framework MUST declarar explícitamente la convención del estadístico de Wilcoxon empleado y MUST reportar ambos estadísticos de rango, `T+` (suma de rangos positivos) y `T−` (suma de rangos negativos), además del valor p. El tamaño del efecto MUST calcularse con la fórmula rank-biserial `r = (T+ − T−) / (n(n+1)/2)`, equivalente a `1 − 4W/(n(n+1))` cuando `W = T− = min(T+, T−)`; MUST NOT usarse `r = 1 − 2W/(n(n+1))`. El cálculo SHALL ser una función pura que recibe las dos series pareadas y devuelve, como mínimo, el estadístico de contraste, `T+`, `T−`, el valor p y el tamaño del efecto.
 
 #### Scenario: Diferencia sistemática produce p significativo
 
-- **WHEN** el flujo automatizado es consistentemente más rápido que el manual en todos los pares
+- **WHEN** el flujo automatizado es consistentemente más rápido que el manual en la mayoría de los pares
 - **THEN** la prueba devuelve un valor p por debajo del nivel de significancia 0.05 y un tamaño del efecto de magnitud alta
 
 #### Scenario: Series de distinta longitud son rechazadas
 
 - **WHEN** se invoca la prueba con dos series de cantidad de elementos distinta
 - **THEN** el framework lanza un error en lugar de producir un resultado inválido
+
+#### Scenario: Convención de W y ambos estadísticos reportados
+
+- **WHEN** el framework devuelve el resultado de la prueba de Wilcoxon
+- **THEN** informa explícitamente la convención de `W` adoptada
+- **AND** reporta `T+` y `T−` de forma diferenciada
+
+#### Scenario: Fórmula rank-biserial correcta y rango verdadero
+
+- **WHEN** se calcula el tamaño del efecto sobre los pares reales
+- **THEN** el resultado es `(T+ − T−) / (n(n+1)/2)` (por ejemplo `0,9667` para `T+=19765`, `T−=335`, `n=200`)
+- **AND** no se reporta el valor espurio `1,00` ni se documenta un rango `[-1,+1]` para `1 − 2W/(n(n+1))`
+
+#### Scenario: Código y tesis usan la misma fórmula
+
+- **WHEN** se compara la implementación del framework con la fórmula declarada en la tesis
+- **THEN** ambas emplean la misma definición `r = (T+ − T−) / (n(n+1)/2)` (o su equivalente `1 − 4W/(n(n+1))`)
+- **AND** no se emplea una aproximación distinta basada en el conteo de pares concordantes y discordantes sin ponderar por rango
 
 ### Requirement: Runner de evaluación sobre el corpus
 
@@ -163,3 +179,129 @@ El sistema SHALL separar estrictamente los datos usados para ajustar o calibrar 
 
 - **WHEN** se declara la estrategia de calibracion
 - **THEN** queda documentada la procedencia de los datos (held-out, split pre-registrado o cross-fitting) junto con su tradeoff
+
+### Requirement: Divulgacion del redondeo de la medicion manual y analisis de sensibilidad
+
+La evaluacion de tiempos SHALL declarar la naturaleza de la medicion de
+`tiempo_manual_s` (medicion real en vivo con redondeo hacia arriba, sesgo
+sistematico) y SHALL reportar, junto a la reduccion calculada sobre los valores
+reportados, una cota inferior conservadora de sensibilidad. El analisis de
+tiempos SHALL reportar el numero de pares en que el flujo automatizado no fue mas
+rapido, y el estadistico de Wilcoxon SHALL usar la correccion por empates en
+lugar de asumir ausencia de pares invertidos.
+
+#### Scenario: Redondeo y sensibilidad declarados en el reporte
+
+- **WHEN** se presenta la seccion de tiempos de la evaluacion o `evaluation/report.md`
+- **THEN** se declara que `tiempo_manual_s` es una medicion redondeada al alza
+- **AND** se reporta la reduccion conservadora ademas de la reduccion sobre los valores reportados
+
+#### Scenario: Pares invertidos visibles
+
+- **WHEN** se comparan los tiempos pareados manual y automatizado
+- **THEN** se reporta la cantidad de pares en que el flujo automatizado no fue mas rapido (12 de 200)
+- **AND** el estadistico de Wilcoxon reportado no asume cero pares invertidos
+
+### Requirement: Divulgacion de la distribucion de etapas del pipeline (incluida fallback)
+
+La evaluacion SHALL reportar la distribucion de casos por etapa del pipeline como
+deterministic 131/200 (65,5 %), Gemini 69/200 (34,5 %) y fallback 0/200, e SHALL
+documentar la etapa fallback y el orden deterministic -> Gemini -> fallback. La
+documentacion de evaluacion SHALL NOT reportar el reparto stale "~62 % / 38 %".
+
+#### Scenario: Etapas y fallback en el reporte
+
+- **WHEN** se presenta `evaluation/report.md` o la seccion de etapas del pipeline
+- **THEN** reporta deterministic 131, Gemini 69 y fallback 0
+- **AND** documenta el orden deterministic -> Gemini -> fallback
+
+### Requirement: Trazabilidad del corpus real en la documentacion de evaluacion
+
+La documentacion de evaluacion SHALL declarar que el corpus real reside en
+`data/corpus_evaluacion_pseudonimizado.json` (JSON, pseudonimizado y versionado)
+y SHALL NOT declarar un corpus en `evaluation/data/` ni un esquema CSV de siete
+columnas como ubicacion vigente del corpus.
+
+#### Scenario: evaluacion/data no aloja el corpus
+
+- **WHEN** se leen `evaluation/README.md` y `evaluation/data/README.md`
+- **THEN** remiten al corpus real en `data/corpus_evaluacion_pseudonimizado.json`
+- **AND** no declaran que el corpus resida en `evaluation/data/` como CSV
+
+### Requirement: Reporte de calibración de la confianza del clasificador
+
+El framework SHALL reportar la calibración de la confianza del clasificador: la
+relación entre el valor de `confianza` devuelto por caso y la exactitud estricta
+de la predicción. El reporte MUST incluir, como mínimo, la precisión del segmento
+de confianza `>= 0,70` y la del segmento `< 0,70`, la cantidad de errores con
+confianza `>= 0,90`, y una tabla de calibración por bandas de confianza. El
+cálculo SHALL ser una función pura sobre las predicciones ya recolectadas.
+
+#### Scenario: Tabla de calibración por bandas
+
+- **WHEN** el framework procesa las predicciones con `confianza` y `sector_predicho`
+- **THEN** produce una tabla de calibración con, al menos, las bandas `[0;0,5)`, `[0,5;0,7)`, `[0,7;0,85)`, `[0,85;0,95)` y `[0,95;1,0]`
+- **AND** por cada banda reporta la cantidad de casos y la exactitud observada
+
+#### Scenario: Contingencia alta/baja confianza
+
+- **WHEN** el framework reporta la calibración
+- **THEN** informa la precisión del segmento con confianza `>= 0,70` y la del segmento con confianza `< 0,70`
+- **AND** informa la cantidad de errores entre las predicciones con confianza `>= 0,90`
+
+#### Scenario: El reporte no altera las métricas primarias
+
+- **WHEN** se agrega el reporte de calibración
+- **THEN** las métricas primarias de clasificación (exactitud, F1 macro/micro, matriz 5x5) no cambian de valor
+- **AND** la calibración se calcula como salida adicional sobre las mismas predicciones
+
+### Requirement: Veracidad de la descripción del corpus de evaluación
+
+La descripción de metadata del corpus de evaluación (`metadata.descripcion` en `data/corpus_evaluacion_pseudonimizado.json`) SHALL describir fielmente su
+contenido medido. Cuando los tiempos automatizados estén medidos end-to-end, la
+descripción MUST NOT declararlos pendientes de medición; SHOULD distinguir los
+tiempos automatizados (medidos) de los tiempos manuales (de clasificación manual).
+La corrección SHALL limitarse a la cadena descriptiva y MUST NOT alterar ningún
+valor numérico del corpus.
+
+#### Scenario: Descripción sin cláusulas falsas
+
+- **WHEN** se lee `metadata.descripcion` del corpus de evaluación
+- **THEN** no declara los tiempos automatizados como pendientes de medición
+- **AND** declara que los 200 tiempos automatizados están medidos end-to-end y que los tiempos manuales son los de clasificación manual
+
+#### Scenario: Corrección sin alterar los datos
+
+- **WHEN** se corrige la descripción de metadata
+- **THEN** ningún valor numérico del corpus (tiempos, total de casos) cambia
+- **AND** el archivo sigue siendo un JSON válido con los mismos 200 casos
+
+### Requirement: Medición comparable del tiempo automatizado telefónico
+
+El framework SHALL derivar el tiempo automatizado del canal telefónico de forma
+comparable con el tiempo manual del mismo canal, incorporando la duración de la
+llamada/grabación. La derivación MUST ser
+`tiempo_automatizado_s = duracion_segundos + latencia_e2e_ms/1000`, donde
+`duracion_segundos` es la duración de la grabación provista por Twilio. El framework
+MUST declarar explícitamente que este valor es una COTA INFERIOR de la duración real de
+la llamada, porque la grabación está acotada a 45 s (`<Record maxLength="45">`). Los
+tiempos automatizados de los canales web y correo MUST NOT modificarse.
+
+#### Scenario: Tiempo telefónico incluye la duración de la llamada
+
+- **WHEN** se deriva el tiempo automatizado de un caso telefónico
+- **THEN** el valor es `duracion_segundos + latencia_e2e_ms/1000`
+- **AND** se declara que es una cota inferior de la duración real por el tope de 45 s de la grabación
+
+#### Scenario: Web y correo sin cambio
+
+- **WHEN** se deriva el tiempo automatizado de un caso de web o de correo
+- **THEN** el valor permanece igual al de la medición end-to-end previa
+- **AND** no se suma ninguna duración de llamada
+
+#### Scenario: Duración de grabación ausente
+
+- **WHEN** un caso telefónico no tiene `duracion_segundos`
+- **THEN** la derivación maneja el ausente sin romperse ni sumar un valor ficticio
+- **AND** el caso queda identificable para su revisión
+
