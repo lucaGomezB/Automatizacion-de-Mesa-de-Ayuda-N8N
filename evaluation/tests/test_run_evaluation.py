@@ -937,3 +937,199 @@ def test_version_clasificador_real_no_exige_credenciales():
     assert "app.core.database" not in sys.modules, (
         "leer la version real no debe importar app.core.database (exige credenciales)"
     )
+
+
+# ===========================================================================
+# c-99 — Sección "Tiempos" del reporte (normalidad + Wilcoxon + divulgación + canal)
+# ===========================================================================
+def _caso_tiempo(caso_id: str, canal: str, manual, automatizado, sector: str = "Sistemas"):
+    """Construye un CasoEvaluacion con tiempos y canal dados."""
+    from evaluation.corpus import CasoEvaluacion
+
+    return CasoEvaluacion(
+        id=str(caso_id),
+        descripcion=f"caso {caso_id}",
+        sector_asignado=sector,
+        sectores_adicionales=[],
+        canal_origen=canal,
+        tiempo_manual_s=manual,
+        tiempo_automatizado_s=automatizado,
+    )
+
+
+def _reporte_sintetico(corpus, tmp_path, corpus_hash=None):
+    """Genera un reporte para un corpus sintético con predicciones triviales."""
+    from evaluation.run_evaluation import Prediccion, generar_reporte
+
+    predicciones = [
+        Prediccion(
+            caso_id=caso.id,
+            descripcion=caso.descripcion,
+            sector_asignado=caso.sector_asignado,
+            sector_predicho=caso.sector_asignado,
+            confianza=0.9,
+            etapa="deterministic",
+            sectores_adicionales=[],
+        )
+        for caso in corpus
+    ]
+    return generar_reporte(
+        predicciones, corpus, output_path=tmp_path / "report.md", corpus_hash=corpus_hash
+    )
+
+
+def test_generar_reporte_emite_seccion_tiempos(tmp_path):
+    """2.1: el reporte incluye la sección Tiempos con Shapiro, Wilcoxon y campos."""
+    corpus = [_caso_tiempo(i, "A", 100.0 + i, 10.0) for i in range(1, 6)]
+
+    contenido = _reporte_sintetico(corpus, tmp_path)
+
+    assert "## Tiempos" in contenido
+    assert "Shapiro" in contenido
+    assert "Wilcoxon" in contenido
+    assert "rank-biserial" in contenido
+    assert "| n | W | T+ | T− | p | r |" in contenido
+
+
+async def test_dos_corridas_incluyen_tiempos_y_son_identicas(corpus_fixture_path, tmp_path):
+    """2.2: dos corridas producen un reporte idéntico byte a byte con Tiempos."""
+    import shutil
+
+    from evaluation.tests.conftest import FakeClassifier
+    from evaluation.run_evaluation import main_con_corpus_real
+
+    spy = FakeClassifier(default_sector="Sistemas")
+    corpus_copy = tmp_path / "corpus.json"
+    shutil.copy(corpus_fixture_path, corpus_copy)
+    pred_path = tmp_path / "predicciones.json"
+    report_path = tmp_path / "report.md"
+
+    await main_con_corpus_real(
+        corpus_path=corpus_copy,
+        classifier=spy,
+        report_path=report_path,
+        predicciones_path=pred_path,
+    )
+    first = report_path.read_bytes()
+
+    await main_con_corpus_real(
+        corpus_path=corpus_copy,
+        classifier=spy,
+        report_path=report_path,
+        predicciones_path=pred_path,
+    )
+    second = report_path.read_bytes()
+
+    assert first == second, "Dos corridas con cache válido deben ser idénticas byte a byte"
+    assert "## Tiempos" in first.decode("utf-8")
+
+
+async def test_seccion_tiempos_no_altera_metricas_de_clasificacion(
+    fake_classifier, corpus_fixture_path, tmp_path
+):
+    """2.3: agregar Tiempos no cambia las métricas de clasificación del fixture."""
+    from evaluation.corpus import cargar_corpus
+    from evaluation.run_evaluation import evaluar_corpus, generar_reporte
+
+    corpus = cargar_corpus(corpus_fixture_path)
+    predicciones = await evaluar_corpus(corpus, fake_classifier)
+    contenido = generar_reporte(predicciones, corpus, output_path=tmp_path / "report.md")
+
+    # Constantes del fixture con clasificador perfecto (previas a esta sección).
+    assert "- **Exactitud (estricta):** 1.0000 (100.0%)" in contenido
+    assert "- **Aciertos (estrictos):** 9 / 9" in contenido
+    assert "- **Subset accuracy:** 1.0000" in contenido
+    assert "- **Hamming loss:** 0.0000" in contenido
+    assert "- **Micro-F1:** 1.0000" in contenido
+    assert "- **Macro-F1:** 1.0000" in contenido
+    assert "- **Jaccard (IoU) promedio:** 1.0000" in contenido
+    # La sección nueva es aditiva.
+    assert "## Tiempos" in contenido
+
+
+def test_seccion_tiempos_divulga_redondeo_y_pares_no_rapidos(tmp_path):
+    """2.4: divulga el redondeo al alza, la reducción conservadora y los pares."""
+    corpus = [
+        _caso_tiempo(1, "A", 100.0, 10.0),
+        _caso_tiempo(2, "A", 100.0, 120.0),  # automatizado NO fue más rápido
+    ]
+
+    contenido = _reporte_sintetico(corpus, tmp_path).lower()
+
+    assert "redondeo" in contenido
+    assert "al alza" in contenido
+    assert "conservadora" in contenido
+    assert "invertidos/empatados" in contenido
+
+
+def test_seccion_tiempos_lista_desglose_por_canal(tmp_path):
+    """2.5: el reporte lista por canal sus pares y el resultado de Wilcoxon."""
+    corpus = [
+        _caso_tiempo(1, "correo", 100.0, 10.0),
+        _caso_tiempo(2, "correo", 110.0, 11.0),
+        _caso_tiempo(3, "llamada", 120.0, 12.0),
+        _caso_tiempo(4, "llamada", 130.0, 13.0),
+        _caso_tiempo(5, "formulario", 140.0, 14.0),
+        _caso_tiempo(6, "formulario", 150.0, 15.0),
+    ]
+
+    contenido = _reporte_sintetico(corpus, tmp_path)
+
+    assert "### Desglose por canal" in contenido
+    assert "| Canal | Pares válidos | W | T+ | T− | p | r |" in contenido
+    for canal in ("correo", "llamada", "formulario"):
+        assert canal in contenido
+
+
+def test_seccion_tiempos_valores_calculados_a_mano(tmp_path):
+    """
+    4.2 TRIANGULATE: corpus de 5 pares con rangos conocidos.
+    Diferencias manual-automatizado: +10, +20, +30, +40, -50.
+    T+ = 10, T- = 5, W = 5, n = 5, r = 1/3, p exacto = 0.625.
+    Reducción reportada media = 10.0; conservadora media = 9.0.
+    """
+    corpus = [
+        _caso_tiempo(1, "A", 110.0, 100.0),
+        _caso_tiempo(2, "A", 120.0, 100.0),
+        _caso_tiempo(3, "A", 130.0, 100.0),
+        _caso_tiempo(4, "A", 140.0, 100.0),
+        _caso_tiempo(5, "A", 10.0, 60.0),
+    ]
+
+    contenido = _reporte_sintetico(corpus, tmp_path, corpus_hash="abc123")
+
+    assert "| 5 | 5.0000 | 10.0000 | 5.0000 | 0.625 | 0.3333 |" in contenido
+    # Reducción reportada (media) = 10.00 s; conservadora (media) = 9.00 s.
+    assert "10.00" in contenido
+    assert "9.00" in contenido
+    # El SHA-256 del corpus se emite cuando se pasa el hash.
+    assert "SHA-256 del corpus" in contenido
+    assert "abc123" in contenido
+
+
+def test_seccion_tiempos_canal_con_pares_insuficientes_no_aplicable(tmp_path):
+    """
+    4.2 TRIANGULATE: un canal con un solo par declara "no aplicable"; un caso
+    con tiempo nulo se excluye y se contabiliza.
+    """
+    corpus = [
+        _caso_tiempo(1, "A", 110.0, 100.0),
+        _caso_tiempo(2, "A", 120.0, 100.0),
+        _caso_tiempo(3, "B", 130.0, 10.0),   # un solo par válido -> no aplicable
+        _caso_tiempo(4, "C", None, 10.0),     # tiempo nulo -> excluido
+    ]
+
+    contenido = _reporte_sintetico(corpus, tmp_path).lower()
+
+    assert "| b | 1 | no aplicable |" in contenido
+    assert "excluido" in contenido
+
+
+def test_generar_reporte_sin_hash_omite_sha256(tmp_path):
+    """D3: sin `corpus_hash` la línea de SHA-256 se omite (compatibilidad)."""
+    corpus = [_caso_tiempo(i, "A", 100.0 + i, 10.0) for i in range(1, 6)]
+
+    contenido = _reporte_sintetico(corpus, tmp_path)
+
+    assert "## Tiempos" in contenido
+    assert "SHA-256 del corpus" not in contenido

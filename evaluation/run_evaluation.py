@@ -48,6 +48,12 @@ from evaluation.metrics import (
     sensibilidad_por_clase,
     soporte_por_clase,
 )
+from evaluation.stats import (
+    ResultadoWilcoxon,
+    reduccion_tiempos,
+    shapiro_normalidad,
+    wilcoxon_tiempos_detallado,
+)
 
 # ---------------------------------------------------------------------------
 # Rutas por defecto
@@ -161,10 +167,186 @@ async def evaluar_corpus(
 # ---------------------------------------------------------------------------
 # Core: generación de reporte
 # ---------------------------------------------------------------------------
+# Mínimo de pares que exige la prueba de Wilcoxon para reportar un resultado.
+_MIN_PARES_WILCOXON = 2
+_NO_APLICABLE = "no aplicable"
+
+
+def _fmt_p(valor: float) -> str:
+    """Formato determinista del valor p (3 cifras significativas)."""
+    return f"{valor:.3g}"
+
+
+def _pares_tiempos(
+    corpus: List[CasoEvaluacion],
+) -> tuple[List[tuple[float, float]], int]:
+    """
+    Extrae los pares (manual, automatizado) válidos y cuenta los excluidos.
+
+    Un par es válido solo si ambos tiempos son numéricos (no nulos). El orden
+    se preserva para mantener el determinismo (D4).
+    """
+    pares: List[tuple[float, float]] = []
+    excluidos = 0
+    for caso in corpus:
+        if caso.tiempo_manual_s is None or caso.tiempo_automatizado_s is None:
+            excluidos += 1
+            continue
+        pares.append((float(caso.tiempo_manual_s), float(caso.tiempo_automatizado_s)))
+    return pares, excluidos
+
+
+def _wilcoxon_o_no_aplicable(pares: List[tuple[float, float]]) -> Optional[ResultadoWilcoxon]:
+    """
+    Wilcoxon sobre los pares, o None si la prueba no es aplicable.
+
+    No aplicable cuando hay menos de `_MIN_PARES_WILCOXON` pares válidos o
+    cuando no hay diferencias no nulas (scipy rechaza el caso degenerado).
+    """
+    if len(pares) < _MIN_PARES_WILCOXON:
+        return None
+    manual = [m for m, _ in pares]
+    automatizado = [a for _, a in pares]
+    try:
+        return wilcoxon_tiempos_detallado(manual, automatizado)
+    except ValueError:
+        return None
+
+
+def _fila_wilcoxon(
+    n: int,
+    resultado: Optional[ResultadoWilcoxon],
+    canal: Optional[str] = None,
+) -> str:
+    """
+    Fila de tabla de Wilcoxon; declara no aplicable cuando no hay resultado.
+
+    Si se pasa `canal`, se antepone como primera celda (desglose por canal).
+    """
+    if resultado is None:
+        celdas = [str(n), _NO_APLICABLE, _NO_APLICABLE, _NO_APLICABLE, _NO_APLICABLE, _NO_APLICABLE]
+    else:
+        celdas = [
+            str(resultado.n),
+            f"{resultado.estadistico:.4f}",
+            f"{resultado.t_positivos:.4f}",
+            f"{resultado.t_negativos:.4f}",
+            _fmt_p(resultado.p),
+            f"{resultado.r:.4f}",
+        ]
+    if canal is not None:
+        celdas = [canal, *celdas]
+    return "| " + " | ".join(celdas) + " |"
+
+
+def _seccion_tiempos(
+    corpus: List[CasoEvaluacion],
+    corpus_hash: Optional[str] = None,
+) -> List[str]:
+    """
+    Construye la sección "Tiempos" aditiva del reporte (c-99, D7).
+
+    Incluye normalidad (Shapiro-Wilk), prueba de Wilcoxon global, divulgación
+    del redondeo y de la reducción conservadora, y desglose por canal.
+    """
+    pares, excluidos = _pares_tiempos(corpus)
+    manual = [m for m, _ in pares]
+    automatizado = [a for _, a in pares]
+    diferencias = [m - a for m, a in pares]
+
+    lineas: List[str] = [
+        "## Tiempos",
+        "",
+        "Análisis sobre los pares (tiempo_manual_s, tiempo_automatizado_s) del corpus cargado.",
+        f"Pares válidos: {len(pares)}; excluidos por tiempo nulo: {excluidos}.",
+        "",
+        "### Normalidad (Shapiro-Wilk)",
+        "",
+        "| Conjunto | n | W | p |",
+        "|---|---|---|---|",
+    ]
+    series = (
+        ("Manual", manual),
+        ("Automatizado", automatizado),
+        ("Diferencias", diferencias),
+    )
+    for etiqueta, serie in series:
+        resultado = shapiro_normalidad(serie)
+        if resultado.aplicable:
+            lineas.append(
+                f"| {etiqueta} | {resultado.n} | {resultado.w:.4f} | {_fmt_p(resultado.p)} |"
+            )
+        else:
+            lineas.append(
+                f"| {etiqueta} | {resultado.n} | {_NO_APLICABLE} | {_NO_APLICABLE} |"
+            )
+
+    lineas += [
+        "",
+        "### Prueba de Wilcoxon (rangos con signo)",
+        "",
+        "Convención: W = min(T+, T−) (dos colas); tamaño del efecto rank-biserial "
+        "r = (T+ − T−) / (n(n+1)/2).",
+        "",
+        "| n | W | T+ | T− | p | r |",
+        "|---|---|---|---|---|---|",
+        _fila_wilcoxon(len(pares), _wilcoxon_o_no_aplicable(pares)),
+    ]
+
+    reduccion = reduccion_tiempos(manual, automatizado)
+    lineas += [
+        "",
+        "### Reducción de tiempos",
+        "",
+        "`tiempo_manual_s` se midió en vivo con redondeo al alza (sesgo sistemático), por lo",
+        "que su valor real no es mayor que el reportado. Se reporta la reducción sobre los",
+        "valores reportados y una cota conservadora que descuenta 1 s al manual por caso.",
+        "",
+        "| Métrica | Reportada (s) | Conservadora (s) |",
+        "|---|---|---|",
+        f"| Reducción media | {reduccion.reduccion_media_reportada:.2f} "
+        f"| {reduccion.reduccion_media_conservadora:.2f} |",
+        f"| Reducción mediana | {reduccion.reduccion_mediana_reportada:.2f} "
+        f"| {reduccion.reduccion_mediana_conservadora:.2f} |",
+        "",
+        "- Pares en que el flujo automatizado no fue más rápido "
+        f"(invertidos/empatados): {reduccion.pares_no_mas_rapidos}.",
+        f"- Casos excluidos por tiempo nulo: {excluidos}.",
+    ]
+
+    lineas += [
+        "",
+        "### Desglose por canal",
+        "",
+        "Segmentación por el valor crudo de `canal_origen` del corpus.",
+        "",
+        "| Canal | Pares válidos | W | T+ | T− | p | r |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    canales: Dict[Optional[str], List[tuple[float, float]]] = {}
+    for caso in corpus:
+        if caso.tiempo_manual_s is None or caso.tiempo_automatizado_s is None:
+            continue
+        canales.setdefault(caso.canal_origen, []).append(
+            (float(caso.tiempo_manual_s), float(caso.tiempo_automatizado_s))
+        )
+    # Orden canónico estable: conteo descendente y desempate alfabético (D4).
+    for canal in sorted(canales, key=lambda c: (-len(canales[c]), str(c))):
+        pares_canal = canales[canal]
+        resultado_canal = _wilcoxon_o_no_aplicable(pares_canal)
+        lineas.append(_fila_wilcoxon(len(pares_canal), resultado_canal, canal=canal))
+
+    if corpus_hash is not None:
+        lineas += ["", f"- **SHA-256 del corpus:** `{corpus_hash}`"]
+
+    return lineas
+
+
 def generar_reporte(
     predicciones: List[Prediccion],
     corpus: List[CasoEvaluacion],
     output_path: pathlib.Path = REPORT_PATH,
+    corpus_hash: Optional[str] = None,
 ) -> str:
     """
     Genera el reporte de métricas multietiqueta en Markdown.
@@ -175,6 +357,8 @@ def generar_reporte(
         predicciones: Lista de predicciones del runner.
         corpus: Lista de casos originales del corpus (mismo orden).
         output_path: Ruta donde escribir el reporte (default: evaluation/report.md).
+        corpus_hash: SHA-256 opcional del corpus. Si se pasa, se emite dentro de
+            la sección "Tiempos"; si es None, la línea se omite (D3).
 
     Returns:
         Contenido del reporte como string.
@@ -290,6 +474,11 @@ def generar_reporte(
         f"- **Micro-F1:** {micro_f1:.4f}",
         f"- **Macro-F1:** {f1_m:.4f}",
         f"- **Jaccard (IoU) promedio:** {jaccard:.4f}",
+    ]
+
+    lineas += _seccion_tiempos(corpus, corpus_hash)
+
+    lineas += [
         "",
         "---",
         "_Generado automáticamente por `evaluation/run_evaluation.py`_",
@@ -576,7 +765,7 @@ async def main_con_corpus_real(
         }
         guardar_predicciones(predicciones, predicciones_path, cache_meta=cache_meta)
 
-    generar_reporte(predicciones, corpus, report_path)
+    generar_reporte(predicciones, corpus, report_path, corpus_hash=corpus_hash)
     print(f"Evaluacion completa. Reporte escrito en: {report_path}")
 
 
