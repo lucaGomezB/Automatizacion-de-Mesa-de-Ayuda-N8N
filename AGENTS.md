@@ -4,7 +4,7 @@ Project guidance for OpenCode sessions. Every line answers: "Would an agent like
 
 ## Project State
 
-This project is **NOT in maintenance mode**. Several OPSX changes are active at any given time (for example `c-28` through `c-33` at the time of writing), and some are complete but NOT yet archived. Never assume a change is archived — always ask the CLI first:
+This project is **NOT in maintenance mode**. Several OPSX changes can be active at any given time, and some are complete but NOT yet archived. Never assume a change is archived — always ask the CLI first:
 
 ```bash
 openspec list --json

@@ -555,11 +555,11 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 | C-96 | tesis-citas-tablas-evidencia | 31 | aplicar tras C-95 | BAJO | — |
 | C-97 | actualizar-dependencias-seguridad | 32 | C-64 | MEDIO | — |
 
-**Total**: 94 entradas creadas documentadas (93 numeradas + 1 de mantenimiento sin numero) — 84 archivadas (83 numeradas: C-01..C-20, C-22..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-62, C-63, C-64, C-65, C-66, C-67, C-68, C-69, C-70, C-71, C-72, C-73, C-74, C-75, C-81..C-91 y C-97; mas `improve-dockerfiles`) y 10 ACTIVOS (C-76, C-77, C-78, C-79, C-80, C-92, C-93, C-94, C-95, C-96). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
+**Total**: 94 entradas creadas documentadas (93 numeradas + 1 de mantenimiento sin numero) — 93 archivadas (92 numeradas: C-01..C-20, C-22..C-48, C-52..C-79, C-81..C-91 y C-92..C-97 — c-63 se cuenta como un change con sus tres partes c-63a/b/c; mas `improve-dockerfiles`) y 1 ACTIVO (C-80). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
 **Planificadas (NO creadas)**: ninguna. El plan de cumplimiento (FASE 21) quedo TOTALMENTE EJECUTADO: C-61 `compliance-gobernanza` (MEDIO), C-62 `hardening-infra-red` (ALTO) y C-63 `identidad-accesos-claves` (CRITICO, split en c-63a/b/c) quedaron ARCHIVADOS (2026-10-01, 2026-10-08 y 2026-10-08), con sus specs `security-governance-docs`, `infra-network-hardening` e `identity-access-hardening`; C-64 `vulnerabilidades-supply-chain` (MEDIO) quedo ARCHIVADO (2026-10-19, 33/33), con su spec `supply-chain-security` creada y `ci-pipeline` y `security-governance-docs` modificadas; C-65 `backup-continuidad` (ALTO) quedo ARCHIVADO (2026-10-19, 31/31), con su spec `continuity-planning` creada y `backup-scripts` modificada; y C-66 `privacidad-transferencias` (ALTO) quedo creado y ARCHIVADO (2026-10-19, 36/36), con su spec `privacy-runtime-surface` creada y `runtime-cost-guard`, `security-governance-docs` y `employee-directory` modificadas. Ver `docs/cumplimiento/plan-cambios-cumplimiento.md`.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
-**Fases**: 1-31 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67 (archivado 2026-10-19 como NO REALIZADO), la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, TOTALMENTE EJECUTADA, con C-61 archivado (2026-10-01), C-62 archivado (2026-10-08), C-63a/b/c archivados (2026-10-08), C-64 archivado (2026-10-19), C-65 archivado (2026-10-19) y C-66 archivado (2026-10-19), la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 archivado (2026-10-05) y C-68 archivado (2026-10-09), la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 archivado (2026-10-06), la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 archivado (2026-10-06), la FASE 25 agrupa la unificacion de la clasificacion telefonica con C-72 archivado (2026-10-07), la FASE 26 agrupa la pseudonimizacion de numeros de tarjeta hablados con C-73 archivado (2026-10-07), la FASE 27 agrupa la calibracion del cortocircuito determinista con C-74 archivado (2026-10-07), y la FASE 28 agrupa la sincronizacion documental N8N con C-75 archivado (2026-10-08), y la FASE 29 agrupa las correcciones de la tesis por el dictamen CONEAU (C-76..C-80), cinco changes APLICADOS (pendiente solo la recompilacion Overleaf diferida), independientes del software, aplicados en secuencia; y la FASE 30 agrupa el RBAC, el ciclo de cierre y la sesion (C-81..C-91), once changes ARCHIVADOS — C-81..C-83 el 2026-10-13 y C-84..C-91 el 2026-10-15; y la FASE 31 agrupa las correcciones de la tesis por la nueva auditoria (C-92..C-96), cinco changes APLICADOS (pendiente solo la recompilacion Overleaf diferida), independientes del software, aplicados en secuencia despues de la FASE 29).
+**Fases**: 1-31 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67 (archivado 2026-10-19 como NO REALIZADO), la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, TOTALMENTE EJECUTADA, con C-61 archivado (2026-10-01), C-62 archivado (2026-10-08), C-63a/b/c archivados (2026-10-08), C-64 archivado (2026-10-19), C-65 archivado (2026-10-19) y C-66 archivado (2026-10-19), la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 archivado (2026-10-05) y C-68 archivado (2026-10-09), la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 archivado (2026-10-06), la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 archivado (2026-10-06), la FASE 25 agrupa la unificacion de la clasificacion telefonica con C-72 archivado (2026-10-07), la FASE 26 agrupa la pseudonimizacion de numeros de tarjeta hablados con C-73 archivado (2026-10-07), la FASE 27 agrupa la calibracion del cortocircuito determinista con C-74 archivado (2026-10-07), y la FASE 28 agrupa la sincronizacion documental N8N con C-75 archivado (2026-10-08), y la FASE 29 agrupa las correcciones de la tesis por el dictamen CONEAU (C-76..C-80), con C-76..C-79 ARCHIVADOS el 2026-10-20 y C-80 EN PROGRESO (41/45), independientes del software, aplicados en secuencia; y la FASE 30 agrupa el RBAC, el ciclo de cierre y la sesion (C-81..C-91), once changes ARCHIVADOS — C-81..C-83 el 2026-10-13 y C-84..C-91 el 2026-10-15; y la FASE 31 agrupa las correcciones de la tesis por la nueva auditoria (C-92..C-96), cinco changes ARCHIVADOS el 2026-10-20, independientes del software, aplicados en secuencia despues de la FASE 29).
 
 ---
 
@@ -1677,11 +1677,11 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ## FASE 29 — Correcciones de la tesis por el dictamen CONEAU (2026-10-09 / 2026-10-12)
 
-> Changes sobre el documento academico (LaTeX, `docs/Tesis/v9 (IA)/paper/`), independientes del software. Se aplican EN SECUENCIA porque comparten archivos `.tex` (en especial `08-discusion.tex` y `09-conclusiones.tex`). Los cinco estan APLICADOS: C-76 (47/49), C-77 (50/51), C-78 (24/25), C-79 (24/25) y C-80 (40/45). Las unicas tareas abiertas son la recompilacion Overleaf diferida (y, en C-80, las capturas de UI), por lo que aun no se han archivado. El registro acumulativo del dictamen vive en `docs/Tesis/Correcciones/dictamen-correcciones.md`. El plan de auditoria (4 bloques, 32 items) queda cubierto por C-76..C-80; el mapeo item -> change esta al final de ese registro.
+> Changes sobre el documento academico (LaTeX, `docs/Tesis/v9 (IA)/paper/`), independientes del software. Se aplican EN SECUENCIA porque comparten archivos `.tex` (en especial `08-discusion.tex` y `09-conclusiones.tex`). C-76 (49/49), C-77 (51/51), C-78 (25/25) y C-79 (25/25) quedaron APLICADOS y ARCHIVADOS el 2026-10-20; C-80 (41/45) sigue EN PROGRESO. La tesis v9 se recompilo con MiKTeX el 2026-10-20 (xelatex -> biber -> xelatex -> xelatex; 103 paginas, 0 errores fatales, 48/48 bibliografia), cubriendo la recompilacion que estaba diferida en el bloque. La unica tarea abierta de C-80 son las capturas de UI (6.5/6.6) y su verificacion (8.2), mas 6.4 (cerrable por contingencia) y el ajuste de 6.9. El registro acumulativo del dictamen vive en `docs/Tesis/Correcciones/dictamen-correcciones.md`. El plan de auditoria (4 bloques, 32 items) queda cubierto por C-76..C-80; el mapeo item -> change esta al final de ese registro.
 
-### [C-76] `tesis-correcciones-dictamen` — APLICADO (47/49)
+### [C-76] `tesis-correcciones-dictamen` — ARCHIVADO (2026-10-20, 49/49)
 
-- **Estado**: `[x]` aplicado (47/49 tareas). Solo resta la recompilacion Overleaf diferida.
+- **Estado**: `[x]` CREADO, APLICADO (49/49) y ARCHIVADO (2026-10-20; `openspec/changes/archive/2026-10-20-c-76-tesis-correcciones-dictamen`).
 - **Problema**: la tesis todavia reporta numeros del corpus sintetico descartado en C-27 (3 clases con "Operaciones", exactitud 92 %, F1 0,919, Wilcoxon W=0 falso).
 - **Scope**: alinear Cap. 4/7/8 y los capitulos que citan numeros con el corpus real de 200 casos; grupo T1-T7 (trazabilidad y existencia de datos experimentales, ventana temporal, instrumento manual); Anexos F/H y `main.pdf`.
 - **Dependencias**: ninguna (documento de tesis).
@@ -1691,9 +1691,9 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
   - `docs/Tesis/Correcciones/dictamen-correcciones.md` (P1.0/P1, T1-T7)
   - `data/corpus_evaluacion_pseudonimizado.json`, `evaluation/report.md`
 
-### [C-77] `tesis-errores-estadisticos-inferenciales` — APLICADO (50/51)
+### [C-77] `tesis-errores-estadisticos-inferenciales` — ARCHIVADO (2026-10-20, 51/51)
 
-- **Estado**: `[x]` aplicado (50/51 tareas; OQ1-OQ6 resueltas; ampliado con Grupo E - Opcion A del tiempo automatico telefonico). Solo resta la recompilacion Overleaf diferida.
+- **Estado**: `[x]` CREADO, APLICADO (51/51; OQ1-OQ6 resueltas; ampliado con Grupo E - Opcion A del tiempo automatico telefonico) y ARCHIVADO (2026-10-20; `openspec/changes/archive/2026-10-20-c-77-tesis-errores-estadisticos-inferenciales`).
 - **Problema**: errores estadisticos e inferenciales (formula del tamano del efecto, convencion de W, W+/W-, calibracion, "varianza casi diez veces menor", horas-persona, universo 3.700).
 - **Scope**: reparar la estadistica y la coherencia metodologica; alinear `evaluation/stats.py`; cruce confianza x acierto; calculo del tamano muestral.
 - **Dependencias**: aplicar tras C-76.
@@ -1702,9 +1702,9 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
   - `openspec/changes/c-77-tesis-errores-estadisticos-inferenciales/{proposal,design,tasks}.md`
   - `evaluation/stats.py`, `evaluation/report.md`
 
-### [C-78] `tesis-bibliografia-atribucion` — APLICADO (24/25)
+### [C-78] `tesis-bibliografia-atribucion` — ARCHIVADO (2026-10-20, 25/25)
 
-- **Estado**: `[x]` aplicado (24/25 tareas; min. 12 refs; OQ-B3-1 resuelta 2026-10-12). Solo resta la recompilacion Overleaf diferida.
+- **Estado**: `[x]` CREADO, APLICADO (25/25; min. 12 refs; OQ-B3-1 resuelta 2026-10-12) y ARCHIVADO (2026-10-20; `openspec/changes/archive/2026-10-20-c-78-tesis-bibliografia-atribucion`).
 - **Problema**: misatribucion a Revina et al. (2020) (BERT/91 %/transferencia: falso); 2 citas fabricadas de v7 ya retiradas; claims sin cita (88-94 %); higiene de citas (Landis & Koch, Stallings/Brown, Jurafsky, et al.).
 - **Scope**: reescribir 3.3 y 8.2 con la conclusion real de Revina; incorporar 12 refs arbitradas 2023-2026; corregir metadatos del `.bib`; re-verificacion por DOI.
 - **Dependencias**: aplicar tras C-77.
@@ -1713,9 +1713,9 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
   - `openspec/changes/c-78-tesis-bibliografia-atribucion/{proposal,design,tasks}.md`
   - `docs/Tesis/v9 (IA)/Bibliography_base.bib`, `docs/Tesis/v9 (IA)/verify_citations.py`
 
-### [C-79] `tesis-aspectos-legales` — APLICADO (24/25)
+### [C-79] `tesis-aspectos-legales` — ARCHIVADO (2026-10-20, 25/25)
 
-- **Estado**: `[x]` aplicado (24/25 tareas; OQ-L1/L1b/L2/L5 resueltas 2026-10-12). Solo resta la recompilacion Overleaf diferida.
+- **Estado**: `[x]` CREADO, APLICADO (25/25; OQ-L1/L1b/L2/L5 resueltas 2026-10-12) y ARCHIVADO (2026-10-20; `openspec/changes/archive/2026-10-20-c-79-tesis-aspectos-legales`).
 - **Problema**: capitulo legal con defectos de correccion juridica: retencion contradictoria ("indefinida" vs "30 dias") sin politica de supresion, base legal "legitimo interes" (GDPR, no existe en Ley 25.326), adecuacion europea mal explicada (bidireccional), transferencia telefonica pre-pseudonimizacion no declarada (Twilio) y fuentes juridicas sin control de vigencia.
 - **Scope**: reescribir 11.1-11.3; plazo de conservacion concreto + politica de supresion al vencimiento; base art. 5 inc. 2 ap. b/d; Decision 2003/490/CE + revalidacion 2024; audio crudo + numero a EE.UU. antes de pseudonimizar; instrumento del art. 12; revision de vigencia de las fuentes citadas.
 - **Dependencias**: aplicar tras C-78.
@@ -1725,9 +1725,9 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
   - `docs/cumplimiento/marco-legal-ar-2026.md`, `docs/seguridad/registro-requisitos-legales.md`
   - `docs/runbook-verificacion-telefonia-c52.md`
 
-### [C-80] `tesis-forma-evidencia-visual` — APLICADO (40/45)
+### [C-80] `tesis-forma-evidencia-visual` — EN PROGRESO (41/45)
 
-- **Estado**: `[x]` aplicado (40/45 tareas; OQ-F2-1/F2-2/F3-1 resueltas 2026-10-12; figura 7 por canal). Restan la recompilacion Overleaf diferida y las capturas de UI.
+- **Estado**: `[ ]` EN PROGRESO (41/45 tareas; OQ-F2-1/F2-2/F3-1 resueltas 2026-10-12; figura 7 por canal; tesis recompilada el 2026-10-20, 103 paginas con MiKTeX). Abiertas (4): 6.5 y 6.6 (capturas de UI: panel admin y dashboard), 8.2 (verificacion de las 8 figuras), 6.4 (cerrable por contingencia) y el ajuste de 6.9.
 - **Problema**: Bloque 4 del dictamen (items 26-32): 52 errores ortograficos, 8 figuras faltantes (hay 1 sola), 7 anexos A-G descriptivos + Anexo H fuera de la tesis, fuente de tablas inconsistente, ~900 palabras duplicadas, nota obsoleta "N8N 1.62", afirmaciones valorativas sin respaldo.
 - **Scope**: sustitucion ortografica contextual; 8 figuras (Mermaid->PNG, screenshots, matplotlib); anexos con contenido + Anexo H; unificar tablas; deduplicar 1.1/2.1, 5.3/6.3, 8.1/9.1; retirar la nota 1.62; rebajar claims de 8.1/9.1.
 - **Dependencias**: aplicar tras C-79 (al final: comparte 08/09 con C-76/C-77).
@@ -1868,11 +1868,11 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ## FASE 31 — Correcciones de la tesis por la nueva auditoria (2026-10-19)
 
-> Changes sobre el documento academico (LaTeX, `docs/Tesis/v9 (IA)/paper/`), derivados de una NUEVA auditoria capitulo por capitulo (`docs/Tesis/Correcciones/auditoria-capitulos.md`) y del informe completo (`auditorias/Auditoria_Tesis_Gomez_Bustos_Sevilla_040802026.pdf`, 105 hallazgos: 28 criticos / 34 altos / 29 medios / 14 bajos). El cruce con los changes existentes esta en `docs/Tesis/Correcciones/reconciliacion-cobertura.md`. C-76..C-80 (FASE 29) siguen siendo los duenios del corpus, la estadistica/inferencia, la bibliografia, lo legal y la forma; C-92..C-96 cubren los hallazgos NUEVOS A/M/B que los cinco changes previos no abordan. C-18 quedo STALE (el artefacto N8N ya fue corregido por c-29, commit ef656ac; solo resta el residuo textual, en c-77 C3). Los cinco estan APLICADOS: C-92 (28/29), C-93 (28/29), C-94 (23/25), C-95 (35/36) y C-96 (27/28). Las unicas tareas abiertas son la recompilacion Overleaf diferida, por lo que aun no se han archivado. Se aplican EN SECUENCIA porque comparten archivos `.tex`. Orden recomendado: c-76 -> c-77 -> c-78 -> c-79 -> c-80 -> c-92 -> c-93 -> c-94 -> c-95 -> c-96.
+> Changes sobre el documento academico (LaTeX, `docs/Tesis/v9 (IA)/paper/`), derivados de una NUEVA auditoria capitulo por capitulo (`docs/Tesis/Correcciones/auditoria-capitulos.md`) y del informe completo (`auditorias/Auditoria_Tesis_Gomez_Bustos_Sevilla_040802026.pdf`, 105 hallazgos: 28 criticos / 34 altos / 29 medios / 14 bajos). El cruce con los changes existentes esta en `docs/Tesis/Correcciones/reconciliacion-cobertura.md`. C-76..C-80 (FASE 29) siguen siendo los duenios del corpus, la estadistica/inferencia, la bibliografia, lo legal y la forma; C-92..C-96 cubren los hallazgos NUEVOS A/M/B que los cinco changes previos no abordan. C-18 quedo STALE (el artefacto N8N ya fue corregido por c-29, commit ef656ac; solo resta el residuo textual, en c-77 C3). C-92 (29/29), C-93 (29/29), C-94 (25/25), C-95 (36/36) y C-96 (28/28) quedaron APLICADOS y ARCHIVADOS el 2026-10-20, tras la recompilacion de la tesis v9 (103 paginas, MiKTeX). Se aplican EN SECUENCIA porque comparten archivos `.tex`. Orden aplicado: c-76 -> c-77 -> c-78 -> c-79 -> c-80 -> c-92 -> c-93 -> c-94 -> c-95 -> c-96.
 
-### [C-92] `tesis-marco-teorico-profundidad` — APLICADO (28/29)
+### [C-92] `tesis-marco-teorico-profundidad` — ARCHIVADO (2026-10-20, 29/29)
 
-- **Estado**: `[x]` aplicado (28/29 tareas). Solo resta la recompilacion Overleaf diferida.
+- **Estado**: `[x]` CREADO, APLICADO (29/29) y ARCHIVADO (2026-10-20; `openspec/changes/archive/2026-10-20-c-92-tesis-marco-teorico-profundidad`).
 - **Problema**: el Capitulo 2 no sostiene conceptualmente el uso operativo que el resto del documento hace de sus conceptos: el eje LLM ocupa cuatro parrafos con solo tres referencias (A-04); la exactitud se define con la formula binaria y se corrige al lado (A-05); se describe Whisper como si se usara cuando el sistema usa la transcripcion nativa de Twilio (M-03); PostgreSQL se justifica contra "lo no relacional" sin nombrar alternativas (M-04); y quedan una afirmacion sobre corpus EN/DE/PT sin respaldo (M-02) y la atribucion editorial de ITIL Service Operation 2011 (A-06, parcial).
 - **Scope**: §2.4 (profundizar prompting/calibracion de confianza/alucinacion/idioma/evaluacion de LLM, A-04); §2.7 (definir la exactitud multiclase directamente y retirar la formula binaria, A-05); §2.5 (marcar Whisper como antecedente no utilizado y remitir a §6.4, M-03); §2.6 (comparar PostgreSQL con al menos dos alternativas concretas, M-04); §1.7 (citar o reformular la afirmacion sobre corpus EN/DE/PT, reutilizando refs de c-78, M-02); §2.2 (atribuir ITIL Service Operation 2011 a TSO/Cabinet Office; el `.bib` queda en c-78 B3, A-06).
 - **Hallazgos**: A-04, A-05, M-03, M-04 (mas M-02 y A-06 parciales).
@@ -1882,9 +1882,9 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
   - `openspec/changes/c-92-tesis-marco-teorico-profundidad/{proposal,design,tasks}.md`
   - `docs/Tesis/Correcciones/reconciliacion-cobertura.md` (N1)
 
-### [C-93] `tesis-metodologia-rigor` — APLICADO (28/29)
+### [C-93] `tesis-metodologia-rigor` — ARCHIVADO (2026-10-20, 29/29)
 
-- **Estado**: `[x]` aplicado (28/29 tareas). Solo resta la recompilacion Overleaf diferida.
+- **Estado**: `[x]` CREADO, APLICADO (29/29) y ARCHIVADO (2026-10-20; `openspec/changes/archive/2026-10-20-c-93-tesis-metodologia-rigor`).
 - **Problema**: el Cap. 4 declara un diseno metodologico cuya aritmetica y supuestos no son reproducibles: el tamaño muestral (95 % / 6,5 % / correccion por finitud) no reproduce n=200 (A-07); la cobertura de pruebas se afirma sin publicar reporte ni comando (A-08); no hay analisis de potencia a priori (A-09); la rotacion de operadores queda confundida con el efecto de operador (A-10); y el tercer criterio del umbral 85 % de §1.6 confunde el contraste de tiempos con la exactitud (A-03). Faltan ademas criterios de exclusion del corpus (M-05), la demarcacion metodo de investigacion vs construccion del artefacto (M-06) y la declaracion de los analistas etiquetadores (M-07).
 - **Scope**: §4.4 (publicar o corregir el calculo del tamaño muestral, A-07; criterios de exclusion, M-05; analistas etiquetadores, M-07); §4.5/§6.7 (publicar el informe de cobertura y el comando o retraer las cifras, A-08); §4.8 (analisis de potencia a priori, A-09); §4.2/§4.8 (reconocer el confundido operador/mitades, A-10); §4.9 (demarcar o reubicar Scrumban, M-06); §1.6 (reformular el tercer criterio sin "zona de rechazo", A-03, coordinado con c-77 B1).
 - **Hallazgos**: A-07, A-08, A-09, A-10, M-05, M-06, M-07, A-03.
@@ -1894,9 +1894,9 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
   - `openspec/changes/c-93-tesis-metodologia-rigor/{proposal,design,tasks}.md`
   - `docs/Tesis/Correcciones/reconciliacion-cobertura.md` (N2)
 
-### [C-94] `tesis-implementacion-verificabilidad` — APLICADO (23/25)
+### [C-94] `tesis-implementacion-verificabilidad` — ARCHIVADO (2026-10-20, 25/25)
 
-- **Estado**: `[x]` aplicado (23/25 tareas). Solo resta la recompilacion Overleaf diferida.
+- **Estado**: `[x]` CREADO, APLICADO (25/25) y ARCHIVADO (2026-10-20; `openspec/changes/archive/2026-10-20-c-94-tesis-implementacion-verificabilidad`).
 - **Problema**: los Caps. 5 y 6 afirman hechos que el repositorio no respalda: §6.7 declara pruebas e2e que validan N8N (A-11) y una suite de frontend de 89 pruebas con 98,6 % de cobertura (A-12); §6.4 informa una latencia telefonica de 12-15 s sin n, dispersion ni procedimiento y no atribuible dado C-17 (A-13); §6.8 presenta un ejemplo hipotetico como "caso concreto" (M-08); §6.1 declara preparacion para Kubernetes 1.30 sin manifiesto (M-09); §5.4 fija parametros de inferencia "optimizados" sin procedimiento (M-12); y la Tabla 5 lista tres de los puntos de entrada reales (M-13).
 - **Scope**: retraer o reformular las pruebas e2e de N8N (A-11) y el recuento/cobertura de la suite de frontend re-midiendo en HEAD (A-12); reformular la latencia telefonica (A-13, coordinado con c-77 Grupo E); marcar el ejemplo del dashboard como hipotetico (M-08); acotar Kubernetes a trabajo futuro (M-09); retirar "optimizados" o documentar el procedimiento (M-12); completar la Tabla 5 y declararla no exhaustiva (M-13). El residuo textual de C-18 (Tabla 4 / §5.3) se referencia desde c-77 C3, sin duplicar.
 - **Hallazgos**: A-11, A-12, A-13, M-08, M-09, M-12, M-13.
@@ -1906,9 +1906,9 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
   - `openspec/changes/c-94-tesis-implementacion-verificabilidad/{proposal,design,tasks}.md`
   - `docs/Tesis/Correcciones/reconciliacion-cobertura.md` (N3)
 
-### [C-95] `tesis-resultados-discusion-rigor` — APLICADO (35/36)
+### [C-95] `tesis-resultados-discusion-rigor` — ARCHIVADO (2026-10-20, 36/36)
 
-- **Estado**: `[x]` aplicado (35/36 tareas). Solo resta la recompilacion Overleaf diferida.
+- **Estado**: `[x]` CREADO, APLICADO (36/36) y ARCHIVADO (2026-10-20; `openspec/changes/archive/2026-10-20-c-95-tesis-resultados-discusion-rigor`).
 - **Problema**: los Caps. 7, 8 y 9 describen resultados sin la evidencia que exigen: la normalidad que justifica Wilcoxon no reporta estadistico ni p (A-15); la discusion interpreta pero no interroga ni explica la confusion sistematica de Sistemas (A-20); el baseline TF-IDF+SVM se enuncia en una sola oracion sin procedimiento, particion, n ni codigo (A-21); la tipologia de errores no publica ningun ejemplo textual (M-10); los costos operativos no tienen fuente (M-16); y el Cap. 9 introduce una interpretacion estadistica que pertenece al Cap. 8 (A-25) y una generalizacion sobre LLM frente a clasificadores supervisados (A-23).
 - **Scope**: §4.7/§7.1 (reportar W y p de Shapiro-Wilk, A-15); §8.1 (interrogacion critica con hipotesis rivales y explicacion de la confusion de Sistemas sobre la matriz 5x5, A-20); §8.3 (retirar o declarar no reproducible el baseline 78 % / F1 0,764, A-21); §7.4 (2-3 ejemplos textuales anonimizados, M-10); §8.4 (costos con fuente o cota explicita con supuestos, M-16); §9.1/§9.2 (acotar la interpretacion estadistica y la generalizacion, A-25/A-23).
 - **Hallazgos**: A-15, A-20, A-21, M-10, M-16 (mas A-23 y A-25 parciales).
@@ -1918,9 +1918,9 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
   - `openspec/changes/c-95-tesis-resultados-discusion-rigor/{proposal,design,tasks}.md`
   - `docs/Tesis/Correcciones/reconciliacion-cobertura.md` (N4)
 
-### [C-96] `tesis-citas-tablas-evidencia` — APLICADO (27/28)
+### [C-96] `tesis-citas-tablas-evidencia` — ARCHIVADO (2026-10-20, 28/28)
 
-- **Estado**: `[x]` aplicado (27/28 tareas). Solo resta la recompilacion Overleaf diferida.
+- **Estado**: `[x]` CREADO, APLICADO (28/28) y ARCHIVADO (2026-10-20; `openspec/changes/archive/2026-10-20-c-96-tesis-citas-tablas-evidencia`).
 - **Problema**: defectos transversales de trazabilidad de fuentes: la Tabla 1 (Cap. 3) compara seis soluciones comerciales sin cita, linea de fuente ni fecha de consulta y autoevalua la fila "Propuesta" (A-26); la definicion de empresa mediana atribuida a la SEPyME carece de cita y entrada bibliografica (M-01); queda una cita huerfana "(APA, 2017)" en §11.5; §1.7 y §6.1 rotulan a N8N como "codigo abierto" pese a su licencia Sustainable Use (A-27); §1.2/§1.8 caracterizan de forma inconsistente a la organizacion adoptante (B-01); ninguna de las nueve tablas declara fuente (APA 7) y la densidad de citas es desigual (Cap. 6 y Cap. 7).
 - **Scope**: Tabla 1 con linea de fuente, cita y fecha de consulta por fila y separacion de la fila "Propuesta" (A-26); cita y entrada SEPyME para §1.1 y resolucion de la cita huerfana APA 2017 de §11.5 (M-01); corregir "codigo abierto" en §1.7/§6.1 (A-27); unificar la organizacion adoptante en §1.2/§1.8 (B-01); linea de fuente APA 7 en las nueve tablas (coordinado con c-80, duenio del formato); aumentar y equilibrar la densidad de citas reutilizando la bibliografia de c-78 (Cap. 3/6/7).
 - **Hallazgos**: A-26, M-01 + cita huerfana APA 2017, A-27, B-01 (mas las dimensiones transversales de fuente de tablas y densidad de citas).
@@ -2008,6 +2008,8 @@ Actualizacion 2026-10-19 (c-64 y c-65 archivados): C-64 `vulnerabilidades-supply
 
 Actualizacion 2026-10-19 (c-97 archivado): C-97 `actualizar-dependencias-seguridad` (MEDIO) quedo CREADO, APLICADO (14/14) y ARCHIVADO (2026-10-19; `openspec/changes/archive/2026-10-19-c-97-actualizar-dependencias-seguridad`). Es un change post-roadmap que ejecuta el FOLLOW-UP de `pip-audit` declarado por C-64 (FASE 21), NO parte del plan de cumplimiento ISO/NIST/Ley 25.326 (ya TOTALMENTE EJECUTADO). Entrego: `fastapi` 0.115.0 -> 0.135.0 (levanta el cap `starlette<0.39`), `starlette` 1.3.1 (pin explicito nuevo), `pytest` 9.1.1 y `pytest-asyncio` 1.4.0; podo 8 IDs de `scripts/security/pip_audit_exceptions.txt` (7 advisories de `starlette` + `PYSEC-2026-1845` de `pytest`), dejando solo los 2 hallazgos sin correccion publicada (`python-jose` PYSEC-2026-4298 y `ecdsa` PYSEC-2026-1325); regenero `docs/openapi.json` (unico fallout de FastAPI 0.135); sin rotura de codigo de aplicacion (suite 1449 passed, baseline igual; integracion PostgreSQL 48 passed). Specs sincronizadas: `supply-chain-security` y `ci-pipeline` modificadas. Totales: 94 entradas creadas documentadas (93 numeradas + 1 de mantenimiento sin numero) — 84 archivadas y 10 activas (C-76..C-80, C-92..C-96).
 
+Actualizacion 2026-10-20 (recompilacion de la tesis v9 + archivado de 9 changes): la tesis v9 se recompilo con MiKTeX (xelatex -> biber -> xelatex -> xelatex; 103 paginas, 0 errores fatales, 0 referencias indefinidas, 48/48 bibliografia) y se marcaron las 12 tareas de recompilacion repartidas en los 10 changes de tesis, cubriendo la recompilacion que estaba diferida. Con eso se ARCHIVARON nueve changes el 2026-10-20: C-76 (49/49), C-77 (51/51), C-78 (25/25), C-79 (25/25), C-92 (29/29), C-93 (29/29), C-94 (25/25), C-95 (36/36) y C-96 (28/28), bajo `openspec/changes/archive/2026-10-20-*`. Las especificaciones principales se sincronizaron con los delta specs de esos nueve changes (`openspec validate --specs` = 62/62). Queda UN solo change ACTIVO: C-80 `tesis-forma-evidencia-visual` (41/45), con las capturas de UI (6.5/6.6), la verificacion de las 8 figuras (8.2), el cierre de 6.4 por contingencia y el ajuste de 6.9 pendientes. Totales: 94 entradas creadas documentadas (93 numeradas + 1 de mantenimiento sin numero) — 93 archivadas y 1 activa (C-80).
+
 Cambios que NO estan en el roadmap original porque se implementaron durante el desarrollo:
 - Clasificador hibrido (completo)
 - CRUD de incidentes (completo)
@@ -2024,23 +2026,14 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 
 ## Primer change recomendado
 
-Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01), C-61 (2026-10-01, 26/26), C-69 (2026-10-05, 30/30), C-71 (2026-10-06, 43/43), C-60 (2026-10-06, 33/33), C-70 (2026-10-06, 72/72), C-72 (2026-10-07, 37/37), C-73 (2026-10-07, 23/23), C-74 (2026-10-07, 32/32), C-75 (2026-10-08, 14/14), C-56 (2026-10-08, 27/27), C-68 (2026-10-09, 63/63), C-81 (2026-10-13, 24/24), C-82 (2026-10-13, 36/36), C-83 (2026-10-13, 18/18), C-84 (2026-10-15, 15/15), C-85 (2026-10-15, 34/34), C-86 (2026-10-15, 61/61), C-87 (2026-10-15, 25/25), C-88 (2026-10-15, 19/19), C-89 (2026-10-15, 19/19), C-90 (2026-10-15, 17/17) y C-91 (2026-10-15, 48/48); y C-97 `actualizar-dependencias-seguridad` (2026-10-19, 14/14, post-roadmap, seguimiento de C-64).
+Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01), C-61 (2026-10-01, 26/26), C-69 (2026-10-05, 30/30), C-71 (2026-10-06, 43/43), C-60 (2026-10-06, 33/33), C-70 (2026-10-06, 72/72), C-72 (2026-10-07, 37/37), C-73 (2026-10-07, 23/23), C-74 (2026-10-07, 32/32), C-75 (2026-10-08, 14/14), C-56 (2026-10-08, 27/27), C-68 (2026-10-09, 63/63), C-81 (2026-10-13, 24/24), C-82 (2026-10-13, 36/36), C-83 (2026-10-13, 18/18), C-84 (2026-10-15, 15/15), C-85 (2026-10-15, 34/34), C-86 (2026-10-15, 61/61), C-87 (2026-10-15, 25/25), C-88 (2026-10-15, 19/19), C-89 (2026-10-15, 19/19), C-90 (2026-10-15, 17/17) y C-91 (2026-10-15, 48/48); C-97 `actualizar-dependencias-seguridad` (2026-10-19, 14/14, post-roadmap, seguimiento de C-64); y los nueve changes de tesis C-76 (2026-10-20, 49/49), C-77 (2026-10-20, 51/51), C-78 (2026-10-20, 25/25), C-79 (2026-10-20, 25/25), C-92 (2026-10-20, 29/29), C-93 (2026-10-20, 29/29), C-94 (2026-10-20, 25/25), C-95 (2026-10-20, 36/36) y C-96 (2026-10-20, 28/28).
 
-Hay 10 changes ACTIVOS:
-- **`c-76-tesis-correcciones-dictamen`** — 47/49 (FASE 29) — Governance MEDIO.
-- **`c-77-tesis-errores-estadisticos-inferenciales`** — 50/51 (FASE 29) — Governance MEDIO.
-- **`c-78-tesis-bibliografia-atribucion`** — 24/25 (FASE 29) — Governance ALTO.
-- **`c-79-tesis-aspectos-legales`** — 24/25 (FASE 29) — Governance ALTO.
-- **`c-80-tesis-forma-evidencia-visual`** — 40/45 (FASE 29) — Governance BAJO.
-- **`c-92-tesis-marco-teorico-profundidad`** — 28/29 (FASE 31) — Governance MEDIO.
-- **`c-93-tesis-metodologia-rigor`** — 28/29 (FASE 31) — Governance MEDIO.
-- **`c-94-tesis-implementacion-verificabilidad`** — 23/25 (FASE 31) — Governance MEDIO.
-- **`c-95-tesis-resultados-discusion-rigor`** — 35/36 (FASE 31) — Governance MEDIO.
-- **`c-96-tesis-citas-tablas-evidencia`** — 27/28 (FASE 31) — Governance BAJO.
+Hay 1 change ACTIVO:
+- **`c-80-tesis-forma-evidencia-visual`** — 41/45 (FASE 29) — Governance BAJO. Pendientes: capturas de UI (6.5/6.6) y verificacion de las 8 figuras (8.2); 6.4 cerrable por contingencia; ajustar 6.9.
 
-Los cinco changes de la FASE 29 son correcciones del documento de tesis (independientes del software) y se aplican en secuencia, en el orden C-76 -> C-77 -> C-78 -> C-79 -> C-80. Los cinco changes de la FASE 31 (C-92..C-96) cubren los hallazgos NUEVOS de la re-auditoria y se aplican a continuacion, en el orden C-92 -> C-93 -> C-94 -> C-95 -> C-96 (tras la FASE 29).
+Los nueve changes de tesis de las FASES 29/31 (C-76..C-79 y C-92..C-96) quedaron APLICADOS y ARCHIVADOS el 2026-10-20; solo resta C-80 (FASE 29), con las capturas de UI pendientes. Orden que se siguio: C-76 -> C-77 -> C-78 -> C-79 -> C-80 -> C-92 -> C-93 -> C-94 -> C-95 -> C-96.
 
-C-01..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-62, C-63, C-64, C-65, C-66, C-67, C-68, C-69, C-70, C-71, C-72, C-73, C-74, C-75, C-81..C-91 y C-97 estan archivados (C-21 no existe). C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
+C-01..C-20, C-22..C-48, C-52..C-79, C-81..C-91 y C-92..C-97 estan archivados (C-21 no existe; c-63 se cuenta como un change con sus tres partes c-63a/b/c). El unico change activo es C-80. C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
 
 **Detalle de `c-52-telefonia-transcripcion-async`** (Gobernanza CRITICA; ARCHIVADO 2026-09-30):
 
@@ -2061,12 +2054,8 @@ C-01..C-48, C-52, C-53, C-54, C-55, C-56, C-57, C-58, C-59, C-60, C-61, C-62, C-
 
 Pendientes planificados, en orden recomendado:
 
-1. **`c-49-carga-corpus-db`**: cargar los 200 casos del corpus en una tabla dedicada
-   (`corpus_incidente`), solo con la descripcion pseudonimizada, aislada de la tabla operativa,
-   con FK nullable `incidente_id` -> `incidente.id`; temporal hasta poder correr el flujo completo.
-2. **`c-50-corpus-timing-wiring`**: separar el contrato del loader de `evaluation/corpus.py`
-   (carga para clasificacion vs analisis de timing), derivar `tiempo_automatizado_s` de
-   `latencia_e2e_ms` medido y cablear `stats.py`/Wilcoxon al reporte.
+1. **`c-49-carga-corpus-db`** — SUPERADO (verificado 2026-10-20; NO crear). Objetivo original: cargar los 200 casos del corpus en una tabla dedicada (`corpus_incidente`), solo con la descripcion pseudonimizada, aislada de la tabla operativa, con FK nullable `incidente_id` -> `incidente.id`; era una etapa TEMPORAL "hasta poder correr el flujo completo". Esa condicion ya se cumplio: el flujo real ingesta el corpus 200/200 (C-68 web/correo + C-70 telefonia) y la aislacion se logro con la base descartable `mesa_de_ayuda_corpus` + correlacion exacta por `corpus_case_id` (`openspec/specs/telefonia-corpus-medicion/spec.md`), sin migracion de esquema (`c-68/proposal.md`). La tabla `corpus_incidente` nunca se creo y ningun spec vigente la requiere.
+2. **`c-50-corpus-timing-wiring`** — PARCIALMENTE SUPERADO (verificado 2026-10-20). Hecho: `tiempo_automatizado_s` se deriva de `latencia_e2e_ms` medido y el corpus quedo poblado 200/200 (C-68/C-70; `openspec/specs/corpus-n8n-ingest/spec.md`, `openspec/specs/telefonia-corpus-medicion/spec.md`). Residual vivo (no bloqueante): (a) `evaluation/stats.py` (Wilcoxon, corregido por C-77) NO esta cableado al reporte —`evaluation/run_evaluation.py` no importa `evaluation.stats` y `evaluation/report.md` no tiene seccion Wilcoxon; los numeros de la tesis se calcularon ad hoc—; (b) no se separo el contrato del loader de `evaluation/corpus.py` (clasificacion vs timing). Trampa latente: la seccion "Normalidad (Shapiro-Wilk)" de `evaluation/report.md` se agrego a mano en C-95, asi que regenerar el reporte la borra. Cerrar el residual (a) seria un change chico propio.
 
 Operativo para habilitar el pipeline pago (fuera de changes):
 - Cargar la credencial real de Twilio (`TWILIO_AUTH_TOKEN`) y apuntar la Voice URL de la
@@ -2077,7 +2066,7 @@ Operativo para habilitar el pipeline pago (fuera de changes):
   `AI Agent` recibe el item sellado tras la guarda.
 
 Deuda menor pendiente (no bloqueante):
-- Tesis post-pipeline: reconciliar cap. 7 con el corpus real y corregir 4.3/4.8/cap. 11.
+- Tesis post-pipeline: la reconciliacion del Cap. 7 con el corpus real y las correcciones de 4.3/4.8/Cap. 11 quedaron cubiertas por C-76 (Cap. 4/7/8), C-77 (estadistica/inferencia) y C-79 (Cap. 11), archivados el 2026-10-20. La unica deuda residual es la evidencia visual de C-80 (capturas de UI 6.5/6.6).
 
 Para avanzar:
 - Workstream aprobado: el plan de cumplimiento ISO/NIST/Ley 25.326 (`docs/cumplimiento/plan-cambios-cumplimiento.md`), en la FASE 21. C-61 (2026-10-01), C-62 (2026-10-08), C-63a/b/c (2026-10-08), C-64 (2026-10-19), C-65 (2026-10-19) y C-66 (2026-10-19) quedaron ARCHIVADOS. El workstream quedo TOTALMENTE EJECUTADO: no quedan changes planificados.
