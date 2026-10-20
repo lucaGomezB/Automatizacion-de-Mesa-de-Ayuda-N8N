@@ -61,6 +61,11 @@ Verificación de los datos de tiempo del corpus (JSON, `Corpus Tesis.xlsx` y amb
   | Conservador (−5 s) | 56,6 s | 73,8 % | 2,6e-30 | 0,966 |
   | Conservador (−10 s) | 51,6 s | 71,3 % | 2,7e-27 | 0,941 |
 
+  > Nota (c-77): esta tabla registra el análisis de sensibilidad tal como se
+  > calculó sobre el corpus de c-76. La reducción "Reportado" se rebasó luego a
+  > **71,2 %** (\(W = 363\), \(r = 0,9639\)) con el corpus actualizado por c-77
+  > (commit `4602bf5`); los escenarios conservadores quedan como registro histórico.
+
 - **Pares invertidos**: en **12/200** casos el flujo automatizado NO fue más rápido
   (auto ≥ manual). La tesis afirma **W=0** ("sin una sola excepción"), que es
   **falso** para el corpus real.
@@ -90,16 +95,16 @@ sintético descartado en C-27**.
 | Exactitud | 92,0 % | 73,5 % (147/200) |
 | F1 macro | 0,919 | 0,5207 |
 | Manual (media) | 165,3 s | 61,6 s |
-| Automatizado (media) | 18,2 s | 14,8 s |
-| Reducción | 89,0 % | 75,9 % |
-| Wilcoxon | W=0, r=1,00 | W=335, p=2,05e-32, r=0,983 |
+| Automatizado (media) | 18,2 s | 17,76 s |
+| Reducción | 89,0 % | 71,2 % |
+| Wilcoxon | W=0, r=1,00 | W=363, p=3,08e-32, r=0,9639 |
 
 **Datos reales disponibles (listos para aplicar)**:
 - Distribución primaria: Sistemas 16, Soporte Técnico Hardware 85, Soporte Técnico
   Software 67, Seguridad Informática 31, Bases de Datos 1.
 - Canales: correo 66, web 53, teléfono 81.
 - Tiempos: manual media 61,6 s (mediana 50,0; sd 44,9; rango 10–300) vs auto media
-  14,8 s (mediana 12,4; sd 13,1; rango 0,5–65,8); reducción 75,9 %.
+  17,76 s (mediana 17,47; sd 13,48; rango 0,525–65,834); reducción 71,2 %.
 - Clasificación (`evaluation/report.md`): exactitud estricta 73,5 % (147/200),
   macro-F1 0,5207, micro-F1 0,6654, subset accuracy 0,43, Hamming 0,3586; etapas
   deterministic 131 / Gemini 69.
@@ -121,12 +126,12 @@ general", sin calificar la meta no alcanzada.
 - **Fix**:
   - `09-conclusiones.tex` (l.6): el objetivo general (construir y validar el
     sistema) se declara cumplido, pero se explicita que el segundo objetivo
-    específico NO se alcanza; la reducción de tiempo del 75,9~\% se mantiene como
-    resultado central sostenido (\(W = 335\)).
+    específico NO se alcanza; la reducción de tiempo del 71,2~\% se mantiene como
+    resultado central sostenido (\(W = 363\)).
   - `09-conclusiones.tex` (l.12, §Cumplimiento de los objetivos): "brecha que se
     analiza" → "ese objetivo no se alcanza; la brecha se analiza en el Cap. 8",
     consistente con §8.1/§8.3.
-- **Sin números nuevos**: solo 73,5~\%, 0,5207, 75,9~\%, \(W = 335\), IC
+- **Sin números nuevos**: solo 73,5~\%, 0,5207, 71,2~\%, \(W = 363\), IC
   [67,0~\%, 79,1~\%].
 - **Verificación**: `rg "cumplido satisfactoriamente|supero con holgura|superó los
   umbrales|no deja espacio"` en las secciones devuelve CERO coincidencias en el
