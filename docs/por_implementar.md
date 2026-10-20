@@ -83,7 +83,7 @@ Los certificados self-signed generados funcionan en desarrollo pero el navegador
 
 El archivo `n8n/workflow.json` esta montado en el contenedor como `/data/Automatizacion_Mesa_de_Ayuda.json` pero **no se auto-importa**. Pasos manuales:
 
-1. Abrir `https://localhost:5678` (usuario: `admin`, clave: `admin`)
+1. Abrir `http://localhost:5678` y autenticarse con la cuenta owner creada en el primer arranque (email + contraseña; persistida en el volumen `n8n_data`)
 2. Settings > Import from File > seleccionar el JSON
 3. Configurar las credenciales `imap`/`smtp` y el secreto del handoff telefonico en los nodos correspondientes
 4. Activar el workflow (toggle Active)

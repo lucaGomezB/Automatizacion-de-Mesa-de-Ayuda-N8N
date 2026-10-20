@@ -288,7 +288,7 @@ Ambas respuestas deben devolver `{"status": "ok"}`.
 
 ### 6. Importar y activar el workflow N8N
 
-1. Abrir `http://localhost:5678` (usuario: `admin`, contraseña: `n8n_local_dev`; es el default local del `.env` de la raiz, sobreescribible con `N8N_BASIC_AUTH_USER` / `N8N_BASIC_AUTH_PASSWORD`)
+1. Abrir `http://localhost:5678`. En el primer arranque N8N exige crear la cuenta owner (email + contraseña); ese es el acceso a la UI, persistido de forma hasheada en el volumen `n8n_data` (`/home/node/.n8n/database.sqlite`). Su contraseña no vive en el repositorio (gestor de passwords del operador).
 2. **Workflows → Import from file** → seleccionar `n8n/workflow.json`
 3. Configurar las credenciales de Outlook, Twilio y Gemini en N8N
 4. Activar el workflow con el toggle superior derecho

@@ -13,7 +13,7 @@ graph TD
         subgraph Docker["Red Docker: mesa_local_default"]
             PG["PostgreSQL 15.5-alpine\npuerto host: 5433\nvolumen: postgres_data\nDB: mesa_de_ayuda"]
             BE["Backend FastAPI\n(sin puerto host)\nuvicorn app.main:app\nalembic upgrade head al iniciar"]
-            N8N["N8N 2.11.2\npuerto host: 5678\nBasic Auth: admin/n8n_local_dev (default local)\nvolumen: n8n_data"]
+            N8N["N8N 2.11.2\npuerto host: 5678\nacceso: cuenta owner (primer arranque)\nvolumen: n8n_data"]
             FE["Frontend React 18 + Vite\n(sin puerto host)\nVite dev server :3000"]
             NGX["Nginx alpine\npuerto host: 80, 443\nTLS 1.3 termination\nHTTP → HTTPS redirect\nHSTS header"]
         end

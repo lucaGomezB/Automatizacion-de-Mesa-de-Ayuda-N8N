@@ -13,7 +13,7 @@ URLS UNA VEZ ARRANCA TODO
 -------------------------
   Backend : https://localhost/api/v1   (swagger: https://localhost/api/v1/docs)
   Frontend: https://localhost/
-  N8N     : http://localhost:5678      (usuario: admin | password: n8n_local_dev, default local)
+  N8N     : http://localhost:5678      (cuenta owner creada en el primer arranque)
 
 
 PREPARACION (una vez por entorno)

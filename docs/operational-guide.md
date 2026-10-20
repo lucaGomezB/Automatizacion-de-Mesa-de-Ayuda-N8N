@@ -241,7 +241,7 @@ Respuesta esperada:
 ### 1.5 Acceder a N8N e importar el workflow
 
 1. Abrir `http://localhost:5678` en el navegador.
-2. Autenticarse con usuario `admin` / contraseña `n8n_local_dev` (default local del `.env` de la raiz; sobreescribible con `N8N_BASIC_AUTH_USER` / `N8N_BASIC_AUTH_PASSWORD`).
+2. Autenticarse con la cuenta owner creada en el primer arranque de N8N (email + contraseña). La cuenta se persiste de forma hasheada en el volumen `n8n_data` (`/home/node/.n8n/database.sqlite`) y su contraseña no vive en el repositorio.
 3. Importar el workflow: **Workflows → Import from file** → seleccionar
    `n8n/workflow.json` (ya montado en `/data/` del contenedor).
 4. Configurar las credenciales `imap`/`smtp` (correo) y el secreto del handoff telefónico (`X-N8N-Secret`) en N8N.
