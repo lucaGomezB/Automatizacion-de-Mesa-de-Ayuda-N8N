@@ -2,7 +2,7 @@
 
 - [x] 1.1 Confirmar los valores de referencia del corpus real en `evaluation/report.md` (73,5 %, 0,5207, matriz 5x5) y en `data/corpus_evaluacion_pseudonimizado.json` (distribución 16/85/67/31/1; canales 66/53/81); verificar que coinciden con el registro `docs/Tesis/Correcciones/dictamen-correcciones.md`.
 - [x] 1.2 Inventariar con `rg` los términos stale (Operaciones, 165, 18,2, 0,919, W=0, 92 %, tres sectores) en `docs/Tesis/v9 (IA)/paper/sections`; verificar que la lista cubre Cap. 4, 7, 8, 00, 01, 05 y 09.
-- [x] 1.3 Verificar la disponibilidad de XeLaTeX/`latexmk` en el entorno y registrar la alternativa (Overleaf) si no está local; dejar constancia del compilador a usar para regenerar `main.pdf`.
+- [x] 1.3 Verificar la disponibilidad de XeLaTeX/`latexmk` en el entorno y dejar constancia del compilador a usar para regenerar `main.pdf`. — PRESENTE: la recompilación final se realizó localmente con MiKTeX (XeLaTeX -> biber -> XeLaTeX -> XeLaTeX), 103 páginas; `latexmk` no está disponible (MiKTeX sin Perl).
 
 ## 2. Capítulo 7 — Resultados
 
@@ -35,9 +35,9 @@
 
 ## 6. Compilación y verificación final
 
-> Nota: no hay toolchain LaTeX local (`latexmk`/`xelatex`/`pdflatex` no están instalados). La recompilación de `main.pdf` queda DIFERIDA a Overleaf (XeLaTeX), a cargo del autor (tareas 6.1 y 14.2).
+> Nota: la recompilación de `main.pdf` se realizó localmente con MiKTeX (XeLaTeX -> biber -> XeLaTeX -> XeLaTeX) el 2026-10-20; 103 páginas, 0 errores fatales (tareas 6.1 y 14.2). `latexmk` no está disponible (MiKTeX sin Perl).
 
-- [x] 6.1 Recompilar la tesis con `latexmk -xelatex main.tex` (o Overleaf XeLaTeX) desde `docs/Tesis/v9 (IA)/paper/`; verificar que `main.pdf` se regenera sin errores fatales. — COMPLETADO 2026-10-20: recompilado localmente con MiKTeX (xelatex -> biber -> xelatex -> xelatex); 103 paginas; 0 errores fatales; 0 referencias indefinidas; 48/48 bibliografia; las 8 figuras renderizan. (latexmk no disponible: MiKTeX sin Perl.)
+- [x] 6.1 Recompilar la tesis con XeLaTeX (localmente con MiKTeX) desde `docs/Tesis/v9 (IA)/paper/`; verificar que `main.pdf` se regenera sin errores fatales. — COMPLETADO 2026-10-20: recompilado localmente con MiKTeX (xelatex -> biber -> xelatex -> xelatex); 103 paginas; 0 errores fatales; 0 referencias indefinidas; 48/48 bibliografia; las 8 figuras renderizan. (latexmk no disponible: MiKTeX sin Perl.)
 - [x] 6.2 Ejecutar `rg -n "Operaciones" "docs/Tesis/v9 (IA)/paper/sections"` y verificar cero coincidencias como sector; confirmar que el PDF no contiene la categoría. [Residuo: los archivos `.tex.bak` trackeados todavía contienen "Operaciones"; son respaldos de edición fuera del alcance del change — el `.tex` vivo tiene CERO]
 - [x] 6.3 Verificar con `rg` que no quedan números sintéticos ni afirmaciones W=0 en las secciones; confirmar la sustitución completa.
 - [x] 6.4 Ejecutar `openspec validate c-76-tesis-correcciones-dictamen --strict` y verificar que pasa sin errores.

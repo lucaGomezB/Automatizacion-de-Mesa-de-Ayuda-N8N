@@ -1,9 +1,9 @@
 # Tasks: c-77 — Errores estadístico-inferenciales y coherencia técnica
 
 > Convención de archivos: `S = docs/Tesis/v9 (IA)/paper/sections`.
-> Verificación de texto: `rg` sobre `S` (sin compilador LaTeX local).
+> Verificación de texto: `rg` sobre `S`.
 > Verificación de datos: `python3` sobre el corpus real.
-> Recompilación: Overleaf (tarea final). No se edita `App/**` salvo decisión.
+> Recompilación: local con MiKTeX/XeLaTeX+biber (2026-10-20), 103 páginas. No se edita `App/**` salvo decisión.
 
 ## 1. A1 — Convención de W y reporte de T+/T−
 
@@ -118,5 +118,5 @@
 
 - [x] 17.1 Ejecutar el barrido de control `rg -n "W = 0|r = 1,00|varianza casi diez|180 horas-persona|IMAP|tres sectores" S/` y confirmar que no quedan residuos (o que los restantes están justificados). Evidencia: CERO coincidencias de `W = 0`, `r = 1,00`, `varianza casi diez` y `tres sectores`. Residuos justificados: `IMAP` en 05:20, 05:40, 06:37 y 12:37 (alineación de canal correo a IMAP/SMTP verificada por C-18/C-55, según tarea 14.1) y `180 horas-persona` en 08:14 (aparece SOLO dentro de la nota al pie que documenta explícitamente que la cifra previa no era reproducible; no es un residuo activo).
 - [x] 17.2 Ejecutar `cd evaluation && pytest tests/test_stats.py` más el test de calibración y confirmar verde. Evidencia: `pytest tests/test_stats.py tests/test_calibracion_confianza.py -q` -> `12 passed`.
-- [x] 17.3 Recompilar la tesis en Overleaf (`main.tex`, XeLaTeX) y verificar PDF sin errores fatales; registrar el resultado. — COMPLETADO 2026-10-20: recompilado localmente con MiKTeX (xelatex -> biber -> xelatex -> xelatex); 103 paginas; 0 errores fatales; 0 referencias indefinidas; 48/48 bibliografia; las 8 figuras renderizan. (latexmk no disponible: MiKTeX sin Perl.)
+- [x] 17.3 Recompilar la tesis (`main.tex`, XeLaTeX; localmente con MiKTeX) y verificar PDF sin errores fatales; registrar el resultado. — COMPLETADO 2026-10-20: recompilado localmente con MiKTeX (xelatex -> biber -> xelatex -> xelatex); 103 paginas; 0 errores fatales; 0 referencias indefinidas; 48/48 bibliografia; las 8 figuras renderizan. (latexmk no disponible: MiKTeX sin Perl.)
 - [x] 17.4 Ejecutar `openspec validate c-77-tesis-errores-estadisticos-inferenciales --strict` y confirmar que pasa. Evidencia: "Change 'c-77-tesis-errores-estadisticos-inferenciales' is valid" (exit 0).

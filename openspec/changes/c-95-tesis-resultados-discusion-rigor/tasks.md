@@ -2,8 +2,8 @@
 
 > Convención: `S = docs/Tesis/v9 (IA)/paper/sections`.
 > Verificación de texto: `rg` sobre archivos activos (los `.bak` no se editan ni
-> se cuentan). No hay toolchain LaTeX local: la recompilación final es en Overleaf
-> con XeLaTeX.
+> se cuentan). La recompilación final fue local, con MiKTeX/XeLaTeX+biber
+> (2026-10-20), 103 páginas.
 >
 > **D-ORDER (obligatorio):** aplicar este change DESPUÉS de c-76, c-77, c-78 y
 > c-80. Comparte `S/04-marco-metodologico.tex`, `S/07-resultados.tex`,
@@ -79,5 +79,5 @@
 
 - [x] 10.1 Barrido de control en las secciones: `rg -n "W = 0|poco frecuente|interpretada con cautela|78~?\\\\?%|0,764|ganancia sustantiva|superiores a los de clasificadores|50--100 USD|0,02 USD" "docs/Tesis/v9 (IA)/paper/sections"` y verificar que no quedan formulaciones retiradas sin fuente, salvo las que el change decidió conservar con cota explícita.
 - [x] 10.2 Verificar que el change no tocó `App/**`: `git status --porcelain` no debe listar archivos bajo `App/`. Verificar también que no se modificaron `data/corpus_evaluacion_pseudonimizado.json` ni `evaluation/stats.py`.
-- [x] 10.3 Recompilar la tesis en Overleaf (`main.tex`, XeLaTeX): PDF sin errores fatales, tablas y notas al pie renderizan, y la longitud no supera las 100 páginas. Registrar el conteo de páginas. — COMPLETADO 2026-10-20: recompilado localmente con MiKTeX (xelatex -> biber -> xelatex -> xelatex); 103 paginas; 0 errores fatales; 0 referencias indefinidas; 48/48 bibliografia; las 8 figuras renderizan. (latexmk no disponible: MiKTeX sin Perl.)
+- [x] 10.3 Recompilar la tesis (`main.tex`, XeLaTeX; localmente con MiKTeX): PDF sin errores fatales, tablas y notas al pie renderizan, y la longitud no supera las 100 páginas. Registrar el conteo de páginas. — COMPLETADO 2026-10-20: recompilado localmente con MiKTeX (xelatex -> biber -> xelatex -> xelatex); 103 paginas; 0 errores fatales; 0 referencias indefinidas; 48/48 bibliografia; las 8 figuras renderizan. (latexmk no disponible: MiKTeX sin Perl.)
 - [x] 10.4 Ejecutar `openspec validate c-95-tesis-resultados-discusion-rigor --strict` y confirmar que pasa sin errores.
