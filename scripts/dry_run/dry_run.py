@@ -278,7 +278,7 @@ def _workflow_for_dry_run(username: str, password: str) -> tuple[dict, list[str]
        to the default ``keypair`` body (``{"": ""}``), which the backend
        rejects with HTTP 422 and the workflow dies before responding.
     2. Every node whose ``credentials`` still points at a ``REPLACE_WITH_*``
-       placeholder is removed. In particular the Twilio and Outlook triggers
+       placeholder is removed. In particular the Twilio and email triggers
        block activation of the WHOLE workflow because their credentials do not
        exist. Removing them is also the strongest form of the cost-zero
        guardrail: the paid channels are not even present in the running graph.
@@ -321,7 +321,7 @@ def _workflow_for_dry_run(username: str, password: str) -> tuple[dict, list[str]
     # 2. Strip placeholder credentials. Nodes that stay on the web path keep
     #    their place (the HTTP POST node authenticates with an explicit
     #    Authorization header, so its credential reference is redundant);
-    #    paid-channel nodes (Twilio/Outlook/Gemini) are removed entirely so the
+    #    credential-gated nodes (Twilio, email trigger, Gemini) are removed entirely so the
     #    workflow can activate without those credentials.
     keep_but_strip = {"Login operador", "HTTP POST a MESA-AYUDAS"}
     removed: list[str] = []
@@ -495,7 +495,7 @@ def run_preflight(args, base_url: str) -> tuple[list[Check], dict]:
             failing(
                 "preflight:login",
                 f"POST /api/v1/auth/login -> {status}: {text.strip()[:200]}",
-                "verify the seeded operator (admin/admin123) and that the backend reached 'healthy'",
+                "verify the seeded operator credentials (--username/--password or DRY_RUN_USERNAME/DRY_RUN_PASSWORD) and that the backend reached 'healthy'",
             )
         )
         return results, context
@@ -655,12 +655,12 @@ def run_e2e(args, base_url: str, context: dict) -> list[Check]:
 
 # ── Optional email channel variant (§7.2) ────────────────────────────────────
 #
-# The email (Outlook) channel is FREE to receive because the N8N trigger polls
+# The email (IMAP) channel is FREE to receive because the N8N trigger polls
 # the mailbox. This variant is deliberately OPT-IN and ABSENT from the mandatory
 # cost-zero path: unless ``--with-email`` is passed, ``run_email_variant`` runs
 # no checks at all, so the default harness completes with no email credentials.
 #
-# Enabling it requires the N8N Outlook trigger to be active and credentialed for
+# Enabling it requires the N8N IMAP trigger to be active and credentialed for
 # the target mailbox (a manual prerequisite; see docs/dry-run-harness.md). The
 # variant only SENDS a plain SMTP message and then verifies persistence via the
 # backend API. It never touches Twilio or Gemini.
@@ -777,7 +777,7 @@ def run_email_variant(args, base_url: str, context: dict) -> list[Check]:
             failing(
                 "email:induce",
                 f"could not send dry-run email: {type(error).__name__}: {error}",
-                f"verify SMTP settings for {config['host']}:{config['port']} and that the Outlook trigger polls {config['to']}",
+                f"verify SMTP settings for {config['host']}:{config['port']} and that the IMAP trigger polls {config['to']}",
             )
         ]
     results = [passing("email:induced", f"dry-run email sent to {config['to']} (marker {marker})")]
@@ -805,7 +805,7 @@ def run_email_variant(args, base_url: str, context: dict) -> list[Check]:
         failing(
             "email:persisted",
             f"no new incident with canal_origen_id={CANAL_EMAIL_ID} appeared within {args.poll_timeout}s",
-            "ensure the N8N Outlook trigger is active and credentialed for the target mailbox and that the message reached it",
+            "ensure the N8N IMAP trigger is active and credentialed for the target mailbox and that the message reached it",
         )
     )
     return results
