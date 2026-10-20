@@ -37,7 +37,7 @@
 
 > Nota: no hay toolchain LaTeX local (`latexmk`/`xelatex`/`pdflatex` no están instalados). La recompilación de `main.pdf` queda DIFERIDA a Overleaf (XeLaTeX), a cargo del autor (tareas 6.1 y 14.2).
 
-- [ ] 6.1 Recompilar la tesis con `latexmk -xelatex main.tex` (o Overleaf XeLaTeX) desde `docs/Tesis/v9 (IA)/paper/`; verificar que `main.pdf` se regenera sin errores fatales. [DIFERIDO: sin toolchain local; se recompila en Overleaf]
+- [x] 6.1 Recompilar la tesis con `latexmk -xelatex main.tex` (o Overleaf XeLaTeX) desde `docs/Tesis/v9 (IA)/paper/`; verificar que `main.pdf` se regenera sin errores fatales. — COMPLETADO 2026-10-20: recompilado localmente con MiKTeX (xelatex -> biber -> xelatex -> xelatex); 103 paginas; 0 errores fatales; 0 referencias indefinidas; 48/48 bibliografia; las 8 figuras renderizan. (latexmk no disponible: MiKTeX sin Perl.)
 - [x] 6.2 Ejecutar `rg -n "Operaciones" "docs/Tesis/v9 (IA)/paper/sections"` y verificar cero coincidencias como sector; confirmar que el PDF no contiene la categoría. [Residuo: los archivos `.tex.bak` trackeados todavía contienen "Operaciones"; son respaldos de edición fuera del alcance del change — el `.tex` vivo tiene CERO]
 - [x] 6.3 Verificar con `rg` que no quedan números sintéticos ni afirmaciones W=0 en las secciones; confirmar la sustitución completa.
 - [x] 6.4 Ejecutar `openspec validate c-76-tesis-correcciones-dictamen --strict` y verificar que pasa sin errores.
@@ -85,7 +85,7 @@
 ## 14. Verificación final extendida (T1–T7)
 
 - [x] 14.1 Ejecutar el barrido `rg -n "evaluation/data|62~|38~|seis de cada diez|exactitud al segundo|sin fracciones|tres sectores|Gemini 2.5 Flash|trabajo futuro" "docs/Tesis/v9 (IA)/paper/sections"` y verificar cero coincidencias stale del grupo T1–T7. [Residuo: "trabajo futuro" permanece solo en el Cap. 10 (recomendaciones, legítimo) y en una referencia genérica del Cap. 1; ninguna describe la campaña como pendiente — el Cap. 7 tiene CERO]
-- [ ] 14.2 Recompilar `main.pdf` con XeLaTeX (Overleaf, no hay toolchain local) y verificar que no hay errores fatales y que el PDF refleja T1–T7. [DIFERIDO: sin toolchain local; se recompila en Overleaf]
+- [x] 14.2 Recompilar `main.pdf` con XeLaTeX y verificar que no hay errores fatales y que el PDF refleja T1–T7. — COMPLETADO 2026-10-20: recompilado localmente con MiKTeX (xelatex -> biber -> xelatex -> xelatex); 103 paginas; 0 errores fatales; 0 referencias indefinidas; 48/48 bibliografia; las 8 figuras renderizan. (latexmk no disponible: MiKTeX sin Perl.)
 - [x] 14.3 Ejecutar `openspec validate c-76-tesis-correcciones-dictamen --strict` y verificar que pasa sin errores tras las extensiones.
 
 ## 15. Coherencia del encuadre honesto del objetivo no alcanzado (sub-nota de 4.4/4.5)
