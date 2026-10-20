@@ -69,7 +69,7 @@ resolver antes de aplicar.
 | A-11 | §6.7 declara pruebas e2e que validan N8N; no existen | — | NUEVO |
 | A-12 | §6.7 declara 89 pruebas frontend / 98,6 %; el repo cuenta 68 | — | NUEVO |
 | A-13 | §6.4 latencia telefonica 12-15 s no atribuible (C-17); sin n/dispersion | c-77 Grupo E (tiempo telefonico) no aborda §6.4 | PARCIAL |
-| A-14 | §7.1 y Tabla 6 repiten 89,0 % en media y mediana | c-76 2.1 (reemplaza por 75,9 % real) | CUBIERTO |
+| A-14 | §7.1 y Tabla 6 repiten 89,0 % en media y mediana | c-76 2.1 (reemplaza por 75,9 % real; c-77 rebasa luego a 71,2 %) | CUBIERTO |
 | A-15 | Sin estadistico ni p de Shapiro-Wilk (§4.7) | — | NUEVO |
 | A-16 | Sin tiempos desagregados por canal | c-77 E5.1 (tabla por canal) + c-80 F2 (boxplot por canal) | CUBIERTO |
 | A-17 | Figura 1 a mano alzada; no representa las 5 capas ni nombra componentes | c-80 F2 (6.1, 6.9) | CUBIERTO |
@@ -251,7 +251,7 @@ Agrupados por afinidad de archivos y capitulo (evita colisiones de `.tex`):
    matriz de confusion `[[76,4,2],[3,58,3],[2,2,50]]` (3x3 sintetica, 82/64/54). Debe
    usar la matriz **5x5 real** de c-76 (16/85/67/31/1; 147/200). La tarea 5.1 de c-80
    baja afirmaciones "fundadas en 89 % y 92 %", tambien stale (c-76 los pasa a 75,9 %
-   y 73,5 %).
+   y 73,5 %; c-77 rebasa luego la reducción a 71,2 %).
 2. **c-80 introduce una entidad de mas.** El ER de c-80 (6.3/7.3) usa **7 entidades**;
    la auditoria y Tabla 4 describen **6**. Hay que fijar el numero real antes de
    graficar, o c-80 agrava A-19.
@@ -286,7 +286,7 @@ Agrupados por afinidad de archivos y capitulo (evita colisiones de `.tex`):
 1. **Crear cinco changes nuevos** N1..N5 (seccion 3), sin reabrir C-76..C-80.
 2. **Corregir primero los conflictos internos** de la seccion 4 antes de aplicar:
    - c-80: figura 8 con la matriz 5x5 real (no la 3x3 sintetica) y afirmaciones con
-     numeros de c-76 (75,9 %/73,5 %).
+     numeros de c-76 (75,9 %/73,5 %; c-77 rebasa luego a 71,2 %/W=363/r=0,9639).
    - c-80: fijar el numero real de entidades del ER (6, no 7).
    - Decidir el owner de A-26 y de la densidad de citas (N5).
 3. **C-18**: resuelto (artefacto corregido por c-29; residuo textual en c-77 C3). Solo
@@ -309,7 +309,8 @@ Cambios creados (FASE 31), todos `openspec validate --strict` OK, planning 4/4:
 | `c-96-tesis-citas-tablas-evidencia` | BAJO | A-26, M-01 + APA 2017, A-27, B-01 |
 
 `c-80` corregido: figura 8 pasa a derivar la matriz 5x5 real de `evaluation/report.md`
-(no hardcodea), F7 usa 75,9 %/73,5 %, W=335/r=0,983.
+(no hardcodea), F7 usa 75,9 %/73,5 %, W=335/r=0,983 (c-77 rebasa luego estos valores
+a 71,2 %/W=363/r=0,9639).
 
 ### Matiz 1 — la tesis source esta stale, pero NO es identica al PDF auditado
 
