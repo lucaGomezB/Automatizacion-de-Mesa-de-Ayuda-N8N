@@ -1,10 +1,19 @@
 \babel@toc {spanish}{}\relax 
-\contentsline {table}{\numberline {1}{\ignorespaces Comparacion de soluciones para gestion automatizada de mesa de ayuda}}{26}{table.caption.1}%
-\contentsline {table}{\numberline {2}{\ignorespaces Operacionalizacion de variables del estudio}}{29}{table.caption.2}%
-\contentsline {table}{\numberline {3}{\ignorespaces Capas funcionales de la arquitectura del sistema}}{34}{table.caption.3}%
-\contentsline {table}{\numberline {4}{\ignorespaces Entidades principales del modelo de datos}}{38}{table.caption.5}%
-\contentsline {table}{\numberline {5}{\ignorespaces Puntos de entrada principales de la interfaz REST}}{39}{table.caption.6}%
-\contentsline {table}{\numberline {6}{\ignorespaces Estadisticos descriptivos de los tiempos de registro por flujo (\(n = 200\))}}{49}{table.caption.7}%
-\contentsline {table}{\numberline {7}{\ignorespaces Matriz de confusion del clasificador automatico (\(n = 200\))}}{50}{table.caption.8}%
-\contentsline {table}{\numberline {8}{\ignorespaces Métricas de clasificación por clase y promedio macro}}{50}{table.caption.9}%
-\contentsline {table}{\numberline {9}{\ignorespaces Tipología de errores observados en la clasificación automática}}{52}{table.caption.10}%
+\contentsline {table}{\numberline {1}{\ignorespaces Comparacion de soluciones para gestion automatizada de mesa de ayuda}}{29}{table.caption.1}%
+\contentsline {table}{\numberline {2}{\ignorespaces Operacionalizacion de variables del estudio}}{33}{table.caption.2}%
+\contentsline {table}{\numberline {3}{\ignorespaces Capas funcionales de la arquitectura del sistema}}{40}{table.caption.3}%
+\contentsline {table}{\numberline {4}{\ignorespaces Entidades principales del modelo de datos}}{46}{table.caption.7}%
+\contentsline {table}{\numberline {5}{\ignorespaces Puntos de entrada principales de la interfaz REST}}{49}{table.caption.9}%
+\contentsline {table}{\numberline {6}{\ignorespaces Estadisticos descriptivos de los tiempos de registro por flujo (\(n = 200\))}}{60}{table.caption.10}%
+\contentsline {table}{\numberline {7}{\ignorespaces Tiempo automatizado de registro por canal de origen (\(n = 200\))}}{61}{table.caption.11}%
+\contentsline {table}{\numberline {8}{\ignorespaces Matriz de confusion del clasificador automatico (\(n = 200\)). Filas: sector asignado; columnas: sector predicho principal.}}{63}{table.caption.13}%
+\contentsline {table}{\numberline {9}{\ignorespaces Métricas de clasificación por clase (una contra el resto)}}{63}{table.caption.14}%
+\contentsline {table}{\numberline {10}{\ignorespaces Contingencia entre la confianza declarada y la exactitud, umbral 70~\%}}{66}{table.caption.16}%
+\contentsline {table}{\numberline {11}{\ignorespaces Exactitud por banda de confianza declarada}}{66}{table.caption.17}%
+\contentsline {table}{\numberline {12}{\ignorespaces Confusiones observadas en la clasificación automática, por frontera}}{67}{table.caption.18}%
+\contentsline {table}{\numberline {13}{\ignorespaces Entidades del modelo de datos y su rol en el esquema.}}{98}{table.caption.23}%
+\contentsline {table}{\numberline {14}{\ignorespaces Puntos de entrada de la interfaz REST (33 rutas, 41 métodos) agrupados por recurso, según \texttt {docs/openapi.json}.}}{100}{table.caption.24}%
+\contentsline {table}{\numberline {15}{\ignorespaces Los 29 nodos operativos del flujo N8N agrupados por etapa funcional.}}{102}{table.caption.26}%
+\contentsline {table}{\numberline {16}{\ignorespaces Campos de cada caso del corpus de validación (200 casos pseudonimizados).}}{104}{table.caption.27}%
+\contentsline {table}{\numberline {17}{\ignorespaces Índice de la guía operativa (Anexo G).}}{105}{table.caption.28}%
+\contentsline {table}{\numberline {18}{\ignorespaces Parámetros de configuración de la inferencia con \texttt {gemini-3.6-flash}.}}{107}{table.caption.29}%
