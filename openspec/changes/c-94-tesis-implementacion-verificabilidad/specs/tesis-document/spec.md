@@ -142,9 +142,7 @@ Anexo H.
 
 ### Requirement: Alineacion textual del residuo de C-18 sin duplicacion
 
-La alineacion textual del residuo de C-18 —Tabla 4 con `canal_origen_id` en lugar de
-`id_canal`, y §5.3 con un unico `POST /api/v1/incidentes` que clasifica y persiste en vez
-de dos llamadas— SHALL permanecer bajo la titularidad de c-77 C3. c-94 SHALL referenciar y
+La alineacion textual del residuo de C-18 —Tabla 4 con `canal_origen_id` en lugar de `id_canal`, y §5.3 con un unico `POST /api/v1/incidentes` que clasifica y persiste en vez de dos llamadas— SHALL permanecer bajo la titularidad de c-77 C3. c-94 SHALL referenciar y
 verificar esa alineacion, y SHALL NOT reescribirla ni duplicar su alcance.
 
 #### Scenario: Residuo de C-18 referenciado, no duplicado

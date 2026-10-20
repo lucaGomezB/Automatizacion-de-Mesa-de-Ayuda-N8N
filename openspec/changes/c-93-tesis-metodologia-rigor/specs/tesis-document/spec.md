@@ -25,8 +25,7 @@ el margen de error declarado) o el propio tamaño declarado.
 
 ### Requirement: Evidencia de cobertura de pruebas
 
-Toda afirmación de cobertura de pruebas (por ejemplo «superior al 80 %» o
-«87 %») SHALL estar respaldada por el reporte de cobertura y el comando que lo
+Toda afirmación de cobertura de pruebas (por ejemplo «superior al 80 %» o «87 %») SHALL estar respaldada por el reporte de cobertura y el comando que lo
 genera. Si el reporte no se publica, la cifra MUST retirarse del documento. La
 cifra declarada MUST ser consistente entre los capítulos que la mencionan.
 
@@ -65,8 +64,7 @@ amenaza a la validez de conclusión.
 
 ### Requirement: Tratamiento honesto del confundido de la rotación de operadores
 
-Cuando el documento declare rotación o contrabalanceo de operadores entre las
-mitades del corpus, SHALL reconocer explícitamente si dicha rotación queda
+Cuando el documento declare rotación o contrabalanceo de operadores entre las mitades del corpus, SHALL reconocer explícitamente si dicha rotación queda
 confundida con el efecto del operador dado el número de operadores y de mitades
 empleados. Si la rotación no elimina el confundido, el documento MUST NOT
 presentarla como mitigación no calificada del efecto de aprendizaje.
@@ -136,8 +134,7 @@ el cómputo del acuerdo inter-evaluador.
 
 ### Requirement: Criterio de exactitud sin zona de rechazo
 
-El criterio del umbral de exactitud del clasificador (por ejemplo el 85 % del
-segundo objetivo específico) SHALL formularse como un umbral de desempeño
+El criterio del umbral de exactitud del clasificador (por ejemplo el 85 % del segundo objetivo específico) SHALL formularse como un umbral de desempeño
 verificable contra el resultado observado y su intervalo de confianza, sin
 invocar la «zona de rechazo» de un contraste de hipótesis sobre tiempos. El
 documento MUST NOT confundir el contraste `H0`/`H1` sobre la mediana de tiempos
