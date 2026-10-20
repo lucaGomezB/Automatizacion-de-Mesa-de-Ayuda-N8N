@@ -3,7 +3,9 @@
 ## Purpose
 
 Esta especificación define los criterios de calidad del documento de tesis en LaTeX: compilación a PDF, renderizado de citas, ecuaciones y tablas, eliminación de patrones de escritura generados por IA, profundidad de capítulos y consistencia de referencias.
+
 ## Requirements
+
 ### Requirement: Thesis PDF compilation
 
 The thesis document SHALL compile from LaTeX source to PDF via XeLaTeX without fatal errors. The compilation SHALL produce a single `main.pdf` file at `docs/Tesis/v8 (IA)/paper/main.pdf`.
@@ -392,20 +394,20 @@ sistematico de medicion), y SHALL reportar el tiempo manual como cota superior
 junto con una cota inferior conservadora de sensibilidad. El claim primario de
 reduccion SHALL apoyarse en la mediana y en estadisticos de rango, no solo en la
 media. La prueba de Wilcoxon SHALL reportar el valor real con correccion por
-empates (W=335, p=2,05e-32, r=0,983) y SHALL declarar el numero real de pares en
-que el flujo automatizado no fue mas rapido (12 de 200), sin afirmar "W=0" ni
-"sin excepcion".
+empates (W=363, T+=19737, T−=363, p=3,08e-32, r=0,9639) y SHALL declarar el
+numero real de pares en que el flujo automatizado no fue mas rapido (12 de 200),
+sin afirmar "W=0" ni "sin excepcion".
 
 #### Scenario: Redondeo declarado y sensibilidad reportada
 
 - **WHEN** se leen el Capitulo 4 (metodologia) y el Capitulo 7 (resultados)
 - **THEN** se declara el redondeo al alza de la medicion manual
-- **AND** se reporta la reduccion como cota superior (75,9 %) junto a su cota conservadora (>= 71,3 % bajo un ajuste de -10 s)
+- **AND** se reporta la reduccion como cota superior (71,2 %) junto a sus cotas inferiores conservadoras (68,6 % al descontar 5 s y 65,6 % al descontar 10 s a cada medicion manual)
 
 #### Scenario: Estadistico de Wilcoxon real
 
 - **WHEN** se lee la comparacion de tiempos de registro
-- **THEN** el estadistico reportado es W=335 con p=2,05e-32 y r=0,983
+- **THEN** el estadistico reportado es W=363 con T+=19737, T−=363, p=3,08e-32 y r=0,9639
 - **AND** el texto no afirma W=0 ni "sin una sola excepcion"
 
 #### Scenario: Pares invertidos declarados
@@ -578,7 +580,7 @@ el rango verdadero de la fórmula empleada.
 - **WHEN** se lee la fórmula del tamaño del efecto
 - **THEN** la fórmula es `r = (T+ − T−) / (n(n+1)/2)` (o su equivalente `1 − 4W/(n(n+1))` cuando `W=T−`)
 - **AND** el rango declarado es coherente con la fórmula (no `[-1,+1]` como rango universal de `1 − 2W/(n(n+1))`)
-- **AND** el valor reportado sobre el corpus real es `0,9667`, no `1,00`
+- **AND** el valor reportado sobre el corpus real es `0,9639`, no `1,00`
 
 #### Scenario: Sin W=0
 
@@ -1653,4 +1655,3 @@ por c-78 SHALL reutilizarse, sin duplicar su trabajo.
 - **THEN** las unicas entradas agregadas son las dos de la definicion de empresa mediana y del marco etico
 - **AND** las referencias 2023-2026 usadas provienen de las ya incorporadas por c-78
 - **AND** no se crean entradas duplicadas ni citas huerfanas nuevas
-
