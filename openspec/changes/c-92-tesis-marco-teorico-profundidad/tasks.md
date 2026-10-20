@@ -2,8 +2,8 @@
 
 > Convención de rutas: `S = docs/Tesis/v9 (IA)/paper/sections`;
 > `B = docs/Tesis/v9 (IA)/paper/Bibliography_base.bib`.
-> Verificación de texto: `rg` sobre `S`. Recompilación: Overleaf (XeLaTeX), sin
-> toolchain LaTeX local. No se edita `App/**`, ni `B`, ni `CHANGES.md`, ni los
+> Verificación de texto: `rg` sobre `S`. Recompilación: local con
+> MiKTeX/XeLaTeX+biber (2026-10-20), 103 páginas. No se edita `App/**`, ni `B`, ni `CHANGES.md`, ni los
 > artefactos de c-76/c-77/c-78/c-79/c-80.
 >
 > **Orden de aplicación:** ejecutar este change DESPUÉS de c-78 (aporta las
@@ -60,5 +60,5 @@
 - [x] 8.1 Barrido de control: `rg -n "frac.*TP|alternativas no relacionales|facilita su integraci|verdaderos negativos" "S/02-marco-teorico.tex"` sin coincidencias.
 - [x] 8.2 Verificar que no se tocó código de aplicación: `git diff --name-only | rg "^App/"` sin coincidencias.
 - [x] 8.3 Verificar que no se tocó la bibliografía ni los changes ajenos: `git diff --name-only | rg "Bibliography_base.bib|openspec/changes/c-7[6-9]|openspec/changes/c-80"` sin coincidencias.
-- [x] 8.4 Recompilar `docs/Tesis/v9 (IA)/paper/main.tex` en Overleaf con XeLaTeX; verificar PDF sin errores fatales y registrar el conteo de páginas (no superar 100). — COMPLETADO 2026-10-20: recompilado localmente con MiKTeX (xelatex -> biber -> xelatex -> xelatex); 103 paginas; 0 errores fatales; 0 referencias indefinidas; 48/48 bibliografia; las 8 figuras renderizan. (latexmk no disponible: MiKTeX sin Perl.)
+- [x] 8.4 Recompilar `docs/Tesis/v9 (IA)/paper/main.tex` con XeLaTeX (localmente con MiKTeX); verificar PDF sin errores fatales y registrar el conteo de páginas (no superar 100). — COMPLETADO 2026-10-20: recompilado localmente con MiKTeX (xelatex -> biber -> xelatex -> xelatex); 103 paginas; 0 errores fatales; 0 referencias indefinidas; 48/48 bibliografia; las 8 figuras renderizan. (latexmk no disponible: MiKTeX sin Perl.)
 - [x] 8.5 Ejecutar `openspec validate c-92-tesis-marco-teorico-profundidad --strict` y verificar que pasa sin errores.

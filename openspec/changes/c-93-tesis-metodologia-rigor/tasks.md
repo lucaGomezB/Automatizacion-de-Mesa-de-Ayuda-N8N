@@ -1,9 +1,9 @@
 # Tasks: c-93 — Rigor metodológico del Capítulo 4
 
 > Convención de archivos: `S = docs/Tesis/v9 (IA)/paper/sections`.
-> Verificación de texto: `rg` sobre `S` (sin compilador LaTeX local).
+> Verificación de texto: `rg` sobre `S`.
 > Verificación aritmética: `python3` (salida adjunta como evidencia).
-> Recompilación: Overleaf (tarea final). NO se edita `App/**`.
+> Recompilación: local con MiKTeX/XeLaTeX+biber (2026-10-20), 103 páginas. NO se edita `App/**`.
 > Coordinación: c-76 (T6 ventana, T7 instrumento), c-77 (B1 `H1`, A7 universo) —
 > se referencian, no se duplican.
 
@@ -11,7 +11,7 @@
 
 - [x] 1.1 Confirmar en `evaluation/report.md` y `data/corpus_evaluacion_pseudonimizado.json` los valores de referencia del corpus (200 casos; exactitud 73,5 %; IC Wilson [0,6698, 0,7913]; macro-F1 0,5207) y verificar que c-93 no los modifica (`git diff --stat data/ evaluation/` sin cambios). — PRESENTE: `git diff --stat data/ evaluation/` sin salida (sin cambios).
 - [x] 1.2 Inventariar con `rg -n "6,5|95~|confianza|cobertura|80~|87~|rotacion|rotación|analistas|Scrumban|zona de rechazo" S/04-marco-metodologico.tex S/01-introduccion.tex S/06-implementacion.tex` y verificar que la lista cubre A-07, A-08, A-09, A-10, M-05, M-06, M-07 y A-03. — PRESENTE: inventario cubre las siete etiquetas.
-- [x] 1.3 Verificar la disponibilidad de XeLaTeX/`latexmk` local; si no está, registrar Overleaf como compilador (mismo criterio que c-76 6.1). — PRESENTE: sin TeX local (`which xelatex latexmk` vacío); se registra Overleaf.
+- [x] 1.3 Verificar la disponibilidad de XeLaTeX/`latexmk` local; dejar constancia del compilador a usar (mismo criterio que c-76 6.1). — PRESENTE: la recompilación final se realizó localmente en Windows con MiKTeX (XeLaTeX -> biber -> XeLaTeX -> XeLaTeX), 2026-10-20, 103 páginas; `latexmk` no está disponible (MiKTeX sin Perl).
 
 ## 2. A-07 — Cálculo reproducible del tamaño muestral
 
@@ -64,6 +64,6 @@
 ## 10. Compilación y verificación final
 
 - [x] 10.1 Ejecutar el barrido de control `rg -n "6,5~|superior al 80|87~|rotacion de operadores|zona de rechazo" S/04-marco-metodologico.tex S/06-implementacion.tex S/01-introduccion.tex` y confirmar que los residuos están justificados o corregidos. — PRESENTE: residuos justificados: `6,5~` en §4.4 es mención histórica; `87~` en §1.6 es exactitud del estado del arte (Paramesh2019). Sin `superior al 80` ni `zona de rechazo`.
-- [x] 10.2 Recompilar la tesis con XeLaTeX (`latexmk -xelatex main.tex`) o en Overleaf desde `docs/Tesis/v9 (IA)/paper/`; verificar que `main.pdf` se regenera sin errores fatales. — COMPLETADO 2026-10-20: recompilado localmente con MiKTeX (xelatex -> biber -> xelatex -> xelatex); 103 paginas; 0 errores fatales; 0 referencias indefinidas; 48/48 bibliografia; las 8 figuras renderizan. (latexmk no disponible: MiKTeX sin Perl.)
+- [x] 10.2 Recompilar la tesis con XeLaTeX (`latexmk -xelatex main.tex`; localmente con MiKTeX) desde `docs/Tesis/v9 (IA)/paper/`; verificar que `main.pdf` se regenera sin errores fatales. — COMPLETADO 2026-10-20: recompilado localmente con MiKTeX (xelatex -> biber -> xelatex -> xelatex); 103 paginas; 0 errores fatales; 0 referencias indefinidas; 48/48 bibliografia; las 8 figuras renderizan. (latexmk no disponible: MiKTeX sin Perl.)
 - [x] 10.3 Confirmar que `git diff --stat` no incluye archivos bajo `App/**` ni `data/`; registrar la salida. — PRESENTE: `git status` solo muestra secciones .tex de la tesis y tasks.md; sin `App/**` ni `data/`.
 - [x] 10.4 Ejecutar `openspec validate c-93-tesis-metodologia-rigor --strict` y verificar que pasa sin errores. — PRESENTE: "Change 'c-93-tesis-metodologia-rigor' is valid" (exit=0).

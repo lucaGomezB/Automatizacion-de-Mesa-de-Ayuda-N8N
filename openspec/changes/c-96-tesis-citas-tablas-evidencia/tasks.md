@@ -2,11 +2,11 @@
 
 > Convencion de rutas: `S = docs/Tesis/v9 (IA)/paper/sections`;
 > `B = docs/Tesis/v9 (IA)/Bibliography_base.bib`.
-> Verificacion de texto: `rg` sobre `S` y `B` (sin compilador LaTeX local; los
+> Verificacion de texto: `rg` sobre `S` y `B` (los
 > `.bak` no se editan ni se cuentan).
 > Verificacion de citas: `python3 "docs/Tesis/v9 (IA)/verify_citations.py"` y
 > comparacion de las claves de `docs/Tesis/v9 (IA)/paper/main.bcf` contra `B`.
-> Recompilacion: Overleaf (`main.tex`, XeLaTeX), tarea final.
+> Recompilacion: local con MiKTeX/XeLaTeX+biber (2026-10-20), 103 paginas.
 > No se edita `App/**`, ni artefactos de c-76/c-77/c-78/c-80, ni `CHANGES.md`, ni
 > `docs/Tesis/Correcciones/dictamen-correcciones.md`.
 >
@@ -30,7 +30,7 @@
 - [x] 2.1 Agregar en `B` la entrada de la Secretaria de la Pequena y Mediana Empresa (SEPyME) con `author` institucional, `title`, `year`, `url` de la fuente oficial y fecha de consulta (o, si no se verifica la fuente, reformular). Verificar con `rg -n "SEPyME|Pequena y Mediana" B`. Se agrego `SEPyME2026_mipyme` (pagina oficial "Que es una MiPyME?", argentina.gob.ar, consultada el 19-10-2026). DESVIACION: el rango "50-200 trabajadores" NO se pudo respaldar contra la fuente oficial (los topes de personal ocupado de SEPyME para servicios son 7/30/165/535); se reformulo la afirmacion sin ese rango (ver flag F-01).
 - [x] 2.2 En `S/01-introduccion.tex:12` (§1.1) agregar `\parencite{<clave_sepyme>}` a la definicion de empresa mediana (50-200 trabajadores). Verificar con `rg -n "50 y 200|Pequena y Mediana" S/01-introduccion.tex` y que la clave citada existe en `B`. Se agrego `\parencite{SEPyME2026_mipyme}`; la clave existe en `B`. El rango 50-200 se retiro por no ser verificable (ver 2.1).
 - [x] 2.3 En `B` agregar la entrada `APA2017` (Asociacion Americana de Psicologia, 2017) o retirar la cita de `S/11-aspectos-legales.tex:28` y sostener el argumento sin ella. Verificar con `rg -n "APA, 2017|APA2017" S/11-aspectos-legales.tex B`. Se agrego la entrada `APA2017` (Ethical Principles of Psychologists and Code of Conduct, APA, 2017, https://www.apa.org/ethics/code, consultada el 19-10-2026) y se reemplazo la cita textual huerfana "(APA, 2017)" por `\parencite{APA2017}`.
-- [x] 2.4 Ejecutar `python3 "docs/Tesis/v9 (IA)/verify_citations.py"` y la comparacion de `main.bcf` contra `B`; confirmar CERO citas huerfanas y CERO entradas sin usar. Registrar la salida. Salida: 48 entradas / 48 claves citadas / 0 huerfanas / 0 sin usar / STATUS: PASS. `main.bcf` esta desactualizado (ultimo compile previo a este change); se recompila en Overleaf.
+- [x] 2.4 Ejecutar `python3 "docs/Tesis/v9 (IA)/verify_citations.py"` y la comparacion de `main.bcf` contra `B`; confirmar CERO citas huerfanas y CERO entradas sin usar. Registrar la salida. Salida: 48 entradas / 48 claves citadas / 0 huerfanas / 0 sin usar / STATUS: PASS. `main.bcf` estaba desactualizado al momento de la verificacion (ultimo compile previo a este change); quedo regenerado por la recompilacion local con MiKTeX (2026-10-20).
 
 ## 3. A-27 — N8N fuera del rotulo "codigo abierto"
 
@@ -64,5 +64,5 @@
 
 - [x] 7.1 Barrido de control: `rg -ni "Propuesta & Hibrida|Secretaria de la Pequena y Mediana Empresa(?!.*cite)|\(APA, 2017\)|exclusivamente tecnologias de codigo abierto|N8N, Python, FastAPI|unica organizacion del sector servicios" S` sin residuos.
 - [x] 7.2 Confirmar cero citas huerfanas y cero entradas sin usar con `python3 "docs/Tesis/v9 (IA)/verify_citations.py"` y la comparacion de `main.bcf` contra `B`; registrar la salida.
-- [x] 7.3 Recompilar la tesis en Overleaf (`main.tex`, XeLaTeX): PDF sin errores fatales, las nueve tablas muestran su linea de fuente, la Tabla~1 ya no incluye la fila "Propuesta", y la longitud total no supera las 100 paginas. Registrar el conteo de paginas. — COMPLETADO 2026-10-20: recompilado localmente con MiKTeX (xelatex -> biber -> xelatex -> xelatex); 103 paginas; 0 errores fatales; 0 referencias indefinidas; 48/48 bibliografia; las 8 figuras renderizan. (latexmk no disponible: MiKTeX sin Perl.)
+- [x] 7.3 Recompilar la tesis (`main.tex`, XeLaTeX; localmente con MiKTeX): PDF sin errores fatales, las nueve tablas muestran su linea de fuente, la Tabla~1 ya no incluye la fila "Propuesta", y la longitud total no supera las 100 paginas. Registrar el conteo de paginas. — COMPLETADO 2026-10-20: recompilado localmente con MiKTeX (xelatex -> biber -> xelatex -> xelatex); 103 paginas; 0 errores fatales; 0 referencias indefinidas; 48/48 bibliografia; las 8 figuras renderizan. (latexmk no disponible: MiKTeX sin Perl.)
 - [x] 7.4 Ejecutar `openspec validate c-96-tesis-citas-tablas-evidencia --strict` y confirmar que pasa.

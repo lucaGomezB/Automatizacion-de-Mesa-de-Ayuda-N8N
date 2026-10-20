@@ -4,8 +4,8 @@
 > `L = docs/Tesis/v9 (IA)/paper/sections/11-aspectos-legales.tex`;
 > `A = docs/Tesis/v9 (IA)/paper/sections/05-arquitectura.tex`;
 > `D = docs/Tesis/Correcciones/dictamen-correcciones.md`.
-> Verificacion de texto: `rg` sobre `S` (sin compilador LaTeX local).
-> Recompilacion: Overleaf (tarea final). No se edita `App/**`, ni c-76/c-77/c-78,
+> Verificacion de texto: `rg` sobre `S`.
+> Recompilacion: local con MiKTeX/XeLaTeX+biber (2026-10-20), 103 paginas. No se edita `App/**`, ni c-76/c-77/c-78,
 > ni `CHANGES.md`. Alcance: 11.1-11.3. §11.4 y §11.5 quedan fuera (c-76/c-77).
 
 ## 1. L1 — Plazo de conservacion unico y consistente
@@ -54,5 +54,5 @@
 - [x] 7.1 Barrido de control: `rg -ni "conservacion indefinida|legitimo interes|bidireccional|pseudonimizacion previa a la transmision" L` sin residuos en los pasajes de 11.1-11.3 (Twilio y la retencion quedan explicitados). Registrar la salida.
 - [x] 7.2 Confirmar por lectura que 11.1-11.3 cubren los puntos L1-L6 y que no se introdujeron afirmaciones juridicas nuevas sin fuente (no inventar valores; aplicar los valores resueltos: OQ-L1 = 12 meses rodantes, OQ-L1b = anonimizacion, OQ-L2 = art. 5 inc. 2 apartado d), OQ-L5 = cinco dias habiles).
 - [x] 7.3 Confirmar que no se tocaron §11.4 ni §11.5 ni artefactos de c-76/c-77/c-78. Verificar con `git diff --stat` y lectura del rango editado.
-- [x] 7.4 Recompilar la tesis en Overleaf (`main.tex`, XeLaTeX) y verificar PDF sin errores fatales. Registrar el resultado. — COMPLETADO 2026-10-20: recompilado localmente con MiKTeX (xelatex -> biber -> xelatex -> xelatex); 103 paginas; 0 errores fatales; 0 referencias indefinidas; 48/48 bibliografia; las 8 figuras renderizan. (latexmk no disponible: MiKTeX sin Perl.)
+- [x] 7.4 Recompilar la tesis (`main.tex`, XeLaTeX; localmente con MiKTeX) y verificar PDF sin errores fatales. Registrar el resultado. — COMPLETADO 2026-10-20: recompilado localmente con MiKTeX (xelatex -> biber -> xelatex -> xelatex); 103 paginas; 0 errores fatales; 0 referencias indefinidas; 48/48 bibliografia; las 8 figuras renderizan. (latexmk no disponible: MiKTeX sin Perl.)
 - [x] 7.5 Ejecutar `openspec validate c-79-tesis-aspectos-legales --strict` y confirmar que pasa.
