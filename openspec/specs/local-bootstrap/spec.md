@@ -126,17 +126,17 @@ El comando unico SHALL estar disponible como `scripts/up.sh` (bash, Linux/macOS)
 
 ### Requirement: Credenciales de desarrollo local parametrizadas por entorno
 
-Las credenciales de desarrollo local (password de PostgreSQL y password de autenticacion basica de N8N) SHALL resolverse por variables de entorno con sustitucion `${VAR:-default}` en los archivos compose, de modo que sean sobreescribibles sin editar archivos versionados. Los valores por defecto de las passwords SHALL no ser trivialmente adivinables (no `mesa` ni `admin`). Los valores reales SHALL vivir unicamente en el archivo `.env` gitignorado. Ningun archivo versionado (compose, scripts, CI, tests o documentacion) SHALL hardcodear una credencial real ni un default adivinable de password.
+Las credenciales de desarrollo local (password de PostgreSQL) SHALL resolverse por variables de entorno con sustitucion `${VAR:-default}` en los archivos compose, de modo que sean sobreescribibles sin editar archivos versionados. Los valores por defecto de las passwords SHALL no ser trivialmente adivinables (no `mesa` ni `admin`). Los valores reales SHALL vivir unicamente en el archivo `.env` gitignorado. Ningun archivo versionado (compose, scripts, CI, tests o documentacion) SHALL hardcodear una credencial real ni un default adivinable de password. El acceso a la UI de N8N NO se parametriza por variables de entorno de basic auth (n8n removio Basic Auth en v1.0): se resuelve con la cuenta owner creada en el primer arranque y persistida en el volumen `n8n_data`.
 
 #### Scenario: Sustitucion por variables de entorno en el compose
 
 - **WHEN** se inspeccionan los archivos compose de la raiz y del backend
-- **THEN** `POSTGRES_PASSWORD` y `N8N_BASIC_AUTH_PASSWORD` se resuelven con sustitucion `${VAR:-default}` en lugar de un valor literal
+- **THEN** `POSTGRES_PASSWORD` se resuelve con sustitucion `${VAR:-default}` en lugar de un valor literal
 
 #### Scenario: Default de password no adivinable
 
-- **WHEN** se inspecciona el valor por defecto de las passwords en los compose
-- **THEN** no es `mesa` ni `admin`, sino valores de desarrollo no trivialmente adivinables
+- **WHEN** se inspecciona el valor por defecto de la password en los compose
+- **THEN** no es `mesa` ni `admin`, sino un valor de desarrollo no trivialmente adivinable
 
 #### Scenario: Override sin editar archivos versionados
 
