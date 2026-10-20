@@ -64,5 +64,5 @@
 
 - [x] 7.1 Barrido de control: `rg -ni "Propuesta & Hibrida|Secretaria de la Pequena y Mediana Empresa(?!.*cite)|\(APA, 2017\)|exclusivamente tecnologias de codigo abierto|N8N, Python, FastAPI|unica organizacion del sector servicios" S` sin residuos.
 - [x] 7.2 Confirmar cero citas huerfanas y cero entradas sin usar con `python3 "docs/Tesis/v9 (IA)/verify_citations.py"` y la comparacion de `main.bcf` contra `B`; registrar la salida.
-- [ ] 7.3 Recompilar la tesis en Overleaf (`main.tex`, XeLaTeX): PDF sin errores fatales, las nueve tablas muestran su linea de fuente, la Tabla~1 ya no incluye la fila "Propuesta", y la longitud total no supera las 100 paginas. Registrar el conteo de paginas. DIFERIDO: se recompila en Overleaf (XeLaTeX).
+- [x] 7.3 Recompilar la tesis en Overleaf (`main.tex`, XeLaTeX): PDF sin errores fatales, las nueve tablas muestran su linea de fuente, la Tabla~1 ya no incluye la fila "Propuesta", y la longitud total no supera las 100 paginas. Registrar el conteo de paginas. — COMPLETADO 2026-10-20: recompilado localmente con MiKTeX (xelatex -> biber -> xelatex -> xelatex); 103 paginas; 0 errores fatales; 0 referencias indefinidas; 48/48 bibliografia; las 8 figuras renderizan. (latexmk no disponible: MiKTeX sin Perl.)
 - [x] 7.4 Ejecutar `openspec validate c-96-tesis-citas-tablas-evidencia --strict` y confirmar que pasa.

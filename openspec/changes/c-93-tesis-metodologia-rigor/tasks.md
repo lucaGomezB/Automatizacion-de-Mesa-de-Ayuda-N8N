@@ -64,6 +64,6 @@
 ## 10. Compilación y verificación final
 
 - [x] 10.1 Ejecutar el barrido de control `rg -n "6,5~|superior al 80|87~|rotacion de operadores|zona de rechazo" S/04-marco-metodologico.tex S/06-implementacion.tex S/01-introduccion.tex` y confirmar que los residuos están justificados o corregidos. — PRESENTE: residuos justificados: `6,5~` en §4.4 es mención histórica; `87~` en §1.6 es exactitud del estado del arte (Paramesh2019). Sin `superior al 80` ni `zona de rechazo`.
-- [ ] 10.2 Recompilar la tesis con XeLaTeX (`latexmk -xelatex main.tex`) o en Overleaf desde `docs/Tesis/v9 (IA)/paper/`; verificar que `main.pdf` se regenera sin errores fatales. — DIFERIDO: se recompila en Overleaf (XeLaTeX).
+- [x] 10.2 Recompilar la tesis con XeLaTeX (`latexmk -xelatex main.tex`) o en Overleaf desde `docs/Tesis/v9 (IA)/paper/`; verificar que `main.pdf` se regenera sin errores fatales. — COMPLETADO 2026-10-20: recompilado localmente con MiKTeX (xelatex -> biber -> xelatex -> xelatex); 103 paginas; 0 errores fatales; 0 referencias indefinidas; 48/48 bibliografia; las 8 figuras renderizan. (latexmk no disponible: MiKTeX sin Perl.)
 - [x] 10.3 Confirmar que `git diff --stat` no incluye archivos bajo `App/**` ni `data/`; registrar la salida. — PRESENTE: `git status` solo muestra secciones .tex de la tesis y tasks.md; sin `App/**` ni `data/`.
 - [x] 10.4 Ejecutar `openspec validate c-93-tesis-metodologia-rigor --strict` y verificar que pasa sin errores. — PRESENTE: "Change 'c-93-tesis-metodologia-rigor' is valid" (exit=0).
