@@ -23,7 +23,7 @@ El framework SHALL aplicar la prueba de Wilcoxon de rangos con signo sobre los p
 #### Scenario: Fórmula rank-biserial correcta y rango verdadero
 
 - **WHEN** se calcula el tamaño del efecto sobre los pares reales
-- **THEN** el resultado es `(T+ − T−) / (n(n+1)/2)` (por ejemplo `0,9667` para `T+=19765`, `T−=335`, `n=200`)
+- **THEN** el resultado es `(T+ − T−) / (n(n+1)/2)` (por ejemplo `0,9639` para `T+=19737`, `T−=363`, `n=200`)
 - **AND** no se reporta el valor espurio `1,00` ni se documenta un rango `[-1,+1]` para `1 − 2W/(n(n+1))`
 
 #### Scenario: Código y tesis usan la misma fórmula
