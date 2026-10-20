@@ -184,6 +184,8 @@ docker compose ps
 DATABASE_URL=postgresql+asyncpg://ci:ci@localhost:5432/ci_dummy
 GEMINI_API_KEY=ci-dummy-key
 PSEUDONYMIZATION_ENCRYPTION_KEY=MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA= # gitleaks:allow
+JWT_SECRET_KEY=ci-dummy-jwt-secret-key-for-testing-only # gitleaks:allow
+COST_GUARD_CALLER_HMAC_KEY=ci-dummy-cost-guard-caller-hmac-key # gitleaks:allow
 ```
 
 - **SQLite subset runs OFFLINE** — the conftest forces SQLite in-memory and mocks Gemini/N8N; no real service connections are needed. The **PostgreSQL integration subset is NOT offline**: it requires a reachable PostgreSQL and runs destructive DDL against a disposable database only (see the safe local workflow above).
