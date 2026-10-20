@@ -49,6 +49,30 @@ Estado actual verificado (ver `proposal.md` — Why para la motivación):
 - No hay migración de datos. Se implementa, se regenera `evaluation/report.md` con el corpus real una vez, y se verifica la sección "Tiempos" + normalidad y la no-regresión de clasificación.
 - Rollback: revertir los cambios de código de `stats.py`/`run_evaluation.py` y regenerar el reporte.
 
+## Re-clave del cache (operacion de apply)
+
+Para desbloquear las tareas 6.1 y 6.2 (regeneracion end-to-end sin gasto) se re-clavo
+UNICAMENTE el campo `cache_meta.corpus_hash` de `evaluation/predicciones.json`, de
+`5f062e1466facd1a522d80c2693d1d256017aae37372c2d288646ba104f46a93` a
+`1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb`. No se toco el
+payload `predictions`, ni `corpus_count` (200), ni `classifier_version` (`hybrid-v3`),
+ni `generated_at`; no se re-ejecuto el clasificador.
+
+Justificacion (verificada, no re-litigada):
+
+- El unico cambio del corpus ocurrio en el commit `4602bf5` (change c-77): modifico
+  `metadata.descripcion` (nivel superior) y 81 valores de `tiempo_automatizado_s`.
+  Ninguna entrada de clasificacion cambio (`id`, `descripcion` por caso,
+  `sector_asignado`, `canal_origen`, `tiempo_manual_s` son identicos).
+- El runner clasifica usando SOLO `caso.descripcion` (`evaluation/run_evaluation.py:152-153`),
+  y el hash del cache es un SHA-256 de archivo completo (`evaluation/run_evaluation.py:496-506`).
+- `corpus_count` (200) y `classifier_version` (`hybrid-v3`) siguen coincidiendo.
+
+Conclusion: las 200 predicciones cacheadas son equivalentes a una corrida fresca desde
+el punto de vista de clasificacion; una corrida paga solo recalcularia predicciones
+identicas. Reutilizarlas es correcto. La regeneracion reporta CACHE HIT y no construye
+ni invoca el clasificador pago.
+
 ## Open Questions
 
 Ninguna pendiente que cambie specs, enfoque o desglose de tareas. La única pregunta abierta real (contrato del loader clasificación vs tiempos) se declara como Non-Goal/follow-up, no como decisión diferida de este change.
