@@ -35,7 +35,7 @@ La novedad del aporte radica en la validación específica sobre español riopla
 
 \subsection{Limitaciones del estudio}\label{subsec:limitaciones-estudio}
 
-El estudio presenta cinco limitaciones que deben considerarse al interpretar los hallazgos y al planificar replicaciones futuras.
+El estudio presenta seis limitaciones que deben considerarse al interpretar los hallazgos y al planificar replicaciones futuras.
 
 Primero, el tamaño de la muestra (\(n = 200\)) es suficiente para una validación piloto pero insuficiente para sustentar generalizaciones de carácter poblacional sobre el universo de mesas de ayuda en organizaciones medianas. El intervalo de confianza al 95~\% reportado para la exactitud estricta, [67,0~\%, 79,1~\%], se ubica íntegramente por debajo del umbral del 85~\%, por lo que el segundo objetivo específico no se alcanza; muestras mayores, un corpus más equilibrado entre clases y una revisión del clasificador serían necesarios para cerrar esa brecha.
 
@@ -46,6 +46,8 @@ Tercero, la dependencia operativa de un servicio externo de inferencia condicion
 Cuarto, los resultados reflejan el comportamiento del modelo en su versión vigente al momento del estudio (junio de 2026). Las actualizaciones futuras del proveedor pueden modificar tanto el desempeño bruto como la estructura del prompt requerido para alcanzar resultados equivalentes, lo que aconseja la implementación de un régimen de monitoreo continuo de las métricas de clasificación.
 
 Quinto, la comparación se realizó exclusivamente contra el flujo manual (proceso operativo), no contra clasificadores alternativos como TF-IDF+SVM o regresión logística sobre el mismo corpus. Un chequeo exploratorio temprano con un clasificador TF-IDF+SVM sobre un subconjunto no preservado del corpus no se reporta aquí como comparación válida: ni la partición ni el tamaño del subconjunto quedaron registrados, por lo que su cifra no es reproducible ni comparable con las métricas de este capítulo. Se lo menciona únicamente como antecedente del diseño, no como evidencia de superioridad del esquema híbrido. Una comparación sistemática contra clasificadores supervisados sobre el corpus completo, con partición y código preservados, queda como trabajo futuro.
+
+Sexto, los analistas que etiquetaron la referencia operaron también el brazo manual (\autoref{subsec:poblacion-muestra-corpus}), lo que acota la independencia del \emph{ground truth}.
 
 \subsection{Implicancias prácticas}\label{subsec:implicancias-practicas}
 

@@ -30,7 +30,7 @@
 \contentsline {subsection}{\numberline {4.4}Población, muestra y corpus}{32}{subsection.4.4}%
 \contentsline {subsection}{\numberline {4.5}Protocolo de pruebas}{35}{subsection.4.5}%
 \contentsline {subsection}{\numberline {4.6}Métricas e instrumentos}{36}{subsection.4.6}%
-\contentsline {subsection}{\numberline {4.7}Análisis estadístico}{36}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.7}Análisis estadístico}{37}{subsection.4.7}%
 \contentsline {subsection}{\numberline {4.8}Amenazas a la validez}{38}{subsection.4.8}%
 \contentsline {subsection}{\numberline {4.9}Gestión del proyecto bajo enfoque Scrumban (método de construcción del artefacto)}{39}{subsection.4.9}%
 \contentsline {section}{\numberline {5}Arquitectura del sistema}{40}{section.5}%
