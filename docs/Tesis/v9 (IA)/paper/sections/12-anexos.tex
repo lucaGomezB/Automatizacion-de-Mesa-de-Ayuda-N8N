@@ -40,9 +40,9 @@ A título ilustrativo, los 44 esquemas de datos comprenden las estructuras de lo
 
 \section{Configuración del flujo N8N}\label{sec:anexo-flujo-n8n}
 
-La exportación del flujo de orquestación en formato JSON incluye la totalidad de los 29 nodos configurados, sus parámetros operativos, las credenciales referenciadas mediante identificadores opacos sin exposición de valores, y los conectores entre nodos. El archivo \texttt{n8n/workflow.json} contiene esta exportación. La importación de este artefacto en una instancia limpia de N8N~2.11.2 reproduce íntegramente el comportamiento operativo del sistema, sujeta únicamente a la provisión de las credenciales correspondientes a los servicios externos integrados (servidor IMAP de correo, cuenta Twilio y clave de API de Gemini) mediante el sistema de credenciales nativo de la plataforma.
+La exportación del flujo de orquestación en formato JSON incluye la totalidad de los 32 nodos configurados, sus parámetros operativos, las credenciales referenciadas mediante identificadores opacos sin exposición de valores, y los conectores entre nodos. El archivo \texttt{n8n/workflow.json} contiene esta exportación. La importación de este artefacto en una instancia limpia de N8N~2.11.2 reproduce íntegramente el comportamiento operativo del sistema, sujeta únicamente a la provisión de las credenciales correspondientes a los servicios externos integrados (servidor IMAP de correo, cuenta Twilio y clave de API de Gemini) mediante el sistema de credenciales nativo de la plataforma.
 
-La Figura~\ref{fig:anexo_flujo_n8n} presenta una reconstrucción esquemática del flujo, derivada de la exportación JSON y agrupada por etapa funcional. Los 29 nodos operativos se organizan en siete etapas: entrada (triggers), con la recepción de correo por IMAP y los disparadores de telefonía, formulario web y notificación de clasificación; validación y normalización de la información de entrada, incluida la marca de canal y el sellado de ingreso; envío al backend, con la autenticación del operador y la solicitud POST del incidente; ruteo por canal de origen; revisión humana, con la notificación al operador designado y las respuestas de handoff; respuesta y auditoría del ticket; y aviso post-revisión. La parametrización completa de cada nodo reside en \texttt{n8n/workflow.json}.
+La Figura~\ref{fig:anexo_flujo_n8n} presenta una reconstrucción esquemática del flujo, derivada de la exportación JSON y agrupada por etapa funcional. Los 29 nodos operativos (más 3 notas adhesivas, 32 nodos en total) se organizan en siete etapas: entrada (triggers), con la recepción de correo por IMAP y los disparadores de telefonía, formulario web y notificación de clasificación; validación y normalización de la información de entrada, incluida la marca de canal y el sellado de ingreso; envío al backend, con la autenticación del operador y la solicitud POST del incidente; ruteo por canal de origen; revisión humana, con la notificación al operador designado y las respuestas de handoff; respuesta y auditoría del ticket; y aviso post-revisión. La parametrización completa de cada nodo reside en \texttt{n8n/workflow.json}.
 
 \begin{figure}[htbp]
 \centering
@@ -85,7 +85,7 @@ El prompt sigue una estructura fija en español organizada en cinco componentes 
 
 \subsection{Parámetros de configuración}\label{subsec:anexo-parametros-config}
 
-La invocación del modelo se realiza mediante la API \texttt{google-generativeai} versión~0.8, con los hiperparámetros que resume la Tabla~\ref{tab:anexo_gemini_params}, optimizados para equilibrar exactitud, latencia y costo de inferencia.
+La invocación del modelo se realiza mediante el SDK \texttt{google-genai} (\texttt{>=2.20.0}), con los hiperparámetros que resume la Tabla~\ref{tab:anexo_gemini_params}, optimizados para equilibrar exactitud, latencia y costo de inferencia.
 
 \begin{table}[htbp]
 \small
@@ -102,10 +102,10 @@ Parámetro & Valor & Justificación \\
 \texttt{candidate\_count} & 1 & Respuesta única sin remuestreo; optimiza la latencia para el procesamiento en tiempo real. \\
 \texttt{safety\_settings} & Parcialmente desactivados & Desactiva filtros que podrían rechazar descripciones legítimas de incidentes, manteniendo los filtros contra contenido verdaderamente tóxico. \\
 \texttt{timeout} & 10 segundos & Límite máximo de latencia; al excederse, el clasificador devuelve confianza 0,0 y marca el caso para revisión humana. \\
-API & \texttt{google-generativeai} 0.8 & Versión vigente al momento del estudio, documentada para reproducibilidad. \\
+SDK & \texttt{google-genai} \texttt{>=2.20.0} & Versión vigente al momento del estudio, documentada para reproducibilidad. \\
 \bottomrule
 \end{tabular}
-{\footnotesize\textit{Fuente:} elaboración propia a partir de la documentación de la API \texttt{google-generativeai}.\par}
+{\footnotesize\textit{Fuente:} elaboración propia a partir de la documentación del SDK \texttt{google-genai}.\par}
 \end{table}
 
 \subsection{Validación de la respuesta}\label{subsec:anexo-validacion-respuesta}
