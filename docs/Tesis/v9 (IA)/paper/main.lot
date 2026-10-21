@@ -10,4 +10,5 @@
 \contentsline {table}{\numberline {9}{\ignorespaces Métricas de clasificación por clase con intervalo de confianza al 95~\% (una contra el resto)}}{70}{table.caption.17}%
 \contentsline {table}{\numberline {10}{\ignorespaces Exactitud por banda de confianza declarada}}{71}{table.caption.18}%
 \contentsline {table}{\numberline {11}{\ignorespaces Confusiones observadas en la clasificación automática, por frontera}}{72}{table.caption.19}%
-\contentsline {table}{\numberline {12}{\ignorespaces Parámetros de configuración de la inferencia con \texttt {gemini-3.6-flash}.}}{102}{table.caption.22}%
+\contentsline {table}{\numberline {12}{\ignorespaces Cumplimiento de los objetivos del trabajo y evidencia de respaldo}}{82}{table.caption.20}%
+\contentsline {table}{\numberline {13}{\ignorespaces Parámetros de configuración de la inferencia con \texttt {gemini-3.6-flash}.}}{102}{table.caption.23}%
