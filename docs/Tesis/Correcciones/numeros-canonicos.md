@@ -10,6 +10,7 @@ el capítulo de forma aislada (ver `spec.md`, requisito "Gate 0 como prerrequisi
 de las ramas consumidoras").
 
 - **Change**: `c-102-congelar-numeros-canonicos-tesis` (Gate 0 del plan de corrección del dictamen CONEAU 2026-10-20).
+- **Upsert c-108**: `c-108-metricas-paradigma-y-clase-unitaria` agrega la Sección 3.6 (marco métrico unificado e intervalos de confianza: por clase, de conjunto y del kappa). No modifica ningún valor canónico de la Sección 3. Fecha: 2026-10-21.
 - **Artefacto**: este memo. No se edita ningún `.tex` en este change.
 - **Fecha de verificación**: 2026-10-21.
 - **SHA-256 del corpus** (`data/corpus_evaluacion_pseudonimizado.json`):
@@ -130,8 +131,68 @@ citable como resultado) y `condicional` (depende de una decisión editorial).
 |---|---|---|---|
 | SHA-256 del corpus | `report.md:99` | vigente | `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb`. |
 | Tamaño del corpus: `n = 200` | `report.md:3`, `04-marco-metodologico.tex:45` | vigente | |
-| Kappa de Cohen: `0,87` (doble etiquetado) | `00-resumen.tex:11` | vigente | Contexto de validez; no es una métrica del clasificador. |
+| Kappa de Cohen: `0,87` (doble etiquetado) | `00-resumen.tex:11` | vigente | Contexto de validez; no es una métrica del clasificador. Su IC **no es computable** desde las fuentes permitidas (ver 3.6). |
 | Soporte `Bases de Datos`: `n = 1` | `report.md:44`, `08-discusion.tex:22` | vigente | Clase NO estimable (`F1 = 0,0000`). Ver ítem 6. |
+
+### 3.6 Marco métrico unificado e incertidumbre (c-108)
+
+**Paradigma.** La referencia de verdad del corpus es **multietiqueta**
+(`107/200 = 53,5 %` de los casos tienen más de un sector de verdad). El
+clasificador emite **una etiqueta principal** (monoetiqueta) y, en `8` casos,
+etiquetas adicionales predichas. Las métricas primarias se calculan contra la
+etiqueta principal (monoetiqueta); las secundarias, contra la referencia
+multietiqueta del corpus. Se enuncian en un único marco:
+
+| Métrica | Valor | Referencia de verdad | Rol | Nota |
+|---|---|---|---|---|
+| Exactitud estricta | `0,7350` (`147/200`) | Monoetiqueta (etiqueta principal) | Primaria | IC Wilson 95 % `[0,6698; 0,7913]`. |
+| Macro-F1 (4 clases estimables) | `0,6508` | Monoetiqueta (etiqueta principal) | Primaria de umbral | Excluye `Bases de Datos` (`n = 1`). |
+| Macro-F1 (5 clases) | `0,5207` | Monoetiqueta (etiqueta principal) | Informativa | Incluye la clase no estimable. |
+| Micro-F1 | `0,6654` | Multietiqueta | Secundaria | **NO** es equivalente de la exactitud estricta (`0,6654 ≠ 0,7350`): acumula TP/FP/FN por etiqueta, no por caso. |
+| Subset accuracy | `0,43` | Multietiqueta | Secundaria | Penaliza estructuralmente una salida forzada a una etiqueta. |
+| Hamming loss | `0,3586` | Multietiqueta | Secundaria | Ídem; promedio por caso de etiquetas erróneas sobre la unión del caso. |
+
+**Intervalos de confianza por clase (una contra el resto).** Precisión y
+sensibilidad se estiman con el IC de Wilson; F1 con bootstrap percentil a nivel
+de caso. Nivel de confianza 95 %. Procedencia:
+`evaluation/metrics.py::intervalos_por_clase` (semilla `20261021`,
+`B = 2.000`).
+
+| Clase | n | Precisión (IC 95 %) | Sensibilidad (IC 95 %) | F1 (IC 95 %) | Estado |
+|---|---|---|---|---|---|
+| Soporte Técnico Hardware | 85 | `0,8556` `[0,7684; 0,9136]` | `0,9059` `[0,8251; 0,9515]` | `0,8800` `[0,8235; 0,9257]` | vigente |
+| Soporte Técnico Software | 67 | `0,7059` `[0,5889; 0,8008]` | `0,7164` `[0,5991; 0,8103]` | `0,7111` `[0,6140; 0,7951]` | vigente |
+| Seguridad Informática | 31 | `0,8333` `[0,6078; 0,9416]` | `0,4839` `[0,3197; 0,6516]` | `0,6122` `[0,4444; 0,7500]` | vigente |
+| Sistemas | 16 | `0,3684` `[0,1915; 0,5896]` | `0,4375` `[0,2310; 0,6682]` | `0,4000` `[0,1600; 0,5882]` | vigente |
+| Bases de Datos | 1 | no estimable | no estimable | no estimable | **no estimable** |
+
+La clase `Bases de Datos` (`n = 1`) es **no estimable**: sin IC, excluida del
+macro-F1 de umbral. Su valor puntual `0,0000` NO se presenta como evidencia de
+desempeño del clasificador.
+
+**Intervalos de confianza de las métricas de conjunto.** Bootstrap percentil a
+nivel de caso (remuestreo de los 200 casos con sus conjuntos verdad y predicho),
+misma semilla y `B` que los IC por clase. Procedencia:
+`evaluation/metrics.py::intervalos_conjunto`.
+
+| Métrica | Valor puntual | IC 95 % | Estado |
+|---|---|---|---|
+| Subset accuracy | `0,43` | `[0,3600; 0,4950]` | vigente |
+| Hamming loss | `0,3586` | `[0,3125; 0,4058]` | vigente |
+| Micro-F1 | `0,6654` | `[0,6224; 0,7061]` | vigente |
+
+**IC del coeficiente kappa — no computable.** El kappa `0,87` proviene del doble
+etiquetado independiente, pero **no existe registro por caso de los dos
+analistas** en las fuentes permitidas: `data/Corpus Tesis - Hoja 1.csv` y su
+versión pseudonimizada tienen las columnas `ID`, `Descripcion`, `Canal de
+Origen`, `Sector Asignado`, `Sectores Adicionales` y tiempos, sin columnas de
+doble etiquetado por analista; `evaluation/` solo conserva el valor agregado
+(`00-resumen.tex:11`; Sección 3.5). En consecuencia el IC del kappa se declara
+**no estimable** desde las fuentes permitidas y **no se fabrica**. Es
+**reversible si** el autor aporta la tabla primaria de acuerdo observado/esperado
+o las etiquetas por analista; en ese caso se calcula por bootstrap con semilla
+fija y se hace upsert aquí. El rótulo interpretativo del valor puntual sigue
+siendo "casi perfecto" (Landis y Koch, `\kappa > 0,80`).
 
 ## 4. Contingencia del gate de intervención humana
 
@@ -242,7 +303,7 @@ Fuentes primarias (solo lectura, sin edición):
   casos); SHA-256 verificado contra `report.md:99`.
 - `evaluation/metrics.py` — `calibracion_por_bandas`, `contingencia_confianza`,
   `exactitud_subconjunto`, `perdida_hamming`, `f1_micro`, `jaccard_promedio`,
-  `f1_macro`, `intervalo_wilson`.
+  `f1_macro`, `intervalo_wilson`, `intervalos_por_clase`, `intervalos_conjunto`.
 - `App/Backend/app/classifiers/deterministic.py`, `.../hybrid.py`,
   `.../gemini_classifier.py`, `App/Backend/app/config/settings.py` — regla del
   gate (Sección 4).
@@ -324,3 +385,7 @@ decisión editorial adoptada y su condición de reversibilidad.
 _Producido por c-102 (Gate 0). Cualquier rama que reescriba `04`, `07`, `08` o
 `09` —incluida c-104— debe citar únicamente los valores `vigente` de la
 Sección 3._
+
+_Sección 3.6 agregada por c-108 (upsert, 2026-10-21): marco métrico unificado e
+intervalos de confianza. No altera los valores canónicos de las Secciones 3.1 a
+3.5._

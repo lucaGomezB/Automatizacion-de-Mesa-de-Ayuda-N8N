@@ -73,7 +73,7 @@ Cabe señalar que el tiempo manual se registró con redondeo hacia arriba (véas
 
 La evaluación de clasificación se realizó sobre el corpus real de 200 casos pseudonimizados. Su distribución por sector asignado es la siguiente: Soporte Técnico Hardware 85, Soporte Técnico Software 67, Seguridad Informática 31, Sistemas 16 y Bases de Datos 1. Por canal de origen, 81 casos provienen de llamada telefónica, 66 de correo electrónico y 53 de formulario web.
 
-La matriz de confusion obtenida se presenta en la Tabla~\ref{tab:matriz} y en la Figura~\ref{fig:matriz_confusion}. De los 85 casos de Soporte Tecnico Hardware, 77 fueron correctamente clasificados; de los 67 de Soporte Tecnico Software, 48; de los 31 de Seguridad Informatica, 15; de los 16 de Sistemas, 7; y del único caso de Bases de Datos, ninguno. La exactitud estricta resultante asciende al 73,5~\% (147 casos correctos sobre 200).
+La matriz de confusion obtenida se presenta en la Tabla~\ref{tab:matriz} y en la Figura~\ref{fig:matriz_confusion}. De los 85 casos de Soporte Tecnico Hardware, 77 se clasificaron correctamente; de los 67 de Soporte Tecnico Software, 48; de los 31 de Seguridad Informatica, 15; y de los 16 de Sistemas, 7. La exactitud estricta resultante asciende al 73,5~\% (147 casos correctos sobre 200).
 
 \begin{table}[htbp]
 \centering
@@ -105,31 +105,32 @@ Sistemas & 2 & 0 & 5 & 2 & \textbf{7} & \textbf{16} \\
 \label{fig:matriz_confusion}
 \end{figure}
 
-Los valores de precision, sensibilidad (\emph{recall}) y F1 calculados por clase \parencite{Sokolova2009_performance_measures} se presentan en la Tabla~\ref{tab:metricas}. El mejor desempeño correspondió a Soporte Tecnico Hardware (F1 = 0,8800), seguido por Soporte Tecnico Software (0,7111) y Seguridad Informatica (0,6122); Sistemas (0,4000) y Bases de Datos (0,0000, con un único caso de soporte) fueron las clases mas difíciles. El promedio macro de F1 fue de 0,5207 y el micro-F1 de 0,6654. La exactitud estricta del 73,5~\% (147/200) presenta un intervalo de confianza al 95~\%, estimado por el método de Wilson \parencite{Wilson1927_probable_inference}, de [67,0~\%, 79,1~\%]. En cuanto al desempeño de conjunto, el \emph{subset accuracy} (proporción de casos en que el conjunto completo de sectores resultó correcto) fue de 0,43 y el \emph{Hamming loss} de 0,3586. De los 200 casos, 131 fueron resueltos por la etapa determinística del clasificador y 69 requirieron la etapa Gemini.
+Los valores de precision, sensibilidad (recall) y F1 por clase, con su intervalo de confianza al 95~\% \parencite{Sokolova2009_performance_measures}, se presentan en la Tabla~\ref{tab:metricas}; el mejor desempeño correspondió a Soporte Tecnico Hardware (F1 = 0,8800) y Sistemas fue la clase estimable con el F1 mas bajo (0,4000). La evaluación se enmarca en un único marco métrico cuya referencia de verdad es multietiqueta (107 de los 200 casos, 53,5~\%), frente a una salida del clasificador de una etiqueta principal: la exactitud estricta del 73,5~\% (147/200) es la métrica primaria monoetiqueta, con IC de Wilson al 95~\% de [67,0~\%, 79,1~\%]. El macro-F1 de umbral se reporta sobre las cuatro clases estimables (0,6508), excluida Bases de Datos (\(n = 1\), no estimable), y el de cinco clases (0,5207) se conserva como valor informativo. Las métricas secundarias se calculan contra el conjunto de verdad del corpus (multietiqueta): subset accuracy 0,43 (IC [0,36; 0,50]), Hamming loss 0,3586 (IC [0,31; 0,41]) y micro-F1 0,6654 (IC [0,62; 0,71]). Estas métricas de conjunto penalizan estructuralmente una salida forzada a una sola etiqueta y no son equivalentes de la exactitud estricta: el micro-F1 acumula los aciertos por etiqueta y no por caso, de modo que su valor (0,6654) no debe leerse como una exactitud (0,7350). De los 200 casos, 131 fueron resueltos por la etapa determinística del clasificador y 69 requirieron la etapa Gemini.
 
 \begin{table}[htbp]
 \centering
-\caption{Métricas de clasificación por clase (una contra el resto)}
+\caption{Métricas de clasificación por clase con intervalo de confianza al 95~\% (una contra el resto)}
 \label{tab:metricas}
 \small
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.2cm} >{\centering\arraybackslash}p{2.8cm} >{\centering\arraybackslash}p{2.8cm} >{\centering\arraybackslash}p{2.4cm}@{}}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.5cm} >{\centering\arraybackslash}p{3.4cm} >{\centering\arraybackslash}p{3.4cm} >{\centering\arraybackslash}p{3.4cm}@{}}
 \toprule
-\textbf{Clase} & \textbf{Precision} & \textbf{Sensibilidad} & \textbf{F1} \\
+\textbf{Clase} & \textbf{Precisión (IC 95~\%)} & \textbf{Sensibilidad (IC 95~\%)} & \textbf{F1 (IC 95~\%)} \\
 \midrule
-Soporte Tecnico Hardware  & 0,8556 & 0,9059 & 0,8800 \\
-Soporte Tecnico Software  & 0,7059 & 0,7164 & 0,7111 \\
-Seguridad Informatica     & 0,8333 & 0,4839 & 0,6122 \\
-Sistemas                  & 0,3684 & 0,4375 & 0,4000 \\
-Bases de Datos            & 0,0000 & 0,0000 & 0,0000 \\
+Soporte Tecnico Hardware  & 0,8556 [0,77; 0,91] & 0,9059 [0,83; 0,95] & 0,8800 [0,82; 0,93] \\
+Soporte Tecnico Software  & 0,7059 [0,59; 0,80] & 0,7164 [0,60; 0,81] & 0,7111 [0,61; 0,80] \\
+Seguridad Informatica     & 0,8333 [0,61; 0,94] & 0,4839 [0,32; 0,65] & 0,6122 [0,44; 0,75] \\
+Sistemas                  & 0,3684 [0,19; 0,59] & 0,4375 [0,23; 0,67] & 0,4000 [0,16; 0,59] \\
+Bases de Datos            & \multicolumn{3}{c}{no estimable (\(n = 1\))} \\
 \bottomrule
 \end{tabular}
 \par\smallskip
-{\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)).\par}
+{\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)). IC de precisión y sensibilidad por Wilson; IC de F1 por bootstrap percentil (2000 remuestreos).\par}
 \end{table}
 
-Estas metricas confirman que el clasificador exhibe un desempeño desigual entre las cinco clases objetivo \parencite{Sokolova2009_performance_measures}. La clase mayoritaria (Soporte Tecnico Hardware, con 85 casos) obtuvo el mejor resultado, mientras que Sistemas y Bases de Datos presentaron los valores mas bajos. Este desequilibrio es particularmente relevante en el contexto operativo: un clasificador que concentra sus errores en una clase minoritaria genera derivaciones erroneas en un sector específico, lo que erosiona la confianza de ese equipo en el sistema y puede llevar al rechazo operativo de la herramienta, independientemente de sus metricas agregadas.
+Estas metricas confirman un desempeño desigual entre las clases objetivo \parencite{Sokolova2009_performance_measures}: la clase mayoritaria (Soporte Tecnico Hardware, con 85 casos) obtuvo el mejor resultado, mientras que Sistemas fue la clase estimable con los valores mas bajos y Bases de Datos (\(n = 1\)) no es estimable. Este desequilibrio importa en el contexto operativo, porque un clasificador que concentra sus errores en una clase minoritaria genera derivaciones erroneas en un sector específico y puede erosionar la confianza de ese equipo en la herramienta, independientemente de sus metricas agregadas.
 
-La inspeccion de la matriz de confusion revela que los 53 errores totales se concentran en fronteras entre sectores lexicamente proximos, con Soporte Tecnico Software como categoría central. El análisis cualitativo de esos patrones de error, agrupados por frontera de confusion, se desarrolla en la \autoref{subsec:analisis-errores}.
+La inspeccion de la matriz de confusion revela que los 53 errores totales se concentran en fronteras entre sectores lexicamente proximos, con Soporte Tecnico Software como categoría central; su análisis cualitativo, agrupado por frontera de confusion, se desarrolla en la \autoref{subsec:analisis-errores}.
 
 \subsection{Reducción de la intervención humana}\label{subsec:reduccion-intervencion}
 
