@@ -20,14 +20,24 @@ Estado de fuentes (verificado por lectura directa en esta sesión):
   **todos** de la etapa determinística; la etapa Gemini asigna `confianza ∈
   {0,85, 0,90, 0,95, 0,98}` y nunca por debajo de 0,85. `confianza ≥ 0,90`: `46`
   casos con `13` errores (el tramo citado en `07-resultados.tex:165` es
-  reproducible). `8` casos tienen `sectores_adicionales` no vacío (referencia
-  multietiqueta parcial).
+  reproducible). `8` casos tienen `sectores_adicionales` no vacío: son etiquetas
+  **predichas** adicionales del clasificador (`predicciones.json`), NO la
+  referencia multietiqueta. La referencia del corpus tiene `107/200` casos con
+  más de un sector de verdad (`53,5 %`).
 - `07-resultados.tex`: Tabla 7.5 (`:145-163`), gate del 70 % (`:136`,`:165`),
   9,5 %/19 casos (`:138`), 131/69 (`:108`), proyección 45,0 h en
   `08-discusion.tex:14`, universo `3.700 = 42×88` en `04-marco-metodologico.tex:45`.
 - Funciones existentes reutilizables sin re-ejecutar el sistema:
   `evaluation/metrics.py` expone `calibracion_por_bandas` y
   `contingencia_confianza` (probadas en `evaluation/tests/test_calibracion_confianza.py`).
+
+**Nota sobre numeración de líneas.** Las referencias `archivo:línea` de este
+`design.md` usan la numeración de editores y Python (universal newlines), igual
+que el memo canónico. `07-resultados.tex` contiene un único carácter CR suelto
+en su línea 17; las herramientas que solo cortan por LF (`grep -n`, `sed -n`,
+`awk`) reportan un número uno menor para todas las líneas posteriores (p. ej.
+`:108` aquí aparece como `:107` en `grep -n`). Los demás archivos citados no
+tienen CR sueltos.
 
 ## Goals / Non-Goals
 
@@ -74,9 +84,10 @@ Estado de fuentes (verificado por lectura directa en esta sesión):
   el criterio de DÍAS HÁBILES como valor canónico, por coherencia con la tasa
   diaria tomada de una semana laboral; el valor calendario se conserva como
   `retirado`. Propagación obligatoria a `04:45`, `08:14` y `09:24`.
-- **D6 — Paradigma métrico.** La verdad de referencia es multietiqueta parcial
-  (8 casos con `sectores_adicionales`), pero el clasificador emite UNA etiqueta
-  principal. Set métrico final: primario monoetiqueta = exactitud estricta
+- **D6 — Paradigma métrico.** La verdad de referencia es multietiqueta
+  (`107/200` casos del corpus con más de un sector de verdad, `53,5 %`), y el
+  clasificador emite UNA etiqueta principal (más etiquetas adicionales
+  **predichas** en `8` casos, que NO constituyen la referencia). Set métrico final: primario monoetiqueta = exactitud estricta
   `0,7350` + macro-F1 `0,5207`; secundario multietiqueta = subset accuracy `0,43`
   y Hamming `0,3586`, reportados SOLO contra la referencia multietiqueta y con la
   advertencia de penalización estructural; micro-F1 `0,6654` se conserva como
