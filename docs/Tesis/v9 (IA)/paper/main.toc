@@ -80,17 +80,17 @@
 \contentsline {subsection}{\numberline {11.5}Consentimiento, derechos del usuario y supervision humana}{88}{subsection.11.5}%
 \contentsline {section}{Referencias bibliograficas}{90}{subsection.11.5}%
 \contentsline {section}{Appendices}{95}{section*.19}%
-\contentsline {section}{\numberline {A}Diagrama de arquitectura del sistema}{95}{appendix.1.Alph1}%
-\contentsline {section}{\numberline {B}Repositorio de código fuente}{95}{appendix.1.Alph2}%
-\contentsline {section}{\numberline {C}Esquema de base de datos}{96}{appendix.1.Alph3}%
-\contentsline {section}{\numberline {D}Especificación OpenAPI de la interfaz REST}{96}{appendix.1.Alph4}%
-\contentsline {section}{\numberline {E}Configuración del flujo N8N}{97}{appendix.1.Alph5}%
-\contentsline {section}{\numberline {F}Corpus de validación}{98}{appendix.1.Alph6}%
-\contentsline {section}{\numberline {G}Documentación operativa}{99}{appendix.1.Alph7}%
-\contentsline {section}{\numberline {H}Especificación del prompt de Gemini 3.6 Flash}{100}{appendix.1.Alph8}%
-\contentsline {subsection}{\numberline {H.1}Estructura y contenido del prompt}{100}{subsection.1.Alph8.1}%
-\contentsline {subsection}{\numberline {H.2}Parámetros de configuración}{101}{subsection.1.Alph8.2}%
-\contentsline {subsection}{\numberline {H.3}Validación de la respuesta}{101}{subsection.1.Alph8.3}%
-\contentsline {subsection}{\numberline {H.4}Iteración y mejora del prompt}{102}{subsection.1.Alph8.4}%
-\contentsline {subsection}{\numberline {H.5}Recomendaciones para futuras iteraciones}{102}{subsection.1.Alph8.5}%
-\contentsline {section}{\numberline {I}Trazabilidad de las correcciones del dictamen}{102}{appendix.1.Alph9}%
+\contentsline {section}{\numberline {A}Diagrama de arquitectura del sistema}{95}{section.1.A}%
+\contentsline {section}{\numberline {B}Repositorio de código fuente}{95}{section.1.B}%
+\contentsline {section}{\numberline {C}Esquema de base de datos}{96}{section.1.C}%
+\contentsline {section}{\numberline {D}Especificación OpenAPI de la interfaz REST}{96}{section.1.D}%
+\contentsline {section}{\numberline {E}Configuración del flujo N8N}{97}{section.1.E}%
+\contentsline {section}{\numberline {F}Corpus de validación}{98}{section.1.F}%
+\contentsline {section}{\numberline {G}Documentación operativa}{99}{section.1.G}%
+\contentsline {section}{\numberline {H}Especificación del prompt de Gemini 3.6 Flash}{100}{section.1.H}%
+\contentsline {subsection}{\numberline {H.1}Estructura y contenido del prompt}{100}{subsection.1.H.1}%
+\contentsline {subsection}{\numberline {H.2}Parámetros de configuración}{101}{subsection.1.H.2}%
+\contentsline {subsection}{\numberline {H.3}Validación de la respuesta}{101}{subsection.1.H.3}%
+\contentsline {subsection}{\numberline {H.4}Iteración y mejora del prompt}{102}{subsection.1.H.4}%
+\contentsline {subsection}{\numberline {H.5}Recomendaciones para futuras iteraciones}{102}{subsection.1.H.5}%
+\contentsline {section}{\numberline {I}Trazabilidad de las correcciones del dictamen}{102}{section.1.I}%

@@ -1,20 +1,21 @@
 %==============================================================================
 % Capitulo 7: Resultados
 %==============================================================================
-\section{Resultados}
+\section{Resultados}\label{sec:resultados}
 
 Este capítulo presenta los resultados de la validación experimental del sistema. Se reportan los hallazgos en cuatro dimensiones: tiempos de registro, desempeño de clasificación, reducción de la intervención humana y análisis cualitativo de errores.
 
-\subsection{Comparación de tiempos de registro}
+\subsection{Comparación de tiempos de registro}\label{subsec:comparacion-tiempos}
 
-La comparación de los tiempos de registro entre el flujo manual y el flujo automatizado se sintetiza en la Tabla~\ref{tab:tiempos}. La media aritmetica del tiempo manual sobre los 200 casos del corpus fue de 61,6~s (mediana de 50,0~s), con un desvio estandar de 44,9~s y un rango entre 10 y 300~s. Este valor, respaldado por la planilla de cronometraje descrita en la Sección~4.2, corresponde a la medición experimental incidente por incidente y reemplaza a la estimación preliminar de 2 minutos con 45 segundos citada en la Sección~1.2, obtenida sin cronometraje individual. La media del flujo automatizado fue de 17,76~s (mediana de 17,47~s), con un desvio estandar de 13,48~s y un rango entre 0,525 y 65,834~s. La reducción relativa de la media de tiempo alcanzó el 71,2~\%.
+La comparación de los tiempos de registro entre el flujo manual y el flujo automatizado se sintetiza en la Tabla~\ref{tab:tiempos}. La media aritmetica del tiempo manual sobre los 200 casos del corpus fue de 61,6~s (mediana de 50,0~s), con un desvio estandar de 44,9~s y un rango entre 10 y 300~s. Este valor, respaldado por la planilla de cronometraje descrita en la \autoref{subsec:diseno-experimental}, corresponde a la medición experimental incidente por incidente y reemplaza a la estimación preliminar de 2 minutos con 45 segundos citada en la \autoref{subsec:planteamiento-problema}, obtenida sin cronometraje individual. La media del flujo automatizado fue de 17,76~s (mediana de 17,47~s), con un desvio estandar de 13,48~s y un rango entre 0,525 y 65,834~s. La reducción relativa de la media de tiempo alcanzó el 71,2~\%.
 
 \begin{table}[htbp]
 \centering
 \caption{Estadisticos descriptivos de los tiempos de registro por flujo (\(n = 200\))}
 \label{tab:tiempos}
 \small
-\begin{tabular}{@{}>{aggedright\arraybackslash}p{4.0cm} p{3.5cm} p{3.5cm} p{2.5cm}@{}}
+\begin{tabular}{@{}>{
+aggedright\arraybackslash}p{4.0cm} p{3.5cm} p{3.5cm} p{2.5cm}@{}}
 \toprule
 \textbf{Estadistico} & \textbf{Flujo manual} & \textbf{Flujo automatizado} & \textbf{Reduccion} \\
 \midrule
@@ -29,7 +30,7 @@ Maximo (s)                & 300    & 65,834  & --- \\
 {\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)).\par}
 \end{table}
 
-El tiempo automatizado de registro desagregado por canal de origen se presenta en la Tabla~\ref{tab:tiempos-canal}. El canal telefonico incorpora, ademas de la latencia de procesamiento, la duracion de la llamada grabada, de modo que su valor es comparable en su base de medicion con el flujo manual; como la grabacion esta acotada a un maximo de 45~s (véase la Sección~4.4), ese valor constituye una cota inferior de la duracion real de la llamada.
+El tiempo automatizado de registro desagregado por canal de origen se presenta en la Tabla~\ref{tab:tiempos-canal}. El canal telefonico incorpora, ademas de la latencia de procesamiento, la duracion de la llamada grabada, de modo que su valor es comparable en su base de medicion con el flujo manual; como la grabacion esta acotada a un maximo de 45~s (véase la \autoref{subsec:metricas-instrumentos}), ese valor constituye una cota inferior de la duracion real de la llamada.
 
 \begin{table}[htbp]
 \centering
@@ -51,7 +52,7 @@ Formulario web                     & 53 & 1,88  & 1,26  \\
 {\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)).\par}
 \end{table}
 
-La prueba de Wilcoxon de rangos con signo aplicada sobre las mediciones pareadas \parencite{Virtanen2020_scipy} arrojo un estadístico de contraste \(W = \min(T^{+}, T^{-}) = 363\), con una suma de rangos positivos \(T^{+} = 19.737\), una suma de rangos negativos \(T^{-} = 363\) y \(n = 200\) pares validos, junto con un valor \(p = 3{,}08 \times 10^{-32}\), lo que permite rechazar la hipotesis nula de igualdad de medianas con un nivel de confianza superior al 99,9~\%. El estadístico incorpora la corrección por empates y refleja que en 188 de los 200 pares el flujo automatizado fue mas veloz que el manual; en los 12 pares restantes (6,0~\%) el flujo automatizado no fue mas rápido, resultado coherente con la diferencia de aproximadamente 32,5~s entre medianas. La elección de esta prueba no parametrica responde al rechazo de la hipotesis de normalidad en los tres conjuntos de tiempos, cuyo reporte completo se presenta en la Sección~4.7.
+La prueba de Wilcoxon de rangos con signo aplicada sobre las mediciones pareadas \parencite{Virtanen2020_scipy} arrojo un estadístico de contraste \(W = \min(T^{+}, T^{-}) = 363\), con una suma de rangos positivos \(T^{+} = 19.737\), una suma de rangos negativos \(T^{-} = 363\) y \(n = 200\) pares validos, junto con un valor \(p = 3{,}08 \times 10^{-32}\), lo que permite rechazar la hipotesis nula de igualdad de medianas con un nivel de confianza superior al 99,9~\%. El estadístico incorpora la corrección por empates y refleja que en 188 de los 200 pares el flujo automatizado fue mas veloz que el manual; en los 12 pares restantes (6,0~\%) el flujo automatizado no fue mas rápido, resultado coherente con la diferencia de aproximadamente 32,5~s entre medianas. La elección de esta prueba no parametrica responde al rechazo de la hipotesis de normalidad en los tres conjuntos de tiempos, cuyo reporte completo se presenta en la \autoref{subsec:analisis-estadistico}.
 
 Para cuantificar la magnitud práctica de la diferencia, se calculo el coeficiente \(r\) de correlacion rank-biserial a partir de los dos estadísticos de rango:
 \[
@@ -59,7 +60,7 @@ r = \frac{T^{+} - T^{-}}{n(n+1)/2} = \frac{19.737 - 363}{200 \cdot 201 / 2} = \f
 \]
 El valor obtenido (\(r = 0{,}9639\)) corresponde a un tamaño del efecto muy alto, consistente con la alta proporción de pares a favor del flujo automatizado (188 de 200) y con los 12 pares en que este no supero al manual. La diferencia observada es, por tanto, estadísticamente significativa y, dada su magnitud absoluta, relativa y el tamaño del efecto reportado, también prácticamente relevante para la operación.
 
-Cabe señalar que el tiempo manual se registró con redondeo hacia arriba (véase la Sección~4.2), un sesgo de medición sistemático que infla la línea base manual. Por ese motivo la reducción del 71,2~\% debe leerse como cota superior. Un análisis de sensibilidad que descuenta 5~s y 10~s a cada medición manual reduce la media manual a 56,6~s y 51,6~s, respectivamente, y situa la reducción en el 68,6~\% y en el 65,6~\% como cota inferior conservadora. Aun en el escenario mas desfavorable la reducción de tiempo permanece sustancial y estadísticamente significativa (\(p = 1{,}8 \times 10^{-26}\), \(r = 0{,}8683\)).
+Cabe señalar que el tiempo manual se registró con redondeo hacia arriba (véase la \autoref{subsec:diseno-experimental}), un sesgo de medición sistemático que infla la línea base manual. Por ese motivo la reducción del 71,2~\% debe leerse como cota superior. Un análisis de sensibilidad que descuenta 5~s y 10~s a cada medición manual reduce la media manual a 56,6~s y 51,6~s, respectivamente, y situa la reducción en el 68,6~\% y en el 65,6~\% como cota inferior conservadora. Aun en el escenario mas desfavorable la reducción de tiempo permanece sustancial y estadísticamente significativa (\(p = 1{,}8 \times 10^{-26}\), \(r = 0{,}8683\)).
 
 \begin{figure}[htbp]
 \centering
@@ -68,7 +69,7 @@ Cabe señalar que el tiempo manual se registró con redondeo hacia arriba (véas
 \label{fig:boxplot_tiempos}
 \end{figure}
 
-\subsection{Matriz de confusión y métricas de clasificación}
+\subsection{Matriz de confusión y métricas de clasificación}\label{subsec:matriz-metricas}
 
 La evaluación de clasificación se realizó sobre el corpus real de 200 casos pseudonimizados. Su distribución por sector asignado es la siguiente: Soporte Técnico Hardware 85, Soporte Técnico Software 67, Seguridad Informática 31, Sistemas 16 y Bases de Datos 1. Por canal de origen, 81 casos provienen de llamada telefónica, 66 de correo electrónico y 53 de formulario web.
 
@@ -128,9 +129,9 @@ Bases de Datos            & 0,0000 & 0,0000 & 0,0000 \\
 
 Estas metricas confirman que el clasificador exhibe un desempeño desigual entre las cinco clases objetivo \parencite{Sokolova2009_performance_measures}. La clase mayoritaria (Soporte Tecnico Hardware, con 85 casos) obtuvo el mejor resultado, mientras que Sistemas y Bases de Datos presentaron los valores mas bajos. Este desequilibrio es particularmente relevante en el contexto operativo: un clasificador que concentra sus errores en una clase minoritaria genera derivaciones erroneas en un sector específico, lo que erosiona la confianza de ese equipo en el sistema y puede llevar al rechazo operativo de la herramienta, independientemente de sus metricas agregadas.
 
-La inspeccion de la matriz de confusion revela que los 53 errores totales se concentran en fronteras entre sectores lexicamente proximos, con Soporte Tecnico Software como categoría central. El análisis cualitativo de esos patrones de error, agrupados por frontera de confusion, se desarrolla en la Sección~7.5.
+La inspeccion de la matriz de confusion revela que los 53 errores totales se concentran en fronteras entre sectores lexicamente proximos, con Soporte Tecnico Software como categoría central. El análisis cualitativo de esos patrones de error, agrupados por frontera de confusion, se desarrolla en la \autoref{subsec:analisis-errores}.
 
-\subsection{Reducción de la intervención humana}
+\subsection{Reducción de la intervención humana}\label{subsec:reduccion-intervencion}
 
 La proporción de intervención humana en el flujo automatizado se calculó a partir de los registros del propio flujo automatizado ---la confianza devuelta por el clasificador en cada caso y las correcciones de categoría introducidas por el sector responsable---, no a partir del instrumento de cronometraje del flujo manual. En el flujo manual, el 100~\% del tiempo correspondio a intervención humana, incluyendo lectura, comprension, busqueda en sistemas auxiliares y carga del ticket. En el flujo automatizado, el operador humano solo intervino en aquellos casos en los que el clasificador devolvio una confianza inferior al 70~\% o en los que el sector responsable, al recibir el ticket, identificó una clasificación incorrecta y la corrigio antes de iniciar la atención.
 
@@ -161,9 +162,9 @@ La confianza declarada por el clasificador solo resulta útil como criterio de d
 {\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)).\par}
 \end{table}
 
-Los datos revelan una calibración invertida o anti-calibrada: los casos de confianza alta (\(\ge 0{,}70\)) fueron menos exactos (0,697) que los de confianza baja (\(< 0{,}70\), 0,758). La tendencia se acentúa en el extremo superior de la escala: dentro de los 46 casos con confianza igual o superior a 0,90 se registraron 13 errores (28,3~\%), y la banda \([0{,}70\,;\,0{,}85)\) alcanzó apenas 0,333 de exactitud. En otras palabras, el clasificador no solo no discrimina mejor cuando declara mayor certeza, sino que en los tramos de confianza mas alta la exactitud se degrada. La consecuencia operativa es directa: el gate del 70~\% ---el mecanismo previsto para derivar a revisión humana los casos dudosos--- no aisló los errores, porque estos se distribuyen también en las bandas de confianza alta. La supervisión humana no puede apoyarse en la confianza declarada como único disparador; requiere complementarse con señales independientes del propio puntaje (por ejemplo, la proximidad léxica entre las categorías candidatas), tal como se discute en el Capitulo~8.
+Los datos revelan una calibración invertida o anti-calibrada: los casos de confianza alta (\(\ge 0{,}70\)) fueron menos exactos (0,697) que los de confianza baja (\(< 0{,}70\), 0,758). La tendencia se acentúa en el extremo superior de la escala: dentro de los 46 casos con confianza igual o superior a 0,90 se registraron 13 errores (28,3~\%), y la banda \([0{,}70\,;\,0{,}85)\) alcanzó apenas 0,333 de exactitud. En otras palabras, el clasificador no solo no discrimina mejor cuando declara mayor certeza, sino que en los tramos de confianza mas alta la exactitud se degrada. La consecuencia operativa es directa: el gate del 70~\% ---el mecanismo previsto para derivar a revisión humana los casos dudosos--- no aisló los errores, porque estos se distribuyen también en las bandas de confianza alta. La supervisión humana no puede apoyarse en la confianza declarada como único disparador; requiere complementarse con señales independientes del propio puntaje (por ejemplo, la proximidad léxica entre las categorías candidatas), tal como se discute en la \autoref{sec:discusion}.
 
-\subsection{Análisis de errores y casos límite}
+\subsection{Análisis de errores y casos límite}\label{subsec:analisis-errores}
 
 El análisis cualitativo de los 53 casos mal clasificados permitió identificar patrones de error recurrentes, agrupados por frontera de confusión y sintetizados en la Tabla~\ref{tab:errores}.
 
@@ -192,6 +193,6 @@ El patron dominante, presente en 14 casos (26,4~\% de los errores), corresponde 
 
 Los patrones anteriores se ilustran con tres casos mal clasificados del corpus. Las descripciones se reproducen anonimizadas ---se eliminaron nombres de personas, correos, teléfonos, direcciones y denominaciones internas de sistemas--- y se acompañan con el sector asignado, el sector predicho y la confianza declarada por el clasificador. El primer caso corresponde al patrón de descripción corta: la entrada ``No puede ingresar al sistema central'' fue asignada a Seguridad Informatica y predicha como Soporte Tecnico Software con una confianza de 0,95; su brevedad no aporta contexto sobre el recurso ni sobre la naturaleza del acceso fallido, de modo que la frontera resulta indistinguible sin información adicional. El segundo ilustra la mezcla de categorías: ``Su equipo se reinicia de forma reiterada; el usuario sospecha de los cables'' fue asignada a Soporte Tecnico Software y predicha como Soporte Tecnico Hardware con 0,50 de confianza, y combina un síntoma de nivel de aplicación con una hipótesis de causa física cuyo peso relativo no queda determinado por el texto. El tercero ejemplifica la jerga local: ``No le salen los correos por el flujo interno y no le llegan las instancias'' fue asignada a Sistemas y predicha como Soporte Tecnico Software con 0,85 de confianza, y apela a términos organizacionales (``flujo'', ``instancias'') cuyo significado no está disponible para el clasificador. En los tres casos la confianza declarada es alta pese al error, lo que refuerza el problema de calibración descrito en la Sección~\ref{subsec:calibracion}.
 
-Esta tipologia orienta directamente las recomendaciones presentadas en el Capitulo~10, particularmente la incorporacion de un clasificador supervisado entrenado con el corpus etiquetado generado por el propio sistema y la inclusion de un glosario de terminos organizacionales en el prompt del modelo.
+Esta tipologia orienta directamente las recomendaciones presentadas en la \autoref{sec:recomendaciones}, particularmente la incorporacion de un clasificador supervisado entrenado con el corpus etiquetado generado por el propio sistema y la inclusion de un glosario de terminos organizacionales en el prompt del modelo.
 
 \newpage

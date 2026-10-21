@@ -1,5 +1,5 @@
 %==============================================================================
-% Preambulo — Tesis de Grado UTN FRM
+% Preambulo — Trabajo Final UTN FRM
 % Formato: APA 7ma edicion adaptado a tesis
 % Compilador: XeLaTeX
 %==============================================================================
@@ -66,7 +66,7 @@
 
 % --- Figuras ---
 \usepackage{graphicx}
-\graphicspath{{./figures/}}
+\graphicspath{{./figures/}{./}{./assets/}}
 \usepackage[font=small,labelfont=bf,labelsep=period,justification=raggedright,singlelinecheck=false]{caption}
 
 % --- Ecuaciones matematicas y simbolos ---
@@ -82,11 +82,15 @@
 \hypersetup{
   pdftitle={Automatizacion inteligente del registro de incidentes en mesas de ayuda},
   pdfauthor={Luca Gomez, Carla Bustos, Gonzalo Sevilla},
-  pdfsubject={Tesis de Grado — Tecnicatura Universitaria en Programacion},
+  pdfsubject={Trabajo Final — Tecnicatura Universitaria en Programación},
   pdfkeywords={automatizacion, mesa de ayuda, NLP, LLM, N8N, FastAPI, clasificacion de tickets, espanol rioplatense},
   colorlinks=false,
   pdfborder={0 0 0}
 }
+
+% --- Nombres de referencia cruzada: "Sección" (en lugar de "Capítulo") ---
+\renewcommand{\sectionautorefname}{Sección}
+\renewcommand{\subsectionautorefname}{Sección}
 
 % --- Bibliografia: APA 7ma edicion ---
 \usepackage[style=apa,backend=biber,sorting=nyt,language=spanish]{biblatex}

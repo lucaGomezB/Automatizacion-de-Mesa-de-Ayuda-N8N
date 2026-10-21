@@ -1,11 +1,11 @@
 %==============================================================================
 % Capitulo 3: Estado del Arte
 %==============================================================================
-\section{Estado del arte}
+\section{Estado del arte}\label{sec:estado-del-arte}
 
 Este capítulo revisa la literatura académica y las soluciones comerciales disponibles en tres áreas relevantes para el presente trabajo: plataformas de mesa de ayuda, herramientas de orquestación de flujos, y métodos de clasificación automática de tickets de soporte. El proposito es situar la contribucion de esta investigación en el contexto de los desarrollos previos y fundamentar la brecha que motiva el trabajo.
 
-\subsection{Soluciones comerciales de mesa de ayuda}
+\subsection{Soluciones comerciales de mesa de ayuda}\label{subsec:soluciones-comerciales}
 
 El segmento de soluciones comerciales para gestión de mesa de ayuda se encuentra dominado por plataformas integrales que cubren el ciclo completo de vida del ticket. Zendesk Suite ofrece funcionalidades de recepción multicanal, automatización de flujos básicos y, mediante un modulo adicional, capacidades de inteligencia artificial para sugerencia de respuestas y defleccion de consultas frecuentes. Freshdesk propone una arquitectura comparable e incorpora el motor Freddy AI para clasificación automática y enrutamiento inteligente. Jira Service Management, parte del ecosistema de Atlassian, ofrece capacidades limitadas de automatización inteligente en su plan estandar; la edicion Data Center permite el despliegue autoalojado para organizaciones con requisitos de soberanía sobre los datos. ServiceNow ITSM constituye la opcion de referencia en el segmento corporativo, con un modulo Predictive Intelligence que aplica aprendizaje automático sobre el histórico de tickets de la organización.
 
@@ -13,13 +13,13 @@ La adopción de capacidades de inteligencia artificial en plataformas comerciale
 
 En el segmento de código abierto, osTicket constituye una alternativa de despliegue autoalojado sin costo de licencia, aunque carece de capacidades nativas de clasificación automática mediante procesamiento de lenguaje natural moderno. Esta brecha funcional motiva la busqueda de arquitecturas compositivas que integren componentes maduros de código abierto con servicios de inferencia bajo demanda.
 
-\subsection{Plataformas de orquestación de flujos}
+\subsection{Plataformas de orquestación de flujos}\label{subsec:plataformas-orquestacion}
 
 Dentro del segmento de plataformas de orquestación de flujos, las soluciones mas difundidas incluyen Zapier, Make (anteriormente Integromat), Microsoft Power Automate, Apache Airflow y N8N. Las primeras tres operan exclusivamente como SaaS, lo que las descarta como base para implementaciones donde el control sobre la infraestructura es un requisito explicito. Apache Airflow se orienta a flujos de trabajo programados de tipo procesamiento de datos por lotes, con un diseño centrado en grafos aciclicos dirigidos (DAG) definidos como código Python \parencite{Apache2024_airflow}; aunque potente, su paradigma de ejecución programada resulta inadecuado para un caso de uso reactivo y orientado a eventos como el de una mesa de ayuda.
 
 N8N ofrece un modelo de construcción visual de flujos sobre nodos predefinidos, soporte nativo para webhooks y disparadores reactivos, ejecución basada en eventos y posibilidad de despliegue completamente autoalojado bajo Docker \parencite{n8n2024_docs}. La disponibilidad de su código fuente bajo licencia Sustainable Use facilita la auditoria de seguridad y la adaptacion a requerimientos específicos sin generar dependencia exclusiva del proveedor. Estas caracteristicas confluyen para posicionar a N8N como la opcion mas adecuada para el escenario propuesto, donde la soberanía sobre los datos y los flujos de procesamiento constituye un requisito no negociable.
 
-\subsection{Trabajos académicos previos sobre clasificación de tickets}
+\subsection{Trabajos académicos previos sobre clasificación de tickets}\label{subsec:trabajos-academicos}
 
 La literatura académica sobre clasificación automática de tickets de soporte ha experimentado un crecimiento considerable durante los últimos anos. A continuación se presentan los trabajos mas relevantes, organizados por enfoque metodológico y por orden cronologico.
 
@@ -31,7 +31,7 @@ La literatura reciente sobre clasificacion automatica de tickets con modelos de 
 
 La evaluacion de modelos de lenguaje en escenarios de pocos ejemplos ha documentado que el rendimiento de clasificacion depende fuertemente del idioma del corpus, con resultados que favorecen a los idiomas mejor representados en los corpus de entrenamiento de los modelos contemporaneos \parencite{ahuja2023mega, lai2023okapi, zhang2023multilingual, xuan2025mmluprox}. Para el espanol y sus variantes regionales, \textcite{grandury2025laleaderboard} construyen una tabla comparativa de LLM especifica para las variedades del espanol de Espana y Latinoamerica, mientras que \textcite{mayorrocher2026spanish} evaluan modelos con pruebas de espanol como lengua extranjera, \textcite{bernalbeltran2025mexicanspanish} comparan ajuste fino y aprendizaje en contexto sobre espanol mexicano, y \textcite{ramonferrer2026tripletotext} evaluan modelos de bajos recursos sobre un corpus en espanol. Esta linea evidencia que el espanol, y en particular sus variantes regionales como el rioplatense, ha recibido una atencion notablemente menor en las evaluaciones sistematicas publicadas. Cabe declarar, ademas, una brecha concreta: hasta la fecha no existe articulo arbitrado 2023-2026 que evalue Google Gemini sobre tickets de soporte en espanol. Esta ausencia constituye una de las motivaciones academicas del presente trabajo, el cual aporta evidencia empírica sobre el desempeño del clasificador en espanol rioplatense aplicado a un dominio de mesa de ayuda de organización mediana.
 
-\subsection{Análisis comparativo y brecha identificada}
+\subsection{Análisis comparativo y brecha identificada}\label{subsec:analisis-comparativo}
 
 La Tabla~\ref{tab:comparativa} presenta la comparación sistematica de las principales soluciones revisadas, considerando cuatro dimensiones relevantes: tipo de despliegue, capacidad de clasificación automática, soberanía sobre los datos y modelo de costos.
 
