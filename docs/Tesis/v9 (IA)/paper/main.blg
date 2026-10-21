@@ -1,17 +1,17 @@
 [0] Config.pm:329> INFO - This is Biber 2.22
-[1] Config.pm:332> INFO - Logfile is 'main.blg'
-[176] biber:342> INFO - === Wed Oct 21, 2026, 19:00:22
-[218] Biber.pm:421> INFO - Reading 'main.bcf'
-[469] Biber.pm:1002> INFO - Found 48 citekeys in bib section 0
-[524] Biber.pm:4487> INFO - Processing section 0
-[548] Biber.pm:4680> INFO - Looking for bibtex file '../Bibliography_base.bib' for section 0
-[554] bibtex.pm:1713> INFO - LaTeX decoding ...
-[669] bibtex.pm:1519> INFO - Found BibTeX data source '../Bibliography_base.bib'
-[2703] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[2704] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'variable = shifted' with 'variable = non-ignorable'
-[2704] Biber.pm:4307> INFO - Sorting list 'nyt/apasortcite//global/global/global' of type 'entry' with template 'nyt' and locale 'es-ES'
-[3121] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[3122] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'variable = shifted' with 'variable = non-ignorable'
-[3122] Biber.pm:4307> INFO - Sorting list 'nyt/global//global/global/global' of type 'entry' with template 'nyt' and locale 'es-ES'
-[3373] bbl.pm:676> INFO - Writing 'main.bbl' with encoding 'UTF-8'
-[3685] bbl.pm:779> INFO - Output to main.bbl
+[0] Config.pm:332> INFO - Logfile is 'main.blg'
+[169] biber:342> INFO - === Wed Oct 21, 2026, 19:10:05
+[213] Biber.pm:421> INFO - Reading 'main.bcf'
+[428] Biber.pm:1002> INFO - Found 48 citekeys in bib section 0
+[481] Biber.pm:4487> INFO - Processing section 0
+[499] Biber.pm:4680> INFO - Looking for bibtex file '../Bibliography_base.bib' for section 0
+[503] bibtex.pm:1713> INFO - LaTeX decoding ...
+[600] bibtex.pm:1519> INFO - Found BibTeX data source '../Bibliography_base.bib'
+[2618] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'variable = shifted' with 'variable = non-ignorable'
+[2619] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[2619] Biber.pm:4307> INFO - Sorting list 'nyt/apasortcite//global/global/global' of type 'entry' with template 'nyt' and locale 'es-ES'
+[3063] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'variable = shifted' with 'variable = non-ignorable'
+[3064] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[3064] Biber.pm:4307> INFO - Sorting list 'nyt/global//global/global/global' of type 'entry' with template 'nyt' and locale 'es-ES'
+[3285] bbl.pm:676> INFO - Writing 'main.bbl' with encoding 'UTF-8'
+[3530] bbl.pm:779> INFO - Output to main.bbl
