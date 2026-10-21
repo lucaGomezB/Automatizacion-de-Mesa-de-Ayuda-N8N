@@ -30,8 +30,8 @@
 \contentsline {subsection}{\numberline {4.5}Protocolo de pruebas}{36}{subsection.4.5}%
 \contentsline {subsection}{\numberline {4.6}Métricas e instrumentos}{37}{subsection.4.6}%
 \contentsline {subsection}{\numberline {4.7}Análisis estadístico}{37}{subsection.4.7}%
-\contentsline {subsection}{\numberline {4.8}Amenazas a la validez}{38}{subsection.4.8}%
-\contentsline {subsection}{\numberline {4.9}Gestión del proyecto bajo enfoque Scrumban (método de construcción del artefacto)}{39}{subsection.4.9}%
+\contentsline {subsection}{\numberline {4.8}Amenazas a la validez}{39}{subsection.4.8}%
+\contentsline {subsection}{\numberline {4.9}Gestión del proyecto bajo enfoque Scrumban (método de construcción del artefacto)}{40}{subsection.4.9}%
 \contentsline {section}{\numberline {5}Arquitectura del sistema}{41}{section.5}%
 \contentsline {subsection}{\numberline {5.1}Visión general}{41}{subsection.5.1}%
 \contentsline {subsection}{\numberline {5.2}Capa de canales de entrada}{43}{subsection.5.2}%
@@ -58,9 +58,9 @@
 \contentsline {section}{\numberline {8}Resultados}{67}{section.8}%
 \contentsline {subsection}{\numberline {8.1}Comparación de tiempos de registro}{67}{subsection.8.1}%
 \contentsline {subsection}{\numberline {8.2}Matriz de confusión y métricas de clasificación}{69}{subsection.8.2}%
-\contentsline {subsection}{\numberline {8.3}Reducción de la intervención humana}{71}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.3}Reducción de la intervención humana}{72}{subsection.8.3}%
 \contentsline {subsection}{\numberline {8.4}Calibración de la confianza}{72}{subsection.8.4}%
-\contentsline {subsection}{\numberline {8.5}Análisis de errores y casos límite}{72}{subsection.8.5}%
+\contentsline {subsection}{\numberline {8.5}Análisis de errores y casos límite}{73}{subsection.8.5}%
 \contentsline {section}{\numberline {9}Discusión}{75}{section.9}%
 \contentsline {subsection}{\numberline {9.1}Interpretación de los resultados}{75}{subsection.9.1}%
 \contentsline {subsection}{\numberline {9.2}Comparación con la literatura}{78}{subsection.9.2}%

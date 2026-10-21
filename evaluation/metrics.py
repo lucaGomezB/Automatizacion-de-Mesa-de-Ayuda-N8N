@@ -17,8 +17,10 @@ Definiciones:
 
 from __future__ import annotations
 
+import math
+import random
 from dataclasses import dataclass
-from typing import Dict, Iterable, List, Sequence, Set, Tuple
+from typing import Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
 from evaluation.corpus import SECTORES_CANONICOS
 
@@ -362,4 +364,170 @@ def contingencia_confianza(
         baja_total=baja_total,
         baja_aciertos=baja_aciertos,
         baja_exactitud=_dividir_seguro(baja_aciertos, baja_total),
+    )
+
+
+# ---------------------------------------------------------------------------
+# Grupo 7 — Intervalos de confianza por clase y de conjunto (c-108)
+# ---------------------------------------------------------------------------
+# Procedimiento declarado (design.md D2/D3 de c-108):
+# - Precision y sensibilidad por clase son proporciones binomiales
+#   (una contra el resto): se estiman con el IC de Wilson (`intervalo_wilson`).
+# - F1 por clase y las metricas de conjunto no son proporciones simples: se
+#   estiman por bootstrap percentil a nivel de caso, con semilla fija y B
+#   remuestreos, para reproducibilidad exacta.
+SEMILLA_BOOTSTRAP: int = 20261021
+REMUESTREOS_BOOTSTRAP: int = 2000
+NIVEL_CONFIANZA: float = 0.95
+# Clase con soporte unitario: sin IC, no estimable (design.md D4).
+MIN_SOPORTE_ESTIMABLE: int = 2
+
+
+@dataclass(frozen=True)
+class IntervaloClase:
+    """IC por clase. `None` cuando la clase no es estimable."""
+
+    clase: str
+    soporte: int
+    estimable: bool
+    precision: Optional[Tuple[float, float]]
+    sensibilidad: Optional[Tuple[float, float]]
+    f1: Optional[Tuple[float, float]]
+
+
+@dataclass(frozen=True)
+class IntervalosConjunto:
+    """IC bootstrap de las metricas de conjunto multietiqueta."""
+
+    subset_accuracy: Tuple[float, float]
+    hamming_loss: Tuple[float, float]
+    micro_f1: Tuple[float, float]
+
+
+def _percentil_intervalo(
+    muestras: Sequence[float],
+    confianza: float,
+) -> Tuple[float, float]:
+    """Intervalo percentil con interpolacion lineal sobre la muestra ordenada."""
+    ordenados = sorted(muestras)
+    n = len(ordenados)
+    if n == 0:
+        return 0.0, 0.0
+    if n == 1:
+        return ordenados[0], ordenados[0]
+
+    alfa = 1.0 - confianza
+
+    def _cuantil(q: float) -> float:
+        posicion = q * (n - 1)
+        bajo = int(math.floor(posicion))
+        alto = int(math.ceil(posicion))
+        if bajo == alto:
+            return ordenados[bajo]
+        fraccion = posicion - bajo
+        return ordenados[bajo] * (1.0 - fraccion) + ordenados[alto] * fraccion
+
+    return _cuantil(alfa / 2.0), _cuantil(1.0 - alfa / 2.0)
+
+
+def _remuestreos_indices(
+    generador: random.Random,
+    n: int,
+    remuestreos: int,
+) -> Iterable[List[int]]:
+    """Genera `remuestreos` listas de indices de casos (con reemplazo)."""
+    for _ in range(max(0, remuestreos)):
+        yield [generador.randrange(n) for _ in range(n)] if n else []
+
+
+def intervalos_por_clase(
+    reales: Sequence[str],
+    predichos: Sequence[str],
+    *,
+    semilla: int = SEMILLA_BOOTSTRAP,
+    remuestreos: int = REMUESTREOS_BOOTSTRAP,
+    confianza: float = NIVEL_CONFIANZA,
+) -> Dict[str, IntervaloClase]:
+    """
+    IC de precision, sensibilidad y F1 por clase (una contra el resto).
+
+    Precision y sensibilidad usan el IC de Wilson sobre la matriz primaria
+    completa; F1 usa bootstrap percentil a nivel de caso con semilla fija.
+    Una clase con soporte menor que `MIN_SOPORTE_ESTIMABLE` se declara no
+    estimable y devuelve intervalos `None`.
+    """
+    reales = list(reales)
+    predichos = list(predichos)
+    mc = matriz_confusion(reales, predichos)
+    soportes = soporte_por_clase(mc)
+
+    generador = random.Random(semilla)
+    n = len(reales)
+    muestras_f1: Dict[str, List[float]] = {clase: [] for clase in CLASES}
+    for indices in _remuestreos_indices(generador, n, remuestreos):
+        f1s = f1_por_clase(
+            matriz_confusion([reales[i] for i in indices], [predichos[i] for i in indices])
+        )
+        for clase in CLASES:
+            muestras_f1[clase].append(f1s[clase])
+
+    resultado: Dict[str, IntervaloClase] = {}
+    for clase in CLASES:
+        soporte = soportes[clase]
+        if soporte < MIN_SOPORTE_ESTIMABLE:
+            resultado[clase] = IntervaloClase(
+                clase=clase,
+                soporte=soporte,
+                estimable=False,
+                precision=None,
+                sensibilidad=None,
+                f1=None,
+            )
+            continue
+
+        tp = mc[clase][clase]
+        fp = sum(mc[real][clase] for real in CLASES if real != clase)
+        resultado[clase] = IntervaloClase(
+            clase=clase,
+            soporte=soporte,
+            estimable=True,
+            precision=intervalo_wilson(tp, tp + fp, confianza),
+            sensibilidad=intervalo_wilson(tp, soporte, confianza),
+            f1=_percentil_intervalo(muestras_f1[clase], confianza),
+        )
+    return resultado
+
+
+def intervalos_conjunto(
+    conjuntos_verdad: Iterable[ConjuntoEtiquetas],
+    conjuntos_predichos: Iterable[ConjuntoEtiquetas],
+    *,
+    semilla: int = SEMILLA_BOOTSTRAP,
+    remuestreos: int = REMUESTREOS_BOOTSTRAP,
+    confianza: float = NIVEL_CONFIANZA,
+) -> IntervalosConjunto:
+    """
+    IC bootstrap percentil (nivel de caso) de subset accuracy, Hamming loss y micro-F1.
+
+    Cada remuestreo extrae, con reemplazo, `n` casos de la verdad multietiqueta
+    y de la prediccion, y recalcula las tres metricas de conjunto. Misma
+    semilla y numero de remuestreos que `intervalos_por_clase`.
+    """
+    pares = _pares_conjuntos(conjuntos_verdad, conjuntos_predichos)
+    n = len(pares)
+
+    generador = random.Random(semilla)
+    muestras_subset: List[float] = []
+    muestras_hamming: List[float] = []
+    muestras_micro: List[float] = []
+    for indices in _remuestreos_indices(generador, n, remuestreos):
+        verdad = [pares[i][0] for i in indices]
+        predicho = [pares[i][1] for i in indices]
+        muestras_subset.append(exactitud_subconjunto(verdad, predicho))
+        muestras_hamming.append(perdida_hamming(verdad, predicho))
+        muestras_micro.append(f1_micro(verdad, predicho))
+    return IntervalosConjunto(
+        subset_accuracy=_percentil_intervalo(muestras_subset, confianza),
+        hamming_loss=_percentil_intervalo(muestras_hamming, confianza),
+        micro_f1=_percentil_intervalo(muestras_micro, confianza),
     )
