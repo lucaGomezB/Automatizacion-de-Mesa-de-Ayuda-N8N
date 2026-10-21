@@ -3204,28 +3204,20 @@
     <bcf:citekey order="126" intorder="1">Paramesh2019_it_service_desk</bcf:citekey>
     <bcf:citekey order="127" intorder="1">Revina2020_it_tickets</bcf:citekey>
     <bcf:citekey order="128" intorder="1">Revina2020_it_tickets</bcf:citekey>
-    <bcf:citekey order="129" intorder="1">paket2024itservice</bcf:citekey>
-    <bcf:citekey order="130" intorder="1">paket2024itservice</bcf:citekey>
-    <bcf:citekey order="131" intorder="1">liu2025tickit</bcf:citekey>
-    <bcf:citekey order="132" intorder="1">liu2025tickit</bcf:citekey>
-    <bcf:citekey order="133" intorder="1">colavito2025benchmarking</bcf:citekey>
-    <bcf:citekey order="134" intorder="1">colavito2025benchmarking</bcf:citekey>
-    <bcf:citekey order="135" intorder="1">Paramesh2019_it_service_desk</bcf:citekey>
-    <bcf:citekey order="136" intorder="1">Paramesh2019_it_service_desk</bcf:citekey>
-    <bcf:citekey order="137" intorder="1">Revina2020_it_tickets</bcf:citekey>
-    <bcf:citekey order="138" intorder="1">Revina2020_it_tickets</bcf:citekey>
-    <bcf:citekey order="139" intorder="1">Revina2020_it_tickets</bcf:citekey>
-    <bcf:citekey order="140" intorder="1">Revina2020_it_tickets</bcf:citekey>
-    <bcf:citekey order="141" intorder="1">Ley25326_2000</bcf:citekey>
-    <bcf:citekey order="142" intorder="1">Touvron2023_llama2</bcf:citekey>
-    <bcf:citekey order="143" intorder="1">Touvron2023_llama2</bcf:citekey>
-    <bcf:citekey order="144" intorder="1">Touvron2023_llama2</bcf:citekey>
-    <bcf:citekey order="145" intorder="1">Touvron2023_llama2</bcf:citekey>
-    <bcf:citekey order="146" intorder="1">Gomez2026_repositorio</bcf:citekey>
-    <bcf:citekey order="147" intorder="1">Gomez2026_repositorio</bcf:citekey>
-    <bcf:citekey order="148" intorder="1">Gomez2026_repositorio</bcf:citekey>
-    <bcf:citekey order="149" intorder="1">Tiangolo2024_fastapi</bcf:citekey>
-    <bcf:citekey order="150" intorder="1">Ley25326_2000</bcf:citekey>
+    <bcf:citekey order="129" intorder="1">Paramesh2019_it_service_desk</bcf:citekey>
+    <bcf:citekey order="130" intorder="1">Paramesh2019_it_service_desk</bcf:citekey>
+    <bcf:citekey order="131" intorder="1">Revina2020_it_tickets</bcf:citekey>
+    <bcf:citekey order="132" intorder="1">Revina2020_it_tickets</bcf:citekey>
+    <bcf:citekey order="133" intorder="1">Revina2020_it_tickets</bcf:citekey>
+    <bcf:citekey order="134" intorder="1">Revina2020_it_tickets</bcf:citekey>
+    <bcf:citekey order="135" intorder="1">Ley25326_2000</bcf:citekey>
+    <bcf:citekey order="136" intorder="1">Touvron2023_llama2</bcf:citekey>
+    <bcf:citekey order="137" intorder="1">Touvron2023_llama2</bcf:citekey>
+    <bcf:citekey order="138" intorder="1">Gomez2026_repositorio</bcf:citekey>
+    <bcf:citekey order="139" intorder="1">Gomez2026_repositorio</bcf:citekey>
+    <bcf:citekey order="140" intorder="1">Gomez2026_repositorio</bcf:citekey>
+    <bcf:citekey order="141" intorder="1">Tiangolo2024_fastapi</bcf:citekey>
+    <bcf:citekey order="142" intorder="1">Ley25326_2000</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="nyt">

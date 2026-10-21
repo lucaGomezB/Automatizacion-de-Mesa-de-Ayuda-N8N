@@ -46,13 +46,13 @@
 \usepackage{titlesec}
 % Nivel 1: Centrado, negrita, titulo en mayuscula/minuscula
 \titleformat{\section}[block]{\centering\bfseries\normalsize}{\thesection.}{0.5em}{}
-\titlespacing*{\section}{0pt}{12pt}{6pt}
+\titlespacing*{\section}{0pt}{9pt}{4pt}
 % Nivel 2: Alineado a izquierda, negrita
 \titleformat{\subsection}[hang]{\bfseries\normalsize}{\thesubsection.}{0.5em}{}
-\titlespacing*{\subsection}{0pt}{12pt}{6pt}
+\titlespacing*{\subsection}{0pt}{9pt}{4pt}
 % Nivel 3: Alineado a izquierda, negrita cursiva
 \titleformat{\subsubsection}[hang]{\bfseries\itshape\normalsize}{\thesubsubsection.}{0.5em}{}
-\titlespacing*{\subsubsection}{0pt}{12pt}{6pt}
+\titlespacing*{\subsubsection}{0pt}{9pt}{4pt}
 
 \usepackage{tocloft}
 \renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
@@ -62,12 +62,18 @@
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{multirow}
-\renewcommand{\arraystretch}{1.2}
+\renewcommand{\arraystretch}{1.05}
 
 % --- Figuras ---
 \usepackage{graphicx}
 \graphicspath{{./figures/}{./}{./assets/}}
 \usepackage[font=small,labelfont=bf,labelsep=period,justification=raggedright,singlelinecheck=false]{caption}
+% --- Espaciado vertical de flotantes y leyendas (reduccion c-116) ---
+\setlength{\intextsep}{6pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{9pt plus 2pt minus 2pt}
+\setlength{\floatsep}{7pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{6pt}
+\setlength{\belowcaptionskip}{0pt}
 
 % --- Ecuaciones matematicas y simbolos ---
 \usepackage{amsmath,amssymb,amsfonts}

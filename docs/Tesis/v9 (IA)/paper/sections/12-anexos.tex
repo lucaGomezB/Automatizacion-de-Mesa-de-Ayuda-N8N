@@ -12,7 +12,7 @@ El Anexo~A referencia los diagramas de la arquitectura propuesta en notación UM
   \item \textbf{Diagrama de componentes} (Figura~\ref{fig:componentes}, \autoref{sec:arquitectura}): organización interna del módulo Python por capas (routes, services, repositories, models, classifiers), con sus dependencias y relaciones. Fuente versionada: \texttt{docs/diagrams/componentes.md}.
 \end{itemize}
 
-Los diagramas se generan a partir de fuentes Mermaid versionadas en formato \texttt{.md} en el directorio \texttt{docs/diagrams/} del repositorio y se renderizan a imágenes PNG para su inclusión en el documento \parencite{Gomez2026_repositorio}. Las Figuras~\ref{fig:despliegue} y~\ref{fig:secuencia} se presentan en la \autoref{sec:arquitectura} y se referencian desde este anexo, sin duplicar el material gráfico.
+Los diagramas se generan a partir de fuentes Mermaid versionadas en formato \texttt{.md} en el directorio \texttt{docs/diagrams/} del repositorio y se renderizan a imágenes PNG para su inclusión en el documento \parencite{Gomez2026_repositorio}.
 
 \section{Repositorio de código fuente}\label{sec:anexo-repositorio}
 
@@ -26,7 +26,7 @@ El esquema completo de la base de datos PostgreSQL se documenta mediante scripts
 
 La migración inicial incluye la creación de las tablas de catálogo (\texttt{sector}, \texttt{estado}, \texttt{canal\_origen}) con sus valores semilla, garantizando que un despliegue nuevo del sistema comience con los datos de referencia correctos. Las migraciones subsiguientes documentan la evolución del esquema durante las seis iteraciones de desarrollo descritas en la \autoref{sec:marco-metodologico}.
 
-El diagrama entidad-relación de las siete entidades del modelo se incluye como Figura~\ref{fig:er_modelo_datos} de la \autoref{sec:arquitectura}, junto con la descripción de cada entidad en la Tabla~\ref{tab:entidades}; este anexo no lo reproduce nuevamente. La fuente Mermaid versionada del diagrama reside en \texttt{docs/diagrams/er\_modelo\_datos.md}. El detalle de atributos, tipos, claves primarias y foráneas, restricciones de integridad referencial e índices secundarios se conserva como scripts SQL y migraciones Alembic versionadas en el repositorio.
+El diagrama entidad-relación de las siete entidades se incluye como Figura~\ref{fig:er_modelo_datos} de la \autoref{sec:arquitectura}; su fuente Mermaid versionada reside en \texttt{docs/diagrams/er\_modelo\_datos.md}.
 
 \section{Especificación OpenAPI de la interfaz REST}\label{sec:anexo-openapi}
 
@@ -34,7 +34,7 @@ La especificación completa de la interfaz REST se genera automáticamente media
 
 La interfaz se encuentra disponible adicionalmente en formato interactivo a través del componente Swagger UI integrado en el servidor, accesible bajo la ruta \texttt{/docs} durante la ejecución, y en formato estático como archivo \texttt{openapi.json} en el directorio \texttt{docs/} del repositorio. La sincronización entre el código y la especificación estática se verifica automáticamente en el pipeline de integración continua.
 
-La especificación OpenAPI vigente describe 33 puntos de entrada que exponen 41 métodos HTTP y 44 esquemas de datos, agrupados por recurso: autenticación, catálogos, clasificaciones, incidentes, directorio, estadísticas, telefonía, control de costo y salud. El documento completo reside en \texttt{docs/openapi.json} del repositorio y se expone además en formato interactivo bajo la ruta \texttt{/docs}.
+La especificación OpenAPI vigente describe 33 puntos de entrada que exponen 41 métodos HTTP y 44 esquemas de datos, agrupados por recurso: autenticación, catálogos, clasificaciones, incidentes, directorio, estadísticas, telefonía, control de costo y salud.
 
 A título ilustrativo, los 44 esquemas de datos comprenden las estructuras de los catálogos, las entidades de dominio y los objetos de respuesta de cada recurso. El esquema \texttt{IncidenteRead}, por ejemplo, expone el identificador del ticket, la descripción pseudonimizada, la prioridad, el sector y los sectores adicionales, el estado, el canal de origen, el reportante, las marcas temporales de ingreso y persistencia, y los indicadores de latencia end-to-end y de latencia anómala, con sus tipos y campos de solo lectura. El detalle exhaustivo de atributos, tipos y ejemplos reside en \texttt{docs/openapi.json}.
 
@@ -47,7 +47,7 @@ La Figura~\ref{fig:anexo_flujo_n8n} presenta una reconstrucción esquemática de
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{flujo_n8n}
-\caption[Reconstrucción esquemática del flujo de orquestación N8N]{Reconstrucción esquemática del flujo de orquestación N8N, derivada de la exportación \texttt{n8n/workflow.json}. No es una captura de la interfaz: los 29 nodos operativos se agrupan por etapa funcional.}
+\caption[Reconstrucción esquemática del flujo de orquestación N8N]{Reconstrucción esquemática del flujo de orquestación N8N: no es una captura de la interfaz; los 29 nodos operativos se agrupan por etapa funcional.}
 \label{fig:anexo_flujo_n8n}
 \end{figure}
 
