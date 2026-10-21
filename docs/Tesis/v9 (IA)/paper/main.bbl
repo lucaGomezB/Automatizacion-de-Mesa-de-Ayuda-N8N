@@ -1168,6 +1168,101 @@
       \verb http://servicios.infoleg.gob.ar/infolegInternet/anexos/60000-64999/64790/norma.htm
       \endverb
     \endentry
+    \entry{Ji2023_hallucination}{article}{}{}
+      \name{author}{10}{}{%
+        {{un=0,uniquepart=base,hash=24b318d147ffe07cf3d183806694085a}{%
+           family={Ji},
+           familyi={J\bibinitperiod},
+           given={Ziwei},
+           giveni={Z\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=30e209c0765ff028b6fcf8cab91168d6}{%
+           family={Lee},
+           familyi={L\bibinitperiod},
+           given={Nayeon},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=597ff597dc47ab99a423ad5244f36682}{%
+           family={Frieske},
+           familyi={F\bibinitperiod},
+           given={Rita},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c5c5b0c867563b0b96b0baac7fcac39c}{%
+           family={Yu},
+           familyi={Y\bibinitperiod},
+           given={Tiezheng},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0d5b93df1983207786b72b9e0149f7c7}{%
+           family={Su},
+           familyi={S\bibinitperiod},
+           given={Dan},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=86acdbbb888fb1622ad5366d9d67dc8f}{%
+           family={Xu},
+           familyi={X\bibinitperiod},
+           given={Yan},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=cabf98fe93804124c62b0da032c7d50b}{%
+           family={Ishii},
+           familyi={I\bibinitperiod},
+           given={Etsuko},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=be28d93258f7d45919f0e6af840ca7b8}{%
+           family={Bang},
+           familyi={B\bibinitperiod},
+           given={Ye\bibnamedelima Jin},
+           giveni={Y\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c42ccecbd088ddce88e391c844d4bb7a}{%
+           family={Madotto},
+           familyi={M\bibinitperiod},
+           given={Andrea},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ea1e0efe4f3dcaf0a50c1119d83f7ca8}{%
+           family={Fung},
+           familyi={F\bibinitperiod},
+           given={Pascale},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{7f1de58d3d36035f2dcbf85d331900f1}
+      \strng{fullhash}{49761b2d8905ea2a262c7076dcd0dd8e}
+      \strng{fullhashraw}{49761b2d8905ea2a262c7076dcd0dd8e}
+      \strng{bibnamehash}{49761b2d8905ea2a262c7076dcd0dd8e}
+      \strng{authorbibnamehash}{49761b2d8905ea2a262c7076dcd0dd8e}
+      \strng{authornamehash}{7f1de58d3d36035f2dcbf85d331900f1}
+      \strng{authorfullhash}{49761b2d8905ea2a262c7076dcd0dd8e}
+      \strng{authorfullhashraw}{49761b2d8905ea2a262c7076dcd0dd8e}
+      \field{sortinit}{J}
+      \field{sortinithash}{b2f54a9081ace9966a7cb9413811edb4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{ACM Computing Surveys}
+      \field{number}{12}
+      \field{title}{Survey of Hallucination in Natural Language Generation}
+      \field{volume}{55}
+      \field{year}{2023}
+      \field{pages}{1\bibrangedash 38}
+      \range{pages}{38}
+      \verb{doi}
+      \verb 10.1145/3571730
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/3571730
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/3571730
+      \endverb
+    \endentry
     \entry{Jurafsky2023_speech_language}{unpublished}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=bd33d7a70284b5ead9c7985cb5c9929c}{%
@@ -4826,6 +4921,101 @@
       \endverb
       \verb{url}
       \verb http://servicios.infoleg.gob.ar/infolegInternet/anexos/60000-64999/64790/norma.htm
+      \endverb
+    \endentry
+    \entry{Ji2023_hallucination}{article}{}{}
+      \name{author}{10}{}{%
+        {{un=0,uniquepart=base,hash=24b318d147ffe07cf3d183806694085a}{%
+           family={Ji},
+           familyi={J\bibinitperiod},
+           given={Ziwei},
+           giveni={Z\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=30e209c0765ff028b6fcf8cab91168d6}{%
+           family={Lee},
+           familyi={L\bibinitperiod},
+           given={Nayeon},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=597ff597dc47ab99a423ad5244f36682}{%
+           family={Frieske},
+           familyi={F\bibinitperiod},
+           given={Rita},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c5c5b0c867563b0b96b0baac7fcac39c}{%
+           family={Yu},
+           familyi={Y\bibinitperiod},
+           given={Tiezheng},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0d5b93df1983207786b72b9e0149f7c7}{%
+           family={Su},
+           familyi={S\bibinitperiod},
+           given={Dan},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=86acdbbb888fb1622ad5366d9d67dc8f}{%
+           family={Xu},
+           familyi={X\bibinitperiod},
+           given={Yan},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=cabf98fe93804124c62b0da032c7d50b}{%
+           family={Ishii},
+           familyi={I\bibinitperiod},
+           given={Etsuko},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=be28d93258f7d45919f0e6af840ca7b8}{%
+           family={Bang},
+           familyi={B\bibinitperiod},
+           given={Ye\bibnamedelima Jin},
+           giveni={Y\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c42ccecbd088ddce88e391c844d4bb7a}{%
+           family={Madotto},
+           familyi={M\bibinitperiod},
+           given={Andrea},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ea1e0efe4f3dcaf0a50c1119d83f7ca8}{%
+           family={Fung},
+           familyi={F\bibinitperiod},
+           given={Pascale},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{7f1de58d3d36035f2dcbf85d331900f1}
+      \strng{fullhash}{49761b2d8905ea2a262c7076dcd0dd8e}
+      \strng{fullhashraw}{49761b2d8905ea2a262c7076dcd0dd8e}
+      \strng{bibnamehash}{49761b2d8905ea2a262c7076dcd0dd8e}
+      \strng{authorbibnamehash}{49761b2d8905ea2a262c7076dcd0dd8e}
+      \strng{authornamehash}{7f1de58d3d36035f2dcbf85d331900f1}
+      \strng{authorfullhash}{49761b2d8905ea2a262c7076dcd0dd8e}
+      \strng{authorfullhashraw}{49761b2d8905ea2a262c7076dcd0dd8e}
+      \field{sortinit}{J}
+      \field{sortinithash}{b2f54a9081ace9966a7cb9413811edb4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{ACM Computing Surveys}
+      \field{number}{12}
+      \field{title}{Survey of Hallucination in Natural Language Generation}
+      \field{volume}{55}
+      \field{year}{2023}
+      \field{pages}{1\bibrangedash 38}
+      \range{pages}{38}
+      \verb{doi}
+      \verb 10.1145/3571730
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/3571730
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/3571730
       \endverb
     \endentry
     \entry{Jurafsky2023_speech_language}{unpublished}{}{}
