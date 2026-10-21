@@ -16,7 +16,8 @@ Ver `proposal.md — Why`. Estado medido el 2026-10-21 sobre
 §1.1 fija el tope sobre el CUERPO ("los anexos no cuentan"). El pedido de este
 change fija el tope sobre el TOTAL (portada e índices incluidos). Se adopta el
 criterio más estricto: **total del PDF <= 100** vía `pdfinfo`, que subsume el tope
-del cuerpo. El conteo se mide siempre sobre `main.pdf`.
+del cuerpo. El conteo se mide siempre sobre `main.pdf`. **Confirmado por el autor el
+2026-10-21: el total debe ser <= 100.**
 
 ## Goals / Non-Goals
 
