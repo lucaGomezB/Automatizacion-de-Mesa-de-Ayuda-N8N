@@ -1,5 +1,5 @@
 \babel@toc {spanish}{}\relax 
-\contentsline {table}{\numberline {1}{\ignorespaces Comparacion de soluciones para gestion automatizada de mesa de ayuda}}{30}{table.caption.2}%
+\contentsline {table}{\numberline {1}{\ignorespaces Comparacion de soluciones para gestion automatizada de mesa de ayuda}}{31}{table.caption.2}%
 \contentsline {table}{\numberline {2}{\ignorespaces Operacionalizacion de variables del estudio}}{34}{table.caption.3}%
 \contentsline {table}{\numberline {3}{\ignorespaces Capas funcionales de la arquitectura del sistema}}{41}{table.caption.4}%
 \contentsline {table}{\numberline {4}{\ignorespaces Entidades principales del modelo de datos}}{48}{table.caption.9}%
@@ -10,4 +10,4 @@
 \contentsline {table}{\numberline {9}{\ignorespaces Métricas de clasificación por clase con intervalo de confianza al 95~\% (una contra el resto)}}{71}{table.caption.17}%
 \contentsline {table}{\numberline {10}{\ignorespaces Exactitud por banda de confianza declarada}}{72}{table.caption.18}%
 \contentsline {table}{\numberline {11}{\ignorespaces Confusiones observadas en la clasificación automática, por frontera}}{73}{table.caption.19}%
-\contentsline {table}{\numberline {12}{\ignorespaces Parámetros de configuración de la inferencia con \texttt {gemini-3.6-flash}.}}{102}{table.caption.22}%
+\contentsline {table}{\numberline {12}{\ignorespaces Parámetros de configuración de la inferencia con \texttt {gemini-3.6-flash}.}}{103}{table.caption.22}%

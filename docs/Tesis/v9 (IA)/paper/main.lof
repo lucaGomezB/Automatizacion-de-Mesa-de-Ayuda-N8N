@@ -6,4 +6,4 @@
 \contentsline {figure}{\numberline {5}{\ignorespaces Diagrama entidad-relación de las siete entidades principales del modelo de datos. El esquema completo se documenta en el Anexo~C.}}{50}{figure.caption.10}%
 \contentsline {figure}{\numberline {6}{\ignorespaces Distribucion del tiempo de registro por canal de origen (manual frente a automatizado). El panel de telefonia incorpora la duracion de la llamada grabada.}}{69}{figure.caption.14}%
 \contentsline {figure}{\numberline {7}{\ignorespaces Matriz de confusion del clasificador (\(n = 200\)). Filas: sector asignado (verdad); columnas: sector predicho principal.}}{70}{figure.caption.16}%
-\contentsline {figure}{\numberline {8}{\ignorespaces Reconstrucción esquemática del flujo de orquestación N8N}}{99}{figure.caption.21}%
+\contentsline {figure}{\numberline {8}{\ignorespaces Reconstrucción esquemática del flujo de orquestación N8N}}{100}{figure.caption.21}%
