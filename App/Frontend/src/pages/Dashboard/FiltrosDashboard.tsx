@@ -7,7 +7,7 @@
  *   los hooks de React Query refetchen los datos.
  */
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { MaskedDateInput } from '@/components/ui/masked-date-input';
 import { cn } from '@/lib/utils';
 import type { AgruparPor } from '@/types/estadisticas';
 
@@ -59,19 +59,17 @@ export function FiltrosDashboard({
       {/* Inputs de rango de fechas */}
       <div className="flex items-center gap-2">
         <label className="text-xs text-muted-foreground">Desde:</label>
-        <Input
-          type="date"
+        <MaskedDateInput
           value={desde}
-          onChange={(e) => onDesdeChange(e.target.value)}
+          onChange={onDesdeChange}
           className="h-9 w-40 text-xs"
         />
       </div>
       <div className="flex items-center gap-2">
         <label className="text-xs text-muted-foreground">Hasta:</label>
-        <Input
-          type="date"
+        <MaskedDateInput
           value={hasta}
-          onChange={(e) => onHastaChange(e.target.value)}
+          onChange={onHastaChange}
           className="h-9 w-40 text-xs"
         />
       </div>
