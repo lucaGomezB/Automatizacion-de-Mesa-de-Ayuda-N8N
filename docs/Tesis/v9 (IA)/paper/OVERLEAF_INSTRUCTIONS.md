@@ -2,7 +2,7 @@
 
 ## Files to Upload
 
-Upload the following from `docs/Tesis/v8 (IA)/`:
+Upload the following from `docs/Tesis/v9 (IA)/`:
 
 1. **main.tex** (from `paper/`)
 2. **Entire `paper/preambles/` folder** (contains `preamble.tex`)
@@ -31,7 +31,7 @@ overleaf-project/
 │   ├── 09-conclusiones.tex
 │   ├── 10-recomendaciones.tex
 │   ├── 11-aspectos-legales.tex
-│   └── 13-anexos.tex
+│   └── 12-anexos.tex
 ```
 
 **CRITICAL**: `Bibliography_base.bib` must be at the same level as `main.tex` (together at project root). The preamble references it as `../Bibliography_base.bib`. If using Overleaf's file picker, ensure the .bib is uploaded to the project root, NOT inside any subfolder.
@@ -69,16 +69,31 @@ The preamble configures **Arial** as the main font. If Arial is not available on
 ## After Successful Compilation
 
 Download the PDF and save it as:
-`docs/Tesis/v8 (IA)/paper/main.pdf`
+`docs/Tesis/v9 (IA)/paper/main.pdf`
 
 ## Alternative: Compile Locally
 
-If you prefer to install MiKTeX or TeX Live locally:
+### Con Docker (recomendado; no requiere instalar TeX)
+
+El repo versiona `docs/Tesis/v9 (IA)/paper/Dockerfile`: una imagen XeLaTeX con las
+fuentes Microsoft core que el preambulo requiere (`Arial`, `Courier New`). Construir
+una vez y compilar:
+
+```bash
+docker build -t texlive-thesis -f "docs/Tesis/v9 (IA)/paper/Dockerfile" "docs/Tesis/v9 (IA)/paper"
+docker run --rm -v "$PWD/docs/Tesis/v9 (IA)":/work -w /work/paper texlive-thesis latexmk main.tex
+```
+
+Se monta el directorio PADRE (`v9 (IA)`) porque `latexmkrc` fija `BIBINPUTS=..//` y
+`Bibliography_base.bib` vive un nivel arriba de `paper/`. `latexmk` ya resuelve los
+pases multiples y biber.
+
+### Con TeX nativo (MiKTeX o TeX Live)
 
 ```bash
 # Install TeX Live (Windows: download from tug.org/texlive)
 # Then compile:
-cd docs/Tesis/v8 (IA)/paper
+cd docs/Tesis/v9 (IA)/paper
 latexmk -xelatex main.tex
 ```
 
