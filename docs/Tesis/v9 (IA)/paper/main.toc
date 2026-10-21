@@ -22,7 +22,7 @@
 \contentsline {subsection}{\numberline {3.1}Soluciones comerciales de mesa de ayuda}{26}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}Plataformas de orquestación de flujos}{27}{subsection.3.2}%
 \contentsline {subsection}{\numberline {3.3}Trabajos académicos previos sobre clasificación de tickets}{28}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}Análisis comparativo y brecha identificada}{29}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.4}Análisis comparativo y brecha identificada}{30}{subsection.3.4}%
 \contentsline {section}{\numberline {4}Marco metodológico}{31}{section.4}%
 \contentsline {subsection}{\numberline {4.1}Enfoque y tipo de investigación}{31}{subsection.4.1}%
 \contentsline {subsection}{\numberline {4.2}Diseño experimental}{31}{subsection.4.2}%
@@ -74,7 +74,7 @@
 \contentsline {section}{\numberline {11}Recomendaciones y líneas de trabajo futuro}{85}{section.11}%
 \contentsline {subsection}{\numberline {11.1}Incorporación de un clasificador supervisado con corpus propio}{85}{subsection.11.1}%
 \contentsline {subsection}{\numberline {11.2}Ampliación de canales de entrada}{85}{subsection.11.2}%
-\contentsline {subsection}{\numberline {11.3}Panel de monitoreo en tiempo real}{85}{subsection.11.3}%
+\contentsline {subsection}{\numberline {11.3}Panel de monitoreo en tiempo real}{86}{subsection.11.3}%
 \contentsline {subsection}{\numberline {11.4}Mecanismos de aprendizaje activo}{86}{subsection.11.4}%
 \contentsline {subsection}{\numberline {11.5}Estudios de replicación}{87}{subsection.11.5}%
 \contentsline {subsection}{\numberline {11.6}Evaluación de modelos de lenguaje de código abierto}{87}{subsection.11.6}%
