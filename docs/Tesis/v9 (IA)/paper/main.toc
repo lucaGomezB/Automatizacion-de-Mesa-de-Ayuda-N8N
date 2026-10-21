@@ -62,7 +62,7 @@
 \contentsline {subsection}{\numberline {8.5}Reflexiones sobre la generalización}{76}{subsection.8.5}%
 \contentsline {section}{\numberline {9}Conclusiones}{77}{section.9}%
 \contentsline {subsection}{\numberline {9.1}Cumplimiento de los objetivos del trabajo}{77}{subsection.9.1}%
-\contentsline {subsection}{\numberline {9.2}Aportes y generalización}{78}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.2}Aportes y generalización}{79}{subsection.9.2}%
 \contentsline {section}{\numberline {10}Recomendaciones y líneas de trabajo futuro}{80}{section.10}%
 \contentsline {subsection}{\numberline {10.1}Incorporación de un clasificador supervisado con corpus propio}{80}{subsection.10.1}%
 \contentsline {subsection}{\numberline {10.2}Ampliación de canales de entrada}{80}{subsection.10.2}%
