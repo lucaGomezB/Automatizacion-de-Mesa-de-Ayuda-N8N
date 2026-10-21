@@ -1054,7 +1054,7 @@
       \verb http://servicios.infoleg.gob.ar/infolegInternet/anexos/60000-64999/64790/norma.htm
       \endverb
     \endentry
-    \entry{Jurafsky2023_speech_language}{book}{}{}
+    \entry{Jurafsky2023_speech_language}{unpublished}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=bd33d7a70284b5ead9c7985cb5c9929c}{%
            family={Jurafsky},
@@ -1087,7 +1087,6 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{edition}{3}
       \field{note}{Borrador de la 3ra edicion, disponible en el sitio de los autores}
       \field{title}{Speech and Language Processing: An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition}
       \field{year}{2023}
@@ -2184,7 +2183,7 @@
       \verb https://fastapi.tiangolo.com/
       \endverb
     \endentry
-    \entry{Touvron2023_llama2}{article}{}{}
+    \entry{Touvron2023_llama2}{misc}{}{}
       \name{author}{68}{}{%
         {{un=0,uniquepart=base,hash=a2a13fcd633ec70c55a7f3f4812afdcf}{%
            family={Touvron},
@@ -2610,12 +2609,17 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{arXiv preprint}
+      \field{eprintclass}{cs.CL}
+      \field{eprinttype}{arXiv}
+      \field{howpublished}{arXiv preprint}
       \field{note}{arXiv:2307.09288}
       \field{title}{Llama 2: Open Foundation and Fine-Tuned Chat Models}
       \field{year}{2023}
       \verb{doi}
       \verb 10.48550/arXiv.2307.09288
+      \endverb
+      \verb{eprint}
+      \verb 2307.09288
       \endverb
     \endentry
     \entry{Vaswani2017_attention}{article}{}{}
@@ -4396,7 +4400,7 @@
       \verb http://servicios.infoleg.gob.ar/infolegInternet/anexos/60000-64999/64790/norma.htm
       \endverb
     \endentry
-    \entry{Jurafsky2023_speech_language}{book}{}{}
+    \entry{Jurafsky2023_speech_language}{unpublished}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=bd33d7a70284b5ead9c7985cb5c9929c}{%
            family={Jurafsky},
@@ -4429,7 +4433,6 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{edition}{3}
       \field{note}{Borrador de la 3ra edicion, disponible en el sitio de los autores}
       \field{title}{Speech and Language Processing: An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition}
       \field{year}{2023}
@@ -5526,7 +5529,7 @@
       \verb https://fastapi.tiangolo.com/
       \endverb
     \endentry
-    \entry{Touvron2023_llama2}{article}{}{}
+    \entry{Touvron2023_llama2}{misc}{}{}
       \name{author}{68}{}{%
         {{un=0,uniquepart=base,hash=a2a13fcd633ec70c55a7f3f4812afdcf}{%
            family={Touvron},
@@ -5952,12 +5955,17 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{arXiv preprint}
+      \field{eprintclass}{cs.CL}
+      \field{eprinttype}{arXiv}
+      \field{howpublished}{arXiv preprint}
       \field{note}{arXiv:2307.09288}
       \field{title}{Llama 2: Open Foundation and Fine-Tuned Chat Models}
       \field{year}{2023}
       \verb{doi}
       \verb 10.48550/arXiv.2307.09288
+      \endverb
+      \verb{eprint}
+      \verb 2307.09288
       \endverb
     \endentry
     \entry{Vaswani2017_attention}{article}{}{}
