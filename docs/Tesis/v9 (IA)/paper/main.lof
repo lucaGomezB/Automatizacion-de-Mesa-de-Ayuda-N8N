@@ -1,9 +1,9 @@
 \babel@toc {spanish}{}\relax 
-\contentsline {figure}{\numberline {1}{\ignorespaces Diagrama de componentes del módulo Python organizado en capas (routes, services, repositories, classifiers).}}{42}{figure.caption.5}%
-\contentsline {figure}{\numberline {2}{\ignorespaces Diagrama de arquitectura del sistema. La version completa en notacion UML se detalla en el Anexo~A y en las fuentes Mermaid del repositorio (\texttt {docs/diagrams/}).}}{43}{figure.caption.6}%
-\contentsline {figure}{\numberline {3}{\ignorespaces Diagrama de despliegue del entorno local. Servicios, red Docker, volumenes y servicios externos.}}{44}{figure.caption.7}%
-\contentsline {figure}{\numberline {4}{\ignorespaces Diagrama de secuencia del flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmacion o la derivacion a revision humana.}}{45}{figure.caption.8}%
-\contentsline {figure}{\numberline {5}{\ignorespaces Diagrama entidad-relación de las siete entidades principales del modelo de datos. El esquema completo se documenta en el Anexo~C.}}{50}{figure.caption.10}%
-\contentsline {figure}{\numberline {6}{\ignorespaces Distribucion del tiempo de registro por canal de origen (manual frente a automatizado). El panel de telefonia incorpora la duracion de la llamada grabada.}}{69}{figure.caption.14}%
-\contentsline {figure}{\numberline {7}{\ignorespaces Matriz de confusion del clasificador (\(n = 200\)). Filas: sector asignado (verdad); columnas: sector predicho principal.}}{70}{figure.caption.16}%
-\contentsline {figure}{\numberline {8}{\ignorespaces Reconstrucción esquemática del flujo de orquestación N8N}}{100}{figure.caption.21}%
+\contentsline {figure}{\numberline {1}{\ignorespaces Diagrama de componentes del módulo Python organizado en capas (routes, services, repositories, classifiers).}}{41}{figure.caption.5}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Diagrama de arquitectura del sistema. La versión completa en notación UML se detalla en el Anexo~A y en las fuentes Mermaid del repositorio (\texttt {docs/diagrams/}).}}{42}{figure.caption.6}%
+\contentsline {figure}{\numberline {3}{\ignorespaces Diagrama de despliegue del entorno local. Servicios, red Docker, volúmenes y servicios externos.}}{43}{figure.caption.7}%
+\contentsline {figure}{\numberline {4}{\ignorespaces Diagrama de secuencia del flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión humana.}}{44}{figure.caption.8}%
+\contentsline {figure}{\numberline {5}{\ignorespaces Diagrama entidad-relación de las siete entidades principales del modelo de datos. El esquema completo se documenta en el Anexo~C.}}{49}{figure.caption.10}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Distribución del tiempo de registro por canal de origen (manual frente a automatizado). El panel de telefonía incorpora la duración de la llamada grabada.}}{68}{figure.caption.14}%
+\contentsline {figure}{\numberline {7}{\ignorespaces Matriz de confusión del clasificador (\(n = 200\)). Filas: sector asignado (verdad); columnas: sector predicho principal.}}{69}{figure.caption.16}%
+\contentsline {figure}{\numberline {8}{\ignorespaces Reconstrucción esquemática del flujo de orquestación N8N}}{99}{figure.caption.21}%

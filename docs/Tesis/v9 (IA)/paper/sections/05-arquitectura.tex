@@ -1,11 +1,11 @@
 %==============================================================================
-% Capitulo 5: Arquitectura del Sistema
+% Capítulo 5: Arquitectura del Sistema
 %==============================================================================
 \section{Arquitectura del sistema}\label{sec:arquitectura}
 
 \subsection{Visión general}\label{subsec:vision-general}
 
-El sistema propuesto se estructura como una arquitectura distribuida y modular compuesta por cinco capas claramente diferenciadas, siguiendo los principios de cohesion alta y acoplamiento bajo descritos por \textcite{Pressman2020_software_engineering}. En el diseño se previó proteger la comunicación con el exterior mediante TLS~1.2/1.3 a nivel de un proxy inverso (Nginx); el despliegue publicado para la validación experimental no incluyó dicho proxy, por lo que la terminación TLS corresponde al diseño y no a una capacidad verificada en la instancia publicada. La comunicación interna entre los servicios del sistema (N8N, backend, PostgreSQL, Redis) se realiza sobre la red aislada de Docker, que constituye el perímetro de confianza. Todas las interfaces entre capas utilizan el estilo arquitectónico REST con cuerpos JSON para el intercambio estructurado de datos \parencite{Fielding2002_rest}. Esta separación de responsabilidades facilita el reemplazo independiente de cualquier componente sin afectar a los demas.
+El sistema propuesto se estructura como una arquitectura distribuida y modular compuesta por cinco capas claramente diferenciadas, siguiendo los principios de cohesión alta y acoplamiento bajo descritos por \textcite{Pressman2020_software_engineering}. En el diseño se previó proteger la comunicación con el exterior mediante TLS~1.2/1.3 a nivel de un proxy inverso (Nginx); el despliegue publicado para la validación experimental no incluyó dicho proxy, por lo que la terminación TLS corresponde al diseño y no a una capacidad verificada en la instancia publicada. La comunicación interna entre los servicios del sistema (N8N, backend, PostgreSQL, Redis) se realiza sobre la red aislada de Docker, que constituye el perímetro de confianza. Todas las interfaces entre capas utilizan el estilo arquitectónico REST con cuerpos JSON para el intercambio estructurado de datos \parencite{Fielding2002_rest}. Esta separación de responsabilidades facilita el reemplazo independiente de cualquier componente sin afectar a los demas.
 
 La Tabla~\ref{tab:capas} sintetiza las cinco capas y sus responsabilidades específicas, y la Figura~\ref{fig:componentes} detalla la organización en capas del módulo de procesamiento.
 
@@ -19,10 +19,10 @@ La Tabla~\ref{tab:capas} sintetiza las cinco capas y sus responsabilidades espec
 \textbf{Capa} & \textbf{Componentes y responsabilidades} \\
 \midrule
 1. Canales de entrada & Casilla de correo electrónico monitoreada mediante IMAP/SMTP, formulario web implementado como SPA React y número virtual de Twilio con transcripción automática del habla. \\
-2. Orquestacion & Motor N8N~2.11.2 desplegado en contenedor Docker autoalojado. Normaliza la entrada y coordina la invocacion a las capas inferiores. \\
-3. Procesamiento & Servicio Python sobre FastAPI~0.115 ejecutado bajo Uvicorn. Aplica clasificador hibrido en dos etapas (reglas + LLM) y expone una API REST documentada con OpenAPI~3.1. \\
-4. Inferencia & Modelo Gemini~3.6 Flash de Google, invocado únicamente cuando el filtro deterministico previo no alcanza el umbral de confianza preestablecido. \\
-5. Persistencia & PostgreSQL~15.5 desplegado en contenedor con volumen persistente y respaldos diarios. Almacena los incidentes y la trazabilidad de cada decision del clasificador. \\
+2. Orquestación & Motor N8N~2.11.2 desplegado en contenedor Docker autoalojado. Normaliza la entrada y coordina la invocación a las capas inferiores. \\
+3. Procesamiento & Servicio Python sobre FastAPI~0.115 ejecutado bajo Uvicorn. Aplica clasificador híbrido en dos etapas (reglas + LLM) y expone una API REST documentada con OpenAPI~3.1. \\
+4. Inferencia & Modelo Gemini~3.6 Flash de Google, invocado únicamente cuando el filtro determinístico previo no alcanza el umbral de confianza preestablecido. \\
+5. Persistencia & PostgreSQL~15.5 desplegado en contenedor con volumen persistente y respaldos diarios. Almacena los incidentes y la trazabilidad de cada decisión del clasificador. \\
 \bottomrule
 \end{tabular}
 \par\smallskip
@@ -36,56 +36,56 @@ La Tabla~\ref{tab:capas} sintetiza las cinco capas y sus responsabilidades espec
 \label{fig:componentes}
 \end{figure}
 
-La trazabilidad operativa se garantiza mediante registros estructurados en cada capa, accesibles desde la capa de orquestación. La Figura~\ref{fig:arquitectura} representa esquematicamente el flujo de información entre capas.
+La trazabilidad operativa se garantiza mediante registros estructurados en cada capa, accesibles desde la capa de orquestación. La Figura~\ref{fig:arquitectura} representa esquemáticamente el flujo de información entre capas.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{arquitectura_sistema}
-\caption{Diagrama de arquitectura del sistema. La version completa en notacion UML se detalla en el Anexo~A y en las fuentes Mermaid del repositorio (\texttt{docs/diagrams/}).}
+\caption{Diagrama de arquitectura del sistema. La versión completa en notación UML se detalla en el Anexo~A y en las fuentes Mermaid del repositorio (\texttt{docs/diagrams/}).}
 \label{fig:arquitectura}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.92\textwidth]{despliegue}
-\caption{Diagrama de despliegue del entorno local. Servicios, red Docker, volumenes y servicios externos.}
+\caption{Diagrama de despliegue del entorno local. Servicios, red Docker, volúmenes y servicios externos.}
 \label{fig:despliegue}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{secuencia}
-\caption{Diagrama de secuencia del flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmacion o la derivacion a revision humana.}
+\caption{Diagrama de secuencia del flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión humana.}
 \label{fig:secuencia}
 \end{figure}
 
 \subsection{Capa de canales de entrada}\label{subsec:capa-canales}
 
-La capa de canales de entrada habilita tres vias paralelas a través de las cuales un usuario puede reportar un incidente. La primera es el correo electrónico, monitoreado mediante IMAP/SMTP que detecta nuevos mensajes en una casilla institucional dedicada. La segunda via es un formulario web implementado como aplicación React de página única (SPA) que se comunica directamente con la API REST del módulo de procesamiento. La autenticación se realiza mediante tokens JWT (JSON Web Tokens) con usuario y contraseña; la autenticación única corporativa (SSO) se prevé como evolución para entornos productivos (\autoref{sec:recomendaciones}). La tercera via es la llamada telefónica, en la cual el usuario marca un número virtual provisto por Twilio, recibe instrucciones por voz pregrabadas y deja su solicitud; la grabación es transcrita automáticamente por el servicio de reconocimiento del habla del proveedor y enviada al flujo N8N mediante webhook posterior al cuelgue. El script TwiML que define el flujo de la llamada —incluyendo el mensaje de bienvenida en español rioplatense y la configuración de grabación— se implementa en el modulo de backend del proyecto (\texttt{app/cost\_guard/twiml.py}), versionado en el repositorio. Esta diversidad de canales amplía la accesibilidad del sistema y reduce las barreras al reporte oportuno.
+La capa de canales de entrada habilita tres vías paralelas a través de las cuales un usuario puede reportar un incidente. La primera es el correo electrónico, monitoreado mediante IMAP/SMTP que detecta nuevos mensajes en una casilla institucional dedicada. La segunda vía es un formulario web implementado como aplicación React de página única (SPA) que se comunica directamente con la API REST del módulo de procesamiento. La autenticación se realiza mediante tokens JWT (JSON Web Tokens) con usuario y contraseña; la autenticación única corporativa (SSO) se prevé como evolución para entornos productivos (\autoref{sec:recomendaciones}). La tercera vía es la llamada telefónica, en la cual el usuario marca un número virtual provisto por Twilio, recibe instrucciones por voz pregrabadas y deja su solicitud; la grabación es transcrita automáticamente por el servicio de reconocimiento del habla del proveedor y enviada al flujo N8N mediante webhook posterior al cuelgue. El script TwiML que define el flujo de la llamada —incluyendo el mensaje de bienvenida en español rioplatense y la configuración de grabación— se implementa en el módulo de backend del proyecto (\texttt{app/cost\_guard/twiml.py}), versionado en el repositorio. Esta diversidad de canales amplía la accesibilidad del sistema y reduce las barreras al reporte oportuno.
 
 \subsection{Capa de orquestación}\label{subsec:capa-orquestacion}
 
-N8N actua como orquestador principal del flujo de trabajo: recibe la entrada de cada canal, la normaliza en una estructura unificada y coordina la clasificación y la persistencia del incidente. La descripción operativa detallada del flujo ---los disparadores por canal, la estructura normalizada con identificador único (UUID v4), la invocación al modulo Python y la persistencia del ticket--- se desarrolla en la \autoref{subsec:construccion-flujo-n8n}. Los registros de cada ejecución se conservan durante 30 días para fines de auditoria y diagnostico operativo; constituyen un conjunto de datos distinto de los incidentes, cuya retención se rige por la política declarada en la \autoref{subsec:principios-datos}.
+N8N actúa como orquestador principal del flujo de trabajo: recibe la entrada de cada canal, la normaliza en una estructura unificada y coordina la clasificación y la persistencia del incidente. La descripción operativa detallada del flujo ---los disparadores por canal, la estructura normalizada con identificador único (UUID v4), la invocación al módulo Python y la persistencia del ticket--- se desarrolla en la \autoref{subsec:construccion-flujo-n8n}. Los registros de cada ejecución se conservan durante 30 días para fines de auditoría y diagnóstico operativo; constituyen un conjunto de datos distinto de los incidentes, cuya retención se rige por la política declarada en la \autoref{subsec:principios-datos}.
 
 \subsection{Capa de procesamiento}\label{subsec:capa-procesamiento}
 
-El modulo de procesamiento se implementó como un servicio web ligero utilizando el marco FastAPI~0.115, expuesto sobre un servidor ASGI Uvicorn 0.30.6 \parencite{Tiangolo2024_fastapi}. La eleccion de FastAPI obedece a su soporte nativo de validación de esquemas mediante Pydantic, su rendimiento competitivo y su documentación automática conforme a la especificación OpenAPI~3.1.
+El módulo de procesamiento se implementó como un servicio web ligero utilizando el marco FastAPI~0.115, expuesto sobre un servidor ASGI Uvicorn 0.30.6 \parencite{Tiangolo2024_fastapi}. La elección de FastAPI obedece a su soporte nativo de validación de esquemas mediante Pydantic, su rendimiento competitivo y su documentación automática conforme a la especificación OpenAPI~3.1.
 
-Las dependencias del modulo se organizan por capas funcionales claramente delimitadas. La capa de acceso a datos utiliza SQLAlchemy~2.0 como mapeador objeto-relacional (ORM) y asyncpg como driver asincrónico para PostgreSQL, en coherencia con la operación no bloqueante de FastAPI. La capa de procesamiento textual emplea las bibliotecas regex y unicodedata de la biblioteca estandar de Python para normalización ortografica y eliminacion de signos diacriticos. La capa de inferencia se comunica con la interfaz oficial del modelo \texttt{gemini-3.6-flash} mediante el cliente google-genai >=2.20.0 (SDK unificado de Google Generative AI), con los siguientes parámetros de configuración: temperatura \(= 0{,}3\), top\_p \(= 0{,}9\), max\_tokens \(= 100\) y timeout \(= 10\)~s. Estos valores corresponden a la configuración adoptada para el despliegue y no a un procedimiento de optimización documentado; su calibración sistemática frente a valores alternativos se plantea como trabajo futuro (\autoref{sec:recomendaciones}). Las bibliotecas NumPy~2.1 y Pandas~2.2 se utilizan exclusivamente para la generación de reportes agregados de desempeño y no participan del flujo de procesamiento individual de incidentes.
+Las dependencias del módulo se organizan por capas funcionales claramente delimitadas. La capa de acceso a datos utiliza SQLAlchemy~2.0 como mapeador objeto-relacional (ORM) y asyncpg como driver asincrónico para PostgreSQL, en coherencia con la operación no bloqueante de FastAPI. La capa de procesamiento textual emplea las bibliotecas regex y unicodedata de la biblioteca estándar de Python para normalización ortográfica y eliminación de signos diacríticos. La capa de inferencia se comunica con la interfaz oficial del modelo \texttt{gemini-3.6-flash} mediante el cliente google-genai >=2.20.0 (SDK unificado de Google Generative AI), con los siguientes parámetros de configuración: temperatura \(= 0{,}3\), top\_p \(= 0{,}9\), max\_tokens \(= 100\) y timeout \(= 10\)~s. Estos valores corresponden a la configuración adoptada para el despliegue y no a un procedimiento de optimización documentado; su calibración sistemática frente a valores alternativos se plantea como trabajo futuro (\autoref{sec:recomendaciones}). Las bibliotecas NumPy~2.1 y Pandas~2.2 se utilizan exclusivamente para la generación de reportes agregados de desempeño y no participan del flujo de procesamiento individual de incidentes.
 
 \subsection{Subsistema de clasificación híbrido}\label{subsec:subsistema-clasificacion}
 
-El subsistema de clasificación adopta un enfoque hibrido en dos etapas, caracteristica que lo diferencia de aproximaciones puramente basadas en modelo externo. La primera etapa aplica un filtro deterministico basado en expresiones regulares y diccionarios de terminos del dominio. Tanto la construcción del filtro deterministico como el ajuste del prompt se realizaron sin acceso al corpus de validación, para evitar fuga de datos (véase \autoref{subsec:interpretacion-resultados}). La especificación detallada del prompt y de los parámetros de configuración del modelo se documenta en el Anexo~H.
+El subsistema de clasificación adopta un enfoque híbrido en dos etapas, característica que lo diferencia de aproximaciones puramente basadas en modelo externo. La primera etapa aplica un filtro determinístico basado en expresiones regulares y diccionarios de términos del dominio. Tanto la construcción del filtro determinístico como el ajuste del prompt se realizaron sin acceso al corpus de validación, para evitar fuga de datos (véase \autoref{subsec:interpretacion-resultados}). La especificación detallada del prompt y de los parámetros de configuración del modelo se documenta en el Anexo~H.
 
-Este filtro es capaz de derivar de forma inmediata aquellos incidentes que contienen marcadores inequivocos. Por ejemplo, la presencia simultanea de las palabras \texttt{impresora}, \texttt{papel} y \texttt{atasco} sugiere con alta certeza una categoría de Soporte Tecnico. Cuando este filtro inicial alcanza un umbral de confianza superior al 90~\%, la decision se toma sin consultar al modelo externo, lo que reduce sustancialmente la latencia y el costo de inferencia.
+Este filtro es capaz de derivar de forma inmediata aquellos incidentes que contienen marcadores inequivocos. Por ejemplo, la presencia simultanea de las palabras \texttt{impresora}, \texttt{papel} y \texttt{atasco} sugiere con alta certeza una categoría de Soporte Técnico. Cuando este filtro inicial alcanza un umbral de confianza superior al 90~\%, la decisión se toma sin consultar al modelo externo, lo que reduce sustancialmente la latencia y el costo de inferencia.
 
-La segunda etapa, activada únicamente cuando el filtro deterministico no alcanza el umbral, consulta al modelo Gemini~3.6 Flash mediante un prompt estructurado en espanol que incluye una breve descripción de cada categoría, ejemplos representativos balanceados y la solicitud explicita de devolver la categoría asignada y un valor numerico de confianza entre 0 y 1 en formato JSON estricto. La justificación de este diseño compositivo radica en aprovechar la rapidez del filtro deterministico para los casos triviales y reservar la capacidad semántica del modelo de lenguaje grande para los casos ambiguos o de redacción atipica, optimizando la relacion entre exactitud, costo y latencia. El pipeline completo comprende tres etapas, aplicadas en orden: (1)~el filtro deterministico, (2)~el modelo Gemini y (3)~una etapa de reserva (\emph{fallback}) que asigna una categoría por defecto y marca el caso para revisión humana cuando las etapas previas no producen una salida válida. El desglose de casos resueltos por cada etapa del pipeline sobre el corpus de validación se reporta en la \autoref{sec:resultados}.
+La segunda etapa, activada únicamente cuando el filtro determinístico no alcanza el umbral, consulta al modelo Gemini~3.6 Flash mediante un prompt estructurado en español que incluye una breve descripción de cada categoría, ejemplos representativos balanceados y la solicitud explícita de devolver la categoría asignada y un valor numérico de confianza entre 0 y 1 en formato JSON estricto. La justificación de este diseño compositivo radica en aprovechar la rapidez del filtro determinístico para los casos triviales y reservar la capacidad semántica del modelo de lenguaje grande para los casos ambiguos o de redacción atípica, optimizando la relación entre exactitud, costo y latencia. El pipeline completo comprende tres etapas, aplicadas en orden: (1)~el filtro determinístico, (2)~el modelo Gemini y (3)~una etapa de reserva (\emph{fallback}) que asigna una categoría por defecto y marca el caso para revisión humana cuando las etapas previas no producen una salida válida. El desglose de casos resueltos por cada etapa del pipeline sobre el corpus de validación se reporta en la \autoref{sec:resultados}.
 
 El camino de clasificación es único para los tres canales de entrada. Tanto el correo electrónico y el formulario web como la llamada telefónica resuelven su sector mediante esta misma cascada híbrida, aplicada sobre la descripción pseudonimizada del incidente: ningún canal aporta una clasificación precalculada que omita la cascada, de modo que las reglas determinísticas, el prompt y las reglas de frontera se ajustan una sola vez para todo el sistema. El prompt único incorpora reglas de desambiguación de frontera entre sectores adyacentes (acceder o iniciar sesión en una aplicación se orienta a Soporte Tecnico Software; la digitalización, el escaner o la impresora se orientan a Soporte Tecnico Hardware; el servidor, la red, SMTP o una VM se orientan a Sistemas), redactadas con los cinco strings canónicos sin tildes. Desde el punto de vista del costo, la clasificación telefónica dejó de computarse sobre una invocación incondicional al modelo externo: el canal atraviesa el filtro determinístico y solo escala al modelo semántico cuando la cascada lo requiere, momento en el cual la reserva de costo se imputa a la superficie de inferencia del backend.
 
 \subsection{Modelo de datos}\label{subsec:modelo-datos}
 
-La persistencia se realiza sobre PostgreSQL~15.5, desplegado en contenedor Docker bajo configuración de respaldo diario y replicación fisica opcional para entornos productivos \parencite{PostgreSQL2024_docs}. El modelo de datos se organiza alrededor de siete entidades principales, descritas en la Tabla~\ref{tab:entidades}.
+La persistencia se realiza sobre PostgreSQL~15.5, desplegado en contenedor Docker bajo configuración de respaldo diario y replicación física opcional para entornos productivos \parencite{PostgreSQL2024_docs}. El modelo de datos se organiza alrededor de siete entidades principales, descritas en la Tabla~\ref{tab:entidades}.
 
 \begin{table}[htbp]
 \centering
@@ -94,14 +94,14 @@ La persistencia se realiza sobre PostgreSQL~15.5, desplegado en contenedor Docke
 \small
 \begin{tabular}{@{}p{2.5cm} >{\raggedright\arraybackslash}p{4.8cm} >{\raggedright\arraybackslash}p{5.5cm}@{}}
 \toprule
-\textbf{Tabla} & \textbf{Atributos clave} & \textbf{Descripcion} \\
+\textbf{Tabla} & \textbf{Atributos clave} & \textbf{Descripción} \\
 \midrule
-\texttt{incidente} & id\_incidente (PK), canal\_origen\_id (FK), id\_sector (FK), id\_estado (FK) & Tabla central: fecha de creacion, descripción cruda pseudonimizada, prioridad, sector asignado y estado actual. \\
-\texttt{sector} & id\_sector (PK), nombre & Catalogo de los cinco sectores canónicos: Seguridad Informática, Soporte Técnico Hardware, Soporte Técnico Software, Bases de Datos y Sistemas. \\
-\texttt{estado} & id\_estado (PK), nombre & Catalogo de estados: nuevo, en proceso, en espera, resuelto y cerrado. \\
-\texttt{canal\_origen} & id (PK), nombre & Catalogo de canales: correo, formulario web y llamada telefonica. \\
-\texttt{clasificacion\_log} & id\_log (PK), id\_incidente (FK), \\ categoría\_predicha, confianza, \\ categoría\_validada & Registro de cada decision del clasificador, con categoría predicha, confianza asociada y categoría validada por el sector responsable. \\
-\texttt{users} & id (PK), username (UNIQUE), hashed\_password, is\_active & Almacena credenciales de operadores para autenticacion JWT. \\
+\texttt{incidente} & id\_incidente (PK), canal\_origen\_id (FK), id\_sector (FK), id\_estado (FK) & Tabla central: fecha de creación, descripción cruda pseudonimizada, prioridad, sector asignado y estado actual. \\
+\texttt{sector} & id\_sector (PK), nombre & Catálogo de los cinco sectores canónicos: Seguridad Informática, Soporte Técnico Hardware, Soporte Técnico Software, Bases de Datos y Sistemas. \\
+\texttt{estado} & id\_estado (PK), nombre & Catálogo de estados: nuevo, en proceso, en espera, resuelto y cerrado. \\
+\texttt{canal\_origen} & id (PK), nombre & Catálogo de canales: correo, formulario web y llamada telefónica. \\
+\texttt{clasificacion\_log} & id\_log (PK), id\_incidente (FK), \\ categoría\_predicha, confianza, \\ categoría\_validada & Registro de cada decisión del clasificador, con categoría predicha, confianza asociada y categoría validada por el sector responsable. \\
+\texttt{users} & id (PK), username (UNIQUE), hashed\_password, is\_active & Almacena credenciales de operadores para autenticación JWT. \\
 \texttt{directorio\_empleado} & id (PK), legajo (UNIQUE), \\ email (UNIQUE), telefono, \\ sector\_id (FK), rol, activo, \\ fecha\_baja, user\_id (FK) & Directorio institucional de empleados para resolución de contacto y notificación. Datos de contacto almacenados en texto plano para su auditabilidad directa; el campo \texttt{rol} distingue usuario final, operador y administrador del directorio. La columna \texttt{fecha\_baja} registra la desactivación y sostiene la retención (relación laboral activa más un año). \\
 \bottomrule
 \end{tabular}
@@ -109,7 +109,7 @@ La persistencia se realiza sobre PostgreSQL~15.5, desplegado en contenedor Docke
 {\footnotesize\textit{Fuente:} elaboración propia.\par}
 \end{table}
 
-El canal de origen constituye una entrada opcional del backend: el esquema de creación de incidentes acepta \texttt{canal\_origen\_id} como campo anulable, de modo que un incidente puede registrarse sin canal conocido. La entidad central \texttt{incidente} referencia mediante claves foraneas a los catalogos de sector, estado y canal de origen, y mantiene una relacion uno a muchos con \texttt{clasificacion\_log} para preservar la trazabilidad histórica de las decisiones del clasificador. El número de incidente que se comunica al usuario corresponde al identificador único del registro, formateado para su legibilidad; la incorporación de un prefijo configurable se prevé como evolución futura (\autoref{sec:recomendaciones}). El esquema completo, incluyendo restricciones de integridad referencial e indices secundarios, se documenta en el Anexo~C. El directorio de empleados (\texttt{directorio\_empleado}) se vincula opcionalmente con la tabla de autenticación mediante \texttt{user\_id} y referencia el catálogo de sectores mediante \texttt{sector\_id}; su campo \texttt{rol} distingue al usuario final, al operador y al administrador del directorio.
+El canal de origen constituye una entrada opcional del backend: el esquema de creación de incidentes acepta \texttt{canal\_origen\_id} como campo anulable, de modo que un incidente puede registrarse sin canal conocido. La entidad central \texttt{incidente} referencia mediante claves foráneas a los catálogos de sector, estado y canal de origen, y mantiene una relación uno a muchos con \texttt{clasificacion\_log} para preservar la trazabilidad histórica de las decisiones del clasificador. El número de incidente que se comunica al usuario corresponde al identificador único del registro, formateado para su legibilidad; la incorporación de un prefijo configurable se prevé como evolución futura (\autoref{sec:recomendaciones}). El esquema completo, incluyendo restricciones de integridad referencial e índices secundarios, se documenta en el Anexo~C. El directorio de empleados (\texttt{directorio\_empleado}) se vincula opcionalmente con la tabla de autenticación mediante \texttt{user\_id} y referencia el catálogo de sectores mediante \texttt{sector\_id}; su campo \texttt{rol} distingue al usuario final, al operador y al administrador del directorio.
 
 \begin{figure}[htbp]
 \centering
@@ -120,7 +120,7 @@ El canal de origen constituye una entrada opcional del backend: el esquema de cr
 
 \subsection{Contrato de la interfaz REST}\label{subsec:contrato-rest}
 
-La interfaz de programacion de aplicaciones expuesta por el modulo Python sigue el estilo arquitectonico REST \parencite{Fielding2002_rest}, con representación de recursos mediante identificadores uniformes, uso semántico de los métodos HTTP estandar y comunicación sin estado del lado del servidor. La autenticacion se realiza mediante tokens JWT (JSON Web Tokens) firmados con HS256, validados en cada solicitud mediante el esquema OAuth2PasswordBearer de FastAPI. La Tabla~\ref{tab:api} sintetiza los principales puntos de entrada.
+La interfaz de programación de aplicaciones expuesta por el módulo Python sigue el estilo arquitectónico REST \parencite{Fielding2002_rest}, con representación de recursos mediante identificadores uniformes, uso semántico de los métodos HTTP estándar y comunicación sin estado del lado del servidor. La autenticación se realiza mediante tokens JWT (JSON Web Tokens) firmados con HS256, validados en cada solicitud mediante el esquema OAuth2PasswordBearer de FastAPI. La Tabla~\ref{tab:api} sintetiza los principales puntos de entrada.
 
 \begin{table}[htbp]
 \centering
@@ -129,10 +129,10 @@ La interfaz de programacion de aplicaciones expuesta por el modulo Python sigue 
 \small
 \begin{tabular}{@{}p{1.8cm} >{\raggedright\arraybackslash}p{5.2cm} p{1.8cm} >{\raggedright\arraybackslash}p{4.8cm}@{}}
 \toprule
-\textbf{Metodo} & \textbf{Ruta} & \textbf{Codigo} & \textbf{Funcion} \\
+\textbf{Método} & \textbf{Ruta} & \textbf{Código} & \textbf{Función} \\
 \midrule
-\multicolumn{4}{@{}l}{\textbf{Autenticacion}} \\
-POST & \texttt{/api/v1/auth/login}, \texttt{/refresh}, \texttt{/logout} & 200 OK & Inicio y renovacion de sesion y cierre de sesion de operadores. \\
+\multicolumn{4}{@{}l}{\textbf{Autenticación}} \\
+POST & \texttt{/api/v1/auth/login}, \texttt{/refresh}, \texttt{/logout} & 200 OK & Inicio y renovación de sesión y cierre de sesión de operadores. \\
 GET & \texttt{/api/v1/auth/me} & 200 OK & Recupera el perfil del operador autenticado. \\
 \midrule
 \multicolumn{4}{@{}l}{\textbf{Incidentes}} \\
@@ -142,20 +142,20 @@ PATCH & \texttt{/api/v1/incidentes/\{id\}} & 200 OK & Actualiza los campos edita
 \midrule
 \multicolumn{4}{@{}l}{\textbf{Clasificaciones}} \\
 GET & \texttt{/api/v1/clasificaciones/incidente/\{id\}} & 200 OK & Recupera la trazabilidad de la clasificación de un incidente. \\
-GET & \texttt{/api/v1/clasificaciones/revision-pendiente} & 200 OK & Lista los casos derivados a revision humana. \\
+GET & \texttt{/api/v1/clasificaciones/revision-pendiente} & 200 OK & Lista los casos derivados a revisión humana. \\
 PATCH & \texttt{/api/v1/clasificaciones/\{log\_id\}/validar} & 200 OK & Registra la categoría validada por el sector responsable. \\
 \midrule
-\multicolumn{4}{@{}l}{\textbf{Estadisticas}} \\
+\multicolumn{4}{@{}l}{\textbf{Estadísticas}} \\
 GET & \texttt{/api/v1/estadisticas/resumen}, \texttt{/tendencias} & 200 OK & Agregados y series temporales para el dashboard. \\
 \midrule
 \multicolumn{4}{@{}l}{\textbf{Salud}} \\
-GET & \texttt{/health} y \texttt{/health/db} & 200 OK & Verificacion de salud del servicio para monitoreo externo. \\
+GET & \texttt{/health} y \texttt{/health/db} & 200 OK & Verificación de salud del servicio para monitoreo externo. \\
 \bottomrule
 \end{tabular}
 \par\smallskip
 {\footnotesize\textit{Fuente:} elaboración propia.\par}
 \end{table}
 
-Los códigos de estado HTTP se utilizan conforme a su semántica original: 201 cuando un recurso se crea exitosamente, 200 cuando una consulta se atiende con éxito, 400 cuando los datos de entrada no validan el esquema esperado, 401 cuando la autenticacion falla, y 500 cuando ocurre un error interno no recuperable. La Tabla~\ref{tab:api} no es exhaustiva: reúne los grupos principales de puntos de entrada, mientras que el contrato completo de la interfaz ---que comprende la totalidad de las rutas expuestas--- se documenta en el Anexo~D y se versiona en \texttt{docs/openapi.json}; la especificación OpenAPI~3.1 la genera FastAPI automáticamente.
+Los códigos de estado HTTP se utilizan conforme a su semántica original: 201 cuando un recurso se crea exitosamente, 200 cuando una consulta se atiende con éxito, 400 cuando los datos de entrada no validan el esquema esperado, 401 cuando la autenticación falla, y 500 cuando ocurre un error interno no recuperable. La Tabla~\ref{tab:api} no es exhaustiva: reúne los grupos principales de puntos de entrada, mientras que el contrato completo de la interfaz ---que comprende la totalidad de las rutas expuestas--- se documenta en el Anexo~D y se versiona en \texttt{docs/openapi.json}; la especificación OpenAPI~3.1 la genera FastAPI automáticamente.
 
 \newpage
