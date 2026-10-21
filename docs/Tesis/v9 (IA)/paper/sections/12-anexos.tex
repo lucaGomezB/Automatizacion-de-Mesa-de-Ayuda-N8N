@@ -61,9 +61,7 @@ Por razones de privacidad y en cumplimiento de la Ley~25.326 \parencite{Ley25326
 
 \section{Documentación operativa}\label{sec:anexo-documentacion-operativa}
 
-La documentación operativa del sistema describe los procedimientos de despliegue inicial, configuración recurrente, respaldo y restauración, monitoreo activo y respuesta ante incidentes operativos. Se incluyen instrucciones detalladas para los entornos de desarrollo, preproducción y producción, así como una guía de resolución de incidencias frecuentes orientada al personal de operaciones de la organización adoptante. La documentación se mantiene actualizada en el repositorio del proyecto y se versiona conjuntamente con el código fuente, garantizando coherencia entre la versión desplegada y los procedimientos vigentes en cada momento del ciclo de vida del sistema.
-
-El runbook operativo (\texttt{docs/operational-guide.md}) se organiza en una sección de prerequisitos y once secciones de procedimiento: despliegue inicial (clonado del repositorio, configuración de variables de entorno, certificados TLS, arranque del stack, verificación de salud, importación del flujo N8N y acceso al frontend), detención y reinicio de los servicios, respaldo y restauración de PostgreSQL, monitoreo de salud (endpoints, contenedores, logs estructurados y cola de revisión humana), regeneración de la especificación OpenAPI, actualización de dependencias del backend, aplicación manual de migraciones Alembic, evaluación del clasificador, arnés de ejecución en seco (\emph{dry-run}), medición de latencia end-to-end y guarda de costo en runtime (postura al arranque, \emph{enforcement}, política \emph{fail-closed} y reproducibilidad de la suite de integración).
+La documentación operativa del sistema, que reúne los procedimientos de despliegue, configuración, respaldo y restauración, monitoreo y respuesta ante incidentes operativos, se versiona en el repositorio junto con el código fuente; el runbook operativo reside en \texttt{docs/operational-guide.md}.
 
 \section{Especificación del prompt de Gemini 3.6 Flash}
 \label{anexo:H}
