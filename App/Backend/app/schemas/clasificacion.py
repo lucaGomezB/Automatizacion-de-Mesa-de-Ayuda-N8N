@@ -59,8 +59,18 @@ class ClasificacionResult(BaseModel):
 
     Invariantes del sistema:
         - Si etapa == "fallback": confianza == 0.0 y requiere_revision_humana == True.
-        - Si confianza < 0.70:    requiere_revision_humana debe ser True.
-        - Si confianza >= 0.90 y etapa == "deterministic": Gemini no fue invocado.
+        - confianza es la fuerza de senal reportada (ASG-009), NO un criterio de
+          seleccion ni una probabilidad calibrada. El umbral de revision humana
+          (0.70) aplica a la etapa Gemini (confianza < 0.70 => revision humana) y
+          al fallback.
+        - El cortocircuito deterministico esta exceptuado (c-74, D1): la etapa
+          "deterministic" emite siempre requiere_revision_humana == False, aun con
+          confianza < 0.70 (incluida confianza == 0.0 cuando no hay senal). Que se
+          omita Gemini lo decide score_correctitud >= punto de operacion, no la
+          confianza.
+        - El flag final puede ser forzado por el servicio de incidentes, p. ej.
+          por reportante no identificado (VIS-005), independientemente del flag
+          que traiga este DTO.
     """
 
     sector_predicho: str | None                         # Sector principal; None si no hay senal
