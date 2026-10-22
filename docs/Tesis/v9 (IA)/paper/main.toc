@@ -50,55 +50,55 @@
 \contentsline {subsection}{\numberline {6.6}Conexión con el proceso Scrumban}{57}{subsection.6.6}%
 \contentsline {subsection}{\numberline {6.7}Pruebas automatizadas}{58}{subsection.6.7}%
 \contentsline {subsection}{\numberline {6.8}Dashboard de analítica}{59}{subsection.6.8}%
-\contentsline {section}{\numberline {7}Consideraciones éticas y aspectos legales}{61}{section.7}%
-\contentsline {subsection}{\numberline {7.1}Marco normativo aplicable}{61}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}Principios aplicados al tratamiento de datos}{61}{subsection.7.2}%
-\contentsline {subsection}{\numberline {7.3}Transferencia internacional y pseudonimización}{62}{subsection.7.3}%
-\contentsline {subsection}{\numberline {7.4}Seguridad técnica}{63}{subsection.7.4}%
-\contentsline {subsection}{\numberline {7.5}Consentimiento, derechos del usuario y supervisión humana}{63}{subsection.7.5}%
-\contentsline {section}{\numberline {8}Cumplimiento normativo y alineación con estándares}{64}{section.8}%
-\contentsline {subsection}{\numberline {8.1}Marco de referencia adoptado}{64}{subsection.8.1}%
-\contentsline {subsection}{\numberline {8.2}Estado de alineación con ISO/IEC 27002:2022}{65}{subsection.8.2}%
-\contentsline {subsection}{\numberline {8.3}Perfil de alineación con NIST CSF 2.0}{65}{subsection.8.3}%
-\contentsline {subsection}{\numberline {8.4}Brechas principales y hoja de ruta}{65}{subsection.8.4}%
-\contentsline {subsection}{\numberline {8.5}Alineación con el marco legal}{66}{subsection.8.5}%
-\contentsline {section}{\numberline {9}Resultados}{67}{section.9}%
-\contentsline {subsection}{\numberline {9.1}Comparación de tiempos de registro}{67}{subsection.9.1}%
-\contentsline {subsection}{\numberline {9.2}Matriz de confusión y métricas de clasificación}{68}{subsection.9.2}%
-\contentsline {subsection}{\numberline {9.3}Reducción de la intervención humana}{71}{subsection.9.3}%
-\contentsline {subsection}{\numberline {9.4}Calibración de la confianza}{72}{subsection.9.4}%
-\contentsline {subsection}{\numberline {9.5}Análisis de errores y casos límite}{72}{subsection.9.5}%
-\contentsline {section}{\numberline {10}Discusión}{74}{section.10}%
-\contentsline {subsection}{\numberline {10.1}Interpretación de los resultados}{74}{subsection.10.1}%
-\contentsline {subsection}{\numberline {10.2}Comparación con la literatura}{76}{subsection.10.2}%
-\contentsline {subsection}{\numberline {10.3}Limitaciones del estudio}{77}{subsection.10.3}%
-\contentsline {subsection}{\numberline {10.4}Implicancias prácticas}{79}{subsection.10.4}%
-\contentsline {subsection}{\numberline {10.5}Reflexiones sobre la generalización}{80}{subsection.10.5}%
-\contentsline {section}{\numberline {11}Conclusiones}{81}{section.11}%
-\contentsline {subsection}{\numberline {11.1}Cumplimiento de los objetivos del trabajo}{81}{subsection.11.1}%
-\contentsline {subsection}{\numberline {11.2}Aportes y generalización}{83}{subsection.11.2}%
-\contentsline {section}{\numberline {12}Recomendaciones y líneas de trabajo futuro}{84}{section.12}%
-\contentsline {subsection}{\numberline {12.1}Incorporación de un clasificador supervisado con corpus propio}{84}{subsection.12.1}%
-\contentsline {subsection}{\numberline {12.2}Ampliación de canales de entrada}{84}{subsection.12.2}%
-\contentsline {subsection}{\numberline {12.3}Panel de monitoreo en tiempo real}{85}{subsection.12.3}%
-\contentsline {subsection}{\numberline {12.4}Mecanismos de aprendizaje activo}{85}{subsection.12.4}%
-\contentsline {subsection}{\numberline {12.5}Estudios de replicación}{85}{subsection.12.5}%
-\contentsline {subsection}{\numberline {12.6}Evaluación de modelos de lenguaje de código abierto}{86}{subsection.12.6}%
-\contentsline {subsection}{\numberline {12.7}Base de conocimientos para resolución automática}{86}{subsection.12.7}%
-\contentsline {subsection}{\numberline {12.8}Agente conversacional telefónico en tiempo real}{87}{subsection.12.8}%
-\contentsline {section}{Referencias bibliograficas}{88}{subsection.12.8}%
-\contentsline {section}{Appendices}{94}{section*.24}%
-\contentsline {section}{\numberline {A}Diagrama de arquitectura del sistema}{94}{section.1.A}%
-\contentsline {section}{\numberline {B}Repositorio de código fuente}{94}{section.1.B}%
-\contentsline {section}{\numberline {C}Esquema de base de datos}{95}{section.1.C}%
-\contentsline {section}{\numberline {D}Especificación OpenAPI de la interfaz REST}{95}{section.1.D}%
-\contentsline {section}{\numberline {E}Configuración del flujo N8N}{96}{section.1.E}%
-\contentsline {section}{\numberline {F}Corpus de validación}{97}{section.1.F}%
-\contentsline {section}{\numberline {G}Documentación operativa}{98}{section.1.G}%
-\contentsline {section}{\numberline {H}Especificación del prompt de Gemini 3.6 Flash}{98}{section.1.H}%
-\contentsline {subsection}{\numberline {H.1}Estructura y contenido del prompt}{98}{subsection.1.H.1}%
-\contentsline {subsection}{\numberline {H.2}Parámetros de configuración}{99}{subsection.1.H.2}%
-\contentsline {subsection}{\numberline {H.3}Validación de la respuesta}{99}{subsection.1.H.3}%
-\contentsline {subsection}{\numberline {H.4}Iteración y mejora del prompt}{100}{subsection.1.H.4}%
-\contentsline {subsection}{\numberline {H.5}Recomendaciones para futuras iteraciones}{100}{subsection.1.H.5}%
-\contentsline {section}{\numberline {I}Trazabilidad de las correcciones del dictamen}{101}{section.1.I}%
+\contentsline {section}{\numberline {7}Consideraciones éticas y aspectos legales}{62}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Marco normativo aplicable}{62}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Principios aplicados al tratamiento de datos}{62}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Transferencia internacional y pseudonimización}{63}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Seguridad técnica}{64}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}Consentimiento, derechos del usuario y supervisión humana}{64}{subsection.7.5}%
+\contentsline {section}{\numberline {8}Cumplimiento normativo y alineación con estándares}{65}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Marco de referencia adoptado}{65}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Estado de alineación con ISO/IEC 27002:2022}{66}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Perfil de alineación con NIST CSF 2.0}{66}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Brechas principales y hoja de ruta}{66}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Alineación con el marco legal}{67}{subsection.8.5}%
+\contentsline {section}{\numberline {9}Resultados}{68}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Comparación de tiempos de registro}{68}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Matriz de confusión y métricas de clasificación}{69}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Reducción de la intervención humana}{72}{subsection.9.3}%
+\contentsline {subsection}{\numberline {9.4}Calibración de la confianza}{73}{subsection.9.4}%
+\contentsline {subsection}{\numberline {9.5}Análisis de errores y casos límite}{73}{subsection.9.5}%
+\contentsline {section}{\numberline {10}Discusión}{75}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Interpretación de los resultados}{75}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Comparación con la literatura}{77}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}Limitaciones del estudio}{78}{subsection.10.3}%
+\contentsline {subsection}{\numberline {10.4}Implicancias prácticas}{80}{subsection.10.4}%
+\contentsline {subsection}{\numberline {10.5}Reflexiones sobre la generalización}{81}{subsection.10.5}%
+\contentsline {section}{\numberline {11}Conclusiones}{82}{section.11}%
+\contentsline {subsection}{\numberline {11.1}Cumplimiento de los objetivos del trabajo}{82}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}Aportes y generalización}{84}{subsection.11.2}%
+\contentsline {section}{\numberline {12}Recomendaciones y líneas de trabajo futuro}{85}{section.12}%
+\contentsline {subsection}{\numberline {12.1}Incorporación de un clasificador supervisado con corpus propio}{85}{subsection.12.1}%
+\contentsline {subsection}{\numberline {12.2}Ampliación de canales de entrada}{85}{subsection.12.2}%
+\contentsline {subsection}{\numberline {12.3}Panel de monitoreo en tiempo real}{86}{subsection.12.3}%
+\contentsline {subsection}{\numberline {12.4}Mecanismos de aprendizaje activo}{86}{subsection.12.4}%
+\contentsline {subsection}{\numberline {12.5}Estudios de replicación}{86}{subsection.12.5}%
+\contentsline {subsection}{\numberline {12.6}Evaluación de modelos de lenguaje de código abierto}{87}{subsection.12.6}%
+\contentsline {subsection}{\numberline {12.7}Base de conocimientos para resolución automática}{87}{subsection.12.7}%
+\contentsline {subsection}{\numberline {12.8}Agente conversacional telefónico en tiempo real}{88}{subsection.12.8}%
+\contentsline {section}{Referencias bibliograficas}{89}{subsection.12.8}%
+\contentsline {section}{Appendices}{95}{section*.26}%
+\contentsline {section}{\numberline {A}Diagrama de arquitectura del sistema}{95}{section.1.A}%
+\contentsline {section}{\numberline {B}Repositorio de código fuente}{95}{section.1.B}%
+\contentsline {section}{\numberline {C}Esquema de base de datos}{96}{section.1.C}%
+\contentsline {section}{\numberline {D}Especificación OpenAPI de la interfaz REST}{96}{section.1.D}%
+\contentsline {section}{\numberline {E}Configuración del flujo N8N}{97}{section.1.E}%
+\contentsline {section}{\numberline {F}Corpus de validación}{98}{section.1.F}%
+\contentsline {section}{\numberline {G}Documentación operativa}{99}{section.1.G}%
+\contentsline {section}{\numberline {H}Especificación del prompt de Gemini 3.6 Flash}{99}{section.1.H}%
+\contentsline {subsection}{\numberline {H.1}Estructura y contenido del prompt}{99}{subsection.1.H.1}%
+\contentsline {subsection}{\numberline {H.2}Parámetros de configuración}{100}{subsection.1.H.2}%
+\contentsline {subsection}{\numberline {H.3}Validación de la respuesta}{100}{subsection.1.H.3}%
+\contentsline {subsection}{\numberline {H.4}Iteración y mejora del prompt}{101}{subsection.1.H.4}%
+\contentsline {subsection}{\numberline {H.5}Recomendaciones para futuras iteraciones}{101}{subsection.1.H.5}%
+\contentsline {section}{\numberline {I}Trazabilidad de las correcciones del dictamen}{102}{section.1.I}%
