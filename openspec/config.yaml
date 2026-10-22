@@ -45,6 +45,6 @@ conventions:
 context_files:
   roadmap: CHANGES.md
   knowledge_base: knowledge-base/
-  thesis: docs/Tesis/v10 (IA)/tesis_completa_extraida.txt
+  thesis: docs/Tesis/v10 (IA)/tesis_para_agente.md
   gemini_spec: docs/anexo_h_prompt_gemini.md
   rules: CLAUDE.md
