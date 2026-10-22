@@ -191,6 +191,7 @@ Cubierto por P1.0/P1 (declarar redondeo al alza + cota de sensibilidad; números
 
 - **Decisiones OQ (c-77, 2026-10-09)**: OQ1=c (rank-biserial directo `r=(T+−T−)/(n(n+1)/2)`), OQ2=c (retirar la sub-pregunta de exactitud humana y reformular H1), OQ3=b (reescribir 6.5 como limitación), OQ4=a (redacción condicional Nginx/TLS), OQ5=b (alinear tesis a 5 sectores), OQ6=diferido (tag).
 - **Acción diferida (OQ6)**: al **terminar** las correcciones (c-76 + c-77), crear el tag **`v1.0.0`** sobre el commit entregado al jurado y consignar el **hash completo** en el Anexo B de la tesis.
+- **OQ6 CERRADO (c-111, 2026-10-21)**: el tag anotado **`v1.0.0`** se creó sobre el commit **`61a6b117dd1321fbee25f9792d9f29b884e5ac8d`** y se publicó en `origin` (`git ls-remote --tags` lo devuelve). El hash completo quedó consignado en el Anexo B de la tesis (`12-anexos.tex`, §Repositorio de código fuente).
 - Este registro es acumulativo. Las correcciones que dependan de decisiones o de
   trabajo mayor (reescritura de capítulos) quedan en "Pendientes" hasta aplicarse.
 
