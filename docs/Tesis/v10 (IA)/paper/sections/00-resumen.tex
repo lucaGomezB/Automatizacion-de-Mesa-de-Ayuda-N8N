@@ -1,0 +1,36 @@
+%==============================================================================
+% Resumen — APA 7: máximo 250 palabras + palabras clave
+%==============================================================================
+\newpage
+\section*{Resumen}
+
+La digitalización de los procesos organizacionales incrementa la dependencia de los sistemas informáticos y la criticidad de la gestión de incidentes. En muchas organizaciones medianas el registro inicial aún es manual, lo que genera demoras, errores de clasificación y uso ineficiente de recursos técnicos.
+
+Esta investigación diseña, implementa y valida un sistema automatizado de mesa de ayuda que integra orquestación con N8N, un módulo de lenguaje natural en Python con FastAPI, inferencia con Gemini~3.6 Flash, persistencia PostgreSQL y telefonía con Twilio. Recibe solicitudes por correo electrónico, formulario web y teléfono, y deriva cada incidente a uno de los cinco sectores canónicos mediante un clasificador híbrido de reglas determinísticas y un modelo de lenguaje grande.
+
+El estudio adopta un enfoque cuantitativo cuasiexperimental de muestras pareadas sobre los mismos 200 casos, con muestreo estratificado. El doble etiquetado independiente alcanzó un Kappa de Cohen de 0,87.
+
+Los resultados evidencian una reducción estadísticamente significativa del tiempo medio de registro, de 61,6~s a 17,76~s (71,2~\%). La prueba de Wilcoxon arrojó \(W = 363\) y un tamaño del efecto \(r = 0{,}9639\). La exactitud estricta alcanzó 73,5~\% y el macro-F1 de cinco clases, 0,5207. El estado de la hipótesis principal se declara por sub-hipótesis: se confirma en la reducción del tiempo de registro, se refuta en el umbral de clasificación y la sub-hipótesis de intervención humana por caso se declara no contrastada por ausencia de registro primario.
+
+Los hallazgos confirman la viabilidad técnica, económica y operativa de automatizar el registro de tickets en organizaciones medianas, y aportan una arquitectura reproducible y evidencia empírica sobre modelos de lenguaje grandes en español rioplatense.
+
+\bigskip
+\noindent\textbf{Palabras clave:} automatización, mesa de ayuda, procesamiento de lenguaje natural, modelo de lenguaje grande, N8N, FastAPI, clasificación de tickets, español rioplatense, human in the loop
+
+\newpage
+\section*{Abstract}
+
+The digitalization of organizational processes increases dependence on information systems and, with it, the criticality of incident management. In many medium-sized organizations, initial incident registration is still performed manually, introducing delays, classification errors, and inefficient use of technical resources.
+
+This thesis designs, implements, and validates an automated help desk system integrating N8N workflow orchestration, a Python natural language processing module built with FastAPI, inference through the Gemini~3.6 Flash model, PostgreSQL persistence, and a telephony channel managed by Twilio. It receives requests through email, web form, and phone calls with automatic transcription, and routes each incident to one of the five canonical sectors using a hybrid classifier that combines deterministic rules with a large language model.
+
+The study adopts a quantitative approach with a quasi-experimental paired-samples design over the same 200 cases, drawn by proportional stratified sampling. Independent double labeling reached a Cohen's Kappa of 0.87.
+
+Results show a statistically significant reduction in mean registration time, from 61.6~s to 17.76~s (71.2~\%). The Wilcoxon signed-rank test yielded \(W = 363\) with an effect size \(r = 0.9639\). Strict classification accuracy reached 73.5~\% and the five-class macro-F1 was 0.5207. The state of the main hypothesis is declared per sub-hypothesis: it is confirmed in registration time, refuted in the classification threshold, and not tested due to the absence of a primary record for per-case human intervention.
+
+The findings confirm the technical, economic, and operational feasibility of automating ticket registration in medium-sized organizations, and provide a reproducible architecture and empirical evidence on large language models in Rioplatense Spanish.
+
+\bigskip
+\noindent\textbf{Keywords:} automation, help desk, natural language processing, large language model, N8N, FastAPI, ticket classification, Rioplatense Spanish, human in the loop
+
+\newpage

@@ -1,0 +1,73 @@
+/*-- scss:defaults --*/
+
+// Typography
+$presentation-font-size-root: 36px;
+$presentation-heading-color: #1a1a36;
+$presentation-heading-font: 'Source Sans Pro', 'Helvetica Neue', Helvetica, sans-serif;
+$body-bg: #ffffff;
+$body-color: #2a2a2a;
+$link-color: #007fff;
+
+// Code blocks
+$code-block-bg: #f5f5f5;
+$code-color: #2a2a2a;
+
+/*-- scss:rules --*/
+
+// Highlighted results — use with [text]{.result}
+.result {
+  color: #007fff;
+  font-weight: bold;
+  font-size: 1.3em;
+}
+
+// Slide numbers
+.reveal .slide-number {
+  font-size: 0.6em;
+  color: #888;
+}
+
+// Tables — academic style matching booktabs
+.reveal table {
+  border-collapse: collapse;
+  margin: 0 auto;
+  font-size: 0.7em;
+}
+
+.reveal table thead th {
+  border-top: 2px solid #2a2a2a;
+  border-bottom: 1px solid #2a2a2a;
+  padding: 0.4em 0.8em;
+  font-weight: bold;
+}
+
+.reveal table tbody td {
+  padding: 0.3em 0.8em;
+  border: none;
+}
+
+.reveal table tbody tr:last-child td {
+  border-bottom: 2px solid #2a2a2a;
+}
+
+// Section title slides
+.reveal .slide-background[data-background-color="#1a1a36"] {
+  color: #ffffff;
+}
+
+// Speaker notes reminder
+.reveal .notes {
+  font-size: 0.9em;
+}
+
+// Backup slide header styling
+.reveal .slide[data-visibility="hidden"] {
+  display: block;
+}
+
+// Figure captions
+.reveal figcaption {
+  font-size: 0.6em;
+  color: #666;
+  margin-top: 0.5em;
+}
