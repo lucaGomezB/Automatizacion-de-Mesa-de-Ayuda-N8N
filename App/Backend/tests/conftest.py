@@ -853,3 +853,77 @@ async def seed_pg_catalogs(pg_engine):
             "canal_formulario": canales["formulario web"],
             "canal_llamada": canales["llamada telefónica"],
         }
+
+
+@pytest.fixture
+def make_pg_client_with_classifier(pg_engine):
+    """Factory de clientes HTTP sobre PostgreSQL con clasificador doble.
+
+    Replica los overrides de `pg_client` (motor PostgreSQL, autenticacion
+    bypass, alcance GLOBAL, `cost_guard` None, `notify_n8n` mockeado) y agrega
+    el override de `get_incidente_service` para construir un `IncidenteService`
+    cuyo clasificador es un `AsyncMock` que devuelve el `ClasificacionResult`
+    dado. De este modo los tests de integracion PostgreSQL que crean incidentes
+    via API quedan aislados del servicio externo de Gemini.
+
+    Uso en tests:
+        async with make_pg_client_with_classifier(result) as c:
+            response = await c.post(...)
+
+    Args:
+        result: ClasificacionResult que el clasificador doble debe devolver.
+
+    Returns:
+        AsyncContextManager que provee el cliente listo para usar.
+    """
+    from contextlib import asynccontextmanager
+
+    @asynccontextmanager
+    async def _make(result: ClasificacionResult):
+        app = create_app()
+
+        async def override_db():
+            """Override get_db_session to use the PostgreSQL engine."""
+            factory = async_sessionmaker(pg_engine, expire_on_commit=False)
+            async with factory() as session:
+                try:
+                    yield session
+                    await session.commit()
+                except Exception:
+                    await session.rollback()
+                    raise
+
+        def _build_service_override(classification_result: ClasificacionResult):
+            """Crea el factory de servicio con el clasificador doble."""
+            async def _factory(session: AsyncSession = Depends(get_db_session)):
+                fake_classifier = AsyncMock()
+                fake_classifier.classify = AsyncMock(return_value=classification_result)
+                return IncidenteService(session, classifier=fake_classifier)
+            return _factory
+
+        app.dependency_overrides[get_db_session] = override_db
+        app.dependency_overrides[get_incidente_service] = _build_service_override(result)
+
+        # Bypass de autenticacion — mismo mock que en el fixture pg_client
+        async def override_auth():
+            return User(id=1, username="test_user", hashed_password="", is_active=True)
+        app.dependency_overrides[get_current_user] = override_auth
+        # Visibilidad por rol (c-54): los tests heredados conservan alcance global.
+        app.dependency_overrides[get_alcance_incidentes] = lambda: AlcanceIncidentes(ModoAlcance.GLOBAL)
+
+        # Guarda de costo deshabilitada por defecto en la suite offline.
+        app.dependency_overrides[get_cost_guard] = lambda: None
+
+        with patch(
+            "app.services.incidente_service.notify_n8n",
+            new_callable=AsyncMock,
+        ):
+            async with AsyncClient(
+                transport=ASGITransport(app=app),
+                base_url="http://test",
+            ) as ac:
+                yield ac
+                # Drenar tareas fire-and-forget pendientes
+                await asyncio.sleep(0)
+
+    return _make
