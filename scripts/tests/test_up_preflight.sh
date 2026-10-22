@@ -9,6 +9,8 @@
 #   - placeholder GEMINI_API_KEY    -> non-zero exit, variable named, no secret
 #   - placeholder PSEUDONYMIZATION_ENCRYPTION_KEY -> non-zero exit, no secret
 #   - missing/empty/placeholder JWT_SECRET_KEY -> non-zero exit, variable named
+#   - missing/empty/placeholder COST_GUARD_CALLER_HMAC_KEY (c-66, obligatoria en
+#     Settings) -> non-zero exit, variable named, no Docker
 #   - empty required variable       -> non-zero exit, variable named
 #   - valid values                  -> preflight passes, no secret value printed
 #   - custom placeholder defined in .env.example is detected (triangulation)
@@ -60,6 +62,10 @@ assert_nonzero() {
     if [ "$1" -ne 0 ]; then pass "$2"; else fail "$2 (exit code was 0)"; fi
 }
 
+assert_equal() {
+    if [ "$1" = "$2" ]; then pass "$3"; else fail "$3 (expected $2, got $1)"; fi
+}
+
 assert_zero() {
     if [ "$1" -eq 0 ]; then pass "$2"; else fail "$2 (exit code was $1)"; fi
 }
@@ -79,6 +85,7 @@ cat > "$EXAMPLE" <<'EOF'
 GEMINI_API_KEY=your-gemini-api-key-here
 PSEUDONYMIZATION_ENCRYPTION_KEY=your-fernet-key-here
 JWT_SECRET_KEY=your-jwt-secret-key-here
+COST_GUARD_CALLER_HMAC_KEY=your-cost-guard-hmac-key-here
 EOF
 
 VALID="${WORK}/valid.env"
@@ -86,6 +93,7 @@ cat > "$VALID" <<EOF
 GEMINI_API_KEY=real-gemini-$SECRET_SENTINEL
 PSEUDONYMIZATION_ENCRYPTION_KEY=real-fernet-$SECRET_SENTINEL
 JWT_SECRET_KEY=real-jwt-$SECRET_SENTINEL
+COST_GUARD_CALLER_HMAC_KEY=real-hmac-$SECRET_SENTINEL
 EOF
 
 PLACEHOLDER_GEMINI="${WORK}/placeholder-gemini.env"
@@ -137,6 +145,32 @@ GEMINI_API_KEY=your-gemini-api-key-here
 PSEUDONYMIZATION_ENCRYPTION_KEY=your-fernet-key-here
 EOF
 
+# c-66: COST_GUARD_CALLER_HMAC_KEY es obligatoria en el backend (Settings sin
+# default). Con las otras tres claves validas pero SIN esta, el backend entraria
+# en restart loop; el preflight debe cortar antes de levantar Docker.
+MISSING_HMAC="${WORK}/missing-hmac.env"
+cat > "$MISSING_HMAC" <<EOF
+GEMINI_API_KEY=real-gemini-$SECRET_SENTINEL
+PSEUDONYMIZATION_ENCRYPTION_KEY=real-fernet-$SECRET_SENTINEL
+JWT_SECRET_KEY=real-jwt-$SECRET_SENTINEL
+EOF
+
+EMPTY_HMAC="${WORK}/empty-hmac.env"
+cat > "$EMPTY_HMAC" <<EOF
+GEMINI_API_KEY=real-gemini-$SECRET_SENTINEL
+PSEUDONYMIZATION_ENCRYPTION_KEY=real-fernet-$SECRET_SENTINEL
+JWT_SECRET_KEY=real-jwt-$SECRET_SENTINEL
+COST_GUARD_CALLER_HMAC_KEY=
+EOF
+
+PLACEHOLDER_HMAC="${WORK}/placeholder-hmac.env"
+cat > "$PLACEHOLDER_HMAC" <<EOF
+GEMINI_API_KEY=real-gemini-$SECRET_SENTINEL
+PSEUDONYMIZATION_ENCRYPTION_KEY=real-fernet-$SECRET_SENTINEL
+JWT_SECRET_KEY=real-jwt-$SECRET_SENTINEL
+COST_GUARD_CALLER_HMAC_KEY=your-cost-guard-hmac-key-here
+EOF
+
 MISSING="${WORK}/does-not-exist.env"
 
 CUSTOM_EXAMPLE="${WORK}/custom.example"
@@ -173,6 +207,7 @@ cat > "$QUOTED_VALID" <<EOF
 GEMINI_API_KEY="real-gemini-$SECRET_SENTINEL"
 PSEUDONYMIZATION_ENCRYPTION_KEY='real-fernet-$SECRET_SENTINEL'
 JWT_SECRET_KEY="real-jwt-$SECRET_SENTINEL"
+COST_GUARD_CALLER_HMAC_KEY="real-hmac-$SECRET_SENTINEL"
 EOF
 
 COMMENTED="${WORK}/commented.env"
@@ -181,6 +216,7 @@ cat > "$COMMENTED" <<EOF
 GEMINI_API_KEY=real-gemini-$SECRET_SENTINEL
 PSEUDONYMIZATION_ENCRYPTION_KEY=real-fernet-$SECRET_SENTINEL
 JWT_SECRET_KEY=real-jwt-$SECRET_SENTINEL
+COST_GUARD_CALLER_HMAC_KEY=real-hmac-$SECRET_SENTINEL
 EOF
 
 # ─ Cost readiness gate fixtures ─────────────────────────────────────────────
@@ -303,6 +339,7 @@ if out="$(run_script_subprocess "$MISSING" "$EXAMPLE")"; then status=0; else sta
 assert_nonzero "$status" "missing .env: exits non-zero"
 assert_contains "$out" "cp App/Backend/.env.example App/Backend/.env" "missing .env: prints the copy command"
 assert_contains "$out" "aistudio.google.com" "missing .env: points to the Gemini key"
+assert_contains "$out" "COST_GUARD_CALLER_HMAC_KEY" "missing .env: guide lists the cost guard HMAC key"
 assert_not_contains "$out" "$SECRET_SENTINEL" "missing .env: never prints a secret value"
 
 printf 'Preflight: placeholder secrets\n'
@@ -322,6 +359,32 @@ assert_contains "$out" "Fernet.generate_key" "fernet placeholder: shows the gene
 
 printf 'Preflight: empty secret\n'
 assert_preflight_fails "$EMPTY_GEMINI" "$EXAMPLE" "empty gemini key" "GEMINI_API_KEY"
+
+printf 'Preflight: COST_GUARD_CALLER_HMAC_KEY absent\n'
+assert_check_fails "$MISSING_HMAC" "$EXAMPLE" "missing cost guard hmac key" "COST_GUARD_CALLER_HMAC_KEY"
+
+# Same contract through the real script (subprocess): it fails during preflight,
+# so the stack is never built or started and the exit code is exactly 1.
+out=""
+status=0
+if out="$(run_script_subprocess "$MISSING_HMAC" "$EXAMPLE")"; then status=0; else status=$?; fi
+assert_equal "$status" "1" "missing cost guard hmac key: up.sh exits 1 before Docker"
+assert_contains "$out" "COST_GUARD_CALLER_HMAC_KEY" "missing cost guard hmac key: up.sh names the variable"
+assert_contains "$out" "token_hex(32)" "missing cost guard hmac key: shows the generator"
+assert_not_contains "$out" "$SECRET_SENTINEL" "missing cost guard hmac key: up.sh never prints a secret value"
+
+printf 'Preflight: COST_GUARD_CALLER_HMAC_KEY empty\n'
+assert_check_fails "$EMPTY_HMAC" "$EXAMPLE" "empty cost guard hmac key" "COST_GUARD_CALLER_HMAC_KEY"
+
+printf 'Preflight: COST_GUARD_CALLER_HMAC_KEY placeholder from template\n'
+assert_check_fails "$PLACEHOLDER_HMAC" "$EXAMPLE" "cost guard hmac placeholder" "COST_GUARD_CALLER_HMAC_KEY"
+
+printf 'Preflight: all four keys present passes\n'
+out=""
+status=0
+if out="$(run_check_function "$VALID" "$EXAMPLE")"; then status=0; else status=$?; fi
+assert_zero "$status" "four valid keys: the secrets check passes"
+assert_not_contains "$out" "$SECRET_SENTINEL" "four valid keys: secret value never printed"
 
 printf 'Preflight: JWT_SECRET_KEY absent\n'
 assert_check_fails "$MISSING_JWT" "$EXAMPLE" "missing jwt key" "JWT_SECRET_KEY"
@@ -524,11 +587,20 @@ assert_contains "$ps1_content" "Write-EnvSetupGuide" "up.ps1 defines the env set
 assert_contains "$ps1_content" "aistudio.google.com" "up.ps1 points to the Gemini key"
 assert_contains "$ps1_content" "Write-StackFailureHint" "up.ps1 defines the stack failure hint"
 
+assert_contains "$ps1_content" "COST_GUARD_CALLER_HMAC_KEY" "up.ps1 references COST_GUARD_CALLER_HMAC_KEY"
+assert_contains "$ps1_content" "token_hex(32)" "up.ps1 shows the HMAC key generator"
+
 required_line="$(grep -n -F '$RequiredSecrets' "$UP_PS1" | head -n 1 | cut -d: -f1)"
 if [ -n "$required_line" ] && sed -n "${required_line}p" "$UP_PS1" | grep -q -F "JWT_SECRET_KEY"; then
     pass "up.ps1 declares JWT_SECRET_KEY in \$RequiredSecrets"
 else
     fail "up.ps1 declares JWT_SECRET_KEY in \$RequiredSecrets"
+fi
+
+if [ -n "$required_line" ] && sed -n "${required_line}p" "$UP_PS1" | grep -q -F "COST_GUARD_CALLER_HMAC_KEY"; then
+    pass "up.ps1 declares COST_GUARD_CALLER_HMAC_KEY in \$RequiredSecrets"
+else
+    fail "up.ps1 declares COST_GUARD_CALLER_HMAC_KEY in \$RequiredSecrets"
 fi
 
 gate_line="$(grep -n -F 'if (-not (Invoke-CostPreflight))' "$UP_PS1" | head -n 1 | cut -d: -f1)"

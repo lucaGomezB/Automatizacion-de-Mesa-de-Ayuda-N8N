@@ -42,10 +42,11 @@ Antes de ejecutarlo, prepara **una sola vez** `App/Backend/.env`:
    cp App/Backend/.env.example App/Backend/.env
    ```
    Windows (PowerShell): `Copy-Item App\Backend\.env.example App\Backend\.env`
-2. Generar y pegar los dos secretos locales:
+2. Generar y pegar los tres secretos locales:
    ```bash
    python -c "import secrets; print(secrets.token_urlsafe(32))"                             # JWT_SECRET_KEY
    python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())" # PSEUDONYMIZATION_ENCRYPTION_KEY
+   python -c "import secrets; print(secrets.token_hex(32))"                                 # COST_GUARD_CALLER_HMAC_KEY
    ```
 3. Obtener una `GEMINI_API_KEY` en https://aistudio.google.com/apikey y pegarla.
 4. Volver a ejecutar el comando del inicio.
@@ -97,8 +98,8 @@ El comando unico verifica el entorno, genera los certificados TLS si faltan,
 levanta el stack con `docker compose up -d --build`, espera a que los servicios
 queden sanos y valida los endpoints de salud por HTTPS. Falla de forma explicita
 si `App/Backend/.env` no existe o si `GEMINI_API_KEY`,
-`PSEUDONYMIZATION_ENCRYPTION_KEY` o `JWT_SECRET_KEY` estan ausentes, vacias o
-conservan los placeholders de la plantilla.
+`PSEUDONYMIZATION_ENCRYPTION_KEY`, `JWT_SECRET_KEY` o `COST_GUARD_CALLER_HMAC_KEY`
+estan ausentes, vacias o conservan los placeholders de la plantilla.
 
 Antes de tocar Docker, el comando unico ejecuta un preflight de costo: si el
 preflight falla, el arranque se bloquea y no se levanta ningun servicio. El bypass
@@ -146,8 +147,8 @@ ejecutar `.\scripts\up.ps1` directamente.
 > define en `NGROK_AUTHTOKEN` del `.env` de la raiz (ver `.env.example`).
 
 Al finalizar, el comando imprime las URLs de acceso y recuerda importar
-`n8n/workflow.json` y configurar las credenciales de Outlook, Twilio y Gemini en
-N8N de forma manual. La importacion del workflow NO es automatica.
+`n8n/workflow.json` y configurar sus credenciales en N8N (IMAP, SMTP, login de
+operador y secreto del webhook telefonico) de forma manual. La importacion del workflow NO es automatica.
 
 Los pasos siguientes describen el camino manual equivalente.
 
@@ -174,6 +175,7 @@ Editar `App/Backend/.env` y completar:
 | `GEMINI_API_KEY`                  | Clave de Google Gemini (obtener en [aistudio.google.com](https://aistudio.google.com/app/apikey)) |
 | `PSEUDONYMIZATION_ENCRYPTION_KEY` | Clave Fernet de 32 bytes en base64url (generar con `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`) |
 | `JWT_SECRET_KEY`                  | Clave de firma HS256 de los tokens JWT (generar con `python -c "import secrets; print(secrets.token_urlsafe(32))"`) |
+| `COST_GUARD_CALLER_HMAC_KEY`      | Clave dedicada OBLIGATORIA (sin default) para derivar el identificador de origen no reversible de los eventos de la guarda de costo; independiente de la clave Fernet (generar con `python -c "import secrets; print(secrets.token_hex(32))"`). Si falta, el backend no arranca (`ValidationError`) |
 | `DATABASE_URL`                    | Ya configurada en `.env.example` para el compose; no cambiar el host |
 | `COST_GUARD_SHARED_SECRET`        | Secreto compartido OBLIGATORIO del endpoint de reserva que consume n8n (`POST /api/v1/cost-guard/reserve`). Se envía en el header `X-Cost-Guard-Secret`; nunca por query string. En el stack Docker la fuente única es el `.env` de la raíz (docker-compose lo inyecta en backend y n8n). Si queda vacío, el endpoint responde HTTP 401 y el arranque advierte `cost_guard_secret_missing` |
 
@@ -288,9 +290,17 @@ Ambas respuestas deben devolver `{"status": "ok"}`.
 
 ### 6. Importar y activar el workflow N8N
 
-1. Abrir `http://localhost:5678`. En el primer arranque N8N exige crear la cuenta owner (email + contraseña); ese es el acceso a la UI, persistido de forma hasheada en el volumen `n8n_data` (`/home/node/.n8n/database.sqlite`). Su contraseña no vive en el repositorio (gestor de passwords del operador).
-2. **Workflows → Import from file** → seleccionar `n8n/workflow.json`
-3. Configurar las credenciales de Outlook, Twilio y Gemini en N8N
+1. Abrir `http://localhost:5678`. Al ingresar por primera vez N8N pide crear la cuenta owner (email + contraseña). Son locales a esa instancia: se persisten hasheadas en el volumen `n8n_data` (`/home/node/.n8n/database.sqlite`), no estan en ningun `.env` ni en el repositorio, asi que guardalas en tu gestor de passwords.
+2. Importar `n8n/workflow.json` (**Workflows → Import from file** sobre un workflow vacio, o por CLI).
+
+   > **Cuidado**: usar "Import from File" sobre un workflow que ya esta abierto DUPLICA los nodos. Importarlo en un workflow vacio o usar la importacion por CLI documentada en `docs/n8n-workflow-guide.md`: `docker exec mesa_local-n8n-1 n8n import:workflow --input=/data/Automatizacion_Mesa_de_Ayuda.json`.
+3. Crear las cuatro credenciales del workflow en N8N y asignarlas a sus nodos (detalle en `docs/n8n-workflow-guide.md`):
+   - **IMAP** (`Mesa de Ayuda - IMAP`): Gmail, `imap.gmail.com:993` SSL, con App Password.
+   - **SMTP** (`Mesa de Ayuda - SMTP`): `smtp.gmail.com:465` SSL, misma App Password; asignarla a los tres nodos `emailSend`.
+   - **Custom Auth** para el nodo `Login operador`: JSON `{"body": {"username": "...", "password": "..."}}` con un usuario existente del backend.
+   - **Header Auth** para el nodo `Llamada telefonica`: nombre `X-N8N-Secret`, valor igual a `N8N_WEBHOOK_SECRET` de `App/Backend/.env`.
+
+   Gemini NO se configura en N8N: la clave va en `GEMINI_API_KEY` del backend.
 4. Activar el workflow con el toggle superior derecho
 
 ### Frontend

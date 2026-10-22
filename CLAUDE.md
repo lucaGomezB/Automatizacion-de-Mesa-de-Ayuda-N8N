@@ -98,7 +98,7 @@ function engram-import { engram sync --import --project "Automatizacion-de-Mesa-
 - The workflow is currently set to **inactive** (`"active": false` in the JSON). Activate it in the N8N UI before testing.
 - The JavaScript and Python code nodes in the workflow have been fully implemented (C-04): validation, normalization, Anexo H §H.3 checks, and HTTP payload mapping. No placeholders remain.
 - The IF node conditions are configured: `confianza >= 0.70` (inclusive) in both channels.
-- To deploy: import `n8n/workflow.json` into an N8N instance and configure credentials for Outlook, Twilio, and Gemini. The backend endpoint is `POST /api/v1/incidentes`.
+- To deploy: import `n8n/workflow.json` into an N8N instance and configure the N8N credentials (IMAP, SMTP, operator login Custom Auth, telephony Header Auth); Gemini is configured in the backend `GEMINI_API_KEY`, not in N8N. The backend endpoint is `POST /api/v1/incidentes`.
 - A `docker-compose.yml` for local testing (N8N 1.62 + FastAPI backend + PostgreSQL + Redis) is available at the root of the repository (added in C-04 verification). See `docs/n8n-workflow-guide.md` for setup instructions.
 - The evaluation corpus (`data/corpus_evaluacion_pseudonimizado.json`, multi-label JSON) is not tracked in git. The synthetic 200-case corpus was discarded and removed (C-27).
 
