@@ -811,6 +811,41 @@
       \verb 10.1145/514183.514185
       \endverb
     \endentry
+    \entry{Freshdesk2026_platform}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=74bf8664b28229886076c121dc56a218}{%
+           family={{Freshworks}},
+           familyi={F\bibinitperiod}}}%
+      }
+      \strng{namehash}{74bf8664b28229886076c121dc56a218}
+      \strng{fullhash}{74bf8664b28229886076c121dc56a218}
+      \strng{fullhashraw}{74bf8664b28229886076c121dc56a218}
+      \strng{bibnamehash}{74bf8664b28229886076c121dc56a218}
+      \strng{authorbibnamehash}{74bf8664b28229886076c121dc56a218}
+      \strng{authornamehash}{74bf8664b28229886076c121dc56a218}
+      \strng{authorfullhash}{74bf8664b28229886076c121dc56a218}
+      \strng{authorfullhashraw}{74bf8664b28229886076c121dc56a218}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Documentacion de la plataforma (capacidades y precios) consultada el 19 de octubre de 2026}
+      \field{title}{{Freshdesk} --- {S}oftware de soporte al cliente}
+      \field{urlday}{19}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.freshworks.com/freshdesk/
+      \endverb
+      \verb{url}
+      \verb https://www.freshworks.com/freshdesk/
+      \endverb
+    \endentry
     \entry{Galup2009_itsm}{article}{}{}
       \name{author}{4}{}{%
         {{un=0,uniquepart=base,hash=52959bce9b1d2c75d42a6cf60c6fbc72}{%
@@ -2384,6 +2419,41 @@
       \verb https://www.argentina.gob.ar/produccion/registrar-una-pyme/que-es-una-pyme
       \endverb
     \endentry
+    \entry{ServiceNow2026_itsm}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=3f9f6951a15d7f9fff1e42f86a01430e}{%
+           family={{ServiceNow}},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{3f9f6951a15d7f9fff1e42f86a01430e}
+      \strng{fullhash}{3f9f6951a15d7f9fff1e42f86a01430e}
+      \strng{fullhashraw}{3f9f6951a15d7f9fff1e42f86a01430e}
+      \strng{bibnamehash}{3f9f6951a15d7f9fff1e42f86a01430e}
+      \strng{authorbibnamehash}{3f9f6951a15d7f9fff1e42f86a01430e}
+      \strng{authornamehash}{3f9f6951a15d7f9fff1e42f86a01430e}
+      \strng{authorfullhash}{3f9f6951a15d7f9fff1e42f86a01430e}
+      \strng{authorfullhashraw}{3f9f6951a15d7f9fff1e42f86a01430e}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Documentacion de la plataforma (capacidades y precios) consultada el 19 de octubre de 2026}
+      \field{title}{{ServiceNow} {ITSM}}
+      \field{urlday}{19}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.servicenow.com/products/itsm.html
+      \endverb
+      \verb{url}
+      \verb https://www.servicenow.com/products/itsm.html
+      \endverb
+    \endentry
     \entry{Shneiderman2020_human_centered_ai}{article}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=39afccc0f55ae7821df79ffd677c90b0}{%
@@ -3771,6 +3841,41 @@
       \endverb
       \verb{url}
       \verb https://doi.org/10.1613/jair.1.11345
+      \endverb
+    \endentry
+    \entry{Zendesk2026_help_desk}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=a151608a9113acccb09c9ebf7b0b2b6a}{%
+           family={{Zendesk}},
+           familyi={Z\bibinitperiod}}}%
+      }
+      \strng{namehash}{a151608a9113acccb09c9ebf7b0b2b6a}
+      \strng{fullhash}{a151608a9113acccb09c9ebf7b0b2b6a}
+      \strng{fullhashraw}{a151608a9113acccb09c9ebf7b0b2b6a}
+      \strng{bibnamehash}{a151608a9113acccb09c9ebf7b0b2b6a}
+      \strng{authorbibnamehash}{a151608a9113acccb09c9ebf7b0b2b6a}
+      \strng{authornamehash}{a151608a9113acccb09c9ebf7b0b2b6a}
+      \strng{authorfullhash}{a151608a9113acccb09c9ebf7b0b2b6a}
+      \strng{authorfullhashraw}{a151608a9113acccb09c9ebf7b0b2b6a}
+      \field{sortinit}{Z}
+      \field{sortinithash}{96892c0b0a36bb8557c40c49813d48b3}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Documentacion de la plataforma (capacidades y precios) consultada el 19 de octubre de 2026}
+      \field{title}{{Zendesk} {S}uite --- {S}oftware de mesa de ayuda}
+      \field{urlday}{19}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.zendesk.com/service/help-desk-software/
+      \endverb
+      \verb{url}
+      \verb https://www.zendesk.com/service/help-desk-software/
       \endverb
     \endentry
     \entry{zhang2023multilingual}{article}{}{}
@@ -4636,6 +4741,41 @@
       \verb 10.1145/514183.514185
       \endverb
     \endentry
+    \entry{Freshdesk2026_platform}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=74bf8664b28229886076c121dc56a218}{%
+           family={{Freshworks}},
+           familyi={F\bibinitperiod}}}%
+      }
+      \strng{namehash}{74bf8664b28229886076c121dc56a218}
+      \strng{fullhash}{74bf8664b28229886076c121dc56a218}
+      \strng{fullhashraw}{74bf8664b28229886076c121dc56a218}
+      \strng{bibnamehash}{74bf8664b28229886076c121dc56a218}
+      \strng{authorbibnamehash}{74bf8664b28229886076c121dc56a218}
+      \strng{authornamehash}{74bf8664b28229886076c121dc56a218}
+      \strng{authorfullhash}{74bf8664b28229886076c121dc56a218}
+      \strng{authorfullhashraw}{74bf8664b28229886076c121dc56a218}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Documentacion de la plataforma (capacidades y precios) consultada el 19 de octubre de 2026}
+      \field{title}{{Freshdesk} --- {S}oftware de soporte al cliente}
+      \field{urlday}{19}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.freshworks.com/freshdesk/
+      \endverb
+      \verb{url}
+      \verb https://www.freshworks.com/freshdesk/
+      \endverb
+    \endentry
     \entry{Galup2009_itsm}{article}{}{}
       \name{author}{4}{}{%
         {{un=0,uniquepart=base,hash=52959bce9b1d2c75d42a6cf60c6fbc72}{%
@@ -6209,6 +6349,41 @@
       \verb https://www.argentina.gob.ar/produccion/registrar-una-pyme/que-es-una-pyme
       \endverb
     \endentry
+    \entry{ServiceNow2026_itsm}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=3f9f6951a15d7f9fff1e42f86a01430e}{%
+           family={{ServiceNow}},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{3f9f6951a15d7f9fff1e42f86a01430e}
+      \strng{fullhash}{3f9f6951a15d7f9fff1e42f86a01430e}
+      \strng{fullhashraw}{3f9f6951a15d7f9fff1e42f86a01430e}
+      \strng{bibnamehash}{3f9f6951a15d7f9fff1e42f86a01430e}
+      \strng{authorbibnamehash}{3f9f6951a15d7f9fff1e42f86a01430e}
+      \strng{authornamehash}{3f9f6951a15d7f9fff1e42f86a01430e}
+      \strng{authorfullhash}{3f9f6951a15d7f9fff1e42f86a01430e}
+      \strng{authorfullhashraw}{3f9f6951a15d7f9fff1e42f86a01430e}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Documentacion de la plataforma (capacidades y precios) consultada el 19 de octubre de 2026}
+      \field{title}{{ServiceNow} {ITSM}}
+      \field{urlday}{19}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.servicenow.com/products/itsm.html
+      \endverb
+      \verb{url}
+      \verb https://www.servicenow.com/products/itsm.html
+      \endverb
+    \endentry
     \entry{Shneiderman2020_human_centered_ai}{article}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=39afccc0f55ae7821df79ffd677c90b0}{%
@@ -7596,6 +7771,41 @@
       \endverb
       \verb{url}
       \verb https://doi.org/10.1613/jair.1.11345
+      \endverb
+    \endentry
+    \entry{Zendesk2026_help_desk}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=a151608a9113acccb09c9ebf7b0b2b6a}{%
+           family={{Zendesk}},
+           familyi={Z\bibinitperiod}}}%
+      }
+      \strng{namehash}{a151608a9113acccb09c9ebf7b0b2b6a}
+      \strng{fullhash}{a151608a9113acccb09c9ebf7b0b2b6a}
+      \strng{fullhashraw}{a151608a9113acccb09c9ebf7b0b2b6a}
+      \strng{bibnamehash}{a151608a9113acccb09c9ebf7b0b2b6a}
+      \strng{authorbibnamehash}{a151608a9113acccb09c9ebf7b0b2b6a}
+      \strng{authornamehash}{a151608a9113acccb09c9ebf7b0b2b6a}
+      \strng{authorfullhash}{a151608a9113acccb09c9ebf7b0b2b6a}
+      \strng{authorfullhashraw}{a151608a9113acccb09c9ebf7b0b2b6a}
+      \field{sortinit}{Z}
+      \field{sortinithash}{96892c0b0a36bb8557c40c49813d48b3}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Documentacion de la plataforma (capacidades y precios) consultada el 19 de octubre de 2026}
+      \field{title}{{Zendesk} {S}uite --- {S}oftware de mesa de ayuda}
+      \field{urlday}{19}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.zendesk.com/service/help-desk-software/
+      \endverb
+      \verb{url}
+      \verb https://www.zendesk.com/service/help-desk-software/
       \endverb
     \endentry
     \entry{zhang2023multilingual}{article}{}{}
