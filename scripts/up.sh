@@ -58,7 +58,7 @@ EXPECTED_SERVICE_COUNT=5
 # Required secret variables. The values listed here are the placeholders from
 # App/Backend/.env.example; the template file is also parsed at runtime so this
 # remains a single named source of truth that tolerates template changes.
-REQUIRED_SECRETS=("GEMINI_API_KEY" "PSEUDONYMIZATION_ENCRYPTION_KEY" "JWT_SECRET_KEY")
+REQUIRED_SECRETS=("GEMINI_API_KEY" "PSEUDONYMIZATION_ENCRYPTION_KEY" "JWT_SECRET_KEY" "COST_GUARD_CALLER_HMAC_KEY")
 PLACEHOLDER_VALUES=(
     "your-gemini-api-key-here"
     "your-fernet-key-here"
@@ -122,9 +122,10 @@ log_env_setup_guide() {
     log_error "       cp App/Backend/.env.example App/Backend/.env"
     log_error "     Windows (PowerShell):"
     log_error "       Copy-Item App\\Backend\\.env.example App\\Backend\\.env"
-    log_error "  2. Generate the two local secrets and paste them into the file:"
+    log_error "  2. Generate the three local secrets and paste them into the file:"
     log_error '       python -c "import secrets; print(secrets.token_urlsafe(32))"                            # JWT_SECRET_KEY'
     log_error '       python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"  # PSEUDONYMIZATION_ENCRYPTION_KEY'
+    log_error '       python -c "import secrets; print(secrets.token_hex(32))"                                # COST_GUARD_CALLER_HMAC_KEY'
     log_error "  3. Get a GEMINI_API_KEY at https://aistudio.google.com/apikey and paste it."
     log_error "  4. Re-run: bash scripts/up.sh   (Windows: .\\scripts\\up.ps1)"
 }
@@ -141,6 +142,9 @@ log_env_variable_help() {
         PSEUDONYMIZATION_ENCRYPTION_KEY)
             log_error '  Generate one with: python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"'
             ;;
+        COST_GUARD_CALLER_HMAC_KEY)
+            log_error '  Generate one with: python -c "import secrets; print(secrets.token_hex(32))"'
+            ;;
         *)
             log_error "  Set $1 to a real value."
             ;;
@@ -148,7 +152,7 @@ log_env_variable_help() {
 }
 
 # Preflight: validates the environment file without ever printing values.
-# Returns 0 when the file exists and both required secrets are real values.
+# Returns 0 when the file exists and all required secrets are real values.
 check_env_file() {
     local env_file="$1"
     local example_file="${2:-$ENV_EXAMPLE}"
@@ -416,7 +420,7 @@ print_access_info() {
     printf '\n'
     printf 'Manual N8N setup (required, not automated):\n'
     printf '  1. Open N8N and import n8n/workflow.json via Workflows -> Import from file.\n'
-    printf '  2. Configure the email (IMAP/SMTP), Twilio, and Gemini credentials in N8N.\n'
+    printf '  2. Create the N8N credentials: IMAP, SMTP, operator login and telephony webhook secret (see docs/n8n-workflow-guide.md). Gemini is set in the backend .env, not in N8N.\n'
     printf '  3. Activate the workflow.\n'
     printf '\n'
     printf 'Note: the workflow is NOT imported automatically; do it manually.\n'
