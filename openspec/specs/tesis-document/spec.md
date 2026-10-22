@@ -431,7 +431,7 @@ corpus real pseudonimizado y versionado; `evaluation/README.md` y
 forma pseudonimizada; el `README.md` raiz SHALL referenciar
 `docs/anexo_h_prompt_gemini.md`; y `docs/anexo_h_prompt_gemini.md` SHALL usar la
 misma version de modelo que el codigo (`gemini-3.6-flash`). La tesis SHALL
-recompilar `docs/Tesis/v9 (IA)/paper/main.pdf` de modo que refleje las
+recompilar `docs/Tesis/v10 (IA)/paper/main.pdf` de modo que refleje las
 correcciones.
 
 #### Scenario: Anexo H alineado con el codigo
@@ -2224,7 +2224,7 @@ aseveración propia sin respaldo.
 
 ### Requirement: Acentuación normalizada del manuscrito
 
-Los 14 archivos `.tex` de `docs/Tesis/v9 (IA)/paper/sections/` SHALL presentar el
+Los 14 archivos `.tex` de `docs/Tesis/v10 (IA)/paper/sections/` SHALL presentar el
 texto español acentuado conforme a las reglas ortográficas del español. La
 normalización SHALL aplicarse a la prosa (cuerpo, encabezados, pies de página,
 pies de figura y tabla, celdas de texto) incluyendo el texto dentro de argumentos
@@ -2259,7 +2259,7 @@ des-acentuar texto, duplicar tildes ni alterar cifras. El cambio MUST NOT editar
 #### Scenario: Sin residuos de la herramienta
 - **WHEN** se revisa el árbol de trabajo tras aplicar la normalización
 - **THEN** no existen archivos `.tex.bak` nuevos
-- **AND** ningún archivo fuera de `docs/Tesis/v9 (IA)/paper/sections/` fue modificado
+- **AND** ningún archivo fuera de `docs/Tesis/v10 (IA)/paper/sections/` fue modificado
 
 ### Requirement: Presupuesto de palabras del resumen en español
 
@@ -2763,7 +2763,7 @@ el espacio de la tabla. El change MUST NOT exceder el tope de páginas vigente.
 
 ### Requirement: Alcance del archivo y secuencia respecto de c-111
 
-El change SHALL limitarse a `docs/Tesis/v9 (IA)/paper/sections/03-estado-del-arte.tex`.
+El change SHALL limitarse a `docs/Tesis/v10 (IA)/paper/sections/03-estado-del-arte.tex`.
 El change MUST NOT editar `preambles/`, `main.tex`, el memo canónico, `CHANGES.md`
 ni `dictamen-correcciones.md`. La tabla SHALL preexistir al change de versionado y
 etiquetado: este change MUST aprobarse y aplicarse antes de `c-111`.
@@ -2793,7 +2793,7 @@ madurez. Cada tabla del capitulo SHALL declarar su linea de fuente.
 
 #### Scenario: Capitulo de cumplimiento presente
 
-- **WHEN** se busca en `docs/Tesis/v9 (IA)/paper/sections/` y en el PDF compilado
+- **WHEN** se busca en `docs/Tesis/v10 (IA)/paper/sections/` y en el PDF compilado
   contenido sobre ISO 27001/27002 y NIST CSF 2.0
 - **THEN** existe una seccion de cumplimiento con el mapeo ISO y el perfil NIST
 - **AND** la seccion declara los estandares adoptados y su estado actual, brechas y hoja de ruta

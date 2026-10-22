@@ -1,0 +1,100 @@
+%==============================================================================
+% Capítulo 7: Consideraciones éticas y aspectos legales (reubicado por c-105)
+%==============================================================================
+\section{Consideraciones éticas y aspectos legales}\label{sec:aspectos-legales}
+
+\subsection{Marco normativo aplicable}\label{subsec:marco-normativo}
+
+El sistema desarrollado se enmarca normativamente en la Ley~25.326 de Protección de los Datos Personales de la República Argentina \parencite{Ley25326_2000}, en su decreto reglamentario y en las disposiciones complementarias emitidas por la Agencia de Acceso a la Información Pública en su carácter de autoridad de aplicación. Dado que el sistema realiza transferencia de fragmentos textuales hacía infraestructura de inferencia operada por proveedores con sede en los Estados Unidos, resultan aplicables las consideraciones del artículo 12 de la mencionada ley sobre transferencia internacional de datos personales y, de manera complementaria, los lineamientos del Reglamento General de Protección de Datos de la Unión Europea \parencite{GDPR2016} en aquellos casos que pudieran involucrar a residentes europeos. La Unión Europea reconoce a la Argentina como país con nivel adecuado de protección de datos personales mediante la Decisión 2003/490/CE, del 30 de junio de 2003, revalidada en enero de 2024. Esta adecuación ampara el flujo desde la Unión Europea hacia la Argentina y no opera en sentido inverso: los Estados Unidos no revisten la condición de país adecuado para la normativa argentina, de modo que la transferencia desde la Argentina hacia los proveedores de inferencia y de telefonía con sede en ese país requiere un instrumento específico conforme al artículo 12 de la Ley~25.326, según se detalla en la \autoref{subsec:transferencia-internacional}.
+
+\subsection{Principios aplicados al tratamiento de datos}\label{subsec:principios-datos}
+
+El diseño se atiene a cinco principios del tratamiento de datos personales. La licitud se funda en el artículo~5, inciso~2, apartado~d) de la Ley~25.326, que admite tratar los datos que deriven de una relación contractual, científica o profesional y resulten necesarios para su cumplimiento: la organización es la empleadora y trata datos de sus propios empleados para gestionar los incidentes que estos reportan. Esta base se distingue del consentimiento analizado para el corpus académico en la \autoref{subsec:consentimiento-derechos} y no dispensa el deber de información del artículo~6 de la Ley~25.326. La finalidad determinada limita el uso de los datos a la declaración y derivación de incidentes, sin usos secundarios no compatibles. La minimización se materializa en que solo se almacena el usuario corporativo y un directorio acotado ---legajo, nombre, correo electrónico corporativo, teléfono, sector y rol--- para resolver el contacto y notificar al usuario, descartando otros datos capturados incidentalmente (domicilios, documentos, información financiera). La exactitud opera mediante la revisión y corrección del incidente antes de su persistencia definitiva; el ejercicio de los derechos de rectificación, actualización y supresión (derechos ARCO) se resuelve en cinco días hábiles, de acuerdo con el artículo~16 de la Ley~25.326. La limitación del plazo de conservación fija una retención de 12 meses rodantes para los incidentes, justificada por el ciclo estadístico anual, independiente de la retención de 30 días de los registros de ejecución con fines de auditoría y diagnóstico (\autoref{subsec:capa-orquestacion}); los datos del directorio se conservan mientras la relación laboral permanezca activa y hasta un año después de su finalización, y luego se eliminan. Vencido el plazo, los datos del incidente se someten a anonimización irreversible, de modo que se eliminan los identificadores que permiten vincularlos a una persona. El bloqueo de escritura sobre los incidentes cerrados, que rechaza con un error 409 los intentos de modificación, constituye un control de integridad de auditoría y no una excepción permanente al vencimiento del plazo. La pseudonimización y el cifrado en reposo protegen la información durante el plazo de conservación declarado.
+
+\subsection{Transferencia internacional y pseudonimización}\label{subsec:transferencia-internacional}
+
+El tratamiento comporta dos transferencias internacionales hacia proveedores con sede en los Estados Unidos. La primera corresponde a la inferencia Gemini~3.6 Flash, a la que se envian fragmentos textuales descriptivos de los incidentes; sobre ese texto, el módulo Python local pseudonimiza los nombres propios, las direcciones de correo electrónico, los números telefónicos, los identificadores corporativos y los nombres de hosts internos con etiquetas genéricas como \texttt{[PERSONA]}, \texttt{[EMAIL]} o \texttt{[HOST]}, de modo que el texto transmitido no contiene identificadores directos. La pseudonimización se valida con expresiones regulares del dominio y pruebas unitarias dedicadas.
+
+La segunda corresponde al canal telefónico de Twilio, con sede en los Estados Unidos: el llamante deja su solicitud y Twilio graba el audio; el audio crudo y el número telefónico se transfieren a la infraestructura del proveedor y se transcriben mediante reconocimiento del habla; recién después el backend pseudonimiza el texto ya transcrito. En consecuencia, el audio crudo y el número telefónico cruzan a los Estados Unidos antes de cualquier pseudonimización, que opera únicamente sobre el texto y no sobre el audio.
+
+Ambas transferencias se dirigen a un país que no reviste la condición de adecuado para la normativa argentina, por lo que requieren un instrumento específico conforme al artículo 12 de la Ley~25.326: el consentimiento del titular o la suscripción de cláusulas contractuales modelo. El acuerdo de procesamiento de datos suscripto con cada proveedor complementa ese instrumento, pero no lo sustituye, en tanto no configura por si mismo una de las bases de transferencia que la ley admite.
+
+\subsection{Seguridad técnica}\label{subsec:seguridad-tecnica}
+
+Las medidas de seguridad técnica del sistema se sustentan en la triada confidencialidad, integridad y disponibilidad (CIA) descrita por \textcite{Stallings2017_computer_security}, y su evidencia de control se sintetiza en la \autoref{tab:cumplimiento-iso} (tema Tecnológico). El cifrado en reposo con Fernet (AES-128 en modo CBC con HMAC-SHA-256), el cifrado en tránsito sobre TLS~1.2/1.3 en el borde, el control de acceso por rol, el registro de auditoría de las modificaciones, la gestión de credenciales por variables de entorno y las medidas de disponibilidad ---respaldo diario cifrado con prueba de restauración, contenedores con reinicio automático y monitoreo de salud--- quedan mapeados allí junto con sus brechas residuales. El despliegue publicado para la validación experimental no incluyó el proxy inverso, de modo que la capa TLS corresponde al diseño y no a una capacidad verificada en esa instancia.
+
+\subsection{Consentimiento, derechos del usuario y supervisión humana}\label{subsec:consentimiento-derechos}
+
+Los usuarios de la organización son informados, mediante una política de privacidad accesible desde los canales de entrada, sobre las características del sistema, los datos que se recolectan, la transferencia internacional aplicable y los derechos que les asisten conforme a la normativa vigente. Se garantiza el ejercicio de los derechos de acceso, rectificación, actualización y supresión (derechos ARCO) mediante un procedimiento documentado a cargo del responsable de protección de datos designado por la organización.
+
+En lo que respecta al consentimiento informado para los fines de investigación académica, los 120 empleados de la organización fueron notificados mediante comunicación interna formal, con descripción explícita del propósito del estudio, del tipo de datos tratados, del carácter pseudonimizado de los registros y del derecho a requerir la exclusión de sus incidentes del corpus de validación. El procedimiento fue supervisado por la dirección académica del trabajo y avalado institucionalmente mediante una carta de autorización emitida por la organización adoptante.
+
+En relación con el protocolo de medición en vivo aplicado durante la fase experimental ---en el cual el cronometraje no fue anunciado en tiempo real al operador cuyo tiempo se registraba, con el objeto de mitigar el efecto Hawthorne, pero cuyo conocimiento fue diferido---, corresponde dejar constancia de que, una vez concluida la recolección de datos, se realizó una sesión de esclarecimiento posterior (\textit{debriefing}) con los dos operadores participantes. En dicha sesión se explicó el propósito del estudio, se detalló el procedimiento de medición empleado y se ofreció a cada operador la posibilidad de solicitar la exclusión de sus registros individuales del corpus de validación. Ninguno de los operadores ejerció este derecho. Este procedimiento se alinea con las recomendaciones de la Asociación Americana de Psicología para investigaciones que emplean medición con conocimiento diferido de los participantes \parencite{APA2017}, y fue supervisado por el director del trabajo.
+
+En concordancia con las recomendaciones contemporáneas sobre sistemas que incorporan inteligencia artificial, se preserva en todo momento la posibilidad de supervisión humana significativa. Ninguna decisión que afecte derechos sustanciales de los usuarios se toma de manera completamente automatizada sin posibilidad de revisión, y el sector responsable conserva la potestad de modificar la clasificación inicial cuando lo considere apropiado, registrándose tal modificación en la tabla de trazabilidad descrita en la \autoref{sec:arquitectura}. Este mecanismo materializa el principio de la persona en el bucle (\emph{human in the loop}) como salvaguarda frente a errores potenciales del clasificador automático. Cabe precisar que el umbral de confianza de 0,70 que dispara la revisión obligatoria no constituye, por sí solo, una garantía suficiente de esa salvaguarda: el análisis de calibración de la \autoref{sec:resultados} muestra que la confianza declarada por el clasificador no discrimina de forma fiable los casos correctos de los incorrectos, por lo que la supervisión humana efectiva se apoya además en la revisión por el sector responsable y en la trazabilidad de las correcciones, y no únicamente en el puntaje del modelo.
+
+\subsection{Cumplimiento normativo y alineación con estándares}\label{subsec:cumplimiento}
+
+\subsubsection{Marco de referencia adoptado}\label{subsec:cumplimiento-marco}
+
+Este apartado evalúa el grado de alineación del sistema con los marcos adoptados: ISO/IEC~27001:2022 y su catálogo de controles ISO/IEC~27002:2022, NIST CSF~2.0, la extensión de privacidad ISO/IEC~27701 y la Ley~25.326. El relevamiento es estático y documental: describe el grado de alineación y las brechas identificadas, no un aseguramiento de un tercero (no constituye una acreditación externa ni una auditoría independiente), y su detalle se conserva en el repositorio (\texttt{docs/cumplimiento/}).
+
+\subsubsection{Estado de alineación con ISO/IEC 27002:2022}\label{subsec:cumplimiento-iso}
+
+La Tabla~\ref{tab:cumplimiento-iso} agrupa por tema los controles del Anexo~A de ISO/IEC~27002:2022; el inventario de los 93 controles reside en el repositorio.
+
+\begin{table}[htbp]
+\centering
+\caption{Estado de alineación con los controles de ISO/IEC 27002:2022, agrupados por tema}
+\label{tab:cumplimiento-iso}
+\footnotesize\singlespacing
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.2cm} >{\raggedright\arraybackslash}p{1.4cm} >{\raggedright\arraybackslash}p{1.7cm} >{\raggedright\arraybackslash}p{10.5cm}@{}}
+\toprule
+\textbf{Tema} & \textbf{Controles} & \textbf{Estado} & \textbf{Evidencia / brecha principal} \\
+\midrule
+Organizacional & 5.x & Parcial & Política, clasificación, roles e IR (C-61); residual: revisión independiente (5.35) \\
+Personas & 6.x & No aplicable & Selección, formación, sanciones y cese: competen al adoptante \\
+Físico & 7.x & No aplicable & Sin infraestructura productiva; se cubren en el hosting del adoptante \\
+Tecnológico & 8.x & Alineado y parcial & Pseudonimización, Fernet, TLS, JWT y roles, vulnerabilidades en CI y respaldo cifrado (C-62 a C-66); residual: MFA, logs centralizados y redundancia offsite \\
+\bottomrule
+\end{tabular}
+\par
+{\footnotesize\textit{Fuente:} elaboración propia a partir del gap assessment ISO/IEC 27001:2022/27002:2022 y NIST CSF 2.0.\par}
+\end{table}
+
+\subsubsection{Perfil de alineación con NIST CSF 2.0}\label{subsec:cumplimiento-nist}
+
+La Tabla~\ref{tab:cumplimiento-nist} cubre las seis funciones de NIST CSF~2.0 y su madurez de 0 (inexistente) a 4 (optimizado).
+
+\begin{table}[htbp]
+\centering
+\caption{Perfil de alineación con las funciones de NIST CSF 2.0}
+\label{tab:cumplimiento-nist}
+\footnotesize\singlespacing
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.2cm} >{\raggedright\arraybackslash}p{3.7cm} >{\centering\arraybackslash}p{1.2cm} >{\raggedright\arraybackslash}p{8.7cm}@{}}
+\toprule
+\textbf{Función} & \textbf{Subcategoría representativa} & \textbf{Madurez} & \textbf{Brecha principal} \\
+\midrule
+GV (Gobernar) & Políticas, roles, riesgo y proveedores & 1 & Sin política de seguridad ni gestión de riesgo formal (5.1, 5.19, 5.24, 5.35) \\
+ID (Identificar) & Inventario de activos y clasificación & 1 & Modelo de datos documentado; sin inventario ni clasificación formal (5.9, 5.12) \\
+PR (Proteger) & Acceso, endurecimiento y criptografía & 2 & Pseudonimización, Fernet, TLS, JWT y roles; sin MFA ni gestión completa de vulnerabilidades (8.5, 8.8, 8.20, 8.24) \\
+DE (Detectar) & Monitoreo y detección de eventos & 1 & Logs estructurados y chequeos de salud; sin centralización ni alertas (8.15, 8.16) \\
+RS (Responder) & Plan de respuesta y mitigación & 0 & Sin plan de respuesta a incidentes de seguridad (5.24--5.26) \\
+RC (Recuperar) & Recuperación y restauración & 2 & Respaldo cifrado y continuidad con RTO/RPO; copia fuera del host y redundancia como acción del adoptante (5.29, 5.30, 8.13, 8.14) \\
+\bottomrule
+\end{tabular}
+\par
+{\footnotesize\textit{Fuente:} elaboración propia a partir del gap assessment ISO/IEC 27001:2022/27002:2022 y NIST CSF 2.0.\par}
+\end{table}
+
+\subsubsection{Brechas principales y hoja de ruta}\label{subsec:cumplimiento-brechas}
+
+Los seis changes de cumplimiento cerraron, para el alcance del repositorio, las brechas priorizadas: C-61 (gobernanza documental: 5.1, 5.12, 5.13, 5.24--5.27, 5.31, 8.26), C-62 (endurecimiento de red: 8.20, 8.22, 8.2, 5.14, 8.31), C-63 (identidades y accesos: 8.5, 5.15, 5.17, 8.2), C-64 (vulnerabilidades: 8.8, 8.28, 8.29, 5.19--5.23), C-65 (respaldo y continuidad: 8.13, 8.14, 5.29, 5.30, 5.33) y C-66 (privacidad: 5.34, 8.12, 8.15, 5.31). Quedan residuales la MFA y la rotación de claves, la gestión de claves, la centralización de logs, la redundancia fuera del host y el SBOM; las brechas organizacionales ---personas (6.x), físicas (7.x), revisión independiente (5.35), segregación de funciones (5.3) y trabajo remoto (6.7, 8.1)--- son responsabilidad de la organización adoptante.
+
+\subsubsection{Alineación con el marco legal}\label{subsec:cumplimiento-legal}
+
+El plano legal de la alineación se desarrolla en el \autoref{subsec:marco-normativo} y en la \autoref{subsec:transferencia-internacional}, a los que este apartado remite sin reproducir su contenido. Los controles de privacidad mapeados (5.31, 5.34, 8.12, 8.15) se apoyan en la base de licitud del artículo~5 de la Ley~25.326, en el instrumento de transferencia internacional del artículo~12 y en los plazos ARCO del artículo~16.
+
+\newpage
