@@ -32,7 +32,7 @@ El diagrama entidad-relación de las siete entidades se incluye como Figura~\ref
 
 \section{Especificación OpenAPI de la interfaz REST}\label{sec:anexo-openapi}
 
-La especificación completa de la interfaz REST se genera automáticamente mediante FastAPI conforme a la versión~3.1 de la especificación OpenAPI \parencite{Tiangolo2024_fastapi}. El documento resultante describe los puntos de entrada listados en la Tabla~5 de la \autoref{sec:arquitectura}, los esquemas de los cuerpos de solicitud y respuesta validados mediante Pydantic~v2, los códigos de estado posibles para cada método HTTP, y ejemplos representativos para cada caso de uso.
+La especificación completa de la interfaz REST se genera automáticamente mediante FastAPI conforme a la versión~3.1 de la especificación OpenAPI \parencite{Tiangolo2024_fastapi}. El documento resultante describe los puntos de entrada listados en la Tabla~\ref{tab:api} de la \autoref{sec:arquitectura}, los esquemas de los cuerpos de solicitud y respuesta validados mediante Pydantic~v2, los códigos de estado posibles para cada método HTTP, y ejemplos representativos para cada caso de uso.
 
 La interfaz se encuentra disponible adicionalmente en formato interactivo a través del componente Swagger UI integrado en el servidor, accesible bajo la ruta \texttt{/docs} durante la ejecución, y en formato estático como archivo \texttt{openapi.json} en el directorio \texttt{docs/} del repositorio. La sincronización entre el código y la especificación estática se verifica automáticamente en el pipeline de integración continua.
 
