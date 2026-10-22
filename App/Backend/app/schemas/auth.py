@@ -104,12 +104,12 @@ class MfaEnrollResponse(BaseModel):
 class AlcanceResponse(BaseModel):
     """Alcance de incidentes de la sesion (c-81, IAH-012).
 
-    Contiene SOLO el modo vigente del modelo c-82. NO expone `sector_id`,
-    `ver_todos` ni conceptos del RBAC anterior (los modos SECTOR y REVISION no
-    existen).
+    Contiene SOLO el modo vigente (modos PROPIO/GLOBAL/SECTOR/VACIO, c-86). NO
+    expone `sector_id`, `ver_todos` ni conceptos del RBAC anterior (el modo
+    REVISION no existe).
     """
 
-    modo: Literal["PROPIO", "GLOBAL", "VACIO"] = Field(
+    modo: Literal["PROPIO", "GLOBAL", "SECTOR", "VACIO"] = Field(
         ..., description="Modo de alcance de incidentes derivado del rol"
     )
 
@@ -127,5 +127,5 @@ class IdentidadActualResponse(BaseModel):
         default=None, description="Rol del empleado vinculado (nulo si no hay)"
     )
     alcance: AlcanceResponse = Field(
-        ..., description="Alcance de incidentes derivado (modo PROPIO/GLOBAL/VACIO)"
+        ..., description="Alcance de incidentes derivado (modo PROPIO/GLOBAL/SECTOR/VACIO, c-86)"
     )
