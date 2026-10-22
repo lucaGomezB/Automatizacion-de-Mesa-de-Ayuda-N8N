@@ -12,6 +12,8 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
+import subprocess
 from pathlib import Path
 from typing import get_args
 
@@ -4539,3 +4541,178 @@ def test_c56_no_regresion_c38_c40_c53_c55():
         assert "smtp" in (node.get("credentials") or {}), (
             f"El nodo {node['name']!r} perdio la credencial smtp"
         )
+
+
+# ---------------------------------------------------------------------------
+# c-gonzalo: filtro de rebotes y auto-respuestas
+#
+# El trigger IMAP ingesta TODO correo no leido. Cuando el workflow notifica a
+# un empleado con email invalido (p. ej. los sinteticos @example.test del seed),
+# Gmail devuelve un rebote de mailer-daemon a la casilla; ese rebote entraba al
+# flujo y se creaba como incidente nuevo, que a su vez disparaba otra
+# notificacion (bucle de incidentes basura). El nodo de verificacion del canal
+# correo descarta ahora rebotes y auto-respuestas ANTES de calcular la validez.
+# ---------------------------------------------------------------------------
+
+
+def test_cgonzalo_validator_filters_bounce_senders():
+    """RED: el validador de correo menciona los remitentes de rebote (mailer-daemon, postmaster)."""
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    code = _active_js_code(by_name[CODE_NODE_CORREO]).lower()
+
+    assert "mailer-daemon" in code, "El validador no filtra remitentes mailer-daemon"
+    assert "postmaster" in code, "El validador no filtra remitentes postmaster"
+
+
+def test_cgonzalo_validator_filters_auto_submitted_header():
+    """RED: el validador de correo inspecciona el header auto-submitted (RFC 3834)."""
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    code = _active_js_code(by_name[CODE_NODE_CORREO]).lower()
+
+    assert "auto-submitted" in code, "El validador no inspecciona el header auto-submitted"
+
+
+def test_cgonzalo_validator_discards_instead_of_flagging_invalid():
+    """
+    RED: un rebote/auto-respuesta se DESCARTA (`continue`, sin push al resultado)
+    antes de calcular `esValida`; no se marca `es_valido=false`, porque eso lo
+    rutearia al reenvio y generaria mas correo saliente (bucle).
+    """
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    code = _active_js_code(by_name[CODE_NODE_CORREO])
+
+    assert re.search(r"\bcontinue\s*;", code), (
+        "El validador no descarta el item con `continue`"
+    )
+    assert code.lower().index("mailer-daemon") < code.index("const esValida"), (
+        "El filtro de rebotes debe evaluarse ANTES de calcular esValida"
+    )
+    assert code.index("continue") < code.index("result.push"), (
+        "El descarte debe ocurrir antes de emitir el item al resultado"
+    )
+
+
+# TRIANGULATE: ejecucion real del jsCode con Node (shim de $input.all()).
+
+_NODE_SHIM = """
+const code = %(code)s;
+const items = %(items)s;
+const fn = new Function('$input', code);
+const out = fn({ all: () => items.map((json) => ({ json })) });
+process.stdout.write(JSON.stringify(out.map((o) => o.json)));
+"""
+
+
+def _run_validator_with_node(items: list[dict]) -> list[dict]:
+    """Ejecuta el jsCode REAL del validador de correo con Node y devuelve los json emitidos."""
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    code = _js_code(by_name[CODE_NODE_CORREO])
+    script = _NODE_SHIM % {"code": json.dumps(code), "items": json.dumps(items)}
+    proc = subprocess.run(
+        [shutil.which("node") or "node", "-e", script],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=30,
+        check=False,
+    )
+    assert proc.returncode == 0, f"Node fallo ejecutando el validador: {proc.stderr}"
+    return json.loads(proc.stdout)
+
+
+_requires_node = pytest.mark.skipif(
+    shutil.which("node") is None, reason="Node no disponible en este entorno"
+)
+
+_CUERPO_VALIDO = "No me anda la impresora del segundo piso desde ayer a la tarde."
+
+
+@_requires_node
+def test_cgonzalo_node_normal_email_passes_as_valid():
+    out = _run_validator_with_node(
+        [
+            {
+                "from": "Ana Perez <ana.perez@empresa.com>",
+                "subject": "Impresora sin tinta",
+                "textPlain": _CUERPO_VALIDO,
+                "metadata": {"auto-submitted": "no"},
+            }
+        ]
+    )
+    assert len(out) == 1
+    assert out[0]["es_valido"] is True
+    assert out[0]["canal_raw"] == "correo"
+    assert out[0]["descripcion"] == _CUERPO_VALIDO
+
+
+@_requires_node
+def test_cgonzalo_node_gmail_bounce_is_discarded():
+    out = _run_validator_with_node(
+        [
+            {
+                "from": "Mail Delivery Subsystem <mailer-daemon@googlemail.com>",
+                "subject": "Delivery Status Notification (Failure)",
+                "textPlain": "** No se ha encontrado la dirección ** Tu mensaje no se ha entregado a x@example.test",
+            },
+            {
+                "from": "postmaster@empresa.com",
+                "subject": "Aviso",
+                "textPlain": "Mensaje largo suficiente para pasar la longitud minima.",
+            },
+        ]
+    )
+    assert out == [], "Un rebote de mailer-daemon/postmaster no debe emitirse"
+
+
+@_requires_node
+def test_cgonzalo_node_auto_submitted_header_is_discarded():
+    base = {
+        "from": "Ana Perez <ana.perez@empresa.com>",
+        "subject": "Fuera de oficina",
+        "textPlain": _CUERPO_VALIDO,
+    }
+    out = _run_validator_with_node(
+        [
+            {**base, "metadata": {"Auto-Submitted": "auto-replied"}},
+            {**base, "headers": {"auto-submitted": ["auto-generated"]}},
+        ]
+    )
+    assert out == [], "Un correo con Auto-Submitted distinto de 'no' no debe emitirse"
+
+
+@_requires_node
+def test_cgonzalo_node_undeliverable_subject_is_discarded():
+    out = _run_validator_with_node(
+        [
+            {
+                "from": "Ana Perez <ana.perez@empresa.com>",
+                "subject": "Undeliverable: Impresora sin tinta",
+                "textPlain": _CUERPO_VALIDO,
+            },
+            {
+                "from": "Ana Perez <ana.perez@empresa.com>",
+                "subject": "Respuesta automatica: de vacaciones",
+                "textPlain": _CUERPO_VALIDO,
+            },
+        ]
+    )
+    assert out == [], "Un asunto de rebote/auto-respuesta no debe emitirse"
+
+
+@_requires_node
+def test_cgonzalo_node_mixed_batch_keeps_only_real_emails():
+    """Un lote mixto emite solo el correo real; el corto sigue marcandose es_valido=false."""
+    out = _run_validator_with_node(
+        [
+            {"from": "mailer-daemon@googlemail.com", "subject": "x", "textPlain": _CUERPO_VALIDO},
+            {"from": "Luis <luis@empresa.com>", "subject": "Hola", "textPlain": "corto"},
+            {"from": "Ana <ana@empresa.com>", "subject": "VPN caida", "textPlain": _CUERPO_VALIDO},
+            {"from": "noreply@servicio.com", "subject": "Promo", "textPlain": _CUERPO_VALIDO},
+        ]
+    )
+    assert [o["from"] for o in out] == ["Luis <luis@empresa.com>", "Ana <ana@empresa.com>"]
+    assert [o["es_valido"] for o in out] == [False, True]
