@@ -92,9 +92,23 @@ La integración continua (CI) se ejecuta automáticamente en cada solicitud de i
 
 \subsection{Dashboard de analítica}\label{subsec:dashboard-analitica}
 
-El panel de administración incluye un dashboard de analítica desarrollado con la biblioteca ReCharts de React. Este módulo proporciona visualización agregada de los datos históricos de incidentes, permitiendo identificar tendencias temporales, patrones de fallas recurrentes y desequilibrios en la distribución de carga entre sectores. Esta capacidad de análisis retrospectivo transforma los datos operativos acumulados en inteligencia organizacional accionable.
+El panel de administración incluye un dashboard de analítica desarrollado con la biblioteca ReCharts de React. Este módulo proporciona visualización agregada de los datos históricos de incidentes, permitiendo identificar tendencias temporales, patrones de fallas recurrentes y desequilibrios en la distribución de carga entre sectores. Esta capacidad de análisis retrospectivo transforma los datos operativos acumulados en inteligencia organizacional accionable. La Figura~\ref{fig:panel_admin} muestra el panel de administración sobre el que se integra esta capacidad analítica, con el listado de tickets, los filtros combinados y la pestaña de revisión humana para los casos de baja confianza.
 
-El dashboard se organiza en tres visualizaciones principales. Un gráfico de tendencias muestra la evolución temporal de los incidentes, agrupables por día o por mes según la granularidad seleccionada por el operador. Un gráfico de torta presenta la distribución proporcional de incidentes entre los cinco sectores responsables. Un gráfico de barras apiladas desglosa los incidentes según su estado en el ciclo de vida, facilitando la identificación de cuellos de botella en la resolución.
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{panel_admin}
+\caption{Panel de administración del sistema: listado de tickets con filtros combinados y cola de revisión humana.}
+\label{fig:panel_admin}
+\end{figure}
+
+El dashboard se organiza en tres visualizaciones principales. Un gráfico de tendencias muestra la evolución temporal de los incidentes, agrupables por día o por mes según la granularidad seleccionada por el operador. Un gráfico de torta presenta la distribución proporcional de incidentes entre los cinco sectores responsables. Un gráfico de barras apiladas desglosa los incidentes según su estado en el ciclo de vida, facilitando la identificación de cuellos de botella en la resolución. La Figura~\ref{fig:dashboard} presenta estas tres visualizaciones junto con los indicadores agregados del período seleccionado.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{dashboard}
+\caption{Dashboard de analítica del panel de administración: tendencia temporal de incidentes, distribución por sector y distribución por estado.}
+\label{fig:dashboard}
+\end{figure}
 
 Los controles de filtro permiten acotar el período de análisis mediante un rango de fechas configurable, y alternar entre agrupación diaria y mensual para adaptar la granularidad al horizonte temporal de interés. Cada gráfico puede exportarse como imagen PNG para su inclusión en informes periódicos o presentaciones.
 

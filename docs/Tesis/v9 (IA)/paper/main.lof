@@ -4,6 +4,8 @@
 \contentsline {figure}{\numberline {3}{\ignorespaces Diagrama de despliegue del entorno local. Servicios, red Docker, volúmenes y servicios externos.}}{43}{figure.caption.8}%
 \contentsline {figure}{\numberline {4}{\ignorespaces Diagrama de secuencia del flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión humana.}}{44}{figure.caption.9}%
 \contentsline {figure}{\numberline {5}{\ignorespaces Diagrama entidad-relación de las siete entidades principales del modelo de datos (esquema completo en el Anexo~C).}}{49}{figure.caption.11}%
-\contentsline {figure}{\numberline {6}{\ignorespaces Distribución del tiempo de registro por canal de origen (manual frente a automatizado). El panel de telefonía incorpora la duración de la llamada grabada.}}{69}{figure.caption.17}%
-\contentsline {figure}{\numberline {7}{\ignorespaces Matriz de confusión del clasificador (\(n = 200\)). Filas: sector asignado (verdad); columnas: sector predicho principal.}}{70}{figure.caption.19}%
-\contentsline {figure}{\numberline {8}{\ignorespaces Reconstrucción esquemática del flujo de orquestación N8N}}{97}{figure.caption.25}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Panel de administración del sistema: listado de tickets con filtros combinados y cola de revisión humana.}}{60}{figure.caption.13}%
+\contentsline {figure}{\numberline {7}{\ignorespaces Dashboard de analítica del panel de administración: tendencia temporal de incidentes, distribución por sector y distribución por estado.}}{61}{figure.caption.14}%
+\contentsline {figure}{\numberline {8}{\ignorespaces Distribución del tiempo de registro por canal de origen (manual frente a automatizado). El panel de telefonía incorpora la duración de la llamada grabada.}}{70}{figure.caption.19}%
+\contentsline {figure}{\numberline {9}{\ignorespaces Matriz de confusión del clasificador (\(n = 200\)). Filas: sector asignado (verdad); columnas: sector predicho principal.}}{71}{figure.caption.21}%
+\contentsline {figure}{\numberline {10}{\ignorespaces Reconstrucción esquemática del flujo de orquestación N8N}}{98}{figure.caption.27}%
