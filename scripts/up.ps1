@@ -64,7 +64,7 @@ $ExpectedServiceCount = 5
 # Required secret variables. The values listed here are the placeholders from
 # App\Backend\.env.example; the template file is also parsed at runtime so this
 # remains a single named source of truth that tolerates template changes.
-$RequiredSecrets = @("GEMINI_API_KEY", "PSEUDONYMIZATION_ENCRYPTION_KEY", "JWT_SECRET_KEY")
+$RequiredSecrets = @("GEMINI_API_KEY", "PSEUDONYMIZATION_ENCRYPTION_KEY", "JWT_SECRET_KEY", "COST_GUARD_CALLER_HMAC_KEY")
 $PlaceholderValues = @(
     "your-gemini-api-key-here",
     "your-fernet-key-here",
@@ -131,9 +131,10 @@ function Write-EnvSetupGuide {
     Write-Err "       Copy-Item App\Backend\.env.example App\Backend\.env"
     Write-Err "     Linux/macOS:"
     Write-Err "       cp App/Backend/.env.example App/Backend/.env"
-    Write-Err "  2. Generate the two local secrets and paste them into the file:"
+    Write-Err "  2. Generate the three local secrets and paste them into the file:"
     Write-Err '       python -c "import secrets; print(secrets.token_urlsafe(32))"                            # JWT_SECRET_KEY'
     Write-Err '       python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"  # PSEUDONYMIZATION_ENCRYPTION_KEY'
+    Write-Err '       python -c "import secrets; print(secrets.token_hex(32))"                                # COST_GUARD_CALLER_HMAC_KEY'
     Write-Err "  3. Get a GEMINI_API_KEY at https://aistudio.google.com/apikey and paste it."
     Write-Err "  4. Re-run: .\scripts\up.ps1   (Linux/macOS: bash scripts/up.sh)"
 }
@@ -145,6 +146,7 @@ function Write-EnvVariableHelp {
         "GEMINI_API_KEY" { Write-Err "  Get a key at https://aistudio.google.com/apikey and set GEMINI_API_KEY." }
         "JWT_SECRET_KEY" { Write-Err '  Generate one with: python -c "import secrets; print(secrets.token_urlsafe(32))"' }
         "PSEUDONYMIZATION_ENCRYPTION_KEY" { Write-Err '  Generate one with: python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"' }
+        "COST_GUARD_CALLER_HMAC_KEY" { Write-Err '  Generate one with: python -c "import secrets; print(secrets.token_hex(32))"' }
         default { Write-Err "  Set $Key to a real value." }
     }
 }
@@ -390,7 +392,7 @@ function Write-AccessInfo {
     Write-Host ""
     Write-Host "Manual N8N setup (required, not automated):"
     Write-Host "  1. Open N8N and import n8n/workflow.json via Workflows -> Import from file."
-    Write-Host "  2. Configure the email (IMAP/SMTP), Twilio, and Gemini credentials in N8N."
+    Write-Host "  2. Create the N8N credentials: IMAP, SMTP, operator login and telephony webhook secret (see docs/n8n-workflow-guide.md). Gemini is set in the backend .env, not in N8N."
     Write-Host "  3. Activate the workflow."
     Write-Host ""
     Write-Host "Note: the workflow is NOT imported automatically; do it manually."

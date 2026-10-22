@@ -419,6 +419,13 @@ Credenciales adicionales a configurar en la UI de N8N:
   Usada por el trigger `emailReadImap`.
 - `smtp` (C-55): misma casilla Gmail (`smtp.gmail.com:465` SSL, App Password). Usada por los
   nodos `emailSend`.
+- Custom Auth (`Operador Mesa de Ayuda (login)`): usada por el nodo `Login operador`. JSON
+  `{"body": {"username": "...", "password": "..."}}` con un usuario existente del backend
+  (`POST /api/v1/auth/login`).
+- Header Auth (`Mesa de Ayuda - Handoff Telefonia`): usada por el webhook `Llamada telefonica`.
+  Nombre `X-N8N-Secret`, valor igual a `N8N_WEBHOOK_SECRET` de `App/Backend/.env`.
+- **Gemini NO se configura en N8N**: la clasificación corre en el backend (`GEMINI_API_KEY` en
+  `App/Backend/.env`).
 - **Sin `TWILIO_*` ni `REDIS_URL` en el workflow**: la admisión de voz la maneja el backend
   (webhook `POST /api/v1/cost-guard/twilio/voice`) y la memoria Redis del `AI Agent` se retiró
   con la rama IA (C-72). El workflow no lee esas variables.
@@ -468,6 +475,9 @@ docker exec mesa_local-n8n-1 n8n import:workflow --input=/data/Automatizacion_Me
 
 # Resultado esperado: "Successfully imported 1 workflow."
 ```
+
+> **Cuidado**: usar **Import from File** de la UI sobre un workflow ya abierto DUPLICA los
+> nodos. Importar en un workflow vacío o usar la importación por CLI de arriba.
 
 Acceder a la UI de N8N en http://localhost:5678 con la cuenta owner creada en el primer arranque (email + contraseña), persistida de forma hasheada en el volumen `n8n_data` (`/home/node/.n8n/database.sqlite`).
 
