@@ -43,7 +43,7 @@ foreach ($candidate in $searchPaths) {
         break
     }
     catch {
-        # Not in PATH — try as a literal file path
+        # Not in PATH - try as a literal file path
         if (Test-Path -LiteralPath $candidate) {
             $opensslPath = $candidate
             break
@@ -55,7 +55,7 @@ if (-not $opensslPath) {
     Write-Host "ERROR: OpenSSL was not found." -ForegroundColor Red
     Write-Host ""
     Write-Host "Install OpenSSL via one of:" -ForegroundColor Yellow
-    Write-Host "  1. Git for Windows (recommended — includes OpenSSL in Git Bash)"
+    Write-Host "  1. Git for Windows (recommended - includes OpenSSL in Git Bash)"
     Write-Host "     https://git-scm.com/download/win"
     Write-Host "  2. Chocolatey:  choco install openssl"
     Write-Host "  3. Standalone:   https://slproweb.com/products/Win32OpenSSL.html"
