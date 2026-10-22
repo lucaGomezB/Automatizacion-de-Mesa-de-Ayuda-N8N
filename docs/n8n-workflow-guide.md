@@ -168,7 +168,7 @@ App Password (documentado, sin secretos versionados). Esta decisión se registra
 | Posición | Nombre | Tipo | Función |
 |----------|--------|------|---------|
 | 1 | Llega un email a Mesa de Ayuda | `emailReadImap` | **[C-55]** Disparador IMAP por sondeo (`postProcessAction=read`, `format=simple`, lookback 24 h). Recibe el correo y lo marca como leído en el trigger. |
-| 2 | Se verifica que la informacion sea la necesaria para levantar un incidente | `code` (JS) | Valida `descripcion` ≥10 y ≤5000 caracteres. Emite `es_valido`. |
+| 2 | Se verifica que la informacion sea la necesaria para levantar un incidente | `code` (JS) | Valida `descripcion` ≥10 y ≤5000 caracteres. Emite `es_valido`. **[c-gonzalo]** Antes de validar, DESCARTA (no emite el ítem) rebotes y auto-respuestas: `from` con `mailer-daemon`/`postmaster`/`no-reply@`/`noreply@`, header `Auto-Submitted` distinto de `no` (en `metadata` o `headers`) o asunto que empieza con `Delivery Status Notification`/`Undeliverable`/`Mail delivery failed`/`Respuesta automatica`/`Automatic reply`. Evita que los rebotes de Gmail por destinatarios inválidos (p. ej. `@example.test`) generen incidentes basura en bucle. |
 | 3 | Normalizar entrada del incidente | `code` (JS) | Homogeniza a estructura unificada: `{id, timestamp, canal_origen, descripcion}`. Compartido entre los tres canales. |
 | 4 | Entrada valida | `if` | Gate de validación de ENTRADA previo al POST. Condición: `confianza >= 0.70 OR revision_forzada == true`. Rama true → `Login operador`; rama false → `Registro de auditoria` + `Es correo?`. |
 | 5 | Login operador | `httpRequest` | `POST /api/v1/auth/login`; obtiene el token que autentica el POST de incidentes. Compartido. |
@@ -584,7 +584,7 @@ cd App/Backend
 python -m pytest tests/test_n8n_workflow.py -v
 ```
 
-Verifica 163 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40, C-52, C-53, C-55, C-56, C-57 y C-69).
+Verifica 171 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40, C-52, C-53, C-55, C-56, C-57 y C-69).
 
 ### Prueba manual del canal web (C-05)
 
