@@ -18,6 +18,8 @@ Los diagramas se generan a partir de fuentes Mermaid versionadas en formato \tex
 
 El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto \parencite{Gomez2026_repositorio}. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado \texttt{v1.1.0}, creado sobre el commit definitivo del repositorio.
 
+El hash completo de ese commit es \texttt{7103b649d8c4f51737ad6ad4095dad22c9406400}, que constituye la referencia verificable de la versión corregida.
+
 La estructura del repositorio separa el módulo de procesamiento (\texttt{App/Backend/}, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (\texttt{App/Frontend/}, React con TypeScript), la definición del flujo de orquestación (\texttt{n8n/workflow.json}), los artefactos de evaluación (\texttt{evaluation/}), el corpus pseudonimizado (\texttt{data/}), los scripts auxiliares (\texttt{scripts/}) y la documentación (\texttt{docs/}), junto con las especificaciones de los changes (\texttt{openspec/}) y los archivos de orquestación local \texttt{docker-compose.yml} y \texttt{Makefile}. El archivo \texttt{README.md} describe esta organización y reúne las instrucciones detalladas para el despliegue local en menos de 15 minutos, por lo que constituye el punto de entrada al código fuente disponible en el repositorio público \parencite{Gomez2026_repositorio}.
 
 \section{Esquema de base de datos}\label{sec:anexo-esquema-bd}
