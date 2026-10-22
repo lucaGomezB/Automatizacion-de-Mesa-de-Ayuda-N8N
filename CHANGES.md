@@ -555,11 +555,11 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 | C-96 | tesis-citas-tablas-evidencia | 31 | aplicar tras C-95 | BAJO | — |
 | C-97 | actualizar-dependencias-seguridad | 32 | C-64 | MEDIO | — |
 
-**Total**: 94 entradas creadas documentadas (93 numeradas + 1 de mantenimiento sin numero) — 93 archivadas (92 numeradas: C-01..C-20, C-22..C-48, C-52..C-79, C-81..C-91 y C-92..C-97 — c-63 se cuenta como un change con sus tres partes c-63a/b/c; mas `improve-dockerfiles`) y 1 ACTIVO (C-80). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
+**Total**: 0 changes ACTIVOS — todos los changes creados quedaron ARCHIVADOS (118 directorios en `openspec/changes/archive/`; numeracion C-01..C-120, c-63 se cuenta como un change con sus tres partes c-63a/b/c). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre.
 **Planificadas (NO creadas)**: ninguna. El plan de cumplimiento (FASE 21) quedo TOTALMENTE EJECUTADO: C-61 `compliance-gobernanza` (MEDIO), C-62 `hardening-infra-red` (ALTO) y C-63 `identidad-accesos-claves` (CRITICO, split en c-63a/b/c) quedaron ARCHIVADOS (2026-10-01, 2026-10-08 y 2026-10-08), con sus specs `security-governance-docs`, `infra-network-hardening` e `identity-access-hardening`; C-64 `vulnerabilidades-supply-chain` (MEDIO) quedo ARCHIVADO (2026-10-19, 33/33), con su spec `supply-chain-security` creada y `ci-pipeline` y `security-governance-docs` modificadas; C-65 `backup-continuidad` (ALTO) quedo ARCHIVADO (2026-10-19, 31/31), con su spec `continuity-planning` creada y `backup-scripts` modificada; y C-66 `privacidad-transferencias` (ALTO) quedo creado y ARCHIVADO (2026-10-19, 36/36), con su spec `privacy-runtime-surface` creada y `runtime-cost-guard`, `security-governance-docs` y `employee-directory` modificadas. Ver `docs/cumplimiento/plan-cambios-cumplimiento.md`.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
-**Fases**: 1-31 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67 (archivado 2026-10-19 como NO REALIZADO), la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, TOTALMENTE EJECUTADA, con C-61 archivado (2026-10-01), C-62 archivado (2026-10-08), C-63a/b/c archivados (2026-10-08), C-64 archivado (2026-10-19), C-65 archivado (2026-10-19) y C-66 archivado (2026-10-19), la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 archivado (2026-10-05) y C-68 archivado (2026-10-09), la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 archivado (2026-10-06), la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 archivado (2026-10-06), la FASE 25 agrupa la unificacion de la clasificacion telefonica con C-72 archivado (2026-10-07), la FASE 26 agrupa la pseudonimizacion de numeros de tarjeta hablados con C-73 archivado (2026-10-07), la FASE 27 agrupa la calibracion del cortocircuito determinista con C-74 archivado (2026-10-07), y la FASE 28 agrupa la sincronizacion documental N8N con C-75 archivado (2026-10-08), y la FASE 29 agrupa las correcciones de la tesis por el dictamen CONEAU (C-76..C-80), con C-76..C-79 ARCHIVADOS el 2026-10-20 y C-80 EN PROGRESO (41/45), independientes del software, aplicados en secuencia; y la FASE 30 agrupa el RBAC, el ciclo de cierre y la sesion (C-81..C-91), once changes ARCHIVADOS — C-81..C-83 el 2026-10-13 y C-84..C-91 el 2026-10-15; y la FASE 31 agrupa las correcciones de la tesis por la nueva auditoria (C-92..C-96), cinco changes ARCHIVADOS el 2026-10-20, independientes del software, aplicados en secuencia despues de la FASE 29).
+**Fases**: 1-35 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67 (archivado 2026-10-19 como NO REALIZADO), la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, TOTALMENTE EJECUTADA, con C-61 archivado (2026-10-01), C-62 archivado (2026-10-08), C-63a/b/c archivados (2026-10-08), C-64 archivado (2026-10-19), C-65 archivado (2026-10-19) y C-66 archivado (2026-10-19), la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 archivado (2026-10-05) y C-68 archivado (2026-10-09), la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 archivado (2026-10-06), la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 archivado (2026-10-06), la FASE 25 agrupa la unificacion de la clasificacion telefonica con C-72 archivado (2026-10-07), la FASE 26 agrupa la pseudonimizacion de numeros de tarjeta hablados con C-73 archivado (2026-10-07), la FASE 27 agrupa la calibracion del cortocircuito determinista con C-74 archivado (2026-10-07), y la FASE 28 agrupa la sincronizacion documental N8N con C-75 archivado (2026-10-08), y la FASE 29 agrupa las correcciones de la tesis por el dictamen CONEAU (C-76..C-80), con C-76..C-80 ARCHIVADOS (C-80 el 2026-10-21), independientes del software, aplicados en secuencia; y la FASE 30 agrupa el RBAC, el ciclo de cierre y la sesion (C-81..C-91), once changes ARCHIVADOS — C-81..C-83 el 2026-10-13 y C-84..C-91 el 2026-10-15; y la FASE 31 agrupa las correcciones de la tesis por la nueva auditoria (C-92..C-96), cinco changes ARCHIVADOS el 2026-10-20, independientes del software, aplicados en secuencia despues de la FASE 29; y las FASES 33, 34 y 35 agrupan el cierre post-roadmap: C-98..C-101 (2026-10-20), C-102..C-119 (2026-10-21) y C-120 (2026-10-22), todos ARCHIVADOS).
 
 ---
 
@@ -1677,7 +1677,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ## FASE 29 — Correcciones de la tesis por el dictamen CONEAU (2026-10-09 / 2026-10-12)
 
-> Changes sobre el documento academico (LaTeX, `docs/Tesis/v9 (IA)/paper/`), independientes del software. Se aplican EN SECUENCIA porque comparten archivos `.tex` (en especial `08-discusion.tex` y `09-conclusiones.tex`). C-76 (49/49), C-77 (51/51), C-78 (25/25) y C-79 (25/25) quedaron APLICADOS y ARCHIVADOS el 2026-10-20; C-80 (41/45) sigue EN PROGRESO. La tesis v9 se recompilo con MiKTeX el 2026-10-20 (xelatex -> biber -> xelatex -> xelatex; 103 paginas, 0 errores fatales, 48/48 bibliografia), cubriendo la recompilacion que estaba diferida en el bloque. La unica tarea abierta de C-80 son las capturas de UI (6.5/6.6) y su verificacion (8.2), mas 6.4 (cerrable por contingencia) y el ajuste de 6.9. El registro acumulativo del dictamen vive en `docs/Tesis/Correcciones/dictamen-correcciones.md`. El plan de auditoria (4 bloques, 32 items) queda cubierto por C-76..C-80; el mapeo item -> change esta al final de ese registro.
+> Changes sobre el documento academico (LaTeX, `docs/Tesis/v9 (IA)/paper/`), independientes del software. Se aplican EN SECUENCIA porque comparten archivos `.tex` (en especial `08-discusion.tex` y `09-conclusiones.tex`). C-76 (49/49), C-77 (51/51), C-78 (25/25) y C-79 (25/25) quedaron APLICADOS y ARCHIVADOS el 2026-10-20; C-80 (45/45) quedo APLICADO y ARCHIVADO el 2026-10-21. La tesis v9 se recompilo con MiKTeX el 2026-10-20 (xelatex -> biber -> xelatex -> xelatex; 103 paginas, 0 errores fatales, 48/48 bibliografia), cubriendo la recompilacion que estaba diferida en el bloque. La unica tarea abierta de C-80 son las capturas de UI (6.5/6.6) y su verificacion (8.2), mas 6.4 (cerrable por contingencia) y el ajuste de 6.9. El registro acumulativo del dictamen vive en `docs/Tesis/Correcciones/dictamen-correcciones.md`. El plan de auditoria (4 bloques, 32 items) queda cubierto por C-76..C-80; el mapeo item -> change esta al final de ese registro.
 
 ### [C-76] `tesis-correcciones-dictamen` — ARCHIVADO (2026-10-20, 49/49)
 
@@ -1725,9 +1725,9 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
   - `docs/cumplimiento/marco-legal-ar-2026.md`, `docs/seguridad/registro-requisitos-legales.md`
   - `docs/runbook-verificacion-telefonia-c52.md`
 
-### [C-80] `tesis-forma-evidencia-visual` — EN PROGRESO (41/45)
+### [C-80] `tesis-forma-evidencia-visual` — ARCHIVADO (2026-10-21, 45/45)
 
-- **Estado**: `[ ]` EN PROGRESO (41/45 tareas; OQ-F2-1/F2-2/F3-1 resueltas 2026-10-12; figura 7 por canal; tesis recompilada el 2026-10-20, 103 paginas con MiKTeX). Abiertas (4): 6.5 y 6.6 (capturas de UI: panel admin y dashboard), 8.2 (verificacion de las 8 figuras), 6.4 (cerrable por contingencia) y el ajuste de 6.9.
+- **Estado**: `[x]` ARCHIVADO (2026-10-21, 45/45). Las 4 tareas que estaban abiertas (capturas de UI 6.5/6.6 panel admin y dashboard, verificacion de las 8 figuras 8.2, 6.4 por contingencia y ajuste de 6.9) quedaron cerradas; la tesis se recompilo y el change se archivo en el cierre del roadmap (2026-10-22).
 - **Problema**: Bloque 4 del dictamen (items 26-32): 52 errores ortograficos, 8 figuras faltantes (hay 1 sola), 7 anexos A-G descriptivos + Anexo H fuera de la tesis, fuente de tablas inconsistente, ~900 palabras duplicadas, nota obsoleta "N8N 1.62", afirmaciones valorativas sin respaldo.
 - **Scope**: sustitucion ortografica contextual; 8 figuras (Mermaid->PNG, screenshots, matplotlib); anexos con contenido + Anexo H; unificar tablas; deduplicar 1.1/2.1, 5.3/6.3, 8.1/9.1; retirar la nota 1.62; rebajar claims de 8.1/9.1.
 - **Dependencias**: aplicar tras C-79 (al final: comparte 08/09 con C-76/C-77).
@@ -1953,9 +1953,47 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
+## FASE 33 — Cierre de brechas software/evaluacion y alineacion (2026-10-20)
+
+> Post-roadmap: cierra brechas de implementacion y de alineacion tesis/documento detectadas tras la FASE 32.
+
+### [C-98] `limpiar-basic-auth-n8n-vestigial` — ARCHIVADO (2026-10-20)
+### [C-99] `cablear-wilcoxon-al-reporte` — ARCHIVADO (2026-10-20)
+### [C-100] `test-umbral-settings-hermetico` — ARCHIVADO (2026-10-20)
+### [C-101] `alinear-tiempos-tesis-document` — ARCHIVADO (2026-10-20)
+
+## FASE 34 — Correcciones finales de la tesis por el dictamen CONEAU (2026-10-21)
+
+> Independientes del software; se aplican en secuencia porque comparten los archivos .tex de la tesis.
+
+### [C-102] `congelar-numeros-canonicos-tesis` — ARCHIVADO (2026-10-21)
+### [C-103] `portada-formal-y-remisiones` — ARCHIVADO (2026-10-21)
+### [C-104] `bibliografia-y-atribucion` — ARCHIVADO (2026-10-21)
+### [C-105] `reubicacion-capitulo-legal-y-glosario` — ARCHIVADO (2026-10-21)
+### [C-106] `acentuacion-del-manuscrito` — ARCHIVADO (2026-10-21)
+### [C-107] `propagacion-numeros-canonicos` — ARCHIVADO (2026-10-21)
+### [C-108] `metricas-paradigma-y-clase-unitaria` — ARCHIVADO (2026-10-21)
+### [C-109] `coherencia-de-conteos-tecnicos` — ARCHIVADO (2026-10-21)
+### [C-110] `marco-teorico-hitl-y-literatura` — ARCHIVADO (2026-10-21)
+### [C-111] `version-y-trazabilidad` — ARCHIVADO (2026-10-21)
+### [C-112] `objetivos-e-hipotesis` — ARCHIVADO (2026-10-21)
+### [C-113] `marco-teorico-y-fuentes` — ARCHIVADO (2026-10-21)
+### [C-114] `afirmaciones-comerciales-y-umbrales` — ARCHIVADO (2026-10-21)
+### [C-115] `metodologia-y-limites-declarados` — ARCHIVADO (2026-10-21)
+### [C-116] `reduccion-de-paginas` — ARCHIVADO (2026-10-21)
+### [C-117] `tabla-trabajos-academicos` — ARCHIVADO (2026-10-21)
+### [C-118] `capitulo-cumplimiento-iso-nist` — ARCHIVADO (2026-10-21)
+### [C-119] `correcciones-residuales` — ARCHIVADO (2026-10-21)
+
+## FASE 35 — Observaciones finales del dictamen CONEAU (2026-10-22)
+
+### [C-120] `observaciones-finales-dictamen` — ARCHIVADO (2026-10-22, 15/15)
+
+---
+
 ## Notas del analisis
 
-### Estado actual del proyecto (verificado contra el codigo; actualizado 2026-10-19)
+### Estado actual del proyecto (verificado contra el codigo; actualizado 2026-10-22)
 
 | Componente | Estado | Observaciones |
 |------------|--------|---------------|
@@ -2010,6 +2048,8 @@ Actualizacion 2026-10-19 (c-97 archivado): C-97 `actualizar-dependencias-segurid
 
 Actualizacion 2026-10-20 (recompilacion de la tesis v9 + archivado de 9 changes): la tesis v9 se recompilo con MiKTeX (xelatex -> biber -> xelatex -> xelatex; 103 paginas, 0 errores fatales, 0 referencias indefinidas, 48/48 bibliografia) y se marcaron las 12 tareas de recompilacion repartidas en los 10 changes de tesis, cubriendo la recompilacion que estaba diferida. Con eso se ARCHIVARON nueve changes el 2026-10-20: C-76 (49/49), C-77 (51/51), C-78 (25/25), C-79 (25/25), C-92 (29/29), C-93 (29/29), C-94 (25/25), C-95 (36/36) y C-96 (28/28), bajo `openspec/changes/archive/2026-10-20-*`. Las especificaciones principales se sincronizaron con los delta specs de esos nueve changes (`openspec validate --specs` = 62/62). Queda UN solo change ACTIVO: C-80 `tesis-forma-evidencia-visual` (41/45), con las capturas de UI (6.5/6.6), la verificacion de las 8 figuras (8.2), el cierre de 6.4 por contingencia y el ajuste de 6.9 pendientes. Totales: 94 entradas creadas documentadas (93 numeradas + 1 de mantenimiento sin numero) — 93 archivadas y 1 activa (C-80).
 
+Actualizacion 2026-10-22 (cierre del roadmap — 0 changes activos): se archivo el ultimo change ACTIVO, C-80 `tesis-forma-evidencia-visual` (2026-10-21, 45/45; se incorporaron las capturas de UI y la verificacion de las 8 figuras). Se registran ademas en este indice los changes que faltaban: la FASE 33 (C-98 `limpiar-basic-auth-n8n-vestigial`, C-99 `cablear-wilcoxon-al-reporte`, C-100 `test-umbral-settings-hermetico` y C-101 `alinear-tiempos-tesis-document`, archivados 2026-10-20), la FASE 34 (C-102..C-119, correcciones finales de la tesis por el dictamen CONEAU, archivados 2026-10-21) y la FASE 35 (C-120 `observaciones-finales-dictamen`, archivado 2026-10-22, 15/15). La tesis quedo cerrada con las 7 recomendaciones del dictamen CONEAU 2026-10-21 resueltas; el PDF se mantiene en 101 paginas. El tag anotado `v1.0.1` (`bac4c5f6f85c889b48a90d4396bbdaccc7a35ad0`) identifica la version corregida; el tag `v1.0.0` (`61a6b117dd1321fbee25f9792d9f29b884e5ac8d`) queda como la version evaluada previa. `openspec list` no reporta changes activos.
+
 Cambios que NO estan en el roadmap original porque se implementaron durante el desarrollo:
 - Clasificador hibrido (completo)
 - CRUD de incidentes (completo)
@@ -2028,12 +2068,11 @@ Cambios que NO estan en el roadmap original porque se implementaron durante el d
 
 Los changes C-46, C-47 y C-48 quedaron implementados, verificados y archivados (2026-09-22). Desde entonces tambien se archivaron C-52 (2026-09-30), C-53 (2026-10-01), C-54 (2026-10-01, 51/51), C-55 (2026-09-29), C-57 (2026-09-29), C-58 (2026-09-29), C-59 (2026-10-01), C-61 (2026-10-01, 26/26), C-69 (2026-10-05, 30/30), C-71 (2026-10-06, 43/43), C-60 (2026-10-06, 33/33), C-70 (2026-10-06, 72/72), C-72 (2026-10-07, 37/37), C-73 (2026-10-07, 23/23), C-74 (2026-10-07, 32/32), C-75 (2026-10-08, 14/14), C-56 (2026-10-08, 27/27), C-68 (2026-10-09, 63/63), C-81 (2026-10-13, 24/24), C-82 (2026-10-13, 36/36), C-83 (2026-10-13, 18/18), C-84 (2026-10-15, 15/15), C-85 (2026-10-15, 34/34), C-86 (2026-10-15, 61/61), C-87 (2026-10-15, 25/25), C-88 (2026-10-15, 19/19), C-89 (2026-10-15, 19/19), C-90 (2026-10-15, 17/17) y C-91 (2026-10-15, 48/48); C-97 `actualizar-dependencias-seguridad` (2026-10-19, 14/14, post-roadmap, seguimiento de C-64); y los nueve changes de tesis C-76 (2026-10-20, 49/49), C-77 (2026-10-20, 51/51), C-78 (2026-10-20, 25/25), C-79 (2026-10-20, 25/25), C-92 (2026-10-20, 29/29), C-93 (2026-10-20, 29/29), C-94 (2026-10-20, 25/25), C-95 (2026-10-20, 36/36) y C-96 (2026-10-20, 28/28).
 
-Hay 1 change ACTIVO:
-- **`c-80-tesis-forma-evidencia-visual`** — 41/45 (FASE 29) — Governance BAJO. Pendientes: capturas de UI (6.5/6.6) y verificacion de las 8 figuras (8.2); 6.4 cerrable por contingencia; ajustar 6.9.
+No hay changes activos. El roadmap quedo COMPLETO el 2026-10-22: todos los changes creados (C-01..C-120) estan archivados.
 
-Los nueve changes de tesis de las FASES 29/31 (C-76..C-79 y C-92..C-96) quedaron APLICADOS y ARCHIVADOS el 2026-10-20; solo resta C-80 (FASE 29), con las capturas de UI pendientes. Orden que se siguio: C-76 -> C-77 -> C-78 -> C-79 -> C-80 -> C-92 -> C-93 -> C-94 -> C-95 -> C-96.
+Los changes de tesis de las FASES 29/31/34 (C-76..C-80, C-92..C-96 y C-102..C-119) y el de la FASE 35 (C-120) quedaron APLICADOS y ARCHIVADOS entre el 2026-10-20 y el 2026-10-22. Orden seguido en las FASES 29/31: C-76 -> C-77 -> C-78 -> C-79 -> C-80 -> C-92 -> C-93 -> C-94 -> C-95 -> C-96; en las FASES 33/34/35: C-98..C-101 -> C-102..C-119 -> C-120.
 
-C-01..C-20, C-22..C-48, C-52..C-79, C-81..C-91 y C-92..C-97 estan archivados (C-21 no existe; c-63 se cuenta como un change con sus tres partes c-63a/b/c). El unico change activo es C-80. C-49/C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre.
+La numeracion va de C-01 a C-120 (C-21, C-49 y C-50 nunca se crearon; `c-51` fue absorbido por C-52 y no se abre; c-63 se cuenta como un change con sus tres partes c-63a/b/c). No queda ningun change activo. La version final de la tesis se publico con el tag anotado `v1.0.1` (2026-10-22).
 
 **Detalle de `c-52-telefonia-transcripcion-async`** (Gobernanza CRITICA; ARCHIVADO 2026-09-30):
 
