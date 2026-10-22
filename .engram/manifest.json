@@ -512,6 +512,14 @@
       "sessions": 0,
       "memories": 1,
       "prompts": 0
+    },
+    {
+      "id": "42be5a16",
+      "created_by": "Gonzalo",
+      "created_at": "2026-10-22T21:43:28Z",
+      "sessions": 0,
+      "memories": 1,
+      "prompts": 0
     }
   ]
 }
