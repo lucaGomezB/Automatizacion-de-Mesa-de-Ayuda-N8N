@@ -302,7 +302,7 @@ async def me(
 
     Returns:
         IdentidadActualResponse con username, rol (o nulo) y alcance.modo
-        (PROPIO | GLOBAL | VACIO).
+        (PROPIO | GLOBAL | SECTOR | VACIO).
 
     Raises:
         HTTPException 401: si la solicitud no esta autenticada.

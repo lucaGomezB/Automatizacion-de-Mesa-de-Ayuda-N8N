@@ -11,13 +11,14 @@
         "type": "string"
       },
       "AlcanceResponse": {
-        "description": "Alcance de incidentes de la sesion (c-81, IAH-012).\n\nContiene SOLO el modo vigente del modelo c-82. NO expone `sector_id`,\n`ver_todos` ni conceptos del RBAC anterior (los modos SECTOR y REVISION no\nexisten).",
+        "description": "Alcance de incidentes de la sesion (c-81, IAH-012).\n\nContiene SOLO el modo vigente (modos PROPIO/GLOBAL/SECTOR/VACIO, c-86). NO\nexpone `sector_id`, `ver_todos` ni conceptos del RBAC anterior (el modo\nREVISION no existe).",
         "properties": {
           "modo": {
             "description": "Modo de alcance de incidentes derivado del rol",
             "enum": [
               "PROPIO",
               "GLOBAL",
+              "SECTOR",
               "VACIO"
             ],
             "title": "Modo",
@@ -777,7 +778,7 @@
         "properties": {
           "alcance": {
             "$ref": "#/components/schemas/AlcanceResponse",
-            "description": "Alcance de incidentes derivado (modo PROPIO/GLOBAL/VACIO)"
+            "description": "Alcance de incidentes derivado (modo PROPIO/GLOBAL/SECTOR/VACIO, c-86)"
           },
           "rol": {
             "anyOf": [
@@ -2085,7 +2086,7 @@
     },
     "/api/v1/auth/me": {
       "get": {
-        "description": "Devuelve la identidad efectiva de la sesion y su alcance DERIVADO.\n\nADITIVO y de SOLO LECTURA. No modifica el contrato de login/refresh/logout.\nRecomputa el alcance por request reutilizando la derivacion existente\n(`EmpleadoRepository.get_by_user_id` + `alcance_desde_empleado`, que lee el\nregistro unico de politica de rol) SIN duplicar el mapeo rol -> alcance. La\nruta solo orquesta: route -> (repositorio + servicio) -> models.\n\nReturns:\n    IdentidadActualResponse con username, rol (o nulo) y alcance.modo\n    (PROPIO | GLOBAL | VACIO).\n\nRaises:\n    HTTPException 401: si la solicitud no esta autenticada.",
+        "description": "Devuelve la identidad efectiva de la sesion y su alcance DERIVADO.\n\nADITIVO y de SOLO LECTURA. No modifica el contrato de login/refresh/logout.\nRecomputa el alcance por request reutilizando la derivacion existente\n(`EmpleadoRepository.get_by_user_id` + `alcance_desde_empleado`, que lee el\nregistro unico de politica de rol) SIN duplicar el mapeo rol -> alcance. La\nruta solo orquesta: route -> (repositorio + servicio) -> models.\n\nReturns:\n    IdentidadActualResponse con username, rol (o nulo) y alcance.modo\n    (PROPIO | GLOBAL | SECTOR | VACIO).\n\nRaises:\n    HTTPException 401: si la solicitud no esta autenticada.",
         "operationId": "me_api_v1_auth_me_get",
         "responses": {
           "200": {

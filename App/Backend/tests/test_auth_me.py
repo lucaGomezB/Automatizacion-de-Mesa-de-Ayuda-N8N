@@ -6,7 +6,8 @@ de incidentes DERIVADO por request desde el directorio, reutilizando
 `EmpleadoRepository.get_by_user_id` + `alcance_desde_empleado` (que lee el
 registro unico de politica de rol). NO duplica el mapeo rol -> alcance.
 
-Modelo de modos (c-82): PROPIO | GLOBAL | VACIO, sin sector ni `ver_todos`.
+Modelo de modos (c-82, c-86): PROPIO | GLOBAL | SECTOR | VACIO, sin `ver_todos`.
+El modo SECTOR corresponde al rol `gestion_incidentes` (c-86).
 
 Patron: espejo de `tests/test_incident_visibility.py` (override de
 `get_db_session` y `get_current_user`). El caso anonimo NO sobrescribe
@@ -25,6 +26,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker
 from app.core.database import get_db_session
 from app.core.security import get_current_user
 from app.main import create_app
+from app.models.catalog import Sector
 from app.models.empleado import Empleado, RolEmpleado
 from app.models.user import User
 
@@ -37,8 +39,11 @@ async def me_env(engine):
         admin_user = User(username="me-admin", hashed_password="x", is_active=True)
         mesa_user = User(username="me-mesa", hashed_password="x", is_active=True)
         final_user = User(username="me-final", hashed_password="x", is_active=True)
+        gestion_user = User(username="me-gestion", hashed_password="x", is_active=True)
         huerfano_user = User(username="me-huerfano", hashed_password="x", is_active=True)
-        s.add_all([admin_user, mesa_user, final_user, huerfano_user])
+        s.add_all([admin_user, mesa_user, final_user, gestion_user, huerfano_user])
+        sector = Sector(nombre="Sistemas", descripcion="Sector de gestion")
+        s.add(sector)
         await s.flush()
 
         admin = Empleado(
@@ -53,24 +58,33 @@ async def me_env(engine):
             legajo="ME-FIN", nombre="Final", email="me.final@example.test",
             rol=RolEmpleado.usuario_final, user_id=final_user.id,
         )
-        s.add_all([admin, mesa, final])
+        # c-86: el rol gestion_incidentes exige sector.
+        gestion = Empleado(
+            legajo="ME-GES", nombre="Gestion", email="me.gestion@example.test",
+            rol=RolEmpleado.gestion_incidentes, user_id=gestion_user.id,
+            sector_id=sector.id,
+        )
+        s.add_all([admin, mesa, final, gestion])
         await s.commit()
 
         ids = {
             "admin_user": admin_user.id,
             "mesa_user": mesa_user.id,
             "final_user": final_user.id,
+            "gestion_user": gestion_user.id,
             "huerfano_user": huerfano_user.id,
             "admin_empleado": admin.id,
             "username_admin": admin_user.username,
             "username_mesa": mesa_user.username,
             "username_final": final_user.username,
+            "username_gestion": gestion_user.username,
         }
 
     yield ids
 
     async with factory() as s:
         await s.execute(delete(Empleado))
+        await s.execute(delete(Sector))
         await s.execute(delete(User))
         await s.commit()
 
@@ -132,6 +146,19 @@ async def test_mesa_de_ayuda_obtiene_global(engine, me_env):
     assert body["username"] == me_env["username_mesa"]
     assert body["rol"] == "mesa_de_ayuda"
     assert body["alcance"] == {"modo": "GLOBAL"}
+
+
+@pytest.mark.asyncio
+async def test_gestion_incidentes_obtiene_sector(engine, me_env):
+    """`gestion_incidentes` (con sector) -> alcance SECTOR, sin exponer el sector."""
+    async with _client(engine, me_env["gestion_user"], me_env["username_gestion"]) as c:
+        resp = await c.get("/api/v1/auth/me")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["username"] == me_env["username_gestion"]
+    assert body["rol"] == "gestion_incidentes"
+    assert body["alcance"] == {"modo": "SECTOR"}
+    assert set(body["alcance"].keys()) == {"modo"}
 
 
 @pytest.mark.asyncio
