@@ -1,5 +1,5 @@
 %==============================================================================
-% Capítulo 10: Recomendaciones y líneas de trabajo futuro
+% Capítulo 11: Recomendaciones y líneas de trabajo futuro
 %==============================================================================
 \section{Recomendaciones y líneas de trabajo futuro}\label{sec:recomendaciones}
 
@@ -9,7 +9,7 @@ Las recomendaciones que siguen no revisten idéntica prioridad. Se priorizan las
 
 \subsection{Incorporación de un clasificador supervisado con corpus propio}\label{subsec:clasificador-supervisado}
 
-Se sugiere incorporar progresivamente un clasificador supervisado entrenado con el corpus etiquetado generado por el propio sistema durante su operación. La acumulación sostenida de decisiones validadas por los sectores responsables constituye un activo informacional valioso que, una vez alcanzado un volumen del orden de 5.000 casos (de carácter indicativo, no derivado del corpus actual), permitiría entrenar modelos de clasificación específicos del dominio organizacional. Las ventajas potenciales de esta migración incluyen: reducción del costo marginal por incidente clasificado al eliminar la dependencia del servicio externo de inferencia, disminución de la latencia al ejecutar la inferencia localmente, y ganancia de soberanía sobre los datos al evitar la transferencia internacional de fragmentos textuales. \textcite{Touvron2023_llama2} y trabajos subsiguientes sobre modelos de código abierto sugieren que los LLM desplegados localmente alcanzan rendimientos competitivos en tareas de clasificación cuando se invocan mediante prompts adecuadamente diseñados, lo que abre una vía concreta hacía un sistema completamente autoalojado.
+Se sugiere incorporar progresivamente un clasificador supervisado entrenado con el corpus etiquetado generado por el propio sistema durante su operación. La acumulación sostenida de decisiones validadas por los sectores responsables constituye un activo informacional valioso que, una vez alcanzado un volumen del orden de 5.000 casos (referencia indicativa de orden de magnitud, no derivada del corpus actual ni de un cálculo de potencia estadística), permitiría entrenar modelos de clasificación específicos del dominio organizacional. Las ventajas potenciales de esta migración incluyen: reducción del costo marginal por incidente clasificado al eliminar la dependencia del servicio externo de inferencia, disminución de la latencia al ejecutar la inferencia localmente, y ganancia de soberanía sobre los datos al evitar la transferencia internacional de fragmentos textuales. \textcite{Touvron2023_llama2} y trabajos subsiguientes sobre modelos de código abierto sugieren que los LLM desplegados localmente alcanzan rendimientos competitivos en tareas de clasificación cuando se invocan mediante prompts adecuadamente diseñados, lo que abre una vía concreta hacía un sistema completamente autoalojado.
 
 \subsection{Ampliación de canales de entrada}\label{subsec:ampliacion-canales}
 

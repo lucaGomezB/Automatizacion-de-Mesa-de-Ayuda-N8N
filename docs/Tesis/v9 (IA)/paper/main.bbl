@@ -735,6 +735,41 @@
       \field{title}{An Introduction to Database Systems}
       \field{year}{2003}
     \endentry
+    \entry{DigitalOcean2026_pricing}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=73a76fbbbd72a5aebae27785fa05c794}{%
+           family={{DigitalOcean}},
+           familyi={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{73a76fbbbd72a5aebae27785fa05c794}
+      \strng{fullhash}{73a76fbbbd72a5aebae27785fa05c794}
+      \strng{fullhashraw}{73a76fbbbd72a5aebae27785fa05c794}
+      \strng{bibnamehash}{73a76fbbbd72a5aebae27785fa05c794}
+      \strng{authorbibnamehash}{73a76fbbbd72a5aebae27785fa05c794}
+      \strng{authornamehash}{73a76fbbbd72a5aebae27785fa05c794}
+      \strng{authorfullhash}{73a76fbbbd72a5aebae27785fa05c794}
+      \strng{authorfullhashraw}{73a76fbbbd72a5aebae27785fa05c794}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Precio de lista consultado el 19 de octubre de 2026}
+      \field{title}{Pricing --- {D}roplets}
+      \field{urlday}{19}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.digitalocean.com/pricing/droplets
+      \endverb
+      \verb{url}
+      \verb https://www.digitalocean.com/pricing/droplets
+      \endverb
+    \endentry
     \entry{Fielding2002_rest}{article}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=489e3655cdca151facfb40953b9759f8}{%
@@ -873,6 +908,41 @@
       \endverb
       \verb{url}
       \verb https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N
+      \endverb
+    \endentry
+    \entry{Google2026_vertex_pricing}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=57f3af2a3d1051c172ab3c3db7d5409d}{%
+           family={{Google Cloud}},
+           familyi={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{57f3af2a3d1051c172ab3c3db7d5409d}
+      \strng{fullhash}{57f3af2a3d1051c172ab3c3db7d5409d}
+      \strng{fullhashraw}{57f3af2a3d1051c172ab3c3db7d5409d}
+      \strng{bibnamehash}{57f3af2a3d1051c172ab3c3db7d5409d}
+      \strng{authorbibnamehash}{57f3af2a3d1051c172ab3c3db7d5409d}
+      \strng{authornamehash}{57f3af2a3d1051c172ab3c3db7d5409d}
+      \strng{authorfullhash}{57f3af2a3d1051c172ab3c3db7d5409d}
+      \strng{authorfullhashraw}{57f3af2a3d1051c172ab3c3db7d5409d}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Precios de lista consultados el 19 de octubre de 2026}
+      \field{title}{{Vertex AI} {G}enerative {AI} Pricing}
+      \field{urlday}{19}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://cloud.google.com/vertex-ai/generative-ai/pricing
+      \endverb
+      \verb{url}
+      \verb https://cloud.google.com/vertex-ai/generative-ai/pricing
       \endverb
     \endentry
     \entry{grandury2025laleaderboard}{article}{}{}
@@ -4490,6 +4560,41 @@
       \field{title}{An Introduction to Database Systems}
       \field{year}{2003}
     \endentry
+    \entry{DigitalOcean2026_pricing}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=73a76fbbbd72a5aebae27785fa05c794}{%
+           family={{DigitalOcean}},
+           familyi={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{73a76fbbbd72a5aebae27785fa05c794}
+      \strng{fullhash}{73a76fbbbd72a5aebae27785fa05c794}
+      \strng{fullhashraw}{73a76fbbbd72a5aebae27785fa05c794}
+      \strng{bibnamehash}{73a76fbbbd72a5aebae27785fa05c794}
+      \strng{authorbibnamehash}{73a76fbbbd72a5aebae27785fa05c794}
+      \strng{authornamehash}{73a76fbbbd72a5aebae27785fa05c794}
+      \strng{authorfullhash}{73a76fbbbd72a5aebae27785fa05c794}
+      \strng{authorfullhashraw}{73a76fbbbd72a5aebae27785fa05c794}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Precio de lista consultado el 19 de octubre de 2026}
+      \field{title}{Pricing --- {D}roplets}
+      \field{urlday}{19}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.digitalocean.com/pricing/droplets
+      \endverb
+      \verb{url}
+      \verb https://www.digitalocean.com/pricing/droplets
+      \endverb
+    \endentry
     \entry{Fielding2002_rest}{article}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=489e3655cdca151facfb40953b9759f8}{%
@@ -4628,6 +4733,41 @@
       \endverb
       \verb{url}
       \verb https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N
+      \endverb
+    \endentry
+    \entry{Google2026_vertex_pricing}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=57f3af2a3d1051c172ab3c3db7d5409d}{%
+           family={{Google Cloud}},
+           familyi={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{57f3af2a3d1051c172ab3c3db7d5409d}
+      \strng{fullhash}{57f3af2a3d1051c172ab3c3db7d5409d}
+      \strng{fullhashraw}{57f3af2a3d1051c172ab3c3db7d5409d}
+      \strng{bibnamehash}{57f3af2a3d1051c172ab3c3db7d5409d}
+      \strng{authorbibnamehash}{57f3af2a3d1051c172ab3c3db7d5409d}
+      \strng{authornamehash}{57f3af2a3d1051c172ab3c3db7d5409d}
+      \strng{authorfullhash}{57f3af2a3d1051c172ab3c3db7d5409d}
+      \strng{authorfullhashraw}{57f3af2a3d1051c172ab3c3db7d5409d}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Precios de lista consultados el 19 de octubre de 2026}
+      \field{title}{{Vertex AI} {G}enerative {AI} Pricing}
+      \field{urlday}{19}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://cloud.google.com/vertex-ai/generative-ai/pricing
+      \endverb
+      \verb{url}
+      \verb https://cloud.google.com/vertex-ai/generative-ai/pricing
       \endverb
     \endentry
     \entry{grandury2025laleaderboard}{article}{}{}

@@ -33,13 +33,13 @@ En relación con el protocolo de medición en vivo aplicado durante la fase expe
 
 En concordancia con las recomendaciones contemporáneas sobre sistemas que incorporan inteligencia artificial, se preserva en todo momento la posibilidad de supervisión humana significativa. Ninguna decisión que afecte derechos sustanciales de los usuarios se toma de manera completamente automatizada sin posibilidad de revisión, y el sector responsable conserva la potestad de modificar la clasificación inicial cuando lo considere apropiado, registrándose tal modificación en la tabla de trazabilidad descrita en la \autoref{sec:arquitectura}. Este mecanismo materializa el principio de la persona en el bucle (\emph{human in the loop}) como salvaguarda frente a errores potenciales del clasificador automático. Cabe precisar que el umbral de confianza de 0,70 que dispara la revisión obligatoria no constituye, por sí solo, una garantía suficiente de esa salvaguarda: el análisis de calibración de la \autoref{sec:resultados} muestra que la confianza declarada por el clasificador no discrimina de forma fiable los casos correctos de los incorrectos, por lo que la supervisión humana efectiva se apoya además en la revisión por el sector responsable y en la trazabilidad de las correcciones, y no únicamente en el puntaje del modelo.
 
-\section{Cumplimiento normativo y alineación con estándares}\label{sec:cumplimiento}
+\subsection{Cumplimiento normativo y alineación con estándares}\label{subsec:cumplimiento}
 
-\subsection{Marco de referencia adoptado}\label{subsec:cumplimiento-marco}
+\subsubsection{Marco de referencia adoptado}\label{subsec:cumplimiento-marco}
 
 Este apartado evalúa el grado de alineación del sistema con los marcos adoptados: ISO/IEC~27001:2022 y su catálogo de controles ISO/IEC~27002:2022, NIST CSF~2.0, la extensión de privacidad ISO/IEC~27701 y la Ley~25.326. El relevamiento es estático y documental: describe el grado de alineación y las brechas identificadas, no un aseguramiento de un tercero (no constituye una acreditación externa ni una auditoría independiente), y su detalle se conserva en el repositorio (\texttt{docs/cumplimiento/}).
 
-\subsection{Estado de alineación con ISO/IEC 27002:2022}\label{subsec:cumplimiento-iso}
+\subsubsection{Estado de alineación con ISO/IEC 27002:2022}\label{subsec:cumplimiento-iso}
 
 La Tabla~\ref{tab:cumplimiento-iso} agrupa por tema los controles del Anexo~A de ISO/IEC~27002:2022; el inventario de los 93 controles reside en el repositorio.
 
@@ -63,7 +63,7 @@ Tecnológico & 8.x & Alineado y parcial & Pseudonimización, Fernet, TLS, JWT y 
 {\footnotesize\textit{Fuente:} elaboración propia a partir del gap assessment ISO/IEC 27001:2022/27002:2022 y NIST CSF 2.0.\par}
 \end{table}
 
-\subsection{Perfil de alineación con NIST CSF 2.0}\label{subsec:cumplimiento-nist}
+\subsubsection{Perfil de alineación con NIST CSF 2.0}\label{subsec:cumplimiento-nist}
 
 La Tabla~\ref{tab:cumplimiento-nist} cubre las seis funciones de NIST CSF~2.0 y su madurez de 0 (inexistente) a 4 (optimizado).
 
@@ -89,11 +89,11 @@ RC (Recuperar) & Recuperación y restauración & 2 & Respaldo cifrado y continui
 {\footnotesize\textit{Fuente:} elaboración propia a partir del gap assessment ISO/IEC 27001:2022/27002:2022 y NIST CSF 2.0.\par}
 \end{table}
 
-\subsection{Brechas principales y hoja de ruta}\label{subsec:cumplimiento-brechas}
+\subsubsection{Brechas principales y hoja de ruta}\label{subsec:cumplimiento-brechas}
 
 Los seis changes de cumplimiento cerraron, para el alcance del repositorio, las brechas priorizadas: C-61 (gobernanza documental: 5.1, 5.12, 5.13, 5.24--5.27, 5.31, 8.26), C-62 (endurecimiento de red: 8.20, 8.22, 8.2, 5.14, 8.31), C-63 (identidades y accesos: 8.5, 5.15, 5.17, 8.2), C-64 (vulnerabilidades: 8.8, 8.28, 8.29, 5.19--5.23), C-65 (respaldo y continuidad: 8.13, 8.14, 5.29, 5.30, 5.33) y C-66 (privacidad: 5.34, 8.12, 8.15, 5.31). Quedan residuales la MFA y la rotación de claves, la gestión de claves, la centralización de logs, la redundancia fuera del host y el SBOM; las brechas organizacionales ---personas (6.x), físicas (7.x), revisión independiente (5.35), segregación de funciones (5.3) y trabajo remoto (6.7, 8.1)--- son responsabilidad de la organización adoptante.
 
-\subsection{Alineación con el marco legal}\label{subsec:cumplimiento-legal}
+\subsubsection{Alineación con el marco legal}\label{subsec:cumplimiento-legal}
 
 El plano legal de la alineación se desarrolla en el \autoref{subsec:marco-normativo} y en la \autoref{subsec:transferencia-internacional}, a los que este apartado remite sin reproducir su contenido. Los controles de privacidad mapeados (5.31, 5.34, 8.12, 8.15) se apoyan en la base de licitud del artículo~5 de la Ley~25.326, en el instrumento de transferencia internacional del artículo~12 y en los plazos ARCO del artículo~16.
 
