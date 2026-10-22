@@ -16,13 +16,13 @@
 
 ## 4. Version y trazabilidad de la release v1.1.0 (D2)
 
-- [ ] 4.1 En `sections/12-anexos.tex` (`sec:anexo-repositorio`, lineas ~19-21), reemplazar el tag `v1.0.1` por `v1.1.0` (patron C1 de c-111), conservando la estructura de la frase; verificar `grep -c "v1.1.0" sections/12-anexos.tex` >= 1
-- [ ] 4.2 Crear el tag anotado `v1.1.0` sobre el commit de cierre de v10 (SOLO despues de aplicar c-122 y c-121 y recompilar) y publicarlo en `origin`; verificar `git cat-file -t v1.1.0` == `tag` (anotado, no lightweight)
-- [ ] 4.3 Consignar el hash completo de 40 caracteres del commit etiquetado en `12-anexos.tex` (nuevo parrafo, patron C2 de c-111) y en `docs/Tesis/Correcciones/dictamen-correcciones.md`; verificar coincidencia con `git rev-parse v1.1.0^{commit}`
+- [x] 4.1 En `sections/12-anexos.tex` (`sec:anexo-repositorio`, lineas ~19-21), reemplazar el tag `v1.0.1` por `v1.1.0` (patron C1 de c-111), conservando la estructura de la frase; verificar `grep -c "v1.1.0" sections/12-anexos.tex` >= 1
+- [x] 4.2 Crear el tag anotado `v1.1.0` sobre el commit de cierre de v10 (SOLO despues de aplicar c-122 y c-121 y recompilar) y publicarlo en `origin`; verificar `git cat-file -t v1.1.0` == `tag` (anotado, no lightweight)
+- [x] 4.3 Consignar el hash completo de 40 caracteres del commit etiquetado en `12-anexos.tex` (nuevo parrafo, patron C2 de c-111) y en `docs/Tesis/Correcciones/dictamen-correcciones.md`; verificar coincidencia con `git rev-parse v1.1.0^{commit}`
 
 ## 5. Compilacion y verificacion global
 
 - [x] 5.1 Compilar con XeLaTeX (`latexmk -xelatex main.tex`, o el contenedor usado en c-120) y verificar ausencia de errores fatales y de referencias indefinidas en el `.log`
 - [x] 5.2 Verificar el presupuesto de paginas: el total del PDF MUST ser <= 101 paginas (criterio duro); registrar el conteo obtenido y, si se supera, aplicar el recorte previsto en `design.md` (Risks) antes de cerrar
 - [x] 5.3 Confirmar que no se modificaron numeros canonicos, las cinco cadenas de categoria, las figuras, `evaluation/` ni `CHANGES.md`, y que `v1.0.1` no se movio (`git rev-parse v1.0.1^{commit}` == `bac4c5f6f85c889b48a90d4396bbdaccc7a35ad0`)
-- [ ] 5.4 Verificar que el tag `v1.1.0` esta anotado y publicado en `origin` (`git ls-remote --tags origin v1.1.0`)
+- [x] 5.4 Verificar que el tag `v1.1.0` esta anotado y publicado en `origin` (`git ls-remote --tags origin v1.1.0`)
