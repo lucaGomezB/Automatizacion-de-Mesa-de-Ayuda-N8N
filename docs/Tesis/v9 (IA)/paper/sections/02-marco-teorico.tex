@@ -55,11 +55,8 @@ En el contexto de una mesa de ayuda, el uso de NLP permite clasificar incidentes
 
 \subsection{Reconocimiento automático del habla}\label{subsec:reconocimiento-habla}
 
-Los sistemas de reconocimiento automático del habla (ASR) permiten convertir audio en texto mediante modelos previamente entrenados sobre grandes corpus de habla anotada. \textcite{Rabiner1993_speech_recognition} describen los fundamentos clásicos del reconocimiento basado en modelos ocultos de Markov (HMM), que durante decadas constituyeron el enfoque dominante. La generación contemporánea de sistemas se apoya mayoritariamente en redes neuronales profundas con arquitecturas codificador-decodificador, de las cuales el modelo Whisper \parencite{Radford2023_whisper} representa un exponente reciente con alta robustez en escenarios multilingües y en presencia de ruido ambiental.
-
-Whisper fue entrenado sobre 680.000 horas de audio multilingüe recolectadas de la web, lo que le confiere una capacidad de generalización superior a la de sistemas entrenados sobre corpus curados de menor escala. Este modelo se menciona como exponente del estado del arte del reconocimiento del habla y no forma parte de la implementación desarrollada: el canal telefónico del sistema propuesto delega la transcripción en el servicio nativo de Twilio, cuya integración se detalla en la \autoref{subsec:integracion-canal-telefonico}.
-
-El reconocimiento automático del habla se conserva únicamente como marco conceptual del canal telefónico; la transcripción efectiva la provee un servicio externo y no un motor de ASR integrado al sistema (\autoref{subsec:integracion-canal-telefonico}).
+Los sistemas de reconocimiento automático del habla (ASR) permiten convertir audio en texto mediante modelos entrenados sobre grandes corpus de habla anotada, cuyo marco clásico describen \textcite{Rabiner1993_speech_recognition}, mientras que la generación contemporánea se apoya en redes neuronales profundas cuyo exponente reciente con alta robustez multilingüe es el modelo Whisper
+\parencite{Radford2023_whisper}. El sistema propuesto no integra un motor de ASR: la transcripción efectiva del canal telefónico la provee un servicio externo (\autoref{subsec:integracion-canal-telefonico}), de modo que la noción de reconocimiento automático del habla se conserva únicamente como marco conceptual de ese canal.
 
 \subsection{Bases de datos relacionales y persistencia transaccional}\label{subsec:bd-relacionales}
 

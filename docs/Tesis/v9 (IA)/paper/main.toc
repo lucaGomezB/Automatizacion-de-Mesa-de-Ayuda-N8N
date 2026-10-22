@@ -7,7 +7,7 @@
 \contentsline {subsection}{\numberline {1.4}Hipótesis de trabajo}{13}{subsection.1.4}%
 \contentsline {subsection}{\numberline {1.5}Objetivo general}{14}{subsection.1.5}%
 \contentsline {subsection}{\numberline {1.6}Objetivos específicos}{14}{subsection.1.6}%
-\contentsline {subsection}{\numberline {1.7}Justificación}{15}{subsection.1.7}%
+\contentsline {subsection}{\numberline {1.7}Justificación}{16}{subsection.1.7}%
 \contentsline {subsection}{\numberline {1.8}Alcance y delimitaciones}{17}{subsection.1.8}%
 \contentsline {section}{\numberline {2}Marco teórico}{18}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Gestión de servicios de tecnologías de la información}{18}{subsection.2.1}%
@@ -16,7 +16,7 @@
 \contentsline {subsection}{\numberline {2.4}Human-in-the-loop y grados de autonomía}{20}{subsection.2.4}%
 \contentsline {subsection}{\numberline {2.5}Procesamiento de lenguaje natural y modelos de lenguaje grandes}{21}{subsection.2.5}%
 \contentsline {subsection}{\numberline {2.6}Reconocimiento automático del habla}{23}{subsection.2.6}%
-\contentsline {subsection}{\numberline {2.7}Bases de datos relacionales y persistencia transaccional}{24}{subsection.2.7}%
+\contentsline {subsection}{\numberline {2.7}Bases de datos relacionales y persistencia transaccional}{23}{subsection.2.7}%
 \contentsline {subsection}{\numberline {2.8}Métricas de evaluación de clasificadores multiclase}{24}{subsection.2.8}%
 \contentsline {section}{\numberline {3}Estado del arte}{26}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Soluciones comerciales de mesa de ayuda}{26}{subsection.3.1}%
@@ -56,36 +56,36 @@
 \contentsline {subsection}{\numberline {7.3}Transferencia internacional y pseudonimización}{62}{subsection.7.3}%
 \contentsline {subsection}{\numberline {7.4}Seguridad técnica}{63}{subsection.7.4}%
 \contentsline {subsection}{\numberline {7.5}Consentimiento, derechos del usuario y supervisión humana}{63}{subsection.7.5}%
-\contentsline {section}{\numberline {8}Cumplimiento normativo y alineación con estándares}{65}{section.8}%
-\contentsline {subsection}{\numberline {8.1}Marco de referencia adoptado}{65}{subsection.8.1}%
-\contentsline {subsection}{\numberline {8.2}Estado de alineación con ISO/IEC 27002:2022}{65}{subsection.8.2}%
-\contentsline {subsection}{\numberline {8.3}Perfil de alineación con NIST CSF 2.0}{65}{subsection.8.3}%
-\contentsline {subsection}{\numberline {8.4}Brechas principales y hoja de ruta}{65}{subsection.8.4}%
-\contentsline {subsection}{\numberline {8.5}Alineación con el marco legal}{66}{subsection.8.5}%
-\contentsline {section}{\numberline {9}Resultados}{67}{section.9}%
-\contentsline {subsection}{\numberline {9.1}Comparación de tiempos de registro}{67}{subsection.9.1}%
-\contentsline {subsection}{\numberline {9.2}Matriz de confusión y métricas de clasificación}{69}{subsection.9.2}%
-\contentsline {subsection}{\numberline {9.3}Reducción de la intervención humana}{71}{subsection.9.3}%
-\contentsline {subsection}{\numberline {9.4}Calibración de la confianza}{71}{subsection.9.4}%
-\contentsline {subsection}{\numberline {9.5}Análisis de errores y casos límite}{72}{subsection.9.5}%
-\contentsline {section}{\numberline {10}Discusión}{74}{section.10}%
-\contentsline {subsection}{\numberline {10.1}Interpretación de los resultados}{74}{subsection.10.1}%
-\contentsline {subsection}{\numberline {10.2}Comparación con la literatura}{76}{subsection.10.2}%
-\contentsline {subsection}{\numberline {10.3}Limitaciones del estudio}{77}{subsection.10.3}%
-\contentsline {subsection}{\numberline {10.4}Implicancias prácticas}{79}{subsection.10.4}%
-\contentsline {subsection}{\numberline {10.5}Reflexiones sobre la generalización}{80}{subsection.10.5}%
-\contentsline {section}{\numberline {11}Conclusiones}{81}{section.11}%
-\contentsline {subsection}{\numberline {11.1}Cumplimiento de los objetivos del trabajo}{81}{subsection.11.1}%
-\contentsline {subsection}{\numberline {11.2}Aportes y generalización}{83}{subsection.11.2}%
-\contentsline {section}{\numberline {12}Recomendaciones y líneas de trabajo futuro}{84}{section.12}%
-\contentsline {subsection}{\numberline {12.1}Incorporación de un clasificador supervisado con corpus propio}{84}{subsection.12.1}%
-\contentsline {subsection}{\numberline {12.2}Ampliación de canales de entrada}{84}{subsection.12.2}%
-\contentsline {subsection}{\numberline {12.3}Panel de monitoreo en tiempo real}{85}{subsection.12.3}%
-\contentsline {subsection}{\numberline {12.4}Mecanismos de aprendizaje activo}{85}{subsection.12.4}%
-\contentsline {subsection}{\numberline {12.5}Estudios de replicación}{85}{subsection.12.5}%
-\contentsline {subsection}{\numberline {12.6}Evaluación de modelos de lenguaje de código abierto}{86}{subsection.12.6}%
-\contentsline {subsection}{\numberline {12.7}Base de conocimientos para resolución automática}{86}{subsection.12.7}%
-\contentsline {subsection}{\numberline {12.8}Agente conversacional telefónico en tiempo real}{87}{subsection.12.8}%
+\contentsline {subsection}{\numberline {7.6}Cumplimiento normativo y alineación con estándares}{65}{subsection.7.6}%
+\contentsline {subsubsection}{\numberline {7.6.1}Marco de referencia adoptado}{65}{subsubsection.7.6.1}%
+\contentsline {subsubsection}{\numberline {7.6.2}Estado de alineación con ISO/IEC 27002:2022}{65}{subsubsection.7.6.2}%
+\contentsline {subsubsection}{\numberline {7.6.3}Perfil de alineación con NIST CSF 2.0}{65}{subsubsection.7.6.3}%
+\contentsline {subsubsection}{\numberline {7.6.4}Brechas principales y hoja de ruta}{65}{subsubsection.7.6.4}%
+\contentsline {subsubsection}{\numberline {7.6.5}Alineación con el marco legal}{66}{subsubsection.7.6.5}%
+\contentsline {section}{\numberline {8}Resultados}{67}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Comparación de tiempos de registro}{67}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Matriz de confusión y métricas de clasificación}{69}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Intervención humana en el flujo automatizado}{71}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Calibración de la confianza}{71}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Análisis de errores y casos límite}{72}{subsection.8.5}%
+\contentsline {section}{\numberline {9}Discusión}{74}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Interpretación de los resultados}{74}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Comparación con la literatura}{76}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Limitaciones del estudio}{77}{subsection.9.3}%
+\contentsline {subsection}{\numberline {9.4}Implicancias prácticas}{79}{subsection.9.4}%
+\contentsline {subsection}{\numberline {9.5}Reflexiones sobre la generalización}{80}{subsection.9.5}%
+\contentsline {section}{\numberline {10}Conclusiones}{81}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Cumplimiento de los objetivos del trabajo}{81}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Aportes y generalización}{83}{subsection.10.2}%
+\contentsline {section}{\numberline {11}Recomendaciones y líneas de trabajo futuro}{84}{section.11}%
+\contentsline {subsection}{\numberline {11.1}Incorporación de un clasificador supervisado con corpus propio}{84}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}Ampliación de canales de entrada}{84}{subsection.11.2}%
+\contentsline {subsection}{\numberline {11.3}Panel de monitoreo en tiempo real}{85}{subsection.11.3}%
+\contentsline {subsection}{\numberline {11.4}Mecanismos de aprendizaje activo}{85}{subsection.11.4}%
+\contentsline {subsection}{\numberline {11.5}Estudios de replicación}{85}{subsection.11.5}%
+\contentsline {subsection}{\numberline {11.6}Evaluación de modelos de lenguaje de código abierto}{86}{subsection.11.6}%
+\contentsline {subsection}{\numberline {11.7}Base de conocimientos para resolución automática}{86}{subsection.11.7}%
+\contentsline {subsection}{\numberline {11.8}Agente conversacional telefónico en tiempo real}{87}{subsection.11.8}%
 \contentsline {section}{Referencias bibliograficas}{88}{section*.26}%
 \contentsline {section}{Anexos}{94}{section*.27}%
 \contentsline {section}{\numberline {A}Diagrama de arquitectura del sistema}{94}{section.1.A}%
