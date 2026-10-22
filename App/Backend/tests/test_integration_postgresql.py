@@ -29,6 +29,7 @@ from app.models.catalog import CanalOrigen, Estado, Sector
 from app.models.clasificacion_log import ClasificacionLog
 from app.models.incidente import Incidente, PrioridadEnum
 from app.repositories.estadisticas_repository import EstadisticasRepository
+from app.schemas.clasificacion import ClasificacionResult
 
 pytestmark = pytest.mark.integration
 
@@ -526,7 +527,7 @@ async def test_estadisticas_resumen_200_on_postgresql(pg_client, seed_pg_catalog
 
 
 async def test_patch_incidente_nonexistent_fk_returns_4xx(
-    pg_client, seed_pg_catalogs
+    make_pg_client_with_classifier, seed_pg_catalogs
 ):
     """PATCH con una FK inexistente sobre PostgreSQL debe devolver 4xx, no 500.
 
@@ -535,28 +536,41 @@ async def test_patch_incidente_nonexistent_fk_returns_4xx(
     (IntegrityError) y el manejador generico la traduce a 500. El contrato
     correcto es rechazar la peticion con un error de cliente (4xx) y conservar
     las referencias previas del incidente.
+
+    El clasificador se inyecta como doble determinista (sector sembrado
+    "Sistemas") para que el alta del incidente sea determinista e independiente
+    del servicio externo de Gemini (c-124).
     """
     catalogs = seed_pg_catalogs
-    created = await _crear_incidente_via_pg_api(
-        pg_client, catalogs, "PATCH FK inexistente PG seam"
-    )
-    incidente_id = created["id"]
-    sector_previo_id = created["sector"]["id"]
-
-    response = await pg_client.patch(
-        f"/api/v1/incidentes/{incidente_id}",
-        json={"estado_id": 99999},
+    result = ClasificacionResult(
+        sector_predicho="Sistemas",
+        confianza=0.95,
+        etapa="deterministic",
+        requiere_revision_humana=False,
+        sectores_adicionales=[],
     )
 
-    assert 400 <= response.status_code < 500, (
-        f"PATCH /api/v1/incidentes/{incidente_id} con estado_id=99999 "
-        f"devolvio {response.status_code} (esperado 4xx, no 5xx). "
-        f"Body: {response.text}"
-    )
+    async with make_pg_client_with_classifier(result) as pg_client:
+        created = await _crear_incidente_via_pg_api(
+            pg_client, catalogs, "PATCH FK inexistente PG seam"
+        )
+        incidente_id = created["id"]
+        sector_previo_id = created["sector"]["id"]
 
-    # El incidente debe conservar sus referencias previas (no corromperse).
-    verify = await pg_client.get(f"/api/v1/incidentes/{incidente_id}")
-    assert verify.status_code == 200, f"GET failed: {verify.text}"
-    assert verify.json()["sector"]["id"] == sector_previo_id, (
-        "El incidente cambio de sector pese a que el PATCH debia ser rechazado."
-    )
+        response = await pg_client.patch(
+            f"/api/v1/incidentes/{incidente_id}",
+            json={"estado_id": 99999},
+        )
+
+        assert 400 <= response.status_code < 500, (
+            f"PATCH /api/v1/incidentes/{incidente_id} con estado_id=99999 "
+            f"devolvio {response.status_code} (esperado 4xx, no 5xx). "
+            f"Body: {response.text}"
+        )
+
+        # El incidente debe conservar sus referencias previas (no corromperse).
+        verify = await pg_client.get(f"/api/v1/incidentes/{incidente_id}")
+        assert verify.status_code == 200, f"GET failed: {verify.text}"
+        assert verify.json()["sector"]["id"] == sector_previo_id, (
+            "El incidente cambio de sector pese a que el PATCH debia ser rechazado."
+        )
