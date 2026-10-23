@@ -143,6 +143,22 @@ La tabla de parametros de configuracion del Anexo H (`tab:anexo_gemini_params`) 
 - **WHEN** se revisa el registro de compilacion
 - **THEN** no hay advertencias `Overfull \hbox` atribuibles a la fila agregada
 
+### Requirement: Atribucion de roles del equipo coherente con la autoria registrada en el repositorio
+
+La declaracion de la distribucion de roles del equipo en `04-marco-metodologico.tex` (parrafo de roles de la seccion 4.9) SHALL atribuir a cada integrante un rol que la historia del repositorio respalde. Quien no registre commits de desarrollo en el repositorio MUST NOT declararse autor del modulo Python ni del modelado de la base de datos; Carla Bustos SHALL presentarse como revisora de la tesis y colaboradora en los anexos y en la corroboracion de las fuentes utilizadas, o figurar entre los agradecimientos. Los roles de desarrollo (modulo Python y modelado de la base de datos, configuracion del flujo N8N e integracion telefonica) SHALL coincidir con la autoria real de cada componente segun el historial del repositorio, y la supervision academica del director SHALL conservarse.
+
+#### Scenario: Roles de desarrollo coherentes con la autoria del repositorio
+
+- **WHEN** se compara la distribucion de roles declarada en `04-marco-metodologico.tex` con la autoria de los componentes en la historia del repositorio
+- **THEN** cada rol de desarrollo declarado corresponde a quien el repositorio registra como autor de ese componente
+- **AND** la supervision academica del director se conserva
+
+#### Scenario: Sin atribucion de desarrollo a quien no contribuyo al codigo
+
+- **WHEN** se busca en `sections/*.tex` una atribucion del desarrollo del modulo Python o del modelado de la base de datos a Carla Bustos
+- **THEN** no aparece ninguna
+- **AND** Carla Bustos figura como revisora de la tesis y colaboradora en anexos y corroboracion de fuentes, o entre los agradecimientos
+
 ## MODIFIED Requirements
 
 ### Requirement: Hallazgo del gate de clasificacion presentado como resultado propio
