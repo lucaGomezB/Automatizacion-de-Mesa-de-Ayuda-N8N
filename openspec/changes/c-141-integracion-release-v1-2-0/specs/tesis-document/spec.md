@@ -4,13 +4,13 @@
 
 La tesis SHALL compilar desde la fuente LaTeX de la version de trabajo vigente (`docs/Tesis/v10 (IA)/paper/main.tex`) a `docs/Tesis/v10 (IA)/paper/main.pdf` mediante XeLaTeX y biber, sin errores fatales, con las fuentes reales que declara el preambulo (Arial y Courier New) y en el entorno de compilacion de registro consignado en `docs/Tesis/Correcciones/dictamen-correcciones.md`. El PDF SHALL incluir todos los archivos de seccion que `main.tex` incorpora con `\input`, en el orden de `main.tex`. La compilacion de una release SHALL cumplir ademas: cero referencias y citas indefinidas, cero etiquetas duplicadas, biber sin advertencias ni errores, `verify_citations.py` con estado PASS y todo `\includegraphics` resuelto a un archivo existente. Como `main.log` no se versiona, la evidencia de la compilacion de cada release SHALL registrarse en `docs/Tesis/Correcciones/dictamen-correcciones.md`.
 
-#### Scenario: Compilacion exitosa
+#### Scenario: Successful compilation
 
 - **WHEN** el proyecto LaTeX se compila con `latexmk -xelatex main.tex` (o con la secuencia xelatex -> biber -> xelatex -> xelatex) en el entorno de registro
 - **THEN** se produce `docs/Tesis/v10 (IA)/paper/main.pdf` sin errores fatales
 - **AND** el PDF contiene los archivos de seccion que `main.tex` incorpora, en el orden de `main.tex`
 
-#### Scenario: Recuperacion ante una falla de compilacion
+#### Scenario: Compilation failure recovery
 
 - **WHEN** ocurre un error de compilacion (paquete faltante, referencia indefinida, fuente no encontrada)
 - **THEN** el error se diagnostica desde el `.log`
@@ -47,7 +47,7 @@ La tesis SHALL compilar desde la fuente LaTeX de la version de trabajo vigente (
 
 El total de paginas de la tesis SHALL cumplir el tope vigente de paginas. El tope vigente SHALL declararse en un unico lugar, la seccion de presupuesto de paginas de `docs/Tesis/Correcciones/dictamen-correcciones.md`, con su regla de medicion (total del PDF, o cuerpo sin anexos entendido como las paginas anteriores al encabezado "Anexos"), su valor, su fuente (exigencia de la catedra o decision del equipo) y su fecha. Mientras no se registre un tope renegociado, el tope vigente SHALL ser de 101 paginas sobre el total del PDF. El conteo SHALL medirse sobre `main.pdf` compilado en el entorno de registro, con `pdfinfo` o un conteo equivalente de paginas del PDF. La portada SHALL seguir ocupando exactamente una pagina. Este requisito SHALL prevalecer sobre los topes de 100 paginas que enuncian requisitos anteriores de reduccion de paginas, de incorporacion de la tabla de trabajos academicos y del capitulo de cumplimiento, que reflejaban el tope vigente en su momento. Una reduccion para cumplir el tope MUST NOT eliminar contenido cientifico, numeros canonicos, figuras o tablas requeridas, referencias ni correcciones previas.
 
-#### Scenario: Tope por defecto
+#### Scenario: Conteo de páginas sin cambios
 
 - **WHEN** no hay un tope renegociado registrado y se ejecuta `pdfinfo main.pdf | grep Pages` (o el conteo equivalente) sobre el PDF de la release
 - **THEN** el total es de 101 paginas o menos
@@ -60,7 +60,7 @@ El total de paginas de la tesis SHALL cumplir el tope vigente de paginas. El top
 - **AND** el PDF de la release cumple esa regla
 - **AND** el registro consigna los dos conteos, total y cuerpo sin anexos
 
-#### Scenario: Conteo segun la regla registrada
+#### Scenario: Tope medido sobre el total
 
 - **WHEN** la regla vigente es sobre el total del PDF
 - **THEN** el conteo incluye portada, indices, glosario, cuerpo, referencias y anexos
@@ -82,7 +82,7 @@ El total de paginas de la tesis SHALL cumplir el tope vigente de paginas. El top
 
 La entrada `Gomez2026_repositorio` de `docs/Tesis/v10 (IA)/Bibliography_base.bib` SHALL declarar en su titulo la misma version que el tag de release que identifica el Anexo B (`sec:anexo-repositorio`). Para la release `v1.2.0`, el titulo SHALL enunciar la version `1.2.0`, con la etiqueta "Version" o con su forma acentuada si la revision ortotipografica la acentuo por decision registrada, y SHALL NOT conservar numeros de version anteriores como `1.1.1` o `1.0.0`. El numero de version SHALL actualizarlo el change que publica la release, en el mismo commit que cambia el tag del Anexo B; ningun otro change MUST modificar ese numero. Los demas campos de la entrada (autoria, ano, `url` y `note`) SHALL conservarse y la referencia SHALL seguir imprimiendose en la seccion de Referencias.
 
-#### Scenario: Version bibliografica alineada con el tag del Anexo B
+#### Scenario: Version bibliografica alineada con la release
 
 - **WHEN** se compara el titulo de `Gomez2026_repositorio` con el tag que consigna el Anexo B
 - **THEN** el titulo enuncia la version `1.2.0` y el Anexo B enuncia `v1.2.0`

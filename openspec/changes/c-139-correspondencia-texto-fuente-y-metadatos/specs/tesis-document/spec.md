@@ -260,7 +260,7 @@ El capitulo de estado del arte (seccion 3.3) y el de discusion (seccion 8.2) SHA
 
 La seccion 1.7 SHALL enunciar los idiomas de los corpus de la literatura sobre clasificacion automatica de tickets solo en la medida en que los declaren las fuentes citadas o la tabla de trabajos academicos relevados (`tab:trabajos-academicos`). El documento MUST NOT atribuir a una fuente idiomas que esta no reporta, en particular corpus en aleman o portugues sin una fuente que los sostenga, y SHALL anclar la afirmacion en esa tabla o en una cita verificable que la sostenga. Las evaluaciones de LLM que incorporan el espanol SHALL describirse conforme a lo que esas obras evaluan.
 
-#### Scenario: Afirmacion anclada en lo que declaran las fuentes
+#### Scenario: Afirmacion comparativa respaldada o reformulada
 - **WHEN** se lee la seccion 1.7 del PDF compilado
 - **THEN** la afirmacion sobre los idiomas de los corpus remite a la tabla de trabajos relevados o a una cita que la sostiene
 - **AND** no queda una generalizacion sobre la literatura sin referencia
@@ -275,6 +275,11 @@ La seccion 1.7 SHALL enunciar los idiomas de los corpus de la literatura sobre c
 - **THEN** la afirmacion es coherente con lo que la tabla declara
 - **AND** si la tabla incorpora un trabajo con corpus en espanol, la afirmacion se ajusta en consecuencia
 
+#### Scenario: Sin duplicacion del trabajo bibliografico
+- **WHEN** se revisa el diff del change
+- **THEN** no se agregan ni modifican entradas de `Bibliography_base.bib`
+- **AND** las referencias usadas ya existen por c-78
+
 ### Requirement: Atribucion editorial de ITIL Service Operation 2011
 
 La seccion 2.2 SHALL atribuir la edicion de 2011 de ITIL Service Operation a The Stationery Office (TSO) por encargo del Cabinet Office, sin presentarla como una publicacion directa del Office of Government Commerce. La entrada `OGC2011_itil` de `Bibliography_base.bib` SHALL ser coherente con esa atribucion: autor corporativo Cabinet Office (o el que consigne el catalogo consultado, declarado en el registro de correcciones), editorial The Stationery Office y ninguna nota que atribuya el encargo al Office of Government Commerce. La clave `OGC2011_itil` MUST NOT renombrarse.
@@ -284,7 +289,7 @@ La seccion 2.2 SHALL atribuir la edicion de 2011 de ITIL Service Operation a The
 - **THEN** la edicion de 2011 se atribuye a TSO/Cabinet Office
 - **AND** no se afirma que el Office of Government Commerce sea el editor de la edicion de 2011
 
-#### Scenario: Entrada bibliografica coherente con el cuerpo
+#### Scenario: Correccion bibliografica delegada
 - **WHEN** se inspecciona la entrada `OGC2011_itil` y su referencia compilada
 - **THEN** el autor corporativo, la editorial y la nota (si existe) son coherentes con la atribucion de la seccion 2.2
 - **AND** ninguna nota atribuye el encargo de la edicion de 2011 al Office of Government Commerce

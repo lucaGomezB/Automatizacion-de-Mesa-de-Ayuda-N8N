@@ -4,17 +4,17 @@
 
 El framework SHALL calcular, sobre la definicion de acierto primaria (igualdad estricta entre `sector_asignado` y `sector_predicho`), la exactitud primaria como la proporcion de aciertos sobre el total. Ademas SHALL calcular el subconjunto exacto y la perdida de Hamming conforme a la evaluacion multietiqueta. El framework SHALL estimar el intervalo de confianza al 95% mediante el metodo de Wilson sobre TRES definiciones de acierto: (a) igualdad estricta del sector principal; (b) pertenencia, es decir `sector_asignado` contenido en el conjunto predicho (`sector_predicho` mas `sectores_adicionales` predichos); y (c) acierto laxo, es decir `sector_predicho` contenido en el conjunto de verdad del caso (`sector_asignado` mas `sectores_adicionales` de verdad del corpus). El reporte SHALL rotular cada definicion con su enunciado explicito, de modo que la pertenencia no se confunda con la exactitud laxa. Un `sector_predicho` ausente, vacio o no canonico SHALL contar como error en las tres definiciones. El calculo SHALL ser una funcion pura.
 
-#### Scenario: Exactitud como proporcion de aciertos
+#### Scenario: Exactitud como proporción de aciertos
 
 - **WHEN** se clasifican N casos y K tienen `sector_predicho` igual a `sector_asignado`
 - **THEN** la exactitud primaria es `K / N`
 
-#### Scenario: Intervalo de Wilson contiene la proporcion puntual
+#### Scenario: Intervalo de Wilson contiene la proporción puntual
 
 - **WHEN** se calcula el intervalo de Wilson al 95% para la proporcion de aciertos de cada una de las tres definiciones
 - **THEN** el intervalo esta acotado en `[0, 1]`, su limite inferior no supera a la proporcion puntual y su limite superior no es inferior a ella
 
-#### Scenario: Acierto por pertenencia es mas laxo que el estricto
+#### Scenario: Acierto por pertenencia es más laxo que el estricto
 
 - **WHEN** `sector_asignado` no coincide con `sector_predicho` pero si aparece en `sectores_adicionales` predichos
 - **THEN** la definicion de acierto por pertenencia cuenta el caso como acierto y la definicion estricta no
@@ -45,7 +45,7 @@ El framework SHALL calcular, sobre la definicion de acierto primaria (igualdad e
 
 El framework SHALL reportar la calibracion de la confianza del clasificador: la relacion entre el valor de `confianza` devuelto por caso y la exactitud estricta de la prediccion. El reporte SHALL emitirlo el runner dentro de `evaluation/report.md` (MUST NOT agregarse a mano) e MUST incluir, como minimo, la precision del segmento de confianza `>= 0,70` y la del segmento `< 0,70`, la cantidad de casos y de errores con confianza `>= 0,90`, y una tabla de calibracion por bandas de confianza. Cada uno de esos elementos MUST reportarse en forma global y desagregado por etapa del pipeline (`deterministic`, `gemini`, `fallback`), porque las etapas emiten magnitudes de confianza de naturaleza distinta y la agregacion confunde la comparacion entre bandas con una comparacion entre etapas. Por etapa, el reporte SHALL incluir ademas la distribucion de los valores de confianza observados (casos y aciertos por valor) y el IC de Wilson al 95% de la exactitud de cada banda no vacia. El calculo SHALL ser una funcion pura sobre las predicciones ya recolectadas.
 
-#### Scenario: Tabla de calibracion por bandas
+#### Scenario: Tabla de calibración por bandas
 
 - **WHEN** el framework procesa las predicciones con `confianza` y `sector_predicho`
 - **THEN** produce una tabla de calibracion global con, al menos, las bandas `[0;0,5)`, `[0,5;0,7)`, `[0,7;0,85)`, `[0,85;0,95)` y `[0,95;1,0]`
@@ -75,7 +75,7 @@ El framework SHALL reportar la calibracion de la confianza del clasificador: la 
 - **THEN** lista, para cada etapa, los valores distintos de `confianza` observados en orden ascendente con la cantidad de casos y de aciertos de cada uno
 - **AND** la suma de los casos de una etapa coincide con el total de casos de esa etapa
 
-#### Scenario: El reporte no altera las metricas primarias
+#### Scenario: El reporte no altera las métricas primarias
 
 - **WHEN** se agrega el reporte de calibracion
 - **THEN** las metricas primarias de clasificacion (exactitud, F1 macro/micro, matriz 5x5) no cambian de valor

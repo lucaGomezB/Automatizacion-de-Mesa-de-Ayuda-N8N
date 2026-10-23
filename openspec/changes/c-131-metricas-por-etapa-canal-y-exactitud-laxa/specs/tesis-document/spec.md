@@ -4,13 +4,13 @@
 
 La tesis SHALL reportar la relacion entre la confianza devuelta por el clasificador y su exactitud DESAGREGADA POR ETAPA del pipeline, porque la etapa deterministica y la etapa Gemini emiten magnitudes de confianza de naturaleza distinta (definidas en el subsistema de clasificacion, `subsec:subsistema-clasificacion`). El capitulo de resultados MUST incluir la exactitud por banda de confianza separada por etapa (casos, aciertos y exactitud), la exactitud estricta de cada etapa con su IC de Wilson y la contingencia de confianza alta/baja en torno a 0,70 con su composicion por etapa. La conclusion sobre calibracion SHALL restringirse a la etapa Gemini y a su rango efectivo observado (0,85 a 1,00) y SHALL declarar que la etapa de reglas no emite una confianza utilizable como criterio de derivacion. La tesis MUST NOT caracterizar al clasificador en su conjunto como "anti-calibrado" ni como de "calibracion invertida". El capitulo de discusion MUST interpretar la implicancia de la lectura por etapa para el umbral de revision humana de 0,70.
 
-#### Scenario: Tabla de calibracion por etapa presente
+#### Scenario: Tabla de contingencia o curva de calibración presente
 
 - **WHEN** se lee el capitulo de resultados
 - **THEN** existe una tabla que cruza las bandas de confianza con la etapa del pipeline y reporta casos, aciertos y exactitud por celda
 - **AND** se reportan la precision del segmento de confianza `>= 0,70` y la del segmento `< 0,70` junto con su composicion por etapa (los 124 casos con confianza `< 0,70` son de la etapa deterministica; el segmento `>= 0,70` reune 7 casos deterministicos y los 69 de Gemini)
 
-#### Scenario: Contraste agregado leido como efecto de composicion
+#### Scenario: Discusión de la anti-calibración
 
 - **WHEN** se lee la interpretacion del contraste agregado entre confianza alta (0,697) y confianza baja (0,758)
 - **THEN** se presenta como una comparacion entre la etapa de reglas y la etapa de modelo, no como evidencia sobre la calibracion de la confianza

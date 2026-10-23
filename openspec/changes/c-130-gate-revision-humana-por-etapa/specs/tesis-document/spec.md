@@ -155,7 +155,7 @@ La tesis SHALL presentar la conducta observada del gate de clasificacion en el c
 - **THEN** se declara que la etapa Gemini nunca devolvio una confianza inferior a 0,85 en los 69 casos que resolvio
 - **AND** no se afirma que esa conducta abarque los 200 casos del corpus
 
-#### Scenario: Hallazgo con valor propio y valoracion coherente
+#### Scenario: Hallazgo enunciado como resultado positivo
 
 - **WHEN** se lee la enunciacion del hallazgo
 - **THEN** se presenta como resultado empirico propio sobre el clasificador y no solo como motivo de la no contraste de la sub-hipotesis

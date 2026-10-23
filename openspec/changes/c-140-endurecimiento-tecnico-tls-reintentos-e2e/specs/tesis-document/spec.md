@@ -10,7 +10,7 @@ La tesis SHALL afirmar unicamente lo que el repositorio permite verificar. El §
 - **THEN** el repositorio contiene el arnes con los checks de recorrido declarados y el workflow que lo ejecuta
 - **AND** el alcance declarado (variante de costo cero, canales, propiedades verificadas y exclusiones) coincide con los checks implementados
 
-#### Scenario: Sin afirmacion de pruebas e2e si la prueba no existe
+#### Scenario: Sin afirmacion de pruebas e2e de N8N no verificable
 
 - **WHEN** se busca en el repositorio una prueba ejecutable que instancie N8N y recorra el flujo hasta la persistencia y no existe
 - **THEN** el §6.7 no afirma que tales pruebas existan o se hayan ejecutado
