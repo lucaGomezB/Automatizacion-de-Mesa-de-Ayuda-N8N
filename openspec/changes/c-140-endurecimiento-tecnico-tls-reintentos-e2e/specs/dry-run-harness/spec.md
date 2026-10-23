@@ -19,7 +19,7 @@ El arnes MUST operar sin invocar servicios pagos: MUST NOT realizar llamadas rea
 - **WHEN** el arnes inicia su recorrido
 - **THEN** verifica que el presupuesto efectivo de la guarda de costo del backend es cero y aborta con exit code distinto de cero si no lo es
 
-#### Scenario: Escalada denegada no genera costo
+#### Scenario: Escalada fallida no genera costo
 
 - **WHEN** un incidente de prueba no se resuelve en la etapa deterministica y el clasificador intenta escalar
 - **THEN** la guarda de costo deniega la llamada paga, el backend aplica la degradacion configurada con revision humana y no se emite ninguna peticion al proveedor de Gemini

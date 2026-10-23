@@ -63,7 +63,7 @@ El proyecto SHALL proveer dos scripts de generacion de certificados, `openssl/ge
 
 El servicio `frontend` de docker-compose SHALL recibir como argumento de build `VITE_API_BASE_URL=https://localhost`, es decir, el ORIGEN sin el prefijo `/api/v1` (que el cliente HTTP de la SPA agrega una sola vez), de modo que el bundle compilado llame a la API por HTTPS a traves del proxy nginx. El valor MUST llegar como argumento de build y no como variable de entorno de runtime, porque el bundle estatico ya compilado ignora el entorno de ejecucion.
 
-#### Scenario: El argumento de build usa el origen HTTPS
+#### Scenario: Frontend environment variable uses HTTPS
 
 - **WHEN** se inspecciona la seccion `build.args` del servicio `frontend` en `docker-compose.yml`
 - **THEN** `VITE_API_BASE_URL` vale `https://localhost`, sin el sufijo `/api/v1`

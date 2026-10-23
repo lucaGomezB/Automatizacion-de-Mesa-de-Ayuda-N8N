@@ -4,7 +4,7 @@
 
 El parrafo introductorio de la tabla comparativa de soluciones (`\label{tab:comparativa}` en `03-estado-del-arte.tex`) SHALL declarar como dimensiones de comparacion exactamente las columnas de la tabla distintas de la clave de fila (`Solucion`), en un numero igual al de esas columnas, y SHALL NOT enunciar como dimension la clave de fila ni una propiedad que no tenga columna propia. La tabla SHALL conservar sus cuatro columnas (Solucion como clave de fila; Despliegue, Clasificacion automatica y Modelo de costo como dimensiones) y su rotulo. La sintesis comparativa posterior a la tabla SHALL NOT afirmar que las soluciones revisadas carecen de una propiedad que la tabla no releva; una propiedad sin columna que se conserve en la prosa SHALL presentarse como rasgo de la propuesta o del contexto y no como resultado de la comparacion.
 
-#### Scenario: Dimensiones declaradas excluyen la clave de fila
+#### Scenario: Dimensiones declaradas coinciden con las columnas
 
 - **WHEN** se lee el parrafo introductorio de `tab:comparativa` y se cuentan las columnas de la tabla
 - **THEN** el numero de dimensiones enunciadas es igual al numero de columnas menos la clave de fila (tres)

@@ -313,7 +313,7 @@ dos hipótesis subsidiarias.
 - **THEN** el estado de la hipótesis principal se declara parcialmente confirmado y parcialmente refutado
 - **AND** la refutación se ancla en las métricas de clasificación reportadas
 
-#### Scenario: Sub-hipótesis de intervención humana declarada no contrastada
+#### Scenario: Sub-hipótesis de intervención humana declarada no medida
 
 - **WHEN** se lee el estado de la hipótesis principal en el resumen y las conclusiones
 - **THEN** la sub-hipótesis de intervención humana se declara no contrastada por ausencia de registro primario
