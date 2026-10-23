@@ -1,0 +1,1810 @@
+{
+  "cache_meta": {
+    "corpus_hash": "5f062e1466facd1a522d80c2693d1d256017aae37372c2d288646ba104f46a93",
+    "corpus_count": 200,
+    "classifier_version": "hybrid-v2",
+    "generated_at": "2026-10-07T20:33:03.438926+00:00"
+  },
+  "predictions": [
+    {
+      "caso_id": "R001",
+      "descripcion": "No puede ingresar al sistema principal",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R002",
+      "descripcion": "No se puede acceder al ambiente de prueba del sistema secundario",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R003",
+      "descripcion": "No se puede acceder a las planillas de excel en un recurso compartido, se necesita la habilitacion de botones de ordenar y filtros, la planilla esta lenta",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R004",
+      "descripcion": "No se puede conectar a las redes en su PC, se desconecta el telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R005",
+      "descripcion": "No puede abrir archivos excel ni word",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R006",
+      "descripcion": "Su telefono deriva llamadas a cualquier lado",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R007",
+      "descripcion": "No puede atender llamadas externas",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R008",
+      "descripcion": "El sistema principal se cierra solo al intentar hacer una consulta de una cuenta",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R009",
+      "descripcion": "No puede acceder al ambiente de consulta del sistema principal",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R010",
+      "descripcion": "Hay 2 maquinas que se tildan al entrar al sistema principal",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R011",
+      "descripcion": "Un usuario confirma que no puede generar el PDF que recibe al hacer el reporte del sistema principal en estados de cuenta",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R012",
+      "descripcion": "No puede acceder al correo",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R013",
+      "descripcion": "Solicitud de instalacion del navegador Google Chrome",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.98,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R014",
+      "descripcion": "No puede recibir respuestas de correo",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R015",
+      "descripcion": "No le salen correos por flujo del sistema principal y no le llegan las instancias",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R016",
+      "descripcion": "El modem que atiende una entidad y da servicio a los clientes no funciona. Tiene 2 leds rojos. Se adjunta una imagen.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R017",
+      "descripcion": "Una impresora no tiene toner debe ser redirigida",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R018",
+      "descripcion": "Solicitud de auriculares nuevo",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R019",
+      "descripcion": "Un telefono no recibe llamadas externas pero si puede realizarlas",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R020",
+      "descripcion": "Un sistema de terceros no levanta",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R021",
+      "descripcion": "La hora de los telefonos fijos esta corrida 8 minutos",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R022",
+      "descripcion": "No funciona un sistema de terceros y hay un error de conexion en el web service del sistema principal",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R023",
+      "descripcion": "No se escuchan los auriculares",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R024",
+      "descripcion": "No puede acceder al sistema secundario",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R025",
+      "descripcion": "El escaner le tira error 2019",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R026",
+      "descripcion": "El teclado no funciona",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.98,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R027",
+      "descripcion": "No puede hablar en las reuniones",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R028",
+      "descripcion": "No puede hacer llamadas al exterior, se le cortan las llamadas",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R029",
+      "descripcion": "Se solicita revisar un rack viejo en la cocina de gerencia",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R030",
+      "descripcion": "Se tilda y apaga su maquina sola, necesitando un reseteo manual",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.9,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R031",
+      "descripcion": "Se le han desaparecido Office, Outlook y Chrome",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R032",
+      "descripcion": "Su PC se reinicia a cada rato, sospecha que son los cables de la computadora.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R033",
+      "descripcion": "No puede ingresar al sistema principal, le sale un cartel \"Usuario no hablitado para operar desde este puesto de trabajo\"",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R034",
+      "descripcion": "Su PC se apaga sola por problema con termica",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R035",
+      "descripcion": "Cuando trata de traer un documento en formato .jpg del menu de digitalizacion se cierra su sesion",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.9,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R036",
+      "descripcion": "A todo su sector de vuelta no les funciona el telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R037",
+      "descripcion": "Solicitud de cambio de cable VGA defectuoso",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.98,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R038",
+      "descripcion": "Reporta error de digitalizacion en el sistema principal",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R039",
+      "descripcion": "Solicitud de revision de lineas telefonicas",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.9,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R040",
+      "descripcion": "No funcionan las lineas telefonicas",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R041",
+      "descripcion": "Se le han borrado todos los datos del perfil de consulta de SQL",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R042",
+      "descripcion": "No funciona una macro en su computadora",
+      "sector_asignado": "Bases de Datos",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R043",
+      "descripcion": "Reloj de fichadas sucursal x no marca la huella dactilar",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R044",
+      "descripcion": "No puede ingresar a una parte del sistema principal",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R045",
+      "descripcion": "Solicita un desbloqueo de usuario de dominio",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R046",
+      "descripcion": "Tiene problemas para ingresar al S.O. con la autenticación de doble factor",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.9,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R047",
+      "descripcion": "Le sale un error de \"Cuenta suspendida por inactividad / fin de contrato o licencia\"",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R048",
+      "descripcion": "Solicita un reseteo de contraseña de usuario de dominio porque al reestablecerla la puso mal",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R049",
+      "descripcion": "Al intentar iniciar sesion en el sistema secundario, le hace un bucle de redireccion infinito al intentar iniciar sesion",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R050",
+      "descripcion": "Gerencia perdió su llave física de seguridad FIDO",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R051",
+      "descripcion": "Su clave del sistema secundario almacenada en el gestor de contraseñas se aplica automática y erroneamente en el navegador, causando un bucle infinito de redirección.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R052",
+      "descripcion": "Tiene una pérdida total de conexión a la red wifi corporativa",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R053",
+      "descripcion": "Le ocurren desconexiones intermitentes a la red inalámbrica, con señal débil.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R054",
+      "descripcion": "Tiene una conexión actual activa pero \"Sin acceso a internet\"",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.9,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R055",
+      "descripcion": "Tiene el cable de internet (RJ45) dañado, solicita un reemplazo de 5 metros.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R056",
+      "descripcion": "Le sale el error \"conflicto de dirección IP (estática o duplicada)\"",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R057",
+      "descripcion": "Le sale el error \"fallo en la asignación de dirección IP por parte del servidor DHCP\"",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R058",
+      "descripcion": "Lentitud extrema en la navegación / descarga de archivos",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R059",
+      "descripcion": "La red wifi corporativa no le aparece dentro de la lista de conexiones disponibles",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.9,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R060",
+      "descripcion": "Tiene bloqueados algunos sitios web o puertos necesarios por la configuracion del firewall",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R061",
+      "descripcion": "Tiene fallos de roaming wifi al desplazarse entre distintos puntos de acceso",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R062",
+      "descripcion": "Le sale \"error 2024\" al intentar ingresar al sistema principal",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R063",
+      "descripcion": "Se le cierra inesperadamente el sistema principal al intentar realizar la operación NQ14",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R064",
+      "descripcion": "Al intentar ingresar al sistema principal, le sale el error \"Licencia expirada / no valida\"",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R065",
+      "descripcion": "No puede ingresar a las aplicaciones (sistemas) principales. Solicita una reinstalación.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R066",
+      "descripcion": "Desde la ultima actualizacion a su sistema operativo perdió acceso a algunas aplicaciones. Solicita rehabilitación",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R067",
+      "descripcion": "Le sale un cartel \"Falta el dll axm0102301239999320002302\" al intentar iniciar el sistema principal",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R068",
+      "descripcion": "Reporta lentitud en el sistema principal a la hora de realizar consultas al estado de las adquisiciones más recientes",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R069",
+      "descripcion": "Al intentar iniciar sesión en el sistema principal, le sale un error \"Es necesario Visual C++ 2015-2022 (x86 y x64) Redistributables\"",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R070",
+      "descripcion": "Tocó algo y accidentalmente ahora tiene Adobe PDF Reader en ruso",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R071",
+      "descripcion": "No puede actualizar Firefox a la última versión",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R072",
+      "descripcion": "Dentro del sistema principal no puede registrar insumos porque su nombre de usuario se muestra roto",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.9,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R073",
+      "descripcion": "Crashea su instancia del sistema secundario al intentar exportar los datos del cliente al formato de excel",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R074",
+      "descripcion": "Se le está llenando el disco de su PC al gerente de sucursal Rio Negro. Solicita un backup y limpieza",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R075",
+      "descripcion": "Puede recibir correos, pero no enviarlos",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R076",
+      "descripcion": "Puede enviar correos, pero no recibirlos",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R077",
+      "descripcion": "Recibe varios correos directamente a la carpeta de spam, en vez de al buzón de entrada",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R078",
+      "descripcion": "Recibe los archivos por correo, de manera corrupta.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R079",
+      "descripcion": "No puede acceder a su correo electrónico empresarial desde un dispositivo personal.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R080",
+      "descripcion": "No puede enviar archivos por correo que pesen menos de 1kb",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R081",
+      "descripcion": "No puede proporcionar los permisos de cámara y sonido para una reunión",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.9,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R082",
+      "descripcion": "Se le ha roto el formato de su firma electronica",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R083",
+      "descripcion": "No puede enviar ni recibir comprimidos cifrados por adjunto en el correo",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R084",
+      "descripcion": "No enciende la computadora",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R085",
+      "descripcion": "No le enciende la webcam",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R086",
+      "descripcion": "La batería de su laptop no carga o se descarga rápidamente estando enchufada.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R087",
+      "descripcion": "La computadora hace un ruido fuerte al encender",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R088",
+      "descripcion": "La computadora le tira un pantallazo azul al hacer tareas pesadas",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R089",
+      "descripcion": "Antes de encender, el monitor parpadea un par de veces una luz ténue y luego se apaga",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R090",
+      "descripcion": "A cada rato la computadora hace ruido y se apaga",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R091",
+      "descripcion": "El monitor le dice \"no signal\", el cable está bien enchufado",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R092",
+      "descripcion": "No le funciona el ratón",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R093",
+      "descripcion": "No le funciona el teclado",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.98,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R094",
+      "descripcion": "Los programas se tardan un montón en cargar. La luz de la PC está prendida permanente",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R095",
+      "descripcion": "No se puede seleccionar la cámara web de la laptop para una videollamada",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R096",
+      "descripcion": "La docking station no reconoce a todos los monitores conectados.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R097",
+      "descripcion": "No le sale sonido desde los auriculares",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R098",
+      "descripcion": "No funciona la radio de la oficina",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R099",
+      "descripcion": "Un puerto USB de la PC no reconoce ni teclado, ni ratón, ni pendrive",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 1.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R100",
+      "descripcion": "Se le cayó un monitor, la pantalla ahora está partida y no se ve nada",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.98,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R101",
+      "descripcion": "Un trafo de monitor tira olor a quemado, no prende el monitor.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.98,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R102",
+      "descripcion": "Se le cayó una pc y ahor está abollada la carcaza, al parecer los programas ahora se tardan más en cargar",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R103",
+      "descripcion": "El reloj de entrada de la sucursal de Maipú no toma las huellas dactilares",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R104",
+      "descripcion": "La impresora se muestra en estado \"offline\"",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R105",
+      "descripcion": "Se atascaron unos papeles en la impresora y tratando de sacarlos, se arrancaron unos piñones de la impresora",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.98,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R106",
+      "descripcion": "Se le está acabando el toner",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R107",
+      "descripcion": "Necesita un cambio de tambor de imagen",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R108",
+      "descripcion": "Necesita un reemplazo de fusor",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R109",
+      "descripcion": "Necesita un cambio de unidad de tinta",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R110",
+      "descripcion": "Se ve el texto borroso al imprimir",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R111",
+      "descripcion": "El papel sale como desgastado al imprimir",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R112",
+      "descripcion": "Los drivers de la impresora están desactualizados y no permiten usar una funcionalidad específica de un driver posterior",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.9,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R113",
+      "descripcion": "Está desalineada la configuración estándar de la impresora, imprime chueco",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R114",
+      "descripcion": "La dirección IP por defecto de la impresora se ha perdido, está \"huérfana\"",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R115",
+      "descripcion": "La computadora enciende extremadamente lenta",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R116",
+      "descripcion": "Algunos procesos están consumiendo más recursos que de lo usual, reduciendo la eficiencia del equipo.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R117",
+      "descripcion": "Falta espacio en el disco de su máquina, solicita una limpieza",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R118",
+      "descripcion": "Hay actualizaciones del S.O. atascadas o que fallan reiteradamente",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R119",
+      "descripcion": "Hay un perfil de usuario temporal cargado en lugar del perfil de usuario completo.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R120",
+      "descripcion": "El sistema principal se ha congelado completamente, se solicita un reinicio urgente",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R121",
+      "descripcion": "Se han desaparecido sus aplicaciones y se han desvinculado sus accesos directos",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R122",
+      "descripcion": "Los controladores de su webcam se han vuelto incompatibles tras una actualización del sistema.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R123",
+      "descripcion": "Se han corrompido unos archivos del sistema, impidiendo su funcionamiento básico.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R124",
+      "descripcion": "Se han desconfigurado el día y la zona horaria de su PC",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R125",
+      "descripcion": "Le sale un mensaje de \"Acceso Denegado\" al intentar abrir archivos o carpetas compartidas",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R126",
+      "descripcion": "Se emiten alertas de malware desde la pc del usuario por el antivirus corporativo",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R127",
+      "descripcion": "El usuario reporta sospechas sobre un correo de phishing",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.98,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R128",
+      "descripcion": "Se ha perdido el acceso a unos archivos en la red tras cambios en Active Directory",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R129",
+      "descripcion": "Se han encontrado unos archivos dudosos con extensiones no especificadas",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R130",
+      "descripcion": "Se han restringido unas funciones del sistema, aplicadas por políticas de grupo (GPO)",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R131",
+      "descripcion": "No puede ejecutar unos ejecutables o scripts debido a las políticas de control de aplicaciones",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R132",
+      "descripcion": "No puede conectar unidades USB por políticas de prevención de pérdida de datos.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R133",
+      "descripcion": "No se puede conectar a la VPN corporativa debido a un fallo de autenticación",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R134",
+      "descripcion": "Le da error de protocolo al intentar econectarse a la VPN corporativa",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R135",
+      "descripcion": "Durante la jornada laboral, se le desconecta varias veces la VPN",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R136",
+      "descripcion": "No se puede conectar por escritorio remoto (RDP) al equipo de la oficina",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R137",
+      "descripcion": "Siente una lentitud acentuada en el acceso a recursos locales al estar conectado por VPN",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.9,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R138",
+      "descripcion": "Hay un conflicto entre la subred del hogar del usuario y el rango de red de la empresa",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R139",
+      "descripcion": "Eliminó accidentalmente unos archivos y carpetas importantes",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R140",
+      "descripcion": "Se tienen unidades de red mapeadas que no se reconectan al iniciar sesión",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R141",
+      "descripcion": "Ocurren fallos de sincronización de archivos en la nube",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R142",
+      "descripcion": "El usuario solicita la restauración de su copia de seguridad debido a una corrupción de información",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R143",
+      "descripcion": "No puede exceder a archivos excel o word",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R144",
+      "descripcion": "Le figura un error en la licencia Microsoft Office 365",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R145",
+      "descripcion": "No se puede conectar a la red corporativa via Ethernet",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R146",
+      "descripcion": "Su instancia del sistema principal se tarda un montón al navegar entre las páginas",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R147",
+      "descripcion": "Solicita un cambio de cable HDMI defectuoso",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R148",
+      "descripcion": "Tiene bloqueado el puerto del middleware que permite el acceso al sistema secundario",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R149",
+      "descripcion": "Solicita un cambio de ratón",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.98,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R150",
+      "descripcion": "Solicita un cambio de ratón",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.98,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R151",
+      "descripcion": "Solicita un cambio de auriculares",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.98,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R152",
+      "descripcion": "Solicita un cambio de auriculares",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R153",
+      "descripcion": "Solicita un cambio de auriculares",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R154",
+      "descripcion": "No le inicia la computadora",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R155",
+      "descripcion": "No le funciona la webcam",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R156",
+      "descripcion": "No recibe archivos por correo",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R157",
+      "descripcion": "No le carga su laptop",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R158",
+      "descripcion": "Solicita un cambio de display de nombre en su telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.9,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R159",
+      "descripcion": "Quiere actualizar sus botones de derivación en su teléfono, porque derivan a teléfonos ahora inexistentes",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R160",
+      "descripcion": "Las llamadas externas dan estado \" ocupado \" hasta en teléfonos desocupados",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R161",
+      "descripcion": "Solicita la reinstalación de Microsoft Vision",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R162",
+      "descripcion": "No funcionan las salidas ni entradas de audio",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R163",
+      "descripcion": "El sistema secundario le dice que \" no tiene menu asignado \"",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R164",
+      "descripcion": "El sistema secundario le da error cuando vaa a dar de alta una tarjeta",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R165",
+      "descripcion": "No puede ver los datos del cliente en el sistema principal",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R166",
+      "descripcion": "El sistema principal se queda colgado con una pantalla gris al hacerse un reporte o estado de cuenta.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R167",
+      "descripcion": "El reloj de entrada de la sucursal de Cordoba Capital no toma las huellas dactilares",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R168",
+      "descripcion": "No le llegan correos de \" workflow \"",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R169",
+      "descripcion": "Tiene problemas al dar de alta una tarjeta",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R170",
+      "descripcion": "La máquina de fax no funciona",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R171",
+      "descripcion": "La conexión entre el sistema principal y su escaner no funciona",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R172",
+      "descripcion": "No le llegan correos de instancias de ventas, solicita ser agregado al correo generico de Neuquen",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R173",
+      "descripcion": "Solicitud de revisión de 3 monitores en el sector de cobranzas",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R174",
+      "descripcion": "El sistema secundario se traba al intentar cargar unas altas de tarjeta",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.9,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R175",
+      "descripcion": "No se puede conectar al WIFI corporativo",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R176",
+      "descripcion": "No puede acceder al drive proporcionado por marketing",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R177",
+      "descripcion": "Se desconecta el escaner y figura error 2019",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R178",
+      "descripcion": "Pierde acceso a internet desde su PC intermitentemente. Sus compañeros tienen.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R179",
+      "descripcion": "Al intentar entrar al sistema web, salir, y volver a intentar entrar, la página no vuelve a cargar.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R180",
+      "descripcion": "Le llaman los clientes y el teléfono les responde \"esta línea está fuera de servicio\"",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R181",
+      "descripcion": "El usuario informa que al querer abrir archivos excel o pdf, la PC se queda cargando y no respode",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R182",
+      "descripcion": "El usuario no puede imprimir transferencias del sistema principal",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R183",
+      "descripcion": "El usuario no puede acceder al sistema secundario, pero si a los otros",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R184",
+      "descripcion": "Reportan desde la sucursal Guaymallén que el cartel de cotizaciones no funciona correctamente",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R185",
+      "descripcion": "Solicitud de 3 mouses",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.98,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R186",
+      "descripcion": "Le anda la PC muy lenta",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R187",
+      "descripcion": "Solicita un ratón nuevo",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.98,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R188",
+      "descripcion": "Solicita una limpieza de disco duro",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R189",
+      "descripcion": "Solicita que le revisen la PC porque le anda muy lenta",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R190",
+      "descripcion": "El usuario solicita que se le actualice el índice telefónico",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R191",
+      "descripcion": "Le anda lento el gestor de archivos",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.9,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R192",
+      "descripcion": "Le anda muy lenta la PC",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R193",
+      "descripcion": "La PC no le responde",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R194",
+      "descripcion": "Al dar de alta una tarjeta de cliente no les entega la edad correcta y no pueden avanzar",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R195",
+      "descripcion": "No se pueden visualizar los correos anteriores a la migración",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.9,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R196",
+      "descripcion": "Se queda procesando infinitamente la descarga de billeteras",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R197",
+      "descripcion": "El sistema principal le anda lento",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R198",
+      "descripcion": "Solicita un cambio de impresora",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R199",
+      "descripcion": "Solicita la reparación de unas tomas de corriente rotas",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "R200",
+      "descripcion": "No puede operar con su computadora, al ingresar a su computadora con su cuenta, muestra una pantalla en negro, pero al ingresar otro usuario a la misma computadora, no le hace problemas.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    }
+  ]
+}
