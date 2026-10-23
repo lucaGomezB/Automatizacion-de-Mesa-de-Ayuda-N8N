@@ -224,9 +224,13 @@ async def test_api_no_existe_edicion_ni_borrado_de_comentarios(engine, comentari
     comentario_id = alta.json()["id"]
 
     app = create_app()
+    # FastAPI 0.143 / Starlette 1.8 exponen routers incluidos (_IncludedRouter)
+    # sin atributo `path` dentro de app.routes. Solo las rutas con `path`
+    # representan endpoints reales, que es lo que esta verificacion inspecciona.
     rutas = {
         (r.path, tuple(sorted(getattr(r, "methods", set()) or [])))
         for r in app.routes
+        if getattr(r, "path", None) is not None
     }
     assert not any(
         path.endswith(f"/comentarios/{comentario_id}") for path, _ in rutas
