@@ -49,7 +49,7 @@ openspec list --json
 │   ├── alembic/              # Migrations (seed catalogs in 001)
 │   └── tests/                # SQLite unit suite + PostgreSQL integration subset (disposable DB)
 │
-├── App/Frontend/                 # React 18 + TypeScript + Vite
+├── App/Frontend/                 # React 19 + TypeScript + Vite
 │   └── src/
 │       ├── components/       # Domain components (exclude ui/ and layout/ from coverage)
 │       ├── hooks/            # React Query wrappers

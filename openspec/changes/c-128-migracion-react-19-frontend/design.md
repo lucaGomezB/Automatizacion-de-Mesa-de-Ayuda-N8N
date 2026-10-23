@@ -1,61 +1,82 @@
-# Design: Migración a React 19 y actualización mayor del toolchain del frontend
+# Design: Migración del frontend a React 19 y react-router 7 (alcance reducido)
 
 ## Context
 
-Ver `proposal.md` (Why). El estado actual es React 18 + Vite 5 + Vitest 2 + ESLint 9, todo verde en `main`. El PR #34 agrupa 36 actualizaciones en el grupo `frontend-npm` y no instala (`ERESOLVE`). El frontend usa el runtime moderno (`createRoot`), modo declarativo de react-router, flat config de ESLint y un stack de estilos shadcn/ui + Tailwind. La suite (Vitest/happy-dom + Testing Library) es la principal red de seguridad de comportamiento.
+Ver `proposal.md` (Why). El estado actual es React 18 + react-router 6 + Vite 5 + Vitest 2 + ESLint 9 + Tailwind 3, todo verde en `main`. El grupo `frontend-npm` de Dependabot (PR #34) no instala porque, en su alcance completo, pide `eslint ^10` mientras `eslint-plugin-react@7.37.5` declara peer hasta `^9.7`. Este change adopta SOLO React 19 y react-router 7, dejando el toolchain en sus mayores actuales.
 
 ## Goals / Non-Goals
 
 **Goals**
-- Adoptar el conjunto objetivo del grupo `frontend-npm` de PR #34, con `npm ci` / `lint` / `build` / `test` en verde.
-- Resolver el conflicto de peer eslint 10 ↔ `eslint-plugin-react` sin flags de escape.
+- Adoptar React 19 (+ tipos) y react-router 7 con `npm ci` / `lint` / `build` / `test` en verde y sin flags de escape.
+- Mantener el toolchain actual (Vite 5, Vitest 2, ESLint 9, Tailwind 3) sin cambios.
 - Preservar el comportamiento observable validado por la suite existente.
+- Alinear la versión de Node a una con soporte vigente por fin de vida de Node 20.
 
 **Non-Goals**
+- No se actualizan los mayores del toolchain (diferidos; ver proposal).
 - No se cambia comportamiento funcional, contratos de API ni rutas del frontend.
 - No se adopta el modo data-router de react-router 7 (se mantiene el modo declarativo).
-- No se aborda el endurecimiento de reglas de ESLint diferido desde C-09.
 
 ## Decisions
 
-### D1 — Alcance: se adopta el conjunto completo del grupo `frontend-npm`
-Las versiones están acopladas por peers (`@vitejs/plugin-react` 6 exige Vite 6+; `@vitest/coverage-v8` 5 exige Vitest 5; `tailwind-merge` 3 apunta a Tailwind 4). Adoptarlas por separado rompería el árbol. Se auditan explícitamente los tres ecosistemas de titular (React 19, react-router 7, ESLint 10) y los acoplamientos mayores (toolchain de build/test y stack de estilos).
-- Alternativa considerada: dividir Tailwind 4 en un change aparte. Se descarta para no dejar un manifiesto intermedio no resolubles; queda como palanca de rollback si el volumen resulta excesivo.
+### D1 — Alcance reducido: React 19 y react-router 7 están desacoplados del toolchain
 
-### D2 — Resolución del conflicto ESLint 10 ↔ `eslint-plugin-react`
-`eslint-plugin-react@7.37.5` no soporta ESLint 10 (sin release compatible). En `eslint.config.js` las únicas reglas consumidas del plugin (`react/react-in-jsx-scope`, `react/prop-types`) están en `off`; el valor real lo aportan `eslint-plugin-react-hooks` (`rules-of-hooks: error`, `exhaustive-deps: warn`) y `typescript-eslint`. Se retira `eslint-plugin-react` y su `settings.react`, conservando las mismas reglas efectivas.
-- Alternativas: adoptar `@eslint-react/eslint-plugin` (diferido; aportaría reglas nuevas no requeridas) o fijar ESLint 9 (rechazado; incumple el objetivo).
+React 19 no exige ningún mayor del toolchain. Evidencia de peers verificada:
 
-### D3 — react-router 7 en modo declarativo
-`react-router-dom` 7 reexporta todo desde `react-router`; `BrowserRouter`/`MemoryRouter`/`Routes`/`Route`/`Navigate`/`NavLink`/`Link`/`useNavigate` siguen disponibles, por lo que los imports no cambian. El único ajuste es retirar el prop `future` de `<BrowserRouter>` en `main.tsx`, porque en v7 esos flags ya son comportamiento por defecto y dejan de ser props válidas.
+- `@vitejs/plugin-react@4.7.0` declara peer `vite ^4.2 || ^5 || ^6 || ^7` → React 19 corre sobre Vite 5 sin bump.
+- `vitest@2` no declara peer de React.
+- `@testing-library/react@16` declara peer `react ^18 || ^19`.
+- `recharts@3` incluye `^19` en su peer de React.
+- `lucide-react@1` declara peer `react ^16.5.1 || ^17 || ^18 || ^19`.
 
-### D4 — Tailwind 4 con mínima superficie de cambio
-Se migra `postcss.config.cjs` al plugin `@tailwindcss/postcss` (y se retira `autoprefixer`, absorbido por el pipeline de v4), se reemplazan las directivas `@tailwind base/components/utilities` por `@import "tailwindcss"` en `src/index.css` y se mantiene el `tailwind.config.ts` vía la directiva `@config` (menor churn que migrar el tema a `@theme`). Se retira `tailwindcss-animate` (declarado pero no registrado en `plugins`) por incompatibilidad con v4.
-- Se asume como riesgo los cambios de defaults visuales de v4 (color de borde, ancho de `ring`, escala de `shadow`, `outline-none`).
+Los mayores del toolchain están acoplados SOLO entre sí (ver D3), no con React. Por eso se pueden adoptar React 19 y react-router 7 de forma aislada.
 
-### D5 — Versión de Node alineada
-El toolchain objetivo (Vite 8 / `@vitejs/plugin-react` 6) exige Node ≥ 20.19 (o ≥ 22.12). Se alinea `App/Frontend/Dockerfile` y `.github/workflows/ci.yml` (hoy `node:20-alpine` / `node-version: "20"`) a una versión soportada y consistente; si `node:20` no alcanza el mínimo, se sube a la siguiente versión LTS.
+### D2 — D-NODE: Node 20 → 24, motivado por fin de vida
+
+Node 20 alcanzó su fin de vida el 2026-04-30 (verificado en endoflife.date). El bump a Node 24 en `App/Frontend/Dockerfile` y `.github/workflows/ci.yml` responde EXCLUSIVAMENTE a esa obsolescencia: NO lo exige React 19 ni react-router 7 (ambos corren sobre Node 20 sin problema). Se elige Node 24 por ser la LTS vigente. El cambio se limita a la imagen base del `Dockerfile`, al `node-version` del job `frontend-tests` y al `node-version` del job `security-scan`.
+
+### D3 — D-DEFER: por qué los mayores del toolchain se difieren
+
+Los mayores diferidos están acoplados entre ellos, no con React:
+
+- `@vitejs/plugin-react` 6 exige `vite ^8`.
+- `@vitest/coverage-v8` 5 exige `vitest 5`.
+- `tailwind-merge` 3 apunta a Tailwind 4.
+- `eslint-plugin-react-hooks` 7 exige `eslint 10`.
+
+Adoptarlos exige un salto coordinado de cuatro ecosistemas (build/test, lint, estilos, tipos), cada uno con su propia superficie de rotura. Al RETAENER ESLint 9, `eslint-plugin-react@7.37.5` sigue siendo válido y el conflicto `ERESOLVE` del PR #34 desaparece sin tocar el lint. Esto es lo que convierte esta migración en un cambio de bajo riesgo y lo que justifica separar los mayores en un change aparte (número TBD).
+
+### D4 — Auditoría de código fuente: una sola edición obligatoria
+
+React 19 NO requiere ninguna edición de código fuente en este repositorio. La auditoría verificó 0 ocurrencias de: `ReactDOM.render`/`hydrate`, `findDOMNode`, `createFactory`, contexto legacy, refs string, `defaultProps`/`propTypes` sobre funciones, `React.FC`, `children` implícito y namespace global `JSX`; además, todas las llamadas a `useRef` pasan un argumento.
+
+La ÚNICA edición obligatoria es retirar el prop `future` de `<BrowserRouter>` en `src/main.tsx:116`: en react-router 7 esos flags (`v7_startTransition`, `v7_relativeSplatPath`) son comportamiento por defecto y `future` deja de ser una prop válida. El resto de la API declarativa usada (`BrowserRouter`, `Routes`, `Route`, `Navigate`, `NavLink`, `Link`, `useNavigate`) sigue disponible sin cambios de import.
+
+### D5 — `React.ElementRef` → `React.ComponentRef` (opcional)
+
+`React.ElementRef` sigue existiendo como alias deprecado en `@types/react` 19, por lo que su uso NO bloquea el build. Se migran igualmente las 13 ocurrencias a `React.ComponentRef` (el reemplazo recomendado) por higiene de tipos y bajo riesgo: dialog.tsx (4), select.tsx (7), separator.tsx (1), label.tsx (1).
 
 ### D6 — Contrato de aceptación
-La migración se considera completa solo cuando `npm ci`, `npm run lint`, `npm run build` y `npm run test` finalizan en 0 sobre el árbol actualizado, sin `--force`/`--legacy-peer-deps`.
+
+La migración se considera completa solo cuando `npm ci`, `npm run lint`, `npm run build` y `npm run test` finalizan en 0 sobre el árbol actualizado, sin `--force`/`--legacy-peer-deps`, y `openspec validate c-128-migracion-react-19-frontend --strict` pasa.
 
 ## Risks / Trade-offs
 
-- **Volumen del change (muchos mayores acoplados)** → grupos de tareas escenificados con compuertas por grupo; palanca de rollback (D1) para aislar Tailwind 4 si es necesario.
-- **Regresiones visuales de Tailwind 4** (borde/ring/shadow/outline) → suite DOM verde + revisión de los componentes de dominio; no hay snapshots visuales.
-- **Tipos de React 19** (`React.ElementRef` deprecado/removido, `children` implícito, `JSX`) → `npm run build` (tsc) como detector; migrar `React.ElementRef` → `React.ComponentRef` donde los tipos 19 lo exijan.
-- **Compatibilidad TypeScript 7 ↔ `typescript-eslint` 8.71** → verificar con `npm ci` y el build; si hay peer mismatch, ajustar el pin de `typescript-eslint`.
-- **`lucide-react` mayor (0.441 → 1.58)** con iconos renombrados/removidos → el build detecta imports rotos.
-- **Node insuficiente en la base `node:20-alpine`** → bump explícito de Node (D5).
+- **Tipos de React 19** → `npm run build` (tsc) como detector; la auditoría (D4) confirma que no hay APIs legadas en uso.
+- **`react-router` 7 rompe el prop `future`** → única edición obligatoria (D4); los tests de enrutado validan el comportamiento.
+- **Regresión silenciosa en el enrutado** → la suite existente es la red de seguridad; no se retira ni deshabilita cobertura.
+- **Nombre de scenario desactualizado en la spec de `ci-pipeline`** → OpenSpec 1.10.0 rechaza el renombre de un scenario en un requirement MODIFIED (pérdida por nombre exacto). Se conserva el nombre "El job de frontend corre sobre Node 20" y se actualiza su cuerpo a Node 24. Trade-off aceptado: la herramienta prioriza la estabilidad del identificador del scenario sobre la coincidencia literal del texto.
 
 ## Migration Plan
 
 1. Registrar baseline verde de `main` (4 comandos).
-2. Actualizar manifiesto + regenerar lockfile; resolver el conflicto ESLint (D2) para que `npm ci` pase.
-3. Adaptar por grupo: React 19, react-router 7, toolchain de build/test, stack de estilos, dependencias de runtime.
-4. Verificar las cuatro compuertas y el job `frontend-tests` de CI.
-5. **Rollback**: revertir la rama del change (`git checkout main -- App/Frontend` y restaurar `package-lock.json`). Sin migraciones de datos ni cambios de esquema.
+2. Actualizar `package.json` (react, react-dom, @types/react, @types/react-dom, react-router-dom) + `npm install` sin flags; regenerar lockfile.
+3. Editar `src/main.tsx` (retirar `future`) y, opcionalmente, `React.ElementRef` → `React.ComponentRef`.
+4. Bump de Node 20 → 24 en `Dockerfile` y `ci.yml`.
+5. Sincronizar documentación y versión (config, KB, tesis, AGENTS.md).
+6. Verificar las cuatro compuertas + `openspec validate --strict`.
+7. **Rollback**: revertir la rama del change (`git checkout main -- App/Frontend` y restaurar `package-lock.json`). Sin migraciones de datos ni cambios de esquema.
 
 ## Open Questions
 
-- Ninguna que cambie specs, enfoque o desglose de tareas. La versión exacta de Node (20.19 vs 22 LTS) y la estrategia de Tailwind (`@config` vs `@theme`) se deciden durante el apply según lo que exija el árbol resuelto.
+- Ninguna que cambie specs, enfoque o desglose de tareas. El número del change que absorberá los mayores del toolchain queda por definir (TBD) cuando se proponga.
