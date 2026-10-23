@@ -157,9 +157,9 @@ def validar_respuesta_gemini(response_text: str) -> tuple[bool, dict]:
 
 ## H.4. Iteración y mejora del prompt
 
-El prompt ha sido validado y ajustado iterativamente sobre un conjunto de ~100 incidentes representativos en entornos de preproducción, **sin exposición al corpus de validación utilizado en el estudio**.
+El prompt de la versión evaluada ha sido validado y ajustado iterativamente a partir de errores observados en el corpus de validación; no se dispuso de un corpus independiente de incidentes de preproducción (c-72).
 
-Versiones históricas del prompt se mantienen en el repositorio bajo `docs/prompt_gemini_history/` para auditoría y posible rollback.
+Las versiones históricas del prompt se conservan en el historial de versiones de `docs/prompt_gemini.txt` (`git log -- docs/prompt_gemini.txt`) para auditoría y posible rollback.
 
 ---
 

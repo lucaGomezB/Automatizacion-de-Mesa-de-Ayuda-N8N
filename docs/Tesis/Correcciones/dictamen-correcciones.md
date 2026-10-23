@@ -542,3 +542,64 @@ retiradas (salvo el \(W=0{,}803\) de Shapiro, que es un estadístico lícito);
 
 **Estado**: grupo aplicado. Recompilación final en Overleaf (XeLaTeX) diferida
 (ver tarea 10.3 del change).
+
+## Dictamen c-144 - Procedencia real y ausencia de preproduccion
+
+**Origen**: change `c-144-declarar-procedencia-real-y-ausencia-de-preproduccion`
+(docs-only, MEDIUM). Declara la procedencia real de los ajustes realizados sobre
+el corpus de validacion y la ausencia de un corpus de preproduccion. No se
+modifica ningun valor numerico ni rotulo.
+
+**Evidencia verificada**:
+
+- `1368fd8` (c-71) amplio el vocabulario del filtro deterministico a partir de
+  errores del corpus.
+- `a76851e` (c-72) redacto las reglas de frontera del prompt a partir de casos
+  del corpus (R002, R038).
+- `d6bb474` (c-74) fijo el punto de operacion `tau` por validacion cruzada fuera
+  de muestra sobre el corpus.
+- Directorio `docs/prompt_gemini_history/` inexistente: sin commit, sin entrada
+  en `git ls-files` y sin rama que lo contenga.
+- Sin conjunto de ~100 incidentes independientes de preproduccion:
+  `rg -l "incidentes de preproduccion" data/ evaluation/` sin resultados.
+
+**Mapeo de objetivos de propagacion T01-T07**:
+
+- T01 - `sections/05-arquitectura.tex:78`: procedencia de filtro, reglas del
+  prompt y punto de operacion declarada en lugar de "sin acceso al corpus".
+- T02 - `sections/06-implementacion.tex:75`: ajustes derivados de errores del
+  corpus; sin conjunto independiente de preproduccion.
+- T03 - `sections/08-discusion.tex:18`: metricas como estimaciones dentro de la
+  muestra; se acota la mitigacion fuera de muestra de c-74.
+- T04 - `sections/12-anexos.tex:135`: procedencia real y ubicacion veraz del
+  historial del prompt (`docs/prompt_gemini.txt`).
+- T05 - `docs/anexo_h_prompt_gemini.md:160/162`: misma declaracion y ubicacion
+  del historial en el Anexo H.
+- T06 - `evaluation/README.md:192-204`: advertencia metodologica coherente con
+  el historial (commits c-71, c-72, c-74).
+- T07 - `sections/10-recomendaciones.tex`: subseccion nueva
+  `Validacion sobre un corpus independiente` (`subsec:corpus-independiente`).
+
+**Reconciliacion con c-130 y c-142 (PR #40 sin fusionar)**:
+
+c-144 aplica sobre `main` correcciones que c-130 (D9) y c-142 (D11/D13/T08)
+aplican sobre el PR #40. Los requisitos de `tesis-document` y
+`evaluation-framework` usan los MISMOS nombres que el PR #40
+(`Procedencia declarada de los ajustes realizados sobre el corpus de validacion`,
+`Ubicacion veraz de las versiones historicas del prompt en el Anexo H`,
+`Advertencia metodologica del framework coherente con el historial`) para que la
+deduplicacion al fusionar sea mecanica. Al fusionar el PR #40, los bloques
+`## ADDED Requirements` de esos tres requisitos en c-130 y c-142 se eliminan o se
+convierten en no-op; c-144 es la fuente canonica. c-130 conserva magnitudes por
+etapa, alcance del gate y criterio de cortocircuito; c-142 conserva su analisis
+de sensibilidad completo.
+
+**Linea base y conteo de paginas**:
+
+- Commit de partida: `d9dfcb3` (rama `RamaLuca`).
+- Linea base del PDF: `\@abspage@last{101}` (101 paginas).
+- Conteo tras aplicar c-144: `\@abspage@last{102}` (102 paginas), diferencia
+  `+1`. Compilacion XeLaTeX (Docker `texlive-thesis`) sin errores fatales y con
+  `grep -c "undefined" main.log` = 0.
+
+**Estado**: grupo aplicado.

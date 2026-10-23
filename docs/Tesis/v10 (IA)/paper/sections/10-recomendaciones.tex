@@ -25,6 +25,10 @@ Más alla del monitoreo operativo, los datos acumulados de incidentes constituye
 
 Se propone incorporar mecanismos de aprendizaje activo (\emph{active learning}), en virtud de los cuales aquellos casos clasificados con baja confianza se prioricen automáticamente para revisión humana, y los resultados de esa revisión retroalimenten al sistema mediante un mecanismo de ajuste incremental. Este enfoque maximiza el rendimiento marginal de cada intervención humana ---que de todos modos ocurre en los casos derivados a revisión--- y acelera la mejora continua del clasificador con un costo operativo controlado.
 
+\subsection{Validación sobre un corpus independiente}\label{subsec:corpus-independiente}
+
+El clasificador evaluado se ajustó, en parte, con el mismo corpus sobre el que se reportan las métricas de clasificación (vocabulario del filtro determinístico y reglas de frontera del prompt), de modo que esas métricas son estimaciones dentro de la muestra. La confirmación del desempeño fuera de la muestra exige construir un corpus independiente, etiquetado con el mismo protocolo y sin solapamiento con el corpus de evaluación, y reportar sobre él las métricas de la etapa determinística y de la etapa semántica. Esa validación no se realizó en este trabajo porque no se dispuso de un corpus de preproducción con esas características.
+
 \subsection{Estudios de replicación}\label{subsec:estudios-replicacion}
 
 Se sugiere realizar estudios de replicación en organizaciones de distinto tamaño, sector y región geográfica, con el objeto de fortalecer la validez externa de los hallazgos y construir un cuerpo de evidencia empírica sobre el desempeño de soluciones similares en contextos heterogeneos. Particularmente relevantes serían las réplicas en organizaciones del sector público (con mayor proporción de incidentes vinculados a sistemas administrativos), en organizaciones del sector industrial (con mayor proporción de incidentes vinculados a infraestructura física) y en organizaciones de mayor tamaño donde el volumen diario de incidentes supere las 100 unidades.
