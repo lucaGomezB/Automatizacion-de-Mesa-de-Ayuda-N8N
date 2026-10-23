@@ -53,7 +53,7 @@ El workflow SHALL definir un job `frontend-tests` que se ejecute sobre Node 24. 
 - **WHEN** se ejecuta el job `frontend-tests`
 - **THEN** ejecuta `npm ci` en `App/Frontend/` y luego el script `test:coverage`, que corre Vitest con reporte de cobertura del proveedor `v8`
 
-#### Scenario: El job de frontend corre sobre Node 20
+#### Scenario: El job de frontend corre sobre Node 24
 
 - **WHEN** se ejecuta el job `frontend-tests`
 - **THEN** la versión de Node configurada por el paso de setup es la 24
