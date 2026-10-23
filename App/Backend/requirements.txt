@@ -2,10 +2,10 @@
 # c-97: 0.135.0 levanto el cap starlette<0.39 y admitio starlette 1.x,
 # habilitando el fix de las advisories PYSEC-2026-*. c-127: bump a 0.143.3
 # (matriz del PR #33); no habilita capacidades nuevas, solo cierra el delta.
-fastapi==0.143.3
+fastapi==0.150.0
 # starlette se importa directo (app/core/error_handlers.py, app/main.py,
 # tests CORS); pin explicito. c-127: 1.8.0 (par de fastapi 0.143.3).
-starlette==1.8.0
+starlette==1.9.0
 uvicorn[standard]==0.54.0
 
 # Form parsing: FastAPI Form/File endpoints (e.g. /twilio/voice FromForm).
