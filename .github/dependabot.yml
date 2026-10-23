@@ -1,8 +1,14 @@
-# dependabot.yml — actualizaciones automatizadas de dependencias (C-64, D9).
+# dependabot.yml — actualizaciones automatizadas de dependencias (C-64, D9; C-129).
 #
 # Tres ecosistemas, todos con cadencia semanal y actualizaciones agrupadas para
 # evitar una avalancha de PRs. Sin fusion automatica ni aprobacion automatica:
 # cada grupo queda sujeto a revision humana antes de fusionarse.
+#
+# C-129: se excluyen las actualizaciones de version MAYOR (salto de major). El
+# proyecto fija versiones exactas y no puede adoptar saltos de mayor a ciegas;
+# las migraciones de major se gestionan con changes OpenSpec explicitos
+# (c-127 backend, c-128 frontend), nunca con un PR automatico de Dependabot.
+# Menores y parches siguen proponiendose con normalidad.
 #
 # Nota: Dependabot solo propone la subida de version; no la aplica.
 
@@ -18,6 +24,10 @@ updates:
       backend-python:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major
 
   # Frontend — dependencias JavaScript declaradas en App/Frontend/package.json.
   # El lockfile (App/Frontend/package-lock.json) sigue versionado y la CI
@@ -30,6 +40,10 @@ updates:
       frontend-npm:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major
 
   # GitHub Actions — versiones de las actions usadas en .github/workflows/.
   - package-ecosystem: github-actions
@@ -40,3 +54,7 @@ updates:
       github-actions:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major
