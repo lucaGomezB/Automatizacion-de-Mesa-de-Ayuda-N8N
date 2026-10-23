@@ -46,7 +46,7 @@ El workflow SHALL definir un job `backend-tests` que se ejecute sobre Python 3.1
 
 ### Requirement: Job de pruebas del frontend
 
-El workflow SHALL definir un job `frontend-tests` que se ejecute sobre Node 20. El job MUST hacer checkout del repositorio, configurar Node 20 con caché de npm, instalar las dependencias del frontend con `npm ci` desde `App/Frontend/`, y ejecutar la suite de pruebas con cobertura mediante el script `test:coverage` de `App/Frontend/package.json` (Vitest con proveedor `v8`). El job MUST poder completarse sin acceso a servicios externos: la suite mockea Axios y no levanta el backend.
+El workflow SHALL definir un job `frontend-tests` que se ejecute sobre Node 24. El job MUST hacer checkout del repositorio, configurar Node 24 con caché de npm, instalar las dependencias del frontend con `npm ci` desde `App/Frontend/`, y ejecutar la suite de pruebas con cobertura mediante el script `test:coverage` de `App/Frontend/package.json` (Vitest con proveedor `v8`). El job MUST poder completarse sin acceso a servicios externos: la suite mockea Axios y no levanta el backend.
 
 #### Scenario: El job de frontend instala dependencias y corre la suite con cobertura
 
@@ -56,7 +56,7 @@ El workflow SHALL definir un job `frontend-tests` que se ejecute sobre Node 20. 
 #### Scenario: El job de frontend corre sobre Node 20
 
 - **WHEN** se ejecuta el job `frontend-tests`
-- **THEN** la versión de Node configurada por el paso de setup es la 20
+- **THEN** la versión de Node configurada por el paso de setup es la 24
 
 ### Requirement: Linting en el pipeline
 
@@ -97,7 +97,7 @@ El `README.md` del repositorio SHALL mostrar un badge que refleje el estado del 
 
 ### Requirement: Escaneo de seguridad de dependencias y SAST en el pipeline
 
-El workflow de integracion continua SHALL ejecutar un job de escaneo de seguridad, en paralelo a los jobs de pruebas existentes, que corra sobre Python 3.12 y Node 20 y cubra: auditoria de vulnerabilidades conocidas de las dependencias del backend (`pip-audit` sobre `App/Backend/requirements.txt`), analisis estatico de seguridad del codigo del backend (SAST) y auditoria de dependencias del frontend (`npm audit` sobre `App/Frontend/package-lock.json`). El job MUST declarar de forma explicita su politica de bloqueo (que hallazgos hacen fallar la corrida) y MUST poder completarse sin secretos del repositorio. El job MUST NOT modificar el arbol de dependencias instalado por los jobs de pruebas.
+El workflow de integracion continua SHALL ejecutar un job de escaneo de seguridad, en paralelo a los jobs de pruebas existentes, que corra sobre Python 3.12 y Node 24 y cubra: auditoria de vulnerabilidades conocidas de las dependencias del backend (`pip-audit` sobre `App/Backend/requirements.txt`), analisis estatico de seguridad del codigo del backend (SAST) y auditoria de dependencias del frontend (`npm audit` sobre `App/Frontend/package-lock.json`). El job MUST declarar de forma explicita su politica de bloqueo (que hallazgos hacen fallar la corrida) y MUST poder completarse sin secretos del repositorio. El job MUST NOT modificar el arbol de dependencias instalado por los jobs de pruebas.
 
 La politica de bloqueo SHALL ser conservadora y estar justificada: el SAST MUST bloquear ante hallazgos de severidad alta en el codigo del backend; la auditoria de dependencias del backend MUST bloquear ante vulnerabilidades conocidas con una correccion NO rompiente disponible, y MUST ofrecer una via documentada para exceptuar de forma explicita y por ID los hallazgos SIN correccion publicada. Los hallazgos corregibles solo mediante una actualizacion mayor rompiente NO MUST exceptuarse mientras la actualizacion sea viable: MUST resolverse subiendo la dependencia. Si la actualizacion resulta NO viable sin rotura desproporcionada, la excepcion MAY mantenerse con el seguimiento revisado registrado, y el bloqueo MUST seguir siendo explicito y auditable. La auditoria de dependencias del frontend MUST operar en modo reporte (no bloqueante) en esta primera iteracion, con su justificacion registrada. Las excepciones MUST ser explicitas y auditables por ID; NO MUST existir un mecanismo global de omision (por ejemplo `continue-on-error`) que suprima el bloqueo de forma silenciosa.
 
