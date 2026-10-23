@@ -1,0 +1,48 @@
+## Why
+
+El dictamen CONEAU del 2026-10-22 sobre la tesis v10 (`auditorias/Dictamen_Tesis_v10_v1.1.0_CONEAU_2026-10-22.md`, aplicable por igual a la release vigente `v1.1.1`) emite "APROBADO CON OBSERVACIONES" y condiciona la aprobacion plena a cuatro observaciones de fondo. La tercera (VEREDICTO punto 3, seccion 7 (c) y RECOMENDACION A3) senala que la tesis concluye "viabilidad tecnica, economica y operativa" sin confrontar el ahorro de tiempo de registro (32,2 horas-persona por trimestre) con el costo de las derivaciones erroneas que el clasificador agrega, aunque el propio documento aporta todos los insumos: con la tasa manual preliminar del 15 %, la tasa de error automatizada del 26,5 % (53/200) y 10 a 15 minutos por reasignacion, el sistema produciria ~304 derivaciones erroneas adicionales por trimestre (50,7 a 76,1 horas-persona) y el balance seria negativo. Como la exactitud del brazo manual sobre el corpus no se midio, el balance es en rigor indeterminado con el diseno actual, y la frase "el sistema absorbe la carga rutinaria sin sustituir el juicio humano en los casos que verdaderamente lo demandan" no se sostiene cuando el gate no derivo ningun caso. Cerrar A3 antes de la defensa es trabajo de redaccion y aritmetica sobre cifras que ya estan en el documento: no exige nuevas mediciones ni codigo.
+
+## What Changes
+
+- **Balance neto en la discusion (A3, calculo):** nueva subseccion "Balance neto de la automatizacion" (`\label{subsec:balance-neto}`) en `08-discusion.tex`, a continuacion de `subsec:implicancias-practicas`. Contiene la formula explicita del balance neto trimestral `B = (N / 3.600) x [Delta t - (e_aut - e_man) x c]` y de la exactitud minima de equilibrio `a* = 1 - e_man - Delta t / c`, el calculo con los supuestos del documento (15 %, 10-15 min: ~304 derivaciones adicionales, 50,7-76,1 h, balance de -18,5 a -43,9 h) y una tabla de escenarios (`\label{tab:balance-neto}`: tasa manual 10/15/20/26,5 %; costo 5/10/15 min) con `a*` y `B`. La lectura compara `a*` con la exactitud estricta (73,5 %), con su IC de Wilson [67,0 %; 79,1 %] y, si `c-126` la aporto, con la exactitud laxa.
+- **Indeterminacion declarada (A3, alcance de la evidencia):** declarar que la exactitud del brazo manual sobre el corpus no se midio (el corpus no registra la derivacion del operador por caso y los operadores son los mismos analistas que fijaron la referencia), que el 15 % es una estimacion preliminar de la misma naturaleza que los 2 min 45 s luego corregidos a 61,6 s, y que por lo tanto el balance neto es indeterminado. Se refleja en la nueva subseccion, con una extension minima de la sexta limitacion (`subsec:limitaciones-estudio`) y una frase en el planteamiento del problema (`01-introduccion.tex`).
+- **Viabilidad operativa condicional (A3, conclusion):** reformular la triple viabilidad en `00-resumen.tex` (espanol e ingles, sin aumentar el conteo de palabras), la justificacion de `01-introduccion.tex`, `08-discusion.tex` y `09-conclusiones.tex`: viabilidad tecnica y economica sostenidas; viabilidad operativa condicionada a que la exactitud efectiva supere el punto de equilibrio, por mejora del clasificador o porque la revision humana del sector responsable reduzca la tasa o el costo efectivos de las derivaciones erroneas. Las 32,2 horas-persona se califican como ahorro bruto de registro; el valor no cambia.
+- **Afirmacion sobre el juicio humano retirada (A3):** retirar de `subsec:interpretacion-resultados` la frase "El sistema absorbe la carga rutinaria sin sustituir el juicio humano en los casos que verdaderamente lo demandan" y la siguiente ("Este equilibrio ... preserva la calidad del servicio ..."), y reemplazar el cierre valorativo del parrafo por la remision al balance neto.
+- **Linea futura:** una frase en `10-recomendaciones.tex` (`subsec:estudios-replicacion`) para que una replicacion registre la derivacion del brazo manual por caso, con etiquetadores distintos de los operadores, y cronometre el costo real de reasignacion.
+- **Registro canonico:** nueva seccion en `docs/Tesis/Correcciones/numeros-canonicos.md` con insumos, formula, valores de la tabla, procedencia y estado `condicional`, sin alterar ningun valor existente; entrada A3 en `docs/Tesis/Correcciones/dictamen-correcciones.md`.
+- **Correccion colateral (a confirmar por el usuario, ver `design.md` Open Questions):** `09-conclusiones.tex` afirma que el costo operativo "esta dominado por el consumo de API de inferencia", lo que contradice la discusion (infraestructura de 24 a 32 USD/mes frente a ~1 USD por trimestre de API). Se corrige al delimitar la viabilidad economica.
+
+> **Nota de alcance (fronteras con la familia c-125..c-136):** este change NO reescribe la descripcion del gate en los capitulos 2, 5, 6 y 7 ni el parrafo de calibracion/gate de la discusion (`c-125`); NO calcula la exactitud laxa ni metricas por etapa o canal (`c-126`, cuyo valor se consume si existe); NO toca la tabla de cumplimiento de objetivos, las hipotesis, la metrica primaria ni la justificacion del umbral del 85 % (`c-128`); NO agrega las subsecciones de recomendaciones anunciadas y ausentes (`c-131`); NO hace la revision ortotipografica general (`c-132`); NO crea tags ni regenera los renders derivados (`c-136`).
+
+## Capabilities
+
+### New Capabilities
+
+None.
+
+### Modified Capabilities
+
+- `tesis-document`: se agregan requisitos que cierran la observacion A3 del dictamen v1.1.0: balance neto explicito entre el ahorro de registro y el costo de las derivaciones erroneas (formula, tabla de escenarios y punto de equilibrio), declaracion de la exactitud manual no medida y del balance indeterminado, viabilidad operativa presentada como condicional en resumen, abstract, introduccion, discusion y conclusiones, retiro de la afirmacion sobre el juicio humano, linea futura de medicion y registro canonico de los valores nuevos.
+
+## Impact
+
+- **Edita:** `docs/Tesis/v10 (IA)/paper/sections/{00-resumen,01-introduccion,08-discusion,09-conclusiones,10-recomendaciones}.tex`, `docs/Tesis/Correcciones/numeros-canonicos.md` (seccion nueva) y `docs/Tesis/Correcciones/dictamen-correcciones.md` (entrada A3).
+- **No toca:** codigo de aplicacion (`App/`, `n8n/`), `evaluation/`, `data/`, `Bibliography_base.bib` (no se agregan citas), `04-marco-metodologico.tex`, `07-resultados.tex`, la tabla `tab:cumplimiento-objetivos`, los valores canonicos existentes (73,5 %, IC [67,0 %; 79,1 %], 71,2 %, 43,82 s, 2.646, 32,2 h, etc.), las cinco cadenas de categoria, las figuras, `docs/Tesis/v9 (IA)/`, `auditorias/`, `CHANGES.md` ni los tags.
+- **Numeros nuevos:** solo derivados aritmeticamente de valores ya presentes (`N`, `Delta t`, 147/200) y de dos supuestos que el documento ya declara (15 %, 10-15 min), mas una rejilla de sensibilidad explicitamente rotulada como supuesta. Ninguna tasa manual se presenta como medida.
+- **Presupuesto de paginas:** el PDF tiene hoy 101 paginas y los capitulos 1, 9, 10 y 11 terminan en paginas casi llenas. Impacto estimado: +1 a +3 paginas (central +2) sin compensacion; objetivo local <= +1 pagina neta mediante redaccion compacta y ediciones de propagacion neutras en palabras. La verificacion final del tope la hace `c-136` (ver `design.md` D10 y Open Questions).
+- **Dependencias:** sin prerrequisito duro (aplica sobre `v1.1.1`). Dependencia blanda de `c-126` (exactitud laxa); coordinacion por parrafo con `c-125` y `c-128` en `08-discusion.tex`, `09-conclusiones.tex` y `00-resumen.tex`; `c-131` no debe duplicar la linea de replicacion; `c-136` integra, verifica paginas y publica `v1.2.0`.
+- **Gobernanza:** LOW (solo documento). Se recomienda revision de los autores sobre la redaccion final del resumen y de la conclusion antes de la release.
+
+## Rollback
+
+Revertir los cinco `.tex` y los dos `.md` afectados con `git checkout <commit-previo> -- <ruta>` (una ruta por archivo, citando `"docs/Tesis/v10 (IA)/paper/sections/..."` por el espacio del directorio) y recompilar el PDF. Este change no crea ni mueve tags, por lo que el rollback no afecta `v1.0.0`, `v1.0.1`, `v1.1.0` ni `v1.1.1`. Si otro change de la familia ya cito `subsec:balance-neto` o `tab:balance-neto`, retirar esas remisiones en el mismo rollback para no dejar referencias indefinidas.
+
+## Success Criteria
+
+- [ ] La subseccion `subsec:balance-neto` y la tabla `tab:balance-neto` existen en el PDF con la formula explicita, los insumos con su procedencia y valores identicos a los registrados en `numeros-canonicos.md`.
+- [ ] El calculo con los supuestos del documento reproduce ~304 derivaciones adicionales, 50,7-76,1 horas-persona y un balance de -18,5 a -43,9 horas-persona por trimestre; la exactitud minima de equilibrio para 15 % y 10-15 min es 77,7-80,1 %.
+- [ ] La tesis declara que la exactitud manual no se midio, que el 15 % es preliminar y que el balance neto es indeterminado; no aparece ninguna tasa manual presentada como medida.
+- [ ] Ni el resumen ni el abstract ni los capitulos 1, 9 y 10 afirman la viabilidad operativa como confirmada; la formulacion condicional aparece en los cuatro archivos editados que la tratan y el parrafo de conclusion del resumen no aumenta su conteo de palabras (ES <= 34, EN <= 31).
+- [ ] `grep -c "absorbe la carga rutinaria"` sobre las secciones devuelve 0 y el valor 32,2 horas-persona se conserva, calificado como ahorro bruto.
+- [ ] El PDF compila sin errores fatales ni referencias indefinidas; el delta de paginas queda registrado (objetivo <= +1).
+- [ ] Ningun valor canonico existente cambia; la seccion nueva del memo declara procedencia, formula, estado `condicional` y condicion de reversibilidad.
