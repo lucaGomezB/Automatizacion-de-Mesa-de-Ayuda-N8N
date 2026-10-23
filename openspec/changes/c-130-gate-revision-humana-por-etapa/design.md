@@ -298,7 +298,7 @@ Umbral de revisión humana & 0,70 & Confianza mínima de una respuesta del model
 | `06-implementacion.tex:75` (semanas), modelo evaluado | c-135 | T13 no fecha los ajustes; c-135 fija las fechas. Deriva de modelo detectada: `CLAUDE.md` y `openspec/config.yaml` dicen "Gemini 2.5 Flash"; tesis y `Settings`, 3.6. |
 | `12-anexos.tex:104` (`timeout` 10 s frente a 30 s en `settings.py:85`) | c-140 | T16 agrega una fila contigua; no editar la misma fila. |
 | Acentuacion fuera de los fragmentos reescritos (por ejemplo `06-implementacion.tex:40` "no lo esta", "continua", "este vacia") | c-137 | Correr despues de c-130. |
-| Paginas, release | c-141 | Recibe el conteo de paginas registrado en la tarea 9.4. |
+| Paginas, release | c-141 | Recibe el conteo de paginas registrado en la tarea 10.4. |
 
 ## Presupuesto de paginas
 

@@ -58,6 +58,12 @@ La tesis SHALL presentar una cronologia unica, en una figura (`\label{fig:cronog
 - **THEN** se declara a que iteracion corresponde la campana automatizada y que la campana manual no forma parte de las iteraciones de construccion
 - **AND** ninguna descripcion de iteracion afirma un orden temporal o una condicion incompatible con la cronologia fechada (por ejemplo, ajustes del clasificador declarados sin exposicion al corpus pero fechados despues de su procesamiento)
 
+#### Scenario: Entregable de iteración coherente con la fecha de su artefacto
+
+- **WHEN** se leen la lista de iteraciones de `06-implementacion.tex` (subsec:conexion-scrumban) y la lista de §4.9 de `04-marco-metodologico.tex`
+- **THEN** cada entregable concreto atribuido a una iteración existe y su fecha de creación o de archivo (según `docs/diagrams/cronograma.md` y la historia de `openspec/changes/archive/`) cae dentro de la ventana declarada de esa iteración
+- **AND** ningún artefacto creado después de la ventana (en particular el documento de arquitectura de `knowledge-base/` del 2026-06-10 y el contrato OpenAPI estático del 2026-06-11) se atribuye a la iteración 1
+
 ### Requirement: Parrafo introductorio del capitulo de resultados coherente con sus subsecciones
 
 El parrafo introductorio de `07-resultados.tex` SHALL enumerar exactamente las subsecciones del capitulo, en su orden y con denominaciones coherentes con sus titulos, y SHALL NOT anunciar como dimension de los resultados una magnitud que el propio capitulo declara no medida. Si el parrafo usa un cardinal, este MUST coincidir con el numero de subsecciones.
