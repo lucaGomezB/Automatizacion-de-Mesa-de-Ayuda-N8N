@@ -15,6 +15,7 @@ de las ramas consumidoras").
 - **Upsert c-134**: `c-134-contrastes-estadisticos-y-desagregado-canal` (bloque de código, aplicado el 2026-10-25) agrega la Sección 3.8 (tiempos por canal, contrastes, `d_z`, efecto mínimo detectable, sensibilidad del redondeo y granularidad de la medición manual), notas de convención bilateral en dos filas de la Sección 3.1 y actualiza las remisiones `report.md:99` → `report.md:140` (la línea del SHA-256 se desplazó al agregarse tres subsecciones a "## Tiempos"). No modifica ningún valor vigente de las Secciones 3.1 a 3.7. Los números de sección siguientes se corren (ver `dictamen-correcciones.md`, G0.6). El bloque de tesis de c-134 (grupos 6 a 8) cita estos valores y queda pendiente.
 - **Upsert c-131**: `c-131-metricas-por-etapa-canal-y-exactitud-laxa` (aplicado el 2026-10-25) agrega la Sección 3.9 (exactitud estricta y laxa por etapa y por canal con IC de Wilson, bandas, contingencia, tramo `≥ 0,90` y distribución de confianza por etapa, contraste pareado de McNemar entre etapas y decisión de datos PROVISIONAL), anota en las Secciones 3.3, 4 y 5 (ítem 2) que el contraste agregado `0,697` frente a `0,758` es un efecto de composición entre etapas y registra como `retirado` la lectura de anti-calibración del clasificador en su conjunto. Como el reporte regenerado agrega la línea de procedencia, la exactitud laxa y cuatro secciones antes de `## Tiempos`, **actualiza todas las remisiones `report.md:<línea>`** de este memo (la línea del SHA-256 pasa de `140` a `256`; verificado por correspondencia de contenido línea a línea con el reporte previo). No modifica ningún valor `vigente` de las Secciones 3.1 a 3.8.
 - **Upsert c-142**: `c-142-sensibilidad-fuera-de-muestra-ajustes-clasificador` (aplicado el 2026-10-25) agrega la Sección 3.10 (sensibilidad de las métricas frente al ajuste del clasificador con el corpus: variante principal con el vocabulario previo a c-71, descomposición pareada, control de fidelidad de la réplica histórica, E3, E4 y niveles del prompt), notas "estimación dentro de la muestra; ver sección 3.10" en las filas de `97/131`, `0,7405` y `0,6769` y los puntos 8 y 9 de la Sección 7. No modifica ningún valor `vigente` de las Secciones 3.1 a 3.9. Fecha: 2026-10-25.
+- **Upsert c-132**: `c-132-balance-neto-derivaciones-erroneas` (aplicado el 2026-10-25) agrega la Sección 3.11 (balance neto trimestral entre el ahorro bruto de registro y el costo de las derivaciones erróneas: insumos con procedencia, fórmulas de `B` y de la exactitud mínima de equilibrio `a*`, tabla de escenarios, escenario central, lectura laxa, comando de referencia y redondeo; todo valor derivado de supuestos con estado `condicional`). No modifica ningún valor `vigente` de las Secciones 3.1 a 3.10. Fecha: 2026-10-25.
 - **Artefacto**: este memo. No se edita ningún `.tex` en este change.
 - **Fecha de verificación**: 2026-10-21.
 - **SHA-256 del corpus** (`data/corpus_evaluacion_pseudonimizado.json`):
@@ -498,6 +499,96 @@ conocimiento del dominio que una ampliación hecha con datos independientes habr
 (iii) un resultado no significativo nunca se lee como ausencia de efecto; los `p` son
 descriptivos y no llevan corrección por multiplicidad; (iv) E3 y E4 usan predicciones de Gemini de una corrida distinta de la oficial
 (salvedad ya registrada en la Sección 3.9 y en el punto 7 de la Sección 7).
+
+### 3.11 Balance neto de derivaciones erróneas (c-132)
+
+**Condicional: no reemplaza valores canónicos.** Esta sección registra el cálculo que
+cierra la observación A3 del dictamen CONEAU 2026-10-22 (`subsec:balance-neto` y
+`tab:balance-neto` de `08-discusion.tex`). Todo valor derivado de la tasa manual `e_man`,
+del costo por derivación errónea `c` o de la rejilla de sensibilidad lleva estado
+`condicional`: son supuestos, no mediciones. NO modifica ningún valor de las Secciones 3.1
+a 3.10; en particular, `32,2 h` sigue siendo el ahorro bruto vigente de la Sección 3.4.
+Cálculo de solo lectura, sin invocar al clasificador (cero llamadas a Gemini).
+
+**Insumos.**
+
+| Insumo | Valor | Procedencia (archivo:línea) | Estado | Notas |
+|---|---|---|---|---|
+| Universo trimestral `N` | `≈ 2.646 = 42 × 63` | Sección 3.4; `04-marco-metodologico.tex:45,51` | vigente | Escala el balance, no su signo. |
+| Ahorro medio por incidente `Δt` | `43,82 s` | Sección 3.1; `report.md:199` | vigente | El `.tex` lo aproxima como `43,8 s`. |
+| Tasa de error estricta del clasificador `e_aut` | `0,265 = 53/200 = 1 − 0,7350` | `07-resultados.tex:75,129`; `report.md:20-21` | vigente (derivado) | El `26,5 %` no figura literalmente en el `.tex`. Es una cota **superior** de la tasa operativa de derivación errónea: el `53,5 %` de los casos (`107/200`, `07-resultados.tex:129`) admite más de un sector. |
+| Tasa de derivación errónea manual `e_man` | `≈ 15 %` | `01-introduccion.tex:18` | condicional | Estimación **preliminar** de una semana de operación, de la misma naturaleza que los `2 min 45 s` luego corregidos a `61,6 s`; nunca re-medida. La exactitud del brazo manual sobre el corpus NO se midió: el corpus no registra por caso la derivación del operador (`12-anexos.tex`, `sec:anexo-corpus`) y los operadores son los mismos analistas que fijaron la referencia (`04-marco-metodologico.tex:55,87`). |
+| Costo por derivación errónea `c` | `10 a 15 min` (`600-900 s`) | `01-introduccion.tex:48` | condicional | Estimación propia de los autores, sin registro cuantitativo conservado. |
+| Rejilla de sensibilidad | `e_man ∈ {10 %, 15 %, 20 %, 26,5 %}`; `c ∈ {5, 10, 15} min` | c-132 (`design.md`, D3) | condicional | `10 %` y `20 %` son ±5 puntos alrededor del `15 %`; `26,5 %` es la paridad con el error automatizado; `5 min` es un escenario optimista por debajo de la estimación propia. Supuestos de sensibilidad, no datos. |
+| Exactitud laxa `a_laxa` | `179/200 = 0,8950`, IC de Wilson `[0,8448; 0,9303]` (`[84,5 %; 93,0 %]`) | Sección 3.9 (c-131); `report.md:31-33` | vigente | Métrica secundaria; se cita sin recalcular. |
+
+**Fórmulas** (`N` en incidentes por trimestre; `Δt` y `c` en segundos; `B` en horas-persona por trimestre):
+
+- Balance neto: `B = (N / 3.600) × [Δt − (e_aut − e_man) × c]`. El primer sumando es el ahorro bruto (`32,2 h`); el segundo, el costo de las derivaciones erróneas adicionales.
+- Exactitud mínima de equilibrio (`B = 0`): `a* = 1 − e_man − Δt / c`.
+- Tasa de error automatizada máxima: `e_aut* = e_man + Δt / c`; exceso de error tolerable `Δe* = Δt / c` = `14,6 / 7,3 / 4,9` puntos porcentuales para `5 / 10 / 15 min`.
+- Propiedad: `a*` no depende de `N`; el universo escala el balance pero no su signo.
+- Supuestos: cada derivación errónea cuesta `c` en ambos flujos; el ahorro `Δt` aplica a todo `N`; la tasa automatizada es la del corpus; el flujo automatizado no agrega tiempo de revisión (el gate no derivó casos); relación lineal.
+
+**Tabla de escenarios** (`Δt = 43,82 s`, `N = 2.646`, `e_aut = 53/200`; una decimal, mitad hacia arriba; `condicional`):
+
+| `e_man` | `a*` 5 min | `a*` 10 min | `a*` 15 min | `B` 5 min | `B` 10 min | `B` 15 min |
+|---|---|---|---|---|---|---|
+| 10 % | 75,4 | 82,7 | 85,1 | −4,2 | −40,6 | −76,9 |
+| 15 % | 70,4 | 77,7 | 80,1 | +6,9 | −18,5 | −43,9 |
+| 20 % | 65,4 | 72,7 | 75,1 | +17,9 | +3,5 | −10,8 |
+| 26,5 % | 58,9 | 66,2 | 68,6 | +32,2 | +32,2 | +32,2 |
+
+**Escenario central** (`e_man = 15 %`; `c = 10 a 15 min`): derivaciones erróneas adicionales
+`(0,265 − 0,15) × 2.646 = 304,3 ≈ 304` por trimestre; costo `50,7 h` (10 min) y `76,1 h`
+(15 min); balance `−18,5 h` y `−43,9 h`; `a* = 77,7 %` y `80,1 %`; exceso de error observado
+`11,5` puntos (`26,5 % − 15 %`). Con la exactitud estricta (`73,5 %`, IC `[67,0 %; 79,1 %]`):
+`a*(15 %, 10 min) = 77,7 %` cae **dentro** del IC (ni con esos supuestos la muestra determina
+el signo) y `a*(15 %, 15 min) = 80,1 %` supera su límite superior. `B > 0` con la exactitud
+estricta solo si `e_man ≥ 20 %` con `c ≤ 10 min`, con `e_man = 15 %` y `c = 5 min`, o en
+paridad (`e_man ≥ e_aut − Δt / c` = `11,9 / 19,2 / 21,6 %` para `5 / 10 / 15 min`).
+**El balance es indeterminado con el diseño actual**: la tesis no enuncia su signo como resultado.
+
+**Lectura laxa (rama "laxa disponible" de D4; `condicional`).** Con `e_aut = 1 − a_laxa = 0,105`
+(sector principal dentro del conjunto de verdad), el mismo comando devuelve `B` (h por trimestre,
+`c` = 5 / 10 / 15 min): `e_man = 10 %`: `+31,1 / +30,0 / +28,9`; `15 %`: `+42,1 / +52,1 / +62,0`;
+`20 %`: `+53,2 / +74,1 / +95,1`; `26,5 %`: `+67,5 / +102,8 / +138,0`. La exactitud laxa
+(`89,5 %`) supera los 12 valores de `a*` de la tabla (máximo `85,1 %`) y su límite inferior
+(`84,5 %`) supera 11 de los 12. Es la cota **favorable**: supone que toda derivación a un sector
+válido no genera reasignación, mientras que el `26,5 %` es la cota desfavorable; la tasa
+operativa real queda entre ambas y no se midió.
+
+**Sensibilidad opcional (E3 de c-142; no entra a la tesis).** Con el vocabulario previo a c-71
+(`128/200`, `e_aut = 0,36`), `B(15 %)` = `−14,1 / −60,4 / −106,7 h` para `5 / 10 / 15 min`;
+con el vigente de la corrida de Gemini fija (`146/200`, `e_aut = 0,27`) = `+5,7 / −20,7 / −47,2 h`.
+Son lecturas de sensibilidad del ajuste del clasificador (Sección 3.10), condicionales.
+
+**Comando de referencia** (solo lectura, sin invocar el clasificador):
+
+```bash
+python3 -c "
+from decimal import Decimal as D, ROUND_HALF_UP
+r=lambda x: D(x).quantize(D('0.1'), ROUND_HALF_UP)
+dt, N, ea = D('43.82'), D('2646'), D(53)/D(200)
+S = dt*N/3600
+for em in ('0.10','0.15','0.20','0.265'):
+    em = D(em)
+    print(em, [r((1-em-dt/(60*c))*100) for c in (5,10,15)], [r(S-(ea-em)*N*c/60) for c in (5,10,15)])
+"
+```
+
+Para la lectura laxa se reemplaza `ea` por `1-D(179)/D(200)`.
+
+**Redondeo.** Una decimal, mitad hacia arriba, con `Δt = 43,82 s` (valor canónico de la
+Sección 3.1). Con `Δt = 43,8 s` (la aproximación del `.tex`) difieren dos celdas en `0,1`:
+`B(15 %, 5 min) = 6,8` y `B(10 %, 15 min) = −77,0`; la nota de la tabla declara la
+convención. El `32,2 h` coincide con ambas.
+
+**Reversibilidad.** Si una réplica mide `e_man` y `c` (registro por caso de la derivación
+manual con etiquetadores distintos de los operadores y cronometraje de las reasignaciones;
+`subsec:estudios-replicacion`), esta sección se actualiza (upsert), la tabla se recalcula y la
+viabilidad operativa puede enunciarse en un sentido u otro. Hasta entonces los valores
+permanecen `condicional`.
 
 ## 4. Contingencia del gate de intervención humana
 
