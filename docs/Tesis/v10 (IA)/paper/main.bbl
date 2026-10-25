@@ -581,6 +581,53 @@
       \field{pages}{1877\bibrangedash 1901}
       \range{pages}{25}
     \endentry
+    \entry{Chen2024_frugalgpt}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=4722d1c517fb1393cd8f82862ffc9746}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Lingjiao},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=00dc518b94dfa6349c86e70661a1a5ef}{%
+           family={Zaharia},
+           familyi={Z\bibinitperiod},
+           given={Matei},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=1b868d50048a635fa27ffa744323fa41}{%
+           family={Zou},
+           familyi={Z\bibinitperiod},
+           given={James},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{f2a2f8e38b957734c44c48a88fe983d6}
+      \strng{fullhash}{a4e726228d1a1c5296ab3556cae89810}
+      \strng{fullhashraw}{a4e726228d1a1c5296ab3556cae89810}
+      \strng{bibnamehash}{a4e726228d1a1c5296ab3556cae89810}
+      \strng{authorbibnamehash}{a4e726228d1a1c5296ab3556cae89810}
+      \strng{authornamehash}{f2a2f8e38b957734c44c48a88fe983d6}
+      \strng{authorfullhash}{a4e726228d1a1c5296ab3556cae89810}
+      \strng{authorfullhashraw}{a4e726228d1a1c5296ab3556cae89810}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{2835-8856}
+      \field{journaltitle}{Transactions on Machine Learning Research}
+      \field{title}{{FrugalGPT}: How to Use Large Language Models While Reducing Cost and Improving Performance}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://openreview.net/forum?id=cSimKw5p6R
+      \endverb
+      \verb{url}
+      \verb https://openreview.net/forum?id=cSimKw5p6R
+      \endverb
+    \endentry
     \entry{Cohen1960_kappa}{article}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=eaad07ee1c6ef93a9308150f12c3c2eb}{%
@@ -1167,6 +1214,65 @@
       \endverb
       \verb{url}
       \verb https://aclanthology.org/2025.acl-long.1561/
+      \endverb
+    \endentry
+    \entry{Guo2017_calibration}{article}{}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=e053cf028522c39af65dd862da2d8ed1}{%
+           family={Guo},
+           familyi={G\bibinitperiod},
+           given={Chuan},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=373d04718ec0efd3786a0e2b6c0adf00}{%
+           family={Pleiss},
+           familyi={P\bibinitperiod},
+           given={Geoff},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=17b6a43f5598c7efd897f9d254090fdd}{%
+           family={Sun},
+           familyi={S\bibinitperiod},
+           given={Yu},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=68a0238356fbd88b34be8886f25938a7}{%
+           family={Weinberger},
+           familyi={W\bibinitperiod},
+           given={Kilian\bibnamedelima Q.},
+           giveni={K\bibinitperiod\bibinitdelim Q\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {PMLR}%
+      }
+      \strng{namehash}{203b115999f73097be6ab32411fb1f42}
+      \strng{fullhash}{f3833eed8ef776fc6c89f407c7d66c34}
+      \strng{fullhashraw}{f3833eed8ef776fc6c89f407c7d66c34}
+      \strng{bibnamehash}{f3833eed8ef776fc6c89f407c7d66c34}
+      \strng{authorbibnamehash}{f3833eed8ef776fc6c89f407c7d66c34}
+      \strng{authornamehash}{203b115999f73097be6ab32411fb1f42}
+      \strng{authorfullhash}{f3833eed8ef776fc6c89f407c7d66c34}
+      \strng{authorfullhashraw}{f3833eed8ef776fc6c89f407c7d66c34}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the 34th International Conference on Machine Learning (ICML 2017)}
+      \field{series}{Proceedings of Machine Learning Research}
+      \field{title}{On Calibration of Modern Neural Networks}
+      \field{volume}{70}
+      \field{year}{2017}
+      \field{pages}{1321\bibrangedash 1330}
+      \range{pages}{10}
+      \verb{urlraw}
+      \verb https://proceedings.mlr.press/v70/guo17a.html
+      \endverb
+      \verb{url}
+      \verb https://proceedings.mlr.press/v70/guo17a.html
       \endverb
     \endentry
     \entry{HernandezSampieri2018_metodologia}{book}{}{}
@@ -2604,6 +2710,90 @@
       \verb https://www.postgresql.org/docs/15/
       \endverb
     \endentry
+    \entry{Tian2023_verbalized_confidence}{article}{}{}
+      \name{author}{8}{}{%
+        {{un=0,uniquepart=base,hash=14d0da9723d355c9cc411b0daaf91473}{%
+           family={Tian},
+           familyi={T\bibinitperiod},
+           given={Katherine},
+           giveni={K\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b9441ad4287a1b5f251258a6fd6afb3a}{%
+           family={Mitchell},
+           familyi={M\bibinitperiod},
+           given={Eric},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0a5513f7fd0315dca73a5f522838f1f4}{%
+           family={Zhou},
+           familyi={Z\bibinitperiod},
+           given={Allan},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d6e9caed0d49d143fa1bf05559bc7c20}{%
+           family={Sharma},
+           familyi={S\bibinitperiod},
+           given={Archit},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ba3b0dbc0637707e13b68258120d22ca}{%
+           family={Rafailov},
+           familyi={R\bibinitperiod},
+           given={Rafael},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3b115344acb9ff313d507977648f7ece}{%
+           family={Yao},
+           familyi={Y\bibinitperiod},
+           given={Huaxiu},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=058e82495825ae376c6a96a12169e6ee}{%
+           family={Finn},
+           familyi={F\bibinitperiod},
+           given={Chelsea},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=2214edb8305f7ccd7cdc310b3a8ae1b4}{%
+           family={Manning},
+           familyi={M\bibinitperiod},
+           given={Christopher\bibnamedelima D.},
+           giveni={C\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computational Linguistics}%
+      }
+      \strng{namehash}{3ea9e6078e180b006e3c94b3557b39df}
+      \strng{fullhash}{e7ca567f605838879984505191bbd027}
+      \strng{fullhashraw}{e7ca567f605838879984505191bbd027}
+      \strng{bibnamehash}{e7ca567f605838879984505191bbd027}
+      \strng{authorbibnamehash}{e7ca567f605838879984505191bbd027}
+      \strng{authornamehash}{3ea9e6078e180b006e3c94b3557b39df}
+      \strng{authorfullhash}{e7ca567f605838879984505191bbd027}
+      \strng{authorfullhashraw}{e7ca567f605838879984505191bbd027}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing (EMNLP 2023)}
+      \field{title}{Just Ask for Calibration: Strategies for Eliciting Calibrated Confidence Scores from Language Models Fine-Tuned with Human Feedback}
+      \field{year}{2023}
+      \field{pages}{5433\bibrangedash 5442}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.18653/v1/2023.emnlp-main.330
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.18653/v1/2023.emnlp-main.330
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.18653/v1/2023.emnlp-main.330
+      \endverb
+    \endentry
     \entry{Tiangolo2024_fastapi}{manual}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=223d828339f8033ceb273f7dfcbc556c}{%
@@ -3077,6 +3267,54 @@
       \verb 2307.09288
       \endverb
     \endentry
+    \entry{Varshney2022_model_cascading}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=0e824b6ad92d00940e0d061061b7fabe}{%
+           family={Varshney},
+           familyi={V\bibinitperiod},
+           given={Neeraj},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=121708a74e1528d506fc79a1638d9e8f}{%
+           family={Baral},
+           familyi={B\bibinitperiod},
+           given={Chitta},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computational Linguistics}%
+      }
+      \strng{namehash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{fullhash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{fullhashraw}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{bibnamehash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{authorbibnamehash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{authornamehash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{authorfullhash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{authorfullhashraw}{62bff4318108a0c499c4fb3d08fe17ba}
+      \field{sortinit}{V}
+      \field{sortinithash}{afb52128e5b4dc4b843768c0113d673b}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing (EMNLP 2022)}
+      \field{title}{Model Cascading: Towards Jointly Improving Efficiency and Accuracy of {NLP} Systems}
+      \field{year}{2022}
+      \field{pages}{11007\bibrangedash 11021}
+      \range{pages}{15}
+      \verb{doi}
+      \verb 10.18653/v1/2022.emnlp-main.756
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.18653/v1/2022.emnlp-main.756
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.18653/v1/2022.emnlp-main.756
+      \endverb
+    \endentry
     \entry{Vaswani2017_attention}{article}{}{}
       \name{author}{8}{}{%
         {{un=0,uniquepart=base,hash=7f28e84700536646dd6620a0db07ad09}{%
@@ -3506,6 +3744,76 @@
       \endverb
       \verb{url}
       \verb https://doi.org/10.1145/3491102.3517582
+      \endverb
+    \endentry
+    \entry{Xiong2024_confidence_elicitation}{article}{}{}
+      \name{author}{7}{}{%
+        {{un=0,uniquepart=base,hash=c6fc8978db42ed2a39aed9ee5e002ffb}{%
+           family={Xiong},
+           familyi={X\bibinitperiod},
+           given={Miao},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ed366d1e427ae77f2ebc1a184bf85dcb}{%
+           family={Hu},
+           familyi={H\bibinitperiod},
+           given={Zhiyuan},
+           giveni={Z\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=bb8ec0d106efdfe2df3eb5baae20a610}{%
+           family={Lu},
+           familyi={L\bibinitperiod},
+           given={Xinyang},
+           giveni={X\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7c067c709e7a1f9fed426206033b51d5}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Yifei},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=f0ae8cd7eb0b07fe71e1654376c0fc0e}{%
+           family={Fu},
+           familyi={F\bibinitperiod},
+           given={Jie},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=2883148bd3351a45d72c69b1a91dbd79}{%
+           family={He},
+           familyi={H\bibinitperiod},
+           given={Junxian},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b5c2ebc85fb8cba01d66e9eaaae19fd1}{%
+           family={Hooi},
+           familyi={H\bibinitperiod},
+           given={Bryan},
+           giveni={B\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{013ba0b2a1af0ba7815401fbfb638dc6}
+      \strng{fullhash}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \strng{fullhashraw}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \strng{bibnamehash}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \strng{authorbibnamehash}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \strng{authornamehash}{013ba0b2a1af0ba7815401fbfb638dc6}
+      \strng{authorfullhash}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \strng{authorfullhashraw}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \field{sortinit}{X}
+      \field{sortinithash}{1965c258adceecf23ce3d67b05113442}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{The Twelfth International Conference on Learning Representations (ICLR 2024)}
+      \field{title}{Can {LLMs} Express Their Uncertainty? An Empirical Evaluation of Confidence Elicitation in {LLMs}}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://openreview.net/forum?id=gjeQKFxFpZ
+      \endverb
+      \verb{url}
+      \verb https://openreview.net/forum?id=gjeQKFxFpZ
       \endverb
     \endentry
     \entry{xuan2025mmluprox}{article}{}{}
@@ -3945,6 +4253,71 @@
       \endverb
       \verb{url}
       \verb https://aclanthology.org/2023.emnlp-main.774/
+      \endverb
+    \endentry
+    \entry{Zhao2021_calibrate_before_use}{article}{}{}
+      \name{author}{5}{}{%
+        {{un=0,uniquepart=base,hash=396bf132d19d9792c2ce86de28419896}{%
+           family={Zhao},
+           familyi={Z\bibinitperiod},
+           given={Zihao},
+           giveni={Z\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=f7bf50210206dec5bb19e32a74e1a580}{%
+           family={Wallace},
+           familyi={W\bibinitperiod},
+           given={Eric},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=1fdbe6573824ffd09db88df8bfcf769f}{%
+           family={Feng},
+           familyi={F\bibinitperiod},
+           given={Shi},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=9fb237891a1517d36109c68767dd6fae}{%
+           family={Klein},
+           familyi={K\bibinitperiod},
+           given={Dan},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0b9694812f0dc77974d99bb875a76d48}{%
+           family={Singh},
+           familyi={S\bibinitperiod},
+           given={Sameer},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {PMLR}%
+      }
+      \strng{namehash}{1a9a9295531bb5a924ddd4d69b26eb38}
+      \strng{fullhash}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \strng{fullhashraw}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \strng{bibnamehash}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \strng{authorbibnamehash}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \strng{authornamehash}{1a9a9295531bb5a924ddd4d69b26eb38}
+      \strng{authorfullhash}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \strng{authorfullhashraw}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \field{sortinit}{Z}
+      \field{sortinithash}{96892c0b0a36bb8557c40c49813d48b3}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the 38th International Conference on Machine Learning (ICML 2021)}
+      \field{series}{Proceedings of Machine Learning Research}
+      \field{title}{Calibrate Before Use: Improving Few-Shot Performance of Language Models}
+      \field{volume}{139}
+      \field{year}{2021}
+      \field{pages}{12697\bibrangedash 12706}
+      \range{pages}{10}
+      \verb{urlraw}
+      \verb https://proceedings.mlr.press/v139/zhao21c.html
+      \endverb
+      \verb{url}
+      \verb https://proceedings.mlr.press/v139/zhao21c.html
       \endverb
     \endentry
   \enddatalist
@@ -4511,6 +4884,53 @@
       \field{pages}{1877\bibrangedash 1901}
       \range{pages}{25}
     \endentry
+    \entry{Chen2024_frugalgpt}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=4722d1c517fb1393cd8f82862ffc9746}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Lingjiao},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=00dc518b94dfa6349c86e70661a1a5ef}{%
+           family={Zaharia},
+           familyi={Z\bibinitperiod},
+           given={Matei},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=1b868d50048a635fa27ffa744323fa41}{%
+           family={Zou},
+           familyi={Z\bibinitperiod},
+           given={James},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{f2a2f8e38b957734c44c48a88fe983d6}
+      \strng{fullhash}{a4e726228d1a1c5296ab3556cae89810}
+      \strng{fullhashraw}{a4e726228d1a1c5296ab3556cae89810}
+      \strng{bibnamehash}{a4e726228d1a1c5296ab3556cae89810}
+      \strng{authorbibnamehash}{a4e726228d1a1c5296ab3556cae89810}
+      \strng{authornamehash}{f2a2f8e38b957734c44c48a88fe983d6}
+      \strng{authorfullhash}{a4e726228d1a1c5296ab3556cae89810}
+      \strng{authorfullhashraw}{a4e726228d1a1c5296ab3556cae89810}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{2835-8856}
+      \field{journaltitle}{Transactions on Machine Learning Research}
+      \field{title}{{FrugalGPT}: How to Use Large Language Models While Reducing Cost and Improving Performance}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://openreview.net/forum?id=cSimKw5p6R
+      \endverb
+      \verb{url}
+      \verb https://openreview.net/forum?id=cSimKw5p6R
+      \endverb
+    \endentry
     \entry{Cohen1960_kappa}{article}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=eaad07ee1c6ef93a9308150f12c3c2eb}{%
@@ -5097,6 +5517,65 @@
       \endverb
       \verb{url}
       \verb https://aclanthology.org/2025.acl-long.1561/
+      \endverb
+    \endentry
+    \entry{Guo2017_calibration}{article}{}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=e053cf028522c39af65dd862da2d8ed1}{%
+           family={Guo},
+           familyi={G\bibinitperiod},
+           given={Chuan},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=373d04718ec0efd3786a0e2b6c0adf00}{%
+           family={Pleiss},
+           familyi={P\bibinitperiod},
+           given={Geoff},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=17b6a43f5598c7efd897f9d254090fdd}{%
+           family={Sun},
+           familyi={S\bibinitperiod},
+           given={Yu},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=68a0238356fbd88b34be8886f25938a7}{%
+           family={Weinberger},
+           familyi={W\bibinitperiod},
+           given={Kilian\bibnamedelima Q.},
+           giveni={K\bibinitperiod\bibinitdelim Q\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {PMLR}%
+      }
+      \strng{namehash}{203b115999f73097be6ab32411fb1f42}
+      \strng{fullhash}{f3833eed8ef776fc6c89f407c7d66c34}
+      \strng{fullhashraw}{f3833eed8ef776fc6c89f407c7d66c34}
+      \strng{bibnamehash}{f3833eed8ef776fc6c89f407c7d66c34}
+      \strng{authorbibnamehash}{f3833eed8ef776fc6c89f407c7d66c34}
+      \strng{authornamehash}{203b115999f73097be6ab32411fb1f42}
+      \strng{authorfullhash}{f3833eed8ef776fc6c89f407c7d66c34}
+      \strng{authorfullhashraw}{f3833eed8ef776fc6c89f407c7d66c34}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the 34th International Conference on Machine Learning (ICML 2017)}
+      \field{series}{Proceedings of Machine Learning Research}
+      \field{title}{On Calibration of Modern Neural Networks}
+      \field{volume}{70}
+      \field{year}{2017}
+      \field{pages}{1321\bibrangedash 1330}
+      \range{pages}{10}
+      \verb{urlraw}
+      \verb https://proceedings.mlr.press/v70/guo17a.html
+      \endverb
+      \verb{url}
+      \verb https://proceedings.mlr.press/v70/guo17a.html
       \endverb
     \endentry
     \entry{HernandezSampieri2018_metodologia}{book}{}{}
@@ -6534,6 +7013,90 @@
       \verb https://www.postgresql.org/docs/15/
       \endverb
     \endentry
+    \entry{Tian2023_verbalized_confidence}{article}{}{}
+      \name{author}{8}{}{%
+        {{un=0,uniquepart=base,hash=14d0da9723d355c9cc411b0daaf91473}{%
+           family={Tian},
+           familyi={T\bibinitperiod},
+           given={Katherine},
+           giveni={K\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b9441ad4287a1b5f251258a6fd6afb3a}{%
+           family={Mitchell},
+           familyi={M\bibinitperiod},
+           given={Eric},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0a5513f7fd0315dca73a5f522838f1f4}{%
+           family={Zhou},
+           familyi={Z\bibinitperiod},
+           given={Allan},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d6e9caed0d49d143fa1bf05559bc7c20}{%
+           family={Sharma},
+           familyi={S\bibinitperiod},
+           given={Archit},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ba3b0dbc0637707e13b68258120d22ca}{%
+           family={Rafailov},
+           familyi={R\bibinitperiod},
+           given={Rafael},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3b115344acb9ff313d507977648f7ece}{%
+           family={Yao},
+           familyi={Y\bibinitperiod},
+           given={Huaxiu},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=058e82495825ae376c6a96a12169e6ee}{%
+           family={Finn},
+           familyi={F\bibinitperiod},
+           given={Chelsea},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=2214edb8305f7ccd7cdc310b3a8ae1b4}{%
+           family={Manning},
+           familyi={M\bibinitperiod},
+           given={Christopher\bibnamedelima D.},
+           giveni={C\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computational Linguistics}%
+      }
+      \strng{namehash}{3ea9e6078e180b006e3c94b3557b39df}
+      \strng{fullhash}{e7ca567f605838879984505191bbd027}
+      \strng{fullhashraw}{e7ca567f605838879984505191bbd027}
+      \strng{bibnamehash}{e7ca567f605838879984505191bbd027}
+      \strng{authorbibnamehash}{e7ca567f605838879984505191bbd027}
+      \strng{authornamehash}{3ea9e6078e180b006e3c94b3557b39df}
+      \strng{authorfullhash}{e7ca567f605838879984505191bbd027}
+      \strng{authorfullhashraw}{e7ca567f605838879984505191bbd027}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing (EMNLP 2023)}
+      \field{title}{Just Ask for Calibration: Strategies for Eliciting Calibrated Confidence Scores from Language Models Fine-Tuned with Human Feedback}
+      \field{year}{2023}
+      \field{pages}{5433\bibrangedash 5442}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.18653/v1/2023.emnlp-main.330
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.18653/v1/2023.emnlp-main.330
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.18653/v1/2023.emnlp-main.330
+      \endverb
+    \endentry
     \entry{Tiangolo2024_fastapi}{manual}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=223d828339f8033ceb273f7dfcbc556c}{%
@@ -7007,6 +7570,54 @@
       \verb 2307.09288
       \endverb
     \endentry
+    \entry{Varshney2022_model_cascading}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=0e824b6ad92d00940e0d061061b7fabe}{%
+           family={Varshney},
+           familyi={V\bibinitperiod},
+           given={Neeraj},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=121708a74e1528d506fc79a1638d9e8f}{%
+           family={Baral},
+           familyi={B\bibinitperiod},
+           given={Chitta},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computational Linguistics}%
+      }
+      \strng{namehash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{fullhash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{fullhashraw}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{bibnamehash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{authorbibnamehash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{authornamehash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{authorfullhash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{authorfullhashraw}{62bff4318108a0c499c4fb3d08fe17ba}
+      \field{sortinit}{V}
+      \field{sortinithash}{afb52128e5b4dc4b843768c0113d673b}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing (EMNLP 2022)}
+      \field{title}{Model Cascading: Towards Jointly Improving Efficiency and Accuracy of {NLP} Systems}
+      \field{year}{2022}
+      \field{pages}{11007\bibrangedash 11021}
+      \range{pages}{15}
+      \verb{doi}
+      \verb 10.18653/v1/2022.emnlp-main.756
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.18653/v1/2022.emnlp-main.756
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.18653/v1/2022.emnlp-main.756
+      \endverb
+    \endentry
     \entry{Vaswani2017_attention}{article}{}{}
       \name{author}{8}{}{%
         {{un=0,uniquepart=base,hash=7f28e84700536646dd6620a0db07ad09}{%
@@ -7436,6 +8047,76 @@
       \endverb
       \verb{url}
       \verb https://doi.org/10.1145/3491102.3517582
+      \endverb
+    \endentry
+    \entry{Xiong2024_confidence_elicitation}{article}{}{}
+      \name{author}{7}{}{%
+        {{un=0,uniquepart=base,hash=c6fc8978db42ed2a39aed9ee5e002ffb}{%
+           family={Xiong},
+           familyi={X\bibinitperiod},
+           given={Miao},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ed366d1e427ae77f2ebc1a184bf85dcb}{%
+           family={Hu},
+           familyi={H\bibinitperiod},
+           given={Zhiyuan},
+           giveni={Z\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=bb8ec0d106efdfe2df3eb5baae20a610}{%
+           family={Lu},
+           familyi={L\bibinitperiod},
+           given={Xinyang},
+           giveni={X\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7c067c709e7a1f9fed426206033b51d5}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Yifei},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=f0ae8cd7eb0b07fe71e1654376c0fc0e}{%
+           family={Fu},
+           familyi={F\bibinitperiod},
+           given={Jie},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=2883148bd3351a45d72c69b1a91dbd79}{%
+           family={He},
+           familyi={H\bibinitperiod},
+           given={Junxian},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b5c2ebc85fb8cba01d66e9eaaae19fd1}{%
+           family={Hooi},
+           familyi={H\bibinitperiod},
+           given={Bryan},
+           giveni={B\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{013ba0b2a1af0ba7815401fbfb638dc6}
+      \strng{fullhash}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \strng{fullhashraw}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \strng{bibnamehash}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \strng{authorbibnamehash}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \strng{authornamehash}{013ba0b2a1af0ba7815401fbfb638dc6}
+      \strng{authorfullhash}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \strng{authorfullhashraw}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \field{sortinit}{X}
+      \field{sortinithash}{1965c258adceecf23ce3d67b05113442}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{The Twelfth International Conference on Learning Representations (ICLR 2024)}
+      \field{title}{Can {LLMs} Express Their Uncertainty? An Empirical Evaluation of Confidence Elicitation in {LLMs}}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://openreview.net/forum?id=gjeQKFxFpZ
+      \endverb
+      \verb{url}
+      \verb https://openreview.net/forum?id=gjeQKFxFpZ
       \endverb
     \endentry
     \entry{xuan2025mmluprox}{article}{}{}
@@ -7875,6 +8556,71 @@
       \endverb
       \verb{url}
       \verb https://aclanthology.org/2023.emnlp-main.774/
+      \endverb
+    \endentry
+    \entry{Zhao2021_calibrate_before_use}{article}{}{}
+      \name{author}{5}{}{%
+        {{un=0,uniquepart=base,hash=396bf132d19d9792c2ce86de28419896}{%
+           family={Zhao},
+           familyi={Z\bibinitperiod},
+           given={Zihao},
+           giveni={Z\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=f7bf50210206dec5bb19e32a74e1a580}{%
+           family={Wallace},
+           familyi={W\bibinitperiod},
+           given={Eric},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=1fdbe6573824ffd09db88df8bfcf769f}{%
+           family={Feng},
+           familyi={F\bibinitperiod},
+           given={Shi},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=9fb237891a1517d36109c68767dd6fae}{%
+           family={Klein},
+           familyi={K\bibinitperiod},
+           given={Dan},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0b9694812f0dc77974d99bb875a76d48}{%
+           family={Singh},
+           familyi={S\bibinitperiod},
+           given={Sameer},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {PMLR}%
+      }
+      \strng{namehash}{1a9a9295531bb5a924ddd4d69b26eb38}
+      \strng{fullhash}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \strng{fullhashraw}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \strng{bibnamehash}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \strng{authorbibnamehash}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \strng{authornamehash}{1a9a9295531bb5a924ddd4d69b26eb38}
+      \strng{authorfullhash}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \strng{authorfullhashraw}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \field{sortinit}{Z}
+      \field{sortinithash}{96892c0b0a36bb8557c40c49813d48b3}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the 38th International Conference on Machine Learning (ICML 2021)}
+      \field{series}{Proceedings of Machine Learning Research}
+      \field{title}{Calibrate Before Use: Improving Few-Shot Performance of Language Models}
+      \field{volume}{139}
+      \field{year}{2021}
+      \field{pages}{12697\bibrangedash 12706}
+      \range{pages}{10}
+      \verb{urlraw}
+      \verb https://proceedings.mlr.press/v139/zhao21c.html
+      \endverb
+      \verb{url}
+      \verb https://proceedings.mlr.press/v139/zhao21c.html
       \endverb
     \endentry
   \enddatalist

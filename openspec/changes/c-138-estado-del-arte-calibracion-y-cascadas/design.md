@@ -196,3 +196,10 @@ Cambio documental sin test runner para prosa ni `.bib`: Strict TDD no aplica (mi
 2. **ITSM-BERT y Alsac et al. (D9):** se incorporan como filas de `tab:trabajos-academicos` mediante un complemento declarado de A1 (despues de `c-135`), o quedan fuera? Recomendacion por defecto: fuera de este change; reconsiderar si `c-139` decide sostener la mencion a corpus en portugues.
 3. **Vacancia acotada en 3.x:** se enuncia solo si C1-C2 la confirman (D6). El usuario puede preferir omitirla aunque se confirme, para no sumar una afirmacion de inexistencia; por defecto se enuncia acotada.
 4. **Texto completo de FrugalGPT en TMLR:** se acepta la descarga asistida por el usuario del PDF de OpenReview, o la atribucion minima verificada sobre arXiv v1 (D3)?
+
+### Decisiones PROVISIONALES del orquestador (2026-10-25, pendientes de confirmacion del autor)
+
+1. OQ1 (tope de paginas): lo decide c-141; este change registra el impacto medido (+3, 105 -> 108) y no aplica la contingencia de D8 porque no supera +3.
+2. OQ2 (ITSM-BERT y Alsac et al.): fuera de este change.
+3. OQ3 (vacancia acotada): se enuncia, porque C1-C2 la confirman sobre las fuentes consultadas.
+4. OQ4 (FrugalGPT): no se evade el control anti-bot; contenido verificado sobre arXiv:2305.05176v1 y atribucion limitada al concepto de cascada con funcion de puntaje y umbral.
