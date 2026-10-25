@@ -14,6 +14,7 @@ de las ramas consumidoras").
 - **Upsert c-130**: `c-130-gate-revision-humana-por-etapa` agrega la Sección 3.7 (gate de revisión por etapa y punto de operación del cortocircuito), un punto en la Sección 4 (alcance del gate por etapa) y el punto 7 de la Sección 7 (procedencia de la cache FORCE-ESCALATE y salvedad de estimación dentro de la muestra). No modifica ningún valor vigente de las Secciones 3.1 a 3.6. Fecha: 2026-10-25.
 - **Upsert c-134**: `c-134-contrastes-estadisticos-y-desagregado-canal` (bloque de código, aplicado el 2026-10-25) agrega la Sección 3.8 (tiempos por canal, contrastes, `d_z`, efecto mínimo detectable, sensibilidad del redondeo y granularidad de la medición manual), notas de convención bilateral en dos filas de la Sección 3.1 y actualiza las remisiones `report.md:99` → `report.md:140` (la línea del SHA-256 se desplazó al agregarse tres subsecciones a "## Tiempos"). No modifica ningún valor vigente de las Secciones 3.1 a 3.7. Los números de sección siguientes se corren (ver `dictamen-correcciones.md`, G0.6). El bloque de tesis de c-134 (grupos 6 a 8) cita estos valores y queda pendiente.
 - **Upsert c-131**: `c-131-metricas-por-etapa-canal-y-exactitud-laxa` (aplicado el 2026-10-25) agrega la Sección 3.9 (exactitud estricta y laxa por etapa y por canal con IC de Wilson, bandas, contingencia, tramo `≥ 0,90` y distribución de confianza por etapa, contraste pareado de McNemar entre etapas y decisión de datos PROVISIONAL), anota en las Secciones 3.3, 4 y 5 (ítem 2) que el contraste agregado `0,697` frente a `0,758` es un efecto de composición entre etapas y registra como `retirado` la lectura de anti-calibración del clasificador en su conjunto. Como el reporte regenerado agrega la línea de procedencia, la exactitud laxa y cuatro secciones antes de `## Tiempos`, **actualiza todas las remisiones `report.md:<línea>`** de este memo (la línea del SHA-256 pasa de `140` a `256`; verificado por correspondencia de contenido línea a línea con el reporte previo). No modifica ningún valor `vigente` de las Secciones 3.1 a 3.8.
+- **Upsert c-142**: `c-142-sensibilidad-fuera-de-muestra-ajustes-clasificador` (aplicado el 2026-10-25) agrega la Sección 3.10 (sensibilidad de las métricas frente al ajuste del clasificador con el corpus: variante principal con el vocabulario previo a c-71, descomposición pareada, control de fidelidad de la réplica histórica, E3, E4 y niveles del prompt), notas "estimación dentro de la muestra; ver sección 3.10" en las filas de `97/131`, `0,7405` y `0,6769` y los puntos 8 y 9 de la Sección 7. No modifica ningún valor `vigente` de las Secciones 3.1 a 3.9. Fecha: 2026-10-25.
 - **Artefacto**: este memo. No se edita ningún `.tex` en este change.
 - **Fecha de verificación**: 2026-10-21.
 - **SHA-256 del corpus** (`data/corpus_evaluacion_pseudonimizado.json`):
@@ -212,8 +213,8 @@ registran los números.
 | Confianza mínima declarada por Gemini: `0,85` en `69` casos | Sección 4 de este memo; `07-resultados.tex:158`; `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` | vigente | Verificado el 2026-10-25 sobre la evidencia versionada: `69` predicciones con `etapa = gemini`, mínimo `0,85`. La etapa de reserva no se activó (`0` casos). |
 | Punto de operación del cortocircuito: `0,5166` | `App/Backend/app/config/settings.py:134`; `docs/deterministic_calibration.md:35-36` | vigente | Umbral sobre el `score_correctitud` (no sobre la confianza). Derivado por validación cruzada de cinco pliegues (tau OOF `0,516666…` en los cinco pliegues, truncado a 4 decimales). Sustituye al piso absoluto `0,90` del diseño inicial (ver el punto siguiente). |
 | Cobertura del punto: `131/200` (`65,5 %`) | `docs/deterministic_calibration.md:39`; Sección 3.3 (etapa determinística `131`) | vigente | Equivale a cortocircuitar todo caso con señal dominante (`57` sin predicción y `12` ambiguos escalan a Gemini); todos los `131` tienen puntaje `≥ 0,516667` (mínimo repetido offline el 2026-10-25). |
-| `precision_det(S)`: `97/131` = `0,7405` | `docs/deterministic_calibration.md:40,67` | vigente | Coincide con la exactitud estricta de la etapa determinística de la corrida oficial (Sección 3.3; c-131 la consume y le agrega el intervalo de confianza). **Estimación dentro de la muestra** (ver el punto 7 de la Sección 7). |
-| `precision_gem(S)`: `88/130` = `0,6769` | `docs/deterministic_calibration.md:41-44,68` | vigente | Fuente: cache FORCE-ESCALATE (`evaluation/predicciones_calibracion.json`, no versionada; copia congelada en `evaluation/evidence/predicciones_calibracion_hybrid-v2_2026-10-07.json`). Excluye `1` caso cortocircuitable sin predicción de Gemini en esa cache. **Estimación dentro de la muestra**. Recalculado el 2026-10-25 desde la evidencia versionada: `88` aciertos sobre `130` = `0,6769`. |
+| `precision_det(S)`: `97/131` = `0,7405` | `docs/deterministic_calibration.md:40,67` | vigente | Coincide con la exactitud estricta de la etapa determinística de la corrida oficial (Sección 3.3; c-131 la consume y le agrega el intervalo de confianza). **Estimación dentro de la muestra** (ver el punto 7 de la Sección 7). Sensibilidad: estimación dentro de la muestra; ver sección 3.10. |
+| `precision_gem(S)`: `88/130` = `0,6769` | `docs/deterministic_calibration.md:41-44,68` | vigente | Fuente: cache FORCE-ESCALATE (`evaluation/predicciones_calibracion.json`, no versionada; copia congelada en `evaluation/evidence/predicciones_calibracion_hybrid-v2_2026-10-07.json`). Excluye `1` caso cortocircuitable sin predicción de Gemini en esa cache. **Estimación dentro de la muestra**. Recalculado el 2026-10-25 desde la evidencia versionada: `88` aciertos sobre `130` = `0,6769`. Sensibilidad: estimación dentro de la muestra; ver sección 3.10. |
 | Piso absoluto `0,90` del diseño inicial: `1/200` | `docs/deterministic_calibration.md:104,181-182` | **retirado** | Cobertura de un piso de precisión (no de un umbral de confianza) que habría cortocircuitado un único caso; retirado como criterio de operación por c-74. La tesis ya no lo cita (se retira "umbral de confianza superior al 90 %"); se conserva aquí por trazabilidad. |
 
 Salvedades: (i) `97/131` y `88/130` son estimaciones dentro de la muestra
@@ -360,7 +361,7 @@ sí sola el estado de ningún objetivo (lo decide c-133). Todos los IC son de Wi
 | Ámbito | Casos | Estricta `k/n` | Exactitud estricta e IC | Laxa `k/n` | Exactitud laxa e IC | Estado |
 |---|---|---|---|---|---|---|
 | Global | 200 | `147/200` | `0,7350` `[0,6698; 0,7913]` (ya canónico, Sección 3.2) | `179/200` | `0,8950` `[0,8448; 0,9303]` (`89,5 %`) | vigente |
-| Etapa determinística | 131 | `97/131` | `0,7405` `[0,6593; 0,8079]` | `119/131` | `0,9084` `[0,8467; 0,9468]` | vigente |
+| Etapa determinística | 131 | `97/131` | `0,7405` `[0,6593; 0,8079]` | `119/131` | `0,9084` `[0,8467; 0,9468]` | vigente Sensibilidad: estimación dentro de la muestra; ver sección 3.10. |
 | Etapa Gemini | 69 | `50/69` | `0,7246` `[0,6095; 0,8161]` | `60/69` | `0,8696` `[0,7703; 0,9298]` | vigente |
 | Etapa fallback | 0 | `0/0` | no aplicable | `0/0` | no aplicable | vigente |
 | Llamada telefónica | 81 | `53/81` | `0,6543` `[0,5459; 0,7488]` | `70/81` | `0,8642` `[0,7730; 0,9224]` | vigente |
@@ -446,6 +447,57 @@ confianza autodeclarada no discrimina aciertos de errores en el rango observado
 discreta) no ordena la correctitud: sus `98` decisiones con confianza menor que `0,5` aciertan
 `75` (`0,7653`) y las `6` de `0,75` aciertan `2`. Estado de la lectura de anti-calibración:
 **retirado**. Ningún valor `vigente` de las Secciones 3.1 a 3.8 cambió.
+
+### 3.10 Sensibilidad frente al ajuste del clasificador con el corpus (c-142)
+
+**Sensibilidad: no reemplaza valores canónicos.** Todo valor de esta sección es una
+medición de sensibilidad (variantes pre-registradas en el `design.md` de c-142, D2-D4, D8
+y D9) y NO sustituye ningún valor de las Secciones 3.1 a 3.9: la corrida oficial y su
+`evaluation/report.md` quedan intactos. Fuente única: `evaluation/report_sensibilidad_ajustes.md`
+(generado el 2026-10-25 por `python -m evaluation.sensibilidad_ajustes`, offline, sin
+Gemini; dos corridas consecutivas dan un archivo idéntico byte a byte). Notación: `V1` =
+vocabulario vigente (151 patrones), `V0` = vocabulario previo a c-71 (89 patrones, blob
+`858f1c6`, versionado con procedencia en `evaluation/data/sensibilidad_ajustes/`), `L1` =
+lógica y punto de operación vigentes (`tau = 0,5166`), `L0` = lógica previa a c-71
+(replica; confianza `w/(w + r + 1e-6)`, cortocircuito con confianza `≥ 0,90`).
+
+**Estado de datos.** Rama P1 de c-131 (G0.5): la caché oficial `hybrid-v3` y la FORCE-ESCALATE
+`hybrid-v2` (copias congeladas de `evaluation/evidence/`, c-143). La FORCE-ESCALATE tiene
+`corpus_hash` `5f062e14…` distinto del vigente (`1fd17d7e…`); antes de usarla como fuente
+de predicciones de Gemini, `evaluation/sensibilidad_ajustes.py` verifica que identificador,
+descripción y sector asignado de sus 200 entradas coinciden con el corpus (0 diferencias) y
+que el lado `V1` de E3 reproduce los `146` aciertos documentados (`docs/deterministic_calibration.md:89`)
+sin casos excluidos. Esa verificación sustenta E3 y E4; la decisión de usar la caché
+queda PROVISIONAL (ver el grupo c-142 de `dictamen-correcciones.md`).
+
+| Valor de sensibilidad | Procedencia (archivo:línea) | Estado | Notas |
+|---|---|---|---|
+| Control de fidelidad de la configuración evaluada (`V1 + L1`): `131` casos y `97` aciertos reproducidos | `evaluation/report_sensibilidad_ajustes.md:19-22` | vigente | Reproducción por el adaptador sobre el clasificador de producción: `97/131 = 0,7405` `[0,6593; 0,8079]`, cobertura `131/200`, laxos `119/131`. Idéntica al valor canónico de la Sección 3.9. |
+| **E1** variante principal (`V0 + L1`): casos cortocircuitados `n_A = 74` (cobertura `74/200 = 0,3700`) | `evaluation/report_sensibilidad_ajustes.md:28` | vigente | Sensibilidad: no reemplaza valores canónicos. Ablación de un solo factor (vocabulario). |
+| E1: aciertos `k_A = 39`; exactitud `p_A = 39/74 = 0,5270`; IC de Wilson 95 % `[0,4148; 0,6366]` | `evaluation/report_sensibilidad_ajustes.md:29` | vigente | Aciertos laxos `57/74` (`:30`). Rama **A** pre-registrada (`p_A < 0,7405`): cota pesimista del sesgo atribuible al vocabulario. |
+| E1: diferencia descriptiva `0,7405 − p_A` = `0,2134` (**21,3 puntos**) | `evaluation/report_sensibilidad_ajustes.md:31` | vigente | Exacta (`97/131 − 39/74 = 0,21343`); con los extremos redondeados de la tabla (`0,7405 − 0,5270`) la fórmula de D2 da `21,35`, empate de redondeo sin efecto sobre la rama. No es una diferencia pareada: los conjuntos de casos difieren. |
+| Descomposición pareada: cortocircuitados por ambos `67` (aciertos `V1` `38`, `V0` `37`); solo `V1` `64` (aciertos `V1` `59`, `0,9219`); solo `V0` `7` (aciertos `V0` `2`) | `evaluation/report_sensibilidad_ajustes.md:37-39` | vigente | Suman `131` casos y `97` aciertos del lado `V1` (`38 + 59`) y `74` y `39` del lado `V0` (`67 + 7`, `37 + 2`). Los `64` casos que solo cortocircuita `V1` son el aporte de la ampliación de c-71. |
+| McNemar sobre los `67` casos comunes (`V1` frente a `V0`): ambas `37`, solo `V1` `1`, solo `V0` `0`, ninguna `29`; `p` exacto `1,0000` | `evaluation/report_sensibilidad_ajustes.md:43-44` | vigente | `b + c = 1 < 25`, criterio exacto. Evidencia descriptiva, sin corrección por multiplicidad; sobre los casos comunes ambos vocabularios aciertan casi lo mismo, de modo que la diferencia de E1 proviene de los casos que solo resuelve `V1`. |
+| **Referencia histórica** (`V0 + L0`): `72` casos cortocircuitados (`72/200 = 0,3600`), `37` aciertos, `0,5139` `[0,4007; 0,6257]`, laxos `55/72` | `evaluation/report_sensibilidad_ajustes.md:50-52` | vigente | Reproduce la línea base de c-71. No se lee como cota del sesgo (incluye cambios de lógica legítimos). |
+| Control de fidelidad de la réplica `L0` frente a la línea base documentada por c-71: las `11` métricas **coinciden** (`72`; `22/14/36` por canal correo/web/teléfono; `37`; `13/7/17`; `55`; `119` sin coincidencias; `126` predicciones de Seguridad Informatica) | `evaluation/report_sensibilidad_ajustes.md:56-68`; `evaluation/tests/test_sensibilidad_corpus.py` | vigente | Fiel: el test de caracterización pasa sin ajustar la réplica ni el valor esperado. Fuente de lo documentado: `openspec/changes/archive/2026-10-06-c-71-hardening-clasificador-determinista/proposal.md:9-13` y notas de su `tasks.md`. |
+| **E3** exactitud global con las predicciones de Gemini fijas (FORCE-ESCALATE, una sola fuente para ambos lados): `V1` `146/200` (`0,7300`); `V0` `128/200` (`0,6400`); `0` casos excluidos | `evaluation/report_sensibilidad_ajustes.md:76-77` | vigente | `V1 = 146` reproduce el valor documentado (`docs/deterministic_calibration.md:89`). Lectura: sin la ampliación del vocabulario, el pipeline acertaría `18` casos menos con Gemini fijo. Sensibilidad: no reemplaza la exactitud global oficial `147/200`. |
+| E3: McNemar `V1` frente a `V0` (`200` pares): ambas `128`, solo `V1` `18`, solo `V0` `0`, ninguna `54`; `p` exacto `0,0000` (`2 × 0,5^18 ≈ 7,6 × 10^-6`, **`p < 0,001`**); `χ²` corregido `16,0556` (`p = 0,0001`) | `evaluation/report_sensibilidad_ajustes.md:78-79` | vigente | `b + c = 18 < 25`, criterio exacto. Evidencia descriptiva. |
+| **E4** referencia en muestra (`V1`): reglas `96/130 = 0,7385`, Gemini `88/130 = 0,6769`; `b = 16`, `c = 8`, `p` exacto `0,1516` | `evaluation/report_sensibilidad_ajustes.md:80-83` | vigente | Reproduce el contraste de c-131 (Sección 3.9; `docs/deterministic_calibration.md:234`). |
+| E4 (`V0`): `|S| = 74`, `73` pares (excluido `R099`); reglas `38/73 = 0,5205`, Gemini `48/73 = 0,6575`; ambas `35`, solo reglas `3`, solo Gemini `13`, ninguna `22`; `p` exacto `0,0213` (`χ²` corregido `5,0625`, `p = 0,0244`) | `evaluation/report_sensibilidad_ajustes.md:84-87` | vigente | Con el vocabulario previo la etapa de reglas **no supera** a Gemini sobre los casos que resuelve (`0,5205` frente a `0,6575`, discordancias `3` frente a `13`, `p` exacto `0,021` sin corrección por multiplicidad). Insumo de c-133: la ventaja de las reglas sobre Gemini en `S` depende del vocabulario ajustado con el corpus. |
+| Prompt, **nivel a**: los tres casos motivadores de c-72 (`R002`, `R038`, `R015`) están entre los `69` escalados; etapa Gemini `50/69 = 0,7246` con todos y `48/66 = 0,7273` sin ellos | `evaluation/report_sensibilidad_ajustes.md:93-94` | vigente | Cota débil: solo retira la influencia directa de los casos documentados. Con todos los casos reproduce el `50/69` de la Sección 3.9. `K_EX = 48`, `N_EX = 66`. |
+| Prompt, **nivel b**: la FORCE-ESCALATE se clasifica "**posterior**" (`generated_at = 2026-10-07T20:33:03.438926+00:00`, posterior a la aplicación de c-72, 2026-10-06T19:38:20Z); la comparación pareada contra la corrida oficial **no aplica** | `evaluation/report_sensibilidad_ajustes.md:95-96` | vigente | Consecuencia de la tarea 7.3. La suposición de la propuesta (FORCE-ESCALATE generada antes de las reglas de frontera) queda refutada por su `cache_meta`: la comparación `0,7405` frente a `0,6769` no mezcla, por esta vía, dos versiones del prompt. La fecha no prueba qué archivo de prompt cargó esa corrida. |
+| Prompt, **nivel c** (ablación paga de dos brazos, 138 invocaciones): **no computado** | `evaluation/report_sensibilidad_ajustes.md:97` | no computado | Sin autorización (G0.7a): cero llamadas a Gemini en todo el change. El efecto de las reglas de frontera, limitado a los `69` casos de la etapa Gemini, no se cuantificó; nivel del prompt para la tesis: **a**. |
+| Variante por pliegues | `evaluation/report_sensibilidad_ajustes.md:70-72`; Sección 7, punto 8 | no factible | El repositorio no registra qué casos motivaron cada patrón de c-71. Sin valor. |
+| Conjunto de incidentes de preproducción | Sección 7, punto 6 (c-144) | no existe | Desenlace D11: no existen / no se localizan; sin datos personales involucrados. Sin valor. |
+
+Salvedades: (i) todo valor de esta sección es una estimación dentro de la muestra: el
+vocabulario `V0` se supone no ajustado con el corpus (C-27 lo redistribuyó con el corpus
+ausente del repositorio; si los autores informan lo contrario la cota pasa a ser parcial);
+(ii) `0,7405 − p_A` es una **cota pesimista** (por exceso), porque `V0` carece también del
+conocimiento del dominio que una ampliación hecha con datos independientes habría aportado;
+(iii) un resultado no significativo nunca se lee como ausencia de efecto; los `p` son
+descriptivos y no llevan corrección por multiplicidad; (iv) E3 y E4 usan predicciones de Gemini de una corrida distinta de la oficial
+(salvedad ya registrada en la Sección 3.9 y en el punto 7 de la Sección 7).
 
 ## 4. Contingencia del gate de intervención humana
 
@@ -688,6 +740,30 @@ decisión editorial adoptada y su condición de reversibilidad.
    de frontera del prompt y el punto de operación se ajustaron sobre el mismo
    corpus: c-71, c-72, c-74), probablemente optimistas; su confirmación exige
    un corpus independiente (`08-discusion.tex:20`, `subsec:corpus-independiente`).
+
+8. **Variante por pliegues del vocabulario: no factible (c-142).** El dictamen
+   sugiere reconstruir el vocabulario por pliegues. Eso exige saber qué casos del
+   corpus motivaron cada uno de los `62` patrones que agregó c-71 (commit `1368fd8`);
+   el diff solo trae cinco comentarios de bloque por sector y las propuestas, el diseño
+   y las tareas de c-71 describen el procedimiento en forma genérica. Cualquier
+   atribución por pliegues requeriría una regla no verificable cuyo resultado dependería
+   de la regla elegida. **Decisión adoptada**: declararla no factible, con ese motivo, en
+   `evaluation/report_sensibilidad_ajustes.md:70-72` y en una oración de la tesis; la
+   aproximación por coincidencia (exploratoria) no se ejecuta. **Reversible si** los
+   autores aportan la atribución por patrón (Open Question 4 de c-142: respuesta
+   PROVISIONAL, recomendación del design).
+
+9. **Versión del prompt de la FORCE-ESCALATE (c-142, D9).** El `cache_meta.generated_at`
+   de la copia congelada (`evaluation/evidence/predicciones_calibracion_hybrid-v2_2026-10-07.json`)
+   es `2026-10-07T20:33:03.438926+00:00`, posterior a la aplicación de c-72
+   (`a76851e`, 2026-10-06T19:38:20Z). Clasificación según D9: **"posterior"**; el nivel b
+   de la sensibilidad del prompt (comparación pareada contra la corrida oficial) **no
+   aplica**. La suposición de la propuesta de c-142 (cache generada el 2026-10-05, antes
+   de las reglas de frontera) queda refutada por su `cache_meta`. Esto acota, sin cerrar,
+   el punto 7: sigue sin registrarse qué archivo de prompt cargó esa corrida, pero la
+   fecha impide atribuirle el prompt previo a c-72. **Decisión adoptada**: no fabricar la
+   versión del prompt; informar la clasificación y su fecha. **Reversible si** el autor
+   de la corrida aporta la versión del prompt (Open Question 5 de c-142).
 
 ---
 

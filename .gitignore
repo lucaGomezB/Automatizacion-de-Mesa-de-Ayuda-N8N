@@ -71,5 +71,7 @@ data/.~lock*
 # Caches de predicciones del framework de evaluacion (derivan del corpus real, PII)
 evaluation/predicciones.json
 evaluation/predicciones_calibracion.json
+# Salidas de la ablacion paga del prompt (c-142, D9): derivan del corpus real, no se versionan
+evaluation/predicciones_sensibilidad_prompt_*.json
 # NOTA: evaluation/report.md NO se ignora. Es evidencia agregada del resultado de la
 # evaluacion (metricas, matriz de confusion, tiempos) y se versiona con el repositorio.

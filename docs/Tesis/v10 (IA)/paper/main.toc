@@ -67,39 +67,40 @@
 \contentsline {subsection}{\numberline {8.2}Matriz de confusión y métricas de clasificación}{69}{subsection.8.2}%
 \contentsline {subsection}{\numberline {8.3}Intervención humana en el flujo automatizado}{71}{subsection.8.3}%
 \contentsline {subsection}{\numberline {8.4}Calibración de la confianza}{72}{subsection.8.4}%
-\contentsline {subsection}{\numberline {8.5}Análisis de errores y casos límite}{72}{subsection.8.5}%
-\contentsline {section}{\numberline {9}Discusión}{74}{section.9}%
-\contentsline {subsection}{\numberline {9.1}Interpretación de los resultados}{74}{subsection.9.1}%
-\contentsline {subsection}{\numberline {9.2}Comparación con la literatura}{77}{subsection.9.2}%
-\contentsline {subsection}{\numberline {9.3}Limitaciones del estudio}{78}{subsection.9.3}%
-\contentsline {subsection}{\numberline {9.4}Implicancias prácticas}{79}{subsection.9.4}%
-\contentsline {subsection}{\numberline {9.5}Reflexiones sobre la generalización}{81}{subsection.9.5}%
-\contentsline {section}{\numberline {10}Conclusiones}{82}{section.10}%
-\contentsline {subsection}{\numberline {10.1}Cumplimiento de los objetivos del trabajo}{82}{subsection.10.1}%
-\contentsline {subsection}{\numberline {10.2}Aportes y generalización}{84}{subsection.10.2}%
-\contentsline {section}{\numberline {11}Recomendaciones y líneas de trabajo futuro}{85}{section.11}%
-\contentsline {subsection}{\numberline {11.1}Incorporación de un clasificador supervisado con corpus propio}{85}{subsection.11.1}%
-\contentsline {subsection}{\numberline {11.2}Ampliación de canales de entrada}{85}{subsection.11.2}%
-\contentsline {subsection}{\numberline {11.3}Panel de monitoreo en tiempo real}{86}{subsection.11.3}%
-\contentsline {subsection}{\numberline {11.4}Mecanismos de aprendizaje activo}{86}{subsection.11.4}%
-\contentsline {subsection}{\numberline {11.5}Validación sobre un corpus independiente}{86}{subsection.11.5}%
-\contentsline {subsection}{\numberline {11.6}Estudios de replicación}{87}{subsection.11.6}%
-\contentsline {subsection}{\numberline {11.7}Evaluación de modelos de lenguaje de código abierto}{87}{subsection.11.7}%
-\contentsline {subsection}{\numberline {11.8}Base de conocimientos para resolución automática}{87}{subsection.11.8}%
-\contentsline {subsection}{\numberline {11.9}Agente conversacional telefónico en tiempo real}{88}{subsection.11.9}%
-\contentsline {section}{Referencias bibliograficas}{90}{section*.27}%
-\contentsline {section}{Anexos}{96}{section*.28}%
-\contentsline {section}{\numberline {A}Diagrama de arquitectura del sistema}{96}{section.1.A}%
-\contentsline {section}{\numberline {B}Repositorio de código fuente}{96}{section.1.B}%
-\contentsline {section}{\numberline {C}Esquema de base de datos}{97}{section.1.C}%
-\contentsline {section}{\numberline {D}Especificación OpenAPI de la interfaz REST}{97}{section.1.D}%
-\contentsline {section}{\numberline {E}Configuración del flujo N8N}{98}{section.1.E}%
-\contentsline {section}{\numberline {F}Corpus de validación}{99}{section.1.F}%
-\contentsline {section}{\numberline {G}Documentación operativa}{100}{section.1.G}%
-\contentsline {section}{\numberline {H}Especificación del prompt de Gemini 3.6 Flash}{100}{section.1.H}%
-\contentsline {subsection}{\numberline {H.1}Estructura y contenido del prompt}{100}{subsection.1.H.1}%
-\contentsline {subsection}{\numberline {H.2}Parámetros de configuración}{101}{subsection.1.H.2}%
-\contentsline {subsection}{\numberline {H.3}Validación de la respuesta}{101}{subsection.1.H.3}%
-\contentsline {subsection}{\numberline {H.4}Iteración y mejora del prompt}{102}{subsection.1.H.4}%
-\contentsline {subsection}{\numberline {H.5}Recomendaciones para futuras iteraciones}{102}{subsection.1.H.5}%
-\contentsline {section}{\numberline {I}Trazabilidad de las correcciones del dictamen}{103}{section.1.I}%
+\contentsline {subsection}{\numberline {8.5}Sensibilidad al ajuste del clasificador con el corpus}{72}{subsection.8.5}%
+\contentsline {subsection}{\numberline {8.6}Análisis de errores y casos límite}{73}{subsection.8.6}%
+\contentsline {section}{\numberline {9}Discusión}{75}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Interpretación de los resultados}{75}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Comparación con la literatura}{78}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Limitaciones del estudio}{79}{subsection.9.3}%
+\contentsline {subsection}{\numberline {9.4}Implicancias prácticas}{80}{subsection.9.4}%
+\contentsline {subsection}{\numberline {9.5}Reflexiones sobre la generalización}{82}{subsection.9.5}%
+\contentsline {section}{\numberline {10}Conclusiones}{83}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Cumplimiento de los objetivos del trabajo}{83}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Aportes y generalización}{85}{subsection.10.2}%
+\contentsline {section}{\numberline {11}Recomendaciones y líneas de trabajo futuro}{86}{section.11}%
+\contentsline {subsection}{\numberline {11.1}Incorporación de un clasificador supervisado con corpus propio}{86}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}Ampliación de canales de entrada}{86}{subsection.11.2}%
+\contentsline {subsection}{\numberline {11.3}Panel de monitoreo en tiempo real}{87}{subsection.11.3}%
+\contentsline {subsection}{\numberline {11.4}Mecanismos de aprendizaje activo}{87}{subsection.11.4}%
+\contentsline {subsection}{\numberline {11.5}Validación sobre un corpus independiente}{87}{subsection.11.5}%
+\contentsline {subsection}{\numberline {11.6}Estudios de replicación}{88}{subsection.11.6}%
+\contentsline {subsection}{\numberline {11.7}Evaluación de modelos de lenguaje de código abierto}{88}{subsection.11.7}%
+\contentsline {subsection}{\numberline {11.8}Base de conocimientos para resolución automática}{88}{subsection.11.8}%
+\contentsline {subsection}{\numberline {11.9}Agente conversacional telefónico en tiempo real}{89}{subsection.11.9}%
+\contentsline {section}{Referencias bibliograficas}{91}{section*.28}%
+\contentsline {section}{Anexos}{97}{section*.29}%
+\contentsline {section}{\numberline {A}Diagrama de arquitectura del sistema}{97}{section.1.A}%
+\contentsline {section}{\numberline {B}Repositorio de código fuente}{97}{section.1.B}%
+\contentsline {section}{\numberline {C}Esquema de base de datos}{98}{section.1.C}%
+\contentsline {section}{\numberline {D}Especificación OpenAPI de la interfaz REST}{98}{section.1.D}%
+\contentsline {section}{\numberline {E}Configuración del flujo N8N}{99}{section.1.E}%
+\contentsline {section}{\numberline {F}Corpus de validación}{100}{section.1.F}%
+\contentsline {section}{\numberline {G}Documentación operativa}{101}{section.1.G}%
+\contentsline {section}{\numberline {H}Especificación del prompt de Gemini 3.6 Flash}{101}{section.1.H}%
+\contentsline {subsection}{\numberline {H.1}Estructura y contenido del prompt}{101}{subsection.1.H.1}%
+\contentsline {subsection}{\numberline {H.2}Parámetros de configuración}{102}{subsection.1.H.2}%
+\contentsline {subsection}{\numberline {H.3}Validación de la respuesta}{102}{subsection.1.H.3}%
+\contentsline {subsection}{\numberline {H.4}Iteración y mejora del prompt}{103}{subsection.1.H.4}%
+\contentsline {subsection}{\numberline {H.5}Recomendaciones para futuras iteraciones}{103}{subsection.1.H.5}%
+\contentsline {section}{\numberline {I}Trazabilidad de las correcciones del dictamen}{104}{section.1.I}%
