@@ -12,6 +12,9 @@ Uso (corpus real):
     - GEMINI_API_KEY en el entorno
     - PYTHONPATH configurado para incluir App/Backend/
 
+Regenerar solo la sección "Tiempos" (sin Gemini, sin cache, sin gate pago):
+    python -m evaluation.run_evaluation --solo-tiempos
+
 Diseño (D1): el clasificador se inyecta por parámetro, lo que permite
     testear con FakeClassifier sin llamadas a Gemini.
     El main() real usa HybridClassifier; los tests usan FakeClassifier.
@@ -49,9 +52,16 @@ from evaluation.metrics import (
     soporte_por_clase,
 )
 from evaluation.stats import (
+    ARE_WILCOXON_MINIMA,
     ResultadoWilcoxon,
+    efecto_minimo_detectable,
+    escenario_sensibilidad,
+    estadisticos_descriptivos,
+    granularidad_manual,
+    reduccion_relativa,
     reduccion_tiempos,
     shapiro_normalidad,
+    tamano_efecto_dz,
     wilcoxon_tiempos_detallado,
 )
 
@@ -169,7 +179,13 @@ async def evaluar_corpus(
 # ---------------------------------------------------------------------------
 # Mínimo de pares que exige la prueba de Wilcoxon para reportar un resultado.
 _MIN_PARES_WILCOXON = 2
+# Ámbitos de las tablas de tiempos: pares (manual, automatizado) por etiqueta.
+_Ambitos = List[tuple[str, List[tuple[float, float]]]]
 _NO_APLICABLE = "no aplicable"
+_AMBITO_GLOBAL = "Global"
+_NO_CANAL = "sin canal"
+# Descuentos (en segundos) de los escenarios de sensibilidad del manual (c-134).
+_DESCUENTOS_SENSIBILIDAD_S = (5, 10)
 
 
 def _fmt_p(valor: float) -> str:
@@ -237,6 +253,208 @@ def _fila_wilcoxon(
     if canal is not None:
         celdas = [canal, *celdas]
     return "| " + " | ".join(celdas) + " |"
+
+
+def _fmt_num(valor: Optional[float]) -> str:
+    """Formato determinista de una cantidad (4 decimales) o "no aplicable"."""
+    return _NO_APLICABLE if valor is None else f"{valor:.4f}"
+
+
+def _fmt_pct(fraccion: Optional[float]) -> str:
+    """Formato determinista de una fracción como porcentaje (2 decimales)."""
+    return _NO_APLICABLE if fraccion is None else f"{fraccion * 100:.2f}"
+
+
+def _fmt_p_opcional(valor: Optional[float]) -> str:
+    """Valor p con 3 cifras significativas o "no aplicable"."""
+    return _NO_APLICABLE if valor is None else _fmt_p(valor)
+
+
+def _pares_por_canal(
+    corpus: List[CasoEvaluacion],
+) -> _Ambitos:
+    """
+    Agrupa los pares válidos por valor crudo de `canal_origen`.
+
+    Orden canónico estable: conteo descendente y desempate alfabético (c-99,
+    D4); un canal nulo se rotula "sin canal".
+    """
+    canales: Dict[Optional[str], List[tuple[float, float]]] = {}
+    for caso in corpus:
+        if caso.tiempo_manual_s is None or caso.tiempo_automatizado_s is None:
+            continue
+        canales.setdefault(caso.canal_origen, []).append(
+            (float(caso.tiempo_manual_s), float(caso.tiempo_automatizado_s))
+        )
+    orden = sorted(canales, key=lambda c: (-len(canales[c]), str(c)))
+    return [(_NO_CANAL if c is None else str(c), canales[c]) for c in orden]
+
+
+def _ambitos_tiempos(
+    corpus: List[CasoEvaluacion],
+    pares: List[tuple[float, float]],
+) -> _Ambitos:
+    """Ámbitos de las tablas de c-134: fila "Global" y luego cada canal."""
+    return [(_AMBITO_GLOBAL, pares), *_pares_por_canal(corpus)]
+
+
+def _tabla_descriptivos(
+    ambitos: _Ambitos,
+) -> List[str]:
+    """Tabla de descriptivos de ambos brazos, reducción relativa y no más rápidos."""
+    lineas = [
+        "| Ámbito | n | Manual media (s) | Manual mediana (s) | Manual desvío (s) "
+        "| Manual mín (s) | Manual máx (s) | Automatizado media (s) "
+        "| Automatizado mediana (s) | Automatizado desvío (s) "
+        "| Automatizado mín (s) | Automatizado máx (s) "
+        "| Reducción de la media (%) | Reducción de la mediana (%) | No más rápidos |",
+        "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|",
+    ]
+    for etiqueta, pares_ambito in ambitos:
+        if not pares_ambito:
+            celdas = [etiqueta, "0", *([_NO_APLICABLE] * 13)]
+        else:
+            manual = [m for m, _ in pares_ambito]
+            automatizado = [a for _, a in pares_ambito]
+            dm = estadisticos_descriptivos(manual)
+            da = estadisticos_descriptivos(automatizado)
+            relativa = reduccion_relativa(manual, automatizado)
+            no_rapidos = reduccion_tiempos(manual, automatizado).pares_no_mas_rapidos
+            celdas = [
+                etiqueta,
+                str(dm.n),
+                _fmt_num(dm.media),
+                _fmt_num(dm.mediana),
+                _fmt_num(dm.desvio),
+                _fmt_num(dm.minimo),
+                _fmt_num(dm.maximo),
+                _fmt_num(da.media),
+                _fmt_num(da.mediana),
+                _fmt_num(da.desvio),
+                _fmt_num(da.minimo),
+                _fmt_num(da.maximo),
+                _fmt_pct(relativa.media),
+                _fmt_pct(relativa.mediana),
+                str(no_rapidos),
+            ]
+        lineas.append("| " + " | ".join(celdas) + " |")
+    return lineas
+
+
+def _tabla_contraste(
+    ambitos: _Ambitos,
+) -> List[str]:
+    """Tabla de p bilateral y unilateral, d_z y efecto mínimo detectable."""
+    lineas = [
+        f"| Ámbito | n | p bilateral | p unilateral | d_z | MDE (ARE = 1) "
+        f"| MDE (ARE = {ARE_WILCOXON_MINIMA}) |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    for etiqueta, pares_ambito in ambitos:
+        n = len(pares_ambito)
+        wilcoxon = _wilcoxon_o_no_aplicable(pares_ambito)
+        manual = [m for m, _ in pares_ambito]
+        automatizado = [a for _, a in pares_ambito]
+        mde_sin_ajuste = efecto_minimo_detectable(n) if n >= 1 else None
+        mde_con_are = (
+            efecto_minimo_detectable(n, eficiencia_relativa=ARE_WILCOXON_MINIMA)
+            if n >= 1
+            else None
+        )
+        celdas = [
+            etiqueta,
+            str(n),
+            _fmt_p_opcional(wilcoxon.p if wilcoxon else None),
+            _fmt_p_opcional(wilcoxon.p_unilateral if wilcoxon else None),
+            _fmt_num(tamano_efecto_dz(manual, automatizado)),
+            _fmt_num(mde_sin_ajuste),
+            _fmt_num(mde_con_are),
+        ]
+        lineas.append("| " + " | ".join(celdas) + " |")
+    return lineas
+
+
+def _tabla_sensibilidad(pares: List[tuple[float, float]]) -> List[str]:
+    """Tabla de escenarios que descuentan segundos fijos al tiempo manual."""
+    lineas = [
+        "| Descuento al manual (s) | Media manual ajustada (s) "
+        "| Reducción de la media (%) | p bilateral | p unilateral | r |",
+        "|---|---|---|---|---|---|",
+    ]
+    manual = [m for m, _ in pares]
+    automatizado = [a for _, a in pares]
+    for descuento in _DESCUENTOS_SENSIBILIDAD_S:
+        if len(pares) < _MIN_PARES_WILCOXON:
+            celdas = [str(descuento), *([_NO_APLICABLE] * 5)]
+        else:
+            try:
+                escenario = escenario_sensibilidad(manual, automatizado, descuento)
+            except ValueError:
+                celdas = [str(descuento), *([_NO_APLICABLE] * 5)]
+            else:
+                celdas = [
+                    str(descuento),
+                    _fmt_num(escenario.media_manual_ajustada),
+                    _fmt_pct(escenario.reduccion_relativa_media),
+                    _fmt_p(escenario.wilcoxon.p),
+                    _fmt_p(escenario.wilcoxon.p_unilateral),
+                    f"{escenario.wilcoxon.r:.4f}",
+                ]
+        lineas.append("| " + " | ".join(celdas) + " |")
+    return lineas
+
+
+def _subseccion_descriptivos(ambitos: _Ambitos) -> List[str]:
+    """Subsección "Descriptivos global y por canal" (c-134, D4)."""
+    return [
+        "",
+        "### Descriptivos global y por canal",
+        "",
+        "Desvío estándar con la convención muestral (divisor n − 1). La reducción relativa es",
+        "1 − media(automatizado) / media(manual) (y su análoga con la mediana). \"No más",
+        "rápidos\" cuenta los pares con `automatizado >= manual`.",
+        "",
+        *_tabla_descriptivos(ambitos),
+    ]
+
+
+def _subseccion_contraste(ambitos: _Ambitos) -> List[str]:
+    """Subsección "Contraste direccional y tamaño del efecto" (c-134, D4)."""
+    return [
+        "",
+        "### Contraste direccional y tamaño del efecto estandarizado",
+        "",
+        "El p bilateral corresponde a la convención W = min(T+, T−); el p unilateral contrasta",
+        "H1: manual > automatizado (`alternative=\"greater\"` sobre manual − automatizado).",
+        "d_z = media(d) / desvío(d) con d = manual − automatizado (desvío muestral).",
+        "El efecto mínimo detectable (MDE, en escala d_z) usa la aproximación normal",
+        "(z_(1−alfa/2) + z_potencia) / raíz(n · ARE) con alfa = 0.05 (bilateral),",
+        f"potencia = 0.80 y ARE = 1 (sin ajuste) o ARE = {ARE_WILCOXON_MINIMA} "
+        "(cota inferior de la eficiencia de la prueba de rangos frente a la t pareada).",
+        "",
+        *_tabla_contraste(ambitos),
+    ]
+
+
+def _subseccion_sensibilidad(
+    pares: List[tuple[float, float]],
+    manual: List[float],
+) -> List[str]:
+    """Subsección de sensibilidad del redondeo manual y granularidad (c-134, D4)."""
+    total = len(manual)
+    granularidad = granularidad_manual(manual)
+    return [
+        "",
+        "### Escenarios de sensibilidad del redondeo manual",
+        "",
+        "Se descuenta una cantidad fija de segundos a cada `tiempo_manual_s` y se recalcula el",
+        "contraste de Wilcoxon sobre los pares ajustados (conjunto global).",
+        "",
+        *_tabla_sensibilidad(pares),
+        "",
+        f"- Granularidad de `tiempo_manual_s`: {granularidad[5]} / {total} valores "
+        f"múltiplos de 5 s; {granularidad[10]} / {total} múltiplos de 10 s.",
+    ]
 
 
 def _seccion_tiempos(
@@ -323,18 +541,15 @@ def _seccion_tiempos(
         "| Canal | Pares válidos | W | T+ | T− | p | r |",
         "|---|---|---|---|---|---|---|",
     ]
-    canales: Dict[Optional[str], List[tuple[float, float]]] = {}
-    for caso in corpus:
-        if caso.tiempo_manual_s is None or caso.tiempo_automatizado_s is None:
-            continue
-        canales.setdefault(caso.canal_origen, []).append(
-            (float(caso.tiempo_manual_s), float(caso.tiempo_automatizado_s))
-        )
     # Orden canónico estable: conteo descendente y desempate alfabético (D4).
-    for canal in sorted(canales, key=lambda c: (-len(canales[c]), str(c))):
-        pares_canal = canales[canal]
+    for canal, pares_canal in _pares_por_canal(corpus):
         resultado_canal = _wilcoxon_o_no_aplicable(pares_canal)
         lineas.append(_fila_wilcoxon(len(pares_canal), resultado_canal, canal=canal))
+
+    ambitos = _ambitos_tiempos(corpus, pares)
+    lineas += _subseccion_descriptivos(ambitos)
+    lineas += _subseccion_contraste(ambitos)
+    lineas += _subseccion_sensibilidad(pares, manual)
 
     if corpus_hash is not None:
         lineas += ["", f"- **SHA-256 del corpus:** `{corpus_hash}`"]
@@ -491,11 +706,73 @@ def generar_reporte(
 
 
 # ---------------------------------------------------------------------------
+# Regeneración de la sección "Tiempos" sin predicciones (c-134, D5)
+# ---------------------------------------------------------------------------
+_ENCABEZADO_TIEMPOS = "## Tiempos"
+_PIE_REPORTE = "---"
+
+
+def reemplazar_seccion_tiempos(reporte: str, seccion: str) -> str:
+    """
+    Reemplaza en `reporte` solo el bloque "## Tiempos" por `seccion`.
+
+    Función pura. El bloque va desde la línea `## Tiempos` hasta antes del
+    siguiente encabezado que empiece con `## ` o de la línea `---` del pie;
+    las líneas en blanco que lo separan de lo que sigue se conservan. Si el
+    bloque no existe, la sección se inserta antes del pie (o al final, si no
+    hay pie). El resto del reporte queda idéntico byte a byte.
+
+    Args:
+        reporte: Contenido completo del reporte (con saltos de línea LF).
+        seccion: Bloque nuevo, sin salto de línea final, que empieza en
+            `## Tiempos`.
+
+    Returns:
+        Reporte con el bloque de tiempos reemplazado o insertado.
+    """
+    lineas = reporte.split("\n")
+    nueva = seccion.split("\n")
+
+    inicio = next(
+        (i for i, linea in enumerate(lineas) if linea == _ENCABEZADO_TIEMPOS), None
+    )
+    if inicio is None:
+        pie = next(
+            (i for i in range(len(lineas) - 1, -1, -1) if lineas[i] == _PIE_REPORTE),
+            None,
+        )
+        if pie is None:
+            return "\n".join([*lineas, "", *nueva])
+        previas = lineas[:pie]
+        while previas and previas[-1] == "":
+            previas.pop()
+        return "\n".join([*previas, "", *nueva, "", *lineas[pie:]])
+
+    fin = next(
+        (
+            j
+            for j in range(inicio + 1, len(lineas))
+            if lineas[j].startswith("## ") or lineas[j] == _PIE_REPORTE
+        ),
+        len(lineas),
+    )
+    # Las líneas en blanco finales del bloque pertenecen al separador siguiente.
+    while fin > inicio + 1 and lineas[fin - 1] == "":
+        fin -= 1
+    return "\n".join([*lineas[:inicio], *nueva, *lineas[fin:]])
+
+
+# ---------------------------------------------------------------------------
 # Helpers de cache (D1, D2, D3)
 # ---------------------------------------------------------------------------
 def _compute_corpus_hash(corpus_path: pathlib.Path) -> str:
     """
-    Calcula el hash SHA-256 del contenido binario del archivo de corpus.
+    Calcula el hash SHA-256 del contenido del archivo de corpus.
+
+    Los fines de línea se normalizan a LF antes de hashear (c-134, D6): una copia
+    con CRLF (por ejemplo, un checkout de Windows con `core.autocrlf=true`) y
+    una con LF producen la misma huella, igual a la del blob versionado. Una
+    diferencia de contenido distinta del fin de línea sí cambia la huella.
 
     Args:
         corpus_path: Ruta al archivo de corpus JSON.
@@ -503,7 +780,8 @@ def _compute_corpus_hash(corpus_path: pathlib.Path) -> str:
     Returns:
         Hex digest SHA-256 (64 caracteres).
     """
-    return hashlib.sha256(corpus_path.read_bytes()).hexdigest()
+    contenido = corpus_path.read_bytes().replace(b"\r\n", b"\n")
+    return hashlib.sha256(contenido).hexdigest()
 
 
 def _get_classifier_version(classifier: Any) -> str:
@@ -769,6 +1047,52 @@ async def main_con_corpus_real(
     print(f"Evaluacion completa. Reporte escrito en: {report_path}")
 
 
+def main_solo_tiempos(
+    corpus_path: pathlib.Path = CORPUS_REAL_PATH,
+    report_path: pathlib.Path = REPORT_PATH,
+) -> None:
+    """
+    Regenera solo el bloque "## Tiempos" de un reporte existente (c-134, D5).
+
+    No construye ni invoca el clasificador, no lee ni escribe el cache de
+    predicciones y no exige la confirmación de corrida paga: la sección de
+    tiempos depende únicamente del corpus. El resto del reporte se conserva
+    byte a byte y el bloque resultante es idéntico al de la corrida completa
+    sobre el mismo corpus.
+
+    Args:
+        corpus_path: Ruta al corpus JSON.
+        report_path: Reporte existente a actualizar.
+
+    Raises:
+        FileNotFoundError: Si falta el corpus o si el reporte no existe (en ese
+            caso no se crea un reporte parcial).
+    """
+    corpus_path = pathlib.Path(corpus_path)
+    report_path = pathlib.Path(report_path)
+
+    if not corpus_path.exists():
+        raise FileNotFoundError(
+            f"El corpus de evaluacion no esta en: {corpus_path}\n"
+            f"Coloca el archivo 'corpus_evaluacion_pseudonimizado.json' en la carpeta 'data/' "
+            f"antes de ejecutar la evaluacion. Ver evaluation/README.md para instrucciones."
+        )
+    if not report_path.exists():
+        raise FileNotFoundError(
+            f"No existe el reporte a actualizar: {report_path}\n"
+            f"El modo --solo-tiempos solo reemplaza el bloque '## Tiempos': genera "
+            f"primero el reporte completo (python -m evaluation.run_evaluation)."
+        )
+
+    corpus = cargar_corpus(corpus_path)
+    seccion = "\n".join(_seccion_tiempos(corpus, _compute_corpus_hash(corpus_path)))
+    reporte = report_path.read_text(encoding="utf-8")
+    report_path.write_text(
+        reemplazar_seccion_tiempos(reporte, seccion), encoding="utf-8"
+    )
+    print(f"Seccion 'Tiempos' regenerada en: {report_path}")
+
+
 # ---------------------------------------------------------------------------
 # Punto de entrada CLI
 # ---------------------------------------------------------------------------
@@ -806,7 +1130,28 @@ def main() -> None:
         default=None,
         help="Override del costo estimado por llamada (USD), solo para la estimacion.",
     )
+    parser.add_argument(
+        "--solo-tiempos",
+        dest="solo_tiempos",
+        action="store_true",
+        default=False,
+        help=(
+            "Regenera solo el bloque '## Tiempos' de evaluation/report.md a partir del "
+            "corpus, sin clasificador, sin cache de predicciones y sin gate de corrida "
+            "paga (no requiere GEMINI_API_KEY)."
+        ),
+    )
     args = parser.parse_args()
+    if args.solo_tiempos:
+        # D5: el modo de solo tiempos no usa cache ni clasificador pago; combinarlo
+        # con los flags de esa ruta es un error de uso, no una opcion ignorada.
+        if args.force or args.confirm_paid:
+            parser.error(
+                "--solo-tiempos no se puede combinar con --force, --no-cache "
+                "ni --confirm-paid (no usa clasificador ni cache de predicciones)."
+            )
+        main_solo_tiempos()
+        return
     confirm_paid = args.confirm_paid or _env_confirm_paid()
     try:
         asyncio.run(
