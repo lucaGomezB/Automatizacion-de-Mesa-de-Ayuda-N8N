@@ -35,9 +35,18 @@ from typing import Any, Dict, List, Optional, Protocol
 
 from evaluation.corpus import CasoEvaluacion, cargar_corpus
 from evaluation.metrics import (
+    BANDAS_CALIBRACION_DEFECTO,
     CLASES,
+    ETAPAS_PIPELINE,
+    ResumenExactitud,
     aciertos_estrictos,
+    aciertos_laxos,
     aciertos_pertenencia,
+    calibracion_por_bandas,
+    calibracion_por_etapa,
+    contingencia_confianza,
+    desglose_exactitud,
+    distribucion_confianza,
     exactitud_global,
     exactitud_subconjunto,
     f1_macro,
@@ -557,11 +566,379 @@ def _seccion_tiempos(
     return lineas
 
 
+# ---------------------------------------------------------------------------
+# Secciones aditivas de c-131 (D7): exactitud por etapa, por canal y calibración
+# ---------------------------------------------------------------------------
+def _fmt_intervalo(intervalo: Optional[tuple[float, float]]) -> str:
+    """Intervalo `[inferior, superior]` (4 decimales) o "no aplicable"."""
+    if intervalo is None:
+        return _NO_APLICABLE
+    return f"[{intervalo[0]:.4f}, {intervalo[1]:.4f}]"
+
+
+def _celdas_exactitud(resumen: ResumenExactitud) -> List[str]:
+    """Celdas de una fila de exactitud: estricta y laxa, cada una con su IC de Wilson."""
+    return [
+        str(resumen.aciertos_estrictos),
+        _fmt_num(resumen.exactitud_estricta),
+        _fmt_intervalo(resumen.ic_estricta),
+        str(resumen.aciertos_laxos),
+        _fmt_num(resumen.exactitud_laxa),
+        _fmt_intervalo(resumen.ic_laxa),
+    ]
+
+
+_ENCABEZADO_EXACTITUD = (
+    "| Casos | Aciertos (estrictos) | Exactitud (estricta) | IC Wilson 95% (estricto) "
+    "| Aciertos (laxos) | Exactitud (laxa) | IC Wilson 95% (laxo) |"
+)
+
+
+def _etapa_normalizada(etapa: str) -> str:
+    """Etapa del pipeline; una etapa desconocida se cuenta como `fallback`."""
+    return etapa if etapa in ETAPAS_PIPELINE else "fallback"
+
+
+def _seccion_exactitud_por_etapa(
+    predicciones: List[Prediccion],
+    reales: List[str],
+    predichas: List[str],
+    conjuntos_verdad: List[frozenset],
+) -> List[str]:
+    """
+    Sección "Exactitud por etapa del pipeline" (c-131, D7).
+
+    Exactitud estricta y laxa con IC de Wilson de cada etapa, en el orden
+    `deterministic`, `gemini`, `fallback`. Una etapa sin casos se declara
+    "no aplicable". Las filas suman los totales globales.
+    """
+    desglose = desglose_exactitud(
+        [_etapa_normalizada(p.etapa) for p in predicciones],
+        reales,
+        predichas,
+        conjuntos_verdad,
+        orden=ETAPAS_PIPELINE,
+    )
+    lineas = [
+        "",
+        "## Exactitud por etapa del pipeline",
+        "",
+        "Segmentación por la etapa que resolvió cada caso. Exactitud estricta (sector",
+        "principal igual al asignado) y laxa (sector principal dentro del conjunto de",
+        "verdad), cada una con su IC de Wilson al 95%. Una etapa sin casos se declara",
+        f"\"{_NO_APLICABLE}\".",
+        "",
+        "| Etapa " + _ENCABEZADO_EXACTITUD,
+        "|---|---|---|---|---|---|---|---|",
+    ]
+    for etapa, resumen in desglose.items():
+        celdas = [etapa, str(resumen.casos), *_celdas_exactitud(resumen)]
+        lineas.append("| " + " | ".join(celdas) + " |")
+    return lineas
+
+
+# Umbrales de la calibración (c-131): el gate de revisión humana y el tramo de alta confianza.
+_UMBRAL_GATE = 0.70
+_UMBRAL_ALTA_CONFIANZA = 0.90
+
+# Ámbito: nombre de la fila y posiciones de las predicciones que abarca.
+_AmbitoCalibracion = tuple[str, List[int]]
+
+
+def _etiqueta_banda(inferior: float, superior: float, ultima: bool) -> str:
+    """Rótulo de banda: `[inf, sup)`, o `[inf, sup]` si es la última (cerrada)."""
+    cierre = "]" if ultima else ")"
+    return f"[{inferior:.2f}, {superior:.2f}{cierre}"
+
+
+def _exactitud_o_na(aciertos: int, total: int) -> str:
+    """Exactitud con 4 decimales, o "no aplicable" si no hay casos."""
+    return _fmt_num(aciertos / total if total else None)
+
+
+def _ambitos_calibracion(etapas: List[str]) -> List[_AmbitoCalibracion]:
+    """Ámbitos de la calibración: "Global" y luego cada etapa en su orden canónico."""
+    ambitos: List[_AmbitoCalibracion] = [("Global", list(range(len(etapas))))]
+    for etapa in ETAPAS_PIPELINE:
+        ambitos.append((etapa, [i for i, valor in enumerate(etapas) if valor == etapa]))
+    return ambitos
+
+
+def _tabla_bandas_globales(
+    confianzas: List[float], reales: List[str], predichas: List[str]
+) -> List[str]:
+    """Tabla de bandas global (reproduce la Tabla 7.5 de la tesis)."""
+    lineas = [
+        "",
+        "### Bandas de confianza (global)",
+        "",
+        "| Banda | Casos | Aciertos | Exactitud |",
+        "|---|---|---|---|",
+    ]
+    ultima = len(BANDAS_CALIBRACION_DEFECTO) - 1
+    for indice, banda in enumerate(calibracion_por_bandas(confianzas, reales, predichas)):
+        etiqueta = _etiqueta_banda(banda.limite_inferior, banda.limite_superior, indice == ultima)
+        lineas.append(
+            f"| {etiqueta} | {banda.total} | {banda.aciertos} "
+            f"| {_exactitud_o_na(banda.aciertos, banda.total)} |"
+        )
+    return lineas
+
+
+def _tabla_contingencia(
+    ambitos: List[_AmbitoCalibracion],
+    confianzas: List[float],
+    reales: List[str],
+    predichas: List[str],
+) -> List[str]:
+    """Contingencia en el umbral 0,70, global y por etapa."""
+    lineas = [
+        "",
+        "### Contingencia en el umbral 0,70",
+        "",
+        "Confianza `>= 0,70` frente a `< 0,70`, global y por etapa.",
+        "",
+        "| Ámbito | Casos >= 0,70 | Aciertos >= 0,70 | Exactitud >= 0,70 "
+        "| Casos < 0,70 | Aciertos < 0,70 | Exactitud < 0,70 |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    for nombre, indices in ambitos:
+        c = contingencia_confianza(
+            [confianzas[i] for i in indices],
+            [reales[i] for i in indices],
+            [predichas[i] for i in indices],
+            umbral=_UMBRAL_GATE,
+        )
+        lineas.append(
+            f"| {nombre} | {c.alta_total} | {c.alta_aciertos} "
+            f"| {_exactitud_o_na(c.alta_aciertos, c.alta_total)} "
+            f"| {c.baja_total} | {c.baja_aciertos} "
+            f"| {_exactitud_o_na(c.baja_aciertos, c.baja_total)} |"
+        )
+    return lineas
+
+
+def _tabla_tramo_alta_confianza(
+    ambitos: List[_AmbitoCalibracion],
+    confianzas: List[float],
+    reales: List[str],
+    predichas: List[str],
+) -> List[str]:
+    """Casos y errores con confianza `>= 0,90`, global y por etapa."""
+    lineas = [
+        "",
+        "### Tramo de confianza >= 0,90",
+        "",
+        "Casos y errores (predicción estricta distinta de la asignada) con confianza `>= 0,90`.",
+        "",
+        "| Ámbito | Casos | Errores |",
+        "|---|---|---|",
+    ]
+    for nombre, indices in ambitos:
+        en_tramo = [i for i in indices if confianzas[i] >= _UMBRAL_ALTA_CONFIANZA]
+        errores = sum(1 for i in en_tramo if reales[i] != predichas[i])
+        lineas.append(f"| {nombre} | {len(en_tramo)} | {errores} |")
+    return lineas
+
+
+def _tabla_bandas_por_etapa(
+    confianzas: List[float], reales: List[str], predichas: List[str], etapas: List[str]
+) -> List[str]:
+    """Bandas de confianza de cada etapa, con IC de Wilson de las no vacías."""
+    lineas = [
+        "",
+        "### Bandas de confianza por etapa",
+        "",
+        "Exactitud por banda dentro de cada etapa, con IC de Wilson al 95%. La suma de las",
+        "etapas reproduce la tabla global. Una banda sin casos se declara "
+        f"\"{_NO_APLICABLE}\".",
+        "",
+        "| Etapa | Banda | Casos | Aciertos | Exactitud | IC Wilson 95% |",
+        "|---|---|---|---|---|---|",
+    ]
+    ultima = len(BANDAS_CALIBRACION_DEFECTO) - 1
+    por_etapa = calibracion_por_etapa(confianzas, reales, predichas, etapas)
+    for etapa in ETAPAS_PIPELINE:
+        for indice, banda in enumerate(por_etapa[etapa]):
+            etiqueta = _etiqueta_banda(
+                banda.limite_inferior, banda.limite_superior, indice == ultima
+            )
+            intervalo = intervalo_wilson(banda.aciertos, banda.total) if banda.total else None
+            lineas.append(
+                f"| {etapa} | {etiqueta} | {banda.total} | {banda.aciertos} "
+                f"| {_exactitud_o_na(banda.aciertos, banda.total)} | {_fmt_intervalo(intervalo)} |"
+            )
+    return lineas
+
+
+def _tabla_distribucion_por_etapa(
+    ambitos: List[_AmbitoCalibracion],
+    confianzas: List[float],
+    reales: List[str],
+    predichas: List[str],
+) -> List[str]:
+    """Valores distintos de confianza de cada etapa, con casos y aciertos."""
+    lineas = [
+        "",
+        "### Distribución de valores de confianza por etapa",
+        "",
+        "Valores distintos de confianza observados (redondeados a 4 decimales), en orden",
+        "ascendente, con sus casos y aciertos estrictos.",
+        "",
+        "| Etapa | Confianza | Casos | Aciertos |",
+        "|---|---|---|---|",
+    ]
+    for etapa, indices in ambitos[1:]:
+        valores = distribucion_confianza(
+            [confianzas[i] for i in indices],
+            [reales[i] for i in indices],
+            [predichas[i] for i in indices],
+        )
+        if not valores:
+            lineas.append(f"| {etapa} | {_NO_APLICABLE} | 0 | 0 |")
+        for valor in valores:
+            lineas.append(f"| {etapa} | {valor.valor:.4f} | {valor.casos} | {valor.aciertos} |")
+    return lineas
+
+
+def _seccion_calibracion(
+    predicciones: List[Prediccion],
+    reales: List[str],
+    predichas: List[str],
+) -> List[str]:
+    """
+    Sección "Calibración de la confianza" (c-131, D7).
+
+    Reproduce la tabla de bandas global (Tabla 7.5), la contingencia en 0,70 y el
+    tramo `>= 0,90` en forma global y por etapa, las bandas por etapa con IC de
+    Wilson y la distribución de valores de confianza por etapa. Las etapas y
+    bandas vacías se declaran "no aplicable". Las confianzas de la etapa
+    determinística y de Gemini son magnitudes de naturaleza distinta, por lo que
+    comparar bandas agregadas compara etapas.
+    """
+    confianzas = [p.confianza for p in predicciones]
+    etapas = [_etapa_normalizada(p.etapa) for p in predicciones]
+    ambitos = _ambitos_calibracion(etapas)
+
+    lineas = [
+        "",
+        "## Calibración de la confianza",
+        "",
+        "Relación entre la confianza devuelta por caso y la exactitud estricta. La etapa",
+        "determinística y la etapa Gemini emiten magnitudes de confianza distintas: una",
+        "banda agregada compara etapas, no mide la calibración del modelo. Se reporta en",
+        "forma global y desagregada por etapa.",
+    ]
+    lineas += _tabla_bandas_globales(confianzas, reales, predichas)
+    lineas += _tabla_contingencia(ambitos, confianzas, reales, predichas)
+    lineas += _tabla_tramo_alta_confianza(ambitos, confianzas, reales, predichas)
+    lineas += _tabla_bandas_por_etapa(confianzas, reales, predichas, etapas)
+    lineas += _tabla_distribucion_por_etapa(ambitos, confianzas, reales, predichas)
+    return lineas
+
+
+def _lineas_procedencia(procedencia: Optional[Dict[str, Any]]) -> List[str]:
+    """Línea de procedencia de las predicciones (vacía si no hay metadata)."""
+    if not procedencia:
+        return []
+    version = procedencia.get("classifier_version", _NO_APLICABLE)
+    fecha = procedencia.get("generated_at", _NO_APLICABLE)
+    return [
+        "",
+        "**Procedencia de las predicciones:** "
+        f"`classifier_version` = `{version}`; `generated_at` = `{fecha}`.",
+    ]
+
+
+def _validar_alineacion(predicciones: List[Prediccion], corpus: List[CasoEvaluacion]) -> None:
+    """
+    Verifica que `predicciones[i]` corresponda a `corpus[i]` (c-131, D7).
+
+    El desglose por canal asocia cada predicción a su caso por posición; si los
+    identificadores no coinciden, el desglose saldría desalineado, así que se
+    falla con un error que nombra la posición y ambos identificadores.
+
+    Raises:
+        ValueError: Si las longitudes difieren o algún `caso_id` no coincide.
+    """
+    if len(predicciones) != len(corpus):
+        raise ValueError(
+            f"Predicciones desalineadas con el corpus: {len(predicciones)} "
+            f"predicciones frente a {len(corpus)} casos."
+        )
+    for posicion, (prediccion, caso) in enumerate(zip(predicciones, corpus)):
+        if prediccion.caso_id != caso.id:
+            raise ValueError(
+                f"Predicciones desalineadas con el corpus en la posición {posicion}: "
+                f"caso_id de la predicción '{prediccion.caso_id}' frente a id del caso "
+                f"'{caso.id}'."
+            )
+
+
+def _seccion_exactitud_por_canal(
+    predicciones: List[Prediccion],
+    corpus: List[CasoEvaluacion],
+    reales: List[str],
+    predichas: List[str],
+    conjuntos_verdad: List[frozenset],
+) -> List[str]:
+    """
+    Sección "Exactitud por canal de origen" (c-131, D7).
+
+    Casos, composición por etapa del pipeline y exactitud estricta y laxa con IC
+    de Wilson por valor de `canal_origen`, con el mismo orden que el desglose de
+    tiempos (conteo descendente y desempate alfabético; canal nulo = "sin canal").
+    """
+    conteo: Dict[Optional[str], int] = {}
+    for caso in corpus:
+        conteo[caso.canal_origen] = conteo.get(caso.canal_origen, 0) + 1
+    orden_crudo = sorted(conteo, key=lambda canal: (-conteo[canal], str(canal)))
+    etiqueta = {canal: (_NO_CANAL if canal is None else str(canal)) for canal in orden_crudo}
+
+    claves = [etiqueta[caso.canal_origen] for caso in corpus]
+    desglose = desglose_exactitud(
+        claves,
+        reales,
+        predichas,
+        conjuntos_verdad,
+        orden=[etiqueta[canal] for canal in orden_crudo],
+    )
+    composicion: Dict[str, Dict[str, int]] = {
+        clave: {etapa: 0 for etapa in ETAPAS_PIPELINE} for clave in desglose
+    }
+    for clave, prediccion in zip(claves, predicciones):
+        composicion[clave][_etapa_normalizada(prediccion.etapa)] += 1
+
+    lineas = [
+        "",
+        "## Exactitud por canal de origen",
+        "",
+        "Segmentación por el valor crudo de `canal_origen` del corpus, con el mismo orden",
+        "que el desglose por canal de tiempos. La composición sectorial y la proporción de",
+        "casos multietiqueta difieren entre canales: la comparación no aísla el efecto del canal.",
+        "",
+        "| Canal | Casos | Deterministic | Gemini | Fallback | Aciertos (estrictos) "
+        "| Exactitud (estricta) | IC Wilson 95% (estricto) | Aciertos (laxos) "
+        "| Exactitud (laxa) | IC Wilson 95% (laxo) |",
+        "|---|---|---|---|---|---|---|---|---|---|---|",
+    ]
+    for canal, resumen in desglose.items():
+        celdas = [
+            canal,
+            str(resumen.casos),
+            *(str(composicion[canal][etapa]) for etapa in ETAPAS_PIPELINE),
+            *_celdas_exactitud(resumen),
+        ]
+        lineas.append("| " + " | ".join(celdas) + " |")
+    return lineas
+
+
 def generar_reporte(
     predicciones: List[Prediccion],
     corpus: List[CasoEvaluacion],
     output_path: pathlib.Path = REPORT_PATH,
     corpus_hash: Optional[str] = None,
+    procedencia: Optional[Dict[str, Any]] = None,
 ) -> str:
     """
     Genera el reporte de métricas multietiqueta en Markdown.
@@ -574,10 +951,15 @@ def generar_reporte(
         output_path: Ruta donde escribir el reporte (default: evaluation/report.md).
         corpus_hash: SHA-256 opcional del corpus. Si se pasa, se emite dentro de
             la sección "Tiempos"; si es None, la línea se omite (D3).
+        procedencia: `cache_meta` de las predicciones usadas (c-131, D7). Si trae
+            `classifier_version` y `generated_at`, el reporte declara la versión
+            y la fecha de generación; si es None o está vacío, la línea se omite.
 
     Returns:
         Contenido del reporte como string.
     """
+    _validar_alineacion(predicciones, corpus)
+
     reales = [p.sector_asignado for p in predicciones]
     # c-71: un sector ausente (fallback sin estimacion) cuenta como error y se
     # excluye de la matriz de confusion (que solo admite los 5 canonicos).
@@ -611,6 +993,10 @@ def generar_reporte(
     lower_pert, upper_pert = intervalo_wilson(aciertos_pert, len(reales))
     exactitud_pert = aciertos_pert / len(reales) if reales else 0.0
 
+    aciertos_lax = aciertos_laxos(predichas, conjuntos_verdad)
+    lower_lax, upper_lax = intervalo_wilson(aciertos_lax, len(reales))
+    exactitud_lax = aciertos_lax / len(reales) if reales else 0.0
+
     subset = exactitud_subconjunto(conjuntos_verdad, conjuntos_predichos)
     hamming = perdida_hamming(conjuntos_verdad, conjuntos_predichos)
     micro_f1 = f1_micro(conjuntos_verdad, conjuntos_predichos)
@@ -631,6 +1017,7 @@ def generar_reporte(
         "# Reporte de Evaluación del Clasificador (multietiqueta)",
         "",
         f"**Total de casos evaluados:** {len(predicciones)}",
+        *_lineas_procedencia(procedencia),
         "",
         "## Etapas del pipeline",
         "",
@@ -651,6 +1038,14 @@ def generar_reporte(
         f"- **Exactitud (pertenencia):** {exactitud_pert:.4f} ({exactitud_pert * 100:.1f}%)",
         f"- **Aciertos (pertenencia):** {aciertos_pert} / {len(reales)}",
         f"- **IC Wilson 95% (pertenencia):** [{lower_pert:.4f}, {upper_pert:.4f}]",
+        "",
+        "Exactitud laxa (c-131, D5): el sector predicho principal pertenece al conjunto de",
+        "verdad del caso (`sector_asignado` más `sectores_adicionales` del corpus). No es la",
+        "pertenencia, que mide el sector asignado dentro del conjunto predicho.",
+        "",
+        f"- **Exactitud (laxa):** {exactitud_lax:.4f} ({exactitud_lax * 100:.1f}%)",
+        f"- **Aciertos (laxos):** {aciertos_lax} / {len(reales)}",
+        f"- **IC Wilson 95% (laxo):** [{lower_lax:.4f}, {upper_lax:.4f}]",
         "",
         "## Matriz de Confusión (primaria 5x5)",
         "",
@@ -690,6 +1085,13 @@ def generar_reporte(
         f"- **Macro-F1:** {f1_m:.4f}",
         f"- **Jaccard (IoU) promedio:** {jaccard:.4f}",
     ]
+
+    lineas += _seccion_exactitud_por_etapa(predicciones, reales, predichas, conjuntos_verdad)
+    lineas += _seccion_exactitud_por_canal(
+        predicciones, corpus, reales, predichas, conjuntos_verdad
+    )
+    lineas += _seccion_calibracion(predicciones, reales, predichas)
+    lineas += [""]
 
     lineas += _seccion_tiempos(corpus, corpus_hash)
 
@@ -881,6 +1283,24 @@ def guardar_predicciones(
     )
 
 
+def cargar_cache_meta(input_path: pathlib.Path) -> Optional[Dict[str, Any]]:
+    """
+    Lee el `cache_meta` de un archivo de predicciones (c-131, D7).
+
+    Returns:
+        El diccionario `cache_meta`, o None si el archivo no existe, no es JSON
+        válido, no tiene `cache_meta` de nivel superior o este no es un objeto.
+    """
+    try:
+        data = json.loads(pathlib.Path(input_path).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    if not isinstance(data, dict):
+        return None
+    meta = data.get("cache_meta")
+    return meta if isinstance(meta, dict) else None
+
+
 def cargar_predicciones(input_path: pathlib.Path) -> List[Prediccion]:
     """
     Carga predicciones previamente persistidas desde JSON.
@@ -1016,6 +1436,7 @@ async def main_con_corpus_real(
 
     if cache_hit:
         predicciones = cargar_predicciones(predicciones_path)
+        procedencia = cargar_cache_meta(predicciones_path)
         print(
             f"Cache valido encontrado. Predicciones cargadas desde: {predicciones_path}"
         )
@@ -1042,8 +1463,11 @@ async def main_con_corpus_real(
             "generated_at": datetime.now(tz=timezone.utc).isoformat(),
         }
         guardar_predicciones(predicciones, predicciones_path, cache_meta=cache_meta)
+        procedencia = cache_meta
 
-    generar_reporte(predicciones, corpus, report_path, corpus_hash=corpus_hash)
+    generar_reporte(
+        predicciones, corpus, report_path, corpus_hash=corpus_hash, procedencia=procedencia
+    )
     print(f"Evaluacion completa. Reporte escrito en: {report_path}")
 
 

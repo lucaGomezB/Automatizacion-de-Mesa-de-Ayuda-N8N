@@ -29,6 +29,7 @@ from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, Iterable, List, Optional, Protocol, Sequence, Tuple
 
 from evaluation.corpus import CasoEvaluacion
+from evaluation.stats import ResultadoMcNemar, contraste_mcnemar
 from evaluation.metrics import (
     CLASES,
     aciertos_estrictos,
@@ -783,6 +784,136 @@ def medir_hibrido_con_cache(
 
 
 # ---------------------------------------------------------------------------
+# Contraste pareado de McNemar entre etapas sobre S (c-131, D13)
+# ---------------------------------------------------------------------------
+@dataclass(frozen=True)
+class ContrasteDetGemEnS:
+    """
+    Contraste pareado entre la etapa deterministica y Gemini sobre el conjunto S.
+
+    `S` = casos cortocircuitables con `score >= umbral_score`. Los pares son los
+    casos de `S` con prediccion cacheada de Gemini; los demas se excluyen y se
+    listan en `excluidos`.
+    """
+
+    tamano_s: int
+    pares: int
+    excluidos: Tuple[str, ...]
+    aciertos_det: int
+    aciertos_gem: int
+    exactitud_det: Optional[float]
+    exactitud_gem: Optional[float]
+    mcnemar: ResultadoMcNemar
+
+
+def contraste_det_gem_en_s(
+    observaciones: Sequence[ObservacionDeterminista],
+    cache: "Mapping[str, PrediccionCacheada]",
+    umbral_score: float,
+) -> ContrasteDetGemEnS:
+    """
+    Aparea la prediccion deterministica con la de Gemini sobre los casos de S.
+
+    Solo se aparean predicciones cacheadas con `etapa == "gemini"`; un caso de S
+    sin ellas se excluye. El acierto es el estricto: `sector_predicho` igual a
+    `sector_asignado`. Funcion pura, sin Gemini.
+    """
+    conjunto_s = [
+        obs
+        for obs in observaciones
+        if _es_cortocircuitable(obs) and obs.score >= umbral_score
+    ]
+    aciertos_det: List[bool] = []
+    aciertos_gem: List[bool] = []
+    excluidos: List[str] = []
+    for obs in conjunto_s:
+        cacheada = cache.get(obs.caso_id)
+        if cacheada is None or cacheada.etapa != "gemini":
+            excluidos.append(obs.caso_id)
+            continue
+        aciertos_det.append(obs.sector_predicho == obs.sector_asignado)
+        aciertos_gem.append(cacheada.sector_predicho == obs.sector_asignado)
+
+    pares = len(aciertos_det)
+    return ContrasteDetGemEnS(
+        tamano_s=len(conjunto_s),
+        pares=pares,
+        excluidos=tuple(excluidos),
+        aciertos_det=sum(aciertos_det),
+        aciertos_gem=sum(aciertos_gem),
+        exactitud_det=(sum(aciertos_det) / pares) if pares else None,
+        exactitud_gem=(sum(aciertos_gem) / pares) if pares else None,
+        mcnemar=contraste_mcnemar(aciertos_det, aciertos_gem),
+    )
+
+
+def contraste_para_cache(
+    observaciones: Sequence[ObservacionDeterminista],
+    cache: "Mapping[str, PrediccionCacheada]",
+    umbral_score: Optional[float],
+    ruta_cache,
+) -> Optional[ContrasteDetGemEnS]:
+    """
+    Contraste de McNemar solo si la cache es la FORCE-ESCALATE y hay punto de operacion.
+
+    La cache OFICIAL (hybrid-v3) no sirve: los casos de S se resolvieron por el
+    cortocircuito y no tienen prediccion de Gemini. Sin umbral tampoco hay S.
+    """
+    import pathlib
+
+    es_calibracion = pathlib.Path(ruta_cache).name == pathlib.Path(CALIBRACION_CACHE_PATH).name
+    if umbral_score is None or not es_calibracion:
+        return None
+    return contraste_det_gem_en_s(observaciones, cache, umbral_score)
+
+
+ENCABEZADO_CONTRASTE_MCNEMAR = "## Contraste pareado de McNemar entre etapas sobre S (c-131)"
+
+
+def lineas_contraste_mcnemar(contraste: Optional[ContrasteDetGemEnS]) -> List[str]:
+    """Seccion del reporte comparativo con el contraste; "no computable" si es None."""
+    lineas = ["", ENCABEZADO_CONTRASTE_MCNEMAR, ""]
+    if contraste is None:
+        lineas.append(
+            "- Contraste de McNemar: no computable con los artefactos disponibles "
+            "(requiere la cache FORCE-ESCALATE)."
+        )
+        return lineas
+
+    m = contraste.mcnemar
+    lineas += [
+        f"- |S| = {contraste.tamano_s}; pares con prediccion de ambas etapas: {contraste.pares}.",
+        "- Casos excluidos (sin prediccion de Gemini): "
+        f"{', '.join(contraste.excluidos) if contraste.excluidos else 'ninguno'}.",
+    ]
+    if contraste.pares:
+        lineas.append(
+            f"- Exactitud estricta sobre los pares: deterministica "
+            f"{contraste.exactitud_det:.4f} ({contraste.aciertos_det}/{contraste.pares}); "
+            f"Gemini {contraste.exactitud_gem:.4f} ({contraste.aciertos_gem}/{contraste.pares})."
+        )
+    lineas.append(
+        f"- Tabla 2x2: ambas aciertan {m.ambas}; solo la deterministica (b) {m.solo_a}; "
+        f"solo Gemini (c) {m.solo_b}; ninguna {m.ninguna}."
+    )
+    if not m.aplicable:
+        lineas.append("- Contraste: no aplicable (sin discordancias, b + c = 0).")
+        return lineas
+    lineas += [
+        f"- Estadistico chi-cuadrado con correccion de continuidad: {m.estadistico:.4f} "
+        f"(p = {m.p_corregido:.4f}).",
+        f"- p binomial exacto bilateral: {m.p_exacto:.4f}.",
+        f"- p primario: {m.p_primario:.4f} (criterio {m.criterio}: exacto si b + c < 25, "
+        "corregido en otro caso).",
+        "- Salvedades: la prediccion de Gemini sobre S proviene de otra corrida y otra "
+        "version que la oficial; el contraste es dentro de la muestra y S se definio con "
+        "el tau out-of-fold calibrado sobre el mismo corpus; un resultado no significativo "
+        "no demuestra equivalencia.",
+    ]
+    return lineas
+
+
+# ---------------------------------------------------------------------------
 # Cobertura del vocabulario
 # ---------------------------------------------------------------------------
 def resumen_vocabulario(
@@ -1052,6 +1183,8 @@ async def main(
         else None
     )
 
+    contraste = contraste_para_cache(observaciones, cache, tau_settings_oof, cache_path)
+
     contenido = formatear_reporte_comparativo(
         resumen=resumen,
         metricas_det=metricas_det,
@@ -1065,6 +1198,7 @@ async def main(
         umbral_settings=umbral_settings,
         hibrido=hibrido,
         ruta_cache_calibracion=str(cache_path.relative_to(repo_root)),
+        contraste=contraste,
     )
     print(contenido)
     if output_path is not None:
@@ -1086,6 +1220,7 @@ def formatear_reporte_comparativo(
     hibrido: Optional[Dict[str, Any]],
     tau_oof: Optional[float] = None,
     ruta_cache_calibracion: Optional[str] = None,
+    contraste: Optional[ContrasteDetGemEnS] = None,
 ) -> str:
     """Reporte markdown de la calibracion comparativa y la re-medicion hibrida."""
     cache_mostrada = ruta_cache_calibracion or PREDICCIONES_OFICIALES_PATH
@@ -1157,6 +1292,8 @@ def formatear_reporte_comparativo(
             f"{p.precision_det:.4f} | {p.precision_gem:.4f} | "
             f"{'si' if p.cumple_piso_comparativo else 'no'} |"
         )
+
+    lineas += lineas_contraste_mcnemar(contraste)
 
     if hibrido is not None:
         lineas += [

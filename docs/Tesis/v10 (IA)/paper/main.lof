@@ -8,4 +8,4 @@
 \contentsline {figure}{\numberline {7}{\ignorespaces Dashboard de analítica del panel de administración: tendencia temporal de incidentes, distribución por sector y distribución por estado.}}{61}{figure.caption.14}%
 \contentsline {figure}{\numberline {8}{\ignorespaces Distribución del tiempo de registro por canal de origen (manual frente a automatizado). El panel de telefonía incorpora la duración de la llamada grabada.}}{68}{figure.caption.19}%
 \contentsline {figure}{\numberline {9}{\ignorespaces Matriz de confusión del clasificador (\(n = 200\)). Filas: sector asignado (verdad); columnas: sector predicho principal.}}{70}{figure.caption.21}%
-\contentsline {figure}{\numberline {10}{\ignorespaces Reconstrucción esquemática del flujo de orquestación N8N}}{99}{figure.caption.28}%
+\contentsline {figure}{\numberline {10}{\ignorespaces Reconstrucción esquemática del flujo de orquestación N8N}}{99}{figure.caption.29}%

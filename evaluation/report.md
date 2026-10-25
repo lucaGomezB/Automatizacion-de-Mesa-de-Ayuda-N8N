@@ -2,6 +2,8 @@
 
 **Total de casos evaluados:** 200
 
+**Procedencia de las predicciones:** `classifier_version` = `hybrid-v3`; `generated_at` = `2026-10-07T22:22:01.947873+00:00`.
+
 ## Etapas del pipeline
 
 | Etapa | Casos |
@@ -21,6 +23,14 @@ pertenencia del sector asignado al conjunto predicho.
 - **Exactitud (pertenencia):** 0.7350 (73.5%)
 - **Aciertos (pertenencia):** 147 / 200
 - **IC Wilson 95% (pertenencia):** [0.6698, 0.7913]
+
+Exactitud laxa (c-131, D5): el sector predicho principal pertenece al conjunto de
+verdad del caso (`sector_asignado` más `sectores_adicionales` del corpus). No es la
+pertenencia, que mide el sector asignado dentro del conjunto predicho.
+
+- **Exactitud (laxa):** 0.8950 (89.5%)
+- **Aciertos (laxos):** 179 / 200
+- **IC Wilson 95% (laxo):** [0.8448, 0.9303]
 
 ## Matriz de Confusión (primaria 5x5)
 
@@ -51,6 +61,112 @@ Filas = sector asignado | Columnas = sector predicho principal
 - **Micro-F1:** 0.6654
 - **Macro-F1:** 0.5207
 - **Jaccard (IoU) promedio:** 0.6414
+
+## Exactitud por etapa del pipeline
+
+Segmentación por la etapa que resolvió cada caso. Exactitud estricta (sector
+principal igual al asignado) y laxa (sector principal dentro del conjunto de
+verdad), cada una con su IC de Wilson al 95%. Una etapa sin casos se declara
+"no aplicable".
+
+| Etapa | Casos | Aciertos (estrictos) | Exactitud (estricta) | IC Wilson 95% (estricto) | Aciertos (laxos) | Exactitud (laxa) | IC Wilson 95% (laxo) |
+|---|---|---|---|---|---|---|---|
+| deterministic | 131 | 97 | 0.7405 | [0.6593, 0.8079] | 119 | 0.9084 | [0.8467, 0.9468] |
+| gemini | 69 | 50 | 0.7246 | [0.6095, 0.8161] | 60 | 0.8696 | [0.7703, 0.9298] |
+| fallback | 0 | 0 | no aplicable | no aplicable | 0 | no aplicable | no aplicable |
+
+## Exactitud por canal de origen
+
+Segmentación por el valor crudo de `canal_origen` del corpus, con el mismo orden
+que el desglose por canal de tiempos. La composición sectorial y la proporción de
+casos multietiqueta difieren entre canales: la comparación no aísla el efecto del canal.
+
+| Canal | Casos | Deterministic | Gemini | Fallback | Aciertos (estrictos) | Exactitud (estricta) | IC Wilson 95% (estricto) | Aciertos (laxos) | Exactitud (laxa) | IC Wilson 95% (laxo) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| llamada telefónica | 81 | 58 | 23 | 0 | 53 | 0.6543 | [0.5459, 0.7488] | 70 | 0.8642 | [0.7730, 0.9224] |
+| correo electrónico | 66 | 34 | 32 | 0 | 51 | 0.7727 | [0.6583, 0.8571] | 61 | 0.9242 | [0.8346, 0.9672] |
+| formulario web | 53 | 39 | 14 | 0 | 43 | 0.8113 | [0.6864, 0.8941] | 48 | 0.9057 | [0.7975, 0.9590] |
+
+## Calibración de la confianza
+
+Relación entre la confianza devuelta por caso y la exactitud estricta. La etapa
+determinística y la etapa Gemini emiten magnitudes de confianza distintas: una
+banda agregada compara etapas, no mide la calibración del modelo. Se reporta en
+forma global y desagregada por etapa.
+
+### Bandas de confianza (global)
+
+| Banda | Casos | Aciertos | Exactitud |
+|---|---|---|---|
+| [0.00, 0.50) | 98 | 75 | 0.7653 |
+| [0.50, 0.70) | 26 | 19 | 0.7308 |
+| [0.70, 0.85) | 6 | 2 | 0.3333 |
+| [0.85, 0.95) | 31 | 22 | 0.7097 |
+| [0.95, 1.00] | 39 | 29 | 0.7436 |
+
+### Contingencia en el umbral 0,70
+
+Confianza `>= 0,70` frente a `< 0,70`, global y por etapa.
+
+| Ámbito | Casos >= 0,70 | Aciertos >= 0,70 | Exactitud >= 0,70 | Casos < 0,70 | Aciertos < 0,70 | Exactitud < 0,70 |
+|---|---|---|---|---|---|---|
+| Global | 76 | 53 | 0.6974 | 124 | 94 | 0.7581 |
+| deterministic | 7 | 3 | 0.4286 | 124 | 94 | 0.7581 |
+| gemini | 69 | 50 | 0.7246 | 0 | 0 | no aplicable |
+| fallback | 0 | 0 | no aplicable | 0 | 0 | no aplicable |
+
+### Tramo de confianza >= 0,90
+
+Casos y errores (predicción estricta distinta de la asignada) con confianza `>= 0,90`.
+
+| Ámbito | Casos | Errores |
+|---|---|---|
+| Global | 46 | 13 |
+| deterministic | 1 | 0 |
+| gemini | 45 | 13 |
+| fallback | 0 | 0 |
+
+### Bandas de confianza por etapa
+
+Exactitud por banda dentro de cada etapa, con IC de Wilson al 95%. La suma de las
+etapas reproduce la tabla global. Una banda sin casos se declara "no aplicable".
+
+| Etapa | Banda | Casos | Aciertos | Exactitud | IC Wilson 95% |
+|---|---|---|---|---|---|
+| deterministic | [0.00, 0.50) | 98 | 75 | 0.7653 | [0.6724, 0.8382] |
+| deterministic | [0.50, 0.70) | 26 | 19 | 0.7308 | [0.5392, 0.8630] |
+| deterministic | [0.70, 0.85) | 6 | 2 | 0.3333 | [0.0968, 0.7000] |
+| deterministic | [0.85, 0.95) | 0 | 0 | no aplicable | no aplicable |
+| deterministic | [0.95, 1.00] | 1 | 1 | 1.0000 | [0.2065, 1.0000] |
+| gemini | [0.00, 0.50) | 0 | 0 | no aplicable | no aplicable |
+| gemini | [0.50, 0.70) | 0 | 0 | no aplicable | no aplicable |
+| gemini | [0.70, 0.85) | 0 | 0 | no aplicable | no aplicable |
+| gemini | [0.85, 0.95) | 31 | 22 | 0.7097 | [0.5341, 0.8390] |
+| gemini | [0.95, 1.00] | 38 | 28 | 0.7368 | [0.5799, 0.8503] |
+| fallback | [0.00, 0.50) | 0 | 0 | no aplicable | no aplicable |
+| fallback | [0.50, 0.70) | 0 | 0 | no aplicable | no aplicable |
+| fallback | [0.70, 0.85) | 0 | 0 | no aplicable | no aplicable |
+| fallback | [0.85, 0.95) | 0 | 0 | no aplicable | no aplicable |
+| fallback | [0.95, 1.00] | 0 | 0 | no aplicable | no aplicable |
+
+### Distribución de valores de confianza por etapa
+
+Valores distintos de confianza observados (redondeados a 4 decimales), en orden
+ascendente, con sus casos y aciertos estrictos.
+
+| Etapa | Confianza | Casos | Aciertos |
+|---|---|---|---|
+| deterministic | 0.0000 | 90 | 67 |
+| deterministic | 0.1667 | 8 | 8 |
+| deterministic | 0.5000 | 26 | 19 |
+| deterministic | 0.7500 | 6 | 2 |
+| deterministic | 1.0000 | 1 | 1 |
+| gemini | 0.8500 | 24 | 18 |
+| gemini | 0.9000 | 7 | 4 |
+| gemini | 0.9500 | 35 | 25 |
+| gemini | 0.9800 | 3 | 3 |
+| fallback | no aplicable | 0 | 0 |
+
 ## Tiempos
 
 Análisis sobre los pares (tiempo_manual_s, tiempo_automatizado_s) del corpus cargado.
