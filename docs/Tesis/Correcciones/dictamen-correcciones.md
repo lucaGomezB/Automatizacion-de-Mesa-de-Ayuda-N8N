@@ -856,6 +856,17 @@ colision: la secuencia esperada se mantiene: **3.7 c-130, 3.8 c-131, 3.9 c-142, 
 3.11 c-133, 3.12 c-134**. La consolidacion de c-141 (tarea 2.7) no debe renumerar el item 6
 de la seccion 7 y debe tratarlo como existente.
 
+**Actualizacion 2026-10-25 (c-134, bloque de codigo)**: c-134 se aplica en dos tramos y su
+bloque de codigo (que escribe la seccion del memo) va ANTES de c-131; por la regla anterior
+tomo la **3.8** ("Tiempos por canal, contrastes y sensibilidad (c-134)"; 3.7 ya era de
+c-130, verificado con `grep -n "^## \|^### " numeros-canonicos.md`). La secuencia esperada
+se corre: **c-131 -> 3.9, c-142 -> 3.10, c-132 -> 3.11, c-133 -> 3.12**; el bloque de tesis de
+c-134 reutiliza la 3.8 y remite a ella ("ver seccion 3.8"). Cada change posterior toma el
+siguiente numero libre al aplicar. Ademas, c-134 actualizo en el memo las remisiones
+`report.md:99` -> `report.md:140` (la linea del SHA-256 se desplazo al agregar tres
+subsecciones a "## Tiempos"); c-131 debe volver a contrastar las lineas del reporte que cite
+si agrega secciones antes de "## Tiempos" (D12 de c-134).
+
 **Obligacion de libro mayor**: cada change de la familia agrega su fila al libro mayor de
 paginas (subseccion siguiente) despues de su apply, con commit, total, cuerpo sin anexos,
 anexos, delta y estado; el orquestador lo incluye en cada prompt de apply. c-141 consolida y
@@ -942,6 +953,18 @@ siguiente. Aplicada a las dos reglas sobre la linea base de 102 / 94:
   acumulado del cuerpo supera **5** paginas.
 
 **Verificacion de la fila base**: la fila `v1.1.1` contiene los tres valores (101, 93, 8).
+
+### Nota: c-134, bloque de codigo aplicado (2026-10-25)
+
+c-134 bloque de codigo (tareas 1 a 5 de `tasks.md`) aplicado el 2026-10-25 en la rama
+`change/c-134-contrastes-estadisticos-y-desagregado-canal` (sin commit; lo crea el
+orquestador); bloque de tesis (grupos 6 a 8) **pendiente**, posicion 7 del orden de la
+familia (despues de c-133). Alcance: los modulos `stats.py` y `run_evaluation.py`, el `README.md`, el
+`report.md` y los tests de `evaluation/`, y la seccion 3.8 del memo `numeros-canonicos.md`; no toca `.tex`, no
+recompila la tesis ni agrega fila al libro mayor de paginas (la agrega el bloque de tesis).
+`evaluation/report.md` se regenero con `--solo-tiempos` (sin Gemini ni predicciones):
+solo se agregaron tres subsecciones dentro de "## Tiempos"; las filas previas (W, T+, T-,
+p, r, desglose por canal) y la huella canonica del corpus no cambiaron.
 
 ## Dictamen v1.1.0 - A1 (c-130) - Gate de revision humana por etapa
 
