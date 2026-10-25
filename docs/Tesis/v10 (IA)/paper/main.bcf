@@ -3243,13 +3243,16 @@
     <bcf:citekey order="161" intorder="1">DigitalOcean2026_pricing</bcf:citekey>
     <bcf:citekey order="162" intorder="1">Google2026_vertex_pricing</bcf:citekey>
     <bcf:citekey order="163" intorder="1">Ley25326_2000</bcf:citekey>
-    <bcf:citekey order="164" intorder="1">Touvron2023_llama2</bcf:citekey>
-    <bcf:citekey order="165" intorder="1">Touvron2023_llama2</bcf:citekey>
-    <bcf:citekey order="166" intorder="1">Gomez2026_repositorio</bcf:citekey>
-    <bcf:citekey order="167" intorder="1">Gomez2026_repositorio</bcf:citekey>
+    <bcf:citekey order="164" intorder="1">Guo2017_calibration</bcf:citekey>
+    <bcf:citekey order="165" intorder="1">Xiong2024_confidence_elicitation</bcf:citekey>
+    <bcf:citekey order="165" intorder="2">Tian2023_verbalized_confidence</bcf:citekey>
+    <bcf:citekey order="166" intorder="1">Touvron2023_llama2</bcf:citekey>
+    <bcf:citekey order="167" intorder="1">Touvron2023_llama2</bcf:citekey>
     <bcf:citekey order="168" intorder="1">Gomez2026_repositorio</bcf:citekey>
-    <bcf:citekey order="169" intorder="1">Tiangolo2024_fastapi</bcf:citekey>
-    <bcf:citekey order="170" intorder="1">Ley25326_2000</bcf:citekey>
+    <bcf:citekey order="169" intorder="1">Gomez2026_repositorio</bcf:citekey>
+    <bcf:citekey order="170" intorder="1">Gomez2026_repositorio</bcf:citekey>
+    <bcf:citekey order="171" intorder="1">Tiangolo2024_fastapi</bcf:citekey>
+    <bcf:citekey order="172" intorder="1">Ley25326_2000</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="nyt">
