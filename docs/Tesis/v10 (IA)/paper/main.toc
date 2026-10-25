@@ -81,15 +81,17 @@
 \contentsline {subsection}{\numberline {10.1}Cumplimiento de los objetivos del trabajo}{86}{subsection.10.1}%
 \contentsline {subsection}{\numberline {10.2}Aportes y generalización}{88}{subsection.10.2}%
 \contentsline {section}{\numberline {11}Recomendaciones y líneas de trabajo futuro}{89}{section.11}%
-\contentsline {subsection}{\numberline {11.1}Incorporación de un clasificador supervisado con corpus propio}{89}{subsection.11.1}%
-\contentsline {subsection}{\numberline {11.2}Ampliación de canales de entrada}{89}{subsection.11.2}%
-\contentsline {subsection}{\numberline {11.3}Panel de monitoreo en tiempo real}{90}{subsection.11.3}%
-\contentsline {subsection}{\numberline {11.4}Mecanismos de aprendizaje activo}{90}{subsection.11.4}%
-\contentsline {subsection}{\numberline {11.5}Validación sobre un corpus independiente}{90}{subsection.11.5}%
-\contentsline {subsection}{\numberline {11.6}Estudios de replicación}{91}{subsection.11.6}%
-\contentsline {subsection}{\numberline {11.7}Evaluación de modelos de lenguaje de código abierto}{91}{subsection.11.7}%
-\contentsline {subsection}{\numberline {11.8}Base de conocimientos para resolución automática}{91}{subsection.11.8}%
-\contentsline {subsection}{\numberline {11.9}Agente conversacional telefónico en tiempo real}{92}{subsection.11.9}%
+\contentsline {subsection}{\numberline {11.1}Calibración del gate de confianza}{89}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}Incorporación de un clasificador supervisado con corpus propio}{90}{subsection.11.2}%
+\contentsline {subsection}{\numberline {11.3}Corrección de la medición de intervención humana}{90}{subsection.11.3}%
+\contentsline {subsection}{\numberline {11.4}Ampliación de canales de entrada}{91}{subsection.11.4}%
+\contentsline {subsection}{\numberline {11.5}Panel de monitoreo en tiempo real}{91}{subsection.11.5}%
+\contentsline {subsection}{\numberline {11.6}Mecanismos de aprendizaje activo}{91}{subsection.11.6}%
+\contentsline {subsection}{\numberline {11.7}Validación sobre un corpus independiente}{92}{subsection.11.7}%
+\contentsline {subsection}{\numberline {11.8}Estudios de replicación}{92}{subsection.11.8}%
+\contentsline {subsection}{\numberline {11.9}Evaluación de modelos de lenguaje de código abierto}{92}{subsection.11.9}%
+\contentsline {subsection}{\numberline {11.10}Base de conocimientos para resolución automática}{93}{subsection.11.10}%
+\contentsline {subsection}{\numberline {11.11}Agente conversacional telefónico en tiempo real}{93}{subsection.11.11}%
 \contentsline {section}{Referencias bibliograficas}{94}{section*.29}%
 \contentsline {section}{Anexos}{101}{section*.30}%
 \contentsline {section}{\numberline {A}Diagrama de arquitectura del sistema}{101}{section.1.A}%
