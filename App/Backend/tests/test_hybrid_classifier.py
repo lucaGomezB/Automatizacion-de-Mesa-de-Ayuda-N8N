@@ -474,3 +474,44 @@ async def test_unico_match_con_score_suficiente_cortocircuita() -> None:
         result = await classifier.classify("teclado")
         assert result.etapa == "deterministic"
         mock_gemini.assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# c-130 — Contrato del gate por etapa (test de caracterizacion)
+# ---------------------------------------------------------------------------
+@pytest.mark.asyncio
+@pytest.mark.parametrize("confianza", [0.0, 1 / 6, 0.5])
+async def test_cortocircuito_deterministico_no_marca_revision_aunque_confianza_menor_a_070(
+    confianza: float,
+) -> None:
+    """c-130 (D12): el cortocircuito deterministico NO marca revision humana.
+
+    El umbral de revision humana (0.70) se evalua solo sobre la salida de
+    Gemini. Con senal dominante y score en el punto de operacion el pipeline
+    devuelve el resultado deterministico tal cual, con
+    `requiere_revision_humana is False`, aunque la `confianza` (fuerza de
+    senal) sea inferior a 0.70, y la etapa Gemini no se invoca. Fija el
+    comportamiento existente: si el gate se extiende a la etapa
+    deterministica, este test y la tesis deben cambiar juntos.
+    """
+    from app.config.settings import get_settings
+
+    settings = get_settings()
+    assert confianza < settings.human_review_threshold
+    classifier = HybridClassifier()
+    with patch.object(
+        classifier._deterministic,
+        "classify",
+        new_callable=AsyncMock,
+        return_value=_det_con_score(
+            "Sistemas",
+            score=settings.deterministic_score_threshold,
+            confianza=confianza,
+        ),
+    ), patch.object(
+        classifier._gemini, "classify", new_callable=AsyncMock
+    ) as mock_gemini:
+        result = await classifier.classify("senal dominante con confianza baja")
+        assert result.etapa == "deterministic"
+        assert result.requiere_revision_humana is False
+        mock_gemini.assert_not_called()

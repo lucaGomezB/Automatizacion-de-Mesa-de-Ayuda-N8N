@@ -102,6 +102,7 @@ Parámetro & Valor & Justificación \\
 \texttt{candidate\_count} & 1 & Respuesta única sin remuestreo; optimiza la latencia para el procesamiento en tiempo real. \\
 \texttt{safety\_settings} & Parcialmente desactivados & Desactiva filtros que podrían rechazar descripciones legítimas de incidentes, manteniendo los filtros contra contenido verdaderamente tóxico. \\
 \texttt{timeout} & 10 segundos & Límite máximo de latencia; al excederse, el clasificador devuelve confianza 0,0 y marca el caso para revisión humana. \\
+Umbral de revisión humana & 0,70 & Confianza mínima de una respuesta del modelo para no marcarla para revisión; no se aplica a la etapa determinística (\autoref{subsec:subsistema-clasificacion}). \\
 SDK & \texttt{google-genai} \texttt{>=2.20.0} & Versión vigente al momento del estudio, documentada para reproducibilidad. \\
 \bottomrule
 \end{tabular}

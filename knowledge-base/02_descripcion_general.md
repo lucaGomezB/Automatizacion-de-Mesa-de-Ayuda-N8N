@@ -36,7 +36,7 @@
 │    routes → services → repositories → models                 │
 │    Clasificador híbrido: deterministic → gemini → fallback   │
 └──────┬────────────────────────────────────────┬──────────────┘
-       ▼ solo si reglas < 0,90                  ▼ asyncpg
+       ▼ si reglas no deciden                   ▼ asyncpg
 ┌─────────────────────────┐      ┌────────────────────────────┐
 │ 4. INFERENCIA           │      │ 5. PERSISTENCIA            │
 │    Gemini 2.5 Flash     │      │    PostgreSQL 15.5         │
