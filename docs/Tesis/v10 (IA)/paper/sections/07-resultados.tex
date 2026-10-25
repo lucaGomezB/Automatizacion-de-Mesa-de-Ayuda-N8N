@@ -133,7 +133,7 @@ La inspección de la matriz de confusión revela que los 53 errores totales se c
 
 \subsection{Intervención humana en el flujo automatizado}\label{subsec:reduccion-intervencion}
 
-La intervención humana en el flujo automatizado se deriva del gate de revisión implementado, \texttt{requiere\_revision\_humana = (confianza < 0,70)}, que escala un caso a un operador humano cuando la confianza devuelta por el clasificador cae por debajo de ese umbral. El gate de revisión no derivó ningún caso del corpus: la etapa determinística fija el campo en \texttt{False} y la etapa Gemini nunca devolvió una confianza inferior a 0,85, resultado que se interpreta en la \autoref{sec:discusion}.
+La intervención humana en el flujo automatizado se deriva del gate de revisión implementado, \texttt{requiere\_revision\_humana = (confianza < 0,70)}, que solo se evalúa sobre la salida de la etapa Gemini; la etapa de reserva deriva siempre y la determinística no deriva por su confianza (\autoref{subsec:subsistema-clasificacion}). El gate no derivó ningún caso del corpus: en 124 de los 200 casos (62~\%) la confianza registrada fue inferior a 0,70, pero todos pertenecen a la etapa determinística, cuya confianza mide fuerza de señal; los 69 casos de Gemini declararon siempre al menos 0,85 y la etapa de reserva no se activó. Sobre el 65,5~\% de los casos no existió, por lo tanto, derivación automática por caso basada en la clasificación. El resultado se interpreta en la \autoref{sec:discusion}.
 
 La sub-hipótesis de intervención humana por caso se declara no contrastada por ausencia de registro primario: la proporción no se computa como resultado, de modo que el aporte operativo asociado al gate queda, por lo tanto, como no medido.
 
