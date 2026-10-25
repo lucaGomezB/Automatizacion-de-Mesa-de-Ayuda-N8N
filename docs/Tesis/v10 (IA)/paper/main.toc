@@ -67,7 +67,7 @@
 \contentsline {subsection}{\numberline {8.2}Matriz de confusión y métricas de clasificación}{69}{subsection.8.2}%
 \contentsline {subsection}{\numberline {8.3}Intervención humana en el flujo automatizado}{71}{subsection.8.3}%
 \contentsline {subsection}{\numberline {8.4}Calibración de la confianza}{72}{subsection.8.4}%
-\contentsline {subsection}{\numberline {8.5}Sensibilidad al ajuste del clasificador con el corpus}{72}{subsection.8.5}%
+\contentsline {subsection}{\numberline {8.5}Sensibilidad al ajuste del clasificador con el corpus}{73}{subsection.8.5}%
 \contentsline {subsection}{\numberline {8.6}Análisis de errores y casos límite}{73}{subsection.8.6}%
 \contentsline {section}{\numberline {9}Discusión}{75}{section.9}%
 \contentsline {subsection}{\numberline {9.1}Interpretación de los resultados}{75}{subsection.9.1}%
