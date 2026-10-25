@@ -32,7 +32,7 @@ Automatizacion-de-Mesa-de-Ayuda-N8N/
 │   ├── alembic/                   # migraciones + seed de catálogos
 │   ├── tests/                     # pytest (conftest listo para integración)
 │   └── docker-compose.yml / Dockerfile
-├── App/Frontend/                      # React 18 + TS + Vite
+├── App/Frontend/                      # React 19 + TS + Vite
 │   └── src/{components,hooks,services,types,utils,lib}
 ├── n8n/workflow.json   # Workflow N8N exportado
 ├── docs/                          # Tesis md, prompt y parámetros Gemini

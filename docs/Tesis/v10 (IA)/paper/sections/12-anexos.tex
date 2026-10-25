@@ -132,7 +132,7 @@ def validar_respuesta_gemini(response_text: str) -> tuple[bool, dict]:
 
 \subsection{Iteración y mejora del prompt}\label{subsec:anexo-iteracion-prompt}
 
-El prompt se validó y ajustó de forma iterativa sobre un conjunto de aproximadamente 100 incidentes representativos en entornos de preproducción, sin exposición al corpus de validación de 200 casos. Las versiones históricas del prompt se conservan en el repositorio bajo \texttt{docs/prompt\_gemini\_history/} para auditoría y eventual reversión.
+El prompt de la versión evaluada se ajustó de forma iterativa a partir de errores observados en el corpus de validación; no se dispuso de un corpus independiente de preproducción. Las versiones históricas del prompt se conservan en el historial de versiones del repositorio (archivo \texttt{docs/prompt\_gemini.txt}) para auditoría y eventual reversión.
 
 \subsection{Recomendaciones para futuras iteraciones}\label{subsec:anexo-recomendaciones-prompt}
 

@@ -189,16 +189,22 @@ Python), en lugar de hacer `POST /api/v1/incidentes` al servidor FastAPI.
 **Trade-off asumido**: la evaluación mide el **clasificador**, no la capa HTTP.
 El Capítulo 7 evalúa calidad de clasificación; la API ya se cubre en C-04/C-05.
 
-## Advertencia Metodológica (Anti Data Leakage — §8.1)
+## Advertencia Metodológica (procedencia de los ajustes)
 
-> **El clasificador NO fue ajustado sobre el corpus de evaluación.**
+> **Parte del clasificador evaluado se ajustó con el corpus de evaluación.**
 
-Este framework solo **evalúa** el clasificador. Las reglas determinísticas
-(keywords) y el prompt de Gemini fueron definidos antes de la recolección del
-corpus final. El framework **nunca modifica** reglas ni prompts a partir de los
-resultados de evaluación.
+El historial del repositorio registra ajustes hechos sobre
+`data/corpus_evaluacion_pseudonimizado.json` antes de la corrida oficial: el
+vocabulario del filtro determinístico se amplió a partir de sus errores (c-71,
+commit `1368fd8`); las reglas de frontera del prompt se redactaron a partir de
+casos del corpus (c-72, commit `a76851e`; R002 y R038); y el punto de operación
+del cortocircuito se derivó sobre el corpus por validación cruzada fuera de
+muestra (c-74, commit `d6bb474`). El protocolo fuera de muestra cubre el punto de
+operación, no el vocabulario ni las reglas del prompt. No se dispuso de un corpus
+independiente de preproducción. Las métricas de `report.md` son, por lo tanto,
+estimaciones dentro de la muestra.
 
-Ajustar el clasificador sobre el corpus de evaluación invalidaría las métricas
-reportadas (data leakage). Si identificás errores sistemáticos y necesitás
-ajustar el sistema, usá el corpus de evaluación **solo para diagnóstico** y
-medí el impacto sobre datos separados.
+Regla vigente: el framework solo **evalúa**; el corpus de evaluación se usa
+**solo para diagnóstico** y todo ajuste posterior del clasificador se mide sobre
+datos separados y declara su procedencia. La validación sobre un corpus
+independiente queda como línea de trabajo futuro.

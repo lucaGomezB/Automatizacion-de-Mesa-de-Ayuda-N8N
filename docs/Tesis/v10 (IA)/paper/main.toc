@@ -82,23 +82,24 @@
 \contentsline {subsection}{\numberline {11.2}Ampliación de canales de entrada}{84}{subsection.11.2}%
 \contentsline {subsection}{\numberline {11.3}Panel de monitoreo en tiempo real}{85}{subsection.11.3}%
 \contentsline {subsection}{\numberline {11.4}Mecanismos de aprendizaje activo}{85}{subsection.11.4}%
-\contentsline {subsection}{\numberline {11.5}Estudios de replicación}{85}{subsection.11.5}%
-\contentsline {subsection}{\numberline {11.6}Evaluación de modelos de lenguaje de código abierto}{86}{subsection.11.6}%
-\contentsline {subsection}{\numberline {11.7}Base de conocimientos para resolución automática}{86}{subsection.11.7}%
-\contentsline {subsection}{\numberline {11.8}Agente conversacional telefónico en tiempo real}{87}{subsection.11.8}%
-\contentsline {section}{Referencias bibliograficas}{88}{section*.26}%
-\contentsline {section}{Anexos}{94}{section*.27}%
-\contentsline {section}{\numberline {A}Diagrama de arquitectura del sistema}{94}{section.1.A}%
-\contentsline {section}{\numberline {B}Repositorio de código fuente}{94}{section.1.B}%
-\contentsline {section}{\numberline {C}Esquema de base de datos}{95}{section.1.C}%
-\contentsline {section}{\numberline {D}Especificación OpenAPI de la interfaz REST}{95}{section.1.D}%
-\contentsline {section}{\numberline {E}Configuración del flujo N8N}{96}{section.1.E}%
-\contentsline {section}{\numberline {F}Corpus de validación}{97}{section.1.F}%
-\contentsline {section}{\numberline {G}Documentación operativa}{98}{section.1.G}%
-\contentsline {section}{\numberline {H}Especificación del prompt de Gemini 3.6 Flash}{98}{section.1.H}%
-\contentsline {subsection}{\numberline {H.1}Estructura y contenido del prompt}{98}{subsection.1.H.1}%
-\contentsline {subsection}{\numberline {H.2}Parámetros de configuración}{99}{subsection.1.H.2}%
-\contentsline {subsection}{\numberline {H.3}Validación de la respuesta}{99}{subsection.1.H.3}%
-\contentsline {subsection}{\numberline {H.4}Iteración y mejora del prompt}{100}{subsection.1.H.4}%
-\contentsline {subsection}{\numberline {H.5}Recomendaciones para futuras iteraciones}{100}{subsection.1.H.5}%
-\contentsline {section}{\numberline {I}Trazabilidad de las correcciones del dictamen}{101}{section.1.I}%
+\contentsline {subsection}{\numberline {11.5}Validación sobre un corpus independiente}{85}{subsection.11.5}%
+\contentsline {subsection}{\numberline {11.6}Estudios de replicación}{86}{subsection.11.6}%
+\contentsline {subsection}{\numberline {11.7}Evaluación de modelos de lenguaje de código abierto}{86}{subsection.11.7}%
+\contentsline {subsection}{\numberline {11.8}Base de conocimientos para resolución automática}{86}{subsection.11.8}%
+\contentsline {subsection}{\numberline {11.9}Agente conversacional telefónico en tiempo real}{87}{subsection.11.9}%
+\contentsline {section}{Referencias bibliograficas}{89}{section*.26}%
+\contentsline {section}{Anexos}{95}{section*.27}%
+\contentsline {section}{\numberline {A}Diagrama de arquitectura del sistema}{95}{section.1.A}%
+\contentsline {section}{\numberline {B}Repositorio de código fuente}{95}{section.1.B}%
+\contentsline {section}{\numberline {C}Esquema de base de datos}{96}{section.1.C}%
+\contentsline {section}{\numberline {D}Especificación OpenAPI de la interfaz REST}{96}{section.1.D}%
+\contentsline {section}{\numberline {E}Configuración del flujo N8N}{97}{section.1.E}%
+\contentsline {section}{\numberline {F}Corpus de validación}{98}{section.1.F}%
+\contentsline {section}{\numberline {G}Documentación operativa}{99}{section.1.G}%
+\contentsline {section}{\numberline {H}Especificación del prompt de Gemini 3.6 Flash}{99}{section.1.H}%
+\contentsline {subsection}{\numberline {H.1}Estructura y contenido del prompt}{99}{subsection.1.H.1}%
+\contentsline {subsection}{\numberline {H.2}Parámetros de configuración}{100}{subsection.1.H.2}%
+\contentsline {subsection}{\numberline {H.3}Validación de la respuesta}{100}{subsection.1.H.3}%
+\contentsline {subsection}{\numberline {H.4}Iteración y mejora del prompt}{101}{subsection.1.H.4}%
+\contentsline {subsection}{\numberline {H.5}Recomendaciones para futuras iteraciones}{101}{subsection.1.H.5}%
+\contentsline {section}{\numberline {I}Trazabilidad de las correcciones del dictamen}{102}{section.1.I}%
