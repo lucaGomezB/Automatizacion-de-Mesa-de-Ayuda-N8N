@@ -96,6 +96,47 @@ Segmentación por el valor crudo de `canal_origen` del corpus.
 | correo electrónico | 66 | 189.0000 | 2022.0000 | 189.0000 | 4.78e-09 | 0.8290 |
 | formulario web | 53 | 0.0000 | 1431.0000 | 0.0000 | 2.39e-10 | 1.0000 |
 
+### Descriptivos global y por canal
+
+Desvío estándar con la convención muestral (divisor n − 1). La reducción relativa es
+1 − media(automatizado) / media(manual) (y su análoga con la mediana). "No más
+rápidos" cuenta los pares con `automatizado >= manual`.
+
+| Ámbito | n | Manual media (s) | Manual mediana (s) | Manual desvío (s) | Manual mín (s) | Manual máx (s) | Automatizado media (s) | Automatizado mediana (s) | Automatizado desvío (s) | Automatizado mín (s) | Automatizado máx (s) | Reducción de la media (%) | Reducción de la mediana (%) | No más rápidos |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Global | 200 | 61.5850 | 50.0000 | 44.8961 | 10.0000 | 300.0000 | 17.7606 | 17.4710 | 13.5164 | 0.5250 | 65.8340 | 71.16 | 65.06 | 12 |
+| llamada telefónica | 81 | 87.2469 | 72.0000 | 48.8985 | 30.0000 | 220.0000 | 20.0883 | 18.6980 | 6.0246 | 14.0270 | 59.1500 | 76.98 | 74.03 | 0 |
+| correo electrónico | 66 | 56.5152 | 50.0000 | 35.8090 | 20.0000 | 300.0000 | 27.6546 | 25.8180 | 14.2000 | 8.9700 | 65.8340 | 51.07 | 48.36 | 12 |
+| formulario web | 53 | 28.6792 | 20.0000 | 16.4419 | 10.0000 | 100.0000 | 1.8823 | 1.2650 | 1.2662 | 0.5250 | 4.1620 | 93.44 | 93.67 | 0 |
+
+### Contraste direccional y tamaño del efecto estandarizado
+
+El p bilateral corresponde a la convención W = min(T+, T−); el p unilateral contrasta
+H1: manual > automatizado (`alternative="greater"` sobre manual − automatizado).
+d_z = media(d) / desvío(d) con d = manual − automatizado (desvío muestral).
+El efecto mínimo detectable (MDE, en escala d_z) usa la aproximación normal
+(z_(1−alfa/2) + z_potencia) / raíz(n · ARE) con alfa = 0.05 (bilateral),
+potencia = 0.80 y ARE = 1 (sin ajuste) o ARE = 0.864 (cota inferior de la eficiencia de la prueba de rangos frente a la t pareada).
+
+| Ámbito | n | p bilateral | p unilateral | d_z | MDE (ARE = 1) | MDE (ARE = 0.864) |
+|---|---|---|---|---|---|---|
+| Global | 200 | 3.08e-32 | 1.54e-32 | 1.0004 | 0.1981 | 0.2131 |
+| llamada telefónica | 81 | 5.36e-15 | 2.68e-15 | 1.3674 | 0.3113 | 0.3349 |
+| correo electrónico | 66 | 4.78e-09 | 2.39e-09 | 0.7345 | 0.3449 | 0.3710 |
+| formulario web | 53 | 2.39e-10 | 1.19e-10 | 1.6147 | 0.3848 | 0.4140 |
+
+### Escenarios de sensibilidad del redondeo manual
+
+Se descuenta una cantidad fija de segundos a cada `tiempo_manual_s` y se recalcula el
+contraste de Wilcoxon sobre los pares ajustados (conjunto global).
+
+| Descuento al manual (s) | Media manual ajustada (s) | Reducción de la media (%) | p bilateral | p unilateral | r |
+|---|---|---|---|---|---|
+| 5 | 56.5850 | 68.61 | 4.87e-30 | 2.44e-30 | 0.9286 |
+| 10 | 51.5850 | 65.57 | 1.8e-26 | 8.98e-27 | 0.8683 |
+
+- Granularidad de `tiempo_manual_s`: 199 / 200 valores múltiplos de 5 s; 180 / 200 múltiplos de 10 s.
+
 - **SHA-256 del corpus:** `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb`
 
 ---
