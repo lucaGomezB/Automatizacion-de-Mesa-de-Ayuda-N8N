@@ -108,26 +108,7 @@ El capitulo de consideraciones eticas y legales (`11-aspectos-legales.tex`, subs
 - **THEN** remite a `subsec:calibracion`
 - **AND** no afirma por si misma una conclusion de calibracion
 
-### Requirement: Procedencia declarada de los ajustes realizados sobre el corpus de validacion
-
-La tesis SHALL declarar en la discusion (`subsec:interpretacion-resultados`) que las reglas de frontera del prompt y la ampliacion del vocabulario del filtro deterministico de la version evaluada se incorporaron a partir de errores observados en el corpus de validacion, y que el punto de operacion del cortocircuito se derivo por validacion cruzada sobre ese corpus; y SHALL calificar las metricas de clasificacion reportadas como estimaciones dentro de la muestra cuya confirmacion exige un corpus independiente. Las demas secciones que afirman la ausencia de exposicion al corpus (`05-arquitectura.tex`, `06-implementacion.tex`, Anexo H) SHALL alinearse con esa declaracion o remitir a ella. La tesis MUST NOT afirmar separacion estricta entre datos de construccion y de validacion, ausencia de exposicion al corpus ni desempeno sobre datos no vistos mientras el repositorio registre esos ajustes, y MUST NOT alterar ningun valor numerico por esta declaracion.
-
-#### Scenario: Sin afirmacion de no exposicion
-
-- **WHEN** se buscan en `sections/*.tex` las afirmaciones "sin exposición a" (el corpus o los 200 casos de validacion), "sin acceso al corpus", "datos no vistos" y "separación estricta"
-- **THEN** ninguna aparece como afirmacion vigente sobre la version evaluada
-
-#### Scenario: Procedencia declarada en la discusion
-
-- **WHEN** se lee `subsec:interpretacion-resultados`
-- **THEN** se declaran los ajustes del prompt, del vocabulario y del punto de operacion realizados sobre el corpus
-- **AND** las metricas de clasificacion se califican como estimaciones dentro de la muestra
-
-#### Scenario: Numeros intactos
-
-- **WHEN** se comparan las metricas de clasificacion del PDF antes y despues de la declaracion
-- **THEN** no cambia ningun valor numerico
-
+<!-- c-144 (archivado el 2026-10-23 en main) ya incorporo al spec vivo el requisito "Procedencia declarada de los ajustes realizados sobre el corpus de validacion"; este change solo verifica el texto resultante. -->
 ### Requirement: Umbral de revision humana en la especificacion del Anexo H
 
 La tabla de parametros de configuracion del Anexo H (`tab:anexo_gemini_params`) SHALL incluir el umbral de revision humana (0,70) y declarar su alcance: se aplica a la confianza de la respuesta del modelo y no a la etapa deterministica. La fila MUST NOT desbordar la primera columna de la tabla.
