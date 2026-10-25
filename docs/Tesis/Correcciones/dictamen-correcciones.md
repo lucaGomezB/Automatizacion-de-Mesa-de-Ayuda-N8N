@@ -923,6 +923,7 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 | `+c-133` (`change/c-133-hipotesis-objetivos-metrica-primaria`) | sin commit (lo crea el orquestador) | 105 | 97 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{105}`; `Anexos` en p. 98; brecha frente a 101: +4 (sin compensar habria sido 107); rama (b): cuerpo 97, margen 3 |
 | `+c-134 tesis` (`change/c-134-contrastes-estadisticos-y-desagregado-canal`) | sin commit (lo crea el orquestador) | 105 | 97 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{105}`; `Anexos` en p. 98; brecha frente a 101: +4 (la primera compilacion dio 108, +3; las compensaciones dentro de los mismos pasajes devolvieron las tres paginas); rama (b): cuerpo 97, margen 3 |
 | `+c-138` (`change/c-138-estado-del-arte-calibracion-y-cascadas`) | sin commit (lo crea el orquestador) | 108 | 100 | 8 | +3 | +3 | (a) total <= 101 | Medido: `abspage@last{108}`; `Anexos` en p. 101; brecha frente a 101: +7; rama (b): cuerpo 100, margen 0 |
+| `+c-136` (`change/c-136-recomendaciones-lineas-faltantes`) | sin commit (lo crea el orquestador) | 108 | 100 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{108}`; `Anexos` en p. 101; brecha frente a 101: +7; rama (b): cuerpo 100, margen 0 (el capitulo de recomendaciones ya ocupaba 5 paginas, 89 a 93, con unas 21 lineas libres en la ultima; el agregado neto las consume y no abre una sexta) |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -1827,5 +1828,87 @@ Las seis superan las tres compuertas (existencia, metadatos, texto completo): Gu
 ### Reversibilidad
 
 `git checkout <commit-previo> -- "docs/Tesis/v10 (IA)/paper/sections/02-marco-teorico.tex" "docs/Tesis/v10 (IA)/paper/sections/03-estado-del-arte.tex" "docs/Tesis/v10 (IA)/paper/sections/08-discusion.tex" "docs/Tesis/v10 (IA)/Bibliography_base.bib" docs/Tesis/Correcciones/bitacora-busqueda-c-110.md`, recompilar. Si c-139 ya retiro O3 o c-136 cita las claves, conservar la fundamentacion de 2.5 y las entradas.
+
+**Estado**: grupo aplicado.
+
+
+## Dictamen v1.1.0 - B11 (c-136) - Recomendaciones: lineas prioritarias faltantes
+
+**Origen**: change `c-136-recomendaciones-lineas-faltantes` (dictamen CONEAU 2026-10-22: seccion 8 y recomendacion B11). Aplicado el **2026-10-25** en la rama `change/c-136-recomendaciones-lineas-faltantes`, cortada de `ramagonzalo` en `9443331` (merge de c-138). Posicion 9 del orden de la familia (G0.6). Solo documento (gobernanza LOW): sin codigo, sin Gemini, sin tags, sin commit (lo crea el orquestador). Archivos editados: `10-recomendaciones.tex` (unico fuente de tesis), este registro y los artefactos de compilacion versionados de `paper/` (`main.pdf`, `main.xdv`, `main.toc`, `main.aux`, `main.bbl`, `main.bcf`, `main.blg`, `main.lof`, `main.lot`, `main.out`, `main.fdb_latexmk`).
+
+### Open Questions del design - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+
+| Open Question | Decision PROVISIONAL | Efecto |
+|---|---|---|
+| OQ1 - extension D7 (SSO, prefijo configurable, Kubernetes, parametros de inferencia) | **Se incluye** en este change (recomendado) | Tres temas nombrados en el nivel de extensiones del parrafo de priorizacion y una oracion sobre los parametros de inferencia en `subsec:calibracion-gate` (unas 40 palabras); las cuatro remisiones de `05` y `06` a `sec:recomendaciones` encuentran destino |
+| OQ2 - presupuesto de paginas | **Aceptar +1 pagina** con renegociacion del tope en c-141 (recomendado), aplicando igual las compensaciones del bloque 6 (D10) | No hizo falta la pagina: delta medido 0 (ver Compilacion y paginas); las compensaciones se aplicaron igual |
+| OQ3 - citas de recalibracion | **c-138 ya aplicado**: se usan sus claves | `Guo2017_calibration`, `Xiong2024_confidence_elicitation` y `Tian2023_verbalized_confidence` citadas donde se nombra la tecnica; `Zhao2021_calibrate_before_use` no se cita (la calibracion contextual no se nombra); `Bibliography_base.bib` sin cambios (65 entradas) |
+
+### Precondiciones y linea base (tareas 1.1 a 1.4)
+
+- c-130 y c-131 aplicados (`openspec list`: completos); rotulos vigentes: `subsec:calibracion` (07, calibracion por etapa), `subsec:reduccion-intervencion` (07), `subsec:subsistema-clasificacion` (05), `subsec:analisis-errores` (07), `subsec:balance-neto` (08, c-132), `subsec:hipotesis-trabajo` (01, c-133), `subsec:poblacion-muestra-corpus` (04, c-134), `subsec:calibracion-cascadas` (03.4, c-138), `subsec:limitaciones-estudio` (ocho limitaciones), `subsec:capa-procesamiento`, `anexo:H`, `tab:variables`. Las cuatro claves de calibracion existen una vez en el `.bib`.
+- Paginas antes: 108 (cuerpo 100, anexos 8); capitulo de recomendaciones 89 a 93 (5 paginas; Referencias en p. 94), con 9 lineas de texto en la p. 93 (unas 21 libres). Palabras antes por subseccion (conteo sobre la fuente, sin comandos): introduccion 106, clasificador supervisado 160, canales 88, panel de monitoreo 170, aprendizaje activo 74, corpus independiente 102, replicacion 112, modelos abiertos 85, base de conocimientos 271, agente conversacional 328; total 1.496.
+- Linea base en rojo (tarea 1.4): `label{subsec:calibracion-gate}` y `label{subsec:medicion-intervencion}` = 0; `autoref{subsec:analisis-errores}` = 0 (la remision apuntaba a `subsec:calibracion`); "de todos modos ocurre" = 1; "Kubernetes", "SSO" y "prefijo" = 0; `autoref{subsec:capa-procesamiento}` = 0.
+
+### Mapeo del dictamen (B11) -> pasajes
+
+| Observacion | Correccion | Rotulo |
+|---|---|---|
+| Linea prioritaria anunciada sin desarrollo: calibracion del gate | Subseccion nueva 11.1 (diagnostico por etapa, validacion propia, senales independientes, recalibracion con advertencia, umbral por curva cobertura-precision fuera de muestra con piso previo) | `subsec:calibracion-gate` |
+| Linea prioritaria anunciada sin desarrollo: medicion de intervencion | Subseccion nueva 11.3 (registro primario por caso de cuatro campos, `clasificacion_log` o tabla dedicada, definicion alineada con `tab:variables`, contraste contra la cota de 0,15 o como cobertura efectiva del gate, derivaciones erroneas para el balance neto) | `subsec:medicion-intervencion` |
+| Aprendizaje activo prioriza por baja confianza y presupone derivaciones del gate | Seleccion por senales independientes; confianza solo tras recalibracion validada; revisiones vinculadas al registro primario; se retira "de todos modos ocurre" | `subsec:aprendizaje-activo` |
+| Replicaciones sin exactitud manual ni muestreo no proporcional | La oracion de c-132 (T14) se extiende, sin duplicarla, con la exactitud del flujo manual sobre el mismo corpus y la asignacion no proporcional con ponderacion (remision a `04:45`, c-134) | `subsec:estudios-replicacion` |
+| Parrafo de priorizacion incoherente y remision erronea al analisis de errores | Un parrafo en tres niveles con `autoref` a las tres prioritarias; remision corregida | `subsec:analisis-errores` |
+| Remisiones anticipadas sin destino (D7) | SSO, prefijo configurable y Kubernetes en el nivel de extensiones; parametros de inferencia en 11.1 | `sec:recomendaciones` |
+
+Lectura de las consignas previas: la validacion sobre un corpus independiente se conserva (`subsec:corpus-independiente`, de c-144, sin tocar; 11.1 remite a ella para confirmar el umbral y el parrafo de priorizacion la clasifica); la dependencia de la ventaja de las reglas respecto del vocabulario (E4 de c-142) se nombra en 11.1 con remision a `subsec:sensibilidad-ajustes`, sin repetir cifras; la cota de 0,15 de la segunda sub-hipotesis es el contraste de 11.3. Para contener el tope de palabras de 11.1 se retiro la oracion "si ninguna senal alcanza el piso, el gate no queda justificado y la salvaguarda es la revision por muestreo" (D2 punto 5, parte final); la revision por muestreo sigue como una de las senales.
+
+### Palabras por subseccion (antes -> despues; tope)
+
+| Subseccion | Antes | Despues | Tope |
+|---|---|---|---|
+| Introduccion (parrafo fundido) | 106 | 137 | 140 |
+| Calibracion del gate (nueva) | 0 | 219 | 220 |
+| Medicion de intervencion (nueva) | 0 | 177 | 180 |
+| Aprendizaje activo | 74 | 107 | 110 |
+| Estudios de replicacion | 112 | 136 | 140 |
+| Base de conocimientos (2 parrafos) | 271 | 152 | 170 |
+| Agente conversacional | 328 | 168 | 170 |
+| Clasificador supervisado, canales, panel, corpus independiente, modelos abiertos | 605 | 605 | sin cambios |
+| **Total** | **1.496** | **1.701** | +205 |
+
+Compensaciones aplicadas (bloque 6): base de conocimientos -119 palabras, agente conversacional -160. Se conservaron todos los elementos exigidos: Twilio Media Streams, vista previa, mu-law 8 kHz a PCM 16 kHz, turnos de habla, costo por minuto, prueba de concepto con la grabacion actual como respaldo (se retiro la deteccion de actividad de voz); y, en la base de conocimientos, dos parrafos, los tres ejemplos de incidentes simples, las dos remisiones y cero citas. El "hacia" mal acentuado de la base de conocimientos desaparecio al reescribir la oracion.
+
+### Verificaciones (tarea 7.3; antes en rojo, despues en verde)
+
+| Verificacion | Antes | Despues |
+|---|---|---|
+| (a) tres rotulos prioritarios precedentes a `ampliacion-canales` y referenciados en el parrafo introductorio | 1 de 3 | 3 de 3 (orden 11.1, 11.2, 11.3) |
+| (b) temas de `ref{sec:recomendaciones}` presentes (SSO, prefijo, Kubernetes, parametros de inferencia) | 0 de 4 | 4 de 4 |
+| (c) numeros del diff en la lista blanca | n/a | 0,15 (vigente), 0,70, 0,85, 1,00, 85 %, 100, 45, 8, 16; ninguno nuevo ni retirado |
+| (d) `verify_citations.py` | PASS | PASS (65 entradas, 65 claves, 115 comandos, 0 huerfanas, 0 sin usar) |
+| (e) topes de palabras | n/a | todos respetados (tabla anterior) |
+| "invertida" / "anti-calibr" | 0 | 0 |
+| "9,5" en el capitulo | 0 | 0 |
+| Partes protegidas (clasificador supervisado, primer parrafo del panel, modelos abiertos) | n/a | `git diff` sin cambios en ellas |
+
+### Compilacion y paginas (tareas 7.1 y 7.2)
+
+- Docker `texlive-thesis` (`latexmk main.tex`, en el arbol): `^!` = 0, `undefined` = 0, `multiply defined` = 0, `main.blg` sin WARN/ERROR, "??" = 0 en el texto del PDF.
+- **Paginas: antes 108 (cuerpo 100, anexos 8); despues `abspage@last{108}`; `Anexos` en p. 101: cuerpo 100, anexos 8; delta 0 / 0.** Capitulo de recomendaciones: antes 89 a 93, despues 89 a 93 (5 paginas, dentro del limite duro); Referencias en p. 94. La prevision del design (+1 pagina) no se materializo porque la p. 93 tenia unas 21 lineas libres y el agregado neto es de +205 palabras (unas 20 lineas).
+- **Margen restante del capitulo: 0 a 2 lineas** en la p. 93 (llena). Cualquier crecimiento de mas de dos lineas en el capitulo (por ejemplo, la correccion de la frase de Touvron por c-139 si se alarga) abre una sexta pagina y rompe la regla (b) (cuerpo 101).
+- Brecha frente al tope provisional 101 (regla (a)): **+7**; regla (b) (cuerpo <= 100): cuerpo 100, margen 0.
+
+### Consignas para otros changes
+
+- **c-135**: hallazgo D7 resuelto aqui (OQ1 incluida); queda sin destino en el capitulo el primer item del alcance excluido de `01-introduccion.tex:74` (integracion con inventario de activos y gestion de configuracion), que remite a `sec:recomendaciones`. La tabla `tab:anexo_gemini_params` califica de "optimizados" los parametros de inferencia mientras `05` dice que no hay optimizacion documentada (hallazgo del design).
+- **c-139**: el capitulo cita `Guo2017_calibration`, `Xiong2024_confidence_elicitation` y `Tian2023_verbalized_confidence` en `subsec:calibracion-gate` (verificar la atribucion: escalado de temperatura de Guo; sobreconfianza y dependencia de la elicitacion de Xiong y Tian; "recalibrable" no se afirma de la confianza verbalizada, solo de un puntaje). `subsec:clasificador-supervisado` no se toco (la frase de Touvron sigue intacta, con "hacia" mal acentuado). Cuidar el margen de 0 a 2 lineas del capitulo.
+- **c-137**: oraciones reescritas con ortografia revisada (introduccion, 11.1, 11.3, aprendizaje activo, replicacion, base de conocimientos, agente). Quedan intactos los defectos preexistentes: "hacia" en el clasificador supervisado, "aquellas" acentuado, "alla" en el panel y "heterogeneos" ya corregido solo en replicacion.
+- **c-141**: fila `+c-136` = 108 / 100 / 8, delta 0 / 0 (prevision 0 a +1); el contrato de rotulos `subsec:calibracion-gate` y `subsec:medicion-intervencion` queda fijado; revision del autor pendiente de OQ1 a OQ3 (PROVISIONAL); `tesis_para_agente.md` no se regenero.
+- **c-140**: si agrega remisiones nuevas a `sec:recomendaciones`, debe darles destino en el capitulo (margen de 0 a 2 lineas).
+
+### Reversibilidad
+
+`git checkout <commit-previo> -- "docs/Tesis/v10 (IA)/paper/sections/10-recomendaciones.tex" docs/Tesis/Correcciones/dictamen-correcciones.md`, recompilar. Si otros changes ya citan `subsec:calibracion-gate` o `subsec:medicion-intervencion`, conservar las subsecciones.
 
 **Estado**: grupo aplicado.
