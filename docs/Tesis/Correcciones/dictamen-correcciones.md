@@ -603,3 +603,341 @@ de sensibilidad completo.
   `grep -c "undefined" main.log` = 0.
 
 **Estado**: grupo aplicado.
+
+## FASE 36 - decisiones G0
+
+**Origen**: change `c-141-integracion-release-v1-2-0`, grupo 1 (tareas 1.1 a 1.7), apply
+parcial al inicio de la familia, ANTES de aplicar c-130 (design D2). Registrado el
+**2026-10-25**. Rama de trabajo: `change/c-141-g0-decisiones` (cortada de `ramagonzalo` en
+`f6c121e`). Solo documentacion: no se modifica ningun `.tex`, codigo ni `CHANGES.md`.
+
+**Convencion de estado de las decisiones**: el usuario (Gonzalo Sevilla, coautor) pidio
+aplicar la familia sin detenerse y NO respondio de forma explicita a OQ1, OQ2, OQ3, OQ4 ni
+OQ7a. Cada decision se registra como **PROVISIONAL (default del design, pendiente de
+confirmacion del autor)**, con la opcion por defecto que fija el propio `design.md`. Una
+confirmacion o un cambio posterior se agrega en esta misma seccion con su fecha, sin
+reescribir la entrada original.
+
+### G0.0 - Linea base movida por c-144 (hecho que condiciona G0.1 y el libro mayor)
+
+La linea base del dictamen era `v1.1.1` = 101 paginas (cuerpo sin anexos 93; encabezado
+"Anexos" en la p. 94). El 2026-10-23 Luca Gomez aplico y fusiono en `main` el change
+`c-144-declarar-procedencia-real-y-ausencia-de-preproduccion` (commit `0c7f5bc`, ya
+incluido en `ramagonzalo`), que recompilo el PDF. Evidencia verificada el 2026-10-25 sobre
+el arbol de `ramagonzalo` (`f6c121e`):
+
+- `grep -o "abspage@last{[0-9]*}" "docs/Tesis/v10 (IA)/paper/main.aux"` devuelve
+  `abspage@last{102}`.
+- `main.toc` contiene `\contentsline {section}{Anexos}{95}{section*.27}`: cuerpo sin
+  anexos = 95 - 1 = 94; anexos = 102 - 94 = 8.
+- Delta de c-144: +1 pagina (101 -> 102), declarado por el propio c-144 en su seccion
+  "Dictamen c-144" de este registro ("Conteo tras aplicar c-144: 102 paginas").
+
+Consecuencia: toda regla de tope se evalua contra el total vigente de **102**, no contra
+101. Los `design.md` y `tasks.md` de la familia que citan 101 como linea base se leen como
+"101 en `v1.1.1`, 102 tras c-144".
+
+### G0.1 - Tope de paginas (OQ1) y compensacion C3 de c-142
+
+**Estado: PROVISIONAL (default del design D2/D3, pendiente de confirmacion del autor).
+Fecha: 2026-10-25.**
+
+| Campo | Valor |
+|---|---|
+| Regla de medicion | **Total del PDF** (rama (a)), medido con `abspage@last` de `main.aux` o `pdfinfo` |
+| Valor | **total <= 101** |
+| Fuente | Criterio duro mas reciente de los changes c-120..c-123 (decision del equipo; NO consta que sea una exigencia de la catedra) |
+| Fecha | 2026-10-25 (registro); los topes de 100/101 de c-116, c-117, c-118 y c-120..c-123 son anteriores |
+
+Advertencia explicita: la linea base ya esta en **102** por c-144, es decir, la familia
+arranca **1 pagina POR ENCIMA** del tope de la rama (a) antes de aplicar cualquier change.
+Con la estimacion de D3 (+5,4 a +12,2 paginas, central +7,7) el total sin compactar queda
+en 107 a 114 paginas (central unas 109,7). La rama (a) exige entonces compactar de 6,4 a
+13,2 paginas, que las palancas de forma P1-P5 (1,6 a 2,9) no cubren; solo cierra la brecha
+la palanca P8 (interlineado, formato de la catedra) o reducir el contenido de la familia.
+Esto debe revisarse con el autor antes de que el acumulado de c-130..c-139 consuma el margen.
+
+**Candidata recomendada para la rama (b)** (a confirmar por el autor y, si corresponde, por
+la catedra): la regla del plan §1.1 de cumplimiento, **cuerpo sin anexos <= 100, anexos sin
+limite**, ya aplicada en c-118 con confirmacion del autor. Sobre la linea base vigente deja
+un margen de 100 - 94 = **6 paginas** de cuerpo, frente a un crecimiento central estimado
+del cuerpo de unas +7,4: la estimacion central supera el margen en unas 1,4 paginas y exige compensaciones locales (palancas P1-P5 o C3).
+
+**Compensacion C3 de c-142** (mover su tabla `tab:sensibilidad-ajustes` a un anexo): **se
+adopta CONDICIONALMENTE, solo si se confirma la rama (b)**. Bajo la rama (a) no rinde (el
+total no baja al mover contenido de 07 a un anexo) y por lo tanto no se aplica.
+
+Efecto sobre la alarma temprana (D4): ver "Libro mayor de paginas". Bajo la rama (a) la
+alarma ya esta activa en la linea base (margen 101 - 102 = -1). Mientras el autor no
+confirme, la familia se aplica con la rama (a) como regla registrada y cada fila del libro
+mayor se toma como dato de decision, no como bloqueo.
+
+### G0.2 - Entorno de compilacion de registro (OQ3)
+
+**Estado: PROVISIONAL, PARCIAL (entorno registrado; reproduccion de la linea base
+PENDIENTE del build Docker). Fecha: 2026-10-25.**
+
+- **Hecho verificado**: en la PC de Gonzalo NO hay `xelatex`, `biber`, `latexmk` ni MiKTeX
+  en el PATH (verificado con `which` y busqueda en Program Files y AppData). La opcion (1)
+  de D6 (MiKTeX local) queda descartada en esta maquina. Tampoco hay `pdfinfo` en el PATH
+  (si `pdftotext`); el conteo de paginas de registro usa `abspage@last` de `main.aux`
+  (equivalente documentado en D4/D6) o el conteo de saltos de pagina de `pdftotext`.
+- **Entorno adoptado para el registro**: imagen Docker `texlive-thesis`
+  (`docs/Tesis/v10 (IA)/paper/Dockerfile`: XeLaTeX + biber + fuentes Microsoft core), la
+  misma que uso Luca para compilar c-144 (su seccion "Dictamen c-144" registra
+  "Compilacion XeLaTeX (Docker `texlive-thesis`)"). Opcion (2) de D6.
+- **Build en curso** en la PC de Gonzalo (lo construye el orquestador en segundo plano).
+  Comando de compilacion previsto (montar `docs/Tesis/v10 (IA)`, no la ruta de v9 de los
+  comentarios del Dockerfile): `docker run --rm -v "$PWD/docs/Tesis/v10 (IA)":/work
+  -w /work/paper texlive-thesis latexmk main.tex`.
+
+Datos completados el 2026-10-25 (build de `texlive-thesis` terminado con exito en la PC de Gonzalo;
+compilacion sobre una copia aislada del arbol de `ramagonzalo` en `f6c121e`, fuente identica a
+`0c7f5bc` en `docs/Tesis/v10 (IA)/`, con los artefactos previos borrados y `latexmk main.tex`):
+
+- `xelatex --version`: `XeTeX 3.141592653-2.6-0.999998 (TeX Live 2026)`
+- `biber --version`: `biber version: 2.22`
+- Prueba de reproduccion de la linea base: `latexmk` salida 0; `abspage@last{102}` (**102 paginas**,
+  coincide con la linea base movida por c-144); `grep -c -i "undefined" main.log` = 0;
+  `grep -c "multiply defined" main.log` = 0; `grep -E "WARN|ERROR" main.blg` sin resultados;
+  `grep -c "^!" main.log` = 0 (0 errores fatales). **Entorno ADOPTADO** como entorno de registro
+  de toda la familia (D6, opcion 2). La tarea 1.2 de `tasks.md` queda cerrada.
+
+Nota sobre la tarea 1.2 de `tasks.md`: su redaccion dice "verificar 101 paginas"; tras c-144
+el valor de reproduccion correcto es 102 (G0.0). El valor 101 se verifica solo, de forma
+opcional, compilando el commit `4160d84` (`v1.1.1`).
+
+### G0.3 - Inclusion de c-140 (OQ4)
+
+**Estado: PROVISIONAL (default del design, pendiente de confirmacion del autor). Fecha:
+2026-10-25.**
+
+Decision por defecto: **c-140 SE INCLUYE como opcional** (`endurecimiento-tecnico-tls-reintentos-e2e`),
+con su texto de tesis en la **posicion 12 de D1** (despues de c-139 y antes de c-137) y sus
+bloques de codigo en paralelo desde G0 (no comparten archivos con la familia). La exclusion
+(archivar c-140 como NO REALIZADO con `--skip-specs`, precedente c-67, dejar el criterio 5
+como limitacion declarada y buscar otro dueno para el `timeout` de 10 s frente a 30 s)
+**queda disponible si el tiempo no alcanza**; se decide antes de aplicar la posicion 12 y se
+registra aqui con su fecha.
+
+### G0.4 - Nombre de la release (OQ2)
+
+**Estado: PROVISIONAL. Fecha: 2026-10-25.** Nombre: **`v1.2.0`**. Confirmable (por ejemplo
+`v2.0.0` si el jurado o la catedra piden una version nueva numerada para el reexamen) hasta
+antes de C1 (tarea 5.1).
+
+### G0.5 - Estado de las caches de predicciones
+
+**Estado: VERIFICADO (hecho, no decision). Fecha de verificacion: 2026-10-25.** Condiciona
+A2, B7b y B8 (c-131) y las sensibilidades E3 y E4 de c-142.
+
+Hallazgos:
+
+- `ls evaluation/*.json`: sin resultados. **Las caches vivas NO existen en el arbol de
+  trabajo**: ni `evaluation/predicciones.json` ni `evaluation/predicciones_calibracion.json`.
+- `.gitignore:71-73` sigue excluyendo ambas rutas (comentario: "derivan del corpus real,
+  PII"). No existe `evaluation/.gitignore`. `git check-ignore -v evaluation/predicciones.json`
+  confirma la regla `.gitignore:72`.
+- **Cambio frente a lo que supone la tarea 1.4**: el change
+  `c-143-publicar-predicciones-como-evidencia-de-evaluacion` (Luca, archivado 2026-10-23,
+  13/13; commit `fec4c42`) publico copias congeladas byte-identicas de las caches bajo
+  `evaluation/evidence/`, **versionadas** (no ignoradas):
+
+| Archivo versionado | `classifier_version` | `corpus_hash` | `generated_at` | Estado frente al corpus vigente |
+|---|---|---|---|---|
+| `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` | `hybrid-v3` | `1fd17d7e...ac5cb` (coincide con el hash canonico del corpus versionado) | `2026-10-07T22:22:01Z` | **Vigente**: es la corrida principal de 200 casos |
+| `evaluation/evidence/predicciones_calibracion_hybrid-v2_2026-10-07.json` | `hybrid-v2` | `5f062e14...f46a93` (NO coincide) | `2026-10-07T20:33:03Z` | **Solo historica**: corpus y clasificador anteriores |
+
+  y `evaluation/evidence/README.md` (campos de `cache_meta`, recalculo por caso por join
+  `caso_id` <-> `id` con `data/corpus_evaluacion_pseudonimizado.json`, advertencia del hash
+  de calibracion). c-143 NO modifica `.gitignore` ni crea el cache vivo.
+- Consecuencias para la familia:
+  - **c-131 (A2, B7b, B8)**: la causa "caches irrecuperables" ya no aplica para la corrida
+    principal; las metricas por etapa/canal y el contraste pareado se pueden recomputar sin
+    invocar Gemini a partir de la evidencia `hybrid-v3` (no hace falta pedir las caches al
+    clon de Luca ni gastar la corrida paga de ~0,05 USD de su opcion alternativa). Para
+    regenerar `evaluation/report.md` por el runner (`PREDICCIONES_PATH =
+    evaluation/predicciones.json`) c-131 decide si copia la evidencia a esa ruta
+    gitignoreada; `HYBRID_CACHE_VERSION` es `hybrid-v3` (cache hit) y el obstaculo de
+    huella por fin de linea (`core.autocrlf=true`, corpus de trabajo en CRLF) lo trata
+    c-131/c-134, no G0.
+  - **c-142 (E3, E4)**: computables sobre la evidencia `hybrid-v3` (sin costo). Su riesgo
+    "las caches no se recuperan -> E3, E4 y niveles a y b no computables" queda atenuado:
+    la cache de la **configuracion final** esta disponible; la ablacion del prompt (nivel c)
+    NO se recupera de ninguna cache (requiere corrida paga, ver G0.7a). La cache de
+    calibracion `hybrid-v2` no sirve para sensibilidades sobre el corpus vigente (hash
+    distinto).
+  - Esto reemplaza, a efectos de c-131 y c-142, la frase de la tarea 1.4 ("no existe en el
+    arbol al 2026-10-22"); la decision definitiva sobre su uso sigue siendo de c-131.
+
+### G0.6 - Orden de aplicacion de la familia (D1)
+
+**Estado: FIJADO por c-141 (D1), con la supersesion parcial de c-144. Fecha: 2026-10-25.**
+
+Aplicacion estrictamente secuencial en `ramagonzalo`, un change por vez, cada uno sobre el
+resultado del anterior:
+
+| # | Change | Recomendaciones | Debe ir despues de |
+|---|---|---|---|
+| 0 | c-141, grupo 1 (G0) | Decisiones bloqueantes (esta seccion) | - |
+| 1 | c-130 | A1; A5a (mitad declarativa; su D9) | G0 |
+| 2 | c-134, bloque de codigo (tareas 1 a 5) | B7a (base), B12 (base) | c-130 |
+| 3 | c-131 | A2, B7b, B8; McNemar | c-130 |
+| 4 | c-142 | A5b (sensibilidad fuera de muestra) | c-130, c-131 |
+| 5 | c-132 | A3 | c-131, c-142 |
+| 6 | c-133 | B4, B5, B6 | c-130, c-131, c-142, c-132 |
+| 7 | c-134, bloque de tesis | B7a, B12, B13b (cronometraje) | c-132, c-133 |
+| 8 | c-138 | Sec. 4 del dictamen; criterio 3 residual | c-130, c-131 |
+| 9 | c-136 | B11 | c-130, c-131 (duras); c-132, c-133, c-138 (blandas) |
+| 10 | c-135 | B9, B10a-d, B13a (cota telefonica) | c-130, c-131, c-134, c-142 |
+| 11 | c-139 | A4, B15, B16a | c-130, c-133, c-134, c-135, c-136 |
+| 12 | c-140 (si se incluye; G0.3) | Criterio 5 residual (texto de tesis) | c-130, c-135, c-136, c-139 |
+| 13 | c-137 | B14 | todos los anteriores |
+| 14 | c-141, grupos 2 a 9 | Cierre y B16b | todos |
+
+Orden lineal: G0 -> c-130 -> c-134 (bloque de codigo) -> c-131 -> c-142 -> c-132 -> c-133 ->
+c-134 (bloque de tesis) -> c-138 -> c-136 -> c-135 -> c-139 -> c-140 (si se incluye) ->
+c-137 -> c-141 (grupos 2 a 9). La unica paralelizacion admitida es la de los bloques de
+codigo de c-140 y la herramienta de c-137, que no tocan la tesis.
+
+**Desacuerdos resueltos** (entregar al orquestador para que ajuste el D7 de c-133):
+
+- **c-132 antes de c-133.** c-133 (D7) proponia c-133 -> c-132; c-132 (D11) y c-136 (D11)
+  proponen c-132 -> c-133. Se adopta c-132 -> c-133: c-132 no depende de c-133, la propiedad
+  por clausula de c-133 D7 evita conflictos en los parrafos compartidos, c-133 puede citar
+  el balance en `tab:cumplimiento-objetivos` y, como compresor del resumen, conviene que
+  pase despues de la oracion de viabilidad de c-132. **Accion del orquestador: actualizar el
+  D7 de c-133.**
+- **c-135 antes de c-139.** c-139 declara que necesita la tabla de trabajos ya completada
+  por c-135; c-135 no depende de c-136 ni de c-139 (fragmentos disjuntos en 03). Se sigue
+  c-136 D11 (c-138 -> c-136 -> c-139) con c-135 intercalado antes de c-139.
+- **c-142 entre c-131 y c-132** (orden que propone c-142 y confirma el orquestador).
+- **c-134 en dos tramos** (codigo antes de c-131; tesis despues de c-133), segun c-134 D12.
+- **c-140 frente a c-133**: no se adelanta; si c-133 ya esta aplicado, c-140 actualiza solo
+  el calificativo de la fila del objetivo 1.
+
+**Divisiones explicitas de recomendaciones**:
+
+- **A5a** (procedencia declarada en `05:78`, `06:75`, `08:18` y primera oracion de
+  `12:135`) -> **c-130** (D9); **A5b** (sensibilidad fuera de muestra, limitacion y evidencia
+  del objetivo 6) -> **c-142**.
+- **B7a** (tiempos manuales por canal y Wilcoxon intra-canal) -> **c-134**; **B7b**
+  (exactitud por canal) -> **c-131**.
+- **B13a** (salvedad de cota inferior del canal telefonico en `09:39`) -> **c-135**;
+  **B13b** (procedimiento de cronometraje en vivo en `04:16`, `08:20`, `11:32`) -> **c-134**.
+- **B16a** (metadatos bibliograficos) -> **c-139**; **B16b** (version de
+  `Gomez2026_repositorio`) -> **c-141** en C1.
+
+**Supersesion parcial por c-144** (nueva respecto del design de c-141; hecho verificado en
+`openspec/changes/archive/2026-10-23-c-144-declarar-procedencia-real-y-ausencia-de-preproduccion/proposal.md`
+y en la seccion "Dictamen c-144" de este registro):
+
+- **c-130** conserva magnitudes por etapa, alcance del gate y criterio de cortocircuito, pero
+  **aplica T04, T12, T13 y T14 solo como verificacion** (los resuelve c-144: procedencia
+  declarada en `05`, `06`, `08` y `12`; Anexo H; advertencia de `evaluation/README.md`;
+  subseccion `subsec:corpus-independiente`). No reescribe lo que c-144 ya dejo en `main`.
+- **c-142** **omite los requisitos ya cubiertos por c-144** (D11/D13/T08: los tres
+  requisitos `ADDED` de procedencia, ubicacion veraz del historial del prompt y advertencia
+  metodologica; retirados de c-130 y c-142 en el commit `90b0b9b`). Conserva su analisis de
+  sensibilidad completo.
+- c-144 es la fuente canonica de esos tres requisitos; al fusionar el PR #40 los bloques
+  `ADDED` correspondientes ya son no-op.
+
+**Regla de numeracion de las secciones del memo** (`docs/Tesis/Correcciones/numeros-canonicos.md`):
+el primero en aplicarse conserva la "Seccion 3.7"; cada change posterior que cree una
+seccion propia toma el siguiente numero libre al aplicar y corrige sus propias remisiones
+("ver seccion 3.N", su grupo en este registro, la evidencia de sus tareas). Verificado el
+2026-10-25 con `grep -n "^## \|^### " numeros-canonicos.md`: las secciones vigentes son 3.1
+a 3.6 (3.6 = marco metrico unificado, c-108), 4, 5, 6 y 7; **no existe 3.7**.
+**c-144 NO ocupo un numero de la serie 3.N**: sus 15 lineas agregadas
+(`git show 0c7f5bc -- numeros-canonicos.md`) son el **item 6 de la seccion 7 "Decisiones no
+resolubles"** (conjunto de ~100 incidentes de preproduccion, no verificable). No hay
+colision: la secuencia esperada se mantiene: **3.7 c-130, 3.8 c-131, 3.9 c-142, 3.10 c-132,
+3.11 c-133, 3.12 c-134**. La consolidacion de c-141 (tarea 2.7) no debe renumerar el item 6
+de la seccion 7 y debe tratarlo como existente.
+
+**Obligacion de libro mayor**: cada change de la familia agrega su fila al libro mayor de
+paginas (subseccion siguiente) despues de su apply, con commit, total, cuerpo sin anexos,
+anexos, delta y estado; el orquestador lo incluye en cada prompt de apply. c-141 consolida y
+contrasta con el PDF final.
+
+**Regla de ramas** (acordada con el usuario, 2026-10-25): cada change de la familia se aplica
+en su propia rama git **`change/<nombre-del-change>`** creada desde **`ramagonzalo`**; al
+terminar se **fusiona localmente en `ramagonzalo`** y la rama siguiente se corta de ese
+resultado (aplicacion secuencial, coherente con D1). **Sin push ni PR sin confirmacion del
+usuario.** El G0 se aplico en `change/c-141-g0-decisiones`. Los changes de codigo (bloque de
+codigo de c-134, c-131, c-142) siguen la misma regla. Los tags y el PR de c-141 mantienen
+sus checkpoints HIGH propios (tareas 8.5 y 8.8).
+
+### G0.7 - Checkpoints HIGH de c-142 (OQ7)
+
+**(a) Ablacion paga del prompt (nivel c).**
+**Estado: NO AUTORIZADA por ahora. Fecha: 2026-10-25.** Alcance consultado: 138
+invocaciones (los 69 casos de la etapa Gemini, dos variantes del prompt), del orden de 0,03
+USD y como maximo 0,10 USD. El usuario no respondio a la consulta y no hay autorizacion
+registrada. **Consecuencia para c-142**: la sensibilidad del prompt (nivel c) se declara
+**"no cuantificada"** (rama minima de su limitacion y su subseccion); no se ejecuta ninguna
+invocacion paga. Una autorizacion posterior se registra AQUI con fecha y, en ese caso, c-142
+ejecuta el nivel c antes de su cierre. Sin esa autorizacion, ninguna tarea de la familia
+debe invocar a Gemini (control de la tarea 2.8).
+
+**(b) Conjunto de ~100 incidentes de preproduccion del Anexo H.**
+**Estado: RESUELTO por c-144 (hecho verificado). Fecha de resolucion: 2026-10-23
+(c-144); registrado aqui 2026-10-25.** El conjunto **no existe**: `rg -l "incidentes de
+preproduccion" data/ evaluation/` no devuelve resultados, `data/` y `evaluation/` solo
+contienen el corpus de 200 casos y sus derivados, y `docs/prompt_gemini_history/` nunca
+existio (verificado inexistente el 2026-10-25). c-144 declara el desenlace "no existen / no
+se localizan" (item 6 de la seccion 7 del memo). **Consecuencia para c-142**: **ausencia
+declarada**, sin datos personales involucrados (no hay conjunto, por lo tanto no aplica la
+Ley 25.326 a este checkpoint ni hace falta aprobacion de pseudonimizacion). c-142 NO intenta
+usar un conjunto independiente. **Reversible si** el autor aporta el conjunto pseudonimizado
+y etiquetado: corresponde entonces un change de gobernanza HIGH propio.
+
+### Libro mayor de paginas (D4)
+
+Medicion: total = `\@abspage@last` de `main.aux` (`grep -o "abspage@last{[0-9]*}" main.aux`)
+o `pdfinfo main.pdf | grep Pages` (no disponible en esta maquina) o, como equivalente, el
+conteo de saltos de pagina de `pdftotext -enc UTF-8 main.pdf -`; cuerpo sin anexos = pagina
+del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) menos 1; anexos
+= total - cuerpo. Todos los conteos de registro salen del entorno de G0.2.
+
+| Change | Commit | Total | Cuerpo sin anexos | Anexos | Delta total | Delta cuerpo | Regla vigente | Estado |
+|---|---|---|---|---|---|---|---|---|
+| base `v1.1.1` | `4160d84` | 101 | 93 | 8 | - | - | (a) total <= 101 | Medido (dictamen / `main.toc` de v1.1.1) |
+| `+c-144` (main) | `0c7f5bc` | 102 | 94 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{102}`; `Anexos` en p. 95 |
+
+Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
+Previsiones declaradas por cada change (se contrastan al cerrar):
+
+| Change | Prevision declarada (paginas) |
+|---|---|
+| c-130 | +0,3 a +0,9 netas (bruto +0,7 a +0,9) |
+| c-131 | 0 a +0,9 |
+| c-142 | **+1,0 a +1,4 (central +1,2)** |
+| c-132 | +1 a +3 (objetivo neto <= +1) |
+| c-133 | 0 |
+| c-134 | 0 a +0,4 |
+| c-135 | 0 |
+| c-136 | 0 a +1 |
+| c-138 | +2 a +3 |
+| c-139 | +1 (bibliografia) |
+| c-140 (opcional) | 0 a +0,5 |
+| c-137 | 0 |
+| c-141 | +0,1 a +0,6 (Anexo I) |
+| **Total sin c-140** | **+5,4 a +12,2 (central +7,7)** |
+
+Proyeccion sobre la linea base vigente de 102: total 107 a 114 (central unas 109,7); cuerpo
+sin anexos 99,3 a 105,6, central unas 101,4 (el Anexo I es el unico crecimiento de anexos).
+
+**Alarma temprana**: si el delta acumulado supera el margen de la regla vigente menos 1
+pagina de reserva, el orquestador se detiene y consulta antes de aplicar el change
+siguiente. Aplicada a las dos reglas sobre la linea base de 102 / 94:
+
+- Rama (a), total <= 101: margen = 101 - 102 = **-1**; umbral de alarma = -1 - 1 = -2.
+  **La alarma ya esta superada en la linea base** (el acumulado de la familia parte en +1
+  por c-144). Efecto provisional: la familia se aplica igual (instruccion del usuario) y
+  cada fila del libro mayor se reporta con su brecha frente a 101.
+- Rama (b), cuerpo <= 100: margen = 100 - 94 = **6**; la alarma salta cuando el delta
+  acumulado del cuerpo supera **5** paginas.
+
+**Verificacion de la fila base**: la fila `v1.1.1` contiene los tres valores (101, 93, 8).
