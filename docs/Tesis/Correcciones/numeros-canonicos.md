@@ -12,6 +12,7 @@ de las ramas consumidoras").
 - **Change**: `c-102-congelar-numeros-canonicos-tesis` (Gate 0 del plan de corrección del dictamen CONEAU 2026-10-20).
 - **Upsert c-108**: `c-108-metricas-paradigma-y-clase-unitaria` agrega la Sección 3.6 (marco métrico unificado e intervalos de confianza: por clase, de conjunto y del kappa). No modifica ningún valor canónico de la Sección 3. Fecha: 2026-10-21.
 - **Upsert c-130**: `c-130-gate-revision-humana-por-etapa` agrega la Sección 3.7 (gate de revisión por etapa y punto de operación del cortocircuito), un punto en la Sección 4 (alcance del gate por etapa) y el punto 7 de la Sección 7 (procedencia de la cache FORCE-ESCALATE y salvedad de estimación dentro de la muestra). No modifica ningún valor vigente de las Secciones 3.1 a 3.6. Fecha: 2026-10-25.
+- **Upsert c-134**: `c-134-contrastes-estadisticos-y-desagregado-canal` (bloque de código, aplicado el 2026-10-25) agrega la Sección 3.8 (tiempos por canal, contrastes, `d_z`, efecto mínimo detectable, sensibilidad del redondeo y granularidad de la medición manual), notas de convención bilateral en dos filas de la Sección 3.1 y actualiza las remisiones `report.md:99` → `report.md:140` (la línea del SHA-256 se desplazó al agregarse tres subsecciones a "## Tiempos"). No modifica ningún valor vigente de las Secciones 3.1 a 3.7. Los números de sección siguientes se corren (ver `dictamen-correcciones.md`, G0.6). El bloque de tesis de c-134 (grupos 6 a 8) cita estos valores y queda pendiente.
 - **Artefacto**: este memo. No se edita ningún `.tex` en este change.
 - **Fecha de verificación**: 2026-10-21.
 - **SHA-256 del corpus** (`data/corpus_evaluacion_pseudonimizado.json`):
@@ -86,9 +87,9 @@ citable como resultado) y `condicional` (depende de una decisión editorial).
 | Tiempo automatizado medio: `17,76 s` | `07-resultados.tex:10`, `07-resultados.tex:22`, `00-resumen.tex:13` | vigente | Mediana `17,47 s` (`07-resultados.tex:22`). |
 | Reducción relativa de tiempo: `71,2 %` | `07-resultados.tex:10`, `07-resultados.tex:22`, `08-discusion.tex:8` | vigente | Cota superior (manual redondeado al alza, `07-resultados.tex:63`). |
 | Reducción media por incidente: `43,82 s` | `report.md:83` | vigente | El `.tex` la aproxima como `43,8 s` (`08-discusion.tex:14`). |
-| Wilcoxon `W = 363` | `07-resultados.tex:55`, `00-resumen.tex:13` | vigente | `W = min(T+, T−)`, dos colas (`report.md:69`). |
+| Wilcoxon `W = 363` | `07-resultados.tex:55`, `00-resumen.tex:13` | vigente | `W = min(T+, T−)`, dos colas (`report.md:69`). Contraste **bilateral**, conservador frente a `H1` direccional (c-134; ver Sección 3.8). |
 | `T+ = 19.737`, `T− = 363` | `report.md:73`, `07-resultados.tex:55` | vigente | |
-| p-valor `p = 3,08e-32` | `07-resultados.tex:55`, `00-resumen.tex:13` | vigente | |
+| p-valor `p = 3,08e-32` | `07-resultados.tex:55`, `00-resumen.tex:13` | vigente | **Bilateral** (conservador frente a `H1: M_manual > M_automatizado`); el `p` unilateral es `1,54e-32` (Sección 3.8, `report.md:123`). |
 | Tamaño del efecto `r = 0,9639` | `07-resultados.tex:55`, `07-resultados.tex:61`, `00-resumen.tex:13` | vigente | |
 | Pares a favor `188 / 200` (`94,0 %`) | `07-resultados.tex:55`, `07-resultados.tex:61`, `09-conclusiones.tex:16` | vigente | Pares no a favor: `12` (`report.md:86`). |
 
@@ -130,7 +131,7 @@ citable como resultado) y `condicional` (depende de una decisión editorial).
 
 | Valor canónico | Procedencia (archivo:línea) | Estado | Notas |
 |---|---|---|---|
-| SHA-256 del corpus | `report.md:99` | vigente | `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb`. |
+| SHA-256 del corpus | `report.md:140` | vigente | `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb`. |
 | Tamaño del corpus: `n = 200` | `report.md:3`, `04-marco-metodologico.tex:45` | vigente | |
 | Kappa de Cohen: `0,87` (doble etiquetado) | `00-resumen.tex:11` | vigente | Contexto de validez; no es una métrica del clasificador. Su IC **no es computable** desde las fuentes permitidas (ver 3.6). |
 | Soporte `Bases de Datos`: `n = 1` | `report.md:44`, `08-discusion.tex:22` | vigente | Clase NO estimable (`F1 = 0,0000`). Ver ítem 6. |
@@ -219,6 +220,111 @@ porque el vocabulario del filtro, las reglas de frontera del prompt y el punto
 de operación se ajustaron sobre el mismo corpus (c-71, c-72 y c-74; declarado por
 c-144 en `08-discusion.tex:18`); (ii) `88/130` proviene de una cache que no es la
 corrida oficial y su procedencia queda registrada en el punto 7 de la Sección 7.
+
+### 3.8 Tiempos por canal, contrastes y sensibilidad (c-134)
+
+Valores del bloque "## Tiempos" de `evaluation/report.md` regenerado el 2026-10-25 con
+`python -m evaluation.run_evaluation --solo-tiempos` (sin Gemini ni predicciones; el
+corpus del checkout de Windows con CRLF da la huella canónica `1fd17d7e…`, en
+`evaluation/report.md:140`). Las funciones que los calculan están en
+`evaluation/stats.py`. Convenciones fijadas por el change:
+
+- El desvío estándar es **muestral** (divisor `n − 1`) en todo el documento.
+- Los `p` de tiempos se informan **bilaterales** (`W = min(T+, T−)`), conservadores
+  frente a la hipótesis direccional `H1: M_manual > M_automatizado`; el `p` unilateral
+  se informa aparte (`alternative="greater"` sobre `manual − automatizado`, una segunda
+  llamada a `scipy`, no la mitad del bilateral).
+- `d_z = media(d) / desvío(d)` con `d = manual − automatizado` (desvío muestral); no es
+  el rank-biserial `r` (los rótulos no se intercambian).
+- El efecto mínimo detectable (MDE, en escala `d_z`) es
+  `(z_{1−α/2} + z_{potencia}) / raíz(n · ARE)` con `α = 0,05` bilateral, potencia `0,80`
+  y `ARE = 1` (sin ajuste) o `ARE = 0,864` (cota inferior de Hodges-Lehmann, `108/125`,
+  de la eficiencia de la prueba de rangos frente a la `t` pareada).
+
+**Brazo manual** (`s`). Procedencia: `evaluation/report.md:107-110`;
+`evaluation/stats.py::estadisticos_descriptivos`.
+
+| Ámbito | n | Media | Mediana | Desvío | Mínimo–máximo | Estado |
+|---|---|---|---|---|---|---|
+| Global | 200 | `61,585` | `50` | `44,896` | `10`–`300` | vigente |
+| Llamada telefónica | 81 | `87,247` | `72` | `48,899` | `30`–`220` | vigente |
+| Correo electrónico | 66 | `56,515` | `50` | `35,809` | `20`–`300` | vigente |
+| Formulario web | 53 | `28,679` | `20` | `16,442` | `10`–`100` | vigente |
+
+**Brazo automatizado** (`s`). Misma procedencia.
+
+| Ámbito | n | Media | Mediana | Desvío | Mínimo–máximo | Estado |
+|---|---|---|---|---|---|---|
+| Global | 200 | `17,761` | `17,471` | `13,516` | `0,525`–`65,834` | vigente |
+| Llamada telefónica | 81 | `20,088` | `18,698` | `6,025` | `14,027`–`59,150` | vigente |
+| Correo electrónico | 66 | `27,655` | `25,818` | `14,200` | `8,970`–`65,834` | vigente |
+| Formulario web | 53 | `1,882` | `1,265` | `1,266` | `0,525`–`4,162` | vigente |
+
+**Reducción relativa y pares no más rápidos.** Procedencia:
+`evaluation/report.md:107-110`; `evaluation/stats.py::reduccion_relativa` y
+`reduccion_tiempos`.
+
+| Ámbito | Reducción de la media | Reducción de la mediana | Pares no más rápidos | Estado |
+|---|---|---|---|---|
+| Global | `71,16 %` | `65,06 %` | `12` de `200` | vigente |
+| Llamada telefónica | `76,98 %` | `74,03 %` | `0` de `81` | vigente |
+| Correo electrónico | `51,07 %` | `48,36 %` | `12` de `66` | vigente |
+| Formulario web | `93,44 %` | `93,67 %` | `0` de `53` | vigente |
+
+Los `12` pares no más rápidos del global (`report.md:86`) pertenecen **todos** al canal
+correo electrónico. Los `71,16 %` coinciden con los `71,2 %` de la Sección 3.1 (misma
+cifra con más decimales). Sustituyen a la afirmación "reducciones positivas en los tres"
+canales de `08-discusion.tex:20`, que no tenía tabla de respaldo.
+
+**Contraste direccional, tamaño del efecto estandarizado y efecto mínimo detectable.**
+Procedencia: `evaluation/report.md:123-126`; `evaluation/stats.py::wilcoxon_tiempos_detallado`
+(`p`, `p_unilateral`), `tamano_efecto_dz`, `efecto_minimo_detectable` y
+`ARE_WILCOXON_MINIMA`.
+
+| Ámbito | n | `p` bilateral | `p` unilateral | `d_z` | MDE (`ARE = 1`) | MDE (`ARE = 0,864`) | Estado |
+|---|---|---|---|---|---|---|---|
+| Global | 200 | `3,08e-32` | `1,54e-32` | `1,0004` | `0,1981` | `0,2131` | vigente |
+| Llamada telefónica | 81 | `5,36e-15` | `2,68e-15` | `1,3674` | `0,3113` | `0,3349` | vigente |
+| Correo electrónico | 66 | `4,78e-09` | `2,39e-09` | `0,7345` | `0,3449` | `0,3710` | vigente |
+| Formulario web | 53 | `2,39e-10` | `1,19e-10` | `1,6147` | `0,3848` | `0,4140` | vigente |
+
+`d_z` observado frente al mínimo detectable del global: `1,0004 / 0,1981 = 5,05` veces
+(`1,0004 / 0,2131 = 4,69` con `ARE`), es decir, más de cuatro veces; por canal, `d_z`
+`0,73`–`1,61` frente a mínimos `0,31`–`0,38` (`0,33`–`0,41` con `ARE`). Los `p` y `d_z`
+del global y de cada canal son la base de `tab:tiempos-canal`; `W`, `T+`, `T−` y `r` por
+canal quedan en el reporte (`report.md:95-97`) y no se citan en la tesis (telefonía y
+formulario web tienen `W = 0` y `r = 1`, ver el requisito "Rigor inferencial del tamaño
+del efecto").
+
+**Sensibilidad del redondeo manual y granularidad** (conjunto global, descuento fijo a
+cada `tiempo_manual_s`). Procedencia: `evaluation/report.md:135-136` y `:138`;
+`evaluation/stats.py::escenario_sensibilidad` y `granularidad_manual`.
+
+| Descuento | Media manual ajustada | Reducción de la media | `p` bilateral | `p` unilateral | `r` | Estado |
+|---|---|---|---|---|---|---|
+| `5 s` | `56,585 s` | `68,61 %` | `4,87e-30` | `2,44e-30` | `0,9286` | vigente |
+| `10 s` | `51,585 s` | `65,57 %` | `1,8e-26` | `8,98e-27` | `0,8683` | vigente |
+
+| Valor canónico | Procedencia (archivo:línea) | Estado | Notas |
+|---|---|---|---|
+| Múltiplos exactos de `5 s` en `tiempo_manual_s`: `199 / 200` | `evaluation/report.md:138`; `evaluation/stats.py::granularidad_manual` | vigente | El único valor que no es múltiplo de `5` es `72 s`. Precisa el instrumento: la planilla manual tiene resolución efectiva de `5 s`. |
+| Múltiplos exactos de `10 s`: `180 / 200` | `evaluation/report.md:138` | vigente | Vincula el escenario de `10 s` con la resolución efectiva de la planilla. |
+
+**Convención del desvío estándar y diferencias pareadas.**
+
+| Valor canónico | Procedencia (archivo:línea) | Estado | Notas |
+|---|---|---|---|
+| Desvío estándar manual: `44,9 s` | `evaluation/report.md:107` (`44,8961`) | vigente | Muestral; ya era la convención de `07-resultados.tex:23`. El poblacional daría `44,8` y no se cita. |
+| Desvío estándar automatizado: `13,52 s` | `evaluation/report.md:107` (`13,5164`) | vigente | Muestral (divisor `n − 1`). Reemplaza a `13,48`. |
+| Desvío estándar automatizado: `13,48 s` | `07-resultados.tex:10,23`, `08-discusion.tex:12` (a corregir por la rama de tesis de c-134) | **retirado** | Convención poblacional (divisor `n`): `13,5164 × raíz(199/200) = 13,4825`. Se unifica en muestral (decisión D3 del change). Reversible si el autor adopta divisor `n` en todo el documento. |
+| Diferencias pareadas: media `43,82 s`, desvío muestral `43,81 s` | media: `evaluation/report.md:83` (`43,82`); desvío: recálculo offline del 2026-10-25 con `estadisticos_descriptivos` sobre los 200 pares (`43,8067`), no figura en el reporte | vigente | `d_z = 43,8244 / 43,8067 = 1,0004` (coincide con la tabla de contrastes). |
+
+**Reversibilidad.** El `p` bilateral queda como valor principal para no mover `W`, `T+`,
+`r` ni las cifras ya canónicas de la Sección 3.1; si el autor prefiere el unilateral como
+principal, el cambio se limita a `01-introduccion.tex:32`, `07-resultados.tex:54` y a
+esta sección. El MDE por aproximación normal reproduce las cifras vigentes de la tesis
+(`0,20` y `0,21`); una potencia por `t` no central daría una diferencia
+despreciable que no justifica la dependencia adicional.
 
 ## 4. Contingencia del gate de intervención humana
 
@@ -335,9 +441,10 @@ Fuentes primarias (solo lectura, sin edición):
   `sector_asignado`, `sector_predicho`, `confianza`, `etapa`,
   `sectores_adicionales`; `cache_meta.corpus_hash` verificado.
 - `evaluation/report.md` — líneas `3`, `9-11`, `18-20`, `41-45`, `49-53`,
-  `69`, `73`, `83`, `86`, `99`.
+  `69`, `73`, `83`, `86`, `140` (SHA-256; era `99` antes de c-134, que agrega
+  las líneas `99-138` en "## Tiempos").
 - `data/corpus_evaluacion_pseudonimizado.json` — verdad multietiqueta (200
-  casos); SHA-256 verificado contra `report.md:99`.
+  casos); SHA-256 verificado contra `report.md:140`.
 - `evaluation/metrics.py` — `calibracion_por_bandas`, `contingencia_confianza`,
   `exactitud_subconjunto`, `perdida_hamming`, `f1_micro`, `jaccard_promedio`,
   `f1_macro`, `intervalo_wilson`, `intervalos_por_clase`, `intervalos_conjunto`.

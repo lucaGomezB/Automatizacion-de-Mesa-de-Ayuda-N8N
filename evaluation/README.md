@@ -80,6 +80,32 @@ Esto:
 3. Persiste las predicciones en `evaluation/predicciones.json`
 4. Escribe el reporte en `evaluation/report.md`
 
+### Regenerar solo la sección "Tiempos" (`--solo-tiempos`)
+
+```bash
+# Desde la raíz del repositorio (no requiere GEMINI_API_KEY ni predicciones.json):
+PYTHONPATH=App/Backend python -m evaluation.run_evaluation --solo-tiempos
+```
+
+La sección "Tiempos" depende únicamente del corpus (pares `tiempo_manual_s` /
+`tiempo_automatizado_s`), de modo que este modo la recalcula sin pagar:
+
+- **Sin Gemini y sin gate pago**: no construye ni invoca el clasificador y no
+  exige `--confirm-paid` ni `EVALUATION_CONFIRM_PAID`.
+- **Sin cache**: no lee ni escribe `evaluation/predicciones.json`.
+- **Reemplazo acotado**: reescribe solo el bloque `## Tiempos` de
+  `evaluation/report.md` (hasta el siguiente encabezado `## ` o el pie `---`);
+  el resto del reporte queda idéntico byte a byte y el bloque resultante es el
+  mismo que produce la corrida completa sobre el mismo corpus.
+- **Requiere un reporte previo**: si `evaluation/report.md` no existe, termina
+  con un error que indica generar primero el reporte completo.
+- **Incompatible con `--force`, `--no-cache` y `--confirm-paid`**: combinarlo
+  con ellos es un error de uso (código de salida 2).
+
+La huella SHA-256 del corpus que emite el reporte normaliza los fines de línea
+a LF: un checkout de Windows con CRLF y uno de Linux con LF producen la misma
+huella (la del blob versionado).
+
 ## Gate de Corrida Paga
 
 El runner invoca el clasificador real (Gemini) y esa corrida tiene costo. Antes
@@ -169,6 +195,22 @@ El reporte incluye (design D5):
 - **Métricas por sector (one-vs-rest)**: precisión, sensibilidad, F1 y soporte.
 - **Métricas de conjunto**: subset accuracy, Hamming loss, micro-F1, macro-F1 y
   Jaccard (IoU) promedio.
+- **Tiempos** (se puede regenerar sola con `--solo-tiempos`): normalidad
+  (Shapiro-Wilk), Wilcoxon global, reducción de tiempos y desglose por canal,
+  más tres subsecciones aditivas:
+  - **Descriptivos global y por canal**: media, mediana, desvío muestral
+    (divisor n − 1), mínimo y máximo de los brazos manual y automatizado, la
+    reducción relativa de media y mediana y los pares en que el flujo
+    automatizado no fue más rápido.
+  - **Contraste direccional y tamaño del efecto estandarizado**: p bilateral
+    (convención W = min(T+, T−)), p unilateral de H1 `manual > automatizado`,
+    `d_z = media(d) / desvío(d)` y efecto mínimo detectable (MDE, en escala
+    `d_z`; alfa = 0.05 bilateral, potencia = 0.80, con ARE = 1 y con la cota
+    ARE = 0.864 de la prueba de rangos frente a la t pareada).
+  - **Escenarios de sensibilidad del redondeo manual**: descuentos de 5 s y
+    10 s a cada tiempo manual (media ajustada, reducción relativa, p bilateral,
+    p unilateral y r) y la granularidad de `tiempo_manual_s` (cuántos valores
+    son múltiplos de 5 s y de 10 s).
 
 ## Decisión D1: Import Directo vs HTTP al Backend
 
