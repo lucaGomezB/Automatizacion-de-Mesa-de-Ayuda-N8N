@@ -562,3 +562,100 @@ def granularidad_manual(
     return {
         paso: sum(1 for valor in serie if valor % paso == 0) for paso in multiplos
     }
+
+
+# ---------------------------------------------------------------------------
+# Contraste pareado de McNemar (c-131, D13)
+# ---------------------------------------------------------------------------
+# Con menos discordancias que este umbral el p primario es el binomial exacto.
+_UMBRAL_DISCORDANCIAS_EXACTO = 25
+
+
+@dataclass(frozen=True)
+class ResultadoMcNemar:
+    """
+    Contraste de McNemar sobre dos secuencias pareadas de aciertos.
+
+    Attributes:
+        pares: Cantidad de pares (ambas + solo_a + solo_b + ninguna).
+        ambas: Pares que acierta cada serie.
+        solo_a: `b`, pares que acierta solo la primera serie.
+        solo_b: `c`, pares que acierta solo la segunda serie.
+        ninguna: Pares que no acierta ninguna.
+        aplicable: False si no hay discordancias (`b + c == 0`).
+        estadistico: Chi-cuadrado con corrección de continuidad
+            `max(0, |b - c| - 1)^2 / (b + c)` (1 gl); None si no aplicable.
+        p_corregido: Valor p del chi-cuadrado corregido; None si no aplicable.
+        p_exacto: Valor p binomial exacto bilateral
+            `min(1, 2 P(X <= min(b, c)))`, `X ~ Bin(b + c; 0,5)`; None si no aplicable.
+        p_primario: El exacto si `b + c < 25` y el corregido en otro caso.
+        criterio: "exacto", "corregido" o "no aplicable".
+    """
+
+    pares: int
+    ambas: int
+    solo_a: int
+    solo_b: int
+    ninguna: int
+    aplicable: bool
+    estadistico: Optional[float]
+    p_corregido: Optional[float]
+    p_exacto: Optional[float]
+    p_primario: Optional[float]
+    criterio: str
+
+
+def contraste_mcnemar(
+    aciertos_a: Sequence[bool],
+    aciertos_b: Sequence[bool],
+) -> ResultadoMcNemar:
+    """
+    Contraste de McNemar entre dos secuencias pareadas de aciertos (mismos casos,
+    mismo orden). Función pura.
+
+    Raises:
+        ValueError: Si las secuencias tienen distinta longitud.
+    """
+    from scipy.stats import binom, chi2
+
+    if len(aciertos_a) != len(aciertos_b):
+        raise ValueError(
+            "Las secuencias de aciertos deben tener la misma longitud. "
+            f"Se recibieron: a={len(aciertos_a)}, b={len(aciertos_b)}."
+        )
+    ambas = solo_a = solo_b = ninguna = 0
+    for a, b in zip(aciertos_a, aciertos_b):
+        if a and b:
+            ambas += 1
+        elif a:
+            solo_a += 1
+        elif b:
+            solo_b += 1
+        else:
+            ninguna += 1
+
+    discordantes = solo_a + solo_b
+    pares = ambas + discordantes + ninguna
+    if discordantes == 0:
+        return ResultadoMcNemar(
+            pares, ambas, solo_a, solo_b, ninguna, False, None, None, None, None,
+            "no aplicable",
+        )
+
+    estadistico = max(0, abs(solo_a - solo_b) - 1) ** 2 / discordantes
+    p_corregido = float(chi2.sf(estadistico, 1))
+    p_exacto = min(1.0, 2.0 * float(binom.cdf(min(solo_a, solo_b), discordantes, 0.5)))
+    exacto = discordantes < _UMBRAL_DISCORDANCIAS_EXACTO
+    return ResultadoMcNemar(
+        pares=pares,
+        ambas=ambas,
+        solo_a=solo_a,
+        solo_b=solo_b,
+        ninguna=ninguna,
+        aplicable=True,
+        estadistico=estadistico,
+        p_corregido=p_corregido,
+        p_exacto=p_exacto,
+        p_primario=p_exacto if exacto else p_corregido,
+        criterio="exacto" if exacto else "corregido",
+    )

@@ -104,7 +104,29 @@ Sistemas & 2 & 0 & 5 & 2 & \textbf{7} & \textbf{16} \\
 \label{fig:matriz_confusion}
 \end{figure}
 
-Los valores de precisión, sensibilidad (recall) y F1 por clase, con su intervalo de confianza al 95~\% \parencite{Sokolova2009_performance_measures}, se presentan en la Tabla~\ref{tab:metricas}. La evaluación se enmarca en un único marco métrico cuya referencia de verdad es multietiqueta (107 de los 200 casos, 53,5~\%), frente a una salida del clasificador de una etiqueta principal: la exactitud estricta del 73,5~\% (147/200) es la métrica primaria monoetiqueta, con IC de Wilson al 95~\% de [67,0~\%, 79,1~\%]. El macro-F1 de umbral se reporta sobre las cuatro clases estimables (0,6508), excluida Bases de Datos (\(n = 1\), no estimable), y el de cinco clases (0,5207) se conserva como valor informativo. Las métricas secundarias se calculan contra el conjunto de verdad del corpus (multietiqueta): subset accuracy 0,43 (IC [0,36; 0,50]), Hamming loss 0,3586 (IC [0,31; 0,41]) y micro-F1 0,6654 (IC [0,62; 0,71]). Estas métricas de conjunto penalizan estructuralmente una salida forzada a una sola etiqueta y no son equivalentes de la exactitud estricta: el micro-F1 acumula los aciertos por etiqueta y no por caso, de modo que su valor (0,6654) no debe leerse como una exactitud (0,7350). De los 200 casos, 131 fueron resueltos por la etapa determinística del clasificador y 69 requirieron la etapa Gemini.
+\begin{table}[p]
+\centering
+\caption{Exactitud estricta y laxa por etapa del pipeline y por canal de origen}
+\label{tab:exactitud-etapa-canal}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.6cm} >{\centering\arraybackslash}p{1.2cm} >{\centering\arraybackslash}p{4.6cm} >{\centering\arraybackslash}p{4.6cm}@{}}
+\toprule
+\textbf{Ámbito} & \textbf{Casos} & \textbf{Exactitud estricta (IC 95~\%)} & \textbf{Exactitud laxa (IC 95~\%)} \\
+\midrule
+Global & 200 & 147/200 = 0,735 [0,670; 0,791] & 179/200 = 0,895 [0,845; 0,930] \\
+Etapa determinística & 131 & 97/131 = 0,740 [0,659; 0,808] & 119/131 = 0,908 [0,847; 0,947] \\
+Etapa Gemini & 69 & 50/69 = 0,725 [0,610; 0,816] & 60/69 = 0,870 [0,770; 0,930] \\
+Llamada telefónica & 81 & 53/81 = 0,654 [0,546; 0,749] & 70/81 = 0,864 [0,773; 0,922] \\
+Correo electrónico & 66 & 51/66 = 0,773 [0,658; 0,857] & 61/66 = 0,924 [0,835; 0,967] \\
+Formulario web & 53 & 43/53 = 0,811 [0,686; 0,894] & 48/53 = 0,906 [0,797; 0,959] \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+{\footnotesize\textit{Fuente:} elaboración propia (\(n = 200\)); IC de Wilson. La etapa de reserva no registró casos; la composición sectorial y la proporción multietiqueta difieren entre canales.\par}
+\end{table}
+
+Los valores de precisión, sensibilidad (recall) y F1 por clase, con su intervalo de confianza al 95~\% \parencite{Sokolova2009_performance_measures}, se presentan en la Tabla~\ref{tab:metricas}. La evaluación se enmarca en un único marco métrico cuya referencia de verdad es multietiqueta (107 de los 200 casos, 53,5~\%), frente a una salida del clasificador de una etiqueta principal: la exactitud estricta del 73,5~\% (147/200) es la métrica primaria monoetiqueta, con IC de Wilson al 95~\% de [67,0~\%, 79,1~\%]. El macro-F1 de umbral se reporta sobre las cuatro clases estimables (0,6508), excluida Bases de Datos (\(n = 1\), no estimable), y el de cinco clases (0,5207) se conserva como valor informativo. Las métricas secundarias se calculan contra el conjunto de verdad del corpus (multietiqueta): subset accuracy 0,43 (IC [0,36; 0,50]), Hamming loss 0,3586 (IC [0,31; 0,41]) y micro-F1 0,6654 (IC [0,62; 0,71]). Estas métricas de conjunto penalizan estructuralmente una salida forzada a una sola etiqueta y no son equivalentes de la exactitud estricta: el micro-F1 acumula los aciertos por etiqueta y no por caso, de modo que su valor (0,6654) no debe leerse como una exactitud (0,7350). De los 200 casos, 131 fueron resueltos por la etapa determinística del clasificador y 69 requirieron la etapa Gemini. La exactitud laxa ---sector predicho principal dentro del conjunto de verdad--- es secundaria y no reemplaza a la estricta: alcanza el 89,5~\% (179/200; IC de Wilson de [84,5~\%, 93,0~\%]). La Tabla~\ref{tab:exactitud-etapa-canal} desagrega ambas por etapa y por canal.
 
 \begin{table}[htbp]
 \centering
@@ -140,29 +162,32 @@ La sub-hipótesis de intervención humana por caso se declara no contrastada por
 \subsection{Calibración de la confianza}
 \label{subsec:calibracion}
 
-La confianza declarada por el clasificador solo resulta útil como criterio de derivación si guarda relación con la exactitud real. Para verificar esa relación se contrastó, sobre los 200 casos del corpus, la confianza devuelta en cada predicción contra la corrección de la clasificación. La Tabla~\ref{tab:bandas} desagrega la exactitud por bandas de confianza en torno al umbral del 70~\% que gobierna el gate de revisión humana.
+La confianza declarada solo es útil como criterio de derivación si guarda relación con la exactitud real, y las dos etapas que la emiten lo hacen con magnitudes distintas (\autoref{subsec:subsistema-clasificacion}); por eso la Tabla~\ref{tab:bandas} desagrega la exactitud por banda y por etapa. El umbral de 0,70 del gate se evalúa solo sobre la salida de Gemini (\autoref{subsec:reduccion-intervencion}).
 
 \begin{table}[htbp]
 \centering
-\caption{Exactitud por banda de confianza declarada}
+\caption{Exactitud por banda de confianza declarada y por etapa del pipeline}
 \label{tab:bandas}
-\small
-\begin{tabular}{@{}l c c c@{}}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}l c c c c c c@{}}
 \toprule
-\textbf{Banda de confianza} & \textbf{Casos} & \textbf{Aciertos} & \textbf{Exactitud} \\
+ & \multicolumn{3}{c}{\textbf{Etapa determinística}} & \multicolumn{3}{c}{\textbf{Etapa Gemini}} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+\textbf{Banda de confianza} & \textbf{Casos} & \textbf{Aciertos} & \textbf{Exactitud} & \textbf{Casos} & \textbf{Aciertos} & \textbf{Exactitud} \\
 \midrule
-\([0{,}00\,;\,0{,}50)\) & 98 & 75 & 0,765 \\
-\([0{,}50\,;\,0{,}70)\) & 26 & 19 & 0,731 \\
-\([0{,}70\,;\,0{,}85)\) & 6  & 2  & 0,333 \\
-\([0{,}85\,;\,0{,}95)\) & 31 & 22 & 0,710 \\
-\([0{,}95\,;\,1{,}00]\) & 39 & 29 & 0,744 \\
+\([0{,}00\,;\,0{,}50)\) & 98 & 75 & 0,765 & --- & --- & --- \\
+\([0{,}50\,;\,0{,}70)\) & 26 & 19 & 0,731 & --- & --- & --- \\
+\([0{,}70\,;\,0{,}85)\) & 6  & 2  & 0,333 & --- & --- & --- \\
+\([0{,}85\,;\,0{,}95)\) & --- & --- & --- & 31 & 22 & 0,710 \\
+\([0{,}95\,;\,1{,}00]\) & 1 & 1 & 1,000 & 38 & 28 & 0,737 \\
 \bottomrule
 \end{tabular}
 \par\smallskip
-{\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)).\par}
+{\footnotesize\textit{Fuente:} elaboración propia (\(n = 200\)). ``---'': la etapa no emitió confianza en esa banda; la reserva no registró casos.\par}
 \end{table}
 
-Los datos revelan una calibración invertida o anti-calibrada: los casos de confianza alta (\(\ge 0{,}70\)) fueron menos exactos (0,697) que los de confianza baja (\(< 0{,}70\), 0,758). La tendencia se acentúa en el extremo superior de la escala: dentro de los 46 casos con confianza igual o superior a 0,90 se registraron 13 errores (28,3~\%), y la banda \([0{,}70\,;\,0{,}85)\) alcanzó apenas 0,333 de exactitud. En otras palabras, el clasificador no solo no discrimina mejor cuando declara mayor certeza, sino que en los tramos de confianza más alta la exactitud se degrada. La consecuencia operativa es directa: el gate del 70~\% no aisló los errores, porque estos se distribuyen también en las bandas de confianza alta. Este hallazgo fundamenta la discusión de la \autoref{sec:discusion}.
+El contraste agregado entre los casos de confianza alta (\(\ge 0{,}70\), exactitud 0,697) y baja (\(< 0{,}70\), 0,758) es un efecto de composición, no una medida de calibración: los 124 casos por debajo de 0,70 son todos de la etapa determinística y el resto reúne 7 casos determinísticos y los 69 de Gemini. Por etapa, la exactitud estricta es de 0,7405 en la determinística y de 0,7246 en la de Gemini (Tabla~\ref{tab:exactitud-etapa-canal}). La confianza de Gemini, concentrada entre 0,85 y 1,00, no discrimina aciertos de errores: rinde 0,710 en la banda \([0{,}85\,;\,0{,}95)\) (IC de Wilson [53,4~\%, 83,9~\%]) y 0,737 en la banda \([0{,}95\,;\,1{,}00]\) ([58,0~\%, 85,0~\%]), con intervalos solapados, y los 46 casos con confianza igual o superior a 0,90 (45 de Gemini) incluyen 13 errores (28,3~\%), todos de Gemini. La de la etapa determinística es una fuerza de señal en escala discreta que no ordena la correctitud (0,731 a 0,765 por debajo de 0,70; 0,333 en \([0{,}70\,;\,0{,}85)\), con 6 casos) y no es un criterio utilizable para derivar (\autoref{subsec:subsistema-clasificacion}). La conclusión se restringe, así, a Gemini en su rango observado: el umbral de 0,70 no habría aislado sus 19 errores, pues su confianza nunca fue inferior a 0,85. Este hallazgo fundamenta la discusión de la \autoref{sec:discusion}.
 
 \subsection{Análisis de errores y casos límite}\label{subsec:analisis-errores}
 
