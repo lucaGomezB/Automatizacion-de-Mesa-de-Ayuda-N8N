@@ -920,6 +920,7 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 | `+c-131` (`change/c-131-metricas-por-etapa-canal-y-exactitud-laxa`) | sin commit (lo crea el orquestador) | 103 | 95 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{103}`; `Anexos` en p. 96; brecha frente a 101: +2 (sin compensar habria sido 105) |
 | `+c-142` (`change/c-142-sensibilidad-fuera-de-muestra-ajustes-clasificador`) | sin commit (lo crea el orquestador) | 104 | 96 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{104}`; `Anexos` en p. 97; brecha frente a 101: +3 (sin los recortes de `09` y la variante de T06 habria sido 105); C3 no aplicada (el total no supera 104) |
 | `+c-132` (`change/c-132-balance-neto-derivaciones-erroneas`) | sin commit (lo crea el orquestador) | 105 | 97 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{105}`; `Anexos` en p. 98; brecha frente a 101: +4 (la primera compilacion dio 106; las variantes cortas de T10, T11 y T13 recuperaron la pagina); rama (b): cuerpo 97, margen 3 |
+| `+c-133` (`change/c-133-hipotesis-objetivos-metrica-primaria`) | sin commit (lo crea el orquestador) | 105 | 97 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{105}`; `Anexos` en p. 98; brecha frente a 101: +4 (sin compensar habria sido 107); rama (b): cuerpo 97, margen 3 |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -1516,5 +1517,161 @@ VEREDICTO punto 3, seccion 7 (c) y RECOMENDACION A3 -> subseccion `subsec:balanc
 "docs/Tesis/v10 (IA)/paper/sections/08-discusion.tex" "docs/Tesis/v10 (IA)/paper/sections/09-conclusiones.tex"
 "docs/Tesis/v10 (IA)/paper/sections/10-recomendaciones.tex" docs/Tesis/Correcciones/numeros-canonicos.md docs/Tesis/Correcciones/dictamen-correcciones.md`,
 regenerar el render y recompilar. Si otro change cito `subsec:balance-neto` o `tab:balance-neto`, retirar esas remisiones en el mismo rollback.
+
+**Estado**: grupo aplicado.
+
+## Dictamen v1.1.0 - B4, B5 y B6 (c-133) - Hipotesis, objetivos y metrica primaria
+
+**Origen**: change `c-133-hipotesis-objetivos-metrica-primaria` (dictamen CONEAU 2026-10-22: VEREDICTO dimensiones 2 y 3,
+RECOMENDACIONES B4, B5 y B6). Aplicado el **2026-10-25** en la rama `change/c-133-hipotesis-objetivos-metrica-primaria`, cortada
+de `ramagonzalo` en `d241c0b` (merge de c-132). Posicion 6 del orden de la familia (G0.6). Solo documento (gobernanza LOW): cero
+llamadas a Gemini (ningun `--confirm-paid` ni `run_evaluation.py --force`), sin codigo, sin tags. Sin commit (lo crea el orquestador).
+
+### Open Questions del design (tarea 1.1) - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+
+El usuario pidio aplicar la familia sin detenerse y no respondio de forma explicita a las Open Questions 1 a 3. Cada decision es el
+default del design, **PROVISIONAL (pendiente de confirmacion del autor)**, registrada ANTES de editar ningun `.tex`:
+
+| Open Question | Decision PROVISIONAL | Efecto en el apply |
+|---|---|---|
+| OQ1 - segunda sub-hipotesis | **Opcion A**: cota `0,15 = 1 - 0,85`, estado "no contrastada por ausencia de registro primario" | T1 en la variante principal; la cota entra al memo (3.12) como "explicitada por c-133; no es un resultado" |
+| OQ2 - subsidiaria de eficiencia | **"Contrastada de forma acotada"** con las salvedades de D3 y, ademas, con el resultado E4 de c-142 y el McNemar no significativo de c-131 como salvedades adicionales. **La regla de decision de D3 prevalece (ver abajo): con E4 el rotulo efectivo es "no contrastada".** | T10, T3, T11 y T14 en la variante de fallback |
+| OQ3 - objetivo 3 tras c-131 | **Sin aceptacion del autor** de la condicion (iii) (la "complejidad operativa percibida" no se da por satisfecha por construccion): la fila queda "Alcanzado parcialmente" aunque c-131 aporte la calidad por canal | T12 variante "calidad por canal publicada"; el componente faltante pasa a ser la complejidad percibida |
+
+### Precondiciones y relevamiento (tarea 1.2)
+
+Los cuatro prerequisitos estan aplicados (37/37, 81/81, 91/91 y 29/29 tareas) y siguen en `openspec/changes/` (el archivo es de c-141).
+Rama cortada de `ramagonzalo` `d241c0b`. Relevado:
+
+- **c-130**: terminologia "etapa determinista"/"etapa semantica" en el design; el manuscrito usa "etapa deterministica" (`07:129`, `08:10`,
+  `08:16`) y "etapa semantica" (`02`, `10`, `11`). T14 se escribe con "filtro deterministico" y "etapa deterministica". El gate se evalua solo sobre la
+  salida de Gemini; la etapa determinista cortocircuita con puntaje de correctitud `>= 0,5166`; 124 de 200 casos con confianza `< 0,70` no escalaron
+  (todos de la etapa determinista). T14 retira la formulacion "con confianza suficiente" (la etapa determinista no se evalua por su confianza).
+- **c-131**: calidad por canal publicada (`tab:exactitud-etapa-canal` en `07-resultados.tex`; memo 3.9): estricta por canal `53/81 = 0,6543`
+  (telefono), `51/66 = 0,7727` (correo), `43/53 = 0,8113` (formulario); por etapa `97/131 = 0,7405` y `50/69 = 0,7246` (IC de Wilson); laxa
+  `179/200 = 0,8950`. McNemar entre etapas sobre `S` en el memo 3.9: `|S| = 131`, `130` pares, `b = 16`, `c = 8`, p exacto `0,1516`,
+  **no significativo**. `cache_meta` de la FORCE-ESCALATE: `hybrid-v2` (corpus_hash distinto del vigente); por eso la comparacion `97/131` frente a
+  `88/130` queda como estimacion dentro de la muestra y solo historica en cuanto a la cache (salvedad 4 de D3).
+- **c-142**: `subsec:sensibilidad-ajustes` existe en `07-resultados.tex` (entre `subsec:calibracion` y `subsec:analisis-errores`). **E4** (memo 3.10):
+  con el vocabulario previo (`V0`) la etapa de reglas acierta `38/73 = 0,5205` frente a Gemini `48/73 = 0,6575` (`b = 3`, `c = 13`, p exacto
+  `0,0213`): las reglas **no superan** a Gemini. Prompt: nivel a (R002, R038, R015 entre los 69 escalados; Gemini `50/69` con ellos y `48/66`
+  sin ellos); la FORCE-ESCALATE es **posterior** a las reglas de frontera (nivel b). Limitacion nueva: item "Septimo"; `subsec:limitaciones-estudio` dice "siete".
+- **c-132**: `subsec:balance-neto` (`08-discusion.tex`) y `tab:balance-neto` (Tabla 17; `tab:cumplimiento-objetivos` pasa a ser la 18). Clausulas a conservar literales
+  (copia previa a editar):
+  - `09:6`: "...resulto tecnicamente viable, eficiente en el registro y economicamente accesible para organizaciones medianas, con viabilidad operativa condicionada al balance neto (\autoref{subsec:balance-neto})".
+  - `09:41`: "el sistema libera tiempo bruto de registro, cuyo saldo neto esta indeterminado (\autoref{subsec:balance-neto})".
+  - `00-resumen.tex` (parrafo final ES/EN): "Los hallazgos confirman la viabilidad tecnica y economica; la operativa es condicional, porque el balance neto frente a las derivaciones erroneas resulta indeterminado." / "The findings confirm technical and economic feasibility; operational feasibility is conditional, since the net balance against misrouted incidents remains undetermined."
+  - Umbral del 85 % = paridad con el 15 % manual; `a*` = 77,7 a 80,1 %; la laxa 89,5 % supera los `a*` pero es la cota favorable (`subsec:balance-neto`).
+
+### Linea base (tarea 1.3)
+
+- Paginas de partida: **105** (`abspage@last{105}` de `main.aux`; cuerpo 97, anexos 8; `Anexos` en p. 98 de `main.toc`). Secuencia: 102 tras c-144, 103
+  c-130, 103 c-131, 104 c-142, 105 c-132. Inicio de capitulos: 1:11, 2:18, 3:26, 4:31, 5:40, 6:51, 7:61, 8:67, 9:75, 10:84, 11:87, Referencias:92, Anexos:98.
+- Palabras de prosa del resumen y del abstract (regla de c-106 con el math en linea como una palabra; script de la sesion que reproduce el conteo de
+  c-132): **ES 264, EN 252** (exceso preexistente de +14 / +2 sobre 250).
+
+### Memo (bloque 2, Gate 0)
+
+Seccion **3.12** de `numeros-canonicos.md` ("Hipotesis, objetivos y metrica primaria (c-133)"; 3.7 c-130, 3.8 c-134, 3.9 c-131, 3.10 c-142, 3.11 c-132; las remisiones
+del design a la "Seccion 3.7" se leen como 3.12). Cambios, todos solo agregados o anotaciones: Seccion 3.2 (`0,6508` pasa de `condicional` a `vigente`, "Primaria de umbral (c-133 D1)";
+`0,5207` con la nota "Informativa; toda cita lleva su aclaracion"), Seccion 3.3 (filas `65,5 %` y `34,5 %`, procedencia `report.md:11-12` actual), Seccion 3.12 (cota `0,15`
+"explicitada por c-133; no es un resultado", `97/131`, `88/130`, McNemar `b = 16`, `c = 8`, p exacto `0,1516`, E4, `65,5 %`/`34,5 %`, exactitud por canal), item 5 de la Seccion 5
+("superado por c-133 D1"), punto 4 de la Seccion 7 ("decision ratificada por c-133 D1") y linea "Upsert c-133" en la cabecera. `grep -c "c-133"` del memo = 16.
+Las cifras `0,7405` y `0,6769` ya estaban en la 3.7 (c-130); c-133 no duplica sus valores, los remite. **Estado de la prueba pareada (tarea 2.5)**: c-131 la registro en la 3.9
+(`b = 16`, `c = 8`, p exacto `0,1516`, no significativo); `cache_meta` de la FORCE-ESCALATE es `hybrid-v2` (otro `corpus_hash` que el vigente), de modo que la comparacion `97/131` frente a
+`88/130` es historica en cuanto a la cache. Sin llamadas pagas: ningun `--confirm-paid` ni `run_evaluation.py --force`.
+
+### Aplicacion de la regla de decision de E4 (D3) y decision del objetivo 6
+
+- **Hipotesis subsidiaria de eficiencia: "no contrastada" (fallback de T3, T10, T11 y T14).** Con la variante E4 de c-142 la etapa de reglas (`V0`) acierta `38/73 = 0,5205` frente a
+  Gemini `48/73 = 0,6575` (p exacto `0,0213`): no supera a Gemini. La ventaja en `S` (`97/131` frente a `88/130`) depende, por lo tanto, del vocabulario ajustado con el corpus. Ademas,
+  el McNemar de c-131 en `S` no es significativo (p exacto `0,1516`). La OQ2 PROVISIONAL ("contrastada de forma acotada") queda **sobrepasada por la regla de decision del design**, que es
+  anterior y especifica; no es una decision de fondo del autor. `08-discusion.tex` conserva las cifras como descripcion (estimaciones dentro de la muestra, sin diferencia significativa, y
+  con la remision a `subsec:sensibilidad-ajustes`) y NO las presenta como evidencia favorable. **Reversible** a "contrastada de forma acotada" si el autor lo decide: variante principal de T10,
+  T3, T11 y T14 (texto en el `design.md` de c-133, D9) y upsert de la 3.12. Los cuatro rotulos de la subsidiaria de eficiencia (introduccion, discusion, conclusiones, resumen no la cita) coinciden.
+- **Hipotesis subsidiaria de integracion multicanal: "no contrastada"** en introduccion (T3), discusion (frase agregada a `08:10`) y conclusiones (T15). La exactitud por canal de c-131 se
+  cita como descriptiva.
+- **Objetivo 3 (OQ3)**: "Alcanzado parcialmente" con la calidad por canal publicada: la celda cita `subsec:capa-canales`, "latencia y exactitud por canal (Tabla 12)" y nombra el
+  componente faltante, la complejidad operativa percibida no medida (condicion iii de D4 no aceptada por el autor; condiciones i y ii cumplibles con los datos de c-131).
+- **Objetivo 2**: "No alcanzado" con macro-F1 de umbral `0,6508`. La exactitud laxa (`89,5 %`) se lee como secundaria y no cambia el estado del objetivo: el criterio del 85 % es la exactitud estricta
+  (c-131 y `subsec:balance-neto`: el umbral equivale a la paridad con el 15 % manual y la laxa es la cota favorable).
+- **Objetivo 6**: se conserva "Alcanzado" (OQ3 provisional de c-142). Tarea 5.8: la celda ya cita `subsec:analisis-errores`, `subsec:calibracion` (calibracion por etapa de c-131) y
+  `subsec:sensibilidad-ajustes` (c-142); las tres piezas existen, ninguna contradice la caracterizacion de la confianza. Sin edicion.
+- **Objetivos 1 y 4**: "Alcanzado parcialmente" (sincronica y TLS no verificado; exactitud solo del flujo automatizado e intervencion humana no medida). Objetivo general: "Alcanzado
+  parcialmente" con el desglose dentro de la celda (tiempo alcanzado; clasificacion por debajo del umbral; intervencion humana no medida; viabilidad operativa condicionada, `subsec:balance-neto`).
+
+### Mapeo B4 / B5 / B6 -> T1-T18 (bloques 3 a 5)
+
+| Item | Archivo | Estado |
+|---|---|---|
+| T1 (H2) | `01-introduccion.tex` | aplicado, opcion A: cota `0,15`, contraste con IC de Wilson, "no era contrastable", "no contrastada por ausencia de registro primario"; el `0 de 200` del gate NO se presenta como contraste; remite a `subsec:limitaciones-estudio` ("se falsea" en lugar de "se falsa") |
+| T2 (H3) | `01-introduccion.tex` | aplicado ("F1 macro de umbral"; "macro-F1 de umbral de 0,6508 sobre las cuatro clases estimables"); `0,5207` ya no figura en la introduccion |
+| T3 | `01-introduccion.tex` | **variante de fallback**: "Ninguna tiene contraste formal y ambas se declaran no contrastadas" |
+| T4 | `01-introduccion.tex` | aplicado: se elimina la ultima oracion del objetivo 2 (tres criterios y fuentes intactos); enunciados de los objetivos sin cambios |
+| T5, T7 | `04-marco-metodologico.tex` | aplicados (variantes cortas: "Promedio aritmetico del F1 de cada sector; el de umbral excluye los de soporte unitario"; "contra el cual se evalua el criterio de 0,85") |
+| T6 | `04-marco-metodologico.tex` | aplicado: "estimable" en la tercera, cuarta "prevista en dos dimensiones rotuladas ... en la version evaluada no se midio, por ausencia de registro primario" |
+| T8 | `07-resultados.tex` | aplicado solo en la oracion del macro-F1 (el resto del parrafo es de c-131/c-142 y queda literal) |
+| T9 | `07-resultados.tex` | aplicado en el parrafo de estado de `subsec:reduccion-intervencion` (el parrafo del gate, de c-130, intacto) |
+| T10 | `08-discusion.tex` | **variante de fallback** (regla de decision de E4), con las cifras como descripcion calificada y la remision a `subsec:sensibilidad-ajustes`; mas una frase sobre la subsidiaria multicanal |
+| T11 | `09-conclusiones.tex` | aplicado: "cumplido parcialmente el objetivo general"; clausula de viabilidad de c-132 **literal**; macro-F1 de umbral `0,6508`; estado por sub-hipotesis y de las subsidiarias (no contrastadas); "ha cumplido con el objetivo general" = 0 |
+| T12 | `09-conclusiones.tex` | aplicado: filas general, 1, 3 y 4 "Alcanzado parcialmente" con el componente faltante; objetivo 2 con `0,6508 (0,5207 con cinco clases, una no estimable)`; objetivo 3 en la variante "calidad por canal publicada"; columnas ensanchadas (3,6 / 2,2 / 8,4 cm) para que "Alcanzado parcialmente" no se corte (corrige tambien el overfull de la cabecera "Cumplimiento") |
+| T13 | `09-conclusiones.tex` | aplicado en variante corta (sin la enumeracion de las cinco capas) |
+| T14 | `09-conclusiones.tex` | **variante de fallback**: "el filtro no resuelve" (se retira "con confianza suficiente"); 65,5 %; eficiencia "no se contrasto"; las oraciones de c-131/c-142 (0,7405, 0,7246, laxa, por canal) literales |
+| T15 | `09-conclusiones.tex` | aplicado, **variante con calidad por canal**; la oracion del canal telefonico ("El canal telefonico ... demostracion de laboratorio") queda **literal** para c-135 (B13) |
+| T16 | `09-conclusiones.tex` | aplicado; clausula de c-132 literal ("el sistema libera tiempo bruto de registro, cuyo saldo neto esta indeterminado (`subsec:balance-neto`)") |
+| T17 | `00-resumen.tex` | aplicado en ES y EN (macro-F1 de umbral 0,6508 / 0.6508; estado por sub-hipotesis); parrafo final de c-132 literal |
+| T18 | `08-discusion.tex` | aplicado, opcion principal: cardinal "siete" -> "ocho" y limitacion "Octavo" sobre la ausencia de registro primario; lista de 8 ordinales (Primero a Octavo) |
+| Tarea 4.8 | `08-discusion.tex` | aplicada como compensacion: se elimina "Tres aspectos de los resultados merecen una interpretacion detallada." |
+
+### Verificaciones (grupos 3 a 7)
+
+`0,5207`/`0,6508` rotulados en todas las fuentes (control global de 3.6 vacio); `cinco sectores objetivo` = 0; `consistente con la hip` = 0; `ha cumplido con el objetivo general` = 0; "Alcanzado parcialmente" = 4 filas;
+rotulo "no contrastada por ausencia de registro primario" en resumen, introduccion, resultados y conclusiones (1 en cada archivo; el abstract en ingles lo dice como "not tested ... absence of a primary record");
+sin `9,5` como proporcion de intervencion humana (solo `89,5`); sin tildes omitidas en el texto nuevo; `verify_citations.py` PASS (0 huerfanas); `openspec validate c-133-hipotesis-objetivos-metrica-primaria --strict` valido.
+
+### Compilacion, paginas y palabras (bloque 6)
+
+- Docker `texlive-thesis` (`latexmk main.tex`, en el arbol): `grep -c "^!" main.log` = 0, `undefined` = 0, `multiply defined` = 0, `main.blg` sin WARN/ERROR, sin `??` en el texto del PDF.
+- **Paginas: antes `abspage@last{105}` (cuerpo 97, anexos 8); despues `abspage@last{105}`; `Anexos` en p. 98: cuerpo 97, anexos 8; delta 0 / 0** (prevision 0). Inicio de capitulos
+  identico a la linea base: 1:11, 2:18, 3:26, 4:31, 5:40, 6:51, 7:61, 8:67, 9:75, 10:84, 11:87. Sin compensar habria sido **107** (+2): la primera compilacion desbordaba el marco metodologico
+  (2 lineas) y las conclusiones (8 lineas, por la tabla de cumplimiento con "Alcanzado parcialmente" en una columna de 1,7 cm que partia la palabra en tres lineas). Compensaciones: columnas de la
+  tabla ensanchadas y celdas de evidencia acortadas; variantes cortas de T5, T6, T7, T11, T13, T14, T15 y T16 (sin cambiar cifras, rotulos ni estados); T4 (ultima oracion del objetivo 2);
+  tarea 4.8 ("Tres aspectos ..."); compresion del parrafo de descripcion del sistema del resumen. No se recorto ningun parrafo de otro change.
+  Brecha frente al tope vigente de 101 (regla (a) provisional): **+4**, sin cambio respecto de c-132; regla (b) (cuerpo <= 100): cuerpo 97, margen 3. Si c-141 necesita paginas, las palancas
+  residuales de c-133 son la nota de la tabla de cumplimiento y las celdas de evidencia de la tabla.
+- **Resumen** (regla de c-106, math en linea como una palabra): **ES 264 -> 250, EN 252 -> 243**. El exceso preexistente (+14 / +2) queda corregido: el espanol llega a 250 (maximo permitido) tras las
+  ediciones de T17 (-7 palabras en ES y -2 en EN) y la compresion del parrafo de descripcion del sistema (-7 en ES y -7 en EN: se quitan "orquestacion con", "inferencia con", "persistencia" y "determinist." de reglas, y "cada incidente" pasa a "las", en ES; "workflow orchestration", "inference through", "persistence" y "a telephony channel managed by Twilio" -> "a Twilio telephony channel" en EN). **c-132 y c-141 deben conservar ese tope**
+  (el espanol no tiene margen: cualquier agregado exige otra compresion). El conteo "plano" (sin colapsar el math) da 252 / 245.
+
+### Libro mayor de paginas
+
+| Change | Commit | Total | Cuerpo sin anexos | Anexos | Delta total | Delta cuerpo | Regla vigente | Estado |
+|---|---|---|---|---|---|---|---|---|
+| `+c-133` (`change/c-133-hipotesis-objetivos-metrica-primaria`) | sin commit (lo crea el orquestador) | 105 | 97 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{105}`; `Anexos` en p. 98; brecha frente a 101: +4 (sin compensar habria sido 107); rama (b): cuerpo 97, margen 3 |
+
+(La fila queda registrada aqui y, en la tabla de la seccion G0, como `+c-133`; el orquestador la consolida.)
+
+### Mapeo del dictamen
+
+VEREDICTO dimensiones 2 y 3, RECOMENDACIONES B4 (tabla de cumplimiento y prosa), B5 (segunda sub-hipotesis y subsidiarias) y B6 (metrica primaria) -> D1-D9 (con el desvio de T3/T10/T11/T14 por la regla de E4), T1-T18 y memo 3.12.
+
+### Consignas para otros changes
+
+- **c-134 (bloque de tesis)**: la 3.8 del memo es suya; las remisiones del resumen/abstract a la convencion de `p` no cambian. El resumen ES queda en exactamente 250 palabras: si agrega texto debe comprimir otro. `08-discusion.tex:10` cita `\(p = 0{,}1516\)` (McNemar exacta, bilateral); aplicar la convencion de `p` de c-134 si corresponde.
+- **c-138 / c-136**: `10-recomendaciones.tex` afirma que la medicion de intervencion humana ataca un defecto "reconocido entre las limitaciones": ahora es cierto (limitacion "Octavo" de `subsec:limitaciones-estudio`, ocho limitaciones). c-136 debe proponer como linea futura el registro primario por caso de la accion manual que
+  permitiria contrastar la segunda sub-hipotesis contra `0,15`, la validacion en un corpus independiente y el dato de que la ventaja de las reglas depende del vocabulario (E4); no duplicar `subsec:estudios-replicacion` (T14 de c-132).
+- **c-135 (B13)**: la oracion del canal telefonico de `09-conclusiones.tex` esta literal; agregar ahi la salvedad de cota inferior. `07:6` debe seguir enumerando `subsec:sensibilidad-ajustes`. La nueva frase de `08:10` sobre la subsidiaria multicanal remite a "capacidad bajo carga concurrente" (no medida).
+- **c-139**: sin cambios en `01:66`. Las atribuciones del objetivo 2 (Paramesh2019) y sus tres criterios quedan intactos.
+- **c-140**: autorizado a actualizar solo la fila del objetivo 1 de `tab:cumplimiento-objetivos` (hoy "Alcanzado parcialmente": invocacion sincronica y TLS no verificado) y la oracion del objetivo 1 de `09:35` segun la regla de D4 (volver a "Alcanzado" solo con TLS verificado y comunicacion asincronica; celda con "incorporado despues de la validacion experimental"). Si solo resuelve el TLS la fila conserva solo la invocacion sincronica.
+- **c-141**: (1) libro mayor: fila `+c-133` = 105 / 97 / 8, delta 0 / 0; (2) revision del autor pendiente: OQ1 a OQ3, el rotulo "no contrastada" de la subsidiaria de eficiencia (regla de E4) y la redaccion de la tabla de objetivos; (3) `Tabla 18` es la de cumplimiento (la 17 es `tab:balance-neto`); (4) el resumen ES esta en 250 palabras (topado); (5) la regeneracion final del render y `main.bbl`
+  son suyas; (6) si el McNemar o E4 se actualizan, `08:10` es el unico sitio de la subsidiaria de eficiencia en la discusion; (7) `numeros-canonicos.md`: la seccion siguiente libre es la 3.13.
+- **c-137** (ortotipografia): el texto nuevo lleva tildes; "falsea" reemplaza a "falsa" solo en la segunda sub-hipotesis (el resto del documento conserva "falsacion").
+
+### Reversibilidad
+
+`git checkout <commit-previo> -- "docs/Tesis/v10 (IA)/paper/sections/00-resumen.tex" "docs/Tesis/v10 (IA)/paper/sections/01-introduccion.tex" "docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex"
+"docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex" "docs/Tesis/v10 (IA)/paper/sections/08-discusion.tex" "docs/Tesis/v10 (IA)/paper/sections/09-conclusiones.tex" docs/Tesis/Correcciones/numeros-canonicos.md
+docs/Tesis/Correcciones/dictamen-correcciones.md`, regenerar el render y recompilar. Las decisiones PROVISIONALES (OQ1 a OQ3) y el rotulo de la subsidiaria de eficiencia se pueden invertir sin tocar los valores canonicos
+(ver D1 a D4 del design y la 3.12).
 
 **Estado**: grupo aplicado.

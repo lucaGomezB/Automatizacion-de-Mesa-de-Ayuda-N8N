@@ -16,6 +16,7 @@ de las ramas consumidoras").
 - **Upsert c-131**: `c-131-metricas-por-etapa-canal-y-exactitud-laxa` (aplicado el 2026-10-25) agrega la Sección 3.9 (exactitud estricta y laxa por etapa y por canal con IC de Wilson, bandas, contingencia, tramo `≥ 0,90` y distribución de confianza por etapa, contraste pareado de McNemar entre etapas y decisión de datos PROVISIONAL), anota en las Secciones 3.3, 4 y 5 (ítem 2) que el contraste agregado `0,697` frente a `0,758` es un efecto de composición entre etapas y registra como `retirado` la lectura de anti-calibración del clasificador en su conjunto. Como el reporte regenerado agrega la línea de procedencia, la exactitud laxa y cuatro secciones antes de `## Tiempos`, **actualiza todas las remisiones `report.md:<línea>`** de este memo (la línea del SHA-256 pasa de `140` a `256`; verificado por correspondencia de contenido línea a línea con el reporte previo). No modifica ningún valor `vigente` de las Secciones 3.1 a 3.8.
 - **Upsert c-142**: `c-142-sensibilidad-fuera-de-muestra-ajustes-clasificador` (aplicado el 2026-10-25) agrega la Sección 3.10 (sensibilidad de las métricas frente al ajuste del clasificador con el corpus: variante principal con el vocabulario previo a c-71, descomposición pareada, control de fidelidad de la réplica histórica, E3, E4 y niveles del prompt), notas "estimación dentro de la muestra; ver sección 3.10" en las filas de `97/131`, `0,7405` y `0,6769` y los puntos 8 y 9 de la Sección 7. No modifica ningún valor `vigente` de las Secciones 3.1 a 3.9. Fecha: 2026-10-25.
 - **Upsert c-132**: `c-132-balance-neto-derivaciones-erroneas` (aplicado el 2026-10-25) agrega la Sección 3.11 (balance neto trimestral entre el ahorro bruto de registro y el costo de las derivaciones erróneas: insumos con procedencia, fórmulas de `B` y de la exactitud mínima de equilibrio `a*`, tabla de escenarios, escenario central, lectura laxa, comando de referencia y redondeo; todo valor derivado de supuestos con estado `condicional`). No modifica ningún valor `vigente` de las Secciones 3.1 a 3.10. Fecha: 2026-10-25.
+- **Upsert c-133**: `c-133-hipotesis-objetivos-metrica-primaria` (aplicado el 2026-10-25) pasa el macro-F1 de umbral de las cuatro clases estimables (`0,6508`) de `condicional` a `vigente` (Sección 3.2), agrega los porcentajes `65,5 %` y `34,5 %` a la Sección 3.3, agrega la Sección 3.12 (cota de la segunda sub-hipótesis y contraste acotado de la hipótesis subsidiaria de eficiencia, con el estado que fija la regla de decisión frente a la variante E4 de c-142) y anota el ítem 5 de la Sección 5 y el punto 4 de la Sección 7. No modifica ningún otro valor `vigente`. Fecha: 2026-10-25.
 - **Artefacto**: este memo. No se edita ningún `.tex` en este change.
 - **Fecha de verificación**: 2026-10-21.
 - **SHA-256 del corpus** (`data/corpus_evaluacion_pseudonimizado.json`):
@@ -102,8 +103,8 @@ citable como resultado) y `condicional` (depende de una decisión editorial).
 |---|---|---|---|
 | Exactitud estricta: `0,7350` (`73,5 %`; `147/200`) | `report.md:20`, `07-resultados.tex:129`, `07-resultados.tex:76` | vigente | Métrica primaria monoetiqueta. |
 | IC Wilson 95 %: `[0,6698; 0,7913]` (`[67,0 %; 79,1 %]`) | `report.md:22`, `07-resultados.tex:129` | vigente | |
-| Macro-F1 (5 clases): `0,5207` | `report.md:62`, `07-resultados.tex:129`, `08-discusion.tex:32` | vigente | Valor informativo; incluye la clase no estimable. |
-| Macro-F1 (4 clases estimables): `0,6508` | recálculo (`metrics.py`) | condicional | Métrica de umbral propuesta (decisión D7); excluye `Bases de Datos`. |
+| Macro-F1 (5 clases): `0,5207` | `report.md:62`, `07-resultados.tex:129`, `08-discusion.tex:32` | vigente | Valor informativo; incluye la clase no estimable. Informativa; toda cita lleva su aclaración (c-133). |
+| Macro-F1 (4 clases estimables): `0,6508` | recálculo (`metrics.py`) | vigente | Primaria de umbral (c-133 D1); excluye `Bases de Datos`. Único referente del criterio `0,85`; ambos macro-F1 quedan por debajo de `0,85`. |
 | Micro-F1 (multietiqueta): `0,6654` | `report.md:61`, `07-resultados.tex:129` | vigente | Métrica multietiqueta; NO es equivalente de la exactitud. |
 | Subset accuracy: `0,43` | `report.md:59`, `07-resultados.tex:129` | vigente | Contra la referencia multietiqueta. |
 | Hamming loss: `0,3586` | `report.md:60`, `07-resultados.tex:129` | vigente | Contra la referencia multietiqueta. |
@@ -117,6 +118,8 @@ citable como resultado) y `condicional` (depende de una decisión editorial).
 | Etapa determinística: `131` | `report.md:11`, `07-resultados.tex:129` | vigente | |
 | Etapa Gemini: `69` | `report.md:12`, `07-resultados.tex:129` | vigente | |
 | Etapa fallback: `0` | `report.md:13` | vigente | |
+| Casos resueltos por la etapa determinística: `65,5 %` (`131/200`) | `evaluation/report.md:11` (actual; los design de c-133 citan `:9-10`, obsoleto), `08-discusion.tex:10,58` | vigente | Cociente de los `131` casos de la etapa determinística sobre `200`; registrado por c-133. |
+| Casos que llegan a la etapa Gemini: `34,5 %` (`69/200`) | `evaluation/report.md:12`, `08-discusion.tex:10,58` | vigente | Complemento de `65,5 %`; registrado por c-133. |
 | Bandas de confianza: `98 / 26 / 6 / 31 / 39` | `07-resultados.tex:179-183` | vigente | Reproduce la Tabla 7.5 (`07-resultados.tex:167-188`). **Efecto de composición (c-131):** las bandas bajas son solo de la etapa determinística y las altas casi solo de Gemini; su desglose por etapa figura en la Sección 3.9. |
 | Tramo confianza `≥ 0,90`: `46` casos, `13` errores | `07-resultados.tex:190` | vigente | Ver Sección 5, ítem 3. Por etapa (c-131): Gemini `45` casos y `13` errores; determinística `1` caso y `0` errores (Sección 3.9). |
 
@@ -590,6 +593,34 @@ manual con etiquetadores distintos de los operadores y cronometraje de las reasi
 viabilidad operativa puede enunciarse en un sentido u otro. Hasta entonces los valores
 permanecen `condicional`.
 
+### 3.12 Hipótesis, objetivos y métrica primaria (c-133)
+
+Cifras que el texto de c-133 cita y su procedencia. c-133 no calcula nada nuevo ni invoca a
+Gemini: toda cifra proviene de las secciones 3.3, 3.7, 3.9 y 3.10 de este memo.
+
+| Valor canónico | Procedencia (archivo:línea) | Estado | Notas |
+|---|---|---|---|
+| Cota de la segunda sub-hipótesis: `0,15` (`= 1 − 0,85`) | `01-introduccion.tex` (segundo objetivo específico, umbral del `85 %`), subsec:hipotesis-trabajo | vigente | **Explicitada por c-133; no es un resultado.** Complemento del umbral de exactitud fijado a priori. Contraste: proporción con IC de Wilson al 95 %; se falsa si el límite superior no queda por debajo de `0,15`. Estado de la sub-hipótesis: *no contrastada por ausencia de registro primario*; la proporción no se cuantifica y el `0 de 200` del gate no se presenta como contraste (no operacionaliza la variable). No reintroduce el `9,5 %` (`retirado`). |
+| Macro-F1 de umbral (cuatro clases estimables): `0,6508` | Sección 3.2 | vigente | Primario y único referente del `0,85` (c-133 D1). |
+| Macro-F1 de cinco clases: `0,5207` | Sección 3.2 | vigente | Informativo; incluye Bases de Datos (`n = 1`, no estimable). |
+| Etapa determinística: `97/131` = `0,7405` | Sección 3.7 (`docs/deterministic_calibration.md:40,67`) y Sección 3.9 | vigente | **Estimación dentro de la muestra** (Sección 3.10). |
+| Gemini sobre `S`: `88/130` = `0,6769` | Sección 3.7 (`docs/deterministic_calibration.md:41-44,68`) | vigente | Cache FORCE-ESCALATE `hybrid-v2` (otra corrida que la oficial); un caso de `S` sin predicción, excluido y no fabricado. **Estimación dentro de la muestra.** |
+| McNemar entre etapas sobre `S`: `b = 16`, `c = 8`, `p` exacto `0,1516` | Sección 3.9 | vigente | No significativo. c-133 lo cita; no lo calcula. |
+| E4 (`V0`): reglas `38/73` = `0,5205` frente a Gemini `48/73` = `0,6575`, `p` exacto `0,0213` | Sección 3.10 | vigente | Con el vocabulario previo al ajuste la etapa de reglas **no supera** a Gemini. |
+| `65,5 %` (`131/200`) y `34,5 %` (`69/200`) | Sección 3.3 | vigente | |
+| Exactitud estricta por canal: `0,654` (llamada telefónica), `0,773` (correo), `0,811` (formulario web) | Sección 3.9 | vigente | Se cita en la fila del objetivo específico 3. |
+
+**Regla de decisión aplicada (D3).** Con E4, la ventaja de la etapa de reglas sobre Gemini en
+`S` depende del vocabulario ajustado con el propio corpus: la hipótesis subsidiaria de
+eficiencia del esquema híbrido se rotula *no contrastada* en la introducción, la discusión y
+las conclusiones. Las cifras `97/131`, `88/130` y la prueba de McNemar se citan como
+descripción, no como contraste favorable. **Reversible si** el autor decide el rótulo
+"contrastada de forma acotada" (variante principal de T10): se actualizan los sitios T3, T10,
+T11 y T14 y esta sección.
+
+**Reproducción.** Sin cifras propias: ver los comandos de reproducción de las Secciones 3.7, 3.9
+y 3.10. No hubo llamadas a Gemini (`--confirm-paid`, `run_evaluation.py --force`).
+
 ## 4. Contingencia del gate de intervención humana
 
 Tabla reconstruida desde `evaluation/predicciones.json` con
@@ -680,7 +711,8 @@ etiquetas `23`, 4 etiquetas `1`, 5 etiquetas `1`). El clasificador emite UNA
 etiqueta principal más, en `8` casos, etiquetas adicionales predichas. Set
 métrico final:
 - Primario monoetiqueta: exactitud estricta `0,7350` e IC Wilson; macro-F1
-  `0,5207`.
+  `0,5207`. *(Superado por c-133 D1: el primario de umbral es `0,6508`; `0,5207`
+  es informativo y se cita siempre con su aclaración.)*
 - Secundario multietiqueta (contra la referencia multietiqueta declarada del
   corpus): subset accuracy `0,43`, Hamming loss `0,3586` y micro-F1 `0,6654`,
   con la advertencia de penalización estructural. El micro-F1 NO debe
@@ -787,7 +819,9 @@ decisión editorial adoptada y su condición de reversibilidad.
    estimable y reportar el umbral sobre las cuatro clases estimables
    (macro-F1 `0,6508`), conservando el macro-F1 de cinco clases (`0,5207`) como
    valor informativo. **Reversible si**: el autor prefiere reportar el `0,5207`
-   como métrica principal.
+   como métrica principal. *(Decisión ratificada por c-133 D1, 2026-10-25: `0,6508`
+   es el primario y único referente del umbral `0,85`; la reversibilidad se
+   mantiene.)*
 
 5. **Corte en `0,90` del tramo de alta confianza.** El texto cita `46` casos
    `≥ 0,90`, cifra reproducible pero no deducible de la Tabla 7.5 publicada.
