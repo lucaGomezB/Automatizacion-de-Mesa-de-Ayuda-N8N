@@ -12,7 +12,7 @@ de las ramas consumidoras").
 - **Change**: `c-102-congelar-numeros-canonicos-tesis` (Gate 0 del plan de corrección del dictamen CONEAU 2026-10-20).
 - **Upsert c-108**: `c-108-metricas-paradigma-y-clase-unitaria` agrega la Sección 3.6 (marco métrico unificado e intervalos de confianza: por clase, de conjunto y del kappa). No modifica ningún valor canónico de la Sección 3. Fecha: 2026-10-21.
 - **Upsert c-130**: `c-130-gate-revision-humana-por-etapa` agrega la Sección 3.7 (gate de revisión por etapa y punto de operación del cortocircuito), un punto en la Sección 4 (alcance del gate por etapa) y el punto 7 de la Sección 7 (procedencia de la cache FORCE-ESCALATE y salvedad de estimación dentro de la muestra). No modifica ningún valor vigente de las Secciones 3.1 a 3.6. Fecha: 2026-10-25.
-- **Upsert c-134**: `c-134-contrastes-estadisticos-y-desagregado-canal` (bloque de código, aplicado el 2026-10-25) agrega la Sección 3.8 (tiempos por canal, contrastes, `d_z`, efecto mínimo detectable, sensibilidad del redondeo y granularidad de la medición manual), notas de convención bilateral en dos filas de la Sección 3.1 y actualiza las remisiones `report.md:99` → `report.md:140` (la línea del SHA-256 se desplazó al agregarse tres subsecciones a "## Tiempos"). No modifica ningún valor vigente de las Secciones 3.1 a 3.7. Los números de sección siguientes se corren (ver `dictamen-correcciones.md`, G0.6). El bloque de tesis de c-134 (grupos 6 a 8) cita estos valores y queda pendiente.
+- **Upsert c-134**: `c-134-contrastes-estadisticos-y-desagregado-canal` (bloque de código, aplicado el 2026-10-25) agrega la Sección 3.8 (tiempos por canal, contrastes, `d_z`, efecto mínimo detectable, sensibilidad del redondeo y granularidad de la medición manual), notas de convención bilateral en dos filas de la Sección 3.1 y actualiza las remisiones `report.md:99` → `report.md:140` (la línea del SHA-256 se desplazó al agregarse tres subsecciones a "## Tiempos"). No modifica ningún valor vigente de las Secciones 3.1 a 3.7. Los números de sección siguientes se corren (ver `dictamen-correcciones.md`, G0.6). El bloque de tesis de c-134 (grupos 6 a 8, aplicado el 2026-10-25) cita estos valores en `04-marco-metodologico.tex`, `07-resultados.tex`, `08-discusion.tex`, `01-introduccion.tex`, `11-aspectos-legales.tex` y `00-resumen.tex`, agrega a la Sección 3.8 la tabla de cifras con redondeo de tesis y no modifica ningún valor `vigente`.
 - **Upsert c-131**: `c-131-metricas-por-etapa-canal-y-exactitud-laxa` (aplicado el 2026-10-25) agrega la Sección 3.9 (exactitud estricta y laxa por etapa y por canal con IC de Wilson, bandas, contingencia, tramo `≥ 0,90` y distribución de confianza por etapa, contraste pareado de McNemar entre etapas y decisión de datos PROVISIONAL), anota en las Secciones 3.3, 4 y 5 (ítem 2) que el contraste agregado `0,697` frente a `0,758` es un efecto de composición entre etapas y registra como `retirado` la lectura de anti-calibración del clasificador en su conjunto. Como el reporte regenerado agrega la línea de procedencia, la exactitud laxa y cuatro secciones antes de `## Tiempos`, **actualiza todas las remisiones `report.md:<línea>`** de este memo (la línea del SHA-256 pasa de `140` a `256`; verificado por correspondencia de contenido línea a línea con el reporte previo). No modifica ningún valor `vigente` de las Secciones 3.1 a 3.8.
 - **Upsert c-142**: `c-142-sensibilidad-fuera-de-muestra-ajustes-clasificador` (aplicado el 2026-10-25) agrega la Sección 3.10 (sensibilidad de las métricas frente al ajuste del clasificador con el corpus: variante principal con el vocabulario previo a c-71, descomposición pareada, control de fidelidad de la réplica histórica, E3, E4 y niveles del prompt), notas "estimación dentro de la muestra; ver sección 3.10" en las filas de `97/131`, `0,7405` y `0,6769` y los puntos 8 y 9 de la Sección 7. No modifica ningún valor `vigente` de las Secciones 3.1 a 3.9. Fecha: 2026-10-25.
 - **Upsert c-132**: `c-132-balance-neto-derivaciones-erroneas` (aplicado el 2026-10-25) agrega la Sección 3.11 (balance neto trimestral entre el ahorro bruto de registro y el costo de las derivaciones erróneas: insumos con procedencia, fórmulas de `B` y de la exactitud mínima de equilibrio `a*`, tabla de escenarios, escenario central, lectura laxa, comando de referencia y redondeo; todo valor derivado de supuestos con estado `condicional`). No modifica ningún valor `vigente` de las Secciones 3.1 a 3.10. Fecha: 2026-10-25.
@@ -322,8 +322,35 @@ cada `tiempo_manual_s`). Procedencia: `evaluation/report.md:251-252` y `:254`;
 |---|---|---|---|
 | Desvío estándar manual: `44,9 s` | `evaluation/report.md:223` (`44,8961`) | vigente | Muestral; ya era la convención de `07-resultados.tex:23`. El poblacional daría `44,8` y no se cita. |
 | Desvío estándar automatizado: `13,52 s` | `evaluation/report.md:223` (`13,5164`) | vigente | Muestral (divisor `n − 1`). Reemplaza a `13,48`. |
-| Desvío estándar automatizado: `13,48 s` | `07-resultados.tex:10,23`, `08-discusion.tex:12` (a corregir por la rama de tesis de c-134) | **retirado** | Convención poblacional (divisor `n`): `13,5164 × raíz(199/200) = 13,4825`. Se unifica en muestral (decisión D3 del change). Reversible si el autor adopta divisor `n` en todo el documento. |
+| Desvío estándar automatizado: `13,48 s` | `07-resultados.tex:10,23`, `08-discusion.tex:12` (corregidos por el bloque de tesis de c-134, 2026-10-25; ya no figura en ninguna fuente `.tex`) | **retirado** | Convención poblacional (divisor `n`): `13,5164 × raíz(199/200) = 13,4825`. Se unifica en muestral (decisión D3 del change). Reversible si el autor adopta divisor `n` en todo el documento. |
 | Diferencias pareadas: media `43,82 s`, desvío muestral `43,81 s` | media: `evaluation/report.md:199` (`43,82`); desvío: recálculo offline del 2026-10-25 con `estadisticos_descriptivos` sobre los 200 pares (`43,8067`), no figura en el reporte | vigente | `d_z = 43,8244 / 43,8067 = 1,0004` (coincide con la tabla de contrastes). |
+
+**Cifras con redondeo de tesis** (bloque de tesis de c-134, 2026-10-25). Son las formas
+redondeadas de los valores canónicos de las tablas anteriores; no son valores nuevos.
+
+| Valor citado en la tesis | Valor canónico de origen | Dónde se cita | Estado |
+|---|---|---|---|
+| `13,52 s` (desvío automatizado) | `13,5164` | `07-resultados.tex` (texto y `tab:tiempos`), `08-discusion.tex` | vigente |
+| `77,0 %`, `51,1 %`, `93,4 %` (reducción de la media por canal) | `76,98 %`, `51,07 %`, `93,44 %` | `tab:tiempos-canal`, `08-discusion.tex` (`51,1`–`93,4`) | vigente |
+| `87,2`, `56,5`, `28,7 s` (media manual por canal) y `72,0`, `50,0`, `20,0 s` (mediana) | `87,2469`, `56,5152`, `28,6792` y `72`, `50`, `20` | `tab:tiempos-canal` | vigente |
+| `20,09`, `27,65`, `1,88 s` (media automatizada por canal) y `18,70`, `25,82`, `1,26 s` (mediana) | `20,0883`, `27,6546`, `1,8823` y `18,6980`, `25,8180`, `1,2650` | `tab:tiempos-canal` | vigente |
+| `d_z`: `1,00`, `1,37`, `0,73`, `1,61` | `1,0004`, `1,3674`, `0,7345`, `1,6147` | `04-marco-metodologico.tex` (potencia), `07-resultados.tex` | vigente |
+| MDE: `0,20` y `0,21` (global); `0,31`, `0,34`, `0,38` y `0,33`, `0,37`, `0,41` (por canal, sin y con `ARE`) | `0,1981`, `0,2131`; `0,3113`, `0,3449`, `0,3848` y `0,3349`, `0,3710`, `0,4140` | `04-marco-metodologico.tex` | vigente |
+| `p` unilateral global `1,54e-32` | `1,54e-32` | `01-introduccion.tex`, `04-marco-metodologico.tex` | vigente |
+| `p` bilateral por canal `5,36e-15`, `4,78e-09`, `2,39e-10` y global `3,08e-32` | idem | `tab:tiempos-canal` (el global también en `01` y `07`) | vigente |
+| Media y desvío de las diferencias: `43,82 s` y `43,81 s` | `43,8244` y `43,8067` | `04-marco-metodologico.tex`, `07-resultados.tex` | vigente |
+| Pares no más rápidos `0 de 81`, `12 de 66`, `0 de 53` (`12 de 200`) | tabla de reducción relativa de arriba | `tab:tiempos-canal` | vigente |
+| Múltiplos de `5 s` `199 / 200` y de `10 s` `180 / 200` | `evaluation/report.md:254` | `04-marco-metodologico.tex` (`subsec:diseno-experimental`) | vigente |
+
+Dos redondeos a dos decimales no coinciden con el redondeo a tres decimales de las tablas
+de arriba y no son errores: la media automatizada de correo es `27,6546` (se cita
+`27,65`; la forma `27,655` de arriba es la de tres decimales) y la mediana automatizada
+de formulario web es `1,2650` a cuatro decimales (se cita `1,26`, el valor que la tabla
+previa de la tesis ya tenía). **Hechos del estudio PROVISIONALES** (pendientes de
+confirmación del autor, ver `design.md` de c-134, OQ1 y OQ2): el relato del cronometraje
+mutuo (`04-marco-metodologico.tex`, `08-discusion.tex`, `11-aspectos-legales.tex`) y la
+declaración de que la distribución del universo por sector no está disponible
+(`04-marco-metodologico.tex`); no aportan ninguna cifra nueva.
 
 **Reversibilidad.** El `p` bilateral queda como valor principal para no mover `W`, `T+`,
 `r` ni las cifras ya canónicas de la Sección 3.1; si el autor prefiere el unilateral como

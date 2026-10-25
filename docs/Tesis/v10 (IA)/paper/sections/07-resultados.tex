@@ -7,7 +7,7 @@ Este capítulo presenta los resultados de la validación experimental en cuatro 
 
 \subsection{Comparación de tiempos de registro}\label{subsec:comparacion-tiempos}
 
-La comparación de los tiempos de registro entre el flujo manual y el flujo automatizado se sintetiza en la Tabla~\ref{tab:tiempos}. La media aritmética del tiempo manual sobre los 200 casos del corpus fue de 61,6~s (mediana de 50,0~s), con un desvío estándar de 44,9~s y un rango entre 10 y 300~s. Este valor, respaldado por la planilla de cronometraje descrita en la \autoref{subsec:diseno-experimental}, corresponde a la medición experimental incidente por incidente y reemplaza a la estimación preliminar de 2 minutos con 45 segundos citada en la \autoref{subsec:planteamiento-problema}, obtenida sin cronometraje individual. La media del flujo automatizado fue de 17,76~s (mediana de 17,47~s), con un desvío estándar de 13,48~s y un rango entre 0,525 y 65,834~s. La reducción relativa de la media de tiempo alcanzó el 71,2~\%.
+La comparación de los tiempos de registro entre el flujo manual y el flujo automatizado se sintetiza en la Tabla~\ref{tab:tiempos}. La media aritmética del tiempo manual sobre los 200 casos del corpus fue de 61,6~s (mediana de 50,0~s), con un desvío estándar de 44,9~s y un rango entre 10 y 300~s. Este valor, respaldado por la planilla de cronometraje descrita en la \autoref{subsec:diseno-experimental}, corresponde a la medición experimental incidente por incidente y reemplaza a la estimación preliminar de 2 minutos con 45 segundos citada en la \autoref{subsec:planteamiento-problema}, obtenida sin cronometraje individual. La media del flujo automatizado fue de 17,76~s (mediana de 17,47~s), con un desvío estándar de 13,52~s y un rango entre 0,525 y 65,834~s. La reducción relativa de la media de tiempo alcanzó el 71,2~\%.
 
 \begin{table}[htbp]
 \centering
@@ -20,7 +20,7 @@ La comparación de los tiempos de registro entre el flujo manual y el flujo auto
 \midrule
 Media aritmética (s)      & 61,6   & 17,76   & 71,2~\% \\
 Mediana (s)               & 50,0   & 17,47   & 65,1~\% \\
-Desvío estándar (s)       & 44,9   & 13,48   & --- \\
+Desvío estándar (s)       & 44,9   & 13,52   & --- \\
 Mínimo (s)                & 10     & 0,525   & --- \\
 Máximo (s)                & 300    & 65,834  & --- \\
 \bottomrule
@@ -29,37 +29,36 @@ Máximo (s)                & 300    & 65,834  & --- \\
 {\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)).\par}
 \end{table}
 
-El tiempo automatizado de registro desagregado por canal de origen se presenta en la Tabla~\ref{tab:tiempos-canal}. El canal telefónico incorpora, además de la latencia de procesamiento, la duración de la llamada grabada; como la grabación esta acotada a un máximo de 45~s (véase la \autoref{subsec:metricas-instrumentos}), su valor constituye una cota inferior de la duración real de la llamada.
+El desagregado por canal de origen, con los dos brazos y el contraste intra-canal, se presenta en la Tabla~\ref{tab:tiempos-canal}: la reducción de la media va del 51,1~\% en correo electrónico, donde se concentran los 12 pares en que el flujo automatizado no fue más rápido, al 93,4~\% en formulario web, y el contraste es significativo en los tres canales. El canal telefónico incorpora, además de la latencia de procesamiento, la duración de la llamada grabada; como la grabación está acotada a un máximo de 45~s (véase la \autoref{subsec:metricas-instrumentos}), su valor constituye una cota inferior de la duración real de la llamada.
 
 \begin{table}[htbp]
 \centering
-\caption{Tiempo automatizado de registro por canal de origen (\(n = 200\))}
+\caption{Tiempo de registro por canal de origen: flujos manual y automatizado, reducción y contraste intra-canal (\(n = 200\))}
 \label{tab:tiempos-canal}
-\small
-\begin{tabular}{@{}p{6.0cm} c c c@{}}
+\footnotesize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.9cm} c c c c c >{\centering\arraybackslash}p{1.65cm} >{\centering\arraybackslash}p{1.65cm} c c@{}}
 \toprule
-\textbf{Canal de origen} & \textbf{Casos} & \textbf{Media (s)} & \textbf{Mediana (s)} \\
+ & & \multicolumn{2}{c}{\textbf{Manual (s)}} & \multicolumn{2}{c}{\textbf{Automatizado (s)}} & & & & \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+\textbf{Canal de origen} & \textbf{Casos} & \textbf{Media} & \textbf{Mediana} & \textbf{Media} & \textbf{Mediana} & \textbf{Reducción de la media} & \textbf{Pares no más rápidos} & \textbf{\(p\) bilateral} & \textbf{\(d_z\)} \\
 \midrule
-Llamada telefónica (cota inferior) & 81 & 20,09 & 18,70 \\
-Correo electrónico                 & 66 & 27,65 & 25,82 \\
-Formulario web                     & 53 & 1,88  & 1,26  \\
+Llamada telefónica (cota inferior) & 81 & 87,2 & 72,0 & 20,09 & 18,70 & 77,0~\% & 0 de 81 & 5,36e-15 & 1,37 \\
+Correo electrónico & 66 & 56,5 & 50,0 & 27,65 & 25,82 & 51,1~\% & 12 de 66 & 4,78e-09 & 0,73 \\
+Formulario web & 53 & 28,7 & 20,0 & 1,88 & 1,26 & 93,4~\% & 0 de 53 & 2,39e-10 & 1,61 \\
 \midrule
-\textbf{Global}                    & \textbf{200} & \textbf{17,76} & \textbf{17,47} \\
+\textbf{Global} & \textbf{200} & \textbf{61,6} & \textbf{50,0} & \textbf{17,76} & \textbf{17,47} & \textbf{71,2~\%} & \textbf{12 de 200} & \textbf{3,08e-32} & \textbf{1,00} \\
 \bottomrule
 \end{tabular}
 \par\smallskip
-{\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)).\par}
+{\footnotesize\textit{Nota:} \(p\): valor bilateral de Wilcoxon sobre las diferencias pareadas (\autoref{subsec:analisis-estadistico}); \(d_z\): media sobre desvío muestral de las diferencias (manual menos automatizado); \(W\), \(T^{+}\), \(T^{-}\) y \(r\) por canal figuran en \texttt{evaluation/report.md}. \textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)).\par}
 \end{table}
 
-La prueba de Wilcoxon de rangos con signo aplicada sobre las mediciones pareadas \parencite{Virtanen2020_scipy} arrojó un estadístico de contraste \(W = \min(T^{+}, T^{-}) = 363\), con una suma de rangos positivos \(T^{+} = 19.737\), una suma de rangos negativos \(T^{-} = 363\) y \(n = 200\) pares válidos, junto con un valor \(p = 3{,}08 \times 10^{-32}\), lo que permite rechazar la hipótesis nula de igualdad de medianas con un nivel de confianza superior al 99,9~\%. El estadístico refleja que en 188 de los 200 pares el flujo automatizado fue más veloz que el manual; en los 12 pares restantes (6,0~\%) el flujo automatizado no fue más rápido, resultado coherente con la diferencia de aproximadamente 32,5~s entre medianas. La prueba se eligió por el rechazo de la normalidad en los tres conjuntos de tiempos (\autoref{subsec:analisis-estadistico}).
+La prueba de Wilcoxon de rangos con signo aplicada sobre las mediciones pareadas \parencite{Virtanen2020_scipy} arrojó un estadístico de contraste \(W = \min(T^{+}, T^{-}) = 363\), con una suma de rangos positivos \(T^{+} = 19.737\), una suma de rangos negativos \(T^{-} = 363\) y \(n = 200\) pares válidos, junto con un valor \(p = 3{,}08 \times 10^{-32}\) bilateral (\autoref{subsec:analisis-estadistico}), lo que permite rechazar la hipótesis nula de igualdad de medianas con un nivel de confianza superior al 99,9~\%. El estadístico refleja que en 188 de los 200 pares el flujo automatizado fue más veloz que el manual; en los 12 pares restantes (6,0~\%) el flujo automatizado no fue más rápido, resultado coherente con la diferencia de aproximadamente 32,5~s entre medianas. La prueba se eligió por el rechazo de la normalidad en los tres conjuntos de tiempos (\autoref{subsec:analisis-estadistico}).
 
-Para cuantificar la magnitud práctica de la diferencia, se calculó el coeficiente \(r\) de correlación rank-biserial a partir de los dos estadísticos de rango:
-\[
-r = \frac{T^{+} - T^{-}}{n(n+1)/2} = \frac{19.737 - 363}{200 \cdot 201 / 2} = \frac{19.374}{20.100} = 0{,}9639
-\]
-El valor obtenido (\(r = 0{,}9639\)) corresponde a un tamaño del efecto muy alto. La diferencia observada es, por tanto, estadísticamente significativa y, dada su magnitud absoluta, relativa y el tamaño del efecto reportado, también prácticamente relevante para la operación.
+Para cuantificar la magnitud práctica de la diferencia, se calculó el coeficiente \(r\) de correlación rank-biserial a partir de los dos estadísticos de rango (\(r = 19.374/20.100 = 0{,}9639\)), un tamaño del efecto muy alto. En la escala estandarizada del contraste pareado, distinta de la anterior, el tamaño del efecto es \(d_z = 1{,}00\) (media de las diferencias de 43,82~s sobre su desvío muestral de 43,81~s). La diferencia observada es, por tanto, estadísticamente significativa y, dada su magnitud absoluta, relativa y el tamaño del efecto reportado, también prácticamente relevante para la operación.
 
-Cabe señalar que el tiempo manual se registró con redondeo hacia arriba (véase la \autoref{subsec:diseno-experimental}), un sesgo de medición sistemático que infla la línea base manual. Por ese motivo la reducción del 71,2~\% debe leerse como cota superior. Un análisis de sensibilidad que descuenta 5~s y 10~s a cada medición manual reduce la media manual a 56,6~s y 51,6~s, respectivamente, y sitúa la reducción en el 68,6~\% y en el 65,6~\% como cota inferior conservadora. Aun en el escenario más desfavorable la reducción de tiempo permanece sustancial y estadísticamente significativa (\(p = 1{,}8 \times 10^{-26}\), \(r = 0{,}8683\)).
+Cabe señalar que el tiempo manual se registró con redondeo hacia arriba (véase la \autoref{subsec:diseno-experimental}), un sesgo de medición sistemático que infla la línea base manual. Por ese motivo la reducción del 71,2~\% debe leerse como cota superior. Un análisis de sensibilidad que descuenta 5~s y 10~s a cada medición manual reduce la media manual a 56,6~s y 51,6~s, respectivamente, y sitúa la reducción en el 68,6~\% y en el 65,6~\% como cota inferior conservadora. Aun en el escenario más desfavorable la reducción de tiempo permanece sustancial y estadísticamente significativa (\(p = 1{,}8 \times 10^{-26}\) bilateral, \(r = 0{,}8683\)).
 
 \begin{figure}[htbp]
 \centering

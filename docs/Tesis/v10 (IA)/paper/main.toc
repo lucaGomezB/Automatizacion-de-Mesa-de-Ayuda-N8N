@@ -59,12 +59,12 @@
 \contentsline {subsection}{\numberline {7.6}Cumplimiento normativo y alineación con estándares}{65}{subsection.7.6}%
 \contentsline {subsubsection}{\numberline {7.6.1}Marco de referencia adoptado}{65}{subsubsection.7.6.1}%
 \contentsline {subsubsection}{\numberline {7.6.2}Estado de alineación con ISO/IEC 27002:2022}{65}{subsubsection.7.6.2}%
-\contentsline {subsubsection}{\numberline {7.6.3}Perfil de alineación con NIST CSF 2.0}{65}{subsubsection.7.6.3}%
+\contentsline {subsubsection}{\numberline {7.6.3}Perfil de alineación con NIST CSF 2.0}{66}{subsubsection.7.6.3}%
 \contentsline {subsubsection}{\numberline {7.6.4}Brechas principales y hoja de ruta}{66}{subsubsection.7.6.4}%
 \contentsline {subsubsection}{\numberline {7.6.5}Alineación con el marco legal}{66}{subsubsection.7.6.5}%
 \contentsline {section}{\numberline {8}Resultados}{67}{section.8}%
 \contentsline {subsection}{\numberline {8.1}Comparación de tiempos de registro}{67}{subsection.8.1}%
-\contentsline {subsection}{\numberline {8.2}Matriz de confusión y métricas de clasificación}{69}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.2}Matriz de confusión y métricas de clasificación}{68}{subsection.8.2}%
 \contentsline {subsection}{\numberline {8.3}Intervención humana en el flujo automatizado}{71}{subsection.8.3}%
 \contentsline {subsection}{\numberline {8.4}Calibración de la confianza}{72}{subsection.8.4}%
 \contentsline {subsection}{\numberline {8.5}Sensibilidad al ajuste del clasificador con el corpus}{73}{subsection.8.5}%
