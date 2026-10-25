@@ -60,7 +60,7 @@ El incidente guarda un `reportante_empleado_id` (FK nullable a `directorio_emple
 
 Principio rector (§11.5 de la tesis): ninguna decisión automatizada es definitiva sin posibilidad de revisión humana. Materialización:
 
-1. Confianza < 0,70 → `requiere_revision_humana = true` → entra a la cola FIFO. También se deriva a revisión cuando el reportante no se pudo identificar (VIS-005).
+1. Gemini con confianza < 0,70 o etapa fallback → `requiere_revision_humana = true` → entra a la cola FIFO. También se deriva a revisión cuando el reportante no se pudo identificar (VIS-005). La etapa determinística no deriva por su confianza.
 2. La validación humana puede confirmar o corregir cualquier clasificación (no solo las de baja confianza): `mesa_de_ayuda` sobre cualquier incidente (GLOBAL) y `usuario_final` sobre los propios. La corrección queda en `clasificacion_log.sector_id_validado` y, para casos multietiqueta, en el conjunto validado (`clasificacion_sector_validado`).
 3. La notificación de revisión se dirige a TODOS los `mesa_de_ayuda` activos, sin acotar por sector.
 4. Toda decisión (automática o humana) es trazable: etapa, confianza, respuesta cruda de Gemini, timestamps.

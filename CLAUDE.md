@@ -47,7 +47,7 @@ Twilio Webhook (call transcription)
 
 ### AI Classification (Gemini 2.5 Flash)
 - **Response format**: Strict JSON with `"categoría"` (one of five canonical strings) and `"confianza"` (float 0.0–1.0)
-- **Confidence threshold**: ≥ 0.7 required; below that routes to human review
+- **Confidence threshold**: the human-review rule (`confianza < 0.70`) applies only to Gemini's output; the fallback stage always flags review (confidence 0.0); the deterministic stage short-circuits on `score_correctitud >= 0.5166` and does not flag review by its confidence; the backend also flags review when the reporter is not identified (VIS-005)
 - **Temperature**: 0.3 | **Top_p**: 0.9 | **Max tokens**: 100 | **Timeout**: 10s
 - **Language**: Rioplatense Spanish dialect
 
@@ -97,7 +97,7 @@ function engram-import { engram sync --import --project "Automatizacion-de-Mesa-
 
 - The workflow is currently set to **inactive** (`"active": false` in the JSON). Activate it in the N8N UI before testing.
 - The JavaScript and Python code nodes in the workflow have been fully implemented (C-04): validation, normalization, Anexo H §H.3 checks, and HTTP payload mapping. No placeholders remain.
-- The IF node conditions are configured: `confianza >= 0.70` (inclusive) in both channels.
+- The IF node conditions are configured: `Entrada valida` evaluates a synthetic input-validity confidence (`>= 0.70`, inclusive) before the POST, and `Requiere revision humana` evaluates the backend's `requiere_revision_humana` indicator.
 - To deploy: import `n8n/workflow.json` into an N8N instance and configure the N8N credentials (IMAP, SMTP, operator login Custom Auth, telephony Header Auth); Gemini is configured in the backend `GEMINI_API_KEY`, not in N8N. The backend endpoint is `POST /api/v1/incidentes`.
 - A `docker-compose.yml` for local testing (N8N 1.62 + FastAPI backend + PostgreSQL + Redis) is available at the root of the repository (added in C-04 verification). See `docs/n8n-workflow-guide.md` for setup instructions.
 - The evaluation corpus (`data/corpus_evaluacion_pseudonimizado.json`, multi-label JSON) is not tracked in git. The synthetic 200-case corpus was discarded and removed (C-27).

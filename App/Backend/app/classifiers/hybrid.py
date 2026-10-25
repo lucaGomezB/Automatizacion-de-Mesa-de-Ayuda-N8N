@@ -57,8 +57,8 @@ class HybridClassifier(BaseClassifier):
     Clasificador híbrido que orquesta el pipeline de dos etapas.
 
     Combina la velocidad y el costo cero del filtro determinístico
-    para los casos de alta confianza, con la comprensión semántica
-    del LLM Gemini 3.6 Flash para los casos ambiguos.
+    para los casos con señal dominante, con la comprensión semántica
+    del LLM Gemini 3.6 Flash para los casos que el filtro no resuelve.
 
     Permite inyección de dependencias de las sub-etapas para testing:
         classifier = HybridClassifier(
@@ -141,10 +141,10 @@ class HybridClassifier(BaseClassifier):
             que había estimado el clasificador determinístico.
 
         Revisión humana:
-            Se activa cuando la confianza final (de cualquier etapa) es inferior
-            al umbral de revisión humana (0.70 por defecto). Se verifica
-            explícitamente aquí como segunda línea de defensa, aunque
-            GeminiClassifier ya lo maneja internamente.
+            Se evalúa solo sobre la salida de Gemini: se activa cuando su
+            confianza es inferior al umbral de revisión humana (0.70 por defecto).
+            Se verifica aquí como segunda línea de defensa; el cortocircuito
+            determinístico no la activa y la etapa de reserva la activa siempre.
 
         Args:
             descripcion: Texto pseudonimizado del incidente a clasificar.

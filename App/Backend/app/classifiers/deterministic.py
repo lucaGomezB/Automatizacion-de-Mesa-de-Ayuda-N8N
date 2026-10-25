@@ -5,9 +5,9 @@ Responsabilidad:
     Implementa la primera etapa del pipeline de clasificación. Opera aplicando
     expresiones regulares del diccionario de palabras clave (keywords.py) sobre
     la descripción del incidente y calculando una puntuación normalizada por
-    categoría. Si la confianza resultante supera el umbral configurado (0.90),
-    el resultado se devuelve directamente sin invocar a Gemini, reduciendo
-    la latencia y el costo de inferencia del LLM.
+    categoría. Si la señal es dominante y el score de correctitud alcanza el
+    punto de operación (Settings, c-74), el resultado se devuelve sin invocar
+    a Gemini, reduciendo la latencia y el costo de inferencia del LLM.
 
 Fórmula de confianza (c-71 ASG-009):
     La confianza deja de ser degenerada (1.0 con un unico match). Combina:
@@ -19,8 +19,8 @@ Fórmula de confianza (c-71 ASG-009):
                          = min(1.0, margin_ratio * sufficiency) en caso contrario
 
     Un unico match (winner < min_matches) o cualquier empate (margin 0) produce
-    confianza 0.0 y jamas alcanza el cortocircuito. El umbral concreto se
-    calibra offline contra el corpus (curva precision/cobertura, piso >= 0.90).
+    confianza 0.0; el cortocircuito NO depende de la confianza sino del score
+    de correctitud, cuyo punto de operacion se calibra offline (c-74).
 
 No-match y empate (c-71 ASG-007/ASG-008):
     Sin ningun match (`winner_score == 0`) el resultado senala `sin_prediccion=True`
@@ -182,7 +182,7 @@ class DeterministicClassifier(BaseClassifier):
     sentido de que ante la misma entrada produce siempre la misma salida,
     sin variabilidad estocástica ni llamadas a servicios externos.
 
-    Ventajas sobre el clasificador LLM para los casos de alta confianza:
+    Ventajas sobre el clasificador LLM para los casos con senal dominante:
         - Latencia < 1 ms (sin E/S de red).
         - Sin costo de API por token procesado.
         - Totalmente predecible y auditable.
@@ -224,9 +224,9 @@ class DeterministicClassifier(BaseClassifier):
             4. Calcula la confianza con conteo minimo y margen sobre el segundo.
             5. Retorna el resultado con etapa="deterministic".
 
-        El campo requiere_revision_humana siempre es False en esta etapa;
-        la evaluación de revisión humana la realiza el HybridClassifier
-        según el umbral de confianza.
+        El campo requiere_revision_humana siempre es False en esta etapa:
+        la confianza de esta etapa mide fuerza de senal y NO dispara revision
+        humana (el umbral 0.70 se evalua solo sobre la salida de Gemini).
 
         Args:
             descripcion: Texto del incidente a clasificar.
@@ -291,7 +291,7 @@ class DeterministicClassifier(BaseClassifier):
             sectores_adicionales=sectores_adicionales,
             confianza=confidence,
             etapa="deterministic",
-            requiere_revision_humana=False,  # Evaluado por el HybridClassifier
+            requiere_revision_humana=False,  # Esta etapa no deriva por su confianza
             respuesta_raw=None,              # Sin respuesta raw en etapa determinística
             sin_prediccion=False,
             ambiguo=ambiguo,
@@ -348,13 +348,13 @@ class DeterministicClassifier(BaseClassifier):
 
     def is_confident(self, result: ClasificacionResult) -> bool:
         """
-        Indica si el resultado alcanza el umbral de confianza para cortocircuitar Gemini.
+        Indica si la confianza (fuerza de senal) alcanza el umbral de Settings.
 
         Args:
             result: Resultado producido por classify().
 
         Returns:
-            True si la confianza supera o iguala el umbral calibrado en Settings
-            (c-71; documentado en docs/deterministic_calibration.md).
+            True si la confianza supera o iguala el umbral; el pipeline no lo usa
+            (el cortocircuito se decide por el score de correctitud, c-74).
         """
         return result.confianza >= self._threshold
