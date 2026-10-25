@@ -109,17 +109,4 @@ El framework SHALL permitir acotar el efecto de las reglas de frontera del promp
 - **THEN** su prompt se clasifica como "previa confirmada", "probablemente previa", "posterior" o "indeterminada" segun su fecha de generacion frente a la propuesta y a la aplicacion de las reglas de frontera
 - **AND** solo la clase "previa confirmada" habilita el uso del nivel (b) fuera del reporte
 
-### Requirement: Advertencia metodologica del framework coherente con el historial
-
-`evaluation/README.md` SHALL describir la procedencia factual de los ajustes del clasificador realizados con el corpus de evaluacion (vocabulario del filtro deterministico, c-71; reglas de frontera del prompt, c-72; punto de operacion del cortocircuito por validacion cruzada fuera de muestra, c-74), SHALL calificar las metricas del reporte como estimaciones dentro de la muestra, SHALL remitir al analisis de sensibilidad y SHALL enunciar la regla vigente: el corpus de evaluacion se usa solo para diagnostico y todo ajuste posterior se mide sobre datos separados. La documentacion MUST NOT afirmar que el clasificador no se ajusto con el corpus de evaluacion.
-
-#### Scenario: Sin afirmacion de no ajuste
-
-- **WHEN** se busca en `evaluation/README.md` una afirmacion de que el clasificador no fue ajustado sobre el corpus de evaluacion
-- **THEN** no aparece ninguna
-
-#### Scenario: Procedencia y remision presentes
-
-- **WHEN** se lee la advertencia metodologica de `evaluation/README.md`
-- **THEN** enumera los ajustes de c-71, c-72 y c-74 con su commit y califica las metricas como estimaciones dentro de la muestra
-- **AND** indica el comando del analisis de sensibilidad y su archivo de salida
+<!-- c-144 (archivado el 2026-10-23 en main) ya incorporo al spec vivo el requisito "Advertencia metodologica del framework coherente con el historial"; este change solo verifica el texto resultante. -->

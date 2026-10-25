@@ -77,21 +77,7 @@ Toda aparicion en `sections/*.tex` de la exactitud de la etapa deterministica (`
 - **WHEN** se comparan los valores numericos de la tesis antes y despues de agregar las calificaciones
 - **THEN** no cambia ninguno
 
-### Requirement: Ubicacion veraz de las versiones historicas del prompt en el Anexo H
-
-El Anexo H (`12-anexos.tex`) y su documento fuente `docs/anexo_h_prompt_gemini.md` SHALL ubicar las versiones historicas del prompt en el historial de versiones del repositorio para `docs/prompt_gemini.txt` y MUST NOT remitir a `docs/prompt_gemini_history/`, que no existe. Cuando el analisis de sensibilidad haya usado la version previa a las reglas de frontera, el Anexo H SHALL remitir a `subsec:sensibilidad-ajustes`. `docs/anexo_h_prompt_gemini.md` MUST NOT afirmar que el prompt se ajusto sin exposicion al corpus de validacion y SHALL declarar que las reglas de frontera de la version evaluada se incorporaron a partir de errores observados en ese corpus, en coherencia con el Anexo H de la tesis.
-
-#### Scenario: Sin remision a un directorio inexistente
-
-- **WHEN** se busca `prompt_gemini_history` en `sections/*.tex` y en `docs/anexo_h_prompt_gemini.md`
-- **THEN** no aparece ninguna coincidencia
-
-#### Scenario: Documento fuente alineado con la tesis
-
-- **WHEN** se lee la seccion de iteracion del prompt de `docs/anexo_h_prompt_gemini.md`
-- **THEN** no afirma ausencia de exposicion al corpus de validacion
-- **AND** declara el origen de las reglas de frontera y la ubicacion de las versiones historicas del prompt
-
+<!-- c-144 (archivado el 2026-10-23 en main) ya incorporo al spec vivo el requisito "Ubicacion veraz de las versiones historicas del prompt en el Anexo H"; este change solo verifica el texto resultante. -->
 ### Requirement: Impacto de paginas del analisis de sensibilidad
 
 El change SHALL registrar el conteo de paginas del PDF compilado tras aplicarlo y su diferencia con el conteo de partida, para la decision de tope de la release. El analisis SHALL presentarse con una unica tabla compacta. Si el conteo supera el tope vigente registrado por el gate G0, SHALL aplicar las compensaciones declaradas en su diseno en el orden previsto y registrar el exceso remanente y su causa; MUST NOT eliminar contenido cientifico, numeros canonicos ni la linea de fuente de la tabla para compensar paginas, aunque SHALL poder trasladar la tabla a un anexo si la regla de G0 limita solo el cuerpo.
