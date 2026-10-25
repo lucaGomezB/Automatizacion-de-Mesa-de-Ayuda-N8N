@@ -919,6 +919,7 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 | `+c-130` (`change/c-130-gate-revision-humana-por-etapa`) | sin commit (lo crea el orquestador) | 103 | 95 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{103}`; `Anexos` en p. 96; brecha frente a 101: +2 (con C3 aplicada) |
 | `+c-131` (`change/c-131-metricas-por-etapa-canal-y-exactitud-laxa`) | sin commit (lo crea el orquestador) | 103 | 95 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{103}`; `Anexos` en p. 96; brecha frente a 101: +2 (sin compensar habria sido 105) |
 | `+c-142` (`change/c-142-sensibilidad-fuera-de-muestra-ajustes-clasificador`) | sin commit (lo crea el orquestador) | 104 | 96 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{104}`; `Anexos` en p. 97; brecha frente a 101: +3 (sin los recortes de `09` y la variante de T06 habria sido 105); C3 no aplicada (el total no supera 104) |
+| `+c-132` (`change/c-132-balance-neto-derivaciones-erroneas`) | sin commit (lo crea el orquestador) | 105 | 97 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{105}`; `Anexos` en p. 98; brecha frente a 101: +4 (la primera compilacion dio 106; las variantes cortas de T10, T11 y T13 recuperaron la pagina); rama (b): cuerpo 97, margen 3 |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -1404,5 +1405,116 @@ declarativa de A5 es de c-130 y c-144.
 docs/Tesis/Correcciones/numeros-canonicos.md docs/Tesis/Correcciones/dictamen-correcciones.md`, regenerar el render y
 recompilar. Las decisiones PROVISIONALES (OQ1 a OQ7 y el uso de la FORCE-ESCALATE) se pueden revertir sin tocar los valores
 canonicos: si se rechaza la FORCE-ESCALATE, E3 y E4 pasan a "no computable" y la tabla pierde su cuarta columna.
+
+**Estado**: grupo aplicado.
+
+## Dictamen v1.1.0 - A3 (c-132) - Balance neto entre el ahorro de registro y las derivaciones erroneas
+
+**Origen**: change `c-132-balance-neto-derivaciones-erroneas` (dictamen CONEAU 2026-10-22: VEREDICTO punto 3, seccion 7 (c)
+y RECOMENDACION A3). Aplicado el **2026-10-25** en la rama `change/c-132-balance-neto-derivaciones-erroneas`, cortada de
+`ramagonzalo` en `31c143a` (merge de c-142). Posicion 5 del orden de la familia (G0.6). Solo documento (gobernanza LOW):
+cero llamadas a Gemini, sin codigo, sin tags. Sin commit (lo crea el orquestador).
+
+**A3 - Balance neto de derivaciones erroneas - APLICADO por c-132 (2026-10-25).**
+
+### Open Questions del design - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+
+El usuario pidio aplicar la familia sin detenerse y no respondio de forma explicita a las preguntas del design. Decisiones del
+orquestador, **PROVISIONALES**:
+
+| Open Question | Decision | Efecto en el apply |
+|---|---|---|
+| OQ1 - tope de paginas | Lo decide c-141. Hoy rige provisionalmente la rama (a) total <= 101 (G0.1), ya superada: la base de este change era 104. c-132 apunta a <= +1 y registra el exceso. | Medido +1 (total 105); ver "Paginas" y el libro mayor. |
+| OQ2 - correccion colateral T13 (`09-conclusiones.tex`, "costo operativo dominado por el consumo de API de inferencia") | **Se incluye** (recomendacion del design). | T13 aplicado en una variante mas corta (ver "Mapeo T1-T14"). |
+| OQ3 - orden respecto de c-131 | **Rama "laxa disponible" de D4**: c-131 registro la exactitud laxa (`179/200 = 0,8950`, IC `[0,8448; 0,9303]`, memo 3.9). No se usa el fallback. | Laxa en la nota de `tab:balance-neto`, una frase con el balance laxo y las filas laxas en el memo 3.11 (`condicional`). |
+
+### Linea base y coordinacion (bloque 1)
+
+- Paginas de partida: `abspage@last{104}`, `Anexos` en p. 97 (cuerpo 96, anexos 8). La tarea 1.1 dice 101: **102 tras c-144, 103 tras c-130,
+  103 tras c-131, 104 tras c-142**. Inicio de capitulos (`main.toc`): 1:11, 2:18, 3:26, 4:31, 5:40, 6:51, 7:61, 8:67, 9:75, 10:83, 11:86.
+- Rama de D4 (tarea 1.2): **laxa disponible** (`grep -n -i "laxa" numeros-canonicos.md` -> Seccion 3.9, c-131).
+- Anclas de D6 (tarea 1.3): las 12 anclas existian (1 ocurrencia cada una). Adaptaciones al estado vigente: la sexta limitacion se
+  extiende dentro de un listado que ahora tiene **siete** limitaciones (c-142; el check "presenta seis limitaciones" se lee
+  "siete limitaciones", y el cardinal no cambia); `10-recomendaciones.tex` tiene **9** `\subsection` en la base (no 8) y sigue en 9.
+- Conteo de las conclusiones del resumen (tarea 1.4): ES 34, EN 31 (esperado 34 y 31).
+
+### Memo (bloque 2, Gate 0)
+
+Seccion **3.11** de `numeros-canonicos.md` ("Balance neto de derivaciones erroneas (c-132)"; 3.7 c-130, 3.8 c-134, 3.9 c-131,
+3.10 c-142), mas la linea de upsert de la cabecera. Solo agregados (`git diff -U0 | grep "^-[^-]"` vacio). El comando de referencia
+reproduce la tabla de D3 (10/15/20/26,5 %: `a*` y `B`), el escenario central (304,3; 50,7 h; 76,1 h; `Delta e*` 14,6 / 7,3 / 4,9)
+y, en la rama laxa, `B` laxo (`e_aut = 0,105`): 10 %: +31,1 / +30,0 / +28,9; 15 %: +42,1 / +52,1 / +62,0; 20 %: +53,2 / +74,1 / +95,1;
+26,5 %: +67,5 / +102,8 / +138,0 (todos `condicional`). Insumos `vigente`: `N`, `Delta t`, `e_aut`; `condicional`: `e_man`, `c`, la rejilla y
+los valores derivados. Consigna de c-142: la sensibilidad E3 (`128/200` y `146/200` con Gemini fijo) se registro en el memo como
+lectura opcional (`B(15 %)` = -14,1 / -60,4 / -106,7 h y +5,7 / -20,7 / -47,2 h) y **no entra a la tesis**.
+
+### Mapeo T1-T14 (bloques 3 a 5)
+
+| Item | Archivo | Estado |
+|---|---|---|
+| Subseccion `subsec:balance-neto` (9.5) y `tab:balance-neto` (Tabla 17) | `08-discusion.tex`, entre `subsec:implicancias-practicas` y `subsec:reflexiones-generalizacion` (que pasa de 9.5 a 9.6) | aplicado, con la rama laxa de D4 |
+| T1, T2 | `00-resumen.tex` (conclusion ES y EN) | aplicado: viabilidad tecnica y economica; operativa condicional; 34 y 31 palabras |
+| T3 | `01-introduccion.tex`, planteamiento | aplicado (15 % preliminar no re-medido, "brutas", sin "costo de oportunidad significativo"); neto +14 palabras (<= 15) |
+| T4 | `01-introduccion.tex`, justificacion organizacional | aplicado con el borrador del design |
+| T5 | `08-discusion.tex`, `subsec:interpretacion-resultados` | S1 y S2 retiradas; "32,2 horas-persona brutas ---unas cuatro jornadas laborales de un operador---"; S4 reemplazada por la remision; nota al pie intacta |
+| T6 | `08-discusion.tex`, sexta limitacion | aplicado ("exactitud de ese brazo" en lugar de "del brazo manual", para no repetir) |
+| T7 | `08-discusion.tex`, implicancias | aplicado; ademas "libera al personal tecnico" -> "puede liberar al personal tecnico" (coherencia con el saldo neto; +1 palabra) |
+| T8, T9 | `08-discusion.tex` | aplicados |
+| T10 | `09-conclusiones.tex`, parrafo inicial | aplicado en variante corta: "...con viabilidad operativa condicionada al balance neto (\autoref{subsec:balance-neto})" |
+| T11 | `09-conclusiones.tex`, evaluacion comparativa | **variante**: "el sistema libera tiempo bruto de registro, cuyo saldo neto esta indeterminado (\autoref{subsec:balance-neto})" en lugar de "...depende del costo de las derivaciones erroneas": ahorra la linea que desbordaba el capitulo a una pagina nueva |
+| T12 | `09-conclusiones.tex` | aplicado ("tecnicamente viable") |
+| T13 | `09-conclusiones.tex`, aportes (OQ2) | aplicado en variante corta: "su costo monetario, dominado por la infraestructura y no por la inferencia, se cuantifica en la \autoref{subsec:implicancias-practicas}" |
+| T14 | `10-recomendaciones.tex`, `subsec:estudios-replicacion` | aplicado (21 palabras); c-136 NO debe duplicarla |
+
+Sin tasa manual presentada como medida: el unico valor atribuido al flujo manual es el 15 % preliminar; 10 %, 20 % y 26,5 % se rotulan
+"supuestos de sensibilidad". Prosa de la subseccion: **492 palabras** con el comando de la tarea 3.6 (incluye la nota de la tabla y el
+texto matematico en linea; el objetivo era <= 280 y el maximo 320): excede el presupuesto de prosa del design, pero el delta de paginas
+cumple (ver abajo); si c-141 necesita paginas, la nota de la tabla y la frase laxa son las palancas.
+`grep -c "absorbe la carga rutinaria"` y `"preserva la calidad del servicio"` sobre `sections/*.tex` = 0; `32,2` se conserva.
+
+### Revision del autor (gobernanza LOW con recomendacion de revision) - PROVISIONAL
+
+**Quedan marcadas para revision del autor antes de la release** la redaccion final del **resumen/abstract** (T1 y T2) y de la
+**conclusion** (T10 a T13 y el parrafo inicial de `09-conclusiones.tex`). Ningun valor vigente cambio. Reversible: si una replicacion
+mide un balance positivo, la viabilidad operativa puede enunciarse como sostenida (upsert del memo 3.11 y propagacion inversa de T1, T2 y T10).
+
+### Compilacion y paginas (bloque 6)
+
+- Docker `texlive-thesis` (`latexmk main.tex`, en el arbol): `grep -c "^!" main.log` = 0, `undefined` = 0, `multiply defined` = 0, `main.blg` sin
+  WARN/ERROR, sin `Overfull \hbox` en `08-discusion.tex` (ni en `tab:balance-neto`); el unico en `09-conclusiones.tex` es el de la cabecera
+  "Cumplimiento" (preexistente). `verify_citations.py` PASS (59 entradas, 0 huerfanas). `tesis_para_agente.md` regenerado (contiene la
+  subseccion; 0 apariciones de "absorbe la carga rutinaria").
+- **Paginas: antes `abspage@last{104}` (cuerpo 96, anexos 8); despues `abspage@last{105}`; `Anexos` en p. 98: cuerpo 97, anexos 8; delta +1 / +1**
+  (prevision +1 a +3, objetivo <= +1). Primera compilacion: 106 (+2: la subseccion agrego 1 pagina a la discusion y las conclusiones
+  desbordaban una linea a una pagina nueva); las variantes cortas de T10, T11 y T13 recuperaron la pagina. Inicio de capitulos despues: 1:11 ... 9:75,
+  10:84, 11:87 (el capitulo 9 pasa de 8 a 9 paginas; el 10 y el 11 conservan su extension). Brecha frente al tope vigente de 101 (regla (a)
+  provisional): **+4**; regla (b) (cuerpo <= 100): cuerpo 97, margen 3.
+- Resumen: conteo con la regla de c-106 (prosa, math como una palabra, sin "Palabras clave"): **ES 264 -> 264, EN 252 -> 252** (delta 0).
+  Exceso preexistente frente a las 250 palabras del requisito (+14 ES, +2 EN) que c-132 no agrava ni corrige; lo ajusta c-133 o c-141.
+
+### Mapeo del dictamen
+
+VEREDICTO punto 3, seccion 7 (c) y RECOMENDACION A3 -> subseccion `subsec:balance-neto` (formula, tabla, indeterminacion), T1 a T14 y memo 3.11.
+
+### Consignas para otros changes
+
+- **c-133**: `subsec:balance-neto` y `tab:balance-neto` existen con esos nombres; citar como evidencia en `tab:cumplimiento-objetivos`. El umbral del
+  85 % equivale a la paridad con el 15 % manual y `a*` (77,7 a 80,1 % para 15 % y 10-15 min) es menos exigente (esta dicho en la subseccion); la
+  exactitud laxa (89,5 %) supera los doce `a*` pero es la cota favorable. La clausula de viabilidad de `09:6` ya dice "tecnicamente viable ... operativa
+  condicionada"; la frase del objetivo 2 y la tabla siguen siendo de c-133. La seccion siguiente del memo es la 3.12.
+- **c-136**: la linea de replicacion (registro por caso de la derivacion manual, etiquetadores distintos, cronometraje) ya esta en `subsec:estudios-replicacion`
+  (T14); no duplicarla. `10-recomendaciones.tex` tiene 9 subsecciones.
+- **c-141**: libro mayor (fila `+c-132`: 105 / 97 / 8, +1 / +1); revision del autor pendiente sobre resumen y conclusion; el resumen ES conserva 264 palabras
+  (exceso preexistente); renders regenerados con 105 paginas; `Tabla 17` es la tabla nueva y la de cumplimiento pasa a la 18 (las remisiones son por rotulo).
+  Reflexiones sobre la generalizacion pasa de 9.5 a 9.6 (los registros historicos no se reescriben).
+- **c-137** (ortotipografia): el texto nuevo lleva tildes; quedan palabras sin tilde preexistentes fuera de lo reescrito (p. ej. "derivacion erronea" en la primera
+  oracion del planteamiento, `continua` y `antiguedad` en las implicancias).
+
+### Reversibilidad
+
+`git checkout <commit-previo> -- "docs/Tesis/v10 (IA)/paper/sections/00-resumen.tex" "docs/Tesis/v10 (IA)/paper/sections/01-introduccion.tex"
+"docs/Tesis/v10 (IA)/paper/sections/08-discusion.tex" "docs/Tesis/v10 (IA)/paper/sections/09-conclusiones.tex"
+"docs/Tesis/v10 (IA)/paper/sections/10-recomendaciones.tex" docs/Tesis/Correcciones/numeros-canonicos.md docs/Tesis/Correcciones/dictamen-correcciones.md`,
+regenerar el render y recompilar. Si otro change cito `subsec:balance-neto` o `tab:balance-neto`, retirar esas remisiones en el mismo rollback.
 
 **Estado**: grupo aplicado.
