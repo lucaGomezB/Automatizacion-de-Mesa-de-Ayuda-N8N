@@ -276,6 +276,47 @@ Python), en lugar de hacer `POST /api/v1/incidentes` al servidor FastAPI.
 **Trade-off asumido**: la evaluación mide el **clasificador**, no la capa HTTP.
 El Capítulo 7 evalúa calidad de clasificación; la API ya se cubre en C-04/C-05.
 
+## Sensibilidad frente a los ajustes del clasificador (c-142)
+
+`evaluation/sensibilidad_ajustes.py` acota con un análisis **offline y sin costo** el
+sesgo optimista que introdujo ajustar el vocabulario del filtro determinístico con
+el corpus de evaluación (ver la advertencia metodológica de más abajo). Re-mide la
+etapa determinística con el vocabulario previo a c-71 (89 patrones, versionado con
+su procedencia en `evaluation/data/sensibilidad_ajustes/`), conservando la lógica y
+el punto de operación vigentes, y reporta cobertura, aciertos, exactitud con IC de
+Wilson y una descomposición pareada. Las variantes y sus reglas de lectura están
+pre-registradas en el `design.md` de c-142. Escribe **solo**
+`evaluation/report_sensibilidad_ajustes.md`: nunca toca `report.md` ni las cachés
+oficiales, y sus valores no reemplazan ningún valor canónico.
+
+```bash
+# Corrida offline (sin Gemini, sin costo). Desde evaluation/ para no leer el .env de la raíz.
+cd evaluation
+PYTHONPATH=..:../App/Backend python -m evaluation.sensibilidad_ajustes
+```
+
+Usa las cachés de `evaluation/` si existen y, si no, la evidencia congelada de
+`evaluation/evidence/` (o las rutas de `--cache-fe` y `--cache-oficial`). Sin ellas, la
+sensibilidad global, el piso comparativo y los niveles a y b del prompt se rotulan
+"no computable". La corrida falla si la configuración evaluada no reproduce `131`
+casos y `97` aciertos.
+
+**Ablación del prompt (nivel c, corrida PAGA).** Dos brazos sobre los casos que la
+configuración vigente escala a Gemini, cada uno en un proceso propio y en una misma
+sesión, con el mismo gate de corrida paga que `run_evaluation.py`: sin `--confirm-paid`
+(o `EVALUATION_CONFIRM_PAID=1`) sale con código 2 antes de construir el clasificador.
+Antes de la primera llamada verifica el SHA-256 del prompt que cargó el backend y escribe
+cada brazo en un archivo propio (ignorado por git), nunca sobre las cachés oficiales.
+
+```bash
+PYTHONPATH=App/Backend python -m evaluation.sensibilidad_ajustes prompt --brazo vigente --confirm-paid
+PYTHONPATH=App/Backend python -m evaluation.sensibilidad_ajustes prompt --brazo sin-reglas --confirm-paid
+# Reporte con el nivel c (offline):
+python -m evaluation.sensibilidad_ajustes \
+  --brazo-vigente evaluation/predicciones_sensibilidad_prompt_vigente.json \
+  --brazo-sin-reglas evaluation/predicciones_sensibilidad_prompt_sin_reglas.json
+```
+
 ## Advertencia Metodológica (procedencia de los ajustes)
 
 > **Parte del clasificador evaluado se ajustó con el corpus de evaluación.**
@@ -289,7 +330,9 @@ del cortocircuito se derivó sobre el corpus por validación cruzada fuera de
 muestra (c-74, commit `d6bb474`). El protocolo fuera de muestra cubre el punto de
 operación, no el vocabulario ni las reglas del prompt. No se dispuso de un corpus
 independiente de preproducción. Las métricas de `report.md` son, por lo tanto,
-estimaciones dentro de la muestra.
+estimaciones dentro de la muestra. `python -m evaluation.sensibilidad_ajustes` (sin
+Gemini) acota la parte atribuible al vocabulario en
+`evaluation/report_sensibilidad_ajustes.md`.
 
 Regla vigente: el framework solo **evalúa**; el corpus de evaluación se usa
 **solo para diagnóstico** y todo ajuste posterior del clasificador se mide sobre
