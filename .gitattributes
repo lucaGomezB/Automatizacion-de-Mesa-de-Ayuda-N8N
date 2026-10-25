@@ -1,0 +1,5 @@
+# Fin de linea del corpus de evaluacion (c-131, D4).
+# El SHA-256 del corpus valida el cache de predicciones y lo imprime el reporte de
+# evaluacion. Con core.autocrlf=true (checkout Windows) el archivo se extraia en CRLF
+# y hasheaba distinto del blob versionado (LF). Se fija LF en toda plataforma.
+data/corpus_evaluacion_pseudonimizado.json text eol=lf

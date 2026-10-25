@@ -917,6 +917,7 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 | base `v1.1.1` | `4160d84` | 101 | 93 | 8 | - | - | (a) total <= 101 | Medido (dictamen / `main.toc` de v1.1.1) |
 | `+c-144` (main) | `0c7f5bc` | 102 | 94 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{102}`; `Anexos` en p. 95 |
 | `+c-130` (`change/c-130-gate-revision-humana-por-etapa`) | sin commit (lo crea el orquestador) | 103 | 95 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{103}`; `Anexos` en p. 96; brecha frente a 101: +2 (con C3 aplicada) |
+| `+c-131` (`change/c-131-metricas-por-etapa-canal-y-exactitud-laxa`) | sin commit (lo crea el orquestador) | 103 | 95 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{103}`; `Anexos` en p. 96; brecha frente a 101: +2 (sin compensar habria sido 105) |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -1110,5 +1111,130 @@ Sevilla (commits c-04/c-05 sobre el workflow); se conserva la supervision del di
   prevision de ~+0,7 por el corte de pagina.
 - `verify_citations.py`: PASS (59 entradas, 0 huerfanas). `tesis_para_agente.md` regenerado
   (contiene "0,5166" y "124 de los 200 casos"; no contiene "superior al 90").
+
+**Estado**: grupo aplicado.
+
+## Dictamen v1.1.0 - A2, B7b y B8 (c-131) - Metricas por etapa, por canal y exactitud laxa
+
+**Origen**: change `c-131-metricas-por-etapa-canal-y-exactitud-laxa` (dictamen CONEAU 2026-10-22: VEREDICTO
+punto 2 y recomendacion A2 condicionante; seccion 6, cuarta observacion; B7 parte de exactitud; B8). Aplicado
+el **2026-10-25** en la rama `change/c-131-metricas-por-etapa-canal-y-exactitud-laxa`, cortada de `ramagonzalo`
+en `dae365a` (merge del bloque de codigo de c-134). Posicion 3 del orden de la familia (G0.6). Sin commit
+(lo crea el orquestador).
+
+### Linea base (tareas 1.1 a 1.5)
+
+- Entorno: imagen Docker `eval-tests` (Python 3.12.15, pytest 9.1.1, pytest-asyncio 1.4.0, **scipy 1.18.1**).
+- Baseline de `evaluation/`: **216 passed, 1 skipped** (sin cache viva); con las caches colocadas el skip
+  (`test_settings_tau_deriva_del_oof_del_corpus`) pasa a PASSED: 217. Total final: **310 passed**
+  (217 + 93 pruebas nuevas).
+- Paginas de partida: `abspage@last{103}`, `Anexos` en p. 96 (cuerpo 95, anexos 8): la tarea 1.3 dice 101;
+  correccion: **102 tras c-144, 103 tras c-130**.
+- c-130 aplicado (37/37 `[x]`, `efc3d3e`): se ejecutan los bloques 10 y 11.
+- Hash del corpus (bloque 2): la copia de trabajo hasheaba `7408cd2a...62134` (CRLF por `core.autocrlf=true`);
+  tras `.gitattributes` (`data/corpus_evaluacion_pseudonimizado.json text eol=lf`) y refrescar la copia vale
+  `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb`; `git diff --stat -- data/` vacio y blob
+  `76590212b59cec5791094518b8169509461e500c` intacto. Es complementario de la normalizacion CRLF->LF que
+  c-134 agrego a `_compute_corpus_hash`.
+
+### Checkpoint de datos (bloque 3, gobernanza HIGH) - PROVISIONAL
+
+El usuario pidio aplicar la familia sin detenerse y no respondio de forma explicita a las preguntas 1 a 3 del
+design. Fecha: **2026-10-25**. Cada decision es **PROVISIONAL (pendiente de confirmacion del autor)**.
+
+| Pregunta | Decision | Estado |
+|---|---|---|
+| 1 - recuperar las caches | **P1 via c-143**: se usan las copias congeladas de `evaluation/evidence/` (c-143, Luca, archivado 2026-10-23); no se pidieron al clon de Luca. Se copian a `evaluation/predicciones.json` y `evaluation/predicciones_calibracion.json` (rutas ignoradas por git) | PROVISIONAL |
+| 2 - corrida paga de reproduccion | **No autorizada (P2 no aplica)**: cero llamadas a Gemini, sin `GEMINI_API_KEY` real | PROVISIONAL |
+| 3 - versionado de las caches (D8) | **Resuelto por c-143** con copias congeladas; no se toca `.gitignore` ni se agregan las copias vivas al indice. Bloque 8 marcado "no aplica" | PROVISIONAL |
+
+Verificaciones (tareas 3.2 a 3.4 y 6.1): `evaluation/predicciones.json` es copia byte-identica de
+`predicciones_hybrid-v3_2026-10-07.json` (SHA-256 `3fb5bacd04f2e9d303f580e4cf2ac4b4c6f2eab628a4fff80a6e1238029cd8fd`;
+`corpus_hash` `1fd17d7e...`, 200 casos, `hybrid-v3`, `2026-10-07T22:22:01.947873+00:00`; 131 deterministicas y 69 de
+Gemini). La FORCE-ESCALATE (`hybrid-v2`, SHA-256 `2d4f868ce1c01f8a528b29afc69dc541842f7f238c4932c3eee94a6f6298a775`,
+`corpus_hash` `5f062e14...` que NO coincide con el vigente, 199 `gemini` + 1 `deterministic`) reproduce offline
+`precision_gem(S) = 88/130 = 0,6769` y tau `0,5166`. Las 200 descripciones de ambas caches son identicas al corpus
+pseudonimizado (0 diferencias). `evaluation/tests/test_huella_canonica.py` (7 pruebas) PASSED reproduce los
+agregados canonicos; si falta la copia viva, busca la de `evaluation/evidence/` (asi corre PASSED en CI sin versionar
+la viva). 6.2 y 6.4 no aplican.
+
+### Codigo (bloques 4, 5 y 7; TDD estricto)
+
+- `evaluation/metrics.py`: `aciertos_laxos`, `ResumenExactitud`, `resumen_exactitud`, `desglose_exactitud`,
+  `ETAPAS_PIPELINE`, `ValorConfianza`, `distribucion_confianza`, `calibracion_por_etapa`.
+- `evaluation/run_evaluation.py`: lineas de la exactitud laxa, secciones "Exactitud por etapa del pipeline",
+  "Exactitud por canal de origen" y "Calibracion de la confianza" (antes de "## Tiempos"), linea de procedencia,
+  `cargar_cache_meta`, validacion de alineacion `predicciones[i].caso_id == corpus[i].id` (`ValueError`).
+- `evaluation/stats.py`: `ResultadoMcNemar` y `contraste_mcnemar`; `evaluation/deterministic_measurement.py`:
+  `contraste_det_gem_en_s`, `contraste_para_cache`, `lineas_contraste_mcnemar` y el parametro `contraste` de
+  `formatear_reporte_comparativo`.
+- `evaluation/report.md` regenerado por cache hit (sin costo): **116 lineas agregadas, 0 eliminadas**; el SHA-256 del
+  corpus pasa de `report.md:140` a **`report.md:256`**; las secciones nuevas de c-134 y las filas previas no cambian.
+- `evaluation/README.md`, `docs/deterministic_calibration.md:234` (seccion McNemar, 39 lineas agregadas, 0 eliminadas).
+- Desvio respecto del design: D10/6.1 describe la distribucion deterministica como `{0: 98, 0,5: 26, 0,75: 6, 1,0: 1}`;
+  los valores reales son `{0,0: 90, 1/6: 8, 0,5: 26, 0,75: 6, 1,0: 1}` (los `98` casos de la banda `[0; 0,5)` son
+  `90 + 8`). El test caracteriza los valores reales.
+
+### Valores obtenidos (memo, Seccion 3.9; todos `vigente`)
+
+- Exactitud estricta por etapa: deterministica `97/131 = 0,7405` IC `[0,6593; 0,8079]`; Gemini `50/69 = 0,7246`
+  IC `[0,6095; 0,8161]`; fallback sin casos. **Coinciden con los derivados del design** (que quedaban `condicional`).
+- Exactitud laxa: global `179/200 = 0,8950` IC `[0,8448; 0,9303]` (**supera el 85 %**, pero es metrica secundaria: no
+  cambia el estado del objetivo 2; lo decide c-133); deterministica `119/131 = 0,9084`; Gemini `60/69 = 0,8696`.
+- Por canal (estricta / laxa): llamada telefonica `53/81 = 0,6543` / `70/81 = 0,8642`; correo electronico
+  `51/66 = 0,7727` / `61/66 = 0,9242`; formulario web `43/53 = 0,8113` / `48/53 = 0,9057`. Composicion distinta
+  entre canales (multietiqueta `49/81`, `43/66`, `15/53`): no se atribuye la diferencia a la transcripcion.
+- Bandas por etapa: determinista `98/75`, `26/19`, `6/2`, `0/0`, `1/1`; Gemini `0/0`, `0/0`, `0/0`, `31/22`, `38/28`
+  (`0,7097` y `0,7368`, IC solapados). La suma reproduce `98/26/6/31/39` y `75/19/2/22/29`.
+- Contingencia `76/53` y `124/94` con su composicion; tramo `>= 0,90`: global `46/13`, Gemini `45/13`,
+  deterministica `1/0`.
+- **McNemar entre etapas sobre `S`** (insumo de c-133 y c-142; no entra a la tesis): `|S| = 131`, pares `130`, excluido
+  `R099`; 2x2 ambas `80`, `b = 16`, `c = 8`, ninguna `26`; deterministica `96/130`, Gemini `88/130`; chi-cuadrado
+  corregido `2,0417` (p `0,1530`), p exacto `0,1516` (primario, `b + c = 24 < 25`). Las `131` predicciones
+  deterministicas offline coinciden `131/131` con la etapa `deterministic` de la cache oficial.
+
+### Tesis (bloques 10 y 11) y paginas
+
+- `04-marco-metodologico.tex:79`, `07-resultados.tex` (marco metrico, `tab:exactitud-etapa-canal` nueva, `tab:bandas`
+  reestructurada por etapa, introduccion y parrafo de calibracion), `08-discusion.tex` (`:16`, parrafo nuevo en `:18`,
+  `:32`), `09-conclusiones.tex:37`, `11-aspectos-legales.tex:34`. Se retira la lectura de anti-calibracion del
+  clasificador en su conjunto (0 coincidencias de "anti-calibr" y "calibracion invertida"). Sin cambios en
+  `tab:cumplimiento-objetivos`, `tab:tiempos-canal`, `08:10`, `10-recomendaciones.tex` ni en el blob del corpus.
+- Compilacion Docker `texlive-thesis` (`latexmk main.tex`, en el arbol): `grep -c "^!"` = 0, `undefined` = 0,
+  `multiply defined` = 0, `main.blg` sin WARN/ERROR; `verify_citations.py` PASS (59 entradas, 0 huerfanas).
+- **Paginas: antes `abspage@last{103}` (cuerpo 95, anexos 8); despues `abspage@last{103}`; `Anexos` en p. 96: cuerpo 95,
+  anexos 8; delta 0** (prevision 0 a +0,9). Sin compensar habria sido **105** (+2: la metodologia desbordaba 3 lineas a
+  una pagina nueva y las conclusiones 2 lineas). Compensaciones de D12 aplicadas: `tab:bandas` sin fila de totales,
+  tablas en `\footnotesize` con fuente de una linea, la tabla nueva como flotante `[p]` ubicado tras la figura de la
+  matriz (usa la pagina de flotantes que antes quedaba medio vacia) y recorte de redaccion en 04, 07:143/:190, 08 y
+  09:37 (en 09:37 se abreviaron dos incisos propios del parrafo, sin tocar valores ni el estado del objetivo 2).
+- Brecha frente al tope vigente de 101 (regla (a) provisional): **+2**, sin cambio respecto de c-130; rama (b)
+  (cuerpo <= 100): cuerpo 95, margen 5.
+
+### Consignas para otros changes
+
+- **c-142**: el McNemar de `docs/deterministic_calibration.md:234` es su referencia en muestra; las caches viven en
+  `evaluation/predicciones*.json` (copias ignoradas) y la evidencia en `evaluation/evidence/`. El runner ya emite por
+  etapa y canal: se puede regenerar el reporte sin Gemini. No usar la cache `hybrid-v2` para sensibilidades sobre el
+  corpus vigente (hash distinto).
+- **c-132**: la exactitud laxa (`0,8950`) y su IC estan en el memo 3.9 para la sensibilidad del balance neto.
+- **c-133**: leer la laxa como secundaria (no cambia el objetivo 2); exactitud por etapa `97/131` y `50/69` y McNemar
+  (p exacto `0,1516`, no significativo, con sus salvedades) para la hipotesis subsidiaria de eficiencia; por canal
+  para el objetivo 3. Cualquier cita `evaluation/report.md:N` debe tomar las lineas **actuales**: etapas `:11-13`
+  (los design de c-133 citan `:9-10`, obsoleto), exactitud `:20-33`, SHA-256 `:256`. En `07-resultados.tex` el parrafo
+  del marco metrico esta ahora en `:129` y la calibracion en `:190`.
+- **c-134 (bloque de tesis)**: las lineas del reporte de "## Tiempos" se corrieron en bloque (`+116`; SHA-256 en `:256`);
+  el memo ya fue actualizado. `07-resultados.tex` crecio +25 lineas antes de la seccion de tiempos por canal: revisar
+  sus remisiones `:N`.
+- **c-136**: la propuesta de aprendizaje activo debe alinearse a la lectura por etapa (la confianza de Gemini no
+  discrimina en 0,85-1,00; la etapa de reglas no emite confianza utilizable).
+- **c-141**: tope de paginas: total 103 (cuerpo 95); nota de `CHANGES.md` ("Pendientes planificados", punto 2) obsoleta,
+  ya resuelta por c-99 y por el runner; consolidar `report.md:256`; recordar que `.gitattributes` es nuevo.
+
+### Reversibilidad
+
+Las tres decisiones de datos son reversibles: si el autor autoriza P2 se ejecuta la reproduccion con rutas separadas
+(README de `evaluation/`); si decide versionar las caches vivas se aplica el bloque 8. El `.gitattributes` y los
+valores del memo no dependen de esas decisiones.
 
 **Estado**: grupo aplicado.

@@ -187,9 +187,29 @@ El reporte incluye (design D5):
 
 - **Etapas del pipeline**: cuántos casos resolvió cada etapa (deterministic /
   gemini / fallback).
-- **Exactitud**: dos definiciones de acierto — igualdad estricta del sector
-  principal y pertenencia del sector asignado al conjunto predicho — cada una
-  con su IC de Wilson al 95%.
+- **Procedencia de las predicciones** (c-131): bajo "Total de casos evaluados",
+  la `classifier_version` y el `generated_at` del `cache_meta` de las
+  predicciones usadas (en un cache hit se leen del archivo; en una corrida nueva,
+  del `cache_meta` recién construido). Sin metadata la línea se omite.
+- **Exactitud**: tres definiciones de acierto, cada una con su IC de Wilson al
+  95%: igualdad estricta del sector principal; **pertenencia** del sector
+  asignado al conjunto predicho; y **laxa** (c-131), el sector predicho
+  principal dentro del conjunto de verdad del caso (`sector_asignado` más
+  `sectores_adicionales` del corpus). La laxa no es la pertenencia y nunca es
+  menor que la estricta; es una métrica secundaria, no reemplaza a la estricta.
+- **Exactitud por etapa del pipeline** (c-131): casos, aciertos, exactitud
+  estricta y laxa con IC de Wilson de `deterministic`, `gemini` y `fallback`
+  (una etapa sin casos se declara "no aplicable"). Suma los totales globales.
+- **Exactitud por canal de origen** (c-131): lo mismo por `canal_origen`, con la
+  composición por etapa y el orden del desglose de tiempos. El runner falla con
+  `ValueError` (posición y ambos identificadores) si `predicciones[i].caso_id`
+  no coincide con `corpus[i].id`. La composición sectorial y la proporción
+  multietiqueta difieren entre canales: la comparación no aísla el efecto del canal.
+- **Calibración de la confianza** (c-131): bandas globales (Tabla 7.5),
+  contingencia en 0,70 y tramo `>= 0,90` globales y por etapa, bandas por etapa
+  con IC de Wilson y distribución de valores de confianza por etapa. Las bandas
+  agregadas comparan etapas (la confianza determinística y la de Gemini son
+  magnitudes distintas); la lectura de calibración se hace por etapa.
 - **Matriz de confusión primaria 5x5**: filas = sector asignado, columnas =
   sector predicho principal.
 - **Métricas por sector (one-vs-rest)**: precisión, sensibilidad, F1 y soporte.
@@ -211,6 +231,31 @@ El reporte incluye (design D5):
     10 s a cada tiempo manual (media ajustada, reducción relativa, p bilateral,
     p unilateral y r) y la granularidad de `tiempo_manual_s` (cuántos valores
     son múltiplos de 5 s y de 10 s).
+
+### Política de deriva y reproducción (c-131, D3)
+
+Los valores canónicos de clasificación provienen de la corrida oficial
+(`hybrid-v3`, 2026-10-07), conservada como evidencia congelada en
+`evaluation/evidence/`. Para regenerar `evaluation/report.md` sin costo, copiar
+esa evidencia a la ruta que espera el runner (ignorada por git) y correr el
+runner: es un cache hit y no invoca a Gemini.
+
+```bash
+cp evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json evaluation/predicciones.json
+PYTHONPATH=App/Backend python -m evaluation.run_evaluation
+```
+
+Una corrida de **reproducción** (nueva invocación paga al proveedor) NO debe
+sobrescribir `evaluation/predicciones.json` ni `evaluation/report.md`: se escribe
+en archivos separados y se rotula con su versión y fecha.
+
+```bash
+PYTHONPATH=App/Backend python -c "import asyncio, pathlib; from evaluation.run_evaluation import main_con_corpus_real; asyncio.run(main_con_corpus_real(report_path=pathlib.Path('evaluation/report_reproduccion.md'), predicciones_path=pathlib.Path('evaluation/predicciones_reproduccion.json'), force=True, confirm_paid=True))"
+```
+
+La deriva de la etapa Gemini se cuantifica contra los agregados oficiales y los
+canónicos no se reemplazan salvo decisión explícita del usuario registrada en
+`docs/Tesis/Correcciones/numeros-canonicos.md`.
 
 ## Decisión D1: Import Directo vs HTTP al Backend
 

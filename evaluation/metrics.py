@@ -531,3 +531,172 @@ def intervalos_conjunto(
         hamming_loss=_percentil_intervalo(muestras_hamming, confianza),
         micro_f1=_percentil_intervalo(muestras_micro, confianza),
     )
+
+
+# ---------------------------------------------------------------------------
+# Grupo 8 — Exactitud laxa y desgloses por grupo (c-131, D5/D6)
+# ---------------------------------------------------------------------------
+def aciertos_laxos(
+    predichos: Sequence[str],
+    conjuntos_verdad: Iterable[Iterable[str]],
+) -> int:
+    """
+    Cantidad de casos donde el sector predicho principal pertenece a la verdad.
+
+    Acierto laxo = `sector_predicho` dentro de `sector_asignado` mas
+    `sectores_adicionales` del corpus. Es distinto de la "pertenencia"
+    (`aciertos_pertenencia`), que mide el sector asignado dentro del conjunto
+    predicho.
+    """
+    return sum(
+        1
+        for predicho, verdad in zip(predichos, conjuntos_verdad)
+        if predicho in CLASES and predicho in verdad
+    )
+
+
+def _seleccionar(valores: Sequence, indices: Sequence[int]) -> List:
+    """Sub-lista de `valores` en las posiciones `indices` (en ese orden)."""
+    return [valores[i] for i in indices]
+
+
+def _indices_por_clave(claves: Sequence[str]) -> Dict[str, List[int]]:
+    """Posiciones de cada clave, en orden de aparicion."""
+    indices: Dict[str, List[int]] = {}
+    for indice, clave in enumerate(claves):
+        indices.setdefault(clave, []).append(indice)
+    return indices
+
+
+@dataclass(frozen=True)
+class ResumenExactitud:
+    """
+    Exactitud estricta y laxa de un grupo de casos, con IC de Wilson.
+
+    Con `casos == 0` las exactitudes y los intervalos son `None`: un grupo
+    vacio no tiene exactitud ni un intervalo `[0, 1]` que mostrar.
+    """
+
+    casos: int
+    aciertos_estrictos: int
+    aciertos_laxos: int
+    exactitud_estricta: Optional[float]
+    ic_estricta: Optional[Tuple[float, float]]
+    exactitud_laxa: Optional[float]
+    ic_laxa: Optional[Tuple[float, float]]
+
+
+def resumen_exactitud(
+    reales: Sequence[str],
+    predichos: Sequence[str],
+    conjuntos_verdad: Sequence[Iterable[str]],
+    confianza: float = NIVEL_CONFIANZA,
+) -> ResumenExactitud:
+    """Casos, aciertos, exactitudes e IC de Wilson (estricta y laxa) del grupo."""
+    casos = len(reales)
+    estrictos = aciertos_estrictos(list(reales), list(predichos))
+    laxos = aciertos_laxos(predichos, conjuntos_verdad)
+    if casos == 0:
+        return ResumenExactitud(0, 0, 0, None, None, None, None)
+    return ResumenExactitud(
+        casos=casos,
+        aciertos_estrictos=estrictos,
+        aciertos_laxos=laxos,
+        exactitud_estricta=estrictos / casos,
+        ic_estricta=intervalo_wilson(estrictos, casos, confianza),
+        exactitud_laxa=laxos / casos,
+        ic_laxa=intervalo_wilson(laxos, casos, confianza),
+    )
+
+
+# Etapas del pipeline en el orden de reporte (paridad con `Prediccion.etapa`).
+ETAPAS_PIPELINE: Tuple[str, ...] = ("deterministic", "gemini", "fallback")
+
+
+def desglose_exactitud(
+    claves: Sequence[str],
+    reales: Sequence[str],
+    predichos: Sequence[str],
+    conjuntos_verdad: Sequence[Iterable[str]],
+    orden: Optional[Sequence[str]] = None,
+) -> Dict[str, ResumenExactitud]:
+    """
+    Exactitud estricta y laxa por grupo (etapa, canal, ...), con IC de Wilson.
+
+    `claves[i]` es el grupo del caso `i`. Con `orden` explicito se listan
+    exactamente esas claves, incluidas las de 0 casos; una clave presente en los
+    datos pero ausente de `orden` se omite. Con `orden=None` los grupos se
+    ordenan por conteo descendente y desempate alfabetico.
+    """
+    indices = _indices_por_clave(claves)
+    if orden is None:
+        orden = sorted(indices, key=lambda clave: (-len(indices[clave]), clave))
+
+    resultado: Dict[str, ResumenExactitud] = {}
+    for clave in orden:
+        seleccion = indices.get(clave, [])
+        resultado[clave] = resumen_exactitud(
+            _seleccionar(reales, seleccion),
+            _seleccionar(predichos, seleccion),
+            _seleccionar(conjuntos_verdad, seleccion),
+        )
+    return resultado
+
+
+@dataclass(frozen=True)
+class ValorConfianza:
+    """Casos y aciertos estrictos de un valor de confianza observado."""
+
+    valor: float
+    casos: int
+    aciertos: int
+
+
+def distribucion_confianza(
+    confianzas: Sequence[float],
+    reales: Sequence[str],
+    predichos: Sequence[str],
+    decimales: int = 4,
+) -> List[ValorConfianza]:
+    """
+    Valores distintos de confianza en orden ascendente, con casos y aciertos.
+
+    Los valores se redondean a `decimales` para agrupar magnitudes equivalentes
+    (por ejemplo `1/6` y `0.1666666667`).
+    """
+    por_valor: Dict[float, List[int]] = {}
+    for confianza, real, predicho in zip(confianzas, reales, predichos):
+        acumulado = por_valor.setdefault(round(confianza, decimales), [0, 0])
+        acumulado[0] += 1
+        acumulado[1] += _acierto(real, predicho)
+    return [
+        ValorConfianza(valor=valor, casos=casos, aciertos=aciertos)
+        for valor, (casos, aciertos) in sorted(por_valor.items())
+    ]
+
+
+def calibracion_por_etapa(
+    confianzas: Sequence[float],
+    reales: Sequence[str],
+    predichos: Sequence[str],
+    etapas: Sequence[str],
+    bandas: Sequence[Tuple[float, float]] = BANDAS_CALIBRACION_DEFECTO,
+) -> Dict[str, List[BandaCalibracion]]:
+    """
+    Bandas de calibracion de cada etapa del pipeline, en el orden de `ETAPAS_PIPELINE`.
+
+    Aplica `calibracion_por_bandas` al subconjunto de cada etapa; una etapa sin
+    casos devuelve todas sus bandas en 0. Una etapa fuera de `ETAPAS_PIPELINE`
+    no se lista.
+    """
+    indices = _indices_por_clave(etapas)
+    resultado: Dict[str, List[BandaCalibracion]] = {}
+    for etapa in ETAPAS_PIPELINE:
+        seleccion = indices.get(etapa, [])
+        resultado[etapa] = calibracion_por_bandas(
+            _seleccionar(confianzas, seleccion),
+            _seleccionar(reales, seleccion),
+            _seleccionar(predichos, seleccion),
+            bandas,
+        )
+    return resultado
