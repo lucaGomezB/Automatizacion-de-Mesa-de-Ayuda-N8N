@@ -918,6 +918,7 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 | `+c-144` (main) | `0c7f5bc` | 102 | 94 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{102}`; `Anexos` en p. 95 |
 | `+c-130` (`change/c-130-gate-revision-humana-por-etapa`) | sin commit (lo crea el orquestador) | 103 | 95 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{103}`; `Anexos` en p. 96; brecha frente a 101: +2 (con C3 aplicada) |
 | `+c-131` (`change/c-131-metricas-por-etapa-canal-y-exactitud-laxa`) | sin commit (lo crea el orquestador) | 103 | 95 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{103}`; `Anexos` en p. 96; brecha frente a 101: +2 (sin compensar habria sido 105) |
+| `+c-142` (`change/c-142-sensibilidad-fuera-de-muestra-ajustes-clasificador`) | sin commit (lo crea el orquestador) | 104 | 96 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{104}`; `Anexos` en p. 97; brecha frente a 101: +3 (sin los recortes de `09` y la variante de T06 habria sido 105); C3 no aplicada (el total no supera 104) |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -1236,5 +1237,172 @@ la viva). 6.2 y 6.4 no aplican.
 Las tres decisiones de datos son reversibles: si el autor autoriza P2 se ejecuta la reproduccion con rutas separadas
 (README de `evaluation/`); si decide versionar las caches vivas se aplica el bloque 8. El `.gitattributes` y los
 valores del memo no dependen de esas decisiones.
+
+**Estado**: grupo aplicado.
+
+## Dictamen v1.1.0 - A5 analitica (c-142) - Sensibilidad fuera de muestra frente a los ajustes del clasificador
+
+**Origen**: change `c-142-sensibilidad-fuera-de-muestra-ajustes-clasificador` (dictamen CONEAU 2026-10-22: VEREDICTO
+punto 5; seccion 6, septima observacion; seccion 7, ultimo parrafo; recomendacion A5, mitad analitica). Aplicado el
+**2026-10-25** en la rama `change/c-142-sensibilidad-fuera-de-muestra-ajustes-clasificador`, cortada de `ramagonzalo`
+en `af32630` (merge de c-131). Posicion 4 del orden de la familia (G0.6). Sin commit (lo crea el orquestador).
+Cero llamadas a Gemini en todo el change; sin `GEMINI_API_KEY` real.
+
+### Linea base y pre-registro (tareas 1.1 a 1.7, 2.2 y 2.3)
+
+- Entorno: imagen Docker `eval-tests` (Python 3.12.15, scipy 1.18.1, pytest 9.1.1). Baseline de `evaluation/`:
+  **310 passed**. Total final: **451 passed, 2 skipped** (310 + 141 pruebas nuevas; los 2 skips son las pruebas
+  de igualdad con los blobs del historial git, que se omiten sin `git`/historial, como en un clon superficial de CI).
+  Cobertura de `evaluation/sensibilidad_ajustes.py`: **100 %** (589 sentencias, 0 sin cubrir).
+- c-130 (37/37) y c-131 (81/81) aplicados; `contraste_mcnemar` (`stats.py:608`) y `contraste_det_gem_en_s`
+  (`deterministic_measurement.py:809`) presentes. SHA-256 del corpus
+  `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb` (copia de trabajo con LF por `.gitattributes`).
+- Hechos de 1.6 verificados con el git del host: blob de `keywords.py` en `7925903` = `858f1c6...`; vigente = `334a8ed...`;
+  prompt en `a76851e^` = `1daceb3...`; vigente = `49267f4...`; `deterministic_score_threshold` = 0,5166. Ninguno cambio.
+  El modulo recalcula los blobs vigentes sin git (`blob_git`) y el reporte los imprime.
+- Paginas de partida: `abspage@last{103}`, `Anexos` en p. 96 (cuerpo 95, anexos 8), commit de partida `af32630`.
+- Seccion del memo: **3.10** (3.7 c-130, 3.8 c-134, 3.9 c-131). El choque de la "3.7" quedo resuelto por G0.6.
+- Tarea 2.3 (congelar el pre-registro): `git log --follow` sobre el `design.md` muestra `e378105` (propose) y `0977104`
+  (renumeracion c-137 -> c-142); el segundo solo cambia identificadores de changes (c-125..c-137 -> c-130..c-142) y
+  `90b0b9b` solo toco `specs/`. D2-D4, D8, D9 y T01-T08 **no cambiaron** en contenido. Commit de referencia del
+  pre-registro: `0977104`. Ninguna variante se ejecuto sobre el corpus real antes de esta verificacion; los tests de
+  caracterizacion sobre el corpus (6.6) se ejecutaron despues.
+
+### Checkpoint del bloque 2 (gobernanza HIGH) - PROVISIONAL, 2026-10-25
+
+El usuario pidio aplicar la familia sin detenerse y no respondio de forma explicita a las preguntas del design.
+Cada decision queda **PROVISIONAL (pendiente de confirmacion del autor)**, con la recomendacion del design o la
+decision ya registrada en G0.7.
+
+| Open Question | Decision | Efecto en el apply |
+|---|---|---|
+| 1 - ablacion paga del prompt (nivel c, 138 invocaciones) | **NO autorizada** (G0.7a) | Tareas 8.9 y 8.10 "no aplica (sin autorizacion)"; 8.11 cumplida: el reporte declara el nivel c "no computado". El instrumento (`prompt --brazo`, gate, `comparar_brazos`) se implemento por TDD y no se invoco al proveedor. |
+| 2 - incidentes de preproduccion | **No existen** (G0.7b; resuelto por c-144, item 6 de la Seccion 7 del memo) | 9.1 registra "no existe o no se localiza"; 9.2 a 9.5 "no aplica". Sin datos personales involucrados. |
+| 3 - estado del objetivo especifico 6 | Se conserva "Alcanzado" con la salvedad en la evidencia (recomendacion del design) | T06 solo agrega evidencia; c-133 puede revisarlo. |
+| 4 - variante por pliegues | Declarada **no factible** (recomendacion del design) | Memo, Seccion 7, punto 8; reporte `:70-72`; una oracion en la subseccion. |
+| 5 - `generated_at` de la FORCE-ESCALATE | Aportado por c-143: `2026-10-07T20:33:03.438926+00:00` | Clasificacion D9: **"posterior"** (posterior a `2026-10-06T19:38:20Z`); consecuencia de 7.3: nivel b "no aplica". |
+| 6 - versionado de salidas de corrida paga | No hay corrida paga; no aplica | Se agrego igual a `.gitignore` la regla `evaluation/predicciones_sensibilidad_prompt_*.json` (prevencion; los brazos escriben ahi). |
+| 7 - paginas | Se acepto el impacto declarado (+1,0 a +1,4) | Medido +1; C3 no se aplico (total 104, no supera 104). |
+
+Estado de datos de c-131 (tarea 2.2): rama **P1** via c-143. Cache oficial `hybrid-v3` (`corpus_hash` `1fd17d7e...`,
+`generated_at` 2026-10-07T22:22:01Z) y FORCE-ESCALATE `hybrid-v2` (199 `gemini` + 1 `deterministic`, `corpus_hash`
+`5f062e14...` distinto del vigente aunque las 200 descripciones coinciden). **Uso de la FORCE-ESCALATE**: la consigna de
+c-131 pedia no usarla para sensibilidades sobre el corpus vigente por el hash distinto, pero E3, E4 y los niveles a y b
+del design pre-registrado dependen de ella. Se uso con una guarda explicita (`verificar_cache_contra_corpus`:
+identificador, descripcion y sector asignado de las 200 entradas iguales al corpus, 0 diferencias) y se comprobo que el
+lado `V1` de E3 reproduce los `146/200` documentados (`docs/deterministic_calibration.md:89`) con 0 excluidos y que E4
+sobre `V1` reproduce `b = 16`, `c = 8`, `p = 0,1516` (`docs/deterministic_calibration.md:234`). **Decision PROVISIONAL**;
+si el autor la rechaza, E3 y E4 pasan a "no computable" (columna "Global" fuera de la tabla, rama "sin E3" de T01).
+
+### Codigo (bloques 3 a 6 y 8; TDD estricto)
+
+- `evaluation/sensibilidad_ajustes.py` (nuevo): `keyword_map_desde_fuente`, `clasificador_con_vocabulario` (adaptador
+  sobre `DeterministicClassifier`), `ClasificadorLegadoPreC71` (replica L0), `regla_vigente`/`regla_legado`,
+  `resumen_cortocircuito`, `descomposicion_pareada`, `exactitud_global_con_cache`, `comparar_linea_base_c71`
+  (`LINEA_BASE_C71`), `clasificar_prompt_de_la_cache`, `calcular_nivel_a`/`comparar_corridas`/`calcular_nivel_b`,
+  `formatear_reporte_sensibilidad`, `main` (async, fabricas inyectables), `seleccionar_casos_escalados`,
+  `prompt_esperado`, `correr_brazo_prompt` (gate, SHA-256 del prompt, `cache_meta` ampliado), `comparar_brazos`,
+  `verificar_cache_contra_corpus`, `blob_git`, `construir_procedencia` y la CLI (`python -m evaluation.sensibilidad_ajustes`;
+  subcomando `prompt --brazo {vigente,sin-reglas} --confirm-paid`).
+- `evaluation/data/sensibilidad_ajustes/` (`keywords_pre_c71.json`, `prompt_gemini_pre_c72.txt`, `procedencia.json`),
+  regla `eol=lf` en `.gitattributes`, `evaluation/tests/test_sensibilidad_ajustes.py` (141 pruebas, de las cuales 2 se omiten sin historial git) y
+  `evaluation/tests/test_sensibilidad_corpus.py` (2, caracterizacion sobre el corpus real).
+- Caracterizacion 6.6: (a) `V1 + L1` = **131 cortocircuitados y 97 aciertos**; (b) `V0 + L0` reproduce **las 11 metricas**
+  de la linea base de c-71 (72; 22/14/36; 37; 13/7/17; 55; 119; 126). Sin discrepancia que registrar.
+- Desvio de 4.4: el design dice "9:1 -> cortocircuito", pero `w/(w + r + 1e-6)` con 9:1 da 0,8999999 < 0,90 (la constante
+  deja el 9:1 apenas por debajo); la replica es fiel al codigo de `7925903` y no se toco. Las pruebas usan 10:1
+  (cortocircuita, 0,9091) y 9:1 y 8:1 (no cortocircuitan). Por eso el cortocircuito de la epoca exige ganador >= 10 x segundo.
+- Reportes: `evaluation/report_sensibilidad_ajustes.md` (97 lineas, regenerado offline; dos corridas dan archivo identico
+  byte a byte; `report.md` y las caches oficiales sin cambios, verificado por SHA-256).
+
+### Valores obtenidos (memo, Seccion 3.10) y ramas elegidas
+
+| Salida | Valor | Rama / lectura |
+|---|---|---|
+| Configuracion evaluada `V1 + L1` | 131 casos, 97 aciertos, `0,7405` `[0,6593; 0,8079]` | reproduce lo esperado |
+| **E1** `V0 + L1` | `n_A = 74` (cobertura `0,3700`), `k_A = 39`, `p_A = 0,5270` `[0,4148; 0,6366]` | **Rama A** (`p_A < 0,7405`); `D_A` = 21,3 puntos (exacto 21,34; con los extremos redondeados 21,35: empate de redondeo sin efecto) |
+| Descomposicion pareada | comunes 67 (`V1` 38, `V0` 37); solo `V1` 64 (59 aciertos); solo `V0` 7 (2 aciertos); McNemar comunes `b = 1`, `c = 0`, `p` exacto 1,0000 | la diferencia viene de los 64 casos que solo resuelve `V1` |
+| Referencia historica `V0 + L0` | 72 casos, 37 aciertos, `0,5139` `[0,4007; 0,6257]` | **Fiel**: las 11 metricas coinciden |
+| **E3** (FORCE-ESCALATE) | `V1` 146/200, `V0` 128/200, 0 excluidos; `b = 18`, `c = 0`, `p < 0,001` | **Con E3** (columna "Global" en la tabla) |
+| **E4** | `V1`: 96/130 frente a 88/130, `p = 0,1516` (reproduce c-131); `V0`: reglas 38/73 (0,5205) frente a Gemini 48/73 (0,6575), `b = 3`, `c = 13`, `p` exacto 0,0213 | con `V0` la etapa de reglas **no supera** a Gemini (resultado incomodo pre-anticipado en el design; se reporta igual) |
+| Prompt, nivel a | los 3 motivadores (R002, R038, R015) estan entre los 69 escalados; Gemini 50/69 con todos y 48/66 sin ellos | **Nivel a** (el mayor disponible) |
+| Prompt, nivel b | FORCE-ESCALATE "posterior"; comparacion pareada "no aplica" | |
+| Prompt, nivel c | no computado (sin autorizacion) | |
+| Variante por pliegues | no factible | |
+
+Coinciden con lo pre-registrado en cuanto a ramas: la expectativa del design (rama A, cota de unos 20 puntos, y E4 con `V0`
+adverso a las reglas) se cumple; el resultado de E1 (21,3 puntos) y el de la referencia historica (0,5139 frente a 0,51
+documentado) son consistentes con lo inferido de la linea base de c-71.
+
+### Tesis (bloques 12 y 13) y delta frente a c-144
+
+| Item | Estado |
+|---|---|
+| T01 `subsec:sensibilidad-ajustes` + `tab:sensibilidad-ajustes` | aplicado (ramas: Fiel, A, con E3, nivel a) en `07-resultados.tex`, entre `subsec:calibracion` y `subsec:analisis-errores` |
+| T02 | aplicado en la primera oracion de `subsec:calibracion` que da 0,7405; ademas, calificacion minima en la oracion que presenta `tab:exactitud-etapa-canal` (la tabla de c-131 no se edita) |
+| T03 | aplicado en `05-arquitectura.tex:80` ("ambas estimadas dentro de la muestra") |
+| T04 | aplicado al final del parrafo de c-130/c-144 en `08-discusion.tex` (sin la clausula de reglas del prompt: nivel a) |
+| T05 | aplicado: item "Septimo" y cardinal "siete" en `subsec:limitaciones-estudio` (rama A, nivel a) |
+| T06 | aplicado con una variante mas corta (`; dentro de la muestra, \autoref{subsec:sensibilidad-ajustes}`) porque el texto del design hacia crecer el total una pagina; el estado "Alcanzado" no cambia |
+| T07 | aplicado ("La exactitud estricta, estimada dentro de la muestra, fue de ..."), con dos recortes de redaccion en `09:37` (" y sus valores" y "sin embargo,") sin perdida de contenido cientifico, para no agregar una pagina |
+| T08 | **cubierto por c-144 `0c7f5bc`; verificado** (`12-anexos.tex:136` ya ubica el historial en el repositorio y `prompt_gemini_history` no aparece); el nivel es "a", asi que no corresponde la clausula de nivel b o c |
+| R01 | **cubierto por c-144; verificado** (`evaluation/README.md`, "Advertencia Metodologica"); delta aplicado: remision a `python -m evaluation.sensibilidad_ajustes` y a `report_sensibilidad_ajustes.md`, seccion de comandos (offline y brazos pagos con gate) |
+| R02 | **cubierto por c-144 en `:160`; `:162` con delta**: se agrego la remision a `evaluation/data/sensibilidad_ajustes/prompt_gemini_pre_c72.txt` |
+| Declaracion de procedencia (05:78, 06:75, 08:18, 12:135), `subsec:corpus-independiente` | de c-144; no se reescriben |
+
+Verificaciones: ninguna aparicion de "ausencia de sesgo" ni "demuestra" en la subseccion; "fuera de la muestra" solo en la
+oracion que atribuye la estimacion a un corpus independiente; `grep -c "NO fue ajustado" evaluation/README.md` = 0;
+`grep -rn prompt_gemini_history` sin resultados; sin cambios en `04-marco-metodologico.tex`, `00-resumen.tex`,
+`10-recomendaciones.tex`, `12-anexos.tex`, `tab:bandas`, `tab:exactitud-etapa-canal` ni en otras filas de
+`tab:cumplimiento-objetivos`. Barrido 12.2 (apariciones de `0,7405`, `97/131`, `0,6769`, `88/130` en `sections/`):
+`05:80` (c-130; faltaba -> T03), `07` tabla de c-131 y su oracion (faltaba -> calificada en la oracion), `07` calibracion
+(faltaba -> T02), `09:37` (c-131; faltaba -> T07); `08` no tiene esas cifras (el contraste de `08:10` es de c-133).
+
+### Compilacion y conteo de paginas (tareas 14.1 y 14.2)
+
+- Docker `texlive-thesis` (`latexmk main.tex`, en el arbol): `grep -c "^!" main.log` = 0, `undefined` = 0, `main.blg` sin
+  WARN/ERROR, sin `Overfull \hbox` en `07-resultados.tex` (ni en `tab:sensibilidad-ajustes`); el unico en `09-conclusiones.tex`
+  es el de la cabecera "Cumplimiento" (preexistente, columna de 1,7 cm). `verify_citations.py` PASS.
+  `tesis_para_agente.md` regenerado (contiene "Sensibilidad al ajuste del clasificador", no contiene `prompt_gemini_history`).
+- **Paginas: antes `abspage@last{103}` (cuerpo 95, anexos 8); despues `abspage@last{104}`; `Anexos` en p. 97: cuerpo 96,
+  anexos 8; delta +1 / +1** (prevision +1,0 a +1,4). Sin los recortes de `09` y la variante de T06 habria sido 105 (+2: la
+  seccion de conclusiones estaba al borde de pagina). Brecha frente al tope vigente de 101 (regla (a) provisional): **+3**;
+  regla (b) (cuerpo <= 100): cuerpo 96, margen 4. **C3 no se aplico** (el total 104 no supera 104).
+
+### Mapeo del dictamen
+
+VEREDICTO punto 5, seccion 6 (septima observacion), seccion 7 (ultimo parrafo) y A5 (mitad analitica) -> D1-D15
+(analisis, variantes pre-registradas, artefactos con procedencia, reporte, memo, paginas), T01-T08 y R01-R02. La mitad
+declarativa de A5 es de c-130 y c-144.
+
+### Consignas para otros changes
+
+- **c-132**: E3 (146 -> 128 aciertos sobre 200 con Gemini fijo, `p < 0,001`) puede usarse como escenario de sensibilidad
+  del balance neto; no es obligatorio.
+- **c-133**: (1) calificar `0,7405` frente a `0,6769` como estimaciones dentro de la muestra con remision a
+  `subsec:sensibilidad-ajustes` en `08:10`; (2) **E4**: con el vocabulario previo la etapa de reglas no supera a Gemini en
+  los casos que resuelve (0,5205 frente a 0,6575; `p` exacto 0,0213), de modo que la ventaja del esquema hibrido en `S`
+  depende del vocabulario ajustado con el corpus: considerarlo al rotular la hipotesis subsidiaria de eficiencia; (3)
+  la FORCE-ESCALATE es **posterior** a las reglas de frontera (`generated_at` 2026-10-07T20:33:03Z), por lo que la
+  comparacion `0,7405` frente a `0,6769` no mezcla versiones del prompt por esa via (la fecha no prueba que archivo de
+  prompt cargo esa corrida); (4) estado del objetivo 6: se conserva "Alcanzado" (OQ3 provisional); (5) cardinal de
+  `subsec:limitaciones-estudio`: ahora **siete** items; el item que agregue c-133 (T18) parte de "siete" y debe pasar a
+  "ocho".
+- **c-135**: `07:6` debe enumerar la subseccion nueva (`subsec:sensibilidad-ajustes`, 8.5) entre las vigentes.
+- **c-136**: conservar la validacion sobre un corpus independiente como linea de trabajo (no hay conjunto de
+  preproduccion; item 6 de la Seccion 7).
+- **c-141**: incorporar A5 y c-142 a la trazabilidad y a las precondiciones; libro mayor de paginas (fila `+c-142`: 104 /
+  96 / 8, +1 / +1); `evaluation/report.md` y las caches oficiales no cambiaron (SHA-256 verificado); `.gitattributes`
+  tiene ahora una segunda regla (`evaluation/data/sensibilidad_ajustes/*`); la copia local de `report_sensibilidad_ajustes.md`
+  esta con CRLF como `report.md`. Una autorizacion posterior de la ablacion paga se registra en G0.7a y exige correr los dos
+  brazos antes de cerrar (el instrumento esta listo).
+- **c-137** (ortotipografia): las tildes de los textos T01-T08 ya son las normativas.
+
+### Reversibilidad
+
+`git checkout <commit-previo> -- evaluation/ .gitattributes .gitignore "docs/Tesis/v10 (IA)/" docs/anexo_h_prompt_gemini.md
+docs/Tesis/Correcciones/numeros-canonicos.md docs/Tesis/Correcciones/dictamen-correcciones.md`, regenerar el render y
+recompilar. Las decisiones PROVISIONALES (OQ1 a OQ7 y el uso de la FORCE-ESCALATE) se pueden revertir sin tocar los valores
+canonicos: si se rechaza la FORCE-ESCALATE, E3 y E4 pasan a "no computable" y la tabla pierde su cuarta columna.
 
 **Estado**: grupo aplicado.

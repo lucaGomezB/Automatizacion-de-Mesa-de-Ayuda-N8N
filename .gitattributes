@@ -3,3 +3,8 @@
 # evaluacion. Con core.autocrlf=true (checkout Windows) el archivo se extraia en CRLF
 # y hasheaba distinto del blob versionado (LF). Se fija LF en toda plataforma.
 data/corpus_evaluacion_pseudonimizado.json text eol=lf
+
+# Artefactos historicos de la sensibilidad frente a los ajustes del clasificador
+# (c-142, D6). Sus SHA-256 estan registrados en procedencia.json y deben coincidir
+# en Windows y Linux: se fija LF en toda plataforma.
+evaluation/data/sensibilidad_ajustes/* text eol=lf
