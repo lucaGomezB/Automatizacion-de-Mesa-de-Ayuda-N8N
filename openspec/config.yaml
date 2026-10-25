@@ -23,7 +23,7 @@ stack:
     config: pydantic-settings (.env)
   frontend:
     path: App/Frontend/
-    framework: React 18 + TypeScript + Vite
+    framework: React 19 + TypeScript + Vite
     data: React Query + Axios
     ui: shadcn/ui + Tailwind
   orchestration:

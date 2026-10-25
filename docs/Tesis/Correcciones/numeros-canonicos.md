@@ -380,6 +380,21 @@ decisión editorial adoptada y su condición de reversibilidad.
    que su procedencia es el recálculo directo, no la tabla de bandas.
    **Reversible**: no; el número es correcto.
 
+6. **Conjunto de ~100 incidentes de preproducción (no verificable).**
+   `12-anexos.tex:135` y `docs/anexo_h_prompt_gemini.md:160` afirmaban que el
+   prompt se ajustó sobre "aproximadamente 100 incidentes representativos en
+   entornos de preproducción". Verificado: ese conjunto no existe ni existió en
+   el repositorio (`data/` y `evaluation/` solo contienen el corpus de 200 casos
+   y sus derivados; `rg -l "incidentes de preproduccion" data/ evaluation/` sin
+   resultados) y el directorio `docs/prompt_gemini_history/` nunca existió en el
+   historial de git (sin commit, sin entrada en `git ls-files`, sin rama).
+   **Decisión adoptada**: declarar la procedencia real (los ajustes se derivaron
+   del corpus de evaluación) y registrar el desenlace "no existen / no se localizan"
+   del conjunto; el texto del Anexo H depende de esta declaración
+   (`docs/anexo_h_prompt_gemini.md:160/162`). **Reversible si**: el autor aporta
+   el conjunto independiente pseudonimizado; en ese caso corresponde un change de
+   gobernanza HIGH propio.
+
 ---
 
 _Producido por c-102 (Gate 0). Cualquier rama que reescriba `04`, `07`, `08` o

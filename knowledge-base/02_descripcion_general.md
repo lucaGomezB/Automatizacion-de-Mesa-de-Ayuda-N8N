@@ -12,7 +12,7 @@
 | Migraciones | Alembic | — | `alembic/versions/001_seed_catalogs.py` siembra catálogos |
 | Inferencia LLM | Gemini 2.5 Flash | `google-genai` ≥ 1.0 | temp 0,3 · top_p 0,9 · max_tokens 100 · timeout 10 s; reemplaza al deprecado `google-generativeai` |
 | Telefonía | Twilio Programmable Voice | — | TwiML + transcripción automática nativa |
-| Frontend | React 18 + TypeScript + Vite | — | React Query + Axios + shadcn/ui |
+| Frontend | React 19 + TypeScript + Vite | — | React Query + Axios + shadcn/ui |
 | Logging | structlog | — | JSON (prod) / consola (dev) |
 | Config | pydantic-settings | — | `.env`, caché LRU |
 | Testing backend | pytest | 8.3 | Objetivo cobertura ≥ 80 % (tesis reporta 87 %) |

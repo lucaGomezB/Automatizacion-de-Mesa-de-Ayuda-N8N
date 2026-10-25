@@ -7,6 +7,24 @@ Markdown. Preserva los valores numericos verbatim.
 import re
 import sys
 import pathlib
+import subprocess
+
+WORKING_VERSION = "v10"
+FALLBACK_RELEASE = "v1.1.1"
+
+
+def detect_release() -> str:
+    """Release vigente: ultimo tag de git; si no hay repo o tag, usa el fallback."""
+    try:
+        out = subprocess.run(
+            ["git", "describe", "--tags", "--abbrev=0"],
+            capture_output=True, text=True, check=True,
+        ).stdout.strip()
+        if out:
+            return out
+    except (subprocess.CalledProcessError, FileNotFoundError, OSError):
+        pass
+    return FALLBACK_RELEASE
 
 BASE = pathlib.Path("docs/Tesis/v10 (IA)/paper/sections")
 # Orden de inclusion segun main.tex (11-antecedentes-legales va antes de 07-resultados)
@@ -195,10 +213,11 @@ def main():
         parts.append(t.strip())
     body = "\n\n".join(parts)
     body = re.sub(r"\n{3,}", "\n\n", body)
+    release = detect_release()
     header = (
-        "# Tesis UTN-FRM 2026 - Tesis para agentes (v10 / v1.1.0)\n\n"
+        f"# Tesis UTN-FRM 2026 - Tesis para agentes ({WORKING_VERSION} / {release})\n\n"
         "> Documento generado a partir de las fuentes LaTeX de `docs/Tesis/v10 (IA)/paper/sections/` "
-        "(version de trabajo v10, release `v1.1.0`). Render Markdown de referencia para agentes. "
+        f"(version de trabajo {WORKING_VERSION}, release `{release}`). Render Markdown de referencia para agentes. "
         "Los valores numericos son verbatim de las fuentes.\n\n---\n\n"
     )
     sys.stdout.write(header + body + "\n")
