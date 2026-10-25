@@ -9,7 +9,7 @@
 **Decisión**: lógica de control centralizada en N8N. **Justificación**: trazabilidad auditiva de cada ejecución, prioritaria en este dominio (Hohpe & Woolf, 2003). **Trade-off**: menor robustez ante fallos parciales que un esquema de eventos distribuido.
 
 ### DD-03 — Clasificador híbrido en 2 etapas
-**Decisión**: reglas determinísticas (umbral 0,90) antes que Gemini. **Alternativas**: LLM puro (mayor costo/latencia), clasificador supervisado propio (requiere corpus de entrenamiento que no existía). **Justificación**: ~62 % de casos resueltos sin inferencia externa; mejor relación exactitud/latencia/costo (hipótesis subsidiaria confirmada). **Trade-off**: mantenimiento del diccionario de keywords.
+**Decisión**: reglas determinísticas (cortocircuito por `score_correctitud` ≥ 0,5166) antes que Gemini. **Alternativas**: LLM puro (mayor costo/latencia), clasificador supervisado propio (requiere corpus de entrenamiento que no existía). **Justificación**: 65,5 % de casos (131 de 200) resueltos sin inferencia externa; mejor relación exactitud/latencia/costo (hipótesis subsidiaria confirmada). **Trade-off**: mantenimiento del diccionario de keywords.
 
 ### DD-04 — Gemini 2.5 Flash con parámetros conservadores
 **Decisión**: temperature 0,3, top_p 0,9, max_tokens 100, timeout 10 s, candidate_count 1. **Justificación**: clasificación requiere consistencia, no creatividad; JSON de salida ~15 tokens; el timeout limita la latencia del peor caso. Calibrados empíricamente (Anexo H). **Trade-off**: dependencia de proveedor externo y de la versión vigente del modelo (limitación §8.3).
@@ -20,8 +20,8 @@
 ### DD-06 — FastAPI + Pydantic
 **Decisión**: FastAPI 0.115 sobre Uvicorn. **Justificación**: validación de esquemas nativa, OpenAPI 3.1 automática, rendimiento, DI integrada.
 
-### DD-07 — Umbralización doble (0,90 / 0,70)
-**Decisión**: ≥ 0,90 decide la etapa determinística sola; < 0,70 exige revisión humana. **Justificación**: balance entre autonomía del sistema y supervisión humana significativa (human in the loop, §11.5).
+### DD-07 — Punto de operación del cortocircuito (0,5166) y umbral de revisión (0,70)
+**Decisión**: la etapa determinística decide sola con señal dominante y `score_correctitud` ≥ 0,5166 (punto derivado por validación cruzada; sustituyó al umbral 0,90 sobre la confianza del diseño inicial); una confianza de Gemini < 0,70 exige revisión humana, y la etapa fallback la exige siempre. **Justificación**: balance entre autonomía del sistema y supervisión humana significativa (human in the loop, §11.5).
 
 ### DD-08 — asyncpg en lugar de psycopg2 (decision confirmada)
 **Decisión**: El código usa `asyncpg` + SQLAlchemy async. **Justificación**: la decisión se fundamenta en la necesidad de E/S no bloqueante coherente con el event loop de FastAPI/uvicorn. La tesis ha sido actualizada para reflejar esta elección.

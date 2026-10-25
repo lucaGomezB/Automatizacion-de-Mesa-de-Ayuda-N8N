@@ -54,7 +54,7 @@
 - `sector_id_predicho` FK→sector (SET NULL; null si fallback total).
 - `confianza` Numeric(5,4) ∈ [0,1] — 0.0 señala fallo del clasificador.
 - `etapa` String(30): `"deterministic"` | `"gemini"` | `"fallback"`.
-- `requiere_revision_humana` bool (true cuando confianza < 0,70).
+- `requiere_revision_humana` bool (true cuando Gemini devuelve confianza < 0,70, interviene la etapa fallback o el reportante no se identifica; la etapa determinística no la marca por su confianza).
 - `respuesta_raw` Text nullable — respuesta cruda de Gemini para auditoría.
 - `sector_id_validado` FK→sector nullable — NULL hasta validación humana; su presencia saca el registro de la cola de revisión y lo convierte en etiqueta de verdad del corpus.
 - Sectores adicionales predichos/validados: relaciones N-a-N con `sector` vía `clasificacion_sector_predicho` y `clasificacion_sector_validado` (el principal vive en la FK escalar).

@@ -905,6 +905,7 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 |---|---|---|---|---|---|---|---|---|
 | base `v1.1.1` | `4160d84` | 101 | 93 | 8 | - | - | (a) total <= 101 | Medido (dictamen / `main.toc` de v1.1.1) |
 | `+c-144` (main) | `0c7f5bc` | 102 | 94 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{102}`; `Anexos` en p. 95 |
+| `+c-130` (`change/c-130-gate-revision-humana-por-etapa`) | sin commit (lo crea el orquestador) | 103 | 95 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{103}`; `Anexos` en p. 96; brecha frente a 101: +2 (con C3 aplicada) |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -941,3 +942,150 @@ siguiente. Aplicada a las dos reglas sobre la linea base de 102 / 94:
   acumulado del cuerpo supera **5** paginas.
 
 **Verificacion de la fila base**: la fila `v1.1.1` contiene los tres valores (101, 93, 8).
+
+## Dictamen v1.1.0 - A1 (c-130) - Gate de revision humana por etapa
+
+**Origen**: change `c-130-gate-revision-humana-por-etapa` (dictamen CONEAU 2026-10-22 sobre
+v1.1.0/v1.1.1: VEREDICTO punto 1; secciones 5, 6 y 7(a); recomendacion A1). Aplicado el
+**2026-10-25** en la rama `change/c-130-gate-revision-humana-por-etapa`, cortada de
+`ramagonzalo` en `103f198` (merge del G0). Posicion 1 del orden de la familia (G0.6).
+
+### Linea base (tarea 1.1)
+
+- Commit de partida: `103f198`.
+- `grep -o "abspage@last{[0-9]*}" "docs/Tesis/v10 (IA)/paper/main.aux"` devuelve
+  **`abspage@last{102}`**, NO 101: la tarea 1.1 de `tasks.md` cita la linea base de `v1.1.1`
+  (101); c-144 (`0c7f5bc`) la movio a 102 (G0.0). `main.toc`: `Anexos` en p. 95, cuerpo sin
+  anexos 94, anexos 8.
+
+### Red de seguridad y re-verificacion offline (tareas 1.2 y 1.3)
+
+- Tests del backend (`test_hybrid_classifier`, `test_deterministic_classifier`,
+  `test_deterministic_correctness_score`, `test_gemini_validation`, `test_gemini_retry`,
+  `test_reporter_link`; Docker `mesa_local-backend`): **122 passed** antes de editar.
+- Repeticion offline de la etapa determinista (`DeterministicClassifier` real, clave ficticia,
+  sin red) sobre `data/corpus_evaluacion_pseudonimizado.json`: 57 sin prediccion, 12
+  ambiguos, **131** con senal dominante, todos con score >= 0,516667 (minimo 0,5166667), **97**
+  aciertos estrictos (0,7405), **124** con confianza < 0,70 (94 aciertos), 7 con >= 0,70, 1
+  con >= 0,90; confianzas {0,0: 90; 1/6: 8; 0,5: 26; 0,75: 6; 1,0: 1}. Coincide con el design:
+  no hay deriva entre el codigo y la etapa evaluada.
+- Contraste con la evidencia versionada por c-143 (`evaluation/evidence/`): la corrida
+  `hybrid-v3` tiene 131 deterministicos y 69 de Gemini, 124 con confianza < 0,70 (todos
+  deterministicos), minimo de Gemini 0,85 y 97 aciertos deterministicos; la cache de
+  calibracion `hybrid-v2` reproduce **88/130 = 0,6769** de `precision_gem(S)`.
+
+### Checkpoint de autores (tarea 1.4) - PROVISIONAL
+
+El usuario pidio aplicar sin detenerse y no respondio de forma explicita a las Open Questions.
+Fecha: 2026-10-25. Cada decision es **PROVISIONAL (default del design, pendiente de
+confirmacion del autor)**.
+
+| OQ | Tema | Decision | Estado |
+|---|---|---|---|
+| OQ1 (D9) | Procedencia de los ajustes sobre el corpus | **RESUELTA por c-144** (`0c7f5bc`): los autores ya declararon la procedencia real al fusionarlo en `main`. T04, T12, T13 y T14 no se reescriben; se ejecutan solo sus verificaciones | Resuelta (hecho) |
+| OQ2 (D7) | Alcance de la salvaguarda legal; reasignacion solo por REST | Default del design: se aplica T15 | PROVISIONAL |
+| OQ3 (D12) | Comentarios y test en `App/Backend` | Si: bloque 7 aplicado | PROVISIONAL |
+| OQ4 (D11) | Editar `CLAUDE.md` y `openspec/config.yaml` (solo las lineas del gate) | Si: bloque 8 aplicado | PROVISIONAL |
+| OQ5 | `cache_meta` de la calibracion | Ver abajo | Parcial |
+| OQ6 | `usuario_final` puede validar la clasificacion de su incidente | Fuera de alcance (dominio CRITICAL); sin cambios | Abierta |
+
+**OQ5.** c-143 publico `evaluation/evidence/predicciones_calibracion_hybrid-v2_2026-10-07.json`
+(`classifier_version = hybrid-v2`, `generated_at = 2026-10-07T20:33:03Z`, `corpus_hash =
+5f062e14...` que NO coincide con el vigente `1fd17d7e...`, solo evidencia historica) y
+`predicciones_hybrid-v3_2026-10-07.json` (hash que coincide con el corpus vigente). Eso aporta
+una parte del `cache_meta` de la tarea 2.3 (fecha y etiqueta de version del clasificador) y
+permite **reproducir 88/130 offline**; NO aporta la version del prompt ni explica la diferencia
+de `corpus_hash` (las 200 descripciones coinciden con el corpus vigente). Se registra en la
+Seccion 7, punto 7, de `numeros-canonicos.md`; reversible si el autor aporta la version del prompt.
+
+### Mapeo VEREDICTO 1 / seccion 5 / seccion 6 / seccion 7(a) / A1 -> T01-T16
+
+| T | Archivo | Estado |
+|---|---|---|
+| T01 | `02-marco-teorico.tex:34` | Aplicada (revision selectiva acotada por etapa) |
+| T02 | `02-marco-teorico.tex:46` | Aplicada (solo la oracion final) |
+| T03 | `05-arquitectura.tex:24` | Aplicada (celda de la capa 4) |
+| T04 | `05-arquitectura.tex:78` | Cubierta por c-144 `0c7f5bc`; verificada (`grep -c "sin acceso al corpus de validación"` = 0) |
+| T05 | `05-arquitectura.tex:80` | Aplicada (parrafo completo; retira "superior al 90 %") |
+| T06 | `05-arquitectura.tex:82` | Aplicada (3 fragmentos; incluye C1) |
+| T07 | `06-implementacion.tex:39` | Aplicada (incluye C4) |
+| T08 | `06-implementacion.tex:40` | Aplicada (2 fragmentos; acentos corregidos solo en lo reescrito) |
+| T09 | `06-implementacion.tex:87,95` | Aplicada |
+| T10 | `07-resultados.tex:136` | Aplicada (124/200; solo se modifica la linea 136) |
+| T11 | `08-discusion.tex:16` | Aplicada (69 casos de Gemini; valoracion remitida a `subsec:calibracion`) |
+| T12 | `08-discusion.tex:18` | Cubierta por c-144; verificada (0 coincidencias de "datos no vistos" y "separación estricta"; 1 de "estimaciones dentro de la muestra") |
+| T13 | `06-implementacion.tex:75` | Cubierta por c-144; verificada (0 coincidencias de "sin exposición al corpus de validación") |
+| T14 | `12-anexos.tex:135` | Cubierta por c-144; verificada (`grep -c "sin exposición a\|sin acceso al corpus" sections/*.tex` = 0 en todos) |
+| T15 | `11-aspectos-legales.tex:34` | Aplicada [D7, PROVISIONAL] |
+| T16 | `12-anexos.tex` (tab:anexo_gemini_params) | Aplicada (fila nueva tras `timeout`, sin tocar `timeout`) |
+
+Tarea 9.1 (roles, agregada por Luca en `2236b26`): aplicada en `04-marco-metodologico.tex:108`.
+Evidencia `git shortlog -sne HEAD`: lucaGomezB 417, GonzaloSevilla22 93, Luca Gomez 35, Gonzalo
+Sevilla 15, dependabot[bot] 1 (con `--all`: 420/93/35/15/6); **ningun commit a nombre de Carla
+Bustos** y ninguna mencion en los mensajes (`git log --grep`). Carla pasa a revisora de la tesis y
+colaboradora en anexos y corroboracion de fuentes; el modulo Python y el modelado de datos se
+atribuyen a Luca Gomez; la configuracion N8N y la integracion telefonica quedan en Gonzalo
+Sevilla (commits c-04/c-05 sobre el workflow); se conserva la supervision del director.
+**Salvedad para los autores**: el historial tambien muestra que el modulo inicial
+`Gestion_Incidentes` y el frontend los commiteo la identidad `GonzaloSevilla22`
+(`7db7fe1`, `ca8e2b6`, 2026-05-20/21) y que el codigo de telefonia del backend es de
+`lucaGomezB`; la redaccion adoptada sigue el encargo del design y debe confirmarse.
+
+### Codigo (bloque 7, MEDIUM) y documentacion para agentes (bloque 8)
+
+- Test de caracterizacion `test_cortocircuito_deterministico_no_marca_revision_aunque_confianza_menor_a_070`
+  (3 casos: confianza 0,0; 1/6; 0,5): pasa en la primera corrida por diseno (RED no aplica);
+  una mutacion que marca revision en el cortocircuito lo hace fallar (3/3).
+- Docstrings de `hybrid.py`, `deterministic.py` y `gemini_classifier.py` alineados con el
+  comportamiento vigente; `wc -l` identico (257/360/604); `ast.dump` sin docstrings
+  identico antes y despues (sha256 igual en los tres archivos). Suite: **125 passed** (122 + 3).
+- `openspec/config.yaml` (lineas 11 y 42), `CLAUDE.md` (lineas 50 y 100) y `knowledge-base/`
+  (RN-CL-02, RN-CL-03, RN-CL-05, DD-07, tabla de variables de entorno y afines) actualizados;
+  `openspec validate c-130-gate-revision-humana-por-etapa --strict` en verde.
+
+### Reversibilidad (D6, D7, D9, D10)
+
+- D6: c-131 fija la valoracion final del hallazgo de Gemini (fiabilidad o sobreconfianza).
+- D7: se retira la salvedad de la reasignacion solo por REST si un change de codigo expone la
+  reasignacion de incidentes no derivados en la interfaz web.
+- D9: ya resuelta por c-144; si los autores acreditan que los ajustes usaron datos ajenos al
+  corpus, se restituye la afirmacion de no exposicion con esa evidencia.
+- D10: la Seccion 3.7 de `numeros-canonicos.md` se actualiza si el autor aporta la version del
+  prompt de la cache FORCE-ESCALATE.
+
+### Consignas derivadas a otros changes (tabla de fronteras del design)
+
+- **c-131**: desagregar por etapa con los nombres de D2; reformular `07-resultados.tex:143`
+  ("umbral del 70 % que gobierna el gate") y `:165` ("el gate del 70 % no aislo los errores");
+  conservar `\label{subsec:calibracion}`; consumir `97/131` de la Seccion 3.7.
+- **c-133**: `01-introduccion.tex:34` y `07-resultados.tex:138` (sub-hipotesis de intervencion):
+  la base es 69 de 200 casos sujetos al gate; no apoyar la hipotesis de eficiencia en 0,7405
+  frente a 0,6769 como evidencia independiente.
+- **c-132**: `08-discusion.tex:14` y `09-conclusiones.tex:41` deben reconocer que no hubo derivacion
+  por caso basada en la clasificacion sobre el 65,5 %.
+- **c-136**: gate por caso sobre el puntaje y confirmacion en corpus independiente.
+- **c-135**: fechas de `06-implementacion.tex:75`; deriva de modelo (`CLAUDE.md` y
+  `openspec/config.yaml` dicen "Gemini 2.5 Flash"; tesis y `Settings`, 3.6).
+- **c-137**: acentuacion fuera de los fragmentos reescritos (por ejemplo `06-implementacion.tex:40`
+  "no lo esta", "continua").
+- **c-141**: recibe el conteo de paginas (abajo).
+
+### Compilacion y conteo de paginas (tareas 10.3 y 10.4)
+
+- Entorno: Docker `texlive-thesis` (`latexmk main.tex`), en el arbol. Sin errores fatales
+  (`grep -c "^!" main.log` = 0), `grep -c -i undefined main.log` = 0, `multiply defined` = 0,
+  `grep -E "WARN|ERROR" main.blg` vacio; sin `Overfull \hbox` atribuible a la fila nueva de
+  `tab:anexo_gemini_params` (los dos existentes son de las filas `candidate_count` y
+  `safety_settings`).
+- Antes: `abspage@last{102}` (cuerpo 94, anexos 8). Despues de T01-T16 y 9.1:
+  `abspage@last{103}` (`Anexos` en p. 96: cuerpo 95, anexos 8), delta +1.
+- Se aplico la compensacion **C3** (`05-arquitectura.tex:84`: se eliminaron la aposicion "redactadas
+  con los cinco strings canonicos sin tildes" y la coda "momento en el cual la reserva de costo se
+  imputa a la superficie de inferencia del backend") y se recompilo: el conteo **sigue en 103**
+  (la ultima pagina del cuerpo, la bibliografia, esta al 70 %). Conteo final de c-130 para c-141:
+  **103 paginas** (cuerpo 95, anexos 8), +2 sobre el tope de 101 (rama (a)); +1 sobre la
+  prevision de ~+0,7 por el corte de pagina.
+- `verify_citations.py`: PASS (59 entradas, 0 huerfanas). `tesis_para_agente.md` regenerado
+  (contiene "0,5166" y "124 de los 200 casos"; no contiene "superior al 90").
+
+**Estado**: grupo aplicado.

@@ -61,8 +61,8 @@ Automatizacion-de-Mesa-de-Ayuda-N8N/
 | DATABASE_URL | URL asyncpg de PostgreSQL | `postgresql+asyncpg://user:pass@host:5432/db` | Y |
 | GEMINI_API_KEY | Clave Google AI | — | Y |
 | GEMINI_MODEL / TEMPERATURE / TOP_P / MAX_OUTPUT_TOKENS / CANDIDATE_COUNT / TIMEOUT_SECONDS | Parámetros del modelo | `gemini-2.5-flash` · 0.3 · 0.9 · 100 · 1 · 10 | N |
-| DETERMINISTIC_CONFIDENCE_THRESHOLD | Umbral etapa 1 | 0.90 | N |
-| HUMAN_REVIEW_THRESHOLD | Umbral revisión humana | 0.70 | N |
+| DETERMINISTIC_SCORE_THRESHOLD | Punto de operación del `score_correctitud` (cortocircuito etapa 1) | 0.5166 | N |
+| HUMAN_REVIEW_THRESHOLD | Umbral revisión humana (solo sobre la salida de Gemini) | 0.70 | N |
 | N8N_WEBHOOK_URL / N8N_WEBHOOK_SECRET | Webhook post-clasificación | vacío ⇒ se omite | Y |
 | DB_POOL_SIZE / DB_MAX_OVERFLOW / DB_ECHO | Pool SQLAlchemy | 10 / 20 / false | N |
 | DEBUG / ENVIRONMENT | Habilita /docs; etiqueta de entorno | false / production | N |

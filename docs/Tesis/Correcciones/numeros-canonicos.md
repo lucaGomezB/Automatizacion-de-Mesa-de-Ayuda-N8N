@@ -11,6 +11,7 @@ de las ramas consumidoras").
 
 - **Change**: `c-102-congelar-numeros-canonicos-tesis` (Gate 0 del plan de corrección del dictamen CONEAU 2026-10-20).
 - **Upsert c-108**: `c-108-metricas-paradigma-y-clase-unitaria` agrega la Sección 3.6 (marco métrico unificado e intervalos de confianza: por clase, de conjunto y del kappa). No modifica ningún valor canónico de la Sección 3. Fecha: 2026-10-21.
+- **Upsert c-130**: `c-130-gate-revision-humana-por-etapa` agrega la Sección 3.7 (gate de revisión por etapa y punto de operación del cortocircuito), un punto en la Sección 4 (alcance del gate por etapa) y el punto 7 de la Sección 7 (procedencia de la cache FORCE-ESCALATE y salvedad de estimación dentro de la muestra). No modifica ningún valor vigente de las Secciones 3.1 a 3.6. Fecha: 2026-10-25.
 - **Artefacto**: este memo. No se edita ningún `.tex` en este change.
 - **Fecha de verificación**: 2026-10-21.
 - **SHA-256 del corpus** (`data/corpus_evaluacion_pseudonimizado.json`):
@@ -194,6 +195,31 @@ o las etiquetas por analista; en ese caso se calcula por bootstrap con semilla
 fija y se hace upsert aquí. El rótulo interpretativo del valor puntual sigue
 siendo "casi perfecto" (Landis y Koch, `\kappa > 0,80`).
 
+### 3.7 Gate de revisión por etapa y punto de operación (c-130)
+
+Valores que la tesis cita para describir el alcance del gate de revisión humana
+por etapa y el cortocircuito de la etapa determinística. La definición de las
+magnitudes (confianza por etapa, puntaje de correctitud, punto de operación) la
+fija `05-arquitectura.tex` (`subsec:subsistema-clasificacion`); aquí solo se
+registran los números.
+
+| Valor canónico | Procedencia (archivo:línea) | Estado | Notas |
+|---|---|---|---|
+| Casos con confianza `< 0,70` sin escalamiento: `124/200` | `07-resultados.tex:154-155` (bandas `98 + 26`), `07-resultados.tex:136`; Sección 4 de este memo; `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` | vigente | Los `124` son **todos** de la etapa determinística (confianza = fuerza de señal, no probabilidad). Repetición offline del 2026-10-25 con `DeterministicClassifier` sobre el corpus versionado: `124` con confianza `< 0,70` (`94` aciertos) y `7` con `≥ 0,70`; coincide con la evidencia versionada `hybrid-v3` (`124` de `200`). |
+| Proporción de esos casos: `62,0 %` | `07-resultados.tex:136` (`124/200`) | vigente | Aritmética sobre `124/200`; la tesis lo escribe `62~\%`. |
+| Confianza mínima declarada por Gemini: `0,85` en `69` casos | Sección 4 de este memo; `07-resultados.tex:136`; `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` | vigente | Verificado el 2026-10-25 sobre la evidencia versionada: `69` predicciones con `etapa = gemini`, mínimo `0,85`. La etapa de reserva no se activó (`0` casos). |
+| Punto de operación del cortocircuito: `0,5166` | `App/Backend/app/config/settings.py:134`; `docs/deterministic_calibration.md:35-36` | vigente | Umbral sobre el `score_correctitud` (no sobre la confianza). Derivado por validación cruzada de cinco pliegues (tau OOF `0,516666…` en los cinco pliegues, truncado a 4 decimales). Sustituye al piso absoluto `0,90` del diseño inicial (ver el punto siguiente). |
+| Cobertura del punto: `131/200` (`65,5 %`) | `docs/deterministic_calibration.md:39`; Sección 3.3 (etapa determinística `131`) | vigente | Equivale a cortocircuitar todo caso con señal dominante (`57` sin predicción y `12` ambiguos escalan a Gemini); todos los `131` tienen puntaje `≥ 0,516667` (mínimo repetido offline el 2026-10-25). |
+| `precision_det(S)`: `97/131` = `0,7405` | `docs/deterministic_calibration.md:40,67` | vigente | Coincide con la exactitud estricta de la etapa determinística de la corrida oficial (Sección 3.3; c-131 la consume y le agrega el intervalo de confianza). **Estimación dentro de la muestra** (ver el punto 7 de la Sección 7). |
+| `precision_gem(S)`: `88/130` = `0,6769` | `docs/deterministic_calibration.md:41-44,68` | vigente | Fuente: cache FORCE-ESCALATE (`evaluation/predicciones_calibracion.json`, no versionada; copia congelada en `evaluation/evidence/predicciones_calibracion_hybrid-v2_2026-10-07.json`). Excluye `1` caso cortocircuitable sin predicción de Gemini en esa cache. **Estimación dentro de la muestra**. Recalculado el 2026-10-25 desde la evidencia versionada: `88` aciertos sobre `130` = `0,6769`. |
+| Piso absoluto `0,90` del diseño inicial: `1/200` | `docs/deterministic_calibration.md:104,181-182` | **retirado** | Cobertura de un piso de precisión (no de un umbral de confianza) que habría cortocircuitado un único caso; retirado como criterio de operación por c-74. La tesis ya no lo cita (se retira "umbral de confianza superior al 90 %"); se conserva aquí por trazabilidad. |
+
+Salvedades: (i) `97/131` y `88/130` son estimaciones dentro de la muestra
+porque el vocabulario del filtro, las reglas de frontera del prompt y el punto
+de operación se ajustaron sobre el mismo corpus (c-71, c-72 y c-74; declarado por
+c-144 en `08-discusion.tex:18`); (ii) `88/130` proviene de una cache que no es la
+corrida oficial y su procedencia queda registrada en el punto 7 de la Sección 7.
+
 ## 4. Contingencia del gate de intervención humana
 
 Tabla reconstruida desde `evaluation/predicciones.json` con
@@ -226,6 +252,17 @@ escala a revisión); baja = `confianza < 0,70`.
 - Conclusión operativa: la proporción de intervención humana derivable del gate
   de confianza implementado es `0 %`, no `9,5 %`. Esto desmiente el `9,5 %`
   como cifra derivable de las fuentes permitidas (ver Sección 7).
+- **Alcance del gate por etapa (c-130).** La regla
+  `requiere_revision_humana = (confianza < 0,70)` se evalúa **solo sobre la
+  salida de Gemini**; la etapa de reserva marca revisión siempre (confianza
+  `0,0` por construcción); la etapa determinística no deriva por su confianza
+  desde c-74 (el cortocircuito se decide por `score_correctitud >=
+  deterministic_score_threshold`). Los docstrings que atribuían la revisión al
+  híbrido "de cualquier etapa" o declaraban un cortocircuito por confianza
+  `0,90` se corrigen en c-130 (solo comentarios; el test de caracterización
+  `tests/test_hybrid_classifier.py` fija el contrato). El backend tiene además
+  un segundo disparador, ajeno al clasificador: reportante no identificado
+  (VIS-005, c-82; `App/Backend/app/services/incidente_service.py:401-410`).
 
 ## 5. Decisiones por ítem
 
@@ -394,6 +431,28 @@ decisión editorial adoptada y su condición de reversibilidad.
    (`docs/anexo_h_prompt_gemini.md:160/162`). **Reversible si**: el autor aporta
    el conjunto independiente pseudonimizado; en ese caso corresponde un change de
    gobernanza HIGH propio.
+
+7. **Procedencia de la cache FORCE-ESCALATE y estimaciones dentro de la
+   muestra (c-130).** `precision_gem(S) = 88/130` (Sección 3.7) se calculó sobre
+   la cache FORCE-ESCALATE (`evaluation/predicciones_calibracion.json`), que
+   sigue ignorada por `.gitignore` y no existe en el árbol de trabajo. Desde
+   c-143 existe una copia congelada y versionada
+   (`evaluation/evidence/predicciones_calibracion_hybrid-v2_2026-10-07.json`)
+   cuyo `cache_meta` aporta: `classifier_version = hybrid-v2`, `generated_at =
+   2026-10-07T20:33:03Z` y `corpus_count = 200`; con ella se **reprodujo
+   offline** el `88/130 = 0,6769` el 2026-10-25 (199 predicciones de Gemini y 1
+   determinística; las 200 descripciones coinciden con el corpus vigente).
+   Siguen **sin documentarse**: la versión del prompt con que se generó esa
+   cache (el `cache_meta` solo registra la etiqueta `hybrid-v2`) y el motivo de
+   que su `corpus_hash` (`5f062e14…`) difiera del hash vigente (`1fd17d7e…`)
+   pese a que las descripciones coinciden. **Decisión adoptada**: citar `88/130`
+   como cifra de `docs/deterministic_calibration.md` con esta salvedad y no
+   fabricar la versión del prompt. **Reversible si** el autor aporta la versión
+   del prompt de esa corrida. Además, `97/131` y la exactitud global son
+   **estimaciones dentro de la muestra** (el vocabulario del filtro, las reglas
+   de frontera del prompt y el punto de operación se ajustaron sobre el mismo
+   corpus: c-71, c-72, c-74), probablemente optimistas; su confirmación exige
+   un corpus independiente (`08-discusion.tex:18`, `subsec:corpus-independiente`).
 
 ---
 
