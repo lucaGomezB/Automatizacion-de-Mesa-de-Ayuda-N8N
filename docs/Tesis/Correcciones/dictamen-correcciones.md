@@ -921,6 +921,7 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 | `+c-142` (`change/c-142-sensibilidad-fuera-de-muestra-ajustes-clasificador`) | sin commit (lo crea el orquestador) | 104 | 96 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{104}`; `Anexos` en p. 97; brecha frente a 101: +3 (sin los recortes de `09` y la variante de T06 habria sido 105); C3 no aplicada (el total no supera 104) |
 | `+c-132` (`change/c-132-balance-neto-derivaciones-erroneas`) | sin commit (lo crea el orquestador) | 105 | 97 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{105}`; `Anexos` en p. 98; brecha frente a 101: +4 (la primera compilacion dio 106; las variantes cortas de T10, T11 y T13 recuperaron la pagina); rama (b): cuerpo 97, margen 3 |
 | `+c-133` (`change/c-133-hipotesis-objetivos-metrica-primaria`) | sin commit (lo crea el orquestador) | 105 | 97 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{105}`; `Anexos` en p. 98; brecha frente a 101: +4 (sin compensar habria sido 107); rama (b): cuerpo 97, margen 3 |
+| `+c-134 tesis` (`change/c-134-contrastes-estadisticos-y-desagregado-canal`) | sin commit (lo crea el orquestador) | 105 | 97 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{105}`; `Anexos` en p. 98; brecha frente a 101: +4 (la primera compilacion dio 108, +3; las compensaciones dentro de los mismos pasajes devolvieron las tres paginas); rama (b): cuerpo 97, margen 3 |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -969,6 +970,11 @@ recompila la tesis ni agrega fila al libro mayor de paginas (la agrega el bloque
 `evaluation/report.md` se regenero con `--solo-tiempos` (sin Gemini ni predicciones):
 solo se agregaron tres subsecciones dentro de "## Tiempos"; las filas previas (W, T+, T-,
 p, r, desglose por canal) y la huella canonica del corpus no cambiaron.
+
+**Actualizacion 2026-10-25 (c-134, bloque de tesis)**: los grupos 6 a 8 se aplicaron el mismo dia en la rama
+`change/c-134-contrastes-estadisticos-y-desagregado-canal` (sobre `0ac3160`, ya con c-133); ver la seccion
+"Dictamen v1.1.0 - B7a, B12 y B13b (c-134, bloque de tesis)" al final de este registro. La fila `+c-134 tesis`
+del libro mayor (105 / 97 / 8, delta 0 / 0) esta en la tabla de arriba.
 
 ## Dictamen v1.1.0 - A1 (c-130) - Gate de revision humana por etapa
 
@@ -1673,5 +1679,90 @@ VEREDICTO dimensiones 2 y 3, RECOMENDACIONES B4 (tabla de cumplimiento y prosa),
 "docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex" "docs/Tesis/v10 (IA)/paper/sections/08-discusion.tex" "docs/Tesis/v10 (IA)/paper/sections/09-conclusiones.tex" docs/Tesis/Correcciones/numeros-canonicos.md
 docs/Tesis/Correcciones/dictamen-correcciones.md`, regenerar el render y recompilar. Las decisiones PROVISIONALES (OQ1 a OQ3) y el rotulo de la subsidiaria de eficiencia se pueden invertir sin tocar los valores canonicos
 (ver D1 a D4 del design y la 3.12).
+
+**Estado**: grupo aplicado.
+
+## Dictamen v1.1.0 - B7a, B12 y B13b (c-134, bloque de tesis) - Contrastes de tiempos, muestreo y cronometraje
+
+**Origen**: change `c-134-contrastes-estadisticos-y-desagregado-canal`, bloque de tesis (grupos 6, 7 y 8 de `tasks.md`; 20 tareas, 6.1 a 8.7)
+(dictamen CONEAU 2026-10-22: seccion 6, observaciones primera, segunda, tercera y quinta; seccion 7, desagregado por canal; recomendaciones B7a,
+B12 y B13b). Aplicado el **2026-10-25** en la rama `change/c-134-contrastes-estadisticos-y-desagregado-canal`, ya actualizada con `ramagonzalo`
+(`0ac3160`, merge de c-133); el bloque de codigo (grupos 1 a 5) estaba commiteado en `78957f7`. Posicion 7 del orden de la familia (G0.6). Cero
+llamadas a Gemini; `evaluation/`, `data/`, `App/`, `n8n/` y `CHANGES.md` sin cambios en este tramo (`git diff --quiet` verificado). Sin commit
+(lo crea el orquestador). Gobernanza MEDIUM: solo documento.
+
+### Open Questions del design (tareas 7.1 y 7.3) - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+
+El usuario pidio aplicar la familia sin detenerse y nadie respondio a OQ1 ni a OQ2 (hechos del estudio que solo conocen los autores). Cada
+decision es el **texto por defecto del design, PROVISIONAL**, registrada tambien en `design.md` (seccion Open Questions) ANTES de cerrar el grupo:
+
+| Open Question | Decision PROVISIONAL (2026-10-25) | Pasajes afectados | Reversible si |
+|---|---|---|---|
+| OQ1 - procedimiento del cronometraje | **Opcion (a)**: los dos operadores trabajaron en pares y se cronometraron mutuamente, sabian que la campana registraba tiempos; no se anunciaron el inicio de cada medicion ni el proposito comparativo; el debriefing informo el proposito; Hawthorne atenuado, no eliminado, amenaza residual. Granularidad 199/200 (5 s) y 180/200 (10 s) declarada como hecho verificable de la planilla, sin afirmar si es por diseno o por redondeo a ojo | `04` (`:16`), `08` (explicacion rival "Tercero"), `11` (`:32`, con `\parencite{APA2017}` intacto); `04:67` sin cambios | el autor describe otro procedimiento (opcion b o c): se reescriben esos tres pasajes; ninguna cifra cambia |
+| OQ2 - universo y seleccion de los 200 casos | **Sin respuesta: texto por defecto de D8**: muestreo estratificado con asignacion proporcional a la distribucion por sector observada en el periodo relevado, no verificable frente al universo (no esta disponible); Bases de Datos `n = 1` no estimable por clase; en replicaciones, asignacion no proporcional con sobremuestreo de las clases minoritarias. Abstract: "drawn by stratified sampling" (equivale al "con muestreo estratificado" del resumen en espanol, que no cambia) | `04` (`:45`), `00-resumen.tex` (linea en ingles) | el autor aporta el universo por sector (se agrega una frase y el memo) o aclara que los 200 son todos los incidentes cronometrados sin estratificacion ("muestra no probabilistica por disponibilidad") |
+| OQ3 - IC del tiempo medio | **Default**: se retira la promesa del intervalo de confianza (`04:65`) y la lista declarada queda alineada con lo reportado | `04` (`:65`) | el autor prefiere reportar el IC: se agrega al runner y una fila a `tab:tiempos` |
+
+### Mapeo de tareas 6.1 a 8.7 -> pasajes (anclas P1-P18 re-ubicadas por texto; las lineas son las vigentes tras la edicion)
+
+| Tarea | Ancla | Resultado |
+|---|---|---|
+| 6.1 | P1-P3 | `13,48` -> `13,52` en `07:10`, `07:23` y `08:12` (`grep -rn "13,48" sections/` = 0; `13,52`: 2 en 07 y 1 en 08); `08:12` ademas compactada ("consecuencia de la automatizacion y no un objetivo del diseno") para la compensacion de paginas |
+| 6.2 | P4 | `04:65`: la metrica de tiempo declara media, mediana, desvio estandar muestral, minimo, maximo y reduccion relativa de la media; sin "intervalo de confianza al 95" en el parrafo de la metrica de tiempo (`grep -c "intervalo de confianza al 95" 04` = 0); el resto del parrafo (exactitud, F1 macro, intervencion humana) intacto |
+| 6.3 | P5-P7 | `04:71`: "Los p de tiempos son bilaterales, conservadores frente a la H1 direccional; el unilateral global (`alternative=greater`) es 1,54 x 10^-32"; `01:32`: `p = 3,08e-32` rotulado bilateral con `1,54e-32` unilateral; `07:57`: el mismo p rotulado bilateral con remision a `subsec:analisis-estadistico`; sensibilidad (`07:61`): `p = 1,8 x 10^-26` rotulado bilateral. `08:10`: la cita del McNemar `p = 0,1516` pasa a "McNemar exacta bilateral" (convencion coherente, sin cambiar el valor). `1{,}54` en 01 y 04 = 1 y 1; `3{,}08` en 01 y 07 = 1 y 1 |
+| 6.4 | P8 | `04:87`: MDE en escala `d_z` (0,20; 0,21 con ARE 0,864), `d_z` observado 1,00 ("mas de cuatro veces"), por canal 1,37 / 0,73 / 1,61 frente a 0,31 / 0,34 / 0,38 (0,33 / 0,37 / 0,41 con el ajuste); `grep -c "supera holgadamente ese m" 04` = 0, `0{,}864` = 1 |
+| 6.5 | P9 | `07:59`: la ecuacion desplegada de `r` pasa a expresion en linea (`r = 19.374/20.100 = 0,9639`) mas `d_z = 1,00` rotulado y distinguido del `r`; sin `\[` en la subseccion; sin rank-biserial `1,00`. Compensacion no prevista por D10: la formula de `r` de `04:73` tambien pasa de display a en linea (misma formula, mismo contenido) |
+| 6.6 | P16 | `07:32` reescrita y `tab:tiempos-canal` (Tabla 10) reemplazada por la tabla de D7: Canal, Casos, manual media / mediana, automatizado media / mediana, reduccion de la media, pares no mas rapidos, p bilateral, `d_z`; 3 canales y Global; `\footnotesize`, `\tabcolsep` 2,5 pt, cabecera de dos niveles, "(cota inferior)" en la fila telefonica, nota de convencion de p y de `d_z` y remision a `evaluation/report.md` para `W`, `T+`, `T-` y `r`; linea de fuente conservada (`grep -c Fuente 07` = 8, como antes); sin `W = 0` en ninguna fuente; la celda del p global se escribe en texto (`3,08e-32`) para que `3{,}08` figure una sola vez en 07 |
+| 6.7 | P13 | `08:22` ("Segundo"): remite a `tab:tiempos-canal` (reducciones del 51,1 al 93,4 % y contraste intra-canal significativo), conserva "lo debilita" y la dependencia de la magnitud global respecto de la composicion; sin "se descartaria con un contraste intra-canal" (= 0); `tab:tiempos-canal` en 08 = 1 |
+| 6.8 | P17-P18 | retiradas las notas historicas de `04:51` ("Ese margen sustituye al 6,5 %...") y de `04:77` ("La definicion anterior... queda reemplazada..."); `6,5~` = 0, `queda reemplazada por esta` = 0; el parrafo conserva formula, `N`, `z`, `p`, `e = 6,66 %` y la declaracion de tamano fijado por disponibilidad |
+| 7.1 | OQ2 | registrada (tabla de arriba y `design.md`) |
+| 7.2 | P10-P11 | `04:45` (default de D8) y abstract `00-resumen.tex:27`; `grep -c "estratificado proporcional un corpus" 04` = 0, `proportional stratified sampling` = 0; no se aporta cifra de universo (no hay valores nuevos para el memo por esta via) |
+| 7.3 | OQ1 | registrada (tabla de arriba y `design.md`) |
+| 7.4 | P12 | `04:16` (default de D9, opcion a): relato del cronometraje mutuo, no anunciado el inicio ni el proposito, debriefing, Hawthorne atenuado y residual, y granularidad 199/200 y 180/200 vinculada a los descuentos de 5 s y 10 s; `no fue anunciado en tiempo real al operador` = 0; `199` y `180` figuran en el texto y en el memo 3.8. Se quito de `04:16` la descripcion del registro automatico (duplicada en `04:67`, inciso (a)) como compensacion |
+| 7.5 | P14-P15 | `08:22` ("Tercero"): los operadores sabian que se cronometraba y el procedimiento atenua el efecto sin eliminarlo, con remision a `subsec:diseno-experimental`; `11:32`: mismo relato, "conocimiento diferido" -> "informacion diferida sobre el proposito del estudio", `\parencite{APA2017}` = 1 (sin cambio); ningun capitulo afirma que el operador ignoraba el cronometraje durante toda la campana ni describe la planilla como "estimados" o "con exactitud al segundo" |
+| 8.1 | trazabilidad | cada cifra nueva o modificada figura en la Seccion 3.8 del memo con estado `vigente` (tabla nueva "Cifras con redondeo de tesis"): `13,52`, `1,54e-32`, `d_z` 1,00 / 1,37 / 0,73 / 1,61, MDE, medias y medianas por canal, reducciones 77,0 / 51,1 / 93,4, pares no mas rapidos 0 / 12 / 0, `199` y `180`, media y desvio de las diferencias; sin universo (OQ2 sin aporte); dos redondeos explicados (`27,65` de `27,6546`; `1,26` de `1,2650`) |
+| 8.2 | compilacion | ver "Compilacion" |
+| 8.3 | paginas | ver "Compilacion" y libro mayor |
+| 8.4 | `verify_citations.py` | PASS: 59 entradas, 59 claves citadas, 100 comandos de cita, 0 huerfanas, 0 sin usar (no se agregan citas ni entradas `.bib`) |
+| 8.5 | render | `tesis_para_agente.md` regenerado (`build_tesis_para_agente.py`): `13,48` = 0, `13,52` = 3, contiene la tabla por canal nueva |
+| 8.6 | alcance | `git diff --quiet -- data/ evaluation/ App/ n8n/ CHANGES.md` sin diferencias; `git status` de este tramo: las seis secciones `.tex` editadas (`00`, `01`, `04`, `07`, `08`, `11`), `numeros-canonicos.md`, `dictamen-correcciones.md`, `design.md` y `tasks.md` del change, el render y los artefactos de compilacion versionados (`main.aux`, `main.toc`, `main.lof`, `main.lot`, `main.out`, `main.fdb_latexmk`, `main.xdv`, `main.pdf`) |
+| 8.7 | cierre | tabla TDD de los grupos 2-4 ya entregada en el apply del codigo (153 -> 216 tests): se referencia, no se rehace; handoffs en "Consignas" |
+
+### Compilacion, paginas y palabras (tareas 8.2 y 8.3)
+
+- Docker `texlive-thesis` (`latexmk main.tex`, en el arbol): `grep -c "^!" main.log` = 0, `undefined` = 0, `multiply defined` = 0, `main.blg` sin WARN/ERROR, 29 `Overfull \hbox` (los mismos 29 de la linea base; ninguno en `tab:tiempos-canal`, que no genera `Overfull`).
+- **Paginas: antes `abspage@last{105}` (cuerpo 97, anexos 8); despues `abspage@last{105}`; `Anexos` en p. 98: cuerpo 97, anexos 8; delta 0 / 0** (prevision 0 a +0,4). Inicio de capitulos identico a la linea base: 1:11, 2:18, 3:26, 4:31, 5:40, 6:51, 7:61, 8:67, 9:75, 10:84, 11:87, Referencias:92, Anexos:98.
+- **Sin compensar habria sido 108 (+3)**: la primera compilacion con los textos completos de D8 y D9 y la tabla ancha dio `abspage@last{108}` (cuerpo 100). La causa es que tres paginas finales de capitulo estaban casi llenas en la linea base (medido con `\the\pagetotal` al cierre de cada capitulo en una copia instrumentada, sin tocar el arbol): el marco metodologico terminaba en la p. 39 con 684 de 700 pt (una linea de margen), la discusion en la p. 83 con 684 de 700 pt, y los resultados en la p. 74 con 473 de 552 pt (con un flotante); el texto nuevo desborda cada una (+1, +1 y +1 pagina).
+- **Reservas de D10 y compensaciones aplicadas** (dentro de los pasajes que posee c-134): (1) `07:32` reducida a un parrafo corto que remite a la tabla; tabla en `\footnotesize`, `\tabcolsep` 2,5 pt, rotulo de cota inferior en la fila y nota y fuente en un solo parrafo; (2) textos por defecto de D8 y D9 acortados (`04:45`, `04:16`; en `04:16` se quita la descripcion del registro automatico, duplicada en `04:67`); (3) notas historicas de `04:51` y `04:77` retiradas (P17-P18, previstas); (4) ecuacion de `r` compactada en `07` (P9, prevista) y, ademas, formula de `r` en linea en `04:73`; (5) `08:12` y la explicacion rival "Segundo" de `08:22` acortadas (se quita la enumeracion de los canales, ya en la tabla). No se recorto ningun parrafo de otro change. La compensacion de `08` y de `04` dejo cada capitulo en el mismo punto de corte que la linea base (684 de 700 pt en `04` y en `08`; `07`: 539 de 552 pt).
+- **Margen para los changes siguientes: cero.** Las ultimas paginas del marco metodologico (p. 39) y de la discusion (p. 83) vuelven a estar llenas (una linea de margen) y la de resultados (p. 74) tiene unos 13 pt: cualquier agregado de c-135, c-136, c-138 o c-139 en `04`, `07` u `08` agrega una pagina entera salvo que compense en el mismo pasaje.
+- Brecha frente al tope provisional 101 (regla (a) de G0.1): **+4**, sin cambio respecto de c-133; regla (b) (cuerpo <= 100): cuerpo 97, margen 3.
+- **Resumen** (regla de c-106, math en linea como una palabra): **ES 250 -> 250** (los parrafos en espanol no se tocan; el cambio de muestreo del resumen solo alcanza al abstract) y **EN 243 -> 242** ("proportional stratified sampling" -> "stratified sampling"; la reproduccion del conteo con un script propio da el mismo delta de -1: 232 -> 231 en esa variante de conteo, cuyo valor absoluto difiere del de c-132 y c-133 porque no se recupero su script). El espanol sigue topado en 250.
+
+### Libro mayor de paginas
+
+| Change | Commit | Total | Cuerpo sin anexos | Anexos | Delta total | Delta cuerpo | Regla vigente | Estado |
+|---|---|---|---|---|---|---|---|---|
+| `+c-134 tesis` (`change/c-134-contrastes-estadisticos-y-desagregado-canal`) | sin commit (lo crea el orquestador) | 105 | 97 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{105}`; `Anexos` en p. 98; brecha frente a 101: +4 (sin compensar habria sido 108, +3); rama (b): cuerpo 97, margen 3 |
+
+(La fila queda registrada aqui y, en la tabla de la seccion G0, como `+c-134 tesis`; el orquestador la consolida.)
+
+### Mapeo del dictamen
+
+VEREDICTO seccion 6 (observaciones primera a tercera y quinta), seccion 7 (desagregado por canal), RECOMENDACIONES B7a (tiempos manuales por canal y Wilcoxon intra-canal), B12 (muestreo y asignacion) y B13b (procedimiento de cronometraje) -> D1, D2, D3, D7, D8, D9, D10 y P1-P18; memo 3.8.
+
+### Consignas para otros changes
+
+- **c-138 / c-136 / c-135 / c-139 (paginas)**: ver "Margen para los changes siguientes: cero" arriba. Los capitulos 4 (p. 39), 8 (p. 74) y 9 (p. 83) estan al limite; todo agregado debe compensar en el mismo pasaje.
+- **c-135 (B9, B10a-d, B13a)**: la salvedad de cota inferior del canal telefonico queda en la fila de `tab:tiempos-canal` ("cota inferior") y en el parrafo de `07:32` (no duplicarla ahi); la de `09:39` es suya. Las fechas de la campana siguen en `04:45` (la clausula de muestreo es de c-134; no pisar la oracion de las fechas) y `04:16` ya no contiene fechas. `07:6` (parrafo introductorio) es suyo. La nota de Scrumban de `04` es suya.
+- **c-136 (B11)**: `04:45` declara de forma autocontenida la asignacion no proporcional con sobremuestreo de las clases minoritarias para replicaciones; puede recogerla en `subsec:estudios-replicacion` con remision, sin duplicar. El hecho de OQ1/OQ2 es PROVISIONAL: si el autor lo cambia, la recomendacion se ajusta.
+- **c-137 (B14, ortotipografia)**: el texto nuevo lleva tildes; los `p` aparecen en tres formas (`3{,}08 \times 10^{-32}` en prosa de `07` y `04`, `3{,}08\text{e-}32` en `01`, `3,08e-32` en texto plano dentro de `tab:tiempos-canal`); decidir si se unifican (la tabla evita el math para que `3{,}08` figure una sola vez en `07`, como pide la tarea 6.3). Decimales con coma; `d_z` siempre en math.
+- **Change bibliografico de B15 (c-139)**: este change NO agrega citas ni entradas `.bib`; quedan sin referencia primaria la prueba de Wilcoxon de rangos con signo (`04:71`), el analisis de potencia y la eficiencia relativa asintotica 0,864 de la prueba de rangos frente a la `t` pareada (`04:87`) y la definicion de `d_z`.
+- **c-141 (integracion)**: (1) libro mayor: fila `+c-134 tesis` = 105 / 97 / 8, delta 0 / 0 (sin compensar +3); (2) revision del autor pendiente: OQ1 y OQ2 de c-134 (hechos del cronometraje y del muestreo) y OQ3; (3) `CHANGES.md` ("Pendientes planificados", punto 2) sigue diciendo que la seccion de normalidad del reporte es manual: ya no lo es (c-99 la cableo al runner); (4) el requisito vigente "Presupuesto de paginas preservado" de `tesis-document` fija <= 100 mientras la familia opera con <= 101; (5) `tab:tiempos-canal` es la Tabla 10; (6) el resumen ES esta en 250 palabras (topado); (7) la regeneracion final del render y de `main.bbl` es suya (el render se regenero en este tramo); (8) `numeros-canonicos.md`: la 3.8 queda completa (la serie libre sigue en 3.13); (9) opcional: `.gitattributes` para el corpus (seguimiento de D6).
+
+### Reversibilidad
+
+`git checkout <commit-previo> -- "docs/Tesis/v10 (IA)/paper/sections/00-resumen.tex" "docs/Tesis/v10 (IA)/paper/sections/01-introduccion.tex" "docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex"
+"docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex" "docs/Tesis/v10 (IA)/paper/sections/08-discusion.tex" "docs/Tesis/v10 (IA)/paper/sections/11-aspectos-legales.tex" docs/Tesis/Correcciones/numeros-canonicos.md
+docs/Tesis/Correcciones/dictamen-correcciones.md`, regenerar el render y recompilar. Las decisiones PROVISIONALES (OQ1 a OQ3) se pueden invertir sin tocar los valores canonicos
+(ver D1 a D9 del design y la 3.8).
 
 **Estado**: grupo aplicado.

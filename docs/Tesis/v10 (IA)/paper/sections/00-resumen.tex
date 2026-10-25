@@ -24,7 +24,7 @@ The digitalization of organizational processes increases dependence on informati
 
 This thesis designs, implements, and validates an automated help desk system integrating N8N, a Python natural language processing module built with FastAPI, the Gemini~3.6 Flash model, PostgreSQL, and a Twilio telephony channel. It receives requests through email, web form, and phone calls with automatic transcription, and routes each incident to one of the five canonical sectors using a hybrid classifier that combines deterministic rules with a large language model.
 
-The study adopts a quantitative approach with a quasi-experimental paired-samples design over the same 200 cases, drawn by proportional stratified sampling. Independent double labeling reached a Cohen's Kappa of 0.87.
+The study adopts a quantitative approach with a quasi-experimental paired-samples design over the same 200 cases, drawn by stratified sampling. Independent double labeling reached a Cohen's Kappa of 0.87.
 
 Results show a statistically significant reduction in mean registration time, from 61.6~s to 17.76~s (71.2~\%). The Wilcoxon signed-rank test yielded \(W = 363\) with an effect size \(r = 0.9639\). Strict classification accuracy reached 73.5~\% and the threshold macro-F1, over the four estimable classes, was 0.6508. Per sub-hypothesis, the main hypothesis is confirmed in registration time, refuted in the classification threshold, and not tested for human intervention due to the absence of a primary record.
 
