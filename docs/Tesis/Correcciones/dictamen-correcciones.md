@@ -922,6 +922,7 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 | `+c-132` (`change/c-132-balance-neto-derivaciones-erroneas`) | sin commit (lo crea el orquestador) | 105 | 97 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{105}`; `Anexos` en p. 98; brecha frente a 101: +4 (la primera compilacion dio 106; las variantes cortas de T10, T11 y T13 recuperaron la pagina); rama (b): cuerpo 97, margen 3 |
 | `+c-133` (`change/c-133-hipotesis-objetivos-metrica-primaria`) | sin commit (lo crea el orquestador) | 105 | 97 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{105}`; `Anexos` en p. 98; brecha frente a 101: +4 (sin compensar habria sido 107); rama (b): cuerpo 97, margen 3 |
 | `+c-134 tesis` (`change/c-134-contrastes-estadisticos-y-desagregado-canal`) | sin commit (lo crea el orquestador) | 105 | 97 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{105}`; `Anexos` en p. 98; brecha frente a 101: +4 (la primera compilacion dio 108, +3; las compensaciones dentro de los mismos pasajes devolvieron las tres paginas); rama (b): cuerpo 97, margen 3 |
+| `+c-138` (`change/c-138-estado-del-arte-calibracion-y-cascadas`) | sin commit (lo crea el orquestador) | 108 | 100 | 8 | +3 | +3 | (a) total <= 101 | Medido: `abspage@last{108}`; `Anexos` en p. 101; brecha frente a 101: +7; rama (b): cuerpo 100, margen 0 |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -1764,5 +1765,67 @@ VEREDICTO seccion 6 (observaciones primera a tercera y quinta), seccion 7 (desag
 "docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex" "docs/Tesis/v10 (IA)/paper/sections/08-discusion.tex" "docs/Tesis/v10 (IA)/paper/sections/11-aspectos-legales.tex" docs/Tesis/Correcciones/numeros-canonicos.md
 docs/Tesis/Correcciones/dictamen-correcciones.md`, regenerar el render y recompilar. Las decisiones PROVISIONALES (OQ1 a OQ3) se pueden invertir sin tocar los valores canonicos
 (ver D1 a D9 del design y la 3.8).
+
+**Estado**: grupo aplicado.
+
+## Dictamen v1.1.0 - Seccion 4 y criterio 3 residual (c-138) - Estado del arte sobre calibracion y cascadas
+
+**Origen**: change `c-138-estado-del-arte-calibracion-y-cascadas` (dictamen CONEAU 2026-10-22: seccion 4, seccion 5 y recomendacion A4 en su parte de fuentes de calibracion). Aplicado el **2026-10-25** en la rama `change/c-138-estado-del-arte-calibracion-y-cascadas`, cortada de `ramagonzalo` en `738a3d4` (merge del bloque de tesis de c-134). Posicion 8 del orden de la familia (G0.6). Solo documento (gobernanza LOW): cero llamadas a Gemini, sin codigo, sin tags, sin commit (lo crea el orquestador). Archivos editados: `02-marco-teorico.tex`, `03-estado-del-arte.tex`, `08-discusion.tex`, `Bibliography_base.bib`, `bitacora-busqueda-c-110.md` (mas `tasks.md` y `design.md` del change y los artefactos de compilacion).
+
+### Open Questions del design - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+
+| Open Question | Decision PROVISIONAL | Efecto |
+|---|---|---|
+| OQ1 - tope de paginas | Lo decide c-141 (hoy regla (a) total <= 101, ya superada; linea base 105). Este change declara +2 esperadas (+3 peor caso) y registra el impacto medido; compensa dentro de su texto si supera +2 | Impacto medido +3 (ver Compilacion y paginas); sin contingencia de D8 |
+| OQ2 - ITSM-BERT y Alsac et al. | **Fuera** de este change (default) | No se citan ni se registran en la bitacora |
+| OQ3 - vacancia acotada en 3.4 | **Se enuncia** solo porque C1-C2 la confirman (default) | Frase de cierre de 3.4, acotada a las fuentes consultadas con C1 y C2 hasta 2026-10-25 |
+| OQ4 - FrugalGPT | **No evadir** los controles anti-bot de OpenReview: el PDF dio 403; se verifica sobre arXiv:2305.05176v1 y se limita la atribucion al concepto de cascada con funcion de puntaje y umbral | Registrado en la bitacora (nota de FrugalGPT) |
+
+### Linea base y vecinos (tareas 1.1 a 1.3)
+
+Rama real `change/c-138-...` (regla G0.6, no `ramagonzalo` literal); arbol limpio; PDF 105 paginas (cuerpo 97, anexos 8); `.bib` 59 entradas; `verify_citations.py` PASS. Holgura: cap. 2 (p. 25) unas 18 lineas; cap. 3 (p. 30) llena; cap. 9 (p. 83) una linea; bibliografia (p. 97) unas 14 lineas. Vecinos: la oracion de Xuan et al. (O3) sigue en 2.5 y no se toco; c-130 y c-131 aplicados (`grep -i "invertida|anti-calibr"` en 07 = 0), por lo que el bloque 7 se ejecuto; ninguna de las seis claves existia.
+
+### Busqueda C1-C2 (bloque 2; detalle en la bitacora, Grupo C)
+
+`FECHA_CORTE_C` = 2026-10-25. arXiv por API: C1 2334 y C2 3600 resultados, 100 primeros de cada una examinados (200) mas 3 consultas dirigidas a tickets y Gemini (7). ACL Anthology (8 examinados) y ACM DL (4) por motor web restringido al dominio; IEEE Xplore: sin resultados del dominio, 0; Scopus: sin acceso, 0; Google Scholar: CAPTCHA (no evadido), 0. Condiciones 2.3: (a) ninguna cascada de reglas y LLM con confianza verbalizada sobre tickets en español; (b) ningun trabajo arbitrado 2023-2026 que evalue Gemini sobre tickets en español (no hubo que detener la aplicacion). Vacancia acotada confirmada sobre las fuentes consultadas.
+
+### Verificacion de las seis fuentes (bloque 3)
+
+Las seis superan las tres compuertas (existencia, metadatos, texto completo): Guo 2017 y Zhao 2021 (PMLR, HTTP 200, metadatos `citation_*`), Tian 2023 y Varshney 2022 (DOI 302 a ACL Anthology, Crossref coincidente), Xiong 2024 (foro de OpenReview con desafio, existencia por la pagina de ICLR, MLAnthology y encabezado del PDF; texto de arXiv v2), Chen 2024 (listado y `.bib` oficiales de TMLR 200; PDF de OpenReview 403, texto de arXiv v1). Reserva de D2 no utilizada.
+
+### Tesis (bloques 4 a 7)
+
+| Tarea | Resultado |
+|---|---|
+| 4.1 a 4.3 | Bloque aditivo "CALIBRACION DE LA CONFIANZA Y CASCADAS DE MODELOS" en el `.bib` (59 -> 65 entradas; cinco `@inproceedings` y un `@article`); cada clave una sola vez; `git diff --numstat`: 69 agregadas, 0 borradas |
+| 5.1 a 5.3 | 2.5: dos oraciones nuevas a continuacion de O2 (Guo, Tian, Xiong) y clausula de cascada en la oracion del esquema hibrido (Varshney, Chen); O3 (Xuan) y O4 (umbral) intactas; lo agregado no cita `xuan2025mmluprox` ni contiene cifras. Presupuesto: unas 13 lineas (supera las 8 del design; absorbidas por la holgura del cap. 2, que no crecio) |
+| 6.1 a 6.4 | 3: protocolo extendido con C1, C2, criterios y regla de seleccion, fecha de corte 25-10-2026 (A1-A4, B1 y el corte del 21-10-2026 intactos; las cadenas de C se componen con `\shorthandoff{"}` para que las comillas rectas no se interpreten como atajos de babel); oracion introductoria con cuatro areas; subseccion `subsec:calibracion-cascadas` (3.4) entre 3.3 y la comparativa. El agregado del cap. 3 ronda las 35 lineas (presupuesto 30) |
+| 7.1 a 7.3 | 9.2: un parrafo antes de "La novedad del aporte radica", por etapa (confianza de Gemini sobreconfiada segun Xiong; cortocircuito de la etapa determinística por el puntaje de correctitud, no por su confianza; revision humana dependiente de la confianza verbalizada de Gemini); la eficiencia del esquema hibrido sigue "sin contrastarse"; sin cifras nuevas; sin "invertida" ni "anti-calibr" (0). Unas 9 lineas (presupuesto 7) |
+
+### Compilacion y paginas (bloque 8)
+
+- Docker `texlive-thesis` (`latexmk main.tex`, en el arbol): `^!` = 0, `undefined` = 0, `multiply defined` = 0, `main.blg` sin WARN/ERROR, "Found 65 citekeys" = 65 entradas; `verify_citations.py` PASS (65 entradas, 65 claves citadas, 113 comandos de cita, 0 huerfanas, 0 sin usar).
+- **Paginas: antes 105 (cuerpo 97, anexos 8); despues `abspage@last{108}`; `Anexos` en p. 101: cuerpo 100, anexos 8; delta +3 / +3.** Inicio de capitulos: 1:11, 2:18, 3:26, 4:32, 5:41, 6:52, 7:62, 8:68, 9:76, 10:86, 11:89, Referencias:94, Anexos:101. Crecieron: cap. 3 (+1, p. 26-31, ultima pagina casi llena), cap. 9 (+1, la pagina nueva contiene 9.6 con unas 13 lineas) y bibliografia (+1, 18 lineas en la pagina nueva). El cap. 2 no crecio. No se aplico la contingencia de D8 (el aumento no supera +3).
+- Brecha frente al tope provisional 101 (regla (a)): **+7**; regla (b) (cuerpo <= 100): cuerpo 100, margen 0.
+
+### Libro mayor de paginas
+
+| Change | Commit | Total | Cuerpo sin anexos | Anexos | Delta total | Delta cuerpo | Regla vigente | Estado |
+|---|---|---|---|---|---|---|---|---|
+| `+c-138` (`change/c-138-estado-del-arte-calibracion-y-cascadas`) | sin commit (lo crea el orquestador) | 108 | 100 | 8 | +3 | +3 | (a) total <= 101 | Medido: `abspage@last{108}`; `Anexos` en p. 101; brecha frente a 101: +7; rama (b): cuerpo 100, margen 0 |
+
+(La fila queda aqui y en la tabla de la seccion G0; el orquestador la consolida.)
+
+### Consignas para otros changes
+
+- **c-136**: puede citar `Guo2017_calibration` (ECE, escalado de temperatura como recalibracion posterior), `Xiong2024_confidence_elicitation` y `Tian2023_verbalized_confidence` (la confianza verbalizada es sobreconfiada, depende de la elicitacion y puede recalibrarse; proponer registrar la accion manual y validar el gate sobre el puntaje en corpus independiente) y `Zhao2021_calibrate_before_use` (calibracion contextual, sensibilidad al prompt). Sin "anti-calibracion" agregada. No afirmar que la cascada reduzca costo: la eficiencia del esquema sigue "no contrastada".
+- **c-139**: las seis claves ya existen (reutilizar; `grep -c "{<clave>,"` = 1); `Zhao2021_calibrate_before_use` sirve para la sensibilidad al prompt (solo para GPT-3/GPT-2 con calibracion de la distribucion de salida, no para API sin probabilidades). Retirar O3 (Xuan) de 2.5 libera lineas en el cap. 2. Compensaciones de paginas disponibles: fecha de consulta duplicada en las entradas `@online` y parrafo de Revina duplicado entre 3.3 y 9.2 (el cap. 9 crecio +1 con 13 lineas en la pagina nueva). Las comillas rectas de las cadenas A1-A4 y B1 del protocolo (`03`, parrafo "Protocolo de revision") se imprimen mal por los atajos de babel ("ÏT support", "çlassification"); es un defecto preexistente que en C1-C2 se evito con `\shorthandoff{"}`.
+- **c-137**: el texto nuevo lleva tildes; el defecto de comillas de A1-A4/B1 (arriba) es de ortotipografia y puede corregirse sin cambiar el texto fuente de las cadenas (grupo `{\shorthandoff{"}...}`, sin impacto en paginas).
+- **c-135**: el cap. 3 queda con unas 2 a 3 lineas de margen en su ultima pagina; cualquier agregado en 3 desborda a una pagina nueva salvo compensacion. `tab:trabajos-academicos` y `tab:comparativa` no se tocaron; la subseccion nueva es 3.4 y la comparativa pasa a 3.5.
+- **c-141**: fila `+c-138` = 108 / 100 / 8, +3 / +3; revision del autor pendiente de OQ1 a OQ4; la regeneracion del render y de `main.bbl` es suya; verificacion de FrugalGPT sobre el texto de la version TMLR opcional; Scopus, IEEE Xplore y Google Scholar sin acceso (convencion de la bitacora).
+
+### Reversibilidad
+
+`git checkout <commit-previo> -- "docs/Tesis/v10 (IA)/paper/sections/02-marco-teorico.tex" "docs/Tesis/v10 (IA)/paper/sections/03-estado-del-arte.tex" "docs/Tesis/v10 (IA)/paper/sections/08-discusion.tex" "docs/Tesis/v10 (IA)/Bibliography_base.bib" docs/Tesis/Correcciones/bitacora-busqueda-c-110.md`, recompilar. Si c-139 ya retiro O3 o c-136 cita las claves, conservar la fundamentacion de 2.5 y las entradas.
 
 **Estado**: grupo aplicado.
