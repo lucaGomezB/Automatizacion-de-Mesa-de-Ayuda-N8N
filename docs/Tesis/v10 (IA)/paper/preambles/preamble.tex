@@ -101,6 +101,8 @@
 % --- Bibliografia: APA 7ma edicion ---
 \usepackage[style=apa,backend=biber,sorting=nyt,language=spanish]{biblatex}
 \addbibresource{../Bibliography_base.bib}
+% Bibliografia compacta (c-141, palanca P7): cuerpo de letra \small solo en la lista de referencias
+\renewcommand*{\bibfont}{\normalfont\small}
 % Mapeo de campos para APA 7 en espanol
 \DefineBibliographyStrings{spanish}{%
   bibliography = {Referencias bibliográficas},
