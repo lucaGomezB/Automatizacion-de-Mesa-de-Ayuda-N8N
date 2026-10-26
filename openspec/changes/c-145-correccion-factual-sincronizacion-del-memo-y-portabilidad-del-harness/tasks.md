@@ -50,6 +50,8 @@
 - [ ] 5.7 Registrar en `REGISTRO` la evidencia de A2: `find "App/Frontend/src" -type f \( -name '*.test.ts' -o -name '*.test.tsx' \) | wc -l` = 59 archivos, ausencia de `App/Frontend/node_modules` y decision de retirar los recuentos congelados. Verificar que figura el resultado 59 y la decision.
 - [x] 5.8 Corregir `04-marco-metodologico.tex:95` (roles): atribuir la coordinacion general, la integracion de componentes y la integracion telefonica mediante Twilio a Luca Gomez, y la implementacion inicial del modulo Python, el modelado inicial de la base de datos, el frontend y la configuracion del flujo N8N a Gonzalo Sevilla. Verificar con `grep -n "desarrollo del módulo Python\|integración telefónica mediante Twilio a Gonzalo"` que no quedan coincidencias.
 - [x] 5.9 Registrar en `REGISTRO` la correccion de roles: referencia `04:95`, conteos re-medidos sobre `224fa16` (418/93/52/35/1), evidencia de `7db7fe1`, `ca8e2b6` y `ec92689`, y decision confirmada por el autor (2026-10-26).
+- [x] 5.10 Corregir el tablero y el conteo de iteraciones: `04:93` y `04:97` (Jira como tablero tecnico, GitHub Projects solo para la coordinacion del grupo), `06:68`, `06:70-81` (rotulo "Etapa de construccion" y lenguaje de etapas) y `12:37`. Verificar que `grep -rn "seis iteraciones"` no devuelve coincidencias y que la unica mencion de GitHub Projects es la de coordinacion del grupo.
+- [x] 5.11 Actualizar `docs/diagrams/cronograma.md` y el `REGISTRO` (grupo c-135, OQ-1): tablero Jira, trial vencido sin export, sin numero fijo de iteraciones y tarea 5.2 cerrada como no reconstruible con fuente primaria. Verificar que `grep -n "seis iteraciones" docs/diagrams/cronograma.md` no devuelve coincidencias.
 
 ## 6. Bloques C y G - discusion y documentacion para agentes
 
