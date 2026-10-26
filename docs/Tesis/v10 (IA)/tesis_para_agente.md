@@ -1,6 +1,6 @@
-# Tesis UTN-FRM 2026 - Tesis para agentes (v10 / v1.1.1)
+# Tesis UTN-FRM 2026 - Tesis para agentes (v10 / v1.2.0)
 
-> Documento generado a partir de las fuentes LaTeX de `docs/Tesis/v10 (IA)/paper/sections/` (version de trabajo v10, release `v1.1.1`). Render Markdown de referencia para agentes. Los valores numericos son verbatim de las fuentes.
+> Documento generado a partir de las fuentes LaTeX de `docs/Tesis/v10 (IA)/paper/sections/` (version de trabajo v10, release `v1.2.0`). Render Markdown de referencia para agentes. Los valores numericos son verbatim de las fuentes.
 
 ---
 
@@ -1107,9 +1107,7 @@ Los diagramas se generan a partir de fuentes Mermaid versionadas en formato `.md
 
 ## Repositorio de código fuente
 
-El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto [Gomez2026_repositorio], accesible en https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado `v1.1.1`, creado sobre el commit definitivo del repositorio.
-
-El hash completo de ese commit es `4160d84286623b073d2904353e6f9163ae211de7`, que constituye la referencia verificable de la versión corregida.
+El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto [Gomez2026_repositorio], accesible en https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado `v1.2.0`, creado sobre el commit definitivo del repositorio.
 
 La estructura del repositorio separa el módulo de procesamiento (`App/Backend/`, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (`App/Frontend/`, React con TypeScript), la definición del flujo de orquestación (`n8n/workflow.json`), los artefactos de evaluación (`evaluation/`), el corpus pseudonimizado (`data/`), los scripts auxiliares (`scripts/`) y la documentación (`docs/`), junto con las especificaciones de los changes (`openspec/`) y los archivos de orquestación local `docker-compose.yml` y `Makefile`. El archivo `README.md` describe esta organización y reúne las instrucciones detalladas para el despliegue local en menos de 15 minutos, por lo que constituye el punto de entrada al código fuente disponible en el repositorio público [Gomez2026_repositorio].
 
@@ -1219,3 +1217,31 @@ Ante una degradación de las métricas por cambios en el modelo, se recomienda p
 ## Trazabilidad de las correcciones del dictamen
 
 El registro de correcciones derivado del dictamen evaluador se conserva como artefacto versionado en el repositorio, bajo la ruta `docs/Tesis/Correcciones/dictamen-correcciones.md`. El documento compila, de forma acumulativa, cada corrección aplicada al manuscrito y las decisiones adoptadas sobre las observaciones que no admitían una resolución inmediata (por ejemplo, la convención estadística del estadístico *W*, la reformulación de la hipótesis principal y el tratamiento de los reintentos como limitación conocida). Se incluye aquí como ejemplo de trazabilidad: cada entrada del registro vincula una observación del dictamen con el archivo y la línea corregidos, de modo que la correspondencia entre la revisión solicitada y la revisión efectuada resulte auditable de extremo a extremo.
+
+El dictamen que motiva las correcciones vigentes es el emitido el 22 de octubre de 2026 sobre la versión de trabajo v10, publicada como `v1.1.0` y aplicable por igual a `v1.1.1`. Sus cinco observaciones de fondo (A1 a A5) y sus correcciones de consistencia (B4 a B16) se atendieron mediante changes del repositorio; la §`tab:anexo-trazabilidad` indica, para cada una, el change responsable y las secciones de la tesis donde se la atendió. Cuando una recomendación se dividió en partes, figuran los changes que las atendieron.
+
+**Tabla: Recomendaciones del dictamen del 22 de octubre de 2026, change responsable y secciones donde se atendieron.**
+
+4pt
+| Rec. | Change | Secciones de la tesis |
+| — | — | — |
+| A1 | `c-130` | §`subsec:human-in-the-loop`, §`subsec:subsistema-clasificacion`, §`subsec:construccion-flujo-n8n`, §`subsec:reduccion-intervencion` |
+| A2 | `c-131` | §`subsec:calibracion`, §`tab:bandas`, §`tab:exactitud-etapa-canal`, §`subsec:interpretacion-resultados` |
+| A3 | `c-132` | §`subsec:balance-neto`, §`subsec:implicancias-practicas` |
+| A4 | `c-139`, `c-138` | §`subsec:nlp-llm`, §`subsec:trabajos-academicos`, §`subsec:calibracion-cascadas`, §`subsec:clasificador-supervisado` |
+| A5 | `c-130`, `c-144`, `c-142` | §`subsec:subsistema-clasificacion`, §`subsec:conexion-scrumban`, §`subsec:interpretacion-resultados`, §`subsec:anexo-iteracion-prompt`; §`subsec:sensibilidad-ajustes`, §`subsec:limitaciones-estudio` |
+| B4 | `c-133` | §`tab:cumplimiento-objetivos`, §`subsec:cumplimiento-objetivos` |
+| B5 | `c-133` | §`subsec:hipotesis-trabajo` |
+| B6 | `c-133` | §`subsec:metricas-instrumentos`, §`tab:metricas` |
+| B7 | `c-134`, `c-131` | §`tab:tiempos-canal`; §`tab:exactitud-etapa-canal` |
+| B8 | `c-131` | §`subsec:metricas-instrumentos`, §`tab:exactitud-etapa-canal` |
+| B9 | `c-135` | §`subsec:gestion-scrumban`, §`subsec:conexion-scrumban`, §`fig:cronograma`, §`subsec:limitaciones-estudio` |
+| B10 | `c-135` | §`sec:resultados`, §`tab:comparativa`, §`tab:trabajos-academicos` |
+| B11 | `c-136` | §`sec:recomendaciones`, §`subsec:calibracion-gate`, §`subsec:medicion-intervencion`, §`subsec:aprendizaje-activo` |
+| B12 | `c-134` | §`subsec:analisis-estadistico`, §`subsec:poblacion-muestra-corpus` |
+| B13 | `c-135`, `c-134` | §`subsec:cumplimiento-objetivos`; §`subsec:diseno-experimental`, §`subsec:consentimiento-derechos` |
+| B14 | `c-137` | Todo el documento (revisión ortotipográfica) |
+| B15 | `c-139` | §`subsec:cumplimiento`, §`subsec:analisis-estadistico` |
+| B16 | `c-139`, `c-141` | §`sec:anexo-repositorio` y Referencias bibliográficas |
+
+*Fuente:* elaboración propia a partir de `docs/Tesis/Correcciones/dictamen-correcciones.md`.

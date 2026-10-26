@@ -1,6 +1,6 @@
 # Automatización de Mesa de Ayuda N8N — Base de Conocimiento
 
-KB generada por ingesta desde `docs/Tesis/tesis_para_agente.md` (tesis completa UTN-FRM 2026), `docs/parameters_gemini.md`, `docs/prompt_gemini.txt`, `docs/anexo_h_prompt_gemini.md` y verificación contra el código real del repositorio.
+KB generada por ingesta desde `docs/Tesis/v10 (IA)/tesis_para_agente.md` (tesis completa UTN-FRM 2026), `docs/parameters_gemini.md`, `docs/prompt_gemini.txt`, `docs/anexo_h_prompt_gemini.md` y verificación contra el código real del repositorio.
 
 ## Índice de Archivos
 
@@ -16,7 +16,7 @@ KB generada por ingesta desde `docs/Tesis/tesis_para_agente.md` (tesis completa 
 | [08_arquitectura_propuesta.md](08_arquitectura_propuesta.md) | Patrones, estructura real, seguridad, env vars |
 | [09_decisiones_y_supuestos.md](09_decisiones_y_supuestos.md) | 11 decisiones + 5 supuestos |
 | [10_preguntas_abiertas.md](10_preguntas_abiertas.md) | 6 inconsistencias tesis↔código + preguntas priorizadas |
-| [11_evaluacion_experimental.md](11_evaluacion_experimental.md) | Corpus, métricas, resultados esperados (alimenta C-08) |
+| [11_evaluacion_experimental.md](11_evaluacion_experimental.md) | Corpus, métricas y resultados vigentes de la release `v1.2.0` (alimenta C-08) |
 
 ## Quick Start para Desarrolladores
 
@@ -29,4 +29,4 @@ KB generada por ingesta desde `docs/Tesis/tesis_para_agente.md` (tesis completa 
 
 ## Resumen Ejecutivo
 
-Sistema de registro automático de incidentes para mesa de ayuda mediana: tres canales de entrada (correo, web, teléfono) convergen vía N8N en una API FastAPI que clasifica cada incidente con un pipeline híbrido (reglas determinísticas con `score_correctitud` ≥0,5166 → Gemini 2.5 Flash → fallback) hacia los cinco sectores canónicos (Seguridad Informatica, Soporte Tecnico Hardware, Soporte Tecnico Software, Bases de Datos, Sistemas), persiste en PostgreSQL con trazabilidad completa y deriva a revisión humana los casos con confianza de Gemini <0,70, la etapa fallback y el reportante no identificado. Los resultados del corpus sintético (92 % exactitud, F1 macro 0,919, −89 % de tiempo de registro, 9,5 % de intervención humana) fueron descartados con el corpus y quedan superados por C-27; se re-miden sobre el corpus real JSON multietiqueta.
+Sistema de registro automático de incidentes para mesa de ayuda mediana: tres canales de entrada (correo, web, teléfono) convergen vía N8N en una API FastAPI que clasifica cada incidente con un pipeline híbrido (reglas determinísticas con `score_correctitud` ≥0,5166 → `gemini-3.6-flash` → fallback) hacia los cinco sectores canónicos (Seguridad Informatica, Soporte Tecnico Hardware, Soporte Tecnico Software, Bases de Datos, Sistemas), persiste en PostgreSQL con trazabilidad completa y deriva a revisión humana los casos con confianza de Gemini <0,70, la etapa fallback y el reportante no identificado. Los resultados del corpus sintético descartado en C-27 quedan superados. Resultados vigentes (release `v1.2.0`, fuente única `docs/Tesis/Correcciones/numeros-canonicos.md`), sobre el corpus real multietiqueta de 200 casos: exactitud estricta 73,5 % (IC de Wilson 95 % [67,0 %; 79,1 %]; la exactitud laxa, 0,8950, es secundaria) y macro-F1 de 0,6508 sobre las cuatro clases estimables (0,5207 sobre cinco), ambas por debajo del umbral de 0,85; reducción del tiempo de registro del 71,2 % (61,6 s → 17,76 s; Wilcoxon bilateral W = 363, r = 0,9639). La intervención humana no se midió. Las métricas de clasificación son estimaciones al menos parcialmente dentro de la muestra, porque el vocabulario, las reglas de frontera del prompt y el punto de operación se ajustaron con el propio corpus (c-71, c-72 y c-74); su sensibilidad se analiza en la tesis. La viabilidad técnica y económica se confirma; la operativa es condicional, porque el balance neto frente a las derivaciones erróneas resulta indeterminado con el diseño actual. Detalle en [11_evaluacion_experimental.md](11_evaluacion_experimental.md).
