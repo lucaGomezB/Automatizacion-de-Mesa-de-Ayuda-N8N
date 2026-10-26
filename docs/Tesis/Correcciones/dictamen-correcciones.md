@@ -2786,3 +2786,50 @@ RESULT: 4/12 chequeos en PASS (8 en FAIL). Documentacion desincronizada.
 
 - **5.7 Evidencia de A2**: `find "App/Frontend/src" -type f \( -name '*.test.ts' -o -name '*.test.tsx' \) | wc -l` = **59** archivos; `App/Frontend/node_modules` **ausente** en el worktree. Decision: retirar los recuentos congelados de la tesis (no se ejecuto `npm install` ni Vitest en esta fase) y dejar la cifra sujeta al reporte vigente del pipeline.
 - **Paginas (aviso para bloque 8)**: no se recompilo la tesis en estas tareas. El cuerpo sigue en **100** segun la linea base de 1.4; el bloque 8 debe re-medir el conteo tras estos cambios de texto.
+
+### Discusion y documentacion para agentes (bloques C y G, tareas 6.1 a 6.11) - 2026-10-26
+
+- **6.1 C1 - denominadores pareados en `08-discusion.tex:10`**: se conserva el valor global `97/131 (0,7405)` y se agrega el pareado `96/130 (0,7385)` frente a Gemini `88/130 (0,6769)`, con la calificacion de estimacion dentro de la muestra y la remision a `\autoref{subsec:sensibilidad-ajustes}`. Fuentes: `numeros-canonicos.md:463` (`96/130 = 0,7385`; `88/130 = 0,6769`) y `evaluation/report_sensibilidad_ajustes.md:81` (`0.7385 (96/130)`; `0.6769 (88/130)`). El memo sigue registrando `96/130 = 0,7385` (linea 463; el `:460` del design es previo al upsert del bloque B, que desplazo la tabla). Las tres cifras quedan en la linea.
+- **6.2 C2 - celdas del balance en `08-discusion.tex:95`**: se completa el parentesis con las tres celdas `+42,1 / +52,1 / +62,0` del escenario central (se prefirio completarlo). Fuente: `numeros-canonicos.md:588` (`15 %`: `+42,1 / +52,1 / +62,0`). Las tres celdas quedan en la linea.
+- **6.3 Regla del bloque G (fuente por valor)**: cada valor editado se leyo de su fuente viva antes de escribirlo; no se copio ningun valor de otro documento. Tabla de fuentes (D14, once filas, todas con fuente citada):
+
+  | Dato | Valor escrito | Fuente viva |
+  |---|---|---|
+  | Modelo de inferencia | `Gemini 3.6 Flash` / `gemini-3.6-flash` | `App/Backend/app/config/settings.py:78` (`gemini_model`) |
+  | Timeout de inferencia | `timeout_s: 30`, `total_timeout_s: 60` | `settings.py:85,104` |
+  | Reintentos | `max_retries: 2` | `settings.py:97` |
+  | Parametros de muestreo | `temperature: 0.3`, `top_p: 0.9`, `max_output_tokens: 100` | `settings.py:79-81` |
+  | FastAPI / Uvicorn | `FastAPI 0.143 + Uvicorn 0.54` | `App/Backend/requirements.txt:5,9` (`fastapi==0.143.3`, `uvicorn[standard]==0.54.0`) |
+  | google-genai | `>=2.31,<3` | `requirements.txt:37` (`google-genai>=2.31.0,<3`) |
+  | N8N | sin literal en `CLAUDE.md` (remision a la fuente) | `docker-compose.yml:133,380` (`n8nio/n8n:2.11.2`) |
+  | Redis | no existe como servicio | `docker-compose.yml` (sin servicio `redis`; `grep -cE "^  redis:"` = 0) |
+  | Flujo de clasificacion | deterministico -> Gemini -> fallback | `knowledge-base/08_arquitectura_propuesta.md:12`; ausencia de nodos LangChain en `App/Backend/tests/test_c72_prompt_boundaries.py:144` y `tests/test_n8n_workflow.py:1295-1297` |
+  | Corpus pseudonimizado | versionado, 68.911 bytes | `git ls-files --error-unmatch data/corpus_evaluacion_pseudonimizado.json` (exit 0); `wc -c` = 68911 |
+  | Docstring del test del hibrido | `score_correctitud >= 0.5166` | `App/Backend/app/classifiers/hybrid.py:168` y `settings.py:134` (`deterministic_score_threshold`) |
+
+- **6.4 G1 (`CLAUDE.md`)**: linea 7 `Gemini 2.5 Flash` -> `Gemini 3.6 Flash`; el titulo de la seccion (linea 48) idem. La linea 50 conserva la descripcion cualitativa del gate (la regla de revision aplica solo a la salida de Gemini, el fallback marca revision siempre, el deterministico cortocircuita por score y no marca revision por su confianza, y el backend deriva a revision si el reportante no esta identificado) y **sustituye los valores restateados** (los dos umbrales y los parametros de muestreo/timeout) por remisiones a `openspec/config.yaml` (`conventions.thresholds` y `stack.inference`). Verificacion: `grep -c "2.5 Flash" CLAUDE.md` = **0**; `grep -nE "0\.5166|0\.70" CLAUDE.md` sin coincidencias.
+- **6.5 G4 (`CLAUDE.md`)**: el diagrama del canal telefonico reemplaza el bloque `LangChain AI Agent -> Redis Memory` (lineas 40-41) por `Backend hybrid classifier: deterministic rules (score_correctitud) -> Gemini 3.6 Flash -> human-review fallback (see knowledge-base/08_arquitectura_propuesta.md)`; se retira la linea 94 (`Redis: Session/memory storage for the LangChain AI agent`). **Edicion de coherencia dentro de la misma conversion del diagrama**: la rama `NO` del IF, que remitia al nodo retirado, pasa de `Loop back to AI Agent for refinement` a `Loop back to the validation node for refinement`; el agente LLM del canal telefonico fue retirado por c-72 y dejar la remision contradecia el objetivo de `DOC-005` (la tarea 6.5 nombra las lineas 40-41 y 94, no la rama `NO`; se documenta por ser parte del mismo diagrama obsoleto). Verificacion: `grep -niE "langchain|redis" CLAUDE.md` sin coincidencias; ausencia respaldada por `App/Backend/tests/test_c72_prompt_boundaries.py:144` (`@n8n/n8n-nodes-langchain.agent` no figura en el workflow) y `tests/test_n8n_workflow.py:1295-1297` (los nodos `memoryRedisChat` y `lmChatGoogleGemini` se listan como sub-nodos no ejecutables del flujo retirado).
+- **6.6 G2 (`CLAUDE.md`)**: se retira el bloque obsoleto `N8N 1.62 + FastAPI backend + PostgreSQL + Redis` y se declara el stack de **desarrollo local** (`N8N, FastAPI backend and PostgreSQL`), con los pines en `openspec/config.yaml` y `docker-compose.yml`. **Desvio respecto del enunciado de 6.6**: la tarea pedia el literal `N8N 2.11.2`; ese literal lo **prohibe el chequeo 12** de la barrera H, que deriva la version de N8N de `stack.orchestration.tool` en `config.yaml` y exige que `CLAUDE.md` remita a la fuente en lugar de restatear el numero (design D15; la propia seccion 6.11 instruye resolver los literales restantes para que el chequeo 12 pase). Se remite la version en lugar de restatearla. Verificacion contra la fuente: `docker-compose.yml:133,380` = `n8nio/n8n:2.11.2`; `grep -cE "^  redis:" docker-compose.yml` = **0**.
+- **6.7 G3 (`CLAUDE.md`)**: se corrige la afirmacion falsa sobre `data/corpus_evaluacion_pseudonimizado.json`: el corpus pseudonimizado **SI se versiona** (se retira `is not tracked in git` y se explicita `is tracked in git (68,911 bytes)`). Evidencia: `git ls-files --error-unmatch data/corpus_evaluacion_pseudonimizado.json` resuelve el archivo (exit 0) y `wc -c` = **68911** bytes (68.911).
+- **6.8 G5/G6 (`openspec/config.yaml`)**: `stack.inference.model` = `Gemini 3.6 Flash (google-genai >=2.31,<3)`; `stack.inference.params` = `{ temperature: 0.3, top_p: 0.9, max_output_tokens: 100, timeout_s: 30, total_timeout_s: 60, max_retries: 2 }`; `stack.backend.framework` = `FastAPI 0.143 + Uvicorn 0.54`; descripcion del proyecto (linea 10) = `Gemini 3.6 Flash`. Verificacion: `python3 -c "import yaml;yaml.safe_load(open('openspec/config.yaml'));print('ok')"` = `ok`; `openspec list --json` responde (c-145 en `in-progress`).
+- **6.9 G7 (`App/Backend/tests/test_hybrid_classifier.py:8-9`)**: el docstring del modulo pasa de `>= 0.90` / `< 0.90` a `score_correctitud >= 0.5166` (cortocircuito) y `score_correctitud < 0.5166` o ausencia/ambiguedad (escalada), en linea con `app/classifiers/hybrid.py:168` (condicion real del cortocircuito; el design cita `:151`, dentro de la documentacion del mismo metodo) y el test de caracterizacion en `:484`. `git diff --stat` del archivo = **2/2** (solo lineas no ejecutables). `cd App/Backend && python3 -m pytest tests/test_hybrid_classifier.py -q` = **21 passed** (con las variables dummy de CI).
+- **6.10 Verificacion global del bloque G**: `grep -nE "2\.5 Flash|1\.62|FastAPI 0\.115|google-genai >= 1\.0" CLAUDE.md openspec/config.yaml` **sin coincidencias**; cada valor editado coincide con su fuente (6.3); el YAML es valido; `openspec validate --specs --strict --no-interactive` = **64 passed, 0 failed (64 items)**; `openspec validate c-145-correccion-factual-sincronizacion-del-memo-y-portabilidad-del-harness --strict --no-interactive` = **valid**.
+- **6.11 Cierre de la duplicacion (H, chequeo 12)**: la linea del IF de validez de entrada pierde el umbral restateado `>= 0.70` y remite a `openspec/config.yaml` (`conventions.thresholds.human_review`), conservando la distincion entre el IF de validez de entrada (`Entrada valida`) y el IF que evalua el indicador del backend (`Requiere revision humana`). Verificacion: `grep -nE "0\.5166|0\.70|0\.115|1\.62|2\.5 Flash" CLAUDE.md` **sin coincidencias** y `python3 scripts/preflight/docs_stack_sync.py` sale **0** (12/12 PASS). Salida final completa:
+
+  ```text
+  [PASS] modelo: config.yaml y CLAUDE.md coinciden con Settings.gemini_model - gemini-3.6-flash
+  [PASS] timeout y reintentos: config.yaml coincide con Settings
+  [PASS] parametros de muestreo: config.yaml coincide con Settings
+  [PASS] framework: FastAPI/Uvicorn de config.yaml compatibles con requirements.txt
+  [PASS] google-genai: restriccion de config.yaml y CLAUDE.md compatible con requirements.txt
+  [PASS] n8n: version declarada coincide con la imagen del compose - 2.11.2
+  [PASS] servicios: los descritos en CLAUDE.md existen en el compose
+  [PASS] etapas retiradas: ninguna se describe como vigente
+  [PASS] config.yaml: YAML valido y con las claves que consume el CLI
+  [PASS] umbrales: config.yaml coincide con Settings
+  [PASS] categorias: config.yaml coincide con SECTORES_CANONICOS (contenido y orden)
+  [PASS] duplicacion: CLAUDE.md no restatea literales volatiles de config.yaml
+
+  RESULT: 12/12 chequeos en PASS. Documentacion sincronizada.
+  ```
+
