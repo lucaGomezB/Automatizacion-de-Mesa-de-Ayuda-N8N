@@ -7,9 +7,7 @@ documento puede citar, declara la regla efectiva del gate de revisión humana y
 resuelve —o declara explícitamente como no resolubles— las contradicciones
 numéricas internas detectadas por el dictamen CONEAU. El memo actúa como Gate 0
 antes de que cualquier rama reescriba el texto de la tesis.
-
 ## Requirements
-
 ### Requirement: Registro canónico con procedencia por valor
 
 El proyecto SHALL mantener el memo `docs/Tesis/Correcciones/numeros-canonicos.md`
@@ -210,3 +208,134 @@ las metricas de conjunto imponen sobre una salida forzada a una etiqueta.
 - **WHEN** se compara el micro-F1 con la exactitud estricta en el memo
 - **THEN** el memo declara que no son equivalentes y explica por que difieren (`0,6654` frente a `0,7350`)
 - **AND** no deja el micro-F1 rotulado como exactitud multietiqueta
+
+### Requirement: Registro canonico del gate por etapa y del punto de operacion del cortocircuito
+
+El memo canonico `docs/Tesis/Correcciones/numeros-canonicos.md` SHALL registrar, con archivo y linea de origen y estado, los valores que la tesis cita para describir el gate de revision por etapa y el cortocircuito de la etapa deterministica: los casos con confianza inferior a 0,70 sin escalamiento (`124/200`, `62,0 %`, todos de la etapa deterministica), la confianza minima declarada por la etapa Gemini (`0,85` en sus `69` casos), el punto de operacion del cortocircuito (`0,5166`, derivado por validacion cruzada de cinco pliegues), su cobertura (`131/200`), la precision del filtro sobre el conjunto cortocircuitable (`97/131`, `0,7405`) y la de la etapa Gemini sobre ese conjunto (`88/130`, `0,6769`). El memo SHALL declarar que ambas precisiones son estimaciones dentro de la muestra, que `88/130` proviene de la cache FORCE-ESCALATE con un caso excluido por no tener prediccion de Gemini, y SHALL registrar en "Decisiones no resolubles" la procedencia no documentada de esa cache con su condicion de reversibilidad. El memo MUST NOT modificar ningun valor vigente previo.
+
+#### Scenario: Filas con procedencia y estado
+
+- **WHEN** se lee la seccion del gate por etapa del memo
+- **THEN** cada uno de los valores `124/200`, `62,0 %`, `0,85`, `0,5166`, `131/200`, `97/131`, `0,7405`, `88/130` y `0,6769` declara un archivo y una linea de origen que existen, y el estado `vigente`
+- **AND** ningun valor vigente de las Secciones 3.1 a 3.6 cambia
+
+#### Scenario: Salvedades declaradas
+
+- **WHEN** se leen las notas de `97/131` y `88/130`
+- **THEN** se declara que son estimaciones dentro de la muestra
+- **AND** se declara la exclusion del caso sin prediccion de Gemini y la fuente de la cache FORCE-ESCALATE
+
+#### Scenario: Procedencia de la cache registrada como no resoluble
+
+- **WHEN** no puede verificarse desde fuentes versionadas la fecha ni la version del prompt de la cache FORCE-ESCALATE
+- **THEN** la Seccion 7 del memo lo declara con la decision editorial adoptada
+- **AND** registra que se revisa si el autor aporta el `cache_meta` de la cache
+
+#### Scenario: Consumo por la tesis
+
+- **WHEN** la tesis cita 124, 62 %, 0,85, 0,5166, 131, 0,7405 o 0,6769 en el contexto del gate o del cortocircuito
+- **THEN** el valor coincide con el valor vigente del memo
+
+### Requirement: Registro de las metricas por etapa, por canal y de la exactitud laxa
+
+El memo `docs/Tesis/Correcciones/numeros-canonicos.md` SHALL incorporar, en una seccion propia, la exactitud estricta y laxa por etapa del pipeline y por canal de origen con sus IC de Wilson, la descomposicion por etapa de las bandas de confianza y del tramo de confianza `>= 0,90`, la distribucion de valores de confianza por etapa y el contraste pareado de McNemar entre la etapa deterministica y Gemini sobre el conjunto cortocircuitable ---o su declaracion de no computable---, rotulado como insumo de c-133 y c-142 y acompanado de sus salvedades (otra corrida y otra version que la oficial; contraste en muestra). Cada valor SHALL registrarse con su procedencia verificable ---linea del reporte regenerado o derivacion aritmetica explicita desde valores ya canonicos--- y con su estado. Los valores ya canonicos de la calibracion (bandas `98/26/6/31/39` con `75/19/2/22/29` aciertos, contingencia `76/53` y `124/94`, tramo `46/13`) SHALL conservarse sin cambio de valor, y su lectura SHALL anotarse como efecto de composicion entre etapas. La lectura de "anti-calibracion" del clasificador en su conjunto SHALL registrarse como retirada.
+
+#### Scenario: Valores nuevos con procedencia y estado
+
+- **WHEN** se recorre la seccion nueva del memo
+- **THEN** cada valor por etapa, por canal y de exactitud laxa declara su procedencia (archivo y linea, o derivacion explicita) y un estado en `{vigente, retirado, condicional}`
+- **AND** ningun valor carece de fuente verificable
+
+#### Scenario: Descomposicion por etapa consistente con los canonicos
+
+- **WHEN** se suman, banda por banda, los casos y aciertos de la etapa deterministica y de la etapa Gemini
+- **THEN** las sumas reproducen la tabla de bandas canonica (`98/26/6/31/39` casos y `75/19/2/22/29` aciertos)
+- **AND** los totales por etapa reproducen `131/97` y `69/50`
+
+#### Scenario: Lectura retirada anotada
+
+- **WHEN** se lee la entrada de la contingencia de confianza o de las bandas en el memo
+- **THEN** se anota que el contraste agregado `0,697` frente a `0,758` es un efecto de composicion entre etapas
+- **AND** la lectura de anti-calibracion del clasificador en su conjunto figura como retirada
+
+#### Scenario: Contraste de McNemar registrado o declarado no computable
+
+- **WHEN** se lee la seccion nueva del memo
+- **THEN** figura el contraste de McNemar (pares, `b`, `c`, estadistico, p primario y criterio) con procedencia en `docs/deterministic_calibration.md` y sus salvedades, o la declaracion de que no es computable con los artefactos disponibles
+- **AND** se lo rotula como insumo de c-133 y c-142
+
+### Requirement: Procedencia de las predicciones por caso y politica de deriva
+
+Los valores canonicos de clasificacion SHALL provenir de la corrida oficial del clasificador (`hybrid-v3`, predicciones generadas el 2026-10-07), identificada en el memo por su `cache_meta` y por el SHA-256 del archivo de predicciones. Antes de usar como fuente un archivo de predicciones recuperado, su metadata (hash del corpus, cantidad de casos y version del clasificador) y su huella agregada (exactitud `147/200`, etapas `131/69/0`, bandas, contingencia y tramo `>= 0,90` canonicos) MUST coincidir con los valores canonicos. Una corrida de reproduccion (nueva invocacion al proveedor) MUST NOT sobrescribir las predicciones oficiales, `evaluation/report.md` ni ningun valor canonico vigente: sus resultados SHALL escribirse en archivos separados, rotularse con su version y fecha, y acompanarse de la deriva cuantificada respecto de los agregados oficiales de la etapa Gemini. El reemplazo de los canonicos por una corrida nueva SHALL requerir una decision explicita del usuario registrada en el memo.
+
+#### Scenario: Archivo recuperado con huella coincidente
+
+- **WHEN** se recupera un `evaluation/predicciones.json` cuya metadata y cuya huella agregada coinciden con los valores canonicos
+- **THEN** el archivo se acepta como fuente de los valores nuevos
+- **AND** su `cache_meta` y su SHA-256 quedan registrados en el memo
+
+#### Scenario: Archivo recuperado con huella discrepante
+
+- **WHEN** la metadata o algun agregado de la huella de un archivo recuperado difiere de los valores canonicos
+- **THEN** el archivo se rechaza como fuente de valores canonicos
+- **AND** la discrepancia se registra sin modificar ningun valor vigente
+
+#### Scenario: Corrida de reproduccion rotulada y separada
+
+- **WHEN** el usuario autoriza una corrida de reproduccion porque las predicciones oficiales no pudieron recuperarse
+- **THEN** sus predicciones y su reporte se escriben en archivos distintos de `evaluation/predicciones.json` y `evaluation/report.md`, con su version y fecha
+- **AND** el memo registra la deriva de la etapa Gemini frente a los agregados oficiales (`50/69` aciertos, bandas `31/22` y `38/28`, tramo `>= 0,90` de `45` casos con `13` errores)
+
+#### Scenario: Sin reemplazo silencioso de los canonicos
+
+- **WHEN** una corrida de reproduccion produce agregados distintos de los oficiales
+- **THEN** los valores canonicos vigentes del memo y de la tesis no cambian
+- **AND** solo una decision explicita del usuario, registrada en el memo, habilita su reemplazo
+
+### Requirement: Registro de los valores de sensibilidad frente al ajuste con el corpus
+
+El memo `docs/Tesis/Correcciones/numeros-canonicos.md` SHALL incorporar, en una seccion propia, cada valor del analisis de sensibilidad frente al ajuste del clasificador con el corpus que la tesis cite o que sostenga su lectura: variante principal (casos, aciertos, exactitud, IC de Wilson y cobertura), descomposicion pareada, referencia historica y su control de fidelidad, exactitud global con Gemini fijo y contraste entre etapas con el vocabulario previo (o su declaracion de no computable), efecto de las reglas de frontera del prompt por nivel (o su declaracion de no cuantificado) y, si aplica, los resultados sobre el conjunto de preproduccion. Cada valor SHALL declarar su procedencia (linea de `evaluation/report_sensibilidad_ajustes.md`, archivo de un brazo de la ablacion o derivacion aritmetica explicita desde valores versionados), su estado (`vigente` como valor de sensibilidad, o `condicional` mientras su checkpoint siga abierto) y el rotulo "sensibilidad: no reemplaza valores canonicos". Las filas de `97/131` (`0,7405`) y de `88/130` (`0,6769`) SHALL llevar una nota que las califique como estimaciones dentro de la muestra y remita a esa seccion. La seccion de decisiones no resolubles SHALL registrar la no factibilidad de la variante por pliegues, la version del prompt de la cache FORCE-ESCALATE (o su indeterminacion) y el desenlace sobre el conjunto de preproduccion. El memo MUST NOT modificar ningun valor vigente previo.
+
+#### Scenario: Valores con procedencia, estado y rotulo
+
+- **WHEN** se recorre la seccion de sensibilidad del memo
+- **THEN** cada valor declara una procedencia verificable, un estado en `{vigente, condicional}` y el rotulo de sensibilidad
+- **AND** cada `archivo:linea` citado existe y contiene el valor
+
+#### Scenario: Valores canonicos intactos
+
+- **WHEN** se compara el memo antes y despues del change
+- **THEN** ninguna celda de valor con estado `vigente` previo cambio
+- **AND** los cambios en filas previas se limitan a notas agregadas
+
+#### Scenario: Notas de estimacion dentro de la muestra
+
+- **WHEN** se leen las filas de `97/131` y de `0,7405` frente a `0,6769`
+- **THEN** cada una incluye la nota que la califica como estimacion dentro de la muestra y la remision a la seccion de sensibilidad
+
+#### Scenario: Decisiones no resolubles registradas
+
+- **WHEN** se lee la seccion de decisiones no resolubles
+- **THEN** figuran la variante por pliegues como no factible con su motivo y su condicion de reversibilidad, la clasificacion de la version del prompt de la cache FORCE-ESCALATE y el desenlace sobre el conjunto de preproduccion
+
+#### Scenario: Salidas no computables sin valores
+
+- **WHEN** una salida del analisis no fue computable con los artefactos disponibles
+- **THEN** el memo la registra como no computable, con su motivo
+- **AND** no consigna ningun valor estimado para ella
+
+### Requirement: Corridas de sensibilidad sin efecto sobre los valores canonicos
+
+Una corrida de sensibilidad, sea la re-medicion offline con otra configuracion del clasificador o una ablacion que invoque al proveedor, MUST NOT sobrescribir las predicciones oficiales, `evaluation/report.md` ni ningun valor canonico vigente. Sus resultados SHALL escribirse en archivos separados, rotulados con la configuracion evaluada, el hash del prompt cuando corresponda y la fecha, y SHALL citarse en la tesis solo como sensibilidad. El reemplazo de un valor canonico por uno de sensibilidad SHALL requerir una decision explicita del usuario registrada en el memo.
+
+#### Scenario: Archivos separados y rotulados
+
+- **WHEN** se ejecuta una corrida de sensibilidad
+- **THEN** sus salidas se escriben en archivos distintos de `evaluation/predicciones.json` y `evaluation/report.md`, rotulados con su configuracion y su fecha
+
+#### Scenario: Canonicos sin cambio ante resultados distintos
+
+- **WHEN** una corrida de sensibilidad produce valores distintos de los canonicos
+- **THEN** los valores vigentes del memo y de la tesis no cambian
+- **AND** la tesis presenta los valores de sensibilidad como tales, con remision a su seccion del memo
+
