@@ -25,7 +25,7 @@ Organizadas por épica. Estado de cada historia: implementado / parcial / pendie
 
 ### US-004 — Clasificación híbrida (implementado)
 **Como** organización **quiero** que cada incidente se derive automáticamente al sector correcto **para** eliminar la derivación manual.
-- CA: etapa determinística ≥ 0,90 decide sola; si no, Gemini; fallback ante fallo. Reglas RN-CL-01…07.
+- CA: la etapa determinística decide sola con señal dominante y `score_correctitud` ≥ 0,5166; si no, Gemini; fallback ante fallo. Reglas RN-CL-01…07.
 - Implementación: `app/classifiers/` (deterministic, gemini_classifier, hybrid) + keywords redistribuidos en los 5 sectores canónicos (C-27).
 
 ### US-005 — Pseudonimización pre-Gemini (implementado, C-03)
@@ -47,7 +47,7 @@ Organizadas por épica. Estado de cada historia: implementado / parcial / pendie
 ## Épica 4: Revisión humana
 
 ### US-008 — Cola de revisión pendiente (implementado)
-**Como** mesa de ayuda **quiero** ver los casos de baja confianza en orden FIFO **para** validarlos sin que nada quede olvidado.
+**Como** mesa de ayuda **quiero** ver los casos derivados a revisión humana en orden FIFO **para** validarlos sin que nada quede olvidado.
 - Implementación: `GET /clasificaciones/revision-pendiente` + tabla en frontend.
 
 ### US-009 — Validación / corrección humana (implementado)
@@ -58,7 +58,7 @@ Organizadas por épica. Estado de cada historia: implementado / parcial / pendie
 
 ### US-010 — Workflow funcional end-to-end (parcial, C-04)
 **Como** organización **quiero** el flujo de 16 nodos operativo **para** que los 3 canales converjan en un único pipeline.
-- CA: normalizacion unificada (UUID v4, timestamp, canal, descripcion); IF por confianza ≥ 0.70; invocacion HTTP a API; notificaciones paralelas post-registro; logs de auditoria 30 dias. Canal telefonico con AI Agent (LangChain) + Redis.
+- CA: normalizacion unificada (UUID v4, timestamp, canal, descripcion); IF de validez de entrada (confianza sintetica >= 0.70) previo al POST; invocacion HTTP a API; IF sobre el indicador `requiere_revision_humana` del backend; notificaciones paralelas post-registro; logs de auditoria 30 dias. Canal telefonico con AI Agent (LangChain) + Redis.
 - Estado: `n8n/workflow.json` con 16 nodos operativos reales + 3 sticky notes. Trigger email es Microsoft Outlook (NO IMAP). Clasificacion embebida en backend (no existe nodo HTTP a `/api/v1/clasificar` — divergencia con tesis §6.3). Funcional con credenciales configuradas.
 
 ## Épica 6: Evaluación experimental

@@ -4,21 +4,29 @@
 
 \section{Diagrama de arquitectura del sistema}\label{sec:anexo-diagrama-arquitectura}
 
-El Anexo~A referencia los diagramas de la arquitectura propuesta en notación UML. Los diagramas de despliegue y de secuencia se incluyen como figuras de la \autoref{sec:arquitectura}, de modo que no se reproducen nuevamente aquí; el diagrama de componentes se incluye como Figura~\ref{fig:componentes} de la \autoref{sec:arquitectura}. Los tres artefactos son:
+El Anexo~A referencia los diagramas de la arquitectura propuesta en notación UML. Los diagramas de despliegue y de secuencia se incluyen como figuras de la \autoref{sec:arquitectura}, de modo que no se reproducen nuevamente aquí; el diagrama de componentes se incluye como Figura~\ref{fig:componentes} de la \autoref{sec:arquitectura}. Los tres artefactos y el cronograma del estudio, que se reproduce aquí, son:
 
 \begin{itemize}
   \item \textbf{Diagrama de despliegue} (Figura~\ref{fig:despliegue}, \autoref{sec:arquitectura}): los cinco componentes principales (N8N, FastAPI, PostgreSQL, Gemini~3.6 Flash, Twilio), el proxy inverso Nginx que, en el diseño, provee terminación TLS~1.2/1.3 en el perímetro del sistema (no incluido en el despliegue publicado), y las relaciones de comunicación entre ellos. Fuente versionada: \texttt{docs/diagrams/despliegue.md}.
   \item \textbf{Diagrama de secuencia} (Figura~\ref{fig:secuencia}, \autoref{sec:arquitectura}): flujo extremo a extremo de un incidente desde su recepción en el canal de correo electrónico hasta la confirmación al usuario, incluyendo las interacciones con el clasificador híbrido y la base de datos. Fuente versionada: \texttt{docs/diagrams/secuencia.md}.
   \item \textbf{Diagrama de componentes} (Figura~\ref{fig:componentes}, \autoref{sec:arquitectura}): organización interna del módulo Python por capas (routes, services, repositories, models, classifiers), con sus dependencias y relaciones. Fuente versionada: \texttt{docs/diagrams/componentes.md}.
+  \item \textbf{Cronograma} (Figura~\ref{fig:cronograma}, \autoref{subsec:conexion-scrumban}): construcción, campañas de medición y versión del modelo evaluada, con la procedencia de cada fecha. Fuente versionada: \texttt{docs/diagrams/cronograma.md}.
 \end{itemize}
 
 Los diagramas se generan a partir de fuentes Mermaid versionadas en formato \texttt{.md} en el directorio \texttt{docs/diagrams/} del repositorio y se renderizan a imágenes PNG para su inclusión en el documento \parencite{Gomez2026_repositorio}.
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{cronograma}
+\caption{Cronograma de la construcción, las campañas y la versión del modelo (barras con precisión de mes; hitos, de día). Fuente: historial del repositorio y confirmación de los autores (9-10-2026).}
+\label{fig:cronograma}
+\end{figure}
+
 \section{Repositorio de código fuente}\label{sec:anexo-repositorio}
 
-El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto \parencite{Gomez2026_repositorio}, accesible en \url{https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N}. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado \texttt{v1.1.1}, creado sobre el commit definitivo del repositorio.
+El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto \parencite{Gomez2026_repositorio}, accesible en \url{https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N}. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado \texttt{v1.2.0}, creado sobre el commit definitivo del repositorio.
 
-El hash completo de ese commit es \texttt{4160d84286623b073d2904353e6f9163ae211de7}, que constituye la referencia verificable de la versión corregida.
+El hash completo de ese commit es \texttt{\small a49d035c67b32ae17e633ec04b09ecdd2781aac6}, que constituye la referencia verificable de la versión corregida.
 
 La estructura del repositorio separa el módulo de procesamiento (\texttt{App/Backend/}, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (\texttt{App/Frontend/}, React con TypeScript), la definición del flujo de orquestación (\texttt{n8n/workflow.json}), los artefactos de evaluación (\texttt{evaluation/}), el corpus pseudonimizado (\texttt{data/}), los scripts auxiliares (\texttt{scripts/}) y la documentación (\texttt{docs/}), junto con las especificaciones de los changes (\texttt{openspec/}) y los archivos de orquestación local \texttt{docker-compose.yml} y \texttt{Makefile}. El archivo \texttt{README.md} describe esta organización y reúne las instrucciones detalladas para el despliegue local en menos de 15 minutos, por lo que constituye el punto de entrada al código fuente disponible en el repositorio público \parencite{Gomez2026_repositorio}.
 
@@ -85,7 +93,7 @@ El prompt sigue una estructura fija en español organizada en cinco componentes 
 
 \subsection{Parámetros de configuración}\label{subsec:anexo-parametros-config}
 
-La invocación del modelo se realiza mediante el SDK \texttt{google-genai} (\texttt{>=2.20.0}), con los hiperparámetros que resume la Tabla~\ref{tab:anexo_gemini_params}, optimizados para equilibrar exactitud, latencia y costo de inferencia.
+La invocación del modelo se realiza mediante el SDK \texttt{google-genai} (\texttt{>=2.20.0}), con los hiperparámetros que resume la Tabla~\ref{tab:anexo_gemini_params}, que corresponden a la configuración adoptada para el despliegue y no al resultado de una calibración documentada frente a valores alternativos (\autoref{subsec:capa-procesamiento}).
 
 \begin{table}[htbp]
 \small
@@ -99,9 +107,10 @@ Parámetro & Valor & Justificación \\
 \texttt{temperature} & 0,3 & Valor bajo que reduce la variabilidad de la generación y mejora la consistencia en tareas de clasificación determinística. \\
 \texttt{top\_p} & 0,9 & \emph{Nucleus sampling} que admite variantes léxicas válidas en español rioplatense sin sacrificar coherencia. \\
 \texttt{max\_tokens} & 100 & Límite suficiente para la respuesta JSON, con margen ante variaciones y sin truncamiento. \\
-\texttt{candidate\_count} & 1 & Respuesta única sin remuestreo; optimiza la latencia para el procesamiento en tiempo real. \\
+\texttt{candidate\_count} & 1 & Respuesta única sin remuestreo, que acota la latencia del procesamiento en tiempo real. \\
 \texttt{safety\_settings} & Parcialmente desactivados & Desactiva filtros que podrían rechazar descripciones legítimas de incidentes, manteniendo los filtros contra contenido verdaderamente tóxico. \\
-\texttt{timeout} & 10 segundos & Límite máximo de latencia; al excederse, el clasificador devuelve confianza 0,0 y marca el caso para revisión humana. \\
+\texttt{timeout} & 30 segundos por intento; 60 segundos en total & Límite de latencia por intento del backend al modelo (hasta dos reintentos ante fallas transitorias, dentro de un presupuesto total de 60 segundos por clasificación; no son reintentos de N8N al backend); al agotarse, el clasificador devuelve confianza 0,0 y marca el caso para revisión humana. \\
+Umbral de revisión humana & 0,70 & Confianza mínima de una respuesta del modelo para no marcarla para revisión; no se aplica a la etapa determinística (\autoref{subsec:subsistema-clasificacion}). \\
 SDK & \texttt{google-genai} \texttt{>=2.20.0} & Versión vigente al momento del estudio, documentada para reproducibilidad. \\
 \bottomrule
 \end{tabular}
@@ -141,5 +150,41 @@ Ante una degradación de las métricas por cambios en el modelo, se recomienda p
 \section{Trazabilidad de las correcciones del dictamen}\label{sec:anexo-trazabilidad}
 
 El registro de correcciones derivado del dictamen evaluador se conserva como artefacto versionado en el repositorio, bajo la ruta \texttt{docs/Tesis/Correcciones/dictamen-correcciones.md}. El documento compila, de forma acumulativa, cada corrección aplicada al manuscrito y las decisiones adoptadas sobre las observaciones que no admitían una resolución inmediata (por ejemplo, la convención estadística del estadístico \emph{W}, la reformulación de la hipótesis principal y el tratamiento de los reintentos como limitación conocida). Se incluye aquí como ejemplo de trazabilidad: cada entrada del registro vincula una observación del dictamen con el archivo y la línea corregidos, de modo que la correspondencia entre la revisión solicitada y la revisión efectuada resulte auditable de extremo a extremo.
+
+El dictamen que motiva las correcciones vigentes es el emitido el 22 de octubre de 2026 sobre la versión de trabajo v10, publicada como \texttt{v1.1.0} y aplicable por igual a \texttt{v1.1.1}. Sus cinco observaciones de fondo (A1 a A5) y sus correcciones de consistencia (B4 a B16) se atendieron mediante changes del repositorio; la \autoref{tab:anexo-trazabilidad} indica, para cada una, el change responsable y las secciones de la tesis donde se la atendió. Cuando una recomendación se dividió en partes, figuran los changes que las atendieron.
+
+\begin{table}[htbp]
+\small
+\centering
+\caption{Recomendaciones del dictamen del 22 de octubre de 2026, change responsable y secciones donde se atendieron.}
+\label{tab:anexo-trazabilidad}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.0cm} >{\raggedright\arraybackslash}p{3.3cm} >{\raggedright\arraybackslash}p{10.6cm}@{}}
+\toprule
+Rec. & Change & Secciones de la tesis \\
+\midrule
+A1 & \texttt{c-130} & \autoref{subsec:human-in-the-loop}, \autoref{subsec:subsistema-clasificacion}, \autoref{subsec:construccion-flujo-n8n}, \autoref{subsec:reduccion-intervencion} \\
+A2 & \texttt{c-131} & \autoref{subsec:calibracion}, \autoref{tab:bandas}, \autoref{tab:exactitud-etapa-canal}, \autoref{subsec:interpretacion-resultados} \\
+A3 & \texttt{c-132} & \autoref{subsec:balance-neto}, \autoref{subsec:implicancias-practicas} \\
+A4 & \texttt{c-139}, \texttt{c-138} & \autoref{subsec:nlp-llm}, \autoref{subsec:trabajos-academicos}, \autoref{subsec:calibracion-cascadas}, \autoref{subsec:clasificador-supervisado} \\
+A5 & \texttt{c-130}, \texttt{c-144}, \texttt{c-142} & \autoref{subsec:subsistema-clasificacion}, \autoref{subsec:conexion-scrumban}, \autoref{subsec:interpretacion-resultados}, \autoref{subsec:anexo-iteracion-prompt}; \autoref{subsec:sensibilidad-ajustes}, \autoref{subsec:limitaciones-estudio} \\
+B4 & \texttt{c-133} & \autoref{tab:cumplimiento-objetivos}, \autoref{subsec:cumplimiento-objetivos} \\
+B5 & \texttt{c-133} & \autoref{subsec:hipotesis-trabajo} \\
+B6 & \texttt{c-133} & \autoref{subsec:metricas-instrumentos}, \autoref{tab:metricas} \\
+B7 & \texttt{c-134}, \texttt{c-131} & \autoref{tab:tiempos-canal}; \autoref{tab:exactitud-etapa-canal} \\
+B8 & \texttt{c-131} & \autoref{subsec:metricas-instrumentos}, \autoref{tab:exactitud-etapa-canal} \\
+B9 & \texttt{c-135} & \autoref{subsec:gestion-scrumban}, \autoref{subsec:conexion-scrumban}, \autoref{fig:cronograma}, \autoref{subsec:limitaciones-estudio} \\
+B10 & \texttt{c-135} & \autoref{sec:resultados}, \autoref{tab:comparativa}, \autoref{tab:trabajos-academicos} \\
+B11 & \texttt{c-136} & \autoref{sec:recomendaciones}, \autoref{subsec:calibracion-gate}, \autoref{subsec:medicion-intervencion}, \autoref{subsec:aprendizaje-activo} \\
+B12 & \texttt{c-134} & \autoref{subsec:analisis-estadistico}, \autoref{subsec:poblacion-muestra-corpus} \\
+B13 & \texttt{c-135}, \texttt{c-134} & \autoref{subsec:cumplimiento-objetivos}; \autoref{subsec:diseno-experimental}, \autoref{subsec:consentimiento-derechos} \\
+B14 & \texttt{c-137} & Todo el documento (revisión ortotipográfica) \\
+B15 & \texttt{c-139} & \autoref{subsec:cumplimiento}, \autoref{subsec:analisis-estadistico} \\
+B16 & \texttt{c-139}, \texttt{c-141} & \autoref{sec:anexo-repositorio} y Referencias bibliográficas \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+{\footnotesize\textit{Fuente:} elaboración propia a partir de \texttt{docs/Tesis/Correcciones/dictamen-correcciones.md}.\par}
+\end{table}
 
 \newpage

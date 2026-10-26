@@ -9,8 +9,8 @@ Responsabilidad:
         - Anexo H de la tesis (docs/anexo_h_prompt_gemini.md)
 
     Esta etapa solo se activa cuando el clasificador determinístico no
-    supera el umbral de confianza de 0.90. Aprovecha la comprensión
-    semántica del LLM para resolver casos ambiguos que el diccionario
+    resuelve el caso (senal no dominante o score bajo el punto de operacion).
+    Aprovecha el LLM para resolver casos ambiguos que el diccionario
     de palabras clave no puede discriminar.
 
 Estrategia de resiliencia:

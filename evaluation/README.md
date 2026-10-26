@@ -80,6 +80,32 @@ Esto:
 3. Persiste las predicciones en `evaluation/predicciones.json`
 4. Escribe el reporte en `evaluation/report.md`
 
+### Regenerar solo la sección "Tiempos" (`--solo-tiempos`)
+
+```bash
+# Desde la raíz del repositorio (no requiere GEMINI_API_KEY ni predicciones.json):
+PYTHONPATH=App/Backend python -m evaluation.run_evaluation --solo-tiempos
+```
+
+La sección "Tiempos" depende únicamente del corpus (pares `tiempo_manual_s` /
+`tiempo_automatizado_s`), de modo que este modo la recalcula sin pagar:
+
+- **Sin Gemini y sin gate pago**: no construye ni invoca el clasificador y no
+  exige `--confirm-paid` ni `EVALUATION_CONFIRM_PAID`.
+- **Sin cache**: no lee ni escribe `evaluation/predicciones.json`.
+- **Reemplazo acotado**: reescribe solo el bloque `## Tiempos` de
+  `evaluation/report.md` (hasta el siguiente encabezado `## ` o el pie `---`);
+  el resto del reporte queda idéntico byte a byte y el bloque resultante es el
+  mismo que produce la corrida completa sobre el mismo corpus.
+- **Requiere un reporte previo**: si `evaluation/report.md` no existe, termina
+  con un error que indica generar primero el reporte completo.
+- **Incompatible con `--force`, `--no-cache` y `--confirm-paid`**: combinarlo
+  con ellos es un error de uso (código de salida 2).
+
+La huella SHA-256 del corpus que emite el reporte normaliza los fines de línea
+a LF: un checkout de Windows con CRLF y uno de Linux con LF producen la misma
+huella (la del blob versionado).
+
 ## Gate de Corrida Paga
 
 El runner invoca el clasificador real (Gemini) y esa corrida tiene costo. Antes
@@ -161,14 +187,75 @@ El reporte incluye (design D5):
 
 - **Etapas del pipeline**: cuántos casos resolvió cada etapa (deterministic /
   gemini / fallback).
-- **Exactitud**: dos definiciones de acierto — igualdad estricta del sector
-  principal y pertenencia del sector asignado al conjunto predicho — cada una
-  con su IC de Wilson al 95%.
+- **Procedencia de las predicciones** (c-131): bajo "Total de casos evaluados",
+  la `classifier_version` y el `generated_at` del `cache_meta` de las
+  predicciones usadas (en un cache hit se leen del archivo; en una corrida nueva,
+  del `cache_meta` recién construido). Sin metadata la línea se omite.
+- **Exactitud**: tres definiciones de acierto, cada una con su IC de Wilson al
+  95%: igualdad estricta del sector principal; **pertenencia** del sector
+  asignado al conjunto predicho; y **laxa** (c-131), el sector predicho
+  principal dentro del conjunto de verdad del caso (`sector_asignado` más
+  `sectores_adicionales` del corpus). La laxa no es la pertenencia y nunca es
+  menor que la estricta; es una métrica secundaria, no reemplaza a la estricta.
+- **Exactitud por etapa del pipeline** (c-131): casos, aciertos, exactitud
+  estricta y laxa con IC de Wilson de `deterministic`, `gemini` y `fallback`
+  (una etapa sin casos se declara "no aplicable"). Suma los totales globales.
+- **Exactitud por canal de origen** (c-131): lo mismo por `canal_origen`, con la
+  composición por etapa y el orden del desglose de tiempos. El runner falla con
+  `ValueError` (posición y ambos identificadores) si `predicciones[i].caso_id`
+  no coincide con `corpus[i].id`. La composición sectorial y la proporción
+  multietiqueta difieren entre canales: la comparación no aísla el efecto del canal.
+- **Calibración de la confianza** (c-131): bandas globales (Tabla 7.5),
+  contingencia en 0,70 y tramo `>= 0,90` globales y por etapa, bandas por etapa
+  con IC de Wilson y distribución de valores de confianza por etapa. Las bandas
+  agregadas comparan etapas (la confianza determinística y la de Gemini son
+  magnitudes distintas); la lectura de calibración se hace por etapa.
 - **Matriz de confusión primaria 5x5**: filas = sector asignado, columnas =
   sector predicho principal.
 - **Métricas por sector (one-vs-rest)**: precisión, sensibilidad, F1 y soporte.
 - **Métricas de conjunto**: subset accuracy, Hamming loss, micro-F1, macro-F1 y
   Jaccard (IoU) promedio.
+- **Tiempos** (se puede regenerar sola con `--solo-tiempos`): normalidad
+  (Shapiro-Wilk), Wilcoxon global, reducción de tiempos y desglose por canal,
+  más tres subsecciones aditivas:
+  - **Descriptivos global y por canal**: media, mediana, desvío muestral
+    (divisor n − 1), mínimo y máximo de los brazos manual y automatizado, la
+    reducción relativa de media y mediana y los pares en que el flujo
+    automatizado no fue más rápido.
+  - **Contraste direccional y tamaño del efecto estandarizado**: p bilateral
+    (convención W = min(T+, T−)), p unilateral de H1 `manual > automatizado`,
+    `d_z = media(d) / desvío(d)` y efecto mínimo detectable (MDE, en escala
+    `d_z`; alfa = 0.05 bilateral, potencia = 0.80, con ARE = 1 y con la cota
+    ARE = 0.864 de la prueba de rangos frente a la t pareada).
+  - **Escenarios de sensibilidad del redondeo manual**: descuentos de 5 s y
+    10 s a cada tiempo manual (media ajustada, reducción relativa, p bilateral,
+    p unilateral y r) y la granularidad de `tiempo_manual_s` (cuántos valores
+    son múltiplos de 5 s y de 10 s).
+
+### Política de deriva y reproducción (c-131, D3)
+
+Los valores canónicos de clasificación provienen de la corrida oficial
+(`hybrid-v3`, 2026-10-07), conservada como evidencia congelada en
+`evaluation/evidence/`. Para regenerar `evaluation/report.md` sin costo, copiar
+esa evidencia a la ruta que espera el runner (ignorada por git) y correr el
+runner: es un cache hit y no invoca a Gemini.
+
+```bash
+cp evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json evaluation/predicciones.json
+PYTHONPATH=App/Backend python -m evaluation.run_evaluation
+```
+
+Una corrida de **reproducción** (nueva invocación paga al proveedor) NO debe
+sobrescribir `evaluation/predicciones.json` ni `evaluation/report.md`: se escribe
+en archivos separados y se rotula con su versión y fecha.
+
+```bash
+PYTHONPATH=App/Backend python -c "import asyncio, pathlib; from evaluation.run_evaluation import main_con_corpus_real; asyncio.run(main_con_corpus_real(report_path=pathlib.Path('evaluation/report_reproduccion.md'), predicciones_path=pathlib.Path('evaluation/predicciones_reproduccion.json'), force=True, confirm_paid=True))"
+```
+
+La deriva de la etapa Gemini se cuantifica contra los agregados oficiales y los
+canónicos no se reemplazan salvo decisión explícita del usuario registrada en
+`docs/Tesis/Correcciones/numeros-canonicos.md`.
 
 ## Decisión D1: Import Directo vs HTTP al Backend
 
@@ -189,6 +276,47 @@ Python), en lugar de hacer `POST /api/v1/incidentes` al servidor FastAPI.
 **Trade-off asumido**: la evaluación mide el **clasificador**, no la capa HTTP.
 El Capítulo 7 evalúa calidad de clasificación; la API ya se cubre en C-04/C-05.
 
+## Sensibilidad frente a los ajustes del clasificador (c-142)
+
+`evaluation/sensibilidad_ajustes.py` acota con un análisis **offline y sin costo** el
+sesgo optimista que introdujo ajustar el vocabulario del filtro determinístico con
+el corpus de evaluación (ver la advertencia metodológica de más abajo). Re-mide la
+etapa determinística con el vocabulario previo a c-71 (89 patrones, versionado con
+su procedencia en `evaluation/data/sensibilidad_ajustes/`), conservando la lógica y
+el punto de operación vigentes, y reporta cobertura, aciertos, exactitud con IC de
+Wilson y una descomposición pareada. Las variantes y sus reglas de lectura están
+pre-registradas en el `design.md` de c-142. Escribe **solo**
+`evaluation/report_sensibilidad_ajustes.md`: nunca toca `report.md` ni las cachés
+oficiales, y sus valores no reemplazan ningún valor canónico.
+
+```bash
+# Corrida offline (sin Gemini, sin costo). Desde evaluation/ para no leer el .env de la raíz.
+cd evaluation
+PYTHONPATH=..:../App/Backend python -m evaluation.sensibilidad_ajustes
+```
+
+Usa las cachés de `evaluation/` si existen y, si no, la evidencia congelada de
+`evaluation/evidence/` (o las rutas de `--cache-fe` y `--cache-oficial`). Sin ellas, la
+sensibilidad global, el piso comparativo y los niveles a y b del prompt se rotulan
+"no computable". La corrida falla si la configuración evaluada no reproduce `131`
+casos y `97` aciertos.
+
+**Ablación del prompt (nivel c, corrida PAGA).** Dos brazos sobre los casos que la
+configuración vigente escala a Gemini, cada uno en un proceso propio y en una misma
+sesión, con el mismo gate de corrida paga que `run_evaluation.py`: sin `--confirm-paid`
+(o `EVALUATION_CONFIRM_PAID=1`) sale con código 2 antes de construir el clasificador.
+Antes de la primera llamada verifica el SHA-256 del prompt que cargó el backend y escribe
+cada brazo en un archivo propio (ignorado por git), nunca sobre las cachés oficiales.
+
+```bash
+PYTHONPATH=App/Backend python -m evaluation.sensibilidad_ajustes prompt --brazo vigente --confirm-paid
+PYTHONPATH=App/Backend python -m evaluation.sensibilidad_ajustes prompt --brazo sin-reglas --confirm-paid
+# Reporte con el nivel c (offline):
+python -m evaluation.sensibilidad_ajustes \
+  --brazo-vigente evaluation/predicciones_sensibilidad_prompt_vigente.json \
+  --brazo-sin-reglas evaluation/predicciones_sensibilidad_prompt_sin_reglas.json
+```
+
 ## Advertencia Metodológica (procedencia de los ajustes)
 
 > **Parte del clasificador evaluado se ajustó con el corpus de evaluación.**
@@ -202,7 +330,9 @@ del cortocircuito se derivó sobre el corpus por validación cruzada fuera de
 muestra (c-74, commit `d6bb474`). El protocolo fuera de muestra cubre el punto de
 operación, no el vocabulario ni las reglas del prompt. No se dispuso de un corpus
 independiente de preproducción. Las métricas de `report.md` son, por lo tanto,
-estimaciones dentro de la muestra.
+estimaciones dentro de la muestra. `python -m evaluation.sensibilidad_ajustes` (sin
+Gemini) acota la parte atribuible al vocabulario en
+`evaluation/report_sensibilidad_ajustes.md`.
 
 Regla vigente: el framework solo **evalúa**; el corpus de evaluación se usa
 **solo para diagnóstico** y todo ajuste posterior del clasificador se mide sobre

@@ -1133,3 +1133,721 @@ def test_generar_reporte_sin_hash_omite_sha256(tmp_path):
 
     assert "## Tiempos" in contenido
     assert "SHA-256 del corpus" not in contenido
+
+
+# ===========================================================================
+# c-134 — Sección "Tiempos": descriptivos, contraste direccional, d_z, MDE,
+#         sensibilidad del redondeo manual y granularidad (aditiva)
+# ===========================================================================
+_H_DESCRIPTIVOS = "### Descriptivos global y por canal"
+_H_CONTRASTE = "### Contraste direccional y tamaño del efecto estandarizado"
+_H_SENSIBILIDAD = "### Escenarios de sensibilidad del redondeo manual"
+
+
+def _corpus_cinco_pares_a_mano():
+    """
+    Corpus de 5 pares (un solo canal "A") con valores calculables a mano.
+
+    Manual [110, 120, 130, 140, 10]; automatizado [100, 100, 100, 100, 60].
+    Diferencias +10, +20, +30, +40, -50 (T+ = 10, T- = 5, W = 5).
+    """
+    manual = [110.0, 120.0, 130.0, 140.0, 10.0]
+    automatizado = [100.0, 100.0, 100.0, 100.0, 60.0]
+    return [
+        _caso_tiempo(i + 1, "A", m, a)
+        for i, (m, a) in enumerate(zip(manual, automatizado))
+    ]
+
+
+def _filas(contenido: str, encabezado: str) -> list:
+    """Líneas de tabla ('| ...') del bloque que sigue a `encabezado`."""
+    lineas = contenido.splitlines()
+    inicio = lineas.index(encabezado) + 1
+    filas = []
+    for linea in lineas[inicio:]:
+        if linea.startswith("### ") or linea.startswith("- **SHA-256"):
+            break
+        if linea.startswith("|"):
+            filas.append(linea)
+    return filas
+
+
+def test_c134_reporte_incluye_subsecciones_nuevas_en_orden(tmp_path):
+    """
+    3.1 RED: las tres subsecciones nuevas aparecen después del desglose por
+    canal y antes de la línea del SHA-256; en las tablas la fila "Global" va
+    primero y luego los canales en el orden canónico de c-99 (conteo
+    descendente, desempate alfabético): aquí "B" (3 pares) antes que "A" (2).
+    """
+    corpus = [
+        _caso_tiempo(1, "A", 100.0, 10.0),
+        _caso_tiempo(2, "A", 120.0, 20.0),
+        _caso_tiempo(3, "B", 90.0, 15.0),
+        _caso_tiempo(4, "B", 95.0, 12.0),
+        _caso_tiempo(5, "B", 130.0, 30.0),
+    ]
+
+    contenido = _reporte_sintetico(corpus, tmp_path, corpus_hash="abc123")
+
+    posiciones = [
+        contenido.index("### Desglose por canal"),
+        contenido.index(_H_DESCRIPTIVOS),
+        contenido.index(_H_CONTRASTE),
+        contenido.index(_H_SENSIBILIDAD),
+        contenido.index("SHA-256 del corpus"),
+    ]
+    assert posiciones == sorted(posiciones)
+
+    for encabezado in (_H_DESCRIPTIVOS, _H_CONTRASTE):
+        filas_datos = _filas(contenido, encabezado)[2:]  # sin cabecera ni separador
+        etiquetas = [f.split("|")[1].strip() for f in filas_datos]
+        assert etiquetas == ["Global", "B", "A"]
+
+
+def test_c134_contraste_declara_supuestos_del_minimo_detectable(tmp_path):
+    """3.1 RED: el reporte declara alfa, potencia, lateralidad y ARE del MDE."""
+    corpus = [_caso_tiempo(i, "A", 100.0 + i, 10.0) for i in range(1, 6)]
+
+    contenido = _reporte_sintetico(corpus, tmp_path)
+
+    assert "alfa = 0.05 (bilateral)" in contenido
+    assert "potencia = 0.80" in contenido
+    assert "ARE = 0.864" in contenido
+    encabezado = [f for f in _filas(contenido, _H_CONTRASTE) if f.startswith("| Ámbito")]
+    assert encabezado == [
+        "| Ámbito | n | p bilateral | p unilateral | d_z | MDE (ARE = 1) | MDE (ARE = 0.864) |"
+    ]
+
+
+def test_c134_valores_calculados_a_mano_descriptivos_y_contraste(tmp_path):
+    """
+    3.1 RED: corpus de 5 pares (ver `_corpus_cinco_pares_a_mano`).
+
+    Manual: media 510/5 = 102, mediana 120, desvío muestral
+        sqrt(11080/4) = 52.6308, mín 10, máx 140.
+    Automatizado: media 460/5 = 92, mediana 100, desvío sqrt(1280/4) = 17.8885,
+        mín 60, máx 100.
+    Reducción relativa de la media: 1 - 92/102 = 9.80 %; de la mediana:
+        1 - 100/120 = 16.67 %. Pares no más rápidos: 60 >= 10 -> 1.
+    Contraste: p bilateral exacto 0.625, p unilateral 10/32 = 0.3125 -> "0.312".
+    d_z = media(d) / desvío(d) = 10 / sqrt(5000/4) = 10 / 35.3553 = 0.2828.
+    MDE (n = 5): (1.95996 + 0.84162) / sqrt(5) = 1.2529; con ARE 0.864:
+        2.80158 / sqrt(4.32) = 1.3479.
+    """
+    contenido = _reporte_sintetico(_corpus_cinco_pares_a_mano(), tmp_path)
+
+    assert (
+        "| Global | 5 | 102.0000 | 120.0000 | 52.6308 | 10.0000 | 140.0000 "
+        "| 92.0000 | 100.0000 | 17.8885 | 60.0000 | 100.0000 | 9.80 | 16.67 | 1 |"
+    ) in contenido
+    assert (
+        "| Global | 5 | 0.625 | 0.312 | 0.2828 | 1.2529 | 1.3479 |"
+    ) in contenido
+
+
+def test_c134_sensibilidad_y_granularidad_calculadas_a_mano(tmp_path):
+    """
+    3.1 RED: manual [30, 40, 50] vs automatizado [10, 10, 10].
+
+    Descuento 5 s: manual [25, 35, 45], media 35; reducción 1 - 10/35 = 71.43 %;
+        diferencias 15, 25, 35 (todas positivas, n = 3): p bilateral 2/8 = 0.25,
+        p unilateral 1/8 = 0.125, r = (6 - 0) / 6 = 1.
+    Descuento 10 s: manual [20, 30, 40], media 30; reducción 1 - 10/30 = 66.67 %.
+    Granularidad: 30, 40, 50 son múltiplos de 5 (3 / 3) y de 10 (3 / 3).
+    """
+    corpus = [
+        _caso_tiempo(1, "A", 30.0, 10.0),
+        _caso_tiempo(2, "A", 40.0, 10.0),
+        _caso_tiempo(3, "A", 50.0, 10.0),
+    ]
+
+    contenido = _reporte_sintetico(corpus, tmp_path)
+
+    assert "| 5 | 35.0000 | 71.43 | 0.25 | 0.125 | 1.0000 |" in contenido
+    assert "| 10 | 30.0000 | 66.67 | 0.25 | 0.125 | 1.0000 |" in contenido
+    assert (
+        "- Granularidad de `tiempo_manual_s`: 3 / 3 valores múltiplos de 5 s; "
+        "3 / 3 múltiplos de 10 s."
+    ) in contenido
+
+
+def test_c134_granularidad_distingue_multiplos_de_5_y_de_10(tmp_path):
+    """3.1 RED: manual [10, 15, 20, 23] -> múltiplos de 5: 3 / 4, de 10: 2 / 4."""
+    corpus = [
+        _caso_tiempo(i + 1, "A", m, 5.0) for i, m in enumerate([10.0, 15.0, 20.0, 23.0])
+    ]
+
+    contenido = _reporte_sintetico(corpus, tmp_path)
+
+    assert (
+        "- Granularidad de `tiempo_manual_s`: 3 / 4 valores múltiplos de 5 s; "
+        "2 / 4 múltiplos de 10 s."
+    ) in contenido
+
+
+def test_c134_no_regresion_de_las_tablas_previas_de_tiempos(tmp_path):
+    """
+    3.2 RED: las cabeceras, la fila exacta y la tabla de reducción conservadora
+    de 1 s de c-99 se conservan literalmente, y las subsecciones nuevas no se
+    intercalan antes del desglose por canal.
+    """
+    contenido = _reporte_sintetico(_corpus_cinco_pares_a_mano(), tmp_path)
+
+    assert "| n | W | T+ | T− | p | r |" in contenido
+    assert "| Canal | Pares válidos | W | T+ | T− | p | r |" in contenido
+    assert "| 5 | 5.0000 | 10.0000 | 5.0000 | 0.625 | 0.3333 |" in contenido
+    assert "| Métrica | Reportada (s) | Conservadora (s) |" in contenido
+    assert "| Reducción media | 10.00 | 9.00 |" in contenido
+    assert contenido.index("### Reducción de tiempos") < contenido.index(
+        "### Desglose por canal"
+    ) < contenido.index(_H_DESCRIPTIVOS)
+
+
+def test_c134_canal_con_un_unico_par_declara_no_aplicable_sin_romper_tablas(tmp_path):
+    """
+    3.4 TRIANGULATE: el canal "B" tiene un único par: desvío (manual y
+    automatizado), d_z y p son "no aplicable"; las medias, el mínimo detectable
+    (n = 1: 2.80158 -> 2.8016; con ARE 0.864: 2.80158 / sqrt(0.864) = 3.0140) y la fila Global siguen presentes.
+    """
+    corpus = [
+        _caso_tiempo(1, "A", 110.0, 100.0),
+        _caso_tiempo(2, "A", 120.0, 100.0),
+        _caso_tiempo(3, "B", 130.0, 10.0),
+    ]
+
+    contenido = _reporte_sintetico(corpus, tmp_path)
+
+    fila_b_contraste = [
+        f for f in _filas(contenido, _H_CONTRASTE) if f.startswith("| B |")
+    ]
+    assert fila_b_contraste == [
+        "| B | 1 | no aplicable | no aplicable | no aplicable | 2.8016 | 3.0140 |"
+    ]
+    fila_b_descriptivos = [
+        f for f in _filas(contenido, _H_DESCRIPTIVOS) if f.startswith("| B |")
+    ]
+    assert fila_b_descriptivos == [
+        "| B | 1 | 130.0000 | 130.0000 | no aplicable | 130.0000 | 130.0000 "
+        "| 10.0000 | 10.0000 | no aplicable | 10.0000 | 10.0000 | 92.31 | 92.31 | 0 |"
+    ]
+    assert any(f.startswith("| Global | 3 |") for f in _filas(contenido, _H_CONTRASTE))
+
+
+def test_c134_caso_con_tiempo_nulo_se_excluye_del_canal_y_del_global(tmp_path):
+    """
+    3.4 TRIANGULATE: un caso sin tiempo manual no entra en las tablas nuevas:
+    Global n = 2 y el canal "C" no aparece (su único caso es nulo).
+    """
+    corpus = [
+        _caso_tiempo(1, "A", 110.0, 100.0),
+        _caso_tiempo(2, "A", 120.0, 100.0),
+        _caso_tiempo(3, "C", None, 10.0),
+    ]
+
+    contenido = _reporte_sintetico(corpus, tmp_path)
+
+    for encabezado in (_H_DESCRIPTIVOS, _H_CONTRASTE):
+        etiquetas = [f.split("|")[1].strip() for f in _filas(contenido, encabezado)[2:]]
+        assert etiquetas == ["Global", "A"]
+        assert any(f.startswith("| Global | 2 |") for f in _filas(contenido, encabezado))
+    assert "2 / 2 valores" in contenido  # granularidad sobre los pares válidos
+
+
+def test_c134_corpus_sin_pares_validos_no_rompe_las_tablas_nuevas(tmp_path):
+    """3.4 TRIANGULATE: sin pares válidos, Global declara todo "no aplicable"."""
+    corpus = [_caso_tiempo(1, "A", None, None)]
+
+    contenido = _reporte_sintetico(corpus, tmp_path)
+
+    fila_global = [f for f in _filas(contenido, _H_CONTRASTE) if f.startswith("| Global |")]
+    assert fila_global == [
+        "| Global | 0 | no aplicable | no aplicable | no aplicable "
+        "| no aplicable | no aplicable |"
+    ]
+    assert _H_SENSIBILIDAD in contenido
+
+
+async def test_c134_dos_corridas_son_identicas_e_incluyen_subsecciones_nuevas(
+    corpus_fixture_path, tmp_path
+):
+    """3.4: las subsecciones nuevas no rompen el determinismo byte a byte."""
+    import shutil
+
+    from evaluation.run_evaluation import main_con_corpus_real
+    from evaluation.tests.conftest import FakeClassifier
+
+    corpus_copy = tmp_path / "corpus.json"
+    shutil.copy(corpus_fixture_path, corpus_copy)
+    report_path = tmp_path / "report.md"
+    spy = FakeClassifier(default_sector="Sistemas")
+
+    resultados = []
+    for _ in range(2):
+        await main_con_corpus_real(
+            corpus_path=corpus_copy,
+            classifier=spy,
+            report_path=report_path,
+            predicciones_path=tmp_path / "predicciones.json",
+        )
+        resultados.append(report_path.read_bytes())
+
+    assert resultados[0] == resultados[1]
+    texto = resultados[0].decode("utf-8")
+    for encabezado in (_H_DESCRIPTIVOS, _H_CONTRASTE, _H_SENSIBILIDAD):
+        assert encabezado in texto
+
+
+def test_c134_sensibilidad_con_descuento_mayor_al_manual_invierte_el_signo(tmp_path):
+    """
+    3.4 TRIANGULATE: manual [15, 15] vs automatizado [10, 10], descuento 10 s:
+    manual ajustado [5, 5] (media 5), reducción 1 - 10/5 = -100 %, diferencias
+    -5, -5 (todas negativas, n = 2): T+ = 0, r = (0 - 3) / 3 = -1, p
+    unilateral 1 y p bilateral exacto 2/4 = 0.5.
+    """
+    corpus = [_caso_tiempo(1, "A", 15.0, 10.0), _caso_tiempo(2, "A", 15.0, 10.0)]
+
+    contenido = _reporte_sintetico(corpus, tmp_path)
+
+    assert "| 10 | 5.0000 | -100.00 | 0.5 | 1 | -1.0000 |" in contenido
+
+
+def test_c134_sensibilidad_declara_no_aplicable_si_el_contraste_es_degenerado(
+    tmp_path, monkeypatch
+):
+    """
+    3.4 TRIANGULATE: si el contraste del escenario no es calculable (ValueError
+    del cálculo, por ejemplo diferencias ajustadas todas nulas en versiones de
+    scipy que lo rechazan), la fila se declara "no aplicable" sin romper la tabla.
+    """
+    from evaluation import run_evaluation
+
+    def _degenerado(*args, **kwargs):
+        raise ValueError("contraste degenerado")
+
+    monkeypatch.setattr(run_evaluation, "escenario_sensibilidad", _degenerado)
+    corpus = [_caso_tiempo(1, "A", 15.0, 10.0), _caso_tiempo(2, "A", 20.0, 10.0)]
+
+    contenido = _reporte_sintetico(corpus, tmp_path)
+
+    na = " | ".join(["no aplicable"] * 5)
+    assert f"| 5 | {na} |" in contenido
+    assert f"| 10 | {na} |" in contenido
+
+
+# ===========================================================================
+# c-134 — Huella del corpus independiente del fin de línea (D6)
+# ===========================================================================
+_CORPUS_JSON_LF = '{\n  "casos": [\n    {"id": "1", "tiempo_manual_s": 10}\n  ]\n}\n'
+
+
+def test_c134_huella_crlf_y_lf_son_iguales_y_canonicas(tmp_path):
+    """
+    4.1 RED: el mismo JSON con fines de línea CRLF y LF produce la misma huella,
+    igual al SHA-256 del contenido con LF (la del blob versionado).
+    """
+    import hashlib
+
+    from evaluation.run_evaluation import _compute_corpus_hash
+
+    bytes_lf = _CORPUS_JSON_LF.encode("utf-8")
+    ruta_lf = tmp_path / "corpus_lf.json"
+    ruta_crlf = tmp_path / "corpus_crlf.json"
+    ruta_lf.write_bytes(bytes_lf)
+    ruta_crlf.write_bytes(bytes_lf.replace(b"\n", b"\r\n"))
+
+    esperada = hashlib.sha256(bytes_lf).hexdigest()
+    assert _compute_corpus_hash(ruta_lf) == esperada
+    assert _compute_corpus_hash(ruta_crlf) == esperada
+
+
+def test_c134_huella_cambia_si_cambia_el_contenido(tmp_path):
+    """4.1 TRIANGULATE: una diferencia real de contenido sí cambia la huella."""
+    from evaluation.run_evaluation import _compute_corpus_hash
+
+    original = tmp_path / "a.json"
+    modificado = tmp_path / "b.json"
+    original.write_bytes(_CORPUS_JSON_LF.encode("utf-8"))
+    modificado.write_bytes(
+        _CORPUS_JSON_LF.replace('"tiempo_manual_s": 10', '"tiempo_manual_s": 15')
+        .replace("\n", "\r\n")
+        .encode("utf-8")
+    )
+
+    assert _compute_corpus_hash(original) != _compute_corpus_hash(modificado)
+
+
+def test_c134_cache_con_huella_previa_queda_invalido_tras_cambio_de_contenido(tmp_path):
+    """
+    4.1 TRIANGULATE: un cache guardado con la huella del contenido original
+    deja de ser válido cuando el corpus cambia de contenido, pero sigue siendo
+    válido para una copia CRLF del mismo contenido.
+    """
+    import json
+
+    from evaluation.run_evaluation import _compute_corpus_hash, _is_cache_valid
+
+    bytes_lf = _CORPUS_JSON_LF.encode("utf-8")
+    ruta = tmp_path / "corpus.json"
+    ruta.write_bytes(bytes_lf)
+    huella_original = _compute_corpus_hash(ruta)
+    cache = tmp_path / "predicciones.json"
+    cache.write_text(
+        json.dumps(
+            {
+                "cache_meta": {
+                    "corpus_hash": huella_original,
+                    "corpus_count": 1,
+                    "classifier_version": "v",
+                },
+                "predictions": [],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    ruta.write_bytes(bytes_lf.replace(b"\n", b"\r\n"))  # solo fin de línea
+    assert _is_cache_valid(cache, _compute_corpus_hash(ruta), 1, "v") is True
+
+    ruta.write_bytes(bytes_lf.replace(b"10", b"11"))  # contenido distinto
+    assert _is_cache_valid(cache, _compute_corpus_hash(ruta), 1, "v") is False
+
+
+# ===========================================================================
+# c-134 — reemplazar_seccion_tiempos (D5)
+# ===========================================================================
+_REPORTE_BASE = (
+    "# Reporte\n"
+    "\n"
+    "## Exactitud\n"
+    "\n"
+    "- **Exactitud (estricta):** 0.5000\n"
+    "\n"
+    "## Tiempos\n"
+    "\n"
+    "contenido viejo\n"
+    "### Subseccion vieja\n"
+    "\n"
+    "- **SHA-256 del corpus:** `viejo`\n"
+    "\n"
+    "---\n"
+    "_Generado automáticamente por `evaluation/run_evaluation.py`_"
+)
+_SECCION_NUEVA = "## Tiempos\n\ncontenido nuevo\n### Subseccion nueva\n\n- **SHA-256 del corpus:** `nuevo`"
+
+
+def test_c134_reemplazar_seccion_tiempos_conserva_clasificacion_byte_a_byte():
+    """
+    4.2 RED: un bloque "## Tiempos" desactualizado se reemplaza y todo lo que
+    lo rodea (secciones de clasificación y pie) queda idéntico.
+    """
+    from evaluation.run_evaluation import reemplazar_seccion_tiempos
+
+    resultado = reemplazar_seccion_tiempos(_REPORTE_BASE, _SECCION_NUEVA)
+
+    antes, _, _ = _REPORTE_BASE.partition("## Tiempos")
+    pie = _REPORTE_BASE[_REPORTE_BASE.index("\n\n---\n") :]
+    assert resultado == antes + _SECCION_NUEVA + pie
+    assert "contenido viejo" not in resultado
+    assert "`viejo`" not in resultado
+
+
+def test_c134_reemplazar_seccion_tiempos_conserva_seccion_posterior_ajena():
+    """
+    4.2 RED: una sección de nivel 2 posterior al bloque (agregada por otro
+    change) se conserva; el reemplazo termina antes de ella.
+    """
+    from evaluation.run_evaluation import reemplazar_seccion_tiempos
+
+    reporte = _REPORTE_BASE.replace(
+        "\n---\n", "\n## Seccion ajena\n\ntexto ajeno\n\n---\n"
+    )
+
+    resultado = reemplazar_seccion_tiempos(reporte, _SECCION_NUEVA)
+
+    assert "## Seccion ajena\n\ntexto ajeno\n\n---\n" in resultado
+    assert resultado.index("contenido nuevo") < resultado.index("## Seccion ajena")
+    assert "contenido viejo" not in resultado
+    # La línea en blanco que separa el bloque de la sección siguiente se conserva.
+    assert "`nuevo`\n\n## Seccion ajena" in resultado
+
+
+def test_c134_reemplazar_seccion_tiempos_sin_bloque_inserta_antes_del_pie():
+    """4.2 RED: si falta el bloque, la sección se inserta antes del pie `---`."""
+    from evaluation.run_evaluation import reemplazar_seccion_tiempos
+
+    sin_bloque = (
+        "# Reporte\n\n## Exactitud\n\n- dato\n\n---\n_Generado automáticamente_"
+    )
+
+    resultado = reemplazar_seccion_tiempos(sin_bloque, _SECCION_NUEVA)
+
+    assert resultado == (
+        "# Reporte\n\n## Exactitud\n\n- dato\n\n"
+        + _SECCION_NUEVA
+        + "\n\n---\n_Generado automáticamente_"
+    )
+
+
+def test_c134_reemplazar_seccion_tiempos_es_idempotente():
+    """4.2 TRIANGULATE: aplicar dos veces el mismo bloque no cambia el texto."""
+    from evaluation.run_evaluation import reemplazar_seccion_tiempos
+
+    una_vez = reemplazar_seccion_tiempos(_REPORTE_BASE, _SECCION_NUEVA)
+    dos_veces = reemplazar_seccion_tiempos(una_vez, _SECCION_NUEVA)
+
+    assert dos_veces == una_vez
+
+
+def test_c134_reemplazar_seccion_tiempos_sin_pie_ni_bloque_agrega_al_final():
+    """4.2 TRIANGULATE: sin pie y sin bloque, la sección se agrega al final."""
+    from evaluation.run_evaluation import reemplazar_seccion_tiempos
+
+    resultado = reemplazar_seccion_tiempos("# Reporte\n\n## Exactitud\n\n- dato", _SECCION_NUEVA)
+
+    assert resultado == "# Reporte\n\n## Exactitud\n\n- dato\n\n" + _SECCION_NUEVA
+
+
+def test_c134_reemplazar_seccion_tiempos_al_final_sin_pie():
+    """4.2 TRIANGULATE: un bloque que llega hasta el final del texto se reemplaza completo."""
+    from evaluation.run_evaluation import reemplazar_seccion_tiempos
+
+    reporte = "# Reporte\n\n## Tiempos\n\nviejo\nmas viejo"
+
+    resultado = reemplazar_seccion_tiempos(reporte, _SECCION_NUEVA)
+
+    assert resultado == "# Reporte\n\n" + _SECCION_NUEVA
+
+
+# ===========================================================================
+# c-134 — main_solo_tiempos (D5)
+# ===========================================================================
+async def _reporte_completo(corpus_fixture_path, tmp_path):
+    """Corrida completa con FakeClassifier; devuelve (corpus, reporte)."""
+    import shutil
+
+    from evaluation.run_evaluation import main_con_corpus_real
+    from evaluation.tests.conftest import FakeClassifier
+
+    corpus_copy = tmp_path / "corpus.json"
+    shutil.copy(corpus_fixture_path, corpus_copy)
+    report_path = tmp_path / "report.md"
+    await main_con_corpus_real(
+        corpus_path=corpus_copy,
+        classifier=FakeClassifier(default_sector="Sistemas"),
+        report_path=report_path,
+        predicciones_path=tmp_path / "predicciones.json",
+    )
+    return corpus_copy, report_path
+
+
+async def test_c134_solo_tiempos_reproduce_byte_a_byte_la_corrida_completa(
+    corpus_fixture_path, tmp_path
+):
+    """
+    4.3 RED (a): tras una corrida completa con FakeClassifier, el modo de solo
+    tiempos sobre el mismo corpus deja el reporte idéntico byte a byte, y una
+    segunda ejecución tampoco lo cambia (idempotencia).
+    """
+    from evaluation.run_evaluation import main_solo_tiempos
+
+    corpus_copy, report_path = await _reporte_completo(corpus_fixture_path, tmp_path)
+    completo = report_path.read_bytes()
+
+    main_solo_tiempos(corpus_copy, report_path)
+    primera = report_path.read_bytes()
+    main_solo_tiempos(corpus_copy, report_path)
+    segunda = report_path.read_bytes()
+
+    assert primera == completo
+    assert segunda == completo
+
+
+async def test_c134_solo_tiempos_no_usa_clasificador_ni_cache(
+    corpus_fixture_path, tmp_path, monkeypatch
+):
+    """
+    4.3 RED (b): con el resolutor del clasificador real, la versión del
+    clasificador, la evaluación y la lectura/escritura de predicciones
+    sustituidos por funciones que lanzan, el modo termina bien y no crea
+    ningún `predicciones.json`.
+    """
+    from evaluation import run_evaluation
+
+    corpus_copy, report_path = await _reporte_completo(corpus_fixture_path, tmp_path)
+    (tmp_path / "predicciones.json").unlink()
+
+    def _prohibido(*args, **kwargs):
+        raise AssertionError("el modo de solo tiempos no debe tocar clasificador ni cache")
+
+    async def _prohibido_async(*args, **kwargs):
+        _prohibido()
+
+    for nombre in (
+        "_resolver_clasificador_real",
+        "_version_clasificador_real",
+        "cargar_predicciones",
+        "guardar_predicciones",
+    ):
+        monkeypatch.setattr(run_evaluation, nombre, _prohibido)
+    monkeypatch.setattr(run_evaluation, "evaluar_corpus", _prohibido_async)
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    monkeypatch.delenv("EVALUATION_CONFIRM_PAID", raising=False)
+
+    run_evaluation.main_solo_tiempos(corpus_copy, report_path)
+
+    assert list(tmp_path.glob("predicciones*.json")) == []
+
+
+def test_c134_solo_tiempos_con_reporte_ausente_falla_claro_sin_crear_archivo(
+    corpus_fixture_path, tmp_path
+):
+    """
+    4.3 RED (c): sin reporte previo el modo falla con FileNotFoundError que
+    indica generar primero el reporte completo, y no crea un reporte parcial.
+    """
+    import shutil
+
+    from evaluation.run_evaluation import main_solo_tiempos
+
+    corpus_copy = tmp_path / "corpus.json"
+    shutil.copy(corpus_fixture_path, corpus_copy)
+    report_path = tmp_path / "report.md"
+
+    with pytest.raises(FileNotFoundError, match="reporte completo"):
+        main_solo_tiempos(corpus_copy, report_path)
+    assert not report_path.exists()
+
+
+def test_c134_solo_tiempos_con_corpus_ausente_falla_claro(tmp_path):
+    """4.3 TRIANGULATE: un corpus inexistente falla con mensaje claro."""
+    from evaluation.run_evaluation import main_solo_tiempos
+
+    reporte = tmp_path / "report.md"
+    reporte.write_text("# Reporte\n\n## Tiempos\n\nviejo", encoding="utf-8")
+
+    with pytest.raises(FileNotFoundError, match="corpus"):
+        main_solo_tiempos(tmp_path / "no_existe.json", reporte)
+    assert reporte.read_text(encoding="utf-8") == "# Reporte\n\n## Tiempos\n\nviejo"
+
+
+async def test_c134_solo_tiempos_con_un_tiempo_distinto_cambia_solo_el_bloque(
+    corpus_fixture_path, tmp_path
+):
+    """
+    4.3 TRIANGULATE: modificar un tiempo manual del corpus cambia únicamente
+    el bloque de tiempos (y su huella); lo anterior al bloque queda idéntico.
+    """
+    import json
+
+    from evaluation.run_evaluation import main_solo_tiempos
+
+    corpus_copy, report_path = await _reporte_completo(corpus_fixture_path, tmp_path)
+    original = report_path.read_text(encoding="utf-8")
+    datos = json.loads(corpus_copy.read_text(encoding="utf-8"))
+    datos["casos"][0]["tiempo_manual_s"] = 999
+    corpus_copy.write_text(json.dumps(datos, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    main_solo_tiempos(corpus_copy, report_path)
+    nuevo = report_path.read_text(encoding="utf-8")
+
+    corte = original.index("## Tiempos")
+    assert nuevo[:corte] == original[:corte]
+    assert nuevo[corte:] != original[corte:]
+    assert "999" not in nuevo[:corte]
+    assert nuevo.endswith("_Generado automáticamente por `evaluation/run_evaluation.py`_")
+
+
+# ===========================================================================
+# c-134 — Flag --solo-tiempos del CLI (D5)
+# ===========================================================================
+def test_c134_cli_solo_tiempos_despacha_main_solo_tiempos(monkeypatch):
+    """
+    4.4 RED: `--solo-tiempos` invoca `main_solo_tiempos` y nunca
+    `main_con_corpus_real`; no exige confirmación de corrida paga.
+    """
+    import sys
+
+    from evaluation import run_evaluation
+
+    llamadas: list = []
+
+    def fake_solo(*args, **kwargs):
+        llamadas.append("solo")
+
+    async def fake_completo(*args, **kwargs):
+        llamadas.append("completo")
+
+    monkeypatch.setattr(run_evaluation, "main_solo_tiempos", fake_solo)
+    monkeypatch.setattr(run_evaluation, "main_con_corpus_real", fake_completo)
+    monkeypatch.delenv("EVALUATION_CONFIRM_PAID", raising=False)
+    monkeypatch.setattr(sys, "argv", ["run_evaluation", "--solo-tiempos"])
+
+    run_evaluation.main()
+
+    assert llamadas == ["solo"]
+
+
+@pytest.mark.parametrize(
+    "incompatible", ["--confirm-paid", "--force", "--no-cache"]
+)
+def test_c134_cli_solo_tiempos_es_incompatible_con_flags_de_corrida_paga(
+    monkeypatch, capsys, incompatible
+):
+    """
+    4.4 RED: `--solo-tiempos` combinado con `--confirm-paid`, `--force` o
+    `--no-cache` termina con SystemExit código 2 (parser.error) sin ejecutar
+    ningún modo.
+    """
+    import sys
+
+    from evaluation import run_evaluation
+
+    llamadas: list = []
+
+    def fake_solo(*args, **kwargs):
+        llamadas.append("solo")
+
+    async def fake_completo(*args, **kwargs):
+        llamadas.append("completo")
+
+    monkeypatch.setattr(run_evaluation, "main_solo_tiempos", fake_solo)
+    monkeypatch.setattr(run_evaluation, "main_con_corpus_real", fake_completo)
+    monkeypatch.setattr(sys, "argv", ["run_evaluation", "--solo-tiempos", incompatible])
+
+    with pytest.raises(SystemExit) as exc_info:
+        run_evaluation.main()
+
+    assert exc_info.value.code == 2
+    assert "no se puede combinar" in capsys.readouterr().err
+    assert llamadas == []
+
+
+def test_c134_cli_sin_solo_tiempos_conserva_la_combinacion_force_y_confirm_paid(
+    monkeypatch,
+):
+    """
+    4.4 TRIANGULATE: sin el flag, el comportamiento previo no cambia:
+    `--force --confirm-paid` sigue combinándose y despacha la corrida completa.
+    """
+    import sys
+
+    from evaluation import run_evaluation
+
+    captured: dict = {}
+
+    async def fake_completo(*args, **kwargs):
+        captured.update(kwargs)
+
+    def fake_solo(*args, **kwargs):
+        captured["solo"] = True
+
+    monkeypatch.setattr(run_evaluation, "main_con_corpus_real", fake_completo)
+    monkeypatch.setattr(run_evaluation, "main_solo_tiempos", fake_solo)
+    monkeypatch.delenv("EVALUATION_CONFIRM_PAID", raising=False)
+    monkeypatch.setattr(sys, "argv", ["run_evaluation", "--force", "--confirm-paid"])
+
+    run_evaluation.main()
+
+    assert captured["force"] is True
+    assert captured["confirm_paid"] is True
+    assert "solo" not in captured

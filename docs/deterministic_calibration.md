@@ -230,3 +230,42 @@ El comando es **offline**: no invoca a Gemini y reutiliza la cache FORCE-ESCALAT
 comparativo. NO sobrescribe este documento: la seccion de la corrida oficial paga
 (0.7350 / 0.5207) se transcribe de la corrida registrada el 2026-10-07, no la
 genera el comando offline.
+
+## Contraste pareado de McNemar (c-131)
+
+Insumo de **c-133** (hipotesis subsidiaria de eficiencia del esquema hibrido) y de
+**c-142** (sensibilidad fuera de muestra por el ajuste del clasificador con el corpus,
+A5). c-131 NO lo incorpora al texto de la tesis. Registrado el 2026-10-25.
+
+Contraste pareado entre la etapa deterministica y Gemini sobre el conjunto
+cortocircuitable `S` (131 casos con senal no ambigua y `score_correctitud >= 0.5166`),
+con acierto estricto (`sector_predicho == sector_asignado`). La deterministica sale de
+la reproduccion offline (`recolectar_observaciones`; sus 131 predicciones coinciden
+131/131 con la etapa `deterministic` de la cache oficial `hybrid-v3`); la de Gemini, de
+la cache FORCE-ESCALATE.
+
+- Comando (offline, no invoca a Gemini; el reporte imprime la seccion
+  "Contraste pareado de McNemar entre etapas sobre S (c-131)"):
+  `cd App/Backend && PYTHONPATH=../.. python -m evaluation.deterministic_measurement --umbral-actual 1.0`
+- Cache de Gemini: `evaluation/predicciones_calibracion.json` = copia byte-identica de
+  `evaluation/evidence/predicciones_calibracion_hybrid-v2_2026-10-07.json`
+  (`classifier_version` = `hybrid-v2`, `generated_at` = 2026-10-07T20:33:03Z,
+  `corpus_hash` 5f062e14... distinto del vigente aunque las 200 descripciones coinciden),
+  SHA-256 `2d4f868ce1c01f8a528b29afc69dc541842f7f238c4932c3eee94a6f6298a775`.
+- `|S|` = 131; pares con prediccion de ambas etapas: **130**; excluido: **R099** (cortocircuito
+  tambien en la corrida forzada, sin prediccion de Gemini).
+- Exactitud estricta sobre los 130 pares: deterministica 0.7385 (96/130); Gemini 0.6769
+  (88/130; control: coincide con `precision_gem(S)`).
+- Tabla 2x2: ambas aciertan 80; solo la deterministica (`b`) 16; solo Gemini (`c`) 8;
+  ninguna 26 (suma 130).
+- Estadistico chi-cuadrado con correccion de continuidad `max(0, |b - c| - 1)^2 / (b + c)`:
+  **2.0417** (1 gl), p = 0.1530.
+- p binomial exacto bilateral (`X ~ Bin(24; 0.5)`): 0.1516.
+- p primario: **0.1516**, criterio **exacto** (`b + c = 24 < 25`).
+- Lectura: no se rechaza la igualdad de ambas etapas sobre `S` al 5 %.
+- Salvedades: (1) la prediccion de Gemini sobre `S` proviene de otra corrida y de otra
+  version (`hybrid-v2`) que la oficial (`hybrid-v3`), y en la oficial Gemini nunca vio `S`;
+  (2) el contraste es dentro de la muestra de evaluacion y `S` se definio con el tau
+  out-of-fold calibrado sobre el mismo corpus; (3) un resultado no significativo no
+  demuestra equivalencia (potencia limitada con 24 discordancias).
+
