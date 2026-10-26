@@ -344,10 +344,17 @@ def test_chequeo_11_sector_retirado_falla(tmp_path):
 # ===========================================================================
 # Chequeo 12 - duplicacion de literales volatiles en CLAUDE.md
 # ===========================================================================
-@pytest.mark.parametrize("literal", ["0.5166", "0.70", "0.115", ">= 1.0", "2.11.2"])
+def _literales_volatiles_del_config():
+    """Literales prohibidos derivados del `config.yaml` real, no hardcodeados."""
+    config, error = docs_stack_sync._cargar_yaml(docs_stack_sync.CONFIG_PATH)
+    assert error is None, error
+    return [literal for literal in docs_stack_sync._literales_prohibidos(config) if literal]
+
+
+@pytest.mark.parametrize("literal", _literales_volatiles_del_config())
 def test_g_literal_volatil_en_claude_falla(tmp_path, literal):
-    """(g) cualquiera de los cinco literales volatiles derivados de config.yaml."""
-    raiz = _copiar_arbol(tmp_path)  # config.yaml sin corregir: los cinco literales vigentes
+    """(g) cada literal volatil derivado de config.yaml, restateado en CLAUDE.md, produce FAIL."""
+    raiz = _copiar_arbol(tmp_path)
     (raiz / CLAUDE_REL).write_text(
         f"Modelo: Gemini 3.6 Flash. Valor: {literal}.\n", encoding="utf-8"
     )
