@@ -17,6 +17,15 @@ toda divergencia se resuelve actualizando este memo, no el capítulo de forma ai
 - **Fecha de verificación**: 2026-10-21.
 - **Método**: conteo de solo lectura desde el sistema. No se editó código,
   `n8n/workflow.json` ni `requirements.txt`.
+- **Upsert c-135** (`c-135-cronologia-y-consistencia-redaccional`, 2026-10-25): se
+  agregan a la Sección 2 los parámetros de tiempo de espera de la inferencia con
+  Gemini vigentes durante la campaña automatizada (30 s por intento y 60 s de
+  presupuesto total, con 2 reintentos adicionales) y se retira el valor de 10 s; la
+  alineación de `05-arquitectura.tex:74` y `12-anexos.tex:104` figura en la Sección 3
+  y la evidencia en la Sección 5. Los valores son los predeterminados de
+  `settings.py`: ningún archivo versionado los sobreescribe y los `.env*` no se
+  leyeron por política de permisos (pendiente de confirmación de los autores, ver
+  `design.md` de c-135, D15).
 
 ## 1. Procedimiento de recálculo (solo lectura, reproducible)
 
@@ -57,6 +66,10 @@ Estados: `vigente` (valor citable), `retirado` (desmentido; NO citable) y `intoc
 | Notas adhesivas (`stickyNote`) | **3** | `n8n/workflow.json` | vigente |
 | Paquete del SDK de Google | **`google-genai`** | `App/Backend/requirements.txt:34` (`google-genai>=2.20.0,<3`) | vigente |
 | Paquete `google-generativeai` | **retirado** (SDK deprecado) | `App/Backend/requirements.txt:25` (comentario: reemplaza al deprecado) | retirado |
+| Tiempo de espera de la inferencia por intento (backend → modelo) | **30 s** | `App/Backend/app/config/settings.py:85` (`gemini_timeout_seconds`), introducido en el commit `11036be` (2026-09-24) | vigente |
+| Presupuesto total de reloj por clasificación | **60 s** | `App/Backend/app/config/settings.py:104` (`gemini_total_timeout_seconds`), introducido en el commit `429f2c9` (2026-09-29, c-58) | vigente |
+| Reintentos adicionales del backend al modelo | **2** (peor caso, 3 intentos) | `App/Backend/app/config/settings.py:97` (`gemini_max_retries`), commit `429f2c9` (2026-09-29) | vigente |
+| Tiempo de espera de la inferencia de 10 s | **retirado** | valor previo a `11036be` (2026-09-24); desmentido por `settings.py:85` | retirado |
 
 ### 2.1 Las siete entidades principales (lista canónica)
 
@@ -103,6 +116,8 @@ post-revisión. Fuente: `12-anexos.tex:45`.
 | `12-anexos.tex:108` | fuente "documentación de la API `google-generativeai`" | fuente "documentación del SDK `google-genai`" |
 | `05-arquitectura.tex:74` | "google-genai >=2.0" | "google-genai >=2.20.0" |
 | `06-implementacion.tex:10` | "google-genai >=2.0" | "google-genai >=2.20.0" |
+| `05-arquitectura.tex:74` (c-135) | "timeout = 10 s" | "timeout = 30 s por intento del backend al modelo, con un presupuesto total de 60 s por clasificación" |
+| `12-anexos.tex:104` (c-135) | fila `timeout`: "10 segundos" / "Límite máximo de latencia; al excederse, el clasificador devuelve confianza 0,0 y marca el caso para revisión humana." | "30 segundos por intento; 60 segundos en total" / límite por intento del backend al modelo, hasta dos reintentos ante fallas transitorias dentro del presupuesto total de 60 s (no son reintentos de N8N al backend); al agotarse, confianza 0,0 y revisión humana |
 
 ### 3.1 Líneas intocables (ya canónicas)
 
@@ -133,6 +148,26 @@ Fuentes primarias (solo lectura, sin edición):
   `directorio_empleado`).
 - `docs/Tesis/v9 (IA)/paper/sections/05-arquitectura.tex:90-110` — Tabla
   `tab:entidades` (siete filas).
+
+Evidencia del upsert c-135 (solo lectura):
+
+- `git log -S "gemini_timeout_seconds: int = 30" --date=short --format='%ad %h %s' -- App/Backend/app/config/settings.py`
+  devuelve `2026-09-24 11036be fix(gemini): migrar el clasificador a Gemini 3.6 Flash y timeout de 30s`.
+- `git log -S "gemini_total_timeout_seconds" ...` y `git log -S "gemini_max_retries" ...`
+  devuelven `2026-09-29 429f2c9 feat(c-58): resiliencia de Gemini (reintentos acotados, presupuesto y guard de costo)`.
+- Ambos commits son anteriores a las corridas de la campaña automatizada (2026-10-02
+  y 2026-10-06).
+- Sin override versionado: `grep -rn -E "GEMINI_(TIMEOUT|TOTAL_TIMEOUT)_SECONDS" docs docker-compose.yml docker-compose.dev.yml`
+  solo devuelve la línea comentada `docs/operational-guide.md:67`
+  (`# GEMINI_TOTAL_TIMEOUT_SECONDS=60`). Los `.env*` no se leen (política de permisos).
+- Semántica al agotarse el presupuesto: `App/Backend/app/classifiers/gemini_classifier.py`
+  (bucle de intentos, `gemini_retry_budget_exhausted`) levanta `GeminiTimeoutError` o
+  `GeminiUnavailableError`, y `App/Backend/app/classifiers/hybrid.py` las captura y
+  devuelve la etapa `fallback` con confianza 0,0 y revisión humana.
+- Los reintentos son del backend al modelo; la invocación de N8N al backend
+  (`06-implementacion.tex:60`) no tiene reintentos y no se edita (c-140).
+- `CLAUDE.md` y `openspec/config.yaml` (10 s) los alinea c-130 con confirmación del
+  usuario; c-135 solo deja la nota de coordinación en `dictamen-correcciones.md`.
 
 Capítulos de la tesis citados (editados en c-109, solo las líneas de la Sección 3):
 `05-arquitectura.tex:74`; `06-implementacion.tex:10,32,34,72,73`;

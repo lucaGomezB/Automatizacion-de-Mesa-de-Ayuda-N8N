@@ -360,6 +360,8 @@ INPUT sections/10-recomendaciones.tex
 INPUT ./sections/12-anexos.tex
 INPUT ./sections/12-anexos.tex
 INPUT sections/12-anexos.tex
+INPUT ./figures/cronograma.png
+INPUT ./figures/cronograma.png
 INPUT ./figures/flujo_n8n.png
 INPUT ./figures/flujo_n8n.png
 INPUT main.aux
