@@ -1,21 +1,21 @@
 \babel@toc {spanish}{}\relax 
-\contentsline {table}{\numberline {1}{\ignorespaces Trabajos académicos previos sobre clasificación de tickets}}{29}{table.caption.2}%
+\contentsline {table}{\numberline {1}{\ignorespaces Trabajos académicos previos sobre clasificación de tickets}}{30}{table.caption.2}%
 \contentsline {table}{\numberline {2}{\ignorespaces Comparación de soluciones para gestión automatizada de mesa de ayuda}}{31}{table.caption.3}%
-\contentsline {table}{\numberline {3}{\ignorespaces Operacionalización de variables del estudio}}{34}{table.caption.4}%
-\contentsline {table}{\numberline {4}{\ignorespaces Capas funcionales de la arquitectura del sistema}}{41}{table.caption.5}%
-\contentsline {table}{\numberline {5}{\ignorespaces Entidades principales del modelo de datos}}{48}{table.caption.10}%
-\contentsline {table}{\numberline {6}{\ignorespaces Puntos de entrada principales de la interfaz REST}}{51}{table.caption.12}%
-\contentsline {table}{\numberline {7}{\ignorespaces Estado de alineación con los controles de ISO/IEC 27002:2022, agrupados por tema}}{66}{table.caption.15}%
-\contentsline {table}{\numberline {8}{\ignorespaces Perfil de alineación con las funciones de NIST CSF 2.0}}{67}{table.caption.16}%
-\contentsline {table}{\numberline {9}{\ignorespaces Estadísticos descriptivos de los tiempos de registro por flujo (\(n = 200\))}}{68}{table.caption.17}%
-\contentsline {table}{\numberline {10}{\ignorespaces Tiempo de registro por canal de origen: flujos manual y automatizado, reducción y contraste intra-canal (\(n = 200\))}}{69}{table.caption.18}%
-\contentsline {table}{\numberline {11}{\ignorespaces Matriz de confusión del clasificador automático (\(n = 200\)). Filas: sector asignado; columnas: sector predicho principal.}}{70}{table.caption.20}%
-\contentsline {table}{\numberline {12}{\ignorespaces Exactitud estricta y laxa por etapa del pipeline y por canal de origen}}{71}{table.caption.22}%
-\contentsline {table}{\numberline {13}{\ignorespaces Métricas de clasificación por clase con intervalo de confianza al 95~\% (una contra el resto)}}{72}{table.caption.23}%
-\contentsline {table}{\numberline {14}{\ignorespaces Exactitud por banda de confianza declarada y por etapa del pipeline}}{73}{table.caption.24}%
-\contentsline {table}{\numberline {15}{\ignorespaces Sensibilidad de la exactitud al vocabulario ajustado con el corpus}}{74}{table.caption.25}%
-\contentsline {table}{\numberline {16}{\ignorespaces Confusiones observadas en la clasificación automática, por frontera}}{75}{table.caption.26}%
-\contentsline {table}{\numberline {17}{\ignorespaces Exactitud mínima de equilibrio y balance neto trimestral según la tasa de derivación errónea manual y el costo por derivación}}{84}{table.caption.27}%
-\contentsline {table}{\numberline {18}{\ignorespaces Cumplimiento de los objetivos del trabajo y evidencia de respaldo}}{86}{table.caption.28}%
+\contentsline {table}{\numberline {3}{\ignorespaces Operacionalización de variables del estudio}}{35}{table.caption.4}%
+\contentsline {table}{\numberline {4}{\ignorespaces Capas funcionales de la arquitectura del sistema}}{42}{table.caption.5}%
+\contentsline {table}{\numberline {5}{\ignorespaces Entidades principales del modelo de datos}}{49}{table.caption.10}%
+\contentsline {table}{\numberline {6}{\ignorespaces Puntos de entrada principales de la interfaz REST}}{52}{table.caption.12}%
+\contentsline {table}{\numberline {7}{\ignorespaces Estado de alineación con los controles de ISO/IEC 27002:2022, agrupados por tema}}{67}{table.caption.15}%
+\contentsline {table}{\numberline {8}{\ignorespaces Perfil de alineación con las funciones de NIST CSF 2.0}}{68}{table.caption.16}%
+\contentsline {table}{\numberline {9}{\ignorespaces Estadísticos descriptivos de los tiempos de registro por flujo (\(n = 200\))}}{69}{table.caption.17}%
+\contentsline {table}{\numberline {10}{\ignorespaces Tiempo de registro por canal de origen: flujos manual y automatizado, reducción y contraste intra-canal (\(n = 200\))}}{70}{table.caption.18}%
+\contentsline {table}{\numberline {11}{\ignorespaces Matriz de confusión del clasificador automático (\(n = 200\)). Filas: sector asignado; columnas: sector predicho principal.}}{71}{table.caption.20}%
+\contentsline {table}{\numberline {12}{\ignorespaces Exactitud estricta y laxa por etapa del pipeline y por canal de origen}}{72}{table.caption.22}%
+\contentsline {table}{\numberline {13}{\ignorespaces Métricas de clasificación por clase con intervalo de confianza al 95~\% (una contra el resto)}}{73}{table.caption.23}%
+\contentsline {table}{\numberline {14}{\ignorespaces Exactitud por banda de confianza declarada y por etapa del pipeline}}{74}{table.caption.24}%
+\contentsline {table}{\numberline {15}{\ignorespaces Sensibilidad de la exactitud al vocabulario ajustado con el corpus}}{75}{table.caption.25}%
+\contentsline {table}{\numberline {16}{\ignorespaces Confusiones observadas en la clasificación automática, por frontera}}{76}{table.caption.26}%
+\contentsline {table}{\numberline {17}{\ignorespaces Exactitud mínima de equilibrio y balance neto trimestral según la tasa de derivación errónea manual y el costo por derivación}}{85}{table.caption.27}%
+\contentsline {table}{\numberline {18}{\ignorespaces Cumplimiento de los objetivos del trabajo y evidencia de respaldo}}{87}{table.caption.28}%
 \contentsline {table}{\numberline {19}{\ignorespaces Parámetros de configuración de la inferencia con \texttt {gemini-3.6-flash}.}}{107}{table.caption.33}%
 \contentsline {table}{\numberline {20}{\ignorespaces Recomendaciones del dictamen del 22 de octubre de 2026, change responsable y secciones donde se atendieron.}}{109}{table.caption.34}%

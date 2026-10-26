@@ -2807,6 +2807,61 @@
       \verb https://doi.org/10.1177/22104968261440701
       \endverb
     \endentry
+    \entry{ramya2021classifying}{misc}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=7f6a3ebcd1ad343bfd72675b299312c1}{%
+           family={Ramya},
+           familyi={R\bibinitperiod},
+           given={C.},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=260c67a8ad5e79dd75763e79d9366a48}{%
+           family={Paramesh},
+           familyi={P\bibinitperiod},
+           given={S.\bibnamedelimi P.},
+           giveni={S\bibinitperiod\bibinitdelim P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e614a755a923d2f3bfad3d9701cb37cb}{%
+           family={Shreedhara},
+           familyi={S\bibinitperiod},
+           given={K.\bibnamedelimi S.},
+           giveni={K\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{cebc390798e80da06517999d5fc439fb}
+      \strng{fullhash}{2416663b32035ad25a920ac83acb984c}
+      \strng{fullhashraw}{2416663b32035ad25a920ac83acb984c}
+      \strng{bibnamehash}{2416663b32035ad25a920ac83acb984c}
+      \strng{authorbibnamehash}{2416663b32035ad25a920ac83acb984c}
+      \strng{authornamehash}{cebc390798e80da06517999d5fc439fb}
+      \strng{authorfullhash}{2416663b32035ad25a920ac83acb984c}
+      \strng{authorfullhashraw}{2416663b32035ad25a920ac83acb984c}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{cs.LG}
+      \field{eprinttype}{arXiv}
+      \field{howpublished}{arXiv preprint}
+      \field{note}{arXiv:2103.15822; presentado en la 3rd IEEE International Conference on Computational Systems and Information Technology for Sustainable Solutions ({CSITSS}), 2018}
+      \field{title}{Classifying the Unstructured {IT} Service Desk Tickets Using Ensemble of Classifiers}
+      \field{year}{2021}
+      \verb{doi}
+      \verb 10.48550/arXiv.2103.15822
+      \endverb
+      \verb{eprint}
+      \verb 2103.15822
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2103.15822
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2103.15822
+      \endverb
+    \endentry
     \entry{Revina2020_it_tickets}{article}{}{}
       \name{author}{3}{}{%
         {{un=0,uniquepart=base,hash=2ddba49568e98fd63be36f1b4515d555}{%
@@ -7517,6 +7572,61 @@
       \endverb
       \verb{url}
       \verb https://doi.org/10.1177/22104968261440701
+      \endverb
+    \endentry
+    \entry{ramya2021classifying}{misc}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=7f6a3ebcd1ad343bfd72675b299312c1}{%
+           family={Ramya},
+           familyi={R\bibinitperiod},
+           given={C.},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=260c67a8ad5e79dd75763e79d9366a48}{%
+           family={Paramesh},
+           familyi={P\bibinitperiod},
+           given={S.\bibnamedelimi P.},
+           giveni={S\bibinitperiod\bibinitdelim P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e614a755a923d2f3bfad3d9701cb37cb}{%
+           family={Shreedhara},
+           familyi={S\bibinitperiod},
+           given={K.\bibnamedelimi S.},
+           giveni={K\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{cebc390798e80da06517999d5fc439fb}
+      \strng{fullhash}{2416663b32035ad25a920ac83acb984c}
+      \strng{fullhashraw}{2416663b32035ad25a920ac83acb984c}
+      \strng{bibnamehash}{2416663b32035ad25a920ac83acb984c}
+      \strng{authorbibnamehash}{2416663b32035ad25a920ac83acb984c}
+      \strng{authornamehash}{cebc390798e80da06517999d5fc439fb}
+      \strng{authorfullhash}{2416663b32035ad25a920ac83acb984c}
+      \strng{authorfullhashraw}{2416663b32035ad25a920ac83acb984c}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{cs.LG}
+      \field{eprinttype}{arXiv}
+      \field{howpublished}{arXiv preprint}
+      \field{note}{arXiv:2103.15822; presentado en la 3rd IEEE International Conference on Computational Systems and Information Technology for Sustainable Solutions ({CSITSS}), 2018}
+      \field{title}{Classifying the Unstructured {IT} Service Desk Tickets Using Ensemble of Classifiers}
+      \field{year}{2021}
+      \verb{doi}
+      \verb 10.48550/arXiv.2103.15822
+      \endverb
+      \verb{eprint}
+      \verb 2103.15822
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2103.15822
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2103.15822
       \endverb
     \endentry
     \entry{Revina2020_it_tickets}{article}{}{}
