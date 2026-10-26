@@ -102,7 +102,7 @@
 \contentsline {section}{\numberline {F}Corpus de validación}{104}{section.1.F}%
 \contentsline {section}{\numberline {G}Documentación operativa}{105}{section.1.G}%
 \contentsline {section}{\numberline {H}Especificación del prompt de Gemini 3.6 Flash}{105}{section.1.H}%
-\contentsline {subsection}{\numberline {H.1}Estructura y contenido del prompt}{105}{subsection.1.H.1}%
+\contentsline {subsection}{\numberline {H.1}Estructura y contenido del prompt}{106}{subsection.1.H.1}%
 \contentsline {subsection}{\numberline {H.2}Parámetros de configuración}{106}{subsection.1.H.2}%
 \contentsline {subsection}{\numberline {H.3}Validación de la respuesta}{106}{subsection.1.H.3}%
 \contentsline {subsection}{\numberline {H.4}Iteración y mejora del prompt}{108}{subsection.1.H.4}%

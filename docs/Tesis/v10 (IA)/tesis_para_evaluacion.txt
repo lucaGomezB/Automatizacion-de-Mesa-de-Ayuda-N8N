@@ -77,7 +77,7 @@ D Especificación OpenAPI de la interfaz REST . . . . . . . . . . . . . . . . . 
 E Configuración del flujo N8N . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .103
 F Corpus de validación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .104
 G Documentación operativa . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .105
-H Especificación del prompt de Gemini 3.6 Flash . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .105 H.1 Estructura y contenido del prompt . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .105 H.2 Parámetros de configuración . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .106 H.3 Validación de la respuesta . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .106 H.4 Iteración y mejora del prompt . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .108 H.5 Recomendaciones para futuras iteraciones . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .108
+H Especificación del prompt de Gemini 3.6 Flash . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .105 H.1 Estructura y contenido del prompt . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .106 H.2 Parámetros de configuración . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .106 H.3 Validación de la respuesta . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .106 H.4 Iteración y mejora del prompt . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .108 H.5 Recomendaciones para futuras iteraciones . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .108
 I Trazabilidad de las correcciones del dictamen . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .108
 
 8
@@ -2305,50 +2305,51 @@ El código fuente del módulo Python, los scripts de migración de la base de da
 102
 
 Figura 10. Cronograma de la construcción, las campañas y la versión del modelo (barras con precisión de mes; hitos, de día). Fuente: historial del repositorio y confirmación de los autores (9-10-2026). commit definitivo del repositorio.
+El hash completo de ese commit es a49d035c67b32ae17e633ec04b09ecdd2781aac6, que constituye la referencia verificable de la versión corregida.
 La estructura del repositorio separa el módulo de procesamiento (App/Backend/, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (App/Frontend/, React con TypeScript), la definición del flujo de orquestación (n8n/workflow.json), los artefactos de evaluación (evaluation/), el corpus pseudonimizado (data/), los scripts auxiliares (scripts/) y la documentación (docs/), junto con las especificaciones de los changes (openspec/) y los archivos de orquestación local docker-compose.yml y Makefile. El archivo README.md describe esta organización y reúne las instrucciones detalladas para el despliegue local en menos de 15 minutos, por lo que constituye el punto de entrada al código fuente disponible en el repositorio público (Gómez et al. 2026).
 C. Esquema de base de datos
 El esquema completo de la base de datos PostgreSQL se documenta mediante scripts SQL versionados que definen las siete entidades descritas en la Tabla 5 de la Sección 5, las restricciones de integridad referencial (claves foráneas con eliminación en cascada condicional), los índices secundarios sobre los atributos de búsqueda frecuente (fecha de creación, sector responsable y estado actual del ticket), y la generación de los identificadores de incidente. Las migraciones incrementales se gestionan mediante Alembic, lo que permite reproducir el estado de la base en cualquier punto histórico del desarrollo y revertir cambios cuando resulte necesario.
-La migración inicial incluye la creación de las tablas de catálogo (sector, estado, canal_origen) con sus valores semilla, garantizando que un despliegue nuevo del sistema comience con los datos de referencia correctos. Las migraciones subsiguientes documentan la evolución del esquema durante las seis iteraciones de desarrollo descritas en la Sección 4.
+La migración inicial incluye la creación de las tablas de catálogo (sector, estado, canal_origen) con sus valores semilla, garantizando que un despliegue nuevo del sistema
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 103
 
+comience con los datos de referencia correctos. Las migraciones subsiguientes documentan la evolución del esquema durante las seis iteraciones de desarrollo descritas en la Sección 4.
 El diagrama entidad-relación de las siete entidades se incluye como Figura 5 de la Sección 5; su fuente Mermaid versionada reside en docs/diagrams/er_modelo_datos.md.
 D. Especificación OpenAPI de la interfaz REST La especificación completa de la interfaz REST se genera automáticamente mediante FastAPI conforme a la versión 3.1 de la especificación OpenAPI (Ramírez, 2024). El documento resultante describe los puntos de entrada listados en la Tabla 6 de la Sección 5, los esquemas de los cuerpos de solicitud y respuesta validados mediante Pydantic v2, los códigos de estado posibles para cada método HTTP, y ejemplos representativos para cada caso de uso. La interfaz se encuentra disponible adicionalmente en formato interactivo a través del componente Swagger UI integrado en el servidor, accesible bajo la ruta /docs durante la ejecución, y en formato estático como archivo openapi.json en el directorio docs/ del repositorio. La sincronización entre el código y la especificación estática se verifica automáticamente en el pipeline de integración continua. La especificación OpenAPI vigente describe 33 puntos de entrada que exponen 41 métodos HTTP y 44 esquemas de datos, agrupados por recurso: autenticación, catálogos, clasificaciones, incidentes, directorio, estadísticas, telefonía, control de costo y salud. A título ilustrativo, los 44 esquemas de datos comprenden las estructuras de los catálogos, las entidades de dominio y los objetos de respuesta de cada recurso. El esquema IncidenteRead, por ejemplo, expone el identificador del ticket, la descripción pseudonimizada, la prioridad, el sector y los sectores adicionales, el estado, el canal de origen, el reportante, las marcas temporales de ingreso y persistencia, y los indicadores de latencia end-to-end y de latencia anómala, con sus tipos y campos de solo lectura. El detalle exhaustivo de atributos, tipos y ejemplos reside en docs/openapi.json.
-E. Configuración del flujo N8N La exportación del flujo de orquestación en formato JSON incluye la totalidad de los 32 nodos configurados, sus parámetros operativos, las credenciales referenciadas mediante identificadores opacos sin exposición de valores, y los conectores entre nodos. El archivo n8n/workflow.json contiene esta exportación. La importación de este artefacto en una instancia limpia de N8N 2.11.2 reproduce íntegramente el comportamiento operativo del sistema, sujeta únicamente a la provisión de las credenciales correspondientes a los servicios exter-
+E. Configuración del flujo N8N La exportación del flujo de orquestación en formato JSON incluye la totalidad de los 32 nodos configurados, sus parámetros operativos, las credenciales referenciadas mediante identificadores opacos sin exposición de valores, y los conectores entre nodos. El archivo n8n/workflow.json contiene esta exportación. La importación de este artefacto en una ins-
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 104
 
-nos integrados (servidor IMAP de correo, cuenta Twilio y clave de API de Gemini) mediante el sistema de credenciales nativo de la plataforma.
+tancia limpia de N8N 2.11.2 reproduce íntegramente el comportamiento operativo del sistema, sujeta únicamente a la provisión de las credenciales correspondientes a los servicios externos integrados (servidor IMAP de correo, cuenta Twilio y clave de API de Gemini) mediante el sistema de credenciales nativo de la plataforma.
 La Figura 11 presenta una reconstrucción esquemática del flujo, derivada de la exportación JSON y agrupada por etapa funcional. Los 29 nodos operativos (más 3 notas adhesivas, 32 nodos en total) se organizan en siete etapas: entrada (triggers), con la recepción de correo por IMAP y los disparadores de telefonía, formulario web y notificación de clasificación; validación y normalización de la información de entrada, incluida la marca de canal y el sellado de ingreso; envío al backend, con la autenticación del operador y la solicitud POST del incidente; ruteo por canal de origen; revisión humana, con la notificación al operador designado y las respuestas de handoff; respuesta y auditoría del ticket; y aviso post-revisión. La parametrización completa de cada nodo reside en n8n/workflow.json.
 
 Figura 11. Reconstrucción esquemática del flujo de orquestación N8N: no es una captura de la interfaz; los 29 nodos operativos se agrupan por etapa funcional.
-F. Corpus de validación El corpus de 200 incidentes utilizado para la validación experimental reside en el repositorio en formato JSON, en su forma pseudonimizada y versionada, bajo la ruta data/corpus_evaluacion_p Cada caso incluye el identificador anónimo, la descripción cruda pseudonimizada, el canal de origen, el sector asignado por consenso humano, los sectores adicionales de verdad y el tiempo de registro medido en cada flujo. La categoría predicha por el clasificador y la confianza
+F. Corpus de validación El corpus de 200 incidentes utilizado para la validación experimental reside en el repositorio en formato JSON, en su forma pseudonimizada y versionada, bajo la ruta data/corpus_evaluacion_p Cada caso incluye el identificador anónimo, la descripción cruda pseudonimizada, el canal de
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 105
 
-asociada no forman parte del corpus: se conservan en evaluation/predicciones.json, generado por el framework de evaluación. Se incluyen además las planillas de cronometraje del flujo manual y los registros automáticos generados por el flujo automatizado.
+origen, el sector asignado por consenso humano, los sectores adicionales de verdad y el tiempo de registro medido en cada flujo. La categoría predicha por el clasificador y la confianza asociada no forman parte del corpus: se conservan en evaluation/predicciones.json, generado por el framework de evaluación. Se incluyen además las planillas de cronometraje del flujo manual y los registros automáticos generados por el flujo automatizado.
 Cada uno de los 200 casos del corpus se compone de siete campos: id (identificador anónimo, por ejemplo R001), descripcion (texto pseudonimizado, con los identificadores personales reemplazados por etiquetas genéricas como [EMAIL], [TELEFONO], [HOST] y [PERSONA]), canal_origen (correo electrónico, formulario web o llamada telefónica), sector_asignado (sector principal de verdad, exactamente uno de los cinco sectores canónicos), sectores_adicionales (sectores de verdad complementarios, sin repetir el asignado), tiempo_manual_s (tiempo de clasificación manual, en segundos) y tiempo_automatizado_s (tiempo del sistema automatizado, en segundos). El corpus completo reside en data/corpus_evaluacion_ y las predicciones del clasificador en evaluation/predicciones.json.
 Por razones de privacidad y en cumplimiento de la Ley 25.326 (Honorable Congreso de la Nación Argentina, 2000), las descripciones textuales han sido pseudonimizadas previamente a su inclusión en el repositorio público, reemplazando nombres propios, direcciones de correo y otros identificadores personales por etiquetas genéricas.
 G. Documentación operativa La documentación operativa del sistema, que reúne los procedimientos de despliegue, configuración, respaldo y restauración, monitoreo y respuesta ante incidentes operativos, se versiona en el repositorio junto con el código fuente; el runbook operativo reside en docs/operational-guide.md.
 H. Especificación del prompt de Gemini 3.6 Flash Este anexo documenta la especificación del prompt enviado al modelo gemini-3.6-flash (Gemini 3.6 Flash en el texto) y los parámetros de configuración de la inferencia. El prompt se mantiene en el repositorio bajo docs/prompt_gemini.txt y es único para los tres canales de entrada.
-H.1. Estructura y contenido del prompt El prompt sigue una estructura fija en español organizada en cinco componentes fun-
-cionales y un conjunto de reglas de desambiguación: 1. Instrucción de rol: define que el modelo actúa como agente especializado en cla-
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 106
 
-sificación de incidentes técnicos en español rioplatense, lo que ancla el comportamiento en el dominio y el dialecto del estudio. 2. Definición de categorías: presenta los cinco sectores canónicos con sus strings exactos (sensibles a mayúsculas y sin tildes), un ámbito descriptivo por sector y un ejemplo representativo extraído del dominio real por cada uno. 3. Formato de respuesta: solicita un JSON válido con exactamente dos campos, categoría (uno de los cinco valores canónicos) y confianza (número entre 0,0 y 1,0), sin texto adicional, comentarios ni explicaciones. 4. Lógica de decisión: indica analizar la descripción y asignar una categoría única entre las cinco opciones; ante elementos de múltiples categorías, elegir la dominante. 5. Validación sintáctica: exige validar la corrección sintáctica del JSON antes de devolverlo y reducir la confianza cuando no sea posible clasificar con seguridad. 6. Reglas de desambiguación de frontera: las acciones sobre aplicaciones o sistemas operativos (acceder, iniciar sesión, abrir una aplicación) se orientan a Soporte Tecnico Software; los dispositivos físicos y su digitalización (escáner, impresora, periférico, error de digitalización) a Soporte Tecnico Hardware; y la infraestructura y los servicios de plataforma (servidor, red, SMTP, VM) a Sistemas. Estas reglas corrigen casos de frontera medidos sobre el corpus.
+H.1. Estructura y contenido del prompt El prompt sigue una estructura fija en español organizada en cinco componentes fun-
+cionales y un conjunto de reglas de desambiguación: 1. Instrucción de rol: define que el modelo actúa como agente especializado en clasificación de incidentes técnicos en español rioplatense, lo que ancla el comportamiento en el dominio y el dialecto del estudio. 2. Definición de categorías: presenta los cinco sectores canónicos con sus strings exactos (sensibles a mayúsculas y sin tildes), un ámbito descriptivo por sector y un ejemplo representativo extraído del dominio real por cada uno. 3. Formato de respuesta: solicita un JSON válido con exactamente dos campos, categoría (uno de los cinco valores canónicos) y confianza (número entre 0,0 y 1,0), sin texto adicional, comentarios ni explicaciones. 4. Lógica de decisión: indica analizar la descripción y asignar una categoría única entre las cinco opciones; ante elementos de múltiples categorías, elegir la dominante. 5. Validación sintáctica: exige validar la corrección sintáctica del JSON antes de devolverlo y reducir la confianza cuando no sea posible clasificar con seguridad. 6. Reglas de desambiguación de frontera: las acciones sobre aplicaciones o sistemas operativos (acceder, iniciar sesión, abrir una aplicación) se orientan a Soporte Tecnico Software; los dispositivos físicos y su digitalización (escáner, impresora, periférico, error de digitalización) a Soporte Tecnico Hardware; y la infraestructura y los servicios de plataforma (servidor, red, SMTP, VM) a Sistemas. Estas reglas corrigen casos de frontera medidos sobre el corpus.
 H.2. Parámetros de configuración La invocación del modelo se realiza mediante el SDK google-genai (>=2.20.0),
 con los hiperparámetros que resume la Tabla 19, que corresponden a la configuración adoptada para el despliegue y no al resultado de una calibración documentada frente a valores alternativos (Subsección 5.4).
 H.3. Validación de la respuesta Antes de aceptar la respuesta del modelo, el módulo de clasificación valida que el
-texto sea JSON parseable, que contenga exactamente las claves categoría y confianza, que la categoría sea uno de los cinco valores canónicos y que la confianza sea un número en el intervalo [0,0, 1,0]. Si cualquiera de estas condiciones falla, se registra la excepción, se asigna confianza 0,0, se marca el incidente para revisión humana y no se propagan estados inconsistentes a la base de datos. Este procedimiento garantiza la confiabilidad operativa frente a errores de formato o alucinaciones del modelo. El Listado 1 resume la rutina de validación.
+texto sea JSON parseable, que contenga exactamente las claves categoría y confianza,
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
@@ -2391,6 +2392,16 @@ google-genai >=2.20.0
 Valor bajo que reduce la variabilidad de la generación y mejora la consistencia en tareas de clasificación determinística. Nucleus sampling que admite variantes léxicas válidas en español rioplatense sin sacrificar coherencia. Límite suficiente para la respuesta JSON, con margen ante variaciones y sin truncamiento. Respuesta única sin remuestreo, que acota la latencia del procesamiento en tiempo real. Desactiva filtros que podrían rechazar descripciones legítimas de incidentes, manteniendo los filtros contra contenido verdaderamente tóxico. Límite de latencia por intento del backend al modelo (hasta dos reintentos ante fallas transitorias, dentro de un presupuesto total de 60 segundos por clasificación; no son reintentos de N8N al backend); al agotarse, el clasificador devuelve confianza 0,0 y marca el caso para revisión humana. Confianza mínima de una respuesta del modelo para no marcarla para revisión; no se aplica a la etapa determinística (Subsección 5.5). Versión vigente al momento del estudio, documentada para reproducibilidad.
 
 Fuente: elaboración propia a partir de la documentación del SDK google-genai.
+
+que la categoría sea uno de los cinco valores canónicos y que la confianza sea un número
+
+en el intervalo [0,0, 1,0]. Si cualquiera de estas condiciones falla, se registra la excepción, se
+
+asigna confianza 0,0, se marca el incidente para revisión humana y no se propagan estados
+
+inconsistentes a la base de datos. Este procedimiento garantiza la confiabilidad operativa frente
+
+a errores de formato o alucinaciones del modelo. El Listado 1 resume la rutina de validación.
 
 1 def validar_respuesta_gemini(response_text: str) -> tuple[bool, dict]:
 
@@ -2438,6 +2449,10 @@ return False, {"error": "Falta campo 'confianza'"}
 
 if not isinstance(data["confianza"], (int, float)) \
 
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+108
+
 13
 
 or not (0.0 <= data["confianza"] <= 1.0):
@@ -2452,20 +2467,19 @@ return True, data
 
 Listing 1. Validación de la respuesta de Gemini (resumen).
 
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-108
-
 H.4. Iteración y mejora del prompt El prompt de la versión evaluada se ajustó de forma iterativa a partir de errores obser-
 vados en el corpus de validación; no se dispuso de un corpus independiente de preproducción. Las versiones históricas del prompt se conservan en el historial de versiones del repositorio (archivo docs/prompt_gemini.txt) para auditoría y eventual reversión.
 H.5. Recomendaciones para futuras iteraciones Ante una degradación de las métricas por cambios en el modelo, se recomienda pro-
 fundizar los ejemplos por clase (de dos a cuatro o cinco), agregar contraejemplos de incidentes limítrofes, especificar umbrales de confianza explícitos, incluir un diccionario de términos clave por categoría y, una vez acumulado un corpus del orden de 5.000 casos etiquetados (referencia indicativa de orden de magnitud, no derivada del corpus actual ni de un cálculo de potencia estadística), migrar a un modelo ajustado específicamente al dominio.
-I. Trazabilidad de las correcciones del dictamen El registro de correcciones derivado del dictamen evaluador se conserva como artefacto versionado en el repositorio, bajo la ruta docs/Tesis/Correcciones/dictamen-correcciones.md. El documento compila, de forma acumulativa, cada corrección aplicada al manuscrito y las decisiones adoptadas sobre las observaciones que no admitían una resolución inmediata (por ejemplo, la convención estadística del estadístico W, la reformulación de la hipótesis principal y el tratamiento de los reintentos como limitación conocida). Se incluye aquí como ejemplo de trazabilidad: cada entrada del registro vincula una observación del dictamen con el archivo y la línea corregidos, de modo que la correspondencia entre la revisión solicitada y la revisión efectuada resulte auditable de extremo a extremo. El dictamen que motiva las correcciones vigentes es el emitido el 22 de octubre de 2026 sobre la versión de trabajo v10, publicada como v1.1.0 y aplicable por igual a v1.1.1. Sus cinco observaciones de fondo (A1 a A5) y sus correcciones de consistencia (B4 a B16) se atendieron mediante changes del repositorio; la Tabla 20 indica, para cada una, el change responsable y las secciones de la tesis donde se la atendió. Cuando una recomendación se dividió en partes, figuran los changes que las atendieron.
+I. Trazabilidad de las correcciones del dictamen El registro de correcciones derivado del dictamen evaluador se conserva como artefacto versionado en el repositorio, bajo la ruta docs/Tesis/Correcciones/dictamen-correcciones.md. El documento compila, de forma acumulativa, cada corrección aplicada al manuscrito y las decisiones adoptadas sobre las observaciones que no admitían una resolución inmediata (por ejemplo, la convención estadística del estadístico W, la reformulación de la hipótesis principal y el tratamiento de los reintentos como limitación conocida). Se incluye aquí como ejemplo de trazabilidad: cada entrada del registro vincula una observación del dictamen con el archivo y la línea corregidos, de modo que la correspondencia entre la revisión solicitada y la revisión efectuada resulte auditable de extremo a extremo. El dictamen que motiva las correcciones vigentes es el emitido el 22 de octubre de 2026 sobre la versión de trabajo v10, publicada como v1.1.0 y aplicable por igual a v1.1.1. Sus cinco observaciones de fondo (A1 a A5) y sus correcciones de consistencia (B4 a B16) se atendieron mediante changes del repositorio; la Tabla 20 indica, para cada una, el change
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 109
 
+responsable y las secciones de la tesis donde se la atendió. Cuando una recomendación se
+
+dividió en partes, figuran los changes que las atendieron.
 Tabla 20. Recomendaciones del dictamen del 22 de octubre de 2026, change responsable y secciones donde se atendieron.
 
 Rec. Change
