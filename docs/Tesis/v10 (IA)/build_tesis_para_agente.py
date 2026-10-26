@@ -3,31 +3,24 @@
 
 Determinista: no reinterpreta texto, solo traduce la notacion LaTeX mas comun a
 Markdown. Preserva los valores numericos verbatim.
+
+Uso (desde cualquier carpeta; la release es un argumento obligatorio):
+
+    python "docs/Tesis/v10 (IA)/build_tesis_para_agente.py" <release> > tesis_para_agente.md
+
+El script falla si falta la release o si su lista ORDER de secciones difiere del
+orden de los \\input{sections/...} de paper/main.tex.
 """
 import re
 import sys
 import pathlib
-import subprocess
 
 WORKING_VERSION = "v10"
-FALLBACK_RELEASE = "v1.1.1"
 
-
-def detect_release() -> str:
-    """Release vigente: ultimo tag de git; si no hay repo o tag, usa el fallback."""
-    try:
-        out = subprocess.run(
-            ["git", "describe", "--tags", "--abbrev=0"],
-            capture_output=True, text=True, check=True,
-        ).stdout.strip()
-        if out:
-            return out
-    except (subprocess.CalledProcessError, FileNotFoundError, OSError):
-        pass
-    return FALLBACK_RELEASE
-
-BASE = pathlib.Path("docs/Tesis/v10 (IA)/paper/sections")
-# Orden de inclusion segun main.tex (11-antecedentes-legales va antes de 07-resultados)
+AQUI = pathlib.Path(__file__).resolve().parent
+MAIN_TEX = AQUI / "paper" / "main.tex"
+BASE = AQUI / "paper" / "sections"
+# Orden de inclusion segun main.tex (11-aspectos-legales va antes de 07-resultados)
 ORDER = [
     "00-portada.tex",
     "00-resumen.tex",
@@ -202,26 +195,61 @@ def convert_inline(text: str) -> str:
     return text
 
 
-def main():
-    parts = []
-    for name in ORDER:
-        p = BASE / name
-        raw = p.read_text(encoding="utf-8")
-        t = strip_comments(raw)
-        t = convert_envs(t)
-        t = convert_inline(t)
-        parts.append(t.strip())
-    body = "\n\n".join(parts)
-    body = re.sub(r"\n{3,}", "\n\n", body)
-    release = detect_release()
-    header = (
+INPUT_RE = re.compile(r"^\\input\{sections/([^}]+)\}")
+
+
+def leer_inputs(main_tex: pathlib.Path) -> list:
+    """Nombres de las secciones incluidas por main.tex, en orden (ignora comentarios)."""
+    nombres = []
+    for linea in main_tex.read_text(encoding="utf-8").splitlines():
+        m = INPUT_RE.match(strip_comments(linea).strip())
+        if m:
+            nombres.append(m.group(1))
+    return nombres
+
+
+def verificar_orden(main_tex: pathlib.Path) -> None:
+    """Falla si ORDER difiere del orden de los \\input de main.tex."""
+    inputs = leer_inputs(main_tex)
+    if inputs != ORDER:
+        raise ValueError(
+            "ORDER difiere del orden de los \\input de main.tex: "
+            f"ORDER={ORDER} main.tex={inputs}"
+        )
+
+
+def construir_encabezado(release: str) -> str:
+    return (
         f"# Tesis UTN-FRM 2026 - Tesis para agentes ({WORKING_VERSION} / {release})\n\n"
         "> Documento generado a partir de las fuentes LaTeX de `docs/Tesis/v10 (IA)/paper/sections/` "
         f"(version de trabajo {WORKING_VERSION}, release `{release}`). Render Markdown de referencia para agentes. "
         "Los valores numericos son verbatim de las fuentes.\n\n---\n\n"
     )
-    sys.stdout.write(header + body + "\n")
+
+
+def renderizar_cuerpo() -> str:
+    """Convierte las secciones de ORDER y las concatena."""
+    parts = []
+    for name in ORDER:
+        raw = (BASE / name).read_text(encoding="utf-8")
+        parts.append(convert_inline(convert_envs(strip_comments(raw))).strip())
+    return re.sub(r"\n{3,}", "\n\n", "\n\n".join(parts))
+
+
+def main(argv=None) -> int:
+    argv = sys.argv[1:] if argv is None else argv
+    if len(argv) != 1:
+        sys.stderr.write("uso: build_tesis_para_agente.py <release>  (la release es obligatoria)\n")
+        return 2
+    release = argv[0]
+    try:
+        verificar_orden(MAIN_TEX)
+    except ValueError as e:
+        sys.stderr.write(f"error: {e}\n")
+        return 1
+    sys.stdout.write(construir_encabezado(release) + renderizar_cuerpo() + "\n")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
