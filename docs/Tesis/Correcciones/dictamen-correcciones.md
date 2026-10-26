@@ -925,6 +925,7 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 | `+c-138` (`change/c-138-estado-del-arte-calibracion-y-cascadas`) | sin commit (lo crea el orquestador) | 108 | 100 | 8 | +3 | +3 | (a) total <= 101 | Medido: `abspage@last{108}`; `Anexos` en p. 101; brecha frente a 101: +7; rama (b): cuerpo 100, margen 0 |
 | `+c-136` (`change/c-136-recomendaciones-lineas-faltantes`) | sin commit (lo crea el orquestador) | 108 | 100 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{108}`; `Anexos` en p. 101; brecha frente a 101: +7; rama (b): cuerpo 100, margen 0 (el capitulo de recomendaciones ya ocupaba 5 paginas, 89 a 93, con unas 21 lineas libres en la ultima; el agregado neto las consume y no abre una sexta) |
 | `+c-135` (`change/c-135-cronologia-y-consistencia-redaccional`) | sin commit (lo crea el orquestador) | 108 | 100 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{108}`; `Anexos` en p. 101; brecha frente a 101: +7; rama (b): cuerpo 100, margen 0 (la figura del cronograma va al Anexo A porque el capitulo 6 no tenia holgura: en 6.6 habria dado 109 o 110) |
+| `+c-139` (`change/c-139-correspondencia-texto-fuente-y-metadatos`) | sin commit (lo crea el orquestador) | 109 | 101 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{109}`; `Anexos` en p. 102; brecha frente a 101: +8; rama (b): cuerpo 101, margen -1 (cuerpo neutral: Referencias bibliograficas empieza en la p. 94 antes y despues; la bibliografia pasa de 7 a 8 paginas por las 8 entradas nuevas y los metadatos; la primera compilacion dio 111 y los recortes dentro de los parrafos editados recuperaron 2 paginas del cuerpo; palancas tipograficas para c-141) |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -1983,3 +1984,127 @@ Detalle por celda en `extraccion-metricas-trabajos-c-135.md`. Revina 2020: exact
 `git checkout <commit-previo> -- "docs/Tesis/v10 (IA)/paper/sections" docs/Tesis/Correcciones/dictamen-correcciones.md docs/Tesis/Correcciones/conteos-canonicos-tecnicos.md`, `git rm` de `docs/diagrams/cronograma.md`, `paper/figures/cronograma.png` y `docs/Tesis/Correcciones/extraccion-metricas-trabajos-c-135.md`, y recompilar.
 
 **Estado**: grupo aplicado (34 de 35 tareas; la 5.2 queda abierta por OQ-1).
+
+## Dictamen v1.1.0 - A4, B15 y B16 (c-139) - Correspondencia texto-fuente y metadatos
+
+**Origen**: change `c-139-correspondencia-texto-fuente-y-metadatos` (dictamen CONEAU 2026-10-22: observacion 4 / recomendacion A4, correcciones B15 y B16). Aplicado el **2026-10-25** en la rama `change/c-139-correspondencia-texto-fuente-y-metadatos`, cortada de `ramagonzalo` en `69a9b34` (merge de c-135). Posicion 11 del orden de la familia (G0.6). Documental y bibliografico; un bloque TDD estricto sobre `verify_citations.py` (gobernanza LOW). Ningun numero canonico cambia.
+
+### Open Questions del design - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+
+| Open Question | Decision PROVISIONAL (del orquestador) | Efecto |
+|---|---|---|
+| OQ1 - cifras de Paramesh y Shreedhara | **Rama B** (sin acceso al texto completo; no se descargaron copias no autorizadas) | Se retiran 10.000 tickets, "ingles", TF-IDF como representacion y 87 % de los cinco sitios; la fila de `tab:trabajos-academicos` declara "no reportado en el alcance revisado"; el primer criterio del umbral del 85 % (`01:48`) deja de tener ancla numerica |
+| OQ2 - ISO/IEC 27701 | **Edicion 2025** (la 2019 figura retirada el 2025-10-14 en el IEC Webstore) | `ISO27701_2025`; `11:40` dice "la norma de gestion de la privacidad ISO/IEC 27701:2025" |
+| OQ3 - Russell y Norvig | **2021** (ano de copyright, criterio D8) | Sin cambio de la entrada; el 2020 del dictamen es la fecha de puesta en venta |
+| OQ4 - alcance adicional | **Incluidos**: FastAPI (Ramirez), RGPD con URL, y las precisiones de `11:44` y `11:68` | Ver B16 y B15 |
+| OQ5 - paginas | Palanca tipografica **reservada para c-141**; criterio de c-139: cuerpo neutral (D13) | El preambulo no se edita; la bibliografia crece |
+
+### Precondiciones y linea base (tareas 1.1 a 1.3)
+
+- Predecesores aplicados (`openspec list`: c-130, c-131, c-132, c-133, c-134, c-136, c-138 y c-142 completos; c-135 con la tarea 5.2 abierta; ninguno archivado). c-138 no se aplicaba en paralelo. c-138 ya inserto las fuentes de calibracion (Guo, Zhao, Tian, Xiong): **no se dejo ancla `% [c-138]`** (0 lineas).
+- `verify_citations.py` antes: PASS, 65 entradas, "65 <-> 92 unique citation keys" (rotulo erroneo: suma por archivo). `main.bib`: 65 entradas.
+- Paginas antes: **108** (cuerpo 100, anexos 8; `Anexos` en p. 101). "Referencias bibliograficas" empieza en la **p. 94**, la bibliografia ocupa las p. 94-100 y su ultima pagina llega a la fila 21 de ~36 de `pdftotext -lineprinter` (unas 15 filas libres); la ultima pagina del cuerpo (p. 93) esta llena (fila 36). Ultima pagina por capitulo (fila de la ultima linea no vacia): cap. 2 p. 25 fila 39; cap. 3 p. 31 fila 39 (sin holgura).
+
+### Tabla D15 - A4: hallazgo, fuente, evidencia y frase aplicada
+
+Nivel de evidencia: TC = texto completo leido; R = resumen de la pagina del editor o de ACL Anthology; F = ficha oficial; S = fuente secundaria.
+
+| Id / sitio (clave) | Atribucion previa | Lo que la fuente sostiene | Evidencia (URL, nivel) | Correccion aplicada |
+|---|---|---|---|---|
+| T1 `02:46` `xuan2025mmluprox` | "documentan ... que la calibracion depende del modelo y del dominio" | Benchmark de rendimiento multilingue (29 idiomas, 36 modelos); no trata calibracion (0 apariciones de "calibrat" en el texto) | https://aclanthology.org/2025.emnlp-main.79/ (R); https://arxiv.org/pdf/2503.10497 (TC) | **Frase principal**: oracion retirada; definicion y frase del gate intactas; sin ancla (c-138 ya aplicado) |
+| T2 `02:50` Xuan, Lai, Zhang, Grandury, Mayor-Rocher | Zhang "no generalizan homogeneamente fuera del ingles"; Grandury y Mayor-Rocher "diferencias atribuibles al dialecto" | Xuan: caida marcada en idiomas de bajos recursos. Lai: ajuste por instrucciones de LLM abiertos concentrado en ingles y pocos idiomas. Zhang: alternancia de codigo; rinden por debajo de modelos ajustados mucho mas pequenos. Grandury: tabla abierta, 66 conjuntos, 50 modelos, variedades del espanol y lenguas de Espana y America Latina. Mayor-Rocher: TELEIA; comprenden bien el espanol, lejos de la competencia gramatical nativa | https://aclanthology.org/2025.emnlp-main.79/, https://aclanthology.org/2023.emnlp-demo.28/, https://aclanthology.org/2023.emnlp-main.774/, https://aclanthology.org/2025.acl-long.1561/, https://academic.oup.com/applij/advance-article/doi/10.1093/applin/amag048/8789841 (todas R; Mayor-Rocher coincide con Crossref) | **Frase principal** de D3 (acortada para la pagina) |
+| T3 `02:44` `ahuja2023mega`, `lai2023okapi` | MEGA y Okapi "evidencian que la seleccion de ejemplos, su orden y la redaccion ... modifican el rendimiento de manera sustancial" | MEGA compara prompting monolingue, cross-lingual zero-shot y translate-test; translate-test mejora a menudo, con ganancias "substantial" en idiomas de pocos recursos y similar en los de muchos; el orden y la seleccion de ejemplos los cita como trabajo previo (Zhao et al., 2021), no los estudia (usa ejemplos aleatorios). Okapi no trata sensibilidad al prompt | https://arxiv.org/pdf/2303.12528 secciones 2.3.1 y 3.1 (TC) | **Atenuada**: "la estrategia elegida puede modificar el rendimiento de manera sustancial, sobre todo en idiomas con pocos recursos"; Lai sale de esta frase; orden y seleccion de ejemplos retirados |
+| T4 `02:48` `colavito2025benchmarking` | "muestran que el etiquetado automatico requiere validacion ... no puede aceptarse sin control" | LLM generativos: desempeno que "varies significantly across datasets" y costo computacional; BERT ajustados, consistentes | https://conf.researchr.org/details/esem-2025/esem-2025-journal-first-track/2/Benchmarking-large-language-models-for-automated-labeling-The-case-of-issue-report-c (R, listado ESEM 2025; ScienceDirect y ricerca.uniba.it devuelven 403) | **Frase principal**: la cita respalda la premisa (variacion entre conjuntos); la conclusion queda como inferencia de los autores ("Esta exigencia motiva ...") |
+| T5 `02:52` Xuan, Ahuja | "combinan multiples tareas y reportan resultados desagregados" | MMLU-ProX: 14 disciplinas, resultados por idioma; MEGA: 16 conjuntos, 70 idiomas, por idioma | arXiv 2503.10497 y 2303.12528 (TC) | **Precision aplicada**: "abarcan multiples tareas o disciplinas y reportan resultados desagregados por idioma" |
+| T6 `02:38` `Jurafsky2023_speech_language` | "sistematizan la disciplina en torno a tres ejes principales" | El indice de la version del 19-08-2026 (Vol. I: n-gramas, embeddings, redes neuronales, Transformers) no enuncia "tres ejes" | https://web.stanford.edu/~jurafsky/slp3/ (TC del indice) | **Atenuada**: "abordan, entre otros temas, el modelado estadistico de secuencias, la representacion distribuida de palabras y las arquitecturas neuronales profundas" (se retira "comprension semantica", que el indice no sostiene) |
+| T7 `03:30` `Revina2020_it_tickets` | "Un hallazgo ... los modelos preentrenados pueden rendir peor en este dominio" | Sec. II: los word embeddings "are not applicable in our study" por tres razones (vocabulario del dominio, corpus limitado, explicabilidad): decision de diseno, no resultado medido. Sec. IV.A: expertos etiquetaron 30 y 60 tickets (Data1 y Data2). Conclusion: algoritmos simples con rasgos linguisticos logran buena prediccion | https://depositonce.tu-berlin.de/items/93f30592-198d-48d3-9b05-e36bfc914f6d/full (copia de acceso abierto, TC) | **Frase principal**; ademas "competitivos o superiores" pasa a "competitivos", "Con 30 y 60 tickets etiquetados" (matiz pedido por c-135) y la cola del parrafo se reemplaza por una remision a `subsec:comparacion-literatura` (el argumento ya se enuncia alli; compensa paginas) |
+| T8 `03:32` `paket2024itservice`, `colavito2025benchmarking` | "confirma el desplazamiento hacia LLM" | Paket: BERT supera a Titan, Llama y Mistral en 172 clases en turco. Colavito: BERT ajustados mas consistentes y menos costosos que LLM zero-shot | resumen de Paket via OpenAlex https://api.openalex.org/works/doi:10.1109/UBMK63289.2024.10773473 (R; IEEE Xplore no accesible) y listado ESEM (R) | **Frase principal** (acortada) |
+| T9 `03:56` | Lai y Zhang en "favorecen a los idiomas con mas recursos" | Lai y Zhang no sostienen esa afirmacion; Ahuja y Xuan si | resumenes citados arriba | Agrupamiento reducido a `ahuja2023mega, xuan2025mmluprox`; las oraciones de Grandury, Mayor-Rocher, Bernal-Beltran y Ramon-Ferrer se conservan |
+| T10 `08:30` | "resultan consistentes con los reportados" (contradice "por debajo" de la oracion siguiente) | - | - | **Aplicada**: "se contrastan a continuacion con los reportados"; Revina acortado (argumento solo en `08:34`) |
+| T11 `08:34` `Revina2020_it_tickets` | "observan que los modelos preentrenados pueden degradarse" | Ver T7 | Ver T7 (TC) | **Frase principal**: "excluyen por diseno ... lo que desaconseja suponer" |
+| T12 `10:14` `Touvron2023_llama2` | "sugieren que los LLM desplegados localmente alcanzan rendimientos competitivos en clasificacion" | Touvron et al. no evaluan clasificacion de tickets; aporta la disponibilidad de pesos abiertos. Paket: BERT supera a Llama y Mistral | resumen de Paket (R) | **Frase principal** (se corrige tambien "hacia") |
+| T13 `01:66` `zangari2023ticket`, `colavito2025benchmarking` | "corpus en ingles y, en menor medida, aleman o portugues" | El resumen de Zangari no nombra idiomas; el de Colavito habla de issues de GitHub sin idioma. Ninguna fila vigente de `tab:trabajos-academicos` declara un corpus en espanol (Paramesh: no reportado; Revina: ingles predominante; Zangari: no reportado; Paket: turco; Liu: no reportado; Colavito: sin idioma) | tabla vigente tras c-135 | **Frase principal**: anclada en `\autoref{tab:trabajos-academicos}`; Zangari y Colavito salen de la oracion (siguen citados en el cap. 3) |
+| T14 `08:38` | "menor cobertura del espanol ... ingles o aleman" sin cita | Lai: ajuste concentrado en ingles; Xuan: caida en idiomas de menos recursos. Ninguna fuente reporta desempeno en aleman | resumenes (R) | **Frase principal**: cita `lai2023okapi, xuan2025mmluprox`; "aleman" retirado; la cifra propia y la atribucion al esquema multietiqueta no se tocan |
+| Paramesh `01:48`, `03:28`, `03:44`, `08:30`, `08:32` `Paramesh2019_it_service_desk` | 10.000 tickets, ingles, TF-IDF, 87 %, "uno de los primeros trabajos exhaustivos" | El resumen (Springer) compara NB multinomial, regresion logistica, kNN y SVM sobre tickets reales no estructurados de una mesa de servicio de infraestructura de TI; "classifier based on SVM performed well on all data samples". TF-IDF solo figura como palabra clave. Sin tamano, idioma ni exactitud. Autoria Paramesh y Shreedhara (Springer y Crossref); "Paramesh y Ramya" es un error de denominacion del dictamen | https://link.springer.com/chapter/10.1007/978-981-13-2514-4_28 (R) | **Rama B** (OQ1): cinco sitios corregidos segun D4; **atenuacion**: el resumen no dice que SVM supere explicitamente a los otros, asi que se escribe "buen desempeno de SVM en todas las muestras" y no "mejor desempeno" |
+
+### B15 - entradas nuevas (tareas 5.1 a 5.5; verificacion del 2026-10-25)
+
+| Clave | Evidencia (URL, nivel) | Datos verificados |
+|---|---|---|
+| `ISO27001_2022` | https://webstore.iec.ch/en/publication/79694 (F) | ISO/IEC 27001:2022, ed. 3.0, 2022-10-25, titulo completo; Amd 1:2024 es publicacion aparte |
+| `ISO27002_2022` | https://webstore.iec.ch/en/publication/74287 (F) | ISO/IEC 27002:2022, ed. 3.0, 2022-02-15 |
+| `ISO27701_2025` | https://webstore.iec.ch/en/publication/110123 (F); https://webstore.iec.ch/en/publication/65597 (F) | ISO/IEC 27701:2025, ed. 2.0, 2025-10-14, "Privacy information management systems - Requirements and guidance"; la ficha de 2019 (ed. 1.0, 2019-08-05) figura **Withdrawn 2025-10-14** y remite a la 2025 |
+| `NIST2024_csf` | https://doi.org/10.6028/NIST.CSWP.29 -> 302 a https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.29.pdf (TC); Crossref | CSWP 29, 2024-02-26; sin `urldate` (DOI) |
+| `Decreto1558_2001` | http://servicios.infoleg.gob.ar/infolegInternet/verNorma.do?id=70368 y .../anexos/70000-74999/70368/norma.htm (200; F) | P.E.N., 29-nov-2001, B.O. 03-dic-2001, Reglamentacion de la Ley 25.326 |
+| `Wilcoxon1945_individual_comparisons` | doi.org/10.2307/3001968 -> 302 JSTOR; Crossref y OpenAlex (Biometrics Bulletin 1(6), 1945-12, primera pagina 80) | **Paginas 80-83: nivel S** (citas de Wikipedia, DocCheck y OrDB; JSTOR y UCL bloquean la consulta automatizada); Crossref solo registra p. 80 |
+| `Cohen1988_power_analysis` | Open Library `isbn/0805802835` (catalogo, LCCN 88012110): 2.a ed., 1988, L. Erlbaum Associates | Sin DOI (el de la reedicion 2013 no se usa) |
+| `Efron1993_bootstrap` | doi.org/10.1007/978-1-4899-4541-9 -> 302 Springer; Crossref: 1993, Springer US, ISBN 9780412042317 / 9781489945419 | Editorial Chapman & Hall (ISBN 0-412-04231-2) |
+
+Citas en el texto: `11:8` (decreto), `11:40` (las cuatro normas y marcos, primera mencion; ninguna en titulos, leyendas ni lineas de fuente), `04:71`, `04:75` y `04:87` (Wilcoxon, Efron y Tibshirani con `\textcite` para no encadenar dos parentesis, y Cohen); `Virtanen2020_scipy` sigue citada en `07`. Precisiones de OQ4: `11:44` ("controles de ISO/IEC 27002:2022, que corresponden al Anexo A de ISO/IEC 27001:2022"): el Anexo A de 27002:2022 trata atributos y el Anexo B la correspondencia con 2013 (S: SGS white paper sobre 27002:2022, https://www.sgs.com/-/media/sgscorp/documents/corporate/white-papers/sgs-kn-key-changes-in-iso-iec-27002-white-paper-en-(2).cdn.bg-BG.pdf; el indice oficial de ISO esta tras un control anti-bot); `11:68` ("escala propia del relevamiento"): CSWP 29 define Tiers 1 a 4 de rigor de la gestion del riesgo (Partial, Risk Informed, Repeatable, Adaptive) y no una escala de madurez 0 a 4 (TC).
+
+### B16 - metadatos (tareas 6.1 a 6.8)
+
+| Entrada | Antes | Despues | Evidencia |
+|---|---|---|---|
+| `Paramesh2019_it_service_desk` | `booktitle` = nombre de la serie | libro *Data Analytics and Learning: Proceedings of DAL 2018*, editores Nagabhushan, Guru, Shekar y Sharath Kumar, serie LNNS vol. 43, pp. 331-346, Springer | pagina de capitulo y de libro de Springer (R) |
+| `OGC2011_itil` | autor OGC; nota "por encargo del OGC" | autor Cabinet Office, TSO, ISBN 978-0-11-331307-5, sin nota | portadilla (Crown copyright, licencia del Cabinet Office) vista en un resultado de busqueda; Open Library y AbeBooks para el ISBN; un registro de la Union Africana con ISBN discrepante lista al OGC como autor corporativo (ver desvios) |
+| `Jurafsky2023_speech_language` | 2023, sin URL | 2026, URL, `urldate`, "Borrador de la 3.a edicion, version del 19 de agosto de 2026", titulo con "... Speech Recognition with Language Models" | https://web.stanford.edu/~jurafsky/slp3/ (TC); la entrada se conserva `@unpublished` |
+| `Stallings2017_computer_security` | 2017 | **2018** | Pearson: "Published by Pearson (August 4, 2017) (c) 2018" (resultado de busqueda; la pagina de producto no es recuperable) |
+| `Date2003_database` | 2003 | **2004** | NII CiNii BA63430879 (c2004, LCCN 2003052442) |
+| `Russell2021_ai_modern` | 2021 | **2021** (sin cambio) | Pearson (c) 2021 (resultado de busqueda) y portadilla "Copyright 2021, 2010, 2003"; catalogo Libris (c)2021 (no recuperable); AIMA lista 2020 (puesta en venta) |
+| `liu2025tickit` | FSE | *FSE Companion '25*, Trondheim, Norway | Crossref (evento "FSE Companion '25 ... Trondheim Norway", pp. 343-354) |
+| `Tiangolo2024_fastapi` | "Tiangolo, Sebastian Ramirez" | Ramirez, Sebastian | perfil de GitHub (name), LICENSE y PyPI (author) |
+| `GDPR2016` | sin URL | URL ELI + `urldate` | CELEX 32016R0679 resuelve en publications.europa.eu al DO L 119, 4.5.2016; data.europa.eu redirige (307) a la URL ELI; EUR-Lex responde 202 (control anti-bot) |
+| Nueve `@manual`/`@misc` con URL | sin `urldate` | `urldate` 2026-10-25 (200 verificado: Airflow, n8n, PostgreSQL 15, FastAPI, 12factor, InfoLEG Ley 25.326, GitHub); `SEPyME2026_mipyme` (200, titulo coherente) y `APA2017` con 2026-10-19 tomada de su nota | `curl -m 40`; APA bloquea con Incapsula (no verificable desde esta maquina) |
+| Cinco `@online` y notas | fecha duplicada en la nota; `;` en notas | solo `urldate = {2026-10-19}`; notas sin fecha ni punto y coma (`APA2017`, `SEPyME2026_mipyme`, `mayorrocher2026spanish`) | render de la bibliografia (una sola fecha) |
+
+Comentario agregado al `.bib`: las claves conservan el ano historico (D8); el ano impreso es el de copyright.
+
+### verify_citations.py - TDD (bloque 7)
+
+- **Red de seguridad**: PASS, "65 bibliography entries <-> 92 unique citation keys" (rotulo erroneo; con 73 entradas y las citas nuevas el mismo defecto mostraba "73 <-> 117").
+- **RED**: `test_verify_citations.py` (`unittest`, co-ubicado) con el caso de claves compartidas; `python -m unittest test_verify_citations -v` -> `ImportError: cannot import name 'count_unique_cited_keys'` (FAILED, errors=1).
+- **GREEN**: `count_unique_cited_keys(file_keys) = len(set().union(*file_keys.values()))` y uso en "Total unique citation keys" y en el mensaje de PASS -> 1 prueba OK.
+- **TRIANGULATE**: claves disjuntas (3), diccionario vacio (0) y prueba de `main()` con `SECTIONS_DIR`/`BIB_FILE` temporales: "2 bibliography entries <-> 2 unique citation keys" y "Total unique citation keys: 2" -> 4 pruebas; la ultima asercion (rotulo de la suma por archivo) quedo en rojo a proposito (RED del refactor).
+- **REFACTOR**: la suma por archivo se informa como "Total key-file appearances" -> 4 pruebas OK. Salida final sobre la tesis: `73 bibliography entries <-> 73 unique citation keys match perfectly`, `Total key-file appearances: 117`, `Summary: 73 bib entries, 73 unique keys cited, 126 total citation commands`, `STATUS: PASS`.
+
+### Compilacion y paginas (bloque 8)
+
+- Docker `texlive-thesis` (`latexmk main.tex`, incluye `main.bbl`): `^!` = 0, `undefined` = 0, `main.blg` sin WARN/ERROR, "Found 73 citekeys" = 73 entradas del `.bib`, sin `(?`/`??` en el PDF.
+- **Paginas: antes 108 (cuerpo 100, anexos 8); despues `abspage@last{109}`; `Anexos` en p. 102: cuerpo 101, anexos 8; delta +1 / +1 / 0.** "Referencias bibliograficas" empieza en la **p. 94 antes y despues** (cuerpo neutral, D13 regla 1). Bibliografia: p. 94-100 antes (ultima fila 21) -> p. 94-101 despues (ultima fila 17): el desborde es de unas 17 filas. Brecha frente al tope provisional 101: **+8**; regla (b) (cuerpo <= 100): cuerpo 101, **margen -1**.
+- La primera compilacion dio 111 paginas (`Referencias` en p. 96: los capitulos 2 y 3 crecieron una pagina cada uno). Recortes aplicados dentro de los parrafos editados por c-139: frases de T2, T3, T7 y T8 acortadas; Paramesh (`03:28`) en dos lineas; cola del parrafo de Revina de `03:30` reemplazada por una remision (el argumento ya esta en `08:34`); fila de Paramesh de la tabla con celdas breves. Recortes de B16: fechas de consulta duplicadas de las cinco `@online`, nota de OGC y notas de `APA2017`/`SEPyME2026_mipyme`. Sin tocar el preambulo ni eliminar cifras, figuras o tablas.
+- **Palancas para c-141** (D13, no aplicadas): reducir `\bibitemsep` (73 entradas; unas 20 a 22 filas), `\renewcommand*{\bibfont}{\small}` (del orden de 0,8 paginas) o retirar las notas descriptivas de las cuatro `@manual` (2 a 4 filas). Con cualquiera de las dos primeras la bibliografia vuelve a 7 paginas y el cuerpo a 100.
+- Libro mayor (G0): fila `+c-139` agregada (109 / 101 / 8, delta +1 / +1).
+
+### Desvios respecto de la letra del dictamen o del design
+
+1. **ISO/IEC 27701:2025** en lugar de la 2019 retirada (OQ2, D6). Las fichas se verificaron en el **IEC Webstore** y las `url` de las tres normas apuntan alli (no a iso.org, que responde 403 con control anti-bot desde esta maquina; no se evadio); es el co-editor oficial de las normas ISO/IEC.
+2. **Russell y Norvig 2021** (OQ3).
+3. **Paramesh y Shreedhara**: autoria de Crossref y Springer (no "Paramesh y Ramya"); rama B (OQ1); redaccion atenuada a "buen desempeno de SVM en todas las muestras".
+4. ***Biometrics Bulletin*** (nombre de la revista hasta 1947), no *Biometrics*; paginas 80-83 con nivel S (pendiente de confirmar en JSTOR).
+5. **Cabinet Office** como autor de `OGC2011_itil` (D10): un registro de la biblioteca de la Union Africana lista al OGC para la edicion de 2011 de TSO, con un ISBN (9780113313068) que Open Library asigna a *Service Transition*; se priorizo la portadilla (Crown copyright, licencia del Cabinet Office) y la coherencia con `02:16`.
+6. **Jurafsky y Martin**: el titulo vigente de la pagina incluye "with Language Models" y el indice no sostiene "tres ejes"; T6 aplicada.
+7. T3 sin "Lai"; T7 con "competitivos" (no "competitivos o superiores"); T14 "reportado para el ingles" (interpretacion de los autores, respaldada por las fuentes de la misma oracion).
+8. Wilcoxon, Efron y Tibshirani se citan con `\textcite` en `04:75` para no encadenar parentesis.
+9. Hallazgos del registro del compilador (FastAPI, RGPD) y precisiones `11:44` y `11:68` incluidos (OQ4).
+10. No verificables desde esta maquina: ficha de ISO (403), `apa.org` (Incapsula), EUR-Lex (202), JSTOR (paginas), ScienceDirect/ricerca.uniba.it (403), IEEE Xplore (Paket, 418/vacio) y paginas de producto de Pearson; en cada caso se uso la fuente alternativa indicada y se atenuo.
+
+### Consignas para otros changes
+
+- **c-138**: sin ancla pendiente; la sugerencia de Zhao et al. (2021) ya estaba cubierta por c-138. Las seis claves de calibracion no se tocaron.
+- **c-133**: el primer criterio del umbral del 85 % ya no aporta un ancla numerica (rama B); `01:48` queda con la oracion de D4 y el resto del parrafo literal.
+- **c-137** (pasada de ortografia): quedan sin tocar, entre otros, "decada" y la tilde erronea del verbo "formula" en `02`, la tilde erronea de "hacia" en `11:8`, "evalue" en `03:56` y "erronea" en `01:48`.
+- **c-140**: nada de c-139 (independiente); `tesis_para_agente.md` no se regenero.
+- **c-141**: (1) fila `+c-139` = 109 / 101 / 8 y las palancas de D13 (arriba); (2) `Gomez2026_repositorio` lleva `urldate = 2026-10-25` con version 1.1.1: actualizar ambos al cambiar la version; (3) control de anclas `% [c-138]`: 0 en `02`; (4) control de T13: si `tab:trabajos-academicos` suma un trabajo con corpus en espanol, ajustar `01:66`; (5) regenerar `tesis_para_agente.md`; (6) confirmar con los autores las paginas de Wilcoxon (JSTOR) y la autoria de `OGC2011_itil`.
+
+### Lo que los autores deben confirmar
+
+1. Acceso institucional al capitulo de Paramesh y Shreedhara (OQ1): con el texto completo se pasa a la rama A (pagina por cifra).
+2. ISO/IEC 27701:2025 (OQ2), Russell y Norvig 2021 (OQ3), inclusion de FastAPI, RGPD y las precisiones de `11:44` y `11:68` (OQ4), palanca tipografica reservada (OQ5).
+3. Paginas 80-83 de Wilcoxon (1945) en JSTOR y autor corporativo de `OGC2011_itil` en un catalogo nacional.
+
+### Reversibilidad
+
+`git checkout <commit-previo> -- "docs/Tesis/v10 (IA)/paper/sections" "docs/Tesis/v10 (IA)/Bibliography_base.bib" "docs/Tesis/v10 (IA)/verify_citations.py" docs/Tesis/Correcciones/dictamen-correcciones.md`, eliminar `docs/Tesis/v10 (IA)/test_verify_citations.py` y recompilar. No se crean ni mueven tags.
+
+**Estado**: grupo aplicado (46 de 46 tareas).

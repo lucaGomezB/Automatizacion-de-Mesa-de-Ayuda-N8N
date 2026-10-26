@@ -8,5 +8,5 @@
 \contentsline {figure}{\numberline {7}{\ignorespaces Dashboard de analítica del panel de administración: tendencia temporal de incidentes, distribución por sector y distribución por estado.}}{62}{figure.caption.14}%
 \contentsline {figure}{\numberline {8}{\ignorespaces Distribución del tiempo de registro por canal de origen (manual frente a automatizado). El panel de telefonía incorpora la duración de la llamada grabada.}}{70}{figure.caption.19}%
 \contentsline {figure}{\numberline {9}{\ignorespaces Matriz de confusión del clasificador (\(n = 200\)). Filas: sector asignado (verdad); columnas: sector predicho principal.}}{71}{figure.caption.21}%
-\contentsline {figure}{\numberline {10}{\ignorespaces Cronograma de la construcción, las campañas y la versión del modelo (barras con precisión de mes; hitos, de día). Fuente: historial del repositorio y confirmación de los autores (9-10-2026).}}{102}{figure.caption.31}%
-\contentsline {figure}{\numberline {11}{\ignorespaces Reconstrucción esquemática del flujo de orquestación N8N}}{104}{figure.caption.32}%
+\contentsline {figure}{\numberline {10}{\ignorespaces Cronograma de la construcción, las campañas y la versión del modelo (barras con precisión de mes; hitos, de día). Fuente: historial del repositorio y confirmación de los autores (9-10-2026).}}{103}{figure.caption.31}%
+\contentsline {figure}{\numberline {11}{\ignorespaces Reconstrucción esquemática del flujo de orquestación N8N}}{105}{figure.caption.32}%
