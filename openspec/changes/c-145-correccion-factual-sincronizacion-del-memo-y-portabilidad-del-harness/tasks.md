@@ -70,17 +70,17 @@
 
 ## 7. Verificacion de contenido
 
-- [ ] 7.1 Verificar que no quedan valores retirados ni afirmaciones falsas: `grep -rn "16 tests\|omisión automática\|357 pruebas\|56 archivos\|OQ1 = A\|OQ2 = A\|6,74 %" "$TESIS/paper/sections/"` sin resultados en el cuerpo (el `6,74 %` puede aparecer solo en el memo como retirado).
-- [ ] 7.2 Verificar que las oraciones corregidas aparecen en el texto extraido despues de recompilar: `pdftotext -enc UTF-8 "$TESIS/paper/main.pdf" - | grep -c "48 pruebas"` >= 1; `grep -c "96/130"` >= 1; `grep -c "6,66"` >= 1; `grep -c "42,1"` >= 1.
-- [ ] 7.3 Ejecutar `cd evaluation && python3 -m pytest -q` y verificar 0 failed; registrar el conteo final.
+- [x] 7.1 Verificar que no quedan valores retirados ni afirmaciones falsas: `grep -rn "16 tests\|omisión automática\|357 pruebas\|56 archivos\|OQ1 = A\|OQ2 = A\|6,74 %" "$TESIS/paper/sections/"` sin resultados en el cuerpo (el `6,74 %` puede aparecer solo en el memo como retirado).
+- [x] 7.2 Verificar que las oraciones corregidas aparecen en el texto extraido despues de recompilar: `pdftotext -enc UTF-8 "$TESIS/paper/main.pdf" - | grep -c "48 pruebas"` >= 1; `grep -c "96/130"` >= 1; `grep -c "6,66"` >= 1; `grep -c "42,1"` >= 1.
+- [x] 7.3 Ejecutar `cd evaluation && python3 -m pytest -q` y verificar 0 failed; registrar el conteo final.
 
 ## 8. Compilacion de registro y tope de paginas
 
-- [ ] 8.1 Compilar en el entorno de registro: `MSYS_NO_PATHCONV=1 docker run --rm -v "<repo>/docs/Tesis/v10 (IA):/work" -w /work/paper texlive-thesis latexmk main.tex`. Verificar `grep -c "^!" main.log` = 0 y `grep -i undefined main.log` vacio.
-- [ ] 8.2 Verificar `grep -c "multiply defined" main.log` = 0; `grep -E "WARN|ERROR" "$TESIS/paper/main.blg"` vacio; `grep -c "^@" "$TESIS/Bibliography_base.bib"` = `grep -o "Found [0-9]* citekeys" "$TESIS/paper/main.blg"` (esperado 73); `cd "$TESIS" && python3 verify_citations.py` = `STATUS: PASS`; `pdftotext -enc UTF-8 "$TESIS/paper/main.pdf" - | grep -c "??"` = 0.
-- [ ] 8.3 **Tope de paginas (bloqueante):** medir `pdfinfo "$TESIS/paper/main.pdf" | grep Pages` y la pagina de `Anexos` en `main.toc`; calcular cuerpo = pagina de Anexos − 1. Registrar total, cuerpo y anexos en el ledger. **Si el cuerpo supera 100, la tarea FALLA y no se continua**: aplicar la palanca declarada en el design D9 (tipografia de la lista de referencias, `\footnotesize`, reversible), recompilar y volver a medir; si aun supera 100, detenerse y solicitar aprobacion explicita de un recorte documentado. Verificar que el cuerpo final es <= 100 y que la portada ocupa exactamente una pagina.
-- [ ] 8.4 Regenerar `tesis_para_agente.md` con `python "docs/Tesis/v10 (IA)/build_tesis_para_agente.py" v1.2.1 > "docs/Tesis/v10 (IA)/tesis_para_agente.md"` y los textos extraidos con `pdftotext -enc UTF-8` desde `paper/`. Verificar que el encabezado declara `v1.2.1` y que las oraciones corregidas aparecen en los renders.
-- [ ] 8.5 Verificar que cada `\includegraphics` de `sections/*.tex` resuelve y que `openspec/config.yaml` sigue apuntando a un archivo existente (`test -f "$(python3 -c '...')"` o lectura directa).
+- [x] 8.1 Compilar en el entorno de registro: `MSYS_NO_PATHCONV=1 docker run --rm -v "<repo>/docs/Tesis/v10 (IA):/work" -w /work/paper texlive-thesis latexmk main.tex`. Verificar `grep -c "^!" main.log` = 0 y `grep -i undefined main.log` vacio.
+- [x] 8.2 Verificar `grep -c "multiply defined" main.log` = 0; `grep -E "WARN|ERROR" "$TESIS/paper/main.blg"` vacio; `grep -c "^@" "$TESIS/Bibliography_base.bib"` = `grep -o "Found [0-9]* citekeys" "$TESIS/paper/main.blg"` (esperado 73); `cd "$TESIS" && python3 verify_citations.py` = `STATUS: PASS`; `pdftotext -enc UTF-8 "$TESIS/paper/main.pdf" - | grep -c "??"` = 0.
+- [x] 8.3 **Tope de paginas (bloqueante):** medir `pdfinfo "$TESIS/paper/main.pdf" | grep Pages` y la pagina de `Anexos` en `main.toc`; calcular cuerpo = pagina de Anexos − 1. Registrar total, cuerpo y anexos en el ledger. **Si el cuerpo supera 100, la tarea FALLA y no se continua**: aplicar la palanca declarada en el design D9 (tipografia de la lista de referencias, `\footnotesize`, reversible), recompilar y volver a medir; si aun supera 100, detenerse y solicitar aprobacion explicita de un recorte documentado. Verificar que el cuerpo final es <= 100 y que la portada ocupa exactamente una pagina.
+- [x] 8.4 Regenerar `tesis_para_agente.md` con `python "docs/Tesis/v10 (IA)/build_tesis_para_agente.py" v1.2.1 > "docs/Tesis/v10 (IA)/tesis_para_agente.md"` y los textos extraidos con `pdftotext -enc UTF-8` desde `paper/`. Verificar que el encabezado declara `v1.2.1` y que las oraciones corregidas aparecen en los renders.
+- [x] 8.5 Verificar que cada `\includegraphics` de `sections/*.tex` resuelve y que `openspec/config.yaml` sigue apuntando a un archivo existente (`test -f "$(python3 -c '...')"` o lectura directa).
 
 ## 9. Release `v1.2.1`
 
