@@ -137,8 +137,8 @@ general", sin calificar la meta no alcanzada.
   umbrales|no deja espacio"` en las secciones devuelve CERO coincidencias en el
   `.tex` vivo (residuo solo en `.tex.bak` trackeados, fuera de alcance).
 
-### P4. (a completar)
-Items restantes del dictamen a medida que el autor los provea.
+### P4. Sin observaciones pendientes al 2026-10-26
+El bloque P se cerro con P1 a P3. No existe material fuente que complete P4 y no se inventan observaciones: si el autor aporta nuevos items del dictamen, se agregan aqui con su procedencia. Estado: sin observaciones pendientes.
 
 ---
 
@@ -2738,3 +2738,51 @@ RESULT: 4/12 chequeos en PASS (8 en FAIL). Documentacion desincronizada.
 
   Los hallazgos nombran, como minimo: **"Gemini 2.5 Flash"** (chequeo 1), el **timeout de 10 s** (chequeo 2), **"FastAPI 0.115"** (chequeo 4), la **imagen de N8N** (`1.62` declarado frente a `n8nio/n8n:2.11.2`, chequeo 6), el **servicio Redis** (chequeo 7) y la **duplicacion de literales en `CLAUDE.md`** (chequeo 12: `0.5166`, `0.7`, `>= 1.0`, `2.5 Flash`, `1.62`). La barrera detecta el drift real: no sale 0.
 - **Asimetria esperada (chequeos 10 y 11 en PASS)**: los umbrales (`0.5166` y `0.70`) y las categorias de `config.yaml` ya coinciden con `Settings` y con `SECTORES_CANONICOS` en este punto (los corrigio el PR #40), de modo que los chequeos 10 y 11 **pasan desde el primer dia**. El valor a probar con 2.13 es que el chequeo **12** detecte la duplicacion de esos mismos valores en prosa dentro de `CLAUDE.md`, no que todo falle. Una barrera que solo falla donde el drift ya se conoce no agrega nada; la asimetria muestra que el chequeo nuevo (12) atrapa la duplicacion sin cobertura que dejaba pasar un cambio de umbral con el pipeline en verde. Los chequeos 3 (muestreo) y 9 (YAML valido) tambien pasan por el mismo motivo. El cierre de la barrera (exit 0 con la documentacion corregida) corresponde al bloque G y se registra en la tarea 10.6.
+
+### Sincronizacion del memo canonico (bloque B, tareas 4.1 a 4.5) - 2026-10-26
+
+- **4.1 Upsert del margen**: se agrega en `numeros-canonicos.md` (Seccion 3.4) la fila `6,66 %` con estado `vigente`, `N ≈ 2.646`, `z = 1,96`, `p = 0,5`, `n = 200`, formula `n = n₀/[1+(n₀−1)/N]` con `n₀ = z²p(1−p)/e²` y procedencia `04-marco-metodologico.tex:51`. Verificacion aritmetica: `n₀ = 216,52`; `216,52/[1+215,52/2646] = 200,21 ≈ 200`.
+- **4.2 Retiro del margen calendario**: se conserva la fila `6,74 %` / `N = 3.700` con estado `retirado` y nota de reemplazo por `6,66 %` / `N ≈ 2.646`; no se cita como vigente.
+- **4.3 Seccion 7 y `MEMO:732`**: el punto 2 y la advertencia de arrastre del item 4 ahora remiten al upsert de 4.1 y declaran el margen `6,66 %`; el `6,74 %` figura solo como retirado.
+- **4.4 Barrido de referencias `07-resultados.tex:<linea>`** (por correspondencia de contenido sobre el archivo vigente):
+
+  | Antes | Despues | Pasaje verificado |
+  |---|---|---|
+  | `:129` | `:128` | Parrafo del marco metrico, reparto `131/69` y `107/200` |
+  | `:75` | `:74` | Exactitud estricta `73,5 % (147/200)` |
+  | `:167-188` | `:166-187` | Entorno de `tab:bandas` |
+  | `:179-183` | `:178-182` | Filas de bandas `98/26/6/31/39` |
+  | `:179-180` | `:178-179` | Bandas `98 + 26` = `124` casos `< 0,70` |
+  | `:160` | `:157-159` | Fila `retirado` del `9,5 %`: remite a la seccion que declara la intervencion como no medida |
+  | `:55` | `:57` | Parrafo de Wilcoxon `W = 363` |
+  | `:21` (mediana) | `:22` | Fila `Mediana (s) = 17,47` |
+  | `:190` | `:189` | Parrafo del tramo `>= 0,90` |
+  | `:129` (nota c-131) | `:128` | Parrafo del marco metrico en la nota de numeracion |
+
+  Verificacion: cada linea destino contiene el valor citado (`sed -n '<linea>p'`). No se modifico ningun valor ni estado distinto del upsert 6,66/6,74.
+- **4.5 Encabezado**: se agrega la entrada `Upsert c-145` con fecha y alcance.
+
+### Correccion factual de la tesis (bloque A, tareas 5.1 a 5.7) - 2026-10-26
+
+- **5.1 Recuento real de integracion**: con las variables dummy de CI exportadas solo en el entorno (sin escribirlas en el repositorio), `cd App/Backend && python3 -m pytest -m integration --collect-only -q` devuelve:
+
+  ```text
+  48/1510 tests collected (1462 deselected) in 6.70s
+  ```
+
+  Coincide con el esperado `48/1510`. `grep -n "pytest.skip" ".../06-implementacion.tex"` no devuelve coincidencias en la clausula de PostgreSQL.
+- **5.2**: `06-implementacion.tex:87` reemplaza "16 tests con un mecanismo de omision automatica (`pytest.skip`) cuando PostgreSQL no esta disponible" por "48 pruebas marcadas como integracion, que fallan de forma ruidosa si PostgreSQL no esta disponible en lugar de omitirse". `grep -n "16 tests\|omisión automática"` = 0; `grep -n "48 pruebas"` = linea 87.
+- **5.3**: `06-implementacion.tex:91` retira "357" y "56 archivos" y conserva la remision al reporte vigente del pipeline. `grep -n "357\|56 archivos"` = 0.
+- **5.4**: `06-implementacion.tex:44` y `:54` reemplazan los identificadores internos por lenguaje llano que preserva el hecho. `grep -n "OQ1 = A\|OQ2 = A\|change c-72"` = 0.
+- **5.5**: el Anexo I (`12-anexos.tex`, `sec:anexo-trazabilidad`) agrega una nota breve que atribuye las dos decisiones al change `c-72`; el cuerpo de `06-implementacion.tex` ya no lo menciona.
+- **5.6 Causa raiz de A1**:
+
+  | Hecho | Commit | Fecha | Efecto |
+  |---|---|---|---|
+  | Se agregan 16 pruebas de integracion PostgreSQL con omision automatica | `a0436e0` (C-19) | 2026-07-03 | Nace la oracion "16 tests ... `pytest.skip`" |
+  | `conftest.py` pasa a fallo ruidoso y la suite crece | `ef656ac` (c-29/c-30/c-32) | 2026-09-17 | La oracion queda obsoleta |
+  | Copia de trabajo v9 | `8466cbe` | 2026-10-01 | Arrastra la oracion |
+  | Copia de trabajo v10 | `7408543` (c-122) | 2026-10-22 | La publica en v10 |
+
+- **5.7 Evidencia de A2**: `find "App/Frontend/src" -type f \( -name '*.test.ts' -o -name '*.test.tsx' \) | wc -l` = **59** archivos; `App/Frontend/node_modules` **ausente** en el worktree. Decision: retirar los recuentos congelados de la tesis (no se ejecuto `npm install` ni Vitest en esta fase) y dejar la cifra sujeta al reporte vigente del pipeline.
+- **Paginas (aviso para bloque 8)**: no se recompilo la tesis en estas tareas. El cuerpo sigue en **100** segun la linea base de 1.4; el bloque 8 debe re-medir el conteo tras estos cambios de texto.
