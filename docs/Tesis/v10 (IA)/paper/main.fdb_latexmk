@@ -1,17 +1,17 @@
 # Fdb version 4
-["biber main"] 1792982759.32719 "main.bcf" "main.bbl" "main" 1792985543.17714 0
-  "../Bibliography_base.bib" 1792983254.62635 37057 c8e5cd6c0f272b5636813b34ba0b534c ""
-  "main.bcf" 1792985539.86975 147994 1a310b7709af6f199d9ac0ab125d6e71 "xelatex"
+["biber main"] 1792985923.15253 "main.bcf" "main.bbl" "main" 1792985954.34187 0
+  "../Bibliography_base.bib" 1792985912.00136 37057 dcbbedd83ccdd66546203918fc941ca8 ""
+  "main.bcf" 1792985951.09286 147994 1a310b7709af6f199d9ac0ab125d6e71 "xelatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["xdvipdfmx"] 1792985540.40304 "main.xdv" "main.pdf" "main" 1792985543.23041 0
-  "main.xdv" 1792985539.87028 2851860 d2364ce92c670bd8ddcbc7353e197541 "xelatex"
+["xdvipdfmx"] 1792985951.63661 "main.xdv" "main.pdf" "main" 1792985954.39386 0
+  "main.xdv" 1792985951.10575 2850400 685584e9729316613c7da19a66ec206f "xelatex"
   (generated)
   "main.pdf"
   (rewritten before read)
-["xelatex"] 1792985528.1441 "main.tex" "main.xdv" "main" 1792985543.1813 0
+["xelatex"] 1792985939.23028 "main.tex" "main.xdv" "main" 1792985954.3463 0
   "/usr/local/texlive/2026/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2026/texmf-dist/fonts/tfm/adobe/zapfding/pzdr.tfm" 1136768653 1528 f853c4d1b4e0550255e02831fdc8496f ""
   "/usr/local/texlive/2026/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
@@ -148,14 +148,14 @@
   "figures/matriz_confusion.pdf" 1792703458.46786 19783 40d03fd9bbd52ae1607f5f8dbe44596e ""
   "figures/panel_admin.png" 1792703458.47416 138254 93adb78483a72cdb12f38bde11c145ac ""
   "figures/secuencia.png" 1792703458.47416 170041 e6741daaab01f9f7a84b7a2988a0bcc6 ""
-  "main.aux" 1792985539.80922 72081 b290d4fd4cbeacdb46b30e2c2125de40 "xelatex"
-  "main.bbl" 1792983254.62944 392121 ceb001e21e57f285f329b2f1aa6fbd17 "biber main"
-  "main.lof" 1792985539.87028 2225 52720bfe0109b8c63fe7559ca091f5fe "xelatex"
-  "main.lot" 1792985539.87028 3114 415af9c1775be9f438f7204c789c3e43 "xelatex"
-  "main.out" 1792985539.85888 27265 8d55806c41703e0ffc64197938117f3e "xelatex"
-  "main.run.xml" 1792985539.87028 2404 9c7f54d382023ceb7d9c12f2f9b6e648 "xelatex"
+  "main.aux" 1792985951.03179 72081 1fa994737bbb7f4efa4760cd3e0f3c27 "xelatex"
+  "main.bbl" 1792985925.91642 382674 b4739338b6d85e2d7660004c9112addb "biber main"
+  "main.lof" 1792985951.10375 2225 52720bfe0109b8c63fe7559ca091f5fe "xelatex"
+  "main.lot" 1792985951.10238 3114 415af9c1775be9f438f7204c789c3e43 "xelatex"
+  "main.out" 1792985951.082 27265 8d55806c41703e0ffc64197938117f3e "xelatex"
+  "main.run.xml" 1792985951.09983 2404 9c7f54d382023ceb7d9c12f2f9b6e648 "xelatex"
   "main.tex" 1792983254.63469 2419 91d4dab98ee170b6a9ffe37a736c7b8a ""
-  "main.toc" 1792985539.87028 10760 7117c56938ad7b8d504bd7666abcad6e "xelatex"
+  "main.toc" 1792985951.10137 10760 b7bf6648c3050fbfc9aff71d0ea9d458 "xelatex"
   "preambles/preamble.tex" 1792985497.33282 5415 f5e67e2ae93725ff0f95b57eca6dfb1d ""
   "sections/00-glosario.tex" 1792703458.50782 3742 e6d2d488d3dd68b95363b6fe72fdeb8c ""
   "sections/00-portada.tex" 1792703458.50782 1327 91880dc9de96b58702bb74ac15f51547 ""
@@ -171,7 +171,7 @@
   "sections/09-conclusiones.tex" 1792983254.66591 9716 1a2ca4de85bf94cc381403d4b219c04a ""
   "sections/10-recomendaciones.tex" 1792983254.66591 14382 b1e9cec58e49804feb66fba1537223df ""
   "sections/11-aspectos-legales.tex" 1792983254.66591 16911 76a0541545d5490a1761a1c05173241e ""
-  "sections/12-anexos.tex" 1792985078.20427 24125 138f4e47cff5acdde71e01d04eaa2047 ""
+  "sections/12-anexos.tex" 1792985912.00046 23970 b8ad85a73333e2f5c6b5f683813646b6 ""
   (generated)
   "main.aux"
   "main.bcf"
