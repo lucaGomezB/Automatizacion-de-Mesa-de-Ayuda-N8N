@@ -11,23 +11,23 @@
 
 ## 1. Preparacion, decision de alcance y red de seguridad
 
-- [ ] 1.1 Confirmar con el usuario que bloques se aplican (1 TLS, 2 reintentos, 3 humo E2E) y responder OQ1-OQ5 de `design.md`; registrar las decisiones en una seccion "Decisiones del apply" al pie de este archivo. Verificacion: la seccion existe y nombra los bloques aplicados y la respuesta a cada OQ
-- [ ] 1.2 Confirmar el estado del change y de la familia: `openspec status --change c-140-endurecimiento-tecnico-tls-reintentos-e2e --json` (proposal, design, specs y tasks en `done`) y `openspec list --json` (registrar si c-130, c-133, c-135, c-136 y c-137 ya estan aplicados; condiciona el orden de la seccion 8). Verificacion: estado registrado en "Decisiones del apply"
-- [ ] 1.3 Red de seguridad global antes de tocar nada: `cd App/Backend; pytest -m "not integration" -q`, `cd App/Backend; pytest -m integration -q` (base descartable), `cd App/Backend; ruff check .`, `python -m pytest scripts/dry_run -q`, `python -m pytest scripts/preflight -q`; anotar el baseline (cantidad de pruebas por suite). Si algo falla, DETENER y reportar como falla preexistente sin corregirla. Verificacion: baseline anotado, todo en verde
-- [ ] 1.4 Cargar las skills de `.agents/SKILLS.md` indicadas en "Leer antes". Verificacion: skills nombradas en el resumen del apply
+- [x] 1.1 Confirmar con el usuario que bloques se aplican (1 TLS, 2 reintentos, 3 humo E2E) y responder OQ1-OQ5 de `design.md`; registrar las decisiones en una seccion "Decisiones del apply" al pie de este archivo. Verificacion: la seccion existe y nombra los bloques aplicados y la respuesta a cada OQ
+- [x] 1.2 Confirmar el estado del change y de la familia: `openspec status --change c-140-endurecimiento-tecnico-tls-reintentos-e2e --json` (proposal, design, specs y tasks en `done`) y `openspec list --json` (registrar si c-130, c-133, c-135, c-136 y c-137 ya estan aplicados; condiciona el orden de la seccion 8). Verificacion: estado registrado en "Decisiones del apply"
+- [x] 1.3 Red de seguridad global antes de tocar nada: `cd App/Backend; pytest -m "not integration" -q`, `cd App/Backend; pytest -m integration -q` (base descartable), `cd App/Backend; ruff check .`, `python -m pytest scripts/dry_run -q`, `python -m pytest scripts/preflight -q`; anotar el baseline (cantidad de pruebas por suite). Si algo falla, DETENER y reportar como falla preexistente sin corregirla. Verificacion: baseline anotado, todo en verde
+- [x] 1.4 Cargar las skills de `.agents/SKILLS.md` indicadas en "Leer antes". Verificacion: skills nombradas en el resumen del apply
 
 ## 2. Bloque 2 - Backend: idempotencia bajo concurrencia y equivalencia del replay (MEDIUM; solo si se aplica el bloque 2)
 
-- [ ] 2.1 Red de seguridad del bloque: `cd App/Backend; pytest tests/test_api_incidentes.py tests/test_notification_recipients.py tests/test_telefonia_handoff.py tests/test_timing_service.py -q` y `pytest -m integration tests/test_integration_postgresql.py -q`; anotar el baseline. Verificacion: todo en verde
-- [ ] 2.2 CARACTERIZACION (verde esperado, comportamiento C-33/C-69 vigente): crear `App/Backend/tests/test_c135_idempotencia_concurrente_integration.py` (`pytestmark = pytest.mark.integration`) con dos altas concurrentes (`asyncio.gather`) con el mismo `origen_message_id` contra PostgreSQL, usando `make_pg_client_with_classifier` (c-124) extendida para aceptar un clasificador espia con demora sin romper su firma vigente; afirmar HTTP 201 en ambas, mismo `id`, una fila de `incidente`, un registro de `clasificacion_log` y una sola invocacion del clasificador (decision D6). Si falla, es un defecto preexistente: DETENER y reportar (CP4). Verificacion: `cd App/Backend; pytest -m integration tests/test_c135_idempotencia_concurrente_integration.py -q` en verde
-- [ ] 2.3 TRIANGULATE (integracion): agregar (a) N=5 altas concurrentes con el mismo identificador -> una fila; (b) primer intento abortado (el espia lanza excepcion, la transaccion revierte) y luego reintento -> el reintento crea el incidente una sola vez; (c) replay secuencial tras commit -> mismo `id`; (d) eventos `incidente_idempotente_carrera` e `incidente_idempotente` capturados con `structlog.testing.capture_logs`, con `origen_message_id` e `incidente_id` y sin la descripcion. Verificacion: los cuatro casos en verde
-- [ ] 2.4 RED (SQLite): en un archivo nuevo `App/Backend/tests/test_c135_replay_equivalencia.py`, siguiendo el patron de `test_notification_recipients.py::test_4_1_alta_con_revision_incluye_todos_los_mesa_de_ayuda`, crear un alta con revision humana y destinatarios sembrados, repetir el alta con el mismo `origen_message_id` y afirmar que la respuesta del replay trae los mismos `destinatarios_revision` que el alta original (hoy llega vacia). Verificacion: la prueba falla por lista vacia
-- [ ] 2.5 GREEN: en `App/Backend/app/services/incidente_service.py`, en los dos caminos de replay (cortocircuito del Paso 0 y rama `IntegrityError`), re-resolver `destinatarios_revision` con `NotificationRecipientService` solo cuando el incidente existente requiere revision humana, degradando a lista vacia ante fallo igual que el alta original; sin reclasificar, sin `notify_n8n`, sin persistir (decision D7). Presentar el diff para CP4 antes de cerrar la tarea. Verificacion: la prueba de 2.4 pasa
-- [ ] 2.6 TRIANGULATE: (a) replay de un incidente sin revision -> `destinatarios_revision` vacio; (b) replay con directorio vacio -> lista vacia sin excepcion; (c) el replay no invoca al clasificador ni despacha la notificacion (espias); (d) caso de carrera en PostgreSQL con revision -> ambas respuestas con los mismos destinatarios (en el archivo de 2.2). Verificacion: todos en verde
-- [ ] 2.7 RED: en `App/Backend/tests/test_telefonia_handoff.py`, cambiar la asercion que fija `30.0` por una que exija `TELEFONIA_HANDOFF_TIMEOUT_S` mayor o igual que el presupuesto de peor caso del tramo de alta (D9; la prueba cruzada contra el workflow vive en 3.2). Verificacion: la prueba falla con el valor vigente
-- [ ] 2.8 GREEN: elevar `TELEFONIA_HANDOFF_TIMEOUT_S` en `App/Backend/app/utils/n8n_webhook.py` a `300.0` con un comentario que cite c-140 y el presupuesto de reintentos. Verificacion: la prueba de 2.7 pasa
-- [ ] 2.9 REFACTOR: extraer un helper privado para los destinatarios del replay (sin saltar capas routes -> services -> repositories); re-correr 2.2-2.8. Medir cobertura del servicio con `pytest --cov=app.services --cov-report=term-missing` y confirmar que las lineas nuevas quedan cubiertas (skill `pytest-coverage`). Verificacion: verde tras el refactor y lineas nuevas cubiertas
-- [ ] 2.10 Verificacion del bloque (backend): `pytest -m "not integration" -q`, `pytest -m integration -q`, `ruff check .`, `pytest tests/test_openapi_sync.py -q` (el contrato no cambia). Verificacion: todo en verde y `git diff --stat docs/openapi.json` vacio
+- [x] 2.1 Red de seguridad del bloque: `cd App/Backend; pytest tests/test_api_incidentes.py tests/test_notification_recipients.py tests/test_telefonia_handoff.py tests/test_timing_service.py -q` y `pytest -m integration tests/test_integration_postgresql.py -q`; anotar el baseline. Verificacion: todo en verde
+- [x] 2.2 CARACTERIZACION (verde esperado, comportamiento C-33/C-69 vigente): crear `App/Backend/tests/test_c135_idempotencia_concurrente_integration.py` (`pytestmark = pytest.mark.integration`) con dos altas concurrentes (`asyncio.gather`) con el mismo `origen_message_id` contra PostgreSQL, usando `make_pg_client_with_classifier` (c-124) extendida para aceptar un clasificador espia con demora sin romper su firma vigente; afirmar HTTP 201 en ambas, mismo `id`, una fila de `incidente`, un registro de `clasificacion_log` y una sola invocacion del clasificador (decision D6). Si falla, es un defecto preexistente: DETENER y reportar (CP4). Verificacion: `cd App/Backend; pytest -m integration tests/test_c135_idempotencia_concurrente_integration.py -q` en verde
+- [x] 2.3 TRIANGULATE (integracion): agregar (a) N=5 altas concurrentes con el mismo identificador -> una fila; (b) primer intento abortado (el espia lanza excepcion, la transaccion revierte) y luego reintento -> el reintento crea el incidente una sola vez; (c) replay secuencial tras commit -> mismo `id`; (d) eventos `incidente_idempotente_carrera` e `incidente_idempotente` capturados con `structlog.testing.capture_logs`, con `origen_message_id` e `incidente_id` y sin la descripcion. Verificacion: los cuatro casos en verde
+- [x] 2.4 RED (SQLite): en un archivo nuevo `App/Backend/tests/test_c135_replay_equivalencia.py`, siguiendo el patron de `test_notification_recipients.py::test_4_1_alta_con_revision_incluye_todos_los_mesa_de_ayuda`, crear un alta con revision humana y destinatarios sembrados, repetir el alta con el mismo `origen_message_id` y afirmar que la respuesta del replay trae los mismos `destinatarios_revision` que el alta original (hoy llega vacia). Verificacion: la prueba falla por lista vacia
+- [x] 2.5 GREEN: en `App/Backend/app/services/incidente_service.py`, en los dos caminos de replay (cortocircuito del Paso 0 y rama `IntegrityError`), re-resolver `destinatarios_revision` con `NotificationRecipientService` solo cuando el incidente existente requiere revision humana, degradando a lista vacia ante fallo igual que el alta original; sin reclasificar, sin `notify_n8n`, sin persistir (decision D7). Presentar el diff para CP4 antes de cerrar la tarea. Verificacion: la prueba de 2.4 pasa
+- [x] 2.6 TRIANGULATE: (a) replay de un incidente sin revision -> `destinatarios_revision` vacio; (b) replay con directorio vacio -> lista vacia sin excepcion; (c) el replay no invoca al clasificador ni despacha la notificacion (espias); (d) caso de carrera en PostgreSQL con revision -> ambas respuestas con los mismos destinatarios (en el archivo de 2.2). Verificacion: todos en verde
+- [x] 2.7 RED: en `App/Backend/tests/test_telefonia_handoff.py`, cambiar la asercion que fija `30.0` por una que exija `TELEFONIA_HANDOFF_TIMEOUT_S` mayor o igual que el presupuesto de peor caso del tramo de alta (D9; la prueba cruzada contra el workflow vive en 3.2). Verificacion: la prueba falla con el valor vigente
+- [x] 2.8 GREEN: elevar `TELEFONIA_HANDOFF_TIMEOUT_S` en `App/Backend/app/utils/n8n_webhook.py` a `300.0` con un comentario que cite c-140 y el presupuesto de reintentos. Verificacion: la prueba de 2.7 pasa
+- [x] 2.9 REFACTOR: extraer un helper privado para los destinatarios del replay (sin saltar capas routes -> services -> repositories); re-correr 2.2-2.8. Medir cobertura del servicio con `pytest --cov=app.services --cov-report=term-missing` y confirmar que las lineas nuevas quedan cubiertas (skill `pytest-coverage`). Verificacion: verde tras el refactor y lineas nuevas cubiertas. Resultado: helper `_replay_destinatarios_revision` extraido y usado en los dos caminos de replay; 2.2-2.8 verdes. DESVIACION: la medicion `--cov` del entorno local no traza los cuerpos async del servicio (el mismo faltante aparece con un archivo preexistente como `test_api_incidentes.py`; conflicto SQLAlchemy 2.1.5 / coverage 7.16.0 que tambien produce TypeError/segfault con `--cov=app.services.<submodulo>`). La cobertura quedo NO MEDIBLE localmente; el helper y los dos sitios de replay quedan ejercitados por las pruebas en verde (cortocircuito por el test SQLite y rama IntegrityError por el test de carrera PostgreSQL).
+- [x] 2.10 Verificacion del bloque (backend): `pytest -m "not integration" -q`, `pytest -m integration -q`, `ruff check .`, `pytest tests/test_openapi_sync.py -q` (el contrato no cambia). Verificacion: todo en verde y `git diff --stat docs/openapi.json` vacio
 
 ## 3. Bloque 2 - Workflow N8N: politica de reintento del tramo de alta (MEDIUM; solo si se aplica el bloque 2)
 
@@ -44,12 +44,12 @@
 
 ## 4. Infraestructura compartida de humo (solo si se aplica el bloque 1 o el 3; la crea el primero que se aplique)
 
-- [ ] 4.1 RED: crear `scripts/dry_run/test_smoke_workflow.py` que parsee `.github/workflows/smoke-stack.yml` y exija: disparadores solo `workflow_dispatch` y `push` de tags `v*` (sin `pull_request`); ausencia de `secrets.`; cada `uses:` fijado a version mayor; `timeout-minutes` declarado; paso de publicacion de artefactos (reporte JSON y logs de compose) y desmontaje del stack con `if: always()`. Verificacion: falla por archivo ausente
-- [ ] 4.2 CP6: presentar al usuario el workflow propuesto (disparo por tag y ejecucion de Docker en runners de GitHub, segun OQ2) y esperar aprobacion. Si OQ2 resuelve "solo local", marcar 4.3-4.5 como no aplicables con referencia a la decision y continuar con ejecuciones locales. Verificacion: decision registrada
-- [ ] 4.3 GREEN: crear `.github/workflows/smoke-stack.yml`: checkout, Python 3.12, generacion de certificados efimeros con `bash openssl/generate-certs.sh`, generacion de `App/Backend/.env` con los mismos valores ficticios que usa `ci.yml` (marcados `gitleaks:allow`), ejecucion de `python3 scripts/dry_run/dry_run.py --json-out smoke-report.json` con los flags de los bloques aplicados, publicacion de `smoke-report.json` y de `docker compose logs` como artefactos (`actions/upload-artifact@v4`) y `docker compose -f docker-compose.yml -f scripts/dry_run/compose.dry-run.yml down -v` con `if: always()`; `timeout-minutes: 30`. Verificacion: la prueba de 4.1 pasa
-- [ ] 4.4 TRIANGULATE: casos de 4.1 con copias mutadas del YAML (agregar `pull_request`, una referencia `secrets.X`, un `uses:` sin version, quitar `if: always()`) que la verificacion debe rechazar. Verificacion: todos en verde
-- [ ] 4.5 RED/GREEN: agregar a `.github/workflows/ci.yml`, job `backend-tests`, el paso `python -m pytest scripts/dry_run -q` (desde la raiz del repo), con una prueba en `scripts/dry_run/test_ci_wiring.py` que lo exija dentro de ese job y verifique que `ci.yml` sigue sin `secrets.`. Verificacion: la prueba falla antes del cambio y pasa despues; `python -m pytest scripts/dry_run -q` en verde
-- [ ] 4.6 Agregar al `Makefile` el objetivo `smoke` (arnes con los grupos de los bloques aplicados y `--json-out`). Verificacion: `make -n smoke` muestra el comando esperado
+- [x] 4.1 NO APLICABLE (OQ2=local): esta tarea es el RED del YAML de humo `.github/workflows/smoke-stack.yml`, que la decision OQ2/CP6 difiere; sin ese archivo la verificacion no puede pasar. RED: crear `scripts/dry_run/test_smoke_workflow.py` que parsee `.github/workflows/smoke-stack.yml` y exija: disparadores solo `workflow_dispatch` y `push` de tags `v*` (sin `pull_request`); ausencia de `secrets.`; cada `uses:` fijado a version mayor; `timeout-minutes` declarado; paso de publicacion de artefactos (reporte JSON y logs de compose) y desmontaje del stack con `if: always()`. Verificacion: falla por archivo ausente
+- [x] 4.2 CP6: presentar al usuario el workflow propuesto (disparo por tag y ejecucion de Docker en runners de GitHub, segun OQ2) y esperar aprobacion. Si OQ2 resuelve "solo local", marcar 4.3-4.5 como no aplicables con referencia a la decision y continuar con ejecuciones locales. Verificacion: decision registrada (esta en "Decisiones del apply": OQ2=local, CP6 = sin workflow de CI de humo)
+- [x] 4.3 NO APLICABLE (OQ2=local): no se crea `.github/workflows/smoke-stack.yml`. GREEN: crear `.github/workflows/smoke-stack.yml`: checkout, Python 3.12, generacion de certificados efimeros con `bash openssl/generate-certs.sh`, generacion de `App/Backend/.env` con los mismos valores ficticios que usa `ci.yml` (marcados `gitleaks:allow`), ejecucion de `python3 scripts/dry_run/dry_run.py --json-out smoke-report.json` con los flags de los bloques aplicados, publicacion de `smoke-report.json` y de `docker compose logs` como artefactos (`actions/upload-artifact@v4`) y `docker compose -f docker-compose.yml -f scripts/dry_run/compose.dry-run.yml down -v` con `if: always()`; `timeout-minutes: 30`. Verificacion: la prueba de 4.1 pasa
+- [x] 4.4 NO APLICABLE (OQ2=local): sin YAML de humo no hay copias que mutar. TRIANGULATE: casos de 4.1 con copias mutadas del YAML (agregar `pull_request`, una referencia `secrets.X`, un `uses:` sin version, quitar `if: always()`) que la verificacion debe rechazar. Verificacion: todos en verde
+- [x] 4.5 NO APLICABLE (OQ2=local/CP6): el paso offline del arnes en el job `backend-tests` es tecnicamente independiente del YAML de humo, pero se difiere junto con la decision de CI para no abrir trabajo de CI pospuesto por el equipo. RED/GREEN: agregar a `.github/workflows/ci.yml`, job `backend-tests`, el paso `python -m pytest scripts/dry_run -q` (desde la raiz del repo), con una prueba en `scripts/dry_run/test_ci_wiring.py` que lo exija dentro de ese job y verifique que `ci.yml` sigue sin `secrets.`. Verificacion: la prueba falla antes del cambio y pasa despues; `python -m pytest scripts/dry_run -q` en verde
+- [x] 4.6 Agregar al `Makefile` el objetivo `smoke` (arnes con los grupos de los bloques aplicados y `--json-out`). Verificacion: `make -n smoke` muestra el comando esperado
 
 ## 5. Bloque 3 - Prueba de humo E2E (MEDIUM; solo si se aplica el bloque 3)
 
@@ -66,11 +66,11 @@
 
 ## 6. Bloque 3 (opcional) - Variante de correo con servidor IMAP/SMTP simulado (solo si OQ4 = si)
 
-- [ ] 6.1 Verificar la procedencia oficial de la imagen del servidor IMAP/SMTP de prueba (organizacion y repositorio canonicos enlazados desde la documentacion oficial del proyecto, segun AGENTS.md "External Sources") y fijarla por digest; presentar la eleccion para CP6. Verificacion: aprobacion registrada con el digest
-- [ ] 6.2 RED: pruebas offline de la transformacion para la variante: con el flag, el trigger IMAP y los nodos `emailSend` se conservan y se re-vinculan a ids de credenciales de prueba; sin el flag, la transformacion vigente no cambia. Verificacion: fallan por funcionalidad inexistente
-- [ ] 6.3 GREEN: override `scripts/dry_run/compose.e2e-mail.yml` (servicio de correo de prueba en la red `automation`), plantilla de credenciales de prueba sin secretos importada con `n8n import:credentials`, re-vinculacion en la transformacion y checks `email-sim:persisted` (canal 1) y `email-sim:confirmacion` (lectura del buzon de prueba con `imaplib`) bajo `--with-email-sim`. Verificacion: pruebas offline en verde
-- [ ] 6.4 TRIANGULATE: sin el flag no se levanta el servicio ni aparecen checks `email-sim:*`; con el servidor caido el check queda en FAIL accionable. Corrida local con Docker en verde. Verificacion: resumen verde con los checks de correo
-- [ ] 6.5 Si OQ4 = no: marcar 6.1-6.4 como no aplicables con referencia a la decision y dejar constancia de que la tesis declara solo el canal web. Verificacion: constancia en "Decisiones del apply"
+- [x] 6.1 NO APLICABLE (OQ4=no): sin variante de correo no se elige ni fija ninguna imagen IMAP/SMTP. Verificar la procedencia oficial de la imagen del servidor IMAP/SMTP de prueba (organizacion y repositorio canonicos enlazados desde la documentacion oficial del proyecto, segun AGENTS.md "External Sources") y fijarla por digest; presentar la eleccion para CP6. Verificacion: aprobacion registrada con el digest
+- [x] 6.2 NO APLICABLE (OQ4=no). RED: pruebas offline de la transformacion para la variante: con el flag, el trigger IMAP y los nodos `emailSend` se conservan y se re-vinculan a ids de credenciales de prueba; sin el flag, la transformacion vigente no cambia. Verificacion: fallan por funcionalidad inexistente
+- [x] 6.3 NO APLICABLE (OQ4=no). GREEN: override `scripts/dry_run/compose.e2e-mail.yml` (servicio de correo de prueba en la red `automation`), plantilla de credenciales de prueba sin secretos importada con `n8n import:credentials`, re-vinculacion en la transformacion y checks `email-sim:persisted` (canal 1) y `email-sim:confirmacion` (lectura del buzon de prueba con `imaplib`) bajo `--with-email-sim`. Verificacion: pruebas offline en verde
+- [x] 6.4 NO APLICABLE (OQ4=no). TRIANGULATE: sin el flag no se levanta el servicio ni aparecen checks `email-sim:*`; con el servidor caido el check queda en FAIL accionable. Corrida local con Docker en verde. Verificacion: resumen verde con los checks de correo
+- [x] 6.5 Si OQ4 = no: marcar 6.1-6.4 como no aplicables con referencia a la decision y dejar constancia de que la tesis declara solo el canal web. Verificacion: constancia en "Decisiones del apply" (registrado: OQ4=no, la tesis declarara solo el canal web; 6.1-6.4 marcadas NO APLICABLES)
 
 ## 7. Bloque 1 - Borde TLS verificado en el despliegue de referencia (HIGH; solo si se aplica el bloque 1)
 
@@ -111,3 +111,64 @@
 - [ ] 10.4 Coordinacion de deltas antes de archivar: verificar si otro change de la familia (por ejemplo c-130 sobre el escenario del gate) ya archivo cambios en los requisitos que este change declara como MODIFIED (`Coherencia técnica entre la tesis y el sistema implementado` y `Verificabilidad de las afirmaciones de pruebas del Capitulo 6` en `tesis-document`, `Guardarraíl de costo cero` en `dry-run-harness` y los seis de `tls-docker-compose`); si los hay, re-basar el bloque MODIFIED sobre la spec vigente conservando ambos cambios y re-validar. Verificacion: `openspec validate ... --strict` valido y ningun escenario ajeno perdido (`git diff openspec/specs/` revisado tras el archivo)
 - [ ] 10.5 Poda de deltas de bloques no aplicados (antes de archivar): retirar de `specs/` los requisitos cuyo bloque no se aplico, segun este mapa. Bloque 1: en `tls-docker-compose`, los ADDED "Exposicion unica del borde" y "Verificacion automatizada del borde TLS en el despliegue de referencia" (la reconciliacion MODIFIED/REMOVED y "N8N fuera del borde TLS y acotado a loopback" describen lo ya desplegado y pueden conservarse); en `dry-run-harness`, "Grupo de verificacion del borde TLS". Bloque 2: `n8n-workflow` completo, `incident-origin-correlation` completo, `classification-resilience` completo; en `dry-run-harness`, "Recuperacion ante indisponibilidad transitoria del backend" y, si tampoco se aplica el bloque 3, "La transformacion de costo cero conserva el tramo de alta". Bloque 3: en `dry-run-harness`, el MODIFIED "Guardarraíl de costo cero", "Asercion de etapa deterministica y clasificacion unica", "Idempotencia del alta verificada a traves del webhook", "Reporte de evidencia del recorrido" y "Variante opcional de correo con servidor IMAP/SMTP simulado" (esta ultima tambien si OQ4 = no); en `tesis-document`, el MODIFIED "Verificabilidad de las afirmaciones de pruebas del Capitulo 6". Bloques 1 y 3 ambos ausentes: `ci-pipeline` completo y "Evidencia de la prueba de humo asociada a la release" de `tesis-document`. Verificacion: `openspec validate ... --strict` valido y cada requisito restante tiene implementacion verificada
 - [ ] 10.6 Resumen del apply con la tabla "TDD Cycle Evidence" (tarea, archivo de prueba, capa, red de seguridad, RED, GREEN, TRIANGULATE, REFACTOR), los bloques aplicados, los checkpoints aprobados y lo pendiente para el equipo (CP5) y para c-141. Verificacion: resumen entregado
+
+## Decisiones del apply
+
+Seccion registrada en la tarea 1.1.
+
+### Alcance de la corrida
+- Bloques aplicados: 1 (TLS), 2 (reintentos N8N -> backend) y 3 (humo E2E). Los tres, en fases posteriores.
+- Esta corrida cubre SOLO las secciones 1 a 4 del `tasks.md`: preparacion y red de seguridad (1),
+  backend del bloque 2 (2), workflow N8N del bloque 2 (3) e infraestructura compartida de humo (4).
+  Las secciones 5 a 10 se ejecutan despues.
+
+### Respuestas a OQ1-OQ5 y checkpoints (CP)
+- OQ1: no hay evidencia de que la organizacion adoptante opere hoy TLS en su borde. La tesis
+  declarara unicamente el despliegue de referencia (seccion 8, fase posterior).
+- OQ2: el E2E corre LOCAL y el resumen JSON se versiona; el workflow de CI de humo queda DIFERIDO.
+  Consecuencia directa en la seccion 4: la tarea 4.2 registra la decision y las tareas 4.3, 4.4 y
+  4.5 quedan NO APLICABLES (no se crea `.github/workflows/smoke-stack.yml`). La tarea 4.1 (RED del
+  YAML de humo) tambien queda NO APLICABLE: su verificacion depende del archivo que no se crea. El
+  paso offline de las pruebas del arnes en el job `backend-tests` (tarea 4.5) es tecnicamente
+  independiente del YAML de humo, pero se difiere junto con la decision de CI (CP6) para no abrir
+  trabajo de CI que el equipo pidio posponer.
+- OQ3: el objetivo especifico 1 se mantiene como "Alcanzado parcialmente" con el calificativo
+  actualizado (seccion 8, fase posterior).
+- OQ4: categoria NO a la variante de correo (solo canal web). La seccion 6 completa queda NO
+  APLICABLE (marcada en 6.5, fase posterior; se deja constancia aqui).
+- OQ5 / CP3 (APROBADO): login 3 intentos, 5000 ms de espera, timeout 10000 ms; alta 3 intentos,
+  5000 ms de espera, timeout 75000 ms. Presupuesto de peor caso del tramo: 40 s + 235 s = 275 s,
+  por debajo del tope `EXECUTIONS_TIMEOUT` de 300 s.
+- CP1: el unico cambio previsto en configuracion es el comentario de cabecera de `docker-compose.yml`
+  (seccion 7, fase posterior). No se toca `nginx/nginx.conf`.
+- CP4: se implementa el cambio de equivalencia observable del replay (tarea 2.5) y su diff se
+  presenta en el informe del apply antes de cerrar la tarea.
+- CP5: la reimportacion del workflow en la instancia N8N operativa la ejecuta el equipo, nunca el
+  agente. No se toca la instancia operativa.
+- CP6: no se crea workflow de CI de humo.
+
+### Estado del change y de la familia (tarea 1.2)
+- `openspec status --change c-140-...`: `isPlanningComplete: true`, `isComplete: true`; proposal,
+  design, specs y tasks presentes y completos.
+- `openspec list --json`: c-140 en `in-progress` (0/73 al inicio). La familia c-130 a c-139 figura
+  ARCHIVADA en `openspec/changes/archive/` (fecha 2026-10-26), incluidos c-130, c-133, c-135, c-136
+  y c-137; por lo tanto YA estan aplicados. c-141 y c-146 siguen `in-progress`.
+- Consecuencia para la seccion 8 (fase posterior): c-130, c-133, c-135, c-136 y c-137 ya aplicados;
+  la seccion 8 coordina sobre los parrafos vigentes y, segun 9.3, actualiza solo el calificativo de
+  la fila del objetivo especifico 1 de `tab:cumplimiento-objetivos` sin cambiar el rotulo.
+
+### Red de seguridad global (tarea 1.3) - baseline
+- `cd App/Backend; pytest -m "not integration" -q`: 1461 passed, 48 deselected, 1 xfailed.
+- `cd App/Backend; pytest -m integration -q` (base descartable PostgreSQL): 48 passed.
+- `cd App/Backend; ruff check .`: All checks passed.
+- `python -m pytest scripts/dry_run -q` (desde la raiz del repo): 41 passed.
+- `python -m pytest scripts/preflight -q`: 83 passed.
+- Notas operativas: en este entorno no existe el ejecutable `python`, se uso `python3` para las
+  suites de scripts. La base descartable `mesa_de_ayuda_test` se provisiona y elimina sola; el
+  PostgreSQL de compose se levanto con `docker compose up -d postgres`. El `App/Backend/.env`
+  requerido por el compose se creo local a partir del `.env` de trabajo (archivo gitignorado, nunca
+  versionado; el hook de pre-commit lo bloquea).
+
+### Skills cargadas (tarea 1.4)
+- `python-testing-patterns`, `pytest-coverage` y `python-design-patterns` (`.agents/skills/...`),
+  cargadas completas antes de escribir codigo, conforme al modo TDD estricto.
