@@ -720,6 +720,8 @@ como limitacion declarada y buscar otro dueno para el `timeout` de 10 s frente a
 **queda disponible si el tiempo no alcanza**; se decide antes de aplicar la posicion 12 y se
 registra aqui con su fecha.
 
+**Actualizacion 2026-10-25 (c-141, tramo de integracion; decision del orquestador, registrada al aplicar el tramo el 2026-10-26)**: c-140 excluido provisionalmente de la integracion; decision del usuario pendiente. Estado de c-140: 0/73 tareas, sin ediciones de prosa de la tesis. Si el usuario lo incluye, sus bloques de codigo, la prueba de humo (tarea 8.3) y su texto de tesis (posicion 12 de D1, antes de c-137) obligan a repetir la regresion cruzada y la pasada ortotipografica corta; si lo excluye, se archiva como NO REALIZADO con `openspec archive c-140-endurecimiento-tecnico-tls-reintentos-e2e -y --skip-specs` (tarea 2.9) y los descuentos del criterio 5 quedan como limitacion declarada (ver la fila "Criterio 5 (residual)" de la matriz de cobertura).
+
 ### G0.4 - Nombre de la release (OQ2)
 
 **Estado: PROVISIONAL. Fecha: 2026-10-25.** Nombre: **`v1.2.0`**. Confirmable (por ejemplo
@@ -927,6 +929,7 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 | `+c-135` (`change/c-135-cronologia-y-consistencia-redaccional`) | sin commit (lo crea el orquestador) | 108 | 100 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{108}`; `Anexos` en p. 101; brecha frente a 101: +7; rama (b): cuerpo 100, margen 0 (la figura del cronograma va al Anexo A porque el capitulo 6 no tenia holgura: en 6.6 habria dado 109 o 110) |
 | `+c-139` (`change/c-139-correspondencia-texto-fuente-y-metadatos`) | sin commit (lo crea el orquestador) | 109 | 101 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{109}`; `Anexos` en p. 102; brecha frente a 101: +8; rama (b): cuerpo 101, margen -1 (cuerpo neutral: Referencias bibliograficas empieza en la p. 94 antes y despues; la bibliografia pasa de 7 a 8 paginas por las 8 entradas nuevas y los metadatos; la primera compilacion dio 111 y los recortes dentro de los parrafos editados recuperaron 2 paginas del cuerpo; palancas tipograficas para c-141) |
 | `+c-137` (`change/c-137-revision-ortotipografica`) | sin commit (lo crea el orquestador) | 109 | 101 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{109}`; `Anexos` en p. 102; brecha frente a 101: +8; rama (b): cuerpo 101, margen -1 (neutral por construccion: el cambio es diacritico; `Referencias bibliograficas` empieza en la p. 94 antes y despues; solo se desplazo una linea de la p. 26 a la p. 27 por las comillas de las cadenas A1-A4 y B1, sin cambiar el total; el tope lo decide c-141) |
+| integrado (pre-compactacion) (`change/c-141-integracion-release-v1-2-0`; tarea 3.2) | sin commit (lo crea el orquestador) | 110 | 101 | 9 | +1 | 0 | (a) total <= 101 | Medido: `abspage@last{110}`; `Anexos` en p. 102; delta frente a `+c-137` (109 / 101 / 8): +1 total y +1 anexos por el Anexo I (tarea 3.1: Tabla 20 de trazabilidad; prevision de D10 +0,1 a +0,6, cuantizada a una pagina porque la p. 109 estaba llena); **brecha frente a 101: +9**; **regla (b): cuerpo 101, margen -1** (`Referencias bibliograficas` empieza en la p. 94 y ocupa 8 paginas, la ultima con 14 lineas); acumulado de la familia: +8 total / +7 cuerpo / +1 anexos sobre `+c-144` (102 / 94 / 8) y +9 / +8 / +1 sobre la base `v1.1.1`; sin compactar nada (checkpoint HIGH de 3.4 pendiente) |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -2234,3 +2237,273 @@ Despues de cualquier edicion tardia de la prosa, desde la raiz del repositorio: 
 `git checkout f1fc134 -- "docs/Tesis/v10 (IA)/paper/sections" "docs/Tesis/v10 (IA)/paper/main.tex" "docs/Tesis/v10 (IA)/paper/preambles/preamble.tex" "docs/Tesis/v10 (IA)/Bibliography_base.bib" "docs/Tesis/v10 (IA)/tesis_para_agente.md" docs/Tesis/acentuar_tesis.py docs/Tesis/acentuar_tesis_v9.py`, recompilar y regenerar `tesis_para_agente.md`. La herramienta, sus pruebas y el registro de decisiones pueden conservarse. No se crean ni mueven tags.
 
 **Estado**: grupo aplicado (41 de 41 tareas; bloque 1 en `b241ec8`).
+
+## Integracion c-141 - tramo de integracion (FASE 36, grupos 2 a 4 y 6)
+
+**Origen**: change `c-141-integracion-release-v1-2-0`, apply parcial del tramo de integracion: tareas 2.1 a 2.8, 3.1, 3.2, 4.1 a 4.6 y 6.1 a 6.3 de `tasks.md`. Aplicado el **2026-10-26** en la rama `change/c-141-integracion-release-v1-2-0` (cortada de `ramagonzalo` en `b3c6f0f`, merge de c-137). Sin commit (lo crea el orquestador), sin push, sin merge, sin tag, sin archivado de changes. **No ejecutadas** (motivo): 2.9 (archivar: c-135 tiene la 5.2 abierta y c-140 espera decision del usuario); 3.3 a 3.6 (presupuesto de paginas: checkpoint HIGH del usuario); 5.x (contenido de C1); 6.4 (cierre del libro mayor: depende de C1); 7.x (renders de `v1.2.0`); 8.x y 9.x (tag, push y PR: acciones publicas). Gobernanza MEDIUM. Cero llamadas a Gemini; `App/`, `n8n/`, `data/`, `evaluation/` (salvo lectura) y `CLAUDE.md` sin cambios en este tramo.
+
+### Estado de la familia (tarea 2.1)
+
+`openspec list --json` y `ls openspec/changes/archive/ | grep -E "c-12[5-9]-|c-13[0-5]-|c-142-"` (2026-10-26): ningun change de la FASE 36 esta archivado (el archivo es de la tarea 2.9); los archivados c-125..c-129 son de otra fase.
+
+| Change | Tareas | Estado | Pendiente de archivo |
+|---|---|---|---|
+| c-130 | 37/37 | aplicado | si |
+| c-131 | 81/81 | aplicado | si |
+| c-132 | 29/29 | aplicado | si |
+| c-133 | 42/42 | aplicado | si |
+| c-134 | 47/47 | aplicado | si |
+| c-135 | 34/35 | aplicado con la **tarea 5.2 abierta** (fechas de las seis iteraciones Scrumban sin fuente primaria: `gh` sin scope `read:project`; OQ-1 PROVISIONAL) | si, con la 5.2 abierta o cerrada antes con las fechas de los autores |
+| c-136 | 24/24 | aplicado | si |
+| c-137 | 41/41 | aplicado | si |
+| c-138 | 30/30 | aplicado | si |
+| c-139 | 46/46 | aplicado | si |
+| c-140 | 0/73 | **EXCLUIDO provisionalmente** de la integracion (decision del orquestador, 2026-10-25); no edito prosa de la tesis (`git log -- "docs/Tesis/v10 (IA)/paper/sections"` sin commits de c-140); **decision del usuario pendiente**: incluirlo (bloques de codigo, prueba de humo y texto de tesis antes de c-137, lo que obliga a repetir la pasada corta) o archivarlo como NO REALIZADO con `openspec archive c-140-endurecimiento-tecnico-tls-reintentos-e2e -y --skip-specs` (precedente c-67) | -- |
+| c-142 | 91/91 | aplicado | si |
+| c-141 | 7/52 antes de este tramo (grupo 1) | en curso | su archivo es de la fase archive |
+
+### Reconciliacion del mapeo de D1 con los artefactos (tarea 2.2)
+
+Contraste de los `proposal.md` y `tasks.md` de cada change y de los grupos de este registro con el mapeo de D1. Resultado: **ninguna parte de A1-A5 ni de B4-B16 queda sin dueno y ninguna tiene dos duenos de edicion**; dos salvedades que se devuelven al orquestador:
+
+| Parte | Dueno | Comentario |
+|---|---|---|
+| A1 | c-130 | Magnitudes por etapa, alcance del gate y cortocircuito; c-133 solo alinea la sub-hipotesis de intervencion con la base de 69 casos |
+| A2 | c-131 | Exactitud por etapa, calibracion por etapa y McNemar |
+| A3 | c-132 | Balance neto |
+| A4 | c-139 (correspondencia texto-fuente) y c-138 (fuentes de calibracion y cascadas, seccion 4 del dictamen y criterio 3 residual) | **Salvedad 1**: el `proposal.md` de c-138 y el de c-139 nombran ambos a A4. No hay solapamiento de texto (c-138 agrego seis entradas y la subseccion 3.4; c-139 corrige atribuciones y agrega ocho entradas). La matriz las separa en filas distintas |
+| A5a | c-130 (a traves de c-144, que ya declaro la procedencia en `0c7f5bc`) | T04, T12, T13 y T14 de c-130 solo se verificaron |
+| A5b | c-142 | Sensibilidad fuera de muestra, septima limitacion y evidencia del objetivo 6 |
+| B4, B5, B6 | c-133 | |
+| B7a | c-134 | |
+| B7b | c-131 | |
+| B8 | c-131 | |
+| B9 | c-135 | |
+| B10a-d | c-135 | |
+| B11 | c-136 | |
+| B12 | c-134 | |
+| B13a | c-135 | |
+| B13b | c-134 | |
+| B14 | c-137 | |
+| B15 | c-139 | |
+| B16a | c-139 | |
+| B16b | c-141 | En C1 (tarea 5.1); pendiente |
+
+Observaciones no numeradas del dictamen (D10): `timeout` de 10 s frente a 30 s -> dueno **c-135** (D15; aplicado: `05-arquitectura.tex` y `tab:anexo_gemini_params` dicen 30 s por intento y 60 s en total, procedencia en `conteos-canonicos-tecnicos.md`; c-140, opcional, trata otro timeout, el del handoff telefonico, `TELEFONIA_HANDOFF_TIMEOUT_S`, no el de la inferencia). **Salvedad 2**: `CLAUDE.md` (linea 51) y `openspec/config.yaml` (linea 34) siguen diciendo 10 s; c-135 lo dejo a c-130 "con confirmacion del usuario" y c-130 solo edito las lineas del gate: queda **sin dueno** y fuera de la tesis. Se registra como pendiente (ver "Pendientes").
+
+### Sincronizacion con el remoto (tarea 2.3)
+
+- `git fetch origin` (2026-10-26): sin errores. `origin/main` = `origin/RamaLuca` = `11e969c5919e56ca65bf10ca8e9c5bc4e43e19ac`.
+- `git log --oneline ramagonzalo..origin/main | wc -l` = **0** y `git log --oneline ramagonzalo..origin/RamaLuca | wc -l` = **0**.
+- `git merge-base --is-ancestor origin/main HEAD` (y lo mismo para `origin/RamaLuca`): **verdadero**. `git diff --stat $(git merge-base HEAD origin/main) origin/main -- docs/Tesis/ knowledge-base/ evaluation/ CHANGES.md` vacio (idem `origin/RamaLuca`).
+- No hay nada que integrar: **no se hizo `git merge`** (instruccion del orquestador). Hay que repetir esta comprobacion antes de C1 (tarea 8.1).
+
+### Regresion cruzada (tarea 2.4)
+
+Se re-ejecutaron sobre el arbol integrado (HEAD `b3c6f0f` mas las ediciones de este tramo) los comandos de verificacion automatizables de los `tasks.md` de c-130..c-139 y c-142 (greps de frase presente/ausente y de conteos, existencia de rotulos y claves del `.bib`, conteos de palabras del resumen) con un ejecutor propio (170 comprobaciones, mas las manuales de c-135, que no tiene greps en su `tasks.md`), mas las suites y herramientas. Las verificaciones de compilacion de cada `tasks.md` (sin indefinidas, sin `??`, `main.blg` limpio, `verify_citations.py`) se cumplen en el arbol final (ver "Compilacion de verificacion").
+
+| Change | Resultado | Detalle |
+|---|---|---|
+| c-130 | **PASS** | 28 comprobaciones; 1 con expectativa superada por un cambio posterior legitimo: `grep -c "estimaciones dentro de la muestra" 08-discusion.tex` da 3 y la tarea 5.3 esperaba 1 (c-142 T04 y c-133 agregaron la calificacion en otros parrafos); las frases refutadas siguen en 0. Suite del backend de la tarea 1.2: **125 passed** |
+| c-131 | **PASS** | 3 comprobaciones; suite `evaluation/` **451 passed, 2 skipped** (linea base de c-142; los 2 skips son las pruebas contra el historial git) |
+| c-132 | **PASS** | 27 comprobaciones; 2 con expectativa superada: "presenta seis limitaciones" (4.2) hoy es "presenta ocho limitaciones" por c-142 (septima) y c-133 (octava), cardinal confirmado; `subsec:balance-neto` en `10-recomendaciones.tex` aparece 2 veces (5.6 esperaba 1) porque c-136 la cita en la subseccion de medicion de intervencion. Resumen: 34 y 31 palabras en la conclusion ES/EN |
+| c-133 | **PASS** | 27 comprobaciones, 0 desvios |
+| c-134 | **PASS** | 23 comprobaciones, 0 desvios (`13,48` = 0, `13,52` en 07 y 08, `W = 0` = 0) |
+| c-135 | **PASS** | Comprobaciones manuales: `Semanas [0-9]` = 0 en 06, `12 semanas` = 0 en 04, `junio de 2026` = 0 en 08, `entre junio y octubre de 2026` = 0 en 01, `optimiz` = 0 en 12, "tres dimensiones" = 1 en 03, "cota inferior" y "20,1 segundos" = 1 en 09, `timeout` de `tab:anexo_gemini_params` = 30 s por intento y 60 s en total, `figures/cronograma.png` existe y resuelve. Desvio ya documentado en su grupo: `label{fig:cronograma}` esta en `12-anexos.tex` (Anexo A) y no en `06-implementacion.tex` (la tarea 6.1 esperaba 1 en 06). La tarea **5.2 sigue abierta** (OQ-1) |
+| c-136 | **PASS** | 15 comprobaciones; rotulos `subsec:calibracion-gate` y `subsec:medicion-intervencion` = 1 cada uno y orden 11.1, 11.2, 11.3 |
+| c-137 | **PASS** | 5 comprobaciones de grep; `revision_tildes.py --check` codigo **0** y 298 pruebas de la herramienta en verde; formas diacriticas del dictamen en 0 |
+| c-138 | **PASS** | 10 comprobaciones; las seis claves de calibracion y cascadas existen una vez en el `.bib` |
+| c-139 | **PASS** | 25 comprobaciones; 73 entradas, 8 claves nuevas de B15 = 8; `test_verify_citations.py` 4 pruebas OK; `verify_citations.py` **PASS** (73 <-> 73) |
+| c-142 | **PASS** | 7 comprobaciones; los 451 tests de `evaluation/` (incluidos los 141 de `sensibilidad_ajustes`) |
+
+Resumen de ejecutor: 170 comprobaciones, **5 sin cumplir la expectativa literal**: las tres expectativas superadas por cambios posteriores legitimos (c-130 5.3; c-132 4.2 y 5.6) y dos artefactos del ejecutor (c-137 5.1 cuenta lineas de comentario de `main.tex`: 0 si se excluyen; c-139 2.3 espera 1, como indica su propia nota). **Ninguna FAIL de contenido; no se parcho nada ajeno.** `openspec validate <change> --strict` pasa para los doce changes (c-130..c-139, c-142 y c-141).
+
+Suite completa del backend (`App/Backend`, imagen `eval-tests`, `GEMINI_API_KEY=test-key`): 1453 passed, 3 failed, 48 errors, 5 skipped, 1 xfailed. Los 48 errores son pruebas de integracion contra PostgreSQL (no hay base levantada en este entorno) y los 3 fallos son `test_001_seed_catalogs_no_fue_modificado`, que compara el SHA-256 de `001_seed_catalogs.py` y falla porque el arbol de trabajo tiene fin de linea CRLF (`core.autocrlf=true`). Ni las migraciones ni esos tests cambiaron desde `v1.1.1` (`git diff v1.1.1 --stat -- App/Backend/migrations` vacio): es una limitacion del entorno de verificacion, no una regresion de la familia. Los cambios de `App/Backend` desde `v1.1.1` son los de c-130 (comentarios, test de caracterizacion) y los de otros changes de la linea de Luca.
+
+### Controles de familia (tarea 2.5)
+
+Ejecutor: `python` sobre `paper/sections/*.tex` (reejecutable en 4.6).
+
+- **Valores `retirado` del memo** (`9,5` como proporcion de intervencion humana, `3.700`, `42 x 88`, `45,0 h`, `13,48`, `W = 0`, `Operaciones` como sector): **0 coincidencias** en `sections/*.tex`. Las apariciones de `9,5` en los listados de control eran `95~\%` (intervalo de confianza) y `89,5` (exactitud laxa): descartadas con la expresion `(?<![0-9,.])9(,|\{,\})5(?![0-9])`.
+- **`97/131`, `0,7405`, `0,6769`**: `0,6769` y `88/130` no figuran en la tesis. `97/131` y `0,7405` aparecen en 8 lugares, **todos calificados como estimacion dentro de la muestra o con remision a `subsec:sensibilidad-ajustes`**: `05-arquitectura.tex:80`, `07-resultados.tex:117` (fila de `tab:exactitud-etapa-canal`, calificada en la oracion que presenta la tabla), `:189`, `:204` y `:213` (la propia subseccion de sensibilidad), `08-discusion.tex:10` y `:56`, `09-conclusiones.tex:37`.
+- **Ausencia de fuga de datos**: 0 coincidencias de "sin acceso al corpus", "sin exposicion al corpus", "datos no vistos", "separacion estricta", "held-out", "estrictamente fuera de muestra".
+- **Resumen en espanol** (regla de c-106 reproducida: math en linea como una palabra, `~` como separador salvo antes de un digito): **ES 250, EN 242** (identicos a los valores registrados por c-133 y c-134); recuento plano con cada token separado: ES 258, EN 248. El espanol esta exactamente en el tope de 250: cualquier agregado exige comprimir otro pasaje.
+- **Referencias cruzadas**: 263 `\ref`/`\autoref`/`\pageref` en `sections/*.tex` (214 antes del Anexo I y 49 de la Tabla 20 y su parrafo), 137 `\label` (mas el del listado `lst:validar-gemini`, declarado en `\lstlisting[label=...]`), **0 sin destino** y 0 rotulos duplicados.
+- **Sectores canonicos**: 0 formas con tilde (c-137, OQ1).
+
+### Libro mayor de paginas (tarea 2.6)
+
+El libro mayor de la seccion G0 tiene una fila por change aplicado que modifica la tesis: base `v1.1.1`, `+c-144`, c-130, c-131, c-142, c-132, c-133, `c-134 tesis`, c-138, c-136, c-135, c-139 y c-137 (el bloque de codigo de c-134 y c-140 no tocan la tesis y no tienen fila). **No falta ninguna; no hubo que reconstruir ninguna.** La fila de c-142 (+1 / +1) esta dentro de su prevision de +1,0 a +1,4. Todas las filas se contrastaron con las previsiones declaradas: c-130 +1 (prevision +0,3 a +0,9; mas el corte de pagina), c-131 0, c-132 +1, c-133 0, c-134 0, c-136 0, c-135 0, c-138 +3 (prevision +2 a +3), c-139 +1 (+1 en la bibliografia), c-137 0. Acumulado de la familia c-130..c-137 sobre `+c-144` (102): +7 (109), dentro de +5,4 a +12,2 (central +7,7). Con el Anexo I de c-141 (tarea 3.1) el total integrado es 110: ver "Anexo I y presupuesto de paginas".
+
+### Memo canonico (tarea 2.7)
+
+Archivo `docs/Tesis/Correcciones/numeros-canonicos.md` (solo estructura, referencias y encabezado; **ningun valor ni estado cambio**):
+
+- **Numeracion**: encabezados 3.1 a 3.12 unicos y consecutivos (3.7 c-130, 3.8 c-134, 3.9 c-131, 3.10 c-142, 3.11 c-132, 3.12 c-133, que es el orden de aplicacion tras el ajuste de G0.6); el item 6 de la Seccion 7 (c-144) se conserva sin renumerar. Toda remision "Seccion 3.N" del memo y de este registro resuelve a una seccion existente (las remisiones historicas a "3.7" de los design de c-131, c-133 y c-134 estan explicadas en los grupos respectivos).
+- **Numeros de la familia**: `git diff -U0 v1.1.1 -- sections/` agrega 148 tokens numericos nuevos (no presentes en las lineas retiradas del mismo archivo); 123 figuran literalmente en el memo y los 25 restantes se explican asi: 17 son redondeos de la tesis a tres decimales o a un decimal porcentual de valores de cuatro decimales registrados en las secciones 3.8 a 3.10 (`0,546` de `0,5459`, `0,610` de `0,6095`, `0,670` de `0,6698`, `0,725` de `0,7246`, `0,737` de `0,7368`, `0,749` de `0,7488`, `0,808` de `0,8079`, `0,835` de `0,8346`, `0,845` de `0,8448`, `0,847` de `0,8467`, `0,870` de `0,8696`, `0,906` de `0,9059`/`0,9057`, `0,947` de `0,9468`, `53,4`, `58,0`, `83,9` y `85,0 %` de `0,5341`, `0,5799`, `0,8390` y `0,85`); 5 son valores de la literatura citados en `tab:trabajos-academicos` (`0,433`, `0,801`, `0,862`, `28.243`, `4.684`), cuya procedencia esta en `extraccion-metricas-trabajos-c-135.md` y que no son resultados de la tesis; y 3 no son resultados (`0.28` de la altura de una figura, `0.6508` del abstract con punto decimal, `1558/2001` numero de decreto). No quedo ningun numero de resultado solo en la tesis.
+- **Procedencia (`archivo:linea`)**: se verificaron 90 citas de las filas del memo; las filas `vigente` cuyas lineas de `sections/*.tex` se habian desplazado por la familia se actualizaron (19 citas mas 4 ajustes manuales: `07-resultados.tex:22 -> 21`, `:55 -> :57`, `:61 -> :59`, `:129 -> :128`, `:158 -> :157`, `:190 -> :189`, entre otras; solo el numero de linea). Las filas `retirado` conservan su ubicacion historica a proposito. Las citas restantes marcadas por el verificador son diferencias de formato (`94,0 %` derivado, `65,5` en `report.md`, `19.737` como `19737.0000`).
+- **Ninguna corrida de sensibilidad cambio un valor `vigente`**: las tres filas que c-142 reformulo (`97/131`, `88/130` y la fila de la etapa determinista) conservan valor y estado; ninguna de las 27 filas `vigente` de `v1.1.1` ni de las 44 anteriores a c-142 cambio de valor ni de estado.
+- **Decisiones no resolubles**: la Seccion 7 conserva sus nueve puntos con su condicion de reversibilidad (punto 6, conjunto de preproduccion, c-144; punto 7, procedencia de la cache FORCE-ESCALATE, c-130; punto 8, variante por pliegues, y punto 9, version del prompt de la FORCE-ESCALATE, c-142). Los valores no derivables: nivel c del prompt (corrida paga no autorizada) figura como "no computado"; las sensibilidades E3/E4 dependen de la cache `hybrid-v2` con `corpus_hash` distinto (decision PROVISIONAL de c-142; si se rechaza pasan a "no computable").
+- **Encabezado**: titulo "version de trabajo v10, release prevista `v1.2.0`"; nueva vineta "Consolidacion c-141" con la fecha de consolidacion 2026-10-26; conserva el SHA-256 del corpus `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb`.
+
+### Reportes de evaluacion (tarea 2.8)
+
+- `evaluation/report.md` conserva sus secciones: Etapas del pipeline, Exactitud, Matriz de Confusion, Metricas por sector, Metricas de conjunto, **Exactitud por etapa** y **por canal** y **Calibracion de la confianza** (c-131), **Tiempos** con Normalidad (Shapiro-Wilk), Prueba de Wilcoxon, Reduccion de tiempos, Desglose por canal (y, de c-134, Descriptivos, Contraste direccional y Escenarios de sensibilidad del redondeo). Los valores canonicos coinciden con el memo (`0.7350`, `0.5207`, `0.6654`, `0.3586`, `61.5850`, `17.7606`, `71.16`, `W = 363`, `T+ = 19737`, `r = 0.9639`, `0.7405`, `0.7246`); los valores de cuatro decimales de `report.md` que el memo no registra son descriptivos que la tesis no cita.
+- `evaluation/report_sensibilidad_ajustes.md` existe (97 lineas); sus 32 valores de cuatro decimales figuran en el memo (3.10) salvo constantes de diseno (`0.2000`, `0.3000`, `0.5000`). Declara el nivel c "no computado; requiere autorizacion explicita y no se ejecuto".
+- **Sin invocaciones pagas**: la ablacion del prompt (G0.7a) no esta autorizada y `report_sensibilidad_ajustes.md` no registra corrida paga; ninguna tarea de este tramo invoco a Gemini.
+- `report.md` y las caches oficiales no fueron modificados por c-142 (`git show --stat 59b9967 -- evaluation/report.md evaluation/evidence` vacio; `git log -- evaluation/report.md` solo muestra c-134 codigo, c-131 y el versionado inicial).
+- Huella del corpus: `git show HEAD:data/corpus_evaluacion_pseudonimizado.json | sha256sum` = `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb` (coincide con la esperada). Las copias vivas `evaluation/predicciones*.json` siguen ignoradas (`.gitignore:72`) y son copias locales de las evidencias versionadas de c-143.
+
+### Anexo I y presupuesto de paginas (tareas 3.1 y 3.2)
+
+- **3.1**: `12-anexos.tex`, `sec:anexo-trazabilidad`: se conserva el parrafo que remite a `docs/Tesis/Correcciones/dictamen-correcciones.md`; se agrega la identificacion del dictamen (22 de octubre de 2026, version de trabajo v10 publicada como `v1.1.0`, aplicable a `v1.1.1`) y la **Tabla 20** (`tab:anexo-trazabilidad`, `\small`, 18 filas, columnas Rec., Change y Secciones de la tesis con `\autoref`) para A1 a A5 y B4 a B16 (A4, A5, B7, B13 y B16 con los changes de cada parte). Sin numeros de linea de las fuentes. Los 48 `\autoref` de la tabla resuelven (0 referencias indefinidas tras compilar). Nota: el parrafo de la ruta del registro ya producia un `Overfull \hbox` de 67 pt (la ruta en `\texttt` no se parte) en `v1.1.1`/c-137; no se toco.
+- **3.2**: compilacion en el entorno de registro (Docker `texlive-thesis`, `latexmk main.tex`, en el arbol): `abspage@last{110}`; `main.toc`: `Anexos` en p. 102 (cuerpo sin anexos 101, anexos 9). Fila **"integrado (pre-compactacion)"** agregada al libro mayor de la seccion G0. **Brecha frente a la rama (a)** (total <= 101): **+9 paginas**. **Margen de la regla (b)** (cuerpo <= 100): **-1** (cuerpo 101). Sin compactar nada.
+- El Anexo I costo +1 pagina de total (110 frente a 109; prevision de D10: +0,1 a +0,6): la pagina 109 estaba llena con el final del Anexo H y el Anexo I, por lo que ni la tabla ni un parrafo de enumeracion caben sin abrir una pagina; la tabla queda en la p. 110 con las dos ultimas lineas del parrafo nuevo. Crece fuera del cuerpo (regla (b)).
+
+**Palancas de D5 para el checkpoint HIGH** (sin aplicar; ahorros estimados de D5 y de los grupos de los changes, a confirmar sobre el PDF):
+
+| Palanca | Ahorro estimado (paginas) | Clase | Nota sobre el PDF integrado |
+|---|---|---|---|
+| P1 Redundancia introducida por la familia (gate y procedencia de los ajustes repetidos; una explicacion y remisiones `\autoref`) | 0,5 a 1,0 | Forma | Candidatos: `05:80`, `07:157`, `08:16-20`, `09:37` repiten la regla por etapa y la procedencia |
+| P2 Leyendas de tablas y figuras nuevas | 0,2 a 0,4 | Forma | `tab:exactitud-etapa-canal`, `tab:sensibilidad-ajustes`, `tab:balance-neto`, `tab:tiempos-canal`, Tabla 20 |
+| P3 Tablas nuevas con la densidad de las existentes | 0,3 a 0,5 | Forma | |
+| P4 Espaciado de flotantes y listas | 0,3 a 0,5 | Forma (preambulo) | |
+| P5 Anexos H e I compactos | 0,3 a 0,5 | Forma | La p. 110 contiene solo la Tabla 20 y dos lineas del parrafo nuevo: una enumeracion en parrafo mas compacta o acortar la prosa del Anexo I podria devolver esa pagina al total (no al cuerpo); a confirmar |
+| P6 Indices de tablas y de figuras en una misma pagina | 0,5 a 1,0 | Formato: requiere aprobacion | |
+| P7 Bibliografia en `\small` o `\bibitemsep` reducido | 0,8 a 1,2 | Formato: requiere aprobacion | La ultima pagina de Referencias (p. 101) tiene 14 lineas: por si sola cierra el -1 de la regla (b) |
+| P8 Interlineado del cuerpo de 2 a 1,5 | del orden de 10 a 14 | Formato de la catedra: requiere aprobacion explicita | Unico que cierra la brecha de +9 de la rama (a) |
+
+Lectura: las palancas de forma P1-P5 rinden 1,6 a 2,9 y con P6 y P7, 2,9 a 5,1; **no cierran la brecha de +9 de la rama (a)** (total <= 101); solo la cierra P8 o recortar contenido de la familia. Bajo la **regla (b)** (cuerpo <= 100) basta recuperar **1 pagina del cuerpo**: P7 sola (0,8 a 1,2) o P1 mas P2; alternativas locales: la ultima pagina de Discusion (p. 85) tiene 13 lineas y la de Implementacion (p. 61) 21, de modo que compactar esas lineas en sus capitulos devuelve una pagina sin tocar el preambulo. Ultima pagina de cada capitulo (lineas no vacias de `pdftotext -layout`): 1: 31, 2: 33, 3: 35, 4: 26, 5: 31, 6: 21, 7: 41, 8: 36, 9: 13, 10: 32, 11: 32, Referencias: 14.
+
+### Pasada ortotipografica corta (tarea 4.1)
+
+Commit de apply de c-137: `492f56c` (merge `b3c6f0f`). `git diff 492f56c..HEAD -- "docs/Tesis/v10 (IA)/paper/sections/"` esta **vacio**; el unico texto de prosa modificado despues de c-137 es el del Anexo I de este tramo (`git diff 492f56c -- sections/` = 36 lineas agregadas en `12-anexos.tex`). Verificaciones de c-137 sobre ese texto: `revision_tildes.py --check` codigo **0**; ninguna ocurrencia de los pares `hacia`/`hacia`, `formula`, `continua`, `esta`/`este`, `si`/`aun`/`solo` ni de las palabras enumeradas por el dictamen (`erronea`, `heterogeneos`, `multiples`, `inequivocos`, `antiguedad`, `perimetro`, `enganosa`, `escaner`, `decada`, `alla`, `guian`, `envian`, `demas`) en las lineas agregadas; se revisaron a mano. No se reaplicaron `acentuar_tesis.py` ni `acentuar_tesis_v9.py`.
+
+### Compilacion de verificacion (tareas 4.2 a 4.6) - arbol integrado pre-compactacion
+
+- **Entorno**: Docker `texlive-thesis` (XeTeX 3.141592653-2.6-0.999998, TeX Live 2026; biber 2.22). **Comando**: `MSYS_NO_PATHCONV=1 docker run --rm -v "<repo>/docs/Tesis/v10 (IA):/work" -w /work/paper texlive-thesis latexmk main.tex`.
+- **Paginas**: `abspage@last{110}`; `Anexos` en p. 102: cuerpo 101, anexos 9. `pdftotext` cuenta 110 saltos de pagina; la portada ocupa una pagina.
+- **Log** (`main.log`, no versionado): errores fatales (`grep -c "^!"`) **0**; referencias o citas indefinidas **0**; `multiply defined` **0**; `Overfull \hbox`: 31 avisos, **22 mayores de 10 pt** (todos preexistentes: celdas de `Courier New` de las tablas de arquitectura y rutas de la API, el comando `pytest --cov` de 04 y 06, parrafos con rutas y literales de los Anexos B, F, H e I y dos filas de la tabla del capitulo 7; ninguno en `tab:anexo-trazabilidad`; 31 avisos = los 31 de c-137). Sin avisos de `fancyhdr`.
+- **biber**: `main.blg` sin `WARN` ni `ERROR`; "Found 73 citekeys" = 73 entradas de `Bibliography_base.bib`; `verify_citations.py` **STATUS: PASS** (73 entradas <-> 73 claves, 126 comandos de cita, 0 huerfanas, 0 sin usar).
+- **Figuras y texto**: los 12 `\includegraphics` de `sections/*.tex` resuelven contra `\graphicspath` (`figures/`, `./`, `assets/`), incluida `figures/cronograma.png`; `pdftotext -enc UTF-8 main.pdf - | grep -c "??"` = **0**.
+- **4.6**: los controles de familia (tarea 2.5) se repitieron sobre este arbol final del tramo (mismo ejecutor, resultados de la seccion anterior) y el conteo se contrasta con el tope en "Anexo I y presupuesto de paginas": 110 / 101 / 9, sin tope cumplido (3.6 no ejecutada: depende del checkpoint HIGH).
+
+### Pendientes y verificaciones diferidas
+
+- Repetir 2.3 (fetch y ancestro) antes de C1; repetir 4.2-4.6 tras cualquier compactacion o edicion de la tesis; recalcular la matriz de trazabilidad tras C1 (`python docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py [--reubicar | --rev v1.2.0]`).
+- `CLAUDE.md` (linea 51) y `openspec/config.yaml` (linea 34): alinear el timeout de la inferencia (30 s por intento y 60 s en total) con confirmacion del usuario; ademas dicen "Gemini 2.5 Flash" (la tesis usa `gemini-3.6-flash`), fuera del alcance declarado de c-141.
+- `CHANGES.md` ("Pendientes planificados", punto 2) sigue diciendo que la seccion de normalidad del reporte es manual: obsoleto desde c-99 (tarea 9.1).
+- `knowledge-base/11_evaluacion_experimental.md` y `README.md` (tareas 7.6 y 7.7) y los renders (7.1 a 7.3) quedan para el tramo de release; hoy el render `tesis_para_agente.md` y los textos extraidos no reflejan el Anexo I nuevo.
+- El primer item del alcance excluido de `01-introduccion.tex:74` (integracion con inventario de activos y gestion de configuracion) remite a `sec:recomendaciones` y el capitulo no tiene una subseccion para ese tema (hallazgo heredado de c-136 y c-135): decidir si se agrega una linea o se acota la remision.
+- Suite completa del backend: 3 fallos y 48 errores de entorno (ver 2.4); no son de la familia.
+
+## Dictamen v10 / v1.1.0 (2026-10-22) - cobertura por change (FASE 36)
+
+**Origen**: change `c-141-integracion-release-v1-2-0`, tarea 6.1 (matriz de trazabilidad), 6.2 (observaciones no numeradas) y 6.3 (rubrica). Escrito el **2026-10-26**. La matriz da, por recomendacion o parte de recomendacion, el change dueno, el `archivo:linea`, el `\label` ancla mas cercano (el del flotante si la linea esta dentro de una tabla o figura; si no, el de la seccion o subseccion previa), un fragmento verificable y el estado.
+
+**Alcance de las lineas**: calculadas sobre el **arbol integrado pre-compactacion y pre-C1** (HEAD `b3c6f0f` mas las ediciones del tramo de integracion, Anexo I incluido). Valen en `v1.2.0` solo si C1 (tarea 5.1: Anexo B y titulo de `Gomez2026_repositorio`) y una eventual compactacion (3.4/3.5) no desplazan esas lineas: las filas de `12-anexos.tex` posteriores al Anexo B y la fila B16b son las sensibles. **Hay que recalcular tras C1 y antes de crear el tag** con `python docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py --reubicar` (arbol de trabajo) y verificar contra la etiqueta con `python docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py --rev v1.2.0` (la tarea 6.1 pide `git show v1.2.0:<archivo> | sed -n '<linea>p'` por fila; el script lo automatiza y comprueba el `\label`). Verificacion de este tramo: **todas las filas pasan** (41 filas; B16b se omite por PENDIENTE).
+
+| Rec | Sintesis | Change | Archivo:linea en v1.2.0 | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| A1 | Gate de revision acotado por etapa: el umbral 0,70 aplica solo a la salida de Gemini | c-130 | `docs/Tesis/v10 (IA)/paper/sections/02-marco-teorico.tex:34` | `subsec:human-in-the-loop` | `revisión selectiva acotada por etapa` | cerrada |
+| A1 | Arquitectura: la reserva fija confianza 0,0 y el cortocircuito se decide por el puntaje de correctitud | c-130 | `docs/Tesis/v10 (IA)/paper/sections/05-arquitectura.tex:82` | `subsec:subsistema-clasificacion` | `fija la confianza en 0,0` | cerrada |
+| A1 | 124 de 200 casos con confianza < 0,70 no escalan (todos de la etapa determinista) | c-130 | `docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex:157` | `subsec:reduccion-intervencion` | `124 de los 200 casos` | cerrada |
+| A2 | Calibracion aparente invertida = efecto de composicion entre etapas, no anti-calibracion | c-131 | `docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex:189` | `subsec:calibracion` | `es un efecto de composición` | cerrada (cache de la corrida principal via c-143; PROVISIONAL) |
+| A2 | Exactitud estricta y laxa por etapa del pipeline (tab:exactitud-etapa-canal) | c-131 | `docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex:117` | `tab:exactitud-etapa-canal` | `Etapa determinística & 131 & 97/131` | cerrada |
+| A3 | Subseccion nueva de balance neto entre ahorro bruto de registro y derivaciones erroneas | c-132 | `docs/Tesis/v10 (IA)/paper/sections/08-discusion.tex:70` | `subsec:balance-neto` | `Balance neto de la automatización` | cerrada (revision del autor pendiente sobre resumen y conclusion) |
+| A3 | Conclusiones: tiempo bruto liberado con saldo neto indeterminado | c-132 | `docs/Tesis/v10 (IA)/paper/sections/09-conclusiones.tex:41` | `subsec:cumplimiento-objetivos` | `cuyo saldo neto está indeterminado` | cerrada |
+| A4 | Atribuciones de las fuentes sobre rendimiento multilingue acotadas a lo que sostienen | c-139 | `docs/Tesis/v10 (IA)/paper/sections/02-marco-teorico.tex:50` | `subsec:nlp-llm` | `tampoco es uniforme entre idiomas` | cerrada (acceso a texto completo parcial; PROVISIONAL) |
+| A4 | Hallazgo de Revina 2020 presentado como decision de diseno y no como resultado medido | c-139 | `docs/Tesis/v10 (IA)/paper/sections/03-estado-del-arte.tex:30` | `subsec:trabajos-academicos` | `no como resultado medido` | cerrada |
+| A4 | Literatura de calibracion de la confianza y cascadas de modelos (subseccion 3.4) | c-138 | `docs/Tesis/v10 (IA)/paper/sections/03-estado-del-arte.tex:58` | `subsec:calibracion-cascadas` | `Calibración de la confianza y cascadas de modelos` | cerrada |
+| A5a | Procedencia declarada: ajustes del filtro y del prompt hechos con el corpus de evaluacion | c-130 / c-144 | `docs/Tesis/v10 (IA)/paper/sections/08-discusion.tex:20` | `subsec:interpretacion-resultados` | `La procedencia de los datos de ajuste merece una observación aparte` | cerrada (declaracion de c-144) |
+| A5a | Anexo H: prompt ajustado sobre el corpus de validacion, sin corpus independiente de preproduccion | c-130 / c-144 | `docs/Tesis/v10 (IA)/paper/sections/12-anexos.tex:144` | `subsec:anexo-iteracion-prompt` | `no se dispuso de un corpus independiente de preproducción` | cerrada (declaracion de c-144) |
+| A5b | Sensibilidad fuera de muestra de los ajustes (subseccion y tabla nuevas) | c-142 | `docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex:191` | `subsec:sensibilidad-ajustes` | `Sensibilidad al ajuste del clasificador con el corpus` | cerrada (nivel c del prompt no cuantificado; PROVISIONAL) |
+| A5b | Septima limitacion: metricas estimadas dentro de la muestra | c-142 | `docs/Tesis/v10 (IA)/paper/sections/08-discusion.tex:56` | `subsec:limitaciones-estudio` | `Séptimo, el vocabulario del filtro` | cerrada |
+| B4 | Tabla de cumplimiento de objetivos sin sobreestimar (objetivo general: alcanzado parcialmente) | c-133 | `docs/Tesis/v10 (IA)/paper/sections/09-conclusiones.tex:22` | `tab:cumplimiento-objetivos` | `Objetivo general: viabilidad y desempeño & Alcanzado parcialmente` | cerrada |
+| B5 | Segunda sub-hipotesis contrastable contra la cota 0,15; estado no contrastada | c-133 | `docs/Tesis/v10 (IA)/paper/sections/01-introduccion.tex:34` | `subsec:hipotesis-trabajo` | `complemento del umbral de exactitud fijado a priori` | cerrada (OQ1 PROVISIONAL) |
+| B6 | Macro-F1 primaria de umbral (cuatro clases estimables) unificada | c-133 | `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex:75` | `subsec:analisis-estadistico` | `contra el cual se eval` | cerrada |
+| B7a | Tiempos manuales y automatizados por canal con contraste intra-canal | c-134 | `docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex:37` | `tab:tiempos-canal` | `label{tab:tiempos-canal}` | cerrada |
+| B7b | Exactitud estricta y laxa por canal de origen | c-131 | `docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex:119` | `tab:exactitud-etapa-canal` | `Llamada telefónica & 81 & 53/81` | cerrada |
+| B8 | Exactitud laxa definida junto a la estricta (metrica secundaria) | c-131 | `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex:75` | `subsec:analisis-estadistico` | `exactitud laxa` | cerrada |
+| B9 | Cronograma con procedencia: figura en el Anexo A | c-135 | `docs/Tesis/v10 (IA)/paper/sections/12-anexos.tex:22` | `fig:cronograma` | `label{fig:cronograma}` | cerrada parcialmente: fechas de las seis iteraciones sin fuente primaria (tarea 5.2 de c-135 abierta) |
+| B9 | Cuarta limitacion: version del modelo vigente durante la campana (24-09-2026) | c-135 | `docs/Tesis/v10 (IA)/paper/sections/08-discusion.tex:50` | `subsec:limitaciones-estudio` | `integrada al clasificador el 24 de septiembre de 2026` | cerrada |
+| B10a | Introduccion de resultados enumera los seis apartados vigentes | c-135 | `docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex:6` | `sec:resultados` | `Los resultados se presentan en seis apartados` | cerrada |
+| B10b | Dimension nombrada como intervencion humana (sin 'reduccion') | c-135 | `docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex:6` | `sec:resultados` | `intervención humana, calibración de la confianza` | cerrada |
+| B10c | Tabla comparativa: tres dimensiones; telefonia fuera de la afirmacion comparativa | c-135 | `docs/Tesis/v10 (IA)/paper/sections/03-estado-del-arte.tex:66` | `subsec:analisis-comparativo` | `tres dimensiones` | cerrada (OQ-4 PROVISIONAL) |
+| B10d | Metricas de los trabajos academicos completadas desde la fuente accesible | c-135 | `docs/Tesis/v10 (IA)/paper/sections/03-estado-del-arte.tex:46` | `tab:trabajos-academicos` | `20.000 reclamos + 35.000 issues` | cerrada parcialmente: Paket 2024 y Colavito 2025 sin acceso (OQ-5) |
+| B11 | Linea prioritaria: calibracion del gate | c-136 | `docs/Tesis/v10 (IA)/paper/sections/10-recomendaciones.tex:8` | `subsec:calibracion-gate` | `label{subsec:calibracion-gate}` | cerrada |
+| B11 | Linea prioritaria: correccion de la medicion de intervencion humana | c-136 | `docs/Tesis/v10 (IA)/paper/sections/10-recomendaciones.tex:16` | `subsec:medicion-intervencion` | `label{subsec:medicion-intervencion}` | cerrada |
+| B12 | Muestreo: asignacion proporcional no verificable frente al universo; clase con n = 1 no estimable | c-134 | `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex:45` | `subsec:poblacion-muestra-corpus` | `estratificado` | cerrada (OQ2 PROVISIONAL) |
+| B13a | Canal telefonico: duracion de 20,1 s como cota inferior por el tope de grabacion | c-135 | `docs/Tesis/v10 (IA)/paper/sections/09-conclusiones.tex:39` | `subsec:cumplimiento-objetivos` | `cota inferior` | cerrada |
+| B13b | Cronometraje en vivo: relato del procedimiento, efecto Hawthorne atenuado y residual | c-134 | `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex:16` | `subsec:diseno-experimental` | `Hawthorne` | cerrada (OQ1 PROVISIONAL) |
+| B14 | Revision ortotipografica: titulos acentuados de indices y bibliografia | c-137 | `docs/Tesis/v10 (IA)/paper/main.tex:79` | - | `Referencias bibliográficas` | cerrada |
+| B15 | Normas y metodos estadisticos con entrada bibliografica (ISO/IEC 27001:2022) | c-139 | `docs/Tesis/v10 (IA)/paper/sections/11-aspectos-legales.tex:40` | `subsec:cumplimiento-marco` | `ISO27001_2022` | cerrada |
+| B16a | Metadatos bibliograficos (Jurafsky y Martin: edicion 2026, URL y fecha de consulta) | c-139 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:96` | - | `@unpublished{Jurafsky2023_speech_language` | cerrada |
+| B16b | Version de Gomez2026_repositorio alineada con la release (1.2.0) | c-141 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:793` | - | `{Gomez2026_repositorio` | PENDIENTE: se cierra en C1 (tarea 5.1) |
+| Criterio 5 (residual) | TLS no verificado e invocacion sincronica declarados como limite (c-140 excluido provisionalmente) | c-140 / limitacion declarada | `docs/Tesis/v10 (IA)/paper/sections/09-conclusiones.tex:23` | `tab:cumplimiento-objetivos` | `TLS no verificado` | residual declarado |
+| B11 | Aprendizaje activo: seleccion por senales independientes y confianza solo tras recalibracion | c-136 | `docs/Tesis/v10 (IA)/paper/sections/10-recomendaciones.tex:30` | `subsec:aprendizaje-activo` | `label{subsec:aprendizaje-activo}` | cerrada |
+| B12 | Contraste direccional: p unilateral global junto al bilateral de los tiempos | c-134 | `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex:71` | `subsec:analisis-estadistico` | `alternative=greater` | cerrada |
+| B12 | Potencia expresada en d_z con eficiencia relativa asintotica 0,864 | c-134 | `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex:87` | `subsec:amenazas-validez` | `0{,}864` | cerrada |
+| Residual criterio 4 (A1/B5) | Intervencion humana no medida: sin registro primario de la accion manual por caso | c-130 / c-133 | `docs/Tesis/v10 (IA)/paper/sections/08-discusion.tex:58` | `subsec:limitaciones-estudio` | `no se conservó un registro primario de la acción manual` | residual declarado |
+| Residual criterio 4 (kappa) | Registros primarios del doble etiquetado no conservados: kappa sin incertidumbre cuantificada | - | `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex:55` | `subsec:poblacion-muestra-corpus` | `registros que no se conservaron en las fuentes disponibles` | residual declarado |
+
+Estados: *cerrada* (la correccion esta en el arbol integrado), *cerrada parcialmente* (con la justificacion indicada), *residual declarado* (limitacion que la tesis declara; no corregible con los datos disponibles) y *PENDIENTE* (se cierra en un paso posterior). Las decisiones PROVISIONALES de cada change figuran en sus grupos de este registro y en la lista consolidada de "Pendientes y verificaciones diferidas". El `Rec` A4 tiene dos duenos de parte (c-139 para la correspondencia texto-fuente; c-138 para las fuentes de calibracion y cascadas, seccion 4 del dictamen y criterio 3 residual); A5 se divide en A5a (c-130, a traves de la declaracion de c-144) y A5b (c-142).
+
+### Observaciones del dictamen sin numero de recomendacion (tarea 6.2)
+
+| # | Observacion | Dueno | Estado |
+|---|---|---|---|
+| O1 | Registros primarios del doble etiquetado no conservados (kappa sin incertidumbre) | Fuera de alcance (no recuperables); limitacion declarada en `subsec:poblacion-muestra-corpus` (fila "Residual criterio 4 (kappa)" de la matriz) | residual declarado |
+| O2 | Doble fecha de consulta en las cinco entradas `@online` | c-139 (B16) | cerrada: solo `urldate = {2026-10-19}`; notas sin fecha |
+| O3 | Seudonimo como apellido en `Tiangolo2024_fastapi` | c-139 (B16) | cerrada: `Ramirez, Sebastian` |
+| O4 | `GDPR2016` y `Jurafsky2023_speech_language` sin enlace | c-139 (B16) | cerrada: URL y `urldate` en ambas |
+| O5 | Sede omitida en Liu et al. 2025 (`liu2025tickit`) | c-139 (B16) | cerrada: *FSE Companion '25*, Trondheim |
+| O6 | Ausencia de `main.log` en el repositorio | c-141 (D6) | cerrada por evidencia: la compilacion se consigna en este registro (seccion "Compilacion de verificacion"); la evidencia de la release se completa en 5.3 |
+| O7 | Version del modelo fechada en "junio de 2026" frente a `11036be` (24-09-2026) | c-135 (B9) | cerrada: la cuarta limitacion cita `gemini-3.6-flash`, integrada el 24-09-2026 |
+| O8 | `timeout` de 10 s en la tesis y en el Anexo H frente a 30 s del backend | c-135 (D15); el residual de `CLAUDE.md` y `openspec/config.yaml` no tiene dueno (fuera de la tesis) | cerrada en la tesis (30 s por intento y 60 s en total); pendiente fuera de la tesis |
+| O9 | Remision al inexistente `docs/prompt_gemini_history/` y afirmacion refutada en `evaluation/README.md` y `docs/anexo_h_prompt_gemini.md` | c-144 y c-142 | cerrada: `prompt_gemini_history` = 0 en `sections/` y en `docs/anexo_h_prompt_gemini.md`; `NO fue ajustado` = 0 en `evaluation/README.md` |
+| O10 | Afirmacion refutada en `knowledge-base/11_evaluacion_experimental.md` | c-141 (D9, tarea 7.6) | PENDIENTE: tramo de release (tarea 7.6) |
+
+Las diez observaciones tienen dueno o declaracion de residual; ninguna queda sin cubrir.
+
+### Verificacion de cierre contra la rubrica del dictamen (tarea 6.3)
+
+Rubrica de la catedra tal como la aplico el dictamen del 22-10-2026 (revision vigente, ponderado **7,67**, nota 8): nueve criterios evaluables sobre peso efectivo 105; el criterio 10 (defensa oral, peso 10) **no es aplicable** a este documento. **No se asignan puntajes nuevos**: la columna "Puntaje" repite el del dictamen y la evidencia es la fila de la matriz. "Aplicado, pendiente de release" significa que la correccion esta en el arbol integrado y se consolida al etiquetar `v1.2.0`.
+
+| Criterio | Peso | Puntaje (dictamen) | Descuento | Change dueno | Estado tras la release | Evidencia (matriz) |
+|---|---|---|---|---|---|---|
+| 1 Definicion del problema | 15 | 8,5 | Sub-hipotesis 2 no contrastable | c-133 (B5) | aplicado, pendiente de release | B5 |
+| 1 Definicion del problema | 15 | 8,5 | Hipotesis subsidiarias no contrastadas | c-133 (B5) | aplicado, pendiente de release (rotuladas "no contrastadas") | B5 |
+| 1 Definicion del problema | 15 | 8,5 | Sub-pregunta de calidad por canal sin respuesta | c-131 (B7b) | aplicado, pendiente de release | B7b |
+| 2 Justificacion y relevancia | 10 | 9 | Sin descuentos (verificar que c-132 no altere el argumento) | c-132 / c-139 (verificacion) | aplicado, pendiente de release: c-132 matizo dos verbos de `subsec:justificacion` ("busca liberar") y no altero las tres dimensiones; revision del autor pendiente | A3 |
+| 3 Marco teorico y revision | 15 | 8 | Metricas de la tabla de trabajos previos no extraidas | c-135 (B10d) | aplicado, pendiente de release; cerrada parcialmente: Paket 2024 y Colavito 2025 sin acceso (OQ-5) | B10d |
+| 3 Marco teorico y revision | 15 | 8 | Telefonia no evidenciada por la tabla comparativa | c-135 (B10c) | aplicado, pendiente de release | B10c |
+| 3 Marco teorico y revision | 15 | 8 | Sin literatura de calibracion y cascadas | c-138 | aplicado, pendiente de release | A4 (c-138) |
+| 3 Marco teorico y revision | 15 | 8 | Atribuciones imprecisas a fuentes de NLP | c-139 (A4) | aplicado, pendiente de release | A4 (c-139) |
+| 4 Metodologia | 20 | 7 | Contraste unilateral con p bilateral | c-134 (B12) | aplicado, pendiente de release | B12 (alternative=greater) |
+| 4 Metodologia | 20 | 7 | Comparacion de potencia heterogenea | c-134 (B12) | aplicado, pendiente de release | B12 (0{,}864) |
+| 4 Metodologia | 20 | 7 | Estratificacion no verificable y clase con n = 1 | c-134 (B12) | aplicado, pendiente de release (OQ2 PROVISIONAL) | B12 (estratificado) |
+| 4 Metodologia | 20 | 7 | Exactitud laxa no reportada | c-131 (B8) | aplicado, pendiente de release | B8 |
+| 4 Metodologia | 20 | 7 | Variable de intervencion humana nunca medida | c-130 (A1) y c-133 (B5) | residual declarado: "Octavo, no se conservo un registro primario" (`subsec:limitaciones-estudio`) | Residual criterio 4 (A1/B5) |
+| 4 Metodologia | 20 | 7 | Registros primarios del doble etiquetado no conservados | - | residual declarado en `subsec:poblacion-muestra-corpus` | Residual criterio 4 (kappa) |
+| 4 Metodologia | 20 | 7 | Afirmacion de ausencia de fuga de datos desmentida por el historial | c-130 (A5a) y c-142 (A5b) | aplicado, pendiente de release | A5a, A5b |
+| 5 Desarrollo tecnico | 15 | 8 | TLS no desplegado, invocacion sincronica sin reintentos, sin pruebas de extremo a extremo | c-140 (excluido provisionalmente) o limitacion declarada | residual declarado (objetivo 1 "Alcanzado parcialmente"); si el usuario incluye c-140 se re-evalua | Criterio 5 (residual) |
+| 5 Desarrollo tecnico | 15 | 8 | Gate de revision no aplicado a la etapa determinista sin documentarlo | c-130 (A1) | aplicado, pendiente de release | A1 |
+| 6 Resultados y analisis | 10 | 6,5 | Calibracion invertida como artefacto de agregacion | c-131 (A2) | aplicado, pendiente de release | A2 |
+| 6 Resultados y analisis | 10 | 6,5 | 124 casos bajo el umbral no escalados sin explicacion | c-130 (A1) | aplicado, pendiente de release | A1 |
+| 6 Resultados y analisis | 10 | 6,5 | Sin exactitud por etapa ni por canal | c-131 (A2, B7b) | aplicado, pendiente de release | A2, B7b |
+| 6 Resultados y analisis | 10 | 6,5 | Tiempos manuales por canal no tabulados | c-134 (B7a) | aplicado, pendiente de release | B7a |
+| 6 Resultados y analisis | 10 | 6,5 | Exactitud reportada sin advertir que es en parte una estimacion dentro de la muestra | c-130 (A5a) y c-142 (A5b) | aplicado, pendiente de release | A5a, A5b |
+| 7 Conclusiones y aportes | 10 | 7 | Tabla de cumplimiento sobreestimada (objetivos 1, 3 y 4) | c-133 (B4) | aplicado, pendiente de release | B4 |
+| 7 Conclusiones y aportes | 10 | 7 | Viabilidad operativa sin computar el costo de la derivacion erronea | c-132 (A3) | aplicado, pendiente de release (revision del autor sobre resumen y conclusion) | A3 |
+| 7 Conclusiones y aportes | 10 | 7 | Dos lineas prioritarias anunciadas sin desarrollo | c-136 (B11) | aplicado, pendiente de release | B11 |
+| 7 Conclusiones y aportes | 10 | 7 | Aprendizaje activo contradictorio con el hallazgo de calibracion | c-136 (B11) | aplicado, pendiente de release | B11 (aprendizaje activo) |
+| 8 Redaccion y estructura | 5 | 7 | Patron sistematico de tildes incorrectas | c-137 (B14) | aplicado, pendiente de release | B14 |
+| 8 Redaccion y estructura | 5 | 7 | Cronologia no conciliada entre capitulos | c-135 (B9) | aplicado, pendiente de release; cerrada parcialmente (fechas de las seis iteraciones, tarea 5.2 abierta) | B9 |
+| 8 Redaccion y estructura | 5 | 7 | Residuos de redaccion en el capitulo 7 y en la tabla comparativa | c-135 (B10a, B10b, B10c) | aplicado, pendiente de release | B10a, B10b, B10c |
+| 9 Referencias | 5 | 7,5 | Correspondencia semantica texto-fuente deficiente | c-139 (A4) | aplicado, pendiente de release | A4 (c-139) |
+| 9 Referencias | 5 | 7,5 | Normas ISO/IEC y NIST sin entrada bibliografica | c-139 (B15) | aplicado, pendiente de release | B15 |
+| 9 Referencias | 5 | 7,5 | Metadatos incompletos o discordantes | c-139 (B16a) y c-141 (B16b) | B16a aplicado; B16b (version del repositorio) PENDIENTE: se cierra en C1 (tarea 5.1) | B16a, B16b |
+| 10 Defensa oral | 10 | - | No evaluable en este dictamen | - | no aplicable | - |
+
+Los nueve criterios evaluables figuran con todos los descuentos que enumera el dictamen (incluidos los dos de A5 en los criterios 4 y 6); el criterio 10 queda no aplicable; no hay puntajes nuevos. Residuales: el kappa sin incertidumbre y la intervencion humana no medida (criterio 4) y el TLS, los reintentos y las pruebas de extremo a extremo (criterio 5) son los descuentos que la release no corrige; el criterio 5 depende de la decision del usuario sobre c-140.

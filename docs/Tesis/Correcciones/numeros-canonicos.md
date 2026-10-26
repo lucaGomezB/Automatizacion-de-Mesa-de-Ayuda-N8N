@@ -1,4 +1,4 @@
-# Números canónicos de la tesis v9 — Gate 0 (c-102)
+# Números canónicos de la tesis (versión de trabajo v10, release prevista `v1.2.0`) — Gate 0 (c-102)
 
 **Este documento es la Fuente Única de Verdad numérica de la tesis.** Todo valor
 numérico que la tesis v9 cite en los capítulos `04-marco-metodologico.tex`,
@@ -17,6 +17,7 @@ de las ramas consumidoras").
 - **Upsert c-142**: `c-142-sensibilidad-fuera-de-muestra-ajustes-clasificador` (aplicado el 2026-10-25) agrega la Sección 3.10 (sensibilidad de las métricas frente al ajuste del clasificador con el corpus: variante principal con el vocabulario previo a c-71, descomposición pareada, control de fidelidad de la réplica histórica, E3, E4 y niveles del prompt), notas "estimación dentro de la muestra; ver sección 3.10" en las filas de `97/131`, `0,7405` y `0,6769` y los puntos 8 y 9 de la Sección 7. No modifica ningún valor `vigente` de las Secciones 3.1 a 3.9. Fecha: 2026-10-25.
 - **Upsert c-132**: `c-132-balance-neto-derivaciones-erroneas` (aplicado el 2026-10-25) agrega la Sección 3.11 (balance neto trimestral entre el ahorro bruto de registro y el costo de las derivaciones erróneas: insumos con procedencia, fórmulas de `B` y de la exactitud mínima de equilibrio `a*`, tabla de escenarios, escenario central, lectura laxa, comando de referencia y redondeo; todo valor derivado de supuestos con estado `condicional`). No modifica ningún valor `vigente` de las Secciones 3.1 a 3.10. Fecha: 2026-10-25.
 - **Upsert c-133**: `c-133-hipotesis-objetivos-metrica-primaria` (aplicado el 2026-10-25) pasa el macro-F1 de umbral de las cuatro clases estimables (`0,6508`) de `condicional` a `vigente` (Sección 3.2), agrega los porcentajes `65,5 %` y `34,5 %` a la Sección 3.3, agrega la Sección 3.12 (cota de la segunda sub-hipótesis y contraste acotado de la hipótesis subsidiaria de eficiencia, con el estado que fija la regla de decisión frente a la variante E4 de c-142) y anota el ítem 5 de la Sección 5 y el punto 4 de la Sección 7. No modifica ningún otro valor `vigente`. Fecha: 2026-10-25.
+- **Consolidación c-141** (`c-141-integracion-release-v1-2-0`, tramo de integración; fecha de consolidación: 2026-10-26; versión de trabajo de la tesis: v10; release prevista: `v1.2.0`): verifica que las Secciones 3.7 a 3.12 (c-130, c-134, c-131, c-142, c-132, c-133, en ese orden de aplicación) son únicas y consecutivas y que toda remisión "ver sección 3.N" resuelve; que los números de resultado agregados a `sections/*.tex` por la familia c-130..c-142 (diff contra `v1.1.1`) figuran en alguna sección con procedencia y estado (los redondeos de la tesis a tres decimales o a un decimal porcentual derivan de valores de cuatro decimales ya registrados; los valores de la literatura citados en `tab:trabajos-academicos` tienen su procedencia en `extraccion-metricas-trabajos-c-135.md`); que ninguna corrida de sensibilidad de c-142 cambió un valor `vigente` (las tres filas reformuladas por c-142 conservan valor y estado); y refresca las referencias `archivo:línea` a `sections/*.tex` de las filas `vigente` que el desplazamiento de líneas de la familia había dejado desfasadas (solo el número de línea; ningún valor ni estado cambia). El item 6 de la Sección 7 (conjunto de preproducción, c-144) se conserva sin renumerar. Fecha de consolidación: 2026-10-26.
 - **Artefacto**: este memo. No se edita ningún `.tex` en este change.
 - **Fecha de verificación**: 2026-10-21.
 - **SHA-256 del corpus** (`data/corpus_evaluacion_pseudonimizado.json`):
@@ -87,27 +88,27 @@ citable como resultado) y `condicional` (depende de una decisión editorial).
 
 | Valor canónico | Procedencia (archivo:línea) | Estado | Notas |
 |---|---|---|---|
-| Tiempo manual medio: `61,6 s` | `07-resultados.tex:10`, `07-resultados.tex:22`, `00-resumen.tex:13` | vigente | Medición por caso; reemplaza la estimación preliminar de 2 min 45 s (`01-introduccion.tex:18`). |
-| Tiempo automatizado medio: `17,76 s` | `07-resultados.tex:10`, `07-resultados.tex:22`, `00-resumen.tex:13` | vigente | Mediana `17,47 s` (`07-resultados.tex:22`). |
-| Reducción relativa de tiempo: `71,2 %` | `07-resultados.tex:10`, `07-resultados.tex:22`, `08-discusion.tex:8` | vigente | Cota superior (manual redondeado al alza, `07-resultados.tex:63`). |
-| Reducción media por incidente: `43,82 s` | `report.md:199` | vigente | El `.tex` la aproxima como `43,8 s` (`08-discusion.tex:14`). |
+| Tiempo manual medio: `61,6 s` | `07-resultados.tex:10`, `07-resultados.tex:21`, `00-resumen.tex:13` | vigente | Medición por caso; reemplaza la estimación preliminar de 2 min 45 s (`01-introduccion.tex:18`). |
+| Tiempo automatizado medio: `17,76 s` | `07-resultados.tex:10`, `07-resultados.tex:21`, `00-resumen.tex:13` | vigente | Mediana `17,47 s` (`07-resultados.tex:21`). |
+| Reducción relativa de tiempo: `71,2 %` | `07-resultados.tex:10`, `07-resultados.tex:21`, `08-discusion.tex:8` | vigente | Cota superior (manual redondeado al alza, `07-resultados.tex:61`). |
+| Reducción media por incidente: `43,82 s` | `report.md:199` | vigente | El `.tex` la aproxima como `43,8 s` (`07-resultados.tex:59`). |
 | Wilcoxon `W = 363` | `07-resultados.tex:55`, `00-resumen.tex:13` | vigente | `W = min(T+, T−)`, dos colas (`report.md:185`). Contraste **bilateral**, conservador frente a `H1` direccional (c-134; ver Sección 3.8). |
-| `T+ = 19.737`, `T− = 363` | `report.md:189`, `07-resultados.tex:55` | vigente | |
-| p-valor `p = 3,08e-32` | `07-resultados.tex:55`, `00-resumen.tex:13` | vigente | **Bilateral** (conservador frente a `H1: M_manual > M_automatizado`); el `p` unilateral es `1,54e-32` (Sección 3.8, `report.md:239`). |
-| Tamaño del efecto `r = 0,9639` | `07-resultados.tex:55`, `07-resultados.tex:61`, `00-resumen.tex:13` | vigente | |
-| Pares a favor `188 / 200` (`94,0 %`) | `07-resultados.tex:55`, `07-resultados.tex:61`, `09-conclusiones.tex:16` | vigente | Pares no a favor: `12` (`report.md:202`). |
+| `T+ = 19.737`, `T− = 363` | `report.md:189`, `07-resultados.tex:57` | vigente | |
+| p-valor `p = 3,08e-32` | `07-resultados.tex:57`, `01-introduccion.tex:32` | vigente | **Bilateral** (conservador frente a `H1: M_manual > M_automatizado`); el `p` unilateral es `1,54e-32` (Sección 3.8, `report.md:239`). |
+| Tamaño del efecto `r = 0,9639` | `07-resultados.tex:59`, `07-resultados.tex:59`, `00-resumen.tex:13` | vigente | |
+| Pares a favor `188 / 200` (`94,0 %`) | `07-resultados.tex:57`, `09-conclusiones.tex:41` | vigente | Pares no a favor: `12` (`report.md:202`). |
 
 ### 3.2 Clasificación (métricas)
 
 | Valor canónico | Procedencia (archivo:línea) | Estado | Notas |
 |---|---|---|---|
-| Exactitud estricta: `0,7350` (`73,5 %`; `147/200`) | `report.md:20`, `07-resultados.tex:129`, `07-resultados.tex:76` | vigente | Métrica primaria monoetiqueta. |
-| IC Wilson 95 %: `[0,6698; 0,7913]` (`[67,0 %; 79,1 %]`) | `report.md:22`, `07-resultados.tex:129` | vigente | |
-| Macro-F1 (5 clases): `0,5207` | `report.md:62`, `07-resultados.tex:129`, `08-discusion.tex:32` | vigente | Valor informativo; incluye la clase no estimable. Informativa; toda cita lleva su aclaración (c-133). |
+| Exactitud estricta: `0,7350` (`73,5 %`; `147/200`) | `report.md:20`, `07-resultados.tex:128`, `07-resultados.tex:74` | vigente | Métrica primaria monoetiqueta. |
+| IC Wilson 95 %: `[0,6698; 0,7913]` (`[67,0 %; 79,1 %]`) | `report.md:22`, `07-resultados.tex:128` | vigente | |
+| Macro-F1 (5 clases): `0,5207` | `report.md:62`, `07-resultados.tex:128`, `08-discusion.tex:32` | vigente | Valor informativo; incluye la clase no estimable. Informativa; toda cita lleva su aclaración (c-133). |
 | Macro-F1 (4 clases estimables): `0,6508` | recálculo (`metrics.py`) | vigente | Primaria de umbral (c-133 D1); excluye `Bases de Datos`. Único referente del criterio `0,85`; ambos macro-F1 quedan por debajo de `0,85`. |
-| Micro-F1 (multietiqueta): `0,6654` | `report.md:61`, `07-resultados.tex:129` | vigente | Métrica multietiqueta; NO es equivalente de la exactitud. |
-| Subset accuracy: `0,43` | `report.md:59`, `07-resultados.tex:129` | vigente | Contra la referencia multietiqueta. |
-| Hamming loss: `0,3586` | `report.md:60`, `07-resultados.tex:129` | vigente | Contra la referencia multietiqueta. |
+| Micro-F1 (multietiqueta): `0,6654` | `report.md:61`, `07-resultados.tex:128` | vigente | Métrica multietiqueta; NO es equivalente de la exactitud. |
+| Subset accuracy: `0,43` | `report.md:59`, `07-resultados.tex:128` | vigente | Contra la referencia multietiqueta. |
+| Hamming loss: `0,3586` | `report.md:60`, `07-resultados.tex:128` | vigente | Contra la referencia multietiqueta. |
 | Jaccard (IoU) promedio: `0,6414` | `report.md:63` | informativo | No citado en los `.tex` del alcance. |
 | F1 por clase | `report.md:51-55`, `07-resultados.tex:141-145` | vigente | Hardware `0,8800`; Software `0,7111`; Seguridad `0,6122`; Sistemas `0,4000`; Bases de Datos `0,0000`. |
 
@@ -121,7 +122,7 @@ citable como resultado) y `condicional` (depende de una decisión editorial).
 | Casos resueltos por la etapa determinística: `65,5 %` (`131/200`) | `evaluation/report.md:11` (actual; los design de c-133 citan `:9-10`, obsoleto), `08-discusion.tex:10,58` | vigente | Cociente de los `131` casos de la etapa determinística sobre `200`; registrado por c-133. |
 | Casos que llegan a la etapa Gemini: `34,5 %` (`69/200`) | `evaluation/report.md:12`, `08-discusion.tex:10,58` | vigente | Complemento de `65,5 %`; registrado por c-133. |
 | Bandas de confianza: `98 / 26 / 6 / 31 / 39` | `07-resultados.tex:179-183` | vigente | Reproduce la Tabla 7.5 (`07-resultados.tex:167-188`). **Efecto de composición (c-131):** las bandas bajas son solo de la etapa determinística y las altas casi solo de Gemini; su desglose por etapa figura en la Sección 3.9. |
-| Tramo confianza `≥ 0,90`: `46` casos, `13` errores | `07-resultados.tex:190` | vigente | Ver Sección 5, ítem 3. Por etapa (c-131): Gemini `45` casos y `13` errores; determinística `1` caso y `0` errores (Sección 3.9). |
+| Tramo confianza `≥ 0,90`: `46` casos, `13` errores | `07-resultados.tex:189` | vigente | Ver Sección 5, ítem 3. Por etapa (c-131): Gemini `45` casos y `13` errores; determinística `1` caso y `0` errores (Sección 3.9). |
 
 ### 3.4 Intervención humana, universo y proyección
 
@@ -212,9 +213,9 @@ registran los números.
 
 | Valor canónico | Procedencia (archivo:línea) | Estado | Notas |
 |---|---|---|---|
-| Casos con confianza `< 0,70` sin escalamiento: `124/200` | `07-resultados.tex:179-180` (bandas `98 + 26`), `07-resultados.tex:158`; Sección 4 de este memo; `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` | vigente | Los `124` son **todos** de la etapa determinística (confianza = fuerza de señal, no probabilidad). Repetición offline del 2026-10-25 con `DeterministicClassifier` sobre el corpus versionado: `124` con confianza `< 0,70` (`94` aciertos) y `7` con `≥ 0,70`; coincide con la evidencia versionada `hybrid-v3` (`124` de `200`). |
-| Proporción de esos casos: `62,0 %` | `07-resultados.tex:158` (`124/200`) | vigente | Aritmética sobre `124/200`; la tesis lo escribe `62~\%`. |
-| Confianza mínima declarada por Gemini: `0,85` en `69` casos | Sección 4 de este memo; `07-resultados.tex:158`; `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` | vigente | Verificado el 2026-10-25 sobre la evidencia versionada: `69` predicciones con `etapa = gemini`, mínimo `0,85`. La etapa de reserva no se activó (`0` casos). |
+| Casos con confianza `< 0,70` sin escalamiento: `124/200` | `07-resultados.tex:179-180` (bandas `98 + 26`), `07-resultados.tex:157`; Sección 4 de este memo; `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` | vigente | Los `124` son **todos** de la etapa determinística (confianza = fuerza de señal, no probabilidad). Repetición offline del 2026-10-25 con `DeterministicClassifier` sobre el corpus versionado: `124` con confianza `< 0,70` (`94` aciertos) y `7` con `≥ 0,70`; coincide con la evidencia versionada `hybrid-v3` (`124` de `200`). |
+| Proporción de esos casos: `62,0 %` | `07-resultados.tex:157` (`124/200`) | vigente | Aritmética sobre `124/200`; la tesis lo escribe `62~\%`. |
+| Confianza mínima declarada por Gemini: `0,85` en `69` casos | Sección 4 de este memo; `07-resultados.tex:157`; `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` | vigente | Verificado el 2026-10-25 sobre la evidencia versionada: `69` predicciones con `etapa = gemini`, mínimo `0,85`. La etapa de reserva no se activó (`0` casos). |
 | Punto de operación del cortocircuito: `0,5166` | `App/Backend/app/config/settings.py:134`; `docs/deterministic_calibration.md:35-36` | vigente | Umbral sobre el `score_correctitud` (no sobre la confianza). Derivado por validación cruzada de cinco pliegues (tau OOF `0,516666…` en los cinco pliegues, truncado a 4 decimales). Sustituye al piso absoluto `0,90` del diseño inicial (ver el punto siguiente). |
 | Cobertura del punto: `131/200` (`65,5 %`) | `docs/deterministic_calibration.md:39`; Sección 3.3 (etapa determinística `131`) | vigente | Equivale a cortocircuitar todo caso con señal dominante (`57` sin predicción y `12` ambiguos escalan a Gemini); todos los `131` tienen puntaje `≥ 0,516667` (mínimo repetido offline el 2026-10-25). |
 | `precision_det(S)`: `97/131` = `0,7405` | `docs/deterministic_calibration.md:40,67` | vigente | Coincide con la exactitud estricta de la etapa determinística de la corrida oficial (Sección 3.3; c-131 la consume y le agrega el intervalo de confianza). **Estimación dentro de la muestra** (ver el punto 7 de la Sección 7). Sensibilidad: estimación dentro de la muestra; ver sección 3.10. |
