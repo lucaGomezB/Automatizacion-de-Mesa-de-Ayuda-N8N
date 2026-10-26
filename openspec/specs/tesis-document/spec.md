@@ -3,9 +3,7 @@
 ## Purpose
 
 Esta especificación define los criterios de calidad del documento de tesis en LaTeX: compilación a PDF, renderizado de citas, ecuaciones y tablas, eliminación de patrones de escritura generados por IA, profundidad de capítulos y consistencia de referencias.
-
 ## Requirements
-
 ### Requirement: Thesis PDF compilation
 
 The thesis document SHALL compile from LaTeX source to PDF via XeLaTeX without fatal errors. The compilation SHALL produce a single `main.pdf` file at `docs/Tesis/v8 (IA)/paper/main.pdf`.
@@ -169,7 +167,8 @@ The thesis SHALL contain an English abstract section immediately after the Spani
 - **WHEN** reading the English abstract
 - **THEN** it covers the thesis problem, methodology, key results, and conclusions
 - **AND** all technical terms are consistent with the Spanish text (same classifier names, tool names, category strings)
-- **AND** the key figures match those of the reduced Spanish "Resumen" (200 paired cases, 61.6~s to 17.76~s, 71.2~\% reduction, \(W = 363\), \(r = 0.9639\), 73.5~\% accuracy, macro-F1 0.5207, Cohen's Kappa 0.87)
+- **AND** the key figures match those of the reduced Spanish "Resumen" (200 paired cases, 61.6~s to 17.76~s, 71.2~\% reduction, \(W = 363\), \(r = 0.9639\), 73.5~\% accuracy, threshold macro-F1 0.6508 over the four estimable classes, Cohen's Kappa 0.87)
+- **AND** the five-class macro-F1 (0.5207), if cited, is labelled as including the non-estimable single-case class
 
 ### Requirement: Secondary DOCX generation
 
@@ -369,7 +368,9 @@ corpus sintetico descartado en C-27. El Capitulo 7 SHALL reportar: la distribuci
 por sector del corpus real (Sistemas 16, Soporte Tecnico Hardware 85, Soporte
 Tecnico Software 67, Seguridad Informatica 31, Bases de Datos 1), los canales de
 origen (correo 66, formulario web 53, llamada telefonica 81), la exactitud estricta
-73,5 % (147/200), macro-F1 0,5207, micro-F1 0,6654, subset accuracy 0,43, Hamming
+73,5 % (147/200), macro-F1 de umbral 0,6508 sobre las cuatro clases estimables (con
+el de cinco clases, 0,5207, como valor informativo), micro-F1 0,6654, subset
+accuracy 0,43, Hamming
 loss 0,3586, las etapas deterministic 131 / Gemini 69, y la matriz de confusion 5x5
 completa. El vocabulario de sectores reportado SHALL ser el conjunto canonico de
 cinco categorias, SIN la categoria retirada "Operaciones". La tesis SHALL NOT
@@ -379,7 +380,7 @@ reportar como vigentes los valores del corpus sintetico (3 clases, distribucion
 #### Scenario: Capitulo 7 reporta las metricas reales
 
 - **WHEN** se lee el Capitulo 7 (Resultados) del PDF compilado
-- **THEN** la exactitud reportada es 73,5 % (147/200) y el macro-F1 es 0,5207
+- **THEN** la exactitud reportada es 73,5 % (147/200) y el macro-F1 de umbral es 0,6508, con el de cinco clases (0,5207) rotulado como informativo
 - **AND** la matriz de confusion reportada es 5x5 sobre las cinco categorias canonicas
 
 #### Scenario: Categoria retirada ausente
@@ -550,7 +551,8 @@ trabajo futuro, pendiente o propuesta.
 ### Requirement: Coherencia de los datos en los capitulos 7.2 y 1.6
 
 La tesis SHALL reportar en el Capitulo 7.2 las metricas reales (exactitud 73,5 %,
-macro-F1 0,5207, cinco clases) y SHALL corregir en el Capitulo 1.6 la mencion a
+macro-F1 de umbral 0,6508 sobre cuatro clases estimables, 0,5207 con las cinco
+clases, y taxonomia de cinco clases) y SHALL corregir en el Capitulo 1.6 la mencion a
 "tres sectores (Sistemas, Operaciones y Soporte Tecnico)" por las cinco categorias
 canonicas, "Gemini 2.5 Flash" por `gemini-3.6-flash` y revisar la fecha "junio de
 2026".
@@ -558,7 +560,7 @@ canonicas, "Gemini 2.5 Flash" por `gemini-3.6-flash` y revisar la fecha "junio d
 #### Scenario: 7.2 usa metricas reales
 
 - **WHEN** se lee el Capitulo 7.2
-- **THEN** reporta exactitud 73,5 %, macro-F1 0,5207 y cinco clases
+- **THEN** reporta exactitud 73,5 %, macro-F1 de umbral 0,6508 (con el de cinco clases, 0,5207, rotulado) y la taxonomia de cinco clases
 - **AND** no reporta 92 %, 0,919 ni tres clases
 
 #### Scenario: 1.6 sin tres sectores ni modelo stale
@@ -597,23 +599,31 @@ el rango verdadero de la fórmula empleada.
 
 ### Requirement: Calibración de la confianza del clasificador
 
-La tesis SHALL reportar la relación entre la confianza devuelta por el
-clasificador y su exactitud. El capítulo de resultados MUST incluir al menos la
-tabla de contingencia de confianza alta/baja contra acierto/error, y el capítulo
-de discusión MUST interpretar su implicancia para el umbral de revisión humana
-de 0,70.
+La tesis SHALL reportar la relacion entre la confianza devuelta por el clasificador y su exactitud DESAGREGADA POR ETAPA del pipeline, porque la etapa deterministica y la etapa Gemini emiten magnitudes de confianza de naturaleza distinta (definidas en el subsistema de clasificacion, `subsec:subsistema-clasificacion`). El capitulo de resultados MUST incluir la exactitud por banda de confianza separada por etapa (casos, aciertos y exactitud), la exactitud estricta de cada etapa con su IC de Wilson y la contingencia de confianza alta/baja en torno a 0,70 con su composicion por etapa. La conclusion sobre calibracion SHALL restringirse a la etapa Gemini y a su rango efectivo observado (0,85 a 1,00) y SHALL declarar que la etapa de reglas no emite una confianza utilizable como criterio de derivacion. La tesis MUST NOT caracterizar al clasificador en su conjunto como "anti-calibrado" ni como de "calibracion invertida". El capitulo de discusion MUST interpretar la implicancia de la lectura por etapa para el umbral de revision humana de 0,70.
 
 #### Scenario: Tabla de contingencia o curva de calibración presente
 
-- **WHEN** se lee el capítulo de resultados
-- **THEN** existe una tabla o figura que cruza confianza con acierto/error
-- **AND** se reportan al menos la precisión del segmento de confianza `>= 0,70` y la del segmento `< 0,70`
+- **WHEN** se lee el capitulo de resultados
+- **THEN** existe una tabla que cruza las bandas de confianza con la etapa del pipeline y reporta casos, aciertos y exactitud por celda
+- **AND** se reportan la precision del segmento de confianza `>= 0,70` y la del segmento `< 0,70` junto con su composicion por etapa (los 124 casos con confianza `< 0,70` son de la etapa deterministica; el segmento `>= 0,70` reune 7 casos deterministicos y los 69 de Gemini)
 
 #### Scenario: Discusión de la anti-calibración
 
-- **WHEN** se lee el capítulo de discusión
-- **THEN** se reconoce que la precisión del segmento de confianza alta no supera a la del segmento de confianza baja (0,697 vs 0,758)
-- **AND** se discute la implicancia de esta anti-calibración para el umbral de revisión humana de 0,70
+- **WHEN** se lee la interpretacion del contraste agregado entre confianza alta (0,697) y confianza baja (0,758)
+- **THEN** se presenta como una comparacion entre la etapa de reglas y la etapa de modelo, no como evidencia sobre la calibracion de la confianza
+- **AND** ninguna fuente `.tex` contiene las expresiones "anti-calibr" ni "calibracion invertida" (con o sin tilde)
+
+#### Scenario: Conclusion restringida al rango efectivo de Gemini
+
+- **WHEN** se lee la conclusion de la subseccion de calibracion
+- **THEN** se reportan las exactitudes de la etapa Gemini en las bandas `[0,85; 0,95)` y `[0,95; 1,00]` con su IC de Wilson y se declara que la confianza autodeclarada por Gemini no discrimina aciertos de errores dentro del rango observado
+- **AND** se declara que la etapa de reglas no emite una confianza utilizable como criterio de derivacion
+
+#### Scenario: Discusion del umbral de 0,70
+
+- **WHEN** se lee el capitulo de discusion
+- **THEN** se interpreta la implicancia de la lectura por etapa para el umbral de revision humana de 0,70, de forma coherente con el alcance del gate declarado en el capitulo de arquitectura
+- **AND** se conserva el hallazgo de que la etapa Gemini nunca devolvio una confianza inferior a 0,85 en el corpus
 
 ### Requirement: Aritmética metodológica verificable
 
@@ -736,7 +746,7 @@ presentarse como afectados por esta corrección.
 
 ### Requirement: Atribucion correcta de Revina et al. (2020)
 
-El capitulo de estado del arte (seccion 3.3) y el de discusion (seccion 8.2) SHALL describir el aporte de Revina, Buza & Meister (2020) conforme al contenido real del articulo "IT Ticket Classification: The Simpler, the Better" (IEEE Access, vol. 8, pp. 193380-193395, 2020). El documento MUST NOT atribuir a ese articulo el uso de arquitecturas basadas en BERT, una exactitud cercana al 91 % ni la conclusion de que los modelos preentrenados transfieren conocimiento linguistico al dominio de tickets sin ajuste fino.
+El capitulo de estado del arte (seccion 3.3) y el de discusion (seccion 8.2) SHALL describir el aporte de Revina, Buza & Meister (2020) conforme al contenido real del articulo "IT Ticket Classification: The Simpler, the Better" (IEEE Access, vol. 8, pp. 193380-193395, 2020). El documento MUST NOT atribuir a ese articulo el uso de arquitecturas basadas en BERT, una exactitud cercana al 91 % ni la conclusion de que los modelos preentrenados transfieren conocimiento linguistico al dominio de tickets sin ajuste fino. La posible degradacion de las representaciones preentrenadas ante el vocabulario del dominio SHALL presentarse como la razon de diseno por la que los autores excluyen los word embeddings, y MUST NOT presentarse como un hallazgo medido.
 
 #### Scenario: Sin BERT ni 91 % atribuidos a Revina
 - **WHEN** se lee la seccion 3.3 o la 8.2 en busca de las referencias a Revina et al. (2020)
@@ -747,12 +757,17 @@ El capitulo de estado del arte (seccion 3.3) y el de discusion (seccion 8.2) SHA
 #### Scenario: Conclusion real de Revina et al. enunciada
 - **WHEN** se lee la descripcion de Revina et al. (2020)
 - **THEN** el texto enuncia que el articulo concluye que los metodos simples y explicables con un conjunto pequeno de rasgos linguisticos del dominio son competitivos para clasificar tickets de TI
-- **AND** el texto enuncia que los embeddings preentrenados pueden rendir peor por el vocabulario especifico del dominio
+- **AND** el texto presenta la posible degradacion de los embeddings preentrenados por el vocabulario especifico del dominio como argumento de diseno de los autores para excluirlos, no como resultado medido
+
+#### Scenario: Ningun hallazgo medido sobre modelos preentrenados
+- **WHEN** se leen las secciones 3.3, 8.1 y 8.2 en busca de afirmaciones sobre el rendimiento de los modelos preentrenados atribuidas a Revina et al. (2020)
+- **THEN** ninguna las presenta como hallazgo, resultado u observacion empirica del articulo
+- **AND** el argumento sobre los modelos preentrenados se enuncia una sola vez en la discusion, sin duplicarse en la comparacion con la literatura
 
 #### Scenario: Tension incorporada en la discusion
 - **WHEN** se lee la seccion 8.2 del capitulo de discusion
-- **THEN** la evidencia contraria de Revina et al. se integra como una tension explicita para el enfoque basado en LLM del presente trabajo
-- **AND** la discusion explica por que la evidencia contraria fortalece (no debilita) el analisis
+- **THEN** la evidencia de Revina et al. sobre la competitividad de los metodos simples y su argumento de diseno se integran como una tension explicita para el enfoque basado en LLM del presente trabajo
+- **AND** la discusion explica por que esa tension fortalece (no debilita) el analisis
 
 ### Requirement: Estado del arte modernizado con literatura arbitrada 2023-2026
 
@@ -1056,45 +1071,46 @@ relacionales.
 
 ### Requirement: Respaldo de la afirmacion sobre idiomas del corpus
 
-La seccion 1.7 SHALL respaldar con al menos una cita verificable la afirmacion de
-que la mayoria de los estudios publicados sobre clasificacion automatica de tickets
-utilizan corpus en ingles, aleman o portugues, o bien SHALL reformular la
-afirmacion para que no requiera un respaldo cuantitativo no provisto. Las citas
-utilizadas SHALL provenir de las referencias incorporadas por c-78; este change
-SHALL NOT duplicar la modernizacion bibliografica ni editar
-`Bibliography_base.bib`.
+La seccion 1.7 SHALL enunciar los idiomas de los corpus de la literatura sobre clasificacion automatica de tickets solo en la medida en que los declaren las fuentes citadas o la tabla de trabajos academicos relevados (`tab:trabajos-academicos`). El documento MUST NOT atribuir a una fuente idiomas que esta no reporta, en particular corpus en aleman o portugues sin una fuente que los sostenga, y SHALL anclar la afirmacion en esa tabla o en una cita verificable que la sostenga. Las evaluaciones de LLM que incorporan el espanol SHALL describirse conforme a lo que esas obras evaluan.
 
 #### Scenario: Afirmacion comparativa respaldada o reformulada
-
 - **WHEN** se lee la seccion 1.7 del PDF compilado
-- **THEN** la afirmacion sobre los idiomas de los corpus esta respaldada por al menos una cita verificable de c-78, o bien fue reformulada sin el alcance cuantitativo
+- **THEN** la afirmacion sobre los idiomas de los corpus remite a la tabla de trabajos relevados o a una cita que la sostiene
 - **AND** no queda una generalizacion sobre la literatura sin referencia
 
-#### Scenario: Sin duplicacion del trabajo bibliografico
+#### Scenario: Sin idiomas sin fuente
+- **WHEN** se buscan menciones a corpus en aleman o en portugues en la seccion 1.7
+- **THEN** no aparecen, o aparecen acompanadas de una cita que las sostiene
+- **AND** `zangari2023ticket` y `colavito2025benchmarking` no se citan como respaldo de idiomas que sus resumenes no mencionan
 
+#### Scenario: Coherencia con la tabla de trabajos relevados
+- **WHEN** se compara la afirmacion de la seccion 1.7 con la columna de corpus e idioma de `tab:trabajos-academicos`
+- **THEN** la afirmacion es coherente con lo que la tabla declara
+- **AND** si la tabla incorpora un trabajo con corpus en espanol, la afirmacion se ajusta en consecuencia
+
+#### Scenario: Sin duplicacion del trabajo bibliografico
 - **WHEN** se revisa el diff del change
 - **THEN** no se agregan ni modifican entradas de `Bibliography_base.bib`
 - **AND** las referencias usadas ya existen por c-78
 
 ### Requirement: Atribucion editorial de ITIL Service Operation 2011
 
-La seccion 2.2 SHALL atribuir la edicion de 2011 de ITIL Service Operation a The
-Stationery Office (TSO) por encargo del Cabinet Office, sin presentarla como una
-publicacion directa del Office of Government Commerce. La correccion del campo
-bibliografico `OGC2011_itil` SHALL quedar a cargo de c-78 (B3); este change SHALL
-NOT editar la entrada `.bib`.
+La seccion 2.2 SHALL atribuir la edicion de 2011 de ITIL Service Operation a The Stationery Office (TSO) por encargo del Cabinet Office, sin presentarla como una publicacion directa del Office of Government Commerce. La entrada `OGC2011_itil` de `Bibliography_base.bib` SHALL ser coherente con esa atribucion: autor corporativo Cabinet Office (o el que consigne el catalogo consultado, declarado en el registro de correcciones), editorial The Stationery Office y ninguna nota que atribuya el encargo al Office of Government Commerce. La clave `OGC2011_itil` MUST NOT renombrarse.
 
 #### Scenario: Atribucion editorial correcta en el cuerpo
-
 - **WHEN** se lee la seccion 2.2 del PDF compilado
 - **THEN** la edicion de 2011 se atribuye a TSO/Cabinet Office
 - **AND** no se afirma que el Office of Government Commerce sea el editor de la edicion de 2011
 
 #### Scenario: Correccion bibliografica delegada
+- **WHEN** se inspecciona la entrada `OGC2011_itil` y su referencia compilada
+- **THEN** el autor corporativo, la editorial y la nota (si existe) son coherentes con la atribucion de la seccion 2.2
+- **AND** ninguna nota atribuye el encargo de la edicion de 2011 al Office of Government Commerce
 
-- **WHEN** se revisa el alcance del change
-- **THEN** el texto remite a la correccion de metadatos de c-78
-- **AND** no se modifica `Bibliography_base.bib`
+#### Scenario: Cita en el texto coherente con el autor
+- **WHEN** se lee la cita de la seccion 2.2 en el PDF compilado
+- **THEN** la cita muestra el autor corporativo de la entrada corregida
+- **AND** la prosa conserva la mencion del Office of Government Commerce solo como titular historico
 
 ### Requirement: Cálculo reproducible del tamaño muestral
 
@@ -1867,15 +1883,16 @@ reconciliarse con la definición de las dos dimensiones rotuladas de la variable
 El resumen, la discusión y las conclusiones SHALL declarar el estado de la
 hipótesis principal como parcialmente confirmada y parcialmente refutada: se
 confirma en la reducción del tiempo de registro y se refuta en el umbral de
-clasificación (`73,5 %` de exactitud y macro-F1 `0,5207`, por debajo de `85 %` y
-`0,85`). El resumen MUST NOT permitir inferir una confirmación plena de la
+clasificación (`73,5 %` de exactitud y macro-F1 de umbral `0,6508` sobre las cuatro
+clases estimables, por debajo de `85 %` y `0,85`). El resumen MUST NOT permitir inferir una confirmación plena de la
 hipótesis. La declaración SHALL distinguir las sub-hipótesis de tiempo,
 intervención humana y exactitud o F1. La sub-hipótesis de intervención humana
-SHALL declararse **no medida** con la evidencia disponible, de forma coherente con
+SHALL declararse **no contrastada por ausencia de registro primario**, de forma coherente con
 la retirada del `9,5 %` (c-107); el documento MUST NOT reintroducir esa cifra ni
 presentarla como resultado. Las conclusiones SHALL declarar el estado por
 sub-hipótesis: confirmada en tiempo, refutada en clasificación e intervención
-humana no medida.
+humana no contrastada por ausencia de registro primario, junto con el estado de las
+dos hipótesis subsidiarias.
 
 #### Scenario: Estado parcial declarado en el resumen
 
@@ -1892,14 +1909,15 @@ humana no medida.
 #### Scenario: Sub-hipótesis de intervención humana declarada no medida
 
 - **WHEN** se lee el estado de la hipótesis principal en el resumen y las conclusiones
-- **THEN** la sub-hipótesis de intervención humana se declara no medida con la evidencia disponible
+- **THEN** la sub-hipótesis de intervención humana se declara no contrastada por ausencia de registro primario
 - **AND** no se reporta el `9,5 %` de intervención humana como resultado vigente
 
 #### Scenario: Estado por sub-hipótesis en las conclusiones
 
 - **WHEN** se leen las conclusiones
-- **THEN** se distingue explícitamente la sub-hipótesis confirmada (tiempo), la refutada (exactitud/F1) y la no medida (intervención humana)
+- **THEN** se distingue explícitamente la sub-hipótesis confirmada (tiempo), la refutada (exactitud/F1) y la no contrastada (intervención humana)
 - **AND** no se declara la hipótesis principal confirmada o refutada como bloque
+- **AND** se declara el estado de las dos hipótesis subsidiarias
 
 ### Requirement: Costo de API consistente con el universo vigente
 
@@ -2224,31 +2242,45 @@ aseveración propia sin respaldo.
 
 ### Requirement: Acentuación normalizada del manuscrito
 
-Los 14 archivos `.tex` de `docs/Tesis/v10 (IA)/paper/sections/` SHALL presentar el
-texto español acentuado conforme a las reglas ortográficas del español. La
-normalización SHALL aplicarse a la prosa (cuerpo, encabezados, pies de página,
-pies de figura y tabla, celdas de texto) incluyendo el texto dentro de argumentos
-de comandos portadores de texto (`\section{}`, `\subsection{}`, `\caption{}`,
-`\textbf{}`, `\emph{}`, `\item`, `\footnote{}`). El documento MUST NOT modificar
-tokens protegidos: las cinco cadenas canónicas de categorías (`Seguridad
-Informatica`, `Soporte Tecnico Hardware`, `Soporte Tecnico Software`, `Bases de
-Datos`, `Sistemas`), las claves de `\label{}`/`\ref{}`/`\autoref{}`/`\cref{}`,
-las claves de `\cite{}`/`\textcite{}`/`\parencite{}`, las rutas de
+Los archivos `.tex` de `docs/Tesis/v10 (IA)/paper/sections/` SHALL presentar el
+texto español acentuado conforme a las reglas ortográficas vigentes del español
+(Ortografía de la lengua española, RAE-ASALE, 2010). La normalización SHALL
+aplicarse a la prosa (cuerpo, encabezados, pies de página, pies de figura y tabla,
+celdas de texto) incluyendo el texto dentro de argumentos de comandos portadores
+de texto (`\section{}`, `\subsection{}`, `\caption{}`, `\textbf{}`, `\emph{}`,
+`\item`, `\footnote{}`). El documento MUST NOT modificar tokens protegidos: las
+cinco cadenas canónicas de categorías (`Seguridad Informatica`, `Soporte Tecnico
+Hardware`, `Soporte Tecnico Software`, `Bases de Datos`, `Sistemas`), las claves
+de `\label{}`/`\ref{}`/`\autoref{}`/`\cref{}`, las claves de
+`\cite{}`/`\textcite{}`/`\parencite{}`, las rutas de
 `\input{}`/`\includegraphics{}`/`\bibliography{}` y las rutas de repositorio en
 prosa (`docs/Tesis/`, `evaluation/`, `data/`, `App/Backend`), el contenido de
-`verbatim`/`lstlisting`/`\verb`, las URLs y DOI, la matemática, los nombres de
-comandos LaTeX y las palabras ya acentuadas. Ninguna corrección SHALL
-des-acentuar texto, duplicar tildes ni alterar cifras. El cambio MUST NOT editar
-`Bibliography_base.bib`.
+`verbatim`/`lstlisting`/`\verb`, los argumentos de `\texttt{}`, las URLs y DOI, la
+matemática, los nombres de comandos LaTeX, el resumen en inglés (desde
+`\section*{Abstract}` hasta el fin de `00-resumen.tex`) y las palabras
+correctamente acentuadas. Ninguna corrección SHALL des-acentuar una palabra
+correctamente acentuada, duplicar tildes ni alterar cifras. Las tildes
+improcedentes ---las diacríticas mal asignadas a un homógrafo (por ejemplo "hacía"
+con valor de preposición o "fórmula" con valor verbal) y las de los demostrativos
+y del adverbio "solo", que la ortografía vigente no prescribe--- SHALL retirarse
+con justificación contextual registrada. La normalización MUST NOT editar
+`Bibliography_base.bib` salvo las tildes del texto impreso en español de sus
+campos `note` y `title`, sin alterar claves, autores, años, DOI, URL ni demás
+metadatos.
 
 #### Scenario: Prosa acentuada
-- **WHEN** se busca en `sections/*.tex` una forma sin tilde de una palabra que la requiere (por ejemplo "clasificacion", "informacion", "metodologico", "Capitulo", "Introduccion")
+- **WHEN** se busca en `sections/*.tex` una forma sin tilde de una palabra que la requiere (por ejemplo "clasificacion", "informacion", "metodologico", "Capitulo", "Introduccion", "erronea", "multiples")
 - **THEN** no queda ninguna ocurrencia en prosa sin acentuar
-- **AND** el texto ya acentuado permanece sin cambios (no se des-acentúa ni se duplica la tilde)
+- **AND** el texto correctamente acentuado permanece sin cambios (no se des-acentúa ni se duplica la tilde)
+
+#### Scenario: Tildes improcedentes retiradas con justificación
+- **WHEN** se inspeccionan las ocurrencias de "hacía", "fórmula", de los demostrativos con tilde y de "sólo" en `sections/*.tex`
+- **THEN** "hacía" solo aparece como pretérito de "hacer", "fórmula" solo como sustantivo, y no quedan demostrativos con tilde ni "sólo"
+- **AND** cada tilde retirada de un homógrafo consta con su justificación en el registro de decisiones de la revisión
 
 #### Scenario: Tokens protegidos intactos
 - **WHEN** se comparan antes y después las cinco cadenas canónicas de categorías, las claves de `\label`/`\ref`/`\autoref`, las claves de citas y las rutas de `\input`/`\includegraphics`
-- **THEN** el conjunto de tokens es idéntico
+- **THEN** las claves y rutas forman un conjunto idéntico y ninguna ocurrencia previa de las cinco cadenas canónicas se altera
 - **AND** ninguna cadena de categoría incorpora tilde
 
 #### Scenario: Pares sensibles preservados
@@ -2259,17 +2291,19 @@ des-acentuar texto, duplicar tildes ni alterar cifras. El cambio MUST NOT editar
 #### Scenario: Sin residuos de la herramienta
 - **WHEN** se revisa el árbol de trabajo tras aplicar la normalización
 - **THEN** no existen archivos `.tex.bak` nuevos
-- **AND** ningún archivo fuera de `docs/Tesis/v10 (IA)/paper/sections/` fue modificado
+- **AND** ningún archivo de la tesis fuera de `paper/sections/`, `paper/main.tex`, `paper/preambles/preamble.tex`, `Bibliography_base.bib` y del render regenerado `tesis_para_agente.md` fue modificado por la normalización
 
 ### Requirement: Presupuesto de palabras del resumen en español
 
 El resumen en español (`00-resumen.tex`) SHALL tener como máximo 250 palabras de
 prosa. La reducción SHALL conservar el problema, el método y diseño (200 casos
 pareados), los resultados clave (61,6~s a 17,76~s, reducción del 71,2~\%, \(W =
-363\), \(r = 0,9639\), exactitud 73,5~\%, macro-F1 0,5207, Kappa de Cohen 0,87) y
+363\), \(r = 0,9639\), exactitud 73,5~\%, macro-F1 de umbral 0,6508 sobre las cuatro clases
+estimables, Kappa de Cohen 0,87) y
 la conclusión. El resumen MUST NOT reintroducir valores retirados por c-107 (la
 intervención humana del 9,5~\% y el universo calendario 3.700) ni presentar la
-hipótesis principal como plenamente confirmada.
+hipótesis principal como plenamente confirmada. Si el resumen cita el macro-F1 de
+cinco clases (0,5207), SHALL acompañarlo de su aclaración.
 
 #### Scenario: Longitud del resumen
 - **WHEN** se cuenta el número de palabras de prosa del cuerpo del resumen en español (excluyendo comandos LaTeX y la línea "Palabras clave")
@@ -2277,8 +2311,9 @@ hipótesis principal como plenamente confirmada.
 
 #### Scenario: Cifras clave conservadas
 - **WHEN** se lee el resumen reducido
-- **THEN** aparecen 200 casos, 61,6~s, 17,76~s, 71,2~\%, \(W = 363\), \(r = 0,9639\), 73,5~\% y 0,5207
+- **THEN** aparecen 200 casos, 61,6~s, 17,76~s, 71,2~\%, \(W = 363\), \(r = 0,9639\), 73,5~\% y 0,6508 rotulado como macro-F1 de umbral
 - **AND** el resumen no presenta la hipótesis principal como plenamente confirmada
+- **AND** si aparece 0,5207, lo acompaña su aclaración
 
 #### Scenario: Sin valores retirados
 - **WHEN** se busca "9,5 %" o "3.700" en el resumen y el abstract
@@ -3287,13 +3322,19 @@ El parrafo introductorio de la tabla comparativa de soluciones (`\label{tab:comp
 
 ### Requirement: Hallazgo del gate de clasificacion presentado como resultado propio
 
-La tesis SHALL presentar la conducta observada del gate de clasificacion en el corpus (la etapa Gemini nunca devolvio una confianza inferior a 0,85 sobre los 200 casos, de modo que el gate de revision no derivo ningun caso) como un hallazgo empirico con valor propio sobre el comportamiento del clasificador en el dominio evaluado, ademas de su uso como justificacion de la sub-hipotesis no contrastada. El hallazgo SHALL enunciarse en el capitulo de discusion y/o en la subseccion de intervencion humana de resultados (`subsec:reduccion-intervencion`) y MUST NOT introducir valores numericos distintos de los ya canonicos.
+La tesis SHALL presentar la conducta observada del gate de clasificacion en el corpus como un hallazgo empirico con valor propio sobre el comportamiento del clasificador en el dominio evaluado, ademas de su uso como justificacion de la sub-hipotesis no contrastada: la etapa Gemini nunca devolvio una confianza inferior a 0,85 en los 69 casos que resolvio, de modo que el gate de revision, que solo alcanza a esa etapa y a la de reserva, no derivo ningun caso; los 131 casos de la etapa deterministica no estan sujetos al gate. El hallazgo SHALL enunciarse en el capitulo de discusion y/o en la subseccion de intervencion humana de resultados (`subsec:reduccion-intervencion`), MUST NOT atribuirse a los 200 casos del corpus y MUST NOT introducir valores numericos distintos de los ya canonicos. La valoracion del hallazgo (fiabilidad o sobreconfianza del modelo) SHALL ser coherente con el analisis de calibracion por etapa.
+
+#### Scenario: Hallazgo enunciado con su alcance correcto
+
+- **WHEN** se lee el capitulo de discusion y/o la subseccion de intervencion humana de resultados
+- **THEN** se declara que la etapa Gemini nunca devolvio una confianza inferior a 0,85 en los 69 casos que resolvio
+- **AND** no se afirma que esa conducta abarque los 200 casos del corpus
 
 #### Scenario: Hallazgo enunciado como resultado positivo
 
-- **WHEN** se lee el capitulo de discusion y/o la subseccion de intervencion humana de resultados
-- **THEN** se declara que la etapa Gemini nunca devolvio una confianza inferior a 0,85 en el corpus
-- **AND** ese comportamiento se presenta como un hallazgo positivo sobre el clasificador en el dominio evaluado, no solo como motivo de la no contraste de la sub-hipotesis
+- **WHEN** se lee la enunciacion del hallazgo
+- **THEN** se presenta como resultado empirico propio sobre el clasificador y no solo como motivo de la no contraste de la sub-hipotesis
+- **AND** su valoracion no contradice la conclusion del analisis de calibracion por etapa
 
 #### Scenario: Sin numeros nuevos
 
@@ -3303,27 +3344,27 @@ La tesis SHALL presentar la conducta observada del gate de clasificacion en el c
 
 ### Requirement: Cobertura bibliografica formal de las plataformas comerciales
 
-Toda mencion a las plataformas comerciales Zendesk, Freshdesk y ServiceNow en `01-introduccion.tex` SHALL acompanarse de una entrada bibliografica formal en `Bibliography_base.bib` y de su cita en el texto. Cada entrada nueva SHALL tiparse como `@online` e incluir entidad autora, titulo, ano, `url`, `urldate` y una `note` de fecha de consulta, siguiendo el patron de las entradas `DigitalOcean2026_pricing` y `Google2026_vertex_pricing`. El documento MUST NOT introducir cifras de precio no verificables: cuando no exista una figura comprobable, la `note` SHALL declarar la pagina de documentacion de la plataforma y la prosa SHALL mantenerse como observacion de relevamiento.
+Toda mencion a las plataformas comerciales Zendesk, Freshdesk y ServiceNow en `01-introduccion.tex` SHALL acompanarse de una entrada bibliografica formal en `Bibliography_base.bib` y de su cita en el texto. Cada entrada nueva SHALL tiparse como `@online` e incluir entidad autora, titulo, ano, `url` y `urldate`, siguiendo el patron de las entradas `DigitalOcean2026_pricing` y `Google2026_vertex_pricing`. La fecha de consulta SHALL declararse una sola vez, en `urldate`; la `note`, cuando exista, SHALL declarar la pagina de documentacion de la plataforma y MUST NOT repetir la fecha. El documento MUST NOT introducir cifras de precio no verificables: cuando no exista una figura comprobable, la `note` SHALL declarar la pagina de documentacion de la plataforma y la prosa SHALL mantenerse como observacion de relevamiento.
 
 #### Scenario: Entradas y citas incorporadas
-
 - **WHEN** se inspecciona `Bibliography_base.bib` y `01-introduccion.tex`
-- **THEN** existen entradas `@online` para Zendesk, Freshdesk y ServiceNow con `url`, `urldate = {2026-10-19}` y `note` de consulta
+- **THEN** existen entradas `@online` para Zendesk, Freshdesk y ServiceNow con `url`, `urldate = {2026-10-19}` y una `note` que declara la pagina de documentacion sin repetir la fecha
 - **AND** la mencion a las tres plataformas en la introduccion se acompana de `\parencite` a esas entradas
 
-#### Scenario: Sin cifras de precio fabricadas
+#### Scenario: Fecha de consulta impresa una sola vez
+- **WHEN** se lee la bibliografia compilada
+- **THEN** cada una de las cinco entradas `@online` (DigitalOcean, Google Cloud, Zendesk, Freshdesk y ServiceNow) imprime la fecha de consulta una sola vez
+- **AND** ninguna `note` de esas entradas contiene la fecha de consulta
 
+#### Scenario: Sin cifras de precio fabricadas
 - **WHEN** se revisa la prosa y la `note` de las entradas nuevas
 - **THEN** no se afirma ninguna cifra de precio o de capacidad que no pueda verificarse contra la pagina de documentacion citada
 - **AND** la formulacion se mantiene como observacion de relevamiento propio declarado
 
 #### Scenario: Correspondencia citas-bibliografia preservada
-
 - **WHEN** se ejecuta la verificacion de citas contra `Bibliography_base.bib` tras agregar las entradas
 - **THEN** no se introduce ninguna cita huerfana
 - **AND** no queda ninguna entrada nueva sin usar
-
-<!-- REC 4 (trazabilidad del conteo bibliografico) retirada: la verificacion directa demuestra que no existe discrepancia de conteo (54 -> 56, delta +2 explicado por c-120). Vease la fe de errata del dictamen y la nota de alcance en proposal.md. -->
 
 ### Requirement: Etiqueta de la release v1.1.0 y trazabilidad del hash
 
@@ -3454,3 +3495,1581 @@ El Anexo H (`12-anexos.tex`) y su documento fuente `docs/anexo_h_prompt_gemini.m
 - **WHEN** se lee la seccion de iteracion del prompt de `docs/anexo_h_prompt_gemini.md`
 - **THEN** no afirma ausencia de exposicion al corpus de validacion ni la existencia de un conjunto de incidentes de preproduccion
 - **AND** declara el origen de las reglas de frontera y la ubicacion de las versiones historicas del prompt
+
+### Requirement: Definicion de la confianza por etapa y del puntaje de correctitud
+
+La tesis SHALL definir una sola vez, en la subseccion del subsistema de clasificacion de `05-arquitectura.tex` (`subsec:subsistema-clasificacion`), las dos magnitudes que emite la etapa deterministica: la confianza, como indice de fuerza de senal en [0;1] que vale 0 cuando el sector ganador reune menos de dos patrones coincidentes, y el puntaje de correctitud (`score_correctitud`), que ordena la correctitud esperada. La tesis SHALL declarar que ninguna de las dos es una probabilidad de acierto, que la confianza deterministica no es comparable con la confianza autodeclarada por el modelo de la etapa Gemini y que la etapa de reserva fija la confianza en 0,0 por construccion. Los capitulos `02`, `06`, `07`, `08` y `11` MUST usar las mismas denominaciones y MUST NOT atribuir a la decision del filtro deterministico una "alta certeza" o una "alta confianza".
+
+#### Scenario: Dos magnitudes definidas
+
+- **WHEN** se lee `subsec:subsistema-clasificacion` en el PDF compilado
+- **THEN** se definen la confianza deterministica como indice de fuerza de senal en [0;1] y el puntaje de correctitud como criterio que ordena la correctitud esperada
+- **AND** se declara que ninguna de las dos magnitudes es una probabilidad de acierto
+
+#### Scenario: Confianza no comparable entre etapas
+
+- **WHEN** se leen el eje human-in-the-loop de `02-marco-teorico.tex` y el subsistema de clasificacion de `05-arquitectura.tex`
+- **THEN** la confianza de la etapa Gemini se denomina autodeclarada por el modelo
+- **AND** se declara que la confianza deterministica no se compara con el umbral de revision
+
+#### Scenario: Sin certeza atribuida al filtro
+
+- **WHEN** se busca en `sections/*.tex` una atribucion de "alta certeza" o "alta confianza" a la decision del filtro deterministico
+- **THEN** no aparece ninguna
+
+### Requirement: Alcance del gate de revision humana declarado por etapa
+
+La tesis SHALL declarar que la regla `requiere_revision_humana = (confianza < 0,70)` se evalua solo sobre la salida de la etapa Gemini, que la etapa de reserva deriva siempre a revision con confianza 0,0 y que la etapa deterministica no deriva a revision por su confianza. La descripcion del flujo en `06-implementacion.tex` SHALL enumerar las condiciones con que el backend activa el indicador de revision humana, incluida la derivacion por reportante no identificado en el directorio de empleados. Ningun capitulo MUST afirmar que el umbral de 0,70 alcanza a todos los casos ni que es el unico disparador automatico de revision humana.
+
+#### Scenario: Grado de autonomia acotado por etapa en el marco teorico
+
+- **WHEN** se lee `subsec:human-in-the-loop` en `02-marco-teorico.tex`
+- **THEN** el grado adoptado por el sistema se describe como revision selectiva acotada por etapa
+- **AND** no se afirma que todo caso con confianza inferior a 0,70 escala a revision humana
+
+#### Scenario: Disparadores enumerados en la implementacion
+
+- **WHEN** se lee la etapa de evaluacion del flujo en `06-implementacion.tex`
+- **THEN** se enumeran la confianza de Gemini inferior a 0,70, la intervencion de la etapa de reserva y el reportante no identificado como condiciones del indicador
+- **AND** no aparece la afirmacion de que el umbral de 0,70 es el unico disparador automatico de revision humana
+
+#### Scenario: Coherencia entre capitulos
+
+- **WHEN** se recorren las menciones al umbral de 0,70 en `02`, `05`, `06`, `07`, `08`, `11` y `12`
+- **THEN** ninguna aplica el umbral a la etapa deterministica
+- **AND** ninguna describe la cola de revision como destinada a los "casos de baja confianza" sin calificar
+
+### Requirement: Criterio de cortocircuito y procedencia del punto de operacion
+
+La tesis SHALL describir el cortocircuito de la etapa deterministica por su criterio vigente: senal dominante, sin ausencia de coincidencias ni empate, y puntaje de correctitud mayor o igual al punto de operacion 0,5166. La tesis SHALL declarar la procedencia del punto de operacion (validacion cruzada de cinco pliegues sobre el corpus con un piso comparativo: precision del filtro no inferior a la de la etapa Gemini sobre el conjunto que resuelve, 0,7405 frente a 0,6769), su equivalencia en el corpus (resolver los 131 casos con senal dominante) y el retiro del umbral de 0,90 sobre la confianza del diseno inicial. La tesis MUST NOT afirmar que el filtro decide cuando su confianza supera el 90 % y MUST NOT presentar el piso comparativo como garantia independiente de exactitud.
+
+#### Scenario: Criterio vigente descrito
+
+- **WHEN** se lee `subsec:subsistema-clasificacion` y la tabla `tab:capas`
+- **THEN** el cortocircuito se describe por la senal dominante y el punto de operacion 0,5166 del puntaje de correctitud
+- **AND** no aparece "superior al 90" ni "umbral de confianza preestablecido" como criterio de cortocircuito
+
+#### Scenario: Procedencia y equivalencia declaradas
+
+- **WHEN** se lee la descripcion del punto de operacion
+- **THEN** se declara su derivacion por validacion cruzada de cinco pliegues sobre el corpus con el piso comparativo frente a Gemini
+- **AND** se declara que en el corpus equivale a resolver los 131 casos con senal dominante
+
+#### Scenario: Valores tomados del memo canonico
+
+- **WHEN** se cotejan 0,5166, 0,7405, 0,6769 y 131 con `docs/Tesis/Correcciones/numeros-canonicos.md`
+- **THEN** cada valor figura como `vigente` con su procedencia
+
+### Requirement: Casos bajo el umbral no escalados consignados en resultados
+
+La subseccion de intervencion humana del capitulo de resultados (`subsec:reduccion-intervencion`) SHALL consignar que 124 de los 200 casos (62 %) tuvieron una confianza registrada inferior a 0,70 sin ser escalados, que todos pertenecen a la etapa deterministica y que su confianza mide fuerza de senal y no se compara con el umbral; que los 69 casos de la etapa Gemini declararon siempre una confianza de al menos 0,85; que la etapa de reserva no se activo; y que sobre el 65,5 % de los casos no existio derivacion automatica por caso basada en la clasificacion. La subseccion MUST conservar su rotulo y MUST NOT introducir valores ausentes del memo canonico.
+
+#### Scenario: Cifra de casos no escalados consignada
+
+- **WHEN** se lee `subsec:reduccion-intervencion` en el PDF compilado
+- **THEN** aparecen los 124 de 200 casos (62 %) con confianza inferior a 0,70 sin escalamiento
+- **AND** se los atribuye a la etapa deterministica con la causa por la que no se comparan con el umbral
+
+#### Scenario: Etapas Gemini y de reserva descritas
+
+- **WHEN** se lee la misma subseccion
+- **THEN** se declara que los 69 casos de la etapa Gemini declararon siempre una confianza de al menos 0,85
+- **AND** se declara que la etapa de reserva no se activo
+
+#### Scenario: Rotulo de la subseccion preservado
+
+- **WHEN** se inspecciona `07-resultados.tex`
+- **THEN** existe `\label{subsec:reduccion-intervencion}`
+- **AND** las referencias cruzadas a esa subseccion resuelven sin advertencias
+
+### Requirement: Alcance real de la salvaguarda de supervision humana en el capitulo legal
+
+El capitulo de consideraciones eticas y legales (`11-aspectos-legales.tex`, subseccion `subsec:consentimiento-derechos`) SHALL declarar que el umbral de 0,70 solo alcanza a la etapa semantica y a la de reserva; que sobre el 65,5 % de los casos, resueltos por la etapa deterministica, no existe derivacion automatica por caso basada en la clasificacion; y que para esa fraccion la salvaguarda se limita al criterio de diseno con que se fijo el punto de operacion, estimado sobre el corpus de validacion, y a la reasignacion trazable del incidente, con la salvedad de su exposicion en la interfaz web. El capitulo MUST NOT presentar el umbral de 0,70 como salvaguarda de todos los casos ni el criterio comparativo como garantia independiente, y SHALL remitir la capacidad discriminante de la confianza del modelo al analisis de calibracion sin afirmar su resultado.
+
+#### Scenario: Alcance de la salvaguarda declarado
+
+- **WHEN** se lee la subseccion de supervision humana del capitulo legal
+- **THEN** se declara que el umbral de 0,70 solo alcanza a la etapa semantica y a la de reserva
+- **AND** se declara que sobre el 65,5 % de los casos no existe derivacion automatica por caso basada en la clasificacion
+
+#### Scenario: Mitigaciones sin sobreafirmar
+
+- **WHEN** se leen las mitigaciones declaradas para la etapa deterministica
+- **THEN** el criterio de diseno del punto de operacion se califica como estimado sobre el corpus de validacion
+- **AND** la reasignacion trazable se acompana de la salvedad sobre su exposicion en la interfaz web
+
+#### Scenario: Remision a la calibracion
+
+- **WHEN** se lee la oracion sobre la capacidad discriminante de la confianza
+- **THEN** remite a `subsec:calibracion`
+- **AND** no afirma por si misma una conclusion de calibracion
+
+<!-- c-144 (archivado el 2026-10-23 en main) ya incorporo al spec vivo el requisito "Procedencia declarada de los ajustes realizados sobre el corpus de validacion"; este change solo verifica el texto resultante. -->
+
+### Requirement: Umbral de revision humana en la especificacion del Anexo H
+
+La tabla de parametros de configuracion del Anexo H (`tab:anexo_gemini_params`) SHALL incluir el umbral de revision humana (0,70) y declarar su alcance: se aplica a la confianza de la respuesta del modelo y no a la etapa deterministica. La fila MUST NOT desbordar la primera columna de la tabla.
+
+#### Scenario: Fila del umbral presente
+
+- **WHEN** se lee `tab:anexo_gemini_params` en el PDF compilado
+- **THEN** existe una fila del umbral de revision humana con valor 0,70
+- **AND** su justificacion declara que no se aplica a la etapa deterministica
+
+#### Scenario: Sin desborde
+
+- **WHEN** se revisa el registro de compilacion
+- **THEN** no hay advertencias `Overfull \hbox` atribuibles a la fila agregada
+
+### Requirement: Atribucion de roles del equipo coherente con la autoria registrada en el repositorio
+
+La declaracion de la distribucion de roles del equipo en `04-marco-metodologico.tex` (parrafo de roles de la seccion 4.9) SHALL atribuir a cada integrante un rol que la historia del repositorio respalde. Quien no registre commits de desarrollo en el repositorio MUST NOT declararse autor del modulo Python ni del modelado de la base de datos; Carla Bustos SHALL presentarse como revisora de la tesis y colaboradora en los anexos y en la corroboracion de las fuentes utilizadas, o figurar entre los agradecimientos. Los roles de desarrollo (modulo Python y modelado de la base de datos, configuracion del flujo N8N e integracion telefonica) SHALL coincidir con la autoria real de cada componente segun el historial del repositorio, y la supervision academica del director SHALL conservarse.
+
+#### Scenario: Roles de desarrollo coherentes con la autoria del repositorio
+
+- **WHEN** se compara la distribucion de roles declarada en `04-marco-metodologico.tex` con la autoria de los componentes en la historia del repositorio
+- **THEN** cada rol de desarrollo declarado corresponde a quien el repositorio registra como autor de ese componente
+- **AND** la supervision academica del director se conserva
+
+#### Scenario: Sin atribucion de desarrollo a quien no contribuyo al codigo
+
+- **WHEN** se busca en `sections/*.tex` una atribucion del desarrollo del modulo Python o del modelado de la base de datos a Carla Bustos
+- **THEN** no aparece ninguna
+- **AND** Carla Bustos figura como revisora de la tesis y colaboradora en anexos y corroboracion de fuentes, o entre los agradecimientos
+
+### Requirement: Tabla de tiempos por canal con brazo manual y contraste intra-canal
+
+La tabla de tiempos por canal de origen (`\label{tab:tiempos-canal}` en `07-resultados.tex`) SHALL presentar, para cada canal (llamada telefonica, correo electronico, formulario web) y para el total, la cantidad de casos, la media y la mediana del tiempo manual, la media y la mediana del tiempo automatizado, la reduccion relativa de la media, la cantidad de pares en que el flujo automatizado no fue mas rapido, el valor p del contraste de Wilcoxon intra-canal sobre los pares del canal (bajo la convencion declarada) y el tamano del efecto estandarizado `d_z`. Todos los valores MUST coincidir con la seccion "Tiempos" de `evaluation/report.md` regenerada y con el valor vigente de `docs/Tesis/Correcciones/numeros-canonicos.md`. Los estadisticos de rango por canal (`W`, `T+`, `T-`, `r`) SHALL quedar disponibles en `evaluation/report.md` y la tabla o su nota SHALL remitir a ese reporte; la tabla y el texto MUST NOT presentar `W = 0` ni un tamano del efecto rank-biserial `r = 1,00` como resultado del contraste, en coherencia con el requisito "Rigor inferencial del tamano del efecto" (en los canales sin pares desfavorables el texto lo expresa como "el flujo automatizado fue mas rapido en todos los pares del canal"). El tamano del efecto `d_z` SHALL rotularse siempre como `d_z`, de modo que su valor global (1,00) no se confunda con el rank-biserial. La fila telefonica SHALL conservar su rotulo de cota inferior y la tabla SHALL conservar su linea de fuente. Toda afirmacion de la discusion sobre reducciones por canal SHALL remitir a esta tabla y MUST NOT presentar el contraste intra-canal apareado como un analisis pendiente.
+
+#### Scenario: Brazo manual y contraste presentes por canal
+
+- **WHEN** se lee `tab:tiempos-canal` en el PDF compilado
+- **THEN** cada canal y el total muestran casos, media y mediana manual, media y mediana automatizada, reduccion relativa, pares no mas rapidos, p y `d_z`
+- **AND** la fila "Global" reproduce los valores de `tab:tiempos` (61,6 s y 17,76 s de media)
+
+#### Scenario: Sin W = 0 ni r = 1,00 en la tesis
+
+- **WHEN** se buscan en las secciones de la tesis los resultados del contraste por canal
+- **THEN** no aparece `W = 0` ni un rank-biserial `r = 1,00` presentado como resultado
+- **AND** la ausencia de pares desfavorables en telefonia y formulario web se expresa con el conteo de pares no mas rapidos (0) y la remision al reporte, y todo `d_z` aparece rotulado como tal
+
+#### Scenario: Afirmacion de la discusion verificable desde el texto
+
+- **WHEN** se lee en `08-discusion.tex` la explicacion rival de la mezcla de canales
+- **THEN** la afirmacion de reducciones positivas en los tres canales remite a `tab:tiempos-canal` y al contraste de Wilcoxon intra-canal ya realizado
+- **AND** el texto no afirma que la explicacion "se descartaria con un contraste intra-canal apareado" como si ese contraste no existiera
+
+#### Scenario: Valores trazables al reporte y al memo
+
+- **WHEN** se compara cada celda numerica de `tab:tiempos-canal` con `evaluation/report.md` y con `numeros-canonicos.md`
+- **THEN** cada valor coincide con el reporte regenerado (con el redondeo declarado) y figura en el memo con su procedencia y estado `vigente`
+- **AND** la tabla declara su linea de fuente y la fila telefonica conserva el rotulo de cota inferior
+
+### Requirement: Convencion declarada del valor p frente a la hipotesis direccional de tiempos
+
+Cuando la primera sub-hipotesis de tiempos se formule con una alternativa direccional (`H1: M_manual > M_automatizado`), la tesis SHALL declarar explicitamente la convencion de los valores p que reporta para los contrastes de tiempos: los valores p reportados son bilaterales (variante de dos colas de `scipy.stats.wilcoxon`, coherente con `W = min(T+, T-)`) y, por lo tanto, conservadores respecto de la hipotesis direccional. La tesis SHALL informar al menos una vez el valor p unilateral del contraste global (`1,54e-32`), calculado por el framework con la variante direccional, en el capitulo de marco metodologico y en el enunciado de la sub-hipotesis. Los valores p bilaterales vigentes (`3,08e-32` global, escenarios de sensibilidad y contrastes por canal) MUST NOT cambiar de valor, y ningun valor p de tiempos MUST quedar sin convencion declarada.
+
+#### Scenario: Convencion declarada en metodologia y en la hipotesis
+
+- **WHEN** se leen la subseccion de analisis estadistico de `04-marco-metodologico.tex` y el enunciado de la primera sub-hipotesis en `01-introduccion.tex`
+- **THEN** ambos declaran que el p reportado es bilateral y conservador frente a la alternativa direccional
+- **AND** ambos informan el p unilateral global `1,54e-32`, igual al valor vigente del memo
+
+#### Scenario: Valores bilaterales preservados
+
+- **WHEN** se buscan los valores p de tiempos en `01-introduccion.tex` y `07-resultados.tex`
+- **THEN** el p global bilateral sigue siendo `3,08e-32` con `W = 363`, `T+ = 19.737` y `T- = 363`
+- **AND** los p de los escenarios de sensibilidad y de los contrastes por canal quedan cubiertos por la misma convencion declarada
+
+### Requirement: Comparacion de potencia homogenea sobre el tamano del efecto d_z
+
+El analisis de potencia del marco metodologico SHALL comparar el efecto minimo detectable, expresado como tamano del efecto estandarizado de muestras pareadas `d_z`, con el `d_z` observado, calculado como la media de las diferencias pareadas dividida por su desvio estandar muestral. El texto MUST NOT comparar el efecto minimo detectable con la reduccion relativa (71,2 %) ni con ninguna otra magnitud no estandarizada. SHALL declarar los supuestos del efecto minimo detectable (alfa, lateralidad, potencia, `n` y la eficiencia relativa asintotica usada para el ajuste de la prueba de rangos) y, cuando se citen contrastes por canal, SHALL comparar el `d_z` de cada canal con el efecto minimo detectable para su propio `n`.
+
+#### Scenario: d_z observado frente al minimo detectable
+
+- **WHEN** se lee el analisis de potencia en `04-marco-metodologico.tex`
+- **THEN** el efecto minimo detectable (`d_z` aproximadamente 0,20; 0,21 con la eficiencia relativa asintotica declarada) se compara con el `d_z` observado de 1,00
+- **AND** la reduccion relativa del 71,2 % no aparece como termino de esa comparacion
+
+#### Scenario: Supuestos y valores trazables
+
+- **WHEN** se verifican los valores de potencia citados
+- **THEN** alfa, lateralidad, potencia, `n` y la eficiencia relativa asintotica estan declarados en el texto
+- **AND** el `d_z` observado y los efectos minimos detectables global y por canal figuran en `numeros-canonicos.md` con procedencia en el reporte regenerado
+
+### Requirement: Verificabilidad del muestreo y de la asignacion por sector
+
+La descripcion del muestreo en `04-marco-metodologico.tex` SHALL ser verificable con la informacion que el documento aporta. Si la distribucion del universo por sector esta disponible, la tesis SHALL reportarla junto a la distribucion de la muestra para que la proporcionalidad sea comprobable. Si no esta disponible, la tesis SHALL declarar que la composicion por sector de la muestra refleja la distribucion observada en el periodo relevado y que su proporcionalidad respecto del universo no es verificable, y MUST NOT afirmar una proporcionalidad respecto del universo que el documento no permite comprobar. En ambos casos la tesis SHALL discutir la consecuencia de la asignacion resultante para Bases de Datos (`n = 1`, clase no estimable) y la alternativa de una asignacion no proporcional con sobremuestreo de las clases minoritarias para replicaciones. El resumen y el abstract MUST describir el muestreo de forma coherente con el capitulo 4.
+
+#### Scenario: Universo por sector disponible
+
+- **WHEN** el autor aporta la distribucion del universo por sector
+- **THEN** el capitulo 4 la reporta junto a la distribucion muestral (85/67/31/16/1)
+- **AND** cada cifra nueva figura en `numeros-canonicos.md` con su procedencia
+
+#### Scenario: Universo por sector no disponible
+
+- **WHEN** la distribucion del universo por sector no esta disponible
+- **THEN** el capitulo 4 declara que la composicion de la muestra refleja la distribucion observada en el periodo relevado y que la proporcionalidad frente al universo no es verificable
+- **AND** el texto no afirma un muestreo proporcional al universo sin respaldo
+
+#### Scenario: Asignacion de Bases de Datos discutida
+
+- **WHEN** se lee la descripcion del muestreo
+- **THEN** se explica que la asignacion dejo a Bases de Datos con un unico caso, no estimable para la inferencia por clase
+- **AND** se menciona la asignacion no proporcional con sobremuestreo de clases minoritarias como alternativa para replicaciones
+
+#### Scenario: Resumen y abstract coherentes
+
+- **WHEN** se comparan `00-resumen.tex` (resumen y abstract) con el capitulo 4
+- **THEN** la caracterizacion del muestreo es la misma en los tres lugares
+- **AND** el abstract no conserva "proportional stratified sampling" si el capitulo 4 declara la proporcionalidad como no verificable
+
+### Requirement: Procedimiento de cronometraje precisado y compatible con la mitigacion del efecto Hawthorne
+
+La tesis SHALL describir el procedimiento de cronometraje manual de forma unica y precisa en `04-marco-metodologico.tex` (diseno experimental e instrumentos), `08-discusion.tex` (explicacion rival del efecto Hawthorne) y `11-aspectos-legales.tex` (sesion de esclarecimiento): quien cronometro, que conocia el operador cronometrado durante la campana, que aspecto concreto no se anuncio y que se informo en el debriefing. El texto MUST NOT afirmar a la vez que el cronometraje no fue anunciado al operador y que un companero lo cronometraba en vivo sin explicar como ambas afirmaciones son compatibles. SHALL declarar la granularidad observada de los registros manuales (valores multiplos de 5 s y mayormente de 10 s, verificable en el corpus) y su relacion con los escenarios de sensibilidad de 5 s y 10 s. Si el procedimiento no elimina el efecto Hawthorne, la tesis SHALL presentarlo como atenuado y residual, no como mitigado por completo.
+
+#### Scenario: Sin contradiccion entre medicion no anunciada y cronometraje en vivo
+
+- **WHEN** se leen la subseccion de diseno experimental y la de instrumentos de `04-marco-metodologico.tex`
+- **THEN** el texto explica que conocia el operador y que aspecto de la medicion no se anuncio
+- **AND** no subsisten juntas, sin explicacion, "no fue anunciado en tiempo real" y "lo cronometro en vivo el companero"
+
+#### Scenario: Relato consistente entre capitulos
+
+- **WHEN** se comparan `04-marco-metodologico.tex`, `08-discusion.tex` y `11-aspectos-legales.tex`
+- **THEN** los tres describen el mismo procedimiento y el mismo alcance del conocimiento diferido
+- **AND** el efecto Hawthorne figura como atenuado y residual si el procedimiento no lo elimina
+
+#### Scenario: Granularidad declarada y verificable
+
+- **WHEN** se lee la descripcion del instrumento manual
+- **THEN** declara que los registros son multiplos de 5 s (199 de 200) y mayormente de 10 s (180 de 200)
+- **AND** esas cifras coinciden con la granularidad emitida por el reporte de evaluacion y figuran en `numeros-canonicos.md`
+
+### Requirement: Convencion unica del desvio estandar y correspondencia de los estadisticos de tiempo declarados
+
+Todos los desvios estandar de tiempos que la tesis reporte SHALL usar la misma convencion que el framework de evaluacion (desvio muestral, divisor `n - 1`). El desvio del flujo automatizado SHALL reportarse como 13,52 s, y el valor 13,48 s (convencion poblacional) MUST NOT aparecer en las fuentes. Los estadisticos de tiempo que el marco metodologico declara como parte de la metrica de tiempo MUST coincidir con los que el capitulo de resultados efectivamente reporta.
+
+#### Scenario: Desvio automatizado unificado
+
+- **WHEN** se buscan los desvios estandar de tiempos en `07-resultados.tex` y `08-discusion.tex`
+- **THEN** el desvio automatizado es 13,52 s y el manual 44,9 s, ambos con divisor `n - 1`
+- **AND** `13,48` no aparece en ninguna seccion y figura como `retirado` en `numeros-canonicos.md`
+
+#### Scenario: Estadisticos declarados igual a reportados
+
+- **WHEN** se compara la definicion de la metrica de tiempo en `04-marco-metodologico.tex` con `tab:tiempos` y `tab:tiempos-canal`
+- **THEN** cada estadistico declarado (media, mediana, desvio, minimo, maximo y los que se agreguen) se reporta en resultados
+- **AND** no se declara un intervalo de confianza del tiempo medio que el capitulo de resultados no informe
+
+### Requirement: Exactitud por etapa del pipeline en resultados
+
+El capitulo de resultados SHALL reportar la exactitud estricta de cada etapa del pipeline con su IC de Wilson al 95% ---etapa deterministica `97/131`, etapa Gemini `50/69`, etapa fallback sin casos--- y, cuando se disponga de predicciones por caso, tambien su exactitud laxa. La mencion de la distribucion de casos por etapa (131/69/0) SHALL conservarse. Todo valor por etapa MUST figurar en `docs/Tesis/Correcciones/numeros-canonicos.md` con su procedencia.
+
+#### Scenario: Exactitud por etapa presente
+
+- **WHEN** se lee el capitulo de resultados
+- **THEN** se reporta la exactitud estricta de la etapa deterministica (0,7405; 97/131) y de la etapa Gemini (0,7246; 50/69), cada una con su IC de Wilson al 95%
+- **AND** se declara que la etapa fallback no registro casos
+
+#### Scenario: Valores por etapa trazables
+
+- **WHEN** se compara cada valor por etapa citado en la tesis con el memo de numeros canonicos
+- **THEN** cada valor figura en el memo con procedencia y estado `vigente`
+
+### Requirement: Exactitud laxa reportada junto a la estricta
+
+El marco metodologico SHALL definir la exactitud laxa como la proporcion de casos cuyo sector predicho principal pertenece al conjunto de sectores de verdad del caso (sector asignado o sectores adicionales), como metrica secundaria operativa distinta de la exactitud estricta. El capitulo de resultados SHALL reportarla con su IC de Wilson al 95% junto a la exactitud estricta, y la discusion SHALL leerla como la proporcion de derivaciones operativamente aceptables. La exactitud laxa MUST NOT presentarse como metrica primaria ni como cumplimiento del umbral del segundo objetivo especifico: el estado de ese objetivo lo fija la metrica primaria declarada. Si no se dispone de predicciones por caso para calcularla, la tesis SHALL declararla no computable con los artefactos disponibles y MUST NOT consignar un valor estimado.
+
+#### Scenario: Definicion en el marco metodologico
+
+- **WHEN** se lee el analisis estadistico del marco metodologico
+- **THEN** la exactitud laxa se define como la pertenencia del sector predicho principal al conjunto de sectores de verdad del caso
+- **AND** se la distingue de la exactitud estricta y se la rotula como metrica secundaria
+
+#### Scenario: Valor con intervalo en resultados
+
+- **WHEN** se lee la subseccion de metricas de clasificacion
+- **THEN** la exactitud laxa figura con sus aciertos, su proporcion y su IC de Wilson junto a la exactitud estricta
+- **AND** su valor no es inferior al de la exactitud estricta (147/200)
+
+#### Scenario: Sin reemplazo de la metrica primaria
+
+- **WHEN** se leen la discusion y las conclusiones
+- **THEN** la exactitud laxa no se presenta como metrica primaria ni como evidencia de cumplimiento del umbral del 85% del segundo objetivo especifico
+
+#### Scenario: Exactitud laxa no computable declarada
+
+- **WHEN** las predicciones por caso no estan disponibles al aplicar el change
+- **THEN** la tesis declara que la exactitud laxa no es computable con los artefactos disponibles
+- **AND** no consigna ningun valor estimado de exactitud laxa
+
+### Requirement: Exactitud de clasificacion por canal de origen
+
+El capitulo de resultados SHALL reportar la exactitud estricta y laxa de clasificacion por canal de origen (llamada telefonica, correo electronico y formulario web), con la cantidad de casos por canal y su IC de Wilson al 95%, en una tabla compacta que reuna los desgloses por etapa y por canal. La discusion SHALL leerla como evidencia de la dimension de calidad del tercer objetivo especifico y del efecto potencial de la transcripcion telefonica, y SHALL advertir que la comparacion entre canales no aisla ese efecto porque la composicion sectorial y la proporcion de casos multietiqueta difieren entre canales. La tesis MUST NOT atribuir causalmente a la transcripcion una diferencia entre canales. Si no se dispone de predicciones por caso, SHALL declararla no computable sin consignar valores.
+
+#### Scenario: Tabla por canal presente
+
+- **WHEN** se lee la subseccion de metricas de clasificacion
+- **THEN** una tabla reporta, para cada canal de origen (81, 66 y 53 casos), la exactitud estricta y la laxa con su IC de Wilson
+- **AND** la suma de los casos por canal es 200
+
+#### Scenario: Salvedad de composicion entre canales
+
+- **WHEN** se lee la interpretacion de la exactitud por canal en la discusion
+- **THEN** se advierte que la composicion sectorial y la proporcion multietiqueta difieren entre canales
+- **AND** no se atribuye a la transcripcion telefonica, como causa, una diferencia de exactitud entre canales
+
+#### Scenario: Exactitud por canal no computable declarada
+
+- **WHEN** las predicciones por caso no estan disponibles al aplicar el change
+- **THEN** la tesis declara que la exactitud por canal no es computable con los artefactos disponibles
+- **AND** no consigna ningun valor de exactitud por canal
+
+### Requirement: Propagacion de la lectura de calibracion por etapa
+
+Los capitulos de discusion (`08-discusion.tex`), conclusiones (`09-conclusiones.tex`) y aspectos eticos y legales (`11-aspectos-legales.tex`) SHALL reflejar la lectura de calibracion por etapa: donde citen el analisis de calibracion o el umbral de 0,70 como salvaguarda, SHALL restringir la afirmacion de no discriminacion a la confianza de la etapa Gemini dentro de su rango observado y declarar que la etapa de reglas no emite una confianza utilizable para derivar. Los rotulos `subsec:calibracion`, `tab:bandas` y `subsec:matriz-metricas` SHALL conservarse, porque otros capitulos los referencian. El change MUST NOT editar la tabla de cumplimiento de objetivos, la tabla de tiempos por canal ni el capitulo de recomendaciones, que pertenecen a otros changes del plan de correccion.
+
+#### Scenario: Discusion y capitulo legal coherentes con la lectura por etapa
+
+- **WHEN** se leen los pasajes de `08-discusion.tex` y `11-aspectos-legales.tex` que citan el analisis de calibracion o el umbral de 0,70
+- **THEN** la afirmacion de no discriminacion se restringe a la confianza de la etapa Gemini dentro de su rango observado
+- **AND** se declara que la etapa de reglas no emite una confianza utilizable como criterio de derivacion
+
+#### Scenario: Conclusiones con la exactitud por etapa
+
+- **WHEN** se lee el parrafo de conclusiones sobre el clasificador hibrido
+- **THEN** se cita la exactitud estricta de cada etapa y, si fueron computables, la exactitud laxa y la exactitud por canal
+
+#### Scenario: Rotulos preservados
+
+- **WHEN** se compila el documento tras el change
+- **THEN** los rotulos `subsec:calibracion`, `tab:bandas` y `subsec:matriz-metricas` existen y no hay referencias indefinidas
+
+#### Scenario: Limites con los changes hermanos
+
+- **WHEN** se inspecciona el diff del change sobre las fuentes `.tex`
+- **THEN** no se modifican las filas de `tab:cumplimiento-objetivos`, la tabla `tab:tiempos-canal` ni `10-recomendaciones.tex`
+
+### Requirement: Impacto de paginas de las metricas por etapa, canal y exactitud laxa
+
+El change SHALL dejar el PDF compilado en 101 paginas o menos. La reestructuracion de `tab:bandas` SHALL reemplazar la tabla de bandas vigente en lugar de agregar una tabla nueva de bandas, y los desgloses por etapa y por canal SHALL reunirse en una unica tabla compacta. Si tras las compensaciones previstas el PDF supera las 101 paginas, el exceso SHALL registrarse con su causa y la decision final del tope SHALL delegarse al change de integracion de la release (c-141). El change MUST NOT eliminar contenido cientifico, numeros canonicos, figuras ni tablas con linea de fuente para compensar paginas.
+
+#### Scenario: Tope de paginas respetado o exceso registrado
+
+- **WHEN** se compila `main.tex` tras aplicar el change y se cuenta el total de paginas
+- **THEN** el total es 101 o menos
+- **AND** si es mayor, el exceso y su causa quedan registrados para c-141 sin haberse eliminado contenido cientifico
+
+#### Scenario: Sin tabla de bandas duplicada
+
+- **WHEN** se buscan las tablas de bandas de confianza en `07-resultados.tex`
+- **THEN** existe una unica tabla de bandas (`tab:bandas`), desagregada por etapa
+
+### Requirement: Analisis de sensibilidad frente al ajuste del clasificador con el corpus en resultados
+
+El capitulo de resultados (`07-resultados.tex`) SHALL incluir la subseccion `subsec:sensibilidad-ajustes`, que: enuncia el metodo (re-medicion de la etapa deterministica sin invocar al modelo con el vocabulario previo a su ampliacion con el corpus, conservando la logica de decision y el punto de operacion evaluados, y referencia con la logica de entonces junto con el resultado de su control de fidelidad); declara no factible la reconstruccion del vocabulario por pliegues y su motivo; presenta una tabla compacta `tab:sensibilidad-ajustes` con la configuracion evaluada y las variantes (casos resueltos por la etapa y exactitud con su IC de Wilson al 95 %, y la exactitud global con Gemini fijo solo si es computable); informa el efecto de las reglas de frontera del prompt con el mayor nivel de evidencia disponible o declara que no se cuantifico; y lee los resultados segun las reglas pre-registradas en el diseno del change. Todo valor citado SHALL coincidir con el memo de numeros canonicos. La subseccion MUST NOT afirmar la ausencia de sesgo, MUST NOT presentar metricas obtenidas sobre el corpus como estimaciones fuera de la muestra y MUST NOT modificar ningun valor canonico.
+
+#### Scenario: Subseccion y tabla presentes
+
+- **WHEN** se compila el documento y se lee el capitulo de resultados
+- **THEN** existe `subsec:sensibilidad-ajustes` con la tabla `tab:sensibilidad-ajustes`, que incluye la configuracion evaluada (131 casos, 0,7405 con su IC) y las variantes con casos, exactitud e IC
+- **AND** las referencias a ambos rotulos resuelven sin advertencias
+
+#### Scenario: Valores trazables al memo
+
+- **WHEN** se coteja cada valor de la subseccion con `docs/Tesis/Correcciones/numeros-canonicos.md`
+- **THEN** cada valor figura en la seccion de sensibilidad del memo con su procedencia
+
+#### Scenario: Lectura de una exactitud menor como cota pesimista
+
+- **WHEN** la exactitud de la variante principal es menor que 0,7405
+- **THEN** la diferencia se presenta como cota pesimista del sesgo atribuible al vocabulario, con la razon por la que lo es
+- **AND** no se la presenta como estimacion puntual del sesgo
+
+#### Scenario: Lectura de una exactitud no menor
+
+- **WHEN** la exactitud de la variante principal no es menor que 0,7405
+- **THEN** se declara que el analisis no detecta un sesgo atribuible al vocabulario, sin descartarlo, por la diferencia entre los conjuntos de casos comparados
+
+#### Scenario: Efecto del prompt informado o declarado
+
+- **WHEN** se lee la subseccion
+- **THEN** el efecto de las reglas de frontera sobre los 69 casos de la etapa Gemini figura con su nivel de evidencia y su contraste pareado, o se declara no cuantificado
+
+#### Scenario: Columna global solo si es computable
+
+- **WHEN** la exactitud global con Gemini fijo no fue computable
+- **THEN** la tabla no incluye esa columna ni su nota
+
+### Requirement: Sesgo optimista acotado en las limitaciones y en la evidencia del objetivo especifico 6
+
+La subseccion `subsec:limitaciones-estudio` de `08-discusion.tex` SHALL incluir una limitacion que declare que el vocabulario del filtro deterministico y las reglas de frontera del prompt se ajustaron con errores observados en el corpus de evaluacion, que las metricas de clasificacion son estimaciones dentro de la muestra, la cota que aporta el analisis de sensibilidad con remision a `subsec:sensibilidad-ajustes`, y que solo un corpus independiente permitiria estimar el desempeno fuera de la muestra. El cardinal de la oracion introductoria de esa subseccion SHALL coincidir con la cantidad de limitaciones enumeradas. El parrafo de procedencia de los datos de ajuste en `subsec:interpretacion-resultados` SHALL remitir a `subsec:sensibilidad-ajustes`. La celda de evidencia del objetivo especifico 6 en `tab:cumplimiento-objetivos` SHALL incluir la referencia a `subsec:sensibilidad-ajustes` y la salvedad de estimacion dentro de la muestra; este requisito MUST NOT alterar el estado de ningun objetivo.
+
+#### Scenario: Limitacion presente y cardinal coherente
+
+- **WHEN** se lee `subsec:limitaciones-estudio`
+- **THEN** una limitacion declara el ajuste con el corpus, la naturaleza dentro de la muestra de las metricas y la cota del analisis de sensibilidad, con remision a la subseccion
+- **AND** el cardinal de la oracion introductoria coincide con la cantidad de items de la lista
+
+#### Scenario: Remision desde la interpretacion
+
+- **WHEN** se lee el parrafo de procedencia de los datos de ajuste en `subsec:interpretacion-resultados`
+- **THEN** remite a `subsec:sensibilidad-ajustes` sin repetir sus valores
+
+#### Scenario: Evidencia del objetivo 6 sin cambio de estado
+
+- **WHEN** se lee la fila del objetivo especifico 6 en `tab:cumplimiento-objetivos`
+- **THEN** su evidencia incluye `subsec:sensibilidad-ajustes` y la salvedad de estimacion dentro de la muestra
+- **AND** su estado es el que fijen los autores y el change dueno de los estados, sin cambio introducido por este requisito
+
+### Requirement: Calificacion dentro de la muestra de la exactitud deterministica y del contraste entre etapas
+
+Toda aparicion en `sections/*.tex` de la exactitud de la etapa deterministica (`97/131`, `0,7405`) y de la comparacion entre etapas sobre el conjunto cortocircuitable (`0,7405` frente a `0,6769`; `88/130`) SHALL figurar en una oracion o parrafo que la califique como estimacion dentro de la muestra o que remita a `subsec:sensibilidad-ajustes`. La cuantificacion del sesgo SHALL residir solo en `subsec:sensibilidad-ajustes`; los demas pasajes SHALL limitarse a calificar o remitir. Este requisito MUST NOT cambiar ningun valor numerico.
+
+#### Scenario: Cada aparicion calificada
+
+- **WHEN** se listan con `grep` las apariciones de `0,7405`, `97/131`, `97 de 131`, `0,6769` y `88/130` en `sections/*.tex`
+- **THEN** cada una esta en una oracion o parrafo que la califica como estimacion dentro de la muestra o que remite a `subsec:sensibilidad-ajustes`
+
+#### Scenario: Cuantificacion en un unico lugar
+
+- **WHEN** se buscan los valores del analisis de sensibilidad fuera de `subsec:sensibilidad-ajustes`
+- **THEN** solo aparecen en la limitacion del capitulo de discusion, que remite a la subseccion
+- **AND** ningun otro pasaje repite la tabla ni su lectura
+
+#### Scenario: Valores sin cambio
+
+- **WHEN** se comparan los valores numericos de la tesis antes y despues de agregar las calificaciones
+- **THEN** no cambia ninguno
+
+<!-- c-144 (archivado el 2026-10-23 en main) ya incorporo al spec vivo el requisito "Ubicacion veraz de las versiones historicas del prompt en el Anexo H"; este change solo verifica el texto resultante. -->
+
+### Requirement: Impacto de paginas del analisis de sensibilidad
+
+El change SHALL registrar el conteo de paginas del PDF compilado tras aplicarlo y su diferencia con el conteo de partida, para la decision de tope de la release. El analisis SHALL presentarse con una unica tabla compacta. Si el conteo supera el tope vigente registrado por el gate G0, SHALL aplicar las compensaciones declaradas en su diseno en el orden previsto y registrar el exceso remanente y su causa; MUST NOT eliminar contenido cientifico, numeros canonicos ni la linea de fuente de la tabla para compensar paginas, aunque SHALL poder trasladar la tabla a un anexo si la regla de G0 limita solo el cuerpo.
+
+#### Scenario: Conteo registrado
+
+- **WHEN** se compila `main.tex` tras aplicar el change
+- **THEN** el conteo de paginas y su diferencia con el de partida quedan registrados en `docs/Tesis/Correcciones/dictamen-correcciones.md`
+
+#### Scenario: Compensacion sin perdida de contenido
+
+- **WHEN** el conteo supera el tope vigente
+- **THEN** se aplican las compensaciones declaradas en el diseno y el exceso remanente se registra para el change de integracion
+- **AND** no se elimina ningun valor de la subseccion ni la linea de fuente de la tabla
+
+### Requirement: Balance neto entre el ahorro de registro y el costo de las derivaciones erroneas
+
+El capitulo de discusion (`08-discusion.tex`) SHALL incluir una subseccion con rotulo `subsec:balance-neto` que compute el balance neto trimestral entre el ahorro de tiempo de registro y el costo de las derivaciones erroneas adicionales del clasificador respecto del flujo manual. La subseccion SHALL enunciar de forma explicita las formulas del balance neto, `B = (N / 3.600) x [Delta t - (e_aut - e_man) x c]`, y de la exactitud minima de equilibrio, `a* = 1 - e_man - Delta t / c`, junto con la procedencia de cada insumo: universo trimestral `N ~ 2.646`, ahorro medio por incidente `Delta t = 43,82 s` (43,8 s en el texto), tasa de error estricta del clasificador `e_aut = 26,5 %` (53/200), tasa de derivacion erronea manual `e_man` (15 % preliminar) y costo por derivacion erronea `c` (10 a 15 minutos, estimacion propia). La subseccion SHALL incluir una tabla con rotulo `tab:balance-neto` que, para tasas manuales de 10 %, 15 %, 20 % y 26,5 % y costos de 5, 10 y 15 minutos, reporte la exactitud minima de equilibrio y el balance neto con la exactitud estricta, y SHALL contrastar la exactitud minima de equilibrio con la exactitud estricta observada y su intervalo de Wilson. Todo valor de la subseccion y de la tabla MUST coincidir con el registrado en `docs/Tesis/Correcciones/numeros-canonicos.md`.
+
+#### Scenario: Formulas e insumos explicitos
+
+- **WHEN** se lee la subseccion `subsec:balance-neto`
+- **THEN** figuran las formulas del balance neto y de la exactitud minima de equilibrio con la definicion de `N`, `Delta t`, `e_aut`, `e_man` y `c`
+- **AND** cada insumo remite a su origen en el documento (planteamiento del problema, objetivos especificos, interpretacion de los resultados o resultados)
+
+#### Scenario: Calculo con los supuestos del propio documento
+
+- **WHEN** se aplican las formulas con `e_man = 15 %` y `c` de 10 y 15 minutos
+- **THEN** el texto informa del orden de 304 derivaciones erroneas adicionales por trimestre, un costo de 50,7 y 76,1 horas-persona y un balance neto de -18,5 y -43,9 horas-persona
+- **AND** la exactitud minima de equilibrio informada para esos supuestos es 77,7 % y 80,1 %
+
+#### Scenario: Tabla de escenarios con el punto de equilibrio
+
+- **WHEN** se lee la tabla `tab:balance-neto`
+- **THEN** contiene una fila por tasa manual (10 %, 15 %, 20 % y 26,5 %) y, para costos de 5, 10 y 15 minutos, la exactitud minima de equilibrio y el balance neto con la exactitud estricta
+- **AND** cada celda coincide con el valor del memo canonico bajo la convencion de redondeo declarada en la nota de la tabla
+
+#### Scenario: Incertidumbre muestral considerada
+
+- **WHEN** se contrasta la exactitud minima de equilibrio con la exactitud estricta observada
+- **THEN** el texto compara la exactitud minima de equilibrio con el intervalo de Wilson [67,0 %; 79,1 %]
+- **AND** declara que, con una tasa manual del 15 % y 10 minutos por reasignacion, el signo del balance no queda determinado por la muestra
+
+#### Scenario: Exactitud laxa sin cifras inventadas
+
+- **WHEN** la exactitud laxa esta registrada en el memo canonico al momento de aplicar el cambio
+- **THEN** la subseccion la compara con la exactitud minima de equilibrio e informa los escenarios en que el balance resulta positivo bajo esa lectura
+- **AND** si no esta registrada, la subseccion no presenta ningun valor de exactitud laxa y declara que el 26,5 % es una cota superior de la tasa operativa de derivacion erronea atribuible al clasificador
+
+#### Scenario: Remisiones resueltas
+
+- **WHEN** se compila el documento con XeLaTeX tras incorporar la subseccion y la tabla
+- **THEN** las remisiones a `subsec:balance-neto` y `tab:balance-neto` resuelven sin referencias indefinidas
+- **AND** ambos rotulos son unicos en el documento
+
+### Requirement: Exactitud del brazo manual declarada no medida y balance neto indeterminado
+
+La tesis SHALL declarar que la exactitud del brazo manual sobre el corpus no se midio, con sus dos razones: el corpus no registra por caso la derivacion efectuada por el operador del brazo manual, y esos operadores son los mismos analistas que fijaron la referencia, por lo que una medicion sobre este corpus estaria sesgada hacia el acuerdo. La tesis SHALL declarar que la tasa de derivacion erronea manual cercana al 15 % es una estimacion preliminar de la misma naturaleza que los 2 minutos 45 segundos luego corregidos a 61,6 s, y que, en consecuencia, el balance neto es indeterminado con el diseno actual. El documento MUST NOT presentar ninguna exactitud o tasa de derivacion erronea del flujo manual como medida, y MUST NOT enunciar el signo del balance neto como resultado.
+
+#### Scenario: Declaracion en la discusion
+
+- **WHEN** se leen la subseccion `subsec:balance-neto` y la sexta limitacion de `subsec:limitaciones-estudio`
+- **THEN** se declara que la exactitud del brazo manual no se midio y se enuncian las dos razones
+- **AND** se concluye que el balance neto es indeterminado con el diseno actual, indicando la condicion bajo la cual seria positivo
+
+#### Scenario: Declaracion en el planteamiento del problema
+
+- **WHEN** se lee el planteamiento del problema en `01-introduccion.tex`
+- **THEN** la tasa de derivacion erronea del 15 % se califica como estimacion preliminar no re-medida, de la misma naturaleza que los 2 minutos 45 segundos
+- **AND** el parrafo remite a `subsec:balance-neto`
+
+#### Scenario: Sin tasa manual presentada como medida
+
+- **WHEN** se recorren las secciones de la tesis en busca de una exactitud o tasa de derivacion erronea del flujo manual
+- **THEN** el unico valor atribuido al flujo manual es el 15 % preliminar, rotulado como tal, y las demas tasas de la tabla de escenarios se rotulan como supuestos de sensibilidad
+- **AND** ningun pasaje presenta una tasa manual como resultado de la campana experimental ni afirma que el balance neto sea positivo o negativo
+
+### Requirement: Viabilidad operativa presentada como condicional
+
+El resumen (en espanol y en ingles), la justificacion de la introduccion, la discusion y las conclusiones SHALL presentar la viabilidad tecnica y la economica como sostenidas por la evidencia y la viabilidad operativa como condicional a que la exactitud efectiva supere la exactitud minima de equilibrio, sea por mejora del clasificador o porque la revision humana del sector responsable reduzca la tasa o el costo efectivos de las derivaciones erroneas. El documento MUST NOT afirmar que los hallazgos confirman la viabilidad "tecnica, economica y operativa" (ni la "technical, economic, and operational feasibility"). El ahorro de 32,2 horas-persona por trimestre SHALL presentarse como ahorro bruto de registro, sin cambiar su valor. El parrafo de conclusion del resumen en espanol y del abstract MUST NOT aumentar su conteo de palabras respecto de la version previa.
+
+#### Scenario: Resumen y abstract con viabilidad operativa condicional
+
+- **WHEN** se leen los parrafos de conclusion del resumen y del abstract en `00-resumen.tex`
+- **THEN** la viabilidad tecnica y economica se presentan como confirmadas y la operativa como condicional, con el balance neto frente a las derivaciones erroneas declarado indeterminado
+- **AND** el parrafo en espanol tiene a lo sumo 34 palabras y el parrafo en ingles a lo sumo 31
+
+#### Scenario: Conclusiones con los tres planos de viabilidad
+
+- **WHEN** se lee el parrafo inicial de `09-conclusiones.tex`
+- **THEN** el sistema se declara tecnicamente viable y economicamente accesible, y su viabilidad operativa se declara condicionada al balance neto con remision a `subsec:balance-neto`
+- **AND** no queda una afirmacion de viabilidad incondicional del sistema en su conjunto
+
+#### Scenario: Justificacion sin mejora neta cuantificada
+
+- **WHEN** se lee la dimension organizacional de la justificacion en `01-introduccion.tex`
+- **THEN** la evidencia del trabajo se presenta como cuantificacion del ahorro bruto de registro y del punto de equilibrio frente al costo de las derivaciones erroneas
+- **AND** no se afirma como cuantificada una mejora neta ni una reduccion del tiempo de respuesta percibido por los usuarios
+
+#### Scenario: Ahorro de 32,2 horas-persona calificado como bruto
+
+- **WHEN** se lee cualquier mencion de las 32,2 horas-persona por trimestre en la introduccion, la discusion o las conclusiones
+- **THEN** la mencion la califica como ahorro bruto o remite al balance neto de `subsec:balance-neto`
+- **AND** el valor 32,2 y su calculo (`43,8 s x 2.646 / 3.600`) se conservan sin cambios
+
+#### Scenario: Composicion del costo economico coherente con la discusion
+
+- **WHEN** se lee en las conclusiones la descripcion del costo monetario de operacion del sistema
+- **THEN** la descripcion es coherente con las cifras de la discusion (infraestructura de 24 a 32 USD por mes frente a inferencia del orden de 1 USD por trimestre)
+- **AND** no se afirma que el costo de operacion este dominado por el consumo de la API de inferencia
+
+### Requirement: Retiro de la afirmacion de preservacion del juicio humano
+
+La discusion MUST NOT contener la afirmacion "El sistema absorbe la carga rutinaria sin sustituir el juicio humano en los casos que verdaderamente lo demandan" ni la afirmacion de que el equilibrio entre automatizacion y supervision "preserva la calidad del servicio", porque el gate de revision no derivo ningun caso del corpus y su aporte se declara no medido. El documento MUST NOT atribuir al sistema una preservacion del juicio humano que no fue medida. El parrafo de `subsec:interpretacion-resultados` SHALL conservar la proyeccion de 32,2 horas-persona con su nota de calculo.
+
+#### Scenario: Frases retiradas
+
+- **WHEN** se buscan en las secciones de la tesis las cadenas "absorbe la carga rutinaria" y "preserva la calidad del servicio"
+- **THEN** no aparece ninguna ocurrencia
+- **AND** el parrafo de `subsec:interpretacion-resultados` conserva la proyeccion de 32,2 horas-persona y su nota al pie
+
+#### Scenario: Sin afirmaciones equivalentes
+
+- **WHEN** se leen la discusion y las conclusiones
+- **THEN** ningun pasaje afirma que el sistema preserva el juicio humano en los casos que lo demandan
+- **AND** las menciones al gate de revision son coherentes con la declaracion de que su aporte no fue medido
+
+### Requirement: Registro canonico del balance neto y sus supuestos
+
+El memo `docs/Tesis/Correcciones/numeros-canonicos.md` SHALL registrar, en una seccion propia, los insumos, las formulas y los valores de la tabla del balance neto, cada uno con su procedencia (archivo y linea de origen, o recalculo con formula explicita) y su estado. Los valores que dependen de la tasa manual, del costo por derivacion erronea o de la rejilla de sensibilidad SHALL registrarse con estado `condicional` y con su condicion de reversibilidad. La seccion SHALL incluir un comando de recalculo reproducible y declarar la convencion de redondeo. El registro MUST NOT modificar ningun valor canonico existente.
+
+#### Scenario: Insumos con procedencia y estado
+
+- **WHEN** se lee la seccion del balance neto en el memo canonico
+- **THEN** cada insumo declara valor, procedencia y estado: `vigente` para el universo, el ahorro medio por incidente y la tasa de error estricta; `condicional` para la tasa manual, el costo por derivacion erronea y la rejilla de sensibilidad
+- **AND** cada linea de origen citada existe en el archivo referenciado
+
+#### Scenario: Valores reproducibles
+
+- **WHEN** se ejecuta el comando de recalculo de la seccion
+- **THEN** reproduce la exactitud minima de equilibrio y el balance neto de cada celda de la tabla, y los valores del escenario central
+- **AND** la convencion de redondeo y la diferencia respecto del calculo con 43,8 s quedan declaradas
+
+#### Scenario: Valores canonicos existentes intactos
+
+- **WHEN** se comparan las secciones previas del memo antes y despues del cambio
+- **THEN** ningun valor existente cambio de valor ni de estado
+- **AND** la cabecera del memo registra el agregado de la seccion nueva
+
+### Requirement: Linea futura de medicion de la exactitud manual y del costo de reasignacion
+
+El capitulo de recomendaciones SHALL incluir, en `subsec:estudios-replicacion`, la recomendacion de que toda replicacion registre por caso la derivacion efectuada en el brazo manual, con etiquetadores distintos de los operadores, y cronometre cada reasignacion, de modo de medir la exactitud manual y el costo de la derivacion erronea y cerrar el balance neto. La subseccion `subsec:balance-neto` SHALL remitir a esa recomendacion, y el capitulo MUST NOT duplicarla en otra subseccion.
+
+#### Scenario: Recomendacion presente y conectada
+
+- **WHEN** se lee `subsec:estudios-replicacion`
+- **THEN** recomienda registrar por caso la derivacion del brazo manual con etiquetadores distintos de los operadores y cronometrar las reasignaciones
+- **AND** remite a `subsec:balance-neto`, que a su vez remite a esta subseccion
+
+#### Scenario: Sin duplicacion en recomendaciones
+
+- **WHEN** se recorre el capitulo de recomendaciones
+- **THEN** la medicion de la exactitud del flujo manual se recomienda una sola vez
+- **AND** no existe una subseccion adicional que repita esa recomendacion
+
+### Requirement: Grados de cumplimiento de los objetivos acotados a la evidencia
+
+La tabla `tab:cumplimiento-objetivos` de `09-conclusiones.tex` SHALL asignar a cada objetivo el grado "Alcanzado" solo cuando cada componente exigido por su enunciado literal en `01-introduccion.tex` este evidenciado en la version evaluada; "Alcanzado parcialmente" cuando al menos un componente este evidenciado y al menos otro no se cumpla o no se haya medido; y "No alcanzado" cuando no se cumpla el criterio del objetivo. Toda fila "Alcanzado parcialmente" SHALL nombrar en su evidencia el componente no cumplido o no medido. Los objetivos especificos 1, 3 y 4 SHALL figurar como "Alcanzado parcialmente" mientras falte la evidencia de, respectivamente, la comunicacion asincronica y el cifrado verificado en la instancia publicada; la calidad de clasificacion por canal; y la exactitud del brazo manual y la proporcion de intervencion humana. El objetivo general SHALL desglosarse en sus tres componentes (tiempo de registro, calidad de la clasificacion y proporcion de intervencion humana) con estado individual, y su grado global SHALL ser coherente con ese desglose. El documento MUST NOT reformular el enunciado de un objetivo para ajustarlo a lo construido o medido, y la prosa de las conclusiones SHALL ser coherente con la tabla.
+
+#### Scenario: Objetivos 1, 3 y 4 parcialmente alcanzados
+
+- **WHEN** se leen las filas de los objetivos especificos 1, 3 y 4 en `tab:cumplimiento-objetivos`
+- **THEN** cada una declara "Alcanzado parcialmente"
+- **AND** su evidencia nombra el componente faltante: invocacion sincronica y TLS no verificado (1); calidad por canal no medida (3); exactitud del brazo manual e intervencion humana no medidas (4)
+
+#### Scenario: Objetivo general desglosado
+
+- **WHEN** se lee la fila del objetivo general
+- **THEN** figuran el tiempo de registro como alcanzado, la calidad de la clasificacion como evaluada por debajo del umbral y la intervencion humana como no medida
+- **AND** el grado global es "Alcanzado parcialmente"
+
+#### Scenario: Enunciados de objetivos sin reformular
+
+- **WHEN** se comparan los enunciados del objetivo general y de los objetivos especificos en `01-introduccion.tex` con los de la version previa al change
+- **THEN** los enunciados no cambian
+- **AND** solo cambia su grado de cumplimiento en la tabla
+
+#### Scenario: Reversion condicionada a evidencia
+
+- **WHEN** se dispone de evidencia nueva para un componente faltante del objetivo 1 o del objetivo 3 (por ejemplo, la que aporte c-140 para el objetivo 1) y se propone elevar su grado
+- **THEN** el grado solo pasa a "Alcanzado" si la tabla cita evidencia para cada componente faltante (TLS verificado y comunicacion asincronica para el 1; calidad por canal sin evidencia de degradacion y decision del autor sobre la complejidad percibida para el 3)
+- **AND** si la evidencia es posterior a la validacion experimental, la celda lo declara
+
+#### Scenario: Objetivo 6 con evidencia ampliada
+
+- **WHEN** se lee la fila del objetivo especifico 6
+- **THEN** su grado sigue la regla de esta tabla y su evidencia cita el analisis de errores, la calibracion por etapa y el analisis de sensibilidad de los ajustes (`subsec:sensibilidad-ajustes`)
+- **AND** si alguna de esas piezas no esta disponible, el grado no es "Alcanzado" sin declarar el componente faltante
+
+#### Scenario: Prosa coherente con la tabla
+
+- **WHEN** se leen los parrafos de las conclusiones que tratan el objetivo general y los objetivos 1, 3 y 4
+- **THEN** ninguno afirma un cumplimiento pleno que la tabla declare parcial
+- **AND** el primer parrafo declara cumplido parcialmente el objetivo general
+
+### Requirement: Segunda sub-hipotesis con fraccion esperada explicita
+
+La segunda sub-hipotesis (`01-introduccion.tex`, `subsec:hipotesis-trabajo`) SHALL enunciarse con una fraccion esperada numerica explicita, derivada de un criterio fijado a priori en el propio documento (en esta version, una proporcion de casos con accion manual de un operador no superior a `0,15`, complemento del umbral de exactitud del 85 %), junto con su contraste (proporcion con intervalo de confianza de Wilson) y su criterio de falsacion. El texto SHALL declarar que la formulacion original, referida al proceso manual y sin fraccion esperada especificada, no era contrastable, y que la cota se explicita en esta version. Mientras no exista registro primario de intervencion por caso, la sub-hipotesis SHALL declararse "no contrastada por ausencia de registro primario" en el resumen, la introduccion, los resultados y las conclusiones. El documento MUST NOT presentar las derivaciones del gate de revision (ninguna en el corpus) como contraste o confirmacion de esta sub-hipotesis y MUST NOT cuantificar la proporcion. Toda remision desde la sub-hipotesis SHALL apuntar a una seccion que declare la ausencia de registro primario; si remite a la lista de limitaciones del estudio (`subsec:limitaciones-estudio`), esa lista SHALL incluir la proporcion de intervencion humana no medida y su oracion introductoria SHALL declarar el numero real de limitaciones listadas.
+
+#### Scenario: Fraccion esperada y criterio de falsacion explicitos
+
+- **WHEN** se lee la segunda sub-hipotesis en `01-introduccion.tex`
+- **THEN** declara la cota numerica, su derivacion del umbral fijado a priori, el contraste con intervalo de Wilson y el criterio de falsacion
+- **AND** la cota figura en `docs/Tesis/Correcciones/numeros-canonicos.md` con su procedencia
+
+#### Scenario: Formulacion original declarada no contrastable
+
+- **WHEN** se lee la segunda sub-hipotesis
+- **THEN** el texto declara que la comparacion con el proceso manual, donde la intervencion es total por definicion, no era contrastable sin fraccion esperada
+- **AND** declara que la cota se explicita en esta version
+
+#### Scenario: Sin confirmacion espuria por el gate
+
+- **WHEN** se leen la introduccion y la subseccion `subsec:reduccion-intervencion` de resultados
+- **THEN** la ausencia de derivaciones del gate no se presenta como contraste ni como confirmacion de la sub-hipotesis
+- **AND** el texto explica que esas derivaciones no operacionalizan la proporcion de casos con accion manual
+
+#### Scenario: Estado propagado
+
+- **WHEN** se busca el rotulo de la segunda sub-hipotesis en `00-resumen.tex`, `01-introduccion.tex`, `07-resultados.tex` y `09-conclusiones.tex`
+- **THEN** en los cuatro aparece "no contrastada por ausencia de registro primario"
+- **AND** ninguno informa una proporcion de intervencion humana como resultado
+
+#### Scenario: Remision coherente con su destino
+
+- **WHEN** se sigue la remision `\autoref` de la segunda sub-hipotesis en `01-introduccion.tex`
+- **THEN** la seccion de destino declara que la proporcion de intervencion humana no se midio por ausencia de registro primario
+- **AND** si el destino es `subsec:limitaciones-estudio`, la lista incluye esa limitacion y el conteo de su oracion introductoria coincide con el numero de limitaciones listadas
+
+### Requirement: Estado declarado de las hipotesis subsidiarias
+
+Las dos hipotesis subsidiarias de `01-introduccion.tex` SHALL tener un estado declarado y coherente en la introduccion, la discusion y las conclusiones. La de integracion multicanal sin cuellos de botella SHALL declararse "no contrastada" mientras no se mida la capacidad bajo carga concurrente. La de mayor eficiencia del esquema hibrido frente a un esquema solo de modelo SHALL declararse "contrastada de forma acotada" solo si el texto informa el contraste acotado con sus salvedades y el analisis de sensibilidad de los ajustes del clasificador no lo contradice; en caso contrario SHALL declararse "no contrastada". La discusion MUST NOT afirmar consistencia con la hipotesis de eficiencia apoyandose solo en la proporcion de casos resueltos sin invocar al modelo.
+
+#### Scenario: Estados declarados en los tres capitulos
+
+- **WHEN** se leen la introduccion, la discusion y las conclusiones
+- **THEN** cada hipotesis subsidiaria tiene un estado explicito
+- **AND** el estado es el mismo en los tres capitulos
+
+#### Scenario: Frase de consistencia sin sustento retirada
+
+- **WHEN** se busca en `08-discusion.tex` la afirmacion de consistencia con la hipotesis subsidiaria de eficiencia
+- **THEN** no aparece apoyada solo en el 65,5 % de casos resueltos sin el modelo
+- **AND** en su lugar figura el contraste acotado con sus salvedades, o el rotulo "no contrastada"
+
+#### Scenario: Subsidiaria multicanal no contrastada
+
+- **WHEN** se leen las conclusiones sobre la integracion de los tres canales
+- **THEN** el texto no afirma que la integracion "confirmo" la ausencia de dispersion operativa o de cuellos de botella
+- **AND** declara que la hipotesis subsidiaria de integracion multicanal no se contrasto
+
+### Requirement: Contraste acotado de la hipotesis subsidiaria de eficiencia con salvedades declaradas
+
+Cuando el documento sostenga la hipotesis subsidiaria de eficiencia del esquema hibrido, SHALL hacerlo con cifras ya documentadas en el repositorio (sobre los 131 casos que resuelve la etapa de reglas: exactitud de la etapa de reglas `0,7405`, 97/131, frente a Gemini ejecutado sobre 130 de esos casos con el cortocircuito deshabilitado, `0,6769`, 88/130, segun `docs/deterministic_calibration.md`) y SHALL declarar en el mismo pasaje: que las cifras son estimaciones dentro de la muestra, con remision al analisis de sensibilidad de los ajustes del clasificador (`subsec:sensibilidad-ajustes`); si se aplico o no una prueba pareada; que la comparacion se hace sobre el mismo corpus con que se ajustaron el vocabulario, las reglas del prompt y el punto de operacion del filtro; y que la latencia no se midio por etapa, salvo que otro change la reporte. Si la variante de ese analisis con el vocabulario previo al ajuste muestra que la etapa de reglas no supera a Gemini en exactitud sobre los casos que resuelve, la hipotesis SHALL rotularse "no contrastada". La prueba pareada (McNemar exacta) SHALL citarse solo si figura registrada en el memo canonico, computada fuera de linea sobre los pares por caso de la cache de calibracion por el change dueno de esa cache. El change MUST NOT ejecutar llamadas pagas al proveedor ni presentar el contraste acotado como confirmacion de la hipotesis.
+
+#### Scenario: Cifras del contraste con procedencia
+
+- **WHEN** se leen las cifras del contraste en `08-discusion.tex`
+- **THEN** coinciden con `docs/deterministic_calibration.md` (97/131 = 0,7405 y 88/130 = 0,6769)
+- **AND** figuran en `docs/Tesis/Correcciones/numeros-canonicos.md` con su procedencia
+
+#### Scenario: Salvedades presentes
+
+- **WHEN** se lee el pasaje del contraste
+- **THEN** declara la ausencia (o el resultado) de la prueba pareada, el origen in-corpus de los ajustes del clasificador y la latencia no medida por etapa
+- **AND** el estado de la hipotesis se rotula "contrastada de forma acotada", no "confirmada"
+
+#### Scenario: Estimacion dentro de la muestra
+
+- **WHEN** se leen las cifras 0,7405 y 0,6769 en `08-discusion.tex`
+- **THEN** el texto las califica como estimaciones dentro de la muestra
+- **AND** remite a `subsec:sensibilidad-ajustes`
+
+#### Scenario: Regla de decision con el vocabulario previo
+
+- **WHEN** la variante del analisis de sensibilidad con el vocabulario previo al ajuste muestra que la etapa de reglas no supera a Gemini en exactitud sobre los casos que resuelve
+- **THEN** la hipotesis subsidiaria de eficiencia se rotula "no contrastada" en la introduccion, la discusion y las conclusiones
+- **AND** la discusion no presenta el contraste acotado como evidencia favorable
+
+#### Scenario: Prueba pareada condicionada al memo
+
+- **WHEN** el memo canonico no registra la prueba pareada (por ejemplo, porque la cache `evaluation/predicciones_calibracion.json` no se recupero)
+- **THEN** el texto declara que la diferencia no se sometio a una prueba pareada
+- **AND** no se cita ningun valor p para este contraste
+
+#### Scenario: Sin llamadas pagas
+
+- **WHEN** se revisa el registro de ejecucion del change
+- **THEN** no hubo invocaciones a Gemini ni re-ejecucion del clasificador
+- **AND** toda cifra nueva proviene de documentos o caches ya versionados o recuperados
+
+### Requirement: Metrica primaria unica del F1 macro
+
+El documento SHALL usar el macro-F1 de umbral sobre las cuatro clases estimables (`0,6508`) como metrica primaria y unico referente del umbral `0,85` en el resumen, el abstract, la tercera sub-hipotesis, la tabla de cumplimiento de objetivos, la metodologia, los resultados y la discusion. Toda aparicion del macro-F1 de cinco clases (`0,5207`) SHALL acompanarse de su aclaracion (incluye Bases de Datos, con un unico caso y no estimable). La metodologia SHALL definir el macro-F1 de umbral excluyendo las clases con soporte unitario. Los resultados SHALL declarar por que se excluye la clase no estimable y que la eleccion no altera el veredicto, porque ambos valores quedan por debajo de `0,85`. El memo canonico SHALL registrar `0,6508` como `vigente`.
+
+#### Scenario: Primario en resumen y abstract
+
+- **WHEN** se lee `00-resumen.tex`
+- **THEN** el resumen y el abstract citan 0,6508 (0.6508) rotulado como macro-F1 de umbral sobre las cuatro clases estimables
+- **AND** no citan 0,5207 sin su aclaracion
+
+#### Scenario: Primario en la hipotesis y en la tabla de objetivos
+
+- **WHEN** se leen la tercera sub-hipotesis y la fila del objetivo especifico 2 de `tab:cumplimiento-objetivos`
+- **THEN** ambas citan 0,6508 como macro-F1 de umbral
+- **AND** si la fila cita 0,5207, lo acompana su aclaracion
+
+#### Scenario: Cada aparicion rotulada
+
+- **WHEN** se ejecuta `grep -n "0[,.]5207"` y `grep -n "0[,.]6508"` sobre `paper/sections/*.tex`
+- **THEN** cada linea con 0,5207 contiene su aclaracion (cinco clases, no estimable o equivalente)
+- **AND** cada linea con 0,6508 lo rotula como de umbral o sobre cuatro clases estimables
+
+#### Scenario: Definicion metodologica coherente
+
+- **WHEN** se leen la fila del F1 macro en `tab:variables` y el analisis estadistico de `04-marco-metodologico.tex`
+- **THEN** el F1 macro de umbral excluye las clases con soporte unitario
+- **AND** no se define el F1 macro de umbral sobre los cinco sectores
+
+#### Scenario: Robustez de la eleccion declarada
+
+- **WHEN** se lee la oracion del macro-F1 en `07-resultados.tex`
+- **THEN** declara que el umbral 0,85 se evalua contra el macro-F1 de umbral y por que se excluye la clase no estimable
+- **AND** declara que ambos valores quedan por debajo del criterio
+
+#### Scenario: Memo coherente
+
+- **WHEN** se lee `docs/Tesis/Correcciones/numeros-canonicos.md`
+- **THEN** el macro-F1 de cuatro clases figura como `vigente` y primario de umbral
+- **AND** el macro-F1 de cinco clases figura como informativo
+
+### Requirement: Procedencia canonica de las cifras de hipotesis, objetivos y metrica primaria
+
+Toda cifra que las correcciones de hipotesis, objetivos y metrica primaria introduzcan en las fuentes LaTeX SHALL figurar en `docs/Tesis/Correcciones/numeros-canonicos.md` con su procedencia (archivo y linea) y su estado antes de citarse en el texto. Ninguna cifra MUST fabricarse ni derivarse de una fuente no versionada. Las correcciones MUST NOT reintroducir valores `retirado`, en particular la intervencion humana del `9,5 %`.
+
+#### Scenario: Cifras nuevas registradas
+
+- **WHEN** se listan las cifras nuevas que cita el texto (por ejemplo 0,15; 97/131; 0,7405; 88/130; 0,6769; 65,5 %)
+- **THEN** cada una figura en el memo canonico con procedencia y estado
+- **AND** el valor del texto coincide con el del memo
+
+#### Scenario: Sin valores retirados
+
+- **WHEN** se busca "9,5" como proporcion de intervencion humana en las fuentes tras las correcciones
+- **THEN** no aparece como resultado
+- **AND** el memo conserva su estado `retirado`
+
+### Requirement: Neutralidad de paginas y palabras de las correcciones de hipotesis, objetivos y metrica primaria
+
+Las correcciones de hipotesis, objetivos y metrica primaria MUST NOT aumentar el total de paginas del PDF compilado respecto del estado compilado inmediatamente anterior a su aplicacion, ni desplazar las paginas de inicio de los capitulos, salvo que, agotadas las compensaciones dentro de los parrafos propios, el exceso quede documentado en `docs/Tesis/Correcciones/dictamen-correcciones.md` para su resolucion en el gate de paginas de la integracion final, que fija el tope global. El exceso MUST NOT compensarse recortando parrafos asignados a otros changes. El resumen y el abstract MUST NOT aumentar su numero de palabras de prosa (regla de conteo de c-106) y SHALL quedar en 250 palabras o menos.
+
+#### Scenario: Paginas sin aumento
+
+- **WHEN** se compila el PDF antes y despues de aplicar las correcciones
+- **THEN** el total de paginas despues es menor o igual que antes
+- **AND** las paginas de inicio de la introduccion, la discusion, las conclusiones y las recomendaciones no cambian, o el exceso queda documentado
+
+#### Scenario: Palabras del resumen sin aumento
+
+- **WHEN** se cuentan las palabras de prosa del resumen y del abstract antes y despues de las correcciones
+- **THEN** el conteo posterior no supera al anterior
+- **AND** ambos quedan en 250 palabras o menos
+
+### Requirement: Extension del protocolo de revision para calibracion y cascadas
+
+El parrafo de protocolo de revision de `03-estado-del-arte.tex` SHALL declarar, ademas de las cadenas A1-A4 y B1, una extension con dos cadenas de busqueda: C1 (calibracion y estimacion de la confianza en clasificadores y modelos de lenguaje) y C2 (cascadas, enrutamiento y esquemas hibridos con criterio de costo-exactitud), ejecutadas sobre las mismas seis bases, con criterios de inclusion y exclusion propios del grupo C, una regla de seleccion declarada y una fecha de corte propia posterior al 21 de octubre de 2026. La bitacora `docs/Tesis/Correcciones/bitacora-busqueda-c-110.md` SHALL registrar cada consulta de la extension (base, cadena, fecha y resultado) y MUST coincidir con el texto en bases, cadenas, criterios y fecha de corte. Las cadenas A1-A4 y B1, sus criterios y su fecha de corte MUST permanecer sin cambios.
+
+#### Scenario: Cadenas C1 y C2 declaradas en el capitulo
+
+- **WHEN** se lee el parrafo de protocolo de revision en `03-estado-del-arte.tex`
+- **THEN** enuncia las cadenas C1 y C2 completas, las seis bases, los criterios de inclusion y exclusion del grupo C y la fecha de corte de la extension
+- **AND** la formulacion permite a un lector reproducir la busqueda
+
+#### Scenario: Bitacora consistente con la extension
+
+- **WHEN** se compara la seccion del grupo C de la bitacora con el parrafo de protocolo
+- **THEN** cada consulta registra base, cadena, fecha y resultado (claves incorporadas o ausencia de incorporaciones)
+- **AND** las cadenas, bases, criterios y fecha de corte coinciden con los del capitulo, y la bitacora no registra consultas que el texto no mencione
+
+#### Scenario: Protocolo original preservado
+
+- **WHEN** se compara el parrafo de protocolo despues del change con la version previa
+- **THEN** las cadenas A1-A4 y B1, sus criterios y la fecha de corte del 21 de octubre de 2026 permanecen identicos
+- **AND** la afirmacion de vacancia sobre Google Gemini y tickets de soporte en espanol conserva su alcance original
+
+### Requirement: Verificacion individual de las fuentes de calibracion y cascadas
+
+Toda fuente incorporada por la extension C1-C2 SHALL verificarse antes de citarse en tres compuertas: existencia (el DOI resuelve hacia la editorial o, para sedes sin DOI, la pagina oficial de la sede responde), metadatos (titulo, autores, sede, ano y paginas coinciden con Crossref o con los metadatos oficiales de la sede) y contenido (lectura del texto completo y registro de cada afirmacion atribuida con su seccion o pagina). Las fuentes SHALL ser arbitradas y los preprints sin version arbitrada MUST excluirse. Una fuente que no supere alguna compuerta MUST NOT citarse, y ninguna oracion agregada MUST atribuir a una fuente mas de lo que esta sostiene.
+
+#### Scenario: Existencia y metadatos registrados
+
+- **WHEN** se inspecciona la tabla de verificacion del grupo C en la bitacora
+- **THEN** cada fuente incorporada registra su DOI o URL oficial, el resultado de la resolucion y el cotejo de metadatos
+- **AND** ninguna fuente incorporada carece de alguno de esos registros
+
+#### Scenario: Correspondencia afirmacion-fuente
+
+- **WHEN** se toma cualquier oracion agregada por el change que cite una fuente nueva
+- **THEN** la bitacora registra esa afirmacion con la seccion o pagina de la fuente que la sostiene
+- **AND** la oracion no atribuye a la fuente resultados que esta no reporta, como resultados sobre Gemini, sobre tickets de soporte o sobre una primera etapa de reglas
+
+#### Scenario: Fuente no verificada o no arbitrada excluida
+
+- **WHEN** una fuente candidata no resuelve, no coincide en metadatos, no trata lo que se le atribuiria o carece de version arbitrada
+- **THEN** no aparece citada en ningun `.tex` ni como entrada de `Bibliography_base.bib`
+- **AND** la bitacora la registra como excluida con su motivo
+
+### Requirement: Fundamentacion de la calibracion de la confianza con fuentes que la tratan
+
+La seccion del marco teorico sobre procesamiento de lenguaje natural y modelos de lenguaje grandes (`subsec:nlp-llm`) SHALL fundamentar el concepto de calibracion de la confianza con al menos dos fuentes verificadas que efectivamente lo traten, cubriendo su medicion, su correccion posterior y la confianza verbalizada por modelos de lenguaje consultados como servicio. Las oraciones agregadas MUST NOT citar `xuan2025mmluprox` como fuente de calibracion. La seccion SHALL vincular el esquema hibrido del sistema con la nocion de cascada de modelos mediante al menos una fuente verificada.
+
+#### Scenario: Calibracion sostenida por fuentes que la tratan
+
+- **WHEN** se leen en el PDF compilado las oraciones de `subsec:nlp-llm` sobre calibracion
+- **THEN** el concepto, su medicion y la confianza verbalizada se apoyan en al menos dos fuentes verificadas de la extension C1-C2
+- **AND** ninguna de esas oraciones cita a Xuan et al. (2025)
+
+#### Scenario: Esquema hibrido vinculado con la literatura de cascadas
+
+- **WHEN** se lee la oracion de `subsec:nlp-llm` que presenta el esquema hibrido entre clasificador supervisado y modelo de lenguaje grande
+- **THEN** describe la combinacion como una cascada en la que el componente mas economico resuelve los casos para los que su senal de fiabilidad alcanza un umbral y deriva los restantes al mas costoso
+- **AND** cita al menos una fuente verificada sobre cascadas de modelos
+
+### Requirement: Estado del arte sobre calibracion de la confianza y cascadas de modelos
+
+El capitulo de estado del arte SHALL contener una subseccion con rotulo `subsec:calibracion-cascadas` que revise la literatura sobre (a) calibracion de la confianza en clasificadores y en modelos de lenguaje grandes, incluidas la confianza verbalizada y el sesgo de etiquetas en la clasificacion por instrucciones, y (b) cascadas de modelos con criterio de costo-exactitud, citando las fuentes verificadas de la extension C1-C2. La oracion introductoria del capitulo SHALL enumerar esta area. Toda afirmacion de vacancia de la subseccion SHALL formularse relativa a las cadenas C1-C2, a las bases consultadas y a la fecha de corte de la extension, y MUST omitirse si la busqueda no la confirma.
+
+#### Scenario: Ambos ejes cubiertos
+
+- **WHEN** se lee la subseccion de calibracion y cascadas en el PDF compilado
+- **THEN** al menos una fuente verificada sostiene cada eje (calibracion de la confianza; cascadas de modelos)
+- **AND** cada fuente se describe por lo que efectivamente estudia y encuentra
+
+#### Scenario: Vacancia acotada o ausente
+
+- **WHEN** la subseccion enuncia que no se identifico un trabajo con determinadas caracteristicas
+- **THEN** la afirmacion declara las cadenas C1-C2 y la fecha de corte de la extension y no se presenta como inexistencia absoluta
+- **AND** la bitacora no registra ningun trabajo incorporado o examinado que la refute
+
+#### Scenario: Introduccion del capitulo coherente
+
+- **WHEN** se lee la oracion introductoria de `03-estado-del-arte.tex`
+- **THEN** el numero de areas enunciadas coincide con las areas que el capitulo revisa
+- **AND** la calibracion de la confianza y las cascadas de modelos figuran entre ellas
+
+### Requirement: Lectura del hallazgo de calibracion y del esquema hibrido a la luz de la literatura
+
+La subseccion de comparacion con la literatura de la discusion (`subsec:comparacion-literatura`) SHALL contrastar con las fuentes verificadas de calibracion y cascadas el hallazgo sobre la confianza autodeclarada, tal como lo formula por etapa del pipeline el capitulo de resultados, y el esquema hibrido de reglas y modelo. El parrafo MUST NOT introducir valores numericos ausentes de `docs/Tesis/Correcciones/numeros-canonicos.md`, salvo cifras de terceros citadas textualmente con su pagina; MUST NOT reintroducir la lectura de "calibracion invertida" del clasificador en su conjunto; y MUST NOT presentar como demostrada la eficiencia del esquema hibrido.
+
+#### Scenario: Hallazgo contrastado con la literatura
+
+- **WHEN** se lee la subseccion de comparacion con la literatura
+- **THEN** relaciona el comportamiento de la confianza de la etapa del modelo de lenguaje con lo que la literatura documenta sobre la confianza verbalizada
+- **AND** relaciona la derivacion entre etapas del esquema hibrido con el criterio de derivacion de las cascadas de modelos
+
+#### Scenario: Coherencia con el capitulo de resultados
+
+- **WHEN** se compara el parrafo con la subseccion de calibracion del capitulo de resultados (`subsec:calibracion`)
+- **THEN** describe el hallazgo por etapa del pipeline y en los mismos terminos que ese capitulo
+- **AND** no afirma "calibracion invertida" ni "anti-calibracion" del clasificador en su conjunto
+
+#### Scenario: Sin numeros nuevos ni eficiencia afirmada
+
+- **WHEN** se revisan los valores numericos y las conclusiones del parrafo agregado
+- **THEN** todo valor figura en `numeros-canonicos.md` o es una cifra de terceros citada textualmente con su pagina
+- **AND** el parrafo no afirma que la eficiencia del esquema hibrido frente a una alternativa basada solo en el modelo haya sido contrastada
+
+### Requirement: Higiene bibliografica de las fuentes de calibracion y cascadas
+
+Las entradas que incorpora la extension C1-C2 SHALL agregarse a `Bibliography_base.bib` en un bloque aditivo comentado, con `author`, `title`, `year`, el campo de publicacion (`booktitle` o `journal`) y `doi` o `url` oficial, con claves `ApellidoAnio_palabra_clave` y con el tipo que corresponde a la naturaleza real de la fuente (`@inproceedings` para actas, `@article` para revistas). Ninguna entrada existente MUST modificarse, ninguna clave MUST duplicarse y toda entrada nueva SHALL citarse al menos una vez en el texto.
+
+#### Scenario: Entradas completas y bien tipadas
+
+- **WHEN** se inspeccionan las entradas del bloque de calibracion y cascadas
+- **THEN** cada una incluye autor, titulo, ano, campo de publicacion y `doi` o `url` oficial
+- **AND** las actas se tipan `@inproceedings` y la revista TMLR `@article`, sin presentar un preprint como publicacion arbitrada
+
+#### Scenario: Correspondencia citas-bibliografia preservada
+
+- **WHEN** se ejecuta `verify_citations.py` despues del change
+- **THEN** reporta cero citas huerfanas y cero entradas sin usar
+- **AND** cada clave nueva aparece una sola vez como entrada en `Bibliography_base.bib`
+
+#### Scenario: Entradas existentes intactas
+
+- **WHEN** se inspecciona el diff de `Bibliography_base.bib`
+- **THEN** solo contiene lineas agregadas en el bloque nuevo
+- **AND** ninguna entrada previa cambia de clave ni de campos
+
+### Requirement: Impacto de paginas de la cobertura de calibracion y cascadas medido y acotado
+
+El change SHALL registrar el numero de paginas del PDF compilado antes y despues de aplicarse, medido sobre el documento completo, y el aumento atribuible a sus inserciones MUST NOT superar tres paginas. Si lo supera, SHALL aplicarse la contingencia declarada en el diseno (reduccion del parrafo de discusion y retiro de fuentes en el orden declarado) antes de cerrar el change. El conteo resultante SHALL quedar registrado para la verificacion final del tope de paginas de la release.
+
+#### Scenario: Conteo registrado antes y despues
+
+- **WHEN** se compila `main.tex` antes y despues de aplicar el change
+- **THEN** ambos conteos, medidos sobre el PDF completo, quedan registrados en `tasks.md`
+- **AND** se identifica que capitulos o secciones crecieron
+
+#### Scenario: Aumento acotado
+
+- **WHEN** se calcula la diferencia de paginas atribuible al change
+- **THEN** es de tres paginas o menos
+- **AND** si inicialmente la excedia, la contingencia del diseno se aplico y el conteo final la respeta
+
+### Requirement: Subseccion de calibracion del gate de confianza en el capitulo de recomendaciones
+
+El capitulo de recomendaciones (`10-recomendaciones.tex`) SHALL incluir una subseccion propia para la calibracion del gate de confianza, rotulada `subsec:calibracion-gate` y ubicada antes de la subseccion del clasificador supervisado. La subseccion SHALL enunciar un diagnostico coherente con el analisis de calibracion por etapa del capitulo de resultados: el gate de 0,70 solo aplica a la etapa Gemini y a la etapa de reserva, la etapa deterministica se gobierna por su propio score de correctitud y la confianza autodeclarada de Gemini no discrimina aciertos de errores en su rango efectivo (0,85 a 1,00). La subseccion SHALL proponer: un conjunto de validacion propio disjunto del corpus de evaluacion; al menos tres senales independientes del puntaje, entre ellas la ambiguedad lexica entre categorias candidatas, el margen entre la primera y la segunda categoria y la revision por muestreo de casos de alta confianza; una recalibracion posterior del puntaje, declarando que corrige su nivel pero no crea capacidad de discriminacion; y la derivacion del umbral del gate a partir de una curva de cobertura y precision ajustada fuera de la muestra, con un criterio declarado de antemano, como el punto de operacion de la etapa deterministica. El texto MUST NOT reintroducir la "calibracion invertida" del clasificador en su conjunto, MUST NOT presentar la propuesta como resultado y MUST NOT agregar entradas a `Bibliography_base.bib`.
+
+#### Scenario: Subseccion presente y ubicada entre las prioritarias
+
+- **WHEN** se inspecciona `10-recomendaciones.tex`
+- **THEN** existe una `\subsection` con `\label{subsec:calibracion-gate}`
+- **AND** ese rotulo aparece antes de `\label{subsec:clasificador-supervisado}`
+
+#### Scenario: Diagnostico coherente con la calibracion por etapa
+
+- **WHEN** se compara la subseccion con el analisis de calibracion del capitulo de resultados
+- **THEN** la falta de discriminacion se atribuye a la confianza autodeclarada de Gemini en su rango efectivo y no al clasificador en su conjunto
+- **AND** el gate de 0,70 se describe como aplicable solo a la etapa Gemini y a la etapa de reserva
+
+#### Scenario: Propuesta con senales independientes, recalibracion y umbral derivado
+
+- **WHEN** se lee la propuesta de la subseccion
+- **THEN** figuran el conjunto de validacion propio disjunto del corpus de evaluacion, al menos tres senales independientes del puntaje y una recalibracion posterior con la advertencia de que no crea capacidad de discriminacion
+- **AND** el umbral del gate se deriva de una curva de cobertura y precision ajustada fuera de la muestra, con un criterio declarado de antemano
+
+#### Scenario: Sin bibliografia nueva desde este change
+
+- **WHEN** se compara `Bibliography_base.bib` antes y despues del change
+- **THEN** no hay entradas nuevas atribuibles a este change
+- **AND** toda cita de la subseccion apunta a una entrada existente o incorporada por el change dueno de la bibliografia, y `verify_citations.py` reporta PASS
+
+### Requirement: Subseccion de correccion de la medicion de intervencion humana
+
+El capitulo de recomendaciones SHALL incluir una subseccion propia, rotulada `subsec:medicion-intervencion` y ubicada inmediatamente despues de la subseccion del clasificador supervisado, que proponga un protocolo de registro primario de la intervencion humana por caso. El protocolo SHALL registrar, para cada intervencion, su ocurrencia y origen, la consigna de tiempo de inicio y de fin, el resultado (categoria confirmada o corregida) y el operador seudonimizado, y SHALL indicar como almacenamiento la ampliacion de `clasificacion_log` o una tabla dedicada vinculada al incidente. La definicion operacional SHALL alinearse con las dos formas rotuladas de la variable de intervencion humana de `tab:variables` y aplicarse de igual modo en ambos brazos, de modo que la sub-hipotesis de intervencion, hoy no contrastada por ausencia de registro primario, pueda contrastarse en una replicacion. La subseccion MUST NOT reportar ninguna proporcion de intervencion humana como resultado.
+
+#### Scenario: Subseccion presente a continuacion del clasificador supervisado
+
+- **WHEN** se inspecciona `10-recomendaciones.tex`
+- **THEN** existe una `\subsection` con `\label{subsec:medicion-intervencion}`
+- **AND** es la subseccion inmediatamente posterior a `subsec:clasificador-supervisado`
+
+#### Scenario: Protocolo de registro primario por caso
+
+- **WHEN** se lee la subseccion
+- **THEN** el protocolo enumera la ocurrencia y el origen de la intervencion, la consigna de tiempo de inicio y de fin, el resultado y el operador seudonimizado
+- **AND** indica como almacenamiento la ampliacion de `clasificacion_log` o una tabla dedicada vinculada al incidente
+
+#### Scenario: Definicion alineada con la tabla de variables y contrastabilidad
+
+- **WHEN** se compara la subseccion con `tab:variables` y con la sub-hipotesis de intervencion de `subsec:hipotesis-trabajo`
+- **THEN** la definicion operacional usa las mismas dos formas rotuladas (proporcion de casos y proporcion del tiempo del proceso) aplicadas a ambos brazos
+- **AND** la subseccion explica que registro permitiria contrastar la sub-hipotesis en la formulacion vigente
+
+#### Scenario: Sin proporcion de intervencion reportada
+
+- **WHEN** se buscan en el capitulo de recomendaciones cifras de proporcion de intervencion humana
+- **THEN** no aparece ninguna presentada como resultado
+- **AND** no aparece el 9,5 % retirado
+
+### Requirement: Aprendizaje activo condicionado a la calibracion de la confianza
+
+La subseccion de aprendizaje activo (`subsec:aprendizaje-activo`) SHALL NOT proponer la priorizacion de casos por baja confianza declarada como criterio incondicional. SHALL apoyar la seleccion de casos en las senales independientes del puntaje de `subsec:calibracion-gate` y SHALL condicionar el uso de la confianza declarada como criterio de prioridad a una recalibracion validada segun esa subseccion. El texto MUST NOT presuponer que el gate deriva casos a revision. El rotulo `subsec:aprendizaje-activo` SHALL conservarse y la subseccion de base de conocimientos SHALL seguir remitiendo a el.
+
+#### Scenario: Criterio de seleccion independiente del puntaje
+
+- **WHEN** se lee la subseccion de aprendizaje activo
+- **THEN** remite con `\autoref` a `subsec:calibracion-gate`
+- **AND** la baja confianza declarada no figura como criterio de prioridad sin la condicion de una recalibracion validada
+
+#### Scenario: Sin presuponer derivaciones del gate
+
+- **WHEN** se lee la subseccion de aprendizaje activo
+- **THEN** no afirma que la intervencion humana ocurre en los casos derivados a revision por el gate
+- **AND** las revisiones que alimentan el ajuste incremental se vinculan con el registro de `subsec:medicion-intervencion`
+
+#### Scenario: Remision de la base de conocimientos preservada
+
+- **WHEN** se lee la subseccion de base de conocimientos
+- **THEN** sigue remitiendo con `\autoref` a `subsec:aprendizaje-activo`
+- **AND** el rotulo `subsec:aprendizaje-activo` se conserva sin cambios
+
+### Requirement: Replicaciones con exactitud del flujo manual y asignacion muestral no proporcional
+
+La subseccion de estudios de replicacion (`subsec:estudios-replicacion`) SHALL recomendar medir la exactitud del flujo manual sobre el mismo corpus, con etiquetadores distintos de los operadores del brazo manual, y SHALL recomendar una asignacion muestral no proporcional que sobremuestree las clases minoritarias y pondere las estimaciones globales por la distribucion del universo. La subseccion SHALL conservar su rotulo y los contextos de replicacion que ya enuncia.
+
+#### Scenario: Exactitud del flujo manual con etiquetadores independientes
+
+- **WHEN** se lee la subseccion de estudios de replicacion
+- **THEN** recomienda medir la exactitud del flujo manual sobre el mismo corpus
+- **AND** exige que los etiquetadores de la referencia sean distintos de los operadores del brazo manual
+
+#### Scenario: Asignacion no proporcional ponderada
+
+- **WHEN** se lee la subseccion de estudios de replicacion
+- **THEN** recomienda sobremuestrear las clases minoritarias y ponderar las estimaciones globales por la distribucion del universo
+- **AND** si menciona la clase Bases de Datos, lo hace con el soporte canonico de un caso
+
+#### Scenario: Rotulo y contextos preservados
+
+- **WHEN** se inspecciona la subseccion de estudios de replicacion
+- **THEN** conserva `\label{subsec:estudios-replicacion}`
+- **AND** mantiene los contextos de replicacion del sector publico, del sector industrial y de organizaciones de mayor tamano
+
+### Requirement: Correspondencia entre el parrafo de priorizacion y las subsecciones del capitulo
+
+El parrafo introductorio del capitulo de recomendaciones SHALL referenciar con `\autoref` la subseccion propia de cada linea anunciada como prioritaria (calibracion del gate de confianza, clasificador supervisado con corpus propio y correccion de la medicion de intervencion humana), y cada una de esas lineas SHALL existir como `\subsection` con `\label`. Las tres subsecciones prioritarias SHALL preceder al resto de las subsecciones del capitulo. El parrafo SHALL clasificar cada subseccion del capitulo en un nivel de prioridad, y su remision al analisis de errores SHALL apuntar a `subsec:analisis-errores`. El capitulo MUST NOT anunciar una linea prioritaria sin desarrollo propio.
+
+#### Scenario: Cada linea prioritaria tiene subseccion
+
+- **WHEN** se extraen los `\autoref` del parrafo introductorio y los `\label` de las subsecciones del capitulo
+- **THEN** `subsec:calibracion-gate`, `subsec:clasificador-supervisado` y `subsec:medicion-intervencion` aparecen en ambos conjuntos
+- **AND** no queda ninguna linea anunciada como prioritaria sin subseccion propia
+
+#### Scenario: Orden de las subsecciones prioritarias
+
+- **WHEN** se comparan las posiciones de los rotulos de subseccion en `10-recomendaciones.tex`
+- **THEN** los tres rotulos prioritarios aparecen antes que cualquier otro rotulo de subseccion del capitulo
+
+#### Scenario: Todas las subsecciones clasificadas y remision correcta
+
+- **WHEN** se compara el parrafo introductorio con la lista de subsecciones del capitulo
+- **THEN** cada subseccion figura en uno de los niveles de prioridad enunciados
+- **AND** la remision al analisis de errores apunta a `subsec:analisis-errores` y no a `subsec:calibracion`
+
+### Requirement: Destino de las referencias anticipadas al capitulo de recomendaciones
+
+Toda remision a `sec:recomendaciones` desde otro capitulo que anuncie una evolucion o un trabajo futuro SHALL encontrar esa linea mencionada en el capitulo de recomendaciones. En particular, la calibracion de los parametros de inferencia, la autenticacion unica corporativa (SSO), el prefijo configurable del numero de incidente y la migracion a Kubernetes SHALL figurar en el capitulo.
+
+#### Scenario: Referencias anticipadas con destino
+
+- **WHEN** se listan las remisiones a `sec:recomendaciones` en los demas archivos de `paper/sections/`
+- **THEN** cada tema anunciado por esas remisiones aparece en `10-recomendaciones.tex`
+- **AND** ninguna remision queda sin una linea correspondiente en el capitulo
+
+### Requirement: Neutralidad numerica de las lineas de trabajo futuro
+
+El texto nuevo o reescrito del capitulo de recomendaciones SHALL limitarse a valores numericos que ya figuran en el documento o que tienen estado `vigente` en `docs/Tesis/Correcciones/numeros-canonicos.md`: el umbral del gate (0,70), el rango efectivo de confianza de Gemini (0,85 a 1,00), el umbral del 85 % del segundo objetivo especifico, el tamano del corpus (200 casos), el soporte de un caso de Bases de Datos y los valores que el capitulo ya contenia antes del change. El texto MUST NOT reintroducir cifras con estado `retirado` ni introducir valores sin procedencia.
+
+#### Scenario: Cifras del texto agregado en la lista blanca
+
+- **WHEN** se extraen los numeros de las lineas agregadas o reescritas en `10-recomendaciones.tex`
+- **THEN** cada uno figura en la lista de valores admitidos o tiene estado `vigente` en `numeros-canonicos.md`
+- **AND** ninguna cifra con estado `retirado` reaparece en el capitulo
+
+### Requirement: Impacto de paginas acotado del capitulo de recomendaciones
+
+Tras el change, el capitulo de recomendaciones SHALL ocupar a lo sumo cinco paginas del PDF compilado (cuatro en la release v1.1.1), medidas como la diferencia entre la pagina de inicio de las referencias bibliograficas y la pagina de inicio del capitulo en `main.toc`. El crecimiento SHALL compensarse dentro del capitulo condensando las subsecciones del agente conversacional telefonico y de la base de conocimientos, sin perder los elementos exigidos por los requisitos vigentes ni los elementos tecnicos de la justificacion del agente. El delta de paginas medido SHALL registrarse para la verificacion global del change de integracion.
+
+#### Scenario: Extension del capitulo acotada
+
+- **WHEN** se compila el PDF tras el change y se leen en `main.toc` las paginas de inicio del capitulo y de las referencias bibliograficas
+- **THEN** la diferencia es de cinco paginas o menos
+- **AND** el delta respecto de la release v1.1.1 queda registrado en la entrada de trazabilidad del change
+
+#### Scenario: Condensacion sin perdida de elementos exigidos
+
+- **WHEN** se leen las subsecciones condensadas
+- **THEN** la del agente conversacional conserva Twilio Media Streams, la madurez de las interfaces de audio bidireccional, la transcodificacion mu-law a PCM, la gestion de turnos de habla, el modelo de costo por minuto y la recomendacion de una prueba de concepto con la grabacion actual como respaldo
+- **AND** la de base de conocimientos conserva al menos dos parrafos, los ejemplos de incidentes simples, las remisiones a aprendizaje activo y a modelos abiertos y la ausencia de citas
+
+#### Scenario: Partes protegidas sin cambios
+
+- **WHEN** se compara el capitulo con su version previa al change
+- **THEN** el primer parrafo de `subsec:panel-monitoreo` y el texto de `subsec:clasificador-supervisado` no fueron modificados por este change
+- **AND** `subsec:evaluacion-modelos-abiertos` conserva su contenido
+
+### Requirement: Atribuciones del eje de modelos de lenguaje conformes al contenido de las fuentes
+
+El eje de procesamiento de lenguaje natural y modelos de lenguaje grandes del marco teorico (seccion 2.4) y el estado del arte multilingue del capitulo 3 SHALL atribuir a cada fuente solo lo que esa fuente sostiene, contrastado con su texto completo cuando es de acceso abierto o con el resumen de la pagina del editor. El documento MUST NOT citar Xuan et al. (2025) como fuente de calibracion de la confianza, MUST NOT citar Lai et al. (2023) como evidencia de sensibilidad a la redaccion del prompt, MUST NOT citar Zhang et al. (2023) como evidencia de generalizacion fuera del ingles, y MUST NOT atribuir a Mayor-Rocher et al. (2026) ni a Grandury et al. (2025) diferencias de desempeno por dialecto que esas obras no reportan. La fundamentacion bibliografica de la calibracion SHALL provenir de fuentes que estudien la calibracion (incorporadas por c-138); hasta entonces el parrafo MUST NOT conservar una cita que no la trate.
+
+#### Scenario: Calibracion sin atribucion a un benchmark de rendimiento
+
+- **WHEN** se lee el parrafo de la seccion 2.4 que define la calibracion de la confianza
+- **THEN** el parrafo no cita `xuan2025mmluprox`
+- **AND** ninguna fuente citada en ese parrafo es una obra que no trate la calibracion
+
+#### Scenario: Xuan et al. citado por lo que sostiene
+
+- **WHEN** se buscan todas las citas de `xuan2025mmluprox` en las secciones de la tesis
+- **THEN** cada una le atribuye solo resultados de rendimiento multilingue (benchmark de 29 idiomas, caida del desempeno en los idiomas con menos recursos, resultados desagregados por idioma)
+- **AND** ninguna le atribuye resultados sobre calibracion, confianza o incertidumbre
+
+#### Scenario: Diseno del prompt respaldado por la fuente adecuada
+
+- **WHEN** se lee el parrafo de la seccion 2.4 sobre el diseno del prompt
+- **THEN** Lai et al. (2023) no se cita como evidencia de sensibilidad a la redaccion del prompt
+- **AND** Ahuja et al. (2023) se cita solo por su comparacion de estrategias de prompting entre idiomas
+- **AND** no se afirma un efecto del orden o de la seleccion de los ejemplos sin una fuente que lo estudie
+
+#### Scenario: Idiomas, alternancia de codigo y variedades del espanol
+
+- **WHEN** se leen las citas de Lai et al. (2023), Zhang et al. (2023), Grandury et al. (2025) y Mayor-Rocher et al. (2026)
+- **THEN** Lai et al. se cita por el ajuste por instrucciones de modelos abiertos concentrado en el ingles y en pocos idiomas, Zhang et al. por el rendimiento ante textos con alternancia de codigo, Grandury et al. por su tabla de clasificacion de variedades del espanol y Mayor-Rocher et al. por su evaluacion con pruebas de espanol como lengua extranjera
+- **AND** a ninguna se le atribuyen diferencias de desempeno atribuibles al dialecto que la obra no reporte
+
+#### Scenario: Agrupamientos de citas coherentes
+
+- **WHEN** se lee un comando de cita con varias claves en el estado del arte multilingue del capitulo 3
+- **THEN** cada clave del agrupamiento sostiene la afirmacion a la que se adjunta
+- **AND** Lai et al. y Zhang et al. no respaldan la afirmacion de que el rendimiento favorece a los idiomas con mas recursos
+
+### Requirement: Sintesis del estado del arte y recomendaciones coherentes con la evidencia comparativa citada
+
+Las afirmaciones de sintesis del estado del arte, de la discusion y de las recomendaciones SHALL ser coherentes con los resultados de las fuentes en que se apoyan. El documento MUST NOT afirmar que la literatura reciente confirma un desplazamiento del enfoque clasico hacia los LLM cuando sus fuentes comparativas (Paket et al., 2024; Colavito et al., 2025) encuentran que los modelos tipo BERT igualan o superan a los LLM generativos, y MUST NOT citar Touvron et al. (2023) como evidencia de que los LLM desplegados localmente son competitivos en clasificacion mediante prompts. Toda caracterizacion de una obra citada en estas secciones SHALL poder contrastarse con su resumen o con su texto completo.
+
+#### Scenario: Sintesis del estado del arte sin desplazamiento contrario a la evidencia
+
+- **WHEN** se lee la oracion de sintesis que precede a la tabla `tab:trabajos-academicos`
+- **THEN** no afirma que la literatura confirme un desplazamiento hacia arquitecturas basadas en LLM
+- **AND** refleja que en las comparaciones directas relevadas los modelos tipo BERT igualan o superan a los LLM generativos, con cita explicita a `paket2024itservice` y `colavito2025benchmarking`
+
+#### Scenario: Llama 2 citado por la disponibilidad de pesos abiertos
+
+- **WHEN** se lee la recomendacion sobre el clasificador supervisado y los modelos de codigo abierto en el capitulo de recomendaciones
+- **THEN** `Touvron2023_llama2` se cita solo por la disponibilidad de modelos de pesos abiertos aptos para despliegue local
+- **AND** la competitividad en clasificacion no se le atribuye
+- **AND** se consigna que en clasificacion de tickets con muchas clases los modelos tipo BERT superaron a LLM abiertos como Llama y Mistral (`paket2024itservice`)
+
+#### Scenario: Caracterizaciones contrastables con la fuente
+
+- **WHEN** se contrastan las citas de Colavito et al. (2025) en el marco teorico y de Jurafsky y Martin en la seccion 2.4 con el resumen o el indice de la version citada
+- **THEN** cada caracterizacion se limita a lo que esa evidencia sostiene
+- **AND** las inferencias propias de los autores no se presentan como resultados de la fuente
+
+#### Scenario: Cobertura del espanol en la discusion respaldada
+
+- **WHEN** se lee el parrafo de la discusion sobre el desempeno en espanol rioplatense frente a idiomas de mayor cobertura
+- **THEN** la afirmacion de que diversos trabajos senalan la menor cobertura de los idiomas distintos del ingles cita fuentes que la sostienen
+- **AND** no se menciona un desempeno reportado para el aleman sin una fuente que lo reporte
+
+### Requirement: Cifras de Paramesh y Shreedhara (2019) localizadas o reformuladas
+
+Toda cifra atribuida a Paramesh y Shreedhara (2019) (tamano del corpus, idioma, representacion textual o exactitud) SHALL acompanarse de la pagina del capitulo de la que proviene, o bien SHALL dejar de atribuirse si no puede localizarse en el texto completo. En ausencia de verificacion, la descripcion de la obra SHALL limitarse a lo que sostiene su resumen (comparacion de Naive Bayes multinomial, regresion logistica, k vecinos mas cercanos y SVM sobre tickets reales de una mesa de servicio de infraestructura de TI, con SVM como el clasificador de mejor desempeno) y las celdas de la tabla de trabajos academicos SHALL declarar "no reportado en el alcance revisado". La autoria MUST corresponder a la registrada en Crossref (Paramesh, S. P., y Shreedhara, K. S.).
+
+#### Scenario: Cifras con pagina
+
+- **WHEN** la tesis atribuye a `Paramesh2019_it_service_desk` el tamano del corpus, el idioma, la representacion TF-IDF o una exactitud
+- **THEN** cada cita que acompana esas cifras indica la pagina del capitulo
+- **AND** cada cifra coincide con la que figura en esa pagina
+
+#### Scenario: Cifras no verificables retiradas
+
+- **WHEN** las cifras no pueden localizarse en el texto completo
+- **THEN** ninguna seccion atribuye a la obra 10.000 tickets, el idioma ingles, la representacion TF-IDF ni una exactitud de 87 %
+- **AND** la fila de la obra en `tab:trabajos-academicos` declara "no reportado en el alcance revisado" para el corpus y la metrica, con el resultado cualitativo que sostiene el resumen
+
+#### Scenario: Umbral del 85 % sin cifra no localizada
+
+- **WHEN** se lee la justificacion del umbral de exactitud del 85 % en la introduccion
+- **THEN** su primer criterio no se apoya en una cifra de Paramesh y Shreedhara que no haya sido localizada con pagina
+- **AND** el criterio sigue declarando su fuente
+
+#### Scenario: Autoria y caracterizacion de la obra
+
+- **WHEN** se inspecciona la entrada `Paramesh2019_it_service_desk` y se lee su descripcion en el estado del arte
+- **THEN** la entrada conserva los autores Paramesh y Shreedhara
+- **AND** el texto no presenta la obra como uno de los primeros trabajos exhaustivos del area ni la nombra "Paramesh y Ramya"
+
+### Requirement: Entradas bibliograficas de las normas y marcos del capitulo de cumplimiento
+
+Las normas y marcos que el capitulo 11 declara adoptados SHALL tener entrada propia en `Bibliography_base.bib` y cita en el texto: ISO/IEC 27001:2022, ISO/IEC 27002:2022, ISO/IEC 27701 en su edicion vigente, NIST CSF 2.0 y el Decreto 1558/2001 reglamentario de la Ley 25.326. Cada entrada SHALL verificarse antes de agregarse contra la ficha oficial del organismo (ISO, NIST, InfoLEG) o su DOI, e incluir organismo autor, titulo, ano, identificador (numero de norma, numero de documento o de decreto) y `doi` o `url`, con `urldate` cuando se cita por URL. El documento MUST NOT citar como marco adoptado una edicion retirada (ISO/IEC 27701:2019, retirada el 2025-10-14) y MUST NOT incorporar datos no verificados. Las afirmaciones del capitulo que la cita formal vuelve contrastables SHALL coincidir con las normas citadas.
+
+#### Scenario: Entradas presentes y verificadas
+
+- **WHEN** se inspecciona `Bibliography_base.bib`
+- **THEN** existen las entradas `ISO27001_2022`, `ISO27002_2022`, `ISO27701_2025`, `NIST2024_csf` y `Decreto1558_2001`, con autor institucional, titulo, ano e identificador
+- **AND** `NIST2024_csf` declara el DOI `10.6028/NIST.CSWP.29` y las demas una `url` de la ficha oficial con `urldate`
+- **AND** las claves contienen solo letras, digitos y guiones bajos
+
+#### Scenario: Edicion vigente de ISO/IEC 27701
+
+- **WHEN** se lee la enumeracion de marcos adoptados del capitulo 11 y su cita
+- **THEN** ISO/IEC 27701 se identifica con su edicion vigente (2025) y se describe como norma de gestion de la privacidad
+- **AND** no se cita la edicion 2019 como marco adoptado
+
+#### Scenario: Citas en el capitulo de cumplimiento
+
+- **WHEN** se lee el capitulo 11
+- **THEN** la primera mencion de cada norma o marco adoptado lleva su cita y el decreto reglamentario de la Ley 25.326 se cita junto a su mencion
+- **AND** no hay citas dentro de titulos de seccion, leyendas de tabla ni lineas de fuente de tabla
+
+#### Scenario: Afirmaciones contrastables con las normas citadas
+
+- **WHEN** se leen la introduccion de la tabla de alineacion ISO y la del perfil NIST
+- **THEN** los controles se ubican en ISO/IEC 27002:2022 y en el Anexo A de ISO/IEC 27001:2022, no en un Anexo A de ISO/IEC 27002:2022
+- **AND** la escala de madurez de 0 a 4 se declara propia del relevamiento y no se presenta como definida por NIST CSF 2.0
+
+### Requirement: Referencias metodologicas primarias de los procedimientos estadisticos
+
+La prueba de rangos con signo, el analisis de potencia a priori y el bootstrap percentil SHALL respaldarse en el marco metodologico con una referencia primaria verificada, ademas de la referencia de implementacion (SciPy): Wilcoxon (1945), *Biometrics Bulletin*, 1(6), 80-83, DOI 10.2307/3001968; Cohen (1988), *Statistical Power Analysis for the Behavioral Sciences*, 2.a ed.; y Efron y Tibshirani (1993), *An Introduction to the Bootstrap*. Las entradas MUST NOT declarar un DOI que corresponda a otra edicion o reedicion de la obra.
+
+#### Scenario: Citas en el marco metodologico
+
+- **WHEN** se lee el capitulo 4 donde se declaran la prueba de Wilcoxon, el bootstrap percentil y el analisis de potencia
+- **THEN** cada procedimiento cita su referencia primaria (`Wilcoxon1945_individual_comparisons`, `Efron1993_bootstrap`, `Cohen1988_power_analysis`)
+- **AND** `Virtanen2020_scipy` sigue citada como referencia de implementacion
+
+#### Scenario: Metadatos de las referencias de metodo verificados
+
+- **WHEN** se inspeccionan las tres entradas nuevas
+- **THEN** Wilcoxon (1945) figura en la revista *Biometrics Bulletin*, volumen 1, numero 6, con su DOI resoluble
+- **AND** Efron y Tibshirani (1993) declaran un DOI que resuelve a la edicion de 1993, y Cohen (1988) no declara el DOI de la reedicion de 2013
+
+### Requirement: Metadatos bibliograficos coherentes con catalogos y editores (dictamen v1.1.0)
+
+Las entradas senaladas por el dictamen v1.1.0 SHALL corregirse conforme a Crossref, a la ficha del editor o a un catalogo, y los anos de los libros SHALL seguir un criterio uniforme: el ano de copyright de la obra (criterio APA 7), o el de la version consultada en el caso de un borrador vivo. `Paramesh2019_it_service_desk` SHALL declarar el titulo del libro, su subtitulo, los editores y la serie; `Jurafsky2023_speech_language` SHALL declarar la URL del borrador y la fecha de la version consultada; `liu2025tickit` SHALL declarar la sede FSE Companion 2025. Toda entrada `@manual`, `@misc` u `@online` citada por URL SHALL tener `urldate`, y la fecha de consulta MUST NOT imprimirse dos veces. Ninguna `note` SHALL usar punto y coma, que el estilo suprime al imprimir. Las claves existentes MUST NOT renombrarse.
+
+#### Scenario: Capitulo de libro con sus metadatos completos
+
+- **WHEN** se inspecciona `Paramesh2019_it_service_desk`
+- **THEN** declara el libro *Data Analytics and Learning* (*Proceedings of DAL 2018*), los editores Nagabhushan, Guru, Shekar y Sharath Kumar, la serie Lecture Notes in Networks and Systems, el volumen 43 y las paginas 331-346
+- **AND** la referencia compilada ya no presenta el nombre de la serie como titulo del libro
+
+#### Scenario: Anos con criterio uniforme
+
+- **WHEN** se inspeccionan `Stallings2017_computer_security`, `Date2003_database` y `Russell2021_ai_modern`
+- **THEN** sus anos son 2018, 2004 y 2021, respectivamente, cada uno confirmado como ano de copyright en la ficha del editor o en un catalogo
+- **AND** las claves no se renombran y las citas en el texto muestran el ano corregido
+
+#### Scenario: Borrador vivo con URL y version
+
+- **WHEN** se inspecciona `Jurafsky2023_speech_language`
+- **THEN** declara la URL `https://web.stanford.edu/~jurafsky/slp3/`, la fecha de la version del borrador consultada y su `urldate`
+- **AND** conserva el tipo de borrador no publicado
+
+#### Scenario: Fechas de consulta completas y no duplicadas
+
+- **WHEN** se compila la bibliografia
+- **THEN** las nueve entradas `@manual`/`@misc` con URL (`Apache2024_airflow`, `n8n2024_docs`, `PostgreSQL2024_docs`, `Tiangolo2024_fastapi`, `Wiggins2017_12factor`, `Ley25326_2000`, `SEPyME2026_mipyme`, `APA2017`, `Gomez2026_repositorio`) tienen `urldate`
+- **AND** ninguna entrada imprime la fecha de consulta dos veces
+- **AND** ninguna `note` contiene punto y coma
+
+#### Scenario: Sede, seudonimo y enlace corregidos
+
+- **WHEN** se inspeccionan `liu2025tickit`, `Tiangolo2024_fastapi` y `GDPR2016`
+- **THEN** `liu2025tickit` identifica las actas de FSE Companion 2025
+- **AND** `Tiangolo2024_fastapi` no imprime el seudonimo como apellido y `GDPR2016` declara su URL oficial con `urldate`, salvo que el usuario excluya expresamente estos dos ajustes
+
+### Requirement: Rotulo correcto del conteo global de claves en el verificador de citas
+
+El script `docs/Tesis/v10 (IA)/verify_citations.py` SHALL informar como "unique citation keys" el numero de claves distintas citadas en el conjunto de las secciones, y no la suma de las claves unicas de cada archivo; si conserva esa suma, SHALL rotularla de forma que no se confunda con el conteo global. El calculo SHALL estar cubierto por una prueba unitaria co-ubicada que se ejecute sin dependencias externas. El veredicto PASS/FAIL MUST NOT cambiar.
+
+#### Scenario: Conteo global en el mensaje de verificacion
+
+- **WHEN** se ejecuta `python verify_citations.py` sobre la tesis con todas las citas resueltas
+- **THEN** la salida informa "N bibliography entries <-> N unique citation keys", con N igual al numero de claves distintas citadas
+- **AND** ese N coincide con el de la linea de resumen "unique keys cited" y el estado es PASS
+
+#### Scenario: Suma por archivo con rotulo propio
+
+- **WHEN** una misma clave se cita en mas de un archivo
+- **THEN** el conteo global la cuenta una sola vez
+- **AND** la suma por archivo, si se informa, lleva un rotulo distinto del conteo global
+
+#### Scenario: Prueba unitaria del conteo
+
+- **WHEN** se ejecuta `python -m unittest test_verify_citations -v` desde `docs/Tesis/v10 (IA)/`
+- **THEN** las pruebas pasan
+- **AND** cubren claves compartidas entre archivos, claves disjuntas, la ausencia de citas y el mensaje impreso por `main()`
+
+### Requirement: Impacto de paginas cuantificado con cuerpo neutral
+
+Las ediciones de texto del change SHALL ser neutrales en paginas para el cuerpo: la pagina en que empieza "Referencias bibliograficas" MUST NOT cambiar respecto de la linea base tomada inmediatamente antes de aplicar el change. El crecimiento de la bibliografia por las entradas nuevas y los metadatos SHALL medirse (paginas totales y paginas de la bibliografia, antes y despues) y registrarse junto con las palancas de compensacion disponibles, para la verificacion final del presupuesto en c-141. El change MUST NOT editar el preambulo LaTeX ni eliminar contenido cientifico, numeros canonicos, figuras o tablas para compensar.
+
+#### Scenario: Cuerpo neutral
+
+- **WHEN** se compila la tesis antes y despues de aplicar el change
+- **THEN** "Referencias bibliograficas" empieza en la misma pagina en ambas compilaciones
+
+#### Scenario: Delta bibliografico registrado
+
+- **WHEN** se cierra el change
+- **THEN** quedan registrados el total de paginas y las paginas de inicio y fin de la bibliografia antes y despues
+- **AND** quedan registradas las palancas de compensacion con su rendimiento estimado para c-141
+
+#### Scenario: Sin compensacion destructiva
+
+- **WHEN** se revisa el diff del change
+- **THEN** el preambulo LaTeX no cambia
+- **AND** no se eliminaron numeros canonicos, figuras ni tablas
+
+### Requirement: Trazabilidad de las correcciones de correspondencia texto-fuente
+
+Cada correccion de atribucion, alta bibliografica y ajuste de metadatos del change SHALL registrarse en `docs/Tesis/Correcciones/dictamen-correcciones.md` con su ubicacion, la fuente, la atribucion previa, lo que la fuente sostiene, la evidencia (URL y nivel: texto completo, resumen o ficha oficial) y la correccion aplicada. Las decisiones que se apartan de la letra del dictamen SHALL declararse con su fundamento.
+
+#### Scenario: Registro por hallazgo
+
+- **WHEN** se lee el grupo del change en `dictamen-correcciones.md`
+- **THEN** cada hallazgo de A4, B15 y B16 tiene una fila con su evidencia y su correccion
+
+#### Scenario: Desviaciones declaradas
+
+- **WHEN** una correccion difiere de lo que propone el dictamen
+- **THEN** el registro declara la diferencia y su fundamento (por ejemplo, la edicion vigente de ISO/IEC 27701, el ano de copyright de Russell y Norvig o la autoria de Paramesh y Shreedhara)
+
+### Requirement: Inventario reproducible de tildes de la tesis
+
+El repositorio SHALL incluir `docs/Tesis/v10 (IA)/revision_tildes.py`, implementado solo con la biblioteca estandar de Python y cubierto por pruebas automatizadas en `docs/Tesis/v10 (IA)/test_revision_tildes.py`. Ejecutado sin opciones, el script MUST NOT modificar ningun archivo y SHALL emitir un inventario determinista de candidatos de tilde faltante o improcedente en `paper/sections/*.tex`, con archivo, linea, columna, token, forma sugerida, clase y zona. La clase SHALL ser `INEQUIVOCO` cuando la forma encontrada no es una palabra valida del espanol en ese contexto (por ejemplo "erronea", "multiples") o cuando la ortografia vigente no admite la tilde (demostrativos y adverbio "solo" con tilde), y `AMBIGUO` cuando ambas formas existen (pares diacriticos como "esta"/"está", "hacia"/"hacía", y homografos verbo/sustantivo/adjetivo como "formula"/"fórmula", "continua"/"continúa", "asigno"/"asignó"). La zona SHALL ser `prosa`, `tabla` (cuerpo de entornos `tabular`) o `cita` (texto entre comillas). El inventario MUST excluir las zonas protegidas: las cinco cadenas canonicas exactas (`Seguridad Informatica`, `Soporte Tecnico Hardware`, `Soporte Tecnico Software`, `Bases de Datos`, `Sistemas`), los argumentos de `\texttt`, `\url`, `\path`, el destino de `\href`, las claves de `\label`, `\ref`, `\autoref`, `\cref`, `\eqref`, `\pageref` y de los comandos de cita, las rutas de `\input`, `\include` e `\includegraphics`, los entornos `lstlisting`, `verbatim` y `minted`, `\verb` y `\lstinline`, la matematica, los comentarios, los nombres de comandos LaTeX y el resumen en ingles (desde `\section*{Abstract}` hasta el fin de `00-resumen.tex`).
+
+#### Scenario: Ejecucion por defecto sin efectos
+
+- **WHEN** se ejecuta `python "docs/Tesis/v10 (IA)/revision_tildes.py"` sin opciones
+- **THEN** ningun archivo del repositorio cambia (`git status --short` es identico antes y despues)
+- **AND** la salida lista los candidatos ordenados por archivo, linea y columna, y dos ejecuciones consecutivas producen exactamente la misma salida
+
+#### Scenario: Zonas protegidas excluidas
+
+- **WHEN** el inventario procesa un fragmento que contiene `Seguridad Informatica`, `\texttt{categoria}`, `\label{sec:introduccion}`, `\url{https://example.org/version}`, un entorno `lstlisting` con "JSON invalido", una expresion matematica, un comentario con "erronea" y un Abstract en ingles con "version"
+- **THEN** no reporta ningun candidato dentro de esas zonas
+- **AND** ninguna de las cinco cadenas canonicas recibe una sugerencia de tilde
+
+#### Scenario: Clasificacion de candidatos
+
+- **WHEN** el inventario procesa en prosa "derivación erronea", "tareas heterogeneas", "multiples canales" y "más alla del caso"
+- **THEN** los reporta como `INEQUIVOCO` con las sugerencias "errónea", "heterogéneas", "múltiples" y "allá"
+- **AND** reporta como `AMBIGUO` "sesgos hacía una clase", "la forma en que se fórmula la instrucción", "el flujo continua automáticamente", "el indicador esta activo", "no este vacía" y "La distribución de roles asigno la coordinación"
+
+#### Scenario: Usos legitimos sin reporte
+
+- **WHEN** el inventario procesa en prosa "mejora continua", "integración continua", "mediante la fórmula clásica", "el registro manual" y "derivación de incidentes hacia los sectores"
+- **THEN** no reporta ningun candidato en esos fragmentos
+
+#### Scenario: Deteccion completa de la linea base
+
+- **WHEN** se ejecuta la prueba de regresion con las oraciones de la linea base v1.1.1 (las erratas de la muestra del dictamen y los hallazgos adicionales "multiples", "alla", "escaner" y "por si mismo")
+- **THEN** cada errata se reporta con la clase esperada
+- **AND** ningun uso legitimo incluido en la misma prueba (adjetivos "continua", sustantivos "fórmula", "aun" con valor de "incluso", verbos "valida" y "publica") recibe una correccion automatica
+
+### Requirement: Aplicacion en dos pasos de las correcciones de tildes
+
+`revision_tildes.py --diff` SHALL mostrar, sin escribir, el diff unificado de las correcciones `INEQUIVOCO` en zona `prosa`, y `revision_tildes.py --apply` SHALL escribir exactamente esas correcciones. Los candidatos `AMBIGUO` y los candidatos en zonas `tabla` o `cita` MUST NOT corregirse automaticamente, y ningun candidato con decision `mantener` en el registro de decisiones MUST aplicarse. La aplicacion SHALL preservar la capitalizacion (inicial mayuscula y todo mayusculas), la codificacion UTF-8 y los terminadores de linea (CRLF o LF) de cada archivo, MUST NOT crear archivos de respaldo (`.bak`) y SHALL ser idempotente.
+
+#### Scenario: Diff revisable sin escritura
+
+- **WHEN** se ejecuta `revision_tildes.py --diff`
+- **THEN** la salida es un diff unificado que contiene solo correcciones `INEQUIVOCO` en zona `prosa`
+- **AND** ningun archivo cambia
+
+#### Scenario: Aplicacion limitada a inequivocos
+
+- **WHEN** se ejecuta `--apply` sobre un fragmento con "derivación erronea" en prosa, "sesgos hacía una clase" en prosa y la celda de tabla `telefono`
+- **THEN** solo "erronea" pasa a "errónea"
+- **AND** las lineas con "hacía" y con `telefono` quedan identicas byte a byte
+
+#### Scenario: Preservacion de forma
+
+- **WHEN** se ejecuta `--apply` sobre un archivo con terminadores CRLF que contiene "Erronea" y "ERRONEA"
+- **THEN** el resultado contiene "Errónea" y "ERRÓNEA"
+- **AND** los terminadores CRLF y el resto de los bytes del archivo no cambian, y no se crea ningun archivo `.bak`
+
+#### Scenario: Idempotencia
+
+- **WHEN** se ejecuta `--apply` por segunda vez sobre el mismo arbol
+- **THEN** ningun archivo cambia
+- **AND** `--diff` no muestra ninguna correccion pendiente
+
+### Requirement: Revision humana de homografos con registro de decisiones
+
+Cada candidato que no se corrige automaticamente (`AMBIGUO`, o ubicado en zona `tabla` o `cita`) SHALL resolverse uno por uno y registrarse en `docs/Tesis/Correcciones/revision-tildes-decisiones.tsv` (UTF-8, separado por tabuladores) con archivo, token, contexto, decision (`corregir` o `mantener`), forma final y justificacion basada en la categoria gramatical del token en su contexto. Las decisiones SHALL seguir la ortografia vigente (RAE-ASALE, 2010): "hacia" preposicion sin tilde; "formula" verbo sin tilde y "fórmula" sustantivo con tilde; "continúa" verbo con tilde y "continua" adjetivo sin tilde; "está"/"esté" formas de "estar" con tilde y "esta"/"este" determinantes sin tilde; preteritos de tercera persona con tilde ("asignó", "gestionó"); "aún" (todavia) con tilde y "aun" (incluso) sin tilde; "sí" pronombre con tilde; demostrativos y adverbio "solo" sin tilde. Los identificadores de datos (nombres de columnas, campos o valores literales) y las citas textuales de incidentes del corpus MUST conservarse tal como estan. Las tablas que contienen alguna de las cinco cadenas canonicas MUST NOT editarse en esta revision, salvo la unificacion de nombres de sector confirmada por el usuario; sus candidatos SHALL registrarse como hallazgos.
+
+#### Scenario: Cada candidato con decision registrada
+
+- **WHEN** se cruza el inventario final con el registro de decisiones
+- **THEN** todo candidato no automatico tiene una fila con decision y justificacion no vacia
+- **AND** toda fila con decision `corregir` esta aplicada en el texto
+
+#### Scenario: Homografos resueltos por categoria gramatical
+
+- **WHEN** se leen los pasajes de la linea base que contenian "sesgos hacía una clase", "se fórmula la instrucción", "el flujo continua automáticamente", "el indicador esta activo", "cuando no lo esta,", "no este vacía", "la grabación esta acotada", "roles asigno" y "se gestiono"
+- **THEN** se leen "sesgos hacia una clase", "se formula la instrucción", "el flujo continúa automáticamente", "el indicador está activo", "cuando no lo está,", "no esté vacía", "la grabación está acotada", "roles asignó" y "se gestionó"
+- **AND** "mejora continua", "integración continua" y "mediante la fórmula clásica" permanecen sin cambios
+
+#### Scenario: Datos y citas literales preservados
+
+- **WHEN** se revisan las celdas de tabla que contienen identificadores (por ejemplo la columna `telefono` del modelo de datos) y las citas de incidentes del corpus entre comillas
+- **THEN** no se agrega ni se quita ninguna tilde en identificadores ni en citas
+- **AND** cada uno de esos candidatos consta en el registro con decision `mantener` y su justificacion
+
+### Requirement: Ausencia de las erratas de tildes senaladas por el dictamen v1.1.0
+
+Tras la revision, `docs/Tesis/v10 (IA)/paper/sections/*.tex` SHALL contener cero ocurrencias, fuera de zonas protegidas, de: "hacía" con valor de preposicion; "fórmula" con valor verbal; "continua" con valor verbal; "esta" y "este" con valor de verbo "estar"; "heterogeneas", "erronea", "erroneas", "antiguedad", "perimetro", "inequivocos", "enganosa", "simultanea" (adjetivo), "aquéllas", "asigno" y "gestiono" (preteritos); y de los hallazgos adicionales "multiples", "alla", "escaner" y "por si mismo". Los criterios de aceptacion SHALL expresarse por categoria gramatical y no por conteo bruto: los usos adjetivales de "continua" y nominales de "fórmula" MUST conservarse.
+
+#### Scenario: Formas inequivocas en cero
+
+- **WHEN** se ejecuta `grep -o -w` de cada una de las formas "heterogeneas", "erronea", "erroneas", "antiguedad", "perimetro", "inequivocos", "enganosa", "aquéllas", "asigno", "gestiono", "multiples", "alla" y "escaner" sobre `paper/sections/*.tex`
+- **THEN** cada conteo es 0
+- **AND** si una edicion previa a la pasada introdujo alguna de esas formas dentro de una zona protegida (por ejemplo un termino en ingles o un identificador), la ocurrencia consta en el registro de decisiones con decision `mantener` y su justificacion
+
+#### Scenario: Homografos de la muestra resueltos
+
+- **WHEN** se buscan en `paper/sections/*.tex` los contextos de la linea base "sesgos hacía", "concreta hacía", "incidentes hacía", "textuales hacía", "se fórmula", "incidentes continua", "flujo continua", "experto continua", "indicador esta", "lo esta,", "no este vacía", "grabación esta acotada", "presencia simultanea" y "por si mismo"
+- **THEN** cada busqueda devuelve 0 ocurrencias
+
+#### Scenario: Usos legitimos preservados
+
+- **WHEN** se cuentan "mejora continua", "integración continua" y "la fórmula" antes y despues de la pasada
+- **THEN** los conteos posteriores son iguales a los previos a la pasada
+
+#### Scenario: Herramienta sin pendientes
+
+- **WHEN** se ejecuta `python "docs/Tesis/v10 (IA)/revision_tildes.py" --check` al cerrar la pasada
+- **THEN** el codigo de salida es 0
+
+### Requirement: Cadenas visibles y bibliografia impresa acentuadas
+
+Las cadenas visibles en el PDF que se definen fuera de `paper/sections/` SHALL llevar sus tildes: en `paper/main.tex`, "Índice general", "Índice de tablas", "Índice de figuras" y el titulo "Referencias bibliográficas" de `\printbibliography`; en `paper/preambles/preamble.tex`, el encabezado de pagina "AUTOMATIZACIÓN DE MESA DE AYUDA", la cadena `bibliography` de `\DefineBibliographyStrings` ("Referencias bibliográficas") y los metadatos `pdftitle` y `pdfkeywords`. En `Bibliography_base.bib`, el texto impreso en espanol de los campos `note` SHALL acentuarse con la notacion de escape LaTeX que ya usa el archivo (por ejemplo `Documentaci{\'o}n t{\'e}cnica oficial`); las claves, autores, anos, DOI, URL y demas metadatos MUST NOT cambiar. Los comentarios LaTeX quedan fuera de alcance.
+
+#### Scenario: Encabezados y titulos con tildes
+
+- **WHEN** se buscan "Indice general", "Indice de tablas", "Indice de figuras", "Referencias bibliograficas" y "AUTOMATIZACION" en las lineas no comentadas de `paper/main.tex` y `paper/preambles/preamble.tex`
+- **THEN** no queda ninguna ocurrencia
+- **AND** el indice general del PDF compilado muestra "Referencias bibliográficas" y el encabezado de pagina muestra "AUTOMATIZACIÓN DE MESA DE AYUDA"
+
+#### Scenario: Metadatos del PDF con tildes
+
+- **WHEN** se leen `pdftitle` y `pdfkeywords` en `paper/preambles/preamble.tex`
+- **THEN** contienen "Automatización", "automatización", "clasificación" y "español"
+
+#### Scenario: Notas de la bibliografia con tildes y metadatos intactos
+
+- **WHEN** se buscan "Documentacion", "tecnica" y "edicion" en los campos `note` de `Bibliography_base.bib` y se compara el conjunto de claves `@tipo{clave` con el previo a la pasada
+- **THEN** no queda ninguna ocurrencia y el conjunto de claves es identico
+- **AND** `verify_citations.py` reporta PASS y el registro de Biber no contiene advertencias ni errores
+
+### Requirement: Coherencia de los nombres de sector con su definicion canonica
+
+Las menciones de los cinco sectores que la tesis presenta como "sectores canonicos" SHALL escribirse con la cadena canonica exacta, sin tildes, que la propia tesis define como string del clasificador (`05-arquitectura.tex`, `12-anexos.tex`), salvo que el usuario decida conservar en esos pasajes la forma legible con tildes; en ese caso la convencion y los pasajes afectados SHALL constar en el registro de la revision. En cualquiera de los dos casos, las ocurrencias previas de las cinco cadenas canonicas MUST NOT alterarse.
+
+#### Scenario: Convencion canonica aplicada
+
+- **WHEN** el usuario confirma la unificacion y se buscan "Seguridad Informática", "Soporte Técnico Hardware" y "Soporte Técnico Software" en `paper/sections/*.tex`
+- **THEN** no queda ninguna ocurrencia en los pasajes que enumeran los "sectores canonicos"
+- **AND** cada mencion unificada coincide byte a byte con una de las cinco cadenas canonicas
+
+#### Scenario: Excepcion documentada
+
+- **WHEN** el usuario decide conservar la forma con tildes en esos pasajes
+- **THEN** los pasajes quedan sin cambios
+- **AND** el registro de la revision consigna la convencion (nombre legible con tildes en prosa, cadena canonica sin tildes como dato del clasificador) y la lista de pasajes
+
+### Requirement: Neutralidad de la revision ortotipografica
+
+Todas las modificaciones que esta revision introduce en archivos de la tesis SHALL ser puramente diacriticas: cada linea modificada MUST ser igual a su version previa al normalizar tildes, dieresis y eñe (incluidas las secuencias de escape LaTeX de acentos del `.bib`), y la cantidad de lineas de cada archivo MUST conservarse. En consecuencia la revision MUST NOT alterar cifras, claves de `\label`/`\ref`/citas ni rutas. El PDF SHALL compilar con XeLaTeX sin errores fatales ni referencias indefinidas y con el mismo numero de paginas que la compilacion previa a la pasada, dentro del presupuesto de 101 paginas. `verify_citations.py` SHALL reportar PASS y `tesis_para_agente.md` SHALL regenerarse desde las fuentes corregidas.
+
+#### Scenario: Diff puramente diacritico
+
+- **WHEN** se ejecuta `revision_tildes.py --base <copia de paper/sections previa a la pasada>`
+- **THEN** el codigo de salida es 0 y no se reporta ninguna linea con cambios no diacriticos
+- **AND** la comparacion equivalente de `paper/main.tex`, `paper/preambles/preamble.tex` y `Bibliography_base.bib` contra el commit base tambien resulta puramente diacritica
+
+#### Scenario: Cadenas canonicas sin alteraciones
+
+- **WHEN** se cuenta cada una de las cinco cadenas canonicas en `paper/sections/*.tex` antes y despues de la pasada
+- **THEN** el conteo posterior es igual al previo mas las menciones unificadas por la decision de coherencia de nombres de sector (cero si no se unifica)
+- **AND** ninguna ocurrencia previa cambia ni incorpora tilde
+
+#### Scenario: Conteo de paginas invariante
+
+- **WHEN** se compila el PDF despues de la pasada con el mismo entorno que la compilacion previa
+- **THEN** el numero de paginas es igual al previo y no supera 101
+- **AND** el registro de compilacion no contiene errores fatales, referencias indefinidas ni advertencias nuevas de altura de encabezado
+
+#### Scenario: Integridad de citas y render
+
+- **WHEN** se ejecuta `verify_citations.py` y se regenera `tesis_para_agente.md`
+- **THEN** la verificacion reporta PASS
+- **AND** el render regenerado no contiene ninguna de las formas erroneas corregidas en las secciones
+
+### Requirement: Pasada corta repetible para la integracion
+
+`revision_tildes.py --check` SHALL terminar con codigo 0 si y solo si no quedan candidatos `INEQUIVOCO` en zona `prosa` y todo candidato restante tiene decision `mantener` en el registro de decisiones; en caso contrario SHALL terminar con codigo distinto de 0 y listar los candidatos pendientes con archivo, linea, token y forma sugerida. La correspondencia entre candidato y decision SHALL basarse en archivo, token y contexto normalizado, y MUST NOT depender del numero de linea. El procedimiento SHALL quedar documentado para que c-141 lo ejecute despues de cualquier edicion tardia de la prosa.
+
+#### Scenario: Check limpio al cerrar la pasada
+
+- **WHEN** se ejecuta `--check` con todas las correcciones aplicadas y las decisiones registradas
+- **THEN** el codigo de salida es 0
+
+#### Scenario: Errata reintroducida detectada
+
+- **WHEN** una edicion posterior agrega "derivación erronea" en prosa y se ejecuta `--check`
+- **THEN** el codigo de salida es distinto de 0
+- **AND** la salida lista el archivo, la linea, el token y la sugerencia "errónea"
+
+#### Scenario: Homografo nuevo sin decision
+
+- **WHEN** una edicion posterior agrega "el flujo continua sin cambios" sin fila en el registro y se ejecuta `--check`
+- **THEN** el codigo de salida es distinto de 0
+- **AND** tras registrar la decision y aplicarla, `--check` termina con codigo 0
+
+#### Scenario: Decisiones robustas a desplazamientos de linea
+
+- **WHEN** se insertan lineas antes de un candidato con decision `mantener` y se ejecuta `--check`
+- **THEN** la decision se sigue reconociendo y el candidato no se informa como pendiente
+
+### Requirement: Registro de la revision ortotipografica y neutralizacion de la causa raiz
+
+`docs/Tesis/Correcciones/dictamen-correcciones.md` SHALL incorporar una seccion de la recomendacion B14 con: commit base de la pasada, conteos por forma antes y despues, correcciones por clase, cantidad de decisiones y ruta del registro de decisiones, discrepancias con los conteos del dictamen ("fórmula" y "continua" con valor verbal), hallazgos fuera de la muestra, decision sobre los nombres de sector, causa raiz y procedimiento de la pasada corta. `docs/Tesis/acentuar_tesis.py` y `docs/Tesis/acentuar_tesis_v9.py` SHALL declarar en su cabecera que estan deprecados para la tesis v10, con el motivo y la herramienta que los reemplaza, sin cambios en su logica. El lexico de correcciones automaticas de `revision_tildes.py` MUST NOT contener correcciones incondicionales de homografos.
+
+#### Scenario: Registro completo
+
+- **WHEN** se lee la seccion B14 de `dictamen-correcciones.md`
+- **THEN** contiene el commit base, los conteos antes y despues, las correcciones por clase, la ruta del registro de decisiones, las discrepancias con el dictamen, la causa raiz y la decision sobre los nombres de sector
+- **AND** documenta el uso de `revision_tildes.py --check` como pasada corta para c-141
+
+#### Scenario: Utilidades previas deprecadas
+
+- **WHEN** se ejecuta `grep -c "DEPRECADO"` sobre `docs/Tesis/acentuar_tesis.py` y `docs/Tesis/acentuar_tesis_v9.py`
+- **THEN** cada archivo devuelve al menos 1
+- **AND** ambos compilan con `python -m py_compile` y su diff solo modifica el docstring de cabecera
+
+#### Scenario: Lexico sin correcciones incondicionales de homografos
+
+- **WHEN** una prueba unitaria inspecciona el lexico de correcciones automaticas de `revision_tildes.py`
+- **THEN** ninguna de las claves "hacia", "formula", "continua", "esta", "este", "aquellas", "aquellos", "desarrollo", "completo", "registro", "valida" y "publica" figura como correccion `INEQUIVOCO`
+

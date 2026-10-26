@@ -2,9 +2,7 @@
 
 ## Purpose
 Define la visibilidad de incidentes por rol a nivel de API: que porciones del universo de incidentes puede leer/listar cada usuario autenticado segun el rol de su empleado en el directorio. La interfaz de usuario que refleje esta visibilidad queda fuera de este change (diferida).
-
 ## Requirements
-
 ### Requirement: VIS-001 — Alcance de visibilidad de incidentes y clasificaciones (PROPIO/GLOBAL)
 
 El sistema SHALL restringir la lectura y el listado de incidentes segun el rol del empleado asociado al usuario autenticado, con exactamente tres alcances mas el vacio:
@@ -216,7 +214,7 @@ La resolucion SHALL distinguir ENCONTRADO / NO ENCONTRADO / AMBIGUO. Un resultad
 
 El sistema SHALL derivar el incidente a revision humana (`requiere_revision_humana = true`) cuando NO pueda identificar al reportante, es decir, cuando no haya contacto de canal (ni email de remitente ni telefono de llamante, segun el canal), cuando el contacto no resuelva a un empleado ACTIVO del directorio (NO ENCONTRADO o AMBIGUO), o cuando la cuenta web autenticada no tenga empleado vinculado. La derivacion SHALL persistir `reportante_empleado_id = NULL` y MUST NOT bloquear ni demorar el alta.
 
-El sistema SHALL combinar esta derivacion por OR con la condicion de revision del clasificador: `requiere_revision_humana = (confianza < 0.70) OR (reportante no identificado)`, de modo que un incidente ya marcado por el clasificador NUNCA deje de requerir revision. La identificacion exitosa del reportante MUST NOT forzar revision humana por si misma. La trazabilidad SHALL registrar el canal y el resultado sin email ni telefono en claro.
+El sistema SHALL combinar esta derivacion por OR con el indicador de revision del clasificador: `requiere_revision_humana = (indicador del clasificador) OR (reportante no identificado)`, donde el indicador del clasificador es verdadero cuando la etapa Gemini devuelve una confianza inferior a 0.70 o interviene la etapa fallback, y falso cuando la etapa determinista cortocircuita, cualquiera sea su confianza; de modo que un incidente ya marcado por el clasificador NUNCA deje de requerir revision. La identificacion exitosa del reportante MUST NOT forzar revision humana por si misma. La trazabilidad SHALL registrar el canal y el resultado sin email ni telefono en claro.
 
 #### Scenario: Sin contacto de canal deriva a revision
 
@@ -235,8 +233,13 @@ El sistema SHALL combinar esta derivacion por OR con la condicion de revision de
 
 #### Scenario: La derivacion no quita una revision ya marcada
 
-- **WHEN** el clasificador ya marco el incidente para revision (`confianza < 0.70`) aunque el reportante se identifique
+- **WHEN** el clasificador ya marco el incidente para revision (etapa Gemini con confianza inferior a 0.70, o etapa fallback) aunque el reportante se identifique
 - **THEN** el incidente conserva `requiere_revision_humana = true`
+
+#### Scenario: La derivacion por reportante alcanza al cortocircuito determinista
+
+- **WHEN** la etapa determinista cortocircuita la clasificacion y el reportante no se identifica
+- **THEN** el incidente se persiste con `requiere_revision_humana = true` aunque el indicador del clasificador sea falso
 
 #### Scenario: Reportante identificado no fuerza revision
 
@@ -376,3 +379,4 @@ La exclusión SHALL aplicarse con independencia del rol y del alcance del llaman
 
 - **WHEN** un usuario con rol `administrador_directorio` lista o consulta el detalle de un incidente borrado
 - **THEN** el incidente no aparece en el listado y el detalle responde como no encontrado, igual que para cualquier otro rol
+
