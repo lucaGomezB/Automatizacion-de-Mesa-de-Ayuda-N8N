@@ -30,6 +30,19 @@ El flujo de clasificacion y los servicios de infraestructura que esos documentos
 - **WHEN** se busca en `CLAUDE.md` y `openspec/config.yaml` un modelo, una version o un servicio que el codigo ya no usa
 - **THEN** no aparece como valor vigente del stack
 
+#### Scenario: Barrera ejecutable detecta la divergencia
+
+- **WHEN** un valor de stack declarado en `CLAUDE.md` u `openspec/config.yaml` diverge de `settings.py`, de `requirements.txt` o del compose, o se describe un servicio o etapa que ya no existe
+- **THEN** el preflight `scripts/preflight/docs_stack_sync.py` termina con codigo distinto de cero
+- **AND** el hallazgo nombra el valor o el servicio divergente
+- **AND** el paso corre en el job `backend-tests` del pipeline de integracion continua
+
+#### Scenario: Barrera ejecutable en verde con la documentacion sincronizada
+
+- **WHEN** la documentacion para agentes declara unicamente valores que coinciden con el codigo y el compose
+- **THEN** el preflight termina con codigo 0 y sin hallazgos
+- **AND** su suite de pruebas queda incluida en `python -m pytest scripts/preflight -q`
+
 #### Scenario: Documentacion de agentes valida como configuracion
 
 - **WHEN** se carga `openspec/config.yaml` con un lector YAML y se ejecuta el CLI de OpenSpec
