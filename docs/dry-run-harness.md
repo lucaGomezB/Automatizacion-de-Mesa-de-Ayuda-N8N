@@ -335,7 +335,7 @@ Esto se cubre con pruebas en `scripts/dry_run/test_workflow_transform.py`
 - `scripts/dry_run/compose.dry-run.yml` — override de costo cero (clave Gemini ficticia y presupuesto cero).
 - `scripts/dry_run/test_checks.py`, `test_exit_contract.py`,
   `test_workflow_transform.py`, `test_email_variant.py`, `test_checks_c135.py` — pruebas del arnés.
-- `docs/runbook-smoke-stack-referencia.md` — runbook del despliegue de referencia (E2E y TLS).
+- `docs/runbook-smoke-stack-referencia.md` — [runbook del despliegue de referencia](runbook-smoke-stack-referencia.md) (recorrido E2E y grupo TLS).
 - `docs/operational-guide.md` — guía operativa general.
 
 ## 11. Ejecución en CI

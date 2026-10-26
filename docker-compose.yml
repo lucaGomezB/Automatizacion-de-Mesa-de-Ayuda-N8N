@@ -1,9 +1,11 @@
 # docker-compose.yml — Entorno endurecido: Nginx + Frontend + Backend + N8N + PostgreSQL
 #
-# Puertos publicados en el host, TODOS acotados a loopback (127.0.0.1):
-#   80, 443   → Nginx reverse proxy (TLS termination, HTTP→HTTPS redirect)
-#   5433      → PostgreSQL (solo desde la maquina local)
-#   5678      → N8N (solo desde la maquina local; admin UI y webhooks)
+# Puertos publicados en el host:
+#   80, 443   → Nginx reverse proxy, UNICO borde publicado en TODAS las
+#               interfaces (TLS termination, HTTP→HTTPS redirect). Es la unica
+#               superficie del stack fuera de loopback.
+#   5433      → PostgreSQL, acotado a loopback (127.0.0.1; solo desde la maquina local)
+#   5678      → N8N, acotado a loopback (127.0.0.1; solo desde la maquina local)
 # Redis fue RETIRADO del stack (c-62, OQ-2): no tenia consumidor real.
 #
 # Segmentacion de red (c-62, OQ-3):
