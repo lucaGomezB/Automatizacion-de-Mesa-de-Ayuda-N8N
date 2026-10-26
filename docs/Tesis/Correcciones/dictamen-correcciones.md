@@ -924,6 +924,7 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 | `+c-134 tesis` (`change/c-134-contrastes-estadisticos-y-desagregado-canal`) | sin commit (lo crea el orquestador) | 105 | 97 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{105}`; `Anexos` en p. 98; brecha frente a 101: +4 (la primera compilacion dio 108, +3; las compensaciones dentro de los mismos pasajes devolvieron las tres paginas); rama (b): cuerpo 97, margen 3 |
 | `+c-138` (`change/c-138-estado-del-arte-calibracion-y-cascadas`) | sin commit (lo crea el orquestador) | 108 | 100 | 8 | +3 | +3 | (a) total <= 101 | Medido: `abspage@last{108}`; `Anexos` en p. 101; brecha frente a 101: +7; rama (b): cuerpo 100, margen 0 |
 | `+c-136` (`change/c-136-recomendaciones-lineas-faltantes`) | sin commit (lo crea el orquestador) | 108 | 100 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{108}`; `Anexos` en p. 101; brecha frente a 101: +7; rama (b): cuerpo 100, margen 0 (el capitulo de recomendaciones ya ocupaba 5 paginas, 89 a 93, con unas 21 lineas libres en la ultima; el agregado neto las consume y no abre una sexta) |
+| `+c-135` (`change/c-135-cronologia-y-consistencia-redaccional`) | sin commit (lo crea el orquestador) | 108 | 100 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{108}`; `Anexos` en p. 101; brecha frente a 101: +7; rama (b): cuerpo 100, margen 0 (la figura del cronograma va al Anexo A porque el capitulo 6 no tenia holgura: en 6.6 habria dado 109 o 110) |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -1912,3 +1913,73 @@ Compensaciones aplicadas (bloque 6): base de conocimientos -119 palabras, agente
 `git checkout <commit-previo> -- "docs/Tesis/v10 (IA)/paper/sections/10-recomendaciones.tex" docs/Tesis/Correcciones/dictamen-correcciones.md`, recompilar. Si otros changes ya citan `subsec:calibracion-gate` o `subsec:medicion-intervencion`, conservar las subsecciones.
 
 **Estado**: grupo aplicado.
+
+## Dictamen v1.1.0 - B9, B10 y B13 (cota) (c-135) - Cronologia y consistencia redaccional
+
+**Origen**: change `c-135-cronologia-y-consistencia-redaccional` (dictamen CONEAU 2026-10-22: B9, B10, B13 parte cota telefonica; mas la consistencia del Anexo H y el tiempo de espera de la inferencia, asignados por el orquestador desde c-136). Aplicado el **2026-10-25** en la rama `change/c-135-cronologia-y-consistencia-redaccional`, cortada de `ramagonzalo` en `9865300` (merge de c-136). Posicion 10 del orden de la familia (G0.6). Solo documento y una figura (gobernanza LOW, checkpoint MEDIUM de OQ-3).
+
+### Open Questions del design - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+
+| Open Question | Decision PROVISIONAL | Efecto |
+|---|---|---|
+| OQ-1 - fechas de las seis iteraciones | **Sin fuente primaria**: el token de `gh` no tiene `read:project` (`gh project list --owner lucaGomezB` falla) y no hay confirmacion. Regla (iv) de D5: ninguna fecha por interpolacion | Las iteraciones no se fechan por separado; la figura muestra dos barras de mes (actividad de desarrollo del repositorio, abril a julio y septiembre a octubre de 2026, con pausa 2026-07-10 a 2026-09-10); se retiran "de dos semanas", "12 semanas" y "(Semanas k--k+1)"; la tarea 5.2 queda abierta |
+| OQ-2 - campanas | Ventana mensual confirmada el 2026-10-09 (manual junio a agosto; automatizada septiembre a octubre de 2026) mas hitos del repositorio | Hitos: `gemini-3.6-flash` 2026-09-24, corrida de correo y formulario 2026-10-02, corrida de telefonia 2026-10-06, recalculo telefonico 2026-10-19; cada uno con comando en `docs/diagrams/cronograma.md` |
+| OQ-3 - checkpoint MEDIUM (`06:75`) | El item 5 ya no afirma "sin exposicion al corpus" (c-144/c-130); no declara fechas; c-135 no lo edita | Redaccion final PROVISIONAL |
+| OQ-4 - telefonia en `tab:comparativa` | Opcion (b) | Telefonia fuera de la afirmacion comparativa; rasgo de la propuesta en `03:84`; tabla de cuatro columnas sin cambios |
+| OQ-5 - acceso institucional | Sin acceso desde esta maquina | Paket 2024 y Colavito 2025 con "no reportado en el alcance revisado" y motivo; Zangari 2023 (acceso abierto) bloqueado por anti-bot: idioma sin dato |
+
+### Precondiciones y linea base (tareas 1.1 a 1.4)
+
+- Predecesores aplicados (`openspec list`: c-130, c-131, c-132, c-133, c-134, c-136, c-138 y c-142 completos; siguen sin archivar, eso es de c-141). Estructura de resultados vigente: seis `subsection` (tiempos, matriz y metricas, intervencion humana, calibracion, sensibilidad, analisis de errores).
+- Paginas antes: **108** (cuerpo 100, anexos 8; `Anexos` en p. 101). Ultima pagina por capitulo antes -> despues (lineas no vacias, incluido el encabezado): cap. 1 32 -> 32; cap. 3 36 -> 38; cap. 4 32 -> 26; cap. 6 20 -> 21; cap. 8 36 -> 36; cap. 9 13 -> 13; cap. 10 32 -> 32.
+- Instantanea de numeros canonicos (`73,5`, `0,5207`, `71,2`, `363`, `0,9639`, `0,87`, `2.646`, `32,2` sobre `sections/*.tex`): 9, 3, 10, 5, 0, 2, 8, 8 antes y despues (sin cambios).
+
+### Mapeo del dictamen -> pasajes
+
+| Observacion | Correccion | Archivo |
+|---|---|---|
+| B9 cronologia no conciliada | Fuente unica `docs/diagrams/cronograma.md` (Gantt Mermaid + tabla de procedencia), figura `fig:cronograma` (Anexo A); se retiran los rotulos "Semanas k--k+1", "de dos semanas cada una" y "12 semanas"; 4.9 condensada (la lista de iteraciones se reemplaza por una remision a 6.6 y a la figura); 6.6 declara que la campana manual no es una iteracion y que la automatizada es la iteracion 6; campanas de `04:14` con remision a la figura; "junio de 2026" de la cuarta limitacion reemplazado por `gemini-3.6-flash` (integrada el 2026-09-24); delimitacion de `01:76` | `04`, `06`, `08`, `01`, `12-anexos` |
+| B9 (tarea 6.8) entregable de la iteracion 1 | Se retira "el documento de arquitectura y el contrato OpenAPI inicial" de la iteracion 1: `knowledge-base/08_arquitectura_propuesta.md` es de 2026-06-10 (`0ceebe0`) y `docs/openapi.json` de 2026-06-11 (`15f9516`) | `06` |
+| B10 resultados | Parrafo introductorio enumera los seis apartados vigentes; "intervencion humana" sin "reduccion" | `07` |
+| B10 comparativa | Tres dimensiones; sintesis sin telefonia; telefonia como rasgo propio en el posicionamiento | `03` |
+| B10 trabajos academicos | Metrica y corpus completados desde resumen o texto abierto; residuo con motivo; procedencia en `extraccion-metricas-trabajos-c-135.md` | `03` |
+| B13 cota | "es una cota inferior de la duracion real por el tope de 45 s de grabacion", con remision a `subsec:metricas-instrumentos`; 20,1 s sin cambios | `09` |
+| Anexo H (desde c-136) | "configuracion adoptada" en lugar de "optimizados"; `candidate_count`: "acota la latencia" | `12-anexos` |
+| Tiempo de espera (D15) | 10 s -> 30 s por intento y 60 s de presupuesto total (`settings.py:85`, `:104`; commits `11036be` y `429f2c9`); procedencia en `conteos-canonicos-tecnicos.md` | `05`, `12-anexos` |
+
+### Procedencia del cronograma y representacion de las iteraciones
+
+Tabla completa en `docs/diagrams/cronograma.md`. Resumen: desarrollo abril a julio (primer commit 2026-04-06; ultimo previo a la pausa 2026-07-10) y septiembre a octubre (primer commit tras la pausa 2026-09-10), precision de mes; campana manual junio a agosto y automatizada septiembre a octubre de 2026, precision de mes (confirmacion del autor 2026-10-09, T6); hitos de dia: 2026-09-24 (`11036be`), 2026-10-02 (c-68 6.4), 2026-10-06 (c-70 8.2), 2026-10-19 (`4602bf5`). Render: mmdc 11.17.0 (`npx -y @mermaid-js/mermaid-cli@11 ... -w 760`) mas recorte con Pillow.
+
+### Extraccion de metricas (D8)
+
+Detalle por celda en `extraccion-metricas-trabajos-c-135.md`. Revina 2020: exactitud 1,000 (arbol de decision, rasgos linguisticos) frente a 0,433 maximo con TF-IDF, sobre 30 y 60 tickets etiquetados (texto abierto). Zangari 2023: >28 % F1 y ML-BERT hasta 5,7 % F1 y 5,4 % exactitud (resumen); idioma no reportado. Paket 2024: metrica no reportada (acceso cerrado). Liu 2025: F1 0,862 frente a 0,801 de los modelos pequenos; 160 tickets de prueba; idioma no reportado (preprint arXiv). Colavito 2025: tamano y metrica no reportados (acceso cerrado). `verify_citations.py`: PASS (65 entradas, 0 huerfanas, 0 sin usar); `Bibliography_base.bib` sin cambios.
+
+### Compilacion y paginas (tareas 8.1 y 8.2)
+
+- Docker `texlive-thesis` (`latexmk main.tex`): `^!` = 0, `undefined` = 0, `multiply defined` = 0, `main.blg` sin WARN/ERROR.
+- **Paginas: antes 108 (cuerpo 100, anexos 8); despues `abspage@last{108}`; `Anexos` en p. 101: cuerpo 100, anexos 8; delta 0 / 0.** Brecha frente al tope provisional 101: **+7**; regla (b) (cuerpo <= 100): cuerpo 100, margen 0.
+- Palancas aplicadas (D12): 4.9 condensada; figura recortada y con alto limitado; **desvio**: la figura se reproduce en el Anexo A y no en 6.6, porque el capitulo 6 no tenia holgura (con la figura en 6.6 el total fue 110, y 109 tras acotarla; el Anexo A la absorbe con delta 0); celdas y linea de fuente de `tab:trabajos-academicos` acortadas y columna de metrica ensanchada; parrafos de `01`, `07` y `03` reescritos en longitud neutra. El capitulo 3 queda con 38 lineas en su ultima pagina (sin margen): cualquier agregado lo extiende.
+- Libro mayor (G0): fila `+c-135` agregada (108 / 100 / 8, delta 0 / 0).
+
+### Consignas para otros changes
+
+- **c-130**: `CLAUDE.md` y `openspec/config.yaml` siguen diciendo 10 s de timeout; deben alinearse con 30 s por intento y 60 s totales (confirmacion del usuario). c-135 no los toco.
+- **c-139**: `03:32` ("confirma el desplazamiento hacia LLM") queda en tension con Paket 2024 y Colavito 2025 (BERT supera o es mas consistente); `01:66` atribuye corpus en ingles, aleman o portugues a Zangari y Colavito, cuyo idioma no consta en las fuentes accesibles; `03:30` puede matizar que las cifras de Revina vienen de 30 y 60 tickets etiquetados.
+- **c-140**: la figura esta en el Anexo A (no consume holgura del capitulo 6, que no tiene); solo verificar que el tiempo de espera de la tesis (30 s por intento y 60 s totales, 2 reintentos del backend al modelo) coincide con el codigo; `06:60` (N8N al backend, sin reintentos) no se edito.
+- **c-137**: ortografia fuera de los fragmentos reescritos (por ejemplo "multiples" en `03`, "gestiono" en `04`) sin tocar.
+- **c-141**: fila `+c-135` = 108 / 100 / 8; hallazgo colateral heredado de c-136: el primer item del alcance excluido de `01-introduccion.tex:74` (inventario de activos y gestion de configuracion) remite a `sec:recomendaciones` sin destino; archivar c-135 con la tarea 5.2 abierta (OQ-1) o cerrarla antes con las fechas de los autores; `tesis_para_agente.md` no se regenero.
+
+### Lo que los autores deben confirmar
+
+1. Inicio y fin de cada una de las seis iteraciones y si fueron de dos semanas y contiguas (OQ-1); con eso se reemplazan las dos barras de mes por seis barras y se cierra la tarea 5.2.
+2. Si hubo procesamiento automatizado del corpus entre 2026-09-01 y 2026-09-23 (con `gemini-2.5-flash`) y cuando se generaron las predicciones evaluadas (OQ-2).
+3. La redaccion del item 5 de 6.6 y su orden respecto de la campana (c-71 y c-74 midieron sobre el corpus el 2026-10-05 y 2026-10-07) (OQ-3).
+4. Que el `.env` de la campana no sobreescribio `GEMINI_TIMEOUT_SECONDS` ni `GEMINI_TOTAL_TIMEOUT_SECONDS` (D15).
+5. Acceso institucional a Paket 2024 y Colavito 2025, y al texto de Zangari 2023 (idioma) (OQ-5).
+
+### Reversibilidad
+
+`git checkout <commit-previo> -- "docs/Tesis/v10 (IA)/paper/sections" docs/Tesis/Correcciones/dictamen-correcciones.md docs/Tesis/Correcciones/conteos-canonicos-tecnicos.md`, `git rm` de `docs/diagrams/cronograma.md`, `paper/figures/cronograma.png` y `docs/Tesis/Correcciones/extraccion-metricas-trabajos-c-135.md`, y recompilar.
+
+**Estado**: grupo aplicado (34 de 35 tareas; la 5.2 queda abierta por OQ-1).
