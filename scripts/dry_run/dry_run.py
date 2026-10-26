@@ -190,6 +190,8 @@ from e2e_checks import (  # noqa: E402
     groups_from_checks,
 )
 
+import tls_checks  # noqa: E402
+
 
 # ── Stack lift / reuse ───────────────────────────────────────────────────────
 
@@ -834,6 +836,101 @@ def run_retry_fault(args, base_url: str, context: dict) -> list[Check]:
     return [evaluate_retry_recovery(_json_or_none(text), listing, origen)]
 
 
+# ── TLS edge group (c-140 section 7, opt-in --with-tls) ──────────────────────
+
+
+def run_tls_group(args, base_url: str, context: dict) -> list[Check]:
+    """Verify the TLS edge of the reference deployment (opt-in ``--with-tls``).
+
+    Checks the effective exposure (`docker compose config`), the TLS 1.3 and 1.2
+    handshakes with the certificate identity, the HTTP->HTTPS redirect, the HSTS
+    and security headers, the versionless Server header, the catch-all for an
+    unknown Host and the rejection of TLS 1.1. Never disables verification.
+    """
+    if not getattr(args, "with_tls", False):
+        return []
+    results: list[Check] = []
+    host = getattr(args, "tls_host", "localhost")
+    port = getattr(args, "tls_port", 443)
+    cert_path = _REPO_ROOT / "openssl" / "mesa.crt"
+
+    # Exposure from the effective configuration.
+    config_result = compose(["config", "--format", "json"], timeout=60)
+    if config_result.returncode != 0:
+        results.append(
+            failing(
+                tls_checks.CHECK_EXPOSURE,
+                f"docker compose config fallo: {(config_result.stderr or '').strip()[-200:]}",
+                "fix the compose files before verifying the edge",
+            )
+        )
+    else:
+        try:
+            services = json.loads(config_result.stdout).get("services", {})
+        except ValueError:
+            services = None
+        if services is None:
+            results.append(
+                failing(
+                    tls_checks.CHECK_EXPOSURE,
+                    "docker compose config no devolvio JSON",
+                    "re-run `docker compose config --format json` manually",
+                )
+            )
+        else:
+            results.append(tls_checks.evaluate_edge_exposure(services))
+
+    expected_fingerprint = (
+        tls_checks.cert_fingerprint_from_file(cert_path) if cert_path.exists() else None
+    )
+    if expected_fingerprint is None:
+        results.append(
+            failing(
+                tls_checks.CHECK_IDENTITY,
+                f"no existe el certificado de la corrida ({cert_path})",
+                "run `bash openssl/generate-certs.sh` before --with-tls",
+            )
+        )
+
+    # Handshakes (TLS 1.3 and TLS 1.2), with identity by anchor or fingerprint.
+    version13, fingerprint13 = tls_checks.negotiate(
+        host, port, ssl.TLSVersion.TLSv1_3, ssl.TLSVersion.TLSv1_3, cert_path
+    )
+    results.append(tls_checks.evaluate_version(tls_checks.CHECK_VERSION_13, version13, "TLSv1.3"))
+    results.append(tls_checks.evaluate_identity(fingerprint13, expected_fingerprint))
+
+    version12, _ = tls_checks.negotiate(
+        host, port, ssl.TLSVersion.TLSv1_2, ssl.TLSVersion.TLSv1_2, cert_path
+    )
+    results.append(tls_checks.evaluate_version(tls_checks.CHECK_VERSION_12, version12, "TLSv1.2"))
+
+    # HTTP -> HTTPS redirect (port 80), preserving path and query, without HSTS.
+    redirect_path = "/api/v1/health?origen=smoke"
+    status, headers, _ = tls_checks.http_get(host, 80, redirect_path)
+    results.append(
+        tls_checks.evaluate_redirect(status, headers, f"https://{host}{redirect_path}")
+    )
+
+    # HTTPS response headers through the proxy.
+    context_tls = tls_checks.verify_context(cert_path)
+    _, https_headers, _ = tls_checks.http_get(
+        host, port, "/api/v1/health", tls=True, context=context_tls
+    )
+    results.append(tls_checks.evaluate_security_headers(https_headers))
+    results.append(tls_checks.evaluate_server_header(https_headers))
+
+    # Catch-all for an unknown Host.
+    results.append(
+        tls_checks.evaluate_unknown_host(tls_checks.probe_unknown_host(host, port, cert_path))
+    )
+
+    # TLS 1.1 must be rejected (PENDING if the client cannot offer it).
+    offerable, error = tls_checks.probe_tls11(host, port, cert_path)
+    results.append(tls_checks.evaluate_tls11_rejection(offerable, error))
+
+    return results
+
+
 # ── Evidence report gathering (c-140 section 5.7) ────────────────────────────
 
 
@@ -1047,6 +1144,13 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Write a JSON evidence report (commit, UTC date, N8N version, per-check result) to this path.",
     )
+    parser.add_argument(
+        "--with-tls",
+        action="store_true",
+        help="OPT-IN: verify the TLS edge of the reference deployment (group tls:*).",
+    )
+    parser.add_argument("--tls-host", default="localhost", help="Host for the TLS group. Default: localhost")
+    parser.add_argument("--tls-port", type=int, default=443, help="HTTPS port for the TLS group. Default: 443")
     parser.add_argument("--timeout", type=int, default=15, help="Per-request timeout in seconds. Default: 15")
     parser.add_argument("--e2e-timeout", type=int, default=60, help="Webhook POST timeout. Default: 60")
     parser.add_argument("--poll-timeout", type=int, default=45, help="Persistence polling window. Default: 45")
@@ -1090,6 +1194,7 @@ def main(argv: list[str] | None = None) -> int:
     results.extend(run_e2e_idempotency(args, base_url, context))
     results.extend(run_retry_fault(args, base_url, context))
     results.extend(run_email_variant(args, base_url, context))
+    results.extend(run_tls_group(args, base_url, context))
     return _finish(results, args, context)
 
 
