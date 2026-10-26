@@ -35,7 +35,15 @@ paths = [
 #    secreto real que se agregue más adelante en un test.
 # 2) Nombre de un test citado en un reporte de verify: la regla
 #    'generic-api-key' lo marcó como falso positivo por contener "api".
+# 3) Dos falsos positivos de 'generic-api-key' en prosa en español del
+#    design.md de un change OpenSpec (commit e378105, PR #40): la palabra
+#    "capitulo" contiene "api" y, seguida de "," o "=" y de un nombre de
+#    archivo de la tesis, la regla toma el nombre de archivo como secreto.
+#    El texto actual ya fue reescrito, pero el escaneo de historial sigue
+#    viendo el commit original. Se acota a los dos valores exactos.
 regexes = [
   '''2BFqlzB9uZlu2axKBM-ZrYJGq3u8JOK93ZYzIwkE3tQ=''',
   '''test_fallo_descarga_persiste_el_ingreso_tras_503''',
+  '''^08-discusion\.tex$''',
+  '''^07-resultados$''',
 ]

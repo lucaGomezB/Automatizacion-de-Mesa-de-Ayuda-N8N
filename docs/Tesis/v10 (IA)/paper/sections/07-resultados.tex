@@ -3,11 +3,11 @@
 %==============================================================================
 \section{Resultados}\label{sec:resultados}
 
-Este capítulo presenta los resultados de la validación experimental en cuatro dimensiones: tiempos de registro, desempeño de clasificación, reducción de la intervención humana y análisis cualitativo de errores.
+Los resultados se presentan en seis apartados: tiempos de registro, métricas de clasificación, intervención humana, calibración de la confianza, sensibilidad al ajuste del clasificador y análisis de errores.
 
 \subsection{Comparación de tiempos de registro}\label{subsec:comparacion-tiempos}
 
-La comparación de los tiempos de registro entre el flujo manual y el flujo automatizado se sintetiza en la Tabla~\ref{tab:tiempos}. La media aritmética del tiempo manual sobre los 200 casos del corpus fue de 61,6~s (mediana de 50,0~s), con un desvío estándar de 44,9~s y un rango entre 10 y 300~s. Este valor, respaldado por la planilla de cronometraje descrita en la \autoref{subsec:diseno-experimental}, corresponde a la medición experimental incidente por incidente y reemplaza a la estimación preliminar de 2 minutos con 45 segundos citada en la \autoref{subsec:planteamiento-problema}, obtenida sin cronometraje individual. La media del flujo automatizado fue de 17,76~s (mediana de 17,47~s), con un desvío estándar de 13,48~s y un rango entre 0,525 y 65,834~s. La reducción relativa de la media de tiempo alcanzó el 71,2~\%.
+La comparación de los tiempos de registro entre el flujo manual y el flujo automatizado se sintetiza en la Tabla~\ref{tab:tiempos}. La media aritmética del tiempo manual sobre los 200 casos del corpus fue de 61,6~s (mediana de 50,0~s), con un desvío estándar de 44,9~s y un rango entre 10 y 300~s. Este valor, respaldado por la planilla de cronometraje descrita en la \autoref{subsec:diseno-experimental}, corresponde a la medición experimental incidente por incidente y reemplaza a la estimación preliminar de 2 minutos con 45 segundos citada en la \autoref{subsec:planteamiento-problema}, obtenida sin cronometraje individual. La media del flujo automatizado fue de 17,76~s (mediana de 17,47~s), con un desvío estándar de 13,52~s y un rango entre 0,525 y 65,834~s. La reducción relativa de la media de tiempo alcanzó el 71,2~\%.
 
 \begin{table}[htbp]
 \centering
@@ -20,7 +20,7 @@ La comparación de los tiempos de registro entre el flujo manual y el flujo auto
 \midrule
 Media aritmética (s)      & 61,6   & 17,76   & 71,2~\% \\
 Mediana (s)               & 50,0   & 17,47   & 65,1~\% \\
-Desvío estándar (s)       & 44,9   & 13,48   & --- \\
+Desvío estándar (s)       & 44,9   & 13,52   & --- \\
 Mínimo (s)                & 10     & 0,525   & --- \\
 Máximo (s)                & 300    & 65,834  & --- \\
 \bottomrule
@@ -29,37 +29,36 @@ Máximo (s)                & 300    & 65,834  & --- \\
 {\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)).\par}
 \end{table}
 
-El tiempo automatizado de registro desagregado por canal de origen se presenta en la Tabla~\ref{tab:tiempos-canal}. El canal telefónico incorpora, además de la latencia de procesamiento, la duración de la llamada grabada; como la grabación esta acotada a un máximo de 45~s (véase la \autoref{subsec:metricas-instrumentos}), su valor constituye una cota inferior de la duración real de la llamada.
+El desagregado por canal de origen, con los dos brazos y el contraste intra-canal, se presenta en la Tabla~\ref{tab:tiempos-canal}: la reducción de la media va del 51,1~\% en correo electrónico, donde se concentran los 12 pares en que el flujo automatizado no fue más rápido, al 93,4~\% en formulario web, y el contraste es significativo en los tres canales. El canal telefónico incorpora, además de la latencia de procesamiento, la duración de la llamada grabada; como la grabación está acotada a un máximo de 45~s (véase la \autoref{subsec:metricas-instrumentos}), su valor constituye una cota inferior de la duración real de la llamada.
 
 \begin{table}[htbp]
 \centering
-\caption{Tiempo automatizado de registro por canal de origen (\(n = 200\))}
+\caption{Tiempo de registro por canal de origen: flujos manual y automatizado, reducción y contraste intra-canal (\(n = 200\))}
 \label{tab:tiempos-canal}
-\small
-\begin{tabular}{@{}p{6.0cm} c c c@{}}
+\footnotesize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.9cm} c c c c c >{\centering\arraybackslash}p{1.65cm} >{\centering\arraybackslash}p{1.65cm} c c@{}}
 \toprule
-\textbf{Canal de origen} & \textbf{Casos} & \textbf{Media (s)} & \textbf{Mediana (s)} \\
+ & & \multicolumn{2}{c}{\textbf{Manual (s)}} & \multicolumn{2}{c}{\textbf{Automatizado (s)}} & & & & \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+\textbf{Canal de origen} & \textbf{Casos} & \textbf{Media} & \textbf{Mediana} & \textbf{Media} & \textbf{Mediana} & \textbf{Reducción de la media} & \textbf{Pares no más rápidos} & \textbf{\(p\) bilateral} & \textbf{\(d_z\)} \\
 \midrule
-Llamada telefónica (cota inferior) & 81 & 20,09 & 18,70 \\
-Correo electrónico                 & 66 & 27,65 & 25,82 \\
-Formulario web                     & 53 & 1,88  & 1,26  \\
+Llamada telefónica (cota inferior) & 81 & 87,2 & 72,0 & 20,09 & 18,70 & 77,0~\% & 0 de 81 & 5,36e-15 & 1,37 \\
+Correo electrónico & 66 & 56,5 & 50,0 & 27,65 & 25,82 & 51,1~\% & 12 de 66 & 4,78e-09 & 0,73 \\
+Formulario web & 53 & 28,7 & 20,0 & 1,88 & 1,26 & 93,4~\% & 0 de 53 & 2,39e-10 & 1,61 \\
 \midrule
-\textbf{Global}                    & \textbf{200} & \textbf{17,76} & \textbf{17,47} \\
+\textbf{Global} & \textbf{200} & \textbf{61,6} & \textbf{50,0} & \textbf{17,76} & \textbf{17,47} & \textbf{71,2~\%} & \textbf{12 de 200} & \textbf{3,08e-32} & \textbf{1,00} \\
 \bottomrule
 \end{tabular}
 \par\smallskip
-{\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)).\par}
+{\footnotesize\textit{Nota:} \(p\): valor bilateral de Wilcoxon sobre las diferencias pareadas (\autoref{subsec:analisis-estadistico}); \(d_z\): media sobre desvío muestral de las diferencias (manual menos automatizado); \(W\), \(T^{+}\), \(T^{-}\) y \(r\) por canal figuran en \texttt{evaluation/report.md}. \textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)).\par}
 \end{table}
 
-La prueba de Wilcoxon de rangos con signo aplicada sobre las mediciones pareadas \parencite{Virtanen2020_scipy} arrojó un estadístico de contraste \(W = \min(T^{+}, T^{-}) = 363\), con una suma de rangos positivos \(T^{+} = 19.737\), una suma de rangos negativos \(T^{-} = 363\) y \(n = 200\) pares válidos, junto con un valor \(p = 3{,}08 \times 10^{-32}\), lo que permite rechazar la hipótesis nula de igualdad de medianas con un nivel de confianza superior al 99,9~\%. El estadístico refleja que en 188 de los 200 pares el flujo automatizado fue más veloz que el manual; en los 12 pares restantes (6,0~\%) el flujo automatizado no fue más rápido, resultado coherente con la diferencia de aproximadamente 32,5~s entre medianas. La prueba se eligió por el rechazo de la normalidad en los tres conjuntos de tiempos (\autoref{subsec:analisis-estadistico}).
+La prueba de Wilcoxon de rangos con signo aplicada sobre las mediciones pareadas \parencite{Virtanen2020_scipy} arrojó un estadístico de contraste \(W = \min(T^{+}, T^{-}) = 363\), con una suma de rangos positivos \(T^{+} = 19.737\), una suma de rangos negativos \(T^{-} = 363\) y \(n = 200\) pares válidos, junto con un valor \(p = 3{,}08 \times 10^{-32}\) bilateral (\autoref{subsec:analisis-estadistico}), lo que permite rechazar la hipótesis nula de igualdad de medianas con un nivel de confianza superior al 99,9~\%. El estadístico refleja que en 188 de los 200 pares el flujo automatizado fue más veloz que el manual; en los 12 pares restantes (6,0~\%) el flujo automatizado no fue más rápido, resultado coherente con la diferencia de aproximadamente 32,5~s entre medianas. La prueba se eligió por el rechazo de la normalidad en los tres conjuntos de tiempos (\autoref{subsec:analisis-estadistico}).
 
-Para cuantificar la magnitud práctica de la diferencia, se calculó el coeficiente \(r\) de correlación rank-biserial a partir de los dos estadísticos de rango:
-\[
-r = \frac{T^{+} - T^{-}}{n(n+1)/2} = \frac{19.737 - 363}{200 \cdot 201 / 2} = \frac{19.374}{20.100} = 0{,}9639
-\]
-El valor obtenido (\(r = 0{,}9639\)) corresponde a un tamaño del efecto muy alto. La diferencia observada es, por tanto, estadísticamente significativa y, dada su magnitud absoluta, relativa y el tamaño del efecto reportado, también prácticamente relevante para la operación.
+Para cuantificar la magnitud práctica de la diferencia, se calculó el coeficiente \(r\) de correlación rank-biserial a partir de los dos estadísticos de rango (\(r = 19.374/20.100 = 0{,}9639\)), un tamaño del efecto muy alto. En la escala estandarizada del contraste pareado, distinta de la anterior, el tamaño del efecto es \(d_z = 1{,}00\) (media de las diferencias de 43,82~s sobre su desvío muestral de 43,81~s). La diferencia observada es, por tanto, estadísticamente significativa y, dada su magnitud absoluta, relativa y el tamaño del efecto reportado, también prácticamente relevante para la operación.
 
-Cabe señalar que el tiempo manual se registró con redondeo hacia arriba (véase la \autoref{subsec:diseno-experimental}), un sesgo de medición sistemático que infla la línea base manual. Por ese motivo la reducción del 71,2~\% debe leerse como cota superior. Un análisis de sensibilidad que descuenta 5~s y 10~s a cada medición manual reduce la media manual a 56,6~s y 51,6~s, respectivamente, y sitúa la reducción en el 68,6~\% y en el 65,6~\% como cota inferior conservadora. Aun en el escenario más desfavorable la reducción de tiempo permanece sustancial y estadísticamente significativa (\(p = 1{,}8 \times 10^{-26}\), \(r = 0{,}8683\)).
+Cabe señalar que el tiempo manual se registró con redondeo hacia arriba (véase la \autoref{subsec:diseno-experimental}), un sesgo de medición sistemático que infla la línea base manual. Por ese motivo la reducción del 71,2~\% debe leerse como cota superior. Un análisis de sensibilidad que descuenta 5~s y 10~s a cada medición manual reduce la media manual a 56,6~s y 51,6~s, respectivamente, y sitúa la reducción en el 68,6~\% y en el 65,6~\% como cota inferior conservadora. Aun en el escenario más desfavorable la reducción de tiempo permanece sustancial y estadísticamente significativa (\(p = 1{,}8 \times 10^{-26}\) bilateral, \(r = 0{,}8683\)).
 
 \begin{figure}[htbp]
 \centering
@@ -104,7 +103,29 @@ Sistemas & 2 & 0 & 5 & 2 & \textbf{7} & \textbf{16} \\
 \label{fig:matriz_confusion}
 \end{figure}
 
-Los valores de precisión, sensibilidad (recall) y F1 por clase, con su intervalo de confianza al 95~\% \parencite{Sokolova2009_performance_measures}, se presentan en la Tabla~\ref{tab:metricas}. La evaluación se enmarca en un único marco métrico cuya referencia de verdad es multietiqueta (107 de los 200 casos, 53,5~\%), frente a una salida del clasificador de una etiqueta principal: la exactitud estricta del 73,5~\% (147/200) es la métrica primaria monoetiqueta, con IC de Wilson al 95~\% de [67,0~\%, 79,1~\%]. El macro-F1 de umbral se reporta sobre las cuatro clases estimables (0,6508), excluida Bases de Datos (\(n = 1\), no estimable), y el de cinco clases (0,5207) se conserva como valor informativo. Las métricas secundarias se calculan contra el conjunto de verdad del corpus (multietiqueta): subset accuracy 0,43 (IC [0,36; 0,50]), Hamming loss 0,3586 (IC [0,31; 0,41]) y micro-F1 0,6654 (IC [0,62; 0,71]). Estas métricas de conjunto penalizan estructuralmente una salida forzada a una sola etiqueta y no son equivalentes de la exactitud estricta: el micro-F1 acumula los aciertos por etiqueta y no por caso, de modo que su valor (0,6654) no debe leerse como una exactitud (0,7350). De los 200 casos, 131 fueron resueltos por la etapa determinística del clasificador y 69 requirieron la etapa Gemini.
+\begin{table}[p]
+\centering
+\caption{Exactitud estricta y laxa por etapa del pipeline y por canal de origen}
+\label{tab:exactitud-etapa-canal}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.6cm} >{\centering\arraybackslash}p{1.2cm} >{\centering\arraybackslash}p{4.6cm} >{\centering\arraybackslash}p{4.6cm}@{}}
+\toprule
+\textbf{Ámbito} & \textbf{Casos} & \textbf{Exactitud estricta (IC 95~\%)} & \textbf{Exactitud laxa (IC 95~\%)} \\
+\midrule
+Global & 200 & 147/200 = 0,735 [0,670; 0,791] & 179/200 = 0,895 [0,845; 0,930] \\
+Etapa determinística & 131 & 97/131 = 0,740 [0,659; 0,808] & 119/131 = 0,908 [0,847; 0,947] \\
+Etapa Gemini & 69 & 50/69 = 0,725 [0,610; 0,816] & 60/69 = 0,870 [0,770; 0,930] \\
+Llamada telefónica & 81 & 53/81 = 0,654 [0,546; 0,749] & 70/81 = 0,864 [0,773; 0,922] \\
+Correo electrónico & 66 & 51/66 = 0,773 [0,658; 0,857] & 61/66 = 0,924 [0,835; 0,967] \\
+Formulario web & 53 & 43/53 = 0,811 [0,686; 0,894] & 48/53 = 0,906 [0,797; 0,959] \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+{\footnotesize\textit{Fuente:} elaboración propia (\(n = 200\)); IC de Wilson. La etapa de reserva no registró casos; la composición sectorial y la proporción multietiqueta difieren entre canales.\par}
+\end{table}
+
+Los valores de precisión, sensibilidad (recall) y F1 por clase, con su intervalo de confianza al 95~\% \parencite{Sokolova2009_performance_measures}, se presentan en la Tabla~\ref{tab:metricas}. La evaluación se enmarca en un único marco métrico cuya referencia de verdad es multietiqueta (107 de los 200 casos, 53,5~\%), frente a una salida del clasificador de una etiqueta principal: la exactitud estricta del 73,5~\% (147/200) es la métrica primaria monoetiqueta, con IC de Wilson al 95~\% de [67,0~\%, 79,1~\%]. El macro-F1 de umbral, métrica primaria contra la que se evalúa el criterio de 0,85, se reporta sobre las cuatro clases estimables (0,6508), excluida Bases de Datos (\(n = 1\), no estimable: su F1 depende de un único incidente y pesaría un quinto del promedio), y el de cinco clases (0,5207) se conserva como valor informativo; ambos quedan por debajo del criterio, de modo que la elección no altera el veredicto. Las métricas secundarias se calculan contra el conjunto de verdad del corpus (multietiqueta): subset accuracy 0,43 (IC [0,36; 0,50]), Hamming loss 0,3586 (IC [0,31; 0,41]) y micro-F1 0,6654 (IC [0,62; 0,71]). Estas métricas de conjunto penalizan estructuralmente una salida forzada a una sola etiqueta y no son equivalentes de la exactitud estricta: el micro-F1 acumula los aciertos por etiqueta y no por caso, de modo que su valor (0,6654) no debe leerse como una exactitud (0,7350). De los 200 casos, 131 fueron resueltos por la etapa determinística del clasificador y 69 requirieron la etapa Gemini. La exactitud laxa ---sector predicho principal dentro del conjunto de verdad--- es secundaria y no reemplaza a la estricta: alcanza el 89,5~\% (179/200; IC de Wilson de [84,5~\%, 93,0~\%]). La Tabla~\ref{tab:exactitud-etapa-canal} desagrega ambas por etapa y por canal, como estimaciones dentro de la muestra (\autoref{subsec:sensibilidad-ajustes}).
 
 \begin{table}[htbp]
 \centering
@@ -127,42 +148,69 @@ Bases de Datos            & \multicolumn{3}{c}{no estimable (\(n = 1\))} \\
 {\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)). IC de precisión y sensibilidad por Wilson; IC de F1 por bootstrap percentil (2000 remuestreos).\par}
 \end{table}
 
-Estas métricas confirman un desempeño desigual entre las clases objetivo \parencite{Sokolova2009_performance_measures}. Este desequilibrio importa en el contexto operativo, porque un clasificador que concentra sus errores en una clase minoritaria genera derivaciones erroneas en un sector específico y puede erosionar la confianza de ese equipo en la herramienta, independientemente de sus métricas agregadas.
+Estas métricas confirman un desempeño desigual entre las clases objetivo \parencite{Sokolova2009_performance_measures}. Este desequilibrio importa en el contexto operativo, porque un clasificador que concentra sus errores en una clase minoritaria genera derivaciones erróneas en un sector específico y puede erosionar la confianza de ese equipo en la herramienta, independientemente de sus métricas agregadas.
 
 La inspección de la matriz de confusión revela que los 53 errores totales se concentran en fronteras entre sectores léxicamente próximos, con Soporte Tecnico Software como categoría central; su análisis cualitativo, agrupado por frontera de confusión, se desarrolla en la \autoref{subsec:analisis-errores}.
 
 \subsection{Intervención humana en el flujo automatizado}\label{subsec:reduccion-intervencion}
 
-La intervención humana en el flujo automatizado se deriva del gate de revisión implementado, \texttt{requiere\_revision\_humana = (confianza < 0,70)}, que escala un caso a un operador humano cuando la confianza devuelta por el clasificador cae por debajo de ese umbral. El gate de revisión no derivó ningún caso del corpus: la etapa determinística fija el campo en \texttt{False} y la etapa Gemini nunca devolvió una confianza inferior a 0,85, resultado que se interpreta en la \autoref{sec:discusion}.
+La intervención humana en el flujo automatizado se deriva del gate de revisión implementado, \texttt{requiere\_revision\_humana = (confianza < 0,70)}, que solo se evalúa sobre la salida de la etapa Gemini; la etapa de reserva deriva siempre y la determinística no deriva por su confianza (\autoref{subsec:subsistema-clasificacion}). El gate no derivó ningún caso del corpus: en 124 de los 200 casos (62~\%) la confianza registrada fue inferior a 0,70, pero todos pertenecen a la etapa determinística, cuya confianza mide fuerza de señal; los 69 casos de Gemini declararon siempre al menos 0,85 y la etapa de reserva no se activó. Sobre el 65,5~\% de los casos no existió, por lo tanto, derivación automática por caso basada en la clasificación. El resultado se interpreta en la \autoref{sec:discusion}.
 
-La sub-hipótesis de intervención humana por caso se declara no contrastada por ausencia de registro primario: la proporción no se computa como resultado, de modo que el aporte operativo asociado al gate queda, por lo tanto, como no medido.
+La segunda sub-hipótesis ---proporción de casos con acción manual no superior a 0,15 (\autoref{subsec:hipotesis-trabajo})--- se declara no contrastada por ausencia de registro primario: la proporción no se computa como resultado y las derivaciones del gate no la sustituyen, de modo que el aporte operativo asociado al gate queda como no medido.
 
 \subsection{Calibración de la confianza}
 \label{subsec:calibracion}
 
-La confianza declarada por el clasificador solo resulta útil como criterio de derivación si guarda relación con la exactitud real. Para verificar esa relación se contrastó, sobre los 200 casos del corpus, la confianza devuelta en cada predicción contra la corrección de la clasificación. La Tabla~\ref{tab:bandas} desagrega la exactitud por bandas de confianza en torno al umbral del 70~\% que gobierna el gate de revisión humana.
+La confianza declarada solo es útil como criterio de derivación si guarda relación con la exactitud real, y las dos etapas que la emiten lo hacen con magnitudes distintas (\autoref{subsec:subsistema-clasificacion}); por eso la Tabla~\ref{tab:bandas} desagrega la exactitud por banda y por etapa. El umbral de 0,70 del gate se evalúa solo sobre la salida de Gemini (\autoref{subsec:reduccion-intervencion}).
 
 \begin{table}[htbp]
 \centering
-\caption{Exactitud por banda de confianza declarada}
+\caption{Exactitud por banda de confianza declarada y por etapa del pipeline}
 \label{tab:bandas}
-\small
-\begin{tabular}{@{}l c c c@{}}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}l c c c c c c@{}}
 \toprule
-\textbf{Banda de confianza} & \textbf{Casos} & \textbf{Aciertos} & \textbf{Exactitud} \\
+ & \multicolumn{3}{c}{\textbf{Etapa determinística}} & \multicolumn{3}{c}{\textbf{Etapa Gemini}} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+\textbf{Banda de confianza} & \textbf{Casos} & \textbf{Aciertos} & \textbf{Exactitud} & \textbf{Casos} & \textbf{Aciertos} & \textbf{Exactitud} \\
 \midrule
-\([0{,}00\,;\,0{,}50)\) & 98 & 75 & 0,765 \\
-\([0{,}50\,;\,0{,}70)\) & 26 & 19 & 0,731 \\
-\([0{,}70\,;\,0{,}85)\) & 6  & 2  & 0,333 \\
-\([0{,}85\,;\,0{,}95)\) & 31 & 22 & 0,710 \\
-\([0{,}95\,;\,1{,}00]\) & 39 & 29 & 0,744 \\
+\([0{,}00\,;\,0{,}50)\) & 98 & 75 & 0,765 & --- & --- & --- \\
+\([0{,}50\,;\,0{,}70)\) & 26 & 19 & 0,731 & --- & --- & --- \\
+\([0{,}70\,;\,0{,}85)\) & 6  & 2  & 0,333 & --- & --- & --- \\
+\([0{,}85\,;\,0{,}95)\) & --- & --- & --- & 31 & 22 & 0,710 \\
+\([0{,}95\,;\,1{,}00]\) & 1 & 1 & 1,000 & 38 & 28 & 0,737 \\
 \bottomrule
 \end{tabular}
 \par\smallskip
-{\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)).\par}
+{\footnotesize\textit{Fuente:} elaboración propia (\(n = 200\)). ``---'': la etapa no emitió confianza en esa banda; la reserva no registró casos.\par}
 \end{table}
 
-Los datos revelan una calibración invertida o anti-calibrada: los casos de confianza alta (\(\ge 0{,}70\)) fueron menos exactos (0,697) que los de confianza baja (\(< 0{,}70\), 0,758). La tendencia se acentúa en el extremo superior de la escala: dentro de los 46 casos con confianza igual o superior a 0,90 se registraron 13 errores (28,3~\%), y la banda \([0{,}70\,;\,0{,}85)\) alcanzó apenas 0,333 de exactitud. En otras palabras, el clasificador no solo no discrimina mejor cuando declara mayor certeza, sino que en los tramos de confianza más alta la exactitud se degrada. La consecuencia operativa es directa: el gate del 70~\% no aisló los errores, porque estos se distribuyen también en las bandas de confianza alta. Este hallazgo fundamenta la discusión de la \autoref{sec:discusion}.
+El contraste agregado entre los casos de confianza alta (\(\ge 0{,}70\), exactitud 0,697) y baja (\(< 0{,}70\), 0,758) es un efecto de composición, no una medida de calibración: los 124 casos por debajo de 0,70 son todos de la etapa determinística y el resto reúne 7 casos determinísticos y los 69 de Gemini. Por etapa, la exactitud estricta, estimada dentro de la muestra (\autoref{subsec:sensibilidad-ajustes}), es de 0,7405 en la determinística y de 0,7246 en la de Gemini (Tabla~\ref{tab:exactitud-etapa-canal}). La confianza de Gemini, concentrada entre 0,85 y 1,00, no discrimina aciertos de errores: rinde 0,710 en la banda \([0{,}85\,;\,0{,}95)\) (IC de Wilson [53,4~\%, 83,9~\%]) y 0,737 en la banda \([0{,}95\,;\,1{,}00]\) ([58,0~\%, 85,0~\%]), con intervalos solapados, y los 46 casos con confianza igual o superior a 0,90 (45 de Gemini) incluyen 13 errores (28,3~\%), todos de Gemini. La de la etapa determinística es una fuerza de señal en escala discreta que no ordena la correctitud (0,731 a 0,765 por debajo de 0,70; 0,333 en \([0{,}70\,;\,0{,}85)\), con 6 casos) y no es un criterio utilizable para derivar (\autoref{subsec:subsistema-clasificacion}). La conclusión se restringe, así, a Gemini en su rango observado: el umbral de 0,70 no habría aislado sus 19 errores, pues su confianza nunca fue inferior a 0,85. Este hallazgo fundamenta la discusión de la \autoref{sec:discusion}.
+
+\subsection{Sensibilidad al ajuste del clasificador con el corpus}\label{subsec:sensibilidad-ajustes}
+
+Las métricas de este capítulo son estimaciones dentro de la muestra (\autoref{subsec:interpretacion-resultados}). Para acotar el sesgo atribuible al vocabulario del filtro, ampliado a partir de errores observados en el corpus, se repitió sin invocar al modelo la etapa determinística con el vocabulario previo a esa ampliación (89 de los 151 patrones), conservando la lógica de decisión y el punto de operación evaluados; con la lógica de decisión de entonces, la repetición reprodujo la medición registrada antes del ajuste. La reconstrucción del vocabulario por pliegues no es factible, porque el repositorio no registra qué casos motivaron cada patrón. La Tabla~\ref{tab:sensibilidad-ajustes} resume los resultados.
+
+\begin{table}[htbp]
+\centering
+\caption{Sensibilidad de la exactitud al vocabulario ajustado con el corpus}
+\label{tab:sensibilidad-ajustes}
+\footnotesize
+\begin{tabular}{@{}l c c c@{}}
+\toprule
+\textbf{Filtro determinístico} & \textbf{Casos} & \textbf{Exactitud (IC 95~\%)} & \textbf{Global\textsuperscript{a}} \\
+\midrule
+Evaluado (vocabulario ampliado) & 131 & 0,7405 [0,6593; 0,8079] & 146/200 \\
+Vocabulario previo, lógica vigente & 74 & 0,5270 [0,4148; 0,6366] & 128/200 \\
+Vocabulario y lógica previos & 72 & 0,5139 [0,4007; 0,6257] & --- \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+{\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)) y de \texttt{evaluation/report\_sensibilidad\_ajustes.md}. Casos y exactitud de la etapa determinística. \textsuperscript{a}Aciertos con las predicciones de la etapa Gemini fijas (caché de calibración); la exactitud global oficial es 147/200.\par}
+\end{table}
+
+Sin la ampliación, la exactitud de la etapa determinística baja de 0,7405 a 0,5270 sobre 74 casos: la diferencia, de 21,3 puntos, es una cota pesimista del sesgo atribuible al vocabulario, porque el vocabulario previo carece también del conocimiento del dominio que una ampliación hecha con datos independientes habría aportado. Con las predicciones de la etapa Gemini fijas, la exactitud global pasa de 146 a 128 aciertos sobre 200 casos (McNemar exacto, \(p < 0{,}001\)). El efecto de las reglas de frontera del prompt, limitado a los 69 casos de la etapa Gemini, no se cuantificó; sin los casos que las motivaron, esa etapa acertó 48 de 66. Ningún valor canónico cambia: el análisis estima la sensibilidad de las métricas y no sustituye la medición del sistema evaluado.
 
 \subsection{Análisis de errores y casos límite}\label{subsec:analisis-errores}
 
@@ -189,7 +237,7 @@ Otras fronteras & 16 & 30,2~\% \\
 {\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)).\par}
 \end{table}
 
-El patrón dominante, presente en 14 casos (26,4~\% de los errores), corresponde a la frontera entre Soporte Tecnico Hardware y Soporte Tecnico Software: incidentes en que una falla física de un equipo afecta a una aplicación, o en que una tarea sobre una aplicación se describe con términos de equipamiento, de modo que la decisión correcta depende del juicio humano sobre que aspecto prevalece. El segundo patrón, presente en 12 casos (22,6~\%), corresponde a la frontera entre Sistemas y Soporte Tecnico Software, asociada a acciones sobre servidores y servicios de plataforma descritas como problemas de una aplicación. El tercer patrón, presente en 11 casos (20,8~\%), corresponde a la frontera entre Seguridad Informatica y Soporte Tecnico Software, vinculada a incidentes de acceso y credenciales. El 30,2~\% restante se reparte entre las demas fronteras, incluidas las confusiones que involucran a Bases de Datos, con un único caso de soporte.
+El patrón dominante, presente en 14 casos (26,4~\% de los errores), corresponde a la frontera entre Soporte Tecnico Hardware y Soporte Tecnico Software: incidentes en que una falla física de un equipo afecta a una aplicación, o en que una tarea sobre una aplicación se describe con términos de equipamiento, de modo que la decisión correcta depende del juicio humano sobre que aspecto prevalece. El segundo patrón, presente en 12 casos (22,6~\%), corresponde a la frontera entre Sistemas y Soporte Tecnico Software, asociada a acciones sobre servidores y servicios de plataforma descritas como problemas de una aplicación. El tercer patrón, presente en 11 casos (20,8~\%), corresponde a la frontera entre Seguridad Informatica y Soporte Tecnico Software, vinculada a incidentes de acceso y credenciales. El 30,2~\% restante se reparte entre las demás fronteras, incluidas las confusiones que involucran a Bases de Datos, con un único caso de soporte.
 
 Los patrones anteriores se ilustran con tres casos mal clasificados del corpus. Las descripciones se reproducen pseudonimizadas y se acompañan con el sector asignado, el sector predicho y la confianza declarada por el clasificador. El primer caso corresponde al patrón de descripción corta: la entrada ``No puede ingresar al sistema central'' fue asignada a Seguridad Informatica y predicha como Soporte Tecnico Software con una confianza de 0,95; su brevedad no aporta contexto sobre el recurso ni sobre la naturaleza del acceso fallido, de modo que la frontera resulta indistinguible sin información adicional. El segundo ilustra la mezcla de categorías: ``Su equipo se reinicia de forma reiterada; el usuario sospecha de los cables'' fue asignada a Soporte Tecnico Software y predicha como Soporte Tecnico Hardware con 0,50 de confianza, y combina un síntoma de nivel de aplicación con una hipótesis de causa física cuyo peso relativo no queda determinado por el texto. El tercero ejemplifica la jerga local: ``No le salen los correos por el flujo interno y no le llegan las instancias'' fue asignada a Sistemas y predicha como Soporte Tecnico Software con 0,85 de confianza, y apela a términos organizacionales (``flujo'', ``instancias'') cuyo significado no está disponible para el clasificador. En los tres casos la confianza declarada es alta pese al error.
 

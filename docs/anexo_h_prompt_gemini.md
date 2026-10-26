@@ -159,7 +159,7 @@ def validar_respuesta_gemini(response_text: str) -> tuple[bool, dict]:
 
 El prompt de la versión evaluada ha sido validado y ajustado iterativamente a partir de errores observados en el corpus de validación; no se dispuso de un corpus independiente de incidentes de preproducción (c-72).
 
-Las versiones históricas del prompt se conservan en el historial de versiones de `docs/prompt_gemini.txt` (`git log -- docs/prompt_gemini.txt`) para auditoría y posible rollback.
+Las versiones históricas del prompt se conservan en el historial de versiones de `docs/prompt_gemini.txt` (`git log -- docs/prompt_gemini.txt`) para auditoría y posible rollback; la versión previa a las reglas de frontera está versionada, con su procedencia, en `evaluation/data/sensibilidad_ajustes/prompt_gemini_pre_c72.txt`.
 
 ---
 

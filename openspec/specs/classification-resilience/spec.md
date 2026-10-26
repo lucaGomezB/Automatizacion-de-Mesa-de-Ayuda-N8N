@@ -2,9 +2,7 @@
 
 ## Purpose
 Define el contrato de resiliencia de la clasificacion semantica con Gemini ante fallas transitorias del proveedor: que fallas se reintentan y cuales no, como se acotan los reintentos (backoff, jitter, latencia total y costo), que ocurre al agotarlos y como se observa el proceso, de modo que una indisponibilidad transitoria no degrade indebidamente la clasificacion a revision humana.
-
 ## Requirements
-
 ### Requirement: Reintento acotado ante fallas transitorias del proveedor
 
 La clasificacion con Gemini SHALL reintentar una falla transitoria del proveedor hasta un maximo de intentos configurable, con espera exponencial creciente entre intentos y una componente de jitter. El numero de intentos y la latencia total de la operacion MUST quedar acotados por configuracion. Al agotarse el presupuesto de intentos o de latencia, el sistema SHALL dejar de reintentar y SHALL aplicar el fallback definido en el requisito de fallback tras agotar los reintentos. La clasificacion MUST NOT abandonar el bucle de reintentos antes de agotar el maximo de intentos configurado, salvo que se agote el presupuesto de latencia total.
@@ -198,19 +196,20 @@ El clasificador hibrido SHALL escalar a la etapa semantica cuando el resultado d
 
 ### Requirement: Clasificacion telefonica determinista-primero
 
-El canal telefonico SHALL beneficiarse del mismo pipeline que los canales correo y web: la etapa determinista se ejecuta primero sobre la descripcion pseudonimizada y, si alcanza la confianza calibrada, SHALL cortocircuitar la etapa semantica paga. Si el determinista no alcanza la confianza o senala ausencia de prediccion o ambiguedad, el pipeline SHALL escalar a la etapa semantica conforme al comportamiento vigente. Cuando la cascada escala para un incidente telefonico, la operacion paga SHALL quedar sujeta a la guarda de costo vigente del backend. El comportamiento SHALL ser identico al de correo y web.
+El canal telefonico SHALL beneficiarse del mismo pipeline que los canales correo y web: la etapa determinista se ejecuta primero sobre la descripcion pseudonimizada y, si su senal es dominante y su score de correctitud alcanza el punto de operacion vigente, SHALL cortocircuitar la etapa semantica paga. Si el score de correctitud queda por debajo del punto de operacion o el determinista senala ausencia de prediccion o ambiguedad, el pipeline SHALL escalar a la etapa semantica conforme al comportamiento vigente. La `confianza` determinista MUST NOT usarse como criterio de cortocircuito en este canal, igual que en correo y web. Cuando la cascada escala para un incidente telefonico, la operacion paga SHALL quedar sujeta a la guarda de costo vigente del backend. El comportamiento SHALL ser identico al de correo y web.
 
 #### Scenario: El cortocircuito determinista evita la llamada paga en telefonia
 
-- **WHEN** la etapa determinista alcanza la confianza calibrada sobre la descripcion pseudonimizada de un incidente telefonico
+- **WHEN** la etapa determinista tiene senal dominante y su score de correctitud alcanza el punto de operacion sobre la descripcion pseudonimizada de un incidente telefonico
 - **THEN** el pipeline omite la etapa semantica paga y persiste el resultado determinista
 
 #### Scenario: La escalacion de telefonia queda sujeta a la guarda
 
-- **WHEN** la etapa determinista no alcanza la confianza para un incidente telefonico y el pipeline escala
+- **WHEN** el score de correctitud de la etapa determinista queda por debajo del punto de operacion, o el determinista senala ausencia de prediccion o ambiguedad, para un incidente telefonico y el pipeline escala
 - **THEN** la operacion paga se reserva contra la superficie del backend conforme a la guarda vigente
 
 #### Scenario: El pipeline telefonico es el mismo que correo y web
 
 - **WHEN** se comparan los pasos de clasificacion de los tres canales
 - **THEN** los tres usan la etapa determinista primero, la etapa semantica como escalamiento y el fallback con revision humana
+

@@ -151,9 +151,13 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{2002, con enmiendas efectivas del 1 de junio de 2010 y del 1 de enero de 2017; consultado el 19 de octubre de 2026}
+      \field{note}{2002, con enmiendas efectivas del 1 de junio de 2010 y del 1 de enero de 2017}
       \field{title}{Ethical Principles of Psychologists and Code of Conduct}
+      \field{urlday}{19}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
       \field{year}{2017}
+      \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://www.apa.org/ethics/code
       \endverb
@@ -296,9 +300,13 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion tecnica}
+      \field{note}{Documentación técnica}
       \field{title}{{Apache Airflow} Documentation (Version 2.10)}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
       \field{year}{2024}
+      \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://airflow.apache.org/docs/
       \endverb
@@ -581,6 +589,81 @@
       \field{pages}{1877\bibrangedash 1901}
       \range{pages}{25}
     \endentry
+    \entry{OGC2011_itil}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=c743329a06b95ebbc50f27e1afc7bfd0}{%
+           family={{Cabinet Office}},
+           familyi={C\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {The Stationery Office}%
+      }
+      \strng{namehash}{c743329a06b95ebbc50f27e1afc7bfd0}
+      \strng{fullhash}{c743329a06b95ebbc50f27e1afc7bfd0}
+      \strng{fullhashraw}{c743329a06b95ebbc50f27e1afc7bfd0}
+      \strng{bibnamehash}{c743329a06b95ebbc50f27e1afc7bfd0}
+      \strng{authorbibnamehash}{c743329a06b95ebbc50f27e1afc7bfd0}
+      \strng{authornamehash}{c743329a06b95ebbc50f27e1afc7bfd0}
+      \strng{authorfullhash}{c743329a06b95ebbc50f27e1afc7bfd0}
+      \strng{authorfullhashraw}{c743329a06b95ebbc50f27e1afc7bfd0}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{978-0-11-331307-5}
+      \field{title}{{ITIL} Service Operation}
+      \field{year}{2011}
+    \endentry
+    \entry{Chen2024_frugalgpt}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=4722d1c517fb1393cd8f82862ffc9746}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Lingjiao},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=00dc518b94dfa6349c86e70661a1a5ef}{%
+           family={Zaharia},
+           familyi={Z\bibinitperiod},
+           given={Matei},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=1b868d50048a635fa27ffa744323fa41}{%
+           family={Zou},
+           familyi={Z\bibinitperiod},
+           given={James},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{f2a2f8e38b957734c44c48a88fe983d6}
+      \strng{fullhash}{a4e726228d1a1c5296ab3556cae89810}
+      \strng{fullhashraw}{a4e726228d1a1c5296ab3556cae89810}
+      \strng{bibnamehash}{a4e726228d1a1c5296ab3556cae89810}
+      \strng{authorbibnamehash}{a4e726228d1a1c5296ab3556cae89810}
+      \strng{authornamehash}{f2a2f8e38b957734c44c48a88fe983d6}
+      \strng{authorfullhash}{a4e726228d1a1c5296ab3556cae89810}
+      \strng{authorfullhashraw}{a4e726228d1a1c5296ab3556cae89810}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{2835-8856}
+      \field{journaltitle}{Transactions on Machine Learning Research}
+      \field{title}{{FrugalGPT}: How to Use Large Language Models While Reducing Cost and Improving Performance}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://openreview.net/forum?id=cSimKw5p6R
+      \endverb
+      \verb{url}
+      \verb https://openreview.net/forum?id=cSimKw5p6R
+      \endverb
+    \endentry
     \entry{Cohen1960_kappa}{article}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=eaad07ee1c6ef93a9308150f12c3c2eb}{%
@@ -598,6 +681,7 @@
       \strng{authornamehash}{eaad07ee1c6ef93a9308150f12c3c2eb}
       \strng{authorfullhash}{eaad07ee1c6ef93a9308150f12c3c2eb}
       \strng{authorfullhashraw}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \field{extraname}{1}
       \field{sortinit}{C}
       \field{sortinithash}{4d103a86280481745c9c897c925753c0}
       \field{extradatescope}{labelyear}
@@ -615,6 +699,39 @@
       \verb{doi}
       \verb 10.1177/001316446002000104
       \endverb
+    \endentry
+    \entry{Cohen1988_power_analysis}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=eaad07ee1c6ef93a9308150f12c3c2eb}{%
+           family={Cohen},
+           familyi={C\bibinitperiod},
+           given={Jacob},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Lawrence Erlbaum Associates}%
+      }
+      \strng{namehash}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \strng{fullhash}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \strng{fullhashraw}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \strng{bibnamehash}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \strng{authorbibnamehash}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \strng{authornamehash}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \strng{authorfullhash}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \strng{authorfullhashraw}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \field{extraname}{2}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{2}
+      \field{isbn}{0-8058-0283-5}
+      \field{title}{Statistical Power Analysis for the Behavioral Sciences}
+      \field{year}{1988}
     \endentry
     \entry{colavito2025benchmarking}{article}{}{}
       \name{author}{3}{}{%
@@ -733,7 +850,7 @@
       \field{labeltitlesource}{title}
       \field{edition}{8}
       \field{title}{An Introduction to Database Systems}
-      \field{year}{2003}
+      \field{year}{2004}
     \endentry
     \entry{DigitalOcean2026_pricing}{online}{}{}
       \name{author}{1}{}{%
@@ -756,7 +873,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Precio de lista consultado el 19 de octubre de 2026}
+      \field{note}{Precio de lista}
       \field{title}{Pricing --- {D}roplets}
       \field{urlday}{19}
       \field{urlmonth}{10}
@@ -768,6 +885,45 @@
       \endverb
       \verb{url}
       \verb https://www.digitalocean.com/pricing/droplets
+      \endverb
+    \endentry
+    \entry{Efron1993_bootstrap}{book}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=5470455fc7dceb3ccf6db38cb22a113d}{%
+           family={Efron},
+           familyi={E\bibinitperiod},
+           given={Bradley},
+           giveni={B\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=678c48302939b4b85d5ad2d85319617a}{%
+           family={Tibshirani},
+           familyi={T\bibinitperiod},
+           given={Robert\bibnamedelima J.},
+           giveni={R\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Chapman \& Hall}%
+      }
+      \strng{namehash}{5c03685c9f7f37796bba48432d40df61}
+      \strng{fullhash}{5c03685c9f7f37796bba48432d40df61}
+      \strng{fullhashraw}{5c03685c9f7f37796bba48432d40df61}
+      \strng{bibnamehash}{5c03685c9f7f37796bba48432d40df61}
+      \strng{authorbibnamehash}{5c03685c9f7f37796bba48432d40df61}
+      \strng{authornamehash}{5c03685c9f7f37796bba48432d40df61}
+      \strng{authorfullhash}{5c03685c9f7f37796bba48432d40df61}
+      \strng{authorfullhashraw}{5c03685c9f7f37796bba48432d40df61}
+      \field{sortinit}{E}
+      \field{sortinithash}{8da8a182d344d5b9047633dfc0cc9131}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{An Introduction to the Bootstrap}
+      \field{year}{1993}
+      \verb{doi}
+      \verb 10.1007/978-1-4899-4541-9
       \endverb
     \endentry
     \entry{Fielding2002_rest}{article}{}{}
@@ -832,7 +988,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion de la plataforma (capacidades y precios) consultada el 19 de octubre de 2026}
+      \field{note}{Documentación de la plataforma (capacidades y precios)}
       \field{title}{{Freshdesk} --- {S}oftware de soporte al cliente}
       \field{urlday}{19}
       \field{urlmonth}{10}
@@ -936,8 +1092,12 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Software de computadora. GitHub}
-      \field{title}{Automatización de Mesa de Ayuda {N8N} (Version 1.1.1)}
+      \field{title}{Automatización de Mesa de Ayuda {N8N} (Versión 1.2.0)}
+      \field{urlday}{26}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
       \field{year}{2026}
+      \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N
       \endverb
@@ -966,7 +1126,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Precios de lista consultados el 19 de octubre de 2026}
+      \field{note}{Precios de lista}
       \field{title}{{Vertex AI} {G}enerative {AI} Pricing}
       \field{urlday}{19}
       \field{urlmonth}{10}
@@ -1169,6 +1329,65 @@
       \verb https://aclanthology.org/2025.acl-long.1561/
       \endverb
     \endentry
+    \entry{Guo2017_calibration}{article}{}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=e053cf028522c39af65dd862da2d8ed1}{%
+           family={Guo},
+           familyi={G\bibinitperiod},
+           given={Chuan},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=373d04718ec0efd3786a0e2b6c0adf00}{%
+           family={Pleiss},
+           familyi={P\bibinitperiod},
+           given={Geoff},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=17b6a43f5598c7efd897f9d254090fdd}{%
+           family={Sun},
+           familyi={S\bibinitperiod},
+           given={Yu},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=68a0238356fbd88b34be8886f25938a7}{%
+           family={Weinberger},
+           familyi={W\bibinitperiod},
+           given={Kilian\bibnamedelima Q.},
+           giveni={K\bibinitperiod\bibinitdelim Q\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {PMLR}%
+      }
+      \strng{namehash}{203b115999f73097be6ab32411fb1f42}
+      \strng{fullhash}{f3833eed8ef776fc6c89f407c7d66c34}
+      \strng{fullhashraw}{f3833eed8ef776fc6c89f407c7d66c34}
+      \strng{bibnamehash}{f3833eed8ef776fc6c89f407c7d66c34}
+      \strng{authorbibnamehash}{f3833eed8ef776fc6c89f407c7d66c34}
+      \strng{authornamehash}{203b115999f73097be6ab32411fb1f42}
+      \strng{authorfullhash}{f3833eed8ef776fc6c89f407c7d66c34}
+      \strng{authorfullhashraw}{f3833eed8ef776fc6c89f407c7d66c34}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the 34th International Conference on Machine Learning (ICML 2017)}
+      \field{series}{Proceedings of Machine Learning Research}
+      \field{title}{On Calibration of Modern Neural Networks}
+      \field{volume}{70}
+      \field{year}{2017}
+      \field{pages}{1321\bibrangedash 1330}
+      \range{pages}{10}
+      \verb{urlraw}
+      \verb https://proceedings.mlr.press/v70/guo17a.html
+      \endverb
+      \verb{url}
+      \verb https://proceedings.mlr.press/v70/guo17a.html
+      \endverb
+    \endentry
     \entry{HernandezSampieri2018_metodologia}{book}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=82531f0c5173ef965e84d101f98cbf0a}{%
@@ -1265,12 +1484,156 @@
       \field{month}{10}
       \field{note}{Boletín Oficial de la República Argentina}
       \field{title}{Ley 25.326 de Protección de los Datos Personales}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
       \field{year}{2000}
+      \field{urldateera}{ce}
       \verb{urlraw}
       \verb http://servicios.infoleg.gob.ar/infolegInternet/anexos/60000-64999/64790/norma.htm
       \endverb
       \verb{url}
       \verb http://servicios.infoleg.gob.ar/infolegInternet/anexos/60000-64999/64790/norma.htm
+      \endverb
+    \endentry
+    \entry{ISO27002_2022}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=7058e4bd76f877c52b621c942b30613c}{%
+           family={{International Organization for Standardization}},
+           familyi={I\bibinitperiod}}}%
+      }
+      \name{shortauthor}{1}{}{%
+        {{un=0,uniquepart=base,hash=5b512ee8a59deb284ad0a6a035ba10b1}{%
+           family={ISO},
+           familyi={I\bibinitperiod}}}%
+      }
+      \strng{namehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{fullhash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{fullhashraw}{7058e4bd76f877c52b621c942b30613c}
+      \strng{bibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{authorbibnamehash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{authornamehash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{authorfullhash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{authorfullhashraw}{7058e4bd76f877c52b621c942b30613c}
+      \strng{shortauthorbibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{shortauthornamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{shortauthorfullhash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{shortauthorfullhashraw}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \field{extraname}{1}
+      \field{sortinit}{I}
+      \field{sortinithash}{8d291c51ee89b6cd86bf5379f0b151d8}
+      \field{extradate}{1}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{shortauthor}
+      \field{labeltitlesource}{title}
+      \field{number}{27002:2022}
+      \field{title}{Information security, cybersecurity and privacy protection --- Information security controls}
+      \field{type}{Norma ISO/IEC}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2022}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://webstore.iec.ch/en/publication/74287
+      \endverb
+      \verb{url}
+      \verb https://webstore.iec.ch/en/publication/74287
+      \endverb
+    \endentry
+    \entry{ISO27001_2022}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=7058e4bd76f877c52b621c942b30613c}{%
+           family={{International Organization for Standardization}},
+           familyi={I\bibinitperiod}}}%
+      }
+      \name{shortauthor}{1}{}{%
+        {{un=0,uniquepart=base,hash=5b512ee8a59deb284ad0a6a035ba10b1}{%
+           family={ISO},
+           familyi={I\bibinitperiod}}}%
+      }
+      \strng{namehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{fullhash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{fullhashraw}{7058e4bd76f877c52b621c942b30613c}
+      \strng{bibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{authorbibnamehash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{authornamehash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{authorfullhash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{authorfullhashraw}{7058e4bd76f877c52b621c942b30613c}
+      \strng{shortauthorbibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{shortauthornamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{shortauthorfullhash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{shortauthorfullhashraw}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \field{extraname}{2}
+      \field{sortinit}{I}
+      \field{sortinithash}{8d291c51ee89b6cd86bf5379f0b151d8}
+      \field{extradate}{2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{shortauthor}
+      \field{labeltitlesource}{title}
+      \field{number}{27001:2022}
+      \field{title}{Information security, cybersecurity and privacy protection --- Information security management systems --- Requirements}
+      \field{type}{Norma ISO/IEC}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2022}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://webstore.iec.ch/en/publication/79694
+      \endverb
+      \verb{url}
+      \verb https://webstore.iec.ch/en/publication/79694
+      \endverb
+    \endentry
+    \entry{ISO27701_2025}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=7058e4bd76f877c52b621c942b30613c}{%
+           family={{International Organization for Standardization}},
+           familyi={I\bibinitperiod}}}%
+      }
+      \name{shortauthor}{1}{}{%
+        {{un=0,uniquepart=base,hash=5b512ee8a59deb284ad0a6a035ba10b1}{%
+           family={ISO},
+           familyi={I\bibinitperiod}}}%
+      }
+      \strng{namehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{fullhash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{fullhashraw}{7058e4bd76f877c52b621c942b30613c}
+      \strng{bibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{authorbibnamehash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{authornamehash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{authorfullhash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{authorfullhashraw}{7058e4bd76f877c52b621c942b30613c}
+      \strng{shortauthorbibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{shortauthornamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{shortauthorfullhash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{shortauthorfullhashraw}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \field{extraname}{3}
+      \field{sortinit}{I}
+      \field{sortinithash}{8d291c51ee89b6cd86bf5379f0b151d8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{shortauthor}
+      \field{labeltitlesource}{title}
+      \field{number}{27701:2025}
+      \field{title}{Information security, cybersecurity and privacy protection --- Privacy information management systems --- Requirements and guidance}
+      \field{type}{Norma ISO/IEC}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2025}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://webstore.iec.ch/en/publication/110123
+      \endverb
+      \verb{url}
+      \verb https://webstore.iec.ch/en/publication/110123
       \endverb
     \endentry
     \entry{Ji2023_hallucination}{article}{}{}
@@ -1401,9 +1764,19 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Borrador de la 3ra edicion, disponible en el sitio de los autores}
-      \field{title}{Speech and Language Processing: An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition}
-      \field{year}{2023}
+      \field{note}{Borrador de la 3.a edición, versión del 19 de agosto de 2026}
+      \field{title}{Speech and Language Processing: An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition with Language Models}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://web.stanford.edu/~jurafsky/slp3/
+      \endverb
+      \verb{url}
+      \verb https://web.stanford.edu/~jurafsky/slp3/
+      \endverb
     \endentry
     \entry{Ladas2009_scrumban}{book}{}{}
       \name{author}{1}{}{%
@@ -1614,6 +1987,9 @@
            giveni={R\bibinitperiod},
            givenun=0}}%
       }
+      \list{location}{1}{%
+        {Trondheim, Norway}%
+      }
       \list{publisher}{1}{%
         {ACM}%
       }
@@ -1632,7 +2008,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{Proceedings of the 33rd ACM International Conference on the Foundations of Software Engineering (FSE)}
+      \field{journaltitle}{Proceedings of the 33rd ACM International Conference on the Foundations of Software Engineering (FSE Companion '25)}
       \field{title}{TickIt: Leveraging Large Language Models for Automated Ticket Escalation}
       \field{year}{2025}
       \field{pages}{343\bibrangedash 354}
@@ -1702,7 +2078,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Applied Linguistics}
-      \field{note}{Advance article; volume/pages pending}
+      \field{note}{Advance article, volume/pages pending}
       \field{title}{Evaluating large language models with tests of {S}panish as a foreign language: pass or fail?}
       \field{year}{2026}
       \verb{doi}
@@ -1801,9 +2177,13 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion tecnica oficial}
+      \field{note}{Documentación técnica oficial}
       \field{title}{{n8n} Documentation}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
       \field{year}{2024}
+      \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://docs.n8n.io/
       \endverb
@@ -1811,33 +2191,43 @@
       \verb https://docs.n8n.io/
       \endverb
     \endentry
-    \entry{OGC2011_itil}{book}{}{}
+    \entry{NIST2024_csf}{report}{}{}
       \name{author}{1}{}{%
-        {{un=0,uniquepart=base,hash=81febe3daa1ad283f5641d79d2d623ed}{%
-           family={{Office of Government Commerce}},
-           familyi={O\bibinitperiod}}}%
+        {{hash=ef9cb61878e61d434507444346b29d1a}{%
+           family={{National Institute of Standards and Technology}},
+           familyi={N\bibinitperiod}}}%
       }
-      \list{publisher}{1}{%
-        {The Stationery Office}%
+      \name{shortauthor}{1}{}{%
+        {{un=0,uniquepart=base,hash=a44b6b00e5eebd7494e1fd00658685e2}{%
+           family={NIST},
+           familyi={N\bibinitperiod}}}%
       }
-      \strng{namehash}{81febe3daa1ad283f5641d79d2d623ed}
-      \strng{fullhash}{81febe3daa1ad283f5641d79d2d623ed}
-      \strng{fullhashraw}{81febe3daa1ad283f5641d79d2d623ed}
-      \strng{bibnamehash}{81febe3daa1ad283f5641d79d2d623ed}
-      \strng{authorbibnamehash}{81febe3daa1ad283f5641d79d2d623ed}
-      \strng{authornamehash}{81febe3daa1ad283f5641d79d2d623ed}
-      \strng{authorfullhash}{81febe3daa1ad283f5641d79d2d623ed}
-      \strng{authorfullhashraw}{81febe3daa1ad283f5641d79d2d623ed}
-      \field{sortinit}{O}
-      \field{sortinithash}{2cd7140a07aea5341f9e2771efe90aae}
+      \strng{namehash}{a44b6b00e5eebd7494e1fd00658685e2}
+      \strng{fullhash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{fullhashraw}{ef9cb61878e61d434507444346b29d1a}
+      \strng{bibnamehash}{a44b6b00e5eebd7494e1fd00658685e2}
+      \strng{authorbibnamehash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{authornamehash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{authorfullhash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{authorfullhashraw}{ef9cb61878e61d434507444346b29d1a}
+      \strng{shortauthorbibnamehash}{a44b6b00e5eebd7494e1fd00658685e2}
+      \strng{shortauthornamehash}{a44b6b00e5eebd7494e1fd00658685e2}
+      \strng{shortauthorfullhash}{a44b6b00e5eebd7494e1fd00658685e2}
+      \strng{shortauthorfullhashraw}{a44b6b00e5eebd7494e1fd00658685e2}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
-      \field{labelnamesource}{author}
+      \field{labelnamesource}{shortauthor}
       \field{labeltitlesource}{title}
-      \field{note}{Publicado por encargo del Office of Government Commerce; la titularidad de ITIL es hoy de la herencia AXELOS/PeopleCert}
-      \field{title}{{ITIL} Service Operation}
-      \field{year}{2011}
+      \field{number}{29}
+      \field{title}{The {NIST} Cybersecurity Framework ({CSF}) 2.0}
+      \field{type}{NIST Cybersecurity White Paper}
+      \field{year}{2024}
+      \verb{doi}
+      \verb 10.6028/NIST.CSWP.29
+      \endverb
     \endentry
     \entry{paket2024itservice}{article}{}{}
       \name{author}{4}{}{%
@@ -1914,6 +2304,28 @@
            giveni={K\bibinitperiod\bibinitdelim S\bibinitperiod},
            givenun=0}}%
       }
+      \name{editor}{4}{}{%
+        {{hash=a04ba74ab12224106701f314e30a5880}{%
+           family={Nagabhushan},
+           familyi={N\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+        {{hash=75007f4ccf3eb7aa5602ef1c50c90a12}{%
+           family={Guru},
+           familyi={G\bibinitperiod},
+           given={D.\bibnamedelimi S.},
+           giveni={D\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+        {{hash=5b6c3f75ba18d12a72bc00d54df49783}{%
+           family={Shekar},
+           familyi={S\bibinitperiod},
+           given={B.\bibnamedelimi H.},
+           giveni={B\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+        {{hash=7e462a3d6d6640042021bcf832e606ca}{%
+           family={Sharath\bibnamedelima Kumar},
+           familyi={S\bibinitperiod\bibinitdelim K\bibinitperiod},
+           given={Y.\bibnamedelimi H.},
+           giveni={Y\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+      }
       \list{publisher}{1}{%
         {Springer}%
       }
@@ -1925,6 +2337,10 @@
       \strng{authornamehash}{9e94c8bdf3e16bc625ad3ea0b6c520a4}
       \strng{authorfullhash}{9e94c8bdf3e16bc625ad3ea0b6c520a4}
       \strng{authorfullhashraw}{9e94c8bdf3e16bc625ad3ea0b6c520a4}
+      \strng{editorbibnamehash}{11aa50eb3b0d64d0b9f29a9a84da9f6a}
+      \strng{editornamehash}{48f61dd373c03ea943375c031b9b6580}
+      \strng{editorfullhash}{11aa50eb3b0d64d0b9f29a9a84da9f6a}
+      \strng{editorfullhashraw}{11aa50eb3b0d64d0b9f29a9a84da9f6a}
       \field{sortinit}{P}
       \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
       \field{extradatescope}{labelyear}
@@ -1932,7 +2348,9 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{booktitle}{Lecture Notes in Networks and Systems}
+      \field{booksubtitle}{Proceedings of {DAL} 2018}
+      \field{booktitle}{Data Analytics and Learning}
+      \field{series}{Lecture Notes in Networks and Systems}
       \field{title}{Automated IT Service Desk Systems Using Machine Learning Techniques}
       \field{volume}{43}
       \field{year}{2019}
@@ -1966,7 +2384,17 @@
       \field{month}{4}
       \field{note}{Diario Oficial de la Unión Europea, L 119/1}
       \field{title}{Reglamento ({UE}) 2016/679 --- {R}eglamento General de Protección de Datos}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
       \field{year}{2016}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://eur-lex.europa.eu/eli/reg/2016/679/oj
+      \endverb
+      \verb{url}
+      \verb https://eur-lex.europa.eu/eli/reg/2016/679/oj
+      \endverb
     \endentry
     \entry{Pedregosa2011_scikit_learn}{article}{}{}
       \name{author}{16}{}{%
@@ -2088,6 +2516,42 @@
       \field{year}{2011}
       \field{pages}{2825\bibrangedash 2830}
       \range{pages}{6}
+    \endentry
+    \entry{Decreto1558_2001}{misc}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=9f31ae5841cd1fc4dc33535a609a7154}{%
+           family={{Poder Ejecutivo Nacional}},
+           familyi={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{9f31ae5841cd1fc4dc33535a609a7154}
+      \strng{fullhash}{9f31ae5841cd1fc4dc33535a609a7154}
+      \strng{fullhashraw}{9f31ae5841cd1fc4dc33535a609a7154}
+      \strng{bibnamehash}{9f31ae5841cd1fc4dc33535a609a7154}
+      \strng{authorbibnamehash}{9f31ae5841cd1fc4dc33535a609a7154}
+      \strng{authornamehash}{9f31ae5841cd1fc4dc33535a609a7154}
+      \strng{authorfullhash}{9f31ae5841cd1fc4dc33535a609a7154}
+      \strng{authorfullhashraw}{9f31ae5841cd1fc4dc33535a609a7154}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{11}
+      \field{note}{Boletín Oficial de la República Argentina, 3 de diciembre de 2001}
+      \field{title}{Decreto 1558/2001: Reglamentación de la Ley 25.326 de Protección de los Datos Personales}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2001}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb http://servicios.infoleg.gob.ar/infolegInternet/anexos/70000-74999/70368/norma.htm
+      \endverb
+      \verb{url}
+      \verb http://servicios.infoleg.gob.ar/infolegInternet/anexos/70000-74999/70368/norma.htm
+      \endverb
     \endentry
     \entry{Powers2011_evaluation}{article}{}{}
       \name{author}{1}{}{%
@@ -2254,6 +2718,44 @@
       \field{pages}{28492\bibrangedash 28518}
       \range{pages}{27}
     \endentry
+    \entry{Tiangolo2024_fastapi}{manual}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=f5305ee02dd2a5c6215b53401b4a10b0}{%
+           family={Ramírez},
+           familyi={R\bibinitperiod},
+           given={Sebastián},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{f5305ee02dd2a5c6215b53401b4a10b0}
+      \strng{fullhash}{f5305ee02dd2a5c6215b53401b4a10b0}
+      \strng{fullhashraw}{f5305ee02dd2a5c6215b53401b4a10b0}
+      \strng{bibnamehash}{f5305ee02dd2a5c6215b53401b4a10b0}
+      \strng{authorbibnamehash}{f5305ee02dd2a5c6215b53401b4a10b0}
+      \strng{authornamehash}{f5305ee02dd2a5c6215b53401b4a10b0}
+      \strng{authorfullhash}{f5305ee02dd2a5c6215b53401b4a10b0}
+      \strng{authorfullhashraw}{f5305ee02dd2a5c6215b53401b4a10b0}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Documentación técnica oficial}
+      \field{title}{{FastAPI} Documentation}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://fastapi.tiangolo.com/
+      \endverb
+      \verb{url}
+      \verb https://fastapi.tiangolo.com/
+      \endverb
+    \endentry
     \entry{ramonferrer2026tripletotext}{article}{}{}
       \name{author}{3}{}{%
         {{un=0,uniquepart=base,hash=e6cf35ddfce986b6b34f176e58d5de36}{%
@@ -2409,9 +2911,13 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Ministerio de Economía de la Nación Argentina; consultado el 19 de octubre de 2026}
+      \field{note}{Ministerio de Economía de la Nación Argentina}
       \field{title}{{¿}Qué es una {MiPyME}?}
+      \field{urlday}{19}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
       \field{year}{2026}
+      \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://www.argentina.gob.ar/produccion/registrar-una-pyme/que-es-una-pyme
       \endverb
@@ -2440,7 +2946,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion de la plataforma (capacidades y precios) consultada el 19 de octubre de 2026}
+      \field{note}{Documentación de la plataforma (capacidades y precios)}
       \field{title}{{ServiceNow} {ITSM}}
       \field{urlday}{19}
       \field{urlmonth}{10}
@@ -2571,7 +3077,7 @@
       \field{labeltitlesource}{title}
       \field{edition}{4}
       \field{title}{Computer Security: Principles and Practice}
-      \field{year}{2017}
+      \field{year}{2018}
     \endentry
     \entry{PostgreSQL2024_docs}{manual}{}{}
       \name{author}{1}{}{%
@@ -2594,9 +3100,13 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion tecnica oficial}
+      \field{note}{Documentación técnica oficial}
       \field{title}{{PostgreSQL} 15 Documentation}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
       \field{year}{2024}
+      \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://www.postgresql.org/docs/15/
       \endverb
@@ -2604,23 +3114,68 @@
       \verb https://www.postgresql.org/docs/15/
       \endverb
     \endentry
-    \entry{Tiangolo2024_fastapi}{manual}{}{}
-      \name{author}{1}{}{%
-        {{un=0,uniquepart=base,hash=223d828339f8033ceb273f7dfcbc556c}{%
-           family={Tiangolo},
+    \entry{Tian2023_verbalized_confidence}{article}{}{}
+      \name{author}{8}{}{%
+        {{un=0,uniquepart=base,hash=14d0da9723d355c9cc411b0daaf91473}{%
+           family={Tian},
            familyi={T\bibinitperiod},
-           given={Sebastián\bibnamedelima Ramírez},
-           giveni={S\bibinitperiod\bibinitdelim R\bibinitperiod},
+           given={Katherine},
+           giveni={K\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b9441ad4287a1b5f251258a6fd6afb3a}{%
+           family={Mitchell},
+           familyi={M\bibinitperiod},
+           given={Eric},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0a5513f7fd0315dca73a5f522838f1f4}{%
+           family={Zhou},
+           familyi={Z\bibinitperiod},
+           given={Allan},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d6e9caed0d49d143fa1bf05559bc7c20}{%
+           family={Sharma},
+           familyi={S\bibinitperiod},
+           given={Archit},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ba3b0dbc0637707e13b68258120d22ca}{%
+           family={Rafailov},
+           familyi={R\bibinitperiod},
+           given={Rafael},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3b115344acb9ff313d507977648f7ece}{%
+           family={Yao},
+           familyi={Y\bibinitperiod},
+           given={Huaxiu},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=058e82495825ae376c6a96a12169e6ee}{%
+           family={Finn},
+           familyi={F\bibinitperiod},
+           given={Chelsea},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=2214edb8305f7ccd7cdc310b3a8ae1b4}{%
+           family={Manning},
+           familyi={M\bibinitperiod},
+           given={Christopher\bibnamedelima D.},
+           giveni={C\bibinitperiod\bibinitdelim D\bibinitperiod},
            givenun=0}}%
       }
-      \strng{namehash}{223d828339f8033ceb273f7dfcbc556c}
-      \strng{fullhash}{223d828339f8033ceb273f7dfcbc556c}
-      \strng{fullhashraw}{223d828339f8033ceb273f7dfcbc556c}
-      \strng{bibnamehash}{223d828339f8033ceb273f7dfcbc556c}
-      \strng{authorbibnamehash}{223d828339f8033ceb273f7dfcbc556c}
-      \strng{authornamehash}{223d828339f8033ceb273f7dfcbc556c}
-      \strng{authorfullhash}{223d828339f8033ceb273f7dfcbc556c}
-      \strng{authorfullhashraw}{223d828339f8033ceb273f7dfcbc556c}
+      \list{publisher}{1}{%
+        {Association for Computational Linguistics}%
+      }
+      \strng{namehash}{3ea9e6078e180b006e3c94b3557b39df}
+      \strng{fullhash}{e7ca567f605838879984505191bbd027}
+      \strng{fullhashraw}{e7ca567f605838879984505191bbd027}
+      \strng{bibnamehash}{e7ca567f605838879984505191bbd027}
+      \strng{authorbibnamehash}{e7ca567f605838879984505191bbd027}
+      \strng{authornamehash}{3ea9e6078e180b006e3c94b3557b39df}
+      \strng{authorfullhash}{e7ca567f605838879984505191bbd027}
+      \strng{authorfullhashraw}{e7ca567f605838879984505191bbd027}
       \field{sortinit}{T}
       \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
       \field{extradatescope}{labelyear}
@@ -2628,14 +3183,19 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion tecnica oficial}
-      \field{title}{{FastAPI} Documentation}
-      \field{year}{2024}
+      \field{journaltitle}{Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing (EMNLP 2023)}
+      \field{title}{Just Ask for Calibration: Strategies for Eliciting Calibrated Confidence Scores from Language Models Fine-Tuned with Human Feedback}
+      \field{year}{2023}
+      \field{pages}{5433\bibrangedash 5442}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.18653/v1/2023.emnlp-main.330
+      \endverb
       \verb{urlraw}
-      \verb https://fastapi.tiangolo.com/
+      \verb https://doi.org/10.18653/v1/2023.emnlp-main.330
       \endverb
       \verb{url}
-      \verb https://fastapi.tiangolo.com/
+      \verb https://doi.org/10.18653/v1/2023.emnlp-main.330
       \endverb
     \endentry
     \entry{Touvron2023_llama2}{misc}{}{}
@@ -3077,6 +3637,54 @@
       \verb 2307.09288
       \endverb
     \endentry
+    \entry{Varshney2022_model_cascading}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=0e824b6ad92d00940e0d061061b7fabe}{%
+           family={Varshney},
+           familyi={V\bibinitperiod},
+           given={Neeraj},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=121708a74e1528d506fc79a1638d9e8f}{%
+           family={Baral},
+           familyi={B\bibinitperiod},
+           given={Chitta},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computational Linguistics}%
+      }
+      \strng{namehash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{fullhash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{fullhashraw}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{bibnamehash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{authorbibnamehash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{authornamehash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{authorfullhash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{authorfullhashraw}{62bff4318108a0c499c4fb3d08fe17ba}
+      \field{sortinit}{V}
+      \field{sortinithash}{afb52128e5b4dc4b843768c0113d673b}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing (EMNLP 2022)}
+      \field{title}{Model Cascading: Towards Jointly Improving Efficiency and Accuracy of {NLP} Systems}
+      \field{year}{2022}
+      \field{pages}{11007\bibrangedash 11021}
+      \range{pages}{15}
+      \verb{doi}
+      \verb 10.18653/v1/2022.emnlp-main.756
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.18653/v1/2022.emnlp-main.756
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.18653/v1/2022.emnlp-main.756
+      \endverb
+    \endentry
     \entry{Vaswani2017_attention}{article}{}{}
       \name{author}{8}{}{%
         {{un=0,uniquepart=base,hash=7f28e84700536646dd6620a0db07ad09}{%
@@ -3411,12 +4019,51 @@
       \field{labeltitlesource}{title}
       \field{note}{Manifiesto de arquitectura de software}
       \field{title}{The Twelve-Factor App}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
       \field{year}{2017}
+      \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://12factor.net/
       \endverb
       \verb{url}
       \verb https://12factor.net/
+      \endverb
+    \endentry
+    \entry{Wilcoxon1945_individual_comparisons}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=405b308b1e8e33ef3275bf6cb9c9b281}{%
+           family={Wilcoxon},
+           familyi={W\bibinitperiod},
+           given={Frank},
+           giveni={F\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{405b308b1e8e33ef3275bf6cb9c9b281}
+      \strng{fullhash}{405b308b1e8e33ef3275bf6cb9c9b281}
+      \strng{fullhashraw}{405b308b1e8e33ef3275bf6cb9c9b281}
+      \strng{bibnamehash}{405b308b1e8e33ef3275bf6cb9c9b281}
+      \strng{authorbibnamehash}{405b308b1e8e33ef3275bf6cb9c9b281}
+      \strng{authornamehash}{405b308b1e8e33ef3275bf6cb9c9b281}
+      \strng{authorfullhash}{405b308b1e8e33ef3275bf6cb9c9b281}
+      \strng{authorfullhashraw}{405b308b1e8e33ef3275bf6cb9c9b281}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Biometrics Bulletin}
+      \field{number}{6}
+      \field{title}{Individual Comparisons by Ranking Methods}
+      \field{volume}{1}
+      \field{year}{1945}
+      \field{pages}{80\bibrangedash 83}
+      \range{pages}{4}
+      \verb{doi}
+      \verb 10.2307/3001968
       \endverb
     \endentry
     \entry{Wilson1927_probable_inference}{article}{}{}
@@ -3506,6 +4153,76 @@
       \endverb
       \verb{url}
       \verb https://doi.org/10.1145/3491102.3517582
+      \endverb
+    \endentry
+    \entry{Xiong2024_confidence_elicitation}{article}{}{}
+      \name{author}{7}{}{%
+        {{un=0,uniquepart=base,hash=c6fc8978db42ed2a39aed9ee5e002ffb}{%
+           family={Xiong},
+           familyi={X\bibinitperiod},
+           given={Miao},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ed366d1e427ae77f2ebc1a184bf85dcb}{%
+           family={Hu},
+           familyi={H\bibinitperiod},
+           given={Zhiyuan},
+           giveni={Z\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=bb8ec0d106efdfe2df3eb5baae20a610}{%
+           family={Lu},
+           familyi={L\bibinitperiod},
+           given={Xinyang},
+           giveni={X\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7c067c709e7a1f9fed426206033b51d5}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Yifei},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=f0ae8cd7eb0b07fe71e1654376c0fc0e}{%
+           family={Fu},
+           familyi={F\bibinitperiod},
+           given={Jie},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=2883148bd3351a45d72c69b1a91dbd79}{%
+           family={He},
+           familyi={H\bibinitperiod},
+           given={Junxian},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b5c2ebc85fb8cba01d66e9eaaae19fd1}{%
+           family={Hooi},
+           familyi={H\bibinitperiod},
+           given={Bryan},
+           giveni={B\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{013ba0b2a1af0ba7815401fbfb638dc6}
+      \strng{fullhash}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \strng{fullhashraw}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \strng{bibnamehash}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \strng{authorbibnamehash}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \strng{authornamehash}{013ba0b2a1af0ba7815401fbfb638dc6}
+      \strng{authorfullhash}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \strng{authorfullhashraw}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \field{sortinit}{X}
+      \field{sortinithash}{1965c258adceecf23ce3d67b05113442}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{The Twelfth International Conference on Learning Representations (ICLR 2024)}
+      \field{title}{Can {LLMs} Express Their Uncertainty? An Empirical Evaluation of Confidence Elicitation in {LLMs}}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://openreview.net/forum?id=gjeQKFxFpZ
+      \endverb
+      \verb{url}
+      \verb https://openreview.net/forum?id=gjeQKFxFpZ
       \endverb
     \endentry
     \entry{xuan2025mmluprox}{article}{}{}
@@ -3864,7 +4581,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion de la plataforma (capacidades y precios) consultada el 19 de octubre de 2026}
+      \field{note}{Documentación de la plataforma (capacidades y precios)}
       \field{title}{{Zendesk} {S}uite --- {S}oftware de mesa de ayuda}
       \field{urlday}{19}
       \field{urlmonth}{10}
@@ -3945,6 +4662,71 @@
       \endverb
       \verb{url}
       \verb https://aclanthology.org/2023.emnlp-main.774/
+      \endverb
+    \endentry
+    \entry{Zhao2021_calibrate_before_use}{article}{}{}
+      \name{author}{5}{}{%
+        {{un=0,uniquepart=base,hash=396bf132d19d9792c2ce86de28419896}{%
+           family={Zhao},
+           familyi={Z\bibinitperiod},
+           given={Zihao},
+           giveni={Z\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=f7bf50210206dec5bb19e32a74e1a580}{%
+           family={Wallace},
+           familyi={W\bibinitperiod},
+           given={Eric},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=1fdbe6573824ffd09db88df8bfcf769f}{%
+           family={Feng},
+           familyi={F\bibinitperiod},
+           given={Shi},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=9fb237891a1517d36109c68767dd6fae}{%
+           family={Klein},
+           familyi={K\bibinitperiod},
+           given={Dan},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0b9694812f0dc77974d99bb875a76d48}{%
+           family={Singh},
+           familyi={S\bibinitperiod},
+           given={Sameer},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {PMLR}%
+      }
+      \strng{namehash}{1a9a9295531bb5a924ddd4d69b26eb38}
+      \strng{fullhash}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \strng{fullhashraw}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \strng{bibnamehash}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \strng{authorbibnamehash}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \strng{authornamehash}{1a9a9295531bb5a924ddd4d69b26eb38}
+      \strng{authorfullhash}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \strng{authorfullhashraw}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \field{sortinit}{Z}
+      \field{sortinithash}{96892c0b0a36bb8557c40c49813d48b3}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the 38th International Conference on Machine Learning (ICML 2021)}
+      \field{series}{Proceedings of Machine Learning Research}
+      \field{title}{Calibrate Before Use: Improving Few-Shot Performance of Language Models}
+      \field{volume}{139}
+      \field{year}{2021}
+      \field{pages}{12697\bibrangedash 12706}
+      \range{pages}{10}
+      \verb{urlraw}
+      \verb https://proceedings.mlr.press/v139/zhao21c.html
+      \endverb
+      \verb{url}
+      \verb https://proceedings.mlr.press/v139/zhao21c.html
       \endverb
     \endentry
   \enddatalist
@@ -4081,9 +4863,13 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{2002, con enmiendas efectivas del 1 de junio de 2010 y del 1 de enero de 2017; consultado el 19 de octubre de 2026}
+      \field{note}{2002, con enmiendas efectivas del 1 de junio de 2010 y del 1 de enero de 2017}
       \field{title}{Ethical Principles of Psychologists and Code of Conduct}
+      \field{urlday}{19}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
       \field{year}{2017}
+      \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://www.apa.org/ethics/code
       \endverb
@@ -4226,9 +5012,13 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion tecnica}
+      \field{note}{Documentación técnica}
       \field{title}{{Apache Airflow} Documentation (Version 2.10)}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
       \field{year}{2024}
+      \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://airflow.apache.org/docs/
       \endverb
@@ -4511,6 +5301,81 @@
       \field{pages}{1877\bibrangedash 1901}
       \range{pages}{25}
     \endentry
+    \entry{OGC2011_itil}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=c743329a06b95ebbc50f27e1afc7bfd0}{%
+           family={{Cabinet Office}},
+           familyi={C\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {The Stationery Office}%
+      }
+      \strng{namehash}{c743329a06b95ebbc50f27e1afc7bfd0}
+      \strng{fullhash}{c743329a06b95ebbc50f27e1afc7bfd0}
+      \strng{fullhashraw}{c743329a06b95ebbc50f27e1afc7bfd0}
+      \strng{bibnamehash}{c743329a06b95ebbc50f27e1afc7bfd0}
+      \strng{authorbibnamehash}{c743329a06b95ebbc50f27e1afc7bfd0}
+      \strng{authornamehash}{c743329a06b95ebbc50f27e1afc7bfd0}
+      \strng{authorfullhash}{c743329a06b95ebbc50f27e1afc7bfd0}
+      \strng{authorfullhashraw}{c743329a06b95ebbc50f27e1afc7bfd0}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{978-0-11-331307-5}
+      \field{title}{{ITIL} Service Operation}
+      \field{year}{2011}
+    \endentry
+    \entry{Chen2024_frugalgpt}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=4722d1c517fb1393cd8f82862ffc9746}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Lingjiao},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=00dc518b94dfa6349c86e70661a1a5ef}{%
+           family={Zaharia},
+           familyi={Z\bibinitperiod},
+           given={Matei},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=1b868d50048a635fa27ffa744323fa41}{%
+           family={Zou},
+           familyi={Z\bibinitperiod},
+           given={James},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{f2a2f8e38b957734c44c48a88fe983d6}
+      \strng{fullhash}{a4e726228d1a1c5296ab3556cae89810}
+      \strng{fullhashraw}{a4e726228d1a1c5296ab3556cae89810}
+      \strng{bibnamehash}{a4e726228d1a1c5296ab3556cae89810}
+      \strng{authorbibnamehash}{a4e726228d1a1c5296ab3556cae89810}
+      \strng{authornamehash}{f2a2f8e38b957734c44c48a88fe983d6}
+      \strng{authorfullhash}{a4e726228d1a1c5296ab3556cae89810}
+      \strng{authorfullhashraw}{a4e726228d1a1c5296ab3556cae89810}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{2835-8856}
+      \field{journaltitle}{Transactions on Machine Learning Research}
+      \field{title}{{FrugalGPT}: How to Use Large Language Models While Reducing Cost and Improving Performance}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://openreview.net/forum?id=cSimKw5p6R
+      \endverb
+      \verb{url}
+      \verb https://openreview.net/forum?id=cSimKw5p6R
+      \endverb
+    \endentry
     \entry{Cohen1960_kappa}{article}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=eaad07ee1c6ef93a9308150f12c3c2eb}{%
@@ -4528,6 +5393,7 @@
       \strng{authornamehash}{eaad07ee1c6ef93a9308150f12c3c2eb}
       \strng{authorfullhash}{eaad07ee1c6ef93a9308150f12c3c2eb}
       \strng{authorfullhashraw}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \field{extraname}{1}
       \field{sortinit}{C}
       \field{sortinithash}{4d103a86280481745c9c897c925753c0}
       \field{extradatescope}{labelyear}
@@ -4545,6 +5411,39 @@
       \verb{doi}
       \verb 10.1177/001316446002000104
       \endverb
+    \endentry
+    \entry{Cohen1988_power_analysis}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=eaad07ee1c6ef93a9308150f12c3c2eb}{%
+           family={Cohen},
+           familyi={C\bibinitperiod},
+           given={Jacob},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Lawrence Erlbaum Associates}%
+      }
+      \strng{namehash}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \strng{fullhash}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \strng{fullhashraw}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \strng{bibnamehash}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \strng{authorbibnamehash}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \strng{authornamehash}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \strng{authorfullhash}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \strng{authorfullhashraw}{eaad07ee1c6ef93a9308150f12c3c2eb}
+      \field{extraname}{2}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{2}
+      \field{isbn}{0-8058-0283-5}
+      \field{title}{Statistical Power Analysis for the Behavioral Sciences}
+      \field{year}{1988}
     \endentry
     \entry{colavito2025benchmarking}{article}{}{}
       \name{author}{3}{}{%
@@ -4663,7 +5562,7 @@
       \field{labeltitlesource}{title}
       \field{edition}{8}
       \field{title}{An Introduction to Database Systems}
-      \field{year}{2003}
+      \field{year}{2004}
     \endentry
     \entry{DigitalOcean2026_pricing}{online}{}{}
       \name{author}{1}{}{%
@@ -4686,7 +5585,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Precio de lista consultado el 19 de octubre de 2026}
+      \field{note}{Precio de lista}
       \field{title}{Pricing --- {D}roplets}
       \field{urlday}{19}
       \field{urlmonth}{10}
@@ -4698,6 +5597,45 @@
       \endverb
       \verb{url}
       \verb https://www.digitalocean.com/pricing/droplets
+      \endverb
+    \endentry
+    \entry{Efron1993_bootstrap}{book}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=5470455fc7dceb3ccf6db38cb22a113d}{%
+           family={Efron},
+           familyi={E\bibinitperiod},
+           given={Bradley},
+           giveni={B\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=678c48302939b4b85d5ad2d85319617a}{%
+           family={Tibshirani},
+           familyi={T\bibinitperiod},
+           given={Robert\bibnamedelima J.},
+           giveni={R\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Chapman \& Hall}%
+      }
+      \strng{namehash}{5c03685c9f7f37796bba48432d40df61}
+      \strng{fullhash}{5c03685c9f7f37796bba48432d40df61}
+      \strng{fullhashraw}{5c03685c9f7f37796bba48432d40df61}
+      \strng{bibnamehash}{5c03685c9f7f37796bba48432d40df61}
+      \strng{authorbibnamehash}{5c03685c9f7f37796bba48432d40df61}
+      \strng{authornamehash}{5c03685c9f7f37796bba48432d40df61}
+      \strng{authorfullhash}{5c03685c9f7f37796bba48432d40df61}
+      \strng{authorfullhashraw}{5c03685c9f7f37796bba48432d40df61}
+      \field{sortinit}{E}
+      \field{sortinithash}{8da8a182d344d5b9047633dfc0cc9131}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{An Introduction to the Bootstrap}
+      \field{year}{1993}
+      \verb{doi}
+      \verb 10.1007/978-1-4899-4541-9
       \endverb
     \endentry
     \entry{Fielding2002_rest}{article}{}{}
@@ -4762,7 +5700,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion de la plataforma (capacidades y precios) consultada el 19 de octubre de 2026}
+      \field{note}{Documentación de la plataforma (capacidades y precios)}
       \field{title}{{Freshdesk} --- {S}oftware de soporte al cliente}
       \field{urlday}{19}
       \field{urlmonth}{10}
@@ -4866,8 +5804,12 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Software de computadora. GitHub}
-      \field{title}{Automatización de Mesa de Ayuda {N8N} (Version 1.1.1)}
+      \field{title}{Automatización de Mesa de Ayuda {N8N} (Versión 1.2.0)}
+      \field{urlday}{26}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
       \field{year}{2026}
+      \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N
       \endverb
@@ -4896,7 +5838,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Precios de lista consultados el 19 de octubre de 2026}
+      \field{note}{Precios de lista}
       \field{title}{{Vertex AI} {G}enerative {AI} Pricing}
       \field{urlday}{19}
       \field{urlmonth}{10}
@@ -5099,6 +6041,65 @@
       \verb https://aclanthology.org/2025.acl-long.1561/
       \endverb
     \endentry
+    \entry{Guo2017_calibration}{article}{}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=e053cf028522c39af65dd862da2d8ed1}{%
+           family={Guo},
+           familyi={G\bibinitperiod},
+           given={Chuan},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=373d04718ec0efd3786a0e2b6c0adf00}{%
+           family={Pleiss},
+           familyi={P\bibinitperiod},
+           given={Geoff},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=17b6a43f5598c7efd897f9d254090fdd}{%
+           family={Sun},
+           familyi={S\bibinitperiod},
+           given={Yu},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=68a0238356fbd88b34be8886f25938a7}{%
+           family={Weinberger},
+           familyi={W\bibinitperiod},
+           given={Kilian\bibnamedelima Q.},
+           giveni={K\bibinitperiod\bibinitdelim Q\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {PMLR}%
+      }
+      \strng{namehash}{203b115999f73097be6ab32411fb1f42}
+      \strng{fullhash}{f3833eed8ef776fc6c89f407c7d66c34}
+      \strng{fullhashraw}{f3833eed8ef776fc6c89f407c7d66c34}
+      \strng{bibnamehash}{f3833eed8ef776fc6c89f407c7d66c34}
+      \strng{authorbibnamehash}{f3833eed8ef776fc6c89f407c7d66c34}
+      \strng{authornamehash}{203b115999f73097be6ab32411fb1f42}
+      \strng{authorfullhash}{f3833eed8ef776fc6c89f407c7d66c34}
+      \strng{authorfullhashraw}{f3833eed8ef776fc6c89f407c7d66c34}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the 34th International Conference on Machine Learning (ICML 2017)}
+      \field{series}{Proceedings of Machine Learning Research}
+      \field{title}{On Calibration of Modern Neural Networks}
+      \field{volume}{70}
+      \field{year}{2017}
+      \field{pages}{1321\bibrangedash 1330}
+      \range{pages}{10}
+      \verb{urlraw}
+      \verb https://proceedings.mlr.press/v70/guo17a.html
+      \endverb
+      \verb{url}
+      \verb https://proceedings.mlr.press/v70/guo17a.html
+      \endverb
+    \endentry
     \entry{HernandezSampieri2018_metodologia}{book}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=82531f0c5173ef965e84d101f98cbf0a}{%
@@ -5195,12 +6196,156 @@
       \field{month}{10}
       \field{note}{Boletín Oficial de la República Argentina}
       \field{title}{Ley 25.326 de Protección de los Datos Personales}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
       \field{year}{2000}
+      \field{urldateera}{ce}
       \verb{urlraw}
       \verb http://servicios.infoleg.gob.ar/infolegInternet/anexos/60000-64999/64790/norma.htm
       \endverb
       \verb{url}
       \verb http://servicios.infoleg.gob.ar/infolegInternet/anexos/60000-64999/64790/norma.htm
+      \endverb
+    \endentry
+    \entry{ISO27002_2022}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=7058e4bd76f877c52b621c942b30613c}{%
+           family={{International Organization for Standardization}},
+           familyi={I\bibinitperiod}}}%
+      }
+      \name{shortauthor}{1}{}{%
+        {{un=0,uniquepart=base,hash=5b512ee8a59deb284ad0a6a035ba10b1}{%
+           family={ISO},
+           familyi={I\bibinitperiod}}}%
+      }
+      \strng{namehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{fullhash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{fullhashraw}{7058e4bd76f877c52b621c942b30613c}
+      \strng{bibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{authorbibnamehash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{authornamehash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{authorfullhash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{authorfullhashraw}{7058e4bd76f877c52b621c942b30613c}
+      \strng{shortauthorbibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{shortauthornamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{shortauthorfullhash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{shortauthorfullhashraw}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \field{extraname}{1}
+      \field{sortinit}{I}
+      \field{sortinithash}{8d291c51ee89b6cd86bf5379f0b151d8}
+      \field{extradate}{1}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{shortauthor}
+      \field{labeltitlesource}{title}
+      \field{number}{27002:2022}
+      \field{title}{Information security, cybersecurity and privacy protection --- Information security controls}
+      \field{type}{Norma ISO/IEC}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2022}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://webstore.iec.ch/en/publication/74287
+      \endverb
+      \verb{url}
+      \verb https://webstore.iec.ch/en/publication/74287
+      \endverb
+    \endentry
+    \entry{ISO27001_2022}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=7058e4bd76f877c52b621c942b30613c}{%
+           family={{International Organization for Standardization}},
+           familyi={I\bibinitperiod}}}%
+      }
+      \name{shortauthor}{1}{}{%
+        {{un=0,uniquepart=base,hash=5b512ee8a59deb284ad0a6a035ba10b1}{%
+           family={ISO},
+           familyi={I\bibinitperiod}}}%
+      }
+      \strng{namehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{fullhash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{fullhashraw}{7058e4bd76f877c52b621c942b30613c}
+      \strng{bibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{authorbibnamehash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{authornamehash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{authorfullhash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{authorfullhashraw}{7058e4bd76f877c52b621c942b30613c}
+      \strng{shortauthorbibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{shortauthornamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{shortauthorfullhash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{shortauthorfullhashraw}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \field{extraname}{2}
+      \field{sortinit}{I}
+      \field{sortinithash}{8d291c51ee89b6cd86bf5379f0b151d8}
+      \field{extradate}{2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{shortauthor}
+      \field{labeltitlesource}{title}
+      \field{number}{27001:2022}
+      \field{title}{Information security, cybersecurity and privacy protection --- Information security management systems --- Requirements}
+      \field{type}{Norma ISO/IEC}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2022}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://webstore.iec.ch/en/publication/79694
+      \endverb
+      \verb{url}
+      \verb https://webstore.iec.ch/en/publication/79694
+      \endverb
+    \endentry
+    \entry{ISO27701_2025}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=7058e4bd76f877c52b621c942b30613c}{%
+           family={{International Organization for Standardization}},
+           familyi={I\bibinitperiod}}}%
+      }
+      \name{shortauthor}{1}{}{%
+        {{un=0,uniquepart=base,hash=5b512ee8a59deb284ad0a6a035ba10b1}{%
+           family={ISO},
+           familyi={I\bibinitperiod}}}%
+      }
+      \strng{namehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{fullhash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{fullhashraw}{7058e4bd76f877c52b621c942b30613c}
+      \strng{bibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{authorbibnamehash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{authornamehash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{authorfullhash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{authorfullhashraw}{7058e4bd76f877c52b621c942b30613c}
+      \strng{shortauthorbibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{shortauthornamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{shortauthorfullhash}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{shortauthorfullhashraw}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \field{extraname}{3}
+      \field{sortinit}{I}
+      \field{sortinithash}{8d291c51ee89b6cd86bf5379f0b151d8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{shortauthor}
+      \field{labeltitlesource}{title}
+      \field{number}{27701:2025}
+      \field{title}{Information security, cybersecurity and privacy protection --- Privacy information management systems --- Requirements and guidance}
+      \field{type}{Norma ISO/IEC}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2025}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://webstore.iec.ch/en/publication/110123
+      \endverb
+      \verb{url}
+      \verb https://webstore.iec.ch/en/publication/110123
       \endverb
     \endentry
     \entry{Ji2023_hallucination}{article}{}{}
@@ -5331,9 +6476,19 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Borrador de la 3ra edicion, disponible en el sitio de los autores}
-      \field{title}{Speech and Language Processing: An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition}
-      \field{year}{2023}
+      \field{note}{Borrador de la 3.a edición, versión del 19 de agosto de 2026}
+      \field{title}{Speech and Language Processing: An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition with Language Models}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://web.stanford.edu/~jurafsky/slp3/
+      \endverb
+      \verb{url}
+      \verb https://web.stanford.edu/~jurafsky/slp3/
+      \endverb
     \endentry
     \entry{Ladas2009_scrumban}{book}{}{}
       \name{author}{1}{}{%
@@ -5544,6 +6699,9 @@
            giveni={R\bibinitperiod},
            givenun=0}}%
       }
+      \list{location}{1}{%
+        {Trondheim, Norway}%
+      }
       \list{publisher}{1}{%
         {ACM}%
       }
@@ -5562,7 +6720,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{Proceedings of the 33rd ACM International Conference on the Foundations of Software Engineering (FSE)}
+      \field{journaltitle}{Proceedings of the 33rd ACM International Conference on the Foundations of Software Engineering (FSE Companion '25)}
       \field{title}{TickIt: Leveraging Large Language Models for Automated Ticket Escalation}
       \field{year}{2025}
       \field{pages}{343\bibrangedash 354}
@@ -5632,7 +6790,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Applied Linguistics}
-      \field{note}{Advance article; volume/pages pending}
+      \field{note}{Advance article, volume/pages pending}
       \field{title}{Evaluating large language models with tests of {S}panish as a foreign language: pass or fail?}
       \field{year}{2026}
       \verb{doi}
@@ -5731,9 +6889,13 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion tecnica oficial}
+      \field{note}{Documentación técnica oficial}
       \field{title}{{n8n} Documentation}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
       \field{year}{2024}
+      \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://docs.n8n.io/
       \endverb
@@ -5741,33 +6903,43 @@
       \verb https://docs.n8n.io/
       \endverb
     \endentry
-    \entry{OGC2011_itil}{book}{}{}
+    \entry{NIST2024_csf}{report}{}{}
       \name{author}{1}{}{%
-        {{un=0,uniquepart=base,hash=81febe3daa1ad283f5641d79d2d623ed}{%
-           family={{Office of Government Commerce}},
-           familyi={O\bibinitperiod}}}%
+        {{hash=ef9cb61878e61d434507444346b29d1a}{%
+           family={{National Institute of Standards and Technology}},
+           familyi={N\bibinitperiod}}}%
       }
-      \list{publisher}{1}{%
-        {The Stationery Office}%
+      \name{shortauthor}{1}{}{%
+        {{un=0,uniquepart=base,hash=a44b6b00e5eebd7494e1fd00658685e2}{%
+           family={NIST},
+           familyi={N\bibinitperiod}}}%
       }
-      \strng{namehash}{81febe3daa1ad283f5641d79d2d623ed}
-      \strng{fullhash}{81febe3daa1ad283f5641d79d2d623ed}
-      \strng{fullhashraw}{81febe3daa1ad283f5641d79d2d623ed}
-      \strng{bibnamehash}{81febe3daa1ad283f5641d79d2d623ed}
-      \strng{authorbibnamehash}{81febe3daa1ad283f5641d79d2d623ed}
-      \strng{authornamehash}{81febe3daa1ad283f5641d79d2d623ed}
-      \strng{authorfullhash}{81febe3daa1ad283f5641d79d2d623ed}
-      \strng{authorfullhashraw}{81febe3daa1ad283f5641d79d2d623ed}
-      \field{sortinit}{O}
-      \field{sortinithash}{2cd7140a07aea5341f9e2771efe90aae}
+      \strng{namehash}{a44b6b00e5eebd7494e1fd00658685e2}
+      \strng{fullhash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{fullhashraw}{ef9cb61878e61d434507444346b29d1a}
+      \strng{bibnamehash}{a44b6b00e5eebd7494e1fd00658685e2}
+      \strng{authorbibnamehash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{authornamehash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{authorfullhash}{ef9cb61878e61d434507444346b29d1a}
+      \strng{authorfullhashraw}{ef9cb61878e61d434507444346b29d1a}
+      \strng{shortauthorbibnamehash}{a44b6b00e5eebd7494e1fd00658685e2}
+      \strng{shortauthornamehash}{a44b6b00e5eebd7494e1fd00658685e2}
+      \strng{shortauthorfullhash}{a44b6b00e5eebd7494e1fd00658685e2}
+      \strng{shortauthorfullhashraw}{a44b6b00e5eebd7494e1fd00658685e2}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
-      \field{labelnamesource}{author}
+      \field{labelnamesource}{shortauthor}
       \field{labeltitlesource}{title}
-      \field{note}{Publicado por encargo del Office of Government Commerce; la titularidad de ITIL es hoy de la herencia AXELOS/PeopleCert}
-      \field{title}{{ITIL} Service Operation}
-      \field{year}{2011}
+      \field{number}{29}
+      \field{title}{The {NIST} Cybersecurity Framework ({CSF}) 2.0}
+      \field{type}{NIST Cybersecurity White Paper}
+      \field{year}{2024}
+      \verb{doi}
+      \verb 10.6028/NIST.CSWP.29
+      \endverb
     \endentry
     \entry{paket2024itservice}{article}{}{}
       \name{author}{4}{}{%
@@ -5844,6 +7016,28 @@
            giveni={K\bibinitperiod\bibinitdelim S\bibinitperiod},
            givenun=0}}%
       }
+      \name{editor}{4}{}{%
+        {{hash=a04ba74ab12224106701f314e30a5880}{%
+           family={Nagabhushan},
+           familyi={N\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+        {{hash=75007f4ccf3eb7aa5602ef1c50c90a12}{%
+           family={Guru},
+           familyi={G\bibinitperiod},
+           given={D.\bibnamedelimi S.},
+           giveni={D\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+        {{hash=5b6c3f75ba18d12a72bc00d54df49783}{%
+           family={Shekar},
+           familyi={S\bibinitperiod},
+           given={B.\bibnamedelimi H.},
+           giveni={B\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+        {{hash=7e462a3d6d6640042021bcf832e606ca}{%
+           family={Sharath\bibnamedelima Kumar},
+           familyi={S\bibinitperiod\bibinitdelim K\bibinitperiod},
+           given={Y.\bibnamedelimi H.},
+           giveni={Y\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+      }
       \list{publisher}{1}{%
         {Springer}%
       }
@@ -5855,6 +7049,10 @@
       \strng{authornamehash}{9e94c8bdf3e16bc625ad3ea0b6c520a4}
       \strng{authorfullhash}{9e94c8bdf3e16bc625ad3ea0b6c520a4}
       \strng{authorfullhashraw}{9e94c8bdf3e16bc625ad3ea0b6c520a4}
+      \strng{editorbibnamehash}{11aa50eb3b0d64d0b9f29a9a84da9f6a}
+      \strng{editornamehash}{48f61dd373c03ea943375c031b9b6580}
+      \strng{editorfullhash}{11aa50eb3b0d64d0b9f29a9a84da9f6a}
+      \strng{editorfullhashraw}{11aa50eb3b0d64d0b9f29a9a84da9f6a}
       \field{sortinit}{P}
       \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
       \field{extradatescope}{labelyear}
@@ -5862,7 +7060,9 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{booktitle}{Lecture Notes in Networks and Systems}
+      \field{booksubtitle}{Proceedings of {DAL} 2018}
+      \field{booktitle}{Data Analytics and Learning}
+      \field{series}{Lecture Notes in Networks and Systems}
       \field{title}{Automated IT Service Desk Systems Using Machine Learning Techniques}
       \field{volume}{43}
       \field{year}{2019}
@@ -5896,7 +7096,17 @@
       \field{month}{4}
       \field{note}{Diario Oficial de la Unión Europea, L 119/1}
       \field{title}{Reglamento ({UE}) 2016/679 --- {R}eglamento General de Protección de Datos}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
       \field{year}{2016}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://eur-lex.europa.eu/eli/reg/2016/679/oj
+      \endverb
+      \verb{url}
+      \verb https://eur-lex.europa.eu/eli/reg/2016/679/oj
+      \endverb
     \endentry
     \entry{Pedregosa2011_scikit_learn}{article}{}{}
       \name{author}{16}{}{%
@@ -6018,6 +7228,42 @@
       \field{year}{2011}
       \field{pages}{2825\bibrangedash 2830}
       \range{pages}{6}
+    \endentry
+    \entry{Decreto1558_2001}{misc}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=9f31ae5841cd1fc4dc33535a609a7154}{%
+           family={{Poder Ejecutivo Nacional}},
+           familyi={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{9f31ae5841cd1fc4dc33535a609a7154}
+      \strng{fullhash}{9f31ae5841cd1fc4dc33535a609a7154}
+      \strng{fullhashraw}{9f31ae5841cd1fc4dc33535a609a7154}
+      \strng{bibnamehash}{9f31ae5841cd1fc4dc33535a609a7154}
+      \strng{authorbibnamehash}{9f31ae5841cd1fc4dc33535a609a7154}
+      \strng{authornamehash}{9f31ae5841cd1fc4dc33535a609a7154}
+      \strng{authorfullhash}{9f31ae5841cd1fc4dc33535a609a7154}
+      \strng{authorfullhashraw}{9f31ae5841cd1fc4dc33535a609a7154}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{11}
+      \field{note}{Boletín Oficial de la República Argentina, 3 de diciembre de 2001}
+      \field{title}{Decreto 1558/2001: Reglamentación de la Ley 25.326 de Protección de los Datos Personales}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2001}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb http://servicios.infoleg.gob.ar/infolegInternet/anexos/70000-74999/70368/norma.htm
+      \endverb
+      \verb{url}
+      \verb http://servicios.infoleg.gob.ar/infolegInternet/anexos/70000-74999/70368/norma.htm
+      \endverb
     \endentry
     \entry{Powers2011_evaluation}{article}{}{}
       \name{author}{1}{}{%
@@ -6184,6 +7430,44 @@
       \field{pages}{28492\bibrangedash 28518}
       \range{pages}{27}
     \endentry
+    \entry{Tiangolo2024_fastapi}{manual}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=f5305ee02dd2a5c6215b53401b4a10b0}{%
+           family={Ramírez},
+           familyi={R\bibinitperiod},
+           given={Sebastián},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{f5305ee02dd2a5c6215b53401b4a10b0}
+      \strng{fullhash}{f5305ee02dd2a5c6215b53401b4a10b0}
+      \strng{fullhashraw}{f5305ee02dd2a5c6215b53401b4a10b0}
+      \strng{bibnamehash}{f5305ee02dd2a5c6215b53401b4a10b0}
+      \strng{authorbibnamehash}{f5305ee02dd2a5c6215b53401b4a10b0}
+      \strng{authornamehash}{f5305ee02dd2a5c6215b53401b4a10b0}
+      \strng{authorfullhash}{f5305ee02dd2a5c6215b53401b4a10b0}
+      \strng{authorfullhashraw}{f5305ee02dd2a5c6215b53401b4a10b0}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Documentación técnica oficial}
+      \field{title}{{FastAPI} Documentation}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://fastapi.tiangolo.com/
+      \endverb
+      \verb{url}
+      \verb https://fastapi.tiangolo.com/
+      \endverb
+    \endentry
     \entry{ramonferrer2026tripletotext}{article}{}{}
       \name{author}{3}{}{%
         {{un=0,uniquepart=base,hash=e6cf35ddfce986b6b34f176e58d5de36}{%
@@ -6339,9 +7623,13 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Ministerio de Economía de la Nación Argentina; consultado el 19 de octubre de 2026}
+      \field{note}{Ministerio de Economía de la Nación Argentina}
       \field{title}{{¿}Qué es una {MiPyME}?}
+      \field{urlday}{19}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
       \field{year}{2026}
+      \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://www.argentina.gob.ar/produccion/registrar-una-pyme/que-es-una-pyme
       \endverb
@@ -6370,7 +7658,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion de la plataforma (capacidades y precios) consultada el 19 de octubre de 2026}
+      \field{note}{Documentación de la plataforma (capacidades y precios)}
       \field{title}{{ServiceNow} {ITSM}}
       \field{urlday}{19}
       \field{urlmonth}{10}
@@ -6501,7 +7789,7 @@
       \field{labeltitlesource}{title}
       \field{edition}{4}
       \field{title}{Computer Security: Principles and Practice}
-      \field{year}{2017}
+      \field{year}{2018}
     \endentry
     \entry{PostgreSQL2024_docs}{manual}{}{}
       \name{author}{1}{}{%
@@ -6524,9 +7812,13 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion tecnica oficial}
+      \field{note}{Documentación técnica oficial}
       \field{title}{{PostgreSQL} 15 Documentation}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
       \field{year}{2024}
+      \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://www.postgresql.org/docs/15/
       \endverb
@@ -6534,23 +7826,68 @@
       \verb https://www.postgresql.org/docs/15/
       \endverb
     \endentry
-    \entry{Tiangolo2024_fastapi}{manual}{}{}
-      \name{author}{1}{}{%
-        {{un=0,uniquepart=base,hash=223d828339f8033ceb273f7dfcbc556c}{%
-           family={Tiangolo},
+    \entry{Tian2023_verbalized_confidence}{article}{}{}
+      \name{author}{8}{}{%
+        {{un=0,uniquepart=base,hash=14d0da9723d355c9cc411b0daaf91473}{%
+           family={Tian},
            familyi={T\bibinitperiod},
-           given={Sebastián\bibnamedelima Ramírez},
-           giveni={S\bibinitperiod\bibinitdelim R\bibinitperiod},
+           given={Katherine},
+           giveni={K\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b9441ad4287a1b5f251258a6fd6afb3a}{%
+           family={Mitchell},
+           familyi={M\bibinitperiod},
+           given={Eric},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0a5513f7fd0315dca73a5f522838f1f4}{%
+           family={Zhou},
+           familyi={Z\bibinitperiod},
+           given={Allan},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d6e9caed0d49d143fa1bf05559bc7c20}{%
+           family={Sharma},
+           familyi={S\bibinitperiod},
+           given={Archit},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ba3b0dbc0637707e13b68258120d22ca}{%
+           family={Rafailov},
+           familyi={R\bibinitperiod},
+           given={Rafael},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3b115344acb9ff313d507977648f7ece}{%
+           family={Yao},
+           familyi={Y\bibinitperiod},
+           given={Huaxiu},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=058e82495825ae376c6a96a12169e6ee}{%
+           family={Finn},
+           familyi={F\bibinitperiod},
+           given={Chelsea},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=2214edb8305f7ccd7cdc310b3a8ae1b4}{%
+           family={Manning},
+           familyi={M\bibinitperiod},
+           given={Christopher\bibnamedelima D.},
+           giveni={C\bibinitperiod\bibinitdelim D\bibinitperiod},
            givenun=0}}%
       }
-      \strng{namehash}{223d828339f8033ceb273f7dfcbc556c}
-      \strng{fullhash}{223d828339f8033ceb273f7dfcbc556c}
-      \strng{fullhashraw}{223d828339f8033ceb273f7dfcbc556c}
-      \strng{bibnamehash}{223d828339f8033ceb273f7dfcbc556c}
-      \strng{authorbibnamehash}{223d828339f8033ceb273f7dfcbc556c}
-      \strng{authornamehash}{223d828339f8033ceb273f7dfcbc556c}
-      \strng{authorfullhash}{223d828339f8033ceb273f7dfcbc556c}
-      \strng{authorfullhashraw}{223d828339f8033ceb273f7dfcbc556c}
+      \list{publisher}{1}{%
+        {Association for Computational Linguistics}%
+      }
+      \strng{namehash}{3ea9e6078e180b006e3c94b3557b39df}
+      \strng{fullhash}{e7ca567f605838879984505191bbd027}
+      \strng{fullhashraw}{e7ca567f605838879984505191bbd027}
+      \strng{bibnamehash}{e7ca567f605838879984505191bbd027}
+      \strng{authorbibnamehash}{e7ca567f605838879984505191bbd027}
+      \strng{authornamehash}{3ea9e6078e180b006e3c94b3557b39df}
+      \strng{authorfullhash}{e7ca567f605838879984505191bbd027}
+      \strng{authorfullhashraw}{e7ca567f605838879984505191bbd027}
       \field{sortinit}{T}
       \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
       \field{extradatescope}{labelyear}
@@ -6558,14 +7895,19 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion tecnica oficial}
-      \field{title}{{FastAPI} Documentation}
-      \field{year}{2024}
+      \field{journaltitle}{Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing (EMNLP 2023)}
+      \field{title}{Just Ask for Calibration: Strategies for Eliciting Calibrated Confidence Scores from Language Models Fine-Tuned with Human Feedback}
+      \field{year}{2023}
+      \field{pages}{5433\bibrangedash 5442}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.18653/v1/2023.emnlp-main.330
+      \endverb
       \verb{urlraw}
-      \verb https://fastapi.tiangolo.com/
+      \verb https://doi.org/10.18653/v1/2023.emnlp-main.330
       \endverb
       \verb{url}
-      \verb https://fastapi.tiangolo.com/
+      \verb https://doi.org/10.18653/v1/2023.emnlp-main.330
       \endverb
     \endentry
     \entry{Touvron2023_llama2}{misc}{}{}
@@ -7007,6 +8349,54 @@
       \verb 2307.09288
       \endverb
     \endentry
+    \entry{Varshney2022_model_cascading}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=0e824b6ad92d00940e0d061061b7fabe}{%
+           family={Varshney},
+           familyi={V\bibinitperiod},
+           given={Neeraj},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=121708a74e1528d506fc79a1638d9e8f}{%
+           family={Baral},
+           familyi={B\bibinitperiod},
+           given={Chitta},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computational Linguistics}%
+      }
+      \strng{namehash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{fullhash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{fullhashraw}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{bibnamehash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{authorbibnamehash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{authornamehash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{authorfullhash}{62bff4318108a0c499c4fb3d08fe17ba}
+      \strng{authorfullhashraw}{62bff4318108a0c499c4fb3d08fe17ba}
+      \field{sortinit}{V}
+      \field{sortinithash}{afb52128e5b4dc4b843768c0113d673b}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing (EMNLP 2022)}
+      \field{title}{Model Cascading: Towards Jointly Improving Efficiency and Accuracy of {NLP} Systems}
+      \field{year}{2022}
+      \field{pages}{11007\bibrangedash 11021}
+      \range{pages}{15}
+      \verb{doi}
+      \verb 10.18653/v1/2022.emnlp-main.756
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.18653/v1/2022.emnlp-main.756
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.18653/v1/2022.emnlp-main.756
+      \endverb
+    \endentry
     \entry{Vaswani2017_attention}{article}{}{}
       \name{author}{8}{}{%
         {{un=0,uniquepart=base,hash=7f28e84700536646dd6620a0db07ad09}{%
@@ -7341,12 +8731,51 @@
       \field{labeltitlesource}{title}
       \field{note}{Manifiesto de arquitectura de software}
       \field{title}{The Twelve-Factor App}
+      \field{urlday}{25}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
       \field{year}{2017}
+      \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://12factor.net/
       \endverb
       \verb{url}
       \verb https://12factor.net/
+      \endverb
+    \endentry
+    \entry{Wilcoxon1945_individual_comparisons}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=405b308b1e8e33ef3275bf6cb9c9b281}{%
+           family={Wilcoxon},
+           familyi={W\bibinitperiod},
+           given={Frank},
+           giveni={F\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{405b308b1e8e33ef3275bf6cb9c9b281}
+      \strng{fullhash}{405b308b1e8e33ef3275bf6cb9c9b281}
+      \strng{fullhashraw}{405b308b1e8e33ef3275bf6cb9c9b281}
+      \strng{bibnamehash}{405b308b1e8e33ef3275bf6cb9c9b281}
+      \strng{authorbibnamehash}{405b308b1e8e33ef3275bf6cb9c9b281}
+      \strng{authornamehash}{405b308b1e8e33ef3275bf6cb9c9b281}
+      \strng{authorfullhash}{405b308b1e8e33ef3275bf6cb9c9b281}
+      \strng{authorfullhashraw}{405b308b1e8e33ef3275bf6cb9c9b281}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Biometrics Bulletin}
+      \field{number}{6}
+      \field{title}{Individual Comparisons by Ranking Methods}
+      \field{volume}{1}
+      \field{year}{1945}
+      \field{pages}{80\bibrangedash 83}
+      \range{pages}{4}
+      \verb{doi}
+      \verb 10.2307/3001968
       \endverb
     \endentry
     \entry{Wilson1927_probable_inference}{article}{}{}
@@ -7436,6 +8865,76 @@
       \endverb
       \verb{url}
       \verb https://doi.org/10.1145/3491102.3517582
+      \endverb
+    \endentry
+    \entry{Xiong2024_confidence_elicitation}{article}{}{}
+      \name{author}{7}{}{%
+        {{un=0,uniquepart=base,hash=c6fc8978db42ed2a39aed9ee5e002ffb}{%
+           family={Xiong},
+           familyi={X\bibinitperiod},
+           given={Miao},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ed366d1e427ae77f2ebc1a184bf85dcb}{%
+           family={Hu},
+           familyi={H\bibinitperiod},
+           given={Zhiyuan},
+           giveni={Z\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=bb8ec0d106efdfe2df3eb5baae20a610}{%
+           family={Lu},
+           familyi={L\bibinitperiod},
+           given={Xinyang},
+           giveni={X\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7c067c709e7a1f9fed426206033b51d5}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Yifei},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=f0ae8cd7eb0b07fe71e1654376c0fc0e}{%
+           family={Fu},
+           familyi={F\bibinitperiod},
+           given={Jie},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=2883148bd3351a45d72c69b1a91dbd79}{%
+           family={He},
+           familyi={H\bibinitperiod},
+           given={Junxian},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b5c2ebc85fb8cba01d66e9eaaae19fd1}{%
+           family={Hooi},
+           familyi={H\bibinitperiod},
+           given={Bryan},
+           giveni={B\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{013ba0b2a1af0ba7815401fbfb638dc6}
+      \strng{fullhash}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \strng{fullhashraw}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \strng{bibnamehash}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \strng{authorbibnamehash}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \strng{authornamehash}{013ba0b2a1af0ba7815401fbfb638dc6}
+      \strng{authorfullhash}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \strng{authorfullhashraw}{3c4617aa3cb2a4d7072c74c110d6381a}
+      \field{sortinit}{X}
+      \field{sortinithash}{1965c258adceecf23ce3d67b05113442}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{The Twelfth International Conference on Learning Representations (ICLR 2024)}
+      \field{title}{Can {LLMs} Express Their Uncertainty? An Empirical Evaluation of Confidence Elicitation in {LLMs}}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://openreview.net/forum?id=gjeQKFxFpZ
+      \endverb
+      \verb{url}
+      \verb https://openreview.net/forum?id=gjeQKFxFpZ
       \endverb
     \endentry
     \entry{xuan2025mmluprox}{article}{}{}
@@ -7794,7 +9293,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion de la plataforma (capacidades y precios) consultada el 19 de octubre de 2026}
+      \field{note}{Documentación de la plataforma (capacidades y precios)}
       \field{title}{{Zendesk} {S}uite --- {S}oftware de mesa de ayuda}
       \field{urlday}{19}
       \field{urlmonth}{10}
@@ -7875,6 +9374,71 @@
       \endverb
       \verb{url}
       \verb https://aclanthology.org/2023.emnlp-main.774/
+      \endverb
+    \endentry
+    \entry{Zhao2021_calibrate_before_use}{article}{}{}
+      \name{author}{5}{}{%
+        {{un=0,uniquepart=base,hash=396bf132d19d9792c2ce86de28419896}{%
+           family={Zhao},
+           familyi={Z\bibinitperiod},
+           given={Zihao},
+           giveni={Z\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=f7bf50210206dec5bb19e32a74e1a580}{%
+           family={Wallace},
+           familyi={W\bibinitperiod},
+           given={Eric},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=1fdbe6573824ffd09db88df8bfcf769f}{%
+           family={Feng},
+           familyi={F\bibinitperiod},
+           given={Shi},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=9fb237891a1517d36109c68767dd6fae}{%
+           family={Klein},
+           familyi={K\bibinitperiod},
+           given={Dan},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0b9694812f0dc77974d99bb875a76d48}{%
+           family={Singh},
+           familyi={S\bibinitperiod},
+           given={Sameer},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {PMLR}%
+      }
+      \strng{namehash}{1a9a9295531bb5a924ddd4d69b26eb38}
+      \strng{fullhash}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \strng{fullhashraw}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \strng{bibnamehash}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \strng{authorbibnamehash}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \strng{authornamehash}{1a9a9295531bb5a924ddd4d69b26eb38}
+      \strng{authorfullhash}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \strng{authorfullhashraw}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
+      \field{sortinit}{Z}
+      \field{sortinithash}{96892c0b0a36bb8557c40c49813d48b3}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the 38th International Conference on Machine Learning (ICML 2021)}
+      \field{series}{Proceedings of Machine Learning Research}
+      \field{title}{Calibrate Before Use: Improving Few-Shot Performance of Language Models}
+      \field{volume}{139}
+      \field{year}{2021}
+      \field{pages}{12697\bibrangedash 12706}
+      \range{pages}{10}
+      \verb{urlraw}
+      \verb https://proceedings.mlr.press/v139/zhao21c.html
+      \endverb
+      \verb{url}
+      \verb https://proceedings.mlr.press/v139/zhao21c.html
       \endverb
     \endentry
   \enddatalist

@@ -8,7 +8,7 @@ project:
     (tesis UTN-FRM 2026). Tres canales de entrada (correo, formulario web, telefonía
     Twilio) convergen vía N8N en una API FastAPI que clasifica con pipeline híbrido
     (reglas deterministicas -> Gemini 2.5 Flash -> fallback) y persiste en PostgreSQL
-    con revisión humana para confianza < 0.70.
+    con revisión humana (Gemini con confianza < 0.70, fallback o reportante no identificado).
 
 stack:
   backend:
@@ -39,7 +39,7 @@ conventions:
   layers: routes -> services -> repositories -> models (no saltear capas)
   async: SQLAlchemy async — siempre selectinload explícito para relationships serializados (nunca lazy-load)
   errors: 'cuerpo estándar {"error": {"code", "message", "details?"}} vía core/error_handlers.py'
-  thresholds: { deterministic: 0.90, human_review: 0.70 }
+  thresholds: { deterministic_score: 0.5166, human_review: 0.70 }  # deterministic_score: punto de operacion del score_correctitud (cortocircuito, c-74); human_review: solo sobre la salida de Gemini
   categorias: ["Seguridad Informatica", "Soporte Tecnico Hardware", "Soporte Tecnico Software", "Bases de Datos", "Sistemas"]  # exactas, case-sensitive, SIN tildes (C-27)
 
 context_files:

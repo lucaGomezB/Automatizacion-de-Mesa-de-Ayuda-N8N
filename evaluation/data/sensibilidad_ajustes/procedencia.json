@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "change": "c-142-sensibilidad-fuera-de-muestra-ajustes-clasificador",
+  "decision": "D6",
+  "archivos": {
+    "keywords_pre_c71.json": {
+      "descripcion": "KEYWORD_MAP previo a c-71 (89 patrones), orden de claves preservado",
+      "ruta_origen": "App/Backend/app/classifiers/keywords.py",
+      "commit_de_extraccion": "7925903ab2691321fecedc42c38c42fb3d126a29",
+      "commit_de_extraccion_fecha": "2026-10-05T20:52:21-03:00",
+      "commit_del_ultimo_cambio_del_archivo": "c73fde4 (C-27, 2026-09-11T19:16:23-03:00)",
+      "blob": "858f1c679c660e5e2a88a06544f2cdc3bfcb6328",
+      "comando_de_extraccion": "git show 7925903:App/Backend/app/classifiers/keywords.py | python -c \"keyword_map_desde_fuente(texto) -> json.dumps(ensure_ascii=False, indent=2)\"",
+      "funcion_de_extraccion": "evaluation.sensibilidad_ajustes.keyword_map_desde_fuente (ast.literal_eval; no ejecuta el modulo historico)",
+      "sha256": "8d9e646fae8ec5ff746fdaddecc5301a4db8f0df6e46da6d77eca26e56952e55",
+      "nota": "c-71 (commit 1368fd8, 2026-10-05T21:50:04-03:00) agrego 62 patrones y no quito ni modifico ninguno (blob vigente 334a8edb296cf8e88468164c9a35d57f80952c0e)."
+    },
+    "prompt_gemini_pre_c72.txt": {
+      "descripcion": "Prompt de Gemini previo a las REGLAS DE FRONTERA de c-72",
+      "ruta_origen": "docs/prompt_gemini.txt",
+      "commit_de_extraccion": "a76851e^ = 771b392d42df878f2e4d7ffbbd7d4424eb83debf",
+      "commit_de_extraccion_fecha": "2026-10-06T16:38:13-03:00",
+      "commit_del_ultimo_cambio_del_archivo": "c73fde4 (C-27, 2026-09-11T19:16:23-03:00)",
+      "blob": "1daceb384f0a585941afaf2a9b87de8bffb31db8",
+      "comando_de_extraccion": "git show 1daceb384f0a585941afaf2a9b87de8bffb31db8 > evaluation/data/sensibilidad_ajustes/prompt_gemini_pre_c72.txt",
+      "sha256": "934542f6d6a96ab77c58615419cb8f3265913f24ae01adbc326ecd723bdcc1ec",
+      "nota": "c-72 (commit a76851e, 2026-10-06T16:38:20-03:00) agrego solo el bloque REGLAS DE FRONTERA (12 lineas); blob vigente 49267f4a5cf214bf46899c5177661f1cdbfd10fb."
+    }
+  }
+}
