@@ -27,6 +27,9 @@
 ## 3. Bloque D - higiene del registro
 
 - [ ] 3.1 Reemplazar en `REGISTRO:140` el placeholder `### P4. (a completar)` por una nota de estado fechada 2026-10-26 que declare que no hay observaciones pendientes y que no se inventan hallazgos. Verificar con `grep -n "a completar" "docs/Tesis/Correcciones/dictamen-correcciones.md"` que no queda ninguna coincidencia y que `grep -n "^### P4"` sigue devolviendo una linea.
+- [x] 3.2 Declarar en el generador del reporte de sensibilidad la cache FORCE-ESCALATE y su `corpus_hash` distinto (TDD: prueba RED en `evaluation/tests/test_sensibilidad_ajustes.py`, GREEN en `_seccion_procedencia`, regenerar `evaluation/report_sensibilidad_ajustes.md` con el CLI). Verificar que el reporte contiene `hybrid-v2`, el hash `5f062e14…`, `no coincide` y `200`, y que el diff del reporte es una sola linea.
+- [x] 3.3 Actualizar la etiqueta de estado de la fila FORCE-ESCALATE en `numeros-canonicos.md:386` de `vigente (solo para el contraste de McNemar)` a `vigente (contraste de McNemar y sensibilidades E3/E4; uso confirmado 2026-10-26)`.
+- [x] 3.4 Marcar en `REGISTRO` la decision FORCE-ESCALATE como CONFIRMADA por el autor (2026-10-26), explicitar la tension con la consigna de c-131, actualizar la reversibilidad y el conteo de lineas del reporte (98). Verificar que `grep -n "Decision CONFIRMADA por el autor"` devuelve la linea y que no queda `Decision PROVISIONAL` para esa decision.
 
 ## 4. Bloque B - sincronizacion del memo
 
@@ -45,6 +48,8 @@
 - [ ] 5.5 Agregar en el Anexo I (`12-anexos.tex`, `sec:anexo-trazabilidad`) la trazabilidad de las dos decisiones de c-72 en una nota breve, si no figura ya. Verificar que el Anexo I menciona `c-72` y que el cuerpo de `06-implementacion.tex` no.
 - [ ] 5.6 Registrar en `REGISTRO` la causa raiz de A1 con los commits `a0436e0` (2026-07-03, 16 pruebas con skip), `ef656ac` (2026-09-17, fallo ruidoso), `8466cbe` y `7408543` (copias que arrastraron la oracion). Verificar que los cuatro hashes figuran en la seccion de c-145.
 - [ ] 5.7 Registrar en `REGISTRO` la evidencia de A2: `find "App/Frontend/src" -type f \( -name '*.test.ts' -o -name '*.test.tsx' \) | wc -l` = 59 archivos, ausencia de `App/Frontend/node_modules` y decision de retirar los recuentos congelados. Verificar que figura el resultado 59 y la decision.
+- [x] 5.8 Corregir `04-marco-metodologico.tex:95` (roles): atribuir la coordinacion general, la integracion de componentes y la integracion telefonica mediante Twilio a Luca Gomez, y la implementacion inicial del modulo Python, el modelado inicial de la base de datos, el frontend y la configuracion del flujo N8N a Gonzalo Sevilla. Verificar con `grep -n "desarrollo del módulo Python\|integración telefónica mediante Twilio a Gonzalo"` que no quedan coincidencias.
+- [x] 5.9 Registrar en `REGISTRO` la correccion de roles: referencia `04:95`, conteos re-medidos sobre `224fa16` (418/93/52/35/1), evidencia de `7db7fe1`, `ca8e2b6` y `ec92689`, y decision confirmada por el autor (2026-10-26).
 
 ## 6. Bloques C y G - discusion y documentacion para agentes
 
