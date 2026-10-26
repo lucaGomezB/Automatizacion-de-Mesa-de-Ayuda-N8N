@@ -24,75 +24,75 @@
 \contentsline {subsection}{\numberline {3.3}Trabajos académicos previos sobre clasificación de tickets}{28}{subsection.3.3}%
 \contentsline {subsection}{\numberline {3.4}Calibración de la confianza y cascadas de modelos}{30}{subsection.3.4}%
 \contentsline {subsection}{\numberline {3.5}Análisis comparativo y brecha identificada}{31}{subsection.3.5}%
-\contentsline {section}{\numberline {4}Marco metodológico}{32}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Enfoque y tipo de investigación}{32}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Diseño experimental}{32}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Operacionalización de variables}{33}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}Población, muestra y corpus}{33}{subsection.4.4}%
-\contentsline {subsection}{\numberline {4.5}Protocolo de pruebas}{36}{subsection.4.5}%
-\contentsline {subsection}{\numberline {4.6}Métricas e instrumentos}{37}{subsection.4.6}%
-\contentsline {subsection}{\numberline {4.7}Análisis estadístico}{37}{subsection.4.7}%
-\contentsline {subsection}{\numberline {4.8}Amenazas a la validez}{39}{subsection.4.8}%
-\contentsline {subsection}{\numberline {4.9}Gestión del proyecto bajo enfoque Scrumban (método de construcción del artefacto)}{40}{subsection.4.9}%
-\contentsline {section}{\numberline {5}Arquitectura del sistema}{41}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Visión general}{41}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}Capa de canales de entrada}{43}{subsection.5.2}%
-\contentsline {subsection}{\numberline {5.3}Capa de orquestación}{45}{subsection.5.3}%
-\contentsline {subsection}{\numberline {5.4}Capa de procesamiento}{45}{subsection.5.4}%
-\contentsline {subsection}{\numberline {5.5}Subsistema de clasificación híbrido}{46}{subsection.5.5}%
-\contentsline {subsection}{\numberline {5.6}Modelo de datos}{47}{subsection.5.6}%
-\contentsline {subsection}{\numberline {5.7}Contrato de la interfaz REST}{49}{subsection.5.7}%
-\contentsline {section}{\numberline {6}Implementación}{52}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Entorno de despliegue y dependencias}{52}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}Construcción del módulo Python}{52}{subsection.6.2}%
-\contentsline {subsection}{\numberline {6.3}Construcción del flujo en N8N}{53}{subsection.6.3}%
-\contentsline {subsection}{\numberline {6.4}Integración del canal telefónico}{56}{subsection.6.4}%
-\contentsline {subsection}{\numberline {6.5}Desafíos de integración}{56}{subsection.6.5}%
-\contentsline {subsection}{\numberline {6.6}Conexión con el proceso Scrumban}{58}{subsection.6.6}%
-\contentsline {subsection}{\numberline {6.7}Pruebas automatizadas}{59}{subsection.6.7}%
-\contentsline {subsection}{\numberline {6.8}Dashboard de analítica}{60}{subsection.6.8}%
-\contentsline {section}{\numberline {7}Consideraciones éticas y aspectos legales}{62}{section.7}%
-\contentsline {subsection}{\numberline {7.1}Marco normativo aplicable}{62}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}Principios aplicados al tratamiento de datos}{63}{subsection.7.2}%
-\contentsline {subsection}{\numberline {7.3}Transferencia internacional y pseudonimización}{63}{subsection.7.3}%
-\contentsline {subsection}{\numberline {7.4}Seguridad técnica}{64}{subsection.7.4}%
-\contentsline {subsection}{\numberline {7.5}Consentimiento, derechos del usuario y supervisión humana}{64}{subsection.7.5}%
-\contentsline {subsection}{\numberline {7.6}Cumplimiento normativo y alineación con estándares}{66}{subsection.7.6}%
-\contentsline {subsubsection}{\numberline {7.6.1}Marco de referencia adoptado}{66}{subsubsection.7.6.1}%
-\contentsline {subsubsection}{\numberline {7.6.2}Estado de alineación con ISO/IEC 27002:2022}{66}{subsubsection.7.6.2}%
-\contentsline {subsubsection}{\numberline {7.6.3}Perfil de alineación con NIST CSF 2.0}{67}{subsubsection.7.6.3}%
-\contentsline {subsubsection}{\numberline {7.6.4}Brechas principales y hoja de ruta}{67}{subsubsection.7.6.4}%
-\contentsline {subsubsection}{\numberline {7.6.5}Alineación con el marco legal}{67}{subsubsection.7.6.5}%
-\contentsline {section}{\numberline {8}Resultados}{68}{section.8}%
-\contentsline {subsection}{\numberline {8.1}Comparación de tiempos de registro}{68}{subsection.8.1}%
-\contentsline {subsection}{\numberline {8.2}Matriz de confusión y métricas de clasificación}{69}{subsection.8.2}%
-\contentsline {subsection}{\numberline {8.3}Intervención humana en el flujo automatizado}{72}{subsection.8.3}%
-\contentsline {subsection}{\numberline {8.4}Calibración de la confianza}{73}{subsection.8.4}%
-\contentsline {subsection}{\numberline {8.5}Sensibilidad al ajuste del clasificador con el corpus}{74}{subsection.8.5}%
-\contentsline {subsection}{\numberline {8.6}Análisis de errores y casos límite}{74}{subsection.8.6}%
-\contentsline {section}{\numberline {9}Discusión}{76}{section.9}%
-\contentsline {subsection}{\numberline {9.1}Interpretación de los resultados}{76}{subsection.9.1}%
-\contentsline {subsection}{\numberline {9.2}Comparación con la literatura}{79}{subsection.9.2}%
-\contentsline {subsection}{\numberline {9.3}Limitaciones del estudio}{80}{subsection.9.3}%
-\contentsline {subsection}{\numberline {9.4}Implicancias prácticas}{82}{subsection.9.4}%
-\contentsline {subsection}{\numberline {9.5}Balance neto de la automatización}{83}{subsection.9.5}%
-\contentsline {subsection}{\numberline {9.6}Reflexiones sobre la generalización}{85}{subsection.9.6}%
-\contentsline {section}{\numberline {10}Conclusiones}{86}{section.10}%
-\contentsline {subsection}{\numberline {10.1}Cumplimiento de los objetivos del trabajo}{86}{subsection.10.1}%
-\contentsline {subsection}{\numberline {10.2}Aportes y generalización}{88}{subsection.10.2}%
-\contentsline {section}{\numberline {11}Recomendaciones y líneas de trabajo futuro}{89}{section.11}%
-\contentsline {subsection}{\numberline {11.1}Calibración del gate de confianza}{89}{subsection.11.1}%
-\contentsline {subsection}{\numberline {11.2}Incorporación de un clasificador supervisado con corpus propio}{90}{subsection.11.2}%
-\contentsline {subsection}{\numberline {11.3}Corrección de la medición de intervención humana}{90}{subsection.11.3}%
-\contentsline {subsection}{\numberline {11.4}Ampliación de canales de entrada}{91}{subsection.11.4}%
-\contentsline {subsection}{\numberline {11.5}Panel de monitoreo en tiempo real}{91}{subsection.11.5}%
-\contentsline {subsection}{\numberline {11.6}Mecanismos de aprendizaje activo}{91}{subsection.11.6}%
-\contentsline {subsection}{\numberline {11.7}Validación sobre un corpus independiente}{92}{subsection.11.7}%
-\contentsline {subsection}{\numberline {11.8}Estudios de replicación}{92}{subsection.11.8}%
-\contentsline {subsection}{\numberline {11.9}Evaluación de modelos de lenguaje de código abierto}{92}{subsection.11.9}%
-\contentsline {subsection}{\numberline {11.10}Base de conocimientos para resolución automática}{93}{subsection.11.10}%
-\contentsline {subsection}{\numberline {11.11}Agente conversacional telefónico en tiempo real}{93}{subsection.11.11}%
-\contentsline {section}{Referencias bibliográficas}{94}{section*.29}%
+\contentsline {section}{\numberline {4}Marco metodológico}{33}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Enfoque y tipo de investigación}{33}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Diseño experimental}{33}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Operacionalización de variables}{34}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Población, muestra y corpus}{34}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Protocolo de pruebas}{37}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Métricas e instrumentos}{38}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Análisis estadístico}{38}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.8}Amenazas a la validez}{40}{subsection.4.8}%
+\contentsline {subsection}{\numberline {4.9}Gestión del proyecto bajo enfoque Scrumban (método de construcción del artefacto)}{41}{subsection.4.9}%
+\contentsline {section}{\numberline {5}Arquitectura del sistema}{42}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Visión general}{42}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Capa de canales de entrada}{44}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Capa de orquestación}{46}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Capa de procesamiento}{46}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Subsistema de clasificación híbrido}{47}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}Modelo de datos}{48}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.7}Contrato de la interfaz REST}{50}{subsection.5.7}%
+\contentsline {section}{\numberline {6}Implementación}{53}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Entorno de despliegue y dependencias}{53}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Construcción del módulo Python}{53}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Construcción del flujo en N8N}{54}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Integración del canal telefónico}{57}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}Desafíos de integración}{57}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.6}Conexión con el proceso Scrumban}{59}{subsection.6.6}%
+\contentsline {subsection}{\numberline {6.7}Pruebas automatizadas}{60}{subsection.6.7}%
+\contentsline {subsection}{\numberline {6.8}Dashboard de analítica}{61}{subsection.6.8}%
+\contentsline {section}{\numberline {7}Consideraciones éticas y aspectos legales}{63}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Marco normativo aplicable}{63}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Principios aplicados al tratamiento de datos}{64}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Transferencia internacional y pseudonimización}{64}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Seguridad técnica}{65}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}Consentimiento, derechos del usuario y supervisión humana}{65}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}Cumplimiento normativo y alineación con estándares}{67}{subsection.7.6}%
+\contentsline {subsubsection}{\numberline {7.6.1}Marco de referencia adoptado}{67}{subsubsection.7.6.1}%
+\contentsline {subsubsection}{\numberline {7.6.2}Estado de alineación con ISO/IEC 27002:2022}{67}{subsubsection.7.6.2}%
+\contentsline {subsubsection}{\numberline {7.6.3}Perfil de alineación con NIST CSF 2.0}{68}{subsubsection.7.6.3}%
+\contentsline {subsubsection}{\numberline {7.6.4}Brechas principales y hoja de ruta}{68}{subsubsection.7.6.4}%
+\contentsline {subsubsection}{\numberline {7.6.5}Alineación con el marco legal}{68}{subsubsection.7.6.5}%
+\contentsline {section}{\numberline {8}Resultados}{69}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Comparación de tiempos de registro}{69}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Matriz de confusión y métricas de clasificación}{70}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Intervención humana en el flujo automatizado}{73}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Calibración de la confianza}{74}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Sensibilidad al ajuste del clasificador con el corpus}{75}{subsection.8.5}%
+\contentsline {subsection}{\numberline {8.6}Análisis de errores y casos límite}{75}{subsection.8.6}%
+\contentsline {section}{\numberline {9}Discusión}{77}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Interpretación de los resultados}{77}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Comparación con la literatura}{80}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Limitaciones del estudio}{81}{subsection.9.3}%
+\contentsline {subsection}{\numberline {9.4}Implicancias prácticas}{83}{subsection.9.4}%
+\contentsline {subsection}{\numberline {9.5}Balance neto de la automatización}{84}{subsection.9.5}%
+\contentsline {subsection}{\numberline {9.6}Reflexiones sobre la generalización}{86}{subsection.9.6}%
+\contentsline {section}{\numberline {10}Conclusiones}{87}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Cumplimiento de los objetivos del trabajo}{87}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Aportes y generalización}{89}{subsection.10.2}%
+\contentsline {section}{\numberline {11}Recomendaciones y líneas de trabajo futuro}{90}{section.11}%
+\contentsline {subsection}{\numberline {11.1}Calibración del gate de confianza}{90}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}Incorporación de un clasificador supervisado con corpus propio}{91}{subsection.11.2}%
+\contentsline {subsection}{\numberline {11.3}Corrección de la medición de intervención humana}{91}{subsection.11.3}%
+\contentsline {subsection}{\numberline {11.4}Ampliación de canales de entrada}{92}{subsection.11.4}%
+\contentsline {subsection}{\numberline {11.5}Panel de monitoreo en tiempo real}{92}{subsection.11.5}%
+\contentsline {subsection}{\numberline {11.6}Mecanismos de aprendizaje activo}{92}{subsection.11.6}%
+\contentsline {subsection}{\numberline {11.7}Validación sobre un corpus independiente}{93}{subsection.11.7}%
+\contentsline {subsection}{\numberline {11.8}Estudios de replicación}{93}{subsection.11.8}%
+\contentsline {subsection}{\numberline {11.9}Evaluación de modelos de lenguaje de código abierto}{93}{subsection.11.9}%
+\contentsline {subsection}{\numberline {11.10}Base de conocimientos para resolución automática}{94}{subsection.11.10}%
+\contentsline {subsection}{\numberline {11.11}Agente conversacional telefónico en tiempo real}{94}{subsection.11.11}%
+\contentsline {section}{Referencias bibliográficas}{95}{section*.29}%
 \contentsline {section}{Anexos}{101}{section*.30}%
 \contentsline {section}{\numberline {A}Diagrama de arquitectura del sistema}{101}{section.1.A}%
 \contentsline {section}{\numberline {B}Repositorio de código fuente}{101}{section.1.B}%
