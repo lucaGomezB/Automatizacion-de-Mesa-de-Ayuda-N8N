@@ -114,6 +114,12 @@ jobs:
       - name: Run Gemini readiness preflight
         run: python scripts/preflight/gemini_readiness.py
 
+      # c-145 (H): barrera ejecutable de DOC-005. Compara CLAUDE.md y
+      # openspec/config.yaml contra settings.py, constants.py, requirements.txt
+      # y docker-compose.yml; falla nombrando cada valor divergente.
+      - name: Run docs stack sync preflight
+        run: python scripts/preflight/docs_stack_sync.py
+
       # Evaluation suite — self-contained (fixture JSON + FakeClassifier)
       # Chapter 7 thesis evidence; must not rot.
       - name: Install evaluation dependencies
