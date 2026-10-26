@@ -18,6 +18,7 @@ de las ramas consumidoras").
 - **Upsert c-132**: `c-132-balance-neto-derivaciones-erroneas` (aplicado el 2026-10-25) agrega la Sección 3.11 (balance neto trimestral entre el ahorro bruto de registro y el costo de las derivaciones erróneas: insumos con procedencia, fórmulas de `B` y de la exactitud mínima de equilibrio `a*`, tabla de escenarios, escenario central, lectura laxa, comando de referencia y redondeo; todo valor derivado de supuestos con estado `condicional`). No modifica ningún valor `vigente` de las Secciones 3.1 a 3.10. Fecha: 2026-10-25.
 - **Upsert c-133**: `c-133-hipotesis-objetivos-metrica-primaria` (aplicado el 2026-10-25) pasa el macro-F1 de umbral de las cuatro clases estimables (`0,6508`) de `condicional` a `vigente` (Sección 3.2), agrega los porcentajes `65,5 %` y `34,5 %` a la Sección 3.3, agrega la Sección 3.12 (cota de la segunda sub-hipótesis y contraste acotado de la hipótesis subsidiaria de eficiencia, con el estado que fija la regla de decisión frente a la variante E4 de c-142) y anota el ítem 5 de la Sección 5 y el punto 4 de la Sección 7. No modifica ningún otro valor `vigente`. Fecha: 2026-10-25.
 - **Consolidación c-141** (`c-141-integracion-release-v1-2-0`, tramo de integración; fecha de consolidación: 2026-10-26; versión de trabajo de la tesis: v10; release prevista: `v1.2.0`): verifica que las Secciones 3.7 a 3.12 (c-130, c-134, c-131, c-142, c-132, c-133, en ese orden de aplicación) son únicas y consecutivas y que toda remisión "ver sección 3.N" resuelve; que los números de resultado agregados a `sections/*.tex` por la familia c-130..c-142 (diff contra `v1.1.1`) figuran en alguna sección con procedencia y estado (los redondeos de la tesis a tres decimales o a un decimal porcentual derivan de valores de cuatro decimales ya registrados; los valores de la literatura citados en `tab:trabajos-academicos` tienen su procedencia en `extraccion-metricas-trabajos-c-135.md`); que ninguna corrida de sensibilidad de c-142 cambió un valor `vigente` (las tres filas reformuladas por c-142 conservan valor y estado); y refresca las referencias `archivo:línea` a `sections/*.tex` de las filas `vigente` que el desplazamiento de líneas de la familia había dejado desfasadas (solo el número de línea; ningún valor ni estado cambia). El item 6 de la Sección 7 (conjunto de preproducción, c-144) se conserva sin renumerar. Fecha de consolidación: 2026-10-26.
+- **Upsert c-145**: `c-145-correccion-factual-sincronizacion-del-memo-y-portabilidad-del-harness` (aplicado el 2026-10-26) registra el margen de error `6,66 %` como `vigente` con `N ≈ 2.646`, `z = 1,96`, `p = 0,5` y `n = 200` (Sección 3.4), marca `6,74 %` / `N = 3.700` como `retirado` y actualiza el punto 2 de la Sección 7 y la advertencia de arrastre del ítem 4. Además corrige por correspondencia de contenido las referencias `07-resultados.tex:<línea>` desfasadas (mínimo `:129 → :128`, `:75 → :74`, `:167-188 → :166-187` y `:179-183 → :178-182`) y la fila retirada del `9,5 %` que citaba `:160`. No modifica ningún otro valor `vigente`. Fecha: 2026-10-26.
 - **Artefacto**: este memo. No se edita ningún `.tex` en este change.
 - **Fecha de verificación**: 2026-10-21.
 - **SHA-256 del corpus** (`data/corpus_evaluacion_pseudonimizado.json`):
@@ -89,10 +90,10 @@ citable como resultado) y `condicional` (depende de una decisión editorial).
 | Valor canónico | Procedencia (archivo:línea) | Estado | Notas |
 |---|---|---|---|
 | Tiempo manual medio: `61,6 s` | `07-resultados.tex:10`, `07-resultados.tex:21`, `00-resumen.tex:13` | vigente | Medición por caso; reemplaza la estimación preliminar de 2 min 45 s (`01-introduccion.tex:18`). |
-| Tiempo automatizado medio: `17,76 s` | `07-resultados.tex:10`, `07-resultados.tex:21`, `00-resumen.tex:13` | vigente | Mediana `17,47 s` (`07-resultados.tex:21`). |
+| Tiempo automatizado medio: `17,76 s` | `07-resultados.tex:10`, `07-resultados.tex:21`, `00-resumen.tex:13` | vigente | Mediana `17,47 s` (`07-resultados.tex:22`). |
 | Reducción relativa de tiempo: `71,2 %` | `07-resultados.tex:10`, `07-resultados.tex:21`, `08-discusion.tex:8` | vigente | Cota superior (manual redondeado al alza, `07-resultados.tex:61`). |
 | Reducción media por incidente: `43,82 s` | `report.md:199` | vigente | El `.tex` la aproxima como `43,8 s` (`07-resultados.tex:59`). |
-| Wilcoxon `W = 363` | `07-resultados.tex:55`, `00-resumen.tex:13` | vigente | `W = min(T+, T−)`, dos colas (`report.md:185`). Contraste **bilateral**, conservador frente a `H1` direccional (c-134; ver Sección 3.8). |
+| Wilcoxon `W = 363` | `07-resultados.tex:57`, `00-resumen.tex:13` | vigente | `W = min(T+, T−)`, dos colas (`report.md:185`). Contraste **bilateral**, conservador frente a `H1` direccional (c-134; ver Sección 3.8). |
 | `T+ = 19.737`, `T− = 363` | `report.md:189`, `07-resultados.tex:57` | vigente | |
 | p-valor `p = 3,08e-32` | `07-resultados.tex:57`, `01-introduccion.tex:32` | vigente | **Bilateral** (conservador frente a `H1: M_manual > M_automatizado`); el `p` unilateral es `1,54e-32` (Sección 3.8, `report.md:239`). |
 | Tamaño del efecto `r = 0,9639` | `07-resultados.tex:59`, `07-resultados.tex:59`, `00-resumen.tex:13` | vigente | |
@@ -116,21 +117,23 @@ citable como resultado) y `condicional` (depende de una decisión editorial).
 
 | Valor canónico | Procedencia (archivo:línea) | Estado | Notas |
 |---|---|---|---|
-| Etapa determinística: `131` | `report.md:11`, `07-resultados.tex:129` | vigente | |
-| Etapa Gemini: `69` | `report.md:12`, `07-resultados.tex:129` | vigente | |
+| Etapa determinística: `131` | `report.md:11`, `07-resultados.tex:128` | vigente | |
+| Etapa Gemini: `69` | `report.md:12`, `07-resultados.tex:128` | vigente | |
 | Etapa fallback: `0` | `report.md:13` | vigente | |
 | Casos resueltos por la etapa determinística: `65,5 %` (`131/200`) | `evaluation/report.md:11` (actual; los design de c-133 citan `:9-10`, obsoleto), `08-discusion.tex:10,58` | vigente | Cociente de los `131` casos de la etapa determinística sobre `200`; registrado por c-133. |
 | Casos que llegan a la etapa Gemini: `34,5 %` (`69/200`) | `evaluation/report.md:12`, `08-discusion.tex:10,58` | vigente | Complemento de `65,5 %`; registrado por c-133. |
-| Bandas de confianza: `98 / 26 / 6 / 31 / 39` | `07-resultados.tex:179-183` | vigente | Reproduce la Tabla 7.5 (`07-resultados.tex:167-188`). **Efecto de composición (c-131):** las bandas bajas son solo de la etapa determinística y las altas casi solo de Gemini; su desglose por etapa figura en la Sección 3.9. |
+| Bandas de confianza: `98 / 26 / 6 / 31 / 39` | `07-resultados.tex:178-182` | vigente | Reproduce la Tabla 7.5 (`07-resultados.tex:166-187`). **Efecto de composición (c-131):** las bandas bajas son solo de la etapa determinística y las altas casi solo de Gemini; su desglose por etapa figura en la Sección 3.9. |
 | Tramo confianza `≥ 0,90`: `46` casos, `13` errores | `07-resultados.tex:189` | vigente | Ver Sección 5, ítem 3. Por etapa (c-131): Gemini `45` casos y `13` errores; determinística `1` caso y `0` errores (Sección 3.9). |
 
 ### 3.4 Intervención humana, universo y proyección
 
 | Valor canónico | Procedencia (archivo:línea) | Estado | Notas |
 |---|---|---|---|
-| Intervención humana: `9,5 %` (`19/200`; `181/200` sin intervención) | `07-resultados.tex:160`, `00-resumen.tex:13`, `08-discusion.tex:14`, `09-conclusiones.tex:16`, `10-recomendaciones.tex:24` | **retirado** | Valor heredado del corpus sintético descartado en C-27 (2026-09-11), sin re-medir (`knowledge-base/01_vision_y_objetivos.md:39,44`; `knowledge-base/README.md:32`); NO derivable del corpus real. Ver Sección 7. |
+| Intervención humana: `9,5 %` (`19/200`; `181/200` sin intervención) | `07-resultados.tex:157-159`, `00-resumen.tex:13`, `08-discusion.tex:14`, `09-conclusiones.tex:16`, `10-recomendaciones.tex:24` | **retirado** | Valor heredado del corpus sintético descartado en C-27 (2026-09-11), sin re-medir (`knowledge-base/01_vision_y_objetivos.md:39,44`; `knowledge-base/README.md:32`); NO derivable del corpus real. La remisión apunta a la sección que declara la intervención como no medida (`:157-159`); el valor retirado ya no figura en el `.tex`. Ver Sección 7. |
 | Universo calendario: `3.700 = 42 × 88` | `04-marco-metodologico.tex:45`, `04-marco-metodologico.tex:51` | **retirado** | Criterio incoherente con la tasa diaria de origen semanal. |
 | Universo días hábiles: `≈ 2.646 = 42 × 63` | recálculo (`88 × 5/7 ≈ 62,86 ≈ 63` días hábiles) | vigente | Valor canónico propuesto (decisión D5). |
+| Margen de error (corrección por finitud): `6,66 %` | `04-marco-metodologico.tex:51`; recálculo con `n = n₀/[1+(n₀−1)/N]`, `n₀ = z²p(1−p)/e²`, `z = 1,96`, `p = 0,5`, `n = 200`, `N ≈ 2.646` | vigente | Upsert c-145 (2026-10-26). Con esos insumos la fórmula reproduce `n ≈ 200,2`. Ver Sección 7, punto 2. |
+| Margen de error (calendario): `6,74 %` | `04-marco-metodologico.tex:51` (histórico; calibrado con `N = 3.700`) | **retirado** | Reemplazado por `6,66 %` con `N ≈ 2.646` (upsert c-145). Se conserva solo para trazabilidad; no citar como vigente. |
 | Proyección calendario: `45,0 h` | `08-discusion.tex:14`, `01-introduccion.tex:18` | **retirado** | `43,82 × 3.700 / 3.600 = 45,04 h`. |
 | Proyección días hábiles: `≈ 32,2 h` | recálculo | vigente | `43,82 × 2.646 / 3.600 = 32,21 h`. |
 
@@ -213,7 +216,7 @@ registran los números.
 
 | Valor canónico | Procedencia (archivo:línea) | Estado | Notas |
 |---|---|---|---|
-| Casos con confianza `< 0,70` sin escalamiento: `124/200` | `07-resultados.tex:179-180` (bandas `98 + 26`), `07-resultados.tex:157`; Sección 4 de este memo; `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` | vigente | Los `124` son **todos** de la etapa determinística (confianza = fuerza de señal, no probabilidad). Repetición offline del 2026-10-25 con `DeterministicClassifier` sobre el corpus versionado: `124` con confianza `< 0,70` (`94` aciertos) y `7` con `≥ 0,70`; coincide con la evidencia versionada `hybrid-v3` (`124` de `200`). |
+| Casos con confianza `< 0,70` sin escalamiento: `124/200` | `07-resultados.tex:178-179` (bandas `98 + 26`), `07-resultados.tex:157`; Sección 4 de este memo; `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` | vigente | Los `124` son **todos** de la etapa determinística (confianza = fuerza de señal, no probabilidad). Repetición offline del 2026-10-25 con `DeterministicClassifier` sobre el corpus versionado: `124` con confianza `< 0,70` (`94` aciertos) y `7` con `≥ 0,70`; coincide con la evidencia versionada `hybrid-v3` (`124` de `200`). |
 | Proporción de esos casos: `62,0 %` | `07-resultados.tex:157` (`124/200`) | vigente | Aritmética sobre `124/200`; la tesis lo escribe `62~\%`. |
 | Confianza mínima declarada por Gemini: `0,85` en `69` casos | Sección 4 de este memo; `07-resultados.tex:157`; `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` | vigente | Verificado el 2026-10-25 sobre la evidencia versionada: `69` predicciones con `etapa = gemini`, mínimo `0,85`. La etapa de reserva no se activó (`0` casos). |
 | Punto de operación del cortocircuito: `0,5166` | `App/Backend/app/config/settings.py:134`; `docs/deterministic_calibration.md:35-36` | vigente | Umbral sobre el `score_correctitud` (no sobre la confianza). Derivado por validación cruzada de cinco pliegues (tau OOF `0,516666…` en los cinco pliegues, truncado a 4 decimales). Sustituye al piso absoluto `0,90` del diseño inicial (ver el punto siguiente). |
@@ -547,7 +550,7 @@ Cálculo de solo lectura, sin invocar al clasificador (cero llamadas a Gemini).
 |---|---|---|---|---|
 | Universo trimestral `N` | `≈ 2.646 = 42 × 63` | Sección 3.4; `04-marco-metodologico.tex:45,51` | vigente | Escala el balance, no su signo. |
 | Ahorro medio por incidente `Δt` | `43,82 s` | Sección 3.1; `report.md:199` | vigente | El `.tex` lo aproxima como `43,8 s`. |
-| Tasa de error estricta del clasificador `e_aut` | `0,265 = 53/200 = 1 − 0,7350` | `07-resultados.tex:75,129`; `report.md:20-21` | vigente (derivado) | El `26,5 %` no figura literalmente en el `.tex`. Es una cota **superior** de la tasa operativa de derivación errónea: el `53,5 %` de los casos (`107/200`, `07-resultados.tex:129`) admite más de un sector. |
+| Tasa de error estricta del clasificador `e_aut` | `0,265 = 53/200 = 1 − 0,7350` | `07-resultados.tex:74,128`; `report.md:20-21` | vigente (derivado) | El `26,5 %` no figura literalmente en el `.tex`. Es una cota **superior** de la tasa operativa de derivación errónea: el `53,5 %` de los casos (`107/200`, `07-resultados.tex:128`) admite más de un sector. |
 | Tasa de derivación errónea manual `e_man` | `≈ 15 %` | `01-introduccion.tex:18` | condicional | Estimación **preliminar** de una semana de operación, de la misma naturaleza que los `2 min 45 s` luego corregidos a `61,6 s`; nunca re-medida. La exactitud del brazo manual sobre el corpus NO se midió: el corpus no registra por caso la derivación del operador (`12-anexos.tex`, `sec:anexo-corpus`) y los operadores son los mismos analistas que fijaron la referencia (`04-marco-metodologico.tex:55,87`). |
 | Costo por derivación errónea `c` | `10 a 15 min` (`600-900 s`) | `01-introduccion.tex:48` | condicional | Estimación propia de los autores, sin registro cuantitativo conservado. |
 | Rejilla de sensibilidad | `e_man ∈ {10 %, 15 %, 20 %, 26,5 %}`; `c ∈ {5, 10, 15} min` | c-132 (`design.md`, D3) | condicional | `10 %` y `20 %` son ±5 puntos alrededor del `15 %`; `26,5 %` es la paridad con el error automatizado; `5 min` es un escenario optimista por debajo de la estimación propia. Supuestos de sensibilidad, no datos. |
@@ -717,7 +720,7 @@ la contradicción era entre la Tabla 7.5 y el `9,5 %` (ítem 1).
 errores (`28,3 %`). Composición: `45` Gemini + `1` determinístico. El tramo NO
 se deduce de la Tabla 7.5 publicada tal como está (la banda `[0,85;0,95]` tiene
 `31` casos y la `[0,95;1,00]` tiene `39`; `0,90` corta dentro de la primera
-banda). La rama que reescriba `07-resultados.tex:190` debe conservar la
+banda). La rama que reescriba `07-resultados.tex:189` debe conservar la
 referencia textual a la banda como criterio o justificar por separado el corte
 en `0,90`.
 
@@ -728,9 +731,10 @@ coherencia con la tasa diaria de `42` incidentes tomada de una semana laboral
 como `retirado`. Propagación obligatoria: `04-marco-metodologico.tex:45` y
 `04-marco-metodologico.tex:51` (universo y fórmula de tamaño muestral),
 `08-discusion.tex:14` (proyección) y `09-conclusiones.tex:24` (referencia
-cualitativa al ahorro). Advertencia de arrastre: la fórmula de tamaño muestral
-de `04-marco-metodologico.tex:51` usa `N = 3.700`; al adoptar `≈ 2.646` debe
-recalcularse el margen de error asociado (ver §7, punto 2).
+cualitativa al ahorro). Advertencia de arrastre (actualizada por c-145,
+2026-10-26): la fórmula de tamaño muestral de `04-marco-metodologico.tex:51`
+ya usa `N ≈ 2.646`; el margen quedó recalculado y registrado como `6,66 %` con
+`N ≈ 2.646` (Sección 3.4, upsert c-145; ver §7, punto 2).
 
 **Ítem 5 — Paradigma métrico.** La verdad de referencia es MULTIETIQUETA
 (`107/200 = 53,5 %` de los casos del corpus tienen más de un sector de verdad;
@@ -784,7 +788,7 @@ Fuentes primarias (solo lectura, sin edición):
 Capítulos de la tesis citados (NO editados en este change):
 `00-resumen.tex:11,13`; `01-introduccion.tex:18`;
 `04-marco-metodologico.tex:45,51`;
-`07-resultados.tex:10,22,55,61,63,76,108,119-123,136,138,145-163,165`;
+`07-resultados.tex:10,22,57,61,63,76,108,119-121,136,138,141-145,157-159,166-187,189`;
 `08-discusion.tex:8,14,22,30,34,56`; `09-conclusiones.tex:6,16,24`;
 `10-recomendaciones.tex:24`.
 
@@ -795,12 +799,13 @@ Las líneas se citan según la numeración que usan los editores y Python
 de este change. El archivo `07-resultados.tex` contiene un único carácter CR
 suelto en su línea 17 (dentro del bloque de la matriz de confusión); las
 herramientas que solo cortan por LF (`grep -n`, `sed -n`, `awk`) reportan un
-número **uno menor** para todas las líneas posteriores a la 17 (por ejemplo, el
-párrafo citado como `07-resultados.tex:129` aparece como `:107` en `grep -n`).
+número distinto para todas las líneas posteriores a la 17 (por ejemplo, el
+párrafo del marco métrico aparecía en `grep -n` con un número menor que el que
+usa `splitlines`).
 El contenido de cada línea citada fue verificado; los demás archivos no tienen
 CR sueltos y su numeración coincide en todas las herramientas.
 
-*Actualización c-131 (2026-10-25).* En el árbol de trabajo vigente `07-resultados.tex` ya no tiene el CR suelto (`splitlines` y `grep -n` coinciden) y las remisiones a los `.tex` editados por c-131 se actualizaron por correspondencia de contenido: el párrafo del marco métrico, citado antes como `:108`, está hoy en `:129`; `tab:bandas` y la calibración pasan de `145-165` a `167-190` aproximadamente; las citas de `08-discusion.tex` posteriores al párrafo de gate (`:16`) se corren `+2`.
+*Actualización c-131 (2026-10-25).* En el árbol de trabajo vigente `07-resultados.tex` ya no tiene el CR suelto (`splitlines` y `grep -n` coinciden) y las remisiones a los `.tex` editados por c-131 se actualizaron por correspondencia de contenido: el párrafo del marco métrico, citado antes como `:108`, está hoy en `:128`; `tab:bandas` y la calibración pasan de `145-165` a `166-187` (la sección de calibración cierra en `:189`); las citas de `08-discusion.tex` posteriores al párrafo de gate (`:16`) se corren `+2`.
 
 ## 7. Decisiones no resolubles
 
@@ -828,10 +833,12 @@ decisión editorial adoptada y su condición de reversibilidad.
    (`01-introduccion.tex:18`) con `88` días calendario. **Decisión adoptada**:
    adoptar días hábiles (`≈ 2.646`, `≈ 32,2 h`) y retirar el valor calendario.
    **Reversible si**: el autor ratifica el criterio calendario. **Advertencia de
-   arrastre**: el cambio de `N` afecta la fórmula de tamaño muestral de
-   `04-marco-metodologico.tex:51` (margen de error del `6,74 %` calibrado con
-   `N = 3.700`); la rama que edite ese capítulo debe recalcular el margen o
-   justificar la conservación de `N`.
+   arrastre (actualizada por c-145, 2026-10-26)**: el cambio de `N` afecta la
+   fórmula de tamaño muestral de `04-marco-metodologico.tex:51`. El margen ya
+   quedó recalculado y registrado como `6,66 %` con `N ≈ 2.646` (Sección 3.4,
+   upsert c-145): el capítulo publica ese valor y la fórmula reproduce
+   `n ≈ 200,2`. El margen `6,74 %` calibrado con `N = 3.700` queda `retirado` y
+   no debe citarse como vigente. La decisión de universo no cambia.
 
 3. **Referencia multietiqueta (interpretación).** `design.md` describe los `8`
    casos con `sectores_adicionales` como "referencia multietiqueta parcial".
