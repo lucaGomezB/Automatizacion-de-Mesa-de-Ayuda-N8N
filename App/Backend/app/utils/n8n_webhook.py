@@ -180,7 +180,15 @@ HANDOFF_FAILED = "failed"
 # de 5 s producia un `telefonia_handoff_failed` FALSO (ReadTimeout) que no
 # bloqueaba nada pero enmascaraba el exito. El handoff es fire-and-forget: un
 # margen amplio no penaliza la latencia de la respuesta HTTP.
-TELEFONIA_HANDOFF_TIMEOUT_S = 30.0
+#
+# c-140 (D9): con la politica de reintento acotada del tramo de alta
+# (retryOnFail 3 intentos, 5000 ms de espera fija y timeout por intento), el
+# peor caso del tramo login + POST es 40 s + 235 s = 275 s. El timeout del
+# handoff se iguala a `EXECUTIONS_TIMEOUT` (300 s) para cubrir ese presupuesto
+# y no registrar `telefonia_handoff_failed` cuando N8N reintenta. La prueba
+# cruzada contra `n8n/workflow.json` vive en
+# `tests/test_c135_n8n_retry_policy.py`.
+TELEFONIA_HANDOFF_TIMEOUT_S = 300.0
 
 
 def build_telefonia_handoff_payload(
