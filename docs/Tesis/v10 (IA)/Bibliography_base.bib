@@ -3,6 +3,9 @@
 % Automatizacion de Mesa de Ayuda con N8N y NLP
 % Formato: BibLaTeX + APA 7ma edicion
 % Convencion de claves: ApellidoAnio_palabra_clave
+% Nota (c-139): el anio impreso es el de copyright de la obra (criterio APA 7); la clave
+% conserva el anio historico y no se renombra (p. ej. Stallings2017_computer_security
+% imprime 2018, Date2003_database imprime 2004, Jurafsky2023_speech_language imprime 2026).
 % ==============================================================================
 
 % ==============================================================================
@@ -51,7 +54,7 @@
   title     = {An Introduction to Database Systems},
   edition   = {8},
   publisher = {Addison-Wesley},
-  year      = {2003},
+  year      = {2004},
 }
 
 @article{Fielding2002_rest,
@@ -92,10 +95,12 @@
 
 @unpublished{Jurafsky2023_speech_language,
   author    = {Jurafsky, Daniel and Martin, James H.},
-  title     = {Speech and Language Processing: An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition},
-  note      = {Borrador de la 3ra edicion, disponible en el sitio de los autores},
+  title     = {Speech and Language Processing: An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition with Language Models},
+  note      = {Borrador de la 3.a edici{\'o}n, versi{\'o}n del 19 de agosto de 2026},
   publisher = {Stanford University},
-  year      = {2023},
+  year      = {2026},
+  url       = {https://web.stanford.edu/~jurafsky/slp3/},
+  urldate   = {2026-10-25},
 }
 
 @book{Ladas2009_scrumban,
@@ -108,12 +113,15 @@
 @incollection{Paramesh2019_it_service_desk,
   author    = {Paramesh, S. P. and Shreedhara, K. S.},
   title     = {Automated IT Service Desk Systems Using Machine Learning Techniques},
-  booktitle = {Lecture Notes in Networks and Systems},
-  volume    = {43},
-  pages     = {331--346},
-  publisher = {Springer},
-  year      = {2019},
-  doi       = {10.1007/978-981-13-2514-4_28},
+  booktitle    = {Data Analytics and Learning},
+  booksubtitle = {Proceedings of {DAL} 2018},
+  editor       = {Nagabhushan, P. and Guru, D. S. and Shekar, B. H. and Sharath Kumar, Y. H.},
+  series       = {Lecture Notes in Networks and Systems},
+  volume       = {43},
+  pages        = {331--346},
+  publisher    = {Springer},
+  year         = {2019},
+  doi          = {10.1007/978-981-13-2514-4_28},
 }
 
 @article{Pedregosa2011_scikit_learn,
@@ -160,8 +168,8 @@
 
 % Revina et al. (2020) NO usa BERT ni transformers: compara TF-IDF contra rasgos
 % linguisticos artesanales con clasificadores clasicos y concluye que los metodos
-% simples y explicables del dominio ganan; los embeddings preentrenados pueden
-% rendir peor por vocabulario especifico del dominio. Clave renombrada desde
+% simples y explicables del dominio son competitivos; los autores excluyen por
+% diseno los embeddings preentrenados (argumento, no resultado medido). Clave renombrada desde
 % `Revina2020_bert_tickets` para no reafirmar una atribucion falsa.
 @article{Revina2020_it_tickets,
   author  = {Revina, Aleksandra and Buza, Krisztian and Meister, Vera G.},
@@ -197,7 +205,7 @@
   title     = {Computer Security: Principles and Practice},
   edition   = {4},
   publisher = {Pearson},
-  year      = {2017},
+  year      = {2018},
 }
 
 @misc{Touvron2023_llama2,
@@ -311,7 +319,7 @@
   author  = {Mayor-Rocher, Marina and Melero, Nina and Merino-G{\'o}mez, Elena and Grandury, Mar{\'i}a and Conde, Javier and Reviriego, Pedro},
   journal = {Applied Linguistics},
   year    = {2026},
-  note    = {Advance article; volume/pages pending},
+  note    = {Advance article, volume/pages pending},
   doi     = {10.1093/applin/amag048},
   url     = {https://doi.org/10.1093/applin/amag048}
 }
@@ -353,10 +361,11 @@
 @inproceedings{liu2025tickit,
   title     = {TickIt: Leveraging Large Language Models for Automated Ticket Escalation},
   author    = {Liu, Fengrui and He, Xiao and Zhang, Tieying and Chen, Jianjun and Li, Yi and Yi, Lihua and Zhang, Haipeng and Wu, Gang and Shi, Rui},
-  booktitle = {Proceedings of the 33rd ACM International Conference on the Foundations of Software Engineering (FSE)},
+  booktitle = {Proceedings of the 33rd ACM International Conference on the Foundations of Software Engineering (FSE Companion '25)},
   pages     = {343--354},
   year      = {2025},
   publisher = {ACM},
+  address   = {Trondheim, Norway},
   doi       = {10.1145/3696630.3728558},
   url       = {https://doi.org/10.1145/3696630.3728558}
 }
@@ -542,15 +551,16 @@
   title        = {{Apache Airflow} Documentation (Version 2.10)},
   year         = {2024},
   url          = {https://airflow.apache.org/docs/},
+  urldate      = {2026-10-25},
   note         = {Documentacion tecnica},
 }
 
 @book{OGC2011_itil,
-  author       = {{Office of Government Commerce}},
+  author       = {{Cabinet Office}},
   title        = {{ITIL} Service Operation},
   publisher    = {The Stationery Office},
   year         = {2011},
-  note         = {Publicado por encargo del Office of Government Commerce; la titularidad de ITIL es hoy de la herencia AXELOS/PeopleCert},
+  isbn         = {978-0-11-331307-5},
 }
 
 @manual{n8n2024_docs,
@@ -558,6 +568,7 @@
   title        = {{n8n} Documentation},
   year         = {2024},
   url          = {https://docs.n8n.io/},
+  urldate      = {2026-10-25},
   note         = {Documentacion tecnica oficial},
 }
 
@@ -566,14 +577,16 @@
   title        = {{PostgreSQL} 15 Documentation},
   year         = {2024},
   url          = {https://www.postgresql.org/docs/15/},
+  urldate      = {2026-10-25},
   note         = {Documentacion tecnica oficial},
 }
 
 @manual{Tiangolo2024_fastapi,
-  author       = {Tiangolo, Sebasti{\'a}n Ram{\'i}rez},
+  author       = {Ram{\'i}rez, Sebasti{\'a}n},
   title        = {{FastAPI} Documentation},
   year         = {2024},
   url          = {https://fastapi.tiangolo.com/},
+  urldate      = {2026-10-25},
   note         = {Documentacion tecnica oficial},
 }
 
@@ -582,6 +595,7 @@
   title        = {The Twelve-Factor App},
   year         = {2017},
   url          = {https://12factor.net/},
+  urldate      = {2026-10-25},
   note         = {Manifiesto de arquitectura de software},
 }
 
@@ -597,7 +611,7 @@
   year    = {2026},
   url     = {https://www.digitalocean.com/pricing/droplets},
   urldate = {2026-10-19},
-  note    = {Precio de lista consultado el 19 de octubre de 2026},
+  note    = {Precio de lista},
 }
 
 @online{Google2026_vertex_pricing,
@@ -606,7 +620,7 @@
   year    = {2026},
   url     = {https://cloud.google.com/vertex-ai/generative-ai/pricing},
   urldate = {2026-10-19},
-  note    = {Precios de lista consultados el 19 de octubre de 2026},
+  note    = {Precios de lista},
 }
 
 @online{Zendesk2026_help_desk,
@@ -615,7 +629,7 @@
   year    = {2026},
   url     = {https://www.zendesk.com/service/help-desk-software/},
   urldate = {2026-10-19},
-  note    = {Documentacion de la plataforma (capacidades y precios) consultada el 19 de octubre de 2026},
+  note    = {Documentacion de la plataforma (capacidades y precios)},
 }
 
 @online{Freshdesk2026_platform,
@@ -624,7 +638,7 @@
   year    = {2026},
   url     = {https://www.freshworks.com/freshdesk/},
   urldate = {2026-10-19},
-  note    = {Documentacion de la plataforma (capacidades y precios) consultada el 19 de octubre de 2026},
+  note    = {Documentacion de la plataforma (capacidades y precios)},
 }
 
 @online{ServiceNow2026_itsm,
@@ -633,7 +647,7 @@
   year    = {2026},
   url     = {https://www.servicenow.com/products/itsm.html},
   urldate = {2026-10-19},
-  note    = {Documentacion de la plataforma (capacidades y precios) consultada el 19 de octubre de 2026},
+  note    = {Documentacion de la plataforma (capacidades y precios)},
 }
 
 % ==============================================================================
@@ -647,6 +661,7 @@
   month        = {10},
   day          = {4},
   url          = {http://servicios.infoleg.gob.ar/infolegInternet/anexos/60000-64999/64790/norma.htm},
+  urldate      = {2026-10-25},
   note         = {Bolet{\'i}n Oficial de la Rep{\'u}blica Argentina},
 }
 
@@ -656,6 +671,8 @@
   year         = {2016},
   month        = {4},
   day          = {27},
+  url          = {https://eur-lex.europa.eu/eli/reg/2016/679/oj},
+  urldate      = {2026-10-25},
   note         = {Diario Oficial de la Uni{\'o}n Europea, L 119/1},
 }
 
@@ -664,7 +681,8 @@
   title        = {{\textquestiondown}Qu{\'e} es una {MiPyME}?},
   year         = {2026},
   url          = {https://www.argentina.gob.ar/produccion/registrar-una-pyme/que-es-una-pyme},
-  note         = {Ministerio de Econom{\'i}a de la Naci{\'o}n Argentina; consultado el 19 de octubre de 2026},
+  urldate      = {2026-10-19},
+  note         = {Ministerio de Econom{\'i}a de la Naci{\'o}n Argentina},
 }
 
 @misc{APA2017,
@@ -672,7 +690,100 @@
   title        = {Ethical Principles of Psychologists and Code of Conduct},
   year         = {2017},
   url          = {https://www.apa.org/ethics/code},
-  note         = {2002, con enmiendas efectivas del 1 de junio de 2010 y del 1 de enero de 2017; consultado el 19 de octubre de 2026},
+  urldate      = {2026-10-19},
+  note         = {2002, con enmiendas efectivas del 1 de junio de 2010 y del 1 de enero de 2017},
+}
+
+% ==============================================================================
+% NORMAS, MARCOS Y METODO ESTADISTICO (B15) - entradas aditivas agregadas por c-139,
+% verificadas el 2026-10-25: fichas del IEC Webstore (publicaciones 79694, 74287 y
+% 110123; el sitio de ISO bloquea la consulta automatizada), Crossref y NIST (CSWP 29),
+% InfoLEG (id 70368), Crossref (Wilcoxon, Efron y Tibshirani) y catalogo Open Library
+% (Cohen, LCCN 88012110). ISO/IEC 27701 se cita en su edicion vigente (2025): la
+% edicion 2019 figura como retirada el 2025-10-14. No se modifica ninguna entrada
+% existente.
+% ==============================================================================
+
+@report{ISO27001_2022,
+  author      = {{International Organization for Standardization}},
+  shortauthor = {ISO},
+  title       = {Information security, cybersecurity and privacy protection --- Information security management systems --- Requirements},
+  type        = {Norma ISO/IEC},
+  number      = {27001:2022},
+  year        = {2022},
+  url         = {https://webstore.iec.ch/en/publication/79694},
+  urldate     = {2026-10-25},
+}
+
+@report{ISO27002_2022,
+  author      = {{International Organization for Standardization}},
+  shortauthor = {ISO},
+  title       = {Information security, cybersecurity and privacy protection --- Information security controls},
+  type        = {Norma ISO/IEC},
+  number      = {27002:2022},
+  year        = {2022},
+  url         = {https://webstore.iec.ch/en/publication/74287},
+  urldate     = {2026-10-25},
+}
+
+@report{ISO27701_2025,
+  author      = {{International Organization for Standardization}},
+  shortauthor = {ISO},
+  title       = {Information security, cybersecurity and privacy protection --- Privacy information management systems --- Requirements and guidance},
+  type        = {Norma ISO/IEC},
+  number      = {27701:2025},
+  year        = {2025},
+  url         = {https://webstore.iec.ch/en/publication/110123},
+  urldate     = {2026-10-25},
+}
+
+@report{NIST2024_csf,
+  author      = {{National Institute of Standards and Technology}},
+  shortauthor = {NIST},
+  title       = {The {NIST} Cybersecurity Framework ({CSF}) 2.0},
+  type        = {NIST Cybersecurity White Paper},
+  number      = {29},
+  year        = {2024},
+  doi         = {10.6028/NIST.CSWP.29},
+}
+
+@misc{Decreto1558_2001,
+  author  = {{Poder Ejecutivo Nacional}},
+  title   = {Decreto 1558/2001: Reglamentaci{\'o}n de la Ley 25.326 de Protecci{\'o}n de los Datos Personales},
+  year    = {2001},
+  month   = {11},
+  day     = {29},
+  url     = {http://servicios.infoleg.gob.ar/infolegInternet/anexos/70000-74999/70368/norma.htm},
+  urldate = {2026-10-25},
+  note    = {Bolet{\'i}n Oficial de la Rep{\'u}blica Argentina, 3 de diciembre de 2001},
+}
+
+@article{Wilcoxon1945_individual_comparisons,
+  author  = {Wilcoxon, Frank},
+  title   = {Individual Comparisons by Ranking Methods},
+  journal = {Biometrics Bulletin},
+  volume  = {1},
+  number  = {6},
+  pages   = {80--83},
+  year    = {1945},
+  doi     = {10.2307/3001968},
+}
+
+@book{Cohen1988_power_analysis,
+  author    = {Cohen, Jacob},
+  title     = {Statistical Power Analysis for the Behavioral Sciences},
+  edition   = {2},
+  publisher = {Lawrence Erlbaum Associates},
+  year      = {1988},
+  isbn      = {0-8058-0283-5},
+}
+
+@book{Efron1993_bootstrap,
+  author    = {Efron, Bradley and Tibshirani, Robert J.},
+  title     = {An Introduction to the Bootstrap},
+  publisher = {Chapman \& Hall},
+  year      = {1993},
+  doi       = {10.1007/978-1-4899-4541-9},
 }
 
 % ==============================================================================
@@ -684,5 +795,6 @@
   title        = {Automatizaci{\'o}n de Mesa de Ayuda {N8N} (Version 1.1.1)},
   year         = {2026},
   url          = {https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N},
+  urldate      = {2026-10-25},
   note         = {Software de computadora. GitHub},
 }

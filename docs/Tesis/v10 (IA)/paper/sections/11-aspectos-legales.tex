@@ -5,7 +5,7 @@
 
 \subsection{Marco normativo aplicable}\label{subsec:marco-normativo}
 
-El sistema desarrollado se enmarca normativamente en la Ley~25.326 de Protección de los Datos Personales de la República Argentina \parencite{Ley25326_2000}, en su decreto reglamentario y en las disposiciones complementarias emitidas por la Agencia de Acceso a la Información Pública en su carácter de autoridad de aplicación. Dado que el sistema realiza transferencia de fragmentos textuales hacía infraestructura de inferencia operada por proveedores con sede en los Estados Unidos, resultan aplicables las consideraciones del artículo 12 de la mencionada ley sobre transferencia internacional de datos personales y, de manera complementaria, los lineamientos del Reglamento General de Protección de Datos de la Unión Europea \parencite{GDPR2016} en aquellos casos que pudieran involucrar a residentes europeos. La Unión Europea reconoce a la Argentina como país con nivel adecuado de protección de datos personales mediante la Decisión 2003/490/CE, del 30 de junio de 2003, revalidada en enero de 2024. Esta adecuación ampara el flujo desde la Unión Europea hacia la Argentina y no opera en sentido inverso: los Estados Unidos no revisten la condición de país adecuado para la normativa argentina, de modo que la transferencia desde la Argentina hacia los proveedores de inferencia y de telefonía con sede en ese país requiere un instrumento específico conforme al artículo 12 de la Ley~25.326, según se detalla en la \autoref{subsec:transferencia-internacional}.
+El sistema desarrollado se enmarca normativamente en la Ley~25.326 de Protección de los Datos Personales de la República Argentina \parencite{Ley25326_2000}, en su decreto reglamentario, el Decreto~1558/2001 \parencite{Decreto1558_2001}, y en las disposiciones complementarias emitidas por la Agencia de Acceso a la Información Pública en su carácter de autoridad de aplicación. Dado que el sistema realiza transferencia de fragmentos textuales hacía infraestructura de inferencia operada por proveedores con sede en los Estados Unidos, resultan aplicables las consideraciones del artículo 12 de la mencionada ley sobre transferencia internacional de datos personales y, de manera complementaria, los lineamientos del Reglamento General de Protección de Datos de la Unión Europea \parencite{GDPR2016} en aquellos casos que pudieran involucrar a residentes europeos. La Unión Europea reconoce a la Argentina como país con nivel adecuado de protección de datos personales mediante la Decisión 2003/490/CE, del 30 de junio de 2003, revalidada en enero de 2024. Esta adecuación ampara el flujo desde la Unión Europea hacia la Argentina y no opera en sentido inverso: los Estados Unidos no revisten la condición de país adecuado para la normativa argentina, de modo que la transferencia desde la Argentina hacia los proveedores de inferencia y de telefonía con sede en ese país requiere un instrumento específico conforme al artículo 12 de la Ley~25.326, según se detalla en la \autoref{subsec:transferencia-internacional}.
 
 \subsection{Principios aplicados al tratamiento de datos}\label{subsec:principios-datos}
 
@@ -37,11 +37,11 @@ En concordancia con las recomendaciones contemporáneas sobre sistemas que incor
 
 \subsubsection{Marco de referencia adoptado}\label{subsec:cumplimiento-marco}
 
-Este apartado evalúa el grado de alineación del sistema con los marcos adoptados: ISO/IEC~27001:2022 y su catálogo de controles ISO/IEC~27002:2022, NIST CSF~2.0, la extensión de privacidad ISO/IEC~27701 y la Ley~25.326. El relevamiento es estático y documental: describe el grado de alineación y las brechas identificadas, no un aseguramiento de un tercero (no constituye una acreditación externa ni una auditoría independiente), y su detalle se conserva en el repositorio (\texttt{docs/cumplimiento/}).
+Este apartado evalúa el grado de alineación del sistema con los marcos adoptados: ISO/IEC~27001:2022 \parencite{ISO27001_2022} y su catálogo de controles ISO/IEC~27002:2022 \parencite{ISO27002_2022}, NIST CSF~2.0 \parencite{NIST2024_csf}, la norma de gestión de la privacidad ISO/IEC~27701:2025 \parencite{ISO27701_2025} y la Ley~25.326. El relevamiento es estático y documental: describe el grado de alineación y las brechas identificadas, no un aseguramiento de un tercero (no constituye una acreditación externa ni una auditoría independiente), y su detalle se conserva en el repositorio (\texttt{docs/cumplimiento/}).
 
 \subsubsection{Estado de alineación con ISO/IEC 27002:2022}\label{subsec:cumplimiento-iso}
 
-La Tabla~\ref{tab:cumplimiento-iso} agrupa por tema los controles del Anexo~A de ISO/IEC~27002:2022; el inventario de los 93 controles reside en el repositorio.
+La Tabla~\ref{tab:cumplimiento-iso} agrupa por tema los controles de ISO/IEC~27002:2022, que corresponden al Anexo~A de ISO/IEC~27001:2022; el inventario de los 93 controles reside en el repositorio.
 
 \begin{table}[htbp]
 \centering
@@ -65,7 +65,7 @@ Tecnológico & 8.x & Alineado y parcial & Pseudonimización, Fernet, TLS, JWT y 
 
 \subsubsection{Perfil de alineación con NIST CSF 2.0}\label{subsec:cumplimiento-nist}
 
-La Tabla~\ref{tab:cumplimiento-nist} cubre las seis funciones de NIST CSF~2.0 y su madurez de 0 (inexistente) a 4 (optimizado).
+La Tabla~\ref{tab:cumplimiento-nist} cubre las seis funciones de NIST CSF~2.0 y su madurez en una escala propia del relevamiento, de 0 (inexistente) a 4 (optimizado).
 
 \begin{table}[htbp]
 \centering
