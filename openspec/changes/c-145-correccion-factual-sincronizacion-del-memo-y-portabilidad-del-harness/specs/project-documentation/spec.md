@@ -2,9 +2,11 @@
 
 ### Requirement: DOC-005 — Stack declarado en la documentacion para agentes sincronizado con el codigo
 
-La documentacion que heredan los agentes (`CLAUDE.md` y `openspec/config.yaml`) SHALL declarar solo valores de stack que se puedan reproducir desde el codigo o desde los archivos de dependencias: el modelo de inferencia y sus parametros desde `App/Backend/app/config/settings.py`, y las versiones de framework y librerias desde `App/Backend/requirements.txt` y `docker-compose.yml`. Ningun valor MUST provenir de otro documento, y ningun valor retirado MUST citarse como vigente.
+La documentacion que heredan los agentes (`CLAUDE.md` y `openspec/config.yaml`) SHALL declarar solo valores de stack que se puedan reproducir desde el codigo o desde los archivos de dependencias: el modelo de inferencia y sus parametros desde `App/Backend/app/config/settings.py`, los umbrales de decision desde el mismo `Settings`, el conjunto canonico de sectores desde `App/Backend/app/constants.py`, y las versiones de framework y librerias desde `App/Backend/requirements.txt` y `docker-compose.yml`. Ningun valor MUST provenir de otro documento, y ningun valor retirado MUST citarse como vigente.
 
 El flujo de clasificacion y los servicios de infraestructura que esos documentos describan MUST existir en el repositorio; una etapa o un servicio que ya no existe MUST retirarse o declararse historico, no describirse como vigente.
+
+Cada valor volatil MUST tener una sola fuente declarada: cuando `CLAUDE.md` repita un valor que ya vive en `openspec/config.yaml`, MUST remitir a esa seccion en lugar de restatear el literal, para que la superficie vigilada no tenga dos copias que puedan divergir. La unica excepcion es el nombre del modelo, que se declara en ambos documentos y se verifica por coincidencia con `Settings.gemini_model`.
 
 #### Scenario: Modelo y parametros de inferencia coinciden con la configuracion
 
@@ -18,6 +20,19 @@ El flujo de clasificacion y los servicios de infraestructura que esos documentos
 - **WHEN** se leen las versiones de FastAPI, Uvicorn y `google-genai` declaradas en `openspec/config.yaml`
 - **THEN** coinciden con las restricciones vigentes de `App/Backend/requirements.txt`
 - **AND** la version de N8N declarada coincide con la imagen pinneada del compose
+
+#### Scenario: Umbrales y sectores canonicos coinciden con el codigo
+
+- **WHEN** se leen `conventions.thresholds` y `conventions.categorias` de `openspec/config.yaml`
+- **THEN** los umbrales coinciden con `Settings.deterministic_score_threshold` y `Settings.human_review_threshold`
+- **AND** los sectores coinciden, en contenido y en orden, con `SECTORES_CANONICOS` de `App/Backend/app/constants.py`
+
+#### Scenario: Un valor volatil no se duplica fuera de su fuente
+
+- **WHEN** se busca en `CLAUDE.md` un umbral, una version de framework o de plataforma que ya declara `openspec/config.yaml`
+- **THEN** el valor no aparece como literal repetido
+- **AND** el texto remite a la seccion correspondiente de `openspec/config.yaml`
+- **AND** el nombre del modelo es la excepcion: figura en ambos documentos y ambos coinciden con `Settings.gemini_model`
 
 #### Scenario: Flujo y servicios descritos existen en el repositorio
 
