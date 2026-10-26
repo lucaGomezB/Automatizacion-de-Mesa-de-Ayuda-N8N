@@ -1,6 +1,6 @@
 ## Context
 
-Ver `proposal.md` (Why). Estado verificado en el arbol de trabajo (2026-10-26, rama `change/c-145-...`, base `origin/ramagonzalo` en `78d11f1`):
+Ver `proposal.md` (Why). Estado verificado en el arbol de trabajo (2026-10-26, rama `change/c-145-...`, base `origin/ramagonzalo` en `78d11f1`, ya integrada en `main` por el merge `224fa16` del PR #40):
 
 - **A1.** `06-implementacion.tex:87` afirma "16 tests con un mecanismo de omisión automática (`pytest.skip`)". `cd App/Backend && pytest -m integration --collect-only -q` devuelve 48 pruebas sobre 1510. `App/Backend/tests/conftest.py:291` documenta "FALLA RUIDOSAMENTE (D2), nunca skip"; los unicos `pytest.skip` de `App/Backend/tests/` estan en `test_openapi_sync.py` y no se refieren a PostgreSQL. Causa raiz: la oracion nacio en `a0436e0` (C-19, 2026-07-03, commit que agrego 16 pruebas con skip); `ef656ac` (2026-09-17, c-29/c-30/c-32) cambio `conftest.py` a fallo ruidoso; la copia a v9 (`8466cbe`) y a v10 (`7408543`) arrastro la oracion sin actualizarla. Es un defecto preexistente en `main`, no introducido por el PR #40.
 - **A2.** `06-implementacion.tex:91` congela "357 pruebas ... 56 archivos". `find "App/Frontend/src" -type f \( -name '*.test.ts' -o -name '*.test.tsx' \) | wc -l` devuelve 59 archivos. El worktree no tiene `App/Frontend/node_modules`, de modo que la suite no se puede ejecutar sin `npm install`, prohibido en esta fase.
@@ -44,9 +44,9 @@ El bloque E va primero porque su suite es la red de seguridad del resto y porque
 
 **Por que un solo change y no dos (E separado):** los bloques A/B/C/F comparten el mismo artefacto publicable y el mismo PR bloqueado; separarlos exigiria dos recompilaciones, dos releases o una release intermedia con el texto aun falso. El bloque E es pequeno (una linea de parser, una rama de error y pruebas) y su prueba de regresion debe viajar en el mismo commit que el arnes para que la evidencia de reproducibilidad de la release sea valida. El cambio sigue siendo acotado: un archivo de codigo, uno de runner, un archivo de pruebas, dos `.tex`, dos documentos de registro y artefactos de compilacion.
 
-**Alternativa considerada:** publicar primero `v1.2.1` solo con A/B/C y dejar E para un change posterior. Se descarta porque el PR #40 seguiria bloqueado hasta la segunda release y porque la verificacion de la release se correria en un interprete distinto del documentado, sin la prueba que fija el comportamiento.
+**Alternativa considerada:** publicar primero `v1.2.1` solo con A/B/C y dejar E para un change posterior. Se descarta porque la rama principal seguiria con la afirmacion falsa hasta la segunda release y porque la verificacion de la release se correria en un interprete distinto del documentado, sin la prueba que fija el comportamiento.
 
-**Integracion en la rama del PR (paso obligatorio).** C3 y C4 se crean en `change/c-145-...`, la rama de este change, cortada de `origin/ramagonzalo` en `78d11f1`. Cerrada la release, esa rama se fusiona con `git merge --no-ff` en `ramagonzalo` y se publica con `git push origin ramagonzalo` (checkpoint ALTO, con confirmacion explicita del usuario). Sin ese paso el PR #40 no cambia: publicar solo la rama del change dejaria el tag `v1.2.1` fuera del PR y la verificacion `git merge-base --is-ancestor v1.2.1 origin/main` fallaria despues del merge, con lo que la release dejaria de ser trazable desde `main`. Es el mismo patron que uso c-141 con las ramas `change/*` de la FASE 36. La rama del change se publica solo si el usuario lo pide; el requisito es que `ramagonzalo` contenga C3 y C4 antes de actualizar el PR.
+**Integracion en `main` (paso obligatorio).** C3 y C4 se crean en `change/c-145-...`, la rama de este change, cortada de `origin/ramagonzalo` en `78d11f1` y actualizada con `main` tras el merge del PR #40 (`224fa16`). Cerrada la release, esa rama se publica y se abre un PR hacia `main`, que se integra con `git merge --no-ff` (checkpoint ALTO, con confirmacion explicita del usuario). Sin ese paso el tag `v1.2.1` quedaria fuera de `main` y la verificacion `git merge-base --is-ancestor v1.2.1 origin/main` fallaria, con lo que la release dejaria de ser trazable desde la rama principal. Es el mismo patron que uso c-141 con las ramas `change/*` de la FASE 36. La rama del change se publica solo si el usuario lo pide; el requisito es que `main` contenga C3 y C4.
 
 ### D2 - A1: redaccion de la correccion y causa raiz
 
@@ -133,7 +133,7 @@ Se publica `v1.2.1` con el patron de dos commits, identico a `v1.2.0`:
 
 - **C3:** corrige A/B/C/D/E, actualiza el Anexo B a `v1.2.1`, retira el hash de `v1.2.0` y actualiza la version de `Gomez2026_repositorio` a `1.2.1`; recompila y regenera renders. Tag anotado `v1.2.1` sobre C3 y push con confirmacion del usuario.
 - **C4:** consigna el hash completo de C3 en `12-anexos.tex`, agrega la nota "Trazabilidad `v1.2.1`" al REGISTRO y recompila/regenera renders. Commit C4 y push.
-- **PR #40:** se actualiza la descripcion con el tag `v1.2.1`, el hash de C3 y la indicacion de merge commit; el PR sigue siendo el mismo y queda desbloqueado.
+- **PR de correccion:** se abre desde `change/c-145-...` hacia `main` y su descripcion declara el tag `v1.2.1`, el hash de C3, la nota de que `v1.2.0` queda superada y la indicacion de merge commit.
 
 `v1.2.0` queda inmutable y registrada como superada. No se borra ni se reapunta.
 
@@ -169,8 +169,8 @@ Renders: `python "docs/Tesis/v10 (IA)/build_tesis_para_agente.py" v1.2.1 > "docs
 ### D12 - F4: rastro documental
 
 - **REGISTRO:** nueva seccion "Correccion factual de la release v1.2.0 (c-145)" con: estado inicial y final de cada bloque; causa raiz de A1; evidencia de A2 (conteo de archivos y ausencia de `node_modules`); upsert del margen; tabla de referencias corregidas; decision E2; pagina ledger (fila base 109/100/9 y fila final); evidencia de compilacion; nota de release `v1.2.1` con tag, hash y `v1.2.0` superada.
-- **CHANGES.md:** nueva FASE 39 (la ultima es la 38) con la entrada C-145, governance ALTO por el bloque F, dependencia explicita del PR #40 y nota en "Notas del analisis".
-- **PR #40:** actualizar la descripcion despues del apply, como ultimo paso y con confirmacion del usuario.
+- **CHANGES.md:** nueva FASE 39 (la ultima es la 38) con la entrada C-145, governance ALTO por el bloque F, sucesion respecto del PR #40 ya mergeado y nota en "Notas del analisis".
+- **PR de correccion:** abrirlo hacia `main` despues del apply, como ultimo paso y con confirmacion del usuario.
 
 **Alternativa considerada:** actualizar solo el REGISTRO. Se descarta: `CHANGES.md` es el indice operativo y el PR es donde el revisor ve el estado.
 
@@ -277,7 +277,7 @@ Un requisito de spec no se verifica solo: `openspec validate --specs --strict` c
 5. **Bloques A y C:** editar los dos `.tex`; verificar con grep que no quedan "16 tests", "pytest.skip" en la clausula de PostgreSQL, "357", "56 archivos", "OQ1 = A", "OQ2 = A", "decisión OQ".
 6. **Compilacion y tope:** compilar en `texlive-thesis`, medir, aplicar la palanca si hace falta, repetir verificaciones.
 7. **Release:** C3, tag `v1.2.1`, push con confirmacion; C4 con hash y REGISTRO; push.
-8. **Cierre:** `CHANGES.md`, `openspec validate`, descripcion del PR #40.
+8. **Cierre:** `CHANGES.md`, `openspec validate`, descripcion del PR de correccion.
 9. **Rollback:** antes del tag, `git revert` de los commits; despues del tag y antes de entregar, eliminar el tag solo con confirmacion; despues de entregar, no se borra: se corrige con `v1.2.2`. `v1.2.0` y anteriores no se tocan.
 
 ## Open Questions
