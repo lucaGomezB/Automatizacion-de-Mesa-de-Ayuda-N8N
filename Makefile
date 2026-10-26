@@ -24,7 +24,7 @@ UP_COMMAND := bash scripts/up.sh
 PYTHON := python3
 endif
 
-.PHONY: up up-core tunnel down ps logs health dry-run dry-run-email preflight
+.PHONY: up up-core tunnel down ps logs health dry-run dry-run-email smoke preflight
 
 up: ## Start the full local stack INCLUDING the ngrok tunnel (needs NGROK_AUTHTOKEN)
 	$(UP_COMMAND)
@@ -57,3 +57,10 @@ dry-run: ## Run the zero-cost local dry-run harness (scripts/dry_run/)
 
 dry-run-email: ## OPT-IN: dry-run harness plus the free email channel (needs DRY_RUN_EMAIL_* env)
 	$(PYTHON) scripts/dry_run/dry_run.py --with-email
+
+smoke: ## Run the smoke harness and version a JSON evidence report (local mode)
+	# Local smoke mode (OQ2=local): the harness runs on this machine and the JSON
+	# report is the evidence artifact. The `--json-out` flag and the per-block
+	# flags (`--with-tls`, `--with-retry-fault`) are added by the later sections
+	# of c-140 (5.x/7.x); `make -n smoke` already shows the intended command.
+	$(PYTHON) scripts/dry_run/dry_run.py --json-out smoke-report.json
