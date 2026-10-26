@@ -30,6 +30,7 @@
 - [x] 3.2 Declarar en el generador del reporte de sensibilidad la cache FORCE-ESCALATE y su `corpus_hash` distinto (TDD: prueba RED en `evaluation/tests/test_sensibilidad_ajustes.py`, GREEN en `_seccion_procedencia`, regenerar `evaluation/report_sensibilidad_ajustes.md` con el CLI). Verificar que el reporte contiene `hybrid-v2`, el hash `5f062e14…`, `no coincide` y `200`, y que el diff del reporte es una sola linea.
 - [x] 3.3 Actualizar la etiqueta de estado de la fila FORCE-ESCALATE en `numeros-canonicos.md:386` de `vigente (solo para el contraste de McNemar)` a `vigente (contraste de McNemar y sensibilidades E3/E4; uso confirmado 2026-10-26)`.
 - [x] 3.4 Marcar en `REGISTRO` la decision FORCE-ESCALATE como CONFIRMADA por el autor (2026-10-26), explicitar la tension con la consigna de c-131, actualizar la reversibilidad y el conteo de lineas del reporte (98). Verificar que `grep -n "Decision CONFIRMADA por el autor"` devuelve la linea y que no queda `Decision PROVISIONAL` para esa decision.
+- [x] 3.5 Confirmar en el `REGISTRO` las 30 Open Questions de los grupos c-130, c-132, c-133, c-134, c-136, c-137, c-138, c-139 y c-135 mediante la seccion "Confirmacion de las Open Questions de la FASE 36 (2026-10-26)"; marcar c-130 OQ4 como superada por el bloque G. Verificar que la seccion contiene 30 filas y que los encabezados de grupo dicen CONFIRMADAS.
 
 ## 4. Bloque B - sincronizacion del memo
 

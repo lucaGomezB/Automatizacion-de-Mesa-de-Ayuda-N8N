@@ -1039,7 +1039,7 @@ v1.1.0/v1.1.1: VEREDICTO punto 1; secciones 5, 6 y 7(a); recomendacion A1). Apli
   deterministicos), minimo de Gemini 0,85 y 97 aciertos deterministicos; la cache de
   calibracion `hybrid-v2` reproduce **88/130 = 0,6769** de `precision_gem(S)`.
 
-### Checkpoint de autores (tarea 1.4) - PROVISIONAL (OQ2 confirmada el 2026-10-26)
+### Checkpoint de autores (tarea 1.4) - CONFIRMADO el 2026-10-26 (OQ2 y OQ3; OQ4 superada por c-145 G)
 
 El usuario pidio aplicar sin detenerse y no respondio de forma explicita a las Open Questions.
 Fecha: 2026-10-25. Cada decision es **PROVISIONAL (default del design, pendiente de
@@ -1049,8 +1049,8 @@ confirmacion del autor)**.
 |---|---|---|---|
 | OQ1 (D9) | Procedencia de los ajustes sobre el corpus | **RESUELTA por c-144** (`0c7f5bc`): los autores ya declararon la procedencia real al fusionarlo en `main`. T04, T12, T13 y T14 no se reescriben; se ejecutan solo sus verificaciones | Resuelta (hecho) |
 | OQ2 (D7) | Alcance de la salvaguarda legal; reasignacion solo por REST | Default del design: se aplica T15. **Confirmada por el autor (2026-10-26)**. Verificacion en codigo: la reasignacion esta en `PATCH /api/v1/incidentes/{id}` (campo `sector_id`) y en `PATCH /api/v1/clasificaciones/{log_id}/validar`; la interfaz web solo la expone para casos derivados; N8N no reasigna; no hay guarda de rol sobre `sector_id`, de modo que un `usuario_final` puede reasignar su propio incidente por REST. El texto de `11-aspectos-legales.tex:34` es exacto | Confirmada |
-| OQ3 (D12) | Comentarios y test en `App/Backend` | Si: bloque 7 aplicado | PROVISIONAL |
-| OQ4 (D11) | Editar `CLAUDE.md` y `openspec/config.yaml` (solo las lineas del gate) | Si: bloque 8 aplicado | PROVISIONAL |
+| OQ3 (D12) | Comentarios y test en `App/Backend` | Si: bloque 7 aplicado | Confirmada |
+| OQ4 (D11) | Editar `CLAUDE.md` y `openspec/config.yaml` (solo las lineas del gate) | Si: bloque 8 aplicado | Superada por c-145 G |
 | OQ5 | `cache_meta` de la calibracion | Ver abajo | Parcial |
 | OQ6 | `usuario_final` puede validar la clasificacion de su incidente | Fuera de alcance (dominio CRITICAL); sin cambios | Abierta |
 
@@ -1458,7 +1458,7 @@ cero llamadas a Gemini, sin codigo, sin tags. Sin commit (lo crea el orquestador
 
 **A3 - Balance neto de derivaciones erroneas - APLICADO por c-132 (2026-10-25).**
 
-### Open Questions del design - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+### Open Questions del design - CONFIRMADAS el 2026-10-26 (registradas como PROVISIONAL el 2026-10-25)
 
 El usuario pidio aplicar la familia sin detenerse y no respondio de forma explicita a las preguntas del design. Decisiones del
 orquestador, **PROVISIONALES**:
@@ -1567,7 +1567,7 @@ RECOMENDACIONES B4, B5 y B6). Aplicado el **2026-10-25** en la rama `change/c-13
 de `ramagonzalo` en `d241c0b` (merge de c-132). Posicion 6 del orden de la familia (G0.6). Solo documento (gobernanza LOW): cero
 llamadas a Gemini (ningun `--confirm-paid` ni `run_evaluation.py --force`), sin codigo, sin tags. Sin commit (lo crea el orquestador).
 
-### Open Questions del design (tarea 1.1) - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+### Open Questions del design (tarea 1.1) - CONFIRMADAS el 2026-10-26 (registradas como PROVISIONAL el 2026-10-25)
 
 El usuario pidio aplicar la familia sin detenerse y no respondio de forma explicita a las Open Questions 1 a 3. Cada decision es el
 default del design, **PROVISIONAL (pendiente de confirmacion del autor)**, registrada ANTES de editar ningun `.tex`:
@@ -1725,7 +1725,7 @@ B12 y B13b). Aplicado el **2026-10-25** en la rama `change/c-134-contrastes-esta
 llamadas a Gemini; `evaluation/`, `data/`, `App/`, `n8n/` y `CHANGES.md` sin cambios en este tramo (`git diff --quiet` verificado). Sin commit
 (lo crea el orquestador). Gobernanza MEDIUM: solo documento.
 
-### Open Questions del design (tareas 7.1 y 7.3) - PROVISIONAL, 2026-10-25 (OQ1 y OQ2 confirmadas el 2026-10-26)
+### Open Questions del design (tareas 7.1 y 7.3) - CONFIRMADAS el 2026-10-26 (OQ1, OQ2 y OQ3)
 
 El usuario pidio aplicar la familia sin detenerse y nadie respondio a OQ1 ni a OQ2 (hechos del estudio que solo conocen los autores). Cada
 decision es el **texto por defecto del design, PROVISIONAL**, registrada tambien en `design.md` (seccion Open Questions) ANTES de cerrar el grupo:
@@ -1805,7 +1805,7 @@ docs/Tesis/Correcciones/dictamen-correcciones.md`, regenerar el render y recompi
 
 **Origen**: change `c-138-estado-del-arte-calibracion-y-cascadas` (dictamen CONEAU 2026-10-22: seccion 4, seccion 5 y recomendacion A4 en su parte de fuentes de calibracion). Aplicado el **2026-10-25** en la rama `change/c-138-estado-del-arte-calibracion-y-cascadas`, cortada de `ramagonzalo` en `738a3d4` (merge del bloque de tesis de c-134). Posicion 8 del orden de la familia (G0.6). Solo documento (gobernanza LOW): cero llamadas a Gemini, sin codigo, sin tags, sin commit (lo crea el orquestador). Archivos editados: `02-marco-teorico.tex`, `03-estado-del-arte.tex`, `08-discusion.tex`, `Bibliography_base.bib`, `bitacora-busqueda-c-110.md` (mas `tasks.md` y `design.md` del change y los artefactos de compilacion).
 
-### Open Questions del design - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+### Open Questions del design - CONFIRMADAS el 2026-10-26 (registradas como PROVISIONAL el 2026-10-25)
 
 | Open Question | Decision PROVISIONAL | Efecto |
 |---|---|---|
@@ -1868,7 +1868,7 @@ Las seis superan las tres compuertas (existencia, metadatos, texto completo): Gu
 
 **Origen**: change `c-136-recomendaciones-lineas-faltantes` (dictamen CONEAU 2026-10-22: seccion 8 y recomendacion B11). Aplicado el **2026-10-25** en la rama `change/c-136-recomendaciones-lineas-faltantes`, cortada de `ramagonzalo` en `9443331` (merge de c-138). Posicion 9 del orden de la familia (G0.6). Solo documento (gobernanza LOW): sin codigo, sin Gemini, sin tags, sin commit (lo crea el orquestador). Archivos editados: `10-recomendaciones.tex` (unico fuente de tesis), este registro y los artefactos de compilacion versionados de `paper/` (`main.pdf`, `main.xdv`, `main.toc`, `main.aux`, `main.bbl`, `main.bcf`, `main.blg`, `main.lof`, `main.lot`, `main.out`, `main.fdb_latexmk`).
 
-### Open Questions del design - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+### Open Questions del design - CONFIRMADAS el 2026-10-26 (registradas como PROVISIONAL el 2026-10-25)
 
 | Open Question | Decision PROVISIONAL | Efecto |
 |---|---|---|
@@ -1949,7 +1949,7 @@ Compensaciones aplicadas (bloque 6): base de conocimientos -119 palabras, agente
 
 **Origen**: change `c-135-cronologia-y-consistencia-redaccional` (dictamen CONEAU 2026-10-22: B9, B10, B13 parte cota telefonica; mas la consistencia del Anexo H y el tiempo de espera de la inferencia, asignados por el orquestador desde c-136). Aplicado el **2026-10-25** en la rama `change/c-135-cronologia-y-consistencia-redaccional`, cortada de `ramagonzalo` en `9865300` (merge de c-136). Posicion 10 del orden de la familia (G0.6). Solo documento y una figura (gobernanza LOW, checkpoint MEDIUM de OQ-3).
 
-### Open Questions del design - 2026-10-25 (OQ-1 resuelta el 2026-10-26)
+### Open Questions del design - CONFIRMADAS el 2026-10-26 (OQ-1 a OQ-5)
 
 | Open Question | Decision PROVISIONAL | Efecto |
 |---|---|---|
@@ -2019,7 +2019,7 @@ Detalle por celda en `extraccion-metricas-trabajos-c-135.md`. Revina 2020: exact
 
 **Origen**: change `c-139-correspondencia-texto-fuente-y-metadatos` (dictamen CONEAU 2026-10-22: observacion 4 / recomendacion A4, correcciones B15 y B16). Aplicado el **2026-10-25** en la rama `change/c-139-correspondencia-texto-fuente-y-metadatos`, cortada de `ramagonzalo` en `69a9b34` (merge de c-135). Posicion 11 del orden de la familia (G0.6). Documental y bibliografico; un bloque TDD estricto sobre `verify_citations.py` (gobernanza LOW). Ningun numero canonico cambia.
 
-### Open Questions del design - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+### Open Questions del design - CONFIRMADAS el 2026-10-26 (registradas como PROVISIONAL el 2026-10-25)
 
 | Open Question | Decision PROVISIONAL (del orquestador) | Efecto |
 |---|---|---|
@@ -2145,7 +2145,7 @@ Comentario agregado al `.bib`: las claves conservan el ano historico (D8); el an
 
 **Commit base de la pasada**: `f1fc134dc59673939a19c99364a13991f3468e4b` (merge de `ramagonzalo` en `change/c-137-revision-ortotipografica`; descendiente de `846189f`, c-139). Copia de las versiones base de `paper/sections/*.tex` (15 archivos), `paper/main.tex`, `paper/preambles/preamble.tex` y `Bibliography_base.bib` en un directorio temporal del repositorio, borrado al cerrar.
 
-### Open Questions del design - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+### Open Questions del design - CONFIRMADAS el 2026-10-26 (registradas como PROVISIONAL el 2026-10-25)
 
 | Open Question | Decision PROVISIONAL (del orquestador) | Efecto |
 |---|---|---|
@@ -2256,7 +2256,7 @@ Despues de cualquier edicion tardia de la prosa, desde la raiz del repositorio: 
 ### Para c-141 y para los autores
 
 - c-141: (1) fila `+c-137` del libro mayor = 109 / 101 / 8 (neutral); el tope lo decide c-141 (brecha +8 frente a 101; rama (b): cuerpo 101, margen -1); (2) correr `--check` despues de todo cambio de prosa y regenerar `tesis_para_agente.md`; (3) conservar "Versi{\'o}n" y la opcion `headheight=13pt`; (4) si c-140 edita prosa, correr la pasada corta.
-- Los autores deben confirmar: OQ1 (unificacion de sectores, PROVISIONAL), la opcion `headheight=13pt`, la forma de las comillas de apertura de A1-A4/B1/C1/C2 (glifo de cierre) y "cache" (en lugar de "cache") en `02:65`.
+- Confirmadas por el autor el 2026-10-26: OQ1 (unificacion de sectores), la opcion `headheight=13pt`, la forma de las comillas de apertura de A1-A4/B1/C1/C2 (glifo de cierre) y "cache" (sin tilde) en `02:65`.
 
 ### Reversibilidad
 
@@ -2538,6 +2538,43 @@ Resumen de la FASE 36 (todas las cifras en paginas: total / cuerpo sin anexos / 
 - Resuelto en el tramo B (2026-10-26): `knowledge-base/11_evaluacion_experimental.md` y `README.md` (7.6 y 7.7) y los renders (7.1 a 7.3) reflejan el Anexo I y el contenido de C1. Para C2 hay que volver a generar el render y los textos extraidos (8.7).
 - El primer item del alcance excluido de `01-introduccion.tex:74` (integracion con inventario de activos y gestion de configuracion) remite a `sec:recomendaciones` y el capitulo no tiene una subseccion para ese tema (hallazgo heredado de c-136 y c-135): decidir si se agrega una linea o se acota la remision.
 - Suite completa del backend: 3 fallos y 48 errores de entorno (ver 2.4); no son de la familia.
+
+### Confirmacion de las Open Questions de la FASE 36 (2026-10-26)
+
+El autor reviso las decisiones que habian quedado PROVISIONALES en los grupos c-130, c-132, c-133, c-134, c-136, c-137, c-138, c-139 y c-135. Se confirman 29 y se declara superada 1 (c-130 OQ4, por el bloque G de c-145). Las decisiones ya confirmadas antes (c-130 OQ2, c-134 OQ1, c-134 OQ2, FORCE-ESCALATE de c-142 y c-135 OQ-1) figuran en sus grupos.
+
+| Change | OQ | Decision confirmada |
+|---|---|---|
+| c-130 | OQ3 | Comentarios y test en `App/Backend`: si, bloque 7 aplicado. |
+| c-130 | OQ4 | Superada por c-145 G (alineacion completa de `CLAUDE.md` y `openspec/config.yaml`); no se confirma como decision vigente. |
+| c-132 | OQ1 | Tope de paginas decidido por c-141 (cuerpo <= 100); +1 medido. |
+| c-132 | OQ2 | Incluir la correccion colateral T13 (costo operativo) en variante corta. |
+| c-132 | OQ3 | Rama "laxa disponible" de D4; exactitud laxa `179/200 = 0,8950`. |
+| c-133 | OQ1 | Segunda sub-hipotesis: cota 0,15, "no contrastada por ausencia de registro primario". |
+| c-133 | OQ2 | Subsidiaria de eficiencia: "no contrastada" (prevalece D3 con E4). |
+| c-133 | OQ3 | Objetivo 3: "Alcanzado parcialmente" (complejidad operativa percibida no satisfecha). |
+| c-134 | OQ3 | Se retira la promesa del IC del tiempo medio; la lista declarada queda alineada con lo reportado. |
+| c-136 | OQ1 | Incluir la extension D7 (SSO, prefijo, Kubernetes, parametros de inferencia). |
+| c-136 | OQ2 | Aceptar +1 pagina, con renegociacion en c-141; delta medido 0. |
+| c-136 | OQ3 | Usar las claves de c-138; `Zhao2021_calibrate_before_use` no se cita. |
+| c-138 | OQ1 | Tope por c-141; +2 esperadas (+3 peor caso), compensado en el texto. |
+| c-138 | OQ2 | ITSM-BERT y Alsac fuera del change. |
+| c-138 | OQ3 | Vacancia acotada enunciada solo con C1-C2. |
+| c-138 | OQ4 | FrugalGPT por arXiv, sin evadir los controles anti-bot. |
+| c-139 | OQ1 | Paramesh rama B; se retiran las cifras no verificadas y la fila declara "no reportado en el alcance revisado". |
+| c-139 | OQ2 | ISO/IEC 27701:2025. |
+| c-139 | OQ3 | Russell y Norvig 2021. |
+| c-139 | OQ4 | Incluir FastAPI, RGPD y las precisiones de `11:44` y `11:68`. |
+| c-139 | OQ5 | Palanca tipografica reservada a c-141; cuerpo neutral. |
+| c-137 | OQ1 | Unificar los 5 pasajes canonicos a las cadenas sin tilde. |
+| c-137 | OQ2 | No editar el dictamen auditado. |
+| c-137 | Tipografica 1 | `headheight=13pt`. |
+| c-137 | Tipografica 2 | Glifo de cierre en las comillas de apertura de A1-A4/B1/C1/C2. |
+| c-137 | Tipografica 3 | "cache" sin tilde en `02:65`. |
+| c-135 | OQ-2 | Ventana mensual confirmada (manual junio-agosto; automatizada septiembre-octubre de 2026) e hitos del repositorio. |
+| c-135 | OQ-3 | Checkpoint MEDIUM de `06:75` sin "sin exposicion al corpus" y sin fechas. |
+| c-135 | OQ-4 | Telefonia fuera de la comparativa; el rasgo queda en `03:84`. |
+| c-135 | OQ-5 | Acceso institucional "no reportado"; Zangari sin dato de idioma. |
 
 ## Dictamen v10 / v1.1.0 (2026-10-22) - cobertura por change (FASE 36)
 
