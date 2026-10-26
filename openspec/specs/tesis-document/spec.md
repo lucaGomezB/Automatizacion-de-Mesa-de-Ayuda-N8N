@@ -3,7 +3,9 @@
 ## Purpose
 
 Esta especificación define los criterios de calidad del documento de tesis en LaTeX: compilación a PDF, renderizado de citas, ecuaciones y tablas, eliminación de patrones de escritura generados por IA, profundidad de capítulos y consistencia de referencias.
+
 ## Requirements
+
 ### Requirement: Thesis PDF compilation
 
 The thesis document SHALL compile from LaTeX source to PDF via XeLaTeX without fatal errors. The compilation SHALL produce a single `main.pdf` file at `docs/Tesis/v8 (IA)/paper/main.pdf`.
@@ -1302,6 +1304,16 @@ el momento de la correccion, o SHALL acompanarse de un informe de cobertura vers
 como evidencia; la tesis SHALL NOT publicar cifras de pruebas o de cobertura que el
 repositorio no reproduzca.
 
+Toda afirmacion del §6.7 sobre la suite de integracion PostgreSQL SHALL declarar un
+recuento igual al que devuelve `pytest -m integration --collect-only -q` sobre
+`App/Backend` en el commit publicado, y SHALL describir el comportamiento ante la
+ausencia de PostgreSQL tal como lo implementa `App/Backend/tests/conftest.py`: la suite
+FALLA de forma ruidosa y MUST NOT declararse una omision automatica con `pytest.skip`.
+Cuando la suite de frontend no pueda ejecutarse en el entorno documentado, el §6.7
+SHALL omitir los recuentos numericos congelados y conservar la remision al reporte
+vigente del pipeline, sin publicar un numero de pruebas ni de archivos que no se haya
+reproducido.
+
 #### Scenario: Sin afirmacion de pruebas e2e de N8N no verificable
 
 - **WHEN** se busca en el repositorio una prueba que instancie N8N y ejecute el flujo completo hasta la persistencia
@@ -1313,6 +1325,24 @@ repositorio no reproduzca.
 - **WHEN** se cuenta la suite de pruebas de frontend en HEAD y se genera el informe de cobertura con el comando documentado
 - **THEN** las cifras declaradas en §6.7 coinciden con el resultado reproducible, o existe un informe de cobertura versionado que las respalda
 - **AND** no queda publicada la cifra 89/98,6 % sin evidencia que la respalde
+
+#### Scenario: Recuento de integracion PostgreSQL reproducible
+
+- **WHEN** se ejecuta `cd App/Backend && pytest -m integration --collect-only -q` sobre el commit publicado
+- **THEN** el recuento de pruebas de integracion que declara el §6.7 coincide con el total informado por el comando
+- **AND** el §6.7 no describe una omision automatica con `pytest.skip` cuando PostgreSQL no esta disponible
+
+#### Scenario: Comportamiento ante PostgreSQL ausente declarado
+
+- **WHEN** se lee `App/Backend/tests/conftest.py` en el commit publicado
+- **THEN** las fixtures de integracion fallan de forma ruidosa si PostgreSQL no esta disponible
+- **AND** la tesis describe ese comportamiento y no el de una omision silenciosa
+
+#### Scenario: Recuentos de frontend retirados si no son reproducibles
+
+- **WHEN** la suite de frontend no puede ejecutarse en el entorno documentado por falta de dependencias instaladas
+- **THEN** el §6.7 no publica recuentos numericos congelados de pruebas ni de archivos
+- **AND** conserva la remision al reporte vigente del pipeline de integracion continua
 
 ### Requirement: Atribuibilidad de la latencia telefonica del §6.4
 
@@ -5073,3 +5103,32 @@ Todas las modificaciones que esta revision introduce en archivos de la tesis SHA
 - **WHEN** una prueba unitaria inspecciona el lexico de correcciones automaticas de `revision_tildes.py`
 - **THEN** ninguna de las claves "hacia", "formula", "continua", "esta", "este", "aquellas", "aquellos", "desarrollo", "completo", "registro", "valida" y "publica" figura como correccion `INEQUIVOCO`
 
+### Requirement: Publicacion de una release de correccion sin mover tags publicados
+
+Cuando una release publicada contenga afirmaciones que el repositorio desmienta, el
+proyecto SHALL publicar una release de correccion nueva (por ejemplo `v1.2.1`) en lugar
+de mover el tag existente. El tag de correccion SHALL ser anotado y SHALL crearse sobre
+el commit C3, que contiene el texto corregido y el PDF recompilado. Ese commit C3 SHALL
+actualizar el tag del Anexo B y retirar el hash de la release anterior, pero MUST NOT
+intentar consignar su propio hash. Un commit posterior C4 SHALL consignar el hash
+completo de 40 caracteres de C3 en el Anexo B y la nota de trazabilidad en
+`docs/Tesis/Correcciones/dictamen-correcciones.md`. El tag superado SHALL registrarse
+como superado y MUST NOT borrarse, recrearse ni reapuntarse.
+
+#### Scenario: Tag de correccion anotado sobre el texto corregido
+
+- **WHEN** se ejecutan `git cat-file -t v1.2.1` y `git rev-parse v1.2.1^{commit}`
+- **THEN** el tag existe, es anotado (devuelve `tag`) y apunta al commit que contiene el texto corregido y el PDF recompilado
+- **AND** el tag esta publicado en `origin`
+
+#### Scenario: Tag publicado inmutable
+
+- **WHEN** se compara `git rev-parse v1.2.0^{commit}` con el valor registrado antes de este change (`a49d035c67b32ae17e633ec04b09ecdd2781aac6`)
+- **THEN** el valor no cambio
+- **AND** el registro declara `v1.2.0` como superada por `v1.2.1`
+
+#### Scenario: Hash en el commit posterior al tag
+
+- **WHEN** se lee `sec:anexo-repositorio` en el commit C4 y se compara con `git rev-parse v1.2.1^{commit}`
+- **THEN** figura el tag `v1.2.1` y el hash completo de 40 caracteres de C3
+- **AND** el hash coincide en los 40 caracteres y figura tambien en la nota de trazabilidad del registro
