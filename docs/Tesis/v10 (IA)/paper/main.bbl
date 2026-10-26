@@ -300,7 +300,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion tecnica}
+      \field{note}{Documentación técnica}
       \field{title}{{Apache Airflow} Documentation (Version 2.10)}
       \field{urlday}{25}
       \field{urlmonth}{10}
@@ -988,7 +988,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion de la plataforma (capacidades y precios)}
+      \field{note}{Documentación de la plataforma (capacidades y precios)}
       \field{title}{{Freshdesk} --- {S}oftware de soporte al cliente}
       \field{urlday}{19}
       \field{urlmonth}{10}
@@ -1092,7 +1092,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Software de computadora. GitHub}
-      \field{title}{Automatización de Mesa de Ayuda {N8N} (Version 1.1.1)}
+      \field{title}{Automatización de Mesa de Ayuda {N8N} (Versión 1.1.1)}
       \field{urlday}{25}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
@@ -2177,7 +2177,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion tecnica oficial}
+      \field{note}{Documentación técnica oficial}
       \field{title}{{n8n} Documentation}
       \field{urlday}{25}
       \field{urlmonth}{10}
@@ -2742,7 +2742,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion tecnica oficial}
+      \field{note}{Documentación técnica oficial}
       \field{title}{{FastAPI} Documentation}
       \field{urlday}{25}
       \field{urlmonth}{10}
@@ -2946,7 +2946,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion de la plataforma (capacidades y precios)}
+      \field{note}{Documentación de la plataforma (capacidades y precios)}
       \field{title}{{ServiceNow} {ITSM}}
       \field{urlday}{19}
       \field{urlmonth}{10}
@@ -3100,7 +3100,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion tecnica oficial}
+      \field{note}{Documentación técnica oficial}
       \field{title}{{PostgreSQL} 15 Documentation}
       \field{urlday}{25}
       \field{urlmonth}{10}
@@ -4581,7 +4581,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion de la plataforma (capacidades y precios)}
+      \field{note}{Documentación de la plataforma (capacidades y precios)}
       \field{title}{{Zendesk} {S}uite --- {S}oftware de mesa de ayuda}
       \field{urlday}{19}
       \field{urlmonth}{10}
@@ -5012,7 +5012,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion tecnica}
+      \field{note}{Documentación técnica}
       \field{title}{{Apache Airflow} Documentation (Version 2.10)}
       \field{urlday}{25}
       \field{urlmonth}{10}
@@ -5700,7 +5700,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion de la plataforma (capacidades y precios)}
+      \field{note}{Documentación de la plataforma (capacidades y precios)}
       \field{title}{{Freshdesk} --- {S}oftware de soporte al cliente}
       \field{urlday}{19}
       \field{urlmonth}{10}
@@ -5804,7 +5804,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Software de computadora. GitHub}
-      \field{title}{Automatización de Mesa de Ayuda {N8N} (Version 1.1.1)}
+      \field{title}{Automatización de Mesa de Ayuda {N8N} (Versión 1.1.1)}
       \field{urlday}{25}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
@@ -6889,7 +6889,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion tecnica oficial}
+      \field{note}{Documentación técnica oficial}
       \field{title}{{n8n} Documentation}
       \field{urlday}{25}
       \field{urlmonth}{10}
@@ -7454,7 +7454,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion tecnica oficial}
+      \field{note}{Documentación técnica oficial}
       \field{title}{{FastAPI} Documentation}
       \field{urlday}{25}
       \field{urlmonth}{10}
@@ -7658,7 +7658,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion de la plataforma (capacidades y precios)}
+      \field{note}{Documentación de la plataforma (capacidades y precios)}
       \field{title}{{ServiceNow} {ITSM}}
       \field{urlday}{19}
       \field{urlmonth}{10}
@@ -7812,7 +7812,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion tecnica oficial}
+      \field{note}{Documentación técnica oficial}
       \field{title}{{PostgreSQL} 15 Documentation}
       \field{urlday}{25}
       \field{urlmonth}{10}
@@ -9293,7 +9293,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentacion de la plataforma (capacidades y precios)}
+      \field{note}{Documentación de la plataforma (capacidades y precios)}
       \field{title}{{Zendesk} {S}uite --- {S}oftware de mesa de ayuda}
       \field{urlday}{19}
       \field{urlmonth}{10}

@@ -926,6 +926,7 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 | `+c-136` (`change/c-136-recomendaciones-lineas-faltantes`) | sin commit (lo crea el orquestador) | 108 | 100 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{108}`; `Anexos` en p. 101; brecha frente a 101: +7; rama (b): cuerpo 100, margen 0 (el capitulo de recomendaciones ya ocupaba 5 paginas, 89 a 93, con unas 21 lineas libres en la ultima; el agregado neto las consume y no abre una sexta) |
 | `+c-135` (`change/c-135-cronologia-y-consistencia-redaccional`) | sin commit (lo crea el orquestador) | 108 | 100 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{108}`; `Anexos` en p. 101; brecha frente a 101: +7; rama (b): cuerpo 100, margen 0 (la figura del cronograma va al Anexo A porque el capitulo 6 no tenia holgura: en 6.6 habria dado 109 o 110) |
 | `+c-139` (`change/c-139-correspondencia-texto-fuente-y-metadatos`) | sin commit (lo crea el orquestador) | 109 | 101 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{109}`; `Anexos` en p. 102; brecha frente a 101: +8; rama (b): cuerpo 101, margen -1 (cuerpo neutral: Referencias bibliograficas empieza en la p. 94 antes y despues; la bibliografia pasa de 7 a 8 paginas por las 8 entradas nuevas y los metadatos; la primera compilacion dio 111 y los recortes dentro de los parrafos editados recuperaron 2 paginas del cuerpo; palancas tipograficas para c-141) |
+| `+c-137` (`change/c-137-revision-ortotipografica`) | sin commit (lo crea el orquestador) | 109 | 101 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{109}`; `Anexos` en p. 102; brecha frente a 101: +8; rama (b): cuerpo 101, margen -1 (neutral por construccion: el cambio es diacritico; `Referencias bibliograficas` empieza en la p. 94 antes y despues; solo se desplazo una linea de la p. 26 a la p. 27 por las comillas de las cadenas A1-A4 y B1, sin cambiar el total; el tope lo decide c-141) |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -2108,3 +2109,128 @@ Comentario agregado al `.bib`: las claves conservan el ano historico (D8); el an
 `git checkout <commit-previo> -- "docs/Tesis/v10 (IA)/paper/sections" "docs/Tesis/v10 (IA)/Bibliography_base.bib" "docs/Tesis/v10 (IA)/verify_citations.py" docs/Tesis/Correcciones/dictamen-correcciones.md`, eliminar `docs/Tesis/v10 (IA)/test_verify_citations.py` y recompilar. No se crean ni mueven tags.
 
 **Estado**: grupo aplicado (46 de 46 tareas).
+
+## Grupo: Revision ortotipografica (B14, c-137)
+
+**Origen**: change `c-137-revision-ortotipografica` (dictamen CONEAU 2026-10-22: seccion 1, tercer defecto de forma, y recomendacion B14). Bloque 1 (herramienta `revision_tildes.py` con TDD estricto) aplicado antes en el commit `b241ec8`; bloques 2 a 8 aplicados el **2026-10-25** en la rama `change/c-137-revision-ortotipografica`, con todo `ramagonzalo` fusionado (posicion 13 del orden de la familia, G0.6; c-140 excluido de este tramo, ver mas abajo). Sin commit propio de este apply (lo crea el orquestador). Gobernanza LOW: solo diacriticos, las comillas de seis cadenas de busqueda, una opcion de geometria (ver "Desvios") y, por OQ1, las menciones de sectores.
+
+**Commit base de la pasada**: `f1fc134dc59673939a19c99364a13991f3468e4b` (merge de `ramagonzalo` en `change/c-137-revision-ortotipografica`; descendiente de `846189f`, c-139). Copia de las versiones base de `paper/sections/*.tex` (15 archivos), `paper/main.tex`, `paper/preambles/preamble.tex` y `Bibliography_base.bib` en un directorio temporal del repositorio, borrado al cerrar.
+
+### Open Questions del design - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+
+| Open Question | Decision PROVISIONAL (del orquestador) | Efecto |
+|---|---|---|
+| OQ1 - nombres de sector | **Si, unificar** a la cadena canonica sin tildes las 15 menciones con tilde de los 5 pasajes que presentan los sectores como "canonicos" (recomendacion D7; el default del design para "sin respuesta" era no unificar) | Ver "Decision OQ1". Reversible: `git checkout f1fc134 -- "docs/Tesis/v10 (IA)/paper/sections/01-introduccion.tex" ...` restaura las formas con tilde sin tocar el resto |
+| OQ2 - fe de errata del dictamen | **No** editar el dictamen auditado | La discrepancia de conteos se consigna solo aqui ("formula" verbal 1 y no 4; "continua" verbal 4 y no 11) |
+
+### Precondiciones y linea base (tareas 2.1 a 2.5)
+
+- Predecesores (`openspec list --json`): c-130, c-131, c-132, c-133, c-134, c-136, c-138, c-139 y c-142 con todas sus tareas completas; c-135 con 34 de 35 (la 5.2 abierta); ninguno archivado. **c-140 no edito prosa de la tesis**: `git log --oneline -- "docs/Tesis/v10 (IA)/paper/sections"` no muestra commits de c-140 (ultimo: c-139, `c269f09`). c-140 queda excluido de este tramo por decision del orquestador, pendiente del usuario; si luego edita prosa, correr `revision_tildes.py --check` despues.
+- Arbol limpio en `docs/Tesis/v10 (IA)` al inicio. La herramienta (292 pruebas) estaba en verde.
+- Compilacion base (`texlive-thesis`, `latexmk main.tex`): `abspage@last{109}` (cuerpo 101, anexos 8; `Anexos` en p. 102 de `main.toc`), `grep -c "^!" main.log` = 0, referencias/citas indefinidas = 0, `main.blg` sin `WARN`/`ERROR`, **0 avisos de `fancyhdr`** (el unico `headheight` del log es el volcado del parametro `\headheight=12.0pt`), 33 avisos `Overfull`.
+- Conteos base en `sections/`: `Seguridad Informatica` 7, `Soporte Tecnico Hardware` 8, `Soporte Tecnico Software` 16, `Bases de Datos` 15, `Sistemas` 14; con tilde (Informatica, Tecnico): 5 menciones de cada una de las tres cadenas con acento posible. "mejora continua" 3, "integracion continua" 5, "la formula" (sustantivo) 3. `verify_citations.py`: PASS, 73 entradas, 0 huerfanas. 73 claves `@tipo{clave` en el `.bib`.
+
+### Inventario y correcciones (tareas 3.1 a 3.3 y 4.1 a 4.5)
+
+Inventario regenerado sobre el arbol posterior a c-139 (la linea base del design ya no existe tal cual: c-136, c-138 y c-139 reescribieron pasajes y retiraron "multiples" de `03`, dos "hacia" de `10`, "esta acotada" de `07`, "simultanea" y "asigno"). Toda errata conocida que seguia presente figuro en el inventario.
+
+| Clase | Cantidad | Tratamiento |
+|---|---|---|
+| Inventario inicial | 50 candidatos: 23 `INEQUIVOCO` prosa, 25 `AMBIGUO` prosa, 1 `INEQUIVOCO` tabla (`Version`), 1 `AMBIGUO` tabla (`telefono`) | - |
+| Candidatos agregados por los ajustes de la herramienta (ver abajo) | +8: 5 `INEQUIVOCO` prosa ("guian" x2, "envian", "demas" x2) y 3 `AMBIGUO` tabla ("Si, ..." de `tab:comparativa`) | - |
+| **Total** | **58** | - |
+| Corregidos por `--apply` (`INEQUIVOCO` prosa) | **28** ocurrencias en 24 lineas | `--diff` revisado hunk por hunk (sin falsos positivos); segundo `--diff` vacio; sin `.bak` |
+| `AMBIGUO` prosa corregidos a mano | **17** | fila `corregir` con justificacion gramatical |
+| Celdas de tabla corregidas a mano | **3** ("Si" -> "Si" con tilde en la tabla comparativa de soluciones, sin cadenas canonicas) | fila `corregir` |
+| `mantener` | **10**: "valida" x2 (verbo), "explicita" (verbo), "fijo" (adjetivo), "invalida" (verbo), "Aun"/"aun" x3 (valor de "incluso"), `telefono` (identificador del modelo de datos), "Version" (expansion en ingles del glosario) | fila `mantener` |
+
+Registro de decisiones: `docs/Tesis/Correcciones/revision-tildes-decisiones.tsv`, **36 filas** (26 `corregir`, 10 `mantener`; incluye 6 filas de documentacion de OQ1 y de la etiqueta de version del `.bib`, que no son candidatos del inventario). `revision_tildes.py --check` termina con **codigo 0** y sin avisos.
+
+Conteos por forma, antes -> despues, en `sections/` (a mano: `grep -o -w`):
+
+| Forma | Antes | Despues | Via |
+|---|---|---|---|
+| erronea / erroneas | 2 / 1 | 0 / 0 | script |
+| heterogeneas / heterogeneos | 2 / 1 | 0 / 0 | script |
+| multiples | 5 (`01` x4, `06` x1) | 0 | script |
+| inequivocos, antiguedad, perimetro, enganosa, escaner, decada | 1, 2, 2, 1, 1, 1 | 0 | script |
+| "mas alla" (alla) | 3 | 0 | script |
+| "aquellas" con tilde indebida (`10:22`) | 1 | 0 (sin tilde) | script |
+| guian / envian / demas | 2 / 1 / 2 | 0 | script (lexico ampliado, ver abajo) |
+| "hacia" con tilde indebida, preposicion (`02:84`, `11:8`) | 2 | 0 | a mano |
+| "se formula" con tilde indebida, verbo (`02:44`) | 1 | 0 (sin tilde) | a mano |
+| "continua" verbal (`01:10`, `06:40`, `06:50`, `08:62`) | 4 | 0 (verbo acentuado) | a mano |
+| "esta"/"este" verbales sin tilde (`06:40`: "lo esta", "no este vacia") | 2 | 0 | a mano |
+| evalue, sustento, gestiono, comun, cache | 1 cada una | 0 | a mano (se acentuan) |
+| cual / como interrogativos (`01:28`) | 1 / 1 | 0 | a mano (se acentuan) |
+| "por si mismo" (`11:20`) | 1 | 0 (pronombre con tilde) | a mano |
+| mejora continua / integracion continua / la formula con tilde, sustantivo (usos legitimos) | 3 / 5 / 3 | 3 / 5 / 3 | intactos |
+
+**Discrepancias con el dictamen (OQ2, solo aqui)**: el dictamen informa 4 "formula" verbales y 11 "continua" verbales; la verificacion encuentra **1** y **4**. Un reemplazo ciego de las 16 "continua" o de las 4 "formula" habria introducido 15 erratas nuevas. Los criterios de aceptacion de este change se formularon por categoria gramatical.
+
+**Hallazgos fuera de la muestra del dictamen**: "multiples" (5 tras c-139; 6 en la linea base), "alla" (3), "escaner", "por si mismo", "decada", "evalue" (`03:56`), "sustento" (`06:85`), "gestiono" (`04:97`), "comun" (`02:28`), "cache" (`02:65`), interrogativos sin tilde en `01:28`, "guian" (2), "envian", "demas" (2) y "Si" de la tabla comparativa de `03` (3), mas las cadenas de `main.tex`, del preambulo y las notas del `.bib` (abajo). Las del tipo "guian", "envian", "demas" y "Si" **escaparon a la herramienta** y se descubrieron con un barrido propio de las 4.102 palabras distintas de la prosa (3.234 sin tilde de 4+ letras revisadas a ojo) y de las zonas `tabla` y `cita`; se corrigieron ampliando la herramienta con prueba previa.
+
+**Barrido `--todos` (tarea 4.4)**: 949 filas en total (452 "que", 169 "como", 77 "registro", 60 "esta", 48 "este", 39 "cuando", 24 "donde", 15 "hacia", 11 "si", 11 "continua", 10 "cual", 8 "desarrollo", 6 "cuales", 5 "promedio", 3 "formula", 3 "aun", ...). Revisadas una por una las **149 ocurrencias de los cinco pares de riesgo** ("esta"/"este" 108, "continua" 11, "formula" nominal y verbal 4, "hacia" 15, "si" 11), mas "aun", "cual/cuales", "donde", "cuando" y los sustantivos homografos "registro/desarrollo/promedio" (por palabra previa). Ningun caso adicional salvo los de la lista anterior. Todas las "esta/este" restantes son demostrativos (sin tilde, incluido "tampoco esta se contrasta" y "que esta se corrige", pronombres sin tilde segun la ortografia vigente), todas las "continua" son adjetivos y todas las "hacia" son preposiciones.
+
+### Ajustes a la herramienta (TDD; suite 292 -> 298 pruebas)
+
+Cada ajuste con su prueba RED antes del GREEN; la salida del script nunca se edito a mano.
+
+1. Lexico `INEQUIVOCO` ampliado con **"guian", "envian", "demas"** (formas con tilde en las tres) (3 casos parametrizados nuevos en `test_forma_sin_tilde_que_no_es_palabra_valida_es_inequivoca`; RED 3 fallos, GREEN). Ninguna forma es homografo valido.
+2. Senal de "si" (conjuncion, sin tilde) frente al pronombre o afirmacion con tilde: se informa tambien cuando va **seguido de puntuacion al inicio de frase o de celda** ("Si, modulo de IA"), no solo tras preposicion (2 casos nuevos en `test_pares_ambiguos_se_informan_con_senal_de_contexto`, uno en celda `tabular`; RED 2 fallos, GREEN). Los usos legitimos ("si se proyecta ...", "si el valor supera ..., entonces") siguen sin reporte.
+3. `--check` ya no avisa en stderr de decisiones `corregir` sin candidato (la correccion esta aplicada por definicion): `test_check_no_avisa_de_decisiones_corregir_ya_aplicadas` (RED 1 fallo, GREEN). Las decisiones `mantener` huerfanas siguen avisando.
+
+Los falsos positivos `AMBIGUO` ("valida", "explicita", "fijo", "invalida", "aun") no se corrigieron en el lexico: son homografos legitimos que la herramienta debe seguir informando y se resuelven con `mantener` en el registro (D2/D4). Ningun falso positivo `INEQUIVOCO` aparecio en `--diff`.
+
+### Cadenas visibles y bibliografia impresa (bloque 5)
+
+- `paper/main.tex`: los tres titulos "Indice ..." (general, de tablas, de figuras) y el titulo "Referencias bibliograficas" de `\printbibliography` pasan a llevar tilde (4 lineas; comentarios intactos).
+- `paper/preambles/preamble.tex`: encabezado "AUTOMATIZACION DE MESA DE AYUDA" (con tilde en la O), `pdftitle`, `pdfkeywords` (automatizacion, clasificacion, espanol), `bibliography = {Referencias bibliograficas}` y, ademas, el `\title{...}` (automatizacion, orquestacion), que el design no listaba (5 lineas).
+- `Bibliography_base.bib`: 7 campos `note` ("Documentaci{\'o}n t{\'e}cnica [oficial]" x4, "Documentaci{\'o}n de la plataforma ..." x3) y la etiqueta "(Versi{\'o}n 1.1.1)" del titulo de `Gomez2026_repositorio` (decision D6 registrada en el TSV); "edici{\'o}n" ya la habia corregido c-139. La lista de claves `@tipo{clave` es identica a la base (73). **Nota para c-141 (B16b)**: al actualizar el numero de version de `Gomez2026_repositorio`, conservar "Versi{\'o}n".
+- Control de la herramienta sobre `main.tex` y el preambulo (`--archivos`): sin candidatos pendientes.
+
+### Decision OQ1 - nombres de sector (bloque 6)
+
+PROVISIONAL, 2026-10-25: se unifican a la cadena canonica sin tildes las **15 menciones** de los 5 pasajes `01-introduccion.tex:48` y `:72`, `04-marco-metodologico.tex:36` (fila de la tabla de variables, en zona tabla) y `:45`, y `05-arquitectura.tex:100` (fila del modelo de datos, en zona tabla); cada pasaje consta en el TSV. Conteos de las cinco cadenas canonicas (`grep -o` sobre `sections/*.tex`):
+
+| Cadena | Antes | Despues | Esperado (base + unificadas) |
+|---|---|---|---|
+| `Seguridad Informatica` | 7 | 12 | 7 + 5 |
+| `Soporte Tecnico Hardware` | 8 | 13 | 8 + 5 |
+| `Soporte Tecnico Software` | 16 | 21 | 16 + 5 |
+| `Bases de Datos` | 15 | 15 | sin cambio |
+| `Sistemas` | 14 | 14 | sin cambio |
+
+Las formas con tilde quedaron en 0 (antes 5, 5 y 5). Ninguna ocurrencia previa de las cinco cadenas se altero. La tarea 6.3 (excepcion documentada) no aplica.
+
+### Comillas rectas de las cadenas A1-A4 y B1 (consigna de c-138/c-139)
+
+Las cadenas de busqueda A1, A2, A3, A4 y B1 del parrafo "Protocolo de revision" (`03-estado-del-arte.tex:8`) se imprimian mal por los atajos de babel ("ÏT support", "çlassification", con `.` en lugar del cierre). Se envolvio cada `\emph{(...)}` en `{\shorthandoff{"}...}`, igual que c-138 hizo con C1-C2; el texto fuente de las cadenas no cambia. Resultado en el PDF: `("help desk" OR "service desk" OR "IT support")`, impreso con comillas de cierre a ambos lados, ahora **identico en forma a C1-C2** (las comillas de apertura se imprimen con el glifo de cierre; es el comportamiento de XeLaTeX con el mapeo `tex-text` y se deja como esta para no tocar el texto). Es la unica modificacion no diacritica de `sections/` (una linea, solo la envoltura).
+
+### Verificacion global (bloque 7)
+
+- **Invariante diacritico** (`--base`): sobre `sections/` contra la base, codigo 1 con **una sola linea** reportada (`03:8`, la envoltura `{\shorthandoff{"}...}` de las cinco cadenas); contra una copia de la base a la que solo se aplico esa envoltura, **codigo 0**. Sobre `main.tex`, preambulo y `.bib` contra la base, codigo 1 con una sola linea (`preamble.tex:20`, opcion `headheight=13pt`, ver "Desvios"); contra una copia de la base con esa unica opcion, **codigo 0**. Cifras, claves, rutas y numero de lineas intactos.
+- Formas inequivocas en cero (`grep -o -w`), contextos de la linea base en cero, usos legitimos 3 / 5 / 3 iguales a la base, cadenas canonicas segun la tabla de OQ1.
+- Compilacion final (`texlive-thesis`, `latexmk main.tex`): `abspage@last{109}` (**igual a la base**), `Anexos` en p. 102, `grep -c "^!" main.log` = 0, referencias/citas indefinidas = 0, `main.blg` sin `WARN`/`ERROR`, **0 avisos `fancyhdr`**, 31 `Overfull` (base 33). `Referencias bibliograficas` (con tilde) figura en `main.toc` (p. 94). El PDF muestra el encabezado, los tres indices y el titulo de la bibliografia acentuados. Comparacion pagina a pagina del texto del PDF antes/despues (`pdftotext`, sin diacriticos): solo difieren las pp. 26-27 (comillas de A1-A4/B1 y una linea que pasa a la p. 27).
+- `verify_citations.py`: PASS (73 entradas, 0 huerfanas). `tesis_para_agente.md` regenerado con `build_tesis_para_agente.py`: no contiene ninguna forma inequivoca corregida ni los contextos de la base ni formas con tilde de sectores. **Aviso**: el render anterior estaba desactualizado (c-130..c-139 no lo regeneraron), de modo que el diff incluye tambien el contenido de esos changes.
+- Cierre tecnico: `--check` codigo 0; suite de la herramienta 298 pruebas en verde.
+
+### Desvios y causa raiz
+
+- **Desvio (headheight)**: la mayuscula acentuada del encabezado ("AUTOMATIZACION" con tilde en la O) eleva la caja del encabezado a 12,56 pt y `fancyhdr` emitio **105 avisos** (`\headheight is too small (12.0pt)`) en la primera compilacion. Se agrego `headheight=13pt` a las opciones de `geometry` (`paper/preambles/preamble.tex:20`). Con `top=2.54cm` el cuerpo del texto no se mueve (el encabezado vive en el margen), y la paginacion se mantuvo en 109. Es una modificacion no diacritica, minima y reversible (quitar la opcion devuelve los 105 avisos, sin efecto visible). A confirmar por los autores.
+- **Causa raiz**: `docs/Tesis/acentuar_tesis.py` mapea de forma incondicional "hacia" (preposicion) a su forma con tilde (imperfecto de "hacer") y "aquellas" (determinante) a su forma con tilde (commit `e2bbd3f`, que tambien creo la utilidad); `acentuar_tesis_v9.py` (c-106) mantiene "formula" (verbo) -> forma con tilde del sustantivo y "fijo" (adjetivo) -> el preterito "fij" con tilde en la o ("se formula" con tilde indebida entra con `f0546ec`). Precedente: c-80 (F1) ya tuvo que revertir 50 erratas del mismo diccionario. Ambas utilidades quedan marcadas **DEPRECADO (c-137)** en su docstring de cabecera (sin cambios de logica; `grep -c DEPRECADO` = 1 en cada una; el diff solo agrega 7 lineas al docstring; compilan).
+
+### Procedimiento de la pasada corta (para c-141)
+
+Despues de cualquier edicion tardia de la prosa, desde la raiz del repositorio: `python "docs/Tesis/v10 (IA)/revision_tildes.py" --check` (codigo 0 = sin pendientes). Si falla: `--diff` y `--apply` para lo `INEQUIVOCO` en prosa; decidir uno por uno lo `AMBIGUO`, de tabla o de cita y registrarlo en `docs/Tesis/Correcciones/revision-tildes-decisiones.tsv` (columnas `archivo`, `token`, `contexto`, `decision`, `forma_final`, `justificacion`; clave por archivo, token y contexto, sin numero de linea); repetir hasta 0. Si c-141 edita `main.tex`, el preambulo o el `.bib`, repetir ademas los `grep` del bloque 5 y `revision_tildes.py --archivos paper/main.tex paper/preambles/preamble.tex`. `--base <dir>` verifica que una pasada sea puramente diacritica. La herramienta no detecta todo (ver "guian", "demas"): un barrido propio de palabras sin tilde antes de la release es recomendable.
+
+### Para c-141 y para los autores
+
+- c-141: (1) fila `+c-137` del libro mayor = 109 / 101 / 8 (neutral); el tope lo decide c-141 (brecha +8 frente a 101; rama (b): cuerpo 101, margen -1); (2) correr `--check` despues de todo cambio de prosa y regenerar `tesis_para_agente.md`; (3) conservar "Versi{\'o}n" y la opcion `headheight=13pt`; (4) si c-140 edita prosa, correr la pasada corta.
+- Los autores deben confirmar: OQ1 (unificacion de sectores, PROVISIONAL), la opcion `headheight=13pt`, la forma de las comillas de apertura de A1-A4/B1/C1/C2 (glifo de cierre) y "cache" (en lugar de "cache") en `02:65`.
+
+### Reversibilidad
+
+`git checkout f1fc134 -- "docs/Tesis/v10 (IA)/paper/sections" "docs/Tesis/v10 (IA)/paper/main.tex" "docs/Tesis/v10 (IA)/paper/preambles/preamble.tex" "docs/Tesis/v10 (IA)/Bibliography_base.bib" "docs/Tesis/v10 (IA)/tesis_para_agente.md" docs/Tesis/acentuar_tesis.py docs/Tesis/acentuar_tesis_v9.py`, recompilar y regenerar `tesis_para_agente.md`. La herramienta, sus pruebas y el registro de decisiones pueden conservarse. No se crean ni mueven tags.
+
+**Estado**: grupo aplicado (41 de 41 tareas; bloque 1 en `b241ec8`).

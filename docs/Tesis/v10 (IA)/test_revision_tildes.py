@@ -285,6 +285,9 @@ def clasif(texto, **kw):
         ("la digitalización, el escaner o la impresora", "escaner", "escáner"),
         ("el Capitulo anterior", "Capitulo", "Capítulo"),
         ("tambien lo hace", "tambien", "también"),
+        ("interrogantes que guian el diseño", "guian", "guían"),
+        ("a la que se envian fragmentos textuales", "envian", "envían"),
+        ("entre las demas fronteras", "demas", "demás"),
     ],
 )
 def test_forma_sin_tilde_que_no_es_palabra_valida_es_inequivoca(texto, token, sugerencia):
@@ -429,6 +432,8 @@ def test_palabras_correctamente_acentuadas_no_generan_candidatos():
         ("lo hizo mas rápido", "mas", "más"),
         ("no configura por si mismo una base", "si", "sí"),
         ("lo hace por sí mismo y de si, sin ayuda", "si", "sí"),
+        ("Si, módulo de IA", "Si", "Sí"),
+        ("\\begin{tabular}{ll}\nZendesk & Si, módulo de IA \\\\\n\\end{tabular}", "Si", "Sí"),
     ],
 )
 def test_pares_ambiguos_se_informan_con_senal_de_contexto(texto, token, sugerencia):
@@ -1043,6 +1048,13 @@ def test_check_avisa_en_stderr_de_decisiones_sin_candidato_pero_no_falla(tmp_pat
 
     assert correr_check(tmp_path, "Texto limpio.\n", decision) == 0
     assert "sin candidato" in capsys.readouterr().err
+
+
+def test_check_no_avisa_de_decisiones_corregir_ya_aplicadas(tmp_path, capsys):
+    decision = "t.tex\tcontinua\tel flujo continua sin cambios\tcorregir\tcontinúa\tverbo\n"
+
+    assert correr_check(tmp_path, "el flujo continúa sin cambios\n", decision) == 0
+    assert capsys.readouterr().err == ""
 
 
 def test_check_sin_archivo_de_decisiones_equivale_a_un_registro_vacio(tmp_path, capsys):

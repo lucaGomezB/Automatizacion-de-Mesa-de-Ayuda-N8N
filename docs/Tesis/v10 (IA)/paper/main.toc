@@ -92,7 +92,7 @@
 \contentsline {subsection}{\numberline {11.9}Evaluación de modelos de lenguaje de código abierto}{92}{subsection.11.9}%
 \contentsline {subsection}{\numberline {11.10}Base de conocimientos para resolución automática}{93}{subsection.11.10}%
 \contentsline {subsection}{\numberline {11.11}Agente conversacional telefónico en tiempo real}{93}{subsection.11.11}%
-\contentsline {section}{Referencias bibliograficas}{94}{section*.29}%
+\contentsline {section}{Referencias bibliográficas}{94}{section*.29}%
 \contentsline {section}{Anexos}{102}{section*.30}%
 \contentsline {section}{\numberline {A}Diagrama de arquitectura del sistema}{102}{section.1.A}%
 \contentsline {section}{\numberline {B}Repositorio de código fuente}{102}{section.1.B}%
