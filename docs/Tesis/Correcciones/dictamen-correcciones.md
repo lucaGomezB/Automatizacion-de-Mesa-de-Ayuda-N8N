@@ -1039,7 +1039,7 @@ v1.1.0/v1.1.1: VEREDICTO punto 1; secciones 5, 6 y 7(a); recomendacion A1). Apli
   deterministicos), minimo de Gemini 0,85 y 97 aciertos deterministicos; la cache de
   calibracion `hybrid-v2` reproduce **88/130 = 0,6769** de `precision_gem(S)`.
 
-### Checkpoint de autores (tarea 1.4) - PROVISIONAL
+### Checkpoint de autores (tarea 1.4) - PROVISIONAL (OQ2 confirmada el 2026-10-26)
 
 El usuario pidio aplicar sin detenerse y no respondio de forma explicita a las Open Questions.
 Fecha: 2026-10-25. Cada decision es **PROVISIONAL (default del design, pendiente de
@@ -1048,7 +1048,7 @@ confirmacion del autor)**.
 | OQ | Tema | Decision | Estado |
 |---|---|---|---|
 | OQ1 (D9) | Procedencia de los ajustes sobre el corpus | **RESUELTA por c-144** (`0c7f5bc`): los autores ya declararon la procedencia real al fusionarlo en `main`. T04, T12, T13 y T14 no se reescriben; se ejecutan solo sus verificaciones | Resuelta (hecho) |
-| OQ2 (D7) | Alcance de la salvaguarda legal; reasignacion solo por REST | Default del design: se aplica T15 | PROVISIONAL |
+| OQ2 (D7) | Alcance de la salvaguarda legal; reasignacion solo por REST | Default del design: se aplica T15. **Confirmada por el autor (2026-10-26)**. Verificacion en codigo: la reasignacion esta en `PATCH /api/v1/incidentes/{id}` (campo `sector_id`) y en `PATCH /api/v1/clasificaciones/{log_id}/validar`; la interfaz web solo la expone para casos derivados; N8N no reasigna; no hay guarda de rol sobre `sector_id`, de modo que un `usuario_final` puede reasignar su propio incidente por REST. El texto de `11-aspectos-legales.tex:34` es exacto | Confirmada |
 | OQ3 (D12) | Comentarios y test en `App/Backend` | Si: bloque 7 aplicado | PROVISIONAL |
 | OQ4 (D11) | Editar `CLAUDE.md` y `openspec/config.yaml` (solo las lineas del gate) | Si: bloque 8 aplicado | PROVISIONAL |
 | OQ5 | `cache_meta` de la calibracion | Ver abajo | Parcial |
@@ -1725,14 +1725,14 @@ B12 y B13b). Aplicado el **2026-10-25** en la rama `change/c-134-contrastes-esta
 llamadas a Gemini; `evaluation/`, `data/`, `App/`, `n8n/` y `CHANGES.md` sin cambios en este tramo (`git diff --quiet` verificado). Sin commit
 (lo crea el orquestador). Gobernanza MEDIUM: solo documento.
 
-### Open Questions del design (tareas 7.1 y 7.3) - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+### Open Questions del design (tareas 7.1 y 7.3) - PROVISIONAL, 2026-10-25 (OQ1 confirmada el 2026-10-26)
 
 El usuario pidio aplicar la familia sin detenerse y nadie respondio a OQ1 ni a OQ2 (hechos del estudio que solo conocen los autores). Cada
 decision es el **texto por defecto del design, PROVISIONAL**, registrada tambien en `design.md` (seccion Open Questions) ANTES de cerrar el grupo:
 
 | Open Question | Decision PROVISIONAL (2026-10-25) | Pasajes afectados | Reversible si |
 |---|---|---|---|
-| OQ1 - procedimiento del cronometraje | **Opcion (a)**: los dos operadores trabajaron en pares y se cronometraron mutuamente, sabian que la campana registraba tiempos; no se anunciaron el inicio de cada medicion ni el proposito comparativo; el debriefing informo el proposito; Hawthorne atenuado, no eliminado, amenaza residual. Granularidad 199/200 (5 s) y 180/200 (10 s) declarada como hecho verificable de la planilla, sin afirmar si es por diseno o por redondeo a ojo | `04` (`:16`), `08` (explicacion rival "Tercero"), `11` (`:32`, con `\parencite{APA2017}` intacto); `04:67` sin cambios | el autor describe otro procedimiento (opcion b o c): se reescriben esos tres pasajes; ninguna cifra cambia |
+| OQ1 - procedimiento del cronometraje | **CONFIRMADA por el autor (2026-10-26). Opcion (a)**: los dos operadores trabajaron en pares y se cronometraron mutuamente, sabian que la campana registraba tiempos; no se anunciaron el inicio de cada medicion ni el proposito comparativo; el debriefing informo el proposito; Hawthorne atenuado, no eliminado, amenaza residual. Granularidad 199/200 (5 s) y 180/200 (10 s) declarada como hecho verificable de la planilla, sin afirmar si es por diseno o por redondeo a ojo | `04` (`:16`), `08` (explicacion rival "Tercero"), `11` (`:32`, con `\parencite{APA2017}` intacto); `04:67` sin cambios | confirmado (2026-10-26) |
 | OQ2 - universo y seleccion de los 200 casos | **Sin respuesta: texto por defecto de D8**: muestreo estratificado con asignacion proporcional a la distribucion por sector observada en el periodo relevado, no verificable frente al universo (no esta disponible); Bases de Datos `n = 1` no estimable por clase; en replicaciones, asignacion no proporcional con sobremuestreo de las clases minoritarias. Abstract: "drawn by stratified sampling" (equivale al "con muestreo estratificado" del resumen en espanol, que no cambia) | `04` (`:45`), `00-resumen.tex` (linea en ingles) | el autor aporta el universo por sector (se agrega una frase y el memo) o aclara que los 200 son todos los incidentes cronometrados sin estratificacion ("muestra no probabilistica por disponibilidad") |
 | OQ3 - IC del tiempo medio | **Default**: se retira la promesa del intervalo de confianza (`04:65`) y la lista declarada queda alineada con lo reportado | `04` (`:65`) | el autor prefiere reportar el IC: se agrega al runner y una fila a `tab:tiempos` |
 
