@@ -191,6 +191,7 @@ había habían podía podían podría podrían debería deberían tendría tendr
 estaría habría haría diría sabría seguía conocía requería exponía entendía exigía
 ofrecería permitiría reduciría resultaría constituiría consultaría afectaría
 liberaría replicaría sugeriría
+guían envían demás
 """
 
 LEXICO_INEQUIVOCO = {}
@@ -635,10 +636,14 @@ def _evaluar_par_con_senal(bajo, entorno):
         return previa_sm in DETERMINANTES_Y_PREPOSICIONES
     if bajo == "hacia":
         return previa in CLITICOS_Y_SUJETOS
-    # bajo == "si": pronombre reflexivo ("por si mismo", "de si,").
+    # bajo == "si": pronombre reflexivo ("por si mismo", "de si,") o afirmacion
+    # al inicio de oracion o de celda ("Si, modulo de IA").
     mismo = sin_marcas(entorno.siguiente) in ("mismo", "misma", "mismos", "mismas")
     tras_preposicion = previa_sm in PREPOSICIONES or previa_sm == "por"
-    return mismo or (tras_preposicion and entorno.puntuacion_siguiente)
+    inicio_de_frase = not entorno.previas
+    return mismo or (
+        (tras_preposicion or inicio_de_frase) and entorno.puntuacion_siguiente
+    )
 
 
 def _evaluar_palabra(token, enfasis, corpus, entorno=None, todos=False):
@@ -1004,8 +1009,11 @@ def main(argv=None):
     if args.base:
         return verificar_base(rutas, args.base)
     if args.check:
-        pendientes, huerfanas = comprobar(rutas, cargar_decisiones(args.decisiones), args.todos)
+        decisiones = cargar_decisiones(args.decisiones)
+        pendientes, huerfanas = comprobar(rutas, decisiones, args.todos)
         for archivo, token, contexto in huerfanas:
+            if decisiones[(archivo, token, contexto)].decision == "corregir":
+                continue  # correccion ya aplicada: el candidato desaparecio
             print(
                 f"aviso: decision sin candidato en el texto: {archivo} | {token} | {contexto}",
                 file=sys.stderr,
