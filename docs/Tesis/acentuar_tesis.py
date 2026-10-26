@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 """
+DEPRECADO (c-137): no usar sobre la tesis v10. Sus diccionarios corrigen de forma
+incondicional homografos y produjeron erratas de tilde que cambian el significado
+(`hacia`->`hacía`, `formula`->`fórmula`, `aquellas`->`aquéllas`, `fijo`->`fijó`,
+`completo`->`completó`, `desarrollo`->`desarrolló`; ver c-80 F1 y los commits e2bbd3f y f0546ec).
+Reemplazo: `docs/Tesis/v10 (IA)/revision_tildes.py` (inventario de solo lectura,
+`--diff`/`--apply` solo de lo inequivoco y `--check` como pasada corta).
+
 Acentuador automatico de texto espanol en archivos LaTeX.
 Preserva comandos LaTeX, bloques verbatim, referencias y URLs.
 Aplica diccionario de palabras comunes + reglas de patrones.
