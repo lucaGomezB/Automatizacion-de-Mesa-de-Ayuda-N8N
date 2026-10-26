@@ -908,6 +908,23 @@ def test_reporte_incluye_procedencia_con_blobs_hashes_tau_y_pesos():
         assert esperado in texto, esperado
 
 
+def test_reporte_declara_la_cache_force_escalate_y_su_corpus_hash_distinto():
+    hash_distinto = "5f062e1466facd1a522d80c2693d1d256017aae37372c2d288646ba104f46a93"
+    base = _resultados()
+    procedencia = dict(base.procedencia)
+    procedencia["cache_fe_meta"] = {
+        "classifier_version": "hybrid-v2",
+        "corpus_hash": hash_distinto,
+    }
+    texto = sa.formatear_reporte_sensibilidad(_resultados(procedencia=procedencia))
+
+    seccion = texto.split("## Procedencia")[1].split("## Configuracion evaluada")[0]
+    assert "hybrid-v2" in seccion
+    assert hash_distinto in seccion
+    assert "no coincide" in seccion
+    assert "200" in seccion
+
+
 def test_reporte_declara_la_variante_por_pliegues_no_factible_con_su_motivo():
     texto = sa.formatear_reporte_sensibilidad(_resultados())
 
