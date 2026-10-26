@@ -592,6 +592,16 @@ def _seccion_procedencia(p: Mapping[str, Any]) -> List[str]:
         lineas.append(f"- Blob `{etiqueta}`: `{blob}`.")
     for nombre, digest in sha.items():
         lineas.append(f"- SHA-256 de `{nombre}`: `{digest}`.")
+    meta_fe = p.get("cache_fe_meta") or {}
+    if meta_fe:
+        lineas.append(
+            "- Cache FORCE-ESCALATE usada en E3/E4: `classifier_version` "
+            f"`{meta_fe.get('classifier_version')}`, `corpus_hash` "
+            f"`{meta_fe.get('corpus_hash')}` (no coincide con el del corpus vigente). "
+            "La guarda `verificar_cache_contra_corpus` verifico identificador, descripcion y "
+            "sector asignado de las 200 entradas (0 diferencias); el uso de la cache fue "
+            "confirmado por los autores."
+        )
     lineas.append(
         "- Pre-registro: variantes, comparadores y reglas de lectura fijados en el design "
         "de c-142 (D2-D4, D8, D9) antes de computar; todas se reportan cualquiera sea el resultado."
@@ -989,7 +999,7 @@ def verificar_cache_contra_corpus(ruta: pathlib.Path, corpus: Sequence[CasoEvalu
 
 
 def _cargar_cache(ruta: Optional[pathlib.Path], corpus: Sequence[CasoEvaluacion]):
-    """Cache de predicciones verificada contra el corpus, con su `generated_at`; None si no existe."""
+    """Cache de predicciones verificada contra el corpus, con su `cache_meta`; None si no existe."""
     if ruta is None or not pathlib.Path(ruta).exists():
         return None
     from evaluation.deterministic_measurement import cargar_predicciones_cacheadas
@@ -997,7 +1007,7 @@ def _cargar_cache(ruta: Optional[pathlib.Path], corpus: Sequence[CasoEvaluacion]
 
     verificar_cache_contra_corpus(ruta, corpus)
     meta = cargar_cache_meta(pathlib.Path(ruta)) or {}
-    return cargar_predicciones_cacheadas(ruta), meta.get("generated_at")
+    return cargar_predicciones_cacheadas(ruta), meta
 
 
 async def main(
@@ -1050,10 +1060,13 @@ async def main(
 
     fe = _cargar_cache(cache_fe_path, corpus)
     oficial = _cargar_cache(cache_oficial_path, corpus)
+    procedencia_efectiva = dict(procedencia or {})
 
     global_cache = piso_v1 = piso_v0 = nivel_b = nivel_a = None
     if fe is not None:
-        cache_fe, generated_at_fe = fe
+        cache_fe, meta_fe = fe
+        generated_at_fe = meta_fe.get("generated_at")
+        procedencia_efectiva["cache_fe_meta"] = meta_fe
         global_cache = exactitud_global_con_cache(obs_v1, obs_v0, cache_fe, regla)
         piso_v1 = contraste_det_gem_en_s(obs_v1, cache_fe, umbral)
         piso_v0 = contraste_det_gem_en_s(obs_v0, cache_fe, umbral)
@@ -1064,7 +1077,7 @@ async def main(
         nivel_b = calcular_nivel_b(generated_at_fe, obs_v1, regla, cache_fe, cache_oficial)
 
     resultados = ResultadosSensibilidad(
-        procedencia=procedencia or {},
+        procedencia=procedencia_efectiva,
         evaluada=evaluada,
         esperada_evaluada=tuple(esperada_evaluada),
         variante_principal=resumen_cortocircuito(obs_v0, regla),
@@ -1184,6 +1197,11 @@ def construir_parser() -> argparse.ArgumentParser:
             "Sin subcomando: corrida offline, sin Gemini, que escribe solo el reporte indicado. "
             "Subcomando `prompt`: UN brazo de la ablacion del prompt (corrida PAGA con gate)."
         ),
+        # c-145 (E1): deshabilitar la resolucion por prefijo. Sin esto, en Python
+        # 3.12.3 `--brazo` (opcion del subcomando `prompt`) se resuelve contra las
+        # opciones de nivel superior `--brazo-vigente` / `--brazo-sin-reglas` y el
+        # parser aborta con "ambiguous option". Los nombres deben ser exactos.
+        allow_abbrev=False,
     )
     parser.add_argument("--corpus", type=pathlib.Path, default=CORPUS_REAL_PATH)
     parser.add_argument("--report", type=pathlib.Path, default=REPORT_SENSIBILIDAD_PATH)

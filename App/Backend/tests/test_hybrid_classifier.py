@@ -5,8 +5,8 @@ C-27: el DTO expone `sector_predicho` (+ `sectores_adicionales`) en lugar de
 `categoria`.
 
 Casos cubiertos:
-    - Cortocircuito: confianza determinística >= 0.90 → Gemini no es invocado.
-    - Escalada: confianza determinística < 0.90 → Gemini es consultado.
+    - Cortocircuito: `score_correctitud >= 0.5166` determinístico → Gemini no es invocado.
+    - Escalada: `score_correctitud < 0.5166` (o ausencia/ambigüedad) → Gemini es consultado.
     - Fallback: Gemini lanza GeminiUnavailableError → resultado de emergencia.
     - Revisión humana: confianza de Gemini < 0.70 → requiere_revision_humana=True.
 """

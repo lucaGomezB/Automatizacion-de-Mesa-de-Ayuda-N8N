@@ -26,7 +26,7 @@ El parrafo introductorio de la tabla comparativa de soluciones (`\label{tab:comp
 
 ### Requirement: Cronologia unica y fechada del estudio y de la construccion del artefacto
 
-La tesis SHALL presentar una cronologia unica, en una figura (`\label{fig:cronograma}`) generada desde una fuente Mermaid versionada (`docs/diagrams/cronograma.md`), que feche las seis iteraciones Scrumban de construccion, la campana de medicion del flujo manual, la campana del flujo automatizado y la integracion de la version del modelo evaluada. Toda mencion textual de esos periodos en `01-introduccion.tex`, `04-marco-metodologico.tex`, `06-implementacion.tex` y `08-discusion.tex` SHALL coincidir con la cronologia. Cada fecha SHALL tener procedencia registrada en la fuente (evidencia verificable del repositorio o confirmacion explicita de los autores, con su fecha) y MUST NOT inventarse, interpolarse ni expresarse con mas precision que su evidencia.
+La tesis SHALL presentar una cronologia unica, en una figura (`\label{fig:cronograma}`) generada desde una fuente Mermaid versionada (`docs/diagrams/cronograma.md`), que feche los periodos de actividad de la construccion bajo Scrumban, la campana de medicion del flujo manual, la campana del flujo automatizado y la integracion de la version del modelo evaluada. Toda mencion textual de esos periodos en `01-introduccion.tex`, `04-marco-metodologico.tex`, `06-implementacion.tex` y `08-discusion.tex` SHALL coincidir con la cronologia. Cada fecha SHALL tener procedencia registrada en la fuente (evidencia verificable del repositorio o confirmacion explicita de los autores, con su fecha) y MUST NOT inventarse, interpolarse ni expresarse con mas precision que su evidencia. La tesis SHALL NOT fijar un numero de iteraciones ni fechas individuales de iteracion mientras no exista fuente primaria o confirmacion de los autores; en ese caso SHALL representar la construccion con la precision disponible (barras de mes).
 
 #### Scenario: Figura de cronograma con fuente reproducible
 
@@ -55,7 +55,7 @@ La tesis SHALL presentar una cronologia unica, en una figura (`\label{fig:cronog
 #### Scenario: Relacion entre iteraciones y campanas explicita
 
 - **WHEN** se lee la seccion de conexion con el proceso Scrumban de `06-implementacion.tex`
-- **THEN** se declara a que iteracion corresponde la campana automatizada y que la campana manual no forma parte de las iteraciones de construccion
+- **THEN** se declara que la campana automatizada corresponde a la etapa de validacion experimental y que la campana manual no forma parte de las etapas de construccion
 - **AND** ninguna descripcion de iteracion afirma un orden temporal o una condicion incompatible con la cronologia fechada (por ejemplo, ajustes del clasificador declarados sin exposicion al corpus pero fechados despues de su procesamiento)
 
 #### Scenario: Entregable de iteración coherente con la fecha de su artefacto

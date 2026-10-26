@@ -24,9 +24,9 @@ Los diagramas se generan a partir de fuentes Mermaid versionadas en formato \tex
 
 \section{Repositorio de código fuente}\label{sec:anexo-repositorio}
 
-El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto \parencite{Gomez2026_repositorio}, accesible en \url{https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N}. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado \texttt{v1.2.0}, creado sobre el commit definitivo del repositorio.
+El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto \parencite{Gomez2026_repositorio}, accesible en \url{https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N}. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado \texttt{v1.2.1}, creado sobre el commit definitivo del repositorio.
 
-El hash completo de ese commit es \texttt{\small a49d035c67b32ae17e633ec04b09ecdd2781aac6}, que constituye la referencia verificable de la versión corregida.
+El hash completo de ese commit es \texttt{\small 509ffff105c21fed0c07cbf9a46245ba6c53e0e1}, que constituye la referencia verificable de la versión corregida.
 
 La estructura del repositorio separa el módulo de procesamiento (\texttt{App/Backend/}, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (\texttt{App/Frontend/}, React con TypeScript), la definición del flujo de orquestación (\texttt{n8n/workflow.json}), los artefactos de evaluación (\texttt{evaluation/}), el corpus pseudonimizado (\texttt{data/}), los scripts auxiliares (\texttt{scripts/}) y la documentación (\texttt{docs/}), junto con las especificaciones de los changes (\texttt{openspec/}) y los archivos de orquestación local \texttt{docker-compose.yml} y \texttt{Makefile}. El archivo \texttt{README.md} describe esta organización y reúne las instrucciones detalladas para el despliegue local en menos de 15 minutos, por lo que constituye el punto de entrada al código fuente disponible en el repositorio público \parencite{Gomez2026_repositorio}.
 
@@ -34,7 +34,7 @@ La estructura del repositorio separa el módulo de procesamiento (\texttt{App/Ba
 
 El esquema completo de la base de datos PostgreSQL se documenta mediante scripts SQL versionados que definen las siete entidades descritas en la Tabla~\ref{tab:entidades} de la \autoref{sec:arquitectura}, las restricciones de integridad referencial (claves foráneas con eliminación en cascada condicional), los índices secundarios sobre los atributos de búsqueda frecuente (fecha de creación, sector responsable y estado actual del ticket), y la generación de los identificadores de incidente. Las migraciones incrementales se gestionan mediante Alembic, lo que permite reproducir el estado de la base en cualquier punto histórico del desarrollo y revertir cambios cuando resulte necesario.
 
-La migración inicial incluye la creación de las tablas de catálogo (\texttt{sector}, \texttt{estado}, \texttt{canal\_origen}) con sus valores semilla, garantizando que un despliegue nuevo del sistema comience con los datos de referencia correctos. Las migraciones subsiguientes documentan la evolución del esquema durante las seis iteraciones de desarrollo descritas en la \autoref{sec:marco-metodologico}.
+La migración inicial incluye la creación de las tablas de catálogo (\texttt{sector}, \texttt{estado}, \texttt{canal\_origen}) con sus valores semilla, garantizando que un despliegue nuevo del sistema comience con los datos de referencia correctos. Las migraciones subsiguientes documentan la evolución del esquema durante las etapas de desarrollo descritas en la \autoref{sec:marco-metodologico}.
 
 El diagrama entidad-relación de las siete entidades se incluye como Figura~\ref{fig:er_modelo_datos} de la \autoref{sec:arquitectura}; su fuente Mermaid versionada reside en \texttt{docs/diagrams/er\_modelo\_datos.md}.
 
@@ -186,5 +186,7 @@ B16 & \texttt{c-139}, \texttt{c-141} & \autoref{sec:anexo-repositorio} y Referen
 \par\smallskip
 {\footnotesize\textit{Fuente:} elaboración propia a partir de \texttt{docs/Tesis/Correcciones/dictamen-correcciones.md}.\par}
 \end{table}
+
+La trazabilidad interna de dos decisiones que el cuerpo del Capítulo~6 presenta en lenguaje llano se conserva aquí: el retiro de la rama de clasificación telefónica por agente LLM basada en LangChain y el traslado de la superficie de costo al backend corresponden al change \texttt{c-72}. El detalle de ambas decisiones figura en \texttt{docs/Tesis/Correcciones/dictamen-correcciones.md}.
 
 \newpage

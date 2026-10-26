@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a UTN thesis project (2026) that automates help desk ticket classification using **N8N** (workflow automation platform) and **Google Gemini 2.5 Flash**. Incoming incidents from email (Microsoft Outlook) and phone calls (Twilio) are automatically classified into one of five canonical sectors in Spanish (exact strings, case-sensitive, without accents):
+This is a UTN thesis project (2026) that automates help desk ticket classification using **N8N** (workflow automation platform) and **Google Gemini 3.6 Flash**. Incoming incidents from email (Microsoft Outlook) and phone calls (Twilio) are automatically classified into one of five canonical sectors in Spanish (exact strings, case-sensitive, without accents):
 
 - **Seguridad Informatica**: Cybersecurity, firewall, VPN, malware, phishing, corporate access and identity
 - **Soporte Tecnico Hardware**: User equipment, peripherals, printers, physical failures
@@ -37,18 +37,17 @@ Outlook Email Trigger
 ### Channel 2: Phone/Call Incidents
 ```
 Twilio Webhook (call transcription)
-  → LangChain AI Agent (parse call with custom prompt)
-  → Redis Memory (store parsed JSON session data)
+  → Backend hybrid classifier: deterministic rules (score_correctitud) → Gemini 3.6 Flash → human-review fallback (see `knowledge-base/08_arquitectura_propuesta.md`)
   → Python Validation Node (verify extracted fields)
   → IF Node: can incident be created?
     ├─ YES → HTTP POST to MESA-AYUDAS (create incident)
-    └─ NO  → Loop back to AI Agent for refinement
+    └─ NO  → Loop back to the validation node for refinement
 ```
 
-### AI Classification (Gemini 2.5 Flash)
+### AI Classification (Gemini 3.6 Flash)
 - **Response format**: Strict JSON with `"categoría"` (one of five canonical strings) and `"confianza"` (float 0.0–1.0)
-- **Confidence threshold**: the human-review rule (`confianza < 0.70`) applies only to Gemini's output; the fallback stage always flags review (confidence 0.0); the deterministic stage short-circuits on `score_correctitud >= 0.5166` and does not flag review by its confidence; the backend also flags review when the reporter is not identified (VIS-005)
-- **Temperature**: 0.3 | **Top_p**: 0.9 | **Max tokens**: 100 | **Timeout**: 10s
+- **Confidence threshold**: the human-review rule applies only to Gemini's output; the fallback stage always flags review (confidence 0.0); the deterministic stage short-circuits on the correctness score and does not flag review by its confidence; the backend also flags review when the reporter is not identified (VIS-005). The numeric thresholds live in `openspec/config.yaml` (`conventions.thresholds`)
+- **Sampling parameters and timeout**: see `openspec/config.yaml` (`stack.inference`)
 - **Language**: Rioplatense Spanish dialect
 
 ### Validation Logic (per ANEXO_H specification)
@@ -90,17 +89,16 @@ function engram-import { engram sync --import --project "Automatizacion-de-Mesa-
 - **Microsoft Outlook**: Email trigger and automated reply
 - **Twilio**: Receives phone call transcription via webhook
 - **MESA-AYUDAS**: Internal incident management system, receives HTTP POST to create tickets
-- **Google Gemini API**: Classification requests (`google-genai >= 1.0`, the new SDK that replaces the deprecated `google-generativeai`)
-- **Redis**: Session/memory storage for the LangChain AI agent
+- **Google Gemini API**: Classification requests via the `google-genai` SDK (version pinned in `openspec/config.yaml`), which replaces the deprecated `google-generativeai`
 
 ## Development Notes
 
 - The workflow is currently set to **inactive** (`"active": false` in the JSON). Activate it in the N8N UI before testing.
 - The JavaScript and Python code nodes in the workflow have been fully implemented (C-04): validation, normalization, Anexo H §H.3 checks, and HTTP payload mapping. No placeholders remain.
-- The IF node conditions are configured: `Entrada valida` evaluates a synthetic input-validity confidence (`>= 0.70`, inclusive) before the POST, and `Requiere revision humana` evaluates the backend's `requiere_revision_humana` indicator.
+- The IF node conditions are configured: `Entrada valida` evaluates a synthetic input-validity confidence before the POST, and `Requiere revision humana` evaluates the backend's `requiere_revision_humana` indicator; the human-review threshold that the backend applies lives in `openspec/config.yaml` (`conventions.thresholds.human_review`).
 - To deploy: import `n8n/workflow.json` into an N8N instance and configure the N8N credentials (IMAP, SMTP, operator login Custom Auth, telephony Header Auth); Gemini is configured in the backend `GEMINI_API_KEY`, not in N8N. The backend endpoint is `POST /api/v1/incidentes`.
-- A `docker-compose.yml` for local testing (N8N 1.62 + FastAPI backend + PostgreSQL + Redis) is available at the root of the repository (added in C-04 verification). See `docs/n8n-workflow-guide.md` for setup instructions.
-- The evaluation corpus (`data/corpus_evaluacion_pseudonimizado.json`, multi-label JSON) is not tracked in git. The synthetic 200-case corpus was discarded and removed (C-27).
+- A `docker-compose.yml` for local development (N8N, FastAPI backend and PostgreSQL; the pinned versions live in `openspec/config.yaml` and `docker-compose.yml`) is available at the root of the repository (added in C-04 verification). See `docs/n8n-workflow-guide.md` for setup instructions.
+- The evaluation corpus (`data/corpus_evaluacion_pseudonimizado.json`, multi-label JSON) is tracked in git (68,911 bytes). The synthetic 200-case corpus was discarded and removed (C-27).
 
 ## Skill routing
 
