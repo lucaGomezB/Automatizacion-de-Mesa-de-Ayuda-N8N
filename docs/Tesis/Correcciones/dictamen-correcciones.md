@@ -2832,6 +2832,8 @@ RESULT: 4/12 chequeos en PASS (8 en FAIL). Documentacion desincronizada.
   [PASS] duplicacion: CLAUDE.md no restatea literales volatiles de config.yaml
 
   RESULT: 12/12 chequeos en PASS. Documentacion sincronizada.
+
+**Cierre 10.6 (2026-10-26).** Verificacion final del ciclo de la barrera: `python3 scripts/preflight/docs_stack_sync.py` = **exit 0, 12/12 PASS** (salida final arriba) y `python3 -m pytest scripts/preflight -q` = **83 passed**. El ledger queda completo: 2.13 habia registrado **8 FAIL** sobre la documentacion sin corregir y el cierre registra **0 hallazgos**. La prueba de duplicacion del chequeo 12 deriva los literales de `config.yaml` en tiempo de ejecucion desde el ajuste del 2026-10-26 (antes usaba una lista hardcodeada, que fallo en CI al cambiar `FastAPI 0.115` por `0.143` y `google-genai >= 1.0` por `>=2.31,<3`).
   ```
 
 ### Verificacion de contenido y compilacion de registro (bloque F, tareas 7.1 a 8.5) - 2026-10-26
