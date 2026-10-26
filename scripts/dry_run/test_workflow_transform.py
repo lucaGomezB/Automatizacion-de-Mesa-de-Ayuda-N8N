@@ -117,6 +117,31 @@ def test_web_channel_path_is_preserved():
     assert "Webhook formulario web" in names
 
 
+# ── c-140 (3.6/3.7): la transformacion conserva la politica de reintento ─────
+
+
+def test_transform_preserves_retry_policy_on_both_http_nodes():
+    workflow, _ = dry_run._workflow_for_dry_run(USERNAME, PASSWORD)
+    nodes = {node["name"]: node for node in workflow["nodes"]}
+    for name in ("Login operador", "HTTP POST a MESA-AYUDAS"):
+        node = nodes[name]
+        assert node.get("retryOnFail") is True, f"{name} perdio retryOnFail"
+        assert node.get("maxTries") == 3, f"{name} perdio maxTries"
+        assert node.get("waitBetweenTries") == 5000, (
+            f"{name} perdio waitBetweenTries"
+        )
+        timeout = node["parameters"]["options"]["timeout"]
+        assert isinstance(timeout, int) and timeout > 0, (
+            f"{name} perdio parameters.options.timeout"
+        )
+
+
+def test_transform_preserves_post_onerror():
+    workflow, _ = dry_run._workflow_for_dry_run(USERNAME, PASSWORD)
+    nodes = {node["name"]: node for node in workflow["nodes"]}
+    assert nodes["HTTP POST a MESA-AYUDAS"]["onError"] == "continueErrorOutput"
+
+
 # ── Twilio guardrail (§8.2) ──────────────────────────────────────────────────
 
 

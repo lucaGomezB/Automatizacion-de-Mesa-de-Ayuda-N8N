@@ -298,6 +298,11 @@ def _workflow_for_dry_run(username: str, password: str) -> tuple[dict, list[str]
             node.pop("credentials", None)
             node.pop("authentication", None)
             node.pop("genericAuthType", None)
+            # c-140 (3.7): conservar los `options` del nodo (p. ej. el `timeout`
+            # de la politica de reintento) en lugar de reemplazarlos por `{}`.
+            # Sin esto la copia de costo cero perderia el timeout del login y las
+            # pruebas de la transformacion lo detectarian.
+            existing_options = (node.get("parameters") or {}).get("options", {})
             node["parameters"] = {
                 "method": "POST",
                 "url": "http://backend:8000/api/v1/auth/login",
@@ -305,7 +310,7 @@ def _workflow_for_dry_run(username: str, password: str) -> tuple[dict, list[str]
                 "contentType": "json",
                 "specifyBody": "json",
                 "jsonBody": json.dumps({"username": username, "password": password}),
-                "options": {},
+                "options": dict(existing_options),
             }
 
     # 1b. Give every webhook trigger a stable webhookId so N8N registers the

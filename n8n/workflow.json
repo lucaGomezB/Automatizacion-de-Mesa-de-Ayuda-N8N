@@ -99,7 +99,9 @@
         "contentType": "json",
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ descripcion: $('Normalizar entrada del incidente').item.json.descripcion, prioridad: $('Normalizar entrada del incidente').item.json.prioridad || 'media', canal_origen_id: $('Normalizar entrada del incidente').item.json.canal_origen_id, origen_message_id: $('Normalizar entrada del incidente').item.json.origen_message_id || null, origen_evento: 'creacion_incidente', ingresado_en: $('Normalizar entrada del incidente').item.json.ingresado_en }) }}",
-        "options": {},
+        "options": {
+          "timeout": 75000
+        },
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -118,7 +120,10 @@
       ],
       "id": "70893531-ce20-4e27-ad12-18b4b0edb21b",
       "name": "HTTP POST a MESA-AYUDAS",
-      "onError": "continueErrorOutput"
+      "onError": "continueErrorOutput",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
     },
     {
       "parameters": {
@@ -466,7 +471,9 @@
         "authentication": "genericCredentialType",
         "genericAuthType": "httpCustomAuth",
         "contentType": "json",
-        "options": {}
+        "options": {
+          "timeout": 10000
+        }
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
@@ -481,7 +488,10 @@
           "id": "REPLACE_WITH_OPERATOR_LOGIN_CREDENTIAL_ID",
           "name": "Operador Mesa de Ayuda (login)"
         }
-      }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
     },
     {
       "parameters": {
