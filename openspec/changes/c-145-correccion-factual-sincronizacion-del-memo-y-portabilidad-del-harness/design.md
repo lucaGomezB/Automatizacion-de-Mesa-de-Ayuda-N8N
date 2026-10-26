@@ -218,6 +218,7 @@ Un requisito de spec no se verifica solo: `openspec validate --specs --strict` c
 | Fuente | Que se extrae | Como |
 |---|---|---|
 | `App/Backend/app/config/settings.py` | defaults de `gemini_model`, `gemini_timeout_seconds`, `gemini_total_timeout_seconds`, `gemini_max_retries`, `gemini_temperature`, `gemini_top_p`, `gemini_max_output_tokens` | `ast.parse` y lectura del valor literal de cada asignacion anotada |
+| `App/Backend/app/constants.py` | `SECTORES_CANONICOS` | `ast.parse` y lectura de la tupla literal |
 | `App/Backend/requirements.txt` | pins de `fastapi`, `uvicorn`, `google-genai` | lineas de requerimiento |
 | `docker-compose.yml` | imagenes por servicio | `yaml.safe_load` |
 | `openspec/config.yaml` | modelo, `params`, `stack.backend.framework`, `stack.orchestration.tool` | `yaml.safe_load` |
@@ -236,12 +237,23 @@ Un requisito de spec no se verifica solo: `openspec validate --specs --strict` c
 7. Todo servicio que `CLAUDE.md` describa como parte del stack existe como servicio del compose (el caso Redis).
 8. Ninguna etapa o tecnologia retirada se describe como vigente (el caso LangChain): si `CLAUDE.md` menciona un nodo o etapa, el workflow debe contenerlo; los tests de c-72 documentan su ausencia.
 9. `openspec/config.yaml` parsea como YAML y conserva las claves que consume el CLI.
+10. `conventions.thresholds.deterministic_score` y `.human_review` de `config.yaml` iguales a `Settings.deterministic_score_threshold` y `Settings.human_review_threshold`.
+11. `conventions.categorias` de `config.yaml` igual, en contenido y en orden, a `SECTORES_CANONICOS` de `App/Backend/app/constants.py` (leido con `ast`, no importado).
+12. Sin duplicacion sin cobertura: `CLAUDE.md` no puede contener los literales volatiles que declara `config.yaml`. Donde los repite, el texto remite a `openspec/config.yaml` en lugar de restatear el numero. Asi el conjunto de valores vigilados tiene una sola fuente y el chequeo 12 impide que reaparezca una segunda.
 
-**Semantica:** `exit_code(checks)` es 0 si y solo si todos son PASS, igual que los otros preflights. Un YAML malformado produce un `Check` FAIL con mensaje explicito, nunca una traza cruda.
+**Como se construye la lista del chequeo 12 (decision de diseno).** Los literales prohibidos se **derivan de `config.yaml` en tiempo de ejecucion**, no se codifican como constante: los dos umbrales de `conventions.thresholds`, las versiones de `stack.backend.framework`, la restriccion de `google-genai` y la version de N8N. Una lista hardcodeada reintroduciria el mismo defecto un nivel mas arriba: al cambiar un valor en `config.yaml` y en el codigo, la constante seguiria prohibiendo el valor viejo y dejaria de prohibir el nuevo, con lo cual `CLAUDE.md` podria restatear el valor nuevo y pasar el chequeo. Se mantiene una lista **estatica** separada, solo para identificadores retirados que ya no figuran en `config.yaml` (`2.5 Flash`, `1.62`), porque son los que no se pueden derivar de ningun lado y son justamente los que reaparecen por copiar texto viejo. La prueba de que la derivacion funciona es un caso de triangulacion: cambiar el umbral en `config.yaml` y restatear el valor nuevo en `CLAUDE.md` debe fallar.
+
+**Huecos que cubre la extension (10 a 12).** Los chequeos 1 a 9 solo comparan valores que ya se declaran en `config.yaml`. Eso deja dos agujeros: (a) `thresholds` y `categorias` estan declarados en `config.yaml:42-43` pero ninguno de los chequeos los leia, y son justo los valores que el PR #40 corrige; (b) `CLAUDE.md` repite cinco literales volatiles en prosa (`:50` y `:100` entre otras), de modo que un cambio de umbral actualizado en `config.yaml` y en el codigo podia dejar `CLAUDE.md` afirmando el valor viejo con el pipeline en verde. El agujero real no era la ausencia de un dato, era la duplicacion sin cobertura.
+
+**Semantica:** `exit_code(checks)` es 0 si y solo si todos son PASS, igual que los otros preflights. Un YAML malformado produce un `Check` FAIL con mensaje explicito, nunca una traza cruda. Los chequeos 1 a 11 fallan por divergencia de valor; el 12 falla por presencia de un valor duplicado en `CLAUDE.md`, que es una condicion distinta y debe reportarse como tal.
+
+**Fuera de alcance explicito:** no se verifica la completitud de los 82 campos de `Settings`. La mayoria (`cost_guard_*`, `db_pool_size`, `twilio_*`, claves y secretos) no debe figurar en la documentacion para agentes, y una lista de exenciones de 80 entradas tendria mas costo de mantenimiento que valor. La barrera cubre la superficie documentada, no todo el objeto de configuracion. Tampoco cubre la tesis: los numeros del documento tienen su propio circuito (memo canonico y `verificar_matriz_trazabilidad.py`, bloques B y D de este change).
 
 **Cableado en CI:** paso nuevo en el job `backend-tests`, despues del preflight de Gemini, mas la inclusion automatica en `python -m pytest scripts/preflight -q`, que ya corre el job. El orden importa: el preflight se ejecuta despues de que el bloque G corrige la documentacion, porque antes de esa correccion debe fallar (y ese fallo se usa como prueba de que la barrera detecta el drift real).
 
-**Prueba de que la barrera sirve:** se corre el preflight sobre el arbol **sin** el bloque G aplicado y se verifica que falla nombrando exactamente el modelo, el timeout, FastAPI, la imagen de N8N y Redis. Ese resultado se consigna en el REGISTRO. Despues del bloque G, el mismo comando debe salir 0. Una barrera que nunca se vio fallar no es evidencia de nada.
+**Prueba de que la barrera sirve:** se corre el preflight sobre el arbol **sin** el bloque G aplicado y se verifica que falla nombrando exactamente el modelo, el timeout, FastAPI, la imagen de N8N, Redis y la duplicacion de literales en `CLAUDE.md` (chequeo 12). Ese resultado se consigna en el REGISTRO. Despues del bloque G, el mismo comando debe salir 0. Una barrera que nunca se vio fallar no es evidencia de nada.
+
+**Nota sobre el chequeo 12 y los umbrales:** los umbrales de `config.yaml` son correctos hoy (0.5166 y 0.70 coinciden con `Settings`), de modo que los chequeos 10 y 11 pasan desde el primer dia. El que debe fallar antes del bloque G es el 12, porque `CLAUDE.md` repite esos valores en prosa. Esa asimetria es intencional: no se busca que todo falle, se busca que el chequeo nuevo demuestre que detecta la duplicacion.
 
 **Alternativa considerada:** validar solo con `grep` de las cadenas retiradas. Se descarta: detecta el sintoma ya conocido y no el proximo drift (una version nueva, un servicio nuevo, una etapa nueva); el chequeo cruzado contra la fuente falla ante cualquier divergencia, incluida la que todavia no conocemos.
 
