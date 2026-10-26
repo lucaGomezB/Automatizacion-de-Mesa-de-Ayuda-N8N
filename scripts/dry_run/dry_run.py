@@ -35,10 +35,12 @@ import re
 import ssl
 import subprocess
 import sys
+import threading
 import time
 import urllib.error
 import urllib.request
 import uuid
+from datetime import datetime, timezone
 from pathlib import Path
 
 # Make ``import checks`` work both when executed as a script and when imported.
@@ -73,6 +75,15 @@ CANAL_PHONE_ID = 3  # llamada telefonica (catalogo canal_origen, migracion 001)
 BACKEND_CONTAINER = "mesa_local-backend-1"
 N8N_CONTAINER = "mesa_local-n8n-1"
 LOGIN_CREDENTIAL_NAME = "Operador Mesa de Ayuda (login)"
+
+# c-140 (5.6): the automation network the backend shares with N8N. The retry-fault
+# check disconnects the backend from it and reconnects before N8N's first wait
+# between attempts (5000 ms) elapses. `docker network connect` does NOT restore
+# the compose service alias, so it must be passed explicitly or N8N cannot
+# resolve `backend` during the retry window (verified: EAI_AGAIN otherwise).
+NETWORK_AUTOMATION = "mesa_local_automation"
+BACKEND_SERVICE_ALIAS = "backend"
+RETRY_FAULT_RECONNECT_DELAY_S = 2.0
 
 # Deterministic description: hardware keywords + a stable marker.
 TEST_DESCRIPTION = "La impresora del sector no enciende y la pantalla del equipo falla"
@@ -160,6 +171,26 @@ def _json_or_none(text: str):
         return None
 
 
+# ── Pure E2E evaluators (c-140 section 5) ────────────────────────────────────
+#
+# The judgement is pure and lives in ``e2e_checks.py``; ``dry_run.py`` only does
+# the I/O (D12/D14). The harness suite exercises the pure module offline.
+
+from e2e_checks import (  # noqa: E402
+    CHECK_COST_GUARD_BUDGET,
+    CHECK_ETAPA,
+    CHECK_IDEMPOTENCIA,
+    CHECK_REINTENTO,
+    ETAPA_DETERMINISTIC,
+    build_evidence_report,
+    evaluate_cost_guard_budget,
+    evaluate_etapa,
+    evaluate_idempotency,
+    evaluate_retry_recovery,
+    groups_from_checks,
+)
+
+
 # ── Stack lift / reuse ───────────────────────────────────────────────────────
 
 
@@ -214,6 +245,14 @@ def assert_dummy_key() -> Check:
         "effective GEMINI_API_KEY is NOT fictitious - aborting before any paid call",
         "lift the backend with `-f scripts/dry_run/compose.dry-run.yml` (env_file overrides are not enough)",
     )
+
+
+def assert_cost_guard_budget() -> Check:
+    """Read the effective runtime budget inside the backend (layer 2 of cost zero)."""
+    result = compose(["exec", "-T", "backend", "printenv", "COST_GUARD_BUDGET_USD"], timeout=60)
+    if result.returncode != 0:
+        return evaluate_cost_guard_budget(None)
+    return evaluate_cost_guard_budget(result.stdout.strip())
 
 
 # ── N8N workflow import / activation ─────────────────────────────────────────
@@ -645,6 +684,16 @@ def run_e2e(args, base_url: str, context: dict) -> list[Check]:
         return results
     results.append(passing("e2e:persisted", f"incidente {incidente_id} persisted"))
 
+    # c-140 (5.3): the classification history must be a single deterministic
+    # record (cost-zero by construction). Wired right after e2e:persisted.
+    status, _, text = http_request(
+        "GET",
+        f"{base_url}/api/v1/clasificaciones/incidente/{incidente_id}",
+        headers=auth,
+        timeout=args.timeout,
+    )
+    results.append(evaluate_etapa(_json_or_none(text)))
+
     if observed_canal == CANAL_WEB_ID:
         results.append(passing("e2e:canal", f"canal_origen_id={observed_canal} (formulario web)"))
     else:
@@ -656,6 +705,155 @@ def run_e2e(args, base_url: str, context: dict) -> list[Check]:
             )
         )
     return results
+
+
+def _fetch_incidentes_por_origen(base_url: str, auth: dict, origen: str, args) -> list:
+    """Poll the filtered listing until the run identifier appears (or time out)."""
+    deadline = time.time() + args.poll_timeout
+    payload: object = []
+    while time.time() < deadline:
+        status, _, text = http_request(
+            "GET",
+            f"{base_url}/api/v1/incidentes/?origen_message_id={origen}",
+            headers=auth,
+            timeout=args.timeout,
+        )
+        payload = _json_or_none(text)
+        if status == 200 and isinstance(payload, list) and payload:
+            return payload
+        time.sleep(2)
+    return payload if isinstance(payload, list) else []
+
+
+def run_e2e_idempotency(args, base_url: str, context: dict) -> list[Check]:
+    """c-140 (5.4): replay the same body with an explicit run identifier.
+
+    Sends the same payload twice with ``origen_message_id = smoke-<run id>`` and
+    verifies that both responses carry the same incident and that the filtered
+    listing returns exactly one incident.
+    """
+    scheme = context.get("n8n_scheme")
+    token = context.get("token")
+    if not scheme or not token:
+        return [
+            pending(
+                CHECK_IDEMPOTENCIA,
+                "preflight incompleto (sin esquema de webhook o token de operador)",
+                "run the preflight successfully before the idempotency walk",
+            )
+        ]
+    webhook_url = f"{scheme}://{args.n8n_host}:{args.n8n_port}/webhook/{WEBHOOK_PATH}"
+    origen = f"smoke-{uuid.uuid4().hex[:12]}"
+    body = {
+        "descripcion": TEST_DESCRIPTION,
+        "prioridad": "media",
+        "origen_message_id": origen,
+    }
+    _, _, first_text = http_request("POST", webhook_url, body, timeout=args.e2e_timeout)
+    _, _, second_text = http_request("POST", webhook_url, body, timeout=args.e2e_timeout)
+    listing = _fetch_incidentes_por_origen(
+        base_url, {"Authorization": f"Bearer {token}"}, origen, args
+    )
+    return [
+        evaluate_idempotency(
+            _json_or_none(first_text), _json_or_none(second_text), listing, origen
+        )
+    ]
+
+
+def run_retry_fault(args, base_url: str, context: dict) -> list[Check]:
+    """c-140 (5.6, opt-in): verify recovery from a transient backend outage.
+
+    Disconnects the backend from the automation network, sends the webhook in the
+    background, reconnects after ``RETRY_FAULT_RECONNECT_DELAY_S`` (before N8N's
+    5000 ms wait) and requires an incident with a single filtered row. The
+    reconnection always runs, even if the send fails.
+    """
+    if not getattr(args, "with_retry_fault", False):
+        return []
+    scheme = context.get("n8n_scheme")
+    token = context.get("token")
+    if not scheme or not token:
+        return [
+            pending(
+                CHECK_REINTENTO,
+                "preflight incompleto (sin esquema de webhook o token de operador)",
+                "run the preflight successfully before --with-retry-fault",
+            )
+        ]
+    webhook_url = f"{scheme}://{args.n8n_host}:{args.n8n_port}/webhook/{WEBHOOK_PATH}"
+    origen = f"smoke-{uuid.uuid4().hex[:12]}"
+    body = {
+        "descripcion": TEST_DESCRIPTION,
+        "prioridad": "media",
+        "origen_message_id": origen,
+    }
+    outcome: dict = {}
+    errors: list = []
+
+    def _send() -> None:
+        try:
+            outcome["response"] = http_request(
+                "POST", webhook_url, body, timeout=args.e2e_timeout
+            )
+        except BaseException as exc:  # noqa: BLE001 - must still reconnect below
+            errors.append(exc)
+
+    docker(["network", "disconnect", NETWORK_AUTOMATION, BACKEND_CONTAINER])
+    thread = threading.Thread(target=_send, daemon=True)
+    try:
+        thread.start()
+        time.sleep(RETRY_FAULT_RECONNECT_DELAY_S)
+    finally:
+        docker(
+            [
+                "network",
+                "connect",
+                "--alias",
+                BACKEND_CONTAINER,
+                "--alias",
+                BACKEND_SERVICE_ALIAS,
+                NETWORK_AUTOMATION,
+                BACKEND_CONTAINER,
+            ]
+        )
+    thread.join(timeout=args.e2e_timeout + 15)
+
+    if errors:
+        return [
+            failing(
+                CHECK_REINTENTO,
+                f"el envio fallo durante la recuperacion: {errors[0]!r}",
+                "the backend was reconnected in the finally block; inspect the webhook and re-run",
+            )
+        ]
+    _, _, text = outcome.get("response", (None, {}, ""))
+    listing = _fetch_incidentes_por_origen(
+        base_url, {"Authorization": f"Bearer {token}"}, origen, args
+    )
+    return [evaluate_retry_recovery(_json_or_none(text), listing, origen)]
+
+
+# ── Evidence report gathering (c-140 section 5.7) ────────────────────────────
+
+
+def _git_commit() -> str:
+    result = _run(["git", "rev-parse", "HEAD"], timeout=30)
+    return result.stdout.strip() if result.returncode == 0 else "unknown"
+
+
+def _utc_now() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _n8n_version() -> str:
+    try:
+        result = n8n_cli(["--version"], timeout=60)
+    except Exception:  # noqa: BLE001 - report best-effort metadata
+        return "unknown"
+    text = (result.stdout or result.stderr or "").strip()
+    match = re.search(r"(\d+\.\d+\.\d+)", text)
+    return match.group(1) if match else (text or "unknown")
 
 
 # ── Optional email channel variant (§7.2) ────────────────────────────────────
@@ -839,6 +1037,16 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="OPT-IN: also walk the (free) email channel. Off by default and absent from the cost-zero path.",
     )
+    parser.add_argument(
+        "--with-retry-fault",
+        action="store_true",
+        help="OPT-IN: disconnect/reconnect the backend to verify N8N retry recovery (needs block 2).",
+    )
+    parser.add_argument(
+        "--json-out",
+        default=None,
+        help="Write a JSON evidence report (commit, UTC date, N8N version, per-check result) to this path.",
+    )
     parser.add_argument("--timeout", type=int, default=15, help="Per-request timeout in seconds. Default: 15")
     parser.add_argument("--e2e-timeout", type=int, default=60, help="Webhook POST timeout. Default: 60")
     parser.add_argument("--poll-timeout", type=int, default=45, help="Persistence polling window. Default: 45")
@@ -861,6 +1069,11 @@ def main(argv: list[str] | None = None) -> int:
     if not key_check.ok:
         return _finish(results, args)
 
+    budget_check = assert_cost_guard_budget()
+    results.append(budget_check)
+    if not budget_check.ok:
+        return _finish(results, args)
+
     if not args.skip_import:
         results.extend(import_and_activate_workflow(args))
         if exit_code(results) != 0:
@@ -870,18 +1083,36 @@ def main(argv: list[str] | None = None) -> int:
     results.extend(preflight)
     if exit_code(preflight) != 0:
         # Early abort: no incident is sent over the webhook (§4.6).
-        return _finish(results, args)
+        return _finish(results, args, context)
 
-    results.extend(run_e2e(args, args.base_url.rstrip("/"), context))
-    results.extend(run_email_variant(args, args.base_url.rstrip("/"), context))
-    return _finish(results, args)
+    base_url = args.base_url.rstrip("/")
+    results.extend(run_e2e(args, base_url, context))
+    results.extend(run_e2e_idempotency(args, base_url, context))
+    results.extend(run_retry_fault(args, base_url, context))
+    results.extend(run_email_variant(args, base_url, context))
+    return _finish(results, args, context)
 
 
-def _finish(results: list[Check], args) -> int:
+def _finish(results: list[Check], args, context: dict | None = None) -> int:
     if args.json:
         print(json.dumps([r.__dict__ for r in results], ensure_ascii=False, indent=2))
     else:
         print(format_summary(results))
+    json_out = getattr(args, "json_out", None)
+    if json_out:
+        context = context or {}
+        report = build_evidence_report(
+            commit=_git_commit(),
+            timestamp_utc=_utc_now(),
+            n8n_version=_n8n_version(),
+            groups=groups_from_checks(results),
+            results=results,
+            secrets=[getattr(args, "password", ""), context.get("token", "")],
+        )
+        Path(json_out).write_text(
+            json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        print(f"[INFO] evidence report written to {json_out}")
     return exit_code(results)
 
 
