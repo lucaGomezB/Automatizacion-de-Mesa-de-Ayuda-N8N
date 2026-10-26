@@ -328,6 +328,12 @@ class IncidenteService:
                 await self._link_telefonia_ingreso(
                     payload.origen_message_id, existente.id
                 )
+                # c-140 (D7): equivalencia observable del replay. Si el incidente
+                # requiere revision, se re-resuelven los destinatarios antes de
+                # responder para que N8N no caiga al respaldo por haber reintentado.
+                existente.destinatarios_revision = (
+                    await self._replay_destinatarios_revision(existente)
+                )
                 return existente
 
         # Paso 1: Resolver el estado inicial desde el catálogo
@@ -380,6 +386,10 @@ class IncidenteService:
                 incidente_id=existente.id,
             )
             await self._link_telefonia_ingreso(payload.origen_message_id, existente.id)
+            # c-140 (D7): misma equivalencia observable que el cortocircuito.
+            existente.destinatarios_revision = (
+                await self._replay_destinatarios_revision(existente)
+            )
             return existente
 
         logger.info("incidente_created", incidente_id=incidente.id)
@@ -693,6 +703,34 @@ class IncidenteService:
             call_sid=origen_message_id,
             incidente_id=incidente_id,
         )
+
+    async def _replay_destinatarios_revision(
+        self, incidente: Incidente
+    ) -> list[str]:
+        """
+        Re-resuelve los destinatarios de revision para un replay idempotente.
+
+        c-140 (D7): la respuesta del replay debe ser observablemente equivalente
+        a la del alta original. Si el incidente existente requiere revision
+        humana, se re-resuelve la lista con la MISMA lectura del alta original
+        (operadores `mesa_de_ayuda` activos); si no requiere revision, se
+        devuelve lista vacia, igual que el alta. NO reclasifica, NO despacha la
+        notificacion a N8N, NO persiste los destinatarios y NO altera el
+        contrato OpenAPI (el campo ya existe). `NotificationRecipientService`
+        degrada a lista vacia ante directorio ausente o fallo del repositorio
+        (NR-007), por lo que el replay nunca rompe por este camino.
+
+        Args:
+            incidente: incidente existente recuperado por `origen_message_id`.
+
+        Returns:
+            Lista de emails de los operadores de revision (vacia si no aplica).
+        """
+        if not incidente.requiere_revision_humana:
+            return []
+        return await NotificationRecipientService(
+            self._session
+        ).resolver_destinatarios_revision()
 
     async def _resolve_estado(self, nombre: str) -> Estado:
         """
