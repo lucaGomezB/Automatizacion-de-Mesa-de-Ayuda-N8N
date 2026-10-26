@@ -1184,6 +1184,11 @@ def construir_parser() -> argparse.ArgumentParser:
             "Sin subcomando: corrida offline, sin Gemini, que escribe solo el reporte indicado. "
             "Subcomando `prompt`: UN brazo de la ablacion del prompt (corrida PAGA con gate)."
         ),
+        # c-145 (E1): deshabilitar la resolucion por prefijo. Sin esto, en Python
+        # 3.12.3 `--brazo` (opcion del subcomando `prompt`) se resuelve contra las
+        # opciones de nivel superior `--brazo-vigente` / `--brazo-sin-reglas` y el
+        # parser aborta con "ambiguous option". Los nombres deben ser exactos.
+        allow_abbrev=False,
     )
     parser.add_argument("--corpus", type=pathlib.Path, default=CORPUS_REAL_PATH)
     parser.add_argument("--report", type=pathlib.Path, default=REPORT_SENSIBILIDAD_PATH)

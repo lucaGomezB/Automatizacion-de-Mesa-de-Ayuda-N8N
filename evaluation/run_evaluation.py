@@ -1574,7 +1574,14 @@ def main() -> None:
                 "--solo-tiempos no se puede combinar con --force, --no-cache "
                 "ni --confirm-paid (no usa clasificador ni cache de predicciones)."
             )
-        main_solo_tiempos()
+        try:
+            main_solo_tiempos()
+        except FileNotFoundError as exc:
+            # c-145 (E2-i): la ausencia del corpus o del reporte es un error de
+            # uso, no un fallo del programa. Mensaje legible y codigo distinto de
+            # cero, sin propagar la traza cruda de FileNotFoundError.
+            print(f"ERROR: {exc}", file=sys.stderr)
+            raise SystemExit(1) from exc
         return
     confirm_paid = args.confirm_paid or _env_confirm_paid()
     try:

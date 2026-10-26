@@ -1901,3 +1901,65 @@ def test_cli_prompt_con_un_prompt_inesperado_sale_con_codigo_2_y_el_mensaje(
 
     assert codigo == 2
     assert "prompt equivocado" in capsys.readouterr().err
+
+
+# --- c-145 E1: portabilidad del parser entre parches de Python 3.12 ----------
+def test_c145_cli_prompt_reconoce_brazo_como_opcion_del_subcomando():
+    """
+    RED (c-145 E1): en Python 3.12.3, `--brazo` debe ser la opcion del
+    subcomando `prompt` y NO una abreviatura ambigua de `--brazo-vigente` /
+    `--brazo-sin-reglas` del parser de nivel superior.
+    """
+    parser = sa.construir_parser()
+
+    args = parser.parse_args(["prompt", "--brazo", "vigente"])
+
+    assert args.comando == "prompt"
+    assert args.brazo == "vigente"
+
+
+@pytest.mark.parametrize("brazo", ["vigente", "sin-reglas"])
+def test_c145_cli_prompt_reconoce_ambos_brazos_del_subcomando(brazo):
+    """TRIANGULATE: los dos valores validos de `--brazo` son opciones del subcomando."""
+    args = sa.construir_parser().parse_args(["prompt", "--brazo", brazo])
+
+    assert args.comando == "prompt"
+    assert args.brazo == brazo
+
+
+def test_c145_parser_de_nivel_superior_reconoce_los_nombres_exactos(tmp_path):
+    """TRIANGULATE: `--brazo-vigente` y `--brazo-sin-reglas` se reconocen exactos."""
+    args = sa.construir_parser().parse_args(
+        ["--brazo-vigente", str(tmp_path / "v.json"),
+         "--brazo-sin-reglas", str(tmp_path / "s.json")]
+    )
+
+    assert args.brazo_vigente == tmp_path / "v.json"
+    assert args.brazo_sin_reglas == tmp_path / "s.json"
+
+
+@pytest.mark.parametrize("prefijo", ["--brazo-v", "--brazo-s"])
+def test_c145_prefijo_no_exacto_no_se_resuelve_silenciosamente(prefijo):
+    """
+    TRIANGULATE: un prefijo que colisiona con una sola opcion de nivel superior
+    (`--brazo-v` con `--brazo-vigente`, `--brazo-s` con `--brazo-sin-reglas`) NO
+    debe resolverse por abreviacion. Esta prueba falla si se elimina
+    `allow_abbrev=False` (con la resolucion por prefijo activa el parseo prospera).
+    """
+    with pytest.raises(SystemExit) as exc_info:
+        sa.construir_parser().parse_args([prefijo, "x.json"])
+
+    assert exc_info.value.code == 2
+
+
+def test_c145_cli_prompt_help_por_subproceso_no_reporta_ambiguedad():
+    """TRIANGULATE: el mismo comando del escenario, ejecutado como proceso real."""
+    resultado = subprocess.run(
+        [sys.executable, "-m", "evaluation.sensibilidad_ajustes",
+         "prompt", "--brazo", "vigente", "--help"],
+        cwd=_REPO, capture_output=True, text=True,
+    )
+
+    assert resultado.returncode == 0, resultado.stderr
+    assert "ambiguous option" not in resultado.stderr
+    assert "--brazo" in resultado.stdout
