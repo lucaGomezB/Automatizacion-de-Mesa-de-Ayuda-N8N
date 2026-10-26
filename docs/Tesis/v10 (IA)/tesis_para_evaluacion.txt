@@ -206,7 +206,7 @@ E Configuración del flujo N8N . . . . . . . . . . . . . . . . . . . . . . . . .
 F Corpus de validación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .104
 G Documentación operativa . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .105
 H Especificación del prompt de Gemini 3.6 Flash . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .105
-H.1 Estructura y contenido del prompt . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .105
+H.1 Estructura y contenido del prompt . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .106
 H.2 Parámetros de configuración . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .106
 H.3 Validación de la respuesta . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .106
 H.4 Iteración y mejora del prompt . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .108
@@ -4147,6 +4147,8 @@ Figura 10. Cronograma de la construcción, las campañas y la versión del model
 de mes; hitos, de día). Fuente: historial del repositorio y confirmación de los autores (9-10-2026).
 
 commit definitivo del repositorio.
+El hash completo de ese commit es 509ffff105c21fed0c07cbf9a46245ba6c53e0e1,
+que constituye la referencia verificable de la versión corregida.
 La estructura del repositorio separa el módulo de procesamiento (App/Backend/, con
 la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (App/Frontend/,
 React con TypeScript), la definición del flujo de orquestación (n8n/workflow.json), los artefactos de evaluación (evaluation/), el corpus pseudonimizado (data/), los scripts auxiliares (scripts/) y la documentación (docs/), junto con las especificaciones de los changes
@@ -4164,13 +4166,13 @@ estado de la base en cualquier punto histórico del desarrollo y revertir cambio
 necesario.
 La migración inicial incluye la creación de las tablas de catálogo (sector, estado,
 canal_origen) con sus valores semilla, garantizando que un despliegue nuevo del sistema
-comience con los datos de referencia correctos. Las migraciones subsiguientes documentan
-la evolución del esquema durante las etapas de desarrollo descritas en la Sección 4.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 103
 
+comience con los datos de referencia correctos. Las migraciones subsiguientes documentan
+la evolución del esquema durante las etapas de desarrollo descritas en la Sección 4.
 El diagrama entidad-relación de las siete entidades se incluye como Figura 5 de la Sección 5; su fuente Mermaid versionada reside en docs/diagrams/er_modelo_datos.md.
 D. Especificación OpenAPI de la interfaz REST
 La especificación completa de la interfaz REST se genera automáticamente mediante
@@ -4191,14 +4193,14 @@ tipos y ejemplos reside en docs/openapi.json.
 E. Configuración del flujo N8N
 La exportación del flujo de orquestación en formato JSON incluye la totalidad de los
 32 nodos configurados, sus parámetros operativos, las credenciales referenciadas mediante identificadores opacos sin exposición de valores, y los conectores entre nodos. El archivo
-n8n/workflow.json contiene esta exportación. La importación de este artefacto en una instancia limpia de N8N 2.11.2 reproduce íntegramente el comportamiento operativo del sistema,
-sujeta únicamente a la provisión de las credenciales correspondientes a los servicios exter-
+n8n/workflow.json contiene esta exportación. La importación de este artefacto en una ins-
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 104
 
-nos integrados (servidor IMAP de correo, cuenta Twilio y clave de API de Gemini) mediante el
+tancia limpia de N8N 2.11.2 reproduce íntegramente el comportamiento operativo del sistema,
+sujeta únicamente a la provisión de las credenciales correspondientes a los servicios externos integrados (servidor IMAP de correo, cuenta Twilio y clave de API de Gemini) mediante el
 sistema de credenciales nativo de la plataforma.
 La Figura 11 presenta una reconstrucción esquemática del flujo, derivada de la exportación JSON y agrupada por etapa funcional. Los 29 nodos operativos (más 3 notas adhesivas,
 32 nodos en total) se organizan en siete etapas: entrada (triggers), con la recepción de correo
@@ -4215,12 +4217,12 @@ El corpus de 200 incidentes utilizado para la validación experimental reside en
 
 torio en formato JSON, en su forma pseudonimizada y versionada, bajo la ruta data/corpus_evaluacion_p
 Cada caso incluye el identificador anónimo, la descripción cruda pseudonimizada, el canal de
-origen, el sector asignado por consenso humano, los sectores adicionales de verdad y el tiempo de registro medido en cada flujo. La categoría predicha por el clasificador y la confianza
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 105
 
+origen, el sector asignado por consenso humano, los sectores adicionales de verdad y el tiempo de registro medido en cada flujo. La categoría predicha por el clasificador y la confianza
 asociada no forman parte del corpus: se conservan en evaluation/predicciones.json,
 generado por el framework de evaluación. Se incluyen además las planillas de cronometraje
 del flujo manual y los registros automáticos generados por el flujo automatizado.
@@ -4243,15 +4245,14 @@ Este anexo documenta la especificación del prompt enviado al modelo gemini-3.6-
 (Gemini 3.6 Flash en el texto) y los parámetros de configuración de la inferencia. El prompt se
 mantiene en el repositorio bajo docs/prompt_gemini.txt y es único para los tres canales
 de entrada.
-H.1. Estructura y contenido del prompt
-El prompt sigue una estructura fija en español organizada en cinco componentes funcionales y un conjunto de reglas de desambiguación:
-1. Instrucción de rol: define que el modelo actúa como agente especializado en cla-
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 106
 
-sificación de incidentes técnicos en español rioplatense, lo que ancla el comportamiento en el dominio y el dialecto del estudio.
+H.1. Estructura y contenido del prompt
+El prompt sigue una estructura fija en español organizada en cinco componentes funcionales y un conjunto de reglas de desambiguación:
+1. Instrucción de rol: define que el modelo actúa como agente especializado en clasificación de incidentes técnicos en español rioplatense, lo que ancla el comportamiento en el dominio y el dialecto del estudio.
 2. Definición de categorías: presenta los cinco sectores canónicos con sus strings
 exactos (sensibles a mayúsculas y sin tildes), un ámbito descriptivo por sector y un
 ejemplo representativo extraído del dominio real por cada uno.
@@ -4270,11 +4271,6 @@ alternativos (Subsección 5.4).
 H.3. Validación de la respuesta
 Antes de aceptar la respuesta del modelo, el módulo de clasificación valida que el
 texto sea JSON parseable, que contenga exactamente las claves categoría y confianza,
-que la categoría sea uno de los cinco valores canónicos y que la confianza sea un número
-en el intervalo [0,0, 1,0]. Si cualquiera de estas condiciones falla, se registra la excepción, se
-asigna confianza 0,0, se marca el incidente para revisión humana y no se propagan estados
-inconsistentes a la base de datos. Este procedimiento garantiza la confiabilidad operativa frente
-a errores de formato o alucinaciones del modelo. El Listado 1 resume la rutina de validación.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
@@ -4346,6 +4342,11 @@ google-genai
 
 Fuente: elaboración propia a partir de la documentación del SDK google-genai.
 
+que la categoría sea uno de los cinco valores canónicos y que la confianza sea un número
+en el intervalo [0,0, 1,0]. Si cualquiera de estas condiciones falla, se registra la excepción, se
+asigna confianza 0,0, se marca el incidente para revisión humana y no se propagan estados
+inconsistentes a la base de datos. Este procedimiento garantiza la confiabilidad operativa frente
+a errores de formato o alucinaciones del modelo. El Listado 1 resume la rutina de validación.
 1
 2
 3
@@ -4358,9 +4359,6 @@ Fuente: elaboración propia a partir de la documentación del SDK google-genai.
 10
 11
 12
-13
-14
-15
 
 def validar_respuesta_gemini(response_text: str) -> tuple[bool, dict]:
 try:
@@ -4374,14 +4372,19 @@ return False, {"error": f"Categoria invalida: {data['categoria']}"}
 if "confianza" not in data:
 return False, {"error": "Falta campo 'confianza'"}
 if not isinstance(data["confianza"], (int, float)) \
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+13
+14
+15
+
+108
+
 or not (0.0 <= data["confianza"] <= 1.0):
 return False, {"error": f"Confianza invalida: {data['confianza']}"}
 return True, data
 Listing 1. Validación de la respuesta de Gemini (resumen).
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-108
 
 H.4. Iteración y mejora del prompt
 El prompt de la versión evaluada se ajustó de forma iterativa a partir de errores observados en el corpus de validación; no se dispuso de un corpus independiente de preproducción.
@@ -4404,14 +4407,13 @@ El dictamen que motiva las correcciones vigentes es el emitido el 22 de octubre 
 2026 sobre la versión de trabajo v10, publicada como v1.1.0 y aplicable por igual a v1.1.1.
 Sus cinco observaciones de fondo (A1 a A5) y sus correcciones de consistencia (B4 a B16)
 se atendieron mediante changes del repositorio; la Tabla 20 indica, para cada una, el change
-responsable y las secciones de la tesis donde se la atendió. Cuando una recomendación se
-dividió en partes, figuran los changes que las atendieron.
-La trazabilidad interna de dos decisiones que el cuerpo del Capítulo 6 presenta en lenguaje llano se conserva aquí: el retiro de la rama de clasificación telefónica por agente LLM
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 109
 
+responsable y las secciones de la tesis donde se la atendió. Cuando una recomendación se
+dividió en partes, figuran los changes que las atendieron.
 Tabla 20. Recomendaciones del dictamen del 22 de octubre de 2026, change responsable y
 secciones donde se atendieron.
 Rec.
@@ -4482,6 +4484,7 @@ B16
 
 Fuente: elaboración propia a partir de docs/Tesis/Correcciones/dictamen-correcciones.md.
 
+La trazabilidad interna de dos decisiones que el cuerpo del Capítulo 6 presenta en lenguaje llano se conserva aquí: el retiro de la rama de clasificación telefónica por agente LLM
 basada en LangChain y el traslado de la superficie de costo al backend corresponden al change
 
 c-72. El detalle de ambas decisiones figura en docs/Tesis/Correcciones/dictamen-correcciones.
