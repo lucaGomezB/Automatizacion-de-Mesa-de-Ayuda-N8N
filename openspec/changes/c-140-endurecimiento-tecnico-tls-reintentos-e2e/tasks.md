@@ -121,6 +121,11 @@ Seccion registrada en la tarea 1.1.
 - Esta corrida cubre SOLO las secciones 1 a 4 del `tasks.md`: preparacion y red de seguridad (1),
   backend del bloque 2 (2), workflow N8N del bloque 2 (3) e infraestructura compartida de humo (4).
   Las secciones 5 a 10 se ejecutan despues.
+- Dentro de la seccion 3 se ejecutan solo 3.1-3.7 (TDD del verificador de reintento, edicion del
+  workflow y transformacion del arnes). Las tareas 3.8 (regresion), 3.9 (documentacion de la guia,
+  N8N-DOC-007) y 3.10 (CP5, reimportacion del equipo) quedan para fases posteriores. La regresion
+  de 3.8 se corrio igualmente como evidencia adicional: 214 passed + 1 xfailed, la guia conserva
+  "Verifica 171 propiedades estructurales" y los preflights de costo siguen en PASS.
 
 ### Respuestas a OQ1-OQ5 y checkpoints (CP)
 - OQ1: no hay evidencia de que la organizacion adoptante opere hoy TLS en su borde. La tesis
