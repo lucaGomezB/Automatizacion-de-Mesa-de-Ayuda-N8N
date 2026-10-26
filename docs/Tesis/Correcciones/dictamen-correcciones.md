@@ -672,6 +672,26 @@ alarma ya esta activa en la linea base (margen 101 - 102 = -1). Mientras el auto
 confirme, la familia se aplica con la rama (a) como regla registrada y cada fila del libro
 mayor se toma como dato de decision, no como bloqueo.
 
+#### G0.1 - Actualizacion 2026-10-26: regla (b) CONFIRMADA por el usuario
+
+**Estado: CONFIRMADA por el usuario (Gonzalo Sevilla, 2026-10-26).** Esta entrada se agrega
+sin reescribir la entrada provisional anterior (que queda como historia de la decision).
+
+| Campo | Valor |
+|---|---|
+| Regla de medicion | **Cuerpo sin anexos** (rama (b)): pagina del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) menos 1 |
+| Valor | **cuerpo sin anexos <= 100, anexos sin limite** |
+| Fuente | Decision del equipo (no consta exigencia de la catedra) |
+| Fecha | 2026-10-26 |
+| Palanca de formato P7 (bibliografia compacta) | **Aprobada** por el usuario |
+| Compensacion C3 de c-142 (tabla `tab:sensibilidad-ajustes` a un anexo) | Queda disponible, pero no hace falta si P7 alcanza (alcanzo; ver "Compactacion P7") |
+
+Decision textual del usuario: "Adopta la regla (b): cuerpo sin anexos <= 100, anexos sin
+limite. Aplica la palanca P7 (bibliografia compacta) y segui con c-141 hasta antes del tag y
+el PR." Consecuencia: la brecha de la rama (a) (+9) deja de ser la vara de medir; rige el
+margen de la regla (b) (100 - cuerpo). Las tareas 3.4 y 3.5 de c-141 (rama (a)) quedan "no
+aplica (regla (b) confirmada el 2026-10-26)". P6 y P8 no se aplican.
+
 ### G0.2 - Entorno de compilacion de registro (OQ3)
 
 **Estado: PROVISIONAL, PARCIAL (entorno registrado; reproduccion de la linea base
@@ -930,6 +950,7 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 | `+c-139` (`change/c-139-correspondencia-texto-fuente-y-metadatos`) | sin commit (lo crea el orquestador) | 109 | 101 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{109}`; `Anexos` en p. 102; brecha frente a 101: +8; rama (b): cuerpo 101, margen -1 (cuerpo neutral: Referencias bibliograficas empieza en la p. 94 antes y despues; la bibliografia pasa de 7 a 8 paginas por las 8 entradas nuevas y los metadatos; la primera compilacion dio 111 y los recortes dentro de los parrafos editados recuperaron 2 paginas del cuerpo; palancas tipograficas para c-141) |
 | `+c-137` (`change/c-137-revision-ortotipografica`) | sin commit (lo crea el orquestador) | 109 | 101 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{109}`; `Anexos` en p. 102; brecha frente a 101: +8; rama (b): cuerpo 101, margen -1 (neutral por construccion: el cambio es diacritico; `Referencias bibliograficas` empieza en la p. 94 antes y despues; solo se desplazo una linea de la p. 26 a la p. 27 por las comillas de las cadenas A1-A4 y B1, sin cambiar el total; el tope lo decide c-141) |
 | integrado (pre-compactacion) (`change/c-141-integracion-release-v1-2-0`; tarea 3.2) | sin commit (lo crea el orquestador) | 110 | 101 | 9 | +1 | 0 | (a) total <= 101 | Medido: `abspage@last{110}`; `Anexos` en p. 102; delta frente a `+c-137` (109 / 101 / 8): +1 total y +1 anexos por el Anexo I (tarea 3.1: Tabla 20 de trazabilidad; prevision de D10 +0,1 a +0,6, cuantizada a una pagina porque la p. 109 estaba llena); **brecha frente a 101: +9**; **regla (b): cuerpo 101, margen -1** (`Referencias bibliograficas` empieza en la p. 94 y ocupa 8 paginas, la ultima con 14 lineas); acumulado de la familia: +8 total / +7 cuerpo / +1 anexos sobre `+c-144` (102 / 94 / 8) y +9 / +8 / +1 sobre la base `v1.1.1`; sin compactar nada (checkpoint HIGH de 3.4 pendiente) |
+| compactacion P7 (`change/c-141-integracion-release-v1-2-0`; tareas 3.3 a 3.6) | sin commit (lo crea el orquestador) | 109 | 100 | 9 | -1 | -1 | (b) cuerpo sin anexos <= 100 (confirmada 2026-10-26) | Medido: `abspage@last{109}`; `Anexos` en p. 101; delta frente a "integrado (pre-compactacion)" (110 / 101 / 9): -1 total y -1 cuerpo; **regla (b): cuerpo 100, margen 0 (cumple)**; `Referencias bibliograficas` sigue empezando en la p. 94 y pasa de 8 paginas (la ultima con 14 lineas) a 7 (la ultima, p. 100, con una sola entrada de 3 lineas); anexos 9 sin cambio; brecha frente a la rama (a) (101): +8, ya no vigente; acumulado de la familia: +7 total / +6 cuerpo / +1 anexos sobre `+c-144` (102 / 94 / 8) y +8 / +7 / +1 sobre la base `v1.1.1`. Palanca P7: una linea en el preambulo (ver "Compactacion P7") |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -2240,7 +2261,7 @@ Despues de cualquier edicion tardia de la prosa, desde la raiz del repositorio: 
 
 ## Integracion c-141 - tramo de integracion (FASE 36, grupos 2 a 4 y 6)
 
-**Origen**: change `c-141-integracion-release-v1-2-0`, apply parcial del tramo de integracion: tareas 2.1 a 2.8, 3.1, 3.2, 4.1 a 4.6 y 6.1 a 6.3 de `tasks.md`. Aplicado el **2026-10-26** en la rama `change/c-141-integracion-release-v1-2-0` (cortada de `ramagonzalo` en `b3c6f0f`, merge de c-137). Sin commit (lo crea el orquestador), sin push, sin merge, sin tag, sin archivado de changes. **No ejecutadas** (motivo): 2.9 (archivar: c-135 tiene la 5.2 abierta y c-140 espera decision del usuario); 3.3 a 3.6 (presupuesto de paginas: checkpoint HIGH del usuario); 5.x (contenido de C1); 6.4 (cierre del libro mayor: depende de C1); 7.x (renders de `v1.2.0`); 8.x y 9.x (tag, push y PR: acciones publicas). Gobernanza MEDIUM. Cero llamadas a Gemini; `App/`, `n8n/`, `data/`, `evaluation/` (salvo lectura) y `CLAUDE.md` sin cambios en este tramo.
+**Origen**: change `c-141-integracion-release-v1-2-0`, apply parcial del tramo de integracion: tareas 2.1 a 2.8, 3.1, 3.2, 4.1 a 4.6 y 6.1 a 6.3 de `tasks.md`. Aplicado el **2026-10-26** en la rama `change/c-141-integracion-release-v1-2-0` (cortada de `ramagonzalo` en `b3c6f0f`, merge de c-137). Sin commit (lo crea el orquestador), sin push, sin merge, sin tag, sin archivado de changes. **Actualizacion 2026-10-26 (tramo A del apply)**: con la decision del usuario sobre el tope de paginas se ejecutaron 3.3 a 3.6 y la parte permitida de 2.9 (ver "Compactacion P7" y "Archivo de la familia" mas abajo). **No ejecutadas** (motivo): 5.x (contenido de C1); 6.4 (cierre del libro mayor: depende de C1); 7.x (renders de `v1.2.0`); 8.x y 9.x (tag, push y PR: acciones publicas). Gobernanza MEDIUM. Cero llamadas a Gemini; `App/`, `n8n/`, `data/`, `evaluation/` (salvo lectura) y `CLAUDE.md` sin cambios en este tramo.
 
 ### Estado de la familia (tarea 2.1)
 
@@ -2375,6 +2396,59 @@ Archivo `docs/Tesis/Correcciones/numeros-canonicos.md` (solo estructura, referen
 
 Lectura: las palancas de forma P1-P5 rinden 1,6 a 2,9 y con P6 y P7, 2,9 a 5,1; **no cierran la brecha de +9 de la rama (a)** (total <= 101); solo la cierra P8 o recortar contenido de la familia. Bajo la **regla (b)** (cuerpo <= 100) basta recuperar **1 pagina del cuerpo**: P7 sola (0,8 a 1,2) o P1 mas P2; alternativas locales: la ultima pagina de Discusion (p. 85) tiene 13 lineas y la de Implementacion (p. 61) 21, de modo que compactar esas lineas en sus capitulos devuelve una pagina sin tocar el preambulo. Ultima pagina de cada capitulo (lineas no vacias de `pdftotext -layout`): 1: 31, 2: 33, 3: 35, 4: 26, 5: 31, 6: 21, 7: 41, 8: 36, 9: 13, 10: 32, 11: 32, Referencias: 14.
 
+### Compactacion P7 (tareas 3.3 a 3.6) - 2026-10-26
+
+Decision del usuario registrada en G0.1 (regla (b), P7 aprobada). Se aplico **solo P7**, de forma minima y reversible; no se tocaron margenes, interlineado del cuerpo (P8), indices (P6) ni contenido.
+
+- **Lineas agregadas** (dos, un comentario y un comando) en `docs/Tesis/v10 (IA)/paper/preambles/preamble.tex`, justo despues de `\addbibresource{../Bibliography_base.bib}` (lineas 104 y 105):
+
+  ```
+  % Bibliografia compacta (c-141, palanca P7): cuerpo de letra \small solo en la lista de referencias
+  \renewcommand*{\bibfont}{\normalfont\small}
+  ```
+- **`\bibitemsep` no se agrego**: el estilo `biblatex-apa` ya fija `\setlength{\bibitemsep}{0pt}` (`apa.bbx`, linea 2242, TeX Live 2026 de la imagen `texlive-thesis`), de modo que reducirlo no ahorra nada; la separacion entre entradas viene del interlineado doble y de la sangria francesa. Por eso la unica palanca efectiva es `\bibfont` en `\small`. Reversible: borrar esas dos lineas del preambulo.
+- **Medicion antes y despues** (Docker `texlive-thesis`, `latexmk main.tex`, en el arbol; `abspage@last` de `main.aux` y `main.toc`; el conteo de saltos de pagina de `pdftotext -enc UTF-8 main.pdf -` coincide):
+
+  | Estado | Total | Cuerpo sin anexos | Anexos | `Referencias bibliograficas` (pagina) | `Anexos` (pagina) |
+  |---|---|---|---|---|---|
+  | Antes (integrado, pre-compactacion) | 110 | 101 | 9 | 94 | 102 |
+  | Despues (con `\bibfont` `\small`) | **109** | **100** | **9** | 94 | 101 |
+  | Ahorro | -1 | -1 | 0 | 0 | -1 |
+
+  La bibliografia pasa de 8 paginas (94 a 101, la ultima con 14 lineas) a 7 (94 a 100); la ultima, p. 100, queda con una sola entrada (Zhao et al., 3 lineas) y unas 34 lineas libres, es decir, el ahorro real es de unas 1,4 paginas y el margen de la regla (b) queda en 0 con holgura local en esa pagina.
+- **3.3**: regla (b) cumplida: total **109**, cuerpo sin anexos **100** (`\contentsline {section}{Anexos}{101}` menos 1). Fuente: decision del equipo, confirmada el 2026-10-26 (G0.1); no consta exigencia de la catedra.
+- **3.4 y 3.5**: no aplica (regla (b) confirmada el 2026-10-26); no hubo recortes de contenido ni bloques de compactacion de la rama (a).
+- **3.6**: tope final verificado con la regla vigente: cuerpo 100 <= 100. La portada ocupa exactamente una pagina (la p. 2 es el resumen; `pdftotext -f 1 -l 1` termina en la fecha de la portada).
+- **Verificaciones tras P7**: `grep -c "^!" main.log` = 0; `grep -i undefined main.log` vacio; `grep -c "multiply defined" main.log` = 0; `grep -E "WARN|ERROR" main.blg` vacio; "Found 73 citekeys" = 73 entradas; `verify_citations.py` STATUS: PASS; `??` en el texto del PDF = 0. Solo se recompusieron `main.pdf`, `main.xdv`, `main.aux`, `main.toc`, `main.lof`, `main.lot` y `main.fdb_latexmk`; `main.bbl`, `main.blg` y `main.bcf` quedaron sin cambios.
+- **Brecha actualizada**: bajo la regla (b) el margen es **0** (>= 0, cumple); antes era -1. La brecha de la rama (a) (+8) ya no rige. Para C1 (tarea 5.1, cambio de version en el Anexo B y en el `.bib`) no se esperan paginas adicionales; el margen 0 deja solo la holgura de la p. 100 (bibliografia); cualquier crecimiento del cuerpo anterior a la bibliografia exige compensar.
+
+### Archivo de la familia (tarea 2.9) - 2026-10-26
+
+Alcance fijado por el usuario: archivar **solo** los changes con todas las tareas `[x]`. Verificado antes con `openspec list --json` (N/N): c-130 37/37, c-131 81/81, c-132 29/29, c-133 42/42, c-134 47/47, c-136 24/24, c-137 41/41, c-138 30/30, c-139 46/46, c-142 91/91. Orden de archivo (el de aplicacion de D1, para que los deltas sobre un mismo spec se sincronicen en ese orden): c-130, c-134, c-131, c-142, c-132, c-133, c-138, c-136, c-139, c-137; comando `openspec archive <change> -y` (sin `--skip-specs`).
+
+| Change | Carpeta en `openspec/changes/archive/` | Deltas sincronizados |
+|---|---|---|
+| c-130 | `2026-10-26-c-130-gate-revision-humana-por-etapa` | +9 ~3 |
+| c-131 | `2026-10-26-c-131-metricas-por-etapa-canal-y-exactitud-laxa` | +12 ~3 |
+| c-132 | `2026-10-26-c-132-balance-neto-derivaciones-erroneas` | +6 |
+| c-133 | `2026-10-26-c-133-hipotesis-objetivos-metrica-primaria` | +7 ~5 |
+| c-134 | `2026-10-26-c-134-contrastes-estadisticos-y-desagregado-canal` | +11 |
+| c-136 | `2026-10-26-c-136-recomendaciones-lineas-faltantes` | +8 |
+| c-137 | `2026-10-26-c-137-revision-ortotipografica` | +9 ~1 |
+| c-138 | `2026-10-26-c-138-estado-del-arte-calibracion-y-cascadas` | +7 |
+| c-139 | `2026-10-26-c-139-correspondencia-texto-fuente-y-metadatos` | +9 ~4 |
+| c-142 | `2026-10-26-c-142-sensibilidad-fuera-de-muestra-ajustes-clasificador` | +9 |
+
+Specs sincronizados: `classification-resilience`, `incident-visibility`, `project-documentation`, `evaluation-framework`, `evaluation-prediction-cache`, `tesis-document` y `tesis-numeros-canonicos`. Ningun conflicto de merge de deltas. `openspec validate --specs --strict --no-interactive`: **64 de 64 pasan, 0 fallan** (linea base del 2026-10-22: 63 de 63; el spec extra proviene de un change posterior a esa linea base). `ls openspec/changes/archive/ | grep -c "2026-10-26-c-1"` = 10; `openspec list --json` ya no devuelve ninguno de los diez.
+
+**Quedan activos** (no archivados, por instruccion del usuario):
+
+- **c-135** (`c-135-cronologia-y-consistencia-redaccional`, 34/35): su tarea 5.2 sigue abierta a la espera de las fechas de las seis iteraciones Scrumban de los autores (sin fuente primaria; OQ-1 PROVISIONAL).
+- **c-140** (`c-140-endurecimiento-tecnico-tls-reintentos-e2e`, 0/73): el usuario todavia no decidio incluirlo o archivarlo como NO REALIZADO (`--skip-specs`, precedente c-67).
+- **c-141** (este change): se archiva en su propia fase archive, despues de la release.
+
+Con esto, la tarea 2.9 queda **parcialmente cumplida**: faltan c-135 y c-140; `openspec list --json` todavia devuelve c-135 y c-140, de modo que la verificacion final "no devuelve changes c-130..c-140 ni c-142" se completa cuando el usuario decida sobre ambos (tramo de release, 9.2).
+
 ### Pasada ortotipografica corta (tarea 4.1)
 
 Commit de apply de c-137: `492f56c` (merge `b3c6f0f`). `git diff 492f56c..HEAD -- "docs/Tesis/v10 (IA)/paper/sections/"` esta **vacio**; el unico texto de prosa modificado despues de c-137 es el del Anexo I de este tramo (`git diff 492f56c -- sections/` = 36 lineas agregadas en `12-anexos.tex`). Verificaciones de c-137 sobre ese texto: `revision_tildes.py --check` codigo **0**; ninguna ocurrencia de los pares `hacia`/`hacia`, `formula`, `continua`, `esta`/`este`, `si`/`aun`/`solo` ni de las palabras enumeradas por el dictamen (`erronea`, `heterogeneos`, `multiples`, `inequivocos`, `antiguedad`, `perimetro`, `enganosa`, `escaner`, `decada`, `alla`, `guian`, `envian`, `demas`) en las lineas agregadas; se revisaron a mano. No se reaplicaron `acentuar_tesis.py` ni `acentuar_tesis_v9.py`.
@@ -2387,6 +2461,7 @@ Commit de apply de c-137: `492f56c` (merge `b3c6f0f`). `git diff 492f56c..HEAD -
 - **biber**: `main.blg` sin `WARN` ni `ERROR`; "Found 73 citekeys" = 73 entradas de `Bibliography_base.bib`; `verify_citations.py` **STATUS: PASS** (73 entradas <-> 73 claves, 126 comandos de cita, 0 huerfanas, 0 sin usar).
 - **Figuras y texto**: los 12 `\includegraphics` de `sections/*.tex` resuelven contra `\graphicspath` (`figures/`, `./`, `assets/`), incluida `figures/cronograma.png`; `pdftotext -enc UTF-8 main.pdf - | grep -c "??"` = **0**.
 - **4.6**: los controles de familia (tarea 2.5) se repitieron sobre este arbol final del tramo (mismo ejecutor, resultados de la seccion anterior) y el conteo se contrasta con el tope en "Anexo I y presupuesto de paginas": 110 / 101 / 9, sin tope cumplido (3.6 no ejecutada: depende del checkpoint HIGH).
+  - **Actualizacion 2026-10-26**: tras P7 el conteo es 109 / 100 / 9 y el tope de 3.6 (regla (b), cuerpo <= 100) **se cumple** con margen 0; los controles de la tarea 2.5 no dependen de la tipografia de la bibliografia y no se alteraron (el texto de las secciones no cambio).
 
 ### Pendientes y verificaciones diferidas
 
