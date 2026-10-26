@@ -107,6 +107,11 @@ def cross_reference(
     return orphan_citations, unused_entries
 
 
+def count_unique_cited_keys(file_keys: dict[str, set[str]]) -> int:
+    """Count the distinct citation keys across all files (global count)."""
+    return len(set().union(*file_keys.values()))
+
+
 # --- Main ---
 def main() -> None:
     print("=" * 72)
@@ -121,7 +126,9 @@ def main() -> None:
 
     print("\n[2/3] Extracting citation keys from section .tex files ...")
     file_keys = extract_citation_keys(SECTIONS_DIR)
-    total_citation_occurrences = sum(len(keys) for keys in file_keys.values())
+    total_unique_keys = count_unique_cited_keys(file_keys)
+    # Sum of per-file unique keys: a key cited in N files counts N times.
+    total_key_file_appearances = sum(len(keys) for keys in file_keys.values())
 
     # Count each citation command invocation (not unique keys)
     total_commands = 0
@@ -138,7 +145,8 @@ def main() -> None:
 
     print(f"\n      Total: {total_commands} citation commands across "
           f"{len(file_keys)} files")
-    print(f"      Total unique citation keys: {total_citation_occurrences}")
+    print(f"      Total unique citation keys: {total_unique_keys}")
+    print(f"      Total key-file appearances: {total_key_file_appearances}")
 
     # Cross-reference
     print("\n[3/3] Cross-referencing citations against bibliography ...")
@@ -153,7 +161,7 @@ def main() -> None:
         print("\n  ALL CITATIONS VERIFIED. Zero orphan citations, "
               "zero unused bibliography entries.")
         print(f"  {len(bib_keys)} bibliography entries <-> "
-              f"{total_citation_occurrences} unique citation keys match perfectly.")
+              f"{total_unique_keys} unique citation keys match perfectly.")
     else:
         if orphan_citations:
             print(f"\n  ORPHAN CITATIONS ({len(orphan_citations)}):")
