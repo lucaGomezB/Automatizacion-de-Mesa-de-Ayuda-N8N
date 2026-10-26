@@ -1851,3 +1851,61 @@ def test_c134_cli_sin_solo_tiempos_conserva_la_combinacion_force_y_confirm_paid(
     assert captured["force"] is True
     assert captured["confirm_paid"] is True
     assert "solo" not in captured
+
+
+# ===========================================================================
+# c-145 E2-i — `--solo-tiempos` con reporte ausente falla limpio (sin traza)
+# ===========================================================================
+def test_c145_cli_solo_tiempos_con_reporte_ausente_falla_sin_traza(
+    monkeypatch, capsys, tmp_path
+):
+    """
+    RED (c-145 E2-i): `main()` con `--solo-tiempos` y un reporte inexistente debe
+    terminar con codigo distinto de cero e imprimir un mensaje legible, sin
+    propagar una traza cruda de `FileNotFoundError`.
+    """
+    import sys
+
+    from evaluation import run_evaluation
+
+    real_solo = run_evaluation.main_solo_tiempos
+
+    def solo_con_reporte_ausente():
+        real_solo(report_path=tmp_path / "reporte_ausente.md")
+
+    monkeypatch.setattr(run_evaluation, "main_solo_tiempos", solo_con_reporte_ausente)
+    monkeypatch.setattr(sys, "argv", ["run_evaluation", "--solo-tiempos"])
+
+    with pytest.raises(SystemExit) as exc_info:
+        run_evaluation.main()
+
+    err = capsys.readouterr().err
+    assert exc_info.value.code != 0
+    assert "reporte_ausente.md" in err
+    assert "Traceback" not in err
+    assert "FileNotFoundError" not in err
+
+
+def test_c145_cli_solo_tiempos_con_corpus_ausente_falla_sin_traza(
+    monkeypatch, capsys, tmp_path
+):
+    """TRIANGULATE: el corpus ausente tambien sale limpio por el mismo envoltorio."""
+    import sys
+
+    from evaluation import run_evaluation
+
+    real_solo = run_evaluation.main_solo_tiempos
+
+    def solo_con_corpus_ausente():
+        real_solo(corpus_path=tmp_path / "corpus_ausente.json")
+
+    monkeypatch.setattr(run_evaluation, "main_solo_tiempos", solo_con_corpus_ausente)
+    monkeypatch.setattr(sys, "argv", ["run_evaluation", "--solo-tiempos"])
+
+    with pytest.raises(SystemExit) as exc_info:
+        run_evaluation.main()
+
+    err = capsys.readouterr().err
+    assert exc_info.value.code != 0
+    assert "corpus_ausente.json" in err
+    assert "Traceback" not in err

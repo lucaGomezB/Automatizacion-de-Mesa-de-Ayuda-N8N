@@ -137,8 +137,8 @@ general", sin calificar la meta no alcanzada.
   umbrales|no deja espacio"` en las secciones devuelve CERO coincidencias en el
   `.tex` vivo (residuo solo en `.tex.bak` trackeados, fuera de alcance).
 
-### P4. (a completar)
-Items restantes del dictamen a medida que el autor los provea.
+### P4. Sin observaciones pendientes al 2026-10-26
+El bloque P se cerro con P1 a P3. No existe material fuente que complete P4 y no se inventan observaciones: si el autor aporta nuevos items del dictamen, se agregan aqui con su procedencia. Estado: sin observaciones pendientes.
 
 ---
 
@@ -195,6 +195,7 @@ Cubierto por P1.0/P1 (declarar redondeo al alza + cota de sensibilidad; números
 - **Trazabilidad `v1.1.0` (c-121, 2026-10-22)**: el tag anotado **`v1.1.0`** se creó sobre el commit **`7103b649d8c4f51737ad6ad4095dad22c9406400`** y se publicó en `origin` (`git ls-remote --tags` lo devuelve). Ese commit cierra las observaciones del dictamen CONEAU de la v1.0.1 sobre la versión de trabajo `v10 (IA)`, que reproduce el contenido congelado de la v9. El hash completo quedó consignado en el Anexo B de la tesis (`12-anexos.tex`, §Repositorio de código fuente).
 - **Trazabilidad `v1.1.1` (c-123, 2026-10-22)**: el tag anotado **`v1.1.1`** se creó sobre el commit **`4160d84286623b073d2904353e6f9163ae211de7`** y se publicó en `origin`. Ese commit agrega la URL explícita del repositorio en el Anexo B (`12-anexos.tex`, §Repositorio de código fuente) y corrige la versión de la entrada bibliográfica `Gomez2026_repositorio` a `(Version 1.1.1)`. El hash completo quedó consignado en el Anexo B.
 - **Trazabilidad `v1.2.0` (c-141, 2026-10-26)**: el tag anotado **`v1.2.0`** se creo sobre el commit **`a49d035c67b32ae17e633ec04b09ecdd2781aac6`** (C1, `docs(tesis): integrar la FASE 36 y publicar v1.2.0 (c-141)`) y se publico en `origin` junto con `ramagonzalo` (`git ls-remote --tags` lo devuelve). Ese commit integra la FASE 36 (c-130 a c-139 y c-142): cierra las recomendaciones A1-A5 y B4-B16 del dictamen CONEAU del 2026-10-22 sobre `v1.1.0` (matriz de cobertura en este registro), con el Anexo I actualizado, el render y la base de conocimiento sincronizados y 109 paginas (cuerpo 100, anexos 9; regla (b), decision del equipo del 2026-10-26). c-140 no se aplico (excluido provisionalmente) y por eso no hubo prueba de humo. El hash completo quedo consignado en el Anexo B (`12-anexos.tex`, Repositorio de codigo fuente).
+- **Trazabilidad `v1.2.1` (c-145, 2026-10-26)**: el tag anotado **`v1.2.1`** se creó sobre el commit **`509ffff105c21fed0c07cbf9a46245ba6c53e0e1`** (C3, `docs(tesis): corregir afirmaciones factuales y sincronizar el memo (c-145)`). Ese commit corrige las afirmaciones que el repositorio desmentía en la release `v1.2.0` (recuento y omisión de las pruebas de integración PostgreSQL, recuentos congelados de frontend e identificadores internos `OQ1 = A`/`OQ2 = A` del cuerpo), sincroniza el memo canónico (margen 6,66 %), precisa la discusión, resuelve el placeholder `P4`, hace portable el arnés de sensibilidad y agrega la barrera `scripts/preflight/docs_stack_sync.py` de `DOC-005` (change c-145). **`v1.2.0` queda superada** (permanece inmutable, en `a49d035c67b32ae17e633ec04b09ecdd2781aac6`). El hash completo quedó consignado en el Anexo B (`12-anexos.tex`, Repositorio de código fuente); el push del tag y de la rama queda pendiente de confirmación explícita del usuario.
 - Este registro es acumulativo. Las correcciones que dependan de decisiones o de
   trabajo mayor (reescritura de capítulos) quedan en "Pendientes" hasta aplicarse.
 
@@ -1039,7 +1040,7 @@ v1.1.0/v1.1.1: VEREDICTO punto 1; secciones 5, 6 y 7(a); recomendacion A1). Apli
   deterministicos), minimo de Gemini 0,85 y 97 aciertos deterministicos; la cache de
   calibracion `hybrid-v2` reproduce **88/130 = 0,6769** de `precision_gem(S)`.
 
-### Checkpoint de autores (tarea 1.4) - PROVISIONAL
+### Checkpoint de autores (tarea 1.4) - CONFIRMADO el 2026-10-26 (OQ2 y OQ3; OQ4 superada por c-145 G)
 
 El usuario pidio aplicar sin detenerse y no respondio de forma explicita a las Open Questions.
 Fecha: 2026-10-25. Cada decision es **PROVISIONAL (default del design, pendiente de
@@ -1048,9 +1049,9 @@ confirmacion del autor)**.
 | OQ | Tema | Decision | Estado |
 |---|---|---|---|
 | OQ1 (D9) | Procedencia de los ajustes sobre el corpus | **RESUELTA por c-144** (`0c7f5bc`): los autores ya declararon la procedencia real al fusionarlo en `main`. T04, T12, T13 y T14 no se reescriben; se ejecutan solo sus verificaciones | Resuelta (hecho) |
-| OQ2 (D7) | Alcance de la salvaguarda legal; reasignacion solo por REST | Default del design: se aplica T15 | PROVISIONAL |
-| OQ3 (D12) | Comentarios y test en `App/Backend` | Si: bloque 7 aplicado | PROVISIONAL |
-| OQ4 (D11) | Editar `CLAUDE.md` y `openspec/config.yaml` (solo las lineas del gate) | Si: bloque 8 aplicado | PROVISIONAL |
+| OQ2 (D7) | Alcance de la salvaguarda legal; reasignacion solo por REST | Default del design: se aplica T15. **Confirmada por el autor (2026-10-26)**. Verificacion en codigo: la reasignacion esta en `PATCH /api/v1/incidentes/{id}` (campo `sector_id`) y en `PATCH /api/v1/clasificaciones/{log_id}/validar`; la interfaz web solo la expone para casos derivados; N8N no reasigna; no hay guarda de rol sobre `sector_id`, de modo que un `usuario_final` puede reasignar su propio incidente por REST. El texto de `11-aspectos-legales.tex:34` es exacto | Confirmada |
+| OQ3 (D12) | Comentarios y test en `App/Backend` | Si: bloque 7 aplicado | Confirmada |
+| OQ4 (D11) | Editar `CLAUDE.md` y `openspec/config.yaml` (solo las lineas del gate) | Si: bloque 8 aplicado | Superada por c-145 G |
 | OQ5 | `cache_meta` de la calibracion | Ver abajo | Parcial |
 | OQ6 | `usuario_final` puede validar la clasificacion de su incidente | Fuera de alcance (dominio CRITICAL); sin cambios | Abierta |
 
@@ -1084,17 +1085,20 @@ Seccion 7, punto 7, de `numeros-canonicos.md`; reversible si el autor aporta la 
 | T15 | `11-aspectos-legales.tex:34` | Aplicada [D7, PROVISIONAL] |
 | T16 | `12-anexos.tex` (tab:anexo_gemini_params) | Aplicada (fila nueva tras `timeout`, sin tocar `timeout`) |
 
-Tarea 9.1 (roles, agregada por Luca en `2236b26`): aplicada en `04-marco-metodologico.tex:108`.
-Evidencia `git shortlog -sne HEAD`: lucaGomezB 417, GonzaloSevilla22 93, Luca Gomez 35, Gonzalo
-Sevilla 15, dependabot[bot] 1 (con `--all`: 420/93/35/15/6); **ningun commit a nombre de Carla
-Bustos** y ninguna mencion en los mensajes (`git log --grep`). Carla pasa a revisora de la tesis y
-colaboradora en anexos y corroboracion de fuentes; el modulo Python y el modelado de datos se
-atribuyen a Luca Gomez; la configuracion N8N y la integracion telefonica quedan en Gonzalo
-Sevilla (commits c-04/c-05 sobre el workflow); se conserva la supervision del director.
-**Salvedad para los autores**: el historial tambien muestra que el modulo inicial
-`Gestion_Incidentes` y el frontend los commiteo la identidad `GonzaloSevilla22`
-(`7db7fe1`, `ca8e2b6`, 2026-05-20/21) y que el codigo de telefonia del backend es de
-`lucaGomezB`; la redaccion adoptada sigue el encargo del design y debe confirmarse.
+Tarea 9.1 (roles, agregada por Luca en `2236b26`): aplicada en `04-marco-metodologico.tex:95`.
+Evidencia `git shortlog -sne` sobre `224fa16` (re-medida el 2026-10-26): lucaGomezB 418,
+GonzaloSevilla22 93, Gonzalo Sevilla 52, Luca Gomez 35, dependabot[bot] 1; **ningun commit a
+nombre de Carla Bustos** y ninguna mencion en los mensajes (`git log --grep`). Carla pasa a
+revisora de la tesis y colaboradora en anexos y corroboracion de fuentes. **Correccion del
+2026-10-26, confirmada por el autor**: la redaccion anterior atribuia a Luca Gomez "el desarrollo
+del modulo Python y el modelado de la base de datos" y a Gonzalo Sevilla "la integracion
+telefonica mediante Twilio"; el historial la contradice en tres puntos. El modulo inicial
+`Gestion_Incidentes` (`7db7fe1`, 2026-05-20) y el frontend inicial (`ca8e2b6`, 2026-05-21) los
+firmo `GonzaloSevilla22`, igual que las migraciones iniciales (`ec92689`); todos los commits con
+Twilio son de `lucaGomezB`. El texto vigente atribuye la coordinacion general, la integracion de
+componentes y la integracion telefonica a Luca Gomez, y la implementacion inicial del modulo
+Python, el modelado inicial de la base de datos, el frontend y la configuracion del flujo N8N a
+Gonzalo Sevilla. Se conserva la supervision del director.
 
 ### Codigo (bloque 7, MEDIUM) y documentacion para agentes (bloque 8)
 
@@ -1308,7 +1312,7 @@ Cero llamadas a Gemini en todo el change; sin `GEMINI_API_KEY` real.
   pre-registro: `0977104`. Ninguna variante se ejecuto sobre el corpus real antes de esta verificacion; los tests de
   caracterizacion sobre el corpus (6.6) se ejecutaron despues.
 
-### Checkpoint del bloque 2 (gobernanza HIGH) - PROVISIONAL, 2026-10-25
+### Checkpoint del bloque 2 (gobernanza HIGH) - PROVISIONAL, 2026-10-25 (FORCE-ESCALATE confirmada el 2026-10-26)
 
 El usuario pidio aplicar la familia sin detenerse y no respondio de forma explicita a las preguntas del design.
 Cada decision queda **PROVISIONAL (pendiente de confirmacion del autor)**, con la recomendacion del design o la
@@ -1331,8 +1335,7 @@ c-131 pedia no usarla para sensibilidades sobre el corpus vigente por el hash di
 del design pre-registrado dependen de ella. Se uso con una guarda explicita (`verificar_cache_contra_corpus`:
 identificador, descripcion y sector asignado de las 200 entradas iguales al corpus, 0 diferencias) y se comprobo que el
 lado `V1` de E3 reproduce los `146/200` documentados (`docs/deterministic_calibration.md:89`) con 0 excluidos y que E4
-sobre `V1` reproduce `b = 16`, `c = 8`, `p = 0,1516` (`docs/deterministic_calibration.md:234`). **Decision PROVISIONAL**;
-si el autor la rechaza, E3 y E4 pasan a "no computable" (columna "Global" fuera de la tabla, rama "sin E3" de T01).
+sobre `V1` reproduce `b = 16`, `c = 8`, `p = 0,1516` (`docs/deterministic_calibration.md:234`). **Decision CONFIRMADA por el autor (2026-10-26)**: se acepta el uso de la FORCE-ESCALATE. Se explicita la tension con la consigna de c-131 (que pedia no usarla para sensibilidades sobre el corpus vigente): la excepcion se sostiene en que la guarda verifica identificador, descripcion y sector asignado de las 200 entradas (0 diferencias) y en que el lado `V1` de E3 reproduce los `146/200` documentados. `evaluation/report_sensibilidad_ajustes.md` declara el `corpus_hash` distinto en la seccion de procedencia. Si en el futuro se rechazara, E3 y E4 pasan a "no computable" (columna "Global" fuera de la tabla, rama "sin E3" de T01).
 
 ### Codigo (bloques 3 a 6 y 8; TDD estricto)
 
@@ -1352,7 +1355,7 @@ si el autor la rechaza, E3 y E4 pasan a "no computable" (columna "Global" fuera 
 - Desvio de 4.4: el design dice "9:1 -> cortocircuito", pero `w/(w + r + 1e-6)` con 9:1 da 0,8999999 < 0,90 (la constante
   deja el 9:1 apenas por debajo); la replica es fiel al codigo de `7925903` y no se toco. Las pruebas usan 10:1
   (cortocircuita, 0,9091) y 9:1 y 8:1 (no cortocircuitan). Por eso el cortocircuito de la epoca exige ganador >= 10 x segundo.
-- Reportes: `evaluation/report_sensibilidad_ajustes.md` (97 lineas, regenerado offline; dos corridas dan archivo identico
+- Reportes: `evaluation/report_sensibilidad_ajustes.md` (98 lineas, regenerado offline; dos corridas dan archivo identico
   byte a byte; `report.md` y las caches oficiales sin cambios, verificado por SHA-256).
 
 ### Valores obtenidos (memo, Seccion 3.10) y ramas elegidas
@@ -1442,8 +1445,8 @@ declarativa de A5 es de c-130 y c-144.
 
 `git checkout <commit-previo> -- evaluation/ .gitattributes .gitignore "docs/Tesis/v10 (IA)/" docs/anexo_h_prompt_gemini.md
 docs/Tesis/Correcciones/numeros-canonicos.md docs/Tesis/Correcciones/dictamen-correcciones.md`, regenerar el render y
-recompilar. Las decisiones PROVISIONALES (OQ1 a OQ7 y el uso de la FORCE-ESCALATE) se pueden revertir sin tocar los valores
-canonicos: si se rechaza la FORCE-ESCALATE, E3 y E4 pasan a "no computable" y la tabla pierde su cuarta columna.
+recompilar. La decision sobre la FORCE-ESCALATE quedo confirmada por el autor el 2026-10-26 (se acepta) y es reversible sin tocar los valores
+canonicos: si se rechazara, E3 y E4 pasan a "no computable" y la tabla pierde su cuarta columna.
 
 **Estado**: grupo aplicado.
 
@@ -1456,7 +1459,7 @@ cero llamadas a Gemini, sin codigo, sin tags. Sin commit (lo crea el orquestador
 
 **A3 - Balance neto de derivaciones erroneas - APLICADO por c-132 (2026-10-25).**
 
-### Open Questions del design - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+### Open Questions del design - CONFIRMADAS el 2026-10-26 (registradas como PROVISIONAL el 2026-10-25)
 
 El usuario pidio aplicar la familia sin detenerse y no respondio de forma explicita a las preguntas del design. Decisiones del
 orquestador, **PROVISIONALES**:
@@ -1565,7 +1568,7 @@ RECOMENDACIONES B4, B5 y B6). Aplicado el **2026-10-25** en la rama `change/c-13
 de `ramagonzalo` en `d241c0b` (merge de c-132). Posicion 6 del orden de la familia (G0.6). Solo documento (gobernanza LOW): cero
 llamadas a Gemini (ningun `--confirm-paid` ni `run_evaluation.py --force`), sin codigo, sin tags. Sin commit (lo crea el orquestador).
 
-### Open Questions del design (tarea 1.1) - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+### Open Questions del design (tarea 1.1) - CONFIRMADAS el 2026-10-26 (registradas como PROVISIONAL el 2026-10-25)
 
 El usuario pidio aplicar la familia sin detenerse y no respondio de forma explicita a las Open Questions 1 a 3. Cada decision es el
 default del design, **PROVISIONAL (pendiente de confirmacion del autor)**, registrada ANTES de editar ningun `.tex`:
@@ -1723,15 +1726,15 @@ B12 y B13b). Aplicado el **2026-10-25** en la rama `change/c-134-contrastes-esta
 llamadas a Gemini; `evaluation/`, `data/`, `App/`, `n8n/` y `CHANGES.md` sin cambios en este tramo (`git diff --quiet` verificado). Sin commit
 (lo crea el orquestador). Gobernanza MEDIUM: solo documento.
 
-### Open Questions del design (tareas 7.1 y 7.3) - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+### Open Questions del design (tareas 7.1 y 7.3) - CONFIRMADAS el 2026-10-26 (OQ1, OQ2 y OQ3)
 
 El usuario pidio aplicar la familia sin detenerse y nadie respondio a OQ1 ni a OQ2 (hechos del estudio que solo conocen los autores). Cada
 decision es el **texto por defecto del design, PROVISIONAL**, registrada tambien en `design.md` (seccion Open Questions) ANTES de cerrar el grupo:
 
 | Open Question | Decision PROVISIONAL (2026-10-25) | Pasajes afectados | Reversible si |
 |---|---|---|---|
-| OQ1 - procedimiento del cronometraje | **Opcion (a)**: los dos operadores trabajaron en pares y se cronometraron mutuamente, sabian que la campana registraba tiempos; no se anunciaron el inicio de cada medicion ni el proposito comparativo; el debriefing informo el proposito; Hawthorne atenuado, no eliminado, amenaza residual. Granularidad 199/200 (5 s) y 180/200 (10 s) declarada como hecho verificable de la planilla, sin afirmar si es por diseno o por redondeo a ojo | `04` (`:16`), `08` (explicacion rival "Tercero"), `11` (`:32`, con `\parencite{APA2017}` intacto); `04:67` sin cambios | el autor describe otro procedimiento (opcion b o c): se reescriben esos tres pasajes; ninguna cifra cambia |
-| OQ2 - universo y seleccion de los 200 casos | **Sin respuesta: texto por defecto de D8**: muestreo estratificado con asignacion proporcional a la distribucion por sector observada en el periodo relevado, no verificable frente al universo (no esta disponible); Bases de Datos `n = 1` no estimable por clase; en replicaciones, asignacion no proporcional con sobremuestreo de las clases minoritarias. Abstract: "drawn by stratified sampling" (equivale al "con muestreo estratificado" del resumen en espanol, que no cambia) | `04` (`:45`), `00-resumen.tex` (linea en ingles) | el autor aporta el universo por sector (se agrega una frase y el memo) o aclara que los 200 son todos los incidentes cronometrados sin estratificacion ("muestra no probabilistica por disponibilidad") |
+| OQ1 - procedimiento del cronometraje | **CONFIRMADA por el autor (2026-10-26). Opcion (a)**: los dos operadores trabajaron en pares y se cronometraron mutuamente, sabian que la campana registraba tiempos; no se anunciaron el inicio de cada medicion ni el proposito comparativo; el debriefing informo el proposito; Hawthorne atenuado, no eliminado, amenaza residual. Granularidad 199/200 (5 s) y 180/200 (10 s) declarada como hecho verificable de la planilla, sin afirmar si es por diseno o por redondeo a ojo | `04` (`:16`), `08` (explicacion rival "Tercero"), `11` (`:32`, con `\parencite{APA2017}` intacto); `04:67` sin cambios | confirmado (2026-10-26) |
+| OQ2 - universo y seleccion de los 200 casos | **CONFIRMADA por el autor (2026-10-26): A y B, en ese orden.** El tamano total se fijo por disponibilidad operativa (N = 200: los incidentes efectivamente cronometrados en la campana manual) y, dentro de ese marco, la seleccion se estratifico con asignacion proporcional a la distribucion por sector observada en el periodo relevado. La distribucion del universo por sector no esta disponible, por lo que la proporcionalidad frente al universo no es verificable; Bases de Datos `n = 1` no es estimable y en replicaciones conviene sobremuestrear las clases minoritarias. El texto de `04:45` ya expresa las dos cosas y el abstract conserva "drawn by stratified sampling" | `04` (`:45`), `00-resumen.tex` (`:27`) | sin cambio de texto; si el autor aporta el universo por sector se agrega una frase y una fila al memo |
 | OQ3 - IC del tiempo medio | **Default**: se retira la promesa del intervalo de confianza (`04:65`) y la lista declarada queda alineada con lo reportado | `04` (`:65`) | el autor prefiere reportar el IC: se agrega al runner y una fila a `tab:tiempos` |
 
 ### Mapeo de tareas 6.1 a 8.7 -> pasajes (anclas P1-P18 re-ubicadas por texto; las lineas son las vigentes tras la edicion)
@@ -1803,7 +1806,7 @@ docs/Tesis/Correcciones/dictamen-correcciones.md`, regenerar el render y recompi
 
 **Origen**: change `c-138-estado-del-arte-calibracion-y-cascadas` (dictamen CONEAU 2026-10-22: seccion 4, seccion 5 y recomendacion A4 en su parte de fuentes de calibracion). Aplicado el **2026-10-25** en la rama `change/c-138-estado-del-arte-calibracion-y-cascadas`, cortada de `ramagonzalo` en `738a3d4` (merge del bloque de tesis de c-134). Posicion 8 del orden de la familia (G0.6). Solo documento (gobernanza LOW): cero llamadas a Gemini, sin codigo, sin tags, sin commit (lo crea el orquestador). Archivos editados: `02-marco-teorico.tex`, `03-estado-del-arte.tex`, `08-discusion.tex`, `Bibliography_base.bib`, `bitacora-busqueda-c-110.md` (mas `tasks.md` y `design.md` del change y los artefactos de compilacion).
 
-### Open Questions del design - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+### Open Questions del design - CONFIRMADAS el 2026-10-26 (registradas como PROVISIONAL el 2026-10-25)
 
 | Open Question | Decision PROVISIONAL | Efecto |
 |---|---|---|
@@ -1866,7 +1869,7 @@ Las seis superan las tres compuertas (existencia, metadatos, texto completo): Gu
 
 **Origen**: change `c-136-recomendaciones-lineas-faltantes` (dictamen CONEAU 2026-10-22: seccion 8 y recomendacion B11). Aplicado el **2026-10-25** en la rama `change/c-136-recomendaciones-lineas-faltantes`, cortada de `ramagonzalo` en `9443331` (merge de c-138). Posicion 9 del orden de la familia (G0.6). Solo documento (gobernanza LOW): sin codigo, sin Gemini, sin tags, sin commit (lo crea el orquestador). Archivos editados: `10-recomendaciones.tex` (unico fuente de tesis), este registro y los artefactos de compilacion versionados de `paper/` (`main.pdf`, `main.xdv`, `main.toc`, `main.aux`, `main.bbl`, `main.bcf`, `main.blg`, `main.lof`, `main.lot`, `main.out`, `main.fdb_latexmk`).
 
-### Open Questions del design - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+### Open Questions del design - CONFIRMADAS el 2026-10-26 (registradas como PROVISIONAL el 2026-10-25)
 
 | Open Question | Decision PROVISIONAL | Efecto |
 |---|---|---|
@@ -1947,11 +1950,11 @@ Compensaciones aplicadas (bloque 6): base de conocimientos -119 palabras, agente
 
 **Origen**: change `c-135-cronologia-y-consistencia-redaccional` (dictamen CONEAU 2026-10-22: B9, B10, B13 parte cota telefonica; mas la consistencia del Anexo H y el tiempo de espera de la inferencia, asignados por el orquestador desde c-136). Aplicado el **2026-10-25** en la rama `change/c-135-cronologia-y-consistencia-redaccional`, cortada de `ramagonzalo` en `9865300` (merge de c-136). Posicion 10 del orden de la familia (G0.6). Solo documento y una figura (gobernanza LOW, checkpoint MEDIUM de OQ-3).
 
-### Open Questions del design - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+### Open Questions del design - CONFIRMADAS el 2026-10-26 (OQ-1 a OQ-5)
 
 | Open Question | Decision PROVISIONAL | Efecto |
 |---|---|---|
-| OQ-1 - fechas de las seis iteraciones | **Sin fuente primaria**: el token de `gh` no tiene `read:project` (`gh project list --owner lucaGomezB` falla) y no hay confirmacion. Regla (iv) de D5: ninguna fecha por interpolacion | Las iteraciones no se fechan por separado; la figura muestra dos barras de mes (actividad de desarrollo del repositorio, abril a julio y septiembre a octubre de 2026, con pausa 2026-07-10 a 2026-09-10); se retiran "de dos semanas", "12 semanas" y "(Semanas k--k+1)"; la tarea 5.2 queda abierta |
+| OQ-1 - iteraciones | **RESUELTA por el autor (2026-10-26)**: no hubo un numero fijo de iteraciones; se ajustaron durante el proyecto. El tablero tecnico fue Jira y su trial se dio de baja sin export; GitHub Projects se uso para la coordinacion del grupo. No hay fuente primaria de fechas. Regla (iv) de D5: ninguna fecha por interpolacion; la tarea 5.2 se cierra como no reconstruible con fuente primaria | Las iteraciones no se fechan por separado; la figura muestra dos barras de mes (actividad de desarrollo del repositorio, abril a julio y septiembre a octubre de 2026, con pausa 2026-07-10 a 2026-09-10); se retiran "de dos semanas", "12 semanas" y "(Semanas k--k+1)"; no se fija numero de iteraciones; la tarea 5.2 queda cerrada con la salvedad documentada |
 | OQ-2 - campanas | Ventana mensual confirmada el 2026-10-09 (manual junio a agosto; automatizada septiembre a octubre de 2026) mas hitos del repositorio | Hitos: `gemini-3.6-flash` 2026-09-24, corrida de correo y formulario 2026-10-02, corrida de telefonia 2026-10-06, recalculo telefonico 2026-10-19; cada uno con comando en `docs/diagrams/cronograma.md` |
 | OQ-3 - checkpoint MEDIUM (`06:75`) | El item 5 ya no afirma "sin exposicion al corpus" (c-144/c-130); no declara fechas; c-135 no lo edita | Redaccion final PROVISIONAL |
 | OQ-4 - telefonia en `tab:comparativa` | Opcion (b) | Telefonia fuera de la afirmacion comparativa; rasgo de la propuesta en `03:84`; tabla de cuatro columnas sin cambios |
@@ -2017,7 +2020,7 @@ Detalle por celda en `extraccion-metricas-trabajos-c-135.md`. Revina 2020: exact
 
 **Origen**: change `c-139-correspondencia-texto-fuente-y-metadatos` (dictamen CONEAU 2026-10-22: observacion 4 / recomendacion A4, correcciones B15 y B16). Aplicado el **2026-10-25** en la rama `change/c-139-correspondencia-texto-fuente-y-metadatos`, cortada de `ramagonzalo` en `69a9b34` (merge de c-135). Posicion 11 del orden de la familia (G0.6). Documental y bibliografico; un bloque TDD estricto sobre `verify_citations.py` (gobernanza LOW). Ningun numero canonico cambia.
 
-### Open Questions del design - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+### Open Questions del design - CONFIRMADAS el 2026-10-26 (registradas como PROVISIONAL el 2026-10-25)
 
 | Open Question | Decision PROVISIONAL (del orquestador) | Efecto |
 |---|---|---|
@@ -2143,7 +2146,7 @@ Comentario agregado al `.bib`: las claves conservan el ano historico (D8); el an
 
 **Commit base de la pasada**: `f1fc134dc59673939a19c99364a13991f3468e4b` (merge de `ramagonzalo` en `change/c-137-revision-ortotipografica`; descendiente de `846189f`, c-139). Copia de las versiones base de `paper/sections/*.tex` (15 archivos), `paper/main.tex`, `paper/preambles/preamble.tex` y `Bibliography_base.bib` en un directorio temporal del repositorio, borrado al cerrar.
 
-### Open Questions del design - PROVISIONAL, 2026-10-25 (pendiente de confirmacion del autor)
+### Open Questions del design - CONFIRMADAS el 2026-10-26 (registradas como PROVISIONAL el 2026-10-25)
 
 | Open Question | Decision PROVISIONAL (del orquestador) | Efecto |
 |---|---|---|
@@ -2254,7 +2257,7 @@ Despues de cualquier edicion tardia de la prosa, desde la raiz del repositorio: 
 ### Para c-141 y para los autores
 
 - c-141: (1) fila `+c-137` del libro mayor = 109 / 101 / 8 (neutral); el tope lo decide c-141 (brecha +8 frente a 101; rama (b): cuerpo 101, margen -1); (2) correr `--check` despues de todo cambio de prosa y regenerar `tesis_para_agente.md`; (3) conservar "Versi{\'o}n" y la opcion `headheight=13pt`; (4) si c-140 edita prosa, correr la pasada corta.
-- Los autores deben confirmar: OQ1 (unificacion de sectores, PROVISIONAL), la opcion `headheight=13pt`, la forma de las comillas de apertura de A1-A4/B1/C1/C2 (glifo de cierre) y "cache" (en lugar de "cache") en `02:65`.
+- Confirmadas por el autor el 2026-10-26: OQ1 (unificacion de sectores), la opcion `headheight=13pt`, la forma de las comillas de apertura de A1-A4/B1/C1/C2 (glifo de cierre) y "cache" (sin tilde) en `02:65`.
 
 ### Reversibilidad
 
@@ -2367,13 +2370,13 @@ Archivo `docs/Tesis/Correcciones/numeros-canonicos.md` (solo estructura, referen
 - **Numeros de la familia**: `git diff -U0 v1.1.1 -- sections/` agrega 148 tokens numericos nuevos (no presentes en las lineas retiradas del mismo archivo); 123 figuran literalmente en el memo y los 25 restantes se explican asi: 17 son redondeos de la tesis a tres decimales o a un decimal porcentual de valores de cuatro decimales registrados en las secciones 3.8 a 3.10 (`0,546` de `0,5459`, `0,610` de `0,6095`, `0,670` de `0,6698`, `0,725` de `0,7246`, `0,737` de `0,7368`, `0,749` de `0,7488`, `0,808` de `0,8079`, `0,835` de `0,8346`, `0,845` de `0,8448`, `0,847` de `0,8467`, `0,870` de `0,8696`, `0,906` de `0,9059`/`0,9057`, `0,947` de `0,9468`, `53,4`, `58,0`, `83,9` y `85,0 %` de `0,5341`, `0,5799`, `0,8390` y `0,85`); 5 son valores de la literatura citados en `tab:trabajos-academicos` (`0,433`, `0,801`, `0,862`, `28.243`, `4.684`), cuya procedencia esta en `extraccion-metricas-trabajos-c-135.md` y que no son resultados de la tesis; y 3 no son resultados (`0.28` de la altura de una figura, `0.6508` del abstract con punto decimal, `1558/2001` numero de decreto). No quedo ningun numero de resultado solo en la tesis.
 - **Procedencia (`archivo:linea`)**: se verificaron 90 citas de las filas del memo; las filas `vigente` cuyas lineas de `sections/*.tex` se habian desplazado por la familia se actualizaron (19 citas mas 4 ajustes manuales: `07-resultados.tex:22 -> 21`, `:55 -> :57`, `:61 -> :59`, `:129 -> :128`, `:158 -> :157`, `:190 -> :189`, entre otras; solo el numero de linea). Las filas `retirado` conservan su ubicacion historica a proposito. Las citas restantes marcadas por el verificador son diferencias de formato (`94,0 %` derivado, `65,5` en `report.md`, `19.737` como `19737.0000`).
 - **Ninguna corrida de sensibilidad cambio un valor `vigente`**: las tres filas que c-142 reformulo (`97/131`, `88/130` y la fila de la etapa determinista) conservan valor y estado; ninguna de las 27 filas `vigente` de `v1.1.1` ni de las 44 anteriores a c-142 cambio de valor ni de estado.
-- **Decisiones no resolubles**: la Seccion 7 conserva sus nueve puntos con su condicion de reversibilidad (punto 6, conjunto de preproduccion, c-144; punto 7, procedencia de la cache FORCE-ESCALATE, c-130; punto 8, variante por pliegues, y punto 9, version del prompt de la FORCE-ESCALATE, c-142). Los valores no derivables: nivel c del prompt (corrida paga no autorizada) figura como "no computado"; las sensibilidades E3/E4 dependen de la cache `hybrid-v2` con `corpus_hash` distinto (decision PROVISIONAL de c-142; si se rechaza pasan a "no computable").
+- **Decisiones no resolubles**: la Seccion 7 conserva sus nueve puntos con su condicion de reversibilidad (punto 6, conjunto de preproduccion, c-144; punto 7, procedencia de la cache FORCE-ESCALATE, c-130; punto 8, variante por pliegues, y punto 9, version del prompt de la FORCE-ESCALATE, c-142). Los valores no derivables: nivel c del prompt (corrida paga no autorizada) figura como "no computado"; las sensibilidades E3/E4 dependen de la cache `hybrid-v2` con `corpus_hash` distinto (decision confirmada por el autor el 2026-10-26: se acepta; si se rechazara pasan a "no computable").
 - **Encabezado**: titulo "version de trabajo v10, release prevista `v1.2.0`"; nueva vineta "Consolidacion c-141" con la fecha de consolidacion 2026-10-26; conserva el SHA-256 del corpus `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb`.
 
 ### Reportes de evaluacion (tarea 2.8)
 
 - `evaluation/report.md` conserva sus secciones: Etapas del pipeline, Exactitud, Matriz de Confusion, Metricas por sector, Metricas de conjunto, **Exactitud por etapa** y **por canal** y **Calibracion de la confianza** (c-131), **Tiempos** con Normalidad (Shapiro-Wilk), Prueba de Wilcoxon, Reduccion de tiempos, Desglose por canal (y, de c-134, Descriptivos, Contraste direccional y Escenarios de sensibilidad del redondeo). Los valores canonicos coinciden con el memo (`0.7350`, `0.5207`, `0.6654`, `0.3586`, `61.5850`, `17.7606`, `71.16`, `W = 363`, `T+ = 19737`, `r = 0.9639`, `0.7405`, `0.7246`); los valores de cuatro decimales de `report.md` que el memo no registra son descriptivos que la tesis no cita.
-- `evaluation/report_sensibilidad_ajustes.md` existe (97 lineas); sus 32 valores de cuatro decimales figuran en el memo (3.10) salvo constantes de diseno (`0.2000`, `0.3000`, `0.5000`). Declara el nivel c "no computado; requiere autorizacion explicita y no se ejecuto".
+- `evaluation/report_sensibilidad_ajustes.md` existe (98 lineas); sus 32 valores de cuatro decimales figuran en el memo (3.10) salvo constantes de diseno (`0.2000`, `0.3000`, `0.5000`). Declara el nivel c "no computado; requiere autorizacion explicita y no se ejecuto".
 - **Sin invocaciones pagas**: la ablacion del prompt (G0.7a) no esta autorizada y `report_sensibilidad_ajustes.md` no registra corrida paga; ninguna tarea de este tramo invoco a Gemini.
 - `report.md` y las caches oficiales no fueron modificados por c-142 (`git show --stat 59b9967 -- evaluation/report.md evaluation/evidence` vacio; `git log -- evaluation/report.md` solo muestra c-134 codigo, c-131 y el versionado inicial).
 - Huella del corpus: `git show HEAD:data/corpus_evaluacion_pseudonimizado.json | sha256sum` = `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb` (coincide con la esperada). Las copias vivas `evaluation/predicciones*.json` siguen ignoradas (`.gitignore:72`) y son copias locales de las evidencias versionadas de c-143.
@@ -2537,6 +2540,43 @@ Resumen de la FASE 36 (todas las cifras en paginas: total / cuerpo sin anexos / 
 - El primer item del alcance excluido de `01-introduccion.tex:74` (integracion con inventario de activos y gestion de configuracion) remite a `sec:recomendaciones` y el capitulo no tiene una subseccion para ese tema (hallazgo heredado de c-136 y c-135): decidir si se agrega una linea o se acota la remision.
 - Suite completa del backend: 3 fallos y 48 errores de entorno (ver 2.4); no son de la familia.
 
+### Confirmacion de las Open Questions de la FASE 36 (2026-10-26)
+
+El autor reviso las decisiones que habian quedado PROVISIONALES en los grupos c-130, c-132, c-133, c-134, c-136, c-137, c-138, c-139 y c-135. Se confirman 29 y se declara superada 1 (c-130 OQ4, por el bloque G de c-145). Las decisiones ya confirmadas antes (c-130 OQ2, c-134 OQ1, c-134 OQ2, FORCE-ESCALATE de c-142 y c-135 OQ-1) figuran en sus grupos.
+
+| Change | OQ | Decision confirmada |
+|---|---|---|
+| c-130 | OQ3 | Comentarios y test en `App/Backend`: si, bloque 7 aplicado. |
+| c-130 | OQ4 | Superada por c-145 G (alineacion completa de `CLAUDE.md` y `openspec/config.yaml`); no se confirma como decision vigente. |
+| c-132 | OQ1 | Tope de paginas decidido por c-141 (cuerpo <= 100); +1 medido. |
+| c-132 | OQ2 | Incluir la correccion colateral T13 (costo operativo) en variante corta. |
+| c-132 | OQ3 | Rama "laxa disponible" de D4; exactitud laxa `179/200 = 0,8950`. |
+| c-133 | OQ1 | Segunda sub-hipotesis: cota 0,15, "no contrastada por ausencia de registro primario". |
+| c-133 | OQ2 | Subsidiaria de eficiencia: "no contrastada" (prevalece D3 con E4). |
+| c-133 | OQ3 | Objetivo 3: "Alcanzado parcialmente" (complejidad operativa percibida no satisfecha). |
+| c-134 | OQ3 | Se retira la promesa del IC del tiempo medio; la lista declarada queda alineada con lo reportado. |
+| c-136 | OQ1 | Incluir la extension D7 (SSO, prefijo, Kubernetes, parametros de inferencia). |
+| c-136 | OQ2 | Aceptar +1 pagina, con renegociacion en c-141; delta medido 0. |
+| c-136 | OQ3 | Usar las claves de c-138; `Zhao2021_calibrate_before_use` no se cita. |
+| c-138 | OQ1 | Tope por c-141; +2 esperadas (+3 peor caso), compensado en el texto. |
+| c-138 | OQ2 | ITSM-BERT y Alsac fuera del change. |
+| c-138 | OQ3 | Vacancia acotada enunciada solo con C1-C2. |
+| c-138 | OQ4 | FrugalGPT por arXiv, sin evadir los controles anti-bot. |
+| c-139 | OQ1 | Paramesh rama B; se retiran las cifras no verificadas y la fila declara "no reportado en el alcance revisado". |
+| c-139 | OQ2 | ISO/IEC 27701:2025. |
+| c-139 | OQ3 | Russell y Norvig 2021. |
+| c-139 | OQ4 | Incluir FastAPI, RGPD y las precisiones de `11:44` y `11:68`. |
+| c-139 | OQ5 | Palanca tipografica reservada a c-141; cuerpo neutral. |
+| c-137 | OQ1 | Unificar los 5 pasajes canonicos a las cadenas sin tilde. |
+| c-137 | OQ2 | No editar el dictamen auditado. |
+| c-137 | Tipografica 1 | `headheight=13pt`. |
+| c-137 | Tipografica 2 | Glifo de cierre en las comillas de apertura de A1-A4/B1/C1/C2. |
+| c-137 | Tipografica 3 | "cache" sin tilde en `02:65`. |
+| c-135 | OQ-2 | Ventana mensual confirmada (manual junio-agosto; automatizada septiembre-octubre de 2026) e hitos del repositorio. |
+| c-135 | OQ-3 | Checkpoint MEDIUM de `06:75` sin "sin exposicion al corpus" y sin fechas. |
+| c-135 | OQ-4 | Telefonia fuera de la comparativa; el rasgo queda en `03:84`. |
+| c-135 | OQ-5 | Acceso institucional "no reportado"; Zangari sin dato de idioma. |
+
 ## Dictamen v10 / v1.1.0 (2026-10-22) - cobertura por change (FASE 36)
 
 **Origen**: change `c-141-integracion-release-v1-2-0`, tarea 6.1 (matriz de trazabilidad), 6.2 (observaciones no numeradas) y 6.3 (rubrica). Escrito el **2026-10-26**. La matriz da, por recomendacion o parte de recomendacion, el change dueno, el `archivo:linea`, el `\label` ancla mas cercano (el del flotante si la linea esta dentro de una tabla o figura; si no, el de la seccion o subseccion previa), un fragmento verificable y el estado.
@@ -2647,3 +2687,164 @@ Rubrica de la catedra tal como la aplico el dictamen del 22-10-2026 (revision vi
 | 10 Defensa oral | 10 | - | No evaluable en este dictamen | - | no aplicable | - |
 
 Los nueve criterios evaluables figuran con todos los descuentos que enumera el dictamen (incluidos los dos de A5 en los criterios 4 y 6); el criterio 10 queda no aplicable; no hay puntajes nuevos. Residuales: el kappa sin incertidumbre y la intervencion humana no medida (criterio 4) y el TLS, los reintentos y las pruebas de extremo a extremo (criterio 5) son los descuentos que la release no corrige; el criterio 5 depende de la decision del usuario sobre c-140.
+
+## Correccion factual de la release v1.2.0 (c-145)
+
+**Origen**: change `c-145-correccion-factual-sincronizacion-del-memo-y-portabilidad-del-harness`, aplicado el **2026-10-26** sobre la rama `change/c-145-...` (cortada de `main` en `224fa16`, merge del PR #40 ya integrado). Corrige afirmaciones que el repositorio desmiente en la release `v1.2.0` (A1: 16 pruebas de integracion PostgreSQL con omision; A2: recuentos congelados de frontend; A3: identificadores internos `OQ1 = A`/`OQ2 = A del change c-72` en el cuerpo), sincroniza el memo canonico (B: margen `6,66 %` vigente y barrido de referencias), precisa la discusion (C), resuelve el placeholder `P4` (D), hace portable el arnes de sensibilidad (E) y agrega la barrera ejecutable `scripts/preflight/docs_stack_sync.py` de `DOC-005` (H). Gobernanza: A/B/C MEDIO; D/E/G/H BAJO; F (release) ALTO.
+
+### Red de seguridad y linea base (tareas 1.1 a 1.5) - 2026-10-26
+
+- **1.1 Interprete y entorno**: `python3 --version` = **`Python 3.12.3`** (empieza con `Python 3.12.3`, verificado); `uname -a` = `Linux skywalker-SF20GM7-2023 6.8.0-147-generic #147-Ubuntu SMP PREEMPT_DYNAMIC Thu Sep 24 11:33:16 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux`. La maquina de trabajo usa **3.12.3**; la CI usa **3.12.15** (Python de CI documentado en el design, D-Entorno).
+- **1.2 Baseline de la suite de evaluacion**: `cd evaluation && python3 -m pytest -q` = **4 failed, 448 passed, 1 skipped** (28 warnings, 17,06 s). Coincide con el baseline esperado para 3.12.3. Los 4 fallos son de `tests/test_sensibilidad_ajustes.py` y el mensaje es `error: ambiguous option: --brazo could match --brazo-vigente, --brazo-sin-reglas` (`SystemExit: 2`). No se corrigen fallos preexistentes.
+- **1.3 Suite de sensibilidad aislada**: `cd evaluation && python3 -m pytest tests/test_sensibilidad_ajustes.py -q` = **4 failed, 137 passed** (6,97 s); los 4 fallos coinciden exactamente con los de 1.2.
+- **1.4 Linea base de paginas**: `pdfinfo "docs/Tesis/v10 (IA)/paper/main.pdf" | grep Pages` = **109**; `grep -n "contentsline {section}{Anexos}" main.toc` = linea 96, pagina **101**. Cuerpo = 101 - 1 = **100**; anexos = 109 - 100 = **9**. Ledger base: **109 / 100 / 9** (margen 0 de la regla cuerpo sin anexos <= 100).
+- **1.5 Estado de los tags**: `git rev-parse v1.2.0^{commit}` = `a49d035c67b32ae17e633ec04b09ecdd2781aac6`; `git cat-file -t v1.2.0` = `tag`; tags previos: `v1.0.0` = `61a6b117dd1321fbee25f9792d9f29b884e5ac8d`, `v1.0.1` = `bac4c5f6f85c889b48a90d4396bbdaccc7a35ad0`, `v1.1.0` = `7103b649d8c4f51737ad6ad4095dad22c9406400`, `v1.1.1` = `4160d84286623b073d2904353e6f9163ae211de7`. Los cinco coinciden con los valores de `tasks.md`.
+
+### Portabilidad del arnes (bloque E, tareas 2.1 a 2.7) - 2026-10-26
+
+TDD estricto. **E1**: se agrego `allow_abbrev=False` al `ArgumentParser` de nivel superior de `evaluation/sensibilidad_ajustes.py` (`construir_parser`). Sin el flag, en Python 3.12.3 `--brazo` (opcion del subcomando `prompt`) se resuelve contra `--brazo-vigente`/`--brazo-sin-reglas` y el parser aborta con `ambiguous option`.
+
+- **RED**: `tests/test_sensibilidad_ajustes.py::test_c145_cli_prompt_reconoce_brazo_como_opcion_del_subcomando` falla antes del cambio con `SystemExit: 2` y el mensaje `ambiguous option: --brazo could match --brazo-vigente, --brazo-sin-reglas` (la misma causa que 1.2/1.3).
+- **GREEN**: `pytest tests/test_sensibilidad_ajustes.py -q` pasa de 4 fallos a **142 passed**; `python -m evaluation.sensibilidad_ajustes prompt --brazo vigente --help` sale con codigo 0 y no imprime `ambiguous option`.
+- **TRIANGULATE**: `--brazo sin-reglas` (subcomando), `--brazo-vigente`/`--brazo-sin-reglas` (nivel superior, nombres exactos), prefijos no exactos `--brazo-v`/`--brazo-s` (no se resuelven silenciosamente; el caso falla si se elimina `allow_abbrev=False`, verificado) y el comando del escenario por `subprocess` (`prompt --brazo vigente --help`, codigo 0). Total del archivo: **148 passed**.
+- **REFACTOR**: el parser ya estaba extraido como funcion pura (`construir_parser` devuelve un parser nuevo por llamada, sin estado compartido); no hizo falta otra extraccion. Suite verde despues del cambio.
+- **E2-i**: `tests/test_run_evaluation.py::test_c145_cli_solo_tiempos_con_reporte_ausente_falla_sin_traza` (RED: `FileNotFoundError` crudo; GREEN: `main()` envuelve la llamada a `main_solo_tiempos()` en `try/except FileNotFoundError`, imprime `ERROR: ...` en stderr y sale con `SystemExit(1)` sin traza). TRIANGULATE: corpus ausente sale igual de limpio. `tests/test_run_evaluation.py` = **70 passed**.
+- **2.6 Suite completa**: `cd evaluation && python3 -m pytest -q` = **461 passed, 1 skipped, 0 failed** (baseline 452 recolectadas; 9 pruebas nuevas: 7 en `test_sensibilidad_ajustes.py` y 2 en `test_run_evaluation.py`).
+- **E2-ii (excluido, tarea 2.7)**: la identidad de las caches de predicciones en `construir_procedencia` (ruta, SHA-256 y `generated_at`) queda como **trabajo futuro**. Motivo: agregarla ampliaria el esquema del reporte de sensibilidad, sus pruebas de formato y la documentacion de `evaluation/README.md` sin ser un defecto que bloquee el PR ni la release (disciplina de alcance, design D8). No se implementa en c-145.
+
+### Barrera documental `docs_stack_sync.py` (bloque H, tareas 2.8 a 2.13) - 2026-10-26
+
+Barrera ejecutable de `DOC-005` (`scripts/preflight/docs_stack_sync.py`), con doce chequeos (design D15) sobre `settings.py` y `constants.py` (via `ast`), `requirements.txt`, `docker-compose.yml`, `openspec/config.yaml` y `CLAUDE.md`. Contrato reutilizado de `cost_readiness.py`/`gemini_readiness.py` (`Check`, `check_docs`, `run_docs_stack_sync`, `exit_code`, `format_summary`).
+
+- **TDD (tareas 2.8 a 2.11)**: **RED**: `scripts/preflight/test_docs_stack_sync.py` falla al recolectar con `ModuleNotFoundError: No module named 'docs_stack_sync'`; los 48 preflights existentes siguen en verde. **GREEN**: se implementa el modulo; `python3 -m pytest scripts/preflight/test_docs_stack_sync.py -q` = **32 passed**. **TRIANGULATE**: (a) los cinco documentos en sincronia -> 0 hallazgos y `exit_code` 0; (b) cada drift por separado -> exactamente un FAIL que nombra el valor (modelo, timeout, reintentos, muestreo, FastAPI, Uvicorn, google-genai en config y en `CLAUDE.md`, N8N en config y en `CLAUDE.md`, umbrales, categorias); (c) YAML malformado -> FAIL explicito sin traza; (d) seccion ausente -> FAIL, no excepcion; (e) `CLAUDE.md` sin el modelo -> FAIL; (f) `SECTORES_CANONICOS` en distinto orden -> FAIL del chequeo 11; (g) los cinco literales volatiles (`0.5166`, `0.70`, `0.115`, `>= 1.0`, `2.11.2`) restateados en `CLAUDE.md` -> FAIL del chequeo 12; (h) el mismo valor como remision a `openspec/config.yaml` -> PASS del chequeo 12; (i) cambiar el umbral en `config.yaml` y restatear el valor nuevo -> FAIL del chequeo 12 (la lista se deriva, no esta hardcodeada); (j) identificador retirado `2.5 Flash` que ya no figura en `config.yaml` -> FAIL por la lista estatica. **REFACTOR**: los parsers ya estan extraidos como funciones puras (`_leer_settings`, `_leer_constantes`, `_leer_requirements`, `_leer_compose`, `_leer_docs`, `_leer_claude`); se extrajo ademas `_comparar_valores` para unificar la comparacion de parametros de los chequeos 2, 3 y 10 (regla de tres), sin cambios de comportamiento. Suite verde despues del refactor. Total del directorio `scripts/preflight`: **80 passed**.
+- **2.12 Cableado en CI**: paso `Run docs stack sync preflight` (`run: python scripts/preflight/docs_stack_sync.py`) agregado en el job `backend-tests`, despues de `Run Gemini readiness preflight`. Verificado: `yaml.safe_load` del workflow parsea y el nombre del paso figura **una sola vez**.
+- **2.13 PRUEBA DE LA BARRERA (arbol con la documentacion sin corregir)**: `python3 scripts/preflight/docs_stack_sync.py` termina con **codigo 1** y **8 de 12 chequeos en FAIL**. Salida completa:
+
+```text
+[FAIL] modelo: config.yaml y CLAUDE.md coinciden con Settings.gemini_model - config.yaml declara 'Gemini 2.5 Flash' y Settings dice 'gemini-3.6-flash'; CLAUDE.md menciona 'gemini-2.5-flash' y Settings dice 'gemini-3.6-flash'
+[FAIL] timeout y reintentos: config.yaml coincide con Settings - timeout_s: config.yaml=10 vs Settings=30; config.yaml no declara total_timeout_s (Settings: 60); config.yaml no declara max_retries (Settings: 2)
+[PASS] parametros de muestreo: config.yaml coincide con Settings
+[FAIL] framework: FastAPI/Uvicorn de config.yaml compatibles con requirements.txt - FastAPI: config.yaml declara 0.115 y requirements.txt fija 0.143.3
+[FAIL] google-genai: restriccion de config.yaml y CLAUDE.md compatible con requirements.txt - config.yaml declara google-genai >= 1.0 y requirements.txt fija >=2.31.0,<3; CLAUDE.md declara google-genai >= 1.0 y requirements.txt fija >=2.31.0,<3
+[FAIL] n8n: version declarada coincide con la imagen del compose - CLAUDE.md declara N8N 1.62 y la imagen es n8nio/n8n:2.11.2
+[FAIL] servicios: los descritos en CLAUDE.md existen en el compose - CLAUDE.md describe servicios inexistentes: Redis (servicio 'redis' ausente en docker-compose.yml)
+[FAIL] etapas retiradas: ninguna se describe como vigente - CLAUDE.md menciona la etapa retirada LangChain (retirada por c-72)
+[PASS] config.yaml: YAML valido y con las claves que consume el CLI
+[PASS] umbrales: config.yaml coincide con Settings
+[PASS] categorias: config.yaml coincide con SECTORES_CANONICOS (contenido y orden)
+[FAIL] duplicacion: CLAUDE.md no restatea literales volatiles de config.yaml - CLAUDE.md repite literales que viven en openspec/config.yaml: '0.5166' (derivado de conventions.thresholds.deterministic_score); '0.7' (derivado de conventions.thresholds.human_review); '>= 1.0' (derivado de stack.inference.model (google-genai)); '2.5 Flash' (derivado de lista estatica de identificadores retirados); '1.62' (derivado de lista estatica de identificadores retirados)
+
+RESULT: 4/12 chequeos en PASS (8 en FAIL). Documentacion desincronizada.
+```
+
+  Los hallazgos nombran, como minimo: **"Gemini 2.5 Flash"** (chequeo 1), el **timeout de 10 s** (chequeo 2), **"FastAPI 0.115"** (chequeo 4), la **imagen de N8N** (`1.62` declarado frente a `n8nio/n8n:2.11.2`, chequeo 6), el **servicio Redis** (chequeo 7) y la **duplicacion de literales en `CLAUDE.md`** (chequeo 12: `0.5166`, `0.7`, `>= 1.0`, `2.5 Flash`, `1.62`). La barrera detecta el drift real: no sale 0.
+- **Asimetria esperada (chequeos 10 y 11 en PASS)**: los umbrales (`0.5166` y `0.70`) y las categorias de `config.yaml` ya coinciden con `Settings` y con `SECTORES_CANONICOS` en este punto (los corrigio el PR #40), de modo que los chequeos 10 y 11 **pasan desde el primer dia**. El valor a probar con 2.13 es que el chequeo **12** detecte la duplicacion de esos mismos valores en prosa dentro de `CLAUDE.md`, no que todo falle. Una barrera que solo falla donde el drift ya se conoce no agrega nada; la asimetria muestra que el chequeo nuevo (12) atrapa la duplicacion sin cobertura que dejaba pasar un cambio de umbral con el pipeline en verde. Los chequeos 3 (muestreo) y 9 (YAML valido) tambien pasan por el mismo motivo. El cierre de la barrera (exit 0 con la documentacion corregida) corresponde al bloque G y se registra en la tarea 10.6.
+
+### Sincronizacion del memo canonico (bloque B, tareas 4.1 a 4.5) - 2026-10-26
+
+- **4.1 Upsert del margen**: se agrega en `numeros-canonicos.md` (Seccion 3.4) la fila `6,66 %` con estado `vigente`, `N ≈ 2.646`, `z = 1,96`, `p = 0,5`, `n = 200`, formula `n = n₀/[1+(n₀−1)/N]` con `n₀ = z²p(1−p)/e²` y procedencia `04-marco-metodologico.tex:51`. Verificacion aritmetica: `n₀ = 216,52`; `216,52/[1+215,52/2646] = 200,21 ≈ 200`.
+- **4.2 Retiro del margen calendario**: se conserva la fila `6,74 %` / `N = 3.700` con estado `retirado` y nota de reemplazo por `6,66 %` / `N ≈ 2.646`; no se cita como vigente.
+- **4.3 Seccion 7 y `MEMO:732`**: el punto 2 y la advertencia de arrastre del item 4 ahora remiten al upsert de 4.1 y declaran el margen `6,66 %`; el `6,74 %` figura solo como retirado.
+- **4.4 Barrido de referencias `07-resultados.tex:<linea>`** (por correspondencia de contenido sobre el archivo vigente):
+
+  | Antes | Despues | Pasaje verificado |
+  |---|---|---|
+  | `:129` | `:128` | Parrafo del marco metrico, reparto `131/69` y `107/200` |
+  | `:75` | `:74` | Exactitud estricta `73,5 % (147/200)` |
+  | `:167-188` | `:166-187` | Entorno de `tab:bandas` |
+  | `:179-183` | `:178-182` | Filas de bandas `98/26/6/31/39` |
+  | `:179-180` | `:178-179` | Bandas `98 + 26` = `124` casos `< 0,70` |
+  | `:160` | `:157-159` | Fila `retirado` del `9,5 %`: remite a la seccion que declara la intervencion como no medida |
+  | `:55` | `:57` | Parrafo de Wilcoxon `W = 363` |
+  | `:21` (mediana) | `:22` | Fila `Mediana (s) = 17,47` |
+  | `:190` | `:189` | Parrafo del tramo `>= 0,90` |
+  | `:129` (nota c-131) | `:128` | Parrafo del marco metrico en la nota de numeracion |
+
+  Verificacion: cada linea destino contiene el valor citado (`sed -n '<linea>p'`). No se modifico ningun valor ni estado distinto del upsert 6,66/6,74.
+- **4.5 Encabezado**: se agrega la entrada `Upsert c-145` con fecha y alcance.
+
+### Correccion factual de la tesis (bloque A, tareas 5.1 a 5.7) - 2026-10-26
+
+- **5.1 Recuento real de integracion**: con las variables dummy de CI exportadas solo en el entorno (sin escribirlas en el repositorio), `cd App/Backend && python3 -m pytest -m integration --collect-only -q` devuelve:
+
+  ```text
+  48/1510 tests collected (1462 deselected) in 6.70s
+  ```
+
+  Coincide con el esperado `48/1510`. `grep -n "pytest.skip" ".../06-implementacion.tex"` no devuelve coincidencias en la clausula de PostgreSQL.
+- **5.2**: `06-implementacion.tex:87` reemplaza "16 tests con un mecanismo de omision automatica (`pytest.skip`) cuando PostgreSQL no esta disponible" por "48 pruebas marcadas como integracion, que fallan de forma ruidosa si PostgreSQL no esta disponible en lugar de omitirse". `grep -n "16 tests\|omisión automática"` = 0; `grep -n "48 pruebas"` = linea 87.
+- **5.3**: `06-implementacion.tex:91` retira "357" y "56 archivos" y conserva la remision al reporte vigente del pipeline. `grep -n "357\|56 archivos"` = 0.
+- **5.4**: `06-implementacion.tex:44` y `:54` reemplazan los identificadores internos por lenguaje llano que preserva el hecho. `grep -n "OQ1 = A\|OQ2 = A\|change c-72"` = 0.
+- **5.5**: el Anexo I (`12-anexos.tex`, `sec:anexo-trazabilidad`) agrega una nota breve que atribuye las dos decisiones al change `c-72`; el cuerpo de `06-implementacion.tex` ya no lo menciona.
+- **5.6 Causa raiz de A1**:
+
+  | Hecho | Commit | Fecha | Efecto |
+  |---|---|---|---|
+  | Se agregan 16 pruebas de integracion PostgreSQL con omision automatica | `a0436e0` (C-19) | 2026-07-03 | Nace la oracion "16 tests ... `pytest.skip`" |
+  | `conftest.py` pasa a fallo ruidoso y la suite crece | `ef656ac` (c-29/c-30/c-32) | 2026-09-17 | La oracion queda obsoleta |
+  | Copia de trabajo v9 | `8466cbe` | 2026-10-01 | Arrastra la oracion |
+  | Copia de trabajo v10 | `7408543` (c-122) | 2026-10-22 | La publica en v10 |
+
+- **5.7 Evidencia de A2**: `find "App/Frontend/src" -type f \( -name '*.test.ts' -o -name '*.test.tsx' \) | wc -l` = **59** archivos; `App/Frontend/node_modules` **ausente** en el worktree. Decision: retirar los recuentos congelados de la tesis (no se ejecuto `npm install` ni Vitest en esta fase) y dejar la cifra sujeta al reporte vigente del pipeline.
+- **Paginas (aviso para bloque 8)**: no se recompilo la tesis en estas tareas. El cuerpo sigue en **100** segun la linea base de 1.4; el bloque 8 debe re-medir el conteo tras estos cambios de texto.
+
+### Discusion y documentacion para agentes (bloques C y G, tareas 6.1 a 6.11) - 2026-10-26
+
+- **6.1 C1 - denominadores pareados en `08-discusion.tex:10`**: se conserva el valor global `97/131 (0,7405)` y se agrega el pareado `96/130 (0,7385)` frente a Gemini `88/130 (0,6769)`, con la calificacion de estimacion dentro de la muestra y la remision a `\autoref{subsec:sensibilidad-ajustes}`. Fuentes: `numeros-canonicos.md:463` (`96/130 = 0,7385`; `88/130 = 0,6769`) y `evaluation/report_sensibilidad_ajustes.md:81` (`0.7385 (96/130)`; `0.6769 (88/130)`). El memo sigue registrando `96/130 = 0,7385` (linea 463; el `:460` del design es previo al upsert del bloque B, que desplazo la tabla). Las tres cifras quedan en la linea.
+- **6.2 C2 - celdas del balance en `08-discusion.tex:95`**: se completa el parentesis con las tres celdas `+42,1 / +52,1 / +62,0` del escenario central (se prefirio completarlo). Fuente: `numeros-canonicos.md:588` (`15 %`: `+42,1 / +52,1 / +62,0`). Las tres celdas quedan en la linea.
+- **6.3 Regla del bloque G (fuente por valor)**: cada valor editado se leyo de su fuente viva antes de escribirlo; no se copio ningun valor de otro documento. Tabla de fuentes (D14, once filas, todas con fuente citada):
+
+  | Dato | Valor escrito | Fuente viva |
+  |---|---|---|
+  | Modelo de inferencia | `Gemini 3.6 Flash` / `gemini-3.6-flash` | `App/Backend/app/config/settings.py:78` (`gemini_model`) |
+  | Timeout de inferencia | `timeout_s: 30`, `total_timeout_s: 60` | `settings.py:85,104` |
+  | Reintentos | `max_retries: 2` | `settings.py:97` |
+  | Parametros de muestreo | `temperature: 0.3`, `top_p: 0.9`, `max_output_tokens: 100` | `settings.py:79-81` |
+  | FastAPI / Uvicorn | `FastAPI 0.143 + Uvicorn 0.54` | `App/Backend/requirements.txt:5,9` (`fastapi==0.143.3`, `uvicorn[standard]==0.54.0`) |
+  | google-genai | `>=2.31,<3` | `requirements.txt:37` (`google-genai>=2.31.0,<3`) |
+  | N8N | sin literal en `CLAUDE.md` (remision a la fuente) | `docker-compose.yml:133,380` (`n8nio/n8n:2.11.2`) |
+  | Redis | no existe como servicio | `docker-compose.yml` (sin servicio `redis`; `grep -cE "^  redis:"` = 0) |
+  | Flujo de clasificacion | deterministico -> Gemini -> fallback | `knowledge-base/08_arquitectura_propuesta.md:12`; ausencia de nodos LangChain en `App/Backend/tests/test_c72_prompt_boundaries.py:144` y `tests/test_n8n_workflow.py:1295-1297` |
+  | Corpus pseudonimizado | versionado, 68.911 bytes | `git ls-files --error-unmatch data/corpus_evaluacion_pseudonimizado.json` (exit 0); `wc -c` = 68911 |
+  | Docstring del test del hibrido | `score_correctitud >= 0.5166` | `App/Backend/app/classifiers/hybrid.py:168` y `settings.py:134` (`deterministic_score_threshold`) |
+
+- **6.4 G1 (`CLAUDE.md`)**: linea 7 `Gemini 2.5 Flash` -> `Gemini 3.6 Flash`; el titulo de la seccion (linea 48) idem. La linea 50 conserva la descripcion cualitativa del gate (la regla de revision aplica solo a la salida de Gemini, el fallback marca revision siempre, el deterministico cortocircuita por score y no marca revision por su confianza, y el backend deriva a revision si el reportante no esta identificado) y **sustituye los valores restateados** (los dos umbrales y los parametros de muestreo/timeout) por remisiones a `openspec/config.yaml` (`conventions.thresholds` y `stack.inference`). Verificacion: `grep -c "2.5 Flash" CLAUDE.md` = **0**; `grep -nE "0\.5166|0\.70" CLAUDE.md` sin coincidencias.
+- **6.5 G4 (`CLAUDE.md`)**: el diagrama del canal telefonico reemplaza el bloque `LangChain AI Agent -> Redis Memory` (lineas 40-41) por `Backend hybrid classifier: deterministic rules (score_correctitud) -> Gemini 3.6 Flash -> human-review fallback (see knowledge-base/08_arquitectura_propuesta.md)`; se retira la linea 94 (`Redis: Session/memory storage for the LangChain AI agent`). **Edicion de coherencia dentro de la misma conversion del diagrama**: la rama `NO` del IF, que remitia al nodo retirado, pasa de `Loop back to AI Agent for refinement` a `Loop back to the validation node for refinement`; el agente LLM del canal telefonico fue retirado por c-72 y dejar la remision contradecia el objetivo de `DOC-005` (la tarea 6.5 nombra las lineas 40-41 y 94, no la rama `NO`; se documenta por ser parte del mismo diagrama obsoleto). Verificacion: `grep -niE "langchain|redis" CLAUDE.md` sin coincidencias; ausencia respaldada por `App/Backend/tests/test_c72_prompt_boundaries.py:144` (`@n8n/n8n-nodes-langchain.agent` no figura en el workflow) y `tests/test_n8n_workflow.py:1295-1297` (los nodos `memoryRedisChat` y `lmChatGoogleGemini` se listan como sub-nodos no ejecutables del flujo retirado).
+- **6.6 G2 (`CLAUDE.md`)**: se retira el bloque obsoleto `N8N 1.62 + FastAPI backend + PostgreSQL + Redis` y se declara el stack de **desarrollo local** (`N8N, FastAPI backend and PostgreSQL`), con los pines en `openspec/config.yaml` y `docker-compose.yml`. **Desvio respecto del enunciado de 6.6**: la tarea pedia el literal `N8N 2.11.2`; ese literal lo **prohibe el chequeo 12** de la barrera H, que deriva la version de N8N de `stack.orchestration.tool` en `config.yaml` y exige que `CLAUDE.md` remita a la fuente en lugar de restatear el numero (design D15; la propia seccion 6.11 instruye resolver los literales restantes para que el chequeo 12 pase). Se remite la version en lugar de restatearla. Verificacion contra la fuente: `docker-compose.yml:133,380` = `n8nio/n8n:2.11.2`; `grep -cE "^  redis:" docker-compose.yml` = **0**.
+- **6.7 G3 (`CLAUDE.md`)**: se corrige la afirmacion falsa sobre `data/corpus_evaluacion_pseudonimizado.json`: el corpus pseudonimizado **SI se versiona** (se retira `is not tracked in git` y se explicita `is tracked in git (68,911 bytes)`). Evidencia: `git ls-files --error-unmatch data/corpus_evaluacion_pseudonimizado.json` resuelve el archivo (exit 0) y `wc -c` = **68911** bytes (68.911).
+- **6.8 G5/G6 (`openspec/config.yaml`)**: `stack.inference.model` = `Gemini 3.6 Flash (google-genai >=2.31,<3)`; `stack.inference.params` = `{ temperature: 0.3, top_p: 0.9, max_output_tokens: 100, timeout_s: 30, total_timeout_s: 60, max_retries: 2 }`; `stack.backend.framework` = `FastAPI 0.143 + Uvicorn 0.54`; descripcion del proyecto (linea 10) = `Gemini 3.6 Flash`. Verificacion: `python3 -c "import yaml;yaml.safe_load(open('openspec/config.yaml'));print('ok')"` = `ok`; `openspec list --json` responde (c-145 en `in-progress`).
+- **6.9 G7 (`App/Backend/tests/test_hybrid_classifier.py:8-9`)**: el docstring del modulo pasa de `>= 0.90` / `< 0.90` a `score_correctitud >= 0.5166` (cortocircuito) y `score_correctitud < 0.5166` o ausencia/ambiguedad (escalada), en linea con `app/classifiers/hybrid.py:168` (condicion real del cortocircuito; el design cita `:151`, dentro de la documentacion del mismo metodo) y el test de caracterizacion en `:484`. `git diff --stat` del archivo = **2/2** (solo lineas no ejecutables). `cd App/Backend && python3 -m pytest tests/test_hybrid_classifier.py -q` = **21 passed** (con las variables dummy de CI).
+- **6.10 Verificacion global del bloque G**: `grep -nE "2\.5 Flash|1\.62|FastAPI 0\.115|google-genai >= 1\.0" CLAUDE.md openspec/config.yaml` **sin coincidencias**; cada valor editado coincide con su fuente (6.3); el YAML es valido; `openspec validate --specs --strict --no-interactive` = **64 passed, 0 failed (64 items)**; `openspec validate c-145-correccion-factual-sincronizacion-del-memo-y-portabilidad-del-harness --strict --no-interactive` = **valid**.
+- **6.11 Cierre de la duplicacion (H, chequeo 12)**: la linea del IF de validez de entrada pierde el umbral restateado `>= 0.70` y remite a `openspec/config.yaml` (`conventions.thresholds.human_review`), conservando la distincion entre el IF de validez de entrada (`Entrada valida`) y el IF que evalua el indicador del backend (`Requiere revision humana`). Verificacion: `grep -nE "0\.5166|0\.70|0\.115|1\.62|2\.5 Flash" CLAUDE.md` **sin coincidencias** y `python3 scripts/preflight/docs_stack_sync.py` sale **0** (12/12 PASS). Salida final completa:
+
+  ```text
+  [PASS] modelo: config.yaml y CLAUDE.md coinciden con Settings.gemini_model - gemini-3.6-flash
+  [PASS] timeout y reintentos: config.yaml coincide con Settings
+  [PASS] parametros de muestreo: config.yaml coincide con Settings
+  [PASS] framework: FastAPI/Uvicorn de config.yaml compatibles con requirements.txt
+  [PASS] google-genai: restriccion de config.yaml y CLAUDE.md compatible con requirements.txt
+  [PASS] n8n: version declarada coincide con la imagen del compose - 2.11.2
+  [PASS] servicios: los descritos en CLAUDE.md existen en el compose
+  [PASS] etapas retiradas: ninguna se describe como vigente
+  [PASS] config.yaml: YAML valido y con las claves que consume el CLI
+  [PASS] umbrales: config.yaml coincide con Settings
+  [PASS] categorias: config.yaml coincide con SECTORES_CANONICOS (contenido y orden)
+  [PASS] duplicacion: CLAUDE.md no restatea literales volatiles de config.yaml
+
+  RESULT: 12/12 chequeos en PASS. Documentacion sincronizada.
+  ```
+
+### Verificacion de contenido y compilacion de registro (bloque F, tareas 7.1 a 8.5) - 2026-10-26
+
+Compilacion en el entorno de registro `texlive-thesis` (`latexmk main.tex`) y verificacion de contenido sobre el PDF recompilado. No se modifico ningun contenido de la tesis en este bloque (la palanca D9 no hizo falta).
+
+- **7.1 Valores retirados en el cuerpo**: `grep -rn "16 tests\|omisión automática\|357 pruebas\|56 archivos\|OQ1 = A\|OQ2 = A\|6,74 %" "docs/Tesis/v10 (IA)/paper/sections/"` = **sin coincidencias** (exit 1). El `6,74 %` solo figura en el memo, con estado `retirado`.
+- **7.3 Suite de evaluacion**: `cd evaluation && python3 -m pytest -q` = **462 passed, 1 skipped, 0 failed** (28 warnings, 13,59 s) en Python 3.12.3. Sube de 461 a 462 passed respecto del cierre del bloque E (2.6) por las tareas de higiene del registro (3.1 a 3.5).
+- **8.1 Compilacion**: `MSYS_NO_PATHCONV=1 docker run --rm -v "<repo>/docs/Tesis/v10 (IA):/work" -w /work/paper texlive-thesis latexmk main.tex` termina con **codigo 0**; `1638999 bytes written`; 109 paginas emitidas. `grep -c "^!" main.log` = **0**; `grep -i undefined main.log` = **vacio** (exit 1).
+- **7.2 Oraciones corregidas en el PDF recompilado** (`pdftotext -enc UTF-8 main.pdf -`): `48 pruebas` = **1**; `96/130` = **1**; `6,66` = **2**; `42,1` = **1**. Las cuatro >= 1.
+- **8.2 Bibliografia y citas**: `grep -c "multiply defined" main.log` = **0**; `grep -E "WARN|ERROR" main.blg` = **vacio** (exit 1); `grep -c "^@" Bibliography_base.bib` = **73** = `grep -o "Found [0-9]* citekeys" main.blg` = **`Found 73 citekeys`**; `python3 verify_citations.py` = **`STATUS: PASS`** (73 entradas <-> 73 claves citadas, 126 comandos de cita, 0 huerfanas, 0 sin usar); `pdftotext -enc UTF-8 main.pdf - | grep -c "??"` = **0**.
+- **8.3 Tope de paginas (bloqueante)**: `pdfinfo main.pdf | grep Pages` = **109**; `\contentsline {section}{Anexos}{101}` en `main.toc` (linea 96) => cuerpo = 101 - 1 = **100**, anexos = 109 - 100 = **9**. Ledger final: **109 / 100 / 9**. La regla (cuerpo sin anexos <= 100) **se cumple con margen 0**; la palanca D9 (`\footnotesize` de la lista de referencias) **no fue necesaria** y no se toco el preambulo. Portada: `pdftotext -f 1 -l 1` termina en la fecha de la portada y la p. 2 es el `Resumen`; la portada ocupa **exactamente una pagina**. Ledger base de 1.4: 109 / 100 / 9; delta **0 / 0 / 0**.
+- **8.4 Renders**: `tesis_para_agente.md` regenerado con `build_tesis_para_agente.py v1.2.1` (encabezado `(v10 / v1.2.1)`); textos extraidos `tesis_para_evaluacion.txt` (109 saltos de pagina, igual a las paginas del PDF) y `tesis_completa_extraida.txt` (espacios colapsados) regenerados con `pdftotext -enc UTF-8` desde el `main.pdf` de 8.1. Las cuatro oraciones corregidas (`48 pruebas`, `96/130`, `6,66`, `42,1`) figuran en los tres renders. **Nota de entorno**: la tarea nombra `python`; en esta maquina solo existe `python3`, de modo que el generador se invoco con `python3` (mismo script, solo stdlib). El primer intento con `python` fallo con `python: command not found` y vacio el redirect; se re-ejecuto con `python3` (exit 0).
+- **8.5 Figuras y config**: los **12** `\includegraphics` de `sections/*.tex` resuelven contra `\graphicspath{{./figures/}{./}{./assets/}}` (`preambulo`, linea 69): `assets/logo-utn-frm.png`, `componentes`, `arquitectura_sistema`, `despliegue`, `secuencia`, `er_modelo_datos`, `panel_admin`, `dashboard`, `boxplot_tiempos`, `matriz_confusion`, `cronograma` y `flujo_n8n`. Cada puntero de `openspec/config.yaml` (`context_files` y `stack.*.path`) apunta a un archivo o directorio existente, incluido `docs/Tesis/v10 (IA)/tesis_para_agente.md` regenerado en 8.4.
+- **Artefactos de compilacion**: conforme a la convencion del repositorio (los "artefactos de compilacion versionados de `paper/`", ver c-136/c-141), se consignan `main.pdf` y los artefactos intermedios versionados (`main.aux`, `main.blg`, `main.fdb_latexmk`, `main.xdv`) junto con los renders. `main.toc` no cambio (mismo mapa de paginas). `main.log` esta gitignored y no se versiona.
+

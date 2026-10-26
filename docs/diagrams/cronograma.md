@@ -11,16 +11,17 @@ elemento se dibuja con la precisión de su evidencia (mes o día). Las fechas de
 son evidencia de actividad, no límites de iteración: ninguna se convirtió en inicio o
 fin de una iteración.
 
-**Estado de OQ-1 (RESUELTA PROVISIONALMENTE, 2026-10-25; pendiente de confirmación del
-autor).** No hay fuente primaria de las fechas de las seis iteraciones: el campo de
-iteración del tablero GitHub Projects no es legible con el token de esta máquina
-(`gh project list --owner lucaGomezB` falla con "your authentication token is missing
-required scopes [read:project]") y los autores no confirmaron los intervalos. Por la
-regla (iv) de D5, las seis barras individuales quedan **pendientes de confirmación** y la
-construcción se representa con la precisión disponible: dos barras de mes que cubren
-los períodos de actividad de desarrollo registrados en el repositorio. Los autores
-deben aportar el inicio y el fin de cada iteración (y confirmar si fueron de dos
-semanas y contiguas) para reemplazar esas barras por las seis individuales.
+**Estado de OQ-1 (RESUELTA, 2026-10-26; confirmada por el autor).** No hay fuente
+primaria de las fechas de las iteraciones: el tablero técnico se gestionó en Jira, con
+un trial que se dio de baja y cuyos datos no se conservaron; GitHub Projects se usó para
+la coordinación del grupo, no como tablero técnico, y su campo de iteración no es legible
+con el token de esta máquina (`gh project list --owner lucaGomezB` falla con "your
+authentication token is missing required scopes [read:project]"). El autor confirmó que
+no hubo un número fijo de iteraciones: se ajustaron durante el proyecto. Por la regla
+(iv) de D5, la construcción se representa con la precisión disponible: dos barras de mes
+que cubren los períodos de actividad registrados en el repositorio. No se fijan número ni
+fechas individuales; una reconstrucción a partir del historial de commits puede
+consignarse como nota metodológica, nunca como registro primario de Jira.
 
 ## Diagrama
 
@@ -70,7 +71,7 @@ del repositorio, en solo lectura.
 | Corrida de correo y formulario (119 casos) | 2026-10-02 | día | c-68, `tasks.md` 6.4 ("EJECUTADA (2026-10-02 ...) web 53/53, correo 66/66") | `openspec/changes/archive/2026-10-09-c-68-corpus-ingesta-n8n/tasks.md` |
 | Corrida de telefonía (81 casos) | 2026-10-06 | día | c-70, `tasks.md` 8.2 ("REALIZADO (2026-10-06): 81/81 casos telefónicos") | `openspec/changes/archive/2026-10-06-c-70-softphone-corpus-telefonia/tasks.md` |
 | Recálculo del tiempo telefónico | 2026-10-19 | día | Commit `4602bf5` (c-77, "tiempo telefónico end-to-end"); decisión del autor del 2026-10-12 (grupo E de c-77) | `git log -1 --date=short --format='%ad %h %s' 4602bf5`; `openspec/changes/archive/2026-10-20-c-77-tesis-errores-estadisticos-inferenciales/tasks.md:93` |
-| Iteraciones 1 a 6 (fechas individuales) | **pendiente de confirmación (OQ-1)** | — | Sin fuente primaria: tablero GitHub Projects ilegible (falta el scope `read:project`) y sin confirmación de los autores | `gh project list --owner lucaGomezB` |
+| Iteraciones (número y fechas) | **no se fijan** | — | Confirmado por el autor (2026-10-26): no hubo un número fijo; se ajustaron durante el proyecto. El tablero técnico fue Jira y su trial se dio de baja sin export; GitHub Projects se usó para la coordinación del grupo | REGISTRO, grupo c-135, OQ-1; `gh project list --owner lucaGomezB` |
 
 ## Anclas que no se dibujan (contexto y verificación de coherencia)
 
@@ -90,13 +91,13 @@ del repositorio, en solo lectura.
 
 ## Coherencia con el texto de la tesis
 
-- **Iteraciones.** La tesis declara "seis iteraciones" (`04-marco-metodologico.tex`,
-  `06-implementacion.tex`, `12-anexos.tex`) sin duración nominal ni calendario por
-  iteración, hasta que los autores confirmen las fechas (OQ-1). La figura ubica la
+- **Iteraciones.** La tesis declara "iteraciones de duración variable"
+  (`04-marco-metodologico.tex`, `06-implementacion.tex`, `12-anexos.tex`), sin número
+  fijo ni calendario por iteración (OQ-1, confirmada el 2026-10-26). La figura ubica la
   construcción en los dos períodos de actividad del repositorio.
-- **Campañas.** La campaña manual (junio a agosto de 2026) no es una iteración de
+- **Campañas.** La campaña manual (junio a agosto de 2026) no es una etapa de
   construcción; la campaña automatizada (septiembre a octubre de 2026) corresponde a la
-  iteración 6 (validación experimental).
+  etapa de validación experimental.
 - **Versión del modelo.** `gemini-3.6-flash` se integró el 2026-09-24, antes de las
   corridas del corpus del 2026-10-02 y 2026-10-06; "junio de 2026" no es la fecha de la
   versión evaluada (en junio el clasificador usaba `gemini-2.5-flash`). Queda abierta

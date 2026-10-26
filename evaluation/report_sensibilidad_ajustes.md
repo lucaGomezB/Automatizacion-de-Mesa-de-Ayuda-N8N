@@ -10,6 +10,7 @@
 - Blob `prompt_vigente`: `49267f4a5cf214bf46899c5177661f1cdbfd10fb`.
 - SHA-256 de `keywords_pre_c71.json`: `8d9e646fae8ec5ff746fdaddecc5301a4db8f0df6e46da6d77eca26e56952e55`.
 - SHA-256 de `prompt_gemini_pre_c72.txt`: `934542f6d6a96ab77c58615419cb8f3265913f24ae01adbc326ecd723bdcc1ec`.
+- Cache FORCE-ESCALATE usada en E3/E4: `classifier_version` `hybrid-v2`, `corpus_hash` `5f062e1466facd1a522d80c2693d1d256017aae37372c2d288646ba104f46a93` (no coincide con el del corpus vigente). La guarda `verificar_cache_contra_corpus` verifico identificador, descripcion y sector asignado de las 200 entradas (0 diferencias); el uso de la cache fue confirmado por los autores.
 - Pre-registro: variantes, comparadores y reglas de lectura fijados en el design de c-142 (D2-D4, D8, D9) antes de computar; todas se reportan cualquiera sea el resultado.
 
 ## Configuracion evaluada (V1 + L1)
