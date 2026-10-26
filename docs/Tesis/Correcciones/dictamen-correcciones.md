@@ -1084,17 +1084,20 @@ Seccion 7, punto 7, de `numeros-canonicos.md`; reversible si el autor aporta la 
 | T15 | `11-aspectos-legales.tex:34` | Aplicada [D7, PROVISIONAL] |
 | T16 | `12-anexos.tex` (tab:anexo_gemini_params) | Aplicada (fila nueva tras `timeout`, sin tocar `timeout`) |
 
-Tarea 9.1 (roles, agregada por Luca en `2236b26`): aplicada en `04-marco-metodologico.tex:108`.
-Evidencia `git shortlog -sne HEAD`: lucaGomezB 417, GonzaloSevilla22 93, Luca Gomez 35, Gonzalo
-Sevilla 15, dependabot[bot] 1 (con `--all`: 420/93/35/15/6); **ningun commit a nombre de Carla
-Bustos** y ninguna mencion en los mensajes (`git log --grep`). Carla pasa a revisora de la tesis y
-colaboradora en anexos y corroboracion de fuentes; el modulo Python y el modelado de datos se
-atribuyen a Luca Gomez; la configuracion N8N y la integracion telefonica quedan en Gonzalo
-Sevilla (commits c-04/c-05 sobre el workflow); se conserva la supervision del director.
-**Salvedad para los autores**: el historial tambien muestra que el modulo inicial
-`Gestion_Incidentes` y el frontend los commiteo la identidad `GonzaloSevilla22`
-(`7db7fe1`, `ca8e2b6`, 2026-05-20/21) y que el codigo de telefonia del backend es de
-`lucaGomezB`; la redaccion adoptada sigue el encargo del design y debe confirmarse.
+Tarea 9.1 (roles, agregada por Luca en `2236b26`): aplicada en `04-marco-metodologico.tex:95`.
+Evidencia `git shortlog -sne` sobre `224fa16` (re-medida el 2026-10-26): lucaGomezB 418,
+GonzaloSevilla22 93, Gonzalo Sevilla 52, Luca Gomez 35, dependabot[bot] 1; **ningun commit a
+nombre de Carla Bustos** y ninguna mencion en los mensajes (`git log --grep`). Carla pasa a
+revisora de la tesis y colaboradora en anexos y corroboracion de fuentes. **Correccion del
+2026-10-26, confirmada por el autor**: la redaccion anterior atribuia a Luca Gomez "el desarrollo
+del modulo Python y el modelado de la base de datos" y a Gonzalo Sevilla "la integracion
+telefonica mediante Twilio"; el historial la contradice en tres puntos. El modulo inicial
+`Gestion_Incidentes` (`7db7fe1`, 2026-05-20) y el frontend inicial (`ca8e2b6`, 2026-05-21) los
+firmo `GonzaloSevilla22`, igual que las migraciones iniciales (`ec92689`); todos los commits con
+Twilio son de `lucaGomezB`. El texto vigente atribuye la coordinacion general, la integracion de
+componentes y la integracion telefonica a Luca Gomez, y la implementacion inicial del modulo
+Python, el modelado inicial de la base de datos, el frontend y la configuracion del flujo N8N a
+Gonzalo Sevilla. Se conserva la supervision del director.
 
 ### Codigo (bloque 7, MEDIUM) y documentacion para agentes (bloque 8)
 
@@ -1308,7 +1311,7 @@ Cero llamadas a Gemini en todo el change; sin `GEMINI_API_KEY` real.
   pre-registro: `0977104`. Ninguna variante se ejecuto sobre el corpus real antes de esta verificacion; los tests de
   caracterizacion sobre el corpus (6.6) se ejecutaron despues.
 
-### Checkpoint del bloque 2 (gobernanza HIGH) - PROVISIONAL, 2026-10-25
+### Checkpoint del bloque 2 (gobernanza HIGH) - PROVISIONAL, 2026-10-25 (FORCE-ESCALATE confirmada el 2026-10-26)
 
 El usuario pidio aplicar la familia sin detenerse y no respondio de forma explicita a las preguntas del design.
 Cada decision queda **PROVISIONAL (pendiente de confirmacion del autor)**, con la recomendacion del design o la
@@ -1331,8 +1334,7 @@ c-131 pedia no usarla para sensibilidades sobre el corpus vigente por el hash di
 del design pre-registrado dependen de ella. Se uso con una guarda explicita (`verificar_cache_contra_corpus`:
 identificador, descripcion y sector asignado de las 200 entradas iguales al corpus, 0 diferencias) y se comprobo que el
 lado `V1` de E3 reproduce los `146/200` documentados (`docs/deterministic_calibration.md:89`) con 0 excluidos y que E4
-sobre `V1` reproduce `b = 16`, `c = 8`, `p = 0,1516` (`docs/deterministic_calibration.md:234`). **Decision PROVISIONAL**;
-si el autor la rechaza, E3 y E4 pasan a "no computable" (columna "Global" fuera de la tabla, rama "sin E3" de T01).
+sobre `V1` reproduce `b = 16`, `c = 8`, `p = 0,1516` (`docs/deterministic_calibration.md:234`). **Decision CONFIRMADA por el autor (2026-10-26)**: se acepta el uso de la FORCE-ESCALATE. Se explicita la tension con la consigna de c-131 (que pedia no usarla para sensibilidades sobre el corpus vigente): la excepcion se sostiene en que la guarda verifica identificador, descripcion y sector asignado de las 200 entradas (0 diferencias) y en que el lado `V1` de E3 reproduce los `146/200` documentados. `evaluation/report_sensibilidad_ajustes.md` declara el `corpus_hash` distinto en la seccion de procedencia. Si en el futuro se rechazara, E3 y E4 pasan a "no computable" (columna "Global" fuera de la tabla, rama "sin E3" de T01).
 
 ### Codigo (bloques 3 a 6 y 8; TDD estricto)
 
@@ -1352,7 +1354,7 @@ si el autor la rechaza, E3 y E4 pasan a "no computable" (columna "Global" fuera 
 - Desvio de 4.4: el design dice "9:1 -> cortocircuito", pero `w/(w + r + 1e-6)` con 9:1 da 0,8999999 < 0,90 (la constante
   deja el 9:1 apenas por debajo); la replica es fiel al codigo de `7925903` y no se toco. Las pruebas usan 10:1
   (cortocircuita, 0,9091) y 9:1 y 8:1 (no cortocircuitan). Por eso el cortocircuito de la epoca exige ganador >= 10 x segundo.
-- Reportes: `evaluation/report_sensibilidad_ajustes.md` (97 lineas, regenerado offline; dos corridas dan archivo identico
+- Reportes: `evaluation/report_sensibilidad_ajustes.md` (98 lineas, regenerado offline; dos corridas dan archivo identico
   byte a byte; `report.md` y las caches oficiales sin cambios, verificado por SHA-256).
 
 ### Valores obtenidos (memo, Seccion 3.10) y ramas elegidas
@@ -1442,8 +1444,8 @@ declarativa de A5 es de c-130 y c-144.
 
 `git checkout <commit-previo> -- evaluation/ .gitattributes .gitignore "docs/Tesis/v10 (IA)/" docs/anexo_h_prompt_gemini.md
 docs/Tesis/Correcciones/numeros-canonicos.md docs/Tesis/Correcciones/dictamen-correcciones.md`, regenerar el render y
-recompilar. Las decisiones PROVISIONALES (OQ1 a OQ7 y el uso de la FORCE-ESCALATE) se pueden revertir sin tocar los valores
-canonicos: si se rechaza la FORCE-ESCALATE, E3 y E4 pasan a "no computable" y la tabla pierde su cuarta columna.
+recompilar. La decision sobre la FORCE-ESCALATE quedo confirmada por el autor el 2026-10-26 (se acepta) y es reversible sin tocar los valores
+canonicos: si se rechazara, E3 y E4 pasan a "no computable" y la tabla pierde su cuarta columna.
 
 **Estado**: grupo aplicado.
 
@@ -2367,13 +2369,13 @@ Archivo `docs/Tesis/Correcciones/numeros-canonicos.md` (solo estructura, referen
 - **Numeros de la familia**: `git diff -U0 v1.1.1 -- sections/` agrega 148 tokens numericos nuevos (no presentes en las lineas retiradas del mismo archivo); 123 figuran literalmente en el memo y los 25 restantes se explican asi: 17 son redondeos de la tesis a tres decimales o a un decimal porcentual de valores de cuatro decimales registrados en las secciones 3.8 a 3.10 (`0,546` de `0,5459`, `0,610` de `0,6095`, `0,670` de `0,6698`, `0,725` de `0,7246`, `0,737` de `0,7368`, `0,749` de `0,7488`, `0,808` de `0,8079`, `0,835` de `0,8346`, `0,845` de `0,8448`, `0,847` de `0,8467`, `0,870` de `0,8696`, `0,906` de `0,9059`/`0,9057`, `0,947` de `0,9468`, `53,4`, `58,0`, `83,9` y `85,0 %` de `0,5341`, `0,5799`, `0,8390` y `0,85`); 5 son valores de la literatura citados en `tab:trabajos-academicos` (`0,433`, `0,801`, `0,862`, `28.243`, `4.684`), cuya procedencia esta en `extraccion-metricas-trabajos-c-135.md` y que no son resultados de la tesis; y 3 no son resultados (`0.28` de la altura de una figura, `0.6508` del abstract con punto decimal, `1558/2001` numero de decreto). No quedo ningun numero de resultado solo en la tesis.
 - **Procedencia (`archivo:linea`)**: se verificaron 90 citas de las filas del memo; las filas `vigente` cuyas lineas de `sections/*.tex` se habian desplazado por la familia se actualizaron (19 citas mas 4 ajustes manuales: `07-resultados.tex:22 -> 21`, `:55 -> :57`, `:61 -> :59`, `:129 -> :128`, `:158 -> :157`, `:190 -> :189`, entre otras; solo el numero de linea). Las filas `retirado` conservan su ubicacion historica a proposito. Las citas restantes marcadas por el verificador son diferencias de formato (`94,0 %` derivado, `65,5` en `report.md`, `19.737` como `19737.0000`).
 - **Ninguna corrida de sensibilidad cambio un valor `vigente`**: las tres filas que c-142 reformulo (`97/131`, `88/130` y la fila de la etapa determinista) conservan valor y estado; ninguna de las 27 filas `vigente` de `v1.1.1` ni de las 44 anteriores a c-142 cambio de valor ni de estado.
-- **Decisiones no resolubles**: la Seccion 7 conserva sus nueve puntos con su condicion de reversibilidad (punto 6, conjunto de preproduccion, c-144; punto 7, procedencia de la cache FORCE-ESCALATE, c-130; punto 8, variante por pliegues, y punto 9, version del prompt de la FORCE-ESCALATE, c-142). Los valores no derivables: nivel c del prompt (corrida paga no autorizada) figura como "no computado"; las sensibilidades E3/E4 dependen de la cache `hybrid-v2` con `corpus_hash` distinto (decision PROVISIONAL de c-142; si se rechaza pasan a "no computable").
+- **Decisiones no resolubles**: la Seccion 7 conserva sus nueve puntos con su condicion de reversibilidad (punto 6, conjunto de preproduccion, c-144; punto 7, procedencia de la cache FORCE-ESCALATE, c-130; punto 8, variante por pliegues, y punto 9, version del prompt de la FORCE-ESCALATE, c-142). Los valores no derivables: nivel c del prompt (corrida paga no autorizada) figura como "no computado"; las sensibilidades E3/E4 dependen de la cache `hybrid-v2` con `corpus_hash` distinto (decision confirmada por el autor el 2026-10-26: se acepta; si se rechazara pasan a "no computable").
 - **Encabezado**: titulo "version de trabajo v10, release prevista `v1.2.0`"; nueva vineta "Consolidacion c-141" con la fecha de consolidacion 2026-10-26; conserva el SHA-256 del corpus `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb`.
 
 ### Reportes de evaluacion (tarea 2.8)
 
 - `evaluation/report.md` conserva sus secciones: Etapas del pipeline, Exactitud, Matriz de Confusion, Metricas por sector, Metricas de conjunto, **Exactitud por etapa** y **por canal** y **Calibracion de la confianza** (c-131), **Tiempos** con Normalidad (Shapiro-Wilk), Prueba de Wilcoxon, Reduccion de tiempos, Desglose por canal (y, de c-134, Descriptivos, Contraste direccional y Escenarios de sensibilidad del redondeo). Los valores canonicos coinciden con el memo (`0.7350`, `0.5207`, `0.6654`, `0.3586`, `61.5850`, `17.7606`, `71.16`, `W = 363`, `T+ = 19737`, `r = 0.9639`, `0.7405`, `0.7246`); los valores de cuatro decimales de `report.md` que el memo no registra son descriptivos que la tesis no cita.
-- `evaluation/report_sensibilidad_ajustes.md` existe (97 lineas); sus 32 valores de cuatro decimales figuran en el memo (3.10) salvo constantes de diseno (`0.2000`, `0.3000`, `0.5000`). Declara el nivel c "no computado; requiere autorizacion explicita y no se ejecuto".
+- `evaluation/report_sensibilidad_ajustes.md` existe (98 lineas); sus 32 valores de cuatro decimales figuran en el memo (3.10) salvo constantes de diseno (`0.2000`, `0.3000`, `0.5000`). Declara el nivel c "no computado; requiere autorizacion explicita y no se ejecuto".
 - **Sin invocaciones pagas**: la ablacion del prompt (G0.7a) no esta autorizada y `report_sensibilidad_ajustes.md` no registra corrida paga; ninguna tarea de este tramo invoco a Gemini.
 - `report.md` y las caches oficiales no fueron modificados por c-142 (`git show --stat 59b9967 -- evaluation/report.md evaluation/evidence` vacio; `git log -- evaluation/report.md` solo muestra c-134 codigo, c-131 y el versionado inicial).
 - Huella del corpus: `git show HEAD:data/corpus_evaluacion_pseudonimizado.json | sha256sum` = `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb` (coincide con la esperada). Las copias vivas `evaluation/predicciones*.json` siguen ignoradas (`.gitignore:72`) y son copias locales de las evidencias versionadas de c-143.
