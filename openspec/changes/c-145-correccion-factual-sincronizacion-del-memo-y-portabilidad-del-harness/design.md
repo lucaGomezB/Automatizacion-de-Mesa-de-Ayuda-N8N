@@ -38,7 +38,7 @@ Ver `proposal.md` (Why). Estado verificado en el arbol de trabajo (2026-10-26, r
 
 ### D1 - Orden de aplicacion y unidad del change
 
-Orden: (1) bloque E (codigo y prueba de regresion); (2) bloques D y G (higiene del registro y documentacion para agentes); (3) bloque B (memo); (4) bloques A y C (tesis); (5) recompilacion y medicion de paginas (F1/F3); (6) release `v1.2.1` (F2); (7) cierre documental (F4).
+Orden: (1) bloques E y H (codigo, pruebas y barrera ejecutable); (2) bloques D y G (higiene del registro y documentacion para agentes); (3) bloque B (memo); (4) bloques A y C (tesis); (5) recompilacion y medicion de paginas (F1/F3); (6) release `v1.2.1` (F2); (7) cierre documental (F4).
 
 El bloque E va primero porque su suite es la red de seguridad del resto y porque el baseline debe quedar registrado con el interprete local. B va antes que A/C porque A/C consumen valores del memo y porque la correccion de referencias debe hacerse sobre el texto ya editado. F va al final porque mide y etiqueta el resultado integrado.
 
@@ -206,6 +206,44 @@ Alcance de la correccion: reemplazar los valores por los reales; convertir el di
 **Alternativa considerada:** dejar la documentacion para agentes fuera de este change y abrir un c-146. Se descarta por decision del autor: es documentacion de bajo riesgo, sin efecto en el PDF ni en la release, y dejarla afuera mantendria dos documentos que se contradicen dentro del mismo PR que se propone corregir.
 
 **Requisito normativo:** `project-documentation` incorpora `DOC-005`, que exige que todo valor de stack declarado en la documentacion para agentes coincida con el codigo o el archivo de dependencias, con escenarios para modelo, versiones y flujo vigente. Es un requisito `ADDED`, de modo que no altera escenarios vivos de otros requisitos.
+
+### D15 - H: barrera ejecutable de `DOC-005`
+
+Un requisito de spec no se verifica solo: `openspec validate --specs --strict` comprueba forma y consistencia estructural, no el contenido de `CLAUDE.md`. Sin un chequeo ejecutable, `DOC-005` seria una declaracion de intencion y el drift volveria en la proxima pasada de redaccion, que es exactamente como sobrevivio la afirmacion de los 16 tests. Por eso el bloque H materializa el requisito.
+
+**Ubicacion:** `scripts/preflight/docs_stack_sync.py`, junto a `cost_readiness.py` y `gemini_readiness.py`, que ya corren en el job `backend-tests`. Se reutiliza su contrato (`Check`, `exit_code`, `format_summary`) y su `requirements.txt`, que ya declara `PyYAML>=6.0,<7.0`.
+
+**Entradas (solo lectura, sin red, sin credenciales, sin Docker):**
+
+| Fuente | Que se extrae | Como |
+|---|---|---|
+| `App/Backend/app/config/settings.py` | defaults de `gemini_model`, `gemini_timeout_seconds`, `gemini_total_timeout_seconds`, `gemini_max_retries`, `gemini_temperature`, `gemini_top_p`, `gemini_max_output_tokens` | `ast.parse` y lectura del valor literal de cada asignacion anotada |
+| `App/Backend/requirements.txt` | pins de `fastapi`, `uvicorn`, `google-genai` | lineas de requerimiento |
+| `docker-compose.yml` | imagenes por servicio | `yaml.safe_load` |
+| `openspec/config.yaml` | modelo, `params`, `stack.backend.framework`, `stack.orchestration.tool` | `yaml.safe_load` |
+| `CLAUDE.md` | modelo, parametros, servicios y etapas que afirma | texto |
+
+**Decision de parsing:** se usa `ast` sobre `settings.py` en lugar de importar `Settings`. Importarlo obligaria al preflight a depender de `pydantic-settings` y de las variables de entorno de CI, justo lo que el resto de los preflights evita a proposito. `ast` es estatico, offline y no ejecuta codigo del backend. Alternativa descartada: importar `Settings` con las variables dummy de CI; acopla el preflight al arranque de la app y a `App/Backend/requirements.txt`.
+
+**Chequeos (cada uno devuelve un `Check` propio, de modo que el mensaje nombre el valor divergente):**
+
+1. Modelo declarado en `config.yaml` y en `CLAUDE.md` igual a `Settings.gemini_model`.
+2. `timeout_s`, `total_timeout_s` y `max_retries` de `config.yaml` iguales a `Settings`.
+3. `temperature`, `top_p` y `max_output_tokens` iguales a `Settings`.
+4. Versiones de FastAPI y Uvicorn de `config.yaml` compatibles con los pins de `requirements.txt`.
+5. Restriccion de `google-genai` de `config.yaml` y de `CLAUDE.md` compatible con la de `requirements.txt`.
+6. Version de N8N de `config.yaml` igual al tag de la imagen `n8nio/n8n` del compose (sin sufijo de registro).
+7. Todo servicio que `CLAUDE.md` describa como parte del stack existe como servicio del compose (el caso Redis).
+8. Ninguna etapa o tecnologia retirada se describe como vigente (el caso LangChain): si `CLAUDE.md` menciona un nodo o etapa, el workflow debe contenerlo; los tests de c-72 documentan su ausencia.
+9. `openspec/config.yaml` parsea como YAML y conserva las claves que consume el CLI.
+
+**Semantica:** `exit_code(checks)` es 0 si y solo si todos son PASS, igual que los otros preflights. Un YAML malformado produce un `Check` FAIL con mensaje explicito, nunca una traza cruda.
+
+**Cableado en CI:** paso nuevo en el job `backend-tests`, despues del preflight de Gemini, mas la inclusion automatica en `python -m pytest scripts/preflight -q`, que ya corre el job. El orden importa: el preflight se ejecuta despues de que el bloque G corrige la documentacion, porque antes de esa correccion debe fallar (y ese fallo se usa como prueba de que la barrera detecta el drift real).
+
+**Prueba de que la barrera sirve:** se corre el preflight sobre el arbol **sin** el bloque G aplicado y se verifica que falla nombrando exactamente el modelo, el timeout, FastAPI, la imagen de N8N y Redis. Ese resultado se consigna en el REGISTRO. Despues del bloque G, el mismo comando debe salir 0. Una barrera que nunca se vio fallar no es evidencia de nada.
+
+**Alternativa considerada:** validar solo con `grep` de las cadenas retiradas. Se descarta: detecta el sintoma ya conocido y no el proximo drift (una version nueva, un servicio nuevo, una etapa nueva); el chequeo cruzado contra la fuente falla ante cualquier divergencia, incluida la que todavia no conocemos.
 
 ## Risks / Trade-offs
 
