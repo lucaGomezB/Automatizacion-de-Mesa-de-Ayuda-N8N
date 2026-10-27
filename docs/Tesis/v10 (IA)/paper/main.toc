@@ -101,7 +101,7 @@
 \contentsline {section}{\numberline {D}Especificación OpenAPI de la interfaz REST}{98}{section.1.D}%
 \contentsline {section}{\numberline {E}Configuración del flujo N8N}{99}{section.1.E}%
 \contentsline {section}{\numberline {F}Corpus de validación}{99}{section.1.F}%
-\contentsline {section}{\numberline {G}Documentación operativa}{101}{section.1.G}%
+\contentsline {section}{\numberline {G}Documentación operativa}{100}{section.1.G}%
 \contentsline {section}{\numberline {H}Especificación del prompt de Gemini 3.6 Flash}{101}{section.1.H}%
 \contentsline {subsection}{\numberline {H.1}Estructura y contenido del prompt}{101}{subsection.1.H.1}%
 \contentsline {subsection}{\numberline {H.2}Parámetros de configuración}{101}{subsection.1.H.2}%
