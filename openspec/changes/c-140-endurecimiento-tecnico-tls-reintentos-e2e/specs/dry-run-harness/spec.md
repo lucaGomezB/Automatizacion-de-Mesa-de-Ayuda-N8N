@@ -119,17 +119,3 @@ El arnes SHALL poder escribir, bajo una opcion explicita, un reporte JSON con el
 
 - **WHEN** se inspecciona el reporte generado
 - **THEN** no contiene la contrasena del operador, el token de acceso, claves de API ni material criptografico
-
-### Requirement: Variante opcional de correo con servidor IMAP/SMTP simulado
-
-El arnes SHALL ofrecer, solo bajo un flag explicito y fuera del camino minimo, una variante del canal correo que use un servidor IMAP/SMTP de prueba levantado por un override de Compose propio del arnes, con imagen fijada por digest y procedencia verificada. La variante SHALL importar en N8N credenciales de prueba sin secretos, conservar el trigger IMAP y los nodos de envio vinculados a esas credenciales, enviar un correo de prueba y verificar que se persiste un incidente con `canal_origen_id` igual a 1 y que el correo de confirmacion llega al buzon de prueba. Sin el flag, el arnes MUST NOT levantar el servidor ni agregar checks de esta variante.
-
-#### Scenario: Correo simulado registrado y confirmado
-
-- **WHEN** se ejecuta el arnes con el flag de correo simulado
-- **THEN** el incidente inducido por correo se persiste con `canal_origen_id` igual a 1 y el buzon de prueba recibe la confirmacion
-
-#### Scenario: Variante ausente sin flag
-
-- **WHEN** el arnes se ejecuta sin el flag de correo simulado
-- **THEN** no se levanta el servidor de prueba y el resumen no incluye checks de esa variante
