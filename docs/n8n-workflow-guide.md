@@ -875,13 +875,13 @@ El ciclo de confianza < 0.70 está verificado: Gemini devolvió confianza 0.6, b
 - Audit event esperado: `{incidente_id: 15, canal_origen: "web", sector_nombre: "Sistemas", confianza: 1.0, resultado: "creado", retencion_dias: 30}`
 
 Se confirma:
-- **PII excluida**: `descripcion` NO incluida en el evento de auditoría. ✓
-- **Campos correctos**: `{incidente_id, canal_origen, timestamp, sector_nombre, confianza, resultado, retencion_dias: 30}`. ✓
-- **`retencion_dias: 30`** declarado explícitamente. ✓
-- **D-3 fix**: `sector_nombre` lee `item.sector?.nombre` (no `item.categoria`). ✓
-- **D-4 fix**: `canal_origen` y `confianza` leídos del nodo normalizador upstream. ✓
-- **Rama de rechazo cableada**: IF false branch → `Registro de auditoria` directamente. ✓
-- **Rama exitosa**: HTTP POST → `Registro de auditoria` (en paralelo con `Rutear por canal`). ✓
+- **PII excluida**: `descripcion` NO incluida en el evento de auditoría.
+- **Campos correctos**: `{incidente_id, canal_origen, timestamp, sector_nombre, confianza, resultado, retencion_dias: 30}`.
+- **`retencion_dias: 30`** declarado explícitamente.
+- **D-3 fix**: `sector_nombre` lee `item.sector?.nombre` (no `item.categoria`).
+- **D-4 fix**: `canal_origen` y `confianza` leídos del nodo normalizador upstream.
+- **Rama de rechazo cableada**: IF false branch → `Registro de auditoria` directamente.
+- **Rama exitosa**: HTTP POST → `Registro de auditoria` (en paralelo con `Rutear por canal`).
 
 #### 7.6 — `active: false` en JSON versionado: VERIFICADO
 
