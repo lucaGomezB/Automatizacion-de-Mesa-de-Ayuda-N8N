@@ -1,8 +1,8 @@
-# Parámetros de Configuración: Gemini 2.5 Flash
+# Parámetros de Configuración: Gemini 3.6 Flash
 
 ## Invocación de API
 
-Versión de cliente: `google-genai >= 1.0` (SDK nuevo; reemplaza al deprecado `google-generativeai`)
+Versión de cliente: `google-genai >=2.31,<3` (SDK nuevo; reemplaza al deprecado `google-generativeai`)
 
 ```python
 import asyncio
@@ -48,11 +48,11 @@ config = genai_types.GenerateContentConfig(
 
 response = await asyncio.wait_for(
     client.aio.models.generate_content(
-        model="gemini-2.5-flash",
+        model="gemini-3.6-flash",
         contents=prompt + descripcion_incidente,
         config=config,
     ),
-    timeout=10,
+    timeout=30,
 )
 ```
 
@@ -70,9 +70,9 @@ response = await asyncio.wait_for(
 | candidate_count | 1 | Única respuesta candidata; optimiza latencia |
 | response_mime_type | application/json | Modo JSON de la API: impide fences Markdown (```json) que el validador del Anexo H rechaza |
 | response_schema | Schema con enum | Restringe el valor de "categoría" a los 5 strings exactos con su casing correcto (Seguridad Informatica / Soporte Tecnico Hardware / Soporte Tecnico Software / Bases de Datos / Sistemas). Sin este schema, Gemini puede devolver "SISTEMAS" u otras variantes que el validador case-sensitive del Anexo H §H.3 rechaza, generando fallback innecesario e inflando la revisión humana. Ver docs/prompt_gemini.txt sección CASING para el refuerzo complementario en el prompt. |
-| thinking_config | thinking_budget=0 | Gemini 2.5 Flash razona por defecto y esos tokens cuentan contra max_output_tokens, truncando el JSON; presupuesto 0 = respuesta directa y menor latencia |
+| thinking_config | thinking_budget=0 | Gemini 3.6 Flash razona por defecto y esos tokens cuentan contra max_output_tokens, truncando el JSON; presupuesto 0 = respuesta directa y menor latencia |
 | safety_settings | BLOCK_NONE en las 4 categorías de daño | Permite terminología técnica de incidentes (ej. "se cayó", "atasco", "corte de red") |
-| timeout | 10s | Límite máximo; fallback a revisión humana si excede |
+| timeout | 30s | Límite por intento; fallback a revisión humana si excede (total 60 s, 2 reintentos) |
 
 ## Validación de Respuesta
 
@@ -95,7 +95,10 @@ Para futuras iteraciones, considerar:
 - Análisis de distribución de confianzas
 - Ajuste de umbral si cambia versión del modelo
 
-## Historial de Cambios
+## Historial de Cambios (registro historico; los valores citados son antecedentes, no el valor vigente)
+
+> Los valores de este historial son antecedentes. El valor vigente es `gemini-3.6-flash`
+> con timeout 30 s por intento (total 60 s, 2 reintentos) y `google-genai >=2.31,<3`.
 
 - v1.5 (Oct 2026): c-71 endurece el clasificador determinista. El umbral de cortocircuito pasa de `0.90` degenerado a un valor re-derivado OFFLINE de la curva precision/cobertura con piso de precision estricta >= 0.90 (OQ1): `Settings.deterministic_confidence_threshold = 1.0` (setting fijo, OQ3) y `deterministic_min_matches = 2`. La confianza ya no vale 1.0 con un unico match. Detalle y tradeoff en `docs/deterministic_calibration.md`. `HYBRID_CACHE_VERSION` sube a `hybrid-v2`.
 - v1.4 (Sep 2026): `enum` del `response_schema` y validación de respuesta actualizados a los 5 sectores canónicos sin tildes (`Seguridad Informatica`, `Soporte Tecnico Hardware`, `Soporte Tecnico Software`, `Bases de Datos`, `Sistemas`); `Operaciones` eliminado (C-27). Parámetros de inferencia sin cambios.

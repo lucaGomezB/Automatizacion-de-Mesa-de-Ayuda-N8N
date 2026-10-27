@@ -849,7 +849,7 @@ curl -X POST http://localhost:8000/api/v1/incidentes/ \
 # Escenario 2: confianza media → escala a Gemini
 curl -X POST http://localhost:8000/api/v1/incidentes/ \
   -d '{"descripcion": "La impresora de facturacion no imprime nada. Ya reiniciamos el equipo y sigue sin responder.", "prioridad": "media"}'
-# → HTTP 201, id: 10, sector: Soporte Tecnico Hardware, etapa: gemini (Gemini 2.5 Flash), confianza: 0.9
+# → HTTP 201, id: 10, sector: Soporte Tecnico Hardware, etapa: gemini (Gemini 2.5 Flash, valor historico de la corrida), confianza: 0.9
 
 # Escenario 3: confianza baja → revisión humana
 curl -X POST http://localhost:8000/api/v1/incidentes/ \

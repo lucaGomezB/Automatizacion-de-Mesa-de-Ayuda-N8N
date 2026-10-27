@@ -4,13 +4,13 @@
 
 | Capa | Tecnología | Versión | Notas |
 |---|---|---|---|
-| Orquestación | N8N | 1.62 | Docker autoalojado; webhooks + triggers |
-| API / Procesamiento | FastAPI + Uvicorn | 0.115 / 0.32 | Python 3.12; patrón factory `create_app()` |
+| Orquestación | N8N | 2.11.2 | Docker autoalojado; webhooks + triggers |
+| API / Procesamiento | FastAPI + Uvicorn | 0.143.3 / 0.54.0 | Python 3.12; patrón factory `create_app()` |
 | ORM | SQLAlchemy | 2.0 | API declarativa async (`Mapped`/`mapped_column`) |
 | Driver DB | asyncpg | — | La tesis menciona psycopg2; el código usa asyncpg (ver [09](09_decisiones_y_supuestos.md) DD-08) |
 | Base de datos | PostgreSQL | 15.5 | Imagen `postgres:15.5-alpine`, volumen persistente |
 | Migraciones | Alembic | — | `alembic/versions/001_seed_catalogs.py` siembra catálogos |
-| Inferencia LLM | Gemini 2.5 Flash | `google-genai` ≥ 1.0 | temp 0,3 · top_p 0,9 · max_tokens 100 · timeout 10 s; reemplaza al deprecado `google-generativeai` |
+| Inferencia LLM | Gemini 3.6 Flash | `google-genai` >=2.31,<3 | temp 0,3 · top_p 0,9 · max_tokens 100 · timeout 30 s por intento (total 60 s, 2 reintentos); reemplaza al deprecado `google-generativeai` |
 | Telefonía | Twilio Programmable Voice | — | TwiML + transcripción automática nativa |
 | Frontend | React 19 + TypeScript + Vite | — | React Query + Axios + shadcn/ui |
 | Logging | structlog | — | JSON (prod) / consola (dev) |
@@ -27,7 +27,7 @@
 └───────────────┬──────────────────────────────────────────────┘
                 ▼ webhooks / triggers
 ┌──────────────────────────────────────────────────────────────┐
-│ 2. ORQUESTACIÓN — N8N v1.62 (Docker autoalojado)             │
+│ 2. ORQUESTACIÓN — N8N v2.11.2 (Docker autoalojado)           │
 │    Normalización → invocación API → ruteo por confianza      │
 └───────────────┬──────────────────────────────────────────────┘
                 ▼ HTTP/REST (TLS 1.3)
@@ -39,7 +39,7 @@
        ▼ si reglas no deciden                   ▼ asyncpg
 ┌─────────────────────────┐      ┌────────────────────────────┐
 │ 4. INFERENCIA           │      │ 5. PERSISTENCIA            │
-│    Gemini 2.5 Flash     │      │    PostgreSQL 15.5         │
+│    Gemini 3.6 Flash     │      │    PostgreSQL 15.5         │
 │    (pseudonimizado)     │      │    5 tablas + auditoría    │
 └─────────────────────────┘      └────────────────────────────┘
 ```

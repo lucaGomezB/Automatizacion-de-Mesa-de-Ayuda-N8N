@@ -4,7 +4,7 @@
 
 **Disparador**: usuario envía el formulario React. **Actor**: usuario interno.
 
-1. Frontend valida y envía `POST /api/v1/incidentes` (Axios, timeout 20 s > timeout Gemini 10 s).
+1. Frontend valida y envía `POST /api/v1/incidentes` (Axios, timeout 65 s > peor caso total de una clasificación en el backend 60 s; ver `App/Frontend/src/services/api.ts`).
 2. `IncidenteService` persiste el incidente (estado "nuevo") y dispara la clasificación híbrida.
 3. `HybridClassifier`: etapa deterministica -> si hay senal dominante y score_correctitud >= 0,5166 decide; si no -> pseudonimizar (C-03, implementado en `utils/pseudonymizer.py`) -> Gemini -> validacion de respuesta (RN-VA) -> si todo falla, fallback.
 4. Se escribe `clasificacion_log` (etapa, confianza, respuesta_raw); se asigna `sector_id` al incidente.

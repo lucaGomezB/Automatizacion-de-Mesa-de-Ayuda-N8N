@@ -37,22 +37,56 @@ REQUIREMENTS_REL = "App/Backend/requirements.txt"
 COMPOSE_REL = "docker-compose.yml"
 CONFIG_REL = "openspec/config.yaml"
 CLAUDE_REL = "CLAUDE.md"
+KB_REL = "knowledge-base"
+REFERENCIA_REL = ("docs/parameters_gemini.md", "docs/n8n-workflow-guide.md")
+API_TS_REL = "App/Frontend/src/services/api.ts"
+
+#: Reemplazos idempotentes que dejan la superficie ampliada sincronizada con el
+#: codigo (no-op sobre el arbol ya corregido). Hacen el fixture hermetico.
+_SUPERFICIE_REEMPLAZOS = (
+    ("Gemini 2.5 Flash", "Gemini 3.6 Flash"),
+    ("gemini-2.5-flash", "gemini-3.6-flash"),
+    ("timeout 10 s", "timeout 30 s"),
+    ("timeout=10,", "timeout=30,"),
+    ("| timeout | 10s |", "| timeout | 30s |"),
+    ("· 1 · 10 |", "· 1 · 30 |"),
+    # Versiones de componentes (chequeo 17): estado sincronizado con el codigo.
+    ("N8N | 1.62", "N8N | 2.11.2"),
+    ("N8N v1.62", "N8N v2.11.2"),
+    ("N8N oficial 1.62", "N8N oficial 2.11.2"),
+    ("N8N 1.62 autoalojado", "N8N 2.11.2 autoalojado"),
+    ("FastAPI + Uvicorn | 0.115 / 0.32", "FastAPI + Uvicorn | 0.143.3 / 0.54.0"),
+    ("FastAPI 0.115 sobre Uvicorn", "FastAPI 0.143.3 sobre Uvicorn 0.54.0"),
+)
 
 
 # ---------------------------------------------------------------------------
 # Fixtures: copia del arbol real y version sincronizada
 # ---------------------------------------------------------------------------
+def _superficie(raiz: pathlib.Path) -> list:
+    """Archivos de la superficie ampliada (KB + material de referencia)."""
+    return sorted((raiz / KB_REL).glob("**/*.md")) + [raiz / rel for rel in REFERENCIA_REL]
+
+
 def _copiar_arbol(tmp_path: pathlib.Path) -> pathlib.Path:
     raiz = tmp_path / "repo"
     for relativo in (SETTINGS_REL, CONSTANTS_REL, REQUIREMENTS_REL, COMPOSE_REL, CONFIG_REL, CLAUDE_REL):
         destino = raiz / relativo
         destino.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy(REPO_ROOT / relativo, destino)
+    shutil.copytree(REPO_ROOT / KB_REL, raiz / KB_REL)
+    for relativo in REFERENCIA_REL:
+        destino = raiz / relativo
+        destino.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy(REPO_ROOT / relativo, destino)
+    api = raiz / API_TS_REL
+    api.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy(REPO_ROOT / API_TS_REL, api)
     return raiz
 
 
 def _sincronizar(raiz: pathlib.Path) -> pathlib.Path:
-    """Aplica las correcciones del bloque G (documentacion == codigo)."""
+    """Aplica las correcciones del bloque G y de los bloques A/B/E (documentacion == codigo)."""
     config = (raiz / CONFIG_REL).read_text(encoding="utf-8")
     config = config.replace("Gemini 2.5 Flash", "Gemini 3.6 Flash")
     config = config.replace("google-genai >= 1.0", "google-genai >=2.31,<3")
@@ -63,6 +97,16 @@ def _sincronizar(raiz: pathlib.Path) -> pathlib.Path:
     (raiz / CONFIG_REL).write_text(config, encoding="utf-8")
     (raiz / CLAUDE_REL).write_text(
         "# CLAUDE.md\n\nModelo de inferencia: Gemini 3.6 Flash.\n", encoding="utf-8"
+    )
+    for ruta in _superficie(raiz):
+        texto = ruta.read_text(encoding="utf-8")
+        for viejo, nuevo in _SUPERFICIE_REEMPLAZOS:
+            texto = texto.replace(viejo, nuevo)
+        ruta.write_text(texto, encoding="utf-8")
+    api = raiz / API_TS_REL
+    api.write_text(
+        api.read_text(encoding="utf-8").replace("timeout: 20_000", "timeout: 65_000"),
+        encoding="utf-8",
     )
     return raiz
 
@@ -75,6 +119,9 @@ def _checks(raiz: pathlib.Path):
         compose_path=raiz / COMPOSE_REL,
         config_path=raiz / CONFIG_REL,
         claude_path=raiz / CLAUDE_REL,
+        kb_dir=raiz / KB_REL,
+        referencia_paths=tuple(raiz / rel for rel in REFERENCIA_REL),
+        api_ts_path=raiz / API_TS_REL,
     )
 
 
@@ -393,6 +440,319 @@ def test_j_identificador_retirado_falla(tmp_path):
     raiz = _sincronizar(_copiar_arbol(tmp_path))
     (raiz / CLAUDE_REL).write_text(
         "Modelo: Gemini 2.5 Flash.\n", encoding="utf-8"
+    )
+
+    checks = _checks(raiz)
+    _assert_fails_naming(checks, "2.5 Flash")
+
+
+# ===========================================================================
+# Chequeo 13 - modelo vigente en la superficie ampliada (KB + referencia)
+# ===========================================================================
+def test_superficie_declarada_incluye_kb_y_referencia():
+    assert docs_stack_sync.KB_DIR.name == "knowledge-base"
+    nombres = {pathlib.Path(p).name for p in docs_stack_sync.DOCS_REFERENCIA}
+    assert {"parameters_gemini.md", "n8n-workflow-guide.md"} <= nombres
+    assert docs_stack_sync.API_TS_PATH.name == "api.ts"
+
+
+def test_chequeo_13_modelo_retirado_en_kb_sin_rotulacion_falla(tmp_path):
+    raiz = _sincronizar(_copiar_arbol(tmp_path))
+    ruta = raiz / KB_REL / "01_vision_y_objetivos.md"
+    ruta.write_text(
+        ruta.read_text(encoding="utf-8").replace("Gemini 3.6 Flash", "Gemini 2.5 Flash"),
+        encoding="utf-8",
+    )
+
+    checks = _checks(raiz)
+    _assert_fails_naming(checks, "2.5 Flash")
+    _assert_fails_naming(checks, "01_vision_y_objetivos.md")
+
+
+def test_chequeo_13_modelo_retirado_con_rotulacion_pasa(tmp_path):
+    raiz = _sincronizar(_copiar_arbol(tmp_path))
+    ruta = raiz / KB_REL / "01_vision_y_objetivos.md"
+    ruta.write_text(
+        ruta.read_text(encoding="utf-8").replace(
+            "Gemini 3.6 Flash",
+            "Gemini 3.6 Flash (el antecedente historico fue Gemini 2.5 Flash)",
+            1,
+        ),
+        encoding="utf-8",
+    )
+
+    checks = _checks(raiz)
+    assert all(c.status == "PASS" for c in checks), _summary(checks)
+
+
+def test_chequeo_13_modelo_desconocido_en_kb_falla(tmp_path):
+    """(g) la regla no esta hardcodeada a 2.5: cualquier token != Settings falla."""
+    raiz = _sincronizar(_copiar_arbol(tmp_path))
+    ruta = raiz / KB_REL / "05_reglas_de_negocio.md"
+    ruta.write_text(
+        ruta.read_text(encoding="utf-8").replace("Gemini 3.6 Flash", "Gemini 9.9 Flash"),
+        encoding="utf-8",
+    )
+
+    checks = _checks(raiz)
+    _assert_fails_naming(checks, "9.9 Flash")
+
+
+def test_chequeo_13_modelo_retirado_en_referencia_sin_rotulacion_falla(tmp_path):
+    raiz = _sincronizar(_copiar_arbol(tmp_path))
+    _mutar(raiz, REFERENCIA_REL[0], "Gemini 3.6 Flash", "Gemini 2.5 Flash")
+
+    checks = _checks(raiz)
+    _assert_fails_naming(checks, "parameters_gemini.md")
+
+
+# ===========================================================================
+# Chequeo 14 - timeout vigente en contexto de parametros de Gemini
+# ===========================================================================
+def test_chequeo_14_timeout_retirado_en_contexto_gemini_falla(tmp_path):
+    raiz = _sincronizar(_copiar_arbol(tmp_path))
+    _mutar(raiz, "knowledge-base/05_reglas_de_negocio.md", "timeout 30 s", "timeout 10 s")
+
+    checks = _checks(raiz)
+    _assert_fails_naming(checks, "timeout retirado 10")
+    _assert_fails_naming(checks, "05_reglas_de_negocio.md")
+
+
+def test_chequeo_14_timeout_vigente_pasa(tmp_path):
+    raiz = _sincronizar(_copiar_arbol(tmp_path))
+
+    checks = _checks(raiz)
+    assert all(c.status == "PASS" for c in checks), _summary(checks)
+
+
+def test_chequeo_14_timeout_retirado_con_rotulacion_pasa(tmp_path):
+    raiz = _sincronizar(_copiar_arbol(tmp_path))
+    _mutar(
+        raiz,
+        "knowledge-base/05_reglas_de_negocio.md",
+        "timeout 30 s",
+        "timeout 30 s (el valor historico calibrado fue timeout 10 s)",
+    )
+
+    checks = _checks(raiz)
+    assert all(c.status == "PASS" for c in checks), _summary(checks)
+
+
+def test_chequeo_14_timeout_de_n8n_fuera_de_contexto_no_falla(tmp_path):
+    """(negativo) un timeout de N8N sin contexto de Gemini no dispara el chequeo 14."""
+    raiz = _sincronizar(_copiar_arbol(tmp_path))
+    _mutar(
+        raiz,
+        REFERENCIA_REL[1],
+        "| `Login operador` | 3 | 5000 ms | 10000 ms (10 s) |",
+        "| `Login operador` | 3 | 5000 ms | 10000 ms (10 s) |  # timeout 10 s",
+    )
+
+    checks = _checks(raiz)
+    assert not any("timeout retirado" in c.detail for c in _fails(checks)), _summary(checks)
+
+
+# ===========================================================================
+# Chequeo 15 - superficie documental cubierta
+# ===========================================================================
+def test_chequeo_15_archivo_esperado_ausente_falla_sin_excepcion(tmp_path):
+    raiz = _sincronizar(_copiar_arbol(tmp_path))
+    (raiz / KB_REL / "01_vision_y_objetivos.md").unlink()
+
+    checks = _checks(raiz)
+    _assert_fails_naming(checks, "01_vision_y_objetivos.md")
+    assert exit_code(checks) == 1
+
+
+def test_chequeo_15_referencia_ausente_falla(tmp_path):
+    raiz = _sincronizar(_copiar_arbol(tmp_path))
+    (raiz / REFERENCIA_REL[0]).unlink()
+
+    checks = _checks(raiz)
+    _assert_fails_naming(checks, "parameters_gemini.md")
+
+
+# ===========================================================================
+# Chequeo 16 - invariante del timeout del cliente (Bloque E)
+# ===========================================================================
+def test_chequeo_16_cliente_mayor_que_backend_pasa(tmp_path):
+    raiz = _sincronizar(_copiar_arbol(tmp_path))
+
+    checks = _checks(raiz)
+    assert all(c.status == "PASS" for c in checks), _summary(checks)
+
+
+def test_chequeo_16_cliente_menor_que_backend_falla(tmp_path):
+    raiz = _sincronizar(_copiar_arbol(tmp_path))
+    _mutar(raiz, API_TS_REL, "timeout: 65_000", "timeout: 20_000")
+
+    checks = _checks(raiz)
+    _assert_fails_naming(checks, "invariante")
+    _assert_fails_naming(checks, "20000")
+
+
+def test_chequeo_16_cliente_igual_al_backend_falla(tmp_path):
+    """(limite) igual no alcanza: el invariante es estricto."""
+    raiz = _sincronizar(_copiar_arbol(tmp_path))
+    _mutar(raiz, API_TS_REL, "timeout: 65_000", "timeout: 60_000")
+
+    checks = _checks(raiz)
+    _assert_fails_naming(checks, "60000")
+
+
+def test_chequeo_16_sin_declaracion_de_timeout_falla(tmp_path):
+    raiz = _sincronizar(_copiar_arbol(tmp_path))
+    _mutar(raiz, API_TS_REL, "timeout: 65_000,", "")
+
+    checks = _checks(raiz)
+    _assert_fails_naming(checks, "no declara")
+
+
+# ===========================================================================
+# Chequeo 17 - versiones de componentes de la base de conocimiento
+# ===========================================================================
+def test_chequeo_17_n8n_retirado_en_kb_sin_rotulacion_falla(tmp_path):
+    raiz = _sincronizar(_copiar_arbol(tmp_path))
+    _mutar(
+        raiz,
+        "knowledge-base/08_arquitectura_propuesta.md",
+        "N8N oficial 2.11.2",
+        "N8N oficial 1.62",
+    )
+
+    checks = _checks(raiz)
+    _assert_fails_naming(checks, "1.62")
+    _assert_fails_naming(checks, "08_arquitectura_propuesta.md")
+
+
+def test_chequeo_17_n8n_desconocido_en_kb_falla(tmp_path):
+    """(triangulacion) la regla no esta hardcodeada a 1.62: cualquier version != compose falla."""
+    raiz = _sincronizar(_copiar_arbol(tmp_path))
+    _mutar(
+        raiz,
+        "knowledge-base/02_descripcion_general.md",
+        "N8N | 2.11.2",
+        "N8N | 9.9.9",
+    )
+
+    checks = _checks(raiz)
+    _assert_fails_naming(checks, "9.9.9")
+
+
+def test_chequeo_17_n8n_con_rotulacion_pasa(tmp_path):
+    raiz = _sincronizar(_copiar_arbol(tmp_path))
+    _mutar(
+        raiz,
+        "knowledge-base/08_arquitectura_propuesta.md",
+        "N8N oficial 2.11.2",
+        "N8N oficial 2.11.2 (la version historica fue 1.62)",
+    )
+
+    checks = _checks(raiz)
+    assert all(c.status == "PASS" for c in checks), _summary(checks)
+
+
+def test_chequeo_17_fastapi_retirado_en_kb_falla(tmp_path):
+    raiz = _sincronizar(_copiar_arbol(tmp_path))
+    _mutar(
+        raiz,
+        "knowledge-base/02_descripcion_general.md",
+        "FastAPI + Uvicorn | 0.143.3 / 0.54.0",
+        "FastAPI + Uvicorn | 0.115 / 0.54.0",
+    )
+
+    checks = _checks(raiz)
+    _assert_fails_naming(checks, "FastAPI 0.115")
+
+
+def test_chequeo_17_uvicorn_retirado_en_kb_falla(tmp_path):
+    raiz = _sincronizar(_copiar_arbol(tmp_path))
+    _mutar(
+        raiz,
+        "knowledge-base/02_descripcion_general.md",
+        "FastAPI + Uvicorn | 0.143.3 / 0.54.0",
+        "FastAPI + Uvicorn | 0.143.3 / 0.32",
+    )
+
+    checks = _checks(raiz)
+    _assert_fails_naming(checks, "Uvicorn 0.32")
+
+
+def test_chequeo_17_fastapi_uvicorn_inline_retirado_falla(tmp_path):
+    raiz = _sincronizar(_copiar_arbol(tmp_path))
+    _mutar(
+        raiz,
+        "knowledge-base/09_decisiones_y_supuestos.md",
+        "FastAPI 0.143.3 sobre Uvicorn 0.54.0",
+        "FastAPI 0.115 sobre Uvicorn 0.54.0",
+    )
+
+    checks = _checks(raiz)
+    _assert_fails_naming(checks, "FastAPI 0.115")
+    _assert_fails_naming(checks, "09_decisiones_y_supuestos.md")
+
+
+def test_chequeo_17_genai_retirado_en_kb_falla(tmp_path):
+    raiz = _sincronizar(_copiar_arbol(tmp_path))
+    _mutar(
+        raiz,
+        "knowledge-base/02_descripcion_general.md",
+        "`google-genai` >=2.31,<3",
+        "`google-genai` >= 1.0",
+    )
+
+    checks = _checks(raiz)
+    _assert_fails_naming(checks, "google-genai >= 1.0")
+
+
+def test_chequeo_17_deriva_valores_del_runtime(tmp_path):
+    """(triangulacion) los valores esperados se derivan de requirements/compose, no se hardcodean."""
+    kb = tmp_path / "kb"
+    kb.mkdir()
+    (kb / "componentes.md").write_text(
+        "| Orquestación | N8N | 7.7.7 |\n"
+        "| API | FastAPI + Uvicorn | 9.9.9 / 8.8.8 |\n"
+        "SDK `google-genai` >=2.31,<3\n",
+        encoding="utf-8",
+    )
+    check = docs_stack_sync._check_versiones_componentes(
+        requirements={
+            "fastapi": "==9.9.9",
+            "uvicorn": "==8.8.8",
+            "google-genai": ">=2.31.0,<3",
+        },
+        compose={"services": {"n8n": {"image": "n8nio/n8n:7.7.7"}}},
+        kb_dir=kb,
+    )
+    assert check.status == "PASS", check.detail
+
+
+def test_chequeo_17_deriva_valores_del_runtime_falla_si_diverge(tmp_path):
+    """(triangulacion) con las mismas fuentes, una version distinta falla y se nombra."""
+    kb = tmp_path / "kb"
+    kb.mkdir()
+    (kb / "componentes.md").write_text(
+        "| Orquestación | N8N | 1.62 |\n", encoding="utf-8"
+    )
+    check = docs_stack_sync._check_versiones_componentes(
+        requirements={"fastapi": "==9.9.9", "uvicorn": "==8.8.8"},
+        compose={"services": {"n8n": {"image": "n8nio/n8n:7.7.7"}}},
+        kb_dir=kb,
+    )
+    assert check.status == "FAIL"
+    assert "1.62" in check.detail
+
+
+# ===========================================================================
+# Residual 2 - `deprecad` no exime un token de modelo retirado
+# ===========================================================================
+def test_deprecad_no_exime_un_modelo_retirado(tmp_path):
+    raiz = _sincronizar(_copiar_arbol(tmp_path))
+    ruta = raiz / KB_REL / "05_reglas_de_negocio.md"
+    ruta.write_text(
+        ruta.read_text(encoding="utf-8")
+        + "\nEl modelo Gemini 2.5 Flash quedo deprecado y ya no se usa.\n",
+        encoding="utf-8",
     )
 
     checks = _checks(raiz)

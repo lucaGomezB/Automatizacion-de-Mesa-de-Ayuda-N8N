@@ -1,0 +1,47 @@
+## Why
+
+El codigo ejecuta `gemini-3.6-flash` con timeout de 30 s por intento, 60 s total, 2 reintentos y `google-genai >=2.31,<3` (`App/Backend/app/config/settings.py:78,85,97,104`), pero la base de conocimiento (`knowledge-base/`, 6 archivos) y dos documentos de `docs/` siguen declarando "Gemini 2.5 Flash" con timeout de 10 s. El change c-145 sincronizo `CLAUDE.md` y `openspec/config.yaml` y creo la barrera `scripts/preflight/docs_stack_sync.py`, pero esa barrera NO inspecciona `knowledge-base/` ni el material de referencia: por eso la deriva sobrevivio. La misma clase de deriva afecta las VERSIONES DE COMPONENTES: `knowledge-base/` declara N8N 1.62 y FastAPI 0.115 / Uvicorn 0.32 mientras el compose pinnea `n8nio/n8n:2.11.2` y `requirements.txt` fija `fastapi==0.143.3` y `uvicorn[standard]==0.54.0`; ninguno de los chequeos vigentes compara esas versiones. Ademas, el marcador historico `deprecad` produce una exencion falsa: `knowledge-base/02_descripcion_general.md:13` lo usa para rotular el SDK retirado `google-generativeai`, de modo que un token de MODELO retirado en esa misma linea no seria detectado. La misma barrera tampoco cubre `App/Frontend/src/services/api.ts`, cuyo comentario afirma un timeout del cliente mayor al de Gemini (10 s) cuando el valor vigente (30 s por intento, 60 s total) lo desmentia. La calibracion empirica de los parametros sobre `gemini-2.5-flash` y la decision DD-04 son una limitacion declarada de la tesis y MUST sobrevivir como hecho historico rotulado, no eliminarse.
+
+## What Changes
+
+- **Bloque A — sincronizacion de la base de conocimiento (MEDIO).** Actualizar el valor vigente del modelo, sus parametros y los timeouts en `knowledge-base/01_vision_y_objetivos.md`, `02_descripcion_general.md`, `05_reglas_de_negocio.md`, `07_flujos_principales.md`, `08_arquitectura_propuesta.md` y `09_decisiones_y_supuestos.md`. Distinguir en cada pasaje el valor vigente (`gemini-3.6-flash`, 30 s por intento, 60 s total, 2 reintentos, `google-genai >=2.31,<3`) del hecho historico.
+- **Bloque B — material de referencia de `docs/` (MEDIO).** Actualizar `docs/parameters_gemini.md` (titulo, `google-genai >= 1.0` -> `>=2.31,<3`, `model="gemini-2.5-flash"` -> `"gemini-3.6-flash"`, `timeout=10` -> 30, tabla de parametros) y `docs/n8n-workflow-guide.md:852` ("etapa: gemini (Gemini 2.5 Flash)" -> "Gemini 3.6 Flash").
+- **Bloque C — procedencia historica preservada y rotulada (MEDIO).** Conservar la calibracion de parametros sobre 2.5 Flash y DD-04, anadiendo una rotulacion explicita de antecedente historico que remita al valor vigente. Prohibido el reemplazo ciego "2.5" -> "3.6".
+- **Bloque D — extension de la barrera documental (BAJO, codigo, TDD estricto).** Extender `scripts/preflight/docs_stack_sync.py` para que inspeccione `knowledge-base/**` y el material de referencia, con un chequeo nuevo que falle cuando un identificador retirado aparezca sin rotulacion historica, otro que verifique el timeout vigente en contexto de parametros de Gemini, otro que verifique la cobertura de la superficie y otro que verifique el invariante del timeout del cliente (Axios > peor caso total del backend). Extender `scripts/preflight/test_docs_stack_sync.py` con la misma disciplina TDD (hoy 35 pruebas). El cableado en CI ya existe.
+- **Bloque E — invariante del timeout del cliente (BAJO, codigo, noveno archivo).** Subir el timeout de Axios de `App/Frontend/src/services/api.ts` de 20 s a 65 s y corregir su comentario de cabecera y su comentario en linea: el peor caso total de una clasificacion del backend es 60 s (`Settings.gemini_total_timeout_seconds`), de modo que 65 s > 60 s restaura un invariante verdadero. No se cambia ninguna otra logica del cliente.
+- **Bloque F — versiones de componentes en la base de conocimiento (MEDIO, residual 1).** Sincronizar con su fuente las versiones de componentes que declara `knowledge-base/`: `02_descripcion_general.md:7,8,30`, `08_arquitectura_propuesta.md:76` y `09_decisiones_y_supuestos.md:6,21`. N8N `1.62` -> `2.11.2` (imagen del compose); FastAPI `0.115` -> `0.143.3` y Uvicorn `0.32` -> `0.54.0` (`requirements.txt`). En `09_decisiones_y_supuestos.md`, DD-01 y DD-06 son decisiones VIGENTES (la decision sigue en pie; cambio la version con la que se implementa), no registros historicos: se actualiza la version, no se rotula la linea como historia.
+- **Bloque G — correccion del marcador `deprecad` y extension de la barrera a versiones de componentes (BAJO, codigo, TDD estricto, residuales 2 y 3).** Quitar `deprecad` de `MARCADORES_HISTORICOS` (rotula al SDK retirado `google-generativeai`, no al modelo, y hoy exime por error un MODELO retirado en `02_descripcion_general.md:13`). Agregar el chequeo 17, que compara las versiones declaradas en `knowledge-base/` contra `requirements.txt` (FastAPI, Uvicorn y la restriccion `google-genai >=2.31,<3`) y la imagen de N8N del compose, derivando los valores esperados en tiempo de ejecucion. Extender la suite con TDD estricto.
+- **Fuera de alcance.** Los umbrales `0.90` de `docs/n8n-workflow-guide.md:598,610` se documentan como hallazgos y quedan fuera (dominio de DOC-004).
+
+## Capabilities
+
+### New Capabilities
+
+None.
+
+### Modified Capabilities
+
+- `project-documentation`: se modifica el requisito `DOC-005 — Stack declarado en la documentacion para agentes sincronizado con el codigo` para ampliar la superficie documental vigilada a `knowledge-base/**` y al material de referencia alcanzable (`docs/parameters_gemini.md`, `docs/n8n-workflow-guide.md`), y para exigir que los hechos historicos se conserven rotulados como historicos y no como valor vigente; se agregan escenarios para la base de conocimiento, la rotulacion historica, la cobertura de la barrera sobre la superficie ampliada y el invariante del timeout del cliente (`App/Frontend/src/services/api.ts` > peor caso total del backend).
+
+## Impact
+
+- **Edita:** `knowledge-base/{01_vision_y_objetivos,02_descripcion_general,05_reglas_de_negocio,07_flujos_principales,08_arquitectura_propuesta,09_decisiones_y_supuestos}.md`; `docs/parameters_gemini.md`; `docs/n8n-workflow-guide.md`; `App/Frontend/src/services/api.ts` (solo el timeout de Axios y sus comentarios); `scripts/preflight/docs_stack_sync.py` y `scripts/preflight/test_docs_stack_sync.py`; `CHANGES.md`.
+- **No toca:** `App/Backend/app/`, el resto de `App/Frontend/`, `n8n/`, `data/`, el corpus, los numeros canonicos `vigente` de `docs/Tesis/Correcciones/numeros-canonicos.md`, las cinco cadenas de categoria, `openspec/config.yaml` ni `CLAUDE.md` (ya correctos desde c-145), ni los tags `v1.0.0`..`v1.2.2`.
+- **Gobernanza:** A, B, C, E y F MEDIO (documentacion y un cambio de configuracion del cliente con valor de evidencia para la tesis); D y G BAJO (tooling y pruebas).
+- **Dependencias:** barrera creada por c-145 (12 chequeos, 35 pruebas) y su contrato `Check`/`exit_code`/`format_summary`. Los bloques F y G se apoyan en la superficie ampliada de los chequeos 13-16 agregada por D.
+- **Riesgo principal:** el invariante de `knowledge-base/07_flujos_principales.md:7` ("Axios, timeout 20 s > timeout Gemini 10 s") era FALSO con el valor vigente (20 s < 30 s). Con el Bloque E el cliente pasa a 65 s y el invariante se restaura como verdadero (65 s > 60 s, el peor caso total del backend); la documentacion se reescribe con los valores reales de cada capa.
+
+## Rollback
+
+Revertir con `git revert` de los commits de c-148; los archivos de documentacion vuelven a su estado previo, el timeout de Axios de `App/Frontend/src/services/api.ts` vuelve a 20 s y la barrera a sus 12 chequeos (los chequeos 13-17 se retiran con el mismo revert). No se publica tag ni release, de modo que no hay artefacto publico que deshacer. Los hechos historicos conservados y rotulados permanecen; revertir la rotulacion restaura el texto previo sin perdida de la calibracion.
+
+## Success Criteria
+
+- [ ] Los 8 archivos con deriva declaran el valor vigente (`gemini-3.6-flash` / "Gemini 3.6 Flash", 30 s por intento, 60 s total, 2 reintentos, `google-genai >=2.31,<3`) y ninguno presenta "2.5 Flash" ni "timeout 10 s" como valor actual.
+- [ ] La calibracion sobre 2.5 Flash y DD-04 se conservan rotuladas como hechos historicos, con remision al valor vigente.
+- [ ] `App/Frontend/src/services/api.ts` declara `timeout: 65_000` y su comentario afirma un invariante verdadero (65 s > 60 s, el peor caso total del backend); `knowledge-base/07_flujos_principales.md:7` declara la misma desigualdad verdadera.
+- [ ] `scripts/preflight/docs_stack_sync.py` inspecciona `knowledge-base/` y el material de referencia, falla ante un identificador retirado sin rotulacion historica, ante un timeout retirado en contexto de Gemini, ante una version de componente que no coincide con `requirements.txt`/el compose y ante un timeout del cliente que no supere el peor caso del backend, y sale 0 sobre el arbol corregido (17/17).
+- [ ] La base de conocimiento declara N8N `2.11.2`, FastAPI `0.143.3`, Uvicorn `0.54.0` y `google-genai >=2.31,<3`, y `grep -rn "1\.62\|0\.115\|0\.32" knowledge-base/` no devuelve coincidencias.
+- [ ] `deprecad` ya no exime un token de modelo retirado: una linea con `Gemini 2.5 Flash` y la palabra "deprecado" produce un hallazgo del chequeo 13.
+- [ ] `python3 -m pytest scripts/preflight -q` pasa con las pruebas nuevas incluidas.
+- [ ] `openspec validate c-148-... --strict` y `openspec validate --specs --strict` pasan.
