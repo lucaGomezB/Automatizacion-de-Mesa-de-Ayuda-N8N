@@ -2,7 +2,9 @@
 
 ## Purpose
 TBD - created by archiving change c-20-tls-docker-compose. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: TLS termination via nginx reverse proxy
 
 El stack de docker-compose SHALL incluir un servicio nginx que actue como proxy inverso y termine TLS para todo el trafico HTTP externo. El proxy SHALL aceptar exclusivamente TLS 1.2 y TLS 1.3 en todos sus bloques `server` que escuchan en 443 (incluido el catch-all) y MUST rechazar el handshake de versiones anteriores. El proxy MUST servir la API del backend bajo el prefijo `/api/` y la SPA del frontend bajo la ruta raiz `/`. La comunicacion entre contenedores en la red Docker MUST permanecer en HTTP plano, dentro del perimetro de confianza.
@@ -200,4 +202,3 @@ El repositorio SHALL proveer una verificacion automatizada que, sobre el desplie
 
 - **WHEN** la verificacion completa y produce su reporte
 - **THEN** el reporte registra el commit, la fecha y el resultado de cada comprobacion, y no contiene claves privadas ni certificados
-

@@ -2,7 +2,9 @@
 
 ## Purpose
 Define el contrato de resiliencia de la clasificacion semantica con Gemini ante fallas transitorias del proveedor: que fallas se reintentan y cuales no, como se acotan los reintentos (backoff, jitter, latencia total y costo), que ocurre al agotarlos y como se observa el proceso, de modo que una indisponibilidad transitoria no degrade indebidamente la clasificacion a revision humana.
+
 ## Requirements
+
 ### Requirement: Reintento acotado ante fallas transitorias del proveedor
 
 La clasificacion con Gemini SHALL reintentar una falla transitoria del proveedor hasta un maximo de intentos configurable, con espera exponencial creciente entre intentos y una componente de jitter. El numero de intentos y la latencia total de la operacion MUST quedar acotados por configuracion. Al agotarse el presupuesto de intentos o de latencia, el sistema SHALL dejar de reintentar y SHALL aplicar el fallback definido en el requisito de fallback tras agotar los reintentos. La clasificacion MUST NOT abandonar el bucle de reintentos antes de agotar el maximo de intentos configurado, salvo que se agote el presupuesto de latencia total.
@@ -231,4 +233,3 @@ Los reintentos de transporte del orquestador sobre el alta de incidentes y los r
 
 - **WHEN** la guarda de costo deniega una clasificacion durante un reintento del orquestador
 - **THEN** se aplica la degradacion configurada sin invocar al proveedor, igual que en un primer intento
-

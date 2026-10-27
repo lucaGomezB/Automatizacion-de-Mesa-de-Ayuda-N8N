@@ -2,7 +2,9 @@
 
 ## Purpose
 Define el contrato de lectura que expone el identificador de origen de un incidente (`origen_message_id`) y permite filtrar el listado por coincidencia exacta, habilitando la correlacion determinista entre un item enviado y el incidente persistido, y preservando la exclusion de replays idempotentes de la medicion.
+
 ## Requirements
+
 ### Requirement: Exposicion del identificador de origen en el contrato de lectura
 
 El detalle de un incidente (`IncidenteRead`) SHALL exponer el campo `origen_message_id` (nullable) ademas de los campos ya expuestos. El campo SHALL ser un identificador de correlacion y MUST NOT contener la descripcion ni PII. Una fila legacy sin identificador SHALL serializar el campo con valor nulo sin fallar. La exposicion en `IncidenteListItem` NO es requisito de este change (puede agregarse de forma aditiva si simplifica la correlacion).
@@ -113,4 +115,3 @@ Cada replay idempotente que alcanza el backend SHALL emitir un evento estructura
 
 - **WHEN** un mismo `origen_message_id` recibe una alta y luego N replays
 - **THEN** el incidente conserva un unico registro en `clasificacion_log`
-

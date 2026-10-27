@@ -3,7 +3,9 @@
 ## Purpose
 
 Esta especificación define el pipeline de integración continua en GitHub Actions: los disparadores del workflow, los jobs de pruebas de backend y frontend, el linting, el manejo seguro de secretos y el badge de estado en el README.
+
 ## Requirements
+
 ### Requirement: Workflow de integración continua en GitHub Actions
 
 El repositorio SHALL definir un workflow de GitHub Actions en `.github/workflows/ci.yml` que se dispare automáticamente en cada `push` a la rama `main` y en cada `pull_request`. El workflow MUST ejecutar las suites de prueba del proyecto antes de que un cambio pueda fusionarse a `main`. El workflow MUST fijar (pin) las versiones mayores de las acciones que utiliza (por ejemplo `actions/checkout@v4`, `actions/setup-python@v5`, `actions/setup-node@v4`) para que las corridas sean reproducibles.
@@ -171,4 +173,3 @@ El job `backend-tests` de `.github/workflows/ci.yml` SHALL ejecutar la suite off
 
 - **WHEN** las pruebas del arnes se ejecutan en el runner de CI sin Docker ni red de salida
 - **THEN** completan usando solo la biblioteca estandar, los archivos del repositorio y dobles de prueba
-

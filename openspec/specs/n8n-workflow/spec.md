@@ -2,7 +2,9 @@
 
 ## Purpose
 Specifies the end-to-end N8N workflow for automated help desk incident classification, covering all three input channels (Outlook email, web form webhook, Twilio call transcription), validation, categorization via Gemini AI, notification by channel, audit logging, and persistence via a FastAPI backend. Combines the foundation from C-04 (normalization, validation, routing) with channel-layer infrastructure from C-05 (explicit channel identification, per-channel triggers, post-registration notifications, audit trails).
+
 ## Requirements
+
 ### Requirement: Normalización de canales a estructura unificada
 
 El workflow N8N SHALL incluir un nodo de normalización que homogenice la entrada de cualquiera de los tres canales (correo electrónico, formulario web, telefonía con transcripción) en una estructura unificada con exactamente los campos `id`, `timestamp` (precisión al milisegundo), `canal_origen` (uno de `correo`, `web`, `telefonia`) y `descripcion`. Los nodos posteriores SHALL operar exclusivamente sobre esta estructura y no sobre la forma cruda de cada canal. Para el canal de correo, la normalización SHALL consumir los campos genéricos del mensaje IMAP (remitente, asunto, cuerpo de texto y fecha de recepción) y NO SHALL depender de campos propios de un proveedor. Para el canal de telefonía, la normalización SHALL consumir el ingreso pseudonimizado sellado por el backend a través del cableado `Sellar -> Normalizar` y MUST NOT depender de un nodo de clasificacion en n8n.
@@ -1131,4 +1133,3 @@ Los dos nodos HTTP del tramo de alta que invocan al backend, `Login operador` (`
 
 - **WHEN** un operador consulta la guia para actualizar la instancia
 - **THEN** encuentra que la politica solo rige despues de reimportar `n8n/workflow.json` y verificar las credenciales del login
-

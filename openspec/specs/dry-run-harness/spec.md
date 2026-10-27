@@ -2,7 +2,9 @@
 
 ## Purpose
 Validar de forma local, reproducible y de costo cero el tramo compartido de registro de incidentes (normalización, validación, login dinámico, `POST /api/v1/incidentes/`, persistencia y clasificación) antes de configurar o consumir cualquier servicio pago, con preflight de contratos, guardarraíles de costo y fallo ruidoso y accionable ante quiebres de cableado.
+
 ## Requirements
+
 ### Requirement: Preflight de contratos locales
 
 Antes de enviar cualquier incidente simulado, el arnés SHALL verificar de forma automatizada los contratos locales de los que depende el tramo compartido: que `POST /api/v1/auth/login` acepte JSON `{"username","password"}` y devuelva `{"access_token","token_type"}`; que una creación válida contra `POST /api/v1/incidentes/` con header `Authorization: Bearer <access_token>` responda 201; que una `descripcion` de menos de 10 caracteres responda 422; que una llamada sin la barra final sea detectada como redirección 307 (pérdida de `Authorization` y body); y que el webhook de N8N esté alcanzable. Cuando cualquiera de estas verificaciones falla, el arnés MUST abortar antes del recorrido end-to-end, MUST terminar con exit code distinto de cero y MUST identificar el contrato incumplido.
@@ -244,4 +246,3 @@ El arnes SHALL poder escribir, bajo una opcion explicita, un reporte JSON con el
 
 - **WHEN** se inspecciona el reporte generado
 - **THEN** no contiene la contrasena del operador, el token de acceso, claves de API ni material criptografico
-

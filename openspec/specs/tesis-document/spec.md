@@ -3,7 +3,9 @@
 ## Purpose
 
 Esta especificación define los criterios de calidad del documento de tesis en LaTeX: compilación a PDF, renderizado de citas, ecuaciones y tablas, eliminación de patrones de escritura generados por IA, profundidad de capítulos y consistencia de referencias.
+
 ## Requirements
+
 ### Requirement: Thesis PDF compilation
 
 La tesis SHALL compilar desde la fuente LaTeX de la version de trabajo vigente (`docs/Tesis/v10 (IA)/paper/main.tex`) a `docs/Tesis/v10 (IA)/paper/main.pdf` mediante XeLaTeX y biber, sin errores fatales, con las fuentes reales que declara el preambulo (Arial y Courier New) y en el entorno de compilacion de registro consignado en `docs/Tesis/Correcciones/dictamen-correcciones.md`. El PDF SHALL incluir todos los archivos de seccion que `main.tex` incorpora con `\input`, en el orden de `main.tex`. La compilacion de una release SHALL cumplir ademas: cero referencias y citas indefinidas, cero etiquetas duplicadas, biber sin advertencias ni errores, `verify_citations.py` con estado PASS y todo `\includegraphics` resuelto a un archivo existente. Como `main.log` no se versiona, la evidencia de la compilacion de cada release SHALL registrarse en `docs/Tesis/Correcciones/dictamen-correcciones.md`.
@@ -1808,20 +1810,6 @@ El total de paginas del PDF de la tesis SHALL cumplir el tope vigente de paginas
 - **THEN** el conteo incluye portada, indices, glosario, cuerpo, referencias y anexos
 - **AND** no se computa un subconjunto (por ejemplo, solo el cuerpo o el cuerpo sin anexos) para dar por cumplido el tope
 
-#### Scenario: Tope renegociado documentado
-
-- **WHEN** se registra un tope distinto del vigente de 100 paginas sobre el total
-- **THEN** el registro declara su regla de medicion, su valor, su fuente y su fecha
-- **AND** el PDF de la release cumple esa regla o declara el exceso con su magnitud, su fecha y la decision de sostenerlo
-- **AND** el registro consigna los dos conteos, total y cuerpo sin anexos
-
-#### Scenario: Cuerpo sin anexos
-
-- **WHEN** se informa el conteo del cuerpo sin anexos como dato complementario del total
-- **THEN** el conteo excluye unicamente las paginas desde el encabezado "Anexos" (`\contentsline {section}{Anexos}{N}` de `main.toc`)
-- **AND** referencias, indices y glosario se cuentan dentro del cuerpo
-- **AND** el conteo del cuerpo no sustituye al total para dar por cumplido el tope
-
 #### Scenario: Tope total declarado en un unico lugar
 
 - **WHEN** se lee la seccion de presupuesto de paginas de `docs/Tesis/Correcciones/dictamen-correcciones.md`
@@ -1834,7 +1822,7 @@ El total de paginas del PDF de la tesis SHALL cumplir el tope vigente de paginas
 - **THEN** el registro declara la magnitud del exceso, su fecha y la decision de los autores de sostenerlo y defenderlo
 - **AND** el PDF no se presenta como si cumpliera el tope sin exceso
 
-#### Scenario: Reduccion sin perdida de contenido
+#### Scenario: Reduccion sin perdida de contenido ni referencias colgadas
 
 - **WHEN** se compacta el documento para acercarlo al tope
 - **THEN** los numeros canonicos, las figuras y tablas requeridas, las referencias y las correcciones previas permanecen
@@ -1845,6 +1833,24 @@ El total de paginas del PDF de la tesis SHALL cumplir el tope vigente de paginas
 
 - **WHEN** se mide el PDF compilado
 - **THEN** la portada ocupa exactamente una pagina
+
+#### Scenario: Tope renegociado documentado
+
+- **WHEN** se registra un tope distinto de 100 paginas sobre el total (una renegociacion con la catedra)
+- **THEN** el registro declara su regla de medicion, su valor, su fuente y su fecha
+- **AND** el PDF de la release cumple esa regla, con el exceso, si lo hubiera, honrado y declarado
+
+#### Scenario: Cuerpo sin anexos
+
+- **WHEN** se consigna el conteo complementario del cuerpo sin anexos (pagina del encabezado "Anexos" de `main.toc` menos 1)
+- **THEN** ese conteo se registra como informacion complementaria del libro mayor
+- **AND** no se usa para dar por cumplido el tope, cuya metrica es el total del PDF
+
+#### Scenario: Reduccion sin perdida de contenido
+
+- **WHEN** se compacta el documento para acercarlo al tope
+- **THEN** los numeros canonicos, las figuras y tablas requeridas, las referencias y las correcciones previas permanecen
+- **AND** las palancas aplicadas son de forma (indices, listas, tamano de anexos, ancho de figuras y espaciado)
 
 ### Requirement: Coherencia de metadatos PDF
 
@@ -5682,4 +5688,3 @@ La version de trabajo de la tesis `docs/Tesis/v10 (IA)/` SHALL publicarse como r
 - **WHEN** se ejecuta `openspec list --json` despues de la release
 - **THEN** `c-146-completar-metricas-trabajos-previos` y `c-140-endurecimiento-tecnico-tls-reintentos-e2e` no figuran como activos
 - **AND** sus delta specs quedaron sincronizados en `openspec/specs/`
-
