@@ -35,10 +35,12 @@ import re
 import ssl
 import subprocess
 import sys
+import threading
 import time
 import urllib.error
 import urllib.request
 import uuid
+from datetime import datetime, timezone
 from pathlib import Path
 
 # Make ``import checks`` work both when executed as a script and when imported.
@@ -73,6 +75,15 @@ CANAL_PHONE_ID = 3  # llamada telefonica (catalogo canal_origen, migracion 001)
 BACKEND_CONTAINER = "mesa_local-backend-1"
 N8N_CONTAINER = "mesa_local-n8n-1"
 LOGIN_CREDENTIAL_NAME = "Operador Mesa de Ayuda (login)"
+
+# c-140 (5.6): the automation network the backend shares with N8N. The retry-fault
+# check disconnects the backend from it and reconnects before N8N's first wait
+# between attempts (5000 ms) elapses. `docker network connect` does NOT restore
+# the compose service alias, so it must be passed explicitly or N8N cannot
+# resolve `backend` during the retry window (verified: EAI_AGAIN otherwise).
+NETWORK_AUTOMATION = "mesa_local_automation"
+BACKEND_SERVICE_ALIAS = "backend"
+RETRY_FAULT_RECONNECT_DELAY_S = 2.0
 
 # Deterministic description: hardware keywords + a stable marker.
 TEST_DESCRIPTION = "La impresora del sector no enciende y la pantalla del equipo falla"
@@ -160,6 +171,28 @@ def _json_or_none(text: str):
         return None
 
 
+# ── Pure E2E evaluators (c-140 section 5) ────────────────────────────────────
+#
+# The judgement is pure and lives in ``e2e_checks.py``; ``dry_run.py`` only does
+# the I/O (D12/D14). The harness suite exercises the pure module offline.
+
+from e2e_checks import (  # noqa: E402
+    CHECK_COST_GUARD_BUDGET,
+    CHECK_ETAPA,
+    CHECK_IDEMPOTENCIA,
+    CHECK_REINTENTO,
+    ETAPA_DETERMINISTIC,
+    build_evidence_report,
+    evaluate_cost_guard_budget,
+    evaluate_etapa,
+    evaluate_idempotency,
+    evaluate_retry_recovery,
+    groups_from_checks,
+)
+
+import tls_checks  # noqa: E402
+
+
 # ── Stack lift / reuse ───────────────────────────────────────────────────────
 
 
@@ -214,6 +247,14 @@ def assert_dummy_key() -> Check:
         "effective GEMINI_API_KEY is NOT fictitious - aborting before any paid call",
         "lift the backend with `-f scripts/dry_run/compose.dry-run.yml` (env_file overrides are not enough)",
     )
+
+
+def assert_cost_guard_budget() -> Check:
+    """Read the effective runtime budget inside the backend (layer 2 of cost zero)."""
+    result = compose(["exec", "-T", "backend", "printenv", "COST_GUARD_BUDGET_USD"], timeout=60)
+    if result.returncode != 0:
+        return evaluate_cost_guard_budget(None)
+    return evaluate_cost_guard_budget(result.stdout.strip())
 
 
 # ── N8N workflow import / activation ─────────────────────────────────────────
@@ -298,6 +339,11 @@ def _workflow_for_dry_run(username: str, password: str) -> tuple[dict, list[str]
             node.pop("credentials", None)
             node.pop("authentication", None)
             node.pop("genericAuthType", None)
+            # c-140 (3.7): conservar los `options` del nodo (p. ej. el `timeout`
+            # de la politica de reintento) en lugar de reemplazarlos por `{}`.
+            # Sin esto la copia de costo cero perderia el timeout del login y las
+            # pruebas de la transformacion lo detectarian.
+            existing_options = (node.get("parameters") or {}).get("options", {})
             node["parameters"] = {
                 "method": "POST",
                 "url": "http://backend:8000/api/v1/auth/login",
@@ -305,7 +351,7 @@ def _workflow_for_dry_run(username: str, password: str) -> tuple[dict, list[str]
                 "contentType": "json",
                 "specifyBody": "json",
                 "jsonBody": json.dumps({"username": username, "password": password}),
-                "options": {},
+                "options": dict(existing_options),
             }
 
     # 1b. Give every webhook trigger a stable webhookId so N8N registers the
@@ -640,6 +686,16 @@ def run_e2e(args, base_url: str, context: dict) -> list[Check]:
         return results
     results.append(passing("e2e:persisted", f"incidente {incidente_id} persisted"))
 
+    # c-140 (5.3): the classification history must be a single deterministic
+    # record (cost-zero by construction). Wired right after e2e:persisted.
+    status, _, text = http_request(
+        "GET",
+        f"{base_url}/api/v1/clasificaciones/incidente/{incidente_id}",
+        headers=auth,
+        timeout=args.timeout,
+    )
+    results.append(evaluate_etapa(_json_or_none(text)))
+
     if observed_canal == CANAL_WEB_ID:
         results.append(passing("e2e:canal", f"canal_origen_id={observed_canal} (formulario web)"))
     else:
@@ -651,6 +707,250 @@ def run_e2e(args, base_url: str, context: dict) -> list[Check]:
             )
         )
     return results
+
+
+def _fetch_incidentes_por_origen(base_url: str, auth: dict, origen: str, args) -> list:
+    """Poll the filtered listing until the run identifier appears (or time out)."""
+    deadline = time.time() + args.poll_timeout
+    payload: object = []
+    while time.time() < deadline:
+        status, _, text = http_request(
+            "GET",
+            f"{base_url}/api/v1/incidentes/?origen_message_id={origen}",
+            headers=auth,
+            timeout=args.timeout,
+        )
+        payload = _json_or_none(text)
+        if status == 200 and isinstance(payload, list) and payload:
+            return payload
+        time.sleep(2)
+    return payload if isinstance(payload, list) else []
+
+
+def run_e2e_idempotency(args, base_url: str, context: dict) -> list[Check]:
+    """c-140 (5.4): replay the same body with an explicit run identifier.
+
+    Sends the same payload twice with ``origen_message_id = smoke-<run id>`` and
+    verifies that both responses carry the same incident and that the filtered
+    listing returns exactly one incident.
+    """
+    scheme = context.get("n8n_scheme")
+    token = context.get("token")
+    if not scheme or not token:
+        return [
+            pending(
+                CHECK_IDEMPOTENCIA,
+                "preflight incompleto (sin esquema de webhook o token de operador)",
+                "run the preflight successfully before the idempotency walk",
+            )
+        ]
+    webhook_url = f"{scheme}://{args.n8n_host}:{args.n8n_port}/webhook/{WEBHOOK_PATH}"
+    origen = f"smoke-{uuid.uuid4().hex[:12]}"
+    body = {
+        "descripcion": TEST_DESCRIPTION,
+        "prioridad": "media",
+        "origen_message_id": origen,
+    }
+    _, _, first_text = http_request("POST", webhook_url, body, timeout=args.e2e_timeout)
+    _, _, second_text = http_request("POST", webhook_url, body, timeout=args.e2e_timeout)
+    listing = _fetch_incidentes_por_origen(
+        base_url, {"Authorization": f"Bearer {token}"}, origen, args
+    )
+    return [
+        evaluate_idempotency(
+            _json_or_none(first_text), _json_or_none(second_text), listing, origen
+        )
+    ]
+
+
+def run_retry_fault(args, base_url: str, context: dict) -> list[Check]:
+    """c-140 (5.6, opt-in): verify recovery from a transient backend outage.
+
+    Disconnects the backend from the automation network, sends the webhook in the
+    background, reconnects after ``RETRY_FAULT_RECONNECT_DELAY_S`` (before N8N's
+    5000 ms wait) and requires an incident with a single filtered row. The
+    reconnection always runs, even if the send fails.
+    """
+    if not getattr(args, "with_retry_fault", False):
+        return []
+    scheme = context.get("n8n_scheme")
+    token = context.get("token")
+    if not scheme or not token:
+        return [
+            pending(
+                CHECK_REINTENTO,
+                "preflight incompleto (sin esquema de webhook o token de operador)",
+                "run the preflight successfully before --with-retry-fault",
+            )
+        ]
+    webhook_url = f"{scheme}://{args.n8n_host}:{args.n8n_port}/webhook/{WEBHOOK_PATH}"
+    origen = f"smoke-{uuid.uuid4().hex[:12]}"
+    body = {
+        "descripcion": TEST_DESCRIPTION,
+        "prioridad": "media",
+        "origen_message_id": origen,
+    }
+    outcome: dict = {}
+    errors: list = []
+
+    def _send() -> None:
+        try:
+            outcome["response"] = http_request(
+                "POST", webhook_url, body, timeout=args.e2e_timeout
+            )
+        except BaseException as exc:  # noqa: BLE001 - must still reconnect below
+            errors.append(exc)
+
+    docker(["network", "disconnect", NETWORK_AUTOMATION, BACKEND_CONTAINER])
+    thread = threading.Thread(target=_send, daemon=True)
+    try:
+        thread.start()
+        time.sleep(RETRY_FAULT_RECONNECT_DELAY_S)
+    finally:
+        docker(
+            [
+                "network",
+                "connect",
+                "--alias",
+                BACKEND_CONTAINER,
+                "--alias",
+                BACKEND_SERVICE_ALIAS,
+                NETWORK_AUTOMATION,
+                BACKEND_CONTAINER,
+            ]
+        )
+    thread.join(timeout=args.e2e_timeout + 15)
+
+    if errors:
+        return [
+            failing(
+                CHECK_REINTENTO,
+                f"el envio fallo durante la recuperacion: {errors[0]!r}",
+                "the backend was reconnected in the finally block; inspect the webhook and re-run",
+            )
+        ]
+    _, _, text = outcome.get("response", (None, {}, ""))
+    listing = _fetch_incidentes_por_origen(
+        base_url, {"Authorization": f"Bearer {token}"}, origen, args
+    )
+    return [evaluate_retry_recovery(_json_or_none(text), listing, origen)]
+
+
+# ── TLS edge group (c-140 section 7, opt-in --with-tls) ──────────────────────
+
+
+def run_tls_group(args, base_url: str, context: dict) -> list[Check]:
+    """Verify the TLS edge of the reference deployment (opt-in ``--with-tls``).
+
+    Checks the effective exposure (`docker compose config`), the TLS 1.3 and 1.2
+    handshakes with the certificate identity, the HTTP->HTTPS redirect, the HSTS
+    and security headers, the versionless Server header, the catch-all for an
+    unknown Host and the rejection of TLS 1.1. Never disables verification.
+    """
+    if not getattr(args, "with_tls", False):
+        return []
+    results: list[Check] = []
+    host = getattr(args, "tls_host", "localhost")
+    port = getattr(args, "tls_port", 443)
+    cert_path = _REPO_ROOT / "openssl" / "mesa.crt"
+
+    # Exposure from the effective configuration.
+    config_result = compose(["config", "--format", "json"], timeout=60)
+    if config_result.returncode != 0:
+        results.append(
+            failing(
+                tls_checks.CHECK_EXPOSURE,
+                f"docker compose config fallo: {(config_result.stderr or '').strip()[-200:]}",
+                "fix the compose files before verifying the edge",
+            )
+        )
+    else:
+        try:
+            services = json.loads(config_result.stdout).get("services", {})
+        except ValueError:
+            services = None
+        if services is None:
+            results.append(
+                failing(
+                    tls_checks.CHECK_EXPOSURE,
+                    "docker compose config no devolvio JSON",
+                    "re-run `docker compose config --format json` manually",
+                )
+            )
+        else:
+            results.append(tls_checks.evaluate_edge_exposure(services))
+
+    expected_fingerprint = (
+        tls_checks.cert_fingerprint_from_file(cert_path) if cert_path.exists() else None
+    )
+    if expected_fingerprint is None:
+        results.append(
+            failing(
+                tls_checks.CHECK_IDENTITY,
+                f"no existe el certificado de la corrida ({cert_path})",
+                "run `bash openssl/generate-certs.sh` before --with-tls",
+            )
+        )
+
+    # Handshakes (TLS 1.3 and TLS 1.2), with identity by anchor or fingerprint.
+    version13, fingerprint13 = tls_checks.negotiate(
+        host, port, ssl.TLSVersion.TLSv1_3, ssl.TLSVersion.TLSv1_3, cert_path
+    )
+    results.append(tls_checks.evaluate_version(tls_checks.CHECK_VERSION_13, version13, "TLSv1.3"))
+    results.append(tls_checks.evaluate_identity(fingerprint13, expected_fingerprint))
+
+    version12, _ = tls_checks.negotiate(
+        host, port, ssl.TLSVersion.TLSv1_2, ssl.TLSVersion.TLSv1_2, cert_path
+    )
+    results.append(tls_checks.evaluate_version(tls_checks.CHECK_VERSION_12, version12, "TLSv1.2"))
+
+    # HTTP -> HTTPS redirect (port 80), preserving path and query, without HSTS.
+    redirect_path = "/api/v1/health?origen=smoke"
+    status, headers, _ = tls_checks.http_get(host, 80, redirect_path)
+    results.append(
+        tls_checks.evaluate_redirect(status, headers, f"https://{host}{redirect_path}")
+    )
+
+    # HTTPS response headers through the proxy.
+    context_tls = tls_checks.verify_context(cert_path)
+    _, https_headers, _ = tls_checks.http_get(
+        host, port, "/api/v1/health", tls=True, context=context_tls
+    )
+    results.append(tls_checks.evaluate_security_headers(https_headers))
+    results.append(tls_checks.evaluate_server_header(https_headers))
+
+    # Catch-all for an unknown Host.
+    results.append(
+        tls_checks.evaluate_unknown_host(tls_checks.probe_unknown_host(host, port, cert_path))
+    )
+
+    # TLS 1.1 must be rejected (PENDING if the client cannot offer it).
+    offerable, error = tls_checks.probe_tls11(host, port, cert_path)
+    results.append(tls_checks.evaluate_tls11_rejection(offerable, error))
+
+    return results
+
+
+# ── Evidence report gathering (c-140 section 5.7) ────────────────────────────
+
+
+def _git_commit() -> str:
+    result = _run(["git", "rev-parse", "HEAD"], timeout=30)
+    return result.stdout.strip() if result.returncode == 0 else "unknown"
+
+
+def _utc_now() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _n8n_version() -> str:
+    try:
+        result = n8n_cli(["--version"], timeout=60)
+    except Exception:  # noqa: BLE001 - report best-effort metadata
+        return "unknown"
+    text = (result.stdout or result.stderr or "").strip()
+    match = re.search(r"(\d+\.\d+\.\d+)", text)
+    return match.group(1) if match else (text or "unknown")
 
 
 # ── Optional email channel variant (§7.2) ────────────────────────────────────
@@ -834,6 +1134,23 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="OPT-IN: also walk the (free) email channel. Off by default and absent from the cost-zero path.",
     )
+    parser.add_argument(
+        "--with-retry-fault",
+        action="store_true",
+        help="OPT-IN: disconnect/reconnect the backend to verify N8N retry recovery (needs block 2).",
+    )
+    parser.add_argument(
+        "--json-out",
+        default=None,
+        help="Write a JSON evidence report (commit, UTC date, N8N version, per-check result) to this path.",
+    )
+    parser.add_argument(
+        "--with-tls",
+        action="store_true",
+        help="OPT-IN: verify the TLS edge of the reference deployment (group tls:*).",
+    )
+    parser.add_argument("--tls-host", default="localhost", help="Host for the TLS group. Default: localhost")
+    parser.add_argument("--tls-port", type=int, default=443, help="HTTPS port for the TLS group. Default: 443")
     parser.add_argument("--timeout", type=int, default=15, help="Per-request timeout in seconds. Default: 15")
     parser.add_argument("--e2e-timeout", type=int, default=60, help="Webhook POST timeout. Default: 60")
     parser.add_argument("--poll-timeout", type=int, default=45, help="Persistence polling window. Default: 45")
@@ -856,6 +1173,11 @@ def main(argv: list[str] | None = None) -> int:
     if not key_check.ok:
         return _finish(results, args)
 
+    budget_check = assert_cost_guard_budget()
+    results.append(budget_check)
+    if not budget_check.ok:
+        return _finish(results, args)
+
     if not args.skip_import:
         results.extend(import_and_activate_workflow(args))
         if exit_code(results) != 0:
@@ -865,18 +1187,37 @@ def main(argv: list[str] | None = None) -> int:
     results.extend(preflight)
     if exit_code(preflight) != 0:
         # Early abort: no incident is sent over the webhook (§4.6).
-        return _finish(results, args)
+        return _finish(results, args, context)
 
-    results.extend(run_e2e(args, args.base_url.rstrip("/"), context))
-    results.extend(run_email_variant(args, args.base_url.rstrip("/"), context))
-    return _finish(results, args)
+    base_url = args.base_url.rstrip("/")
+    results.extend(run_e2e(args, base_url, context))
+    results.extend(run_e2e_idempotency(args, base_url, context))
+    results.extend(run_retry_fault(args, base_url, context))
+    results.extend(run_email_variant(args, base_url, context))
+    results.extend(run_tls_group(args, base_url, context))
+    return _finish(results, args, context)
 
 
-def _finish(results: list[Check], args) -> int:
+def _finish(results: list[Check], args, context: dict | None = None) -> int:
     if args.json:
         print(json.dumps([r.__dict__ for r in results], ensure_ascii=False, indent=2))
     else:
         print(format_summary(results))
+    json_out = getattr(args, "json_out", None)
+    if json_out:
+        context = context or {}
+        report = build_evidence_report(
+            commit=_git_commit(),
+            timestamp_utc=_utc_now(),
+            n8n_version=_n8n_version(),
+            groups=groups_from_checks(results),
+            results=results,
+            secrets=[getattr(args, "password", ""), context.get("token", "")],
+        )
+        Path(json_out).write_text(
+            json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        print(f"[INFO] evidence report written to {json_out}")
     return exit_code(results)
 
 

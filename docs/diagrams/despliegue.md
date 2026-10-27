@@ -15,7 +15,7 @@ graph TD
             BE["Backend FastAPI\n(sin puerto host)\nuvicorn app.main:app\nalembic upgrade head al iniciar"]
             N8N["N8N 2.11.2\npuerto host: 5678\nacceso: cuenta owner (primer arranque)\nvolumen: n8n_data"]
             FE["Frontend React 19 + Vite\n(sin puerto host)\nVite dev server :3000"]
-            NGX["Nginx alpine\npuerto host: 80, 443\nTLS 1.3 termination\nHTTP → HTTPS redirect\nHSTS header"]
+            NGX["Nginx alpine\npuerto host: 80, 443\nTLS 1.2/1.3 termination\nHTTP → HTTPS redirect\nHSTS header"]
         end
 
         ENV[".env\n(credenciales reales,\ngitignorado)"]
@@ -62,7 +62,7 @@ graph TD
 | Servicio   | Puerto host | Puerto contenedor | Protocolo        |
 |------------|------------|-------------------|------------------|
 | nginx      | 80         | 80                | HTTP (redirect)  |
-| nginx      | 443        | 443               | HTTPS (TLS 1.3)  |
+| nginx      | 443        | 443               | HTTPS (TLS 1.2/1.3) |
 | postgres   | 5433       | 5432              | TCP              |
 | n8n        | 5678       | 5678              | HTTP (directo)   |
 | backend    | —          | 8000              | HTTP (interno)   |

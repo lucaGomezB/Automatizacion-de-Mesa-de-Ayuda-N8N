@@ -870,8 +870,18 @@ def make_pg_client_with_classifier(pg_engine):
         async with make_pg_client_with_classifier(result) as c:
             response = await c.post(...)
 
+    c-140 (tarea 2.2): la firma acepta un `classifier` opcional (un doble espia
+    con demora) que se comparte entre TODAS las peticiones del bloque `async
+    with`, de modo que un test pueda contar cuantas veces se invoco `classify` a
+    lo largo de altas concurrentes. Sin ese argumento se conserva el doble
+    deterministico previo (una instancia por peticion), sin romper la firma
+    vigente ni a sus llamadores existentes.
+
     Args:
-        result: ClasificacionResult que el clasificador doble debe devolver.
+        result:     ClasificacionResult que el clasificador doble debe devolver.
+        classifier: doble espia opcional (con `classify` awaitable). Si se
+                    provee, se usa TAL CUAL en cada peticion para poder espiarlo
+                    y para inyectar una demora que fuerce el entrelazado.
 
     Returns:
         AsyncContextManager que provee el cliente listo para usar.
@@ -879,7 +889,7 @@ def make_pg_client_with_classifier(pg_engine):
     from contextlib import asynccontextmanager
 
     @asynccontextmanager
-    async def _make(result: ClasificacionResult):
+    async def _make(result: ClasificacionResult, classifier=None):
         app = create_app()
 
         async def override_db():
@@ -896,8 +906,12 @@ def make_pg_client_with_classifier(pg_engine):
         def _build_service_override(classification_result: ClasificacionResult):
             """Crea el factory de servicio con el clasificador doble."""
             async def _factory(session: AsyncSession = Depends(get_db_session)):
-                fake_classifier = AsyncMock()
-                fake_classifier.classify = AsyncMock(return_value=classification_result)
+                fake_classifier = classifier
+                if fake_classifier is None:
+                    fake_classifier = AsyncMock()
+                    fake_classifier.classify = AsyncMock(
+                        return_value=classification_result
+                    )
                 return IncidenteService(session, classifier=fake_classifier)
             return _factory
 

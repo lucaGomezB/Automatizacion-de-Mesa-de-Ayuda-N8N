@@ -18,6 +18,12 @@ design D8; tareas 3.1 a 3.5).
   confirmaron tenerlo; pendiente de confirmación del autor. Las celdas que dependen de
   texto completo de acceso cerrado (Paket 2024, Colavito 2025) quedan como "no
   reportado en el alcance revisado" con el motivo.
+- **OQ-5 (ACTUALIZADA POR c-146, 2026-10-26):** Colavito 2025 queda resuelta por su
+  manuscrito aceptado de acceso abierto; Paramesh y Shreedhara (2019) tiene un trabajo
+  compañero de acceso abierto de los mismos autores (arXiv:2103.15822) del que se
+  extrae su métrica, aunque la obra original (capítulo Springer) sigue cerrada; Paket
+  2024 permanece bloqueada (sin copia ni alternativa accesible). Ver la sección c-146
+  al final de este registro.
 - **Límite de acceso:** no se evadieron controles anti-bot. El texto completo de Zangari
   2023 (Elsevier, acceso abierto híbrido CC BY 4.0) no pudo recuperarse: el repositorio
   institucional `iris.unive.it` / `arca.unive.it` respondió con desafío de Cloudflare y
@@ -70,3 +76,66 @@ design D8; tareas 3.1 a 3.5).
   describe los resultados de Revina en términos cualitativos; la tabla ahora consigna que
   sus cifras (exactitud 1,000) provienen de conjuntos etiquetados de 30 y 60 tickets, un
   matiz que c-139 puede incorporar al mencionar su alcance.
+
+## c-146 — métricas del compañero accesible de Paramesh, de Colavito y verdicto de Paket
+
+Registro de procedencia de las celdas completadas por el change
+`c-146-completar-metricas-trabajos-previos` (dictamen CONEAU 2026-10-22, criterio 3 y
+recomendación B16; design D10 a D12; tareas 2.5 a 2.8 y 3.1 a 3.5). Extiende este
+registro; no reescribe las secciones de c-135.
+
+- **Fecha de consulta:** 2026-10-26.
+- **Regla de consignación:** la de c-135 (solo cifras textuales de la fuente accesible,
+  sin recalcular, promediar ni inferir).
+
+### Colavito, Lanubile y Novielli (2025) — manuscrito aceptado de acceso abierto
+
+- **Obra (clave):** `colavito2025benchmarking`, DOI `10.1016/j.infsof.2025.107758`.
+- **URL:** `https://collab.di.uniba.it/nicole/wp-content/uploads/sites/6/2025/05/Extended_Benchmark_LLM_4_Issue_Report_Classification__IST_Accepted.pdf` (grupo de los autores, Universidad de Bari).
+- **Tipo de versión:** manuscrito aceptado (postprint) de acceso abierto, 8 páginas.
+
+| Celda | Valor consignado en la tesis | Ubicación en la fuente | Nota |
+|---|---|---|---|
+| Corpus/idioma | dos datasets de issues de GitHub (NLBSE'23 y NLBSE'24, 1.500 issues); idioma: no reportado en el alcance revisado | Secciones de datasets y tablas de resultados del manuscrito (los dos conjuntos NLBSE'23 y NLBSE'24) | El manuscrito no declara el idioma de los corpus; se conserva "no reportado en el alcance revisado". Resuelve el residuo de c-135 para esta celda. |
+| Métrica reportada | macro-F1: BERT-like NLBSE'23 0,74 (RoBERTa) y 0,82-0,87 (SETFIT); NLBSE'24 0,79 (RoBERTa) y 0,82 (SETFIT); LLM zero-shot 0,79-0,88 (NLBSE'23) y hasta 0,68 (NLBSE'24); BERT ajustado más consistente | Tablas de resultados del manuscrito (baselines tipo BERT y LLM generativos zero-shot, por dataset) | Cifras de F1 macro textuales del manuscrito aceptado; el detalle completo por modelo queda en la fuente. Resuelve el residuo de c-135 para esta celda. |
+
+### Ramya, Paramesh y Shreedhara (2021) — compañero accesible de Paramesh y Shreedhara (2019)
+
+- **Obra (clave):** `ramya2021classifying`, DOI `10.48550/arXiv.2103.15822`.
+- **URL:** `https://arxiv.org/abs/2103.15822`.
+- **Tipo de versión:** preprint de arXiv (2021); trabajo presentado en la 3rd IEEE
+  International Conference on Computational Systems and Information Technology for
+  Sustainable Development (CSITSS), 2018.
+- **Relación con la fila de la tabla:** es el trabajo compañero de acceso abierto de los
+  mismos autores (con C. Ramya) sobre el mismo problema (clasificación de tickets de mesa
+  de servicio no estructurados); la obra original de Paramesh y Shreedhara (2019,
+  `Paramesh2019_it_service_desk`, DOI `10.1007/978-981-13-2514-4_28`) sigue cerrada y su
+  celda conserva "no reportado en el alcance revisado (texto cerrado)".
+
+| Celda | Valor consignado en la tesis | Ubicación en la fuente | Nota |
+|---|---|---|---|
+| Métrica reportada (fila Paramesh 2019) | compañero accesible de los mismos autores (arXiv:2103.15822): árbol de decisión 90,60 % y RandomForest 91,81 % | Tablas de resultados del texto completo: exactitud (accuracy) de los clasificadores base y de los ensembles | Solo entran a la tabla las dos cifras de titular (árbol de decisión 90,60 % y RandomForest 91,81 %). Métricas verificadas en el texto completo, también reportadas: árbol de decisión con bagging 92,04 %, voting 81,11 %, Naive Bayes multinomial 69,93 % (con bagging 70,17 %). Se atribuyen explícitamente al trabajo compañero, no a la obra original. |
+
+### Verdicto de Paket et al. (2024) — obra de acceso cerrado sin alternativa accesible
+
+- **Obra (clave):** `paket2024itservice`, DOI `10.1109/ubmk63289.2024.10773473`.
+- **Acceso:** IEEE Xplore, cerrado (OpenAlex `oa_status = closed`). Verificado el
+  2026-10-26 en OpenAlex y Semantic Scholar: **no** existe copia de acceso abierto ni un
+  trabajo alternativo accesible de sus autores que cuantifique el resultado.
+- **Efecto:** la fila permanece cualitativa con su motivo ("no reportado en el alcance
+  revisado (texto cerrado); cualitativo: BERT supera a los LLM"). El hallazgo (los
+  modelos tipo BERT por encima de los LLM generativos) queda cuantificado por la fila
+  accesible de Colavito 2025.
+
+### Seguimiento bloqueado (acceso institucional)
+
+| Obra | DOI | Motivo | Qué se requiere |
+|---|---|---|---|
+| Paramesh y Shreedhara (2019) | `10.1007/978-981-13-2514-4_28` (Springer, LNNS vol. 43, pp. 331-346) | La obra original sigue cerrada; su extracción directa requiere credenciales | Acceso institucional (Biblioteca Electrónica de Ciencia y Tecnología / UTN) |
+| Paket et al. (2024) | `10.1109/UBMK63289.2024.10773473` (IEEE UBMK 2024, pp. 135-140) | Acceso cerrado sin copia ni alternativa accesible de los autores | Acceso institucional (Biblioteca Electrónica de Ciencia y Tecnología / UTN) |
+
+- **Sin copias:** no se versiona ninguna copia (PDF u otro formato) de los artículos. El
+  registro guarda URL, tipo de versión y cifras.
+- **Alta bibliográfica:** la única entrada agregada a `Bibliography_base.bib` es
+  `ramya2021classifying` (`@misc`, arXiv:2103.15822, verificada por DOI). Ninguna entrada
+  existente se modifica.

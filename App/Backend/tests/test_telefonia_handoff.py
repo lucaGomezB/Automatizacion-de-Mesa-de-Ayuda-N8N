@@ -127,13 +127,16 @@ async def test_url_no_configurada_no_envia_handoff(monkeypatch):
     assert called["n"] == 0
 
 
-# ── 9.5 RED — Timeout del handoff mayor al workflow (~11 s) ─────────────────
+# ── c-140 (2.7/2.8) RED — Timeout del handoff >= presupuesto del tramo de alta ─
 
 
-async def test_handoff_usa_timeout_de_30s_sin_falso_failed(monkeypatch):
+async def test_handoff_usa_timeout_amplio_sin_falso_failed(monkeypatch):
     """
-    El handoff fire-and-forget no debe cortar antes de que el workflow termine
-    (~11 s): el timeout efectivo del cliente HTTP debe ser 30 s (c-70, fix smoke).
+    El handoff fire-and-forget no debe cortar antes de que el tramo de alta
+    termine. Con la politica de reintento de c-140, el peor caso del tramo de
+    alta (login + POST) es de 275 s; el timeout efectivo del cliente HTTP debe
+    cubrirlo (c-140, D9). La prueba cruzada contra `n8n/workflow.json` y
+    `EXECUTIONS_TIMEOUT` vive en `test_c135_n8n_retry_policy.py` (tarea 3.2).
     Se captura el `timeout` que la funcion pasa a `httpx.AsyncClient` sin red.
     """
     from types import SimpleNamespace
@@ -167,7 +170,10 @@ async def test_handoff_usa_timeout_de_30s_sin_falso_failed(monkeypatch):
 
     assert outcome == module.HANDOFF_SENT
     assert captured["timeout"] == module.TELEFONIA_HANDOFF_TIMEOUT_S
-    assert captured["timeout"] == 30.0
+    # Presupuesto de peor caso del tramo de alta (CP3): 40 s + 235 s = 275 s.
+    # El timeout del handoff debe cubrirlo para no registrar falsos
+    # `telefonia_handoff_failed` cuando N8N reintenta.
+    assert captured["timeout"] >= 275.0
 
 
 def test_payload_pseudonimizado_no_contiene_pii_cruda():
