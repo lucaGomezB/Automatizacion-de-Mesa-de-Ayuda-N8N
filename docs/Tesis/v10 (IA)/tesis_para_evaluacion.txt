@@ -29,7 +29,7 @@ Directores
 Prof. Alberto Cortez y Prof. Ariel Enferrel
 
 Mendoza, República Argentina
-26 de octubre de 2026
+27 de octubre de 2026
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
@@ -88,277 +88,209 @@ FastAPI, ticket classification, Rioplatense Spanish, human in the loop
 4
 
 Índice general
-Glosario de siglas y acrónimos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
-1 Introducción . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
-1.1 Contextualización . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
-1.2 Planteamiento del problema . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
-1.3 Pregunta de investigación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
-1.4 Hipótesis de trabajo . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
-1.5 Objetivo general . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
-1.6 Objetivos específicos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
-1.7 Justificación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16
-1.8 Alcance y delimitaciones. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
-2 Marco teórico . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
-2.1 Gestión de servicios de tecnologías de la información . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
-2.2 Mesa de ayuda y modelo ITIL . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
-2.3 Automatización de procesos y orquestación de flujos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
-2.4 Human-in-the-loop y grados de autonomía . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 20
-2.5 Procesamiento de lenguaje natural y modelos de lenguaje grandes. . . . . . . . . . . . . . . . 21
-2.6 Reconocimiento automático del habla . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 23
-2.7 Bases de datos relacionales y persistencia transaccional . . . . . . . . . . . . . . . . . . . . . . . . . . . 24
-2.8 Métricas de evaluación de clasificadores multiclase . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 24
-3 Estado del arte . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 26
-3.1 Soluciones comerciales de mesa de ayuda . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 27
-3.2 Plataformas de orquestación de flujos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 28
-3.3 Trabajos académicos previos sobre clasificación de tickets . . . . . . . . . . . . . . . . . . . . . . . . . 28
-3.4 Calibración de la confianza y cascadas de modelos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 30
-3.5 Análisis comparativo y brecha identificada . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 31
-4 Marco metodológico. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
-4.1 Enfoque y tipo de investigación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
-4.2 Diseño experimental . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+Glosario de siglas y acrónimos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+1 Introducción . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 8
+1.1 Contextualización. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 8
+1.2 Planteamiento del problema . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 8
+1.3 Pregunta de investigación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 9
+1.4 Hipótesis de trabajo . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+1.5 Objetivo general . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+1.6 Objetivos específicos. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+1.7 Justificación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+1.8 Alcance y delimitaciones . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+2 Marco teórico . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+2.1 Gestión de servicios de tecnologías de la información . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+2.2 Mesa de ayuda y modelo ITIL . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+2.3 Automatización de procesos y orquestación de flujos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16
+2.4 Human-in-the-loop y grados de autonomía . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+2.5 Procesamiento de lenguaje natural y modelos de lenguaje grandes . . . . . . . . . . . . . . . . . . . . . . . . . 18
+2.6 Reconocimiento automático del habla . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 20
+2.7 Bases de datos relacionales y persistencia transaccional . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+2.8 Métricas de evaluación de clasificadores multiclase . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+3 Estado del arte . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 23
+3.1 Soluciones comerciales de mesa de ayuda . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 24
+3.2 Plataformas de orquestación de flujos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25
+3.3 Trabajos académicos previos sobre clasificación de tickets . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25
+3.4 Calibración de la confianza y cascadas de modelos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 27
+3.5 Análisis comparativo y brecha identificada . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 28
+4 Marco metodológico . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 30
+4.1 Enfoque y tipo de investigación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 30
+4.2 Diseño experimental . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 30
+4.3 Operacionalización de variables . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 31
+4.4 Población, muestra y corpus . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 31
+4.5 Protocolo de pruebas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 34
+4.6 Métricas e instrumentos. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 35
+4.7 Análisis estadístico . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 35
+4.8 Amenazas a la validez . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 37
+4.9 Gestión del proyecto bajo enfoque Scrumban (método de construcción del artefacto) . . . . . 38
+5 Arquitectura del sistema . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 39
+5.1 Visión general. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 39
+5.2 Capa de canales de entrada . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 41
+5.3 Capa de orquestación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 43
+5.4 Capa de procesamiento. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 43
+5.5 Subsistema de clasificación híbrido . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 44
+5.6 Modelo de datos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 45
+5.7 Contrato de la interfaz REST . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 47
+6 Implementación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 50
+6.1 Entorno de despliegue y dependencias . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 50
+6.2 Construcción del módulo Python . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 50
+6.3 Construcción del flujo en N8N . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 51
+6.4 Integración del canal telefónico . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 53
+6.5 Desafíos de integración . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 54
+6.6 Conexión con el proceso Scrumban . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 55
+6.7 Pruebas automatizadas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 57
+6.8 Dashboard de analítica . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 58
+7 Consideraciones éticas y aspectos legales . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 60
+7.1 Marco normativo aplicable . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 60
+7.2 Principios aplicados al tratamiento de datos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 60
+7.3 Transferencia internacional y pseudonimización. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 61
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
+
+7.4
+7.5
+7.6
 
 5
 
-4.3 Operacionalización de variables . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 33
-4.4 Población, muestra y corpus . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 33
-4.5 Protocolo de pruebas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 36
-4.6 Métricas e instrumentos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 37
-4.7 Análisis estadístico . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 37
-4.8 Amenazas a la validez . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 39
-4.9 Gestión del proyecto bajo enfoque Scrumban (método de construcción del artefacto) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 40
-5 Arquitectura del sistema . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 41
-5.1 Visión general . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 41
-5.2 Capa de canales de entrada . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 43
-5.3 Capa de orquestación. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 45
-5.4 Capa de procesamiento . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 45
-5.5 Subsistema de clasificación híbrido. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 46
-5.6 Modelo de datos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 47
-5.7 Contrato de la interfaz REST . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49
-6 Implementación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 52
-6.1 Entorno de despliegue y dependencias . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 52
-6.2 Construcción del módulo Python . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 52
-6.3 Construcción del flujo en N8N . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 53
-6.4 Integración del canal telefónico . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 56
-6.5 Desafíos de integración . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 56
-6.6 Conexión con el proceso Scrumban . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 58
-6.7 Pruebas automatizadas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 59
-6.8 Dashboard de analítica . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 60
-7 Consideraciones éticas y aspectos legales . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 62
-7.1 Marco normativo aplicable . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 62
-7.2 Principios aplicados al tratamiento de datos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 63
-7.3 Transferencia internacional y pseudonimización. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 63
-7.4 Seguridad técnica . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 64
+Seguridad técnica . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 62
+Consentimiento, derechos del usuario y supervisión humana . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 62
+Cumplimiento normativo y alineación con estándares . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 64
+7.6.1 Marco de referencia adoptado . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 64
+7.6.2 Estado de alineación con ISO/IEC 27002:2022 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 64
+7.6.3 Perfil de alineación con NIST CSF 2.0 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 64
+7.6.4 Brechas principales y hoja de ruta . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 64
+7.6.5 Alineación con el marco legal . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 65
+8 Resultados . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 66
+8.1 Comparación de tiempos de registro . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 66
+8.2 Matriz de confusión y métricas de clasificación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 67
+8.3 Intervención humana en el flujo automatizado . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 70
+8.4 Calibración de la confianza . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 71
+8.5 Sensibilidad al ajuste del clasificador con el corpus . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 72
+8.6 Análisis de errores y casos límite . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 72
+9 Discusión . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 74
+9.1 Interpretación de los resultados . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 74
+9.2 Comparación con la literatura . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 77
+9.3 Limitaciones del estudio . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 78
+9.4 Implicancias prácticas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 80
+9.5 Balance neto de la automatización . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 81
+9.6 Reflexiones sobre la generalización . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 83
+10 Conclusiones . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 84
+10.1 Cumplimiento de los objetivos del trabajo . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 84
+10.2 Aportes y generalización . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 86
+11 Recomendaciones y líneas de trabajo futuro . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 87
+11.1 Calibración del gate de confianza . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 87
+11.2 Incorporación de un clasificador supervisado con corpus propio . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 88
+11.3 Corrección de la medición de intervención humana . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 88
+11.4 Cola de respaldo y alta asincrónica . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 89
+11.5 Ampliación de canales de entrada . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 89
+11.6 Panel de monitoreo en tiempo real . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 89
+11.7 Mecanismos de aprendizaje activo . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 90
+11.8 Validación sobre un corpus independiente . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 90
+11.9 Estudios de replicación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 90
+11.10Evaluación de modelos de lenguaje de código abierto . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 91
+11.11 Base de conocimientos para resolución automática . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 91
+11.12Agente conversacional telefónico en tiempo real . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 91
+Referencias bibliográficas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 93
+Anexos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 97
+A Diagrama de arquitectura del sistema. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 97
+B Repositorio de código fuente . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 97
+C Esquema de base de datos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 98
+D Especificación OpenAPI de la interfaz REST . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 98
+E Configuración del flujo N8N . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 99
+F Corpus de validación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 99
+G Documentación operativa . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 101
+H Especificación del prompt de Gemini 3.6 Flash . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 101
+H.1 Estructura y contenido del prompt . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 101
+H.2 Parámetros de configuración . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 101
+H.3 Validación de la respuesta . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 102
+H.4 Iteración y mejora del prompt. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 103
+H.5 Recomendaciones para futuras iteraciones . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 103
+I Trazabilidad de las correcciones del dictamen . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 103
 
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-6
-
-7.5 Consentimiento, derechos del usuario y supervisión humana . . . . . . . . . . . . . . . . . . . . . . . 64
-7.6 Cumplimiento normativo y alineación con estándares . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 66
-7.6.1 Marco de referencia adoptado . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 66
-7.6.2 Estado de alineación con ISO/IEC 27002:2022 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 66
-7.6.3 Perfil de alineación con NIST CSF 2.0 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 67
-7.6.4 Brechas principales y hoja de ruta . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 67
-7.6.5 Alineación con el marco legal . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 67
-8 Resultados . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 68
-8.1 Comparación de tiempos de registro . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 68
-8.2 Matriz de confusión y métricas de clasificación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 69
-8.3 Intervención humana en el flujo automatizado . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 72
-8.4 Calibración de la confianza . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 73
-8.5 Sensibilidad al ajuste del clasificador con el corpus . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 74
-8.6 Análisis de errores y casos límite . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 74
-9 Discusión . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 76
-9.1 Interpretación de los resultados . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 76
-9.2 Comparación con la literatura . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 79
-9.3 Limitaciones del estudio . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 80
-9.4 Implicancias prácticas. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 82
-9.5 Balance neto de la automatización . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 83
-9.6 Reflexiones sobre la generalización . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 85
-10 Conclusiones . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 86
-10.1 Cumplimiento de los objetivos del trabajo . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 86
-10.2 Aportes y generalización. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 88
-11 Recomendaciones y líneas de trabajo futuro . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 89
-11.1 Calibración del gate de confianza . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 89
-11.2 Incorporación de un clasificador supervisado con corpus propio . . . . . . . . . . . . . . . . . . . . 90
-11.3 Corrección de la medición de intervención humana . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 90
-11.4 Ampliación de canales de entrada . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 91
-11.5 Panel de monitoreo en tiempo real . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 91
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-7
-
-11.6 Mecanismos de aprendizaje activo . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 91
-11.7 Validación sobre un corpus independiente . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 92
-11.8 Estudios de replicación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 92
-11.9 Evaluación de modelos de lenguaje de código abierto . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 92
-11.10Base de conocimientos para resolución automática. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 93
-11.11Agente conversacional telefónico en tiempo real . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 93
-Referencias bibliográficas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 94
-Anexos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .101
-A Diagrama de arquitectura del sistema . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .101
-B Repositorio de código fuente . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .101
-C Esquema de base de datos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .102
-D Especificación OpenAPI de la interfaz REST . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .103
-E Configuración del flujo N8N . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .103
-F Corpus de validación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .104
-G Documentación operativa . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .105
-H Especificación del prompt de Gemini 3.6 Flash . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .105
-H.1 Estructura y contenido del prompt . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .106
-H.2 Parámetros de configuración . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .106
-H.3 Validación de la respuesta . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .106
-H.4 Iteración y mejora del prompt . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .108
-H.5 Recomendaciones para futuras iteraciones . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .108
-I
-
-Trazabilidad de las correcciones del dictamen . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .108
-
-8
+6
 
 Índice de tablas
 1
-
-Trabajos académicos previos sobre clasificación de tickets . . . . . . . . . . . . . . . . . . . . . . . . . 29
-
 2
-
-Comparación de soluciones para gestión automatizada de mesa de ayuda . . . . . . . 31
-
 3
-
-Operacionalización de variables del estudio . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 34
-
 4
-
-Capas funcionales de la arquitectura del sistema . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 41
-
 5
-
-Entidades principales del modelo de datos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 48
-
 6
-
-Puntos de entrada principales de la interfaz REST . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 51
-
 7
-
-Estado de alineación con los controles de ISO/IEC 27002:2022, agrupados por
-tema . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 66
-
 8
-
-Perfil de alineación con las funciones de NIST CSF 2.0 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 67
-
 9
-
-Estadísticos descriptivos de los tiempos de registro por flujo (n = 200) . . . . . . . . . . . . 68
-
 10
-
-Tiempo de registro por canal de origen: flujos manual y automatizado, reducción
-y contraste intra-canal (n = 200) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 69
-
 11
-
-Matriz de confusión del clasificador automático (n = 200). Filas: sector asignado;
-columnas: sector predicho principal. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 70
-
 12
-
-Exactitud estricta y laxa por etapa del pipeline y por canal de origen . . . . . . . . . . . . . . . 71
-
 13
-
-Métricas de clasificación por clase con intervalo de confianza al 95 % (una contra
-el resto) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 72
-
 14
-
-Exactitud por banda de confianza declarada y por etapa del pipeline . . . . . . . . . . . . . . 73
-
 15
-
-Sensibilidad de la exactitud al vocabulario ajustado con el corpus. . . . . . . . . . . . . . . . . . 74
-
 16
-
-Confusiones observadas en la clasificación automática, por frontera. . . . . . . . . . . . . . . 75
-
 17
-
-Exactitud mínima de equilibrio y balance neto trimestral según la tasa de derivación errónea manual y el costo por derivación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 84
-
 18
-
-Cumplimiento de los objetivos del trabajo y evidencia de respaldo . . . . . . . . . . . . . . . . . 86
-
 19
-
-Parámetros de configuración de la inferencia con gemini-3.6-flash. . . . . . . . . . .107
-
 20
 
-Recomendaciones del dictamen del 22 de octubre de 2026, change responsable
-y secciones donde se atendieron. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .109
-
-9
+Trabajos académicos previos sobre clasificación de tickets . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 27
+Comparación de soluciones para gestión automatizada de mesa de ayuda . . . . . . . . . . . . . . . . 28
+Operacionalización de variables del estudio . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+Capas funcionales de la arquitectura del sistema . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 39
+Entidades principales del modelo de datos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 46
+Puntos de entrada principales de la interfaz REST . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49
+Estado de alineación con los controles de ISO/IEC 27002:2022, agrupados por tema . . . . 64
+Perfil de alineación con las funciones de NIST CSF 2.0 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 65
+Estadísticos descriptivos de los tiempos de registro por flujo (n = 200) . . . . . . . . . . . . . . . . . . . . . 66
+Tiempo de registro por canal de origen: flujos manual y automatizado, reducción y contraste intra-canal (n = 200) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 67
+Matriz de confusión del clasificador automático (n = 200). Filas: sector asignado; columnas: sector predicho principal. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 68
+Exactitud estricta y laxa por etapa del pipeline y por canal de origen . . . . . . . . . . . . . . . . . . . . . . . . 69
+Métricas de clasificación por clase con intervalo de confianza al 95 % (una contra el resto) 70
+Exactitud por banda de confianza declarada y por etapa del pipeline . . . . . . . . . . . . . . . . . . . . . . . 71
+Sensibilidad de la exactitud al vocabulario ajustado con el corpus . . . . . . . . . . . . . . . . . . . . . . . . . . . 72
+Confusiones observadas en la clasificación automática, por frontera . . . . . . . . . . . . . . . . . . . . . . . . 73
+Exactitud mínima de equilibrio y balance neto trimestral según la tasa de derivación
+errónea manual y el costo por derivación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 82
+Cumplimiento de los objetivos del trabajo y evidencia de respaldo . . . . . . . . . . . . . . . . . . . . . . . . . . 84
+Parámetros de configuración de la inferencia con gemini-3.6-flash. . . . . . . . . . . . . . . . . . . . 102
+Recomendaciones del dictamen del 22 de octubre de 2026, change responsable y secciones donde se atendieron. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 104
 
 Índice de figuras
 1
-
-Diagrama de componentes del módulo Python organizado en capas (routes,
-services, repositories, classifiers). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 42
-
 2
-
-Diagrama de arquitectura del sistema (detalle en el Anexo A).. . . . . . . . . . . . . . . . . . . . . . 43
-
 3
-
-Diagrama de despliegue del entorno local. Servicios, red Docker, volúmenes y
-servicios externos. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 44
-
 4
-
-Diagrama de secuencia del flujo extremo a extremo de un incidente, desde el
-canal de entrada hasta la confirmación o la derivación a revisión humana. . . . . . . . . 45
-
 5
-
-Diagrama entidad-relación de las siete entidades principales del modelo de datos (esquema completo en el Anexo C).. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 50
-
 6
-
-Panel de administración del sistema: listado de tickets con filtros combinados y
-cola de revisión humana. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 61
-
 7
-
-Dashboard de analítica del panel de administración: tendencia temporal de incidentes, distribución por sector y distribución por estado. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 62
-
 8
-
-Distribución del tiempo de registro por canal de origen (manual frente a automatizado). El panel de telefonía incorpora la duración de la llamada grabada.. . . . . . . . 70
-
 9
-
-Matriz de confusión del clasificador (n = 200). Filas: sector asignado (verdad);
-columnas: sector predicho principal. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 71
-
 10
-
-Cronograma de la construcción, las campañas y la versión del modelo (barras
-con precisión de mes; hitos, de día). Fuente: historial del repositorio y confirmación de los autores (9-10-2026). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .102
 
 11
 
-Reconstrucción esquemática del flujo de orquestación N8N . . . . . . . . . . . . . . . . . . . . . . . .104
+Diagrama de componentes del módulo Python organizado en capas (routes, services,
+repositories, classifiers). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 40
+Diagrama de arquitectura del sistema (detalle en el Anexo A). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 41
+Diagrama de despliegue del entorno local. Servicios, red Docker, volúmenes y servicios
+externos. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 42
+Diagrama de secuencia del flujo extremo a extremo de un incidente, desde el canal de
+entrada hasta la confirmación o la derivación a revisión humana. . . . . . . . . . . . . . . . . . . . . . . . . . . . 43
+Diagrama entidad-relación de las siete entidades principales del modelo de datos (esquema completo en el Anexo C). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 48
+Panel de administración del sistema: listado de tickets con filtros combinados y cola de
+revisión humana. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 58
+Dashboard de analítica del panel de administración: tendencia temporal de incidentes,
+distribución por sector y distribución por estado. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 59
+Distribución del tiempo de registro por canal de origen (manual frente a automatizado).
+El panel de telefonía incorpora la duración de la llamada grabada. . . . . . . . . . . . . . . . . . . . . . . . . . . 68
+Matriz de confusión del clasificador (n = 200). Filas: sector asignado (verdad); columnas:
+sector predicho principal. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 69
+Cronograma de la construcción, las campañas y la versión del modelo (barras con precisión de mes; hitos, de día). Fuente: historial del repositorio y confirmación de los autores
+(9-10-2026). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 97
+Reconstrucción esquemática del flujo de orquestación N8N . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 100
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-10
+7
 
 Glosario de siglas y acrónimos
 ACID Atomicity, Consistency, Isolation,
@@ -435,7 +367,7 @@ WIP Work In Progress
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-11
+8
 
 1. Introducción
 1.1. Contextualización
@@ -465,7 +397,7 @@ Las mediciones preliminares realizadas durante una semana laboral representativa
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-12
+9
 
 denciaron un volumen promedio de 42 incidentes diarios, un tiempo medio de registro manual
 de 2 minutos con 45 segundos por incidente y una tasa de derivación errónea inicial cercana
@@ -497,7 +429,7 @@ y alcanza la exactitud de clasificación el umbral objetivo definido para una me
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-13
+10
 
 empresarial mediana?
 La pregunta se descompone en tres interrogantes subsidiarios que guían el diseño
@@ -529,7 +461,7 @@ contraste de tiempos; su criterio de falsación es una exactitud observada por 
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-14
+11
 
 o un intervalo de confianza que no supera el umbral. El resultado vigente —73,5 % de exactitud, IC [67,0 %, 79,1 %] y macro-F1 de umbral de 0,6508 sobre las cuatro clases estimables
 (Sección 8)— no alcanza el umbral; esta sub-hipótesis se declara refutada.
@@ -560,7 +492,7 @@ exactitud global no inferior al 85 % y F1 macro no inferior a 0,85— no es part
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-15
+12
 
 este objetivo, sino un criterio de éxito contingente verificable contra la exactitud observada y
 su intervalo de confianza; su grado de cumplimiento se declara en la Subsección 10.1. Ese
@@ -592,7 +524,7 @@ cumplimiento es verificable contra el reporte de evaluación del repositorio y l
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-16
+13
 
 de la Sección 8.
 1.7. Justificación
@@ -620,7 +552,7 @@ El relevamiento propio de la documentación pública de los proveedores (consult
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-17
+14
 
 19-10-2026) muestra que plataformas comerciales como Zendesk Suite, Freshdesk o ServiceNow ITSM operan como software como servicio, con datos en jurisdicciones extranjeras y
 costos por agente y mes que escalan con el equipo (Freshworks, 2026; ServiceNow, 2026;
@@ -648,7 +580,7 @@ automatizada (desde el 24-09-2026), sujeta a modificaciones futuras por parte de
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-18
+15
 
 2. Marco teórico
 Este capítulo establece los fundamentos conceptuales sobre los cuales se construye
@@ -677,7 +609,7 @@ como un pedido formal de información, asesoramiento, acceso a un componente o e
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-19
+16
 
 de una operación estandarizada—. Esta distinción resulta especialmente relevante para el
 diseño del clasificador propuesto en este trabajo, ya que orienta la categorización inicial y
@@ -710,7 +642,7 @@ acciones automáticas en función de condiciones predefinidas. Estas plataformas
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-20
+17
 
 rizan por ofrecer modelos visuales de construcción de flujos, soporte nativo para webhooks y
 disparadores reactivos, y capacidad de transformación de datos entre sistemas heterogéneos.
@@ -740,7 +672,7 @@ la granularidad de la revisión. La revisión total somete cada salida a validac
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-21
+18
 
 por debajo de un umbral; y la operación autónoma con auditoría ejecuta sin intervención previa
 y conserva un registro trazable para revisión posterior. El sistema propuesto adopta una revisión selectiva acotada por etapa: la regla requiere_revision_humana = (confianza
@@ -765,7 +697,7 @@ La forma en que se formula la instrucción condiciona el resultado tanto como la
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-22
+19
 
 planteamiento zero-shot, en el que la instrucción describe la tarea sin ejemplos, y el few-shot,
 en el que se incorporan unos pocos casos resueltos dentro del propio mensaje para orientar
@@ -798,7 +730,7 @@ El rendimiento de los LLM tampoco es uniforme entre idiomas ni entre variedades 
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-23
+20
 
 mismo idioma: sobre 29 idiomas, el desempeño de 36 modelos cae de forma marcada en los
 de menos recursos (Xuan et al. 2025); el ajuste por instrucciones de los modelos abiertos se
@@ -829,7 +761,7 @@ clásico describen Rabiner y Juang (1993), mientras que la generación contempor
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-24
+21
 
 ya en redes neuronales profundas cuyo exponente reciente con alta robustez multilingüe es el
 modelo Whisper (Radford et al. 2023). El sistema propuesto no integra un motor de ASR: la
@@ -858,7 +790,7 @@ La evaluación de clasificadores multiclase requiere métricas que capturen tant
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-25
+22
 
 de métricas derivadas de la matriz de confusión, entre las cuales destacan la exactitud global
 (accuracy), la precisión por clase, la sensibilidad o exhaustividad (recall) por clase, y la medida
@@ -904,7 +836,7 @@ del clasificador.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-26
+23
 
 3. Estado del arte
 Este capítulo revisa la literatura académica y las soluciones comerciales disponibles
@@ -934,7 +866,7 @@ criterio de costo y exactitud (C2), con evaluación empírica o método de refer
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-27
+24
 
 ron los preprints sin versión arbitrada y el material no arbitrado. De las que cumplían se eligieron, hasta seis, las más próximas al escenario de este trabajo (un modelo consultado como servicio y una cascada de dos etapas). Cada consulta quedó registrada, con base, cadena, fecha y
 resultado, en la bitácora docs/Tesis/Correcciones/bitacora-busqueda-c-110.md,
@@ -962,7 +894,7 @@ autoalojado sin costo de licencia, aunque carece de capacidades nativas de clasi
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-28
+25
 
 búsqueda de arquitecturas compositivas que integren componentes maduros de código abierto
 con servicios de inferencia bajo demanda.
@@ -983,21 +915,43 @@ constituye un requisito no negociable.
 3.3. Trabajos académicos previos sobre clasificación de tickets
 La literatura académica sobre clasificación automática de tickets de soporte ha experimentado un crecimiento considerable durante los últimos años. La Tabla 1 sistematiza los
 trabajos más relevantes de esta subsección, organizados por enfoque metodológico y por orden cronológico.
-Paramesh y Shreedhara (2019) comparan Naive Bayes multinomial, regresión logística, k vecinos más cercanos y SVM sobre tickets reales de una mesa de servicio de infraestructura de TI, y reportan buen desempeño de SVM en todas las muestras.
-Revina et al. (2020) abordan el mismo problema desde otra óptica: clasifican la complejidad del ticket (baja, media o alta) y no su categoría. Con 30 y 60 tickets etiquetados, con-
+Paramesh y Shreedhara (2019) comparan Naive Bayes multinomial, regresión logística, k vecinos más cercanos y SVM sobre tickets reales de una mesa de servicio de infraestructura de TI, y reportan buen desempeño de SVM en todas las muestras. En su trabajo accesible
+sobre el mismo problema, Ramya et al. (2021) reportan una exactitud de 90,60 % con árbol
+de decisión y de 91,81 % con RandomForest.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-29
+26
 
-cluyen que los métodos simples y explicables, con pocos rasgos lingüísticos del dominio, son
+Revina et al. (2020) abordan el mismo problema desde otra óptica: clasifican la complejidad del ticket (baja, media o alta) y no su categoría. Con 30 y 60 tickets etiquetados, concluyen que los métodos simples y explicables, con pocos rasgos lingüísticos del dominio, son
 competitivos frente a alternativas más complejas. Excluyen además, por decisión de diseño y
 no como resultado medido, los word embeddings preentrenados, con el argumento de que el
 vocabulario del dominio contiene numerosos términos ausentes de los corpus generales; esa
 tensión con el enfoque basado en LLM se retoma en la Subsección 9.2.
 La literatura reciente sobre clasificación de tickets no respalda un desplazamiento generalizado hacia los LLM generativos: en las comparaciones directas relevadas, los modelos
 tipo BERT superan a los LLM en 172 clases en turco (Paket et al. 2024) y, ajustados con pocos
-datos, son más consistentes y menos costosos que los LLM zero-shot (Colavito et al. 2025).
+datos, son más consistentes y menos costosos que los LLM zero-shot: Colavito et al. (2025)
+reportan un macro-F1 de 0,74 a 0,87 para los modelos tipo BERT y de 0,79 a 0,88 para los
+LLM en NLBSE’23, y de 0,79 a 0,82 para BERT frente a un máximo de 0,68 para los LLM en
+NLBSE’24.
+La evaluación de modelos de lenguaje en escenarios de pocos ejemplos ha documentado que el rendimiento de clasificación depende fuertemente del idioma del corpus, con resultados que favorecen a los idiomas con más recursos (Ahuja et al. 2023; Xuan et al. 2025). Para
+el español y sus variantes regionales, Grandury et al. (2025) construyen una tabla comparativa
+de LLM específica para las variedades del español de España y Latinoamérica, mientras que
+Mayor-Rocher et al. (2026) evalúan modelos con pruebas de español como lengua extranjera, Bernal-Beltrán et al. (2025) comparan ajuste fino y aprendizaje en contexto sobre español
+mexicano, y Ramón-Ferrer et al. (2026) evalúan modelos de bajos recursos sobre un corpus
+en español. Esta línea evidencia que el español, y en particular sus variantes regionales como
+el rioplatense, ha recibido una atención notablemente menor en las evaluaciones sistemáticas
+publicadas. Cabe acotar, además, una brecha concreta en el alcance revisado: en las fuentes
+consultadas hasta la fecha de corte del protocolo de revisión de este capítulo (21 de octubre de
+2026), con las cadenas de búsqueda allí declaradas, no se identificó artículo arbitrado 20232026 que evalúe Google Gemini sobre tickets de soporte en español. Esta ausencia relativa al
+alcance revisado constituye una de las motivaciones académicas del presente trabajo, el cual
+aporta evidencia empírica sobre el desempeño del clasificador en español rioplatense aplicado
+a un dominio de mesa de ayuda de organización mediana.
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+27
+
 Tabla 1. Trabajos académicos previos sobre clasificación de tickets
 Trabajo
 
@@ -1012,29 +966,29 @@ infraestructura TI;
 tamaño e idioma: no
 reportado en el
 alcance revisado
+
 Revina et al. complejidad
-28.243 y 4.684 tickets
-(2020)
-(30 y 60 etiquetados);
 baja/media/alta;
-inglés predominante
+(2020)
 TF-IDF vs. rasgos
 lingüísticos; kNN,
 DT, NB, LR, SVM,
 semisupervisado
-Zangari et
 revisión + BERT;
-20.000 reclamos +
-al. (2023)
+Zangari et
 inyección de
-35.000 issues; idioma
+al. (2023)
 jerarquía de
-no reportado en el
 etiquetas
-alcance revisado
-(texto inaccesible)
+
+28.243 y 4.684 tickets
+(30 y 60 etiquetados);
+inglés predominante
+
 Paket et al.
 (2024)
+
+turco, 172 clases
 
 Liu et al.
 (2025)
@@ -1043,19 +997,51 @@ Liu et al.
 Colavito et
 al. (2025)
 
+LLM (Titan, Llama,
+Mistral) vs. BERT;
+zero-shot,
+fine-tuning, RAG
+escalada de tickets
+con LLM; fine-tuning
+supervisado guiado
+por categoría
+
+20.000 reclamos +
+35.000 issues; idioma
+no reportado en el
+alcance revisado
+(texto inaccesible)
+
+tickets de nube
+(ByteDance), 160 de
+prueba; idioma: no
+reportado en el
+alcance revisado
+dos datasets de
+benchmark de 22
+LLM generativos + 2 issues de GitHub
+BERT de base
+(NLBSE’23 y
+NLBSE’24, 1.500
+issues); idioma: no
+reportado en el
+alcance revisado
+
 Métrica reportada
 
 Condición
 
 no reportado en el
-alcance revisado;
-cualitativo: SVM con
-buen desempeño
-
-clasificación
-clásica
-supervisada
-
+alcance revisado (texto
+cerrado); cualitativo:
+SVM con buen
+desempeño; compañero
+accesible de los mismos
+autores
+(arXiv:2103.15822):
+árbol de decisión
+90,60 % y
+RandomForest 91,81 %
 exactitud 1,000 (árbol
 de decisión, rasgos
 lingüísticos) frente a
@@ -1068,36 +1054,30 @@ estándar; ML-BERT:
 hasta 5,7 % en F1 y
 5,4 % en exactitud
 (bugs)
-LLM (Titan, Llama,
-turco, 172 clases
 no reportado en el
-Mistral) vs. BERT;
 alcance revisado (texto
-zero-shot,
 cerrado); cualitativo:
-fine-tuning, RAG
 BERT supera a los LLM
-escalada de tickets tickets de nube
 F1 0,862 (ajuste fino
-con LLM; fine-tuning (ByteDance), 160 de
 supervisado + CoT)
-supervisado guiado prueba; idioma: no
 frente a 0,801 como
-por categoría
-reportado en el
 máximo con modelos
-alcance revisado
 pequeños
-benchmark de 22
-dos datasets de
-no reportado en el
-LLM generativos + 2 issues de GitHub;
-alcance revisado (texto
-BERT de base
-tamaño: no reportado cerrado); cualitativo:
-en el alcance revisado BERT más consistente
-(texto cerrado)
-que los LLM generativos
+macro-F1: BERT-like
+NLBSE’23 0,74
+(RoBERTa) y 0,82-0,87
+(SETFIT); NLBSE’24
+0,79 (RoBERTa) y 0,82
+(SETFIT); LLM
+zero-shot 0,79-0,88
+(NLBSE’23) y hasta
+0,68 (NLBSE’24); BERT
+ajustado más
+consistente
+
+clasificación
+clásica
+supervisada
 
 comparación
 de representaciones y
@@ -1118,30 +1098,18 @@ relaciones
 zero-shot vs.
 fine-tuning
 
-Fuente: elaboración propia sobre las obras citadas (resumen y texto abierto; consulta 25-10-2026).
+Fuente: elaboración propia sobre las obras citadas (resumen y texto abierto; consulta 26-10-2026).
 
-La evaluación de modelos de lenguaje en escenarios de pocos ejemplos ha documentado que el rendimiento de clasificación depende fuertemente del idioma del corpus, con resultados que favorecen a los idiomas con más recursos (Ahuja et al. 2023; Xuan et al. 2025). Para
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-30
-
-el español y sus variantes regionales, Grandury et al. (2025) construyen una tabla comparativa
-de LLM específica para las variedades del español de España y Latinoamérica, mientras que
-Mayor-Rocher et al. (2026) evalúan modelos con pruebas de español como lengua extranjera, Bernal-Beltrán et al. (2025) comparan ajuste fino y aprendizaje en contexto sobre español
-mexicano, y Ramón-Ferrer et al. (2026) evalúan modelos de bajos recursos sobre un corpus
-en español. Esta línea evidencia que el español, y en particular sus variantes regionales como
-el rioplatense, ha recibido una atención notablemente menor en las evaluaciones sistemáticas
-publicadas. Cabe acotar, además, una brecha concreta en el alcance revisado: en las fuentes
-consultadas hasta la fecha de corte del protocolo de revisión de este capítulo (21 de octubre de
-2026), con las cadenas de búsqueda allí declaradas, no se identificó artículo arbitrado 20232026 que evalúe Google Gemini sobre tickets de soporte en español. Esta ausencia relativa al
-alcance revisado constituye una de las motivaciones académicas del presente trabajo, el cual
-aporta evidencia empírica sobre el desempeño del clasificador en español rioplatense aplicado
-a un dominio de mesa de ayuda de organización mediana.
 3.4. Calibración de la confianza y cascadas de modelos
 Guo et al. (2017) mostraron, en experimentos que incluyen clasificación de documentos, que las redes neuronales modernas tienden a la sobreconfianza y que esta se corrige a
 posteriori con un parámetro de temperatura. En la clasificación por instrucciones, Zhao et al.
-(2021) hallaron en GPT-3 y GPT-2 sesgos hacia ciertas etiquetas, que una calibración contextual de la distribución de salida reduce. Para modelos consultados solo por texto, Tian et
+(2021) hallaron en GPT-3 y GPT-2 sesgos hacia ciertas etiquetas, que una calibración con-
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+28
+
+textual de la distribución de salida reduce. Para modelos consultados solo por texto, Tian et
 al. (2023) hallaron, en preguntas y respuestas, mejor calibración de la confianza verbalizada
 que de las probabilidades condicionales, y Xiong et al. (2024) observaron sobreconfianza, valores concentrados en el extremo alto de la escala y poca capacidad para separar aciertos de
 errores.
@@ -1152,11 +1120,6 @@ una cascada de LLM de costo creciente con una función de puntaje aprendida y un
 para aceptar o escalar. En las fuentes consultadas con C1 y C2 hasta el 25 de octubre de
 2026 no se identificó trabajo arbitrado que evalúe una cascada de reglas determinísticas y un
 LLM con confianza verbalizada sobre tickets de soporte en español; la ausencia es relativa al
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-31
-
 alcance revisado.
 3.5. Análisis comparativo y brecha identificada
 La Tabla 2 compara las principales soluciones revisadas en tres dimensiones: modalidad de despliegue, clasificación automática y modelo de costo.
@@ -1212,6 +1175,11 @@ simultáneamente las tres propiedades que la tabla releva y que el contexto del 
 el tiempo, y capacidad nativa de clasificación automática mediante NLP moderno. La brecha
 identificada, en el alcance revisado en este capítulo y hasta la fecha de corte declarada, se
 sintetiza en la ausencia de soluciones de bajo costo, autoalojadas, con clasificación basada en
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+29
+
 modelos de lenguaje grandes y validadas empíricamente sobre corpus en español rioplatense
 para el dominio específico de mesas de ayuda empresariales medianas.
 La presente investigación se ubica precisamente en esa intersección y propone una
@@ -1224,7 +1192,7 @@ comparativa.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-32
+30
 
 4. Marco metodológico
 4.1. Enfoque y tipo de investigación
@@ -1254,7 +1222,7 @@ campaña registraba tiempos; no se anunciaron el inicio de cada cronometraje ni
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-33
+31
 
 comparativo del estudio (el contraste con un flujo automatizado), informado al concluir la campaña en una sesión de esclarecimiento (debriefing). Así se atenuó, sin eliminarlo, el efecto
 Hawthorne —la alteración del comportamiento de los sujetos cuando saben que están siendo
@@ -1285,7 +1253,7 @@ el flujo automatizado se ejecutó entre septiembre y octubre de 2026.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-34
+32
 
 Tabla 3. Operacionalización de variables del estudio
 Variable
@@ -1374,7 +1342,7 @@ Fuente: elaboración propia.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-35
+33
 
 El tamaño muestral se determinó mediante la fórmula clásica de muestreo aleatorio
 simple con corrección por finitud, apropiada porque el universo relevado es finito y relativamente acotado:
@@ -1413,7 +1381,7 @@ en la construcción del sistema, no fueron instruidos según su comportamiento y
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-36
+34
 
 acceso a las predicciones del clasificador al momento de etiquetar. Los dos analistas son, además, las mismas dos personas que operaron el brazo manual descrito en la Subsección 4.5.
 Esta coincidencia se declara explícitamente: no altera el cómputo del acuerdo inter-evaluador,
@@ -1443,7 +1411,7 @@ ambos capacitados previamente en el uso del sistema de gestión de tickets utili
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-37
+35
 
 referencia. El procesamiento automatizado se ejecutó sobre la misma infraestructura, sin intervención humana en la captura y con el gate de revisión aplicable, durante la ventana de
 septiembre a octubre de 2026 y con monitoreo continuo de los tiempos de respuesta.
@@ -1475,7 +1443,7 @@ muestras pareadas, dado que la prueba previa de normalidad de Shapiro-Wilk recha
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-38
+36
 
 pótesis de normalidad en los tres conjuntos analizados, todos con n = 200: tiempos manuales
 (W = 0,803, p = 3,71 × 10−15 ), tiempos automatizados (W = 0,902, p = 3,47 × 10−10 ) y diferencias pareadas (W = 0,822, p = 2,37×10−14 ). En los tres casos el valor p queda muy por debajo
@@ -1505,7 +1473,7 @@ la biblioteca SciPy del ecosistema Python (Virtanen et al. 2020).
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-39
+37
 
 4.8. Amenazas a la validez
 Se identificaron y trataron explícitamente cuatro amenazas a la validez del estudio.
@@ -1533,7 +1501,7 @@ clase, macro-F1), que se reportan con intervalos de confianza (Wilson para las p
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-40
+38
 
 bootstrap percentil para F1). La amenaza se trata, además, con pruebas no paramétricas robustas frente a tamaños muestrales pequeños y a desviaciones de la normalidad (Hernández
 Sampieri & Mendoza Torres, 2018).
@@ -1561,18 +1529,22 @@ y la actualización de la documentación asociada.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-41
+39
 
 5. Arquitectura del sistema
 5.1. Visión general
 El sistema propuesto se estructura como una arquitectura distribuida y modular compuesta por cinco capas claramente diferenciadas, siguiendo los principios de cohesión alta y
 acoplamiento bajo descritos por Pressman y Maxim (2020). En el diseño se previó proteger
-la comunicación con el exterior mediante TLS 1.2/1.3 a nivel de un proxy inverso (Nginx); el
-despliegue publicado para la validación experimental no incluyó dicho proxy, por lo que la terminación TLS corresponde al diseño y no a una capacidad verificada en la instancia publicada.
-La comunicación interna entre los servicios del sistema (N8N, backend, PostgreSQL) se realiza
-sobre la red aislada de Docker, que constituye el perímetro de confianza. Todas las interfaces
-entre capas utilizan el estilo arquitectónico REST con cuerpos JSON para el intercambio estructurado de datos (Fielding & Taylor, 2002). Esta separación de responsabilidades facilita el
-reemplazo independiente de cualquier componente sin afectar a los demás.
+la comunicación con el exterior mediante TLS 1.2/1.3 a nivel de un proxy inverso (Nginx); la
+terminación TLS 1.2/1.3 se verifica de forma automatizada sobre el despliegue de referencia
+de la release v1.2.2 (prueba de humo documentada en el runbook y el Anexo B), con certificado autofirmado de referencia; el despliegue usado para la campaña experimental no incluyó
+el proxy, de modo que las mediciones del Capítulo 7 no dependen de TLS. En producción, el
+adoptante debe proveer un certificado emitido por una CA. La comunicación interna entre los
+servicios del sistema (N8N, backend, PostgreSQL) se realiza sobre la red aislada de Docker,
+que constituye el perímetro de confianza. Todas las interfaces entre capas utilizan el estilo
+arquitectónico REST con cuerpos JSON para el intercambio estructurado de datos (Fielding
+& Taylor, 2002). Esta separación de responsabilidades facilita el reemplazo independiente de
+cualquier componente sin afectar a los demás.
 La Tabla 4 sintetiza las cinco capas y sus responsabilidades específicas, y la Figura 1
 detalla la organización en capas del módulo de procesamiento.
 Tabla 4. Capas funcionales de la arquitectura del sistema
@@ -1614,11 +1586,11 @@ de información entre capas.
 Figura 1. Diagrama de componentes del módulo Python organizado en capas (routes, services,
 repositories, classifiers).
 
-42
+40
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-43
+41
 
 Figura 2. Diagrama de arquitectura del sistema (detalle en el Anexo A).
 
@@ -1642,11 +1614,11 @@ las barreras al reporte oportuno.
 Figura 3. Diagrama de despliegue del entorno local. Servicios, red Docker, volúmenes y servicios
 externos.
 
-44
+42
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-45
+43
 
 Figura 4. Diagrama de secuencia del flujo extremo a extremo de un incidente, desde el canal de
 entrada hasta la confirmación o la derivación a revisión humana.
@@ -1666,7 +1638,7 @@ OpenAPI 3.1.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-46
+44
 
 Las dependencias del módulo se organizan por capas funcionales claramente delimitadas. La capa de acceso a datos utiliza SQLAlchemy 2.0 como mapeador objeto-relacional
 (ORM) y asyncpg como driver asincrónico para PostgreSQL, en coherencia con la operación
@@ -1697,7 +1669,7 @@ de cinco pliegues sobre el corpus, maximizando la cobertura sin que la precisió
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-47
+45
 
 inferior a la del modelo sobre el conjunto que resuelve (0,7405 frente a 0,6769, ambas estimadas dentro de la muestra; Subsección 8.5), y equivale a resolver los 131 casos con señal
 dominante. Sustituyó al umbral de 0,90 sobre la confianza del diseño inicial, retirado porque
@@ -1729,7 +1701,7 @@ de siete entidades principales, descritas en la Tabla 5.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-48
+46
 
 Tabla 5. Entidades principales del modelo de datos
 Tabla
@@ -1814,7 +1786,7 @@ Fuente: elaboración propia.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-49
+47
 
 El canal de origen constituye una entrada opcional del backend: el esquema de creación de incidentes acepta canal_origen_id como campo anulable, de modo que un incidente puede registrarse sin canal conocido. La entidad central incidente referencia mediante
 claves foráneas a los catálogos de sector, estado y canal de origen, y mantiene una relación
@@ -1840,14 +1812,14 @@ en docs/openapi.json; la especificación OpenAPI 3.1 la genera FastAPI automát
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-50
+48
 
 Figura 5. Diagrama entidad-relación de las siete entidades principales del modelo de datos (esquema
 completo en el Anexo C).
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-51
+49
 
 Tabla 6. Puntos de entrada principales de la interfaz REST
 Método
@@ -1942,7 +1914,7 @@ externo.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-52
+50
 
 6. Implementación
 6.1. Entorno de despliegue y dependencias
@@ -1960,26 +1932,20 @@ con el modelo gemini-3.6-flash. Todos los servicios se despliegan sobre imágene
 del módulo Python se realiza mediante un archivo requirements.txt con versiones fijadas
 (pinned) para garantizar la reproducibilidad de las compilaciones en distintos entornos.
 6.2. Construcción del módulo Python
-La selección del marco de trabajo para el servicio de procesamiento implicó la evaluación de tres alternativas: Flask, Django REST Framework y FastAPI. Flask, ampliamente adoptado en el ecosistema Python por su simplicidad, carece de validación nativa de esquemas y de
-generación automática de documentación OpenAPI, funcionalidades que el proyecto requería
-para garantizar la calidad de la interfaz REST. Django REST Framework, por su parte, ofrece
-un conjunto completo de herramientas para la construcción de interfaces de programación de
-aplicaciones, pero su modelo de operación sincrónico y la inclusión de componentes no requeridos por el proyecto —tales como el ORM de Django y el motor de plantillas— incrementaban
-la complejidad de la base de código sin aportar beneficios funcionales para una arquitectura
-de microservicio acotado. FastAPI 0.115, sustentado sobre el servidor ASGI Uvicorn 0.30.6,
-ofrece tres ventajas determinantes para el proyecto: validación automática de esquemas de
-entrada y salida mediante Pydantic v2, generación de documentación interactiva conforme a
-la especificación OpenAPI 3.1 sin configuración adicional, y operación asincrónica nativa que
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-53
-
-permite manejar las llamadas concurrentes desde N8N sin bloquear el hilo de ejecución principal (Ramírez, 2024). La madurez del ecosistema de FastAPI, su adopción creciente en la
-industria y la disponibilidad de documentación exhaustiva en español consolidaron la decisión.
+La selección del marco de trabajo para el servicio de procesamiento implicó la evaluación de tres alternativas: Flask, Django REST Framework y FastAPI. Flask, ampliamente
+adoptado por su simplicidad, carece de validación nativa de esquemas y de generación automática de documentación OpenAPI. Django REST Framework ofrece un conjunto completo de
+herramientas, pero su modelo sincrónico y componentes no requeridos —el ORM de Django
+y el motor de plantillas— incrementaban la complejidad sin aportar beneficios a un microservicio acotado. FastAPI 0.115, sustentado sobre el servidor ASGI Uvicorn 0.30.6, resolvió esas
+carencias con validación automática de esquemas mediante Pydantic v2, documentación interactiva conforme a OpenAPI 3.1 y operación asincrónica nativa ante las llamadas concurrentes
+desde N8N (Ramírez, 2024).
 El módulo Python expone su contrato REST organizado en capas, según la estructura
 descrita en la Sección 5, con una separación clara entre responsabilidades:
 models: entidades del modelo de dominio mapeadas mediante SQLAlchemy 2.0.
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+51
+
 schemas: modelos de validación y serialización con Pydantic v2.
 services: lógica de aplicación (IncidenteService, ClasificacionService).
 repositories: acceso a datos, aislando las consultas SQL del resto de la aplicación.
@@ -1992,28 +1958,25 @@ las pruebas sin modificar el código de los servicios que lo consumen. La gesti�
 configuración de la metodología Twelve-Factor App (Wiggins, 2017).
 6.3. Construcción del flujo en N8N
 El flujo de orquestación implementado en N8N comprende 32 nodos (29 operativos más
-3 notas adhesivas), organizados en siete etapas funcionales pero con ramificaciones específicas por canal. La elección de N8N como plataforma de orquestación, frente a alternativas
-como Apache Airflow, Zapier o Make, obedeció a tres criterios concurrentes. El primero, de
-naturaleza operativa, radica en que N8N admite despliegue completamente autoalojado bajo
-Docker, manteniendo los flujos de procesamiento y los datos dentro del perímetro organizacional. Zapier y Make operan exclusivamente como servicios en la nube, lo que las descarta en
-escenarios donde el procesamiento de datos sensibles exige control de infraestructura. Apache
-Airflow, aunque autoalojable, diseña sus flujos como grafos acíclicos dirigidos programados por
-intervalos temporales; ese paradigma resulta adecuado para procesos de extracción, transformación y carga de datos pero forzadamente inadecuado para un sistema reactivo que debe
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-54
-
-responder en tiempo real a eventos de entrada no programados (Apache Software Foundation, 2024). El segundo criterio refiere al modelo de construcción visual que N8N ofrece sobre
-un editor de nodos arrastrables: la curva de aprendizaje de esta interfaz es sustancialmente
-menor que la de alternativas centradas en definición programática de flujos, lo que permitió al
-equipo concentrar el esfuerzo en la lógica de negocio antes que en la sintaxis de definición
-de procesos. El tercer criterio se vincula con la licencia de código fuente disponible (fair-code)
-que habilita la auditoría de seguridad del núcleo de orquestación (n8n GmbH, 2024).
+3 notas adhesivas), organizados en siete etapas funcionales con ramificaciones específicas por
+canal. La elección de N8N frente a Apache Airflow, Zapier o Make obedeció a tres criterios. El
+primero: N8N admite despliegue autoalojado bajo Docker, que mantiene el procesamiento y
+los datos dentro del perímetro organizacional, mientras que Zapier y Make operan solo como
+servicios en la nube. El segundo: su editor visual de nodos arrastrables reduce la curva de
+aprendizaje frente a las alternativas de definición programática, lo que permitió concentrar el
+esfuerzo en la lógica de negocio. El tercero: la licencia de código fuente (fair-code) habilita la
+auditoría de seguridad del núcleo de orquestación (n8n GmbH, 2024). Apache Airflow, aunque autoalojable, diseña sus flujos como grafos programados por intervalos temporales, un
+paradigma inadecuado para un sistema reactivo a eventos no programados (Apache Software
+Foundation, 2024).
 La composición de los 29 nodos responde a un patrón de procesamiento por canal, de
 cinco pasos, que se replica para cada medio de ingreso con ramificaciones específicas según
 el canal:
 1. Recepción: Tres disparadores (triggers) reciben las entradas desde correo electrónico (IMAP), formulario web (Webhook) y telefonía (trigger de Twilio). La decisión
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+52
+
 de separar los disparadores por canal, en lugar de unificar la recepción mediante un
 único webhook con discriminación interna, se fundamenta en la necesidad de preservar la configuración de autenticación y los parámetros de reintento específicos
 de cada protocolo.
@@ -2029,13 +1992,7 @@ y la respuesta incluye el identificador del ticket, la categoría asignada y el 
 de revisión humana (requiere_revision_humana), que el backend activa según
 las condiciones descritas en la etapa de evaluación. El canal telefónico no constituye
 una excepción: su clasificación se resuelve dentro del backend mediante la misma
-cascada híbrida que los canales escritos, aplicada sobre la descripción pseudoni-
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-55
-
-mizada, y el cuerpo de la creación no transporta una clasificación precalculada.
+cascada híbrida que los canales escritos, aplicada sobre la descripción pseudonimizada, y el cuerpo de la creación no transporta una clasificación precalculada.
 4. Evaluación: Aguas abajo del POST, un nodo condicional (IF) evalúa el indicador
 de revisión humana devuelto por el backend. Cuando el indicador está activo el flujo
 notifica al operador designado por correo electrónico y registra el evento en la auditoría; cuando no lo está, el flujo continúa automáticamente con las confirmaciones
@@ -2045,6 +2002,11 @@ el backend, de modo que una entrada inválida no genera un incidente. El backend
 activa el indicador cuando la etapa Gemini devuelve una confianza inferior a 0,70,
 cuando interviene la etapa de reserva o cuando el reportante no se identifica en el
 directorio de empleados; los casos que resuelve el filtro determinístico no se derivan por su confianza (Subsección 5.5). La calibración de la confianza del modelo se
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+53
+
 analiza en la Sección 8.4.
 5. Notificación: Tres nodos posteriores notifican al usuario por el canal correspondiente y registran la ejecución en el sistema de auditoría; la persistencia del ticket ocurre
 en el mismo POST de creación, que almacena el incidente y su clasificación en una
@@ -2060,11 +2022,6 @@ y salida de cada paso del flujo, generando un historial auditable que resulta es
 valioso en contextos donde la Ley 25.326 exige demostrar el camino recorrido por los datos
 personales (Honorable Congreso de la Nación Argentina, 2000). La exportación completa del
 flujo en formato JSON se incluye en el Anexo E.
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-56
-
 6.4. Integración del canal telefónico
 La integración con Twilio se realizó mediante el producto Programmable Voice, complementado con la transcripción automática nativa. El flujo telefónico opera de la siguiente
 manera: el usuario marca un número virtual asignado a la organización; un script TwiML reproduce un mensaje de bienvenida en español rioplatense y solicita al usuario describir su
@@ -2074,37 +2031,42 @@ por N8N con la transcripción textual. A partir de ese punto, el flujo continúa
 a la de los canales escritos.
 El tiempo de registro del canal telefónico —medido, para igualar la base de comparación con el flujo manual, desde el inicio de la llamada hasta la confirmación del número de
 incidente— promedió 20,1 segundos sobre los 81 casos del corpus. Ese total comprende la
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+54
+
 duración de la llamada grabada y la latencia de procesamiento posterior al cuelgue; el corpus
 registra la suma de ambos tramos, no su descomposición por etapa (transcripción, clasificación y persistencia), de modo que no se publica un desglose de latencias que el repositorio
 no permite reproducir con tamaño de muestra y procedimiento de medición. La grabación está
 acotada a un máximo de 45 s, de modo que el tiempo telefónico reportado constituye una cota
 inferior de la duración real de la llamada.
-Unificada la clasificación, el canal telefónico dejó de reservar la superficie de costo
-asociada a la invocación incondicional del agente en N8N. La clasificación pasa a computarse
-en la superficie de inferencia del backend y solo cuando la cascada híbrida escala al modelo
-semántico; los casos resueltos por el filtro determinístico no consumen cuota de Gemini. Este
-traslado de la superficie de costo elimina la reserva telefónica del proveedor invocado desde
-N8N.
+Unificada la clasificación, la invocación incondicional del agente de N8N dejó de reservar superficie de costo: la clasificación se computa ahora en el backend y solo escala al
+modelo semántico cuando la cascada híbrida lo requiere (Subsección 5.5).
 6.5. Desafíos de integración
-La implementación del sistema enfrentó tres desafíos de integración que merecen documentación explícita por su potencial utilidad en replicaciones futuras.
+La implementación del sistema enfrentó tres desafíos de integración que merecen documentación explícita.
 El primer desafío se presentó en la comunicación asincrónica entre N8N y el servicio de
 clasificación. El nodo HTTP de N8N invoca el endpoint de clasificación de manera sincrónica
 y espera la respuesta del servidor antes de continuar el flujo. Esta arquitectura, aunque simple
+de implementar, introduce un punto de fallo único: si el servicio Python no responde, el flujo
+completo se detiene y el incidente queda sin procesar. Para acotar esa exposición, el tramo de
+alta declara una política de reintento acotada sobre sus dos nodos HTTP: hasta tres intentos
+con una espera fija de cinco segundos y un tiempo de espera por intento de diez segundos
+en el inicio de sesión del operador y de setenta y cinco segundos en la creación del incidente,
+de modo que el peor caso del tramo queda por debajo del tope de ejecución configurado para
+la plataforma. La espera es fija y no un retroceso exponencial, y el reintento es idempotente:
+la clave de deduplicación se calcula una sola vez por ejecución, de modo que un reenvío
+no duplica el incidente. Agotados los intentos, la ejecución se desvía hacia la rama de error
+del flujo. La invocación de alta sigue siendo sincrónica y la cola de respaldo en el servicio
+Python, que retendría los mensajes durante ventanas de saturación, queda como trabajo futuro
+(Subsección 11.4).
+El segundo desafío surgió de la heterogeneidad de los formatos de entrada. Los correos electrónicos incluyen encabezados, firmas corporativas y reenvíos que contaminan el
+texto que el clasificador recibe; las llamadas telefónicas transcritas introducen errores de reconocimiento del habla, particularmente en términos técnicos (por ejemplo, API transcrito como
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-57
+55
 
-de implementar, introduce un punto de fallo único: si el servicio Python no responde dentro
-del tiempo de espera configurado en el nodo HTTP, el flujo completo se detiene y el incidente
-queda sin procesar. Esta limitación se asume como conocida en la versión evaluada: no se
-implementó un mecanismo de reintento con retroceso exponencial ni una cola de respaldo en
-el servicio Python que retuviera los mensajes durante ventanas de saturación. La disponibilidad
-ante fallas transitorias del servicio de clasificación queda, por lo tanto, como trabajo futuro, junto
-con la definición de una política de reintentos idempotente que preserve la trazabilidad de cada
-intento.
-El segundo desafío surgió de la heterogeneidad de los formatos de entrada. Los correos electrónicos incluyen encabezados, firmas corporativas y reenvíos que contaminan el
-texto que el clasificador recibe; las llamadas telefónicas transcritas introducen errores de reconocimiento del habla, particularmente en términos técnicos (por ejemplo, API transcrito como
 a p i o apeye); y los formularios web, aunque proveen texto limpio, llegan con una proporción significativa de campos vacíos o con descripciones de una sola palabra. La respuesta
 a esta heterogeneidad fue doble. Por un lado, se implementó un preprocesador en el nodo
 de normalización de N8N que elimina firmas, encabezados de reenvío y líneas de disclaimer
@@ -2117,17 +2079,12 @@ una categoría, el incidente se persiste con esa decisión o, en caso de falla d
 el estado interno del sistema refleje la inconsistencia y pueda recuperarse. La solución adoptó
 un enfoque pragmático: N8N invoca la creación del incidente —que clasifica y persiste en una
 sola operación del backend— como paso único del flujo. El nodo HTTP de creación declara un
-enrutamiento de error (continueErrorOutput): ante una falla de persistencia, la ejecución
-se desvía hacia la rama de error del flujo en lugar de reintentar automáticamente la operación.
-La recuperación del incidente exige, por lo tanto, una reejecución manual del flujo o el reproceso del mensaje de origen, situación que se asume como limitación conocida de la versión
-evaluada y se propone como trabajo futuro junto con una política de reintentos idempotente.
-La tabla de trazabilidad (clasificacion_log) fue diseñada para admitir múltiples registros
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-58
-
-de clasificación por incidente, preservando así el historial de cada intento.
+enrutamiento de error (continueErrorOutput) que opera una vez agotados los reintentos
+descritos en el primer desafío: si la persistencia falla tras los intentos, la ejecución se desvía
+hacia la rama de error del flujo en lugar de continuar. La recuperación del incidente exige una
+reejecución manual del flujo o el reproceso del mensaje de origen; esa recuperación es segura porque el alta es idempotente, de modo que un reenvío no duplica el incidente ni vuelve
+a clasificarlo. La tabla de trazabilidad (clasificacion_log) conserva un registro por clasificación ejecutada: un replay no agrega registros, y cada replay deja un evento estructurado
+con el identificador de origen y el del incidente, sin datos personales.
 6.6. Conexión con el proceso Scrumban
 La construcción del sistema fue organizada bajo el esquema Scrumban descrito en la
 Sección 4, ejecutando iteraciones de duración variable, ubicadas sin fechar por separado en
@@ -2135,7 +2092,13 @@ los dos períodos de actividad del repositorio (Figura 10, Anexo A). La vinculac
 etapa de construcción y los artefactos de implementación producidos se detalla a continuación:
 Etapa 1: La elicitación de requisitos produjo el diseño preliminar de la arquitectura de
 cinco capas y la especificación de la interfaz REST, documentadas en la Sección 5.
-Etapa 2: La construcción del módulo Python entregó el modelo de datos, los repositorios con operaciones CRUD asincrónicas y los servicios de negocio. Al cierre
+Etapa 2: La construcción del módulo Python entregó el modelo de datos, los reposito-
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+56
+
+rios con operaciones CRUD asincrónicas y los servicios de negocio. Al cierre
 de esta etapa, el módulo Python exponía el endpoint de salud y aceptaba la
 creación de incidentes mediante POST /api/v1/incidentes, con la cobertura de pruebas unitarias medida por pytest-cov sobre los paquetes de
 rutas, servicios y repositorios (véase la Subsección 6.7).
@@ -2152,55 +2115,54 @@ calibración del filtro determinístico y del prompt de Gemini. Los ajustes se
 realizaron a partir de errores observados en el corpus de validación; no se
 dispuso de un conjunto independiente de incidentes de preproducción (Subsección 9.1).
 Etapa 6: La validación experimental y la documentación final ejecutaron el protocolo
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-59
-
 de pruebas descrito en la Sección 4, recolectaron las mediciones del corpus
 completo y produjeron el análisis estadístico presentado en la Sección 8.
 La campaña del flujo manual (junio a agosto de 2026) no es una etapa de construcción; la del flujo automatizado (septiembre a octubre de 2026) corresponde a la validación
 experimental, con gemini-3.6-flash integrado el 24 de septiembre de 2026.
-La trazabilidad entre etapas y artefactos, mediada por el tablero Kanban en Jira, permitió al equipo identificar tempranamente los desvíos respecto del plan y redistribuir el esfuerzo
-cuando la complejidad de un componente superaba la estimación inicial. La adopción de límites de trabajo en curso (WIP) por columna del tablero evitó la acumulación de tareas a medio
-terminar, una práctica que resultó particularmente valiosa durante las etapas 4 y 5, donde la
-interdependencia entre módulos exigía finalizar componentes antes de integrarlos.
+La trazabilidad entre etapas y artefactos, mediada por el tablero Kanban en Jira, permitió identificar tempranamente los desvíos respecto del plan y redistribuir el esfuerzo ante
+imprevistos, y los límites de trabajo en curso evitaron la acumulación de tareas a medio terminar (Subsección 4.9).
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+57
+
 6.7. Pruebas automatizadas
 La estrategia de pruebas se sustentó en la pirámide clásica descrita por Crispin y
 Gregory (2009). En la base se ubicaron las pruebas unitarias del módulo Python construidas con el marco pytest 8.3. La cobertura de código de aplicación se mide con pytest-cov
 5.0.0 sobre los paquetes de rutas, servicios y repositorios, mediante el comando pytest
 
 --cov=app.routes --cov=app.services --cov=app.repositories --cov-report=term-mis
-cuyo reporte se genera en cada ejecución del pipeline de integración continua; la cifra exacta
-queda sujeta al reporte vigente y no se fija en el texto para no declarar un valor no reproducible.
-Estas pruebas cubren los clasificadores (determinístico e híbrido), los servicios de negocio, los
-esquemas de validación y los repositorios de acceso a datos.
+cuyo reporte se genera en cada ejecución del pipeline de integración continua. Estas pruebas
+cubren los clasificadores (determinístico e híbrido), los servicios de negocio, los esquemas de
+validación y los repositorios de acceso a datos.
 En el nivel intermedio se ejecutaron pruebas de integración en dos variantes complementarias: (a) pruebas rápidas contra SQLite en memoria para la ejecución durante el desarrollo, utilizando el fixture db_session con rollback por test; y (b) pruebas de integración contra
 una instancia real de PostgreSQL 15.5, que validan comportamientos específicos del motor
 —integridad de claves foráneas, eliminación en cascada, restricciones UNIQUE, precisión de
-tipos Numeric(5,4) y zona horaria en TIMESTAMPTZ, índices compuestos y coexistencia de
-esquemas— mediante 48 pruebas marcadas como integración, que fallan de forma ruidosa
-si PostgreSQL no está disponible en lugar de omitirse. En el nivel superior no se dispone de
-pruebas de extremo a extremo que instancien N8N y ejecuten el flujo completo: la integración
-con la plataforma de orquestación se verifica de forma estructural, mediante pruebas que par-
+tipos Numeric(5,4) y zona horaria en TIMESTAMPTZ, índices compuestos y coexistencia
+de esquemas— mediante 54 pruebas marcadas como integración, que fallan de forma ruidosa si PostgreSQL no está disponible en lugar de omitirse. En el nivel superior se dispone de
+una prueba de humo de extremo a extremo que instancia N8N activo sobre una variante de
+costo cero del workflow versionado, sin los nodos que requieren credenciales de terceros: el
+recorrido envía un incidente por el webhook del canal web y verifica su persistencia, su canal
+de origen, que la clasificación se resuelve en la etapa determinística, la idempotencia del alta
+ante un reenvío y la recuperación ante una indisponibilidad transitoria del backend. La prueba
+excluye la etapa Gemini real, que la variante nunca invoca, y el canal telefónico, y se reejecuta
+sobre el commit etiquetado en cada release. La integración con la plataforma de orquestación
+se verifica además de forma estructural, mediante pruebas que parsean y validan el archivo
+n8n/workflow.json (composición de nodos, conexiones y límites de costo) y pruebas de
+API y de base de datos que ejercitan los endpoints y la persistencia del módulo Python.
+El frontend se desarrolló como una aplicación React 19 de página única (SPA) con
+TypeScript y Vite como herramienta de construcción. La aplicación consta de dos vistas principales: un portal de reporte de incidentes con validación de formularios, y un panel de administración que incluye listado de tickets con filtros combinados, cola de revisión humana para los
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-60
+58
 
-sean y validan el archivo n8n/workflow.json (composición de nodos, conexiones y límites
-de costo) y pruebas de API y de base de datos que ejercitan los endpoints y la persistencia
-del módulo Python. La ejecución del flujo dentro de una instancia N8N activa queda fuera del
-alcance de la suite automatizada.
-El frontend se desarrolló como una aplicación React 19 de página única (SPA) con
-TypeScript y Vite como herramienta de construcción. La aplicación consta de dos vistas principales: un portal de reporte de incidentes con validación de formularios, y un panel de administración que incluye listado de tickets con filtros combinados, cola de revisión humana para los
 casos derivados por el backend, y visualización detallada de cada incidente con trazabilidad
 completa de la decisión del clasificador. La comunicación con el backend se realiza mediante
 Axios, y la gestión del estado del servidor se apoya en React Query para caching y revalidación
 automática.
-El frontend cuenta con una suite de pruebas automatizadas construida con Vitest y
-Testing Library, que alcanza una cobertura de sentencias del 99,6 % sobre los paquetes medidos, conforme al reporte reproducido con npm run test:coverage; la cifra queda sujeta
-al reporte vigente en cada ejecución del pipeline de integración continua.
+El frontend cuenta con una suite de pruebas automatizadas construida con Vitest y Testing Library, que alcanza una cobertura de sentencias del 99,6 % sobre los paquetes medidos,
+conforme al reporte reproducido con npm run test:coverage.
 La integración continua (CI) se ejecuta automáticamente en cada solicitud de incorporación (pull request) al repositorio mediante GitHub Actions, ejecutando la suite completa
 de pruebas unitarias y de integración antes de permitir la fusión a la rama principal. El pipeline de CI incluye verificación de estilo de código (Ruff), ejecución de pruebas con reporte de
 cobertura, y verificación de sincronización de la especificación OpenAPI.
@@ -2210,19 +2172,23 @@ históricos de incidentes, permitiendo identificar tendencias temporales, patron
 retrospectivo transforma los datos operativos acumulados en inteligencia organizacional accionable. La Figura 6 muestra el panel de administración sobre el que se integra esta capacidad
 analítica, con el listado de tickets, los filtros combinados y la pestaña de revisión humana para
 los casos derivados por el backend.
-El dashboard se organiza en tres visualizaciones principales. Un gráfico de tendencias
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-61
 
 Figura 6. Panel de administración del sistema: listado de tickets con filtros combinados y cola de
 revisión humana.
 
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+59
+
+El dashboard se organiza en tres visualizaciones principales. Un gráfico de tendencias
 muestra la evolución temporal de los incidentes, agrupables por día o por mes según la granularidad seleccionada por el operador. Un gráfico de torta presenta la distribución proporcional
 de incidentes entre los cinco sectores responsables. Un gráfico de barras apiladas desglosa
 los incidentes según su estado en el ciclo de vida, facilitando la identificación de cuellos de botella en la resolución. La Figura 7 presenta estas tres visualizaciones junto con los indicadores
 agregados del período seleccionado.
+
+Figura 7. Dashboard de analítica del panel de administración: tendencia temporal de incidentes,
+distribución por sector y distribución por estado.
+
 Los controles de filtro permiten acotar el período de análisis mediante un rango de
 fechas configurable, y alternar entre agrupación diaria y mensual para adaptar la granularidad
 al horizonte temporal de interés. Cada gráfico puede exportarse como imagen PNG para su
@@ -2230,16 +2196,11 @@ inclusión en informes periódicos o presentaciones.
 La utilidad práctica del dashboard puede ilustrarse con un escenario hipotético: si el
 sistema detectara que veinte usuarios reportaron la rotura de auriculares en una franja temporal
 acotada, el patrón sugeriría un problema de calidad del proveedor antes que una serie de fallas
-aisladas. Esta capacidad de identificar causas raíz a partir de datos agregados constituye un
-salto cualitativo respecto del enfoque tradicional de gestión de incidentes, donde cada ticket
-se trata de forma aislada y los patrones sistémicos permanecen invisibles.
+aisladas.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-62
-
-Figura 7. Dashboard de analítica del panel de administración: tendencia temporal de incidentes,
-distribución por sector y distribución por estado.
+60
 
 7. Consideraciones éticas y aspectos legales
 7.1. Marco normativo aplicable
@@ -2257,11 +2218,6 @@ de protección de datos personales mediante la Decisión 2003/490/CE, del 30 de 
 revalidada en enero de 2024. Esta adecuación ampara el flujo desde la Unión Europea hacia
 la Argentina y no opera en sentido inverso: los Estados Unidos no revisten la condición de país
 adecuado para la normativa argentina, de modo que la transferencia desde la Argentina hacia
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-63
-
 los proveedores de inferencia y de telefonía con sede en ese país requiere un instrumento
 específico conforme al artículo 12 de la Ley 25.326, según se detalla en la Subsección 7.3.
 7.2. Principios aplicados al tratamiento de datos
@@ -2273,7 +2229,13 @@ gestionar los incidentes que estos reportan. Esta base se distingue del consenti
 artículo 6 de la Ley 25.326. La finalidad determinada limita el uso de los datos a la declaración
 y derivación de incidentes, sin usos secundarios no compatibles. La minimización se materializa en que solo se almacena el usuario corporativo y un directorio acotado —legajo, nombre,
 correo electrónico corporativo, teléfono, sector y rol— para resolver el contacto y notificar al
-usuario, descartando otros datos capturados incidentalmente (domicilios, documentos, información financiera). La exactitud opera mediante la revisión y corrección del incidente antes de
+usuario, descartando otros datos capturados incidentalmente (domicilios, documentos, infor-
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+61
+
+mación financiera). La exactitud opera mediante la revisión y corrección del incidente antes de
 su persistencia definitiva; el ejercicio de los derechos de rectificación, actualización y supresión (derechos ARCO) se resuelve en cinco días hábiles, de acuerdo con el artículo 16 de la
 Ley 25.326. La limitación del plazo de conservación fija una retención de 12 meses rodantes
 para los incidentes, justificada por el ciclo estadístico anual, independiente de la retención de
@@ -2287,11 +2249,6 @@ cifrado en reposo protegen la información durante el plazo de conservación dec
 7.3. Transferencia internacional y pseudonimización
 El tratamiento comporta dos transferencias internacionales hacia proveedores con sede en los Estados Unidos. La primera corresponde a la inferencia Gemini 3.6 Flash, a la que se
 envían fragmentos textuales descriptivos de los incidentes; sobre ese texto, el módulo Python
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-64
-
 local pseudonimiza los nombres propios, las direcciones de correo electrónico, los números
 telefónicos, los identificadores corporativos y los nombres de hosts internos con etiquetas genéricas como [PERSONA], [EMAIL] o [HOST], de modo que el texto transmitido no contiene
 identificadores directos. La pseudonimización se valida con expresiones regulares del dominio
@@ -2303,6 +2260,11 @@ crudo y el número telefónico cruzan a los Estados Unidos antes de cualquier ps
 Ambas transferencias se dirigen a un país que no reviste la condición de adecuado para
 la normativa argentina, por lo que requieren un instrumento específico conforme al artículo
 12 de la Ley 25.326: el consentimiento del titular o la suscripción de cláusulas contractuales
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+62
+
 modelo. El acuerdo de procesamiento de datos suscripto con cada proveedor complementa
 ese instrumento, pero no lo sustituye, en tanto no configura por sí mismo una de las bases de
 transferencia que la ley admite.
@@ -2312,17 +2274,11 @@ control se sintetiza en la Tabla 7 (tema Tecnológico). El cifrado en reposo con
 en modo CBC con HMAC-SHA-256), el cifrado en tránsito sobre TLS 1.2/1.3 en el borde, el
 control de acceso por rol, el registro de auditoría de las modificaciones, la gestión de credenciales por variables de entorno y las medidas de disponibilidad —respaldo diario cifrado con
 prueba de restauración, contenedores con reinicio automático y monitoreo de salud— quedan
-mapeados allí junto con sus brechas residuales. El despliegue publicado para la validación
-experimental no incluyó el proxy inverso, de modo que la capa TLS corresponde al diseño y
-no a una capacidad verificada en esa instancia.
+mapeados allí junto con sus brechas residuales. La capa TLS 1.2/1.3 se verifica de forma automatizada sobre el despliegue de referencia de la release v1.2.2; la instancia usada para la
+campaña experimental no incluyó el proxy inverso.
 7.5. Consentimiento, derechos del usuario y supervisión humana
 Los usuarios de la organización son informados, mediante una política de privacidad
 accesible desde los canales de entrada, sobre las características del sistema, los datos que se
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-65
-
 recolectan, la transferencia internacional aplicable y los derechos que les asisten conforme a
 la normativa vigente. Se garantiza el ejercicio de los derechos de acceso, rectificación, actualización y supresión (derechos ARCO) mediante un procedimiento documentado a cargo del
 responsable de protección de datos designado por la organización.
@@ -2332,6 +2288,11 @@ corpus de validación. El procedimiento fue supervisado por la dirección acadé
 y avalado institucionalmente mediante una carta de autorización emitida por la organización
 adoptante.
 En relación con el protocolo de medición en vivo aplicado durante la fase experimental —en el cual los dos operadores se cronometraron mutuamente y sabían que se registraban tiempos, sin que se les anunciaran el inicio de cada medición ni el propósito comparativo
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+63
+
 del estudio, con el objeto de atenuar el efecto Hawthorne, de modo que la información sobre ese propósito fue diferida—, corresponde dejar constancia de que, una vez concluida la
 recolección de datos, se realizó una sesión de esclarecimiento posterior (debriefing) con los
 dos operadores participantes. En dicha sesión se explicó el propósito del estudio, se detalló el
@@ -2345,13 +2306,7 @@ En concordancia con las recomendaciones contemporáneas sobre sistemas que incor
 de manera completamente automatizada sin posibilidad de revisión, y el sector responsable
 conserva la potestad de modificar la clasificación inicial cuando lo considere apropiado, registrándose tal modificación en la tabla de trazabilidad descrita en la Sección 5. Este mecanismo
 materializa el principio de la persona en el bucle (human in the loop) como salvaguarda frente
-a errores potenciales del clasificador automático. Cabe precisar su alcance: el umbral de con-
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-66
-
-fianza de 0,70 que dispara la revisión obligatoria solo alcanza a la etapa semántica y a la de
+a errores potenciales del clasificador automático. Cabe precisar su alcance: el umbral de confianza de 0,70 que dispara la revisión obligatoria solo alcanza a la etapa semántica y a la de
 reserva, de modo que sobre el 65,5 % de los casos, resueltos por la etapa determinística, no
 existe derivación automática por caso basada en la clasificación. Para esa fracción la salvaguarda se limita al criterio con que se fijó el punto de operación del filtro —precisión no inferior
 a la del modelo sobre el conjunto que resuelve, estimada sobre el corpus de validación— y a
@@ -2360,6 +2315,11 @@ la interfaz web solo para los casos derivados. El análisis de calibración por 
 la confianza de Gemini no discrimina aciertos de errores en su rango observado (0,85 a 1,00)
 y que la etapa de reglas no emite una confianza utilizable para derivar (Subsección 8.4); el
 umbral de 0,70 no garantiza, por lo tanto, la detección de errores.
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+64
+
 7.6. Cumplimiento normativo y alineación con estándares
 7.6.1. Marco de referencia adoptado
 Este apartado evalúa el grado de alineación del sistema con los marcos adoptados:
@@ -2413,13 +2373,19 @@ redundancia offsite
 
 Fuente: elaboración propia a partir del gap assessment ISO/IEC 27001:2022/27002:2022 y NIST CSF 2.0.
 
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-67
-
 7.6.3. Perfil de alineación con NIST CSF 2.0
 La Tabla 8 cubre las seis funciones de NIST CSF 2.0 y su madurez en una escala propia
 del relevamiento, de 0 (inexistente) a 4 (optimizado).
+7.6.4. Brechas principales y hoja de ruta
+Los seis changes de cumplimiento cerraron, para el alcance del repositorio, las brechas
+priorizadas: C-61 (gobernanza documental: 5.1, 5.12, 5.13, 5.24–5.27, 5.31, 8.26), C-62 (endurecimiento de red: 8.20, 8.22, 8.2, 5.14, 8.31), C-63 (identidades y accesos: 8.5, 5.15, 5.17,
+8.2), C-64 (vulnerabilidades: 8.8, 8.28, 8.29, 5.19–5.23), C-65 (respaldo y continuidad: 8.13,
+8.14, 5.29, 5.30, 5.33) y C-66 (privacidad: 5.34, 8.12, 8.15, 5.31). Quedan residuales la MFA y
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+65
+
 Tabla 8. Perfil de alineación con las funciones de NIST CSF 2.0
 Función
 
@@ -2472,11 +2438,6 @@ host y redundancia como acción del adoptante (5.29, 5.30,
 
 Fuente: elaboración propia a partir del gap assessment ISO/IEC 27001:2022/27002:2022 y NIST CSF 2.0.
 
-7.6.4. Brechas principales y hoja de ruta
-Los seis changes de cumplimiento cerraron, para el alcance del repositorio, las brechas
-priorizadas: C-61 (gobernanza documental: 5.1, 5.12, 5.13, 5.24–5.27, 5.31, 8.26), C-62 (endurecimiento de red: 8.20, 8.22, 8.2, 5.14, 8.31), C-63 (identidades y accesos: 8.5, 5.15, 5.17,
-8.2), C-64 (vulnerabilidades: 8.8, 8.28, 8.29, 5.19–5.23), C-65 (respaldo y continuidad: 8.13,
-8.14, 5.29, 5.30, 5.33) y C-66 (privacidad: 5.34, 8.12, 8.15, 5.31). Quedan residuales la MFA y
 la rotación de claves, la gestión de claves, la centralización de logs, la redundancia fuera del
 host y el SBOM; las brechas organizacionales —personas (6.x), físicas (7.x), revisión independiente (5.35), segregación de funciones (5.3) y trabajo remoto (6.7, 8.1)— son responsabilidad
 de la organización adoptante.
@@ -2487,7 +2448,7 @@ instrumento de transferencia internacional del artículo 12 y en los plazos ARCO
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-68
+66
 
 8. Resultados
 Los resultados se presentan en seis apartados: tiempos de registro, métricas de clasificación, intervención humana, calibración de la confianza, sensibilidad al ajuste del clasificador
@@ -2549,7 +2510,7 @@ válidos, junto con un valor p = 3,08 × 10−32 bilateral (Subsección 4.7), lo
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-69
+67
 
 Tabla 10. Tiempo de registro por canal de origen: flujos manual y automatizado, reducción y contraste
 intra-canal (n = 200)
@@ -2660,7 +2621,7 @@ La evaluación de clasificación se realizó sobre el corpus real de 200 casos p
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-70
+68
 
 Distribucion del tiempo de registro por canal de origen
 Correo electronico
@@ -2841,7 +2802,7 @@ contra el conjunto de verdad del corpus (multietiqueta): subset accuracy 0,43 (I
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-71
+69
 
 Matriz de confusion del clasificador (n = 200)
 Seguridad
@@ -2981,7 +2942,7 @@ sectorial y la proporción multietiqueta difieren entre canales.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-72
+70
 
 Hamming loss 0,3586 (IC [0,31; 0,41]) y micro-F1 0,6654 (IC [0,62; 0,71]). Estas métricas de
 conjunto penalizan estructuralmente una salida forzada a una sola etiqueta y no son equivalentes de la exactitud estricta: el micro-F1 acumula los aciertos por etiqueta y no por caso, de
@@ -3041,7 +3002,7 @@ de los 200 casos (62 %) la confianza registrada fue inferior a 0,70, pero todos 
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-73
+71
 
 etapa determinística, cuya confianza mide fuerza de señal; los 69 casos de Gemini declararon
 siempre al menos 0,85 y la etapa de reserva no se activó. Sobre el 65,5 % de los casos no
@@ -3119,7 +3080,7 @@ fuerza de señal en escala discreta que no ordena la correctitud (0,731 a 0,765 
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-74
+72
 
 ción 5.5). La conclusión se restringe, así, a Gemini en su rango observado: el umbral de 0,70
 no habría aislado sus 19 errores, pues su confianza nunca fue inferior a 0,85. Este hallazgo
@@ -3174,7 +3135,7 @@ El patrón dominante, presente en 14 casos (26,4 % de los errores), corresponde 
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-75
+73
 
 Tabla 16. Confusiones observadas en la clasificación automática, por frontera
 Frontera de confusión
@@ -3235,7 +3196,7 @@ En los tres casos la confianza declarada es alta pese al error.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-76
+74
 
 9. Discusión
 9.1. Interpretación de los resultados
@@ -3268,7 +3229,7 @@ horas-persona no era reproducible con los tiempos y el volumen declarados.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-77
+75
 
 sificador agrega respecto del flujo manual, cuyo balance se analiza en la Subsección 9.5.
 Sin embargo, la lectura conjunta de la intervención humana por gate y del análisis de
@@ -3302,7 +3263,7 @@ sobre la totalidad del corpus. No se dispuso de un corpus independiente de prepr
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-78
+76
 
 consecuencia, las métricas de clasificación reportadas son estimaciones dentro de la muestra,
 probablemente optimistas, cuya confirmación exige un corpus independiente (Sección 11). La
@@ -3336,7 +3297,7 @@ Esa lectura no equivale a una confirmación concluyente: la evidencia es compati
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-79
+77
 
 con explicaciones rivales que el diseño no permite descartar por completo. Mientras que la
 reducción observada admite una lectura causal fuerte en el plano práctico —el sistema registra
@@ -3368,7 +3329,7 @@ este trabajo no se justifica por transferencia pasiva de conocimiento lingüíst
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-80
+78
 
 tarea concreta —clasificación de categoría con contexto instruccional y esquema híbrido de
 reglas más modelo—, en la que el modelo se emplea como motor de inferencia guiado y no
@@ -3403,7 +3364,7 @@ más equilibrado entre clases y una revisión del clasificador serían necesario
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-81
+79
 
 brecha.
 Segundo, la circunscripción del corpus a una única organización del sector servicios de
@@ -3433,7 +3394,7 @@ ajustaron con errores observados en el mismo corpus de evaluación, de modo que 
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-82
+80
 
 de clasificación son estimaciones dentro de la muestra. Sin ese vocabulario, la exactitud de
 la etapa determinística baja de 0,7405 a 0,5270, cota pesimista del sesgo atribuible a él, y el
@@ -3467,7 +3428,7 @@ adicionales, instantáneas ni direcciones IP reservadas.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-83
+81
 
 del modelo gemini-3.6-flash (0,75 USD por millón de tokens de entrada y 3,75 USD por
 millón de tokens de salida) (Google Cloud, 2026),3 y con supuestos explícitos de aproximadamente 800 tokens de entrada (prompt con la descripción de las cinco categorías, ejemplos
@@ -3505,7 +3466,7 @@ superior al precio de lista vigente.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-84
+82
 
 independiente de N .
 Tabla 17. Exactitud mínima de equilibrio y balance neto trimestral según la tasa de derivación errónea
@@ -3589,11 +3550,11 @@ Quedan así sostenidas la viabilidad técnica (reducción del 71,2 % del tiempo 
 la económica (costo monetario marginal), mientras que la operativa es condicional a que la
 exactitud efectiva supere a∗ , por mejora del clasificador o porque la revisión humana del sector
 responsable reduzca la tasa o el costo de las derivaciones erróneas. Medir ambos es una línea
-futura (Subsección 11.8).
+futura (Subsección 11.9).
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-85
+83
 
 9.6. Reflexiones sobre la generalización
 La generalización de los resultados a otras organizaciones requiere atender al menos tres condiciones. En primer lugar, la disponibilidad de un corpus etiquetado de tamaño
@@ -3609,7 +3570,7 @@ descritas en la Sección 7.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-86
+84
 
 10. Conclusiones
 El trabajo desarrollado ha cumplido parcialmente el objetivo general de evaluar la viabilidad y el desempeño de la automatización del registro inicial de incidentes —sin medir la
@@ -3641,6 +3602,10 @@ parcialmente
 
 Objetivo específico 1:
 arquitectura
+
+Alcanzado
+parcialmente
+
 Objetivo específico 2:
 clasificador
 Objetivo específico 3:
@@ -3652,15 +3617,14 @@ documentación
 Objetivo específico 6:
 errores/calibración
 
-Alcanzado
-parcialmente
 No alcanzado
 
 Tiempo de registro alcanzado (71,2 %); clasificación por
 debajo del umbral (objetivo 2); intervención humana no
 medida; viabilidad operativa condicionada (Subsección 9.5)
-Sección 5; invocación sincrónica (Subsección 6.5) y TLS no
-verificado (Subsección 5.1)
+Sección 5; alta sincrónica con reintentos idempotentes
+(Subsección 6.5) y TLS 1.2/1.3 verificado en el despliegue
+de referencia (Subsección 5.1)
 Exactitud 73,5 %, IC [67,0 %, 79,1 %]; macro-F1 de umbral
 0,6508 (0,5207 con cinco clases, una no estimable)
 Subsección 5.2; latencia y exactitud por canal (Tabla 12);
@@ -3684,7 +3648,7 @@ La arquitectura de cinco capas distribuyó las responsabilidades entre component
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-87
+85
 
 comunicados mediante interfaces REST, y la elección de tecnologías maduras y autoalojadas
 (Docker, PostgreSQL, N8N) respondió a las restricciones presupuestarias, cambiarias y normativas de las organizaciones medianas argentinas. El primer objetivo específico se alcanza,
@@ -3719,7 +3683,7 @@ bruto de registro, cuyo saldo neto está indeterminado (Subsección 9.5).
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-88
+86
 
 La documentación generada —arquitectura, procedimientos de despliegue, especificación OpenAPI, flujo N8N exportable, análisis tipificado de errores y bandas de confianza—
 constituye el aporte documental del quinto objetivo específico y sustenta el sexto. La tipología
@@ -3749,7 +3713,7 @@ sortear barreras legales ni asumir riesgos de cumplimiento.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-89
+87
 
 11. Recomendaciones y líneas de trabajo futuro
 A partir de los resultados, del análisis de errores (Subsección 8.6), de la calibración y la
@@ -3757,9 +3721,9 @@ intervención humana medidas (Subsección 8.4, Subsección 8.3) y de las limitac
 (Subsección 11.2) y la corrección de la medición de intervención humana (Subsección 11.3).
 Fortalecen la evidencia o el clasificador el aprendizaje activo, la validación independiente, la
 replicación y los modelos abiertos. Amplían el alcance sin alterar la validez de lo medido las
-extensiones funcionales: canales, monitoreo, base de conocimientos, agente telefónico y las
-evoluciones de plataforma anticipadas en las Secciones 5 y 6 (autenticación única corporativa,
-SSO; prefijo configurable del número de incidente; migración a Kubernetes).
+extensiones funcionales: canales, monitoreo, base de conocimientos, agente telefónico, la cola de respaldo del alta y las evoluciones de plataforma anticipadas en las Secciones 5 y 6
+(autenticación única corporativa, SSO; prefijo configurable del número de incidente; migración
+a Kubernetes).
 11.1. Calibración del gate de confianza
 Por etapa (Subsección 8.4), el gate de 0,70 solo se evalúa sobre Gemini y la etapa
 de reserva, la etapa determinística se rige por su puntaje de correctitud (Subsección 5.5) y la
@@ -3775,12 +3739,12 @@ de discriminación; y (iii) derivar el umbral de una curva cobertura-precisión
 de la muestra, como el punto de operación de la etapa determinística, cuya ventaja frente a
 Gemini depende del vocabulario (Subsección 8.5), con un piso declarado antes de observarla
 (la exactitud de la revisión humana o el 85 % del segundo objetivo), y confirmarlo en un corpus
-independiente (Subsección 11.7). La misma campaña permitiría contrastar los parámetros de
+independiente (Subsección 11.8). La misma campaña permitiría contrastar los parámetros de
 inferencia, sin optimización documentada (Subsección 5.4).
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-90
+88
 
 11.2. Incorporación de un clasificador supervisado con corpus propio
 Se sugiere incorporar progresivamente un clasificador supervisado entrenado con el
@@ -3807,75 +3771,91 @@ erróneas y su costo en tiempo, insumos del balance neto (Subsección 9.5).
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-91
+89
 
-11.4. Ampliación de canales de entrada
+11.4. Cola de respaldo y alta asincrónica
+La invocación de alta es sincrónica. Una evolución de mayor alcance la desacopla
+mediante un patrón outbox o un intermediario de mensajes con reproceso, de modo que el
+alta se persista de forma diferida. Esa línea tensiona la respuesta sincrónica que el formulario
+web consume para informar el número de incidente y la medición de los tiempos de ingreso y
+persistencia (Subsección 6.5) sobre la que se apoyan los resultados del Capítulo 8, y exigiría
+reintroducir la infraestructura de mensajería que el stack retiró (Sección 5); se propone como
+trabajo futuro y no altera lo medido.
+11.5. Ampliación de canales de entrada
 Se propone ampliar el conjunto de canales de entrada para incluir mensajería corporativa instantánea, particularmente Slack y Microsoft Teams en aquellas organizaciones donde
 estas plataformas constituyen el canal de comunicación dominante. La inclusión de aplicaciones móviles propias para usuarios de campo constituye una extensión natural que atiende la demanda creciente de canales asincrónicos integrados al ecosistema laboral cotidiano.
 La arquitectura modular propuesta en la Sección 5 facilita esta ampliación: cada nuevo canal requiere únicamente un disparador adicional en N8N, sin modificaciones en las capas de
 procesamiento ni de persistencia.
-11.5. Panel de monitoreo en tiempo real
+11.6. Panel de monitoreo en tiempo real
 El sistema incorpora un dashboard de analítica basado en ReCharts que permite visualizar tendencias históricas, distribución por sector y desglose por estado (véase Subsección 6.8). Como evolución de esta capacidad, se sugiere implementar una capa de monitoreo en tiempo real sustentada sobre tecnologías de observabilidad maduras, tales como Prometheus para la captura de métricas y Grafana para la visualización. Esta capa permitiría
 supervisar la latencia del sistema, la tasa de aciertos del clasificador, la distribución de carga
 entre sectores y el costo agregado de las invocaciones al modelo externo, habilitando alertas tempranas frente a degradaciones del servicio. La existencia de endpoints de salud (GET
 /api/v1/health) en cada componente del sistema proporciona los puntos de datos necesarios para instrumentar esta capa de observabilidad.
 Más allá del monitoreo operativo, los datos acumulados de incidentes constituyen una
-fuente de inteligencia organizacional: su registro sistemático habilita flujos ETL (Extract, Transform, Load) que permiten identificar patrones recurrentes de fallas, detectar áreas con mayor
-demanda de soporte y generar indicadores trimestrales que orienten decisiones estratégicas
-de inversión.
-11.6. Mecanismos de aprendizaje activo
-Se propone incorporar mecanismos de aprendizaje activo (active learning; Subsección 2.4) que seleccionen los casos para revisión y reentrenamiento mediante las señales
-independientes del puntaje de la Subsección 11.1: ambigüedad léxica, margen entre categorías, desacuerdo entre etapas y muestreo de casos de alta confianza. La confianza declarada
+fuente de inteligencia organizacional: su registro sistemático habilita flujos ETL (Extract, Trans-
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-92
+90
 
+form, Load) que permiten identificar patrones recurrentes de fallas, detectar áreas con mayor
+demanda de soporte y generar indicadores trimestrales que orienten decisiones estratégicas
+de inversión.
+11.7. Mecanismos de aprendizaje activo
+Se propone incorporar mecanismos de aprendizaje activo (active learning; Subsección 2.4) que seleccionen los casos para revisión y reentrenamiento mediante las señales
+independientes del puntaje de la Subsección 11.1: ambigüedad léxica, margen entre categorías, desacuerdo entre etapas y muestreo de casos de alta confianza. La confianza declarada
 solo se usaría como criterio de prioridad una vez recalibrada y validada según esa subsección,
 porque en el rango observado de Gemini no discrimina aciertos de errores y la etapa determinística no emite una confianza utilizable. Las revisiones que alimenten el ajuste incremental
 serían las registradas según la Subsección 11.3, de modo que cada intervención mejore al
 clasificador con un costo operativo controlado.
-11.7. Validación sobre un corpus independiente
+11.8. Validación sobre un corpus independiente
 El clasificador evaluado se ajustó, en parte, con el mismo corpus sobre el que se reportan las métricas de clasificación (vocabulario del filtro determinístico y reglas de frontera del
 prompt), de modo que esas métricas son estimaciones dentro de la muestra. La confirmación
 del desempeño fuera de la muestra exige construir un corpus independiente, etiquetado con
 el mismo protocolo y sin solapamiento con el corpus de evaluación, y reportar sobre él las
 métricas de la etapa determinística y de la etapa semántica. Esa validación no se realizó en
 este trabajo porque no se dispuso de un corpus de preproducción con esas características.
-11.8. Estudios de replicación
+11.9. Estudios de replicación
 Se sugiere realizar estudios de replicación en organizaciones de distinto tamaño, sector y región geográfica, para fortalecer la validez externa de los hallazgos y reunir evidencia
 empírica sobre soluciones similares en contextos heterogéneos. Serían relevantes las réplicas en organizaciones del sector público (con más incidentes de sistemas administrativos),
 del sector industrial (con más incidentes de infraestructura física) y de mayor tamaño, donde
 el volumen diario supere las 100 unidades. Toda replicación debería medir además la exactitud del flujo manual sobre el mismo corpus, registrando por caso la derivación del operador,
-con etiquetadores distintos de los operadores del brazo manual (Subsección 9.3), y cronometrar las reasignaciones (Subsección 9.5). Convendría, asimismo, una asignación muestral no
-proporcional que sobremuestree las clases minoritarias —como Bases de Datos, con un solo
-caso— y pondere las estimaciones globales por la distribución del universo (Subsección 4.4).
-11.9. Evaluación de modelos de lenguaje de código abierto
-Se propone evaluar la integración de modelos de lenguaje de código abierto desplegados localmente —tales como Llama 3, Mistral o Qwen— como alternativa al modelo externo
-Gemini 3.6 Flash. Esta evaluación permitiría cuantificar el costo en exactitud frente a la ganancia en soberanía de datos, la eliminación de la dependencia de un proveedor único y la
+con etiquetadores distintos de los operadores del brazo manual (Subsección 9.3), y cronome-
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-93
+91
 
+trar las reasignaciones (Subsección 9.5). Convendría, asimismo, una asignación muestral no
+proporcional que sobremuestree las clases minoritarias —como Bases de Datos, con un solo
+caso— y pondere las estimaciones globales por la distribución del universo (Subsección 4.4).
+11.10. Evaluación de modelos de lenguaje de código abierto
+Se propone evaluar la integración de modelos de lenguaje de código abierto desplegados localmente —tales como Llama 3, Mistral o Qwen— como alternativa al modelo externo
+Gemini 3.6 Flash. Esta evaluación permitiría cuantificar el costo en exactitud frente a la ganancia en soberanía de datos, la eliminación de la dependencia de un proveedor único y la
 reducción de costos operativos a largo plazo. La realización de un benchmark comparativo sobre el mismo corpus de 200 casos constituiría una contribución adicional significativa al estado
 del arte.
-11.10. Base de conocimientos para resolución automática
+11.11. Base de conocimientos para resolución automática
 El sistema se concentra en la clasificación y derivación de incidentes hacia los sectores responsables, pero no aborda la resolución de los casos que admiten soluciones estandarizadas y repetibles. Se recomienda incorporar una base de conocimientos, un repositorio
 estructurado de soluciones verificadas que, tras la clasificación inicial, permita proponer los
 pasos de resolución cuando el incidente coincida con un patrón documentado y validado. Ese
 autoservicio absorbería los casos simples y repetitivos —reinicios de sesión, restablecimiento
 de contraseñas o configuraciones básicas de correo electrónico— y reduciría la carga de los
 sectores de soporte.
-Su construcción puede articularse con el aprendizaje activo (Subsección 11.6): cada
+Su construcción puede articularse con el aprendizaje activo (Subsección 11.7): cada
 caso resuelto por un operador y validado como correcto sería candidato a incorporarse, previa
 curación editorial. La viabilidad técnica se apoya en la capacidad de los modelos de lenguaje
 para generar respuestas estructuradas a partir de documentación técnica, línea que conecta
-con la evaluación de modelos de código abierto (Subsección 11.9).
-11.11. Agente conversacional telefónico en tiempo real
+con la evaluación de modelos de código abierto (Subsección 11.10).
+11.12. Agente conversacional telefónico en tiempo real
 Se propone, como evolución de mayor alcance del canal telefónico, reemplazar la captura de toma única —una grabación de hasta 45 segundos que se transcribe de forma diferida—
 por un agente que dialogue en tiempo real. Sobre Twilio Media Streams, que habilita el envío
-bidireccional del audio mediante WebSocket, podría formular preguntas de aclaración, comunicar el número de incidente asignado y cerrar la llamada, lo que elevaría la calidad de la captura
+bidireccional del audio mediante WebSocket, podría formular preguntas de aclaración, comuni-
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+92
+
+car el número de incidente asignado y cerrar la llamada, lo que elevaría la calidad de la captura
 en línea con el tercer objetivo específico.
 Su adopción estuvo condicionada por la madurez de las interfaces de audio bidireccional, entonces en vista previa (preview) y sujetas a cambios, y exige infraestructura no contemplada: un punto de entrada WebSocket con upgrade en el proxy inverso, la transcodificación
 del audio (mu-law, 8 kHz) al formato del modelo (PCM, 16 kHz), la gestión de turnos de habla y un modelo de costo por minuto de transmisión, no por grabación. Se recomienda una
@@ -3884,398 +3864,366 @@ degradado de respaldo.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-94
+93
 
 Referencias bibliográficas
-Ahuja, K., Diddee, H., Hada, R., Ochieng, M., Ramesh, K., Jain, P., Nambi, A., Ganu, T., Segal, S.,
-Ahmed, M., Bali, K., & Sitaram, S. (2023). MEGA: Multilingual Evaluation of Generative AI.
-Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing
-(EMNLP), 4232-4267. https://doi.org/10.18653/v1/2023.emnlp-main.258
-American Psychological Association. (2017). Ethical Principles of Psychologists and Code of Conduct
-[2002, con enmiendas efectivas del 1 de junio de 2010 y del 1 de enero de 2017]. Recuperado
-el 19 de octubre de 2026, de https://www.apa.org/ethics/code
-Amershi, S., Weld, D., Vorvoreanu, M., Fourney, A., Nushi, B., Collisson, P., Suh, J., Iqbal, S., Bennett,
-P. N., Inkpen, K., Teevan, J., Kikin-Gil, R., & Horvitz, E. (2019). Guidelines for Human-AI Interaction. Proceedings of the 2019 CHI Conference on Human Factors in Computing Systems
-(CHI 2019), 1-13. https://doi.org/10.1145/3290605.3300233
-Apache Software Foundation. (2024). Apache Airflow Documentation (Version 2.10) [Documentación
-técnica]. Recuperado el 25 de octubre de 2026, de https://airflow.apache.org/docs/
-Bernal-Beltrán, T., Paredes-Valverde, M. A., Salas-Zárate, M. d. P., García-Díaz, J. A., & ValenciaGarcía, R. (2025). Sentiment Analysis in Mexican Spanish: A Comparison Between Fine-Tuning
-and In-Context Learning with Large Language Models. Future Internet, 17(10), 445. https://doi.
-org/10.3390/fi17100445
-Brown, T. B., Mann, B., Ryder, N., Subbiah, M., Kaplan, J., Dhariwal, P., Neelakantan, A., Shyam,
-P., Sastry, G., Askell, A., Agarwal, S., Herbert-Voss, A., Krueger, G., Henighan, T., Child, R.,
-Ramesh, A., Ziegler, D. M., Wu, J., Winter, C., … Amodei, D. (2020). Language Models are
-Few-Shot Learners. Advances in Neural Information Processing Systems 33 (NeurIPS 2020),
-1877-1901.
+Ahuja, K., Diddee, H., Hada, R., Ochieng, M., Ramesh, K., Jain, P., Nambi, A., Ganu, T., Segal, S., Ahmed, M.,
+Bali, K., & Sitaram, S. (2023). MEGA: Multilingual Evaluation of Generative AI. Proceedings of the 2023
+Conference on Empirical Methods in Natural Language Processing (EMNLP), 4232-4267. https://doi.org/
+10.18653/v1/2023.emnlp-main.258
+American Psychological Association. (2017). Ethical Principles of Psychologists and Code of Conduct [2002, con
+enmiendas efectivas del 1 de junio de 2010 y del 1 de enero de 2017]. Recuperado el 19 de octubre de
+2026, de https://www.apa.org/ethics/code
+Amershi, S., Weld, D., Vorvoreanu, M., Fourney, A., Nushi, B., Collisson, P., Suh, J., Iqbal, S., Bennett, P. N., Inkpen,
+K., Teevan, J., Kikin-Gil, R., & Horvitz, E. (2019). Guidelines for Human-AI Interaction. Proceedings of the
+2019 CHI Conference on Human Factors in Computing Systems (CHI 2019), 1-13. https://doi.org/10.
+1145/3290605.3300233
+Apache Software Foundation. (2024). Apache Airflow Documentation (Version 2.10) [Documentación técnica]. Recuperado el 25 de octubre de 2026, de https://airflow.apache.org/docs/
+Bernal-Beltrán, T., Paredes-Valverde, M. A., Salas-Zárate, M. d. P., García-Díaz, J. A., & Valencia-García, R. (2025).
+Sentiment Analysis in Mexican Spanish: A Comparison Between Fine-Tuning and In-Context Learning with
+Large Language Models. Future Internet, 17(10), 445. https://doi.org/10.3390/fi17100445
+Brown, T. B., Mann, B., Ryder, N., Subbiah, M., Kaplan, J., Dhariwal, P., Neelakantan, A., Shyam, P., Sastry, G.,
+Askell, A., Agarwal, S., Herbert-Voss, A., Krueger, G., Henighan, T., Child, R., Ramesh, A., Ziegler, D. M.,
+Wu, J., Winter, C., … Amodei, D. (2020). Language Models are Few-Shot Learners. Advances in Neural
+Information Processing Systems 33 (NeurIPS 2020), 1877-1901.
 Cabinet Office. (2011). ITIL Service Operation. The Stationery Office.
-Chen, L., Zaharia, M., & Zou, J. (2024). FrugalGPT: How to Use Large Language Models While Reducing Cost and Improving Performance. Transactions on Machine Learning Research. https:
-//openreview.net/forum?id=cSimKw5p6R
-Cohen, J. (1960). A Coefficient of Agreement for Nominal Scales. Educational and Psychological Measurement, 20(1), 37-46. https://doi.org/10.1177/001316446002000104
-Cohen, J. (1988). Statistical Power Analysis for the Behavioral Sciences (2.a ed.). Lawrence Erlbaum
-Associates.
-Colavito, G., Lanubile, F., & Novielli, N. (2025). Benchmarking large language models for automated
-labeling: The case of issue report classification. Information and Software Technology, 184,
-107758. https://doi.org/10.1016/j.infsof.2025.107758
-Crispin, L., & Gregory, J. (2009). Agile Testing: A Practical Guide for Testers and Agile Teams. AddisonWesley.
+Chen, L., Zaharia, M., & Zou, J. (2024). FrugalGPT: How to Use Large Language Models While Reducing Cost and
+Improving Performance. Transactions on Machine Learning Research. https://openreview.net/forum?id=
+cSimKw5p6R
+Cohen, J. (1960). A Coefficient of Agreement for Nominal Scales. Educational and Psychological Measurement,
+20(1), 37-46. https://doi.org/10.1177/001316446002000104
+Cohen, J. (1988). Statistical Power Analysis for the Behavioral Sciences (2.a ed.). Lawrence Erlbaum Associates.
+Colavito, G., Lanubile, F., & Novielli, N. (2025). Benchmarking large language models for automated labeling: The
+case of issue report classification. Information and Software Technology, 184, 107758. https://doi.org/10.
+1016/j.infsof.2025.107758
+Crispin, L., & Gregory, J. (2009). Agile Testing: A Practical Guide for Testers and Agile Teams. Addison-Wesley.
+Date, C. J. (2004). An Introduction to Database Systems (8.a ed.). Addison-Wesley.
+DigitalOcean. (2026). Pricing — Droplets [Precio de lista]. Recuperado el 19 de octubre de 2026, de https://www.
+digitalocean.com/pricing/droplets
+Efron, B., & Tibshirani, R. J. (1993). An Introduction to the Bootstrap. Chapman & Hall. https://doi.org/10.1007/9781-4899-4541-9
+Fielding, R. T., & Taylor, R. N. (2002). Principled Design of the Modern Web Architecture. ACM Transactions on
+Internet Technology, 2(2), 115-150. https://doi.org/10.1145/514183.514185
+Freshworks. (2026). Freshdesk — Software de soporte al cliente [Documentación de la plataforma (capacidades y
+precios)]. Recuperado el 19 de octubre de 2026, de https://www.freshworks.com/freshdesk/
+Galup, S. D., Dattero, R., Quan, J. J., & Conger, S. (2009). An Overview of IT Service Management. Communications
+of the ACM, 52(5), 124-127. https://doi.org/10.1145/1506409.1506439
+Gómez, L., Bustos, C., & Sevilla, G. (2026). Automatización de Mesa de Ayuda N8N (Versión 1.2.2) [Software
+de computadora. GitHub]. Recuperado el 26 de octubre de 2026, de https://github.com/lucaGomezB/
+Automatizacion-de-Mesa-de-Ayuda-N8N
+Google Cloud. (2026). Vertex AI Generative AI Pricing [Precios de lista]. Recuperado el 19 de octubre de 2026, de
+https://cloud.google.com/vertex-ai/generative-ai/pricing
+Grandury, M., Aula-Blasco, J., Falcão, J., Fourrier, C., González Saiz, M., Martínez, G., Santamaria Gomez, G.,
+Agerri, R., Aldama García, N., Chiruzzo, L., Conde, J., Gomez Adorno, H., Guerrero Nieto, M., Ivetta, G.,
+López Fuertes, N., Plaza-del-Arco, F. M., Martín-Valdivia, M.-T., Montoro Zamorano, H., Muñoz Sanz, C.,
+… Zubiaga, I. (2025). La Leaderboard: A Large Language Model Leaderboard for Spanish Varieties and
+Languages of Spain and Latin America. Proceedings of the 63rd Annual Meeting of the Association for
+Computational Linguistics (Volume 1: Long Papers), 32482-32524. https://doi.org/10.18653/v1/2025.acllong.1561
+Guo, C., Pleiss, G., Sun, Y., & Weinberger, K. Q. (2017). On Calibration of Modern Neural Networks. Proceedings of
+the 34th International Conference on Machine Learning (ICML 2017), 70, 1321-1330. https://proceedings.
+mlr.press/v70/guo17a.html
+Hernández Sampieri, R., & Mendoza Torres, C. P. (2018). Metodología de la investigación: Las rutas cuantitativa,
+cualitativa y mixta. McGraw-Hill.
+Hohpe, G., & Woolf, B. (2003). Enterprise Integration Patterns: Designing, Building, and Deploying Messaging
+Solutions. Addison-Wesley.
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+94
+
+Honorable Congreso de la Nación Argentina. (2000, octubre). Ley 25.326 de Protección de los Datos Personales
+[Boletín Oficial de la República Argentina]. Recuperado el 25 de octubre de 2026, de http : / / servicios .
+infoleg.gob.ar/infolegInternet/anexos/60000-64999/64790/norma.htm
+International Organization for Standardization. (2022a). Information security, cybersecurity and privacy protection
+— Information security controls (Norma ISO/IEC N.° 27002:2022). Recuperado el 25 de octubre de 2026,
+de https://webstore.iec.ch/en/publication/74287
+International Organization for Standardization. (2022b). Information security, cybersecurity and privacy protection
+— Information security management systems — Requirements (Norma ISO/IEC N.° 27001:2022). Recuperado el 25 de octubre de 2026, de https://webstore.iec.ch/en/publication/79694
+International Organization for Standardization. (2025). Information security, cybersecurity and privacy protection —
+Privacy information management systems — Requirements and guidance (Norma ISO/IEC N.° 27701:2025).
+Recuperado el 25 de octubre de 2026, de https://webstore.iec.ch/en/publication/110123
+Ji, Z., Lee, N., Frieske, R., Yu, T., Su, D., Xu, Y., Ishii, E., Bang, Y. J., Madotto, A., & Fung, P. (2023). Survey of
+Hallucination in Natural Language Generation. ACM Computing Surveys, 55(12), 1-38. https://doi.org/10.
+1145/3571730
+Jurafsky, D., & Martin, J. H. (2026). Speech and Language Processing: An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition with Language Models [Borrador de la 3.a
+edición, versión del 19 de agosto de 2026]. Recuperado el 25 de octubre de 2026, de https://web.stanford.
+edu/~jurafsky/slp3/
+Ladas, C. (2009). Scrumban: Essays on Kanban Systems for Lean Software Development. Modus Cooperandi
+Press.
+Lai, V. D., Nguyen, C., Ngo, N., Nguyen, T., Dernoncourt, F., Rossi, R. A., & Nguyen, T. H. (2023). Okapi: Instructiontuned Large Language Models in Multiple Languages with Reinforcement Learning from Human Feedback.
+Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing: System Demonstrations, 318-327. https://doi.org/10.18653/v1/2023.emnlp-demo.28
+Landis, J. R., & Koch, G. G. (1977). The Measurement of Observer Agreement for Categorical Data. Biometrics,
+33(1), 159-174. https://doi.org/10.2307/2529310
+Liu, F., He, X., Zhang, T., Chen, J., Li, Y., Yi, L., Zhang, H., Wu, G., & Shi, R. (2025). TickIt: Leveraging Large
+Language Models for Automated Ticket Escalation. Proceedings of the 33rd ACM International Conference
+on the Foundations of Software Engineering (FSE Companion ’25), 343-354. https://doi.org/10.1145 /
+3696630.3728558
+Mayor-Rocher, M., Melero, N., Merino-Gómez, E., Grandury, M., Conde, J., & Reviriego, P. (2026). Evaluating large
+language models with tests of Spanish as a foreign language: pass or fail? [Advance article, volume/pages
+pending]. Applied Linguistics. https://doi.org/10.1093/applin/amag048
+Mosqueira-Rey, E., Hernández-Pereira, E., Alonso-Ríos, D., Bobes-Bascarán, J., & Fernández-Leal, Á. (2023).
+Human-in-the-loop machine learning: a state of the art. Artificial Intelligence Review, 56(4), 3005-3054.
+https://doi.org/10.1007/s10462-022-10246-w
+n8n GmbH. (2024). n8n Documentation [Documentación técnica oficial]. Recuperado el 25 de octubre de 2026, de
+https://docs.n8n.io/
+National Institute of Standards and Technology. (2024). The NIST Cybersecurity Framework (CSF) 2.0 (NIST Cybersecurity White Paper N.° 29). https://doi.org/10.6028/NIST.CSWP.29
+Paket, E., Şenerkek, G., Akyol, F. B., & Salman, F. (2024). IT Service Desk Ticket Classification via Large Language
+Models. 2024 9th International Conference on Computer Science and Engineering (UBMK), 135-140. https:
+//doi.org/10.1109/ubmk63289.2024.10773473
+Paramesh, S. P., & Shreedhara, K. S. (2019). Automated IT Service Desk Systems Using Machine Learning Techniques. En P. Nagabhushan, D. S. Guru, B. H. Shekar & Y. H. Sharath Kumar (Eds.), Data Analytics and
+Learning: Proceedings of DAL 2018 (pp. 331-346, Vol. 43). Springer. https://doi.org/10.1007/978-981-132514-4_28
+Parlamento Europeo y Consejo de la Unión Europea. (2016, abril). Reglamento (UE) 2016/679 — Reglamento
+General de Protección de Datos [Diario Oficial de la Unión Europea, L 119/1]. Recuperado el 25 de octubre
+de 2026, de https://eur-lex.europa.eu/eli/reg/2016/679/oj
+Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., Blondel, M., Prettenhofer, P., Weiss,
+R., Dubourg, V., Vanderplas, J., Passos, A., Cournapeau, D., Brucher, M., Perrot, M., & Duchesnay, É.
+(2011). Scikit-learn: Machine Learning in Python. Journal of Machine Learning Research, 12, 2825-2830.
+Poder Ejecutivo Nacional. (2001, noviembre). Decreto 1558/2001: Reglamentación de la Ley 25.326 de Protección
+de los Datos Personales [Boletín Oficial de la República Argentina, 3 de diciembre de 2001]. Recuperado
+el 25 de octubre de 2026, de http://servicios.infoleg.gob.ar/infolegInternet/anexos/70000-74999/70368/
+norma.htm
+Powers, D. M. W. (2011). Evaluation: From Precision, Recall and F-Measure to ROC, Informedness, Markedness
+and Correlation. Journal of Machine Learning Technologies, 2(1), 37-63.
+Pressman, R. S., & Maxim, B. R. (2020). Software Engineering: A Practitioner’s Approach (9.a ed.). McGraw-Hill.
+Rabiner, L., & Juang, B.-H. (1993). Fundamentals of Speech Recognition. Prentice Hall.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 95
 
-Date, C. J. (2004). An Introduction to Database Systems (8.a ed.). Addison-Wesley.
-DigitalOcean. (2026). Pricing — Droplets [Precio de lista]. Recuperado el 19 de octubre de 2026, de
-https://www.digitalocean.com/pricing/droplets
-Efron, B., & Tibshirani, R. J. (1993). An Introduction to the Bootstrap. Chapman & Hall. https://doi.org/
-10.1007/978-1-4899-4541-9
-Fielding, R. T., & Taylor, R. N. (2002). Principled Design of the Modern Web Architecture. ACM Transactions on Internet Technology, 2(2), 115-150. https://doi.org/10.1145/514183.514185
-Freshworks. (2026). Freshdesk — Software de soporte al cliente [Documentación de la plataforma (capacidades y precios)]. Recuperado el 19 de octubre de 2026, de https://www.freshworks.com/
-freshdesk/
-Galup, S. D., Dattero, R., Quan, J. J., & Conger, S. (2009). An Overview of IT Service Management.
-Communications of the ACM, 52(5), 124-127. https://doi.org/10.1145/1506409.1506439
-Gómez, L., Bustos, C., & Sevilla, G. (2026). Automatización de Mesa de Ayuda N8N (Versión 1.2.1)
-[Software de computadora. GitHub]. Recuperado el 26 de octubre de 2026, de https://github.
-com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N
-Google Cloud. (2026). Vertex AI Generative AI Pricing [Precios de lista]. Recuperado el 19 de octubre
-de 2026, de https://cloud.google.com/vertex-ai/generative-ai/pricing
-Grandury, M., Aula-Blasco, J., Falcão, J., Fourrier, C., González Saiz, M., Martínez, G., Santamaria
-Gomez, G., Agerri, R., Aldama García, N., Chiruzzo, L., Conde, J., Gomez Adorno, H., Guerrero
-Nieto, M., Ivetta, G., López Fuertes, N., Plaza-del-Arco, F. M., Martín-Valdivia, M.-T., Montoro
-Zamorano, H., Muñoz Sanz, C., … Zubiaga, I. (2025). La Leaderboard: A Large Language Model
-Leaderboard for Spanish Varieties and Languages of Spain and Latin America. Proceedings
-of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long
-Papers), 32482-32524. https://doi.org/10.18653/v1/2025.acl-long.1561
-Guo, C., Pleiss, G., Sun, Y., & Weinberger, K. Q. (2017). On Calibration of Modern Neural Networks. Proceedings of the 34th International Conference on Machine Learning (ICML 2017), 70, 1321-1330.
-https://proceedings.mlr.press/v70/guo17a.html
-Hernández Sampieri, R., & Mendoza Torres, C. P. (2018). Metodología de la investigación: Las rutas
-cuantitativa, cualitativa y mixta. McGraw-Hill.
-Hohpe, G., & Woolf, B. (2003). Enterprise Integration Patterns: Designing, Building, and Deploying Messaging Solutions. Addison-Wesley.
-Honorable Congreso de la Nación Argentina. (2000, octubre). Ley 25.326 de Protección de los Datos
-Personales [Boletín Oficial de la República Argentina]. Recuperado el 25 de octubre de 2026,
-de http://servicios.infoleg.gob.ar/infolegInternet/anexos/60000-64999/64790/norma.htm
+Radford, A., Kim, J. W., Xu, T., Brockman, G., McLeavey, C., & Sutskever, I. (2023). Robust Speech Recognition via
+Large-Scale Weak Supervision. Proceedings of the 40th International Conference on Machine Learning
+(ICML 2023), 28492-28518.
+Ramírez, S. (2024). FastAPI Documentation [Documentación técnica oficial]. Recuperado el 25 de octubre de 2026,
+de https://fastapi.tiangolo.com/
+Ramón-Ferrer, V., Badenes-Olmedo, C., & Corcho, Ó. (2026). Spanish Triple-to-Text Benchmark on Low-Resource
+Large Language Models. Semantic Web, 17(3). https://doi.org/10.1177/22104968261440701
+Ramya, C., Paramesh, S. P., & Shreedhara, K. S. (2021). Classifying the Unstructured IT Service Desk Tickets
+Using Ensemble of Classifiers [arXiv:2103.15822; presentado en la 3rd IEEE International Conference
+on Computational Systems and Information Technology for Sustainable Solutions (CSITSS), 2018]. https:
+//doi.org/10.48550/arXiv.2103.15822
+Revina, A., Buza, K., & Meister, V. G. (2020). IT Ticket Classification: The Simpler, the Better. IEEE Access, 8,
+193380-193395. https://doi.org/10.1109/ACCESS.2020.3032840
+Russell, S., & Norvig, P. (2021). Artificial Intelligence: A Modern Approach (4.a ed.). Pearson.
+Secretaría de la Pequeña y Mediana Empresa. (2026). ¿Qué es una MiPyME? [Ministerio de Economía de la Nación
+Argentina]. Recuperado el 19 de octubre de 2026, de https://www.argentina.gob.ar/produccion/registraruna-pyme/que-es-una-pyme
+ServiceNow. (2026). ServiceNow ITSM [Documentación de la plataforma (capacidades y precios)]. Recuperado el
+19 de octubre de 2026, de https://www.servicenow.com/products/itsm.html
+Shneiderman, B. (2020). Human-Centered Artificial Intelligence: Reliable, Safe & Trustworthy. International Journal
+of Human–Computer Interaction, 36(6), 495-504. https://doi.org/10.1080/10447318.2020.1741118
+Sokolova, M., & Lapalme, G. (2009). A Systematic Analysis of Performance Measures for Classification Tasks.
+Information Processing & Management, 45(4), 427-437. https://doi.org/10.1016/j.ipm.2009.03.002
+Stallings, W., & Brown, L. (2018). Computer Security: Principles and Practice (4.a ed.). Pearson.
+The PostgreSQL Global Development Group. (2024). PostgreSQL 15 Documentation [Documentación técnica oficial]. Recuperado el 25 de octubre de 2026, de https://www.postgresql.org/docs/15/
+Tian, K., Mitchell, E., Zhou, A., Sharma, A., Rafailov, R., Yao, H., Finn, C., & Manning, C. D. (2023). Just Ask
+for Calibration: Strategies for Eliciting Calibrated Confidence Scores from Language Models Fine-Tuned
+with Human Feedback. Proceedings of the 2023 Conference on Empirical Methods in Natural Language
+Processing (EMNLP 2023), 5433-5442. https://doi.org/10.18653/v1/2023.emnlp-main.330
+Touvron, H., Martin, L., Stone, K., Albert, P., Almahairi, A., Babaei, Y., Bashlykov, N., Batra, S., Bhargava, P., Bhosale, S., Bikel, D., Blecher, L., Canton-Ferrer, C., Chen, M., Cucurull, G., Esiobu, D., Fernandes, J., Fu, J.,
+Fu, W., … Scialom, T. (2023). Llama 2: Open Foundation and Fine-Tuned Chat Models [arXiv:2307.09288].
+https://doi.org/10.48550/arXiv.2307.09288
+Varshney, N., & Baral, C. (2022). Model Cascading: Towards Jointly Improving Efficiency and Accuracy of NLP
+Systems. Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing
+(EMNLP 2022), 11007-11021. https://doi.org/10.18653/v1/2022.emnlp-main.756
+Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, Ł., & Polosukhin, I. (2017). Attention Is All You Need. Advances in Neural Information Processing Systems 30 (NIPS 2017), 5998-6008.
+Virtanen, P., Gommers, R., Oliphant, T. E., Haberland, M., Reddy, T., Cournapeau, D., Burovski, E., Peterson, P.,
+Weckesser, W., Bright, J., van der Walt, S. J., Brett, M., Wilson, J., Millman, K. J., Mayorov, N., Nelson,
+A. R. J., Jones, E., Kern, R., Larson, E., … SciPy 1.0 Contributors. (2020). SciPy 1.0: Fundamental Algorithms for Scientific Computing in Python. Nature Methods, 17(3), 261-272. https://doi.org/10.1038/
+s41592-019-0686-2
+Wiggins, A. (2017). The Twelve-Factor App [Manifiesto de arquitectura de software]. Recuperado el 25 de octubre
+de 2026, de https://12factor.net/
+Wilcoxon, F. (1945). Individual Comparisons by Ranking Methods. Biometrics Bulletin, 1(6), 80-83. https://doi.org/
+10.2307/3001968
+Wilson, E. B. (1927). Probable Inference, the Law of Succession, and Statistical Inference. Journal of the American
+Statistical Association, 22(158), 209-212. https://doi.org/10.1080/01621459.1927.10502953
+Wu, T., Terry, M., & Cai, C. J. (2022). AI Chains: Transparent and Controllable Human-AI Interaction by Chaining
+Large Language Model Prompts. Proceedings of the 2022 CHI Conference on Human Factors in Computing Systems (CHI 2022), 1-22. https://doi.org/10.1145/3491102.3517582
+Xiong, M., Hu, Z., Lu, X., Li, Y., Fu, J., He, J., & Hooi, B. (2024). Can LLMs Express Their Uncertainty? An Empirical
+Evaluation of Confidence Elicitation in LLMs. The Twelfth International Conference on Learning Representations (ICLR 2024). https://openreview.net/forum?id=gjeQKFxFpZ
+Xuan, W., Yang, R., Qi, H., Zeng, Q., Xiao, Y., Feng, A., Liu, D., Xing, Y., Wang, J., Gao, F., Lu, J., Jiang, Y., Li, H.,
+Li, X., Yu, K., Dong, R., Gu, S., Li, Y., Xie, X., … Li, I. (2025). MMLU-ProX: A Multilingual Benchmark for
+Advanced Large Language Model Evaluation. Proceedings of the 2025 Conference on Empirical Methods
+in Natural Language Processing (EMNLP), 1513-1532. https://doi.org/10.18653/v1/2025.emnlp-main.79
+Zangari, A., Marcuzzo, M., Schiavinato, M., Gasparetto, A., & Albarelli, A. (2023). Ticket automation: An insight into
+current research with applications to multi-level classification scenarios. Expert Systems with Applications,
+225, 119984. https://doi.org/10.1016/j.eswa.2023.119984
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 96
 
-International Organization for Standardization. (2022a). Information security, cybersecurity and privacy
-protection — Information security controls (Norma ISO/IEC N.° 27002:2022). Recuperado el 25
-de octubre de 2026, de https://webstore.iec.ch/en/publication/74287
-International Organization for Standardization. (2022b). Information security, cybersecurity and privacy
-protection — Information security management systems — Requirements (Norma ISO/IEC N.° 27001:2022).
-Recuperado el 25 de octubre de 2026, de https://webstore.iec.ch/en/publication/79694
-International Organization for Standardization. (2025). Information security, cybersecurity and privacy
-protection — Privacy information management systems — Requirements and guidance (Norma
-ISO/IEC N.° 27701:2025). Recuperado el 25 de octubre de 2026, de https://webstore.iec.ch/
-en/publication/110123
-Ji, Z., Lee, N., Frieske, R., Yu, T., Su, D., Xu, Y., Ishii, E., Bang, Y. J., Madotto, A., & Fung, P. (2023). Survey of Hallucination in Natural Language Generation. ACM Computing Surveys, 55(12), 1-38.
-https://doi.org/10.1145/3571730
-Jurafsky, D., & Martin, J. H. (2026). Speech and Language Processing: An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition with Language Models
-[Borrador de la 3.a edición, versión del 19 de agosto de 2026]. Recuperado el 25 de octubre de
-2026, de https://web.stanford.edu/~jurafsky/slp3/
-Ladas, C. (2009). Scrumban: Essays on Kanban Systems for Lean Software Development. Modus
-Cooperandi Press.
-Lai, V. D., Nguyen, C., Ngo, N., Nguyen, T., Dernoncourt, F., Rossi, R. A., & Nguyen, T. H. (2023). Okapi:
-Instruction-tuned Large Language Models in Multiple Languages with Reinforcement Learning
-from Human Feedback. Proceedings of the 2023 Conference on Empirical Methods in Natural
-Language Processing: System Demonstrations, 318-327. https://doi.org/10.18653/v1/2023.
-emnlp-demo.28
-Landis, J. R., & Koch, G. G. (1977). The Measurement of Observer Agreement for Categorical Data.
-Biometrics, 33(1), 159-174. https://doi.org/10.2307/2529310
-Liu, F., He, X., Zhang, T., Chen, J., Li, Y., Yi, L., Zhang, H., Wu, G., & Shi, R. (2025). TickIt: Leveraging Large Language Models for Automated Ticket Escalation. Proceedings of the 33rd ACM
-International Conference on the Foundations of Software Engineering (FSE Companion ’25),
-343-354. https://doi.org/10.1145/3696630.3728558
-Mayor-Rocher, M., Melero, N., Merino-Gómez, E., Grandury, M., Conde, J., & Reviriego, P. (2026).
-Evaluating large language models with tests of Spanish as a foreign language: pass or fail?
-[Advance article, volume/pages pending]. Applied Linguistics. https://doi.org/10.1093/applin/
-amag048
+Zanzotto, F. M. (2019). Viewpoint: Human-in-the-loop Artificial Intelligence. Journal of Artificial Intelligence Research, 64, 243-252. https://doi.org/10.1613/jair.1.11345
+Zendesk. (2026). Zendesk Suite — Software de mesa de ayuda [Documentación de la plataforma (capacidades y
+precios)]. Recuperado el 19 de octubre de 2026, de https://www.zendesk.com/service/help-desk-software/
+Zhang, R., Cahyawijaya, S., Cruz, J. C. B., Winata, G. I., & Aji, A. F. (2023). Multilingual Large Language Models Are
+Not (Yet) Code-Switchers. Proceedings of the 2023 Conference on Empirical Methods in Natural Language
+Processing (EMNLP), 12567-12582. https://doi.org/10.18653/v1/2023.emnlp-main.774
+Zhao, Z., Wallace, E., Feng, S., Klein, D., & Singh, S. (2021). Calibrate Before Use: Improving Few-Shot Performance of Language Models. Proceedings of the 38th International Conference on Machine Learning (ICML
+2021), 139, 12697-12706. https://proceedings.mlr.press/v139/zhao21c.html
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 97
 
-Mosqueira-Rey, E., Hernández-Pereira, E., Alonso-Ríos, D., Bobes-Bascarán, J., & Fernández-Leal, Á.
-(2023). Human-in-the-loop machine learning: a state of the art. Artificial Intelligence Review,
-56(4), 3005-3054. https://doi.org/10.1007/s10462-022-10246-w
-n8n GmbH. (2024). n8n Documentation [Documentación técnica oficial]. Recuperado el 25 de octubre
-de 2026, de https://docs.n8n.io/
-National Institute of Standards and Technology. (2024). The NIST Cybersecurity Framework (CSF) 2.0
-(NIST Cybersecurity White Paper N.° 29). https://doi.org/10.6028/NIST.CSWP.29
-Paket, E., Şenerkek, G., Akyol, F. B., & Salman, F. (2024). IT Service Desk Ticket Classification via Large
-Language Models. 2024 9th International Conference on Computer Science and Engineering
-(UBMK), 135-140. https://doi.org/10.1109/ubmk63289.2024.10773473
-Paramesh, S. P., & Shreedhara, K. S. (2019). Automated IT Service Desk Systems Using Machine
-Learning Techniques. En P. Nagabhushan, D. S. Guru, B. H. Shekar & Y. H. Sharath Kumar
-(Eds.), Data Analytics and Learning: Proceedings of DAL 2018 (pp. 331-346, Vol. 43). Springer.
-https://doi.org/10.1007/978-981-13-2514-4_28
-Parlamento Europeo y Consejo de la Unión Europea. (2016, abril). Reglamento (UE) 2016/679 — Reglamento General de Protección de Datos [Diario Oficial de la Unión Europea, L 119/1]. Recuperado el 25 de octubre de 2026, de https://eur-lex.europa.eu/eli/reg/2016/679/oj
-Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., Blondel, M., Prettenhofer,
-P., Weiss, R., Dubourg, V., Vanderplas, J., Passos, A., Cournapeau, D., Brucher, M., Perrot, M.,
-& Duchesnay, É. (2011). Scikit-learn: Machine Learning in Python. Journal of Machine Learning
-Research, 12, 2825-2830.
-Poder Ejecutivo Nacional. (2001, noviembre). Decreto 1558/2001: Reglamentación de la Ley 25.326 de
-Protección de los Datos Personales [Boletín Oficial de la República Argentina, 3 de diciembre de
-2001]. Recuperado el 25 de octubre de 2026, de http://servicios.infoleg.gob.ar/infolegInternet/
-anexos/70000-74999/70368/norma.htm
-Powers, D. M. W. (2011). Evaluation: From Precision, Recall and F-Measure to ROC, Informedness,
-Markedness and Correlation. Journal of Machine Learning Technologies, 2(1), 37-63.
-Pressman, R. S., & Maxim, B. R. (2020). Software Engineering: A Practitioner’s Approach (9.a ed.).
-McGraw-Hill.
-Rabiner, L., & Juang, B.-H. (1993). Fundamentals of Speech Recognition. Prentice Hall.
-Radford, A., Kim, J. W., Xu, T., Brockman, G., McLeavey, C., & Sutskever, I. (2023). Robust Speech Recognition via Large-Scale Weak Supervision. Proceedings of the 40th International Conference
-on Machine Learning (ICML 2023), 28492-28518.
-Ramírez, S. (2024). FastAPI Documentation [Documentación técnica oficial]. Recuperado el 25 de octubre de 2026, de https://fastapi.tiangolo.com/
+A. Diagrama de arquitectura del sistema
+El Anexo A referencia los diagramas de la arquitectura propuesta en notación UML. Los diagramas de despliegue y de secuencia se incluyen como figuras de la Sección 5, de modo que no se
+reproducen nuevamente aquí; el diagrama de componentes se incluye como Figura 1 de la Sección 5.
+Los tres artefactos y el cronograma del estudio, que se reproduce aquí, son:
+Diagrama de despliegue (Figura 3, Sección 5): los cinco componentes principales (N8N,
+FastAPI, PostgreSQL, Gemini 3.6 Flash, Twilio), el proxy inverso Nginx, que provee terminación TLS 1.2/1.3 verificada en el despliegue de referencia (no incluido en el despliegue de
+la campaña experimental), y las relaciones de comunicación entre ellos. Fuente versionada:
+docs/diagrams/despliegue.md.
+Diagrama de secuencia (Figura 4, Sección 5): flujo extremo a extremo de un incidente
+desde su recepción en el canal de correo electrónico hasta la confirmación al usuario, incluyendo las interacciones con el clasificador híbrido y la base de datos. Fuente versionada:
+docs/diagrams/secuencia.md.
+Diagrama de componentes (Figura 1, Sección 5): organización interna del módulo Python
+por capas (routes, services, repositories, models, classifiers), con sus dependencias y relaciones. Fuente versionada: docs/diagrams/componentes.md.
+Cronograma (Figura 10, Subsección 6.6): construcción, campañas de medición y versión del
+
+modelo evaluada, con la procedencia de cada fecha. Fuente versionada: docs/diagrams/cronograma.md
+Los diagramas se generan a partir de fuentes Mermaid versionadas en formato .md en el directorio docs/diagrams/ del repositorio y se renderizan a imágenes PNG para su inclusión en el
+documento (Gómez et al. 2026).
+
+Figura 10. Cronograma de la construcción, las campañas y la versión del modelo (barras con precisión
+de mes; hitos, de día). Fuente: historial del repositorio y confirmación de los autores (9-10-2026).
+
+B. Repositorio de código fuente
+El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL
+gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 98
 
-Ramón-Ferrer, V., Badenes-Olmedo, C., & Corcho, Ó. (2026). Spanish Triple-to-Text Benchmark on
-Low-Resource Large Language Models. Semantic Web, 17(3). https : / / doi . org / 10 . 1177 /
-22104968261440701
-Revina, A., Buza, K., & Meister, V. G. (2020). IT Ticket Classification: The Simpler, the Better. IEEE
-Access, 8, 193380-193395. https://doi.org/10.1109/ACCESS.2020.3032840
-Russell, S., & Norvig, P. (2021). Artificial Intelligence: A Modern Approach (4.a ed.). Pearson.
-Secretaría de la Pequeña y Mediana Empresa. (2026). ¿Qué es una MiPyME? [Ministerio de Economía
-de la Nación Argentina]. Recuperado el 19 de octubre de 2026, de https://www.argentina.gob.
-ar/produccion/registrar-una-pyme/que-es-una-pyme
-ServiceNow. (2026). ServiceNow ITSM [Documentación de la plataforma (capacidades y precios)]. Recuperado el 19 de octubre de 2026, de https://www.servicenow.com/products/itsm.html
-Shneiderman, B. (2020). Human-Centered Artificial Intelligence: Reliable, Safe & Trustworthy. International Journal of Human–Computer Interaction, 36(6), 495-504. https : / / doi . org / 10 . 1080 /
-10447318.2020.1741118
-Sokolova, M., & Lapalme, G. (2009). A Systematic Analysis of Performance Measures for Classification
-Tasks. Information Processing & Management, 45(4), 427-437. https://doi.org/10.1016/j.ipm.
-2009.03.002
-Stallings, W., & Brown, L. (2018). Computer Security: Principles and Practice (4.a ed.). Pearson.
-The PostgreSQL Global Development Group. (2024). PostgreSQL 15 Documentation [Documentación
-técnica oficial]. Recuperado el 25 de octubre de 2026, de https://www.postgresql.org/docs/15/
-Tian, K., Mitchell, E., Zhou, A., Sharma, A., Rafailov, R., Yao, H., Finn, C., & Manning, C. D. (2023).
-Just Ask for Calibration: Strategies for Eliciting Calibrated Confidence Scores from Language
-Models Fine-Tuned with Human Feedback. Proceedings of the 2023 Conference on Empirical
-Methods in Natural Language Processing (EMNLP 2023), 5433-5442. https://doi.org/10.18653/
-v1/2023.emnlp-main.330
-Touvron, H., Martin, L., Stone, K., Albert, P., Almahairi, A., Babaei, Y., Bashlykov, N., Batra, S., Bhargava,
-P., Bhosale, S., Bikel, D., Blecher, L., Canton-Ferrer, C., Chen, M., Cucurull, G., Esiobu, D.,
-Fernandes, J., Fu, J., Fu, W., … Scialom, T. (2023). Llama 2: Open Foundation and Fine-Tuned
-Chat Models [arXiv:2307.09288]. https://doi.org/10.48550/arXiv.2307.09288
-Varshney, N., & Baral, C. (2022). Model Cascading: Towards Jointly Improving Efficiency and Accuracy of
-NLP Systems. Proceedings of the 2022 Conference on Empirical Methods in Natural Language
-Processing (EMNLP 2022), 11007-11021. https://doi.org/10.18653/v1/2022.emnlp-main.756
-Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, Ł., & Polosukhin,
-I. (2017). Attention Is All You Need. Advances in Neural Information Processing Systems 30
-(NIPS 2017), 5998-6008.
+los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio públi-
+
+co del proyecto (Gómez et al. 2026), accesible en https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N
+El commit de referencia para la versión entregada al jurado se identifica con el tag anotado v1.2.2,
+creado sobre el commit definitivo del repositorio.
+El hash completo de ese commit es 445a47b4f6fccca3d4611ee3cb7adea4e7350dcc, que
+constituye la referencia verificable de la versión corregida.
+La estructura del repositorio separa el módulo de procesamiento (App/Backend/, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (App/Frontend/, React
+con TypeScript), la definición del flujo de orquestación (n8n/workflow.json), los artefactos de evaluación (evaluation/), el corpus pseudonimizado (data/), los scripts auxiliares (scripts/) y la
+documentación (docs/), junto con las especificaciones de los changes (openspec/) y los archivos de
+orquestación local docker-compose.yml y Makefile. El archivo README.md describe esta organización y reúne las instrucciones detalladas para el despliegue local en menos de 15 minutos, por lo que
+constituye el punto de entrada al código fuente disponible en el repositorio público (Gómez et al. 2026).
+
+C. Esquema de base de datos
+El esquema completo de la base de datos PostgreSQL se documenta mediante scripts SQL
+versionados que definen las siete entidades descritas en la Tabla 5 de la Sección 5, las restricciones de
+integridad referencial (claves foráneas con eliminación en cascada condicional), los índices secundarios sobre los atributos de búsqueda frecuente (fecha de creación, sector responsable y estado actual
+del ticket), y la generación de los identificadores de incidente. Las migraciones incrementales se gestionan mediante Alembic, lo que permite reproducir el estado de la base en cualquier punto histórico del
+desarrollo y revertir cambios cuando resulte necesario.
+La migración inicial incluye la creación de las tablas de catálogo (sector, estado, canal_origen)
+con sus valores semilla, garantizando que un despliegue nuevo del sistema comience con los datos de
+referencia correctos. Las migraciones subsiguientes documentan la evolución del esquema durante las
+etapas de desarrollo descritas en la Sección 4.
+El diagrama entidad-relación de las siete entidades se incluye como Figura 5 de la Sección 5;
+su fuente Mermaid versionada reside en docs/diagrams/er_modelo_datos.md.
+
+D. Especificación OpenAPI de la interfaz REST
+La especificación completa de la interfaz REST se genera automáticamente mediante FastAPI conforme a la versión 3.1 de la especificación OpenAPI (Ramírez, 2024). El documento resultante
+describe los puntos de entrada listados en la Tabla 6 de la Sección 5, los esquemas de los cuerpos de
+solicitud y respuesta validados mediante Pydantic v2, los códigos de estado posibles para cada método
+HTTP, y ejemplos representativos para cada caso de uso.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 99
 
-Virtanen, P., Gommers, R., Oliphant, T. E., Haberland, M., Reddy, T., Cournapeau, D., Burovski, E.,
-Peterson, P., Weckesser, W., Bright, J., van der Walt, S. J., Brett, M., Wilson, J., Millman, K. J.,
-Mayorov, N., Nelson, A. R. J., Jones, E., Kern, R., Larson, E., … SciPy 1.0 Contributors. (2020).
-SciPy 1.0: Fundamental Algorithms for Scientific Computing in Python. Nature Methods, 17(3),
-261-272. https://doi.org/10.1038/s41592-019-0686-2
-Wiggins, A. (2017). The Twelve-Factor App [Manifiesto de arquitectura de software]. Recuperado el 25
-de octubre de 2026, de https://12factor.net/
-Wilcoxon, F. (1945). Individual Comparisons by Ranking Methods. Biometrics Bulletin, 1(6), 80-83. https:
-//doi.org/10.2307/3001968
-Wilson, E. B. (1927). Probable Inference, the Law of Succession, and Statistical Inference. Journal of
-the American Statistical Association, 22(158), 209-212. https : / / doi . org / 10 . 1080 / 01621459 .
-1927.10502953
-Wu, T., Terry, M., & Cai, C. J. (2022). AI Chains: Transparent and Controllable Human-AI Interaction by
-Chaining Large Language Model Prompts. Proceedings of the 2022 CHI Conference on Human
-Factors in Computing Systems (CHI 2022), 1-22. https://doi.org/10.1145/3491102.3517582
-Xiong, M., Hu, Z., Lu, X., Li, Y., Fu, J., He, J., & Hooi, B. (2024). Can LLMs Express Their Uncertainty?
-An Empirical Evaluation of Confidence Elicitation in LLMs. The Twelfth International Conference
-on Learning Representations (ICLR 2024). https://openreview.net/forum?id=gjeQKFxFpZ
-Xuan, W., Yang, R., Qi, H., Zeng, Q., Xiao, Y., Feng, A., Liu, D., Xing, Y., Wang, J., Gao, F., Lu, J.,
-Jiang, Y., Li, H., Li, X., Yu, K., Dong, R., Gu, S., Li, Y., Xie, X., … Li, I. (2025). MMLU-ProX: A
-Multilingual Benchmark for Advanced Large Language Model Evaluation. Proceedings of the
-2025 Conference on Empirical Methods in Natural Language Processing (EMNLP), 1513-1532.
-https://doi.org/10.18653/v1/2025.emnlp-main.79
-Zangari, A., Marcuzzo, M., Schiavinato, M., Gasparetto, A., & Albarelli, A. (2023). Ticket automation:
-An insight into current research with applications to multi-level classification scenarios. Expert
-Systems with Applications, 225, 119984. https://doi.org/10.1016/j.eswa.2023.119984
-Zanzotto, F. M. (2019). Viewpoint: Human-in-the-loop Artificial Intelligence. Journal of Artificial Intelligence Research, 64, 243-252. https://doi.org/10.1613/jair.1.11345
-Zendesk. (2026). Zendesk Suite — Software de mesa de ayuda [Documentación de la plataforma (capacidades y precios)]. Recuperado el 19 de octubre de 2026, de https://www.zendesk.com/
-service/help-desk-software/
-Zhang, R., Cahyawijaya, S., Cruz, J. C. B., Winata, G. I., & Aji, A. F. (2023). Multilingual Large Language Models Are Not (Yet) Code-Switchers. Proceedings of the 2023 Conference on Empirical
-Methods in Natural Language Processing (EMNLP), 12567-12582. https://doi.org/10.18653/v1/
-2023.emnlp-main.774
+La interfaz se encuentra disponible adicionalmente en formato interactivo a través del componente Swagger UI integrado en el servidor, accesible bajo la ruta /docs durante la ejecución, y en
+formato estático como archivo openapi.json en el directorio docs/ del repositorio. La sincronización
+entre el código y la especificación estática se verifica automáticamente en el pipeline de integración
+continua.
+La especificación OpenAPI vigente describe 33 puntos de entrada que exponen 41 métodos
+HTTP y 44 esquemas de datos, agrupados por recurso: autenticación, catálogos, clasificaciones, incidentes, directorio, estadísticas, telefonía, control de costo y salud.
+A título ilustrativo, los 44 esquemas de datos comprenden las estructuras de los catálogos, las
+entidades de dominio y los objetos de respuesta de cada recurso. El esquema IncidenteRead, por
+ejemplo, expone el identificador del ticket, la descripción pseudonimizada, la prioridad, el sector y los
+sectores adicionales, el estado, el canal de origen, el reportante, las marcas temporales de ingreso y
+persistencia, y los indicadores de latencia end-to-end y de latencia anómala, con sus tipos y campos
+de solo lectura. El detalle exhaustivo de atributos, tipos y ejemplos reside en docs/openapi.json.
+
+E. Configuración del flujo N8N
+La exportación del flujo de orquestación en formato JSON incluye la totalidad de los 32 nodos
+configurados, sus parámetros operativos, las credenciales referenciadas mediante identificadores opacos sin exposición de valores, y los conectores entre nodos. El archivo n8n/workflow.json contiene
+esta exportación. La importación de este artefacto en una instancia limpia de N8N 2.11.2 reproduce
+íntegramente el comportamiento operativo del sistema, sujeta únicamente a la provisión de las credenciales correspondientes a los servicios externos integrados (servidor IMAP de correo, cuenta Twilio y
+clave de API de Gemini) mediante el sistema de credenciales nativo de la plataforma.
+La Figura 11 presenta una reconstrucción esquemática del flujo, derivada de la exportación
+JSON y agrupada por etapa funcional. Los 29 nodos operativos (más 3 notas adhesivas, 32 nodos
+en total) se organizan en siete etapas: entrada (triggers), con la recepción de correo por IMAP y los
+disparadores de telefonía, formulario web y notificación de clasificación; validación y normalización de
+la información de entrada, incluida la marca de canal y el sellado de ingreso; envío al backend, con la
+autenticación del operador y la solicitud POST del incidente; ruteo por canal de origen; revisión humana,
+con la notificación al operador designado y las respuestas de handoff; respuesta y auditoría del ticket;
+y aviso post-revisión. La parametrización completa de cada nodo reside en n8n/workflow.json.
+
+F. Corpus de validación
+El corpus de 200 incidentes utilizado para la validación experimental reside en el repositorio en
+
+formato JSON, en su forma pseudonimizada y versionada, bajo la ruta data/corpus_evaluacion_pseudonimizado
+Cada caso incluye el identificador anónimo, la descripción cruda pseudonimizada, el canal de origen,
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 100
 
-Zhao, Z., Wallace, E., Feng, S., Klein, D., & Singh, S. (2021). Calibrate Before Use: Improving Few-Shot
-Performance of Language Models. Proceedings of the 38th International Conference on Machine Learning (ICML 2021), 139, 12697-12706. https://proceedings.mlr.press/v139/zhao21c.html
+Figura 11. Reconstrucción esquemática del flujo de orquestación N8N: no es una captura de la
+interfaz; los 29 nodos operativos se agrupan por etapa funcional.
+el sector asignado por consenso humano, los sectores adicionales de verdad y el tiempo de registro
+medido en cada flujo. La categoría predicha por el clasificador y la confianza asociada no forman parte
+del corpus: se conservan en evaluation/predicciones.json, generado por el framework de evaluación. Se incluyen además las planillas de cronometraje del flujo manual y los registros automáticos
+generados por el flujo automatizado.
+Cada uno de los 200 casos del corpus se compone de siete campos: id (identificador anónimo,
+por ejemplo R001), descripcion (texto pseudonimizado, con los identificadores personales reemplazados por etiquetas genéricas como [EMAIL], [TELEFONO], [HOST] y [PERSONA]), canal_origen
+(correo electrónico, formulario web o llamada telefónica), sector_asignado (sector principal de verdad, exactamente uno de los cinco sectores canónicos), sectores_adicionales (sectores de verdad complementarios, sin repetir el asignado), tiempo_manual_s (tiempo de clasificación manual,
+en segundos) y tiempo_automatizado_s (tiempo del sistema automatizado, en segundos). El corpus completo reside en data/corpus_evaluacion_pseudonimizado.json y las predicciones del
+clasificador en evaluation/predicciones.json.
+Por razones de privacidad y en cumplimiento de la Ley 25.326 (Honorable Congreso de la Nación Argentina, 2000), las descripciones textuales han sido pseudonimizadas previamente a su inclusión
+en el repositorio público, reemplazando nombres propios, direcciones de correo y otros identificadores
+personales por etiquetas genéricas.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 101
 
-A. Diagrama de arquitectura del sistema
-El Anexo A referencia los diagramas de la arquitectura propuesta en notación UML.
-Los diagramas de despliegue y de secuencia se incluyen como figuras de la Sección 5, de
-modo que no se reproducen nuevamente aquí; el diagrama de componentes se incluye como
-Figura 1 de la Sección 5. Los tres artefactos y el cronograma del estudio, que se reproduce
-aquí, son:
-Diagrama de despliegue (Figura 3, Sección 5): los cinco componentes principales
-(N8N, FastAPI, PostgreSQL, Gemini 3.6 Flash, Twilio), el proxy inverso Nginx que, en
-el diseño, provee terminación TLS 1.2/1.3 en el perímetro del sistema (no incluido
-en el despliegue publicado), y las relaciones de comunicación entre ellos. Fuente
-versionada: docs/diagrams/despliegue.md.
-Diagrama de secuencia (Figura 4, Sección 5): flujo extremo a extremo de un incidente desde su recepción en el canal de correo electrónico hasta la confirmación al
-usuario, incluyendo las interacciones con el clasificador híbrido y la base de datos.
-Fuente versionada: docs/diagrams/secuencia.md.
-Diagrama de componentes (Figura 1, Sección 5): organización interna del módulo
-Python por capas (routes, services, repositories, models, classifiers), con sus dependencias y relaciones. Fuente versionada: docs/diagrams/componentes.md.
-Cronograma (Figura 10, Subsección 6.6): construcción, campañas de medición y
-versión del modelo evaluada, con la procedencia de cada fecha. Fuente versionada:
-docs/diagrams/cronograma.md.
-Los diagramas se generan a partir de fuentes Mermaid versionadas en formato .md
-en el directorio docs/diagrams/ del repositorio y se renderizan a imágenes PNG para su
-inclusión en el documento (Gómez et al. 2026).
-B. Repositorio de código fuente
-El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran
-disponibles en el repositorio público del proyecto (Gómez et al. 2026), accesible en https:
-//github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N. El commit de referencia
-para la versión entregada al jurado se identifica con el tag anotado v1.2.1, creado sobre el
+G. Documentación operativa
+La documentación operativa del sistema, que reúne los procedimientos de despliegue, configuración, respaldo y restauración, monitoreo y respuesta ante incidentes operativos, se versiona en el
+repositorio junto con el código fuente; el runbook operativo reside en docs/operational-guide.md.
+
+H. Especificación del prompt de Gemini 3.6 Flash
+Este anexo documenta la especificación del prompt enviado al modelo gemini-3.6-flash
+(Gemini 3.6 Flash en el texto) y los parámetros de configuración de la inferencia. El prompt se mantiene
+en el repositorio bajo docs/prompt_gemini.txt y es único para los tres canales de entrada.
+
+H.1. Estructura y contenido del prompt
+El prompt sigue una estructura fija en español organizada en cinco componentes funcionales y
+un conjunto de reglas de desambiguación:
+1. Instrucción de rol: define que el modelo actúa como agente especializado en clasificación
+de incidentes técnicos en español rioplatense, lo que ancla el comportamiento en el dominio
+y el dialecto del estudio.
+2. Definición de categorías: presenta los cinco sectores canónicos con sus strings exactos
+(sensibles a mayúsculas y sin tildes), un ámbito descriptivo por sector y un ejemplo representativo extraído del dominio real por cada uno.
+3. Formato de respuesta: solicita un JSON válido con exactamente dos campos, categoría
+(uno de los cinco valores canónicos) y confianza (número entre 0,0 y 1,0), sin texto adicional, comentarios ni explicaciones.
+4. Lógica de decisión: indica analizar la descripción y asignar una categoría única entre las
+cinco opciones; ante elementos de múltiples categorías, elegir la dominante.
+5. Validación sintáctica: exige validar la corrección sintáctica del JSON antes de devolverlo
+y reducir la confianza cuando no sea posible clasificar con seguridad.
+6. Reglas de desambiguación de frontera: las acciones sobre aplicaciones o sistemas operativos (acceder, iniciar sesión, abrir una aplicación) se orientan a Soporte Tecnico Software;
+los dispositivos físicos y su digitalización (escáner, impresora, periférico, error de digitalización) a Soporte Tecnico Hardware; y la infraestructura y los servicios de plataforma
+(servidor, red, SMTP, VM) a Sistemas. Estas reglas corrigen casos de frontera medidos
+sobre el corpus.
+
+H.2. Parámetros de configuración
+La invocación del modelo se realiza mediante el SDK google-genai (>=2.20.0), con los
+hiperparámetros que resume la Tabla 19, que corresponden a la configuración adoptada para el des-
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 102
 
-Figura 10. Cronograma de la construcción, las campañas y la versión del modelo (barras con precisión
-de mes; hitos, de día). Fuente: historial del repositorio y confirmación de los autores (9-10-2026).
-
-commit definitivo del repositorio.
-El hash completo de ese commit es 509ffff105c21fed0c07cbf9a46245ba6c53e0e1,
-que constituye la referencia verificable de la versión corregida.
-La estructura del repositorio separa el módulo de procesamiento (App/Backend/, con
-la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (App/Frontend/,
-React con TypeScript), la definición del flujo de orquestación (n8n/workflow.json), los artefactos de evaluación (evaluation/), el corpus pseudonimizado (data/), los scripts auxiliares (scripts/) y la documentación (docs/), junto con las especificaciones de los changes
-(openspec/) y los archivos de orquestación local docker-compose.yml y Makefile. El
-archivo README.md describe esta organización y reúne las instrucciones detalladas para el
-despliegue local en menos de 15 minutos, por lo que constituye el punto de entrada al código
-fuente disponible en el repositorio público (Gómez et al. 2026).
-C. Esquema de base de datos
-El esquema completo de la base de datos PostgreSQL se documenta mediante scripts
-SQL versionados que definen las siete entidades descritas en la Tabla 5 de la Sección 5, las restricciones de integridad referencial (claves foráneas con eliminación en cascada condicional),
-los índices secundarios sobre los atributos de búsqueda frecuente (fecha de creación, sector
-responsable y estado actual del ticket), y la generación de los identificadores de incidente.
-Las migraciones incrementales se gestionan mediante Alembic, lo que permite reproducir el
-estado de la base en cualquier punto histórico del desarrollo y revertir cambios cuando resulte
-necesario.
-La migración inicial incluye la creación de las tablas de catálogo (sector, estado,
-canal_origen) con sus valores semilla, garantizando que un despliegue nuevo del sistema
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-103
-
-comience con los datos de referencia correctos. Las migraciones subsiguientes documentan
-la evolución del esquema durante las etapas de desarrollo descritas en la Sección 4.
-El diagrama entidad-relación de las siete entidades se incluye como Figura 5 de la Sección 5; su fuente Mermaid versionada reside en docs/diagrams/er_modelo_datos.md.
-D. Especificación OpenAPI de la interfaz REST
-La especificación completa de la interfaz REST se genera automáticamente mediante
-FastAPI conforme a la versión 3.1 de la especificación OpenAPI (Ramírez, 2024). El documento resultante describe los puntos de entrada listados en la Tabla 6 de la Sección 5, los
-esquemas de los cuerpos de solicitud y respuesta validados mediante Pydantic v2, los códigos de estado posibles para cada método HTTP, y ejemplos representativos para cada caso
-de uso.
-La interfaz se encuentra disponible adicionalmente en formato interactivo a través del
-componente Swagger UI integrado en el servidor, accesible bajo la ruta /docs durante la ejecución, y en formato estático como archivo openapi.json en el directorio docs/ del repositorio. La sincronización entre el código y la especificación estática se verifica automáticamente
-en el pipeline de integración continua.
-La especificación OpenAPI vigente describe 33 puntos de entrada que exponen 41
-métodos HTTP y 44 esquemas de datos, agrupados por recurso: autenticación, catálogos,
-clasificaciones, incidentes, directorio, estadísticas, telefonía, control de costo y salud.
-A título ilustrativo, los 44 esquemas de datos comprenden las estructuras de los catálogos, las entidades de dominio y los objetos de respuesta de cada recurso. El esquema
-IncidenteRead, por ejemplo, expone el identificador del ticket, la descripción pseudonimizada, la prioridad, el sector y los sectores adicionales, el estado, el canal de origen, el reportante,
-las marcas temporales de ingreso y persistencia, y los indicadores de latencia end-to-end y de
-latencia anómala, con sus tipos y campos de solo lectura. El detalle exhaustivo de atributos,
-tipos y ejemplos reside en docs/openapi.json.
-E. Configuración del flujo N8N
-La exportación del flujo de orquestación en formato JSON incluye la totalidad de los
-32 nodos configurados, sus parámetros operativos, las credenciales referenciadas mediante identificadores opacos sin exposición de valores, y los conectores entre nodos. El archivo
-n8n/workflow.json contiene esta exportación. La importación de este artefacto en una ins-
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-104
-
-tancia limpia de N8N 2.11.2 reproduce íntegramente el comportamiento operativo del sistema,
-sujeta únicamente a la provisión de las credenciales correspondientes a los servicios externos integrados (servidor IMAP de correo, cuenta Twilio y clave de API de Gemini) mediante el
-sistema de credenciales nativo de la plataforma.
-La Figura 11 presenta una reconstrucción esquemática del flujo, derivada de la exportación JSON y agrupada por etapa funcional. Los 29 nodos operativos (más 3 notas adhesivas,
-32 nodos en total) se organizan en siete etapas: entrada (triggers), con la recepción de correo
-por IMAP y los disparadores de telefonía, formulario web y notificación de clasificación; validación y normalización de la información de entrada, incluida la marca de canal y el sellado de
-ingreso; envío al backend, con la autenticación del operador y la solicitud POST del incidente;
-ruteo por canal de origen; revisión humana, con la notificación al operador designado y las respuestas de handoff; respuesta y auditoría del ticket; y aviso post-revisión. La parametrización
-completa de cada nodo reside en n8n/workflow.json.
-
-Figura 11. Reconstrucción esquemática del flujo de orquestación N8N: no es una captura de la
-interfaz; los 29 nodos operativos se agrupan por etapa funcional.
-
-F. Corpus de validación
-El corpus de 200 incidentes utilizado para la validación experimental reside en el reposi-
-
-torio en formato JSON, en su forma pseudonimizada y versionada, bajo la ruta data/corpus_evaluacion_p
-Cada caso incluye el identificador anónimo, la descripción cruda pseudonimizada, el canal de
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-105
-
-origen, el sector asignado por consenso humano, los sectores adicionales de verdad y el tiempo de registro medido en cada flujo. La categoría predicha por el clasificador y la confianza
-asociada no forman parte del corpus: se conservan en evaluation/predicciones.json,
-generado por el framework de evaluación. Se incluyen además las planillas de cronometraje
-del flujo manual y los registros automáticos generados por el flujo automatizado.
-Cada uno de los 200 casos del corpus se compone de siete campos: id (identificador anónimo, por ejemplo R001), descripcion (texto pseudonimizado, con los identificadores personales reemplazados por etiquetas genéricas como [EMAIL], [TELEFONO],
-[HOST] y [PERSONA]), canal_origen (correo electrónico, formulario web o llamada telefónica), sector_asignado (sector principal de verdad, exactamente uno de los cinco sectores
-canónicos), sectores_adicionales (sectores de verdad complementarios, sin repetir el
-asignado), tiempo_manual_s (tiempo de clasificación manual, en segundos) y tiempo_automatizado_s
-
-(tiempo del sistema automatizado, en segundos). El corpus completo reside en data/corpus_evaluacion_
-y las predicciones del clasificador en evaluation/predicciones.json.
-Por razones de privacidad y en cumplimiento de la Ley 25.326 (Honorable Congreso de
-la Nación Argentina, 2000), las descripciones textuales han sido pseudonimizadas previamente
-a su inclusión en el repositorio público, reemplazando nombres propios, direcciones de correo
-y otros identificadores personales por etiquetas genéricas.
-G. Documentación operativa
-La documentación operativa del sistema, que reúne los procedimientos de despliegue, configuración, respaldo y restauración, monitoreo y respuesta ante incidentes operativos, se versiona en el repositorio junto con el código fuente; el runbook operativo reside en
-docs/operational-guide.md.
-H. Especificación del prompt de Gemini 3.6 Flash
-Este anexo documenta la especificación del prompt enviado al modelo gemini-3.6-flash
-(Gemini 3.6 Flash en el texto) y los parámetros de configuración de la inferencia. El prompt se
-mantiene en el repositorio bajo docs/prompt_gemini.txt y es único para los tres canales
-de entrada.
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-106
-
-H.1. Estructura y contenido del prompt
-El prompt sigue una estructura fija en español organizada en cinco componentes funcionales y un conjunto de reglas de desambiguación:
-1. Instrucción de rol: define que el modelo actúa como agente especializado en clasificación de incidentes técnicos en español rioplatense, lo que ancla el comportamiento en el dominio y el dialecto del estudio.
-2. Definición de categorías: presenta los cinco sectores canónicos con sus strings
-exactos (sensibles a mayúsculas y sin tildes), un ámbito descriptivo por sector y un
-ejemplo representativo extraído del dominio real por cada uno.
-3. Formato de respuesta: solicita un JSON válido con exactamente dos campos,
-categoría (uno de los cinco valores canónicos) y confianza (número entre 0,0
-y 1,0), sin texto adicional, comentarios ni explicaciones.
-4. Lógica de decisión: indica analizar la descripción y asignar una categoría única entre las cinco opciones; ante elementos de múltiples categorías, elegir la dominante.
-5. Validación sintáctica: exige validar la corrección sintáctica del JSON antes de devolverlo y reducir la confianza cuando no sea posible clasificar con seguridad.
-6. Reglas de desambiguación de frontera: las acciones sobre aplicaciones o sistemas operativos (acceder, iniciar sesión, abrir una aplicación) se orientan a Soporte
-Tecnico Software; los dispositivos físicos y su digitalización (escáner, impresora, periférico, error de digitalización) a Soporte Tecnico Hardware; y la infraestructura y los servicios de plataforma (servidor, red, SMTP, VM) a Sistemas. Estas
-reglas corrigen casos de frontera medidos sobre el corpus.
-H.2. Parámetros de configuración
-La invocación del modelo se realiza mediante el SDK google-genai (>=2.20.0),
-con los hiperparámetros que resume la Tabla 19, que corresponden a la configuración adoptada para el despliegue y no al resultado de una calibración documentada frente a valores
-alternativos (Subsección 5.4).
-H.3. Validación de la respuesta
-Antes de aceptar la respuesta del modelo, el módulo de clasificación valida que el
-texto sea JSON parseable, que contenga exactamente las claves categoría y confianza,
-
-AUTOMATIZACIÓN DE MESA DE AYUDA
-
-107
-
+pliegue y no al resultado de una calibración documentada frente a valores alternativos (Subsección 5.4).
 Tabla 19. Parámetros de configuración de la inferencia con gemini-3.6-flash.
 Parámetro
 
@@ -4342,11 +4290,13 @@ google-genai
 
 Fuente: elaboración propia a partir de la documentación del SDK google-genai.
 
-que la categoría sea uno de los cinco valores canónicos y que la confianza sea un número
-en el intervalo [0,0, 1,0]. Si cualquiera de estas condiciones falla, se registra la excepción, se
-asigna confianza 0,0, se marca el incidente para revisión humana y no se propagan estados
-inconsistentes a la base de datos. Este procedimiento garantiza la confiabilidad operativa frente
-a errores de formato o alucinaciones del modelo. El Listado 1 resume la rutina de validación.
+H.3. Validación de la respuesta
+Antes de aceptar la respuesta del modelo, el módulo de clasificación valida que el texto sea
+JSON parseable, que contenga exactamente las claves categoría y confianza, que la categoría
+sea uno de los cinco valores canónicos y que la confianza sea un número en el intervalo [0,0, 1,0]. Si
+cualquiera de estas condiciones falla, se registra la excepción, se asigna confianza 0,0, se marca el
+incidente para revisión humana y no se propagan estados inconsistentes a la base de datos. Este procedimiento garantiza la confiabilidad operativa frente a errores de formato o alucinaciones del modelo.
+El Listado 1 resume la rutina de validación.
 1
 2
 3
@@ -4355,10 +4305,6 @@ a errores de formato o alucinaciones del modelo. El Listado 1 resume la rutina d
 6
 7
 8
-9
-10
-11
-12
 
 def validar_respuesta_gemini(response_text: str) -> tuple[bool, dict]:
 try:
@@ -4368,52 +4314,56 @@ return False, {"error": f"JSON invalido: {e}"}
 if "categoria" not in data:
 return False, {"error": "Falta campo 'categoria'"}
 if data["categoria"] not in SECTORES_CANONICOS:
-return False, {"error": f"Categoria invalida: {data['categoria']}"}
-if "confianza" not in data:
-return False, {"error": "Falta campo 'confianza'"}
-if not isinstance(data["confianza"], (int, float)) \
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
+9
+10
+11
+12
 13
 14
 15
 
-108
+103
 
+return False, {"error": f"Categoria invalida: {data['categoria']}"}
+if "confianza" not in data:
+return False, {"error": "Falta campo 'confianza'"}
+if not isinstance(data["confianza"], (int, float)) \
 or not (0.0 <= data["confianza"] <= 1.0):
 return False, {"error": f"Confianza invalida: {data['confianza']}"}
 return True, data
 Listing 1. Validación de la respuesta de Gemini (resumen).
 
 H.4. Iteración y mejora del prompt
-El prompt de la versión evaluada se ajustó de forma iterativa a partir de errores observados en el corpus de validación; no se dispuso de un corpus independiente de preproducción.
-Las versiones históricas del prompt se conservan en el historial de versiones del repositorio
-(archivo docs/prompt_gemini.txt) para auditoría y eventual reversión.
+El prompt de la versión evaluada se ajustó de forma iterativa a partir de errores observados en el
+corpus de validación; no se dispuso de un corpus independiente de preproducción. Las versiones históricas del prompt se conservan en el historial de versiones del repositorio (archivo docs/prompt_gemini.txt)
+para auditoría y eventual reversión.
+
 H.5. Recomendaciones para futuras iteraciones
-Ante una degradación de las métricas por cambios en el modelo, se recomienda profundizar los ejemplos por clase (de dos a cuatro o cinco), agregar contraejemplos de incidentes
-limítrofes, especificar umbrales de confianza explícitos, incluir un diccionario de términos clave
-por categoría y, una vez acumulado un corpus del orden de 5.000 casos etiquetados (referencia indicativa de orden de magnitud, no derivada del corpus actual ni de un cálculo de potencia
-estadística), migrar a un modelo ajustado específicamente al dominio.
+Ante una degradación de las métricas por cambios en el modelo, se recomienda profundizar los
+ejemplos por clase (de dos a cuatro o cinco), agregar contraejemplos de incidentes limítrofes, especificar umbrales de confianza explícitos, incluir un diccionario de términos clave por categoría y, una vez
+acumulado un corpus del orden de 5.000 casos etiquetados (referencia indicativa de orden de magnitud,
+no derivada del corpus actual ni de un cálculo de potencia estadística), migrar a un modelo ajustado
+específicamente al dominio.
+
 I. Trazabilidad de las correcciones del dictamen
 El registro de correcciones derivado del dictamen evaluador se conserva como artefacto versionado en el repositorio, bajo la ruta docs/Tesis/Correcciones/dictamen-correcciones.md.
-El documento compila, de forma acumulativa, cada corrección aplicada al manuscrito y las decisiones adoptadas sobre las observaciones que no admitían una resolución inmediata (por
-ejemplo, la convención estadística del estadístico W, la reformulación de la hipótesis principal
-y el tratamiento de los reintentos como limitación conocida). Se incluye aquí como ejemplo de
-trazabilidad: cada entrada del registro vincula una observación del dictamen con el archivo y
-la línea corregidos, de modo que la correspondencia entre la revisión solicitada y la revisión
-efectuada resulte auditable de extremo a extremo.
-El dictamen que motiva las correcciones vigentes es el emitido el 22 de octubre de
-2026 sobre la versión de trabajo v10, publicada como v1.1.0 y aplicable por igual a v1.1.1.
-Sus cinco observaciones de fondo (A1 a A5) y sus correcciones de consistencia (B4 a B16)
-se atendieron mediante changes del repositorio; la Tabla 20 indica, para cada una, el change
+El documento compila, de forma acumulativa, cada corrección aplicada al manuscrito y las decisiones
+adoptadas sobre las observaciones que no admitían una resolución inmediata (por ejemplo, la convención estadística del estadístico W, la reformulación de la hipótesis principal y el tratamiento de los
+reintentos como limitación conocida). Se incluye aquí como ejemplo de trazabilidad: cada entrada del
+registro vincula una observación del dictamen con el archivo y la línea corregidos, de modo que la correspondencia entre la revisión solicitada y la revisión efectuada resulte auditable de extremo a extremo.
+El dictamen que motiva las correcciones vigentes es el emitido el 22 de octubre de 2026 sobre
+la versión de trabajo v10, publicada como v1.1.0 y aplicable por igual a v1.1.1. Sus cinco observaciones de fondo (A1 a A5) y sus correcciones de consistencia (B4 a B16) se atendieron mediante
+changes del repositorio; la Tabla 20 indica, para cada una, el change responsable y las secciones de
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-109
+104
 
-responsable y las secciones de la tesis donde se la atendió. Cuando una recomendación se
-dividió en partes, figuran los changes que las atendieron.
+la tesis donde se la atendió. Cuando una recomendación se dividió en partes, figuran los changes que
+las atendieron.
 Tabla 20. Recomendaciones del dictamen del 22 de octubre de 2026, change responsable y
 secciones donde se atendieron.
 Rec.
@@ -4461,7 +4411,7 @@ Tabla 10; Tabla 12
 Subsección 4.6, Tabla 12
 Subsección 4.9, Subsección 6.6, Figura 10, Subsección 9.3
 Sección 8, Tabla 2, Tabla 1
-Sección 11, Subsección 11.1, Subsección 11.3, Subsección 11.6
+Sección 11, Subsección 11.1, Subsección 11.3, Subsección 11.7
 Subsección 4.7, Subsección 4.4
 Subsección 10.1; Subsección 4.2, Subsección 7.5
 Todo el documento (revisión ortotipográfica)
@@ -4484,9 +4434,9 @@ B16
 
 Fuente: elaboración propia a partir de docs/Tesis/Correcciones/dictamen-correcciones.md.
 
-La trazabilidad interna de dos decisiones que el cuerpo del Capítulo 6 presenta en lenguaje llano se conserva aquí: el retiro de la rama de clasificación telefónica por agente LLM
-basada en LangChain y el traslado de la superficie de costo al backend corresponden al change
-
-c-72. El detalle de ambas decisiones figura en docs/Tesis/Correcciones/dictamen-correcciones.
+La trazabilidad interna de dos decisiones que el cuerpo del Capítulo 6 presenta en lenguaje llano
+se conserva aquí: el retiro de la rama de clasificación telefónica por agente LLM basada en LangChain
+y el traslado de la superficie de costo al backend corresponden al change c-72. El detalle de ambas
+decisiones figura en docs/Tesis/Correcciones/dictamen-correcciones.md.
 
 
