@@ -694,6 +694,32 @@ el PR." Consecuencia: la brecha de la rama (a) (+9) deja de ser la vara de medir
 margen de la regla (b) (100 - cuerpo). Las tareas 3.4 y 3.5 de c-141 (rama (a)) quedan "no
 aplica (regla (b) confirmada el 2026-10-26)". P6 y P8 no se aplican.
 
+#### G0.1 - Actualizacion 2026-10-27: regla real (total <= 100, fuente catedra) CONFIRMADA por el autor y exceso honrado
+
+**Estado: CONFIRMADA por el usuario (Gonzalo Sevilla, 2026-10-27).** Esta entrada se agrega
+sin reescribir las entradas previas (que quedan como historia de la decision).
+
+| Campo | Valor |
+|---|---|
+| Regla de medicion | **Total del PDF**, medido con `pdfinfo main.pdf | grep Pages` o el conteo de saltos de pagina de `pdftotext -enc UTF-8 main.pdf -` |
+| Valor | **total <= 100** |
+| Fuente | **Exigencia de la catedra** (declarada por el autor el 2026-10-27; corrige la entrada del 2026-10-26, que la registraba como "decision del equipo, no consta exigencia de la catedra" bajo la metrica de cuerpo sin anexos) |
+| Fecha | 2026-10-27 |
+| Exceso honrado | **+4 paginas** (104 totales) sobre el tope de 100, sostenido y defendido por los autores; techo practico del orden de 110-115 totales |
+| Regla superada | La "rama (b)" del 2026-10-26 (cuerpo sin anexos <= 100) queda superada y se conserva como historia de la decision |
+
+Decision textual del usuario: "Tope total es <= 100" y "podemos defender si se pasa un poco
+del limite". Se adopta la decision de compactar lo barato y defender el resto. Consecuencia:
+rige la metrica de total del PDF; la linea base del dictamen (`v1.1.1`, 101 totales) ya estaba
++1 y la familia del dictamen la llevo a 111 (cuerpo 102, anexos 9) antes de la compactacion.
+La compactacion de forma del commit `8c0cf6d` (indices general y de tablas/figuras compactados
+y fusionados, anexos en `\small`, figuras de la seccion 6.8 al 70 % de ancho y espaciado de la
+bibliografia) lleva el borrador de 111 a **104 totales** (cuerpo 96, anexos 8) sin quitar
+contenido cientifico, numeros canonicos, figuras, tablas ni referencias, y sin dejar
+referencias colgadas. El exceso de +4 se honra y se defiende ante la catedra; el detalle de la
+medicion esta en el libro mayor de paginas. Governance HIGH (dominio "eliminacion de
+contenido", mitigado por ser compactacion de forma).
+
 ### G0.2 - Entorno de compilacion de registro (OQ3)
 
 **Estado: PROVISIONAL, PARCIAL (entorno registrado; reproduccion de la linea base
@@ -955,6 +981,10 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 | compactacion P7 (`change/c-141-integracion-release-v1-2-0`; tareas 3.3 a 3.6) | sin commit (lo crea el orquestador) | 109 | 100 | 9 | -1 | -1 | (b) cuerpo sin anexos <= 100 (confirmada 2026-10-26) | Medido: `abspage@last{109}`; `Anexos` en p. 101; delta frente a "integrado (pre-compactacion)" (110 / 101 / 9): -1 total y -1 cuerpo; **regla (b): cuerpo 100, margen 0 (cumple)**; `Referencias bibliograficas` sigue empezando en la p. 94 y pasa de 8 paginas (la ultima con 14 lineas) a 7 (la ultima, p. 100, con una sola entrada de 3 lineas); anexos 9 sin cambio; brecha frente a la rama (a) (101): +8, ya no vigente; acumulado de la familia: +7 total / +6 cuerpo / +1 anexos sobre `+c-144` (102 / 94 / 8) y +8 / +7 / +1 sobre la base `v1.1.1`. Palanca P7: una linea en el preambulo (ver "Compactacion P7") |
 | release v1.2.0 (C1) (`change/c-141-integracion-release-v1-2-0`; tareas 5.1 y 5.2) | sin commit (lo crea el orquestador) | 109 | 100 | 9 | 0 | 0 | (b) cuerpo sin anexos <= 100 (confirmada 2026-10-26) | Medido: `abspage@last{109}`; `Anexos` en p. 101 (`main.toc`); `Referencias bibliograficas` en p. 94; saltos de pagina de `pdftotext` 109; delta frente a "compactacion P7" (109 / 100 / 9): 0 / 0 (el cambio del tag y del titulo de `Gomez2026_repositorio` retira dos lineas del Anexo B y no mueve ninguna pagina); **regla (b): cuerpo 100, margen 0 (cumple)**; coincide con el cierre del libro mayor de la tarea 6.4 |
 | release v1.2.0 (C2) (`change/c-141-integracion-release-v1-2-0`; tareas 8.6 y 8.7) | sin commit (lo crea el orquestador) | 109 | 100 | 9 | 0 | 0 | (b) cuerpo sin anexos <= 100 (confirmada 2026-10-26) | Medido: `abspage@last{109}`; `Anexos` en p. 101 (`main.toc`); saltos de pagina de `pdftotext` 109; delta frente a "release v1.2.0 (C1)" (109 / 100 / 9): 0 / 0 (la linea del hash cabe en la p. 102 del Anexo B y no mueve ninguna pagina); **regla (b): cuerpo 100, margen 0 (cumple)**; el conteo final de la release es el de C1 |
+| release v1.2.1 (C1/C2) (`change/c-145-*`) | `509ffff` (C3) | 109 | 100 | 9 | 0 | 0 | (b) cuerpo sin anexos <= 100 (2026-10-26) | Medido en la release `v1.2.1`; regla (b) con margen 0; `v1.2.1` queda superada por `v1.2.2` |
+| borrador `v1.2.1` + `c-146` + `c-140` (`change/c-140-*`; base de c-147) | `9ce0bd2` | 111 | 102 | 9 | +2 | +2 | (b) cuerpo sin anexos <= 100 (2026-10-26); **total <= 100, fuente catedra (2026-10-27)** | Medido: `abspage@last{111}`; `Anexos` en p. 103; **cuerpo 102, margen -2** (bloqueo de la release); **exceso sobre el tope de 100 total: +11** |
+| compactacion c-147 (`change/c-147-*`) | `8c0cf6d` | 104 | 96 | 8 | -7 | -6 | **total <= 100, fuente catedra (2026-10-27)** | Medido: `abspage@last{104}`; `Anexos` en p. 97; `Referencias bibliograficas` en p. 93; **exceso +4 honrado y defendido**; palancas: indices general y de tablas/figuras compactados y fusionados, anexos en `\small`, figuras de 6.8 al 70 %, espaciado de bibliografia; sin contenido removido ni referencias colgadas |
+| release v1.2.2 (C1) (`change/c-147-*`) | sin commit (lo crea el orquestador) | 104 | 96 | 8 | 0 | 0 | **total <= 100, fuente catedra (2026-10-27)** | Pendiente de recompilar y medir en el tramo de release; previsto 104 / 96 / 8 con exceso +4 |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -2906,5 +2936,16 @@ bloques (1 TLS, 2 reintentos, 3 humo E2E) se aplicaron.
 - **Compilacion y tope de paginas**: `texlive-thesis` (`latexmk main.tex`); 0 errores fatales,
   0 referencias indefinidas, `??` = 0, `verify_citations.py` = PASS. **Tope BLOQUEADO**: antes
   109 total / `Anexos` p. 101 / cuerpo 100 / anexos 9; despues 111 / p. 103 / cuerpo **102** /
-  anexos 9. El cuerpo supera el tope de 100 en 2 paginas; el detalle y la compensacion
-  intentada estan en `conteos-canonicos-tecnicos.md` seccion 6.1.
+   anexos 9. El cuerpo supera el tope de 100 en 2 paginas; el detalle y la compensacion
+   intentada estan en `conteos-canonicos-tecnicos.md` seccion 6.1.
+- **Cierre de las tareas 3.8 a 3.10 (c-147, 2026-10-27)**: la tarea **3.8** (regresion completa
+  de backend) se ejecuto: `pytest` completo 1552 passed + 1 xfailed (subconjunto SQLite mas el de
+  integracion PostgreSQL contra la base desechable), red de seguridad de 3.1 214 passed +
+  1 xfailed, `scripts/dry_run` 90 passed, `scripts/preflight/cost_readiness.py` 10/10 PASS GREEN
+  y `gemini_readiness.py` 2/2 PASS GREEN; `test_c40_guide_test_count_matches_suite` en verde con
+  la seccion nueva de la guia. La tarea **3.9** (documentacion) se ejecuto: seccion "Politica de
+  reintento del tramo de alta (c-140)" agregada a `docs/n8n-workflow-guide.md` (requisito
+  `N8N-DOC-007`). La tarea **3.10** (CP5) se registra como accion del **equipo**: el agente no
+  toco la instancia N8N operativa. El **BLOQUEO de tope de paginas** de arriba queda resuelto por
+  la compactacion de forma del commit `8c0cf6d` (111 -> 104 totales; ver G0.1 del 2026-10-27), sin
+  quitar contenido cientifico ni dejar referencias colgadas. Con esto c-140 queda **73/73**.
