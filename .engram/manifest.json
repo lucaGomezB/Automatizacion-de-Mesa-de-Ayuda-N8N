@@ -632,6 +632,46 @@
       "sessions": 4,
       "memories": 23,
       "prompts": 83
+    },
+    {
+      "id": "e0545402",
+      "created_by": "skywalker",
+      "created_at": "2026-10-27T19:51:13Z",
+      "sessions": 0,
+      "memories": 1,
+      "prompts": 0
+    },
+    {
+      "id": "a93d2d9c",
+      "created_by": "skywalker",
+      "created_at": "2026-10-26T14:41:06Z",
+      "sessions": 1,
+      "memories": 5,
+      "prompts": 13
+    },
+    {
+      "id": "7d87057b",
+      "created_by": "skywalker",
+      "created_at": "2026-10-26T15:11:00Z",
+      "sessions": 0,
+      "memories": 4,
+      "prompts": 5
+    },
+    {
+      "id": "d1284466",
+      "created_by": "skywalker",
+      "created_at": "2026-10-27T00:48:16Z",
+      "sessions": 1,
+      "memories": 10,
+      "prompts": 44
+    },
+    {
+      "id": "f2df2a9b",
+      "created_by": "skywalker",
+      "created_at": "2026-10-27T19:00:47Z",
+      "sessions": 2,
+      "memories": 2,
+      "prompts": 14
     }
   ]
 }
