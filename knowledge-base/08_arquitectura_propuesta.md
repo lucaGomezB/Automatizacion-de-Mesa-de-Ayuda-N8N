@@ -60,7 +60,7 @@ Automatizacion-de-Mesa-de-Ayuda-N8N/
 |---|---|---|---|
 | DATABASE_URL | URL asyncpg de PostgreSQL | `postgresql+asyncpg://user:pass@host:5432/db` | Y |
 | GEMINI_API_KEY | Clave Google AI | — | Y |
-| GEMINI_MODEL / TEMPERATURE / TOP_P / MAX_OUTPUT_TOKENS / CANDIDATE_COUNT / TIMEOUT_SECONDS | Parámetros del modelo | `gemini-2.5-flash` · 0.3 · 0.9 · 100 · 1 · 10 | N |
+| GEMINI_MODEL / TEMPERATURE / TOP_P / MAX_OUTPUT_TOKENS / CANDIDATE_COUNT / TIMEOUT_SECONDS | Parámetros del modelo | `gemini-3.6-flash` · 0.3 · 0.9 · 100 · 1 · 30 | N |
 | DETERMINISTIC_SCORE_THRESHOLD | Punto de operación del `score_correctitud` (cortocircuito etapa 1) | 0.5166 | N |
 | HUMAN_REVIEW_THRESHOLD | Umbral revisión humana (solo sobre la salida de Gemini) | 0.70 | N |
 | N8N_WEBHOOK_URL / N8N_WEBHOOK_SECRET | Webhook post-clasificación | vacío ⇒ se omite | Y |
@@ -73,5 +73,5 @@ Automatizacion-de-Mesa-de-Ayuda-N8N/
 
 - Dev/preprod: Docker Compose (api + postgres + n8n).
 - Producción (tesis §6.1): Kubernetes 1.30 — sin manifiestos en el repo aún.
-- Imágenes: `python:3.12-slim`, `postgres:15.5-alpine`, N8N oficial 1.62.
+- Imágenes: `python:3.12-slim`, `postgres:15.5-alpine`, N8N oficial 2.11.2.
 - Healthchecks: `/health` (liveness) y `/health/db` (readiness) ya expuestos.

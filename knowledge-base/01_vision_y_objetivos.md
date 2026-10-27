@@ -2,7 +2,7 @@
 
 ## Propósito del sistema
 
-Automatizar el registro inicial de incidentes de una mesa de ayuda empresarial mediana, integrando orquestación de flujos (N8N), procesamiento de lenguaje natural (FastAPI + Gemini 2.5 Flash) y persistencia relacional (PostgreSQL), de modo que cada incidente reportado por correo, formulario web o llamada telefónica sea clasificado y registrado automáticamente con supervisión humana en los casos que el sistema deriva a revisión (confianza de Gemini inferior a 0,70, etapa fallback o reportante no identificado).
+Automatizar el registro inicial de incidentes de una mesa de ayuda empresarial mediana, integrando orquestación de flujos (N8N), procesamiento de lenguaje natural (FastAPI + Gemini 3.6 Flash) y persistencia relacional (PostgreSQL), de modo que cada incidente reportado por correo, formulario web o llamada telefónica sea clasificado y registrado automáticamente con supervisión humana en los casos que el sistema deriva a revisión (confianza de Gemini inferior a 0,70, etapa fallback o reportante no identificado).
 
 Contexto: organización mediana del sector servicios (Mendoza, Argentina), ~120 usuarios internos, ~42 incidentes diarios, registro manual previo de 165,3 s promedio por incidente con ~15 % de derivación errónea. Trabajo Final de Carrera UTN-FRM (Gómez, Bustos, Sevilla, 2026), director Prof. Alberto Cortez.
 
@@ -19,7 +19,7 @@ Contexto: organización mediana del sector servicios (Mendoza, Argentina), ~120 
 ## Alcance v1.0
 
 - Recepción de incidentes por 3 canales paralelos: correo electrónico (IMAP), formulario web (webhook/frontend React) y llamada telefónica (Twilio + transcripción automática).
-- Clasificación automática híbrida en 2 etapas (reglas determinísticas → Gemini 2.5 Flash) hacia 5 sectores: **Seguridad Informatica**, **Soporte Tecnico Hardware**, **Soporte Tecnico Software**, **Bases de Datos**, **Sistemas** (strings exactos, sin tildes; `Operaciones` eliminado).
+- Clasificación automática híbrida en 2 etapas (reglas determinísticas → Gemini 3.6 Flash) hacia 5 sectores: **Seguridad Informatica**, **Soporte Tecnico Hardware**, **Soporte Tecnico Software**, **Bases de Datos**, **Sistemas** (strings exactos, sin tildes; `Operaciones` eliminado).
 - Registro persistente en PostgreSQL con trazabilidad de cada decisión del clasificador (`clasificacion_log`).
 - Cola de revisión humana FIFO para los casos derivados por el backend: confianza de Gemini < 0,70, etapa fallback o reportante no identificado (human in the loop).
 - Pseudonimización de datos personales antes de transmitir a Gemini (Ley 25.326).
