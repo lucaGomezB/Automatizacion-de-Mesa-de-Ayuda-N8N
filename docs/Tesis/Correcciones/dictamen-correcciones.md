@@ -985,7 +985,7 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 | release v1.2.1 (C1/C2) (`change/c-145-*`) | `509ffff` (C3) | 109 | 100 | 9 | 0 | 0 | (b) cuerpo sin anexos <= 100 (2026-10-26) | Medido en la release `v1.2.1`; regla (b) con margen 0; `v1.2.1` queda superada por `v1.2.2` |
 | borrador `v1.2.1` + `c-146` + `c-140` (`change/c-140-*`; base de c-147) | `9ce0bd2` | 111 | 102 | 9 | +2 | +2 | (b) cuerpo sin anexos <= 100 (2026-10-26); **total <= 100, fuente catedra (2026-10-27)** | Medido: `abspage@last{111}`; `Anexos` en p. 103; **cuerpo 102, margen -2** (bloqueo de la release); **exceso sobre el tope de 100 total: +11** |
 | compactacion c-147 (`change/c-147-*`) | `8c0cf6d` | 104 | 96 | 8 | -7 | -6 | **total <= 100, fuente catedra (2026-10-27)** | Medido: `abspage@last{104}`; `Anexos` en p. 97; `Referencias bibliograficas` en p. 93; **exceso +4 honrado y defendido**; palancas: indices general y de tablas/figuras compactados y fusionados, anexos en `\small`, figuras de 6.8 al 70 %, espaciado de bibliografia; sin contenido removido ni referencias colgadas |
-| release v1.2.2 (C1) (`change/c-147-*`) | sin commit (lo crea el orquestador) | 104 | 96 | 8 | 0 | 0 | **total <= 100, fuente catedra (2026-10-27)** | Pendiente de recompilar y medir en el tramo de release; previsto 104 / 96 / 8 con exceso +4 |
+| release v1.2.2 (C1) (`change/c-147-*`) | `445a47b` | 104 | 96 | 8 | 0 | 0 | **total <= 100, fuente catedra (2026-10-27)** | Medido: `abspage@last{104}`; `Anexos` en p. 97; exceso +4 honrado y defendido; verificado de nuevo el 2026-10-27 sobre `07cc075` (PDF de 104 paginas) |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -2607,6 +2607,23 @@ El autor reviso las decisiones que habian quedado PROVISIONALES en los grupos c-
 | c-135 | OQ-3 | Checkpoint MEDIUM de `06:75` sin "sin exposicion al corpus" y sin fechas. |
 | c-135 | OQ-4 | Telefonia fuera de la comparativa; el rasgo queda en `03:84`. |
 | c-135 | OQ-5 | Acceso institucional "no reportado"; Zangari sin dato de idioma. |
+
+### Cierre de la familia (2026-10-27)
+
+Parte E de c-147 (rama `change/c-147-parte-e-archivo-y-cierre`, cortada de `main` en `07cc075`, merge del PR #48). La release vigente es `v1.2.2` (tag anotado sobre `445a47b4f6fccca3d4611ee3cb7adea4e7350dcc`; PDF de 104 paginas totales: cuerpo 96, anexos 8; regla de la catedra total <= 100 con exceso +4 honrado y defendido).
+
+| Change | Carpeta en `openspec/changes/archive/` | Tareas | Deltas sincronizados |
+|---|---|---|---|
+| c-146 | `2026-10-27-c-146-completar-metricas-trabajos-previos` | 22/23 (6.1 bloqueada por acceso institucional externo a Paramesh y Shreedhara 2019; precedente de archivo con tarea abierta: c-123) | `tesis-document` (+1 ~1) |
+| c-140 | `2026-10-27-c-140-endurecimiento-tecnico-tls-reintentos-e2e` | 73/73 | `ci-pipeline`, `classification-resilience`, `dry-run-harness`, `incident-origin-correlation`, `n8n-workflow`, `tesis-document`, `tls-docker-compose` (+20 ~8 -1) |
+| c-141 | `2026-10-27-c-141-integracion-release-v1-2-0` | 52/52 (la 2.9 cerrada el 2026-10-27) | `project-documentation`, `tesis-document`, `tesis-numeros-canonicos` (+7 ~3) |
+| c-147 | `2026-10-27-c-147-compactacion-y-release-v1-2-2` | 23/23 | `tesis-document` (regla de tope reconciliada: total del PDF, 100, catedra, exceso honrado) |
+
+Al archivar c-147 la guarda del CLI de OpenSpec 1.6.0 rechazo el delta de `tesis-document` porque omitia escenarios del requisito vigente; se refresco el delta (escenarios `Tope renegociado documentado` y `Cuerpo sin anexos` conservados con redaccion adaptada a la regla total <= 100, y `Reduccion sin perdida de contenido` con su nombre original) y se archivo sin editar a mano `openspec/specs/`.
+
+c-135 (34/35, 5.2 justificada) y c-145 (77/77) ya estaban archivados desde el 2026-10-26 (PR #47 y PR #46). `openspec validate --specs --strict --no-interactive` pasa y `openspec list --json` no devuelve changes activos.
+
+Pendientes residuales: (1) la tarea 6.1 de c-146 sigue bloqueada por el acceso institucional externo al capitulo de Paramesh y Shreedhara (2019) y a Paket et al. (2024); (2) las decisiones PROVISIONALES de los autores que no figuran en la tabla de confirmaciones siguen pendientes de confirmacion; (3) el exceso de +4 paginas sobre el tope de 100 se defiende ante la catedra.
 
 ## Dictamen v10 / v1.1.0 (2026-10-22) - cobertura por change (FASE 36)
 
