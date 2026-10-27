@@ -8,20 +8,46 @@ Esta especificación define los criterios de calidad del documento de tesis en L
 
 ### Requirement: Thesis PDF compilation
 
-The thesis document SHALL compile from LaTeX source to PDF via XeLaTeX without fatal errors. The compilation SHALL produce a single `main.pdf` file at `docs/Tesis/v8 (IA)/paper/main.pdf`.
+La tesis SHALL compilar desde la fuente LaTeX de la version de trabajo vigente (`docs/Tesis/v10 (IA)/paper/main.tex`) a `docs/Tesis/v10 (IA)/paper/main.pdf` mediante XeLaTeX y biber, sin errores fatales, con las fuentes reales que declara el preambulo (Arial y Courier New) y en el entorno de compilacion de registro consignado en `docs/Tesis/Correcciones/dictamen-correcciones.md`. El PDF SHALL incluir todos los archivos de seccion que `main.tex` incorpora con `\input`, en el orden de `main.tex`. La compilacion de una release SHALL cumplir ademas: cero referencias y citas indefinidas, cero etiquetas duplicadas, biber sin advertencias ni errores, `verify_citations.py` con estado PASS y todo `\includegraphics` resuelto a un archivo existente. Como `main.log` no se versiona, la evidencia de la compilacion de cada release SHALL registrarse en `docs/Tesis/Correcciones/dictamen-correcciones.md`.
 
 #### Scenario: Successful compilation
-- **WHEN** the LaTeX project is compiled with `latexmk -xelatex main.tex` (or equivalent on Overleaf)
-- **THEN** a PDF file is produced without fatal compilation errors
-- **AND** the PDF contains all pages from the 11 section files in correct order
+
+- **WHEN** el proyecto LaTeX se compila con `latexmk -xelatex main.tex` (o con la secuencia xelatex -> biber -> xelatex -> xelatex) en el entorno de registro
+- **THEN** se produce `docs/Tesis/v10 (IA)/paper/main.pdf` sin errores fatales
+- **AND** el PDF contiene los archivos de seccion que `main.tex` incorpora, en el orden de `main.tex`
 
 #### Scenario: Compilation failure recovery
-- **WHEN** a compilation error occurs (missing package, undefined reference, font not found)
-- **THEN** the error is diagnosed from the .log file
-- **AND** the fix is applied to either the preamble or the affected .tex file
-- **AND** recompilation succeeds
 
----
+- **WHEN** ocurre un error de compilacion (paquete faltante, referencia indefinida, fuente no encontrada)
+- **THEN** el error se diagnostica desde el `.log`
+- **AND** la correccion se aplica en el preambulo o en el `.tex` afectado
+- **AND** la recompilacion es exitosa
+
+#### Scenario: Verificaciones de una release
+
+- **WHEN** se compila la fuente que se va a etiquetar como release
+- **THEN** el `.log` no contiene referencias ni citas indefinidas ni etiquetas `multiply defined`
+- **AND** `main.blg` no contiene lineas `WARN` ni `ERROR`
+- **AND** `python verify_citations.py` (desde `docs/Tesis/v10 (IA)/`) reporta `STATUS: PASS`
+- **AND** el texto extraido del PDF no contiene la secuencia `??`
+
+#### Scenario: Figuras resueltas
+
+- **WHEN** se recorren los `\includegraphics` de `sections/*.tex` contra el `\graphicspath` del preambulo
+- **THEN** cada uno resuelve a un archivo existente de `figures/` o `assets/`
+- **AND** ninguna figura requerida por changes previos falta en el PDF
+
+#### Scenario: Entorno de registro validado contra la release previa
+
+- **WHEN** se adopta un entorno de compilacion de registro para medir una release nueva
+- **THEN** ese entorno reproduce sobre la fuente de la release previa su conteo de paginas publicado (101 paginas para `v1.1.1`)
+- **AND** el registro consigna el entorno, sus versiones de XeLaTeX y biber y el resultado de esa reproduccion
+
+#### Scenario: Evidencia de la compilacion registrada
+
+- **WHEN** se cierra la compilacion de una release
+- **THEN** `dictamen-correcciones.md` consigna el comando, el entorno, el conteo de paginas (total y cuerpo sin anexos) y los conteos extraidos del log (errores fatales, referencias y citas indefinidas, etiquetas duplicadas, `Overfull \hbox` mayores a 10pt revisados)
+- **AND** consigna el estado de biber y de `verify_citations.py`
 
 ### Requirement: Citation rendering
 
@@ -681,14 +707,16 @@ SHALL quedar cerrados y su registro de decisiones anexado.
 #### Scenario: Mecanismos de resiliencia verificados
 
 - **WHEN** el documento declara un mecanismo de reintento, retroceso exponencial o cola de respaldo
-- **THEN** el mecanismo existe en `n8n/workflow.json` o en `App/Backend`
+- **THEN** el mecanismo existe en `n8n/workflow.json` o en `App/Backend`, con los parametros que el documento cita
 - **AND** si no existe, la afirmación se reformula como limitación conocida y trabajo futuro
+- **AND** una espera fija entre intentos no se presenta como retroceso exponencial ni un reintento como cola de respaldo
 
 #### Scenario: Perímetro de seguridad consistente
 
 - **WHEN** el documento declara terminación TLS en el proxy inverso
 - **THEN** la versión de protocolo declarada coincide con la configuración de `nginx/nginx.conf`
-- **AND** si el proxy no forma parte del despliegue publicado, la afirmación se redacta de forma condicional
+- **AND** la afirmacion distingue el despliegue de referencia, cuya terminacion TLS esta verificada por la prueba automatizada del borde, del despliegue usado en la campana experimental, que no incluyo el proxy
+- **AND** si no existe una verificacion automatizada vigente del borde, la afirmación se redacta de forma condicional
 
 #### Scenario: Vocabulario de categorías unificado
 
@@ -1293,32 +1321,23 @@ con el umbral de exactitud.
 
 ### Requirement: Verificabilidad de las afirmaciones de pruebas del Capitulo 6
 
-La tesis SHALL afirmar unicamente lo que el repositorio permite verificar. El §6.7
-SHALL NOT declarar pruebas de extremo a extremo que instancien N8N y ejecuten el flujo
-completo desde el envio de un correo simulado hasta la persistencia del ticket, porque
-ninguna prueba del repositorio instancia N8N. El §6.7 SHALL describir lo que existe
-(pruebas estructurales del `n8n/workflow.json`, pruebas de API y pruebas de integracion
-contra PostgreSQL) o retraer la afirmacion. El recuento y la cobertura de la suite de
-frontend declarados en §6.7 SHALL ser reproducibles contra el estado del repositorio en
-el momento de la correccion, o SHALL acompanarse de un informe de cobertura versionado
-como evidencia; la tesis SHALL NOT publicar cifras de pruebas o de cobertura que el
-repositorio no reproduzca.
+La tesis SHALL afirmar unicamente lo que el repositorio permite verificar. El §6.7 SHALL declarar pruebas de extremo a extremo que instancien N8N solo si el repositorio contiene una prueba ejecutable de ese tipo (el arnes de `scripts/dry_run/` con sus checks de recorrido y el workflow de humo que lo ejecuta), y en ese caso SHALL describir su alcance exacto: que corre una variante de costo cero del workflow versionado (sin los nodos con credenciales de terceros), que canales recorre, que propiedades verifica y que deja fuera (la etapa Gemini real y el canal telefonico). Si esa prueba no existe, el §6.7 SHALL NOT declarar pruebas de extremo a extremo y SHALL describir lo que existe (pruebas estructurales del `n8n/workflow.json`, pruebas de API y pruebas de integracion contra PostgreSQL). La descripcion de las pruebas de integracion contra PostgreSQL SHALL coincidir con el comportamiento vigente de la suite (falla de forma ruidosa si PostgreSQL no esta disponible; no se omite) y el recuento citado SHALL ser reproducible o retirarse. El recuento y la cobertura de la suite de frontend declarados en §6.7 SHALL ser reproducibles contra el estado del repositorio en el momento de la correccion, o SHALL acompanarse de un informe de cobertura versionado como evidencia; la tesis SHALL NOT publicar cifras de pruebas o de cobertura que el repositorio no reproduzca.
 
-Toda afirmacion del §6.7 sobre la suite de integracion PostgreSQL SHALL declarar un
-recuento igual al que devuelve `pytest -m integration --collect-only -q` sobre
-`App/Backend` en el commit publicado, y SHALL describir el comportamiento ante la
-ausencia de PostgreSQL tal como lo implementa `App/Backend/tests/conftest.py`: la suite
-FALLA de forma ruidosa y MUST NOT declararse una omision automatica con `pytest.skip`.
-Cuando la suite de frontend no pueda ejecutarse en el entorno documentado, el §6.7
-SHALL omitir los recuentos numericos congelados y conservar la remision al reporte
-vigente del pipeline, sin publicar un numero de pruebas ni de archivos que no se haya
-reproducido.
+#### Scenario: Afirmacion de pruebas e2e respaldada por el repositorio
+
+- **WHEN** el §6.7 declara una prueba de extremo a extremo con N8N activo
+- **THEN** el repositorio contiene el arnes con los checks de recorrido declarados y el workflow que lo ejecuta
+- **AND** el alcance declarado (variante de costo cero, canales, propiedades verificadas y exclusiones) coincide con los checks implementados
 
 #### Scenario: Sin afirmacion de pruebas e2e de N8N no verificable
 
-- **WHEN** se busca en el repositorio una prueba que instancie N8N y ejecute el flujo completo hasta la persistencia
-- **THEN** no existe ninguna prueba de ese tipo
-- **AND** el §6.7 no afirma que tales pruebas existan o se hayan ejecutado
+- **WHEN** se busca en el repositorio una prueba ejecutable que instancie N8N y recorra el flujo hasta la persistencia y no existe
+- **THEN** el §6.7 no afirma que tales pruebas existan o se hayan ejecutado
+
+#### Scenario: Pruebas de integracion PostgreSQL descritas con exactitud
+
+- **WHEN** se compara la descripcion del subconjunto PostgreSQL en §6.7 con `App/Backend/tests/conftest.py` y la suite marcada `integration`
+- **THEN** el texto no afirma una omision automatica (`pytest.skip`) que la suite ya no aplica, y el recuento citado coincide con la suite o se retira
 
 #### Scenario: Recuento y cobertura de frontend reproducibles
 
@@ -1776,23 +1795,62 @@ compilación mediante `\today` y MUST NOT hardcodear el año.
 
 ### Requirement: Presupuesto de páginas preservado
 
-La reducción de páginas SHALL llevar el total del PDF a un máximo de **100
-páginas**, medido con `pdfinfo main.pdf` sobre el documento completo (portada,
-índices, glosario, cuerpo, referencias y anexos). El conteo MUST ser de 100
-páginas o menos y MUST NOT exceder el tope vigente del plan de correcciones. La
-portada SHALL seguir ocupando exactamente una página.
+El total de paginas del PDF de la tesis SHALL cumplir el tope vigente de paginas, que SHALL declararse en un unico lugar: la seccion de presupuesto de paginas de `docs/Tesis/Correcciones/dictamen-correcciones.md`, con su regla de medicion, su valor, su fuente (exigencia de la catedra o decision del equipo) y su fecha. Para la release `v1.2.2`, la regla vigente SHALL ser: metrica = **total del PDF**; valor = **100 paginas**; fuente = **exigencia de la catedra**; y la medicion SHALL hacerse con `pdfinfo main.pdf | grep Pages` o un conteo equivalente de saltos de pagina del PDF. Cuando el total supere el valor del tope, el exceso SHALL estar declarado y honrado por decision registrada de los autores, con su magnitud y fecha, y SHALL defenderse ante la catedra; un exceso no declarado MUST NOT presentarse como cumplimiento. La portada SHALL seguir ocupando exactamente una pagina. Una reduccion para acercarse al tope MUST NOT eliminar contenido cientifico, numeros canonicos, figuras o tablas requeridas, referencias ni correcciones previas, y MUST NOT dejar referencias colgadas (`\ref` o `\autoref` sin destino) ni listados de codigo removidos con referencias en la prosa.
 
 #### Scenario: Conteo de páginas sin cambios
 
-- **WHEN** se compila `main.tex` tras el change y se ejecuta `pdfinfo main.pdf | grep Pages`
-- **THEN** el total de páginas es 100 o menos
-- **AND** la portada sigue ocupando exactamente una página
+- **WHEN** se compila `main.tex` en el entorno de registro y se ejecuta `pdfinfo main.pdf | grep Pages` (o el conteo equivalente de saltos de pagina del PDF) sobre el PDF de la release
+- **THEN** el total de paginas se mide sobre el PDF completo y queda registrado en el libro mayor con su regla, su valor, su fuente y su fecha
+- **AND** la portada sigue ocupando exactamente una pagina
+- **AND** cuando el total supera las 100 paginas, la magnitud del exceso, su fecha y la decision de sostenerlo quedan registradas, y el requisito no se reescribe para dar el tope por cumplido
 
 #### Scenario: Tope medido sobre el total
 
-- **WHEN** se cuenta el total de páginas del PDF
-- **THEN** el conteo incluye portada, índices, glosario, referencias y anexos
-- **AND** no se computa un subconjunto (solo el cuerpo) para dar por cumplido el tope
+- **WHEN** se cuenta el total de paginas del PDF
+- **THEN** el conteo incluye portada, indices, glosario, cuerpo, referencias y anexos
+- **AND** no se computa un subconjunto (por ejemplo, solo el cuerpo o el cuerpo sin anexos) para dar por cumplido el tope
+
+#### Scenario: Tope total declarado en un unico lugar
+
+- **WHEN** se lee la seccion de presupuesto de paginas de `docs/Tesis/Correcciones/dictamen-correcciones.md`
+- **THEN** figuran la metrica (total del PDF), el valor (100 paginas), la fuente (exigencia de la catedra) y la fecha
+- **AND** ninguna otra regla de tope de paginas se presenta como vigente
+
+#### Scenario: Exceso honrado y defendido
+
+- **WHEN** el total del PDF de la release supera las 100 paginas
+- **THEN** el registro declara la magnitud del exceso, su fecha y la decision de los autores de sostenerlo y defenderlo
+- **AND** el PDF no se presenta como si cumpliera el tope sin exceso
+
+#### Scenario: Reduccion sin perdida de contenido ni referencias colgadas
+
+- **WHEN** se compacta el documento para acercarlo al tope
+- **THEN** los numeros canonicos, las figuras y tablas requeridas, las referencias y las correcciones previas permanecen
+- **AND** no queda ninguna referencia colgada ni un listado de codigo removido con una referencia en la prosa
+- **AND** las palancas aplicadas son de forma (indices, listas, tamano de anexos, ancho de figuras, espaciado)
+
+#### Scenario: Portada de una sola pagina
+
+- **WHEN** se mide el PDF compilado
+- **THEN** la portada ocupa exactamente una pagina
+
+#### Scenario: Tope renegociado documentado
+
+- **WHEN** se registra un tope distinto de 100 paginas sobre el total (una renegociacion con la catedra)
+- **THEN** el registro declara su regla de medicion, su valor, su fuente y su fecha
+- **AND** el PDF de la release cumple esa regla, con el exceso, si lo hubiera, honrado y declarado
+
+#### Scenario: Cuerpo sin anexos
+
+- **WHEN** se consigna el conteo complementario del cuerpo sin anexos (pagina del encabezado "Anexos" de `main.toc` menos 1)
+- **THEN** ese conteo se registra como informacion complementaria del libro mayor
+- **AND** no se usa para dar por cumplido el tope, cuya metrica es el total del PDF
+
+#### Scenario: Reduccion sin perdida de contenido
+
+- **WHEN** se compacta el documento para acercarlo al tope
+- **THEN** los numeros canonicos, las figuras y tablas requeridas, las referencias y las correcciones previas permanecen
+- **AND** las palancas aplicadas son de forma (indices, listas, tamano de anexos, ancho de figuras y espaciado)
 
 ### Requirement: Coherencia de metadatos PDF
 
@@ -3443,18 +3501,18 @@ El Anexo B de la tesis (`sec:anexo-repositorio` en `docs/Tesis/v10 (IA)/paper/se
 
 ### Requirement: Coherencia de la version bibliografica con la release publicada
 
-La entrada `Gomez2026_repositorio` de `docs/Tesis/v10 (IA)/Bibliography_base.bib` SHALL declarar en su titulo la misma version que la release publicada en el manuscrito. El titulo SHALL enunciar `(Version 1.1.1)` y SHALL NOT conservar la version obsoleta `(Version 1.0.0)`. Los demas campos de la entrada (autoria, ano, `url` y `note`) SHALL conservarse y la referencia SHALL seguir imprimiendose en la seccion de Referencias.
+La entrada `Gomez2026_repositorio` de `docs/Tesis/v10 (IA)/Bibliography_base.bib` SHALL declarar en su titulo la misma version que el tag de release que identifica el Anexo B (`sec:anexo-repositorio`). Para la release `v1.2.2`, el titulo SHALL enunciar la version `1.2.2`, con la etiqueta "Version" o con su forma acentuada si la revision ortotipografica la acentuo por decision registrada, y SHALL NOT conservar numeros de version anteriores como `1.2.1`, `1.2.0`, `1.1.1` o `1.0.0`. El numero de version SHALL actualizarlo el change que publica la release, en el mismo commit que cambia el tag del Anexo B; ningun otro change MUST modificar ese numero. Los demas campos de la entrada (autoria, ano, `url` y `note`) SHALL conservarse y la referencia SHALL seguir imprimiendose en la seccion de Referencias.
 
 #### Scenario: Version bibliografica alineada con la release
 
-- **WHEN** se inspecciona la entrada `Gomez2026_repositorio` en `Bibliography_base.bib`
-- **THEN** el campo `title` enuncia `(Version 1.1.1)`
-- **AND** no conserva la cadena `(Version 1.0.0)`
+- **WHEN** se compara el titulo de `Gomez2026_repositorio` con el tag que consigna el Anexo B
+- **THEN** el titulo enuncia la version `1.2.2` y el Anexo B enuncia `v1.2.2`
+- **AND** el titulo de `Gomez2026_repositorio` no conserva los numeros de version `1.2.1`, `1.2.0`, `1.1.1` ni `1.0.0`
 
 #### Scenario: Integridad de la entrada preservada
 
 - **WHEN** se ejecuta la verificacion de citas contra `Bibliography_base.bib`
-- **THEN** la entrada sigue existiendo y sigue siendo referenciada por la cita del anexo
+- **THEN** la entrada sigue existiendo y sigue siendo referenciada por las citas del anexo
 - **AND** sus campos `author`, `year`, `url` y `note` se mantienen, sin introducir citas huerfanas ni entradas sin usar
 
 ### Requirement: Etiqueta de la release v1.1.1 y trazabilidad del hash
@@ -5197,7 +5255,7 @@ El parrafo introductorio de `07-resultados.tex` SHALL enumerar exactamente las s
 
 ### Requirement: Completitud de las metricas de la tabla de trabajos academicos
 
-La tabla `tab:trabajos-academicos` SHALL consignar en la columna "Metrica reportada" de cada trabajo la cifra principal que su resumen o su texto completo accesible reporten textualmente (nombre de la metrica, valor y modelo o condicion), y en "Corpus/idioma" el tamano y el idioma cuando la fuente los establezca. La leyenda "no reportado en el alcance revisado" SHALL quedar solo en las celdas cuya fuente accesible no consigne el dato, acompanada de su motivo abreviado. Cada celda completada SHALL tener su procedencia (DOI o URL consultada, fecha de consulta y ubicacion en la fuente) registrada en `docs/Tesis/Correcciones/extraccion-metricas-trabajos-c-135.md`. El documento MUST NOT recalcular, promediar ni inferir cifras, y MUST NOT agregar entradas a `Bibliography_base.bib`.
+La tabla `tab:trabajos-academicos` SHALL consignar en la columna "Metrica reportada" de cada trabajo la cifra principal que su resumen o su texto completo accesible reporten textualmente (nombre de la metrica, valor y modelo o condicion), y en "Corpus/idioma" el tamano y el idioma cuando la fuente los establezca. Toda fila SHALL reportar su metrica de fuente o declarar "no reportado en el alcance revisado" con su motivo abreviado: la leyenda "no reportado en el alcance revisado" SHALL quedar solo en las celdas cuya fuente accesible no consigne el dato. Cuando exista un texto completo de acceso abierto (por ejemplo, el manuscrito aceptado alojado por los autores), sus metricas SHALL extraerse y la fuente SHALL quedar registrada en `docs/Tesis/Correcciones/extraccion-metricas-trabajos-c-135.md`; MUST NOT invocarse el acceso cerrado de la version editorial como motivo para dejar la celda sin extraer mientras exista una version de acceso abierto verificable. Las obras cuya unica version accesible sea de acceso cerrado SHALL permanecer declaradas como "no reportado en el alcance revisado" con su motivo hasta que se obtenga acceso institucional. Cuando la obra original sea de acceso cerrado pero exista un trabajo companero de acceso abierto de los mismos autores sobre el mismo problema, la celda SHALL poder apuntar a ese trabajo accesible con sus metricas, atribuyendolas explicitamente a ese trabajo companero, sin sustituir la declaracion "no reportado en el alcance revisado" de la obra original. Cada celda completada SHALL tener su procedencia (DOI o URL consultada, fecha de consulta, tipo de version y ubicacion en la fuente) registrada en `docs/Tesis/Correcciones/extraccion-metricas-trabajos-c-135.md`. El documento MUST NOT recalcular, promediar ni inferir cifras, MUST NOT agregar entradas a `Bibliography_base.bib` salvo la entrada del trabajo companero de acceso abierto (que resuelve por DOI), y MUST NOT versionar ninguna copia de los articulos.
 
 #### Scenario: Metricas completadas desde la fuente
 
@@ -5205,17 +5263,42 @@ La tabla `tab:trabajos-academicos` SHALL consignar en la columna "Metrica report
 - **THEN** el valor consignado coincide textualmente con el de la fuente registrada
 - **AND** la celda identifica la metrica, el valor y el modelo o la condicion a que corresponde
 
+#### Scenario: Extraccion obligatoria del texto de acceso abierto
+
+- **WHEN** una obra de la tabla tiene una version de acceso abierto verificable (manuscrito aceptado, postprint o version del editor)
+- **THEN** su metrica se extrae de ese texto y la fuente queda registrada con su tipo de version, URL, fecha de consulta y ubicacion
+- **AND** la celda no declara "no reportado en el alcance revisado" por el acceso cerrado de una version distinta
+
+#### Scenario: Obras de acceso cerrado declaradas con motivo
+
+- **WHEN** la unica version accesible de una obra es de acceso cerrado y no se dispone de acceso institucional
+- **THEN** su fila declara "no reportado en el alcance revisado" con el motivo (acceso cerrado y falta de credenciales institucionales)
+- **AND** la fila permanece declarada asi hasta que se obtenga el acceso institucional, con su DOI registrado como seguimiento pendiente
+
 #### Scenario: Residuo no reportado justificado
 
 - **WHEN** una celda conserva "no reportado en el alcance revisado"
 - **THEN** el registro de procedencia documenta que el resumen no consigna el dato y que el texto completo no fue accesible o tampoco lo consigna
 - **AND** la celda declara ese motivo de forma abreviada
 
+#### Scenario: Companero accesible de una obra cerrada
+
+- **WHEN** una obra de la tabla es de acceso cerrado pero sus autores publicaron un trabajo companero de acceso abierto sobre el mismo problema
+- **THEN** la celda conserva "no reportado en el alcance revisado" para la obra original y agrega las metricas del trabajo companero, atribuidas explicitamente a ese trabajo con su clave y su identificador
+- **AND** la procedencia del trabajo companero (URL, tipo de version, DOI y ubicacion) queda registrada en el registro de procedencia
+
+#### Scenario: Obra cerrada sin alternativa accesible
+
+- **WHEN** una obra de la tabla es de acceso cerrado y no tiene copia ni trabajo companero de acceso abierto de sus autores
+- **THEN** su fila permanece cualitativa con el motivo "no reportado en el alcance revisado"
+- **AND** el registro de procedencia consigna la verificacion de ausencia (OpenAlex y Semantic Scholar)
+
 #### Scenario: Sin altas bibliograficas ni citas huerfanas
 
 - **WHEN** se ejecuta `verify_citations.py` y se inspecciona el diff de `Bibliography_base.bib` tras completar la tabla
 - **THEN** no hay citas huerfanas ni entradas sin usar
-- **AND** `Bibliography_base.bib` no tiene cambios atribuibles a este cambio
+- **AND** la unica entrada agregada es la del trabajo companero de acceso abierto (exigida por la clausula del companero), esta citada en el texto y resuelve por DOI
+- **AND** ninguna entrada existente de `Bibliography_base.bib` cambia
 
 ### Requirement: Salvedad de cota inferior del tiempo telefonico en las conclusiones
 
@@ -5298,3 +5381,310 @@ La aplicacion de este cambio SHALL ser neutral en paginas: el total del PDF comp
 - **WHEN** se compila con `latexmk` (XeLaTeX)
 - **THEN** se produce `main.pdf` sin errores fatales
 - **AND** el registro no contiene referencias indefinidas ni etiquetas definidas mas de una vez
+
+### Requirement: Registro de procedencia de la extraccion de c-146
+
+El registro `docs/Tesis/Correcciones/extraccion-metricas-trabajos-c-135.md` SHALL incorporar una seccion c-146 que documente la extraccion de la fila de Colavito, Lanubile y Novielli (2025): la URL del manuscrito aceptado, su tipo de version (postprint aceptado de acceso abierto), cada valor consignado en la tabla con su ubicacion en el manuscrito; la procedencia del trabajo companero de acceso abierto de Paramesh y Shreedhara (Ramya, Paramesh y Shreedhara, arXiv:2103.15822) con su URL, tipo de version, DOI, clave y metricas verificadas; el verdicto de Paket et al. (2024) (sin copia ni alternativa accesible, verificado en OpenAlex y Semantic Scholar); y el seguimiento pendiente de las dos obras de acceso cerrado con su DOI. El registro SHALL conservar las secciones de c-135 sin reescribir su historia. El cambio MUST NOT versionar ninguna copia de los articulos ni modificar los numeros canonicos de la tesis.
+
+#### Scenario: Seccion c-146 con procedencia completa
+
+- **WHEN** se revisa `docs/Tesis/Correcciones/extraccion-metricas-trabajos-c-135.md`
+- **THEN** existe una seccion c-146 que indica la URL del manuscrito aceptado de Colavito, el tipo de version, los valores extraidos y su ubicacion en la fuente
+- **AND** la seccion c-146 incluye la procedencia del trabajo companero accesible de Paramesh (URL, tipo de version, DOI, clave y metricas) y el verdicto de Paket 2024
+- **AND** las secciones de c-135 permanecen sin reescritura
+
+#### Scenario: Seguimiento de las obras de acceso cerrado
+
+- **WHEN** se lee el seguimiento pendiente de la seccion c-146
+- **THEN** figuran Paramesh y Shreedhara (2019) con DOI `10.1007/978-981-13-2514-4_28` y Paket et al. (2024) con DOI `10.1109/UBMK63289.2024.10773473`
+- **AND** se declara el acceso institucional requerido para extraer sus metricas
+- **AND** se distingue la obra original cerrada de Paramesh de su trabajo companero accesible (arXiv:2103.15822), que no requiere acceso institucional
+
+#### Scenario: Companero accesible de Paramesh consignado
+
+- **WHEN** se lee la fila de Paramesh y Shreedhara (2019) en el PDF compilado y la seccion c-146
+- **THEN** la celda conserva "no reportado en el alcance revisado (texto cerrado)" y agrega las metricas del trabajo companero accesible (arbol de decision 90,60 % y RandomForest 91,81 %), atribuidas a Ramya, Paramesh y Shreedhara (arXiv:2103.15822)
+- **AND** la prosa de la subseccion cita la clave nueva y esta aparece en `Bibliography_base.bib`
+
+#### Scenario: Sin copias de los articulos ni cambios de numeros canonicos
+
+- **WHEN** se inspecciona el diff del cambio
+- **THEN** no se agrega ninguna copia (PDF u otro formato) de los articulos citados
+- **AND** `docs/Tesis/Correcciones/numeros-canonicos.md` y los capitulos de resultados no tienen modificaciones atribuibles a este cambio
+
+### Requirement: Declaracion acotada del endurecimiento tecnico
+
+La tesis SHALL declarar cada capacidad de endurecimiento tecnico (TLS verificado en el borde, reintentos idempotentes del alta, prueba de humo de extremo a extremo) solo si el bloque correspondiente del change c-140 esta aplicado y verificado en el repositorio, y SHALL conservar la redaccion de limitacion vigente para todo bloque no aplicado. En particular: (a) TLS se declara verificado en el despliegue de referencia de la release, nunca en la campana experimental, en `05-arquitectura.tex` (`subsec:vision-general`), `11-aspectos-legales.tex` (`subsec:seguridad-tecnica`) y el Anexo A, aclarando que el certificado de referencia es autofirmado; (b) el primer y el tercer desafio de `06-implementacion.tex` (`subsec:desafios-integracion`) describen la invocacion de alta como sincronica con reintento acotado e idempotente, con los valores de `n8n/workflow.json`, el desvio a la rama de error tras agotar los intentos y la semantica de `clasificacion_log` (un registro por clasificacion ejecutada; los replays no agregan registros), y `10-recomendaciones.tex` conserva la cola de respaldo y el alta asincronica como trabajo futuro; (c) el §6.7 (`subsec:pruebas-automatizadas`) describe la prueba de humo con su alcance exacto. Toda cifra nueva citada (intentos, esperas, tiempos maximos) SHALL registrarse en `docs/Tesis/Correcciones/conteos-canonicos-tecnicos.md` con su fuente. Los resultados del capitulo 7 MUST NOT modificarse por este motivo.
+
+#### Scenario: TLS declarado sin sobreafirmar
+
+- **WHEN** se leen `subsec:vision-general`, `subsec:seguridad-tecnica` y el Anexo A con el bloque TLS aplicado
+- **THEN** declaran TLS 1.2/1.3 en Nginx como verificado en el despliegue de referencia mediante la prueba automatizada del borde
+- **AND** declaran que el despliegue de la campana experimental no incluyo el proxy y que el certificado de referencia es autofirmado
+
+#### Scenario: Reintentos declarados con los valores del workflow
+
+- **WHEN** se leen el primer y el tercer desafio de `subsec:desafios-integracion` con el bloque de reintentos aplicado
+- **THEN** los valores citados de intentos, espera y tiempo maximo coinciden con `n8n/workflow.json` y con `conteos-canonicos-tecnicos.md`
+- **AND** la invocacion se sigue describiendo como sincronica y la cola de respaldo como trabajo futuro
+
+#### Scenario: Bloque no aplicado conserva la limitacion
+
+- **WHEN** un bloque del change c-140 no se aplico
+- **THEN** el texto correspondiente conserva la declaracion de limitacion vigente y no afirma la capacidad
+
+#### Scenario: Prueba de humo descrita con su alcance
+
+- **WHEN** se lee `subsec:pruebas-automatizadas` con el bloque de prueba de humo aplicado
+- **THEN** el texto declara la variante de costo cero, el canal o los canales recorridos, las propiedades verificadas y la exclusion de Gemini real y del canal telefonico
+
+### Requirement: Interfaz del objetivo especifico 1 con el endurecimiento tecnico
+
+La fila del objetivo especifico 1 en la tabla de cumplimiento de objetivos (`tab:cumplimiento-objetivos`) SHALL reflejar por componente la evidencia disponible: HTTP cifrado (verificado en el despliegue de referencia solo si el bloque TLS esta aplicado) y comunicacion asincronica (el alta sigue siendo sincronica; los reintentos idempotentes no la vuelven asincronica). El rotulo MUST NOT pasar a "Alcanzado" con la sola evidencia de los reintentos mientras el enunciado del objetivo exija comunicacion asincronica; el rotulo "Alcanzado" SHALL requerir que el enunciado del objetivo se reformule con justificacion explicita en el change que posee la tabla. El calificativo de la fila SHALL nombrar los componentes no cumplidos.
+
+#### Scenario: Calificativo coherente con los bloques aplicados
+
+- **WHEN** se lee la fila del objetivo especifico 1 con uno o mas bloques de c-140 aplicados
+- **THEN** el calificativo menciona el alta sincronica con reintentos idempotentes (si aplica) y el estado de TLS en el despliegue de referencia (si aplica)
+
+#### Scenario: Sin rotulo de cumplimiento pleno por reintentos
+
+- **WHEN** el enunciado del objetivo especifico 1 sigue exigiendo comunicacion asincronica
+- **THEN** la fila no se rotula "Alcanzado" con base en los reintentos del alta
+
+### Requirement: Evidencia de la prueba de humo asociada a la release
+
+Cuando la tesis cite la verificacion automatizada del borde TLS o la prueba de humo de extremo a extremo, el repositorio SHALL conservar un resumen de su ultima corrida sobre el commit de la release (commit, fecha, resultado por grupo de checks y enlace a la corrida del workflow de humo) en `docs/Tesis/Correcciones/dictamen-correcciones.md`. La tesis SHALL citar el mecanismo (arnes y workflow) y ese resumen, y MUST NOT citar un identificador de corrida que no figure en el repositorio.
+
+#### Scenario: Resumen de corrida versionado
+
+- **WHEN** la tesis declara TLS verificado o la prueba de humo
+- **THEN** `dictamen-correcciones.md` contiene el resumen de la corrida sobre el commit de la release con todos los grupos citados en verde
+
+#### Scenario: Sin referencias a corridas no versionadas
+
+- **WHEN** se buscan en la tesis referencias a corridas del workflow de humo
+- **THEN** solo remiten al mecanismo y al resumen versionado
+
+### Requirement: Integracion verificada de la familia de correcciones del dictamen v10
+
+La release que cierra el dictamen CONEAU del 2026-10-22 sobre la tesis v10 / `v1.1.0` SHALL publicarse solo despues de integrar la familia c-130..c-142 (c-130 a c-140 y c-142). Las decisiones del gate G0 (tope de paginas, entorno de compilacion de registro, inclusion de c-140, checkpoints de c-142 sobre la corrida paga de la ablacion del prompt y sobre el conjunto de preproduccion, orden de aplicacion y nombre de la release) SHALL registrarse en `docs/Tesis/Correcciones/dictamen-correcciones.md` antes de aplicar c-130. Cada change de la familia SHALL estar archivado, o excluido con justificacion registrada (un change excluido se archiva como no realizado sin sincronizar specs); la exclusion SHALL limitarse a c-140, porque los demas changes atienden recomendaciones que condicionan la aprobacion o correcciones de consistencia. Cada parte de cada recomendacion A1-A5 y B4-B16 SHALL tener exactamente un change dueno. Los comandos de verificacion de cada change SHALL pasar de nuevo sobre el arbol integrado y ningun valor `retirado` del memo canonico MUST reaparecer como resultado. El registro SHALL llevar un libro mayor de paginas con una fila por change aplicado. La rama de integracion SHALL incluir `origin/main` antes del commit que se etiqueta.
+
+#### Scenario: Decisiones G0 previas a la familia
+
+- **WHEN** se lee la seccion de decisiones G0 del registro
+- **THEN** figuran el tope de paginas, el entorno de compilacion de registro, la decision sobre c-140, los checkpoints de c-142 (corrida paga del prompt y existencia de los incidentes de preproduccion), el orden de aplicacion y el nombre de la release
+- **AND** su fecha es anterior al primer commit de apply de c-130
+
+#### Scenario: Familia cerrada antes del tag
+
+- **WHEN** se ejecuta `openspec list --json` antes del commit C1 de la release
+- **THEN** no figura ningun change activo entre c-130 y c-140 ni c-142
+- **AND** cada uno existe en `openspec/changes/archive/`, y toda exclusion tiene su justificacion en el registro
+
+#### Scenario: Un unico dueno por parte de recomendacion
+
+- **WHEN** se recorre la matriz de trazabilidad del registro
+- **THEN** cada parte de recomendacion (incluidas A5a, A5b, B7a, B7b, B13a, B13b, B16a y B16b) tiene un solo change dueno
+- **AND** ninguna recomendacion A1-A5 o B4-B16 queda sin dueno
+
+#### Scenario: Regresion cruzada sobre el arbol integrado
+
+- **WHEN** se re-ejecutan sobre el arbol integrado los comandos de verificacion del `tasks.md` archivado de cada change de la familia
+- **THEN** todos pasan
+- **AND** toda falla bloquea la release hasta que la corrige el change dueno o, si ya esta archivado, un change de correccion acotado
+
+#### Scenario: Valores retirados ausentes
+
+- **WHEN** se buscan en `sections/*.tex` los valores que el memo canonico marca `retirado` (incluidos 9,5 %, 3.700, "Operaciones" y W = 0)
+- **THEN** ninguno aparece como resultado vigente
+- **AND** el resumen en espanol conserva un maximo de 250 palabras de prosa
+
+#### Scenario: Metricas calificadas segun la procedencia de los ajustes
+
+- **WHEN** se buscan en `sections/*.tex` las menciones de `97/131`, `0,7405` y `0,6769` y las afirmaciones de ausencia de fuga de datos
+- **THEN** cada mencion de esas metricas esta calificada como estimacion dentro de la muestra o remite a la subseccion de sensibilidad de c-142
+- **AND** ninguna oracion afirma que el filtro determinista o el prompt se ajustaron sin acceso al corpus de evaluacion
+
+#### Scenario: Libro mayor de paginas completo
+
+- **WHEN** se lee el libro mayor de paginas del registro
+- **THEN** hay una fila por change aplicado con total, cuerpo sin anexos, anexos y delta respecto de la linea base `v1.1.1` (101, 93 y 8)
+- **AND** el acumulado coincide con el conteo del PDF de la release
+
+#### Scenario: Integracion con la rama principal
+
+- **WHEN** se crea el commit C1 de la release
+- **THEN** `git merge-base --is-ancestor origin/main <C1>` es verdadero en ese momento
+- **AND** cualquier conflicto en `docs/Tesis/`, `knowledge-base/`, `evaluation/` o `CHANGES.md` se resolvio antes de compilar la version de registro
+
+### Requirement: Trazabilidad de las recomendaciones del dictamen v10 en el registro y en el Anexo I
+
+`docs/Tesis/Correcciones/dictamen-correcciones.md` SHALL contener una seccion dedicada al dictamen del 2026-10-22 sobre la tesis v10 / `v1.1.0` con una matriz de una fila por recomendacion o parte de recomendacion (A1 a A5 y B4 a B16, con A5, B7, B10, B13 y B16 divididas en sus partes), cada una con su sintesis, el change dueno, el archivo y la linea validos en el commit etiquetado `v1.2.0`, el `\label` mas cercano como ancla, un fragmento verificable y su estado (cerrada, o cerrada parcialmente con justificacion). La seccion SHALL listar tambien las observaciones del dictamen que no tienen numero de recomendacion, cada una con su dueno o con la declaracion de que queda fuera de alcance. El Anexo I de la tesis (`sec:anexo-trazabilidad`) SHALL identificar el dictamen (fecha y version examinada), SHALL citar la ruta del registro y SHALL presentar el mapeo recomendacion -> change -> seccion de la tesis mediante referencias cruzadas, sin numeros de linea de las fuentes.
+
+#### Scenario: Matriz completa
+
+- **WHEN** se leen las filas de la matriz del registro
+- **THEN** hay al menos una fila para cada una de A1, A2, A3, A4, A5, B4, B5, B6, B7, B8, B9, B10, B11, B12, B13, B14, B15 y B16
+- **AND** ninguna fila carece de change dueno ni de estado
+
+#### Scenario: Lineas verificables contra el tag
+
+- **WHEN** para cada fila se ejecuta `git show v1.2.0:<archivo> | sed -n '<linea>p'`
+- **THEN** la linea obtenida contiene el fragmento verificable registrado
+- **AND** el `\label` ancla existe en ese archivo en `v1.2.0`
+
+#### Scenario: Anexo I con el mapeo
+
+- **WHEN** se lee el Anexo I en el PDF compilado
+- **THEN** identifica el dictamen del 22 de octubre de 2026 sobre la version `v1.1.0`
+- **AND** presenta cada recomendacion con su change y la seccion de la tesis donde se atendio
+- **AND** cita `docs/Tesis/Correcciones/dictamen-correcciones.md` y no contiene numeros de linea de las fuentes
+
+#### Scenario: Observaciones no numeradas cubiertas
+
+- **WHEN** se lee la tabla de observaciones no numeradas del dictamen
+- **THEN** cada observacion tiene un change dueno o la declaracion explicita de que queda fuera de alcance, con su motivo
+
+### Requirement: Verificacion de cierre contra la rubrica del dictamen
+
+El registro SHALL contener una tabla con los nueve criterios evaluables de la rubrica que aplico el dictamen (criterios 1 a 9), cada uno con su peso, el puntaje del dictamen y sus descuentos, y para cada descuento el change que lo atiende y su estado tras la release, remitiendo a la fila de la matriz de trazabilidad como evidencia. El criterio 10 (defensa oral) SHALL declararse no aplicable. La tabla MUST NOT asignar puntajes nuevos. Todo descuento no corregible SHALL declararse como residual con la seccion de la tesis donde figura como limitacion.
+
+#### Scenario: Nueve criterios cubiertos
+
+- **WHEN** se lee la tabla de la rubrica en el registro
+- **THEN** figuran los criterios 1 a 9 con todos los descuentos que enumera el dictamen
+- **AND** cada descuento tiene un change dueno o figura como residual declarado
+
+#### Scenario: Sin puntajes nuevos
+
+- **WHEN** se lee la tabla de la rubrica
+- **THEN** solo figuran los puntajes del dictamen
+- **AND** no hay puntajes asignados por los autores
+
+#### Scenario: Residuales con ubicacion en la tesis
+
+- **WHEN** un descuento figura como residual (por ejemplo, los registros primarios del doble etiquetado que no se conservaron)
+- **THEN** el registro cita la seccion de la tesis que lo declara como limitacion
+
+### Requirement: Renders derivados regenerados desde la fuente de la release
+
+`docs/Tesis/v10 (IA)/tesis_para_agente.md` SHALL regenerarse desde las fuentes de la release con `docs/Tesis/v10 (IA)/build_tesis_para_agente.py`. El script SHALL recibir el identificador de la release como argumento obligatorio y SHALL fallar si su lista de secciones difiere del orden de `\input` de `main.tex`. El encabezado del render SHALL declarar la release `v1.2.0` y SHALL NOT declarar una release anterior como vigente. `tesis_para_evaluacion.txt` y `tesis_completa_extraida.txt` SHALL regenerarse desde el `main.pdf` de la release mediante extraccion de texto UTF-8. El campo `thesis:` de `openspec/config.yaml` SHALL resolver a un archivo existente. Todo render que no se regenere (por ejemplo `paper/tesis.docx` sin pandoc disponible) SHALL declararse como render legado en el registro. Los renders SHALL regenerarse en el commit etiquetado y en el commit que consigna el hash.
+
+#### Scenario: Render para agentes vigente
+
+- **WHEN** se lee el encabezado de `tesis_para_agente.md` en el commit etiquetado
+- **THEN** declara la release `v1.2.0`
+- **AND** no declara `v1.1.0` ni `v1.1.1` como release vigente
+- **AND** su Anexo B contiene el tag `v1.2.0`
+
+#### Scenario: Generacion determinista
+
+- **WHEN** se ejecuta el script dos veces seguidas sobre la misma fuente con el mismo argumento
+- **THEN** ambas salidas tienen el mismo SHA-256
+
+#### Scenario: Orden de secciones verificado
+
+- **WHEN** la lista de secciones del script difiere del orden de `\input` de `main.tex`
+- **THEN** el script termina con error y no escribe un render
+
+#### Scenario: Textos extraidos desde el PDF de la release
+
+- **WHEN** se leen `tesis_para_evaluacion.txt` y `tesis_completa_extraida.txt`
+- **THEN** contienen texto acentuado y la portada con los dos directores (Prof. Alberto Cortez y Prof. Ariel Enferrel)
+- **AND** la cantidad de saltos de pagina de `tesis_para_evaluacion.txt` coincide con la cantidad de paginas del PDF
+
+#### Scenario: Puntero de configuracion resoluble
+
+- **WHEN** se lee el campo `thesis:` de `openspec/config.yaml`
+- **THEN** la ruta indicada existe en el arbol de trabajo
+
+#### Scenario: Renders legados declarados
+
+- **WHEN** un render derivado no se regenera para la release
+- **THEN** el registro lo declara como render legado, con el motivo
+- **AND** el render no se presenta como vigente en ningun puntero activo
+
+### Requirement: Etiqueta de la release v1.2.0 y trazabilidad del hash
+
+La version de trabajo de la tesis `docs/Tesis/v10 (IA)/` SHALL publicarse mediante un tag anotado `v1.2.0` creado sobre el commit C1, que cambia el tag del Anexo B a `v1.2.0`, retira la linea del hash de la release anterior y actualiza la version de `Gomez2026_repositorio`. El tag SHALL crearse solo despues de integrar la familia c-130..c-142 y de recompilar el PDF con las verificaciones de release. El commit C2 SHALL consignar en el Anexo B (`sec:anexo-repositorio`) el hash completo de 40 caracteres del commit etiquetado, coincidente con `git rev-parse v1.2.0^{commit}`, y el mismo hash SHALL registrarse en `docs/Tesis/Correcciones/dictamen-correcciones.md`. El tag SHALL publicarse en `origin`, y la integracion a `main` SHALL hacerse con merge commit, de modo que el commit etiquetado quede en la historia de `main`. Los tags previos `v1.0.0`, `v1.0.1`, `v1.1.0` y `v1.1.1` MUST NOT moverse.
+
+#### Scenario: Tag anotado sobre C1
+
+- **WHEN** se ejecutan `git cat-file -t v1.2.0` y `git rev-parse v1.2.0^{commit}`
+- **THEN** el tag existe, es anotado (devuelve `tag`, no `commit`) y apunta a C1
+- **AND** el tag esta publicado en `origin` (`git ls-remote --tags origin v1.2.0` lo devuelve)
+
+#### Scenario: Commit etiquetado sin hash de la release anterior
+
+- **WHEN** se lee `sec:anexo-repositorio` en `git show v1.2.0:"docs/Tesis/v10 (IA)/paper/sections/12-anexos.tex"`
+- **THEN** figura el tag `v1.2.0`
+- **AND** no figura el hash `4160d84286623b073d2904353e6f9163ae211de7` de `v1.1.1`
+
+#### Scenario: Hash consignado y coherente con el tag
+
+- **WHEN** se lee `sec:anexo-repositorio` en el commit C2 y se compara con `git rev-parse v1.2.0^{commit}`
+- **THEN** figura el hash completo de 40 caracteres del commit etiquetado
+- **AND** el hash coincide en los 40 caracteres y tambien figura en `docs/Tesis/Correcciones/dictamen-correcciones.md`
+
+#### Scenario: Tags previos inmutables
+
+- **WHEN** se comparan `git rev-parse v1.0.0^{commit}`, `git rev-parse v1.0.1^{commit}`, `git rev-parse v1.1.0^{commit}` y `git rev-parse v1.1.1^{commit}` con sus valores previos
+- **THEN** `v1.0.0` sigue en `61a6b117dd1321fbee25f9792d9f29b884e5ac8d`, `v1.0.1` en `bac4c5f6f85c889b48a90d4396bbdaccc7a35ad0`, `v1.1.0` en `7103b649d8c4f51737ad6ad4095dad22c9406400` y `v1.1.1` en `4160d84286623b073d2904353e6f9163ae211de7`
+- **AND** ningun tag existente fue reescrito ni re-creado
+
+#### Scenario: Tag alcanzable desde la rama principal
+
+- **WHEN** el PR de `ramagonzalo` a `main` se integro y se ejecuta `git fetch origin`
+- **THEN** `git merge-base --is-ancestor v1.2.0 origin/main` es verdadero
+
+### Requirement: Publicacion de la release de integracion v1.2.2
+
+La version de trabajo de la tesis `docs/Tesis/v10 (IA)/` SHALL publicarse como release `v1.2.2` integrando los changes ya aplicados `c-146-completar-metricas-trabajos-previos` y `c-140-endurecimiento-tecnico-tls-reintentos-e2e`, mas la compactacion de forma aplicada en el commit `8c0cf6d`. La release SHALL usar el patron de dos commits: el commit C1 SHALL cambiar el tag del Anexo B a `v1.2.2`, retirar la linea del hash de la release anterior y actualizar la version de `Gomez2026_repositorio`, y el commit C2 SHALL consignar en el Anexo B el hash completo de 40 caracteres del commit etiquetado, coincidente con `git rev-parse v1.2.2^{commit}`, y registrar el mismo hash en `docs/Tesis/Correcciones/dictamen-correcciones.md`. El tag SHALL ser anotado y SHALL crearse sobre C1 solo despues de recompilar el PDF en el entorno de registro (`texlive-thesis`) y verificar cero errores fatales, cero referencias o citas indefinidas, cero etiquetas duplicadas y el conteo de paginas del tope vigente. El tag SHALL publicarse en `origin` y la integracion a `main` SHALL hacerse con merge commit (nunca squash ni rebase). Antes de etiquetar, las tareas pendientes de c-140 (3.8 de regresion de backend y 3.9 de documentacion de la guia del workflow) SHALL estar cerradas y la tarea 3.10 (reimportacion en la instancia operativa) SHALL figurar como ejecutada por el equipo, no por el agente. Los tags `v1.0.0`, `v1.0.1`, `v1.1.0`, `v1.1.1`, `v1.2.0` y `v1.2.1` MUST NOT moverse ni borrarse; `v1.2.1` queda registrada como superada.
+
+#### Scenario: Tag anotado sobre C1
+
+- **WHEN** se ejecutan `git cat-file -t v1.2.2` y `git rev-parse v1.2.2^{commit}`
+- **THEN** el tag existe, es anotado (devuelve `tag`, no `commit`) y apunta a C1
+- **AND** el tag esta publicado en `origin` (`git ls-remote --tags origin v1.2.2` lo devuelve)
+
+#### Scenario: Commit etiquetado sin el hash de la release anterior
+
+- **WHEN** se lee `sec:anexo-repositorio` en `git show v1.2.2:"docs/Tesis/v10 (IA)/paper/sections/12-anexos.tex"`
+- **THEN** figura el tag `v1.2.2`
+- **AND** no figura el hash `509ffff105c21fed0c07cbf9a46245ba6c53e0e1` de `v1.2.1`
+
+#### Scenario: Hash consignado y coherente con el tag
+
+- **WHEN** se lee `sec:anexo-repositorio` en el commit C2 y se compara con `git rev-parse v1.2.2^{commit}`
+- **THEN** figura el hash completo de 40 caracteres del commit etiquetado
+- **AND** el hash coincide en los 40 caracteres y tambien figura en `docs/Tesis/Correcciones/dictamen-correcciones.md`
+
+#### Scenario: Compilacion verificada antes del tag
+
+- **WHEN** se compila la fuente que se va a etiquetar en el entorno `texlive-thesis`
+- **THEN** el log no contiene errores fatales, referencias ni citas indefinidas, ni etiquetas `multiply defined`
+- **AND** el conteo de paginas totales cumple la regla registrada (100, con el exceso honrado y defendido)
+
+#### Scenario: Tareas pendientes de c-140 cerradas antes del tag
+
+- **WHEN** se revisa el `tasks.md` de `c-140-endurecimiento-tecnico-tls-reintentos-e2e` antes de crear el tag
+- **THEN** las tareas 3.8 (regresion completa de backend) y 3.9 (seccion de la guia del workflow) estan cerradas con su evidencia
+- **AND** la tarea 3.10 (reimportacion en la instancia operativa) figura como ejecutada por el equipo
+
+#### Scenario: Tags previos inmutables
+
+- **WHEN** se comparan `git rev-parse v1.0.0^{commit}`, `v1.0.1^{commit}`, `v1.1.0^{commit}`, `v1.1.1^{commit}`, `v1.2.0^{commit}` y `v1.2.1^{commit}` con sus valores previos
+- **THEN** `v1.0.0` sigue en `61a6b117dd1321fbee25f9792d9f29b884e5ac8d`, `v1.0.1` en `bac4c5f6f85c889b48a90d4396bbdaccc7a35ad0`, `v1.1.0` en `7103b649d8c4f51737ad6ad4095dad22c9406400`, `v1.1.1` en `4160d84286623b073d2904353e6f9163ae211de7`, `v1.2.0` en `a49d035c67b32ae17e633ec04b09ecdd2781aac6` y `v1.2.1` en `509ffff105c21fed0c07cbf9a46245ba6c53e0e1`
+- **AND** ningun tag existente fue reescrito, recreado ni borrado
+
+#### Scenario: Tag alcanzable desde la rama principal
+
+- **WHEN** el PR de la rama de release a `main` se integro con merge commit y se ejecuta `git fetch origin`
+- **THEN** `git merge-base --is-ancestor v1.2.2 origin/main` es verdadero
+
+#### Scenario: Changes integrados archivados
+
+- **WHEN** se ejecuta `openspec list --json` despues de la release
+- **THEN** `c-146-completar-metricas-trabajos-previos` y `c-140-endurecimiento-tecnico-tls-reintentos-e2e` no figuran como activos
+- **AND** sus delta specs quedaron sincronizados en `openspec/specs/`
