@@ -26,6 +26,24 @@ La tesis SHALL afirmar unicamente lo que el repositorio permite verificar. El §
 - **THEN** las cifras declaradas en §6.7 coinciden con el resultado reproducible, o existe un informe de cobertura versionado que las respalda
 - **AND** no queda publicada la cifra 89/98,6 % sin evidencia que la respalde
 
+#### Scenario: Recuento de integracion PostgreSQL reproducible
+
+- **WHEN** se ejecuta `cd App/Backend && pytest -m integration --collect-only -q` sobre el commit publicado
+- **THEN** el recuento de pruebas de integracion que declara el §6.7 coincide con el total informado por el comando
+- **AND** el §6.7 no describe una omision automatica con `pytest.skip` cuando PostgreSQL no esta disponible
+
+#### Scenario: Comportamiento ante PostgreSQL ausente declarado
+
+- **WHEN** se lee `App/Backend/tests/conftest.py` en el commit publicado
+- **THEN** las fixtures de integracion fallan de forma ruidosa si PostgreSQL no esta disponible
+- **AND** la tesis describe ese comportamiento y no el de una omision silenciosa
+
+#### Scenario: Recuentos de frontend retirados si no son reproducibles
+
+- **WHEN** la suite de frontend no puede ejecutarse en el entorno documentado por falta de dependencias instaladas
+- **THEN** el §6.7 no publica recuentos numericos congelados de pruebas ni de archivos
+- **AND** conserva la remision al reporte vigente del pipeline de integracion continua
+
 ### Requirement: Coherencia técnica entre la tesis y el sistema implementado
 
 El documento SHALL describir el flujo de clasificación, los canales, los

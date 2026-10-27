@@ -2871,3 +2871,40 @@ Cierre del remanente del criterio 3 y de la recomendacion B16 del dictamen CONEA
 - **Compilacion y tope**: recompilacion en `texlive-thesis` (`latexmk main.tex`); 0 errores fatales, 0 referencias indefinidas, 109 paginas totales (`Anexos` en `main.toc` p. 101 => cuerpo 100, anexos 9), `??` = 0. La palanca D9 (lista de referencias a `\footnotesize`) fue necesaria: sin ella el cuerpo quedaba en 101.
 - **Decisiones D10 a D12**: companero accesible de Paramesh (fila y prosa); verdicto de Paket 2024 (fila sin cambios de contenido); alta bibliografica unica. Ver `design.md` de c-146.
 - **Procedencia**: la seccion c-146 al final de `docs/Tesis/Correcciones/extraccion-metricas-trabajos-c-135.md` registra la URL del manuscrito aceptado de Colavito, la URL de arXiv:2103.15822 del companero de Paramesh, los valores extraidos con su ubicacion y el verdicto de Paket.
+
+## Endurecimiento tecnico TLS/reintentos/E2E (c-140) - 2026-10-26
+
+Cierre del bloque opcional del criterio 5 del dictamen CONEAU del 2026-10-22 (TLS en la
+instancia validada, invocacion sincronica sin reintentos, ausencia de pruebas de extremo a
+extremo con N8N activo). Change `c-140-endurecimiento-tecnico-tls-reintentos-e2e`; los tres
+bloques (1 TLS, 2 reintentos, 3 humo E2E) se aplicaron.
+
+- **Corrida de humo (tarea 9.1)**: corrida **local** (OQ2=local / CP6: sin workflow de CI de
+  humo) sobre el commit candidato `b4b3be95d3ea66f254751d4e6c03869d44fc3cd7`, fecha UTC
+  2026-10-27T00:32:12Z, N8N 2.11.2. Grupos ejecutados: `stack`, `guardrail`, `n8n`,
+  `preflight`, `e2e`, `tls`. Resultado **25/25 checks en verde**. Reporte JSON generado fuera
+  del repositorio. Sin llamadas pagas (clave Gemini ficticia + `COST_GUARD_BUDGET_USD=0` en la
+  variante de costo cero).
+- **Descuentos del criterio 5 que atiende cada bloque**: (1) TLS -> el borde TLS 1.2/1.3 se
+  verifica de forma automatizada sobre el despliegue de referencia (grupo `tls:*`, 9 checks);
+  la campana experimental siguio sin el proxy, y asi se declara. (2) Reintentos -> el tramo de
+  alta declara reintento acotado e idempotente en `Login operador` y `HTTP POST a MESA-AYUDAS`
+  (3 intentos, espera fija 5000 ms; timeout 10 s / 75 s), con desvio a la rama de error tras
+  agotar los intentos; la alta sigue siendo sincronica. (3) E2E -> prueba de humo de costo cero
+  con N8N activo que recorre el canal web hasta la persistencia y verifica etapa deterministica,
+  idempotencia y recuperacion ante indisponibilidad transitoria.
+- **Evidencia por componente del objetivo especifico 1 (D11)**: HTTP cifrado -> verificado en el
+  despliegue de referencia (no en la campana); comunicacion asincronica -> alta sincronica con
+  reintentos idempotentes (no la vuelve asincronica); interfaces REST y modularidad -> ejercitado
+  de extremo a extremo por el humo.
+- **Fila `tab:cumplimiento-objetivos` del objetivo especifico 1 (tarea 9.3)**: c-133 ya esta
+  aplicado; se actualizo **solo el calificativo** (el rotulo "Alcanzado parcialmente" no cambia)
+  a "alta sincronica con reintentos idempotentes y TLS 1.2/1.3 verificado en el despliegue de
+  referencia".
+- **Interfaz con c-141 (tarea 9.4)**: c-141 debe **reejecutar la prueba de humo sobre el commit
+  etiquetado** de la release y actualizar este resumen (commit, fecha y resultado por grupo).
+- **Compilacion y tope de paginas**: `texlive-thesis` (`latexmk main.tex`); 0 errores fatales,
+  0 referencias indefinidas, `??` = 0, `verify_citations.py` = PASS. **Tope BLOQUEADO**: antes
+  109 total / `Anexos` p. 101 / cuerpo 100 / anexos 9; despues 111 / p. 103 / cuerpo **102** /
+  anexos 9. El cuerpo supera el tope de 100 en 2 paginas; el detalle y la compensacion
+  intentada estan en `conteos-canonicos-tecnicos.md` seccion 6.1.
