@@ -41,6 +41,24 @@ El total de paginas del PDF de la tesis SHALL cumplir el tope vigente de paginas
 - **WHEN** se mide el PDF compilado
 - **THEN** la portada ocupa exactamente una pagina
 
+#### Scenario: Tope renegociado documentado
+
+- **WHEN** se registra un tope distinto de 100 paginas sobre el total (una renegociacion con la catedra)
+- **THEN** el registro declara su regla de medicion, su valor, su fuente y su fecha
+- **AND** el PDF de la release cumple esa regla, con el exceso, si lo hubiera, honrado y declarado
+
+#### Scenario: Cuerpo sin anexos
+
+- **WHEN** se consigna el conteo complementario del cuerpo sin anexos (pagina del encabezado "Anexos" de `main.toc` menos 1)
+- **THEN** ese conteo se registra como informacion complementaria del libro mayor
+- **AND** no se usa para dar por cumplido el tope, cuya metrica es el total del PDF
+
+#### Scenario: Reduccion sin perdida de contenido
+
+- **WHEN** se compacta el documento para acercarlo al tope
+- **THEN** los numeros canonicos, las figuras y tablas requeridas, las referencias y las correcciones previas permanecen
+- **AND** las palancas aplicadas son de forma (indices, listas, tamano de anexos, ancho de figuras y espaciado)
+
 ### Requirement: Coherencia de la version bibliografica con la release publicada
 
 La entrada `Gomez2026_repositorio` de `docs/Tesis/v10 (IA)/Bibliography_base.bib` SHALL declarar en su titulo la misma version que el tag de release que identifica el Anexo B (`sec:anexo-repositorio`). Para la release `v1.2.2`, el titulo SHALL enunciar la version `1.2.2`, con la etiqueta "Version" o con su forma acentuada si la revision ortotipografica la acentuo por decision registrada, y SHALL NOT conservar numeros de version anteriores como `1.2.1`, `1.2.0`, `1.1.1` o `1.0.0`. El numero de version SHALL actualizarlo el change que publica la release, en el mismo commit que cambia el tag del Anexo B; ningun otro change MUST modificar ese numero. Los demas campos de la entrada (autoria, ano, `url` y `note`) SHALL conservarse y la referencia SHALL seguir imprimiendose en la seccion de Referencias.
