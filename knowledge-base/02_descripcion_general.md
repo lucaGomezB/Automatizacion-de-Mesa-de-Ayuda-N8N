@@ -5,12 +5,12 @@
 | Capa | Tecnología | Versión | Notas |
 |---|---|---|---|
 | Orquestación | N8N | 2.11.2 | Docker autoalojado; webhooks + triggers |
-| API / Procesamiento | FastAPI + Uvicorn | 0.143.3 / 0.54.0 | Python 3.12; patrón factory `create_app()` |
+| API / Procesamiento | FastAPI + Uvicorn | 0.162.0 / 0.54.0 | Python 3.12; patrón factory `create_app()` |
 | ORM | SQLAlchemy | 2.0 | API declarativa async (`Mapped`/`mapped_column`) |
 | Driver DB | asyncpg | — | La tesis menciona psycopg2; el código usa asyncpg (ver [09](09_decisiones_y_supuestos.md) DD-08) |
 | Base de datos | PostgreSQL | 15.5 | Imagen `postgres:15.5-alpine`, volumen persistente |
 | Migraciones | Alembic | — | `alembic/versions/001_seed_catalogs.py` siembra catálogos |
-| Inferencia LLM | Gemini 3.6 Flash | `google-genai` >=2.31,<3 | temp 0,3 · top_p 0,9 · max_tokens 100 · timeout 30 s por intento (total 60 s, 2 reintentos); reemplaza al deprecado `google-generativeai` |
+| Inferencia LLM | Gemini 3.6 Flash | `google-genai` >=2.33,<3 | temp 0,3 · top_p 0,9 · max_tokens 100 · timeout 30 s por intento (total 60 s, 2 reintentos); reemplaza al deprecado `google-generativeai` |
 | Telefonía | Twilio Programmable Voice | — | TwiML + transcripción automática nativa |
 | Frontend | React 19 + TypeScript + Vite | — | React Query + Axios + shadcn/ui |
 | Logging | structlog | — | JSON (prod) / consola (dev) |

@@ -18,7 +18,7 @@
 **Decisión**: PostgreSQL 15.5. **Justificación**: dominio naturalmente relacional (FK con integridad declarativa), propiedades ACID, MVCC para carga mixta. **Alternativas**: NoSQL — descartada por estructura fija del dominio.
 
 ### DD-06 — FastAPI + Pydantic
-**Decisión**: FastAPI 0.143.3 sobre Uvicorn 0.54.0. **Justificación**: validación de esquemas nativa, OpenAPI 3.1 automática, rendimiento, DI integrada.
+**Decisión**: FastAPI 0.162.0 sobre Uvicorn 0.54.0. **Justificación**: validación de esquemas nativa, OpenAPI 3.1 automática, rendimiento, DI integrada.
 
 ### DD-07 — Punto de operación del cortocircuito (0,5166) y umbral de revisión (0,70)
 **Decisión**: la etapa determinística decide sola con señal dominante y `score_correctitud` ≥ 0,5166 (punto derivado por validación cruzada; sustituyó al umbral 0,90 sobre la confianza del diseño inicial); una confianza de Gemini < 0,70 exige revisión humana, y la etapa fallback la exige siempre. **Justificación**: balance entre autonomía del sistema y supervisión humana significativa (human in the loop, §11.5).
