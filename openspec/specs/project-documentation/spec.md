@@ -292,9 +292,11 @@ Las versiones de componentes que declare `knowledge-base/**` SHALL coincidir con
 
 Cada valor volatil MUST tener una sola fuente declarada: cuando `CLAUDE.md` repita un valor que ya vive en `openspec/config.yaml`, MUST remitir a esa seccion en lugar de restatear el literal, para que la superficie vigilada no tenga dos copias que puedan divergir. La unica excepcion es el nombre del modelo, que se declara en ambos documentos y se verifica por coincidencia con `Settings.gemini_model`.
 
-Los hechos historicos documentados SHALL conservarse y rotularse de forma explicita como historicos, sin presentarse como el valor vigente. En particular, la calibracion empirica de los parametros de generacion realizada sobre `gemini-2.5-flash` y la decision DD-04 de `knowledge-base/09_decisiones_y_supuestos.md` son hechos historicos declarados que SHALL permanecer citables, rotulados como antecedente, mientras que el valor vigente (`gemini-3.6-flash`, timeout 30 s por intento, 60 s total y 2 reintentos, con `google-genai >=2.31,<3`) SHALL ser el que la documentacion declare como actual. Un pasaje que mencione el modelo retirado MUST distinguir de forma explicita el valor vigente del hecho historico y MUST NOT afirmar un invariante de tiempos que el valor vigente desmienta.
+Los hechos historicos documentados SHALL conservarse y rotularse de forma explicita como historicos, sin presentarse como el valor vigente. En particular, la calibracion empirica de los parametros de generacion realizada sobre `gemini-2.5-flash` y la decision DD-04 de `knowledge-base/09_decisiones_y_supuestos.md` son hechos historicos declarados que SHALL permanecer citables, rotulados como antecedente, mientras que el valor vigente (`gemini-3.6-flash`, timeout 30 s por intento, 60 s total y 2 reintentos, con `google-genai >=2.33,<3`) SHALL ser el que la documentacion declare como actual. Un pasaje que mencione el modelo retirado MUST distinguir de forma explicita el valor vigente del hecho historico y MUST NOT afirmar un invariante de tiempos que el valor vigente desmienta.
 
 El timeout del cliente HTTP declarado en `App/Frontend/src/services/api.ts` SHALL superar el peor caso total de una clasificacion del backend (`Settings.gemini_total_timeout_seconds`), de modo que el cliente no desista antes que la API resuelva su propio fallback.
+
+La suite de pruebas de la barrera (`scripts/preflight/test_docs_stack_sync.py`) SHALL ser hermética respecto del estado real del repositorio: sus fixtures MUST construir arboles sinteticos autosuficientes con las versiones de componentes fijadas por la propia prueba, y MUST NOT derivar la linea base de las versiones reales declaradas en `App/Backend/requirements.txt`, `docker-compose.yml` u `openspec/config.yaml`. Un cambio legitimo de version de dependencia MUST NOT producir hallazgos por si mismo en la suite, y una unica deriva inyectada sobre un arbol sincronizado MUST aislar exactamente un hallazgo.
 
 #### Scenario: Modelo y parametros de inferencia coinciden con la configuracion
 
@@ -356,7 +358,7 @@ El timeout del cliente HTTP declarado en `App/Frontend/src/services/api.ts` SHAL
 
 - **WHEN** se buscan tokens de modelo (`gemini-<version>-flash` o `<version> Flash`) en `knowledge-base/**` y en `docs/parameters_gemini.md` y `docs/n8n-workflow-guide.md`
 - **THEN** todo token que no sea `Settings.gemini_model` aparece unicamente en un pasaje rotulado como historico
-- **AND** los archivos que declaran la configuracion vigente citan `gemini-3.6-flash` y `google-genai >=2.31,<3`
+- **AND** los archivos que declaran la configuracion vigente citan `gemini-3.6-flash` y `google-genai >=2.33,<3`
 - **AND** el timeout declarado en contexto de parametros de Gemini es 30 s por intento, con 60 s total y 2 reintentos
 
 #### Scenario: Versiones de componentes de la base de conocimiento coinciden con los pins
@@ -364,7 +366,7 @@ El timeout del cliente HTTP declarado en `App/Frontend/src/services/api.ts` SHAL
 - **WHEN** se leen las versiones de N8N, FastAPI, Uvicorn y `google-genai` declaradas en `knowledge-base/**`
 - **THEN** N8N coincide con la imagen pinneada de `docker-compose.yml`
 - **AND** FastAPI y Uvicorn coinciden con los pines exactos de `App/Backend/requirements.txt`
-- **AND** la restriccion de `google-genai` es al menos tan estricta como `>=2.31.0,<3`
+- **AND** la restriccion de `google-genai` es al menos tan estricta como `>=2.33.0,<3`
 - **AND** una version de componente retirada solo aparece en un pasaje rotulado como historico
 
 #### Scenario: El marcador historico no se infiere de una palabra que rotula otra cosa
@@ -395,6 +397,18 @@ El timeout del cliente HTTP declarado en `App/Frontend/src/services/api.ts` SHAL
 - **THEN** el timeout del cliente es estrictamente mayor que el peor caso total del backend (65 s > 60 s)
 - **AND** el comentario del cliente declara ese invariante sin afirmar un valor de Gemini retirado
 - **AND** la barrera `scripts/preflight/docs_stack_sync.py` verifica el invariante y termina con codigo distinto de cero si el timeout del cliente no supera el peor caso del backend
+
+#### Scenario: La suite de la barrera es hermética frente a las versiones reales del repositorio
+
+- **WHEN** se ejecuta `python3 -m pytest scripts/preflight -q` con una version de dependencia distinta de la que la suite tiene fijada (por ejemplo, tras un bump de `App/Backend/requirements.txt`)
+- **THEN** la suite permanece en verde y no depende del contenido real de `requirements.txt`, `docker-compose.yml` ni `openspec/config.yaml`
+- **AND** sus fixtures construyen el arbol sobre el que corren los chequeos con las versiones fijadas por la propia prueba
+
+#### Scenario: Una deriva inyectada aísla exactamente un hallazgo
+
+- **WHEN** sobre un arbol sintetico sincronizado se muta un unico valor (un modelo, una version de componente, un umbral o un timeout)
+- **THEN** la barrera reporta exactamente un FAIL, nombrando el valor divergente
+- **AND** el resto de los chequeos sigue en PASS, tambien cuando el arbol sintetico usa versiones de componentes nuevas
 
 ### Requirement: Sincronia de la base de conocimiento con la release publicada de la tesis
 
