@@ -7,7 +7,9 @@ documento puede citar, declara la regla efectiva del gate de revisión humana y
 resuelve —o declara explícitamente como no resolubles— las contradicciones
 numéricas internas detectadas por el dictamen CONEAU. El memo actúa como Gate 0
 antes de que cualquier rama reescriba el texto de la tesis.
+
 ## Requirements
+
 ### Requirement: Registro canónico con procedencia por valor
 
 El proyecto SHALL mantener el memo `docs/Tesis/Correcciones/numeros-canonicos.md`
@@ -405,4 +407,3 @@ Antes de etiquetar la release que cierra el dictamen CONEAU del 2026-10-22 sobre
 - **WHEN** se comparan los valores de `evaluation/report.md` y de `evaluation/report_sensibilidad_ajustes.md` con los valores del memo
 - **THEN** coinciden en todos los valores que ambos reportan
 - **AND** `evaluation/report.md` conserva sus secciones de normalidad (Shapiro-Wilk), Wilcoxon y desglose por canal
-

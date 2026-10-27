@@ -1,7 +1,9 @@
 ## Purpose
 
 This specification defines the documentation artifacts required for the Mesa de Ayuda project: architecture diagrams, OpenAPI specification, database schema reference, evaluation corpus description, operational guide, troubleshooting guide, and README deployment instructions. Every artifact must be reproducible, version-controlled, and kept in sync with the live system configuration.
+
 ## Requirements
+
 ### Requirement: Diagramas de arquitectura UML
 
 El proyecto SHALL incluir, bajo `docs/diagrams/`, tres diagramas de arquitectura en notación UML mantenidos como fuente de texto versionable (Mermaid): un diagrama de despliegue, un diagrama de secuencia y un diagrama de componentes. El diagrama de despliegue MUST representar los componentes de infraestructura reales declarados en `docker-compose.yml` (PostgreSQL, Redis, backend FastAPI, N8N) y sus relaciones de comunicación. El diagrama de secuencia MUST ilustrar el flujo extremo a extremo de un incidente desde su recepción en un canal de entrada hasta la confirmación al usuario. El diagrama de componentes MUST reflejar la organización en capas del módulo Python (routes, services, repositories, classifiers, models). Cada archivo de diagrama MUST contener un bloque de código Mermaid sintácticamente válido.
@@ -376,4 +378,3 @@ Cada valor volatil MUST tener una sola fuente declarada: cuando `CLAUDE.md` repi
 
 - **WHEN** se buscan en `knowledge-base/` los valores que el memo marca `retirado` (por ejemplo, 9,5 % de intervencion humana o el universo de 3.700 incidentes)
 - **THEN** no aparecen presentados como resultados vigentes
-
