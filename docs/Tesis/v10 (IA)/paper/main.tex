@@ -16,17 +16,17 @@
 % --- Indice general ---
 \newpage
 \renewcommand{\contentsname}{Índice general}
-\tableofcontents
+{\small\linespread{1.0}\selectfont\setlength{\cftbeforesecskip}{0pt}\setlength{\cftbeforesubsecskip}{0pt}\setlength{\cftbeforesubsubsecskip}{0pt}
+\tableofcontents}
 \newpage
 
-% --- Indice de tablas ---
+% --- Indices de tablas y figuras (compactados) ---
+{\small\linespread{1.0}\selectfont
 \renewcommand{\listtablename}{Índice de tablas}
 \listoftables
-\newpage
-
-% --- Indice de figuras ---
+\vspace{1.5em}
 \renewcommand{\listfigurename}{Índice de figuras}
-\listoffigures
+\listoffigures}
 \newpage
 
 % --- Glosario de siglas y acronimos ---
@@ -81,7 +81,9 @@
 % --- Anexos ---
 \newpage
 \begin{appendices}
+{\small
 \input{sections/12-anexos.tex}
+}
 \end{appendices}
 
 \end{document}
