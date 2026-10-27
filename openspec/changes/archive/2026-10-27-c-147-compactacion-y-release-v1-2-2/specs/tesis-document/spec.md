@@ -17,6 +17,20 @@ El total de paginas del PDF de la tesis SHALL cumplir el tope vigente de paginas
 - **THEN** el conteo incluye portada, indices, glosario, cuerpo, referencias y anexos
 - **AND** no se computa un subconjunto (por ejemplo, solo el cuerpo o el cuerpo sin anexos) para dar por cumplido el tope
 
+#### Scenario: Tope renegociado documentado
+
+- **WHEN** se registra un tope distinto del vigente de 100 paginas sobre el total
+- **THEN** el registro declara su regla de medicion, su valor, su fuente y su fecha
+- **AND** el PDF de la release cumple esa regla o declara el exceso con su magnitud, su fecha y la decision de sostenerlo
+- **AND** el registro consigna los dos conteos, total y cuerpo sin anexos
+
+#### Scenario: Cuerpo sin anexos
+
+- **WHEN** se informa el conteo del cuerpo sin anexos como dato complementario del total
+- **THEN** el conteo excluye unicamente las paginas desde el encabezado "Anexos" (`\contentsline {section}{Anexos}{N}` de `main.toc`)
+- **AND** referencias, indices y glosario se cuentan dentro del cuerpo
+- **AND** el conteo del cuerpo no sustituye al total para dar por cumplido el tope
+
 #### Scenario: Tope total declarado en un unico lugar
 
 - **WHEN** se lee la seccion de presupuesto de paginas de `docs/Tesis/Correcciones/dictamen-correcciones.md`
@@ -29,7 +43,7 @@ El total de paginas del PDF de la tesis SHALL cumplir el tope vigente de paginas
 - **THEN** el registro declara la magnitud del exceso, su fecha y la decision de los autores de sostenerlo y defenderlo
 - **AND** el PDF no se presenta como si cumpliera el tope sin exceso
 
-#### Scenario: Reduccion sin perdida de contenido ni referencias colgadas
+#### Scenario: Reduccion sin perdida de contenido
 
 - **WHEN** se compacta el documento para acercarlo al tope
 - **THEN** los numeros canonicos, las figuras y tablas requeridas, las referencias y las correcciones previas permanecen
