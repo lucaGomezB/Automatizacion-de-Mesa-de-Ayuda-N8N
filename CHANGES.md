@@ -2249,6 +2249,26 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
+## FASE 42 — Actualizacion de dependencias del backend y endurecimiento de la barrera documental (2026-10-27)
+
+> Change posterior a la FASE 41, disparado por el PR #42 de Dependabot, que no podia mergearse: el bump de dependencias quedaba bloqueado por la propia barrera documental (chequeos 4, 5 y 17) y, ademas, la suite de esa barrera estaba acoplada al estado real del repositorio, de modo que cualquier bump legitimo la rompia (`assert 4 == 1`). Governance **BAJO** (A) / **MEDIO** (B, C).
+
+### [C-149] `actualizar-dependencias-y-endurecer-la-barrera` — APLICADO (2026-10-27, BAJO/MEDIO)
+
+- **Scope (bloques A-C)**:
+  - **A — bump de dependencias (BAJO)**: `App/Backend/requirements.txt` adopta las seis versiones exactas del PR #42 de Dependabot (`fastapi` 0.143.3 -> 0.162.0, `starlette` 1.8.0 -> 1.10.0, `sqlalchemy[asyncio]` 2.1.5 -> 2.1.6, `alembic` 1.20.0 -> 1.20.1, `pydantic-settings` 2.16.0 -> 2.16.1, `google-genai` >=2.31.0,<3 -> >=2.33.0,<3); `uvicorn[standard]` queda en 0.54.0. Se conservan los comentarios historicos y se actualizan los que declaraban un hecho vigente que quedaba falso.
+  - **B — documentacion vigilada (MEDIO)**: `openspec/config.yaml` (`stack.backend.framework` = `FastAPI 0.162 + Uvicorn 0.54`; `stack.inference.model` = `Gemini 3.6 Flash (google-genai >=2.33,<3)`), `knowledge-base/02_descripcion_general.md` (FastAPI + Uvicorn `0.162.0 / 0.54.0` y `google-genai >=2.33,<3`) y `knowledge-base/09_decisiones_y_supuestos.md` (DD-06 = FastAPI 0.162.0 sobre Uvicorn 0.54.0). N8N 2.11.2 y Uvicorn 0.54.0 no cambian. DD-06 es una decision VIGENTE: se actualiza la version, no se rotula como historia.
+  - **C — suite hermetica de la barrera (MEDIO, TDD estricto)**: `scripts/preflight/test_docs_stack_sync.py` reescribe sus fixtures (`_arbol_sincronizado` / `_contenido_arbol` / `_VERS_BASE`) para construir un arbol SINTETICO autosuficiente con las versiones fijadas por la propia suite; ya no lee los `requirements.txt`, `docker-compose.yml` ni `openspec/config.yaml` reales. Se agregan tres pruebas de aislamiento (no hereda los archivos reales; un bump coordinado sigue sincronizado y aisla un drift; un bump aislado del pin de FastAPI falla solo los chequeos de version). 108 -> 111 pruebas.
+- **RED/GREEN/TRIANGULATE (Bloque C)**: RED con el Bloque A aplicado y la suite acoplada (`17 failed, 91 passed`; `assert 4 == 1`); GREEN con los fixtures sinteticos (`111 passed`, tambien con el Bloque A aplicado); TRIANGULATE con un bump coordinado del fixture (17/17 PASS y, con un drift inyectado, exactamente 1 FAIL) y con el bump aislado del pin de FastAPI (exactamente 2 FAIL, ambos de version).
+- **Barrier RED -> GREEN (Bloque B)**: con A y sin B, `python3 scripts/preflight/docs_stack_sync.py` = 14/17 PASS con los chequeos 4, 5 y 17 en FAIL (nombran `config.yaml` framework `0.143` vs `0.162.0`, `google-genai >=2.31,<3` vs `>=2.33.0,<3`, `02_descripcion_general.md:8,13` y `09_decisiones_y_supuestos.md:21`); tras el Bloque B, 17/17 PASS, exit 0.
+- **OpenAPI**: `tests/test_openapi_sync.py` pasa (5 passed) con el entorno instalado; NO se regenero `docs/openapi.json` (el bump se verifico contra las dependencias instaladas; ver duda residual abajo).
+- **Verificacion**: `openspec validate "c-149-..." --strict` OK; `python3 -m pytest scripts/preflight/ -q` 111 passed; backend `pytest -m "not integration" -q` 1498 passed + 54 deselected + 1 xfailed (sin regresiones); `ruff check .` OK; frontend `npm run test` 384 passed.
+- **Duda residual**: el entorno local NO reinstalo los pines nuevos (regla "no build after changes"), de modo que `tests/test_openapi_sync.py` validó `docs/openapi.json` contra FastAPI 0.143.3 instalada, no 0.162.0. Si CI (que instala desde `requirements.txt`) detecta un cambio de esquema, se regenera `docs/openapi.json` con `python3 scripts/export_openapi.py`.
+- **Dependencias**: PR #42 de Dependabot; barrera de la FASE 41 (c-145/c-148; 17 chequeos, 108 pruebas).
+- **Leer antes**: `openspec/changes/c-149-actualizar-dependencias-y-endurecer-la-barrera/{proposal,design,tasks}.md`, `openspec/specs/project-documentation/spec.md`.
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo; actualizado 2026-10-22)
