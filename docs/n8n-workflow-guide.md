@@ -253,6 +253,63 @@ item por cada entrada de `destinatarios_gestion` (la lista la resuelve el backen
 no N8N) y `Notificar gestion post-revision` envia el correo por SMTP. Una lista
 vacia (sin `gestion_incidentes` activo en los sectores) no envia correo.
 
+## Politica de reintento del tramo de alta (c-140)
+
+El tramo de alta ejecuta dos nodos HTTP que pueden fallar por indisponibilidad transitoria del
+backend: `Login operador` y `HTTP POST a MESA-AYUDAS`. Ambos tienen una **politica de reintento
+acotada y de espera fija** (no exponencial).
+
+### Nodos y valores
+
+| Nodo | `maxTries` | `waitBetweenTries` | `timeout` por intento |
+|---|---|---|---|
+| `Login operador` | 3 | 5000 ms | 10000 ms (10 s) |
+| `HTTP POST a MESA-AYUDAS` | 3 | 5000 ms | 75000 ms (75 s) |
+
+Fuente: `n8n/workflow.json` (propiedades `maxTries`, `waitBetweenTries` y
+`parameters.options.timeout`). La espera es **fija** (5000 ms entre intentos) y no exponencial:
+se prioriza la previsibilidad del presupuesto de tiempo sobre la mitigacion de saturacion.
+
+### Presupuesto de peor caso frente a `EXECUTIONS_TIMEOUT`
+
+El tope de ejecucion de N8N es de **300 s** (`EXECUTIONS_TIMEOUT` en `docker-compose.yml`).
+Peor caso del tramo de alta: 40 s (`Login operador`: 3 x 10 s de timeout + 2 x 5 s de espera) +
+235 s (`HTTP POST a MESA-AYUDAS`: 3 x 75 s de timeout + 2 x 5 s de espera) = **275 s < 300 s**.
+El presupuesto cabe dentro del tope, con 25 s de margen.
+
+### Comportamiento tras agotar los intentos
+
+Agotados los 3 intentos de cualquiera de los dos nodos, la ejecucion desvia a la rama de error
+del workflow; no reintenta indefinidamente ni bloquea la ejecucion mas alla del tope. Si falla el
+POST, el incidente no queda persistido. La alta sigue siendo sincronica (los reintentos no la
+vuelven asincronica).
+
+### Clave de idempotencia
+
+El `HTTP POST a MESA-AYUDAS` envia una **clave de idempotencia** estable por incidente: un
+reintento del mismo POST no crea un incidente duplicado, porque el backend reconoce la clave y
+responde con el resultado del alta original. La equivalencia de replay del alta esta verificada
+en el backend.
+
+### Reintento de un `401` del login y bloqueo por cuenta (c-63a)
+
+Si `Login operador` recibe un `401`, cada intento consume el contador de intentos fallidos de la
+cuenta (c-63a); agotados los 3 intentos, la cuenta puede quedar bloqueada temporalmente. **Como
+desbloquear**: esperar la ventana de bloqueo o restablecer el contador de la cuenta del operador
+segun el procedimiento de c-63a. No se reintenta con credenciales distintas ni se evita el
+bloqueo.
+
+### Procedimiento de reimportacion (N8N-DOC-007)
+
+Cuando cambien los valores de reintento, la reimportacion del workflow es:
+1. Exportar el workflow de la instancia operativa como respaldo.
+2. Importar `n8n/workflow.json` del repositorio.
+3. Verificar las credenciales del `Login operador`.
+4. Activar el workflow y registrar un incidente de prueba por el canal web.
+
+La reimportacion en la instancia operativa la ejecuta el equipo, no el agente (tarea 3.10 de
+c-140).
+
 ## Contrato: `POST /api/v1/incidentes`
 
 El workflow invoca un **único** endpoint HTTP:
