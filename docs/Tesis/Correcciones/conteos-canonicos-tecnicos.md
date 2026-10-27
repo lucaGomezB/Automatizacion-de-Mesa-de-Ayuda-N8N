@@ -175,6 +175,62 @@ Capítulos de la tesis citados (editados en c-109, solo las líneas de la Secci�
 
 ---
 
+## 6. Upsert c-140 (endurecimiento tecnico: TLS, reintentos y E2E, 2026-10-26)
+
+Cifras nuevas que c-140 cita en la tesis, con fuente y comando de verificacion (D16).
+Ninguna redefine un valor `vigente` de la Seccion 2; los reintentos que describe
+`06-implementacion.tex` son de N8N al backend (tramo de alta), distintos de los
+reintentos del backend al modelo de la Seccion 2.
+
+| Cifra | Valor canonico | Fuente | Estado |
+|---|---|---|---|
+| Intentos del tramo de alta (por nodo) | **3** (`Login operador` y `HTTP POST a MESA-AYUDAS`) | `n8n/workflow.json` (`maxTries`) | vigente |
+| Espera fija entre intentos del tramo de alta | **5000 ms** | `n8n/workflow.json` (`waitBetweenTries`) | vigente |
+| Tiempo de espera por intento del login | **10000 ms** | `n8n/workflow.json` (`parameters.options.timeout` de `Login operador`) | vigente |
+| Tiempo de espera por intento del alta | **75000 ms** | `n8n/workflow.json` (`parameters.options.timeout` de `HTTP POST a MESA-AYUDAS`) | vigente |
+| Tope de ejecucion de N8N | **300 s** (`EXECUTIONS_TIMEOUT`) | `docker-compose.yml` | vigente |
+| Pruebas de integracion PostgreSQL | **54** | `App/Backend/tests` | vigente |
+| Nodos del flujo (totales / operativos) | **32 / 29** | `n8n/workflow.json` | vigente (sin cambio) |
+
+Peor caso del tramo: 40 s (`Login`) + 235 s (`POST`) = 275 s < 300 s.
+
+Comando de verificacion (desde la raiz del repositorio):
+
+```bash
+python3 -c "
+import json
+w = json.load(open('n8n/workflow.json'))
+for n in w['nodes']:
+    if n['name'] in ('Login operador', 'HTTP POST a MESA-AYUDAS'):
+        o = n['parameters'].get('options', {})
+        print(n['name'], n['maxTries'], n['waitBetweenTries'], o.get('timeout'))
+"
+```
+
+y, desde `App/Backend`, `pytest -m integration --collect-only -q` (informa `54/...`).
+
+Figura `fig:despliegue`: se regenero desde la fuente Mermaid versionada
+`docs/diagrams/despliegue.md` (rotulo "TLS 1.2/1.3", antes "TLS 1.3").
+Render: `npx -y @mermaid-js/mermaid-cli@12.0.0 -i <tmp>.mmd -o despliegue.png -b white -s 2`
+(bloque `mermaid` extraido a un `.mmd` temporal fuera del repositorio; salida
+1568x1712, formato retrato). Procedencia: paquete npm oficial `@mermaid-js/mermaid-cli`.
+Nota: `mermaid-cli@11` produce el mismo diagrama en formato apaisado; el retrato del
+manuscrito requiere la version 12.
+
+### 6.1 Libro de paginas de c-140 (BLOQUEO de la compuerta)
+
+- **Antes** (`main.pdf` en `HEAD`): total **109**; `Anexos` en p. 101; cuerpo **100**; anexos 9.
+- **Despues**: total **111**; `Anexos` en p. 103; cuerpo **102**; anexos 9.
+- El cuerpo supera el tope de 100 en **2 paginas**. Compensacion aplicada: recortes de
+  prosa duplicada en el capitulo 6 (neto **-175 palabras** respecto de `HEAD`) y una
+  medida tipografica de espaciado de flotantes; ninguna reduce el conteo. El capitulo 6
+  es NETO mas corto que la linea base y aun asi suma una pagina por una pagina de
+  flotantes dedicada (las dos figuras de 6.8); una relajacion global de la politica de
+  flotantes daria cuerpo 99 pero forzaria tablas del capitulo 8 al interior de los
+  anexos (mejora falsa). BLOQUEO reportado en el informe del apply.
+
+---
+
 _Producido por c-109. Cualquier rama que reescriba los conteos técnicos de `05`, `06`
 o `12` debe citar únicamente los valores `vigente` de la Sección 2 y MUST NOT
 redefinirlos de forma aislada._

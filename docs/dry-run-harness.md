@@ -17,7 +17,9 @@ persistencia y clasificación), antes de configurar o consumir cualquier servici
 
 | Grupo | Check | Qué prueba |
 |-------|-------|------------|
+| Stack | `stack:up` | El stack `mesa_local` se levanta y backend/n8n quedan sanos. |
 | Guardarraíl | `guardrail:gemini-key` | La `GEMINI_API_KEY` efectiva es ficticia (no hay llamadas pagas a Gemini). |
+| Guardarraíl | `guardrail:cost-guard-budget` | El presupuesto efectivo de la guarda de costo es cero (segunda capa de costo cero). |
 | N8N | `n8n:import` | Importa una copia de costo cero del workflow (id estable `P7w2iELDu7O3e8B0`). |
 | N8N | `n8n:activate` | El workflow queda activo y el webhook responde. |
 | Preflight | `preflight:login` | `POST /api/v1/auth/login` devuelve `access_token`/`token_type`. |
@@ -27,9 +29,14 @@ persistencia y clasificación), antes de configurar o consumir cualquier servici
 | Preflight | `preflight:webhook-reachable` | El webhook de N8N está alcanzable (registra el esquema `http`/`https`). |
 | Recorrido | `e2e:webhook-response` | El incidente simulado del formulario web se envía por el webhook. |
 | Recorrido | `e2e:persisted` | El incidente queda persistido y se recupera por la API. |
+| Recorrido | `e2e:etapa` | La clasificación del incidente es un único registro y su etapa es la determinística. |
 | Recorrido | `e2e:canal` | El incidente persistido tiene `canal_origen_id == 2` (formulario web). |
+| Recorrido | `e2e:idempotencia` | Reenviar el mismo `origen_message_id` devuelve el mismo incidente y no duplica la fila. |
+| Recorrido | `e2e:reintento` | (opt-in `--with-retry-fault`) Recuperación ante indisponibilidad transitoria del backend sin duplicado. |
 
-Un recorrido verde son **11/11 checks** con exit code `0`.
+Un recorrido verde por defecto son **15/15 checks** con exit code `0`; con
+`--with-retry-fault` son **16/16**. Los checks del grupo `tls:*` (opt-in
+`--with-tls`) se suman a esa base y se describen en el runbook de la referencia.
 
 ---
 
@@ -49,22 +56,33 @@ nombres alternativos.
 
 ## 3. Guardarraíles de costo (obligatorios)
 
-1. **Gemini nunca es real.** El arnés levanta el backend con un override de Compose
-   (`scripts/dry_run/compose.dry-run.yml`) que inyecta una `GEMINI_API_KEY`
-   ficticia. Antes de enviar nada, `guardrail:gemini-key` afirma la clave efectiva
-   dentro del contenedor y **aborta** si detecta una clave real. El override no
-   modifica `docker-compose.yml` ni `App/Backend/.env`.
-2. **Fallback seguro ante escalada.** Si una descripción no alcanza el umbral
-   determinístico, la escalada falla de forma segura con `confianza=0.0`; no se
-   completa ninguna llamada paga.
-3. **Twilio nunca se toca.** El arnés elimina del workflow los nodos con
+El costo cero se sostiene con **dos capas independientes** sobre el backend del
+arnés, más una tercera barrera sobre los canales pagos:
+
+1. **Gemini nunca es real (capa 1).** El arnés levanta el backend con un override
+   de Compose (`scripts/dry_run/compose.dry-run.yml`) que inyecta una
+   `GEMINI_API_KEY` ficticia. Antes de enviar nada, `guardrail:gemini-key` afirma
+   la clave efectiva dentro del contenedor y **aborta** si detecta una clave real.
+   El override no modifica `docker-compose.yml` ni `App/Backend/.env`.
+2. **Presupuesto nulo (capa 2).** El mismo override fija
+   `COST_GUARD_BUDGET_USD=0`. Con presupuesto cero, la guarda de costo (c-45)
+   deniega cualquier escalada **antes** de emitir la petición al proveedor: ni
+   siquiera se envía una petición de red con la clave falsa. El check
+   `guardrail:cost-guard-budget` lee el valor efectivo dentro del contenedor y
+   **aborta** si está ausente, no es numérico o es distinto de cero.
+3. **Fallback seguro ante escalada.** Si una descripción no alcanza el umbral
+   determinístico, la escalada es denegada por la guarda y degrada con
+   `confianza=0.0` y revisión humana; no se completa ninguna llamada paga. El
+   recorrido lo confirma con `e2e:etapa` (la clasificación del incidente de
+   prueba debe ser de la etapa determinística).
+4. **Twilio nunca se toca.** El arnés elimina del workflow los nodos con
    credenciales placeholder (incluido `Llamada telefonica`, entrada del canal
    telefónico) y no importa ni invoca el cliente de Twilio en ninguna variante.
    El canal telefónico es solo un procedimiento manual documentado (§7) y queda
    fuera del camino de costo cero.
 
-> No debilitar estos guardarraíles. Si `guardrail:gemini-key` falla, el arnés no
-> envía incidentes.
+> No debilitar estos guardarraíles. Si `guardrail:gemini-key` o
+> `guardrail:cost-guard-budget` fallan, el arnés no envía incidentes.
 
 ---
 
@@ -95,10 +113,29 @@ Opciones útiles (todas tienen default):
 | `--skip-import` | off | No reimporta/activa el workflow. |
 | `--poll-timeout` | `45` | Ventana de sondeo de persistencia (segundos). |
 | `--json` | off | Salida estructurada en JSON. |
+| `--json-out` | off | Escribe un reporte JSON de evidencia (commit, fecha UTC, versión de N8N y resultado por check) en la ruta indicada. |
 | `--with-email` | off | Variante opt-in del canal correo (§6). |
+| `--with-retry-fault` | off | Opt-in: desconecta/reconecta el backend para verificar la recuperación ante indisponibilidad transitoria (`e2e:reintento`). Requiere el bloque de reintentos del workflow. |
+| `--with-tls` | off | Opt-in: ejecuta el grupo `tls:*` sobre el borde del despliegue de referencia. Ver el runbook de la referencia. |
 
 Credenciales opcionales por variable de entorno: `DRY_RUN_USERNAME`,
 `DRY_RUN_PASSWORD`.
+
+### 4.1 Reporte de evidencia (`--json-out`)
+
+Con `--json-out RUTA` el arnés escribe, además del resumen en consola, un
+archivo JSON versionable con:
+
+- `commit` (`git rev-parse HEAD`), `timestamp_utc`, `n8n_version` del stack;
+- `groups` ejecutados (prefijos de los nombres de check) y `summary`;
+- `checks`: nombre, estado, detalle y acción de cada verificación.
+
+El reporte **nunca** contiene la contraseña del operador, el token de acceso,
+claves de API ni material criptográfico: los valores sensibles conocidos por el
+arnés se sustituyen por `[REDACTED]` y los que coinciden con patrones de
+credencial se redactan. Escribir el reporte **fuera** del repositorio (por
+ejemplo en un directorio temporal) para no versionar salidas de una corrida
+local.
 
 ---
 
@@ -278,19 +315,38 @@ Esto se cubre con pruebas en `scripts/dry_run/test_workflow_transform.py`
 | Síntoma | Causa probable | Acción |
 |---------|----------------|--------|
 | `guardrail:gemini-key` FAIL | El backend no se levantó con el override de dry-run. | Volver a levantar con `-f scripts/dry_run/compose.dry-run.yml` (sin `--skip-up`). |
+| `guardrail:cost-guard-budget` FAIL | El backend no tiene `COST_GUARD_BUDGET_USD=0` (falta el override o el valor no es cero). | Verificar `scripts/dry_run/compose.dry-run.yml` y volver a levantar con el override. |
 | `preflight:login` FAIL | Operador no sembrado o backend no healthy. | Verificar `admin`/`admin123` y `docker compose logs backend`. |
 | `preflight:missing-slash-307` FAIL | Cambió el contrato de rutas. | Revisar el enrutado del backend; los llamadores deben conservar la barra final. |
 | `e2e:persisted` FAIL | El webhook no completó el registro en la ventana de sondeo. | Revisar `docker compose logs n8n` y el nodo HTTP POST del workflow. |
+| `e2e:etapa` FAIL | La clasificación no es única o no es determinística. | Revisar la descripción de prueba y la guarda de costo; ver `docker compose logs backend`. |
 | `e2e:canal` FAIL | El workflow envía un `canal_origen_id` distinto de 2. | Revisar el nodo `Marcar canal web`. |
+| `e2e:idempotencia` FAIL | El reenvío duplicó el incidente o devolvió otro id. | Revisar el índice único de `origen_message_id` y el cortocircuito de idempotencia. |
+| `e2e:reintento` FAIL | El backend no se recuperó dentro de la ventana o duplicó la fila. | Revisar la política de reintento del workflow y que el backend vuelva a la red `mesa_local_automation` con el alias `backend`. |
 | `email:config` PENDING | Se usó `--with-email` sin configurar SMTP. | Definir `DRY_RUN_EMAIL_*` o quitar `--with-email`. |
 
 ---
 
 ## 10. Archivos relevantes
 
-- `scripts/dry_run/dry_run.py` — entrypoint y orquestación.
+- `scripts/dry_run/dry_run.py` — entrypoint y orquestación (I/O).
+- `scripts/dry_run/e2e_checks.py` — evaluadores puros de los checks E2E (sin red, sin Docker).
 - `scripts/dry_run/checks.py` — modelo de checks, contrato de exit code y formato.
-- `scripts/dry_run/compose.dry-run.yml` — override de costo cero (clave Gemini ficticia).
+- `scripts/dry_run/compose.dry-run.yml` — override de costo cero (clave Gemini ficticia y presupuesto cero).
 - `scripts/dry_run/test_checks.py`, `test_exit_contract.py`,
-  `test_workflow_transform.py`, `test_email_variant.py` — pruebas del arnés.
+  `test_workflow_transform.py`, `test_email_variant.py`, `test_checks_c135.py` — pruebas del arnés.
+- `docs/runbook-smoke-stack-referencia.md` — [runbook del despliegue de referencia](runbook-smoke-stack-referencia.md) (recorrido E2E y grupo TLS).
 - `docs/operational-guide.md` — guía operativa general.
+
+## 11. Ejecución en CI
+
+Las pruebas **offline** del arnés (`python -m pytest scripts/dry_run -q`, desde
+la raíz del repositorio) no requieren Docker, red ni secretos: cubren el modelo
+de checks, el contrato de exit code, la transformación de costo cero y los
+evaluadores puros, y son las que se suman al job `backend-tests` para que el
+arnés no se degrade entre releases.
+
+La corrida **completa** del arnés (con Docker) es local en esta release (decisión
+OQ2 del change c-140): el resumen JSON de la corrida se conserva como evidencia.
+El workflow de CI que levanta el stack y corre el arnés queda diferido; ver el
+runbook del despliegue de referencia para los comandos de la corrida local.

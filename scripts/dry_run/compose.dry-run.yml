@@ -27,6 +27,10 @@ services:
   backend:
     environment:
       GEMINI_API_KEY: "dry-run-dummy-gemini-key-not-real"  # gitleaks:allow
+      # Layer 2 of the cost-zero guardrail (c-140, D13): a null runtime budget
+      # makes the cost guard deny any escalation before a paid call is issued.
+      # The harness asserts this effective value before sending anything.
+      COST_GUARD_BUDGET_USD: "0"
       PYTHONPATH: /app/App/Backend
     working_dir: /app/App/Backend
     volumes:
