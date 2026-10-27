@@ -4,8 +4,9 @@
  * Responsabilidad:
  *   Provee una instancia única de Axios (`apiClient`) preconfigurada con la URL base,
  *   cabeceras JSON, `withCredentials` (para adjuntar la cookie de refresh HttpOnly)
- *   y un timeout mayor al de Gemini (10 s) para permitir que el backend maneje su
- *   propio timeout antes de que el cliente desista.
+ *   y un timeout (65 s) mayor que el peor caso total de una clasificación del backend
+ *   (60 s), para permitir que la API resuelva su propio fallback antes de que el
+ *   cliente desista.
  *
  *   También exporta `extractApiErrorMessage`, función utilitaria que normaliza cualquier
  *   tipo de error de Axios a un mensaje legible en español para mostrar al usuario final.
@@ -39,9 +40,10 @@ export const apiClient = axios.create({
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
-  // El timeout del cliente supera el timeout de Gemini (10 s) para permitir
-  // que la API maneje su propio fallback antes de que el cliente desista.
-  timeout: 20_000,
+  // El timeout del cliente (65 s) supera el peor caso total de una clasificación
+  // del backend (60 s, Settings.gemini_total_timeout_seconds) para permitir que la
+  // API maneje su propio fallback antes de que el cliente desista.
+  timeout: 65_000,
   // c-91 (IAH-014): las requests deben enviar credenciales para que el navegador
   // adjunte la cookie de refresh HttpOnly (login/rehidratacion/refresh).
   withCredentials: true,

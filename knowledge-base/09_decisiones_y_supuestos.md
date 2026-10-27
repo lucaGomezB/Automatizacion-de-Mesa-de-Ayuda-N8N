@@ -3,7 +3,7 @@
 ## Decisiones documentadas
 
 ### DD-01 — N8N como orquestador
-**Decisión**: N8N 1.62 autoalojado en Docker. **Alternativas**: Zapier, Make, Power Automate (solo SaaS — descartadas por soberanía de datos), Apache Airflow (orientado a batch, excesivo para flujo reactivo). **Justificación**: despliegue autoalojado, código fuente disponible, sin costo por ejecución, webhooks nativos. **Trade-off**: punto único de coordinación; su disponibilidad condiciona el sistema.
+**Decisión**: N8N 2.11.2 autoalojado en Docker. **Alternativas**: Zapier, Make, Power Automate (solo SaaS — descartadas por soberanía de datos), Apache Airflow (orientado a batch, excesivo para flujo reactivo). **Justificación**: despliegue autoalojado, código fuente disponible, sin costo por ejecución, webhooks nativos. **Trade-off**: punto único de coordinación; su disponibilidad condiciona el sistema.
 
 ### DD-02 — Orquestación sobre coreografía
 **Decisión**: lógica de control centralizada en N8N. **Justificación**: trazabilidad auditiva de cada ejecución, prioritaria en este dominio (Hohpe & Woolf, 2003). **Trade-off**: menor robustez ante fallos parciales que un esquema de eventos distribuido.
@@ -11,14 +11,14 @@
 ### DD-03 — Clasificador híbrido en 2 etapas
 **Decisión**: reglas determinísticas (cortocircuito por `score_correctitud` ≥ 0,5166) antes que Gemini. **Alternativas**: LLM puro (mayor costo/latencia), clasificador supervisado propio (requiere corpus de entrenamiento que no existía). **Justificación**: 65,5 % de casos (131 de 200) resueltos sin inferencia externa; mejor relación exactitud/latencia/costo (hipótesis subsidiaria confirmada). **Trade-off**: mantenimiento del diccionario de keywords.
 
-### DD-04 — Gemini 2.5 Flash con parámetros conservadores
-**Decisión**: temperature 0,3, top_p 0,9, max_tokens 100, timeout 10 s, candidate_count 1. **Justificación**: clasificación requiere consistencia, no creatividad; JSON de salida ~15 tokens; el timeout limita la latencia del peor caso. Calibrados empíricamente (Anexo H). **Trade-off**: dependencia de proveedor externo y de la versión vigente del modelo (limitación §8.3).
+### DD-04 (historico) — Gemini 2.5 Flash con parámetros conservadores
+**Decisión (antecedente historico)**: temperature 0,3, top_p 0,9, max_tokens 100, timeout 10 s, candidate_count 1, calibrados empiricamente sobre Gemini 2.5 Flash (Anexo H). **Valor vigente**: el modelo default es `gemini-3.6-flash` (migrado el 2026-09-24 porque la familia 2.5 ya no esta disponible para cuentas nuevas) con timeout 30 s por intento (total 60 s, 2 reintentos); los parametros de muestreo (temperature 0,3, top_p 0,9, max_output_tokens 100, candidate_count 1) se conservan calibrados sobre 2.5 Flash y cambiar el modelo exige re-evaluar las metricas de exactitud (`App/Backend/app/config/settings.py:72-85`). **Justificación**: clasificación requiere consistencia, no creatividad; JSON de salida ~15 tokens; el timeout limita la latencia del peor caso. **Trade-off**: dependencia de proveedor externo y de la versión vigente del modelo (limitación §8.3).
 
 ### DD-05 — PostgreSQL relacional
 **Decisión**: PostgreSQL 15.5. **Justificación**: dominio naturalmente relacional (FK con integridad declarativa), propiedades ACID, MVCC para carga mixta. **Alternativas**: NoSQL — descartada por estructura fija del dominio.
 
 ### DD-06 — FastAPI + Pydantic
-**Decisión**: FastAPI 0.115 sobre Uvicorn. **Justificación**: validación de esquemas nativa, OpenAPI 3.1 automática, rendimiento, DI integrada.
+**Decisión**: FastAPI 0.143.3 sobre Uvicorn 0.54.0. **Justificación**: validación de esquemas nativa, OpenAPI 3.1 automática, rendimiento, DI integrada.
 
 ### DD-07 — Punto de operación del cortocircuito (0,5166) y umbral de revisión (0,70)
 **Decisión**: la etapa determinística decide sola con señal dominante y `score_correctitud` ≥ 0,5166 (punto derivado por validación cruzada; sustituyó al umbral 0,90 sobre la confianza del diseño inicial); una confianza de Gemini < 0,70 exige revisión humana, y la etapa fallback la exige siempre. **Justificación**: balance entre autonomía del sistema y supervisión humana significativa (human in the loop, §11.5).
