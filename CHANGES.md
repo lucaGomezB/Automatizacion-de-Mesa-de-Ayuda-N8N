@@ -2223,6 +2223,25 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
+## FASE 41 — Sincronizacion de la base de conocimiento y los docs con el stack vigente (2026-10-27)
+
+> Change documental (mas un ajuste acotado del cliente HTTP) posterior a la FASE 40: alinea `knowledge-base/**` y el material de referencia (`docs/parameters_gemini.md`, `docs/n8n-workflow-guide.md`) con el valor vigente del stack (`gemini-3.6-flash`, timeout 30 s por intento / 60 s total / 2 reintentos, `google-genai >=2.31,<3`), conserva rotulada la procedencia historica (calibracion sobre Gemini 2.5 Flash, DD-04), restaura el invariante del timeout del cliente (Axios 65 s > peor caso total del backend 60 s) y amplia la barrera `scripts/preflight/docs_stack_sync.py` de 12 a 16 chequeos (TDD estricto; 35 -> 50 pruebas). Governance **MEDIO** (A, B, C, E) / **BAJO** (D).
+
+### [C-148] `sincronizar-knowledge-base-y-docs-con-el-stack-vigente` — APLICADO (2026-10-27, MEDIO/BAJO)
+
+- **Scope (bloques A-E)**:
+  - **A — base de conocimiento (MEDIO)**: `01`, `02`, `05`, `07`, `08` y `09` declaran `gemini-3.6-flash` / "Gemini 3.6 Flash", `google-genai >=2.31,<3` y timeout 30 s por intento (total 60 s, 2 reintentos); DD-04 se rotula "(historico)" y conserva la calibracion sobre 2.5 Flash con remision al valor vigente.
+  - **B — material de referencia (MEDIO)**: `docs/parameters_gemini.md` retitulado y con `model`, `timeout` y la restriccion de `google-genai` al valor vigente; el "Historial de Cambios" queda rotulado como registro historico; `docs/n8n-workflow-guide.md:852` pasa a "Gemini 3.6 Flash".
+  - **C — procedencia historica (MEDIO)**: la calibracion sobre 2.5 Flash y DD-04 sobreviven rotuladas; se prohibe el reemplazo ciego "2.5" -> "3.6".
+  - **D — barrera documental (BAJO, TDD)**: `scripts/preflight/docs_stack_sync.py` pasa de 12 a 16 chequeos (13 modelo vigente en `knowledge-base/**` y material de referencia, 14 timeout vigente en contexto de Gemini, 15 superficie cubierta, 16 invariante del timeout del cliente); `test_docs_stack_sync.py` pasa de 35 a 50 pruebas (RED -> GREEN -> TRIANGULATE). Sobre el arbol corregido: 16/16 PASS, exit 0.
+  - **E — invariante del timeout del cliente (MEDIO, noveno archivo)**: `App/Frontend/src/services/api.ts` sube el timeout de Axios de 20 s a 65 s y corrige sus comentarios (65 s > 60 s, peor caso total del backend). Era un hallazgo fuera de alcance en el proposal original; el autor lo incorporo al alcance.
+- **Hallazgo adyacente (fuera de alcance)**: los umbrales `0.90` de `docs/n8n-workflow-guide.md:598,610` pertenecen a DOC-004; se registran, no se corrigen.
+- **Verificacion**: `openspec validate c-148-... --strict` OK; `python3 -m pytest scripts/preflight -q` 98 passed; backend `pytest -m "not integration" -q` 1498 passed + 54 deselected + 1 xfailed (sin regresiones; total 1553); frontend `npm run lint` (0 errores), `npm run test` (384 passed) y `npm run build` OK.
+- **Dependencias**: barrera de c-145 (12 chequeos, 35 pruebas); `CLAUDE.md` y `openspec/config.yaml` ya correctos desde c-145.
+- **Leer antes**: `openspec/changes/c-148-sincronizar-knowledge-base-y-docs-con-el-stack-vigente/{proposal,design,tasks}.md`, `openspec/specs/project-documentation/spec.md`.
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo; actualizado 2026-10-22)
