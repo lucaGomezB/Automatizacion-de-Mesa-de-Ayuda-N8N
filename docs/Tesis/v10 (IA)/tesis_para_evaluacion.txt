@@ -2368,8 +2368,8 @@ Política, clasificación, roles e IR (C-61); residual: revisión independiente
 Selección, formación, sanciones y cese: competen al adoptante
 Sin infraestructura productiva; se cubren en el hosting del adoptante
 Pseudonimización, Fernet, TLS, JWT y roles, vulnerabilidades en CI y
-respaldo cifrado (C-62 a C-66); residual: MFA, logs centralizados y
-redundancia offsite
+respaldo cifrado (C-62 a C-66), MFA de cuentas privilegiadas (C-63b);
+residual: operación con KMS/PAM, logs centralizados y redundancia offsite
 
 Fuente: elaboración propia a partir del gap assessment ISO/IEC 27001:2022/27002:2022 y NIST CSF 2.0.
 
@@ -2377,10 +2377,10 @@ Fuente: elaboración propia a partir del gap assessment ISO/IEC 27001:2022/27002
 La Tabla 8 cubre las seis funciones de NIST CSF 2.0 y su madurez en una escala propia
 del relevamiento, de 0 (inexistente) a 4 (optimizado).
 7.6.4. Brechas principales y hoja de ruta
-Los seis changes de cumplimiento cerraron, para el alcance del repositorio, las brechas
-priorizadas: C-61 (gobernanza documental: 5.1, 5.12, 5.13, 5.24–5.27, 5.31, 8.26), C-62 (endurecimiento de red: 8.20, 8.22, 8.2, 5.14, 8.31), C-63 (identidades y accesos: 8.5, 5.15, 5.17,
-8.2), C-64 (vulnerabilidades: 8.8, 8.28, 8.29, 5.19–5.23), C-65 (respaldo y continuidad: 8.13,
-8.14, 5.29, 5.30, 5.33) y C-66 (privacidad: 5.34, 8.12, 8.15, 5.31). Quedan residuales la MFA y
+Los seis changes de cumplimiento cerraron, para el alcance del repositorio, las brechas priorizadas: C-61 (gobernanza documental: 5.1, 5.12, 5.13, 5.24–5.27, 5.31, 8.26), C-62
+(endurecimiento de red: 8.20, 8.22, 8.2, 5.14, 8.31), C-63 (identidades y accesos: 8.5, 5.15,
+5.17, 8.2), C-64 (vulnerabilidades: 8.8, 8.28, 8.29, 5.19–5.23), C-65 (respaldo y continuidad:
+8.13, 8.14, 5.29, 5.30, 5.33) y C-66 (privacidad: 5.34, 8.12, 8.15, 5.31). La MFA TOTP con
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
@@ -2400,6 +2400,9 @@ Inventario de activos y
 clasificación
 Acceso, endurecimiento y
 criptografía
+
+1
+
 Monitoreo y detección de
 eventos
 Plan de respuesta y
@@ -2407,8 +2410,11 @@ mitigación
 Recuperación y
 restauración
 
+1
+
 ID (Identificar)
 PR (Proteger)
+
 DE (Detectar)
 RS
 (Responder)
@@ -2416,10 +2422,10 @@ RC
 (Recuperar)
 
 Madurez Brecha principal
+
 1
-1
-2
-1
+3
+
 0
 2
 
@@ -2427,8 +2433,10 @@ Sin política de seguridad ni gestión de riesgo formal (5.1,
 5.19, 5.24, 5.35)
 Modelo de datos documentado; sin inventario ni clasificación
 formal (5.9, 5.12)
-Pseudonimización, Fernet, TLS, JWT y roles; sin MFA ni
-gestión completa de vulnerabilidades (8.5, 8.8, 8.20, 8.24)
+Pseudonimización, Fernet, TLS, JWT y roles, MFA de cuentas
+privilegiadas y SAST/auditoría de dependencias en CI (C-62 a
+C-64); residual: KMS/PAM y SIEM del adoptante (8.5, 8.8,
+8.20, 8.24)
 Logs estructurados y chequeos de salud; sin centralización ni
 alertas (8.15, 8.16)
 Sin plan de respuesta a incidentes de seguridad (5.24–5.26)
@@ -2438,9 +2446,10 @@ host y redundancia como acción del adoptante (5.29, 5.30,
 
 Fuente: elaboración propia a partir del gap assessment ISO/IEC 27001:2022/27002:2022 y NIST CSF 2.0.
 
-la rotación de claves, la gestión de claves, la centralización de logs, la redundancia fuera del
-host y el SBOM; las brechas organizacionales —personas (6.x), físicas (7.x), revisión independiente (5.35), segregación de funciones (5.3) y trabajo remoto (6.7, 8.1)— son responsabilidad
-de la organización adoptante.
+desafío para cuentas privilegiadas y la rotación de claves (secreto JWT y clave Fernet) quedaron implementadas en el repositorio (C-63a/b/c, archivados el 2026-10-08); su operación
+con KMS/PAM, la custodia de claves en producción, la centralización de logs, la redundancia
+fuera del host y el SBOM quedan como acción de la organización adoptante; las brechas organizacionales —personas (6.x), físicas (7.x), revisión independiente (5.35), segregación de
+funciones (5.3) y trabajo remoto (6.7, 8.1)— son responsabilidad de la organización adoptante.
 7.6.5. Alineación con el marco legal
 El plano legal de la alineación se desarrolla en el Subsección 7.1 y en la Subsección 7.3,
 a los que este apartado remite sin reproducir su contenido. Los controles de privacidad mapeados (5.31, 5.34, 8.12, 8.15) se apoyan en la base de licitud del artículo 5 de la Ley 25.326, en el
