@@ -11,11 +11,13 @@ from __future__ import annotations
 import dataclasses
 import hashlib
 import json
+import os
 import pathlib
 import re
 import shutil
 import subprocess
 import sys
+import textwrap
 
 import pytest
 
@@ -1765,6 +1767,7 @@ def test_cli_prompt_con_confirmacion_por_flag_o_entorno_delega_en_correr_brazo(
     monkeypatch.setattr(sa, "correr_brazo_prompt", brazo_falso)
     monkeypatch.setattr(sa, "_prompt_cargado_por_el_backend", lambda brazo: "PROMPT")
     monkeypatch.setattr(sa, "_meta_corrida_paga", lambda corpus_path: {"gemini_model": "m"})
+    monkeypatch.setattr(sa, "_preparar_credencial_paga", lambda: "credencial-de-prueba")
     async def escalados_falsos(corpus, umbral):
         return list(corpus)[:2]
     monkeypatch.setattr(sa, "_casos_escalados_reales", escalados_falsos)
@@ -1912,6 +1915,7 @@ def test_cli_prompt_con_un_prompt_inesperado_sale_con_codigo_2_y_el_mensaje(
     monkeypatch.setattr(sa, "correr_brazo_prompt", brazo_que_falla)
     monkeypatch.setattr(sa, "_prompt_cargado_por_el_backend", lambda brazo: "x")
     monkeypatch.setattr(sa, "_meta_corrida_paga", lambda p: {})
+    monkeypatch.setattr(sa, "_preparar_credencial_paga", lambda: "credencial-de-prueba")
     monkeypatch.setattr(sa, "_casos_escalados_reales", escalados)
 
     codigo = sa.cli(["prompt", "--brazo", "vigente", "--confirm-paid", "--corpus", str(corpus_fixture_path)])
@@ -1980,3 +1984,181 @@ def test_c145_cli_prompt_help_por_subproceso_no_reporta_ambiguedad():
     assert resultado.returncode == 0, resultado.stderr
     assert "ambiguous option" not in resultado.stderr
     assert "--brazo" in resultado.stdout
+
+
+# ---------------------------------------------------------------------------
+# c-154 Defecto A - credencial real en el camino pago (TDD estricto)
+# ---------------------------------------------------------------------------
+def test_credencial_paga_resuelve_la_clave_real_del_archivo_sobre_el_valor_inerte(
+    entorno_backend, tmp_path
+):
+    """
+    RED (c-154 D1): el camino pago resuelve `GEMINI_API_KEY` desde
+    `App/Backend/.env` y NO conserva el valor inerte de `ENTORNO_OFFLINE`,
+    aunque `preparar_entorno_offline` ya lo haya inyectado en el proceso.
+    """
+    sa.preparar_entorno_offline()
+    assert os.environ["GEMINI_API_KEY"] == sa.ENTORNO_OFFLINE["GEMINI_API_KEY"]
+    archivo = tmp_path / ".env"
+    archivo.write_text("GEMINI_API_KEY=clave-real-de-prueba\n", encoding="utf-8")  # gitleaks:allow
+
+    credencial = sa.resolver_credencial_paga(archivo)
+
+    assert credencial == "clave-real-de-prueba"
+    assert os.environ["GEMINI_API_KEY"] == "clave-real-de-prueba"
+    assert os.environ["GEMINI_API_KEY"] != sa.ENTORNO_OFFLINE["GEMINI_API_KEY"]
+
+
+def test_credencial_paga_no_pisa_una_credencial_real_ya_presente_en_el_entorno(
+    tmp_path, monkeypatch
+):
+    """TRIANGULATE (c-154 D1): una credencial real ya presente en el entorno tiene prioridad."""
+    monkeypatch.setenv("GEMINI_API_KEY", "clave-real-del-entorno")
+    archivo = tmp_path / ".env"
+    archivo.write_text("GEMINI_API_KEY=clave-del-archivo\n", encoding="utf-8")
+
+    credencial = sa.resolver_credencial_paga(archivo)
+
+    assert credencial == "clave-real-del-entorno"
+    assert os.environ["GEMINI_API_KEY"] == "clave-real-del-entorno"
+
+
+def test_credencial_paga_ausente_falla_antes_de_construir_el_clasificador(
+    entorno_backend, monkeypatch, corpus_fixture_path, tmp_path, capsys
+):
+    """
+    TRIANGULATE (c-154 D1): sin credencial en el entorno ni en el archivo, el camino
+    pago falla con un error claro ANTES de construir el clasificador y no escribe salida.
+    """
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    monkeypatch.setattr(sa, "_ENV_BACKEND_PATH", tmp_path / "sin-credencial.env")
+    construido = []
+    monkeypatch.setattr(sa, "_construir_hybrid_real", lambda: construido.append(1))
+    monkeypatch.setattr(sa, "_prompt_cargado_por_el_backend", lambda brazo: construido.append(2))
+    salida = tmp_path / "predicciones_sensibilidad_prompt_vigente.json"
+
+    codigo = sa.cli([
+        "prompt", "--brazo", "vigente", "--confirm-paid",
+        "--corpus", str(corpus_fixture_path), "--salida", str(salida),
+    ])
+
+    assert codigo == 2
+    assert construido == []
+    assert not salida.exists()
+    assert "GEMINI_API_KEY" in capsys.readouterr().err
+
+
+def test_preparar_entorno_offline_sigue_completando_valores_inertes_sin_pisar_lo_real(
+    monkeypatch,
+):
+    """
+    No regresion (c-154 D1): `preparar_entorno_offline` sigue completando con
+    `setdefault`, no pisa una credencial real presente y deja el valor inerte cuando falta.
+    """
+    for clave in sa.ENTORNO_OFFLINE:
+        monkeypatch.delenv(clave, raising=False)
+    monkeypatch.setenv("GEMINI_API_KEY", "clave-real-del-entorno")
+
+    sa.preparar_entorno_offline()
+
+    for clave, valor in sa.ENTORNO_OFFLINE.items():
+        assert os.environ[clave] == (valor if clave != "GEMINI_API_KEY" else "clave-real-del-entorno")
+
+
+# ---------------------------------------------------------------------------
+# c-154 Defecto B - el brazo carga su propio prompt (TDD estricto)
+# ---------------------------------------------------------------------------
+def _ejecutar_en_proceso_limpio(codigo: str) -> subprocess.CompletedProcess:
+    """Corre `codigo` en un interprete nuevo (sin el estado de import del proceso de pytest)."""
+    entorno = dict(os.environ)
+    entorno.pop("GEMINI_PROMPT_PATH", None)
+    entorno["PYTHONPATH"] = str(_REPO)
+    return subprocess.run(
+        [sys.executable, "-c", textwrap.dedent(codigo)],
+        cwd=str(_REPO / "evaluation"), capture_output=True, text=True, env=entorno,
+    )
+
+
+_SCRIPT_PROMPT_BRAZO = """
+import hashlib
+import json
+import sys
+
+from evaluation import sensibilidad_ajustes as sa
+
+sa.asegurar_backend_en_path()
+sa.preparar_entorno_offline()
+
+# La seleccion offline de casos importa el submodulo deterministico (y con el, el paquete).
+from app.classifiers import deterministic  # noqa: F401
+
+anticipado = "app.classifiers.gemini_classifier" in sys.modules
+cargado = sa._prompt_cargado_por_el_backend(%r)
+esperado = sa.prompt_esperado(%r)
+print(json.dumps({
+    "gemini_cargado_al_importar_el_paquete": anticipado,
+    "coincide": cargado == esperado.texto,
+    "sha_cargado": hashlib.sha256(cargado.encode("utf-8")).hexdigest(),
+    "sha_esperado": esperado.sha256,
+}))
+"""
+
+
+@pytest.mark.parametrize("brazo", ["vigente", "sin-reglas"])
+def test_cada_brazo_carga_su_prompt_sin_importacion_anticipada_del_paquete(brazo):
+    """
+    RED (c-154 D2): importar el paquete de clasificadores NO debe cargar
+    `gemini_classifier` de forma anticipada; tras fijar `GEMINI_PROMPT_PATH` para el
+    brazo, el prompt efectivamente cargado tiene el SHA-256 esperado (distinto del vigente).
+    """
+    resultado = _ejecutar_en_proceso_limpio(_SCRIPT_PROMPT_BRAZO % (brazo, brazo))
+
+    assert resultado.returncode == 0, resultado.stderr
+    datos = json.loads(resultado.stdout.strip().splitlines()[-1])
+    assert datos["gemini_cargado_al_importar_el_paquete"] is False
+    assert datos["coincide"] is True
+    assert datos["sha_cargado"] == datos["sha_esperado"]
+
+
+def test_los_dos_brazos_cargan_prompts_con_sha256_distintos():
+    """TRIANGULATE (c-154 D2): los brazos vigente y sin-reglas resuelven prompts distintos."""
+    vigente = _ejecutar_en_proceso_limpio(_SCRIPT_PROMPT_BRAZO % ("vigente", "vigente"))
+    sin_reglas = _ejecutar_en_proceso_limpio(_SCRIPT_PROMPT_BRAZO % ("sin-reglas", "sin-reglas"))
+
+    assert vigente.returncode == 0, vigente.stderr
+    assert sin_reglas.returncode == 0, sin_reglas.stderr
+    sha_vigente = json.loads(vigente.stdout.strip().splitlines()[-1])["sha_cargado"]
+    sha_sin_reglas = json.loads(sin_reglas.stdout.strip().splitlines()[-1])["sha_cargado"]
+    assert sha_vigente != sha_sin_reglas
+
+
+def test_from_app_classifiers_import_sigue_resolviendo_los_nombres_publicos(entorno_backend):
+    """TRIANGULATE (c-154 D2): el import perezoso preserva la API publica del paquete."""
+    from app.classifiers import (
+        BaseClassifier,
+        DeterministicClassifier,
+        GeminiClassifier,
+        HybridClassifier,
+    )
+    from app.classifiers.base import BaseClassifier as DirectoBase
+    from app.classifiers.deterministic import DeterministicClassifier as DirectoDeterministic
+    from app.classifiers.gemini_classifier import GeminiClassifier as DirectoGemini
+    from app.classifiers.hybrid import HybridClassifier as DirectoHybrid
+
+    assert BaseClassifier is DirectoBase
+    assert DeterministicClassifier is DirectoDeterministic
+    assert GeminiClassifier is DirectoGemini
+    assert HybridClassifier is DirectoHybrid
+
+
+def test_app_classifiers_all_preserva_los_cuatro_nombres_publicos():
+    """TRIANGULATE (c-154 D2): `__all__` sigue declarando los cuatro nombres publicos."""
+    assert set(sa.__dict__)  # el modulo de evaluation sigue cargando
+    import app.classifiers as paquete  # type: ignore
+
+    assert set(paquete.__all__) == {
+        "BaseClassifier",
+        "DeterministicClassifier",
+        "GeminiClassifier",
+        "HybridClassifier",
+    }

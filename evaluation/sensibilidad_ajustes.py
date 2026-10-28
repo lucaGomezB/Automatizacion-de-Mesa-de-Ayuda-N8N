@@ -1170,6 +1170,56 @@ _CACHE_FE_EVIDENCIA = "evaluation/evidence/predicciones_calibracion_hybrid-v2_20
 _CACHE_OFICIAL_VIVA = "evaluation/predicciones.json"
 _CACHE_OFICIAL_EVIDENCIA = "evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json"
 
+#: Fuente unica de la credencial real en el camino pago (D1). Los caminos offline
+#: NO la leen: usan los valores inertes de `ENTORNO_OFFLINE` para construir `Settings`.
+_ENV_BACKEND_PATH = _REPO_ROOT / "App" / "Backend" / ".env"
+
+
+class CredencialPagaAusenteError(RuntimeError):
+    """El camino pago no encontro la credencial del proveedor en el entorno ni en el archivo."""
+
+
+def resolver_credencial_paga(ruta_env: pathlib.Path = _ENV_BACKEND_PATH) -> str:
+    """
+    Resuelve la credencial real del proveedor para el camino pago (D1).
+
+    Prioridad: una credencial ya presente en `os.environ` que NO sea el valor inerte
+    de `ENTORNO_OFFLINE`; en su defecto, la del archivo `App/Backend/.env` (leida con
+    `python-dotenv`), que se inyecta en `os.environ` SOBRESCRIBIENDO cualquier valor
+    inerte previo (por ejemplo, el que dejo `preparar_entorno_offline`). Sin ninguna
+    de las dos fuentes, falla con un error claro.
+
+    Raises:
+        CredencialPagaAusenteError: no hay credencial en el entorno ni en el archivo.
+    """
+    import os
+
+    from dotenv import dotenv_values
+
+    valor_inerte = ENTORNO_OFFLINE["GEMINI_API_KEY"]
+    del_entorno = os.environ.get("GEMINI_API_KEY")
+    if del_entorno and del_entorno != valor_inerte:
+        return del_entorno
+    ruta_env = pathlib.Path(ruta_env)
+    del_archivo = dotenv_values(ruta_env).get("GEMINI_API_KEY") if ruta_env.exists() else None
+    if del_archivo:
+        os.environ["GEMINI_API_KEY"] = del_archivo
+        return del_archivo
+    raise CredencialPagaAusenteError(
+        "corrida paga sin credencial del proveedor: define GEMINI_API_KEY en el entorno "
+        f"o en {ruta_env}; el camino pago no puede construir el clasificador con un valor inerte"
+    )
+
+
+def _preparar_credencial_paga() -> str:
+    """Inyecta la credencial real y limpia la cache de `Settings` antes de construir el clasificador."""
+    credencial = resolver_credencial_paga(_ENV_BACKEND_PATH)
+    asegurar_backend_en_path()
+    from app.config.settings import get_settings  # type: ignore
+
+    get_settings.cache_clear()
+    return credencial
+
 
 def resolver_caches(repo_root: pathlib.Path) -> Tuple[Optional[pathlib.Path], Optional[pathlib.Path]]:
     """
@@ -1362,6 +1412,11 @@ def _cli_prompt(args: argparse.Namespace) -> int:
             f"{CONFIRM_PAID_ENV_VAR}=1.",
             file=sys.stderr,
         )
+        return 2
+    try:
+        _preparar_credencial_paga()
+    except CredencialPagaAusenteError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
         return 2
     corpus_path = args.corpus_prompt or args.corpus
     corpus = cargar_corpus(corpus_path)

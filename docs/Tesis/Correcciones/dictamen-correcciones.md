@@ -977,6 +977,16 @@ sesion del 2026-10-28); alternativamente, exportar `GEMINI_API_KEY` (valor real)
 `GEMINI_PROMPT_PATH` (prompt del brazo) en el entorno antes de la corrida evita el defecto
 sin tocar codigo, pero no fue la via autorizada de forma explicita.
 
+**Actualizacion 2026-10-28 (cierre): EJECUTADA.** Corregidos los dos defectos del arnes por el
+change c-154 (import perezoso del paquete de clasificadores, que evita congelar el prompt, y
+resolucion de la credencial real del camino pago desde `App/Backend/.env`), los dos brazos
+corrieron con la API real. Nivel c computado: prompt vigente `50/69` frente a sin reglas de
+frontera `46/69`; reservas (fallback, contadas como error) `0` en ambos brazos; McNemar pareado
+entre brazos `p` binomial exacto bilateral `0,3438` (no significativo); deriva del brazo control
+frente a la corrida oficial `50/69` frente a `50/69` (temperatura `0,3`). Fuente:
+`evaluation/report_sensibilidad_ajustes.md:98-104`. La entrada "BLOQUEADA" previa se conserva
+como historia.
+
 **(b) Conjunto de ~100 incidentes de preproduccion del Anexo H.**
 **Estado: RESUELTO por c-144 (hecho verificado). Fecha de resolucion: 2026-10-23
 (c-144); registrado aqui 2026-10-25.** El conjunto **no existe**: `rg -l "incidentes de
@@ -1433,9 +1443,9 @@ sobre `V1` reproduce `b = 16`, `c = 8`, `p = 0,1516` (`docs/deterministic_calibr
 | Referencia historica `V0 + L0` | 72 casos, 37 aciertos, `0,5139` `[0,4007; 0,6257]` | **Fiel**: las 11 metricas coinciden |
 | **E3** (FORCE-ESCALATE) | `V1` 146/200, `V0` 128/200, 0 excluidos; `b = 18`, `c = 0`, `p < 0,001` | **Con E3** (columna "Global" en la tabla) |
 | **E4** | `V1`: 96/130 frente a 88/130, `p = 0,1516` (reproduce c-131); `V0`: reglas 38/73 (0,5205) frente a Gemini 48/73 (0,6575), `b = 3`, `c = 13`, `p` exacto 0,0213 | con `V0` la etapa de reglas **no supera** a Gemini (resultado incomodo pre-anticipado en el design; se reporta igual) |
-| Prompt, nivel a | los 3 motivadores (R002, R038, R015) estan entre los 69 escalados; Gemini 50/69 con todos y 48/66 sin ellos | **Nivel a** (el mayor disponible) |
+| Prompt, nivel a | los 3 motivadores (R002, R038, R015) estan entre los 69 escalados; Gemini 50/69 con todos y 48/66 sin ellos | **Nivel a** (el mayor disponible) *(actualizado 2026-10-28: con el nivel c ya computado, el mayor disponible es **c**; ver la entrada G0.7a)* |
 | Prompt, nivel b | FORCE-ESCALATE "posterior"; comparacion pareada "no aplica" | |
-| Prompt, nivel c | no computado (sin autorizacion) | |
+| Prompt, nivel c | no computado (sin autorizacion) *(actualizado 2026-10-28: ejecutada la ablacion paga tras corregir el arnes con c-154; prompt vigente 50/69 frente a sin reglas 46/69, McNemar p = 0,3438, no significativo; ver la entrada G0.7a)* | |
 | Variante por pliegues | no factible | |
 
 Coinciden con lo pre-registrado en cuanto a ramas: la expectativa del design (rama A, cota de unos 20 puntos, y E4 con `V0`
@@ -1661,7 +1671,7 @@ Rama cortada de `ramagonzalo` `d241c0b`. Relevado:
 - **c-142**: `subsec:sensibilidad-ajustes` existe en `07-resultados.tex` (entre `subsec:calibracion` y `subsec:analisis-errores`). **E4** (memo 3.10):
   con el vocabulario previo (`V0`) la etapa de reglas acierta `38/73 = 0,5205` frente a Gemini `48/73 = 0,6575` (`b = 3`, `c = 13`, p exacto
   `0,0213`): las reglas **no superan** a Gemini. Prompt: nivel a (R002, R038, R015 entre los 69 escalados; Gemini `50/69` con ellos y `48/66`
-  sin ellos); la FORCE-ESCALATE es **posterior** a las reglas de frontera (nivel b). Limitacion nueva: item "Septimo"; `subsec:limitaciones-estudio` dice "siete".
+  sin ellos; actualizado 2026-10-28: el nivel c se computo con c-154, prompt vigente `50/69` frente a sin reglas `46/69`, `p = 0,3438`; ver la entrada G0.7a); la FORCE-ESCALATE es **posterior** a las reglas de frontera (nivel b). Limitacion nueva: item "Septimo"; `subsec:limitaciones-estudio` dice "siete".
 - **c-132**: `subsec:balance-neto` (`08-discusion.tex`) y `tab:balance-neto` (Tabla 17; `tab:cumplimiento-objetivos` pasa a ser la 18). Clausulas a conservar literales
   (copia previa a editar):
   - `09:6`: "...resulto tecnicamente viable, eficiente en el registro y economicamente accesible para organizaciones medianas, con viabilidad operativa condicionada al balance neto (\autoref{subsec:balance-neto})".
@@ -3034,7 +3044,7 @@ El autor ratifico (2026-10-27) las decisiones que estaban registradas como PROVI
 
 No se registra autorizacion para las dos decisiones siguientes, que quedan **PENDIENTES**:
 
-- **G0.7a / OQ7a** (ablacion paga del prompt, 138 invocaciones): **PENDIENTE de resolucion del autor u orquestador**. No autorizada; el nivel c del prompt permanece "no computado". **(Actualizacion 2026-10-28: el autor AUTORIZO la corrida paga, pero la ejecucion quedo BLOQUEADA por defectos del arnes (clave ficticia inyectada por `preparar_entorno_offline` y prompt vigente congelado por el import anticipado del paquete). El nivel c sigue NO COMPUTADO. Ver la entrada G0.7a con fecha 2026-10-28. El estado PENDIENTE previo se conserva como historia.)**
+- **G0.7a / OQ7a** (ablacion paga del prompt, 138 invocaciones): **PENDIENTE de resolucion del autor u orquestador**. No autorizada; el nivel c del prompt permanece "no computado". **(Actualizacion 2026-10-28: el autor AUTORIZO la corrida paga, pero la ejecucion quedo BLOQUEADA por defectos del arnes (clave ficticia inyectada por `preparar_entorno_offline` y prompt vigente congelado por el import anticipado del paquete). El nivel c sigue NO COMPUTADO. Ver la entrada G0.7a con fecha 2026-10-28. El estado PENDIENTE previo se conserva como historia.)** **(Actualizacion 2026-10-28 (cierre): EJECUTADA tras corregir el arnes con c-154; nivel c = prompt vigente 50/69 frente a sin reglas 46/69, McNemar p = 0,3438 (no significativo); fuente `evaluation/report_sensibilidad_ajustes.md:98-104`.)**
 - **OQ6** (`usuario_final` valida la clasificacion de su propio incidente, dominio CRITICAL): **PENDIENTE de resolucion**. No autorizada; sin cambios.
 
 ### Aprobacion HIGH de C-60 (W4) - PENDIENTE (no concedida)
@@ -3049,6 +3059,6 @@ El autor resolvio las tres decisiones que c-150 habia dejado explicitamente PEND
 
 - **OQ6** (`usuario_final` valida la clasificacion de su propio incidente, dominio CRITICAL): **CERRADA - FUERA DE ALCANCE**. El autor confirma que la validacion, por `usuario_final`, de su propio incidente queda **fuera del alcance** del sistema. No se agrega guard de rol ni cambio de codigo. La entrada provisional (`:1087`) permanece como historia.
 - **OQ5** (`cache_meta` de la calibracion; version del prompt de la FORCE-ESCALATE): **CERRADA - NO RECUPERABLE**. Se archiva como **no recuperable**: el archivo/version original del run no existe (`docs/prompt_gemini_history/` nunca existio). No se persigue el dato; la procedencia queda documentada como no reconstruible. La entrada provisional (`:1086`, `:1089`) permanece como historia.
-- **G0.7a / OQ7a** (ablacion paga del prompt, 138 invocaciones, ~0.03-0.10 USD): **DIFERIDA A LA PROXIMA SESION**. Sigue sin autorizar; se retoma y decide en la proxima sesion. **(Actualizacion 2026-10-28: AUTORIZADA por el autor ese dia, pero la ejecucion quedo BLOQUEADA por defectos del arnes; el nivel c del prompt sigue NO COMPUTADO. Ver la entrada G0.7a con fecha 2026-10-28.)**
+- **G0.7a / OQ7a** (ablacion paga del prompt, 138 invocaciones, ~0.03-0.10 USD): **DIFERIDA A LA PROXIMA SESION**. Sigue sin autorizar; se retoma y decide en la proxima sesion. **(Actualizacion 2026-10-28: AUTORIZADA por el autor ese dia, pero la ejecucion quedo BLOQUEADA por defectos del arnes; el nivel c del prompt sigue NO COMPUTADO. Ver la entrada G0.7a con fecha 2026-10-28.)** **(Actualizacion 2026-10-28 (cierre): EJECUTADA tras corregir el arnes con c-154; nivel c = prompt vigente 50/69 frente a sin reglas 46/69, McNemar p = 0,3438 (no significativo); fuente `evaluation/report_sensibilidad_ajustes.md:98-104`.)**
 
-Estado resultante del item 8: **sin decisiones abiertas, salvo OQ7a, diferida a la proxima sesion.** **(Actualizacion 2026-10-28: OQ7a esta autorizada pero su corrida paga quedo bloqueada; el nivel c sigue no computado y la resolucion efectiva queda pendiente de corregir el arnes.)**
+Estado resultante del item 8: **sin decisiones abiertas, salvo OQ7a, diferida a la proxima sesion.** **(Actualizacion 2026-10-28: OQ7a esta autorizada pero su corrida paga quedo bloqueada; el nivel c sigue no computado y la resolucion efectiva queda pendiente de corregir el arnes.)** **(Actualizacion 2026-10-28 (cierre): el arnes se corrigio con c-154 y la corrida paga se ejecuto; OQ7a queda CERRADA. Nivel c = prompt vigente 50/69 frente a sin reglas 46/69, McNemar p = 0,3438 (no significativo); fuente `evaluation/report_sensibilidad_ajustes.md:98-104`.)**
