@@ -200,11 +200,11 @@ B Repositorio de código fuente . . . . . . . . . . . . . . . . . . . . . . . . 
 C Esquema de base de datos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 100
 D Especificación OpenAPI de la interfaz REST . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 100
 E Configuración del flujo N8N . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 101
-F Corpus de validación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 101
+F Corpus de validación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 102
 G Documentación operativa . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 103
 H Especificación del prompt de Gemini 3.6 Flash . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 103
 H.1 Estructura y contenido del prompt . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 103
-H.2 Parámetros de configuración . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 103
+H.2 Parámetros de configuración . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 104
 H.3 Validación de la respuesta . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 104
 H.4 Iteración y mejora del prompt. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 105
 H.5 Recomendaciones para futuras iteraciones . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 105
@@ -4144,6 +4144,8 @@ los flujos de integración continua sobre GitHub Actions se encuentran disponibl
 co del proyecto (Gómez et al. 2026), accesible en https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N
 El commit de referencia para la versión entregada al jurado se identifica con el tag anotado v1.2.5,
 creado sobre el commit definitivo del repositorio.
+El hash completo de ese commit es e5508850b5b48368c9cc446de2d616a5198c3f20, que
+constituye la referencia verificable de la versión corregida.
 La estructura del repositorio separa el módulo de procesamiento (App/Backend/, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (App/Frontend/, React
 con TypeScript), la definición del flujo de orquestación (n8n/workflow.json), los artefactos de evaluación (evaluation/), el corpus pseudonimizado (data/), los scripts auxiliares (scripts/) y la
 documentación (docs/), junto con las especificaciones de los changes (openspec/) y los archivos de
@@ -4167,13 +4169,13 @@ su fuente Mermaid versionada reside en docs/diagrams/er_modelo_datos.md.
 D. Especificación OpenAPI de la interfaz REST
 La especificación completa de la interfaz REST se genera automáticamente mediante FastAPI conforme a la versión 3.1 de la especificación OpenAPI (Ramírez, 2024). El documento resultante
 describe los puntos de entrada listados en la Tabla 6 de la Sección 5, los esquemas de los cuerpos de
-solicitud y respuesta validados mediante Pydantic v2, los códigos de estado posibles para cada método
-HTTP, y ejemplos representativos para cada caso de uso.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 101
 
+solicitud y respuesta validados mediante Pydantic v2, los códigos de estado posibles para cada método
+HTTP, y ejemplos representativos para cada caso de uso.
 La interfaz se encuentra disponible adicionalmente en formato interactivo a través del componente Swagger UI integrado en el servidor, accesible bajo la ruta /docs durante la ejecución, y en
 formato estático como archivo openapi.json en el directorio docs/ del repositorio. La sincronización
 entre el código y la especificación estática se verifica automáticamente en el pipeline de integración
@@ -4202,18 +4204,18 @@ autenticación del operador y la solicitud POST del incidente; ruteo por canal 
 con la notificación al operador designado y las respuestas de handoff; respuesta y auditoría del ticket;
 y aviso post-revisión. La parametrización completa de cada nodo reside en n8n/workflow.json.
 
-F. Corpus de validación
-El corpus de 200 incidentes utilizado para la validación experimental reside en el repositorio en
-
-formato JSON, en su forma pseudonimizada y versionada, bajo la ruta data/corpus_evaluacion_pseudonimizado
-Cada caso incluye el identificador anónimo, la descripción cruda pseudonimizada, el canal de origen,
-
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 102
 
 Figura 11. Reconstrucción esquemática del flujo de orquestación N8N: no es una captura de la
 interfaz; los 29 nodos operativos se agrupan por etapa funcional.
+
+F. Corpus de validación
+El corpus de 200 incidentes utilizado para la validación experimental reside en el repositorio en
+
+formato JSON, en su forma pseudonimizada y versionada, bajo la ruta data/corpus_evaluacion_pseudonimizado
+Cada caso incluye el identificador anónimo, la descripción cruda pseudonimizada, el canal de origen,
 el sector asignado por consenso humano, los sectores adicionales de verdad y el tiempo de registro
 medido en cada flujo. La categoría predicha por el clasificador y la confianza asociada no forman parte
 del corpus: se conservan en evaluation/predicciones.json, generado por el framework de evaluación. Se incluyen además las planillas de cronometraje del flujo manual y los registros automáticos
@@ -4224,12 +4226,13 @@ por ejemplo R001), descripcion (texto pseudonimizado, con los identificadores pe
 en segundos) y tiempo_automatizado_s (tiempo del sistema automatizado, en segundos). El corpus completo reside en data/corpus_evaluacion_pseudonimizado.json y las predicciones del
 clasificador en evaluation/predicciones.json.
 Por razones de privacidad y en cumplimiento de la Ley 25.326 (Honorable Congreso de la Nación Argentina, 2000), las descripciones textuales han sido pseudonimizadas previamente a su inclusión
-en el repositorio público, reemplazando nombres propios, direcciones de correo y otros identificadores
-personales por etiquetas genéricas.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 103
+
+en el repositorio público, reemplazando nombres propios, direcciones de correo y otros identificadores
+personales por etiquetas genéricas.
 
 G. Documentación operativa
 La documentación operativa del sistema, que reúne los procedimientos de despliegue, configuración, respaldo y restauración, monitoreo y respuesta ante incidentes operativos, se versiona en el
@@ -4259,15 +4262,13 @@ los dispositivos físicos y su digitalización (escáner, impresora, periférico
 (servidor, red, SMTP, VM) a Sistemas. Estas reglas corrigen casos de frontera medidos
 sobre el corpus.
 
-H.2. Parámetros de configuración
-La invocación del modelo se realiza mediante el SDK google-genai (>=2.20.0), con los
-hiperparámetros que resume la Tabla 19, que corresponden a la configuración adoptada para el des-
-
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 104
 
-pliegue y no al resultado de una calibración documentada frente a valores alternativos (Subsección 5.4).
+H.2. Parámetros de configuración
+La invocación del modelo se realiza mediante el SDK google-genai (>=2.20.0), con los
+hiperparámetros que resume la Tabla 19, que corresponden a la configuración adoptada para el despliegue y no al resultado de una calibración documentada frente a valores alternativos (Subsección 5.4).
 Tabla 19. Parámetros de configuración de la inferencia con gemini-3.6-flash.
 Parámetro
 
@@ -4345,22 +4346,18 @@ El Listado 1 resume la rutina de validación.
 2
 3
 4
-5
-6
-7
-8
 
 def validar_respuesta_gemini(response_text: str) -> tuple[bool, dict]:
 try:
 data = json.loads(response_text)
 except json.JSONDecodeError as e:
-return False, {"error": f"JSON invalido: {e}"}
-if "categoria" not in data:
-return False, {"error": "Falta campo 'categoria'"}
-if data["categoria"] not in SECTORES_CANONICOS:
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
+5
+6
+7
+8
 9
 10
 11
@@ -4371,6 +4368,10 @@ if data["categoria"] not in SECTORES_CANONICOS:
 
 105
 
+return False, {"error": f"JSON invalido: {e}"}
+if "categoria" not in data:
+return False, {"error": "Falta campo 'categoria'"}
+if data["categoria"] not in SECTORES_CANONICOS:
 return False, {"error": f"Categoria invalida: {data['categoria']}"}
 if "confianza" not in data:
 return False, {"error": "Falta campo 'confianza'"}
@@ -4398,14 +4399,14 @@ El documento compila, de forma acumulativa, cada corrección aplicada al manuscr
 adoptadas sobre las observaciones que no admitían una resolución inmediata (por ejemplo, la convención estadística del estadístico W, la reformulación de la hipótesis principal y el tratamiento de los
 reintentos como limitación conocida). Se incluye aquí como ejemplo de trazabilidad: cada entrada del
 registro vincula una observación del dictamen con el archivo y la línea corregidos, de modo que la correspondencia entre la revisión solicitada y la revisión efectuada resulte auditable de extremo a extremo.
-El dictamen que motiva las correcciones vigentes es el emitido el 22 de octubre de 2026 sobre
-la versión de trabajo v10, publicada como v1.1.0 y aplicable por igual a v1.1.1. Sus cinco observaciones de fondo (A1 a A5) y sus correcciones de consistencia (B4 a B16) se atendieron mediante
-changes del repositorio; la Tabla 20 indica, para cada una, el change responsable y las secciones de
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 106
 
+El dictamen que motiva las correcciones vigentes es el emitido el 22 de octubre de 2026 sobre
+la versión de trabajo v10, publicada como v1.1.0 y aplicable por igual a v1.1.1. Sus cinco observaciones de fondo (A1 a A5) y sus correcciones de consistencia (B4 a B16) se atendieron mediante
+changes del repositorio; la Tabla 20 indica, para cada una, el change responsable y las secciones de
 la tesis donde se la atendió. Cuando una recomendación se dividió en partes, figuran los changes que
 las atendieron.
 Tabla 20. Recomendaciones del dictamen del 22 de octubre de 2026, change responsable y

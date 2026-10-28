@@ -102,11 +102,11 @@
 \contentsline {section}{\numberline {C}Esquema de base de datos}{100}{section.1.C}%
 \contentsline {section}{\numberline {D}Especificación OpenAPI de la interfaz REST}{100}{section.1.D}%
 \contentsline {section}{\numberline {E}Configuración del flujo N8N}{101}{section.1.E}%
-\contentsline {section}{\numberline {F}Corpus de validación}{101}{section.1.F}%
+\contentsline {section}{\numberline {F}Corpus de validación}{102}{section.1.F}%
 \contentsline {section}{\numberline {G}Documentación operativa}{103}{section.1.G}%
 \contentsline {section}{\numberline {H}Especificación del prompt de Gemini 3.6 Flash}{103}{section.1.H}%
 \contentsline {subsection}{\numberline {H.1}Estructura y contenido del prompt}{103}{subsection.1.H.1}%
-\contentsline {subsection}{\numberline {H.2}Parámetros de configuración}{103}{subsection.1.H.2}%
+\contentsline {subsection}{\numberline {H.2}Parámetros de configuración}{104}{subsection.1.H.2}%
 \contentsline {subsection}{\numberline {H.3}Validación de la respuesta}{104}{subsection.1.H.3}%
 \contentsline {subsection}{\numberline {H.4}Iteración y mejora del prompt}{105}{subsection.1.H.4}%
 \contentsline {subsection}{\numberline {H.5}Recomendaciones para futuras iteraciones}{105}{subsection.1.H.5}%
