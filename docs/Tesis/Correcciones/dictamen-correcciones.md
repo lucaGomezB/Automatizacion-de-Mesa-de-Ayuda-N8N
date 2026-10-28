@@ -943,6 +943,40 @@ invocacion paga. Una autorizacion posterior se registra AQUI con fecha y, en ese
 ejecuta el nivel c antes de su cierre. Sin esa autorizacion, ninguna tarea de la familia
 debe invocar a Gemini (control de la tarea 2.8).
 
+**AUTORIZADA. Fecha: 2026-10-28.** El autor autorizo explicitamente la corrida paga de la
+ablacion del prompt: 138 invocaciones (2 brazos x 69 casos) con la API real de Gemini, del
+orden de 0,03 USD y como maximo 0,10 USD. La autorizacion se ejecuta en la misma sesion,
+back-to-back (brazo `vigente` y brazo `sin-reglas`), para limitar la deriva del proveedor.
+Los dos brazos escriben `evaluation/predicciones_sensibilidad_prompt_vigente.json` y
+`evaluation/predicciones_sensibilidad_prompt_sin_reglas.json` (ignorados por git) y el cierre
+del reporte se hace sin costo (`--brazo-vigente` / `--brazo-sin-reglas`). La entrada
+"NO AUTORIZADA por ahora" de 2026-10-25 se conserva sin reescribir.
+
+**Ejecucion 2026-10-28: BLOQUEADA (sin resultado valido).** Se intentaron las dos corridas
+con el procedimiento documentado (desde `App/Backend`). Ninguna produjo datos utilizables:
+
+1. Brazo `vigente`: el proceso completo; las 69 invocaciones fallan con
+   `google.genai.errors.ClientError` 400 `API_KEY_INVALID` y caen a fallback
+   (`fallbacks: 69/69`). Causa raiz: `evaluation/sensibilidad_ajustes.py`
+   (`clasificador_con_vocabulario` -> `preparar_entorno_offline`) hace
+   `os.environ.setdefault("GEMINI_API_KEY", "offline-dummy-key-sin-llamadas")`; la clave real
+   vive solo en `App/Backend/.env` y no en `os.environ`, y pydantic-settings da prioridad a
+   `os.environ` sobre `.env`, de modo que todas las llamadas usan la clave ficticia. La clave
+   real SI es valida: una llamada directa al mismo modelo (`gemini-3.6-flash`) responde OK.
+2. Brazo `sin-reglas`: aborta antes de invocar, con `PromptInesperadoError` (SHA-256 cargado
+   `e2ad...` = prompt vigente, esperado `864a...` = previo a c-72). Causa raiz: `app/classifiers/__init__.py:3`
+   importa `gemini_classifier` de forma anticipada; la preseleccion deterministica (`_casos_escalados_reales`)
+   importa `app.classifiers.deterministic`, dispara el `__init__.py` del paquete y congela el
+   prompt por defecto (vigente) ANTES de que `_prompt_cargado_por_el_backend` fije
+   `GEMINI_PROMPT_PATH`.
+
+**Consecuencia**: el **nivel c permanece NO COMPUTADO**. La ablacion paga no se ejecuto de
+forma valida y no hay numeros que propagar. El nivel del prompt para la tesis sigue siendo
+**a**. Antes de reintentar hay que corregir los dos defectos del arnes (ver el analisis en la
+sesion del 2026-10-28); alternativamente, exportar `GEMINI_API_KEY` (valor real) y
+`GEMINI_PROMPT_PATH` (prompt del brazo) en el entorno antes de la corrida evita el defecto
+sin tocar codigo, pero no fue la via autorizada de forma explicita.
+
 **(b) Conjunto de ~100 incidentes de preproduccion del Anexo H.**
 **Estado: RESUELTO por c-144 (hecho verificado). Fecha de resolucion: 2026-10-23
 (c-144); registrado aqui 2026-10-25.** El conjunto **no existe**: `rg -l "incidentes de
@@ -3000,7 +3034,7 @@ El autor ratifico (2026-10-27) las decisiones que estaban registradas como PROVI
 
 No se registra autorizacion para las dos decisiones siguientes, que quedan **PENDIENTES**:
 
-- **G0.7a / OQ7a** (ablacion paga del prompt, 138 invocaciones): **PENDIENTE de resolucion del autor u orquestador**. No autorizada; el nivel c del prompt permanece "no computado".
+- **G0.7a / OQ7a** (ablacion paga del prompt, 138 invocaciones): **PENDIENTE de resolucion del autor u orquestador**. No autorizada; el nivel c del prompt permanece "no computado". **(Actualizacion 2026-10-28: el autor AUTORIZO la corrida paga, pero la ejecucion quedo BLOQUEADA por defectos del arnes (clave ficticia inyectada por `preparar_entorno_offline` y prompt vigente congelado por el import anticipado del paquete). El nivel c sigue NO COMPUTADO. Ver la entrada G0.7a con fecha 2026-10-28. El estado PENDIENTE previo se conserva como historia.)**
 - **OQ6** (`usuario_final` valida la clasificacion de su propio incidente, dominio CRITICAL): **PENDIENTE de resolucion**. No autorizada; sin cambios.
 
 ### Aprobacion HIGH de C-60 (W4) - PENDIENTE (no concedida)
@@ -3015,6 +3049,6 @@ El autor resolvio las tres decisiones que c-150 habia dejado explicitamente PEND
 
 - **OQ6** (`usuario_final` valida la clasificacion de su propio incidente, dominio CRITICAL): **CERRADA - FUERA DE ALCANCE**. El autor confirma que la validacion, por `usuario_final`, de su propio incidente queda **fuera del alcance** del sistema. No se agrega guard de rol ni cambio de codigo. La entrada provisional (`:1087`) permanece como historia.
 - **OQ5** (`cache_meta` de la calibracion; version del prompt de la FORCE-ESCALATE): **CERRADA - NO RECUPERABLE**. Se archiva como **no recuperable**: el archivo/version original del run no existe (`docs/prompt_gemini_history/` nunca existio). No se persigue el dato; la procedencia queda documentada como no reconstruible. La entrada provisional (`:1086`, `:1089`) permanece como historia.
-- **G0.7a / OQ7a** (ablacion paga del prompt, 138 invocaciones, ~0.03-0.10 USD): **DIFERIDA A LA PROXIMA SESION**. Sigue sin autorizar; se retoma y decide en la proxima sesion.
+- **G0.7a / OQ7a** (ablacion paga del prompt, 138 invocaciones, ~0.03-0.10 USD): **DIFERIDA A LA PROXIMA SESION**. Sigue sin autorizar; se retoma y decide en la proxima sesion. **(Actualizacion 2026-10-28: AUTORIZADA por el autor ese dia, pero la ejecucion quedo BLOQUEADA por defectos del arnes; el nivel c del prompt sigue NO COMPUTADO. Ver la entrada G0.7a con fecha 2026-10-28.)**
 
-Estado resultante del item 8: **sin decisiones abiertas, salvo OQ7a, diferida a la proxima sesion.**
+Estado resultante del item 8: **sin decisiones abiertas, salvo OQ7a, diferida a la proxima sesion.** **(Actualizacion 2026-10-28: OQ7a esta autorizada pero su corrida paga quedo bloqueada; el nivel c sigue no computado y la resolucion efectiva queda pendiente de corregir el arnes.)**
