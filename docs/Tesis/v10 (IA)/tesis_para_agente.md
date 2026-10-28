@@ -1,6 +1,6 @@
-# Tesis UTN-FRM 2026 - Tesis para agentes (v10 / v1.2.4)
+# Tesis UTN-FRM 2026 - Tesis para agentes (v10 / v1.2.5)
 
-> Documento generado a partir de las fuentes LaTeX de `docs/Tesis/v10 (IA)/paper/sections/` (version de trabajo v10, release `v1.2.4`). Render Markdown de referencia para agentes. Los valores numericos son verbatim de las fuentes.
+> Documento generado a partir de las fuentes LaTeX de `docs/Tesis/v10 (IA)/paper/sections/` (version de trabajo v10, release `v1.2.5`). Render Markdown de referencia para agentes. Los valores numericos son verbatim de las fuentes.
 
 ---
 
@@ -1068,6 +1068,10 @@ El sistema incorpora un dashboard de analítica basado en ReCharts que permite v
 
 Más allá del monitoreo operativo, los datos acumulados de incidentes constituyen una fuente de inteligencia organizacional: su registro sistemático habilita flujos ETL (*Extract, Transform, Load*) que permiten identificar patrones recurrentes de fallas, detectar áreas con mayor demanda de soporte y generar indicadores trimestrales que orienten decisiones estratégicas de inversión.
 
+### Integración con sistemas externos de inventario de activos y gestión de configuración
+
+La clasificación automática operada por el sistema se sostiene en el contenido textual del incidente y en el catálogo de sectores, sin consultar fuentes externas de verdad operativa. Una extensión de alcance consistente con la base de conocimientos (§`subsec:base-conocimientos`) consiste en integrar el flujo con un sistema de inventario de activos o con una base de datos de gestión de configuración (*CMDB*), de modo que la derivación pueda contrastarse con la titularidad registrada de los equipos, las aplicaciones y los servicios afectados. Esa integración permitiría verificar la coherencia entre el sector sugerido y la responsabilidad formal del activo, enriquecer la derivación con el historial de cambios de configuración y acotar los casos que un operador debe determinar manualmente. Su adopción exige acuerdos de interoperabilidad con los sistemas corporativos y una definición previa del modelo de activos, por lo que se plantea como trabajo futuro y no modifica la validez de lo medido.
+
 ### Mecanismos de aprendizaje activo
 
 Se propone incorporar mecanismos de aprendizaje activo (*active learning*; §`subsec:human-in-the-loop`) que seleccionen los casos para revisión y reentrenamiento mediante las señales independientes del puntaje de la §`subsec:calibracion-gate`: ambigüedad léxica, margen entre categorías, desacuerdo entre etapas y muestreo de casos de alta confianza. La confianza declarada solo se usaría como criterio de prioridad una vez recalibrada y validada según esa subsección, porque en el rango observado de Gemini no discrimina aciertos de errores y la etapa determinística no emite una confianza utilizable. Las revisiones que alimenten el ajuste incremental serían las registradas según la §`subsec:medicion-intervencion`, de modo que cada intervención mejore al clasificador con un costo operativo controlado.
@@ -1090,6 +1094,10 @@ El sistema se concentra en la clasificación y derivación de incidentes hacia l
 
 Su construcción puede articularse con el aprendizaje activo (§`subsec:aprendizaje-activo`): cada caso resuelto por un operador y validado como correcto sería candidato a incorporarse, previa curación editorial. La viabilidad técnica se apoya en la capacidad de los modelos de lenguaje para generar respuestas estructuradas a partir de documentación técnica, línea que conecta con la evaluación de modelos de código abierto (§`subsec:evaluacion-modelos-abiertos`).
 
+### Automatización de la etapa de resolución técnica
+
+La presente investigación abarca la recepción, la clasificación y el registro inicial de incidentes, y deja la resolución técnica bajo responsabilidad del personal humano (§`subsec:alcance-delimitaciones`). Una línea de trabajo posterior consiste en extender la automatización a esa etapa, articulando la base de conocimientos (§`subsec:base-conocimientos`) con los procedimientos operativos de cada sector para proponer pasos de resolución verificados y, eventualmente, ejecutar acciones de bajo riesgo sobre los sistemas afectados. Su factibilidad y su alcance dependen de la disponibilidad de procedimientos estandarizados, de la integración con las herramientas de gestión del inventario de activos (§`subsec:integracion-inventario`) y del nivel de supervisión humana que la organización considere admisible; la resolución de los casos complejos permanecería bajo juicio experto. Se propone como línea de trabajo futuro que trasciende el alcance de esta investigación.
+
 ### Agente conversacional telefónico en tiempo real
 
 Se propone, como evolución de mayor alcance del canal telefónico, reemplazar la captura de toma única —una grabación de hasta 45 segundos que se transcribe de forma diferida— por un agente que dialogue en tiempo real. Sobre Twilio Media Streams, que habilita el envío bidireccional del audio mediante WebSocket, podría formular preguntas de aclaración, comunicar el número de incidente asignado y cerrar la llamada, lo que elevaría la calidad de la captura en línea con el tercer objetivo específico.
@@ -1111,15 +1119,13 @@ Los diagramas se generan a partir de fuentes Mermaid versionadas en formato `.md
 
 ## Repositorio de código fuente
 
-El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto [Gomez2026_repositorio], accesible en https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado `v1.2.4`, creado sobre el commit definitivo del repositorio.
-
-El hash completo de ese commit es ` 8e2a597e62b60fa41338f7a59459730b6f363b8d`, que constituye la referencia verificable de la versión corregida.
+El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto [Gomez2026_repositorio], accesible en https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado `v1.2.5`, creado sobre el commit definitivo del repositorio.
 
 La estructura del repositorio separa el módulo de procesamiento (`App/Backend/`, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (`App/Frontend/`, React con TypeScript), la definición del flujo de orquestación (`n8n/workflow.json`), los artefactos de evaluación (`evaluation/`), el corpus pseudonimizado (`data/`), los scripts auxiliares (`scripts/`) y la documentación (`docs/`), junto con las especificaciones de los changes (`openspec/`) y los archivos de orquestación local `docker-compose.yml` y `Makefile`. El archivo `README.md` describe esta organización y reúne las instrucciones detalladas para el despliegue local en menos de 15 minutos, por lo que constituye el punto de entrada al código fuente disponible en el repositorio público [Gomez2026_repositorio].
 
 ## Esquema de base de datos
 
-El esquema completo de la base de datos PostgreSQL se documenta mediante scripts SQL versionados que definen las siete entidades descritas en la Tabla `tab:entidades` de la §`sec:arquitectura`, las restricciones de integridad referencial (claves foráneas con eliminación en cascada condicional), los índices secundarios sobre los atributos de búsqueda frecuente (fecha de creación, sector responsable y estado actual del ticket), y la generación de los identificadores de incidente. Las migraciones incrementales se gestionan mediante Alembic, lo que permite reproducir el estado de la base en cualquier punto histórico del desarrollo y revertir cambios cuando resulte necesario.
+El esquema completo de la base de datos PostgreSQL se documenta mediante scripts SQL versionados que definen las siete entidades descritas en la Tabla `tab:entidades` de la §`sec:arquitectura`, las restricciones de integridad referencial (claves foráneas con eliminación en cascada condicional), los índices secundarios sobre los atributos de búsqueda frecuente (fecha de creación, sector responsable y estado actual del ticket), y la generación de los identificadores de incidente. La capa de acceso a datos del módulo utiliza SQLAlchemy 2.0 como mapeador objeto-relacional y `asyncpg` como driver asincrónico para PostgreSQL, en coherencia con la Sección 5.4 y con el código del repositorio. Las migraciones incrementales se gestionan mediante Alembic, lo que permite reproducir el estado de la base en cualquier punto histórico del desarrollo y revertir cambios cuando resulte necesario.
 
 La migración inicial incluye la creación de las tablas de catálogo (`sector`, `estado`, `canal_origen`) con sus valores semilla, garantizando que un despliegue nuevo del sistema comience con los datos de referencia correctos. Las migraciones subsiguientes documentan la evolución del esquema durante las etapas de desarrollo descritas en la §`sec:marco-metodologico`.
 

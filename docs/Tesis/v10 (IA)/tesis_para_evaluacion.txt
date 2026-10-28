@@ -185,28 +185,30 @@ Cumplimiento normativo y alineación con estándares . . . . . . . . . . . . . .
 11.4 Cola de respaldo y alta asincrónica . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 90
 11.5 Ampliación de canales de entrada . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 90
 11.6 Panel de monitoreo en tiempo real . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 90
-11.7 Mecanismos de aprendizaje activo . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 91
-11.8 Validación sobre un corpus independiente . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 91
-11.9 Estudios de replicación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 91
-11.10Evaluación de modelos de lenguaje de código abierto . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 92
-11.11 Base de conocimientos para resolución automática . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 92
-11.12Agente conversacional telefónico en tiempo real . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 92
-Referencias bibliográficas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 94
-Anexos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 98
-A Diagrama de arquitectura del sistema. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 98
-B Repositorio de código fuente . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 98
-C Esquema de base de datos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 99
-D Especificación OpenAPI de la interfaz REST . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 99
-E Configuración del flujo N8N . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 100
-F Corpus de validación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 100
-G Documentación operativa . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 102
-H Especificación del prompt de Gemini 3.6 Flash . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 102
-H.1 Estructura y contenido del prompt . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 102
-H.2 Parámetros de configuración . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 102
-H.3 Validación de la respuesta . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 103
-H.4 Iteración y mejora del prompt. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 104
-H.5 Recomendaciones para futuras iteraciones . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 104
-I Trazabilidad de las correcciones del dictamen . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 104
+11.7 Integración con sistemas externos de inventario de activos y gestión de configuración . . . 91
+11.8 Mecanismos de aprendizaje activo . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 91
+11.9 Validación sobre un corpus independiente . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 91
+11.10Estudios de replicación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 92
+11.11 Evaluación de modelos de lenguaje de código abierto . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 92
+11.12Base de conocimientos para resolución automática . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 92
+11.13Automatización de la etapa de resolución técnica . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 93
+11.14Agente conversacional telefónico en tiempo real . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 93
+Referencias bibliográficas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 95
+Anexos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 99
+A Diagrama de arquitectura del sistema. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 99
+B Repositorio de código fuente . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 99
+C Esquema de base de datos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 100
+D Especificación OpenAPI de la interfaz REST . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 100
+E Configuración del flujo N8N . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 101
+F Corpus de validación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 101
+G Documentación operativa . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 103
+H Especificación del prompt de Gemini 3.6 Flash . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 103
+H.1 Estructura y contenido del prompt . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 103
+H.2 Parámetros de configuración . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 103
+H.3 Validación de la respuesta . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 104
+H.4 Iteración y mejora del prompt. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 105
+H.5 Recomendaciones para futuras iteraciones . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 105
+I Trazabilidad de las correcciones del dictamen . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 105
 
 6
 
@@ -251,8 +253,8 @@ Confusiones observadas en la clasificación automática, por frontera . . . . . 
 Exactitud mínima de equilibrio y balance neto trimestral según la tasa de derivación
 errónea manual y el costo por derivación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 83
 Cumplimiento de los objetivos del trabajo y evidencia de respaldo . . . . . . . . . . . . . . . . . . . . . . . . . . 85
-Parámetros de configuración de la inferencia con gemini-3.6-flash. . . . . . . . . . . . . . . . . . . . 103
-Recomendaciones del dictamen del 22 de octubre de 2026, change responsable y secciones donde se atendieron. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 105
+Parámetros de configuración de la inferencia con gemini-3.6-flash. . . . . . . . . . . . . . . . . . . . 104
+Recomendaciones del dictamen del 22 de octubre de 2026, change responsable y secciones donde se atendieron. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 106
 
 Índice de figuras
 1
@@ -285,8 +287,8 @@ El panel de telefonía incorpora la duración de la llamada grabada. . . . . . .
 Matriz de confusión del clasificador (n = 200). Filas: sector asignado (verdad); columnas:
 sector predicho principal. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 69
 Cronograma de la construcción, las campañas y la versión del modelo (barras con precisión de mes; hitos, de día). Fuente: historial del repositorio y confirmación de los autores
-(9-10-2026). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 98
-Reconstrucción esquemática del flujo de orquestación N8N . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 101
+(9-10-2026). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 99
+Reconstrucción esquemática del flujo de orquestación N8N . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 102
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
@@ -3575,7 +3577,7 @@ la económica (costo monetario marginal), mientras que la operativa es condicion
 
 exactitud efectiva supere a∗ , por mejora del clasificador o porque la revisión humana del sector
 responsable reduzca la tasa o el costo de las derivaciones erróneas. Medir ambos es una línea
-futura (Subsección 11.9).
+futura (Subsección 11.10).
 9.6. Reflexiones sobre la generalización
 La generalización de los resultados a otras organizaciones requiere atender al menos tres condiciones. En primer lugar, la disponibilidad de un corpus etiquetado de tamaño
 y calidad similares al utilizado en este trabajo, lo cual implica una inversión inicial en doble
@@ -3759,7 +3761,7 @@ de discriminación; y (iii) derivar el umbral de una curva cobertura-precisión
 de la muestra, como el punto de operación de la etapa determinística, cuya ventaja frente a
 Gemini depende del vocabulario (Subsección 8.5), con un piso declarado antes de observarla
 (la exactitud de la revisión humana o el 85 % del segundo objetivo), y confirmarlo en un corpus
-independiente (Subsección 11.8). La misma campaña permitiría contrastar los parámetros de
+independiente (Subsección 11.9). La misma campaña permitiría contrastar los parámetros de
 inferencia, sin optimización documentada (Subsección 5.4).
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
@@ -3821,70 +3823,93 @@ fuente de inteligencia organizacional: su registro sistemático habilita flujos 
 form, Load) que permiten identificar patrones recurrentes de fallas, detectar áreas con mayor
 demanda de soporte y generar indicadores trimestrales que orienten decisiones estratégicas
 de inversión.
-11.7. Mecanismos de aprendizaje activo
+11.7. Integración con sistemas externos de inventario de activos y gestión de configuración
+La clasificación automática operada por el sistema se sostiene en el contenido textual
+del incidente y en el catálogo de sectores, sin consultar fuentes externas de verdad operativa.
+Una extensión de alcance consistente con la base de conocimientos (Subsección 11.12) consiste en integrar el flujo con un sistema de inventario de activos o con una base de datos de
+gestión de configuración (CMDB), de modo que la derivación pueda contrastarse con la titularidad registrada de los equipos, las aplicaciones y los servicios afectados. Esa integración
+permitiría verificar la coherencia entre el sector sugerido y la responsabilidad formal del activo,
+enriquecer la derivación con el historial de cambios de configuración y acotar los casos que un
+operador debe determinar manualmente. Su adopción exige acuerdos de interoperabilidad con
+los sistemas corporativos y una definición previa del modelo de activos, por lo que se plantea
+como trabajo futuro y no modifica la validez de lo medido.
+11.8. Mecanismos de aprendizaje activo
 Se propone incorporar mecanismos de aprendizaje activo (active learning; Subsección 2.4) que seleccionen los casos para revisión y reentrenamiento mediante las señales
 independientes del puntaje de la Subsección 11.1: ambigüedad léxica, margen entre categorías, desacuerdo entre etapas y muestreo de casos de alta confianza. La confianza declarada
 solo se usaría como criterio de prioridad una vez recalibrada y validada según esa subsección,
 porque en el rango observado de Gemini no discrimina aciertos de errores y la etapa determinística no emite una confianza utilizable. Las revisiones que alimenten el ajuste incremental
 serían las registradas según la Subsección 11.3, de modo que cada intervención mejore al
 clasificador con un costo operativo controlado.
-11.8. Validación sobre un corpus independiente
+11.9. Validación sobre un corpus independiente
 El clasificador evaluado se ajustó, en parte, con el mismo corpus sobre el que se reportan las métricas de clasificación (vocabulario del filtro determinístico y reglas de frontera del
 prompt), de modo que esas métricas son estimaciones dentro de la muestra. La confirmación
-del desempeño fuera de la muestra exige construir un corpus independiente, etiquetado con
-el mismo protocolo y sin solapamiento con el corpus de evaluación, y reportar sobre él las
-métricas de la etapa determinística y de la etapa semántica. Esa validación no se realizó en
-este trabajo porque no se dispuso de un corpus de preproducción con esas características.
-11.9. Estudios de replicación
-Se sugiere realizar estudios de replicación en organizaciones de distinto tamaño, sector y región geográfica, para fortalecer la validez externa de los hallazgos y reunir evidencia
-empírica sobre soluciones similares en contextos heterogéneos. Serían relevantes las réplicas en organizaciones del sector público (con más incidentes de sistemas administrativos),
-del sector industrial (con más incidentes de infraestructura física) y de mayor tamaño, donde
-el volumen diario supere las 100 unidades. Toda replicación debería medir además la exactitud del flujo manual sobre el mismo corpus, registrando por caso la derivación del operador,
-con etiquetadores distintos de los operadores del brazo manual (Subsección 9.3), y cronome-
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 92
 
-trar las reasignaciones (Subsección 9.5). Convendría, asimismo, una asignación muestral no
+del desempeño fuera de la muestra exige construir un corpus independiente, etiquetado con
+el mismo protocolo y sin solapamiento con el corpus de evaluación, y reportar sobre él las
+métricas de la etapa determinística y de la etapa semántica. Esa validación no se realizó en
+este trabajo porque no se dispuso de un corpus de preproducción con esas características.
+11.10. Estudios de replicación
+Se sugiere realizar estudios de replicación en organizaciones de distinto tamaño, sector y región geográfica, para fortalecer la validez externa de los hallazgos y reunir evidencia
+empírica sobre soluciones similares en contextos heterogéneos. Serían relevantes las réplicas en organizaciones del sector público (con más incidentes de sistemas administrativos),
+del sector industrial (con más incidentes de infraestructura física) y de mayor tamaño, donde
+el volumen diario supere las 100 unidades. Toda replicación debería medir además la exactitud del flujo manual sobre el mismo corpus, registrando por caso la derivación del operador,
+con etiquetadores distintos de los operadores del brazo manual (Subsección 9.3), y cronometrar las reasignaciones (Subsección 9.5). Convendría, asimismo, una asignación muestral no
 proporcional que sobremuestree las clases minoritarias —como Bases de Datos, con un solo
 caso— y pondere las estimaciones globales por la distribución del universo (Subsección 4.4).
-11.10. Evaluación de modelos de lenguaje de código abierto
+11.11. Evaluación de modelos de lenguaje de código abierto
 Se propone evaluar la integración de modelos de lenguaje de código abierto desplegados localmente —tales como Llama 3, Mistral o Qwen— como alternativa al modelo externo
 Gemini 3.6 Flash. Esta evaluación permitiría cuantificar el costo en exactitud frente a la ganancia en soberanía de datos, la eliminación de la dependencia de un proveedor único y la
 reducción de costos operativos a largo plazo. La realización de un benchmark comparativo sobre el mismo corpus de 200 casos constituiría una contribución adicional significativa al estado
 del arte.
-11.11. Base de conocimientos para resolución automática
+11.12. Base de conocimientos para resolución automática
 El sistema se concentra en la clasificación y derivación de incidentes hacia los sectores responsables, pero no aborda la resolución de los casos que admiten soluciones estandarizadas y repetibles. Se recomienda incorporar una base de conocimientos, un repositorio
 estructurado de soluciones verificadas que, tras la clasificación inicial, permita proponer los
 pasos de resolución cuando el incidente coincida con un patrón documentado y validado. Ese
-autoservicio absorbería los casos simples y repetitivos —reinicios de sesión, restablecimiento
-de contraseñas o configuraciones básicas de correo electrónico— y reduciría la carga de los
-sectores de soporte.
-Su construcción puede articularse con el aprendizaje activo (Subsección 11.7): cada
-caso resuelto por un operador y validado como correcto sería candidato a incorporarse, previa
-curación editorial. La viabilidad técnica se apoya en la capacidad de los modelos de lenguaje
-para generar respuestas estructuradas a partir de documentación técnica, línea que conecta
-con la evaluación de modelos de código abierto (Subsección 11.10).
-11.12. Agente conversacional telefónico en tiempo real
-Se propone, como evolución de mayor alcance del canal telefónico, reemplazar la captura de toma única —una grabación de hasta 45 segundos que se transcribe de forma diferida—
-por un agente que dialogue en tiempo real. Sobre Twilio Media Streams, que habilita el envío
-bidireccional del audio mediante WebSocket, podría formular preguntas de aclaración, comuni-
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 93
 
-car el número de incidente asignado y cerrar la llamada, lo que elevaría la calidad de la captura
+autoservicio absorbería los casos simples y repetitivos —reinicios de sesión, restablecimiento
+de contraseñas o configuraciones básicas de correo electrónico— y reduciría la carga de los
+sectores de soporte.
+Su construcción puede articularse con el aprendizaje activo (Subsección 11.8): cada
+caso resuelto por un operador y validado como correcto sería candidato a incorporarse, previa
+curación editorial. La viabilidad técnica se apoya en la capacidad de los modelos de lenguaje
+para generar respuestas estructuradas a partir de documentación técnica, línea que conecta
+con la evaluación de modelos de código abierto (Subsección 11.11).
+11.13. Automatización de la etapa de resolución técnica
+La presente investigación abarca la recepción, la clasificación y el registro inicial de
+incidentes, y deja la resolución técnica bajo responsabilidad del personal humano (Subsección 1.8). Una línea de trabajo posterior consiste en extender la automatización a esa etapa,
+articulando la base de conocimientos (Subsección 11.12) con los procedimientos operativos
+de cada sector para proponer pasos de resolución verificados y, eventualmente, ejecutar acciones de bajo riesgo sobre los sistemas afectados. Su factibilidad y su alcance dependen
+de la disponibilidad de procedimientos estandarizados, de la integración con las herramientas
+de gestión del inventario de activos (Subsección 11.7) y del nivel de supervisión humana que
+la organización considere admisible; la resolución de los casos complejos permanecería bajo juicio experto. Se propone como línea de trabajo futuro que trasciende el alcance de esta
+investigación.
+11.14. Agente conversacional telefónico en tiempo real
+Se propone, como evolución de mayor alcance del canal telefónico, reemplazar la captura de toma única —una grabación de hasta 45 segundos que se transcribe de forma diferida—
+por un agente que dialogue en tiempo real. Sobre Twilio Media Streams, que habilita el envío
+bidireccional del audio mediante WebSocket, podría formular preguntas de aclaración, comunicar el número de incidente asignado y cerrar la llamada, lo que elevaría la calidad de la captura
 en línea con el tercer objetivo específico.
 Su adopción estuvo condicionada por la madurez de las interfaces de audio bidireccional, entonces en vista previa (preview) y sujetas a cambios, y exige infraestructura no contemplada: un punto de entrada WebSocket con upgrade en el proxy inverso, la transcodificación
-del audio (mu-law, 8 kHz) al formato del modelo (PCM, 16 kHz), la gestión de turnos de habla y un modelo de costo por minuto de transmisión, no por grabación. Se recomienda una
+del audio (mu-law, 8 kHz) al formato del modelo (PCM, 16 kHz), la gestión de turnos de ha-
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+94
+
+bla y un modelo de costo por minuto de transmisión, no por grabación. Se recomienda una
 prueba de concepto acotada que conserve la grabación y transcripción actuales como modo
 degradado de respaldo.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-94
+95
 
 Referencias bibliográficas
 Ahuja, K., Diddee, H., Hada, R., Ochieng, M., Ramesh, K., Jain, P., Nambi, A., Ganu, T., Segal, S., Ahmed, M.,
@@ -3948,7 +3973,7 @@ Solutions. Addison-Wesley.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-95
+96
 
 Honorable Congreso de la Nación Argentina. (2000, octubre). Ley 25.326 de Protección de los Datos Personales
 [Boletín Oficial de la República Argentina]. Recuperado el 25 de octubre de 2026, de http : / / servicios .
@@ -4008,7 +4033,7 @@ Rabiner, L., & Juang, B.-H. (1993). Fundamentals of Speech Recognition. Prentice
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-96
+97
 
 Radford, A., Kim, J. W., Xu, T., Brockman, G., McLeavey, C., & Sutskever, I. (2023). Robust Speech Recognition via
 Large-Scale Weak Supervision. Proceedings of the 40th International Conference on Machine Learning
@@ -4069,7 +4094,7 @@ current research with applications to multi-level classification scenarios. Expe
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-97
+98
 
 Zanzotto, F. M. (2019). Viewpoint: Human-in-the-loop Artificial Intelligence. Journal of Artificial Intelligence Research, 64, 243-252. https://doi.org/10.1613/jair.1.11345
 Zendesk. (2026). Zendesk Suite — Software de mesa de ayuda [Documentación de la plataforma (capacidades y
@@ -4082,7 +4107,7 @@ Zhao, Z., Wallace, E., Feng, S., Klein, D., & Singh, S. (2021). Calibrate Before
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-98
+99
 
 A. Diagrama de arquitectura del sistema
 El Anexo A referencia los diagramas de la arquitectura propuesta en notación UML. Los diagramas de despliegue y de secuencia se incluyen como figuras de la Sección 5, de modo que no se
@@ -4112,15 +4137,13 @@ gestionados mediante Alembic, los archivos de configuración del despliegue en c
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-99
+100
 
 los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio públi-
 
 co del proyecto (Gómez et al. 2026), accesible en https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N
-El commit de referencia para la versión entregada al jurado se identifica con el tag anotado v1.2.4,
+El commit de referencia para la versión entregada al jurado se identifica con el tag anotado v1.2.5,
 creado sobre el commit definitivo del repositorio.
-El hash completo de ese commit es 8e2a597e62b60fa41338f7a59459730b6f363b8d, que
-constituye la referencia verificable de la versión corregida.
 La estructura del repositorio separa el módulo de procesamiento (App/Backend/, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (App/Frontend/, React
 con TypeScript), la definición del flujo de orquestación (n8n/workflow.json), los artefactos de evaluación (evaluation/), el corpus pseudonimizado (data/), los scripts auxiliares (scripts/) y la
 documentación (docs/), junto con las especificaciones de los changes (openspec/) y los archivos de
@@ -4131,8 +4154,9 @@ C. Esquema de base de datos
 El esquema completo de la base de datos PostgreSQL se documenta mediante scripts SQL
 versionados que definen las siete entidades descritas en la Tabla 5 de la Sección 5, las restricciones de
 integridad referencial (claves foráneas con eliminación en cascada condicional), los índices secundarios sobre los atributos de búsqueda frecuente (fecha de creación, sector responsable y estado actual
-del ticket), y la generación de los identificadores de incidente. Las migraciones incrementales se gestionan mediante Alembic, lo que permite reproducir el estado de la base en cualquier punto histórico del
-desarrollo y revertir cambios cuando resulte necesario.
+del ticket), y la generación de los identificadores de incidente. La capa de acceso a datos del módulo utiliza SQLAlchemy 2.0 como mapeador objeto-relacional y asyncpg como driver asincrónico para
+PostgreSQL, en coherencia con la Sección 5.4 y con el código del repositorio. Las migraciones incrementales se gestionan mediante Alembic, lo que permite reproducir el estado de la base en cualquier
+punto histórico del desarrollo y revertir cambios cuando resulte necesario.
 La migración inicial incluye la creación de las tablas de catálogo (sector, estado, canal_origen)
 con sus valores semilla, garantizando que un despliegue nuevo del sistema comience con los datos de
 referencia correctos. Las migraciones subsiguientes documentan la evolución del esquema durante las
@@ -4148,7 +4172,7 @@ HTTP, y ejemplos representativos para cada caso de uso.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-100
+101
 
 La interfaz se encuentra disponible adicionalmente en formato interactivo a través del componente Swagger UI integrado en el servidor, accesible bajo la ruta /docs durante la ejecución, y en
 formato estático como archivo openapi.json en el directorio docs/ del repositorio. La sincronización
@@ -4186,7 +4210,7 @@ Cada caso incluye el identificador anónimo, la descripción cruda pseudonimizad
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-101
+102
 
 Figura 11. Reconstrucción esquemática del flujo de orquestación N8N: no es una captura de la
 interfaz; los 29 nodos operativos se agrupan por etapa funcional.
@@ -4205,7 +4229,7 @@ personales por etiquetas genéricas.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-102
+103
 
 G. Documentación operativa
 La documentación operativa del sistema, que reúne los procedimientos de despliegue, configuración, respaldo y restauración, monitoreo y respuesta ante incidentes operativos, se versiona en el
@@ -4241,7 +4265,7 @@ hiperparámetros que resume la Tabla 19, que corresponden a la configuración ad
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-103
+104
 
 pliegue y no al resultado de una calibración documentada frente a valores alternativos (Subsección 5.4).
 Tabla 19. Parámetros de configuración de la inferencia con gemini-3.6-flash.
@@ -4345,7 +4369,7 @@ if data["categoria"] not in SECTORES_CANONICOS:
 14
 15
 
-104
+105
 
 return False, {"error": f"Categoria invalida: {data['categoria']}"}
 if "confianza" not in data:
@@ -4380,7 +4404,7 @@ changes del repositorio; la Tabla 20 indica, para cada una, el change responsab
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-105
+106
 
 la tesis donde se la atendió. Cuando una recomendación se dividió en partes, figuran los changes que
 las atendieron.
@@ -4431,7 +4455,7 @@ Tabla 10; Tabla 12
 Subsección 4.6, Tabla 12
 Subsección 4.9, Subsección 6.6, Figura 10, Subsección 9.3
 Sección 8, Tabla 2, Tabla 1
-Sección 11, Subsección 11.1, Subsección 11.3, Subsección 11.7
+Sección 11, Subsección 11.1, Subsección 11.3, Subsección 11.8
 Subsección 4.7, Subsección 4.4
 Subsección 10.1; Subsección 4.2, Subsección 7.5
 Todo el documento (revisión ortotipográfica)
