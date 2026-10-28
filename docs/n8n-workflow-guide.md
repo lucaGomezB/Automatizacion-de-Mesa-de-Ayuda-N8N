@@ -762,7 +762,7 @@ entorno y queda fuera del scope de C-05. Se documenta como punto pendiente para 
 
 ---
 
-### Resultados de verificación 7.1–7.6 (2026-06-11, C-05)
+### Resultados de verificación históricos 7.1–7.6 (2026-06-11, C-05)
 
 > Entorno: `mesa_local` Docker Compose — N8N 2.25.7, FastAPI backend, PostgreSQL 15.5-alpine,
 > Redis 7.2-alpine. Todos los contenedores healthy. GEMINI_API_KEY operativa (verificada en esta sesión).

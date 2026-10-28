@@ -8,7 +8,7 @@
 2. `IncidenteService` persiste el incidente (estado "nuevo") y dispara la clasificación híbrida.
 3. `HybridClassifier`: etapa deterministica -> si hay senal dominante y score_correctitud >= 0,5166 decide; si no -> pseudonimizar (C-03, implementado en `utils/pseudonymizer.py`) -> Gemini -> validacion de respuesta (RN-VA) -> si todo falla, fallback.
 4. Se escribe `clasificacion_log` (etapa, confianza, respuesta_raw); se asigna `sector_id` al incidente.
-5. *(Pendiente C-02)* `notify_n8n()` fire-and-forget.
+5. `notify_n8n()` fire-and-forget (implementado y archivado en C-02; en su etapa inicial figuraba como pendiente).
 6. Respuesta 201 con ticket + sector + confianza → frontend muestra SuccessCard.
 
 ```
@@ -23,7 +23,7 @@ Usuario → React → POST /incidentes → Service → Classifier ─┬─ dete
 
 **Errores**: Gemini timeout → fallback, ticket se crea igual (RN-EX-02) · validación Pydantic falla → 422 · DB caída → 500 con CORS garantizado (RN-EX-03).
 
-## Flujo 2: Incidente por correo (pendiente C-04/C-05)
+## Flujo 2: Incidente por correo (implementado; en su etapa inicial pendiente de C-04/C-05, hoy archivados; canal rediseñado en C-55)
 
 **Disparador**: correo nuevo en casilla institucional. **Actor**: usuario interno.
 
@@ -33,7 +33,7 @@ Usuario → React → POST /incidentes → Service → Classifier ─┬─ dete
 4. IF datos incompletos → respuesta automática solicitando lo faltante.
 5. Notificación al usuario con número de ticket + log de auditoría (30 días).
 
-## Flujo 3: Incidente telefónico (pendiente C-05)
+## Flujo 3: Incidente telefónico (implementado en C-52/C-53; en su etapa inicial pendiente de C-05, hoy archivado)
 
 **Disparador**: llamada al número virtual Twilio. **Actor**: usuario interno.
 

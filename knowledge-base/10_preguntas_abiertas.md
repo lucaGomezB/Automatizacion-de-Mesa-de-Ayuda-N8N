@@ -38,11 +38,11 @@
 
 | Prioridad | Pregunta | Bloquea | Decisor |
 |---|---|---|---|
-| Alta | ¿Donde esta el CSV del corpus de 200 casos? → Resuelto: se construye simulado en C-17 | C-17 (nuevo) | Equipo tecnico |
+| Alta | ¿Donde esta el CSV del corpus de 200 casos? → Resuelto y archivado en C-17 (2026-07-02) | C-17 (archivado) | Equipo tecnico |
 | Alta | ¿Se agrega `POST /api/v1/clasificar` (IN-01)? → Resuelto: NO. Clasificacion embebida en POST /incidentes | — | Decidido (2026-07-02) |
-| Alta | ¿Credenciales reales de Outlook y Twilio disponibles para pruebas? | C-05 | Organizacion |
+| Alta | ¿Credenciales reales de Outlook y Twilio disponibles para pruebas? → Resuelto: C-05 archivado; el transporte de correo se redefinió en C-55 (IMAP/App Password) y las credenciales se gestionan fuera del alcance del change | C-05 (archivado) | Organizacion |
 | Alta | ¿Auth JWT Bearer token se implementa? → Si, en C-15 (jwt-auth-backend-frontend) | C-15 (nuevo) | Equipo + director |
-| Media | ¿La instancia N8N de pruebas corre en el mismo compose? URL del webhook | C-02 | Equipo tecnico |
+| Media | ¿La instancia N8N de pruebas corre en el mismo compose? URL del webhook → Resuelto: C-02 archivado (2026-06-10) | C-02 (archivado) | Equipo tecnico |
 | Baja | ¿K8s 1.30 es alcance real o aspiracional (SU-05)? | C-10 | Equipo + director |
 
 ## [DISCOVERY] Campos inferidos con confianza — sin pendientes
