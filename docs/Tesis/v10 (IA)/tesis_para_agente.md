@@ -1,6 +1,6 @@
-# Tesis UTN-FRM 2026 - Tesis para agentes (v10 / v1.2.2)
+# Tesis UTN-FRM 2026 - Tesis para agentes (v10 / v1.2.3)
 
-> Documento generado a partir de las fuentes LaTeX de `docs/Tesis/v10 (IA)/paper/sections/` (version de trabajo v10, release `v1.2.2`). Render Markdown de referencia para agentes. Los valores numericos son verbatim de las fuentes.
+> Documento generado a partir de las fuentes LaTeX de `docs/Tesis/v10 (IA)/paper/sections/` (version de trabajo v10, release `v1.2.3`). Render Markdown de referencia para agentes. Los valores numericos son verbatim de las fuentes.
 
 ---
 
@@ -885,7 +885,7 @@ Las métricas de este capítulo son estimaciones dentro de la muestra (§`subsec
 
 *Fuente:* elaboración propia a partir del corpus de validación (\(n = 200\)) y de `evaluation/report_sensibilidad_ajustes.md`. Casos y exactitud de la etapa determinística. ^aAciertos con las predicciones de la etapa Gemini fijas (caché de calibración); la exactitud global oficial es 147/200.
 
-Sin la ampliación, la exactitud de la etapa determinística baja de 0,7405 a 0,5270 sobre 74 casos: la diferencia, de 21,3 puntos, es una cota pesimista del sesgo atribuible al vocabulario, porque el vocabulario previo carece también del conocimiento del dominio que una ampliación hecha con datos independientes habría aportado. Con las predicciones de la etapa Gemini fijas, la exactitud global pasa de 146 a 128 aciertos sobre 200 casos (McNemar exacto, \(p < 0,001\)). El efecto de las reglas de frontera del prompt, limitado a los 69 casos de la etapa Gemini, no se cuantificó; sin los casos que las motivaron, esa etapa acertó 48 de 66. Ningún valor canónico cambia: el análisis estima la sensibilidad de las métricas y no sustituye la medición del sistema evaluado.
+Sin la ampliación, la exactitud de la etapa determinística baja de 0,7405 a 0,5270 sobre 74 casos: la diferencia, de 21,3 puntos, es una cota pesimista del sesgo atribuible al vocabulario, porque el vocabulario previo carece también del conocimiento del dominio que una ampliación hecha con datos independientes habría aportado. Con las predicciones de la etapa Gemini fijas, la exactitud global pasa de 146 a 128 aciertos sobre 200 casos (McNemar exacto, \(p < 0,001\)). El efecto de las reglas de frontera del prompt, limitado a los 69 casos de la etapa Gemini, se acotó con una ablación controlada de dos brazos sobre los mismos casos y en una misma sesión: con el prompt vigente esa etapa acertó 50 de 69 y sin las reglas de frontera 46 de 69 (reservas contadas como error: 0 en ambos brazos), una diferencia que no alcanza significación (McNemar exacto entre brazos, \(p = 0,3438\)); sin los casos que las motivaron, la etapa con el prompt vigente acertó 48 de 66 (nivel a; `evaluation/report_sensibilidad_ajustes.md`, línea 98). Ningún valor canónico cambia: el análisis estima la sensibilidad de las métricas y no sustituye la medición del sistema evaluado.
 
 ### Análisis de errores y casos límite
 
@@ -959,7 +959,7 @@ Quinto, la comparación se realizó exclusivamente contra el flujo manual (proce
 
 Sexto, los analistas que etiquetaron la referencia operaron también el brazo manual (§`subsec:poblacion-muestra-corpus`), lo que acota la independencia del *ground truth* y, junto con la falta de registro por caso de la derivación manual, impide medir sin sesgo la exactitud de ese brazo (§`subsec:balance-neto`).
 
-Séptimo, el vocabulario del filtro determinístico y las reglas de frontera del prompt se ajustaron con errores observados en el mismo corpus de evaluación, de modo que las métricas de clasificación son estimaciones dentro de la muestra. Sin ese vocabulario, la exactitud de la etapa determinística baja de 0,7405 a 0,5270, cota pesimista del sesgo atribuible a él, y el efecto de las reglas del prompt no se cuantificó (§`subsec:sensibilidad-ajustes`). Solo un corpus independiente permitiría estimar el desempeño fuera de la muestra.
+Séptimo, el vocabulario del filtro determinístico y las reglas de frontera del prompt se ajustaron con errores observados en el mismo corpus de evaluación, de modo que las métricas de clasificación son estimaciones dentro de la muestra. Sin ese vocabulario, la exactitud de la etapa determinística baja de 0,7405 a 0,5270, cota pesimista del sesgo atribuible a él, y el efecto de las reglas del prompt, acotado por una ablación controlada de dos brazos, es de 50 frente a 46 aciertos sobre los 69 casos de la etapa Gemini (diferencia no significativa; McNemar exacto \(p = 0,3438\); `evaluation/report_sensibilidad_ajustes.md`, línea 98) (§`subsec:sensibilidad-ajustes`). Solo un corpus independiente permitiría estimar el desempeño fuera de la muestra.
 
 Octavo, no se conservó un registro primario de la acción manual de los operadores por caso, de modo que la proporción de intervención humana no se midió y la segunda sub-hipótesis queda no contrastada (§`subsec:reduccion-intervencion`).
 

@@ -29,7 +29,7 @@ Directores
 Prof. Alberto Cortez y Prof. Ariel Enferrel
 
 Mendoza, República Argentina
-27 de octubre de 2026
+28 de octubre de 2026
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
@@ -167,46 +167,46 @@ Cumplimiento normativo y alineación con estándares . . . . . . . . . . . . . .
 8.3 Intervención humana en el flujo automatizado . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 70
 8.4 Calibración de la confianza . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 71
 8.5 Sensibilidad al ajuste del clasificador con el corpus . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 72
-8.6 Análisis de errores y casos límite . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 72
-9 Discusión . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 74
-9.1 Interpretación de los resultados . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 74
-9.2 Comparación con la literatura . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 77
-9.3 Limitaciones del estudio . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 78
-9.4 Implicancias prácticas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 80
-9.5 Balance neto de la automatización . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 81
-9.6 Reflexiones sobre la generalización . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 83
-10 Conclusiones . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 84
-10.1 Cumplimiento de los objetivos del trabajo . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 84
-10.2 Aportes y generalización . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 86
-11 Recomendaciones y líneas de trabajo futuro . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 87
-11.1 Calibración del gate de confianza . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 87
-11.2 Incorporación de un clasificador supervisado con corpus propio . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 88
-11.3 Corrección de la medición de intervención humana . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 88
-11.4 Cola de respaldo y alta asincrónica . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 89
-11.5 Ampliación de canales de entrada . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 89
-11.6 Panel de monitoreo en tiempo real . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 89
-11.7 Mecanismos de aprendizaje activo . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 90
-11.8 Validación sobre un corpus independiente . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 90
-11.9 Estudios de replicación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 90
-11.10Evaluación de modelos de lenguaje de código abierto . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 91
-11.11 Base de conocimientos para resolución automática . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 91
-11.12Agente conversacional telefónico en tiempo real . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 91
-Referencias bibliográficas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 93
-Anexos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 97
-A Diagrama de arquitectura del sistema. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 97
-B Repositorio de código fuente . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 97
-C Esquema de base de datos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 98
-D Especificación OpenAPI de la interfaz REST . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 98
-E Configuración del flujo N8N . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 99
-F Corpus de validación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 99
-G Documentación operativa . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 101
-H Especificación del prompt de Gemini 3.6 Flash . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 101
-H.1 Estructura y contenido del prompt . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 101
-H.2 Parámetros de configuración . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 101
-H.3 Validación de la respuesta . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 102
-H.4 Iteración y mejora del prompt. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 103
-H.5 Recomendaciones para futuras iteraciones . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 103
-I Trazabilidad de las correcciones del dictamen . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 103
+8.6 Análisis de errores y casos límite . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 73
+9 Discusión . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 75
+9.1 Interpretación de los resultados . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 75
+9.2 Comparación con la literatura . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 78
+9.3 Limitaciones del estudio . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 79
+9.4 Implicancias prácticas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 81
+9.5 Balance neto de la automatización . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 82
+9.6 Reflexiones sobre la generalización . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 84
+10 Conclusiones . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 85
+10.1 Cumplimiento de los objetivos del trabajo . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 85
+10.2 Aportes y generalización . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 87
+11 Recomendaciones y líneas de trabajo futuro . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 88
+11.1 Calibración del gate de confianza . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 88
+11.2 Incorporación de un clasificador supervisado con corpus propio . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 89
+11.3 Corrección de la medición de intervención humana . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 89
+11.4 Cola de respaldo y alta asincrónica . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 90
+11.5 Ampliación de canales de entrada . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 90
+11.6 Panel de monitoreo en tiempo real . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 90
+11.7 Mecanismos de aprendizaje activo . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 91
+11.8 Validación sobre un corpus independiente . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 91
+11.9 Estudios de replicación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 91
+11.10Evaluación de modelos de lenguaje de código abierto . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 92
+11.11 Base de conocimientos para resolución automática . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 92
+11.12Agente conversacional telefónico en tiempo real . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 92
+Referencias bibliográficas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 94
+Anexos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 98
+A Diagrama de arquitectura del sistema. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 98
+B Repositorio de código fuente . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 98
+C Esquema de base de datos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 99
+D Especificación OpenAPI de la interfaz REST . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 99
+E Configuración del flujo N8N . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 100
+F Corpus de validación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 100
+G Documentación operativa . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 102
+H Especificación del prompt de Gemini 3.6 Flash . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 102
+H.1 Estructura y contenido del prompt . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 102
+H.2 Parámetros de configuración . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 102
+H.3 Validación de la respuesta . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 103
+H.4 Iteración y mejora del prompt. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 104
+H.5 Recomendaciones para futuras iteraciones . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 104
+I Trazabilidad de las correcciones del dictamen . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 104
 
 6
 
@@ -249,10 +249,10 @@ Exactitud por banda de confianza declarada y por etapa del pipeline . . . . . . 
 Sensibilidad de la exactitud al vocabulario ajustado con el corpus . . . . . . . . . . . . . . . . . . . . . . . . . . . 72
 Confusiones observadas en la clasificación automática, por frontera . . . . . . . . . . . . . . . . . . . . . . . . 73
 Exactitud mínima de equilibrio y balance neto trimestral según la tasa de derivación
-errónea manual y el costo por derivación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 82
-Cumplimiento de los objetivos del trabajo y evidencia de respaldo . . . . . . . . . . . . . . . . . . . . . . . . . . 84
-Parámetros de configuración de la inferencia con gemini-3.6-flash. . . . . . . . . . . . . . . . . . . . 102
-Recomendaciones del dictamen del 22 de octubre de 2026, change responsable y secciones donde se atendieron. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 104
+errónea manual y el costo por derivación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 83
+Cumplimiento de los objetivos del trabajo y evidencia de respaldo . . . . . . . . . . . . . . . . . . . . . . . . . . 85
+Parámetros de configuración de la inferencia con gemini-3.6-flash. . . . . . . . . . . . . . . . . . . . 103
+Recomendaciones del dictamen del 22 de octubre de 2026, change responsable y secciones donde se atendieron. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 105
 
 Índice de figuras
 1
@@ -285,8 +285,8 @@ El panel de telefonía incorpora la duración de la llamada grabada. . . . . . .
 Matriz de confusión del clasificador (n = 200). Filas: sector asignado (verdad); columnas:
 sector predicho principal. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 69
 Cronograma de la construcción, las campañas y la versión del modelo (barras con precisión de mes; hitos, de día). Fuente: historial del repositorio y confirmación de los autores
-(9-10-2026). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 97
-Reconstrucción esquemática del flujo de orquestación N8N . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 100
+(9-10-2026). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 98
+Reconstrucción esquemática del flujo de orquestación N8N . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 101
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
@@ -3122,21 +3122,26 @@ Fuente: elaboración propia a partir del corpus de validación (n = 200) y de
 evaluation/report_sensibilidad_ajustes.md. Casos y exactitud de la etapa determinística. a Aciertos
 con las predicciones de la etapa Gemini fijas (caché de calibración); la exactitud global oficial es 147/200.
 
-Sin la ampliación, la exactitud de la etapa determinística baja de 0,7405 a 0,5270 sobre 74 casos: la diferencia, de 21,3 puntos, es una cota pesimista del sesgo atribuible al vocabulario, porque el vocabulario previo carece también del conocimiento del dominio que una
-ampliación hecha con datos independientes habría aportado. Con las predicciones de la etapa Gemini fijas, la exactitud global pasa de 146 a 128 aciertos sobre 200 casos (McNemar
-exacto, p < 0,001). El efecto de las reglas de frontera del prompt, limitado a los 69 casos de
-la etapa Gemini, no se cuantificó; sin los casos que las motivaron, esa etapa acertó 48 de 66.
-Ningún valor canónico cambia: el análisis estima la sensibilidad de las métricas y no sustituye
-la medición del sistema evaluado.
-8.6. Análisis de errores y casos límite
-El análisis cualitativo de los 53 casos mal clasificados permitió identificar patrones de
-error recurrentes, agrupados por frontera de confusión y sintetizados en la Tabla 16.
-El patrón dominante, presente en 14 casos (26,4 % de los errores), corresponde a la
+Sin la ampliación, la exactitud de la etapa determinística baja de 0,7405 a 0,5270
+sobre 74 casos: la diferencia, de 21,3 puntos, es una cota pesimista del sesgo atribuible
+al vocabulario, porque el vocabulario previo carece también del conocimiento del dominio
+que una ampliación hecha con datos independientes habría aportado. Con las predicciones
+de la etapa Gemini fijas, la exactitud global pasa de 146 a 128 aciertos sobre 200 casos
+(McNemar exacto, p < 0,001). El efecto de las reglas de frontera del prompt, limitado a los
+69 casos de la etapa Gemini, se acotó con una ablación controlada de dos brazos sobre
+los mismos casos y en una misma sesión: con el prompt vigente esa etapa acertó 50 de
+69 y sin las reglas de frontera 46 de 69 (reservas contadas como error: 0 en ambos brazos), una diferencia que no alcanza significación (McNemar exacto entre brazos, p = 0,3438);
+sin los casos que las motivaron, la etapa con el prompt vigente acertó 48 de 66 (nivel a;
+evaluation/report_sensibilidad_ajustes.md, línea 98). Ningún valor canónico cambia: el análisis estima la sensibilidad de las métricas y no sustituye la medición del sistema
+evaluado.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 73
 
+8.6. Análisis de errores y casos límite
+El análisis cualitativo de los 53 casos mal clasificados permitió identificar patrones de
+error recurrentes, agrupados por frontera de confusión y sintetizados en la Tabla 16.
 Tabla 16. Confusiones observadas en la clasificación automática, por frontera
 Frontera de confusión
 
@@ -3170,6 +3175,7 @@ Total
 
 Fuente: elaboración propia a partir del corpus de validación (n = 200).
 
+El patrón dominante, presente en 14 casos (26,4 % de los errores), corresponde a la
 frontera entre Soporte Tecnico Hardware y Soporte Tecnico Software: incidentes en que una
 falla física de un equipo afecta a una aplicación, o en que una tarea sobre una aplicación se
 describe con términos de equipamiento, de modo que la decisión correcta depende del juicio
@@ -3189,6 +3195,11 @@ mezcla de categorías: “Su equipo se reinicia de forma reiterada; el usuario 
 cables” fue asignada a Soporte Tecnico Software y predicha como Soporte Tecnico Hardware
 con 0,50 de confianza, y combina un síntoma de nivel de aplicación con una hipótesis de causa
 física cuyo peso relativo no queda determinado por el texto. El tercero ejemplifica la jerga
+
+AUTOMATIZACIÓN DE MESA DE AYUDA
+
+74
+
 local: “No le salen los correos por el flujo interno y no le llegan las instancias” fue asignada a
 Sistemas y predicha como Soporte Tecnico Software con 0,85 de confianza, y apela a términos
 organizacionales (“flujo”, “instancias”) cuyo significado no está disponible para el clasificador.
@@ -3196,7 +3207,7 @@ En los tres casos la confianza declarada es alta pese al error.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-74
+75
 
 9. Discusión
 9.1. Interpretación de los resultados
@@ -3229,7 +3240,7 @@ horas-persona no era reproducible con los tiempos y el volumen declarados.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-75
+76
 
 sificador agrega respecto del flujo manual, cuyo balance se analiza en la Subsección 9.5.
 Sin embargo, la lectura conjunta de la intervención humana por gate y del análisis de
@@ -3263,7 +3274,7 @@ sobre la totalidad del corpus. No se dispuso de un corpus independiente de prepr
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-76
+77
 
 consecuencia, las métricas de clasificación reportadas son estimaciones dentro de la muestra,
 probablemente optimistas, cuya confirmación exige un corpus independiente (Sección 11). La
@@ -3297,7 +3308,7 @@ Esa lectura no equivale a una confirmación concluyente: la evidencia es compati
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-77
+78
 
 con explicaciones rivales que el diseño no permite descartar por completo. Mientras que la
 reducción observada admite una lectura causal fuerte en el plano práctico —el sistema registra
@@ -3329,7 +3340,7 @@ este trabajo no se justifica por transferencia pasiva de conocimiento lingüíst
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-78
+79
 
 tarea concreta —clasificación de categoría con contexto instruccional y esquema híbrido de
 reglas más modelo—, en la que el modelo se emplea como motor de inferencia guiado y no
@@ -3364,7 +3375,7 @@ más equilibrado entre clases y una revisión del clasificador serían necesario
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-79
+80
 
 brecha.
 Segundo, la circunscripción del corpus a una única organización del sector servicios de
@@ -3394,12 +3405,13 @@ ajustaron con errores observados en el mismo corpus de evaluación, de modo que 
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-80
+81
 
 de clasificación son estimaciones dentro de la muestra. Sin ese vocabulario, la exactitud de
 la etapa determinística baja de 0,7405 a 0,5270, cota pesimista del sesgo atribuible a él, y el
-efecto de las reglas del prompt no se cuantificó (Subsección 8.5). Solo un corpus independiente
-permitiría estimar el desempeño fuera de la muestra.
+efecto de las reglas del prompt, acotado por una ablación controlada de dos brazos, es de 50
+frente a 46 aciertos sobre los 69 casos de la etapa Gemini (diferencia no significativa; McNemar
+exacto p = 0,3438; evaluation/report_sensibilidad_ajustes.md, línea 98) (Subsección 8.5). Solo un corpus independiente permitiría estimar el desempeño fuera de la muestra.
 Octavo, no se conservó un registro primario de la acción manual de los operadores
 por caso, de modo que la proporción de intervención humana no se midió y la segunda subhipótesis queda no contrastada (Subsección 8.3).
 9.4. Implicancias prácticas
@@ -3418,18 +3430,12 @@ En el plano económico, el costo operativo del sistema se compone de dos rubros 
 de memoria se ofrece a 24 USD/mes, rubro que incluye 4.000 GiB de transferencia saliente y
 80 GiB de disco SSD y al que se suman, si se contratan, el respaldo automático (entre el 20 %
 semanal y el 30 % diario del costo de la instancia) y otros servicios de almacenamiento y direccionamiento; el costo mensual se ubica así en el orden de 24 a 32 USD/mes (DigitalOcean,
-2026).2 El segundo rubro es el costo de inferencia del LLM. Con el precio introductorio vigente
-2
-
-Precio de lista consultado el 19 de octubre de 2026 en https://www.digitalocean.com/pricing/droplets: Droplet
-Basic de 2 vCPU y 4 GB, 24 USD/mes, con 4.000 GiB de transferencia y 80 GiB de SSD incluidos; el respaldo
-automático agrega entre el 20 % (semanal) y el 30 % (diario) del costo de la instancia. No se computan volúmenes
-adicionales, instantáneas ni direcciones IP reservadas.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-81
+82
 
+2026).2 El segundo rubro es el costo de inferencia del LLM. Con el precio introductorio vigente
 del modelo gemini-3.6-flash (0,75 USD por millón de tokens de entrada y 3,75 USD por
 millón de tokens de salida) (Google Cloud, 2026),3 y con supuestos explícitos de aproximadamente 800 tokens de entrada (prompt con la descripción de las cinco categorías, ejemplos
 balanceados y el incidente) y 30 tokens de salida (JSON estricto con categoría y confianza),
@@ -3449,11 +3455,13 @@ La proyección de 32,2 horas-persona por trimestre es un ahorro bruto: no descue
 las derivaciones erróneas que el clasificador agrega respecto del flujo manual. Sean N =
 2.646 incidentes por trimestre (Subsección 9.1), ∆t = 43,82 s el ahorro medio por incidente
 (Sección 8), eaut = 0,265 (53/200) la tasa de error estricta del clasificador, eman la tasa de
-derivación errónea manual (15 % preliminar; Subsección 1.2) y c el costo de cada una (10 a 15
-minutos, estimación propia; Subsección 1.6). El balance neto trimestral, en horas-persona, es
-B = (N /3.600) [∆t − (eaut − eman ) c] y la exactitud mínima de equilibrio, a∗ = 1 − eman − ∆t/c,
-3
+2
 
+Precio de lista consultado el 19 de octubre de 2026 en https://www.digitalocean.com/pricing/droplets: Droplet
+Basic de 2 vCPU y 4 GB, 24 USD/mes, con 4.000 GiB de transferencia y 80 GiB de SSD incluidos; el respaldo
+automático agrega entre el 20 % (semanal) y el 30 % (diario) del costo de la instancia. No se computan volúmenes
+adicionales, instantáneas ni direcciones IP reservadas.
+3
 Precios de lista consultados el 19 de octubre de 2026 en https://cloud.google.com/vertex-ai/generative-ai/
 pricing: Gemini 3.6 Flash, precio introductorio de 0,75/3,75 USD por millón de tokens de entrada/salida vigente
 hasta el 31 de diciembre de 2026; desde el 1 de enero de 2027 rige el precio estándar de 1,50/7,50 USD por millón
@@ -3466,8 +3474,11 @@ superior al precio de lista vigente.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-82
+83
 
+derivación errónea manual (15 % preliminar; Subsección 1.2) y c el costo de cada una (10 a 15
+minutos, estimación propia; Subsección 1.6). El balance neto trimestral, en horas-persona, es
+B = (N /3.600) [∆t − (eaut − eman ) c] y la exactitud mínima de equilibrio, a∗ = 1 − eman − ∆t/c,
 independiente de N .
 Tabla 17. Exactitud mínima de equilibrio y balance neto trimestral según la tasa de derivación errónea
 manual y el costo por derivación
@@ -3548,14 +3559,14 @@ la misma naturaleza que los 2 minutos 45 segundos luego corregidos a 61,6 s, y e
 una cota superior de la tasa operativa, porque el 53,5 % de los casos admite más de un sector.
 Quedan así sostenidas la viabilidad técnica (reducción del 71,2 % del tiempo de registro) y
 la económica (costo monetario marginal), mientras que la operativa es condicional a que la
-exactitud efectiva supere a∗ , por mejora del clasificador o porque la revisión humana del sector
-responsable reduzca la tasa o el costo de las derivaciones erróneas. Medir ambos es una línea
-futura (Subsección 11.9).
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-83
+84
 
+exactitud efectiva supere a∗ , por mejora del clasificador o porque la revisión humana del sector
+responsable reduzca la tasa o el costo de las derivaciones erróneas. Medir ambos es una línea
+futura (Subsección 11.9).
 9.6. Reflexiones sobre la generalización
 La generalización de los resultados a otras organizaciones requiere atender al menos tres condiciones. En primer lugar, la disponibilidad de un corpus etiquetado de tamaño
 y calidad similares al utilizado en este trabajo, lo cual implica una inversión inicial en doble
@@ -3570,7 +3581,7 @@ descritas en la Sección 7.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-84
+85
 
 10. Conclusiones
 El trabajo desarrollado ha cumplido parcialmente el objetivo general de evaluar la viabilidad y el desempeño de la automatización del registro inicial de incidentes —sin medir la
@@ -3648,7 +3659,7 @@ La arquitectura de cinco capas distribuyó las responsabilidades entre component
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-85
+86
 
 comunicados mediante interfaces REST, y la elección de tecnologías maduras y autoalojadas
 (Docker, PostgreSQL, N8N) respondió a las restricciones presupuestarias, cambiarias y normativas de las organizaciones medianas argentinas. El primer objetivo específico se alcanza,
@@ -3683,7 +3694,7 @@ bruto de registro, cuyo saldo neto está indeterminado (Subsección 9.5).
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-86
+87
 
 La documentación generada —arquitectura, procedimientos de despliegue, especificación OpenAPI, flujo N8N exportable, análisis tipificado de errores y bandas de confianza—
 constituye el aporte documental del quinto objetivo específico y sustenta el sexto. La tipología
@@ -3713,7 +3724,7 @@ sortear barreras legales ni asumir riesgos de cumplimiento.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-87
+88
 
 11. Recomendaciones y líneas de trabajo futuro
 A partir de los resultados, del análisis de errores (Subsección 8.6), de la calibración y la
@@ -3744,7 +3755,7 @@ inferencia, sin optimización documentada (Subsección 5.4).
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-88
+89
 
 11.2. Incorporación de un clasificador supervisado con corpus propio
 Se sugiere incorporar progresivamente un clasificador supervisado entrenado con el
@@ -3771,7 +3782,7 @@ erróneas y su costo en tiempo, insumos del balance neto (Subsección 9.5).
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-89
+90
 
 11.4. Cola de respaldo y alta asincrónica
 La invocación de alta es sincrónica. Una evolución de mayor alcance la desacopla
@@ -3796,7 +3807,7 @@ fuente de inteligencia organizacional: su registro sistemático habilita flujos 
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-90
+91
 
 form, Load) que permiten identificar patrones recurrentes de fallas, detectar áreas con mayor
 demanda de soporte y generar indicadores trimestrales que orienten decisiones estratégicas
@@ -3824,7 +3835,7 @@ con etiquetadores distintos de los operadores del brazo manual (Subsección 9.3)
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-91
+92
 
 trar las reasignaciones (Subsección 9.5). Convendría, asimismo, una asignación muestral no
 proporcional que sobremuestree las clases minoritarias —como Bases de Datos, con un solo
@@ -3853,7 +3864,7 @@ bidireccional del audio mediante WebSocket, podría formular preguntas de aclara
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-92
+93
 
 car el número de incidente asignado y cerrar la llamada, lo que elevaría la calidad de la captura
 en línea con el tercer objetivo específico.
@@ -3864,7 +3875,7 @@ degradado de respaldo.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-93
+94
 
 Referencias bibliográficas
 Ahuja, K., Diddee, H., Hada, R., Ochieng, M., Ramesh, K., Jain, P., Nambi, A., Ganu, T., Segal, S., Ahmed, M.,
@@ -3928,7 +3939,7 @@ Solutions. Addison-Wesley.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-94
+95
 
 Honorable Congreso de la Nación Argentina. (2000, octubre). Ley 25.326 de Protección de los Datos Personales
 [Boletín Oficial de la República Argentina]. Recuperado el 25 de octubre de 2026, de http : / / servicios .
@@ -3988,7 +3999,7 @@ Rabiner, L., & Juang, B.-H. (1993). Fundamentals of Speech Recognition. Prentice
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-95
+96
 
 Radford, A., Kim, J. W., Xu, T., Brockman, G., McLeavey, C., & Sutskever, I. (2023). Robust Speech Recognition via
 Large-Scale Weak Supervision. Proceedings of the 40th International Conference on Machine Learning
@@ -4049,7 +4060,7 @@ current research with applications to multi-level classification scenarios. Expe
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-96
+97
 
 Zanzotto, F. M. (2019). Viewpoint: Human-in-the-loop Artificial Intelligence. Journal of Artificial Intelligence Research, 64, 243-252. https://doi.org/10.1613/jair.1.11345
 Zendesk. (2026). Zendesk Suite — Software de mesa de ayuda [Documentación de la plataforma (capacidades y
@@ -4062,7 +4073,7 @@ Zhao, Z., Wallace, E., Feng, S., Klein, D., & Singh, S. (2021). Calibrate Before
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-97
+98
 
 A. Diagrama de arquitectura del sistema
 El Anexo A referencia los diagramas de la arquitectura propuesta en notación UML. Los diagramas de despliegue y de secuencia se incluyen como figuras de la Sección 5, de modo que no se
@@ -4092,7 +4103,7 @@ gestionados mediante Alembic, los archivos de configuración del despliegue en c
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-98
+99
 
 los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio públi-
 
@@ -4128,7 +4139,7 @@ HTTP, y ejemplos representativos para cada caso de uso.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-99
+100
 
 La interfaz se encuentra disponible adicionalmente en formato interactivo a través del componente Swagger UI integrado en el servidor, accesible bajo la ruta /docs durante la ejecución, y en
 formato estático como archivo openapi.json en el directorio docs/ del repositorio. La sincronización
@@ -4166,7 +4177,7 @@ Cada caso incluye el identificador anónimo, la descripción cruda pseudonimizad
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-100
+101
 
 Figura 11. Reconstrucción esquemática del flujo de orquestación N8N: no es una captura de la
 interfaz; los 29 nodos operativos se agrupan por etapa funcional.
@@ -4185,7 +4196,7 @@ personales por etiquetas genéricas.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-101
+102
 
 G. Documentación operativa
 La documentación operativa del sistema, que reúne los procedimientos de despliegue, configuración, respaldo y restauración, monitoreo y respuesta ante incidentes operativos, se versiona en el
@@ -4221,7 +4232,7 @@ hiperparámetros que resume la Tabla 19, que corresponden a la configuración ad
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-102
+103
 
 pliegue y no al resultado de una calibración documentada frente a valores alternativos (Subsección 5.4).
 Tabla 19. Parámetros de configuración de la inferencia con gemini-3.6-flash.
@@ -4325,7 +4336,7 @@ if data["categoria"] not in SECTORES_CANONICOS:
 14
 15
 
-103
+104
 
 return False, {"error": f"Categoria invalida: {data['categoria']}"}
 if "confianza" not in data:
@@ -4360,7 +4371,7 @@ changes del repositorio; la Tabla 20 indica, para cada una, el change responsab
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-104
+105
 
 la tesis donde se la atendió. Cuando una recomendación se dividió en partes, figuran los changes que
 las atendieron.
