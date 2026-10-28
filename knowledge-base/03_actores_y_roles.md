@@ -25,7 +25,7 @@ El sistema autentica con JWT Bearer (implementado desde C-15) y autoriza con EXA
 | `administrador_directorio` | GLOBAL: todos los incidentes | Sí | Lee y gestiona (alta, edición, baja, ARCO, purga) | No |
 | Cuenta sin empleado vinculado | VACIO: no ve ningún incidente | Según su cuenta | No lee | No |
 
-Los modos de visibilidad son PROPIO, GLOBAL y VACIO. El aislamiento por sector NO existe: el `sector_id` del empleado es dato organizacional opcional sin efecto en la autorización. El sector del incidente es solo una categoría de clasificación (uno de los cinco strings canónicos), no una frontera de acceso.
+Los modos de visibilidad son PROPIO, GLOBAL, SECTOR y VACIO (`ModoAlcance` en `App/Backend/app/services/role_policy.py:38`, resueltos en `App/Backend/app/services/incident_visibility.py`). El modo SECTOR corresponde al rol `gestion_incidentes` (c-86, VIS-007): ve solo los incidentes de su sector, que para ese rol SI es frontera de acceso. Para los roles con alcance PROPIO y GLOBAL el `sector_id` del empleado es dato organizacional opcional sin efecto en la autorización: el sector del incidente es solo una categoría de clasificación (uno de los cinco strings canónicos), no una frontera de acceso.
 
 El alcance se resuelve en el backend (fuente única de verdad) y el frontend (c-81) lo refleja vía `GET /api/v1/auth/me`.
 

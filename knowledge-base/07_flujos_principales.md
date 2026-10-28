@@ -28,7 +28,7 @@ Usuario → React → POST /incidentes → Service → Classifier ─┬─ dete
 **Disparador**: correo nuevo en casilla institucional. **Actor**: usuario interno.
 
 1. Trigger IMAP de N8N detecta el mensaje.
-2. Nodo JS valida campos requeridos (lógica Anexo H — hoy placeholder).
+2. Nodo JS valida campos requeridos (lógica del Anexo H, implementada en C-04/C-05, hoy archivados).
 3. IF datos completos → nodo de normalización (RN-RE-01) → `POST /api/v1/incidentes`.
 4. IF datos incompletos → respuesta automática solicitando lo faltante.
 5. Notificación al usuario con número de ticket + log de auditoría (30 días).
@@ -39,8 +39,8 @@ Usuario → React → POST /incidentes → Service → Classifier ─┬─ dete
 
 1. TwiML reproduce bienvenida (español rioplatense); graba hasta 45 s (fin con `#`).
 2. Twilio transcribe y dispara webhook hacia N8N post-cuelgue.
-3. Agente LangChain parsea la transcripción (sesión en Redis); validación Python de campos extraídos.
-4. IF incidente creable → mismo pipeline del Flujo 2 paso 3; si no → loop de refinamiento del agente.
+3. El backend transcribe la grabación (STT con Gemini, C-52) y resuelve la clasificación con la cascada `HybridClassifier` —etapa determinística primero, Gemini solo si el score es insuficiente (C-72)—, igual que los canales web y correo.
+4. IF incidente creable → mismo pipeline del Flujo 2 paso 3; si no → revisión humana. Diseño anterior (histórico, superado por C-72): la clasificación la hacía un `AI Agent` de LangChain en N8N, con memoria de sesión en Redis y un bucle de refinamiento del agente; C-72 retiró ese camino y unificó los tres canales en la cascada del backend.
 5. Latencia objetivo cuelgue→confirmación: 12-15 s.
 
 ## Flujo 4: Revisión y validación humana (implementado)
