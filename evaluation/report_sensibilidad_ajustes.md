@@ -95,4 +95,10 @@ Las reglas de frontera de c-72 solo influyeron en los casos que la configuracion
 - Nivel a: exactitud de la etapa Gemini con todos los casos 50/69; sin los motivadores 48/66.
 - Nivel b: version del prompt de la FORCE-ESCALATE clasificada como "posterior" (cache_meta.generated_at: 2026-10-07T20:33:03.438926+00:00).
 - Nivel b: no aplicable (solo la clasificacion "previa confirmada" habilita la comparacion pareada de la FORCE-ESCALATE frente a la corrida oficial).
-- Nivel c (ablacion controlada de dos brazos, corrida paga): no computado; requiere autorizacion explicita y no se ejecuto.
+- Nivel c (ablacion controlada de dos brazos, misma sesion): prompt vigente 50/69 frente a sin reglas de frontera 46/69.
+- Nivel c: reservas (fallback, cuentan como error): vigente 0; sin reglas 0.
+  - Tabla 2x2 (69 pares): ambas aciertan 43; solo prompt vigente (b) 7; solo sin reglas (c) 3; ninguna 16.
+  - McNemar: p binomial exacto bilateral 0.3438; chi-cuadrado corregido 0.9000 (p = 0.3428); p primario 0.3438 (criterio exacto). Evidencia descriptiva, sin correccion por multiplicidad.
+- Nivel c: deriva del brazo control frente a la corrida oficial: 50/69 frente a 50/69 (variabilidad entre corridas, temperatura 0.3).
+  - Tabla 2x2 (69 pares): ambas aciertan 49; solo control (b) 1; solo oficial (c) 1; ninguna 18.
+  - McNemar: p binomial exacto bilateral 1.0000; chi-cuadrado corregido 0.0000 (p = 1.0000); p primario 1.0000 (criterio exacto). Evidencia descriptiva, sin correccion por multiplicidad.
