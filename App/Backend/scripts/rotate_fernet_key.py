@@ -22,6 +22,8 @@ Inventario explicito (design.md D-C5):
       - telefonia_ingreso.caller_cifrado      (nullable)
       - telefonia_ingreso.transcript_original (nullable)
       - users.totp_secret                     (nullable, c-63b)
+      - directorio_empleado.email             (NOT NULL, c-153)
+      - directorio_empleado.telefono          (nullable, c-153)
 
 Orden de rotacion (design.md D-C4):
     (1) configurar la clave nueva como activa y la anterior como respaldo;
@@ -47,6 +49,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.attributes import flag_modified
 
 from app.core.logging import get_logger
+from app.models.empleado import Empleado
 from app.models.incidente import Incidente
 from app.models.telefonia_ingreso import TelefoniaIngreso
 from app.models.user import User
@@ -77,6 +80,8 @@ INVENTORY: tuple[tuple[str, Type, str], ...] = (
     ("telefonia_ingreso.caller_cifrado", TelefoniaIngreso, "caller_cifrado"),
     ("telefonia_ingreso.transcript_original", TelefoniaIngreso, "transcript_original"),
     ("users.totp_secret", User, "totp_secret"),
+    ("directorio_empleado.email", Empleado, "email"),
+    ("directorio_empleado.telefono", Empleado, "telefono"),
 )
 
 

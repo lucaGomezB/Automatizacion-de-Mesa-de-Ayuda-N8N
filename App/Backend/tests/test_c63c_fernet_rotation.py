@@ -132,6 +132,8 @@ def test_script_inventory_covers_all_encrypted_columns():
         ("telefonia_ingreso", "caller_cifrado"),
         ("telefonia_ingreso", "transcript_original"),
         ("users", "totp_secret"),
+        ("directorio_empleado", "email"),
+        ("directorio_empleado", "telefono"),
     }
 
 

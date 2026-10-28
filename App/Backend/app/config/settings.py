@@ -257,6 +257,17 @@ class Settings(BaseSettings):
     # recien al confirmar el re-cifrado (scripts/rotate_fernet_key.py).
     pseudonymization_encryption_key_previous: str = ""
 
+    # ── Directorio de empleados: clave de indice ciego (c-153, DIR-011/DIR-012) ─
+    # Clave DEDICADA para derivar el indice ciego determinista (HMAC-SHA-256) de
+    # la forma normalizada del contacto del directorio (`email_bidx`,
+    # `telefono_bidx`). OBLIGATORIA. Es INDEPENDIENTE de la clave de
+    # pseudonimizacion: NO se reutiliza ni se deriva material de ella. Un hash
+    # sin clave seria vulnerable a diccionario porque el espacio de email y
+    # telefono es enumerable.
+    # Generar con: python -c "import secrets; print(secrets.token_hex(32))"
+    # Ejemplo .env: DIRECTORY_BLIND_INDEX_KEY=<resultado del comando anterior>
+    directory_blind_index_key: str
+
     # ── Autenticación JWT ──────────────────────────────────────────────────────
     # Clave secreta para firmar tokens JWT (algoritmo HS256). OBLIGATORIA.
     # Generar con: python -c "import secrets; print(secrets.token_urlsafe(32))"
@@ -322,6 +333,14 @@ class Settings(BaseSettings):
     account_lockout_window_minutes: int = 15
     # Duracion del bloqueo en minutos.
     account_lockout_duration_minutes: int = 15
+
+    # ── Limitacion de tasa de lectura del directorio (c-153, DIR-006) ──────────
+    # Anti-enumeracion: acota la frecuencia de las peticiones de LECTURA del
+    # directorio por actor. Contador en memoria del proceso (sin Redis desde
+    # c-62). Defaults holgados para no interferir con la operacion normal.
+    directorio_rate_limit_reads: int = 30
+    # Ventana de conteo en segundos: al vencer, el contador del actor se reinicia.
+    directorio_rate_window_seconds: int = 60
 
     # ── MFA TOTP para cuentas privilegiadas (c-63b, IAH-006/IAH-007) ───────────
     # Flag APAGADO por defecto (dev/test/CI preservan el login de un paso). En

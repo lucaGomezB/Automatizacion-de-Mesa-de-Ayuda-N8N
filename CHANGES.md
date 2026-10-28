@@ -2309,6 +2309,26 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
+## FASE 45 — Endurecimiento del directorio para datos reales (2026-10-28)
+
+> Change de endurecimiento del directorio (`employee-directory`) para habilitar de forma segura el tratamiento de PII real. Governance **HIGH** (datos personales bajo Ley 25.326; retencion y ARCO; visibilidad entre sectores). Se aplica por etapas (semillas de TDD estricto). **Gate de gobernanza**: la aprobacion humana HIGH del autor fue **CONCEDIDA el 2026-10-28** y precede a toda implementacion desde el grupo 2 en adelante.
+
+### [C-153] `endurecer-el-directorio-para-datos-reales` — EN APLICACION (2026-10-28, HIGH)
+
+- **Aprobacion humana HIGH**: **CONCEDIDA (2026-10-28)**. Registrada de forma verificable en `docs/directorio-evidencia-cumplimiento.md` seccion 4 y en este indice. Estado anterior: PENDIENTE (c-60 7.4).
+- **Scope (grupos 1-7 aplicados)**:
+  - **Grupo 1 — preparacion, red de seguridad y puerta de gobernanza**: hook activado; red de seguridad del directorio (baseline `80 passed`); gate HIGH registrado.
+  - **Grupo 2 — Tema A (cifrado at-rest)**: ADR de reversion `docs/seguridad/adr-001-reversion-dir-005-cifrado-contacto.md` (revierte DIR-005/DIR-010; la justificacion por minimizacion previa queda marcada SUPERADA); `email`/`telefono` pasan a `EncryptedText` (Fernet) en `app/models/empleado.py`; migracion Alembic reversible `021_directorio_contacto_cifrado` con backfill; inventario de rotacion extendido en `scripts/rotate_fernet_key.py`; helpers `encrypt_value`/`decrypt_value` encapsulados en `app/utils/encryption.py`.
+  - **Grupo 3 — Tema B (indice ciego determinista)**: `email_bidx`/`telefono_bidx` (HMAC-SHA-256 con la clave dedicada `directory_blind_index_key`), derivacion pura en `app/utils/blind_index.py`, repositorio resolviendo por indice, unicidad del email sobre `email_bidx`, migracion `022_directorio_indice_ciego`.
+  - **Grupo 4 — Tema C (control de acceso)**: politica por sujeto en `app/services/role_policy.py` (admin/mesa GLOBAL; `usuario_final` solo su fila; `gestion_incidentes` sin lectura), limitacion de tasa y anti-enumeracion en `app/routes/directorio.py`, test negativo de aislamiento entre sectores (VIS-001/VIS-002).
+  - **Grupo 5 — Tema D (auditoria durable)**: tabla append-only `directorio_auditoria` sin PII (patron `incidente_evento`), migracion `023_directorio_auditoria`, helper unico `registrar_evento_auditoria`, auditoria de gestion y de los canales de resolucion sin el contacto en claro.
+  - **Grupo 6 — Tema E (retencion, ARCO y minimizacion)**: runbook de retencion con purga MANUAL y alerta de acumulacion (solo conteo, sin PII), ARCO de acceso y rectificacion ademas de supresion, ventana de retencion de la auditoria alineada con el ciclo de vida, revision de minimizacion (solo columnas derivadas no-PII).
+  - **Grupo 7 — Tema F (operacion, gobernanza y specs)**: inventario de rotacion Fernet extendido a las columnas del directorio y documentado en `docs/seguridad/gestion-secretos-y-rotacion.md`; variables de clave dedicada en `settings.py`/`.env.example`/`conftest.py`/CI; mecanismo de activacion deliberado y auditado (DIR-014) en `app/services/directorio_activacion.py` + CLI env-gateado `scripts/activar_directorio.py`, bloqueado por defecto y sin interruptor de runtime; delta `employee-directory` verificado (`openspec validate --strict`); `docs/openapi.json` sincronizado; procedimientos de `docs/seguridad/` y evidencia de cumplimiento actualizados; este registro en `CHANGES.md`.
+- **Leer antes**: `openspec/changes/c-153-endurecer-el-directorio-para-datos-reales/{proposal,design,tasks}.md`, `openspec/specs/employee-directory/spec.md`, `docs/seguridad/adr-001-reversion-dir-005-cifrado-contacto.md`, `docs/seguridad/gestion-secretos-y-rotacion.md`, `docs/directorio-evidencia-cumplimiento.md`.
+- **Pendiente (grupo 8)**: verificacion final de integracion (suite backend offline + integracion PostgreSQL sobre base descartable, lint backend y build/lint de frontend si cambia el contrato), validacion OPSX estricta y revision humana HIGH firmada (checklist del autor).
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo; actualizado 2026-10-22)

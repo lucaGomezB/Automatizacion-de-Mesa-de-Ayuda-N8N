@@ -82,7 +82,7 @@ sugerida es anual, o ante cambio de alcance, normativa o infraestructura.
 | `modelado-amenazas-sdlc.md` | Modelado de amenazas y seguridad en el SDLC (8.26) | v1 (aprobada 2026-10-01) | Anual |
 | `politica-privacidad-runtime.md` | Politica de privacidad objetivo/norma (5.34) | v1 (aprobada 2026-10-01) | Anual |
 | `registro-actividades-tratamiento.md` | ROPA (Ley 25.326) y tratamientos T1/T2/T3 | v1 (aprobada 2026-10-01) | Anual |
-| `justificacion-minimizacion-directorio.md` | Justificacion por minimizacion del contacto del directorio en texto plano (5.34/8.12; C-66) | v1 (aprobada 2026-10-19) | Anual |
+| `justificacion-minimizacion-directorio.md` | Justificacion por minimizacion del contacto del directorio en texto plano — **SUPERADA** por el ADR de reversion `adr-001-...` (c-153) (5.34/8.12; C-66/C-153) | v1 (aprobada 2026-10-19; superada 2026-10-28) | Anual |
 | `instrumento-transferencia-internacional.md` | Instrumento de transferencia internacional a Gemini/Twilio documentado, no suscrito (5.34/5.31; SGD-014; C-66) | v1 (aprobada 2026-10-19) | Anual |
 | `procedimiento-arco.md` | Procedimiento ARCO con canal informado, plazos y constancia auditable (5.34; SGD-013; C-66) | v1 (aprobada 2026-10-19) | Anual |
 | `politica-retencion-logs.md` | Politica de retencion de logs por clase de registro y no-PII (8.12/8.15; SGD-015; C-66) | v1 (aprobada 2026-10-19) | Anual |

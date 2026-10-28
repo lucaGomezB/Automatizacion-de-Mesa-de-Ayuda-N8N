@@ -49,7 +49,7 @@ La seguridad es una **puerta de calidad** del SDLC (control mapeado a ISO 5.8), 
 | Amenaza (STRIDE) | Escenario | Control ISO | Change que la aborda |
 |------------------|-----------|-------------|----------------------|
 | Information disclosure | Numero llamante crudo en logs (`cost_guard/guard.py`) | 5.34, 8.12, 8.15 | C-66 |
-| Information disclosure | Contacto del directorio en texto plano (`models/empleado.py`) | 5.34, 8.12 | C-66 |
+| Information disclosure | Contacto del directorio persistido en claro (mitigado: cifrado at-rest + indice ciego desde `c-153`) | 5.34, 8.12 | C-153 |
 | Information disclosure | Servicios internos publicados al host (Redis 6379, PostgreSQL 5433, N8N 5678) | 8.20, 8.22 | C-62 |
 | Spoofing | Sin MFA ni politica de contrasenas; JWT HS256 sin revocacion | 8.5, 5.15, 5.17 | C-63 |
 | Tampering / Elevation | Claves en `.env` sin KMS ni rotacion | 8.24, 8.2 | C-63 |

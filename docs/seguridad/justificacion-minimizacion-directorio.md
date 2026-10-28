@@ -1,5 +1,12 @@
 # Justificacion por minimizacion del contacto del directorio (texto plano)
 
+> **ESTADO: SUPERADA (2026-10-28).** Esta justificacion queda SUPERADA por el ADR
+> de reversion `docs/seguridad/adr-001-reversion-dir-005-cifrado-contacto.md`
+> (change `c-153`): el directorio pasa a cifrar el contacto at-rest con
+> `EncryptedText` mas un indice ciego determinista (DIR-011). El contenido de este
+> documento se CONSERVA INTACTO como registro historico de la decision revertida;
+> NO describe el estado vigente del sistema.
+>
 > **Control mapeado**: ISO/IEC 27002:2022 5.34 (Privacidad y proteccion de PII) y 8.12
 > (Prevencion de fuga de datos), en **alineacion con** ISO/IEC 27701 y el principio de
 > minimizacion de la Ley 25.326 art. 4; NIST CSF 2.0 GV, PR. Hallazgo 5.34/8.12.

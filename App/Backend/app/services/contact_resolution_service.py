@@ -12,9 +12,11 @@ Contrato:
     encontrado / no encontrado / ambiguo. NUNCA lanza excepcion por datos
     ausentes o malformados: un directorio vacio no es un error.
 
-Privacidad (RES-006):
+Privacidad (RES-006 / DIR-013):
     Opera sobre el identificador minimo y registra trazabilidad (canal +
-    resultado) SIN el telefono ni el email en claro. NO envia notificaciones.
+    resultado) SIN el telefono ni el email en claro. Desde c-153 la traza se
+    persiste ADEMAS en el almacen durable del directorio, mediante el helper
+    compartido `registrar_evento_auditoria`. NO envia notificaciones.
 """
 
 from dataclasses import dataclass
@@ -22,12 +24,13 @@ from enum import Enum as PyEnum
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.logging import get_logger
 from app.models.empleado import Empleado
 from app.repositories.empleado_repository import EmpleadoRepository
+from app.services.auditoria_directorio import (
+    EVENTO_RESOLUCION,
+    registrar_evento_auditoria,
+)
 from app.utils.contactos import normalizar_email, normalizar_telefono
-
-logger = get_logger(__name__)
 
 
 class EstadoResolucion(str, PyEnum):
@@ -61,20 +64,26 @@ class ResultadoResolucion:
 class ContactResolutionService:
     """Servicio in-process de resolucion de contactos del directorio."""
 
-    def __init__(self, session: AsyncSession) -> None:
+    def __init__(
+        self, session: AsyncSession, actor_id: int | None = None
+    ) -> None:
+        self._session = session
         self._repo = EmpleadoRepository(session)
+        # Actor de auditoria (identificador interno, no PII). La resolucion
+        # in-process no exige autenticacion HTTP: el llamador puede omitirlo.
+        self._actor_id = actor_id
 
     async def resolver_por_telefono(self, telefono: str | None) -> ResultadoResolucion:
         """Resuelve por telefono normalizado a E.164 (igualdad exacta)."""
         try:
             normalizado = normalizar_telefono(telefono)
         except ValueError:
-            return self._resultado(
+            return await self._resultado(
                 EstadoResolucion.NO_ENCONTRADO, None, "telefono"
             )
 
         coincidencias = await self._repo.listar_por_telefono(normalizado)
-        return self._resultado(
+        return await self._resultado(
             self._clasificar(coincidencias), coincidencias, "telefono"
         )
 
@@ -83,27 +92,29 @@ class ContactResolutionService:
         try:
             normalizado = normalizar_email(email)
         except ValueError:
-            return self._resultado(
+            return await self._resultado(
                 EstadoResolucion.NO_ENCONTRADO, None, "email"
             )
 
         coincidencias = await self._repo.listar_por_email(normalizado)
-        return self._resultado(
+        return await self._resultado(
             self._clasificar(coincidencias), coincidencias, "email"
         )
 
     async def resolver_por_usuario(self, user_id: int | None) -> ResultadoResolucion:
         """Resuelve por identidad autenticada siguiendo el vinculo `user_id`."""
         if user_id is None:
-            return self._resultado(
+            return await self._resultado(
                 EstadoResolucion.NO_ENCONTRADO, None, "usuario"
             )
         empleado = await self._repo.get_by_user_id(user_id)
         if empleado is None:
-            return self._resultado(
+            return await self._resultado(
                 EstadoResolucion.NO_ENCONTRADO, None, "usuario"
             )
-        return self._resultado(EstadoResolucion.ENCONTRADO, [empleado], "usuario")
+        return await self._resultado(
+            EstadoResolucion.ENCONTRADO, [empleado], "usuario"
+        )
 
     # ── Auxiliares ────────────────────────────────────────────────────────────
 
@@ -116,21 +127,32 @@ class ContactResolutionService:
             return EstadoResolucion.AMBIGUO
         return EstadoResolucion.ENCONTRADO
 
-    def _resultado(
+    async def _resultado(
         self,
         estado: EstadoResolucion,
         coincidencias: list[Empleado] | None,
         canal: str,
     ) -> ResultadoResolucion:
-        """Construye el resultado y emite la trazabilidad sin PII."""
+        """
+        Construye el resultado y registra la trazabilidad sin PII.
+
+        Delega en el helper compartido `registrar_evento_auditoria`: persiste la
+        fila durable (`directorio_auditoria`) con el canal, el resultado y el
+        sujeto resuelto (identificador interno) ADEMAS del evento estructurado.
+        NUNCA recibe ni almacena el valor de contacto (email/telefono).
+        """
         empleado = (
             coincidencias[0]
             if estado == EstadoResolucion.ENCONTRADO and coincidencias
             else None
         )
-        logger.info(
-            "resolucion_contacto",
-            canal=canal,
+        await registrar_evento_auditoria(
+            self._session,
+            operacion=EVENTO_RESOLUCION,
             resultado=estado.value,
+            empleado_id=empleado.id if empleado is not None else None,
+            actor_id=self._actor_id,
+            canal=canal,
+            evento=EVENTO_RESOLUCION,
         )
         return ResultadoResolucion(estado=estado, empleado=empleado, canal=canal)

@@ -1,18 +1,24 @@
 """
-Repositorio del directorio de empleados (c-54).
+Repositorio del directorio de empleados (c-54, c-153).
 
 Responsabilidad:
     Encapsula el acceso a datos de `directorio_empleado`: busquedas por email y
-    telefono (en TEXTO PLANO, igualdad exacta sobre valor normalizado), por
-    `user_id` y CRUD de gestion. Las busquedas de contacto devuelven SOLO
-    empleados activos (DIR-007); la busqueda por legajo (gestion) tambien ve
-    inactivos para permitir la reactivacion.
+    telefono, por `user_id` y CRUD de gestion. Las busquedas de contacto
+    devuelven SOLO empleados activos (DIR-007); la busqueda por legajo (gestion)
+    tambien ve inactivos para permitir la reactivacion.
 
 Decisiones:
     - D6: el telefono es repetible, por lo que la busqueda por telefono devuelve
       una lista; la capa de servicio decide la ambiguedad.
     - Async: se usa `selectinload(Empleado.sector)` para serializar sin
       lazy-load (regla del proyecto).
+    - c-153 (Tema B): el contacto se cifra at-rest con `EncryptedText` (cifrado
+      NO determinista: IV aleatorio por operacion), de modo que la igualdad SQL
+      sobre la columna cifrada NO coincide. Las busquedas de contacto se
+      resuelven por el INDICE CIEGO determinista (`email_bidx`/`telefono_bidx`,
+      HMAC-SHA-256 de la forma normalizada) derivado con la clave dedicada
+      `directory_blind_index_key`. La derivacion del indice a partir del valor de
+      entrada la hace `app.utils.blind_index`.
 """
 
 from sqlalchemy import select
@@ -20,6 +26,7 @@ from sqlalchemy.orm import selectinload
 
 from app.models.empleado import Empleado, RolEmpleado
 from app.repositories.base import BaseRepository
+from app.utils.blind_index import email_blind_index, telefono_blind_index
 
 
 class EmpleadoRepository(BaseRepository[Empleado]):
@@ -40,32 +47,43 @@ class EmpleadoRepository(BaseRepository[Empleado]):
         return result.scalar_one_or_none()
 
     async def listar_por_email(self, email: str) -> list[Empleado]:
-        """Devuelve los empleados ACTIVOS cuyo email coincide exactamente."""
+        """Devuelve los empleados ACTIVOS cuyo email coincide (via indice ciego)."""
         result = await self._session.execute(
             self._con_sector(
-                select(Empleado).where(
-                    Empleado.email == email,
+                select(Empleado)
+                .where(
+                    Empleado.email_bidx == email_blind_index(email),
                     Empleado.activo.is_(True),
                 )
+                .order_by(Empleado.id)
             )
         )
         return list(result.scalars().all())
 
     async def get_by_email(self, email: str) -> Empleado | None:
-        """Busca por email exacto incluyendo inactivos (chequeo de unicidad)."""
-        result = await self._session.execute(
-            self._con_sector(select(Empleado).where(Empleado.email == email))
-        )
-        return result.scalar_one_or_none()
-
-    async def listar_por_telefono(self, telefono: str) -> list[Empleado]:
-        """Devuelve los empleados ACTIVOS cuyo telefono coincide exactamente."""
+        """Busca por email via indice ciego, incluyendo inactivos (unicidad)."""
         result = await self._session.execute(
             self._con_sector(
                 select(Empleado).where(
-                    Empleado.telefono == telefono,
+                    Empleado.email_bidx == email_blind_index(email)
+                )
+            )
+        )
+        return result.scalars().first()
+
+    async def listar_por_telefono(self, telefono: str) -> list[Empleado]:
+        """Devuelve los empleados ACTIVOS cuyo telefono coincide (indice ciego)."""
+        indice = telefono_blind_index(telefono)
+        if indice is None:
+            return []
+        result = await self._session.execute(
+            self._con_sector(
+                select(Empleado)
+                .where(
+                    Empleado.telefono_bidx == indice,
                     Empleado.activo.is_(True),
                 )
+                .order_by(Empleado.id)
             )
         )
         return list(result.scalars().all())

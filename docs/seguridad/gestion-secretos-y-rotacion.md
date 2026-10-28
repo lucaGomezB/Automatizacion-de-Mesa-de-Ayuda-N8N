@@ -29,6 +29,7 @@ test verifica que su inventario cubre exactamente las columnas cifradas.
 | 7 | Secreto compartido de la guarda de costo | `COST_GUARD_SHARED_SECRET` | Header `X-Cost-Guard-Secret` | Si (si la guarda esta activa) | ALTA |
 | 8 | Token de autenticacion de Twilio | `TWILIO_AUTH_TOKEN` | Firma del webhook de voz y descarga autenticada | No (canal opcional) | ALTA |
 | 9 | Account SID de Twilio | `TWILIO_ACCOUNT_SID` | Usuario del HTTP Basic de la grabacion | No | MEDIA |
+| 10 | Clave dedicada del indice ciego del directorio | `DIRECTORY_BLIND_INDEX_KEY` | HMAC-SHA-256 de la forma normalizada del contacto (`email_bidx`, `telefono_bidx`; c-153, DIR-011/DIR-012) | Si | CRITICA |
 
 Reglas:
 - Ningun valor real se versiona. La fuente actual es `.env` + variables de
@@ -37,6 +38,9 @@ Reglas:
 - El secreto de la cuenta TOTP de cada usuario (`users.totp_secret`) y los
   codigos de recuperacion se cifran/hashean en la base; no son secretos de
   configuracion y no se rotan por este runbook (se regeneran por enrollment).
+- `DIRECTORY_BLIND_INDEX_KEY` es una clave DEDICADA del directorio: deriva el
+  indice ciego determinista y es INDEPENDIENTE de la clave de pseudonimizacion.
+  Su generacion, custodia y rotacion se detallan en §7.1.
 
 ## 3. Inventario de columnas cifradas con Fernet (prerequisito D-C5)
 
@@ -51,10 +55,14 @@ la lista cubre exactamente las columnas cifradas del modelo ORM.
 | `telefonia_ingreso` | `caller_cifrado` | nullable | PII (numero llamante) | Canal de telefonia (c-52) |
 | `telefonia_ingreso` | `transcript_original` | nullable | PII (transcript crudo) | Solo auditoria / ARCO |
 | `users` | `totp_secret` | nullable | Secreto de autenticacion | Segundo factor TOTP (c-63b) |
+| `directorio_empleado` | `email` | NOT NULL | PII (contacto, Ley 25.326) | Cifrado at-rest (c-153, DIR-011); busqueda por `email_bidx` |
+| `directorio_empleado` | `telefono` | nullable | PII (contacto, Ley 25.326) | Cifrado at-rest (c-153, DIR-011); busqueda por `telefono_bidx` |
 
-El respaldo previo obligatorio y el re-cifrado abarcan las CUATRO columnas; en
-particular `telefonia_ingreso` entra en el respaldo (no se acota a
-`descripcion_original`).
+El respaldo previo obligatorio y el re-cifrado abarcan las SEIS columnas; en
+particular `telefonia_ingreso` y las dos columnas del directorio entran en el
+respaldo (no se acota a `descripcion_original`). La incorporacion de
+`directorio_empleado.email` y `directorio_empleado.telefono` al inventario es la
+extension que exige la tarea 7.1 del change `c-153` (DIR-012).
 
 ## 4. Postura de gestion de secretos
 
@@ -128,8 +136,10 @@ revalida los tokens vigentes. Ninguna operacion es irreversible.
 
 El backend usa `MultiFernet([activa, anterior?])`: al cifrar usa siempre la
 activa; al descifrar prueba el conjunto. La herramienta
-`App/Backend/scripts/rotate_fernet_key.py` re-cifra las CUATRO columnas del
-inventario (§3) en UNA transaccion y exige un respaldo previo obligatorio.
+`App/Backend/scripts/rotate_fernet_key.py` re-cifra las SEIS columnas del
+inventario (§3), incluidas las dos del directorio (`directorio_empleado.email` y
+`directorio_empleado.telefono`), en UNA transaccion y exige un respaldo previo
+obligatorio.
 
 Procedimiento:
 
@@ -160,6 +170,45 @@ Garantias de la herramienta:
 Revertir: reponer la clave anterior como activa (o restaurar el respaldo tomado
 en el paso 2) deja los datos legibles. La clave anterior se conserva en el
 conjunto hasta confirmar el re-cifrado.
+
+### 7.1 Clave dedicada del indice ciego del directorio (c-153, DIR-011/DIR-012)
+
+El directorio almacena el contacto CIFRADO at-rest (`EncryptedText`) y lo busca
+por un indice ciego determinista (`email_bidx`, `telefono_bidx`) derivado con
+HMAC-SHA-256 y la clave DEDICADA `DIRECTORY_BLIND_INDEX_KEY`. Como el cifrado
+Fernet no es determinista (IV aleatorio), la igualdad SQL sobre la columna
+cifrada no sirve: la busqueda se resuelve por el indice.
+
+- **Proposito y separacion**: HMAC-SHA-256 de la forma NORMALIZADA del contacto.
+  Es INDEPENDIENTE de `PSEUDONYMIZATION_ENCRYPTION_KEY`: una clave para HMAC
+  (indice) y otra para Fernet (cifrado); no se reutiliza material de clave entre
+  primitivas. Un hash SIN clave seria vulnerable a diccionario porque el espacio
+  email/telefono es enumerable.
+- **Generacion**: `python -c "import secrets; print(secrets.token_hex(32))"`.
+- **Custodia**: misma postura que las demas claves CRITICAS (§2, §4): fuera del
+  repositorio, en `.env`/variables de entorno, sin valor real en
+  `.env.example`.
+- **Rotacion** (accion HIGH, MANUAL, con respaldo previo obligatorio): rotar la
+  clave CAMBIA todos los digests, de modo que `email_bidx`/`telefono_bidx` quedan
+  inconsistentes con el contacto hasta re-derivarlos. Procedimiento:
+  1. Tomar un respaldo de la base (obligatorio).
+  2. Fijar la clave nueva como `DIRECTORY_BLIND_INDEX_KEY`.
+  3. Re-derivar los indices de TODAS las filas del directorio en UNA
+     transaccion (recalculo por lote con el helper de derivacion; NO se expone
+     el contacto en claro).
+  4. Confirmar que la resolucion por email/telefono vuelve a encontrar las filas.
+  NO la cubre `scripts/rotate_fernet_key.py` (que rota Fernet, no HMAC): no hay
+  descifrado de la clave anterior, porque los indices se RECALCULAN.
+
+### 7.2 Cifrado del contacto del directorio
+
+El email y el telefono del directorio se cifran at-rest con el TypeDecorator
+`EncryptedText` (Fernet). Sus columnas figuran en el inventario de columnas
+cifradas (§3) y se re-cifran con el conjunto Fernet al rotar (§7); el respaldo
+previo obligatorio las cubre. La rotacion de estas columnas es la misma accion
+que la de `incidente.descripcion_original` y `telefonia_ingreso`, y el conteo por
+columna del script incluye `directorio_empleado.email` y
+`directorio_empleado.telefono`.
 
 ## 8. Higiene y verificacion
 

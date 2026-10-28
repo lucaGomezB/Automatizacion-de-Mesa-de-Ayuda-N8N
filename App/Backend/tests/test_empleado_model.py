@@ -1,10 +1,11 @@
 """
-Tests del modelo ORM del directorio de empleados (c-54, seccion 3).
+Tests del modelo ORM del directorio de empleados (c-54, seccion 3; c-153).
 
 Verifican que la tabla `directorio_empleado` tiene EXACTAMENTE los campos
-minimizados (DIR-002/D6b), los tipos/restricciones esperados, que el contacto
-se guarda en TEXTO PLANO (DIR-005) y que el vocabulario de roles es el minimo
-de tres valores (DIR-003).
+minimizados (DIR-002/D6b), los tipos/restricciones esperados, que el contacto se
+almacena CIFRADO at-rest con `EncryptedText` mas el indice ciego determinista
+(`email_bidx`/`telefono_bidx`, c-153 DIR-011) y que el vocabulario de roles es el
+minimo de cuatro valores (DIR-003).
 """
 
 import pytest
@@ -21,6 +22,8 @@ _COLUMNAS_ESPERADAS = {
     "nombre",
     "email",
     "telefono",
+    "email_bidx",
+    "telefono_bidx",
     "sector_id",
     "rol",
     "activo",
@@ -41,12 +44,17 @@ def test_columnas_exactas_sin_datos_extra():
     assert set(Empleado.__table__.columns.keys()) == _COLUMNAS_ESPERADAS
 
 
-def test_sin_columnas_cifradas_ni_hash_ciego():
-    """No existe columna de cifrado ni de hash ciego (DIR-005)."""
-    for nombre in Empleado.__table__.columns.keys():
-        assert "hash" not in nombre.lower()
-        assert "cifrado" not in nombre.lower()
-        assert "blind" not in nombre.lower()
+def test_columnas_derivadas_de_indice_ciego():
+    """El esquema expone las columnas derivadas del indice ciego (DIR-011).
+
+    El contacto se cifra at-rest y se busca por columnas derivadas no-PII; la
+    garantia previa de ausencia de indice ciego (DIR-005) quedo SUPERADA.
+    """
+    columnas = set(Empleado.__table__.columns.keys())
+    assert {"email_bidx", "telefono_bidx"} <= columnas
+    assert Empleado.__table__.c.email_bidx.unique is True
+    assert Empleado.__table__.c.telefono_bidx.unique is not True
+    assert Empleado.__table__.c.email_bidx.index is True
 
 
 def test_restricciones_de_legajo_y_email():

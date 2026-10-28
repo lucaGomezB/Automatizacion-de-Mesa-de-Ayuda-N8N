@@ -2704,7 +2704,7 @@
         ]
       },
       "get": {
-        "description": "Recupera un empleado por id. Requiere rol autorizado.",
+        "description": "Recupera un empleado por id segun el alcance de lectura del actor.",
         "operationId": "obtener_empleado_api_v1_directorio_empleados__empleado_id__get",
         "parameters": [
           {
