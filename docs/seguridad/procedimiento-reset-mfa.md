@@ -1,5 +1,13 @@
 # Procedimiento: reset administrativo de MFA y re-enrollment forzado
 
+> **Control mapeado**: ISO/IEC 27002:2022 5.15 (control de acceso) y 8.5 (autenticacion
+> segura); NIST CSF 2.0 PR. Requisito del change C-63b (MFA y rol privilegiado).
+> **Estado**: v1 — elaborado en el change `c-63b-mfa-y-rol-privilegiado` (governance ALTO).
+> **Alcance**: reset administrativo del segundo factor TOTP de cuentas privilegiadas y
+> re-enrollment forzado.
+> **Encuadre**: stack de desarrollo local; procedimiento operativo **alineado con** los
+> marcos; no es certificacion ni auditoria.
+
 Alcance: cuentas privilegiadas del sistema de Mesa de Ayuda (roles `operador`,
 `administrador_directorio`, `mesa_de_ayuda` y el seed `admin`). Aplica al segundo
 factor TOTP introducido por `c-63b-mfa-y-rol-privilegiado` (controles ISO/IEC
@@ -61,6 +69,6 @@ en `NULL`), tras restaurar una clave valida en el entorno.
 
 ## 5. Referencias
 
-- `openspec/changes/c-63b-mfa-y-rol-privilegiado/design.md` (OQ-B2).
+- `openspec/changes/archive/2026-10-08-c-63b-mfa-y-rol-privilegiado/design.md` (OQ-B2).
 - `App/Backend/app/services/mfa_service.py`.
 - `docs/seguridad/plan-respuesta-incidentes-seguridad.md`.

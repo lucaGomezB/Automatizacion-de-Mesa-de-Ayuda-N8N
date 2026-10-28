@@ -34,7 +34,6 @@ proveedores.
 | Frontend React | Interfaz web de operacion y revision | Responsable de seguridad | N2 Interno |
 | Workflow N8N | Orquestacion de canales (`n8n/workflow.json`) | Responsable de seguridad | N2 Interno |
 | PostgreSQL | Base de datos de incidentes, directorio y catalogos | Responsable de seguridad | N4 Restringido |
-| Redis | Cache y datos transitorios | Responsable de seguridad | N2 Interno |
 | Repositorio de codigo | Codigo fuente y documentacion (publico por decision de tesis) | Responsable de seguridad | N1 Publico |
 
 ## 4. Activos de servicio (terceros)
@@ -43,7 +42,7 @@ proveedores.
 |--------|-------------|-----------------------|---------------|
 | Google Gemini | Inferencia de clasificacion (recibe texto pseudonimizado) | DPO | N3 Confidencial (PII) |
 | Twilio | Telefonia y SMS (numero llamante) | DPO | N3 Confidencial (PII) |
-| Microsoft Outlook | Correo entrante (origen de incidentes) | DPO | N3 Confidencial (PII) |
+| Microsoft Outlook | Correo entrante (origen historico de incidentes; **inactivo desde C-55**) | DPO | N3 Confidencial (PII) |
 | N8N (instancia) | Ejecucion del workflow autoalojado | Responsable de seguridad | N2 Interno |
 | GitHub | Hosting del repositorio y automatizacion CI | Responsable de seguridad | N1 Publico |
 
@@ -54,7 +53,10 @@ proveedores.
 - Los activos marcados N3/N4 se gestionan segun la politica de seguridad y el ROPA
   (`registro-actividades-tratamiento.md`).
 - **Sin secretos**: este inventario no incluye credenciales, claves, tokens ni valores de
-  `.env`. La gestion de claves y secretos esta mapeada al change C-63.
+  `.env`. La gestion de claves y secretos esta documentada en
+  `gestion-secretos-y-rotacion.md`.
+- **Activos retirados**: Redis fue **retirado del stack** en C-62 (no tenia consumidor real)
+  y no es un activo activo; Microsoft Outlook figura como origen **inactivo** desde C-55.
 - El inventario de hardware y de endpoints de operadores compete a la organizacion
   adoptante (O). Los controles fisicos (tema 7.x) quedan fuera del repositorio.
 

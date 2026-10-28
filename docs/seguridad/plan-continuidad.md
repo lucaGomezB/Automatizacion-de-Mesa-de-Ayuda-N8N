@@ -160,7 +160,7 @@ Reglas de custodia:
 ## 7. Verificacion
 
 - La verificacion de este change es **MANUAL** (governance ALTO): la lista de
-  comprobacion de `openspec/changes/c-65-backup-continuidad/tasks.md`, la
+  comprobacion de `openspec/changes/archive/2026-10-19-c-65-backup-continuidad/tasks.md`, la
   revision del autor sobre el encuadre de no-garantia y de que offsite y
   redundancia figuran como accion del adoptante, y
   `openspec validate --strict c-65-backup-continuidad`.
@@ -179,6 +179,6 @@ Reglas de custodia:
   `scripts/backup-schedule.cron` — cadena de respaldo, cifrado, automatizacion y
   prueba de restauracion.
 - `openspec/specs/backup-scripts/spec.md` — requisitos BACKUP-001 a BACKUP-008.
-- `openspec/changes/c-65-backup-continuidad/{proposal.md,design.md,tasks.md}`.
+- `openspec/changes/archive/2026-10-19-c-65-backup-continuidad/{proposal.md,design.md,tasks.md}`.
 - `docs/cumplimiento/gap-assessment-iso27001-27002-nist-csf2.md` — brechas 5.29,
   5.30, 8.13 y 8.14.

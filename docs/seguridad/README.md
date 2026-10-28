@@ -49,8 +49,10 @@ formal**.
   personal, formacion, sanciones, contratos, responsabilidades tras el cese, controles
   fisicos, endpoints — competen a la **organizacion adoptante (O)**. No se documentan
   como implementados por el repositorio.
-- Los controles de tipo **(T) tecnico** que aun no estan implementados se mapean a los
-  changes C-62 a C-67, sin declararlos implementados (ver §7).
+- Los controles de tipo **(T) tecnico** fueron implementados y sus changes cerraron:
+  **C-62 a C-67 estan archivados** (entre 2026-10-08 y 2026-10-19). El estado vigente de
+  cada control reconcialiado esta en el registro del gap assessment
+  (`docs/cumplimiento/gap-assessment-iso27001-27002-nist-csf2.md` §2.4) y en §7.
 
 ## 4. Plantilla comun de documento
 
@@ -90,6 +92,11 @@ sugerida es anual, o ante cambio de alcance, normativa o infraestructura.
 | `ciclo-vida-identidades-y-revision-accesos.md` | Ciclo de vida de identidades y revision de accesos — control organizacional (5.16, 5.18; IAH-011) | v1 (aprobada 2026-10-08) | Anual |
 | `plan-continuidad.md` | Plan de continuidad: RTO/RPO, restauracion desde el dump cifrado, offsite y redundancia como accion del adoptante (5.29, 5.30, 8.13, 8.14; CONT-001/CONT-002; C-65) | v1 (aprobada 2026-10-19) | Anual |
 | `evaluacion-seguridad-proveedores.md` | Evaluacion de seguridad de proveedores: postura observable publicamente y clausulas a evaluar de Twilio, Gemini/Google, Microsoft y N8N, con las garantias no suscritas como accion del adoptante (5.19-5.23; SGD-016; C-64) | v1 (aprobada 2026-10-19) | Anual |
+| `adr-001-reversion-dir-005-cifrado-contacto.md` | ADR-001: reversion de la minimizacion del contacto del directorio y adopcion del cifrado at-rest con indice ciego (5.34/8.12; c-153) | v1 (ACEPTADO 2026-10-28) | Anual |
+| `inventario-licencias.md` | Inventario de dependencias y licencias de backend y frontend (5.32; SGD-020; C-156) | v1 (aprobada 2026-10-28) | Anual |
+| `procedimiento-arco-directorio.md` | Aplicacion del procedimiento ARCO al directorio de empleados (5.34; c-153) | v1 (elaborado 2026-10-28) | Anual |
+| `procedimiento-reset-mfa.md` | Reset administrativo de MFA y re-enrollment forzado para cuentas privilegiadas (8.5/5.17; C-63b) | v1 (elaborado 2026-10-08) | Anual |
+| `runbook-retencion-directorio.md` | Runbook manual de retencion del directorio: purga por vencimiento y supresion (5.34/8.10; c-153) | v1 (elaborado 2026-10-28) | Anual |
 
 Anexo del cuerpo documental (no es uno de los 11 documentos de gobernanza):
 
@@ -127,15 +134,15 @@ Anexo del cuerpo documental (no es uno de los 11 documentos de gobernanza):
 | 5.30 Preparacion de las TIC para la continuidad | RC | `plan-continuidad.md` | CONT-001, CONT-002 |
 | 8.13 Respaldo de informacion | RC | `plan-continuidad.md` | CONT-001, CONT-002 |
 | 8.14 Redundancia | RC | `plan-continuidad.md` | CONT-002 |
-| 5.34 Privacidad y proteccion de PII | GV, PR | `politica-privacidad-runtime.md`, `justificacion-minimizacion-directorio.md`, `instrumento-transferencia-internacional.md`, `procedimiento-arco.md`, `politica-retencion-logs.md` | SGD-009, SGD-013, SGD-014, SGD-015 |
-| 8.12 Prevencion de fuga de datos | PR | `justificacion-minimizacion-directorio.md`, `politica-retencion-logs.md` | SGD-015 |
+| 5.34 Privacidad y proteccion de PII | GV, PR | `politica-privacidad-runtime.md`, `adr-001-reversion-dir-005-cifrado-contacto.md`, `clasificacion-etiquetado-informacion.md`, `instrumento-transferencia-internacional.md`, `procedimiento-arco.md`, `politica-retencion-logs.md` | SGD-009, SGD-013, SGD-014, SGD-015 |
+| 8.12 Prevencion de fuga de datos | PR | `adr-001-reversion-dir-005-cifrado-contacto.md`, `clasificacion-etiquetado-informacion.md`, `politica-retencion-logs.md` | SGD-015 |
 | 8.15 Registro de eventos | DE, PR | `politica-retencion-logs.md` | SGD-015 |
 | ROPA (Ley 25.326) | GV | `registro-actividades-tratamiento.md` | SGD-010 |
 
 Funciones NIST CSF 2.0 cubiertas: **Govern (GV)** — 5.1, 5.2, 5.31, 8.26, 5.34, ROPA;
-**Identify (ID)** — 5.9, 5.12, 5.13, 8.26. Las funciones Proteger (PR), Detectar (DE),
-Responder (RS) y Recuperar (RC) se cubren parcialmente; su cierre tecnico esta en C-62 a
-C-67.
+**Identify (ID)** — 5.9, 5.12, 5.13, 8.26; **Responder (RS)** — 5.24-5.28; **Recuperar
+(RC)** — 5.29, 5.30, 8.13, 8.14. Las funciones Proteger (PR) y Detectar (DE) se cubren
+parcialmente; su cierre tecnico esta en los changes **archivados** C-62 a C-67.
 
 ### 6.2 Matriz requisito SGD -> documento
 
@@ -171,10 +178,18 @@ C-67.
 - El desglose de C-63 (`c-63a`, `c-63b`, `c-63c`) extiende este cuerpo documental:
   `c-63c` agrega `gestion-secretos-y-rotacion.md` (8.2/8.24; IAH-008..010) y
   `ciclo-vida-identidades-y-revision-accesos.md` (5.16/5.18; IAH-011).
-- **C-62** (`hardening-infra-red`), **C-64** (`vulnerabilidades-supply-chain`), **C-65**
-  (`backup-continuidad`), **C-66** (`privacidad-transferencias`) y **C-67**
-  (`notificacion-sms-llamante`) son **changes separados**. C-61 documenta el marco; ellos
-  implementan y extienden. Ver `docs/cumplimiento/plan-cambios-cumplimiento.md` §2-§4.
+- **C-62** (`hardening-infra-red`, archivado 2026-10-08), **C-63a/b/c**
+  (`auth-hardening` / `mfa-y-rol-privilegiado` / `rotacion-claves-secretos`, archivados
+  2026-10-08), **C-64** (`vulnerabilidades-supply-chain`, archivado 2026-10-19), **C-65**
+  (`backup-continuidad`, archivado 2026-10-19), **C-66** (`privacidad-transferencias`,
+  archivado 2026-10-19) y **C-67** (`notificacion-sms-llamante`, archivado 2026-10-19 como
+  NO REALIZADO) ya **cerraron**: C-61 documento el marco; ellos implementaron y extendieron.
+  Ver `docs/cumplimiento/plan-cambios-cumplimiento.md` §2-§4.
+- **c-153** (`endurecer-el-directorio-para-datos-reales`, 2026-10-28) revierte la
+  minimizacion del contacto del directorio con `adr-001-reversion-dir-005-cifrado-contacto.md`
+  y agrega `procedimiento-arco-directorio.md` y `runbook-retencion-directorio.md`.
+- **C-156** (este change, 2026-10-28) reconcilia el gap assessment (§2.4), agrega
+  `inventario-licencias.md` (5.32), el manejo de evidencia (5.28) y el lint documental.
 - La politica de privacidad en runtime y el ROPA documentan el marco legal; el tratamiento
   del numero llamante y los instrumentos de transferencia son de C-66.
 - **C-66** (`privacidad-transferencias`) extiende este cuerpo documental con
@@ -197,12 +212,14 @@ C-67.
 ## 8. Verificacion y estado de aprobacion
 
 - La verificacion de este change es **MANUAL**: la lista de comprobacion de
-  `openspec/changes/c-61-compliance-gobernanza/tasks.md` (existencia de los 11 documentos,
+  `openspec/changes/archive/2026-10-01-c-61-compliance-gobernanza/tasks.md` (existencia de los 11 documentos,
   secciones, encuadre, terminos prohibidos) mas
   `openspec validate --strict --changes c-61-compliance-gobernanza`.
-- **No** se implementa doc-lint automatizado en C-61. Queda registrado como **change
-  futuro** (patron c-42), que agregaria un script/test que valide estructura, encabezados y
-  terminos prohibidos de esta carpeta.
+- **No** se implementa doc-lint automatizado en C-61. El lint quedo diferido como
+  **change futuro** (patron c-42) y se **implemento en C-156**:
+  `App/Backend/tests/test_compliance_docs_lint.py` valida, de forma hermetica, que cada
+  documento del indice exista, que cada documento de gobernanza este listado, los
+  encabezados requeridos y la ausencia de afirmaciones de certificacion.
 - **Aprobacion humana completada (governance MEDIO)**: la politica de seguridad
   (`politica-seguridad-informacion.md`) y los roles
   (`roles-responsabilidades-seguridad.md`) fueron **aprobados como v1 por el autor el
@@ -210,9 +227,9 @@ C-67.
   opera con datos reales del grupo (T1) bajo consentimiento documentado
   (`acta-consentimiento-t1.md`). Los datos de produccion de un adoptante (T3) **no se
   activan** sin su aprobacion.
-- **Pendiente para el orquestador**: evaluar la actualizacion de `CHANGES.md` con la
-  entrada de C-61 (governance MEDIO, habilita C-63, dependencias nulas). `CHANGES.md` NO
-  se modifica en este change.
+- **Estado de `CHANGES.md`**: la entrada de C-61 (governance MEDIO, habilita C-63,
+  dependencias nulas) ya figura en `CHANGES.md`. La nota previa de "pendiente para el
+  orquestador" quedo cumplida y se elimina.
 
 ## 9. Fuentes internas
 
@@ -220,5 +237,5 @@ C-67.
 - `docs/cumplimiento/marco-legal-ar-2026.md`
 - `docs/cumplimiento/plan-cambios-cumplimiento.md`
 - `docs/security-hardening.md`
-- `openspec/changes/c-61-compliance-gobernanza/{proposal.md,design.md,tasks.md}`
+- `openspec/changes/archive/2026-10-01-c-61-compliance-gobernanza/{proposal.md,design.md,tasks.md}`
 - `knowledge-base/03_actores_y_roles.md`, `knowledge-base/04_modelo_de_datos.md`

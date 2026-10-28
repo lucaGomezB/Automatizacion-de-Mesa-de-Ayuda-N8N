@@ -172,3 +172,63 @@ def test_allowed_usa_la_base_publica_configurada(monkeypatch):
     assert record is not None
     assert record.attrib.get("recordingStatusCallback") == _STATUS_URL
     assert record.attrib.get("action") == _ACTION_URL
+
+
+# ── Aviso de privacidad telefonico (C-156, PRIV-003) ─────────────────────────
+
+_AVISO_MINIMOS = ("grabad", "finalidad", "responsable", "transferencia", "derechos")
+
+
+def _texto_del_aviso() -> str:
+    """Texto del <Say> del documento admitido (previo al <Record>)."""
+    root = _parse(twiml.render_twiml_allowed(base_url=_BASE))
+    say = root.find("Say")
+    assert say is not None, "el documento admitido debe contener un <Say>"
+    return "".join(say.itertext())
+
+
+def test_aviso_de_privacidad_aparece_antes_del_record():
+    """El <Say> con el aviso de privacidad precede al <Record>."""
+    root = _parse(twiml.render_twiml_allowed(base_url=_BASE))
+    children = list(root)
+    say_index = next(i for i, el in enumerate(children) if el.tag == "Say")
+    record_index = next(i for i, el in enumerate(children) if el.tag == "Record")
+    assert say_index < record_index, "el aviso debe aparecer antes del <Record>"
+
+
+def test_aviso_menciona_grabacion_finalidad_responsable_transferencia_derechos():
+    """El aviso informa grabacion, finalidad, responsable, transferencia y derechos."""
+    texto = _texto_del_aviso().lower()
+    for termino in _AVISO_MINIMOS:
+        assert termino in texto, f"el aviso debe mencionar '{termino}'"
+    assert "ley 25.326" in texto
+
+
+def test_aviso_es_estatico_y_sin_datos_del_llamante():
+    """El aviso no interpola datos ni contiene un numero de llamante."""
+    import re
+
+    texto = _texto_del_aviso()
+    assert "{" not in texto and "}" not in texto
+    assert re.search(r"\d{7,}", texto) is None, "el aviso no debe contener un telefono"
+
+
+def test_aviso_no_promete_alta_inmediata():
+    """El aviso no promete la creacion inmediata del incidente."""
+    texto = _texto_del_aviso().lower()
+    assert "fue registrado" not in texto
+    assert "numero de ticket" not in texto
+    assert "se creo" not in texto
+
+
+def test_aviso_no_afirma_certificacion_ni_conformidad():
+    """El aviso usa lenguaje de alineacion y no afirma conformidad."""
+    texto = _texto_del_aviso().lower()
+    for prohibido in ("certificado", "compliant", "cumple"):
+        assert prohibido not in texto, f"el aviso no debe contener '{prohibido}'"
+
+
+def test_aviso_usa_lenguaje_de_alineacion():
+    """El aviso declara alineacion (no certificacion)."""
+    texto = _texto_del_aviso().lower()
+    assert "alineado con" in texto
