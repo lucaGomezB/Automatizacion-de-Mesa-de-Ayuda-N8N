@@ -68,8 +68,8 @@
 
 ## 9. Rollback documentado
 
-- [ ] 9.1 `git revert` de los commits de c-148 restaura la documentacion previa y la barrera a 12 chequeos; verificar que `python3 scripts/preflight/docs_stack_sync.py` vuelve a 12/12 PASS y que no hay tag ni release que deshacer. (NO EJECUTADA: no hay commits de c-148; el change queda sin commitear por indicacion del orchestrator.)
-- [ ] 9.2 Verificar que los hechos historicos conservados y rotulados permanecen citables tras el revert (no se elimina la calibracion). (NO EJECUTADA: depende de 9.1.)
+- [ ] 9.1 `git revert` de los commits de c-148 restaura la documentacion previa y la barrera a 12 chequeos; verificar que `python3 scripts/preflight/docs_stack_sync.py` vuelve a 12/12 PASS y que no hay tag ni release que deshacer. (NO EJECUTADA: no hay commits de c-148; el change queda sin commitear por indicacion del orchestrator.) — ANOTACION (2026-10-27, c-150 W2): la justificacion "no hay commits del change" quedo OBSOLETA. c-148 se commiteo en 3392012 y se fusiono en PR #53 (merge 6516f5f); la verificacion de rollback es MOOT. El texto original se conserva como evidencia historica.
+- [ ] 9.2 Verificar que los hechos historicos conservados y rotulados permanecen citables tras el revert (no se elimina la calibracion). (NO EJECUTADA: depende de 9.1.) — ANOTACION (2026-10-27, c-150 W2): depende de 9.1, que quedo MOOT por el merge de c-148 (commit 3392012, PR #53, merge 6516f5f). El texto original se conserva.
 
 ## 10. Residuales absorbidos en el mismo change (bloques F y G)
 

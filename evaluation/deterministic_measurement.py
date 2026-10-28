@@ -28,7 +28,7 @@ import math
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, Iterable, List, Optional, Protocol, Sequence, Tuple
 
-from evaluation.corpus import CasoEvaluacion
+from evaluation.corpus import CasoEvaluacion, cargar_corpus
 from evaluation.stats import ResultadoMcNemar, contraste_mcnemar
 from evaluation.metrics import (
     CLASES,
@@ -1011,59 +1011,17 @@ def metricas_deterministas(
 # ---------------------------------------------------------------------------
 # Punto de entrada offline (camino real, sin Gemini)
 # ---------------------------------------------------------------------------
-def cargar_corpus_tolerante(path) -> List[CasoEvaluacion]:
-    """
-    Carga el corpus admitiendo tiempos faltantes/None.
-
-    `evaluation.corpus.cargar_corpus` exige tiempos numericos y NO se modifica
-    (regla dura: `_a_float` intocable). El corpus real pseudonimizado tiene 56
-    casos con `tiempo_automatizado_s: null`; esta carga tolerante reutiliza
-    `CasoEvaluacion` (cuyos tiempos son Optional) y valida los sectores contra
-    el vocabulario canonico sin tocar `_a_float`.
-    """
-    import json
-    import pathlib
-
-    from evaluation.corpus import CATEGORIAS_VALIDAS, CasoEvaluacion, CorpusError
-
-    path = pathlib.Path(path)
-    if not path.exists():
-        raise FileNotFoundError(f"No se encontro el corpus de evaluacion en: {path}")
-
-    documento = json.loads(path.read_text(encoding="utf-8"))
-    casos: List[CasoEvaluacion] = []
-    for item in documento["casos"]:
-        sector = item["sector_asignado"]
-        if sector not in CATEGORIAS_VALIDAS:
-            raise CorpusError(
-                f"Sector invalido '{sector}' en el caso id='{item.get('id')}'."
-            )
-
-        def _opt(valor: object):
-            if isinstance(valor, bool) or not isinstance(valor, (int, float)):
-                return None
-            return float(valor)
-
-        casos.append(
-            CasoEvaluacion(
-                id=str(item["id"]),
-                descripcion=str(item["descripcion"]),
-                sector_asignado=sector,
-                sectores_adicionales=list(item.get("sectores_adicionales") or []),
-                canal_origen=item.get("canal_origen"),
-                tiempo_manual_s=_opt(item.get("tiempo_manual_s")),
-                tiempo_automatizado_s=_opt(item.get("tiempo_automatizado_s")),
-            )
-        )
-    return casos
-
-
 def _cargar_corpus_real():
+    """Carga el corpus real con el UNICO loader (`cargar_corpus`).
+
+    El contrato de tiempos de `evaluation.corpus` es opcional (c-150): un
+    `tiempo_automatizado_s: null` ya no exige un loader tolerante duplicado.
+    """
     import pathlib
 
     repo_root = pathlib.Path(__file__).parent.parent
     corpus_path = repo_root / "data" / "corpus_evaluacion_pseudonimizado.json"
-    return cargar_corpus_tolerante(corpus_path)
+    return cargar_corpus(corpus_path)
 
 
 def _resolver_clasificador_real() -> ClasificadorDeterministicoProtocol:

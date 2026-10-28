@@ -2967,3 +2967,42 @@ bloques (1 TLS, 2 reintentos, 3 humo E2E) se aplicaron.
   toco la instancia N8N operativa. El **BLOQUEO de tope de paginas** de arriba queda resuelto por
   la compactacion de forma del commit `8c0cf6d` (111 -> 104 totales; ver G0.1 del 2026-10-27), sin
   quitar contenido cientifico ni dejar referencias colgadas. Con esto c-140 queda **73/73**.
+
+---
+
+## Cierre de residuales y separacion del contrato del corpus (c-150) - 2026-10-27
+
+Registro de las confirmaciones del autor y de las ratificaciones incorporadas por el change `c-150-cerrar-residuales-y-separar-el-contrato-del-corpus` (FASE 43). Se agrega **sin reescribir** las entradas provisionales previas, que se conservan como historia de la decision.
+
+### Item 9 - Redaccion final del resumen y las conclusiones (BAJO) - CONFIRMADA 2026-10-27
+
+El autor (Gonzalo Sevilla) aprobo la **redaccion final vigente** de:
+
+- `docs/Tesis/v10 (IA)/paper/sections/00-resumen.tex` (T1/T2: conclusion ES y EN; viabilidad tecnica y economica; operativa condicional).
+- `docs/Tesis/v10 (IA)/paper/sections/09-conclusiones.tex` (T10 a T13 y el parrafo de apertura).
+
+Estado: **CONFIRMADA por el autor (2026-10-27)**. No se edita ningun `.tex`: la aprobacion se registra, no modifica el contenido. Remite a la tabla "Mapeo T1-T14" de este registro y a las entradas T1/T2/T10-T13.
+
+### Item 8 - Ratificacion de las decisiones provisionales - CONFIRMADAS 2026-10-27
+
+El autor ratifico (2026-10-27) las decisiones que estaban registradas como PROVISIONAL, sin reescribir su texto original. Cada fila remite a su entrada provisional:
+
+| Item original | Linea de referencia | Decision ratificada | Nota |
+|---|---|---|---|
+| G0.2 / OQ3 (entorno de compilacion de registro) | `:724` | CONFIRMADA | El entorno adoptado es la imagen Docker `texlive-thesis` (opcion 2 de D6). |
+| G0.3 / OQ4 (inclusion de c-140) | `:759`, `:772` | CONFIRMADA | c-140 se incluyo y quedo 73/73 (ver la seccion "Endurecimiento tecnico TLS/reintentos/E2E (c-140)"). |
+| G0.4 / OQ2 (nombre de la release) | `:774` | CONFIRMADA (moot) | El nombre `v1.2.0` quedo moot: `v1.2.1` y `v1.2.2` se publicaron despues de `v1.2.0`, que permanece inmutable. |
+| OQ5 (`cache_meta` de la calibracion) | `:1086`, `:1089` | CONFIRMADA-A-PROVEER | La decision se confirma; el valor de la version del prompt de la FORCE-ESCALATE puede faltar y se registra como pendiente de ser provisto (no se fabrica). |
+| c-131 Q1-Q3 | `:1223`-`:1225` | CONFIRMADAS | Recuperar las caches via c-143; sin corrida paga; sin tocar `.gitignore`. |
+| c-142 bloque-2 OQ3/OQ4 | `:1356`-`:1357` | CONFIRMADAS | Incidentes de preproduccion: no existen; estado del objetivo especifico 6: se conserva con salvedad. |
+
+### Item 6.4 - Decisiones explicitamente PENDIENTES (sin autorizacion)
+
+No se registra autorizacion para las dos decisiones siguientes, que quedan **PENDIENTES**:
+
+- **G0.7a / OQ7a** (ablacion paga del prompt, 138 invocaciones): **PENDIENTE de resolucion del autor u orquestador**. No autorizada; el nivel c del prompt permanece "no computado".
+- **OQ6** (`usuario_final` valida la clasificacion de su propio incidente, dominio CRITICAL): **PENDIENTE de resolucion**. No autorizada; sin cambios.
+
+### Aprobacion HIGH de C-60 (W4) - PENDIENTE (no concedida)
+
+Se ratifica que la aprobacion humana HIGH del directorio (C-60) sigue **PENDIENTE**: activar datos reales queda bloqueado y la implementacion opera con datos sinteticos (ver `docs/directorio-evidencia-cumplimiento.md` seccion 4). La tarea 7.4 de c-60 esta `[x]` porque su contenido es registrar esa aprobacion como pendiente; el cierre de la tarea no concede la aprobacion.

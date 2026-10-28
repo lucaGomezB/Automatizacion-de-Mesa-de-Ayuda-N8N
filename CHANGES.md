@@ -194,24 +194,24 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ### Paralelismo por fase
 
-**GATE 0: C-01 foundation-setup** ✓
+**GATE 0: C-01 foundation-setup** COMPLETADO
   → C-02 notify-n8n-hook                    [Agente A]
   → C-03 pseudonymization-module            [Agente B]
   → C-07 frontend-testing-setup             [Agente C]
   ← PRIMER FORK: 3 changes en paralelo
 
-**GATE 1: C-02 ✓, C-03 ✓**               ← SEGUNDO FORK
+**GATE 1: C-02 (completado), C-03 (completado)**               ← SEGUNDO FORK
   → C-04 n8n-workflow-validation            [Agente A]
   → C-06 backend-integration-tests          [Agente B]
   → C-08 evaluation-framework               [Agente C]
 
-**GATE 2: C-04 ✓**
+**GATE 2: C-04** COMPLETADO
   → C-05 n8n-channel-triggers               [Agente A]
 
-**GATE 3: C-05 ✓, C-06 ✓, C-07 ✓, C-08 ✓**
+**GATE 3: C-05 (completado), C-06 (completado), C-07 (completado), C-08 (completado)**
   → C-09 ci-cd-pipeline                     [Agente A, B, C]
 
-**GATE 4: C-09 ✓**
+**GATE 4: C-09** COMPLETADO
   → C-10 documentation-annexes              [Agente A, B, C]
 
 ### Camino critico (7 changes — minimo irreducible)
@@ -348,15 +348,15 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 - **Estado**: `[x]` completado (2026-06-11 — openspec/changes/archive/2026-06-11-c-06-backend-integration-tests; 36 tareas completadas, 187 tests nuevos en verde, cobertura 89% — superando objetivo del 85%)
 - **Scope**:
-  - Escribir tests de integracion para `POST /api/v1/incidentes` (creacion + clasificacion) ✓
-  - Escribir tests de integracion para `GET /api/v1/incidentes` (listado con filtros, paginacion) ✓
-  - Escribir tests de integracion para `GET /api/v1/incidentes/{id}` (detalle + 404) ✓
-  - Escribir tests de integracion para `PATCH /api/v1/incidentes/{id}` (actualizacion parcial) ✓
-  - Escribir tests de integracion para `GET /api/v1/clasificaciones/revision-pendiente` (cola FIFO) ✓
-  - Escribir tests de integracion para `PATCH /api/v1/clasificaciones/{id}/validar` (validacion humana) ✓
-  - Escribir tests de integracion para `GET /api/v1/health` (health check) ✓
-  - Usar `conftest.py` existente con SQLite in-memory + fixture `client` ASGI ✓
-  - Cobertura objetivo: > 85% en modulos `routes/`, `services/`, `repositories/` ✓ (89% logrado)
+  - Escribir tests de integracion para `POST /api/v1/incidentes` (creacion + clasificacion)
+  - Escribir tests de integracion para `GET /api/v1/incidentes` (listado con filtros, paginacion)
+  - Escribir tests de integracion para `GET /api/v1/incidentes/{id}` (detalle + 404)
+  - Escribir tests de integracion para `PATCH /api/v1/incidentes/{id}` (actualizacion parcial)
+  - Escribir tests de integracion para `GET /api/v1/clasificaciones/revision-pendiente` (cola FIFO)
+  - Escribir tests de integracion para `PATCH /api/v1/clasificaciones/{id}/validar` (validacion humana)
+  - Escribir tests de integracion para `GET /api/v1/health` (health check)
+  - Usar `conftest.py` existente con SQLite in-memory + fixture `client` ASGI
+  - Cobertura objetivo: > 85% en modulos `routes/`, `services/`, `repositories/` (89% logrado)
 - **Dependencias**: `C-02`, `C-03`
 - **Governance**: BAJO
 - **Leer antes**:
@@ -2269,6 +2269,27 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
+## FASE 43 — Cierre de residuales y separacion del contrato del corpus (2026-10-27)
+
+> Change documental y de codigo (TDD estricto) que cierra cinco residuales de la FASE 42 y un defecto de contrato del corpus. Governance **ALTO** (W2, W4) / **MEDIO** (W3) / **BAJO** (W1, W5 y confirmaciones). W2 y W4 requieren revision del autor antes del merge.
+
+### [C-150] `cerrar-residuales-y-separar-el-contrato-del-corpus` — APLICADO (2026-10-27, ALTO/MEDIO/BAJO)
+
+- **Scope (W1-W5 y confirmaciones)**:
+  - **W1 (BAJO, doc)**: se corrige la nota de estado stale de `CHANGES.md` sobre la deuda residual de C-80; C-80 quedo archivado 45/45 el 2026-10-21 (ya registrado en la actualizacion de cierre del roadmap). No se reescribe ninguna entrada fechada.
+  - **W2 (ALTO, doc, artefactos archivados)**: se anotan con fecha las tareas de rollback obsoletas de c-148 (9.1, 9.2) y c-149 (7.1), conservando su texto original como evidencia historica (c-148: commit `3392012`, PR #53, merge `6516f5f`; c-149: commit `f666316`, PR #55, merge `4d9e072`).
+  - **W3 (MEDIO, codigo, TDD estricto)**: `evaluation/corpus.py` separa el contrato de CLASIFICACION (obligatorio) del de TIEMPOS (opcional pero estricto cuando presente) y colapsa el loader tolerante duplicado `cargar_corpus_tolerante` en el unico `cargar_corpus()`; se actualizan los consumidores (`evaluation/deterministic_measurement.py`, `evaluation/sensibilidad_ajustes.py`) y los tests. `_a_float` NO se relaja para los campos presentes.
+  - **W4 (ALTO, doc, ledger de gobernanza)**: se reasigna el requisito de fidelidad del estado desde `project-documentation` a `employee-directory` (el documento `docs/directorio-evidencia-cumplimiento.md` esta gobernado por DIR-009). Se registra con precision el estado de C-60 (33/33; la tarea 7.4 esta `[x]` porque su contenido es registrar la revision HIGH como PENDIENTE) y se deja la aprobacion HIGH del autor explicitamente PENDIENTE. No se concede ninguna aprobacion.
+  - **W5 (BAJO, doc)**: se eliminan las 14 marcas U+2713 de `CHANGES.md` (encabezados de gate a texto explicito `COMPLETADO` / `(completado)`; items de scope completados, se retira la marca porque la completitud ya la declara el encabezado).
+  - **Confirmaciones (BAJO, doc)**: el ledger del dictamen registra la aprobacion del autor (2026-10-27) de la redaccion final de `00-resumen.tex` y `09-conclusiones.tex` (item 9), ratifica las decisiones provisionales del item 8 y deja G0.7a/OQ7a (ablacion paga) y OQ6 (`usuario_final`, CRITICAL) explicitamente PENDIENTES.
+- **Governance**: W2 y W4 ALTO (el autor revisa esos diffs antes del merge); W3 MEDIO; W1, W5 y confirmaciones BAJO.
+- **Verificacion**: `cd evaluation; pytest` 473 passed; barrido de U+2713 en `CHANGES.md` sin coincidencias; `openspec validate c-150-cerrar-residuales-y-separar-el-contrato-del-corpus --strict` OK.
+- **Hallazgo (W3)**: el corpus real presente en `data/corpus_evaluacion_pseudonimizado.json` tiene 200 casos y 0 tiempos nulos (la premisa de "56 casos nulos" del proposal no coincide con la version actual del archivo); el corpus real cumple el contrato de clasificacion y carga con el unico `cargar_corpus()`. La opcionalidad de los tiempos queda cubierta por tests sinteticos (mixto, ausente, nulo, borde 0).
+- **Dependencias**: FASE 42 (C-149); c-148 y c-149 archivados.
+- **Leer antes**: `openspec/changes/c-150-cerrar-residuales-y-separar-el-contrato-del-corpus/{proposal,design,tasks}.md`, `openspec/specs/evaluation-corpus/spec.md`, `openspec/specs/employee-directory/spec.md`.
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo; actualizado 2026-10-22)
@@ -2395,7 +2416,7 @@ Operativo para habilitar el pipeline pago (fuera de changes):
   `AI Agent` recibe el item sellado tras la guarda.
 
 Deuda menor pendiente (no bloqueante):
-- Tesis post-pipeline: la reconciliacion del Cap. 7 con el corpus real y las correcciones de 4.3/4.8/Cap. 11 quedaron cubiertas por C-76 (Cap. 4/7/8), C-77 (estadistica/inferencia) y C-79 (Cap. 11), archivados el 2026-10-20. La unica deuda residual es la evidencia visual de C-80 (capturas de UI 6.5/6.6).
+- Tesis post-pipeline: la reconciliacion del Cap. 7 con el corpus real y las correcciones de 4.3/4.8/Cap. 11 quedaron cubiertas por C-76 (Cap. 4/7/8), C-77 (estadistica/inferencia) y C-79 (Cap. 11), archivados el 2026-10-20. La evidencia visual de C-80 (capturas de UI 6.5/6.6) NO sigue pendiente: C-80 se archivo 45/45 el 2026-10-21 (ver la actualizacion de cierre del roadmap mas arriba, que registra el cierre), de modo que esta deuda residual quedo cerrada.
 
 Para avanzar:
 - Workstream aprobado: el plan de cumplimiento ISO/NIST/Ley 25.326 (`docs/cumplimiento/plan-cambios-cumplimiento.md`), en la FASE 21. C-61 (2026-10-01), C-62 (2026-10-08), C-63a/b/c (2026-10-08), C-64 (2026-10-19), C-65 (2026-10-19) y C-66 (2026-10-19) quedaron ARCHIVADOS. El workstream quedo TOTALMENTE EJECUTADO: no quedan changes planificados.

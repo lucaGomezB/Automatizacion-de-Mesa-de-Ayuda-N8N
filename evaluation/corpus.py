@@ -19,6 +19,13 @@ El corpus es un documento JSON con:
       ]
     }
 
+Contratos del caso (c-150):
+- CLASIFICACION (obligatorio): `id`, `descripcion`, `canal_origen`,
+  `sector_asignado`, `sectores_adicionales`.
+- TIEMPOS (opcional): `tiempo_manual_s` y `tiempo_automatizado_s` pueden
+  omitirse o declararse `null`; cuando estan presentes y no son `null` deben
+  ser numericos (se rechaza un valor no numerico).
+
 Invariantes de la verdad multietiqueta:
 - `sectores_adicionales` es obligatorio (arreglo vacio `[]` cuando no hay).
 - `sector_asignado` no puede repetirse dentro de `sectores_adicionales`.
@@ -52,12 +59,19 @@ SECTORES_CANONICOS: tuple[str, ...] = (
 
 CATEGORIAS_VALIDAS: frozenset[str] = frozenset(SECTORES_CANONICOS)
 
+#: Contrato de CLASIFICACION: campos obligatorios de cada caso.
 CAMPOS_CASO_REQUERIDOS: tuple[str, ...] = (
     "id",
     "descripcion",
     "canal_origen",
     "sector_asignado",
     "sectores_adicionales",
+)
+
+#: Contrato de TIEMPOS: campos OPCIONALES. Un caso puede omitirlos o declararlos
+#: `null` (el corpus real pseudonimizado tiene 56 casos sin `tiempo_automatizado_s`).
+#: Cuando estan presentes y no son `null`, deben ser numericos (estrictez de `_a_float`).
+CAMPOS_TIEMPO_OPCIONALES: tuple[str, ...] = (
     "tiempo_manual_s",
     "tiempo_automatizado_s",
 )
@@ -143,14 +157,23 @@ def _parsear_caso(item: Any, path: pathlib.Path) -> CasoEvaluacion:
             )
         return float(valor)
 
+    def _a_float_opcional(valor: Any, campo: str) -> Optional[float]:
+        """Contrato de TIEMPOS: ausente o `null` es valido (None); presente y no
+        numerico se rechaza con la estrictez de `_a_float`."""
+        if valor is None:
+            return None
+        return _a_float(valor, campo)
+
     return CasoEvaluacion(
         id=str(caso_id),
         descripcion=str(item["descripcion"]),
         sector_asignado=sector_asignado,
         sectores_adicionales=adicionales_validados,
         canal_origen=str(item["canal_origen"]),
-        tiempo_manual_s=_a_float(item["tiempo_manual_s"], "tiempo_manual_s"),
-        tiempo_automatizado_s=_a_float(item["tiempo_automatizado_s"], "tiempo_automatizado_s"),
+        tiempo_manual_s=_a_float_opcional(item.get("tiempo_manual_s"), "tiempo_manual_s"),
+        tiempo_automatizado_s=_a_float_opcional(
+            item.get("tiempo_automatizado_s"), "tiempo_automatizado_s"
+        ),
     )
 
 
