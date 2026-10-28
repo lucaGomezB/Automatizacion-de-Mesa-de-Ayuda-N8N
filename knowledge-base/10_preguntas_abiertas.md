@@ -12,10 +12,11 @@
 **La tesis dice** (seccion 5.7): tokens portadores firmados validados contra clave compartida con N8N; 401 ante fallo.
 **Estado actual**: Implementado en C-15 (jwt-auth-backend-frontend). JWT Bearer token con python-jose + middleware FastAPI. Todos los endpoints protegidos requieren autenticacion. Frontend con AuthContext y ruta `/login`. Governance: ALTO. Completado y archivado (2026-07-02).
 
-### IN-03 — Driver de base de datos
-**La tesis dice** (§5.4): psycopg2-binary 2.9. **El código dice**: asyncpg + SQLAlchemy async.
-**Impacto**: ninguno funcional (la elección del código es superior para FastAPI); solo desfase documental.
-**Resolución propuesta**: anotar la divergencia en el Anexo B/C al cerrar C-10 (ya documentada en DD-08).
+### IN-03 — Driver de base de datos — RESUELTO (2026-10-28)
+
+**Estado actual**: Resuelto. La version de trabajo de la tesis (`docs/Tesis/v10 (IA)/paper/sections/05-arquitectura.tex`, Seccion 5.4) declara `SQLAlchemy 2.0` como ORM y `asyncpg` como driver asincronico para PostgreSQL, en coherencia con el codigo, que usa esa misma combinacion. La divergencia que la entrada describia no existe en la version vigente. La decision DD-08 (`knowledge-base/09_decisiones_y_supuestos.md`) confirma la eleccion, y la reconciliacion queda asentada en el Anexo C de la tesis (`docs/Tesis/v10 (IA)/paper/sections/12-anexos.tex`, §Esquema de base de datos).
+
+**Antecedente (superado, 2026-07-02)**: la entrada afirmaba "**La tesis dice** (§5.4): psycopg2-binary 2.9. **El codigo dice**: asyncpg + SQLAlchemy async", con impacto "ninguno funcional (la eleccion del codigo es superior para FastAPI); solo desfase documental" y la "**Resolucion propuesta**: anotar la divergencia en el Anexo B/C al cerrar C-10 (ya documentada en DD-08)". Ese planteo presuponia que la tesis aun declaraba `psycopg2`; la version de trabajo ya no lo hace. Se conserva como historia.
 
 ### IN-04 — Cifrado en reposo y HMAC — RESUELTO (2026-09-10)
 
@@ -29,10 +30,11 @@
 **El codigo dice**: El bloqueo de escritura sobre incidentes cerrados esta implementado (C-23: `PATCH /api/v1/incidentes/{id}` devuelve 409 si el estado es terminal). No se requiere purga automatica.
 **Estado actual**: Resuelto. C-18 redefinio la politica de retencion a conservacion indefinida. La pseudonimizacion y el cifrado Fernet garantizan la proteccion de datos en periodos prolongados. La version v7 de `tesis_para_agente.md` (que aun dice "90 dias / 1 ano") quedo desactualizada; la fuente de verdad es el LaTeX corregido en `v8 (IA)/paper/sections/11-aspectos-legales.tex`.
 
-### IN-06 — Workflow N8N del repo vs. descripcion de la tesis
-**La tesis dice** (§6.3): 12 nodos con normalizacion, IF por confianza, dos llamadas HTTP y notificaciones paralelas.
-**El repo dice**: `n8n/workflow.json` con 16 nodos operativos reales + 3 sticky notes. Trigger email es Microsoft Outlook (NO IMAP). Clasificacion embebida en backend (una sola llamada HTTP). Canal telefonico con AI Agent (LangChain) + Redis.
-**Estado actual (2026-07-02)**: workflow funcional con 16 nodos. Divergencias documentadas: (a) Outlook vs IMAP, (b) 16 nodos vs 12, (c) clasificacion embebida vs endpoint separado, (d) AI Agent + Redis para canal telefonico.
+### IN-06 — Workflow N8N del repo vs. descripcion de la tesis — RECONCILIADO (2026-10-28)
+
+**Artefacto vigente** (`n8n/workflow.json`): 32 nodos en total (29 operativos mas 3 notas adhesivas). El disparador de correo usa el nodo IMAP (`n8n-nodes-base.emailReadImap`, credencial `Mesa de Ayuda - IMAP`): la entrada de correo se lee por IMAP, conforme a la redefinicion del transporte de C-55 (IMAP/App Password). La clasificacion permanece embebida en el backend, de modo que el flujo realiza una sola llamada HTTP al alta del incidente. El canal telefonico NO emplea un agente de IA de LangChain ni memoria de sesion en Redis: el agente telefonico y Redis se retiraron en C-72. La ausencia de nodos Redis, agente de IA, LangChain y OpenAI esta verificada sobre el artefacto. La §6.3 de la tesis describe el flujo con el mismo encuadre vigente.
+
+**Antecedente (superado, 2026-07-02)**: la entrada afirmaba "**La tesis dice** (§6.3): 12 nodos con normalizacion, IF por confianza, dos llamadas HTTP y notificaciones paralelas", "**El repo dice**: `n8n/workflow.json` con 16 nodos operativos reales + 3 sticky notes. Trigger email es Microsoft Outlook (NO IMAP). Clasificacion embebida en backend (una sola llamada HTTP). Canal telefonico con AI Agent (LangChain) + Redis." y un "**Estado actual (2026-07-02)**: workflow funcional con 16 nodos. Divergencias documentadas: (a) Outlook vs IMAP, (b) 16 nodos vs 12, (c) clasificacion embebida vs endpoint separado, (d) AI Agent + Redis para canal telefonico." Esas afirmaciones quedaron superadas por C-55 y C-72 y no describen el artefacto vigente. Se conservan como historia.
 
 ## Preguntas abiertas (priorizadas)
 
@@ -43,7 +45,7 @@
 | Alta | ¿Credenciales reales de Outlook y Twilio disponibles para pruebas? → Resuelto: C-05 archivado; el transporte de correo se redefinió en C-55 (IMAP/App Password) y las credenciales se gestionan fuera del alcance del change | C-05 (archivado) | Organizacion |
 | Alta | ¿Auth JWT Bearer token se implementa? → Si, en C-15 (jwt-auth-backend-frontend) | C-15 (nuevo) | Equipo + director |
 | Media | ¿La instancia N8N de pruebas corre en el mismo compose? URL del webhook → Resuelto: C-02 archivado (2026-06-10) | C-02 (archivado) | Equipo tecnico |
-| Baja | ¿K8s 1.30 es alcance real o aspiracional (SU-05)? | C-10 | Equipo + director |
+| Baja | ¿K8s 1.30 es alcance real o aspiracional (SU-05)? → Resuelto (2026-10-28): aspiracional / fuera de alcance; la tesis lo presenta como trabajo futuro (§6.1, `06-implementacion.tex`) sin manifiestos en el repo | C-10 | Equipo + director |
 
 ## [DISCOVERY] Campos inferidos con confianza — sin pendientes
 
