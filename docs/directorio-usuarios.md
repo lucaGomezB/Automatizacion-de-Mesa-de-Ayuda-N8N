@@ -17,8 +17,10 @@ Campos EXACTOS (no se almacena ningun otro dato personal):
 | `id`         | int (PK)       | Autoincremental.                                              |
 | `legajo`     | varchar(50)    | NOT NULL, UNIQUE. Clave de idempotencia del seed.             |
 | `nombre`     | varchar(200)   | NOT NULL.                                                     |
-| `email`      | varchar(254)   | NOT NULL, UNIQUE, indexado.                                   |
-| `telefono`   | varchar(20)    | NULL, indexado, PUEDE repetirse (mesa de area/casilla).       |
+| `email`      | EncryptedText  | NOT NULL; unico (via `email_bidx`); cifrado at-rest.          |
+| `telefono`   | EncryptedText  | NULL; repetible (mesa de area/casilla); cifrado at-rest.      |
+| `email_bidx` | char(64)       | UNIQUE, indexado. Indice ciego (HMAC-SHA-256); NO es PII en claro. |
+| `telefono_bidx` | char(64)    | indexado, NO unico. Indice ciego; NO es PII en claro.         |
 | `sector_id`  | int (FK)       | FK a `sector`, NULL. Obligatorio para usuario_final/operador; NULO para administrador_directorio/mesa_de_ayuda. |
 | `rol`        | varchar(30)    | `usuario_final` / `operador` / `administrador_directorio` / `mesa_de_ayuda`. |
 | `activo`     | bool           | Default `true`.                                               |
@@ -43,21 +45,24 @@ humana), no el universo completo.
 
 El rol NO altera el resultado de clasificacion de incidentes.
 
-## 3. Texto plano y minimizacion
+## 3. Cifrado del contacto e indice ciego (c-153)
 
-El email y el telefono se almacenan en TEXTO PLANO (varchar). NO se aplica cifrado
-de aplicacion ni indice ciego, y NO existe una clave `directory_blind_index_key`.
-La razon (decision v8, cap. 11.2/11.4): auditabilidad directa y consultas SQL
-operativas sin custodia de claves; el dato es personal pero NO sensible bajo Ley
-25.326 art. 2. La proteccion se logra con:
+El email y el telefono se almacenan CIFRADOS at-rest con el TypeDecorator
+`EncryptedText` (Fernet) y se buscan por un INDICE CIEGO determinista
+(`email_bidx`, `telefono_bidx`; HMAC-SHA-256 de la forma normalizada), derivado
+con la clave DEDICADA `directory_blind_index_key`. El contacto NO se persiste en
+claro. La decision previa de texto plano (DIR-005/DIR-010) queda SUPERADA por el
+ADR `docs/seguridad/adr-001-reversion-dir-005-cifrado-contacto.md`; la proteccion
+se completa con:
 
-- Minimizacion: solo los campos de la seccion 1.
-- Control de acceso por rol (seccion 6).
-- Auditoria de accesos y cambios.
+- Minimizacion: solo los campos de la seccion 1 (el indice ciego no es PII en claro).
+- Control de acceso por rol y por sujeto (seccion 6).
+- Auditoria durable sin PII (`directorio_auditoria`).
 - Ausencia de PII en logs y respuestas de error.
 
 El cifrado Fernet del contenido del incidente (`descripcion_original`,
-`caller_cifrado`) NO se modifica.
+`caller_cifrado`) NO se modifica. La generacion, custodia y rotacion de las claves
+del directorio se documentan en `docs/seguridad/gestion-secretos-y-rotacion.md`.
 
 ## 4. Resolucion de contactos (seam c-53)
 
@@ -107,7 +112,8 @@ ocurre ante una invocacion humana explicita. Una segunda corrida devuelve `ids=[
 
 GOVERNANCE: la politica de retencion/ARCO es HIGH y requiere revision humana antes
 de activar datos reales. La evidencia de cumplimiento (retencion/ARCO, ausencia de
-PII real, sin clave de indice ciego) vive en `docs/directorio-evidencia-cumplimiento.md`.
+PII real, cifrado at-rest con indice ciego y el mecanismo deliberado de activacion
+DIR-014) vive en `docs/directorio-evidencia-cumplimiento.md`.
 
 ## 6. Visibilidad de incidentes por rol (API)
 

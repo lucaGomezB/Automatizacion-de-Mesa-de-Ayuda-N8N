@@ -23,6 +23,8 @@ import pytest
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import IntegrityError
 
+from app.utils.encryption import decrypt_value
+
 _BACKEND_ROOT = Path(__file__).resolve().parent.parent
 
 _TEST_FERNET_KEY = "2BFqlzB9uZlu2axKBM-ZrYJGq3u8JOK93ZYzIwkE3tQ="
@@ -247,7 +249,10 @@ def test_upgrade_crea_empleado_sintetico_de_admin(db_file):
     admin = _leer_admin_empleado(db_file)
     assert admin is not None, "La cuenta admin debe tener empleado vinculado"
     assert admin["legajo"] == "SYS-ADMIN"
-    assert admin["email"] == "sys-admin@example.test"
+    # c-153: el contacto del directorio se almacena cifrado at-rest (Tema A);
+    # la lectura cruda devuelve el ciphertext, de modo que se descifra para
+    # comparar contra el valor sembrado por la migracion.
+    assert decrypt_value(admin["email"]) == "sys-admin@example.test"
     assert admin["telefono"] is None
     assert admin["rol"] == "administrador_directorio"
 

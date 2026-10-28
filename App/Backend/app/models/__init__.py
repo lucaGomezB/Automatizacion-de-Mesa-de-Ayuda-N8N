@@ -7,6 +7,7 @@ from app.models.asociaciones import (
 from app.models.catalog import CanalOrigen, Estado, Sector
 from app.models.clasificacion_log import ClasificacionLog
 from app.models.costo_guarda_contador import CostoGuardaContador
+from app.models.directorio_auditoria import DirectorioAuditoria
 from app.models.empleado import Empleado, RolEmpleado
 from app.models.incidente import (
     Incidente,
@@ -33,6 +34,7 @@ __all__ = [
     "IncidenteComentario",
     "ClasificacionLog",
     "CostoGuardaContador",
+    "DirectorioAuditoria",
     "Empleado",
     "RolEmpleado",
     "RefreshToken",

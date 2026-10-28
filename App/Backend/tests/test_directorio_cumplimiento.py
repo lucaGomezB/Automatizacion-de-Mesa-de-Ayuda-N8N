@@ -1,13 +1,17 @@
 """
-Evidencia de cumplimiento del directorio (c-60, 7.2 / DIR-005 / DIR-009).
+Evidencia de cumplimiento del directorio (c-60, 7.2 / c-153 / DIR-011 / DIR-009).
 
-Inspeccion verificable de tres garantias de la revision humana HIGH:
-  1. NO existe clave de indice ciego ni columna de hash ciega del directorio
-     (DIR-005: email/telefono en texto plano, sin indice ciego).
+Inspeccion verificable de las garantias del directorio tras el endurecimiento
+(c-153):
+  1. El directorio usa una clave dedicada de indice ciego
+     (`directory_blind_index_key`) y columnas derivadas (`email_bidx`,
+     `telefono_bidx`), con el contacto CIFRADO at-rest (DIR-011). La garantia
+     original de ausencia de indice ciego quedo SUPERADA.
   2. Los contactos del directorio son SINTETICOS (dominio reservado `.test`), no
      PII real.
-  3. La aprobacion humana HIGH sigue PENDIENTE y los datos reales estan
-     BLOQUEADOS; no existe un toggle de runtime que los active (DIR-009).
+  3. La aprobacion humana HIGH esta registrada como CONCEDIDA (2026-10-28) y el
+     mecanismo de activacion de datos reales es deliberado y auditado (DIR-014);
+     NO existe un toggle de runtime oculto.
 """
 
 from __future__ import annotations
@@ -22,34 +26,37 @@ _BACKEND_ROOT = Path(__file__).resolve().parents[1]
 _REPO_ROOT = _BACKEND_ROOT.parents[1]
 _APP_DIR = _BACKEND_ROOT / "app"
 _ALEMBIC_DIR = _BACKEND_ROOT / "alembic"
-_SCRIPTS_DIR = _BACKEND_ROOT / "scripts"
 _EVIDENCIA_DIRECTORIO = _REPO_ROOT / "docs" / "directorio-evidencia-cumplimiento.md"
 
 
-def test_settings_no_expone_una_clave_de_indice_ciego():
-    """`Settings` no define `directory_blind_index_key` ni variantes 'blind'."""
+def test_settings_expone_la_clave_de_indice_ciego():
+    """`Settings` define la clave dedicada `directory_blind_index_key` (DIR-011)."""
     campos = set(Settings.model_fields)
-    assert "directory_blind_index_key" not in campos
-    assert [c for c in campos if "blind" in c.lower()] == []
+    assert "directory_blind_index_key" in campos
+    assert [c for c in campos if "blind" in c.lower()] != []
 
 
-def test_codigo_y_migraciones_no_introducen_indice_ciego():
-    """Ni el codigo ni las migraciones referencian una clave/columna de indice ciego."""
-    offenders: list[str] = []
+def test_codigo_y_migraciones_introducen_el_indice_ciego():
+    """El codigo y las migraciones referencian el indice ciego (DIR-011).
+
+    La garantia original de ausencia de indice ciego (DIR-005/DIR-009) quedo
+    SUPERADA: ahora existe un modulo de derivacion y una migracion que agregan
+    las columnas derivadas.
+    """
+    referencias: list[str] = []
     for base in (_APP_DIR, _ALEMBIC_DIR):
         for path in base.rglob("*.py"):
             fuente = path.read_text(encoding="utf-8").lower()
             if "blind_index" in fuente or "blindindex" in fuente:
-                offenders.append(path.relative_to(_BACKEND_ROOT).as_posix())
-    assert offenders == [], f"No debe existir indice ciego: {offenders}"
+                referencias.append(path.relative_to(_BACKEND_ROOT).as_posix())
+    assert referencias, "Debe existir el indice ciego del directorio (DIR-011)"
 
 
-def test_empleado_no_tiene_columna_de_hash_ni_indice_ciego():
-    """La tabla del directorio no tiene columnas de hash ni de indice ciego."""
+def test_empleado_tiene_columnas_de_indice_ciego():
+    """La tabla del directorio expone las columnas derivadas del indice ciego."""
     columnas = {columna.name.lower() for columna in Empleado.__table__.columns}
-    assert [c for c in columnas if "hash" in c] == []
-    assert [c for c in columnas if "blind" in c] == []
-    # Los campos de contacto siguen existiendo en texto plano (minimizacion).
+    assert {"email_bidx", "telefono_bidx"} <= columnas
+    # Los campos de contacto siguen existiendo (cifrados at-rest).
     assert {"email", "telefono"} <= columnas
 
 
@@ -60,42 +67,37 @@ def test_contactos_del_seed_son_sinteticos():
         assert persona["email"].endswith(".test"), persona["email"]
 
 
-# ── DIR-009 (c-60 7.4): aprobacion HIGH pendiente y datos reales bloqueados ───
+# ── DIR-009/DIR-014 (c-153 Tema F): aprobacion CONCEDIDA y activacion deliberada ─
 
 
-def test_evidencia_registra_aprobacion_high_pendiente_y_datos_reales_bloqueados():
-    """El artefacto de evidencia existe y registra EXPLICITAMENTE la aprobacion
-    humana HIGH como PENDIENTE y los datos reales como BLOQUEADOS."""
+def test_evidencia_registra_aprobacion_high_concedida_y_mecanismo_deliberado():
+    """El artefacto de evidencia existe, declara la aprobacion humana HIGH como
+    CONCEDIDA con fecha y referencia el mecanismo deliberado (DIR-014)."""
     assert _EVIDENCIA_DIRECTORIO.is_file(), (
         f"Falta el artefacto de evidencia: {_EVIDENCIA_DIRECTORIO}"
     )
-    contenido = _EVIDENCIA_DIRECTORIO.read_text(encoding="utf-8").upper()
-    assert "PENDIENTE" in contenido
-    assert "APROBACION HUMANA HIGH" in contenido
-    assert "BLOQUEADO" in contenido
-    assert "DATOS REALES" in contenido
-    # El directorio opera solo con sinteticos mientras la aprobacion siga pendiente.
-    assert "SINTETICOS" in contenido
+    contenido = _EVIDENCIA_DIRECTORIO.read_text(encoding="utf-8")
+    mayusculas = contenido.upper()
+    assert "APROBACION HUMANA HIGH" in mayusculas
+    assert "CONCEDIDA" in mayusculas
+    assert "2026-10-28" in contenido
+    assert "DIR-014" in contenido
+    # El directorio sigue operando con datos SINTETICOS hasta que la activacion
+    # deliberada se ejecute con aprobacion verificable.
+    assert "SINTETICOS" in mayusculas
 
 
-def test_no_existe_un_toggle_de_activacion_de_datos_reales():
-    """Ni `Settings` ni el codigo de produccion exponen un flag/ruta que active
-    datos reales del directorio: por diseno NO hay gate de runtime (DIR-009)."""
+def test_no_existe_un_interruptor_oculto_de_activacion_de_datos_reales():
+    """La activacion es deliberada (DIR-014): NO hay un flag booleano de `Settings`
+    ni un endpoint HTTP que active datos reales sin el artefacto de aprobacion."""
     campos = {campo.lower() for campo in Settings.model_fields}
     tokens = ("real_data", "datos_reales", "use_real", "enable_real", "real_directory")
     expuestos = {c for c in campos if any(t in c for t in tokens)}
     assert expuestos == set(), f"Settings no debe exponer un toggle real: {expuestos}"
 
-    patrones = (
-        "real_data", "datos_reales", "use_real", "enable_real",
-        "activate_real", "activar_real", "real_directory", "directorio_real",
+    from app.routes.directorio import router
+
+    rutas = [getattr(r, "path", "") for r in router.routes]
+    assert not any("activ" in path.lower() for path in rutas), (
+        "La activacion no debe exponerse por HTTP (no hay interruptor remoto)"
     )
-    offenders: list[str] = []
-    for base in (_APP_DIR, _ALEMBIC_DIR, _SCRIPTS_DIR):
-        for path in base.rglob("*.py"):
-            fuente = path.read_text(encoding="utf-8").lower()
-            for patron in patrones:
-                if patron in fuente:
-                    rel = path.relative_to(_BACKEND_ROOT).as_posix()
-                    offenders.append(f"{rel}:{patron}")
-    assert offenders == [], f"No debe existir un toggle de datos reales: {offenders}"

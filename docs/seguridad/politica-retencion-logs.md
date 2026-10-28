@@ -23,10 +23,29 @@ necesario y evitar la fuga de datos personales por registros.
 | **Ejecucion del sistema** (por ejemplo, ejecuciones de N8N) | Trazas de ejecucion del orquestador y del backend | **30 dias** | Poda vigente del orquestador; consistente con el capitulo 11 de la tesis |
 | **Contadores de tasa por origen** (guarda de costo) | Conteo agregado por identificador derivado | **Solo durante la ventana del contador**; se purga al cerrar la ventana | No se conserva el historico por origen |
 | **Registro de auditoria de cambios** | Actor, marca temporal y delta de las modificaciones | Segun la politica de la organizacion adoptante | Trazabilidad del sistema |
+| **Auditoria del directorio** (traza durable `directorio_auditoria`) | Actor, operacion, resultado, instante y canal; solo identificadores internos, sin datos personales | Segun la politica de la organizacion adoptante, y en ningun caso menos que el **ciclo de vida del directorio** (relacion activa + 1 año) | Trazabilidad de gestion y acceso al directorio (DIR-013/DIR-015) |
 
 Los contadores por origen usan como clave el **numero crudo** del llamante en el almacen
 efimero de la guarda, y la **purga por ventana** acota su retencion: al cerrar la ventana el
 contador se elimina, por lo que **no existe retencion historica por origen**.
+
+### 2.1 Ventana de retencion de la auditoria del directorio
+
+La traza durable del directorio (`directorio_auditoria`, DIR-013) es **append-only** y **sin
+PII**. Su ventana de retencion se **alinea con el ciclo de vida del directorio**: la traza se
+conserva al menos el plazo de conservacion de la fila auditada (relacion activa + 1 año) y se
+rige, ademas, por la politica de retencion de la organizacion adoptante para el registro de
+auditoria de cambios.
+
+- La traza **sobrevive al borrado fisico** del directorio: la referencia al sujeto usa
+  `ON DELETE SET NULL`, de modo que la evidencia del tramite permanece aun despues de la
+  supresion o del vencimiento de la retencion.
+- La traza NO contiene email, telefono ni nombre en claro; solo identificadores internos y
+  metadatos, por lo que no extiende la vida de los datos personales.
+- La purga de la traza, cuando corresponda por politica de la organizacion adoptante, es una
+  accion **operativa explicita**: NO existe cron/scheduler/worker asociado a la retencion del
+  directorio (ver `runbook-retencion-directorio.md`).
+
 
 ## 3. No-PII en logs
 

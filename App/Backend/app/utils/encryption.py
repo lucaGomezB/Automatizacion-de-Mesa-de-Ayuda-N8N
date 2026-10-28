@@ -100,6 +100,28 @@ def _get_fernet() -> MultiFernet:
     return _fernet_instance
 
 
+def encrypt_value(value: str | None) -> str | None:
+    """Cifra un texto con la clave Fernet activa (None -> None).
+
+    Encapsula el acceso al cifrado para reutilizarlo fuera del ORM (por ejemplo,
+    en la migracion de backfill de c-153) sin duplicar la logica de `Fernet`.
+    """
+    if value is None:
+        return None
+    return _get_fernet().encrypt(value.encode("utf-8")).decode("ascii")
+
+
+def decrypt_value(token: str | None) -> str | None:
+    """Descifra un token Fernet con el conjunto de claves configurado.
+
+    None -> None. Lanza `cryptography.fernet.InvalidToken` si el token no es un
+    ciphertext valido con la clave vigente.
+    """
+    if token is None:
+        return None
+    return _get_fernet().decrypt(token.encode("ascii")).decode("utf-8")
+
+
 class EncryptedText(TypeDecorator):
     """
     TypeDecorator de SQLAlchemy que cifra at-rest con Fernet.
@@ -139,9 +161,7 @@ class EncryptedText(TypeDecorator):
         Returns:
             Ciphertext base64 como str, o None si value es None.
         """
-        if value is None:
-            return None
-        return _get_fernet().encrypt(value.encode("utf-8")).decode("ascii")
+        return encrypt_value(value)
 
     def process_result_value(self, value: str | None, dialect) -> str | None:
         """
@@ -154,6 +174,4 @@ class EncryptedText(TypeDecorator):
         Returns:
             Texto plano descifrado como str, o None si value es None.
         """
-        if value is None:
-            return None
-        return _get_fernet().decrypt(value.encode("ascii")).decode("utf-8")
+        return decrypt_value(value)

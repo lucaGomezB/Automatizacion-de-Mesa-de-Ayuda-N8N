@@ -14,8 +14,10 @@ Decisiones (design.md D1-D6b):
       `administrador_directorio`). El `sector_id` es dato organizacional OPCIONAL
       sin efecto en la autorizacion. La politica de cada rol vive en
       `app.services.role_policy`.
-    - D4: email y telefono se almacenan en TEXTO PLANO (varchar), SIN cifrado de
-      aplicacion ni indice ciego.
+    - D4 (c-153, REVERTIDA): el email y el telefono se almacenan CIFRADOS
+      at-rest con `EncryptedText` (Fernet). La decision original de texto plano
+      (DIR-005/DIR-010) quedo SUPERADA por el ADR de reversion; la justificacion
+      por minimizacion previa se conserva como registro historico.
     - D6b: se almacenan EXACTAMENTE los campos definidos, nada mas.
 
 Nota sobre async: la relacion `sector` debe cargarse con `selectinload()` en el
@@ -26,10 +28,20 @@ sesion activa.
 from datetime import datetime
 from enum import Enum as PyEnum
 
-from sqlalchemy import Boolean, CheckConstraint, DateTime, ForeignKey, Integer, String
+from sqlalchemy import (
+    Boolean,
+    CheckConstraint,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    event,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin
+from app.utils.blind_index import email_blind_index, telefono_blind_index
+from app.utils.encryption import EncryptedText
 
 
 class RolEmpleado(str, PyEnum):
@@ -65,8 +77,14 @@ class Empleado(Base, TimestampMixin):
         id:       Clave primaria.
         legajo:   Identificador laboral, obligatorio y unico.
         nombre:   Nombre del empleado, obligatorio.
-        email:    Contacto por correo, obligatorio, unico e indexado.
+        email:    Contacto por correo, obligatorio, unico e indexado. Cifrado
+                  at-rest con `EncryptedText` (c-153).
         telefono: Contacto telefonico E.164, opcional, indexado y repetible.
+                  Cifrado at-rest con `EncryptedText` (c-153).
+        email_bidx / telefono_bidx: Indice ciego determinista (HMAC-SHA-256 de la
+                  forma normalizada, c-153 DIR-011). Columnas derivadas, no PII en
+                  claro; `email_bidx` es UNIQUE (unicidad del email) y
+                  `telefono_bidx` no (telefono repetible).
         sector_id: FK al catalogo `sector` (obligatorio para usuario_final/operador).
         rol:      Rol del empleado (RolEmpleado).
         activo:   Estado de la relacion; False desactiva sin borrar.
@@ -85,10 +103,24 @@ class Empleado(Base, TimestampMixin):
     )
     nombre: Mapped[str] = mapped_column(String(200), nullable=False)
     email: Mapped[str] = mapped_column(
-        String(254), nullable=False, unique=True, index=True
+        EncryptedText, nullable=False, unique=True, index=True
     )
-    # Telefono en texto plano (E.164), opcional y repetible (no unique).
-    telefono: Mapped[str | None] = mapped_column(String(20), nullable=True, index=True)
+    # Telefono cifrado at-rest (E.164), opcional y repetible (no unique).
+    telefono: Mapped[str | None] = mapped_column(EncryptedText, nullable=True, index=True)
+    # Indice ciego determinista del contacto (c-153, DIR-011): HMAC-SHA-256 de la
+    # forma normalizada, derivado con la clave dedicada `directory_blind_index_key`.
+    # NO es PII en claro y no permite reconstruir el valor sin la clave. La
+    # unicidad del email vive sobre `email_bidx` (el ciphertext Fernet no es
+    # determinista, de modo que un UNIQUE sobre `email` no detecta duplicados);
+    # `telefono_bidx` NO es UNIQUE porque el telefono es repetible. Ambas columnas
+    # son nullable (indice derivado; la aplicacion las completa en cada escritura),
+    # y `email_bidx` es UNIQUE: los valores no nulos deben ser unicos.
+    email_bidx: Mapped[str | None] = mapped_column(
+        String(64), nullable=True, unique=True, index=True
+    )
+    telefono_bidx: Mapped[str | None] = mapped_column(
+        String(64), nullable=True, index=True
+    )
     sector_id: Mapped[int | None] = mapped_column(
         Integer,
         ForeignKey("sector.id", ondelete="SET NULL"),
@@ -126,3 +158,18 @@ class Empleado(Base, TimestampMixin):
     def __repr__(self) -> str:
         # Sin datos personales en la representacion (no-PII en logs).
         return f"<Empleado id={self.id} legajo={self.legajo!r} rol={self.rol!r}>"
+
+
+@event.listens_for(Empleado, "before_insert")
+@event.listens_for(Empleado, "before_update")
+def _derivar_indices_ciegos(mapper, connection, target: Empleado) -> None:
+    """Deriva `email_bidx`/`telefono_bidx` del contacto en claro al persistir.
+
+    Se engancha en los eventos del mapper para que TODA escritura (servicio,
+    repositorio o un modelo construido en un test) mantenga el indice ciego
+    coherente con el contacto cifrado, sin depender de que cada llamador lo
+    calcule. La derivacion es determinista e idempotente.
+    """
+    if target.email is not None:
+        target.email_bidx = email_blind_index(target.email)
+    target.telefono_bidx = telefono_blind_index(target.telefono)

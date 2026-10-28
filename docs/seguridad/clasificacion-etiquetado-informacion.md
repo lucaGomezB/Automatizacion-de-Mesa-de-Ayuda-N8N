@@ -65,8 +65,9 @@ original cifrada se trata como N4 y su version pseudonimizada como N3.
   Fernet; solo la copia **pseudonimizada** (N3) cruza hacia N8N y Gemini
   (`docs/pseudonymization.md`).
 - **Directorio de empleados.** Nombre, correo y celular se clasifican **N3**; el contacto
-  del directorio hoy se almacena en texto plano (`models/empleado.py`), brecha mapeada al
-  change C-66 (cifrado o justificacion por minimizacion).
+  del directorio se almacena **cifrado at-rest** con `EncryptedText` (Fernet) y se busca
+  por un indice ciego determinista desde el change C-153 (DIR-011), que SUPERÓ la decision
+  previa de texto plano (`docs/seguridad/adr-001-reversion-dir-005-cifrado-contacto.md`).
 - **Vinculo con las medidas existentes:** pseudonimizacion determinista, cifrado at-rest
   (Fernet) y minimizacion. La pseudonimizacion **no** equivale a la **disociacion** del
   art. 2 de la Ley 25.326: el original existe y es reidentificable con informacion

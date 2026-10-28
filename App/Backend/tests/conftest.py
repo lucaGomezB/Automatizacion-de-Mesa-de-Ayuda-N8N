@@ -43,6 +43,16 @@ import os
 import warnings
 from unittest.mock import AsyncMock, patch
 
+# c-153: `Settings` exige la clave dedicada del indice ciego del directorio. Se
+# define ANTES de importar los modulos de la app (que construyen `Settings` al
+# importar) para que la suite offline no dependa del `.env` local. Los tests que
+# necesitan otra clave la inyectan de forma explicita. En CI la variable llega
+# por el entorno del job.
+os.environ.setdefault(
+    "DIRECTORY_BLIND_INDEX_KEY",
+    "test-directory-blind-index-key-conftest",
+)
+
 import pytest
 import pytest_asyncio
 from fastapi import Depends
@@ -56,6 +66,7 @@ from app.core.security import get_current_user
 from app.cost_guard.dependencies import get_cost_guard
 from app.main import create_app
 from app.models.catalog import CanalOrigen, Estado, Sector
+from app.models.directorio_auditoria import DirectorioAuditoria
 from app.models.user import User
 from app.routes.incidentes import get_alcance_incidentes
 from app.routes.incidentes import get_service as get_incidente_service
@@ -519,6 +530,31 @@ async def db_session(engine):
     async with factory() as session:
         yield session
         await session.rollback()  # Revertir cambios del test para aislamiento
+
+
+@pytest_asyncio.fixture(autouse=True)
+async def _aislar_auditoria_directorio(engine):
+    """
+    Aisla la auditoria durable del directorio entre tests (c-153, DIR-013).
+
+    `directorio_auditoria` es una tabla GLOBAL, append-only y sin claves foraneas
+    (los actores pueden no ser filas del directorio). Los servicios del directorio
+    y de resolucion de contactos escriben en ella incluso cuando se los invoca
+    desde el alta de incidentes, y los clientes ASGI de los tests (`client`,
+    `make_client_with_classifier`, etc.) COMMITEAN por request. Esas filas quedan
+    FUERA del rollback de `db_session` y, si nadie las elimina, filtran a los
+    tests de auditoria siguientes (que asumen la tabla vacia): es la causa raiz
+    del fallo de aislamiento detectado al correr el selector completo.
+
+    El teardown elimina las filas al terminar cada test. Se ejecuta DESPUES de
+    los fixtures de funcion (el orden de finalizacion es el inverso al de
+    creacion), de modo que `db_session` ya revirtio su transaccion.
+    """
+    yield
+    factory = async_sessionmaker(engine, expire_on_commit=False)
+    async with factory() as session:
+        await session.execute(delete(DirectorioAuditoria))
+        await session.commit()
 
 
 @pytest_asyncio.fixture

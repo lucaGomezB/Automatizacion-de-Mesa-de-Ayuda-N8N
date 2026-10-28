@@ -9,9 +9,15 @@ Responsabilidad:
 Autorizacion (DIR-006 / RP-004):
     - Escritura (alta/edicion/desactivacion/borrado ARCO): `manages_directory`
       del registro de politica (solo `administrador_directorio`).
-    - Consulta (listado/detalle): `can_read_directory` del registro (LISTA
-      BLANCA: `mesa_de_ayuda` y `administrador_directorio`).
+    - Consulta (listado): `can_read_directory` del registro (LISTA BLANCA:
+      `mesa_de_ayuda` y `administrador_directorio`). El listado es una
+      ENUMERACION global del directorio.
+    - Consulta (detalle): el alcance de lectura del registro (c-153, DIR-006):
+      GLOBAL (admin/mesa) lee cualquier id; PROPIO (`usuario_final`) lee
+      UNICAMENTE su propia fila, y cualquier id ajeno responde 404 (sin revelar
+      su existencia); NINGUNO (`gestion_incidentes`) recibe 403.
     - Sin token: 401. Con token sin empleado vinculado o rol no autorizado: 403.
+    - Anti-enumeracion: la lectura aplica limitacion de tasa por actor (429).
 
 Privacidad:
     La auditoria de las consultas registra solo el actor y la operacion; NUNCA
@@ -20,7 +26,7 @@ Privacidad:
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db_session
@@ -36,7 +42,15 @@ from app.schemas.directorio import (
     PurgaDirectorioRead,
 )
 from app.services.directorio_service import DirectorioService
-from app.services.role_policy import politica_de_rol
+from app.services.role_policy import (
+    AlcanceLecturaDirectorio,
+    alcance_lectura_directorio,
+    politica_de_rol,
+)
+from app.utils.directorio_rate_limit import (
+    RateLimiterDirectorio,
+    crear_rate_limiter_directorio,
+)
 
 logger = get_logger(__name__)
 
@@ -94,6 +108,81 @@ AdminDep = Annotated[Empleado, Depends(require_directorio_admin)]
 LecturaDep = Annotated[Empleado, Depends(require_directorio_lectura)]
 
 
+async def require_directorio_detalle(
+    empleado_id: int, actor: EmpleadoActualDep
+) -> Empleado:
+    """
+    Autoriza la lectura del DETALLE de un empleado (c-153, DIR-006).
+
+    Deriva el permiso del alcance de lectura del registro unico de politica:
+    GLOBAL (administrador_directorio, mesa_de_ayuda) lee cualquier id; PROPIO
+    (usuario_final) lee UNICAMENTE su propia fila; NINGUNO
+    (gestion_incidentes) o una cuenta sin empleado reciben 403. Un id ajeno
+    fuera del alcance PROPIO responde 404, igual que un id inexistente, para no
+    revelar la existencia de filas ajenas (anti-enumeracion).
+    """
+    if actor is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Rol no autorizado para consultar el directorio.",
+        )
+
+    alcance_lectura = alcance_lectura_directorio(actor.rol)
+
+    if alcance_lectura is AlcanceLecturaDirectorio.NINGUNO:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Rol no autorizado para consultar el directorio.",
+        )
+
+    if alcance_lectura is AlcanceLecturaDirectorio.GLOBAL:
+        return actor
+
+    if actor.id == empleado_id:
+        return actor
+
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="Empleado no encontrado.",
+    )
+
+
+DetalleDep = Annotated[Empleado, Depends(require_directorio_detalle)]
+
+
+def get_directorio_limiter(request: Request) -> RateLimiterDirectorio:
+    """
+    Devuelve el limitador de tasa de lectura, creado una vez por aplicacion.
+
+    El estado vive en `app.state` (una instancia por proceso), de modo que todas
+    las peticiones de lectura del directorio comparten el mismo contador. Se
+    crea de forma perezosa a partir de la configuracion.
+    """
+    limiter = getattr(request.app.state, "directorio_rate_limiter", None)
+    if limiter is None:
+        limiter = crear_rate_limiter_directorio()
+        request.app.state.directorio_rate_limiter = limiter
+    return limiter
+
+
+LimiterDep = Annotated[RateLimiterDirectorio, Depends(get_directorio_limiter)]
+
+
+async def aplicar_limite_lectura_directorio(
+    current_user: CurrentUserDep, limiter: LimiterDep
+) -> None:
+    """Acota la frecuencia de lectura del directorio por actor (DIR-006)."""
+    if not limiter.permitir(current_user.id):
+        logger.warning("directorio_lectura_rate_limited", actor_id=current_user.id)
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Demasiadas consultas al directorio. Intente mas tarde.",
+        )
+
+
+LimiteLecturaDep = Annotated[None, Depends(aplicar_limite_lectura_directorio)]
+
+
 @router.post(
     "/empleados",
     response_model=EmpleadoRead,
@@ -125,6 +214,7 @@ async def crear_empleado(
 async def listar_empleados(
     session: SessionDep,
     actor: LecturaDep,
+    _limite: LimiteLecturaDep,
     solo_activos: bool = False,
 ) -> list[EmpleadoRead]:
     """Lista los empleados del directorio. Requiere rol autorizado."""
@@ -145,9 +235,9 @@ async def listar_empleados(
     summary="Detalle de un empleado del directorio (operador/administrador)",
 )
 async def obtener_empleado(
-    empleado_id: int, session: SessionDep, actor: LecturaDep
+    empleado_id: int, session: SessionDep, actor: DetalleDep, _limite: LimiteLecturaDep
 ) -> EmpleadoRead:
-    """Recupera un empleado por id. Requiere rol autorizado."""
+    """Recupera un empleado por id segun el alcance de lectura del actor."""
     empleado = await DirectorioService(session).obtener(empleado_id)
     logger.info(
         "directorio_consulta",

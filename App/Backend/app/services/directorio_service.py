@@ -7,11 +7,14 @@ Responsabilidad:
     coherencia rol/sector), ciclo de vida (desactivacion, reactivacion, borrado
     ARCO) y la AUDITORIA de cada operacion.
 
-Privacidad (Ley 25.326 / DIR-006):
-    El contacto se almacena en TEXTO PLANO (D4). La proteccion se logra con
-    minimizacion, control de acceso por rol (capa de rutas) y auditoria. Los
-    eventos de auditoria registran SOLO identificadores internos, operacion y
-    resultado: NUNCA el email, el telefono ni el nombre en claro.
+Privacidad (Ley 25.326 / DIR-006 / DIR-013):
+    El contacto se almacena CIFRADO at-rest con `EncryptedText` y se busca por
+    indice ciego (c-153). La proteccion se completa con minimizacion, control de
+    acceso por rol (capa de rutas) y auditoria. Los eventos de auditoria registran
+    SOLO identificadores internos, operacion, resultado e instante: NUNCA el
+    email, el telefono ni el nombre en claro. Desde c-153 cada operacion deja una
+    fila en la traza DURABLE (`directorio_auditoria`) ADEMAS del log estructurado,
+    mediante el helper compartido `registrar_evento_auditoria`.
 """
 
 from datetime import datetime, timezone
@@ -28,6 +31,7 @@ from app.models.base import utcnow
 from app.models.empleado import Empleado, RolEmpleado
 from app.repositories.empleado_repository import EmpleadoRepository
 from app.repositories.sector_repository import SectorRepository
+from app.services.auditoria_directorio import registrar_evento_auditoria
 from app.services.privilege_service import sync_user_privilege
 from app.utils.contactos import normalizar_email, normalizar_telefono
 
@@ -157,7 +161,7 @@ class DirectorioService:
         await sync_user_privilege(
             self._session, user_id=empleado.user_id, rol=rol_norm, linked=True
         )
-        self._auditar("alta", "ok", empleado.id, actor_id)
+        await self._auditar("alta", "ok", empleado.id, actor_id)
         return empleado
 
     # ── Edicion ───────────────────────────────────────────────────────────────
@@ -227,7 +231,7 @@ class DirectorioService:
                 linked=True,
             )
 
-        self._auditar("edicion", "ok", empleado.id, actor_id)
+        await self._auditar("edicion", "ok", empleado.id, actor_id)
         return empleado
 
     # ── Ciclo de vida ─────────────────────────────────────────────────────────
@@ -242,7 +246,7 @@ class DirectorioService:
         self._session.add(empleado)
         await self._session.flush()
         await self._session.refresh(empleado)
-        self._auditar("desactivacion", "ok", empleado.id, actor_id)
+        await self._auditar("desactivacion", "ok", empleado.id, actor_id)
         return empleado
 
     async def reactivar_empleado(
@@ -255,7 +259,7 @@ class DirectorioService:
         self._session.add(empleado)
         await self._session.flush()
         await self._session.refresh(empleado)
-        self._auditar("reactivacion", "ok", empleado.id, actor_id)
+        await self._auditar("reactivacion", "ok", empleado.id, actor_id)
         return empleado
 
     async def borrar_empleado_arco(
@@ -263,8 +267,11 @@ class DirectorioService:
     ) -> None:
         """Borrado FISICO por solicitud ARCO (no es el camino operativo)."""
         empleado = await self.obtener(empleado_id)
+        # La traza durable se emite ANTES del borrado fisico: la FK
+        # `ON DELETE SET NULL` anula la referencia sin eliminar la fila de
+        # auditoria. La fila sobrevive al borrado ARCO (DIR-013).
+        await self._auditar("borrado_arco", "ok", empleado_id, actor_id)
         await self._repo.delete(empleado.id)
-        self._auditar("borrado_arco", "ok", empleado_id, actor_id)
 
     async def purgar_vencidos(
         self,
@@ -291,12 +298,14 @@ class DirectorioService:
             candidatos vencidos). El conteo se deriva con `len(...)`.
         """
         momento = _asegurar_utc(ahora) if ahora is not None else utcnow()
-        candidatos = await self._repo.listar_inactivos()
-        vencidos = [e for e in candidatos if retencion_vencida(e.fecha_baja, momento)]
+        vencidos = await self._vencidos(momento)
 
         ids_purgados: list[int] = []
         for empleado in vencidos:
             ids_purgados.append(empleado.id)
+            # Una fila durable por sujeto purgado, ANTES del borrado fisico: la
+            # FK `ON DELETE SET NULL` conserva la traza sin la referencia.
+            await self._auditar("purgar_vencidos", "ok", empleado.id, actor_id)
             await self._repo.delete(empleado.id)
 
         logger.info(
@@ -308,7 +317,54 @@ class DirectorioService:
         )
         return ids_purgados
 
+    async def alertar_acumulacion_vencidos(
+        self,
+        *,
+        ahora: datetime | None = None,
+    ) -> int:
+        """
+        Emite la alerta operativa de acumulacion de bajas vencidas (DIR-015).
+
+        Cuenta las filas desactivadas que superaron "fecha_baja + 1 año" y aun no
+        fueron purgadas, para que un `administrador_directorio` dispare la purga
+        MANUAL. NO introduce cron/scheduler/worker: es una operacion explicita; el
+        `runbook-retencion-directorio.md` describe su invocacion operativa.
+
+        Privacidad (DIR-015): la alerta reporta SOLO el conteo agregado. NUNCA
+        expone email, telefono, nombre ni los ids de las filas: la superficie de
+        la alerta queda fuera del detalle de los sujetos.
+
+        Args:
+            ahora: instante de referencia (inyectable para tests); UTC por defecto.
+
+        Returns:
+            Cantidad de filas vencidas sin purgar (0 si no hay acumulacion). Solo
+            se emite el evento de alerta cuando el conteo es mayor que cero.
+        """
+        momento = _asegurar_utc(ahora) if ahora is not None else utcnow()
+        vencidos = await self._vencidos(momento)
+        conteo = len(vencidos)
+
+        if conteo > 0:
+            logger.warning(
+                "directorio_retencion_alerta",
+                operacion="alerta_acumulacion_vencidos",
+                vencidos_sin_purgar=conteo,
+            )
+        return conteo
+
     # ── Validaciones privadas ─────────────────────────────────────────────────
+
+    async def _vencidos(self, momento: datetime) -> list[Empleado]:
+        """
+        Bajas desactivadas que superaron "fecha_baja + 1 año" a `momento`.
+
+        Fuente unica de la seleccion de vencidos que consumen la alerta y la purga
+        (DIR-007/DIR-015). No modifica datos: solo lee los inactivos y aplica la
+        funcion pura `retencion_vencida`.
+        """
+        candidatos = await self._repo.listar_inactivos()
+        return [e for e in candidatos if retencion_vencida(e.fecha_baja, momento)]
 
     @staticmethod
     def _validar_texto(valor: str | None, campo: str) -> str:
@@ -362,16 +418,21 @@ class DirectorioService:
             )
         return sector_id
 
-    def _auditar(
+    async def _auditar(
         self,
         operacion: str,
         resultado: str,
         empleado_id: int,
         actor_id: int | None,
     ) -> None:
-        """Emite el evento de auditoria SIN datos personales (DIR-006)."""
-        logger.info(
-            "directorio_auditoria",
+        """
+        Emite el evento de auditoria SIN datos personales (DIR-006/DIR-013).
+
+        Delega en el helper compartido: persiste la fila en la traza durable
+        ADEMAS del evento estructurado. No recibe valores de contacto.
+        """
+        await registrar_evento_auditoria(
+            self._session,
             operacion=operacion,
             resultado=resultado,
             empleado_id=empleado_id,

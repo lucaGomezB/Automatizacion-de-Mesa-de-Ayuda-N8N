@@ -39,6 +39,20 @@ class ModoAlcance(str, PyEnum):
     VACIO = "VACIO"
 
 
+class AlcanceLecturaDirectorio(str, PyEnum):
+    """
+    Alcance de LECTURA del directorio por rol (c-153, DIR-006).
+
+    - NINGUNO: no lee el directorio (denegacion por defecto).
+    - PROPIO:  lee UNICAMENTE su propia fila.
+    - GLOBAL:  lee todo el directorio.
+    """
+
+    NINGUNO = "NINGUNO"
+    PROPIO = "PROPIO"
+    GLOBAL = "GLOBAL"
+
+
 @dataclass(frozen=True)
 class PoliticaRol:
     """
@@ -49,7 +63,9 @@ class PoliticaRol:
         visibilidad:             modo de alcance (PROPIO/GLOBAL/SECTOR/VACIO).
         privileged:              si confiere privilegio de identidad (MFA).
         manages_directory:       si puede gestionar (escribir) el directorio.
-        can_read_directory:      si puede consultar el directorio.
+        alcance_lectura_directorio: alcance de LECTURA del directorio (c-153,
+                                 DIR-006): NINGUNO/PROPIO/GLOBAL. `can_read_directory`
+                                 se deriva de este campo (GLOBAL).
         notification_recipient:  si es destinatario de la notificacion de revision.
         post_review_recipient:   si es destinatario del aviso post-revision (c-86).
         edita_estado:            si puede editar el estado no terminal (c-86, ILC-005).
@@ -65,8 +81,12 @@ class PoliticaRol:
     visibilidad: ModoAlcance
     privileged: bool
     manages_directory: bool
-    can_read_directory: bool
     notification_recipient: bool
+    # c-153 (DIR-006): alcance de lectura del directorio. Por DEFECTO NINGUNO
+    # (denegacion por defecto): un rol que no lo declare no lee el directorio.
+    alcance_lectura_directorio: AlcanceLecturaDirectorio = (
+        AlcanceLecturaDirectorio.NINGUNO
+    )
     post_review_recipient: bool = False
     edita_estado: bool = False
     cierra_sector: bool = False
@@ -74,6 +94,11 @@ class PoliticaRol:
     reabre: bool = False
     can_delete_incident: bool = False
     puede_asignar_prioridad_critica: bool = False
+
+    @property
+    def can_read_directory(self) -> bool:
+        """True si el rol lee TODO el directorio (alcance GLOBAL)."""
+        return self.alcance_lectura_directorio is AlcanceLecturaDirectorio.GLOBAL
 
 
 #: Vocabulario canonico del rol, derivado del enum (RP-002). El CHECK de la base
@@ -87,7 +112,8 @@ ROLE_POLICY: Final[Mapping[RolEmpleado, PoliticaRol]] = {
         visibilidad=ModoAlcance.PROPIO,
         privileged=False,
         manages_directory=False,
-        can_read_directory=False,
+        # c-153 (DIR-006): lee UNICAMENTE su propia fila del directorio.
+        alcance_lectura_directorio=AlcanceLecturaDirectorio.PROPIO,
         notification_recipient=False,
         can_delete_incident=False,
         # c-90 (RP-006): el usuario final NO puede asignar la prioridad `critica`.
@@ -98,7 +124,8 @@ ROLE_POLICY: Final[Mapping[RolEmpleado, PoliticaRol]] = {
         visibilidad=ModoAlcance.GLOBAL,
         privileged=True,
         manages_directory=False,
-        can_read_directory=True,
+        # c-153 (DIR-006): lee todo el directorio.
+        alcance_lectura_directorio=AlcanceLecturaDirectorio.GLOBAL,
         notification_recipient=True,
         # c-86 (D1): mesa de ayuda edita el estado, cierra globalmente y reabre.
         edita_estado=True,
@@ -113,7 +140,8 @@ ROLE_POLICY: Final[Mapping[RolEmpleado, PoliticaRol]] = {
         visibilidad=ModoAlcance.GLOBAL,
         privileged=True,
         manages_directory=True,
-        can_read_directory=True,
+        # c-153 (DIR-006): lee todo el directorio.
+        alcance_lectura_directorio=AlcanceLecturaDirectorio.GLOBAL,
         notification_recipient=False,
         # c-87 (RP-005): unico rol autorizado al borrado logico de incidentes.
         can_delete_incident=True,
@@ -128,7 +156,8 @@ ROLE_POLICY: Final[Mapping[RolEmpleado, PoliticaRol]] = {
         visibilidad=ModoAlcance.SECTOR,
         privileged=False,
         manages_directory=False,
-        can_read_directory=False,
+        # c-153 (DIR-006): NO lee el directorio (denegacion por defecto).
+        alcance_lectura_directorio=AlcanceLecturaDirectorio.NINGUNO,
         notification_recipient=False,
         post_review_recipient=True,
         edita_estado=True,
@@ -167,6 +196,32 @@ def roles_con_lectura_directorio() -> frozenset[str]:
     return frozenset(
         r.value for r, p in ROLE_POLICY.items() if p.can_read_directory
     )
+
+
+def alcance_lectura_directorio(
+    rol: str | RolEmpleado | None,
+) -> AlcanceLecturaDirectorio:
+    """
+    Alcance de lectura del directorio del rol (c-153, DIR-006).
+
+    Normaliza enum o string y DENIEGA POR DEFECTO: un rol desconocido, fuera del
+    registro, o nulo devuelve NINGUNO. Es la fuente unica que consumen los
+    guards de las rutas; ninguna lista de rol se duplica.
+    """
+    politica = politica_de_rol(rol)
+    if politica is None:
+        return AlcanceLecturaDirectorio.NINGUNO
+    return politica.alcance_lectura_directorio
+
+
+def puede_leer_directorio(rol: str | RolEmpleado | None) -> bool:
+    """True si el rol lee TODO el directorio (alcance GLOBAL; c-153)."""
+    return alcance_lectura_directorio(rol) is AlcanceLecturaDirectorio.GLOBAL
+
+
+def puede_leer_su_propia_fila_directorio(rol: str | RolEmpleado | None) -> bool:
+    """True si el rol lee UNICAMENTE su propia fila (alcance PROPIO; c-153)."""
+    return alcance_lectura_directorio(rol) is AlcanceLecturaDirectorio.PROPIO
 
 
 def roles_gestion_directorio() -> frozenset[str]:
@@ -249,12 +304,16 @@ def puede_asignar_prioridad_critica(rol: str | RolEmpleado | None) -> bool:
 
 __all__ = [
     "ModoAlcance",
+    "AlcanceLecturaDirectorio",
     "PoliticaRol",
     "ROLE_POLICY",
     "ROLES_VALIDOS",
     "politica_de_rol",
     "roles_privilegiados",
     "roles_con_lectura_directorio",
+    "alcance_lectura_directorio",
+    "puede_leer_directorio",
+    "puede_leer_su_propia_fila_directorio",
     "roles_gestion_directorio",
     "rol_destinatario_notificacion",
     "rol_destinatario_post_revision",

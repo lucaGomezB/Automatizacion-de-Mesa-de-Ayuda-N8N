@@ -1,12 +1,17 @@
-# Directorio — Evidencia de cumplimiento (c-60)
+# Directorio — Evidencia de cumplimiento (c-60; endurecimiento c-153)
 
 Documento de evidencia de las confirmaciones de la revision humana HIGH del
-directorio (c-54 tarea 7.5, cerrada por c-60 seccion 7). Cubre la politica de
-retencion/ARCO (DIR-007), la ausencia de PII real y de indice ciego
-(DIR-005/DIR-009) y la regla de visibilidad por rol (VIS-001/VIS-002).
+directorio (c-54 tarea 7.5, cerrada por c-60 seccion 7; endurecida por c-153
+seccion 7). Cubre la politica de retencion/ARCO (DIR-007/DIR-015), el cifrado
+at-rest del contacto con indice ciego determinista (DIR-011/DIR-016), la ausencia
+de PII real (DIR-009), la auditoria durable sin PII (DIR-013) y el mecanismo
+deliberado y auditado de activacion de datos reales (DIR-014), ademas de la
+visibilidad por rol (VIS-001/VIS-002).
 
-Este documento NO activa datos reales: la aprobacion humana HIGH sigue PENDIENTE
-(ver seccion 4).
+Este documento registra el estado de la revision humana HIGH. La aprobacion del
+autor para el endurecimiento fue **CONCEDIDA el 2026-10-28** (ver seccion 4); la
+activacion de datos reales, en cambio, sigue gobernada por el mecanismo
+deliberado y auditado (DIR-014) y no se habilita por este documento.
 
 ## 1. Politica de retencion y ARCO (DIR-007)
 
@@ -55,38 +60,66 @@ Exclusiones aplicadas en la API: un incidente fuera de alcance responde como NO
 ENCONTRADO (HTTP 404), sin revelar existencia ni contenido. La representacion en el
 frontend queda diferida.
 
-## 3. Ausencia de PII real y de indice ciego (DIR-005/DIR-009)
+## 3. Cifrado del contacto y ausencia de PII real (DIR-011/DIR-009)
 
 - Contactos SINTETICOS: el seed dev-only usa el dominio reservado `.test`; no hay
   PII real en el repositorio ni en la base.
-- SIN clave de indice ciego: no existe `directory_blind_index_key` ni una columna
-  de hash ciega del directorio. Email y telefono se almacenan en TEXTO PLANO; la
-  proteccion se logra con minimizacion, control de acceso por rol y auditoria.
+- Cifrado at-rest: `directorio_empleado.email` y `directorio_empleado.telefono` se
+  almacenan CIFRADOS con el TypeDecorator `EncryptedText` (Fernet); el contacto NO
+  se persiste en claro (DIR-011). La garantia original de texto plano
+  (DIR-005/DIR-010) queda SUPERADA por el ADR
+  `docs/seguridad/adr-001-reversion-dir-005-cifrado-contacto.md`.
+- Indice ciego: el directorio usa la clave DEDICADA `directory_blind_index_key` y
+  las columnas derivadas `email_bidx`/`telefono_bidx` (HMAC-SHA-256 de la forma
+  normalizada). La garantia original de ausencia de indice ciego (DIR-005) queda
+  SUPERADA (DIR-011).
 
-Evidencia por test: `tests/test_directorio_cumplimiento.py` (settings sin clave de
-indice ciego, migraciones/codigo sin indice ciego, tabla sin columnas de hash,
-contactos del seed con dominio `.test`).
+Evidencia por test: `tests/test_directorio_cumplimiento.py` (presencia de la clave
+de indice ciego, columnas derivadas, codigo/migraciones con indice ciego, contactos
+del seed con dominio `.test`), `tests/test_c153_directorio_cifrado.py` (el contacto
+se lee como ciphertext en la fila cruda) y `tests/test_c153_directorio_indice_ciego.py`
+(determinismo, dependencia de clave y busqueda por indice).
 
-## 4. Revision humana HIGH — PENDIENTE de aprobacion (c-60 7.4)
+## 4. Revision humana HIGH — aprobacion CONCEDIDA (2026-10-28)
 
-Estado de C-60: **33/33**. La tarea 7.4 figura completada (`[x]`) porque su
-contenido es precisamente REGISTRAR la revision humana HIGH como PENDIENTE
-(activar datos reales queda bloqueado; la implementacion usa datos sinteticos):
-cerrar esa tarea NO equivale a conceder la aprobacion. El item que sigue
-genuinamente pendiente es la APROBACION HUMANA HIGH del autor para pasar de
-datos sinteticos a datos reales.
+Estado ANTERIOR (historico, c-60 7.4): la aprobacion humana HIGH figuraba
+**PENDIENTE** y activar datos reales estaba **BLOQUEADO**; la implementacion
+operaba solo con datos **SINTETICOS**.
 
-Estado de esa aprobacion: **PENDIENTE (esperando al autor)**. La politica de
-retencion/ARCO quedo CONFIRMADA por el autor (OQ3) y la regla de visibilidad por
-rol documentada (seccion 2), pero la APROBACION HUMANA HIGH para ACTIVAR DATOS
-PERSONALES REALES sigue sin registrarse.
+Estado ACTUAL: la **APROBACION HUMANA HIGH** para endurecer el directorio y
+habilitar el tratamiento de **DATOS REALES** fue **CONCEDIDA** por el autor el
+**2026-10-28**, en el marco del change `c-153-endurecer-el-directorio-para-datos-reales`.
+Este registro es la evidencia verificable de la aprobacion (DIR-009), previa a
+toda tarea de implementacion desde el grupo 2 en adelante.
 
-Consecuencias vinculantes:
+Alcance de la aprobacion concedida:
 
-- Activar datos reales en el directorio queda BLOQUEADO.
-- La implementacion opera exclusivamente con datos SINTETICOS.
-- La confirmacion de la politica NO habilita por si sola el uso de datos reales:
-  es una aprobacion humana separada.
+- Habilita la IMPLEMENTACION del endurecimiento (cifrado at-rest, indice ciego,
+  auditoria durable, control de acceso por sujeto, retencion/ARCO), que es lo que
+  `c-153` ejecuta por etapas.
+- **NO** equivale a activar datos reales por si misma: mientras no exista el
+  mecanismo deliberado y auditado de activacion (DIR-014) con su artefacto de
+  aprobacion, el directorio continua operando solo con datos SINTETICOS.
 
-La tarea 7.4 (registrar la aprobacion como pendiente) esta cerrada; la aprobacion
-HIGH en si permanece PENDIENTE y no se registra como concedida.
+La tarea 7.4 (registrar la aprobacion) se mantiene cerrada; la aprobacion HIGH
+dejo de estar PENDIENTE al concederse el 2026-10-28.
+
+### 4.1 Mecanismo de activacion de datos reales (DIR-014)
+
+La compuerta historica "sin mecanismo de activacion" queda REEMPLAZADA por el
+mecanismo DELIBERADO y AUDITADO que exige DIR-014:
+
+- Implementacion: `App/Backend/app/services/directorio_activacion.py` y el CLI
+  env-gateado `App/Backend/scripts/activar_directorio.py`.
+- Gobierno: gate de entorno `DIRECTORY_ACTIVATION_APPROVAL_ARTIFACT` mas la
+  verificacion de este artefacto de aprobacion (seccion 4, estado `CONCEDIDA` con
+  fecha verificable).
+- Bloqueado por defecto: sin aprobacion verificable NO hay activacion y el
+  directorio permanece en modo SINTETICO.
+- Con la aprobacion registrada, la activacion deja constancia en la traza durable
+  `directorio_auditoria` (`activacion_datos_reales` / `ok`), sin PII.
+- NO existe un interruptor de runtime oculto: ni un flag booleano de `Settings` ni
+  un endpoint HTTP. La unica via es el mecanismo deliberado.
+
+Evidencia por test: `tests/test_c153_directorio_activacion.py` (sin aprobacion no
+hay activacion; con aprobacion queda auditada; sin interruptor oculto).
