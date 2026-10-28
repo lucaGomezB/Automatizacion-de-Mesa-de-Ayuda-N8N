@@ -2,7 +2,7 @@
 
 ## Invocación de API
 
-Versión de cliente: `google-genai >=2.31,<3` (SDK nuevo; reemplaza al deprecado `google-generativeai`)
+Versión de cliente: `google-genai >=2.33,<3` (SDK nuevo; reemplaza al deprecado `google-generativeai`)
 
 ```python
 import asyncio
@@ -98,7 +98,7 @@ Para futuras iteraciones, considerar:
 ## Historial de Cambios (registro historico; los valores citados son antecedentes, no el valor vigente)
 
 > Los valores de este historial son antecedentes. El valor vigente es `gemini-3.6-flash`
-> con timeout 30 s por intento (total 60 s, 2 reintentos) y `google-genai >=2.31,<3`.
+> con timeout 30 s por intento (total 60 s, 2 reintentos) y `google-genai >=2.33,<3`.
 
 - v1.5 (Oct 2026): c-71 endurece el clasificador determinista. El umbral de cortocircuito pasa de `0.90` degenerado a un valor re-derivado OFFLINE de la curva precision/cobertura con piso de precision estricta >= 0.90 (OQ1): `Settings.deterministic_confidence_threshold = 1.0` (setting fijo, OQ3) y `deterministic_min_matches = 2`. La confianza ya no vale 1.0 con un unico match. Detalle y tradeoff en `docs/deterministic_calibration.md`. `HYBRID_CACHE_VERSION` sube a `hybrid-v2`.
 - v1.4 (Sep 2026): `enum` del `response_schema` y validación de respuesta actualizados a los 5 sectores canónicos sin tildes (`Seguridad Informatica`, `Soporte Tecnico Hardware`, `Soporte Tecnico Software`, `Bases de Datos`, `Sistemas`); `Operaciones` eliminado (C-27). Parámetros de inferencia sin cambios.

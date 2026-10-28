@@ -14,7 +14,10 @@ para que el mensaje nombre el valor divergente. El chequeo 12 deriva de `config.
 en tiempo de ejecucion, los literales volatiles que `CLAUDE.md` no debe restatear; solo
 la lista de identificadores retirados (`2.5 Flash`, `1.62`) queda estatica. El chequeo
 17 deriva de `requirements.txt` y del compose las versiones de componentes que declara
-`knowledge-base/`, sin hardcodear ninguna.
+`knowledge-base/`, sin hardcodear ninguna; la comparacion de la restriccion de
+`google-genai` cubre ademas el material de referencia (`docs/parameters_gemini.md`,
+c-151), mientras que los barridos de N8N, FastAPI y Uvicorn siguen limitados a
+`knowledge-base/`.
 
 NO accede a red, no requiere Docker ni credenciales y no importa el backend (lee
 `settings.py` con `ast`, sin ejecutarlo).
@@ -131,7 +134,7 @@ CLAVES_REQUERIDAS: Tuple[Tuple[str, ...], ...] = (
 
 _MISSING = object()
 _MODELO_RE = re.compile(r"Gemini\s+(\d+(?:\.\d+)?(?:\s+[A-Za-z]+)?)")
-#: Acepta el nombre entre backticks (`google-genai` >=2.31,<3), forma usada en la KB.
+#: Acepta el nombre entre backticks (ej. `google-genai` >=1.0,<2), forma usada en la KB.
 _GENAI_RE = re.compile(r"google-genai[`\s]*([<>=]+\s*[0-9][0-9.,<>=]*)")
 _VERSION_RE = re.compile(r"\d+(?:\.\d+)*")
 
@@ -474,6 +477,34 @@ def _restricciones_genai_en_linea(linea: str) -> List[str]:
     return [coincidencia.group(1).strip() for coincidencia in _GENAI_RE.finditer(linea or "")]
 
 
+def _restricciones_genai_no_compatibles(
+    rutas: Sequence["pathlib.Path | str"], genai_req: str
+) -> List[str]:
+    """Hallazgos de `google-genai` mas laxos que el pin en las rutas dadas (chequeo 17).
+
+    Recorre cada archivo, exime los pasajes rotulados como historicos
+    (`_lineas_con_marcador`) y devuelve un problema por cada restriccion que no sea al
+    menos tan estricta como `genai_req`. Pura: solo lee las rutas recibidas, de modo que
+    la misma logica sirve tanto para `knowledge-base/**` como para el material de
+    referencia (`docs/parameters_gemini.md`).
+    """
+    problemas: List[str] = []
+    for ruta in rutas:
+        ruta = pathlib.Path(ruta)
+        if not ruta.exists():
+            continue
+        for numero, linea, marcada in _lineas_con_marcador(ruta):
+            if marcada:
+                continue
+            for restriccion in _restricciones_genai_en_linea(linea):
+                if not _restriccion_compatible(restriccion, genai_req):
+                    problemas.append(
+                        f"{ruta.name}:{numero}: google-genai {restriccion} "
+                        f"(requirements: {genai_req})"
+                    )
+    return problemas
+
+
 # ---------------------------------------------------------------------------
 # Chequeos 1 a 12
 # ---------------------------------------------------------------------------
@@ -795,13 +826,21 @@ def _check_versiones_componentes(
     requirements: Dict[str, str],
     compose: Dict[str, Any],
     kb_dir: "pathlib.Path | str",
+    referencia_paths: Sequence["pathlib.Path | str"] = (),
 ) -> Check:
-    """Chequeo 17: las versiones de componentes de la KB coinciden con su fuente.
+    """Chequeo 17: las versiones de componentes coinciden con su fuente.
 
     Las fuentes son las mismas que usan los chequeos 4/5/6 para `config.yaml` y
     `CLAUDE.md`: `requirements.txt` para FastAPI/Uvicorn/google-genai y el compose
     para la imagen de N8N. Los valores esperados se derivan en tiempo de ejecucion;
     no se hardcodea ninguna version. Un pasaje rotulado como historico se exime.
+
+    La COMPARACION de la restriccion de `google-genai` cubre `knowledge-base/**` Y el
+    material de referencia (`docs/parameters_gemini.md`, via `_archivos_superficie`);
+    los barridos de N8N, FastAPI y Uvicorn siguen limitados a `knowledge-base/**`
+    (design D2 de c-151), para no arrastrar discrepancias ajenas del material de
+    referencia (por ejemplo `docs/n8n-workflow-guide.md:767`, un registro historico
+    sin marcador reconocido).
     """
     nombre = "versiones de componentes: knowledge-base coincide con requirements.txt y el compose"
     tag = _n8n_tag(compose)
@@ -829,12 +868,12 @@ def _check_versiones_componentes(
                     problemas.append(
                         f"{ruta.name}:{numero}: {componente} {version} (requirements: {pin})"
                     )
-            for restriccion in _restricciones_genai_en_linea(linea):
-                if not _restriccion_compatible(restriccion, genai_req):
-                    problemas.append(
-                        f"{ruta.name}:{numero}: google-genai {restriccion} "
-                        f"(requirements: {genai_req})"
-                    )
+
+    problemas.extend(
+        _restricciones_genai_no_compatibles(
+            _archivos_superficie(kb_dir, referencia_paths), genai_req
+        )
+    )
 
     if problemas:
         return _failing(nombre, "; ".join(problemas))
@@ -891,7 +930,7 @@ def check_docs(
         _check_superficie_timeout(settings, kb_dir, referencia_paths),
         _check_superficie_cubierta(kb_dir, referencia_paths),
         _check_invariante_timeout_cliente(settings, api_ts_path),
-        _check_versiones_componentes(requirements, compose, kb_dir),
+        _check_versiones_componentes(requirements, compose, kb_dir, referencia_paths),
     ]
 
 

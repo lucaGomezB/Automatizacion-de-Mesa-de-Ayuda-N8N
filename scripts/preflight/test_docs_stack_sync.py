@@ -56,8 +56,8 @@ _VERS_BASE: dict = {
     "uvicorn_pin": "0.54.0",
     "uvicorn_cfg": "0.54",
     "n8n": "2.11.2",
-    "genai_req": ">=2.31.0,<3",
-    "genai_doc": ">=2.31,<3",
+    "genai_req": ">=2.33.0,<3",
+    "genai_doc": ">=2.33,<3",
 }
 
 #: Valores de `Settings` del fixture. Deben coincidir con el `config.yaml` del
@@ -342,7 +342,7 @@ def test_chequeo_4_uvicorn_diverge_falla(tmp_path):
 # ===========================================================================
 def test_chequeo_5_google_genai_de_config_diverge_falla(tmp_path):
     raiz = _arbol_sincronizado(tmp_path)
-    _mutar(raiz, CONFIG_REL, "google-genai >=2.31,<3", "google-genai >= 1.0")
+    _mutar(raiz, CONFIG_REL, "google-genai >=2.33,<3", "google-genai >= 1.0")
 
     checks = _checks(raiz)
     _assert_fails_naming(checks, "google-genai")
@@ -798,12 +798,81 @@ def test_chequeo_17_genai_retirado_en_kb_falla(tmp_path):
     _mutar(
         raiz,
         "knowledge-base/02_descripcion_general.md",
-        "`google-genai` >=2.31,<3",
+        "`google-genai` >=2.33,<3",
         "`google-genai` >= 1.0",
     )
 
     checks = _checks(raiz)
     _assert_fails_naming(checks, "google-genai >= 1.0")
+
+
+def test_chequeo_17_genai_no_historico_en_referencia_falla(tmp_path):
+    """(RED c-151) una restriccion de `google-genai` mas laxa que el pin, declarada en un
+    pasaje NO historico de `docs/parameters_gemini.md`, produce FAIL nombrando el archivo.
+
+    Antes de la ampliacion de la superficie (c-151) el chequeo 17 solo recorria
+    `knowledge-base/**`, de modo que este caso no producia ningun hallazgo.
+    """
+    raiz = _arbol_sincronizado(tmp_path)
+    ruta = raiz / REFERENCIA_REL[0]
+    ruta.write_text(
+        ruta.read_text(encoding="utf-8")
+        + "\nVersión de cliente: `google-genai >=2.31,<3`.\n",
+        encoding="utf-8",
+    )
+
+    checks = _checks(raiz)
+    _assert_fails_naming(checks, "parameters_gemini.md")
+    _assert_fails_naming(checks, "google-genai >=2.31,<3")
+    _solo_un_fail(checks)
+
+
+def test_chequeo_17_genai_corregido_en_referencia_pasa(tmp_path):
+    """(TRIANGULATE c-151) con la restriccion corregida (`>=2.33,<3`) en el material de
+    referencia, el chequeo 17 pasa: la ampliacion no es un falso positivo permanente."""
+    raiz = _arbol_sincronizado(tmp_path)
+    ruta = raiz / REFERENCIA_REL[0]
+    ruta.write_text(
+        ruta.read_text(encoding="utf-8")
+        + "\nVersión de cliente: `google-genai >=2.33,<3`.\n",
+        encoding="utf-8",
+    )
+
+    checks = _checks(raiz)
+    assert all(c.status == "PASS" for c in checks), _summary(checks)
+
+
+def test_chequeo_17_genai_laxo_bajo_encabezado_historico_pasa(tmp_path):
+    """(TRIANGULATE c-151) una restriccion mas laxa bajo un encabezado con marcador
+    historico queda exenta: la regla de rotulacion historica tambien aplica al material
+    de referencia."""
+    raiz = _arbol_sincronizado(tmp_path)
+    ruta = raiz / REFERENCIA_REL[0]
+    ruta.write_text(
+        ruta.read_text(encoding="utf-8")
+        + "\n## Historial de Cambios (registro historico; antecedentes)\n"
+        + "> El valor vigente es `google-genai >=2.31,<3`.\n",
+        encoding="utf-8",
+    )
+
+    checks = _checks(raiz)
+    assert all(c.status == "PASS" for c in checks), _summary(checks)
+
+
+def test_chequeo_17_n8n_en_referencia_no_se_barre(tmp_path):
+    """(TRIANGULATE c-151, no regresion de alcance) la ampliacion cubre SOLO
+    `google-genai`: un registro historico de N8N en el material de referencia
+    (`docs/n8n-workflow-guide.md`) NO se barre y no produce FAIL."""
+    raiz = _arbol_sincronizado(tmp_path)
+    ruta = raiz / REFERENCIA_REL[1]
+    ruta.write_text(
+        ruta.read_text(encoding="utf-8")
+        + "\nResultados de verificación (2026-06-11, C-05): N8N 2.25.7.\n",
+        encoding="utf-8",
+    )
+
+    checks = _checks(raiz)
+    assert all(c.status == "PASS" for c in checks), _summary(checks)
 
 
 def test_chequeo_17_deriva_valores_del_runtime(tmp_path):
