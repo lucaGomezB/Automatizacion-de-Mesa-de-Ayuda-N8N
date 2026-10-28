@@ -1262,12 +1262,10 @@ def _cargar_nivel_c(args: argparse.Namespace, oficial: Optional[Mapping[str, Pre
 
 
 def _cli_offline(args: argparse.Namespace) -> int:
-    from evaluation.deterministic_measurement import (
-        cargar_corpus_tolerante,
-        cargar_predicciones_cacheadas,
-    )
+    from evaluation.corpus import cargar_corpus
+    from evaluation.deterministic_measurement import cargar_predicciones_cacheadas
 
-    corpus = cargar_corpus_tolerante(args.corpus)
+    corpus = cargar_corpus(args.corpus)
     umbral, pesos = leer_punto_de_operacion()
     fe_defecto, oficial_defecto = resolver_caches(_REPO_ROOT)
     cache_oficial = args.cache_oficial or oficial_defecto
@@ -1354,7 +1352,7 @@ async def _casos_escalados_reales(corpus: Sequence[CasoEvaluacion], umbral: floa
 
 
 def _cli_prompt(args: argparse.Namespace) -> int:
-    from evaluation.deterministic_measurement import cargar_corpus_tolerante
+    from evaluation.corpus import cargar_corpus
     from evaluation.run_evaluation import PaidRunNotConfirmedError, _env_confirm_paid
 
     confirm_paid = args.confirm_paid or _env_confirm_paid()
@@ -1366,7 +1364,7 @@ def _cli_prompt(args: argparse.Namespace) -> int:
         )
         return 2
     corpus_path = args.corpus_prompt or args.corpus
-    corpus = cargar_corpus_tolerante(corpus_path)
+    corpus = cargar_corpus(corpus_path)
     umbral, _ = leer_punto_de_operacion()
     casos = asyncio.run(_casos_escalados_reales(corpus, umbral))
     try:

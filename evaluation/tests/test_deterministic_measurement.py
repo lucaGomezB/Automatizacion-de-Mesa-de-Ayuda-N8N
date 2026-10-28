@@ -213,22 +213,37 @@ def _escribir_corpus_con_tiempo_nulo(path):
     path.write_text(json.dumps(doc), encoding="utf-8")
 
 
-def test_cargar_corpus_estricto_sigue_rechazando_tiempos_nulos(tmp_path):
-    """_a_float permanece intacto: un tiempo None sigue siendo CorpusError."""
+def test_cargar_corpus_acepta_tiempo_nulo_y_rechaza_no_numerico(tmp_path):
+    """c-150: el contrato de tiempos es opcional (None valido); un valor presente
+    no numerico sigue siendo CorpusError (estrictez de `_a_float`)."""
+    import json
+
     from evaluation.corpus import CorpusError, cargar_corpus
 
     path = tmp_path / "corpus.json"
     _escribir_corpus_con_tiempo_nulo(path)
-    with pytest.raises(CorpusError):
-        cargar_corpus(path)
+
+    casos = cargar_corpus(path)
+    assert casos[0].tiempo_automatizado_s is None
+    assert casos[0].tiempo_manual_s == 1.0
+    assert casos[0].sector_asignado == "Sistemas"
+
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    doc["casos"][0]["tiempo_manual_s"] = "n/a"
+    roto = tmp_path / "corpus_roto.json"
+    roto.write_text(json.dumps(doc), encoding="utf-8")
+    with pytest.raises(CorpusError, match="tiempo_manual_s"):
+        cargar_corpus(roto)
 
 
-def test_cargar_corpus_tolerante_admite_tiempos_nulos(tmp_path):
-    """El loader tolerante (solo medicion offline) admite el tiempo None."""
-    from evaluation.deterministic_measurement import cargar_corpus_tolerante
+def test_unico_loader_reemplaza_al_tolerante(tmp_path):
+    """c-150: el corpus real con tiempos nulos se carga con el unico `cargar_corpus`."""
+    import evaluation.deterministic_measurement as dm
+    from evaluation.corpus import cargar_corpus
 
     path = tmp_path / "corpus.json"
     _escribir_corpus_con_tiempo_nulo(path)
-    casos = cargar_corpus_tolerante(path)
+
+    casos = cargar_corpus(path)
     assert casos[0].tiempo_automatizado_s is None
-    assert casos[0].sector_asignado == "Sistemas"
+    assert not hasattr(dm, "cargar_corpus_tolerante")

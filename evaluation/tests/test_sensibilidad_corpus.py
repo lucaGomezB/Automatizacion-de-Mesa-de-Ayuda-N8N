@@ -18,7 +18,8 @@ import json
 import pytest
 
 import evaluation.sensibilidad_ajustes as sa
-from evaluation.deterministic_measurement import cargar_corpus_tolerante, recolectar_observaciones
+from evaluation.corpus import cargar_corpus
+from evaluation.deterministic_measurement import recolectar_observaciones
 
 pytestmark = pytest.mark.skipif(
     not sa.CORPUS_REAL_PATH.exists(), reason="el corpus real no esta presente en data/"
@@ -27,7 +28,7 @@ pytestmark = pytest.mark.skipif(
 
 @pytest.fixture(scope="module")
 def corpus():
-    return cargar_corpus_tolerante(sa.CORPUS_REAL_PATH)
+    return cargar_corpus(sa.CORPUS_REAL_PATH)
 
 
 @pytest.fixture
