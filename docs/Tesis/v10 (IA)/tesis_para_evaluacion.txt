@@ -199,7 +199,7 @@ C Esquema de base de datos . . . . . . . . . . . . . . . . . . . . . . . . . . .
 D Especificación OpenAPI de la interfaz REST . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 99
 E Configuración del flujo N8N . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 100
 F Corpus de validación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 100
-G Documentación operativa . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 101
+G Documentación operativa . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 102
 H Especificación del prompt de Gemini 3.6 Flash . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 102
 H.1 Estructura y contenido del prompt . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 102
 H.2 Parámetros de configuración . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 102
@@ -4119,6 +4119,8 @@ los flujos de integración continua sobre GitHub Actions se encuentran disponibl
 co del proyecto (Gómez et al. 2026), accesible en https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N
 El commit de referencia para la versión entregada al jurado se identifica con el tag anotado v1.2.4,
 creado sobre el commit definitivo del repositorio.
+El hash completo de ese commit es 8e2a597e62b60fa41338f7a59459730b6f363b8d, que
+constituye la referencia verificable de la versión corregida.
 La estructura del repositorio separa el módulo de procesamiento (App/Backend/, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (App/Frontend/, React
 con TypeScript), la definición del flujo de orquestación (n8n/workflow.json), los artefactos de evaluación (evaluation/), el corpus pseudonimizado (data/), los scripts auxiliares (scripts/) y la
 documentación (docs/), junto con las especificaciones de los changes (openspec/) y los archivos de
@@ -4143,12 +4145,12 @@ La especificación completa de la interfaz REST se genera automáticamente media
 describe los puntos de entrada listados en la Tabla 6 de la Sección 5, los esquemas de los cuerpos de
 solicitud y respuesta validados mediante Pydantic v2, los códigos de estado posibles para cada método
 HTTP, y ejemplos representativos para cada caso de uso.
-La interfaz se encuentra disponible adicionalmente en formato interactivo a través del componente Swagger UI integrado en el servidor, accesible bajo la ruta /docs durante la ejecución, y en
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 100
 
+La interfaz se encuentra disponible adicionalmente en formato interactivo a través del componente Swagger UI integrado en el servidor, accesible bajo la ruta /docs durante la ejecución, y en
 formato estático como archivo openapi.json en el directorio docs/ del repositorio. La sincronización
 entre el código y la especificación estática se verifica automáticamente en el pipeline de integración
 continua.
@@ -4181,8 +4183,6 @@ El corpus de 200 incidentes utilizado para la validación experimental reside en
 
 formato JSON, en su forma pseudonimizada y versionada, bajo la ruta data/corpus_evaluacion_pseudonimizado
 Cada caso incluye el identificador anónimo, la descripción cruda pseudonimizada, el canal de origen,
-el sector asignado por consenso humano, los sectores adicionales de verdad y el tiempo de registro
-medido en cada flujo. La categoría predicha por el clasificador y la confianza asociada no forman parte
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
@@ -4190,6 +4190,8 @@ medido en cada flujo. La categoría predicha por el clasificador y la confianza 
 
 Figura 11. Reconstrucción esquemática del flujo de orquestación N8N: no es una captura de la
 interfaz; los 29 nodos operativos se agrupan por etapa funcional.
+el sector asignado por consenso humano, los sectores adicionales de verdad y el tiempo de registro
+medido en cada flujo. La categoría predicha por el clasificador y la confianza asociada no forman parte
 del corpus: se conservan en evaluation/predicciones.json, generado por el framework de evaluación. Se incluyen además las planillas de cronometraje del flujo manual y los registros automáticos
 generados por el flujo automatizado.
 Cada uno de los 200 casos del corpus se compone de siete campos: id (identificador anónimo,
@@ -4201,13 +4203,12 @@ Por razones de privacidad y en cumplimiento de la Ley 25.326 (Honorable Congreso
 en el repositorio público, reemplazando nombres propios, direcciones de correo y otros identificadores
 personales por etiquetas genéricas.
 
-G. Documentación operativa
-La documentación operativa del sistema, que reúne los procedimientos de despliegue, configuración, respaldo y restauración, monitoreo y respuesta ante incidentes operativos, se versiona en el
-
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 102
 
+G. Documentación operativa
+La documentación operativa del sistema, que reúne los procedimientos de despliegue, configuración, respaldo y restauración, monitoreo y respuesta ante incidentes operativos, se versiona en el
 repositorio junto con el código fuente; el runbook operativo reside en docs/operational-guide.md.
 
 H. Especificación del prompt de Gemini 3.6 Flash
@@ -4236,12 +4237,13 @@ sobre el corpus.
 
 H.2. Parámetros de configuración
 La invocación del modelo se realiza mediante el SDK google-genai (>=2.20.0), con los
-hiperparámetros que resume la Tabla 19, que corresponden a la configuración adoptada para el despliegue y no al resultado de una calibración documentada frente a valores alternativos (Subsección 5.4).
+hiperparámetros que resume la Tabla 19, que corresponden a la configuración adoptada para el des-
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 103
 
+pliegue y no al resultado de una calibración documentada frente a valores alternativos (Subsección 5.4).
 Tabla 19. Parámetros de configuración de la inferencia con gemini-3.6-flash.
 Parámetro
 
@@ -4323,7 +4325,6 @@ El Listado 1 resume la rutina de validación.
 6
 7
 8
-9
 
 def validar_respuesta_gemini(response_text: str) -> tuple[bool, dict]:
 try:
@@ -4333,10 +4334,10 @@ return False, {"error": f"JSON invalido: {e}"}
 if "categoria" not in data:
 return False, {"error": "Falta campo 'categoria'"}
 if data["categoria"] not in SECTORES_CANONICOS:
-return False, {"error": f"Categoria invalida: {data['categoria']}"}
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
+9
 10
 11
 12
@@ -4346,6 +4347,7 @@ return False, {"error": f"Categoria invalida: {data['categoria']}"}
 
 104
 
+return False, {"error": f"Categoria invalida: {data['categoria']}"}
 if "confianza" not in data:
 return False, {"error": "Falta campo 'confianza'"}
 if not isinstance(data["confianza"], (int, float)) \
@@ -4375,12 +4377,12 @@ registro vincula una observación del dictamen con el archivo y la línea correg
 El dictamen que motiva las correcciones vigentes es el emitido el 22 de octubre de 2026 sobre
 la versión de trabajo v10, publicada como v1.1.0 y aplicable por igual a v1.1.1. Sus cinco observaciones de fondo (A1 a A5) y sus correcciones de consistencia (B4 a B16) se atendieron mediante
 changes del repositorio; la Tabla 20 indica, para cada una, el change responsable y las secciones de
-la tesis donde se la atendió. Cuando una recomendación se dividió en partes, figuran los changes que
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 105
 
+la tesis donde se la atendió. Cuando una recomendación se dividió en partes, figuran los changes que
 las atendieron.
 Tabla 20. Recomendaciones del dictamen del 22 de octubre de 2026, change responsable y
 secciones donde se atendieron.
