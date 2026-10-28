@@ -2273,7 +2273,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 > Change documental y de codigo (TDD estricto) que cierra cinco residuales de la FASE 42 y un defecto de contrato del corpus. Governance **ALTO** (W2, W4) / **MEDIO** (W3) / **BAJO** (W1, W5 y confirmaciones). W2 y W4 requieren revision del autor antes del merge.
 
-### [C-150] `cerrar-residuales-y-separar-el-contrato-del-corpus` — APLICADO (2026-10-27, ALTO/MEDIO/BAJO)
+### [C-150] `cerrar-residuales-y-separar-el-contrato-del-corpus` — ARCHIVADO (2026-10-27, ALTO/MEDIO/BAJO)
 
 - **Scope (W1-W5 y confirmaciones)**:
   - **W1 (BAJO, doc)**: se corrige la nota de estado stale de `CHANGES.md` sobre la deuda residual de C-80; C-80 quedo archivado 45/45 el 2026-10-21 (ya registrado en la actualizacion de cierre del roadmap). No se reescribe ninguna entrada fechada.
