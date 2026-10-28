@@ -3006,3 +3006,15 @@ No se registra autorizacion para las dos decisiones siguientes, que quedan **PEN
 ### Aprobacion HIGH de C-60 (W4) - PENDIENTE (no concedida)
 
 Se ratifica que la aprobacion humana HIGH del directorio (C-60) sigue **PENDIENTE**: activar datos reales queda bloqueado y la implementacion opera con datos sinteticos (ver `docs/directorio-evidencia-cumplimiento.md` seccion 4). La tarea 7.4 de c-60 esta `[x]` porque su contenido es registrar esa aprobacion como pendiente; el cierre de la tarea no concede la aprobacion.
+
+---
+
+## Resolucion de decisiones pendientes del item 8 (segunda pasada, 2026-10-27, post-merge c-150)
+
+El autor resolvio las tres decisiones que c-150 habia dejado explicitamente PENDIENTES. Se registra **sin reescribir** las entradas provisionales previas, que se conservan como historia de la decision.
+
+- **OQ6** (`usuario_final` valida la clasificacion de su propio incidente, dominio CRITICAL): **CERRADA - FUERA DE ALCANCE**. El autor confirma que la validacion, por `usuario_final`, de su propio incidente queda **fuera del alcance** del sistema. No se agrega guard de rol ni cambio de codigo. La entrada provisional (`:1087`) permanece como historia.
+- **OQ5** (`cache_meta` de la calibracion; version del prompt de la FORCE-ESCALATE): **CERRADA - NO RECUPERABLE**. Se archiva como **no recuperable**: el archivo/version original del run no existe (`docs/prompt_gemini_history/` nunca existio). No se persigue el dato; la procedencia queda documentada como no reconstruible. La entrada provisional (`:1086`, `:1089`) permanece como historia.
+- **G0.7a / OQ7a** (ablacion paga del prompt, 138 invocaciones, ~0.03-0.10 USD): **DIFERIDA A LA PROXIMA SESION**. Sigue sin autorizar; se retoma y decide en la proxima sesion.
+
+Estado resultante del item 8: **sin decisiones abiertas, salvo OQ7a, diferida a la proxima sesion.**
