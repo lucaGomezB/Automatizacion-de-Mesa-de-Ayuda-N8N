@@ -56,7 +56,7 @@ La Tabla~\ref{tab:cumplimiento-iso} agrupa por tema los controles del Anexo~A de
 Organizacional & 5.x & Parcial & Política, clasificación, roles e IR (C-61); residual: revisión independiente (5.35) \\
 Personas & 6.x & No aplicable & Selección, formación, sanciones y cese: competen al adoptante \\
 Físico & 7.x & No aplicable & Sin infraestructura productiva; se cubren en el hosting del adoptante \\
-Tecnológico & 8.x & Alineado y parcial & Pseudonimización, Fernet, TLS, JWT y roles, vulnerabilidades en CI y respaldo cifrado (C-62 a C-66), MFA de cuentas privilegiadas (C-63b); residual: operación con KMS/PAM, logs centralizados y redundancia offsite \\
+Tecnológico & 8.x & Alineado y parcial & Pseudonimización, Fernet, TLS, JWT y roles, vulnerabilidades en CI y respaldo cifrado (C-62 a C-66); residual: MFA, logs centralizados y redundancia offsite \\
 \bottomrule
 \end{tabular}
 \par
@@ -79,7 +79,7 @@ La Tabla~\ref{tab:cumplimiento-nist} cubre las seis funciones de NIST CSF~2.0 y 
 \midrule
 GV (Gobernar) & Políticas, roles, riesgo y proveedores & 1 & Sin política de seguridad ni gestión de riesgo formal (5.1, 5.19, 5.24, 5.35) \\
 ID (Identificar) & Inventario de activos y clasificación & 1 & Modelo de datos documentado; sin inventario ni clasificación formal (5.9, 5.12) \\
-PR (Proteger) & Acceso, endurecimiento y criptografía & 2 & Pseudonimización, Fernet, TLS, JWT y roles, MFA de cuentas privilegiadas y SAST/auditoría de dependencias en CI (C-62 a C-64); residual: KMS/PAM y SIEM del adoptante (8.5, 8.8, 8.20, 8.24) \\
+PR (Proteger) & Acceso, endurecimiento y criptografía & 2 & Pseudonimización, Fernet, TLS, JWT y roles; sin MFA ni gestión completa de vulnerabilidades (8.5, 8.8, 8.20, 8.24) \\
 DE (Detectar) & Monitoreo y detección de eventos & 1 & Logs estructurados y chequeos de salud; sin centralización ni alertas (8.15, 8.16) \\
 RS (Responder) & Plan de respuesta y mitigación & 0 & Sin plan de respuesta a incidentes de seguridad (5.24--5.26) \\
 RC (Recuperar) & Recuperación y restauración & 2 & Respaldo cifrado y continuidad con RTO/RPO; copia fuera del host y redundancia como acción del adoptante (5.29, 5.30, 8.13, 8.14) \\
@@ -91,7 +91,7 @@ RC (Recuperar) & Recuperación y restauración & 2 & Respaldo cifrado y continui
 
 \subsubsection{Brechas principales y hoja de ruta}\label{subsec:cumplimiento-brechas}
 
-Los seis changes de cumplimiento cerraron, para el alcance del repositorio, las brechas priorizadas: C-61 (gobernanza documental: 5.1, 5.12, 5.13, 5.24--5.27, 5.31, 8.26), C-62 (endurecimiento de red: 8.20, 8.22, 8.2, 5.14, 8.31), C-63 (identidades y accesos: 8.5, 5.15, 5.17, 8.2), C-64 (vulnerabilidades: 8.8, 8.28, 8.29, 5.19--5.23), C-65 (respaldo y continuidad: 8.13, 8.14, 5.29, 5.30, 5.33) y C-66 (privacidad: 5.34, 8.12, 8.15, 5.31). La MFA TOTP con desafío para cuentas privilegiadas y la rotación de claves (secreto JWT y clave Fernet) quedaron implementadas en el repositorio (C-63a/b/c, archivados el 2026-10-08); su operación con KMS/PAM, la custodia de claves en producción, la centralización de logs, la redundancia fuera del host y el SBOM quedan como acción de la organización adoptante; las brechas organizacionales ---personas (6.x), físicas (7.x), revisión independiente (5.35), segregación de funciones (5.3) y trabajo remoto (6.7, 8.1)--- son responsabilidad de la organización adoptante.
+Los seis changes de cumplimiento cerraron, para el alcance del repositorio, las brechas priorizadas: C-61 (gobernanza documental: 5.1, 5.12, 5.13, 5.24--5.27, 5.31, 8.26), C-62 (endurecimiento de red: 8.20, 8.22, 8.2, 5.14, 8.31), C-63 (identidades y accesos: 8.5, 5.15, 5.17, 8.2), C-64 (vulnerabilidades: 8.8, 8.28, 8.29, 5.19--5.23), C-65 (respaldo y continuidad: 8.13, 8.14, 5.29, 5.30, 5.33) y C-66 (privacidad: 5.34, 8.12, 8.15, 5.31). Quedan residuales la MFA y la rotación de claves, la gestión de claves, la centralización de logs, la redundancia fuera del host y el SBOM; las brechas organizacionales ---personas (6.x), físicas (7.x), revisión independiente (5.35), segregación de funciones (5.3) y trabajo remoto (6.7, 8.1)--- son responsabilidad de la organización adoptante.
 
 \subsubsection{Alineación con el marco legal}\label{subsec:cumplimiento-legal}
 
