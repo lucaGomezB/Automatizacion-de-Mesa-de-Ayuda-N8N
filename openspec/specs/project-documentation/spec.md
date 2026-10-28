@@ -288,7 +288,7 @@ La documentacion que heredan los agentes (`CLAUDE.md` y `openspec/config.yaml`),
 
 El flujo de clasificacion y los servicios de infraestructura que esos documentos describan MUST existir en el repositorio; una etapa o un servicio que ya no existe MUST retirarse o declararse historico, no describirse como vigente.
 
-Las versiones de componentes que declare `knowledge-base/**` SHALL coincidir con la misma fuente de verdad que usan `CLAUDE.md` y `openspec/config.yaml`: FastAPI, Uvicorn y la restriccion de `google-genai` desde `App/Backend/requirements.txt`, y la version de N8N desde la imagen pinneada de `docker-compose.yml`. Una version de componente retirada MUST NOT presentarse como vigente; solo se admite en un pasaje rotulado como historico. El marcador historico MUST identificar el hecho historico que rotula y MUST NOT inferirse de una palabra que en el mismo pasaje describa otra cosa: en particular, la mencion de que el SDK `google-generativeai` esta deprecado no convierte en historica una mencion del modelo retirado en esa misma linea.
+Las versiones de componentes que declaren `knowledge-base/**` y el material de referencia (`docs/parameters_gemini.md`) SHALL coincidir con la misma fuente de verdad que usan `CLAUDE.md` y `openspec/config.yaml`: FastAPI, Uvicorn y la restriccion de `google-genai` desde `App/Backend/requirements.txt`, y la version de N8N desde la imagen pinneada de `docker-compose.yml`. En particular, la restriccion de `google-genai` declarada en `docs/parameters_gemini.md` MUST ser al menos tan estricta como el pin de `App/Backend/requirements.txt`; una restriccion mas laxa (por ejemplo `>=2.31,<3` frente al pin `>=2.33.0,<3`) MUST reportarse como hallazgo. Una version de componente retirada MUST NOT presentarse como vigente; solo se admite en un pasaje rotulado como historico. El marcador historico MUST identificar el hecho historico que rotula y MUST NOT inferirse de una palabra que en el mismo pasaje describa otra cosa: en particular, la mencion de que el SDK `google-generativeai` esta deprecado no convierte en historica una mencion del modelo retirado en esa misma linea.
 
 Cada valor volatil MUST tener una sola fuente declarada: cuando `CLAUDE.md` repita un valor que ya vive en `openspec/config.yaml`, MUST remitir a esa seccion en lugar de restatear el literal, para que la superficie vigilada no tenga dos copias que puedan divergir. La unica excepcion es el nombre del modelo, que se declara en ambos documentos y se verifica por coincidencia con `Settings.gemini_model`.
 
@@ -363,10 +363,10 @@ La suite de pruebas de la barrera (`scripts/preflight/test_docs_stack_sync.py`) 
 
 #### Scenario: Versiones de componentes de la base de conocimiento coinciden con los pins
 
-- **WHEN** se leen las versiones de N8N, FastAPI, Uvicorn y `google-genai` declaradas en `knowledge-base/**`
+- **WHEN** se leen las versiones de N8N, FastAPI, Uvicorn y `google-genai` declaradas en `knowledge-base/**` y en `docs/parameters_gemini.md`
 - **THEN** N8N coincide con la imagen pinneada de `docker-compose.yml`
 - **AND** FastAPI y Uvicorn coinciden con los pines exactos de `App/Backend/requirements.txt`
-- **AND** la restriccion de `google-genai` es al menos tan estricta como `>=2.33.0,<3`
+- **AND** la restriccion de `google-genai` declarada en `knowledge-base/**` y en `docs/parameters_gemini.md` es al menos tan estricta como `>=2.33.0,<3`
 - **AND** una version de componente retirada solo aparece en un pasaje rotulado como historico
 
 #### Scenario: El marcador historico no se infiere de una palabra que rotula otra cosa
@@ -390,6 +390,14 @@ La suite de pruebas de la barrera (`scripts/preflight/test_docs_stack_sync.py`) 
 - **AND** el hallazgo nombra el archivo, la linea y el token o valor divergente
 - **AND** los valores esperados de las versiones de componentes se derivan en tiempo de ejecucion de `requirements.txt` y de `docker-compose.yml`, no se hardcodean en el chequeo
 - **AND** la lista de archivos inspeccionados por el preflight incluye `knowledge-base/**`, `docs/parameters_gemini.md` y `docs/n8n-workflow-guide.md`
+
+#### Scenario: La restriccion de google-genai del material de referencia se valida contra requirements.txt
+
+- **WHEN** `docs/parameters_gemini.md` declara una restriccion de `google-genai` mas laxa que el pin de `App/Backend/requirements.txt` (por ejemplo `>=2.31,<3` frente al pin `>=2.33.0,<3`) en un pasaje no rotulado como historico
+- **THEN** el preflight `scripts/preflight/docs_stack_sync.py` termina con codigo distinto de cero
+- **AND** el hallazgo nombra `docs/parameters_gemini.md`, la linea y la restriccion divergente
+- **AND** el valor esperado de la restriccion de `google-genai` se deriva en tiempo de ejecucion de `App/Backend/requirements.txt`, no se hardcodea
+- **AND** cuando el mismo archivo declara la restriccion corregida (`google-genai >=2.33,<3`), el chequeo pasa
 
 #### Scenario: El timeout del cliente supera el peor caso total del backend
 
