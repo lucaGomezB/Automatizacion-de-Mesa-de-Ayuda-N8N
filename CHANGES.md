@@ -2290,6 +2290,25 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
+## FASE 44 — Correccion del pin de google-genai en el material de referencia y ampliacion de la barrera documental (2026-10-28)
+
+> Change documental y de barrera (TDD estricto) posterior a la FASE 43. Cierra el residual que dejo la FASE 42: `docs/parameters_gemini.md` seguia citando `google-genai >=2.31,<3` como valor vigente en dos pasajes (linea 5 y linea 101) frente al pin `>=2.33.0,<3` de `App/Backend/requirements.txt`. La barrera no lo detectaba porque el chequeo 17 solo recorria `knowledge-base/**`, no el material de referencia (`DOCS_REFERENCIA`). Governance **BAJO**.
+
+### [C-151] `corregir-pin-google-genai-y-ampliar-la-barrera` — APLICADO (2026-10-28, BAJO; pendiente de archive)
+
+- **Scope (bloques A y B)**:
+  - **A — corregir el documento (BAJO)**: en `docs/parameters_gemini.md` la restriccion citada como vigente pasa de `google-genai >=2.31,<3` a `google-genai >=2.33,<3` en sus DOS pasajes vigentes: linea 5 ("Versión de cliente", seccion `## Invocación de API`) y linea 101 (nota de valor vigente dentro de `## Historial de Cambios`). El encabezado y el resto del registro historico NO se tocan.
+  - **B — ampliar la barrera (BAJO, TDD estricto)**: `scripts/preflight/docs_stack_sync.py` extrae el escaneo de la restriccion de `google-genai` a un helper puro (`_restricciones_genai_no_compatibles(rutas, genai_req)`, diseno D4) que reutiliza `_restricciones_genai_en_linea`, `_restriccion_compatible` y `_lineas_con_marcador`, y lo invoca sobre la union de `knowledge-base/**` y `DOCS_REFERENCIA` (`_archivos_superficie`) SOLO para `google-genai` (diseno D2). Los barridos de N8N, FastAPI y Uvicorn siguen limitados a `knowledge-base/**`: la discrepancia ajena `docs/n8n-workflow-guide.md:767` (`N8N 2.25.7`, un registro historico sin marcador reconocido) NO se reporta. El valor esperado se sigue derivando en tiempo de ejecucion de `App/Backend/requirements.txt`; no se hardcodea ninguna version. La barrera se mantiene en 17 chequeos (sin chequeo 18).
+- **RED/GREEN/TRIANGULATE (Bloque B)**: RED con el test `test_chequeo_17_genai_no_historico_en_referencia_falla` (`1 failed, 63 passed`; `AssertionError: Se esperaba al menos un FAIL ... assert []`, porque el chequeo 17 aun no escaneaba `parameters_gemini.md`); GREEN con la ampliacion de la superficie (`64 passed`); TRIANGULATE con tres casos nuevos (`67 passed`): el caso positivo (`>=2.33,<3` pasa), la exencion historica (`>=2.31,<3` bajo un encabezado con marcador historico no falla; se uso `## Historial de Cambios (registro historico; antecedentes)` porque la frase pelada "Historial de Cambios" no contiene un marcador de `MARCADORES_HISTORICOS`) y la no regresion de alcance (`N8N 2.25.7` en el material de referencia no falla). REFACTOR: helper puro, sin duplicacion del bucle de `google-genai`.
+- **Fixture hermetico (c-149)**: `_VERS_BASE` del arbol sintetico se alinea con el repo real (`google-genai` `>=2.33.0,<3` / `>=2.33,<3`), de modo que el caso RED `>=2.31,<3` es realmente mas laxo que el pin del fixture; se ajustan las dos mutaciones existentes de `google-genai` en consecuencia.
+- **Barrier (arbol real)**: con el Bloque B aplicado y el Bloque A pendiente, la barrera reportaria FAIL nombrando `parameters_gemini.md`; tras el Bloque A, `python3 scripts/preflight/docs_stack_sync.py` = **17/17 PASS, exit 0**.
+- **Verificacion**: `openspec validate "c-151-..." --strict` OK; `python3 -m pytest scripts/preflight/test_docs_stack_sync.py -q` 67 passed; `python3 -m pytest scripts/preflight -q` 115 passed (sin regresiones: 111 de la FASE 42 + 4 nuevas).
+- **Rollback**: `git revert` de los commits del change: `docs/parameters_gemini.md` vuelve a citar `>=2.31,<3` y el chequeo vuelve a la superficie limitada a `knowledge-base/**`. No se publica tag ni release.
+- **Dependencias**: barrera de la FASE 41/42 (c-145/c-148/c-149; 17 chequeos, 111 pruebas); `App/Backend/requirements.txt` ya declara el pin correcto `>=2.33.0,<3`.
+- **Leer antes**: `openspec/changes/c-151-corregir-pin-google-genai-y-ampliar-la-barrera/{proposal,design,tasks}.md`, `openspec/specs/project-documentation/spec.md`.
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo; actualizado 2026-10-22)
