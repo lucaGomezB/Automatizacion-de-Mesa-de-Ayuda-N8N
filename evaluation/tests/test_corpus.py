@@ -278,3 +278,140 @@ def test_sector_asignado_repetido_en_adicionales_lanza_error(tmp_path):
 
     with pytest.raises(ValueError, match="repite|invariante"):
         cargar_corpus(doc)
+
+
+# ===========================================================================
+# c-150 W3 (RED) — Contratos separados: clasificacion obligatoria, tiempos
+# opcionales pero estrictos cuando estan presentes.
+# ===========================================================================
+def test_tiempo_automatizado_nulo_es_aceptado(tmp_path):
+    """Un `tiempo_automatizado_s: null` ya no es error (contrato de tiempos opcional)."""
+    from evaluation.corpus import cargar_corpus
+
+    doc = _escribir_doc(
+        tmp_path / "tiempo_nulo.json", [_caso(tiempo_automatizado_s=None)]
+    )
+    primero = cargar_corpus(doc)[0]
+    assert primero.tiempo_automatizado_s is None
+    assert primero.tiempo_manual_s == 180.0
+
+
+def test_tiempo_ausente_es_aceptado(tmp_path):
+    """Un caso sin los campos de tiempo se carga con tiempos en None."""
+    from evaluation.corpus import cargar_corpus
+
+    caso = _caso()
+    del caso["tiempo_manual_s"]
+    del caso["tiempo_automatizado_s"]
+    doc = _escribir_doc(tmp_path / "sin_tiempos.json", [caso])
+
+    primero = cargar_corpus(doc)[0]
+    assert primero.tiempo_manual_s is None
+    assert primero.tiempo_automatizado_s is None
+
+
+def test_tiempo_presente_no_numerico_es_rechazado(tmp_path):
+    """Un tiempo presente y no numerico sigue siendo CorpusError (estrictez de _a_float)."""
+    from evaluation.corpus import CorpusError, cargar_corpus
+
+    doc = _escribir_doc(tmp_path / "tiempo_texto.json", [_caso(tiempo_manual_s="n/a")])
+    with pytest.raises(CorpusError, match="tiempo_manual_s"):
+        cargar_corpus(doc)
+
+
+def test_tiempo_booleano_es_rechazado(tmp_path):
+    """Un booleano presente no es un tiempo valido (no se normaliza a None en silencio)."""
+    from evaluation.corpus import CorpusError, cargar_corpus
+
+    doc = _escribir_doc(
+        tmp_path / "tiempo_bool.json", [_caso(tiempo_automatizado_s=True)]
+    )
+    with pytest.raises(CorpusError, match="tiempo_automatizado_s"):
+        cargar_corpus(doc)
+
+
+def test_campo_de_clasificacion_ausente_sigue_siendo_error(tmp_path):
+    """Omitir `descripcion` (contrato de clasificacion) sigue siendo error accionable."""
+    from evaluation.corpus import CorpusError, cargar_corpus
+
+    caso = _caso()
+    del caso["descripcion"]
+    doc = _escribir_doc(tmp_path / "sin_descripcion.json", [caso])
+    with pytest.raises(CorpusError, match="descripcion"):
+        cargar_corpus(doc)
+
+
+def test_tiempo_manual_cero_es_valido(tmp_path):
+    """El borde `tiempo_manual_s: 0` es un valor presente y valido."""
+    from evaluation.corpus import cargar_corpus
+
+    doc = _escribir_doc(tmp_path / "tiempo_cero.json", [_caso(tiempo_manual_s=0)])
+    assert cargar_corpus(doc)[0].tiempo_manual_s == 0.0
+
+
+def test_no_existe_loader_tolerante_duplicado():
+    """El loader tolerante duplicado deja de existir como funcion independiente."""
+    import evaluation.deterministic_measurement as dm
+
+    assert not hasattr(dm, "cargar_corpus_tolerante")
+
+
+def test_contratos_separados_declaran_los_campos():
+    """El contrato separa clasificacion (obligatorio) de tiempos (opcional)."""
+    from evaluation.corpus import CAMPOS_CASO_REQUERIDOS, CAMPOS_TIEMPO_OPCIONALES
+
+    assert set(CAMPOS_CASO_REQUERIDOS) == {
+        "id",
+        "descripcion",
+        "canal_origen",
+        "sector_asignado",
+        "sectores_adicionales",
+    }
+    assert set(CAMPOS_TIEMPO_OPCIONALES) == {
+        "tiempo_manual_s",
+        "tiempo_automatizado_s",
+    }
+
+
+# ===========================================================================
+# c-150 W3 (TRIANGULATE) — corpus real, corpus mixto y borde cero
+# ===========================================================================
+_REAL_CORPUS = (
+    pathlib.Path(__file__).resolve().parents[2]
+    / "data"
+    / "corpus_evaluacion_pseudonimizado.json"
+)
+
+
+@pytest.mark.skipif(
+    not _REAL_CORPUS.exists(), reason="el corpus real no esta presente en data/"
+)
+def test_corpus_real_carga_con_el_unico_loader():
+    """El corpus real (200 casos) carga con `cargar_corpus` sin violar el contrato."""
+    from evaluation.corpus import cargar_corpus
+
+    casos = cargar_corpus(_REAL_CORPUS)
+    assert len(casos) == 200
+    assert all(c.sector_asignado for c in casos)
+    # Los tiempos del corpus real, si estan, son float; si faltan, None.
+    assert all(
+        c.tiempo_manual_s is None or isinstance(c.tiempo_manual_s, float)
+        for c in casos
+    )
+
+
+def test_corpus_mixto_tiempos_presentes_ausentes_y_nulos(tmp_path):
+    """Un corpus mixto normaliza: presentes a float, ausentes y nulos a None."""
+    from evaluation.corpus import cargar_corpus
+
+    con_tiempos = _caso(id="1", tiempo_manual_s=10, tiempo_automatizado_s=2)
+    nulo = _caso(id="2", tiempo_automatizado_s=None)
+    sin = _caso(id="3")
+    del sin["tiempo_manual_s"]
+    del sin["tiempo_automatizado_s"]
+    doc = _escribir_doc(tmp_path / "mixto.json", [con_tiempos, nulo, sin])
+
+    casos = cargar_corpus(doc)
+    assert (casos[0].tiempo_manual_s, casos[0].tiempo_automatizado_s) == (10.0, 2.0)
+    assert (casos[1].tiempo_manual_s, casos[1].tiempo_automatizado_s) == (180.0, None)
+    assert (casos[2].tiempo_manual_s, casos[2].tiempo_automatizado_s) == (None, None)

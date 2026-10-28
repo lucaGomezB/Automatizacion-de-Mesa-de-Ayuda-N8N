@@ -41,4 +41,4 @@
 
 ## 7. Rollback documentado
 
-- [ ] 7.1 Documentar que `git revert` de los commits del change restaura `REQ`, la documentacion y la suite acoplada, sin tag ni release que deshacer (NO EJECUTADA: no hay commits del change; el arbol queda sin commitear por indicacion del orquestador).
+- [ ] 7.1 Documentar que `git revert` de los commits del change restaura `REQ`, la documentacion y la suite acoplada, sin tag ni release que deshacer (NO EJECUTADA: no hay commits del change; el arbol queda sin commitear por indicacion del orquestador). — ANOTACION (2026-10-27, c-150 W2): la justificacion "no hay commits del change" quedo OBSOLETA. c-149 se commiteo en f666316 y se fusiono en PR #55 (merge 4d9e072); la verificacion de rollback es MOOT. El texto original se conserva.
