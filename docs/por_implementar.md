@@ -1,6 +1,6 @@
 # Por Implementar
 
-> Estado: 2026-09-17.
+> Estado: 2026-10-28 (revisado contra el estado archivado y `App/Backend/app/config/settings.py`).
 > El estado de changes y el conteo de tests NO se hardcodean aqui: consultar
 > `openspec list` y `openspec/changes/archive/` como fuente de verdad de los changes
 > vigentes, y `.github/workflows/ci.yml` (o el ultimo run de CI) para el conteo de tests.
@@ -15,7 +15,7 @@
 
 - **Variable**: `GEMINI_API_KEY` en `App/Backend/.env`
 - **Origen**: https://aistudio.google.com/app/apikey
-- **Impacto si falta**: El clasificador hibrido no puede invocar a Gemini 3.6 Flash. Solo funciona el clasificador deterministico por keywords. Los incidentes con confianza < 0.90 quedan sin clasificar o van directo a revision humana.
+- **Impacto si falta**: El clasificador hibrido no puede invocar a Gemini 3.6 Flash. Solo funciona el clasificador deterministico por keywords (cortocircuito en `deterministic_score_threshold` = 0.5166, `App/Backend/app/config/settings.py`). Los incidentes que el atajo determinista no resuelve quedan sin clasificar automaticamente y se derivan a revision humana (umbral `human_review_threshold` = 0.70).
 - **Governance**: ALTO (dependencia externa paga)
 
 ### 1.2 JWT Secret Key
