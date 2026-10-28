@@ -69,9 +69,17 @@ contactos del seed con dominio `.test`).
 
 ## 4. Revision humana HIGH — PENDIENTE de aprobacion (c-60 7.4)
 
-Estado: **PENDIENTE**. La politica de retencion/ARCO quedo CONFIRMADA por el autor
-(OQ3) y la regla de visibilidad por rol documentada (seccion 2), pero la
-APROBACION HUMANA HIGH para ACTIVAR DATOS PERSONALES REALES sigue sin registrarse.
+Estado de C-60: **33/33**. La tarea 7.4 figura completada (`[x]`) porque su
+contenido es precisamente REGISTRAR la revision humana HIGH como PENDIENTE
+(activar datos reales queda bloqueado; la implementacion usa datos sinteticos):
+cerrar esa tarea NO equivale a conceder la aprobacion. El item que sigue
+genuinamente pendiente es la APROBACION HUMANA HIGH del autor para pasar de
+datos sinteticos a datos reales.
+
+Estado de esa aprobacion: **PENDIENTE (esperando al autor)**. La politica de
+retencion/ARCO quedo CONFIRMADA por el autor (OQ3) y la regla de visibilidad por
+rol documentada (seccion 2), pero la APROBACION HUMANA HIGH para ACTIVAR DATOS
+PERSONALES REALES sigue sin registrarse.
 
 Consecuencias vinculantes:
 
@@ -80,4 +88,5 @@ Consecuencias vinculantes:
 - La confirmacion de la politica NO habilita por si sola el uso de datos reales:
   es una aprobacion humana separada.
 
-Esta tarea (7.4) NO se marca resuelta; su aprobacion queda explicitamente pendiente.
+La tarea 7.4 (registrar la aprobacion como pendiente) esta cerrada; la aprobacion
+HIGH en si permanece PENDIENTE y no se registra como concedida.
