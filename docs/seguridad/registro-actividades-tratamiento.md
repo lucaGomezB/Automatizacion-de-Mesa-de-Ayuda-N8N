@@ -37,6 +37,11 @@ organizacion adoptante.
 | Transferencia internacional | Gemini (EE. UU. — pais NO adecuado) |
 | Conservacion | Incidentes: 12 meses rodantes desde su creacion y luego anonimizacion irreversible; registros de ejecucion del sistema podados a 30 dias |
 
+> **Nota (procesador historico inactivo).** **Microsoft Outlook** figura como **procesador
+> historico inactivo** desde **C-55**: el correo entrante dejo de usarse como canal de origen
+> del incidente. Su mencion en las transferencias (§4) se conserva como registro de la
+> actividad historica; no describe un tratamiento vigente.
+
 ### 3.2 Directorio de empleados
 
 | Campo | Contenido |

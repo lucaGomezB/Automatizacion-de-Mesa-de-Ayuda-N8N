@@ -2,6 +2,10 @@
 
 > **Tipo**: Architecture Decision Record (reversion de decision).
 > **Estado**: ACEPTADO — 2026-10-28 (aprobacion humana HIGH del autor CONCEDIDA).
+> **Alcance**: reversion de la decision de minimizacion y adopcion del cifrado at-rest del
+> contacto del directorio (`directorio_empleado`) con indice ciego determinista.
+> **Encuadre**: stack de desarrollo local; documento **alineado con** los marcos; no es
+> certificacion ni auditoria. Los controles organizacionales competen al adoptante.
 > **Decide sobre**: `docs/seguridad/justificacion-minimizacion-directorio.md` (v1,
 > 2026-10-19), que queda marcada como **SUPERADA**.
 > **Control mapeado**: ISO/IEC 27002:2022 5.34 (Privacidad y proteccion de PII) y

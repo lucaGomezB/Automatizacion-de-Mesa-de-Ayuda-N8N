@@ -1,7 +1,8 @@
 # Politica de retencion de logs
 
 > **Control mapeado**: ISO/IEC 27002:2022 8.12 (Prevencion de fuga de datos), 8.15 (Registro
-> de eventos) y 5.34 (Privacidad y proteccion de PII), en **alineacion con** ISO/IEC 27701 y
+> de eventos), 5.34 (Privacidad y proteccion de PII) y 5.28 (Recoleccion de evidencia), en
+> **alineacion con** ISO/IEC 27701 y
 > el deber de seguridad de la Ley 25.326 art. 9; NIST CSF 2.0 PR, GV. Requisito SGD-015.
 > **Estado**: v1 — aprobada por el autor el 2026-10-19 (governance MEDIO).
 > **Alcance**: retencion de los registros del sistema por clase de registro, el no-PII en
@@ -46,6 +47,23 @@ auditoria de cambios.
   accion **operativa explicita**: NO existe cron/scheduler/worker asociado a la retencion del
   directorio (ver `runbook-retencion-directorio.md`).
 
+### 2.2 Retencion de evidencia de incidentes (5.28)
+
+La evidencia recolectada durante un incidente de seguridad se conserva **segun su clase de
+registro**, con los mismos plazos declarados en §2 y sin extenderlos:
+
+| Evidencia | Clase de registro | Plazo aplicable |
+|-----------|-------------------|-----------------|
+| Logs del backend y del orquestador | Ejecucion del sistema | 30 dias |
+| Traza de auditoria del directorio | Auditoria del directorio | Ciclo de vida del directorio (relacion activa + 1 año) |
+| Contadores de origen del guarda | Contadores de tasa por origen | Solo durante la ventana del contador |
+| Registro de auditoria de cambios del incidente | Auditoria de cambios | Segun la politica del adoptante |
+
+El **procedimiento de manejo de evidencia** (identificacion, recoleccion, hash de integridad y
+registro de custodios y transferencias) esta en
+`plan-respuesta-incidentes-seguridad.md` §5. La retencion definida aqui **no se altera** por
+la recoleccion de evidencia: la cadena de custodia formal y la preservacion forense completa
+competen a la organizacion adoptante.
 
 ## 3. No-PII en logs
 

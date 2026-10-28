@@ -16,6 +16,12 @@ es asincrona (el backend transcribe, pseudonimiza y hace handoff a n8n).
 Los callbacks se construyen desde `settings.backend_public_base_url` (o desde
 `base_url` inyectado, para los tests). El texto es estatico (sin interpolacion
 de datos del llamador), de modo que no hay riesgo de inyeccion en el XML.
+
+c-156 (PRIV-003): el `<Say>` de la llamada admitida abre con el aviso de
+privacidad del canal telefonico (grabacion, finalidad, responsable,
+transferencia internacional y derechos del titular), como parte del deber de
+informacion de la Ley 25.326 art. 6. El aviso es texto estatico, no recolecta
+datos del llamante y no promete el alta inmediata del incidente.
 """
 
 from app.config.settings import get_settings
@@ -48,6 +54,12 @@ def render_twiml_allowed(base_url: str | None = None) -> str:
         _XML_HEADER
         + "<Response>"
         + '<Say voice="Polly.Mia-Neural" language="es-US">'
+        + "Esta llamada sera grabada. "
+        + "La finalidad del tratamiento es registrar y clasificar su incidente de mesa de ayuda. "
+        + "El responsable del tratamiento es el grupo de desarrollo del sistema. "
+        + "Sus datos pueden ser objeto de transferencia internacional a Estados Unidos para el procesamiento automatizado. "
+        + "Usted puede ejercer sus derechos de acceso, rectificacion y supresion conforme a la politica de privacidad. "
+        + "El sistema esta alineado con la Ley 25.326. "
         + "Bienvenido a la mesa de ayuda. "
         + "Describí tu problema después del tono. "
         + "Cuando termines, cuelga la llamada. "

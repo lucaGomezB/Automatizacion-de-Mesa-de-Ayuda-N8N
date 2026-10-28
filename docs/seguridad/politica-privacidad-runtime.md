@@ -27,19 +27,21 @@ El sistema debe presentar al titular, de forma expresa y clara, antes de tratar 
 
 La exhibicion de esta informacion en sitio visible es objeto de la Resolucion AAIP 14/2018.
 
-### 1.1 Aviso por canal telefonico (documentado, no implementado)
+### 1.1 Aviso por canal telefonico (implementado)
 
-El sistema preve informar al titular **tambien en el canal telefonico**: el llamante debe
-recibir, en el punto de recoleccion, la informacion de privacidad aplicable (finalidad,
-responsable, transferencia internacional y canal para ejercer derechos), del mismo modo que
-en el canal web. **Este requisito se DOCUMENTA y NO se implementa** en este change (no se
-agrega greeting de voz ni TwiML).
+El sistema informa al titular **tambien en el canal telefonico**: el saludo TwiML del webhook
+de voz (`App/Backend/app/cost_guard/twiml.py`, `render_twiml_allowed`) presenta, **en el punto
+de recoleccion y antes de grabar**, el aviso de privacidad con la grabacion de la llamada, la
+finalidad del tratamiento, la existencia del responsable, la transferencia internacional
+aplicable y el canal para ejercer los derechos de acceso, rectificacion y supresion. El aviso
+es **texto estatico**, no interpola datos del llamante y **no promete el alta inmediata** del
+incidente. Su implementacion es el control PRIV-003 del change C-156.
 
 Aclaracion de alcance: este **aviso de privacidad por voz al llamante** es **DISTINTO** de la
 **notificacion por SMS del numero de incidente**, que correspondia al change **C-67**
-(archivado como **NO REALIZADO**). C-67 **no se reintroduce**: no se construye ni el flujo SMS
-ni el greeting de voz; solo queda documentado el requisito del aviso de privacidad. Ver
-`registro-actividades-tratamiento.md` y `procedimiento-arco.md`.
+(archivado como **NO REALIZADO**). C-67 **no se reintroduce**: no se construye el flujo SMS;
+el aviso de voz se implemento en C-156 como parte del deber de informacion de la Ley 25.326
+art. 6.
 
 ## 2. Bases de licitud
 
@@ -93,5 +95,6 @@ ni el greeting de voz; solo queda documentado el requisito del aviso de privacid
 
 Documento de **alineacion** con ISO/IEC 27002:2022 5.34, ISO/IEC 27701 y la Ley 25.326.
 Describe el **objetivo/norma**, no el estado actual. No constituye certificacion ni
-auditoria. La implementacion en runtime (informacion al titular, procedimiento ARCO,
-instrumentos de transferencia) esta mapeada a los changes C-66 y C-67.
+auditoria. La informacion al titular se implementa en el canal web y en el **aviso de voz
+telefonico** (`render_twiml_allowed`, C-156); el procedimiento ARCO y los instrumentos de
+transferencia internacional estan mapeados al change C-66.
