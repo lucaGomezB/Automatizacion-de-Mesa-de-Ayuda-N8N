@@ -1113,6 +1113,8 @@ Los diagramas se generan a partir de fuentes Mermaid versionadas en formato `.md
 
 El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto [Gomez2026_repositorio], accesible en https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado `v1.2.4`, creado sobre el commit definitivo del repositorio.
 
+El hash completo de ese commit es ` 8e2a597e62b60fa41338f7a59459730b6f363b8d`, que constituye la referencia verificable de la versión corregida.
+
 La estructura del repositorio separa el módulo de procesamiento (`App/Backend/`, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (`App/Frontend/`, React con TypeScript), la definición del flujo de orquestación (`n8n/workflow.json`), los artefactos de evaluación (`evaluation/`), el corpus pseudonimizado (`data/`), los scripts auxiliares (`scripts/`) y la documentación (`docs/`), junto con las especificaciones de los changes (`openspec/`) y los archivos de orquestación local `docker-compose.yml` y `Makefile`. El archivo `README.md` describe esta organización y reúne las instrucciones detalladas para el despliegue local en menos de 15 minutos, por lo que constituye el punto de entrada al código fuente disponible en el repositorio público [Gomez2026_repositorio].
 
 ## Esquema de base de datos
