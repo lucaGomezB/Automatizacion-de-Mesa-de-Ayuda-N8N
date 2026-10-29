@@ -4142,7 +4142,7 @@ gestionados mediante Alembic, los archivos de configuración del despliegue en c
 los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio públi-
 
 co del proyecto (Gómez et al. 2026), accesible en https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N
-El commit de referencia para la versión entregada al jurado se identifica con el tag anotado v1.2.5,
+El commit de referencia para la versión entregada al jurado se identifica con el tag anotado v1.2.6,
 creado sobre el commit definitivo del repositorio.
 El hash completo de ese commit es e5508850b5b48368c9cc446de2d616a5198c3f20, que
 constituye la referencia verificable de la versión corregida.
