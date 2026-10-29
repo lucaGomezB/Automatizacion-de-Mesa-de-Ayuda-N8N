@@ -133,6 +133,17 @@ historial no leído.
 
 - `origen_message_id`: `Message-ID` del mensaje IMAP (header `metadata['message-id']`, con
   fallback al UID del mensaje; solo canal correo; nulo en el resto).
+- `reportante_email`: **[c-162]** dirección de correo normalizada del remitente, solo para el
+  canal correo (nulo en el resto). Permite que el backend resuelva al reportante contra el
+  directorio (`resolver_por_email`) y no derive por reportante no identificado (VIS-005, c-82).
+- `reportante_telefono`: **[c-162]** número llamante propagado por el handoff, solo para el
+  canal telefonía (nulo en el resto). Permite que el backend resuelva al reportante
+  (`resolver_por_telefono`). El canal web queda **fuera de alcance** (no envía contacto): la
+  cuenta autenticada del POST es la del operador, no la del usuario final.
+- Ambos campos de contacto son **null-safe** (fallback `|| null`) y **transitorios**: el
+  backend persiste solo `reportante_empleado_id`, nunca el contacto crudo, y la auditoría no lo
+  registra. El campo crudo `remitente` sigue sin agregarse al POST (N8N-EMAIL-002, acotado por
+  c-162 al transporte transitorio de resolución).
 - `clasificacion`: **[retirado por C-72]** el POST ya no envía una clasificación
   precalculada; los tres canales resuelven el sector con la cascada híbrida del
   backend. El campo dejó de poblarse en el workflow vigente.
@@ -651,7 +662,7 @@ cd App/Backend
 python -m pytest tests/test_n8n_workflow.py -v
 ```
 
-Verifica 171 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40, C-52, C-53, C-55, C-56, C-57 y C-69).
+Verifica 176 propiedades estructurales del JSON sin necesitar N8N en ejecución (C-04, C-05, C-33, gate post-POST de revisión humana, C-39, C-40, C-52, C-53, C-55, C-56, C-57, C-69 y c-162).
 
 ### Prueba manual del canal web (C-05)
 
