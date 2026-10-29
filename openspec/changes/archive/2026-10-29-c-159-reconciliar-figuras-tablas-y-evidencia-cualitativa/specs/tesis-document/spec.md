@@ -205,7 +205,7 @@ La subseccion de analisis de errores y casos limite (`subsec:analisis-errores`, 
 - **THEN** la cita es identica a la del corpus
 - **AND** si no lo es, el texto la rotula expresamente como parafrasis
 
-#### Scenario: Consistencia con la evidencia versionada
+#### Scenario: Consistencia con las predicciones
 
 - **WHEN** se compara cada ejemplo con su registro en `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json`
 - **THEN** el par asignado/predicho, la confianza y la etapa coinciden con el registro
@@ -222,7 +222,7 @@ La subseccion de analisis de errores y casos limite (`subsec:analisis-errores`, 
 - **WHEN** un ejemplo tiene su sector predicho entre los sectores adicionales del caso
 - **THEN** el texto lo declara acierto laxo con la definicion de la subseccion de analisis estadistico
 
-#### Scenario: Anonimizacion suficiente
+#### Scenario: Anonimización suficiente
 
 - **WHEN** se revisan los textos citados
 - **THEN** no contienen nombres de personas, direcciones, correos, telefonos ni identificadores internos que permitan reidentificacion

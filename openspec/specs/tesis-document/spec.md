@@ -3,9 +3,7 @@
 ## Purpose
 
 Esta especificación define los criterios de calidad del documento de tesis en LaTeX: compilación a PDF, renderizado de citas, ecuaciones y tablas, eliminación de patrones de escritura generados por IA, profundidad de capítulos y consistencia de referencias.
-
 ## Requirements
-
 ### Requirement: Thesis PDF compilation
 
 La tesis SHALL compilar desde la fuente LaTeX de la version de trabajo vigente (`docs/Tesis/v10 (IA)/paper/main.tex`) a `docs/Tesis/v10 (IA)/paper/main.pdf` mediante XeLaTeX y biber, sin errores fatales, con las fuentes reales que declara el preambulo (Arial y Courier New) y en el entorno de compilacion de registro consignado en `docs/Tesis/Correcciones/dictamen-correcciones.md`. El PDF SHALL incluir todos los archivos de seccion que `main.tex` incorpora con `\input`, en el orden de `main.tex`. La compilacion de una release SHALL cumplir ademas: cero referencias y citas indefinidas, cero etiquetas duplicadas, biber sin advertencias ni errores, `verify_citations.py` con estado PASS y todo `\includegraphics` resuelto a un archivo existente. Como `main.log` no se versiona, la evidencia de la compilacion de cada release SHALL registrarse en `docs/Tesis/Correcciones/dictamen-correcciones.md`.
@@ -487,7 +485,14 @@ El anexo "Corpus de validacion" de la tesis SHALL remitir al corpus real
 `data/corpus_evaluacion_pseudonimizado.json` (JSON, pseudonimizado y versionado)
 y SHALL NOT declarar que el corpus se conserva como un CSV de siete columnas en
 `evaluation/data/`. El anexo SHALL aclarar que la categoria predicha y la
-confianza por caso viven en `evaluation/predicciones.json`, no dentro del corpus.
+confianza por caso no forman parte del corpus y se conservan en la evidencia versionada
+`evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` (copia de la cache del
+framework de evaluacion, que no se versiona), y MUST NOT remitirlas a
+`evaluation/predicciones.json` ni a otro archivo excluido por `.gitignore`. El anexo
+SHALL declarar que los tiempos del flujo automatizado se conservan por caso en el corpus
+JSON y que sus registros primarios no estan versionados en el repositorio; solo SHALL
+afirmar que no se conservaron si los autores lo confirman de forma registrada. Las rutas
+del anexo SHALL componerse de modo que ninguna linea exceda el margen.
 La tesis SHALL NOT afirmar la existencia de un corpus en `evaluation/data/`.
 
 #### Scenario: El anexo apunta al JSON real
@@ -500,6 +505,23 @@ La tesis SHALL NOT afirmar la existencia de un corpus en `evaluation/data/`.
 
 - **WHEN** se busca "evaluation/data" o "CSV" como ubicacion del corpus en los `.tex` y en el PDF
 - **THEN** no se afirma que el corpus resida alli
+
+#### Scenario: Predicciones remitidas a la evidencia versionada
+
+- **WHEN** se busca en el Anexo F la ubicacion de las predicciones por caso
+- **THEN** remite a `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json`
+- **AND** no remite a `evaluation/predicciones.json`
+
+#### Scenario: Registros primarios declarados con exactitud
+
+- **WHEN** se lee en el Anexo F la descripcion de los registros del flujo automatizado
+- **THEN** declara que no estan versionados en el repositorio y que los tiempos por caso se conservan en el corpus JSON
+- **AND** no afirma que el repositorio incluye "registros automaticos generados por el flujo automatizado" ni que no se conservaron sin confirmacion registrada de los autores
+
+#### Scenario: Sin lineas fuera de margen en el anexo
+
+- **WHEN** se compila `main.tex` y se buscan advertencias `Overfull \hbox` con origen en las lineas del Anexo F de `12-anexos.tex`
+- **THEN** no aparece ninguna
 
 ### Requirement: Divulgacion de las etapas del pipeline incluida la etapa fallback
 
@@ -1580,31 +1602,42 @@ verificarse.
 
 ### Requirement: Evidencia textual anonimizada de errores
 
-La Sección~7.4 SHALL incluir evidencia textual de los errores de clasificación,
-no solo su tipificación agregada. MUST presentar entre dos y tres ejemplos de
-incidentes mal clasificados, con el texto anonimizado de la descripción, el
-sector asignado, el sector predicho y la confianza reportada. Los ejemplos MUST
-provenir de `evaluation/predicciones.json` y MUST ser consistentes con la matriz
-de confusión y la tipología de errores. La anonimización MUST preservar la
-utilidad analítica del ejemplo sin exponer datos personales.
+La subseccion de analisis de errores y casos limite (`subsec:analisis-errores`, seccion de resultados) SHALL incluir evidencia textual de los errores de clasificacion, no solo su tipificacion agregada. MUST presentar entre dos y tres ejemplos de incidentes con error estricto, cada uno con su identificador de caso del corpus, la descripcion pseudonimizada, el sector asignado, el sector predicho, la confianza reportada y la etapa del pipeline que la emitio. La descripcion SHALL reproducirse literalmente desde `data/corpus_evaluacion_pseudonimizado.json` o, si se la parafrasea, SHALL rotularse explicitamente como parafrasis; MUST NOT presentarse como reproducida una descripcion que no es literal. Los ejemplos MUST provenir de la evidencia versionada `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` (copia de la cache `evaluation/predicciones.json`, excluida del repositorio) y MUST ser consistentes con la matriz de confusion y la tipologia de errores. Toda afirmacion de conjunto sobre la confianza de los ejemplos MUST ser verdadera para cada uno de ellos y SHALL distinguir la confianza de la etapa deterministica (indice de fuerza de senal, no utilizable como criterio de derivacion) de la confianza autodeclarada por Gemini. Cuando un ejemplo sea un acierto laxo (sector predicho dentro del conjunto de verdad del caso), el texto SHALL declararlo con la definicion de la subseccion de analisis estadistico. La anonimizacion MUST preservar la utilidad analitica del ejemplo sin exponer datos personales.
 
 #### Scenario: Ejemplos textuales presentes
 
-- **WHEN** se lee la Sección~7.4
-- **THEN** aparecen entre dos y tres ejemplos de descripciones de incidentes mal clasificados
-- **AND** cada ejemplo indica el sector asignado, el sector predicho y la confianza
+- **WHEN** se lee la subseccion de analisis de errores y casos limite
+- **THEN** aparecen entre dos y tres ejemplos de descripciones de incidentes con error estricto
+- **AND** cada ejemplo indica su identificador de caso, el sector asignado, el sector predicho, la confianza y la etapa
+
+#### Scenario: Reproduccion literal o parafrasis rotulada
+
+- **WHEN** se compara cada descripcion citada con el campo `descripcion` del caso en `data/corpus_evaluacion_pseudonimizado.json`
+- **THEN** la cita es identica a la del corpus
+- **AND** si no lo es, el texto la rotula expresamente como parafrasis
 
 #### Scenario: Consistencia con las predicciones
 
-- **WHEN** se compara cada ejemplo con `evaluation/predicciones.json`
-- **THEN** el par asignado/predicho y la confianza coinciden con el registro
-- **AND** el ejemplo pertenece a uno de los patrones de error descritos en la tipología
+- **WHEN** se compara cada ejemplo con su registro en `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json`
+- **THEN** el par asignado/predicho, la confianza y la etapa coinciden con el registro
+- **AND** el ejemplo pertenece a uno de los patrones de error descritos en la tipologia
+
+#### Scenario: Afirmacion sobre la confianza verdadera para cada caso
+
+- **WHEN** se lee la afirmacion de conjunto sobre la confianza de los ejemplos
+- **THEN** es verdadera para cada uno de ellos
+- **AND** la confianza de un caso resuelto por la etapa deterministica no se presenta como confianza alta del modelo
+
+#### Scenario: Aciertos laxos declarados
+
+- **WHEN** un ejemplo tiene su sector predicho entre los sectores adicionales del caso
+- **THEN** el texto lo declara acierto laxo con la definicion de la subseccion de analisis estadistico
 
 #### Scenario: Anonimización suficiente
 
 - **WHEN** se revisan los textos citados
-- **THEN** no contienen nombres de personas, direcciones, correos, teléfonos ni identificadores internos que permitan reidentificación
-- **AND** la descripción conserva el rasgo que explica el error
+- **THEN** no contienen nombres de personas, direcciones, correos, telefonos ni identificadores internos que permitan reidentificacion
+- **AND** la descripcion conserva el rasgo que explica el error
 
 ### Requirement: Fuentes y cotas de costos operativos
 
@@ -3501,13 +3534,19 @@ El Anexo B de la tesis (`sec:anexo-repositorio` en `docs/Tesis/v10 (IA)/paper/se
 
 ### Requirement: Coherencia de la version bibliografica con la release publicada
 
-La entrada `Gomez2026_repositorio` de `docs/Tesis/v10 (IA)/Bibliography_base.bib` SHALL declarar en su titulo la misma version que el tag de release que identifica el Anexo B (`sec:anexo-repositorio`). Para la release `v1.2.2`, el titulo SHALL enunciar la version `1.2.2`, con la etiqueta "Version" o con su forma acentuada si la revision ortotipografica la acentuo por decision registrada, y SHALL NOT conservar numeros de version anteriores como `1.2.1`, `1.2.0`, `1.1.1` o `1.0.0`. El numero de version SHALL actualizarlo el change que publica la release, en el mismo commit que cambia el tag del Anexo B; ningun otro change MUST modificar ese numero. Los demas campos de la entrada (autoria, ano, `url` y `note`) SHALL conservarse y la referencia SHALL seguir imprimiendose en la seccion de Referencias.
+La entrada `Gomez2026_repositorio` de `docs/Tesis/v10 (IA)/Bibliography_base.bib` SHALL declarar en su titulo la misma version que el tag de release que identifica el Anexo B (`sec:anexo-repositorio`), y su `urldate` SHALL ser la fecha de esa release. Para la release `v1.2.5`, el titulo SHALL enunciar la version `1.2.5`, con la etiqueta "Version" o con su forma acentuada si la revision ortotipografica la acentuo por decision registrada, con `urldate` `2026-10-28`, y SHALL NOT conservar numeros de version anteriores como `1.2.4`, `1.2.3`, `1.2.2`, `1.2.1`, `1.2.0`, `1.1.1` o `1.0.0`. El numero de version SHALL actualizarlo el change que publica la release, en el mismo commit que cambia el tag del Anexo B; cuando una release haya omitido esa actualizacion, el primer change documental que detecte el desfase SHALL realinear la entrada con la release del Anexo B y registrar la omision en `docs/Tesis/Correcciones/dictamen-correcciones.md`. Ningun otro change MUST modificar ese numero. Los demas campos de la entrada (autoria, ano, `url` y `note`) SHALL conservarse y la referencia SHALL seguir imprimiendose en la seccion de Referencias.
 
 #### Scenario: Version bibliografica alineada con la release
 
 - **WHEN** se compara el titulo de `Gomez2026_repositorio` con el tag que consigna el Anexo B
-- **THEN** el titulo enuncia la version `1.2.2` y el Anexo B enuncia `v1.2.2`
-- **AND** el titulo de `Gomez2026_repositorio` no conserva los numeros de version `1.2.1`, `1.2.0`, `1.1.1` ni `1.0.0`
+- **THEN** el titulo enuncia la version `1.2.5`, el Anexo B enuncia `v1.2.5` y `urldate` es `2026-10-28`
+- **AND** el titulo de `Gomez2026_repositorio` no conserva los numeros de version `1.2.4`, `1.2.3`, `1.2.2`, `1.2.1`, `1.2.0`, `1.1.1` ni `1.0.0`
+
+#### Scenario: Desfase heredado realineado y registrado
+
+- **WHEN** una release publicada dejo la entrada con una version anterior a la del Anexo B
+- **THEN** el change documental que lo detecta la realinea
+- **AND** el registro de correcciones consigna la omision y la release que la produjo
 
 #### Scenario: Integridad de la entrada preservada
 
@@ -3613,7 +3652,7 @@ La tesis SHALL definir una sola vez, en la subseccion del subsistema de clasific
 
 ### Requirement: Alcance del gate de revision humana declarado por etapa
 
-La tesis SHALL declarar que la regla `requiere_revision_humana = (confianza < 0,70)` se evalua solo sobre la salida de la etapa Gemini, que la etapa de reserva deriva siempre a revision con confianza 0,0 y que la etapa deterministica no deriva a revision por su confianza. La descripcion del flujo en `06-implementacion.tex` SHALL enumerar las condiciones con que el backend activa el indicador de revision humana, incluida la derivacion por reportante no identificado en el directorio de empleados. Ningun capitulo MUST afirmar que el umbral de 0,70 alcanza a todos los casos ni que es el unico disparador automatico de revision humana.
+La tesis SHALL declarar que la regla `requiere_revision_humana = (confianza < 0,70)` se evalua solo sobre la salida de la etapa Gemini, que la etapa de reserva deriva siempre a revision con confianza 0,0 y que la etapa deterministica no deriva a revision por su confianza. Toda descripcion del alcance del gate en 2.4 (`02-marco-teorico.tex`), 5.5 (`05-arquitectura.tex`), 6.3 (`06-implementacion.tex`), 7.5 (`11-aspectos-legales.tex`), 8.3 (`07-resultados.tex`), 11.1 (`10-recomendaciones.tex`) y el Anexo H (`12-anexos.tex`) SHALL usar esa formulacion canonica y MUST NOT describir la regla de 0,70 como aplicable a la etapa Gemini y a la etapa de reserva. La descripcion del flujo en `06-implementacion.tex` SHALL enumerar las condiciones con que el backend activa el indicador de revision humana, incluida la derivacion por reportante no identificado en el directorio de empleados. Esa derivacion SHALL figurar en 2.4, 5.5, 6.3, 7.5 y el Anexo H con su fecha de incorporacion (13 de octubre de 2026) y la aclaracion de que es posterior a las corridas de la campana y no forma parte de la configuracion evaluada. Ningun capitulo MUST afirmar que el umbral de 0,70 alcanza a todos los casos ni que es el unico disparador automatico de revision humana.
 
 #### Scenario: Grado de autonomia acotado por etapa en el marco teorico
 
@@ -3625,6 +3664,7 @@ La tesis SHALL declarar que la regla `requiere_revision_humana = (confianza < 0,
 
 - **WHEN** se lee la etapa de evaluacion del flujo en `06-implementacion.tex`
 - **THEN** se enumeran la confianza de Gemini inferior a 0,70, la intervencion de la etapa de reserva y el reportante no identificado como condiciones del indicador
+- **AND** el reportante no identificado figura con su fecha de incorporacion, posterior a la campana
 - **AND** no aparece la afirmacion de que el umbral de 0,70 es el unico disparador automatico de revision humana
 
 #### Scenario: Coherencia entre capitulos
@@ -3633,9 +3673,21 @@ La tesis SHALL declarar que la regla `requiere_revision_humana = (confianza < 0,
 - **THEN** ninguna aplica el umbral a la etapa deterministica
 - **AND** ninguna describe la cola de revision como destinada a los "casos de baja confianza" sin calificar
 
+#### Scenario: Formulacion canonica en todas las menciones
+
+- **WHEN** se leen las descripciones del alcance del gate en 2.4, 5.5, 6.3, 7.5, 8.3, 11.1 y el Anexo H
+- **THEN** todas declaran que la regla de 0,70 se evalua solo sobre la salida de Gemini y que la reserva deriva siempre
+- **AND** `grep` de "y a la etapa de reserva", "Gemini y la etapa de reserva" y "y a la de reserva" sobre `02-marco-teorico.tex`, `05-arquitectura.tex`, `06-implementacion.tex`, `07-resultados.tex`, `10-recomendaciones.tex`, `11-aspectos-legales.tex` y `12-anexos.tex` devuelve cero coincidencias
+
+#### Scenario: Disparador por directorio fechado
+
+- **WHEN** se leen 2.4, 5.5, 6.3, 7.5 y la fila del umbral del Anexo H
+- **THEN** cada una menciona la derivacion por reportante no identificado en el directorio con la fecha 13 de octubre de 2026
+- **AND** declara que es posterior a las corridas de la campana
+
 ### Requirement: Criterio de cortocircuito y procedencia del punto de operacion
 
-La tesis SHALL describir el cortocircuito de la etapa deterministica por su criterio vigente: senal dominante, sin ausencia de coincidencias ni empate, y puntaje de correctitud mayor o igual al punto de operacion 0,5166. La tesis SHALL declarar la procedencia del punto de operacion (validacion cruzada de cinco pliegues sobre el corpus con un piso comparativo: precision del filtro no inferior a la de la etapa Gemini sobre el conjunto que resuelve, 0,7405 frente a 0,6769), su equivalencia en el corpus (resolver los 131 casos con senal dominante) y el retiro del umbral de 0,90 sobre la confianza del diseno inicial. La tesis MUST NOT afirmar que el filtro decide cuando su confianza supera el 90 % y MUST NOT presentar el piso comparativo como garantia independiente de exactitud.
+La tesis SHALL describir el cortocircuito de la etapa deterministica por su criterio vigente: senal dominante, sin ausencia de coincidencias ni empate, y puntaje de correctitud mayor o igual al punto de operacion 0,5166. La tesis SHALL declarar la procedencia del punto de operacion (validacion cruzada de cinco pliegues sobre el corpus con un piso comparativo: precision del filtro no inferior a la de la etapa Gemini sobre el conjunto que resuelve, expresada sobre los mismos casos, 96/130 = 0,7385 frente a 88/130 = 0,6769 en los 130 casos con prediccion de ambas etapas, calificada como estimacion dentro de la muestra) y su equivalencia en el corpus (resolver los 131 casos con senal dominante). La comparacion MUST NOT mezclar denominadores distintos (por ejemplo, 97/131 frente a 88/130). La descripcion del subsistema de clasificacion (`subsec:subsistema-clasificacion`) MUST NOT narrar el reemplazo del umbral de 0,90 sobre la confianza del diseno inicial; esa decision de diseno SHALL constar en el parrafo de decisiones del Anexo I (c-74) y en el registro de correcciones, y la configuracion de las corridas que aun usaban ese umbral (version `hybrid-v1`) se declara en la procedencia de los datos y en la tabla de configuracion evaluada frente a entregada. La tesis MUST NOT afirmar que el filtro de la configuracion entregada o de la corrida de clasificacion (`hybrid-v3`) decide cuando su confianza supera el 90 % y MUST NOT presentar el piso comparativo como garantia independiente de exactitud.
 
 #### Scenario: Criterio vigente descrito
 
@@ -3646,13 +3698,19 @@ La tesis SHALL describir el cortocircuito de la etapa deterministica por su crit
 #### Scenario: Procedencia y equivalencia declaradas
 
 - **WHEN** se lee la descripcion del punto de operacion
-- **THEN** se declara su derivacion por validacion cruzada de cinco pliegues sobre el corpus con el piso comparativo frente a Gemini
+- **THEN** se declara su derivacion por validacion cruzada de cinco pliegues sobre el corpus con el piso comparativo frente a Gemini, expresado sobre los mismos 130 casos
 - **AND** se declara que en el corpus equivale a resolver los 131 casos con senal dominante
 
 #### Scenario: Valores tomados del memo canonico
 
-- **WHEN** se cotejan 0,5166, 0,7405, 0,6769 y 131 con `docs/Tesis/Correcciones/numeros-canonicos.md`
+- **WHEN** se cotejan 0,5166, 0,7385 (96/130), 0,6769 (88/130) y 131 con `docs/Tesis/Correcciones/numeros-canonicos.md`
 - **THEN** cada valor figura como `vigente` con su procedencia
+
+#### Scenario: Umbral retirado fuera de la descripcion del subsistema
+
+- **WHEN** se busca "umbral de 0,90" en `05-arquitectura.tex` y "Sustituyó al umbral de 0,90" en las secciones `00-*.tex` a `11-*.tex`
+- **THEN** ninguna busqueda devuelve coincidencias
+- **AND** el parrafo de decisiones del Anexo I atribuye a c-74 el reemplazo del umbral de 0,90 por el punto de operacion del puntaje de correctitud
 
 ### Requirement: Casos bajo el umbral no escalados consignados en resultados
 
@@ -3678,13 +3736,14 @@ La subseccion de intervencion humana del capitulo de resultados (`subsec:reducci
 
 ### Requirement: Alcance real de la salvaguarda de supervision humana en el capitulo legal
 
-El capitulo de consideraciones eticas y legales (`11-aspectos-legales.tex`, subseccion `subsec:consentimiento-derechos`) SHALL declarar que el umbral de 0,70 solo alcanza a la etapa semantica y a la de reserva; que sobre el 65,5 % de los casos, resueltos por la etapa deterministica, no existe derivacion automatica por caso basada en la clasificacion; y que para esa fraccion la salvaguarda se limita al criterio de diseno con que se fijo el punto de operacion, estimado sobre el corpus de validacion, y a la reasignacion trazable del incidente, con la salvedad de su exposicion en la interfaz web. El capitulo MUST NOT presentar el umbral de 0,70 como salvaguarda de todos los casos ni el criterio comparativo como garantia independiente, y SHALL remitir la capacidad discriminante de la confianza del modelo al analisis de calibracion sin afirmar su resultado.
+El capitulo de consideraciones eticas y legales (`11-aspectos-legales.tex`, subseccion `subsec:consentimiento-derechos`) SHALL declarar que la regla de 0,70 se evalua solo sobre la salida de la etapa semantica (Gemini), que la etapa de reserva deriva siempre a revision y que, desde el 13 de octubre de 2026, con posterioridad a la campana, tambien se deriva el incidente cuyo reportante no se identifica en el directorio de empleados; que sobre el 65,5 % de los casos, resueltos por la etapa deterministica, no existe derivacion automatica por caso basada en la clasificacion; y que para esa fraccion la salvaguarda se limita al criterio de diseno con que se fijo el punto de operacion, estimado sobre el corpus de validacion, y a la reasignacion trazable del incidente, con la salvedad de su exposicion en la interfaz web. El capitulo MUST NOT presentar el umbral de 0,70 como salvaguarda de todos los casos ni el criterio comparativo como garantia independiente, y SHALL remitir la capacidad discriminante de la confianza del modelo al analisis de calibracion sin afirmar su resultado.
 
 #### Scenario: Alcance de la salvaguarda declarado
 
 - **WHEN** se lee la subseccion de supervision humana del capitulo legal
-- **THEN** se declara que el umbral de 0,70 solo alcanza a la etapa semantica y a la de reserva
+- **THEN** se declara que la regla de 0,70 se evalua solo sobre la salida de la etapa semantica y que la etapa de reserva deriva siempre
 - **AND** se declara que sobre el 65,5 % de los casos no existe derivacion automatica por caso basada en la clasificacion
+- **AND** la derivacion por reportante no identificado figura con su fecha, posterior a la campana
 
 #### Scenario: Mitigaciones sin sobreafirmar
 
@@ -3697,8 +3756,6 @@ El capitulo de consideraciones eticas y legales (`11-aspectos-legales.tex`, subs
 - **WHEN** se lee la oracion sobre la capacidad discriminante de la confianza
 - **THEN** remite a `subsec:calibracion`
 - **AND** no afirma por si misma una conclusion de calibracion
-
-<!-- c-144 (archivado el 2026-10-23 en main) ya incorporo al spec vivo el requisito "Procedencia declarada de los ajustes realizados sobre el corpus de validacion"; este change solo verifica el texto resultante. -->
 
 ### Requirement: Umbral de revision humana en la especificacion del Anexo H
 
@@ -4020,11 +4077,11 @@ La subseccion `subsec:limitaciones-estudio` de `08-discusion.tex` SHALL incluir 
 
 ### Requirement: Calificacion dentro de la muestra de la exactitud deterministica y del contraste entre etapas
 
-Toda aparicion en `sections/*.tex` de la exactitud de la etapa deterministica (`97/131`, `0,7405`) y de la comparacion entre etapas sobre el conjunto cortocircuitable (`0,7405` frente a `0,6769`; `88/130`) SHALL figurar en una oracion o parrafo que la califique como estimacion dentro de la muestra o que remita a `subsec:sensibilidad-ajustes`. La cuantificacion del sesgo SHALL residir solo en `subsec:sensibilidad-ajustes`; los demas pasajes SHALL limitarse a calificar o remitir. Este requisito MUST NOT cambiar ningun valor numerico.
+Toda aparicion en `sections/*.tex` de la exactitud de la etapa deterministica (`97/131`, `0,7405`) y de la comparacion entre etapas sobre el conjunto cortocircuitable (`0,7385` frente a `0,6769`; `96/130`; `88/130`) SHALL figurar en una oracion o parrafo que la califique como estimacion dentro de la muestra o que remita a `subsec:sensibilidad-ajustes`. La cuantificacion del sesgo SHALL residir solo en `subsec:sensibilidad-ajustes`; los demas pasajes SHALL limitarse a calificar o remitir. Este requisito MUST NOT cambiar ningun valor numerico.
 
 #### Scenario: Cada aparicion calificada
 
-- **WHEN** se listan con `grep` las apariciones de `0,7405`, `97/131`, `97 de 131`, `0,6769` y `88/130` en `sections/*.tex`
+- **WHEN** se listan con `grep` las apariciones de `0,7405`, `97/131`, `97 de 131`, `0,7385`, `96/130`, `0,6769` y `88/130` en `sections/*.tex`
 - **THEN** cada una esta en una oracion o parrafo que la califica como estimacion dentro de la muestra o que remite a `subsec:sensibilidad-ajustes`
 
 #### Scenario: Cuantificacion en un unico lugar
@@ -4037,8 +4094,6 @@ Toda aparicion en `sections/*.tex` de la exactitud de la etapa deterministica (`
 
 - **WHEN** se comparan los valores numericos de la tesis antes y despues de agregar las calificaciones
 - **THEN** no cambia ninguno
-
-<!-- c-144 (archivado el 2026-10-23 en main) ya incorporo al spec vivo el requisito "Ubicacion veraz de las versiones historicas del prompt en el Anexo H"; este change solo verifica el texto resultante. -->
 
 ### Requirement: Impacto de paginas del analisis de sensibilidad
 
@@ -4207,13 +4262,19 @@ El capitulo de recomendaciones SHALL incluir, en `subsec:estudios-replicacion`, 
 
 ### Requirement: Grados de cumplimiento de los objetivos acotados a la evidencia
 
-La tabla `tab:cumplimiento-objetivos` de `09-conclusiones.tex` SHALL asignar a cada objetivo el grado "Alcanzado" solo cuando cada componente exigido por su enunciado literal en `01-introduccion.tex` este evidenciado en la version evaluada; "Alcanzado parcialmente" cuando al menos un componente este evidenciado y al menos otro no se cumpla o no se haya medido; y "No alcanzado" cuando no se cumpla el criterio del objetivo. Toda fila "Alcanzado parcialmente" SHALL nombrar en su evidencia el componente no cumplido o no medido. Los objetivos especificos 1, 3 y 4 SHALL figurar como "Alcanzado parcialmente" mientras falte la evidencia de, respectivamente, la comunicacion asincronica y el cifrado verificado en la instancia publicada; la calidad de clasificacion por canal; y la exactitud del brazo manual y la proporcion de intervencion humana. El objetivo general SHALL desglosarse en sus tres componentes (tiempo de registro, calidad de la clasificacion y proporcion de intervencion humana) con estado individual, y su grado global SHALL ser coherente con ese desglose. El documento MUST NOT reformular el enunciado de un objetivo para ajustarlo a lo construido o medido, y la prosa de las conclusiones SHALL ser coherente con la tabla.
+La tabla `tab:cumplimiento-objetivos` de `09-conclusiones.tex` SHALL asignar a cada objetivo el grado "Alcanzado" solo cuando cada componente exigido por su enunciado literal en `01-introduccion.tex` este evidenciado en la version evaluada; "Alcanzado parcialmente" cuando al menos un componente este evidenciado y al menos otro no se cumpla o no se haya medido; y "No alcanzado" cuando no se cumpla el criterio del objetivo. Toda fila "Alcanzado parcialmente" SHALL nombrar en su evidencia el componente no cumplido o no medido. Los objetivos especificos 1, 3, 4 y 6 SHALL figurar como "Alcanzado parcialmente" mientras falte la evidencia de, respectivamente, la comunicacion asincronica (el alta sigue siendo sincronica, con reintentos idempotentes); la complejidad operativa percibida por los usuarios (la latencia y la exactitud por canal ya estan medidas); la exactitud del brazo manual y la proporcion de intervencion humana; y la recalibracion de la confianza, con el analisis de errores y las bandas de confianza estimados dentro de la muestra. La verificacion de TLS SHALL declararse igual en la celda del objetivo 1 y en la prosa de las conclusiones: realizada despues de la campana, sobre el despliegue de referencia de la version entregada, y no sobre la configuracion evaluada ni sobre la instancia operativa. El objetivo general SHALL desglosarse en sus tres componentes (tiempo de registro, calidad de la clasificacion y proporcion de intervencion humana) con estado individual, y su grado global SHALL ser coherente con ese desglose. El documento MUST NOT reformular el enunciado de un objetivo para ajustarlo a lo construido o medido, y la prosa de las conclusiones SHALL ser coherente con la tabla.
 
 #### Scenario: Objetivos 1, 3 y 4 parcialmente alcanzados
 
 - **WHEN** se leen las filas de los objetivos especificos 1, 3 y 4 en `tab:cumplimiento-objetivos`
 - **THEN** cada una declara "Alcanzado parcialmente"
-- **AND** su evidencia nombra el componente faltante: invocacion sincronica y TLS no verificado (1); calidad por canal no medida (3); exactitud del brazo manual e intervencion humana no medidas (4)
+- **AND** su evidencia nombra el componente faltante: alta sincronica y TLS verificado solo despues de la campana en el despliegue de referencia (1); complejidad percibida no medida, con latencia y exactitud por canal medidas (3); exactitud del brazo manual e intervencion humana no medidas (4)
+
+#### Scenario: Objetivo 6 parcialmente alcanzado
+
+- **WHEN** se lee la fila del objetivo especifico 6 en `tab:cumplimiento-objetivos`
+- **THEN** declara "Alcanzado parcialmente"
+- **AND** su evidencia nombra el componente faltante: confianza no recalibrada y analisis estimado dentro de la muestra
 
 #### Scenario: Objetivo general desglosado
 
@@ -4229,25 +4290,26 @@ La tabla `tab:cumplimiento-objetivos` de `09-conclusiones.tex` SHALL asignar a c
 
 #### Scenario: Reversion condicionada a evidencia
 
-- **WHEN** se dispone de evidencia nueva para un componente faltante del objetivo 1 o del objetivo 3 (por ejemplo, la que aporte c-140 para el objetivo 1) y se propone elevar su grado
-- **THEN** el grado solo pasa a "Alcanzado" si la tabla cita evidencia para cada componente faltante (TLS verificado y comunicacion asincronica para el 1; calidad por canal sin evidencia de degradacion y decision del autor sobre la complejidad percibida para el 3)
+- **WHEN** se dispone de evidencia nueva para un componente faltante del objetivo 1, del objetivo 3 o del objetivo 6 y se propone elevar su grado
+- **THEN** el grado solo pasa a "Alcanzado" si la tabla cita evidencia para cada componente faltante (comunicacion asincronica, ademas del TLS ya verificado despues de la campana, para el 1; calidad por canal sin evidencia de degradacion y decision del autor sobre la complejidad percibida para el 3; confianza recalibrada y evaluada fuera de la muestra para el 6)
 - **AND** si la evidencia es posterior a la validacion experimental, la celda lo declara
 
 #### Scenario: Objetivo 6 con evidencia ampliada
 
 - **WHEN** se lee la fila del objetivo especifico 6
-- **THEN** su grado sigue la regla de esta tabla y su evidencia cita el analisis de errores, la calibracion por etapa y el analisis de sensibilidad de los ajustes (`subsec:sensibilidad-ajustes`)
-- **AND** si alguna de esas piezas no esta disponible, el grado no es "Alcanzado" sin declarar el componente faltante
+- **THEN** su grado es "Alcanzado parcialmente" y su evidencia cita el analisis de errores, la calibracion por etapa, el analisis de sensibilidad de los ajustes (`subsec:sensibilidad-ajustes`) y la linea futura de calibracion del gate (`subsec:calibracion-gate`)
+- **AND** la celda nombra la recalibracion no realizada y la estimacion dentro de la muestra como componentes faltantes
 
 #### Scenario: Prosa coherente con la tabla
 
-- **WHEN** se leen los parrafos de las conclusiones que tratan el objetivo general y los objetivos 1, 3 y 4
+- **WHEN** se leen los parrafos de las conclusiones que tratan el objetivo general y los objetivos 1, 3, 4 y 6
 - **THEN** ninguno afirma un cumplimiento pleno que la tabla declare parcial
+- **AND** la prosa sobre TLS coincide con la celda del objetivo 1 y la del objetivo 3 lo declara alcanzado parcialmente, sin "solo en su construcción"
 - **AND** el primer parrafo declara cumplido parcialmente el objetivo general
 
 ### Requirement: Segunda sub-hipotesis con fraccion esperada explicita
 
-La segunda sub-hipotesis (`01-introduccion.tex`, `subsec:hipotesis-trabajo`) SHALL enunciarse con una fraccion esperada numerica explicita, derivada de un criterio fijado a priori en el propio documento (en esta version, una proporcion de casos con accion manual de un operador no superior a `0,15`, complemento del umbral de exactitud del 85 %), junto con su contraste (proporcion con intervalo de confianza de Wilson) y su criterio de falsacion. El texto SHALL declarar que la formulacion original, referida al proceso manual y sin fraccion esperada especificada, no era contrastable, y que la cota se explicita en esta version. Mientras no exista registro primario de intervencion por caso, la sub-hipotesis SHALL declararse "no contrastada por ausencia de registro primario" en el resumen, la introduccion, los resultados y las conclusiones. El documento MUST NOT presentar las derivaciones del gate de revision (ninguna en el corpus) como contraste o confirmacion de esta sub-hipotesis y MUST NOT cuantificar la proporcion. Toda remision desde la sub-hipotesis SHALL apuntar a una seccion que declare la ausencia de registro primario; si remite a la lista de limitaciones del estudio (`subsec:limitaciones-estudio`), esa lista SHALL incluir la proporcion de intervencion humana no medida y su oracion introductoria SHALL declarar el numero real de limitaciones listadas.
+La segunda sub-hipotesis (`01-introduccion.tex`, `subsec:hipotesis-trabajo`) SHALL enunciarse con una fraccion esperada numerica explicita, derivada de un criterio fijado a priori en el propio documento (en esta version, una proporcion de casos con accion manual de un operador no superior a `0,15`, complemento del umbral de exactitud del 85 %), junto con su contraste (proporcion con intervalo de confianza de Wilson) y su criterio de falsacion. El texto SHALL presentar la sub-hipotesis solo en su formulacion vigente y MUST NOT narrar formulaciones anteriores del manuscrito (por ejemplo, que una formulacion original referida al proceso manual no era contrastable); esa historia SHALL constar en el registro de correcciones. Mientras no exista registro primario de intervencion por caso, la sub-hipotesis SHALL declararse "no contrastada por ausencia de registro primario" en el resumen, la introduccion, los resultados y las conclusiones. El documento MUST NOT presentar las derivaciones del gate de revision (ninguna en el corpus) como contraste o confirmacion de esta sub-hipotesis y MUST NOT cuantificar la proporcion. Toda remision desde la sub-hipotesis SHALL apuntar a una seccion que declare la ausencia de registro primario; si remite a la lista de limitaciones del estudio (`subsec:limitaciones-estudio`), esa lista SHALL incluir la proporcion de intervencion humana no medida y su oracion introductoria SHALL declarar el numero real de limitaciones listadas.
 
 #### Scenario: Fraccion esperada y criterio de falsacion explicitos
 
@@ -4255,11 +4317,17 @@ La segunda sub-hipotesis (`01-introduccion.tex`, `subsec:hipotesis-trabajo`) SHA
 - **THEN** declara la cota numerica, su derivacion del umbral fijado a priori, el contraste con intervalo de Wilson y el criterio de falsacion
 - **AND** la cota figura en `docs/Tesis/Correcciones/numeros-canonicos.md` con su procedencia
 
-#### Scenario: Formulacion original declarada no contrastable
+#### Scenario: Formulacion vigente sin narrar la anterior
 
 - **WHEN** se lee la segunda sub-hipotesis
-- **THEN** el texto declara que la comparacion con el proceso manual, donde la intervencion es total por definicion, no era contrastable sin fraccion esperada
-- **AND** declara que la cota se explicita en esta version
+- **THEN** no aparecen "formulación original", "no era contrastable" ni "tampoco esta se contrasta"
+- **AND** el registro de correcciones conserva literal el texto retirado con su ubicacion previa
+
+#### Scenario: Formulacion original declarada no contrastable
+
+- **WHEN** se busca en el cuerpo de la tesis la formulacion original de la segunda sub-hipotesis (comparacion con el proceso manual, donde la intervencion es total por definicion)
+- **THEN** el cuerpo no la narra ni declara que no era contrastable
+- **AND** esa formulacion original y su no contrastabilidad constan solo en el registro de correcciones y en el Anexo I
 
 #### Scenario: Sin confirmacion espuria por el gate
 
@@ -5805,3 +5873,491 @@ La narrativa de la tesis sobre Kubernetes SHALL presentarlo como una evolucion d
 - **WHEN** se compara la observacion O8 con su version previa
 - **THEN** el texto original del hecho registrado se conserva integro
 - **AND** el cierre se expresa como anotacion fechada, no como sustitucion del hecho
+
+### Requirement: Procedencia de los datos del brazo automatizado declarada en el protocolo de pruebas
+
+La subseccion "Protocolo de pruebas" (`subsec:protocolo-pruebas`, `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex`) SHALL incluir un apartado titulado "Procedencia de los datos del brazo automatizado" que declare, con la precision de su evidencia en el repositorio: (a) la corrida de tiempos de correo electronico y formulario web del 2-10-2026 (119 casos), su procedimiento de inyeccion por el arnes de ingesta a traves de los canales reales del flujo N8N, el texto inyectado, la metrica (desde el envio hasta la persistencia, con la espera de recogida del disparador IMAP en el correo y su configuracion declarada) y la configuracion del clasificador vigente ese dia (`hybrid-v1`: vocabulario de 89 patrones, prompt sin reglas de frontera y cortocircuito por confianza determinista >= 0,90); (b) la corrida telefonica concluida el 6-10-2026 (81 casos), su procedimiento (softphone de navegador, lectura en voz alta de la descripcion pseudonimizada, grabacion acotada a 45 s, entorno de medicion aislado) y la imposibilidad de asignarle una configuracion unica del clasificador, anterior en todo caso a c-74; (c) la corrida de clasificacion `hybrid-v3` del 7-10-2026 (22:22 UTC) como ejecucion fuera de linea del framework de evaluacion sobre el corpus JSON, con su archivo de evidencia versionado y el hash del corpus; y (d) el recalculo del tiempo telefonico del 19-10-2026 y su motivo. El apartado MUST NOT afirmar hechos que el repositorio no documenta (identidad nominal de quien llamo, intervalo efectivo de sondeo, version desplegada en el entorno de medicion, fuente de texto distinta de la documentada); cada dato faltante SHALL quedar marcado con un comentario LaTeX `% PENDIENTE AUTORES:` y listado como consulta en `docs/Tesis/Correcciones/dictamen-correcciones.md`. Si el apartado afirma la direccion del sesgo de los tiempos respecto de la configuracion evaluada, SHALL presentarla como inferencia y no como medicion.
+
+#### Scenario: Corridas fechadas y separadas
+
+- **WHEN** se lee el apartado de procedencia de la Seccion 4.5 del PDF compilado
+- **THEN** figuran la corrida del 2-10-2026 (correo y formulario, 119 casos), la corrida telefonica concluida el 6-10-2026 (81 casos), la clasificacion fuera de linea `hybrid-v3` del 7-10-2026 y el recalculo telefonico del 19-10-2026
+- **AND** el texto ya no describe un unico procesamiento "sobre la misma infraestructura" ni un "monitoreo continuo" sin respaldo
+
+#### Scenario: Procedimiento de inyeccion documentado
+
+- **WHEN** se busca en el apartado quien o que introdujo los casos por cada canal y con que texto
+- **THEN** declara que el arnes de ingesta envio los 119 casos de correo y formulario por los canales reales del flujo y que en telefonia una persona leyo la descripcion pseudonimizada desde un softphone de navegador
+- **AND** el intervalo del disparador IMAP se presenta como configuracion declarada del flujo, no como medicion
+
+#### Scenario: Configuracion del clasificador por corrida segun el historial
+
+- **WHEN** se compara la configuracion declarada para cada corrida con `git log` y con los changes archivados c-68, c-70, c-71, c-72 y c-74
+- **THEN** la corrida del 2-10 se describe con la configuracion `hybrid-v1` del commit `24ab238`
+- **AND** la corrida telefonica no se describe como anterior a c-71 ni se le asigna una revision unica, y se la declara anterior a c-74
+
+#### Scenario: Corrida de clasificacion fuera de linea
+
+- **WHEN** se lee la descripcion de la corrida de clasificacion
+- **THEN** remite a `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json`, consigna el hash del corpus que registra la evidencia y la presenta como ejecucion del framework de evaluacion sin pasar por los canales
+- **AND** la asocia a la version `hybrid-v3` que versiona el commit `d6bb474`, sin afirmar que se ejecuto sobre ese commit
+
+#### Scenario: Datos faltantes marcados y no inventados
+
+- **WHEN** se inspecciona la fuente `04-marco-metodologico.tex`
+- **THEN** cada dato que el repositorio no documenta figura en un comentario `% PENDIENTE AUTORES:` y no en el texto compilado
+- **AND** la misma consulta figura como PENDIENTE en la seccion de c-158 de `dictamen-correcciones.md`
+
+### Requirement: Recordatorio de la procedencia al abrir la seccion de resultados
+
+La Seccion 8 (`07-resultados.tex`) SHALL incluir, inmediatamente despues de su parrafo introductorio, un parrafo breve que recuerde que los tiempos y las metricas de clasificacion provienen de corridas y configuraciones distintas y remita al apartado de procedencia de la Seccion 4.5. El parrafo introductorio y su enumeracion de subsecciones MUST NOT modificarse por este motivo.
+
+#### Scenario: Recordatorio presente sin alterar la enumeracion
+
+- **WHEN** se lee el comienzo de la Seccion 8 del PDF compilado
+- **THEN** el segundo parrafo distingue los tiempos (corridas del 2-10 y el 6-10, recalculo del 19-10) de las metricas (clasificacion fuera de linea del 7-10) y remite a la Seccion 4.5
+- **AND** el primer parrafo sigue enumerando las seis subsecciones en su orden
+
+### Requirement: Delimitacion temporal de la introduccion fechada con las corridas reales
+
+La delimitacion temporal de la Seccion 1.8 (`01-introduccion.tex`, `subsec:alcance-delimitaciones`) SHALL fechar los resultados con las corridas reales del brazo automatizado (2 y 6 de octubre de 2026) y la clasificacion fuera de linea (7 de octubre) y MAY conservar el 24-09-2026 solo como fecha de integracion de `gemini-3.6-flash`. La seccion MUST NOT presentar el 24-09-2026 como inicio de una corrida.
+
+#### Scenario: Fechas de las corridas en la Seccion 1.8
+
+- **WHEN** se lee la ultima delimitacion de la Seccion 1.8
+- **THEN** el 24-09-2026 aparece, si aparece, como fecha de integracion del modelo
+- **AND** las corridas se fechan el 2 y el 6 de octubre de 2026 y la clasificacion el 7 de octubre, coherentes con `docs/diagrams/cronograma.md`
+
+### Requirement: Interpretacion de la reduccion de tiempo sin la proporcion de cortocircuito de la configuracion posterior
+
+La Seccion 9.1 (`08-discusion.tex`, `subsec:interpretacion-resultados`) MUST NOT apoyar la reduccion del tiempo de registro en la proporcion de casos que resuelve la etapa determinista de la configuracion evaluada en la clasificacion (65,5 %), porque esa configuracion no regia en las corridas de tiempos. La seccion SHALL declarar que la reduccion se midio con la inferencia externa incluida y con configuraciones que invocaban al modelo con mayor frecuencia, y MAY conservar la cifra del 65,5 % como dato de la configuracion evaluada.
+
+#### Scenario: Sin apoyo causal en el 65,5 %
+
+- **WHEN** se lee el parrafo de la Seccion 9.1 sobre la inferencia externa
+- **THEN** no afirma que la reduccion de tiempo se sostiene porque la etapa determinista resuelve el 65,5 % de los casos
+- **AND** remite a la Seccion 4.5 para la configuracion vigente en las corridas de tiempos
+
+### Requirement: Descripcion exacta del tiempo telefonico y de la fuente del cronograma
+
+La Seccion 6.4 (`06-implementacion.tex`, `subsec:integracion-canal-telefonico`) SHALL describir el tiempo automatizado telefonico como la suma de la duracion de la grabacion y la latencia desde el cuelgue hasta la persistencia del incidente, y MUST NOT describirlo como medido desde el inicio de la llamada hasta la confirmacion del numero de incidente. La leyenda de la figura del cronograma (`fig:cronograma`, `12-anexos.tex`) SHALL distinguir la fuente de los hitos (historial del repositorio, incluido el recalculo del tiempo telefonico del 19-10-2026) de la confirmacion de los autores del 9-10-2026 sobre las ventanas de las campanas, y SHALL usar un titulo corto para el indice de figuras.
+
+#### Scenario: Tiempo telefonico descrito como se midio
+
+- **WHEN** se lee la Seccion 6.4
+- **THEN** el tiempo telefonico se describe como duracion de la grabacion mas latencia hasta la persistencia, con la grabacion acotada a 45 s
+- **AND** no aparece "desde el inicio de la llamada hasta la confirmacion del numero de incidente"
+
+#### Scenario: Leyenda coherente con el hito del 19-10
+
+- **WHEN** se lee la leyenda de la figura del cronograma
+- **THEN** atribuye los hitos, incluido el del 19-10-2026, al historial del repositorio y la confirmacion del 9-10-2026 a las ventanas de las campanas
+- **AND** la entrada del indice de figuras usa el titulo corto
+
+### Requirement: Tabla de configuracion evaluada frente a entregada
+
+El Anexo B (`sec:anexo-repositorio`, `12-anexos.tex`) SHALL incluir una tabla con etiqueta `tab:configuracion-evaluada-entregada` y dos columnas de configuracion: "Configuracion evaluada" (commit `d6bb474`, 7-10-2026) y "Configuracion entregada" (el tag que identifica el Anexo B, hoy `v1.2.5`, 28-10-2026). La tabla SHALL consignar solo valores verificados con `git show <revision>:<archivo>` o con los changes archivados: versiones de FastAPI, Uvicorn, SQLAlchemy, google-genai, pytest, pytest-cov y React; el flujo N8N versionado; los reintentos del tramo de alta (c-140); el disparador de revision por reportante no identificado en el directorio (c-82); la prueba de humo de extremo a extremo y la verificacion automatizada de TLS (c-140); y los componentes sin cambios. Cada valor SHALL registrarse en `docs/Tesis/Correcciones/conteos-canonicos-tecnicos.md` con su comando de verificacion. La tabla MUST NOT incluir valores no verificados.
+
+#### Scenario: Valores verificados contra ambas revisiones
+
+- **WHEN** se compara cada celda de la tabla con `git show d6bb474:App/Backend/requirements.txt`, `git show v1.2.5:App/Backend/requirements.txt`, los `package.json`/`package-lock.json` y `n8n/workflow.json` de ambas revisiones
+- **THEN** cada version coincide (FastAPI 0.115.0 / 0.162.0, Uvicorn 0.30.6 / 0.54.0, SQLAlchemy 2.0.36 / 2.1.6, google-genai >=2.20.0 / >=2.33.0,<3, pytest 8.3.3 / 9.1.1, pytest-cov 5.0.0 / 7.1.0, React 18.3.1 / 19.3.1)
+- **AND** las capacidades posteriores figuran como ausentes en la columna evaluada y presentes en la entregada con su change
+
+#### Scenario: Etiqueta estable para otros changes
+
+- **WHEN** otro change (c-159) remite a la tabla desde las leyendas de las Figuras 1 y 4
+- **THEN** la referencia `\ref{tab:configuracion-evaluada-entregada}` resuelve sin advertencias de referencia indefinida
+
+#### Scenario: Registro en el memo de conteos tecnicos
+
+- **WHEN** se lee `docs/Tesis/Correcciones/conteos-canonicos-tecnicos.md`
+- **THEN** figura una seccion con cada valor de la tabla, su revision y su comando de verificacion
+
+### Requirement: Remisiones uniformes a la configuracion evaluada o entregada
+
+Todo pasaje de las Secciones 5.4, 6.1, 6.2, 6.3, 6.5, 6.7 y 7.4 (`subsec:seguridad-tecnica`) y del Anexo H que cite una version de dependencia o una capacidad incorporada despues de las corridas (reintentos del alta, disparador de revision por directorio, prueba de humo de extremo a extremo, verificacion de TLS, React 19) SHALL declarar a que configuracion pertenece y remitir a `tab:configuracion-evaluada-entregada`. Ningun pasaje MUST presentar esas capacidades como rasgos de la version evaluada.
+
+#### Scenario: Versiones rotuladas
+
+- **WHEN** se buscan en las Secciones 5.4, 6.1, 6.2 y 6.7 y en el Anexo H las versiones de FastAPI, Uvicorn, google-genai, pytest, pytest-cov y React
+- **THEN** cada mencion esta rotulada como de la configuracion evaluada o de la entregada, o se reemplaza por la remision a la tabla
+
+#### Scenario: Capacidades posteriores fechadas
+
+- **WHEN** se leen los pasajes de 6.3 (disparador por directorio), 6.5 (reintentos), 6.7 (prueba de humo) y 7.4 (TLS)
+- **THEN** cada uno declara que la capacidad pertenece a la configuracion entregada y remite a la tabla
+- **AND** ninguno la atribuye al sistema que produjo los resultados de la Seccion 8
+
+### Requirement: Precision del commit de referencia en el Anexo B
+
+El Anexo B SHALL describir el commit al que apunta el tag de la version entregada sin llamarlo "commit definitivo": SHALL declarar que el tag fija el contenido de la version entregada y que un commit posterior de la rama principal consigna su hash, sin modificar las fuentes de la tesis.
+
+#### Scenario: Patron de dos commits declarado
+
+- **WHEN** se lee el primer parrafo del Anexo B
+- **THEN** no aparece "commit definitivo"
+- **AND** se explica que el hash se consigna en un commit posterior, verificable con `git diff --stat <tag> HEAD -- "docs/Tesis/v10 (IA)/paper/sections"`
+
+### Requirement: Trazabilidad de las observaciones A1 y A2 del dictamen del 28-10-2026
+
+`docs/Tesis/Correcciones/dictamen-correcciones.md` SHALL incluir una seccion "Dictamen v10 / v1.2.5 (2026-10-28) - c-158" con la trazabilidad observacion -> cambio -> archivo:linea de A1 y A2, la lista de consultas a los autores con estado PENDIENTE, las discrepancias halladas con el dictamen y la fila del libro mayor de paginas. El Anexo I SHALL mencionar el dictamen del 28-10-2026 y las secciones donde se atendieron A1 y A2. Ningun artefacto MUST contener emojis.
+
+#### Scenario: Registro completo y sin emojis
+
+- **WHEN** se lee la seccion de c-158 del registro de correcciones
+- **THEN** cada parte de A1 y A2 tiene su archivo y linea, y cada consulta a los autores figura como PENDIENTE
+- **AND** el archivo no contiene emojis ni pictogramas
+
+#### Scenario: Anexo I actualizado
+
+- **WHEN** se lee el Anexo I del PDF compilado
+- **THEN** menciona el dictamen del 28-10-2026 sobre `v1.2.5` y las secciones donde c-158 atendio A1 y A2
+
+### Requirement: Figuras de componentes y de secuencia coherentes con el gate de revision vigente
+
+Las figuras `fig:componentes` y `fig:secuencia` de `docs/Tesis/v10 (IA)/paper/sections/05-arquitectura.tex` SHALL generarse desde sus fuentes Mermaid versionadas (`docs/diagrams/componentes.md` y `docs/diagrams/secuencia.md`) y SHALL representar el gate de revision humana de la configuracion entregada tal como lo implementan `App/Backend/app/classifiers/hybrid.py`, `App/Backend/app/services/incidente_service.py` y `openspec/config.yaml` (`conventions.thresholds`): (a) la etapa deterministica cortocircuita cuando la senal es dominante y el puntaje `score_correctitud` alcanza 0,5166, y no deriva a revision por su confianza; (b) la regla de confianza menor que 0,70 se aplica solo a la salida de Gemini; (c) la etapa de reserva fija la confianza en 0,0 y deriva siempre a revision; y (d) el reportante no identificado en el directorio de empleados deriva a revision, combinado con las condiciones anteriores, rotulado con su origen (c-82) y su fecha (13-10-2026) como posterior a la campana de medicion. Las fuentes y los PNG MUST NOT contener un umbral de 0,90 sobre la confianza ni aplicar la regla de 0,70 a la etapa deterministica. Las leyendas SHALL declarar que ambas figuras describen la configuracion entregada (release `v1.2.5`) y SHALL remitir, mediante referencia cruzada, a la tabla de configuracion evaluada frente a entregada de la tesis. Los rotulos de los PNG MUST leerse completos, sin truncamientos causados por caracteres especiales de Mermaid, y el participante N8N de la fuente de secuencia SHALL citar la version de imagen que declara `docker-compose.yml`.
+
+#### Scenario: Fuentes sin el umbral retirado
+
+- **WHEN** se buscan "0.90", "0,90" y la condicion de confianza mayor o igual que 0,90 en `docs/diagrams/componentes.md` y `docs/diagrams/secuencia.md`
+- **THEN** no aparecen
+- **AND** la regla de 0,70 aparece asociada unicamente a la salida de Gemini
+
+#### Scenario: Las cuatro condiciones del gate representadas
+
+- **WHEN** se inspeccionan los PNG `componentes.png` y `secuencia.png` regenerados
+- **THEN** figuran el cortocircuito por `score_correctitud` mayor o igual que 0,5166 con senal dominante, la regla de confianza menor que 0,70 sobre Gemini, la etapa de reserva con confianza 0,0 y revision, y el reportante no identificado en el directorio
+- **AND** ninguna rama aplica la regla de 0,70 a la etapa deterministica
+
+#### Scenario: Disparador por directorio rotulado con su fecha
+
+- **WHEN** se lee el rotulo del disparador por reportante no identificado en ambas figuras
+- **THEN** cita c-82 y la fecha 13-10-2026
+- **AND** lo declara posterior a la campana de medicion
+
+#### Scenario: Leyendas de la configuracion entregada
+
+- **WHEN** se leen las leyendas de `fig:componentes` y `fig:secuencia` en el PDF compilado
+- **THEN** declaran que describen la configuracion entregada (release `v1.2.5`)
+- **AND** remiten a la tabla de configuracion evaluada frente a entregada con una referencia cruzada resuelta, sin "??"
+
+#### Scenario: Rotulos completos y version de N8N
+
+- **WHEN** se inspecciona el PNG de la secuencia y su fuente
+- **THEN** los mensajes de confirmacion y de aviso al usuario se leen completos
+- **AND** el participante N8N de `docs/diagrams/secuencia.md` cita la version de imagen de `docker-compose.yml`
+
+### Requirement: Figura de arquitectura del sistema de cinco capas y tres canales desde fuente versionada
+
+La figura `fig:arquitectura` SHALL representar la arquitectura de cinco capas de la Tabla `tab:capas` (canales de entrada, orquestacion, procesamiento, inferencia y persistencia) con sus tres canales de entrada (correo electronico, formulario web y telefonia) y SHALL generarse desde la fuente Mermaid versionada `docs/diagrams/arquitectura_sistema.md`. La figura MUST NOT representar un flujo de un solo canal como arquitectura del sistema ni contener erratas ortograficas. Su leyenda MUST NOT remitir a un detalle del Anexo A que el anexo no contenga, y el Anexo A (`sec:anexo-diagrama-arquitectura`) SHALL inventariar la fuente versionada de la figura junto con las de los demas diagramas.
+
+#### Scenario: Cinco capas y tres canales
+
+- **WHEN** se inspecciona el PNG `arquitectura_sistema.png`
+- **THEN** figuran las cinco capas de la Tabla `tab:capas` y los tres canales de entrada
+- **AND** el canal telefonico se representa como Twilio con transcripcion en el backend y entrega a N8N, coherente con `n8n/workflow.json`
+
+#### Scenario: Fuente versionada y reproducible
+
+- **WHEN** se renderiza el bloque Mermaid de `docs/diagrams/arquitectura_sistema.md`
+- **THEN** el resultado coincide en contenido con el PNG embebido en la tesis
+- **AND** la version de `mmdc` usada queda registrada en el registro del dictamen
+
+#### Scenario: Sin remision colgada ni erratas
+
+- **WHEN** se lee la leyenda de `fig:arquitectura` y se inspecciona la figura
+- **THEN** la leyenda no remite a un detalle del Anexo A
+- **AND** la figura no contiene "responsablle" ni "SI" sin tilde
+
+#### Scenario: Fuente inventariada en el Anexo A
+
+- **WHEN** se lee el Anexo A en el PDF compilado
+- **THEN** lista la figura de arquitectura con su fuente `docs/diagrams/arquitectura_sistema.md`
+
+### Requirement: Tabla de entidades y diagrama entidad-relacion coherentes con el modelo ORM entregado
+
+La Tabla `tab:entidades` SHALL enumerar, para cada una de las siete entidades principales, atributos clave cuyos nombres coincidan exactamente con columnas del ORM de `App/Backend/app/models/` en la release entregada, sin tildes en los identificadores. SHALL describir el correo y el telefono de `directorio_empleado` como cifrados en reposo con Fernet y localizados mediante un indice ciego (c-153) y MUST NOT describirlos como almacenados en texto plano. Los valores del campo `rol` declarados en la tabla y en la prosa de la subseccion de modelo de datos SHALL coincidir con el vocabulario del modelo. La figura `fig:er_modelo_datos` y su fuente `docs/diagrams/er_modelo_datos.md` SHALL ser coherentes con la tabla y con el ORM. La tabla MUST compilarse sin texto superpuesto, y su leyenda o la de la figura SHALL declarar que describen el modelo de la configuracion entregada.
+
+#### Scenario: Atributos con nombres del ORM
+
+- **WHEN** se busca cada atributo listado en la Tabla `tab:entidades` entre las columnas definidas en `App/Backend/app/models/`
+- **THEN** cada atributo existe en el modelo de su entidad
+- **AND** ningun identificador contiene tildes ni nombres inexistentes como `id_incidente`, `categoría_predicha` o `categoría_validada`
+
+#### Scenario: Contacto del directorio cifrado
+
+- **WHEN** se lee la fila de `directorio_empleado` en la tabla
+- **THEN** declara el correo y el telefono cifrados en reposo con Fernet y el indice ciego
+- **AND** no contiene la expresion "texto plano"
+
+#### Scenario: Roles del modelo
+
+- **WHEN** se comparan los roles enunciados en la tabla y en la prosa de la subseccion de modelo de datos con `RolEmpleado` de `App/Backend/app/models/empleado.py`
+- **THEN** coinciden en cantidad y en significado
+
+#### Scenario: Diagrama entidad-relacion coherente
+
+- **WHEN** se inspeccionan `docs/diagrams/er_modelo_datos.md` y `er_modelo_datos.png`
+- **THEN** `DIRECTORIO_EMPLEADO` incluye `nombre`, el cifrado del contacto y el indice ciego, e `INCIDENTE` incluye `requiere_revision_humana`
+- **AND** la fuente no remite a un numero de tabla distinto del de `tab:entidades` en el PDF
+
+#### Scenario: Tabla legible y siete entidades
+
+- **WHEN** se extrae con `pdftotext -layout` la pagina de la Tabla `tab:entidades`
+- **THEN** los nombres `clasificacion_log` y `directorio_empleado` aparecen completos y sin texto superpuesto
+- **AND** la tabla conserva siete filas de entidades
+
+### Requirement: Perfil NIST CSF coherente con el estado de controles de la seccion de cumplimiento
+
+La Tabla `tab:cumplimiento-nist` SHALL declarar, para cada una de las seis funciones, la madurez y la brecha principal del estado reconciliado del gap assessment versionado (`docs/cumplimiento/gap-assessment-iso27001-27002-nist-csf2.md`, seccion 4 y registro de estado vigente de la seccion 2.4) en la release entregada, y SHALL ser coherente con la Tabla `tab:cumplimiento-iso` y con la subseccion de brechas y hoja de ruta (`subsec:cumplimiento-brechas`): ninguna fila MUST declarar ausente un control que esas secciones declaran cerrado. Su linea de fuente SHALL fechar el estado que describe. La lista de controles atribuidos a C-61 en `subsec:cumplimiento-brechas` SHALL coincidir con la de `docs/cumplimiento/plan-cambios-cumplimiento.md`. La tabla SHALL conservar el vocabulario de alineacion y MUST NOT declarar certificacion ni conformidad.
+
+#### Scenario: Madurez igual al gap assessment
+
+- **WHEN** se compara la columna de madurez de `tab:cumplimiento-nist` con la seccion 4 del gap assessment de la release entregada
+- **THEN** los valores coinciden funcion por funcion (GV 2, ID 2, PR 3, DE 1, RS 2, RC 2)
+
+#### Scenario: Sin ausencias contradichas
+
+- **WHEN** se leen las brechas de las funciones Gobernar, Identificar y Responder
+- **THEN** no declaran ausentes la politica de seguridad (5.1), el inventario y la clasificacion (5.9, 5.12) ni el plan de respuesta a incidentes (5.24 a 5.27)
+- **AND** las brechas residuales coinciden con las del gap assessment
+
+#### Scenario: Lista de C-61 completa
+
+- **WHEN** se lee la lista de controles de C-61 en `subsec:cumplimiento-brechas`
+- **THEN** incluye 5.1, 5.2, 5.9, 5.12, 5.13, 5.24 a 5.27, 5.31 y 8.26
+
+#### Scenario: Fuente fechada y lenguaje de alineacion
+
+- **WHEN** se lee la linea de fuente de `tab:cumplimiento-nist`
+- **THEN** fecha el estado reconciliado y remite al gap assessment
+- **AND** la tabla no contiene "certificado", "certificacion", "conforme" ni "cumple"
+
+### Requirement: Lectura de los errores estrictos por frontera con sus aciertos laxos
+
+La subseccion de analisis de errores y casos limite (`subsec:analisis-errores`) SHALL presentar, por frontera de confusion, cuantos de los errores estrictos son aciertos laxos segun las definiciones de la subseccion de analisis estadistico (`subsec:analisis-estadistico`), con los valores registrados en el memo canonico: 32 de 53 en total, 10 de 12 en Sistemas-Soporte Tecnico Software, 8 de 11 en Seguridad Informatica-Soporte Tecnico Software, 5 de 14 en Soporte Tecnico Hardware-Soporte Tecnico Software y 9 de 16 en las demas fronteras. SHALL acompanarlos de una lectura operativa presentada como interpretacion, coherente con la exactitud laxa canonica (179 de 200) y con la cota superior de la tasa operativa de derivacion erronea ya declarada en la discusion, sin modificar el balance neto ni ningun valor canonico vigente. El texto SHALL decir "sobre qué aspecto" donde hoy dice "sobre que aspecto".
+
+#### Scenario: Valores por frontera presentes y canonicos
+
+- **WHEN** se lee la Tabla `tab:errores` y su texto en el PDF compilado
+- **THEN** figuran los aciertos laxos por frontera (5, 10, 8 y 9) y el total (32 de 53)
+- **AND** cada valor coincide con la seccion correspondiente de `docs/Tesis/Correcciones/numeros-canonicos.md`
+
+#### Scenario: Consistencia con la exactitud laxa
+
+- **WHEN** se suman los aciertos estrictos (147) y los aciertos laxos entre los errores estrictos (32)
+- **THEN** el resultado es la cantidad de aciertos laxos canonica (179)
+- **AND** los errores fuera del conjunto de verdad que cita el texto, si los cita, son 21
+
+#### Scenario: Lectura operativa como interpretacion
+
+- **WHEN** se lee el parrafo que acompana la tabla
+- **THEN** presenta la lectura operativa como interpretacion
+- **AND** no modifica la Tabla `tab:balance-neto` ni ningun valor canonico
+
+#### Scenario: Errata corregida
+
+- **WHEN** se busca "sobre que aspecto" en `07-resultados.tex`
+- **THEN** no aparece
+- **AND** aparece "sobre qué aspecto"
+
+### Requirement: Trazabilidad de las observaciones A3 y A4 del dictamen del 2026-10-28
+
+El registro `docs/Tesis/Correcciones/dictamen-correcciones.md` SHALL contener una seccion del dictamen del 2026-10-28 sobre la tesis v10 / `v1.2.5` atribuida a c-159, con una matriz `| Rec | Sintesis | Change | Archivo:linea | Ancla | Fragmento verificable | Estado |` de una fila por parte de las observaciones A3 y A4 y por cada correccion puntual del inventario del dictamen que este change atiende, con archivo y linea validos tras la aplicacion, el `\label` ancla mas cercano y un fragmento verificable. La seccion SHALL registrar las discrepancias halladas frente al dictamen, que el change cierra el residual de la observacion A1 del dictamen del 2026-10-22 en las Figuras 1 y 4, y la evidencia de cierre (salida del recomputo, resultado de la compilacion y conteo de paginas). El Anexo I (`sec:anexo-trazabilidad`) SHALL identificar el dictamen del 2026-10-28 y presentar el mapeo de A3 y A4 a c-159 y a las secciones de la tesis mediante referencias cruzadas, en una tabla distinta de `tab:anexo-trazabilidad` (o en la que se haya creado para el mismo dictamen), sin numeros de linea de las fuentes.
+
+#### Scenario: Matriz verificable
+
+- **WHEN** para cada fila de la matriz se lee la linea citada del archivo citado
+- **THEN** la linea contiene el fragmento verificable registrado
+- **AND** el `\label` ancla existe en ese archivo
+
+#### Scenario: Anexo I con el dictamen del 2026-10-28
+
+- **WHEN** se lee el Anexo I en el PDF compilado
+- **THEN** identifica el dictamen del 28 de octubre de 2026 sobre la release `v1.2.5`
+- **AND** mapea A3 y A4 a c-159 y a sus secciones sin numeros de linea
+- **AND** no mezcla esas filas con las del dictamen del 22 de octubre de 2026
+
+#### Scenario: Residual de A1 y discrepancias registrados
+
+- **WHEN** se lee la seccion de c-159 del registro
+- **THEN** consigna que las Figuras 1 y 4 cierran el residual de A1 del dictamen del 2026-10-22
+- **AND** enumera las discrepancias halladas frente al dictamen
+
+### Requirement: Impacto de paginas de la reconciliacion de figuras, tablas y evidencia cualitativa
+
+La aplicacion de este change SHALL ser neutral en paginas: el total del PDF compilado despues del change MUST ser menor o igual que el total medido inmediatamente antes de aplicarlo, con la misma cadena de compilacion. Para lograrlo SHALL usar palancas de forma (relaciones de aspecto equivalentes en las figuras regeneradas, leyendas cortas en la lista de figuras, una columna en una tabla existente en lugar de prosa adicional) y MUST NOT eliminar contenido cientifico, numeros canonicos, figuras ni tablas, ni editar el preambulo. Si la neutralidad no puede lograrse sin eliminar contenido, el exceso SHALL registrarse con ambos conteos y su causa en el registro del dictamen como residual para los autores.
+
+#### Scenario: Conteo antes y despues registrado
+
+- **WHEN** se compila `main.tex` con la imagen `texlive-thesis` antes y despues del change
+- **THEN** ambos totales, tomados de `main.log`, quedan registrados
+- **AND** el total posterior es menor o igual que el anterior, o el exceso figura con su causa como residual
+
+#### Scenario: Compilacion limpia
+
+- **WHEN** se revisa `main.log` tras la compilacion final
+- **THEN** no hay lineas que empiecen con "!" ni advertencias "undefined" o "multiply defined"
+- **AND** `pdftotext main.pdf -` no contiene "??"
+
+### Requirement: Cuerpo de la tesis sin residuos del proceso de correccion del manuscrito
+
+Las secciones del cuerpo de la tesis (`docs/Tesis/v10 (IA)/paper/sections/00-*.tex` a `11-*.tex`) SHALL describir el estudio y el sistema en su estado vigente y MUST NOT narrar la historia de revision del manuscrito: cifras previas retiradas, estimaciones de versiones anteriores del texto, formulaciones anteriores de hipotesis, umbrales o ramas del diseno retirados presentados como antecedente, ni afirmaciones sobre la estabilidad de los valores del registro canonico. En particular, el cuerpo MUST NOT contener la nota sobre la "cifra previa de 180 horas-persona" (9.1), la estimacion "entre veinte y treinta veces superior" al precio de lista (9.4), la oracion sobre el reemplazo del umbral de 0,90 del diseno inicial (5.5), la frase de que la rama de clasificacion basada en LangChain "fue retirada" (6.3), la narracion de la formulacion original de la segunda sub-hipotesis (1.4), la frase "Ningún valor canónico cambia" (8.5) ni la afirmacion de que la cobertura real del gate es menor que la que sugiere la proporcion de casos escalados (9.1). Cada texto retirado SHALL conservarse literal, con su ubicacion previa, en `docs/Tesis/Correcciones/dictamen-correcciones.md`; los que documentan decisiones de diseno del sistema (c-72, c-74 y c-82) SHALL figurar ademas en el parrafo de decisiones del Anexo I. La descripcion de la configuracion vigente en cada corrida de la campana (procedencia de los datos en 4.5 y tabla de configuracion evaluada frente a entregada), incluidos el cortocircuito por confianza de la version `hybrid-v1` y el agente LLM de N8N de la clasificacion telefonica previa a c-72, describe el estudio y no constituye un residuo en el sentido de este requisito. La discusion del gate en 9.1 SHALL declarar que en el corpus la regla de 0,70 no derivo ningun caso, porque los 124 casos con confianza registrada inferior a 0,70 pertenecen a la etapa deterministica, a la que la regla no se aplica, y la etapa Gemini nunca declaro una confianza inferior a 0,85. Las correcciones MUST NOT cambiar ningun valor numerico.
+
+#### Scenario: Residuos ausentes del cuerpo
+
+- **WHEN** se buscan con `grep` en `docs/Tesis/v10 (IA)/paper/sections/0*.tex`, `10-recomendaciones.tex` y `11-aspectos-legales.tex` las cadenas "180 horas-persona", "veinte y treinta veces", "Sustituyó al umbral de 0,90", "LangChain fue retirada", "formulación original", "no era contrastable", "Ningún valor canónico" y "cobertura real"
+- **THEN** cada busqueda devuelve cero coincidencias
+- **AND** `05-arquitectura.tex` no contiene "umbral de 0,90" y `06-implementacion.tex` no contiene "LangChain"
+
+#### Scenario: Calculos y argumentos conservados
+
+- **WHEN** se leen la nota de 9.1, la nota de costo de 9.4, el criterio de cortocircuito de 5.5 y el parrafo de sensibilidad de 8.5
+- **THEN** se conservan el calculo de 32,2 horas-persona brutas, el calculo de aproximadamente 7 x 10^-4 USD por invocacion, el criterio vigente de cortocircuito con su punto de operacion y la oracion "El análisis estima la sensibilidad de las métricas y no sustituye la medición del sistema evaluado"
+- **AND** ningun valor numerico difiere del registrado en `docs/Tesis/Correcciones/numeros-canonicos.md`
+
+#### Scenario: Gate sin derivaciones descrito sin proporcion de escalados
+
+- **WHEN** se lee el parrafo de 9.1 sobre la intervencion humana por gate
+- **THEN** declara que la regla de 0,70 no derivo ningun caso del corpus y su causa por etapa
+- **AND** no compara la cobertura del gate con una proporcion de casos escalados
+
+#### Scenario: Residuos trasladados al registro
+
+- **WHEN** se lee la seccion del dictamen del 2026-10-28 de c-160 en `docs/Tesis/Correcciones/dictamen-correcciones.md`
+- **THEN** figuran los siete textos retirados, literales, con su archivo y linea previos y su destino
+- **AND** el parrafo de decisiones del Anexo I menciona c-72, c-74 y c-82
+
+### Requirement: Naturaleza de los dictamenes declarada en el Anexo I
+
+El primer parrafo del Anexo I (`12-anexos.tex`, `sec:anexo-trazabilidad`) SHALL explicar la naturaleza de los dictamenes cuyas correcciones traza: que son revisiones evaluativas previas a la defensa, solicitadas por los autores; el instrumento con que se elaboraron, tal como consta en el repositorio (perfil de evaluador con criterios de la CONEAU versionado en `docs/Tesis/Correcciones/Prompt2.docx` y su modo de aplicacion); la serie y sus fechas (del 20 al 28 de octubre de 2026) y los dictamenes que el anexo traza (22 de octubre, sobre `v1.1.0`, y 28 de octubre, sobre `v1.2.5`); su alcance segun consta en cada dictamen; su caracter no vinculante; y su ubicacion en `auditorias/` junto con la ruta del registro `docs/Tesis/Correcciones/dictamen-correcciones.md`. El parrafo MUST NOT atribuir los dictamenes al jurado, a la direccion, a la catedra ni a la CONEAU, ni presentarlos como revision por pares humana si el repositorio no lo respalda. La decision de conservar el Anexo I en el PDF, con su extension medida en paginas, SHALL registrarse en el registro de correcciones.
+
+#### Scenario: Naturaleza explicada al inicio
+
+- **WHEN** se lee el primer parrafo del Anexo I en el PDF compilado
+- **THEN** declara que los dictamenes son revisiones previas a la defensa, solicitadas por los autores, no vinculantes, y nombra el instrumento y su ubicacion en el repositorio
+- **AND** identifica los dictamenes del 22 y del 28 de octubre de 2026 con la version examinada por cada uno
+
+#### Scenario: Sin atribucion indebida
+
+- **WHEN** se busca en el Anexo I la atribucion de los dictamenes a un jurado, a la direccion, a la catedra o a la CONEAU
+- **THEN** no aparece ninguna
+
+#### Scenario: Conservacion documentada
+
+- **WHEN** se lee la seccion de c-160 del registro de correcciones
+- **THEN** figura la decision de conservar el Anexo I con su extension medida en paginas y las alternativas evaluadas
+
+### Requirement: Punteros exactos y residuos registrados del dictamen del 22 de octubre en el Anexo I
+
+La tabla del dictamen del 22 de octubre de 2026 en el Anexo I (`tab:anexo-trazabilidad`) SHALL remitir, para cada recomendacion, a secciones o tablas que contengan efectivamente lo atendido y SHALL nombrar todos los changes que la atendieron. En particular: B6 SHALL remitir a una seccion o tabla que contenga el macro-F1 de umbral (0,6508) y no a la tabla de metricas por clase (`tab:metricas`); B8 SHALL remitir a la seccion donde se define la exactitud laxa (`subsec:analisis-estadistico`) y no a `subsec:metricas-instrumentos`; B12 SHALL incluir `subsec:amenazas-validez`; B10 SHALL incluir `c-146`; y A5 SHALL incluir `c-154`. Las filas A1, B4, B9, B14 y B16 SHALL registrar sus residuos verificados, cada uno con una remision a la fila del dictamen del 28 de octubre que lo atiende o con la declaracion de que queda pendiente. El anexo MUST NOT contener numeros de linea de las fuentes.
+
+#### Scenario: Punteros corregidos
+
+- **WHEN** se leen las filas A5, B6, B8, B10 y B12 de `tab:anexo-trazabilidad` en las fuentes
+- **THEN** B6 no remite a `tab:metricas` y remite a una ubicacion que contiene 0,6508
+- **AND** B8 remite a `subsec:analisis-estadistico`, B12 incluye `subsec:amenazas-validez`, B10 incluye `c-146` y A5 incluye `c-154`
+
+#### Scenario: Residuos registrados
+
+- **WHEN** se leen las filas A1, B4, B9, B14 y B16 del dictamen del 22 de octubre
+- **THEN** cada una registra su residuo y quien lo atiende o su estado pendiente
+- **AND** ninguna remite a un numero de linea de las fuentes
+
+### Requirement: Estructura comun del Anexo I para los dictamenes del 22 y del 28 de octubre
+
+El Anexo I SHALL organizarse, en este orden, en: el parrafo de naturaleza de los dictamenes; la tabla del dictamen del 22 de octubre de 2026 con su parrafo introductorio; una tabla del dictamen del 28 de octubre de 2026, con las mismas tres columnas (recomendacion, change y secciones de la tesis), que reuna las filas A1 a A4 atendidas por c-158 y c-159 y las filas B5 a B8 atendidas por c-160; y un parrafo de decisiones de diseno con su trazabilidad a los changes (c-72, c-74 y c-82). Las filas de ambos dictamenes MUST NOT mezclarse en una misma tabla, porque sus rotulos de recomendacion no son equivalentes. Las referencias a secciones SHALL hacerse con `\autoref` o `\ref` y la remision a la seccion de implementacion SHALL usar `\autoref{sec:implementacion}` en lugar de un numero de capitulo fijo. Las etiquetas `sec:anexo-trazabilidad` y `tab:anexo-trazabilidad` SHALL conservarse.
+
+#### Scenario: Orden y separacion por dictamen
+
+- **WHEN** se lee el Anexo I en el PDF compilado
+- **THEN** aparecen, en orden, el parrafo de naturaleza, la tabla del 22 de octubre, la tabla del 28 de octubre y el parrafo de decisiones de diseno
+- **AND** ninguna tabla mezcla recomendaciones de los dos dictamenes
+
+#### Scenario: Filas B5 a B8 del dictamen del 28 de octubre
+
+- **WHEN** se leen las filas B5, B6, B7 y B8 de la tabla del 28 de octubre
+- **THEN** cada una nombra a c-160 y las secciones de la tesis donde se atendio
+- **AND** las filas A1 a A4 agregadas por c-158 y c-159 siguen presentes y con el mismo formato
+
+#### Scenario: Remisiones sin numeros fijos
+
+- **WHEN** se busca "Capítulo~6" en `12-anexos.tex`
+- **THEN** no aparece
+- **AND** el parrafo de decisiones remite a la seccion de implementacion con `\autoref{sec:implementacion}`
+
+### Requirement: Calificacion dentro de la muestra de las metricas de clasificacion en el resumen y el abstract
+
+El resumen en espanol y el abstract (`00-resumen.tex`) SHALL calificar la exactitud estricta (73,5 %) y el macro-F1 de umbral (0,6508) como estimaciones dentro de la muestra, sin cambiar ninguna cifra. El resumen en espanol SHALL conservar como maximo 250 palabras de prosa segun la regla de c-106 (comandos LaTeX excluidos, matematica en linea como una palabra, `~` como separador salvo antes de un digito, linea de palabras clave excluida) y SHALL conservar las cifras clave exigidas por el requisito de presupuesto de palabras del resumen. El abstract SHALL conservar como maximo 250 palabras con la misma regla.
+
+#### Scenario: Calificacion presente en ambos idiomas
+
+- **WHEN** se leen el resumen y el abstract
+- **THEN** la exactitud estricta y el macro-F1 de umbral figuran calificados como estimaciones dentro de la muestra ("dentro de la muestra" en espanol; "in-sample" en ingles)
+- **AND** las cifras 73,5 %, 0,6508, 61,6 s, 17,76 s, 71,2 %, W = 363 y r = 0,9639 no cambian
+
+#### Scenario: Presupuesto de palabras respetado
+
+- **WHEN** se cuentan las palabras de prosa con la regla de c-106 antes y despues de la edicion
+- **THEN** el resumen en espanol no supera 250 palabras ni el conteo de la linea base medido con la misma herramienta
+- **AND** el abstract no supera 250 palabras
+
+### Requirement: Remisiones internas exactas de la vision general, del analisis de sensibilidad y del anexo de documentacion operativa
+
+La vision general de la arquitectura (`05-arquitectura.tex`, `subsec:vision-general`) SHALL remitir a los resultados mediante `\autoref{sec:resultados}` y MUST NOT citar un numero de capitulo fijo; su remision a la prueba de humo SHALL apuntar a la seccion que la describe (`subsec:pruebas-automatizadas`), al anexo de documentacion operativa (`sec:anexo-documentacion-operativa`) y al anexo del despliegue (`sec:anexo-diagrama-arquitectura`), y MUST NOT remitir al anexo del repositorio (`sec:anexo-repositorio`), que no la documenta. El anexo de documentacion operativa SHALL nombrar el runbook de la prueba de humo y de la verificacion del borde TLS (`docs/runbook-smoke-stack-referencia.md`). La subseccion de sensibilidad (`07-resultados.tex`, `subsec:sensibilidad-ajustes`) SHALL citar para el nivel a (48 de 66) la linea de `evaluation/report_sensibilidad_ajustes.md` que lo contiene.
+
+#### Scenario: Vision general sin numero de capitulo ni anexo equivocado
+
+- **WHEN** se lee `subsec:vision-general` en las fuentes
+- **THEN** no aparecen "Capítulo 7" ni la remision de la prueba de humo al Anexo B
+- **AND** la remision usa `\autoref{sec:resultados}`, `subsec:pruebas-automatizadas` y los Anexos A y G
+
+#### Scenario: Runbook de humo nombrado en el Anexo G
+
+- **WHEN** se lee `sec:anexo-documentacion-operativa`
+- **THEN** nombra `docs/runbook-smoke-stack-referencia.md`
+- **AND** ese archivo existe en el repositorio
+
+#### Scenario: Linea del reporte verificable
+
+- **WHEN** se lee la linea citada para el nivel a en `subsec:sensibilidad-ajustes` y se ejecuta `sed -n '<linea>p' evaluation/report_sensibilidad_ajustes.md`
+- **THEN** la linea obtenida contiene "sin los motivadores 48/66"
+
+### Requirement: Registro de la trazabilidad de las recomendaciones B5 a B8 del dictamen del 28 de octubre
+
+`docs/Tesis/Correcciones/dictamen-correcciones.md` SHALL contener una seccion "## Dictamen v10 / v1.2.5 (2026-10-28) - c-160" con: el origen, la fecha y el commit base; una matriz de una fila por parte de las recomendaciones B5 a B8 con las columnas de la matriz de la FASE 36 (recomendacion, sintesis, change, `archivo:linea`, `\label` ancla, fragmento verificable y estado), con lineas validas en el arbol al cierre del change; la tabla de los residuos trasladados desde el cuerpo, con su texto literal, su ubicacion previa y su destino; las decisiones del change, incluida la del Anexo I con su conteo de paginas; y la compilacion, las paginas y las palabras del resumen. El libro mayor de paginas SHALL recibir la fila de c-160. El registro MUST NOT contener emojis y su prosa nueva MUST NOT reproducir el patron que el escaneo de secretos marca como falso positivo (la palabra "capitulo" sin tilde seguida de coma o dos puntos y un nombre de archivo).
+
+#### Scenario: Matriz verificable
+
+- **WHEN** para cada fila de la matriz se ejecuta `sed -n '<linea>p' <archivo>` sobre el arbol al cierre de c-160
+- **THEN** la linea contiene el fragmento verificable registrado
+- **AND** el `\label` ancla existe en el mismo archivo
+
+#### Scenario: Residuos y decisiones registrados
+
+- **WHEN** se lee la seccion de c-160
+- **THEN** figuran los siete residuos retirados con su texto literal y su destino
+- **AND** figuran la decision sobre el Anexo I con su extension medida, la formulacion canonica del gate, el tratamiento del disparador por directorio y la forma de la comparacion de 5.5
+
+#### Scenario: Libro mayor actualizado
+
+- **WHEN** se lee el libro mayor de paginas
+- **THEN** existe la fila de c-160 con total, cuerpo sin anexos, anexos, deltas y el exceso frente al tope de 100 paginas declarado
+
+### Requirement: Verificacion de compilacion, render y citas al cierre de c-160
+
+Al cierre de c-160, el render `docs/Tesis/v10 (IA)/tesis_para_agente.md` SHALL regenerarse desde las fuentes con `build_tesis_para_agente.py` y no quedar vacio; el PDF SHALL recompilarse en el entorno Docker de registro (`texlive-thesis`, `latexmk main.tex`) con codigo de salida 0, cero errores (`grep -c "^!" main.log` = 0), cero referencias indefinidas, cero etiquetas definidas mas de una vez, cero `??` en el texto extraido del PDF y una cantidad de avisos `Overfull \hbox` no mayor que la de la linea base medida antes de las ediciones; y `verify_citations.py` SHALL emitir PASS. El total de paginas SHALL medirse y registrarse conforme al requisito de presupuesto de paginas.
+
+#### Scenario: Compilacion limpia
+
+- **WHEN** se compila `main.tex` con Docker al cierre del change
+- **THEN** el codigo de salida es 0, `grep -c "^!" main.log` es 0 y no hay referencias indefinidas ni etiquetas multiplemente definidas
+- **AND** `pdftotext` del PDF no contiene `??` y los avisos `Overfull \hbox` no superan la linea base
+
+#### Scenario: Render y citas
+
+- **WHEN** se regenera el render y se ejecuta `python "docs/Tesis/v10 (IA)/verify_citations.py"`
+- **THEN** el render no esta vacio y refleja las ediciones del change
+- **AND** el verificador de citas emite PASS
+

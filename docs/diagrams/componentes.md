@@ -7,46 +7,48 @@ inmediatamente inferior.
 ```mermaid
 graph TD
     subgraph Routes["Capa de Rutas (app/routes/)"]
-        RI["incidentes.py\nPOST / GET / PATCH /api/v1/incidentes"]
-        RC["clasificaciones.py\nGET /revision-pendiente\nGET /incidente/{id}\nPATCH /{id}/validar"]
-        RH["health.py\nGET /health\nGET /health/db"]
+        RI["incidentes.py<br/>POST / GET / PATCH /api/v1/incidentes"]
+        RC["clasificaciones.py<br/>GET /revision-pendiente<br/>GET /incidente/{id}<br/>PATCH /{id}/validar"]
+        RH["health.py<br/>GET /health<br/>GET /health/db"]
     end
 
     subgraph Services["Capa de Servicios (app/services/)"]
-        SI["IncidenteService\ncreate_and_classify()\nlist_incidentes()\nget_by_id()\nupdate_incidente()"]
-        SC["ClasificacionService\nlist_pending_review()\nlist_by_incidente()\nvalidate()"]
-        SN["notify_n8n()\n(fire-and-forget)"]
+        SI["IncidenteService<br/>create_and_classify()<br/>list_incidentes()<br/>get_by_id()<br/>update_incidente()<br/>revisión = clasificador OR<br/>reportante no identificado"]
+        SCR["ContactResolutionService<br/>resuelve el reportante en el directorio<br/>(c-82, desde el 13-10-2026;<br/>posterior a la campaña de medición)"]
+        SC["ClasificacionService<br/>list_pending_review()<br/>list_by_incidente()<br/>validate()"]
+        SN["notify_n8n()<br/>(fire-and-forget)"]
     end
 
     subgraph Classifiers["Clasificador Híbrido (app/classifiers/)"]
-        CH["HybridClassifier\nclassify()"]
-        CD["DeterministicClassifier\n(reglas, umbral ≥ 0.90)"]
-        CG["GeminiClassifier\n(LLM, umbral ≥ 0.70)"]
+        CH["HybridClassifier<br/>classify()"]
+        CD["DeterministicClassifier<br/>(reglas: cortocircuito con señal dominante<br/>y score_correctitud ≥ 0,5166;<br/>no deriva a revisión por su confianza)"]
+        CG["GeminiClassifier<br/>(LLM: revisión si confianza &lt; 0,70)"]
+        CR["Etapa de reserva<br/>(timeout, indisponibilidad, salida inválida<br/>o guarda de costo:<br/>confianza 0,0 y revisión siempre)"]
     end
 
     subgraph Repositories["Capa de Repositorios (app/repositories/)"]
-        RIR["IncidenteRepository\ncreate() / get_by_id()\nlist_filtered() / update()"]
-        RCR["ClasificacionRepository\ncreate_log() / get_pending()\nget_by_incidente() / update_log()"]
-        RSR["SectorRepository\nget_by_name()"]
-        RER["EstadoRepository\nget_by_name()"]
+        RIR["IncidenteRepository<br/>create() / get_by_id()<br/>list_filtered() / update()"]
+        RCR["ClasificacionRepository<br/>create_log() / get_pending()<br/>get_by_incidente() / update_log()"]
+        RSR["SectorRepository<br/>get_by_name()"]
+        RER["EstadoRepository<br/>get_by_name()"]
     end
 
     subgraph Models["Modelos ORM (app/models/)"]
-        MI["Incidente\n(descripcion_original cifrada,\ndescripcion_pseudonimizada,\nindices compuestos)"]
-        MCL["ClasificacionLog\n(doble FK a sector:\npredicho / validado)"]
-        MS["Sector / Estado / CanalOrigen\n(tablas de catálogo)"]
+        MI["Incidente<br/>(descripcion_original cifrada,<br/>descripcion_pseudonimizada,<br/>indices compuestos)"]
+        MCL["ClasificacionLog<br/>(doble FK a sector:<br/>predicho / validado)"]
+        MS["Sector / Estado / CanalOrigen<br/>(tablas de catálogo)"]
     end
 
     subgraph Utils["Utilidades transversales (app/utils/ / app/core/)"]
-        UP["Pseudonimizador\n(reemplaza PII con etiquetas)"]
-        UE["EncryptedText\n(Fernet, cifrado at-rest)"]
-        DB["Database / get_db_session\n(SQLAlchemy async + PostgreSQL)"]
-        ER["Error Handlers\n(HTTP 404, 409, 422, 500)"]
-        LOG["Logging estructurado\n(structlog)"]
+        UP["Pseudonimizador<br/>(reemplaza PII con etiquetas)"]
+        UE["EncryptedText<br/>(Fernet, cifrado at-rest)"]
+        DB["Database / get_db_session<br/>(SQLAlchemy async + PostgreSQL)"]
+        ER["Error Handlers<br/>(HTTP 404, 409, 422, 500)"]
+        LOG["Logging estructurado<br/>(structlog)"]
     end
 
     subgraph Config["Configuración (app/config/)"]
-        SET["Settings\n(pydantic-settings)\nDATABASE_URL\nGEMINI_API_KEY\nENCRYPTION_KEY"]
+        SET["Settings<br/>(pydantic-settings)<br/>DATABASE_URL<br/>GEMINI_API_KEY<br/>ENCRYPTION_KEY"]
     end
 
     %% Dependencias entre capas
@@ -61,11 +63,13 @@ graph TD
     SI --> CH
     SI --> UP
     SI --> SN
+    SI --> SCR
 
     SC --> RCR
 
     CH --> CD
     CH --> CG
+    CH --> CR
     CG --> SET
 
     RIR --> MI

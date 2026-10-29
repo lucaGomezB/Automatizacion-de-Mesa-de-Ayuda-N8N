@@ -64,7 +64,7 @@ Estados: `vigente` (valor citable), `retirado` (desmentido; NO citable) y `intoc
 | Nodos del flujo (totales) | **32** | `n8n/workflow.json` | vigente |
 | Nodos operativos | **29** | `n8n/workflow.json` (32 totales − 3 notas) | vigente |
 | Notas adhesivas (`stickyNote`) | **3** | `n8n/workflow.json` | vigente |
-| Paquete del SDK de Google | **`google-genai`** | `App/Backend/requirements.txt:34` (`google-genai>=2.20.0,<3`) | vigente |
+| Paquete del SDK de Google | **`google-genai`** | `App/Backend/requirements.txt:34` (`google-genai>=2.20.0,<3`) | vigente como paquete; la cota `>=2.20.0,<3` queda **superada** (la configuracion evaluada `d6bb474` declara `>=2.20.0` y la entregada `v1.2.5` declara `>=2.33.0,<3`; ver la Seccion 7) |
 | Paquete `google-generativeai` | **retirado** (SDK deprecado) | `App/Backend/requirements.txt:25` (comentario: reemplaza al deprecado) | retirado |
 | Tiempo de espera de la inferencia por intento (backend → modelo) | **30 s** | `App/Backend/app/config/settings.py:85` (`gemini_timeout_seconds`), introducido en el commit `11036be` (2026-09-24) | vigente |
 | Presupuesto total de reloj por clasificación | **60 s** | `App/Backend/app/config/settings.py:104` (`gemini_total_timeout_seconds`), introducido en el commit `429f2c9` (2026-09-29, c-58) | vigente |
@@ -228,6 +228,32 @@ manuscrito requiere la version 12.
   flotantes dedicada (las dos figuras de 6.8); una relajacion global de la politica de
   flotantes daria cuerpo 99 pero forzaria tablas del capitulo 8 al interior de los
   anexos (mejora falsa). BLOQUEO reportado en el informe del apply.
+
+## 7. Configuracion evaluada frente a entregada (c-158)
+
+Valores de la tabla `tab:configuracion-evaluada-entregada` (Anexo B de la tesis), verificados el
+2026-10-28 con `git show` sobre el commit evaluado `d6bb474` (7-10-2026, primera revision que
+versiona `hybrid-v3`) y el tag `v1.2.5` (`e5508850b5b48368c9cc446de2d616a5198c3f20`). Las
+dependencias no cambiaron entre `11036be` (24-09) y `d6bb474`, de modo que la columna evaluada
+rige para las tres corridas del brazo automatizado.
+
+| Elemento | `d6bb474` (evaluada) | `v1.2.5` (entregada) | Comando de verificacion |
+|---|---|---|---|
+| FastAPI | 0.115.0 | 0.162.0 | `git show <rev>:App/Backend/requirements.txt \| grep -i fastapi` |
+| Uvicorn | 0.30.6 | 0.54.0 | idem, `uvicorn` |
+| SQLAlchemy | 2.0.36 | 2.1.6 | idem, `sqlalchemy` |
+| google-genai | `>=2.20.0` | `>=2.33.0,<3` | idem, `google-genai` |
+| pytest / pytest-cov | 8.3.3 / 5.0.0 | 9.1.1 / 7.1.0 | idem, `pytest` |
+| React (`package-lock.json`) | 18.3.1 | 19.3.1 | `git show <rev>:App/Frontend/package-lock.json` y lectura de `packages["node_modules/react"].version` |
+| Nodos del flujo N8N | 28 (25 operativos y 3 notas); 38 (35 y 3) hasta c-72 (`24ab238`) | 32 (29 y 3) | `git show <rev>:n8n/workflow.json` y conteo de `nodes` y de `stickyNote` |
+| Reintentos del alta | no (`continueErrorOutput` sin `retryOnFail`) | si: `retryOnFail`, `maxTries` 3, `waitBetweenTries` 5000 ms en `HTTP POST a MESA-AYUDAS` y `Login operador`; `options.timeout` 75000 y 10000 ms | idem, nodos con `retryOnFail` |
+| Revision por reportante no identificado | no | si (c-82, `incidente_service.py:302,412` en `v1.2.5`) | `git grep -n "reportante no identificado" <rev> -- App/Backend/app/services` |
+| Prueba de humo E2E y TLS del borde | no (solo `dry_run` sin `e2e_checks.py` ni `test_tls_checks.py`) | si (c-140; corrida 25/25 del 27-10 sobre `b4b3be9`) | `git ls-tree -r --name-only <rev> \| grep -E "e2e_checks\|test_tls_checks"` |
+| Sin cambios | N8N 2.11.2, Python 3.12-slim, PostgreSQL 15.5-alpine, `gemini-3.6-flash`, temperatura 0,3, top_p 0,9, 100 tokens, 30 s por intento, 60 s en total, 2 reintentos del backend al modelo, umbrales 0,5166 y 0,70 | igual | `git show <rev>:App/Backend/app/config/settings.py` y `docker-compose.yml`; `git diff d6bb474 v1.2.5 -- App/Backend/app/classifiers` solo muestra comentarios, importacion perezosa y docstrings |
+
+Contraste del borde: `git diff --stat b4b3be95 v1.2.5 -- nginx docker-compose.yml openssl n8n/workflow.json scripts/dry_run` es vacio. El nginx del compose pasa de
+`nginx:alpine` (evaluada) a `nginx:1.31.7-alpine` (entregada); no se agrego fila porque el
+proxy no formo parte de la campana (Anexo A y Seccion 7.4 de la tesis).
 
 ---
 

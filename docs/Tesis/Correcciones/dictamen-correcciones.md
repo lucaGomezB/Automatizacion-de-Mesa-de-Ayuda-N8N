@@ -3064,3 +3064,283 @@ El autor resolvio las tres decisiones que c-150 habia dejado explicitamente PEND
 - **G0.7a / OQ7a** (ablacion paga del prompt, 138 invocaciones, ~0.03-0.10 USD): **DIFERIDA A LA PROXIMA SESION**. Sigue sin autorizar; se retoma y decide en la proxima sesion. **(Actualizacion 2026-10-28: AUTORIZADA por el autor ese dia, pero la ejecucion quedo BLOQUEADA por defectos del arnes; el nivel c del prompt sigue NO COMPUTADO. Ver la entrada G0.7a con fecha 2026-10-28.)** **(Actualizacion 2026-10-28 (cierre): EJECUTADA tras corregir el arnes con c-154; nivel c = prompt vigente 50/69 frente a sin reglas 46/69, McNemar p = 0,3438 (no significativo); fuente `evaluation/report_sensibilidad_ajustes.md:98-104`.)**
 
 Estado resultante del item 8: **sin decisiones abiertas, salvo OQ7a, diferida a la proxima sesion.** **(Actualizacion 2026-10-28: OQ7a esta autorizada pero su corrida paga quedo bloqueada; el nivel c sigue no computado y la resolucion efectiva queda pendiente de corregir el arnes.)** **(Actualizacion 2026-10-28 (cierre): el arnes se corrigio con c-154 y la corrida paga se ejecuto; OQ7a queda CERRADA. Nivel c = prompt vigente 50/69 frente a sin reglas 46/69, McNemar p = 0,3438 (no significativo); fuente `evaluation/report_sensibilidad_ajustes.md:98-104`.)**
+
+## Dictamen v10 / v1.2.5 (2026-10-28) - c-158
+
+Atencion de las recomendaciones A1 y A2 del dictamen CONEAU del 2026-10-28 sobre la tesis v10 /
+release `v1.2.5` (`auditorias/Dictamen_Tesis_v10_v1.2.5_CONEAU_2026-10-28.md`). Change
+`c-158-procedencia-de-datos-y-configuracion-evaluada-vs-entregada` (gobernanza MEDIO). Ninguna
+medicion nueva: se declara lo que el repositorio documenta y se consulta a los autores lo que
+no consta (marcadores `% PENDIENTE AUTORES` en las fuentes y entradas PENDIENTE de este registro).
+Primero de la serie c-158 -> c-159 (A3 y A4) -> c-160 (observaciones B).
+
+### Trazabilidad observacion -> cambio -> archivo:linea
+
+Lineas leidas despues de aplicar el change, en `docs/Tesis/v10 (IA)/paper/sections/` (salvo indicacion).
+
+| Observacion | Cambio | Archivo:linea |
+|---|---|---|
+| A1 (a) corrida de correo y formulario del 2-10-2026 | Apartado `\paragraph{Procedencia de los datos del brazo automatizado.}` al final de la Seccion 4.5; reemplaza "misma infraestructura ... monitoreo continuo" por una remision | `04-marco-metodologico.tex:61` (remision) y `:68` (apartado) |
+| A1 (b) corrida telefonica concluida el 6-10-2026 | Mismo apartado: softphone de navegador, descripcion pseudonimizada leida en voz alta, grabacion de 45 s, entorno aislado, sin configuracion unica (25 casos del 5-10, c-71, c-72, anteriores a c-74) | `04-marco-metodologico.tex:68` |
+| A1 (c) clasificacion `hybrid-v3` del 7-10-2026 | Mismo apartado: ejecucion fuera de linea, 22:22 UTC, "que versiona el commit `d6bb474`", evidencia versionada y hash del corpus | `04-marco-metodologico.tex:68` |
+| A1 (d) recalculo del 19-10-2026 (c-77) y su motivo | Mismo apartado y leyenda de la Figura 10 | `04-marco-metodologico.tex:68`; `12-anexos.tex:21` |
+| A1, recordatorio al abrir la Seccion 8 | Parrafo propio tras la introduccion; la enumeracion de seis apartados queda identica | `07-resultados.tex:8` |
+| A1 conexa, Seccion 1.8 | "(desde el 24-09-2026)" pasa a fechar el modelo (integrado el 24-09) y las corridas (2, 6 y 7 de octubre) | `01-introduccion.tex:76` |
+| A1 conexa, Seccion 9.1 | La reduccion de tiempo deja de apoyarse en el 65,5 % de cortocircuito de la configuracion evaluada; se conserva la cifra | `08-discusion.tex:10` |
+| A1 conexa, Seccion 6.4 | El tiempo telefonico pasa a "duracion de la llamada grabada mas latencia hasta la persistencia" (recalculo del 19-10) | `06-implementacion.tex:52` |
+| A1 conexa, Figura 10 | Titulo corto para el indice y fuente desdoblada (hitos: historial, incluido el 19-10 de c-77; ventanas: confirmacion del 9-10) | `12-anexos.tex:21` |
+| A1 conexa, Anexo F | Predicciones en `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json`; registros primarios "no estan versionados"; rutas con `\path{}` (desaparece el Overfull de 106 pt) | `12-anexos.tex:95` y `:98` (marcador Q7 en `:96`) |
+| A2 tabla evaluada frente a entregada | Tabla `tab:configuracion-evaluada-entregada` en el Anexo B (Tabla 19), con `d6bb474` frente a `v1.2.5` | `12-anexos.tex:31-58` |
+| A2 remisiones | 5.4, 6.1, 6.2 (se quitan las versiones repetidas), 6.3, 6.5, 6.7, 7.4 y Anexo H | `05-arquitectura.tex:72,74`; `06-implementacion.tex:10,14,40,60,85,87,89`; `11-aspectos-legales.tex:24`; `12-anexos.tex:126,144` |
+| A2 / Anexo B "commit definitivo" | Patron de dos commits explicado | `12-anexos.tex:27` |
+| A2 / bibliografia | `Gomez2026_repositorio`: "Version 1.2.5", `urldate` 2026-10-28 | `Bibliography_base.bib:813,816` |
+| Cierre | Parrafo del dictamen del 28-10-2026 en el Anexo I | `12-anexos.tex:220` |
+
+### Consultas a los autores (PENDIENTE; no bloquean el apply)
+
+Cada consulta tiene su marcador `% PENDIENTE AUTORES` en la fuente, salvo Q6 y Q8, que no cambian el texto.
+
+- **Q1 (fechas)** - PENDIENTE. La corrida telefonica, comenzo el 5-10 (25 casos medidos segun c-71, `tasks.md:71`, y c-72, `proposal.md:7`) y concluyo el 6-10? A que horas? Si se confirma, 1.8, 4.5, la leyenda de la Figura 10 y el cronograma pasan a "5 y 6 de octubre". Marcador: `04-marco-metodologico.tex:63`.
+- **Q2 (version desplegada)** - PENDIENTE. Que imagen de `backend-corpus` y que flujo importado en `n8n-corpus` procesaron los 56 casos del 6-10 (anteriores o posteriores a c-71, `1368fd8`, y a c-72, `a76851e`)? Marcador: `:64`.
+- **Q3 (quien y como)** - PENDIENTE. Nombre de quien recito las 81 llamadas; si fue una sola persona; si leyo la descripcion tal como la mostraba el softphone; dispositivo, microfono, red y entorno; repeticiones ademas de R126 y R002. La tesis dice "uno de los autores" por "el autor" de c-70 (`tasks.md:96`, `proposal.md:9`). Marcador: `:65`.
+- **Q4 (arnes)** - PENDIENTE. Quien ejecuto `scripts/corpus_ingest/ingest_via_n8n.py` el 2-10, con que flags (en particular `--source`, por defecto `json`), contra que stack y `--base-url` (por defecto nginx) y que host SMTP. Marcador: `:66`.
+- **Q5 (disparador IMAP)** - PENDIENTE. Intervalo efectivo de recogida del buzon en la instancia del 2-10 (el flujo declara `everyMinute`, `n8n/workflow.json:5-13`; el repositorio no contiene una medicion). La tesis dice "configurado para sondear el buzon una vez por minuto". Marcador: `:67`.
+- **Q6 (registro)** - PENDIENTE. Como paso la `cache_meta` de `hybrid-v3` al hash `1fd17d7e...` del corpus del 19-10 sin reclasificar. No cambia la tesis.
+- **Q7 (registros primarios)** - PENDIENTE. Se conservan fuera del repositorio la base operativa con los incidentes del 2-10, el respaldo del 9-10 con los 81 ingresos, los sidecars y las ejecuciones de N8N? Si se conservan, se versiona una exportacion pseudonimizada (id de caso y marcas temporales)? Si no, confirmar "no se conservaron" para el Anexo F. Marcador: `12-anexos.tex:96`.
+- **Q8 (proxy)** - PENDIENTE. La tesis (5.1, 7.4, Anexo A) dice que el despliegue de la campana no incluyo el proxy, pero el arnes lee por defecto a traves de nginx (`https://localhost`); estaba activo nginx el 2-10 (fuera del tramo medido)? No cambia la tabla ("sin TLS verificado").
+
+### Discrepancias con el dictamen y hallazgos adicionales
+
+1. **Corrida telefonica contemporanea de c-71 y c-72.** El dictamen afirma que ambas corridas usaron "la configuracion del clasificador anterior a c-71 y c-74". Es cierto para la del 2-10 y, para c-74, en ambas; no se sostiene para c-71 en la telefonica, que concluyo despues de `1368fd8` (5-10, 21:50) y es contemporanea de c-72 (`a76851e`, 6-10, 16:38). La tesis describe lo que el historial sostiene.
+2. **Hora de `hybrid-v3`.** 22:22 UTC son las 19:22 -0300, 27 minutos antes del commit `d6bb474` (19:49:21 -0300): la corrida se hizo sobre el arbol de trabajo y `d6bb474` es la primera revision versionada que contiene `hybrid-v3`. La tesis dice "que versiona el commit", nunca "ejecutada sobre el commit".
+3. **Hash del corpus reasociado.** `1fd17d7e...` corresponde a la version del corpus creada el 19-10 por `4602bf5`; la del 9-10 (`8f7e6ec`) es `5f062e14...`. Entre ambas solo cambiaron los 81 `tiempo_automatizado_s` telefonicos y `metadata.descripcion`, no descripciones ni etiquetas; la `cache_meta` fue reasociada sin reclasificar (Q6). Verificado: `sha256sum data/corpus_evaluacion_pseudonimizado.json` = `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb`, igual al `corpus_hash` de la evidencia.
+4. **React 19 en 6.7.** El inventario del dictamen no lo incluia; `package-lock.json` pasa de 18.3.1 (`d6bb474`) a 19.3.1 (`v1.2.5`, c-128). 6.7 dice ahora "React" con remision a la tabla.
+5. **Seccion 6.4.** Decia "desde el inicio de la llamada hasta la confirmacion del numero de incidente"; el corpus registra duracion mas latencia posterior al cuelgue (c-77). Corregido.
+6. **Intervalo del disparador IMAP.** `pollTimes: everyMinute` es configuracion declarada; en n8n 2.11.2 el parametro podria ser inerte (herencia del disparador Outlook, c-39 `design.md:10`). La tesis no afirma un intervalo medido (Q5).
+7. **Libro mayor y `Gomez2026_repositorio`.** El requisito vigente reservaba la actualizacion de la entrada al change de la release, y las releases `v1.2.3`, `v1.2.4` y `v1.2.5` la omitieron (decia "Version 1.2.2", `urldate` 2026-10-26). c-158 la realinea a 1.2.5 / 2026-10-28. **Consigna para la proxima release** (la que publique c-158 a c-160): actualizar en el mismo commit que cambia el tag del Anexo B (patron de dos commits) la entrada bibliografica, la columna "entregada" de la tabla `tab:configuracion-evaluada-entregada` y la frase "commit que fija el contenido de la version entregada" (`12-anexos.tex:27`).
+8. **Barrido de la tarea 4.10.** Revisadas todas las apariciones de `0.115`, `0.30.6`, `2.20.0`, `pytest`, `React`, `reintento`, `directorio de empleados`, `prueba de humo` y `TLS` en `paper/sections/*.tex`. Quedan rotuladas o remitidas las de 5.4, 6.1, 6.3, 6.5, 6.7, 7.4 y el Anexo H. Sin rotular, por decision: `05-arquitectura.tex:23` (fila "Procesamiento" de la tabla de capas, "FastAPI~0.115"; agregarle texto movia una pagina) y `09-conclusiones.tex:23` (fila del objetivo 1 con "reintentos idempotentes" y "TLS 1.2/1.3"; la nota movia una pagina), ambas pendientes del change de las observaciones B; `05-arquitectura.tex:8` (5.1) y las apariciones de TLS de 11.x fuera de 7.4 pertenecen a B8.
+9. **Solapamiento con B8.** El tratamiento del disparador por directorio en 2.4, 5.5, 7.5 y el Anexo H queda para el change de las observaciones B; la acotacion de 6.3 ("este ultimo, posterior a las corridas") se retira si ese change retira el disparador de 6.3.
+
+Fuera de alcance para un change posterior: `openspec/specs/telefonia-corpus-medicion/spec.md:47-52` y `docs/medicion-latencia-e2e.md:72-91` conservan la formula telefonica previa a c-77; `docs/medicion-latencia-e2e.md:55-58` dice que el correo "sub-mide", cierto para `latencia_e2e_ms` pero no para el valor del corpus.
+
+### Compilacion y libro mayor de paginas
+
+Compilacion en `texlive-thesis` (`latexmk main.tex`), exit 0: 0 errores (`grep -c "^!" main.log`), 0 referencias indefinidas, 0 `multiply defined`, 25 `Overfull` (linea base 26: desaparece el del Anexo F; la tabla nueva no agrega ninguno), `??` = 0, `verify_citations.py` PASS.
+
+| Change | Commit | Total | Cuerpo sin anexos | Anexos | Delta total | Delta cuerpo | Regla vigente | Estado |
+|---|---|---|---|---|---|---|---|---|
+| base `v1.2.5` (`HEAD`) | `d186d73` | 106 | 98 | 8 | - | - | (b) cuerpo sin anexos <= 100 | Medido: `Anexos` en p. 99 (`main.toc`) |
+| `c-158` (`change/c-158-procedencia-de-datos-y-configuracion-evaluada-vs-entregada`) | sin commit | 109 | 100 | 9 | +3 | +2 | (b) cuerpo sin anexos <= 100 | Medido: `abspage@last{109}`; `Anexos` en p. 101; prevision del design +1 a +2 (cuerpo +0 a +1): el exceso de +1 total y +1 cuerpo se debe a que el apartado de 4.5 (unos 2000 caracteres) cae sobre una ultima pagina del capitulo 4 con holgura de unos 600, y a que las remisiones de 6.1 a 6.7 agregan unas 600 letras a un capitulo 6 cuyas dos figuras de 6.8 ya ocupan una pagina de flotantes dedicada (ver `conteos-canonicos-tecnicos.md`, 6.1). **Regla (b): cuerpo 100, margen 0 (cumple)** |
+
+Compensaciones aplicadas: apartado de 4.5 reducido de unas 410 a unas 340 palabras, remisiones sin "Anexo~B" repetido, titulo corto de la Figura 10, filas de la tabla del Anexo B acortadas, `\path{}` en las rutas del Anexo F. No se aplico ninguna palanca global (espaciado de flotantes, listas de referencias) para no desplazar tablas del capitulo 8 a los anexos.
+
+## Dictamen v10 / v1.2.5 (2026-10-28) - c-159
+
+Atencion de las recomendaciones A3 y A4 del dictamen CONEAU del 2026-10-28 sobre la tesis v10 /
+release `v1.2.5` (`auditorias/Dictamen_Tesis_v10_v1.2.5_CONEAU_2026-10-28.md`). Change
+`c-159-reconciliar-figuras-tablas-y-evidencia-cualitativa` (gobernanza MEDIO), aplicado despues de
+c-158 y antes de c-160. Ninguna medicion nueva: las figuras salen de fuentes Mermaid versionadas, las
+tablas del ORM y del gap assessment, y las cifras de la Seccion 8.6 del script
+`docs/Tesis/Correcciones/recontar_errores_frontera.py` ejecutado sobre el corpus y la evidencia
+`hybrid-v3`. Etiquetas de c-158 usadas: `tab:configuracion-evaluada-entregada` (Anexo B); c-158 no creo
+una tabla propia del Anexo I (agrego un parrafo del dictamen del 28-10), de modo que c-159 amplia ese parrafo.
+
+### Matriz de trazabilidad (A3 y A4)
+
+Lineas leidas despues de aplicar el change, en `docs/Tesis/v10 (IA)/paper/sections/`.
+
+| Rec | Sintesis | Change | Archivo:linea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| A3a | Figuras 1 y 4: gate por etapa y disparador por directorio con fecha | c-159 | `05-arquitectura.tex:35` | `fig:componentes` | `disparador por reportante no identificado en el directorio es posterior a la campaña` | cerrada |
+| A3a | Figura 4 (secuencia): configuracion entregada y remision a la tabla de c-158 | c-159 | `05-arquitectura.tex:58` | `fig:secuencia` | `posterior a la campaña (c-82, 13-10-2026)` | cerrada |
+| A3b | Figura 2 reemplazada por diagrama de cinco capas y tres canales con fuente versionada | c-159 | `05-arquitectura.tex:44` | `fig:arquitectura` | `cinco capas y tres canales de entrada` | cerrada |
+| A3b | Anexo A inventaria el diagrama de arquitectura | c-159 | `12-anexos.tex:10` | `sec:anexo-diagrama-arquitectura` | `arquitectura\_sistema.md` | cerrada |
+| A3c | Tabla 5 con los atributos del ORM, contacto cifrado y cuatro roles | c-159 | `05-arquitectura.tex:99` | `tab:entidades` | `requiere\_revision\_humana` | cerrada |
+| A3c | Directorio: cifrado Fernet e indice ciego en lugar de texto plano | c-159 | `05-arquitectura.tex:105` | `tab:entidades` | `índice ciego (HMAC-SHA-256)` | cerrada |
+| A3c | Prosa de los roles alineada con la tabla | c-159 | `05-arquitectura.tex:112` | `tab:entidades` | `a la mesa de ayuda, al administrador del directorio y a la gestión de incidentes` | cerrada |
+| A3c | Figura 5 desde er_modelo_datos.md con la leyenda de configuracion entregada | c-159 | `05-arquitectura.tex:117` | `fig:er_modelo_datos` | `configuración entregada (release \texttt{v1.2.5}` | cerrada |
+| A3d | Tabla 8: GV 2 | c-159 | `11-aspectos-legales.tex:80` | `tab:cumplimiento-nist` | `& 2 & Política, roles y evaluación de proveedores vigentes` | cerrada |
+| A3d | Tabla 8: ID 2 | c-159 | `11-aspectos-legales.tex:81` | `tab:cumplimiento-nist` | `& 2 & Inventario de activos y clasificación y etiquetado vigentes` | cerrada |
+| A3d | Tabla 8: DE 1 con 8.15 parcial y brecha 8.16 | c-159 | `11-aspectos-legales.tex:83` | `tab:cumplimiento-nist` | `8.15 parcial` | cerrada |
+| A3d | Tabla 8: RS 2 | c-159 | `11-aspectos-legales.tex:84` | `tab:cumplimiento-nist` | `& 2 & Plan de respuesta a incidentes vigente` | cerrada |
+| A3d | Lista de C-61 con 5.2 y 5.9 | c-159 | `11-aspectos-legales.tex:94` | `subsec:cumplimiento-brechas` | `5.1, 5.2, 5.9, 5.12, 5.13` | cerrada |
+| A4a | Tres casos reproducidos literalmente desde el campo descripcion del corpus | c-159 | `07-resultados.tex:246` | `subsec:analisis-errores` | `Su PC se reinicia a cada rato, sospecha que son los cables de la computadora.` | cerrada |
+| A4b | Confianza leida por etapa (Gemini alta en R001 y R015; la de R032 es deterministica) | c-159 | `07-resultados.tex:246` | `subsec:analisis-errores` | `no es criterio de derivación a revisión` | cerrada |
+| A4c | Los tres casos declarados aciertos laxos | c-159 | `07-resultados.tex:246` | `subsec:analisis-errores` | `Los tres casos son aciertos laxos` | cerrada |
+| A4d | Columna de aciertos laxos por frontera (5, 10, 8, 9; total 32) | c-159 | `07-resultados.tex:235` | `tab:errores` | `\textbf{32}` | cerrada |
+| A4d | Lectura laxa: 32 de 53 (60,4 %) y 21 plenos; 147 + 32 = 179 | c-159 | `07-resultados.tex:244` | `subsec:analisis-errores` | `147 estrictos más 32 laxos` | cerrada |
+| Errata | sobre que aspecto -> sobre qué aspecto | c-159 | `07-resultados.tex:242` | `subsec:analisis-errores` | `sobre qué aspecto prevalece` | cerrada |
+
+La fila A3a cierra el residual de A1 del dictamen del 2026-10-22 en las Figuras 1 y 4 (el gate de las
+figuras decia "confianza >= 0.90" y aplicaba 0,70 a toda clasificacion).
+
+### Discrepancias con el dictamen y hallazgos adicionales
+
+1. **Tabla 8 tambien desactualizada en ID y DE.** El dictamen señalaba GV y RS; ID (1, "sin inventario ni clasificacion formal") y DE contradecian la Seccion 7.6.4 y el gap assessment (seccion 4). Se reconciliaron las cuatro filas (GV 2, ID 2, DE 1 con 8.15 parcial y brecha 8.16, RS 2).
+2. **Figura 5 sin c-153.** Omitia el cifrado Fernet del contacto, los indices ciegos, `nombre` e `incidente.requiere_revision_humana`; su fuente citaba "Tabla~4". Corregido en `docs/diagrams/er_modelo_datos.md`.
+3. **Tabla 5 con texto encimado.** Las celdas usaban `\\` dentro de columnas `p{}` y la primera columna no admitia `directorio_empleado`; reescrita sin `\\` internos y con `\footnotesize\singlespacing`. Tambien declaraba tres roles (el ORM admite cuatro: `usuario_final`, `mesa_de_ayuda`, `administrador_directorio`, `gestion_incidentes`).
+4. **Figura 4.** Mensajes truncados ("Confirmacion: incidente", "Aviso: incidente") por el `#{id}` de la fuente; version de N8N ausente (exigida por N8N-DOC-006); nota del corpus etiquetado reemplazada por una formulacion no factica (insumo previsto para aprendizaje activo).
+5. **Tabla 16 sin registro canonico.** Sus cifras no figuraban en `numeros-canonicos.md`; ahora estan en la Seccion 3.13.
+6. **Lista de C-61.** Faltaban 5.2 y 5.9 (`docs/cumplimiento/plan-cambios-cumplimiento.md:39`).
+7. **Anexo I.** c-158 no creo tabla propia para el dictamen del 28-10 (usa un parrafo): c-159 extendio ese parrafo con A3 y A4 en lugar de agregar filas. Desvio respecto de la tarea 6.4; c-160 reestructura el Anexo I.
+8. **Figura 2 sin fuente versionada**: reemplazada por `docs/diagrams/arquitectura_sistema.md` (opcion a del dictamen). El drawio de capas de Luca queda intacto.
+
+Datos que requieren a los autores (no bloquean): (a) `n8n/workflow.json` no envia `reportante_email` ni `reportante_telefono` en el `POST /api/v1/incidentes`, de modo que en la configuracion entregada los incidentes de correo y telefonia ingresados por N8N quedarian sin reportante identificado y derivados a revision por VIS-005 (no verificado en ejecucion; las figuras solo representan la regla); (b) si prefieren actualizar `Diagrama de Capas.drawio` en lugar de la fuente Mermaid (D4); (c) deriva fuera de la tesis: el comentario de `requiere_revision_humana` en `App/Backend/app/models/incidente.py` ("umbral de 0.70 o Gemini fallo"), `docs/anexo_c_esquema_bd.md` sin `directorio_empleado`, el memo que cita el SHA-256 CRLF de la evidencia (`3fb5bacd...`, el blob LF es `89cf956e...`) y `CHANGES.md` sin c-155 a c-157 (resuelto por la FASE 47).
+
+### Evidencia del recomputo (tarea 5.5)
+
+Salida de `python docs/Tesis/Correcciones/recontar_errores_frontera.py` (dos ejecuciones identicas, codigo 0, sin archivos modificados):
+
+```
+Casos: 200
+Errores estrictos: 53 de 200
+Aciertos laxos entre los errores: 32 de 53 (60,4 %)
+Errores plenos: 21 de 53 (39,6 %)
+Identidad: 147 + 32 = 179
+
+| Frontera | Errores | Aciertos laxos | % del total de errores | % laxos de la frontera |
+|---|---|---|---|---|
+| Hardware-Software | 14 | 5 | 26,4 | 35,7 |
+| Sistemas-Software | 12 | 10 | 22,6 | 83,3 |
+| Seguridad-Software | 11 | 8 | 20,8 | 72,7 |
+| Demás fronteras | 16 | 9 | 30,2 | 56,3 |
+```
+
+### Evidencia TDD (script de recomputo)
+
+Imagen `eval-tests` (Python 3.12, pytest 9.1.1): `python -m pytest docs/Tesis/Correcciones -q`.
+
+| Tarea | Archivo de prueba | Capa | Red de seguridad | RED | GREEN | TRIANGULAR | REFACTOR |
+|---|---|---|---|---|---|---|---|
+| 5.1 a 5.4 | `docs/Tesis/Correcciones/test_recontar_errores_frontera.py` | Unitaria (datos sinteticos) y caracterizacion (corpus real) | 11/11 (`test_verificar_matriz_trazabilidad.py`) | `ModuleNotFoundError` en la coleccion (1 error) | 50 passed (11 + 39) | Casos con frontera invertida, sin error, predicho fuera de `CLASES`, todos laxos, ninguno laxo y caracterizacion 53/32 | Fixture de modulo en lugar de fixture de clase (elimina un warning); 50 passed |
+
+### Figuras: version de mmdc y dimensiones
+
+| Figura | Fuente | mmdc | PNG (px) | Alto/ancho (previo) |
+|---|---|---|---|---|
+| 1 `componentes.png` | `docs/diagrams/componentes.md` | 12.0.0 | 1568x2034 | 1,297 (1,265) |
+| 2 `arquitectura_sistema.png` | `docs/diagrams/arquitectura_sistema.md` | 12.0.0 | 1568x530 | 0,338 (0,675) |
+| 4 `secuencia.png` | `docs/diagrams/secuencia.md` | 11.17.1 | 1568x1454 | 0,927 (0,673) |
+| 5 `er_modelo_datos.png` | `docs/diagrams/er_modelo_datos.md` | 11.17.1 | 1568x1918 | 1,223 (1,407) |
+
+La Figura 1 con mmdc 11 salia con relacion 0,448 (ilegible); con 12 vuelve a 1,297 (hallazgo de c-140). La Figura 2 queda mas apaisada que la previa (0,338) para conservar tamano de letra legible a ancho de texto. Ningun PNG muestra `\n` literales; inspeccion visual realizada.
+
+### Compilacion y libro mayor de paginas
+
+Compilacion en `texlive-thesis` (`latexmk main.tex`): 0 errores (`grep -c "^!" main.log`), 0 referencias indefinidas, 0 `multiply defined`, 24 `Overfull` (linea base tras c-158: 25), `??` = 0, `verify_citations.py` PASS.
+
+| Change | Commit | Total | Cuerpo sin anexos | Anexos | Delta total | Delta cuerpo | Regla vigente | Estado |
+|---|---|---|---|---|---|---|---|---|
+| `c-158` (linea base de c-159) | sin commit | 109 | 100 | 9 | - | - | (b) cuerpo sin anexos <= 100 | Medido |
+| `c-159` | sin commit | 108 | 99 | 9 | -1 | -1 | (b) cuerpo sin anexos <= 100 | Medido: `Anexos` en p. 100 (`main.toc`); la Figura 2 mas baja y la Figura 5 mas corta compensan la Figura 4 mas alta y la columna nueva |
+
+### Decisiones D1 a D13 (sintesis)
+
+D1 aplicacion despues de c-158 con anclas por contenido; D2 gate de las figuras tomado del codigo (`hybrid.py:168,252`, `settings.py:117,134`); D3 disparador por directorio rotulado con "c-82, desde el 13-10-2026, posterior a la campaña"; D4 Figura 2 en Mermaid (cinco capas, tres canales); D5 Tabla 5 y Figura 5 desde el ORM; D6 Tabla 8 desde el gap assessment versionado; D7 casos literales; D8 columna de aciertos laxos y lectura interpretativa; D9 script en `docs/Tesis/Correcciones/` reutilizando `evaluation.metrics`; D10 seccion 3.13 del memo; D11 trazabilidad (esta seccion y el Anexo I); D12 leyendas con forma corta/larga; D13 fidelidad de la Figura 4 (sin `#` ni `;`, N8N 2.11.2, respuesta `IncidenteRead`).
+
+## Dictamen v10 / v1.2.5 (2026-10-28) - c-160
+
+Atencion de las recomendaciones B5, B6, B7 y B8 del dictamen CONEAU del 2026-10-28 sobre la tesis v10 /
+release `v1.2.5` (`auditorias/Dictamen_Tesis_v10_v1.2.5_CONEAU_2026-10-28.md`). Change
+`c-160-residuos-de-correccion-anexo-i-y-consistencia-interna` (gobernanza MEDIO), aplicado despues de
+c-158 y c-159 sobre el arbol de trabajo de la rama `docs/dictamen-v1-2-5-y-changes-c-158-c-160` (commit
+base `e2db5a6`; c-158 y c-159 sin commit en el arbol). Ninguna medicion nueva ni valor canonico nuevo: el
+change retira residuos del proceso de correccion, reestructura el Anexo I, ajusta la seccion 10 y el
+resumen y unifica la formulacion del alcance del gate. No se tocaron `docs/Tesis/v9 (IA)/`, `App/`,
+`n8n/`, `evaluation/`, `openspec/config.yaml` ni `requirements.txt`.
+
+### Matriz de trazabilidad (B5 a B8)
+
+Lineas leidas despues de aplicar el change, en `docs/Tesis/v10 (IA)/paper/sections/`.
+
+| Rec | Sintesis | Change | Archivo:linea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| B5a | R1: se retira la narracion de la formulacion original de la segunda sub-hipotesis | c-160 | `01-introduccion.tex:34` | `subsec:hipotesis-trabajo` | `complemento del umbral de exactitud fijado a priori` | cerrada |
+| B5b | R2: se retira la oracion del umbral de 0,90 del diseno inicial | c-160 | `05-arquitectura.tex:80` | `subsec:subsistema-clasificacion` | `punto de operación 0,5166` | cerrada |
+| B5c | R3: la clasificacion telefonica se describe en presente y remite a la procedencia | c-160 | `06-implementacion.tex:44` | `subsec:construccion-flujo-n8n` | `se resuelve con la misma cascada híbrida del backend` | cerrada |
+| B5d | R4: se retira "Ningun valor canonico cambia" | c-160 | `07-resultados.tex:215` | `subsec:sensibilidad-ajustes` | `El análisis estima la sensibilidad de las métricas` | cerrada |
+| B5e | R5: se retira la cifra previa de 180 horas-persona | c-160 | `08-discusion.tex:14` | `subsec:interpretacion-resultados` | `\approx 32{,}2\)~h-persona por trimestre.` | cerrada |
+| B5f | R6: la salvaguarda se describe con la regla de 0,70 que no derivo ningun caso | c-160 | `08-discusion.tex:16` | `subsec:interpretacion-resultados` | `la regla de 0,70 no derivó ningún caso` | cerrada |
+| B5g | R7: se retira la estimacion preliminar sin fuente | c-160 | `08-discusion.tex:66` | `subsec:implicancias-practicas` | `que se factura por separado.` | cerrada |
+| B6a | Naturaleza y autoria de los dictamenes declaradas con el instrumento real | c-160 | `12-anexos.tex:183` | `sec:anexo-trazabilidad` | `revisiones evaluativas previas a la defensa` | cerrada |
+| B6b | Punteros de B6 y B8 corregidos; B10 +c-146; B12 +4.8; A5 +c-154 | c-160 | `12-anexos.tex:204` | `tab:anexo-trazabilidad` | `\autoref{subsec:matriz-metricas}, \autoref{tab:cumplimiento-objetivos}` | cerrada |
+| B6c | Residuos de A1, B4, B9, B14 y B16 registrados como remision o pendiente | c-160 | `12-anexos.tex:197` | `tab:anexo-trazabilidad` | `residuos en A3 y B8 del 28-10` | cerrada |
+| B6d | Tabla del dictamen del 28-10 con A1 a A4 y B5 a B8 | c-160 | `12-anexos.tex:237` | `tab:anexo-trazabilidad-2810` | `\texttt{c-160}` | cerrada |
+| B6e | Decisiones c-72, c-74 y c-82 con `\autoref{sec:implementacion}` | c-160 | `12-anexos.tex:247` | `sec:anexo-trazabilidad` | `incorporada el 13 de octubre de 2026 (\texttt{c-82})` | cerrada |
+| B7a | Tabla 18: TLS verificado despues de la campana | c-160 | `09-conclusiones.tex:23` | `tab:cumplimiento-objetivos` | `verificado después de la campaña, en el despliegue de referencia` | cerrada |
+| B7b | Prosa de 10.1: TLS en el despliegue de referencia, no en la configuracion evaluada | c-160 | `09-conclusiones.tex:35` | `subsec:cumplimiento-objetivos` | `no en la configuración evaluada ni en la instancia operativa` | cerrada |
+| B7c | Objetivo 3 alcanzado parcialmente en la prosa | c-160 | `09-conclusiones.tex:39` | `subsec:cumplimiento-objetivos` | `se alcanza parcialmente (latencia y exactitud medidas por canal)` | cerrada |
+| B7d | Objetivo 6 "Alcanzado parcialmente" en la Tabla 18 | c-160 | `09-conclusiones.tex:28` | `tab:cumplimiento-objetivos` | `Alcanzado parcialmente` | cerrada |
+| B7e | Prosa del objetivo 6 sin sugerir cumplimiento pleno | c-160 | `09-conclusiones.tex:43` | `subsec:cumplimiento-objetivos` | `sustenta parcialmente el sexto` | cerrada |
+| B7f | Resumen: exactitud y macro-F1 dentro de la muestra | c-160 | `00-resumen.tex:13` | `Resumen` | `Dentro de la muestra, la exactitud estricta alcanzó 73,5` | cerrada |
+| B7g | Abstract: in-sample | c-160 | `00-resumen.tex:29` | `Abstract` | `As in-sample estimates` | cerrada |
+| B8a | 5.5: 0,7385 frente a 0,6769 sobre los 130 casos con prediccion de ambas etapas | c-160 | `05-arquitectura.tex:80` | `subsec:subsistema-clasificacion` | `0,7385 frente a 0,6769 sobre los 130 casos` | cerrada |
+| B8b | 5.1: remision a la seccion de resultados y a los Anexos G y A | c-160 | `05-arquitectura.tex:8` | `subsec:vision-general` | `las mediciones de la \autoref{sec:resultados}` | cerrada |
+| B8c | Anexo G nombra el runbook de la prueba de humo | c-160 | `12-anexos.tex:105` | `sec:anexo-documentacion-operativa` | `docs/runbook-smoke-stack-referencia.md` | cerrada |
+| B8d | 8.5: linea 95 del informe de sensibilidad (nivel a) | c-160 | `07-resultados.tex:215` | `subsec:sensibilidad-ajustes` | `línea~95` | cerrada |
+| B8e | Formulacion canonica del gate en 2.4 | c-160 | `02-marco-teorico.tex:34` | `subsec:human-in-the-loop` | `se evalúa solo sobre la salida de la etapa Gemini` | cerrada |
+| B8e | Formulacion canonica del gate en 7.5 | c-160 | `11-aspectos-legales.tex:34` | `subsec:consentimiento-derechos` | `se evalúa solo sobre la salida de la etapa Gemini` | cerrada |
+| B8e | Formulacion canonica del gate en 11.1 | c-160 | `10-recomendaciones.tex:10` | `subsec:calibracion-gate` | `solo se evalúa sobre la salida de Gemini` | cerrada |
+| B8e | Regla de 0,70 y disparador fechado en 5.5 | c-160 | `05-arquitectura.tex:82` | `subsec:subsistema-clasificacion` | `fija la confianza en 0,0` | cerrada |
+| B8e | Anexo H: umbral de revision con la reserva y el disparador fechado | c-160 | `12-anexos.tex:144` | `subsec:anexo-parametros-config` | `Desde el 13 de octubre de 2026` | cerrada |
+| B8f | 6.3: disparador con fecha explicita | c-160 | `06-implementacion.tex:40` | `subsec:construccion-flujo-n8n` | `incorporado el 13 de octubre de 2026` | cerrada |
+
+### Residuos trasladados (B5)
+
+Texto literal retirado del cuerpo, con su ubicacion previa en el arbol `d186d73` y su destino.
+
+| # | Ubicacion previa | Texto retirado (literal) | Destino |
+|---|---|---|---|
+| R1 | `01-introduccion.tex:34` | "Esta cota explicita la fracción esperada que la formulación original, referida al proceso manual ---donde la intervención es total por definición---, no especificaba, por lo que aquella no era contrastable. Con la evidencia disponible tampoco esta se contrasta" (ahora: "Con la evidencia disponible esta sub-hipótesis no se contrasta") | este registro |
+| R2 | `05-arquitectura.tex:80` | "Sustituyó al umbral de 0,90 sobre la confianza del diseño inicial, retirado porque esa confianza no reflejaba la fiabilidad de la decisión." | Anexo I (decision c-74) y este registro |
+| R3 | `06-implementacion.tex:44` | "la rama de clasificación por agente LLM basada en LangChain fue retirada y la clasificación telefónica se unificó con la cascada híbrida del backend" | Anexo I (decision c-72) y este registro |
+| R4 | `07-resultados.tex:213` | "Ningún valor canónico cambia:" | este registro |
+| R5 | `08-discusion.tex:14` | "La cifra previa de 180 horas-persona no era reproducible con los tiempos y el volumen declarados." | este registro |
+| R6 | `08-discusion.tex:16` | "pero su cobertura real es menor que la que sugiere la sola proporción de casos escalados." | este registro |
+| R7 | `08-discusion.tex:66` | "La estimación preliminar, sin fuente, resultaba entre veinte y treinta veces superior al precio de lista vigente." | este registro |
+
+Excluido (D7 del design): `08-discusion.tex:97` ("los 2 minutos 45 segundos luego corregidos a 61,6~s")
+describe el estudio, no el manuscrito. Los residuos A1, B4, B9, B14 y B16 del dictamen del 22-10 quedan
+registrados en las filas correspondientes de la Tabla 20 del Anexo I (mapeo de D3 confirmado contra lo
+efectivamente aplicado por c-158 y c-159): A1 -> A3 y B8 del 28-10; B4 -> B7; B9 -> A1 del 28-10 y
+pendiente (fechas de las iteraciones Scrumban, sin fuente primaria); B14 -> A3 y A4 del 28-10 y pendiente
+(erratas de las Figuras 3, 8, 9 y 11 y "seudonimizado"); B16 -> A2 del 28-10 y pendiente
+(`ramya2021classifying`, C12).
+
+### Decisiones (sintesis)
+
+- **D1 Anexo I**: se conserva y se compacta. Extension medida tras c-158 a c-160: aprox. 1,9 paginas (pp. 108-109 del PDF de 109 paginas), frente a aprox. 1,0 pagina antes de la familia; el parrafo de naturaleza reemplaza al primer parrafo anterior con extension menor.
+- **D2 Naturaleza**: revisiones evaluativas previas a la defensa, solicitadas por los autores, con el perfil `Prompt2.docx` aplicado mediante un modelo de lenguaje; no vinculantes; no emitidas por el jurado, la direccion, la catedra ni la CONEAU (OQ1 pendiente de los autores).
+- **D3 Estructura**: naturaleza, dictamen del 22-10 (Tabla 20 con punteros corregidos), dictamen del 28-10 (tabla propia `tab:anexo-trazabilidad-2810` con A1 a A4 y B5 a B8; c-158 y c-159 solo habian dejado un parrafo) y decisiones de diseno (c-72, c-74, c-82).
+- **D4 Formulacion canonica del gate**: la regla `requiere_revision_humana = (confianza < 0,70)` se evalua solo sobre la salida de la etapa Gemini; la reserva deriva siempre, con confianza 0,0, y la etapa determinística no deriva por su confianza. Llevada a 2.4, 5.5, 7.5, 11.1 y Anexo H; 6.3 y 8.3 ya coincidian.
+- **D5 Disparador por directorio**: fecha 13 de octubre de 2026 (posterior a las corridas), independiente de la clasificacion, en 2.4, 5.5, 6.3, 7.5 y Anexo H; no se agrega a 8.3 ni 11.1. Coincide con las leyendas de las Figuras 1 y 4 (c-159) y con la tabla de c-158. En 2.4 y en el Anexo H la forma es abreviada por presupuesto de paginas (misma fecha).
+- **D6 Comparacion de 5.5**: 96/130 = 0,7385 frente a 88/130 = 0,6769, ambas dentro de la muestra.
+- **D8 Seccion 10**: TLS verificado despues de la campana en el despliegue de referencia; objetivo 3 y objetivo 6 alcanzados parcialmente (el objetivo 6 por la regla de la propia tabla: confianza sin recalibrar y analisis dentro de la muestra).
+- **D9 Resumen y abstract**: calificacion "dentro de la muestra" / "in-sample" sin cambiar cifras.
+- **D10 Remisiones**: 5.1 remite a la seccion de resultados, a `subsec:pruebas-automatizadas` y a los Anexos G y A; la release v1.2.2 de 5.1 no se toca; 8.5 pasa a la linea 95.
+- Pasajes que c-158 dejo sin remision a la tabla por presupuesto de paginas: ambos entraron en el presupuesto de c-160 y se resolvieron. La celda "Procesamiento" de la tabla de capas (`05-arquitectura.tex:23`, "FastAPI~0.115") ahora se rotula "configuracion evaluada" y remite a `tab:configuracion-evaluada-entregada`; la prosa del objetivo 1 de 10.1 (`09-conclusiones.tex:35`, TLS) remite a la misma tabla.
+
+### Candidatos fuera de alcance (OQ3, OQ6)
+
+- Segunda observacion de la seccion 7 del dictamen: calificar como dentro de la muestra la frase de 10.2 sobre la viabilidad tecnica del modelo de lenguaje.
+- Notacion "gate del 70 %" de 9.1 frente a "0,70" del resto del documento.
+- Menores de la verificacion aritmetica: mediana del formulario 1,265 impresa como 1,26 y margen de 6,66 % frente a n = 200,2.
+- `07-resultados.tex`, 8.5 y `09-conclusiones.tex` conservan 0,7405 (97/131) como exactitud de la etapa determinística dentro de la muestra, sin mezclar denominadores.
+
+### Compilacion, paginas y palabras
+
+Compilacion en `texlive-thesis` (`latexmk main.tex`): 0 errores (`grep -c "^!" main.log`), 0 referencias indefinidas, 0 `multiply defined`, 24 `Overfull` (igual a la linea base tras c-159), `??` = 0, `verify_citations.py` PASS. Resumen (regla de c-106): ES 249 -> 249, EN 242 -> 245 (maximo 250). `verificar_matriz_trazabilidad.py --rev v1.2.0`: 1 falla (A5a, preexistente); en el arbol de trabajo 15 fallas, todas por desplazamientos de lineas de c-158 y c-159 o preexistentes, ninguna sobre un fragmento editado por c-160.
+
+### Libro mayor de paginas (c-160)
+
+| Change | Commit | Total | Cuerpo sin anexos | Anexos | Delta total | Delta cuerpo | Regla vigente | Estado |
+|---|---|---|---|---|---|---|---|---|
+| `c-159` (linea base de c-160) | sin commit | 108 | 99 | 9 | - | - | (b) cuerpo sin anexos <= 100 | Medido |
+| `+c-160` | sin commit | 109 | 99 | 10 | +1 | 0 | (b) cuerpo sin anexos <= 100 | Medido: `abspage@last{109}`; `Anexos` en p. 100 (`main.toc`); exceso de 9 paginas sobre el tope de 100 del total, declarado y defendido (el cuerpo cumple <= 100). El Anexo I crece una pagina; el cuerpo se mantiene en 99 tras recortar las adiciones de 2.4 y de la seccion 10 (palancas de forma de D14) |
+
+### Consigna para otros changes
+
+- La release que publique c-158 a c-160 debe actualizar en el mismo commit la entrada `Gomez2026_repositorio`, la columna "entregada" de `tab:configuracion-evaluada-entregada` y el tag del Anexo B (ver c-158).
+- OQ1 (autoria de los dictamenes) y OQ4/OQ5 (agente LLM en la corrida telefonica; alcance operativo del disparador por directorio) siguen pendientes de los autores.
+
+- 2026-10-29: archivados los tres changes del dictamen del 28-10 (c-158 41/42 con la 7.1 diferida a los autores, c-159 39/39 y c-160 42/42) en `openspec/changes/archive/2026-10-29-*`, con `openspec/specs/` sincronizada, `openspec validate --specs --strict` en 64/64 y 0 changes activos. El commit, el PR y la release quedan pendientes.
