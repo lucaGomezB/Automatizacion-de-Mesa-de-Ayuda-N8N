@@ -800,6 +800,14 @@
       "sessions": 0,
       "memories": 7,
       "prompts": 0
+    },
+    {
+      "id": "ace5b14d",
+      "created_by": "skywalker",
+      "created_at": "2026-10-29T22:29:54Z",
+      "sessions": 1,
+      "memories": 18,
+      "prompts": 27
     }
   ]
 }
