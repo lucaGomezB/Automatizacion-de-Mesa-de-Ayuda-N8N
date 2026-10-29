@@ -36,7 +36,7 @@ La Tabla~\ref{tab:capas} sintetiza las cinco capas y sus responsabilidades espec
 \label{fig:componentes}
 \end{figure}
 
-La trazabilidad operativa se garantiza mediante registros estructurados en cada capa, accesibles desde la capa de orquestación. La Figura~\ref{fig:arquitectura} representa esquemáticamente el flujo de información entre capas.
+La trazabilidad operativa se garantiza mediante registros estructurados en cada capa, accesibles desde la capa de orquestación. La Figura~\ref{fig:arquitectura} representa esquemáticamente el flujo de información entre capas. El despliegue del entorno local ---servicios, red Docker, volúmenes y servicios externos--- se detalla en la Figura~\ref{fig:despliegue}, y el flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión, en la Figura~\ref{fig:secuencia}.
 
 \begin{figure}[htbp]
 \centering
@@ -85,13 +85,14 @@ El camino de clasificación es único para los tres canales de entrada. Tanto el
 
 \subsection{Modelo de datos}\label{subsec:modelo-datos}
 
-La persistencia se realiza sobre PostgreSQL~15.5, desplegado en contenedor Docker bajo configuración de respaldo diario y replicación física opcional para entornos productivos \parencite{PostgreSQL2024_docs}. El modelo de datos se organiza alrededor de siete entidades principales, descritas en la Tabla~\ref{tab:entidades}.
+La persistencia se realiza sobre PostgreSQL~15.5, desplegado en contenedor Docker bajo configuración de respaldo diario y replicación física opcional para entornos productivos \parencite{PostgreSQL2024_docs}. El modelo de datos se organiza alrededor de siete entidades principales, descritas en la Tabla~\ref{tab:entidades} y en el diagrama entidad-relación de la Figura~\ref{fig:er_modelo_datos}.
 
 \begin{table}[htbp]
 \centering
 \caption[Entidades principales del modelo de datos]{Entidades principales del modelo de datos de la configuración entregada (release \texttt{v1.2.5}); el atributo \texttt{reportante\_empleado\_id}, el cuarto rol del directorio y el cifrado del contacto son posteriores a la campaña de medición (c-82, c-86 y c-153).}
 \label{tab:entidades}
 \footnotesize\singlespacing
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{5.3cm} >{\raggedright\arraybackslash}p{6.9cm}@{}}
 \toprule
 \textbf{Tabla} & \textbf{Atributos clave} & \textbf{Descripción} \\
@@ -132,24 +133,24 @@ La interfaz de programación de aplicaciones expuesta por el módulo Python sigu
 \textbf{Método} & \textbf{Ruta} & \textbf{Código} & \textbf{Función} \\
 \midrule
 \multicolumn{4}{@{}l}{\textbf{Autenticación}} \\
-POST & \texttt{/api/v1/auth/login}, \texttt{/refresh}, \texttt{/logout} & 200 OK & Inicio y renovación de sesión y cierre de sesión de operadores. \\
-GET & \texttt{/api/v1/auth/me} & 200 OK & Recupera el perfil del operador autenticado. \\
+POST & \path{/api/v1/auth/login}, \path{/refresh}, \path{/logout} & 200 OK & Inicio y renovación de sesión y cierre de sesión de operadores. \\
+GET & \path{/api/v1/auth/me} & 200 OK & Recupera el perfil del operador autenticado. \\
 \midrule
 \multicolumn{4}{@{}l}{\textbf{Incidentes}} \\
-POST & \texttt{/api/v1/incidentes} & 201 Created & Crea un nuevo ticket y devuelve el identificador generado. \\
-GET & \texttt{/api/v1/incidentes/\{id\}} & 200 OK & Recupera la información de un ticket por su identificador. \\
+POST & \path{/api/v1/incidentes} & 201 Created & Crea un nuevo ticket y devuelve el identificador generado. \\
+GET & \path{/api/v1/incidentes/{id}} & 200 OK & Recupera la información de un ticket por su identificador. \\
 PATCH & \texttt{/api/v1/incidentes/\{id\}} & 200 OK & Actualiza los campos editables de un ticket. \\
 \midrule
 \multicolumn{4}{@{}l}{\textbf{Clasificaciones}} \\
-GET & \texttt{/api/v1/clasificaciones/incidente/\{id\}} & 200 OK & Recupera la trazabilidad de la clasificación de un incidente. \\
-GET & \texttt{/api/v1/clasificaciones/revision-pendiente} & 200 OK & Lista los casos derivados a revisión humana. \\
-PATCH & \texttt{/api/v1/clasificaciones/\{log\_id\}/validar} & 200 OK & Registra la categoría validada por el sector responsable. \\
+GET & \path{/api/v1/clasificaciones/incidente/{id}} & 200 OK & Recupera la trazabilidad de la clasificación de un incidente. \\
+GET & \path{/api/v1/clasificaciones/revision-pendiente} & 200 OK & Lista los casos derivados a revisión humana. \\
+PATCH & \path{/api/v1/clasificaciones/{log_id}/validar} & 200 OK & Registra la categoría validada por el sector responsable. \\
 \midrule
 \multicolumn{4}{@{}l}{\textbf{Estadísticas}} \\
-GET & \texttt{/api/v1/estadisticas/resumen}, \texttt{/tendencias} & 200 OK & Agregados y series temporales para el dashboard. \\
+GET & \path{/api/v1/estadisticas/resumen}, \path{/tendencias} & 200 OK & Agregados y series temporales para el dashboard. \\
 \midrule
 \multicolumn{4}{@{}l}{\textbf{Salud}} \\
-GET & \texttt{/health} y \texttt{/health/db} & 200 OK & Verificación de salud del servicio para monitoreo externo. \\
+GET & \path{/health} y \path{/health/db} & 200 OK & Verificación de salud del servicio para monitoreo externo. \\
 \bottomrule
 \end{tabular}
 \par\smallskip

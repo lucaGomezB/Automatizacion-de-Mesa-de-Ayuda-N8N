@@ -9,7 +9,7 @@ repositorio). Todos los servicios corren dentro de la red Docker `mesa_local_def
 
 ```mermaid
 graph TD
-    subgraph Host["Host (maquina local)"]
+    subgraph Host["Host (máquina local)"]
         subgraph Docker["Red Docker: mesa_local_default"]
             PG["PostgreSQL 15.5-alpine\npuerto host: 5433\nvolumen: postgres_data\nDB: mesa_de_ayuda"]
             BE["Backend FastAPI\n(sin puerto host)\nuvicorn app.main:app\nalembic upgrade head al iniciar"]
@@ -25,9 +25,9 @@ graph TD
     end
 
     subgraph External["Servicios Externos"]
-        GEMINI["Google Gemini API\n(clasificacion LLM)"]
+        GEMINI["Google Gemini API\n(clasificación LLM)"]
         IMAP["Gmail IMAP/SMTP\n(correo: trigger y envio)"]
-        TWILIO["Twilio\n(voz / callback de grabacion)"]
+        TWILIO["Twilio\n(voz / callback de grabación)"]
     end
 
     %% Dependencias de salud declaradas en el compose
@@ -36,7 +36,7 @@ graph TD
     BE -- "service_started" --> NGX
     FE -- "service_started" --> NGX
 
-    %% Comunicacion entre servicios
+    %% Comunicación entre servicios
     BE -- "asyncpg (PostgreSQL protocol)" --> PG
     N8N -- "HTTP POST /api/v1/incidentes" --> BE
     BE -- "HTTPS (google-genai SDK)" --> GEMINI
@@ -50,7 +50,7 @@ graph TD
     TWILIO -- "webhook de voz / callback" --> BE
     BE -- "handoff pseudonimizado" --> N8N
 
-    %% Volumenes y archivos
+    %% Volúmenes y archivos
     ENV -. "env_file" .-> BE
     WF -. "montado :ro en /data/" .-> N8N
     PROMPT -. "montado :ro en /app/docs/" .-> BE

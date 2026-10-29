@@ -116,7 +116,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing (EMNLP)}
-      \field{title}{{MEGA}: Multilingual Evaluation of Generative {AI}}
+      \field{title}{{MEGA}: Multilingual evaluation of generative {AI}}
       \field{year}{2023}
       \field{pages}{4232\bibrangedash 4267}
       \range{pages}{36}
@@ -152,7 +152,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{2002, con enmiendas efectivas del 1 de junio de 2010 y del 1 de enero de 2017}
-      \field{title}{Ethical Principles of Psychologists and Code of Conduct}
+      \field{title}{Ethical principles of psychologists and code of conduct}
       \field{urlday}{19}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
@@ -265,7 +265,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 2019 CHI Conference on Human Factors in Computing Systems (CHI 2019)}
-      \field{title}{Guidelines for Human-{AI} Interaction}
+      \field{title}{Guidelines for human-{AI} interaction}
       \field{year}{2019}
       \field{pages}{1\bibrangedash 13}
       \range{pages}{13}
@@ -301,7 +301,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Documentación técnica}
-      \field{title}{{Apache Airflow} Documentation (Version 2.10)}
+      \field{title}{{Apache Airflow} documentation (Version 2.10)}
       \field{urlday}{25}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
@@ -364,7 +364,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Future Internet}
       \field{number}{10}
-      \field{title}{Sentiment Analysis in {M}exican {S}panish: A Comparison Between Fine-Tuning and In-Context Learning with Large Language Models}
+      \field{title}{Sentiment analysis in {M}exican {S}panish: A comparison between fine-tuning and in-context learning with large language models}
       \field{volume}{17}
       \field{year}{2025}
       \field{pages}{445}
@@ -584,7 +584,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Advances in Neural Information Processing Systems 33 (NeurIPS 2020)}
-      \field{title}{Language Models are Few-Shot Learners}
+      \field{title}{Language models are few-shot learners}
       \field{year}{2020}
       \field{pages}{1877\bibrangedash 1901}
       \range{pages}{25}
@@ -614,7 +614,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{isbn}{978-0-11-331307-5}
-      \field{title}{{ITIL} Service Operation}
+      \field{title}{{ITIL} service operation}
       \field{year}{2011}
     \endentry
     \entry{Chen2024_frugalgpt}{article}{}{}
@@ -655,7 +655,7 @@
       \field{labeltitlesource}{title}
       \field{issn}{2835-8856}
       \field{journaltitle}{Transactions on Machine Learning Research}
-      \field{title}{{FrugalGPT}: How to Use Large Language Models While Reducing Cost and Improving Performance}
+      \field{title}{{FrugalGPT}: How to use large language models while reducing cost and improving performance}
       \field{year}{2024}
       \verb{urlraw}
       \verb https://openreview.net/forum?id=cSimKw5p6R
@@ -691,7 +691,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Educational and Psychological Measurement}
       \field{number}{1}
-      \field{title}{A Coefficient of Agreement for Nominal Scales}
+      \field{title}{A coefficient of agreement for nominal scales}
       \field{volume}{20}
       \field{year}{1960}
       \field{pages}{37\bibrangedash 46}
@@ -730,7 +730,7 @@
       \field{labeltitlesource}{title}
       \field{edition}{2}
       \field{isbn}{0-8058-0283-5}
-      \field{title}{Statistical Power Analysis for the Behavioral Sciences}
+      \field{title}{Statistical power analysis for the behavioral sciences}
       \field{year}{1988}
     \endentry
     \entry{colavito2025benchmarking}{article}{}{}
@@ -785,6 +785,44 @@
       \verb https://doi.org/10.1016/j.infsof.2025.107758
       \endverb
     \endentry
+    \entry{Decision2003_490_CE}{misc}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=51964341e4da002e0362675417e1ad23}{%
+           family={{Comisión Europea}},
+           familyi={C\bibinitperiod}}}%
+      }
+      \strng{namehash}{51964341e4da002e0362675417e1ad23}
+      \strng{fullhash}{51964341e4da002e0362675417e1ad23}
+      \strng{fullhashraw}{51964341e4da002e0362675417e1ad23}
+      \strng{bibnamehash}{51964341e4da002e0362675417e1ad23}
+      \strng{authorbibnamehash}{51964341e4da002e0362675417e1ad23}
+      \strng{authornamehash}{51964341e4da002e0362675417e1ad23}
+      \strng{authorfullhash}{51964341e4da002e0362675417e1ad23}
+      \strng{authorfullhashraw}{51964341e4da002e0362675417e1ad23}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{30}
+      \field{month}{6}
+      \field{note}{Diario Oficial de la Unión Europea, L 168, 8 de julio de 2003}
+      \field{title}{Decisión 2003/490/CE de la Comisión, de 30 de junio de 2003, con arreglo a la Directiva 95/46/CE, sobre la protección adecuada de los datos personales en Argentina}
+      \field{urlday}{29}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2003}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://eur-lex.europa.eu/eli/dec/2003/490/oj
+      \endverb
+      \verb{url}
+      \verb https://eur-lex.europa.eu/eli/dec/2003/490/oj
+      \endverb
+    \endentry
     \entry{Crispin2009_agile_testing}{book}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=94961eb97d99629938a206fa00ee5642}{%
@@ -818,7 +856,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{Agile Testing: A Practical Guide for Testers and Agile Teams}
+      \field{title}{Agile testing: A practical guide for testers and agile teams}
       \field{year}{2009}
     \endentry
     \entry{Date2003_database}{book}{}{}
@@ -849,7 +887,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{edition}{8}
-      \field{title}{An Introduction to Database Systems}
+      \field{title}{An introduction to database systems}
       \field{year}{2004}
     \endentry
     \entry{DigitalOcean2026_pricing}{online}{}{}
@@ -903,7 +941,7 @@
            givenun=0}}%
       }
       \list{publisher}{1}{%
-        {Chapman \& Hall}%
+        {Chapman \& Hall/CRC}%
       }
       \strng{namehash}{5c03685c9f7f37796bba48432d40df61}
       \strng{fullhash}{5c03685c9f7f37796bba48432d40df61}
@@ -920,10 +958,10 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{An Introduction to the Bootstrap}
+      \field{title}{An introduction to the bootstrap}
       \field{year}{1993}
       \verb{doi}
-      \verb 10.1007/978-1-4899-4541-9
+      \verb 10.1201/9780429246593
       \endverb
     \endentry
     \entry{Fielding2002_rest}{article}{}{}
@@ -958,7 +996,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{ACM Transactions on Internet Technology}
       \field{number}{2}
-      \field{title}{Principled Design of the Modern Web Architecture}
+      \field{title}{Principled design of the modern web architecture}
       \field{volume}{2}
       \field{year}{2002}
       \field{pages}{115\bibrangedash 150}
@@ -1046,7 +1084,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Communications of the ACM}
       \field{number}{5}
-      \field{title}{An Overview of IT Service Management}
+      \field{title}{An overview of {IT} service management}
       \field{volume}{52}
       \field{year}{2009}
       \field{pages}{124\bibrangedash 127}
@@ -1092,7 +1130,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Software de computadora. GitHub}
-      \field{title}{Automatización de Mesa de Ayuda {N8N} (Versión 1.2.5)}
+      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.2.5)}
       \field{urlday}{28}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
@@ -1127,7 +1165,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Precios de lista}
-      \field{title}{{Vertex AI} {G}enerative {AI} Pricing}
+      \field{title}{{Vertex AI} {G}enerative {AI} pricing}
       \field{urlday}{19}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
@@ -1315,7 +1353,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)}
-      \field{title}{La Leaderboard: A Large Language Model Leaderboard for {S}panish Varieties and Languages of {S}pain and {L}atin {A}merica}
+      \field{title}{La leaderboard: A large language model leaderboard for {S}panish varieties and languages of {S}pain and {L}atin {A}merica}
       \field{year}{2025}
       \field{pages}{32482\bibrangedash 32524}
       \range{pages}{43}
@@ -1376,7 +1414,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 34th International Conference on Machine Learning (ICML 2017)}
       \field{series}{Proceedings of Machine Learning Research}
-      \field{title}{On Calibration of Modern Neural Networks}
+      \field{title}{On calibration of modern neural networks}
       \field{volume}{70}
       \field{year}{2017}
       \field{pages}{1321\bibrangedash 1330}
@@ -1424,6 +1462,47 @@
       \field{title}{Metodología de la investigación: Las rutas cuantitativa, cualitativa y mixta}
       \field{year}{2018}
     \endentry
+    \entry{Hodges1956_efficiency}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=a82a9c60a0efbd5d80a0a2d2a9be7809}{%
+           family={Hodges},
+           familyi={H\bibinitperiod},
+           given={J.\bibnamedelimi L.},
+           giveni={J\bibinitperiod\bibinitdelim L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=808b954963d0bddf6d17af82a209aaeb}{%
+           family={Lehmann},
+           familyi={L\bibinitperiod},
+           given={E.\bibnamedelimi L.},
+           giveni={E\bibinitperiod\bibinitdelim L\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{425cfd39b7b0bcc6210067f18b4e0b31}
+      \strng{fullhash}{425cfd39b7b0bcc6210067f18b4e0b31}
+      \strng{fullhashraw}{425cfd39b7b0bcc6210067f18b4e0b31}
+      \strng{bibnamehash}{425cfd39b7b0bcc6210067f18b4e0b31}
+      \strng{authorbibnamehash}{425cfd39b7b0bcc6210067f18b4e0b31}
+      \strng{authornamehash}{425cfd39b7b0bcc6210067f18b4e0b31}
+      \strng{authorfullhash}{425cfd39b7b0bcc6210067f18b4e0b31}
+      \strng{authorfullhashraw}{425cfd39b7b0bcc6210067f18b4e0b31}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{The Annals of Mathematical Statistics}
+      \field{number}{2}
+      \field{title}{The efficiency of some nonparametric competitors of the $t$-test}
+      \field{volume}{27}
+      \field{year}{1956}
+      \field{pages}{324\bibrangedash 335}
+      \range{pages}{12}
+      \verb{doi}
+      \verb 10.1214/aoms/1177728261
+      \endverb
+    \endentry
     \entry{Hohpe2003_eip}{book}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=2ed2f5feceafdf9a03a27134da39d3d0}{%
@@ -1457,8 +1536,8 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{Enterprise Integration Patterns: Designing, Building, and Deploying Messaging Solutions}
-      \field{year}{2003}
+      \field{title}{Enterprise integration patterns: Designing, building, and deploying messaging solutions}
+      \field{year}{2004}
     \endentry
     \entry{Ley25326_2000}{misc}{}{}
       \name{author}{1}{}{%
@@ -1481,6 +1560,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
+      \field{day}{4}
       \field{month}{10}
       \field{note}{Boletín Oficial de la República Argentina}
       \field{title}{Ley 25.326 de Protección de los Datos Personales}
@@ -1488,6 +1568,7 @@
       \field{urlmonth}{10}
       \field{urlyear}{2026}
       \field{year}{2000}
+      \field{dateera}{ce}
       \field{urldateera}{ce}
       \verb{urlraw}
       \verb http://servicios.infoleg.gob.ar/infolegInternet/anexos/60000-64999/64790/norma.htm
@@ -1498,27 +1579,18 @@
     \endentry
     \entry{ISO27002_2022}{report}{}{}
       \name{author}{1}{}{%
-        {{hash=7058e4bd76f877c52b621c942b30613c}{%
-           family={{International Organization for Standardization}},
+        {{un=0,uniquepart=base,hash=0828a8408614177181026ea908d5594a}{%
+           family={{ISO/IEC}},
            familyi={I\bibinitperiod}}}%
       }
-      \name{shortauthor}{1}{}{%
-        {{un=0,uniquepart=base,hash=5b512ee8a59deb284ad0a6a035ba10b1}{%
-           family={ISO},
-           familyi={I\bibinitperiod}}}%
-      }
-      \strng{namehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{fullhash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{fullhashraw}{7058e4bd76f877c52b621c942b30613c}
-      \strng{bibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{authorbibnamehash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{authornamehash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{authorfullhash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{authorfullhashraw}{7058e4bd76f877c52b621c942b30613c}
-      \strng{shortauthorbibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{shortauthornamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{shortauthorfullhash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{shortauthorfullhashraw}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{namehash}{0828a8408614177181026ea908d5594a}
+      \strng{fullhash}{0828a8408614177181026ea908d5594a}
+      \strng{fullhashraw}{0828a8408614177181026ea908d5594a}
+      \strng{bibnamehash}{0828a8408614177181026ea908d5594a}
+      \strng{authorbibnamehash}{0828a8408614177181026ea908d5594a}
+      \strng{authornamehash}{0828a8408614177181026ea908d5594a}
+      \strng{authorfullhash}{0828a8408614177181026ea908d5594a}
+      \strng{authorfullhashraw}{0828a8408614177181026ea908d5594a}
       \field{extraname}{1}
       \field{sortinit}{I}
       \field{sortinithash}{8d291c51ee89b6cd86bf5379f0b151d8}
@@ -1526,7 +1598,7 @@
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
-      \field{labelnamesource}{shortauthor}
+      \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{number}{27002:2022}
       \field{title}{Information security, cybersecurity and privacy protection --- Information security controls}
@@ -1545,27 +1617,18 @@
     \endentry
     \entry{ISO27001_2022}{report}{}{}
       \name{author}{1}{}{%
-        {{hash=7058e4bd76f877c52b621c942b30613c}{%
-           family={{International Organization for Standardization}},
+        {{un=0,uniquepart=base,hash=0828a8408614177181026ea908d5594a}{%
+           family={{ISO/IEC}},
            familyi={I\bibinitperiod}}}%
       }
-      \name{shortauthor}{1}{}{%
-        {{un=0,uniquepart=base,hash=5b512ee8a59deb284ad0a6a035ba10b1}{%
-           family={ISO},
-           familyi={I\bibinitperiod}}}%
-      }
-      \strng{namehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{fullhash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{fullhashraw}{7058e4bd76f877c52b621c942b30613c}
-      \strng{bibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{authorbibnamehash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{authornamehash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{authorfullhash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{authorfullhashraw}{7058e4bd76f877c52b621c942b30613c}
-      \strng{shortauthorbibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{shortauthornamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{shortauthorfullhash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{shortauthorfullhashraw}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{namehash}{0828a8408614177181026ea908d5594a}
+      \strng{fullhash}{0828a8408614177181026ea908d5594a}
+      \strng{fullhashraw}{0828a8408614177181026ea908d5594a}
+      \strng{bibnamehash}{0828a8408614177181026ea908d5594a}
+      \strng{authorbibnamehash}{0828a8408614177181026ea908d5594a}
+      \strng{authornamehash}{0828a8408614177181026ea908d5594a}
+      \strng{authorfullhash}{0828a8408614177181026ea908d5594a}
+      \strng{authorfullhashraw}{0828a8408614177181026ea908d5594a}
       \field{extraname}{2}
       \field{sortinit}{I}
       \field{sortinithash}{8d291c51ee89b6cd86bf5379f0b151d8}
@@ -1573,7 +1636,7 @@
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
-      \field{labelnamesource}{shortauthor}
+      \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{number}{27001:2022}
       \field{title}{Information security, cybersecurity and privacy protection --- Information security management systems --- Requirements}
@@ -1592,34 +1655,25 @@
     \endentry
     \entry{ISO27701_2025}{report}{}{}
       \name{author}{1}{}{%
-        {{hash=7058e4bd76f877c52b621c942b30613c}{%
-           family={{International Organization for Standardization}},
+        {{un=0,uniquepart=base,hash=0828a8408614177181026ea908d5594a}{%
+           family={{ISO/IEC}},
            familyi={I\bibinitperiod}}}%
       }
-      \name{shortauthor}{1}{}{%
-        {{un=0,uniquepart=base,hash=5b512ee8a59deb284ad0a6a035ba10b1}{%
-           family={ISO},
-           familyi={I\bibinitperiod}}}%
-      }
-      \strng{namehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{fullhash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{fullhashraw}{7058e4bd76f877c52b621c942b30613c}
-      \strng{bibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{authorbibnamehash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{authornamehash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{authorfullhash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{authorfullhashraw}{7058e4bd76f877c52b621c942b30613c}
-      \strng{shortauthorbibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{shortauthornamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{shortauthorfullhash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{shortauthorfullhashraw}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{namehash}{0828a8408614177181026ea908d5594a}
+      \strng{fullhash}{0828a8408614177181026ea908d5594a}
+      \strng{fullhashraw}{0828a8408614177181026ea908d5594a}
+      \strng{bibnamehash}{0828a8408614177181026ea908d5594a}
+      \strng{authorbibnamehash}{0828a8408614177181026ea908d5594a}
+      \strng{authornamehash}{0828a8408614177181026ea908d5594a}
+      \strng{authorfullhash}{0828a8408614177181026ea908d5594a}
+      \strng{authorfullhashraw}{0828a8408614177181026ea908d5594a}
       \field{extraname}{3}
       \field{sortinit}{I}
       \field{sortinithash}{8d291c51ee89b6cd86bf5379f0b151d8}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
-      \field{labelnamesource}{shortauthor}
+      \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{number}{27701:2025}
       \field{title}{Information security, cybersecurity and privacy protection --- Privacy information management systems --- Requirements and guidance}
@@ -1716,7 +1770,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{ACM Computing Surveys}
       \field{number}{12}
-      \field{title}{Survey of Hallucination in Natural Language Generation}
+      \field{title}{Survey of hallucination in natural language generation}
       \field{volume}{55}
       \field{year}{2023}
       \field{pages}{1\bibrangedash 38}
@@ -1765,7 +1819,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Borrador de la 3.a edición, versión del 19 de agosto de 2026}
-      \field{title}{Speech and Language Processing: An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition with Language Models}
+      \field{title}{Speech and language processing: An introduction to natural language processing, computational linguistics, and speech recognition with language models}
       \field{urlday}{25}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
@@ -1776,6 +1830,40 @@
       \endverb
       \verb{url}
       \verb https://web.stanford.edu/~jurafsky/slp3/
+      \endverb
+    \endentry
+    \entry{Kerby2014_rank_biserial}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=e8d4941921f5a5757003d5001f94013d}{%
+           family={Kerby},
+           familyi={K\bibinitperiod},
+           given={Dave\bibnamedelima S.},
+           giveni={D\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{e8d4941921f5a5757003d5001f94013d}
+      \strng{fullhash}{e8d4941921f5a5757003d5001f94013d}
+      \strng{fullhashraw}{e8d4941921f5a5757003d5001f94013d}
+      \strng{bibnamehash}{e8d4941921f5a5757003d5001f94013d}
+      \strng{authorbibnamehash}{e8d4941921f5a5757003d5001f94013d}
+      \strng{authornamehash}{e8d4941921f5a5757003d5001f94013d}
+      \strng{authorfullhash}{e8d4941921f5a5757003d5001f94013d}
+      \strng{authorfullhashraw}{e8d4941921f5a5757003d5001f94013d}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Comprehensive Psychology}
+      \field{title}{The simple difference formula: An approach to teaching nonparametric correlation}
+      \field{volume}{3}
+      \field{year}{2014}
+      \field{pages}{Article 1}
+      \range{pages}{-1}
+      \verb{doi}
+      \verb 10.2466/11.IT.3.1
       \endverb
     \endentry
     \entry{Ladas2009_scrumban}{book}{}{}
@@ -1805,7 +1893,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{Scrumban: Essays on Kanban Systems for Lean Software Development}
+      \field{title}{Scrumban: Essays on Kanban systems for lean software development}
       \field{year}{2009}
     \endentry
     \entry{lai2023okapi}{article}{}{}
@@ -1875,7 +1963,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing: System Demonstrations}
-      \field{title}{Okapi: Instruction-tuned Large Language Models in Multiple Languages with Reinforcement Learning from Human Feedback}
+      \field{title}{Okapi: Instruction-tuned large language models in multiple languages with reinforcement learning from human feedback}
       \field{year}{2023}
       \field{pages}{318\bibrangedash 327}
       \range{pages}{10}
@@ -1921,7 +2009,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Biometrics}
       \field{number}{1}
-      \field{title}{The Measurement of Observer Agreement for Categorical Data}
+      \field{title}{The measurement of observer agreement for categorical data}
       \field{volume}{33}
       \field{year}{1977}
       \field{pages}{159\bibrangedash 174}
@@ -2009,7 +2097,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 33rd ACM International Conference on the Foundations of Software Engineering (FSE Companion '25)}
-      \field{title}{TickIt: Leveraging Large Language Models for Automated Ticket Escalation}
+      \field{title}{TickIt: Leveraging large language models for automated ticket escalation}
       \field{year}{2025}
       \field{pages}{343\bibrangedash 354}
       \range{pages}{12}
@@ -2078,7 +2166,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Applied Linguistics}
-      \field{note}{Advance article, volume/pages pending}
+      \field{note}{Artículo en prensa, volumen y páginas pendientes}
       \field{title}{Evaluating large language models with tests of {S}panish as a foreign language: pass or fail?}
       \field{year}{2026}
       \verb{doi}
@@ -2089,6 +2177,41 @@
       \endverb
       \verb{url}
       \verb https://doi.org/10.1093/applin/amag048
+      \endverb
+    \endentry
+    \entry{McNemar1947_sampling_error}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=3c2670ad8954343917d3fd0384a23703}{%
+           family={McNemar},
+           familyi={M\bibinitperiod},
+           given={Quinn},
+           giveni={Q\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{3c2670ad8954343917d3fd0384a23703}
+      \strng{fullhash}{3c2670ad8954343917d3fd0384a23703}
+      \strng{fullhashraw}{3c2670ad8954343917d3fd0384a23703}
+      \strng{bibnamehash}{3c2670ad8954343917d3fd0384a23703}
+      \strng{authorbibnamehash}{3c2670ad8954343917d3fd0384a23703}
+      \strng{authornamehash}{3c2670ad8954343917d3fd0384a23703}
+      \strng{authorfullhash}{3c2670ad8954343917d3fd0384a23703}
+      \strng{authorfullhashraw}{3c2670ad8954343917d3fd0384a23703}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Psychometrika}
+      \field{number}{2}
+      \field{title}{Note on the sampling error of the difference between correlated proportions or percentages}
+      \field{volume}{12}
+      \field{year}{1947}
+      \field{pages}{153\bibrangedash 157}
+      \range{pages}{5}
+      \verb{doi}
+      \verb 10.1007/BF02295996
       \endverb
     \endentry
     \entry{MosqueiraRey2023_human_in_the_loop}{article}{}{}
@@ -2178,7 +2301,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Documentación técnica oficial}
-      \field{title}{{n8n} Documentation}
+      \field{title}{{n8n} documentation}
       \field{urlday}{25}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
@@ -2222,11 +2345,53 @@
       \field{labelnamesource}{shortauthor}
       \field{labeltitlesource}{title}
       \field{number}{29}
-      \field{title}{The {NIST} Cybersecurity Framework ({CSF}) 2.0}
+      \field{title}{The {NIST} cybersecurity framework ({CSF}) 2.0}
       \field{type}{NIST Cybersecurity White Paper}
       \field{year}{2024}
       \verb{doi}
       \verb 10.6028/NIST.CSWP.29
+      \endverb
+    \endentry
+    \entry{NiculescuMizil2005_probabilities}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=b35fbebaaa62ff79aee38093ae22a581}{%
+           family={Niculescu-Mizil},
+           familyi={N\bibinithyphendelim M\bibinitperiod},
+           given={Alexandru},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=599c5251d489b92dc7856277d56cb1a9}{%
+           family={Caruana},
+           familyi={C\bibinitperiod},
+           given={Rich},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {ACM}%
+      }
+      \strng{namehash}{daa42a219e7d77fc10d94cb9ba3608f1}
+      \strng{fullhash}{daa42a219e7d77fc10d94cb9ba3608f1}
+      \strng{fullhashraw}{daa42a219e7d77fc10d94cb9ba3608f1}
+      \strng{bibnamehash}{daa42a219e7d77fc10d94cb9ba3608f1}
+      \strng{authorbibnamehash}{daa42a219e7d77fc10d94cb9ba3608f1}
+      \strng{authornamehash}{daa42a219e7d77fc10d94cb9ba3608f1}
+      \strng{authorfullhash}{daa42a219e7d77fc10d94cb9ba3608f1}
+      \strng{authorfullhashraw}{daa42a219e7d77fc10d94cb9ba3608f1}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the 22nd International Conference on Machine Learning (ICML '05)}
+      \field{title}{Predicting good probabilities with supervised learning}
+      \field{year}{2005}
+      \field{pages}{625\bibrangedash 632}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1145/1102351.1102430
       \endverb
     \endentry
     \entry{paket2024itservice}{article}{}{}
@@ -2275,7 +2440,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{2024 9th International Conference on Computer Science and Engineering (UBMK)}
-      \field{title}{IT Service Desk Ticket Classification via Large Language Models}
+      \field{title}{{IT} service desk ticket classification via large language models}
       \field{year}{2024}
       \field{pages}{135\bibrangedash 140}
       \range{pages}{6}
@@ -2351,7 +2516,7 @@
       \field{booksubtitle}{Proceedings of {DAL} 2018}
       \field{booktitle}{Data Analytics and Learning}
       \field{series}{Lecture Notes in Networks and Systems}
-      \field{title}{Automated IT Service Desk Systems Using Machine Learning Techniques}
+      \field{title}{Automated {IT} service desk systems using machine learning techniques}
       \field{volume}{43}
       \field{year}{2019}
       \field{pages}{331\bibrangedash 346}
@@ -2381,6 +2546,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
+      \field{day}{27}
       \field{month}{4}
       \field{note}{Diario Oficial de la Unión Europea, L 119/1}
       \field{title}{Reglamento ({UE}) 2016/679 --- {R}eglamento General de Protección de Datos}
@@ -2388,6 +2554,7 @@
       \field{urlmonth}{10}
       \field{urlyear}{2026}
       \field{year}{2016}
+      \field{dateera}{ce}
       \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://eur-lex.europa.eu/eli/reg/2016/679/oj
@@ -2511,7 +2678,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of Machine Learning Research}
-      \field{title}{Scikit-learn: Machine Learning in {P}ython}
+      \field{title}{Scikit-learn: Machine learning in {P}ython}
       \field{volume}{12}
       \field{year}{2011}
       \field{pages}{2825\bibrangedash 2830}
@@ -2538,6 +2705,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
+      \field{day}{29}
       \field{month}{11}
       \field{note}{Boletín Oficial de la República Argentina, 3 de diciembre de 2001}
       \field{title}{Decreto 1558/2001: Reglamentación de la Ley 25.326 de Protección de los Datos Personales}
@@ -2545,6 +2713,7 @@
       \field{urlmonth}{10}
       \field{urlyear}{2026}
       \field{year}{2001}
+      \field{dateera}{ce}
       \field{urldateera}{ce}
       \verb{urlraw}
       \verb http://servicios.infoleg.gob.ar/infolegInternet/anexos/70000-74999/70368/norma.htm
@@ -2579,7 +2748,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of Machine Learning Technologies}
       \field{number}{1}
-      \field{title}{Evaluation: From Precision, Recall and {F}-Measure to {ROC}, Informedness, Markedness and Correlation}
+      \field{title}{Evaluation: From precision, recall and {F}-measure to {ROC}, informedness, markedness and correlation}
       \field{volume}{2}
       \field{year}{2011}
       \field{pages}{37\bibrangedash 63}
@@ -2619,7 +2788,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{edition}{9}
-      \field{title}{Software Engineering: A Practitioner's Approach}
+      \field{title}{Software engineering: A practitioner's approach}
       \field{year}{2020}
     \endentry
     \entry{Rabiner1993_speech_recognition}{book}{}{}
@@ -2655,7 +2824,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{Fundamentals of Speech Recognition}
+      \field{title}{Fundamentals of speech recognition}
       \field{year}{1993}
     \endentry
     \entry{Radford2023_whisper}{article}{}{}
@@ -2713,7 +2882,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 40th International Conference on Machine Learning (ICML 2023)}
-      \field{title}{Robust Speech Recognition via Large-Scale Weak Supervision}
+      \field{title}{Robust speech recognition via large-scale weak supervision}
       \field{year}{2023}
       \field{pages}{28492\bibrangedash 28518}
       \range{pages}{27}
@@ -2743,7 +2912,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Documentación técnica oficial}
-      \field{title}{{FastAPI} Documentation}
+      \field{title}{{FastAPI} documentation}
       \field{urlday}{25}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
@@ -2794,7 +2963,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Semantic Web}
       \field{number}{3}
-      \field{title}{{S}panish Triple-to-Text Benchmark on Low-Resource Large Language Models}
+      \field{title}{{S}panish triple-to-text benchmark on low-resource large language models}
       \field{volume}{17}
       \field{year}{2026}
       \verb{doi}
@@ -2846,9 +3015,13 @@
       \field{eprintclass}{cs.LG}
       \field{eprinttype}{arXiv}
       \field{howpublished}{arXiv preprint}
-      \field{note}{arXiv:2103.15822; presentado en la 3rd IEEE International Conference on Computational Systems and Information Technology for Sustainable Solutions ({CSITSS}), 2018}
-      \field{title}{Classifying the Unstructured {IT} Service Desk Tickets Using Ensemble of Classifiers}
+      \field{note}{Preprint de la versión arbitrada presentada en la 3rd IEEE International Conference on Computational Systems and Information Technology for Sustainable Solutions ({CSITSS}), 2018}
+      \field{title}{Classifying the unstructured {IT} service desk tickets using ensemble of classifiers}
+      \field{urlday}{29}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
       \field{year}{2021}
+      \field{urldateera}{ce}
       \verb{doi}
       \verb 10.48550/arXiv.2103.15822
       \endverb
@@ -2899,7 +3072,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{IEEE Access}
-      \field{title}{{IT} Ticket Classification: The Simpler, the Better}
+      \field{title}{{IT} ticket classification: The simpler, the better}
       \field{volume}{8}
       \field{year}{2020}
       \field{pages}{193380\bibrangedash 193395}
@@ -2942,7 +3115,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{edition}{4}
-      \field{title}{Artificial Intelligence: A Modern Approach}
+      \field{title}{Artificial intelligence: A modern approach}
       \field{year}{2021}
     \endentry
     \entry{SEPyME2026_mipyme}{misc}{}{}
@@ -3015,6 +3188,47 @@
       \verb https://www.servicenow.com/products/itsm.html
       \endverb
     \endentry
+    \entry{Shapiro1965_normality}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=d68649e4f2a1a671378e6b8133ccb0d3}{%
+           family={Shapiro},
+           familyi={S\bibinitperiod},
+           given={S.\bibnamedelimi S.},
+           giveni={S\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4804e1730322ac9acf50f7acded4b705}{%
+           family={Wilk},
+           familyi={W\bibinitperiod},
+           given={M.\bibnamedelimi B.},
+           giveni={M\bibinitperiod\bibinitdelim B\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{c79429df467595c7a5a1ca33b7d909f2}
+      \strng{fullhash}{c79429df467595c7a5a1ca33b7d909f2}
+      \strng{fullhashraw}{c79429df467595c7a5a1ca33b7d909f2}
+      \strng{bibnamehash}{c79429df467595c7a5a1ca33b7d909f2}
+      \strng{authorbibnamehash}{c79429df467595c7a5a1ca33b7d909f2}
+      \strng{authornamehash}{c79429df467595c7a5a1ca33b7d909f2}
+      \strng{authorfullhash}{c79429df467595c7a5a1ca33b7d909f2}
+      \strng{authorfullhashraw}{c79429df467595c7a5a1ca33b7d909f2}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Biometrika}
+      \field{number}{3--4}
+      \field{title}{An analysis of variance test for normality (complete samples)}
+      \field{volume}{52}
+      \field{year}{1965}
+      \field{pages}{591\bibrangedash 611}
+      \range{pages}{21}
+      \verb{doi}
+      \verb 10.1093/biomet/52.3-4.591
+      \endverb
+    \endentry
     \entry{Shneiderman2020_human_centered_ai}{article}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=39afccc0f55ae7821df79ffd677c90b0}{%
@@ -3041,7 +3255,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{International Journal of Human--Computer Interaction}
       \field{number}{6}
-      \field{title}{Human-Centered Artificial Intelligence: Reliable, Safe \& Trustworthy}
+      \field{title}{Human-centered artificial intelligence: Reliable, safe \& trustworthy}
       \field{volume}{36}
       \field{year}{2020}
       \field{pages}{495\bibrangedash 504}
@@ -3088,7 +3302,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Information Processing \& Management}
       \field{number}{4}
-      \field{title}{A Systematic Analysis of Performance Measures for Classification Tasks}
+      \field{title}{A systematic analysis of performance measures for classification tasks}
       \field{volume}{45}
       \field{year}{2009}
       \field{pages}{427\bibrangedash 437}
@@ -3131,7 +3345,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{edition}{4}
-      \field{title}{Computer Security: Principles and Practice}
+      \field{title}{Computer security: Principles and practice}
       \field{year}{2018}
     \endentry
     \entry{PostgreSQL2024_docs}{manual}{}{}
@@ -3156,7 +3370,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Documentación técnica oficial}
-      \field{title}{{PostgreSQL} 15 Documentation}
+      \field{title}{{PostgreSQL} 15 documentation}
       \field{urlday}{25}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
@@ -3239,7 +3453,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing (EMNLP 2023)}
-      \field{title}{Just Ask for Calibration: Strategies for Eliciting Calibrated Confidence Scores from Language Models Fine-Tuned with Human Feedback}
+      \field{title}{Just ask for calibration: Strategies for eliciting calibrated confidence scores from language models fine-tuned with human feedback}
       \field{year}{2023}
       \field{pages}{5433\bibrangedash 5442}
       \range{pages}{10}
@@ -3327,9 +3541,9 @@
            given={Lukas},
            giveni={L\bibinitperiod},
            givenun=0}}%
-        {{un=0,uniquepart=base,hash=a34f5689cad1c408c313da70915c7631}{%
-           family={Canton-Ferrer},
-           familyi={C\bibinithyphendelim F\bibinitperiod},
+        {{un=0,uniquepart=base,hash=66171542a64814987c7681a97ec22707}{%
+           family={Canton\bibnamedelima Ferrer},
+           familyi={C\bibinitperiod\bibinitdelim F\bibinitperiod},
            given={Cristian},
            giveni={C\bibinitperiod},
            givenun=0}}%
@@ -3665,13 +3879,13 @@
            givenun=0}}%
       }
       \strng{namehash}{c237483431fea681283a37adbb23a59f}
-      \strng{fullhash}{ee54b4f359ddee33e0901553eefacb68}
-      \strng{fullhashraw}{ee54b4f359ddee33e0901553eefacb68}
-      \strng{bibnamehash}{fe0985da89ec60c48a35b751eff7baa5}
-      \strng{authorbibnamehash}{fe0985da89ec60c48a35b751eff7baa5}
+      \strng{fullhash}{b044ce31d008d7c2bd02d85a2301f208}
+      \strng{fullhashraw}{b044ce31d008d7c2bd02d85a2301f208}
+      \strng{bibnamehash}{2d4e9531fbebe65e015fe37353d29cb7}
+      \strng{authorbibnamehash}{2d4e9531fbebe65e015fe37353d29cb7}
       \strng{authornamehash}{c237483431fea681283a37adbb23a59f}
-      \strng{authorfullhash}{ee54b4f359ddee33e0901553eefacb68}
-      \strng{authorfullhashraw}{ee54b4f359ddee33e0901553eefacb68}
+      \strng{authorfullhash}{b044ce31d008d7c2bd02d85a2301f208}
+      \strng{authorfullhashraw}{b044ce31d008d7c2bd02d85a2301f208}
       \field{sortinit}{T}
       \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
       \field{extradatescope}{labelyear}
@@ -3683,13 +3897,54 @@
       \field{eprinttype}{arXiv}
       \field{howpublished}{arXiv preprint}
       \field{note}{arXiv:2307.09288}
-      \field{title}{Llama 2: Open Foundation and Fine-Tuned Chat Models}
+      \field{title}{Llama 2: Open foundation and fine-tuned chat models}
       \field{year}{2023}
       \verb{doi}
       \verb 10.48550/arXiv.2307.09288
       \endverb
       \verb{eprint}
       \verb 2307.09288
+      \endverb
+    \endentry
+    \entry{Tsoumakas2007_multilabel}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=4f0d141cf0fe25aef8af5a28df702ef7}{%
+           family={Tsoumakas},
+           familyi={T\bibinitperiod},
+           given={Grigorios},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=91b5fa88d99d012b0486f3602b17f8fe}{%
+           family={Katakis},
+           familyi={K\bibinitperiod},
+           given={Ioannis},
+           giveni={I\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{3eae60f117932774a2c5c843ad11eabb}
+      \strng{fullhash}{3eae60f117932774a2c5c843ad11eabb}
+      \strng{fullhashraw}{3eae60f117932774a2c5c843ad11eabb}
+      \strng{bibnamehash}{3eae60f117932774a2c5c843ad11eabb}
+      \strng{authorbibnamehash}{3eae60f117932774a2c5c843ad11eabb}
+      \strng{authornamehash}{3eae60f117932774a2c5c843ad11eabb}
+      \strng{authorfullhash}{3eae60f117932774a2c5c843ad11eabb}
+      \strng{authorfullhashraw}{3eae60f117932774a2c5c843ad11eabb}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{International Journal of Data Warehousing and Mining}
+      \field{number}{3}
+      \field{title}{Multi-label classification: An overview}
+      \field{volume}{3}
+      \field{year}{2007}
+      \field{pages}{1\bibrangedash 13}
+      \range{pages}{13}
+      \verb{doi}
+      \verb 10.4018/jdwm.2007070101
       \endverb
     \endentry
     \entry{Varshney2022_model_cascading}{article}{}{}
@@ -3726,7 +3981,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing (EMNLP 2022)}
-      \field{title}{Model Cascading: Towards Jointly Improving Efficiency and Accuracy of {NLP} Systems}
+      \field{title}{Model cascading: Towards jointly improving efficiency and accuracy of {NLP} systems}
       \field{year}{2022}
       \field{pages}{11007\bibrangedash 11021}
       \range{pages}{15}
@@ -3807,7 +4062,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Advances in Neural Information Processing Systems 30 (NIPS 2017)}
-      \field{title}{Attention Is All You Need}
+      \field{title}{Attention is all you need}
       \field{year}{2017}
       \field{pages}{5998\bibrangedash 6008}
       \range{pages}{11}
@@ -4039,7 +4294,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Nature Methods}
       \field{number}{3}
-      \field{title}{{SciPy} 1.0: Fundamental Algorithms for Scientific Computing in {P}ython}
+      \field{title}{{SciPy} 1.0: Fundamental algorithms for scientific computing in {P}ython}
       \field{volume}{17}
       \field{year}{2020}
       \field{pages}{261\bibrangedash 272}
@@ -4073,7 +4328,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Manifiesto de arquitectura de software}
-      \field{title}{The Twelve-Factor App}
+      \field{title}{The twelve-factor app}
       \field{urlday}{25}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
@@ -4112,7 +4367,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Biometrics Bulletin}
       \field{number}{6}
-      \field{title}{Individual Comparisons by Ranking Methods}
+      \field{title}{Individual comparisons by ranking methods}
       \field{volume}{1}
       \field{year}{1945}
       \field{pages}{80\bibrangedash 83}
@@ -4147,7 +4402,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of the American Statistical Association}
       \field{number}{158}
-      \field{title}{Probable Inference, the Law of Succession, and Statistical Inference}
+      \field{title}{Probable inference, the law of succession, and statistical inference}
       \field{volume}{22}
       \field{year}{1927}
       \field{pages}{209\bibrangedash 212}
@@ -4196,7 +4451,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 2022 CHI Conference on Human Factors in Computing Systems (CHI 2022)}
-      \field{title}{{AI} Chains: Transparent and Controllable Human-{AI} Interaction by Chaining Large Language Model Prompts}
+      \field{title}{{AI} chains: Transparent and controllable human-{AI} interaction by chaining large language model prompts}
       \field{year}{2022}
       \field{pages}{1\bibrangedash 22}
       \range{pages}{22}
@@ -4271,7 +4526,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{The Twelfth International Conference on Learning Representations (ICLR 2024)}
-      \field{title}{Can {LLMs} Express Their Uncertainty? An Empirical Evaluation of Confidence Elicitation in {LLMs}}
+      \field{title}{Can {LLMs} express their uncertainty? An empirical evaluation of confidence elicitation in {LLMs}}
       \field{year}{2024}
       \verb{urlraw}
       \verb https://openreview.net/forum?id=gjeQKFxFpZ
@@ -4497,7 +4752,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing (EMNLP)}
-      \field{title}{{MMLU}-{P}ro{X}: A Multilingual Benchmark for Advanced Large Language Model Evaluation}
+      \field{title}{{MMLU}-{P}ro{X}: A multilingual benchmark for advanced large language model evaluation}
       \field{year}{2025}
       \field{pages}{1513\bibrangedash 1532}
       \range{pages}{20}
@@ -4600,7 +4855,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of Artificial Intelligence Research}
-      \field{title}{Viewpoint: Human-in-the-loop Artificial Intelligence}
+      \field{title}{Viewpoint: Human-in-the-loop artificial intelligence}
       \field{volume}{64}
       \field{year}{2019}
       \field{pages}{243\bibrangedash 252}
@@ -4705,7 +4960,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing (EMNLP)}
-      \field{title}{Multilingual Large Language Models Are Not (Yet) Code-Switchers}
+      \field{title}{Multilingual large language models are not (yet) code-switchers}
       \field{year}{2023}
       \field{pages}{12567\bibrangedash 12582}
       \range{pages}{16}
@@ -4772,7 +5027,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 38th International Conference on Machine Learning (ICML 2021)}
       \field{series}{Proceedings of Machine Learning Research}
-      \field{title}{Calibrate Before Use: Improving Few-Shot Performance of Language Models}
+      \field{title}{Calibrate before use: Improving few-shot performance of language models}
       \field{volume}{139}
       \field{year}{2021}
       \field{pages}{12697\bibrangedash 12706}
@@ -4883,7 +5138,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing (EMNLP)}
-      \field{title}{{MEGA}: Multilingual Evaluation of Generative {AI}}
+      \field{title}{{MEGA}: Multilingual evaluation of generative {AI}}
       \field{year}{2023}
       \field{pages}{4232\bibrangedash 4267}
       \range{pages}{36}
@@ -4919,7 +5174,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{2002, con enmiendas efectivas del 1 de junio de 2010 y del 1 de enero de 2017}
-      \field{title}{Ethical Principles of Psychologists and Code of Conduct}
+      \field{title}{Ethical principles of psychologists and code of conduct}
       \field{urlday}{19}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
@@ -5032,7 +5287,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 2019 CHI Conference on Human Factors in Computing Systems (CHI 2019)}
-      \field{title}{Guidelines for Human-{AI} Interaction}
+      \field{title}{Guidelines for human-{AI} interaction}
       \field{year}{2019}
       \field{pages}{1\bibrangedash 13}
       \range{pages}{13}
@@ -5068,7 +5323,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Documentación técnica}
-      \field{title}{{Apache Airflow} Documentation (Version 2.10)}
+      \field{title}{{Apache Airflow} documentation (Version 2.10)}
       \field{urlday}{25}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
@@ -5131,7 +5386,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Future Internet}
       \field{number}{10}
-      \field{title}{Sentiment Analysis in {M}exican {S}panish: A Comparison Between Fine-Tuning and In-Context Learning with Large Language Models}
+      \field{title}{Sentiment analysis in {M}exican {S}panish: A comparison between fine-tuning and in-context learning with large language models}
       \field{volume}{17}
       \field{year}{2025}
       \field{pages}{445}
@@ -5351,7 +5606,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Advances in Neural Information Processing Systems 33 (NeurIPS 2020)}
-      \field{title}{Language Models are Few-Shot Learners}
+      \field{title}{Language models are few-shot learners}
       \field{year}{2020}
       \field{pages}{1877\bibrangedash 1901}
       \range{pages}{25}
@@ -5381,7 +5636,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{isbn}{978-0-11-331307-5}
-      \field{title}{{ITIL} Service Operation}
+      \field{title}{{ITIL} service operation}
       \field{year}{2011}
     \endentry
     \entry{Chen2024_frugalgpt}{article}{}{}
@@ -5422,7 +5677,7 @@
       \field{labeltitlesource}{title}
       \field{issn}{2835-8856}
       \field{journaltitle}{Transactions on Machine Learning Research}
-      \field{title}{{FrugalGPT}: How to Use Large Language Models While Reducing Cost and Improving Performance}
+      \field{title}{{FrugalGPT}: How to use large language models while reducing cost and improving performance}
       \field{year}{2024}
       \verb{urlraw}
       \verb https://openreview.net/forum?id=cSimKw5p6R
@@ -5458,7 +5713,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Educational and Psychological Measurement}
       \field{number}{1}
-      \field{title}{A Coefficient of Agreement for Nominal Scales}
+      \field{title}{A coefficient of agreement for nominal scales}
       \field{volume}{20}
       \field{year}{1960}
       \field{pages}{37\bibrangedash 46}
@@ -5497,7 +5752,7 @@
       \field{labeltitlesource}{title}
       \field{edition}{2}
       \field{isbn}{0-8058-0283-5}
-      \field{title}{Statistical Power Analysis for the Behavioral Sciences}
+      \field{title}{Statistical power analysis for the behavioral sciences}
       \field{year}{1988}
     \endentry
     \entry{colavito2025benchmarking}{article}{}{}
@@ -5552,6 +5807,44 @@
       \verb https://doi.org/10.1016/j.infsof.2025.107758
       \endverb
     \endentry
+    \entry{Decision2003_490_CE}{misc}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=51964341e4da002e0362675417e1ad23}{%
+           family={{Comisión Europea}},
+           familyi={C\bibinitperiod}}}%
+      }
+      \strng{namehash}{51964341e4da002e0362675417e1ad23}
+      \strng{fullhash}{51964341e4da002e0362675417e1ad23}
+      \strng{fullhashraw}{51964341e4da002e0362675417e1ad23}
+      \strng{bibnamehash}{51964341e4da002e0362675417e1ad23}
+      \strng{authorbibnamehash}{51964341e4da002e0362675417e1ad23}
+      \strng{authornamehash}{51964341e4da002e0362675417e1ad23}
+      \strng{authorfullhash}{51964341e4da002e0362675417e1ad23}
+      \strng{authorfullhashraw}{51964341e4da002e0362675417e1ad23}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{30}
+      \field{month}{6}
+      \field{note}{Diario Oficial de la Unión Europea, L 168, 8 de julio de 2003}
+      \field{title}{Decisión 2003/490/CE de la Comisión, de 30 de junio de 2003, con arreglo a la Directiva 95/46/CE, sobre la protección adecuada de los datos personales en Argentina}
+      \field{urlday}{29}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{year}{2003}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://eur-lex.europa.eu/eli/dec/2003/490/oj
+      \endverb
+      \verb{url}
+      \verb https://eur-lex.europa.eu/eli/dec/2003/490/oj
+      \endverb
+    \endentry
     \entry{Crispin2009_agile_testing}{book}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=94961eb97d99629938a206fa00ee5642}{%
@@ -5585,7 +5878,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{Agile Testing: A Practical Guide for Testers and Agile Teams}
+      \field{title}{Agile testing: A practical guide for testers and agile teams}
       \field{year}{2009}
     \endentry
     \entry{Date2003_database}{book}{}{}
@@ -5616,7 +5909,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{edition}{8}
-      \field{title}{An Introduction to Database Systems}
+      \field{title}{An introduction to database systems}
       \field{year}{2004}
     \endentry
     \entry{DigitalOcean2026_pricing}{online}{}{}
@@ -5670,7 +5963,7 @@
            givenun=0}}%
       }
       \list{publisher}{1}{%
-        {Chapman \& Hall}%
+        {Chapman \& Hall/CRC}%
       }
       \strng{namehash}{5c03685c9f7f37796bba48432d40df61}
       \strng{fullhash}{5c03685c9f7f37796bba48432d40df61}
@@ -5687,10 +5980,10 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{An Introduction to the Bootstrap}
+      \field{title}{An introduction to the bootstrap}
       \field{year}{1993}
       \verb{doi}
-      \verb 10.1007/978-1-4899-4541-9
+      \verb 10.1201/9780429246593
       \endverb
     \endentry
     \entry{Fielding2002_rest}{article}{}{}
@@ -5725,7 +6018,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{ACM Transactions on Internet Technology}
       \field{number}{2}
-      \field{title}{Principled Design of the Modern Web Architecture}
+      \field{title}{Principled design of the modern web architecture}
       \field{volume}{2}
       \field{year}{2002}
       \field{pages}{115\bibrangedash 150}
@@ -5813,7 +6106,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Communications of the ACM}
       \field{number}{5}
-      \field{title}{An Overview of IT Service Management}
+      \field{title}{An overview of {IT} service management}
       \field{volume}{52}
       \field{year}{2009}
       \field{pages}{124\bibrangedash 127}
@@ -5859,7 +6152,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Software de computadora. GitHub}
-      \field{title}{Automatización de Mesa de Ayuda {N8N} (Versión 1.2.5)}
+      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.2.5)}
       \field{urlday}{28}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
@@ -5894,7 +6187,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Precios de lista}
-      \field{title}{{Vertex AI} {G}enerative {AI} Pricing}
+      \field{title}{{Vertex AI} {G}enerative {AI} pricing}
       \field{urlday}{19}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
@@ -6082,7 +6375,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)}
-      \field{title}{La Leaderboard: A Large Language Model Leaderboard for {S}panish Varieties and Languages of {S}pain and {L}atin {A}merica}
+      \field{title}{La leaderboard: A large language model leaderboard for {S}panish varieties and languages of {S}pain and {L}atin {A}merica}
       \field{year}{2025}
       \field{pages}{32482\bibrangedash 32524}
       \range{pages}{43}
@@ -6143,7 +6436,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 34th International Conference on Machine Learning (ICML 2017)}
       \field{series}{Proceedings of Machine Learning Research}
-      \field{title}{On Calibration of Modern Neural Networks}
+      \field{title}{On calibration of modern neural networks}
       \field{volume}{70}
       \field{year}{2017}
       \field{pages}{1321\bibrangedash 1330}
@@ -6191,6 +6484,47 @@
       \field{title}{Metodología de la investigación: Las rutas cuantitativa, cualitativa y mixta}
       \field{year}{2018}
     \endentry
+    \entry{Hodges1956_efficiency}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=a82a9c60a0efbd5d80a0a2d2a9be7809}{%
+           family={Hodges},
+           familyi={H\bibinitperiod},
+           given={J.\bibnamedelimi L.},
+           giveni={J\bibinitperiod\bibinitdelim L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=808b954963d0bddf6d17af82a209aaeb}{%
+           family={Lehmann},
+           familyi={L\bibinitperiod},
+           given={E.\bibnamedelimi L.},
+           giveni={E\bibinitperiod\bibinitdelim L\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{425cfd39b7b0bcc6210067f18b4e0b31}
+      \strng{fullhash}{425cfd39b7b0bcc6210067f18b4e0b31}
+      \strng{fullhashraw}{425cfd39b7b0bcc6210067f18b4e0b31}
+      \strng{bibnamehash}{425cfd39b7b0bcc6210067f18b4e0b31}
+      \strng{authorbibnamehash}{425cfd39b7b0bcc6210067f18b4e0b31}
+      \strng{authornamehash}{425cfd39b7b0bcc6210067f18b4e0b31}
+      \strng{authorfullhash}{425cfd39b7b0bcc6210067f18b4e0b31}
+      \strng{authorfullhashraw}{425cfd39b7b0bcc6210067f18b4e0b31}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{The Annals of Mathematical Statistics}
+      \field{number}{2}
+      \field{title}{The efficiency of some nonparametric competitors of the $t$-test}
+      \field{volume}{27}
+      \field{year}{1956}
+      \field{pages}{324\bibrangedash 335}
+      \range{pages}{12}
+      \verb{doi}
+      \verb 10.1214/aoms/1177728261
+      \endverb
+    \endentry
     \entry{Hohpe2003_eip}{book}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=2ed2f5feceafdf9a03a27134da39d3d0}{%
@@ -6224,8 +6558,8 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{Enterprise Integration Patterns: Designing, Building, and Deploying Messaging Solutions}
-      \field{year}{2003}
+      \field{title}{Enterprise integration patterns: Designing, building, and deploying messaging solutions}
+      \field{year}{2004}
     \endentry
     \entry{Ley25326_2000}{misc}{}{}
       \name{author}{1}{}{%
@@ -6248,6 +6582,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
+      \field{day}{4}
       \field{month}{10}
       \field{note}{Boletín Oficial de la República Argentina}
       \field{title}{Ley 25.326 de Protección de los Datos Personales}
@@ -6255,6 +6590,7 @@
       \field{urlmonth}{10}
       \field{urlyear}{2026}
       \field{year}{2000}
+      \field{dateera}{ce}
       \field{urldateera}{ce}
       \verb{urlraw}
       \verb http://servicios.infoleg.gob.ar/infolegInternet/anexos/60000-64999/64790/norma.htm
@@ -6265,27 +6601,18 @@
     \endentry
     \entry{ISO27002_2022}{report}{}{}
       \name{author}{1}{}{%
-        {{hash=7058e4bd76f877c52b621c942b30613c}{%
-           family={{International Organization for Standardization}},
+        {{un=0,uniquepart=base,hash=0828a8408614177181026ea908d5594a}{%
+           family={{ISO/IEC}},
            familyi={I\bibinitperiod}}}%
       }
-      \name{shortauthor}{1}{}{%
-        {{un=0,uniquepart=base,hash=5b512ee8a59deb284ad0a6a035ba10b1}{%
-           family={ISO},
-           familyi={I\bibinitperiod}}}%
-      }
-      \strng{namehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{fullhash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{fullhashraw}{7058e4bd76f877c52b621c942b30613c}
-      \strng{bibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{authorbibnamehash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{authornamehash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{authorfullhash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{authorfullhashraw}{7058e4bd76f877c52b621c942b30613c}
-      \strng{shortauthorbibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{shortauthornamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{shortauthorfullhash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{shortauthorfullhashraw}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{namehash}{0828a8408614177181026ea908d5594a}
+      \strng{fullhash}{0828a8408614177181026ea908d5594a}
+      \strng{fullhashraw}{0828a8408614177181026ea908d5594a}
+      \strng{bibnamehash}{0828a8408614177181026ea908d5594a}
+      \strng{authorbibnamehash}{0828a8408614177181026ea908d5594a}
+      \strng{authornamehash}{0828a8408614177181026ea908d5594a}
+      \strng{authorfullhash}{0828a8408614177181026ea908d5594a}
+      \strng{authorfullhashraw}{0828a8408614177181026ea908d5594a}
       \field{extraname}{1}
       \field{sortinit}{I}
       \field{sortinithash}{8d291c51ee89b6cd86bf5379f0b151d8}
@@ -6293,7 +6620,7 @@
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
-      \field{labelnamesource}{shortauthor}
+      \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{number}{27002:2022}
       \field{title}{Information security, cybersecurity and privacy protection --- Information security controls}
@@ -6312,27 +6639,18 @@
     \endentry
     \entry{ISO27001_2022}{report}{}{}
       \name{author}{1}{}{%
-        {{hash=7058e4bd76f877c52b621c942b30613c}{%
-           family={{International Organization for Standardization}},
+        {{un=0,uniquepart=base,hash=0828a8408614177181026ea908d5594a}{%
+           family={{ISO/IEC}},
            familyi={I\bibinitperiod}}}%
       }
-      \name{shortauthor}{1}{}{%
-        {{un=0,uniquepart=base,hash=5b512ee8a59deb284ad0a6a035ba10b1}{%
-           family={ISO},
-           familyi={I\bibinitperiod}}}%
-      }
-      \strng{namehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{fullhash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{fullhashraw}{7058e4bd76f877c52b621c942b30613c}
-      \strng{bibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{authorbibnamehash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{authornamehash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{authorfullhash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{authorfullhashraw}{7058e4bd76f877c52b621c942b30613c}
-      \strng{shortauthorbibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{shortauthornamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{shortauthorfullhash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{shortauthorfullhashraw}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{namehash}{0828a8408614177181026ea908d5594a}
+      \strng{fullhash}{0828a8408614177181026ea908d5594a}
+      \strng{fullhashraw}{0828a8408614177181026ea908d5594a}
+      \strng{bibnamehash}{0828a8408614177181026ea908d5594a}
+      \strng{authorbibnamehash}{0828a8408614177181026ea908d5594a}
+      \strng{authornamehash}{0828a8408614177181026ea908d5594a}
+      \strng{authorfullhash}{0828a8408614177181026ea908d5594a}
+      \strng{authorfullhashraw}{0828a8408614177181026ea908d5594a}
       \field{extraname}{2}
       \field{sortinit}{I}
       \field{sortinithash}{8d291c51ee89b6cd86bf5379f0b151d8}
@@ -6340,7 +6658,7 @@
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
-      \field{labelnamesource}{shortauthor}
+      \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{number}{27001:2022}
       \field{title}{Information security, cybersecurity and privacy protection --- Information security management systems --- Requirements}
@@ -6359,34 +6677,25 @@
     \endentry
     \entry{ISO27701_2025}{report}{}{}
       \name{author}{1}{}{%
-        {{hash=7058e4bd76f877c52b621c942b30613c}{%
-           family={{International Organization for Standardization}},
+        {{un=0,uniquepart=base,hash=0828a8408614177181026ea908d5594a}{%
+           family={{ISO/IEC}},
            familyi={I\bibinitperiod}}}%
       }
-      \name{shortauthor}{1}{}{%
-        {{un=0,uniquepart=base,hash=5b512ee8a59deb284ad0a6a035ba10b1}{%
-           family={ISO},
-           familyi={I\bibinitperiod}}}%
-      }
-      \strng{namehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{fullhash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{fullhashraw}{7058e4bd76f877c52b621c942b30613c}
-      \strng{bibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{authorbibnamehash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{authornamehash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{authorfullhash}{7058e4bd76f877c52b621c942b30613c}
-      \strng{authorfullhashraw}{7058e4bd76f877c52b621c942b30613c}
-      \strng{shortauthorbibnamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{shortauthornamehash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{shortauthorfullhash}{5b512ee8a59deb284ad0a6a035ba10b1}
-      \strng{shortauthorfullhashraw}{5b512ee8a59deb284ad0a6a035ba10b1}
+      \strng{namehash}{0828a8408614177181026ea908d5594a}
+      \strng{fullhash}{0828a8408614177181026ea908d5594a}
+      \strng{fullhashraw}{0828a8408614177181026ea908d5594a}
+      \strng{bibnamehash}{0828a8408614177181026ea908d5594a}
+      \strng{authorbibnamehash}{0828a8408614177181026ea908d5594a}
+      \strng{authornamehash}{0828a8408614177181026ea908d5594a}
+      \strng{authorfullhash}{0828a8408614177181026ea908d5594a}
+      \strng{authorfullhashraw}{0828a8408614177181026ea908d5594a}
       \field{extraname}{3}
       \field{sortinit}{I}
       \field{sortinithash}{8d291c51ee89b6cd86bf5379f0b151d8}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
-      \field{labelnamesource}{shortauthor}
+      \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{number}{27701:2025}
       \field{title}{Information security, cybersecurity and privacy protection --- Privacy information management systems --- Requirements and guidance}
@@ -6483,7 +6792,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{ACM Computing Surveys}
       \field{number}{12}
-      \field{title}{Survey of Hallucination in Natural Language Generation}
+      \field{title}{Survey of hallucination in natural language generation}
       \field{volume}{55}
       \field{year}{2023}
       \field{pages}{1\bibrangedash 38}
@@ -6532,7 +6841,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Borrador de la 3.a edición, versión del 19 de agosto de 2026}
-      \field{title}{Speech and Language Processing: An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition with Language Models}
+      \field{title}{Speech and language processing: An introduction to natural language processing, computational linguistics, and speech recognition with language models}
       \field{urlday}{25}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
@@ -6543,6 +6852,40 @@
       \endverb
       \verb{url}
       \verb https://web.stanford.edu/~jurafsky/slp3/
+      \endverb
+    \endentry
+    \entry{Kerby2014_rank_biserial}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=e8d4941921f5a5757003d5001f94013d}{%
+           family={Kerby},
+           familyi={K\bibinitperiod},
+           given={Dave\bibnamedelima S.},
+           giveni={D\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{e8d4941921f5a5757003d5001f94013d}
+      \strng{fullhash}{e8d4941921f5a5757003d5001f94013d}
+      \strng{fullhashraw}{e8d4941921f5a5757003d5001f94013d}
+      \strng{bibnamehash}{e8d4941921f5a5757003d5001f94013d}
+      \strng{authorbibnamehash}{e8d4941921f5a5757003d5001f94013d}
+      \strng{authornamehash}{e8d4941921f5a5757003d5001f94013d}
+      \strng{authorfullhash}{e8d4941921f5a5757003d5001f94013d}
+      \strng{authorfullhashraw}{e8d4941921f5a5757003d5001f94013d}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Comprehensive Psychology}
+      \field{title}{The simple difference formula: An approach to teaching nonparametric correlation}
+      \field{volume}{3}
+      \field{year}{2014}
+      \field{pages}{Article 1}
+      \range{pages}{-1}
+      \verb{doi}
+      \verb 10.2466/11.IT.3.1
       \endverb
     \endentry
     \entry{Ladas2009_scrumban}{book}{}{}
@@ -6572,7 +6915,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{Scrumban: Essays on Kanban Systems for Lean Software Development}
+      \field{title}{Scrumban: Essays on Kanban systems for lean software development}
       \field{year}{2009}
     \endentry
     \entry{lai2023okapi}{article}{}{}
@@ -6642,7 +6985,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing: System Demonstrations}
-      \field{title}{Okapi: Instruction-tuned Large Language Models in Multiple Languages with Reinforcement Learning from Human Feedback}
+      \field{title}{Okapi: Instruction-tuned large language models in multiple languages with reinforcement learning from human feedback}
       \field{year}{2023}
       \field{pages}{318\bibrangedash 327}
       \range{pages}{10}
@@ -6688,7 +7031,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Biometrics}
       \field{number}{1}
-      \field{title}{The Measurement of Observer Agreement for Categorical Data}
+      \field{title}{The measurement of observer agreement for categorical data}
       \field{volume}{33}
       \field{year}{1977}
       \field{pages}{159\bibrangedash 174}
@@ -6776,7 +7119,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 33rd ACM International Conference on the Foundations of Software Engineering (FSE Companion '25)}
-      \field{title}{TickIt: Leveraging Large Language Models for Automated Ticket Escalation}
+      \field{title}{TickIt: Leveraging large language models for automated ticket escalation}
       \field{year}{2025}
       \field{pages}{343\bibrangedash 354}
       \range{pages}{12}
@@ -6845,7 +7188,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Applied Linguistics}
-      \field{note}{Advance article, volume/pages pending}
+      \field{note}{Artículo en prensa, volumen y páginas pendientes}
       \field{title}{Evaluating large language models with tests of {S}panish as a foreign language: pass or fail?}
       \field{year}{2026}
       \verb{doi}
@@ -6856,6 +7199,41 @@
       \endverb
       \verb{url}
       \verb https://doi.org/10.1093/applin/amag048
+      \endverb
+    \endentry
+    \entry{McNemar1947_sampling_error}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=3c2670ad8954343917d3fd0384a23703}{%
+           family={McNemar},
+           familyi={M\bibinitperiod},
+           given={Quinn},
+           giveni={Q\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{3c2670ad8954343917d3fd0384a23703}
+      \strng{fullhash}{3c2670ad8954343917d3fd0384a23703}
+      \strng{fullhashraw}{3c2670ad8954343917d3fd0384a23703}
+      \strng{bibnamehash}{3c2670ad8954343917d3fd0384a23703}
+      \strng{authorbibnamehash}{3c2670ad8954343917d3fd0384a23703}
+      \strng{authornamehash}{3c2670ad8954343917d3fd0384a23703}
+      \strng{authorfullhash}{3c2670ad8954343917d3fd0384a23703}
+      \strng{authorfullhashraw}{3c2670ad8954343917d3fd0384a23703}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Psychometrika}
+      \field{number}{2}
+      \field{title}{Note on the sampling error of the difference between correlated proportions or percentages}
+      \field{volume}{12}
+      \field{year}{1947}
+      \field{pages}{153\bibrangedash 157}
+      \range{pages}{5}
+      \verb{doi}
+      \verb 10.1007/BF02295996
       \endverb
     \endentry
     \entry{MosqueiraRey2023_human_in_the_loop}{article}{}{}
@@ -6945,7 +7323,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Documentación técnica oficial}
-      \field{title}{{n8n} Documentation}
+      \field{title}{{n8n} documentation}
       \field{urlday}{25}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
@@ -6989,11 +7367,53 @@
       \field{labelnamesource}{shortauthor}
       \field{labeltitlesource}{title}
       \field{number}{29}
-      \field{title}{The {NIST} Cybersecurity Framework ({CSF}) 2.0}
+      \field{title}{The {NIST} cybersecurity framework ({CSF}) 2.0}
       \field{type}{NIST Cybersecurity White Paper}
       \field{year}{2024}
       \verb{doi}
       \verb 10.6028/NIST.CSWP.29
+      \endverb
+    \endentry
+    \entry{NiculescuMizil2005_probabilities}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=b35fbebaaa62ff79aee38093ae22a581}{%
+           family={Niculescu-Mizil},
+           familyi={N\bibinithyphendelim M\bibinitperiod},
+           given={Alexandru},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=599c5251d489b92dc7856277d56cb1a9}{%
+           family={Caruana},
+           familyi={C\bibinitperiod},
+           given={Rich},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {ACM}%
+      }
+      \strng{namehash}{daa42a219e7d77fc10d94cb9ba3608f1}
+      \strng{fullhash}{daa42a219e7d77fc10d94cb9ba3608f1}
+      \strng{fullhashraw}{daa42a219e7d77fc10d94cb9ba3608f1}
+      \strng{bibnamehash}{daa42a219e7d77fc10d94cb9ba3608f1}
+      \strng{authorbibnamehash}{daa42a219e7d77fc10d94cb9ba3608f1}
+      \strng{authornamehash}{daa42a219e7d77fc10d94cb9ba3608f1}
+      \strng{authorfullhash}{daa42a219e7d77fc10d94cb9ba3608f1}
+      \strng{authorfullhashraw}{daa42a219e7d77fc10d94cb9ba3608f1}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the 22nd International Conference on Machine Learning (ICML '05)}
+      \field{title}{Predicting good probabilities with supervised learning}
+      \field{year}{2005}
+      \field{pages}{625\bibrangedash 632}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1145/1102351.1102430
       \endverb
     \endentry
     \entry{paket2024itservice}{article}{}{}
@@ -7042,7 +7462,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{2024 9th International Conference on Computer Science and Engineering (UBMK)}
-      \field{title}{IT Service Desk Ticket Classification via Large Language Models}
+      \field{title}{{IT} service desk ticket classification via large language models}
       \field{year}{2024}
       \field{pages}{135\bibrangedash 140}
       \range{pages}{6}
@@ -7118,7 +7538,7 @@
       \field{booksubtitle}{Proceedings of {DAL} 2018}
       \field{booktitle}{Data Analytics and Learning}
       \field{series}{Lecture Notes in Networks and Systems}
-      \field{title}{Automated IT Service Desk Systems Using Machine Learning Techniques}
+      \field{title}{Automated {IT} service desk systems using machine learning techniques}
       \field{volume}{43}
       \field{year}{2019}
       \field{pages}{331\bibrangedash 346}
@@ -7148,6 +7568,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
+      \field{day}{27}
       \field{month}{4}
       \field{note}{Diario Oficial de la Unión Europea, L 119/1}
       \field{title}{Reglamento ({UE}) 2016/679 --- {R}eglamento General de Protección de Datos}
@@ -7155,6 +7576,7 @@
       \field{urlmonth}{10}
       \field{urlyear}{2026}
       \field{year}{2016}
+      \field{dateera}{ce}
       \field{urldateera}{ce}
       \verb{urlraw}
       \verb https://eur-lex.europa.eu/eli/reg/2016/679/oj
@@ -7278,7 +7700,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of Machine Learning Research}
-      \field{title}{Scikit-learn: Machine Learning in {P}ython}
+      \field{title}{Scikit-learn: Machine learning in {P}ython}
       \field{volume}{12}
       \field{year}{2011}
       \field{pages}{2825\bibrangedash 2830}
@@ -7305,6 +7727,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
+      \field{day}{29}
       \field{month}{11}
       \field{note}{Boletín Oficial de la República Argentina, 3 de diciembre de 2001}
       \field{title}{Decreto 1558/2001: Reglamentación de la Ley 25.326 de Protección de los Datos Personales}
@@ -7312,6 +7735,7 @@
       \field{urlmonth}{10}
       \field{urlyear}{2026}
       \field{year}{2001}
+      \field{dateera}{ce}
       \field{urldateera}{ce}
       \verb{urlraw}
       \verb http://servicios.infoleg.gob.ar/infolegInternet/anexos/70000-74999/70368/norma.htm
@@ -7346,7 +7770,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of Machine Learning Technologies}
       \field{number}{1}
-      \field{title}{Evaluation: From Precision, Recall and {F}-Measure to {ROC}, Informedness, Markedness and Correlation}
+      \field{title}{Evaluation: From precision, recall and {F}-measure to {ROC}, informedness, markedness and correlation}
       \field{volume}{2}
       \field{year}{2011}
       \field{pages}{37\bibrangedash 63}
@@ -7386,7 +7810,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{edition}{9}
-      \field{title}{Software Engineering: A Practitioner's Approach}
+      \field{title}{Software engineering: A practitioner's approach}
       \field{year}{2020}
     \endentry
     \entry{Rabiner1993_speech_recognition}{book}{}{}
@@ -7422,7 +7846,7 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{Fundamentals of Speech Recognition}
+      \field{title}{Fundamentals of speech recognition}
       \field{year}{1993}
     \endentry
     \entry{Radford2023_whisper}{article}{}{}
@@ -7480,7 +7904,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 40th International Conference on Machine Learning (ICML 2023)}
-      \field{title}{Robust Speech Recognition via Large-Scale Weak Supervision}
+      \field{title}{Robust speech recognition via large-scale weak supervision}
       \field{year}{2023}
       \field{pages}{28492\bibrangedash 28518}
       \range{pages}{27}
@@ -7510,7 +7934,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Documentación técnica oficial}
-      \field{title}{{FastAPI} Documentation}
+      \field{title}{{FastAPI} documentation}
       \field{urlday}{25}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
@@ -7561,7 +7985,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Semantic Web}
       \field{number}{3}
-      \field{title}{{S}panish Triple-to-Text Benchmark on Low-Resource Large Language Models}
+      \field{title}{{S}panish triple-to-text benchmark on low-resource large language models}
       \field{volume}{17}
       \field{year}{2026}
       \verb{doi}
@@ -7613,9 +8037,13 @@
       \field{eprintclass}{cs.LG}
       \field{eprinttype}{arXiv}
       \field{howpublished}{arXiv preprint}
-      \field{note}{arXiv:2103.15822; presentado en la 3rd IEEE International Conference on Computational Systems and Information Technology for Sustainable Solutions ({CSITSS}), 2018}
-      \field{title}{Classifying the Unstructured {IT} Service Desk Tickets Using Ensemble of Classifiers}
+      \field{note}{Preprint de la versión arbitrada presentada en la 3rd IEEE International Conference on Computational Systems and Information Technology for Sustainable Solutions ({CSITSS}), 2018}
+      \field{title}{Classifying the unstructured {IT} service desk tickets using ensemble of classifiers}
+      \field{urlday}{29}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
       \field{year}{2021}
+      \field{urldateera}{ce}
       \verb{doi}
       \verb 10.48550/arXiv.2103.15822
       \endverb
@@ -7666,7 +8094,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{IEEE Access}
-      \field{title}{{IT} Ticket Classification: The Simpler, the Better}
+      \field{title}{{IT} ticket classification: The simpler, the better}
       \field{volume}{8}
       \field{year}{2020}
       \field{pages}{193380\bibrangedash 193395}
@@ -7709,7 +8137,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{edition}{4}
-      \field{title}{Artificial Intelligence: A Modern Approach}
+      \field{title}{Artificial intelligence: A modern approach}
       \field{year}{2021}
     \endentry
     \entry{SEPyME2026_mipyme}{misc}{}{}
@@ -7782,6 +8210,47 @@
       \verb https://www.servicenow.com/products/itsm.html
       \endverb
     \endentry
+    \entry{Shapiro1965_normality}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=d68649e4f2a1a671378e6b8133ccb0d3}{%
+           family={Shapiro},
+           familyi={S\bibinitperiod},
+           given={S.\bibnamedelimi S.},
+           giveni={S\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4804e1730322ac9acf50f7acded4b705}{%
+           family={Wilk},
+           familyi={W\bibinitperiod},
+           given={M.\bibnamedelimi B.},
+           giveni={M\bibinitperiod\bibinitdelim B\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{c79429df467595c7a5a1ca33b7d909f2}
+      \strng{fullhash}{c79429df467595c7a5a1ca33b7d909f2}
+      \strng{fullhashraw}{c79429df467595c7a5a1ca33b7d909f2}
+      \strng{bibnamehash}{c79429df467595c7a5a1ca33b7d909f2}
+      \strng{authorbibnamehash}{c79429df467595c7a5a1ca33b7d909f2}
+      \strng{authornamehash}{c79429df467595c7a5a1ca33b7d909f2}
+      \strng{authorfullhash}{c79429df467595c7a5a1ca33b7d909f2}
+      \strng{authorfullhashraw}{c79429df467595c7a5a1ca33b7d909f2}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Biometrika}
+      \field{number}{3--4}
+      \field{title}{An analysis of variance test for normality (complete samples)}
+      \field{volume}{52}
+      \field{year}{1965}
+      \field{pages}{591\bibrangedash 611}
+      \range{pages}{21}
+      \verb{doi}
+      \verb 10.1093/biomet/52.3-4.591
+      \endverb
+    \endentry
     \entry{Shneiderman2020_human_centered_ai}{article}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=39afccc0f55ae7821df79ffd677c90b0}{%
@@ -7808,7 +8277,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{International Journal of Human--Computer Interaction}
       \field{number}{6}
-      \field{title}{Human-Centered Artificial Intelligence: Reliable, Safe \& Trustworthy}
+      \field{title}{Human-centered artificial intelligence: Reliable, safe \& trustworthy}
       \field{volume}{36}
       \field{year}{2020}
       \field{pages}{495\bibrangedash 504}
@@ -7855,7 +8324,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Information Processing \& Management}
       \field{number}{4}
-      \field{title}{A Systematic Analysis of Performance Measures for Classification Tasks}
+      \field{title}{A systematic analysis of performance measures for classification tasks}
       \field{volume}{45}
       \field{year}{2009}
       \field{pages}{427\bibrangedash 437}
@@ -7898,7 +8367,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{edition}{4}
-      \field{title}{Computer Security: Principles and Practice}
+      \field{title}{Computer security: Principles and practice}
       \field{year}{2018}
     \endentry
     \entry{PostgreSQL2024_docs}{manual}{}{}
@@ -7923,7 +8392,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Documentación técnica oficial}
-      \field{title}{{PostgreSQL} 15 Documentation}
+      \field{title}{{PostgreSQL} 15 documentation}
       \field{urlday}{25}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
@@ -8006,7 +8475,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing (EMNLP 2023)}
-      \field{title}{Just Ask for Calibration: Strategies for Eliciting Calibrated Confidence Scores from Language Models Fine-Tuned with Human Feedback}
+      \field{title}{Just ask for calibration: Strategies for eliciting calibrated confidence scores from language models fine-tuned with human feedback}
       \field{year}{2023}
       \field{pages}{5433\bibrangedash 5442}
       \range{pages}{10}
@@ -8094,9 +8563,9 @@
            given={Lukas},
            giveni={L\bibinitperiod},
            givenun=0}}%
-        {{un=0,uniquepart=base,hash=a34f5689cad1c408c313da70915c7631}{%
-           family={Canton-Ferrer},
-           familyi={C\bibinithyphendelim F\bibinitperiod},
+        {{un=0,uniquepart=base,hash=66171542a64814987c7681a97ec22707}{%
+           family={Canton\bibnamedelima Ferrer},
+           familyi={C\bibinitperiod\bibinitdelim F\bibinitperiod},
            given={Cristian},
            giveni={C\bibinitperiod},
            givenun=0}}%
@@ -8432,13 +8901,13 @@
            givenun=0}}%
       }
       \strng{namehash}{c237483431fea681283a37adbb23a59f}
-      \strng{fullhash}{ee54b4f359ddee33e0901553eefacb68}
-      \strng{fullhashraw}{ee54b4f359ddee33e0901553eefacb68}
-      \strng{bibnamehash}{fe0985da89ec60c48a35b751eff7baa5}
-      \strng{authorbibnamehash}{fe0985da89ec60c48a35b751eff7baa5}
+      \strng{fullhash}{b044ce31d008d7c2bd02d85a2301f208}
+      \strng{fullhashraw}{b044ce31d008d7c2bd02d85a2301f208}
+      \strng{bibnamehash}{2d4e9531fbebe65e015fe37353d29cb7}
+      \strng{authorbibnamehash}{2d4e9531fbebe65e015fe37353d29cb7}
       \strng{authornamehash}{c237483431fea681283a37adbb23a59f}
-      \strng{authorfullhash}{ee54b4f359ddee33e0901553eefacb68}
-      \strng{authorfullhashraw}{ee54b4f359ddee33e0901553eefacb68}
+      \strng{authorfullhash}{b044ce31d008d7c2bd02d85a2301f208}
+      \strng{authorfullhashraw}{b044ce31d008d7c2bd02d85a2301f208}
       \field{sortinit}{T}
       \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
       \field{extradatescope}{labelyear}
@@ -8450,13 +8919,54 @@
       \field{eprinttype}{arXiv}
       \field{howpublished}{arXiv preprint}
       \field{note}{arXiv:2307.09288}
-      \field{title}{Llama 2: Open Foundation and Fine-Tuned Chat Models}
+      \field{title}{Llama 2: Open foundation and fine-tuned chat models}
       \field{year}{2023}
       \verb{doi}
       \verb 10.48550/arXiv.2307.09288
       \endverb
       \verb{eprint}
       \verb 2307.09288
+      \endverb
+    \endentry
+    \entry{Tsoumakas2007_multilabel}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=4f0d141cf0fe25aef8af5a28df702ef7}{%
+           family={Tsoumakas},
+           familyi={T\bibinitperiod},
+           given={Grigorios},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=91b5fa88d99d012b0486f3602b17f8fe}{%
+           family={Katakis},
+           familyi={K\bibinitperiod},
+           given={Ioannis},
+           giveni={I\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{3eae60f117932774a2c5c843ad11eabb}
+      \strng{fullhash}{3eae60f117932774a2c5c843ad11eabb}
+      \strng{fullhashraw}{3eae60f117932774a2c5c843ad11eabb}
+      \strng{bibnamehash}{3eae60f117932774a2c5c843ad11eabb}
+      \strng{authorbibnamehash}{3eae60f117932774a2c5c843ad11eabb}
+      \strng{authornamehash}{3eae60f117932774a2c5c843ad11eabb}
+      \strng{authorfullhash}{3eae60f117932774a2c5c843ad11eabb}
+      \strng{authorfullhashraw}{3eae60f117932774a2c5c843ad11eabb}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{International Journal of Data Warehousing and Mining}
+      \field{number}{3}
+      \field{title}{Multi-label classification: An overview}
+      \field{volume}{3}
+      \field{year}{2007}
+      \field{pages}{1\bibrangedash 13}
+      \range{pages}{13}
+      \verb{doi}
+      \verb 10.4018/jdwm.2007070101
       \endverb
     \endentry
     \entry{Varshney2022_model_cascading}{article}{}{}
@@ -8493,7 +9003,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing (EMNLP 2022)}
-      \field{title}{Model Cascading: Towards Jointly Improving Efficiency and Accuracy of {NLP} Systems}
+      \field{title}{Model cascading: Towards jointly improving efficiency and accuracy of {NLP} systems}
       \field{year}{2022}
       \field{pages}{11007\bibrangedash 11021}
       \range{pages}{15}
@@ -8574,7 +9084,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Advances in Neural Information Processing Systems 30 (NIPS 2017)}
-      \field{title}{Attention Is All You Need}
+      \field{title}{Attention is all you need}
       \field{year}{2017}
       \field{pages}{5998\bibrangedash 6008}
       \range{pages}{11}
@@ -8806,7 +9316,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Nature Methods}
       \field{number}{3}
-      \field{title}{{SciPy} 1.0: Fundamental Algorithms for Scientific Computing in {P}ython}
+      \field{title}{{SciPy} 1.0: Fundamental algorithms for scientific computing in {P}ython}
       \field{volume}{17}
       \field{year}{2020}
       \field{pages}{261\bibrangedash 272}
@@ -8840,7 +9350,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Manifiesto de arquitectura de software}
-      \field{title}{The Twelve-Factor App}
+      \field{title}{The twelve-factor app}
       \field{urlday}{25}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
@@ -8879,7 +9389,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Biometrics Bulletin}
       \field{number}{6}
-      \field{title}{Individual Comparisons by Ranking Methods}
+      \field{title}{Individual comparisons by ranking methods}
       \field{volume}{1}
       \field{year}{1945}
       \field{pages}{80\bibrangedash 83}
@@ -8914,7 +9424,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of the American Statistical Association}
       \field{number}{158}
-      \field{title}{Probable Inference, the Law of Succession, and Statistical Inference}
+      \field{title}{Probable inference, the law of succession, and statistical inference}
       \field{volume}{22}
       \field{year}{1927}
       \field{pages}{209\bibrangedash 212}
@@ -8963,7 +9473,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 2022 CHI Conference on Human Factors in Computing Systems (CHI 2022)}
-      \field{title}{{AI} Chains: Transparent and Controllable Human-{AI} Interaction by Chaining Large Language Model Prompts}
+      \field{title}{{AI} chains: Transparent and controllable human-{AI} interaction by chaining large language model prompts}
       \field{year}{2022}
       \field{pages}{1\bibrangedash 22}
       \range{pages}{22}
@@ -9038,7 +9548,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{The Twelfth International Conference on Learning Representations (ICLR 2024)}
-      \field{title}{Can {LLMs} Express Their Uncertainty? An Empirical Evaluation of Confidence Elicitation in {LLMs}}
+      \field{title}{Can {LLMs} express their uncertainty? An empirical evaluation of confidence elicitation in {LLMs}}
       \field{year}{2024}
       \verb{urlraw}
       \verb https://openreview.net/forum?id=gjeQKFxFpZ
@@ -9264,7 +9774,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing (EMNLP)}
-      \field{title}{{MMLU}-{P}ro{X}: A Multilingual Benchmark for Advanced Large Language Model Evaluation}
+      \field{title}{{MMLU}-{P}ro{X}: A multilingual benchmark for advanced large language model evaluation}
       \field{year}{2025}
       \field{pages}{1513\bibrangedash 1532}
       \range{pages}{20}
@@ -9367,7 +9877,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of Artificial Intelligence Research}
-      \field{title}{Viewpoint: Human-in-the-loop Artificial Intelligence}
+      \field{title}{Viewpoint: Human-in-the-loop artificial intelligence}
       \field{volume}{64}
       \field{year}{2019}
       \field{pages}{243\bibrangedash 252}
@@ -9472,7 +9982,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing (EMNLP)}
-      \field{title}{Multilingual Large Language Models Are Not (Yet) Code-Switchers}
+      \field{title}{Multilingual large language models are not (yet) code-switchers}
       \field{year}{2023}
       \field{pages}{12567\bibrangedash 12582}
       \range{pages}{16}
@@ -9539,7 +10049,7 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{Proceedings of the 38th International Conference on Machine Learning (ICML 2021)}
       \field{series}{Proceedings of Machine Learning Research}
-      \field{title}{Calibrate Before Use: Improving Few-Shot Performance of Language Models}
+      \field{title}{Calibrate before use: Improving few-shot performance of language models}
       \field{volume}{139}
       \field{year}{2021}
       \field{pages}{12697\bibrangedash 12706}

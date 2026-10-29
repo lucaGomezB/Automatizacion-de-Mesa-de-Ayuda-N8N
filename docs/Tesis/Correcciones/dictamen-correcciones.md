@@ -3450,3 +3450,52 @@ Compilacion en `texlive-thesis` (`MSYS_NO_PATHCONV=1 docker run ... latexmk main
 ### Release
 
 - **Nota de release (planificada, NO publicada en este change):** la release **v1.2.6** incluira c-162. El tag y el commit los publica el orquestador; este change solo deja la nota. No se creo tag ni commit.
+
+---
+
+## Dictamen v10 / v1.2.5 (2026-10-28) - c-163
+
+Cierre de las recomendaciones 9 a 13 del dictamen CONEAU del 2026-10-28 sobre la tesis v10 / release `v1.2.5` (`auditorias/Dictamen_Tesis_v10_v1.2.5_CONEAU_2026-10-28.md`). Change `c-163-atender-las-recomendaciones-9-a-13-del-dictamen`. Docs-only sobre `docs/Tesis/v10 (IA)/`. No se modifico `App/`, `n8n/`, `evaluation/`, `openspec/config.yaml`, las cinco cadenas canonicas ni `docs/Tesis/v9 (IA)/`. No se creo tag ni commit.
+
+### Origen y linea base
+
+- Linea base de compilacion: **111 paginas**, "Referencias bibliograficas" en la pagina **97**. Comando reproducible: `MSYS_NO_PATHCONV=1 docker run --rm -v "$PWD/docs/Tesis/v10 (IA)":/work -w /work/paper texlive-thesis latexmk main.tex`.
+- Author decisions: OQ-1 = B (fecha de portada DIFERIDA; `00-portada.tex` conserva `\today`); OQ-2 confirmada (regenerar las figuras con erratas).
+
+### Cierre de las recomendaciones 9 a 13
+
+- **Rec 9 (consistencia estadistica y de metodo).** 1.4 y 8.1 enuncian la hipotesis nula de Wilcoxon sobre las DIFERENCIAS PAREADAS (`D_i = t_manual,i - t_automatizado,i`, simetria respecto de cero), sin igualdad de medianas. 4.1 rotula el diseno como cuasiexperimental. 8.5 separa el efecto de cobertura (74 -> 131 casos) del de exactitud (38 vs 37 en los 67 casos comunes) y rotula la "cota pesimista" como interpretacion. Anexo H: `safety_settings` con las cuatro categorias y umbral `BLOCK_NONE`, un unico ejemplo por clase (cinco en total) y la clave JSON `categoría` (con tilde), coherente con `docs/prompt_gemini.txt` y `gemini_classifier.py`.
+- **Rec 10 (legal, governance MEDIUM).** 7.1: articulo 2 define la disociacion junto a la pseudonimizacion; RGPD limitado a las personas que se encuentren en la Union (art. 3.2); Decision 2003/490/CE citada con su entrada. 7.2 y 7.6.5: acceso en diez dias corridos (art. 14) y ARCO en cinco dias habiles (art. 16). 7.2 y `06-implementacion.tex`: la trazabilidad como medida tecnica que facilita el art. 9, no como exigencia literal.
+- **Rec 11 (forma, glosario y figuras).** Glosario con 79 entradas (se agregaron 17 y se retiraron HMM y WIP). Fig. 8 citada desde 8.1; Figs. 3-5 citadas desde el capitulo 5. Figuras 3, 8, 9 y 11 regeneradas desde su fuente, con las erratas eliminadas. "seudonimizado" -> "pseudonimizado" en 11.3; Table 5 con identificadores sin tilde. Lineas fuera de margen resueltas (`xurl`, `\path`, `\tabcolsep`, `\cftsubsecnumwidth`). "sobre qué aspecto" (8.6) verificado con tilde. Rol de los dos directores declarado en 4.9.
+- **Rec 12 (conformidad formal APA 7).** Coma antes del ano con "et al."; titulos en sentence case; "2.ª ed."; raya corta en rangos de paginas; "N.º"; ISO/IEC como autor institucional; "(Vol. 43, pp. 331-346)" en Paramesh; dia en las entradas legales; Hohpe y Woolf (2004); nota de Mayor-Rocher en espanol; apellido compuesto de Touvron; Ramya con `urldate` y nota de preprint; Efron con editor Chapman & Hall/CRC y DOI 10.1201/9780429246593.
+- **Rec 13 (fuentes primarias).** Se incorporaron y citaron Shapiro-Wilk (1965), McNemar (1947), metricas multietiqueta (Tsoumakas & Katakis, 2007), r rank-biserial (Kerby, 2014), eficiencia relativa asintotica (Hodges & Lehmann, 1956) y regresion isotonica como calibracion (Niculescu-Mizil & Caruana, 2005). La prueba de Wilcoxon en 8.1 quedo respaldada con su fuente primaria ademas de SciPy.
+
+### Figuras regeneradas (Rec 11, OQ-2)
+
+| Figura | Archivo | Fuente | Toolchain | Dimensiones | Erratas eliminadas |
+|---|---|---|---|---|---|
+| 3 | `despliegue.png` | `docs/diagrams/despliegue.md` | mmdc 12.0.0 | 1568x1712 (ratio 1,092, igual al previo) | "maquina" -> "máquina"; "clasificacion" -> "clasificación" |
+| 8 | `boxplot_tiempos.pdf` | `scripts/figures/boxplot_tiempos.py` | python3 (matplotlib 3.11.2) | n/a | "Distribucion", "electronico", "Telefonia" y punto decimal -> acentos y coma |
+| 9 | `matriz_confusion.pdf` | `scripts/figures/matriz_confusion.py` | python3 (matplotlib 3.11.2) | n/a | "confusion" -> "confusión" |
+| 11 | `flujo_n8n.png` | `docs/diagrams/flujo_n8n.md` | mmdc 11.17.1 | 1568x926 (ratio 0,591, igual al previo) | "Validacion", "Revision", "Envio" -> acentos |
+
+La Figura 2 `arquitectura_sistema.png` ya la regenero c-159 y NO se toco. Todas las figuras se regeneraron fielmente (mismo ratio para las Mermaid, salida desde el script real para las de matplotlib); ninguna quedo declarada como no regenerada.
+
+### OQ-1 (fecha de portada) - item abierto
+
+DIFERIDA por decision del autor (opcion B, 2026-10-29): `00-portada.tex` conserva `\today` y no se modifica. El item queda abierto para fijar la fecha de entrega cuando sea firme.
+
+### Compilacion, paginas y palabras
+
+Compilacion en `texlive-thesis` (`latexmk main.tex`): exit 0, 0 errores (`^!`), 0 referencias indefinidas, 0 `multiply defined`, 0 `??`, biber sin advertencias. `Overfull` = 12 (linea base 24; se redujeron 12; las lineas señaladas por el dictamen —comando de `pytest`, URL del repositorio, ruta del corpus y texto encimado de la Tabla 6— ya no exceden el margen). `verify_citations.py` PASS (81 entradas, 0 huerfanas, 0 sin uso). Render regenerado con `build_tesis_para_agente.py v1.2.5`.
+
+| Change | Total | Delta total | Referencias (pagina inicial) | Estado |
+|---|---|---|---|---|
+| `c-162` (linea base) | 111 | - | 97 | Medido |
+| `+c-163` | 112 | +1 | 98 | Medido (`Pages: 112`); exceso registrado y honrado |
+
+El delta +1 proviene de una pagina viuda de la subseccion 7.6.5 en el capitulo legal; las palancas de forma aplicadas (`xurl`, `\path`, `\cftsubsecnumwidth`, `\tabcolsep` en la Tabla 5) no lo revierten sin recortar contenido requerido. Se registra como exceso honrado.
+
+### Release
+
+- **Nota de release (planificada, NO publicada en este change):** la release **v1.2.7** incluira c-163. El tag y el commit los publica el orquestador; este change solo deja la nota. No se creo tag ni commit.

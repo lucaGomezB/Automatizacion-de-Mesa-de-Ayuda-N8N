@@ -13,20 +13,20 @@ Diagrama esquematico reconstruido a partir de la exportacion versionada en
 flowchart TB
     subgraph ENTRADA["Etapa 1 - Entrada (triggers)"]
         A1["Llega un email a Mesa de Ayuda"]
-        A2["Llamada telefonica (webhook)"]
+        A2["Llamada telefónica (webhook)"]
         A3["Webhook formulario web"]
-        A4["notificacion-clasificacion (webhook)"]
+        A4["notificación-clasificación (webhook)"]
     end
 
-    subgraph VALIDACION["Etapa 2 - Validacion y normalizacion"]
-        B1["Se verifica que la informacion sea la necesaria"]
-        B2["Sellar ingreso telefonia"]
+    subgraph VALIDACION["Etapa 2 - Validación y normalización"]
+        B1["Se verifica que la información sea la necesaria"]
+        B2["Sellar ingreso telefonía"]
         B3["Marcar canal web"]
         B4["Normalizar entrada del incidente"]
-        B5["Entrada valida (IF)"]
+        B5["Entrada válida (IF)"]
     end
 
-    subgraph ENVIO["Etapa 3 - Envio al backend"]
+    subgraph ENVIO["Etapa 3 - Envío al backend"]
         C1["Login operador"]
         C2["HTTP POST a MESA-AYUDAS"]
     end
@@ -38,27 +38,27 @@ flowchart TB
         D4["Web con incidente? (IF)"]
     end
 
-    subgraph REVISION["Etapa 5 - Revision humana"]
+    subgraph REVISION["Etapa 5 - Revisión humana"]
         E1["Requiere revision humana (IF)"]
         E2["Preparar destinatarios de revision"]
         E3["Notificar operador designado"]
         E4["Confirmar correo en revision? (IF)"]
-        E5["Confirmacion web revision humana"]
-        E6["Responder handoff telefonia"]
+        E5["Confirmación web revisión humana"]
+        E6["Responder handoff telefonía"]
     end
 
-    subgraph RESPUESTA["Etapa 6 - Respuesta y auditoria"]
+    subgraph RESPUESTA["Etapa 6 - Respuesta y auditoría"]
         F1["Confirmacion web al usuario"]
-        F2["Correo de confirmacion al usuario"]
-        F3["Registro de auditoria"]
+        F2["Correo de confirmación al usuario"]
+        F3["Registro de auditoría"]
         F4["Respuesta web de cierre"]
     end
 
-    subgraph POST["Etapa 7 - Aviso post-revision"]
-        G1["Auditar notificacion"]
-        G2["Es aviso post-revision? (IF)"]
-        G3["Preparar destinatarios gestion"]
-        G4["Notificar gestion post-revision"]
+    subgraph POST["Etapa 7 - Aviso post-revisión"]
+        G1["Auditar notificación"]
+        G2["Es aviso post-revisión? (IF)"]
+        G3["Preparar destinatarios gestión"]
+        G4["Notificar gestión post-revisión"]
     end
 
     A1 --> B1

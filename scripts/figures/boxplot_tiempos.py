@@ -20,12 +20,12 @@ import matplotlib.pyplot as plt  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 CORPUS = ROOT / "data" / "corpus_evaluacion_pseudonimizado.json"
-OUT = ROOT / "docs" / "Tesis" / "v9 (IA)" / "paper" / "figures" / "boxplot_tiempos.pdf"
+OUT = ROOT / "docs" / "Tesis" / "v10 (IA)" / "paper" / "figures" / "boxplot_tiempos.pdf"
 
 CHANNELS = [
     ("formulario web", "Formulario web"),
-    ("correo electr\u00f3nico", "Correo electronico"),
-    ("llamada telef\u00f3nica", "Telefonia"),
+    ("correo electr\u00f3nico", "Correo electrónico"),
+    ("llamada telef\u00f3nica", "Telefonía"),
 ]
 
 
@@ -58,11 +58,11 @@ def build_figure(casos: list[dict]) -> plt.Figure:
         med_m = statistics.median(manual)
         med_a = statistics.median(auto)
         ax.set_xlabel(
-            f"mediana manual = {med_m:.2f} s\nmediana automatizada = {med_a:.2f} s",
+            f"mediana manual = {med_m:.2f} s\nmediana automatizada = {med_a:.2f} s".replace(".", ","),
             fontsize=9,
         )
     fig.suptitle(
-        "Distribucion del tiempo de registro por canal de origen",
+        "Distribución del tiempo de registro por canal de origen",
         fontsize=13,
     )
     fig.tight_layout(rect=(0, 0, 1, 0.96))

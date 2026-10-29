@@ -2424,6 +2424,21 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
+## FASE 50 — Recomendaciones 9 a 13 del dictamen CONEAU v10/v1.2.5 (2026-10-29)
+
+> Change documental posterior a la FASE 49: cierra las recomendaciones 9 a 13 del dictamen CONEAU del 2026-10-28 sobre la tesis v10 / release `v1.2.5` (`auditorias/Dictamen_Tesis_v10_v1.2.5_CONEAU_2026-10-28.md`), que las FASES 48 y 49 no cubrian. Docs-only sobre `docs/Tesis/v10 (IA)/`; no toca `App/`, `n8n/`, `evaluation/`, `openspec/config.yaml`, las cadenas canonicas ni `docs/Tesis/v9 (IA)/`. Gobernanza MEDIA (rec 10 legal) / BAJA (recs 9, 11, 12, 13). Sin mediciones nuevas.
+
+### [C-163] `atender-las-recomendaciones-9-a-13-del-dictamen` — EN APLICACION (2026-10-29)
+
+- **Scope**: rec 9 (hipotesis nula de Wilcoxon sobre diferencias pareadas en 1.4 y 8.1; "cuasiexperimental" en 4.1; separacion de cobertura y exactitud en 8.5; Anexo H con `safety_settings`, ejemplos por clase y clave JSON `categoría`); rec 10 (11-aspectos-legales: disociacion art. 2, plazos art. 14/16, trazabilidad como medida tecnica, RGPD art. 3.2, entrada de la Decision 2003/490/CE); rec 11 (glosario, citacion de figuras 3-5 y 8, regeneracion de las figuras 3/8/9/11, "seudonimizado", lineas fuera de margen y texto encimado, espaciado del indice, rol de los directores); rec 12 (conformidad formal APA 7: coma con "et al.", sentence case, "2.ª ed.", raya corta, ISO/IEC, "(Vol., pp.)", dia legal, Hohpe y Woolf 2004, Mayor-Rocher en espanol, Touvron, Ramya, Efron); rec 13 (fuentes primarias: Shapiro-Wilk, McNemar, metricas multietiqueta, r rank-biserial, ARE de Hodges & Lehmann y regresion isotonica, con Wilcoxon respaldado en 8.1).
+- **Verificacion**: compilacion Docker `texlive-thesis` con exit 0, 0 errores, 0 referencias indefinidas, 0 `multiply defined`, 0 `??`, biber sin advertencias; `Overfull` = 12 (base 24; las lineas señaladas ya no exceden el margen); 111 -> 112 paginas (delta +1, exceso registrado y honrado); "Referencias bibliograficas" 97 -> 98; `verify_citations.py` PASS (81 entradas, 0 huerfanas, 0 sin uso); `openspec validate "c-163-atender-las-recomendaciones-9-a-13-del-dictamen" --strict`; render regenerado con `build_tesis_para_agente.py v1.2.5`.
+- **Item abierto**: OQ-1 = B — fecha de portada DIFERIDA; `00-portada.tex` conserva `\today` y se atendera cuando la fecha de entrega sea firme.
+- **Rollback**: `git checkout --` de las fuentes `.tex`, `Bibliography_base.bib`, las figuras regeneradas, `docs/diagrams/despliegue.md`, `docs/diagrams/flujo_n8n.md`, `scripts/figures/*.py`, el render, el ledger y `CHANGES.md`. Sin efecto en runtime ni release.
+- **Dependencias**: archivos del dictamen y su ledger (`dictamen-correcciones.md`). No revierte c-158..c-162.
+- **Leer antes**: `openspec/changes/c-163-atender-las-recomendaciones-9-a-13-del-dictamen/{proposal,design,tasks}.md` y la seccion "Dictamen v10 / v1.2.5 (2026-10-28) - c-163" de `docs/Tesis/Correcciones/dictamen-correcciones.md`.
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo; actualizado 2026-10-22)

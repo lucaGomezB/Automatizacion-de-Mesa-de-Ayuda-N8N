@@ -57,6 +57,9 @@
 \usepackage{tocloft}
 \renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
 \renewcommand{\cftdotsep}{1}
+% Ancho del numero de subseccion en el indice: evita que "11.10" quede pegado
+% al titulo ("11.10Estudios") en las subsecciones de dos digitos (c-163, rec 11).
+\setlength{\cftsubsecnumwidth}{4.5em}
 
 % --- Tablas: formato APA 7 (solo bordes horizontales, sin lineas verticales) ---
 \usepackage{booktabs}
@@ -85,6 +88,9 @@
 
 % --- Hipervinculos (APA 7: sin bordes de color) ---
 \usepackage[hidelinks,bookmarks=true,bookmarksnumbered=true,pdfstartview=FitH]{hyperref}
+% xurl: permite el corte de URLs largas (p. ej. la del repositorio) en el
+% margen, sin que la linea exceda el ancho de caja (c-163, rec 11).
+\usepackage{xurl}
 \hypersetup{
   pdftitle={Automatización inteligente del registro de incidentes en mesas de ayuda},
   pdfauthor={Luca Gomez, Carla Bustos, Gonzalo Sevilla},
@@ -101,6 +107,40 @@
 % --- Bibliografia: APA 7ma edicion ---
 \usepackage[style=apa,backend=biber,sorting=nyt,language=spanish]{biblatex}
 \addbibresource{../Bibliography_base.bib}
+% Conformidad formal APA 7 (c-163, rec 12):
+% (a) coma antes del ano en las citas con "et al.": biblatex suprime la coma
+%     cuando el autor termina en "et al." (por el punto); se compone literal.
+\DeclareDelimFormat{nameyeardelim}{,\space}
+% (b) raya corta (no guion) en los rangos de paginas; el lbx spanish usa \mbox{-}.
+\DefineBibliographyExtras{spanish}{\protected\def\bibrangedash{\textendash}}
+% (c) ordinal de edicion femenino con punto ("2.a ed." -> "2.\textordfeminine~ed.").
+\DeclareFieldFormat{edition}{%
+  \ifinteger{#1}
+    {#1.\textordfeminine~\bibstring{edition}}
+    {#1\isdot}}
+% (d) "(Vol., pp.)" en incollection/inbook (apa.bbx compone pages antes que volume).
+\renewbibmacro*{addinfo1}{%
+  \printtexte[parens]{%
+    \usebibmacro{editor+trans+narr}%
+    \setunit*{\addsemicolon\addspace}%
+    \printfield{edition}%
+    \setunit*{\addcomma\addspace}%
+    \ifthenelse{\ifentrytype{report}\OR
+                \ifentrytype{unpublished}\OR
+                \ifentrytype{dataset}\OR
+                \ifentrytype{software}\OR
+                \ifentrytype{audio}\OR
+                \ifentrytype{patent}\OR
+                \ifentrytype{image}}{\usebibmacro{addinfo3}}{}%
+    \setunit*{\addcomma\addspace}%
+    \iffieldundef{maintitle}
+      {\ifthenelse{\ifentrytype{book}\OR\ifentrytype{inbook}}{\printfield{volumes}}{}%
+       \setunit*{\addcomma\addspace}%
+       \ifthenelse{\ifentrytype{book}\OR\ifentrytype{inbook}}{\printfield{volume}}{}}
+      {}%
+    \setunit*{\addcomma\addspace}%
+    \ifentrytype{inbook}{\printfield{pages}}{}}%
+}
 % Bibliografia compacta (c-141, palanca P7; ajustada a \footnotesize por c-146, palanca D9): cuerpo de letra solo en la lista de referencias
 \renewcommand*{\bibfont}{\normalfont\footnotesize}
 \AtBeginBibliography{\linespread{1.0}\selectfont\setlength{\bibitemsep}{0pt}\setlength{\bibnamesep}{0pt}\setlength{\bibinitsep}{0pt}}
@@ -116,7 +156,7 @@
   urlseen = {Consultado},
   edition = {ed.},
   volume = {Vol.},
-  number = {N.°},
+  number = {N.º},
   in = {En},
 }
 
