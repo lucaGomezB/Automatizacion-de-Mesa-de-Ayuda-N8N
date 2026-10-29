@@ -1,7 +1,7 @@
 # Diagrama Entidad-Relación — Modelo de Datos (Anexo C)
 
-Modelo de las siete entidades principales del sistema (Tabla~4, `tab:entidades`),
-verificado contra `App/Backend/app/models/`. Las tablas auxiliares
+Modelo de las siete entidades principales del sistema (`tab:entidades`) en la
+configuración entregada (release `v1.2.5`), verificado contra `App/Backend/app/models/`. Las tablas auxiliares
 (`incidente_evento`, `incidente_comentario`, `telefonia_ingreso`, etc.) quedan
 fuera del alcance de este diagrama.
 
@@ -25,6 +25,7 @@ erDiagram
         int estado_id FK
         int canal_origen_id FK
         int reportante_empleado_id FK
+        bool requiere_revision_humana
     }
     SECTOR {
         int id PK
@@ -59,8 +60,11 @@ erDiagram
     DIRECTORIO_EMPLEADO {
         int id PK
         string legajo
-        string email
-        string telefono
+        string nombre
+        string email "cifrado Fernet (c-153)"
+        string telefono "cifrado Fernet (c-153)"
+        string email_bidx UK "indice ciego"
+        string telefono_bidx "indice ciego"
         int sector_id FK
         int user_id FK
         string rol

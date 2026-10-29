@@ -19,6 +19,8 @@ de las ramas consumidoras").
 - **Upsert c-133**: `c-133-hipotesis-objetivos-metrica-primaria` (aplicado el 2026-10-25) pasa el macro-F1 de umbral de las cuatro clases estimables (`0,6508`) de `condicional` a `vigente` (Sección 3.2), agrega los porcentajes `65,5 %` y `34,5 %` a la Sección 3.3, agrega la Sección 3.12 (cota de la segunda sub-hipótesis y contraste acotado de la hipótesis subsidiaria de eficiencia, con el estado que fija la regla de decisión frente a la variante E4 de c-142) y anota el ítem 5 de la Sección 5 y el punto 4 de la Sección 7. No modifica ningún otro valor `vigente`. Fecha: 2026-10-25.
 - **Consolidación c-141** (`c-141-integracion-release-v1-2-0`, tramo de integración; fecha de consolidación: 2026-10-26; versión de trabajo de la tesis: v10; release prevista: `v1.2.0`): verifica que las Secciones 3.7 a 3.12 (c-130, c-134, c-131, c-142, c-132, c-133, en ese orden de aplicación) son únicas y consecutivas y que toda remisión "ver sección 3.N" resuelve; que los números de resultado agregados a `sections/*.tex` por la familia c-130..c-142 (diff contra `v1.1.1`) figuran en alguna sección con procedencia y estado (los redondeos de la tesis a tres decimales o a un decimal porcentual derivan de valores de cuatro decimales ya registrados; los valores de la literatura citados en `tab:trabajos-academicos` tienen su procedencia en `extraccion-metricas-trabajos-c-135.md`); que ninguna corrida de sensibilidad de c-142 cambió un valor `vigente` (las tres filas reformuladas por c-142 conservan valor y estado); y refresca las referencias `archivo:línea` a `sections/*.tex` de las filas `vigente` que el desplazamiento de líneas de la familia había dejado desfasadas (solo el número de línea; ningún valor ni estado cambia). El item 6 de la Sección 7 (conjunto de preproducción, c-144) se conserva sin renumerar. Fecha de consolidación: 2026-10-26.
 - **Upsert c-145**: `c-145-correccion-factual-sincronizacion-del-memo-y-portabilidad-del-harness` (aplicado el 2026-10-26) registra el margen de error `6,66 %` como `vigente` con `N ≈ 2.646`, `z = 1,96`, `p = 0,5` y `n = 200` (Sección 3.4), marca `6,74 %` / `N = 3.700` como `retirado` y actualiza el punto 2 de la Sección 7 y la advertencia de arrastre del ítem 4. Además corrige por correspondencia de contenido las referencias `07-resultados.tex:<línea>` desfasadas (mínimo `:129 → :128`, `:75 → :74`, `:167-188 → :166-187` y `:179-183 → :178-182`) y la fila retirada del `9,5 %` que citaba `:160`. No modifica ningún otro valor `vigente`. Fecha: 2026-10-26.
+- **Upsert c-159**: `c-159-reconciliar-figuras-tablas-y-evidencia-cualitativa` (aplicado el 2026-10-28) agrega la Sección 3.13 (errores estrictos por frontera de confusión y aciertos laxos entre ellos, recomputados por `docs/Tesis/Correcciones/recontar_errores_frontera.py`). No modifica ningún valor canónico de las Secciones 3.1 a 3.12; la Tabla 16 (`tab:errores`) pasa a tener entrada canónica.
+- **Upsert c-160**: `c-160-residuos-de-correccion-anexo-i-y-consistencia-interna` (aplicado el 2026-10-29) no agrega ni modifica ningun valor canónico. Nota de consumo: la Sección 3.9 (`96/130 = 0,7385` frente a `88/130 = 0,6769`) pasa a consumirse también en la Sección 5.5 de la tesis (`05-arquitectura.tex`, comparación pareada del punto de operación del filtro, sobre los 130 casos con predicción de ambas etapas), en lugar de `0,7405 frente a 0,6769` (97/131 frente a 88/130).
 - **Artefacto**: este memo. No se edita ningún `.tex` en este change.
 - **Fecha de verificación**: 2026-10-21.
 - **SHA-256 del corpus** (`data/corpus_evaluacion_pseudonimizado.json`):
@@ -651,6 +653,43 @@ T11 y T14 y esta sección.
 
 **Reproducción.** Sin cifras propias: ver los comandos de reproducción de las Secciones 3.7, 3.9
 y 3.10. No hubo llamadas a Gemini (`--confirm-paid`, `run_evaluation.py --force`).
+
+### 3.13 Errores por frontera y aciertos laxos entre los errores estrictos (c-159)
+
+Cifras de la Tabla 16 (`tab:errores`) y de la lectura laxa de la Sección 8.6. Recomputadas el
+2026-10-28 por `docs/Tesis/Correcciones/recontar_errores_frontera.py` (solo lectura; reutiliza
+`evaluation.metrics.aciertos_laxos` y `CLASES`; NO invoca al clasificador, a Gemini, a N8N ni a
+Twilio). Un acierto laxo es un error estricto cuyo sector predicho pertenece al sector asignado o a
+los sectores adicionales del corpus (Sección 4.7 de la tesis).
+
+| Valor canónico | Procedencia (archivo:línea) | Estado | Notas |
+|---|---|---|---|
+| Errores estrictos: `53` de `200` | `07-resultados.tex:155,219` | vigente | Ya registrado en la Sección 3.2; sin cambio. |
+| Hardware-Software: `14` errores (`26,4 %`), `5` aciertos laxos (`35,7 %`) | `07-resultados.tex:230` | vigente | Frontera Soporte Tecnico Hardware - Soporte Tecnico Software, par no ordenado. |
+| Sistemas-Software: `12` errores (`22,6 %`), `10` aciertos laxos (`83,3 %`) | `07-resultados.tex:231` | vigente | |
+| Seguridad-Software: `11` errores (`20,8 %`), `8` aciertos laxos (`72,7 %`) | `07-resultados.tex:232` | vigente | |
+| Demás fronteras: `16` errores (`30,2 %`), `9` aciertos laxos (`56,3 %`) | `07-resultados.tex:233` | vigente | Incluye las que involucran a Bases de Datos. |
+| Aciertos laxos entre los errores: `32` de `53` (`60,4 %`) | `07-resultados.tex:235,244` | vigente | Recuento sobre el corpus y la evidencia `hybrid-v3` del 7-10-2026. |
+| Errores plenos (sector predicho fuera del conjunto de verdad): `21` de `53` (`39,6 %`) | `07-resultados.tex:244` | vigente | `21 = 200 - 179`. |
+| Identidad: `147 + 32 = 179` (exactitud laxa `0,895`) | `07-resultados.tex:244` | vigente | `147` aciertos estrictos (Sección 3.2) más `32` laxos. |
+| R001: `No puede ingresar al sistema principal`; Seguridad Informatica a Soporte Tecnico Software; `0,95`; `gemini`; acierto laxo | `07-resultados.tex:246` | vigente | Texto literal del campo `descripcion` del corpus. |
+| R032: `Su PC se reinicia a cada rato, sospecha que son los cables de la computadora.`; Soporte Tecnico Software a Soporte Tecnico Hardware; `0,50`; `deterministic`; acierto laxo | `07-resultados.tex:246` | vigente | La confianza de la etapa determinística mide la fuerza de la señal y no deriva a revisión. |
+| R015: `No le salen correos por flujo del sistema principal y no le llegan las instancias`; Sistemas a Soporte Tecnico Software; `0,85`; `gemini`; acierto laxo | `07-resultados.tex:246` | vigente | |
+
+**Reproducción.** Desde la raíz del repositorio: `python docs/Tesis/Correcciones/recontar_errores_frontera.py`
+(Python 3.12 o 3.14, solo biblioteca estándar). Valida antes de computar: SHA-256 del corpus con fin
+de línea normalizado a LF `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb`; `cache_meta`
+de `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` (`corpus_hash` igual al del corpus,
+`corpus_count` 200, `classifier_version` `hybrid-v3`, `generated_at` `2026-10-07T22:22:01.947873+00:00`);
+y la unión por identificador con descripciones idénticas. Pruebas:
+`docker run --rm -v "<raiz>:/repo" -w /repo eval-tests python -m pytest docs/Tesis/Correcciones/test_recontar_errores_frontera.py -q`
+(fuera de la CI, como `test_verificar_matriz_trazabilidad.py`).
+
+**Hash de la evidencia.** Se valida por contenido (`cache_meta`), no por el SHA-256 del archivo: el
+blob versionado (fin de línea LF) es `89cf956e82f660dd8675a2d23b7b4d17efd62da542c0ba35bea28e0e54572ede`
+y la copia de trabajo de Windows con `core.autocrlf` (CRLF) es
+`3fb5bacd04f2e9d303f580e4cf2ac4b4c6f2eab628a4fff80a6e1238029cd8fd`, el valor que cita hoy la
+procedencia de la evidencia. `.gitattributes` solo fija LF para el corpus.
 
 ## 4. Contingencia del gate de intervención humana
 
