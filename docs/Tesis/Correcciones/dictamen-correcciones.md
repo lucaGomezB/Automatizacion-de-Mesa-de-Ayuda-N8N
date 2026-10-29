@@ -3310,7 +3310,7 @@ pendiente (fechas de las iteraciones Scrumban, sin fuente primaria); B14 -> A3 y
 ### Decisiones (sintesis)
 
 - **D1 Anexo I**: se conserva y se compacta. Extension medida tras c-158 a c-160: aprox. 1,9 paginas (pp. 108-109 del PDF de 109 paginas), frente a aprox. 1,0 pagina antes de la familia; el parrafo de naturaleza reemplaza al primer parrafo anterior con extension menor.
-- **D2 Naturaleza**: revisiones evaluativas previas a la defensa, solicitadas por los autores, con el perfil `Prompt2.docx` aplicado mediante un modelo de lenguaje; no vinculantes; no emitidas por el jurado, la direccion, la catedra ni la CONEAU (OQ1 pendiente de los autores).
+- **D2 Naturaleza**: revisiones evaluativas previas a la defensa, solicitadas por los autores, con el perfil `Prompt2.docx` aplicado mediante un modelo de lenguaje; no vinculantes; no emitidas por el jurado, la direccion, la catedra ni la CONEAU (OQ1 resuelto: opcion B, c-161).
 - **D3 Estructura**: naturaleza, dictamen del 22-10 (Tabla 20 con punteros corregidos), dictamen del 28-10 (tabla propia `tab:anexo-trazabilidad-2810` con A1 a A4 y B5 a B8; c-158 y c-159 solo habian dejado un parrafo) y decisiones de diseno (c-72, c-74, c-82).
 - **D4 Formulacion canonica del gate**: la regla `requiere_revision_humana = (confianza < 0,70)` se evalua solo sobre la salida de la etapa Gemini; la reserva deriva siempre, con confianza 0,0, y la etapa determinística no deriva por su confianza. Llevada a 2.4, 5.5, 7.5, 11.1 y Anexo H; 6.3 y 8.3 ya coincidian.
 - **D5 Disparador por directorio**: fecha 13 de octubre de 2026 (posterior a las corridas), independiente de la clasificacion, en 2.4, 5.5, 6.3, 7.5 y Anexo H; no se agrega a 8.3 ni 11.1. Coincide con las leyendas de las Figuras 1 y 4 (c-159) y con la tabla de c-158. En 2.4 y en el Anexo H la forma es abreviada por presupuesto de paginas (misma fecha).
@@ -3341,7 +3341,7 @@ Compilacion en `texlive-thesis` (`latexmk main.tex`): 0 errores (`grep -c "^!" m
 ### Consigna para otros changes
 
 - La release que publique c-158 a c-160 debe actualizar en el mismo commit la entrada `Gomez2026_repositorio`, la columna "entregada" de `tab:configuracion-evaluada-entregada` y el tag del Anexo B (ver c-158).
-- OQ1 (autoria de los dictamenes) y OQ4/OQ5 (agente LLM en la corrida telefonica; alcance operativo del disparador por directorio) siguen pendientes de los autores.
+- OQ1 (autoria de los dictamenes: resuelto, opcion B, c-161), OQ5 (alcance operativo del disparador por directorio: resuelto por c-162) y OQ2 (retiro del Anexo I: diferible) quedan cerrados; OQ4 (agente LLM en la corrida telefonica) no se resuelve porque Q2 quedo "no consta".
 
 - 2026-10-29: archivados los tres changes del dictamen del 28-10 (c-158 41/42 con la 7.1 diferida a los autores, c-159 39/39 y c-160 42/42) en `openspec/changes/archive/2026-10-29-*`, con `openspec/specs/` sincronizada, `openspec validate --specs --strict` en 64/64 y 0 changes activos. El commit, el PR y la release quedan pendientes.
 
@@ -3365,11 +3365,11 @@ Cada consulta se cierra con la respuesta verificada del autor o con la declaraci
 |---|---|---|---|
 | Q1 (fechas) | **CERRADA** | Corrida telefonica el 5-10-2026 (25 casos, ~2 h) y el 6-10-2026 (56 casos, ~3 h); horas de reloj exactas no constan | 1.8, 4.5, leyenda de la figura telefonica (`07-resultados.tex`, `fig:boxplot_tiempos`) y cronograma pasan a "5 y 6 de octubre" |
 | Q2 (version desplegada) | **CERRADA - no consta** | La imagen de `backend-corpus` y el flujo importado en `n8n-corpus` que procesaron los 56 casos del 6-10 no estan registrados en git | 4.5 declara "no consta" |
-| Q3 (quien y como) | **CERRADA (listado pendiente, OQ1)** | Recito el autor Luca Gomez, con lectura parafraseada, softphone VoIP en la computadora SF20GM7; hubo repeticiones ademas de R126 y R002 | 4.5 nombra al autor y el modo; declara las repeticiones sin apoyarse en el sidecar, que consolida una fila por caso |
+| Q3 (quien y como) | **CERRADA** | Recito el autor Luca Gomez, con lectura parafraseada, softphone VoIP en la computadora SF20GM7; las unicas repeticiones fueron R126 y R002 (confirmado 2026-10-29) | 4.5 nombra al autor y el modo; declara las repeticiones sin apoyarse en el sidecar, que consolida una fila por caso |
 | Q4 (arnes) | **CERRADA - SMTP no consta** | Luca Gomez ejecuto `scripts/corpus_ingest/ingest_via_n8n.py` el 2-10 (commits `69b5328`, `1d32538`, `3840246`, `24ab238`, todos de `lucaGomezB`); flags por defecto `--source json` y `--insecure`; URL base por defecto `https://localhost` (Nginx); host SMTP en `scripts/corpus_ingest/ingest.env` (gitignored) => no consta | 4.5 agrega autor, flags, URL base y "no consta" del SMTP |
 | Q5 (disparador IMAP) | **CERRADA - no consta** | El nodo IMAP declara `everyMinute` (`postProcessAction: read`, UNSEEN + SINCE 24h, `trackLastMessageId`); el intervalo efectivo no se midio en N8N 2.11.2 | 4.5 conserva "configurado para sondear" y agrega que el intervalo efectivo no se midio |
 | Q6 (hash del corpus) | **CERRADA - no consta** | La reasociacion de la `cache_meta` de `hybrid-v3` al hash `1fd17d7e...` del corpus del 19-10 no esta documentada; `evaluation/evidence/README.md` ya advierte del desajuste | Solo registro; no cambia la tesis |
-| Q7 (registros primarios) | **CERRADA - no conservados** | La base operativa del 2-10, el respaldo del 9-10 de los 81 ingresos telefonicos y las ejecuciones de N8N no se conservan en el repositorio | Anexo F lo declara; los sidecars se versionan (ver mas abajo) |
+| Q7 (registros primarios) | **CERRADA - no conservados** | La base operativa del 2-10, el respaldo del 9-10 de los 81 ingresos telefonicos y las ejecuciones de N8N no se conservan en el repositorio | Anexo F lo declara; los sidecars completos se versionan (ver mas abajo) |
 | Q8 (proxy) | **CERRADA - correccion** | Distincion por despliegue (ver seccion siguiente) | 5.1, 7.4 y Anexo A |
 
 Las entradas provisionales previas (PENDIENTE Q1-Q8 del tramo c-158/c-159, lineas 3103-3110 de este registro) se conservan como historia.
@@ -3389,11 +3389,15 @@ Se conserva la fuente Mermaid `docs/diagrams/arquitectura_sistema.md` (cinco cap
 
 ### Versionado de los sidecars y OQ2
 
-Los tres sidecars PII-free (`data/corpus_resultados.json` 200 filas, `data/corpus_resultados_n8n.json` 4 filas y `data/corpus_resultados_telefonia.json` 81 filas) pasan a estar versionados: se relajo la regla `data/corpus_resultados*.json` de `.gitignore`, se actualizo `data/README.md` y se coherentizaron `docs/como_cargar_datos_corpus.md`, `scripts/corpus_ingest/README.md` y `knowledge-base/09_decisiones_y_supuestos.md`. Verificado: solo exponen `case_id`, canal, `incidente_id`, sector, marcas temporales y latencias, sin descripciones de caso.
+Los sidecars completos PII-free (`data/corpus_resultados.json` 200 filas y `data/corpus_resultados_telefonia.json` 81 filas) pasan a estar versionados: se reemplazo la regla `data/corpus_resultados*.json` de `.gitignore` por una que los trackea y excluye por defecto el resto, se actualizo `data/README.md` y se coherentizaron `docs/como_cargar_datos_corpus.md`, `scripts/corpus_ingest/README.md` y `knowledge-base/09_decisiones_y_supuestos.md`. Verificado: solo exponen `case_id`, canal, `incidente_id`, sector, marcas temporales y latencias, sin descripciones de caso. El sidecar `corpus_resultados_n8n.json` (4 filas) NO se versiona (ver OQ2).
 
-Se staged los dos sidecars completos (`data/corpus_resultados.json` y `data/corpus_resultados_telefonia.json`).
+Se versionan los dos sidecars completos (`data/corpus_resultados.json` y `data/corpus_resultados_telefonia.json`).
 
-- **OQ2 (abierta, BLOQUEANTE del `git add` del sidecar de N8N).** `data/corpus_resultados_n8n.json` local tiene **4 filas** frente a las **119** de la corrida del 2-10-2026. Confirmar cual artefacto es el autoritativo antes de commitearlo; hasta entonces queda declarado sin versionar.
+#### Cierre de OQ1, OQ2 y OQ3 (respuesta del autor, 2026-10-29)
+
+- **OQ1 (repeticiones telefonicas) - CERRADA.** El autor confirma que las unicas repeticiones fueron R126 y R002. El texto de 4.5 lo declara sin apoyarse en el sidecar.
+- **OQ2 (sidecar de N8N autoritativo) - CERRADA.** El autor indica que el artefacto autoritativo es el de la corrida completa (119 filas). Busqueda exhaustiva en el repositorio y en los respaldos: solo existe el archivo local de 4 filas, no el de la corrida. Con el criterio del autor ("si no se encontro, no existe"), el sidecar autoritativo no se conserva; `data/corpus_resultados_n8n.json` queda declarado sin versionar y excluido por `.gitignore`.
+- **OQ3 (export de registros primarios) - CERRADA.** No se hallo un export pseudonimizado de la base operativa, el respaldo del 9-10 ni las ejecuciones de N8N; la tesis declara (Anexo F) que no se conservan en el repositorio.
 
 ### Compilacion, paginas y palabras
 
