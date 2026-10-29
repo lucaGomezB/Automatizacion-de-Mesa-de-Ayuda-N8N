@@ -792,6 +792,14 @@
       "sessions": 0,
       "memories": 9,
       "prompts": 0
+    },
+    {
+      "id": "cc6b7683",
+      "created_by": "Gonzalo",
+      "created_at": "2026-10-29T03:35:30Z",
+      "sessions": 0,
+      "memories": 7,
+      "prompts": 0
     }
   ]
 }
