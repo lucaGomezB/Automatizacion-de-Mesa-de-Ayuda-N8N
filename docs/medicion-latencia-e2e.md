@@ -21,8 +21,9 @@ lectura para no duplicar la fuente de verdad.
 ## 2. Unidades
 
 `latencia_e2e_ms` se expresa en **milisegundos** (entero). Para el corpus:
-`tiempo_automatizado_s = latencia_e2e_ms / 1000`. El cableado de
-`tiempo_automatizado_s` es un consumidor futuro, fuera de C-39.
+`tiempo_automatizado_s = latencia_e2e_ms / 1000` en web y correo; en telefonía el
+valor SUMA además la duración de la grabación (c-77, Grupo E), según se detalla en
+§5. El cableado de `tiempo_automatizado_s` es un consumidor futuro, fuera de C-39.
 
 ## 3. Validación del instante de ingreso
 
@@ -54,8 +55,11 @@ son homogéneos y mezclarlos rompería la comparabilidad.
 
 - **Correo**: el ingreso es el instante en que el **poller IMAP (`emailReadImap`) recoge el
   mensaje**, NO la llegada al buzón. La latencia **excluye la espera previa a la
-  recogida** (hasta ~60 s por `everyMinute`), por lo que **sub-mide** respecto de
-  la llegada real al buzón y no es comparable caso a caso con web/telefonía.
+  recogida** (hasta ~60 s por `everyMinute`), por lo que **`latencia_e2e_ms`
+  sub-mide** respecto de la llegada real al buzón y no es comparable caso a caso
+  con web/telefonía. El "sub-mide" aplica a `latencia_e2e_ms`, NO al valor del
+  corpus `tiempo_automatizado_s`: ese valor es OTRA cantidad —una derivación por
+  canal, con su propio caveat— y no coincide con `latencia_e2e_ms`.
 - **Telefonía**: el ingreso es la **recepción del callback de estado de grabación en el
   backend** (C-52), sellado ANTES de descargar y transcribir. La latencia **incluye** la
   descarga de la grabación, la transcripción con el motor dedicado de Gemini, la
@@ -72,19 +76,25 @@ latencia del canal incluye la descarga, la transcripción, la pseudonimización 
 ### Telefonía: descomposición y espera N-A
 
 Como `ingresado_en` se sella en la **recepción del callback** y no al inicio de la
-llamada, en telefonía no existe un componente de espera del cliente. La
-descomposición canónica es:
+llamada, en telefonía no existe un componente de espera del cliente. Además, para
+quedar en una base comparable con el tiempo manual, el tiempo de telefonía SUMA la
+duración de la grabación/llamada provista por Twilio (`duracion_segundos`): es la
+Opción A del Grupo E de c-77. La descomposición canónica es:
 
 | Componente | Fórmula | Significado |
 |------------|---------|-------------|
-| `t_pipeline_s` | `latencia_e2e_ms / 1000` | Trabajo del canal tras el callback |
+| `t_pipeline_s` | `duracion_segundos + latencia_e2e_ms / 1000` | Duración de la llamada más el trabajo del canal tras el callback |
 | `t_espera_s` | **N-A** | No medible: no hay espera del cliente |
-| `t_e2e_s` | `latencia_e2e_ms / 1000` = `t_pipeline_s` | Extremo a extremo |
+| `t_e2e_s` | `duracion_segundos + latencia_e2e_ms / 1000` = `t_pipeline_s` | Extremo a extremo |
 
-`tiempo_automatizado_s = t_e2e_s` y coincide con la MISMA métrica de los otros
-canales (fuente única: `latencia_e2e_ms` del incidente vinculado). La columna
-`Tiempo espera (s)` queda **VACÍA/N-A** para telefonía: se escribe `t_espera_s =
-None`, NUNCA `0`, para no fabricar un valor inexistente. El script
+`tiempo_automatizado_s = t_e2e_s` y usa la MISMA métrica de latencia de los otros
+canales (fuente única: `latencia_e2e_ms` del incidente vinculado), a la que SUMA la
+duración de la grabación. La grabación está acotada a 45 s
+(`<Record maxLength="45">`), por lo que el valor resultante es una **cota
+inferior** del tiempo real de la llamada. Una `duracion_segundos` ausente
+contribuye cero, sin fabricar un valor ficticio. La columna `Tiempo espera (s)`
+queda **VACÍA/N-A** para telefonía: se escribe `t_espera_s = None`, NUNCA `0`, para
+no fabricar un valor inexistente. El script
 `scripts/corpus_ingest/ingest_telefonia_corpus.py` materializa esta regla al
 construir el resultado de cada caso y al escribir de vuelta al corpus. Un caso con
 latencia nula, negativa o marcada como anómala se excluye sin recortarse a cero

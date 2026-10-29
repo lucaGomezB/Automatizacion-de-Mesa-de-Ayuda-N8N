@@ -230,9 +230,13 @@ class Incidente(Base, TimestampMixin):
         """Sectores con un cierre registrado para este incidente (c-86, D4)."""
         return frozenset(c.sector_id for c in self.cierres_sector)
 
-    # Indicador de alerta: True cuando el clasificador no alcanzó el umbral de
-    # confianza de 0.70 o cuando Gemini falló. El operador humano debe revisar
-    # y corregir la categoría asignada.
+    # Indicador de alerta para revision humana. El umbral de confianza de 0.70
+    # aplica SOLO a la etapa Gemini: deriva cuando su confianza queda por debajo
+    # del umbral. La etapa deterministica NO deriva por su confianza (cortocircuita
+    # por score, c-74) y el fallback SIEMPRE deriva. Desde 2026-10-13 el backend
+    # tambien deriva cuando el reportante no esta identificado en el directorio de
+    # empleados (c-82, VIS-005), combinado por OR. El operador humano debe revisar
+    # y corregir la categoria asignada.
     requiere_revision_humana: Mapped[bool] = mapped_column(
         Boolean, default=False, nullable=False
     )
