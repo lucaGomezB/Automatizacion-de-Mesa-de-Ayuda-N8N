@@ -2,7 +2,7 @@
 
 Esta carpeta contiene el corpus de evaluación del clasificador híbrido.
 
-## Archivos versionados (solo la version pseudonimizada)
+## Archivos versionados
 
 ### `corpus_evaluacion_pseudonimizado.json`
 
@@ -13,12 +13,23 @@ El corpus real de evaluación (200 casos), pseudonimizado por el módulo de C-03
 
 Corpus de registro pseudonimizado (formato Hoja 1). **SI se versiona**.
 
+### Sidecars de resultados `corpus_resultados*.json`
+
+`corpus_resultados.json` (200 filas) y `corpus_resultados_telefonia.json` (81 filas)
+son los sidecars de trazabilidad de los harness de ingesta que corresponden a
+corridas completas. **SI se versionan** como evidencia agregada: son libres de PII
+por construcción (solo `case_id`, canal, `incidente_id`, sector, marcas temporales
+y latencias; sin descripciones de caso). El sidecar `corpus_resultados_n8n.json`
+tiene 4 filas locales frente a las 119 de la corrida del 2-10-2026: **NO se versiona**
+hasta confirmar cuál artefacto es el autoritativo (pregunta abierta OQ2); `.gitignore`
+lo excluye por defecto junto con cualquier otro sidecar del patrón.
+
 ## Archivos NO versionados (Ley 25.326)
 
 - `Corpus Tesis.xlsx` y `Corpus Tesis - Hoja 1.csv` — originales
   **pre-pseudonimización**; contienen PII y NUNCA se commitean.
-- `corpus_resultados_*.json` — sidecars de resultados de los harness de ingesta
-  (artefactos de corrida).
+- `corpus_resultados_n8n.json` — sidecar de la ingesta por N8N, pendiente de
+  resolver su discrepancia de conteo (4 filas vs 119; OQ2); no se versiona por ahora.
 
 El corpus sintético provisional de 200 casos (`corpus_sintetico_provisional.csv`)
 y su andamiaje de generación fueron **eliminados permanentemente** en C-27.

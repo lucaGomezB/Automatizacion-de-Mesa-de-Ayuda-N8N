@@ -3,10 +3,10 @@
 \contentsline {figure}{\numberline {2}{\ignorespaces Diagrama de arquitectura del sistema}}{42}{figure.caption.8}%
 \contentsline {figure}{\numberline {3}{\ignorespaces Diagrama de despliegue del entorno local. Servicios, red Docker, volúmenes y servicios externos.}}{43}{figure.caption.9}%
 \contentsline {figure}{\numberline {4}{\ignorespaces Diagrama de secuencia del flujo extremo a extremo de un incidente}}{44}{figure.caption.10}%
-\contentsline {figure}{\numberline {5}{\ignorespaces Diagrama entidad-relación de las siete entidades principales}}{49}{figure.caption.12}%
-\contentsline {figure}{\numberline {6}{\ignorespaces Panel de administración del sistema: listado de tickets con filtros combinados y cola de revisión humana.}}{60}{figure.caption.14}%
-\contentsline {figure}{\numberline {7}{\ignorespaces Dashboard de analítica del panel de administración: tendencia temporal de incidentes, distribución por sector y distribución por estado.}}{60}{figure.caption.15}%
-\contentsline {figure}{\numberline {8}{\ignorespaces Distribución del tiempo de registro por canal de origen (manual frente a automatizado). El panel de telefonía incorpora la duración de la llamada grabada.}}{69}{figure.caption.20}%
-\contentsline {figure}{\numberline {9}{\ignorespaces Matriz de confusión del clasificador (\(n = 200\)). Filas: sector asignado (verdad); columnas: sector predicho principal.}}{70}{figure.caption.22}%
-\contentsline {figure}{\numberline {10}{\ignorespaces Cronograma de la construcción, las campañas y la versión del modelo}}{100}{figure.caption.32}%
-\contentsline {figure}{\numberline {11}{\ignorespaces Reconstrucción esquemática del flujo de orquestación N8N}}{104}{figure.caption.34}%
+\contentsline {figure}{\numberline {5}{\ignorespaces Diagrama entidad-relación de las siete entidades principales}}{50}{figure.caption.12}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Panel de administración del sistema: listado de tickets con filtros combinados y cola de revisión humana.}}{61}{figure.caption.14}%
+\contentsline {figure}{\numberline {7}{\ignorespaces Dashboard de analítica del panel de administración: tendencia temporal de incidentes, distribución por sector y distribución por estado.}}{61}{figure.caption.15}%
+\contentsline {figure}{\numberline {8}{\ignorespaces Distribución del tiempo de registro por canal de origen (manual frente a automatizado), para la corrida telefónica del 5 y 6 de octubre de 2026. El panel de telefonía incorpora la duración de la llamada grabada.}}{70}{figure.caption.20}%
+\contentsline {figure}{\numberline {9}{\ignorespaces Matriz de confusión del clasificador (\(n = 200\)). Filas: sector asignado (verdad); columnas: sector predicho principal.}}{71}{figure.caption.22}%
+\contentsline {figure}{\numberline {10}{\ignorespaces Cronograma de la construcción, las campañas y la versión del modelo}}{102}{figure.caption.32}%
+\contentsline {figure}{\numberline {11}{\ignorespaces Reconstrucción esquemática del flujo de orquestación N8N}}{105}{figure.caption.34}%

@@ -44,7 +44,7 @@
 **Origen**: tesis Anexo F; `data/corpus_evaluacion_pseudonimizado.csv` no esta en git.
 **Estado (2026-07-02)**: corpus real NO existe. Se construira corpus simulado en C-17 (evaluation-corpus-simulado) con distribucion 82/64/54.
 **SUPERADO (C-27, 2026-09-11)**: el corpus simulado de 200 casos fue descartado y eliminado; la unica fuente de evaluacion es el corpus real JSON multietiqueta (`data/corpus_evaluacion_pseudonimizado.json`).
-**ACTUALIZADO (2026-10-09)**: la version pseudonimizada (`data/corpus_evaluacion_pseudonimizado.json` y `data/Corpus Tesis - Hoja 1 (pseudonimizado).csv`) YA se versiona en el repo. Los originales pre-pseudonimizacion y los sidecars (`data/corpus_resultados*.json`) siguen fuera (Ley 25.326).
+**ACTUALIZADO (2026-10-09)**: la version pseudonimizada (`data/corpus_evaluacion_pseudonimizado.json` y `data/Corpus Tesis - Hoja 1 (pseudonimizado).csv`) YA se versiona en el repo. Los originales pre-pseudonimizacion siguen fuera (Ley 25.326). **(2026-10-28, c-161)**: los sidecars PII-free de corridas completas (`data/corpus_resultados.json` y `data/corpus_resultados_telefonia.json`) tambien se versionan como evidencia agregada; solo exponen identificadores, canal, sector, marcas temporales y latencias, sin descripciones. El sidecar `data/corpus_resultados_n8n.json` queda excluido hasta resolver su discrepancia de conteo (OQ2).
 
 ### SU-02 — Las metricas de la tesis son resultados esperados a reproducir
 **Origen**: el capitulo 7 reporta resultados completos. Framework de evaluacion (C-08) completado y archivado.

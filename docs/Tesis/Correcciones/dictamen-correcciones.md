@@ -3185,7 +3185,7 @@ figuras decia "confianza >= 0.90" y aplicaba 0,70 a toda clasificacion).
 7. **Anexo I.** c-158 no creo tabla propia para el dictamen del 28-10 (usa un parrafo): c-159 extendio ese parrafo con A3 y A4 en lugar de agregar filas. Desvio respecto de la tarea 6.4; c-160 reestructura el Anexo I.
 8. **Figura 2 sin fuente versionada**: reemplazada por `docs/diagrams/arquitectura_sistema.md` (opcion a del dictamen). El drawio de capas de Luca queda intacto.
 
-Datos que requieren a los autores (no bloquean): (a) `n8n/workflow.json` no envia `reportante_email` ni `reportante_telefono` en el `POST /api/v1/incidentes`, de modo que en la configuracion entregada los incidentes de correo y telefonia ingresados por N8N quedarian sin reportante identificado y derivados a revision por VIS-005 (no verificado en ejecucion; las figuras solo representan la regla); (b) si prefieren actualizar `Diagrama de Capas.drawio` en lugar de la fuente Mermaid (D4); (c) deriva fuera de la tesis: el comentario de `requiere_revision_humana` en `App/Backend/app/models/incidente.py` ("umbral de 0.70 o Gemini fallo"), `docs/anexo_c_esquema_bd.md` sin `directorio_empleado`, el memo que cita el SHA-256 CRLF de la evidencia (`3fb5bacd...`, el blob LF es `89cf956e...`) y `CHANGES.md` sin c-155 a c-157 (resuelto por la FASE 47).
+Datos que requieren a los autores (no bloquean): (a) `n8n/workflow.json` no envia `reportante_email` ni `reportante_telefono` en el `POST /api/v1/incidentes`, de modo que en la configuracion entregada los incidentes de correo y telefonia ingresados por N8N quedarian sin reportante identificado y derivados a revision por VIS-005 (no verificado en ejecucion; las figuras solo representan la regla); (b) [RESUELTO por c-161] la fuente Mermaid `docs/diagrams/arquitectura_sistema.md` se conserva como unica fuente de `fig:arquitectura` (decision Figura 2 = A) y el `Diagrama de Capas.drawio` y su PNG quedaron archivados en `docs/diagrams/archive/`; no se presenta como fuente vigente; (c) deriva fuera de la tesis: el comentario de `requiere_revision_humana` en `App/Backend/app/models/incidente.py` ("umbral de 0.70 o Gemini fallo"), `docs/anexo_c_esquema_bd.md` sin `directorio_empleado`, el memo que cita el SHA-256 CRLF de la evidencia (`3fb5bacd...`, el blob LF es `89cf956e...`) y `CHANGES.md` sin c-155 a c-157 (resuelto por la FASE 47).
 
 ### Evidencia del recomputo (tarea 5.5)
 
@@ -3344,3 +3344,64 @@ Compilacion en `texlive-thesis` (`latexmk main.tex`): 0 errores (`grep -c "^!" m
 - OQ1 (autoria de los dictamenes) y OQ4/OQ5 (agente LLM en la corrida telefonica; alcance operativo del disparador por directorio) siguen pendientes de los autores.
 
 - 2026-10-29: archivados los tres changes del dictamen del 28-10 (c-158 41/42 con la 7.1 diferida a los autores, c-159 39/39 y c-160 42/42) en `openspec/changes/archive/2026-10-29-*`, con `openspec/specs/` sincronizada, `openspec validate --specs --strict` en 64/64 y 0 changes activos. El commit, el PR y la release quedan pendientes.
+
+---
+
+## Dictamen v10 / v1.2.5 (2026-10-28) - c-161
+
+Cierre de los items abiertos del dictamen CONEAU del 2026-10-28 (`auditorias/Dictamen_Tesis_v10_v1.2.5_CONEAU_2026-10-28.md`) y de dos decisiones del autor: la naturaleza del Anexo I (OQ1-B), la fuente unica de la Figura 2, las ocho consultas a los autores (Q1-Q8), el versionado de los sidecars y la correccion de tres afirmaciones sobre Nginx. Change `c-161-cierre-de-marcadores-y-decisiones-del-dictamen`.
+
+### Origen y linea base
+
+- Rama `main`; commit base de la linea base: `c0d3989` (merge del PR #63, que aplico y archivo c-158, c-159 y c-160).
+- Arbol congelado `docs/Tesis/v9 (IA)/` sin cambios (`git diff --quiet` limpio). Los cambios se aplican a `docs/Tesis/v10 (IA)/`.
+- Verificacion previa (2026-10-29): seis marcadores `% PENDIENTE AUTORES` (Q1 a Q5 en `04-marco-metodologico.tex`, Q7 en `12-anexos.tex`); tres frases Nginx; el `Diagrama de Capas.drawio` y su PNG aun en `docs/diagrams/` (archivados despues por este change); tres sidecars en `data/` (200, 4 y 81 filas); linea base de compilacion 109 paginas.
+
+### Cierre de Q1 a Q8
+
+Cada consulta se cierra con la respuesta verificada del autor o con la declaracion "no consta". Ninguna se deduce de un dato que el repositorio no respalde.
+
+| Q | Estado | Respuesta / fuente | Destino textual |
+|---|---|---|---|
+| Q1 (fechas) | **CERRADA** | Corrida telefonica el 5-10-2026 (25 casos, ~2 h) y el 6-10-2026 (56 casos, ~3 h); horas de reloj exactas no constan | 1.8, 4.5, leyenda de la figura telefonica (`07-resultados.tex`, `fig:boxplot_tiempos`) y cronograma pasan a "5 y 6 de octubre" |
+| Q2 (version desplegada) | **CERRADA - no consta** | La imagen de `backend-corpus` y el flujo importado en `n8n-corpus` que procesaron los 56 casos del 6-10 no estan registrados en git | 4.5 declara "no consta" |
+| Q3 (quien y como) | **CERRADA (listado pendiente, OQ1)** | Recito el autor Luca Gomez, con lectura parafraseada, softphone VoIP en la computadora SF20GM7; hubo repeticiones ademas de R126 y R002 | 4.5 nombra al autor y el modo; declara las repeticiones sin apoyarse en el sidecar, que consolida una fila por caso |
+| Q4 (arnes) | **CERRADA - SMTP no consta** | Luca Gomez ejecuto `scripts/corpus_ingest/ingest_via_n8n.py` el 2-10 (commits `69b5328`, `1d32538`, `3840246`, `24ab238`, todos de `lucaGomezB`); flags por defecto `--source json` y `--insecure`; URL base por defecto `https://localhost` (Nginx); host SMTP en `scripts/corpus_ingest/ingest.env` (gitignored) => no consta | 4.5 agrega autor, flags, URL base y "no consta" del SMTP |
+| Q5 (disparador IMAP) | **CERRADA - no consta** | El nodo IMAP declara `everyMinute` (`postProcessAction: read`, UNSEEN + SINCE 24h, `trackLastMessageId`); el intervalo efectivo no se midio en N8N 2.11.2 | 4.5 conserva "configurado para sondear" y agrega que el intervalo efectivo no se midio |
+| Q6 (hash del corpus) | **CERRADA - no consta** | La reasociacion de la `cache_meta` de `hybrid-v3` al hash `1fd17d7e...` del corpus del 19-10 no esta documentada; `evaluation/evidence/README.md` ya advierte del desajuste | Solo registro; no cambia la tesis |
+| Q7 (registros primarios) | **CERRADA - no conservados** | La base operativa del 2-10, el respaldo del 9-10 de los 81 ingresos telefonicos y las ejecuciones de N8N no se conservan en el repositorio | Anexo F lo declara; los sidecars se versionan (ver mas abajo) |
+| Q8 (proxy) | **CERRADA - correccion** | Distincion por despliegue (ver seccion siguiente) | 5.1, 7.4 y Anexo A |
+
+Las entradas provisionales previas (PENDIENTE Q1-Q8 del tramo c-158/c-159, lineas 3103-3110 de este registro) se conservan como historia.
+
+### Correccion Nginx (Q8)
+
+La tesis afirmaba en tres pasajes que el despliegue de la campana "no incluyo el proxy". La afirmacion no era uniformemente incorrecta: hay dos despliegues que deben distinguirse, no una afirmacion unica.
+
+- La **medicion telefonica del 5 y 6 de octubre de 2026** (c-70) corrio sobre el perfil Compose aislado `corpus` (`postgres-corpus`, `backend-corpus`, `n8n-corpus`), que NO incluye el proxy inverso Nginx (garantizado por el test `test_base_services_are_not_part_of_the_corpus_profile`); el corpus usa su propio tunel a `backend-corpus:8000`.
+- La **ingesta del brazo automatico del 2 de octubre de 2026** (correo y formulario web, c-68, anterior a c-70) corrio sobre el stack base, que SI incluye Nginx con el certificado autofirmado de referencia; de alli el flag `--insecure` del arnes sobre `https://localhost`.
+
+Pasajes corregidos: `05-arquitectura.tex` (`subsec:vision-general`), `11-aspectos-legales.tex` (`subsec:seguridad-tecnica`) y `12-anexos.tex` (Anexo A, diagrama de despliegue). En los tres se conserva que la terminacion TLS 1.2/1.3 esta verificada (automaticamente) solo sobre el despliegue de referencia, no sobre las instancias de la campana, y que en ningun caso las mediciones dependen de TLS. La Tabla 18 del capitulo 10 no cambia. Verificacion: `grep -rn "no incluyó el proxy\|no incluyo el proxy\|no incluido en el despliegue de la campaña" "docs/Tesis/v10 (IA)/paper/sections/"` = 0.
+
+### Decision Figura 2 = A
+
+Se conserva la fuente Mermaid `docs/diagrams/arquitectura_sistema.md` (cinco capas, tres canales) como unica fuente de `fig:arquitectura`. El `Diagrama de Capas.drawio` (obsoleto: N8N 1.62, Gemini 2.5, sin frontend) y su PNG se archivaron en `docs/diagrams/archive/`; sus dos referencias (este registro y `preguntas-para-lucas-dictamen-2026-10-28.md`) se actualizaron para no presentarlo como fuente vigente. El PNG de la figura no se regenero.
+
+### Versionado de los sidecars y OQ2
+
+Los tres sidecars PII-free (`data/corpus_resultados.json` 200 filas, `data/corpus_resultados_n8n.json` 4 filas y `data/corpus_resultados_telefonia.json` 81 filas) pasan a estar versionados: se relajo la regla `data/corpus_resultados*.json` de `.gitignore`, se actualizo `data/README.md` y se coherentizaron `docs/como_cargar_datos_corpus.md`, `scripts/corpus_ingest/README.md` y `knowledge-base/09_decisiones_y_supuestos.md`. Verificado: solo exponen `case_id`, canal, `incidente_id`, sector, marcas temporales y latencias, sin descripciones de caso.
+
+Se staged los dos sidecars completos (`data/corpus_resultados.json` y `data/corpus_resultados_telefonia.json`).
+
+- **OQ2 (abierta, BLOQUEANTE del `git add` del sidecar de N8N).** `data/corpus_resultados_n8n.json` local tiene **4 filas** frente a las **119** de la corrida del 2-10-2026. Confirmar cual artefacto es el autoritativo antes de commitearlo; hasta entonces queda declarado sin versionar.
+
+### Compilacion, paginas y palabras
+
+Compilacion en `texlive-thesis` (`MSYS_NO_PATHCONV=1 docker run ... latexmk main.tex`): exit 0, 0 errores (`grep -c "^!" main.log`), 0 referencias indefinidas, 0 `multiply defined`, 0 `??` en `pdftotext`, `Overfull` = 24 (igual a la linea base), `verify_citations.py` PASS, `openspec validate --strict` PASS. Paginas: 109 antes -> 110 despues (delta +1, dentro del presupuesto D9 de 0 a +1; anexos en p. 101). El cronograma PNG se regenero desde su fuente Mermaid para reflejar el hito "05-06/10/2026" (coherencia fuente/imagen; dimensiones 1467x465, mmdc 11.17.0). Palabras: el resumen no cambia con c-161 (regla de c-106: ES 249, EN 245, identicos a c-160, `00-resumen.tex` sin tocar); la prosa de las secciones editadas suma +310 palabras (recuento plano).
+
+### Presupuesto de paginas (D9)
+
+| Change | Total | Delta total | Regla vigente | Estado |
+|---|---|---|---|---|
+| `c-160` (linea base) | 109 | - | 0 a +1 | Medido |
+| `+c-161` | 110 | +1 | 0 a +1 | Medido: `abspage@last{110}`; delta +1, dentro del presupuesto |

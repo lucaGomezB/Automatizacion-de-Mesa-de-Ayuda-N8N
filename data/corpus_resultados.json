@@ -1,0 +1,2002 @@
+[
+  {
+    "case_id": "R001",
+    "incidente_id": 165,
+    "numero_incidente": "165",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 1.902,
+    "latencia_e2e_ms": 1776,
+    "error": null
+  },
+  {
+    "case_id": "R002",
+    "incidente_id": 166,
+    "numero_incidente": "166",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 1.796,
+    "latencia_e2e_ms": 1723,
+    "error": null
+  },
+  {
+    "case_id": "R003",
+    "incidente_id": 167,
+    "numero_incidente": "167",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 0.148,
+    "latencia_e2e_ms": 71,
+    "error": null
+  },
+  {
+    "case_id": "R004",
+    "incidente_id": 168,
+    "numero_incidente": "168",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.135,
+    "latencia_e2e_ms": 71,
+    "error": null
+  },
+  {
+    "case_id": "R005",
+    "incidente_id": 169,
+    "numero_incidente": "169",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 0.151,
+    "latencia_e2e_ms": 65,
+    "error": null
+  },
+  {
+    "case_id": "R006",
+    "incidente_id": 170,
+    "numero_incidente": "170",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.134,
+    "latencia_e2e_ms": 69,
+    "error": null
+  },
+  {
+    "case_id": "R007",
+    "incidente_id": 171,
+    "numero_incidente": "171",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.172,
+    "latencia_e2e_ms": 83,
+    "error": null
+  },
+  {
+    "case_id": "R008",
+    "incidente_id": 172,
+    "numero_incidente": "172",
+    "sector": "Bases de Datos",
+    "revision": true,
+    "wall_s": 0.131,
+    "latencia_e2e_ms": 42,
+    "error": null
+  },
+  {
+    "case_id": "R009",
+    "incidente_id": 173,
+    "numero_incidente": "173",
+    "sector": "Bases de Datos",
+    "revision": true,
+    "wall_s": 0.148,
+    "latencia_e2e_ms": 68,
+    "error": null
+  },
+  {
+    "case_id": "R010",
+    "incidente_id": 174,
+    "numero_incidente": "174",
+    "sector": "Soporte Tecnico Software",
+    "revision": false,
+    "wall_s": 1.246,
+    "latencia_e2e_ms": 1179,
+    "error": null
+  },
+  {
+    "case_id": "R011",
+    "incidente_id": 175,
+    "numero_incidente": "175",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 0.122,
+    "latencia_e2e_ms": 63,
+    "error": null
+  },
+  {
+    "case_id": "R012",
+    "incidente_id": 176,
+    "numero_incidente": "176",
+    "sector": "Soporte Tecnico Software",
+    "revision": false,
+    "wall_s": 1.618,
+    "latencia_e2e_ms": 1538,
+    "error": null
+  },
+  {
+    "case_id": "R013",
+    "incidente_id": 177,
+    "numero_incidente": "177",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 0.133,
+    "latencia_e2e_ms": 55,
+    "error": null
+  },
+  {
+    "case_id": "R014",
+    "incidente_id": 178,
+    "numero_incidente": "178",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 1.411,
+    "latencia_e2e_ms": 1351,
+    "error": null
+  },
+  {
+    "case_id": "R015",
+    "incidente_id": 179,
+    "numero_incidente": "179",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 1.58,
+    "latencia_e2e_ms": 1505,
+    "error": null
+  },
+  {
+    "case_id": "R016",
+    "incidente_id": 180,
+    "numero_incidente": "180",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 4.384,
+    "latencia_e2e_ms": 4322,
+    "error": null
+  },
+  {
+    "case_id": "R017",
+    "incidente_id": 181,
+    "numero_incidente": "181",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.136,
+    "latencia_e2e_ms": 72,
+    "error": null
+  },
+  {
+    "case_id": "R018",
+    "incidente_id": 182,
+    "numero_incidente": "182",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.114,
+    "latencia_e2e_ms": 44,
+    "error": null
+  },
+  {
+    "case_id": "R019",
+    "incidente_id": 183,
+    "numero_incidente": "183",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.126,
+    "latencia_e2e_ms": 58,
+    "error": null
+  },
+  {
+    "case_id": "R020",
+    "incidente_id": 184,
+    "numero_incidente": "184",
+    "sector": "Sistemas",
+    "revision": true,
+    "wall_s": 0.12,
+    "latencia_e2e_ms": 60,
+    "error": null
+  },
+  {
+    "case_id": "R021",
+    "incidente_id": 185,
+    "numero_incidente": "185",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.14,
+    "latencia_e2e_ms": 67,
+    "error": null
+  },
+  {
+    "case_id": "R022",
+    "incidente_id": 186,
+    "numero_incidente": "186",
+    "sector": "Sistemas",
+    "revision": true,
+    "wall_s": 1.586,
+    "latencia_e2e_ms": 1513,
+    "error": null
+  },
+  {
+    "case_id": "R023",
+    "incidente_id": 187,
+    "numero_incidente": "187",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.137,
+    "latencia_e2e_ms": 53,
+    "error": null
+  },
+  {
+    "case_id": "R024",
+    "incidente_id": 188,
+    "numero_incidente": "188",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 1.595,
+    "latencia_e2e_ms": 1525,
+    "error": null
+  },
+  {
+    "case_id": "R025",
+    "incidente_id": 189,
+    "numero_incidente": "189",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.146,
+    "latencia_e2e_ms": 59,
+    "error": null
+  },
+  {
+    "case_id": "R026",
+    "incidente_id": 190,
+    "numero_incidente": "190",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 1.23,
+    "latencia_e2e_ms": 1162,
+    "error": null
+  },
+  {
+    "case_id": "R027",
+    "incidente_id": 191,
+    "numero_incidente": "191",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 1.249,
+    "latencia_e2e_ms": 1179,
+    "error": null
+  },
+  {
+    "case_id": "R028",
+    "incidente_id": 192,
+    "numero_incidente": "192",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.161,
+    "latencia_e2e_ms": 79,
+    "error": null
+  },
+  {
+    "case_id": "R029",
+    "incidente_id": 193,
+    "numero_incidente": "193",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 1.176,
+    "latencia_e2e_ms": 1127,
+    "error": null
+  },
+  {
+    "case_id": "R030",
+    "incidente_id": 194,
+    "numero_incidente": "194",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 1.359,
+    "latencia_e2e_ms": 1283,
+    "error": null
+  },
+  {
+    "case_id": "R031",
+    "incidente_id": 195,
+    "numero_incidente": "195",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 0.151,
+    "latencia_e2e_ms": 82,
+    "error": null
+  },
+  {
+    "case_id": "R032",
+    "incidente_id": 196,
+    "numero_incidente": "196",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.114,
+    "latencia_e2e_ms": 50,
+    "error": null
+  },
+  {
+    "case_id": "R033",
+    "incidente_id": 197,
+    "numero_incidente": "197",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 1.308,
+    "latencia_e2e_ms": 1237,
+    "error": null
+  },
+  {
+    "case_id": "R034",
+    "incidente_id": 198,
+    "numero_incidente": "198",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 1.638,
+    "latencia_e2e_ms": 1575,
+    "error": null
+  },
+  {
+    "case_id": "R035",
+    "incidente_id": 199,
+    "numero_incidente": "199",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 1.663,
+    "latencia_e2e_ms": 1588,
+    "error": null
+  },
+  {
+    "case_id": "R036",
+    "incidente_id": 200,
+    "numero_incidente": "200",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.125,
+    "latencia_e2e_ms": 55,
+    "error": null
+  },
+  {
+    "case_id": "R037",
+    "incidente_id": 201,
+    "numero_incidente": "201",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.11,
+    "latencia_e2e_ms": 48,
+    "error": null
+  },
+  {
+    "case_id": "R038",
+    "incidente_id": 202,
+    "numero_incidente": "202",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 1.665,
+    "latencia_e2e_ms": 1568,
+    "error": null
+  },
+  {
+    "case_id": "R039",
+    "incidente_id": 203,
+    "numero_incidente": "203",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.137,
+    "latencia_e2e_ms": 59,
+    "error": null
+  },
+  {
+    "case_id": "R040",
+    "incidente_id": 204,
+    "numero_incidente": "204",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.119,
+    "latencia_e2e_ms": 67,
+    "error": null
+  },
+  {
+    "case_id": "R041",
+    "incidente_id": 205,
+    "numero_incidente": "205",
+    "sector": "Bases de Datos",
+    "revision": true,
+    "wall_s": 0.098,
+    "latencia_e2e_ms": 51,
+    "error": null
+  },
+  {
+    "case_id": "R042",
+    "incidente_id": 57,
+    "numero_incidente": "57",
+    "sector": "Soporte Tecnico Software",
+    "revision": false,
+    "wall_s": 0.047,
+    "latencia_e2e_ms": 565,
+    "error": null
+  },
+  {
+    "case_id": "R043",
+    "incidente_id": 206,
+    "numero_incidente": "206",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 1.138,
+    "latencia_e2e_ms": 1072,
+    "error": null
+  },
+  {
+    "case_id": "R044",
+    "incidente_id": 207,
+    "numero_incidente": "207",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 1.365,
+    "latencia_e2e_ms": 1289,
+    "error": null
+  },
+  {
+    "case_id": "R045",
+    "incidente_id": 208,
+    "numero_incidente": "208",
+    "sector": "Seguridad Informatica",
+    "revision": true,
+    "wall_s": 0.131,
+    "latencia_e2e_ms": 51,
+    "error": null
+  },
+  {
+    "case_id": "R046",
+    "incidente_id": 209,
+    "numero_incidente": "209",
+    "sector": "Seguridad Informatica",
+    "revision": true,
+    "wall_s": 0.143,
+    "latencia_e2e_ms": 66,
+    "error": null
+  },
+  {
+    "case_id": "R047",
+    "incidente_id": 210,
+    "numero_incidente": "210",
+    "sector": "Seguridad Informatica",
+    "revision": true,
+    "wall_s": 1.711,
+    "latencia_e2e_ms": 1644,
+    "error": null
+  },
+  {
+    "case_id": "R048",
+    "incidente_id": 211,
+    "numero_incidente": "211",
+    "sector": "Seguridad Informatica",
+    "revision": true,
+    "wall_s": 0.128,
+    "latencia_e2e_ms": 57,
+    "error": null
+  },
+  {
+    "case_id": "R049",
+    "incidente_id": 212,
+    "numero_incidente": "212",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 1.144,
+    "latencia_e2e_ms": 1060,
+    "error": null
+  },
+  {
+    "case_id": "R050",
+    "incidente_id": 213,
+    "numero_incidente": "213",
+    "sector": "Seguridad Informatica",
+    "revision": true,
+    "wall_s": 0.107,
+    "latencia_e2e_ms": 54,
+    "error": null
+  },
+  {
+    "case_id": "R051",
+    "incidente_id": 214,
+    "numero_incidente": "214",
+    "sector": "Seguridad Informatica",
+    "revision": true,
+    "wall_s": 0.15,
+    "latencia_e2e_ms": 76,
+    "error": null
+  },
+  {
+    "case_id": "R052",
+    "incidente_id": 215,
+    "numero_incidente": "215",
+    "sector": "Sistemas",
+    "revision": true,
+    "wall_s": 0.148,
+    "latencia_e2e_ms": 69,
+    "error": null
+  },
+  {
+    "case_id": "R053",
+    "incidente_id": 62,
+    "numero_incidente": "62",
+    "sector": "Sistemas",
+    "revision": false,
+    "wall_s": 0.054,
+    "latencia_e2e_ms": 492,
+    "error": null
+  },
+  {
+    "case_id": "R054",
+    "incidente_id": 216,
+    "numero_incidente": "216",
+    "sector": "Sistemas",
+    "revision": true,
+    "wall_s": 0.162,
+    "latencia_e2e_ms": 84,
+    "error": null
+  },
+  {
+    "case_id": "R055",
+    "incidente_id": 217,
+    "numero_incidente": "217",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.113,
+    "latencia_e2e_ms": 48,
+    "error": null
+  },
+  {
+    "case_id": "R056",
+    "incidente_id": 218,
+    "numero_incidente": "218",
+    "sector": "Sistemas",
+    "revision": true,
+    "wall_s": 0.272,
+    "latencia_e2e_ms": 67,
+    "error": null
+  },
+  {
+    "case_id": "R057",
+    "incidente_id": 219,
+    "numero_incidente": "219",
+    "sector": "Sistemas",
+    "revision": true,
+    "wall_s": 0.121,
+    "latencia_e2e_ms": 54,
+    "error": null
+  },
+  {
+    "case_id": "R058",
+    "incidente_id": 220,
+    "numero_incidente": "220",
+    "sector": "Sistemas",
+    "revision": true,
+    "wall_s": 1.403,
+    "latencia_e2e_ms": 1335,
+    "error": null
+  },
+  {
+    "case_id": "R059",
+    "incidente_id": 221,
+    "numero_incidente": "221",
+    "sector": "Sistemas",
+    "revision": true,
+    "wall_s": 0.13,
+    "latencia_e2e_ms": 62,
+    "error": null
+  },
+  {
+    "case_id": "R060",
+    "incidente_id": 222,
+    "numero_incidente": "222",
+    "sector": "Seguridad Informatica",
+    "revision": true,
+    "wall_s": 0.138,
+    "latencia_e2e_ms": 69,
+    "error": null
+  },
+  {
+    "case_id": "R061",
+    "incidente_id": 223,
+    "numero_incidente": "223",
+    "sector": "Sistemas",
+    "revision": false,
+    "wall_s": 0.175,
+    "latencia_e2e_ms": 67,
+    "error": null
+  },
+  {
+    "case_id": "R062",
+    "incidente_id": 224,
+    "numero_incidente": "224",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 1.369,
+    "latencia_e2e_ms": 1279,
+    "error": null
+  },
+  {
+    "case_id": "R063",
+    "incidente_id": 225,
+    "numero_incidente": "225",
+    "sector": "Soporte Tecnico Software",
+    "revision": false,
+    "wall_s": 1.201,
+    "latencia_e2e_ms": 1135,
+    "error": null
+  },
+  {
+    "case_id": "R064",
+    "incidente_id": 226,
+    "numero_incidente": "226",
+    "sector": "Soporte Tecnico Software",
+    "revision": false,
+    "wall_s": 0.14,
+    "latencia_e2e_ms": 68,
+    "error": null
+  },
+  {
+    "case_id": "R065",
+    "incidente_id": 227,
+    "numero_incidente": "227",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 0.108,
+    "latencia_e2e_ms": 42,
+    "error": null
+  },
+  {
+    "case_id": "R066",
+    "incidente_id": 228,
+    "numero_incidente": "228",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 0.135,
+    "latencia_e2e_ms": 72,
+    "error": null
+  },
+  {
+    "case_id": "R067",
+    "incidente_id": 229,
+    "numero_incidente": "229",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.125,
+    "latencia_e2e_ms": 51,
+    "error": null
+  },
+  {
+    "case_id": "R068",
+    "incidente_id": 230,
+    "numero_incidente": "230",
+    "sector": "Bases de Datos",
+    "revision": true,
+    "wall_s": 0.147,
+    "latencia_e2e_ms": 70,
+    "error": null
+  },
+  {
+    "case_id": "R069",
+    "incidente_id": 231,
+    "numero_incidente": "231",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 1.249,
+    "latencia_e2e_ms": 1193,
+    "error": null
+  },
+  {
+    "case_id": "R070",
+    "incidente_id": 232,
+    "numero_incidente": "232",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 1.456,
+    "latencia_e2e_ms": 1395,
+    "error": null
+  },
+  {
+    "case_id": "R071",
+    "incidente_id": 74,
+    "numero_incidente": "74",
+    "sector": "Soporte Tecnico Software",
+    "revision": false,
+    "wall_s": 0.08,
+    "latencia_e2e_ms": 545,
+    "error": null
+  },
+  {
+    "case_id": "R072",
+    "incidente_id": 233,
+    "numero_incidente": "233",
+    "sector": "Soporte Tecnico Software",
+    "revision": false,
+    "wall_s": 1.368,
+    "latencia_e2e_ms": 1300,
+    "error": null
+  },
+  {
+    "case_id": "R073",
+    "incidente_id": 234,
+    "numero_incidente": "234",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 0.12,
+    "latencia_e2e_ms": 55,
+    "error": null
+  },
+  {
+    "case_id": "R074",
+    "incidente_id": 235,
+    "numero_incidente": "235",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 1.232,
+    "latencia_e2e_ms": 1165,
+    "error": null
+  },
+  {
+    "case_id": "R075",
+    "incidente_id": 236,
+    "numero_incidente": "236",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 1.384,
+    "latencia_e2e_ms": 1294,
+    "error": null
+  },
+  {
+    "case_id": "R076",
+    "incidente_id": 237,
+    "numero_incidente": "237",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 3.799,
+    "latencia_e2e_ms": 3706,
+    "error": null
+  },
+  {
+    "case_id": "R077",
+    "incidente_id": 238,
+    "numero_incidente": "238",
+    "sector": "Soporte Tecnico Software",
+    "revision": false,
+    "wall_s": 0.096,
+    "latencia_e2e_ms": 40,
+    "error": null
+  },
+  {
+    "case_id": "R078",
+    "incidente_id": 239,
+    "numero_incidente": "239",
+    "sector": "Soporte Tecnico Software",
+    "revision": false,
+    "wall_s": 1.45,
+    "latencia_e2e_ms": 1358,
+    "error": null
+  },
+  {
+    "case_id": "R079",
+    "incidente_id": 240,
+    "numero_incidente": "240",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 0.13,
+    "latencia_e2e_ms": 46,
+    "error": null
+  },
+  {
+    "case_id": "R080",
+    "incidente_id": 241,
+    "numero_incidente": "241",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 1.298,
+    "latencia_e2e_ms": 1235,
+    "error": null
+  },
+  {
+    "case_id": "R081",
+    "incidente_id": 242,
+    "numero_incidente": "242",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.122,
+    "latencia_e2e_ms": 58,
+    "error": null
+  },
+  {
+    "case_id": "R082",
+    "incidente_id": 243,
+    "numero_incidente": "243",
+    "sector": "Soporte Tecnico Software",
+    "revision": false,
+    "wall_s": 0.131,
+    "latencia_e2e_ms": 57,
+    "error": null
+  },
+  {
+    "case_id": "R083",
+    "incidente_id": 244,
+    "numero_incidente": "244",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 0.222,
+    "latencia_e2e_ms": 147,
+    "error": null
+  },
+  {
+    "case_id": "R084",
+    "incidente_id": 245,
+    "numero_incidente": "245",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.11,
+    "latencia_e2e_ms": 48,
+    "error": null
+  },
+  {
+    "case_id": "R085",
+    "incidente_id": 246,
+    "numero_incidente": "246",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.131,
+    "latencia_e2e_ms": 60,
+    "error": null
+  },
+  {
+    "case_id": "R086",
+    "incidente_id": 247,
+    "numero_incidente": "247",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.137,
+    "latencia_e2e_ms": 58,
+    "error": null
+  },
+  {
+    "case_id": "R087",
+    "incidente_id": 248,
+    "numero_incidente": "248",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.132,
+    "latencia_e2e_ms": 55,
+    "error": null
+  },
+  {
+    "case_id": "R088",
+    "incidente_id": 249,
+    "numero_incidente": "249",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.179,
+    "latencia_e2e_ms": 68,
+    "error": null
+  },
+  {
+    "case_id": "R089",
+    "incidente_id": 250,
+    "numero_incidente": "250",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.124,
+    "latencia_e2e_ms": 61,
+    "error": null
+  },
+  {
+    "case_id": "R090",
+    "incidente_id": 251,
+    "numero_incidente": "251",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.142,
+    "latencia_e2e_ms": 55,
+    "error": null
+  },
+  {
+    "case_id": "R091",
+    "incidente_id": 252,
+    "numero_incidente": "252",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.137,
+    "latencia_e2e_ms": 56,
+    "error": null
+  },
+  {
+    "case_id": "R092",
+    "incidente_id": 253,
+    "numero_incidente": "253",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.132,
+    "latencia_e2e_ms": 68,
+    "error": null
+  },
+  {
+    "case_id": "R093",
+    "incidente_id": 254,
+    "numero_incidente": "254",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.126,
+    "latencia_e2e_ms": 56,
+    "error": null
+  },
+  {
+    "case_id": "R094",
+    "incidente_id": 85,
+    "numero_incidente": "85",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.064,
+    "latencia_e2e_ms": 538,
+    "error": null
+  },
+  {
+    "case_id": "R095",
+    "incidente_id": 255,
+    "numero_incidente": "255",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.121,
+    "latencia_e2e_ms": 59,
+    "error": null
+  },
+  {
+    "case_id": "R096",
+    "incidente_id": 86,
+    "numero_incidente": "86",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.049,
+    "latencia_e2e_ms": 574,
+    "error": null
+  },
+  {
+    "case_id": "R097",
+    "incidente_id": 256,
+    "numero_incidente": "256",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.143,
+    "latencia_e2e_ms": 56,
+    "error": null
+  },
+  {
+    "case_id": "R098",
+    "incidente_id": 88,
+    "numero_incidente": "88",
+    "sector": "Soporte Tecnico Software",
+    "revision": false,
+    "wall_s": 0.062,
+    "latencia_e2e_ms": 505,
+    "error": null
+  },
+  {
+    "case_id": "R099",
+    "incidente_id": 89,
+    "numero_incidente": "89",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.051,
+    "latencia_e2e_ms": 705,
+    "error": null
+  },
+  {
+    "case_id": "R100",
+    "incidente_id": 90,
+    "numero_incidente": "90",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.055,
+    "latencia_e2e_ms": 497,
+    "error": null
+  },
+  {
+    "case_id": "R101",
+    "incidente_id": 257,
+    "numero_incidente": "257",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.127,
+    "latencia_e2e_ms": 57,
+    "error": null
+  },
+  {
+    "case_id": "R102",
+    "incidente_id": 258,
+    "numero_incidente": "258",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.14,
+    "latencia_e2e_ms": 68,
+    "error": null
+  },
+  {
+    "case_id": "R103",
+    "incidente_id": 259,
+    "numero_incidente": "259",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 1.514,
+    "latencia_e2e_ms": 1441,
+    "error": null
+  },
+  {
+    "case_id": "R104",
+    "incidente_id": 260,
+    "numero_incidente": "260",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.109,
+    "latencia_e2e_ms": 49,
+    "error": null
+  },
+  {
+    "case_id": "R105",
+    "incidente_id": 261,
+    "numero_incidente": "261",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.124,
+    "latencia_e2e_ms": 56,
+    "error": null
+  },
+  {
+    "case_id": "R106",
+    "incidente_id": 262,
+    "numero_incidente": "262",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.143,
+    "latencia_e2e_ms": 60,
+    "error": null
+  },
+  {
+    "case_id": "R107",
+    "incidente_id": 263,
+    "numero_incidente": "263",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.126,
+    "latencia_e2e_ms": 37,
+    "error": null
+  },
+  {
+    "case_id": "R108",
+    "incidente_id": 264,
+    "numero_incidente": "264",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.18,
+    "latencia_e2e_ms": 96,
+    "error": null
+  },
+  {
+    "case_id": "R109",
+    "incidente_id": 265,
+    "numero_incidente": "265",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.105,
+    "latencia_e2e_ms": 50,
+    "error": null
+  },
+  {
+    "case_id": "R110",
+    "incidente_id": 266,
+    "numero_incidente": "266",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 1.353,
+    "latencia_e2e_ms": 1280,
+    "error": null
+  },
+  {
+    "case_id": "R111",
+    "incidente_id": 267,
+    "numero_incidente": "267",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 1.233,
+    "latencia_e2e_ms": 1137,
+    "error": null
+  },
+  {
+    "case_id": "R112",
+    "incidente_id": 268,
+    "numero_incidente": "268",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 1.75,
+    "latencia_e2e_ms": 1682,
+    "error": null
+  },
+  {
+    "case_id": "R113",
+    "incidente_id": 269,
+    "numero_incidente": "269",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.124,
+    "latencia_e2e_ms": 68,
+    "error": null
+  },
+  {
+    "case_id": "R114",
+    "incidente_id": 270,
+    "numero_incidente": "270",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 1.521,
+    "latencia_e2e_ms": 1461,
+    "error": null
+  },
+  {
+    "case_id": "R115",
+    "incidente_id": 271,
+    "numero_incidente": "271",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.154,
+    "latencia_e2e_ms": 60,
+    "error": null
+  },
+  {
+    "case_id": "R116",
+    "incidente_id": 272,
+    "numero_incidente": "272",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.127,
+    "latencia_e2e_ms": 59,
+    "error": null
+  },
+  {
+    "case_id": "R117",
+    "incidente_id": 273,
+    "numero_incidente": "273",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 1.201,
+    "latencia_e2e_ms": 1135,
+    "error": null
+  },
+  {
+    "case_id": "R118",
+    "incidente_id": 274,
+    "numero_incidente": "274",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.177,
+    "latencia_e2e_ms": 87,
+    "error": null
+  },
+  {
+    "case_id": "R119",
+    "incidente_id": 275,
+    "numero_incidente": "275",
+    "sector": "Seguridad Informatica",
+    "revision": true,
+    "wall_s": 0.14,
+    "latencia_e2e_ms": 57,
+    "error": null
+  },
+  {
+    "case_id": "R120",
+    "incidente_id": 276,
+    "numero_incidente": "276",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.276,
+    "latencia_e2e_ms": 200,
+    "error": null
+  },
+  {
+    "case_id": "R121",
+    "incidente_id": 277,
+    "numero_incidente": "277",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 0.163,
+    "latencia_e2e_ms": 69,
+    "error": null
+  },
+  {
+    "case_id": "R122",
+    "incidente_id": 278,
+    "numero_incidente": "278",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 0.126,
+    "latencia_e2e_ms": 57,
+    "error": null
+  },
+  {
+    "case_id": "R123",
+    "incidente_id": 279,
+    "numero_incidente": "279",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.145,
+    "latencia_e2e_ms": 74,
+    "error": null
+  },
+  {
+    "case_id": "R124",
+    "incidente_id": 280,
+    "numero_incidente": "280",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.165,
+    "latencia_e2e_ms": 96,
+    "error": null
+  },
+  {
+    "case_id": "R125",
+    "incidente_id": 281,
+    "numero_incidente": "281",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.148,
+    "latencia_e2e_ms": 80,
+    "error": null
+  },
+  {
+    "case_id": "R126",
+    "incidente_id": 282,
+    "numero_incidente": "282",
+    "sector": "Seguridad Informatica",
+    "revision": true,
+    "wall_s": 0.124,
+    "latencia_e2e_ms": 62,
+    "error": null
+  },
+  {
+    "case_id": "R127",
+    "incidente_id": 283,
+    "numero_incidente": "283",
+    "sector": "Seguridad Informatica",
+    "revision": true,
+    "wall_s": 0.117,
+    "latencia_e2e_ms": 43,
+    "error": null
+  },
+  {
+    "case_id": "R128",
+    "incidente_id": 284,
+    "numero_incidente": "284",
+    "sector": "Sistemas",
+    "revision": true,
+    "wall_s": 0.204,
+    "latencia_e2e_ms": 129,
+    "error": null
+  },
+  {
+    "case_id": "R129",
+    "incidente_id": 285,
+    "numero_incidente": "285",
+    "sector": "Seguridad Informatica",
+    "revision": false,
+    "wall_s": 0.126,
+    "latencia_e2e_ms": 62,
+    "error": null
+  },
+  {
+    "case_id": "R130",
+    "incidente_id": 286,
+    "numero_incidente": "286",
+    "sector": "Seguridad Informatica",
+    "revision": true,
+    "wall_s": 0.11,
+    "latencia_e2e_ms": 41,
+    "error": null
+  },
+  {
+    "case_id": "R131",
+    "incidente_id": 287,
+    "numero_incidente": "287",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 0.118,
+    "latencia_e2e_ms": 51,
+    "error": null
+  },
+  {
+    "case_id": "R132",
+    "incidente_id": 288,
+    "numero_incidente": "288",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.174,
+    "latencia_e2e_ms": 94,
+    "error": null
+  },
+  {
+    "case_id": "R133",
+    "incidente_id": 289,
+    "numero_incidente": "289",
+    "sector": "Seguridad Informatica",
+    "revision": true,
+    "wall_s": 0.119,
+    "latencia_e2e_ms": 55,
+    "error": null
+  },
+  {
+    "case_id": "R134",
+    "incidente_id": 290,
+    "numero_incidente": "290",
+    "sector": "Seguridad Informatica",
+    "revision": true,
+    "wall_s": 0.126,
+    "latencia_e2e_ms": 58,
+    "error": null
+  },
+  {
+    "case_id": "R135",
+    "incidente_id": 291,
+    "numero_incidente": "291",
+    "sector": "Seguridad Informatica",
+    "revision": true,
+    "wall_s": 0.147,
+    "latencia_e2e_ms": 66,
+    "error": null
+  },
+  {
+    "case_id": "R136",
+    "incidente_id": 292,
+    "numero_incidente": "292",
+    "sector": "Sistemas",
+    "revision": true,
+    "wall_s": 0.317,
+    "latencia_e2e_ms": 222,
+    "error": null
+  },
+  {
+    "case_id": "R137",
+    "incidente_id": 293,
+    "numero_incidente": "293",
+    "sector": "Seguridad Informatica",
+    "revision": true,
+    "wall_s": 0.106,
+    "latencia_e2e_ms": 47,
+    "error": null
+  },
+  {
+    "case_id": "R138",
+    "incidente_id": 294,
+    "numero_incidente": "294",
+    "sector": "Sistemas",
+    "revision": true,
+    "wall_s": 0.116,
+    "latencia_e2e_ms": 57,
+    "error": null
+  },
+  {
+    "case_id": "R139",
+    "incidente_id": 295,
+    "numero_incidente": "295",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.141,
+    "latencia_e2e_ms": 76,
+    "error": null
+  },
+  {
+    "case_id": "R140",
+    "incidente_id": 296,
+    "numero_incidente": "296",
+    "sector": "Sistemas",
+    "revision": true,
+    "wall_s": 0.133,
+    "latencia_e2e_ms": 64,
+    "error": null
+  },
+  {
+    "case_id": "R141",
+    "incidente_id": 297,
+    "numero_incidente": "297",
+    "sector": "Sistemas",
+    "revision": true,
+    "wall_s": 0.118,
+    "latencia_e2e_ms": 63,
+    "error": null
+  },
+  {
+    "case_id": "R142",
+    "incidente_id": 298,
+    "numero_incidente": "298",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.147,
+    "latencia_e2e_ms": 83,
+    "error": null
+  },
+  {
+    "case_id": "R143",
+    "incidente_id": 299,
+    "numero_incidente": "299",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 0.145,
+    "latencia_e2e_ms": 56,
+    "error": null
+  },
+  {
+    "case_id": "R144",
+    "incidente_id": 300,
+    "numero_incidente": "300",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 0.194,
+    "latencia_e2e_ms": 133,
+    "error": null
+  },
+  {
+    "case_id": "R145",
+    "incidente_id": 301,
+    "numero_incidente": "301",
+    "sector": "Sistemas",
+    "revision": true,
+    "wall_s": 0.119,
+    "latencia_e2e_ms": 53,
+    "error": null
+  },
+  {
+    "case_id": "R146",
+    "incidente_id": 302,
+    "numero_incidente": "302",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.12,
+    "latencia_e2e_ms": 57,
+    "error": null
+  },
+  {
+    "case_id": "R147",
+    "incidente_id": 303,
+    "numero_incidente": "303",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.154,
+    "latencia_e2e_ms": 85,
+    "error": null
+  },
+  {
+    "case_id": "R148",
+    "incidente_id": 304,
+    "numero_incidente": "304",
+    "sector": "Seguridad Informatica",
+    "revision": true,
+    "wall_s": 0.126,
+    "latencia_e2e_ms": 55,
+    "error": null
+  },
+  {
+    "case_id": "R149",
+    "incidente_id": 305,
+    "numero_incidente": "305",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.129,
+    "latencia_e2e_ms": 53,
+    "error": null
+  },
+  {
+    "case_id": "R150",
+    "incidente_id": 306,
+    "numero_incidente": "306",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.152,
+    "latencia_e2e_ms": 60,
+    "error": null
+  },
+  {
+    "case_id": "R151",
+    "incidente_id": 307,
+    "numero_incidente": "307",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.121,
+    "latencia_e2e_ms": 50,
+    "error": null
+  },
+  {
+    "case_id": "R152",
+    "incidente_id": 308,
+    "numero_incidente": "308",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.374,
+    "latencia_e2e_ms": 212,
+    "error": null
+  },
+  {
+    "case_id": "R153",
+    "incidente_id": 309,
+    "numero_incidente": "309",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.13,
+    "latencia_e2e_ms": 65,
+    "error": null
+  },
+  {
+    "case_id": "R154",
+    "incidente_id": 310,
+    "numero_incidente": "310",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.142,
+    "latencia_e2e_ms": 52,
+    "error": null
+  },
+  {
+    "case_id": "R155",
+    "incidente_id": 311,
+    "numero_incidente": "311",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.135,
+    "latencia_e2e_ms": 63,
+    "error": null
+  },
+  {
+    "case_id": "R156",
+    "incidente_id": 312,
+    "numero_incidente": "312",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.135,
+    "latencia_e2e_ms": 68,
+    "error": null
+  },
+  {
+    "case_id": "R157",
+    "incidente_id": 313,
+    "numero_incidente": "313",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.118,
+    "latencia_e2e_ms": 50,
+    "error": null
+  },
+  {
+    "case_id": "R158",
+    "incidente_id": 314,
+    "numero_incidente": "314",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.19,
+    "latencia_e2e_ms": 96,
+    "error": null
+  },
+  {
+    "case_id": "R159",
+    "incidente_id": 315,
+    "numero_incidente": "315",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.147,
+    "latencia_e2e_ms": 82,
+    "error": null
+  },
+  {
+    "case_id": "R160",
+    "incidente_id": 316,
+    "numero_incidente": "316",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.168,
+    "latencia_e2e_ms": 92,
+    "error": null
+  },
+  {
+    "case_id": "R161",
+    "incidente_id": 317,
+    "numero_incidente": "317",
+    "sector": "Soporte Tecnico Software",
+    "revision": false,
+    "wall_s": 0.125,
+    "latencia_e2e_ms": 56,
+    "error": null
+  },
+  {
+    "case_id": "R162",
+    "incidente_id": 318,
+    "numero_incidente": "318",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.13,
+    "latencia_e2e_ms": 70,
+    "error": null
+  },
+  {
+    "case_id": "R163",
+    "incidente_id": 319,
+    "numero_incidente": "319",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.146,
+    "latencia_e2e_ms": 78,
+    "error": null
+  },
+  {
+    "case_id": "R164",
+    "incidente_id": 320,
+    "numero_incidente": "320",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.146,
+    "latencia_e2e_ms": 80,
+    "error": null
+  },
+  {
+    "case_id": "R165",
+    "incidente_id": 321,
+    "numero_incidente": "321",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.16,
+    "latencia_e2e_ms": 85,
+    "error": null
+  },
+  {
+    "case_id": "R166",
+    "incidente_id": 322,
+    "numero_incidente": "322",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.166,
+    "latencia_e2e_ms": 113,
+    "error": null
+  },
+  {
+    "case_id": "R167",
+    "incidente_id": 323,
+    "numero_incidente": "323",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.134,
+    "latencia_e2e_ms": 66,
+    "error": null
+  },
+  {
+    "case_id": "R168",
+    "incidente_id": 324,
+    "numero_incidente": "324",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.264,
+    "latencia_e2e_ms": 166,
+    "error": null
+  },
+  {
+    "case_id": "R169",
+    "incidente_id": 325,
+    "numero_incidente": "325",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.136,
+    "latencia_e2e_ms": 76,
+    "error": null
+  },
+  {
+    "case_id": "R170",
+    "incidente_id": 132,
+    "numero_incidente": "132",
+    "sector": "Soporte Tecnico Software",
+    "revision": false,
+    "wall_s": 0.066,
+    "latencia_e2e_ms": 1385,
+    "error": null
+  },
+  {
+    "case_id": "R171",
+    "incidente_id": 326,
+    "numero_incidente": "326",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.162,
+    "latencia_e2e_ms": 92,
+    "error": null
+  },
+  {
+    "case_id": "R172",
+    "incidente_id": 327,
+    "numero_incidente": "327",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.147,
+    "latencia_e2e_ms": 65,
+    "error": null
+  },
+  {
+    "case_id": "R173",
+    "incidente_id": 328,
+    "numero_incidente": "328",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.132,
+    "latencia_e2e_ms": 61,
+    "error": null
+  },
+  {
+    "case_id": "R174",
+    "incidente_id": 329,
+    "numero_incidente": "329",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 0.14,
+    "latencia_e2e_ms": 66,
+    "error": null
+  },
+  {
+    "case_id": "R175",
+    "incidente_id": 330,
+    "numero_incidente": "330",
+    "sector": "Sistemas",
+    "revision": false,
+    "wall_s": 0.144,
+    "latencia_e2e_ms": 58,
+    "error": null
+  },
+  {
+    "case_id": "R176",
+    "incidente_id": 331,
+    "numero_incidente": "331",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.14,
+    "latencia_e2e_ms": 79,
+    "error": null
+  },
+  {
+    "case_id": "R177",
+    "incidente_id": 136,
+    "numero_incidente": "136",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.047,
+    "latencia_e2e_ms": 615,
+    "error": null
+  },
+  {
+    "case_id": "R178",
+    "incidente_id": 137,
+    "numero_incidente": "137",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.047,
+    "latencia_e2e_ms": 575,
+    "error": null
+  },
+  {
+    "case_id": "R179",
+    "incidente_id": 332,
+    "numero_incidente": "332",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.128,
+    "latencia_e2e_ms": 84,
+    "error": null
+  },
+  {
+    "case_id": "R180",
+    "incidente_id": 333,
+    "numero_incidente": "333",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.179,
+    "latencia_e2e_ms": 60,
+    "error": null
+  },
+  {
+    "case_id": "R181",
+    "incidente_id": 334,
+    "numero_incidente": "334",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 0.123,
+    "latencia_e2e_ms": 61,
+    "error": null
+  },
+  {
+    "case_id": "R182",
+    "incidente_id": 335,
+    "numero_incidente": "335",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.157,
+    "latencia_e2e_ms": 89,
+    "error": null
+  },
+  {
+    "case_id": "R183",
+    "incidente_id": 336,
+    "numero_incidente": "336",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.175,
+    "latencia_e2e_ms": 77,
+    "error": null
+  },
+  {
+    "case_id": "R184",
+    "incidente_id": 337,
+    "numero_incidente": "337",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 0.333,
+    "latencia_e2e_ms": 107,
+    "error": null
+  },
+  {
+    "case_id": "R185",
+    "incidente_id": 338,
+    "numero_incidente": "338",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.132,
+    "latencia_e2e_ms": 70,
+    "error": null
+  },
+  {
+    "case_id": "R186",
+    "incidente_id": 142,
+    "numero_incidente": "142",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.058,
+    "latencia_e2e_ms": 525,
+    "error": null
+  },
+  {
+    "case_id": "R187",
+    "incidente_id": 339,
+    "numero_incidente": "339",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.126,
+    "latencia_e2e_ms": 59,
+    "error": null
+  },
+  {
+    "case_id": "R188",
+    "incidente_id": 340,
+    "numero_incidente": "340",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.138,
+    "latencia_e2e_ms": 59,
+    "error": null
+  },
+  {
+    "case_id": "R189",
+    "incidente_id": 145,
+    "numero_incidente": "145",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.046,
+    "latencia_e2e_ms": 561,
+    "error": null
+  },
+  {
+    "case_id": "R190",
+    "incidente_id": 341,
+    "numero_incidente": "341",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.146,
+    "latencia_e2e_ms": 79,
+    "error": null
+  },
+  {
+    "case_id": "R191",
+    "incidente_id": 342,
+    "numero_incidente": "342",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 0.132,
+    "latencia_e2e_ms": 53,
+    "error": null
+  },
+  {
+    "case_id": "R192",
+    "incidente_id": 343,
+    "numero_incidente": "343",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.119,
+    "latencia_e2e_ms": 46,
+    "error": null
+  },
+  {
+    "case_id": "R193",
+    "incidente_id": 344,
+    "numero_incidente": "344",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.162,
+    "latencia_e2e_ms": 85,
+    "error": null
+  },
+  {
+    "case_id": "R194",
+    "incidente_id": 345,
+    "numero_incidente": "345",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.163,
+    "latencia_e2e_ms": 83,
+    "error": null
+  },
+  {
+    "case_id": "R195",
+    "incidente_id": 346,
+    "numero_incidente": "346",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.129,
+    "latencia_e2e_ms": 68,
+    "error": null
+  },
+  {
+    "case_id": "R196",
+    "incidente_id": 347,
+    "numero_incidente": "347",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.145,
+    "latencia_e2e_ms": 74,
+    "error": null
+  },
+  {
+    "case_id": "R197",
+    "incidente_id": 348,
+    "numero_incidente": "348",
+    "sector": "Soporte Tecnico Software",
+    "revision": true,
+    "wall_s": 0.126,
+    "latencia_e2e_ms": 56,
+    "error": null
+  },
+  {
+    "case_id": "R198",
+    "incidente_id": 150,
+    "numero_incidente": "150",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": false,
+    "wall_s": 0.049,
+    "latencia_e2e_ms": 443,
+    "error": null
+  },
+  {
+    "case_id": "R199",
+    "incidente_id": 349,
+    "numero_incidente": "349",
+    "sector": null,
+    "revision": true,
+    "wall_s": 0.158,
+    "latencia_e2e_ms": 86,
+    "error": null
+  },
+  {
+    "case_id": "R200",
+    "incidente_id": 350,
+    "numero_incidente": "350",
+    "sector": "Soporte Tecnico Hardware",
+    "revision": true,
+    "wall_s": 0.113,
+    "latencia_e2e_ms": 58,
+    "error": null
+  }
+]
