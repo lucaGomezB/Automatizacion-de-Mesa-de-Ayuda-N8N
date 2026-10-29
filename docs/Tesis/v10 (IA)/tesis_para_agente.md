@@ -1142,6 +1142,7 @@ La versión entregada no es la que se evaluó. La *configuración evaluada* es l
 | Flujo N8N | 28 nodos (25 operativos y 3 notas); 38 (35 y 3) hasta c-72 | 32 nodos (29 operativos y 3 notas) |
 | Reintentos del alta | No | Sí: hasta 3 intentos, espera fija de 5000 ms y tiempo de espera por intento de 10 s (inicio de sesión) y 75 s (alta) |
 | Revisión por reportante no identificado | No | Sí (c-82) |
+| Propagación del contacto del reportante en el POST | No | Sí (c-162, posterior a la campaña): el flujo N8N envía `reportante_email` (correo) y `reportante_telefono` (telefonía), que habilitan la resolución del reportante de c-82 |
 | Prueba de humo E2E y verificación de TLS | No | Sí (c-140) |
 | Sin cambios | N8N 2.11.2, Python 3.12-slim, PostgreSQL 15.5-alpine, `gemini-3.6-flash` con sus parámetros, umbrales (0,5166 y 0,70), vocabulario y *prompt*; la lógica del clasificador solo cambió en comentarios e importaciones diferidas |
 

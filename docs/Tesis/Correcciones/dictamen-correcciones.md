@@ -3185,7 +3185,7 @@ figuras decia "confianza >= 0.90" y aplicaba 0,70 a toda clasificacion).
 7. **Anexo I.** c-158 no creo tabla propia para el dictamen del 28-10 (usa un parrafo): c-159 extendio ese parrafo con A3 y A4 en lugar de agregar filas. Desvio respecto de la tarea 6.4; c-160 reestructura el Anexo I.
 8. **Figura 2 sin fuente versionada**: reemplazada por `docs/diagrams/arquitectura_sistema.md` (opcion a del dictamen). El drawio de capas de Luca queda intacto.
 
-Datos que requieren a los autores (no bloquean): (a) `n8n/workflow.json` no envia `reportante_email` ni `reportante_telefono` en el `POST /api/v1/incidentes`, de modo que en la configuracion entregada los incidentes de correo y telefonia ingresados por N8N quedarian sin reportante identificado y derivados a revision por VIS-005 (no verificado en ejecucion; las figuras solo representan la regla); (b) [RESUELTO por c-161] la fuente Mermaid `docs/diagrams/arquitectura_sistema.md` se conserva como unica fuente de `fig:arquitectura` (decision Figura 2 = A) y el `Diagrama de Capas.drawio` y su PNG quedaron archivados en `docs/diagrams/archive/`; no se presenta como fuente vigente; (c) deriva fuera de la tesis: el comentario de `requiere_revision_humana` en `App/Backend/app/models/incidente.py` ("umbral de 0.70 o Gemini fallo"), `docs/anexo_c_esquema_bd.md` sin `directorio_empleado`, el memo que cita el SHA-256 CRLF de la evidencia (`3fb5bacd...`, el blob LF es `89cf956e...`) y `CHANGES.md` sin c-155 a c-157 (resuelto por la FASE 47).
+Datos que requieren a los autores (no bloquean): (a) [RESUELTO por c-162] `n8n/workflow.json` ahora SI envia `reportante_email` y `reportante_telefono` en el `POST /api/v1/incidentes`, de modo que en la configuracion entregada los incidentes de correo y telefonia ingresados por N8N resuelven al reportante del directorio y no derivan por VIS-005 (ver el tramo c-162 mas abajo); (b) [RESUELTO por c-161] la fuente Mermaid `docs/diagrams/arquitectura_sistema.md` se conserva como unica fuente de `fig:arquitectura` (decision Figura 2 = A) y el `Diagrama de Capas.drawio` y su PNG quedaron archivados en `docs/diagrams/archive/`; no se presenta como fuente vigente; (c) deriva fuera de la tesis: el comentario de `requiere_revision_humana` en `App/Backend/app/models/incidente.py` ("umbral de 0.70 o Gemini fallo"), `docs/anexo_c_esquema_bd.md` sin `directorio_empleado`, el memo que cita el SHA-256 CRLF de la evidencia (`3fb5bacd...`, el blob LF es `89cf956e...`) y `CHANGES.md` sin c-155 a c-157 (resuelto por la FASE 47).
 
 ### Evidencia del recomputo (tarea 5.5)
 
@@ -3405,3 +3405,44 @@ Compilacion en `texlive-thesis` (`MSYS_NO_PATHCONV=1 docker run ... latexmk main
 |---|---|---|---|---|
 | `c-160` (linea base) | 109 | - | 0 a +1 | Medido |
 | `+c-161` | 110 | +1 | 0 a +1 | Medido: `abspage@last{110}`; delta +1, dentro del presupuesto |
+
+## Dictamen v10 / v1.2.6 (2026-10-29) - c-162
+
+Cierre del hallazgo OQ5 (propagacion del contacto del reportante en el flujo N8N) y registro del supersede parcial de C-40/C-53. Change `c-162-propagar-el-contacto-del-reportante-en-el-flujo-n8n` (gobernanza MEDIA/ALTA). No se modifico `App/Backend/app/**` (el schema `IncidenteCreate` y `resolver_reportante` ya soportaban el contrato), ni `evaluation/`, ni `openspec/config.yaml`, ni `docs/Tesis/v9 (IA)/`.
+
+### Origen y linea base
+
+- Rama de trabajo sobre `main`; linea base de la tesis: c-161 (110 paginas).
+- El defecto era de transporte, no de capacidad: el backend ya resolvia el reportante (`resolver_reportante`, c-82/VIS-005) a partir de `reportante_email` (correo) y `reportante_telefono` (telefonia); el workflow entregado no los enviaba en `POST /api/v1/incidentes`.
+
+### Cierre de OQ5 (contacto del reportante)
+
+OQ5 (`docs/Tesis/Correcciones/preguntas-para-lucas-dictamen-2026-10-28.md`) queda **CERRADA** por c-162 sin depender de una respuesta del autor: el repositorio documenta y corrige el flujo.
+
+- Nodo `Normalizar entrada del incidente`: emite `reportante_email` (correo, desde el remitente normalizado `remitenteNorm.remitente`) y `reportante_telefono` (telefonia, desde `caller_number`); `null` en el resto.
+- Nodo `HTTP POST a MESA-AYUDAS`: agrega ambos campos al `jsonBody`, resueltos por expresion desde el normalizador y null-safe (`|| null`). El canal web queda FUERA de alcance (declarado en N8N-CONTACT-001; la cuenta del POST es la del operador).
+- El contacto es transitorio: el backend persiste solo `reportante_empleado_id`; el contacto crudo no se persiste ni se audita.
+
+### Supersede parcial de C-40/C-53
+
+C-40/C-53 (N8N-EMAIL-002) afirmaban que el `remitente` no se agregaba al POST ni a la auditoria. c-162 **supersede parcialmente** esa parte: el contacto normalizado SI viaja al POST como `reportante_email`/`reportante_telefono` para la resolucion transitoria del reportante, mientras el campo crudo `remitente` sigue sin persistirse ni agregarse al registro de auditoria. El requisito N8N-EMAIL-002 se MODIFICA en ese sentido (delta spec `n8n-workflow`) y el comentario C-40/C-53 del normalizador se reescribio en el mismo sentido. El test `test_c40_remitente_not_in_post_body_nor_audit` permanece en verde (el campo crudo `remitente` no aparece en el body).
+
+### Verificacion
+
+- `cd App/Backend; pytest -m "not integration" -q`: **1585 passed**, 60 deselected, 1 xfailed (linea base 1580 passed; +5 pruebas c-162). Sin fallos.
+- `cd App/Backend; pytest tests/test_n8n_workflow.py tests/test_c135_n8n_retry_policy.py -q`: 190 passed, 1 xfailed.
+- `openspec validate c-162-propagar-el-contacto-del-reportante-en-el-flujo-n8n --strict --no-interactive`: PASS.
+- Anexo B: fila nueva en `tab:configuracion-evaluada-entregada` (`12-anexos.tex`) declarando la propagacion del contacto del reportante como capacidad de la version entregada posterior a la campana.
+
+### Compilacion, paginas y palabras
+
+Compilacion en `texlive-thesis` (`MSYS_NO_PATHCONV=1 docker run ... latexmk main.tex`): exit 0, 0 errores (`grep -c "^!" main.log`), 0 referencias indefinidas, 0 `multiply defined`, 0 `??` en `pdftotext`, `Overfull` = 24 (igual a la linea base), `verify_citations.py` PASS (74 entradas, 0 huerfanas, 0 sin uso). Render regenerado con `build_tesis_para_agente.py v1.2.5`.
+
+| Change | Total | Delta total | Regla vigente | Estado |
+|---|---|---|---|---|
+| `c-161` (linea base) | 110 | - | 0 a +1 | Medido |
+| `+c-162` | 111 | +1 | 0 a +1 | Medido: `Pages: 111`; delta +1, dentro del presupuesto |
+
+### Release
+
+- **Nota de release (planificada, NO publicada en este change):** la release **v1.2.6** incluira c-162. El tag y el commit los publica el orquestador; este change solo deja la nota. No se creo tag ni commit.

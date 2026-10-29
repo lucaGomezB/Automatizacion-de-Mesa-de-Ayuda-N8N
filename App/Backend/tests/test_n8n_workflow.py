@@ -4716,3 +4716,146 @@ def test_cgonzalo_node_mixed_batch_keeps_only_real_emails():
     )
     assert [o["from"] for o in out] == ["Luis <luis@empresa.com>", "Ana <ana@empresa.com>"]
     assert [o["es_valido"] for o in out] == [False, True]
+
+
+# ---------------------------------------------------------------------------
+# Grupo c-162 — El contacto del reportante viaja al POST para su resolucion
+#
+# El backend resuelve al reportante contra el directorio a partir de
+# `reportante_email` (correo) y `reportante_telefono` (telefonia); si N8N no lo
+# propaga, TODO incidente de correo/telefonia cae en revision humana por
+# reportante no identificado (VIS-005, c-82). Estos tests verifican que el
+# normalizador emite el contacto acotado por canal (null en el resto) y que el
+# POST lo propaga null-safe, SIN enviar el campo crudo `remitente`
+# (N8N-EMAIL-002 acotado por c-162).
+# ---------------------------------------------------------------------------
+
+_NORMALIZER_SHIM = """
+globalThis.$execution = { id: 'c162-test-execution' };
+const code = %(code)s;
+const items = %(items)s;
+const fn = new Function('$input', code);
+const out = fn({ all: () => items.map((json) => ({ json })) });
+process.stdout.write(JSON.stringify(out.map((o) => o.json)));
+"""
+
+
+def _run_normalizer_with_node(items: list[dict]) -> list[dict]:
+    """Ejecuta el jsCode REAL del normalizador con Node y devuelve los json emitidos."""
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    code = _js_code(by_name[NORMALIZER_NODE_NAME])
+    script = _NORMALIZER_SHIM % {"code": json.dumps(code), "items": json.dumps(items)}
+    proc = subprocess.run(
+        [shutil.which("node") or "node", "-e", script],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=30,
+        check=False,
+    )
+    assert proc.returncode == 0, f"Node fallo ejecutando el normalizador: {proc.stderr}"
+    return json.loads(proc.stdout)
+
+
+_CUERPO_C162 = "No me anda la impresora del segundo piso desde ayer a la tarde."
+
+
+def test_c162_post_body_includes_reportante_contact():
+    """RED (N8N-CONTACT-001): el jsonBody del POST incluye reportante_email y
+    reportante_telefono resueltos por expresion desde el normalizador."""
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    body = http_json_body(by_name[HTTP_NODE_CORREO])
+
+    for field in ("reportante_email", "reportante_telefono"):
+        assert field in body, (
+            f"El POST de persistencia no declara '{field}': los incidentes de N8N "
+            "caerian en VIS-005 por reportante no identificado"
+        )
+        assert NORMALIZER_NODE_NAME in body[field], (
+            f"'{field}' no se resuelve por expresion desde {NORMALIZER_NODE_NAME!r}"
+        )
+
+
+def test_c162_post_body_contact_is_null_safe():
+    """RED (N8N-CONTACT-001): cada campo de contacto del POST resuelve con
+    fallback '|| null', para no romper el alta cuando el canal no aporta contacto."""
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    body = http_json_body(by_name[HTTP_NODE_CORREO])
+
+    for field in ("reportante_email", "reportante_telefono"):
+        assert field in body, f"El POST no declara '{field}'"
+        assert "|| null" in body[field], (
+            f"'{field}' no es null-safe (falta el fallback '|| null'): {body[field]!r}"
+        )
+
+
+@_requires_node
+def test_c162_normalizer_emits_reportante_contact_by_channel():
+    """RED (N8N-CONTACT-001): el normalizador emite reportante_email desde el
+    remitente normalizado (correo) y reportante_telefono desde caller_number
+    (telefonia), y null en el canal que no corresponde."""
+    correo, telefonia = _run_normalizer_with_node(
+        [
+            {
+                "id": "c162-correo",
+                "canal_raw": "correo",
+                "remitente": "Ana Perez <ana.perez@empresa.com>",
+                "descripcion": _CUERPO_C162,
+            },
+            {
+                "id": "c162-telefonia",
+                "canal_raw": "telefonia",
+                "caller_number": "+5491122233344",
+                "descripcion": _CUERPO_C162,
+            },
+        ]
+    )
+
+    assert correo["reportante_email"] == "ana.perez@empresa.com"
+    assert correo["reportante_telefono"] is None
+    assert telefonia["reportante_telefono"] == "+5491122233344"
+    assert telefonia["reportante_email"] is None
+
+
+@_requires_node
+def test_c162_normalizer_contact_null_for_web_and_unresolved():
+    """TRIANGULATE (N8N-CONTACT-001): en el canal web (fuera de alcance) y en un
+    canal cuyo contacto no se resuelve, ambos campos son null y la normalizacion
+    no falla."""
+    web, correo_sin_remitente = _run_normalizer_with_node(
+        [
+            {
+                "id": "c162-web",
+                "canal_raw": "web",
+                "body": {"descripcion": _CUERPO_C162},
+            },
+            {
+                "id": "c162-correo-invalido",
+                "canal_raw": "correo",
+                "remitente": "no-es-un-email",
+                "descripcion": _CUERPO_C162,
+            },
+        ]
+    )
+
+    assert web["reportante_email"] is None
+    assert web["reportante_telefono"] is None
+    assert correo_sin_remitente["reportante_email"] is None
+    assert correo_sin_remitente["reportante_telefono"] is None
+
+
+def test_c162_raw_remitente_still_absent_from_post_body():
+    """TRIANGULATE (N8N-EMAIL-002 acotado): el campo crudo 'remitente' sigue
+    ausente del body del POST; el contacto viaja SOLO como 'reportante_email'.
+    No regresion del test C-40."""
+    wf = load_workflow()
+    by_name, _ = index_nodes(wf)
+    body = http_json_body(by_name[HTTP_NODE_CORREO])
+
+    assert "remitente" not in body, (
+        "El body del POST expone el campo crudo 'remitente' (PII)"
+    )
+    assert "reportante_email" in body

@@ -2,7 +2,7 @@
 Politica de reintento del tramo de alta N8N -> backend (c-140, tareas 3.2/3.5).
 
 Archivo propio para no alterar el conteo de `test_n8n_workflow.py`, que esta
-atado a la guia ("Verifica 171 propiedades estructurales").
+atado a la guia ("Verifica 176 propiedades estructurales").
 
 El verificador `violaciones_politica_reintento(workflow, compose, settings)` es
 PURO: recibe el workflow N8N parseado, el `docker-compose.yml` parseado y un
