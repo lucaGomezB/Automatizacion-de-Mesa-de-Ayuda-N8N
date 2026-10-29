@@ -2439,6 +2439,20 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
+## FASE 51 — Residuales de deriva documental del dictamen CONEAU v10/v1.2.5 (2026-10-29)
+
+> Change documental posterior a la FASE 50: cierra los cinco residuales de "deriva fuera de la tesis" registrados por el dictamen CONEAU del 2026-10-28 sobre la tesis v10 / release `v1.2.5` y por la nota "fuera de alcance" del design de c-158, que las FASES 48/49/50 no cubrian. Alinea el spec `telefonia-corpus-medicion`, dos documentos de `docs/`, el comment del modelo `incidente.py`, el Anexo C (tabla del directorio) y el memo de numeros canonicos; no toca `n8n/`, `evaluation/`, `openspec/config.yaml`, las cadenas canonicas ni los valores numericos canonicos. Gobernanza BAJA (reword de comentario + sincronizacion docs/spec).
+
+### [C-164] `sincronizar-los-residuales-de-deriva-documental` — APLICADO (2026-10-29)
+
+- **Scope**: (1) delta MODIFIED de `telefonia-corpus-medicion` con la formula c-77 `duracion_segundos + latencia_e2e_ms / 1000` y la descomposicion reconciliada, con los tres escenarios de nombres EXACTOS; (2) `docs/medicion-latencia-e2e.md` con la formula c-77, la cota inferior por el tope de 45 s y el caveat de correo precisado; (3) comentario de `requiere_revision_humana` en `App/Backend/app/models/incidente.py` (solo comentario; el 0.70 aplica solo a Gemini, el deterministico no deriva por su confianza, el fallback siempre deriva, y desde 2026-10-13 tambien deriva con reportante no identificado, c-82/VIS-005); (4) `docs/anexo_c_esquema_bd.md` con la tabla `directorio_empleado` (Fernet + indice ciego c-153, rol de cuatro valores, FK) y `directorio_auditoria`; (5) `docs/Tesis/Correcciones/numeros-canonicos.md` con el hash LF `89cf956e…` como vigente y la nota del CRLF `3fb5bacd…`; (6) cierre en `dictamen-correcciones.md` y FASE 51.
+- **Verificacion**: `python3 scripts/preflight/docs_stack_sync.py` = 17/17 PASS; `openspec validate "c-164-sincronizar-los-residuales-de-deriva-documental" --strict --no-interactive` = PASS; `git diff --stat App/Backend/app/models/incidente.py` solo lineas de comentario (sin cambio de logica); `cd App/Backend; python3 -c "import app.models.incidente"` sin error; ningun `.tex` tocado, de modo que NO se recompilo el PDF; `git status --porcelain` lista solo los archivos del scope.
+- **Rollback**: `git checkout --` de los archivos tocados (docs, comment del modelo, `CHANGES.md`, el ledger); sin efecto en runtime ni release.
+- **Dependencias**: dictamen CONEAU v10/v1.2.5 y su ledger; design archivado de c-158. No revierte c-158..c-163.
+- **Leer antes**: `openspec/changes/c-164-sincronizar-los-residuales-de-deriva-documental/{proposal,design,specs,tasks}.md`, `openspec/specs/telefonia-corpus-medicion/spec.md` y la seccion "Dictamen v10 / v1.2.5 (2026-10-28) - c-164" de `docs/Tesis/Correcciones/dictamen-correcciones.md`.
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo; actualizado 2026-10-22)

@@ -10,8 +10,9 @@ Decisiones (design.md D1-D6b):
     - D1: entidad propia; `user_id` es un vinculo opcional a `users` (FK nullable,
       ON DELETE SET NULL) para saber que cuenta corresponde a que empleado, sin
       fusionar el dominio de autenticacion con el de contacto.
-    - D2/D3 (c-82): rol minimo de TRES valores (`usuario_final`, `mesa_de_ayuda`,
-      `administrador_directorio`). El `sector_id` es dato organizacional OPCIONAL
+    - D2/D3 (c-82) y c-86: rol de CUATRO valores (`usuario_final`, `mesa_de_ayuda`,
+      `administrador_directorio` y `gestion_incidentes`, este ultimo incorporado
+      por c-86). El `sector_id` es dato organizacional OPCIONAL
       sin efecto en la autorizacion. La politica de cada rol vive en
       `app.services.role_policy`.
     - D4 (c-153, REVERTIDA): el email y el telefono se almacenan CIFRADOS

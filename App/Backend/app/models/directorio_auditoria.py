@@ -45,9 +45,10 @@ class DirectorioAuditoria(Base):
                            `no_encontrado`, `ambiguo`).
         canal:             Canal de resolucion de contacto (`email`, `telefono`,
                            `usuario`); NULL en operaciones de gestion.
-        empleado_id:       Sujeto de la operacion (identificador interno); NULL
-                           si no aplica. FK `ON DELETE SET NULL` para que el
-                           borrado ARCO no elimine la traza.
+        empleado_id:       Sujeto de la operacion (identificador interno), SIN
+                           FK: la traza es append-only y conserva los ids
+                           aunque el empleado se elimine por ARCO; NULL si no
+                           aplica.
         actor_empleado_id: Empleado que ejecuta la operacion (identificador
                            interno); NULL en resoluciones sin actor.
         created_at:        Instante UTC del evento (inmutable).

@@ -268,6 +268,120 @@ CREATE TABLE clasificacion_sector_validado (
 
 ---
 
+## Directorio de empleados y su auditoría
+
+### `directorio_empleado`
+
+Directorio interno de la mesa de ayuda (c-54, endurecido por c-153). Es una
+entidad de contacto SEPARADA de la autenticación (`users`): `user_id` es un
+vínculo opcional. El contacto personal (`email`, `telefono`) se almacena
+**cifrado at-rest con Fernet** (`EncryptedText`); como el ciphertext Fernet no es
+determinista, la unicidad y la búsqueda por contacto se resuelven con un **índice
+ciego** determinista (HMAC-SHA-256 de la forma normalizada, c-153 DIR-011),
+materializado en `email_bidx` (UNIQUE) y `telefono_bidx` (no UNIQUE: el teléfono
+es repetible). El vocabulario de `rol` tiene **cuatro** valores exactos.
+
+```sql
+CREATE TABLE directorio_empleado (
+    id              SERIAL          PRIMARY KEY,
+
+    legajo          VARCHAR(50)     NOT NULL,
+    nombre          VARCHAR(200)    NOT NULL,
+
+    -- Contacto cifrado at-rest con Fernet (`EncryptedText`, c-153)
+    email           TEXT            NOT NULL,   -- cifrado at-rest con Fernet
+    telefono        TEXT,                       -- E.164, opcional; cifrado at-rest con Fernet
+
+    -- Índice ciego determinista (HMAC-SHA-256, c-153 DIR-011); no es PII en claro.
+    -- La unicidad del email vive sobre `email_bidx` (el ciphertext no es determinista).
+    email_bidx      VARCHAR(64),
+    telefono_bidx   VARCHAR(64),
+
+    -- FK → sector: SET NULL permite desasociar el sector sin borrar al empleado
+    sector_id       INTEGER         REFERENCES sector(id)
+                                    ON DELETE SET NULL,
+
+    rol             VARCHAR(30)     NOT NULL,
+
+    activo          BOOLEAN         NOT NULL DEFAULT TRUE,
+    -- Instante de desactivación (retención DIR-007); NULL = activo
+    fecha_baja      TIMESTAMPTZ,
+
+    -- FK → users (autenticación): SET NULL desvincula la cuenta sin borrar al empleado
+    user_id         INTEGER         REFERENCES users(id)
+                                    ON DELETE SET NULL,
+
+    created_at      TIMESTAMPTZ     NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ     NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT uq_directorio_empleado_legajo UNIQUE (legajo),
+    CONSTRAINT uq_directorio_empleado_email_bidx UNIQUE (email_bidx),
+    CONSTRAINT ck_directorio_empleado_rol CHECK (
+        rol IN ('usuario_final', 'mesa_de_ayuda',
+                'administrador_directorio', 'gestion_incidentes')
+    )
+);
+
+-- Índices simples (FK lookups y búsquedas por contacto vía índice ciego)
+CREATE INDEX ix_directorio_empleado_email_bidx ON directorio_empleado (email_bidx);
+CREATE INDEX ix_directorio_empleado_telefono_bidx ON directorio_empleado (telefono_bidx);
+CREATE INDEX ix_directorio_empleado_sector_id ON directorio_empleado (sector_id);
+CREATE INDEX ix_directorio_empleado_user_id ON directorio_empleado (user_id);
+```
+
+**Vocabulario de `rol`** (cuatro valores, `ck_directorio_empleado_rol`):
+
+| Valor | Alcance |
+|-------|---------|
+| `usuario_final` | Reportante; alcance PROPIO (solo lo que reportó). |
+| `mesa_de_ayuda` | Rol transversal; alcance GLOBAL, privilegiado. |
+| `administrador_directorio` | Alcance GLOBAL, privilegiado; gestiona el directorio. |
+| `gestion_incidentes` | Rol operativo por sector (c-86); alcance SECTOR, no privilegiado. |
+
+**Relaciones**:
+- `directorio_empleado.sector_id` → `sector(id)` (FK con `ON DELETE SET NULL`).
+- `directorio_empleado.user_id` → `users(id)` (FK con `ON DELETE SET NULL`;
+  `users` es la tabla de autenticación y no se detalla en este anexo).
+- No es referenciada por ninguna otra tabla del esquema.
+
+### `directorio_auditoria`
+
+Traza DURABLE y **append-only** de las operaciones del directorio (c-153, DIR-013),
+análoga a `incidente_evento`. Almacena solo identificadores internos, la operación,
+el resultado, el canal de resolución y el instante: NUNCA email, teléfono, nombre
+ni otro dato personal en claro. No existe endpoint ni método de edición o borrado
+y el modelo **no** expone `updated_at` (no hereda `TimestampMixin`). Los
+identificadores `empleado_id` y `actor_empleado_id` son enteros internos OPACOS
+**sin clave foránea**: una traza de auditoría no debe imponer un acoplamiento
+referencial que pueda hacer fallar la operación que audita.
+
+```sql
+CREATE TABLE directorio_auditoria (
+    id                  SERIAL          PRIMARY KEY,
+
+    operacion           VARCHAR(40)     NOT NULL,
+    resultado           VARCHAR(20)     NOT NULL,
+    canal               VARCHAR(20),    -- 'email' | 'telefono' | 'usuario'; NULL en gestión
+
+    -- Identificadores internos opacos, SIN FK (la traza no impone acoplamiento referencial)
+    empleado_id         INTEGER,
+    actor_empleado_id   INTEGER,
+
+    -- Inmutable: no existe `updated_at` (append-only)
+    created_at          TIMESTAMPTZ     NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX ix_directorio_auditoria_empleado_id ON directorio_auditoria (empleado_id);
+CREATE INDEX ix_directorio_auditoria_actor_empleado_id ON directorio_auditoria (actor_empleado_id);
+CREATE INDEX ix_directorio_auditoria_created_at ON directorio_auditoria (created_at);
+```
+
+**Relaciones**:
+- Sin claves foráneas: los identificadores son internos y opacos por diseño
+  (DIR-013), de modo que el borrado ARCO de un empleado no elimina la traza.
+
+---
+
 ## Resumen de restricciones ON DELETE
 
 | FK origen                        | FK destino        | ON DELETE   | Justificación |
@@ -284,6 +398,11 @@ CREATE TABLE clasificacion_sector_validado (
 | `clasificacion_sector_predicho.sector_id` | `sector(id)` | **RESTRICT** | Integridad referencial del catálogo |
 | `clasificacion_sector_validado.clasificacion_log_id` | `clasificacion_log(id)` | **CASCADE** | Las uniones validadas dependen del log |
 | `clasificacion_sector_validado.sector_id` | `sector(id)` | **RESTRICT** | Integridad referencial del catálogo |
+| `directorio_empleado.sector_id` | `sector(id)` | **SET NULL** | El empleado persiste sin sector asignado |
+| `directorio_empleado.user_id` | `users(id)` | **SET NULL** | La cuenta se desvincula sin borrar al empleado |
+
+> `directorio_auditoria` no aporta filas: sus identificadores son internos y
+> opacos, sin clave foránea (DIR-013).
 
 ---
 
@@ -293,3 +412,6 @@ CREATE TABLE clasificacion_sector_validado (
 |---------------------------------|-------------|------------------------------|-----------|
 | `ix_incidente_created_sector`   | `incidente` | `(created_at, sector_id)`    | Panel de control: incidentes por sector en rango de fechas |
 | `ix_incidente_estado_created`   | `incidente` | `(estado_id, created_at)`    | Cola de trabajo: incidentes activos por antigüedad |
+
+> `directorio_empleado` y `directorio_auditoria` solo agregan índices simples
+> (FK, índice ciego del contacto y sello temporal); no definen índices compuestos.

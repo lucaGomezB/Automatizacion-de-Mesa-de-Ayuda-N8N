@@ -3185,7 +3185,7 @@ figuras decia "confianza >= 0.90" y aplicaba 0,70 a toda clasificacion).
 7. **Anexo I.** c-158 no creo tabla propia para el dictamen del 28-10 (usa un parrafo): c-159 extendio ese parrafo con A3 y A4 en lugar de agregar filas. Desvio respecto de la tarea 6.4; c-160 reestructura el Anexo I.
 8. **Figura 2 sin fuente versionada**: reemplazada por `docs/diagrams/arquitectura_sistema.md` (opcion a del dictamen). El drawio de capas de Luca queda intacto.
 
-Datos que requieren a los autores (no bloquean): (a) [RESUELTO por c-162] `n8n/workflow.json` ahora SI envia `reportante_email` y `reportante_telefono` en el `POST /api/v1/incidentes`, de modo que en la configuracion entregada los incidentes de correo y telefonia ingresados por N8N resuelven al reportante del directorio y no derivan por VIS-005 (ver el tramo c-162 mas abajo); (b) [RESUELTO por c-161] la fuente Mermaid `docs/diagrams/arquitectura_sistema.md` se conserva como unica fuente de `fig:arquitectura` (decision Figura 2 = A) y el `Diagrama de Capas.drawio` y su PNG quedaron archivados en `docs/diagrams/archive/`; no se presenta como fuente vigente; (c) deriva fuera de la tesis: el comentario de `requiere_revision_humana` en `App/Backend/app/models/incidente.py` ("umbral de 0.70 o Gemini fallo"), `docs/anexo_c_esquema_bd.md` sin `directorio_empleado`, el memo que cita el SHA-256 CRLF de la evidencia (`3fb5bacd...`, el blob LF es `89cf956e...`) y `CHANGES.md` sin c-155 a c-157 (resuelto por la FASE 47).
+Datos que requieren a los autores (no bloquean): (a) [RESUELTO por c-162] `n8n/workflow.json` ahora SI envia `reportante_email` y `reportante_telefono` en el `POST /api/v1/incidentes`, de modo que en la configuracion entregada los incidentes de correo y telefonia ingresados por N8N resuelven al reportante del directorio y no derivan por VIS-005 (ver el tramo c-162 mas abajo); (b) [RESUELTO por c-161] la fuente Mermaid `docs/diagrams/arquitectura_sistema.md` se conserva como unica fuente de `fig:arquitectura` (decision Figura 2 = A) y el `Diagrama de Capas.drawio` y su PNG quedaron archivados en `docs/diagrams/archive/`; no se presenta como fuente vigente; (c) [RESUELTO por c-164, FASE 51] deriva fuera de la tesis: los cinco residuales —el spec `telefonia-corpus-medicion` con la formula telefonica previa a c-77, `docs/medicion-latencia-e2e.md` (formula previa y caveat de correo), el comentario de `requiere_revision_humana` en `App/Backend/app/models/incidente.py` ("umbral de 0.70 o Gemini fallo"), `docs/anexo_c_esquema_bd.md` sin `directorio_empleado` y el memo que cita el SHA-256 CRLF de la evidencia (`3fb5bacd...`, el blob LF es `89cf956e...`)— quedan ATENDIDOS por c-164; `CHANGES.md` sin c-155 a c-157 quedo resuelto por la FASE 47.
 
 ### Evidencia del recomputo (tarea 5.5)
 
@@ -3499,3 +3499,44 @@ El delta +1 proviene de una pagina viuda de la subseccion 7.6.5 en el capitulo l
 ### Release
 
 - **Nota de release (planificada, NO publicada en este change):** la release **v1.2.7** incluira c-163. El tag y el commit los publica el orquestador; este change solo deja la nota. No se creo tag ni commit.
+
+---
+
+## Dictamen v10 / v1.2.5 (2026-10-28) - c-164
+
+Cierre de los cinco residuales de "deriva fuera de la tesis" registrados por el dictamen CONEAU del 2026-10-28 sobre la tesis v10 / release `v1.2.5` (`auditorias/Dictamen_Tesis_v10_v1.2.5_CONEAU_2026-10-28.md`, entrada de c-158) y por la nota "fuera de alcance" del design archivado de c-158 (`design.md:179`), que las FASES 48/49/50 no cubrian, mas dos docstrings preexistentes detectados durante el apply (`directorio_auditoria.py` y `empleado.py`). Change `c-164-sincronizar-los-residuales-de-deriva-documental` (gobernanza BAJA: reword de comentarios y sincronizacion documental/spec). No se modifico `n8n/`, `evaluation/`, `openspec/config.yaml`, las cinco cadenas canonicas, los valores numericos canonicos ni `docs/Tesis/v9 (IA)/`. No se creo tag ni commit.
+
+### Origen y linea base
+
+- Linea base del arbol: `openspec status --change "c-164-..." --json` con `proposal`/`specs`/`design`/`tasks` completos; `python3 scripts/preflight/docs_stack_sync.py` = 17/17 PASS.
+- Formula vigente confirmada por lectura en `scripts/corpus_ingest/ingest_telefonia_corpus.py:9,88-112` (`t_pipeline_s = t_e2e_s = duracion_segundos + latencia_e2e_ms / 1000`, `t_espera_s = None`) y en `openspec/specs/evaluation-framework/spec.md:354-374`.
+- El spec `telefonia-corpus-medicion` conservaba la formula PRE-c-77 (`latencia_e2e_ms / 1000`), desincronizado de la implementacion verificada.
+
+### Los residuales cerrados: cinco de deriva + dos docstrings
+
+| # | Residual | Archivo | Cierre |
+|---|---|---|---|
+| 1 | Requirement "Metrica canonica de telefonia" con la formula previa a c-77 | `openspec/specs/telefonia-corpus-medicion/spec.md` (delta MODIFIED) | Delta con `duracion_segundos + latencia_e2e_ms / 1000`; conserva los tres escenarios con sus nombres EXACTOS (el skill de archive los aplica) |
+| 2 | Formula previa y caveat de correo impreciso | `docs/medicion-latencia-e2e.md` | Seccion "Telefonia: descomposicion y espera N-A" a la formula c-77 con cota inferior por el tope de 45 s; caveat de correo precisado (el "sub-mide" aplica a `latencia_e2e_ms`, NO al valor del corpus `tiempo_automatizado_s`) |
+| 3 | Comentario que describia el 0.70 como unico gatillo | `App/Backend/app/models/incidente.py` (solo comentario) | Reword: el 0.70 aplica SOLO a la etapa Gemini; el deterministico no deriva por su confianza (cortocircuita por score); el fallback siempre deriva; desde 2026-10-13 el backend tambien deriva con reportante no identificado (c-82, VIS-005) |
+| 4 | Anexo C sin las tablas del directorio | `docs/anexo_c_esquema_bd.md` | Se agregaron `directorio_empleado` (Fernet + indice ciego c-153, `rol` de cuatro valores, FK `sector_id`/`user_id` SET NULL) y `directorio_auditoria` (append-only, sin `updated_at`), con filas en el resumen de ON DELETE |
+| 5 | Memo que citaba el SHA-256 CRLF como vigente | `docs/Tesis/Correcciones/numeros-canonicos.md` | La fila "Predicciones oficiales" declara vigente el blob LF `89cf956e...` y conserva la nota del CRLF `3fb5bacd...`; ningun valor numerico canonico cambia |
+| 6 | Docstring de `directorio_auditoria` afirmaba una FK `ON DELETE SET NULL` inexistente | `App/Backend/app/models/directorio_auditoria.py` (solo comentario) | Docstring reescrito: `empleado_id`/`actor_empleado_id` son ids internos opacos SIN FK; la traza append-only conserva los ids aunque el empleado se elimine por ARCO |
+| 7 | Docstring de `empleado` decia "TRES valores" de rol | `App/Backend/app/models/empleado.py` (solo comentario) | Docstring a CUATRO valores (`usuario_final`, `mesa_de_ayuda`, `administrador_directorio`, `gestion_incidentes`, c-86) |
+
+### Verificacion
+
+- `python3 scripts/preflight/docs_stack_sync.py`: 17/17 PASS (la barrera no lee ninguno de los archivos tocados).
+- `openspec validate "c-164-sincronizar-los-residuales-de-deriva-documental" --strict --no-interactive`: PASS.
+- `git diff --stat App/Backend/app/models/incidente.py`: todas las lineas modificadas son de comentario (ninguna declaracion).
+- Import del modulo: `cd App/Backend; python3 -c "import app.models.incidente"` sin error (el modulo sigue cargando).
+- Ningun `.tex` fue tocado, de modo que NO se recompilo el PDF.
+- Alcance respetado: `git status --porcelain` lista solo los archivos del scope.
+
+### Rollback
+
+- `git checkout --` de los archivos tocados (docs, comentario del modelo, `CHANGES.md`, el ledger); sin efecto en runtime ni release.
+
+### Release
+
+- **Nota de release (planificada, NO publicada en este change):** la release que publique c-164 la define el orquestador; este change solo deja la nota. No se creo tag ni commit.
