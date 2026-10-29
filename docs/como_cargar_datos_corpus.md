@@ -16,8 +16,12 @@ Este es el camino exacto que espera el framework de evaluacion
 
 La version **pseudonimizada** de este archivo **SI se versiona** en git. Lo que
 queda fuera del repositorio por privacidad y cumplimiento de la Ley 25.326 son
-los originales **pre-pseudonimizacion** (con PII) y los sidecars de resultados
-(`data/corpus_resultados*.json`).
+los originales **pre-pseudonimizacion** (con PII). Los sidecars de resultados que
+corresponden a corridas completas (`data/corpus_resultados.json` y
+`data/corpus_resultados_telefonia.json`) tambien **SI se versionan**: son libres de
+PII por construccion (solo identificadores, canal, sector, marcas temporales y
+latencias, sin descripciones); el sidecar de N8N queda excluido hasta resolver su
+discrepancia de conteo (OQ2).
 
 ---
 
@@ -231,12 +235,13 @@ inventa datos.
 
 La version pseudonimizada (`corpus_evaluacion_pseudonimizado.json`) SI se
 versiona. Lo que NUNCA debe entrar son los originales pre-pseudonimizacion
-(`Corpus Tesis.xlsx`, `Corpus Tesis - Hoja 1.csv`) y los sidecars
-(`data/corpus_resultados*.json`), que estan en `.gitignore`. Confirmar antes de
-cada commit:
+(`Corpus Tesis.xlsx`, `Corpus Tesis - Hoja 1.csv`), con PII. Los sidecars de
+corridas completas (`data/corpus_resultados.json` y
+`data/corpus_resultados_telefonia.json`) son PII-free y SI se versionan; el de N8N
+queda excluido por OQ2 (ver `data/README.md`). Confirmar antes de cada commit:
 
 ```bash
-git status --short | grep -E "Corpus Tesis|corpus_resultados"
+git status --short | grep -E "Corpus Tesis"
 ```
 
 Si aparece un original crudo o un sidecar, NO agregarlo. Si se agrego por error,

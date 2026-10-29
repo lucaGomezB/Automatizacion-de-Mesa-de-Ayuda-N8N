@@ -105,7 +105,10 @@ hibrido puede pegarle a Gemini y devolver 503 transitorios).
   quoting minimo original (`\r\n`, `QUOTE_MINIMAL`).
 - **Sidecar** `data/corpus_resultados.json`: lista por caso con `case_id`,
   `incidente_id`, `numero_incidente`, `sector`, `revision`, `wall_s`,
-  `latencia_e2e_ms`, `error`. NO contiene descripciones.
+  `latencia_e2e_ms`, `error`. NO contiene descripciones. Es PII-free y **SI se
+  versiona** en el repositorio (c-161), junto con `corpus_resultados_telefonia.json`
+  (ambos de corridas completas); el sidecar `corpus_resultados_n8n.json` queda
+  excluido hasta resolver su discrepancia de conteo (OQ2). Ver `data/README.md`.
 - Re-ejecutar es seguro: actualiza las mismas dos columnas, no duplica columnas,
   y del lado servidor el `origen_message_id` determinista devuelve el incidente
   existente sin reclasificar ni volver a llamar a Gemini.

@@ -41,7 +41,7 @@ gantt
     section Modelo y corridas
     Integración de gemini-3.6-flash (24/09/2026)  :milestone, m1, 2026-09-24, 0d
     Corrida de correo y formulario (02/10/2026)   :milestone, m2, 2026-10-02, 0d
-    Corrida de telefonía (06/10/2026)             :milestone, m3, 2026-10-06, 0d
+    Corrida de telefonía (05-06/10/2026)          :milestone, m3, 2026-10-05, 0d
     Recálculo del tiempo telefónico (19/10/2026)  :milestone, m4, 2026-10-19, 0d
 ```
 
@@ -69,7 +69,7 @@ del repositorio, en solo lectura.
 | Campaña automatizada | septiembre a octubre de 2026 | mes | Confirmación del autor, 2026-10-09 (T6, mismo registro); instrumentación de tiempos de extremo a extremo (c-39, archivado 2026-09-20) y corridas del corpus del 2026-10-02 y 2026-10-06 | Ídem; `ls openspec/changes/archive/ \| grep c-39` |
 | Integración de `gemini-3.6-flash` | 2026-09-24 | día | Commit `11036be` ("migrar el clasificador a Gemini 3.6 Flash y timeout de 30s"); hasta ese commit el clasificador usó `gemini-2.5-flash` | `git log -S "gemini-3.6-flash" --date=short --format='%ad %h %s' -- App/Backend/app/config/settings.py`; `App/Backend/app/config/settings.py:78` |
 | Corrida de correo y formulario (119 casos) | 2026-10-02 | día | c-68, `tasks.md` 6.4 ("EJECUTADA (2026-10-02 ...) web 53/53, correo 66/66") | `openspec/changes/archive/2026-10-09-c-68-corpus-ingesta-n8n/tasks.md` |
-| Corrida de telefonía (81 casos) | 2026-10-06 | día | c-70, `tasks.md` 8.2 ("REALIZADO (2026-10-06): 81/81 casos telefónicos") | `openspec/changes/archive/2026-10-06-c-70-softphone-corpus-telefonia/tasks.md` |
+| Corrida de telefonía (81 casos) | 2026-10-05 y 2026-10-06 | día | Conclusión el 2026-10-06 (c-70, `tasks.md` 8.2, "REALIZADO (2026-10-06): 81/81 casos telefónicos"); inicio el 2026-10-05 confirmado por los autores (respuesta del 2026-10-28, Q1) | `openspec/changes/archive/2026-10-06-c-70-softphone-corpus-telefonia/tasks.md` |
 | Recálculo del tiempo telefónico | 2026-10-19 | día | Commit `4602bf5` (c-77, "tiempo telefónico end-to-end"); decisión del autor del 2026-10-12 (grupo E de c-77) | `git log -1 --date=short --format='%ad %h %s' 4602bf5`; `openspec/changes/archive/2026-10-20-c-77-tesis-errores-estadisticos-inferenciales/tasks.md:93` |
 | Iteraciones (número y fechas) | **no se fijan** | — | Confirmado por el autor (2026-10-26): no hubo un número fijo; se ajustaron durante el proyecto. El tablero técnico fue Jira y su trial se dio de baja sin export; GitHub Projects se usó para la coordinación del grupo | REGISTRO, grupo c-135, OQ-1; `gh project list --owner lucaGomezB` |
 
@@ -114,13 +114,13 @@ del repositorio, en solo lectura.
   iteración 5 de `06-implementacion.tex` no afirma ausencia de exposición al corpus
   (verificado con `grep "sin exposici" "docs/Tesis/v10 (IA)/paper/sections/06-implementacion.tex"`),
   y su fecha no se declara (OQ-1).
-- **Inicio de la corrida de telefonía (c-158, consulta Q1 a los autores).** La fecha del
-  hito (2026-10-06) es la de conclusión (c-70, `tasks.md` 8.2). Al menos 25 casos
+- **Inicio de la corrida de telefonía (c-158, consulta Q1 a los autores) - RESUELTA por c-161.** La fecha del
+  hito original (2026-10-06) era la de conclusión (c-70, `tasks.md` 8.2); al menos 25 casos
   telefónicos ya estaban medidos al cierre del 2026-10-05 (c-71, `tasks.md:71`, 56 casos
   con tiempo nulo; c-72, `proposal.md:7`, subconjunto de 25 casos medidos con el agente
-  LLM de N8N). Si los autores confirman que la corrida comenzó el 2026-10-05, 1.8, 4.5, la
-  leyenda de la Figura 10 y este archivo pasan a "5 y 6 de octubre"; hasta entonces
-  el texto de la tesis describe la corrida como concluida el 6-10 y declara los 25 casos.
+  LLM de N8N). Los autores confirmaron (respuesta del 2026-10-28) que la corrida comenzó el
+  2026-10-05: 1.8, 4.5, la leyenda de la figura telefónica y este archivo pasan a "5 y 6 de
+  octubre", y el hito se rotula "05-06/10/2026".
 - **OQ-2, cierre parcial (c-158).** Hasta el 2026-10-02 los 200 casos carecían de tiempo
   automatizado (c-68, `proposal.md:3`): ningún tiempo del corpus proviene de un
   procesamiento entre el 2026-09-01 y el 2026-09-23. Queda abierto solo si existió
