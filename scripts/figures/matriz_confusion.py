@@ -20,7 +20,7 @@ import numpy as np  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 REPORT = ROOT / "evaluation" / "report.md"
-OUT = ROOT / "docs" / "Tesis" / "v9 (IA)" / "paper" / "figures" / "matriz_confusion.pdf"
+OUT = ROOT / "docs" / "Tesis" / "v10 (IA)" / "paper" / "figures" / "matriz_confusion.pdf"
 
 ETIQUETAS = [
     "Seguridad\nInformatica",
@@ -61,7 +61,7 @@ def build_figure(matriz: np.ndarray) -> plt.Figure:
     ax.set_yticks(range(len(ETIQUETAS)), labels=ETIQUETAS)
     ax.set_xlabel("Sector predicho principal")
     ax.set_ylabel("Sector asignado (verdad)")
-    ax.set_title("Matriz de confusion del clasificador (n = 200)")
+    ax.set_title("Matriz de confusión del clasificador (n = 200)")
 
     umbral = matriz.max() / 2.0
     for i in range(matriz.shape[0]):

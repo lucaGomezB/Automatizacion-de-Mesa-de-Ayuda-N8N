@@ -2,9 +2,11 @@
 % Glosario de siglas y acronimos
 % Material preliminar — manual, en orden alfabético.
 % Sin paquete glossaries ni paso makeglossaries (c-105, decisión D2).
-% Entradas: 64 siglas inventariadas sobre sections/*.tex.
+% Entradas: 79 siglas inventariadas sobre sections/*.tex (c-163 agregó BERT,
+% CMDB, CSF, ECE, HITL, IC, ISO, KMS, MFA, NIST, PAM, RAG, RTO, SAST, SBOM,
+% SIEM y TOTP; retiró HMM y WIP).
 % Disposición en dos columnas por bloques alfabéticos: la columna izquierda
-% cubre ACID..JSON y la derecha JWT..WIP, de modo que la lectura descendente
+% cubre ACID..KMS y la derecha LLM..VM, de modo que la lectura descendente
 % de la primera columna seguida de la segunda preserva el orden alfabético.
 %==============================================================================
 \newpage
@@ -16,38 +18,46 @@
 \small
 \setlength{\tabcolsep}{4pt}
 \noindent\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.47\textwidth}@{\hspace{0.05\textwidth}}>{\raggedright\arraybackslash}p{0.47\textwidth}@{}}
-\textbf{ACID} Atomicity, Consistency, Isolation, Durability & \textbf{JWT} JSON Web Token \\
-\textbf{AES} Advanced Encryption Standard & \textbf{LLM} Large Language Model \\
+\textbf{ACID} Atomicity, Consistency, Isolation, Durability & \textbf{LLM} Large Language Model \\
+\textbf{AES} Advanced Encryption Standard & \textbf{MFA} Multi-Factor Authentication \\
 \textbf{AI} Artificial Intelligence & \textbf{MVCC} Multi-Version Concurrency Control \\
 \textbf{APA} American Psychological Association & \textbf{N8N} plataforma de orquestación de flujos (\emph{nodemation}) \\
-\textbf{API} Application Programming Interface & \textbf{NLP} Natural Language Processing \\
-\textbf{ARCO} Acceso, Rectificación, Cancelación y Oposición & \textbf{ORM} Object-Relational Mapper \\
-\textbf{ASGI} Asynchronous Server Gateway Interface & \textbf{PATCH} método HTTP de actualización parcial \\
-\textbf{ASR} Automatic Speech Recognition & \textbf{PCM} Pulse Code Modulation \\
-\textbf{BPA} Business Process Automation & \textbf{PK} Primary Key \\
-\textbf{CBC} Cipher Block Chaining & \textbf{PNG} Portable Network Graphics \\
-\textbf{CE} Comunidad Europea & \textbf{POST} método HTTP de creación \\
-\textbf{CI} Continuous Integration & \textbf{REST} Representational State Transfer \\
-\textbf{CIA} Confidentiality, Integrity, Availability & \textbf{SDK} Software Development Kit \\
-\textbf{CRUD} Create, Read, Update, Delete & \textbf{SHA} Secure Hash Algorithm \\
-\textbf{DAG} Directed Acyclic Graph & \textbf{SLA} Service Level Agreement \\
-\textbf{ETL} Extract, Transform, Load & \textbf{SMTP} Simple Mail Transfer Protocol \\
-\textbf{FK} Foreign Key & \textbf{SPA} Single Page Application \\
-\textbf{FRM} Facultad Regional Mendoza & \textbf{SPOC} Single Point of Contact \\
-\textbf{GB} Gigabyte & \textbf{SQL} Structured Query Language \\
-\textbf{GET} método HTTP de lectura & \textbf{SSD} Solid-State Drive \\
-\textbf{GPU} Graphics Processing Unit & \textbf{SSO} Single Sign-On \\
-\textbf{HMAC} Hash-based Message Authentication Code & \textbf{SVM} Support Vector Machine \\
-\textbf{HMM} Hidden Markov Model & \textbf{TF} Term Frequency \\
-\textbf{HTTP} Hypertext Transfer Protocol & \textbf{TLS} Transport Layer Security \\
-\textbf{IA} Inteligencia Artificial & \textbf{TSO} The Stationery Office \\
-\textbf{IDF} Inverse Document Frequency & \textbf{UI} User Interface \\
-\textbf{IMAP} Internet Message Access Protocol & \textbf{UML} Unified Modeling Language \\
-\textbf{IP} Internet Protocol & \textbf{USD} United States Dollar \\
-\textbf{IT} Information Technology & \textbf{UTN} Universidad Tecnológica Nacional \\
-\textbf{ITIL} Information Technology Infrastructure Library & \textbf{UUID} Universally Unique Identifier \\
-\textbf{ITSM} Information Technology Service Management & \textbf{VM} Virtual Machine \\
-\textbf{JSON} JavaScript Object Notation & \textbf{WIP} Work In Progress
+\textbf{API} Application Programming Interface & \textbf{NIST} National Institute of Standards and Technology \\
+\textbf{ARCO} Acceso, Rectificación, Cancelación y Oposición & \textbf{NLP} Natural Language Processing \\
+\textbf{ASGI} Asynchronous Server Gateway Interface & \textbf{ORM} Object-Relational Mapper \\
+\textbf{ASR} Automatic Speech Recognition & \textbf{PAM} Privileged Access Management \\
+\textbf{BERT} Bidirectional Encoder Representations from Transformers & \textbf{PATCH} método HTTP de actualización parcial \\
+\textbf{BPA} Business Process Automation & \textbf{PCM} Pulse Code Modulation \\
+\textbf{CBC} Cipher Block Chaining & \textbf{PK} Primary Key \\
+\textbf{CE} Comunidad Europea & \textbf{PNG} Portable Network Graphics \\
+\textbf{CI} Continuous Integration & \textbf{POST} método HTTP de creación \\
+\textbf{CIA} Confidentiality, Integrity, Availability & \textbf{RAG} Retrieval-Augmented Generation \\
+\textbf{CMDB} Configuration Management Database & \textbf{REST} Representational State Transfer \\
+\textbf{CRUD} Create, Read, Update, Delete & \textbf{RTO} Recovery Time Objective \\
+\textbf{CSF} Cybersecurity Framework & \textbf{SAST} Static Application Security Testing \\
+\textbf{DAG} Directed Acyclic Graph & \textbf{SBOM} Software Bill of Materials \\
+\textbf{ECE} Expected Calibration Error & \textbf{SDK} Software Development Kit \\
+\textbf{ETL} Extract, Transform, Load & \textbf{SHA} Secure Hash Algorithm \\
+\textbf{FK} Foreign Key & \textbf{SIEM} Security Information and Event Management \\
+\textbf{FRM} Facultad Regional Mendoza & \textbf{SLA} Service Level Agreement \\
+\textbf{GB} Gigabyte & \textbf{SMTP} Simple Mail Transfer Protocol \\
+\textbf{GET} método HTTP de lectura & \textbf{SPA} Single Page Application \\
+\textbf{GPU} Graphics Processing Unit & \textbf{SPOC} Single Point of Contact \\
+\textbf{HMAC} Hash-based Message Authentication Code & \textbf{SQL} Structured Query Language \\
+\textbf{HITL} Human In The Loop & \textbf{SSD} Solid-State Drive \\
+\textbf{HTTP} Hypertext Transfer Protocol & \textbf{SSO} Single Sign-On \\
+\textbf{IA} Inteligencia Artificial & \textbf{SVM} Support Vector Machine \\
+\textbf{IC} Intervalo de Confianza & \textbf{TF} Term Frequency \\
+\textbf{IDF} Inverse Document Frequency & \textbf{TLS} Transport Layer Security \\
+\textbf{IMAP} Internet Message Access Protocol & \textbf{TOTP} Time-based One-Time Password \\
+\textbf{IP} Internet Protocol & \textbf{TSO} The Stationery Office \\
+\textbf{ISO} International Organization for Standardization & \textbf{UI} User Interface \\
+\textbf{IT} Information Technology & \textbf{UML} Unified Modeling Language \\
+\textbf{ITIL} Information Technology Infrastructure Library & \textbf{USD} United States Dollar \\
+\textbf{ITSM} Information Technology Service Management & \textbf{UTN} Universidad Tecnológica Nacional \\
+\textbf{JSON} JavaScript Object Notation & \textbf{UUID} Universally Unique Identifier \\
+\textbf{JWT} JSON Web Token & \textbf{VM} Virtual Machine \\
+\textbf{KMS} Key Management Service & \\
 \end{tabular}
 \end{spacing}
 \newpage

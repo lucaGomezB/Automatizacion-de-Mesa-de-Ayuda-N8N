@@ -68,69 +68,86 @@ spacing1
 
 4pt
 tabular@>p0.47@0.05>p0.47@
-**ACID** Atomicity, Consistency, Isolation, Durability & **JWT** JSON Web Token 
+**ACID** Atomicity, Consistency, Isolation, Durability & **LLM** Large Language Model 
 
-**AES** Advanced Encryption Standard & **LLM** Large Language Model 
+**AES** Advanced Encryption Standard & **MFA** Multi-Factor Authentication 
 
 **AI** Artificial Intelligence & **MVCC** Multi-Version Concurrency Control 
 
 **APA** American Psychological Association & **N8N** plataforma de orquestación de flujos (*nodemation*) 
 
-**API** Application Programming Interface & **NLP** Natural Language Processing 
+**API** Application Programming Interface & **NIST** National Institute of Standards and Technology 
 
-**ARCO** Acceso, Rectificación, Cancelación y Oposición & **ORM** Object-Relational Mapper 
+**ARCO** Acceso, Rectificación, Cancelación y Oposición & **NLP** Natural Language Processing 
 
-**ASGI** Asynchronous Server Gateway Interface & **PATCH** método HTTP de actualización parcial 
+**ASGI** Asynchronous Server Gateway Interface & **ORM** Object-Relational Mapper 
 
-**ASR** Automatic Speech Recognition & **PCM** Pulse Code Modulation 
+**ASR** Automatic Speech Recognition & **PAM** Privileged Access Management 
 
-**BPA** Business Process Automation & **PK** Primary Key 
+**BERT** Bidirectional Encoder Representations from Transformers & **PATCH** método HTTP de actualización parcial 
 
-**CBC** Cipher Block Chaining & **PNG** Portable Network Graphics 
+**BPA** Business Process Automation & **PCM** Pulse Code Modulation 
 
-**CE** Comunidad Europea & **POST** método HTTP de creación 
+**CBC** Cipher Block Chaining & **PK** Primary Key 
 
-**CI** Continuous Integration & **REST** Representational State Transfer 
+**CE** Comunidad Europea & **PNG** Portable Network Graphics 
 
-**CIA** Confidentiality, Integrity, Availability & **SDK** Software Development Kit 
+**CI** Continuous Integration & **POST** método HTTP de creación 
 
-**CRUD** Create, Read, Update, Delete & **SHA** Secure Hash Algorithm 
+**CIA** Confidentiality, Integrity, Availability & **RAG** Retrieval-Augmented Generation 
 
-**DAG** Directed Acyclic Graph & **SLA** Service Level Agreement 
+**CMDB** Configuration Management Database & **REST** Representational State Transfer 
 
-**ETL** Extract, Transform, Load & **SMTP** Simple Mail Transfer Protocol 
+**CRUD** Create, Read, Update, Delete & **RTO** Recovery Time Objective 
 
-**FK** Foreign Key & **SPA** Single Page Application 
+**CSF** Cybersecurity Framework & **SAST** Static Application Security Testing 
 
-**FRM** Facultad Regional Mendoza & **SPOC** Single Point of Contact 
+**DAG** Directed Acyclic Graph & **SBOM** Software Bill of Materials 
 
-**GB** Gigabyte & **SQL** Structured Query Language 
+**ECE** Expected Calibration Error & **SDK** Software Development Kit 
 
-**GET** método HTTP de lectura & **SSD** Solid-State Drive 
+**ETL** Extract, Transform, Load & **SHA** Secure Hash Algorithm 
 
-**GPU** Graphics Processing Unit & **SSO** Single Sign-On 
+**FK** Foreign Key & **SIEM** Security Information and Event Management 
 
-**HMAC** Hash-based Message Authentication Code & **SVM** Support Vector Machine 
+**FRM** Facultad Regional Mendoza & **SLA** Service Level Agreement 
 
-**HMM** Hidden Markov Model & **TF** Term Frequency 
+**GB** Gigabyte & **SMTP** Simple Mail Transfer Protocol 
 
-**HTTP** Hypertext Transfer Protocol & **TLS** Transport Layer Security 
+**GET** método HTTP de lectura & **SPA** Single Page Application 
 
-**IA** Inteligencia Artificial & **TSO** The Stationery Office 
+**GPU** Graphics Processing Unit & **SPOC** Single Point of Contact 
 
-**IDF** Inverse Document Frequency & **UI** User Interface 
+**HMAC** Hash-based Message Authentication Code & **SQL** Structured Query Language 
 
-**IMAP** Internet Message Access Protocol & **UML** Unified Modeling Language 
+**HITL** Human In The Loop & **SSD** Solid-State Drive 
 
-**IP** Internet Protocol & **USD** United States Dollar 
+**HTTP** Hypertext Transfer Protocol & **SSO** Single Sign-On 
 
-**IT** Information Technology & **UTN** Universidad Tecnológica Nacional 
+**IA** Inteligencia Artificial & **SVM** Support Vector Machine 
 
-**ITIL** Information Technology Infrastructure Library & **UUID** Universally Unique Identifier 
+**IC** Intervalo de Confianza & **TF** Term Frequency 
 
-**ITSM** Information Technology Service Management & **VM** Virtual Machine 
+**IDF** Inverse Document Frequency & **TLS** Transport Layer Security 
 
-**JSON** JavaScript Object Notation & **WIP** Work In Progress
+**IMAP** Internet Message Access Protocol & **TOTP** Time-based One-Time Password 
+
+**IP** Internet Protocol & **TSO** The Stationery Office 
+
+**ISO** International Organization for Standardization & **UI** User Interface 
+
+**IT** Information Technology & **UML** Unified Modeling Language 
+
+**ITIL** Information Technology Infrastructure Library & **USD** United States Dollar 
+
+**ITSM** Information Technology Service Management & **UTN** Universidad Tecnológica Nacional 
+
+**JSON** JavaScript Object Notation & **UUID** Universally Unique Identifier 
+
+**JWT** JSON Web Token & **VM** Virtual Machine 
+
+**KMS** Key Management Service & 
+
 tabular
 spacing
 
@@ -162,7 +179,7 @@ La pregunta se descompone en tres interrogantes subsidiarios que guían el dise�
 
 ### Hipótesis de trabajo
 
-La hipótesis principal de este trabajo se desdobla en tres sub-hipótesis contrastables, cada una con su propio contraste y su criterio de falsación, y no se enuncia como una conjunción indivisible de mecanismo y umbral de desempeño. La primera sostiene que la automatización reduce el tiempo de registro: su contraste es el no paramétrico de Wilcoxon sobre las medianas, con \(H_0: M_manual = M_automatizado\) frente a \(H_1: M_manual > M_automatizado\), donde \(M\) representa la mediana poblacional del tiempo de registro, y su criterio de falsación es no rechazar \(H_0\). El contraste se rechaza con los valores vigentes \(W = 363\), \(p = 3,08e-32\) bilateral (\(1,54e-32\) unilateral, de modo que el bilateral es conservador frente a la \(H_1\) direccional) y tamaño del efecto \(r = 0,9639\) (§`sec:resultados`); esta sub-hipótesis se declara confirmada.
+La hipótesis principal de este trabajo se desdobla en tres sub-hipótesis contrastables, cada una con su propio contraste y su criterio de falsación, y no se enuncia como una conjunción indivisible de mecanismo y umbral de desempeño. La primera sostiene que la automatización reduce el tiempo de registro: su contraste es el no paramétrico de Wilcoxon sobre las *diferencias pareadas* de los tiempos de registro, con \(H_0\): las diferencias pareadas \(D_i = t_manual,i - t_automatizado,i\) se distribuyen de forma simétrica respecto de cero (la automatización no altera el tiempo de registro) frente a \(H_1\): las diferencias tienden a ser positivas (el tiempo manual supera al automatizado), y su criterio de falsación es no rechazar \(H_0\). El contraste se rechaza con los valores vigentes \(W = 363\), \(p = 3,08e-32\) bilateral (\(1,54e-32\) unilateral, de modo que el bilateral es conservador frente a la \(H_1\) direccional) y tamaño del efecto \(r = 0,9639\) (§`sec:resultados`); esta sub-hipótesis se declara confirmada.
 
 La segunda postula que la proporción de casos del flujo automatizado que requieren acción manual de un operador no supera 0,15, complemento del umbral de exactitud fijado a priori en el segundo objetivo específico; se contrasta con el intervalo de Wilson de esa proporción y se falsea si su límite superior no queda por debajo de 0,15. Con la evidencia disponible esta sub-hipótesis no se contrasta: no existe registro primario de intervención por caso y las derivaciones del gate no la miden, porque la etapa determinística no lo activa; se declara *no contrastada por ausencia de registro primario* y no se cuantifica (véase §`subsec:limitaciones-estudio`).
 
@@ -365,7 +382,7 @@ La presente investigación se ubica precisamente en esa intersección y propone 
 
 ### Enfoque y tipo de investigación
 
-La investigación se enmarca dentro del enfoque cuantitativo aplicado, dado que propone el desarrollo de una solución informática orientada a mejorar el funcionamiento de un proceso organizacional concreto y mide su impacto mediante indicadores numéricos. [HernandezSampieri2018_metodologia] ubican este tipo de estudios dentro de la investigación tecnológica de carácter aplicado, donde el conocimiento producido se orienta a la transformación práctica de la realidad antes que a la generación de teoría general. El trabajo posee adicionalmente carácter experimental, en la medida en que diseña, implementa y evalúa un artefacto tecnológico bajo condiciones controladas.
+La investigación se enmarca dentro del enfoque cuantitativo aplicado, dado que propone el desarrollo de una solución informática orientada a mejorar el funcionamiento de un proceso organizacional concreto y mide su impacto mediante indicadores numéricos. [HernandezSampieri2018_metodologia] ubican este tipo de estudios dentro de la investigación tecnológica de carácter aplicado, donde el conocimiento producido se orienta a la transformación práctica de la realidad antes que a la generación de teoría general. El trabajo posee adicionalmente carácter cuasiexperimental, en la medida en que diseña, implementa y evalúa un artefacto tecnológico con asignación no aleatoria de los casos a las condiciones y con control parcial de las condiciones del estudio.
 
 ### Diseño experimental
 
@@ -408,7 +425,7 @@ Cada incidente del corpus fue revisado y etiquetado de forma independiente por d
 
 ### Protocolo de pruebas
 
-El protocolo de pruebas se ejecutó en dos fases sucesivas. La primera fase consistió en una validación funcional del sistema, en la cual se verificó la correcta integración de los componentes mediante: (a) pruebas unitarias del módulo Python, cuya cobertura se mide con `pytest-cov` sobre los paquetes de rutas, servicios y repositorios mediante el comando `pytest –cov=app.routes –cov=app.services –cov=app.repositories –cov-report=term-missing`, (b) pruebas de integración de la API y de la base de datos, junto con pruebas estructurales que validan el archivo `n8n/workflow.json`, y (c) pruebas de aceptación simuladas con incidentes sintéticos representativos de cada categoría.
+El protocolo de pruebas se ejecutó en dos fases sucesivas. La primera fase consistió en una validación funcional del sistema, en la cual se verificó la correcta integración de los componentes mediante: (a) pruebas unitarias del módulo Python, cuya cobertura se mide con `pytest-cov` sobre los paquetes de rutas, servicios y repositorios mediante el comando pytest –cov=app.routes –cov=app.services –cov=app.repositories –cov-report=term-missing, (b) pruebas de integración de la API y de la base de datos, junto con pruebas estructurales que validan el archivo `n8n/workflow.json`, y (c) pruebas de aceptación simuladas con incidentes sintéticos representativos de cada categoría.
 
 La segunda fase consistió en la validación experimental propiamente dicha, en la cual los 200 incidentes del corpus se procesaron bajo ambas condiciones operativas y se registraron las variables descritas en la §`subsec:operacionalizacion-variables`. El procesamiento manual fue realizado por dos operadores experimentados con más de tres años de antigüedad en la mesa de ayuda, ambos capacitados previamente en el uso del sistema de gestión de tickets utilizado como referencia. El procesamiento automatizado se ejecutó sin intervención humana en la captura y con el gate de revisión aplicable, durante la ventana de septiembre a octubre de 2026; la procedencia de cada conjunto de datos del brazo automatizado se declara al final de esta sección.
 
@@ -422,11 +439,11 @@ Como instrumentos de captura se utilizaron: (a) registros automáticos generados
 
 ### Análisis estadístico
 
-Para la comparación de los tiempos de registro entre ambas condiciones se aplicó la prueba de Wilcoxon de rangos con signo [Wilcoxon1945_individual_comparisons], prueba no paramétrica para muestras pareadas, dado que la prueba previa de normalidad de Shapiro-Wilk rechazó la hipótesis de normalidad en los tres conjuntos analizados, todos con \(n = 200\): tiempos manuales (\(W = 0,803\), \(p = 3,71 10^-15\)), tiempos automatizados (\(W = 0,902\), \(p = 3,47 10^-10\)) y diferencias pareadas (\(W = 0,822\), \(p = 2,37 10^-14\)). En los tres casos el valor \(p\) queda muy por debajo del nivel de significancia \( = 0,05\), lo que respalda el uso de una prueba no paramétrica. El nivel de significancia se fijó en \( = 0,05\). En lo que sigue se denotan \(T^+\) y \(T^-\) la suma de los rangos de las diferencias positivas y negativas, respectivamente. La implementación de referencia (`scipy.stats.wilcoxon` en su variante de dos colas) devuelve como estadístico de contraste el menor de ambos, es decir \(W = (T^+, T^-)\); por lo tanto \(W = T^-\) cuando el flujo automatizado resulta más rápido que el manual en la mayoría de los pares, que es el caso del corpus analizado. Los \(p\) de tiempos son bilaterales, conservadores frente a la \(H_1\) direccional; el unilateral global (`alternative=greater`) es \(1,54 10^-32\).
+Para la comparación de los tiempos de registro entre ambas condiciones se aplicó la prueba de Wilcoxon de rangos con signo [Wilcoxon1945_individual_comparisons], prueba no paramétrica para muestras pareadas, dado que la prueba previa de normalidad de Shapiro-Wilk [Shapiro1965_normality] rechazó la hipótesis de normalidad en los tres conjuntos analizados, todos con \(n = 200\): tiempos manuales (\(W = 0,803\), \(p = 3,71 10^-15\)), tiempos automatizados (\(W = 0,902\), \(p = 3,47 10^-10\)) y diferencias pareadas (\(W = 0,822\), \(p = 2,37 10^-14\)). En los tres casos el valor \(p\) queda muy por debajo del nivel de significancia \( = 0,05\), lo que respalda el uso de una prueba no paramétrica. El nivel de significancia se fijó en \( = 0,05\). En lo que sigue se denotan \(T^+\) y \(T^-\) la suma de los rangos de las diferencias positivas y negativas, respectivamente. La implementación de referencia (`scipy.stats.wilcoxon` en su variante de dos colas) devuelve como estadístico de contraste el menor de ambos, es decir \(W = (T^+, T^-)\); por lo tanto \(W = T^-\) cuando el flujo automatizado resulta más rápido que el manual en la mayoría de los pares, que es el caso del corpus analizado. Los \(p\) de tiempos son bilaterales, conservadores frente a la \(H_1\) direccional; el unilateral global (`alternative=greater`) es \(1,54 10^-32\).
 
-Para cuantificar la magnitud práctica de la diferencia se calculó el coeficiente \(r\) de correlación rank-biserial, indicador de tamaño del efecto para pruebas no paramétricas. El cálculo se define directamente a partir de los dos estadísticos de rango, \(r = (T^+ - T^-) / [n(n+1)/2]\), donde \(T^+\) y \(T^-\) son las sumas de rangos positivos y negativos y \(n\) el número de pares. La expresión equivale a \(1 - 4Wn(n+1)\) cuando \(W = T^- = (T^+, T^-)\), y su rango teórico es \([-1, +1]\).
+Para cuantificar la magnitud práctica de la diferencia se calculó el coeficiente \(r\) de correlación rank-biserial [Kerby2014_rank_biserial], indicador de tamaño del efecto para pruebas no paramétricas. El cálculo se define directamente a partir de los dos estadísticos de rango, \(r = (T^+ - T^-) / [n(n+1)/2]\), donde \(T^+\) y \(T^-\) son las sumas de rangos positivos y negativos y \(n\) el número de pares. La expresión equivale a \(1 - 4Wn(n+1)\) cuando \(W = T^- = (T^+, T^-)\), y su rango teórico es \([-1, +1]\).
 
-Para el análisis de la clasificación se construyó la matriz de confusión global y se calcularon los valores de precisión, sensibilidad (recall) y F1 por cada clase, así como su promedio macro. La referencia de verdad es multietiqueta (107 de los 200 casos, 53,5 %) y el clasificador emite una etiqueta principal: las métricas primarias son monoetiqueta (exactitud estricta y macro-F1 de umbral) y las secundarias, multietiqueta (subset accuracy, Hamming loss y micro-F1), con su penalización estructural explicitada en la §`sec:resultados`. Como métrica secundaria operativa se calculó además la exactitud laxa (sector predicho principal dentro del conjunto de verdad del caso), distinta de la estricta, que sigue siendo la primaria; ambas se desagregaron por etapa y por canal con intervalo de Wilson, y la confianza se analizó por etapa, porque cada una emite una magnitud distinta. Las proporciones por clase se acotaron con el método de Wilson [Wilson1927_probable_inference]; el F1 por clase y las métricas de conjunto, con el bootstrap percentil de [Efron1993_bootstrap] a nivel de caso (2000 remuestreos, semilla fija). La clase de soporte unitario (Bases de Datos, \(n = 1\)) se declara no estimable y se excluye del macro-F1 de umbral, contra el cual se evalúa el criterio de 0,85. Todos los cálculos se realizaron mediante la biblioteca SciPy del ecosistema Python [Virtanen2020_scipy].
+Para el análisis de la clasificación se construyó la matriz de confusión global y se calcularon los valores de precisión, sensibilidad (recall) y F1 por cada clase, así como su promedio macro. La referencia de verdad es multietiqueta (107 de los 200 casos, 53,5 %) y el clasificador emite una etiqueta principal: las métricas primarias son monoetiqueta (exactitud estricta y macro-F1 de umbral) y las secundarias, multietiqueta (subset accuracy, Hamming loss y micro-F1) [Tsoumakas2007_multilabel], con su penalización estructural explicitada en la §`sec:resultados`. Como métrica secundaria operativa se calculó además la exactitud laxa (sector predicho principal dentro del conjunto de verdad del caso), distinta de la estricta, que sigue siendo la primaria; ambas se desagregaron por etapa y por canal con intervalo de Wilson, y la confianza se analizó por etapa, porque cada una emite una magnitud distinta. Las proporciones por clase se acotaron con el método de Wilson [Wilson1927_probable_inference]; el F1 por clase y las métricas de conjunto, con el bootstrap percentil de [Efron1993_bootstrap] a nivel de caso (2000 remuestreos, semilla fija). La clase de soporte unitario (Bases de Datos, \(n = 1\)) se declara no estimable y se excluye del macro-F1 de umbral, contra el cual se evalúa el criterio de 0,85. Todos los cálculos se realizaron mediante la biblioteca SciPy del ecosistema Python [Virtanen2020_scipy].
 
 ### Amenazas a la validez
 
@@ -438,7 +455,7 @@ La segunda, una amenaza a la validez de constructo por la subjetividad inherente
 
 La tercera, una amenaza a la validez externa derivada del idioma y del dominio organizacional, se reconoce como limitación explícita del estudio: los resultados no son extrapolables sin nuevas validaciones a corpus en otros idiomas, en otras organizaciones o en otros sectores de la economía.
 
-La cuarta, una amenaza a la validez de conclusión derivada del tamaño moderado de la muestra (\(n = 200\)), se evaluó mediante un análisis de potencia estadística a priori [Cohen1988_power_analysis]. Para el contraste principal —la prueba de Wilcoxon de rangos con signo sobre las mediciones pareadas, bilateral, con \( = 0,05\)— y una potencia objetivo de \(0,80\), el efecto mínimo detectable con \(n = 200\) es un tamaño del efecto estandarizado \(d_z\) (media de las diferencias pareadas sobre su desvío) de aproximadamente \(0,20\) en la aproximación normal (\(0,21\) con la eficiencia relativa asintótica \(0,864\) de la prueba de rangos frente a la \(t\) pareada). El \(d_z\) observado, \(1,00\), lo supera más de cuatro veces; por canal es de 1,37 (telefonía), 0,73 (correo) y 1,61 (formulario web), frente a mínimos de 0,31, 0,34 y 0,38 (0,33, 0,37 y 0,41 con el ajuste), de modo que el diseño posee potencia suficiente para el contraste de tiempos. El riesgo se concentra, en cambio, en la precisión de las estimaciones de clasificación (exactitud por clase, macro-F1), que se reportan con intervalos de confianza (Wilson para las proporciones, bootstrap percentil para F1). La amenaza se trata, además, con pruebas no paramétricas robustas frente a tamaños muestrales pequeños y a desviaciones de la normalidad [HernandezSampieri2018_metodologia].
+La cuarta, una amenaza a la validez de conclusión derivada del tamaño moderado de la muestra (\(n = 200\)), se evaluó mediante un análisis de potencia estadística a priori [Cohen1988_power_analysis]. Para el contraste principal —la prueba de Wilcoxon de rangos con signo sobre las mediciones pareadas, bilateral, con \( = 0,05\)— y una potencia objetivo de \(0,80\), el efecto mínimo detectable con \(n = 200\) es un tamaño del efecto estandarizado \(d_z\) (media de las diferencias pareadas sobre su desvío) de aproximadamente \(0,20\) en la aproximación normal (\(0,21\) con la eficiencia relativa asintótica \(0,864\) de la prueba de rangos frente a la \(t\) pareada [Hodges1956_efficiency]). El \(d_z\) observado, \(1,00\), lo supera más de cuatro veces; por canal es de 1,37 (telefonía), 0,73 (correo) y 1,61 (formulario web), frente a mínimos de 0,31, 0,34 y 0,38 (0,33, 0,37 y 0,41 con el ajuste), de modo que el diseño posee potencia suficiente para el contraste de tiempos. El riesgo se concentra, en cambio, en la precisión de las estimaciones de clasificación (exactitud por clase, macro-F1), que se reportan con intervalos de confianza (Wilson para las proporciones, bootstrap percentil para F1). La amenaza se trata, además, con pruebas no paramétricas robustas frente a tamaños muestrales pequeños y a desviaciones de la normalidad [HernandezSampieri2018_metodologia].
 
 ### Gestión del proyecto bajo enfoque Scrumban (método de construcción del artefacto)
 
@@ -446,7 +463,7 @@ El presente apartado describe el método de construcción del artefacto, no el m
 
 La construcción del sistema se organizó bajo un esquema Scrumban, combinando la planificación por iteraciones propia de Scrum con la gestión continua del flujo de trabajo característica del método Kanban [Ladas2009_scrumban]. Se trabajó con iteraciones de duración y número variables, ajustadas durante el proyecto; su detalle y relación con las campañas de medición se presentan en la §`subsec:conexion-scrumban` y en la §`fig:cronograma`.
 
-La distribución de roles asignó la coordinación general, la integración de componentes y la integración telefónica (Twilio) a Luca Gomez, y la implementación inicial del módulo Python, el modelado inicial de la base de datos, el frontend y el flujo N8N a Gonzalo Sevilla; Carla Bustos participó como revisora de la tesis y colaboradora en los anexos y en la corroboración de las fuentes utilizadas, todo bajo supervisión académica continua del director del trabajo, Prof. Alberto Cortez.
+La distribución de roles asignó la coordinación general, la integración de componentes y la integración telefónica (Twilio) a Luca Gomez, y la implementación inicial del módulo Python, el modelado inicial de la base de datos, el frontend y el flujo N8N a Gonzalo Sevilla; Carla Bustos participó como revisora de la tesis y colaboradora en los anexos y en la corroboración de las fuentes utilizadas. La dirección académica del trabajo estuvo a cargo de los dos directores consignados en la portada, el Prof. Alberto Cortez y el Prof. Ariel Enferrel, quienes ejercieron la supervisión del estudio de forma conjunta.
 
 El tablero Kanban se gestionó mediante Jira, con seguimiento diario del estado de las tareas y reuniones de planificación al inicio de cada iteración; la coordinación del grupo, en GitHub Projects. Las definiciones de terminado (*Definition of Done*) incluyeron, para cada tarea, la aprobación de las pruebas unitarias correspondientes, la revisión de código por pares y la actualización de la documentación asociada.
 
@@ -472,7 +489,7 @@ La Tabla `tab:capas` sintetiza las cinco capas y sus responsabilidades específi
 
 [Figura: Diagrama de componentes del módulo Python organizado en capas (routes, services, repositories, classifiers). Describe la configuración entregada (release `v1.2.5] (`fig:componentes`)
 
-La trazabilidad operativa se garantiza mediante registros estructurados en cada capa, accesibles desde la capa de orquestación. La Figura `fig:arquitectura` representa esquemáticamente el flujo de información entre capas.
+La trazabilidad operativa se garantiza mediante registros estructurados en cada capa, accesibles desde la capa de orquestación. La Figura `fig:arquitectura` representa esquemáticamente el flujo de información entre capas. El despliegue del entorno local —servicios, red Docker, volúmenes y servicios externos— se detalla en la Figura fig:despliegue`, y el flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión, en la Figura `fig:secuencia`.
 
 [Figura: Diagrama de arquitectura del sistema: cinco capas y tres canales de entrada (correo, formulario web y telefonía), en la configuración entregada (release `v1.2.5] (`fig:arquitectura`)
 
@@ -490,7 +507,7 @@ N8N actúa como orquestador principal del flujo de trabajo: recibe la entrada de
 
 ### Capa de procesamiento
 
-El módulo de procesamiento se implementó como un servicio web ligero utilizando el marco FastAPI 0.115, expuesto sobre un servidor ASGI Uvicorn 0.30.6 (versiones de la configuración evaluada; Anexo B, Tabla tab:configuracion-evaluada-entregada`) [Tiangolo2024_fastapi]. La elección de FastAPI obedece a su soporte nativo de validación de esquemas mediante Pydantic, su rendimiento competitivo y su documentación automática conforme a la especificación OpenAPI 3.1.
+El módulo de procesamiento se implementó como un servicio web ligero utilizando el marco FastAPI 0.115, expuesto sobre un servidor ASGI Uvicorn 0.30.6 (versiones de la configuración evaluada; Anexo B, Tabla `tab:configuracion-evaluada-entregada`) [Tiangolo2024_fastapi]. La elección de FastAPI obedece a su soporte nativo de validación de esquemas mediante Pydantic, su rendimiento competitivo y su documentación automática conforme a la especificación OpenAPI 3.1.
 
 Las dependencias del módulo se organizan por capas funcionales claramente delimitadas. La capa de acceso a datos utiliza SQLAlchemy 2.0 como mapeador objeto-relacional (ORM) y asyncpg como driver asincrónico para PostgreSQL, en coherencia con la operación no bloqueante de FastAPI. La capa de procesamiento textual emplea las bibliotecas regex y unicodedata de la biblioteca estándar de Python para normalización ortográfica y eliminación de signos diacríticos. La capa de inferencia se comunica con la interfaz oficial del modelo `gemini-3.6-flash` mediante el cliente google-genai >=2.20.0 de la configuración evaluada (SDK unificado de Google Generative AI), con los siguientes parámetros de configuración: temperatura \(= 0,3\), top_p \(= 0,9\), max_tokens \(= 100\) y timeout \(= 30\) s por intento del backend al modelo, con un presupuesto total de \(60\) s por clasificación. Estos valores corresponden a la configuración adoptada para el despliegue y no a un procedimiento de optimización documentado; su calibración sistemática frente a valores alternativos se plantea como trabajo futuro (§`sec:recomendaciones`). Las bibliotecas NumPy 2.1 y Pandas 2.2 se utilizan exclusivamente para la generación de reportes agregados de desempeño y no participan del flujo de procesamiento individual de incidentes.
 
@@ -506,12 +523,13 @@ El camino de clasificación es único para los tres canales de entrada. Tanto el
 
 ### Modelo de datos
 
-La persistencia se realiza sobre PostgreSQL 15.5, desplegado en contenedor Docker bajo configuración de respaldo diario y replicación física opcional para entornos productivos [PostgreSQL2024_docs]. El modelo de datos se organiza alrededor de siete entidades principales, descritas en la Tabla `tab:entidades`.
+La persistencia se realiza sobre PostgreSQL 15.5, desplegado en contenedor Docker bajo configuración de respaldo diario y replicación física opcional para entornos productivos [PostgreSQL2024_docs]. El modelo de datos se organiza alrededor de siete entidades principales, descritas en la Tabla `tab:entidades` y en el diagrama entidad-relación de la Figura `fig:er_modelo_datos`.
 
 **Tabla: Entidades principales del modelo de datos de la configuración entregada (release `v1.2.5**
 
 ); el atributo reportante_empleado_id`, el cuarto rol del directorio y el cifrado del contacto son posteriores a la campaña de medición (c-82, c-86 y c-153).
 
+4pt
 | **Tabla** | **Atributos clave** | **Descripción** |
 | — | — | — |
 | `incidente` | id (PK), descripcion_original (cifrada), descripcion_pseudonimizada, prioridad, sector_id (FK), estado_id (FK), canal_origen_id (FK), reportante_empleado_id (FK), requiere_revision_humana | Tabla central: descripción original cifrada en reposo y descripción pseudonimizada, prioridad, sector asignado, estado actual, canal de origen, reportante resuelto en el directorio e indicador de revisión humana. |
@@ -537,20 +555,20 @@ La interfaz de programación de aplicaciones expuesta por el módulo Python sigu
 | **Método** | **Ruta** | **Código** | **Función** |
 | — | — | — | — |
 | **Autenticación**` |
-| POST | `/api/v1/auth/login`, `/refresh`, `/logout` | 200 OK | Inicio y renovación de sesión y cierre de sesión de operadores. |
-| GET | `/api/v1/auth/me` | 200 OK | Recupera el perfil del operador autenticado. |
+| POST | /api/v1/auth/login, /refresh, /logout | 200 OK | Inicio y renovación de sesión y cierre de sesión de operadores. |
+| GET | /api/v1/auth/me | 200 OK | Recupera el perfil del operador autenticado. |
 | **Incidentes** |
-| POST | `/api/v1/incidentes` | 201 Created | Crea un nuevo ticket y devuelve el identificador generado. |
-| GET | `/api/v1/incidentes/id` | 200 OK | Recupera la información de un ticket por su identificador. |
+| POST | /api/v1/incidentes | 201 Created | Crea un nuevo ticket y devuelve el identificador generado. |
+| GET | /api/v1/incidentes/id | 200 OK | Recupera la información de un ticket por su identificador. |
 | PATCH | `/api/v1/incidentes/id` | 200 OK | Actualiza los campos editables de un ticket. |
 | **Clasificaciones** |
-| GET | `/api/v1/clasificaciones/incidente/id` | 200 OK | Recupera la trazabilidad de la clasificación de un incidente. |
-| GET | `/api/v1/clasificaciones/revision-pendiente` | 200 OK | Lista los casos derivados a revisión humana. |
-| PATCH | `/api/v1/clasificaciones/log_id`/validar | 200 OK | Registra la categoría validada por el sector responsable. |
+| GET | /api/v1/clasificaciones/incidente/id | 200 OK | Recupera la trazabilidad de la clasificación de un incidente. |
+| GET | /api/v1/clasificaciones/revision-pendiente | 200 OK | Lista los casos derivados a revisión humana. |
+| PATCH | /api/v1/clasificaciones/log_id/validar | 200 OK | Registra la categoría validada por el sector responsable. |
 | **Estadísticas** |
-| GET | `/api/v1/estadisticas/resumen`, `/tendencias` | 200 OK | Agregados y series temporales para el dashboard. |
+| GET | /api/v1/estadisticas/resumen, /tendencias | 200 OK | Agregados y series temporales para el dashboard. |
 | **Salud** |
-| GET | `/health` y `/health/db` | 200 OK | Verificación de salud del servicio para monitoreo externo. |
+| GET | /health y /health/db | 200 OK | Verificación de salud del servicio para monitoreo externo. |
 
 *Fuente:* elaboración propia.
 
@@ -595,7 +613,7 @@ La composición de los 29 nodos responde a un patrón de procesamiento por canal
 
 El canal telefónico incorpora un nodo adicional de normalización y validación que prepara la transcripción pseudonimizada antes de incorporarla al flujo principal, pero no determina el sector persistido: la clasificación telefónica se resuelve con la misma cascada híbrida del backend que la del correo electrónico; la configuración con que se procesó cada corrida, incluido el agente LLM de N8N empleado en parte de la corrida telefónica, se declara en la §`subsec:protocolo-pruebas` y en la Tabla `tab:configuracion-evaluada-entregada`. La clasificación del incidente telefónico se rige por el diseño unificado descrito en la §`subsec:subsistema-clasificacion`.
 
-La trazabilidad completa de cada ejecución se preserva almacenando los identificadores de nodo, las marcas temporales de entrada y salida de cada etapa, y los datos de entrada y salida de cada paso del flujo, generando un historial auditable que resulta especialmente valioso en contextos donde la Ley 25.326 exige demostrar el camino recorrido por los datos personales [Ley25326_2000]. La exportación completa del flujo en formato JSON se incluye en el Anexo E.
+La trazabilidad completa de cada ejecución se preserva almacenando los identificadores de nodo, las marcas temporales de entrada y salida de cada etapa, y los datos de entrada y salida de cada paso del flujo, generando un historial auditable que facilita el cumplimiento del deber de calidad de los datos del artículo 9 de la Ley 25.326 (§`sec:aspectos-legales`), sin que la ley exija literalmente esa forma de registro. La exportación completa del flujo en formato JSON se incluye en el Anexo E.
 
 ### Integración del canal telefónico
 
@@ -633,7 +651,7 @@ La trazabilidad entre etapas y artefactos, mediada por el tablero Kanban en Jira
 
 ### Pruebas automatizadas
 
-La estrategia de pruebas se sustentó en la pirámide clásica descrita por [Crispin2009_agile_testing]. En la base se ubicaron las pruebas unitarias del módulo Python construidas con el marco pytest (versiones en la Tabla `tab:configuracion-evaluada-entregada`). La cobertura de código de aplicación se mide con pytest-cov sobre los paquetes de rutas, servicios y repositorios, mediante el comando `pytest –cov=app.routes –cov=app.services –cov=app.repositories –cov-report=term-missing`, cuyo reporte se genera en cada ejecución del pipeline de integración continua. Estas pruebas cubren los clasificadores (determinístico e híbrido), los servicios de negocio, los esquemas de validación y los repositorios de acceso a datos.
+La estrategia de pruebas se sustentó en la pirámide clásica descrita por [Crispin2009_agile_testing]. En la base se ubicaron las pruebas unitarias del módulo Python construidas con el marco pytest (versiones en la Tabla `tab:configuracion-evaluada-entregada`). La cobertura de código de aplicación se mide con pytest-cov sobre los paquetes de rutas, servicios y repositorios, mediante el comando pytest –cov=app.routes –cov=app.services –cov=app.repositories –cov-report=term-missing, cuyo reporte se genera en cada ejecución del pipeline de integración continua. Estas pruebas cubren los clasificadores (determinístico e híbrido), los servicios de negocio, los esquemas de validación y los repositorios de acceso a datos.
 
 En el nivel intermedio se ejecutaron pruebas de integración en dos variantes complementarias: (a) pruebas rápidas contra SQLite en memoria para la ejecución durante el desarrollo, utilizando el fixture `db_session` con rollback por test; y (b) pruebas de integración contra una instancia real de PostgreSQL 15.5, que validan comportamientos específicos del motor —integridad de claves foráneas, eliminación en cascada, restricciones UNIQUE, precisión de tipos `Numeric(5,4)` y zona horaria en `TIMESTAMPTZ`, índices compuestos y coexistencia de esquemas— mediante 54 pruebas marcadas como integración, que fallan de forma ruidosa si PostgreSQL no está disponible en lugar de omitirse. En el nivel superior, la configuración entregada —no la evaluada; Tabla `tab:configuracion-evaluada-entregada`— incorpora una prueba de humo de extremo a extremo que instancia N8N activo sobre una variante de costo cero del workflow versionado, sin los nodos que requieren credenciales de terceros: el recorrido envía un incidente por el webhook del canal web y verifica su persistencia, su canal de origen, que la clasificación se resuelve en la etapa determinística, la idempotencia del alta ante un reenvío y la recuperación ante una indisponibilidad transitoria del backend. La prueba excluye la etapa Gemini real, que la variante nunca invoca, y el canal telefónico, y se reejecuta sobre el commit etiquetado en cada release. La integración con la plataforma de orquestación se verifica además de forma estructural, mediante pruebas que parsean y validan el archivo `n8n/workflow.json` (composición de nodos, conexiones y límites de costo) y pruebas de API y de base de datos que ejercitan los endpoints y la persistencia del módulo Python.
 
@@ -661,11 +679,11 @@ La utilidad práctica del dashboard puede ilustrarse con un escenario hipotétic
 
 ### Marco normativo aplicable
 
-El sistema desarrollado se enmarca normativamente en la Ley 25.326 de Protección de los Datos Personales de la República Argentina [Ley25326_2000], en su decreto reglamentario, el Decreto 1558/2001 [Decreto1558_2001], y en las disposiciones complementarias emitidas por la Agencia de Acceso a la Información Pública en su carácter de autoridad de aplicación. Dado que el sistema realiza transferencia de fragmentos textuales hacia infraestructura de inferencia operada por proveedores con sede en los Estados Unidos, resultan aplicables las consideraciones del artículo 12 de la mencionada ley sobre transferencia internacional de datos personales y, de manera complementaria, los lineamientos del Reglamento General de Protección de Datos de la Unión Europea [GDPR2016] en aquellos casos que pudieran involucrar a residentes europeos. La Unión Europea reconoce a la Argentina como país con nivel adecuado de protección de datos personales mediante la Decisión 2003/490/CE, del 30 de junio de 2003, revalidada en enero de 2024. Esta adecuación ampara el flujo desde la Unión Europea hacia la Argentina y no opera en sentido inverso: los Estados Unidos no revisten la condición de país adecuado para la normativa argentina, de modo que la transferencia desde la Argentina hacia los proveedores de inferencia y de telefonía con sede en ese país requiere un instrumento específico conforme al artículo 12 de la Ley 25.326, según se detalla en la §`subsec:transferencia-internacional`.
+El sistema desarrollado se enmarca normativamente en la Ley 25.326 de Protección de los Datos Personales de la República Argentina [Ley25326_2000], en su decreto reglamentario, el Decreto 1558/2001 [Decreto1558_2001], y en las disposiciones complementarias emitidas por la Agencia de Acceso a la Información Pública en su carácter de autoridad de aplicación. Dado que el sistema realiza transferencia de fragmentos textuales hacia infraestructura de inferencia operada por proveedores con sede en los Estados Unidos, resultan aplicables las consideraciones del artículo 12 de la mencionada ley sobre transferencia internacional de datos personales y, de manera complementaria, los lineamientos del Reglamento General de Protección de Datos de la Unión Europea [GDPR2016] respecto de las personas que se encuentren en la Unión (artículo 3.2 del RGPD). El artículo 2 de la ley define la disociación como el tratamiento que impide la identificación del titular, figura que complementa aquí a la pseudonimización. La Unión Europea reconoce a la Argentina como país con nivel adecuado de protección de datos personales mediante la Decisión 2003/490/CE, del 30 de junio de 2003 [Decision2003_490_CE], revalidada en enero de 2024. Esta adecuación ampara el flujo desde la Unión Europea hacia la Argentina y no opera en sentido inverso: los Estados Unidos no revisten la condición de país adecuado para la normativa argentina, de modo que la transferencia desde la Argentina hacia los proveedores de inferencia y de telefonía con sede en ese país requiere un instrumento específico conforme al artículo 12 de la Ley 25.326, según se detalla en la §`subsec:transferencia-internacional`.
 
 ### Principios aplicados al tratamiento de datos
 
-El diseño se atiene a cinco principios del tratamiento de datos personales. La licitud se funda en el artículo 5, inciso 2, apartado d) de la Ley 25.326, que admite tratar los datos que deriven de una relación contractual, científica o profesional y resulten necesarios para su cumplimiento: la organización es la empleadora y trata datos de sus propios empleados para gestionar los incidentes que estos reportan. Esta base se distingue del consentimiento analizado para el corpus académico en la §`subsec:consentimiento-derechos` y no dispensa el deber de información del artículo 6 de la Ley 25.326. La finalidad determinada limita el uso de los datos a la declaración y derivación de incidentes, sin usos secundarios no compatibles. La minimización se materializa en que solo se almacena el usuario corporativo y un directorio acotado —legajo, nombre, correo electrónico corporativo, teléfono, sector y rol— para resolver el contacto y notificar al usuario, descartando otros datos capturados incidentalmente (domicilios, documentos, información financiera). La exactitud opera mediante la revisión y corrección del incidente antes de su persistencia definitiva; el ejercicio de los derechos de rectificación, actualización y supresión (derechos ARCO) se resuelve en cinco días hábiles, de acuerdo con el artículo 16 de la Ley 25.326. La limitación del plazo de conservación fija una retención de 12 meses rodantes para los incidentes, justificada por el ciclo estadístico anual, independiente de la retención de 30 días de los registros de ejecución con fines de auditoría y diagnóstico (§`subsec:capa-orquestacion`); los datos del directorio se conservan mientras la relación laboral permanezca activa y hasta un año después de su finalización, y luego se eliminan. Vencido el plazo, los datos del incidente se someten a anonimización irreversible, de modo que se eliminan los identificadores que permiten vincularlos a una persona. El bloqueo de escritura sobre los incidentes cerrados, que rechaza con un error 409 los intentos de modificación, constituye un control de integridad de auditoría y no una excepción permanente al vencimiento del plazo. La pseudonimización y el cifrado en reposo protegen la información durante el plazo de conservación declarado.
+El diseño se atiene a cinco principios del tratamiento de datos personales. La licitud se funda en el artículo 5, inciso 2, apartado d) de la Ley 25.326, que admite tratar los datos que deriven de una relación contractual, científica o profesional y resulten necesarios para su cumplimiento: la organización es la empleadora y trata datos de sus propios empleados para gestionar los incidentes que estos reportan. Esta base se distingue del consentimiento analizado para el corpus académico en la §`subsec:consentimiento-derechos` y no dispensa el deber de información del artículo 6 de la Ley 25.326. La finalidad determinada limita el uso de los datos a la declaración y derivación de incidentes, sin usos secundarios no compatibles. La minimización se materializa en que solo se almacena el usuario corporativo y un directorio acotado —legajo, nombre, correo electrónico corporativo, teléfono, sector y rol— para resolver el contacto y notificar al usuario, descartando otros datos capturados incidentalmente (domicilios, documentos, información financiera). La exactitud opera mediante la revisión y corrección del incidente antes de su persistencia definitiva; el acceso se satisface en los diez días corridos del artículo 14 y los derechos ARCO, en los cinco días hábiles del artículo 16 de la Ley 25.326. La trazabilidad de cada decisión del clasificador se adopta como medida técnica que facilita el cumplimiento del artículo 9 de la Ley 25.326, no como una exigencia literal de la ley. La limitación del plazo de conservación fija una retención de 12 meses rodantes para los incidentes, justificada por el ciclo estadístico anual, independiente de la retención de 30 días de los registros de ejecución con fines de auditoría y diagnóstico (§`subsec:capa-orquestacion`); los datos del directorio se conservan mientras la relación laboral permanezca activa y hasta un año después de su finalización, y luego se eliminan. Vencido el plazo, los datos del incidente se someten a anonimización irreversible, de modo que se eliminan los identificadores que permiten vincularlos a una persona. El bloqueo de escritura sobre los incidentes cerrados, que rechaza con un error 409 los intentos de modificación, constituye un control de integridad de auditoría y no una excepción permanente al vencimiento del plazo. La pseudonimización y el cifrado en reposo protegen la información durante el plazo de conservación declarado.
 
 ### Transferencia internacional y pseudonimización
 
@@ -735,7 +753,7 @@ Los seis changes de cumplimiento cerraron, para el alcance del repositorio, las 
 
 #### Alineación con el marco legal
 
-El plano legal de la alineación se desarrolla en el §`subsec:marco-normativo` y en la §`subsec:transferencia-internacional`, a los que este apartado remite sin reproducir su contenido. Los controles de privacidad mapeados (5.31, 5.34, 8.12, 8.15) se apoyan en la base de licitud del artículo 5 de la Ley 25.326, en el instrumento de transferencia internacional del artículo 12 y en los plazos ARCO del artículo 16.
+El plano legal de la alineación se desarrolla en el §`subsec:marco-normativo` y en la §`subsec:transferencia-internacional`, a los que este apartado remite sin reproducir su contenido. Los controles de privacidad mapeados (5.31, 5.34, 8.12, 8.15) se apoyan en la base de licitud del artículo 5 de la Ley 25.326, en el instrumento de transferencia internacional del artículo 12 y en los plazos de los artículos 14 (acceso) y 16 (rectificación, actualización y supresión).
 
 ## Resultados
 
@@ -759,7 +777,7 @@ La comparación de los tiempos de registro entre el flujo manual y el flujo auto
 
 *Fuente:* elaboración propia a partir del corpus de validación (\(n = 200\)).
 
-El desagregado por canal de origen, con los dos brazos y el contraste intra-canal, se presenta en la Tabla `tab:tiempos-canal`: la reducción de la media va del 51,1 % en correo electrónico, donde se concentran los 12 pares en que el flujo automatizado no fue más rápido, al 93,4 % en formulario web, y el contraste es significativo en los tres canales. El canal telefónico incorpora, además de la latencia de procesamiento, la duración de la llamada grabada; como la grabación está acotada a un máximo de 45 s (véase la §`subsec:metricas-instrumentos`), su valor constituye una cota inferior de la duración real de la llamada.
+El desagregado por canal de origen, con los dos brazos y el contraste intra-canal, se presenta en la Tabla `tab:tiempos-canal`: la reducción de la media va del 51,1 % en correo electrónico, donde se concentran los 12 pares en que el flujo automatizado no fue más rápido, al 93,4 % en formulario web, y el contraste es significativo en los tres canales. El canal telefónico incorpora, además de la latencia de procesamiento, la duración de la llamada grabada; como la grabación está acotada a un máximo de 45 s (véase la §`subsec:metricas-instrumentos`), su valor constituye una cota inferior de la duración real de la llamada. La distribución de los tiempos de registro por canal de origen, en ambos brazos, se representa en la Figura `fig:boxplot_tiempos`.
 
 **Tabla: Tiempo de registro por canal de origen: flujos manual y automatizado, reducción y contraste intra-canal (\(n = 200\))**
 
@@ -774,7 +792,7 @@ El desagregado por canal de origen, con los dos brazos y el contraste intra-cana
 
 *Nota:* \(p\): valor bilateral de Wilcoxon sobre las diferencias pareadas (§`subsec:analisis-estadistico`); \(d_z\): media sobre desvío muestral de las diferencias (manual menos automatizado); \(W\), \(T^+\), \(T^-\) y \(r\) por canal figuran en `evaluation/report.md`. *Fuente:* elaboración propia a partir del corpus de validación (\(n = 200\)).
 
-La prueba de Wilcoxon de rangos con signo aplicada sobre las mediciones pareadas [Virtanen2020_scipy] arrojó un estadístico de contraste \(W = (T^+, T^-) = 363\), con una suma de rangos positivos \(T^+ = 19.737\), una suma de rangos negativos \(T^- = 363\) y \(n = 200\) pares válidos, junto con un valor \(p = 3,08 10^-32\) bilateral (§`subsec:analisis-estadistico`), lo que permite rechazar la hipótesis nula de igualdad de medianas con un nivel de confianza superior al 99,9 %. El estadístico refleja que en 188 de los 200 pares el flujo automatizado fue más veloz que el manual; en los 12 pares restantes (6,0 %) el flujo automatizado no fue más rápido, resultado coherente con la diferencia de aproximadamente 32,5 s entre medianas. La prueba se eligió por el rechazo de la normalidad en los tres conjuntos de tiempos (§`subsec:analisis-estadistico`).
+La prueba de Wilcoxon de rangos con signo aplicada sobre las mediciones pareadas [Wilcoxon1945_individual_comparisons, Virtanen2020_scipy] arrojó un estadístico de contraste \(W = (T^+, T^-) = 363\), con una suma de rangos positivos \(T^+ = 19.737\), una suma de rangos negativos \(T^- = 363\) y \(n = 200\) pares válidos, junto con un valor \(p = 3,08 10^-32\) bilateral (§`subsec:analisis-estadistico`), lo que permite rechazar la hipótesis nula sobre las diferencias pareadas con un nivel de confianza superior al 99,9 %. El estadístico refleja que en 188 de los 200 pares el flujo automatizado fue más veloz que el manual; en los 12 pares restantes (6,0 %) el flujo automatizado no fue más rápido, resultado coherente con la diferencia de aproximadamente 32,5 s entre medianas. La prueba se eligió por el rechazo de la normalidad en los tres conjuntos de tiempos (§`subsec:analisis-estadistico`).
 
 Para cuantificar la magnitud práctica de la diferencia, se calculó el coeficiente \(r\) de correlación rank-biserial a partir de los dos estadísticos de rango (\(r = 19.374/20.100 = 0,9639\)), un tamaño del efecto muy alto. En la escala estandarizada del contraste pareado, distinta de la anterior, el tamaño del efecto es \(d_z = 1,00\) (media de las diferencias de 43,82 s sobre su desvío muestral de 43,81 s). La diferencia observada es, por tanto, estadísticamente significativa y, dada su magnitud absoluta, relativa y el tamaño del efecto reportado, también prácticamente relevante para la operación.
 
@@ -827,7 +845,7 @@ tabular
 
 *Fuente:* elaboración propia (\(n = 200\)); IC de Wilson. La etapa de reserva no registró casos; la composición sectorial y la proporción multietiqueta difieren entre canales.
 
-Los valores de precisión, sensibilidad (recall) y F1 por clase, con su intervalo de confianza al 95 % [Sokolova2009_performance_measures], se presentan en la Tabla `tab:metricas`. La evaluación se enmarca en un único marco métrico cuya referencia de verdad es multietiqueta (107 de los 200 casos, 53,5 %), frente a una salida del clasificador de una etiqueta principal: la exactitud estricta del 73,5 % (147/200) es la métrica primaria monoetiqueta, con IC de Wilson al 95 % de [67,0 %, 79,1 %]. El macro-F1 de umbral, métrica primaria contra la que se evalúa el criterio de 0,85, se reporta sobre las cuatro clases estimables (0,6508), excluida Bases de Datos (\(n = 1\), no estimable: su F1 depende de un único incidente y pesaría un quinto del promedio), y el de cinco clases (0,5207) se conserva como valor informativo; ambos quedan por debajo del criterio, de modo que la elección no altera el veredicto. Las métricas secundarias se calculan contra el conjunto de verdad del corpus (multietiqueta): subset accuracy 0,43 (IC [0,36; 0,50]), Hamming loss 0,3586 (IC [0,31; 0,41]) y micro-F1 0,6654 (IC [0,62; 0,71]). Estas métricas de conjunto penalizan estructuralmente una salida forzada a una sola etiqueta y no son equivalentes de la exactitud estricta: el micro-F1 acumula los aciertos por etiqueta y no por caso, de modo que su valor (0,6654) no debe leerse como una exactitud (0,7350). De los 200 casos, 131 fueron resueltos por la etapa determinística del clasificador y 69 requirieron la etapa Gemini. La exactitud laxa —sector predicho principal dentro del conjunto de verdad— es secundaria y no reemplaza a la estricta: alcanza el 89,5 % (179/200; IC de Wilson de [84,5 %, 93,0 %]). La Tabla `tab:exactitud-etapa-canal` desagrega ambas por etapa y por canal, como estimaciones dentro de la muestra (§`subsec:sensibilidad-ajustes`).
+Los valores de precisión, sensibilidad (recall) y F1 por clase, con su intervalo de confianza al 95 % [Sokolova2009_performance_measures], se presentan en la Tabla `tab:metricas`. La evaluación se enmarca en un único marco métrico cuya referencia de verdad es multietiqueta (107 de los 200 casos, 53,5 %), frente a una salida del clasificador de una etiqueta principal: la exactitud estricta del 73,5 % (147/200) es la métrica primaria monoetiqueta, con IC de Wilson al 95 % de [67,0 %, 79,1 %]. El macro-F1 de umbral, métrica primaria contra la que se evalúa el criterio de 0,85, se reporta sobre las cuatro clases estimables (0,6508), excluida Bases de Datos (\(n = 1\), no estimable: su F1 depende de un único incidente y pesaría un quinto del promedio), y el de cinco clases (0,5207) se conserva como valor informativo; ambos quedan por debajo del criterio, de modo que la elección no altera el veredicto. Las métricas secundarias se calculan contra el conjunto de verdad del corpus (multietiqueta): subset accuracy 0,43 (IC [0,36; 0,50]), Hamming loss 0,3586 (IC [0,31; 0,41]) y micro-F1 0,6654 (IC [0,62; 0,71]) [Tsoumakas2007_multilabel, Sokolova2009_performance_measures]. Estas métricas de conjunto penalizan estructuralmente una salida forzada a una sola etiqueta y no son equivalentes de la exactitud estricta: el micro-F1 acumula los aciertos por etiqueta y no por caso, de modo que su valor (0,6654) no debe leerse como una exactitud (0,7350). De los 200 casos, 131 fueron resueltos por la etapa determinística del clasificador y 69 requirieron la etapa Gemini. La exactitud laxa —sector predicho principal dentro del conjunto de verdad— es secundaria y no reemplaza a la estricta: alcanza el 89,5 % (179/200; IC de Wilson de [84,5 %, 93,0 %]). La Tabla `tab:exactitud-etapa-canal` desagrega ambas por etapa y por canal, como estimaciones dentro de la muestra (§`subsec:sensibilidad-ajustes`).
 
 **Tabla: Métricas de clasificación por clase con intervalo de confianza al 95 % (una contra el resto)**
 
@@ -886,7 +904,7 @@ Las métricas de este capítulo son estimaciones dentro de la muestra (§`subsec
 
 *Fuente:* elaboración propia a partir del corpus de validación (\(n = 200\)) y de `evaluation/report_sensibilidad_ajustes.md`. Casos y exactitud de la etapa determinística. ^aAciertos con las predicciones de la etapa Gemini fijas (caché de calibración); la exactitud global oficial es 147/200.
 
-Sin la ampliación, la exactitud de la etapa determinística baja de 0,7405 a 0,5270 sobre 74 casos: la diferencia, de 21,3 puntos, es una cota pesimista del sesgo atribuible al vocabulario, porque el vocabulario previo carece también del conocimiento del dominio que una ampliación hecha con datos independientes habría aportado. Con las predicciones de la etapa Gemini fijas, la exactitud global pasa de 146 a 128 aciertos sobre 200 casos (McNemar exacto, \(p < 0,001\)). El efecto de las reglas de frontera del prompt, limitado a los 69 casos de la etapa Gemini, se acotó con una ablación controlada de dos brazos sobre los mismos casos y en una misma sesión: con el prompt vigente esa etapa acertó 50 de 69 y sin las reglas de frontera 46 de 69 (reservas contadas como error: 0 en ambos brazos), una diferencia que no alcanza significación (McNemar exacto entre brazos, \(p = 0,3438\)); sin los casos que las motivaron, la etapa con el prompt vigente acertó 48 de 66 (nivel a; `evaluation/report_sensibilidad_ajustes.md`, línea 95). El análisis estima la sensibilidad de las métricas y no sustituye la medición del sistema evaluado.
+El efecto de la ampliación del vocabulario admite dos lecturas que conviene separar. Por un lado, un efecto de *cobertura*, que es el dominante: el filtro determinístico pasó de resolver 74 casos a resolver 131. Por otro, un efecto de *exactitud* sobre los casos que ambas configuraciones resuelven: en los 67 casos comunes, el vocabulario ampliado acertó 38 frente a los 37 del vocabulario previo, de modo que la ampliación no deterioró la exactitud sobre los casos que ya resolvía. La diferencia de 21,3 puntos entre las exactitudes de la etapa determinística (0,7405 sobre 131 casos frente a 0,5270 sobre 74) es, si se la lee como señal del sesgo, una *cota pesimista*: es una interpretación de los autores, no una medición, porque las dos cifras se calculan sobre conjuntos de casos distintos y el vocabulario previo carece también del conocimiento del dominio que una ampliación hecha con datos independientes habría aportado. Con las predicciones de la etapa Gemini fijas, la exactitud global pasa de 146 a 128 aciertos sobre 200 casos (McNemar exacto [McNemar1947_sampling_error], \(p < 0,001\)). El efecto de las reglas de frontera del prompt, limitado a los 69 casos de la etapa Gemini, se acotó con una ablación controlada de dos brazos sobre los mismos casos y en una misma sesión: con el prompt vigente esa etapa acertó 50 de 69 y sin las reglas de frontera 46 de 69 (reservas contadas como error: 0 en ambos brazos), una diferencia que no alcanza significación (McNemar exacto entre brazos, \(p = 0,3438\)); sin los casos que las motivaron, la etapa con el prompt vigente acertó 48 de 66 (nivel a; `evaluation/report_sensibilidad_ajustes.md`, línea 95). El análisis estima la sensibilidad de las métricas y no sustituye la medición del sistema evaluado.
 
 ### Análisis de errores y casos límite
 
@@ -916,7 +934,7 @@ Los patrones anteriores se ilustran con tres casos con error estricto del corpus
 
 Los resultados obtenidos confirman la hipótesis de trabajo formulada en la §`subsec:hipotesis-trabajo` en lo relativo al tiempo de registro y la refutan en lo relativo a la clasificación, de modo que la hipótesis principal se declara parcialmente confirmada y parcialmente refutada: la disminución del 71,2 % en el tiempo medio de registro es estadísticamente significativa y operativamente relevante, mientras que la exactitud estricta del 73,5 % alcanzada por el clasificador automático quedó por debajo del umbral del 85 % planteado en el segundo objetivo específico, resultado que se analiza entre las limitaciones de este capítulo.
 
-La reducción de tiempo se midió con la inferencia externa incluida y con configuraciones que invocaban al modelo con mayor frecuencia que la evaluada en la clasificación, cuya etapa determinística resuelve el 65,5 % de los casos sin invocar al modelo (§`subsec:protocolo-pruebas`); esa proporción no interviene en la reducción medida. La hipótesis subsidiaria de eficiencia del esquema híbrido no se contrastó: resolver casos sin el modelo no demuestra mayor eficiencia sin comparar la exactitud de cada alternativa. En los 131 casos de esa etapa las reglas aciertan 97/131 (0,7405) y, sobre los 130 casos con predicción de ambas etapas, 96/130 (0,7385) frente a los 88/130 (0,6769) de Gemini, ejecutado con el cortocircuito deshabilitado, estimaciones ambas dentro de la muestra y sin diferencia significativa (McNemar exacta bilateral, \(p = 0,1516\)); además, con el vocabulario previo a su ajuste con el corpus la etapa de reglas no supera a Gemini (§`subsec:sensibilidad-ajustes`), de modo que esa ventaja no se toma como evidencia de eficiencia. El costo de inferencia recae así únicamente en los casos que el filtro no resuelve, y la latencia no se midió por etapa. La hipótesis subsidiaria de integración multicanal tampoco se contrastó: no se midió la capacidad bajo carga concurrente.
+La reducción de tiempo se midió con la inferencia externa incluida y con configuraciones que invocaban al modelo con mayor frecuencia que la evaluada en la clasificación, cuya etapa determinística resuelve el 65,5 % de los casos sin invocar al modelo (§`subsec:protocolo-pruebas`); esa proporción no interviene en la reducción medida. La hipótesis subsidiaria de eficiencia del esquema híbrido no se contrastó: resolver casos sin el modelo no demuestra mayor eficiencia sin comparar la exactitud de cada alternativa. En los 131 casos de esa etapa las reglas aciertan 97/131 (0,7405) y, sobre los 130 casos con predicción de ambas etapas, 96/130 (0,7385) frente a los 88/130 (0,6769) de Gemini, ejecutado con el cortocircuito deshabilitado, estimaciones ambas dentro de la muestra y sin diferencia significativa (McNemar exacta bilateral [McNemar1947_sampling_error], \(p = 0,1516\)); además, con el vocabulario previo a su ajuste con el corpus la etapa de reglas no supera a Gemini (§`subsec:sensibilidad-ajustes`), de modo que esa ventaja no se toma como evidencia de eficiencia. El costo de inferencia recae así únicamente en los casos que el filtro no resuelve, y la latencia no se midió por etapa. La hipótesis subsidiaria de integración multicanal tampoco se contrastó: no se midió la capacidad bajo carga concurrente.
 
 La dispersión de los tiempos automatizados evidencia una compresión sustancial de la variabilidad: el desvío estándar pasa de 44,9 s en el flujo manual a 13,52 s en el automatizado, aproximadamente la tercera parte, consecuencia de la automatización y no un objetivo del diseño.
 
@@ -962,7 +980,7 @@ Quinto, la comparación se realizó exclusivamente contra el flujo manual (proce
 
 Sexto, los analistas que etiquetaron la referencia operaron también el brazo manual (§`subsec:poblacion-muestra-corpus`), lo que acota la independencia del *ground truth* y, junto con la falta de registro por caso de la derivación manual, impide medir sin sesgo la exactitud de ese brazo (§`subsec:balance-neto`).
 
-Séptimo, el vocabulario del filtro determinístico y las reglas de frontera del prompt se ajustaron con errores observados en el mismo corpus de evaluación, de modo que las métricas de clasificación son estimaciones dentro de la muestra. Sin ese vocabulario, la exactitud de la etapa determinística baja de 0,7405 a 0,5270, cota pesimista del sesgo atribuible a él, y el efecto de las reglas del prompt, acotado por una ablación controlada de dos brazos, es de 50 frente a 46 aciertos sobre los 69 casos de la etapa Gemini (diferencia no significativa; McNemar exacto \(p = 0,3438\); `evaluation/report_sensibilidad_ajustes.md`, línea 98) (§`subsec:sensibilidad-ajustes`). Solo un corpus independiente permitiría estimar el desempeño fuera de la muestra.
+Séptimo, el vocabulario del filtro determinístico y las reglas de frontera del prompt se ajustaron con errores observados en el mismo corpus de evaluación, de modo que las métricas de clasificación son estimaciones dentro de la muestra. Sin ese vocabulario, la exactitud de la etapa determinística baja de 0,7405 a 0,5270, cota pesimista del sesgo atribuible a él, y el efecto de las reglas del prompt, acotado por una ablación controlada de dos brazos, es de 50 frente a 46 aciertos sobre los 69 casos de la etapa Gemini (diferencia no significativa; McNemar exacto [McNemar1947_sampling_error], \(p = 0,3438\); `evaluation/report_sensibilidad_ajustes.md`, línea 98) (§`subsec:sensibilidad-ajustes`). Solo un corpus independiente permitiría estimar el desempeño fuera de la muestra.
 
 Octavo, no se conservó un registro primario de la acción manual de los operadores por caso, de modo que la proporción de intervención humana no se midió y la segunda sub-hipótesis queda no contrastada (§`subsec:reduccion-intervencion`).
 
@@ -1047,7 +1065,7 @@ A partir de los resultados, del análisis de errores (§`subsec:analisis-errores
 
 ### Calibración del gate de confianza
 
-Por etapa (§`subsec:calibracion`), el gate de 0,70 solo se evalúa sobre la salida de Gemini, la etapa de reserva deriva siempre a revisión y la etapa determinística no deriva por su confianza y se rige por su puntaje de correctitud (§`subsec:subsistema-clasificacion`) y la confianza autodeclarada de Gemini, concentrada entre 0,85 y 1,00, no discrimina aciertos de errores, por lo que el gate no derivó ningún caso. Se propone, sobre un conjunto de validación propio, disjunto del corpus de evaluación: (i) incorporar señales independientes del puntaje —ambigüedad léxica entre categorías, margen entre las dos primeras categorías (que exige ampliar el contrato de salida, §`anexo:H`), desacuerdo entre etapas y revisión por muestreo de casos de alta confianza (§`subsec:human-in-the-loop`)—; (ii) recalibrar el puntaje por regresión isotónica, o por escalado de temperatura [Guo2017_calibration] si se obtienen puntajes por categoría, advirtiendo que una recalibración monótona corrige el nivel de la confianza verbalizada, sobreconfiada y dependiente de la elicitación [Xiong2024_confidence_elicitation, Tian2023_verbalized_confidence], pero no crea capacidad de discriminación; y (iii) derivar el umbral de una curva cobertura-precisión con ajuste fuera de la muestra, como el punto de operación de la etapa determinística, cuya ventaja frente a Gemini depende del vocabulario (§`subsec:sensibilidad-ajustes`), con un piso declarado antes de observarla (la exactitud de la revisión humana o el 85 % del segundo objetivo), y confirmarlo en un corpus independiente (§`subsec:corpus-independiente`). La misma campaña permitiría contrastar los parámetros de inferencia, sin optimización documentada (§`subsec:capa-procesamiento`).
+Por etapa (§`subsec:calibracion`), el gate de 0,70 solo se evalúa sobre la salida de Gemini, la etapa de reserva deriva siempre a revisión y la etapa determinística no deriva por su confianza y se rige por su puntaje de correctitud (§`subsec:subsistema-clasificacion`) y la confianza autodeclarada de Gemini, concentrada entre 0,85 y 1,00, no discrimina aciertos de errores, por lo que el gate no derivó ningún caso. Se propone, sobre un conjunto de validación propio, disjunto del corpus de evaluación: (i) incorporar señales independientes del puntaje —ambigüedad léxica entre categorías, margen entre las dos primeras categorías (que exige ampliar el contrato de salida, §`anexo:H`), desacuerdo entre etapas y revisión por muestreo de casos de alta confianza (§`subsec:human-in-the-loop`)—; (ii) recalibrar el puntaje por regresión isotónica [NiculescuMizil2005_probabilities], o por escalado de temperatura [Guo2017_calibration] si se obtienen puntajes por categoría, advirtiendo que una recalibración monótona corrige el nivel de la confianza verbalizada, sobreconfiada y dependiente de la elicitación [Xiong2024_confidence_elicitation, Tian2023_verbalized_confidence], pero no crea capacidad de discriminación; y (iii) derivar el umbral de una curva cobertura-precisión con ajuste fuera de la muestra, como el punto de operación de la etapa determinística, cuya ventaja frente a Gemini depende del vocabulario (§`subsec:sensibilidad-ajustes`), con un piso declarado antes de observarla (la exactitud de la revisión humana o el 85 % del segundo objetivo), y confirmarlo en un corpus independiente (§`subsec:corpus-independiente`). La misma campaña permitiría contrastar los parámetros de inferencia, sin optimización documentada (§`subsec:capa-procesamiento`).
 
 ### Incorporación de un clasificador supervisado con corpus propio
 
@@ -1055,7 +1073,7 @@ Se sugiere incorporar progresivamente un clasificador supervisado entrenado con 
 
 ### Corrección de la medición de intervención humana
 
-La segunda sub-hipótesis quedó no contrastada por ausencia de registro primario (§`subsec:reduccion-intervencion`, §`subsec:hipotesis-trabajo`). Se propone registrar, para cada caso, la ocurrencia y el origen de la intervención (derivación por el gate, revisión por muestreo, corrección o rederivación por el sector receptor, completado manual de datos), una consigna de tiempo de inicio y de fin, el resultado (categoría confirmada o corregida) y el operador, seudonimizado. El registro ampliaría `clasificacion_log`, que hoy guarda el indicador de revisión y la categoría validada, o se llevaría en una tabla dedicada vinculada al incidente, preferible cuando un incidente acumula varias intervenciones. La definición operacional seguiría las dos formas rotuladas de la §`tab:variables` —proporción de casos y proporción del tiempo del proceso— y se aplicaría de igual modo en ambos brazos. Así podría contrastarse la sub-hipótesis contra la cota de 0,15, con el intervalo de Wilson de esa proporción, o como cobertura efectiva del gate, esto es, la proporción de clasificaciones erróneas que derivó a revisión. El mismo registro mediría las derivaciones erróneas y su costo en tiempo, insumos del balance neto (§`subsec:balance-neto`).
+La segunda sub-hipótesis quedó no contrastada por ausencia de registro primario (§`subsec:reduccion-intervencion`, §`subsec:hipotesis-trabajo`). Se propone registrar, para cada caso, la ocurrencia y el origen de la intervención (derivación por el gate, revisión por muestreo, corrección o rederivación por el sector receptor, completado manual de datos), una consigna de tiempo de inicio y de fin, el resultado (categoría confirmada o corregida) y el operador, pseudonimizado. El registro ampliaría `clasificacion_log`, que hoy guarda el indicador de revisión y la categoría validada, o se llevaría en una tabla dedicada vinculada al incidente, preferible cuando un incidente acumula varias intervenciones. La definición operacional seguiría las dos formas rotuladas de la §`tab:variables` —proporción de casos y proporción del tiempo del proceso— y se aplicaría de igual modo en ambos brazos. Así podría contrastarse la sub-hipótesis contra la cota de 0,15, con el intervalo de Wilson de esa proporción, o como cobertura efectiva del gate, esto es, la proporción de clasificaciones erróneas que derivó a revisión. El mismo registro mediría las derivaciones erróneas y su costo en tiempo, insumos del balance neto (§`subsec:balance-neto`).
 
 ### Cola de respaldo y alta asincrónica
 
@@ -1111,11 +1129,11 @@ Su adopción estuvo condicionada por la madurez de las interfaces de audio bidir
 
 El Anexo A inventaría los diagramas de la arquitectura del sistema entregado (release `v1.2.5`). Los diagramas de arquitectura, despliegue, secuencia y componentes se incluyen como figuras de la §`sec:arquitectura`, de modo que no se reproducen nuevamente aquí. Los cuatro artefactos y el cronograma del estudio, que se reproduce aquí, son:
 
- - **Diagrama de arquitectura del sistema** (Figura `fig:arquitectura`, §`sec:arquitectura`): las cinco capas de la Tabla `tab:capas` y los tres canales de entrada (correo, formulario web y telefonía), sin versiones de bibliotecas, que constan en la Tabla `tab:capas` y en la §`tab:configuracion-evaluada-entregada`. Fuente versionada: `docs/diagrams/arquitectura_sistema.md`.
- - **Diagrama de despliegue** (Figura `fig:despliegue`, §`sec:arquitectura`): los cinco componentes principales (N8N, FastAPI, PostgreSQL, Gemini 3.6 Flash, Twilio), el proxy inverso Nginx, que provee terminación TLS 1.2/1.3 verificada en el despliegue de referencia y que forma parte del stack base sobre el que corrió la ingesta del 2 de octubre (la medición telefónica del 5 y 6 de octubre usó el perfil aislado `corpus`, sin proxy), y las relaciones de comunicación entre ellos. Fuente versionada: `docs/diagrams/despliegue.md`.
- - **Diagrama de secuencia** (Figura `fig:secuencia`, §`sec:arquitectura`): flujo extremo a extremo de un incidente desde su recepción en cualquiera de los tres canales (correo electrónico, formulario web o telefonía) hasta la confirmación al usuario o la derivación a revisión humana, incluyendo las interacciones con el clasificador híbrido y la base de datos. Fuente versionada: `docs/diagrams/secuencia.md`.
- - **Diagrama de componentes** (Figura `fig:componentes`, §`sec:arquitectura`): organización interna del módulo Python por capas (routes, services, repositories, models, classifiers), con sus dependencias y relaciones. Fuente versionada: `docs/diagrams/componentes.md`.
- - **Cronograma** (Figura `fig:cronograma`, §`subsec:conexion-scrumban`): construcción, campañas de medición y versión del modelo evaluada, con la procedencia de cada fecha. Fuente versionada: `docs/diagrams/cronograma.md`.
+ - **Diagrama de arquitectura del sistema** (Figura `fig:arquitectura`, §`sec:arquitectura`): las cinco capas de la Tabla `tab:capas` y los tres canales de entrada (correo, formulario web y telefonía), sin versiones de bibliotecas, que constan en la Tabla `tab:capas` y en la §`tab:configuracion-evaluada-entregada`. Fuente versionada: docs/diagrams/arquitectura_sistema.md.
+ - **Diagrama de despliegue** (Figura `fig:despliegue`, §`sec:arquitectura`): los cinco componentes principales (N8N, FastAPI, PostgreSQL, Gemini 3.6 Flash, Twilio), el proxy inverso Nginx, que provee terminación TLS 1.2/1.3 verificada en el despliegue de referencia y que forma parte del stack base sobre el que corrió la ingesta del 2 de octubre (la medición telefónica del 5 y 6 de octubre usó el perfil aislado `corpus`, sin proxy), y las relaciones de comunicación entre ellos. Fuente versionada: docs/diagrams/despliegue.md.
+ - **Diagrama de secuencia** (Figura `fig:secuencia`, §`sec:arquitectura`): flujo extremo a extremo de un incidente desde su recepción en cualquiera de los tres canales (correo electrónico, formulario web o telefonía) hasta la confirmación al usuario o la derivación a revisión humana, incluyendo las interacciones con el clasificador híbrido y la base de datos. Fuente versionada: docs/diagrams/secuencia.md.
+ - **Diagrama de componentes** (Figura `fig:componentes`, §`sec:arquitectura`): organización interna del módulo Python por capas (routes, services, repositories, models, classifiers), con sus dependencias y relaciones. Fuente versionada: docs/diagrams/componentes.md.
+ - **Cronograma** (Figura `fig:cronograma`, §`subsec:conexion-scrumban`): construcción, campañas de medición y versión del modelo evaluada, con la procedencia de cada fecha. Fuente versionada: docs/diagrams/cronograma.md.
 
 Los diagramas se generan a partir de fuentes Mermaid versionadas en formato `.md` en el directorio `docs/diagrams/` del repositorio y se renderizan a imágenes PNG para su inclusión en el documento [Gomez2026_repositorio].
 
@@ -1197,7 +1215,7 @@ Este anexo documenta la especificación del prompt enviado al modelo `gemini-3.6
 El prompt sigue una estructura fija en español organizada en cinco componentes funcionales y un conjunto de reglas de desambiguación:
 
  - **Instrucción de rol**: define que el modelo actúa como agente especializado en clasificación de incidentes técnicos en español rioplatense, lo que ancla el comportamiento en el dominio y el dialecto del estudio.
- - **Definición de categorías**: presenta los cinco sectores canónicos con sus *strings* exactos (sensibles a mayúsculas y sin tildes), un ámbito descriptivo por sector y un ejemplo representativo extraído del dominio real por cada uno.
+ - **Definición de categorías**: presenta los cinco sectores canónicos con sus *strings* exactos (sensibles a mayúsculas y sin tildes), un ámbito descriptivo por sector y un único ejemplo representativo extraído del dominio real por clase (cinco en total).
  - **Formato de respuesta**: solicita un JSON válido con exactamente dos campos, `categoría` (uno de los cinco valores canónicos) y `confianza` (número entre 0,0 y 1,0), sin texto adicional, comentarios ni explicaciones.
  - **Lógica de decisión**: indica analizar la descripción y asignar una categoría única entre las cinco opciones; ante elementos de múltiples categorías, elegir la dominante.
  - **Validación sintáctica**: exige validar la corrección sintáctica del JSON antes de devolverlo y reducir la confianza cuando no sea posible clasificar con seguridad.
@@ -1217,7 +1235,7 @@ La invocación del modelo se realiza mediante el SDK `google-genai` (`>=2.20.0`,
 | `top_p` | 0,9 | *Nucleus sampling* que admite variantes léxicas válidas en español rioplatense sin sacrificar coherencia. |
 | `max_tokens` | 100 | Límite suficiente para la respuesta JSON, con margen ante variaciones y sin truncamiento. |
 | `candidate_count` | 1 | Respuesta única sin remuestreo, que acota la latencia del procesamiento en tiempo real. |
-| `safety_settings` | Parcialmente desactivados | Desactiva filtros que podrían rechazar descripciones legítimas de incidentes, manteniendo los filtros contra contenido verdaderamente tóxico. |
+| `safety_settings` | Cuatro categorías con umbral `BLOCK_NONE` | Desactiva los cuatro filtros de contenido (`HARM_CATEGORY_HARASSMENT`, `HARM_CATEGORY_HATE_SPEECH`, `HARM_CATEGORY_SEXUALLY_EXPLICIT` y `HARM_CATEGORY_DANGEROUS_CONTENT`, todos con umbral `BLOCK_NONE`) para no rechazar descripciones legítimas de incidentes; no se configura ningún filtro de umbral intermedio. |
 | `timeout` | 30 segundos por intento; 60 segundos en total | Límite de latencia por intento del backend al modelo (hasta dos reintentos ante fallas transitorias, dentro de un presupuesto total de 60 segundos por clasificación; no son reintentos de N8N al backend); al agotarse, el clasificador devuelve confianza 0,0 y marca el caso para revisión humana. |
 | Umbral de revisión humana | 0,70 | Confianza mínima de una respuesta del modelo para no marcarla para revisión; se evalúa solo sobre la salida de Gemini (la reserva deriva siempre y la etapa determinística no deriva por su confianza; §`subsec:subsistema-clasificacion`). Desde el 13 de octubre de 2026 el backend deriva además a revisión al reportante no identificado en el directorio de empleados. |
 | SDK | `google-genai` `>=2.20.0` | Versión de la configuración evaluada; la entregada exige `>=2.33.0,<3` (Tabla `tab:configuracion-evaluada-entregada`). |
@@ -1233,10 +1251,10 @@ def validar_respuesta_gemini(response_text: str) -> tuple[bool, dict]:
  data = json.loads(response_text)
  except json.JSONDecodeError as e:
  return False, "error": f"JSON invalido: e"
- if "categoria" not in data:
- return False, "error": "Falta campo 'categoria'"
- if data["categoria"] not in SECTORES_CANONICOS:
- return False, "error": f"Categoria invalida: data['categoria']"
+ if "categoría" not in data:
+ return False, "error": "Falta campo 'categoría'"
+ if data["categoría"] not in SECTORES_CANONICOS:
+ return False, "error": f"Categoría invalida: data['categoría']"
  if "confianza" not in data:
  return False, "error": "Falta campo 'confianza'"
  if not isinstance(data["confianza"], (int, float)) \
@@ -1247,15 +1265,15 @@ lstlisting
 
 ### Iteración y mejora del prompt
 
-El prompt de la versión evaluada se ajustó de forma iterativa a partir de errores observados en el corpus de validación; no se dispuso de un corpus independiente de preproducción. Las versiones históricas del prompt se conservan en el historial de versiones del repositorio (archivo `docs/prompt_gemini.txt`) para auditoría y eventual reversión.
+El prompt de la versión evaluada se ajustó de forma iterativa a partir de errores observados en el corpus de validación; no se dispuso de un corpus independiente de preproducción. Las versiones históricas del prompt se conservan en el historial de versiones del repositorio (archivo docs/prompt_gemini.txt) para auditoría y eventual reversión.
 
 ### Recomendaciones para futuras iteraciones
 
-Ante una degradación de las métricas por cambios en el modelo, se recomienda profundizar los ejemplos por clase (de dos a cuatro o cinco), agregar contraejemplos de incidentes limítrofes, especificar umbrales de confianza explícitos, incluir un diccionario de términos clave por categoría y, una vez acumulado un corpus del orden de 5.000 casos etiquetados (referencia indicativa de orden de magnitud, no derivada del corpus actual ni de un cálculo de potencia estadística), migrar a un modelo ajustado específicamente al dominio.
+Ante una degradación de las métricas por cambios en el modelo, se recomienda ampliar los ejemplos por clase (partiendo del único ejemplo actual, hasta cuatro o cinco), agregar contraejemplos de incidentes limítrofes, especificar umbrales de confianza explícitos, incluir un diccionario de términos clave por categoría y, una vez acumulado un corpus del orden de 5.000 casos etiquetados (referencia indicativa de orden de magnitud, no derivada del corpus actual ni de un cálculo de potencia estadística), migrar a un modelo ajustado específicamente al dominio.
 
 ## Trazabilidad de las correcciones de los dictámenes
 
-Los dictámenes que motivan las correcciones de la tesis son autoevaluaciones de control de calidad interno frente a criterios de la CONEAU, esto es revisiones evaluativas previas a la defensa solicitadas por los propios autores y no una revisión por pares. Se elaboraron aplicando un perfil de evaluador con criterios de la CONEAU, versionado en `docs/Tesis/Correcciones/Prompt2.docx`, mediante un modelo de lenguaje; no los emitieron el jurado, la dirección, la cátedra ni la CONEAU, no constituyen una revisión por pares humana y no son vinculantes. La serie comprende cinco dictámenes fechados entre el 20 y el 28 de octubre de 2026, que se conservan en `auditorias/`; cada uno declara su alcance (lectura íntegra del manuscrito, recomputo de las cifras, verificación bibliográfica y cotejo con el repositorio). Este anexo traza los dos más recientes: el del 22 de octubre, sobre la versión `v1.1.0`, y el del 28 de octubre, sobre la `v1.2.5`. El registro acumulativo de las correcciones se conserva como artefacto versionado en `docs/Tesis/Correcciones/dictamen-correcciones.md` y vincula cada observación con el archivo y la línea corregidos.
+Los dictámenes que motivan las correcciones de la tesis son autoevaluaciones de control de calidad interno frente a criterios de la CONEAU, esto es revisiones evaluativas previas a la defensa solicitadas por los propios autores y no una revisión por pares. Se elaboraron aplicando un perfil de evaluador con criterios de la CONEAU, versionado en `docs/Tesis/Correcciones/Prompt2.docx`, mediante un modelo de lenguaje; no los emitieron el jurado, la dirección, la cátedra ni la CONEAU, no constituyen una revisión por pares humana y no son vinculantes. La serie comprende cinco dictámenes fechados entre el 20 y el 28 de octubre de 2026, que se conservan en `auditorias/`; cada uno declara su alcance (lectura íntegra del manuscrito, recomputo de las cifras, verificación bibliográfica y cotejo con el repositorio). Este anexo traza los dos más recientes: el del 22 de octubre, sobre la versión `v1.1.0`, y el del 28 de octubre, sobre la `v1.2.5`. El registro acumulativo de las correcciones se conserva como artefacto versionado en docs/Tesis/Correcciones/dictamen-correcciones.md y vincula cada observación con el archivo y la línea corregidos.
 
 El dictamen del 22 de octubre de 2026, aplicable por igual a `v1.1.1`, formuló cinco observaciones de fondo (A1 a A5) y correcciones de consistencia (B4 a B16), atendidas mediante changes del repositorio; la §`tab:anexo-trazabilidad` indica, para cada una, el change responsable y las secciones donde se la atendió. Cuando una recomendación se dividió en partes, figuran los changes que las atendieron, y los residuos que el dictamen siguiente volvió a señalar remiten a la fila que los atiende (§`tab:anexo-trazabilidad-2810`) o figuran como pendientes.
 
@@ -1283,7 +1301,7 @@ El dictamen del 22 de octubre de 2026, aplicable por igual a `v1.1.1`, formuló 
 | B15 | `c-139` | §`subsec:cumplimiento`, §`subsec:analisis-estadistico` |
 | B16 | `c-139`, `c-141` | §`sec:anexo-repositorio` y Referencias bibliográficas; residuos en A2 del 28-10 y pendiente (fecha de consulta de una referencia) |
 
-*Fuente:* elaboración propia a partir de `docs/Tesis/Correcciones/dictamen-correcciones.md`.
+*Fuente:* elaboración propia a partir de docs/Tesis/Correcciones/dictamen-correcciones.md.
 
 El dictamen del 28 de octubre de 2026, sobre la versión `v1.2.5`, formuló observaciones de método (A1 y A2), de coherencia entre figuras, tablas y texto (A3), de evidencia cualitativa (A4) y de residuos del proceso de corrección y consistencia interna (B5 a B8); la §`tab:anexo-trazabilidad-2810` indica el change responsable y las secciones donde se las atendió. Las demás observaciones de ese dictamen se atienden en changes posteriores del repositorio.
 
@@ -1301,6 +1319,6 @@ El dictamen del 28 de octubre de 2026, sobre la versión `v1.2.5`, formuló obse
 | B7 | `c-160` | Resumen y *abstract*, §`subsec:cumplimiento-objetivos`, §`tab:cumplimiento-objetivos` |
 | B8 | `c-160` | §`subsec:vision-general`, §`subsec:human-in-the-loop`, §`subsec:subsistema-clasificacion`, §`subsec:construccion-flujo-n8n`, §`subsec:consentimiento-derechos`, §`subsec:sensibilidad-ajustes`, §`subsec:calibracion-gate`, §`subsec:anexo-parametros-config`, §`sec:anexo-documentacion-operativa` |
 
-*Fuente:* elaboración propia a partir de `docs/Tesis/Correcciones/dictamen-correcciones.md`.
+*Fuente:* elaboración propia a partir de docs/Tesis/Correcciones/dictamen-correcciones.md.
 
-La trazabilidad interna de tres decisiones de diseño que el cuerpo de la §`sec:implementacion` presenta en lenguaje llano se conserva aquí: el retiro de la rama de clasificación telefónica por agente LLM basada en LangChain y el traslado de la superficie de costo al backend (`c-72`); el reemplazo del umbral de 0,90 sobre la confianza por el punto de operación del puntaje de correctitud (`c-74`); y la derivación a revisión del incidente cuyo reportante no se identifica en el directorio de empleados, incorporada el 13 de octubre de 2026 (`c-82`). El detalle de cada decisión figura en `docs/Tesis/Correcciones/dictamen-correcciones.md`.
+La trazabilidad interna de tres decisiones de diseño que el cuerpo de la §`sec:implementacion` presenta en lenguaje llano se conserva aquí: el retiro de la rama de clasificación telefónica por agente LLM basada en LangChain y el traslado de la superficie de costo al backend (`c-72`); el reemplazo del umbral de 0,90 sobre la confianza por el punto de operación del puntaje de correctitud (`c-74`); y la derivación a revisión del incidente cuyo reportante no se identifica en el directorio de empleados, incorporada el 13 de octubre de 2026 (`c-82`). El detalle de cada decisión figura en docs/Tesis/Correcciones/dictamen-correcciones.md.
