@@ -32,7 +32,7 @@ La Tabla~\ref{tab:capas} sintetiza las cinco capas y sus responsabilidades espec
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.80\textwidth,height=0.9\textheight,keepaspectratio]{componentes}
-\caption[Diagrama de componentes del módulo Python organizado en capas]{Diagrama de componentes del módulo Python organizado en capas (routes, services, repositories, classifiers). Describe la configuración entregada (release \texttt{v1.2.6}): el filtro determinístico cortocircuita con señal dominante y puntaje de correctitud \(\geq 0{,}5166\) sin derivar por su confianza, la revisión por confianza menor que 0,70 rige solo sobre Gemini, la etapa de reserva deriva siempre, y el disparador por reportante no identificado en el directorio es posterior a la campaña (c-82, 13-10-2026; \autoref{tab:configuracion-evaluada-entregada}). Fuente: \texttt{docs/diagrams/componentes.md}.}
+\caption[Diagrama de componentes del módulo Python organizado en capas]{Diagrama de componentes del módulo Python organizado en capas (routes, services, repositories, classifiers). Describe la configuración entregada (release \texttt{v1.2.7}): el filtro determinístico cortocircuita con señal dominante y puntaje de correctitud \(\geq 0{,}5166\) sin derivar por su confianza, la revisión por confianza menor que 0,70 rige solo sobre Gemini, la etapa de reserva deriva siempre, y el disparador por reportante no identificado en el directorio es posterior a la campaña (c-82, 13-10-2026; \autoref{tab:configuracion-evaluada-entregada}). Fuente: \texttt{docs/diagrams/componentes.md}.}
 \label{fig:componentes}
 \end{figure}
 
@@ -41,7 +41,7 @@ La trazabilidad operativa se garantiza mediante registros estructurados en cada 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{arquitectura_sistema}
-\caption[Diagrama de arquitectura del sistema]{Diagrama de arquitectura del sistema: cinco capas y tres canales de entrada (correo, formulario web y telefonía), en la configuración entregada (release \texttt{v1.2.6}). Fuente versionada: \texttt{docs/diagrams/arquitectura\_sistema.md} (Anexo~\ref{sec:anexo-diagrama-arquitectura}).}
+\caption[Diagrama de arquitectura del sistema]{Diagrama de arquitectura del sistema: cinco capas y tres canales de entrada (correo, formulario web y telefonía), en la configuración entregada (release \texttt{v1.2.7}). Fuente versionada: \texttt{docs/diagrams/arquitectura\_sistema.md} (Anexo~\ref{sec:anexo-diagrama-arquitectura}).}
 \label{fig:arquitectura}
 \end{figure}
 
@@ -55,7 +55,7 @@ La trazabilidad operativa se garantiza mediante registros estructurados en cada 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{secuencia}
-\caption[Diagrama de secuencia del flujo extremo a extremo de un incidente]{Diagrama de secuencia del flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión humana, en la configuración entregada (release \texttt{v1.2.6}). El disparador por reportante no identificado en el directorio es posterior a la campaña (c-82, 13-10-2026): véase la \autoref{tab:configuracion-evaluada-entregada}.}
+\caption[Diagrama de secuencia del flujo extremo a extremo de un incidente]{Diagrama de secuencia del flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión humana, en la configuración entregada (release \texttt{v1.2.7}). El disparador por reportante no identificado en el directorio es posterior a la campaña (c-82, 13-10-2026): véase la \autoref{tab:configuracion-evaluada-entregada}.}
 \label{fig:secuencia}
 \end{figure}
 
@@ -89,7 +89,7 @@ La persistencia se realiza sobre PostgreSQL~15.5, desplegado en contenedor Docke
 
 \begin{table}[htbp]
 \centering
-\caption[Entidades principales del modelo de datos]{Entidades principales del modelo de datos de la configuración entregada (release \texttt{v1.2.6}); el atributo \texttt{reportante\_empleado\_id}, el cuarto rol del directorio y el cifrado del contacto son posteriores a la campaña de medición (c-82, c-86 y c-153).}
+\caption[Entidades principales del modelo de datos]{Entidades principales del modelo de datos de la configuración entregada (release \texttt{v1.2.7}); el atributo \texttt{reportante\_empleado\_id}, el cuarto rol del directorio y el cifrado del contacto son posteriores a la campaña de medición (c-82, c-86 y c-153).}
 \label{tab:entidades}
 \footnotesize\singlespacing
 \setlength{\tabcolsep}{4pt}
@@ -115,7 +115,7 @@ El canal de origen constituye una entrada opcional del backend: el esquema de cr
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{er_modelo_datos}
-\caption[Diagrama entidad-relación de las siete entidades principales]{Diagrama entidad-relación de las siete entidades principales del modelo de datos de la configuración entregada (release \texttt{v1.2.6}; esquema completo en el Anexo~C).}
+\caption[Diagrama entidad-relación de las siete entidades principales]{Diagrama entidad-relación de las siete entidades principales del modelo de datos de la configuración entregada (release \texttt{v1.2.7}; esquema completo en el Anexo~C).}
 \label{fig:er_modelo_datos}
 \end{figure}
 

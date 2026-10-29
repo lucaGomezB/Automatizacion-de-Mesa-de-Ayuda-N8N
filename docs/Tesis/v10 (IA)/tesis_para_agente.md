@@ -1,6 +1,6 @@
-# Tesis UTN-FRM 2026 - Tesis para agentes (v10 / v1.2.6)
+# Tesis UTN-FRM 2026 - Tesis para agentes (v10 / v1.2.7)
 
-> Documento generado a partir de las fuentes LaTeX de `docs/Tesis/v10 (IA)/paper/sections/` (version de trabajo v10, release `v1.2.6`). Render Markdown de referencia para agentes. Los valores numericos son verbatim de las fuentes.
+> Documento generado a partir de las fuentes LaTeX de `docs/Tesis/v10 (IA)/paper/sections/` (version de trabajo v10, release `v1.2.7`). Render Markdown de referencia para agentes. Los valores numericos son verbatim de las fuentes.
 
 ---
 
@@ -489,15 +489,15 @@ La Tabla `tab:capas` sintetiza las cinco capas y sus responsabilidades específi
 
 *Fuente:* elaboración propia.
 
-[Figura: Diagrama de componentes del módulo Python organizado en capas (routes, services, repositories, classifiers). Describe la configuración entregada (release `v1.2.6] (`fig:componentes`)
+[Figura: Diagrama de componentes del módulo Python organizado en capas (routes, services, repositories, classifiers). Describe la configuración entregada (release `v1.2.7] (`fig:componentes`)
 
 La trazabilidad operativa se garantiza mediante registros estructurados en cada capa, accesibles desde la capa de orquestación. La Figura `fig:arquitectura` representa esquemáticamente el flujo de información entre capas. El despliegue del entorno local —servicios, red Docker, volúmenes y servicios externos— se detalla en la Figura fig:despliegue`, y el flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión, en la Figura `fig:secuencia`.
 
-[Figura: Diagrama de arquitectura del sistema: cinco capas y tres canales de entrada (correo, formulario web y telefonía), en la configuración entregada (release `v1.2.6] (`fig:arquitectura`)
+[Figura: Diagrama de arquitectura del sistema: cinco capas y tres canales de entrada (correo, formulario web y telefonía), en la configuración entregada (release `v1.2.7] (`fig:arquitectura`)
 
 [Figura: Diagrama de despliegue del entorno local. Servicios, red Docker, volúmenes y servicios externos.] (`fig:despliegue`)
 
-[Figura: Diagrama de secuencia del flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión humana, en la configuración entregada (release v1.2.6] (`fig:secuencia`)
+[Figura: Diagrama de secuencia del flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión humana, en la configuración entregada (release v1.2.7] (`fig:secuencia`)
 
 ### Capa de canales de entrada
 
@@ -527,7 +527,7 @@ El camino de clasificación es único para los tres canales de entrada. Tanto el
 
 La persistencia se realiza sobre PostgreSQL 15.5, desplegado en contenedor Docker bajo configuración de respaldo diario y replicación física opcional para entornos productivos [PostgreSQL2024_docs]. El modelo de datos se organiza alrededor de siete entidades principales, descritas en la Tabla `tab:entidades` y en el diagrama entidad-relación de la Figura `fig:er_modelo_datos`.
 
-**Tabla: Entidades principales del modelo de datos de la configuración entregada (release `v1.2.6**
+**Tabla: Entidades principales del modelo de datos de la configuración entregada (release `v1.2.7**
 
 ); el atributo reportante_empleado_id`, el cuarto rol del directorio y el cifrado del contacto son posteriores a la campaña de medición (c-82, c-86 y c-153).
 
@@ -546,7 +546,7 @@ La persistencia se realiza sobre PostgreSQL 15.5, desplegado en contenedor Docke
 
 El canal de origen constituye una entrada opcional del backend: el esquema de creación de incidentes acepta `canal_origen_id` como campo anulable, de modo que un incidente puede registrarse sin canal conocido. La entidad central `incidente` referencia mediante claves foráneas a los catálogos de sector, estado y canal de origen, y mantiene una relación uno a muchos con `clasificacion_log` para preservar la trazabilidad histórica de las decisiones del clasificador. El número de incidente que se comunica al usuario corresponde al identificador único del registro, formateado para su legibilidad; la incorporación de un prefijo configurable se prevé como evolución futura (§`sec:recomendaciones`). El esquema completo, incluyendo restricciones de integridad referencial e índices secundarios, se documenta en el Anexo C. El directorio de empleados (`directorio_empleado`) se vincula opcionalmente con la tabla de autenticación mediante `user_id` y referencia el catálogo de sectores mediante `sector_id`; su campo `rol` distingue al usuario final, a la mesa de ayuda, al administrador del directorio y a la gestión de incidentes (cuatro valores; §`tab:entidades`).
 
-[Figura: Diagrama entidad-relación de las siete entidades principales del modelo de datos de la configuración entregada (release `v1.2.6] (`fig:er_modelo_datos`)
+[Figura: Diagrama entidad-relación de las siete entidades principales del modelo de datos de la configuración entregada (release `v1.2.7] (`fig:er_modelo_datos`)
 
 ### Contrato de la interfaz REST
 
@@ -582,7 +582,7 @@ Los códigos de estado HTTP se utilizan conforme a su semántica original: 201 c
 
 La implementación del sistema se llevó a cabo combinando componentes de código abierto —Python, FastAPI y PostgreSQL— con N8N, cuya licencia Sustainable Use (*fair-code*) permite auditar su código fuente, con el objetivo de garantizar la portabilidad, la reproducibilidad y la auditoría de seguridad de la solución en organizaciones medianas. Toda la infraestructura se encapsula mediante contenedores Docker, orquestados localmente por Docker Compose para los entornos de desarrollo y preproducción; la migración a un cluster Kubernetes 1.30 para el entorno productivo se plantea como trabajo futuro y no cuenta con manifiestos de despliegue en esta versión (§`sec:recomendaciones`).
 
-Las versiones específicas de los componentes de la configuración evaluada (commit `d6bb474`) son: N8N 2.11.2, Python 3.12, PostgreSQL 15.5 con volumen persistente, FastAPI 0.115, Uvicorn 0.30.6, SQLAlchemy 2.0, y el cliente google-genai >=2.20.0 (SDK unificado de Google Generative AI) para la comunicación con el modelo `gemini-3.6-flash`. Todos los servicios se despliegan sobre imágenes Docker oficiales (`python:3.12-slim` y `postgres:15.5-alpine`). La gestión de dependencias del módulo Python se realiza mediante un archivo `requirements.txt` con versiones fijadas (*pinned*) para garantizar la reproducibilidad de las compilaciones en distintos entornos. La configuración entregada (`v1.2.6`) actualiza las del *backend* y el *frontend* (Tabla `tab:configuracion-evaluada-entregada`).
+Las versiones específicas de los componentes de la configuración evaluada (commit `d6bb474`) son: N8N 2.11.2, Python 3.12, PostgreSQL 15.5 con volumen persistente, FastAPI 0.115, Uvicorn 0.30.6, SQLAlchemy 2.0, y el cliente google-genai >=2.20.0 (SDK unificado de Google Generative AI) para la comunicación con el modelo `gemini-3.6-flash`. Todos los servicios se despliegan sobre imágenes Docker oficiales (`python:3.12-slim` y `postgres:15.5-alpine`). La gestión de dependencias del módulo Python se realiza mediante un archivo `requirements.txt` con versiones fijadas (*pinned*) para garantizar la reproducibilidad de las compilaciones en distintos entornos. La configuración entregada (`v1.2.7`) actualiza las del *backend* y el *frontend* (Tabla `tab:configuracion-evaluada-entregada`).
 
 ### Construcción del módulo Python
 
@@ -747,7 +747,7 @@ La Tabla `tab:cumplimiento-nist` cubre las seis funciones de NIST CSF 2.0 y su m
 | RS (Responder) | Plan de respuesta y mitigación | 2 | Plan de respuesta a incidentes vigente (C-61; 5.24–5.27) y manejo de evidencia (5.28 parcial, C-156); residual: operación en producción del adoptante |
 | RC (Recuperar) | Recuperación y restauración | 2 | Respaldo cifrado y continuidad con RTO/RPO; copia fuera del host y redundancia como acción del adoptante (5.29, 5.30, 8.13, 8.14) |
 
-*Fuente:* elaboración propia a partir del gap assessment ISO/IEC 27001:2022/27002:2022 y NIST CSF 2.0 (`docs/cumplimiento/gap-assessment-iso27001-27002-nist-csf2.md`, sección 4), con el estado reconciliado al 28-10-2026 (release `v1.2.6`).
+*Fuente:* elaboración propia a partir del gap assessment ISO/IEC 27001:2022/27002:2022 y NIST CSF 2.0 (`docs/cumplimiento/gap-assessment-iso27001-27002-nist-csf2.md`, sección 4), con el estado reconciliado al 28-10-2026 (release `v1.2.7`).
 
 #### Brechas principales y hoja de ruta
 
@@ -1129,7 +1129,7 @@ Su adopción estuvo condicionada por la madurez de las interfaces de audio bidir
 
 ## Diagrama de arquitectura del sistema
 
-El Anexo A inventaría los diagramas de la arquitectura del sistema entregado (release `v1.2.6`). Los diagramas de arquitectura, despliegue, secuencia y componentes se incluyen como figuras de la §`sec:arquitectura`, de modo que no se reproducen nuevamente aquí. Los cuatro artefactos y el cronograma del estudio, que se reproduce aquí, son:
+El Anexo A inventaría los diagramas de la arquitectura del sistema entregado (release `v1.2.7`). Los diagramas de arquitectura, despliegue, secuencia y componentes se incluyen como figuras de la §`sec:arquitectura`, de modo que no se reproducen nuevamente aquí. Los cuatro artefactos y el cronograma del estudio, que se reproduce aquí, son:
 
  - **Diagrama de arquitectura del sistema** (Figura `fig:arquitectura`, §`sec:arquitectura`): las cinco capas de la Tabla `tab:capas` y los tres canales de entrada (correo, formulario web y telefonía), sin versiones de bibliotecas, que constan en la Tabla `tab:capas` y en la §`tab:configuracion-evaluada-entregada`. Fuente versionada: docs/diagrams/arquitectura_sistema.md.
  - **Diagrama de despliegue** (Figura `fig:despliegue`, §`sec:arquitectura`): los cinco componentes principales (N8N, FastAPI, PostgreSQL, Gemini 3.6 Flash, Twilio), el proxy inverso Nginx, que provee terminación TLS 1.2/1.3 verificada en el despliegue de referencia y que forma parte del stack base sobre el que corrió la ingesta del 2 de octubre (la medición telefónica del 5 y 6 de octubre usó el perfil aislado `corpus`, sin proxy), y las relaciones de comunicación entre ellos. Fuente versionada: docs/diagrams/despliegue.md.
@@ -1143,16 +1143,16 @@ Los diagramas se generan a partir de fuentes Mermaid versionadas en formato `.md
 
 ## Repositorio de código fuente
 
-El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto [Gomez2026_repositorio], accesible en https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado `v1.2.6`, creado sobre el commit que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, la rama principal registra después un commit que solo consigna el hash que figura a continuación, y los commits posteriores no modifican las fuentes de la tesis.
+El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto [Gomez2026_repositorio], accesible en https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado `v1.2.7`, creado sobre el commit que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, la rama principal registra después un commit que solo consigna el hash que figura a continuación, y los commits posteriores no modifican las fuentes de la tesis.
 
 El hash completo de ese commit es ` ea5e01ad7575ea41a1db6cad6923662c1795a3f9`, que constituye la referencia verificable de la versión corregida.
 
-La versión entregada no es la que se evaluó. La *configuración evaluada* es la del commit `d6bb474` (7-10-2026), primera revisión que versiona la cascada `hybrid-v3`; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (§`subsec:protocolo-pruebas`). La *configuración entregada* es la del tag `v1.2.6`. La §`tab:configuracion-evaluada-entregada` consigna, con valores verificados sobre ambas revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella.
+La versión entregada no es la que se evaluó. La *configuración evaluada* es la del commit `d6bb474` (7-10-2026), primera revisión que versiona la cascada `hybrid-v3`; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (§`subsec:protocolo-pruebas`). La *configuración entregada* es la del tag `v1.2.7`. La §`tab:configuracion-evaluada-entregada` consigna, con valores verificados sobre ambas revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella.
 
 **Tabla: Configuración evaluada y configuración entregada**
 
 4pt
-| Elemento | Configuración evaluada (`d6bb474`) | Configuración entregada (`v1.2.6`) |
+| Elemento | Configuración evaluada (`d6bb474`) | Configuración entregada (`v1.2.7`) |
 | — | — | — |
 | FastAPI y Uvicorn | 0.115.0 y 0.30.6 | 0.162.0 y 0.54.0 |
 | SQLAlchemy | 2.0.36 | 2.1.6 |
@@ -1166,7 +1166,7 @@ La versión entregada no es la que se evaluó. La *configuración evaluada* es l
 | Prueba de humo E2E y verificación de TLS | No | Sí (c-140) |
 | Sin cambios | N8N 2.11.2, Python 3.12-slim, PostgreSQL 15.5-alpine, `gemini-3.6-flash` con sus parámetros, umbrales (0,5166 y 0,70), vocabulario y *prompt*; la lógica del clasificador solo cambió en comentarios e importaciones diferidas |
 
-*Fuente:* elaboración propia a partir de `git show d6bb474:`*archivo* y `git show v1.2.6:`*archivo* sobre `requirements.txt`, `package-lock.json`, `n8n/workflow.json`, `docker-compose.yml` y `settings.py`, y de los changes archivados.
+*Fuente:* elaboración propia a partir de `git show d6bb474:`*archivo* y `git show v1.2.7:`*archivo* sobre `requirements.txt`, `package-lock.json`, `n8n/workflow.json`, `docker-compose.yml` y `settings.py`, y de los changes archivados.
 
 La estructura del repositorio separa el módulo de procesamiento (`App/Backend/`, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (`App/Frontend/`, React con TypeScript), la definición del flujo de orquestación (`n8n/workflow.json`), los artefactos de evaluación (`evaluation/`), el corpus pseudonimizado (`data/`), los scripts auxiliares (`scripts/`) y la documentación (`docs/`), junto con las especificaciones de los changes (`openspec/`) y los archivos de orquestación local `docker-compose.yml` y `Makefile`. El archivo `README.md` describe esta organización y reúne las instrucciones detalladas para el despliegue local en menos de 15 minutos, por lo que constituye el punto de entrada al código fuente disponible en el repositorio público [Gomez2026_repositorio].
 

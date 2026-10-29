@@ -4,7 +4,7 @@
 
 \section{Diagrama de arquitectura del sistema}\label{sec:anexo-diagrama-arquitectura}
 
-El Anexo~A inventaría los diagramas de la arquitectura del sistema entregado (release \texttt{v1.2.6}). Los diagramas de arquitectura, despliegue, secuencia y componentes se incluyen como figuras de la \autoref{sec:arquitectura}, de modo que no se reproducen nuevamente aquí. Los cuatro artefactos y el cronograma del estudio, que se reproduce aquí, son:
+El Anexo~A inventaría los diagramas de la arquitectura del sistema entregado (release \texttt{v1.2.7}). Los diagramas de arquitectura, despliegue, secuencia y componentes se incluyen como figuras de la \autoref{sec:arquitectura}, de modo que no se reproducen nuevamente aquí. Los cuatro artefactos y el cronograma del estudio, que se reproduce aquí, son:
 
 \begin{itemize}
   \item \textbf{Diagrama de arquitectura del sistema} (Figura~\ref{fig:arquitectura}, \autoref{sec:arquitectura}): las cinco capas de la Tabla~\ref{tab:capas} y los tres canales de entrada (correo, formulario web y telefonía), sin versiones de bibliotecas, que constan en la Tabla~\ref{tab:capas} y en la \autoref{tab:configuracion-evaluada-entregada}. Fuente versionada: \path{docs/diagrams/arquitectura_sistema.md}.
@@ -25,11 +25,11 @@ Los diagramas se generan a partir de fuentes Mermaid versionadas en formato \tex
 
 \section{Repositorio de código fuente}\label{sec:anexo-repositorio}
 
-El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto \parencite{Gomez2026_repositorio}, accesible en \url{https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N}. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado \texttt{v1.2.6}, creado sobre el commit que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, la rama principal registra después un commit que solo consigna el hash que figura a continuación, y los commits posteriores no modifican las fuentes de la tesis.
+El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto \parencite{Gomez2026_repositorio}, accesible en \url{https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N}. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado \texttt{v1.2.7}, creado sobre el commit que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, la rama principal registra después un commit que solo consigna el hash que figura a continuación, y los commits posteriores no modifican las fuentes de la tesis.
 
 El hash completo de ese commit es \texttt{\small ea5e01ad7575ea41a1db6cad6923662c1795a3f9}, que constituye la referencia verificable de la versión corregida.
 
-La versión entregada no es la que se evaluó. La \emph{configuración evaluada} es la del commit \texttt{d6bb474} (7-10-2026), primera revisión que versiona la cascada \texttt{hybrid-v3}; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (\autoref{subsec:protocolo-pruebas}). La \emph{configuración entregada} es la del tag \texttt{v1.2.6}. La \autoref{tab:configuracion-evaluada-entregada} consigna, con valores verificados sobre ambas revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella.
+La versión entregada no es la que se evaluó. La \emph{configuración evaluada} es la del commit \texttt{d6bb474} (7-10-2026), primera revisión que versiona la cascada \texttt{hybrid-v3}; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (\autoref{subsec:protocolo-pruebas}). La \emph{configuración entregada} es la del tag \texttt{v1.2.7}. La \autoref{tab:configuracion-evaluada-entregada} consigna, con valores verificados sobre ambas revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella.
 
 \begin{table}[htbp]
 \small
@@ -39,7 +39,7 @@ La versión entregada no es la que se evaluó. La \emph{configuración evaluada}
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{5.8cm} >{\raggedright\arraybackslash}p{5.8cm}@{}}
 \toprule
-Elemento & Configuración evaluada (\texttt{d6bb474}) & Configuración entregada (\texttt{v1.2.6}) \\
+Elemento & Configuración evaluada (\texttt{d6bb474}) & Configuración entregada (\texttt{v1.2.7}) \\
 \midrule
 FastAPI y Uvicorn & 0.115.0 y 0.30.6 & 0.162.0 y 0.54.0 \\
 SQLAlchemy & 2.0.36 & 2.1.6 \\
@@ -56,7 +56,7 @@ Sin cambios & \multicolumn{2}{>{\raggedright\arraybackslash}p{11.6cm}}{N8N 2.11.
 \bottomrule
 \end{tabular}
 \par\smallskip
-{\footnotesize\textit{Fuente:} elaboración propia a partir de \texttt{git show d6bb474:}\emph{archivo} y \texttt{git show v1.2.6:}\emph{archivo} sobre \texttt{requirements.txt}, \texttt{package-lock.json}, \texttt{n8n/workflow.json}, \texttt{docker-compose.yml} y \texttt{settings.py}, y de los changes archivados.\par}
+{\footnotesize\textit{Fuente:} elaboración propia a partir de \texttt{git show d6bb474:}\emph{archivo} y \texttt{git show v1.2.7:}\emph{archivo} sobre \texttt{requirements.txt}, \texttt{package-lock.json}, \texttt{n8n/workflow.json}, \texttt{docker-compose.yml} y \texttt{settings.py}, y de los changes archivados.\par}
 \end{table}
 
 La estructura del repositorio separa el módulo de procesamiento (\texttt{App/Backend/}, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (\texttt{App/Frontend/}, React con TypeScript), la definición del flujo de orquestación (\texttt{n8n/workflow.json}), los artefactos de evaluación (\texttt{evaluation/}), el corpus pseudonimizado (\texttt{data/}), los scripts auxiliares (\texttt{scripts/}) y la documentación (\texttt{docs/}), junto con las especificaciones de los changes (\texttt{openspec/}) y los archivos de orquestación local \texttt{docker-compose.yml} y \texttt{Makefile}. El archivo \texttt{README.md} describe esta organización y reúne las instrucciones detalladas para el despliegue local en menos de 15 minutos, por lo que constituye el punto de entrada al código fuente disponible en el repositorio público \parencite{Gomez2026_repositorio}.
