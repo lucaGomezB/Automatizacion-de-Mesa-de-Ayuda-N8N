@@ -4144,7 +4144,7 @@ los flujos de integración continua sobre GitHub Actions se encuentran disponibl
 co del proyecto (Gómez et al. 2026), accesible en https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N
 El commit de referencia para la versión entregada al jurado se identifica con el tag anotado v1.2.7,
 creado sobre el commit definitivo del repositorio.
-El hash completo de ese commit es ea5e01ad7575ea41a1db6cad6923662c1795a3f9, que
+El hash completo de ese commit es bc6a63ca43c2738cd2904ebca8890529963ac3cd, que
 constituye la referencia verificable de la versión corregida.
 La estructura del repositorio separa el módulo de procesamiento (App/Backend/, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (App/Frontend/, React
 con TypeScript), la definición del flujo de orquestación (n8n/workflow.json), los artefactos de evaluación (evaluation/), el corpus pseudonimizado (data/), los scripts auxiliares (scripts/) y la
