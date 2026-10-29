@@ -32,6 +32,8 @@
 
  Mendoza, República Argentina
 
+ 30 de octubre de 2026
+
 ## Resumen
 
 La digitalización de los procesos organizacionales incrementa la dependencia de los sistemas informáticos y la criticidad de la gestión de incidentes. En muchas organizaciones medianas el registro inicial aún es manual, lo que genera demoras, errores de clasificación y uso ineficiente de recursos técnicos.

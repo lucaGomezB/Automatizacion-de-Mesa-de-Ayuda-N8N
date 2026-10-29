@@ -3460,7 +3460,7 @@ Cierre de las recomendaciones 9 a 13 del dictamen CONEAU del 2026-10-28 sobre la
 ### Origen y linea base
 
 - Linea base de compilacion: **111 paginas**, "Referencias bibliograficas" en la pagina **97**. Comando reproducible: `MSYS_NO_PATHCONV=1 docker run --rm -v "$PWD/docs/Tesis/v10 (IA)":/work -w /work/paper texlive-thesis latexmk main.tex`.
-- Author decisions: OQ-1 = B (fecha de portada DIFERIDA; `00-portada.tex` conserva `\today`); OQ-2 confirmada (regenerar las figuras con erratas).
+- Author decisions: OQ-1 = B en el apply (fecha de portada diferida; se resolvio despues, ver mas abajo); OQ-2 confirmada (regenerar las figuras con erratas).
 
 ### Cierre de las recomendaciones 9 a 13
 
@@ -3481,9 +3481,9 @@ Cierre de las recomendaciones 9 a 13 del dictamen CONEAU del 2026-10-28 sobre la
 
 La Figura 2 `arquitectura_sistema.png` ya la regenero c-159 y NO se toco. Todas las figuras se regeneraron fielmente (mismo ratio para las Mermaid, salida desde el script real para las de matplotlib); ninguna quedo declarada como no regenerada.
 
-### OQ-1 (fecha de portada) - item abierto
+### OQ-1 (fecha de portada) - RESUELTA
 
-DIFERIDA por decision del autor (opcion B, 2026-10-29): `00-portada.tex` conserva `\today` y no se modifica. El item queda abierto para fijar la fecha de entrega cuando sea firme.
+Diferida en el apply por decision del autor (opcion B, 2026-10-29). **RESUELTA el 2026-10-29**: se fijo la fecha de entrega en la portada como texto plano `30 de octubre de 2026`, reemplazando `\today` en `00-portada.tex`; el PDF entregado ya no cambia de fecha con cada recompilacion.
 
 ### Compilacion, paginas y palabras
 
@@ -3498,7 +3498,7 @@ El delta +1 proviene de una pagina viuda de la subseccion 7.6.5 en el capitulo l
 
 ### Release
 
-- **Nota de release (planificada, NO publicada en este change):** la release **v1.2.7** incluira c-163. El tag y el commit los publica el orquestador; este change solo deja la nota. No se creo tag ni commit.
+- **Release:** c-163 quedo incluida en la release **v1.2.6** (tag anotado sobre `ea5e01ad7575ea41a1db6cad6923662c1795a3f9`, 2026-10-29), publicada por el orquestador.
 
 ---
 
