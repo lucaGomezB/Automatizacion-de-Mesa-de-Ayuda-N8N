@@ -1145,7 +1145,7 @@ Los diagramas se generan a partir de fuentes Mermaid versionadas en formato `.md
 
 El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto [Gomez2026_repositorio], accesible en https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado `v1.2.7`, creado sobre el commit que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, la rama principal registra después un commit que solo consigna el hash que figura a continuación, y los commits posteriores no modifican las fuentes de la tesis.
 
-El hash completo de ese commit es ` ea5e01ad7575ea41a1db6cad6923662c1795a3f9`, que constituye la referencia verificable de la versión corregida.
+El hash completo de ese commit es ` bc6a63ca43c2738cd2904ebca8890529963ac3cd`, que constituye la referencia verificable de la versión corregida.
 
 La versión entregada no es la que se evaluó. La *configuración evaluada* es la del commit `d6bb474` (7-10-2026), primera revisión que versiona la cascada `hybrid-v3`; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (§`subsec:protocolo-pruebas`). La *configuración entregada* es la del tag `v1.2.7`. La §`tab:configuracion-evaluada-entregada` consigna, con valores verificados sobre ambas revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella.
 
