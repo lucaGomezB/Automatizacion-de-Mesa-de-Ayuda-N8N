@@ -323,6 +323,12 @@ INPUT ./figures/despliegue.png
 INPUT ./figures/despliegue.png
 INPUT ./figures/secuencia.png
 INPUT ./figures/secuencia.png
+INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/cm/cmmi9.tfm
+INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/cm/cmsy9.tfm
+INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex9.tfm
+INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm
+INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
+INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/cm/cmr9.tfm
 INPUT ./figures/er_modelo_datos.png
 INPUT ./figures/er_modelo_datos.png
 INPUT ./sections/06-implementacion.tex
@@ -335,12 +341,6 @@ INPUT ./figures/dashboard.png
 INPUT ./sections/11-aspectos-legales.tex
 INPUT ./sections/11-aspectos-legales.tex
 INPUT sections/11-aspectos-legales.tex
-INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/cm/cmmi9.tfm
-INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/cm/cmsy9.tfm
-INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex9.tfm
-INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm
-INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
-INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/cm/cmr9.tfm
 INPUT ./sections/07-resultados.tex
 INPUT ./sections/07-resultados.tex
 INPUT sections/07-resultados.tex

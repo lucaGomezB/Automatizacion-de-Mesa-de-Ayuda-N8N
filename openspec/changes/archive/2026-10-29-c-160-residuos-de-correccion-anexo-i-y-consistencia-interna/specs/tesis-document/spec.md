@@ -205,6 +205,12 @@ La segunda sub-hipotesis (`01-introduccion.tex`, `subsec:hipotesis-trabajo`) SHA
 - **THEN** no aparecen "formulación original", "no era contrastable" ni "tampoco esta se contrasta"
 - **AND** el registro de correcciones conserva literal el texto retirado con su ubicacion previa
 
+#### Scenario: Formulacion original declarada no contrastable
+
+- **WHEN** se busca en el cuerpo de la tesis la formulacion original de la segunda sub-hipotesis (comparacion con el proceso manual, donde la intervencion es total por definicion)
+- **THEN** el cuerpo no la narra ni declara que no era contrastable
+- **AND** esa formulacion original y su no contrastabilidad constan solo en el registro de correcciones y en el Anexo I
+
 #### Scenario: Sin confirmacion espuria por el gate
 
 - **WHEN** se leen la introduccion y la subseccion `subsec:reduccion-intervencion` de resultados
@@ -285,11 +291,17 @@ El capitulo de consideraciones eticas y legales (`11-aspectos-legales.tex`, subs
 
 La tabla `tab:cumplimiento-objetivos` de `09-conclusiones.tex` SHALL asignar a cada objetivo el grado "Alcanzado" solo cuando cada componente exigido por su enunciado literal en `01-introduccion.tex` este evidenciado en la version evaluada; "Alcanzado parcialmente" cuando al menos un componente este evidenciado y al menos otro no se cumpla o no se haya medido; y "No alcanzado" cuando no se cumpla el criterio del objetivo. Toda fila "Alcanzado parcialmente" SHALL nombrar en su evidencia el componente no cumplido o no medido. Los objetivos especificos 1, 3, 4 y 6 SHALL figurar como "Alcanzado parcialmente" mientras falte la evidencia de, respectivamente, la comunicacion asincronica (el alta sigue siendo sincronica, con reintentos idempotentes); la complejidad operativa percibida por los usuarios (la latencia y la exactitud por canal ya estan medidas); la exactitud del brazo manual y la proporcion de intervencion humana; y la recalibracion de la confianza, con el analisis de errores y las bandas de confianza estimados dentro de la muestra. La verificacion de TLS SHALL declararse igual en la celda del objetivo 1 y en la prosa de las conclusiones: realizada despues de la campana, sobre el despliegue de referencia de la version entregada, y no sobre la configuracion evaluada ni sobre la instancia operativa. El objetivo general SHALL desglosarse en sus tres componentes (tiempo de registro, calidad de la clasificacion y proporcion de intervencion humana) con estado individual, y su grado global SHALL ser coherente con ese desglose. El documento MUST NOT reformular el enunciado de un objetivo para ajustarlo a lo construido o medido, y la prosa de las conclusiones SHALL ser coherente con la tabla.
 
-#### Scenario: Objetivos 1, 3, 4 y 6 parcialmente alcanzados
+#### Scenario: Objetivos 1, 3 y 4 parcialmente alcanzados
 
-- **WHEN** se leen las filas de los objetivos especificos 1, 3, 4 y 6 en `tab:cumplimiento-objetivos`
+- **WHEN** se leen las filas de los objetivos especificos 1, 3 y 4 en `tab:cumplimiento-objetivos`
 - **THEN** cada una declara "Alcanzado parcialmente"
-- **AND** su evidencia nombra el componente faltante: alta sincronica y TLS verificado solo despues de la campana en el despliegue de referencia (1); complejidad percibida no medida, con latencia y exactitud por canal medidas (3); exactitud del brazo manual e intervencion humana no medidas (4); confianza no recalibrada y analisis estimado dentro de la muestra (6)
+- **AND** su evidencia nombra el componente faltante: alta sincronica y TLS verificado solo despues de la campana en el despliegue de referencia (1); complejidad percibida no medida, con latencia y exactitud por canal medidas (3); exactitud del brazo manual e intervencion humana no medidas (4)
+
+#### Scenario: Objetivo 6 parcialmente alcanzado
+
+- **WHEN** se lee la fila del objetivo especifico 6 en `tab:cumplimiento-objetivos`
+- **THEN** declara "Alcanzado parcialmente"
+- **AND** su evidencia nombra el componente faltante: confianza no recalibrada y analisis estimado dentro de la muestra
 
 #### Scenario: Objetivo general desglosado
 

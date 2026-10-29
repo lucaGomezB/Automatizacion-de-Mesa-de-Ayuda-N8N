@@ -93,7 +93,7 @@ def convert_envs(text: str) -> str:
 
     # figure -> nota
     def figure(m):
-        cap = re.search(r"\\caption\{(.+?)\}", m.group(1), flags=re.S)
+        cap = re.search(r"\\caption(?:\[[^\]]*\])?\{(.+?)\}", m.group(1), flags=re.S)
         lab = re.search(r"\\label\{(.+?)\}", m.group(1))
         name = cap.group(1).strip() if cap else "figura"
         name = re.sub(r"\s+", " ", name)
@@ -105,9 +105,9 @@ def convert_envs(text: str) -> str:
     # table wrapper: keep only the tabular (already converted) + caption
     def tablewrap(m):
         body = m.group(1)
-        cap = re.search(r"\\caption\{(.+?)\}", body, flags=re.S)
+        cap = re.search(r"\\caption(?:\[[^\]]*\])?\{(.+?)\}", body, flags=re.S)
         capname = re.sub(r"\s+", " ", cap.group(1).strip()) if cap else ""
-        body = re.sub(r"\\caption\{.+?\}", "", body, flags=re.S)
+        body = re.sub(r"\\caption(?:\[[^\]]*\])?\{.+?\}", "", body, flags=re.S)
         body = re.sub(r"\\label\{[^}]*\}", "", body)
         header = f"\n**Tabla: {capname}**\n" if capname else "\n"
         return header + body

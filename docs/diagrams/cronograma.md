@@ -86,6 +86,8 @@ del repositorio, en solo lectura.
 | Documento de arquitectura (`knowledge-base/08_arquitectura_propuesta.md`) | 2026-06-10 | Commit `0ceebe0` | `git log --diff-filter=A --date=short --format='%ad %h' -- knowledge-base/08_arquitectura_propuesta.md` |
 | Contrato OpenAPI estático (`docs/openapi.json`) | 2026-06-11 | Commit `15f9516` (c-10) | `git log --diff-filter=A --date=short --format='%ad %h' -- docs/openapi.json` |
 | Endurecimiento del clasificador determinístico (c-71) y calibración del cortocircuito (c-74), medidos sobre el corpus fuera de línea | 2026-10-05 y 2026-10-07 | Commits `1368fd8` y `d6bb474`; changes archivados 2026-10-06 y 2026-10-07 | `git log -1 --date=short --format='%ad %h %s' 1368fd8 d6bb474` |
+| Unificación de la clasificación telefónica en la cascada del backend (c-72), contemporánea de la corrida de telefonía | 2026-10-06 (16:38 -0300) | Commit `a76851e`; retira el agente LLM de N8N (38 a 28 nodos) | `git log -1 --date=iso --format='%ad %h %s' a76851e` |
+| Clasificación `hybrid-v3` fuera de línea (métricas de clasificación de la tesis) | 2026-10-07 (22:22 UTC) | `cache_meta` de `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` (`generated_at`, `classifier_version`, `corpus_hash`); es anterior en 27 minutos al commit `d6bb474` (19:49 -0300), primera revisión que versiona `hybrid-v3` | `python -c "import json;print(json.load(open('evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json'))['cache_meta'])"` |
 | `evaluation/report.md` versionado | 2026-10-20 | Commit `8e1ca55` | `git log --date=short --format='%ad %h %s' -- evaluation/report.md` |
 | Tags `v1.0.0` a `v1.1.1` (cierre documental, no iteraciones) | 2026-10-21 y 2026-10-22 | Tags | `git for-each-ref --sort=creatordate --format='%(refname:short) %(creatordate:short)' refs/tags` |
 
@@ -112,3 +114,15 @@ del repositorio, en solo lectura.
   iteración 5 de `06-implementacion.tex` no afirma ausencia de exposición al corpus
   (verificado con `grep "sin exposici" "docs/Tesis/v10 (IA)/paper/sections/06-implementacion.tex"`),
   y su fecha no se declara (OQ-1).
+- **Inicio de la corrida de telefonía (c-158, consulta Q1 a los autores).** La fecha del
+  hito (2026-10-06) es la de conclusión (c-70, `tasks.md` 8.2). Al menos 25 casos
+  telefónicos ya estaban medidos al cierre del 2026-10-05 (c-71, `tasks.md:71`, 56 casos
+  con tiempo nulo; c-72, `proposal.md:7`, subconjunto de 25 casos medidos con el agente
+  LLM de N8N). Si los autores confirman que la corrida comenzó el 2026-10-05, 1.8, 4.5, la
+  leyenda de la Figura 10 y este archivo pasan a "5 y 6 de octubre"; hasta entonces
+  el texto de la tesis describe la corrida como concluida el 6-10 y declara los 25 casos.
+- **OQ-2, cierre parcial (c-158).** Hasta el 2026-10-02 los 200 casos carecían de tiempo
+  automatizado (c-68, `proposal.md:3`): ningún tiempo del corpus proviene de un
+  procesamiento entre el 2026-09-01 y el 2026-09-23. Queda abierto solo si existió
+  procesamiento de prueba sin registro de tiempos en esa ventana.
+
