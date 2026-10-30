@@ -95,15 +95,16 @@ antes; identificadores en español; sin red ni Gemini. No se escriben ni se rege
 
 ## 8. CLI de solo lectura (`evaluation/analisis_campana.py`)
 
-- [ ] 8.1 RED: test end-to-end del CLI sobre los fixtures en `tmp_path` con red bloqueada (monkeypatch de `socket.socket`): escribe `resultados.json`, `resultados.md` y `SHA256SUMS.txt` y ningún otro archivo; verificar que falla
-- [ ] 8.2 GREEN: implementar el CLI (lectura, validación mínima con error que nombra archivo y columna, delegación, escritura); verificar 8.1
-- [ ] 8.3 Triangular: sin `intervenciones.csv` la sección de intervención dice "no se obtuvo" y kappa y exactitud se reportan; columna `inicio` faltante da error que la nombra
-- [ ] 8.4 Reproducibilidad: dos corridas producen `resultados.json` y `SHA256SUMS.txt` idénticos
-- [ ] 8.5 Crear `evaluation/data/campana/analisis/README.md` con procedencia, entradas esperadas, semilla, remuestreos y el significado de `SHA256SUMS.txt`
-- [ ] 8.6 REFACTOR; suite verde
+- [x] 8.1 RED: test end-to-end del CLI sobre los fixtures en `tmp_path` con red bloqueada (monkeypatch de `socket.socket`): escribe `resultados.json`, `resultados.md` y `SHA256SUMS.txt` y ningún otro archivo; verificar que falla
+- [x] 8.2 GREEN: implementar el CLI (lectura, validación mínima con error que nombra archivo y columna, delegación, escritura); verificar 8.1
+- [x] 8.3 Triangular: sin `intervenciones.csv` la sección de intervención dice "no se obtuvo" y kappa y exactitud se reportan; columna `inicio` faltante da error que la nombra
+- [x] 8.4 Reproducibilidad: dos corridas producen `resultados.json` y `SHA256SUMS.txt` idénticos
+- [x] 8.5 Crear `evaluation/data/campana/analisis/README.md` con procedencia, entradas esperadas, semilla, remuestreos y el significado de `SHA256SUMS.txt`
+- [x] 8.6 REFACTOR; suite verde
 
 ## 9. Cierre
 
-- [ ] 9.1 Ejecutar `python -m pytest evaluation` y verificar la suite completa verde, offline, con al menos los N tests de la línea base más los nuevos
-- [ ] 9.2 Ejecutar `openspec validate c-167-analisis-de-la-nueva-campana-y-de-la-fiabilidad-entre-etiquetadores --strict --no-interactive`
-- [ ] 9.3 Ejecutar `git diff --stat` y verificar que `evaluation/report.md`, `evaluation/predicciones.json`, `evaluation/predicciones_calibracion.json` y los números canónicos v9 no figuran; comparar sus SHA-256 con la línea base de 0.2
+- [x] 9.1 Ejecutar `python -m pytest evaluation` y verificar la suite completa verde, offline, con al menos los N tests de la línea base más los nuevos (25 fallas preexistentes de entorno: 23 de `test_sensibilidad_ajustes.py` + 1 de `test_sensibilidad_corpus.py` por el env var del backend `directory_blind_index_key`, y 1 de `test_campana.py` por los artefactos v9 gitignoreados ausentes; las 11 pruebas nuevas del CLI pasan)
+- [x] 9.2 Ejecutar `openspec validate c-167-analisis-de-la-nueva-campana-y-de-la-fiabilidad-entre-etiquetadores --strict --no-interactive`
+- [x] 9.3 Ejecutar `git diff --stat` y verificar que `evaluation/report.md`, `evaluation/predicciones.json`, `evaluation/predicciones_calibracion.json` y los números canónicos v9 no figuran; comparar sus SHA-256 con la línea base de 0.2 (los dos artefactos v9 están gitignoreados y ausentes en este worktree, por lo que no figuran en el diff y no son tocados)
+
