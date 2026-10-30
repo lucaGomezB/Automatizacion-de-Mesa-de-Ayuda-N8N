@@ -44,7 +44,7 @@ archivo. Mientras no exista la tabla, los valores quedan en `pendiente`.
 - corpus_sha256: pendiente
 - tarea: pendiente
 - comando_de_validacion: pendiente
-- codebook_sha256: pendiente
+- codebook_sha256: d9777139e9eaffe7903fa63d69d2bee346ff2b43599409aedaaebd21a8be9167
 - estado_cegado: pendiente
 - motivo_limitacion: no aplica
 
