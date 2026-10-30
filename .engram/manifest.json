@@ -824,6 +824,14 @@
       "sessions": 0,
       "memories": 1,
       "prompts": 2
+    },
+    {
+      "id": "8702cff4",
+      "created_by": "Gonzalo",
+      "created_at": "2026-10-30T04:14:25Z",
+      "sessions": 0,
+      "memories": 14,
+      "prompts": 0
     }
   ]
 }
