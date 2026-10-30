@@ -16,8 +16,11 @@
  *   - Muestra un mensaje contextual diferenciando "confirmación" de "corrección",
  *     ya que las correcciones alimentan el corpus de evaluación del modelo.
  *   - `resetMutation()` al abrir asegura que errores de intentos previos no persistan.
+ *   - c-165 (ASG-005): al abrirse toma el instante de INICIO de la intervencion y lo envia
+ *     al confirmar como `intervencion_inicio_en`. El dialogo NUNCA envia
+ *     `origen_intervencion`: el backend lo deriva (gate o muestreo segun el log).
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CheckCheck, Loader2, AlertCircle, User } from 'lucide-react';
 import {
@@ -65,11 +68,22 @@ export function ValidarClasificacionDialog({
   // esquema de identificador para principal y adicionales.
   const [sectorPrincipalNombre, setSectorPrincipalNombre] = useState<string>('');
   const [sectoresAdicionales, setSectoresAdicionales] = useState<string[]>([]);
+  // c-165 (ASG-005): instante (ISO-8601 UTC) en que el operador abrio el dialogo para este
+  // log. Es un dato de auditoria que no se renderiza: va en una ref, no en estado.
+  const inicioIntervencionRef = useRef<string | null>(null);
   // Opciones de sector obtenidas en runtime desde el catálogo (sin IDs numéricos fijos)
   const { data: sectores } = useSectores();
 
   const incidenteId = clasificacion?.incidente_id ?? null;
   const habilitado = open && incidenteId !== null;
+  const clasificacionId = clasificacion?.id ?? null;
+
+  // El inicio se fija cuando el dialogo SE ABRE (o pasa a mostrar otro log), no al
+  // confirmar ni cuando la lista refresca el mismo log con otra identidad de objeto.
+  useEffect(() => {
+    inicioIntervencionRef.current =
+      open && clasificacionId !== null ? new Date().toISOString() : null;
+  }, [open, clasificacionId]);
 
   // Detalle del incidente — misma query key que TicketDetailDialog (cache compartida)
   const {
@@ -103,14 +117,19 @@ export function ValidarClasificacionDialog({
       logId,
       sectorValidado,
       sectoresAdicionales: adicionales,
+      intervencionInicioEn,
     }: {
       logId: number;
       sectorValidado: string;
       sectoresAdicionales: string[];
+      intervencionInicioEn: string | null;
     }) =>
       validarClasificacion(logId, {
         sector_validado: sectorValidado,
         sectores_adicionales: adicionales,
+        // c-165: unico dato de la intervencion que declara el cliente. NO se envia
+        // `origen_intervencion` (lo deriva el backend y un payload que lo traiga da 422).
+        ...(intervencionInicioEn ? { intervencion_inicio_en: intervencionInicioEn } : {}),
       }),
     onSuccess: (clasificacionActualizada) => {
       // Invalida la cola de revisión y la lista de incidentes para reflejar el cambio
@@ -164,6 +183,7 @@ export function ValidarClasificacionDialog({
       logId: clasificacion.id,
       sectorValidado: sectorPrincipalNombre,
       sectoresAdicionales,
+      intervencionInicioEn: inicioIntervencionRef.current,
     });
   };
 

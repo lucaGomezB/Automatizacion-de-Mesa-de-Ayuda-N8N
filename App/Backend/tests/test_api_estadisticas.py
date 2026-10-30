@@ -389,3 +389,79 @@ async def test_patch_nonexistent_incidente_404(
         )
 
     assert response.status_code == 404
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# c-165 (ECM-003): tasa_intervencion_backend en GET /resumen
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+@pytest.mark.asyncio
+async def test_resumen_expone_la_tasa_de_intervencion_backend_junto_a_la_de_revision(
+    seed_catalogs, make_client_with_classifier
+):
+    """
+    Tres incidentes marcados para revision y uno validado confirmando el sector predicho:
+    intervencion 1/3 (la confirmacion CUENTA) y revision humana 2/3 (pendientes). Las dos
+    metricas conviven y miden cosas distintas.
+    """
+    pendiente = _make_result(confianza=0.55, requiere_revision_humana=True)
+
+    async with make_client_with_classifier(pendiente) as client:
+        await _create_incidentes(client, count=3)
+        cola = (await client.get("/api/v1/clasificaciones/revision-pendiente")).json()
+        validar = await client.patch(
+            f"/api/v1/clasificaciones/{cola[0]['id']}/validar",
+            json={"sector_validado": "Sistemas"},
+        )
+        assert validar.status_code == 200
+        response = await client.get("/api/v1/estadisticas/resumen")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["tasa_intervencion_backend"] == pytest.approx(0.3333, abs=1e-4)
+    assert body["tasa_revision_humana"] == pytest.approx(0.6667, abs=1e-4)
+    assert body["intervenciones_por_origen"] == {
+        "gate": 1,
+        "muestreo": 0,
+        "rederivacion": 0,
+        "completado_manual": 0,
+    }
+    assert body["intervenciones_por_cambio_sector"] == {"true": 0, "false": 1}
+    assert body["intervenciones_legadas_excluidas"] == 0
+
+
+@pytest.mark.asyncio
+async def test_resumen_de_un_rango_vacio_informa_la_intervencion_en_cero(
+    seed_catalogs, make_client_with_classifier
+):
+    async with make_client_with_classifier(_make_result()) as client:
+        response = await client.get(
+            "/api/v1/estadisticas/resumen",
+            params={"desde": "2026-07-01", "hasta": "2026-07-01"},
+        )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["tasa_intervencion_backend"] == 0.0
+    assert body["intervenciones_por_origen"] == {
+        "gate": 0,
+        "muestreo": 0,
+        "rederivacion": 0,
+        "completado_manual": 0,
+    }
+    assert body["intervenciones_por_cambio_sector"] == {"true": 0, "false": 0}
+    assert body["intervenciones_legadas_excluidas"] == 0
+
+
+def test_la_descripcion_de_tasa_revision_humana_dice_que_mide_pendientes():
+    """La descripcion corregida: mide PENDIENTES al momento de la consulta, no casos marcados."""
+    from app.schemas.estadisticas import ResumenResponse
+
+    revision = ResumenResponse.model_fields["tasa_revision_humana"].description
+    intervencion = ResumenResponse.model_fields["tasa_intervencion_backend"].description
+
+    assert "pendientes" in revision.lower()
+    assert "momento de la consulta" in revision.lower()
+    assert "tasa_intervencion_backend" in revision
+    assert "legad" in intervencion.lower()

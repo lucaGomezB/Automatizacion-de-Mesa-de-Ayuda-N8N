@@ -8,7 +8,8 @@ Responsabilidad:
     TendenciasRequest  → Query params: agrupar_por (dia|mes), desde, hasta, sector_id.
     TendenciasResponse → Serie temporal con totales por periodo y distribucion por sector.
     ResumenRequest     → Query params opcionales (desde, hasta).
-    ResumenResponse    → KPIs agregados: totales, promedio diario, tasa revision humana.
+    ResumenResponse    → KPIs agregados: totales, promedio diario, tasa revision humana y
+                         tasa de intervencion registrada por el backend (c-165).
 """
 
 from datetime import date, timedelta
@@ -88,5 +89,42 @@ class ResumenResponse(BaseModel):
         description="Distribucion de incidentes por estado"
     )
     tasa_revision_humana: float = Field(
-        description="Proporcion de incidentes que requirieron revision humana (0.0 a 1.0)"
+        description=(
+            "Proporcion de incidentes del rango que, al momento de la consulta, siguen "
+            "pendientes de revision humana (flag requiere_revision_humana en True; 0.0 a 1.0). "
+            "No cuenta los casos marcados que ya se validaron ni mide intervenciones: para eso "
+            "ver tasa_intervencion_backend."
+        )
+    )
+    # c-165 (ECM-003): intervencion humana registrada por el backend sobre la cohorte de
+    # logs de clasificacion creados en el rango. Se expone junto a (no en lugar de)
+    # tasa_revision_humana.
+    tasa_intervencion_backend: float = Field(
+        description=(
+            "Intervenciones humanas / logs de clasificacion creados en el rango (0.0 a 1.0). "
+            "Cuenta un log si tiene validado_en (una confirmacion del sector predicho cuenta; "
+            "un caso marcado que nadie valido, no). Excluye del numerador y del denominador "
+            "los logs legados (sector validado sin validado_en, previos a la migracion 024), "
+            "informados en intervenciones_legadas_excluidas. 0.0 si la cohorte esta vacia."
+        )
+    )
+    intervenciones_por_origen: dict[str, int] = Field(
+        default_factory=dict,
+        description=(
+            "Intervenciones por origen_intervencion (gate, muestreo, rederivacion y "
+            "completado_manual, este ultimo reservado y siempre en cero)"
+        ),
+    )
+    intervenciones_por_cambio_sector: dict[str, int] = Field(
+        default_factory=dict,
+        description=(
+            "Intervenciones segun cambiaron o no el sector predicho "
+            "(claves 'true' y 'false'; una confirmacion cuenta en 'false')"
+        ),
+    )
+    intervenciones_legadas_excluidas: int = Field(
+        description=(
+            "Logs de la cohorte validados antes de existir los metadatos de intervencion "
+            "(sector validado sin validado_en), excluidos de la tasa"
+        )
     )

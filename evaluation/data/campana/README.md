@@ -131,3 +131,49 @@ La evidencia congelada no registró `commit` ni `pines`: su `cache_meta` trae so
 
 - La comparabilidad in-sample/out-of-sample se verifica por `classifier_version` idéntico (`hybrid-v3`) y por `pines`: el `modelo` debe coincidir exactamente. El in-sample solo conserva el **rango** declarado de `google-genai`, mientras que el cache independiente registra la versión **instalada**: la igualdad exacta de versiones instaladas no es verificable, y lo comprobable es que la versión del cache independiente cumpla el rango del in-sample; esa versión se informa junto con los resultados.
 - El `commit` es obligatorio solo en el cache independiente (se registra con `git rev-parse --short HEAD` al generarlo y la corrida falla antes de clasificar si no puede obtenerse). En el in-sample no se puede recuperar el commit de generación: solo se sabe que la cascada `hybrid-v3` está versionada desde `d6bb474` y que la evidencia se publicó en `fec4c42`.
+
+## Export de intervenciones (c-165)
+
+`intervenciones.csv` es el dataset de intervención humana de la campaña: lo produce `App/Backend/scripts/exportar_intervenciones.py` a partir de `clasificacion_log` y lo lee c-167 para la `tasa_intervencion_humana` y la proporción de tiempo. No contiene datos personales: el actor es un alias derivado con clave. El protocolo (cuándo y cómo se produce y cómo se verifica) está en `docs/campana-medicion/runbook-brazo-manual-e-intervencion.md`.
+
+Columnas, en este orden: `id_caso, incidente_id, log_id, origen_intervencion, intervencion_inicio_en, validado_en, duracion_s, sector_predicho, sector_validado, cambio_sector, actor_alias`.
+
+- Una fila por log **intervenido** (`validado_en` no nulo), ordenada por `log_id`. Los logs legados (sector validado sin `validado_en`, anteriores a la migración 024) no se exportan: el resumen del comando informa cuántos quedaron afuera.
+- `id_caso` sale del sidecar de la corrida (`case_id`) por `incidente_id`; queda vacío si el incidente no figura en los sidecars o figura en dos casos distintos. El denominador de la tasa **no** sale de este archivo: c-167 lo toma de `plan_campana.csv` o del sidecar de la corrida.
+- `intervencion_inicio_en` y `validado_en` son ISO-8601 en UTC con zona (`+00:00`). `duracion_s` es `validado_en - intervencion_inicio_en` en segundos; queda vacía si falta el inicio o si da negativa (reloj del cliente adelantado).
+- `cambio_sector` es `true` o `false` (un sector predicho nulo cuenta como cambio). `origen_intervencion` es `gate`, `muestreo` o `rederivacion`; `completado_manual` está reservado y no tiene escritor.
+- `actor_alias` es el HMAC-SHA256 del id del empleado con la clave de la variable de entorno `INTERVENCION_EXPORT_HMAC_KEY`, truncado a 12 hex; vacío si no hay actor. La clave es secreta, no se versiona ni se imprime, y debe ser **la misma** en todas las corridas de la campaña para que el alias sea estable. El archivo no trae nombre, email, teléfono, legajo ni el id del empleado.
+
+Comando (desde `App/Backend`, con la variable definida en el entorno de esa terminal):
+
+```bash
+python -m scripts.exportar_intervenciones \
+  --sidecar ../../evaluation/data/campana/sidecar_<id_corrida>.json \
+  --desde AAAA-MM-DD --hasta AAAA-MM-DD \
+  --salida ../../evaluation/data/campana/intervenciones.csv
+```
+
+`--sidecar` se repite una vez por corrida y `--desde`/`--hasta` acotan los logs por su `created_at` (días de negocio, ambos inclusivos). El comando se niega a escribir sobre `data/corpus_evaluacion_pseudonimizado.json`, `data/corpus_resultados*.json`, `evaluation/predicciones.json` y `evaluation/evidence/`.
+
+Procedencia del export (completar **al versionar** `intervenciones.csv`; formato `- campo: valor`, con nombres propios para no mezclarse con los de la tabla primaria):
+
+- intervenciones_archivo: evaluation/data/campana/intervenciones.csv
+- intervenciones_sha256: pendiente
+- intervenciones_fecha: pendiente
+- intervenciones_comando: pendiente
+- intervenciones_rango: pendiente
+- intervenciones_legados_excluidos: pendiente
+
+| Archivo | SHA-256 |
+|---|---|
+| `intervenciones.csv` | pendiente |
+
+### Planilla del brazo manual (c-165)
+
+`brazo_manual.csv` es la planilla del brazo manual (`tarea = brazo_manual`, operadores `O1` y `O2`, con `inicio` y `timestamp` obligatorios en cada fila) que pasó `python -m evaluation.doble_etiquetado --planilla evaluation/data/campana/brazo_manual.csv --corpus data/corpus_evaluacion_pseudonimizado.json --tarea brazo_manual` con exit code `0`. El procedimiento (sujetos, reparto, plan, aceptación) está en `docs/campana-medicion/runbook-brazo-manual-e-intervencion.md`. No contiene datos personales: solo alias de operador, identificadores de caso, sectores canónicos y marcas de tiempo. Mientras no exista, su hash y los desvíos quedan en `pendiente`.
+
+- brazo_manual_desvios_informados: pendiente
+
+| Archivo | SHA-256 |
+|---|---|
+| `brazo_manual.csv` | pendiente |

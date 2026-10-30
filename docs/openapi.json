@@ -220,6 +220,35 @@
             "title": "Incidente Id",
             "type": "integer"
           },
+          "intervencion_inicio_en": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intervencion Inicio En"
+          },
+          "origen_intervencion": {
+            "anyOf": [
+              {
+                "enum": [
+                  "gate",
+                  "muestreo",
+                  "rederivacion",
+                  "completado_manual"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origen Intervencion"
+          },
           "requiere_revision_humana": {
             "title": "Requiere Revision Humana",
             "type": "boolean"
@@ -268,6 +297,29 @@
             },
             "title": "Sectores Validados",
             "type": "array"
+          },
+          "validado_en": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Validado En"
+          },
+          "validado_por_empleado_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Validado Por Empleado Id"
           }
         },
         "required": [
@@ -345,8 +397,20 @@
         "type": "object"
       },
       "ClasificacionValidar": {
-        "description": "Payload enviado por el operador humano para validar o corregir una clasificación.\n\nAcepta el sector principal por nombre canonico (`sector_validado`) o, por\ncompatibilidad, por identificador (`sector_id_validado`). `sectores_adicionales`\npermite registrar el conjunto validado completo cuando el incidente es\nmultietiqueta.",
+        "description": "Payload enviado por el operador humano para validar o corregir una clasificación.\n\nAcepta el sector principal por nombre canonico (`sector_validado`) o, por\ncompatibilidad, por identificador (`sector_id_validado`). `sectores_adicionales`\npermite registrar el conjunto validado completo cuando el incidente es\nmultietiqueta.\n\nc-165 (ASG-005): el unico dato de la intervencion que declara el cliente es\n`intervencion_inicio_en` (apertura del dialogo, opcional y CON zona horaria). El\nORIGEN de la intervencion lo deriva SIEMPRE el backend (`gate` si el log estaba\nmarcado para revision, `muestreo` si no); por eso un payload que traiga la clave\n`origen_intervencion`, con cualquier valor, se rechaza con 422. El resto de los\ncampos desconocidos se trata como siempre (se ignora): el schema NO es\n`extra=\"forbid\"`.",
         "properties": {
+          "intervencion_inicio_en": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intervencion Inicio En"
+          },
           "sector_id_validado": {
             "anyOf": [
               {
@@ -1613,13 +1677,39 @@
             "title": "Distribucion Sectores",
             "type": "object"
           },
+          "intervenciones_legadas_excluidas": {
+            "description": "Logs de la cohorte validados antes de existir los metadatos de intervencion (sector validado sin validado_en), excluidos de la tasa",
+            "title": "Intervenciones Legadas Excluidas",
+            "type": "integer"
+          },
+          "intervenciones_por_cambio_sector": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "description": "Intervenciones segun cambiaron o no el sector predicho (claves 'true' y 'false'; una confirmacion cuenta en 'false')",
+            "title": "Intervenciones Por Cambio Sector",
+            "type": "object"
+          },
+          "intervenciones_por_origen": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "description": "Intervenciones por origen_intervencion (gate, muestreo, rederivacion y completado_manual, este ultimo reservado y siempre en cero)",
+            "title": "Intervenciones Por Origen",
+            "type": "object"
+          },
           "promedio_diario": {
             "description": "Promedio de incidentes por dia en el rango",
             "title": "Promedio Diario",
             "type": "number"
           },
+          "tasa_intervencion_backend": {
+            "description": "Intervenciones humanas / logs de clasificacion creados en el rango (0.0 a 1.0). Cuenta un log si tiene validado_en (una confirmacion del sector predicho cuenta; un caso marcado que nadie valido, no). Excluye del numerador y del denominador los logs legados (sector validado sin validado_en, previos a la migracion 024), informados en intervenciones_legadas_excluidas. 0.0 si la cohorte esta vacia.",
+            "title": "Tasa Intervencion Backend",
+            "type": "number"
+          },
           "tasa_revision_humana": {
-            "description": "Proporcion de incidentes que requirieron revision humana (0.0 a 1.0)",
+            "description": "Proporcion de incidentes del rango que, al momento de la consulta, siguen pendientes de revision humana (flag requiere_revision_humana en True; 0.0 a 1.0). No cuenta los casos marcados que ya se validaron ni mide intervenciones: para eso ver tasa_intervencion_backend.",
             "title": "Tasa Revision Humana",
             "type": "number"
           },
@@ -1632,7 +1722,9 @@
         "required": [
           "total_incidentes",
           "promedio_diario",
-          "tasa_revision_humana"
+          "tasa_revision_humana",
+          "tasa_intervencion_backend",
+          "intervenciones_legadas_excluidas"
         ],
         "title": "ResumenResponse",
         "type": "object"
@@ -2384,7 +2476,7 @@
     },
     "/api/v1/clasificaciones/{log_id}/validar": {
       "patch": {
-        "description": "Registra la decisión del operador humano sobre la categoría correcta.\n\nEste endpoint cierra el ciclo de revisión: el operador indica cuál es\nel sector correcto para el incidente, lo que actualiza el campo\nsector_id_validado en el registro de auditoría. A partir de ese momento,\nel registro deja de aparecer en la cola de revisión pendiente y\npasa a formar parte del corpus de evaluación con etiqueta confirmada.\n\nSi el sector validado coincide con el predicho, confirma la exactitud\ndel clasificador. Si difiere, registra un caso de error para el análisis\nde métricas de la tesis.\n\nEl alcance de visibilidad por rol (VIS-001) también aplica a la ESCRITURA:\nun log cuyo incidente queda fuera del alcance del usuario responde como no\nencontrado (404) y NUNCA modifica el log ni el incidente.\n\nArgs:\n    log_id:  ID del registro de auditoría a validar.\n    payload: Sector correcto (por nombre canónico o id) y adicionales validados.\n\nReturns:\n    Representación actualizada del registro de auditoría (HTTP 200).",
+        "description": "Registra la decisión del operador humano sobre la categoría correcta.\n\nEste endpoint cierra el ciclo de revisión: el operador indica cuál es\nel sector correcto para el incidente, lo que actualiza el campo\nsector_id_validado en el registro de auditoría. A partir de ese momento,\nel registro deja de aparecer en la cola de revisión pendiente y\npasa a formar parte del corpus de evaluación con etiqueta confirmada.\n\nSi el sector validado coincide con el predicho, confirma la exactitud\ndel clasificador. Si difiere, registra un caso de error para el análisis\nde métricas de la tesis.\n\nEl alcance de visibilidad por rol (VIS-001) también aplica a la ESCRITURA:\nun log cuyo incidente queda fuera del alcance del usuario responde como no\nencontrado (404) y NUNCA modifica el log ni el incidente.\n\nc-165 (ASG-005): la validación es una intervención y deja sus metadatos en el\nlog. El ACTOR es el empleado activo vinculado a la cuenta (`EmpleadoDep`); una\ncuenta sin empleado vinculado valida igual y el actor queda NULL. El cliente solo\npuede enviar `intervencion_inicio_en`; el ORIGEN (`gate` o `muestreo`) lo deriva\nel backend y un payload que lo traiga responde 422.\n\nArgs:\n    log_id:  ID del registro de auditoría a validar.\n    payload: Sector correcto (por nombre canónico o id), adicionales validados e\n             inicio declarado de la intervención (opcional).\n\nReturns:\n    Representación actualizada del registro de auditoría (HTTP 200).",
         "operationId": "validar_clasificacion_api_v1_clasificaciones__log_id__validar_patch",
         "parameters": [
           {
@@ -3469,7 +3561,7 @@
         ]
       },
       "patch": {
-        "description": "Actualiza uno o más campos de un incidente existente (PATCH semántico).\n\nSolo se modifican los campos incluidos en el payload con valor distinto\nde None. Casos de uso típicos: cambio de estado por el operador,\nreasignación de sector tras revisión manual, o modificación de prioridad.\n\nEl alcance de visibilidad por rol (VIS-001) se aplica también a la ESCRITURA:\nun incidente fuera del alcance del usuario se comporta como no encontrado\n(404), igual que en la lectura, y NUNCA se modifica.\n\nLos incidentes en estado terminal (cerrado, es_terminal=true) son de solo\nlectura. Cualquier intento de PATCH sobre un incidente cerrado retorna\nHTTP 409 Conflict con código INCIDENTE_CERRADO.\n\nArgs:\n    incidente_id: ID del incidente a modificar.\n    payload:      Campos a actualizar (todos opcionales).\n\nReturns:\n    Representación actualizada del incidente (HTTP 200).\n    HTTP 404 si el incidente no existe o está fuera del alcance.\n    HTTP 409 si el incidente está cerrado (solo lectura).",
+        "description": "Actualiza uno o más campos de un incidente existente (PATCH semántico).\n\nSolo se modifican los campos incluidos en el payload con valor distinto\nde None. Casos de uso típicos: cambio de estado por el operador,\nreasignación de sector tras revisión manual, o modificación de prioridad.\n\nEl alcance de visibilidad por rol (VIS-001) se aplica también a la ESCRITURA:\nun incidente fuera del alcance del usuario se comporta como no encontrado\n(404), igual que en la lectura, y NUNCA se modifica.\n\nLos incidentes en estado terminal (cerrado, es_terminal=true) son de solo\nlectura. Cualquier intento de PATCH sobre un incidente cerrado retorna\nHTTP 409 Conflict con código INCIDENTE_CERRADO.\n\nc-165 (ASG-005): un `sector_id` distinto del actual es una rederivación y queda\nregistrada como intervención (origen `rederivacion`) en el log más reciente del\nincidente, con el empleado activo de la cuenta como actor (NULL si no tiene).\n\nArgs:\n    incidente_id: ID del incidente a modificar.\n    payload:      Campos a actualizar (todos opcionales).\n\nReturns:\n    Representación actualizada del incidente (HTTP 200).\n    HTTP 404 si el incidente no existe o está fuera del alcance.\n    HTTP 409 si el incidente está cerrado (solo lectura).",
         "operationId": "update_incidente_api_v1_incidentes__incidente_id__patch",
         "parameters": [
           {
