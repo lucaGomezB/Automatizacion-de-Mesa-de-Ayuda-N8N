@@ -192,7 +192,9 @@ class EstadisticasService:
 
         Returns:
             dict con keys: total_incidentes, promedio_diario, distribucion_sectores,
-            distribucion_estados, tasa_revision_humana.
+            distribucion_estados, tasa_revision_humana (incidentes PENDIENTES de
+            revision al momento de la consulta) y, desde c-165 (ECM-003),
+            tasa_intervencion_backend con sus desgloses y los legados excluidos.
         """
         desde, hasta = self._default_date_range(desde, hasta, now)
         # El rango de dias de negocio se traduce a limites UTC semiabiertos:
@@ -230,10 +232,23 @@ class EstadisticasService:
 
         tasa_revision = total_revision / max(total_incidentes, 1)
 
+        # Tasa de intervencion registrada por el backend (c-165, ECM-003). Cohorte:
+        # logs con created_at en el rango. Los legados (sector validado sin
+        # validado_en) no entran al numerador ni al denominador y se declaran.
+        conteo = await self._repo.contar_intervenciones(desde_utc, hasta_utc_exclusive)
+        cohorte_efectiva = conteo.total_cohorte - conteo.legados
+        tasa_intervencion = (
+            conteo.intervenidos / cohorte_efectiva if cohorte_efectiva > 0 else 0.0
+        )
+
         return {
             "total_incidentes": total_incidentes,
             "promedio_diario": round(promedio_diario, 2),
             "distribucion_sectores": distribucion_sectores,
             "distribucion_estados": distribucion_estados,
             "tasa_revision_humana": round(tasa_revision, 4),
+            "tasa_intervencion_backend": round(tasa_intervencion, 4),
+            "intervenciones_por_origen": conteo.por_origen,
+            "intervenciones_por_cambio_sector": conteo.por_cambio_sector,
+            "intervenciones_legadas_excluidas": conteo.legados,
         }

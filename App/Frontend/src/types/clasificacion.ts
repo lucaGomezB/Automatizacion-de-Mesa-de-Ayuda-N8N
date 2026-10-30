@@ -17,6 +17,14 @@ import type { SectorRead } from './catalog';
 /** Componente del pipeline híbrido que produjo la clasificación */
 export type ClasificacionEtapa = 'deterministic' | 'gemini' | 'fallback';
 
+/**
+ * Origen de una intervención humana sobre un log (c-165, ASG-005). Lo deriva SIEMPRE
+ * el backend ('gate' si el log estaba marcado para revisión, 'muestreo' si no,
+ * 'rederivacion' al cambiar el sector del incidente); el cliente NUNCA lo envía.
+ * 'completado_manual' está reservado y no tiene escritor.
+ */
+export type OrigenIntervencion = 'gate' | 'muestreo' | 'rederivacion' | 'completado_manual';
+
 // Registro de auditoría devuelto por los endpoints de clasificación
 export interface ClasificacionLogRead {
   id: number;
@@ -42,6 +50,17 @@ export interface ClasificacionLogRead {
    * La API siempre los devuelve; opcional para no romper mocks previos a c-83.
    */
   sectores_validados?: SectorRead[];
+  /**
+   * Metadatos de la intervención humana (c-165, ASG-005), SOLO LECTURA. Son null (o
+   * ausentes en mocks previos) mientras el log no fue intervenido. El actor se
+   * expone únicamente por id: nunca nombre, email ni teléfono del empleado.
+   */
+  validado_por_empleado_id?: number | null;
+  /** Inicio declarado por el cliente al abrir el diálogo de validación (ISO-8601). */
+  intervencion_inicio_en?: string | null;
+  /** Instante en que el servidor registró la intervención (ISO-8601). */
+  validado_en?: string | null;
+  origen_intervencion?: OrigenIntervencion | null;
 }
 
 // Payload enviado al endpoint PATCH /api/v1/clasificaciones/{id}/validar.
@@ -49,9 +68,14 @@ export interface ClasificacionLogRead {
 // único esquema de identificador para principal y adicionales. El backend acepta
 // `sector_validado` (nombre) y `sectores_adicionales` (nombres); `sectores_adicionales`
 // viaja como lista vacía cuando el operador no marca adicionales.
+//
+// c-165 (ASG-005): el único dato de la intervención que declara el cliente es
+// `intervencion_inicio_en` (instante ISO-8601 CON zona, tomado al abrir el diálogo). El
+// payload NO lleva `origen_intervencion`: el backend lo deriva y responde 422 si llega.
 export interface ClasificacionValidar {
   sector_validado: string;
   sectores_adicionales: string[];
+  intervencion_inicio_en?: string;
 }
 
 // Parámetros de paginación para la cola de revisión pendiente

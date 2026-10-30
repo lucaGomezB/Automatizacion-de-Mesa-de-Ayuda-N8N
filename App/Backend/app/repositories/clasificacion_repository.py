@@ -14,6 +14,8 @@ Responsabilidad:
     200 casos etiquetados utilizado para calcular accuracy y F1 por categoría.
 """
 
+from datetime import datetime
+
 from sqlalchemy import func, select
 from sqlalchemy.orm import selectinload
 
@@ -82,6 +84,64 @@ class ClasificacionRepository(BaseRepository[ClasificacionLog]):
             .order_by(ClasificacionLog.created_at.desc())
         )
         return list(result.scalars().all())
+
+    async def get_ultimo_por_incidente(
+        self, incidente_id: int
+    ) -> ClasificacionLog | None:
+        """
+        Recupera el log MÁS RECIENTE de un incidente, entendido como el de mayor `id`.
+
+        Es el destino de la intervención `rederivacion` (c-165, ASG-005). Se ordena
+        por `id` y no por `created_at`: el `id` es monótono y no depende del reloj ni
+        de la resolución del timestamp. `list_by_incidente` ordena por `created_at`
+        para la vista del operador; las dos ordenaciones coinciden en la práctica.
+
+        Returns:
+            El log de mayor id con sus relaciones cargadas, o None si el incidente
+            no tiene logs.
+        """
+        result = await self._session.execute(
+            select(ClasificacionLog)
+            .where(ClasificacionLog.incidente_id == incidente_id)
+            .options(*_CLASIFICACION_LOAD_OPTIONS)
+            .order_by(ClasificacionLog.id.desc())
+            .limit(1)
+        )
+        return result.scalar_one_or_none()
+
+    async def registrar_rederivacion(
+        self,
+        log: ClasificacionLog,
+        sector_id: int,
+        *,
+        origen_intervencion: str,
+        validado_en: datetime,
+        validado_por_empleado_id: int | None,
+    ) -> None:
+        """
+        Registra una rederivación (cambio de sector del incidente) sobre un log.
+
+        Sobrescribe como unidad `sector_id_validado` y los metadatos de la
+        intervención (gana la última escritura); el inicio queda NULL porque no hay
+        diálogo que lo declare. NO toca `requiere_revision_humana` del log ni vacía
+        `sectores_validados`: solo retira de él al nuevo principal, que no puede
+        figurar a la vez como adicional.
+
+        Args:
+            log:                      Log destino (el de mayor id del incidente).
+            sector_id:                Nuevo sector del incidente.
+            origen_intervencion:      `rederivacion` (lo fija el servicio).
+            validado_en:              Instante del servidor.
+            validado_por_empleado_id: Actor (NULL si la cuenta no tiene empleado).
+        """
+        log.sector_id_validado = sector_id
+        log.origen_intervencion = origen_intervencion
+        log.validado_en = validado_en
+        log.validado_por_empleado_id = validado_por_empleado_id
+        log.intervencion_inicio_en = None
+        log.sectores_validados = [s for s in log.sectores_validados if s.id != sector_id]
+        self._session.add(log)
+        await self._session.flush()
 
     async def list_pending_review(
         self,
@@ -207,7 +267,14 @@ class ClasificacionRepository(BaseRepository[ClasificacionLog]):
         await self._session.flush()
 
     async def set_validated_sector(
-        self, log_id: int, sector_id: int
+        self,
+        log_id: int,
+        sector_id: int,
+        *,
+        origen_intervencion: str | None = None,
+        validado_en: datetime | None = None,
+        validado_por_empleado_id: int | None = None,
+        intervencion_inicio_en: datetime | None = None,
     ) -> ClasificacionLog:
         """
         Registra la categoría validada manualmente por el operador humano.
@@ -216,9 +283,20 @@ class ClasificacionRepository(BaseRepository[ClasificacionLog]):
         el registro deja de aparecer en la cola de revisión pendiente y pasa a
         ser parte del corpus de evaluación con etiqueta de verdad confirmada.
 
+        c-165 (ASG-005): la intervención sobrescribe COMO UNIDAD el sector validado y
+        los cuatro metadatos (gana la última escritura). Los metadatos son opcionales
+        y por nombre; sin ellos el log queda en el estado legado (sector validado sin
+        `validado_en`), que es lo que producían las validaciones previas a la 024. Una
+        re-validación sin actor o sin inicio deja esas columnas en NULL: conservar el
+        valor de la intervención anterior mezclaría dos intervenciones.
+
         Args:
-            log_id:    ID del registro de auditoría a validar.
-            sector_id: ID del sector correcto según el criterio del operador.
+            log_id:                   ID del registro de auditoría a validar.
+            sector_id:                ID del sector correcto según el criterio del operador.
+            origen_intervencion:      `gate` o `muestreo` (lo deriva el servicio).
+            validado_en:              Instante del servidor en que se registra la validación.
+            validado_por_empleado_id: Actor (NULL si la cuenta no tiene empleado vinculado).
+            intervencion_inicio_en:   Inicio declarado por el cliente, ya normalizado a UTC.
 
         Returns:
             Instancia actualizada del ClasificacionLog.
@@ -228,6 +306,10 @@ class ClasificacionRepository(BaseRepository[ClasificacionLog]):
         """
         instance = await self.get_by_id(log_id)
         instance.sector_id_validado = sector_id  # Asignar la etiqueta de verdad
+        instance.origen_intervencion = origen_intervencion
+        instance.validado_en = validado_en
+        instance.validado_por_empleado_id = validado_por_empleado_id
+        instance.intervencion_inicio_en = intervencion_inicio_en
         self._session.add(instance)
         await self._session.flush()
 

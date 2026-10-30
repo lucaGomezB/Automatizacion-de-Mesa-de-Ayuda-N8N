@@ -29,7 +29,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.classifiers.hybrid import HybridClassifier
 from app.config.settings import get_settings
-from app.constants import es_canal_telefonia
+from app.constants import ORIGEN_REDERIVACION, es_canal_telefonia
 from app.utils.n8n_webhook import notify_n8n
 from app.utils.pseudonymizer import pseudonymize
 from app.core.exceptions import (
@@ -497,6 +497,8 @@ class IncidenteService:
         incidente_id: int,
         payload: IncidenteUpdate,
         alcance: "AlcanceIncidentes | None" = None,
+        *,
+        actor_empleado_id: int | None = None,
     ) -> Incidente:
         """
         Actualiza parcialmente un incidente existente.
@@ -509,10 +511,18 @@ class IncidenteService:
         por rol que en la lectura: un incidente fuera del alcance del usuario se
         comporta como no encontrado (404) y NUNCA se modifica.
 
+        c-165 (ASG-005): cuando el payload trae un `sector_id` DISTINTO del actual,
+        el cambio es una intervención humana de origen `rederivacion` y se registra
+        en el log más reciente del incidente (ver `_registrar_rederivacion`). Un
+        PATCH con el mismo sector o sin `sector_id` no registra nada.
+
         Args:
-            incidente_id: ID del incidente a actualizar.
-            payload:      Campos a modificar (todos opcionales).
-            alcance:      Alcance de visibilidad por rol (opcional).
+            incidente_id:      ID del incidente a actualizar.
+            payload:           Campos a modificar (todos opcionales).
+            alcance:           Alcance de visibilidad por rol (opcional).
+            actor_empleado_id: Empleado que reasigna; None si la cuenta no tiene
+                               empleado activo vinculado (la rederivación se registra
+                               igual con el actor nulo).
 
         Returns:
             Instancia actualizada del incidente con relaciones cargadas.
@@ -548,9 +558,53 @@ class IncidenteService:
                     f"Sector con id={payload.sector_id} no encontrado en el catálogo."
                 )
 
+        # Se decide ANTES de actualizar: `update_fields` muta la misma instancia
+        # (identity map) y despues ya no se podria comparar con el sector previo.
+        cambia_sector = (
+            payload.sector_id is not None and payload.sector_id != incidente.sector_id
+        )
+
         updates = payload.model_dump(exclude_none=True)  # Solo campos no nulos
         await self._incidente_repo.update_fields(incidente_id, **updates)
+
+        if cambia_sector:
+            await self._registrar_rederivacion(
+                incidente_id, payload.sector_id, actor_empleado_id
+            )
         return await self.get_by_id(incidente_id, alcance=alcance)
+
+    async def _registrar_rederivacion(
+        self, incidente_id: int, sector_id: int, actor_empleado_id: int | None
+    ) -> None:
+        """
+        Registra la rederivación en el log más reciente (mayor id) del incidente.
+
+        Escribe `sector_id_validado`, `validado_en` (instante del servidor),
+        `origen_intervencion = rederivacion`, el actor (o NULL) e inicio NULL. Un
+        incidente sin log no tiene dónde registrar la intervención: no se crea
+        ninguno y el PATCH responde como antes. `completado_manual` no tiene escritor.
+
+        Consecuencia declarada (checkpoint 2.1, opción A): escribir
+        `sector_id_validado` saca de la cola de pendientes a un log marcado para
+        revisión, mientras `Incidente.requiere_revision_humana` queda como esté salvo
+        que el mismo PATCH lo cambie.
+        """
+        log = await self._clasificacion_repo.get_ultimo_por_incidente(incidente_id)
+        if log is None:
+            return
+        await self._clasificacion_repo.registrar_rederivacion(
+            log,
+            sector_id,
+            origen_intervencion=ORIGEN_REDERIVACION,
+            validado_en=utcnow(),
+            validado_por_empleado_id=actor_empleado_id,
+        )
+        logger.info(
+            "rederivacion_registrada",
+            incidente_id=incidente_id,
+            log_id=log.id,
+            sector_id_validado=sector_id,
+        )
 
     async def soft_delete_incidente(
         self,

@@ -404,6 +404,7 @@ async def update_incidente(
     service: ServiceDep,
     alcance: AlcanceDep,
     _guard: GuardPrioridadCriticaUpdate,
+    empleado: EmpleadoDep,
     current_user: User = Depends(get_current_user),
 ) -> IncidenteRead:
     """
@@ -421,6 +422,10 @@ async def update_incidente(
     lectura. Cualquier intento de PATCH sobre un incidente cerrado retorna
     HTTP 409 Conflict con código INCIDENTE_CERRADO.
 
+    c-165 (ASG-005): un `sector_id` distinto del actual es una rederivación y queda
+    registrada como intervención (origen `rederivacion`) en el log más reciente del
+    incidente, con el empleado activo de la cuenta como actor (NULL si no tiene).
+
     Args:
         incidente_id: ID del incidente a modificar.
         payload:      Campos a actualizar (todos opcionales).
@@ -430,7 +435,12 @@ async def update_incidente(
         HTTP 404 si el incidente no existe o está fuera del alcance.
         HTTP 409 si el incidente está cerrado (solo lectura).
     """
-    incidente = await service.update_incidente(incidente_id, payload, alcance=alcance)
+    incidente = await service.update_incidente(
+        incidente_id,
+        payload,
+        alcance=alcance,
+        actor_empleado_id=empleado.id if empleado else None,
+    )
     return IncidenteRead.model_validate(incidente)
 
 

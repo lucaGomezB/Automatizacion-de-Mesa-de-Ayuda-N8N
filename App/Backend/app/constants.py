@@ -47,6 +47,23 @@ CANAL_CORREO: Final[str] = "correo electrónico"
 #: predicciones de la corrida previa (hybrid-v2).
 HYBRID_CACHE_VERSION: Final[str] = "hybrid-v3"
 
+#: Vocabulario cerrado del ORIGEN de una intervencion humana sobre un log de
+#: clasificacion (c-165, ASG-005). Lo deriva SIEMPRE el backend; el cliente nunca
+#: lo declara. Se valida en la capa de aplicacion (la base no tiene CHECK).
+ORIGEN_GATE: Final[str] = "gate"
+ORIGEN_MUESTREO: Final[str] = "muestreo"
+ORIGEN_REDERIVACION: Final[str] = "rederivacion"
+#: Reservado: sin escritor en c-165 (se declara y se desglosa, siempre en cero).
+ORIGEN_COMPLETADO_MANUAL: Final[str] = "completado_manual"
+
+#: Los cuatro valores, en el orden del desglose de la metrica y del export.
+ORIGENES_INTERVENCION: Final[tuple[str, ...]] = (
+    ORIGEN_GATE,
+    ORIGEN_MUESTREO,
+    ORIGEN_REDERIVACION,
+    ORIGEN_COMPLETADO_MANUAL,
+)
+
 
 def es_sector_canonico(nombre: object) -> bool:
     """
@@ -76,6 +93,11 @@ def es_canal_correo(nombre: object) -> bool:
 __all__ = [
     "SECTORES_CANONICOS",
     "HYBRID_CACHE_VERSION",
+    "ORIGEN_GATE",
+    "ORIGEN_MUESTREO",
+    "ORIGEN_REDERIVACION",
+    "ORIGEN_COMPLETADO_MANUAL",
+    "ORIGENES_INTERVENCION",
     "CANAL_TELEFONIA",
     "CANAL_CORREO",
     "es_sector_canonico",
