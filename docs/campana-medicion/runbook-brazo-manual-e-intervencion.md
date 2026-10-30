@@ -264,6 +264,19 @@ sha256sum evaluation/data/campana/brazo_manual.csv
 
 (En PowerShell: `(Get-FileHash -Algorithm SHA256 evaluation\data\campana\brazo_manual.csv).Hash.ToLower()`.) Salida: `evaluation/data/campana/brazo_manual.csv` con fin de línea LF (`.gitattributes` lo fija para los `*.csv` de esa carpeta). Registrar el SHA-256 en `evaluation/data/campana/README.md` (subsección "Planilla del brazo manual (c-165)", fila `brazo_manual.csv`) y la cantidad de desvíos informados en 4.2 en el campo `brazo_manual_desvios_informados`. El registro de sujetos (sección 1.2) se versiona con la misma carpeta.
 
+### 4.4 Ensamblar las entradas del análisis
+
+Con `brazo_manual.csv` y `doble_etiquetado.csv` versionados en `evaluation/data/campana/`, el director produce las dos entradas que consume el análisis de c-167:
+
+```bash
+python -m evaluation.preparar_entradas_analisis \
+  --entrada evaluation/data/campana \
+  --corpus data/corpus_evaluacion_pseudonimizado.json \
+  --cache-in-sample evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json
+```
+
+El comando une las dos planillas C1 en `plantilla_etiquetado.csv` (un único encabezado, LF, sin BOM), re-valida cada tarea (`doble_etiquetado` y `brazo_manual`) con `validar_doble_etiquetado` y copia **byte a byte** el cache congelado `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` a `predicciones_in_sample.json`. Aborta sin escribir si una fuente falta o no pasa el validador, y nunca escribe en `evaluation/evidence/`. Imprime el SHA-256 de cada salida y su procedencia (fuente y hash de la fuente): registrarlos en `evaluation/data/campana/README.md`. Este paso es el único camino documentado para producir las dos entradas y no se puede saltar en silencio.
+
 ## 5. Dataset de intervención: registro en la app y export
 
 ### 5.1 Qué se registra y cuándo
