@@ -246,6 +246,16 @@ Versionado:
 
    Debe pasar: la tabla valida contra el corpus real y su SHA-256 coincide con el declarado en el README.
 6. `.gitattributes` fija LF para `evaluation/data/campana/*.csv`, de modo que el hash coincide en Windows y Linux. Tras `git add`, comprobar que `git status` no muestra la tabla como modificada por cambios de fin de línea.
+7. Ensamblar las entradas que consume el análisis de c-167. Una vez que `doble_etiquetado.csv` y `brazo_manual.csv` (sección 4.3 de `runbook-brazo-manual-e-intervencion.md`) están versionados en `evaluation/data/campana/`:
+
+   ```bash
+   python -m evaluation.preparar_entradas_analisis \
+     --entrada evaluation/data/campana \
+     --corpus data/corpus_evaluacion_pseudonimizado.json \
+     --cache-in-sample evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json
+   ```
+
+   El comando une las dos planillas C1 en `plantilla_etiquetado.csv` (un único encabezado, LF, sin BOM) y copia byte a byte el cache congelado a `predicciones_in_sample.json`; re-valida cada tarea con `validar_doble_etiquetado` y aborta sin escribir si una fuente falta o no pasa el validador. Imprime el SHA-256 de cada salida y su procedencia: registrarlos en `evaluation/data/campana/README.md`. Es el paso documentado que produce las dos entradas que lee `evaluation/analisis_campana.py` (c-167) y **no se puede saltar en silencio**.
 
 La conservación de esta tabla es criterio de aceptación de la campaña. La cita del hash en `docs/Tesis/Correcciones/numeros-canonicos.md` la hace c-169 al incorporar los resultados.
 
