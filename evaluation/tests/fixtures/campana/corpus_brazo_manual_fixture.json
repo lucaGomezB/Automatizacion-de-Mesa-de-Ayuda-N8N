@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "metadata": {
+    "descripcion": "Corpus sintetico minimo de 6 casos para los tests del brazo manual (c-165). Ids R001..R006.",
+    "total_casos": 6
+  },
+  "casos": [
+    {
+      "id": "R001",
+      "descripcion": "Sintetico: la impresora del primer piso muestra un error de papel atascado.",
+      "canal_origen": "formulario",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "R002",
+      "descripcion": "Sintetico: el sistema de liquidaciones no permite cerrar el periodo mensual.",
+      "canal_origen": "correo",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": ["Bases de Datos"],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "R003",
+      "descripcion": "Sintetico: llego un correo que simula ser del banco y pide confirmar una clave.",
+      "canal_origen": "correo",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "R004",
+      "descripcion": "Sintetico: el editor de planillas se cierra solo al abrir un archivo con macros.",
+      "canal_origen": "llamada",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "R005",
+      "descripcion": "Sintetico: una consulta tarda varios minutos en la base de reportes del area comercial.",
+      "canal_origen": "formulario",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "R006",
+      "descripcion": "Sintetico: el teclado de la sala de reuniones dejo de responder tras un derrame.",
+      "canal_origen": "llamada",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    }
+  ]
+}

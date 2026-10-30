@@ -1,0 +1,8 @@
+id_caso,id_etiquetador,tarea,sector_etiquetado,sectores_adicionales_etiquetados,inicio,timestamp
+R001,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-17T14:01:00-03:00,2026-11-17T14:02:15-03:00
+R002,O1,brazo_manual,Sistemas,Bases de Datos,2026-11-17T10:03:30-03:00,2026-11-17T10:05:10-03:00
+R002,O2,brazo_manual,Sistemas,,2026-11-17T14:02:20-03:00,2026-11-17T14:03:45-03:00
+R003,O2,brazo_manual,Seguridad Informatica,,2026-11-17T14:00:00-03:00,2026-11-17T14:00:50-03:00
+R004,O1,brazo_manual,Soporte Tecnico Software,,2026-11-17T10:00:00-03:00,2026-11-17T10:01:05-03:00
+R005,O1,brazo_manual,Bases de Datos,,2026-11-17T10:01:10-03:00,2026-11-17T10:02:30-03:00
+R006,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-17T10:02:35-03:00,2026-11-17T10:03:20-03:00

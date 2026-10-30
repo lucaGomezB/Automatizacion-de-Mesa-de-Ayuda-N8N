@@ -1,0 +1,7 @@
+id_caso,posicion,mitad,brazo_primero,modo,seed
+R004,1,1,manual,aleatorio,4
+R006,2,1,automatizado,aleatorio,4
+R005,3,1,manual,aleatorio,4
+R001,4,2,automatizado,aleatorio,4
+R003,5,2,manual,aleatorio,4
+R002,6,2,automatizado,aleatorio,4
