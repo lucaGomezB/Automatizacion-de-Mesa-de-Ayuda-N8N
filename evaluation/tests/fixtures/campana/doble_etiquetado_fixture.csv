@@ -1,0 +1,19 @@
+id_caso,id_etiquetador,tarea,sector_etiquetado,sectores_adicionales_etiquetados,inicio,timestamp
+1,E1,doble_etiquetado,Seguridad Informatica,,2026-11-03T14:00:00-03:00,2026-11-03T14:01:10-03:00
+1,E2,doble_etiquetado,Seguridad Informatica,,,2026-11-03T15:00:40-03:00
+2,E1,doble_etiquetado,Bases de Datos,Sistemas,2026-11-03T14:01:10-03:00,2026-11-03T14:03:00-03:00
+2,E2,doble_etiquetado,Bases de Datos,Sistemas,,2026-11-03T15:01:50-03:00
+3,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T14:03:00-03:00,2026-11-03T14:04:20-03:00
+3,E2,doble_etiquetado,Soporte Tecnico Hardware,,,2026-11-03T15:02:20-03:00
+4,E1,doble_etiquetado,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-03T14:04:20-03:00,2026-11-03T14:06:00-03:00
+4,E2,doble_etiquetado,Soporte Tecnico Hardware,,,2026-11-03T15:03:30-03:00
+5,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T14:06:00-03:00,2026-11-03T14:07:10-03:00
+5,E2,doble_etiquetado,Soporte Tecnico Software,,,2026-11-03T15:04:10-03:00
+6,E1,doble_etiquetado,Bases de Datos,,2026-11-03T14:07:10-03:00,2026-11-03T14:08:30-03:00
+6,E2,doble_etiquetado,Sistemas,,,2026-11-03T15:05:00-03:00
+7,E1,doble_etiquetado,Sistemas,Bases de Datos,2026-11-03T14:08:30-03:00,2026-11-03T14:10:00-03:00
+7,E2,doble_etiquetado,Sistemas,Bases de Datos,2026-11-03T15:05:00-03:00,2026-11-03T15:06:20-03:00
+8,E1,doble_etiquetado,Sistemas,,2026-11-03T14:10:00-03:00,2026-11-03T14:11:00-03:00
+8,E2,doble_etiquetado,Sistemas,,2026-11-03T15:06:20-03:00,2026-11-03T15:07:00-03:00
+9,E1,doble_etiquetado,Seguridad Informatica,Sistemas|Bases de Datos,2026-11-03T14:11:00-03:00,2026-11-03T14:13:30-03:00
+9,E2,doble_etiquetado,Seguridad Informatica,Sistemas|Bases de Datos,2026-11-03T15:07:00-03:00,2026-11-03T15:09:10-03:00
