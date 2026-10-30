@@ -18,6 +18,7 @@ trazabilidad. NUNCA imprime ni loguea descripciones.
 | `test_ingest_via_n8n.py` | Tests offline de la logica pura, los caminos web/correo y los escritores. |
 | `ingest_telefonia_corpus.py` | Recupera y escribe de vuelta las mediciones del canal telefonia por `corpus_case_id` (c-70). |
 | `test_ingest_telefonia_corpus.py` | Tests offline de la metrica de telefonia, el write-back y el `--replace`. |
+| `modo_campana.py` | Helper compartido del modo campana (c-166): flags `--plan`/`--orden`/`--seed`/`--id-corrida`, validacion, seleccion y anotacion del sidecar. |
 | `pseudonymize_corpus.py` | Genera una copia pseudonimizada del CSV del corpus (Ley 25.326). |
 | `test_pseudonymize_corpus.py` | Tests unitarios offline del pseudonimizador de corpus. |
 | `requirements.txt` | Dependencias (`requests`, `openpyxl`). |
@@ -437,6 +438,76 @@ Las descripciones son texto interno real: el script no las imprime, no las
 loguea y no las escribe en el sidecar. Ante error solo reporta un label corto
 (`http403/forbidden`, `sin_ingreso`, `RuntimeError`). No hay secretos
 hardcodeados.
+
+## Modo campana (c-166): `--plan`, `--orden`, `--seed`, `--id-corrida`
+
+Soporte para la campana de medicion contrabalanceada. El plan de campana
+(`evaluation/plan_campana.py`) asigna a cada caso su `posicion` (1..n), su `mitad` y el
+brazo que lo ve primero (`brazo_primero`: `manual` o `automatizado`); los harnesses lo
+siguen y dejan esa asignacion en cada entrada del sidecar. El protocolo completo esta en
+`docs/campana-medicion/runbook-campana-contrabalanceada.md`.
+
+Sin `--plan` ni `--orden` los tres harnesses se comportan EXACTAMENTE como antes. La
+logica compartida (flags, validacion, seleccion y anotacion) vive en `modo_campana.py`.
+
+### Flags nuevos
+
+| Flag | Harness | Descripcion |
+|------|---------|-------------|
+| `--plan <csv>` | los tres | Plan (o sub-plan) de campana: se envia en el orden de `posicion`. Un `id_caso` del plan ausente del corpus aborta antes de enviar. |
+| `--orden {directo,inverso,alternado,aleatorio}` | `ingest_via_n8n.py`, `ingest_corpus.py` | Atajo: genera el plan al vuelo, lo escribe en `<sidecar>.plan.csv` y procesa en ese orden. Excluyente con `--plan`. |
+| `--seed <entero>` | `ingest_via_n8n.py`, `ingest_corpus.py` | Obligatoria con `--orden aleatorio`; queda en cada fila del plan. |
+| `--id-corrida <texto>` | los tres | Obligatorio con `--plan`/`--orden`. Va a cada entrada del sidecar. |
+
+`ingest_telefonia_corpus.py` NO ingesta (recupera por `corpus_case_id`; el orden de las
+llamadas lo decide el operador del softphone): solo acepta `--plan` e `--id-corrida` y
+copia `posicion`, `mitad`, `brazo_primero` y `orden` al sidecar.
+
+### Reglas del modo campana
+
+1. **`--limit` antes del orden**: `--orden inverso --limit 3` da el reverso de los TRES
+   PRIMEROS casos. Con `--plan`, `--limit` se rechaza (el plan ya es la seleccion; para
+   acotarlo, `python -m evaluation.plan_campana generar --limit N` o `subplan`).
+2. **Proteccion de lo versionado**: con `--plan`/`--orden`, `--json` y `--sidecar` NO
+   pueden apuntar a `data/corpus_evaluacion_pseudonimizado.json` ni a
+   `data/corpus_resultados*.json` (incluye los defaults). El harness termina con exit code
+   2, nombra el archivo y la ruta de campana sugerida, y no lee credenciales ni envia nada.
+   Para `--json` se usa la copia de campana (tiempos en `null`):
+   `python -m evaluation.plan_campana preparar-corpus --origen data/corpus_evaluacion_pseudonimizado.json --destino evaluation/data/campana/corpus_campana.json`.
+3. **Sidecar propio por corrida**: `--sidecar` es obligatorio (sin default).
+   `ingest_via_n8n.py` y `ingest_telefonia_corpus.py` abortan si el sidecar existente tiene
+   otro `id_corrida` (con el mismo `id_corrida` se reanuda con el merge por `case_id`);
+   `ingest_corpus.py`, cuyo writer sobrescribe todo, rechaza cualquier sidecar existente.
+4. **Sin write-back a CSV/XLSX**: los originales locales (con PII) no se tocan; los datos de
+   campana viven solo en el sidecar y en la copia de campana (`--json`).
+5. **Campos nuevos del sidecar** (`orden`, `posicion`, `mitad`, `brazo_primero`,
+   `id_corrida`): van al final y valen `None` si no hay plan. `orden` es el modo del plan
+   y `posicion` la posicion GLOBAL. Los sidecars historicos siguen leyendose.
+6. Los errores de uso salen con exit code 2, antes de leer credenciales o enviar nada.
+
+### Uso
+
+```bash
+# Plan de la campana (una vez; la semilla queda registrada en el CSV).
+python -m evaluation.plan_campana generar --corpus data/corpus_evaluacion_pseudonimizado.json \
+  --modo aleatorio --seed 20261021 --salida evaluation/data/campana/plan_campana.csv
+
+# Corrida siguiendo el plan (sub-plan de un turno, sidecar propio).
+python scripts/corpus_ingest/ingest_via_n8n.py --dry-run \
+  --plan evaluation/data/campana/plan_campana.csv --id-corrida c1-m1-aut-t1 \
+  --json evaluation/data/campana/corpus_campana.json \
+  --sidecar evaluation/data/campana/sidecar_c1-m1-aut-t1.json
+
+# Atajo: genera el plan al vuelo.
+python scripts/corpus_ingest/ingest_corpus.py --dry-run --orden inverso --limit 10 \
+  --id-corrida prueba --sidecar evaluation/data/campana/sidecar_prueba.json
+
+# Telefonia: solo copia el plan al sidecar.
+python scripts/corpus_ingest/ingest_telefonia_corpus.py --dry-run \
+  --plan evaluation/data/campana/plan_campana.csv --id-corrida c1-tel \
+  --json evaluation/data/campana/corpus_campana.json \
+  --sidecar evaluation/data/campana/sidecar_c1-tel.json
+```
 
 ## Pseudonimizacion del corpus (`pseudonymize_corpus.py`)
 

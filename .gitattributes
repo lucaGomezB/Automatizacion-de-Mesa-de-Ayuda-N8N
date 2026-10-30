@@ -14,3 +14,9 @@ evaluation/data/sensibilidad_ajustes/* text eol=lf
 # Linux: se fija LF en toda plataforma.
 evaluation/data/campana/*.csv text eol=lf
 evaluation/data/plantilla_etiquetado.csv text eol=lf
+
+# Artefactos de la campana contrabalanceada y del corpus independiente (c-166). Sus
+# SHA-256 se declaran en evaluation/data/campana/README.md y deben coincidir en Windows y
+# Linux: se fija LF en toda plataforma (los *.csv ya estan cubiertos arriba).
+evaluation/data/campana/*.json text eol=lf
+evaluation/data/campana/*.md text eol=lf

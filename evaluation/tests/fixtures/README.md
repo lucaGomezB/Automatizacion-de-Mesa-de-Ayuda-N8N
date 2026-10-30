@@ -15,6 +15,18 @@ NO es el corpus de evaluación de la tesis (que se encuentra en
   `tiempo_automatizado_s`.
 - Los textos de descripción son ilustrativos y no provienen de datos reales.
 
+## Contenido de `campana/corpus_independiente_fixture.json` (c-166) — SINTÉTICO
+
+**AVISO: Este corpus es SINTÉTICO** y existe solo para los tests de `evaluation/no_solape.py` y de
+los flags `--corpus`/`--predicciones`/`--reporte` de `run_evaluation.py`.
+
+- 4 casos con ids `I001`..`I004` (prefijo `I` del corpus independiente), con sectores
+  canónicos y los dos tiempos en `null`.
+- Sus descripciones no coinciden con las de `corpus_fixture.json` (ni siquiera con
+  similitud Jaccard alta): es un candidato **disjunto** del corpus de ajuste de prueba.
+- Los tests derivan de él, en `tmp_path`, los candidatos con una infracción (descripción
+  repetida con otro id, id sin prefijo).
+
 ## Contenido de `campana/doble_etiquetado_fixture.csv` (c-168) — SINTÉTICO
 
 **AVISO: Esta planilla es SINTÉTICA.** No contiene etiquetas de personas reales ni

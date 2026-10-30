@@ -1,6 +1,6 @@
-# ci.yml — GitHub Actions CI workflow (C-09, C-19, C-64)
-# Cuatro jobs paralelos: backend-tests, frontend-tests, secret-scan y
-# security-scan.
+# ci.yml — GitHub Actions CI workflow (C-09, C-19, C-64, c-166)
+# Cinco jobs paralelos: backend-tests, frontend-tests, secret-scan,
+# security-scan y corpus-ingest-tests.
 # Triggers: push a main y pull_request.
 # C-19: PostgreSQL service container + integration test step.
 # secret-scan: gitleaks sobre el historial git + escaneo de la memoria de Engram.
@@ -275,3 +275,37 @@ jobs:
       - name: Frontend dependency audit (npm audit, report-only)
         working-directory: App/Frontend
         run: npm audit --audit-level=high || true
+
+  # -----------------------------------------------------------------------
+  # Job 5: corpus-ingest-tests — suites de los harnesses de ingesta (c-166)
+  # -----------------------------------------------------------------------
+  # Hasta c-166 las suites de scripts/corpus_ingest/ (test_*.py junto al codigo, sin
+  # subcarpeta tests/) quedaban FUERA del gate: la CI solo corria el backend,
+  # scripts/preflight y evaluation/. Corren 100% offline (sin red ni backend) con solo
+  # las dependencias del harness mas pytest y PyYAML (lo importa
+  # test_corpus_compose_isolation.py), con las mismas versiones/rangos que fija el repo
+  # (pytest en App/Backend/requirements.txt, PyYAML en scripts/preflight/requirements.txt).
+  # test_pseudonymize_corpus.py importa app.utils.pseudonymizer, que solo depende de la
+  # biblioteca estandar y de app.constants: NO exige dependencias ni variables del
+  # backend, asi que no se excluye (verificado en un entorno limpio con solo estas
+  # dependencias). Si dejara de cumplirlo, se excluye con --ignore y se declara aca.
+  corpus-ingest-tests:
+    name: Corpus ingest tests (Python 3.12)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: scripts/corpus_ingest/requirements.txt
+
+      - name: Install corpus ingest dependencies
+        run: pip install -r scripts/corpus_ingest/requirements.txt pytest==9.1.1 "PyYAML>=6.0,<7.0"
+
+      - name: Run corpus ingest tests
+        run: python -m pytest scripts/corpus_ingest -q
