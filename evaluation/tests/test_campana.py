@@ -2350,8 +2350,17 @@ def test_el_modulo_no_importa_ni_llama_al_clasificador_real():
 
 
 def test_los_artefactos_de_v9_conservan_su_sha256_tras_la_evaluacion():
+    # `report.md` esta versionado y SIEMPRE se verifica (la evaluacion fuera de
+    # muestra no puede reescribirlo). `predicciones.json` es una cache real
+    # derivada del corpus con PII, ignorada por git (ver .gitignore, "Caches de
+    # predicciones del framework de evaluacion"): no existe en un checkout limpio
+    # / CI. Se hashea solo cuando esta presente, para conservar la proteccion
+    # local sin romper la suite en CI; la limitacion queda declarada por este
+    # comentario y por el assert de que `report.md` siempre integra la lista.
     reales = [h.RAIZ_EVALUATION / "report.md", h.RAIZ_EVALUATION / "predicciones.json"]
-    antes = {ruta: hashlib.sha256(ruta.read_bytes()).hexdigest() for ruta in reales}
+    presentes = [ruta for ruta in reales if ruta.exists()]
+    assert h.RAIZ_EVALUATION / "report.md" in presentes  # artefacto versionado: obligatorio
+    antes = {ruta: hashlib.sha256(ruta.read_bytes()).hexdigest() for ruta in presentes}
     fixtures = [h.PREDICCIONES_IN_SAMPLE, h.PREDICCIONES_INDEPENDIENTE, h.CORPUS_CAMPANA, h.CORPUS_INDEPENDIENTE]
     antes.update({ruta: hashlib.sha256(ruta.read_bytes()).hexdigest() for ruta in fixtures})
 
