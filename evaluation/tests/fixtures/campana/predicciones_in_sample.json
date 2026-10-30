@@ -1,0 +1,226 @@
+{
+  "cache_meta": {
+    "corpus_hash": "e0e37bd71416704f5cfca3c13702f5c519d08504dcb0a45e01f6562ac685555f",
+    "corpus_count": 24,
+    "classifier_version": "hybrid-v3",
+    "generated_at": "2026-10-07T22:22:01+00:00"
+  },
+  "predictions": [
+    {
+      "caso_id": "S01",
+      "descripcion": "Sintetico: caso de prueba S01 del analisis de campana.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.92,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S02",
+      "descripcion": "Sintetico: caso de prueba S02 del analisis de campana.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.91,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S03",
+      "descripcion": "Sintetico: caso de prueba S03 del analisis de campana.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.93,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S04",
+      "descripcion": "Sintetico: caso de prueba S04 del analisis de campana.",
+      "sector_asignado": "Bases de Datos",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.9,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S05",
+      "descripcion": "Sintetico: caso de prueba S05 del analisis de campana.",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.95,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S06",
+      "descripcion": "Sintetico: caso de prueba S06 del analisis de campana.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.92,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S07",
+      "descripcion": "Sintetico: caso de prueba S07 del analisis de campana.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.94,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S08",
+      "descripcion": "Sintetico: caso de prueba S08 del analisis de campana.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.9,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S09",
+      "descripcion": "Sintetico: caso de prueba S09 del analisis de campana.",
+      "sector_asignado": "Bases de Datos",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.88,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S10",
+      "descripcion": "Sintetico: caso de prueba S10 del analisis de campana.",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.86,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S11",
+      "descripcion": "Sintetico: caso de prueba S11 del analisis de campana.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.9,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S12",
+      "descripcion": "Sintetico: caso de prueba S12 del analisis de campana.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.72,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S13",
+      "descripcion": "Sintetico: caso de prueba S13 del analisis de campana.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.89,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S14",
+      "descripcion": "Sintetico: caso de prueba S14 del analisis de campana.",
+      "sector_asignado": "Bases de Datos",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.91,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S15",
+      "descripcion": "Sintetico: caso de prueba S15 del analisis de campana.",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.87,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S16",
+      "descripcion": "Sintetico: caso de prueba S16 del analisis de campana.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.93,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S17",
+      "descripcion": "Sintetico: caso de prueba S17 del analisis de campana.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S18",
+      "descripcion": "Sintetico: caso de prueba S18 del analisis de campana.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.74,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S19",
+      "descripcion": "Sintetico: caso de prueba S19 del analisis de campana.",
+      "sector_asignado": "Bases de Datos",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.9,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S20",
+      "descripcion": "Sintetico: caso de prueba S20 del analisis de campana.",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.71,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S21",
+      "descripcion": "Sintetico: caso de prueba S21 del analisis de campana.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.0,
+      "etapa": "fallback",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S22",
+      "descripcion": "Sintetico: caso de prueba S22 del analisis de campana.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "fallback",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S23",
+      "descripcion": "Sintetico: caso de prueba S23 del analisis de campana.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "fallback",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "S24",
+      "descripcion": "Sintetico: caso de prueba S24 del analisis de campana.",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.0,
+      "etapa": "fallback",
+      "sectores_adicionales": []
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "cache_meta": {
+    "corpus_hash": "1c4f48e794890fb5eb20c6ad78cabf0d6ce7907bd4d005d085e6c880c22700d1",
+    "corpus_count": 12,
+    "classifier_version": "hybrid-v3",
+    "generated_at": "2026-11-30T12:00:00+00:00",
+    "commit": "c167aa1",
+    "pines": {
+      "google_genai": "2.34.0",
+      "modelo": "gemini-3.5-flash"
+    }
+  },
+  "predictions": [
+    {
+      "caso_id": "I001",
+      "descripcion": "Sintetico: caso independiente de prueba I001 fuera de la muestra de ajuste.",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.93,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I002",
+      "descripcion": "Sintetico: caso independiente de prueba I002 fuera de la muestra de ajuste.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.92,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I003",
+      "descripcion": "Sintetico: caso independiente de prueba I003 fuera de la muestra de ajuste.",
+      "sector_asignado": "Bases de Datos",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.9,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I004",
+      "descripcion": "Sintetico: caso independiente de prueba I004 fuera de la muestra de ajuste.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.95,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I005",
+      "descripcion": "Sintetico: caso independiente de prueba I005 fuera de la muestra de ajuste.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.88,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I006",
+      "descripcion": "Sintetico: caso independiente de prueba I006 fuera de la muestra de ajuste.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.73,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I007",
+      "descripcion": "Sintetico: caso independiente de prueba I007 fuera de la muestra de ajuste.",
+      "sector_asignado": "Bases de Datos",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.87,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I008",
+      "descripcion": "Sintetico: caso independiente de prueba I008 fuera de la muestra de ajuste.",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.9,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I009",
+      "descripcion": "Sintetico: caso independiente de prueba I009 fuera de la muestra de ajuste.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.71,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I010",
+      "descripcion": "Sintetico: caso independiente de prueba I010 fuera de la muestra de ajuste.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.89,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I011",
+      "descripcion": "Sintetico: caso independiente de prueba I011 fuera de la muestra de ajuste.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.0,
+      "etapa": "fallback",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I012",
+      "descripcion": "Sintetico: caso independiente de prueba I012 fuera de la muestra de ajuste.",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.0,
+      "etapa": "fallback",
+      "sectores_adicionales": []
+    }
+  ]
+}

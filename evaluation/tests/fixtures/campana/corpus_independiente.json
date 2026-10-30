@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "metadata": {
+    "descripcion": "Corpus independiente SINTETICO de 12 casos para los tests de c-167. Ids I001..I012.",
+    "total_casos": 12
+  },
+  "casos": [
+    {
+      "id": "I001",
+      "descripcion": "Sintetico: caso independiente de prueba I001 fuera de la muestra de ajuste.",
+      "canal_origen": "correo",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I002",
+      "descripcion": "Sintetico: caso independiente de prueba I002 fuera de la muestra de ajuste.",
+      "canal_origen": "formulario",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I003",
+      "descripcion": "Sintetico: caso independiente de prueba I003 fuera de la muestra de ajuste.",
+      "canal_origen": "llamada",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I004",
+      "descripcion": "Sintetico: caso independiente de prueba I004 fuera de la muestra de ajuste.",
+      "canal_origen": "correo",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I005",
+      "descripcion": "Sintetico: caso independiente de prueba I005 fuera de la muestra de ajuste.",
+      "canal_origen": "formulario",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I006",
+      "descripcion": "Sintetico: caso independiente de prueba I006 fuera de la muestra de ajuste.",
+      "canal_origen": "llamada",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I007",
+      "descripcion": "Sintetico: caso independiente de prueba I007 fuera de la muestra de ajuste.",
+      "canal_origen": "correo",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I008",
+      "descripcion": "Sintetico: caso independiente de prueba I008 fuera de la muestra de ajuste.",
+      "canal_origen": "formulario",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [
+        "Bases de Datos"
+      ],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I009",
+      "descripcion": "Sintetico: caso independiente de prueba I009 fuera de la muestra de ajuste.",
+      "canal_origen": "llamada",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I010",
+      "descripcion": "Sintetico: caso independiente de prueba I010 fuera de la muestra de ajuste.",
+      "canal_origen": "correo",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I011",
+      "descripcion": "Sintetico: caso independiente de prueba I011 fuera de la muestra de ajuste.",
+      "canal_origen": "formulario",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I012",
+      "descripcion": "Sintetico: caso independiente de prueba I012 fuera de la muestra de ajuste.",
+      "canal_origen": "llamada",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    }
+  ]
+}

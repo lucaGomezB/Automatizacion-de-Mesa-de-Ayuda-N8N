@@ -1,0 +1,243 @@
+{
+  "schema_version": 1,
+  "metadata": {
+    "descripcion": "Corpus de campana SINTETICO de 24 casos para los tests de c-167. Ids S01..S24.",
+    "total_casos": 24
+  },
+  "casos": [
+    {
+      "id": "S01",
+      "descripcion": "Sintetico: caso de prueba S01 del analisis de campana.",
+      "canal_origen": "correo",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": 20.0
+    },
+    {
+      "id": "S02",
+      "descripcion": "Sintetico: caso de prueba S02 del analisis de campana.",
+      "canal_origen": "formulario",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": 20.0
+    },
+    {
+      "id": "S03",
+      "descripcion": "Sintetico: caso de prueba S03 del analisis de campana.",
+      "canal_origen": "llamada",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": 20.0
+    },
+    {
+      "id": "S04",
+      "descripcion": "Sintetico: caso de prueba S04 del analisis de campana.",
+      "canal_origen": "correo",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": 20.0
+    },
+    {
+      "id": "S05",
+      "descripcion": "Sintetico: caso de prueba S05 del analisis de campana.",
+      "canal_origen": "formulario",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": 20.0
+    },
+    {
+      "id": "S06",
+      "descripcion": "Sintetico: caso de prueba S06 del analisis de campana.",
+      "canal_origen": "llamada",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": 20.0
+    },
+    {
+      "id": "S07",
+      "descripcion": "Sintetico: caso de prueba S07 del analisis de campana.",
+      "canal_origen": "correo",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": 20.0
+    },
+    {
+      "id": "S08",
+      "descripcion": "Sintetico: caso de prueba S08 del analisis de campana.",
+      "canal_origen": "formulario",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": 20.0
+    },
+    {
+      "id": "S09",
+      "descripcion": "Sintetico: caso de prueba S09 del analisis de campana.",
+      "canal_origen": "llamada",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": 20.0
+    },
+    {
+      "id": "S10",
+      "descripcion": "Sintetico: caso de prueba S10 del analisis de campana.",
+      "canal_origen": "correo",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [
+        "Bases de Datos"
+      ],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": 20.0
+    },
+    {
+      "id": "S11",
+      "descripcion": "Sintetico: caso de prueba S11 del analisis de campana.",
+      "canal_origen": "formulario",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": 20.0
+    },
+    {
+      "id": "S12",
+      "descripcion": "Sintetico: caso de prueba S12 del analisis de campana.",
+      "canal_origen": "llamada",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": 20.0
+    },
+    {
+      "id": "S13",
+      "descripcion": "Sintetico: caso de prueba S13 del analisis de campana.",
+      "canal_origen": "correo",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": 20.0
+    },
+    {
+      "id": "S14",
+      "descripcion": "Sintetico: caso de prueba S14 del analisis de campana.",
+      "canal_origen": "formulario",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": 20.0
+    },
+    {
+      "id": "S15",
+      "descripcion": "Sintetico: caso de prueba S15 del analisis de campana.",
+      "canal_origen": "llamada",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": 20.0
+    },
+    {
+      "id": "S16",
+      "descripcion": "Sintetico: caso de prueba S16 del analisis de campana.",
+      "canal_origen": "correo",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": 20.0
+    },
+    {
+      "id": "S17",
+      "descripcion": "Sintetico: caso de prueba S17 del analisis de campana.",
+      "canal_origen": "formulario",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": 20.0
+    },
+    {
+      "id": "S18",
+      "descripcion": "Sintetico: caso de prueba S18 del analisis de campana.",
+      "canal_origen": "llamada",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": 20.0
+    },
+    {
+      "id": "S19",
+      "descripcion": "Sintetico: caso de prueba S19 del analisis de campana.",
+      "canal_origen": "correo",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": 20.0
+    },
+    {
+      "id": "S20",
+      "descripcion": "Sintetico: caso de prueba S20 del analisis de campana.",
+      "canal_origen": "formulario",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": 20.0
+    },
+    {
+      "id": "S21",
+      "descripcion": "Sintetico: caso de prueba S21 del analisis de campana.",
+      "canal_origen": "llamada",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Bases de Datos"
+      ],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": 20.0
+    },
+    {
+      "id": "S22",
+      "descripcion": "Sintetico: caso de prueba S22 del analisis de campana.",
+      "canal_origen": "correo",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": 20.0
+    },
+    {
+      "id": "S23",
+      "descripcion": "Sintetico: caso de prueba S23 del analisis de campana.",
+      "canal_origen": "formulario",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "S24",
+      "descripcion": "Sintetico: caso de prueba S24 del analisis de campana.",
+      "canal_origen": "llamada",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [
+        "Bases de Datos"
+      ],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    }
+  ]
+}

@@ -404,11 +404,26 @@ class IntervalosConjunto:
     micro_f1: Tuple[float, float]
 
 
-def _percentil_intervalo(
+def percentil_intervalo(
     muestras: Sequence[float],
     confianza: float,
 ) -> Tuple[float, float]:
-    """Intervalo percentil con interpolacion lineal sobre la muestra ordenada."""
+    """
+    Intervalo percentil con interpolacion lineal sobre la muestra ordenada.
+
+    API publica (c-167): la comparten `intervalos_por_clase`, `intervalos_conjunto`,
+    `evaluation/kappa.py` y `evaluation/campana.py`, de modo que todos los IC bootstrap
+    del paquete usen el mismo procedimiento.
+
+    Args:
+        muestras: Valores del estadistico en cada remuestra (en cualquier orden).
+        confianza: Nivel del intervalo, en (0, 1); por ejemplo `NIVEL_CONFIANZA`.
+
+    Returns:
+        `(limite_inferior, limite_superior)` en los percentiles `(1 - confianza) / 2` y
+        `1 - (1 - confianza) / 2`. Una muestra vacia devuelve `(0.0, 0.0)` y una de un
+        solo valor, ese valor repetido.
+    """
     ordenados = sorted(muestras)
     n = len(ordenados)
     if n == 0:
@@ -430,14 +445,27 @@ def _percentil_intervalo(
     return _cuantil(alfa / 2.0), _cuantil(1.0 - alfa / 2.0)
 
 
-def _remuestreos_indices(
+def remuestreos_indices(
     generador: random.Random,
     n: int,
     remuestreos: int,
 ) -> Iterable[List[int]]:
-    """Genera `remuestreos` listas de indices de casos (con reemplazo)."""
+    """
+    Genera `remuestreos` listas de `n` indices de casos extraidos con reemplazo.
+
+    API publica (c-167): el bootstrap por casos de todo el paquete consume este
+    generador con `random.Random(SEMILLA_BOOTSTRAP)` y `REMUESTREOS_BOOTSTRAP`, de modo
+    que la secuencia de remuestras sea reproducible. Con `n == 0` cada remuestra es una
+    lista vacia.
+    """
     for _ in range(max(0, remuestreos)):
         yield [generador.randrange(n) for _ in range(n)] if n else []
+
+
+# Alias retrocompatibles (c-167, D3): los helpers eran privados antes de compartirse con
+# `evaluation/kappa.py` y `evaluation/campana.py`.
+_percentil_intervalo = percentil_intervalo
+_remuestreos_indices = remuestreos_indices
 
 
 def intervalos_por_clase(
@@ -464,7 +492,7 @@ def intervalos_por_clase(
     generador = random.Random(semilla)
     n = len(reales)
     muestras_f1: Dict[str, List[float]] = {clase: [] for clase in CLASES}
-    for indices in _remuestreos_indices(generador, n, remuestreos):
+    for indices in remuestreos_indices(generador, n, remuestreos):
         f1s = f1_por_clase(
             matriz_confusion([reales[i] for i in indices], [predichos[i] for i in indices])
         )
@@ -493,7 +521,7 @@ def intervalos_por_clase(
             estimable=True,
             precision=intervalo_wilson(tp, tp + fp, confianza),
             sensibilidad=intervalo_wilson(tp, soporte, confianza),
-            f1=_percentil_intervalo(muestras_f1[clase], confianza),
+            f1=percentil_intervalo(muestras_f1[clase], confianza),
         )
     return resultado
 
@@ -520,16 +548,16 @@ def intervalos_conjunto(
     muestras_subset: List[float] = []
     muestras_hamming: List[float] = []
     muestras_micro: List[float] = []
-    for indices in _remuestreos_indices(generador, n, remuestreos):
+    for indices in remuestreos_indices(generador, n, remuestreos):
         verdad = [pares[i][0] for i in indices]
         predicho = [pares[i][1] for i in indices]
         muestras_subset.append(exactitud_subconjunto(verdad, predicho))
         muestras_hamming.append(perdida_hamming(verdad, predicho))
         muestras_micro.append(f1_micro(verdad, predicho))
     return IntervalosConjunto(
-        subset_accuracy=_percentil_intervalo(muestras_subset, confianza),
-        hamming_loss=_percentil_intervalo(muestras_hamming, confianza),
-        micro_f1=_percentil_intervalo(muestras_micro, confianza),
+        subset_accuracy=percentil_intervalo(muestras_subset, confianza),
+        hamming_loss=percentil_intervalo(muestras_hamming, confianza),
+        micro_f1=percentil_intervalo(muestras_micro, confianza),
     )
 
 
