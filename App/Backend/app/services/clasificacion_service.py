@@ -15,15 +15,21 @@ Responsabilidad:
     incidente; el otro gestiona el flujo de auditoría y revisión.
 """
 
+from datetime import datetime
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.constants import ORIGEN_GATE, ORIGEN_MUESTREO
 from app.core.exceptions import EntityNotFoundError
 from app.core.logging import get_logger
+from app.models.base import utcnow
+from app.models.catalog import Sector
 from app.models.clasificacion_log import ClasificacionLog
 from app.repositories.clasificacion_repository import ClasificacionRepository
 from app.repositories.incidente_repository import IncidenteRepository
 from app.repositories.sector_repository import SectorRepository
 from app.services.incident_visibility import AlcanceIncidentes, ModoAlcance
+from app.services.intervencion_estado import a_utc
 from app.services.notification_recipient_service import NotificationRecipientService
 from app.utils.n8n_webhook import notify_n8n_post_revision
 
@@ -212,6 +218,9 @@ class ClasificacionService:
         sector_id: int,
         sectores_adicionales: list[str] | None = None,
         alcance: AlcanceIncidentes | None = None,
+        *,
+        actor_empleado_id: int | None = None,
+        intervencion_inicio_en: datetime | None = None,
     ) -> ClasificacionLog:
         """
         Registra la validación humana de una clasificación.
@@ -228,11 +237,23 @@ class ClasificacionService:
         queda fuera del alcance del usuario responde como no encontrado (404) y
         NUNCA modifica el log ni el incidente.
 
+        c-165 (ASG-005): cada validación es una INTERVENCIÓN y registra sus
+        metadatos en el log: el actor (NULL si la cuenta no tiene empleado
+        vinculado), el inicio declarado (normalizado a UTC), `validado_en` (instante
+        del SERVIDOR) y el origen, que el backend deriva SIEMPRE del flag
+        `requiere_revision_humana` del log (`gate` si está marcado, `muestreo` si no).
+        Gana la última escritura: la intervención reemplaza como unidad los cuatro
+        metadatos, el sector validado y el conjunto `sectores_validados`, incluso por
+        el conjunto vacío.
+
         Args:
             log_id:                 ID del registro de clasificación a validar.
             sector_id:              ID del sector principal correcto.
             sectores_adicionales:   Nombres canónicos de los sectores secundarios validados.
             alcance:                Alcance de visibilidad por rol (opcional).
+            actor_empleado_id:      Empleado que valida; None si la cuenta no tiene
+                                    empleado activo vinculado (la validación no falla).
+            intervencion_inicio_en: Inicio declarado por el cliente (opcional).
 
         Returns:
             Instancia actualizada del ClasificacionLog con todas sus relaciones.
@@ -242,6 +263,7 @@ class ClasificacionService:
                                  no existen, o el incidente queda fuera de alcance.
         """
         # Verificar el alcance ANTES de mutar (misma regla que la lectura).
+        log_previo = None
         if alcance is not None:
             log_previo = await self._repo.get_by_id(log_id)
             await self._verificar_alcance_incidente(log_previo.incidente_id, alcance)
@@ -249,16 +271,28 @@ class ClasificacionService:
         # Verificar que el sector de validación existe antes de asignarlo
         await self._sector_repo.get_by_id(sector_id)
 
-        log = await self._repo.set_validated_sector(log_id, sector_id)
+        if log_previo is None:
+            log_previo = await self._repo.get_by_id(log_id)
 
-        # Persistir el conjunto validado adicional (N-a-N)
-        if sectores_adicionales:
-            adjuntos = await self._sector_repo.get_by_nombres(sectores_adicionales)
-            faltantes = [n for n in sectores_adicionales if n not in adjuntos]
-            if faltantes:
-                raise EntityNotFoundError("Sector", ", ".join(faltantes))
-            await self._repo.set_sectores_validados(log, list(adjuntos.values()))
-            log = await self._repo.get_with_relations(log_id)
+        # Resolver los adicionales ANTES de mutar: un adicional inexistente (404) no
+        # debe dejar el log a medio validar.
+        adjuntos = await self._resolver_adicionales(sectores_adicionales)
+
+        # El ORIGEN lo deriva SIEMPRE el backend del flag del LOG (nunca del cliente).
+        origen = ORIGEN_GATE if log_previo.requiere_revision_humana else ORIGEN_MUESTREO
+        log = await self._repo.set_validated_sector(
+            log_id,
+            sector_id,
+            origen_intervencion=origen,
+            validado_en=utcnow(),
+            validado_por_empleado_id=actor_empleado_id,
+            intervencion_inicio_en=a_utc(intervencion_inicio_en),
+        )
+
+        # Persistir el conjunto validado adicional (N-a-N). Se reemplaza SIEMPRE,
+        # aun por el conjunto vacío: la última validación manda (ASG-005).
+        await self._repo.set_sectores_validados(log, list(adjuntos.values()))
+        log = await self._repo.get_with_relations(log_id)
 
         # Propagar el veredicto al incidente en la misma transacción: el ticket
         # queda asignado al sector validado y sale del estado "requiere revisión".
@@ -272,9 +306,7 @@ class ClasificacionService:
         # c-86 (NR-008): una vez que el incidente paso la revision humana, se
         # resuelve y avisa (fire-and-forget) a los `gestion_incidentes` ACTIVOS
         # de los sectores validados. No bloquea ni altera la respuesta.
-        sector_ids = {sector_id}
-        if sectores_adicionales:
-            sector_ids |= {s.id for s in adjuntos.values()}
+        sector_ids = {sector_id} | {s.id for s in adjuntos.values()}
         destinatarios = await NotificationRecipientService(
             self._session
         ).resolver_destinatarios_gestion(sorted(sector_ids))
@@ -288,17 +320,43 @@ class ClasificacionService:
             incidente_id=log.incidente_id,
             sector_id_validado=sector_id,
             sectores_adicionales=sectores_adicionales or [],
+            origen_intervencion=origen,
         )
         return log
 
+    async def _resolver_adicionales(
+        self, nombres: list[str] | None
+    ) -> dict[str, Sector]:
+        """
+        Resuelve los nombres canónicos de los sectores adicionales a sus filas.
+
+        Sin nombres devuelve un dict vacío (el conjunto validado queda vacío).
+
+        Raises:
+            EntityNotFoundError: Si algún nombre no existe en el catálogo.
+        """
+        if not nombres:
+            return {}
+        adjuntos = await self._sector_repo.get_by_nombres(nombres)
+        faltantes = [n for n in nombres if n not in adjuntos]
+        if faltantes:
+            raise EntityNotFoundError("Sector", ", ".join(faltantes))
+        return adjuntos
+
     async def validate_payload(
-        self, log_id: int, payload, alcance: AlcanceIncidentes | None = None
+        self,
+        log_id: int,
+        payload,
+        alcance: AlcanceIncidentes | None = None,
+        *,
+        actor_empleado_id: int | None = None,
     ) -> ClasificacionLog:
         """
         Resuelve el payload de validación (id o nombre) y delega en validate().
 
         Acepta `sector_id_validado` (compatibilidad) o `sector_validado` (nombre
-        canónico) y propaga los `sectores_adicionales` validados.
+        canónico) y propaga los `sectores_adicionales` validados y el inicio
+        declarado de la intervención (`intervencion_inicio_en`).
 
         Raises:
             EntityNotFoundError: Si el nombre de sector no existe en el catálogo,
@@ -311,7 +369,12 @@ class ClasificacionService:
                 raise EntityNotFoundError("Sector", str(payload.sector_validado))
             sector_id = sector.id
         return await self.validate(
-            log_id, sector_id, payload.sectores_adicionales, alcance=alcance
+            log_id,
+            sector_id,
+            payload.sectores_adicionales,
+            alcance=alcance,
+            actor_empleado_id=actor_empleado_id,
+            intervencion_inicio_en=payload.intervencion_inicio_en,
         )
 
     async def _verificar_alcance_incidente(

@@ -8,3 +8,15 @@ data/corpus_evaluacion_pseudonimizado.json text eol=lf
 # (c-142, D6). Sus SHA-256 estan registrados en procedencia.json y deben coincidir
 # en Windows y Linux: se fija LF en toda plataforma.
 evaluation/data/sensibilidad_ajustes/* text eol=lf
+
+# Tabla primaria del doble etiquetado y su plantilla (c-168, D10). El SHA-256 de la
+# tabla se declara en evaluation/data/campana/README.md y debe coincidir en Windows y
+# Linux: se fija LF en toda plataforma.
+evaluation/data/campana/*.csv text eol=lf
+evaluation/data/plantilla_etiquetado.csv text eol=lf
+
+# Artefactos de la campana contrabalanceada y del corpus independiente (c-166). Sus
+# SHA-256 se declaran en evaluation/data/campana/README.md y deben coincidir en Windows y
+# Linux: se fija LF en toda plataforma (los *.csv ya estan cubiertos arriba).
+evaluation/data/campana/*.json text eol=lf
+evaluation/data/campana/*.md text eol=lf

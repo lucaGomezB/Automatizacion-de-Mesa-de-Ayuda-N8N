@@ -9,12 +9,22 @@ from __future__ import annotations
 
 import csv
 import json
-from dataclasses import asdict, replace
+import sys
+from dataclasses import asdict, fields, replace
 from datetime import datetime, timezone
+from pathlib import Path
 
 import pytest
 
-import ingest_via_n8n as ivn
+# Los tests de campana arman planes con el paquete `evaluation` de la raiz del repo;
+# se agrega la raiz a sys.path de forma relativa al archivo (mismo patron que
+# test_ingest_telefonia_corpus.py) para correr tanto desde la raiz como desde este directorio.
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+
+import ingest_via_n8n as ivn  # noqa: E402
+from evaluation import plan_campana as pc  # noqa: E402
 
 UTC = timezone.utc
 
@@ -1819,3 +1829,680 @@ def test_build_confirmation_observer_plumbs_client_factory():
     assert observer is not None
     assert observer("INC-000011") is None
     assert captured["client_factory"] is sentinel
+
+
+# ── Modo campana (c-166): campos nuevos de CaseResult (task 2.1) ────────────
+
+CAMPOS_CAMPANA = ["orden", "posicion", "mitad", "brazo_primero", "id_corrida"]
+
+
+def test_case_result_acepta_los_campos_de_campana_al_final_con_default_none():
+    resultado = _ok_result()  # constructor existente: no pasa ningun campo de campana
+
+    assert [getattr(resultado, campo) for campo in CAMPOS_CAMPANA] == [None] * 5
+    assert [f.name for f in fields(ivn.CaseResult)][-5:] == CAMPOS_CAMPANA
+    assert list(asdict(resultado))[-5:] == CAMPOS_CAMPANA
+
+
+def test_case_result_guarda_los_campos_de_campana_cuando_se_los_pasa():
+    resultado = replace(
+        _ok_result(),
+        orden="aleatorio",
+        posicion=7,
+        mitad=1,
+        brazo_primero="automatizado",
+        id_corrida="corrida-1",
+    )
+
+    assert asdict(resultado)["orden"] == "aleatorio"
+    assert asdict(resultado)["posicion"] == 7
+    assert asdict(resultado)["mitad"] == 1
+    assert asdict(resultado)["brazo_primero"] == "automatizado"
+    assert asdict(resultado)["id_corrida"] == "corrida-1"
+
+
+def test_los_builders_existentes_dejan_los_campos_de_campana_en_none():
+    desde_detalle = ivn._result_from_detail(
+        case_id="R001",
+        canal="web",
+        detail=_detail_body(),
+        t_envio=_dt(12, 0, 0),
+        origen_message_id=None,
+    )
+    desde_error = ivn._error_result("R001", "web", _dt(12, 0, 0), "http500")
+
+    for resultado in (desde_detalle, desde_error):
+        assert [getattr(resultado, campo) for campo in CAMPOS_CAMPANA] == [None] * 5
+
+
+# ── Modo campana (c-166): sidecars historicos (task 2.4) ────────────────────
+
+
+def _entrada_historica(resultado: ivn.CaseResult) -> dict:
+    """Entrada de sidecar tal como la escribia la version previa (sin claves de campana)."""
+    return {k: v for k, v in asdict(resultado).items() if k not in CAMPOS_CAMPANA}
+
+
+def test_sidecar_historico_sin_claves_de_campana_se_sigue_leyendo_y_mergeando(tmp_path):
+    path = tmp_path / "sidecar.json"
+    historicas = [_entrada_historica(_ok_result("R001")), _entrada_historica(_ok_result("R002"))]
+    path.write_text(json.dumps(historicas), encoding="utf-8")
+    nueva = replace(
+        _ok_result("R002"),
+        t_e2e_s=9.0,
+        orden="inverso",
+        posicion=2,
+        mitad=1,
+        brazo_primero="automatizado",
+        id_corrida="corrida-1",
+    )
+
+    ivn.write_sidecar_json(path, [nueva, _ok_result("R003")])
+
+    data = json.loads(path.read_text(encoding="utf-8"))
+    assert [entrada["case_id"] for entrada in data] == ["R001", "R002", "R003"]
+    assert data[0] == historicas[0]  # intacta: no se le agregan claves
+    assert data[1]["t_e2e_s"] == 9.0
+    assert (data[1]["posicion"], data[1]["mitad"], data[1]["id_corrida"]) == (2, 1, "corrida-1")
+    assert [data[2][campo] for campo in CAMPOS_CAMPANA] == [None] * 5
+
+
+def test_las_claves_de_campana_ausentes_de_un_sidecar_historico_equivalen_a_none():
+    entrada = _entrada_historica(_ok_result())
+
+    resultado = ivn.CaseResult(**entrada)
+
+    assert not set(CAMPOS_CAMPANA) & set(entrada)
+    assert [getattr(resultado, campo) for campo in CAMPOS_CAMPANA] == [None] * 5
+
+
+# ── Modo campana (c-166): --limit antes del orden (task 2.5) ────────────────
+
+CANAL_CORREO_JSON = "correo electrónico"
+CANAL_TELEFONO_JSON = "llamada telefónica"
+
+
+def _write_cases_json(path, canales) -> None:
+    """Corpus sintetico con un caso por canal indicado (ids R001, R002, ...)."""
+    casos = [
+        {
+            "id": f"R{numero:03d}",
+            "descripcion": f"d{numero}",
+            "canal_origen": canal,
+            "sector_asignado": "Sistemas",
+            "sectores_adicionales": [],
+            "tiempo_manual_s": 50,
+            "tiempo_automatizado_s": None,
+        }
+        for numero, canal in enumerate(canales, start=1)
+    ]
+    doc = {
+        "schema_version": 1,
+        "metadata": {"descripcion": "synthetic", "total_casos": len(casos)},
+        "casos": casos,
+    }
+    path.write_text(json.dumps(doc, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def _escribir_plan(path, ids, modo="directo", seed=None):
+    pc.escribir_plan_csv(pc.generar_plan_campana(ids, modo, seed), path)
+    return path
+
+
+def _ingesta_falsa(monkeypatch, vistos: list[str]) -> list[str]:
+    """Cliente falso: registra los case_id enviados, en orden, y cada resultado es valido.
+
+    Devuelve la lista donde se anotan las llamadas a los writers de CSV/XLSX (que no
+    escriben nada), para poder afirmar si el modo campana los invoca.
+    """
+    escrituras: list[str] = []
+
+    def falsa(**kwargs):
+        vistos.append(kwargs["case_id"])
+        return _ok_result(case_id=kwargs["case_id"])
+
+    _set_operator_creds(monkeypatch)
+    _clear_confirmation_env(monkeypatch)
+    monkeypatch.setattr(ivn, "login", lambda *a, **k: "tok")
+    monkeypatch.setattr(ivn, "ingest_email_case", falsa)
+    monkeypatch.setattr(ivn, "ingest_web_case", falsa)
+    monkeypatch.setattr(ivn, "write_csv_results", lambda *a, **k: escrituras.append("csv"))
+    monkeypatch.setattr(ivn, "write_xlsx_results", lambda *a, **k: escrituras.append("xlsx"))
+    return escrituras
+
+
+def _argv_campana(tmp_path, json_path, *extra) -> list[str]:
+    return [
+        "--source",
+        "json",
+        "--json",
+        str(json_path),
+        "--sidecar",
+        str(tmp_path / "corrida.json"),
+        "--id-corrida",
+        "corrida-1",
+        "--sleep",
+        "0",
+        *extra,
+    ]
+
+
+def test_orden_inverso_con_limit_procesa_el_reverso_de_los_tres_primeros(tmp_path, monkeypatch):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 5)
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--orden", "inverso", "--limit", "3"))
+
+    assert codigo == 0
+    assert vistos == ["R003", "R002", "R001"]  # NO los tres ultimos (R005, R004, R003)
+
+
+def test_orden_alternado_con_limit_ordena_solo_los_casos_seleccionados(tmp_path, monkeypatch):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 6)
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--orden", "alternado", "--limit", "4"))
+
+    assert codigo == 0
+    assert vistos == ["R001", "R003", "R002", "R004"]
+
+
+def test_plan_con_limit_se_rechaza_con_error_accionable_y_no_envia_nada(
+    tmp_path, monkeypatch, capsys
+):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 4)
+    plan = _escribir_plan(tmp_path / "plan.csv", ["R001", "R002", "R003", "R004"])
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--plan", str(plan), "--limit", "2"))
+
+    err = capsys.readouterr().err
+    assert codigo == 2
+    assert "--limit" in err and "--plan" in err
+    assert vistos == []
+
+
+# ── Modo campana (c-166): --plan (task 2.6) ─────────────────────────────────
+
+CANAL_WEB_JSON = "formulario web"
+IDS_5 = ["R001", "R002", "R003", "R004", "R005"]
+
+
+def _leer_sidecar(tmp_path) -> list[dict]:
+    return json.loads((tmp_path / "corrida.json").read_text(encoding="utf-8"))
+
+
+def test_plan_envia_los_casos_ingestables_en_orden_de_posicion_y_omite_telefono(
+    tmp_path, monkeypatch
+):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(
+        json_path,
+        [CANAL_CORREO_JSON, CANAL_TELEFONO_JSON, CANAL_WEB_JSON, CANAL_CORREO_JSON, CANAL_CORREO_JSON],
+    )
+    plan = _escribir_plan(tmp_path / "plan.csv", IDS_5, "inverso")
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--plan", str(plan)))
+
+    assert codigo == 0
+    assert vistos == ["R005", "R004", "R003", "R001"]  # R002 es telefono: se omite
+
+
+def test_plan_registra_la_asignacion_del_plan_en_cada_entrada_del_sidecar(tmp_path, monkeypatch):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 5)
+    plan = _escribir_plan(tmp_path / "plan.csv", IDS_5, "aleatorio", seed=7)
+    esperado = {fila.id_caso: fila for fila in pc.leer_plan_csv(plan)}
+    _ingesta_falsa(monkeypatch, [])
+
+    ivn.run(_argv_campana(tmp_path, json_path, "--plan", str(plan)))
+
+    entradas = _leer_sidecar(tmp_path)
+    assert sorted(entrada["case_id"] for entrada in entradas) == IDS_5
+    for entrada in entradas:
+        fila = esperado[entrada["case_id"]]
+        assert entrada["posicion"] == fila.posicion
+        assert entrada["mitad"] == fila.mitad
+        assert entrada["brazo_primero"] == fila.brazo_primero
+        assert entrada["orden"] == "aleatorio"
+        assert entrada["id_corrida"] == "corrida-1"
+
+
+def test_plan_acepta_un_subplan_con_posiciones_globales_no_contiguas(tmp_path, monkeypatch):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 5)
+    completo = pc.generar_plan_campana(IDS_5, "directo")
+    subplan = tmp_path / "subplan.csv"
+    pc.escribir_plan_csv(pc.subplan(completo, mitad=2, brazo="manual", turno=1), subplan)
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--plan", str(subplan)))
+
+    assert codigo == 0
+    assert vistos == ["R003", "R005"]  # mitad 2, manual primero: posiciones 3 y 5
+    assert [entrada["posicion"] for entrada in _leer_sidecar(tmp_path)] == [3, 5]
+
+
+def test_plan_respeta_only_channel_sobre_los_casos_del_plan(tmp_path, monkeypatch):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(
+        json_path, [CANAL_CORREO_JSON, CANAL_WEB_JSON, CANAL_CORREO_JSON, CANAL_WEB_JSON]
+    )
+    plan = _escribir_plan(tmp_path / "plan.csv", ["R001", "R002", "R003", "R004"], "inverso")
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+
+    ivn.run(_argv_campana(tmp_path, json_path, "--plan", str(plan), "--only-channel", "web"))
+
+    assert vistos == ["R004", "R002"]
+
+
+def test_plan_con_un_id_caso_ausente_del_corpus_aborta_antes_de_enviar(
+    tmp_path, monkeypatch, capsys
+):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 3)
+    plan = _escribir_plan(tmp_path / "plan.csv", ["R001", "R002", "R999"])
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--plan", str(plan)))
+
+    assert codigo == 2
+    assert "R999" in capsys.readouterr().err
+    assert vistos == []
+    assert not (tmp_path / "corrida.json").exists()
+
+
+def test_plan_inexistente_aborta_con_error_accionable(tmp_path, monkeypatch, capsys):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 2)
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--plan", str(tmp_path / "no_existe.csv")))
+
+    assert codigo == 2
+    assert "no_existe.csv" in capsys.readouterr().err
+    assert vistos == []
+
+
+def test_plan_y_orden_juntos_se_rechazan_y_no_envian_nada(tmp_path, monkeypatch, capsys):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 3)
+    plan = _escribir_plan(tmp_path / "plan.csv", ["R001", "R002", "R003"])
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+
+    codigo = ivn.run(
+        _argv_campana(tmp_path, json_path, "--plan", str(plan), "--orden", "inverso")
+    )
+
+    err = capsys.readouterr().err
+    assert codigo == 2
+    assert "--plan" in err and "--orden" in err
+    assert vistos == []
+
+
+@pytest.mark.parametrize("modo", ["plan", "orden"])
+def test_la_falta_de_id_corrida_se_rechaza_con_plan_y_con_orden(
+    tmp_path, monkeypatch, capsys, modo
+):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 3)
+    plan = _escribir_plan(tmp_path / "plan.csv", ["R001", "R002", "R003"])
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+    modo_argv = ["--plan", str(plan)] if modo == "plan" else ["--orden", "inverso"]
+
+    codigo = ivn.run(
+        [
+            "--source", "json", "--json", str(json_path),
+            "--sidecar", str(tmp_path / "corrida.json"), "--sleep", "0",
+            *modo_argv,
+        ]
+    )  # fmt: skip
+
+    assert codigo == 2
+    assert "--id-corrida" in capsys.readouterr().err
+    assert vistos == []
+
+
+def test_dry_run_con_plan_cuenta_los_casos_sin_red_ni_escritura(tmp_path, monkeypatch, capsys):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON, CANAL_TELEFONO_JSON, CANAL_WEB_JSON])
+    plan = _escribir_plan(tmp_path / "plan.csv", ["R001", "R002", "R003"])
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--plan", str(plan), "--dry-run"))
+
+    assert codigo == 0
+    assert "DRY-RUN" in capsys.readouterr().out
+    assert vistos == []
+    assert not (tmp_path / "corrida.json").exists()
+
+
+# ── Modo campana (c-166): --orden/--seed como atajo (task 2.7) ──────────────
+
+
+def test_orden_genera_el_plan_lo_escribe_junto_al_sidecar_y_procesa_en_ese_orden(
+    tmp_path, monkeypatch
+):
+    ids = [f"R{numero:03d}" for numero in range(1, 7)]
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 6)
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+    plan_esperado = pc.generar_plan_campana(ids, "aleatorio", 11)
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--orden", "aleatorio", "--seed", "11"))
+
+    plan_escrito = pc.leer_plan_csv(tmp_path / "corrida.json.plan.csv")
+    assert codigo == 0
+    assert plan_escrito == plan_esperado
+    assert vistos == [fila.id_caso for fila in plan_esperado]
+    assert [entrada["posicion"] for entrada in _leer_sidecar(tmp_path)] == [1, 2, 3, 4, 5, 6]
+    assert {entrada["orden"] for entrada in _leer_sidecar(tmp_path)} == {"aleatorio"}
+
+
+def test_orden_sin_semilla_deja_la_celda_seed_vacia_en_el_plan_escrito(tmp_path, monkeypatch):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 4)
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--orden", "alternado"))
+
+    assert codigo == 0
+    assert vistos == ["R001", "R003", "R002", "R004"]
+    assert {fila.seed for fila in pc.leer_plan_csv(tmp_path / "corrida.json.plan.csv")} == {None}
+
+
+def test_orden_aleatorio_sin_seed_termina_con_error_que_pide_seed_y_no_envia_nada(
+    tmp_path, monkeypatch, capsys
+):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 3)
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--orden", "aleatorio"))
+
+    assert codigo == 2
+    assert "--seed" in capsys.readouterr().err
+    assert vistos == []
+    assert not (tmp_path / "corrida.json").exists()
+    assert not (tmp_path / "corrida.json.plan.csv").exists()
+
+
+def test_orden_no_pisa_un_plan_previo_distinto_de_la_misma_corrida(tmp_path, monkeypatch, capsys):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 4)
+    previo = _escribir_plan(tmp_path / "corrida.json.plan.csv", IDS_5[:4], "inverso")
+    antes = previo.read_bytes()
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--orden", "directo"))
+
+    assert codigo == 2
+    assert "corrida.json.plan.csv" in capsys.readouterr().err
+    assert previo.read_bytes() == antes
+    assert vistos == []
+
+
+def test_orden_acepta_un_plan_previo_identico_para_reanudar_la_corrida(tmp_path, monkeypatch):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 4)
+    _escribir_plan(tmp_path / "corrida.json.plan.csv", IDS_5[:4], "inverso")
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--orden", "inverso"))
+
+    assert codigo == 0
+    assert vistos == ["R004", "R003", "R002", "R001"]
+
+
+def test_dry_run_con_orden_no_escribe_el_plan(tmp_path, monkeypatch, capsys):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 3)
+    _ingesta_falsa(monkeypatch, [])
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--orden", "inverso", "--dry-run"))
+
+    assert codigo == 0
+    assert "DRY-RUN" in capsys.readouterr().out
+    assert not (tmp_path / "corrida.json.plan.csv").exists()
+
+
+# ── Modo campana (c-166): proteccion de archivos versionados (task 2.8) ─────
+
+JSON_CANONICO = "data/corpus_evaluacion_pseudonimizado.json"
+COPIA_DE_CAMPANA = "evaluation/data/campana/corpus_campana.json"
+
+
+def _argv_con_modo(modo_argv, **opciones) -> list[str]:
+    """argv de campana donde cada opcion es un flag explicito (None = no se pasa)."""
+    argv = ["--source", "json", "--id-corrida", "corrida-1", "--sleep", "0", *modo_argv]
+    for flag, valor in opciones.items():
+        if valor is not None:
+            argv += [f"--{flag}", valor]
+    return argv
+
+
+@pytest.mark.parametrize("modo", ["orden", "plan"])
+@pytest.mark.parametrize(
+    ("json_arg", "sidecar_arg", "ofensor"),
+    [
+        pytest.param(None, "corrida.json", JSON_CANONICO, id="json_en_su_default"),
+        pytest.param(JSON_CANONICO, "corrida.json", JSON_CANONICO, id="json_canonico"),
+        pytest.param("data/corpus_resultados.json", "corrida.json", "data/corpus_resultados.json", id="json_resultados"),
+        pytest.param("campana.json", "data/corpus_resultados.json", "data/corpus_resultados.json", id="sidecar_resultados"),
+        pytest.param("campana.json", "data/corpus_resultados_telefonia.json", "data/corpus_resultados_telefonia.json", id="sidecar_telefonia"),
+        pytest.param("campana.json", "data/corpus_resultados_n8n.json", "data/corpus_resultados_n8n.json", id="sidecar_n8n_por_defecto"),
+        pytest.param("campana.json", "data/corpus_resultados_otra.json", "data/corpus_resultados_otra.json", id="sidecar_patron"),
+    ],
+)  # fmt: skip
+def test_con_plan_u_orden_aborta_si_json_o_sidecar_apuntan_a_un_archivo_versionado(
+    tmp_path, monkeypatch, capsys, modo, json_arg, sidecar_arg, ofensor
+):
+    monkeypatch.chdir(tmp_path)  # cualquier escritura indebida caeria aca, no en el repo
+    plan = _escribir_plan(tmp_path / "plan.csv", ["R001", "R002"])
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+    for variable in ("INGEST_OPERATOR_USERNAME", "INGEST_OPERATOR_PASSWORD"):
+        monkeypatch.delenv(variable)  # la proteccion se evalua antes de leer credenciales
+    modo_argv = ["--orden", "inverso"] if modo == "orden" else ["--plan", str(plan)]
+
+    codigo = ivn.run(_argv_con_modo(modo_argv, json=json_arg, sidecar=sidecar_arg))
+
+    err = capsys.readouterr().err
+    assert codigo == 2
+    assert ofensor in err
+    assert "evaluation/data/campana/" in err  # la ruta de campana sugerida
+    assert "INGEST_OPERATOR" not in err
+    assert vistos == []
+    assert not (tmp_path / "data").exists()  # no se escribio nada en data/
+    assert not list(tmp_path.glob("*.plan.csv"))
+
+
+def test_con_plan_la_ruta_absoluta_a_un_archivo_versionado_del_repo_tambien_se_rechaza(
+    tmp_path, monkeypatch, capsys
+):
+    versionado = _REPO_ROOT / "data" / "corpus_resultados.json"
+    antes = versionado.read_bytes() if versionado.exists() else None
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 2)
+    plan = _escribir_plan(tmp_path / "plan.csv", ["R001", "R002"])
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+    # Red de seguridad: aun si la proteccion fallara, ningun escritor toca el repo real.
+    intentos_de_escritura: list[str] = []
+    monkeypatch.setattr(
+        ivn, "write_sidecar_json", lambda ruta, *a, **k: intentos_de_escritura.append(str(ruta))
+    )
+    monkeypatch.setattr(
+        ivn, "merge_evaluation_json", lambda ruta, *a, **k: intentos_de_escritura.append(str(ruta))
+    )
+
+    codigo = ivn.run(
+        _argv_con_modo(["--plan", str(plan)], json=str(json_path), sidecar=str(versionado))
+    )
+
+    assert codigo == 2
+    assert "corpus_resultados.json" in capsys.readouterr().err
+    assert vistos == []
+    assert intentos_de_escritura == []
+    assert (versionado.read_bytes() if versionado.exists() else None) == antes
+
+
+def test_sin_plan_ni_orden_los_defaults_versionados_no_se_bloquean(tmp_path, monkeypatch):
+    json_path = tmp_path / "corpus.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 2)
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+    monkeypatch.chdir(tmp_path)
+
+    # Sin --plan/--orden la conducta no cambia: el sidecar toma su default (data/...).
+    codigo = ivn.run(["--source", "json", "--json", str(json_path), "--sleep", "0"])
+
+    assert codigo == 0
+    assert vistos == ["R001", "R002"]
+    assert (tmp_path / ivn.DEFAULT_SIDECAR).exists()
+
+
+# ── Modo campana (c-166): sidecar propio de la corrida (task 2.9) ───────────
+
+
+@pytest.mark.parametrize("modo", ["orden", "plan"])
+def test_con_plan_u_orden_el_sidecar_es_obligatorio(tmp_path, monkeypatch, capsys, modo):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 3)
+    plan = _escribir_plan(tmp_path / "plan.csv", ["R001", "R002", "R003"])
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+    monkeypatch.chdir(tmp_path)
+    modo_argv = ["--orden", "inverso"] if modo == "orden" else ["--plan", str(plan)]
+
+    codigo = ivn.run(_argv_con_modo(modo_argv, json=str(json_path)))
+
+    err = capsys.readouterr().err
+    assert codigo == 2
+    assert "--sidecar" in err and "obligatorio" in err
+    assert vistos == []
+    assert not (tmp_path / "data").exists()  # el default NO rige en modo campana
+
+
+def _sembrar_sidecar(tmp_path, id_corrida) -> bytes:
+    entrada = replace(_ok_result("R001"), id_corrida=id_corrida, t_e2e_s=99.0)
+    ruta = tmp_path / "corrida.json"
+    ruta.write_text(json.dumps([asdict(entrada)]), encoding="utf-8")
+    return ruta.read_bytes()
+
+
+def test_un_sidecar_existente_de_otra_corrida_aborta_sin_enviar_ni_tocarlo(
+    tmp_path, monkeypatch, capsys
+):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 3)
+    antes = _sembrar_sidecar(tmp_path, "corrida-previa")
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--orden", "directo"))
+
+    err = capsys.readouterr().err
+    assert codigo == 2
+    assert "corrida-previa" in err and "corrida-1" in err
+    assert vistos == []
+    assert (tmp_path / "corrida.json").read_bytes() == antes
+
+
+def test_un_sidecar_historico_sin_id_corrida_se_trata_como_de_otra_corrida(
+    tmp_path, monkeypatch, capsys
+):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 3)
+    _sembrar_sidecar(tmp_path, None)
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--orden", "directo"))
+
+    assert codigo == 2
+    assert "sin id_corrida" in capsys.readouterr().err
+    assert vistos == []
+
+
+def test_un_sidecar_existente_con_el_mismo_id_corrida_se_reanuda(tmp_path, monkeypatch):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 3)
+    _sembrar_sidecar(tmp_path, "corrida-1")
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--orden", "directo"))
+
+    entradas = _leer_sidecar(tmp_path)
+    assert codigo == 0
+    assert vistos == ["R001", "R002", "R003"]
+    assert [entrada["case_id"] for entrada in entradas] == ["R001", "R002", "R003"]
+    assert {entrada["id_corrida"] for entrada in entradas} == {"corrida-1"}
+    assert entradas[0]["t_e2e_s"] == 7.0  # el re-envio valido reemplaza al previo (merge)
+
+
+# ── Modo campana (c-166): sin write-back a CSV/XLSX (task 2.10) ─────────────
+
+
+@pytest.mark.parametrize("modo", ["orden", "plan"])
+def test_con_plan_u_orden_no_se_escriben_ni_el_csv_ni_el_xlsx(tmp_path, monkeypatch, modo):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 3)
+    plan = _escribir_plan(tmp_path / "plan.csv", ["R001", "R002", "R003"])
+    vistos: list[str] = []
+    escrituras = _ingesta_falsa(monkeypatch, vistos)
+    modo_argv = ["--orden", "inverso"] if modo == "orden" else ["--plan", str(plan)]
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, *modo_argv))
+
+    assert codigo == 0
+    assert len(vistos) == 3  # la corrida se hizo
+    assert escrituras == []  # los datos de campana viven solo en el sidecar y en la copia de campana
+
+
+def test_sin_plan_ni_orden_se_siguen_escribiendo_el_csv_y_el_xlsx(tmp_path, monkeypatch):
+    json_path = tmp_path / "corpus.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 2)
+    escrituras = _ingesta_falsa(monkeypatch, [])
+
+    codigo = ivn.run(
+        [
+            "--source", "json", "--json", str(json_path),
+            "--sidecar", str(tmp_path / "sidecar.json"), "--sleep", "0",
+        ]
+    )  # fmt: skip
+
+    assert codigo == 0
+    assert escrituras == ["csv", "xlsx"]
+
+
+def test_con_plan_el_json_de_campana_si_recibe_las_mediciones(tmp_path, monkeypatch):
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 2)
+    _ingesta_falsa(monkeypatch, [])
+
+    ivn.run(_argv_campana(tmp_path, json_path, "--orden", "directo"))
+
+    casos = json.loads(json_path.read_text(encoding="utf-8"))["casos"]
+    assert [caso["tiempo_automatizado_s"] for caso in casos] == [7.0, 7.0]

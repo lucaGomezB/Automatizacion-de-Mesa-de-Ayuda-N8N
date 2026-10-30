@@ -1,6 +1,8 @@
 # evaluation/data/
 
-Esta carpeta ya no contiene corpus. El corpus calibrado de 200 casos y su
+Esta carpeta ya no contiene corpus (hoy aloja la plantilla de etiquetado,
+`campana/` y `sensibilidad_ajustes/`; `campana/` guarda también el plan de la campaña
+y las predicciones del corpus independiente, ver `campana/README.md`). El corpus calibrado de 200 casos y su
 script de generación fueron **eliminados permanentemente** en C-27.
 
 ## Estado actual
@@ -11,9 +13,39 @@ script de generación fueron **eliminados permanentemente** en C-27.
   (sintético, mínimo, trackeado). Ver `evaluation/tests/fixtures/README.md`.
 - **Esquema y contrato**: `evaluation/README.md`.
 
-No se genera ni se trackea ningún CSV. Cualquier métrica histórica asociada al
+No se genera ni se trackea ningún CSV **de corpus ni de resultados**. Las únicas
+excepciones son la plantilla vacía del doble etiquetado y, después de la campaña, su
+tabla primaria (ver más abajo). Cualquier métrica histórica asociada al
 corpus sintético (distribución 82/64/54, exactitud 92%, F1 ~0.919, Tabla 7)
 queda **superada** por C-27.
+
+## `plantilla_etiquetado.csv` y `campana/` (c-168)
+
+- `plantilla_etiquetado.csv`: plantilla **solo con encabezado** (sin filas, sin
+  PII) del esquema único de toda planilla etiquetador x caso de la campaña:
+  `id_caso,id_etiquetador,tarea,sector_etiquetado,sectores_adicionales_etiquetados,inicio,timestamp`.
+  La usan el doble etiquetado y el brazo manual; la valida
+  `python -m evaluation.doble_etiquetado`. Se versiona con fin de línea LF.
+- `campana/`: procedencia (`README.md`) y, **después de la campaña**, la tabla
+  primaria `doble_etiquetado.csv` con su SHA-256 y el `registro_sujetos.csv`. Hoy
+  solo contiene el README: el etiquetado real corre fuera del repositorio. Ver
+  `evaluation/data/campana/README.md` y
+  `docs/campana-medicion/runbook-doble-etiquetado.md`.
+
+## `campana/`: plan, sidecars y corpus independiente (c-166)
+
+`campana/` aloja además los artefactos de la **campaña contrabalanceada** y de la
+**clasificación del corpus independiente**: el plan por caso (`plan_campana.csv`) y sus
+sub-planes, la copia de campaña del corpus (`corpus_campana.json`, con los tiempos en
+`null`), un sidecar propio por corrida, el corpus independiente pseudonimizado (ids
+`I001..`) y sus predicciones (`predicciones_independiente.json`, con `commit` y `pines`
+en el `cache_meta`). Cada archivo se versiona con su SHA-256, declarado en
+`evaluation/data/campana/README.md`, que indica además qué ruta ocupa cada uno y cuál es
+la referencia in-sample (`classifier_version`, `commit_in_sample` y `pines_in_sample`).
+Los protocolos están en `docs/campana-medicion/runbook-campana-contrabalanceada.md` y
+`docs/campana-medicion/runbook-corpus-independiente.md`. Ninguno de estos artefactos
+reemplaza ni modifica `data/corpus_evaluacion_pseudonimizado.json`,
+`data/corpus_resultados*.json`, `evaluation/predicciones.json` ni `evaluation/report.md`.
 
 ## `sensibilidad_ajustes/` (c-142)
 

@@ -142,7 +142,9 @@ def test_revision_y_cadena_lineal():
     script = ScriptDirectory.from_config(_alembic_config(Path("/tmp/unused.db")))
     revision = script.get_revision(_REVISION)
     assert revision.down_revision == _DOWN_REVISION
-    assert script.get_current_head() == _REVISION
+    # c-165: la 024 pasa a ser el head; este test fija la cadena 022 -> 023 y el
+    # head vigente con el literal "024" (la 023 ya no es el head).
+    assert script.get_current_head() == "024"
 
 
 def test_upgrade_crea_la_tabla_sin_columnas_pii(db_file):

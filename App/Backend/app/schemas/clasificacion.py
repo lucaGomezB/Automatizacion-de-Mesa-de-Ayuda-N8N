@@ -19,9 +19,16 @@ Responsabilidad:
 """
 
 from datetime import datetime
-from typing import Literal
+from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import (
+    AwareDatetime,
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+    model_validator,
+)
 
 from app.constants import SECTORES_CANONICOS
 from app.schemas.catalog import SectorRead
@@ -33,6 +40,13 @@ from app.schemas.catalog import SectorRead
 # "precalculada":  La clasificación fue provista por un emisor externo (N8N)
 #                  y el backend omitió la clasificación server-side (C-33, D5).
 ClasificacionEtapa = Literal["deterministic", "gemini", "fallback", "precalculada"]
+
+# Origen de una intervencion humana sobre un log (c-165, ASG-005). Lo deriva SIEMPRE
+# el backend: "gate" (log marcado para revision), "muestreo" (log no marcado) y
+# "rederivacion" (cambio de sector por PATCH /incidentes/{id}). "completado_manual"
+# esta reservado y no tiene escritor. Debe coincidir con
+# `app.constants.ORIGENES_INTERVENCION` (lo verifica un test).
+OrigenIntervencion = Literal["gate", "muestreo", "rederivacion", "completado_manual"]
 
 
 class ClasificacionResult(BaseModel):
@@ -112,6 +126,12 @@ class ClasificacionLogRead(BaseModel):
     sector_validado: SectorRead | None  # Corrección humana principal; None si aún no fue revisado
     sectores_predichos: list[SectorRead] = Field(default_factory=list)   # Secundarios predichos
     sectores_validados: list[SectorRead] = Field(default_factory=list)   # Secundarios validados
+    # Metadatos de la intervencion humana (c-165, ASG-005). Los cuatro son None
+    # mientras el log no fue intervenido; el actor se expone SOLO por id (sin PII).
+    validado_por_empleado_id: int | None = None
+    intervencion_inicio_en: datetime | None = None
+    validado_en: datetime | None = None
+    origen_intervencion: OrigenIntervencion | None = None
 
 
 class RevisionPendienteCount(BaseModel):
@@ -139,11 +159,34 @@ class ClasificacionValidar(BaseModel):
     compatibilidad, por identificador (`sector_id_validado`). `sectores_adicionales`
     permite registrar el conjunto validado completo cuando el incidente es
     multietiqueta.
+
+    c-165 (ASG-005): el unico dato de la intervencion que declara el cliente es
+    `intervencion_inicio_en` (apertura del dialogo, opcional y CON zona horaria). El
+    ORIGEN de la intervencion lo deriva SIEMPRE el backend (`gate` si el log estaba
+    marcado para revision, `muestreo` si no); por eso un payload que traiga la clave
+    `origen_intervencion`, con cualquier valor, se rechaza con 422. El resto de los
+    campos desconocidos se trata como siempre (se ignora): el schema NO es
+    `extra="forbid"`.
     """
 
     sector_id_validado: int | None = None   # FK al sector principal (compatibilidad)
     sector_validado: str | None = None      # Nombre canonico del sector principal
     sectores_adicionales: list[str] = Field(default_factory=list)  # Nombres secundarios validados
+    # Inicio declarado de la intervencion; AwareDatetime rechaza (422) un instante sin
+    # zona. Se normaliza a UTC antes de persistir (SQLite descarta la zona).
+    intervencion_inicio_en: AwareDatetime | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def _rechazar_origen_enviado_por_el_cliente(cls, data: Any) -> Any:
+        if isinstance(data, dict) and "origen_intervencion" in data:
+            # Mensaje generico: nombra el campo y NUNCA el valor sometido
+            # (el origen lo determina el servidor; un cliente no puede registrar uno falso).
+            raise ValueError(
+                "El campo 'origen_intervencion' no puede enviarse: "
+                "el origen de la intervencion lo determina el servidor."
+            )
+        return data
 
     @field_validator("sector_validado")
     @classmethod

@@ -206,7 +206,25 @@ CREATE TABLE clasificacion_log (
                                             ON DELETE SET NULL,
 
     created_at              TIMESTAMPTZ     NOT NULL DEFAULT NOW(),
-    updated_at              TIMESTAMPTZ     NOT NULL DEFAULT NOW()
+    updated_at              TIMESTAMPTZ     NOT NULL DEFAULT NOW(),
+
+    -- Metadatos de la intervención humana (migración 024, c-165). Las cuatro columnas
+    -- son nullable y sin default: NULL en todas = el log nunca fue intervenido.
+    -- Actor: empleado del directorio; NULL si la cuenta no tiene empleado vinculado
+    -- o si el empleado fue purgado por retención (DIR-007)
+    validado_por_empleado_id INTEGER        CONSTRAINT fk_clasificacion_log_validado_por_directorio_empleado
+                                            REFERENCES directorio_empleado(id)
+                                            ON DELETE SET NULL,
+
+    -- Inicio declarado por el cliente al abrir el diálogo de validación
+    intervencion_inicio_en  TIMESTAMPTZ,
+
+    -- Instante del servidor en que se registró la intervención (distinto de created_at)
+    validado_en             TIMESTAMPTZ,
+
+    -- 'gate' | 'muestreo' | 'rederivacion' | 'completado_manual' (reservado);
+    -- sin CHECK: el vocabulario se valida en la aplicación
+    origen_intervencion     VARCHAR(20)
 );
 
 -- Índice sobre incidente_id para recuperar el historial de un incidente
@@ -214,6 +232,9 @@ CREATE INDEX ix_clasificacion_log_incidente_id ON clasificacion_log (incidente_i
 
 -- Índice temporal de auditoría
 CREATE INDEX ix_clasificacion_log_created_at ON clasificacion_log (created_at);
+
+-- Índice del actor de la intervención (migración 024)
+CREATE INDEX ix_clasificacion_log_validado_por_empleado_id ON clasificacion_log (validado_por_empleado_id);
 ```
 
 ### Doble FK a `sector` en `clasificacion_log`
@@ -225,6 +246,51 @@ CREATE INDEX ix_clasificacion_log_created_at ON clasificacion_log (created_at);
 
 Cuando `sector_id_validado` es distinto de `sector_id_predicho`, el registro
 documenta un error del clasificador y contribuye al análisis de métricas de la tesis.
+
+### Metadatos de la intervención humana en `clasificacion_log` (migración `024`)
+
+La migración `024_clasificacion_log_intervencion.py` (c-165) agrega cuatro columnas
+nullable, sin default y sin backfill, que registran **cada intervención humana**
+sobre una clasificación. Con ellas se mide la tasa de intervención y se produce el
+export pseudonimizado de la campaña de medición.
+
+| Columna                    | Tipo           | FK / índice | Semántica |
+|----------------------------|----------------|-------------|-----------|
+| `validado_por_empleado_id` | `INTEGER`      | FK `fk_clasificacion_log_validado_por_directorio_empleado` → `directorio_empleado(id)`, `ON DELETE SET NULL`; índice `ix_clasificacion_log_validado_por_empleado_id` | Actor de la última intervención. Solo el id: nunca nombre, email ni teléfono. NULL si la cuenta no tiene empleado activo vinculado o si el empleado fue purgado por retención (DIR-007) |
+| `intervencion_inicio_en`   | `TIMESTAMPTZ`  | —           | Inicio declarado por el cliente al abrir el diálogo de validación (UTC). NULL si no se envió y en la rederivación |
+| `validado_en`              | `TIMESTAMPTZ`  | —           | Instante del **servidor** en que se registró la intervención; distinto de `created_at` |
+| `origen_intervencion`      | `VARCHAR(20)`  | —           | `gate`, `muestreo`, `rederivacion` o `completado_manual`. Sin CHECK: ampliar el vocabulario no exige otra migración |
+
+**Origen.** Lo deriva siempre el backend; el cliente no puede declararlo (un payload
+que traiga `origen_intervencion` responde 422).
+
+| Origen              | Escritor |
+|---------------------|----------|
+| `gate`              | `PATCH /api/v1/clasificaciones/{log_id}/validar` sobre un log con `requiere_revision_humana = true` |
+| `muestreo`          | Idem, sobre un log no marcado (hoy solo por la API: la cola de la app lista únicamente los marcados) |
+| `rederivacion`      | `PATCH /api/v1/incidentes/{id}` con un `sector_id` distinto del actual; se registra en el log de mayor `id` del incidente |
+| `completado_manual` | Reservado: sin escritor |
+
+**Estados derivados** (sin columna propia):
+
+| Estado                              | Condición |
+|-------------------------------------|-----------|
+| `no_intervenido`                    | `validado_en IS NULL` y `sector_id_validado IS NULL` |
+| `intervenido`                       | `validado_en IS NOT NULL` |
+| `intervencion_legada_sin_metadatos` | `sector_id_validado IS NOT NULL` y `validado_en IS NULL`: log validado antes de la migración. No se le asigna un instante ni un origen retroactivos; la métrica y el export lo excluyen y declaran cuántos son |
+
+**Reglas.** Una confirmación del sector predicho también es una intervención. Gana la
+última escritura: cada intervención sobrescribe como unidad las cuatro columnas,
+`sector_id_validado` y el conjunto `sectores_validados` (que se reemplaza aunque quede
+vacío); un log re-derivado después de validarse queda con origen `rederivacion`. El
+delta de sector antes/después se reconstruye comparando `sector_id_predicho` y
+`sectores_predichos` contra `sector_id_validado` y `sectores_validados`; no necesita
+columnas propias. `cambio_sector` es `sector_id_validado IS DISTINCT FROM
+sector_id_predicho`: un predicho nulo cuenta como cambio.
+
+**Reversión.** `alembic downgrade 023` retira el índice, la FK y las cuatro columnas sin
+tocar las filas existentes; primero se revierte el código de aplicación (el código
+previo ignora columnas extra) y recién después el esquema.
 
 ---
 
@@ -392,6 +458,7 @@ CREATE INDEX ix_directorio_auditoria_created_at ON directorio_auditoria (created
 | `clasificacion_log.incidente_id` | `incidente(id)`   | **CASCADE**     | Los logs son dependientes del incidente; se borran con él |
 | `clasificacion_log.sector_id_predicho` | `sector(id)` | **SET NULL** | El log persiste; se pierde la referencia al sector |
 | `clasificacion_log.sector_id_validado` | `sector(id)` | **SET NULL** | Idem |
+| `clasificacion_log.validado_por_empleado_id` | `directorio_empleado(id)` | **SET NULL** | La purga por retención del directorio (DIR-007) deja el actor en NULL sin tocar el log |
 | `incidente_sector_adicional.incidente_id` | `incidente(id)` | **CASCADE** | Las uniones de sectores adicionales dependen del incidente |
 | `incidente_sector_adicional.sector_id` | `sector(id)` | **RESTRICT** | No borrar un sector referenciado por un conjunto adicional |
 | `clasificacion_sector_predicho.clasificacion_log_id` | `clasificacion_log(id)` | **CASCADE** | Las uniones predichas dependen del log |
@@ -415,3 +482,5 @@ CREATE INDEX ix_directorio_auditoria_created_at ON directorio_auditoria (created
 
 > `directorio_empleado` y `directorio_auditoria` solo agregan índices simples
 > (FK, índice ciego del contacto y sello temporal); no definen índices compuestos.
+> Tampoco los define la migración `024`: `clasificacion_log` suma solo el índice simple
+> `ix_clasificacion_log_validado_por_empleado_id` sobre el actor de la intervención.
