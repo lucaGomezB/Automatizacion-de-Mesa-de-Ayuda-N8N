@@ -388,6 +388,10 @@ def _escribir(ruta: pathlib.Path, contenido: str) -> None:
 
 
 def _verificar_destino(salida: pathlib.Path) -> None:
+    # Defensa en profundidad: INALCANZABLE con el conjunto de escritura actual, porque el CLI
+    # solo escribe los tres nombres fijos de SALIDAS ("resultados.json", "resultados.md" y
+    # "SHA256SUMS.txt"), y ninguno puede ser un artefacto congelado. Se conserva por si el
+    # conjunto de escritura crece en el futuro.
     for nombre in SALIDAS:
         destino = salida / nombre
         if es_archivo_congelado(destino):

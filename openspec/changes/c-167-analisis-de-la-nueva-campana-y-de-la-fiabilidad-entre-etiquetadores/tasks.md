@@ -104,7 +104,7 @@ antes; identificadores en español; sin red ni Gemini. No se escriben ni se rege
 
 ## 9. Cierre
 
-- [x] 9.1 Ejecutar `python -m pytest evaluation` y verificar la suite completa verde, offline, con al menos los N tests de la línea base más los nuevos (25 fallas preexistentes de entorno: 23 de `test_sensibilidad_ajustes.py` + 1 de `test_sensibilidad_corpus.py` por el env var del backend `directory_blind_index_key`, y 1 de `test_campana.py` por los artefactos v9 gitignoreados ausentes; las 11 pruebas nuevas del CLI pasan)
+- [x] 9.1 Ejecutar `python -m pytest evaluation` y verificar la suite completa verde, offline, con al menos los N tests de la línea base más los nuevos (correccion el 2026-10-30: sin las variables dummy del CI las unicas fallas son 24 de entorno, 23 de `test_sensibilidad_ajustes.py` + 1 de `test_sensibilidad_corpus.py`, porque falta el ajuste del backend `directory_blind_index_key`; `test_campana.py` PASA 198/198 porque el test de artefactos v9 ahora resguarda el `predicciones.json` gitignoreado; con las variables dummy del CI la suite entera queda verde (1172 passed, 2 skipped) y el run de CI 41126307904 paso; las 11 pruebas nuevas del CLI pasan)
 - [x] 9.2 Ejecutar `openspec validate c-167-analisis-de-la-nueva-campana-y-de-la-fiabilidad-entre-etiquetadores --strict --no-interactive`
 - [x] 9.3 Ejecutar `git diff --stat` y verificar que `evaluation/report.md`, `evaluation/predicciones.json`, `evaluation/predicciones_calibracion.json` y los números canónicos v9 no figuran; comparar sus SHA-256 con la línea base de 0.2 (los dos artefactos v9 están gitignoreados y ausentes en este worktree, por lo que no figuran en el diff y no son tocados)
 
