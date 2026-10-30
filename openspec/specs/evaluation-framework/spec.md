@@ -1098,16 +1098,16 @@ para cada bloque la exactitud global con Wilson y el desglose por etapa en casca
 `desglose_exactitud` en el orden de `ETAPAS_PIPELINE`, en bloques rotulados in-sample y
 out-of-sample que no se mezclan. Las predicciones MUST leerse solo con `cargar_predicciones` y
 `cargar_cache_meta`, y MUST NOT invocarse `main()` ni ningún camino que llame a Gemini. El
-análisis MUST abortar si la `classifier_version` del `cache_meta` in-sample difiere de la
+análisis MUST abortar la sección fuera de muestra si la `classifier_version` del `cache_meta` in-sample difiere de la
 del independiente, o si el parámetro obligatorio `pines_in_sample` (versión de `google-genai`
 y modelo, tomados del README de `evaluation/data/campana/` que escribe c-166, porque el cache de
 v9 no los registra) difiere de los `pines` del `cache_meta` independiente; sin
 `pines_in_sample`, la sección MUST fallar con un error accionable. El commit del
-clasificador MUST compararse solo cuando ambos bloques lo traen, abortando si difiere; si falta
+clasificador MUST compararse solo cuando ambos bloques lo traen, abortando la sección fuera de muestra si difiere; si falta
 en el in-sample (la copia congelada de v9 no lo registró), el análisis MUST NOT abortar y la
 salida MUST declarar como limitación "commit in-sample no registrado; comparabilidad verificada por versión y pines". El parámetro `commit_in_sample` es opcional y,
 si se provee, se usa como commit del bloque in-sample. El análisis MUST re-ejecutar `verificar_no_solape` de `evaluation/no_solape.py` antes de
-reportar y abortar si informa solape, y MUST NOT regenerar `evaluation/report.md`. Si el
+reportar y abortar la sección fuera de muestra si informa solape, y MUST NOT regenerar `evaluation/report.md`. Si el
 corpus independiente o sus predicciones no existen, la sección MUST declararse "no se obtuvo"
 nombrando el artefacto faltante, sin sustituirla por datos in-sample.
 
@@ -1119,7 +1119,7 @@ nombrando el artefacto faltante, sin sustituirla por datos in-sample.
 #### Scenario: Versión o pines del clasificador distintos
 
 - **WHEN** la `classifier_version` del cache independiente difiere de la del cache in-sample, o sus `pines` difieren de `pines_in_sample`
-- **THEN** el análisis aborta con un error que muestra ambos valores y no reporta métricas fuera de muestra
+- **THEN** el análisis aborta la sección fuera de muestra con un error que muestra ambos valores y no reporta métricas fuera de muestra
 
 #### Scenario: Pines in-sample no provistos
 
@@ -1129,7 +1129,7 @@ nombrando el artefacto faltante, sin sustituirla por datos in-sample.
 #### Scenario: Commit distinto cuando ambos bloques lo registran
 
 - **WHEN** ambos `cache_meta` traen `commit` (o se provee `commit_in_sample`) y los valores difieren
-- **THEN** el análisis aborta con un error que muestra ambos commits
+- **THEN** el análisis aborta la sección fuera de muestra con un error que muestra ambos commits
 
 #### Scenario: Commit in-sample ausente declara limitación sin abortar
 
@@ -1140,7 +1140,7 @@ nombrando el artefacto faltante, sin sustituirla por datos in-sample.
 #### Scenario: Verificación de no solape fallida
 
 - **WHEN** `verificar_no_solape` informa casos compartidos entre el corpus independiente y el corpus de evaluación
-- **THEN** el análisis aborta nombrando los casos en solape y no reporta métricas fuera de muestra
+- **THEN** el análisis aborta la sección fuera de muestra nombrando los casos en solape y no reporta métricas fuera de muestra
 
 #### Scenario: Corpus independiente ausente
 
