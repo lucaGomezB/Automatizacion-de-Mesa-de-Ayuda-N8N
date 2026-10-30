@@ -48,6 +48,20 @@ seccion se declara "no se obtuvo" con el artefacto faltante y las demas se repor
 Una columna faltante en un archivo presente aborta el CLI con un error que nombra el archivo
 y la columna.
 
+`plantilla_etiquetado.csv` y `predicciones_in_sample.json` no los produce ningun runbook de
+manera directa: los ensambla `evaluation/preparar_entradas_analisis.py` (c-170), el unico
+camino documentado. Ese helper une `doble_etiquetado.csv` + `brazo_manual.csv` en
+`plantilla_etiquetado.csv` (un único encabezado C1, LF, sin BOM) y copia byte a byte el cache
+congelado `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` a
+`predicciones_in_sample.json`:
+
+```bash
+python -m evaluation.preparar_entradas_analisis \
+  --entrada evaluation/data/campana \
+  --corpus data/corpus_evaluacion_pseudonimizado.json \
+  --cache-in-sample evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json
+```
+
 ## Semilla y remuestreos
 
 - Semilla bootstrap: `SEMILLA_BOOTSTRAP` de `evaluation/metrics.py` (`20261021`).

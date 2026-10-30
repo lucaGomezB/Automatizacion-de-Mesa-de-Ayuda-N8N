@@ -31,6 +31,11 @@ queda **superada** por C-27.
   solo contiene el README: el etiquetado real corre fuera del repositorio. Ver
   `evaluation/data/campana/README.md` y
   `docs/campana-medicion/runbook-doble-etiquetado.md`.
+- La hoja unificada de `campana/`, `plantilla_etiquetado.csv` (unión C1 de
+  `doble_etiquetado.csv` + `brazo_manual.csv`) y la copia in-sample
+  `predicciones_in_sample.json` las ensambla `evaluation/preparar_entradas_analisis.py`
+  (c-170), offline, a partir de las fuentes versionadas. Son las dos entradas que lee
+  `evaluation/analisis_campana.py` (c-167).
 
 ## `campana/`: plan, sidecars y corpus independiente (c-166)
 

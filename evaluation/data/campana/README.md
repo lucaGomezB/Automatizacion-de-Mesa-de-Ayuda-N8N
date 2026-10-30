@@ -98,6 +98,8 @@ Al versionar cada archivo se completa su SHA-256 (en minúsculas, calculado sobr
 | `corpus_independiente.json` | pendiente |
 | `predicciones_independiente.json` | pendiente |
 | `reporte_independiente.md` | pendiente |
+| `plantilla_etiquetado.csv` | pendiente |
+| `predicciones_in_sample.json` | pendiente |
 | cada `sidecar_<id_corrida>.json` y `subplan_*.csv` usado | pendiente (una fila por archivo, al versionarlo) |
 
 Los datos de la campaña se citan desde `evaluation/data/README.md`, que describe el resto de esta jerarquía.
@@ -177,3 +179,35 @@ Procedencia del export (completar **al versionar** `intervenciones.csv`; formato
 | Archivo | SHA-256 |
 |---|---|
 | `brazo_manual.csv` | pendiente |
+
+## Entradas del análisis de campaña (c-170)
+
+El análisis de solo lectura de c-167 (`evaluation/analisis_campana.py`) espera dos entradas en esta carpeta que ningún runbook producía. Las ensambla `evaluation/preparar_entradas_analisis.py` (offline, TDD), el único camino documentado para generarlas:
+
+```bash
+python -m evaluation.preparar_entradas_analisis \
+  --entrada evaluation/data/campana \
+  --corpus data/corpus_evaluacion_pseudonimizado.json \
+  --cache-in-sample evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json
+```
+
+| Entrada | Qué es | Procedencia (fuente) |
+|---|---|---|
+| `plantilla_etiquetado.csv` | Unión C1, bajo un único encabezado, de `doble_etiquetado.csv` (`tarea = doble_etiquetado`) y `brazo_manual.csv` (`tarea = brazo_manual`), en el orden de origen; LF y UTF-8 sin BOM | `evaluation/data/campana/doble_etiquetado.csv` + `evaluation/data/campana/brazo_manual.csv`, re-validadas por tarea con `python -m evaluation.doble_etiquetado` |
+| `predicciones_in_sample.json` | Copia **byte a byte** del cache congelado de v9 (referencia in-sample); la fuente es de solo lectura y nunca se regenera | `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` |
+
+El helper escribe LF sin BOM, imprime el SHA-256 de cada salida y su procedencia (fuente y hash de la fuente), y aborta con un error accionable que nombra el archivo (y la `tarea`) si una fuente falta o no pasa el validador. Se niega a escribir sobre un artefacto congelado, sobre `evaluation/evidence/**` o sobre sus propias fuentes. Con las mismas fuentes, dos corridas producen salidas byte a byte idénticas; por eso `predicciones_in_sample.json` comparte el SHA-256 de la fuente congelada.
+
+SHA-256 y procedencia (completar **al versionar** la campaña, formato `- campo: valor`):
+
+- entradas_analisis_planilla_archivo: evaluation/data/campana/plantilla_etiquetado.csv
+- entradas_analisis_planilla_sha256: pendiente
+- entradas_analisis_planilla_fuentes: doble_etiquetado.csv + brazo_manual.csv (sus SHA-256 en las filas de arriba)
+- entradas_analisis_in_sample_archivo: evaluation/data/campana/predicciones_in_sample.json
+- entradas_analisis_in_sample_sha256: pendiente (debe coincidir con el de evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json)
+- entradas_analisis_fecha: pendiente
+- entradas_analisis_comando: `python -m evaluation.preparar_entradas_analisis --entrada evaluation/data/campana --corpus data/corpus_evaluacion_pseudonimizado.json --cache-in-sample evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json`
+
+### Recomendación: enmendar el gate de c-169 (tarea 0.2)
+
+El gate de la campaña de c-169 (tarea 0.2) exige hoy `doble_etiquetado.csv`, `plan_campana.csv`, `intervenciones.csv`, `registro_sujetos.csv` y `analisis/` con las salidas de c-167, pero **no** las dos entradas nuevas. Como el análisis de c-167 no se puede correr end-to-end sin `plantilla_etiquetado.csv` y `predicciones_in_sample.json` (ambas declaradas "Entradas esperadas" en `analisis/README.md`), el gate SHOULD exigirlas también (con su SHA-256 coincidente). Esta recomendación es un seguimiento de c-170: **no** se edita c-169.
