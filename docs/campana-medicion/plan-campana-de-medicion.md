@@ -1,6 +1,6 @@
 # Plan de la corrida de campo (campana de medición)
 
-Registro de la campana que se ejecuta **después de aplicar** los changes `c-165` a `c-169`. Su objetivo es producir las mediciones que la auditoría CONEAU v1.2.5 marcó como faltantes y que caparon los criterios 1 y 4 de la rúbrica: exactitud del brazo manual, tasa de intervención humana, efecto de orden, validación fuera de muestra e intervalo de confianza del kappa.
+Registro de la campana que se ejecuta **después de aplicar** los changes `c-165` a `c-168`; `c-169` incorpora los resultados a la tesis y se aplica **después** de la campana. Su objetivo es producir las mediciones que la auditoría CONEAU v1.2.5 marcó como faltantes y que caparon los criterios 1 y 4 de la rúbrica: exactitud del brazo manual, tasa de intervención humana, efecto de orden, validación fuera de muestra e intervalo de confianza del kappa.
 
 Estado: **PENDIENTE** (no ejecutada). Se dispara cuando `c-165`, `c-166`, `c-167` y `c-168` estén aplicados.
 
@@ -30,7 +30,7 @@ La corrida produce cinco conjuntos de datos:
 2. **Corrida contrabalanceada con brazo manual medido e intervención instrumentada** (c-165 + c-166): ejecutar la campana con el parámetro de orden, registrando por caso la clasificación del operador (condición manual) y la intervención real. Salida: datasets de exactitud manual, intervención y efecto de orden.
 3. **Corpus independiente** (c-166): construir, pseudonimizar y doble-etiquetar un corpus sin solape con el de ajuste; correrlo y registrar las métricas fuera de muestra.
 4. **Análisis** (c-167): correr los scripts sobre los datasets 1-3; producir exactitud manual (estricta/laxa con IC de Wilson), tasa de intervención (proporción de casos y del tiempo con IC), efecto de orden, métricas fuera de muestra y **kappa + IC** (bootstrap y/o asintótico).
-5. **Registro y documentación** (c-169): consignar los valores canónicos con procedencia en `docs/Tesis/Correcciones/numeros-canonicos.md` y llevar los resultados a la tesis (4.4/4.5/4.7/4.8, 8.x, resumen/abstract), retirando los rótulos de "no medido / no contrastada / no estimable" que correspondan.
+5. **Registro y documentación** (c-169): consignar los valores canónicos con procedencia en `docs/Tesis/Correcciones/numeros-canonicos.md` y llevar los resultados a la tesis (4.2 y 4.4 a 4.8, 7.x, 8.x, 9.x, 10.x, Anexo B, resumen/abstract), retirando los rótulos de "no medido / no contrastada / no estimable" que correspondan.
 
 ## Criterios de aceptación
 

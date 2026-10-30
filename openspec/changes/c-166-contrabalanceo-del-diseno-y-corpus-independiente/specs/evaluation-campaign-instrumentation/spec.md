@@ -1,81 +1,131 @@
 ## Purpose
 
-Extiende el instrumento y los protocolos de la campana de campo (introducidos por c-165) con el control de orden/brazo necesario para un diseno CONTRABALANCEADO y con el protocolo y la ruta de harness para una validacion sobre un corpus INDEPENDIENTE (out-of-sample), de modo que el efecto de orden sea estimable y las metricas de clasificacion puedan reportarse fuera de muestra.
+Instrumentar la campaña de medición de modo que el efecto de orden del operador humano sea estimable, mediante un plan por caso que contrabalancea el orden de condición (manual-primero frente a automatizado-primero), y que las métricas de clasificación puedan obtenerse sobre un corpus independiente sin tocar los artefactos congelados de la v9.
 
 ## ADDED Requirements
 
-### Requirement: ECM-004 — Control de orden y contrabalanceo en los harnesses de ingesta
+### Requirement: ECM-004 — Plan de campaña por caso y contrabalanceo de condición
 
-Los harnesses de ingesta del corpus (`ingest_via_n8n.py`, `ingest_corpus.py`, `ingest_telefonia_corpus.py`) SHALL aceptar un parametro de orden `--orden` con al menos los valores `directo`, `inverso`, `alternado` y `aleatorio`, que determine el orden en que los casos son procesados dentro de la corrida. El valor por defecto SHALL ser `directo`, preservando el comportamiento previo. El modo `aleatorio` SHALL requerir una semilla (`--seed`) y con la misma semilla y el mismo conjunto de casos MUST producir el mismo orden. El harness SHALL registrar, por caso, el orden efectivamente aplicado en el sidecar de trazabilidad como un campo aditivo y NULL-able, sin romper consumidores existentes. El cambio MUST NOT requerir conexion a servicios externos para operar (los harnesses siguen siendo ejecutables/verificables offline en su subconjunto determinista).
+El proyecto SHALL proveer en `evaluation/plan_campana.py` una función pura `generar_plan_campana(casos, modo, seed)` que componga `ordenar_casos(casos, modo, seed)` (modos `directo`, `inverso`, `alternado`, `aleatorio`) y asigne a cada caso `id_caso`, `posicion` (1..n), `mitad` (1 o 2), `brazo_primero` (`manual` o `automatizado`), `modo` y `seed`. El contrabalanceo SHALL ser de CONDICIÓN: dentro de cada mitad, la cantidad de casos `manual`-primero y `automatizado`-primero MUST diferir en a lo sumo 1. Con N impar, la primera mitad SHALL tener ⌊n/2⌋ casos y la segunda ⌈n/2⌉. El modo `aleatorio` MUST requerir semilla y, con la misma semilla y los mismos casos, MUST producir el mismo plan. El plan SHALL exportarse a CSV UTF-8 con separador `,` (`evaluation/data/campana/plan_campana.csv`). Los harnesses `scripts/corpus_ingest/ingest_via_n8n.py` y `scripts/corpus_ingest/ingest_corpus.py` SHALL aceptar `--plan <csv>` y enviar en el orden de `posicion`, y `--orden/--seed` como atajo que genera el plan y lo escribe junto al sidecar; `scripts/corpus_ingest/ingest_telefonia_corpus.py` no ingesta y, con `--plan`, SHALL limitarse a copiar `posicion`, `mitad` y `brazo_primero` al sidecar. `CaseResult` y `CorpusResult` SHALL recibir al final, con default `None`, los campos `orden`, `posicion`, `mitad`, `brazo_primero` e `id_corrida`. `--limit` SHALL aplicarse antes del orden. Ninguna de estas operaciones MUST requerir servicios externos para ser verificada.
 
-#### Scenario: Orden directo preserva el orden del corpus
+#### Scenario: Plan balanceado por mitad
 
-- **WHEN** el harness corre con `--orden directo`
-- **THEN** procesa los casos en el orden en que aparecen en el corpus y registra `orden` por caso en el sidecar
+- **WHEN** se genera el plan de 200 casos con cualquier modo
+- **THEN** cada mitad tiene 100 casos, 50 con `brazo_primero` igual a `manual` y 50 con `automatizado`, y `verificar_balance` pasa
 
-#### Scenario: Orden inverso invierte la secuencia
+#### Scenario: N impar documentado
 
-- **WHEN** el harness corre con `--orden inverso`
-- **THEN** procesa los casos en orden inverso al del corpus y registra `orden` por caso en el sidecar
+- **WHEN** se genera el plan de 7 casos
+- **THEN** la mitad 1 tiene 3 casos y la mitad 2 tiene 4, y en cada mitad la diferencia entre `manual` y `automatizado` es a lo sumo 1
 
-#### Scenario: Orden alternado interleala las mitades
+#### Scenario: Plan reproducible con semilla
 
-- **WHEN** el harness corre con `--orden alternado`
-- **THEN** los casos de la primera y la segunda mitad se procesan de forma intercalada segun la regla documentada del modo
+- **WHEN** se genera dos veces el plan con `modo` `aleatorio` y la misma semilla sobre los mismos casos
+- **THEN** ambos planes son idénticos fila por fila y cada fila registra la semilla
 
-#### Scenario: Aleatorio reproducible por semilla
+#### Scenario: Aleatorio sin semilla falla
 
-- **WHEN** el harness corre dos veces con `--orden aleatorio --seed S` sobre el mismo conjunto de casos
-- **THEN** ambas corridas producen exactamente el mismo orden de procesamiento
+- **WHEN** se pide un plan o un harness con `aleatorio` sin semilla
+- **THEN** la operación termina con un error que indica pasar `--seed` y no se genera plan ni se envía ningún caso
 
-#### Scenario: El sidecar registra el orden sin romper consumidores
+#### Scenario: El límite se aplica antes del orden
 
-- **WHEN** se inspecciona el sidecar tras una corrida con cualquier `--orden`
-- **THEN** cada entrada de caso expone un campo `orden` con el valor aplicado y las entradas y campos previos se conservan
+- **WHEN** un harness corre con `--orden inverso --limit 3`
+- **THEN** procesa el reverso de los tres primeros casos del corpus, no los tres últimos
 
-### Requirement: ECM-005 — Protocolo de campana contrabalanceada registrado
+#### Scenario: El harness sigue el plan y registra la asignación
 
-El proyecto SHALL incluir un runbook versionado que defina, para una campana contrabalanceada: como se reparte el corpus en mitades o brazos y que orden se asigna a cada uno, como se estima el efecto de orden (por ejemplo comparando primera contra segunda mitad, o ajustando un termino de orden), y un criterio explicito de aceptacion del diseno. El runbook SHALL ser ejecutable por los autores sin conocimiento tacito y MUST NOT depender de datos de campo ya recolectados.
+- **WHEN** `ingest_via_n8n.py` o `ingest_corpus.py` corren con `--plan` e `--id-corrida`
+- **THEN** envían los casos en orden de `posicion` y cada entrada del sidecar registra `posicion`, `mitad`, `brazo_primero`, `orden` e `id_corrida`
 
-#### Scenario: El runbook define asignacion de mitades y orden
+#### Scenario: Telefonía copia el plan sin ingestar
 
-- **WHEN** se lee el runbook de contrabalanceo
-- **THEN** especifica como se asignan las mitades o brazos y que orden recibe cada uno
+- **WHEN** `ingest_telefonia_corpus.py` corre con `--plan`
+- **THEN** recupera las mediciones por `corpus_case_id` como antes y copia `posicion`, `mitad` y `brazo_primero` del plan al sidecar, sin decidir el orden de las llamadas
 
-#### Scenario: El runbook define la estimacion del efecto de orden
+#### Scenario: Sidecars históricos siguen válidos
 
-- **WHEN** un autor consulta como estimar el efecto de orden
-- **THEN** el runbook describe el procedimiento de comparacion o de ajuste y su criterio de aceptacion
+- **WHEN** se lee o se mergea un sidecar previo que no tiene los campos nuevos
+- **THEN** se procesa sin errores y los campos ausentes valen `None`
 
-### Requirement: ECM-006 — Ruta de harness y verificacion de corpus independiente sin solape
+### Requirement: ECM-005 — Protocolo de campaña contrabalanceada registrado
 
-El proyecto SHALL proveer una ruta de harness y un protocolo para medir sobre un corpus INDEPENDIENTE cuyo contenido MUST NOT solaparse con el corpus de ajuste (los 200 casos). La verificacion de no solape SHALL comparar los identificadores y las descripciones de ambos corpus y MUST fallar de forma accionable si detecta cualquier interseccion, impidiendo reportar como out-of-sample un caso ya usado. El corpus independiente SHALL producirse con el mismo protocolo de pseudonimizacion y la misma exigencia de doble etiquetado que el corpus de ajuste.
+El proyecto SHALL incluir el runbook versionado `docs/campana-medicion/runbook-campana-contrabalanceada.md` que defina cómo se genera y verifica el plan, cómo se reparten los casos por `brazo_primero` dentro de cada mitad, cómo el operador manual sigue el plan fuera del repositorio, qué registra en la planilla de c-168 con `tarea` igual a `brazo_manual` (`inicio` en ISO-8601 al tomar el caso y `timestamp` al asignar el sector, de modo que `timestamp - inicio` es la duración por caso), con qué flags se corren los harnesses, y un criterio de aceptación explícito: contrabalanceo efectivo registrado por caso. Los operadores del brazo manual MUST ser distintos de los etiquetadores del doble etiquetado, de los dos analistas originales y de los autores. El runbook MUST NOT depender de datos de campo ya recolectados y SHALL delegar la estimación del efecto de orden a c-167.
 
-#### Scenario: Verificacion de no solape bloquea la corrida
+#### Scenario: El operador sigue el plan
 
-- **WHEN** un caso del corpus candidato comparte identificador o descripcion con el corpus de ajuste
-- **THEN** la verificacion falla con un error que identifica el caso y no permite continuar la validacion out-of-sample
+- **WHEN** un operador ejecuta el brazo manual según el runbook
+- **THEN** procesa los casos en orden de `posicion`, en el turno que indica `brazo_primero`, y registra cada caso en la planilla con `tarea` igual a `brazo_manual`, `inicio` al tomar el caso y `timestamp` al asignar el sector
 
-#### Scenario: Corpus independiente sin solape habilita la medision
+#### Scenario: Contrabalanceo efectivo registrado por caso
 
-- **WHEN** el corpus candidato no comparte identificadores ni descripciones con el corpus de ajuste
-- **THEN** la verificacion pasa y el harness procede a medir sobre el corpus independiente
+- **WHEN** se cierra la campaña
+- **THEN** cada caso tiene `posicion`, `mitad` y `brazo_primero` en el sidecar y su registro manual, la asignación realizada coincide con el plan y `verificar_balance` pasa
 
-#### Scenario: Mismo protocolo de pseudonimizacion y doble etiquetado
+#### Scenario: Estimación del efecto de orden delegada a c-167
 
-- **WHEN** se prepara el corpus independiente
-- **THEN** se aplica el mismo procedimiento de pseudonimizacion y la misma exigencia de doble etiquetado que el corpus de ajuste
+- **WHEN** un autor consulta cómo estimar el efecto de orden
+- **THEN** el runbook remite al análisis de c-167, que parea por caso las mediciones de las distintas corridas y toma la posición del plan
 
-### Requirement: ECM-007 — Reporte out-of-sample de las metricas de ambas etapas
+### Requirement: ECM-006 — Corpus independiente sin solape con el corpus de ajuste
 
-El sistema SHALL producir un reporte que exponga las metricas de las dos etapas (clasificacion) calculadas sobre el corpus INDEPENDIENTE, distinguidas de las calculadas in-sample sobre el corpus de ajuste. El reporte SHALL etiquetar cada conjunto de metricas como in-sample u out-of-sample y MUST NOT mezclar en un mismo agregado casos de ajuste con casos independientes.
+El proyecto SHALL proveer `evaluation/no_solape.py::verificar_no_solape(ajuste, candidato)` y el runbook `docs/campana-medicion/runbook-corpus-independiente.md`. Los ids del corpus independiente MUST llevar el prefijo `I` (`I001..`). La verificación MUST fallar de forma accionable, nombrando el caso, si un id del candidato no tiene el prefijo, si un id aparece en ambos corpus o si coincide el SHA-256 de la descripción normalizada (NFKC, minúsculas, espacios colapsados); la similitud Jaccard de tokens por encima de un umbral SHALL reportarse como advertencia. La verificación SHALL declarar que no detecta paráfrasis y MUST ejecutarse como paso previo obligatorio antes de clasificar el corpus independiente. El corpus independiente SHALL pseudonimizarse con el mismo protocolo que el de ajuste y doble-etiquetarse con la plantilla y el validador de c-168, y SHALL clasificarse con el clasificador CONGELADO (`classifier_version` y commit iguales a los del in-sample), sin recalibrar tau, prompt ni vocabulario después de ver el corpus.
 
-#### Scenario: El reporte separa in-sample de out-of-sample
+#### Scenario: Prefijo obligatorio
 
-- **WHEN** se genera el reporte de la campana
-- **THEN** las metricas del corpus de ajuste y las del corpus independiente aparecen etiquetadas por separado y no se agregan juntas
+- **WHEN** un caso del corpus candidato tiene un id sin el prefijo `I`
+- **THEN** la verificación falla y nombra ese caso
 
-#### Scenario: Ambas etapas reportadas sobre el corpus independiente
+#### Scenario: Mismo caso con otro id bloquea la corrida
 
-- **WHEN** se inspecciona el reporte out-of-sample
-- **THEN** estan presentes las metricas de las dos etapas sobre el corpus independiente, con su origen declarado
+- **WHEN** un caso del candidato tiene un id nuevo pero su descripción normalizada coincide con la de un caso de ajuste
+- **THEN** la verificación falla identificando ambos casos y no se clasifica el corpus independiente
+
+#### Scenario: Corpus disjunto habilita la medición
+
+- **WHEN** el candidato no comparte ids ni descripciones normalizadas con el corpus de ajuste
+- **THEN** la verificación pasa, devuelve las advertencias de similitud si se pidió umbral, y la clasificación puede proceder
+
+#### Scenario: Mismo protocolo y clasificador congelado
+
+- **WHEN** se prepara y clasifica el corpus independiente según el runbook
+- **THEN** se aplican la misma pseudonimización, la plantilla y el validador de c-168 y el clasificador con el mismo `classifier_version` y commit que el in-sample, sin recalibración posterior
+
+### Requirement: ECM-007 — Protección de los artefactos congelados en la campaña y en el corpus independiente
+
+Las corridas de campaña y la clasificación del corpus independiente MUST NOT escribir sobre los artefactos de la v9. Los harnesses SHALL abortar con error accionable, antes de enviar nada, si con `--plan` u `--orden` el `--json` o el `--sidecar` apuntan a `data/corpus_evaluacion_pseudonimizado.json` o a cualquier `data/corpus_resultados*.json`; con `--plan`, `--sidecar` SHALL ser obligatorio y propio de la corrida. `evaluation/run_evaluation.py` SHALL aceptar `--corpus`, `--predicciones` y `--reporte`; si `--corpus` no es el canónico, `--predicciones` y `--reporte` SHALL ser obligatorios y el runner MUST abortar si apuntan a `evaluation/predicciones.json` o `evaluation/report.md`. Las predicciones del corpus independiente SHALL guardarse separadas (`evaluation/data/campana/predicciones_independiente.json`) y su `cache_meta` SHALL incluir, además de `corpus_hash`, `corpus_count`, `classifier_version` y `generated_at`, los campos `commit` (hash corto de `HEAD` al generar) y `pines` (versión de `google-genai` y modelo); si el commit o los pines no pueden obtenerse, la corrida MUST fallar antes de escribir. El README de `evaluation/data/campana/` SHALL registrar `classifier_version`, `commit_in_sample` y `pines_in_sample` (versión de google-genai y modelo de v9, citando `openspec/config.yaml` `stack.inference` y la Tabla de configuración evaluada del Anexo B) de la corrida in-sample de referencia; como la copia congelada de v9 no registró commit, la comparabilidad SHALL verificarse por `classifier_version` y `pines` idénticos, y el commit es obligatorio solo en el cache independiente. El reporte out-of-sample es de c-167.
+
+#### Scenario: Abort por json congelado
+
+- **WHEN** un harness corre con `--plan` y `--json` apunta a `data/corpus_evaluacion_pseudonimizado.json`, o lo deja en su default
+- **THEN** termina con código distinto de cero, nombra el archivo y la ruta de campaña a usar, y no envía ningún caso
+
+#### Scenario: Abort por sidecar versionado
+
+- **WHEN** un harness corre con `--plan` y `--sidecar` apunta a un `data/corpus_resultados*.json`
+- **THEN** termina con error accionable sin enviar ni escribir nada
+
+#### Scenario: Abort por predicciones o reporte canónicos
+
+- **WHEN** `run_evaluation.py` corre con un `--corpus` no canónico y `--predicciones` apunta a `evaluation/predicciones.json` o `--reporte` a `evaluation/report.md`, o alguno de los dos falta
+- **THEN** aborta antes de construir el clasificador y no modifica ningún archivo
+
+#### Scenario: Predicciones independientes separadas
+
+- **WHEN** se clasifica el corpus independiente con rutas propias
+- **THEN** las predicciones quedan en `evaluation/data/campana/predicciones_independiente.json` y `evaluation/predicciones.json` y `evaluation/report.md` no cambian
+
+#### Scenario: Procedencia completa del cache independiente
+
+- **WHEN** se clasifica el corpus independiente con rutas propias
+- **THEN** el `cache_meta` de `predicciones_independiente.json` trae `classifier_version`, `commit` y `pines` además de `corpus_hash`, `corpus_count` y `generated_at`
+
+#### Scenario: Cache sin commit falla antes de escribir
+
+- **WHEN** al clasificar el corpus independiente no se puede obtener el commit o los pines
+- **THEN** la corrida termina con error accionable antes de invocar al clasificador y no escribe el archivo de predicciones
+
+#### Scenario: Sin flags nuevos la conducta no cambia
+
+- **WHEN** los harnesses o `run_evaluation.py` corren sin los flags nuevos
+- **THEN** se comportan exactamente como antes de este change
