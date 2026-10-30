@@ -1,36 +1,62 @@
 # Tasks: Instrumentar la campana (brazo manual e intervencion)
 
-## 1. Instrumento de captura del brazo manual (ECM-001)
+> Strict TDD: en cada tarea con codigo se escribe primero el test que falla (RED), despues el minimo codigo (GREEN), se triangula con un segundo caso y se refactoriza con la suite en verde. Las tareas de solo documentacion lo indican.
 
-- [ ] 1.1 Definir el esquema de la planilla/CSV offline (id_corpus, id_etiquetador, sector, adicionales) y verificarlo contra el corpus pseudonimizado
-- [ ] 1.2 Crear el archivo plantilla del instrumento en `data/` sin PII y verificar que no incluye campos personales
-- [ ] 1.3 Documentar en el runbook que el etiquetado es por caso y por etiquetador, con >=2 etiquetadores independientes, y verificar la seccion existe
-- [ ] 1.4 Agregar una prueba que valide el esquema del CSV (columnas y tipos) y verificar que pasa en el subset SQLite
+## 0. Safety net inicial
 
-## 2. Registro de intervencion humana (ASG-005 modificado) — CHECKPOINT AUDITORIA
+- [ ] 0.1 Antes de tocar nada, correr el subset SQLite (`pytest -m "not integration"` en `App/Backend`), el subset PostgreSQL (`pytest -m integration`), `pytest tests/test_openapi_sync.py`, la suite `evaluation/` y los tests del frontend del dialogo; registrar la linea base "N tests passing". Si algo falla, DETENERSE y reportarlo como falla preexistente (no corregirla)
 
-- [ ] 2.1 CHECKPOINT: solicitar CONFIRMACION HUMANA explicita antes de aplicar cualquier cambio de schema en `clasificacion_log` (governance ALTA)
-- [ ] 2.2 Extender el modelo `ClasificacionLog` con `validado_por_empleado_id` (FK empleado, SET NULL), `validado_en` y `origen_intervencion`, y verificar que el modelo importa sin error
-- [ ] 2.3 Validar `origen_intervencion` contra el conjunto `gate|review|sample|manual_completion|reassignment` y verificar con un test que un valor invalido es rechazado
-- [ ] 2.4 Crear la migracion Alembic nueva (columnas nullable + FK) sin mutar `001` y verificar `alembic upgrade head` y `downgrade` en PostgreSQL
-- [ ] 2.5 Persistir actor, instante propio y origen en `set_validated_sector`/repositorio y verificar con test unitario SQLite
-- [ ] 2.6 Propagar `current_user` (id de empleado, sin PII) desde el route de validacion al servicio y verificarlo con test de integracion
-- [ ] 2.7 Verificar que el delta antes/despues es reconstruible desde `sector_id_predicho`/`sectores_predichos` vs validado con un test de integracion
-- [ ] 2.8 Verificar que un log sin intervencion queda con metadatos NULL (estado no intervenido) con un test unitario
+## 1. Instrumento del brazo manual (ECM-001; adopta C1, C2 y C6)
 
-## 3. Metrica de intervencion real (ECM-003)
+> Requiere c-168 aplicado (planilla `evaluation/data/plantilla_etiquetado.csv` y `evaluation/doble_etiquetado.py::validar_doble_etiquetado`). Los tests de este grupo van en `evaluation/tests/`, NO en el subset SQLite del backend.
 
-- [ ] 3.1 Agregar `contar_intervenciones` en `estadisticas_repository` filtrando por `validado_en` no nulo en rango y verificarlo con test unitario
-- [ ] 3.2 Exponer `tasa_intervencion_humana` en `estadisticas_service` junto a `tasa_revision_humana` y verificar con test de servicio
-- [ ] 3.3 Verificar con test que la tasa cuenta solo intervenciones efectivas (no todos los marcados `requiere_revision_humana`)
+- [ ] 1.1 RED: en `evaluation/tests/test_brazo_manual.py`, con un fixture sintetico en `evaluation/tests/fixtures/` (planilla con `tarea = brazo_manual`, operadores fijos `O1` y `O2` repartidos por mitades de un plan de 6 casos, mas un caso con doble cobertura, columnas en el orden de C1 incluida `inicio`), escribir un test que la valide con `validar_doble_etiquetado(registros, corpus, tarea="brazo_manual")` (importado, sin copiar el esquema ni las cadenas; el corpus sintetico contiene los `id_caso` del plan) y tres tests que deben fallar: un `id_caso` del plan sin ningun operador, dos registros del mismo `(id_caso, id_etiquetador)` y una fila `brazo_manual` sin `inicio`; verificar que el primero pasa contra el validador de c-168 y que c-165 no tiene esquema ni reglas de reparto propias
+- [ ] 1.2 RED -> GREEN: tests de `evaluation/brazo_manual.py::reconstruir_posicion_real(filas)` (posiciones 1..N por `inicio` dentro de cada `id_etiquetador`, desempate por `timestamp`; triangular con dos operadores en distinto orden y con instantes en zonas horarias distintas); implementar la funcion pura minima
+- [ ] 1.3 RED -> GREEN: tests de `desvios_respecto_del_plan(posiciones_reales, plan)` contra un `plan_campana.csv` sintetico con el formato de c-166 (`id_caso, posicion, mitad, brazo_primero, modo, seed`): sin desvios devuelve vacio; un caso adelantado se reporta con posicion planeada y real; implementar
+- [ ] 1.4 REFACTOR: verificar que `evaluation/brazo_manual.py` importa `SECTORES_CANONICOS` de `evaluation.corpus` si los necesita y no duplica cadenas ni columnas; suite `evaluation/` en verde
 
-## 4. Protocolo de campana (ECM-002)
+## 2. Registro de intervencion humana (ASG-005 modificado) — gobernanza ALTA
 
-- [ ] 4.1 Escribir el runbook de campana en `docs/` (sujetos, minimo de casos, independencia, instrumento, aceptacion/verificacion) y verificar que cubre ambos datasets
-- [ ] 4.2 Verificar que el runbook referencia el instrumento offline y la metrica de intervencion sin depender de conocimiento tacito
+- [ ] 2.1 CHECKPOINT de gobernanza ALTA (ANTES de cualquier tarea que toque modelo, esquema o migracion): presentar al autor (a) las cuatro columnas `validado_por_empleado_id` (FK `fk_clasificacion_log_validado_por_directorio_empleado` a `directorio_empleado.id`, `ON DELETE SET NULL`, nullable, indexada), `intervencion_inicio_en`, `validado_en` y `origen_intervencion` (String(20), vocabulario `gate|muestreo|rederivacion|completado_manual`); (b) la migracion `024` con `batch_alter_table` y su `downgrade`; (c) el ajuste de `tests/test_migration_023_directorio_auditoria.py:145` (head `"023"` -> `"024"`); (d) el escritor de `rederivacion` desde `PATCH /incidentes/{id}`, incluida la escritura de `sector_id_validado`. NO avanzar sin confirmacion explicita
+- [ ] 2.2 RED -> GREEN (PostgreSQL + SQLite): escribir `tests/test_migration_024_clasificacion_log_intervencion.py` con el patron de `test_migration_023` (head `"024"`, `down_revision = "023"`, upgrade agrega las cuatro columnas nullable y el indice, downgrade los retira, filas previas intactas, FK `SET NULL` al borrar el empleado en PostgreSQL); actualizar el assert de head en `test_migration_023_directorio_auditoria.py:145`; crear `alembic/versions/024_clasificacion_log_intervencion.py` siguiendo `019_soft_delete_incidente.py:36-52`
+- [ ] 2.3 RED -> GREEN: extender `ClasificacionLog` con las cuatro columnas y `ClasificacionLogRead` con los campos de lectura (sin datos del empleado mas alla del id); test unitario de que un log recien creado queda `no_intervenido` (las cuatro columnas NULL)
+- [ ] 2.4 RED -> GREEN: en `ClasificacionValidar`, solo `intervencion_inicio_en` opcional (`AwareDatetime`) y un validador `mode="before"` que rechaza la clave `origen_intervencion`; tests: payload con `origen_intervencion` (por ejemplo `gate` o `review`) -> 422 con mensaje generico que no refleja el valor y el log no se modifica; instante sin zona -> 422; payload sin `intervencion_inicio_en` sigue siendo valido; otros campos desconocidos se tratan igual que hoy
+- [ ] 2.5 RED -> GREEN: en el repositorio y en `ClasificacionService.validate`, persistir actor, inicio, `validado_en` (instante del servidor) y origen; derivar SIEMPRE `gate` si el log tiene `requiere_revision_humana = True` y `muestreo` si no; tests de ambas derivaciones
+- [ ] 2.6 RED -> GREEN: escenario actor NULL: con el fixture `User(id=1)` sin empleado, la validacion responde 200, `validado_por_empleado_id` queda NULL y `validado_en` y `origen_intervencion` se registran; con un empleado vinculado (fixture del directorio) se registra su id. Inyectar `EmpleadoDep` en `PATCH /clasificaciones/{log_id}/validar`; verificar que los tests existentes de clasificaciones siguen verdes
+- [ ] 2.7 RED -> GREEN: re-validacion: gana la ultima escritura (las cuatro columnas, `sector_id_validado` y `sectores_validados` se sobrescriben como unidad); test de que una re-validacion con `sectores_adicionales = []` deja `sectores_validados` VACIO (corrige el reemplazo que hoy se saltea cuando la lista llega vacia)
+- [ ] 2.8 RED -> GREEN: rederivacion desde `PATCH /incidentes/{id}`: en `IncidenteService.update_incidente` (con `EmpleadoDep` inyectado en el route), cuando `sector_id` cambia respecto del actual, escribir en el log mas reciente del incidente `sector_id_validado`, `validado_en`, `origen_intervencion = rederivacion`, actor (o NULL) e inicio NULL; tests: cambio de sector registra `rederivacion`; mismo sector o PATCH sin `sector_id` no registra; incidente sin log responde igual que hoy; `validate()` no dispara este escritor
+- [ ] 2.9 RED -> GREEN: datos legados: test de que un log con `sector_id_validado` no nulo y `validado_en` NULL (insertado como fila previa a la `024`) se clasifica como `intervencion_legada_sin_metadatos` por el helper de estado usado por la metrica y el export; no hay backfill
+- [ ] 2.10 RED -> GREEN: test de integracion de que el delta antes/despues es reconstruible desde `sector_id_predicho`/`sectores_predichos` vs `sector_id_validado`/`sectores_validados`
+- [ ] 2.11 RED -> GREEN (frontend, Vitest): `ValidarClasificacionDialog.test.tsx` verifica que al confirmar se envia `intervencion_inicio_en` (tomado al abrir el dialogo) y que el cuerpo NO contiene `origen_intervencion`; actualizar `ValidarClasificacionDialog.tsx` y `types/clasificacion.ts` (`intervencion_inicio_en?` en el payload; campos de intervencion de solo lectura en el log)
 
-## 5. Cierre
+## 3. Metrica backend `tasa_intervencion_backend` (ECM-003)
 
-- [ ] 5.1 Ejecutar el subset SQLite (`pytest -m "not integration"`) y verificar verde
-- [ ] 5.2 Ejecutar el subset PostgreSQL (`pytest -m integration`) y verificar verde
-- [ ] 5.3 Ejecutar `openspec validate "c-165-instrumentar-la-campana-para-medir-el-brazo-manual-y-la-intervencion" --strict --no-interactive` y verificar verde
+- [ ] 3.1 RED -> GREEN: `estadisticas_repository.contar_intervenciones(desde, hasta)` sobre la cohorte de logs con `created_at` en `[desde, hasta)`: numerador = logs con `validado_en` no nulo; devuelve tambien el desglose por `origen_intervencion` y por `cambio_sector` y la cantidad de legados; tests con logs dentro y fuera del rango, uno legado y uno no intervenido
+- [ ] 3.2 RED -> GREEN: `estadisticas_service` calcula `tasa_intervencion_backend` = intervenciones / logs de la cohorte sin legados (0.0 si la cohorte esta vacia); tests: una confirmacion sin cambio de sector CUENTA; un marcado no validado NO cuenta; los legados no entran ni al numerador ni al denominador y se informan en `intervenciones_legadas_excluidas`
+- [ ] 3.3 RED -> GREEN: exponer en `ResumenResponse` `tasa_intervencion_backend`, `intervenciones_por_origen`, `intervenciones_por_cambio_sector` e `intervenciones_legadas_excluidas`; corregir la descripcion de `tasa_revision_humana` (pendientes al momento de la consulta); test de API en `tests/test_api_estadisticas.py`
+- [ ] 3.4 Regenerar `docs/openapi.json` con `App/Backend/scripts/export_openapi.py` y verificar que `pytest tests/test_openapi_sync.py` pasa
+
+## 4. Export pseudonimizado para c-167 (ECM-003)
+
+- [ ] 4.1 RED: `tests/test_exportar_intervenciones.py` (subset SQLite) con logs intervenidos, uno legado, uno sin actor y un sidecar sintetico (`case_id`, `incidente_id`); verificar columnas y orden exactos (`id_caso, incidente_id, log_id, origen_intervencion, intervencion_inicio_en, validado_en, duracion_s, sector_predicho, sector_validado, cambio_sector, actor_alias`)
+- [ ] 4.2 GREEN: implementar `App/Backend/scripts/exportar_intervenciones.py` (CLI con `--sidecar`, `--desde`, `--hasta`, `--salida`); `id_caso` vacio si no se vincula; `duracion_s` vacio si falta el inicio o si es negativa; legados no exportados y contados en el resumen
+- [ ] 4.3 TRIANGULATE: tests de privacidad: el CSV no contiene nombre, email, telefono, legajo ni el id del empleado en claro; `actor_alias` es HMAC con clave del entorno truncado a 12 hex, estable entre corridas con la misma clave y vacio si el actor es NULL
+- [ ] 4.4 RED -> GREEN: test de que el CLI se niega a escribir sobre `data/corpus_evaluacion_pseudonimizado.json`, `data/corpus_resultados*.json` y `evaluation/predicciones.json`
+- [ ] 4.5 Crear `evaluation/data/campana/README.md` con la tabla de archivos y SHA-256 (vacia hasta la campana) y la regla de no versionar PII; verificar que no hay datos reales commiteados
+
+## 5. Runbook de campana (ECM-002) — documentacion
+
+- [ ] 5.1 Escribir `docs/campana-medicion/runbook-brazo-manual-e-intervencion.md`: registro de los operadores `O1`/`O2` en `evaluation/data/campana/registro_sujetos.csv` (esquema de c-168: `alias, rol, persona`, con `persona` = seudonimo estable `P<n>`), sin nombres en el repo; exigencia C2 verificada por `persona` (ninguna `persona` de un `O*` aparece como `E*`, analista del consenso original ni autor; sin ver prediccion ni consenso); referencia = consenso del doble etiquetado nuevo de c-168 con discordantes reportados aparte
+- [ ] 5.2 En el runbook: minimo de casos (por defecto la totalidad de casos del plan de campana, justificado), reparto del brazo manual (cada `id_caso` con al menos un operador, por mitades segun el plan; submuestra opcional con doble cobertura; un registro por `(id_caso, id_etiquetador)`), uso de `plan_campana.csv` de c-166 (`posicion`, `brazo_primero`), registro por caso de `inicio` al tomar el caso y de `timestamp` al asignar el sector (ambos obligatorios en `brazo_manual`; reemplazan cualquier cronometro aparte), instrumento (planilla de ECM-008 con `tarea = brazo_manual`) y produccion del dataset de intervencion (validaciones en la app + `exportar_intervenciones.py`)
+- [ ] 5.3 En el runbook: criterios de aceptacion/verificacion por dataset (planilla valida con `validar_doble_etiquetado`; posicion real reconstruida y desvios reportados; export sin PII; legados y vinculos faltantes declarados; SHA-256 en `evaluation/data/campana/README.md`) y la prohibicion explicita de escribir sobre `data/corpus_evaluacion_pseudonimizado.json`, `data/corpus_resultados*.json`, `evaluation/predicciones.json` y los sidecars de `evaluation/evidence/`
+- [ ] 5.4 Verificar que el runbook es ejecutable sin conocimiento tacito (cada paso nombra comando, archivo de entrada y archivo de salida)
+
+## 6. Cierre
+
+- [ ] 6.1 Actualizar `docs/anexo_c_esquema_bd.md` (seccion `clasificacion_log`, lineas 167-226) con las cuatro columnas, la FK a `directorio_empleado` y los estados `no_intervenido` / `intervenido` / `intervencion_legada_sin_metadatos`
+- [ ] 6.2 Ejecutar el subset SQLite (`pytest -m "not integration"`) y verificar verde contra la linea base de 0.1
+- [ ] 6.3 Ejecutar el subset PostgreSQL (`pytest -m integration`) y verificar verde
+- [ ] 6.4 Ejecutar la suite `evaluation/` y los tests del frontend y verificar verde
+- [ ] 6.5 Ejecutar `git diff --stat` y confirmar que no cambian `docs/Tesis/`, `data/corpus_evaluacion_pseudonimizado.json`, `data/corpus_resultados*.json`, `evaluation/predicciones.json`, `evaluation/evidence/`, `evaluation/report.md`, `docs/Tesis/Correcciones/numeros-canonicos.md` ni las migraciones `001..023`
+- [ ] 6.6 Registrar c-165 en `CHANGES.md` (FASE del programa de medicion)
+- [ ] 6.7 Ejecutar `openspec validate "c-165-instrumentar-la-campana-para-medir-el-brazo-manual-y-la-intervencion" --strict --no-interactive` y verificar verde
