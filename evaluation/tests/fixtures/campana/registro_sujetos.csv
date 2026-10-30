@@ -1,0 +1,9 @@
+alias,rol,persona
+E1,etiquetador,P1
+E2,etiquetador,P2
+O1,operador,P3
+O2,operador,P4
+AN1,analista_original,P5
+AN2,analista_original,P6
+AU1,autor,P7
+AU2,autor,P8
