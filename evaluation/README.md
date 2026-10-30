@@ -124,6 +124,37 @@ Sin confirmación, la corrida aborta con código de salida 2 y un mensaje claro.
 Al confirmar, el runner imprime una estimación orientativa del costo antes de
 ejecutar (no es una factura).
 
+## Corrida sobre un corpus independiente (`--corpus`, c-166)
+
+Para clasificar un corpus distinto del de ajuste (por ejemplo el independiente de la
+validación fuera de muestra) sin tocar los artefactos de la v9:
+
+```bash
+PYTHONPATH=App/Backend python -m evaluation.run_evaluation \
+  --corpus evaluation/data/campana/corpus_independiente.json \
+  --predicciones evaluation/data/campana/predicciones_independiente.json \
+  --reporte evaluation/data/campana/reporte_independiente.md \
+  --confirm-paid
+```
+
+Con un `--corpus` que no es el canónico:
+
+- `--predicciones` y `--reporte` son **obligatorios** y no pueden ser
+  `evaluation/predicciones.json` ni `evaluation/report.md`: el runner aborta con
+  código 2, antes de construir el clasificador y sin modificar ningún archivo.
+- Ejecuta `verificar_no_solape` (`evaluation/no_solape.py`) contra el corpus canónico
+  como paso previo obligatorio: ids con prefijo `I`, ids disjuntos y descripciones
+  normalizadas distintas. No detecta paráfrasis.
+- El `cache_meta` de las predicciones suma `commit` (hash corto de `HEAD`) y `pines`
+  (versión instalada de `google-genai` y modelo). Si no se pueden obtener, la corrida
+  falla ANTES de invocar al clasificador y de escribir.
+- `--solo-tiempos` no se puede usar.
+- Se conserva el gate de corrida paga (`--confirm-paid`).
+
+Sin `--corpus`, `--predicciones` ni `--reporte`, el runner se comporta exactamente como
+antes. El procedimiento completo está en
+`docs/campana-medicion/runbook-corpus-independiente.md`.
+
 ## Setup del Entorno
 
 ### 1. Instalar dependencias de evaluación

@@ -11,6 +11,7 @@ from __future__ import annotations
 import csv
 import json
 import sys
+from dataclasses import asdict, replace
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -1010,3 +1011,298 @@ def test_run_recover_exception_is_reported_and_does_not_abort(tmp_path, monkeypa
     assert by_id["R002"]["error"] == "RuntimeError"
     assert by_id["R003"]["error"] is None
 
+
+
+# ── Modo campana (c-166): --plan copia la asignacion sin ingestar (task 2.12) ──
+
+IDS_3 = ["R001", "R002", "R003"]
+
+
+def _escribir_plan(path, ids, modo="directo", seed=None):
+    from evaluation import plan_campana as pc
+
+    pc.escribir_plan_csv(pc.generar_plan_campana(ids, modo, seed), path)
+    return path
+
+
+def _recuperacion_falsa(monkeypatch, recuperados: list[str]) -> list[str]:
+    """Endpoint falso: registra los case_id recuperados; todos tienen una medicion valida.
+
+    Devuelve la lista donde se anotan las llamadas a los writers de CSV/XLSX (que no
+    escriben nada), para poder afirmar si el modo campana los invoca.
+    """
+    escrituras: list[str] = []
+
+    def recuperar(*, case_id, **kwargs):
+        recuperados.append(case_id)
+        return itc.build_telefonia_result(case_id=case_id, detail=_detail())
+
+    _set_operator_creds(monkeypatch)
+    monkeypatch.setattr(ivn, "login", lambda *a, **k: "tok")
+    monkeypatch.setattr(itc, "recover_telefonia_case", recuperar)
+    monkeypatch.setattr(ivn, "write_csv_results", lambda *a, **k: escrituras.append("csv"))
+    monkeypatch.setattr(ivn, "write_xlsx_results", lambda *a, **k: escrituras.append("xlsx"))
+    return escrituras
+
+
+def _argv_campana(tmp_path, json_path, *extra) -> list[str]:
+    return [
+        "--source",
+        "json",
+        "--json",
+        str(json_path),
+        "--sidecar",
+        str(tmp_path / "corrida.json"),
+        "--id-corrida",
+        "corrida-1",
+        *extra,
+    ]
+
+
+def _leer_sidecar(tmp_path) -> list[dict]:
+    return json.loads((tmp_path / "corrida.json").read_text(encoding="utf-8"))
+
+
+def test_build_telefonia_result_deja_los_campos_de_campana_en_none():
+    resultado = itc.build_telefonia_result(case_id="R002", detail=_detail())
+
+    for campo in ("orden", "posicion", "mitad", "brazo_primero", "id_corrida"):
+        assert getattr(resultado, campo) is None
+
+
+def test_run_con_plan_recupera_solo_los_casos_telefono_y_copia_la_asignacion(
+    tmp_path, monkeypatch
+):
+    json_path = tmp_path / "campana.json"
+    _write_telephony_json(json_path)
+    plan = _escribir_plan(tmp_path / "plan.csv", IDS_3, "inverso")
+    recuperados: list[str] = []
+    _recuperacion_falsa(monkeypatch, recuperados)
+
+    codigo = itc.run(_argv_campana(tmp_path, json_path, "--plan", str(plan)))
+
+    entradas = {entrada["case_id"]: entrada for entrada in _leer_sidecar(tmp_path)}
+    assert codigo == 0
+    assert recuperados == ["R003", "R002"]  # solo telefono, en el orden del plan
+    assert set(entradas) == {"R002", "R003"}
+    assert (entradas["R003"]["posicion"], entradas["R003"]["mitad"]) == (1, 1)
+    assert entradas["R003"]["brazo_primero"] == "manual"
+    assert (entradas["R002"]["posicion"], entradas["R002"]["mitad"]) == (2, 2)  # n=3: n // 2 = 1
+    assert entradas["R002"]["brazo_primero"] == "automatizado"
+    for entrada in entradas.values():
+        assert entrada["orden"] == "inverso"
+        assert entrada["id_corrida"] == "corrida-1"
+
+
+def test_run_con_plan_mergea_la_medicion_en_el_json_de_campana(tmp_path, monkeypatch):
+    json_path = tmp_path / "campana.json"
+    _write_telephony_json(json_path)
+    plan = _escribir_plan(tmp_path / "plan.csv", IDS_3)
+    _recuperacion_falsa(monkeypatch, [])
+
+    itc.run(_argv_campana(tmp_path, json_path, "--plan", str(plan)))
+
+    casos = {c["id"]: c for c in json.loads(json_path.read_text(encoding="utf-8"))["casos"]}
+    assert casos["R002"]["tiempo_automatizado_s"] == pytest.approx(2.0)
+    assert casos["R001"]["tiempo_automatizado_s"] is None
+
+
+def test_run_con_plan_no_escribe_el_csv_ni_el_xlsx(tmp_path, monkeypatch):
+    json_path = tmp_path / "campana.json"
+    _write_telephony_json(json_path)
+    plan = _escribir_plan(tmp_path / "plan.csv", IDS_3)
+    escrituras = _recuperacion_falsa(monkeypatch, [])
+
+    codigo = itc.run(_argv_campana(tmp_path, json_path, "--plan", str(plan)))
+
+    assert codigo == 0
+    assert escrituras == []
+
+
+def test_run_sin_plan_sigue_escribiendo_el_csv_y_el_xlsx(tmp_path, monkeypatch):
+    json_path = tmp_path / "corpus.json"
+    _write_telephony_json(json_path)
+    escrituras = _recuperacion_falsa(monkeypatch, [])
+
+    codigo = itc.run(
+        ["--source", "json", "--json", str(json_path), "--sidecar", str(tmp_path / "sidecar.json")]
+    )
+
+    assert codigo == 0
+    assert escrituras == ["csv", "xlsx"]
+
+
+def test_write_back_sin_planillas_escribe_sidecar_y_json_pero_no_csv_ni_xlsx(
+    tmp_path, monkeypatch
+):
+    json_path = tmp_path / "campana.json"
+    _write_telephony_json(json_path)
+    escrituras: list[str] = []
+    monkeypatch.setattr(ivn, "write_csv_results", lambda *a, **k: escrituras.append("csv"))
+    monkeypatch.setattr(ivn, "write_xlsx_results", lambda *a, **k: escrituras.append("xlsx"))
+    resultado = itc.build_telefonia_result(case_id="R002", detail=_detail())
+
+    pendientes = itc.write_back(
+        csv_path=tmp_path / "x.csv",
+        xlsx_path=tmp_path / "x.xlsx",
+        sidecar_path=tmp_path / "sidecar.json",
+        json_path=json_path,
+        results=[resultado],
+        incluir_planillas=False,
+    )
+
+    escrito = json.loads((tmp_path / "sidecar.json").read_text(encoding="utf-8"))
+    assert escrituras == []
+    assert escrito[0]["case_id"] == "R002"
+    assert pendientes == 2  # R001 y R003 siguen en null
+
+
+def test_run_con_plan_y_limit_se_rechaza_y_no_recupera_nada(tmp_path, monkeypatch, capsys):
+    json_path = tmp_path / "campana.json"
+    _write_telephony_json(json_path)
+    plan = _escribir_plan(tmp_path / "plan.csv", IDS_3)
+    recuperados: list[str] = []
+    _recuperacion_falsa(monkeypatch, recuperados)
+
+    codigo = itc.run(_argv_campana(tmp_path, json_path, "--plan", str(plan), "--limit", "1"))
+
+    assert codigo == 2
+    assert "--limit" in capsys.readouterr().err
+    assert recuperados == []
+
+
+def test_run_con_plan_sin_id_corrida_se_rechaza(tmp_path, monkeypatch, capsys):
+    json_path = tmp_path / "campana.json"
+    _write_telephony_json(json_path)
+    plan = _escribir_plan(tmp_path / "plan.csv", IDS_3)
+    recuperados: list[str] = []
+    _recuperacion_falsa(monkeypatch, recuperados)
+
+    codigo = itc.run(
+        [
+            "--source", "json", "--json", str(json_path),
+            "--sidecar", str(tmp_path / "c.json"), "--plan", str(plan),
+        ]
+    )  # fmt: skip
+
+    assert codigo == 2
+    assert "--id-corrida" in capsys.readouterr().err
+    assert recuperados == []
+
+
+def test_run_con_plan_con_un_id_ausente_del_corpus_aborta_antes_de_recuperar(
+    tmp_path, monkeypatch, capsys
+):
+    json_path = tmp_path / "campana.json"
+    _write_telephony_json(json_path)
+    plan = _escribir_plan(tmp_path / "plan.csv", ["R001", "R002", "R999"])
+    recuperados: list[str] = []
+    _recuperacion_falsa(monkeypatch, recuperados)
+
+    codigo = itc.run(_argv_campana(tmp_path, json_path, "--plan", str(plan)))
+
+    assert codigo == 2
+    assert "R999" in capsys.readouterr().err
+    assert recuperados == []
+
+
+@pytest.mark.parametrize(
+    ("json_arg", "sidecar_arg", "ofensor"),
+    [
+        pytest.param(None, "corrida.json", "data/corpus_evaluacion_pseudonimizado.json", id="json_en_su_default"),
+        pytest.param("data/corpus_resultados.json", "corrida.json", "data/corpus_resultados.json", id="json_resultados"),
+        pytest.param("campana.json", "data/corpus_resultados_telefonia.json", "data/corpus_resultados_telefonia.json", id="sidecar_telefonia"),
+        pytest.param("campana.json", "data/corpus_resultados.json", "data/corpus_resultados.json", id="sidecar_resultados"),
+    ],
+)  # fmt: skip
+def test_run_con_plan_aborta_si_json_o_sidecar_apuntan_a_un_archivo_versionado(
+    tmp_path, monkeypatch, capsys, json_arg, sidecar_arg, ofensor
+):
+    monkeypatch.chdir(tmp_path)  # cualquier escritura indebida caeria aca, no en el repo
+    plan = _escribir_plan(tmp_path / "plan.csv", IDS_3)
+    recuperados: list[str] = []
+    _recuperacion_falsa(monkeypatch, recuperados)
+    for variable in ("INGEST_OPERATOR_USERNAME", "INGEST_OPERATOR_PASSWORD"):
+        monkeypatch.delenv(variable)  # la proteccion se evalua antes de leer credenciales
+    argv = [
+        "--source", "json", "--id-corrida", "corrida-1", "--plan", str(plan),
+        "--sidecar", sidecar_arg,
+    ]  # fmt: skip
+    if json_arg is not None:
+        argv += ["--json", json_arg]
+
+    codigo = itc.run(argv)
+
+    err = capsys.readouterr().err
+    assert codigo == 2
+    assert ofensor in err
+    assert "evaluation/data/campana/" in err
+    assert "INGEST_OPERATOR" not in err
+    assert recuperados == []
+    assert not (tmp_path / "data").exists()
+
+
+def test_run_con_plan_y_sidecar_ausente_exige_un_sidecar_propio(tmp_path, monkeypatch, capsys):
+    json_path = tmp_path / "campana.json"
+    _write_telephony_json(json_path)
+    plan = _escribir_plan(tmp_path / "plan.csv", IDS_3)
+    recuperados: list[str] = []
+    _recuperacion_falsa(monkeypatch, recuperados)
+    monkeypatch.chdir(tmp_path)
+
+    codigo = itc.run(
+        [
+            "--source", "json", "--json", str(json_path),
+            "--id-corrida", "corrida-1", "--plan", str(plan),
+        ]
+    )  # fmt: skip
+
+    err = capsys.readouterr().err
+    assert codigo == 2
+    assert "--sidecar" in err and "obligatorio" in err
+    assert recuperados == []
+    assert not (tmp_path / "data").exists()
+
+
+def test_run_con_plan_un_sidecar_de_otra_corrida_aborta_y_el_de_la_misma_se_reanuda(
+    tmp_path, monkeypatch, capsys
+):
+    json_path = tmp_path / "campana.json"
+    _write_telephony_json(json_path)
+    plan = _escribir_plan(tmp_path / "plan.csv", IDS_3)
+    recuperados: list[str] = []
+    _recuperacion_falsa(monkeypatch, recuperados)
+    previo = replace(
+        itc.build_telefonia_result(case_id="R002", detail=_detail()), id_corrida="otra"
+    )
+    sidecar = tmp_path / "corrida.json"
+    sidecar.write_text(json.dumps([asdict(previo)]), encoding="utf-8")
+
+    codigo_otra = itc.run(_argv_campana(tmp_path, json_path, "--plan", str(plan)))
+
+    assert codigo_otra == 2
+    assert "otra" in capsys.readouterr().err
+    assert recuperados == []
+
+    sidecar.write_text(
+        json.dumps([asdict(replace(previo, id_corrida="corrida-1"))]), encoding="utf-8"
+    )
+    codigo_misma = itc.run(_argv_campana(tmp_path, json_path, "--plan", str(plan)))
+
+    assert codigo_misma == 0
+    assert recuperados == ["R002", "R003"]
+
+
+def test_run_dry_run_con_plan_cuenta_los_casos_telefono_sin_red(tmp_path, monkeypatch, capsys):
+    json_path = tmp_path / "campana.json"
+    _write_telephony_json(json_path)
+    plan = _escribir_plan(tmp_path / "plan.csv", IDS_3)
+    recuperados: list[str] = []
+    _recuperacion_falsa(monkeypatch, recuperados)
+
+    codigo = itc.run(_argv_campana(tmp_path, json_path, "--plan", str(plan), "--dry-run"))
+
+    assert codigo == 0
+    assert "telefonia=2" in capsys.readouterr().out
+    assert recuperados == []
+    assert not (tmp_path / "corrida.json").exists()
