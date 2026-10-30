@@ -44,6 +44,7 @@ from typing import Any, Callable, Iterable, Mapping, Sequence
 from urllib.parse import urlencode
 
 import ingest_corpus as ic
+import modo_campana
 
 # ── Canonical contract ──────────────────────────────────────────────────────
 
@@ -539,6 +540,15 @@ class CaseResult:
     t_confirmacion_s: float | None
     anomalo: bool
     error: str | None
+    # Modo campana (c-166): los cinco campos van AL FINAL y con default None, de modo
+    # que ningun constructor ni sidecar historico cambia. ``orden`` guarda el modo del
+    # plan; ``posicion`` es la posicion GLOBAL del plan; ``id_corrida`` identifica la
+    # corrida de campana (un sidecar por corrida).
+    orden: str | None = None
+    posicion: int | None = None
+    mitad: int | None = None
+    brazo_primero: str | None = None
+    id_corrida: str | None = None
 
 
 # ── Reading ─────────────────────────────────────────────────────────────────
@@ -763,6 +773,31 @@ def write_sidecar_json(path: str | Path, results: Iterable[CaseResult]) -> None:
     with open(target, "w", encoding="utf-8") as fh:
         json.dump(merged, fh, ensure_ascii=False, indent=2)
         fh.write("\n")
+
+
+def verificar_sidecar_de_corrida(path: str | Path, id_corrida: str) -> str | None:
+    """Motivo del rechazo si ``path`` ya tiene entradas de OTRA corrida; ``None`` si se puede usar.
+
+    Un sidecar que no existe, o cuyas entradas son todas de ``id_corrida``, se usa (con el
+    mismo ``id_corrida`` se reanuda con la semantica de merge de ``write_sidecar_json``).
+    Una entrada sin ``id_corrida`` (sidecar historico) cuenta como de otra corrida.
+    """
+    target = Path(path)
+    if not target.exists():
+        return None
+    otras = sorted(
+        {
+            entry.get("id_corrida") or "(sin id_corrida)"
+            for entry in _load_sidecar_entries(target)
+            if entry.get("id_corrida") != id_corrida
+        }
+    )
+    if not otras:
+        return None
+    return (
+        f"el sidecar {target} ya existe y tiene entradas de otra corrida ({', '.join(otras)}); "
+        f"con --id-corrida {id_corrida} no se mezclan corridas: usa un --sidecar propio."
+    )
 
 
 def merge_evaluation_json(path: str | Path, measurements: dict[str, float | None]) -> int:
@@ -1157,7 +1192,11 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--json", default=DEFAULT_JSON)
     parser.add_argument("--csv", default=DEFAULT_CSV)
     parser.add_argument("--xlsx", default=DEFAULT_XLSX)
-    parser.add_argument("--sidecar", default=DEFAULT_SIDECAR)
+    parser.add_argument(
+        "--sidecar",
+        default=None,
+        help=f"Default {DEFAULT_SIDECAR}; obligatorio y propio de la corrida con --plan/--orden.",
+    )
     parser.add_argument("--only-channel", default=None)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--sleep", type=float, default=0.5)
@@ -1172,7 +1211,10 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--smtp-from", default=os.environ.get("INGEST_SMTP_FROM"))
     parser.add_argument("--ingest-address", default=os.environ.get("INGEST_MAILBOX_ADDRESS"))
     parser.add_argument("--dry-run", action="store_true")
-    return parser.parse_args(argv)
+    modo_campana.registrar_argumentos(parser)
+    args = parser.parse_args(argv)
+    modo_campana.resolver_sidecar(args, DEFAULT_SIDECAR)
+    return args
 
 
 def _channel_counts(cases: Sequence[Case]) -> dict[str, int]:
@@ -1212,8 +1254,21 @@ def _print_counts(all_cases: Sequence[Case], selected: Sequence[Case]) -> None:
 
 def run(argv: Sequence[str] | None = None) -> int:
     args = parse_args(argv)
+    codigo = modo_campana.preflight(args, verificar_sidecar_de_corrida)
+    if codigo is not None:
+        return codigo
+    campana = modo_campana.esta_activo(args)
     cases = read_cases(_source_path(args), args.source)
-    selected = select_cases(cases, args.only_channel, args.limit)
+    if campana:
+        try:
+            seleccion = modo_campana.seleccionar_casos(
+                args, cases, lambda base: select_cases(base, args.only_channel, args.limit)
+            )
+        except modo_campana.ERRORES_DE_USO as exc:
+            return modo_campana.informar_error(exc)
+        selected = seleccion.casos
+    else:
+        selected = select_cases(cases, args.only_channel, args.limit)
     _print_counts(cases, selected)
 
     ingestables = [c for c in selected if map_canal(c.canal) in INGESTABLE_CHANNELS]
@@ -1326,10 +1381,15 @@ def run(argv: Sequence[str] | None = None) -> int:
                 f"{result.incidente_id} e2e={result.t_e2e_s} anomaly={result.anomalo}"
             )
 
+    if campana:
+        results = modo_campana.anotar_resultados(results, seleccion.asignaciones, args.id_corrida)
     write_sidecar_json(args.sidecar, results)
-    by_id = {r.case_id: r for r in results}
-    write_csv_results(args.csv, by_id)
-    write_xlsx_results(args.xlsx, by_id)
+    if not campana:
+        # Los originales CSV/XLSX son locales (con PII): una corrida de campana no los
+        # toca; sus datos viven solo en el sidecar y en la copia de campana (--json).
+        by_id = {r.case_id: r for r in results}
+        write_csv_results(args.csv, by_id)
+        write_xlsx_results(args.xlsx, by_id)
 
     measurements = {
         r.case_id: r.t_e2e_s

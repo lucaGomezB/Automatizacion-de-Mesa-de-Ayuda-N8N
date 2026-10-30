@@ -25,15 +25,17 @@ from __future__ import annotations
 import argparse
 import asyncio
 import hashlib
+import importlib.metadata
 import json
 import os
 import pathlib
+import subprocess
 import sys
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Protocol
+from typing import Any, Callable, Dict, List, Optional, Protocol
 
-from evaluation.corpus import CasoEvaluacion, cargar_corpus
+from evaluation.corpus import CasoEvaluacion, CorpusError, cargar_corpus
 from evaluation.metrics import (
     BANDAS_CALIBRACION_DEFECTO,
     CLASES,
@@ -60,6 +62,7 @@ from evaluation.metrics import (
     sensibilidad_por_clase,
     soporte_por_clase,
 )
+from evaluation.no_solape import SolapeError, verificar_no_solape
 from evaluation.stats import (
     ARE_WILCOXON_MINIMA,
     ResultadoWilcoxon,
@@ -1373,6 +1376,129 @@ def _resolver_clasificador_real() -> ClasificadorProtocol:
         ) from exc
 
 
+# ---------------------------------------------------------------------------
+# Procedencia ampliada del cache del corpus independiente (c-166, ECM-007)
+# ---------------------------------------------------------------------------
+class ProcedenciaIncompletaError(RuntimeError):
+    """No se pudo obtener el commit o los pines que exige el cache independiente."""
+
+
+def obtener_commit_corto(cwd: pathlib.Path = _REPO_ROOT) -> str:
+    """Hash corto de `HEAD` (`git rev-parse --short HEAD`) del repositorio en `cwd`.
+
+    Falla con `ProcedenciaIncompletaError` si no hay repositorio git, si `git` no esta
+    instalado o si la salida es vacia: sin commit el cache independiente no se genera.
+    """
+    try:
+        resultado = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=cwd,
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=30,
+        )
+    except (OSError, subprocess.SubprocessError) as exc:
+        raise ProcedenciaIncompletaError(
+            "no se pudo obtener el commit (git rev-parse --short HEAD): corre la evaluacion "
+            f"dentro del repositorio git y con git instalado ({exc})"
+        ) from exc
+    commit = resultado.stdout.strip()
+    if not commit:
+        raise ProcedenciaIncompletaError(
+            "el commit obtenido de git esta vacio: corre la evaluacion dentro del repositorio git"
+        )
+    return commit
+
+
+def _version_google_genai() -> str:
+    return importlib.metadata.version("google-genai")
+
+
+def _modelo_gemini_configurado() -> str:
+    """Modelo de Gemini de la configuracion del backend (`settings.gemini_model`)."""
+    _ensure_backend_on_path()
+    from app.config.settings import get_settings  # type: ignore[import]
+
+    return get_settings().gemini_model
+
+
+def obtener_pines(
+    proveedor_version: Optional[Callable[[], str]] = None,
+    proveedor_modelo: Optional[Callable[[], str]] = None,
+) -> Dict[str, str]:
+    """Pines del clasificador: version INSTALADA de `google-genai` y modelo configurado.
+
+    PRIVACIDAD: el `ValidationError` de pydantic al cargar la configuracion del backend
+    incrusta los VALORES de las variables de entorno (tokens, claves, correos del `.env`).
+    Por eso los errores de esta funcion informan solo el TIPO de la excepcion original y no
+    la encadenan (`from None`): ni el mensaje ni un traceback pueden filtrar esos valores.
+    """
+    try:
+        version = (proveedor_version or _version_google_genai)()
+    except Exception as exc:  # noqa: BLE001 - cualquier falla deja los pines incompletos
+        raise ProcedenciaIncompletaError(
+            "no se pudo obtener la version instalada de google-genai (pines): instala las "
+            f"dependencias del backend ({type(exc).__name__})"
+        ) from None
+    try:
+        modelo = (proveedor_modelo or _modelo_gemini_configurado)()
+    except Exception as exc:  # noqa: BLE001 - cualquier falla deja los pines incompletos
+        raise ProcedenciaIncompletaError(
+            "no se pudo obtener el modelo de Gemini de la configuracion del backend (pines): "
+            "exporta las variables de entorno del backend y revisa el .env "
+            f"({type(exc).__name__}; el detalle se omite porque puede incluir valores de variables)"
+        ) from None
+    return {"google_genai": version, "modelo": modelo}
+
+
+def _texto_no_vacio(valor: Any) -> bool:
+    return isinstance(valor, str) and bool(valor.strip())
+
+
+def obtener_procedencia_independiente(
+    proveedor_commit: Optional[Callable[[], str]] = None,
+    proveedor_pines: Optional[Callable[[], Dict[str, str]]] = None,
+) -> Dict[str, Any]:
+    """Campos que el `cache_meta` del corpus independiente suma a los cuatro de siempre.
+
+    Devuelve `{"commit": <hash corto de HEAD>, "pines": {"google_genai": ..., "modelo": ...}}`.
+    Si el commit o algun pin no se puede obtener (o esta vacio), levanta
+    `ProcedenciaIncompletaError`: la corrida debe fallar ANTES de invocar al clasificador y
+    de escribir el archivo. Los proveedores son inyectables para testear sin git ni red.
+    """
+    try:
+        commit = (proveedor_commit or obtener_commit_corto)()
+    except ProcedenciaIncompletaError:
+        raise
+    except Exception as exc:  # noqa: BLE001 - un proveedor inyectado puede fallar como quiera
+        raise ProcedenciaIncompletaError(f"no se pudo obtener el commit: {exc}") from exc
+    if not _texto_no_vacio(commit):
+        raise ProcedenciaIncompletaError(
+            "el commit obtenido esta vacio: el cache independiente exige el commit de HEAD"
+        )
+    try:
+        pines = (proveedor_pines or obtener_pines)()
+    except ProcedenciaIncompletaError:
+        raise
+    except Exception as exc:  # noqa: BLE001 - un proveedor inyectado puede fallar como quiera
+        # Solo el tipo: el detalle de una falla de configuracion puede traer valores del .env.
+        raise ProcedenciaIncompletaError(
+            f"no se pudieron obtener los pines ({type(exc).__name__})"
+        ) from None
+    if not isinstance(pines, dict) or not all(
+        _texto_no_vacio(pines.get(clave)) for clave in ("google_genai", "modelo")
+    ):
+        raise ProcedenciaIncompletaError(
+            "los pines estan incompletos: el cache independiente exige la version de "
+            f"google-genai y el modelo (se obtuvo {pines!r})"
+        )
+    return {
+        "commit": commit.strip(),
+        "pines": {"google_genai": pines["google_genai"], "modelo": pines["modelo"]},
+    }
+
+
 async def main_con_corpus_real(
     corpus_path: pathlib.Path = CORPUS_REAL_PATH,
     classifier: Optional[ClasificadorProtocol] = None,
@@ -1381,6 +1507,7 @@ async def main_con_corpus_real(
     force: bool = False,
     confirm_paid: bool = False,
     estimated_cost_per_call: Optional[float] = None,
+    procedencia_extra: Optional[Callable[[], Dict[str, Any]]] = None,
 ) -> None:
     """
     Carga el corpus real, evalua y genera el reporte.
@@ -1405,6 +1532,11 @@ async def main_con_corpus_real(
             cuando no hay cache valido. Un cache hit o un clasificador inyectado
             no requieren confirmacion.
         estimated_cost_per_call: Override del costo estimado por llamada (USD).
+        procedencia_extra: Si se indica (corpus independiente, c-166), funcion que devuelve
+            los campos que se suman al `cache_meta` (`commit` y `pines`). Se invoca solo
+            cuando hay que generar predicciones y ANTES del gate de costo y de invocar al
+            clasificador: si no puede completarse, levanta `ProcedenciaIncompletaError` y no
+            se escribe nada. Sin este parametro el `cache_meta` conserva sus cuatro campos.
     """
     corpus_path = pathlib.Path(corpus_path)
 
@@ -1441,6 +1573,8 @@ async def main_con_corpus_real(
             f"Cache valido encontrado. Predicciones cargadas desde: {predicciones_path}"
         )
     else:
+        # c-166: commit y pines se piden ANTES de pagar o invocar al clasificador.
+        procedencia_adicional = procedencia_extra() if procedencia_extra is not None else {}
         if usa_clasificador_real:
             # El gate de costo se evalua ANTES de construir el clasificador real.
             if not confirm_paid:
@@ -1461,6 +1595,7 @@ async def main_con_corpus_real(
             "corpus_count": corpus_count,
             "classifier_version": classifier_version,
             "generated_at": datetime.now(tz=timezone.utc).isoformat(),
+            **procedencia_adicional,
         }
         guardar_predicciones(predicciones, predicciones_path, cache_meta=cache_meta)
         procedencia = cache_meta
@@ -1518,6 +1653,51 @@ def main_solo_tiempos(
 
 
 # ---------------------------------------------------------------------------
+# Corpus independiente (c-166, ECM-007): validaciones previas del CLI
+# ---------------------------------------------------------------------------
+def _misma_ruta(a: Any, b: Any) -> bool:
+    """True si ambas rutas apuntan al mismo archivo (resuelve `..`, enlaces y mayusculas)."""
+    return os.path.normcase(os.path.realpath(a)) == os.path.normcase(os.path.realpath(b))
+
+
+def _validar_corpus_independiente(parser: argparse.ArgumentParser, args: argparse.Namespace) -> None:
+    """Protege los artefactos de la v9 cuando `--corpus` no es el canonico.
+
+    Aborta con `parser.error` (codigo 2) ANTES de construir el clasificador, y sin
+    modificar ningun archivo, si falta `--predicciones` o `--reporte`, o si alguno apunta
+    a `PREDICCIONES_PATH` o `REPORT_PATH`. Despues ejecuta `verificar_no_solape` contra
+    el corpus canonico como paso previo obligatorio.
+    """
+    faltantes = [
+        flag
+        for flag, valor in (("--predicciones", args.predicciones), ("--reporte", args.reporte))
+        if valor is None
+    ]
+    if faltantes:
+        parser.error(
+            "con un --corpus no canonico, --predicciones y --reporte son obligatorios (para no "
+            "pisar evaluation/predicciones.json ni evaluation/report.md); faltan: "
+            + ", ".join(faltantes)
+        )
+    if _misma_ruta(args.predicciones, PREDICCIONES_PATH):
+        parser.error(
+            f"--predicciones apunta a la cache canonica ({PREDICCIONES_PATH}); con un --corpus "
+            "no canonico usa una ruta propia, por ejemplo "
+            "evaluation/data/campana/predicciones_independiente.json"
+        )
+    if _misma_ruta(args.reporte, REPORT_PATH):
+        parser.error(
+            f"--reporte apunta al reporte canonico ({REPORT_PATH}); con un --corpus no canonico "
+            "usa una ruta propia, por ejemplo evaluation/data/campana/reporte_independiente.md"
+        )
+    try:
+        verificar_no_solape(cargar_corpus(CORPUS_REAL_PATH), cargar_corpus(args.corpus))
+    except (SolapeError, FileNotFoundError, CorpusError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        raise SystemExit(2) from exc
+
+
+# ---------------------------------------------------------------------------
 # Punto de entrada CLI
 # ---------------------------------------------------------------------------
 def main() -> None:
@@ -1565,7 +1745,31 @@ def main() -> None:
             "paga (no requiere GEMINI_API_KEY)."
         ),
     )
+    parser.add_argument(
+        "--corpus",
+        dest="corpus",
+        default=None,
+        help=(
+            "Corpus JSON a evaluar (default: el canonico, data/corpus_evaluacion_pseudonimizado.json). "
+            "Con un corpus distinto del canonico (por ejemplo el independiente) son obligatorios "
+            "--predicciones y --reporte, y se ejecuta verificar_no_solape como paso previo."
+        ),
+    )
+    parser.add_argument(
+        "--predicciones",
+        dest="predicciones",
+        default=None,
+        help="Donde persistir la cache de predicciones (no puede ser evaluation/predicciones.json "
+        "con un --corpus no canonico).",
+    )
+    parser.add_argument(
+        "--reporte",
+        dest="reporte",
+        default=None,
+        help="Donde escribir el reporte (no puede ser evaluation/report.md con un --corpus no canonico).",
+    )
     args = parser.parse_args()
+    corpus_no_canonico = args.corpus is not None and not _misma_ruta(args.corpus, CORPUS_REAL_PATH)
     if args.solo_tiempos:
         # D5: el modo de solo tiempos no usa cache ni clasificador pago; combinarlo
         # con los flags de esa ruta es un error de uso, no una opcion ignorada.
@@ -1573,6 +1777,11 @@ def main() -> None:
             parser.error(
                 "--solo-tiempos no se puede combinar con --force, --no-cache "
                 "ni --confirm-paid (no usa clasificador ni cache de predicciones)."
+            )
+        if corpus_no_canonico:
+            parser.error(
+                "--solo-tiempos solo opera sobre el corpus canonico: no se puede usar con un "
+                "--corpus no canonico."
             )
         try:
             main_solo_tiempos()
@@ -1583,17 +1792,31 @@ def main() -> None:
             print(f"ERROR: {exc}", file=sys.stderr)
             raise SystemExit(1) from exc
         return
+    if corpus_no_canonico:
+        _validar_corpus_independiente(parser, args)
     confirm_paid = args.confirm_paid or _env_confirm_paid()
+    # Sin los flags nuevos la llamada es exactamente la de siempre; con ellos se agregan
+    # solo las rutas indicadas.
+    kwargs: Dict[str, Any] = {
+        "force": args.force,
+        "confirm_paid": confirm_paid,
+        "estimated_cost_per_call": args.estimated_cost_per_call,
+    }
+    if args.corpus is not None:
+        kwargs["corpus_path"] = pathlib.Path(args.corpus)
+    if args.predicciones is not None:
+        kwargs["predicciones_path"] = pathlib.Path(args.predicciones)
+    if args.reporte is not None:
+        kwargs["report_path"] = pathlib.Path(args.reporte)
+    if corpus_no_canonico:
+        kwargs["procedencia_extra"] = obtener_procedencia_independiente
     try:
-        asyncio.run(
-            main_con_corpus_real(
-                force=args.force,
-                confirm_paid=confirm_paid,
-                estimated_cost_per_call=args.estimated_cost_per_call,
-            )
-        )
+        asyncio.run(main_con_corpus_real(**kwargs))
     except PaidRunNotConfirmedError as exc:
         print(str(exc), file=sys.stderr)
+        raise SystemExit(2) from exc
+    except ProcedenciaIncompletaError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
         raise SystemExit(2) from exc
 
 

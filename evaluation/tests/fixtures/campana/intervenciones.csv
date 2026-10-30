@@ -1,0 +1,8 @@
+id_caso,incidente_id,log_id,origen_intervencion,intervencion_inicio_en,validado_en,duracion_s,sector_predicho,sector_validado,cambio_sector,actor_alias
+S02,1102,5001,gate,2026-11-24T08:59:30-03:00,2026-11-24T09:00:00-03:00,30,Soporte Tecnico Software,Soporte Tecnico Hardware,true,a1b2c3d4e5f6
+S05,1105,5002,gate,2026-11-24T09:09:48-03:00,2026-11-24T09:10:00-03:00,12,Sistemas,Sistemas,false,a1b2c3d4e5f6
+S09,1109,5003,muestreo,2026-11-24T09:19:40-03:00,2026-11-24T09:20:00-03:00,20,Bases de Datos,Bases de Datos,false,0f9e8d7c6b5a
+S13,1113,5004,gate,2026-11-24T09:29:45-03:00,2026-11-24T09:30:00-03:00,15,Soporte Tecnico Software,Soporte Tecnico Software,false,0f9e8d7c6b5a
+S13,1113,5005,rederivacion,2026-11-24T09:39:35-03:00,2026-11-24T09:40:00-03:00,25,Soporte Tecnico Software,Sistemas,true,a1b2c3d4e5f6
+S16,1116,5006,rederivacion,,2026-11-24T09:50:00-03:00,,Seguridad Informatica,Sistemas,true,0f9e8d7c6b5a
+,1199,5007,gate,2026-11-24T09:59:42-03:00,2026-11-24T10:00:00-03:00,18,Soporte Tecnico Software,Soporte Tecnico Software,false,

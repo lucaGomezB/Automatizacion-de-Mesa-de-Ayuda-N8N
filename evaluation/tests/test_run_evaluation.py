@@ -1909,3 +1909,695 @@ def test_c145_cli_solo_tiempos_con_corpus_ausente_falla_sin_traza(
     assert exc_info.value.code != 0
     assert "corpus_ausente.json" in err
     assert "Traceback" not in err
+
+
+# ===========================================================================
+# c-166 — Flags --corpus, --predicciones y --reporte (corpus independiente, ECM-007)
+#
+# El corpus "canonico", la cache canonica y el reporte canonico se redirigen a rutas
+# de tmp_path con monkeypatch: ningun test puede tocar evaluation/predicciones.json ni
+# evaluation/report.md reales. main_con_corpus_real se reemplaza por un doble: no hay
+# red, ni Gemini, ni clasificador.
+# ===========================================================================
+def _entorno_c166(monkeypatch, tmp_path):
+    import shutil
+    from types import SimpleNamespace
+
+    from evaluation import run_evaluation
+    from evaluation.tests.conftest import CORPUS_FIXTURE_PATH, FIXTURES_DIR
+
+    ajuste = tmp_path / "ajuste.json"
+    shutil.copyfile(CORPUS_FIXTURE_PATH, ajuste)
+    independiente = tmp_path / "independiente.json"
+    shutil.copyfile(FIXTURES_DIR / "campana" / "corpus_independiente_fixture.json", independiente)
+    predicciones_canonicas = tmp_path / "predicciones_canonicas.json"
+    reporte_canonico = tmp_path / "report_canonico.md"
+    monkeypatch.setattr(run_evaluation, "CORPUS_REAL_PATH", ajuste)
+    monkeypatch.setattr(run_evaluation, "PREDICCIONES_PATH", predicciones_canonicas)
+    monkeypatch.setattr(run_evaluation, "REPORT_PATH", reporte_canonico)
+    llamadas: list = []
+
+    async def doble_main_con_corpus_real(*args, **kwargs):
+        llamadas.append(kwargs)
+
+    monkeypatch.setattr(run_evaluation, "main_con_corpus_real", doble_main_con_corpus_real)
+    monkeypatch.delenv("EVALUATION_CONFIRM_PAID", raising=False)
+    return SimpleNamespace(
+        ajuste=ajuste,
+        independiente=independiente,
+        predicciones_canonicas=predicciones_canonicas,
+        reporte_canonico=reporte_canonico,
+        propias={
+            "predicciones": tmp_path / "predicciones_independiente.json",
+            "reporte": tmp_path / "reporte_independiente.md",
+        },
+        llamadas=llamadas,
+    )
+
+
+def _correr_main(monkeypatch, *argv):
+    import sys
+
+    from evaluation import run_evaluation
+
+    monkeypatch.setattr(sys, "argv", ["run_evaluation", *argv])
+    run_evaluation.main()
+
+
+def test_c166_corpus_no_canonico_sin_predicciones_ni_reporte_aborta(monkeypatch, tmp_path, capsys):
+    entorno = _entorno_c166(monkeypatch, tmp_path)
+
+    with pytest.raises(SystemExit) as excinfo:
+        _correr_main(monkeypatch, "--corpus", str(entorno.independiente))
+
+    err = capsys.readouterr().err
+    assert excinfo.value.code == 2
+    assert "--predicciones" in err and "--reporte" in err and "obligatorios" in err
+    assert entorno.llamadas == []
+
+
+@pytest.mark.parametrize("flag_presente", ["predicciones", "reporte"])
+def test_c166_corpus_no_canonico_con_solo_una_de_las_rutas_aborta_y_nombra_la_otra(
+    monkeypatch, tmp_path, capsys, flag_presente
+):
+    entorno = _entorno_c166(monkeypatch, tmp_path)
+    faltante = "reporte" if flag_presente == "predicciones" else "predicciones"
+
+    with pytest.raises(SystemExit) as excinfo:
+        _correr_main(
+            monkeypatch,
+            "--corpus", str(entorno.independiente),
+            f"--{flag_presente}", str(entorno.propias[flag_presente]),
+        )  # fmt: skip
+
+    err = capsys.readouterr().err
+    assert excinfo.value.code == 2
+    assert f"--{faltante}" in err and "obligatorios" in err
+    assert entorno.llamadas == []
+
+
+def test_c166_rechaza_una_cache_canonica_como_destino_y_no_modifica_nada(
+    monkeypatch, tmp_path, capsys
+):
+    entorno = _entorno_c166(monkeypatch, tmp_path)
+
+    with pytest.raises(SystemExit) as excinfo:
+        _correr_main(
+            monkeypatch,
+            "--corpus", str(entorno.independiente),
+            "--predicciones", str(entorno.predicciones_canonicas),
+            "--reporte", str(entorno.propias["reporte"]),
+        )  # fmt: skip
+
+    assert excinfo.value.code == 2
+    assert "cache canonica" in capsys.readouterr().err
+    assert entorno.llamadas == []
+    assert not entorno.predicciones_canonicas.exists()
+    assert not entorno.propias["reporte"].exists()
+
+
+def test_c166_rechaza_el_reporte_canonico_como_destino_y_no_modifica_nada(
+    monkeypatch, tmp_path, capsys
+):
+    entorno = _entorno_c166(monkeypatch, tmp_path)
+
+    with pytest.raises(SystemExit) as excinfo:
+        _correr_main(
+            monkeypatch,
+            "--corpus", str(entorno.independiente),
+            "--predicciones", str(entorno.propias["predicciones"]),
+            "--reporte", str(entorno.reporte_canonico),
+        )  # fmt: skip
+
+    assert excinfo.value.code == 2
+    assert "reporte canonico" in capsys.readouterr().err
+    assert entorno.llamadas == []
+    assert not entorno.reporte_canonico.exists()
+    assert not entorno.propias["predicciones"].exists()
+
+
+def test_c166_rechaza_el_destino_canonico_aunque_se_lo_escriba_con_otra_forma(
+    monkeypatch, tmp_path, capsys
+):
+    entorno = _entorno_c166(monkeypatch, tmp_path)
+    con_rodeo = tmp_path / "subcarpeta" / ".." / "predicciones_canonicas.json"
+
+    with pytest.raises(SystemExit) as excinfo:
+        _correr_main(
+            monkeypatch,
+            "--corpus", str(entorno.independiente),
+            "--predicciones", str(con_rodeo),
+            "--reporte", str(entorno.propias["reporte"]),
+        )  # fmt: skip
+
+    assert excinfo.value.code == 2
+    assert "cache canonica" in capsys.readouterr().err
+    assert entorno.llamadas == []
+
+
+def test_c166_un_candidato_que_solapa_el_corpus_de_ajuste_aborta_antes_de_clasificar(
+    monkeypatch, tmp_path, capsys
+):
+    import json
+
+    entorno = _entorno_c166(monkeypatch, tmp_path)
+    documento = json.loads(entorno.independiente.read_text(encoding="utf-8"))
+    # I001 pasa a ser el caso "1" del ajuste en mayusculas: otro id, misma descripcion normalizada.
+    documento["casos"][0]["descripcion"] = (
+        "SE DETECTO UN ACCESO NO AUTORIZADO A LA BASE DE DATOS DE CLIENTES."
+    )
+    entorno.independiente.write_text(json.dumps(documento), encoding="utf-8")
+
+    with pytest.raises(SystemExit) as excinfo:
+        _correr_main(
+            monkeypatch,
+            "--corpus", str(entorno.independiente),
+            "--predicciones", str(entorno.propias["predicciones"]),
+            "--reporte", str(entorno.propias["reporte"]),
+        )  # fmt: skip
+
+    err = capsys.readouterr().err
+    assert excinfo.value.code == 2
+    assert "no es independiente" in err and "I001" in err and "'1'" in err
+    assert entorno.llamadas == []
+    assert not entorno.propias["predicciones"].exists()
+
+
+def test_c166_un_candidato_con_ids_sin_el_prefijo_I_aborta(monkeypatch, tmp_path, capsys):
+    import json
+
+    entorno = _entorno_c166(monkeypatch, tmp_path)
+    documento = json.loads(entorno.independiente.read_text(encoding="utf-8"))
+    documento["casos"][1]["id"] = "R201"
+    entorno.independiente.write_text(json.dumps(documento), encoding="utf-8")
+
+    with pytest.raises(SystemExit) as excinfo:
+        _correr_main(
+            monkeypatch,
+            "--corpus", str(entorno.independiente),
+            "--predicciones", str(entorno.propias["predicciones"]),
+            "--reporte", str(entorno.propias["reporte"]),
+        )  # fmt: skip
+
+    err = capsys.readouterr().err
+    assert excinfo.value.code == 2
+    assert "no es independiente" in err and "R201" in err
+    assert entorno.llamadas == []
+
+
+def test_c166_solo_tiempos_con_un_corpus_no_canonico_aborta(monkeypatch, tmp_path, capsys):
+    entorno = _entorno_c166(monkeypatch, tmp_path)
+
+    with pytest.raises(SystemExit) as excinfo:
+        _correr_main(monkeypatch, "--solo-tiempos", "--corpus", str(entorno.independiente))
+
+    err = capsys.readouterr().err
+    assert excinfo.value.code == 2
+    assert "--solo-tiempos" in err and "corpus canonico" in err
+    assert entorno.llamadas == []
+
+
+def test_c166_un_corpus_inexistente_falla_limpio_sin_traza(monkeypatch, tmp_path, capsys):
+    entorno = _entorno_c166(monkeypatch, tmp_path)
+
+    with pytest.raises(SystemExit) as excinfo:
+        _correr_main(
+            monkeypatch,
+            "--corpus", str(tmp_path / "no_existe.json"),
+            "--predicciones", str(entorno.propias["predicciones"]),
+            "--reporte", str(entorno.propias["reporte"]),
+        )  # fmt: skip
+
+    err = capsys.readouterr().err
+    assert excinfo.value.code != 0
+    assert err.startswith("ERROR:") and "no_existe.json" in err
+    assert "Traceback" not in err
+    assert entorno.llamadas == []
+
+
+def test_c166_con_rutas_propias_y_corpus_disjunto_llama_a_main_con_corpus_real_con_esas_rutas(
+    monkeypatch, tmp_path
+):
+    entorno = _entorno_c166(monkeypatch, tmp_path)
+
+    _correr_main(
+        monkeypatch,
+        "--corpus", str(entorno.independiente),
+        "--predicciones", str(entorno.propias["predicciones"]),
+        "--reporte", str(entorno.propias["reporte"]),
+        "--confirm-paid",
+    )  # fmt: skip
+
+    assert len(entorno.llamadas) == 1
+    llamada = entorno.llamadas[0]
+    assert llamada["corpus_path"] == entorno.independiente
+    assert llamada["predicciones_path"] == entorno.propias["predicciones"]
+    assert llamada["report_path"] == entorno.propias["reporte"]
+    assert llamada["confirm_paid"] is True
+
+
+def test_c166_sin_los_flags_nuevos_la_llamada_a_main_con_corpus_real_no_cambia(
+    monkeypatch, tmp_path
+):
+    entorno = _entorno_c166(monkeypatch, tmp_path)
+
+    _correr_main(monkeypatch, "--force")
+
+    assert entorno.llamadas == [
+        {"force": True, "confirm_paid": False, "estimated_cost_per_call": None}
+    ]
+
+
+def test_c166_un_corpus_igual_al_canonico_no_exige_rutas_propias_ni_procedencia(
+    monkeypatch, tmp_path
+):
+    entorno = _entorno_c166(monkeypatch, tmp_path)
+
+    _correr_main(monkeypatch, "--corpus", str(entorno.ajuste))
+
+    assert entorno.llamadas == [
+        {
+            "corpus_path": entorno.ajuste,
+            "force": False,
+            "confirm_paid": False,
+            "estimated_cost_per_call": None,
+        }
+    ]
+
+
+# ===========================================================================
+# c-166 — Procedencia ampliada del cache independiente: commit y pines (ECM-007)
+#
+# `obtener_procedencia_independiente` compone los proveedores de commit y de pines (los
+# reales usan git y los metadatos del paquete; los tests los inyectan: sin git, sin red).
+# `main_con_corpus_real(..., procedencia_extra=...)` la pide ANTES de invocar al
+# clasificador y la agrega al cache_meta; sin ese parametro el cache_meta no cambia.
+# ===========================================================================
+PINES_DE_PRUEBA = {"google_genai": "2.34.0", "modelo": "gemini-3.6-flash"}
+
+
+def _procedencia_de_prueba(commit="abc1234", pines=PINES_DE_PRUEBA):
+    from evaluation.run_evaluation import obtener_procedencia_independiente
+
+    return lambda: obtener_procedencia_independiente(
+        proveedor_commit=lambda: commit, proveedor_pines=lambda: pines
+    )
+
+
+def _espia_clasificador():
+    from evaluation.tests.conftest import FakeClassifier
+
+    class EspiaClasificador(FakeClassifier):
+        def __init__(self):
+            super().__init__(default_sector="Sistemas")
+            self.call_count = 0
+
+        async def classify(self, descripcion):
+            self.call_count += 1
+            return await super().classify(descripcion)
+
+    return EspiaClasificador()
+
+
+def _corpus_independiente_en(tmp_path):
+    import shutil
+
+    from evaluation.tests.conftest import FIXTURES_DIR
+
+    destino = tmp_path / "independiente.json"
+    shutil.copyfile(FIXTURES_DIR / "campana" / "corpus_independiente_fixture.json", destino)
+    return destino
+
+
+def test_c166_la_procedencia_compone_el_commit_y_los_pines():
+    from evaluation.run_evaluation import obtener_procedencia_independiente
+
+    procedencia = obtener_procedencia_independiente(
+        proveedor_commit=lambda: "abc1234", proveedor_pines=lambda: dict(PINES_DE_PRUEBA)
+    )
+
+    assert procedencia == {"commit": "abc1234", "pines": PINES_DE_PRUEBA}
+
+
+async def test_c166_el_cache_independiente_trae_commit_y_pines_ademas_de_los_cuatro_campos(
+    tmp_path,
+):
+    import json
+
+    from evaluation.run_evaluation import main_con_corpus_real
+
+    predicciones = tmp_path / "predicciones_independiente.json"
+    clasificador = _espia_clasificador()
+
+    await main_con_corpus_real(
+        corpus_path=_corpus_independiente_en(tmp_path),
+        classifier=clasificador,
+        report_path=tmp_path / "reporte_independiente.md",
+        predicciones_path=predicciones,
+        procedencia_extra=_procedencia_de_prueba("abc1234"),
+    )
+
+    meta = json.loads(predicciones.read_text(encoding="utf-8"))["cache_meta"]
+    assert set(meta) == {
+        "corpus_hash",
+        "corpus_count",
+        "classifier_version",
+        "generated_at",
+        "commit",
+        "pines",
+    }
+    assert meta["commit"] == "abc1234"
+    assert meta["pines"] == {"google_genai": "2.34.0", "modelo": "gemini-3.6-flash"}
+    assert meta["corpus_count"] == 4
+    assert clasificador.call_count == 4
+
+
+async def test_c166_sin_procedencia_extra_el_cache_meta_conserva_sus_cuatro_campos(
+    corpus_fixture_path, tmp_path
+):
+    import json
+    import shutil
+
+    from evaluation.run_evaluation import main_con_corpus_real
+
+    corpus = tmp_path / "corpus.json"
+    shutil.copyfile(corpus_fixture_path, corpus)
+    predicciones = tmp_path / "predicciones.json"
+
+    await main_con_corpus_real(
+        corpus_path=corpus,
+        classifier=_espia_clasificador(),
+        report_path=tmp_path / "report.md",
+        predicciones_path=predicciones,
+    )
+
+    meta = json.loads(predicciones.read_text(encoding="utf-8"))["cache_meta"]
+    assert set(meta) == {"corpus_hash", "corpus_count", "classifier_version", "generated_at"}
+
+
+async def test_c166_un_cache_valido_no_vuelve_a_pedir_la_procedencia(tmp_path):
+    from evaluation.run_evaluation import main_con_corpus_real
+
+    corpus = _corpus_independiente_en(tmp_path)
+    argumentos = {
+        "corpus_path": corpus,
+        "report_path": tmp_path / "reporte.md",
+        "predicciones_path": tmp_path / "predicciones.json",
+    }
+    primero = _espia_clasificador()
+    await main_con_corpus_real(
+        classifier=primero, procedencia_extra=_procedencia_de_prueba(), **argumentos
+    )
+
+    def no_deberia_pedirse():
+        raise AssertionError("un cache valido no genera nada: no requiere commit ni pines")
+
+    segundo = _espia_clasificador()
+    await main_con_corpus_real(classifier=segundo, procedencia_extra=no_deberia_pedirse, **argumentos)
+
+    assert primero.call_count == 4
+    assert segundo.call_count == 0  # cache hit
+
+
+def _proveedor_que_falla(*args, **kwargs):
+    raise OSError("git no esta instalado")
+
+
+@pytest.mark.parametrize(
+    ("proveedor_commit", "motivo"),
+    [
+        pytest.param(lambda: "", "vacio", id="devuelve_vacio"),
+        pytest.param(lambda: "   ", "vacio", id="devuelve_espacios"),
+        pytest.param(_proveedor_que_falla, "git no esta instalado", id="falla"),
+    ],
+)
+async def test_c166_sin_commit_la_corrida_falla_antes_de_clasificar_y_no_escribe_nada(
+    tmp_path, proveedor_commit, motivo
+):
+    from evaluation.run_evaluation import (
+        ProcedenciaIncompletaError,
+        main_con_corpus_real,
+        obtener_procedencia_independiente,
+    )
+
+    predicciones = tmp_path / "predicciones_independiente.json"
+    reporte = tmp_path / "reporte_independiente.md"
+    clasificador = _espia_clasificador()
+
+    with pytest.raises(ProcedenciaIncompletaError, match="commit") as excinfo:
+        await main_con_corpus_real(
+            corpus_path=_corpus_independiente_en(tmp_path),
+            classifier=clasificador,
+            report_path=reporte,
+            predicciones_path=predicciones,
+            procedencia_extra=lambda: obtener_procedencia_independiente(
+                proveedor_commit=proveedor_commit, proveedor_pines=lambda: dict(PINES_DE_PRUEBA)
+            ),
+        )
+
+    assert motivo in str(excinfo.value)
+    assert clasificador.call_count == 0
+    assert not predicciones.exists()
+    assert not reporte.exists()
+
+
+@pytest.mark.parametrize(
+    "pines",
+    [
+        pytest.param({}, id="vacios"),
+        pytest.param(None, id="ninguno"),
+        pytest.param({"google_genai": "2.34.0"}, id="sin_modelo"),
+        pytest.param({"modelo": "gemini-3.6-flash"}, id="sin_google_genai"),
+        pytest.param({"google_genai": "", "modelo": "gemini-3.6-flash"}, id="google_genai_vacio"),
+        pytest.param({"google_genai": "2.34.0", "modelo": None}, id="modelo_nulo"),
+    ],
+)
+async def test_c166_con_pines_faltantes_la_corrida_falla_antes_de_clasificar_y_no_escribe_nada(
+    tmp_path, pines
+):
+    from evaluation.run_evaluation import ProcedenciaIncompletaError, main_con_corpus_real
+
+    predicciones = tmp_path / "predicciones_independiente.json"
+    clasificador = _espia_clasificador()
+
+    with pytest.raises(ProcedenciaIncompletaError, match="pines"):
+        await main_con_corpus_real(
+            corpus_path=_corpus_independiente_en(tmp_path),
+            classifier=clasificador,
+            report_path=tmp_path / "reporte_independiente.md",
+            predicciones_path=predicciones,
+            procedencia_extra=_procedencia_de_prueba(pines=pines),
+        )
+
+    assert clasificador.call_count == 0
+    assert not predicciones.exists()
+
+
+def test_c166_main_pide_la_procedencia_solo_con_un_corpus_no_canonico(monkeypatch, tmp_path):
+    entorno = _entorno_c166(monkeypatch, tmp_path)
+
+    _correr_main(
+        monkeypatch,
+        "--corpus", str(entorno.independiente),
+        "--predicciones", str(entorno.propias["predicciones"]),
+        "--reporte", str(entorno.propias["reporte"]),
+    )  # fmt: skip
+
+    assert callable(entorno.llamadas[0]["procedencia_extra"])
+
+
+def test_c166_main_informa_la_procedencia_incompleta_con_codigo_2_y_sin_traza(
+    monkeypatch, tmp_path, capsys
+):
+    from evaluation import run_evaluation
+
+    entorno = _entorno_c166(monkeypatch, tmp_path)
+
+    async def main_que_pide_la_procedencia(*args, **kwargs):
+        kwargs["procedencia_extra"]()
+
+    def sin_commit():
+        raise run_evaluation.ProcedenciaIncompletaError("no se pudo obtener el commit")
+
+    monkeypatch.setattr(run_evaluation, "main_con_corpus_real", main_que_pide_la_procedencia)
+    monkeypatch.setattr(run_evaluation, "obtener_procedencia_independiente", sin_commit)
+
+    with pytest.raises(SystemExit) as excinfo:
+        _correr_main(
+            monkeypatch,
+            "--corpus", str(entorno.independiente),
+            "--predicciones", str(entorno.propias["predicciones"]),
+            "--reporte", str(entorno.propias["reporte"]),
+        )  # fmt: skip
+
+    err = capsys.readouterr().err
+    assert excinfo.value.code == 2
+    assert err.startswith("ERROR:") and "commit" in err
+    assert "Traceback" not in err
+
+
+# ---------------------------------------------------------------------------
+# c-166 (4.8) — Proveedores reales de commit y de pines (inyectables)
+# ---------------------------------------------------------------------------
+def test_c166_el_commit_por_defecto_es_el_hash_corto_de_head_del_repositorio():
+    import re
+    import shutil
+    import subprocess
+
+    from evaluation.run_evaluation import _REPO_ROOT, obtener_commit_corto
+
+    if shutil.which("git") is None:
+        pytest.skip("git no esta instalado en este entorno")
+    esperado = subprocess.run(
+        ["git", "rev-parse", "--short", "HEAD"],
+        cwd=_REPO_ROOT, capture_output=True, text=True, check=True,
+    ).stdout.strip()  # fmt: skip
+
+    commit = obtener_commit_corto()
+
+    assert re.fullmatch(r"[0-9a-f]{7,40}", commit)
+    assert commit == esperado
+
+
+def test_c166_el_commit_fuera_de_un_repositorio_falla_con_error_accionable(tmp_path):
+    import shutil
+    import subprocess
+
+    from evaluation.run_evaluation import ProcedenciaIncompletaError, obtener_commit_corto
+
+    if shutil.which("git") is None:
+        pytest.skip("git no esta instalado en este entorno")
+    dentro_de_un_repo = subprocess.run(
+        ["git", "rev-parse", "--short", "HEAD"], cwd=tmp_path, capture_output=True
+    ).returncode == 0  # fmt: skip
+    if dentro_de_un_repo:
+        pytest.skip("el directorio temporal esta dentro de un repositorio git")
+
+    with pytest.raises(ProcedenciaIncompletaError, match="commit"):
+        obtener_commit_corto(cwd=tmp_path)
+
+
+def test_c166_el_commit_sin_git_instalado_falla_con_error_accionable(monkeypatch):
+    from evaluation import run_evaluation
+
+    def sin_git(*args, **kwargs):
+        raise FileNotFoundError("git")
+
+    monkeypatch.setattr(run_evaluation.subprocess, "run", sin_git)
+
+    with pytest.raises(run_evaluation.ProcedenciaIncompletaError, match="git"):
+        run_evaluation.obtener_commit_corto()
+
+
+def test_c166_los_pines_son_la_version_de_google_genai_y_el_modelo():
+    from evaluation.run_evaluation import obtener_pines
+
+    pines = obtener_pines(proveedor_version=lambda: "2.34.0", proveedor_modelo=lambda: "gemini-3.6-flash")
+
+    assert pines == {"google_genai": "2.34.0", "modelo": "gemini-3.6-flash"}
+
+
+def test_c166_sin_el_paquete_google_genai_los_pines_fallan_con_error_accionable():
+    import importlib.metadata
+
+    from evaluation.run_evaluation import ProcedenciaIncompletaError, obtener_pines
+
+    def sin_paquete():
+        raise importlib.metadata.PackageNotFoundError("google-genai")
+
+    with pytest.raises(ProcedenciaIncompletaError, match="google-genai"):
+        obtener_pines(proveedor_version=sin_paquete, proveedor_modelo=lambda: "gemini-3.6-flash")
+
+
+def test_c166_sin_la_configuracion_del_modelo_los_pines_fallan_con_error_accionable():
+    from evaluation.run_evaluation import ProcedenciaIncompletaError, obtener_pines
+
+    def sin_configuracion():
+        raise ValueError("faltan variables de entorno")
+
+    with pytest.raises(ProcedenciaIncompletaError, match="modelo"):
+        obtener_pines(proveedor_version=lambda: "2.34.0", proveedor_modelo=sin_configuracion)
+
+
+def test_c166_la_version_de_google_genai_por_defecto_es_la_instalada():
+    import importlib.metadata
+
+    from evaluation.run_evaluation import obtener_pines
+
+    try:
+        instalada = importlib.metadata.version("google-genai")
+    except importlib.metadata.PackageNotFoundError:
+        pytest.skip("google-genai no esta instalado en este entorno")
+
+    assert obtener_pines(proveedor_modelo=lambda: "gemini-3.6-flash")["google_genai"] == instalada
+
+
+def test_c166_el_modelo_por_defecto_sale_de_la_configuracion_del_backend():
+    from evaluation.run_evaluation import _modelo_gemini_configurado
+
+    try:
+        modelo = _modelo_gemini_configurado()
+    except Exception:  # noqa: BLE001 - sin las variables del backend no hay configuracion
+        pytest.skip("la configuracion del backend no se puede cargar en este entorno")
+
+    assert modelo.startswith("gemini-")
+
+
+def test_c166_la_procedencia_por_defecto_usa_los_proveedores_reales(monkeypatch):
+    from evaluation import run_evaluation
+
+    monkeypatch.setattr(run_evaluation, "obtener_commit_corto", lambda: "def5678")
+    monkeypatch.setattr(run_evaluation, "obtener_pines", lambda: dict(PINES_DE_PRUEBA))
+
+    procedencia = run_evaluation.obtener_procedencia_independiente()
+
+    assert procedencia == {"commit": "def5678", "pines": PINES_DE_PRUEBA}
+
+
+def test_c166_el_error_de_configuracion_del_backend_no_filtra_valores_de_variables_de_entorno():
+    """El ValidationError de pydantic incrusta los valores del .env (tokens, claves): no deben salir."""
+    from evaluation.run_evaluation import ProcedenciaIncompletaError, obtener_pines
+
+    def configuracion_invalida():
+        raise ValueError("Extra inputs are not permitted [input_value='TOKEN-SECRETO-123']")
+
+    with pytest.raises(ProcedenciaIncompletaError) as excinfo:
+        obtener_pines(proveedor_version=lambda: "2.34.0", proveedor_modelo=configuracion_invalida)
+
+    assert "TOKEN-SECRETO-123" not in str(excinfo.value)
+    assert "TOKEN-SECRETO-123" not in repr(excinfo.value)
+    assert "ValueError" in str(excinfo.value)  # el tipo alcanza para orientar
+    assert excinfo.value.__cause__ is None  # un traceback tampoco debe encadenar el original
+    assert excinfo.value.__suppress_context__ is True
+
+
+def test_c166_main_no_imprime_valores_de_variables_de_entorno_al_fallar_la_configuracion(
+    monkeypatch, tmp_path, capsys
+):
+    from evaluation import run_evaluation
+
+    entorno = _entorno_c166(monkeypatch, tmp_path)
+
+    def configuracion_invalida():
+        raise ValueError("Extra inputs are not permitted [input_value='TOKEN-SECRETO-123']")
+
+    async def main_que_pide_la_procedencia(*args, **kwargs):
+        kwargs["procedencia_extra"]()
+
+    monkeypatch.setattr(run_evaluation, "_modelo_gemini_configurado", configuracion_invalida)
+    monkeypatch.setattr(run_evaluation, "obtener_commit_corto", lambda: "abc1234")
+    monkeypatch.setattr(run_evaluation, "_version_google_genai", lambda: "2.34.0")
+    monkeypatch.setattr(run_evaluation, "main_con_corpus_real", main_que_pide_la_procedencia)
+
+    with pytest.raises(SystemExit) as excinfo:
+        _correr_main(
+            monkeypatch,
+            "--corpus", str(entorno.independiente),
+            "--predicciones", str(entorno.propias["predicciones"]),
+            "--reporte", str(entorno.propias["reporte"]),
+        )  # fmt: skip
+
+    salida = capsys.readouterr()
+    assert excinfo.value.code == 2
+    assert "TOKEN-SECRETO-123" not in salida.out + salida.err
+    assert "ERROR:" in salida.err and "modelo" in salida.err

@@ -7,8 +7,10 @@
  *     pseudonimizada, los metadatos del incidente y la clasificacion completa.
  *   - FRH-005: carga compuesta y error 403/404 con reintento sin exponer el recurso.
  *   - FRH-006/007: validacion multi-etiqueta editable por nombres canonicos.
+ *   - c-165 (ASG-005): al confirmar se envia `intervencion_inicio_en`, tomado al ABRIR el
+ *     dialogo, y el cuerpo NUNCA lleva `origen_intervencion` (lo deriva el backend).
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -266,6 +268,7 @@ describe('ValidarClasificacionDialog', () => {
       expect(clasificacionesService.validarClasificacion).toHaveBeenCalledWith(5, {
         sector_validado: 'Sistemas',
         sectores_adicionales: ['Bases de Datos'],
+        intervencion_inicio_en: expect.any(String),
       });
     });
   });
@@ -292,6 +295,7 @@ describe('ValidarClasificacionDialog', () => {
       expect(clasificacionesService.validarClasificacion).toHaveBeenCalledWith(5, {
         sector_validado: 'Sistemas',
         sectores_adicionales: [],
+        intervencion_inicio_en: expect.any(String),
       });
     });
   });
@@ -311,6 +315,7 @@ describe('ValidarClasificacionDialog', () => {
       expect(clasificacionesService.validarClasificacion).toHaveBeenCalledWith(5, {
         sector_validado: 'Sistemas',
         sectores_adicionales: [],
+        intervencion_inicio_en: expect.any(String),
       });
     });
   });
@@ -341,6 +346,100 @@ describe('ValidarClasificacionDialog', () => {
       expect(clasificacionesService.validarClasificacion).toHaveBeenCalledWith(5, {
         sector_validado: 'Bases de Datos',
         sectores_adicionales: [],
+        intervencion_inicio_en: expect.any(String),
+      });
+    });
+  });
+});
+
+// ---- c-165 (ASG-005): inicio de la intervencion y origen derivado por el backend ----
+
+describe('ValidarClasificacionDialog: intervencion humana (c-165)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(catalogosService.listarSectores).mockResolvedValue(SECTORES);
+    vi.mocked(incidentesService.obtenerIncidente).mockResolvedValue(mockIncidente);
+    vi.mocked(clasificacionesService.listarClasificacionesPorIncidente).mockResolvedValue([
+      mockClasificacion,
+    ]);
+    vi.mocked(clasificacionesService.validarClasificacion).mockResolvedValue(mockClasificacion);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('al confirmar envia intervencion_inicio_en tomado al abrir el dialogo, no al confirmar', async () => {
+    // Solo se simula el reloj (Date): los temporizadores reales siguen vivos para
+    // React Query y Testing Library.
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-10-30T15:00:00.000Z'));
+    const user = userEvent.setup();
+
+    renderDialog();
+    const confirmar = await screen.findByRole('button', {
+      name: /confirmar predicción|guardar corrección/i,
+    });
+    // El operador tarda 30 segundos en decidir: el inicio ya quedo fijado al abrir.
+    vi.setSystemTime(new Date('2026-10-30T15:00:30.000Z'));
+    await user.click(confirmar);
+
+    await waitFor(() => {
+      expect(clasificacionesService.validarClasificacion).toHaveBeenCalledWith(5, {
+        sector_validado: 'Sistemas',
+        sectores_adicionales: [],
+        intervencion_inicio_en: '2026-10-30T15:00:00.000Z',
+      });
+    });
+  });
+
+  it('el cuerpo enviado no contiene origen_intervencion porque lo deriva el backend', async () => {
+    const user = userEvent.setup();
+
+    renderDialog();
+    await user.click(
+      await screen.findByRole('button', { name: /confirmar predicción|guardar corrección/i })
+    );
+
+    await waitFor(() => {
+      expect(clasificacionesService.validarClasificacion).toHaveBeenCalledTimes(1);
+    });
+    const cuerpo = vi.mocked(clasificacionesService.validarClasificacion).mock.calls[0][1];
+    expect(cuerpo).not.toHaveProperty('origen_intervencion');
+    expect(Object.keys(cuerpo).sort()).toEqual([
+      'intervencion_inicio_en',
+      'sector_validado',
+      'sectores_adicionales',
+    ]);
+    // Instante ISO-8601 en UTC con zona explicita (el backend rechaza un instante sin zona).
+    expect(cuerpo.intervencion_inicio_en).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
+  });
+
+  it('al reabrir el dialogo toma un inicio nuevo en lugar de reutilizar el anterior', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-10-30T15:00:00.000Z'));
+    const user = userEvent.setup();
+    const queryClient = createTestQueryClient();
+    const dialogo = (open: boolean) => (
+      <QueryClientProvider client={queryClient}>
+        <ValidarClasificacionDialog open={open} clasificacion={mockClasificacion} onClose={vi.fn()} />
+      </QueryClientProvider>
+    );
+
+    const { rerender } = render(dialogo(true));
+    await screen.findByRole('button', { name: /confirmar predicción|guardar corrección/i });
+    rerender(dialogo(false));
+    vi.setSystemTime(new Date('2026-10-30T16:00:00.000Z'));
+    rerender(dialogo(true));
+    await user.click(
+      await screen.findByRole('button', { name: /confirmar predicción|guardar corrección/i })
+    );
+
+    await waitFor(() => {
+      expect(clasificacionesService.validarClasificacion).toHaveBeenCalledWith(5, {
+        sector_validado: 'Sistemas',
+        sectores_adicionales: [],
+        intervencion_inicio_en: '2026-10-30T16:00:00.000Z',
       });
     });
   });

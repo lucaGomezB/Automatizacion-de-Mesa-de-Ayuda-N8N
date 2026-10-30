@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "metadata": {
+    "descripcion": "Corpus independiente de prueba, sintetico y minimo (c-166). Ids con prefijo I.",
+    "total_casos": 4
+  },
+  "casos": [
+    {
+      "id": "I001",
+      "descripcion": "El proxy corporativo bloquea el acceso a la intranet de recursos humanos.",
+      "canal_origen": "correo",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I002",
+      "descripcion": "Necesito instalar una licencia nueva del editor de planillas en mi notebook.",
+      "canal_origen": "formulario",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I003",
+      "descripcion": "La replicacion entre el motor primario y el secundario acumula un atraso de horas.",
+      "canal_origen": "llamada",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": ["Sistemas"],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I004",
+      "descripcion": "Recibi un mensaje sospechoso que me pide la contrasena de mi cuenta.",
+      "canal_origen": "correo",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    }
+  ]
+}

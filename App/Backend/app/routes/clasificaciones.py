@@ -27,7 +27,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db_session
 from app.core.security import get_current_user
 from app.models.user import User
-from app.routes.incidentes import get_alcance_incidentes
+from app.routes.incidentes import EmpleadoDep, get_alcance_incidentes
 from app.schemas.clasificacion import (
     ClasificacionLogRead,
     ClasificacionValidar,
@@ -165,6 +165,7 @@ async def validar_clasificacion(
     payload: ClasificacionValidar,
     service: ServiceDep,
     alcance: AlcanceDep,
+    empleado: EmpleadoDep,
     current_user: User = Depends(get_current_user),
 ) -> ClasificacionLogRead:
     """
@@ -184,12 +185,24 @@ async def validar_clasificacion(
     un log cuyo incidente queda fuera del alcance del usuario responde como no
     encontrado (404) y NUNCA modifica el log ni el incidente.
 
+    c-165 (ASG-005): la validación es una intervención y deja sus metadatos en el
+    log. El ACTOR es el empleado activo vinculado a la cuenta (`EmpleadoDep`); una
+    cuenta sin empleado vinculado valida igual y el actor queda NULL. El cliente solo
+    puede enviar `intervencion_inicio_en`; el ORIGEN (`gate` o `muestreo`) lo deriva
+    el backend y un payload que lo traiga responde 422.
+
     Args:
         log_id:  ID del registro de auditoría a validar.
-        payload: Sector correcto (por nombre canónico o id) y adicionales validados.
+        payload: Sector correcto (por nombre canónico o id), adicionales validados e
+                 inicio declarado de la intervención (opcional).
 
     Returns:
         Representación actualizada del registro de auditoría (HTTP 200).
     """
-    log = await service.validate_payload(log_id, payload, alcance=alcance)
+    log = await service.validate_payload(
+        log_id,
+        payload,
+        alcance=alcance,
+        actor_empleado_id=empleado.id if empleado else None,
+    )
     return ClasificacionLogRead.model_validate(log)

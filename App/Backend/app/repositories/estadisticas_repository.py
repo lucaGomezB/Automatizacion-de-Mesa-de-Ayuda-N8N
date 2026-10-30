@@ -26,12 +26,20 @@ Limites temporales:
     semiabierto [desde, hasta_exclusive) y cubre el dia de negocio completo.
 """
 
+from dataclasses import dataclass
 from datetime import datetime
 
-from sqlalchemy import func, select
+from sqlalchemy import case, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.constants import ORIGENES_INTERVENCION
 from app.models.catalog import Estado, Sector
+from app.models.clasificacion_log import (
+    ClasificacionLog,
+    condicion_cambio_de_sector,
+    condicion_intervenido,
+    condicion_legado,
+)
 from app.models.incidente import Incidente
 
 # Dialectos soportados para la agrupacion temporal.
@@ -42,6 +50,29 @@ _SQLITE = "sqlite"
 # `app.utils.business_time.BUSINESS_TZ` (America/Argentina/Buenos_Aires).
 # Argentina no observa DST, por lo que UTC-3 es constante.
 _BUSINESS_TZ_NAME = "America/Argentina/Buenos_Aires"
+
+
+@dataclass(frozen=True)
+class ConteoIntervenciones:
+    """
+    Conteos de la cohorte de logs para `tasa_intervencion_backend` (c-165, ECM-003).
+
+    Campos:
+        total_cohorte:     logs con `created_at` en el rango, INCLUIDOS los legados.
+        legados:           de la cohorte, los `intervencion_legada_sin_metadatos`
+                           (sector validado sin `validado_en`); se excluyen de la tasa.
+        intervenidos:      de la cohorte, los de `validado_en` no nulo (el numerador).
+        por_origen:        intervenidos por `origen_intervencion`; SIEMPRE las cuatro
+                           claves del vocabulario, con cero cuando no hay.
+        por_cambio_sector: intervenidos con y sin cambio de sector respecto del
+                           predicho, claves `"true"` y `"false"`.
+    """
+
+    total_cohorte: int
+    legados: int
+    intervenidos: int
+    por_origen: dict[str, int]
+    por_cambio_sector: dict[str, int]
 
 
 class EstadisticasRepository:
@@ -236,7 +267,11 @@ class EstadisticasRepository:
         self, desde: datetime, hasta_exclusive: datetime
     ) -> int:
         """
-        Cuenta los incidentes marcados como pendientes de revision humana.
+        Cuenta los incidentes del rango que SIGUEN pendientes de revision humana.
+
+        Mide el flag `requiere_revision_humana` del incidente al momento de la
+        consulta: `validate()` lo apaga, por lo que no cuenta los casos marcados que
+        ya se validaron. Para intervenciones ver `contar_intervenciones` (c-165).
 
         Args:
             desde: Limite inferior UTC inclusivo.
@@ -250,3 +285,72 @@ class EstadisticasRepository:
         )
         result = await self._session.execute(query)
         return result.scalar_one()
+
+    async def contar_intervenciones(
+        self, desde: datetime, hasta_exclusive: datetime
+    ) -> ConteoIntervenciones:
+        """
+        Cuenta las intervenciones humanas de la cohorte de logs del rango (c-165).
+
+        La cohorte son los logs de clasificacion con `created_at` en
+        `[desde, hasta_exclusive)` (misma convencion semiabierta del resto del
+        repositorio). El numerador cuenta los de `validado_en` no nulo, y los
+        legados (sector validado sin `validado_en`) se cuentan aparte para que el
+        servicio los excluya del numerador y del denominador y los declare.
+
+        Una confirmacion del sector predicho CUENTA como intervencion. Un log
+        marcado `requiere_revision_humana` que nadie valido NO cuenta (no tiene
+        `validado_en`): no se confunde con uno intervenido.
+
+        Args:
+            desde: Limite inferior UTC inclusivo.
+            hasta_exclusive: Limite superior UTC EXCLUSIVO.
+        """
+        cohorte = (
+            ClasificacionLog.created_at >= desde,
+            ClasificacionLog.created_at < hasta_exclusive,
+        )
+
+        totales = (
+            await self._session.execute(
+                select(
+                    func.count(ClasificacionLog.id),
+                    func.coalesce(func.sum(case((condicion_legado(), 1), else_=0)), 0),
+                    func.coalesce(
+                        func.sum(case((condicion_intervenido(), 1), else_=0)), 0
+                    ),
+                ).where(*cohorte)
+            )
+        ).one()
+
+        por_origen_filas = (
+            await self._session.execute(
+                select(ClasificacionLog.origen_intervencion, func.count(ClasificacionLog.id))
+                .where(*cohorte, condicion_intervenido())
+                .group_by(ClasificacionLog.origen_intervencion)
+            )
+        ).all()
+        por_origen = dict.fromkeys(ORIGENES_INTERVENCION, 0)
+        for origen, cantidad in por_origen_filas:
+            if origen in por_origen:
+                por_origen[origen] = int(cantidad)
+
+        cambio = condicion_cambio_de_sector()
+        por_cambio_filas = (
+            await self._session.execute(
+                select(cambio.label("cambio"), func.count(ClasificacionLog.id))
+                .where(*cohorte, condicion_intervenido())
+                .group_by(cambio)
+            )
+        ).all()
+        por_cambio_sector = {"true": 0, "false": 0}
+        for hubo_cambio, cantidad in por_cambio_filas:
+            por_cambio_sector["true" if hubo_cambio else "false"] = int(cantidad)
+
+        return ConteoIntervenciones(
+            total_cohorte=int(totales[0]),
+            legados=int(totales[1]),
+            intervenidos=int(totales[2]),
+            por_origen=por_origen,
+            por_cambio_sector=por_cambio_sector,
+        )

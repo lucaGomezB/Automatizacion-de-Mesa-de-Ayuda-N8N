@@ -23,8 +23,11 @@ Relación con el corpus de evaluación:
     evaluación experimental de la tesis.
 """
 
-from sqlalchemy import Boolean, ForeignKey, Integer, Numeric, String, Text
+from datetime import datetime
+
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, Numeric, String, Text, and_
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.sql.elements import ColumnElement
 
 from app.models.asociaciones import (
     clasificacion_sector_predicho,
@@ -51,6 +54,11 @@ class ClasificacionLog(Base, TimestampMixin):
         respuesta_raw:          Texto crudo devuelto por Gemini (None en etapa deterministic).
         sector_id_validado:     FK llenada a posteriori por el operador humano;
                                 NULL mientras el registro aguarda revisión.
+        validado_por_empleado_id, intervencion_inicio_en, validado_en,
+        origen_intervencion:    Metadatos de la intervención humana (c-165, migración 024):
+                                actor, inicio declarado, instante del servidor y origen
+                                (gate | muestreo | rederivacion | completado_manual).
+                                Los cuatro son NULL mientras el log no fue intervenido.
     """
 
     __tablename__ = "clasificacion_log"
@@ -117,6 +125,49 @@ class ClasificacionLog(Base, TimestampMixin):
         foreign_keys=[sector_id_validado],  # Distinción explícita de la FK ante múltiples relaciones a Sector
     )
 
+    # ── Metadatos de la intervención humana (c-165, ASG-005; migración 024) ──────
+    #
+    # Las cuatro columnas son NULLABLE y sin default: NULL en todas significa que
+    # el log nunca fue intervenido. Cada intervención las sobrescribe como unidad
+    # junto con sector_id_validado y sectores_validados (gana la última
+    # escritura). Estados derivados, sin columna propia (funcion pura en
+    # app.services.intervencion_estado; condiciones SQL al final de este modulo):
+    #     no_intervenido                    → validado_en IS NULL y sector_id_validado IS NULL
+    #     intervenido                       → validado_en IS NOT NULL
+    #     intervencion_legada_sin_metadatos → sector_id_validado IS NOT NULL y validado_en IS NULL
+    #                                         (validado antes de la 024; sin backfill)
+
+    # Actor de la última intervención. NULL si la cuenta no tiene empleado
+    # vinculado o si el empleado fue purgado por retención (DIR-007): SET NULL
+    # evita que la purga toque el log. Solo se expone el id (sin PII).
+    validado_por_empleado_id: Mapped[int | None] = mapped_column(
+        Integer,
+        ForeignKey(
+            "directorio_empleado.id",
+            ondelete="SET NULL",
+            name="fk_clasificacion_log_validado_por_directorio_empleado",
+        ),
+        nullable=True,
+        index=True,  # ix_clasificacion_log_validado_por_empleado_id
+    )
+
+    # Inicio declarado por el cliente al abrir el diálogo de validación. NULL si no
+    # se envió y en la rederivación. Depende del reloj del cliente: se guarda en UTC
+    # tal cual y el export anula la duración si resulta negativa.
+    intervencion_inicio_en: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+
+    # Instante en que el SERVIDOR registró la intervención (distinto de created_at).
+    validado_en: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+
+    # Origen de la intervención, derivado SIEMPRE por el backend (gate, muestreo,
+    # rederivacion; completado_manual reservado, sin escritor). Sin CHECK: el
+    # vocabulario vive en app.constants.ORIGENES_INTERVENCION.
+    origen_intervencion: Mapped[str | None] = mapped_column(String(20), nullable=True)
+
     # Sectores adicionales del conjunto predicho (N-a-N): el principal vive en
     # sector_id_predicho; esta coleccion guarda el resto.
     sectores_predichos: Mapped[list[Sector]] = relationship(
@@ -137,3 +188,47 @@ class ClasificacionLog(Base, TimestampMixin):
             f"<ClasificacionLog id={self.id} incidente_id={self.incidente_id} "
             f"etapa={self.etapa!r} confianza={self.confianza}>"
         )
+
+
+# ── Condiciones SQL del estado de la intervención (c-165, ASG-005 y ECM-003) ─────
+#
+# Expresiones puras sobre las columnas del modelo, SIN E/S. Las comparten la métrica
+# backend (capa de repositorios) y el export (a través de
+# `app.services.intervencion_estado`, que las re-exporta junto con la función pura de
+# estado). Viven en el modelo, la capa más baja, para que un repositorio no tenga que
+# importar de la capa de servicios (dependencia hacia arriba y riesgo de ciclo).
+
+
+def condicion_intervenido() -> ColumnElement[bool]:
+    """Condición SQL de un log `intervenido` (`validado_en IS NOT NULL`)."""
+    return ClasificacionLog.validado_en.is_not(None)
+
+
+def condicion_legado() -> ColumnElement[bool]:
+    """Condición SQL de un log `intervencion_legada_sin_metadatos`.
+
+    Sector validado SIN `validado_en`: fila validada antes de la migración 024.
+    """
+    return and_(
+        ClasificacionLog.validado_en.is_(None),
+        ClasificacionLog.sector_id_validado.is_not(None),
+    )
+
+
+def condicion_no_intervenido() -> ColumnElement[bool]:
+    """Condición SQL de un log `no_intervenido` (nunca validado por nadie)."""
+    return and_(
+        ClasificacionLog.validado_en.is_(None),
+        ClasificacionLog.sector_id_validado.is_(None),
+    )
+
+
+def condicion_cambio_de_sector() -> ColumnElement[bool]:
+    """Condición SQL de `cambio_sector`: validado distinto del predicho (NULL-safe).
+
+    Equivale a `IS DISTINCT FROM`: un predicho NULL (clasificador sin señal) cuenta
+    como cambio frente a cualquier sector validado.
+    """
+    return ClasificacionLog.sector_id_validado.is_distinct_from(
+        ClasificacionLog.sector_id_predicho
+    )

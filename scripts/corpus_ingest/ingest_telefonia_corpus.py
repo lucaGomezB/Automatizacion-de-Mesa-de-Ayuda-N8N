@@ -42,6 +42,7 @@ from urllib.parse import urlencode
 
 import ingest_corpus as ic
 import ingest_via_n8n as ivn
+import modo_campana
 
 # ── Canonical contract ──────────────────────────────────────────────────────
 
@@ -233,6 +234,7 @@ def write_back(
     sidecar_path: str | Path,
     json_path: str | Path,
     results: Iterable[ivn.CaseResult],
+    incluir_planillas: bool = True,
 ) -> int:
     """Write telephony results to both registration files and the eval JSON.
 
@@ -240,12 +242,17 @@ def write_back(
     existing value, no description in the sidecar, and a numeric-only JSON merge
     that never weakens ``evaluation/corpus.py::_a_float``. Returns the count of
     cases still null in the evaluation JSON.
+
+    With ``incluir_planillas=False`` (campaign mode, c-166) the local CSV/XLSX
+    originals are NOT written: the campaign data lives only in the sidecar and in the
+    campaign copy of the evaluation JSON.
     """
     results = list(results)
     by_id = {result.case_id: result for result in results}
     ivn.write_sidecar_json(sidecar_path, results)
-    ivn.write_csv_results(csv_path, by_id)
-    ivn.write_xlsx_results(xlsx_path, by_id)
+    if incluir_planillas:
+        ivn.write_csv_results(csv_path, by_id)
+        ivn.write_xlsx_results(xlsx_path, by_id)
     measurements = {
         result.case_id: result.t_e2e_s
         for result in results
@@ -271,7 +278,11 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--json", default=DEFAULT_JSON)
     parser.add_argument("--csv", default=DEFAULT_CSV)
     parser.add_argument("--xlsx", default=DEFAULT_XLSX)
-    parser.add_argument("--sidecar", default=DEFAULT_SIDECAR)
+    parser.add_argument(
+        "--sidecar",
+        default=None,
+        help=f"Default {DEFAULT_SIDECAR}; obligatorio y propio de la corrida con --plan.",
+    )
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--timeout", type=float, default=30.0)
     parser.add_argument(
@@ -285,7 +296,12 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         help="Aprobacion explicita para el borrado destructivo de --replace.",
     )
     parser.add_argument("--dry-run", action="store_true")
-    return parser.parse_args(argv)
+    # Telefonia no ingesta: el orden de las llamadas lo decide el operador del softphone,
+    # asi que solo acepta --plan (para copiar la asignacion) e --id-corrida.
+    modo_campana.registrar_argumentos(parser, con_orden=False)
+    args = parser.parse_args(argv)
+    modo_campana.resolver_sidecar(args, DEFAULT_SIDECAR)
+    return args
 
 
 def _source_path(args: argparse.Namespace) -> str:
@@ -321,8 +337,22 @@ def run(argv: Sequence[str] | None = None) -> int:
         )
         return 2
 
+    codigo = modo_campana.preflight(args, ivn.verificar_sidecar_de_corrida)
+    if codigo is not None:
+        return codigo
+    campana = modo_campana.esta_activo(args)
+
     cases = ivn.read_cases(_source_path(args), args.source)
-    selected = ivn.select_cases(cases, CANAL_TELEFONO, args.limit)
+    if campana:
+        try:
+            seleccion = modo_campana.seleccionar_casos(
+                args, cases, lambda base: ivn.select_cases(base, CANAL_TELEFONO, args.limit)
+            )
+        except modo_campana.ERRORES_DE_USO as exc:
+            return modo_campana.informar_error(exc)
+        selected = seleccion.casos
+    else:
+        selected = ivn.select_cases(cases, CANAL_TELEFONO, args.limit)
     _print_counts(cases, selected)
 
     if args.dry_run:
@@ -401,12 +431,15 @@ def run(argv: Sequence[str] | None = None) -> int:
             )
             return 0
 
+    if campana:
+        results = modo_campana.anotar_resultados(results, seleccion.asignaciones, args.id_corrida)
     pending_nulls = write_back(
         csv_path=args.csv,
         xlsx_path=args.xlsx,
         sidecar_path=args.sidecar,
         json_path=args.json,
         results=results,
+        incluir_planillas=not campana,
     )
 
     medidos = sum(

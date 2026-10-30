@@ -41,6 +41,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable, Sequence
 
+import modo_campana
+
 # ── Canonical corpus/file contract ──────────────────────────────────────────
 
 LATENCIA_COL = "Latencia e2e (ms)"
@@ -203,6 +205,13 @@ class CorpusResult:
     wall_s: float | None
     latencia_e2e_ms: int | None
     error: str | None
+    # Modo campana (c-166): AL FINAL y con default None (ningun constructor cambia).
+    # ``orden`` guarda el modo del plan; ``posicion`` es la posicion GLOBAL del plan.
+    orden: str | None = None
+    posicion: int | None = None
+    mitad: int | None = None
+    brazo_primero: str | None = None
+    id_corrida: str | None = None
 
 
 # ── Reading ─────────────────────────────────────────────────────────────────
@@ -494,14 +503,21 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--insecure", action="store_true", help="Aceptar certificado autofirmado.")
     parser.add_argument("--csv", default=DEFAULT_CSV)
     parser.add_argument("--xlsx", default=DEFAULT_XLSX)
-    parser.add_argument("--sidecar", default=DEFAULT_SIDECAR)
+    parser.add_argument(
+        "--sidecar",
+        default=None,
+        help=f"Default {DEFAULT_SIDECAR}; obligatorio y propio de la corrida con --plan/--orden.",
+    )
     parser.add_argument("--source", choices=("csv", "xlsx"), default="csv")
     parser.add_argument("--only-channel", default=None)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--sleep", type=float, default=0.5, help="Segundos entre casos.")
     parser.add_argument("--timeout", type=float, default=30.0)
     parser.add_argument("--dry-run", action="store_true")
-    return parser.parse_args(argv)
+    modo_campana.registrar_argumentos(parser)
+    args = parser.parse_args(argv)
+    modo_campana.resolver_sidecar(args, DEFAULT_SIDECAR)
+    return args
 
 
 def _select_cases(
@@ -525,9 +541,25 @@ def _channel_counts(cases: Sequence[CorpusCase]) -> dict[str, int]:
 
 def run(argv: Sequence[str] | None = None) -> int:
     args = parse_args(argv)
+    # Este writer sobrescribe el sidecar entero: no hay reanudacion (cada corrida, el suyo).
+    codigo = modo_campana.preflight(
+        args, lambda ruta, _id_corrida: modo_campana.verificar_sidecar_nuevo(ruta)
+    )
+    if codigo is not None:
+        return codigo
+    campana = modo_campana.esta_activo(args)
     source_path = args.xlsx if args.source == "xlsx" else args.csv
     cases = read_cases(source_path, args.source)
-    selected = _select_cases(cases, args.only_channel, args.limit)
+    if campana:
+        try:
+            seleccion = modo_campana.seleccionar_casos(
+                args, cases, lambda base: _select_cases(base, args.only_channel, args.limit)
+            )
+        except modo_campana.ERRORES_DE_USO as exc:
+            return modo_campana.informar_error(exc)
+        selected = seleccion.casos
+    else:
+        selected = _select_cases(cases, args.only_channel, args.limit)
 
     counts = _channel_counts(cases)
     print(f"Casos en el corpus: {len(cases)} | seleccionados: {len(selected)}")
@@ -632,10 +664,15 @@ def run(argv: Sequence[str] | None = None) -> int:
             )
             print(f"[{index}/{len(selected)}] {case.case_id}: excepcion {type(exc).__name__}")
 
+    if campana:
+        results = modo_campana.anotar_resultados(results, seleccion.asignaciones, args.id_corrida)
     write_sidecar_json(args.sidecar, results)
-    by_id = {r.case_id: r for r in results}
-    write_csv_results(args.csv, by_id)
-    write_xlsx_results(args.xlsx, by_id)
+    if not campana:
+        # Los originales CSV/XLSX son locales (con PII): una corrida de campana no los
+        # toca; sus datos viven solo en el sidecar de la corrida.
+        by_id = {r.case_id: r for r in results}
+        write_csv_results(args.csv, by_id)
+        write_xlsx_results(args.xlsx, by_id)
 
     ok = sum(1 for r in results if r.error is None)
     print(f"Listo: {ok}/{len(results)} casos registrados. Sidecar: {args.sidecar}")
