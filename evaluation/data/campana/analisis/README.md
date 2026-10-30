@@ -20,7 +20,11 @@ regenerable.
 
 - El analisis NO usa red ni Gemini, NO regenera `evaluation/report.md`,
   `evaluation/predicciones.json` ni los numeros canonicos de v9, y NO escribe fuera de la
-  carpeta de salida. Se niega a escribir sobre un artefacto congelado.
+  carpeta de salida. La proteccion de los artefactos congelados es POR CONSTRUCCION: el CLI
+  escribe exactamente tres nombres fijos (`resultados.json`, `resultados.md` y
+  `SHA256SUMS.txt`), asi que nunca toca `evaluation/report.md`, `evaluation/predicciones.json`,
+  `evaluation/predicciones_calibracion.json`, `data/corpus_resultados*.json` ni
+  `evaluation/evidence/`.
 - Referencia por defecto del brazo manual: `consenso_doble_etiquetado`. La referencia
   alternativa `consenso_original` se pide con `--referencia`.
 
