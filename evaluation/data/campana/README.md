@@ -93,14 +93,18 @@ Al versionar cada archivo se completa su SHA-256 (en minúsculas, calculado sobr
 
 | Archivo | SHA-256 |
 |---|---|
-| `plan_campana.csv` | pendiente |
+| `plan_campana.csv` | b619a734092cbbf2b676636386e4b27bdbeaee76df3f97a19e4b7d1beeb43243 |
 | `corpus_campana.json` | pendiente |
 | `corpus_independiente.json` | pendiente |
 | `predicciones_independiente.json` | pendiente |
 | `reporte_independiente.md` | pendiente |
 | `plantilla_etiquetado.csv` | pendiente |
 | `predicciones_in_sample.json` | pendiente |
-| cada `sidecar_<id_corrida>.json` y `subplan_*.csv` usado | pendiente (una fila por archivo, al versionarlo) |
+| `subplan_m1_manual_t1.csv` | 8d42417274934764c24774d10bbbca8ac47807e1d2960a22167ddb564933c41a |
+| `subplan_m1_manual_t2.csv` | 30d801b5aa142005402fda2b99e8d8f405ea2b95fa7f773843be4b324e0a5d6c |
+| `subplan_m2_manual_t1.csv` | 7dac79db810566f6f351ed28ce0f0a6ff4563a2f81eb03d0fbc86f0bb621438d |
+| `subplan_m2_manual_t2.csv` | 8c7de56298cb573c60c59c4d5438278b9ceb9b3fb3ffc3cad885cff0eef057f9 |
+| cada `sidecar_<id_corrida>.json` usado | pendiente (una fila por archivo, al versionarlo) |
 
 Los datos de la campaña se citan desde `evaluation/data/README.md`, que describe el resto de esta jerarquía.
 
