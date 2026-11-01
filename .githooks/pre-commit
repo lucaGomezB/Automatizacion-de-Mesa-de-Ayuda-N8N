@@ -95,6 +95,18 @@ engram_staged=$(git diff --cached --name-only --diff-filter=ACM \
 if [ -n "$engram_staged" ]; then
     PY=$(command -v python3 || command -v python)
     if [ -n "$PY" ]; then
+        # 4a) Redactar el contenido de los prompts antes de versionarlos. Los prompts
+        # crudos del chat pueden contener datos personales (nombres de colaboradores,
+        # correos); el mapeo codigo-identidad debe quedar fuera del repo publico.
+        chunks_staged=$(printf '%s\n' "$engram_staged" \
+            | grep -E '^\.engram/chunks/.*\.jsonl\.gz$')
+        if [ -n "$chunks_staged" ]; then
+            # shellcheck disable=SC2086
+            "$PY" scripts/security/scrub_engram_prompts.py .engram $chunks_staged \
+                || echo "ADVERTENCIA: falló el saneo de prompts de .engram." >&2
+            git add .engram
+        fi
+        # 4b) Escaneo de secretos sobre el contenido ya saneado.
         if ! "$PY" scripts/security/scan_engram_secrets.py .engram; then
             echo "" >&2
             echo "BLOQUEADO: la memoria de Engram staged contiene posibles secretos." >&2
@@ -103,7 +115,7 @@ if [ -n "$engram_staged" ]; then
             fail=1
         fi
     else
-        echo "ADVERTENCIA: no se encontró python3 ni python; se omite el escaneo de .engram." >&2
+        echo "ADVERTENCIA: no se encontró python3 ni python; se omite el saneo y el escaneo de .engram." >&2
     fi
 fi
 
