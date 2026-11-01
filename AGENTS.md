@@ -244,6 +244,7 @@ Reglas duras de la memoria de Engram:
 - La memoria se versiona en un repositorio PUBLICO y es evidencia para la auditoria de la tesis. Por eso NUNCA se destrackea ni se agrega `.engram/` al `.gitignore`.
 - Las credenciales se SANEAN antes de cada `engram sync`. Un valor real no debe llegar nunca a un chunk.
 - El guard es `scripts/security/scan_engram_secrets.py`, invocado con `python3 scripts/security/scan_engram_secrets.py .engram`. Esta cableado en el hook `.githooks/pre-commit` (seccion 4), que lo corre cuando hay archivos `.engram/` staged y bloquea el commit si encuentra hallazgos.
+- Los **prompts** del chat se exportan crudos a los chunks y pueden contener datos personales (nombres de colaboradores, correos). Por eso el hook (seccion 4a) los **redacta automaticamente** antes de commitear con `scripts/security/scrub_engram_prompts.py`: el `content` de cada prompt pasa a `[contenido no versionado: privacidad]` y se conservan los metadatos. El mapeo codigo-identidad de los sujetos (`P<n>`) va FUERA del repo y FUERA de Engram: NUNCA escribir el nombre real de un colaborador en un prompt, una observacion o cualquier archivo versionado.
 - Si el guard marca un falso positivo (por ejemplo, una referencia a codigo como `api_key=settings.gemini_api_key`), NO se debilita el patron: se evalua el caso y, si corresponde, se documenta. La memoria no se publica con un hallazgo sin resolver. <!-- gitleaks:allow -->
 
 ## External Sources (GitHub and Third-Party Code)
