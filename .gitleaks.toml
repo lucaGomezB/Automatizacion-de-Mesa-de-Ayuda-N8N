@@ -13,17 +13,20 @@ useDefault = true
 description = "Allowlist mínima y específica del repositorio"
 
 # Clave real de Google Gemini filtrada en Gestion_Incidentes/.env. La clave YA
-# fue revocada y rotada (Google la bloqueó por leaked). Revocación declarada por
-# el equipo; al 2026-11-02 queda PENDIENTE de confirmación por Gonzalo. El
-# historial no se puede reescribir sin romper los clones existentes, así que se
-# excluye por COMMIT. La misma clave aparece en más commits de los que cubría la
-# lista original: el escaneo de historial completo empezó a fallar y reportó dos
-# commits extra (3e1aac6 y db6784a7), agregados el 2026-11-02 (PR 71). Nunca se
+# fue revocada y rotada: Gonzalo confirmó el 2026-11-02 en Google AI Studio que
+# la clave de mayo (termina en ckm8) ya no existe en la cuenta. El historial no se
+# puede reescribir sin romper los clones existentes, así que se excluye por
+# COMMIT. Tras la reescritura del 2026-11-01 los commits originales quedaron fuera
+# de main, pero dos de ellos (eee5c843 y 0d430b58) siguen alcanzables por la rama
+# RamaLuca y los tags v1.x: por eso se mantienen acá. El commit 02e845c4 se quitó
+# porque es el que eliminó el archivo y no contiene la clave. Los dos commits
+# vivos en main (3e1aac6 y db6784a7) también se mantienen. Queda pendiente decidir
+# si se purga la clave con git filter-repo --replace-text (lo que exigiría
+# reescribir también tags y ramas) y vaciar esta sección; mientras tanto, nunca se
 # pega el valor de la clave en la configuración.
 commits = [
   "eee5c843ea7ac6f8826aad8f2d8605edf2c73252",
   "0d430b58073cd8de768b301b38c50643546a85bf",
-  "02e845c457906949d90ee92227d27000d07eecaf",
   "3e1aac6438075aa3f4bde04f0261405dd19bf3ec",
   "db6784a7d7644d02a352146b9660dfc5f6791231",
 ]
