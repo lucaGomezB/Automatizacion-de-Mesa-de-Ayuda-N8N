@@ -18,18 +18,30 @@ el kappa vuelve a quedar sin intervalo de confianza. El protocolo completo
 
 ## Estado actual
 
-**Pendiente de campaña.** Todavía no existe `doble_etiquetado.csv`: el etiquetado
-real corre fuera del repositorio y la tabla se agrega después, siguiendo el
-runbook. Mientras el archivo no exista, el test de integridad
+**Plan y sujetos versionados; pendiente la campaña.** Este PR ya versiona
+`plan_campana.csv`, los cuatro sub-planes del brazo manual y `registro_sujetos.csv`
+(8 filas, sin solapes). Todavía no existe `doble_etiquetado.csv`: el etiquetado real
+corre fuera del repositorio y la tabla se agrega después, siguiendo el runbook.
+Mientras el archivo no exista, el test de integridad
 (`test_tabla_primaria_versionada_integra`) se omite.
 
 ## Archivos de esta carpeta
 
 - `doble_etiquetado.csv`: tabla primaria validada (se agrega después de la campaña).
-- `registro_sujetos.csv`: columnas `alias, rol, persona` (se agrega después de la
-  campaña; sin nombres, ver el runbook).
+- `registro_sujetos.csv`: columnas `alias, rol, persona` (versionado en este PR;
+  sin nombres, ver el runbook).
 - `*.csv` se versionan con fin de línea LF (`.gitattributes`) para que el SHA-256
   coincida en Windows y Linux.
+
+### Sujetos: los dos analistas originales y la fila A2
+
+El consenso `sector_asignado` del corpus lo fijaron dos analistas originales: `A1` y
+`T1` (este último es también autor de la tesis). El `registro_sujetos.csv` no incluye
+una fila `A2`: una versión previa de la plantilla la tenía, pero se eliminó al
+confirmarse que el segundo analista original es `T1`, que ya figura con el rol
+`autor`. La coincidencia analista-autor se declara como limitación en c-169 y no
+habilita a `T1` como etiquetador ni operador. El registro queda con 8 filas sin
+solapes: `E1`, `E2`, `O1`, `O2`, `A1`, `T1`, `T2`, `T3`.
 
 ## Procedencia de la tabla primaria
 
@@ -94,6 +106,7 @@ Al versionar cada archivo se completa su SHA-256 (en minúsculas, calculado sobr
 | Archivo | SHA-256 |
 |---|---|
 | `plan_campana.csv` | b619a734092cbbf2b676636386e4b27bdbeaee76df3f97a19e4b7d1beeb43243 |
+| `registro_sujetos.csv` | f7a5653e733d423a3c4b5eee6b94a05d6ea02df38eb04997212865b329224ad2 |
 | `corpus_campana.json` | pendiente |
 | `corpus_independiente.json` | pendiente |
 | `predicciones_independiente.json` | pendiente |
