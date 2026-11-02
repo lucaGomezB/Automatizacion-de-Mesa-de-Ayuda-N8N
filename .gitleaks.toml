@@ -13,14 +13,19 @@ useDefault = true
 description = "Allowlist mínima y específica del repositorio"
 
 # Clave real de Google Gemini filtrada en Gestion_Incidentes/.env. La clave YA
-# fue revocada y rotada (Google la bloqueó por leaked). El historial no se puede
-# reescribir sin romper los clones existentes, así que se excluye por COMMIT:
-# los dos commits que introdujeron el archivo y el que lo eliminó. Nunca se pega
-# el valor de la clave en la configuración.
+# fue revocada y rotada (Google la bloqueó por leaked). Revocación declarada por
+# el equipo; al 2026-11-02 queda PENDIENTE de confirmación por Gonzalo. El
+# historial no se puede reescribir sin romper los clones existentes, así que se
+# excluye por COMMIT. La misma clave aparece en más commits de los que cubría la
+# lista original: el escaneo de historial completo empezó a fallar y reportó dos
+# commits extra (3e1aac6 y db6784a7), agregados el 2026-11-02 (PR 71). Nunca se
+# pega el valor de la clave en la configuración.
 commits = [
   "eee5c843ea7ac6f8826aad8f2d8605edf2c73252",
   "0d430b58073cd8de768b301b38c50643546a85bf",
   "02e845c457906949d90ee92227d27000d07eecaf",
+  "3e1aac6438075aa3f4bde04f0261405dd19bf3ec",
+  "db6784a7d7644d02a352146b9660dfc5f6791231",
 ]
 
 # Archivo de test con una clave Google FICTICIA (AIzaSyA123...) usada como
