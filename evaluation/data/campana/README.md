@@ -108,6 +108,25 @@ Al versionar cada archivo se completa su SHA-256 (en minúsculas, calculado sobr
 
 Los datos de la campaña se citan desde `evaluation/data/README.md`, que describe el resto de esta jerarquía.
 
+### Submuestra con doble cobertura (criterio de la campaña)
+
+El reparto por defecto del brazo manual es `O1` = mitad 1 y `O2` = mitad 2, sin casos
+compartidos. Para poder medir además el acuerdo entre operadores se fijó, antes de
+empezar, una **submuestra con doble cobertura**:
+
+- **Criterio**: un caso de cada diez por `posicion` dentro de cada mitad. Mitad 1:
+  posiciones 10, 20, 30, 40, 50, 60, 70, 80, 90 y 100. Mitad 2: posiciones 110, 120,
+  130, 140, 150, 160, 170, 180, 190 y 200. Son 20 casos en total.
+- **Reparto**: cada operador clasifica su mitad completa más los 10 casos muestreados
+  de la otra mitad. `O1` recibe 110 casos (100 de la mitad 1 + 10 de la mitad 2) y
+  `O2` recibe 110 casos (100 de la mitad 2 + 10 de la mitad 1).
+- **Orden**: cada hoja respeta el orden global del plan (por `posicion`), filtrado a
+  los casos asignados. Los 20 casos de doble cobertura quedan con dos registros en la
+  planilla, uno por operador.
+- **Uso**: el acuerdo entre operadores se calcula sobre esos 20 casos; no reemplaza al
+  kappa de `E1`/`E2`, que sigue siendo la medida principal. Las hojas con doble
+  cobertura se generan fuera del repositorio, igual que el resto de las hojas de campo.
+
 ## Referencia in-sample de la validación fuera de muestra (c-166)
 
 La corrida in-sample de referencia es la de `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json`, copia congelada del cache de v9 (`generated_at` `2026-10-07T22:22:01Z`; evidencia publicada en `fec4c42`, c-143). El análisis de c-167 la compara con `predicciones_independiente.json` y recibe estos valores como parámetro (`pines_in_sample`). Esta sección usa el formato `- campo: valor`, con nombres distintos de los de la procedencia de la tabla primaria.
