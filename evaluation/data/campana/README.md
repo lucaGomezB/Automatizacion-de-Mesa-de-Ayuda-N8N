@@ -18,18 +18,30 @@ el kappa vuelve a quedar sin intervalo de confianza. El protocolo completo
 
 ## Estado actual
 
-**Pendiente de campaña.** Todavía no existe `doble_etiquetado.csv`: el etiquetado
-real corre fuera del repositorio y la tabla se agrega después, siguiendo el
-runbook. Mientras el archivo no exista, el test de integridad
+**Plan y sujetos versionados; pendiente la campaña.** Este PR ya versiona
+`plan_campana.csv`, los cuatro sub-planes del brazo manual y `registro_sujetos.csv`
+(8 filas, sin solapes). Todavía no existe `doble_etiquetado.csv`: el etiquetado real
+corre fuera del repositorio y la tabla se agrega después, siguiendo el runbook.
+Mientras el archivo no exista, el test de integridad
 (`test_tabla_primaria_versionada_integra`) se omite.
 
 ## Archivos de esta carpeta
 
 - `doble_etiquetado.csv`: tabla primaria validada (se agrega después de la campaña).
-- `registro_sujetos.csv`: columnas `alias, rol, persona` (se agrega después de la
-  campaña; sin nombres, ver el runbook).
+- `registro_sujetos.csv`: columnas `alias, rol, persona` (versionado en este PR;
+  sin nombres, ver el runbook).
 - `*.csv` se versionan con fin de línea LF (`.gitattributes`) para que el SHA-256
   coincida en Windows y Linux.
+
+### Sujetos: los dos analistas originales y la fila A2
+
+El consenso `sector_asignado` del corpus lo fijaron dos analistas originales: `A1` y
+`T1` (este último es también autor de la tesis). El `registro_sujetos.csv` no incluye
+una fila `A2`: una versión previa de la plantilla la tenía, pero se eliminó al
+confirmarse que el segundo analista original es `T1`, que ya figura con el rol
+`autor`. La coincidencia analista-autor se declara como limitación en c-169 y no
+habilita a `T1` como etiquetador ni operador. El registro queda con 8 filas sin
+solapes: `E1`, `E2`, `O1`, `O2`, `A1`, `T1`, `T2`, `T3`.
 
 ## Procedencia de la tabla primaria
 
@@ -93,16 +105,40 @@ Al versionar cada archivo se completa su SHA-256 (en minúsculas, calculado sobr
 
 | Archivo | SHA-256 |
 |---|---|
-| `plan_campana.csv` | pendiente |
+| `plan_campana.csv` | b619a734092cbbf2b676636386e4b27bdbeaee76df3f97a19e4b7d1beeb43243 |
+| `registro_sujetos.csv` | f7a5653e733d423a3c4b5eee6b94a05d6ea02df38eb04997212865b329224ad2 |
 | `corpus_campana.json` | pendiente |
 | `corpus_independiente.json` | pendiente |
 | `predicciones_independiente.json` | pendiente |
 | `reporte_independiente.md` | pendiente |
 | `plantilla_etiquetado.csv` | pendiente |
 | `predicciones_in_sample.json` | pendiente |
-| cada `sidecar_<id_corrida>.json` y `subplan_*.csv` usado | pendiente (una fila por archivo, al versionarlo) |
+| `subplan_m1_manual_t1.csv` | 8d42417274934764c24774d10bbbca8ac47807e1d2960a22167ddb564933c41a |
+| `subplan_m1_manual_t2.csv` | 30d801b5aa142005402fda2b99e8d8f405ea2b95fa7f773843be4b324e0a5d6c |
+| `subplan_m2_manual_t1.csv` | 7dac79db810566f6f351ed28ce0f0a6ff4563a2f81eb03d0fbc86f0bb621438d |
+| `subplan_m2_manual_t2.csv` | 8c7de56298cb573c60c59c4d5438278b9ceb9b3fb3ffc3cad885cff0eef057f9 |
+| cada `sidecar_<id_corrida>.json` usado | pendiente (una fila por archivo, al versionarlo) |
 
 Los datos de la campaña se citan desde `evaluation/data/README.md`, que describe el resto de esta jerarquía.
+
+### Submuestra con doble cobertura (criterio de la campaña)
+
+El reparto por defecto del brazo manual es `O1` = mitad 1 y `O2` = mitad 2, sin casos
+compartidos. Para poder medir además el acuerdo entre operadores se fijó, antes de
+empezar, una **submuestra con doble cobertura**:
+
+- **Criterio**: un caso de cada diez por `posicion` dentro de cada mitad. Mitad 1:
+  posiciones 10, 20, 30, 40, 50, 60, 70, 80, 90 y 100. Mitad 2: posiciones 110, 120,
+  130, 140, 150, 160, 170, 180, 190 y 200. Son 20 casos en total.
+- **Reparto**: cada operador clasifica su mitad completa más los 10 casos muestreados
+  de la otra mitad. `O1` recibe 110 casos (100 de la mitad 1 + 10 de la mitad 2) y
+  `O2` recibe 110 casos (100 de la mitad 2 + 10 de la mitad 1).
+- **Orden**: cada hoja respeta el orden global del plan (por `posicion`), filtrado a
+  los casos asignados. Los 20 casos de doble cobertura quedan con dos registros en la
+  planilla, uno por operador.
+- **Uso**: el acuerdo entre operadores se calcula sobre esos 20 casos; no reemplaza al
+  kappa de `E1`/`E2`, que sigue siendo la medida principal. Las hojas con doble
+  cobertura se generan fuera del repositorio, igual que el resto de las hojas de campo.
 
 ## Referencia in-sample de la validación fuera de muestra (c-166)
 
