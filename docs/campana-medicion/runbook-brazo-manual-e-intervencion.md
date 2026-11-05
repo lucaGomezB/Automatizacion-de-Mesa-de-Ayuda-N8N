@@ -60,7 +60,7 @@ Los operadores se registran en `evaluation/data/campana/registro_sujetos.csv` (e
 
 | Columna | Contenido |
 |---|---|
-| `alias` | `O1` o `O2` para los operadores (el archivo ya trae `E1`, `E2`, `A1`, `A2` y los autores `T<n>`) |
+| `alias` | `O1` o `O2` para los operadores (el archivo ya trae `E1`, `E2`, `A1` y los autores `T1`, `T2`, `T3`) |
 | `rol` | `operador` |
 | `persona` | Código seudónimo `P<n>`, **estable entre roles**: la misma persona lleva el mismo código en todos los roles que tenga |
 
@@ -73,9 +73,9 @@ E2,etiquetador,P6
 O1,operador,P3
 O2,operador,P4
 A1,analista_original,P1
-A2,analista_original,P2
 T1,autor,P7
 T2,autor,P8
+T3,autor,P2
 ```
 
 ### 1.3 Verificar la independencia (por `persona`)
@@ -133,7 +133,7 @@ Reglas, que aplica el validador de c-168 con `--tarea brazo_manual` (c-165 no ag
 - Hay **como máximo un registro por `(id_caso, id_etiquetador)`**: un operador no clasifica dos veces el mismo caso.
 - Se registran ambos `O1` y `O2` y ningún tercero.
 
-Reparto por defecto: `O1` toma la **mitad 1** del plan y `O2` la **mitad 2** (columna `mitad` de `plan_campana.csv`); cada uno recibe los sub-planes de su mitad (sección 2.3). Una **submuestra con doble cobertura** (casos que clasifican ambos operadores) es opcional y deseable: permite medir además el acuerdo entre operadores. Si se hace, el criterio de selección se fija antes de empezar (por ejemplo, un caso de cada diez por `posicion`) y se registra en el README; en la planilla esos casos tienen dos filas, una por operador.
+Reparto por defecto: `O1` toma la **mitad 1** del plan y `O2` la **mitad 2** (columna `mitad` de `plan_campana.csv`); cada uno recibe los sub-planes de su mitad (sección 2.3). La **submuestra con doble cobertura** (casos que clasifican ambos operadores) es fija: el criterio es un caso de cada diez por `posicion` dentro de cada mitad, 20 casos compartidos en total. `O1` recibe 110 casos (100 de la mitad 1 + 10 de la mitad 2) y `O2` recibe 110 (100 de la mitad 2 + 10 de la mitad 1); en la planilla esos 20 casos tienen dos filas, una por operador. El criterio está registrado en `evaluation/data/campana/README.md` (sección "Submuestra con doble cobertura") y no se cambia.
 
 ### 2.3 Plan de campaña y sub-planes
 
