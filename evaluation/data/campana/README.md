@@ -18,13 +18,14 @@ el kappa vuelve a quedar sin intervalo de confianza. El protocolo completo
 
 ## Estado actual
 
-**Doble etiquetado versionado; brazo manual e intervención pendientes.** Están
+**Doble etiquetado y brazo manual versionados; intervención pendiente.** Están
 versionados `plan_campana.csv`, los cuatro sub-planes del brazo manual,
-`registro_sujetos.csv` (8 filas, sin solapes) y `doble_etiquetado.csv` (400 registros
-de `E1` y `E2` sobre los 200 casos). El test de integridad
-(`test_tabla_primaria_versionada_integra`) ya no se omite. Faltan `brazo_manual.csv`,
-`intervenciones.csv`, las dos entradas del análisis (`plantilla_etiquetado.csv`,
-`predicciones_in_sample.json`) y las salidas de `analisis/`.
+`registro_sujetos.csv` (8 filas, sin solapes), `doble_etiquetado.csv` (400 registros
+de `E1` y `E2` sobre los 200 casos) y `brazo_manual.csv` (220 registros de `O1` y `O2`
+sobre los 200 casos, con 20 de doble cobertura). El test de integridad
+(`test_tabla_primaria_versionada_integra`) ya no se omite. Faltan `intervenciones.csv`,
+las dos entradas del análisis (`plantilla_etiquetado.csv`, `predicciones_in_sample.json`)
+y las salidas de `analisis/`.
 
 ## Archivos de esta carpeta
 
@@ -210,13 +211,13 @@ Procedencia del export (completar **al versionar** `intervenciones.csv`; formato
 
 ### Planilla del brazo manual (c-165)
 
-`brazo_manual.csv` es la planilla del brazo manual (`tarea = brazo_manual`, operadores `O1` y `O2`, con `inicio` y `timestamp` obligatorios en cada fila) que pasó `python -m evaluation.doble_etiquetado --planilla evaluation/data/campana/brazo_manual.csv --corpus data/corpus_evaluacion_pseudonimizado.json --tarea brazo_manual` con exit code `0`. El procedimiento (sujetos, reparto, plan, aceptación) está en `docs/campana-medicion/runbook-brazo-manual-e-intervencion.md`. No contiene datos personales: solo alias de operador, identificadores de caso, sectores canónicos y marcas de tiempo. Mientras no exista, su hash y los desvíos quedan en `pendiente`.
+`brazo_manual.csv` es la planilla del brazo manual (`tarea = brazo_manual`, operadores `O1` y `O2`, con `inicio` y `timestamp` obligatorios en cada fila) que pasó `python -m evaluation.doble_etiquetado --planilla evaluation/data/campana/brazo_manual.csv --corpus data/corpus_evaluacion_pseudonimizado.json --tarea brazo_manual` con exit code `0`. El procedimiento (sujetos, reparto, plan, aceptación) está en `docs/campana-medicion/runbook-brazo-manual-e-intervencion.md`. No contiene datos personales: solo alias de operador, identificadores de caso, sectores canónicos y marcas de tiempo. Versionada el 2026-11-05 (220 registros). **Desvíos de posición: 196 de 220** (98 por operador), sistemáticos y no ruido: las hojas de campo se armaron como una hoja única de 110 casos por operador ordenada por `posicion` global, no como las dos hojas por sub-plan (turno 1 -> turno 2) que describe el runbook §2.3/§3.2; los operadores siguieron su hoja al pie de la letra. El runbook §4.2 prevé los desvíos y no corrige la planilla: se informan tal cual y el análisis los trata como covariable.
 
-- brazo_manual_desvios_informados: pendiente
+- brazo_manual_desvios_informados: 196
 
 | Archivo | SHA-256 |
 |---|---|
-| `brazo_manual.csv` | pendiente |
+| `brazo_manual.csv` | 25ef12ba7e4c27ba5489d3daff099c697416d996858299e25ffa57dfa2a4d46f |
 
 ## Entradas del análisis de campaña (c-170)
 
