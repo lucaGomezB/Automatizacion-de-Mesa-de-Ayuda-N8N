@@ -18,9 +18,10 @@ el kappa vuelve a quedar sin intervalo de confianza. El protocolo completo
 
 ## Estado actual
 
-**Doble etiquetado y brazo manual versionados; intervención pendiente.** Están
-versionados `plan_campana.csv`, los cuatro sub-planes del brazo manual,
-`registro_sujetos.csv` (8 filas, sin solapes), `doble_etiquetado.csv` (400 registros
+**Doble etiquetado y brazo manual versionados; automatizado listo; intervención pendiente.** Están
+versionados `plan_campana.csv`, los ocho sub-planes (4 manuales + 4 automatizados,
+`subplan_m<mitad>_<brazo>_t<turno>.csv`), `corpus_campana.json` (copia de campaña con
+tiempos en null), `registro_sujetos.csv` (8 filas, sin solapes), `doble_etiquetado.csv` (400 registros
 de `E1` y `E2` sobre los 200 casos) y `brazo_manual.csv` (220 registros de `O1` y `O2`
 sobre los 200 casos, con 20 de doble cobertura). El test de integridad
 (`test_tabla_primaria_versionada_integra`) ya no se omite. Faltan `intervenciones.csv`,
@@ -110,7 +111,7 @@ Al versionar cada archivo se completa su SHA-256 (en minúsculas, calculado sobr
 |---|---|
 | `plan_campana.csv` | b619a734092cbbf2b676636386e4b27bdbeaee76df3f97a19e4b7d1beeb43243 |
 | `registro_sujetos.csv` | f7a5653e733d423a3c4b5eee6b94a05d6ea02df38eb04997212865b329224ad2 |
-| `corpus_campana.json` | pendiente |
+| `corpus_campana.json` | f77c7f92efe66a9ede4326c93825be610d775dc33c469457f10b3f1d43c6d60a |
 | `corpus_independiente.json` | pendiente |
 | `predicciones_independiente.json` | pendiente |
 | `reporte_independiente.md` | pendiente |
@@ -120,6 +121,10 @@ Al versionar cada archivo se completa su SHA-256 (en minúsculas, calculado sobr
 | `subplan_m1_manual_t2.csv` | 30d801b5aa142005402fda2b99e8d8f405ea2b95fa7f773843be4b324e0a5d6c |
 | `subplan_m2_manual_t1.csv` | 7dac79db810566f6f351ed28ce0f0a6ff4563a2f81eb03d0fbc86f0bb621438d |
 | `subplan_m2_manual_t2.csv` | 8c7de56298cb573c60c59c4d5438278b9ceb9b3fb3ffc3cad885cff0eef057f9 |
+| `subplan_m1_automatizado_t1.csv` | 30d801b5aa142005402fda2b99e8d8f405ea2b95fa7f773843be4b324e0a5d6c |
+| `subplan_m1_automatizado_t2.csv` | 8d42417274934764c24774d10bbbca8ac47807e1d2960a22167ddb564933c41a |
+| `subplan_m2_automatizado_t1.csv` | 8c7de56298cb573c60c59c4d5438278b9ceb9b3fb3ffc3cad885cff0eef057f9 |
+| `subplan_m2_automatizado_t2.csv` | 7dac79db810566f6f351ed28ce0f0a6ff4563a2f81eb03d0fbc86f0bb621438d |
 | cada `sidecar_<id_corrida>.json` usado | pendiente (una fila por archivo, al versionarlo) |
 
 Los datos de la campaña se citan desde `evaluation/data/README.md`, que describe el resto de esta jerarquía.
