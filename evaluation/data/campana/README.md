@@ -18,16 +18,18 @@ el kappa vuelve a quedar sin intervalo de confianza. El protocolo completo
 
 ## Estado actual
 
-**Plan y sujetos versionados; pendiente la campaña.** Este PR ya versiona
-`plan_campana.csv`, los cuatro sub-planes del brazo manual y `registro_sujetos.csv`
-(8 filas, sin solapes). Todavía no existe `doble_etiquetado.csv`: el etiquetado real
-corre fuera del repositorio y la tabla se agrega después, siguiendo el runbook.
-Mientras el archivo no exista, el test de integridad
-(`test_tabla_primaria_versionada_integra`) se omite.
+**Doble etiquetado versionado; brazo manual e intervención pendientes.** Están
+versionados `plan_campana.csv`, los cuatro sub-planes del brazo manual,
+`registro_sujetos.csv` (8 filas, sin solapes) y `doble_etiquetado.csv` (400 registros
+de `E1` y `E2` sobre los 200 casos). El test de integridad
+(`test_tabla_primaria_versionada_integra`) ya no se omite. Faltan `brazo_manual.csv`,
+`intervenciones.csv`, las dos entradas del análisis (`plantilla_etiquetado.csv`,
+`predicciones_in_sample.json`) y las salidas de `analisis/`.
 
 ## Archivos de esta carpeta
 
-- `doble_etiquetado.csv`: tabla primaria validada (se agrega después de la campaña).
+- `doble_etiquetado.csv`: tabla primaria validada (400 registros de `E1` y `E2`
+  sobre los 200 casos; ver "Procedencia de la tabla primaria").
 - `registro_sujetos.csv`: columnas `alias, rol, persona` (versionado en este PR;
   sin nombres, ver el runbook).
 - `*.csv` se versionan con fin de línea LF (`.gitattributes`) para que el SHA-256
@@ -45,19 +47,19 @@ solapes: `E1`, `E2`, `O1`, `O2`, `A1`, `T1`, `T2`, `T3`.
 
 ## Procedencia de la tabla primaria
 
-Completar **al versionar** la tabla, con una línea `- campo: valor` por campo. El
+Completada **al versionar** la tabla, con una línea `- campo: valor` por campo. El
 test de integridad lee `sha256` de esta sección y lo compara con el hash real del
-archivo. Mientras no exista la tabla, los valores quedan en `pendiente`.
+archivo.
 
-- archivo: pendiente
-- sha256: pendiente
-- fecha: pendiente
-- corpus: pendiente
-- corpus_sha256: pendiente
-- tarea: pendiente
-- comando_de_validacion: pendiente
+- archivo: evaluation/data/campana/doble_etiquetado.csv
+- sha256: 8b30b15b458bb611a3eff0f45f54731a539dafb5c02a931ebf4d944a7eb47b43
+- fecha: 2026-11-04
+- corpus: data/corpus_evaluacion_pseudonimizado.json
+- corpus_sha256: 1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb
+- tarea: doble_etiquetado
+- comando_de_validacion: `python -m evaluation.doble_etiquetado --planilla evaluation/data/campana/doble_etiquetado.csv --corpus data/corpus_evaluacion_pseudonimizado.json --tarea doble_etiquetado` (exit 0)
 - codebook_sha256: d9777139e9eaffe7903fa63d69d2bee346ff2b43599409aedaaebd21a8be9167
-- estado_cegado: pendiente
+- estado_cegado: cumplido
 - motivo_limitacion: no aplica
 
 Significado de cada campo:
@@ -244,6 +246,9 @@ SHA-256 y procedencia (completar **al versionar** la campaña, formato `- campo:
 - entradas_analisis_fecha: pendiente
 - entradas_analisis_comando: `python -m evaluation.preparar_entradas_analisis --entrada evaluation/data/campana --corpus data/corpus_evaluacion_pseudonimizado.json --cache-in-sample evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json`
 
-### Recomendación: enmendar el gate de c-169 (tarea 0.2)
+### Gate de c-169 (tarea 0.2)
 
-El gate de la campaña de c-169 (tarea 0.2) exige hoy `doble_etiquetado.csv`, `plan_campana.csv`, `intervenciones.csv`, `registro_sujetos.csv` y `analisis/` con las salidas de c-167, pero **no** las dos entradas nuevas. Como el análisis de c-167 no se puede correr end-to-end sin `plantilla_etiquetado.csv` y `predicciones_in_sample.json` (ambas declaradas "Entradas esperadas" en `analisis/README.md`), el gate SHOULD exigirlas también (con su SHA-256 coincidente). Esta recomendación es un seguimiento de c-170: **no** se edita c-169.
+La recomendación de esta sección se aplicó en c-170 (commit `8a72623`): el gate de
+c-169 exige también `plantilla_etiquetado.csv` y `predicciones_in_sample.json`, con su
+SHA-256 coincidente, porque el análisis de c-167 no se puede correr end-to-end sin
+ellas.
