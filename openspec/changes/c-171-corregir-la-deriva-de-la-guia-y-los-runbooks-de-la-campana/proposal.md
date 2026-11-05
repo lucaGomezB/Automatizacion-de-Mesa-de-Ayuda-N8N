@@ -25,7 +25,7 @@ None. Es un cambio docs-only: no introduce comportamiento nuevo en el sistema.
 
 None. No cambia el comportamiento especificado; solo corrige el texto de guias y runbooks para que coincida con la fuente de verdad. El cambio marca `skip_specs: true`.
 
-Nota de residuo: `openspec/specs/evaluation-campaign-instrumentation/spec.md` (ECM-001) todavia describe la doble cobertura como "opcional". Alinear el texto del spec excede este cambio docs-only y se recomienda como cambio de spec posterior.
+Residuo verificado y descartado: `openspec/specs/evaluation-campaign-instrumentation/spec.md` (ECM-001) declara la doble cobertura como "opcional", lo que es CORRECTO a nivel requisito: es coherente con ECM-009 regla (b) del mismo spec ("la cobertura doble no es obligatoria") y con el validador implementado (`evaluation/doble_etiquetado.py`), que acepta planes sin doble cobertura. Volverla obligatoria contradiria ese contrato. La decision de ESTA campana (1 caso de cada diez por `posicion`, 20 compartidos, 110/110) es una decision de campana y vive en `evaluation/data/campana/README.md`. No requiere cambio de spec ni bloquea el archive.
 
 ## Impact
 

@@ -23,7 +23,7 @@ Restricciones: cambio docs-only (gobernanza LOW), sin tocar codigo bajo `App/`, 
 
 - No se modifica `evaluation/data/campana/README.md` ni sus SHA-256.
 - No se modifica el comportamiento ni el codigo de los harnesses, del plan o del validador.
-- No se corrige el texto "opcional" de ECM-001 en `openspec/specs/` (queda como cambio de spec posterior).
+- No se corrige el texto "opcional" de ECM-001 en `openspec/specs/`: verificado que es correcto (coherente con ECM-009 regla (b) y con el validador); la decision de la campana vive en el README. No requiere cambio de spec.
 - No se ejecuta la campana ni el brazo automatizado.
 
 ## Decisions
@@ -38,6 +38,6 @@ Restricciones: cambio docs-only (gobernanza LOW), sin tocar codigo bajo `App/`, 
 ## Risks / Trade-offs
 
 - **[Riesgo] La guia y el runbook contrabalanceado se desincronizan al editar solo uno.** -> La seccion nueva de la guia remite al runbook y repite solo flags y nombres de artefactos; cualquier cambio de flags se hace en el runbook y se referencia.
-- **[Riesgo] El "opcional" de ECM-001 sigue vigente en el spec.** -> Se registra como residuo explicito en el proposal y se recomienda un cambio de spec posterior; este cambio no altera specs.
+- **[Riesgo resuelto] El "opcional" de ECM-001 en el spec.** -> Verificado: no es deriva. ECM-001 lo declara opcional y ECM-009 regla (b) confirma que la cobertura doble no es obligatoria; forzarla contradiria el validador. El criterio de esta campana vive en el README. Sin cambio de spec.
 - **[Riesgo] Duplicar la lista de sectores en varios documentos.** -> Se enumeran solo donde faltaban (guia y runbook manual); se mantiene el texto identico y se verifica con `grep`.
 - **[Trade-off] Se agrega detalle operativo a la guia.** -> Aumenta su longitud, pero evita que el lector tenga que saltar a tres runbooks para un prerequisito o el orden de los pasos.
