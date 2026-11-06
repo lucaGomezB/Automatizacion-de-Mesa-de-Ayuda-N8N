@@ -817,6 +817,76 @@ async def test_webhook_twilio_reserva_una_unidad_por_llamada():
     assert store.snapshot(caller_key("+5492615551234")).llamadas == 2
 
 
+# ── c-175 — Tasa de locucion del aviso en el webhook de voz ─────────────────
+
+
+async def test_webhook_twilio_honra_tts_rate_valido():
+    """c-175: con `tts_rate` valido el `<Say>` del webhook se envuelve en prosody."""
+    guard = make_guard()
+    params = {
+        "From": "+5492615551234",
+        "To": "+5492615550000",
+        "CallSid": "CA175",
+        "tts_rate": "125%",
+    }
+    async with _client_with_guard(guard, twilio_auth_token=_TWILIO_TOKEN) as client:
+        resp = await client.post(
+            "/api/v1/cost-guard/twilio/voice",
+            data=params,
+            headers=_twilio_headers(params),
+        )
+    assert resp.status_code == 200, resp.text
+    root = ElementTree.fromstring(resp.text)
+    prosody = root.find("Say/prosody")
+    assert prosody is not None, "el webhook debe envolver el aviso en <prosody>"
+    assert prosody.attrib.get("rate") == "125%"
+
+
+async def test_webhook_twilio_sin_tts_rate_no_cambia():
+    """c-175 (triangulacion): sin `tts_rate` la respuesta vigente no lleva prosody."""
+    guard = make_guard()
+    params = {"From": "+5492615551234", "To": "+5492615550000"}
+    async with _client_with_guard(guard, twilio_auth_token=_TWILIO_TOKEN) as client:
+        resp = await client.post(
+            "/api/v1/cost-guard/twilio/voice",
+            data=params,
+            headers=_twilio_headers(params),
+        )
+    assert resp.status_code == 200, resp.text
+    root = ElementTree.fromstring(resp.text)
+    assert root.find("Say/prosody") is None
+    assert root.find("Say") is not None
+
+
+@pytest.mark.parametrize(
+    "raw,expected",
+    [("500%", "200%"), ("5%", "20%"), ('"); <Hangup/>', None)],
+)
+async def test_webhook_twilio_tts_rate_se_acota_o_se_ignora(raw, expected):
+    """c-175: un `tts_rate` fuera de rango se acota; uno invalido se ignora."""
+    guard = make_guard()
+    params = {
+        "From": "+5492615551234",
+        "To": "+5492615550000",
+        "tts_rate": raw,
+    }
+    async with _client_with_guard(guard, twilio_auth_token=_TWILIO_TOKEN) as client:
+        resp = await client.post(
+            "/api/v1/cost-guard/twilio/voice",
+            data=params,
+            headers=_twilio_headers(params),
+        )
+    assert resp.status_code == 200, resp.text
+    root = ElementTree.fromstring(resp.text)
+    assert root.find("Hangup") is None, "un tts_rate invalido no debe inyectar XML"
+    prosody = root.find("Say/prosody")
+    if expected is None:
+        assert prosody is None
+    else:
+        assert prosody is not None
+        assert prosody.attrib.get("rate") == expected
+
+
 # ── 1.12 / 9.x / c-66 — Seudonimizacion del origen y exclusion del corpus ───
 
 

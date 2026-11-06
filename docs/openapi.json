@@ -160,6 +160,17 @@
               }
             ],
             "title": "Corpus Case Id"
+          },
+          "tts_rate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tts Rate"
           }
         },
         "title": "Body_twilio_voice_webhook_api_v1_cost_guard_twilio_voice_post",
@@ -2597,7 +2608,7 @@
     },
     "/api/v1/cost-guard/twilio/voice": {
       "post": {
-        "description": "Webhook que Twilio consulta ANTES de grabar y transcribir.\n\nSe autentica con la firma `X-Twilio-Signature`, exigida siempre que\n`TWILIO_AUTH_TOKEN` este configurado; si el token falta, responde 401\n(fail-closed) para no quedar abierto. NO usa el header\n`X-Cost-Guard-Secret` porque Twilio no puede enviar headers personalizados.\n\nCorrelacion opcional (c-70, D2): si el softphone envia el parametro custom\n`corpus_case_id` junto con `CallSid`, se persiste el mapeo efimero\n`call_sid -> corpus_case_id` en `telefonia_pending_call` para que el callback\nde grabacion lo resuelva. Sin `corpus_case_id` es un no-op (retrocompatible).\n\nPermite: responde TwiML con `<Record transcribe=\"true\">`. Deniega: responde\nTwiML con `<Say>` + `<Hangup/>`, de modo que NO se grabe ni se transcriba.\nLa reserva es de una unidad del costo unitario de transcripcion por llamada\nconcedida (la duracion se desconoce al inicio).",
+        "description": "Webhook que Twilio consulta ANTES de grabar y transcribir.\n\nSe autentica con la firma `X-Twilio-Signature`, exigida siempre que\n`TWILIO_AUTH_TOKEN` este configurado; si el token falta, responde 401\n(fail-closed) para no quedar abierto. NO usa el header\n`X-Cost-Guard-Secret` porque Twilio no puede enviar headers personalizados.\n\nCorrelacion opcional (c-70, D2): si el softphone envia el parametro custom\n`corpus_case_id` junto con `CallSid`, se persiste el mapeo efimero\n`call_sid -> corpus_case_id` en `telefonia_pending_call` para que el callback\nde grabacion lo resuelva. Sin `corpus_case_id` es un no-op (retrocompatible).\n\nTasa de locucion opcional (c-175): si se envia el parametro custom `tts_rate`\n(por ejemplo `125%`), el aviso se sirve envuelto en `<prosody rate=\"...\">`.\n`render_twiml_allowed` valida y acota la tasa a 20-200% e ignora todo formato\ninvalido; sin `tts_rate` el TwiML es byte-identico al vigente (el aviso de\nproduccion que reciben los titulares no cambia).\n\nPermite: responde TwiML con `<Record transcribe=\"true\">`. Deniega: responde\nTwiML con `<Say>` + `<Hangup/>`, de modo que NO se grabe ni se transcriba.\nLa reserva es de una unidad del costo unitario de transcripcion por llamada\nconcedida (la duracion se desconoce al inicio).",
         "operationId": "twilio_voice_webhook_api_v1_cost_guard_twilio_voice_post",
         "parameters": [
           {

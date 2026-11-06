@@ -232,3 +232,98 @@ def test_aviso_usa_lenguaje_de_alineacion():
     """El aviso declara alineacion (no certificacion)."""
     texto = _texto_del_aviso().lower()
     assert "alineado con" in texto
+
+
+# ── c-175 — Tasa de locucion del aviso (telephony-notice-cadence) ────────────
+#
+# El aviso se puede entregar mas rapido sin cambiar su TEXTO: el contenido del
+# `<Say>` se envuelve en `<prosody rate="...">`. Sin tasa, la salida es
+# byte-identica a la vigente (produccion intacta, D3).
+
+_GOLDEN_SIN_TASA = (
+    '<?xml version="1.0" encoding="UTF-8"?>'
+    "<Response>"
+    '<Say voice="Polly.Mia-Neural" language="es-US">'
+    "Esta llamada sera grabada. "
+    "La finalidad del tratamiento es registrar y clasificar su incidente de mesa de ayuda. "
+    "El responsable del tratamiento es el grupo de desarrollo del sistema. "
+    "Sus datos pueden ser objeto de transferencia internacional a Estados Unidos para el procesamiento automatizado. "
+    "Usted puede ejercer sus derechos de acceso, rectificacion y supresion conforme a la politica de privacidad. "
+    "El sistema esta alineado con la Ley 25.326. "
+    "Bienvenido a la mesa de ayuda. "
+    "Describí tu problema después del tono. "
+    "Cuando termines, cuelga la llamada. "
+    "En unos minutos vas a recibir una notificación con el número de incidente."
+    "</Say>"
+    '<Record maxLength="45" finishOnKey="#" playBeep="true" channels="mono" '
+    f'recordingStatusCallback="{_STATUS_URL}" '
+    f'action="{_ACTION_URL}"/>'
+    "</Response>"
+)
+
+
+def test_allowed_sin_tasa_es_byte_identico_al_vigente():
+    """D3: sin tasa la salida no cambia (produccion intacta)."""
+    assert twiml.render_twiml_allowed(base_url=_BASE) == _GOLDEN_SIN_TASA
+    # `rate=None` es equivalente a omitir el parametro.
+    assert twiml.render_twiml_allowed(base_url=_BASE, rate=None) == _GOLDEN_SIN_TASA
+    assert "<prosody" not in _GOLDEN_SIN_TASA
+
+
+def test_allowed_con_tasa_valida_envuelve_el_say_en_prosody():
+    """Una tasa valida envuelve el `<Say>` y NO cambia el texto."""
+    root = _parse(twiml.render_twiml_allowed(base_url=_BASE, rate="125%"))
+    say = root.find("Say")
+    assert say is not None
+    prosody = say.find("prosody")
+    assert prosody is not None, "el <Say> debe envolver su contenido en <prosody>"
+    assert prosody.attrib.get("rate") == "125%"
+    # El TEXTO del aviso es identico al de una llamada sin tasa.
+    assert "".join(prosody.itertext()) == _texto_del_aviso()
+
+
+def test_allowed_con_tasa_conserva_el_record_intacto():
+    """La envoltura no altera los atributos ni callbacks del `<Record>`."""
+    root = _parse(twiml.render_twiml_allowed(base_url=_BASE, rate="125%"))
+    record = root.find("Record")
+    assert record is not None
+    assert record.attrib == {
+        "maxLength": "45",
+        "finishOnKey": "#",
+        "playBeep": "true",
+        "channels": "mono",
+        "recordingStatusCallback": _STATUS_URL,
+        "action": _ACTION_URL,
+    }
+
+
+@pytest.mark.parametrize(
+    "raw,expected",
+    [
+        ("125%", "125%"),
+        ("20%", "20%"),
+        ("200%", "200%"),
+        ("500%", "200%"),
+        ("5%", "20%"),
+        (" 125% ", "125%"),
+    ],
+)
+def test_allowed_tasa_valida_se_acota_al_rango(raw, expected):
+    """Formato valido: dentro del rango se respeta; fuera, se acota (clamp)."""
+    root = _parse(twiml.render_twiml_allowed(base_url=_BASE, rate=raw))
+    prosody = root.find("Say/prosody")
+    assert prosody is not None
+    assert prosody.attrib.get("rate") == expected
+
+
+@pytest.mark.parametrize(
+    "raw",
+    ['"); <Hangup/>', "abc", "100", "", "125", "%125", "1e2%", "1000%", "   "],
+)
+def test_allowed_tasa_invalida_se_ignora_sin_inyectar_xml(raw):
+    """Formato invalido: se ignora (tasa normal) y no inyecta XML."""
+    xml = twiml.render_twiml_allowed(base_url=_BASE, rate=raw)
+    assert xml == _GOLDEN_SIN_TASA
+    root = _parse(xml)
+    assert root.find("Say/prosody") is None
+    assert root.find("Hangup") is None

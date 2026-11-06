@@ -56,6 +56,11 @@
       var corpusCases = [];
       var device = null;
 
+      // Notice cadence (c-175, DEV-ONLY): with a case selected the campaign
+      // asks the TwiML app to deliver the privacy notice at this rate. The
+      // no-case branch never sends it (production notice rate is untouched).
+      var TTS_RATE = "125%";
+
       // Processing gate (c-174, design.md D6): after a call with a case, the
       // Call control stays disabled until the case is fully processed.
       var PROCESSING_POLL_MS = 2000;
@@ -234,11 +239,12 @@
         // device.connect() returns a Promise<Call> in the Voice SDK v2; the
         // lifecycle events live on the resolved Call, NOT on the Device (the
         // Device never emits "disconnect").
-        // With a case selected the id travels as a custom call parameter;
-        // without a selection the call is placed exactly as before (C-59).
+        // With a case selected the id travels as a custom call parameter
+        // (plus the notice rate, c-175); without a selection the call is
+        // placed exactly as before (C-59).
         var selected = selectedCaseId();
         var connectPromise = selected
-          ? device.connect({ params: { corpus_case_id: selected } })
+          ? device.connect({ params: { corpus_case_id: selected, tts_rate: TTS_RATE } })
           : device.connect();
         connectPromise.then(function (call) {
           call.on("accept", function () {

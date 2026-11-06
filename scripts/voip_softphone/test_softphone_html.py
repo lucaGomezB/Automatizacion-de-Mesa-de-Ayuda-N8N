@@ -152,10 +152,26 @@ def test_page_has_corpus_case_select_defaulting_to_empty():
 
 def test_page_sends_corpus_case_id_only_when_selected():
     html = _html()
-    # With a selection, the id travels as a custom call parameter...
-    assert "device.connect({ params: { corpus_case_id: selected } })" in html
+    # With a selection, the id (and the notice rate, c-175) travels as custom
+    # call parameters...
+    assert (
+        "device.connect({ params: { corpus_case_id: selected, tts_rate: TTS_RATE } })"
+        in html
+    )
     # ...and without a selection the call is placed exactly as before (C-59).
-    assert "device.connect()" in html
+    assert ": device.connect()" in html
+
+
+def test_page_sends_tts_rate_only_with_a_selected_case():
+    """c-175: la tasa del aviso viaja SOLO en la rama con caso seleccionado."""
+    html = _html()
+    assert 'var TTS_RATE = "125%";' in html
+    body = _handler_body(html, 'callButton.addEventListener("click"')
+    assert "tts_rate" in body
+    # La tasa aparece una sola vez: en la llamada con caso.
+    assert body.count("tts_rate") == 1
+    # La rama sin caso conserva la llamada pelada, sin la tasa.
+    assert ": device.connect()" in body
 
 
 def test_page_select_has_no_preselected_case():

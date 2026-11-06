@@ -67,6 +67,7 @@ SignatureHeader = Annotated[str | None, Header(alias=_SIGNATURE_HEADER)]
 FromForm = Annotated[str | None, Form(alias="From")]
 CallSidForm = Annotated[str | None, Form(alias="CallSid")]
 CorpusCaseIdForm = Annotated[str | None, Form(alias="corpus_case_id")]
+TtsRateForm = Annotated[str | None, Form(alias="tts_rate")]
 PendingServiceDep = Annotated[
     TelefoniaPendingCallService, Depends(get_pending_call_service)
 ]
@@ -199,6 +200,7 @@ async def twilio_voice_webhook(
     from_number: FromForm = None,
     call_sid: CallSidForm = None,
     corpus_case_id: CorpusCaseIdForm = None,
+    tts_rate: TtsRateForm = None,
     x_twilio_signature: SignatureHeader = None,
 ) -> Response:
     """
@@ -214,6 +216,12 @@ async def twilio_voice_webhook(
     `call_sid -> corpus_case_id` en `telefonia_pending_call` para que el callback
     de grabacion lo resuelva. Sin `corpus_case_id` es un no-op (retrocompatible).
 
+    Tasa de locucion opcional (c-175): si se envia el parametro custom `tts_rate`
+    (por ejemplo `125%`), el aviso se sirve envuelto en `<prosody rate="...">`.
+    `render_twiml_allowed` valida y acota la tasa a 20-200% e ignora todo formato
+    invalido; sin `tts_rate` el TwiML es byte-identico al vigente (el aviso de
+    produccion que reciben los titulares no cambia).
+
     Permite: responde TwiML con `<Record transcribe="true">`. Deniega: responde
     TwiML con `<Say>` + `<Hangup/>`, de modo que NO se grabe ni se transcriba.
     La reserva es de una unidad del costo unitario de transcripcion por llamada
@@ -222,7 +230,11 @@ async def twilio_voice_webhook(
     await _require_twilio_signature(request, x_twilio_signature)
     await pending.registrar(call_sid, corpus_case_id)
     decision = await service.reserve(PROVIDER_TWILIO, caller=from_number)
-    twiml = render_twiml_allowed() if decision.allowed else render_twiml_denied()
+    twiml = (
+        render_twiml_allowed(rate=tts_rate)
+        if decision.allowed
+        else render_twiml_denied()
+    )
     return TwimlResponse(content=twiml)
 
 
