@@ -111,7 +111,7 @@ Al versionar cada archivo se completa su SHA-256 (en minúsculas, calculado sobr
 |---|---|
 | `plan_campana.csv` | b619a734092cbbf2b676636386e4b27bdbeaee76df3f97a19e4b7d1beeb43243 |
 | `registro_sujetos.csv` | f7a5653e733d423a3c4b5eee6b94a05d6ea02df38eb04997212865b329224ad2 |
-| `corpus_campana.json` | f77c7f92efe66a9ede4326c93825be610d775dc33c469457f10b3f1d43c6d60a |
+| `corpus_campana.json` | 0bb7716e68e6baa190aa3d76626a6c0c8712c0ed6e65ff0c4572c001bc0e2adc |
 | `corpus_independiente.json` | pendiente |
 | `predicciones_independiente.json` | pendiente |
 | `reporte_independiente.md` | pendiente |
@@ -125,7 +125,10 @@ Al versionar cada archivo se completa su SHA-256 (en minúsculas, calculado sobr
 | `subplan_m1_automatizado_t2.csv` | 8d42417274934764c24774d10bbbca8ac47807e1d2960a22167ddb564933c41a |
 | `subplan_m2_automatizado_t1.csv` | 8c7de56298cb573c60c59c4d5438278b9ceb9b3fb3ffc3cad885cff0eef057f9 |
 | `subplan_m2_automatizado_t2.csv` | 7dac79db810566f6f351ed28ce0f0a6ff4563a2f81eb03d0fbc86f0bb621438d |
-| cada `sidecar_<id_corrida>.json` usado | pendiente (una fila por archivo, al versionarlo) |
+| `sidecar_m1-automatizado-t1.json` | d368eff0366e66c0c94cd8d878a5fc46cf23d58c845305812c47031516606bf2 |
+| `sidecar_m1-automatizado-t2.json` | 9fb73e9dca813d543450cf67dd48de04a4b3eb4d61748e8562144fbcefc0844e |
+| `sidecar_m2-automatizado-t1.json` | dc24315b0c7ae56e5e991dff05ad32378c4e6aa49501c7166347fbb20bc62311 |
+| `sidecar_m2-automatizado-t2.json` y `sidecar_*_tel.json` | pendiente (una fila por archivo, al versionarlo) |
 
 Los datos de la campaña se citan desde `evaluation/data/README.md`, que describe el resto de esta jerarquía.
 
