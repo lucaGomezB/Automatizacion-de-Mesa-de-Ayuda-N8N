@@ -56,6 +56,14 @@
       var corpusCases = [];
       var device = null;
 
+      // Processing gate (c-174, design.md D6): after a call with a case, the
+      // Call control stays disabled until the case is fully processed.
+      var PROCESSING_POLL_MS = 2000;
+      var PROCESSING_TIMEOUT_MS = 60000;
+      var casePollTimer = null;
+      var processingDeadline = 0;
+      var callStartedAt = 0;
+
       function setStatus(text, cssClass) {
         statusEl.textContent = "Estado: " + text;
         statusEl.className = cssClass || "";
@@ -64,6 +72,70 @@
       function setConnected(isConnected) {
         callButton.disabled = isConnected;
         hangupButton.disabled = !isConnected;
+      }
+
+      function cancelProcessingTimer() {
+        if (casePollTimer !== null) {
+          clearTimeout(casePollTimer);
+          casePollTimer = null;
+        }
+      }
+
+      function leaveProcessing(message, cssClass) {
+        // Terminal transition: cancel the timer and re-enable Call so the
+        // operator is never trapped (design.md D6/D7).
+        cancelProcessingTimer();
+        setStatus(message, cssClass);
+        setConnected(false);
+      }
+
+      function scheduleProcessingPoll(caseId, since) {
+        casePollTimer = setTimeout(function () {
+          pollCaseStatus(caseId, since);
+        }, PROCESSING_POLL_MS);
+      }
+
+      function pollCaseStatus(caseId, since) {
+        fetch("/case-status?case_id=" + encodeURIComponent(caseId) + "&since=" + since,
+              { cache: "no-store" }
+        ).then(function (res) {
+          if (!res.ok) { throw new Error("sonda HTTP " + res.status); }
+          return res.json();
+        }).then(function (data) {
+          if (data && data.listo) {
+            leaveProcessing("caso " + caseId + " procesado", "registered");
+            return;
+          }
+          if (Date.now() >= processingDeadline) {
+            var estado = data && data.transcripcion_estado
+              ? data.transcripcion_estado : "pendiente";
+            leaveProcessing(
+              "timeout: caso " + caseId + " sigue en " + estado + "; puede continuar",
+              "error"
+            );
+            return;
+          }
+          scheduleProcessingPoll(caseId, since);
+        }).catch(function (error) {
+          if (Date.now() >= processingDeadline) {
+            leaveProcessing(
+              "no se pudo confirmar el caso " + caseId + " (" + error.message +
+                "); puede continuar",
+              "error"
+            );
+            return;
+          }
+          scheduleProcessingPoll(caseId, since);
+        });
+      }
+
+      function enterProcessing(caseId, since) {
+        cancelProcessingTimer();
+        processingDeadline = Date.now() + PROCESSING_TIMEOUT_MS;
+        setStatus("procesando " + caseId + "...", "busy");
+        callButton.disabled = true;
+        hangupButton.disabled = true;
+        scheduleProcessingPoll(caseId, since);
       }
 
       function tokenIdentity(token) {
@@ -151,6 +223,10 @@
 
       callButton.addEventListener("click", function () {
         if (!device) { return; }
+        // A new call supersedes any pending gate and pins the retry instant
+        // (design.md D3): ingreso with ingresado_en < since is a prior run.
+        cancelProcessingTimer();
+        callStartedAt = Date.now();
         setStatus("llamando...", "busy");
         // Enable Hangup immediately; "accept" keeps it enabled once connected.
         setConnected(true);
@@ -170,8 +246,14 @@
             setConnected(true);
           });
           call.on("disconnect", function () {
-            setStatus("desconectado");
-            setConnected(false);
+            var selected = selectedCaseId();
+            if (selected) {
+              // Do NOT re-enable Call: wait until the case is processed.
+              enterProcessing(selected, callStartedAt);
+            } else {
+              setStatus("desconectado");
+              setConnected(false);
+            }
           });
         }).catch(function (error) {
           setStatus("error: " + (error && error.message ? error.message : error), "error");
@@ -181,9 +263,12 @@
 
       hangupButton.addEventListener("click", function () {
         if (!device) { return; }
+        cancelProcessingTimer();
         device.disconnectAll();
         setConnected(false);
       });
+
+      window.addEventListener("beforeunload", cancelProcessingTimer);
 
       register();
       loadCorpusCases();

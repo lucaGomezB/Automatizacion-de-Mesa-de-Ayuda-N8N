@@ -178,3 +178,89 @@ def test_page_shows_selected_case_for_recitation_without_playback():
 
 def test_page_never_logs_case_descriptions():
     assert "console.log" not in _html()
+
+
+# ── 5.x: processing gate after a call with a case (c-174, design.md D6) ─────
+
+
+def test_page_has_processing_state_helpers():
+    html = _html()
+    assert "function enterProcessing" in html
+    assert "function leaveProcessing" in html
+    assert "function pollCaseStatus" in html
+    assert "function scheduleProcessingPoll" in html
+    assert "function cancelProcessingTimer" in html
+
+
+def test_page_queries_the_case_status_endpoint_with_case_and_since():
+    html = _html()
+    assert 'fetch("/case-status?case_id="' in html
+    assert "encodeURIComponent(caseId)" in html
+    assert "&since=" in html
+
+
+def test_page_declares_processing_constants_and_message():
+    html = _html()
+    assert "PROCESSING_POLL_MS" in html
+    assert "PROCESSING_TIMEOUT_MS" in html
+    assert "procesando" in html
+
+
+def test_enter_processing_disables_call_and_hangup():
+    body = _handler_body(_html(), "function enterProcessing")
+    assert "callButton.disabled = true" in body
+    assert "hangupButton.disabled = true" in body
+    assert "setStatus(" in body
+
+
+def test_disconnect_with_case_enters_processing_not_reset():
+    body = _handler_body(_html(), 'call.on("disconnect"')
+    assert "selectedCaseId()" in body
+    assert "enterProcessing(" in body
+    # The no-case branch still resets the controls exactly as before.
+    assert "setConnected(false)" in body
+
+
+def test_disconnect_processing_branch_is_guarded_by_selected_case():
+    body = _handler_body(_html(), 'call.on("disconnect"')
+    assert "if (selected)" in body
+    assert body.index("enterProcessing(") < body.index("setConnected(false)")
+
+
+def test_poll_releases_the_gate_when_the_case_is_ready():
+    body = _handler_body(_html(), "function pollCaseStatus")
+    assert "data.listo" in body
+    assert "leaveProcessing(" in body
+
+
+def test_poll_exposes_the_state_and_releases_on_timeout():
+    body = _handler_body(_html(), "function pollCaseStatus")
+    assert "processingDeadline" in body
+    assert "transcripcion_estado" in body
+    assert "leaveProcessing(" in body
+
+
+def test_enter_processing_sets_the_timeout_deadline():
+    body = _handler_body(_html(), "function enterProcessing")
+    assert "processingDeadline" in body
+    assert "PROCESSING_TIMEOUT_MS" in body
+
+
+def test_processing_timer_is_cancelled_with_clear_timeout():
+    body = _handler_body(_html(), "function cancelProcessingTimer")
+    assert "clearTimeout(" in body
+    assert "casePollTimer" in body
+
+
+def test_processing_timer_is_cancelled_on_unload_and_hangup():
+    html = _html()
+    assert "beforeunload" in html
+    hangup = _handler_body(html, 'hangupButton.addEventListener("click"')
+    assert "cancelProcessingTimer()" in hangup
+
+
+def test_leave_processing_cancels_timer_and_re_enables_call():
+    body = _handler_body(_html(), "function leaveProcessing")
+    assert "cancelProcessingTimer()" in body
+    assert "setConnected(false)" in body
+

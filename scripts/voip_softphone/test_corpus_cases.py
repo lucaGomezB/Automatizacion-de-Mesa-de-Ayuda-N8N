@@ -220,3 +220,81 @@ def test_corpus_cases_endpoint_does_not_log_descriptions(server, capfd):
     captured = capfd.readouterr()
     assert "Caso telefonico uno" not in captured.out
     assert "Caso telefonico uno" not in captured.err
+
+
+# ── 4.1: same server serves /corpus-cases and /case-status (c-174) ──────────
+
+
+class _FakeProbeOpener:
+    """Replays a login and a ready ingreso; records the transport calls."""
+
+    def __init__(self):
+        self.requests = []
+
+    def __call__(self, request, config):
+        self.requests.append(request)
+        if request.get_method() == "POST":
+            return 200, json.dumps({"access_token": "jwt-test"}).encode("utf-8")
+        ingreso = {
+            "incidente_id": 42,
+            "transcripcion_estado": "transcrito",
+            "latencia_e2e_ms": 7000,
+            "ingresado_en": "2026-11-06T12:00:00+00:00",
+        }
+        return 200, json.dumps(ingreso).encode("utf-8")
+
+
+@pytest.fixture
+def server_with_probe(tmp_path):
+    corpus = _write_corpus(
+        tmp_path / "corpus.json",
+        [_caso("T1", "llamada telefonica", descripcion="Caso telefonico uno")],
+    )
+    config = mt.load_config(ENV)
+    probe_config = mt.ProbeConfig(
+        "https://backend.test", "operador-sonda", "pw", True
+    )
+    client = mt.ProbeClient(probe_config, _FakeProbeOpener())
+    httpd = mt.build_server(
+        "127.0.0.1",
+        0,
+        config,
+        identity="corpus-operator",
+        ttl_seconds=120,
+        corpus_json_path=corpus,
+        probe_config=probe_config,
+        probe=client.status,
+    )
+    thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+    thread.start()
+    try:
+        yield httpd
+    finally:
+        httpd.shutdown()
+        thread.join(timeout=5)
+        httpd.server_close()
+
+
+def test_same_server_serves_corpus_and_case_status(server_with_probe):
+    cases_status, cases_body = _get(server_with_probe, "/corpus-cases")
+    probe_status, probe_body = _get(
+        server_with_probe, "/case-status?case_id=T1&since=1"
+    )
+    assert cases_status == 200
+    assert json.loads(cases_body.decode("utf-8")) == [
+        {"id": "T1", "descripcion": "Caso telefonico uno"}
+    ]
+    assert probe_status == 200
+    payload = json.loads(probe_body.decode("utf-8"))
+    assert payload["listo"] is True
+    assert payload["incidente_id"] == 42
+
+
+def test_case_status_does_not_interfere_with_corpus_listing(server_with_probe):
+    _get(server_with_probe, "/case-status?case_id=T1&since=1")
+    status, body = _get(server_with_probe, "/corpus-cases")
+    assert status == 200
+    assert json.loads(body.decode("utf-8")) == [
+        {"id": "T1", "descripcion": "Caso telefonico uno"}
+    ]
+

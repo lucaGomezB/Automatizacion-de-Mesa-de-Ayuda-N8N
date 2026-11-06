@@ -234,6 +234,13 @@ Sirve la página y un token fresco por request desde el mismo origen de loopback
 el texto del caso por el micrófono y presionar **Hangup** al terminar. La herramienta no
 reproduce audio (no hay TTS ni playback).
 
+> **Gate por caso (c-174).** Con un caso seleccionado, `Call` queda deshabilitado tras
+> colgar hasta que el incidente quede persistido (la página consulta la sonda
+> `GET /case-status`). Requiere exportar `INGEST_OPERATOR_USERNAME` /
+> `INGEST_OPERATOR_PASSWORD` y puede necesitar `--insecure`. El detalle de la sonda y de
+> los flags vive en `scripts/voip_softphone/README.md` (sección 4.b), que es la fuente de
+> verdad única; no duplicar acá.
+
 **Prerequisito de la guarda de costo.** El stack base usa `COST_GUARD_RATE_LIMIT_CALLS=30`
 (rate global, 1 h) y `COST_GUARD_CALLER_RATE_LIMIT_CALLS=3` (por origen, 1 h)
 (`App/Backend/app/config/settings.py:192-194`). Con 81 llamadas, la llamada 31 se deniega.

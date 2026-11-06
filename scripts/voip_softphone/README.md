@@ -166,6 +166,47 @@ python3 scripts/voip_softphone/mint_token.py token
 Tanto `token` como `serve` aceptan `--identity` y `--ttl` (segundos; default
 `1800`). `--corpus-json` aplica solo a `serve`.
 
+## 4.b Gate de proceso y sonda `GET /case-status` (c-174)
+
+Con un **caso seleccionado**, la pagina NO habilita `Call` apenas cuelga: entra
+en estado `procesando` y consulta la sonda hasta que el caso quede procesado
+(incidente persistido). Sin caso (modo desarrollo) el comportamiento es el de
+siempre. El objetivo es serializar las llamadas del brazo de telefonia y no
+inflar `latencia_e2e_ms` por contencion.
+
+La sonda vive **server-side** (mismo origen de loopback) y autentica contra el
+backend con las credenciales del operador; los secretos y el JWT nunca llegan a
+la pagina:
+
+- `GET /case-status?case_id=<id>&since=<epoch_ms>` -> `{listo, transcripcion_estado, incidente_id, latencia_e2e_ms}`.
+  `since` es opcional: es el instante (`Date.now()`) en que se apreto `Call`; el
+  servidor descarta un ingreso cuyo `ingresado_en < since`, de modo que un
+  **reintento del mismo caso** no se reporta desde la corrida anterior.
+- `listo` es verdadero solo cuando EXISTE un ingreso y su `incidente_id` no es
+  nulo. Un `404` (sin ingreso) da `listo=false`.
+- La sonda consulta el endpoint existente `GET /api/v1/telefonia/ingresos?corpus_case_id=<id>&latest=true`
+  (no se modifica el backend).
+
+Flags de `serve`:
+
+- `--backend-base-url` (default `https://localhost`): URL base del backend.
+- `--insecure`: no verifica el certificado TLS (autofirmado de nginx).
+
+Prerequisito del gate: exportar las credenciales del operador, que se leen
+exclusivamente del entorno:
+
+```bash
+export INGEST_OPERATOR_USERNAME='<operador administrador_directorio>'
+export INGEST_OPERATOR_PASSWORD='<password del operador>'   # gitleaks:allow
+python3 scripts/voip_softphone/mint_token.py serve --insecure
+```
+
+Si faltan las credenciales, `serve` sigue operativo pero `/case-status`
+responde `probe_unconfigured` y la pagina degrada a una advertencia visible sin
+bloquear al operador (fail-open). Con credenciales parciales, `serve` avisa por
+stderr y deshabilita la sonda. Un timeout de la sonda (~60 s) tambien muestra
+una advertencia y rehabilita `Call`: el operador nunca queda atrapado.
+
 ## 5. Colocar la llamada
 
 1. Con el servidor arriba, abrir `http://127.0.0.1:8765/`.
@@ -187,7 +228,11 @@ Tanto `token` como `serve` aceptan `--identity` y `--ttl` (segundos; default
    grabacion y dispara el `recordingStatusCallback`: el backend descarga el
    audio, hace STT, pseudonimiza y hace handoff a n8n, que crea el incidente.
    La grabacion tambien termina sola a los 45 s o tras ~5 s de silencio.
-6. La pagina queda lista para una nueva llamada.
+6. Con un caso seleccionado, la pagina entra en `procesando` y deja `Call`
+   deshabilitado hasta que la sonda confirme el caso (ver seccion 4.b). Al
+   quedar procesado, o al agotarse el timeout con una advertencia, `Call` se
+   rehabilita. Sin caso, la pagina queda lista para una nueva llamada como
+   siempre.
 
 > **Nota sobre `#`**: el canal telefonico real espera que el llamante presione
 > `#` (`finishOnKey`) para cerrar la grabacion sin colgar. El softphone NO tiene

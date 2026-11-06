@@ -9,7 +9,10 @@ API Key Secret and assert the claim shape required by the spec
 from __future__ import annotations
 
 import io
+import json
 import time
+import urllib.error
+import urllib.request
 
 import jwt
 import pytest
@@ -148,3 +151,304 @@ def test_load_config_reads_only_from_supplied_environ():
     config = mt.load_config(ENV)
     assert config.account_sid == ACCOUNT_SID
     assert config.api_key_secret == API_KEY_SECRET
+
+
+# ── 1.x: pure case-status decision (c-174, design.md D2/D3) ─────────────────
+
+
+def _ingreso(**overrides) -> dict:
+    """A ``TelefoniaIngresoRead``-shaped payload with synthetic values."""
+
+    payload = {
+        "id": 8,
+        "call_sid": "CA" + "3" * 32,
+        "corpus_case_id": "T1",
+        "transcripcion_estado": "transcrito",
+        "ingresado_en": "2026-11-06T12:00:00+00:00",
+        "persistido_en": "2026-11-06T12:00:07+00:00",
+        "incidente_id": 20,
+        "latencia_e2e_ms": 6800,
+        "duracion_segundos": 18,
+    }
+    payload.update(overrides)
+    return payload
+
+
+def test_evaluate_case_status_ready_when_ingreso_has_incidente():
+    result = mt.evaluate_case_status(_ingreso())
+    assert result == {
+        "listo": True,
+        "transcripcion_estado": "transcrito",
+        "incidente_id": 20,
+        "latencia_e2e_ms": 6800,
+    }
+
+
+def test_evaluate_case_status_without_ingreso_is_not_ready():
+    result = mt.evaluate_case_status(None)
+    assert result == {
+        "listo": False,
+        "transcripcion_estado": None,
+        "incidente_id": None,
+        "latencia_e2e_ms": None,
+    }
+
+
+def test_evaluate_case_status_without_incidente_is_not_ready():
+    result = mt.evaluate_case_status(
+        _ingreso(incidente_id=None, latencia_e2e_ms=None)
+    )
+    assert result["listo"] is False
+    assert result["incidente_id"] is None
+
+
+def test_evaluate_case_status_terminal_error_exposes_estado_and_stays_not_ready():
+    result = mt.evaluate_case_status(
+        _ingreso(
+            incidente_id=None,
+            latencia_e2e_ms=None,
+            transcripcion_estado="error_stt",
+        )
+    )
+    assert result["listo"] is False
+    assert result["transcripcion_estado"] == "error_stt"
+
+
+def test_evaluate_case_status_discards_ingreso_older_than_since():
+    # Retry (D3): a fresh ``since`` (epoch ms) invalidates the previous run.
+    since_ms = mt._parse_iso_to_epoch_ms("2026-11-06T12:00:30+00:00")
+    result = mt.evaluate_case_status(_ingreso(), since_ms=since_ms)
+    assert result["listo"] is False
+
+
+def test_evaluate_case_status_accepts_ingreso_at_or_after_since():
+    since_ms = mt._parse_iso_to_epoch_ms("2026-11-06T12:00:00+00:00")
+    result = mt.evaluate_case_status(_ingreso(), since_ms=since_ms)
+    assert result["listo"] is True
+
+
+def test_parse_iso_to_epoch_ms_accepts_zulu_timestamps():
+    assert mt._parse_iso_to_epoch_ms("1970-01-01T00:00:01Z") == 1000
+
+
+def test_parse_iso_to_epoch_ms_returns_none_for_missing_value():
+    assert mt._parse_iso_to_epoch_ms(None) is None
+    assert mt._parse_iso_to_epoch_ms("no-es-fecha") is None
+
+
+# ── 2.x: probe config + transport (c-174, design.md D4/D5/D8) ───────────────
+
+
+PROBE_ENV = {
+    "INGEST_OPERATOR_USERNAME": "operador-sonda",
+    "INGEST_OPERATOR_PASSWORD": "placeholder-sonda-pw",
+}
+
+
+class _FakeOpener:
+    """Deterministic opener: replays canned ``(status, body)`` tuples."""
+
+    def __init__(self, responses):
+        self._responses = list(responses)
+        self.requests = []
+
+    def __call__(self, request, config):
+        self.requests.append(request)
+        return self._responses.pop(0)
+
+    def methods(self):
+        return [request.get_method() for request in self.requests]
+
+
+def _probe_config(**overrides):
+    values = {
+        "backend_base_url": "https://backend.test",
+        "username": "operador-sonda",
+        "password": "placeholder-sonda-pw",
+        "insecure": True,
+    }
+    values.update(overrides)
+    return mt.ProbeConfig(**values)
+
+
+def test_load_probe_config_reads_credentials_and_flags():
+    config = mt.load_probe_config(PROBE_ENV, "https://backend.test", True)
+    assert config is not None
+    assert config.username == "operador-sonda"
+    assert config.password == "placeholder-sonda-pw"
+    assert config.backend_base_url == "https://backend.test"
+    assert config.insecure is True
+
+
+def test_load_probe_config_absent_credentials_returns_none():
+    assert mt.load_probe_config({}, "https://localhost", False) is None
+
+
+def test_load_probe_config_partial_credentials_raises_config_error():
+    with pytest.raises(mt.ConfigError) as excinfo:
+        mt.load_probe_config(
+            {"INGEST_OPERATOR_USERNAME": "operador-sonda"},
+            "https://localhost",
+            False,
+        )
+    assert "INGEST_OPERATOR_PASSWORD" in str(excinfo.value)
+    assert "placeholder" not in str(excinfo.value)
+
+
+def test_probe_config_repr_and_str_never_expose_password():
+    config = _probe_config(password="secreto-muy-secreto")
+    assert "secreto-muy-secreto" not in repr(config)
+    assert "secreto-muy-secreto" not in str(config)
+
+
+def test_login_backend_extracts_access_token():
+    opener = _FakeOpener(
+        [(200, json.dumps({"access_token": "jwt-1"}).encode("utf-8"))]
+    )
+    assert mt.login_backend(_probe_config(), opener) == "jwt-1"
+    assert opener.methods() == ["POST"]
+
+
+def test_fetch_ingreso_returns_status_and_payload():
+    opener = _FakeOpener([(200, json.dumps(_ingreso()).encode("utf-8"))])
+    status, payload = mt.fetch_ingreso(_probe_config(), "jwt-1", "T1", opener)
+    assert status == 200
+    assert payload["incidente_id"] == 20
+    assert opener.methods() == ["GET"]
+
+
+def test_fetch_ingreso_404_returns_none_payload():
+    opener = _FakeOpener([(404, b"")])
+    status, payload = mt.fetch_ingreso(_probe_config(), "jwt-1", "T1", opener)
+    assert status == 404
+    assert payload is None
+
+
+def test_probe_client_relogins_once_on_401_and_retries():
+    opener = _FakeOpener(
+        [
+            (200, json.dumps({"access_token": "jwt-1"}).encode("utf-8")),
+            (401, b""),
+            (200, json.dumps({"access_token": "jwt-2"}).encode("utf-8")),
+            (200, json.dumps(_ingreso()).encode("utf-8")),
+        ]
+    )
+    client = mt.ProbeClient(_probe_config(), opener)
+    result = client.status("T1", None)
+    assert result["listo"] is True
+    assert opener.methods() == ["POST", "GET", "POST", "GET"]
+
+
+def test_probe_client_propagates_5xx_as_probe_error():
+    opener = _FakeOpener(
+        [
+            (200, json.dumps({"access_token": "jwt-1"}).encode("utf-8")),
+            (503, b""),
+        ]
+    )
+    client = mt.ProbeClient(_probe_config(), opener)
+    with pytest.raises(mt.ProbeError):
+        client.status("T1", None)
+
+
+def test_probe_client_caches_token_across_calls():
+    opener = _FakeOpener(
+        [
+            (200, json.dumps({"access_token": "jwt-1"}).encode("utf-8")),
+            (200, json.dumps(_ingreso()).encode("utf-8")),
+            (200, json.dumps(_ingreso()).encode("utf-8")),
+        ]
+    )
+    client = mt.ProbeClient(_probe_config(), opener)
+    client.status("T1", None)
+    client.status("T1", None)
+    assert opener.methods() == ["POST", "GET", "GET"]
+
+
+def test_default_opener_wraps_network_errors_as_probe_error(monkeypatch):
+    def boom(*args, **kwargs):
+        raise urllib.error.URLError("sin red")
+
+    monkeypatch.setattr(mt.urllib.request, "urlopen", boom)
+    request = urllib.request.Request("https://backend.test/algo")
+    with pytest.raises(mt.ProbeError):
+        mt._default_opener(request, _probe_config())
+
+
+def test_probe_client_surfaces_network_errors_as_probe_error():
+    def boom(request, config):
+        raise mt.ProbeError("No se pudo contactar el backend")
+
+    client = mt.ProbeClient(_probe_config(), boom)
+    with pytest.raises(mt.ProbeError):
+        client.status("T1", None)
+
+
+
+# ── 6.x: `serve` CLI probe flags (c-174, design.md D1/D5) ───────────────────
+
+
+def test_serve_parser_defaults_for_probe_options():
+    args = mt.build_parser().parse_args(["serve"])
+    assert args.backend_base_url == "https://localhost"
+    assert args.insecure is False
+
+
+def test_serve_parser_accepts_probe_options():
+    args = mt.build_parser().parse_args(
+        ["serve", "--backend-base-url", "https://backend.test", "--insecure"]
+    )
+    assert args.backend_base_url == "https://backend.test"
+    assert args.insecure is True
+
+
+def _stub_build_server(monkeypatch, captured):
+    class FakeServer:
+        def serve_forever(self):
+            raise KeyboardInterrupt
+
+        def server_close(self):
+            pass
+
+    def fake_build_server(host, port, config, identity, **kwargs):
+        captured.update(kwargs)
+        captured["host"] = host
+        return FakeServer()
+
+    monkeypatch.setattr(mt, "build_server", fake_build_server)
+
+
+def test_serve_propagates_probe_config_from_environment(monkeypatch):
+    captured = {}
+    _stub_build_server(monkeypatch, captured)
+    env = dict(ENV)
+    env.update(PROBE_ENV)
+    out, err = io.StringIO(), io.StringIO()
+    assert mt.run(["serve", "--insecure"], environ=env, out=out, err=err) == 0
+    probe = captured["probe_config"]
+    assert isinstance(probe, mt.ProbeConfig)
+    assert probe.username == "operador-sonda"
+    assert probe.insecure is True
+    assert probe.backend_base_url == "https://localhost"
+
+
+def test_serve_without_probe_credentials_stays_operational(monkeypatch):
+    captured = {}
+    _stub_build_server(monkeypatch, captured)
+    out, err = io.StringIO(), io.StringIO()
+    assert mt.run(["serve"], environ=dict(ENV), out=out, err=err) == 0
+    assert captured["probe_config"] is None
+
+
+def test_serve_partial_probe_credentials_warn_and_disable_probe(monkeypatch):
+    captured = {}
+    _stub_build_server(monkeypatch, captured)
+    env = dict(ENV)
+    env["INGEST_OPERATOR_USERNAME"] = "operador-sonda"
+    out, err = io.StringIO(), io.StringIO()
+    assert mt.run(["serve"], environ=env, out=out, err=err) == 0
+    assert captured["probe_config"] is None
+    assert "INGEST_OPERATOR" in err.getvalue()
+
+
+
