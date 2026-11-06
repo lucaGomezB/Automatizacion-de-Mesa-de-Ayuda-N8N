@@ -162,13 +162,50 @@ Los harnesses de ingesta ejecutan el brazo automatizado y registran, por caso, `
 
    ```bash
    python scripts/corpus_ingest/ingest_telefonia_corpus.py \
+     --insecure \
      --plan evaluation/data/campana/subplan_m1_automatizado_t1.csv \
      --id-corrida m1-automatizado-t1-tel \
      --json evaluation/data/campana/corpus_campana.json \
      --sidecar evaluation/data/campana/sidecar_m1-automatizado-t1-tel.json
    ```
 
-   Selecciona los casos `telefono` del plan, recupera cada medición como siempre y copia `orden`, `posicion`, `mitad` y `brazo_primero` al sidecar, sin decidir el orden de las llamadas.
+   El `--insecure` es obligatorio: el default `--base-url https://localhost` apunta al
+   certificado autofirmado de nginx. Aplica a las 4 corridas por sub-plan `automatizado`.
+
+   Selecciona los casos `telefono` del plan, recupera cada medición como siempre y copia
+   `orden`, `posicion`, `mitad` y `brazo_primero` al sidecar, sin decidir el orden de las
+   llamadas.
+
+   **El operador del softphone.** La campaña de telefonía corre sobre el **stack principal**
+   (nginx base + el dominio ngrok reservado), NO sobre el perfil corpus aislado de
+   `docs/runbook-corpus-telefonia.md` (c-70). Cada sub-plan `automatizado` corresponde a la
+   mitad de `O1` (mitad 1) o de `O2` (mitad 2). Con el stack principal y el túnel ngrok
+   arriba, el operador arranca el softphone:
+
+   ```bash
+   python3 scripts/voip_softphone/mint_token.py serve
+   ```
+
+   Sirve la página en `127.0.0.1:8765`: abrir `http://127.0.0.1:8765/`, elegir **Caso del
+   corpus (teléfono)**, presionar **Call**, recitar el texto por micrófono y **Hangup** al
+   terminar. Las llamadas se realizan **en orden de `posicion`** eligiendo el `corpus_case_id`
+   que indica el sub-plan. El detalle del softphone (variables, setup de Twilio, arranque y
+   colocación) vive en `scripts/voip_softphone/README.md`, que es la fuente de verdad única;
+   este runbook no lo reproduce.
+
+   **Prerequisitos de la corrida:**
+
+   - **Guarda de costo.** El stack base usa `COST_GUARD_RATE_LIMIT_CALLS=30` (global, 1 h) y
+     `COST_GUARD_CALLER_RATE_LIMIT_CALLS=3` (por origen, 1 h)
+     (`App/Backend/app/config/settings.py:192-194`). Con 81 llamadas, la llamada 31 se
+     deniega: subir el rate global (por ejemplo a 200) en `App/Backend/.env` y recrear el
+     servicio (`docker compose up -d backend`). La identidad única por sesión de
+     `mint_token.py` evita el rate por origen (3/h), pero el global de 30/h SIGUE aplicando.
+   - **Twilio.** Los números, la Voice URL del TwiML App y `BACKEND_PUBLIC_BASE_URL` deben ser
+     el mismo dominio ngrok reservado `tameness-trilogy-unrefined.ngrok-free.dev`.
+     `TWILIO_ACCOUNT_SID` sale de `App/Backend/.env`; `TWILIO_API_KEY_SID`,
+     `TWILIO_API_KEY_SECRET` y `TWILIO_TWIML_APP_SID` de
+     `scripts/voip_softphone/softphone.env` (gitignored).
 5. `--orden/--seed` (en `ingest_via_n8n.py` e `ingest_corpus.py`) es un atajo que genera el plan al vuelo y lo deja en `<sidecar>.plan.csv`. **No se usa en la campaña**: el plan oficial es el versionado, con una semilla registrada.
 
 Qué abortan los harnesses (exit code 2, sin enviar ni escribir nada):

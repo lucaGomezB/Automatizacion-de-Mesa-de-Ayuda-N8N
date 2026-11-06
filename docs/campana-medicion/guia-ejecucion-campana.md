@@ -193,6 +193,7 @@ python scripts/corpus_ingest/ingest_corpus.py \
 # telefonía (NO ingesta: el operador del softphone hace las llamadas siguiendo el plan;
 # el harness lee las mediciones)
 python scripts/corpus_ingest/ingest_telefonia_corpus.py \
+  --insecure \
   --plan evaluation/data/campana/subplan_m1_automatizado_t1.csv \
   --id-corrida m1-automatizado-t1-tel \
   --json evaluation/data/campana/corpus_campana.json \
@@ -200,11 +201,59 @@ python scripts/corpus_ingest/ingest_telefonia_corpus.py \
 ```
 
 Cada harness se repite una vez por cada sub-plan `automatizado` (4 en total) con su
-`--id-corrida` y su `--sidecar` propios, siempre con `--dry-run` primero. Los **sidecars**
-(`evaluation/data/campana/sidecar_<id_corrida>.json`, uno por corrida) son las entradas que
-produce este paso y las que consume el export de 1.5.3. Los CSV/XLSX locales con datos
-personales no se versionan: los datos de campaña viven solo en el sidecar y en la copia de
-campaña.
+`--id-corrida` y su `--sidecar` propios, siempre con `--dry-run` primero. Los ejemplos de
+telefonía llevan `--insecure` (el default `--base-url https://localhost` apunta al
+certificado autofirmado de nginx); aplica a las 4 corridas por sub-plan `automatizado`. Los
+**sidecars** (`evaluation/data/campana/sidecar_<id_corrida>.json`, uno por corrida) son las
+entradas que produce este paso y las que consume el export de 1.5.3. Los CSV/XLSX locales con
+datos personales no se versionan: los datos de campaña viven solo en el sidecar y en la copia
+de campaña.
+
+##### 1.5.2.1 Brazo de telefonía (softphone)
+
+El brazo de telefonía corre sobre el **stack principal** de la campaña (nginx base + el
+dominio ngrok reservado), NO sobre el perfil corpus aislado de
+`docs/runbook-corpus-telefonia.md` (c-70): ese perfil usa una base descartable y la campaña
+no lo usa. El detalle del softphone (variables, setup de Twilio, arranque y colocación de la
+llamada) vive en `scripts/voip_softphone/README.md`, que es la **fuente de verdad única**;
+acá se repite solo el mínimo operativo.
+
+**Quién llama y en qué orden.** Cada sub-plan `automatizado` tiene su mitad asignada a `O1`
+(mitad 1) o `O2` (mitad 2). El operador realiza las llamadas **en orden de `posicion`**,
+eligiendo el `corpus_case_id` de cada caso en la lista de casos telefónicos del corpus. En
+total son 81 llamadas (m1-t1=16, m1-t2=24, m2-t1=18, m2-t2=23).
+
+**Arranque del softphone.** Con el stack principal y el túnel ngrok arriba:
+
+```bash
+python3 scripts/voip_softphone/mint_token.py serve
+```
+
+Sirve la página y un token fresco por request desde el mismo origen de loopback. Abrir
+`http://127.0.0.1:8765/`, elegir **Caso del corpus (teléfono)**, presionar **Call**, recitar
+el texto del caso por el micrófono y presionar **Hangup** al terminar. La herramienta no
+reproduce audio (no hay TTS ni playback).
+
+**Prerequisito de la guarda de costo.** El stack base usa `COST_GUARD_RATE_LIMIT_CALLS=30`
+(rate global, 1 h) y `COST_GUARD_CALLER_RATE_LIMIT_CALLS=3` (por origen, 1 h)
+(`App/Backend/app/config/settings.py:192-194`). Con 81 llamadas, la llamada 31 se deniega.
+Antes de correr el brazo, subir el rate global (por ejemplo a 200) en `App/Backend/.env` (el
+`env_file` del servicio `backend`) y recrear el servicio para que tome el valor:
+
+```bash
+docker compose up -d backend
+```
+
+El rate por origen (3/h) no es obstáculo: `mint_token.py` acuña una identidad única por
+sesión, de modo que la clave `caller` cambia y el 3/h no se agota; el global de 30/h SIGUE
+aplicando. Solo el perfil aislado `corpus` relaja el rate a 200
+(`docker-compose.yml:348-354`) y la campaña NO corre en ese perfil.
+
+**Prerequisitos de Twilio.** Los números Twilio, la Voice URL del TwiML App y
+`BACKEND_PUBLIC_BASE_URL` (`App/Backend/.env:14`) deben ser el MISMO dominio ngrok reservado
+`tameness-trilogy-unrefined.ngrok-free.dev`. `TWILIO_ACCOUNT_SID` proviene de
+`App/Backend/.env`; `TWILIO_API_KEY_SID`, `TWILIO_API_KEY_SECRET` y `TWILIO_TWIML_APP_SID`
+de `scripts/voip_softphone/softphone.env` (gitignored).
 
 #### 1.5.3 Export de intervenciones (desde `App/Backend`, con la app de pie)
 
