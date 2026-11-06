@@ -18,10 +18,13 @@ el kappa vuelve a quedar sin intervalo de confianza. El protocolo completo
 
 ## Estado actual
 
-**Doble etiquetado y brazo manual versionados; automatizado listo; intervención pendiente.** Están
+**Doble etiquetado, brazo manual y brazo automatizado (web/correo + telefonía) versionados; intervención pendiente.** Están
 versionados `plan_campana.csv`, los ocho sub-planes (4 manuales + 4 automatizados,
-`subplan_m<mitad>_<brazo>_t<turno>.csv`), `corpus_campana.json` (copia de campaña con
-tiempos en null), `registro_sujetos.csv` (8 filas, sin solapes), `doble_etiquetado.csv` (400 registros
+`subplan_m<mitad>_<brazo>_t<turno>.csv`), `corpus_campana.json` (copia de campaña, con
+los tiempos automatizados de los 200 casos; sin nulls), los ocho sidecars de corrida
+(`sidecar_m<mitad>-automatizado-t<turno>.json` de web/correo y
+`sidecar_m<mitad>-automatizado-t<turno>-tel.json` de telefonía), `registro_sujetos.csv`
+(8 filas, sin solapes), `doble_etiquetado.csv` (400 registros
 de `E1` y `E2` sobre los 200 casos) y `brazo_manual.csv` (220 registros de `O1` y `O2`
 sobre los 200 casos, con 20 de doble cobertura). El test de integridad
 (`test_tabla_primaria_versionada_integra`) ya no se omite. Faltan `intervenciones.csv`,
@@ -111,7 +114,7 @@ Al versionar cada archivo se completa su SHA-256 (en minúsculas, calculado sobr
 |---|---|
 | `plan_campana.csv` | b619a734092cbbf2b676636386e4b27bdbeaee76df3f97a19e4b7d1beeb43243 |
 | `registro_sujetos.csv` | f7a5653e733d423a3c4b5eee6b94a05d6ea02df38eb04997212865b329224ad2 |
-| `corpus_campana.json` | 5f0bba552f7b666969300682027c2c8aac87c4570da5742bc4c954b43b28a833 |
+| `corpus_campana.json` | 99bbe84b90b6ba66b34aae08c85bd318cd0e9600ad540e58b1a4bd8eccec06a5 |
 | `corpus_independiente.json` | pendiente |
 | `predicciones_independiente.json` | pendiente |
 | `reporte_independiente.md` | pendiente |
@@ -129,7 +132,10 @@ Al versionar cada archivo se completa su SHA-256 (en minúsculas, calculado sobr
 | `sidecar_m1-automatizado-t2.json` | 9fb73e9dca813d543450cf67dd48de04a4b3eb4d61748e8562144fbcefc0844e |
 | `sidecar_m2-automatizado-t1.json` | dc24315b0c7ae56e5e991dff05ad32378c4e6aa49501c7166347fbb20bc62311 |
 | `sidecar_m2-automatizado-t2.json` | affea49637de4c5189af8c0008984315d94038e8d9915481c323f3e91530d07a |
-| `sidecar_*_tel.json` | pendiente (una fila por archivo, al versionarlo) |
+| `sidecar_m1-automatizado-t1-tel.json` | 33a6b435d2e2a6fc6aec3a5a0abae77507de773a30001d1c2a6c85b52ae66875 |
+| `sidecar_m1-automatizado-t2-tel.json` | 15c3e45bfb9ef785aeae7fc1cf462951ecb3850f908f0071f70a74b56a66f801 |
+| `sidecar_m2-automatizado-t1-tel.json` | 603f4509519874e7255a4e59bfe2246ce08bee21abc2b3da595bdc106b27594a |
+| `sidecar_m2-automatizado-t2-tel.json` | cc885c4b48f5b5c2016b95a81866b728876f015d1ab245650bdd4bd0469c7d57 |
 
 Los datos de la campaña se citan desde `evaluation/data/README.md`, que describe el resto de esta jerarquía.
 
