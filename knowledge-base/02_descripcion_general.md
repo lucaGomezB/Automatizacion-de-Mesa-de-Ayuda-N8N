@@ -10,7 +10,7 @@
 | Driver DB | asyncpg | — | La tesis menciona psycopg2; el código usa asyncpg (ver [09](09_decisiones_y_supuestos.md) DD-08) |
 | Base de datos | PostgreSQL | 15.5 | Imagen `postgres:15.5-alpine`, volumen persistente |
 | Migraciones | Alembic | — | `alembic/versions/001_seed_catalogs.py` siembra catálogos |
-| Inferencia LLM | Gemini 3.6 Flash | `google-genai` >=2.33,<3 | temp 0,3 · top_p 0,9 · max_tokens 100 · timeout 30 s por intento (total 60 s, 2 reintentos); reemplaza al deprecado `google-generativeai` |
+| Inferencia LLM | Gemini 3.6 Flash | `google-genai` >=2.34,<3 | temp 0,3 · top_p 0,9 · max_tokens 100 · timeout 30 s por intento (total 60 s, 2 reintentos); reemplaza al deprecado `google-generativeai` |
 | Telefonía | Twilio Programmable Voice | — | TwiML + transcripción automática nativa |
 | Frontend | React 19 + TypeScript + Vite | — | React Query + Axios + shadcn/ui |
 | Logging | structlog | — | JSON (prod) / consola (dev) |

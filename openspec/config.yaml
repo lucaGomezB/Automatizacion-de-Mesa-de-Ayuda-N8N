@@ -30,7 +30,7 @@ stack:
     tool: N8N 2.11.2 (Docker autoalojado, imagen pinneada)
     workflow: n8n/workflow.json
   inference:
-    model: Gemini 3.6 Flash (google-genai >=2.33,<3)
+    model: Gemini 3.6 Flash (google-genai >=2.34,<3)
     params: { temperature: 0.3, top_p: 0.9, max_output_tokens: 100, timeout_s: 30, total_timeout_s: 60, max_retries: 2 }
     prompt: docs/prompt_gemini.txt
 
