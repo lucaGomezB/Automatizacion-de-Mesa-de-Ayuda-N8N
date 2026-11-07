@@ -8,6 +8,7 @@ the real corpus descriptions are never loaded.
 from __future__ import annotations
 
 import csv
+import email
 import json
 import sys
 from dataclasses import asdict, fields, replace
@@ -992,6 +993,55 @@ def test_build_email_message_sets_deterministic_message_id():
     )
     assert msg["Message-ID"] == "<corpus-R001@corpus.local>"
     assert msg["To"] == "ingesta@corpus.local"
+
+
+def test_build_email_message_uses_base64_transfer_encoding():
+    """c-182 (D4): el correo del harness viaja como base64, no quoted-printable.
+
+    Elimina la dependencia de la rama defectuosa del trigger IMAP en la ruta del
+    corpus (defensa en profundidad); los emisores reales los corrige la imagen
+    derivada.
+    """
+    msg = ivn.build_email_message(
+        case_id="R001",
+        descripcion="d" * 20,
+        domain="corpus.local",
+        sender="ingesta@corpus.local",
+        recipient="ingesta@corpus.local",
+    )
+    assert msg["Content-Transfer-Encoding"].lower() == "base64"
+
+
+def test_build_email_message_base64_round_trips_accented_body():
+    """c-182: round-trip exacto del cuerpo acentuado de mas de 78 bytes.
+
+    Ejercita la ruta que producia el mojibake en quoted-printable: al codificar
+    como base64 el cuerpo decodificado debe ser identico a la descripcion
+    (salvo el salto de linea canonico que agrega el serializador de email),
+    conservar los acentos y NO presentar la firma del mojibake (`Ã`). El
+    `Message-ID` deterministico se preserva.
+    """
+    descripcion = (
+        "Reunión del área de sistemas: la señal de red falla y la conexión "
+        "del equipo no responde; revisar la gestión del sector."
+    )
+    assert len(descripcion.encode("utf-8")) > 78
+
+    msg = ivn.build_email_message(
+        case_id="R014",
+        descripcion=descripcion,
+        domain="corpus.local",
+        sender="ingesta@corpus.local",
+        recipient="ingesta@corpus.local",
+    )
+    parsed = email.message_from_bytes(msg.as_bytes())
+    decoded = parsed.get_payload(decode=True).decode("utf-8")
+
+    # El serializador de email agrega el salto de linea canonico final.
+    assert decoded.rstrip("\n") == descripcion
+    assert "ó" in decoded and "ñ" in decoded
+    assert "Ã" not in decoded
+    assert msg["Message-ID"] == "<corpus-R014@corpus.local>"
 
 
 def test_ingest_email_correlates_exact_and_derives_metric():

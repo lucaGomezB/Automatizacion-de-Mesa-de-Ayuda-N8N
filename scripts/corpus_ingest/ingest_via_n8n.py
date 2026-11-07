@@ -1061,7 +1061,7 @@ def build_email_message(
     msg["To"] = recipient
     msg["Subject"] = f"Incidente {case_id}"
     msg["Message-ID"] = build_message_id(case_id, domain)
-    msg.set_content(descripcion)
+    msg.set_content(descripcion, cte="base64")
     return msg
 
 

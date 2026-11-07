@@ -10,8 +10,10 @@ introducido en el canal de ingesta de N8N.
 > base de la campaña, evidencia de tesis) requiere aprobación explícita del
 > usuario**.
 >
-> La corrección de la CAUSA (la imagen/harness N8N que genera la corrupción) es un
-> change separado (`c-182`) y queda fuera de alcance de este procedimiento.
+> La corrección de la CAUSA (la imagen/harness N8N que genera la corrupción) es el
+> change `c-182`, ya documentado en
+> [`runbook-fix-encoding-correo-n8n.md`](runbook-fix-encoding-correo-n8n.md) y
+> fuera del alcance de este procedimiento de reparación de datos.
 
 ---
 
@@ -221,4 +223,7 @@ Registrar por cada base intervenida, en el orden de ejecución:
 - Pruebas: `App/Backend/tests/test_reparar_encoding_descripciones.py`
   (`cd App/Backend; pytest tests/test_reparar_encoding_descripciones.py -v`).
 - Procedimiento de respaldo/restauración general: `docs/operational-guide.md` §3.
-- Change de causa raíz (imagen/harness N8N): `c-182` (fuera de alcance).
+- Change de causa raíz (imagen/harness N8N): `c-182`, documentado en
+  [`runbook-fix-encoding-correo-n8n.md`](runbook-fix-encoding-correo-n8n.md).
+  Este script de reparación permanece disponible para reparar filas legacy
+  corruptas (es idempotente).

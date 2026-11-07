@@ -9,6 +9,10 @@ Sistema de Automatización de Mesa de Ayuda — UTN 2026
 >
 > Para reparar el mojibake de las descripciones de correo, ver
 > [`runbook-reparacion-encoding-descripciones.md`](runbook-reparacion-encoding-descripciones.md).
+>
+> Para corregir la CAUSA (imagen N8N derivada que propaga el charset en la
+> decodificación de correo), ver
+> [`runbook-fix-encoding-correo-n8n.md`](runbook-fix-encoding-correo-n8n.md).
 
 ---
 

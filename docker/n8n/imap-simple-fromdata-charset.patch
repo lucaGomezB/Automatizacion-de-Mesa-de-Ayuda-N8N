@@ -1,0 +1,11 @@
+--- a/usr/local/lib/node_modules/n8n/node_modules/.pnpm/@n8n+imap@file+packages+@n8n+imap/node_modules/@n8n/imap/dist/imap-simple.js
++++ b/usr/local/lib/node_modules/n8n/node_modules/.pnpm/@n8n+imap@file+packages+@n8n+imap/node_modules/@n8n/imap/dist/imap-simple.js
+@@ -83,7 +83,7 @@
+                 }
+                 const data = result.parts[0].body;
+                 const encoding = part.encoding.toUpperCase();
+-                resolve(part_data_1.PartData.fromData(data, encoding));
++                resolve(part_data_1.PartData.fromData(data, encoding, part.params?.charset));
+             };
+             const fetchOnError = (error) => {
+                 fetch.removeListener('message', fetchOnMessage);

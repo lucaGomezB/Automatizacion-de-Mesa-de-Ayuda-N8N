@@ -132,7 +132,13 @@ services:
 
   # ── N8N ─────────────────────────────────────────────────────────────────────
   n8n:
-    image: n8nio/n8n:2.11.2   # Pin a la version validada localmente; evita cambios silenciosos de 'latest' (C-34)
+    # Imagen derivada (c-182): pin 2.11.2 + parche del charset de @n8n/imap en
+    # quoted-printable. Misma base que la version validada localmente; evita
+    # cambios silenciosos de 'latest' (C-34). Ver docker/n8n/Dockerfile y
+    # docs/runbook-fix-encoding-correo-n8n.md.
+    build:
+      context: ./docker/n8n
+      dockerfile: Dockerfile
     restart: unless-stopped
     ports:
       # Loopback: la UI y los webhooks locales quedan accesibles SOLO desde la
@@ -379,7 +385,11 @@ services:
 
   # ── N8N aislado (perfil corpus) ────────────────────────────────────────────
   n8n-corpus:
-    image: n8nio/n8n:2.11.2
+    # Imagen derivada (c-182): MISMA build que el servicio n8n (pin 2.11.2 +
+    # parche de @n8n/imap). No se divergen las imagenes operativa y de corpus.
+    build:
+      context: ./docker/n8n
+      dockerfile: Dockerfile
     profiles: ["corpus"]
     restart: unless-stopped
     ports:
