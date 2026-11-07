@@ -44,9 +44,10 @@ vi.mock('@/contexts/AuthContext', () => ({
 }));
 
 const TEXTO_ESPERADO =
-  'Estos incidentes fueron clasificados con una confianza inferior al 70%, ' +
-  'umbral de revisión humana del clasificador. Revisá y confirmá el sector ' +
-  'correcto para cada uno.';
+  'Estos incidentes requieren revisión humana: el clasificador no alcanzó el ' +
+  'umbral de confianza (70%), la clasificación quedó en la etapa de respaldo, ' +
+  'o el reportante no fue identificado. Revisá y confirmá el sector correcto ' +
+  'para cada uno.';
 
 function renderPage() {
   const queryClient = new QueryClient({
@@ -76,10 +77,13 @@ describe('AdministracionPage - aviso de criterio (FRH-010)', () => {
 
     await user.click(screen.getByRole('button', { name: /revisión humana/i }));
 
-    const aviso = await screen.findByText(/umbral de revisión humana del clasificador/i);
+    const aviso = await screen.findByText(/requieren revisión humana/i);
     expect(aviso.textContent).toBe(TEXTO_ESPERADO);
     expect(aviso.textContent).not.toMatch(/gemini/i);
     expect(aviso.textContent).not.toMatch(/flash/i);
     expect(aviso.textContent).toMatch(/70%/);
+    expect(aviso.textContent).toMatch(/etapa de respaldo/i);
+    expect(aviso.textContent).toMatch(/reportante no fue identificado/i);
+    expect(aviso.textContent).toMatch(/Revisá y confirmá el sector correcto/i);
   });
 });

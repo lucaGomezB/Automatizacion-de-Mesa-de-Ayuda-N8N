@@ -442,8 +442,9 @@ export default function AdministracionPage() {
             <div className="flex items-start gap-2 p-4 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
               <ClipboardCheck className="h-4 w-4 flex-shrink-0 mt-0.5 text-amber-600" />
               <p>
-                Estos incidentes fueron clasificados con una confianza inferior al 70%, umbral de
-                revisión humana del clasificador. Revisá y confirmá el sector correcto para cada uno.
+                Estos incidentes requieren revisión humana: el clasificador no alcanzó el umbral de
+                confianza (70%), la clasificación quedó en la etapa de respaldo, o el reportante no
+                fue identificado. Revisá y confirmá el sector correcto para cada uno.
               </p>
             </div>
 
