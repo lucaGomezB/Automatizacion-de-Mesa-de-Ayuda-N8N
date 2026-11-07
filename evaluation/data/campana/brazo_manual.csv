@@ -1,0 +1,221 @@
+id_caso,id_etiquetador,tarea,sector_etiquetado,sectores_adicionales_etiquetados,inicio,timestamp
+R089,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:04:30-03:00,2026-11-05T16:04:54-03:00
+R166,O1,brazo_manual,Soporte Tecnico Software,,2026-11-05T16:05:09-03:00,2026-11-05T16:05:39-03:00
+R060,O1,brazo_manual,Seguridad Informatica,Sistemas|Soporte Tecnico Software,2026-11-05T16:11:21-03:00,2026-11-05T16:12:10-03:00
+R181,O1,brazo_manual,Soporte Tecnico Software,,2026-11-05T16:12:54-03:00,2026-11-05T16:13:09-03:00
+R081,O1,brazo_manual,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-05T16:13:12-03:00,2026-11-05T16:13:43-03:00
+R004,O1,brazo_manual,Sistemas,Seguridad Informatica|Soporte Tecnico Software|Soporte Tecnico Hardware,2026-11-05T16:13:47-03:00,2026-11-05T16:14:38-03:00
+R040,O1,brazo_manual,Soporte Tecnico Hardware,Sistemas,2026-11-05T16:14:44-03:00,2026-11-05T16:15:07-03:00
+R029,O1,brazo_manual,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-05T16:15:09-03:00,2026-11-05T16:15:28-03:00
+R014,O1,brazo_manual,Soporte Tecnico Software,Seguridad Informatica,2026-11-05T16:15:30-03:00,2026-11-05T16:15:58-03:00
+R175,O1,brazo_manual,Seguridad Informatica,Sistemas|Soporte Tecnico Software,2026-11-05T16:16:06-03:00,2026-11-05T16:16:24-03:00
+R019,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:16:29-03:00,2026-11-05T16:16:51-03:00
+R082,O1,brazo_manual,Soporte Tecnico Software,,2026-11-05T16:16:55-03:00,2026-11-05T16:17:12-03:00
+R192,O1,brazo_manual,Soporte Tecnico Software,,2026-11-05T16:19:44-03:00,2026-11-05T16:20:01-03:00
+R036,O1,brazo_manual,Soporte Tecnico Hardware,Sistemas,2026-11-05T16:20:04-03:00,2026-11-05T16:20:15-03:00
+R194,O1,brazo_manual,Soporte Tecnico Software,,2026-11-05T16:20:17-03:00,2026-11-05T16:20:37-03:00
+R063,O1,brazo_manual,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-05T16:20:39-03:00,2026-11-05T16:20:58-03:00
+R147,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:21:01-03:00,2026-11-05T16:21:13-03:00
+R195,O1,brazo_manual,Soporte Tecnico Software,Seguridad Informatica,2026-11-05T16:21:15-03:00,2026-11-05T16:21:32-03:00
+R098,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:21:36-03:00,2026-11-05T16:21:47-03:00
+R099,O1,brazo_manual,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-05T16:21:50-03:00,2026-11-05T16:22:21-03:00
+R145,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:23:19-03:00,2026-11-05T16:23:37-03:00
+R108,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:23:42-03:00,2026-11-05T16:23:59-03:00
+R020,O1,brazo_manual,Sistemas,Soporte Tecnico Software|Soporte Tecnico Hardware,2026-11-05T16:24:01-03:00,2026-11-05T16:24:18-03:00
+R076,O1,brazo_manual,Soporte Tecnico Software,Seguridad Informatica,2026-11-05T16:24:31-03:00,2026-11-05T16:24:44-03:00
+R158,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:24:46-03:00,2026-11-05T16:24:56-03:00
+R074,O1,brazo_manual,Soporte Tecnico Software,Seguridad Informatica,2026-11-05T16:25:00-03:00,2026-11-05T16:25:20-03:00
+R146,O1,brazo_manual,Soporte Tecnico Software,Soporte Tecnico Hardware|Seguridad Informatica,2026-11-05T16:25:17-03:00,2026-11-05T16:25:45-03:00
+R055,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:26:05-03:00,2026-11-05T16:26:27-03:00
+R143,O1,brazo_manual,Soporte Tecnico Software,,2026-11-05T16:26:29-03:00,2026-11-05T16:26:49-03:00
+R094,O1,brazo_manual,Soporte Tecnico Software,Soporte Tecnico Hardware|Seguridad Informatica,2026-11-05T16:26:51-03:00,2026-11-05T16:27:10-03:00
+R141,O1,brazo_manual,Soporte Tecnico Software,Sistemas,2026-11-05T16:27:12-03:00,2026-11-05T16:27:38-03:00
+R135,O1,brazo_manual,Soporte Tecnico Software,Sistemas|Seguridad Informatica,2026-11-05T16:27:40-03:00,2026-11-05T16:28:03-03:00
+R116,O1,brazo_manual,Soporte Tecnico Software,Soporte Tecnico Hardware|Seguridad Informatica,2026-11-05T16:28:05-03:00,2026-11-05T16:28:38-03:00
+R018,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:33:09-03:00,2026-11-05T16:33:21-03:00
+R023,O1,brazo_manual,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-05T16:33:27-03:00,2026-11-05T16:33:42-03:00
+R075,O1,brazo_manual,Soporte Tecnico Software,Seguridad Informatica,2026-11-05T16:33:45-03:00,2026-11-05T16:34:04-03:00
+R031,O1,brazo_manual,Soporte Tecnico Software,,2026-11-05T16:34:06-03:00,2026-11-05T16:34:21-03:00
+R123,O1,brazo_manual,Soporte Tecnico Software,Seguridad Informatica,2026-11-05T16:34:23-03:00,2026-11-05T16:34:45-03:00
+R155,O1,brazo_manual,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-05T16:34:49-03:00,2026-11-05T16:35:08-03:00
+R058,O1,brazo_manual,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-05T16:35:10-03:00,2026-11-05T16:35:33-03:00
+R034,O1,brazo_manual,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-05T16:35:35-03:00,2026-11-05T16:35:51-03:00
+R069,O1,brazo_manual,Soporte Tecnico Software,,2026-11-05T16:35:53-03:00,2026-11-05T16:36:09-03:00
+R072,O1,brazo_manual,Soporte Tecnico Software,,2026-11-05T16:36:11-03:00,2026-11-05T16:36:42-03:00
+R096,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:36:44-03:00,2026-11-05T16:36:55-03:00
+R049,O1,brazo_manual,Soporte Tecnico Software,Sistemas|Seguridad Informatica,2026-11-05T16:36:57-03:00,2026-11-05T16:37:12-03:00
+R154,O1,brazo_manual,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-05T16:37:26-03:00,2026-11-05T16:38:00-03:00
+R025,O1,brazo_manual,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-05T16:38:27-03:00,2026-11-05T16:38:27-03:00
+R109,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:38:46-03:00,2026-11-05T16:39:01-03:00
+R003,O1,brazo_manual,Seguridad Informatica,Soporte Tecnico Software,2026-11-05T16:39:06-03:00,2026-11-05T16:39:21-03:00
+R110,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:39:35-03:00,2026-11-05T16:39:50-03:00
+R111,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:39:52-03:00,2026-11-05T16:40:03-03:00
+R053,O1,brazo_manual,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-05T16:40:05-03:00,2026-11-05T16:40:30-03:00
+R129,O1,brazo_manual,Seguridad Informatica,Soporte Tecnico Software,2026-11-05T16:40:32-03:00,2026-11-05T16:40:51-03:00
+R113,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:40:53-03:00,2026-11-05T16:41:02-03:00
+R080,O1,brazo_manual,Soporte Tecnico Software,,2026-11-05T16:41:05-03:00,2026-11-05T16:41:17-03:00
+R179,O1,brazo_manual,Soporte Tecnico Software,Sistemas,2026-11-05T16:41:19-03:00,2026-11-05T16:41:47-03:00
+R138,O1,brazo_manual,Sistemas,Seguridad Informatica|Soporte Tecnico Software,2026-11-05T16:41:49-03:00,2026-11-05T16:42:20-03:00
+R093,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:42:22-03:00,2026-11-05T16:42:31-03:00
+R185,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:45:23-03:00,2026-11-05T16:45:31-03:00
+R122,O1,brazo_manual,Soporte Tecnico Software,,2026-11-05T16:46:03-03:00,2026-11-05T16:46:13-03:00
+R104,O1,brazo_manual,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-05T16:46:32-03:00,2026-11-05T16:46:51-03:00
+R032,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:46:57-03:00,2026-11-05T16:47:13-03:00
+R107,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:47:14-03:00,2026-11-05T16:47:31-03:00
+R059,O1,brazo_manual,Sistemas,Seguridad Informatica,2026-11-05T16:47:35-03:00,2026-11-05T16:47:48-03:00
+R006,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T17:01:31-03:00,2026-11-05T17:02:28-03:00
+R078,O1,brazo_manual,Soporte Tecnico Software,,2026-11-05T17:02:32-03:00,2026-11-05T17:02:43-03:00
+R150,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T17:02:45-03:00,2026-11-05T17:02:58-03:00
+R052,O1,brazo_manual,Sistemas,Soporte Tecnico Software|Seguridad Informatica,2026-11-05T17:03:00-03:00,2026-11-05T17:03:30-03:00
+R180,O1,brazo_manual,Soporte Tecnico Hardware,Sistemas,2026-11-05T17:03:45-03:00,2026-11-05T17:04:15-03:00
+R190,O1,brazo_manual,Soporte Tecnico Hardware,Sistemas,2026-11-05T17:04:17-03:00,2026-11-05T17:04:32-03:00
+R151,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T17:04:35-03:00,2026-11-05T17:04:43-03:00
+R103,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T17:04:45-03:00,2026-11-05T17:05:07-03:00
+R152,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T17:06:52-03:00,2026-11-05T17:07:04-03:00
+R117,O1,brazo_manual,Soporte Tecnico Software,,2026-11-05T17:07:06-03:00,2026-11-05T17:07:16-03:00
+R182,O1,brazo_manual,Seguridad Informatica,Soporte Tecnico Software|Sistemas,2026-11-05T17:07:27-03:00,2026-11-05T17:08:12-03:00
+R038,O1,brazo_manual,Soporte Tecnico Software,Soporte Tecnico Hardware|Sistemas,2026-11-05T17:08:14-03:00,2026-11-05T17:08:36-03:00
+R009,O1,brazo_manual,Soporte Tecnico Software,Sistemas|Seguridad Informatica,2026-11-05T17:08:38-03:00,2026-11-05T17:09:04-03:00
+R156,O1,brazo_manual,Soporte Tecnico Software,Seguridad Informatica,2026-11-05T17:09:09-03:00,2026-11-05T17:09:27-03:00
+R149,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T17:09:28-03:00,2026-11-05T17:09:37-03:00
+R170,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T17:11:05-03:00,2026-11-05T17:11:20-03:00
+R011,O1,brazo_manual,Soporte Tecnico Software,Sistemas|Seguridad Informatica,2026-11-05T17:11:21-03:00,2026-11-05T17:11:40-03:00
+R169,O1,brazo_manual,Soporte Tecnico Software,Seguridad Informatica,2026-11-05T17:11:42-03:00,2026-11-05T17:12:10-03:00
+R021,O1,brazo_manual,Soporte Tecnico Hardware,Sistemas,2026-11-05T17:12:20-03:00,2026-11-05T17:12:43-03:00
+R132,O1,brazo_manual,Soporte Tecnico Hardware,Seguridad Informatica,2026-11-05T17:12:47-03:00,2026-11-05T17:13:03-03:00
+R087,O1,brazo_manual,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-05T17:13:05-03:00,2026-11-05T17:13:18-03:00
+R066,O1,brazo_manual,Soporte Tecnico Software,,2026-11-05T17:17:46-03:00,2026-11-05T17:17:56-03:00
+R067,O1,brazo_manual,Soporte Tecnico Software,,2026-11-05T17:17:57-03:00,2026-11-05T17:18:29-03:00
+R065,O1,brazo_manual,Soporte Tecnico Software,Seguridad Informatica,2026-11-05T17:18:32-03:00,2026-11-05T17:19:00-03:00
+R015,O1,brazo_manual,Soporte Tecnico Software,Seguridad Informatica,2026-11-05T17:19:09-03:00,2026-11-05T17:19:25-03:00
+R174,O1,brazo_manual,Soporte Tecnico Software,Sistemas,2026-11-05T17:19:33-03:00,2026-11-05T17:19:52-03:00
+R191,O1,brazo_manual,Soporte Tecnico Software,Seguridad Informatica,2026-11-05T17:19:54-03:00,2026-11-05T17:20:10-03:00
+R017,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T17:20:12-03:00,2026-11-05T17:20:27-03:00
+R102,O1,brazo_manual,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-05T17:20:42-03:00,2026-11-05T17:21:10-03:00
+R095,O1,brazo_manual,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-05T17:21:12-03:00,2026-11-05T17:21:40-03:00
+R070,O1,brazo_manual,Soporte Tecnico Software,Seguridad Informatica,2026-11-05T17:21:52-03:00,2026-11-05T17:22:05-03:00
+R026,O1,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T17:22:07-03:00,2026-11-05T17:22:21-03:00
+R131,O1,brazo_manual,Seguridad Informatica,Sistemas|Soporte Tecnico Software,2026-11-05T17:22:28-03:00,2026-11-05T17:22:52-03:00
+R159,O1,brazo_manual,Soporte Tecnico Hardware,Sistemas,2026-11-05T17:22:54-03:00,2026-11-05T17:23:14-03:00
+R050,O1,brazo_manual,Seguridad Informatica,Soporte Tecnico Hardware,2026-11-05T17:24:15-03:00,2026-11-05T17:24:33-03:00
+R005,O1,brazo_manual,Soporte Tecnico Software,Seguridad Informatica,2026-11-05T17:24:35-03:00,2026-11-05T17:24:47-03:00
+R042,O1,brazo_manual,Soporte Tecnico Software,,2026-11-05T17:24:49-03:00,2026-11-05T17:25:04-03:00
+R090,O1,brazo_manual,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-05T17:27:19-03:00,2026-11-05T17:27:36-03:00
+R056,O1,brazo_manual,Sistemas,Seguridad Informatica|Soporte Tecnico Software,2026-11-05T17:27:37-03:00,2026-11-05T17:28:11-03:00
+R177,O1,brazo_manual,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-05T17:28:13-03:00,2026-11-05T17:28:40-03:00
+R163,O1,brazo_manual,Seguridad Informatica,Sistemas|Soporte Tecnico Software,2026-11-05T17:28:41-03:00,2026-11-05T17:29:07-03:00
+R077,O1,brazo_manual,Soporte Tecnico Software,,2026-11-05T17:36:01-03:00,2026-11-05T17:36:15-03:00
+R162,O1,brazo_manual,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-05T17:36:19-03:00,2026-11-05T17:36:47-03:00
+R001,O1,brazo_manual,Seguridad Informatica,Soporte Tecnico Software,2026-11-05T17:38:19-03:00,2026-11-05T17:38:50-03:00
+R071,O1,brazo_manual,Soporte Tecnico Software,Seguridad Informatica,2026-11-05T17:38:52-03:00,2026-11-05T17:39:06-03:00
+R189,O1,brazo_manual,Seguridad Informatica,Soporte Tecnico Software|Soporte Tecnico Hardware,2026-11-05T17:39:08-03:00,2026-11-05T17:39:27-03:00
+R175,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T09:20:53-03:00,2026-11-05T09:22:06-03:00
+R099,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T09:22:32-03:00,2026-11-05T09:23:59-03:00
+R094,O2,brazo_manual,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-05T09:24:14-03:00,2026-11-05T09:26:02-03:00
+R058,O2,brazo_manual,Sistemas,,2026-11-05T09:26:49-03:00,2026-11-05T09:28:33-03:00
+R110,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T09:29:25-03:00,2026-11-05T09:32:06-03:00
+R122,O2,brazo_manual,Soporte Tecnico Software,,2026-11-05T09:32:42-03:00,2026-11-05T09:34:57-03:00
+R190,O2,brazo_manual,Sistemas,,2026-11-05T09:35:19-03:00,2026-11-05T09:36:52-03:00
+R170,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T09:37:24-03:00,2026-11-05T09:40:22-03:00
+R174,O2,brazo_manual,Sistemas,,2026-11-05T09:41:05-03:00,2026-11-05T09:42:34-03:00
+R005,O2,brazo_manual,Soporte Tecnico Software,,2026-11-05T09:43:55-03:00,2026-11-05T09:45:29-03:00
+R022,O2,brazo_manual,Sistemas,,2026-11-05T09:46:10-03:00,2026-11-05T09:47:43-03:00
+R130,O2,brazo_manual,Seguridad Informatica,,2026-11-05T09:48:52-03:00,2026-11-05T09:50:11-03:00
+R061,O2,brazo_manual,Sistemas,,2026-11-05T09:50:36-03:00,2026-11-05T09:51:53-03:00
+R161,O2,brazo_manual,Soporte Tecnico Software,,2026-11-05T09:52:23-03:00,2026-11-05T09:53:47-03:00
+R197,O2,brazo_manual,Sistemas,,2026-11-05T09:53:54-03:00,2026-11-05T09:55:29-03:00
+R045,O2,brazo_manual,Seguridad Informatica,,2026-11-05T09:55:46-03:00,2026-11-05T09:57:30-03:00
+R140,O2,brazo_manual,Sistemas,,2026-11-05T09:57:51-03:00,2026-11-05T09:59:08-03:00
+R073,O2,brazo_manual,Sistemas,,2026-11-05T09:59:24-03:00,2026-11-05T10:01:23-03:00
+R139,O2,brazo_manual,Sistemas,,2026-11-05T15:02:27-03:00,2026-11-05T15:03:39-03:00
+R042,O2,brazo_manual,Soporte Tecnico Software,,2026-11-05T15:03:47-03:00,2026-11-05T15:05:19-03:00
+R120,O2,brazo_manual,Sistemas,,2026-11-05T15:05:47-03:00,2026-11-05T15:06:53-03:00
+R136,O2,brazo_manual,Sistemas,,2026-11-05T15:07:12-03:00,2026-11-05T15:08:26-03:00
+R188,O2,brazo_manual,Soporte Tecnico Software,,2026-11-05T15:08:55-03:00,2026-11-05T15:10:09-03:00
+R183,O2,brazo_manual,Sistemas,,2026-11-05T15:10:36-03:00,2026-11-05T15:12:17-03:00
+R153,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T15:12:46-03:00,2026-11-05T15:14:02-03:00
+R164,O2,brazo_manual,Sistemas,,2026-11-05T15:14:19-03:00,2026-11-05T15:15:10-03:00
+R044,O2,brazo_manual,Sistemas,,2026-11-05T15:15:32-03:00,2026-11-05T15:16:46-03:00
+R083,O2,brazo_manual,Seguridad Informatica,Sistemas,2026-11-05T15:17:24-03:00,2026-11-05T15:18:56-03:00
+R176,O2,brazo_manual,Seguridad Informatica,,2026-11-05T15:19:17-03:00,2026-11-05T15:20:20-03:00
+R090,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T15:20:54-03:00,2026-11-05T15:22:06-03:00
+R134,O2,brazo_manual,Sistemas,Seguridad Informatica,2026-11-05T15:22:31-03:00,2026-11-05T15:23:45-03:00
+R092,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T15:24:11-03:00,2026-11-05T15:25:35-03:00
+R068,O2,brazo_manual,Sistemas,Bases de Datos,2026-11-05T15:28:19-03:00,2026-11-05T15:29:26-03:00
+R051,O2,brazo_manual,Soporte Tecnico Software,Seguridad Informatica,2026-11-05T15:30:08-03:00,2026-11-05T15:32:19-03:00
+R142,O2,brazo_manual,Sistemas,Bases de Datos,2026-11-05T15:32:34-03:00,2026-11-05T15:33:16-03:00
+R112,O2,brazo_manual,Soporte Tecnico Software,,2026-11-05T15:33:46-03:00,2026-11-05T15:35:03-03:00
+R165,O2,brazo_manual,Sistemas,,2026-11-05T15:35:29-03:00,2026-11-05T15:37:06-03:00
+R043,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T15:37:25-03:00,2026-11-05T15:38:10-03:00
+R010,O2,brazo_manual,Sistemas,Soporte Tecnico Hardware,2026-11-05T15:38:54-03:00,2026-11-05T15:40:04-03:00
+R056,O2,brazo_manual,Sistemas,,2026-11-05T15:40:21-03:00,2026-11-05T15:41:56-03:00
+R046,O2,brazo_manual,Seguridad Informatica,,2026-11-05T15:42:17-03:00,2026-11-05T15:43:18-03:00
+R119,O2,brazo_manual,Soporte Tecnico Software,,2026-11-05T15:44:19-03:00,2026-11-05T15:45:28-03:00
+R124,O2,brazo_manual,Soporte Tecnico Software,,2026-11-05T15:46:30-03:00,2026-11-05T15:47:27-03:00
+R054,O2,brazo_manual,Sistemas,,2026-11-05T15:47:59-03:00,2026-11-05T15:49:04-03:00
+R121,O2,brazo_manual,Soporte Tecnico Software,,2026-11-05T15:49:21-03:00,2026-11-05T15:50:46-03:00
+R137,O2,brazo_manual,Sistemas,,2026-11-05T15:51:36-03:00,2026-11-05T15:52:29-03:00
+R039,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T15:52:54-03:00,2026-11-05T15:54:01-03:00
+R198,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T15:54:29-03:00,2026-11-05T15:55:45-03:00
+R173,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T15:56:04-03:00,2026-11-05T15:57:13-03:00
+R177,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T15:57:46-03:00,2026-11-05T15:58:59-03:00
+R148,O2,brazo_manual,Seguridad Informatica,Sistemas,2026-11-05T15:59:25-03:00,2026-11-05T16:01:04-03:00
+R187,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:03:14-03:00,2026-11-05T16:04:06-03:00
+R097,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:04:44-03:00,2026-11-05T16:05:57-03:00
+R171,O2,brazo_manual,Sistemas,Soporte Tecnico Hardware,2026-11-05T16:06:12-03:00,2026-11-05T16:07:21-03:00
+R157,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:08:19-03:00,2026-11-05T16:09:54-03:00
+R128,O2,brazo_manual,Seguridad Informatica,,2026-11-05T16:10:33-03:00,2026-11-05T16:11:25-03:00
+R172,O2,brazo_manual,Sistemas,,2026-11-05T16:12:06-03:00,2026-11-05T16:13:09-03:00
+R125,O2,brazo_manual,Seguridad Informatica,,2026-11-05T16:13:41-03:00,2026-11-05T16:14:37-03:00
+R086,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:16:30-03:00,2026-11-05T16:17:50-03:00
+R163,O2,brazo_manual,Sistemas,,2026-11-05T16:19:34-03:00,2026-11-05T16:20:36-03:00
+R114,O2,brazo_manual,Sistemas,Soporte Tecnico Hardware,2026-11-05T16:21:51-03:00,2026-11-05T16:23:06-03:00
+R186,O2,brazo_manual,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-05T16:23:43-03:00,2026-11-05T16:25:15-03:00
+R196,O2,brazo_manual,Sistemas,,2026-11-05T16:26:37-03:00,2026-11-05T16:27:19-03:00
+R193,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:27:46-03:00,2026-11-05T16:29:07-03:00
+R133,O2,brazo_manual,Seguridad Informatica,,2026-11-05T16:30:34-03:00,2026-11-05T16:31:48-03:00
+R105,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:32:46-03:00,2026-11-05T16:33:57-03:00
+R118,O2,brazo_manual,Soporte Tecnico Software,,2026-11-05T16:35:28-03:00,2026-11-05T16:36:14-03:00
+R168,O2,brazo_manual,Sistemas,,2026-11-05T16:38:51-03:00,2026-11-05T16:40:03-03:00
+R088,O2,brazo_manual,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-05T16:40:26-03:00,2026-11-05T16:41:38-03:00
+R077,O2,brazo_manual,Sistemas,Seguridad Informatica,2026-11-05T16:42:15-03:00,2026-11-05T16:43:12-03:00
+R106,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:44:22-03:00,2026-11-05T16:45:32-03:00
+R062,O2,brazo_manual,Sistemas,,2026-11-05T16:48:01-03:00,2026-11-05T16:49:08-03:00
+R041,O2,brazo_manual,Bases de Datos,,2026-11-05T16:50:11-03:00,2026-11-05T16:51:47-03:00
+R008,O2,brazo_manual,Sistemas,,2026-11-05T16:53:14-03:00,2026-11-05T16:54:26-03:00
+R084,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T16:55:18-03:00,2026-11-05T16:56:29-03:00
+R079,O2,brazo_manual,Seguridad Informatica,Sistemas,2026-11-05T16:59:35-03:00,2026-11-05T17:00:26-03:00
+R047,O2,brazo_manual,Seguridad Informatica,,2026-11-05T17:02:18-03:00,2026-11-05T17:03:25-03:00
+R064,O2,brazo_manual,Sistemas,,2026-11-05T17:05:29-03:00,2026-11-05T17:06:33-03:00
+R200,O2,brazo_manual,Soporte Tecnico Software,,2026-11-05T17:07:26-03:00,2026-11-05T17:08:21-03:00
+R162,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T17:09:39-03:00,2026-11-05T17:10:39-03:00
+R028,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T17:12:14-03:00,2026-11-05T17:13:44-03:00
+R048,O2,brazo_manual,Seguridad Informatica,,2026-11-05T17:15:46-03:00,2026-11-05T17:16:59-03:00
+R002,O2,brazo_manual,Sistemas,,2026-11-05T17:18:48-03:00,2026-11-05T17:20:03-03:00
+R127,O2,brazo_manual,Seguridad Informatica,,2026-11-05T17:21:18-03:00,2026-11-05T17:22:07-03:00
+R027,O2,brazo_manual,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-05T17:25:43-03:00,2026-11-05T17:26:58-03:00
+R100,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T17:28:08-03:00,2026-11-05T17:29:25-03:00
+R184,O2,brazo_manual,Sistemas,Soporte Tecnico Hardware,2026-11-05T17:32:33-03:00,2026-11-05T17:34:05-03:00
+R007,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T17:35:29-03:00,2026-11-05T17:36:34-03:00
+R091,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T17:38:26-03:00,2026-11-05T17:39:15-03:00
+R001,O2,brazo_manual,Sistemas,,2026-11-05T17:41:13-03:00,2026-11-05T17:42:47-03:00
+R160,O2,brazo_manual,Sistemas,,2026-11-05T17:43:18-03:00,2026-11-05T17:44:22-03:00
+R035,O2,brazo_manual,Sistemas,,2026-11-05T17:46:54-03:00,2026-11-05T17:48:06-03:00
+R199,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T17:49:47-03:00,2026-11-05T17:50:54-03:00
+R126,O2,brazo_manual,Seguridad Informatica,,2026-11-05T17:52:30-03:00,2026-11-05T17:53:27-03:00
+R144,O2,brazo_manual,Soporte Tecnico Software,,2026-11-05T17:55:14-03:00,2026-11-05T17:56:29-03:00
+R115,O2,brazo_manual,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-05T17:59:36-03:00,2026-11-05T18:00:42-03:00
+R037,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T18:02:21-03:00,2026-11-05T18:03:19-03:00
+R033,O2,brazo_manual,Sistemas,Seguridad Informatica,2026-11-05T18:05:31-03:00,2026-11-05T18:06:54-03:00
+R085,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T18:10:15-03:00,2026-11-05T18:11:23-03:00
+R071,O2,brazo_manual,Soporte Tecnico Software,,2026-11-05T18:16:33-03:00,2026-11-05T18:17:25-03:00
+R057,O2,brazo_manual,Sistemas,,2026-11-05T18:19:26-03:00,2026-11-05T18:20:37-03:00
+R167,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T18:21:50-03:00,2026-11-05T18:23:06-03:00
+R013,O2,brazo_manual,Soporte Tecnico Software,,2026-11-05T18:25:34-03:00,2026-11-05T18:27:10-03:00
+R012,O2,brazo_manual,Sistemas,,2026-11-05T18:29:27-03:00,2026-11-05T18:30:52-03:00
+R178,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T18:32:02-03:00,2026-11-05T18:33:26-03:00
+R016,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T18:35:30-03:00,2026-11-05T18:36:21-03:00
+R101,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T18:40:46-03:00,2026-11-05T18:41:54-03:00
+R030,O2,brazo_manual,Soporte Tecnico Hardware,,2026-11-05T18:43:00-03:00,2026-11-05T18:44:17-03:00
+R024,O2,brazo_manual,Sistemas,,2026-11-05T18:45:24-03:00,2026-11-05T18:46:37-03:00
+R189,O2,brazo_manual,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-05T18:47:49-03:00,2026-11-05T18:49:05-03:00

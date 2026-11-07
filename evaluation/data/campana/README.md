@@ -18,34 +18,50 @@ el kappa vuelve a quedar sin intervalo de confianza. El protocolo completo
 
 ## Estado actual
 
-**Pendiente de campaña.** Todavía no existe `doble_etiquetado.csv`: el etiquetado
-real corre fuera del repositorio y la tabla se agrega después, siguiendo el
-runbook. Mientras el archivo no exista, el test de integridad
-(`test_tabla_primaria_versionada_integra`) se omite.
+**Doble etiquetado y brazo manual versionados; automatizado listo; intervención pendiente.** Están
+versionados `plan_campana.csv`, los ocho sub-planes (4 manuales + 4 automatizados,
+`subplan_m<mitad>_<brazo>_t<turno>.csv`), `corpus_campana.json` (copia de campaña con
+tiempos en null), `registro_sujetos.csv` (8 filas, sin solapes), `doble_etiquetado.csv` (400 registros
+de `E1` y `E2` sobre los 200 casos) y `brazo_manual.csv` (220 registros de `O1` y `O2`
+sobre los 200 casos, con 20 de doble cobertura). El test de integridad
+(`test_tabla_primaria_versionada_integra`) ya no se omite. Faltan `intervenciones.csv`,
+las dos entradas del análisis (`plantilla_etiquetado.csv`, `predicciones_in_sample.json`)
+y las salidas de `analisis/`.
 
 ## Archivos de esta carpeta
 
-- `doble_etiquetado.csv`: tabla primaria validada (se agrega después de la campaña).
-- `registro_sujetos.csv`: columnas `alias, rol, persona` (se agrega después de la
-  campaña; sin nombres, ver el runbook).
+- `doble_etiquetado.csv`: tabla primaria validada (400 registros de `E1` y `E2`
+  sobre los 200 casos; ver "Procedencia de la tabla primaria").
+- `registro_sujetos.csv`: columnas `alias, rol, persona` (versionado en este PR;
+  sin nombres, ver el runbook).
 - `*.csv` se versionan con fin de línea LF (`.gitattributes`) para que el SHA-256
   coincida en Windows y Linux.
 
+### Sujetos: los dos analistas originales y la fila A2
+
+El consenso `sector_asignado` del corpus lo fijaron dos analistas originales: `A1` y
+`T1` (este último es también autor de la tesis). El `registro_sujetos.csv` no incluye
+una fila `A2`: una versión previa de la plantilla la tenía, pero se eliminó al
+confirmarse que el segundo analista original es `T1`, que ya figura con el rol
+`autor`. La coincidencia analista-autor se declara como limitación en c-169 y no
+habilita a `T1` como etiquetador ni operador. El registro queda con 8 filas sin
+solapes: `E1`, `E2`, `O1`, `O2`, `A1`, `T1`, `T2`, `T3`.
+
 ## Procedencia de la tabla primaria
 
-Completar **al versionar** la tabla, con una línea `- campo: valor` por campo. El
+Completada **al versionar** la tabla, con una línea `- campo: valor` por campo. El
 test de integridad lee `sha256` de esta sección y lo compara con el hash real del
-archivo. Mientras no exista la tabla, los valores quedan en `pendiente`.
+archivo.
 
-- archivo: pendiente
-- sha256: pendiente
-- fecha: pendiente
-- corpus: pendiente
-- corpus_sha256: pendiente
-- tarea: pendiente
-- comando_de_validacion: pendiente
+- archivo: evaluation/data/campana/doble_etiquetado.csv
+- sha256: 8b30b15b458bb611a3eff0f45f54731a539dafb5c02a931ebf4d944a7eb47b43
+- fecha: 2026-11-04
+- corpus: data/corpus_evaluacion_pseudonimizado.json
+- corpus_sha256: 1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb
+- tarea: doble_etiquetado
+- comando_de_validacion: `python -m evaluation.doble_etiquetado --planilla evaluation/data/campana/doble_etiquetado.csv --corpus data/corpus_evaluacion_pseudonimizado.json --tarea doble_etiquetado` (exit 0)
 - codebook_sha256: d9777139e9eaffe7903fa63d69d2bee346ff2b43599409aedaaebd21a8be9167
-- estado_cegado: pendiente
+- estado_cegado: cumplido
 - motivo_limitacion: no aplica
 
 Significado de cada campo:
@@ -93,16 +109,47 @@ Al versionar cada archivo se completa su SHA-256 (en minúsculas, calculado sobr
 
 | Archivo | SHA-256 |
 |---|---|
-| `plan_campana.csv` | pendiente |
-| `corpus_campana.json` | pendiente |
+| `plan_campana.csv` | b619a734092cbbf2b676636386e4b27bdbeaee76df3f97a19e4b7d1beeb43243 |
+| `registro_sujetos.csv` | f7a5653e733d423a3c4b5eee6b94a05d6ea02df38eb04997212865b329224ad2 |
+| `corpus_campana.json` | 0bb7716e68e6baa190aa3d76626a6c0c8712c0ed6e65ff0c4572c001bc0e2adc |
 | `corpus_independiente.json` | pendiente |
 | `predicciones_independiente.json` | pendiente |
 | `reporte_independiente.md` | pendiente |
 | `plantilla_etiquetado.csv` | pendiente |
 | `predicciones_in_sample.json` | pendiente |
-| cada `sidecar_<id_corrida>.json` y `subplan_*.csv` usado | pendiente (una fila por archivo, al versionarlo) |
+| `subplan_m1_manual_t1.csv` | 8d42417274934764c24774d10bbbca8ac47807e1d2960a22167ddb564933c41a |
+| `subplan_m1_manual_t2.csv` | 30d801b5aa142005402fda2b99e8d8f405ea2b95fa7f773843be4b324e0a5d6c |
+| `subplan_m2_manual_t1.csv` | 7dac79db810566f6f351ed28ce0f0a6ff4563a2f81eb03d0fbc86f0bb621438d |
+| `subplan_m2_manual_t2.csv` | 8c7de56298cb573c60c59c4d5438278b9ceb9b3fb3ffc3cad885cff0eef057f9 |
+| `subplan_m1_automatizado_t1.csv` | 30d801b5aa142005402fda2b99e8d8f405ea2b95fa7f773843be4b324e0a5d6c |
+| `subplan_m1_automatizado_t2.csv` | 8d42417274934764c24774d10bbbca8ac47807e1d2960a22167ddb564933c41a |
+| `subplan_m2_automatizado_t1.csv` | 8c7de56298cb573c60c59c4d5438278b9ceb9b3fb3ffc3cad885cff0eef057f9 |
+| `subplan_m2_automatizado_t2.csv` | 7dac79db810566f6f351ed28ce0f0a6ff4563a2f81eb03d0fbc86f0bb621438d |
+| `sidecar_m1-automatizado-t1.json` | d368eff0366e66c0c94cd8d878a5fc46cf23d58c845305812c47031516606bf2 |
+| `sidecar_m1-automatizado-t2.json` | 9fb73e9dca813d543450cf67dd48de04a4b3eb4d61748e8562144fbcefc0844e |
+| `sidecar_m2-automatizado-t1.json` | dc24315b0c7ae56e5e991dff05ad32378c4e6aa49501c7166347fbb20bc62311 |
+| `sidecar_m2-automatizado-t2.json` y `sidecar_*_tel.json` | pendiente (una fila por archivo, al versionarlo) |
 
 Los datos de la campaña se citan desde `evaluation/data/README.md`, que describe el resto de esta jerarquía.
+
+### Submuestra con doble cobertura (criterio de la campaña)
+
+El reparto por defecto del brazo manual es `O1` = mitad 1 y `O2` = mitad 2, sin casos
+compartidos. Para poder medir además el acuerdo entre operadores se fijó, antes de
+empezar, una **submuestra con doble cobertura**:
+
+- **Criterio**: un caso de cada diez por `posicion` dentro de cada mitad. Mitad 1:
+  posiciones 10, 20, 30, 40, 50, 60, 70, 80, 90 y 100. Mitad 2: posiciones 110, 120,
+  130, 140, 150, 160, 170, 180, 190 y 200. Son 20 casos en total.
+- **Reparto**: cada operador clasifica su mitad completa más los 10 casos muestreados
+  de la otra mitad. `O1` recibe 110 casos (100 de la mitad 1 + 10 de la mitad 2) y
+  `O2` recibe 110 casos (100 de la mitad 2 + 10 de la mitad 1).
+- **Orden**: cada hoja respeta el orden global del plan (por `posicion`), filtrado a
+  los casos asignados. Los 20 casos de doble cobertura quedan con dos registros en la
+  planilla, uno por operador.
+- **Uso**: el acuerdo entre operadores se calcula sobre esos 20 casos; no reemplaza al
+  kappa de `E1`/`E2`, que sigue siendo la medida principal. Las hojas con doble
+  cobertura se generan fuera del repositorio, igual que el resto de las hojas de campo.
 
 ## Referencia in-sample de la validación fuera de muestra (c-166)
 
@@ -172,13 +219,13 @@ Procedencia del export (completar **al versionar** `intervenciones.csv`; formato
 
 ### Planilla del brazo manual (c-165)
 
-`brazo_manual.csv` es la planilla del brazo manual (`tarea = brazo_manual`, operadores `O1` y `O2`, con `inicio` y `timestamp` obligatorios en cada fila) que pasó `python -m evaluation.doble_etiquetado --planilla evaluation/data/campana/brazo_manual.csv --corpus data/corpus_evaluacion_pseudonimizado.json --tarea brazo_manual` con exit code `0`. El procedimiento (sujetos, reparto, plan, aceptación) está en `docs/campana-medicion/runbook-brazo-manual-e-intervencion.md`. No contiene datos personales: solo alias de operador, identificadores de caso, sectores canónicos y marcas de tiempo. Mientras no exista, su hash y los desvíos quedan en `pendiente`.
+`brazo_manual.csv` es la planilla del brazo manual (`tarea = brazo_manual`, operadores `O1` y `O2`, con `inicio` y `timestamp` obligatorios en cada fila) que pasó `python -m evaluation.doble_etiquetado --planilla evaluation/data/campana/brazo_manual.csv --corpus data/corpus_evaluacion_pseudonimizado.json --tarea brazo_manual` con exit code `0`. El procedimiento (sujetos, reparto, plan, aceptación) está en `docs/campana-medicion/runbook-brazo-manual-e-intervencion.md`. No contiene datos personales: solo alias de operador, identificadores de caso, sectores canónicos y marcas de tiempo. Versionada el 2026-11-05 (220 registros). **Desvíos de posición: 196 de 220** (98 por operador), sistemáticos y no ruido: las hojas de campo se armaron como una hoja única de 110 casos por operador ordenada por `posicion` global, no como las dos hojas por sub-plan (turno 1 -> turno 2) que describe el runbook §2.3/§3.2; los operadores siguieron su hoja al pie de la letra. El runbook §4.2 prevé los desvíos y no corrige la planilla: se informan tal cual y el análisis los trata como covariable.
 
-- brazo_manual_desvios_informados: pendiente
+- brazo_manual_desvios_informados: 196
 
 | Archivo | SHA-256 |
 |---|---|
-| `brazo_manual.csv` | pendiente |
+| `brazo_manual.csv` | 25ef12ba7e4c27ba5489d3daff099c697416d996858299e25ffa57dfa2a4d46f |
 
 ## Entradas del análisis de campaña (c-170)
 
@@ -208,6 +255,9 @@ SHA-256 y procedencia (completar **al versionar** la campaña, formato `- campo:
 - entradas_analisis_fecha: pendiente
 - entradas_analisis_comando: `python -m evaluation.preparar_entradas_analisis --entrada evaluation/data/campana --corpus data/corpus_evaluacion_pseudonimizado.json --cache-in-sample evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json`
 
-### Recomendación: enmendar el gate de c-169 (tarea 0.2)
+### Gate de c-169 (tarea 0.2)
 
-El gate de la campaña de c-169 (tarea 0.2) exige hoy `doble_etiquetado.csv`, `plan_campana.csv`, `intervenciones.csv`, `registro_sujetos.csv` y `analisis/` con las salidas de c-167, pero **no** las dos entradas nuevas. Como el análisis de c-167 no se puede correr end-to-end sin `plantilla_etiquetado.csv` y `predicciones_in_sample.json` (ambas declaradas "Entradas esperadas" en `analisis/README.md`), el gate SHOULD exigirlas también (con su SHA-256 coincidente). Esta recomendación es un seguimiento de c-170: **no** se edita c-169.
+La recomendación de esta sección se aplicó en c-170 (commit `8a72623`): el gate de
+c-169 exige también `plantilla_etiquetado.csv` y `predicciones_in_sample.json`, con su
+SHA-256 coincidente, porque el análisis de c-167 no se puede correr end-to-end sin
+ellas.

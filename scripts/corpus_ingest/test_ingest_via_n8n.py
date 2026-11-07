@@ -13,8 +13,10 @@ import sys
 from dataclasses import asdict, fields, replace
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import parse_qs, urlparse
 
 import pytest
+import requests
 
 # Los tests de campana arman planes con el paquete `evaluation` de la raiz del repo;
 # se agrega la raiz a sys.path de forma relativa al archivo (mismo patron que
@@ -2506,3 +2508,213 @@ def test_con_plan_el_json_de_campana_si_recibe_las_mediciones(tmp_path, monkeypa
 
     casos = json.loads(json_path.read_text(encoding="utf-8"))["casos"]
     assert [caso["tiempo_automatizado_s"] for caso in casos] == [7.0, 7.0]
+
+
+# ── c-172: corrida idempotente y reanudable del brazo automatizado ───────────
+#
+# Contrato nuevo: ledger incremental (siempre activo), `--resume` con skip por
+# sidecar y sonda de preexistencia (politica B1). Todo offline con los helpers
+# existentes (`_ingesta_falsa`, `_argv_campana`, `_escribir_plan`, `_leer_sidecar`).
+
+
+class _ProbeSession:
+    """Sesion HTTP falsa que responde al filtro exacto ``origen_message_id``.
+
+    Mapea cada clave a los incidentes que el backend devolveria para ese filtro
+    (sin el guard ``min_ingresado_en``: el objetivo del sondeo es justamente el
+    residuo viejo). Registra las claves consultadas para poder afirmar que un
+    caso salteado no se sondea.
+    """
+
+    def __init__(self, por_clave: dict[str, list[dict]]) -> None:
+        self._por_clave = por_clave
+        self.consultas: list[str] = []
+
+    def request(self, method, url, **kwargs):
+        assert method == "GET"
+        clave = parse_qs(urlparse(url).query).get("origen_message_id", [""])[0]
+        self.consultas.append(clave)
+        return FakeResponse(200, list(self._por_clave.get(clave, [])))
+
+
+def _instalar_sesion_de_sondeo(monkeypatch, por_clave: dict[str, list[dict]]) -> _ProbeSession:
+    sesion = _ProbeSession(por_clave)
+    monkeypatch.setattr(requests, "Session", lambda: sesion)
+    return sesion
+
+
+def _incidente_viejo(incidente_id: int = 999, numero: str = "INC-000999") -> dict:
+    return {
+        "id": incidente_id,
+        "numero_incidente": numero,
+        "ingresado_en": _dt(9, 0, 0).isoformat(),  # ANTERIOR a cualquier envio del test
+    }
+
+
+def test_resume_un_incidente_preexistente_no_se_reenvia_y_se_declara(tmp_path, monkeypatch):
+    """1.1 RED: con --resume, un incidente preexistente se declara (B1), no se reenvia."""
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON])  # R001
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+    clave_r001 = ivn.correlation_keys("R001")[0]
+    sesion = _instalar_sesion_de_sondeo(monkeypatch, {clave_r001: [_incidente_viejo()]})
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--orden", "directo", "--resume"))
+
+    assert codigo == 1  # un caso declarado como fallido, sin abortar la corrida
+    assert vistos == []  # NO se reenvio
+    assert clave_r001 in sesion.consultas  # si se sono
+    entradas = _leer_sidecar(tmp_path)
+    assert [e["case_id"] for e in entradas] == ["R001"]
+    assert entradas[0]["error"] == "incidente_preexistente_sin_t_envio"
+    assert entradas[0]["incidente_id"] == 999
+    assert entradas[0]["t_e2e_s"] is None
+    assert entradas[0]["t_espera_s"] is None
+    assert entradas[0]["t_pipeline_s"] is None
+    assert entradas[0]["anomalo"] is False
+    assert entradas[0]["id_corrida"] == "corrida-1"
+
+
+def test_corrida_interrumpida_deja_el_ledger_incremental(tmp_path, monkeypatch):
+    """1.2 RED: el sidecar persiste cada caso ANTES de terminar la corrida."""
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 3)
+    _set_operator_creds(monkeypatch)
+    _clear_confirmation_env(monkeypatch)
+    monkeypatch.setattr(ivn, "login", lambda *a, **k: "tok")
+
+    llamadas: list[str] = []
+
+    def falsa(**kwargs):
+        llamadas.append(kwargs["case_id"])
+        if len(llamadas) == 3:  # la corrida muere en el tercer caso
+            raise KeyboardInterrupt
+        return _ok_result(case_id=kwargs["case_id"])
+
+    monkeypatch.setattr(ivn, "ingest_email_case", falsa)
+    monkeypatch.setattr(ivn, "ingest_web_case", falsa)
+    monkeypatch.setattr(ivn, "write_csv_results", lambda *a, **k: None)
+    monkeypatch.setattr(ivn, "write_xlsx_results", lambda *a, **k: None)
+
+    with pytest.raises(KeyboardInterrupt):
+        ivn.run(_argv_campana(tmp_path, json_path, "--orden", "directo"))
+
+    entradas = _leer_sidecar(tmp_path)
+    assert [e["case_id"] for e in entradas] == ["R001", "R002"]
+    assert all(e["error"] is None and e["anomalo"] is False for e in entradas)
+    assert {e["id_corrida"] for e in entradas} == {"corrida-1"}
+
+
+def test_resume_salta_los_casos_ya_medidos_y_procesa_los_nuevos(tmp_path, monkeypatch):
+    """1.3 RED: con --resume no se reenvian los casos con entrada valida."""
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 3)
+    _sembrar_sidecar(tmp_path, "corrida-1")  # R001 valido (t_e2e_s = 99.0)
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+    _instalar_sesion_de_sondeo(monkeypatch, {})  # ningun incidente preexistente
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--orden", "directo", "--resume"))
+
+    assert codigo == 0
+    assert vistos == ["R002", "R003"]  # R001 ya medido: se saltea
+    entradas = {e["case_id"]: e for e in _leer_sidecar(tmp_path)}
+    assert sorted(entradas) == ["R001", "R002", "R003"]
+    assert entradas["R001"]["t_e2e_s"] == 99.0  # se reutiliza la medicion almacenada
+
+
+def test_la_ayuda_y_el_docstring_declaran_la_reanudacion(capsys):
+    """ECM-014: el operador encuentra --resume y el ledger por id_corrida."""
+    with pytest.raises(SystemExit):
+        ivn.parse_args(["--help"])
+    ayuda = capsys.readouterr().out
+    assert "--resume" in ayuda
+    assert "id_corrida" in ayuda or "id-corrida" in ayuda
+
+    assert "--resume" in (ivn.__doc__ or "")
+    assert "id_corrida" in (ivn.__doc__ or "") or "id-corrida" in (ivn.__doc__ or "")
+
+
+def test_resume_distingue_medido_de_residuo(tmp_path, monkeypatch):
+    """3.1: un caso ya medido se saltea SIN sonda; un residuo sin medicion se declara."""
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 2)  # R001, R002
+    _sembrar_sidecar(tmp_path, "corrida-1")  # R001 valido (t_e2e_s = 99.0)
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+    clave_r001 = ivn.correlation_keys("R001")[0]
+    clave_r002 = ivn.correlation_keys("R002")[0]
+    sesion = _instalar_sesion_de_sondeo(
+        monkeypatch,
+        {
+            clave_r001: [_incidente_viejo(999)],
+            clave_r002: [_incidente_viejo(888, "INC-000888")],
+        },
+    )
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--orden", "directo", "--resume"))
+
+    assert codigo == 1  # R002 declarado como fallido
+    assert vistos == []  # ni el medido ni el residuo se reenvian
+    assert clave_r001 not in sesion.consultas  # un caso medido ni siquiera se sondea
+    assert clave_r002 in sesion.consultas
+    entradas = {e["case_id"]: e for e in _leer_sidecar(tmp_path)}
+    assert entradas["R001"]["t_e2e_s"] == 99.0  # medicion reutilizada
+    assert entradas["R001"]["error"] is None
+    assert entradas["R002"]["error"] == "incidente_preexistente_sin_t_envio"
+    assert entradas["R002"]["incidente_id"] == 888
+
+
+def test_resume_caso_sin_residuo_se_envia_y_se_mide(tmp_path, monkeypatch):
+    """3.2: la sonda no altera el camino feliz (sin incidente preexistente)."""
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON])
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+    sesion = _instalar_sesion_de_sondeo(monkeypatch, {})  # ningun incidente preexistente
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--orden", "directo", "--resume"))
+
+    assert codigo == 0
+    assert vistos == ["R001"]  # se envio y se midio como hoy
+    assert ivn.correlation_keys("R001")[0] in sesion.consultas  # se sono una vez
+    entradas = _leer_sidecar(tmp_path)
+    assert entradas[0]["t_e2e_s"] == 7.0
+    assert entradas[0]["error"] is None
+
+
+def test_sin_resume_no_sondea_y_reenvia_todos(tmp_path, monkeypatch):
+    """3.3: sin --resume la conducta por defecto no cambia (reenvia todos)."""
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 3)
+    _sembrar_sidecar(tmp_path, "corrida-1")  # R001 valido: igual se reenvia
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+    sesion = _instalar_sesion_de_sondeo(
+        monkeypatch, {ivn.correlation_keys("R001")[0]: [_incidente_viejo()]}
+    )
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--orden", "directo"))
+
+    assert codigo == 0
+    assert vistos == ["R001", "R002", "R003"]  # se reenvian TODOS
+    assert sesion.consultas == []  # sin --resume no hay sonda
+
+
+def test_resume_con_sidecar_de_otra_corrida_aborta_sin_mezclar(tmp_path, monkeypatch, capsys):
+    """3.4: el ledger de reanudacion no cruza corridas (preflight sigue rechazando)."""
+    json_path = tmp_path / "campana.json"
+    _write_cases_json(json_path, [CANAL_CORREO_JSON] * 3)
+    antes = _sembrar_sidecar(tmp_path, "corrida-previa")
+    vistos: list[str] = []
+    _ingesta_falsa(monkeypatch, vistos)
+    _instalar_sesion_de_sondeo(monkeypatch, {})
+
+    codigo = ivn.run(_argv_campana(tmp_path, json_path, "--orden", "directo", "--resume"))
+
+    err = capsys.readouterr().err
+    assert codigo == 2
+    assert "corrida-previa" in err and "corrida-1" in err
+    assert vistos == []
+    assert (tmp_path / "corrida.json").read_bytes() == antes

@@ -25,6 +25,22 @@ construction.
 No secrets live in this file. Credentials are read from the environment:
 ``INGEST_OPERATOR_USERNAME`` / ``INGEST_OPERATOR_PASSWORD`` (login), SMTP and
 confirmation-IMAP variables (see README.md).
+
+Traceability and resume (c-172)
+-------------------------------
+The traceability sidecar is written INCREMENTALLY, once per processed case, so
+an interrupted run keeps the traceability of everything already processed. The
+writer merges by ``case_id``, so a complete run leaves the same final sidecar.
+
+Resume is explicit and OFF by default: ``--resume`` reanudates a previous run of
+the SAME ``--id-corrida``. The resume ledger is keyed by ``id_corrida``: cases
+that already have a VALID sidecar entry are skipped (their stored measurement is
+reused) and, before sending the remaining cases, the harness probes for a
+pre-existing incident with the c-69 exact ``origen_message_id`` filter. A
+pre-existing incident without a valid sidecar entry is recorded as
+``incidente_preexistente_sin_t_envio`` and is NEVER re-sent, and it never
+fabricates a measurement (policy B1). Without ``--resume`` the default behaviour
+is unchanged. Campaign runs use ``--resume``.
 """
 
 from __future__ import annotations
@@ -76,6 +92,10 @@ DEFAULT_SIDECAR = "data/corpus_resultados_n8n.json"
 LOGIN_PATH = "/api/v1/auth/login"
 INCIDENTES_PATH = "/api/v1/incidentes/"
 DEFAULT_LIST_LIMIT = 200
+
+# B1 (c-172): un incidente preexistente sin medicion en el sidecar se declara con
+# esta etiqueta, sin reenviar y sin fabricar ``t_e2e_s``/``t_espera_s``.
+ERROR_PREEXISTENTE = "incidente_preexistente_sin_t_envio"
 
 POLL_TIMEOUT_S = 90.0
 POLL_INTERVAL_S = 5.0
@@ -800,6 +820,28 @@ def verificar_sidecar_de_corrida(path: str | Path, id_corrida: str) -> str | Non
     )
 
 
+def _resume_valid_case_ids(path: str | Path, id_corrida: str | None) -> set[str]:
+    """``case_id`` del sidecar con una entrada VALIDA para la corrida actual (c-172).
+
+    Reconstruye cada entrada como ``CaseResult`` y conserva solo las validas
+    (``_should_write_metric``: sin error y no anomalas). Solo mira entradas cuyo
+    ``id_corrida`` coincide con el de la corrida; fuera del modo campana la
+    corrida es ``None`` (sidecar sin corrida). Entradas corruptas, incompletas o
+    de otra corrida se ignoran, de modo que una reanudacion nunca mezcla corridas.
+    """
+    validos: set[str] = set()
+    for entry in _load_sidecar_entries(Path(path)):
+        if entry.get("id_corrida") != id_corrida:
+            continue
+        try:
+            resultado = CaseResult(**entry)
+        except TypeError:  # entrada con claves desconocidas: no es reanudable
+            continue
+        if _should_write_metric(resultado):
+            validos.add(str(resultado.case_id))
+    return validos
+
+
 def merge_evaluation_json(path: str | Path, measurements: dict[str, float | None]) -> int:
     """Merge numeric ``tiempo_automatizado_s`` by ``id`` into the evaluation JSON.
 
@@ -1070,6 +1112,97 @@ def find_incidente_by_origen(
         time.sleep(max(poll_interval, 0.0))
 
 
+def _probe_keys(case_id: str, canal: str, domain: str) -> list[str]:
+    """Claves deterministas de correlacion del caso para el sondeo de preexistencia.
+
+    Correo: las formas almacenables del ``Message-ID`` normalizado
+    (``correlation_keys``). Web: ``corpus-<ID>`` (``build_web_payload``).
+    """
+    if canal == CANAL_WEB:
+        return [f"{MESSAGE_ID_PREFIX}{case_id}"]
+    return correlation_keys(case_id, domain)
+
+
+def probe_existing_incident(
+    *,
+    session: Any,
+    base_url: str,
+    token: str,
+    keys: Sequence[str],
+    verify: Any,
+    timeout: float,
+    backoff: float = ic.BACKOFF_BASE_S,
+) -> dict[str, Any] | None:
+    """Sonda single-shot de un incidente preexistente por el filtro exacto de c-69.
+
+    Consulta UNA vez por clave ``GET /api/v1/incidentes/?origen_message_id=<key>``
+    y devuelve el primer incidente listado (o ``None``). Es DELIBERADAMENTE sin el
+    guard ``min_ingresado_en`` que usa ``find_incidente_by_origen``: el objetivo es
+    detectar el residuo de una corrida interrumpida, es decir justamente el
+    incidente viejo que el guard de recencia rechazaria. No hace polling.
+    """
+    for key in keys:
+        query = urlencode({"origen_message_id": key, "limit": DEFAULT_LIST_LIMIT})
+        url = f"{base_url}{INCIDENTES_PATH}?{query}"
+        try:
+            response = ic._request_with_retry(
+                session,
+                "GET",
+                url,
+                headers=_headers(token),
+                verify=verify,
+                timeout=timeout,
+                backoff_base=backoff,
+            )
+        except Exception:  # noqa: BLE001 - una sonda fallida nunca aborta la corrida
+            continue
+        if response.status_code >= 400:
+            continue
+        items = response.json()
+        if not isinstance(items, list):
+            continue
+        for item in items:
+            if isinstance(item, dict) and item.get("id") is not None:
+                return item
+    return None
+
+
+def _preexistente_result(
+    case_id: str,
+    canal: str,
+    t_envio: datetime,
+    incidente: Mapping[str, Any],
+    origen_message_id: str | None,
+) -> CaseResult:
+    """``CaseResult`` B1: incidente preexistente sin medicion.
+
+    Lleva la etiqueta ``ERROR_PREEXISTENTE`` y TODAS las metricas en ``None``: la
+    politica B1 excluye y declara, nunca inventa un ``t_e2e_s``. Al tener ``error``,
+    ``_should_write_metric`` es falso y no reemplaza una entrada valida previa.
+    """
+    return CaseResult(
+        case_id=case_id,
+        canal=canal,
+        incidente_id=incidente.get("id"),
+        numero_incidente=incidente.get("numero_incidente"),
+        sector=None,
+        revision=None,
+        t_envio=t_envio.isoformat(),
+        ingresado_en=None,
+        persistido_en=None,
+        latencia_e2e_ms=None,
+        t_pipeline_s=None,
+        t_espera_s=None,
+        t_e2e_s=None,
+        origen_message_id=origen_message_id,
+        confirmacion_recibida=False,
+        t_confirmacion=None,
+        t_confirmacion_s=None,
+        anomalo=False,
+        error=ERROR_PREEXISTENTE,
+    )
+
+
 def _observe_confirmation(
     confirmation_observer: Callable[[str], datetime | None] | None,
     numero_incidente: str | None,
@@ -1211,6 +1344,16 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--smtp-from", default=os.environ.get("INGEST_SMTP_FROM"))
     parser.add_argument("--ingest-address", default=os.environ.get("INGEST_MAILBOX_ADDRESS"))
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help=(
+            "Reanuda una corrida previa del MISMO --id-corrida: salta los casos ya "
+            "medidos en el sidecar (ledger por id_corrida) y sondea la preexistencia "
+            "del incidente por origen_message_id (c-69) antes de enviar. Las corridas "
+            "de campana lo usan. Sin --resume la conducta es la previa a este change."
+        ),
+    )
     modo_campana.registrar_argumentos(parser)
     args = parser.parse_args(argv)
     modo_campana.resolver_sidecar(args, DEFAULT_SIDECAR)
@@ -1327,11 +1470,57 @@ def run(argv: Sequence[str] | None = None) -> int:
     def _send_email(message: EmailMessage) -> None:
         _send_via_smtp(message, args)
 
+    def _anotar(result: CaseResult) -> CaseResult:
+        """En campana, cada resultado lleva su asignacion del plan ANTES de persistir (c-172)."""
+        if not campana:
+            return result
+        return modo_campana.anotar_resultados(
+            [result], seleccion.asignaciones, args.id_corrida
+        )[0]
+
+    # Reanudacion (B, c-172): solo con --resume. El ledger se lee por la corrida
+    # actual (None fuera de campana) y el skip reutiliza la medicion almacenada.
+    reanudados: set[str] = set()
+    if args.resume:
+        reanudados = _resume_valid_case_ids(
+            args.sidecar, args.id_corrida if campana else None
+        )
+
     results: list[CaseResult] = []
     for index, case in enumerate(selected, start=1):
         canal = map_canal(case.canal)
         if canal not in INGESTABLE_CHANNELS:
             continue
+        if args.resume and case.case_id in reanudados:
+            print(
+                f"[{index}/{len(selected)}] {case.case_id}: reanudado "
+                "(medicion ya en el sidecar)"
+            )
+            continue
+        if args.resume:
+            claves = _probe_keys(case.case_id, canal, domain)
+            preexistente = probe_existing_incident(
+                session=session,
+                base_url=base_url,
+                token=token,
+                keys=claves,
+                verify=verify,
+                timeout=args.timeout,
+            )
+            if preexistente is not None:
+                result = _anotar(
+                    _preexistente_result(
+                        case.case_id,
+                        canal,
+                        datetime.now(UTC),
+                        preexistente,
+                        claves[0] if claves else None,
+                    )
+                )
+                results.append(result)
+                write_sidecar_json(args.sidecar, [result])  # ledger incremental (A)
+                print(f"[{index}/{len(selected)}] {case.case_id}: error {result.error}")
+                continue
         if index > 1 and args.sleep > 0:
             time.sleep(args.sleep)
         t_envio = datetime.now(UTC)
@@ -1372,7 +1561,9 @@ def run(argv: Sequence[str] | None = None) -> int:
             result = _error_result(
                 case.case_id, canal, t_envio, type(exc).__name__
             )
+        result = _anotar(result)
         results.append(result)
+        write_sidecar_json(args.sidecar, [result])  # ledger incremental (A, c-172)
         if result.error:
             print(f"[{index}/{len(selected)}] {case.case_id}: error {result.error}")
         else:

@@ -40,7 +40,7 @@ Se mantiene `evaluation/data/campana/registro_sujetos.csv`, **sin nombres, corre
 
 | Columna | Contenido |
 |---|---|
-| `alias` | Alias del rol: `E1`, `E2` (etiquetadores), `O1`, `O2` (operadores), `A1`, `A2` (analistas originales), `T1`, `T2`, ... (autores, uno por autor) |
+| `alias` | Alias del rol: `E1`, `E2` (etiquetadores), `O1`, `O2` (operadores), `A1` (analista original), `T1`, `T2`, `T3` (autores, uno por autor) |
 | `rol` | `etiquetador`, `operador`, `analista_original` o `autor` |
 | `persona` | Código seudónimo `P<n>`, **estable entre roles**: la misma persona lleva el mismo código en todos los roles que tenga |
 
@@ -55,9 +55,9 @@ E2,etiquetador,P6
 O1,operador,P3
 O2,operador,P4
 A1,analista_original,P1
-A2,analista_original,P2
 T1,autor,P7
 T2,autor,P8
+T3,autor,P2
 ```
 
 Regla de aceptación del registro: **cada `persona` figura con un solo rol**. Verificarlo antes de etiquetar:

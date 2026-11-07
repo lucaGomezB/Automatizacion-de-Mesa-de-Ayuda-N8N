@@ -1,0 +1,401 @@
+id_caso,id_etiquetador,tarea,sector_etiquetado,sectores_adicionales_etiquetados,inicio,timestamp
+R001,E1,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-02T16:24:08-03:00,2026-11-02T16:26:00-03:00
+R002,E1,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-02T17:32:42-03:00,2026-11-02T17:33:17-03:00
+R003,E1,doble_etiquetado,Seguridad Informatica,Soporte Tecnico Software|Sistemas,2026-11-02T17:55:12-03:00,2026-11-02T17:55:57-03:00
+R004,E1,doble_etiquetado,Soporte Tecnico Software,Sistemas,2026-11-02T17:59:50-03:00,2026-11-02T18:00:35-03:00
+R005,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T18:01:51-03:00,2026-11-02T18:02:29-03:00
+R006,E1,doble_etiquetado,Soporte Tecnico Hardware,Sistemas,2026-11-02T18:05:39-03:00,2026-11-02T18:06:05-03:00
+R007,E1,doble_etiquetado,Soporte Tecnico Hardware,Sistemas,2026-11-02T18:06:25-03:00,2026-11-02T18:06:53-03:00
+R008,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T18:07:24-03:00,2026-11-02T18:07:45-03:00
+R009,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T18:09:05-03:00,2026-11-02T18:09:32-03:00
+R010,E1,doble_etiquetado,Soporte Tecnico Software,Sistemas,2026-11-02T18:10:56-03:00,2026-11-02T18:11:19-03:00
+R011,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T18:52:23-03:00,2026-11-02T18:52:23-03:00
+R012,E1,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-02T18:53:38-03:00,2026-11-02T18:54:27-03:00
+R013,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T18:55:31-03:00,2026-11-02T18:55:51-03:00
+R014,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T18:56:13-03:00,2026-11-02T18:56:40-03:00
+R015,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T18:57:15-03:00,2026-11-02T18:57:40-03:00
+R016,E1,doble_etiquetado,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-02T18:58:42-03:00,2026-11-02T18:59:38-03:00
+R017,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:13:22-03:00,2026-11-02T19:13:43-03:00
+R018,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:14:12-03:00,2026-11-02T19:14:39-03:00
+R019,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:14:56-03:00,2026-11-02T19:15:15-03:00
+R020,E1,doble_etiquetado,Sistemas,Soporte Tecnico Software,2026-11-02T19:15:33-03:00,2026-11-02T19:16:11-03:00
+R021,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:17:25-03:00,2026-11-02T19:17:54-03:00
+R022,E1,doble_etiquetado,Sistemas,Soporte Tecnico Software,2026-11-02T19:18:07-03:00,2026-11-02T19:18:53-03:00
+R023,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:19:18-03:00,2026-11-02T19:19:45-03:00
+R024,E1,doble_etiquetado,Seguridad Informatica,,2026-11-02T19:20:01-03:00,2026-11-02T19:20:33-03:00
+R025,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:22:42-03:00,2026-11-02T19:23:00-03:00
+R026,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:23:12-03:00,2026-11-02T19:23:35-03:00
+R027,E1,doble_etiquetado,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-02T19:23:53-03:00,2026-11-02T19:24:26-03:00
+R028,E1,doble_etiquetado,Soporte Tecnico Hardware,Sistemas,2026-11-02T19:24:45-03:00,2026-11-02T19:25:06-03:00
+R029,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:25:35-03:00,2026-11-02T19:26:08-03:00
+R030,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:27:03-03:00,2026-11-02T19:27:37-03:00
+R031,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T19:28:00-03:00,2026-11-02T19:28:31-03:00
+R032,E1,doble_etiquetado,Soporte Tecnico Hardware,Seguridad Informatica,2026-11-02T19:28:47-03:00,2026-11-02T19:29:52-03:00
+R033,E1,doble_etiquetado,Seguridad Informatica,Soporte Tecnico Software,2026-11-02T19:31:09-03:00,2026-11-02T19:31:42-03:00
+R034,E1,doble_etiquetado,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-02T19:31:59-03:00,2026-11-02T19:32:23-03:00
+R035,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T19:38:50-03:00,2026-11-02T19:39:09-03:00
+R036,E1,doble_etiquetado,Soporte Tecnico Hardware,Sistemas,2026-11-02T19:39:44-03:00,2026-11-02T19:40:20-03:00
+R037,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:40:33-03:00,2026-11-02T19:40:58-03:00
+R038,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T19:41:40-03:00,2026-11-02T19:42:01-03:00
+R039,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:42:18-03:00,2026-11-02T19:42:58-03:00
+R040,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:44:06-03:00,2026-11-02T19:44:30-03:00
+R041,E1,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica|Bases de Datos,2026-11-02T19:44:50-03:00,2026-11-02T19:45:16-03:00
+R042,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T19:45:30-03:00,2026-11-02T19:45:51-03:00
+R043,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:46:10-03:00,2026-11-02T19:46:40-03:00
+R044,E1,doble_etiquetado,Seguridad Informatica,,2026-11-02T19:47:06-03:00,2026-11-02T19:47:31-03:00
+R045,E1,doble_etiquetado,Seguridad Informatica,,2026-11-02T19:48:21-03:00,2026-11-02T19:48:42-03:00
+R046,E1,doble_etiquetado,Seguridad Informatica,,2026-11-02T19:48:57-03:00,2026-11-02T19:49:18-03:00
+R047,E1,doble_etiquetado,Seguridad Informatica,Soporte Tecnico Software,2026-11-02T19:49:29-03:00,2026-11-02T19:50:01-03:00
+R048,E1,doble_etiquetado,Seguridad Informatica,,2026-11-02T20:13:42-03:00,2026-11-02T20:14:18-03:00
+R049,E1,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-02T20:14:44-03:00,2026-11-02T20:15:20-03:00
+R050,E1,doble_etiquetado,Soporte Tecnico Hardware,Seguridad Informatica,2026-11-02T20:15:37-03:00,2026-11-02T20:16:02-03:00
+R051,E1,doble_etiquetado,Seguridad Informatica,Soporte Tecnico Software,2026-11-02T20:16:20-03:00,2026-11-02T20:17:01-03:00
+R052,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:18:02-03:00,2026-11-02T20:18:34-03:00
+R053,E1,doble_etiquetado,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-02T20:18:54-03:00,2026-11-02T20:19:59-03:00
+R054,E1,doble_etiquetado,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-02T20:20:59-03:00,2026-11-02T20:21:32-03:00
+R055,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T20:21:43-03:00,2026-11-02T20:22:01-03:00
+R056,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:22:12-03:00,2026-11-02T20:22:32-03:00
+R057,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:22:55-03:00,2026-11-02T20:23:34-03:00
+R058,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:24:14-03:00,2026-11-02T20:24:38-03:00
+R059,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:24:53-03:00,2026-11-02T20:25:13-03:00
+R060,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:25:29-03:00,2026-11-02T20:25:53-03:00
+R061,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:26:40-03:00,2026-11-02T20:27:04-03:00
+R062,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:27:18-03:00,2026-11-02T20:27:56-03:00
+R063,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:28:07-03:00,2026-11-02T20:28:44-03:00
+R064,E1,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-02T20:40:09-03:00,2026-11-02T20:40:49-03:00
+R065,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:41:03-03:00,2026-11-02T20:41:26-03:00
+R066,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:41:37-03:00,2026-11-02T20:42:02-03:00
+R067,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:42:13-03:00,2026-11-02T20:42:43-03:00
+R068,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:42:57-03:00,2026-11-02T20:43:37-03:00
+R069,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:44:07-03:00,2026-11-02T20:44:43-03:00
+R070,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:45:00-03:00,2026-11-02T20:45:21-03:00
+R071,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:45:33-03:00,2026-11-02T20:46:11-03:00
+R072,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:46:24-03:00,2026-11-02T20:47:12-03:00
+R073,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:47:24-03:00,2026-11-02T20:47:47-03:00
+R074,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:48:02-03:00,2026-11-02T20:48:28-03:00
+R075,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:48:39-03:00,2026-11-02T20:49:04-03:00
+R076,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:49:12-03:00,2026-11-02T20:50:08-03:00
+R077,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:52:17-03:00,2026-11-02T20:52:47-03:00
+R078,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:52:56-03:00,2026-11-02T20:53:14-03:00
+R079,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:53:25-03:00,2026-11-02T20:53:47-03:00
+R080,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:54:02-03:00,2026-11-02T20:54:21-03:00
+R081,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:57:42-03:00,2026-11-02T20:57:59-03:00
+R082,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:58:09-03:00,2026-11-02T20:58:27-03:00
+R083,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:58:36-03:00,2026-11-02T20:58:56-03:00
+R084,E1,doble_etiquetado,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-02T20:59:07-03:00,2026-11-02T20:59:33-03:00
+R085,E1,doble_etiquetado,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-02T20:59:56-03:00,2026-11-02T21:00:18-03:00
+R086,E1,doble_etiquetado,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-02T21:02:17-03:00,2026-11-02T21:02:42-03:00
+R087,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T21:03:05-03:00,2026-11-02T21:03:35-03:00
+R088,E1,doble_etiquetado,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-02T21:04:03-03:00,2026-11-02T21:04:27-03:00
+R089,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T21:04:39-03:00,2026-11-02T21:05:05-03:00
+R090,E1,doble_etiquetado,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-02T21:05:13-03:00,2026-11-02T21:05:38-03:00
+R091,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T21:06:02-03:00,2026-11-02T21:06:32-03:00
+R092,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T21:06:54-03:00,2026-11-02T21:07:18-03:00
+R093,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T21:11:12-03:00,2026-11-02T21:11:34-03:00
+R094,E1,doble_etiquetado,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-02T21:11:42-03:00,2026-11-02T21:12:10-03:00
+R095,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T21:12:24-03:00,2026-11-02T21:12:46-03:00
+R096,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T21:12:58-03:00,2026-11-02T21:13:28-03:00
+R097,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T21:13:42-03:00,2026-11-02T21:14:06-03:00
+R098,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T21:14:25-03:00,2026-11-02T21:14:51-03:00
+R099,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T21:20:15-03:00,2026-11-02T21:20:40-03:00
+R100,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T21:20:55-03:00,2026-11-02T21:21:26-03:00
+R101,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T21:31:17-03:00,2026-11-02T21:31:46-03:00
+R102,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T21:31:55-03:00,2026-11-02T21:32:42-03:00
+R103,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T21:32:54-03:00,2026-11-02T21:33:16-03:00
+R104,E1,doble_etiquetado,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-02T21:33:29-03:00,2026-11-02T21:33:52-03:00
+R105,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T21:34:16-03:00,2026-11-02T21:34:46-03:00
+R106,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T21:35:00-03:00,2026-11-02T21:35:20-03:00
+R107,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T21:48:22-03:00,2026-11-02T21:48:49-03:00
+R108,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T21:49:02-03:00,2026-11-02T21:49:24-03:00
+R109,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T21:49:38-03:00,2026-11-02T21:50:00-03:00
+R110,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T21:50:09-03:00,2026-11-02T21:50:42-03:00
+R111,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T21:50:52-03:00,2026-11-02T21:51:18-03:00
+R112,E1,doble_etiquetado,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-02T21:51:27-03:00,2026-11-02T21:51:54-03:00
+R113,E1,doble_etiquetado,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-02T21:52:09-03:00,2026-11-02T21:52:34-03:00
+R114,E1,doble_etiquetado,Soporte Tecnico Hardware,Sistemas|Soporte Tecnico Software,2026-11-02T21:52:45-03:00,2026-11-02T21:53:15-03:00
+R115,E1,doble_etiquetado,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-02T21:53:24-03:00,2026-11-02T21:53:57-03:00
+R116,E1,doble_etiquetado,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-02T21:54:09-03:00,2026-11-02T21:54:37-03:00
+R117,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T21:56:56-03:00,2026-11-02T21:57:19-03:00
+R118,E1,doble_etiquetado,Soporte Tecnico Software,Sistemas|Seguridad Informatica,2026-11-02T21:57:30-03:00,2026-11-02T21:58:19-03:00
+R119,E1,doble_etiquetado,Seguridad Informatica,Sistemas,2026-11-02T21:58:29-03:00,2026-11-02T21:59:06-03:00
+R120,E1,doble_etiquetado,Sistemas,Seguridad Informatica|Soporte Tecnico Hardware|Soporte Tecnico Software|Bases de Datos,2026-11-02T21:59:15-03:00,2026-11-02T22:00:30-03:00
+R121,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T22:11:45-03:00,2026-11-02T22:12:12-03:00
+R122,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T22:12:21-03:00,2026-11-02T22:12:53-03:00
+R123,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T22:13:02-03:00,2026-11-02T22:13:35-03:00
+R124,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T22:13:45-03:00,2026-11-02T22:14:10-03:00
+R125,E1,doble_etiquetado,Seguridad Informatica,,2026-11-02T22:14:21-03:00,2026-11-02T22:14:53-03:00
+R126,E1,doble_etiquetado,Seguridad Informatica,Soporte Tecnico Software,2026-11-02T22:17:36-03:00,2026-11-02T22:18:08-03:00
+R127,E1,doble_etiquetado,Seguridad Informatica,,2026-11-02T22:18:18-03:00,2026-11-02T22:18:44-03:00
+R128,E1,doble_etiquetado,Seguridad Informatica,Soporte Tecnico Software,2026-11-02T22:18:53-03:00,2026-11-02T22:19:44-03:00
+R129,E1,doble_etiquetado,Seguridad Informatica,Soporte Tecnico Software,2026-11-03T14:26:08-03:00,2026-11-03T14:26:43-03:00
+R130,E1,doble_etiquetado,Seguridad Informatica,,2026-11-03T14:38:43-03:00,2026-11-03T14:39:07-03:00
+R131,E1,doble_etiquetado,Seguridad Informatica,,2026-11-03T14:41:21-03:00,2026-11-03T14:41:48-03:00
+R132,E1,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica|Soporte Tecnico Hardware,2026-11-03T14:43:58-03:00,2026-11-03T14:45:09-03:00
+R133,E1,doble_etiquetado,Sistemas,Seguridad Informatica,2026-11-03T15:59:40-03:00,2026-11-03T16:00:21-03:00
+R134,E1,doble_etiquetado,Sistemas,Seguridad Informatica,2026-11-03T16:03:18-03:00,2026-11-03T16:03:43-03:00
+R135,E1,doble_etiquetado,Sistemas,Seguridad Informatica,2026-11-03T16:03:56-03:00,2026-11-03T16:04:44-03:00
+R136,E1,doble_etiquetado,Sistemas,Seguridad Informatica,2026-11-03T16:04:56-03:00,2026-11-03T16:05:27-03:00
+R137,E1,doble_etiquetado,Soporte Tecnico Software,Sistemas,2026-11-03T16:05:37-03:00,2026-11-03T16:06:24-03:00
+R138,E1,doble_etiquetado,Sistemas,Seguridad Informatica,2026-11-03T16:06:33-03:00,2026-11-03T16:06:56-03:00
+R139,E1,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-03T16:07:04-03:00,2026-11-03T16:07:51-03:00
+R140,E1,doble_etiquetado,Sistemas,Seguridad Informatica,2026-11-03T16:08:27-03:00,2026-11-03T16:09:04-03:00
+R141,E1,doble_etiquetado,Sistemas,,2026-11-03T16:13:16-03:00,2026-11-03T16:13:40-03:00
+R142,E1,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-03T16:13:51-03:00,2026-11-03T16:15:13-03:00
+R143,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T16:15:21-03:00,2026-11-03T16:16:56-03:00
+R144,E1,doble_etiquetado,Seguridad Informatica,,2026-11-03T16:21:23-03:00,2026-11-03T16:21:58-03:00
+R145,E1,doble_etiquetado,Sistemas,Soporte Tecnico Software,2026-11-03T16:25:25-03:00,2026-11-03T16:25:53-03:00
+R146,E1,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-03T16:26:00-03:00,2026-11-03T16:26:57-03:00
+R147,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T16:27:07-03:00,2026-11-03T16:27:32-03:00
+R148,E1,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-03T16:27:39-03:00,2026-11-03T16:28:06-03:00
+R149,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T16:30:55-03:00,2026-11-03T16:31:17-03:00
+R150,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T16:31:27-03:00,2026-11-03T16:31:43-03:00
+R151,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T16:31:53-03:00,2026-11-03T16:32:14-03:00
+R152,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T16:32:23-03:00,2026-11-03T16:32:42-03:00
+R153,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T16:32:59-03:00,2026-11-03T16:33:30-03:00
+R154,E1,doble_etiquetado,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-03T16:34:14-03:00,2026-11-03T16:34:35-03:00
+R155,E1,doble_etiquetado,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-03T16:34:44-03:00,2026-11-03T16:35:21-03:00
+R156,E1,doble_etiquetado,Soporte Tecnico Software,Sistemas,2026-11-03T16:35:31-03:00,2026-11-03T16:35:56-03:00
+R157,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T16:36:04-03:00,2026-11-03T16:36:32-03:00
+R158,E1,doble_etiquetado,Soporte Tecnico Hardware,Sistemas,2026-11-03T16:36:40-03:00,2026-11-03T16:37:48-03:00
+R159,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T16:38:10-03:00,2026-11-03T16:39:25-03:00
+R160,E1,doble_etiquetado,Sistemas,Soporte Tecnico Hardware,2026-11-03T16:39:33-03:00,2026-11-03T16:40:01-03:00
+R161,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T16:40:10-03:00,2026-11-03T16:40:36-03:00
+R162,E1,doble_etiquetado,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-03T16:40:47-03:00,2026-11-03T16:41:27-03:00
+R163,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T16:41:37-03:00,2026-11-03T16:42:21-03:00
+R164,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T16:42:29-03:00,2026-11-03T16:43:08-03:00
+R165,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T16:43:16-03:00,2026-11-03T16:44:06-03:00
+R166,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T16:44:34-03:00,2026-11-03T16:46:12-03:00
+R167,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T16:46:23-03:00,2026-11-03T16:46:52-03:00
+R168,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T16:47:01-03:00,2026-11-03T16:47:28-03:00
+R169,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T16:47:44-03:00,2026-11-03T16:48:08-03:00
+R170,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T16:48:17-03:00,2026-11-03T16:48:56-03:00
+R171,E1,doble_etiquetado,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-03T16:49:06-03:00,2026-11-03T16:50:59-03:00
+R172,E1,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-03T16:51:09-03:00,2026-11-03T16:51:58-03:00
+R173,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T16:52:13-03:00,2026-11-03T16:52:45-03:00
+R174,E1,doble_etiquetado,Soporte Tecnico Software,Sistemas,2026-11-03T16:52:54-03:00,2026-11-03T16:53:21-03:00
+R175,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T16:53:28-03:00,2026-11-03T16:53:52-03:00
+R176,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T16:54:00-03:00,2026-11-03T16:54:35-03:00
+R177,E1,doble_etiquetado,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-03T16:54:43-03:00,2026-11-03T16:55:15-03:00
+R178,E1,doble_etiquetado,Soporte Tecnico Software,Sistemas|Seguridad Informatica,2026-11-03T16:55:23-03:00,2026-11-03T16:55:56-03:00
+R179,E1,doble_etiquetado,Soporte Tecnico Software,Sistemas,2026-11-03T16:56:23-03:00,2026-11-03T16:56:53-03:00
+R180,E1,doble_etiquetado,Soporte Tecnico Hardware,Sistemas,2026-11-03T17:00:05-03:00,2026-11-03T17:00:31-03:00
+R181,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T17:00:40-03:00,2026-11-03T17:01:22-03:00
+R182,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T17:08:09-03:00,2026-11-03T17:08:36-03:00
+R183,E1,doble_etiquetado,Seguridad Informatica,Soporte Tecnico Software,2026-11-03T17:08:48-03:00,2026-11-03T17:09:26-03:00
+R184,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T17:09:35-03:00,2026-11-03T17:10:39-03:00
+R185,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T17:10:48-03:00,2026-11-03T17:11:11-03:00
+R186,E1,doble_etiquetado,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-03T17:11:20-03:00,2026-11-03T17:11:48-03:00
+R187,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T17:24:38-03:00,2026-11-03T17:25:01-03:00
+R188,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T17:25:16-03:00,2026-11-03T17:25:55-03:00
+R189,E1,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-03T17:26:03-03:00,2026-11-03T17:26:44-03:00
+R190,E1,doble_etiquetado,Soporte Tecnico Hardware,Sistemas,2026-11-03T17:26:57-03:00,2026-11-03T17:27:36-03:00
+R191,E1,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-03T17:27:46-03:00,2026-11-03T17:28:20-03:00
+R192,E1,doble_etiquetado,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-03T17:35:38-03:00,2026-11-03T17:36:11-03:00
+R193,E1,doble_etiquetado,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-03T17:46:37-03:00,2026-11-03T17:47:06-03:00
+R194,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T17:47:13-03:00,2026-11-03T17:47:42-03:00
+R195,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T17:47:49-03:00,2026-11-03T17:48:19-03:00
+R196,E1,doble_etiquetado,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-03T17:48:27-03:00,2026-11-03T17:49:01-03:00
+R197,E1,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T17:49:16-03:00,2026-11-03T17:49:51-03:00
+R198,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T17:50:02-03:00,2026-11-03T17:50:42-03:00
+R199,E1,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T17:50:52-03:00,2026-11-03T17:51:15-03:00
+R200,E1,doble_etiquetado,Soporte Tecnico Software,Sistemas|Seguridad Informatica,2026-11-03T17:51:37-03:00,2026-11-03T17:52:07-03:00
+R001,E2,doble_etiquetado,Sistemas,,2026-11-02T14:29:57-03:00,2026-11-02T14:30:57-03:00
+R002,E2,doble_etiquetado,Sistemas,,2026-11-02T14:31:25-03:00,2026-11-02T14:32:22-03:00
+R003,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T14:32:50-03:00,2026-11-02T14:34:15-03:00
+R004,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T14:34:50-03:00,2026-11-02T14:35:58-03:00
+R005,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T14:40:10-03:00,2026-11-02T14:41:37-03:00
+R006,E2,doble_etiquetado,Sistemas,,2026-11-02T14:42:00-03:00,2026-11-02T14:43:09-03:00
+R007,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T14:44:54-03:00,2026-11-02T14:45:46-03:00
+R008,E2,doble_etiquetado,Sistemas,,2026-11-02T14:48:02-03:00,2026-11-02T14:49:16-03:00
+R009,E2,doble_etiquetado,Sistemas,,2026-11-02T14:50:22-03:00,2026-11-02T14:52:44-03:00
+R010,E2,doble_etiquetado,Sistemas,Soporte Tecnico Hardware,2026-11-02T14:57:23-03:00,2026-11-02T14:58:05-03:00
+R011,E2,doble_etiquetado,Sistemas,,2026-11-02T15:01:56-03:00,2026-11-02T15:02:21-03:00
+R012,E2,doble_etiquetado,Sistemas,,2026-11-02T15:07:10-03:00,2026-11-02T15:07:53-03:00
+R013,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T15:10:40-03:00,2026-11-02T15:11:20-03:00
+R014,E2,doble_etiquetado,Sistemas,,2026-11-02T15:16:19-03:00,2026-11-02T15:16:59-03:00
+R015,E2,doble_etiquetado,Sistemas,,2026-11-02T15:20:58-03:00,2026-11-02T15:22:06-03:00
+R016,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T15:26:01-03:00,2026-11-02T15:26:47-03:00
+R017,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T15:29:44-03:00,2026-11-02T15:30:39-03:00
+R018,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T15:32:42-03:00,2026-11-02T15:33:56-03:00
+R019,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T15:37:41-03:00,2026-11-02T15:38:33-03:00
+R020,E2,doble_etiquetado,Sistemas,,2026-11-02T15:41:34-03:00,2026-11-02T15:42:09-03:00
+R021,E2,doble_etiquetado,Sistemas,,2026-11-02T15:46:35-03:00,2026-11-02T15:47:35-03:00
+R022,E2,doble_etiquetado,Sistemas,,2026-11-02T15:48:12-03:00,2026-11-02T15:50:47-03:00
+R023,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T15:51:04-03:00,2026-11-02T15:53:24-03:00
+R024,E2,doble_etiquetado,Sistemas,,2026-11-02T15:59:00-03:00,2026-11-02T15:59:42-03:00
+R025,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T16:02:02-03:00,2026-11-02T16:03:42-03:00
+R026,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T16:05:16-03:00,2026-11-02T16:06:15-03:00
+R027,E2,doble_etiquetado,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-02T16:09:01-03:00,2026-11-02T16:09:42-03:00
+R028,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T16:13:00-03:00,2026-11-02T16:13:25-03:00
+R029,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T16:15:39-03:00,2026-11-02T16:16:26-03:00
+R030,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T16:18:28-03:00,2026-11-02T16:19:42-03:00
+R031,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T16:22:09-03:00,2026-11-02T16:23:57-03:00
+R032,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T16:26:54-03:00,2026-11-02T16:27:18-03:00
+R033,E2,doble_etiquetado,Sistemas,Seguridad Informatica,2026-11-02T16:29:13-03:00,2026-11-02T16:30:26-03:00
+R034,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T16:31:37-03:00,2026-11-02T16:32:40-03:00
+R035,E2,doble_etiquetado,Sistemas,,2026-11-02T16:35:15-03:00,2026-11-02T16:35:52-03:00
+R036,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T16:38:21-03:00,2026-11-02T16:39:29-03:00
+R037,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T16:41:59-03:00,2026-11-02T16:43:38-03:00
+R038,E2,doble_etiquetado,Sistemas,,2026-11-02T16:44:11-03:00,2026-11-02T16:45:59-03:00
+R039,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T16:47:41-03:00,2026-11-02T16:48:20-03:00
+R040,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T16:50:51-03:00,2026-11-02T16:51:37-03:00
+R041,E2,doble_etiquetado,Bases de Datos,,2026-11-02T16:52:15-03:00,2026-11-02T16:53:08-03:00
+R042,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T16:55:02-03:00,2026-11-02T16:55:31-03:00
+R043,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T16:58:24-03:00,2026-11-02T16:59:47-03:00
+R044,E2,doble_etiquetado,Sistemas,,2026-11-02T17:00:43-03:00,2026-11-02T17:01:09-03:00
+R045,E2,doble_etiquetado,Seguridad Informatica,,2026-11-02T17:05:32-03:00,2026-11-02T17:06:37-03:00
+R046,E2,doble_etiquetado,Seguridad Informatica,,2026-11-02T17:08:14-03:00,2026-11-02T17:09:49-03:00
+R047,E2,doble_etiquetado,Seguridad Informatica,,2026-11-02T17:09:56-03:00,2026-11-02T17:11:10-03:00
+R048,E2,doble_etiquetado,Seguridad Informatica,,2026-11-02T17:13:42-03:00,2026-11-02T17:14:17-03:00
+R049,E2,doble_etiquetado,Sistemas,,2026-11-02T17:18:58-03:00,2026-11-02T17:19:42-03:00
+R050,E2,doble_etiquetado,Seguridad Informatica,,2026-11-02T17:20:26-03:00,2026-11-02T17:21:00-03:00
+R051,E2,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-02T17:23:45-03:00,2026-11-02T17:24:28-03:00
+R052,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T17:26:43-03:00,2026-11-02T17:27:34-03:00
+R053,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T17:29:20-03:00,2026-11-02T17:30:49-03:00
+R054,E2,doble_etiquetado,Sistemas,,2026-11-02T17:32:41-03:00,2026-11-02T17:33:12-03:00
+R055,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T17:34:43-03:00,2026-11-02T17:35:20-03:00
+R056,E2,doble_etiquetado,Sistemas,,2026-11-02T17:36:57-03:00,2026-11-02T17:38:46-03:00
+R057,E2,doble_etiquetado,Sistemas,,2026-11-02T17:39:49-03:00,2026-11-02T17:40:55-03:00
+R058,E2,doble_etiquetado,Sistemas,,2026-11-02T17:42:25-03:00,2026-11-02T17:43:21-03:00
+R059,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T17:43:52-03:00,2026-11-02T17:45:42-03:00
+R060,E2,doble_etiquetado,Seguridad Informatica,,2026-11-02T17:49:02-03:00,2026-11-02T17:49:02-03:00
+R061,E2,doble_etiquetado,Sistemas,,2026-11-02T17:50:23-03:00,2026-11-02T17:51:17-03:00
+R062,E2,doble_etiquetado,Sistemas,,2026-11-02T17:52:29-03:00,2026-11-02T17:53:29-03:00
+R063,E2,doble_etiquetado,Sistemas,,2026-11-02T17:55:21-03:00,2026-11-02T17:56:45-03:00
+R064,E2,doble_etiquetado,Sistemas,,2026-11-02T17:58:32-03:00,2026-11-02T17:59:52-03:00
+R065,E2,doble_etiquetado,Soporte Tecnico Software,Sistemas,2026-11-02T18:01:21-03:00,2026-11-02T18:02:32-03:00
+R066,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T18:04:16-03:00,2026-11-02T18:05:46-03:00
+R067,E2,doble_etiquetado,Soporte Tecnico Software,Sistemas,2026-11-02T18:08:00-03:00,2026-11-02T18:09:59-03:00
+R068,E2,doble_etiquetado,Sistemas,Bases de Datos,2026-11-02T18:11:49-03:00,2026-11-02T18:13:18-03:00
+R069,E2,doble_etiquetado,Soporte Tecnico Software,Sistemas,2026-11-02T18:14:24-03:00,2026-11-02T18:15:45-03:00
+R070,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T18:18:52-03:00,2026-11-02T18:19:03-03:00
+R071,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T18:20:42-03:00,2026-11-02T18:21:12-03:00
+R072,E2,doble_etiquetado,Sistemas,,2026-11-02T18:24:17-03:00,2026-11-02T18:25:29-03:00
+R073,E2,doble_etiquetado,Sistemas,,2026-11-02T18:27:58-03:00,2026-11-02T18:28:39-03:00
+R074,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T18:29:48-03:00,2026-11-02T18:30:53-03:00
+R075,E2,doble_etiquetado,Sistemas,,2026-11-02T18:31:42-03:00,2026-11-02T18:32:04-03:00
+R076,E2,doble_etiquetado,Sistemas,,2026-11-02T18:33:21-03:00,2026-11-02T18:34:23-03:00
+R077,E2,doble_etiquetado,Sistemas,Seguridad Informatica,2026-11-02T18:37:51-03:00,2026-11-02T18:38:38-03:00
+R078,E2,doble_etiquetado,Sistemas,,2026-11-02T18:40:34-03:00,2026-11-02T18:41:55-03:00
+R079,E2,doble_etiquetado,Seguridad Informatica,Sistemas,2026-11-02T18:43:15-03:00,2026-11-02T18:44:11-03:00
+R080,E2,doble_etiquetado,Sistemas,,2026-11-02T18:46:18-03:00,2026-11-02T18:47:28-03:00
+R081,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T18:48:31-03:00,2026-11-02T18:49:49-03:00
+R082,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T18:51:43-03:00,2026-11-02T18:52:10-03:00
+R083,E2,doble_etiquetado,Seguridad Informatica,Sistemas,2026-11-02T18:54:19-03:00,2026-11-02T18:55:28-03:00
+R084,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T18:57:52-03:00,2026-11-02T18:58:43-03:00
+R085,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:01:02-03:00,2026-11-02T19:01:59-03:00
+R086,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:03:19-03:00,2026-11-02T19:04:12-03:00
+R087,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:07:14-03:00,2026-11-02T19:08:21-03:00
+R088,E2,doble_etiquetado,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-02T19:09:21-03:00,2026-11-02T19:10:46-03:00
+R089,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:12:31-03:00,2026-11-02T19:13:55-03:00
+R090,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:15:59-03:00,2026-11-02T19:16:07-03:00
+R091,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:19:48-03:00,2026-11-02T19:20:18-03:00
+R092,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:21:44-03:00,2026-11-02T19:22:34-03:00
+R093,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:25:47-03:00,2026-11-02T19:26:57-03:00
+R094,E2,doble_etiquetado,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-02T19:28:37-03:00,2026-11-02T19:29:59-03:00
+R095,E2,doble_etiquetado,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-02T19:31:38-03:00,2026-11-02T19:32:13-03:00
+R096,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:35:15-03:00,2026-11-02T19:36:30-03:00
+R097,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:39:26-03:00,2026-11-02T19:40:43-03:00
+R098,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:41:56-03:00,2026-11-02T19:42:53-03:00
+R099,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:46:07-03:00,2026-11-02T19:46:07-03:00
+R100,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:49:41-03:00,2026-11-02T19:50:20-03:00
+R101,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:51:46-03:00,2026-11-02T19:52:36-03:00
+R102,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:55:20-03:00,2026-11-02T19:56:43-03:00
+R103,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T19:59:00-03:00,2026-11-02T20:00:02-03:00
+R104,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T20:01:48-03:00,2026-11-02T20:02:22-03:00
+R105,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T20:05:41-03:00,2026-11-02T20:06:37-03:00
+R106,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T20:08:03-03:00,2026-11-02T20:08:49-03:00
+R107,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T20:10:53-03:00,2026-11-02T20:11:02-03:00
+R108,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T20:13:01-03:00,2026-11-02T20:13:29-03:00
+R109,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T20:15:58-03:00,2026-11-02T20:16:38-03:00
+R110,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T20:19:14-03:00,2026-11-02T20:19:55-03:00
+R111,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T20:20:46-03:00,2026-11-02T20:21:17-03:00
+R112,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:22:58-03:00,2026-11-02T20:23:32-03:00
+R113,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-02T20:24:02-03:00,2026-11-02T20:25:47-03:00
+R114,E2,doble_etiquetado,Sistemas,Soporte Tecnico Hardware,2026-11-02T20:28:34-03:00,2026-11-02T20:29:04-03:00
+R115,E2,doble_etiquetado,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-02T20:30:51-03:00,2026-11-02T20:31:27-03:00
+R116,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:33:18-03:00,2026-11-02T20:33:53-03:00
+R117,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:34:43-03:00,2026-11-02T20:35:10-03:00
+R118,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:38:57-03:00,2026-11-02T20:39:25-03:00
+R119,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:42:01-03:00,2026-11-02T20:42:38-03:00
+R120,E2,doble_etiquetado,Sistemas,,2026-11-02T20:44:08-03:00,2026-11-02T20:44:52-03:00
+R121,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:46:43-03:00,2026-11-02T20:47:14-03:00
+R122,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:48:50-03:00,2026-11-02T20:49:30-03:00
+R123,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:51:54-03:00,2026-11-02T20:52:42-03:00
+R124,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-02T20:55:48-03:00,2026-11-02T20:56:11-03:00
+R125,E2,doble_etiquetado,Seguridad Informatica,,2026-11-02T20:57:46-03:00,2026-11-02T20:58:11-03:00
+R126,E2,doble_etiquetado,Seguridad Informatica,,2026-11-02T20:59:59-03:00,2026-11-02T21:00:27-03:00
+R127,E2,doble_etiquetado,Seguridad Informatica,,2026-11-02T21:02:00-03:00,2026-11-02T21:02:42-03:00
+R128,E2,doble_etiquetado,Seguridad Informatica,,2026-11-02T21:06:09-03:00,2026-11-02T21:06:55-03:00
+R129,E2,doble_etiquetado,Seguridad Informatica,Soporte Tecnico Software,2026-11-03T18:12:24-03:00,2026-11-03T18:13:13-03:00
+R130,E2,doble_etiquetado,Seguridad Informatica,,2026-11-03T19:06:23-03:00,2026-11-03T19:06:48-03:00
+R131,E2,doble_etiquetado,Seguridad Informatica,Soporte Tecnico Software,2026-11-03T19:07:01-03:00,2026-11-03T19:07:32-03:00
+R132,E2,doble_etiquetado,Soporte Tecnico Software,Soporte Tecnico Hardware|Seguridad Informatica,2026-11-03T19:08:35-03:00,2026-11-03T19:09:45-03:00
+R133,E2,doble_etiquetado,Seguridad Informatica,Sistemas,2026-11-03T19:10:03-03:00,2026-11-03T19:10:30-03:00
+R134,E2,doble_etiquetado,Sistemas,Seguridad Informatica,2026-11-03T19:13:19-03:00,2026-11-03T19:13:54-03:00
+R135,E2,doble_etiquetado,Sistemas,Seguridad Informatica,2026-11-03T19:14:02-03:00,2026-11-03T19:14:32-03:00
+R136,E2,doble_etiquetado,Sistemas,Seguridad Informatica,2026-11-03T19:16:49-03:00,2026-11-03T19:17:25-03:00
+R137,E2,doble_etiquetado,Soporte Tecnico Software,Sistemas,2026-11-03T19:17:52-03:00,2026-11-03T19:18:30-03:00
+R138,E2,doble_etiquetado,Sistemas,Seguridad Informatica|Soporte Tecnico Software,2026-11-03T19:18:42-03:00,2026-11-03T19:19:13-03:00
+R139,E2,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-03T19:27:17-03:00,2026-11-03T19:28:26-03:00
+R140,E2,doble_etiquetado,Sistemas,Soporte Tecnico Software|Seguridad Informatica,2026-11-03T19:28:35-03:00,2026-11-03T19:29:41-03:00
+R141,E2,doble_etiquetado,Sistemas,Seguridad Informatica|Soporte Tecnico Software,2026-11-03T19:29:50-03:00,2026-11-03T19:30:24-03:00
+R142,E2,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-03T19:30:39-03:00,2026-11-03T19:31:13-03:00
+R143,E2,doble_etiquetado,Seguridad Informatica,Soporte Tecnico Software,2026-11-03T19:31:21-03:00,2026-11-03T19:32:14-03:00
+R144,E2,doble_etiquetado,Seguridad Informatica,Sistemas|Soporte Tecnico Software,2026-11-03T19:47:14-03:00,2026-11-03T19:48:01-03:00
+R145,E2,doble_etiquetado,Sistemas,Seguridad Informatica|Soporte Tecnico Software,2026-11-03T19:48:09-03:00,2026-11-03T19:48:50-03:00
+R146,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T19:48:59-03:00,2026-11-03T19:49:30-03:00
+R147,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T19:49:38-03:00,2026-11-03T19:50:01-03:00
+R148,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T20:17:51-03:00,2026-11-03T20:18:25-03:00
+R149,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T20:18:32-03:00,2026-11-03T20:19:20-03:00
+R150,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T20:19:37-03:00,2026-11-03T20:20:05-03:00
+R151,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T20:20:12-03:00,2026-11-03T20:20:42-03:00
+R152,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T20:20:56-03:00,2026-11-03T20:21:31-03:00
+R153,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T20:21:38-03:00,2026-11-03T20:22:16-03:00
+R154,E2,doble_etiquetado,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-03T20:22:34-03:00,2026-11-03T20:23:22-03:00
+R155,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T20:23:34-03:00,2026-11-03T20:24:54-03:00
+R156,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T20:25:42-03:00,2026-11-03T20:26:07-03:00
+R157,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T20:26:15-03:00,2026-11-03T20:27:43-03:00
+R158,E2,doble_etiquetado,Soporte Tecnico Hardware,Sistemas,2026-11-03T20:28:11-03:00,2026-11-03T20:29:11-03:00
+R159,E2,doble_etiquetado,Soporte Tecnico Hardware,Sistemas,2026-11-03T20:30:15-03:00,2026-11-03T20:32:53-03:00
+R160,E2,doble_etiquetado,Soporte Tecnico Hardware,Sistemas,2026-11-03T20:33:29-03:00,2026-11-03T20:34:11-03:00
+R161,E2,doble_etiquetado,Soporte Tecnico Software,Sistemas|Seguridad Informatica,2026-11-03T20:34:23-03:00,2026-11-03T20:35:02-03:00
+R162,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T20:35:10-03:00,2026-11-03T20:35:37-03:00
+R163,E2,doble_etiquetado,Soporte Tecnico Software,Sistemas|Seguridad Informatica,2026-11-03T20:35:45-03:00,2026-11-03T20:36:36-03:00
+R164,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T20:36:44-03:00,2026-11-03T20:37:31-03:00
+R165,E2,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-03T20:37:43-03:00,2026-11-03T20:38:20-03:00
+R166,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T20:38:32-03:00,2026-11-03T20:38:58-03:00
+R167,E2,doble_etiquetado,Soporte Tecnico Hardware,Sistemas,2026-11-03T20:39:13-03:00,2026-11-03T20:39:43-03:00
+R168,E2,doble_etiquetado,Soporte Tecnico Software,Sistemas|Seguridad Informatica,2026-11-03T20:40:18-03:00,2026-11-03T20:40:54-03:00
+R169,E2,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-03T20:41:08-03:00,2026-11-03T20:41:57-03:00
+R170,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T20:42:06-03:00,2026-11-03T20:42:43-03:00
+R171,E2,doble_etiquetado,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-03T20:42:51-03:00,2026-11-03T20:43:47-03:00
+R172,E2,doble_etiquetado,Sistemas,Seguridad Informatica,2026-11-03T20:43:56-03:00,2026-11-03T20:44:21-03:00
+R173,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T20:44:30-03:00,2026-11-03T20:44:52-03:00
+R174,E2,doble_etiquetado,Soporte Tecnico Software,Sistemas,2026-11-03T20:44:58-03:00,2026-11-03T20:45:31-03:00
+R175,E2,doble_etiquetado,Soporte Tecnico Software,Sistemas|Seguridad Informatica,2026-11-03T20:45:48-03:00,2026-11-03T20:46:28-03:00
+R176,E2,doble_etiquetado,Seguridad Informatica,Soporte Tecnico Software,2026-11-03T20:46:28-03:00,2026-11-03T20:47:24-03:00
+R177,E2,doble_etiquetado,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-03T20:47:33-03:00,2026-11-03T20:47:59-03:00
+R178,E2,doble_etiquetado,Soporte Tecnico Hardware,Soporte Tecnico Software,2026-11-03T20:50:31-03:00,2026-11-03T20:51:07-03:00
+R179,E2,doble_etiquetado,Soporte Tecnico Software,Sistemas,2026-11-03T20:51:16-03:00,2026-11-03T20:51:59-03:00
+R180,E2,doble_etiquetado,Soporte Tecnico Hardware,Sistemas,2026-11-03T20:52:22-03:00,2026-11-03T20:53:16-03:00
+R181,E2,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-03T20:54:30-03:00,2026-11-03T20:55:02-03:00
+R182,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T20:55:16-03:00,2026-11-03T20:55:46-03:00
+R183,E2,doble_etiquetado,Seguridad Informatica,Soporte Tecnico Software,2026-11-03T20:55:58-03:00,2026-11-03T20:56:30-03:00
+R184,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T20:57:24-03:00,2026-11-03T20:57:55-03:00
+R185,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T20:58:04-03:00,2026-11-03T20:58:31-03:00
+R186,E2,doble_etiquetado,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-03T20:58:53-03:00,2026-11-03T20:59:30-03:00
+R187,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T20:59:39-03:00,2026-11-03T21:00:23-03:00
+R188,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T21:00:58-03:00,2026-11-03T21:01:20-03:00
+R189,E2,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-03T21:12:04-03:00,2026-11-03T21:12:35-03:00
+R190,E2,doble_etiquetado,Soporte Tecnico Hardware,Sistemas,2026-11-03T21:12:42-03:00,2026-11-03T21:13:12-03:00
+R191,E2,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica|Sistemas,2026-11-03T21:13:21-03:00,2026-11-03T21:14:07-03:00
+R192,E2,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-03T21:14:18-03:00,2026-11-03T21:14:53-03:00
+R193,E2,doble_etiquetado,Soporte Tecnico Software,Soporte Tecnico Hardware,2026-11-03T21:14:59-03:00,2026-11-03T21:15:29-03:00
+R194,E2,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-03T21:18:23-03:00,2026-11-03T21:18:59-03:00
+R195,E2,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-03T21:19:12-03:00,2026-11-03T21:19:35-03:00
+R196,E2,doble_etiquetado,Soporte Tecnico Software,,2026-11-03T21:19:50-03:00,2026-11-03T21:20:20-03:00
+R197,E2,doble_etiquetado,Soporte Tecnico Software,Seguridad Informatica,2026-11-03T21:20:30-03:00,2026-11-03T21:21:14-03:00
+R198,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T21:21:24-03:00,2026-11-03T21:21:58-03:00
+R199,E2,doble_etiquetado,Soporte Tecnico Hardware,,2026-11-03T21:22:08-03:00,2026-11-03T21:22:27-03:00
+R200,E2,doble_etiquetado,Soporte Tecnico Software,Soporte Tecnico Hardware|Seguridad Informatica,2026-11-03T21:22:53-03:00,2026-11-03T21:23:33-03:00
