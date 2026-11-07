@@ -99,7 +99,10 @@ def test_intervalos_por_clase_conserva_los_f1_de_antes_del_renombre(dataset):
         "Bases de Datos": (0.3333333333333333, 0.9413312693498443),
         "Sistemas": (0.25, 0.875),
     }
-    assert {clase: ic.f1 for clase, ic in resultado.items()} == pytest.approx(esperado, abs=1e-12)
+    f1_por_clase = {clase: ic.f1 for clase, ic in resultado.items()}
+    assert set(f1_por_clase) == set(esperado)
+    for clase, intervalo in esperado.items():
+        assert f1_por_clase[clase] == pytest.approx(intervalo, abs=1e-12)
 
 
 def test_intervalos_conjunto_conserva_los_intervalos_de_antes_del_renombre(dataset):
