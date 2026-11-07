@@ -137,7 +137,7 @@ describe('ValidarClasificacionDialog', () => {
 
     expect(await screen.findByText(/clasificación automática/i)).toBeInTheDocument();
     expect(screen.getByText('42%')).toBeInTheDocument();
-    expect(screen.getByText('Gemini')).toBeInTheDocument();
+    expect(screen.getByText('Análisis por IA')).toBeInTheDocument();
     expect(screen.getByText(/"sector_predicho"/)).toBeInTheDocument();
   });
 

@@ -67,7 +67,7 @@ export function formatearEstado(nombre: string): string {
 export function formatearEtapa(etapa: string): string {
   const mapa: Record<string, string> = {
     deterministic: 'Determinístico',
-    gemini: 'Gemini',
+    gemini: 'Análisis por IA',
     fallback: 'Sin clasificar',
   };
   return mapa[etapa] ?? etapa;

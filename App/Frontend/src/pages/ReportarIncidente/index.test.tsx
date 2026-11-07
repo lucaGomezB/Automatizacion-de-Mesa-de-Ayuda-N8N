@@ -8,11 +8,17 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
 import ReportarIncidentePage from './index';
+import { SuccessCard } from './SuccessCard';
 import * as catalogosService from '@/services/catalogosService';
 import type { SectorOpcion } from '@/types/catalog';
+import type { IncidenteRead } from '@/types/incidente';
 
 vi.mock('@/services/catalogosService', () => ({
   listarSectores: vi.fn(),
+}));
+
+vi.mock('@/services/clasificacionesService', () => ({
+  listarClasificacionesPorIncidente: vi.fn().mockResolvedValue([]),
 }));
 
 // El Header (vía PageWrapper) consulta useHealthCheck. Sin este mock, la prueba
@@ -80,23 +86,48 @@ describe('ReportarIncidentePage', () => {
     expect(within(nota).queryByText('Operaciones')).not.toBeInTheDocument();
   });
 
-  it('el texto que describe la clasificación automática no nombra una versión del modelo', async () => {
+  it('el texto que describe la clasificación automática no nombra un proveedor ni una versión del modelo', async () => {
     renderPage();
 
     const encabezado = await screen.findByText(/El sistema lo clasificará/i);
     const texto = encabezado.textContent ?? '';
 
+    expect(texto).not.toContain('Gemini');
     expect(texto).not.toContain('2.5 Flash');
     expect(texto).not.toMatch(/\d+\.\d+/);
-    expect(texto).toMatch(/Gemini/);
 
-    // El texto sigue describiendo la clasificación automática y menciona al
-    // proveedor sin versión.
+    // El texto sigue describiendo la clasificación automática sin nombrar al proveedor.
     expect(texto).toMatch(/clasificará automáticamente/i);
-    expect(texto).toMatch(/\(Gemini\)/);
+    expect(texto).toMatch(/inteligencia artificial/i);
 
     // La nota informativa conserva el umbral vigente del 70%.
     const nota = await screen.findByTestId('nota-clasificacion');
     expect(within(nota).getByText(/70%/)).toBeInTheDocument();
+
+    // La tarjeta de confirmación conserva la etiqueta "Sector Asignado por IA".
+    const incidenteConfirmado: IncidenteRead = {
+      id: 1,
+      descripcion_pseudonimizada: 'El servidor no responde desde esta mañana',
+      prioridad: 'alta',
+      requiere_revision_humana: false,
+      created_at: '2026-06-11T10:00:00Z',
+      updated_at: '2026-06-11T10:00:00Z',
+      sector: { id: 5, nombre: 'Sistemas', descripcion: null },
+      estado: { id: 1, nombre: 'nuevo', descripcion: null, es_terminal: false },
+      canal_origen: { id: 2, nombre: 'formulario web', descripcion: null },
+    };
+    const queryClientTarjeta = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+    render(
+      <QueryClientProvider client={queryClientTarjeta}>
+        <SuccessCard
+          incidente={incidenteConfirmado}
+          nombreUsuario="María"
+          onNuevoReporte={vi.fn()}
+        />
+      </QueryClientProvider>
+    );
+    expect(await screen.findByText('Sector Asignado por IA')).toBeInTheDocument();
   });
 });

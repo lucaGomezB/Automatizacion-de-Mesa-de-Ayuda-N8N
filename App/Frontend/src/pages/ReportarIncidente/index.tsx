@@ -74,7 +74,7 @@ export default function ReportarIncidentePage() {
           </div>
           <p className="text-muted-foreground text-sm">
             Completá el formulario para registrar un incidente. El sistema lo clasificará
-            automáticamente mediante inteligencia artificial (Gemini).
+            automáticamente mediante inteligencia artificial.
           </p>
         </div>
 
