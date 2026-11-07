@@ -194,6 +194,7 @@ python scripts/corpus_ingest/ingest_corpus.py \
 # el harness lee las mediciones)
 python scripts/corpus_ingest/ingest_telefonia_corpus.py \
   --insecure \
+  --sleep 1.1 \
   --plan evaluation/data/campana/subplan_m1_automatizado_t1.csv \
   --id-corrida m1-automatizado-t1-tel \
   --json evaluation/data/campana/corpus_campana.json \
@@ -203,8 +204,10 @@ python scripts/corpus_ingest/ingest_telefonia_corpus.py \
 Cada harness se repite una vez por cada sub-plan `automatizado` (4 en total) con su
 `--id-corrida` y su `--sidecar` propios, siempre con `--dry-run` primero. Los ejemplos de
 telefonía llevan `--insecure` (el default `--base-url https://localhost` apunta al
-certificado autofirmado de nginx); aplica a las 4 corridas por sub-plan `automatizado`. Los
-**sidecars** (`evaluation/data/campana/sidecar_<id_corrida>.json`, uno por corrida) son las
+certificado autofirmado de nginx) y `--sleep 1.1`, que espacia los requests consecutivos
+para respetar el límite de nginx `webhook_limit` (60 r/m sobre `/api/v1/telefonia/`, ~55 r/m
+con el default) y evita los 429 por ráfaga al recuperar los 81 casos; aplica a las 4 corridas
+por sub-plan `automatizado`. Los **sidecars** (`evaluation/data/campana/sidecar_<id_corrida>.json`, uno por corrida) son las
 entradas que produce este paso y las que consume el export de 1.5.3. Los CSV/XLSX locales con
 datos personales no se versionan: los datos de campaña viven solo en el sidecar y en la copia
 de campaña.

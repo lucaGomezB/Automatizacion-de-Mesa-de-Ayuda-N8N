@@ -39,7 +39,7 @@ import time
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Iterable, Sequence
+from typing import Any, Collection, Iterable, Sequence
 
 import modo_campana
 
@@ -74,9 +74,13 @@ LOGIN_PATH = "/api/v1/auth/login"
 INCIDENTES_PATH = "/api/v1/incidentes/"
 
 # Retry policy for transient 5xx / timeouts (e.g. Gemini 503 through the
-# backend classifier). 4xx are never retried.
+# backend classifier). 4xx are never retried by default. An opt-in
+# ``retry_statuses`` collection (e.g. ``{429}``) adds extra codes to retry.
 MAX_ATTEMPTS = 3
 BACKOFF_BASE_S = 1.0
+# Upper bound for a server-provided ``Retry-After`` on an opt-in retry (c-179),
+# so an absurd value cannot stall a harvest run.
+MAX_RETRY_AFTER_S = 30.0
 
 
 # ── Pure helpers (unit tested offline) ──────────────────────────────────────
@@ -389,6 +393,26 @@ def _import_openpyxl():
 # ── HTTP layer ──────────────────────────────────────────────────────────────
 
 
+def _parse_retry_after(headers: Any) -> float | None:
+    """Return the capped ``Retry-After`` seconds from ``headers`` (pure).
+
+    Only integer-second values are honored (the form nginx emits). A missing,
+    non-integer or negative value returns ``None`` so the caller falls back to
+    the exponential backoff. The value is capped at ``MAX_RETRY_AFTER_S`` so a
+    huge header cannot stall the run.
+    """
+    raw = headers.get("Retry-After") if hasattr(headers, "get") else None
+    if raw is None:
+        return None
+    try:
+        seconds = int(str(raw).strip())
+    except (TypeError, ValueError):
+        return None
+    if seconds < 0:
+        return None
+    return min(float(seconds), MAX_RETRY_AFTER_S)
+
+
 def _request_with_retry(
     session: Any,
     method: str,
@@ -396,22 +420,38 @@ def _request_with_retry(
     *,
     max_attempts: int = MAX_ATTEMPTS,
     backoff_base: float = BACKOFF_BASE_S,
+    retry_statuses: Collection[int] | None = None,
     **kwargs: Any,
 ) -> Any:
-    """Send a request, retrying only 5xx responses and network timeouts.
+    """Send a request, retrying transient failures with a bounded backoff.
 
-    4xx responses are returned immediately (they are deterministic and must not
-    be retried). Exhausted retries re-raise the last network exception.
+    By default only 5xx responses and network timeouts are retried; 4xx are
+    returned immediately (deterministic, must not be retried). The opt-in
+    ``retry_statuses`` adds extra status codes to retry (e.g. ``{429}`` for the
+    telephony harvest). When such a status also carries a ``Retry-After``
+    header, its integer seconds are honored (capped at ``MAX_RETRY_AFTER_S``)
+    instead of the exponential backoff. On exhaustion the last response is
+    RETURNED (never raised); exhausted network timeouts still re-raise.
     """
     import requests  # local import: keeps module import side-effect free
 
+    retry_set = set(retry_statuses) if retry_statuses is not None else set()
     last_exc: Exception | None = None
     for attempt in range(1, max_attempts + 1):
         try:
             response = session.request(method, url, **kwargs)
-            if response.status_code >= 500 and attempt < max_attempts:
-                time.sleep(backoff_base * (2 ** (attempt - 1)))
-                continue
+            if attempt < max_attempts:
+                if response.status_code >= 500:
+                    time.sleep(backoff_base * (2 ** (attempt - 1)))
+                    continue
+                if response.status_code in retry_set:
+                    retry_after = _parse_retry_after(getattr(response, "headers", None))
+                    time.sleep(
+                        retry_after
+                        if retry_after is not None
+                        else backoff_base * (2 ** (attempt - 1))
+                    )
+                    continue
             return response
         except (requests.Timeout, requests.ConnectionError) as exc:
             last_exc = exc

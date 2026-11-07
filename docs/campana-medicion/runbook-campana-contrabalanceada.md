@@ -163,6 +163,7 @@ Los harnesses de ingesta ejecutan el brazo automatizado y registran, por caso, `
    ```bash
    python scripts/corpus_ingest/ingest_telefonia_corpus.py \
      --insecure \
+     --sleep 1.1 \
      --plan evaluation/data/campana/subplan_m1_automatizado_t1.csv \
      --id-corrida m1-automatizado-t1-tel \
      --json evaluation/data/campana/corpus_campana.json \
@@ -171,6 +172,13 @@ Los harnesses de ingesta ejecutan el brazo automatizado y registran, por caso, `
 
    El `--insecure` es obligatorio: el default `--base-url https://localhost` apunta al
    certificado autofirmado de nginx. Aplica a las 4 corridas por sub-plan `automatizado`.
+
+   `--sleep 1.1` (default) espacia los requests consecutivos para respetar el límite de
+   nginx `webhook_limit` (60 r/m sobre `/api/v1/telefonia/`): emite ~55 r/m y no dispara
+   429 por ráfaga al barrer los 81 casos. La pausa va ENTRE requests (recuperación y
+   `--replace`), nunca antes del primero. No hace falta ningún wrapper externo: un 429
+   transitorio se reintenta con backoff que honra `Retry-After` y, agotado, el caso queda
+   como etiqueta de error sin fabricar medición.
 
    Selecciona los casos `telefono` del plan, recupera cada medición como siempre y copia
    `orden`, `posicion`, `mitad` y `brazo_primero` al sidecar, sin decidir el orden de las

@@ -793,3 +793,144 @@ def test_sin_plan_ni_orden_se_siguen_escribiendo_el_csv_y_el_xlsx(tmp_path, monk
 
     assert codigo == 0
     assert escrituras == ["csv", "xlsx"]
+
+
+# ── Shared retry helper: opt-in 429 + Retry-After (c-179) ────────────────────
+
+
+class _RetryResponse:
+    def __init__(
+        self,
+        status_code: int = 200,
+        body: dict | None = None,
+        headers: dict | None = None,
+    ) -> None:
+        self.status_code = status_code
+        self._body = body or {}
+        self.headers = headers or {}
+
+    def json(self) -> dict:
+        return self._body
+
+
+class _RetrySession:
+    """Minimal ``requests.Session`` stand-in; pops canned responses in order."""
+
+    def __init__(self, responses: list) -> None:
+        self._responses = list(responses)
+        self.calls: list[tuple] = []
+
+    def request(self, method, url, **kwargs):
+        self.calls.append((method, url, kwargs))
+        item = self._responses.pop(0)
+        if isinstance(item, Exception):
+            raise item
+        return item
+
+
+def test_parse_retry_after_absent_or_unparseable_is_none():
+    assert ic._parse_retry_after(None) is None
+    assert ic._parse_retry_after({}) is None
+    assert ic._parse_retry_after({"Retry-After": "soon"}) is None
+
+
+def test_parse_retry_after_returns_seconds_capped():
+    assert ic._parse_retry_after({"Retry-After": "2"}) == 2.0
+    assert ic._parse_retry_after({"Retry-After": "99999"}) == ic.MAX_RETRY_AFTER_S
+
+
+def test_request_with_retry_retries_opt_in_429_then_succeeds(monkeypatch):
+    sleeps: list[float] = []
+    monkeypatch.setattr(ic.time, "sleep", lambda s: sleeps.append(s))
+    session = _RetrySession([_RetryResponse(429, {}), _RetryResponse(200, {"ok": True})])
+
+    response = ic._request_with_retry(
+        session, "GET", "https://api.local/x", retry_statuses={429}, backoff_base=1.0
+    )
+
+    assert response.status_code == 200
+    assert len(session.calls) == 2
+    assert sleeps == [1.0]
+
+
+def test_request_with_retry_persistent_429_exhausts_and_returns_response(monkeypatch):
+    monkeypatch.setattr(ic.time, "sleep", lambda s: None)
+    session = _RetrySession([_RetryResponse(429, {}) for _ in range(ic.MAX_ATTEMPTS)])
+
+    response = ic._request_with_retry(
+        session, "GET", "https://api.local/x", retry_statuses={429}, backoff_base=1.0
+    )
+
+    assert response.status_code == 429
+    assert len(session.calls) == ic.MAX_ATTEMPTS
+
+
+def test_request_with_retry_without_opt_in_returns_429_immediately(monkeypatch):
+    sleeps: list[float] = []
+    monkeypatch.setattr(ic.time, "sleep", lambda s: sleeps.append(s))
+    session = _RetrySession([_RetryResponse(429, {})])
+
+    response = ic._request_with_retry(
+        session, "GET", "https://api.local/x", backoff_base=1.0
+    )
+
+    assert response.status_code == 429
+    assert len(session.calls) == 1
+    assert sleeps == []
+
+
+def test_request_with_retry_honors_retry_after(monkeypatch):
+    sleeps: list[float] = []
+    monkeypatch.setattr(ic.time, "sleep", lambda s: sleeps.append(s))
+    session = _RetrySession(
+        [_RetryResponse(429, {}, headers={"Retry-After": "2"}), _RetryResponse(200, {})]
+    )
+
+    ic._request_with_retry(
+        session, "GET", "https://api.local/x", retry_statuses={429}, backoff_base=99.0
+    )
+
+    assert sleeps == [2.0]
+
+
+def test_request_with_retry_caps_retry_after(monkeypatch):
+    sleeps: list[float] = []
+    monkeypatch.setattr(ic.time, "sleep", lambda s: sleeps.append(s))
+    session = _RetrySession(
+        [
+            _RetryResponse(429, {}, headers={"Retry-After": "99999"}),
+            _RetryResponse(200, {}),
+        ]
+    )
+
+    ic._request_with_retry(
+        session, "GET", "https://api.local/x", retry_statuses={429}, backoff_base=99.0
+    )
+
+    assert sleeps == [ic.MAX_RETRY_AFTER_S]
+
+
+def test_request_with_retry_opt_in_429_uses_exponential_backoff(monkeypatch):
+    sleeps: list[float] = []
+    monkeypatch.setattr(ic.time, "sleep", lambda s: sleeps.append(s))
+    session = _RetrySession(
+        [_RetryResponse(429, {}), _RetryResponse(429, {}), _RetryResponse(200, {})]
+    )
+
+    ic._request_with_retry(
+        session, "GET", "https://api.local/x", retry_statuses={429}, backoff_base=1.0
+    )
+
+    assert sleeps == [1.0, 2.0]
+
+
+def test_login_still_returns_4xx_immediately(monkeypatch):
+    sleeps: list[float] = []
+    monkeypatch.setattr(ic.time, "sleep", lambda s: sleeps.append(s))
+    session = _RetrySession([_RetryResponse(429, {})])
+
+    with pytest.raises(RuntimeError):
+        ic.login(session, "https://api.local", "u", "p", True)
+
+    assert len(session.calls) == 1
+    assert sleeps == []

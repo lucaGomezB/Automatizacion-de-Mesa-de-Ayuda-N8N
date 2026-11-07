@@ -385,6 +385,26 @@ python3 scripts/corpus_ingest/ingest_telefonia_corpus.py --replace --limit 1
 python3 scripts/corpus_ingest/ingest_telefonia_corpus.py --replace --confirm-replace
 ```
 
+### Tasa de requests y 429 (c-179)
+
+El harvest emite un request por caso (la recuperacion) mas un `DELETE` por caso
+con `--replace`. nginx limita `/api/v1/telefonia/` con
+`limit_req zone=webhook_limit burst=20 nodelay` y `webhook_limit` es `60 r/m`
+(1 r/s sostenido). Para no exceder la tasa, `--sleep` impone una pausa ENTRE
+requests consecutivos (recuperacion y `--replace`), sin esperar antes del primer
+request. El default es `1.1` s (~55 r/m): deja margen para jitter de red y para
+los `DELETE` del reemplazo, y `burst=20 nodelay` absorbe el arranque. Correr el
+harvest con el default NO produce 429 por rafaga; bajarlo por debajo de `1.0`
+puede volver a gatillar el limite.
+
+Ademas, un `429` transitorio se reintenta con backoff acotado que HONRA el
+header `Retry-After` cuando esta presente (recortado a un tope para no colgar la
+corrida). Agotados los intentos, el caso se reporta con una etiqueta de error
+(`http429`) y NO se fabrica `t_e2e_s`, `t_espera_s` ni `t_pipeline_s`. Este
+reintento es OPT-IN del harness de telefonia: los demas consumidores del retry
+compartido siguen reintentando solo 5xx y timeouts, sin reintentar 4xx. No hay
+que envolver el script en ningun wrapper externo.
+
 | Flag | Default | Descripcion |
 |------|---------|-------------|
 | `--base-url` | `https://localhost` | URL base del backend del corpus. |
@@ -394,6 +414,7 @@ python3 scripts/corpus_ingest/ingest_telefonia_corpus.py --replace --confirm-rep
 | `--sidecar` | `data/corpus_resultados_telefonia.json` | Trazabilidad (sin descripciones). |
 | `--limit` | — | Procesa solo los primeros N casos. |
 | `--timeout` | `30` | Timeout HTTP por request. |
+| `--sleep` | `1.1` | Pausa en segundos entre requests HTTP consecutivos (respeta el limite de nginx `webhook_limit`, 60 r/m). |
 | `--replace` | off | Modo reemplazo; **dry-run por defecto** (no borra ni escribe). |
 | `--confirm-replace` | off | Aprobacion explicita del borrado destructivo (requiere `--replace`). |
 | `--dry-run` | off | Solo parsea y reporta. Sin red, sin escritura. |

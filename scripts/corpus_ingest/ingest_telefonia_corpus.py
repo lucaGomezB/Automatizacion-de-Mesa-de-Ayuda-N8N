@@ -20,6 +20,18 @@ ingreso. It is destructive (governance ALTO): ``--replace`` alone is a dry-run
 that neither deletes nor writes; the destructive run requires the explicit
 ``--confirm-replace`` approval.
 
+Rate limiting (c-179)
+---------------------
+The harvest emits one ``GET /api/v1/telefonia/ingresos`` per case (plus a
+scoped ``DELETE`` per case with ``--replace``). nginx limits
+``/api/v1/telefonia/`` with ``limit_req zone=webhook_limit burst=20 nodelay``
+and ``webhook_limit`` is ``60 r/m``, so consecutive requests are spaced by
+``--sleep`` seconds (default ``1.1`` s, ~55 r/m, safely below the limit) with
+NO wait before the first request. A transient ``429`` is retried with a bounded
+backoff that honors ``Retry-After`` when present; once the attempts are
+exhausted the case is reported as an error label and NO ``t_e2e_s``,
+``t_espera_s`` nor ``t_pipeline_s`` is fabricated.
+
 Privacy
 -------
 Corpus descriptions are REAL internal text. This module NEVER logs, prints or
@@ -35,6 +47,7 @@ from __future__ import annotations
 import argparse
 import os
 import sys
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
@@ -182,6 +195,7 @@ def recover_telefonia_case(
         verify=verify,
         timeout=timeout,
         backoff_base=backoff,
+        retry_statuses={429},
     )
     if response.status_code == 404:
         return ivn._error_result(case_id, CANAL_TELEFONO, None, PENDING_LABEL)
@@ -218,6 +232,7 @@ def delete_previos(
         verify=verify,
         timeout=timeout,
         backoff_base=backoff,
+        retry_statuses={429},
     )
     if response.status_code >= 400:
         return None
@@ -285,6 +300,16 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--timeout", type=float, default=30.0)
+    parser.add_argument(
+        "--sleep",
+        type=float,
+        default=1.1,
+        help=(
+            "Pausa en segundos entre requests HTTP consecutivos, para respetar el "
+            "limite de nginx (webhook_limit, 60 r/m sobre /api/v1/telefonia/). "
+            "Default 1.1 (~55 r/m, por debajo del limite)."
+        ),
+    )
     parser.add_argument(
         "--replace",
         action="store_true",
@@ -390,6 +415,8 @@ def run(argv: Sequence[str] | None = None) -> int:
 
     results: list[ivn.CaseResult] = []
     for index, case in enumerate(selected, start=1):
+        if index > 1 and args.sleep > 0:
+            time.sleep(args.sleep)
         try:
             result = recover_telefonia_case(
                 session=session,
@@ -407,7 +434,9 @@ def run(argv: Sequence[str] | None = None) -> int:
         print(f"[{index}/{len(selected)}] {case.case_id}: {_case_label(result)}")
 
     if args.replace:
-        for case in selected:
+        for index, case in enumerate(selected, start=1):
+            if index > 1 and args.sleep > 0:
+                time.sleep(args.sleep)
             try:
                 counts = delete_previos(
                     session=session,

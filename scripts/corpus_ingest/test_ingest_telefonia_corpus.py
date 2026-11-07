@@ -11,6 +11,7 @@ from __future__ import annotations
 import csv
 import json
 import sys
+import time
 from dataclasses import asdict, replace
 from datetime import datetime, timezone
 from pathlib import Path
@@ -28,6 +29,16 @@ import ingest_telefonia_corpus as itc  # noqa: E402
 import ingest_via_n8n as ivn  # noqa: E402
 
 UTC = timezone.utc
+
+
+@pytest.fixture(autouse=True)
+def _sin_esperas_reales(monkeypatch):
+    """Anula ``time.sleep`` por defecto para que el throttle no duerma la suite.
+
+    Los tests que verifican el orden y los valores de las pausas reemplazan
+    ``time.sleep`` con su propio registrador dentro del cuerpo del test.
+    """
+    monkeypatch.setattr(time, "sleep", lambda *_: None)
 
 
 def _dt(hour: int, minute: int = 0, second: int = 0) -> datetime:
@@ -1306,3 +1317,170 @@ def test_run_dry_run_con_plan_cuenta_los_casos_telefono_sin_red(tmp_path, monkey
     assert "telefonia=2" in capsys.readouterr().out
     assert recuperados == []
     assert not (tmp_path / "corrida.json").exists()
+
+
+# ── Throttle --sleep y robustez ante 429 (c-179) ────────────────────────────
+
+
+def test_parse_args_sleep_default_1_1_y_explicito():
+    assert itc.parse_args([]).sleep == pytest.approx(1.1)
+    assert itc.parse_args(["--sleep", "0.5"]).sleep == pytest.approx(0.5)
+
+
+def _preparar_run_telefonia(tmp_path, monkeypatch, eventos: list[str]) -> Path:
+    """Arma un run() offline de telefonia que registra eventos en orden."""
+    json_path = tmp_path / "corpus.json"
+    _write_telephony_json(json_path)
+    _set_operator_creds(monkeypatch)
+    monkeypatch.setattr(ivn, "login", lambda *a, **k: "tok")
+    monkeypatch.setattr(itc, "write_back", lambda **k: 0)
+    monkeypatch.setattr(itc.time, "sleep", lambda s: eventos.append(f"sleep:{s}"))
+
+    def recover(*, case_id, **kwargs):
+        eventos.append(f"recover:{case_id}")
+        return itc.build_telefonia_result(case_id=case_id, detail=_detail())
+
+    monkeypatch.setattr(itc, "recover_telefonia_case", recover)
+    return json_path
+
+
+def _run_args(json_path: Path, *extra: str) -> list[str]:
+    return ["--source", "json", "--json", str(json_path), *extra]
+
+
+def test_run_aplica_la_pausa_entre_requests_de_recuperacion(tmp_path, monkeypatch):
+    eventos: list[str] = []
+    json_path = _preparar_run_telefonia(tmp_path, monkeypatch, eventos)
+
+    code = itc.run(_run_args(json_path, "--sleep", "1.1"))
+
+    assert code == 0
+    assert eventos == ["recover:R002", "sleep:1.1", "recover:R003"]
+
+
+def test_run_aplica_la_pausa_entre_deletes_de_replace(tmp_path, monkeypatch):
+    eventos: list[str] = []
+    json_path = _preparar_run_telefonia(tmp_path, monkeypatch, eventos)
+
+    def delete(**kwargs):
+        eventos.append(f"delete:{kwargs['case_id']}")
+        return {"ingresos_eliminados": 1, "incidentes_eliminados": 1}
+
+    monkeypatch.setattr(itc, "delete_previos", delete)
+
+    code = itc.run(_run_args(json_path, "--replace", "--sleep", "0.7"))
+
+    assert code == 0
+    assert eventos == [
+        "recover:R002",
+        "sleep:0.7",
+        "recover:R003",
+        "delete:R002",
+        "sleep:0.7",
+        "delete:R003",
+    ]
+
+
+def test_recover_telefonia_case_reintenta_429(monkeypatch):
+    monkeypatch.setattr(itc.ic.time, "sleep", lambda s: None)
+    session = FakeSession([FakeResponse(429, {}), FakeResponse(200, _detail())])
+
+    result = itc.recover_telefonia_case(
+        session=session,
+        base_url="https://localhost",
+        token="tok",
+        case_id="R002",
+        verify=False,
+        timeout=5.0,
+    )
+
+    assert len(session.calls) == 2
+    assert result.error is None
+    assert result.t_e2e_s == pytest.approx(2.0)
+
+
+def test_delete_previos_reintenta_429(monkeypatch):
+    monkeypatch.setattr(itc.ic.time, "sleep", lambda s: None)
+    session = FakeSession(
+        [
+            FakeResponse(429, {}),
+            FakeResponse(200, {"ingresos_eliminados": 1, "incidentes_eliminados": 1}),
+        ]
+    )
+
+    counts = itc.delete_previos(
+        session=session,
+        base_url="https://localhost",
+        token="tok",
+        case_id="R002",
+        verify=False,
+        timeout=5.0,
+        dry_run=True,
+    )
+
+    assert len(session.calls) == 2
+    assert counts["ingresos_eliminados"] == 1
+
+
+def test_run_sleep_cero_no_duerme(tmp_path, monkeypatch):
+    eventos: list[str] = []
+    json_path = _preparar_run_telefonia(tmp_path, monkeypatch, eventos)
+
+    code = itc.run(_run_args(json_path, "--sleep", "0"))
+
+    assert code == 0
+    assert eventos == ["recover:R002", "recover:R003"]
+
+
+def test_run_un_solo_caso_no_duerme(tmp_path, monkeypatch):
+    eventos: list[str] = []
+    json_path = _preparar_run_telefonia(tmp_path, monkeypatch, eventos)
+
+    code = itc.run(_run_args(json_path, "--limit", "1", "--sleep", "1.1"))
+
+    assert code == 0
+    assert eventos == ["recover:R002"]
+
+
+def test_recover_telefonia_case_429_agotado_no_fabrica_metrica(monkeypatch):
+    monkeypatch.setattr(itc.ic.time, "sleep", lambda s: None)
+    session = FakeSession([FakeResponse(429, {}) for _ in range(itc.ic.MAX_ATTEMPTS)])
+
+    result = itc.recover_telefonia_case(
+        session=session,
+        base_url="https://localhost",
+        token="tok",
+        case_id="R002",
+        verify=False,
+        timeout=5.0,
+    )
+
+    assert len(session.calls) == itc.ic.MAX_ATTEMPTS
+    assert result.error is not None and result.error.startswith("http429")
+    assert result.t_e2e_s is None
+    assert result.t_pipeline_s is None
+    assert result.t_espera_s is None
+    assert ivn._should_write_metric(result) is False
+
+
+def test_write_back_429_agotado_no_fabrica_metrica(tmp_path):
+    csv_path, xlsx_path = _write_registration_fixtures(tmp_path)
+    json_path = tmp_path / "corpus.json"
+    _write_telephony_json(json_path)
+    error_result = ivn._error_result("R002", itc.CANAL_TELEFONO, None, "http429")
+
+    itc.write_back(
+        csv_path=csv_path,
+        xlsx_path=xlsx_path,
+        sidecar_path=tmp_path / "sidecar.json",
+        json_path=json_path,
+        results=[error_result],
+    )
+
+    rows = _read_csv_rows(csv_path)
+    header = rows[1]
+    r002 = next(r for r in rows if r and r[0] == "R002")
+    assert r002[header.index(ivn.HEADER_AUTO_TIME)] == ""
+    doc = json.loads(json_path.read_text(encoding="utf-8"))
+    by_id = {c["id"]: c for c in doc["casos"]}
+    assert by_id["R002"]["tiempo_automatizado_s"] is None
