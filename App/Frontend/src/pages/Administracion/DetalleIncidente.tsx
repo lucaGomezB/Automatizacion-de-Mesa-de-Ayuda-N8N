@@ -196,18 +196,6 @@ export function DetalleIncidente({ incidente, clasificacion }: DetalleIncidenteP
                 </div>
               </CampoDetalle>
             )}
-
-            {/* Respuesta raw de Gemini (auditoria, FRH-003) */}
-            {clasificacion.respuesta_raw && (
-              <div>
-                <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-                  Respuesta raw de Gemini
-                </p>
-                <pre className="text-xs bg-slate-900 text-green-400 rounded-md p-3 overflow-x-auto">
-                  {clasificacion.respuesta_raw}
-                </pre>
-              </div>
-            )}
           </div>
         </>
       )}

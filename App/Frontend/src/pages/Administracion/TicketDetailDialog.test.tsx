@@ -123,7 +123,9 @@ describe('TicketDetailDialog', () => {
     expect(screen.getByText('Bases de Datos')).toBeInTheDocument();
     expect(screen.getByText('Soporte Tecnico Hardware')).toBeInTheDocument();
     expect(screen.getByText('42%')).toBeInTheDocument();
-    expect(screen.getByText(/"sector_predicho"/)).toBeInTheDocument();
+    // La respuesta raw no se renderiza (c-180).
+    expect(screen.queryByText(/"sector_predicho"/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/respuesta raw de gemini/i)).not.toBeInTheDocument();
   });
 
   it('muestra el estado de carga mientras las consultas estan pendientes', () => {

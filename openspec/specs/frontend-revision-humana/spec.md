@@ -41,7 +41,11 @@ El dialogo de validacion SHALL mostrar los metadatos disponibles del incidente: 
 
 ### Requirement: FRH-003 — El flujo de validacion expone el resultado completo de la clasificacion
 
-El dialogo de validacion SHALL mostrar el resultado de la clasificacion: sector predicho, confianza, etapa del pipeline, respuesta raw (cuando exista) y, si ya la hubiera, el sector validado. Ademas SHALL mostrar los sectores adicionales predichos y validados cuando existan.
+El dialogo de validacion SHALL mostrar el resultado de la clasificacion: sector predicho, confianza,
+etapa del pipeline y, si ya la hubiera, el sector validado. Ademas SHALL mostrar los sectores
+adicionales predichos y validados cuando existan. La respuesta raw del clasificador (`respuesta_raw`)
+NO SHALL mostrarse en el dialogo de validacion, aunque el campo exista en los datos de la
+clasificacion.
 
 #### Scenario: Se muestra la prediccion principal
 
@@ -56,7 +60,7 @@ El dialogo de validacion SHALL mostrar el resultado de la clasificacion: sector 
 #### Scenario: La clasificacion tiene respuesta raw
 
 - **WHEN** la clasificacion incluye `respuesta_raw` (etapa Gemini)
-- **THEN** el dialogo la muestra como informacion de auditoria
+- **THEN** el dialogo NO muestra la respuesta raw del clasificador
 
 ### Requirement: FRH-004 — La informacion de detalle es consistente entre la validacion y el detalle del ticket
 

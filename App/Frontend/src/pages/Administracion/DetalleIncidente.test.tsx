@@ -4,9 +4,9 @@
  * Cubre los escenarios FRH-001 a FRH-004 desde la vista de solo lectura:
  *   - descripcion pseudonimizada (nunca la original),
  *   - metadatos del incidente (estado, sector, adicionales, prioridad, canal, fechas),
- *   - resultado completo de la clasificacion (predicho, confianza, etapa, validado,
- *     adicionales predichos/validados y respuesta_raw),
- *   - estados borde: sin clasificacion, sin respuesta_raw, sin adicionales,
+ *   - resultado completo de la clasificacion SIN la respuesta raw (predicho, confianza,
+ *     etapa, validado, adicionales predichos/validados),
+ *   - estados borde: sin clasificacion, sin adicionales,
  *     revision humana requerida y estado terminal.
  */
 import { describe, it, expect } from 'vitest';
@@ -70,7 +70,10 @@ describe('DetalleIncidente', () => {
     expect(screen.getByText('Análisis por IA')).toBeInTheDocument();
     expect(screen.getByText('Soporte Tecnico Software')).toBeInTheDocument();
     expect(screen.getByText('Seguridad Informatica')).toBeInTheDocument();
-    expect(screen.getByText(/"sector_predicho"/)).toBeInTheDocument();
+
+    // La respuesta raw no se renderiza en ninguna superficie (c-180).
+    expect(screen.queryByText(/"sector_predicho"/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/respuesta raw de gemini/i)).not.toBeInTheDocument();
   });
 
   // ---- TRIANGULACION ----
@@ -84,15 +87,19 @@ describe('DetalleIncidente', () => {
     expect(screen.queryByText('Confianza')).not.toBeInTheDocument();
   });
 
-  it('omite la respuesta raw cuando la clasificacion no la aporta', () => {
-    render(
-      <DetalleIncidente
-        incidente={mockIncidente}
-        clasificacion={{ ...mockClasificacion, respuesta_raw: null }}
-      />
-    );
+  it('no muestra la respuesta raw aunque la clasificacion la aporte', () => {
+    render(<DetalleIncidente incidente={mockIncidente} clasificacion={mockClasificacion} />);
 
+    // El campo existe en los datos pero no se renderiza (ni etiqueta ni contenido).
     expect(screen.queryByText(/respuesta raw de gemini/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/"sector_predicho"/)).not.toBeInTheDocument();
+
+    // El resto del bloque de clasificacion sigue visible.
+    expect(screen.getByText('Soporte Tecnico Hardware')).toBeInTheDocument();
+    expect(screen.getByText('42%')).toBeInTheDocument();
+    expect(screen.getByText('Análisis por IA')).toBeInTheDocument();
+    expect(screen.getByText('Soporte Tecnico Software')).toBeInTheDocument();
+    expect(screen.getByText('Seguridad Informatica')).toBeInTheDocument();
   });
 
   it('omite los bloques de sectores adicionales cuando no hay ninguno', () => {

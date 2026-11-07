@@ -132,13 +132,15 @@ describe('ValidarClasificacionDialog', () => {
     expect(screen.getByText('Sectores Adicionales')).toBeInTheDocument();
   });
 
-  it('muestra la clasificacion completa incluida la respuesta raw', async () => {
+  it('muestra la clasificacion sin la respuesta raw', async () => {
     renderDialog();
 
     expect(await screen.findByText(/clasificación automática/i)).toBeInTheDocument();
     expect(screen.getByText('42%')).toBeInTheDocument();
     expect(screen.getByText('Análisis por IA')).toBeInTheDocument();
-    expect(screen.getByText(/"sector_predicho"/)).toBeInTheDocument();
+    // La respuesta raw existe en los datos (mock) pero no se renderiza (c-180).
+    expect(screen.queryByText(/"sector_predicho"/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/respuesta raw de gemini/i)).not.toBeInTheDocument();
   });
 
   it('consulta el detalle del incidente y el historial con las query keys compartidas', async () => {
@@ -194,15 +196,19 @@ describe('ValidarClasificacionDialog', () => {
 
   // ---- TRIANGULACION ----
 
-  it('omite la respuesta raw cuando la clasificacion no la aporta', async () => {
+  it('no muestra la respuesta raw aunque la clasificacion la aporte', async () => {
     vi.mocked(clasificacionesService.listarClasificacionesPorIncidente).mockResolvedValue([
-      { ...mockClasificacion, respuesta_raw: null },
+      { ...mockClasificacion, respuesta_raw: '{"sector_predicho":"Sistemas"}' },
     ]);
 
     renderDialog();
 
     expect(await screen.findByText(/clasificación automática/i)).toBeInTheDocument();
+    // El bloque de clasificacion sigue visible...
+    expect(screen.getByText('42%')).toBeInTheDocument();
+    // ...pero la respuesta raw no aparece (ni etiqueta ni contenido).
     expect(screen.queryByText(/respuesta raw de gemini/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/"sector_predicho"/)).not.toBeInTheDocument();
   });
 
   it('muestra la senal de revision humana cuando el incidente la requiere', async () => {
