@@ -6,6 +6,9 @@ Sistema de Automatización de Mesa de Ayuda — UTN 2026
 >
 > Para el arnés de validación local de costo cero (dry-run), ver
 > [`dry-run-harness.md`](dry-run-harness.md).
+>
+> Para reparar el mojibake de las descripciones de correo, ver
+> [`runbook-reparacion-encoding-descripciones.md`](runbook-reparacion-encoding-descripciones.md).
 
 ---
 
