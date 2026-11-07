@@ -67,7 +67,7 @@ describe('DetalleIncidente', () => {
     // FRH-003 — clasificacion completa
     expect(screen.getByText('Soporte Tecnico Hardware')).toBeInTheDocument();
     expect(screen.getByText('42%')).toBeInTheDocument();
-    expect(screen.getByText('Gemini 2.5 Flash')).toBeInTheDocument();
+    expect(screen.getByText('Gemini')).toBeInTheDocument();
     expect(screen.getByText('Soporte Tecnico Software')).toBeInTheDocument();
     expect(screen.getByText('Seguridad Informatica')).toBeInTheDocument();
     expect(screen.getByText(/"sector_predicho"/)).toBeInTheDocument();

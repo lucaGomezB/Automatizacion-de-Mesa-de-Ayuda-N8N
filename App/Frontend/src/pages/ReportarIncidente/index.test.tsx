@@ -79,4 +79,24 @@ describe('ReportarIncidentePage', () => {
     expect(within(nota).getByText('Sistemas')).toBeInTheDocument();
     expect(within(nota).queryByText('Operaciones')).not.toBeInTheDocument();
   });
+
+  it('el texto que describe la clasificación automática no nombra una versión del modelo', async () => {
+    renderPage();
+
+    const encabezado = await screen.findByText(/El sistema lo clasificará/i);
+    const texto = encabezado.textContent ?? '';
+
+    expect(texto).not.toContain('2.5 Flash');
+    expect(texto).not.toMatch(/\d+\.\d+/);
+    expect(texto).toMatch(/Gemini/);
+
+    // El texto sigue describiendo la clasificación automática y menciona al
+    // proveedor sin versión.
+    expect(texto).toMatch(/clasificará automáticamente/i);
+    expect(texto).toMatch(/\(Gemini\)/);
+
+    // La nota informativa conserva el umbral vigente del 70%.
+    const nota = await screen.findByTestId('nota-clasificacion');
+    expect(within(nota).getByText(/70%/)).toBeInTheDocument();
+  });
 });

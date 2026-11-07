@@ -7,7 +7,7 @@
  *
  *   El requisito mínimo de 15 palabras para la descripción es una convención del portal
  *   de usuario final, no una restricción del backend. Su objetivo es garantizar que
- *   el texto enviado a Gemini 2.5 Flash contenga suficiente contexto para una
+ *   el texto enviado a Gemini contenga suficiente contexto para una
  *   clasificación confiable.
  */
 

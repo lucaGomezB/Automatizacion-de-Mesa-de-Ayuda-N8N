@@ -7,7 +7,7 @@
  *   prioridades, estados del ciclo de vida y etapas del pipeline híbrido.
  *
  *   Se utiliza el locale `es-AR` (español rioplatense) como estándar regional del proyecto,
- *   alineado con la variante del idioma utilizada en el prompt de Gemini 2.5 Flash.
+ *   alineado con la variante del idioma utilizada en el prompt de Gemini.
  */
 
 /** Formatea una fecha ISO 8601 al formato "DD/MM/AAAA HH:MM" en español rioplatense. */
@@ -67,7 +67,7 @@ export function formatearEstado(nombre: string): string {
 export function formatearEtapa(etapa: string): string {
   const mapa: Record<string, string> = {
     deterministic: 'Determinístico',
-    gemini: 'Gemini 2.5 Flash',
+    gemini: 'Gemini',
     fallback: 'Sin clasificar',
   };
   return mapa[etapa] ?? etapa;
