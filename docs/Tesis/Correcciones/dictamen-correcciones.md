@@ -3540,3 +3540,96 @@ Cierre de los cinco residuales de "deriva fuera de la tesis" registrados por el 
 ### Release
 
 - **Nota de release (planificada, NO publicada en este change):** la release que publique c-164 la define el orquestador; este change solo deja la nota. No se creo tag ni commit.
+
+---
+
+## Campaña complementaria de medición (c-169) - 2026-11-08
+
+Incorporación documental de los resultados de la campaña complementaria de medición (programa
+c-165 a c-168) a la tesis v10, al memo canónico y a los anexos. Change
+`c-169-incorporar-los-resultados-de-la-campana-a-la-tesis` (gobernanza BAJA, docs-only). El
+gate 0 de `tasks.md` quedó en verde: c-165 a c-168 archivados y fuera de `openspec list`, tablas
+y salidas con README y SHA-256 coincidente, `registro_sujetos.csv` de 8 filas sin solapes y
+`pytest evaluation/` verde (1190 passed). No se modifico `App/`, `n8n/`, `evaluation/`,
+`openspec/config.yaml`, las cinco cadenas canónicas ni `docs/Tesis/v9 (IA)/`.
+
+### Ramas de los ítems (a)-(e) y valores
+
+Salidas de `evaluation/data/campana/analisis/resultados.json` (c-167), registradas en la
+Sección 3.14 de `docs/Tesis/Correcciones/numeros-canonicos.md`. Ninguna reemplaza un valor
+canónico vigente de la campaña 2026-10.
+
+| Ítem | Rama | Valores |
+|---|---|---|
+| (a) exactitud del brazo manual | medida (positiva) | estricta agregada `0,8278` (125/138), IC bootstrap `[0,7647; 0,8882]`; laxa `0,8609`; por operador: O1 `0,8875` (71/80), O2 `0,7606` (54/71, Wilson `[0,6496; 0,8448]`); automatizado estricto `0,7971` (110/138); McNemar O1 `p = 0,2668`, O2 `p = 1,0000` (no significativos) |
+| (b) intervención humana | contrastada: refutada | tasa `0,735` (147/200), Wilson `[0,6698; 0,7913]`, cota `0,15`; cambio de sector `true` 25 (12,5 %), `false` 122 (61,0 %) |
+| (b') proporción de tiempo | estimable | proporción `0,5307`, IC bootstrap `[0,4407; 0,6111]`; cobertura `0,9388` |
+| (c) efecto de orden y posición | estimado | condición (grupos independientes): O1 `p = 0,7545` (`r = 0,035`), O2 `p = 0,2988` (`r = −0,1157`), MDE `d = 0,5771`; posición (Spearman): O1 `rho = −0,0628` (`p = 0,5147`), O2 `rho = −0,3604` (`p = 0,00011`), MDE `rho = 0,2834` |
+| (d) validación fuera de muestra | sin corpus independiente declarado | faltan `predicciones_independiente.json` y `corpus_independiente.json`; no se reemplaza por métricas in-sample |
+| (e) IC del kappa | con IC (positiva) | kappa nuevo `0,5569`, IC asintótico (Fleiss, Cohen y Everitt, 1969) `[0,4725; 0,6413]`, IC bootstrap `[0,4751; 0,6387]`, `p_o = 0,69000`, `p_e = 0,30045`, PABAK `0,6125`, rótulo puntual "moderado"; el `0,87` sigue `vigente (sin IC)` |
+
+**Consecuencias de rama:** el objetivo 4 sube a "Alcanzado" ((a) medida y (b) contrastada en su
+rama refutada); la hipótesis principal queda "confirmada en tiempo, refutada en clasificación y
+refutada en intervención humana"; el balance neto usa la tasa manual derivada
+`1 − 0,8278 = 0,1722` y `a*` recalculada, en estado `condicional` al costo por derivación errónea.
+
+### Cierre de los cinco límites estructurales del dictamen v1.2.5
+
+El dictamen del 28-10-2026 (sobre `v1.2.5`) había consignado cinco límites estructurales sin
+computarlos como incumplimiento: exactitud del brazo manual no medida, proporción de intervención
+humana no medida, efecto de orden sin estimar, métricas dentro de la muestra y kappa sin intervalo.
+c-169 los cierra con la campaña complementaria de medición, con la fila "Lím." agregada a la tabla
+`tab:anexo-trazabilidad-2810` del Anexo I.
+
+### Secciones y anexos actualizados
+
+- **Resumen y abstract** (`00-resumen.tex:13,29`): estado de la campaña de medición con la tasa de
+  intervención y su IC; el `0,87` se conserva sin IC.
+- **Introducción** (`01:34`), **marco metodológico** (`04`), **resultados** (`07`, subsección nueva
+  `subsec:resultados-campana-medicion`), **discusión** (`08`), **conclusiones** (`09`),
+  **recomendaciones** (`10`): propagación del estado de cada ítem (editados en las fases 2A/2B).
+- **Anexo B** (`12-anexos.tex`, Tabla `tab:configuracion-evaluada-entregada`): tercera columna
+  "Configuración de la campaña de medición" y fila `classifier_version` (`hybrid-v3`, la misma
+  configuración evaluada `d6bb474`); valores verificados con `git show` y registrados en
+  `conteos-canonicos-tecnicos.md` (§7.1).
+- **Cronograma** (`docs/diagrams/cronograma.md` y `fig:cronograma`): barra de la campaña
+  complementaria de medición (noviembre de 2026); `figures/cronograma.png` regenarada (1467×512).
+- **Aspectos legales** (`11:32`): sujetos de la campaña de medición (alias, consentimiento,
+  pseudonimización), sin datos personales.
+- **Anexo I** (`tab:anexo-trazabilidad-2810`): fila "Lím." para los cinco límites cerrados.
+- **Bibliografía**: entrada nueva `Fleiss1969_large_sample` (Fleiss, Cohen y Everitt, 1969,
+  *Psychological Bulletin* 72(5), 323-327, DOI `10.1037/h0028106`), que resuelve la cita colgante de
+  `04:81` y `07:252`.
+
+### Registro y verificación
+
+- `python3 "docs/Tesis/v10 (IA)/verify_citations.py"`: **PASS** (82 entradas, 0 huérfanas, 0 sin uso).
+  La clave de Fleiss ya no queda colgante.
+- `python3 "docs/Tesis/v10 (IA)/revision_tildes.py" --check`: sin hallazgos nuevos (los 6 candidatos
+  AMBIGUO preexistentes; el único cambio es el desplazamiento de línea del "retiro" de `12-anexos`).
+- **Recuento de palabras** (regla de c-106): resumen ES **249 → 245**, abstract EN **245 → 240**
+  (ambos ≤ 250); párrafo de viabilidad **ES 34 / EN 31** (sin cambio, dentro del tope 34 / 31).
+- **Compilación y páginas:** MEDIDO (2026-11-08). Compilación en `texlive-thesis` (`latexmk
+  main.tex`): exit 0, `main.log` con 0 `^!` y 0 `undefined`; `pdfinfo` = 118 páginas. El encabezado
+  `Anexos` queda en la p. 108 (`main.toc`) => cuerpo sin anexos 107, anexos 11. Regla vigente (G0.1 /
+  decisión (b), cuerpo sin anexos <= 100): exceso de cuerpo **+7**, declarado y honrado; +6 de cuerpo
+  y +6 total frente a la línea base `v1.2.7` (112 páginas: cuerpo 101, anexos 11). Ver "Libro mayor de
+  paginas (c-169)".
+- `renders`: `build_tesis_para_agente.py v1.2.8` regenerado (`tesis_para_agente.md`); los renders
+  derivados del PDF (`tesis_completa_extraida.txt`, `tesis_para_evaluacion.txt`) regenerados con
+  `pdftotext` (2026-11-08); `tesis_para_evaluacion.txt` con 118 saltos de página (`\f`).
+
+### Libro mayor de paginas (c-169)
+
+| Change | Commit | Total | Cuerpo sin anexos | Anexos | Delta total | Delta cuerpo | Regla vigente | Estado |
+|---|---|---|---|---|---|---|---|---|
+| release `v1.2.7` (linea base) | `bc6a63ca43c2738cd2904ebca8890529963ac3cd` | 112 | 101 | 11 | - | - | (b) cuerpo sin anexos <= 100 | Medido |
+| `+c-169` (release `v1.2.8`) | sin commit (lo crea el orquestador) | 118 | 107 | 11 | +6 | +6 | (b) cuerpo sin anexos <= 100 | Medido (2026-11-08): `latexmk` exit 0, `main.log` con 0 `^!` y 0 `undefined`, `pdfinfo` 118; encabezado `Anexos` en la p. 108 (`main.toc`) => cuerpo 107, anexos 11; **exceso de cuerpo +7** sobre el tope de 100 (G0.1 / decision (b)), declarado y honrado |
+
+### Release
+
+- **Nota de release (planificada, NO publicada en este change):** c-169 se incorpora a la release
+  `v1.2.8`; el tag, el commit del hash y el registro en `CHANGES.md` (tareas 8.9 y 8.10) los publica
+  el orquestador. En este apply se actualizaron las referencias de versión (Anexo A, Anexo B, 05,
+  06, 11 y `Gomez2026_repositorio`) siguiendo el patrón de `ea5e01a`; no se creó tag ni commit.
+

@@ -1005,6 +1005,53 @@
       \verb 10.1145/514183.514185
       \endverb
     \endentry
+    \entry{Fleiss1969_large_sample}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=5fc699ceae2e032e82bec411cfd14c9e}{%
+           family={Fleiss},
+           familyi={F\bibinitperiod},
+           given={Joseph\bibnamedelima L.},
+           giveni={J\bibinitperiod\bibinitdelim L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=eaad07ee1c6ef93a9308150f12c3c2eb}{%
+           family={Cohen},
+           familyi={C\bibinitperiod},
+           given={Jacob},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=f5a78c7c66a2f288f3761c639326732c}{%
+           family={Everitt},
+           familyi={E\bibinitperiod},
+           given={B.\bibnamedelimi S.},
+           giveni={B\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{a9696f0a7faeb1b6685bba189267645e}
+      \strng{fullhash}{11f0ccf5ca7a8fc90dfe362ef1f4c171}
+      \strng{fullhashraw}{11f0ccf5ca7a8fc90dfe362ef1f4c171}
+      \strng{bibnamehash}{11f0ccf5ca7a8fc90dfe362ef1f4c171}
+      \strng{authorbibnamehash}{11f0ccf5ca7a8fc90dfe362ef1f4c171}
+      \strng{authornamehash}{a9696f0a7faeb1b6685bba189267645e}
+      \strng{authorfullhash}{11f0ccf5ca7a8fc90dfe362ef1f4c171}
+      \strng{authorfullhashraw}{11f0ccf5ca7a8fc90dfe362ef1f4c171}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Psychological Bulletin}
+      \field{number}{5}
+      \field{title}{Large sample standard errors of kappa and weighted kappa}
+      \field{volume}{72}
+      \field{year}{1969}
+      \field{pages}{323\bibrangedash 327}
+      \range{pages}{5}
+      \verb{doi}
+      \verb 10.1037/h0028106
+      \endverb
+    \endentry
     \entry{Freshdesk2026_platform}{online}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=74bf8664b28229886076c121dc56a218}{%
@@ -1130,9 +1177,9 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Software de computadora. GitHub}
-      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.2.7)}
-      \field{urlday}{30}
-      \field{urlmonth}{10}
+      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.2.8)}
+      \field{urlday}{8}
+      \field{urlmonth}{11}
       \field{urlyear}{2026}
       \field{year}{2026}
       \field{urldateera}{ce}
@@ -6027,6 +6074,53 @@
       \verb 10.1145/514183.514185
       \endverb
     \endentry
+    \entry{Fleiss1969_large_sample}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=5fc699ceae2e032e82bec411cfd14c9e}{%
+           family={Fleiss},
+           familyi={F\bibinitperiod},
+           given={Joseph\bibnamedelima L.},
+           giveni={J\bibinitperiod\bibinitdelim L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=eaad07ee1c6ef93a9308150f12c3c2eb}{%
+           family={Cohen},
+           familyi={C\bibinitperiod},
+           given={Jacob},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=f5a78c7c66a2f288f3761c639326732c}{%
+           family={Everitt},
+           familyi={E\bibinitperiod},
+           given={B.\bibnamedelimi S.},
+           giveni={B\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{a9696f0a7faeb1b6685bba189267645e}
+      \strng{fullhash}{11f0ccf5ca7a8fc90dfe362ef1f4c171}
+      \strng{fullhashraw}{11f0ccf5ca7a8fc90dfe362ef1f4c171}
+      \strng{bibnamehash}{11f0ccf5ca7a8fc90dfe362ef1f4c171}
+      \strng{authorbibnamehash}{11f0ccf5ca7a8fc90dfe362ef1f4c171}
+      \strng{authornamehash}{a9696f0a7faeb1b6685bba189267645e}
+      \strng{authorfullhash}{11f0ccf5ca7a8fc90dfe362ef1f4c171}
+      \strng{authorfullhashraw}{11f0ccf5ca7a8fc90dfe362ef1f4c171}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Psychological Bulletin}
+      \field{number}{5}
+      \field{title}{Large sample standard errors of kappa and weighted kappa}
+      \field{volume}{72}
+      \field{year}{1969}
+      \field{pages}{323\bibrangedash 327}
+      \range{pages}{5}
+      \verb{doi}
+      \verb 10.1037/h0028106
+      \endverb
+    \endentry
     \entry{Freshdesk2026_platform}{online}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=74bf8664b28229886076c121dc56a218}{%
@@ -6152,9 +6246,9 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Software de computadora. GitHub}
-      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.2.7)}
-      \field{urlday}{30}
-      \field{urlmonth}{10}
+      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.2.8)}
+      \field{urlday}{8}
+      \field{urlmonth}{11}
       \field{urlyear}{2026}
       \field{year}{2026}
       \field{urldateera}{ce}

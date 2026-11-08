@@ -20,6 +20,7 @@ de las ramas consumidoras").
 - **Consolidación c-141** (`c-141-integracion-release-v1-2-0`, tramo de integración; fecha de consolidación: 2026-10-26; versión de trabajo de la tesis: v10; release prevista: `v1.2.0`): verifica que las Secciones 3.7 a 3.12 (c-130, c-134, c-131, c-142, c-132, c-133, en ese orden de aplicación) son únicas y consecutivas y que toda remisión "ver sección 3.N" resuelve; que los números de resultado agregados a `sections/*.tex` por la familia c-130..c-142 (diff contra `v1.1.1`) figuran en alguna sección con procedencia y estado (los redondeos de la tesis a tres decimales o a un decimal porcentual derivan de valores de cuatro decimales ya registrados; los valores de la literatura citados en `tab:trabajos-academicos` tienen su procedencia en `extraccion-metricas-trabajos-c-135.md`); que ninguna corrida de sensibilidad de c-142 cambió un valor `vigente` (las tres filas reformuladas por c-142 conservan valor y estado); y refresca las referencias `archivo:línea` a `sections/*.tex` de las filas `vigente` que el desplazamiento de líneas de la familia había dejado desfasadas (solo el número de línea; ningún valor ni estado cambia). El item 6 de la Sección 7 (conjunto de preproducción, c-144) se conserva sin renumerar. Fecha de consolidación: 2026-10-26.
 - **Upsert c-145**: `c-145-correccion-factual-sincronizacion-del-memo-y-portabilidad-del-harness` (aplicado el 2026-10-26) registra el margen de error `6,66 %` como `vigente` con `N ≈ 2.646`, `z = 1,96`, `p = 0,5` y `n = 200` (Sección 3.4), marca `6,74 %` / `N = 3.700` como `retirado` y actualiza el punto 2 de la Sección 7 y la advertencia de arrastre del ítem 4. Además corrige por correspondencia de contenido las referencias `07-resultados.tex:<línea>` desfasadas (mínimo `:129 → :128`, `:75 → :74`, `:167-188 → :166-187` y `:179-183 → :178-182`) y la fila retirada del `9,5 %` que citaba `:160`. No modifica ningún otro valor `vigente`. Fecha: 2026-10-26.
 - **Upsert c-159**: `c-159-reconciliar-figuras-tablas-y-evidencia-cualitativa` (aplicado el 2026-10-28) agrega la Sección 3.13 (errores estrictos por frontera de confusión y aciertos laxos entre ellos, recomputados por `docs/Tesis/Correcciones/recontar_errores_frontera.py`). No modifica ningún valor canónico de las Secciones 3.1 a 3.12; la Tabla 16 (`tab:errores`) pasa a tener entrada canónica.
+- **Upsert c-169**: `c-169-incorporar-los-resultados-de-la-campana-a-la-tesis` (aplicado el 2026-11-08) agrega la Sección 3.14 (resultados de la campaña complementaria de medición: kappa nuevo con IC, exactitud del brazo manual, exactitud de v9 contra la referencia nueva, tasa de intervención humana con su contraste, proporción de tiempo, efecto de orden y validación fuera de muestra) y cierra la entrada "IC del coeficiente kappa — no computable" de la Sección 3.6 con la nota de remisión. El `0,87` pasa a `vigente (sin IC)`. No modifica ningún otro valor ni estado de las Secciones 3.1 a 3.13. Fecha: 2026-11-08.
 - **Upsert c-160**: `c-160-residuos-de-correccion-anexo-i-y-consistencia-interna` (aplicado el 2026-10-29) no agrega ni modifica ningun valor canónico. Nota de consumo: la Sección 3.9 (`96/130 = 0,7385` frente a `88/130 = 0,6769`) pasa a consumirse también en la Sección 5.5 de la tesis (`05-arquitectura.tex`, comparación pareada del punto de operación del filtro, sobre los 130 casos con predicción de ambas etapas), en lugar de `0,7405 frente a 0,6769` (97/131 frente a 88/130).
 - **Artefacto**: este memo. No se edita ningún `.tex` en este change.
 - **Fecha de verificación**: 2026-10-21.
@@ -145,7 +146,7 @@ citable como resultado) y `condicional` (depende de una decisión editorial).
 |---|---|---|---|
 | SHA-256 del corpus | `report.md:256` | vigente | `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb`. |
 | Tamaño del corpus: `n = 200` | `report.md:3`, `04-marco-metodologico.tex:45` | vigente | |
-| Kappa de Cohen: `0,87` (doble etiquetado) | `00-resumen.tex:11` | vigente | Contexto de validez; no es una métrica del clasificador. Su IC **no es computable** desde las fuentes permitidas (ver 3.6). |
+| Kappa de Cohen: `0,87` (doble etiquetado) | `00-resumen.tex:11` | vigente (sin IC) | Contexto de validez; no es una métrica del clasificador. Su IC **no es computable** desde las fuentes permitidas (ver 3.6); el `0,87` conserva su valor y se informa **sin IC**. |
 | Soporte `Bases de Datos`: `n = 1` | `report.md:54`, `08-discusion.tex:24` | vigente | Clase NO estimable (`F1 = 0,0000`). Ver ítem 6. |
 
 ### 3.6 Marco métrico unificado e incertidumbre (c-108)
@@ -207,6 +208,13 @@ doble etiquetado por analista; `evaluation/` solo conserva el valor agregado
 o las etiquetas por analista; en ese caso se calcula por bootstrap con semilla
 fija y se hace upsert aquí. El rótulo interpretativo del valor puntual sigue
 siendo "casi perfecto" (Landis y Koch, `\kappa > 0,80`).
+
+**Cierre (c-169, 2026-11-08).** La tabla primaria del doble etiquetado de la campaña
+2026-10 sigue sin conservarse, de modo que el IC del `0,87` permanece **no
+estimable**; el `0,87` conserva su valor con estado `vigente (sin IC)`. La campaña
+complementaria de medición aporta un kappa **distinto** (etiquetadores `E1`/`E2`),
+con su propio IC, en la entrada 3.14 de este memo; ese intervalo **no** es el IC del
+`0,87` y la tesis no debe presentarlo como tal (ver D-kappa del change).
 
 ### 3.7 Gate de revisión por etapa y punto de operación (c-130)
 
@@ -690,6 +698,143 @@ blob versionado (fin de línea LF) es `89cf956e82f660dd8675a2d23b7b4d17efd62da54
 y la copia de trabajo de Windows con `core.autocrlf` (CRLF) es
 `3fb5bacd04f2e9d303f580e4cf2ac4b4c6f2eab628a4fff80a6e1238029cd8fd`, el valor que cita hoy la
 procedencia de la evidencia. `.gitattributes` solo fija LF para el corpus.
+
+### 3.14 Campaña de medición (c-165 a c-169)
+
+**Fuente, alcance y estado.** Registro de los resultados de la **campaña
+complementaria de medición** (programa c-165 a c-168) analizados por c-167. El
+análisis es de solo lectura y sin red: reutiliza las funciones puras de
+`evaluation/metrics.py` sobre las entradas versionadas en `evaluation/data/campana/`
+y escribe exactamente tres nombres fijos en `evaluation/data/campana/analisis/`
+(`evaluation/data/campana/analisis/README.md:3-30`). **No modifica ningún valor ni
+estado de las Secciones 3.1 a 3.13**, que siguen vigentes para la campaña 2026-10.
+Fecha de versionado: 2026-11-08. Semilla bootstrap `20261021`, `B = 2000`, nivel de
+confianza `0,95`, referencia del brazo manual `consenso_doble_etiquetado`
+(`analisis/resultados.json:10-12,1343`). Configuración del clasificador `hybrid-v3`
+(la misma configuración evaluada, commit `d6bb474`; el cache in-sample no registra
+su commit de generación, `evaluation/data/campana/README.md:164-191`). Sujetos:
+etiquetadores `E1`/`E2` y operadores `O1`/`O2`, sin solapes con los analistas
+originales, los autores ni entre sí (`evaluation/data/campana/README.md:45-53`).
+
+**Tablas primarias (SHA-256).**
+
+| Tabla | Registros | SHA-256 | Procedencia |
+|---|---|---|---|
+| `doble_etiquetado.csv` | 400 de `E1`/`E2` sobre 200 casos | `8b30b15b458bb611a3eff0f45f54731a539dafb5c02a931ebf4d944a7eb47b43` | `evaluation/data/campana/README.md:62` |
+| `brazo_manual.csv` | 220 de `O1`/`O2` sobre 200 casos | `25ef12ba7e4c27ba5489d3daff099c697416d996858299e25ffa57dfa2a4d46f` | `evaluation/data/campana/README.md:240` |
+| `intervenciones.csv` | 147 intervenciones | `eccc094d46d5ad301296428885114e298f52efb0666be4f61c2e6a266d340ba3` | `evaluation/data/campana/README.md:220` |
+| `plan_campana.csv` | 200 casos de la corrida | `b619a734092cbbf2b676636386e4b27bdbeaee76df3f97a19e4b7d1beeb43243` | `evaluation/data/campana/README.md:118` |
+| `registro_sujetos.csv` | 8 filas | `f7a5653e733d423a3c4b5eee6b94a05d6ea02df38eb04997212865b329224ad2` | `evaluation/data/campana/README.md:119` |
+
+**Comando reproducible** (solo lectura, sin red ni Gemini; desde la raíz del
+repositorio):
+
+```bash
+python -m evaluation.analisis_campana \
+  --entrada evaluation/data/campana \
+  --salida evaluation/data/campana/analisis \
+  --pines-in-sample '{"google_genai": ">=2.20.0", "modelo": "gemini-3.6-flash"}' \
+  --rango-google-genai-vigente ">=2.33,<3"
+```
+
+Con las mismas entradas, dos corridas producen `resultados.json`, `resultados.md` y
+`SHA256SUMS.txt` idénticos byte a byte; las salidas versionadas son `resultados.json`
+`e94b6bb80051b09fd48c1b7a054572c897af5264043460ac8315e5684117677c` y
+`resultados.md` `3c1564b1116994ce9f2101e41fbe9876bdcd126d4ce5b99bfcc7bfa00dc47d68`
+(`analisis/SHA256SUMS.txt:7-8`). El resumen legible de todos los valores siguientes
+está en `analisis/resultados.md:7-34`.
+
+**(e) Kappa del doble etiquetado de la campaña (entrada nueva).**
+
+| Valor | Procedencia | Estado |
+|---|---|---|
+| kappa `0,5569`; `p_o = 0,69000`; `p_e = 0,30045`; PABAK `0,6125`; error estándar `0,0431` | `analisis/resultados.json:966,972,971,973,953` | vigente (nuevo) |
+| IC asintótico (Fleiss, Cohen y Everitt, 1969) `[0,4725; 0,6413]` | `analisis/resultados.json:958-961` | vigente (nuevo) |
+| IC bootstrap percentil `[0,4751; 0,6387]` (`B = 2000`, semilla `20261021`) | `analisis/resultados.json:962-965,975` | vigente (nuevo) |
+| Rótulo de Landis y Koch del valor puntual: "moderado"; los dos IC abarcan "moderado" y "sustancial" | `analisis/resultados.json:970,976-984` | vigente (nuevo) |
+
+`n = 200` casos, etiquetadores `E1` y `E2`, etiqueta primaria, cinco clases, no
+ponderado (`analisis/resultados.json:954-956,968`). Es un kappa **distinto** del
+`0,87` y **no es su intervalo de confianza** (declaración explícita en
+`analisis/resultados.json:949-952`).
+
+**(a) Exactitud del brazo manual (entrada nueva; referencia = consenso `E1 = E2`,
+discordantes excluidos).**
+
+| Valor | Procedencia | Estado |
+|---|---|---|
+| O1 estricta `0,8875` (71/80), IC Wilson `[0,7998; 0,9397]`; laxa `0,9125` (73/80) | `analisis/resultados.json:786-799` | vigente (nuevo) |
+| O2 estricta `0,7606` (54/71), IC Wilson `[0,6496; 0,8448]`; laxa `0,8028` (57/71) | `analisis/resultados.json:801-814` | vigente (nuevo) |
+| Agregada estricta `0,8278` (125/138), IC bootstrap `[0,7647; 0,8882]`; laxa `0,8609` (130/138), IC `[0,8013; 0,9184]` | `analisis/resultados.json:21-39` | vigente (nuevo) |
+| McNemar del brazo manual frente al automatizado: O1 `p` exacto `0,2668`; O2 `p` exacto `1,0000` (no significativos) | `analisis/resultados.json:74-89,414-428` | vigente (nuevo) |
+
+**(a-bis) Exactitud de v9 contra la referencia nueva (entrada propia; no reemplaza
+el `73,5 %`).**
+
+| Valor | Procedencia | Estado |
+|---|---|---|
+| Estricta `0,7971` (110/138), IC Wilson `[0,7224; 0,8557]`; laxa `0,8478` (117/138) | `analisis/resultados.json:41-55` | vigente (nuevo) |
+
+`analisis/resultados.json:784`: "es un numero nuevo, rotulado con su referencia, y no
+reemplaza los numeros canonicos de v9". El `73,5 %` (Sección 3.2) sigue `vigente` sin
+cambio.
+
+**(a-ter) Tasa manual derivada y exactitud mínima de equilibrio (derivada;
+`condicional`).**
+
+| Valor | Procedencia | Estado |
+|---|---|---|
+| `e_man = 1 − 0,8278 = 0,1722`; intervalo del IC de la exactitud estricta `[0,1118; 0,2353]` | derivado de `analisis/resultados.json:26,28-31` (fórmula de la Sección 3.11) | condicional |
+| `a* = 68,2 %` (5 min), `75,5 %` (10 min), `77,9 %` (15 min) | recálculo con `Δt = 43,82 s` (Sección 3.1) y `a* = 1 − e_man − Δt/c` | condicional |
+
+Derivada, no medida: el costo `c` sigue siendo estimación propia (10 a 15 min) porque
+la salida de c-167 no cronometra reasignaciones; por eso el estado es `condicional` al
+costo. Reversible si una réplica mide `c` (ver Sección 3.11).
+
+**(b) Intervención humana de la campaña (entrada nueva; contrastada: refutada).**
+
+| Valor | Procedencia | Estado |
+|---|---|---|
+| Tasa `0,735` (147/200), IC Wilson `[0,6698; 0,7913]` | `analisis/resultados.json:827-838,900-908` | vigente (nuevo) |
+| Contraste con la cota `0,15`: veredicto "refutada" (estimación `0,735 ≥ 0,15`) | `analisis/resultados.json:833-838` | vigente (nuevo) |
+| Desglose por origen: `gate` `147` (100 %); `muestreo`, `rederivacion`, `completado_manual` `0` | `analisis/resultados.json:862-899` | vigente (nuevo) |
+| `cambio_sector`: `true` `25` (12,5 %), IC `[0,0861; 0,1780]`; `false` `122` (61,0 %), IC `[0,5409; 0,6749]` | `analisis/resultados.json:842-861` | vigente (nuevo) |
+
+El veredicto sigue la regla de tres vías de la Sección 3.12 (compatible si el límite
+superior de Wilson < `0,15`; refutada si la estimación ≥ `0,15`; no concluyente si la
+estimación < `0,15` ≤ límite superior); aquí la estimación (`0,735`) supera la cota,
+de modo que la segunda sub-hipótesis queda **refutada**. La tasa medida **no**
+reintroduce el `9,5 %` (`retirado`, Sección 3.4).
+
+**(b') Proporción de tiempo de la campaña (entrada nueva; estimable).**
+
+| Valor | Procedencia | Estado |
+|---|---|---|
+| Proporción `0,5307`, IC bootstrap `[0,4407; 0,6111]` (`B = 2000`, semilla `20261021`) | `analisis/resultados.json:910-927` | vigente (nuevo) |
+| Cobertura `0,9388` (≥ 0,80); casos intervenidos `147`, con duración completa `138` | `analisis/resultados.json:911-914` | vigente (nuevo) |
+
+Limitación declarada: el denominador es el tiempo de registro automatizado más la
+duración de la intervención, no el tiempo total de atención
+(`analisis/resultados.json:921`).
+
+**(c) Efecto de orden de condición y de posición (entrada nueva; estimado).**
+
+| Valor | Procedencia | Estado |
+|---|---|---|
+| Condición (entre grupos independientes): O1 `p = 0,7545`, `r = 0,035`; O2 `p = 0,2988`, `r = −0,1157`; MDE `d = 0,5771` (`n_a = 50`, `n_b = 60`) | `analisis/resultados.json:1023-1035,1195-1207` | vigente (nuevo) |
+| Posición (Spearman): O1 `rho = −0,0628`, `p = 0,5147`; O2 `rho = −0,3604`, `p = 0,00011` (significativo); MDE `rho = 0,2834` | `analisis/resultados.json:1154-1163,1326-1335` | vigente (nuevo) |
+
+Nota de lectura: un resultado no significativo no es ausencia de efecto; solo
+descarta efectos mayores que el MDE de cada contraste
+(`analisis/resultados.json:992`). Los tiempos de la campaña son insumo de este efecto
+de orden y **no** reemplazan `61,6 s` ni `17,76 s` (Sección 3.1).
+
+**(d) Validación fuera de muestra (entrada nueva; sin corpus independiente
+declarado).**
+
+| Valor | Procedencia | Estado |
+|---|---|---|
+| "no se obtuvo la evaluacion fuera de muestra: falta(n) `predicciones_independiente.json`, `corpus_independiente.json`; no se reemplaza por metricas in-sample" | `analisis/resultados.json:820-823` | vigente (nuevo) |
 
 ## 4. Contingencia del gate de intervención humana
 

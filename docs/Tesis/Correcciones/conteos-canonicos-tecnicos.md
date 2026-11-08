@@ -255,7 +255,29 @@ Contraste del borde: `git diff --stat b4b3be95 v1.2.5 -- nginx docker-compose.ym
 `nginx:alpine` (evaluada) a `nginx:1.31.7-alpine` (entregada); no se agrego fila porque el
 proxy no formo parte de la campana (Anexo A y Seccion 7.4 de la tesis).
 
+### 7.1 Configuracion de la campana de medicion (c-169, 2026-11-08)
+
+La tabla `tab:configuracion-evaluada-entregada` del Anexo B agrega la columna
+"Configuracion de la campana de medicion" (c-169). La campana complementaria de medicion
+(programa c-165 a c-168) corrio sobre el **clasificador congelado `hybrid-v3`** con la
+instrumentacion de intervencion de `c-165` aplicada, es decir, sobre la misma
+configuracion del clasificador que la evaluada; solo se consigna la fila
+`classifier_version`, que coincide con la evaluada.
+
+| Clave | `d6bb474` (evaluada) | `v1.2.7` (entregada) | Campana de medicion | Comando de verificacion |
+|---|---|---|---|---|
+| `classifier_version` (`HYBRID_CACHE_VERSION`) | `hybrid-v3` | `hybrid-v3` | `hybrid-v3` | `git show d6bb474:App/Backend/app/constants.py \| grep HYBRID_CACHE_VERSION`; `git show v1.2.7:App/Backend/app/constants.py \| grep HYBRID_CACHE_VERSION` |
+| Configuracion de la campana (cache in-sample) | — | — | `hybrid-v3` | `evaluation/data/campana/README.md:167` (`classifier_version_in_sample: hybrid-v3`) |
+
+Las restantes filas de la columna de la campana quedan sin declarar (`---`) porque las
+dependencias del entorno de esa corrida no se re-verificaron sobre el commit de la
+campana; la unica coincidencia consignada con la evaluada es la version del clasificador,
+segun la regla del design de c-169 ("`classifier_version` debe coincidir con la evaluada;
+si no coincide, las metricas de la campana se rotulan como de otra configuracion del
+clasificador").
+
 ---
+
 
 _Producido por c-109. Cualquier rama que reescriba los conteos técnicos de `05`, `06`
 o `12` debe citar únicamente los valores `vigente` de la Sección 2 y MUST NOT

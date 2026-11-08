@@ -4,14 +4,14 @@
 
 \section{Diagrama de arquitectura del sistema}\label{sec:anexo-diagrama-arquitectura}
 
-El Anexo~A inventaría los diagramas de la arquitectura del sistema entregado (release \texttt{v1.2.7}). Los diagramas de arquitectura, despliegue, secuencia y componentes se incluyen como figuras de la \autoref{sec:arquitectura}, de modo que no se reproducen nuevamente aquí. Los cuatro artefactos y el cronograma del estudio, que se reproduce aquí, son:
+El Anexo~A inventaría los diagramas de la arquitectura del sistema entregado (release \texttt{v1.2.8}). Los diagramas de arquitectura, despliegue, secuencia y componentes se incluyen como figuras de la \autoref{sec:arquitectura}, de modo que no se reproducen nuevamente aquí. Los cuatro artefactos y el cronograma del estudio, que se reproduce aquí, son:
 
 \begin{itemize}
   \item \textbf{Diagrama de arquitectura del sistema} (Figura~\ref{fig:arquitectura}, \autoref{sec:arquitectura}): las cinco capas de la Tabla~\ref{tab:capas} y los tres canales de entrada (correo, formulario web y telefonía), sin versiones de bibliotecas, que constan en la Tabla~\ref{tab:capas} y en la \autoref{tab:configuracion-evaluada-entregada}. Fuente versionada: \path{docs/diagrams/arquitectura_sistema.md}.
   \item \textbf{Diagrama de despliegue} (Figura~\ref{fig:despliegue}, \autoref{sec:arquitectura}): los cinco componentes principales (N8N, FastAPI, PostgreSQL, Gemini~3.6 Flash, Twilio), el proxy inverso Nginx, que provee terminación TLS 1.2/1.3 verificada en el despliegue de referencia y que forma parte del stack base sobre el que corrió la ingesta del 2 de octubre (la medición telefónica del 5 y 6 de octubre usó el perfil aislado \texttt{corpus}, sin proxy), y las relaciones de comunicación entre ellos. Fuente versionada: \path{docs/diagrams/despliegue.md}.
   \item \textbf{Diagrama de secuencia} (Figura~\ref{fig:secuencia}, \autoref{sec:arquitectura}): flujo extremo a extremo de un incidente desde su recepción en cualquiera de los tres canales (correo electrónico, formulario web o telefonía) hasta la confirmación al usuario o la derivación a revisión humana, incluyendo las interacciones con el clasificador híbrido y la base de datos. Fuente versionada: \path{docs/diagrams/secuencia.md}.
   \item \textbf{Diagrama de componentes} (Figura~\ref{fig:componentes}, \autoref{sec:arquitectura}): organización interna del módulo Python por capas (routes, services, repositories, models, classifiers), con sus dependencias y relaciones. Fuente versionada: \path{docs/diagrams/componentes.md}.
-  \item \textbf{Cronograma} (Figura~\ref{fig:cronograma}, \autoref{subsec:conexion-scrumban}): construcción, campañas de medición y versión del modelo evaluada, con la procedencia de cada fecha. Fuente versionada: \path{docs/diagrams/cronograma.md}.
+  \item \textbf{Cronograma} (Figura~\ref{fig:cronograma}, \autoref{subsec:conexion-scrumban}): construcción, campañas de medición de la campaña 2026-10, campaña complementaria de medición y versión del modelo evaluada, con la procedencia de cada fecha. Fuente versionada: \path{docs/diagrams/cronograma.md}.
 \end{itemize}
 
 Los diagramas se generan a partir de fuentes Mermaid versionadas en formato \texttt{.md} en el directorio \texttt{docs/diagrams/} del repositorio y se renderizan a imágenes PNG para su inclusión en el documento \parencite{Gomez2026_repositorio}.
@@ -19,44 +19,45 @@ Los diagramas se generan a partir de fuentes Mermaid versionadas en formato \tex
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{cronograma}
-\caption[Cronograma de la construcción, las campañas y la versión del modelo]{Cronograma de la construcción, las campañas y la versión del modelo (barras con precisión de mes; hitos, de día). Fuente: historial del repositorio para los hitos, incluido el recálculo del tiempo telefónico del 19-10-2026 (c-77); las fechas de la corrida telefónica (el 5 y 6 de octubre de 2026) provienen de la respuesta de los autores del 2026-10-28, y la confirmación del 9-10-2026 cubre las ventanas de las campañas.}
+\caption[Cronograma de la construcción, las campañas y la versión del modelo]{Cronograma de la construcción, las campañas y la versión del modelo (barras con precisión de mes; hitos, de día). Fuente: historial del repositorio para los hitos, incluido el recálculo del tiempo telefónico del 19-10-2026 (c-77); las fechas de la corrida telefónica (el 5 y 6 de octubre de 2026) provienen de la respuesta de los autores del 2026-10-28, y la confirmación del 9-10-2026 cubre las ventanas de las campañas. La campaña complementaria de medición (programa c-165 a c-168) corrió en noviembre de 2026; su plan pre-registrado se versionó el 2026-11-01 y sus tablas primarias y análisis, entre el 2026-11-04 y el 2026-11-08.}
 \label{fig:cronograma}
 \end{figure}
 
 \section{Repositorio de código fuente}\label{sec:anexo-repositorio}
 
-El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto \parencite{Gomez2026_repositorio}, accesible en \url{https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N}. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado \texttt{v1.2.7}, creado sobre el commit que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, la rama principal registra después un commit que solo consigna el hash que figura a continuación, y los commits posteriores no modifican las fuentes de la tesis.
+El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto \parencite{Gomez2026_repositorio}, accesible en \url{https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N}. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado \texttt{v1.2.8}, creado sobre el commit que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, la rama principal registra después un commit que solo consigna el hash que figura a continuación, y los commits posteriores no modifican las fuentes de la tesis.
 
 El hash completo de ese commit es \texttt{\small bc6a63ca43c2738cd2904ebca8890529963ac3cd}, que constituye la referencia verificable de la versión corregida.
 
-La versión entregada no es la que se evaluó. La \emph{configuración evaluada} es la del commit \texttt{d6bb474} (7-10-2026), primera revisión que versiona la cascada \texttt{hybrid-v3}; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (\autoref{subsec:protocolo-pruebas}). La \emph{configuración entregada} es la del tag \texttt{v1.2.7}. La \autoref{tab:configuracion-evaluada-entregada} consigna, con valores verificados sobre ambas revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella.
+La versión entregada no es la que se evaluó. La \emph{configuración evaluada} es la del commit \texttt{d6bb474} (7-10-2026), primera revisión que versiona la cascada \texttt{hybrid-v3}; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (\autoref{subsec:protocolo-pruebas}). La \emph{configuración entregada} es la del tag \texttt{v1.2.8}. La \emph{configuración de la campaña de medición} corrió sobre el clasificador congelado \texttt{hybrid-v3} con la instrumentación de intervención de \texttt{c-165} aplicada (\autoref{subsec:resultados-campana-medicion}). La \autoref{tab:configuracion-evaluada-entregada} consigna, con valores verificados sobre las tres revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella.
 
 \begin{table}[htbp]
 \small
 \centering
-\caption{Configuración evaluada y configuración entregada}
+\caption{Configuración evaluada, configuración entregada y configuración de la campaña de medición}
 \label{tab:configuracion-evaluada-entregada}
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{5.8cm} >{\raggedright\arraybackslash}p{5.8cm}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{4.9cm} >{\raggedright\arraybackslash}p{4.5cm} >{\raggedright\arraybackslash}p{2.7cm}@{}}
 \toprule
-Elemento & Configuración evaluada (\texttt{d6bb474}) & Configuración entregada (\texttt{v1.2.7}) \\
+Elemento & Configuración evaluada (\texttt{d6bb474}) & Configuración entregada (\texttt{v1.2.8}) & Configuración de la campaña de medición \\
 \midrule
-FastAPI y Uvicorn & 0.115.0 y 0.30.6 & 0.162.0 y 0.54.0 \\
-SQLAlchemy & 2.0.36 & 2.1.6 \\
-\texttt{google-genai} & \texttt{>=2.20.0} & \texttt{>=2.33.0,<3} \\
-pytest y pytest-cov & 8.3.3 y 5.0.0 & 9.1.1 y 7.1.0 \\
-React & 18.3.1 & 19.3.1 \\
-Flujo N8N & 28 nodos (25 operativos y 3 notas); 38 (35 y 3) hasta c-72 & 32 nodos (29 operativos y 3 notas) \\
-Reintentos del alta & No & Sí: hasta 3 intentos, espera fija de 5000~ms y tiempo de espera por intento de 10~s (inicio de sesión) y 75~s (alta) \\
-Revisión por reportante no identificado & No & Sí (c-82) \\
-Propagación del contacto del reportante en el POST & No & Sí (c-162, posterior a la campaña): el flujo N8N envía \texttt{reportante\_email} (correo) y \texttt{reportante\_telefono} (telefonía), que habilitan la resolución del reportante de c-82 \\
-Prueba de humo E2E y verificación de TLS & No & Sí (c-140) \\
+FastAPI y Uvicorn & 0.115.0 y 0.30.6 & 0.162.0 y 0.54.0 & --- \\
+SQLAlchemy & 2.0.36 & 2.1.6 & --- \\
+\texttt{google-genai} & \texttt{>=2.20.0} & \texttt{>=2.33.0,<3} & --- \\
+pytest y pytest-cov & 8.3.3 y 5.0.0 & 9.1.1 y 7.1.0 & --- \\
+React & 18.3.1 & 19.3.1 & --- \\
+Flujo N8N & 28 nodos (25 operativos y 3 notas); 38 (35 y 3) hasta c-72 & 32 nodos (29 operativos y 3 notas) & --- \\
+Reintentos del alta & No & Sí: hasta 3 intentos, espera fija de 5000~ms y tiempo de espera por intento de 10~s (inicio de sesión) y 75~s (alta) & --- \\
+Revisión por reportante no identificado & No & Sí (c-82) & --- \\
+Propagación del contacto del reportante en el POST & No & Sí (c-162, posterior a la campaña): el flujo N8N envía \texttt{reportante\_email} (correo) y \texttt{reportante\_telefono} (telefonía), que habilitan la resolución del reportante de c-82 & --- \\
+Prueba de humo E2E y verificación de TLS & No & Sí (c-140) & --- \\
+\texttt{classifier\_version} & \texttt{hybrid-v3} & \texttt{hybrid-v3} & \texttt{hybrid-v3} \\
 \midrule
-Sin cambios & \multicolumn{2}{>{\raggedright\arraybackslash}p{11.6cm}}{N8N 2.11.2, Python 3.12-slim, PostgreSQL 15.5-alpine, \texttt{gemini-3.6-flash} con sus parámetros, umbrales (0,5166 y 0,70), vocabulario y \emph{prompt}; la lógica del clasificador solo cambió en comentarios e importaciones diferidas} \\
+Sin cambios & \multicolumn{2}{>{\raggedright\arraybackslash}p{9.4cm}}{N8N 2.11.2, Python 3.12-slim, PostgreSQL 15.5-alpine, \texttt{gemini-3.6-flash} con sus parámetros, umbrales (0,5166 y 0,70), vocabulario y \emph{prompt}; la lógica del clasificador solo cambió en comentarios e importaciones diferidas} & --- \\
 \bottomrule
 \end{tabular}
 \par\smallskip
-{\footnotesize\textit{Fuente:} elaboración propia a partir de \texttt{git show d6bb474:}\emph{archivo} y \texttt{git show v1.2.7:}\emph{archivo} sobre \texttt{requirements.txt}, \texttt{package-lock.json}, \texttt{n8n/workflow.json}, \texttt{docker-compose.yml} y \texttt{settings.py}, y de los changes archivados.\par}
+{\footnotesize\textit{Fuente:} elaboración propia a partir de \texttt{git show d6bb474:}\emph{archivo}, \texttt{git show v1.2.8:}\emph{archivo} y \texttt{git show d6bb474:App/Backend/app/constants.py} sobre \texttt{requirements.txt}, \texttt{package-lock.json}, \texttt{n8n/workflow.json}, \texttt{docker-compose.yml} y \texttt{settings.py}, y de los changes archivados. La \emph{configuración de la campaña de medición} corrió sobre el clasificador congelado \texttt{hybrid-v3} (la misma configuración evaluada, commit \texttt{d6bb474}) con la instrumentación de intervención de \texttt{c-165} aplicada; se consigna la fila \texttt{classifier\_version}, que coincide con la evaluada, y las celdas no verificadas para esa corrida quedan sin declarar.\par}
 \end{table}
 
 La estructura del repositorio separa el módulo de procesamiento (\texttt{App/Backend/}, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (\texttt{App/Frontend/}, React con TypeScript), la definición del flujo de orquestación (\texttt{n8n/workflow.json}), los artefactos de evaluación (\texttt{evaluation/}), el corpus pseudonimizado (\texttt{data/}), los scripts auxiliares (\texttt{scripts/}) y la documentación (\texttt{docs/}), junto con las especificaciones de los changes (\texttt{openspec/}) y los archivos de orquestación local \texttt{docker-compose.yml} y \texttt{Makefile}. El archivo \texttt{README.md} describe esta organización y reúne las instrucciones detalladas para el despliegue local en menos de 15 minutos, por lo que constituye el punto de entrada al código fuente disponible en el repositorio público \parencite{Gomez2026_repositorio}.
@@ -218,7 +219,7 @@ B16 & \texttt{c-139}, \texttt{c-141} & \autoref{sec:anexo-repositorio} y Referen
 {\footnotesize\textit{Fuente:} elaboración propia a partir de \path{docs/Tesis/Correcciones/dictamen-correcciones.md}.\par}
 \end{table}
 
-El dictamen del 28 de octubre de 2026, sobre la versión \texttt{v1.2.5}, formuló observaciones de método (A1 y A2), de coherencia entre figuras, tablas y texto (A3), de evidencia cualitativa (A4) y de residuos del proceso de corrección y consistencia interna (B5 a B8); la \autoref{tab:anexo-trazabilidad-2810} indica el change responsable y las secciones donde se las atendió. Las demás observaciones de ese dictamen se atienden en changes posteriores del repositorio.
+El dictamen del 28 de octubre de 2026, sobre la versión \texttt{v1.2.5}, formuló observaciones de método (A1 y A2), de coherencia entre figuras, tablas y texto (A3), de evidencia cualitativa (A4) y de residuos del proceso de corrección y consistencia interna (B5 a B8); la \autoref{tab:anexo-trazabilidad-2810} indica el change responsable y las secciones donde se las atendió. Las demás observaciones de ese dictamen se atienden en changes posteriores del repositorio, entre ellos \texttt{c-169}, que cierra los cinco límites estructurales que el dictamen consignó (la fila ``Lím.'' de la tabla).
 
 \begin{table}[htbp]
 \small
@@ -238,6 +239,7 @@ B5 & \texttt{c-160} & \autoref{subsec:hipotesis-trabajo}, \autoref{subsec:subsis
 B6 & \texttt{c-160} & \autoref{sec:anexo-trazabilidad} \\
 B7 & \texttt{c-160} & Resumen y \emph{abstract}, \autoref{subsec:cumplimiento-objetivos}, \autoref{tab:cumplimiento-objetivos} \\
 B8 & \texttt{c-160} & \autoref{subsec:vision-general}, \autoref{subsec:human-in-the-loop}, \autoref{subsec:subsistema-clasificacion}, \autoref{subsec:construccion-flujo-n8n}, \autoref{subsec:consentimiento-derechos}, \autoref{subsec:sensibilidad-ajustes}, \autoref{subsec:calibracion-gate}, \autoref{subsec:anexo-parametros-config}, \autoref{sec:anexo-documentacion-operativa} \\
+Lím. & \texttt{c-169} & Los cinco límites estructurales que el dictamen consignó sin computarlos como incumplimiento (la exactitud del brazo manual, la proporción de intervención humana, el efecto de orden, las métricas dentro de la muestra y el intervalo del kappa) se cierran con la campaña complementaria de medición: \autoref{subsec:resultados-campana-medicion}, \autoref{subsec:reduccion-intervencion}, \autoref{subsec:balance-neto}, \autoref{subsec:limitaciones-estudio}; Resumen y \emph{abstract}; \autoref{sec:anexo-repositorio} (Tabla~\ref{tab:configuracion-evaluada-entregada}) \\
 \bottomrule
 \end{tabular}
 \par\smallskip
