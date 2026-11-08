@@ -24,7 +24,7 @@
 
 ## 6. B9 — Fechas de las iteraciones Scrumban (limitación declarada)
 
-- [ ] 6.1 SUPERSEDED por decisión binding del autor: `06-implementacion.tex:68` CONSERVA "sin fechar por separado" y NO se le agrega la causa (la causa se registra solo en la fila B9 del Anexo I y en `docs/diagrams/cronograma.md`). No se editó el cuerpo; ver 6.2 y 6.3.
+- [x] 6.1 SUPERSEDED por decisión binding del autor: `06-implementacion.tex:68` CONSERVA "sin fechar por separado" y NO se le agrega la causa (la causa se registra solo en la fila B9 del Anexo I y en `docs/diagrams/cronograma.md`). No se editó el cuerpo; ver 6.2 y 6.3. (superseded: la causa de B9 va solo en Anexo I + cronograma, por decision del autor)
 - [x] 6.2 `12-anexos.tex:224` (B9): actualizar la fila para declarar la no recuperabilidad de las fechas de las iteraciones como limitación explícita, no como "pendiente".
 - [x] 6.3 Verificación: la declaración es consistente entre `06-implementacion.tex:68`, la fila B9 del Anexo I y `docs/diagrams/cronograma.md`; no se introducen fechas nuevas.
 
