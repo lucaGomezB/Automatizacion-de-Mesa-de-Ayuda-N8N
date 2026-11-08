@@ -25,10 +25,14 @@ vi.mock('@/hooks/useHealthCheck', () => ({
 
 const useAuthMock = vi.mocked(useAuth);
 
-function authState(modo: 'PROPIO' | 'GLOBAL' | 'SECTOR' | 'VACIO', rol: string | null = null) {
+function authState(
+  modo: 'PROPIO' | 'GLOBAL' | 'SECTOR' | 'VACIO',
+  rol: string | null = null,
+  username: string | null = 'u'
+) {
   return {
     token: 't',
-    username: 'u',
+    username,
     isAuthenticated: true,
     mfaRequired: false,
     rol,
@@ -41,8 +45,12 @@ function authState(modo: 'PROPIO' | 'GLOBAL' | 'SECTOR' | 'VACIO', rol: string |
   };
 }
 
-function renderHeader(modo: 'PROPIO' | 'GLOBAL' | 'SECTOR' | 'VACIO', rol: string | null = null) {
-  useAuthMock.mockReturnValue(authState(modo, rol));
+function renderHeader(
+  modo: 'PROPIO' | 'GLOBAL' | 'SECTOR' | 'VACIO',
+  rol: string | null = null,
+  username: string | null = 'u'
+) {
+  useAuthMock.mockReturnValue(authState(modo, rol, username));
   return render(
     <MemoryRouter>
       <Header />
@@ -155,5 +163,41 @@ describe('Header - navegacion por rol del directorio (c-89)', () => {
   it('NO muestra el enlace a usuario_final (PROPIO)', () => {
     renderHeader('PROPIO', 'usuario_final');
     expect(screen.queryByRole('link', { name: /directorio/i })).not.toBeInTheDocument();
+  });
+});
+
+// c-183 FSU-003: el Header muestra el username autenticado ARRIBA del boton de sesion.
+describe('Header - identidad del usuario autenticado (c-183, FSU-003)', () => {
+  beforeEach(() => {
+    useAuthMock.mockReset();
+  });
+
+  it('muestra el username provisto por el contexto', () => {
+    renderHeader('PROPIO', null, 'usuario_final');
+    expect(screen.getByTestId('header-username')).toHaveTextContent('usuario_final');
+  });
+
+  it('ubica el nombre ARRIBA del control Cerrar sesión (orden del documento)', () => {
+    renderHeader('PROPIO', null, 'usuario_final');
+    const nombre = screen.getByTestId('header-username');
+    const boton = screen.getByRole('button', { name: /cerrar sesión/i });
+
+    // FSU-001 se preserva: el boton sigue visible junto al nombre.
+    expect(boton).toBeInTheDocument();
+    // El boton debe seguir al nombre en el orden del documento (nombre arriba).
+    expect(
+      nombre.compareDocumentPosition(boton) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
+  });
+
+  it('no renderiza ninguna línea de nombre cuando username es null, pero conserva Cerrar sesión (FSU-001)', () => {
+    renderHeader('PROPIO', null, null);
+    expect(screen.queryByTestId('header-username')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /cerrar sesión/i })).toBeInTheDocument();
+  });
+
+  it('refleja el username del contexto con otro valor (triangulación)', () => {
+    renderHeader('GLOBAL', null, 'mesa_de_ayuda');
+    expect(screen.getByTestId('header-username')).toHaveTextContent('mesa_de_ayuda');
   });
 });

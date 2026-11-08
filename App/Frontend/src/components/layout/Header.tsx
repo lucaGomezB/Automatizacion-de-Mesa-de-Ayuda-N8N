@@ -10,6 +10,9 @@
  *      PROPIO, Dashboard sin cambios.
  *   3. Indicador de salud de la API: visible con alcance GLOBAL; usa `useHealthCheck`
  *      para mostrar un punto color verde/amarillo/rojo según el estado del backend.
+ *   4. Zona de sesión (extremo derecho): el nombre del usuario autenticado
+ *      (`username` de `useAuth()`, c-183 FSU-003) apilado ARRIBA del control
+ *      "Cerrar sesión" (FSU-001).
  *
  *   El estilo active de los NavLinks se aplica dinámicamente para reflejar la ruta actual.
  */
@@ -21,7 +24,7 @@ import { cn } from '@/lib/utils';
 
 export function Header() {
   // Navegacion por ALCANCE, no por pathname (c-81, FR-RBAC-003).
-  const { alcance, rol, logout } = useAuth();
+  const { alcance, rol, username, logout } = useAuth();
   const navigate = useNavigate();
   const esGlobal = alcance.modo === 'GLOBAL';
   const esPropio = alcance.modo === 'PROPIO';
@@ -115,19 +118,31 @@ export function Header() {
               </span>
             </div>
           )}
-          {/* Accion de sesion: visible para TODO autenticado, sin depender del alcance */}
-          <button
-            type="button"
-            onClick={handleLogout}
-            className={cn(
-              'inline-flex items-center gap-1.5 px-2.5 py-2 sm:px-4 rounded-md',
-              'text-xs sm:text-sm font-medium transition-colors whitespace-nowrap',
-              'text-white/75 hover:bg-white/10 hover:text-white'
-            )}
-          >
-            <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
-            Cerrar sesión
-          </button>
+          {/* Zona de sesion: identidad del usuario (c-183, FSU-003) ARRIBA del
+              control "Cerrar sesión" (FSU-001), visible para TODO autenticado. */}
+          <div className="flex flex-col items-end gap-0.5">
+            {/* Nombre del usuario autenticado; solo si la identidad fue resuelta. */}
+            {username ? (
+              <span
+                data-testid="header-username"
+                className="text-xs sm:text-sm text-white/75 whitespace-nowrap"
+              >
+                {username}
+              </span>
+            ) : null}
+            <button
+              type="button"
+              onClick={handleLogout}
+              className={cn(
+                'inline-flex items-center gap-1.5 px-2.5 py-2 sm:px-4 rounded-md',
+                'text-xs sm:text-sm font-medium transition-colors whitespace-nowrap',
+                'text-white/75 hover:bg-white/10 hover:text-white'
+              )}
+            >
+              <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
+              Cerrar sesión
+            </button>
+          </div>
         </div>
       </div>
     </header>
