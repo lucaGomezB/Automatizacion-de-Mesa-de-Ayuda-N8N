@@ -7,11 +7,11 @@
 
 ## 0. Gate de campaña (mecánico; no escribe en `CHANGES.md`)
 
-- [ ] 0.1 `openspec list --json` no lista c-165, c-166, c-167 ni c-168 como activos, y existen `openspec/changes/archive/*-c-165-*`, `*-c-166-*`, `*-c-167-*` y `*-c-168-*`. Si falla: detener
-- [ ] 0.2 Existen y tienen README con SHA-256 coincidente (`sha256sum`): `evaluation/data/campana/doble_etiquetado.csv`, `plan_campana.csv`, `intervenciones.csv`, `plantilla_etiquetado.csv` y `predicciones_in_sample.json` —estas dos últimas las produce `python -m evaluation.preparar_entradas_analisis` (helper de c-170), que las ensambla desde `doble_etiquetado.csv` + `brazo_manual.csv` y desde la copia congelada de v9 respectivamente— y `analisis/` con las salidas de c-167 (kappa, exactitud manual, McNemar, intervención, orden, fuera de muestra). `predicciones_independiente.json` es opcional: si falta, rama (d) "sin corpus independiente declarado". Si falta cualquier otro: detener
-- [ ] 0.3 `evaluation/data/campana/registro_sujetos.csv` presente; verificar que `E1`, `E2`, `O1`, `O2`, los analistas originales y los autores no se solapan. Solape operadores-referencia → rama (a) "no medida: operadores no independientes"; solape de etiquetadores con analistas originales o autores → "limitación declarada" en 4.4, 4.8 y 08
-- [ ] 0.4 `pytest evaluation/` en verde. Si falla: detener y reportar
-- [ ] 0.5 Anotar en el design de la sesión de apply la rama de cada ítem (a)-(e) según las salidas de c-167
+- [x] 0.1 `openspec list --json` no lista c-165, c-166, c-167 ni c-168 como activos, y existen `openspec/changes/archive/*-c-165-*`, `*-c-166-*`, `*-c-167-*` y `*-c-168-*`. Si falla: detener
+- [x] 0.2 Existen y tienen README con SHA-256 coincidente (`sha256sum`): `evaluation/data/campana/doble_etiquetado.csv`, `plan_campana.csv`, `intervenciones.csv`, `plantilla_etiquetado.csv` y `predicciones_in_sample.json` —estas dos últimas las produce `python -m evaluation.preparar_entradas_analisis` (helper de c-170), que las ensambla desde `doble_etiquetado.csv` + `brazo_manual.csv` y desde la copia congelada de v9 respectivamente— y `analisis/` con las salidas de c-167 (kappa, exactitud manual, McNemar, intervención, orden, fuera de muestra). `predicciones_independiente.json` es opcional: si falta, rama (d) "sin corpus independiente declarado". Si falta cualquier otro: detener
+- [x] 0.3 `evaluation/data/campana/registro_sujetos.csv` presente; verificar que `E1`, `E2`, `O1`, `O2`, los analistas originales y los autores no se solapan. Solape operadores-referencia → rama (a) "no medida: operadores no independientes"; solape de etiquetadores con analistas originales o autores → "limitación declarada" en 4.4, 4.8 y 08
+- [x] 0.4 `pytest evaluation/` en verde. Si falla: detener y reportar
+- [x] 0.5 Anotar en el design de la sesión de apply la rama de cada ítem (a)-(e) según las salidas de c-167
 
 ## 1. Memo canónico (`docs/Tesis/Correcciones/numeros-canonicos.md`)
 
@@ -87,7 +87,7 @@
 - [x] 8.7 Actualizar las referencias de versión en Anexo A, Anexo B, 05, 06, 11 y la entrada `Gomez2026_repositorio` (patrón de `ea5e01a`)
 - [x] 8.8 Agregar la sección "c-169" a `docs/Tesis/Correcciones/dictamen-correcciones.md` (ítems (a)-(e), ramas, valores, conteos)
 - [x] 8.9 Etiquetar la release vX.Y.Z y consignar el hash en el Anexo B y `CHANGES.md` con un commit posterior (patrón de `756aabe`)
-- [ ] 8.10 Al archivar, registrar c-169 en `CHANGES.md` (requisito "Coherencia del índice de changes con el archivo de changes" de project-documentation)
+- [x] 8.10 Al archivar, registrar c-169 en `CHANGES.md` (requisito "Coherencia del índice de changes con el archivo de changes" de project-documentation)
 
 ## 9. Cierre y verificación
 
