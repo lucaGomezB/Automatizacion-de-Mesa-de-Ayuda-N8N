@@ -214,15 +214,17 @@ python -m scripts.exportar_intervenciones \
 Procedencia del export (completar **al versionar** `intervenciones.csv`; formato `- campo: valor`, con nombres propios para no mezclarse con los de la tabla primaria):
 
 - intervenciones_archivo: evaluation/data/campana/intervenciones.csv
-- intervenciones_sha256: pendiente
-- intervenciones_fecha: pendiente
-- intervenciones_comando: pendiente
-- intervenciones_rango: pendiente
-- intervenciones_legados_excluidos: pendiente
+- intervenciones_sha256: eccc094d46d5ad301296428885114e298f52efb0666be4f61c2e6a266d340ba3
+- intervenciones_fecha: 2026-11-08
+- intervenciones_comando: (desde App/Backend; DATABASE_URL apuntando a la base de campana mesa_de_ayuda_campana) ARGS=""; for f in ../../evaluation/data/campana/sidecar_*.json; do ARGS="$ARGS --sidecar $f"; done; python -m scripts.exportar_intervenciones $ARGS --desde 2026-11-01 --hasta 2026-11-30 --salida ../../evaluation/data/campana/intervenciones.csv
+- intervenciones_rango: 2026-11-01 a 2026-11-30 (dias de negocio, ambos inclusivos, por created_at del log)
+- intervenciones_legados_excluidos: 0
+
+Declaraciones del export (runbook §5.5): sin vinculo (`id_caso` vacio) 0 de 147 (0 ambiguos); sin `duracion_s` 9 de 147 (cobertura 138/147 = 93,9%), todas intervenciones de O1 sin `intervencion_inicio_en` (0 por inicio posterior a la validacion), hechas con una imagen del frontend previa a c-165 que no enviaba el inicio, se declaran y no se reescriben; el denominador de la tasa no sale de este export, c-167 lo toma de `plan_campana.csv` o del sidecar de la corrida.
 
 | Archivo | SHA-256 |
 |---|---|
-| `intervenciones.csv` | pendiente |
+| `intervenciones.csv` | eccc094d46d5ad301296428885114e298f52efb0666be4f61c2e6a266d340ba3 |
 
 ### Planilla del brazo manual (c-165)
 

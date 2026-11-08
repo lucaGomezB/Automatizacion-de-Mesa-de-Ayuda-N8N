@@ -1,0 +1,148 @@
+id_caso,incidente_id,log_id,origen_intervencion,intervencion_inicio_en,validado_en,duracion_s,sector_predicho,sector_validado,cambio_sector,actor_alias
+R166,1,1,gate,,2026-11-07T11:47:34.111049+00:00,,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R181,2,2,gate,,2026-11-07T11:48:10.581626+00:00,,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R029,4,4,gate,,2026-11-07T11:49:32.023654+00:00,,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R036,7,7,gate,,2026-11-07T11:50:25.768774+00:00,,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R195,9,9,gate,,2026-11-07T14:32:12.923168+00:00,,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R123,16,16,gate,,2026-11-07T14:33:31.237709+00:00,,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R058,17,17,gate,,2026-11-07T14:34:01.345866+00:00,,Sistemas,Soporte Tecnico Software,true,ee9cbf71b9b4
+R069,18,18,gate,,2026-11-07T14:34:24.627794+00:00,,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R154,20,20,gate,,2026-11-07T14:36:04.627859+00:00,,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R110,22,22,gate,2026-11-07T14:38:31.384000+00:00,2026-11-07T14:39:16.658809+00:00,45.275,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R179,24,24,gate,2026-11-07T14:39:18.840000+00:00,2026-11-07T14:39:36.105669+00:00,17.266,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R093,25,25,gate,2026-11-07T14:39:38.076000+00:00,2026-11-07T14:39:42.483106+00:00,4.407,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R122,26,26,gate,2026-11-07T14:39:49.107000+00:00,2026-11-07T14:40:21.369970+00:00,32.263,Soporte Tecnico Hardware,Soporte Tecnico Software,true,ee9cbf71b9b4
+R190,28,28,gate,2026-11-07T14:41:04.836000+00:00,2026-11-07T14:41:17.534709+00:00,12.699,Soporte Tecnico Software,Soporte Tecnico Hardware,true,ee9cbf71b9b4
+R132,31,31,gate,2026-11-07T21:36:14.593000+00:00,2026-11-07T21:36:31.667441+00:00,17.074,Seguridad Informatica,Seguridad Informatica,false,ee9cbf71b9b4
+R066,32,32,gate,2026-11-07T21:36:33.907000+00:00,2026-11-07T21:36:58.788558+00:00,24.882,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R065,33,33,gate,2026-11-07T21:37:11.280000+00:00,2026-11-07T21:37:25.230408+00:00,13.95,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R060,35,35,gate,2026-11-07T21:37:26.846000+00:00,2026-11-07T21:37:35.494958+00:00,8.649,Seguridad Informatica,Seguridad Informatica,false,ee9cbf71b9b4
+R040,36,36,gate,2026-11-07T21:37:37.707000+00:00,2026-11-07T21:37:43.480961+00:00,5.774,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R192,38,38,gate,2026-11-07T21:37:44.782000+00:00,2026-11-07T21:37:56.761607+00:00,11.98,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R145,41,41,gate,2026-11-07T21:37:59.655000+00:00,2026-11-07T21:38:08.635698+00:00,8.981,Sistemas,Sistemas,false,ee9cbf71b9b4
+R158,42,42,gate,2026-11-07T21:38:09.872000+00:00,2026-11-07T21:38:17.937732+00:00,8.066,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R146,43,43,gate,2026-11-07T21:38:20.455000+00:00,2026-11-07T21:38:34.918383+00:00,14.463,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R141,44,44,gate,2026-11-07T21:38:39.366000+00:00,2026-11-07T21:38:46.743081+00:00,7.377,Sistemas,Sistemas,false,ee9cbf71b9b4
+R049,47,47,gate,2026-11-07T21:38:48.658000+00:00,2026-11-07T21:38:57.126361+00:00,8.468,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R185,49,49,gate,2026-11-07T21:39:03.205000+00:00,2026-11-07T21:39:09.831599+00:00,6.627,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R006,51,51,gate,2026-11-07T21:39:11.967000+00:00,2026-11-07T21:39:18.865671+00:00,6.899,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R015,58,58,gate,2026-11-07T21:39:20.343000+00:00,2026-11-07T21:39:52.363395+00:00,32.02,Sistemas,Soporte Tecnico Software,true,ee9cbf71b9b4
+R191,59,59,gate,2026-11-07T21:39:57.881000+00:00,2026-11-07T21:40:06.353722+00:00,8.473,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R131,60,60,gate,2026-11-07T21:40:08.460000+00:00,2026-11-07T21:40:20.504519+00:00,12.045,Soporte Tecnico Software,Seguridad Informatica,true,ee9cbf71b9b4
+R130,61,61,gate,2026-11-07T21:40:24.775000+00:00,2026-11-07T21:40:35.713975+00:00,10.939,Seguridad Informatica,Seguridad Informatica,false,ee9cbf71b9b4
+R083,64,64,gate,2026-11-07T21:40:37.617000+00:00,2026-11-07T21:40:49.831006+00:00,12.214,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R092,65,65,gate,2026-11-07T21:40:51.459000+00:00,2026-11-07T21:40:55.438467+00:00,3.979,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R051,66,66,gate,2026-11-07T21:40:58.140000+00:00,2026-11-07T21:41:18.783136+00:00,20.643,Soporte Tecnico Software,Seguridad Informatica,true,ee9cbf71b9b4
+R112,67,67,gate,2026-11-07T21:41:21.281000+00:00,2026-11-07T21:41:28.761903+00:00,7.481,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R128,73,73,gate,2026-11-07T21:41:31.988000+00:00,2026-11-07T21:41:53.116927+00:00,21.129,Sistemas,Soporte Tecnico Software,true,ee9cbf71b9b4
+R163,75,75,gate,2026-11-07T21:41:55.598000+00:00,2026-11-07T21:45:27.432152+00:00,211.834,Soporte Tecnico Software,Seguridad Informatica,true,ee9cbf71b9b4
+R168,77,77,gate,2026-11-07T21:56:26.604000+00:00,2026-11-07T21:56:34.212345+00:00,7.608,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R062,79,79,gate,2026-11-07T22:04:06.605000+00:00,2026-11-07T22:04:12.977692+00:00,6.373,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R079,80,80,gate,2026-11-07T22:04:14.951000+00:00,2026-11-07T22:06:02.471669+00:00,107.521,Soporte Tecnico Software,Seguridad Informatica,true,ee9cbf71b9b4
+R127,82,82,gate,2026-11-07T22:07:21.822000+00:00,2026-11-07T22:07:30.294251+00:00,8.472,Seguridad Informatica,Seguridad Informatica,false,ee9cbf71b9b4
+R007,84,84,gate,2026-11-07T22:07:32.609000+00:00,2026-11-07T22:07:41.562529+00:00,8.954,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R001,85,85,gate,2026-11-07T22:07:43.465000+00:00,2026-11-07T22:07:51.949222+00:00,8.484,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R035,86,86,gate,2026-11-07T22:07:54.150000+00:00,2026-11-07T22:10:54.628209+00:00,180.478,Soporte Tecnico Hardware,Soporte Tecnico Software,true,ee9cbf71b9b4
+R167,88,88,gate,2026-11-07T22:11:04.685000+00:00,2026-11-07T22:11:16.197881+00:00,11.513,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R016,90,90,gate,2026-11-07T22:11:18.994000+00:00,2026-11-07T22:11:30.326957+00:00,11.333,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R030,91,91,gate,2026-11-07T22:11:32.075000+00:00,2026-11-07T22:11:38.740518+00:00,6.666,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R140,95,95,gate,2026-11-07T22:11:42.696000+00:00,2026-11-07T22:12:34.268824+00:00,51.573,Sistemas,Sistemas,false,ee9cbf71b9b4
+R188,96,96,gate,2026-11-07T22:12:35.969000+00:00,2026-11-07T22:12:43.842302+00:00,7.873,Soporte Tecnico Hardware,Soporte Tecnico Software,true,ee9cbf71b9b4
+R044,98,98,gate,2026-11-07T22:12:45.617000+00:00,2026-11-07T22:12:56.242678+00:00,10.626,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R176,99,99,gate,2026-11-07T22:15:44.714000+00:00,2026-11-07T22:15:52.057265+00:00,7.343,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R165,100,100,gate,2026-11-07T22:15:53.203000+00:00,2026-11-07T22:20:09.262217+00:00,256.059,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R124,102,102,gate,2026-11-07T22:20:11.449000+00:00,2026-11-07T22:20:36.890862+00:00,25.442,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R039,103,103,gate,2026-11-07T22:20:38.450000+00:00,2026-11-07T22:20:44.605349+00:00,6.155,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R148,104,104,gate,2026-11-07T22:24:57.018000+00:00,2026-11-07T22:25:05.948952+00:00,8.931,Seguridad Informatica,Seguridad Informatica,false,ee9cbf71b9b4
+R157,106,106,gate,2026-11-07T22:25:07.198000+00:00,2026-11-07T22:25:10.985155+00:00,3.787,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R114,107,107,gate,2026-11-07T22:25:15.316000+00:00,2026-11-07T22:26:50.477181+00:00,95.161,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R118,108,108,gate,2026-11-07T22:26:51.899000+00:00,2026-11-07T22:27:01.122517+00:00,9.224,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R088,109,109,gate,2026-11-07T22:32:13.155000+00:00,2026-11-07T22:32:22.731155+00:00,9.576,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R027,111,111,gate,2026-11-07T22:32:24.324000+00:00,2026-11-07T22:32:28.665832+00:00,4.342,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R160,112,112,gate,2026-11-07T22:32:29.932000+00:00,2026-11-07T22:32:35.026643+00:00,5.095,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R144,114,114,gate,2026-11-07T22:32:43.305000+00:00,2026-11-07T22:33:09.684944+00:00,26.38,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R013,116,116,gate,2026-11-07T22:33:15.211000+00:00,2026-11-07T22:33:24.477478+00:00,9.266,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R101,118,118,gate,2026-11-07T22:33:26.595000+00:00,2026-11-07T22:33:43.942460+00:00,17.347,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R024,119,119,gate,2026-11-07T22:33:46.108000+00:00,2026-11-07T22:33:53.844316+00:00,7.736,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R022,120,120,gate,2026-11-07T22:33:55.951000+00:00,2026-11-07T22:34:21.614530+00:00,25.664,Sistemas,Sistemas,false,ee9cbf71b9b4
+R076,123,123,gate,2026-11-07T22:34:23.328000+00:00,2026-11-07T22:34:44.684290+00:00,21.356,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R135,124,124,gate,2026-11-07T22:34:46.550000+00:00,2026-11-07T22:34:55.398201+00:00,8.848,Seguridad Informatica,Seguridad Informatica,false,ee9cbf71b9b4
+R075,125,125,gate,2026-11-07T22:34:57.148000+00:00,2026-11-07T22:35:03.716764+00:00,6.569,Soporte Tecnico Software,Soporte Tecnico Software,false,ee9cbf71b9b4
+R113,126,126,gate,2026-11-07T22:36:04.900000+00:00,2026-11-07T22:36:12.398767+00:00,7.499,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R032,127,127,gate,2026-11-07T22:36:13.978000+00:00,2026-11-07T22:36:26.138954+00:00,12.161,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R059,128,128,gate,2026-11-07T22:37:25.988000+00:00,2026-11-07T22:43:02.414564+00:00,336.427,Sistemas,Sistemas,false,ee9cbf71b9b4
+R052,129,129,gate,2026-11-07T22:43:04.812000+00:00,2026-11-07T22:43:11.986317+00:00,7.174,Sistemas,Sistemas,false,ee9cbf71b9b4
+R103,130,130,gate,2026-11-07T22:43:13.601000+00:00,2026-11-07T22:43:43.953207+00:00,30.352,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ee9cbf71b9b4
+R117,131,131,gate,2026-11-08T19:24:30.263000+00:00,2026-11-08T19:24:44.144446+00:00,13.881,Soporte Tecnico Hardware,Soporte Tecnico Software,true,ba5b7b79120d
+R038,132,132,gate,2026-11-08T19:25:29.362000+00:00,2026-11-08T19:25:42.114086+00:00,12.752,Soporte Tecnico Hardware,Soporte Tecnico Software,true,ba5b7b79120d
+R169,133,133,gate,2026-11-08T19:31:44.033000+00:00,2026-11-08T19:31:54.511959+00:00,10.479,Soporte Tecnico Software,Soporte Tecnico Software,false,ba5b7b79120d
+R174,134,134,gate,2026-11-08T19:31:55.989000+00:00,2026-11-08T19:32:02.567418+00:00,6.578,Soporte Tecnico Software,Soporte Tecnico Software,false,ba5b7b79120d
+R017,135,135,gate,2026-11-08T19:32:04.971000+00:00,2026-11-08T19:32:11.049555+00:00,6.079,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ba5b7b79120d
+R095,136,136,gate,2026-11-08T19:32:12.649000+00:00,2026-11-08T19:32:21.586775+00:00,8.938,Soporte Tecnico Hardware,Soporte Tecnico Software,true,ba5b7b79120d
+R159,137,137,gate,2026-11-08T19:32:23.376000+00:00,2026-11-08T19:32:34.754548+00:00,11.379,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ba5b7b79120d
+R005,138,138,gate,2026-11-08T19:32:36.833000+00:00,2026-11-08T19:32:42.031388+00:00,5.198,Soporte Tecnico Software,Soporte Tecnico Software,false,ba5b7b79120d
+R089,139,139,gate,2026-11-08T19:32:44.404000+00:00,2026-11-08T19:32:51.733940+00:00,7.33,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ba5b7b79120d
+R081,140,140,gate,2026-11-08T19:33:11.657000+00:00,2026-11-08T19:33:23.377257+00:00,11.72,Soporte Tecnico Hardware,Soporte Tecnico Software,true,ba5b7b79120d
+R014,141,141,gate,2026-11-08T19:33:26.092000+00:00,2026-11-08T19:33:34.100526+00:00,8.009,Sistemas,Soporte Tecnico Software,true,ba5b7b79120d
+R194,142,142,gate,2026-11-08T19:33:36.494000+00:00,2026-11-08T19:33:47.382266+00:00,10.888,Soporte Tecnico Software,Soporte Tecnico Software,false,ba5b7b79120d
+R020,143,143,gate,2026-11-08T19:33:49.751000+00:00,2026-11-08T19:34:06.291838+00:00,16.541,Sistemas,Sistemas,false,ba5b7b79120d
+R143,144,144,gate,2026-11-08T19:34:08.860000+00:00,2026-11-08T19:34:15.060548+00:00,6.201,Soporte Tecnico Software,Soporte Tecnico Software,false,ba5b7b79120d
+R116,145,145,gate,2026-11-08T19:34:18.015000+00:00,2026-11-08T19:35:07.479924+00:00,49.465,Soporte Tecnico Hardware,Soporte Tecnico Software,true,ba5b7b79120d
+R031,146,146,gate,2026-11-08T19:35:09.663000+00:00,2026-11-08T19:35:19.595239+00:00,9.932,Soporte Tecnico Software,Soporte Tecnico Software,false,ba5b7b79120d
+R155,147,147,gate,2026-11-08T19:35:21.827000+00:00,2026-11-08T19:35:28.159651+00:00,6.333,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ba5b7b79120d
+R034,148,148,gate,2026-11-08T19:35:30.489000+00:00,2026-11-08T19:35:44.417183+00:00,13.928,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ba5b7b79120d
+R025,149,149,gate,2026-11-08T19:35:48.155000+00:00,2026-11-08T19:35:53.707799+00:00,5.553,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ba5b7b79120d
+R003,150,150,gate,2026-11-08T19:36:00.465000+00:00,2026-11-08T19:36:56.847444+00:00,56.382,Soporte Tecnico Software,Seguridad Informatica,true,ba5b7b79120d
+R111,151,151,gate,2026-11-08T19:36:59.179000+00:00,2026-11-08T19:37:04.334052+00:00,5.155,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ba5b7b79120d
+R080,152,152,gate,2026-11-08T19:37:07.130000+00:00,2026-11-08T19:37:21.295928+00:00,14.166,Soporte Tecnico Software,Soporte Tecnico Software,false,ba5b7b79120d
+R138,153,153,gate,2026-11-08T19:37:43.261000+00:00,2026-11-08T19:37:53.071349+00:00,9.81,Sistemas,Sistemas,false,ba5b7b79120d
+R104,154,154,gate,2026-11-08T19:37:55.572000+00:00,2026-11-08T19:38:01.048478+00:00,5.476,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ba5b7b79120d
+R182,155,155,gate,2026-11-08T19:38:02.791000+00:00,2026-11-08T19:38:10.388783+00:00,7.598,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ba5b7b79120d
+R009,156,156,gate,2026-11-08T19:38:12.567000+00:00,2026-11-08T19:38:20.414990+00:00,7.848,Bases de Datos,Bases de Datos,false,ba5b7b79120d
+R011,157,157,gate,2026-11-08T19:38:22.354000+00:00,2026-11-08T19:38:40.433641+00:00,18.08,Soporte Tecnico Software,Soporte Tecnico Software,false,ba5b7b79120d
+R021,158,158,gate,2026-11-08T19:38:53.043000+00:00,2026-11-08T19:39:06.712259+00:00,13.669,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ba5b7b79120d
+R087,159,159,gate,2026-11-08T19:39:09.979000+00:00,2026-11-08T19:39:19.960069+00:00,9.981,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ba5b7b79120d
+R102,160,160,gate,2026-11-08T19:39:22.418000+00:00,2026-11-08T19:39:32.548139+00:00,10.13,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ba5b7b79120d
+R070,161,161,gate,2026-11-08T19:39:34.450000+00:00,2026-11-08T19:39:47.074112+00:00,12.624,Soporte Tecnico Software,Soporte Tecnico Software,false,ba5b7b79120d
+R050,162,162,gate,2026-11-08T19:39:49.274000+00:00,2026-11-08T19:39:59.659573+00:00,10.386,Seguridad Informatica,Seguridad Informatica,false,ba5b7b79120d
+R045,163,163,gate,2026-11-08T19:40:26.404000+00:00,2026-11-08T19:40:34.788106+00:00,8.384,Seguridad Informatica,Seguridad Informatica,false,ba5b7b79120d
+R073,164,164,gate,2026-11-08T19:40:36.462000+00:00,2026-11-08T19:40:53.245237+00:00,16.783,Soporte Tecnico Software,Soporte Tecnico Software,false,ba5b7b79120d
+R136,165,165,gate,2026-11-08T19:40:55.001000+00:00,2026-11-08T19:41:04.921317+00:00,9.92,Sistemas,Sistemas,false,ba5b7b79120d
+R183,166,166,gate,2026-11-08T19:41:06.845000+00:00,2026-11-08T19:41:27.190105+00:00,20.345,Soporte Tecnico Software,Seguridad Informatica,true,ba5b7b79120d
+R164,167,167,gate,2026-11-08T19:41:29.366000+00:00,2026-11-08T19:41:36.549024+00:00,7.183,Soporte Tecnico Software,Soporte Tecnico Software,false,ba5b7b79120d
+R090,168,168,gate,2026-11-08T19:41:48.887000+00:00,2026-11-08T19:41:56.191713+00:00,7.305,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ba5b7b79120d
+R056,169,169,gate,2026-11-08T19:41:57.550000+00:00,2026-11-08T19:42:04.232406+00:00,6.682,Sistemas,Sistemas,false,ba5b7b79120d
+R119,170,170,gate,2026-11-08T19:42:06.014000+00:00,2026-11-08T19:42:15.169429+00:00,9.155,Seguridad Informatica,Seguridad Informatica,false,ba5b7b79120d
+R054,171,171,gate,2026-11-08T19:42:16.960000+00:00,2026-11-08T19:42:25.793994+00:00,8.834,Sistemas,Sistemas,false,ba5b7b79120d
+R137,172,172,gate,2026-11-08T19:42:27.605000+00:00,2026-11-08T19:42:53.920604+00:00,26.316,Seguridad Informatica,Seguridad Informatica,false,ba5b7b79120d
+R193,173,173,gate,2026-11-08T19:42:56.999000+00:00,2026-11-08T19:43:06.983206+00:00,9.984,Soporte Tecnico Software,Soporte Tecnico Software,false,ba5b7b79120d
+R105,174,174,gate,2026-11-08T19:43:08.874000+00:00,2026-11-08T19:43:14.932537+00:00,6.059,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ba5b7b79120d
+R008,175,175,gate,2026-11-08T19:44:17.438000+00:00,2026-11-08T19:44:25.958317+00:00,8.52,Bases de Datos,Bases de Datos,false,ba5b7b79120d
+R162,176,176,gate,2026-11-08T19:44:28.205000+00:00,2026-11-08T19:44:32.831088+00:00,4.626,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ba5b7b79120d
+R048,177,177,gate,2026-11-08T19:44:35.133000+00:00,2026-11-08T19:45:12.526617+00:00,37.394,Seguridad Informatica,Seguridad Informatica,false,ba5b7b79120d
+R126,178,178,gate,2026-11-08T19:45:14.313000+00:00,2026-11-08T19:45:22.615752+00:00,8.303,Seguridad Informatica,Seguridad Informatica,false,ba5b7b79120d
+R115,179,179,gate,2026-11-08T19:45:24.586000+00:00,2026-11-08T19:45:35.711238+00:00,11.125,Soporte Tecnico Hardware,Seguridad Informatica,true,ba5b7b79120d
+R033,180,180,gate,2026-11-08T19:46:11.553000+00:00,2026-11-08T19:46:23.167396+00:00,11.614,Soporte Tecnico Software,Seguridad Informatica,true,ba5b7b79120d
+R197,181,181,gate,2026-11-08T19:46:25.375000+00:00,2026-11-08T19:46:32.236405+00:00,6.861,Soporte Tecnico Software,Soporte Tecnico Software,false,ba5b7b79120d
+R139,182,182,gate,2026-11-08T19:46:33.787000+00:00,2026-11-08T19:46:45.963923+00:00,12.177,Soporte Tecnico Software,Soporte Tecnico Software,false,ba5b7b79120d
+R120,183,183,gate,2026-11-08T19:47:11.631000+00:00,2026-11-08T19:47:32.569340+00:00,20.938,Soporte Tecnico Software,Soporte Tecnico Software,false,ba5b7b79120d
+R134,184,184,gate,2026-11-08T19:47:34.246000+00:00,2026-11-08T19:48:07.008568+00:00,32.763,Seguridad Informatica,Seguridad Informatica,false,ba5b7b79120d
+R068,185,185,gate,2026-11-08T19:48:09.617000+00:00,2026-11-08T19:48:45.676785+00:00,36.06,Bases de Datos,Bases de Datos,false,ba5b7b79120d
+R142,186,186,gate,2026-11-08T19:48:47.780000+00:00,2026-11-08T19:49:08.644100+00:00,20.864,Bases de Datos,Seguridad Informatica,true,ba5b7b79120d
+R046,187,187,gate,2026-11-08T19:49:10.361000+00:00,2026-11-08T19:49:17.418522+00:00,7.058,Seguridad Informatica,Seguridad Informatica,false,ba5b7b79120d
+R121,188,188,gate,2026-11-08T19:49:31.199000+00:00,2026-11-08T19:50:00.284109+00:00,29.085,Soporte Tecnico Software,Soporte Tecnico Software,false,ba5b7b79120d
+R173,189,189,gate,2026-11-08T19:50:02.515000+00:00,2026-11-08T19:50:07.384909+00:00,4.87,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ba5b7b79120d
+R172,190,190,gate,2026-11-08T19:50:08.844000+00:00,2026-11-08T19:50:13.591770+00:00,4.748,Soporte Tecnico Software,Soporte Tecnico Software,false,ba5b7b79120d
+R086,191,191,gate,2026-11-08T19:50:15.025000+00:00,2026-11-08T19:51:15.042940+00:00,60.018,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ba5b7b79120d
+R196,192,192,gate,2026-11-08T19:51:16.750000+00:00,2026-11-08T19:51:22.303731+00:00,5.554,Soporte Tecnico Software,Soporte Tecnico Software,false,ba5b7b79120d
+R133,193,193,gate,2026-11-08T19:51:35.786000+00:00,2026-11-08T19:51:42.191924+00:00,6.406,Seguridad Informatica,Seguridad Informatica,false,ba5b7b79120d
+R106,194,194,gate,2026-11-08T19:51:43.464000+00:00,2026-11-08T19:51:50.503834+00:00,7.04,Soporte Tecnico Software,Soporte Tecnico Software,false,ba5b7b79120d
+R041,195,195,gate,2026-11-08T19:51:52.287000+00:00,2026-11-08T19:52:13.000878+00:00,20.714,Bases de Datos,Bases de Datos,false,ba5b7b79120d
+R084,196,196,gate,2026-11-08T19:52:15.571000+00:00,2026-11-08T19:52:19.847163+00:00,4.276,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ba5b7b79120d
+R047,197,197,gate,2026-11-08T19:52:21.480000+00:00,2026-11-08T19:52:32.908444+00:00,11.428,Seguridad Informatica,Seguridad Informatica,false,ba5b7b79120d
+R200,198,198,gate,2026-11-08T19:52:34.353000+00:00,2026-11-08T19:54:25.014568+00:00,110.662,Soporte Tecnico Hardware,Seguridad Informatica,true,ba5b7b79120d
+R002,199,199,gate,2026-11-08T19:54:27.968000+00:00,2026-11-08T19:54:45.513372+00:00,17.545,Soporte Tecnico Software,Seguridad Informatica,true,ba5b7b79120d
+R184,200,200,gate,2026-11-08T19:54:47.428000+00:00,2026-11-08T19:55:01.109982+00:00,13.682,Soporte Tecnico Software,Soporte Tecnico Hardware,true,ba5b7b79120d
+R091,201,201,gate,2026-11-08T19:55:02.371000+00:00,2026-11-08T19:55:07.367298+00:00,4.996,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ba5b7b79120d
+R085,202,202,gate,2026-11-08T19:55:08.719000+00:00,2026-11-08T19:55:12.793125+00:00,4.074,Soporte Tecnico Hardware,Soporte Tecnico Hardware,false,ba5b7b79120d
+R057,203,203,gate,2026-11-08T19:55:14.235000+00:00,2026-11-08T19:55:24.886797+00:00,10.652,Sistemas,Sistemas,false,ba5b7b79120d
