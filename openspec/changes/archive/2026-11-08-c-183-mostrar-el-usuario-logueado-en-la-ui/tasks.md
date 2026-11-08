@@ -29,5 +29,5 @@
 
 ## 6. Deploy (manual)
 
-- [ ] 6.1 DEPLOY: reconstruir y reiniciar el frontend en la instancia de campaña (`cd <repo>; docker compose up -d --build frontend`). Verificación: el contenedor del frontend queda healthy.
+- [x] 6.1 DEPLOY: reconstruir y reiniciar el frontend en la instancia de campaña (`cd <repo>; docker compose up -d --build frontend`). Verificación: el contenedor del frontend queda healthy.
 - [ ] 6.2 Verificación en navegador con HARD REFRESH (Ctrl+Shift+R) para evitar el bundle cacheado: iniciar sesión y comprobar que el Header muestra el nombre del usuario ARRIBA del botón "Cerrar sesión". Verificación: el nombre visible coincide con el usuario autenticado y el orden es nombre arriba, botón abajo. Antecedente: un incidente reciente sirvió una imagen cacheada obsoleta; el hard refresh es obligatorio para descartar el bundle viejo.
