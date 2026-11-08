@@ -4580,7 +4580,7 @@ el tag anotado v1.2.8, creado sobre el commit que fija el contenido de la versi�
 un commit no puede contener su propio hash, la rama principal registra después un commit que solo
 consigna el hash que figura a continuación, y los commits posteriores no modifican las fuentes de la
 tesis.
-El hash completo de ese commit es bc6a63ca43c2738cd2904ebca8890529963ac3cd, que
+El hash completo de ese commit es e52845bc754d2ed5520f3f32c19d27adc4ca67b2, que
 constituye la referencia verificable de la versión corregida.
 La versión entregada no es la que se evaluó. La configuración evaluada es la del commit
 d6bb474 (7-10-2026), primera revisión que versiona la cascada hybrid-v3; las corridas de tiempos

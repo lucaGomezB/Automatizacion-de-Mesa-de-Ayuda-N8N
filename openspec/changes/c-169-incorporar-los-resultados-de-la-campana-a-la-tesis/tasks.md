@@ -86,7 +86,7 @@
 - [x] 8.6 Regenerar los renders con `python "docs/Tesis/v10 (IA)/build_tesis_para_agente.py"`
 - [x] 8.7 Actualizar las referencias de versión en Anexo A, Anexo B, 05, 06, 11 y la entrada `Gomez2026_repositorio` (patrón de `ea5e01a`)
 - [x] 8.8 Agregar la sección "c-169" a `docs/Tesis/Correcciones/dictamen-correcciones.md` (ítems (a)-(e), ramas, valores, conteos)
-- [ ] 8.9 Etiquetar la release vX.Y.Z y consignar el hash en el Anexo B y `CHANGES.md` con un commit posterior (patrón de `756aabe`)
+- [x] 8.9 Etiquetar la release vX.Y.Z y consignar el hash en el Anexo B y `CHANGES.md` con un commit posterior (patrón de `756aabe`)
 - [ ] 8.10 Al archivar, registrar c-169 en `CHANGES.md` (requisito "Coherencia del índice de changes con el archivo de changes" de project-documentation)
 
 ## 9. Cierre y verificación
