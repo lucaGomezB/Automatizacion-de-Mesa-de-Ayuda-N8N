@@ -1861,7 +1861,7 @@ compilación mediante `\today` y MUST NOT hardcodear el año.
 
 ### Requirement: Presupuesto de páginas preservado
 
-El total de paginas del PDF de la tesis SHALL cumplir el tope vigente de paginas, que SHALL declararse en un unico lugar: la seccion de presupuesto de paginas de `docs/Tesis/Correcciones/dictamen-correcciones.md`, con su regla de medicion, su valor, su fuente (exigencia de la catedra o decision del equipo) y su fecha. Para la release `v1.2.2`, la regla vigente SHALL ser: metrica = **total del PDF**; valor = **100 paginas**; fuente = **exigencia de la catedra**; y la medicion SHALL hacerse con `pdfinfo main.pdf | grep Pages` o un conteo equivalente de saltos de pagina del PDF. Cuando el total supere el valor del tope, el exceso SHALL estar declarado y honrado por decision registrada de los autores, con su magnitud y fecha, y SHALL defenderse ante la catedra; un exceso no declarado MUST NOT presentarse como cumplimiento. La portada SHALL seguir ocupando exactamente una pagina. Una reduccion para acercarse al tope MUST NOT eliminar contenido cientifico, numeros canonicos, figuras o tablas requeridas, referencias ni correcciones previas, y MUST NOT dejar referencias colgadas (`\ref` o `\autoref` sin destino) ni listados de codigo removidos con referencias en la prosa.
+El total de paginas del PDF de la tesis SHALL tender al tope vigente de paginas, que SHALL declararse en un unico lugar: la seccion de presupuesto de paginas de `docs/Tesis/Correcciones/dictamen-correcciones.md`, con su regla de medicion, su valor, su fuente (exigencia de la catedra o decision del equipo) y su fecha. La regla vigente SHALL ser: metrica = **total del PDF**, medido con `pdfinfo main.pdf | grep Pages` o un conteo equivalente de saltos de pagina del PDF; valor = **100 paginas**; fuente = **exigencia de la catedra**, declarada por el autor el 2026-10-27 (G0.1); fecha = 2026-10-27. La metrica superada **cuerpo sin anexos <= 100** (rama (b) del 2026-10-26) MUST NOT usarse para declarar cumplimiento ni presentarse como la regla vigente; el conteo de cuerpo sin anexos SHALL conservarse solo como informacion complementaria del libro mayor. Para la release vigente `v1.2.8` el total medido SHALL consignarse como **118 paginas** (cuerpo 107, anexos 11), con un exceso de **+18 sobre el tope de 100** del total. Cuando el total supere el valor del tope, el exceso SHALL estar declarado y honrado por decision registrada de los autores, con su magnitud y fecha, y SHALL defenderse ante la catedra; un exceso no declarado MUST NOT presentarse como cumplimiento, y una reduccion que no alcance el tope no constituye incumplimiento mientras el exceso quede declarado y honrado. La portada SHALL seguir ocupando exactamente una pagina. Una reduccion para acercarse al tope MUST NOT eliminar contenido cientifico, numeros canonicos, figuras o tablas requeridas, referencias ni correcciones previas, y MUST NOT dejar referencias colgadas (`\ref` o `\autoref` sin destino) ni listados de codigo removidos con referencias en la prosa.
 
 #### Scenario: Conteo de páginas sin cambios
 
@@ -1887,6 +1887,13 @@ El total de paginas del PDF de la tesis SHALL cumplir el tope vigente de paginas
 - **WHEN** el total del PDF de la release supera las 100 paginas
 - **THEN** el registro declara la magnitud del exceso, su fecha y la decision de los autores de sostenerlo y defenderlo
 - **AND** el PDF no se presenta como si cumpliera el tope sin exceso
+
+#### Scenario: Contabilidad de una release sobre el total
+
+- **WHEN** se consigna el resultado de paginas de una release (por ejemplo `v1.2.8`) en el libro mayor o en `CHANGES.md`
+- **THEN** el numero reportado como exceso usa la metrica del total del PDF (118 total, +18 sobre 100)
+- **AND** la cuenta por cuerpo sin anexos de la rama (b) no se usa como base del cumplimiento ni se presenta como la regla vigente
+- **AND** la fila de c-169 del libro mayor queda corregida a la metrica del total
 
 #### Scenario: Reduccion sin perdida de contenido ni referencias colgadas
 
@@ -2852,7 +2859,7 @@ de fuente), los números canónicos (exactitud 73,5 %, macro-F1 0,5207, reducci�
 71,2 %, W=363, r=0,9639, κ=0,87, universo 2.646, horas-persona 32,2 h), ni las
 referencias bibliográficas. Las palancas admisibles son de forma: pasajes
 duplicados, leyendas sobre-extendidas, listas redundantes, tamaño del glosario,
-espaciado y compactación de anexos.
+espaciado y compactación de anexos. La reduccion SHALL organizarse en tres fases: **Fase A** (forma), que puede reubicar figuras del cuerpo en el Anexo A con precedente documentado (c-139), reemplazar un flotante `[p]` por `[htbp]` cuando la tabla quepa en el texto, y compactar los `Overfull \hbox` mayores a 10pt; **Fase B** (de-duplicacion), que reemplaza pasajes repetidos por una remision `\autoref` a su seccion primaria sin perder la afirmacion original; y **Fase C** (condensacion de los capitulos 4 y 6), que SHALL aplicarse solo con decision explicita del autor. Una reubicacion a un anexo MUST conservar la figura, su pie y su fuente, y actualizar el inventario del anexo y el indice de figuras. Las siguientes palancas estan PROHIBIDAS: alterar el interlineado o los margenes del preambulo (APA 7 y 2,54~cm estan congelados; la palanca P8 no se aplica), reducir la fuente de la bibliografia (ya esta en `\footnotesize`) y retirar los `\newpage` de capitulo.
 
 #### Scenario: Cifras canónicas intactas
 
@@ -2872,12 +2879,40 @@ espaciado y compactación de anexos.
 - **THEN** las correcciones de c-102..c-115 (números canónicos, cifras retiradas, acentuación, orden de capítulos, glosario y marco teórico) permanecen aplicadas
 - **AND** no se reintroduce ningún valor retirado (9,5 %, 3.700, "Operaciones", W=0)
 
+#### Scenario: Reubicacion a anexo preserva figura y remision
+
+- **WHEN** una figura del cuerpo se mueve al Anexo A (por ejemplo `fig:componentes` o `fig:secuencia`)
+- **THEN** la figura, su pie y su fuente siguen presentes en el Anexo A
+- **AND** el inventario del Anexo A, el indice de figuras y toda remision del cuerpo a la figura quedan actualizados y resueltos
+- **AND** la `\autoref` que la referenciaba sigue dando un destino valido
+
+#### Scenario: De-duplicacion conserva la afirmacion primaria
+
+- **WHEN** un pasaje repetido en otro capitulo se reemplaza por `\autoref` a su seccion primaria
+- **THEN** la afirmacion, el numero canonico y la cita siguen presentes en la seccion primaria
+- **AND** ningun pasaje queda huerfano sin su remision ni se pierde informacion no repetida en la seccion primaria
+
+#### Scenario: Palancas prohibidas no aplicadas
+
+- **WHEN** se revisa el diff del change
+- **THEN** el preambulo no cambia su interlineado (sigue `\doublespacing`) ni sus margenes (siguen 2,54~cm)
+- **AND** la fuente de la bibliografia no baja de su valor vigente (`\footnotesize`)
+- **AND** ningun `\newpage` de capitulo fue retirado
+
+#### Scenario: Fase C solo con decision del autor
+
+- **WHEN** se revisa el diff del change respecto de los capitulos 4 y 6
+- **THEN** cualquier condensacion de esos capitulos esta respaldada por una decision explicita y registrada del autor
+- **AND** sin esa decision, los capitulos 4 y 6 permanecen sin cambios
+
 ### Requirement: Verificación de compilación tras la reducción
 
 La reducción SHALL verificarse sobre el PDF compilado. La compilación con XeLaTeX
 SHALL producir `main.pdf` sin errores fatales, con cero referencias indefinidas y
 cero etiquetas duplicadas en el registro. El conteo de páginas y la ausencia de
-referencias indefinidas SHALL registrarse como evidencia de la verificación.
+referencias indefinidas SHALL registrarse como evidencia de la verificación. La
+meta `total <= 100` es el objetivo (punto dulce) del change: alcanzarla no es un
+criterio obligatorio de aceptacion, pero el conteo alcanzado SHALL registrar su delta respecto de la linea base `v1.2.8` (118 total) y la reduccion no puede lograrse a costa del contenido cientifico.
 
 #### Scenario: Compilación sin errores fatales
 
@@ -2889,7 +2924,8 @@ referencias indefinidas SHALL registrarse como evidencia de la verificación.
 
 - **WHEN** se cierra el change
 - **THEN** el conteo de páginas (`pdfinfo`) y el resultado de la verificación de referencias quedan registrados en las tareas
-- **AND** el conteo es 100 o menos con cero referencias indefinidas
+- **AND** el conteo alcanzado se consigna con su delta respecto de la linea base `v1.2.8`
+- **AND** la meta <= 100 se declara como objetivo del change y no alcanzarla no invalida la reduccion, siempre que el conteo haya disminuido o permanecido igual sin perdida de contenido
 
 ### Requirement: Tabla comparativa de trabajos académicos de clasificación de tickets
 
@@ -6891,9 +6927,15 @@ por origen (`gate`, `muestreo`, `rederivacion`, `completado_manual`) y por cambi
 sector, contraste con la cota `0,15` con la estimacion y ambos limites que entregue
 c-167 (limite superior menor que `0,15`: compatible; estimacion mayor o igual que
 `0,15`: refutada; estimacion menor que `0,15` con limite superior mayor o igual:
-no concluyente) y proporcion del tiempo con intervalo bootstrap del
-cociente o la declaracion "no estimable" por cobertura de inicio y fin inferior al
-80 %. El titulo de `subsec:reduccion-intervencion` SHALL ser coherente con el estado
+no concluyente) y la segunda dimension rotulada de la variable, la proporcion del
+tiempo dedicado a tareas manuales sobre el tiempo del proceso. Cuando la cobertura de
+las consignas de inicio y fin sea mayor o igual que el 80 %, la tesis SHALL reportar la
+proporcion del tiempo con su estimacion puntual, su intervalo bootstrap del cociente
+(`B = 2000`, semilla `20261021`), la cobertura observada y los tamanos que la
+sostienen, y SHALL declarar la limitacion del denominador (tiempo de registro
+automatizado mas duracion de la intervencion, no el tiempo total de atencion); cuando
+la cobertura sea inferior al 80 %, SHALL declararla "no estimable" con la cobertura
+observada. El titulo de `subsec:reduccion-intervencion` SHALL ser coherente con el estado
 de la sub-hipotesis. Si el export no cubre la corrida, SHALL declarar "no contrastada:
 registro incompleto".
 
@@ -6902,6 +6944,19 @@ registro incompleto".
 - **WHEN** el export cubre la corrida y se lee `subsec:reduccion-intervencion`
 - **THEN** se reporta la proporcion de casos con su `n`, su estimacion, ambos limites de Wilson, su desglose por origen y por cambio de sector y el veredicto frente a `0,15` (compatible, refutada o no concluyente)
 - **AND** la proporcion del tiempo figura con su intervalo bootstrap o como "no estimable" con la cobertura observada
+
+#### Scenario: Proporcion de tiempo reportada con su valor
+
+- **WHEN** la cobertura de las consignas de inicio y fin es mayor o igual que el 80 % y se lee `subsec:reduccion-intervencion`
+- **THEN** la proporcion del tiempo dedicado a tareas manuales se reporta con su estimacion puntual `0,5307`, su intervalo bootstrap del cociente `[0,4407; 0,6111]` (`B = 2000`, semilla `20261021`) y la cobertura observada `0,9388`
+- **AND** se declaran los tamanos que la sostienen (147 casos con intervencion y 138 con duracion completa) y la limitacion del denominador (tiempo de registro automatizado mas duracion de la intervencion, no el tiempo total de atencion)
+- **AND** el valor figura en `docs/Tesis/Correcciones/numeros-canonicos.md` (Seccion 3.14) con estado vigente, no reemplaza ningun valor canonico y aparece en `07-resultados.tex` una sola vez
+
+#### Scenario: Anuncio metodologico alineado con el denominador medido
+
+- **WHEN** se lee el parrafo de metricas del marco metodologico (`04-marco-metodologico.tex`)
+- **THEN** la proporcion del tiempo se anuncia con el denominador efectivamente medido (tiempo de registro automatizado mas duracion de la intervencion) y remite con `\autoref` a `subsec:reduccion-intervencion`
+- **AND** no se afirma ningun valor de la proporcion del tiempo en el marco metodologico
 
 #### Scenario: Titulo coherente con el estado
 
