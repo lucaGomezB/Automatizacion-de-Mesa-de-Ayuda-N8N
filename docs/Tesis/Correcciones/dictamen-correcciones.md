@@ -3836,7 +3836,7 @@ canónicas ni `docs/Tesis/v9 (IA)/`.
   `pdftotext -enc UTF-8 main.pdf ../tesis_para_evaluacion.txt` y `tr -s '[:space:]' ' '`
   (`tesis_completa_extraida.txt`); `tesis_para_evaluacion.txt` con 118 saltos de página (`\f`).
 - **`CHANGES.md`**: la línea "Release vigente" pasa a `v1.2.10` (tag anotado sobre el placeholder
-  `HASH_PENDIENTE_V1210`, que resuelve el commit de consignación); **`v1.2.9` queda superada**
+  `c3c63c84a94a79cddc21803868f437db59c3d2df`, que resuelve el commit de consignación); **`v1.2.9` queda superada**
   (inmutable, en `bda6903e65ab40b073daf4bd001eaa9ff85e42cc`).
 - **El hash del Anexo B** (`12-anexos.tex:46`, "El hash completo de ese commit es ...") NO se toca:
   conserva el valor de `v1.2.9` (`bda6903e65ab40b073daf4bd001eaa9ff85e42cc`) hasta el commit de
@@ -3862,7 +3862,7 @@ párrafo de viabilidad ES 34 (tope 34) y EN 31 (tope 34).
 
 - **Nota de release (planificada, NO publicada en este apply):** el tag anotado **`v1.2.10`**, el
   commit de consignación del hash y el registro en `CHANGES.md` los publica el orquestador sobre el
-  commit de contenido de esta preparación (placeholder `HASH_PENDIENTE_V1210`). No se creó tag ni
+  commit de contenido de esta preparación (placeholder `c3c63c84a94a79cddc21803868f437db59c3d2df`). No se creó tag ni
   commit en este apply.
 - **`v1.2.9` queda superada** (inmutable, en `bda6903e65ab40b073daf4bd001eaa9ff85e42cc`).
 
