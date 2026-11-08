@@ -105,7 +105,7 @@ Sistemas & 2 & 0 & 5 & 2 & \textbf{7} & \textbf{16} \\
 \label{fig:matriz_confusion}
 \end{figure}
 
-\begin{table}[p]
+\begin{table}[htbp]
 \centering
 \caption{Exactitud estricta y laxa por etapa del pipeline y por canal de origen}
 \label{tab:exactitud-etapa-canal}
@@ -156,9 +156,11 @@ La inspección de la matriz de confusión revela que los 53 errores totales se c
 
 \subsection{Intervención humana medida en la campaña complementaria de medición}\label{subsec:reduccion-intervencion}
 
-La intervención humana en el flujo automatizado se deriva del gate de revisión implementado, \texttt{requiere\_revision\_humana = (confianza < 0,70)}, que solo se evalúa sobre la salida de la etapa Gemini; la etapa de reserva deriva siempre y la determinística no deriva por su confianza (\autoref{subsec:subsistema-clasificacion}). El gate no derivó ningún caso del corpus: en 124 de los 200 casos (62~\%) la confianza registrada fue inferior a 0,70, pero todos pertenecen a la etapa determinística, cuya confianza mide fuerza de señal; los 69 casos de Gemini declararon siempre al menos 0,85 y la etapa de reserva no se activó. Sobre el 65,5~\% de los casos no existió, por lo tanto, derivación automática por caso basada en la clasificación. El resultado se interpreta en la \autoref{sec:discusion}.
+La intervención humana en el flujo automatizado se deriva del gate de revisión implementado (\autoref{subsec:subsistema-clasificacion}). El gate no derivó ningún caso del corpus: en 124 de los 200 casos (62~\%) la confianza registrada fue inferior a 0,70, pero todos pertenecen a la etapa determinística, cuya confianza mide fuerza de señal; los 69 casos de Gemini declararon siempre al menos 0,85 y la etapa de reserva no se activó. Sobre el 65,5~\% de los casos no existió, por lo tanto, derivación automática por caso basada en la clasificación. El resultado se interpreta en la \autoref{sec:discusion}.
 
 La segunda sub-hipótesis ---proporción de casos con acción manual no superior a 0,15 (\autoref{subsec:hipotesis-trabajo})--- se contrasta con la campaña complementaria de medición, que registró la intervención por caso mediante el export de intervenciones: la tasa observada es del 73,5~\% (147 de 200 casos; IC de Wilson al 95~\% [67,0~\%, 79,1~\%]), por encima de la cota de 0,15, de modo que la sub-hipótesis queda \emph{refutada}. Del total de 200 casos de la corrida, 147 registraron una intervención; en 25 (12,5~\%) la intervención cambió el sector respecto de la predicción automática y en 122 (61,0~\%) lo confirmó, de manera que la mayor parte de las intervenciones no modificó la derivación sugerida sino que la validó. El origen de todas las intervenciones registradas fue el gate (\texttt{gate}); las restantes categorías del vocabulario (\texttt{muestreo}, \texttt{rederivacion} y \texttt{completado\_manual}) no registraron casos. La medición completa se presenta en la \autoref{subsec:resultados-campana-medicion}.
+
+La segunda dimensión rotulada de la misma variable, la proporción del tiempo dedicado a tareas manuales, también es estimable en esta campaña: con una cobertura de las consignas de inicio y fin de 0{,}9388 (147 casos con intervención y 138 con duración completa), la proporción del tiempo es de 0{,}5307, con un intervalo bootstrap del cociente de [0{,}4407; 0{,}6111] (\(B = 2000\), semilla \(20261021\)). El denominador de esa proporción es el tiempo de registro automatizado más la duración de la intervención, no el tiempo total de atención, lo que acota la lectura del valor.
 
 \subsection{Calibración de la confianza}
 \label{subsec:calibracion}
@@ -247,7 +249,7 @@ Los patrones anteriores se ilustran con tres casos con error estricto del corpus
 
 \subsection{Resultados de la campaña complementaria de medición}\label{subsec:resultados-campana-medicion}
 
-Esta subsección reúne los resultados de la campaña complementaria de medición, que instrumentó con sujetos independientes las mediciones que la campaña 2026-10 había dejado pendientes (\autoref{subsec:diseno-experimental}). Sus valores \textbf{no reemplazan} los valores canónicos de la campaña 2026-10 reportados en las subsecciones anteriores: la exactitud global del clasificador, el 73,5~\% (147/200), la reducción de tiempo y el kappa de 0,87 siguen siendo los del sistema evaluado. Los tiempos registrados en esta campaña alimentan únicamente el análisis del efecto de orden y no intervienen en el contraste principal de tiempos (\autoref{subsec:comparacion-tiempos}).
+Esta subsección reúne los resultados de la campaña complementaria de medición, que instrumentó con sujetos independientes las mediciones que la campaña 2026-10 había dejado pendientes (\autoref{subsec:diseno-experimental}). Sus valores \textbf{no reemplazan} los valores canónicos de la campaña 2026-10 reportados en las subsecciones anteriores. Los tiempos registrados en esta campaña alimentan únicamente el análisis del efecto de orden y no intervienen en el contraste principal de tiempos (\autoref{subsec:comparacion-tiempos}).
 
 \paragraph{Fiabilidad del doble etiquetado.} El doble etiquetado independiente de la campaña, realizado por los etiquetadores \texttt{E1} y \texttt{E2} sobre los 200 casos, produjo un kappa de Cohen de 0,5569 ($p_o = 0,69$; $p_e = 0,30$) y un PABAK de 0,6125. El intervalo de confianza al 95~\% es [0,4725; 0,6413] por la aproximación asintótica \parencite{Fleiss1969_large_sample} y [0,4751; 0,6387] por bootstrap percentil (2000 remuestreos); el rótulo de Landis y Koch del valor puntual es \emph{moderado}, y ambos intervalos abarcan las categorías moderada y sustancial. Este kappa es un valor distinto del 0,87 de la campaña 2026-10, y su intervalo \emph{no} es el intervalo de ese valor: el 0,87 se informa sin intervalo, porque su tabla primaria no se conservó (\autoref{subsec:poblacion-muestra-corpus}).
 

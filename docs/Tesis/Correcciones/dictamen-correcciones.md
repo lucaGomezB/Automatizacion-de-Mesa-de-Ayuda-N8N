@@ -3610,11 +3610,12 @@ c-169 los cierra con la campaña complementaria de medición, con la fila "Lím.
 - **Recuento de palabras** (regla de c-106): resumen ES **249 → 245**, abstract EN **245 → 240**
   (ambos ≤ 250); párrafo de viabilidad **ES 34 / EN 31** (sin cambio, dentro del tope 34 / 31).
 - **Compilación y páginas:** MEDIDO (2026-11-08). Compilación en `texlive-thesis` (`latexmk
-  main.tex`): exit 0, `main.log` con 0 `^!` y 0 `undefined`; `pdfinfo` = 118 páginas. El encabezado
-  `Anexos` queda en la p. 108 (`main.toc`) => cuerpo sin anexos 107, anexos 11. Regla vigente (G0.1 /
-  decisión (b), cuerpo sin anexos <= 100): exceso de cuerpo **+7**, declarado y honrado; +6 de cuerpo
-  y +6 total frente a la línea base `v1.2.7` (112 páginas: cuerpo 101, anexos 11). Ver "Libro mayor de
-  paginas (c-169)".
+  main.tex`): exit 0, `main.log` con 0 `^!` y 0 `undefined`; `pdfinfo` = 118 páginas totales
+  (métrica vigente: total del PDF, G0.1 del 2026-10-27). El encabezado `Anexos` queda en la p. 108
+  (`main.toc`) => cuerpo sin anexos 107 y anexos 11 (conteo complementario). Exceso sobre el tope de
+  100 del total: **+18**, declarado y honrado; +6 total frente a la línea base `v1.2.7` (112 totales).
+  La cuenta por cuerpo sin anexos de la rama (b) queda superada y se conserva solo como dato
+  complementario. Ver "Libro mayor de paginas (c-169)".
 - `renders`: `build_tesis_para_agente.py v1.2.8` regenerado (`tesis_para_agente.md`); los renders
   derivados del PDF (`tesis_completa_extraida.txt`, `tesis_para_evaluacion.txt`) regenerados con
   `pdftotext` (2026-11-08); `tesis_para_evaluacion.txt` con 118 saltos de página (`\f`).
@@ -3623,8 +3624,8 @@ c-169 los cierra con la campaña complementaria de medición, con la fila "Lím.
 
 | Change | Commit | Total | Cuerpo sin anexos | Anexos | Delta total | Delta cuerpo | Regla vigente | Estado |
 |---|---|---|---|---|---|---|---|---|
-| release `v1.2.7` (linea base) | `bc6a63ca43c2738cd2904ebca8890529963ac3cd` | 112 | 101 | 11 | - | - | (b) cuerpo sin anexos <= 100 | Medido |
-| `+c-169` (release `v1.2.8`) | sin commit (lo crea el orquestador) | 118 | 107 | 11 | +6 | +6 | (b) cuerpo sin anexos <= 100 | Medido (2026-11-08): `latexmk` exit 0, `main.log` con 0 `^!` y 0 `undefined`, `pdfinfo` 118; encabezado `Anexos` en la p. 108 (`main.toc`) => cuerpo 107, anexos 11; **exceso de cuerpo +7** sobre el tope de 100 (G0.1 / decision (b)), declarado y honrado |
+| release `v1.2.7` (linea base) | `bc6a63ca43c2738cd2904ebca8890529963ac3cd` | 112 | 101 | 11 | - | - | **total <= 100 (G0.1, fuente catedra)** | Medido; exceso +12 sobre el tope de 100 del total |
+| `+c-169` (release `v1.2.8`) | sin commit (lo crea el orquestador) | 118 | 107 | 11 | +6 | +6 | **total <= 100 (G0.1, fuente catedra)** | Medido (2026-11-08): `latexmk` exit 0, `main.log` con 0 `^!` y 0 `undefined`, `pdfinfo` 118 totales; encabezado `Anexos` en la p. 108 (`main.toc`) => cuerpo 107, anexos 11 (conteo complementario); **exceso +18 sobre el tope de 100 del total** (G0.1), declarado y honrado |
 
 ### Release
 
@@ -3632,4 +3633,128 @@ c-169 los cierra con la campaña complementaria de medición, con la fila "Lím.
   `v1.2.8`; el tag, el commit del hash y el registro en `CHANGES.md` (tareas 8.9 y 8.10) los publica
   el orquestador. En este apply se actualizaron las referencias de versión (Anexo A, Anexo B, 05,
   06, 11 y `Gomez2026_repositorio`) siguiendo el patrón de `ea5e01a`; no se creó tag ni commit.
+
+## Proporción de tiempo de la campaña complementaria (c-185) - 2026-11-08
+
+- **Motivo**: c-169 dejó sin reportar en el cuerpo la proporción de tiempo (b'), la segunda
+  dimensión rotulada de la variable de intervención humana, anunciada en
+  `04-marco-metodologico.tex:69` y exigida por la spec de `tesis-document`; el valor no
+  figuraba en ninguna subsección de resultados.
+- **Ediciones** (solo dos archivos de sección; el memo `numeros-canonicos.md` no se editó y
+  ningún valor canónico cambió):
+  - `07-resultados.tex` (`subsec:reduccion-intervencion`, tras la proporción de casos y su
+    desglose): oración que reporta la proporción de tiempo `0{,}5307` con IC bootstrap
+    `[0{,}4407; 0{,}6111]` (`B = 2000`, semilla `20261021`), cobertura `0{,}9388` y los
+    tamaños que la sostienen (147 casos con intervención, 138 con duración completa), más
+    la limitación del denominador (tiempo de registro automatizado más la duración de la
+    intervención, no el tiempo total de atención). Valores literales de la Sección 3.14,
+    rama (b') "estimable".
+  - `04-marco-metodologico.tex:69`: cláusula mínima que fija el denominador efectivamente
+    medido y remite con `\autoref{subsec:reduccion-intervencion}`, sin enunciar valores.
+- **Verificación** (MEDIDO 2026-11-08, `texlive-thesis`, `latexmk main.tex`): exit 0,
+  `main.log` con 0 `^!` y 0 `undefined`; `pdfinfo` = **119 páginas** (línea base c-169:
+  118; **delta +1**). Encabezado `Anexos` en la p. 109 (`main.toc`) => cuerpo sin anexos
+  **108**, anexos **11**. `verify_citations.py`: PASS. `revision_tildes.py --check`: sin
+  hallazgos nuevos (6 candidatos AMBIGUO preexistentes).
+- **Renders**: no regenerados en este apply. El corpus de renders (`tesis_para_agente.md`,
+  `tesis_completa_extraida.txt`, `tesis_para_evaluacion.txt`) se regenera en el commit de
+  release (requisito de `tesis-document`), tras c-184.
+
+## Recorte de longitud de la tesis (c-184) - 2026-11-08
+
+- **Motivo**: acercar el total del PDF al tope vigente (**total <= 100**, G0.1 del 2026-10-27)
+  sin perder contenido, y corregir la contabilidad de páginas a la métrica del total (la entrada
+  de c-169 medía la regla superada de la rama (b), "cuerpo sin anexos"). Gobernanza MEDIUM.
+- **Fases aplicadas** (sin retirar afirmaciones, cifras canónicas, tablas, figuras ni referencias;
+  invariante D-sin-perdida):
+  - **Fase A (forma)**: `fig:componentes` y `fig:secuencia` se reubicaron de `05-arquitectura.tex`
+    al Anexo A (`12-anexos.tex`) conservando figura, pie, fuente e inventario (precedente c-139);
+    `07-resultados.tex` `tab:exactitud-etapa-canal` pasó de `[p]` a `[htbp]`; se compactaron los
+    `Overfull \hbox` mayores a 10 pt (anchos de las tablas ISO/IEC 27002 y NIST CSF de `11`; tokens
+    no partibles de `12`; enumeración de `06`).
+  - **Fase B (de-duplicación)**: pasajes repetidos de `09`, `01`, `10`, `11`, `07` y `03`
+    reemplazados por remisiones a su sección primaria; la afirmación y las cifras siguen presentes
+    en la sección primaria.
+  - **Fase C (condensación)**: prosa del capítulo 4 y enumeraciones del capítulo 6 ajustadas, con
+    decisión del autor del 2026-11-08 APROBADA, con la excepción de que las capturas de UI
+    (`fig:panel_admin`, `fig:dashboard`, en `06`) PERMANECEN en el cuerpo. Ninguna figura ni
+    contenido científico se retiró.
+- **Verificación** (MEDIDO 2026-11-08, `texlive-thesis`, `latexmk main.tex`): exit 0, `main.log`
+  con 0 `^!`, 0 `undefined` y 0 `multiply defined`; 0 `Overfull \hbox` mayores a 10 pt.
+  `verify_citations.py`: PASS. `revision_tildes.py --check`: sin hallazgos nuevos (candidatos
+  AMBIGUO preexistentes).
+- **Páginas**: ver "Libro mayor de paginas (c-184)".
+- **Renders**: NO regenerados en este apply (se regeneran en el commit de release/hash).
+
+### Libro mayor de paginas (c-184)
+
+| Change | Commit | Total | Cuerpo sin anexos | Anexos | Delta total | Delta cuerpo | Regla vigente | Estado |
+|---|---|---|---|---|---|---|---|---|
+| release `v1.2.8` (linea base) | `e52845bc754d2ed5520f3f32c19d27adc4ca67b2` | 118 | 107 | 11 | - | - | **total <= 100 (G0.1, fuente catedra)** | Medido |
+| `+c-185` (proporción de tiempo, `04`/`07`) | sin commit | 119 | 108 | 11 | +1 | +1 | **total <= 100 (G0.1)** | Medido |
+| `+c-184` (Fases A+B+C) | sin commit (lo crea el orquestador) | 118 | 105 | 13 | 0 vs `v1.2.8`; -1 vs c-185 | -2 vs `v1.2.8`; -3 vs c-185 | **total <= 100 (G0.1, fuente catedra)** | Medido (2026-11-08): 0 errores, 0 indefinidas, 0 `??`, 0 overfull > 10 pt; **exceso +18 sobre el tope de 100 del total**, declarado y honrado |
+
+La meta `total <= 100` es el objetivo (punto dulce) del change y no alcanzarla no invalida la
+reducción (spec `tesis-document`, D-sweet-spot). La reubicación de dos figuras al Anexo A bajó el
+cuerpo 2 páginas y sumó 2 al anexo (neto 0 sobre el total); la de-duplicación (Fase B) y la
+condensación (Fase C) sumaron el -1 restante sobre el total, sin pérdida de contenido.
+
+---
+
+## Release v1.2.9 (c-185 + c-184) - 2026-11-08
+
+Entrada de trazabilidad de la release que agrupa los dos changes ya aplicados
+`c-185-reportar-la-proporcion-de-tiempo-de-la-campana` y `c-184-recortar-la-longitud-de-la-tesis`.
+Preparación de release (gobernanza BAJA, integración documental); no se modificó `App/`, `n8n/`,
+`evaluation/`, `openspec/config.yaml`, las cinco cadenas canónicas ni `docs/Tesis/v9 (IA)/`.
+
+### Alcance (patrón de `ea5e01a`, release `v1.2.6`)
+
+- **Bump de versión `v1.2.8` -> `v1.2.9`** en las referencias de la versión entregada: Anexo A y
+  Anexo B (`12-anexos.tex`, 7 ocurrencias), el capítulo de arquitectura (`05`, 3), el de
+  implementación (`06`, 1), el legal (`11`, 1) y la entrada bibliográfica `Gomez2026_repositorio`
+  (versión `1.2.9`; el `urldate` 2026-11-08 no cambia).
+- **Renders regenerados** (tarea 6.1 de c-184): `build_tesis_para_agente.py v1.2.9`
+  (`tesis_para_agente.md`), `pdftotext -enc UTF-8 main.pdf ../tesis_para_evaluacion.txt` y
+  `tr -s '[:space:]' ' '` (`tesis_completa_extraida.txt`); `tesis_para_evaluacion.txt` con 118
+  saltos de página (`\f`).
+- **`CHANGES.md`**: la línea "Release vigente" pasa a `v1.2.9` (tag anotado sobre el placeholder
+  `HASH_PENDIENTE_V129`, que resuelve el commit de consignación); **`v1.2.8` queda superada**
+  (permanece inmutable, en `e52845bc754d2ed5520f3f32c19d27adc4ca67b2`).
+- **El hash del Anexo B** (`12-anexos.tex:46`, "El hash completo de ese commit es ...") NO se toca:
+  conserva el valor de `v1.2.8` hasta el commit de consignación del hash, que publica el
+  orquestador (patrón de dos commits de `ea5e01a` + `756aabe`).
+
+### Recuento de palabras (regla de c-106)
+
+`00-resumen.tex` NO fue editado por c-185 ni por c-184 (el diff de ambos changes toca `01`, `03`,
+`04`, `05`, `06`, `07`, `09`, `10`, `11` y `12`, no el resumen), de modo que el resumen, el abstract
+y el párrafo de viabilidad quedan idénticos a los medidos por c-169. La reproducción del conteo con
+la regla de c-106 (math en línea como una palabra, `~` como separador salvo antes de un dígito,
+puntuación suelta excluida) confirma el resumen ES con exactitud y el párrafo de viabilidad ES/EN con
+exactitud; el abstract EN se ubica dentro de la variante de conteo ya documentada.
+
+| Bloque | v1.2.8 (antes) | v1.2.9 (después) | Tope |
+|---|---|---|---|
+| Resumen ES | 245 | 245 | 250 |
+| Abstract EN | 240 | 240 | 250 |
+| Párrafo de viabilidad ES | 34 | 34 | 34 |
+| Párrafo de viabilidad EN | 31 | 31 | 34 |
+
+### Verificación (MEDIDO 2026-11-08, `texlive-thesis`, `latexmk main.tex`)
+
+- Compilación: exit 0; `main.log` con 0 `^!`, 0 `undefined` y 0 `multiply defined`; `pdfinfo` =
+  **118 páginas totales** (sin cambio frente a la línea base `v1.2.8`).
+- `python3 "docs/Tesis/v10 (IA)/verify_citations.py"`: **PASS** (82 entradas, 0 huérfanas, 0 sin uso).
+- `python3 "docs/Tesis/v10 (IA)/revision_tildes.py" --check`: 7 candidatos AMBIGUO preexistentes
+  (idénticos a los del estado previo al bump de versión), sin hallazgos nuevos.
+- `\f` en `tesis_para_evaluacion.txt`: 118.
+
+### Trazabilidad de release
+
+- **Nota de release (planificada, NO publicada en este apply):** el tag anotado **`v1.2.9`**, el
+  commit de consignación del hash y el registro en `CHANGES.md` los publica el orquestador sobre el
+  commit de contenido de esta preparación (placeholder `HASH_PENDIENTE_V129`). No se creó tag ni
+  commit en este apply.
+- **`v1.2.8` queda superada** (permanece inmutable, en `e52845bc754d2ed5520f3f32c19d27adc4ca67b2`).
 

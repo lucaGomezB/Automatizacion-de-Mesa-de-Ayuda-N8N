@@ -317,14 +317,10 @@ INPUT sections/04-marco-metodologico.tex
 INPUT ./sections/05-arquitectura.tex
 INPUT ./sections/05-arquitectura.tex
 INPUT sections/05-arquitectura.tex
-INPUT ./figures/componentes.png
-INPUT ./figures/componentes.png
 INPUT ./figures/arquitectura_sistema.png
 INPUT ./figures/arquitectura_sistema.png
 INPUT ./figures/despliegue.png
 INPUT ./figures/despliegue.png
-INPUT ./figures/secuencia.png
-INPUT ./figures/secuencia.png
 INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/cm/cmmi9.tfm
 INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/cm/cmsy9.tfm
 INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex9.tfm
@@ -362,6 +358,10 @@ INPUT sections/10-recomendaciones.tex
 INPUT ./sections/12-anexos.tex
 INPUT ./sections/12-anexos.tex
 INPUT sections/12-anexos.tex
+INPUT ./figures/secuencia.png
+INPUT ./figures/secuencia.png
+INPUT ./figures/componentes.png
+INPUT ./figures/componentes.png
 INPUT ./figures/cronograma.png
 INPUT ./figures/cronograma.png
 INPUT ./figures/flujo_n8n.png

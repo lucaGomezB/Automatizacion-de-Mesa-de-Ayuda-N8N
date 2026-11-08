@@ -7,7 +7,7 @@
 
 El sistema propuesto se estructura como una arquitectura distribuida y modular compuesta por cinco capas claramente diferenciadas, siguiendo los principios de cohesión alta y acoplamiento bajo descritos por \textcite{Pressman2020_software_engineering}. En el diseño se previó proteger la comunicación con el exterior mediante TLS~1.2/1.3 a nivel de un proxy inverso (Nginx); la terminación TLS 1.2/1.3 se verifica de forma automatizada sobre el despliegue de referencia de la release v1.2.2 (prueba de humo de la \autoref{subsec:pruebas-automatizadas}, cuyo runbook se cita en el Anexo~\ref{sec:anexo-documentacion-operativa}; despliegue de referencia en el Anexo~\ref{sec:anexo-diagrama-arquitectura}), con certificado autofirmado de referencia; la campaña experimental usó dos despliegues, y la distinción es relevante: la medición telefónica del 5 y 6 de octubre de 2026 corrió sobre el perfil Compose aislado \texttt{corpus}, que no incluye el proxy inverso, mientras que la ingesta del brazo automático del 2 de octubre lo hizo sobre el stack base, que sí incluye Nginx con el certificado autofirmado de referencia; en ningún caso las mediciones de la \autoref{sec:resultados} dependen de TLS. En producción, el adoptante debe proveer un certificado emitido por una CA. La comunicación interna entre los servicios del sistema (N8N, backend, PostgreSQL) se realiza sobre la red aislada de Docker, que constituye el perímetro de confianza. Todas las interfaces entre capas utilizan el estilo arquitectónico REST con cuerpos JSON para el intercambio estructurado de datos \parencite{Fielding2002_rest}. Esta separación de responsabilidades facilita el reemplazo independiente de cualquier componente sin afectar a los demás.
 
-La Tabla~\ref{tab:capas} sintetiza las cinco capas y sus responsabilidades específicas, y la Figura~\ref{fig:componentes} detalla la organización en capas del módulo de procesamiento.
+La Tabla~\ref{tab:capas} sintetiza las cinco capas y sus responsabilidades específicas, y la Figura~\ref{fig:componentes} (Anexo~\ref{sec:anexo-diagrama-arquitectura}) detalla la organización en capas del módulo de procesamiento.
 
 \begin{table}[htbp]
 \centering
@@ -29,19 +29,12 @@ La Tabla~\ref{tab:capas} sintetiza las cinco capas y sus responsabilidades espec
 {\footnotesize\textit{Fuente:} elaboración propia.\par}
 \end{table}
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.80\textwidth,height=0.9\textheight,keepaspectratio]{componentes}
-\caption[Diagrama de componentes del módulo Python organizado en capas]{Diagrama de componentes del módulo Python organizado en capas (routes, services, repositories, classifiers). Describe la configuración entregada (release \texttt{v1.2.8}): el filtro determinístico cortocircuita con señal dominante y puntaje de correctitud \(\geq 0{,}5166\) sin derivar por su confianza, la revisión por confianza menor que 0,70 rige solo sobre Gemini, la etapa de reserva deriva siempre, y el disparador por reportante no identificado en el directorio es posterior a la campaña (c-82, 13-10-2026; \autoref{tab:configuracion-evaluada-entregada}). Fuente: \texttt{docs/diagrams/componentes.md}.}
-\label{fig:componentes}
-\end{figure}
-
-La trazabilidad operativa se garantiza mediante registros estructurados en cada capa, accesibles desde la capa de orquestación. La Figura~\ref{fig:arquitectura} representa esquemáticamente el flujo de información entre capas. El despliegue del entorno local ---servicios, red Docker, volúmenes y servicios externos--- se detalla en la Figura~\ref{fig:despliegue}, y el flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión, en la Figura~\ref{fig:secuencia}.
+La trazabilidad operativa se garantiza mediante registros estructurados en cada capa, accesibles desde la capa de orquestación. La Figura~\ref{fig:arquitectura} representa esquemáticamente el flujo de información entre capas. El despliegue del entorno local ---servicios, red Docker, volúmenes y servicios externos--- se detalla en la Figura~\ref{fig:despliegue}, y el flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión, en la Figura~\ref{fig:secuencia} (Anexo~\ref{sec:anexo-diagrama-arquitectura}).
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{arquitectura_sistema}
-\caption[Diagrama de arquitectura del sistema]{Diagrama de arquitectura del sistema: cinco capas y tres canales de entrada (correo, formulario web y telefonía), en la configuración entregada (release \texttt{v1.2.8}). Fuente versionada: \texttt{docs/diagrams/arquitectura\_sistema.md} (Anexo~\ref{sec:anexo-diagrama-arquitectura}).}
+\caption[Diagrama de arquitectura del sistema]{Diagrama de arquitectura del sistema: cinco capas y tres canales de entrada (correo, formulario web y telefonía), en la configuración entregada (release \texttt{v1.2.9}). Fuente versionada: \texttt{docs/diagrams/arquitectura\_sistema.md} (Anexo~\ref{sec:anexo-diagrama-arquitectura}).}
 \label{fig:arquitectura}
 \end{figure}
 
@@ -50,13 +43,6 @@ La trazabilidad operativa se garantiza mediante registros estructurados en cada 
 \includegraphics[width=0.92\textwidth]{despliegue}
 \caption{Diagrama de despliegue del entorno local. Servicios, red Docker, volúmenes y servicios externos.}
 \label{fig:despliegue}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{secuencia}
-\caption[Diagrama de secuencia del flujo extremo a extremo de un incidente]{Diagrama de secuencia del flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión humana, en la configuración entregada (release \texttt{v1.2.8}). El disparador por reportante no identificado en el directorio es posterior a la campaña (c-82, 13-10-2026): véase la \autoref{tab:configuracion-evaluada-entregada}.}
-\label{fig:secuencia}
 \end{figure}
 
 \subsection{Capa de canales de entrada}\label{subsec:capa-canales}
@@ -89,7 +75,7 @@ La persistencia se realiza sobre PostgreSQL~15.5, desplegado en contenedor Docke
 
 \begin{table}[htbp]
 \centering
-\caption[Entidades principales del modelo de datos]{Entidades principales del modelo de datos de la configuración entregada (release \texttt{v1.2.8}); el atributo \texttt{reportante\_empleado\_id}, el cuarto rol del directorio y el cifrado del contacto son posteriores a la campaña de medición (c-82, c-86 y c-153).}
+\caption[Entidades principales del modelo de datos]{Entidades principales del modelo de datos de la configuración entregada (release \texttt{v1.2.9}); el atributo \texttt{reportante\_empleado\_id}, el cuarto rol del directorio y el cifrado del contacto son posteriores a la campaña de medición (c-82, c-86 y c-153).}
 \label{tab:entidades}
 \footnotesize\singlespacing
 \setlength{\tabcolsep}{4pt}
@@ -115,7 +101,7 @@ El canal de origen constituye una entrada opcional del backend: el esquema de cr
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{er_modelo_datos}
-\caption[Diagrama entidad-relación de las siete entidades principales]{Diagrama entidad-relación de las siete entidades principales del modelo de datos de la configuración entregada (release \texttt{v1.2.8}; esquema completo en el Anexo~C).}
+\caption[Diagrama entidad-relación de las siete entidades principales]{Diagrama entidad-relación de las siete entidades principales del modelo de datos de la configuración entregada (release \texttt{v1.2.9}; esquema completo en el Anexo~C).}
 \label{fig:er_modelo_datos}
 \end{figure}
 

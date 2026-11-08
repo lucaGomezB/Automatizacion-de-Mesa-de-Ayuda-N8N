@@ -1,17 +1,17 @@
 # Fdb version 4
-["biber main"] 1794171011.89592 "main.bcf" "main.bbl" "main" 1794171408.07435 0
-  "../Bibliography_base.bib" 1794170599.52214 40138 bbadd0c46a25781edaa488ca67b791d6 ""
-  "main.bcf" 1794171401.77594 149393 e463862ea4f5592d95b85704d45de9f4 "xelatex"
+["biber main"] 1794175695.04297 "main.bcf" "main.bbl" "main" 1794175743.54732 0
+  "../Bibliography_base.bib" 1794175647.65006 40138 6864f04a26aac14babc8359bf371b006 ""
+  "main.bcf" 1794175736.87388 149393 e463862ea4f5592d95b85704d45de9f4 "xelatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["xdvipdfmx"] 1794171402.25411 "main.xdv" "main.pdf" "main" 1794171408.0828 0
-  "main.xdv" 1794171401.77994 3290464 d3a0945910ab6082982748c342ecb948 "xelatex"
+["xdvipdfmx"] 1794175737.31336 "main.xdv" "main.pdf" "main" 1794175743.55532 0
+  "main.xdv" 1794175736.87688 3271932 d9228f89fc036b794cf54f2ffba7cfa7 "xelatex"
   (generated)
   "main.pdf"
   (rewritten before read)
-["xelatex"] 1794171385.88984 "main.tex" "main.xdv" "main" 1794171408.07461 0
+["xelatex"] 1794175720.34321 "main.tex" "main.xdv" "main" 1794175743.5476 0
   "/usr/local/texlive/2026/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2026/texmf-dist/fonts/tfm/adobe/zapfding/pzdr.tfm" 1136768653 1528 f853c4d1b4e0550255e02831fdc8496f ""
   "/usr/local/texlive/2026/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
@@ -149,30 +149,30 @@
   "figures/matriz_confusion.pdf" 1793305087.96106 20628 d8ce07522fd25c92d99fa7d6fb04fde7 ""
   "figures/panel_admin.png" 1792700235.6485 138254 93adb78483a72cdb12f38bde11c145ac ""
   "figures/secuencia.png" 1793293367.12486 154087 8f904d98fcb85c21e14542119923a8cc ""
-  "main.aux" 1794171401.64794 78270 e3bab5f2e7c73324de80c7ec7b6f85ce "xelatex"
-  "main.bbl" 1794171018.98502 411856 7b8950665ac95e009de90bf4524056fc "biber main"
-  "main.lof" 1794171401.77994 1947 e5454b1ccdbfbdd6e109ae2bb60354c3 "xelatex"
-  "main.lot" 1794171401.77994 3527 35bc44aac8c708fa2c77dce5bf8f060f "xelatex"
-  "main.out" 1794171401.77094 29042 64444cdc008f9a9e113f6b52376da82c "xelatex"
-  "main.run.xml" 1794171401.77894 2404 9c7f54d382023ceb7d9c12f2f9b6e648 "xelatex"
+  "main.aux" 1794175736.73288 78264 ae400343355b497675fff05f8c7ae38e "xelatex"
+  "main.bbl" 1794175704.53759 411856 8e47a6e614a4f78e9508cc929288f695 "biber main"
+  "main.lof" 1794175736.87588 1949 e8c00ec9febdf448e247d96706052cef "xelatex"
+  "main.lot" 1794175736.87588 3527 f2156c2f38c0259afdc694bb5fce6985 "xelatex"
+  "main.out" 1794175736.86988 29042 1238c0a714967305374dfa693b7f4ade "xelatex"
+  "main.run.xml" 1794175736.87588 2404 9c7f54d382023ceb7d9c12f2f9b6e648 "xelatex"
   "main.tex" 1793148733.99438 2527 0603465a504c82c5ca269673962e31a3 ""
-  "main.toc" 1794171401.77894 11902 8f037c2d205a7acd123550755115304c "xelatex"
+  "main.toc" 1794175736.87588 11897 e93f08b711949af3780694572eeecd6a "xelatex"
   "preambles/preamble.tex" 1793305802.8311 7357 4fe9739a368037356c7529c8d6940a83 ""
   "sections/00-glosario.tex" 1793304923.65552 4571 486002865bfd0f460d2c511eecb99a80 ""
   "sections/00-portada.tex" 1793313490.75241 1308 5238faf58d69d243f993475d969e612d ""
   "sections/00-resumen.tex" 1794169979.30021 4167 06f8a75c812e7da4de95207032bee2e0 ""
-  "sections/01-introduccion.tex" 1794169972.54516 19952 3b83ed9ccd3f2664ba8236b48d7470fa ""
+  "sections/01-introduccion.tex" 1794174987.6625 19873 d6ee7273702f56386c4f53c37b3ddc51 ""
   "sections/02-marco-teorico.tex" 1793293367.22297 22248 ca2724fa7e19bd7eee5ec5bf727fdad4 ""
-  "sections/03-estado-del-arte.tex" 1793148734.02038 18867 2c73bcc6581d392d7459f8fe60bb28e6 ""
-  "sections/04-marco-metodologico.tex" 1794169677.40812 33648 1c0fcc9ee2700a83810fee9cd93af250 ""
-  "sections/05-arquitectura.tex" 1794170595.67 22879 d6704efe5d257664ae66699b04922c41 ""
-  "sections/06-implementacion.tex" 1794170595.678 26372 f757a14df1a1ea378c64e13b97891dfa ""
-  "sections/07-resultados.tex" 1794169710.37536 32395 fdc98491b7a75bf304adef941215ad9d ""
+  "sections/03-estado-del-arte.tex" 1794175137.33199 18706 4d018dce2bc84d812ee864870b4793fe ""
+  "sections/04-marco-metodologico.tex" 1794175051.23561 33519 425848ae23d817270f97f8ac67aa43b5 ""
+  "sections/05-arquitectura.tex" 1794175636.37495 21552 5ef08f07d170345a022f08d31199f091 ""
+  "sections/06-implementacion.tex" 1794175636.73096 25456 c897360d79230c87221f00cab481fe45 ""
+  "sections/07-resultados.tex" 1794175006.39784 32651 fd78c2a91ed2d347e95424d8a77f4357 ""
   "sections/08-discusion.tex" 1794170015.06445 30562 08501dece86349ddd4433f353bba915f ""
-  "sections/09-conclusiones.tex" 1794169953.39303 10237 b1dcad06cd7ec0876085121452eef792 ""
-  "sections/10-recomendaciones.tex" 1794169968.73014 18389 31df3968d92b94e963ba473b6bc412a3 ""
-  "sections/11-aspectos-legales.tex" 1794170595.685 19599 c03a634041c1bd8ad79330ed4f284254 ""
-  "sections/12-anexos.tex" 1794171371.64038 35300 afa549b41250a46d399cca618419f881 ""
+  "sections/09-conclusiones.tex" 1794174987.6605 10007 93a74a5de5f087ff164cd960e9121ca5 ""
+  "sections/10-recomendaciones.tex" 1794175000.03672 18316 7729f75853cc90229e97734d4793854d ""
+  "sections/11-aspectos-legales.tex" 1794175637.14496 19083 bd40e3d0a69d08fff0452adf16244711 ""
+  "sections/12-anexos.tex" 1794175637.53396 36715 79688b5d82920dd06d9973afb3108c6d ""
   (generated)
   "main.aux"
   "main.bcf"

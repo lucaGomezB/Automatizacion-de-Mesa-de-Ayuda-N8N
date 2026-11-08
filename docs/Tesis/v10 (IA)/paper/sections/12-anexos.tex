@@ -2,19 +2,35 @@
 % Anexos
 %==============================================================================
 
+\emergencystretch=3em
+
 \section{Diagrama de arquitectura del sistema}\label{sec:anexo-diagrama-arquitectura}
 
-El Anexo~A inventaría los diagramas de la arquitectura del sistema entregado (release \texttt{v1.2.8}). Los diagramas de arquitectura, despliegue, secuencia y componentes se incluyen como figuras de la \autoref{sec:arquitectura}, de modo que no se reproducen nuevamente aquí. Los cuatro artefactos y el cronograma del estudio, que se reproduce aquí, son:
+El Anexo~A inventaría los diagramas de la arquitectura del sistema entregado (release \texttt{v1.2.9}). Los diagramas de arquitectura y despliegue se incluyen como figuras de la \autoref{sec:arquitectura} y no se reproducen aquí; los diagramas de secuencia, componentes y cronograma se reproducen a continuación. Los cinco artefactos son:
 
 \begin{itemize}
   \item \textbf{Diagrama de arquitectura del sistema} (Figura~\ref{fig:arquitectura}, \autoref{sec:arquitectura}): las cinco capas de la Tabla~\ref{tab:capas} y los tres canales de entrada (correo, formulario web y telefonía), sin versiones de bibliotecas, que constan en la Tabla~\ref{tab:capas} y en la \autoref{tab:configuracion-evaluada-entregada}. Fuente versionada: \path{docs/diagrams/arquitectura_sistema.md}.
   \item \textbf{Diagrama de despliegue} (Figura~\ref{fig:despliegue}, \autoref{sec:arquitectura}): los cinco componentes principales (N8N, FastAPI, PostgreSQL, Gemini~3.6 Flash, Twilio), el proxy inverso Nginx, que provee terminación TLS 1.2/1.3 verificada en el despliegue de referencia y que forma parte del stack base sobre el que corrió la ingesta del 2 de octubre (la medición telefónica del 5 y 6 de octubre usó el perfil aislado \texttt{corpus}, sin proxy), y las relaciones de comunicación entre ellos. Fuente versionada: \path{docs/diagrams/despliegue.md}.
-  \item \textbf{Diagrama de secuencia} (Figura~\ref{fig:secuencia}, \autoref{sec:arquitectura}): flujo extremo a extremo de un incidente desde su recepción en cualquiera de los tres canales (correo electrónico, formulario web o telefonía) hasta la confirmación al usuario o la derivación a revisión humana, incluyendo las interacciones con el clasificador híbrido y la base de datos. Fuente versionada: \path{docs/diagrams/secuencia.md}.
-  \item \textbf{Diagrama de componentes} (Figura~\ref{fig:componentes}, \autoref{sec:arquitectura}): organización interna del módulo Python por capas (routes, services, repositories, models, classifiers), con sus dependencias y relaciones. Fuente versionada: \path{docs/diagrams/componentes.md}.
+  \item \textbf{Diagrama de secuencia} (Figura~\ref{fig:secuencia}): flujo extremo a extremo de un incidente desde su recepción en cualquiera de los tres canales (correo electrónico, formulario web o telefonía) hasta la confirmación al usuario o la derivación a revisión humana, incluyendo las interacciones con el clasificador híbrido y la base de datos. Fuente versionada: \path{docs/diagrams/secuencia.md}.
+  \item \textbf{Diagrama de componentes} (Figura~\ref{fig:componentes}): organización interna del módulo Python por capas (routes, services, repositories, models, classifiers), con sus dependencias y relaciones. Fuente versionada: \path{docs/diagrams/componentes.md}.
   \item \textbf{Cronograma} (Figura~\ref{fig:cronograma}, \autoref{subsec:conexion-scrumban}): construcción, campañas de medición de la campaña 2026-10, campaña complementaria de medición y versión del modelo evaluada, con la procedencia de cada fecha. Fuente versionada: \path{docs/diagrams/cronograma.md}.
 \end{itemize}
 
 Los diagramas se generan a partir de fuentes Mermaid versionadas en formato \texttt{.md} en el directorio \texttt{docs/diagrams/} del repositorio y se renderizan a imágenes PNG para su inclusión en el documento \parencite{Gomez2026_repositorio}.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.82\textwidth]{secuencia}
+\caption[Diagrama de secuencia del flujo extremo a extremo de un incidente]{Diagrama de secuencia del flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión humana, en la configuración entregada (release \texttt{v1.2.9}). El disparador por reportante no identificado en el directorio es posterior a la campaña (c-82, 13-10-2026): véase la \autoref{tab:configuracion-evaluada-entregada}.}
+\label{fig:secuencia}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.62\textwidth,height=0.78\textheight,keepaspectratio]{componentes}
+\caption[Diagrama de componentes del módulo Python organizado en capas]{Diagrama de componentes del módulo Python organizado en capas (routes, services, repositories, classifiers). Describe la configuración entregada (release \texttt{v1.2.9}): el filtro determinístico cortocircuita con señal dominante y puntaje de correctitud \(\geq 0{,}5166\) sin derivar por su confianza, la revisión por confianza menor que 0,70 rige solo sobre Gemini, la etapa de reserva deriva siempre, y el disparador por reportante no identificado en el directorio es posterior a la campaña (c-82, 13-10-2026; \autoref{tab:configuracion-evaluada-entregada}). Fuente: \texttt{docs/diagrams/componentes.md}.}
+\label{fig:componentes}
+\end{figure}
 
 \begin{figure}[htbp]
 \centering
@@ -25,11 +41,11 @@ Los diagramas se generan a partir de fuentes Mermaid versionadas en formato \tex
 
 \section{Repositorio de código fuente}\label{sec:anexo-repositorio}
 
-El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto \parencite{Gomez2026_repositorio}, accesible en \url{https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N}. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado \texttt{v1.2.8}, creado sobre el commit que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, la rama principal registra después un commit que solo consigna el hash que figura a continuación, y los commits posteriores no modifican las fuentes de la tesis.
+El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto \parencite{Gomez2026_repositorio}, accesible en \url{https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N}. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado \texttt{v1.2.9}, creado sobre el commit que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, la rama principal registra después un commit que solo consigna el hash que figura a continuación, y los commits posteriores no modifican las fuentes de la tesis.
 
 El hash completo de ese commit es \texttt{\small e52845bc754d2ed5520f3f32c19d27adc4ca67b2}, que constituye la referencia verificable de la versión corregida.
 
-La versión entregada no es la que se evaluó. La \emph{configuración evaluada} es la del commit \texttt{d6bb474} (7-10-2026), primera revisión que versiona la cascada \texttt{hybrid-v3}; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (\autoref{subsec:protocolo-pruebas}). La \emph{configuración entregada} es la del tag \texttt{v1.2.8}. La \emph{configuración de la campaña de medición} corrió sobre el clasificador congelado \texttt{hybrid-v3} con la instrumentación de intervención de \texttt{c-165} aplicada (\autoref{subsec:resultados-campana-medicion}). La \autoref{tab:configuracion-evaluada-entregada} consigna, con valores verificados sobre las tres revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella.
+La versión entregada no es la que se evaluó. La \emph{configuración evaluada} es la del commit \texttt{d6bb474} (7-10-2026), primera revisión que versiona la cascada \texttt{hybrid-v3}; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (\autoref{subsec:protocolo-pruebas}). La \emph{configuración entregada} es la del tag \texttt{v1.2.9}. La \emph{configuración de la campaña de medición} corrió sobre el clasificador congelado \texttt{hybrid-v3} con la instrumentación de intervención de \texttt{c-165} aplicada (\autoref{subsec:resultados-campana-medicion}). La \autoref{tab:configuracion-evaluada-entregada} consigna, con valores verificados sobre las tres revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella.
 
 \begin{table}[htbp]
 \small
@@ -39,7 +55,7 @@ La versión entregada no es la que se evaluó. La \emph{configuración evaluada}
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{4.9cm} >{\raggedright\arraybackslash}p{4.5cm} >{\raggedright\arraybackslash}p{2.7cm}@{}}
 \toprule
-Elemento & Configuración evaluada (\texttt{d6bb474}) & Configuración entregada (\texttt{v1.2.8}) & Configuración de la campaña de medición \\
+Elemento & Configuración evaluada (\texttt{d6bb474}) & Configuración entregada (\texttt{v1.2.9}) & Configuración de la campaña de medición \\
 \midrule
 FastAPI y Uvicorn & 0.115.0 y 0.30.6 & 0.162.0 y 0.54.0 & --- \\
 SQLAlchemy & 2.0.36 & 2.1.6 & --- \\
@@ -51,13 +67,13 @@ Reintentos del alta & No & Sí: hasta 3 intentos, espera fija de 5000~ms y tiemp
 Revisión por reportante no identificado & No & Sí (c-82) & --- \\
 Propagación del contacto del reportante en el POST & No & Sí (c-162, posterior a la campaña): el flujo N8N envía \texttt{reportante\_email} (correo) y \texttt{reportante\_telefono} (telefonía), que habilitan la resolución del reportante de c-82 & --- \\
 Prueba de humo E2E y verificación de TLS & No & Sí (c-140) & --- \\
-\texttt{classifier\_version} & \texttt{hybrid-v3} & \texttt{hybrid-v3} & \texttt{hybrid-v3} \\
+\texttt{classifier\_}\allowbreak\texttt{version} & \texttt{hybrid-v3} & \texttt{hybrid-v3} & \texttt{hybrid-v3} \\
 \midrule
 Sin cambios & \multicolumn{2}{>{\raggedright\arraybackslash}p{9.4cm}}{N8N 2.11.2, Python 3.12-slim, PostgreSQL 15.5-alpine, \texttt{gemini-3.6-flash} con sus parámetros, umbrales (0,5166 y 0,70), vocabulario y \emph{prompt}; la lógica del clasificador solo cambió en comentarios e importaciones diferidas} & --- \\
 \bottomrule
 \end{tabular}
 \par\smallskip
-{\footnotesize\textit{Fuente:} elaboración propia a partir de \texttt{git show d6bb474:}\emph{archivo}, \texttt{git show v1.2.8:}\emph{archivo} y \texttt{git show d6bb474:App/Backend/app/constants.py} sobre \texttt{requirements.txt}, \texttt{package-lock.json}, \texttt{n8n/workflow.json}, \texttt{docker-compose.yml} y \texttt{settings.py}, y de los changes archivados. La \emph{configuración de la campaña de medición} corrió sobre el clasificador congelado \texttt{hybrid-v3} (la misma configuración evaluada, commit \texttt{d6bb474}) con la instrumentación de intervención de \texttt{c-165} aplicada; se consigna la fila \texttt{classifier\_version}, que coincide con la evaluada, y las celdas no verificadas para esa corrida quedan sin declarar.\par}
+{\footnotesize\textit{Fuente:} elaboración propia a partir de \texttt{git show d6bb474:}\emph{archivo}, \texttt{git show v1.2.9:}\emph{archivo} y \texttt{git show d6bb474:App/Backend/app/constants.py} sobre \texttt{requirements.txt}, \texttt{package-lock.json}, \texttt{n8n/workflow.json}, \texttt{docker-compose.yml} y \texttt{settings.py}, y de los changes archivados. La \emph{configuración de la campaña de medición} corrió sobre el clasificador congelado \texttt{hybrid-v3} (la misma configuración evaluada, commit \texttt{d6bb474}) con la instrumentación de intervención de \texttt{c-165} aplicada; se consigna la fila \texttt{classifier\_version}, que coincide con la evaluada, y las celdas no verificadas para esa corrida quedan sin declarar.\par}
 \end{table}
 
 La estructura del repositorio separa el módulo de procesamiento (\texttt{App/Backend/}, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (\texttt{App/Frontend/}, React con TypeScript), la definición del flujo de orquestación (\texttt{n8n/workflow.json}), los artefactos de evaluación (\texttt{evaluation/}), el corpus pseudonimizado (\texttt{data/}), los scripts auxiliares (\texttt{scripts/}) y la documentación (\texttt{docs/}), junto con las especificaciones de los changes (\texttt{openspec/}) y los archivos de orquestación local \texttt{docker-compose.yml} y \texttt{Makefile}. El archivo \texttt{README.md} describe esta organización y reúne las instrucciones detalladas para el despliegue local en menos de 15 minutos, por lo que constituye el punto de entrada al código fuente disponible en el repositorio público \parencite{Gomez2026_repositorio}.
@@ -66,7 +82,7 @@ La estructura del repositorio separa el módulo de procesamiento (\texttt{App/Ba
 
 El esquema completo de la base de datos PostgreSQL se documenta mediante scripts SQL versionados que definen las siete entidades descritas en la Tabla~\ref{tab:entidades} de la \autoref{sec:arquitectura}, las restricciones de integridad referencial (claves foráneas con eliminación en cascada condicional), los índices secundarios sobre los atributos de búsqueda frecuente (fecha de creación, sector responsable y estado actual del ticket), y la generación de los identificadores de incidente. La capa de acceso a datos del módulo utiliza SQLAlchemy~2.0 como mapeador objeto-relacional y \texttt{asyncpg} como driver asincrónico para PostgreSQL, en coherencia con la Sección~5.4 y con el código del repositorio. Las migraciones incrementales se gestionan mediante Alembic, lo que permite reproducir el estado de la base en cualquier punto histórico del desarrollo y revertir cambios cuando resulte necesario.
 
-La migración inicial incluye la creación de las tablas de catálogo (\texttt{sector}, \texttt{estado}, \texttt{canal\_origen}) con sus valores semilla, garantizando que un despliegue nuevo del sistema comience con los datos de referencia correctos. Las migraciones subsiguientes documentan la evolución del esquema durante las etapas de desarrollo descritas en la \autoref{sec:marco-metodologico}.
+La migración inicial incluye la creación de las tablas de catálogo (\texttt{sector}, \texttt{estado}, \texttt{canal\_}\allowbreak\texttt{origen}) con sus valores semilla, garantizando que un despliegue nuevo del sistema comience con los datos de referencia correctos. Las migraciones subsiguientes documentan la evolución del esquema durante las etapas de desarrollo descritas en la \autoref{sec:marco-metodologico}.
 
 El diagrama entidad-relación de las siete entidades se incluye como Figura~\ref{fig:er_modelo_datos} de la \autoref{sec:arquitectura}; su fuente Mermaid versionada reside en \texttt{docs/diagrams/er\_modelo\_datos.md}.
 
