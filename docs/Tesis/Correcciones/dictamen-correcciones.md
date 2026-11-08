@@ -3719,7 +3719,7 @@ Preparación de release (gobernanza BAJA, integración documental); no se modifi
   `tr -s '[:space:]' ' '` (`tesis_completa_extraida.txt`); `tesis_para_evaluacion.txt` con 118
   saltos de página (`\f`).
 - **`CHANGES.md`**: la línea "Release vigente" pasa a `v1.2.9` (tag anotado sobre el placeholder
-  `HASH_PENDIENTE_V129`, que resuelve el commit de consignación); **`v1.2.8` queda superada**
+  `bda6903e65ab40b073daf4bd001eaa9ff85e42cc`, que resuelve el commit de consignación); **`v1.2.8` queda superada**
   (permanece inmutable, en `e52845bc754d2ed5520f3f32c19d27adc4ca67b2`).
 - **El hash del Anexo B** (`12-anexos.tex:46`, "El hash completo de ese commit es ...") NO se toca:
   conserva el valor de `v1.2.8` hasta el commit de consignación del hash, que publica el
@@ -3754,7 +3754,7 @@ exactitud; el abstract EN se ubica dentro de la variante de conteo ya documentad
 
 - **Nota de release (planificada, NO publicada en este apply):** el tag anotado **`v1.2.9`**, el
   commit de consignación del hash y el registro en `CHANGES.md` los publica el orquestador sobre el
-  commit de contenido de esta preparación (placeholder `HASH_PENDIENTE_V129`). No se creó tag ni
+  commit de contenido de esta preparación (placeholder `bda6903e65ab40b073daf4bd001eaa9ff85e42cc`). No se creó tag ni
   commit en este apply.
 - **`v1.2.8` queda superada** (permanece inmutable, en `e52845bc754d2ed5520f3f32c19d27adc4ca67b2`).
 
