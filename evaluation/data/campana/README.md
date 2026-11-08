@@ -18,7 +18,7 @@ el kappa vuelve a quedar sin intervalo de confianza. El protocolo completo
 
 ## Estado actual
 
-**Doble etiquetado, brazo manual y brazo automatizado (web/correo + telefonía) versionados; intervención pendiente.** Están
+**Doble etiquetado, brazo manual, brazo automatizado (web/correo + telefonía), intervención, entradas del análisis y salidas de `analisis/` versionados.** Están
 versionados `plan_campana.csv`, los ocho sub-planes (4 manuales + 4 automatizados,
 `subplan_m<mitad>_<brazo>_t<turno>.csv`), `corpus_campana.json` (copia de campaña, con
 los tiempos automatizados de los 200 casos; sin nulls), los ocho sidecars de corrida
@@ -27,9 +27,11 @@ los tiempos automatizados de los 200 casos; sin nulls), los ocho sidecars de cor
 (8 filas, sin solapes), `doble_etiquetado.csv` (400 registros
 de `E1` y `E2` sobre los 200 casos) y `brazo_manual.csv` (220 registros de `O1` y `O2`
 sobre los 200 casos, con 20 de doble cobertura). El test de integridad
-(`test_tabla_primaria_versionada_integra`) ya no se omite. Faltan `intervenciones.csv`,
-las dos entradas del análisis (`plantilla_etiquetado.csv`, `predicciones_in_sample.json`)
-y las salidas de `analisis/`.
+(`test_tabla_primaria_versionada_integra`) ya no se omite. Están versionados también
+`intervenciones.csv` (147 intervenciones), las dos entradas del análisis
+(`plantilla_etiquetado.csv`, `predicciones_in_sample.json`) y las salidas de `analisis/`
+(`resultados.json`, `resultados.md`, `SHA256SUMS.txt`), con sus SHA-256 en las tablas de
+abajo; el análisis de solo lectura de c-167 corre end-to-end con estas entradas.
 
 ## Archivos de esta carpeta
 
@@ -118,8 +120,8 @@ Al versionar cada archivo se completa su SHA-256 (en minúsculas, calculado sobr
 | `corpus_independiente.json` | pendiente |
 | `predicciones_independiente.json` | pendiente |
 | `reporte_independiente.md` | pendiente |
-| `plantilla_etiquetado.csv` | pendiente |
-| `predicciones_in_sample.json` | pendiente |
+| `plantilla_etiquetado.csv` | c35a58b60aca98dbc5fd03ad280fbba2f8baf2d56444ba7982ada0715f8ccd09 |
+| `predicciones_in_sample.json` | 89cf956e82f660dd8675a2d23b7b4d17efd62da542c0ba35bea28e0e54572ede |
 | `subplan_m1_manual_t1.csv` | 8d42417274934764c24774d10bbbca8ac47807e1d2960a22167ddb564933c41a |
 | `subplan_m1_manual_t2.csv` | 30d801b5aa142005402fda2b99e8d8f405ea2b95fa7f773843be4b324e0a5d6c |
 | `subplan_m2_manual_t1.csv` | 7dac79db810566f6f351ed28ce0f0a6ff4563a2f81eb03d0fbc86f0bb621438d |
@@ -257,11 +259,11 @@ El helper escribe LF sin BOM, imprime el SHA-256 de cada salida y su procedencia
 SHA-256 y procedencia (completar **al versionar** la campaña, formato `- campo: valor`):
 
 - entradas_analisis_planilla_archivo: evaluation/data/campana/plantilla_etiquetado.csv
-- entradas_analisis_planilla_sha256: pendiente
+- entradas_analisis_planilla_sha256: c35a58b60aca98dbc5fd03ad280fbba2f8baf2d56444ba7982ada0715f8ccd09
 - entradas_analisis_planilla_fuentes: doble_etiquetado.csv + brazo_manual.csv (sus SHA-256 en las filas de arriba)
 - entradas_analisis_in_sample_archivo: evaluation/data/campana/predicciones_in_sample.json
-- entradas_analisis_in_sample_sha256: pendiente (debe coincidir con el de evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json)
-- entradas_analisis_fecha: pendiente
+- entradas_analisis_in_sample_sha256: 89cf956e82f660dd8675a2d23b7b4d17efd62da542c0ba35bea28e0e54572ede (coincide con el de evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json)
+- entradas_analisis_fecha: 2026-11-08
 - entradas_analisis_comando: `python -m evaluation.preparar_entradas_analisis --entrada evaluation/data/campana --corpus data/corpus_evaluacion_pseudonimizado.json --cache-in-sample evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json`
 
 ### Gate de c-169 (tarea 0.2)

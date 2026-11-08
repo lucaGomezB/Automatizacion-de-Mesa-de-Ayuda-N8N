@@ -1,0 +1,1344 @@
+{
+  "entradas": {
+    "corpus_campana.json": "99bbe84b90b6ba66b34aae08c85bd318cd0e9600ad540e58b1a4bd8eccec06a5",
+    "intervenciones.csv": "eccc094d46d5ad301296428885114e298f52efb0666be4f61c2e6a266d340ba3",
+    "plan_campana.csv": "b619a734092cbbf2b676636386e4b27bdbeaee76df3f97a19e4b7d1beeb43243",
+    "plantilla_etiquetado.csv": "c35a58b60aca98dbc5fd03ad280fbba2f8baf2d56444ba7982ada0715f8ccd09",
+    "predicciones_in_sample.json": "89cf956e82f660dd8675a2d23b7b4d17efd62da542c0ba35bea28e0e54572ede",
+    "registro_sujetos.csv": "f7a5653e733d423a3c4b5eee6b94a05d6ea02df38eb04997212865b329224ad2"
+  },
+  "generador": "evaluation/analisis_campana.py",
+  "referencia_usada": "consenso_doble_etiquetado",
+  "remuestreos": 2000,
+  "secciones": {
+    "exactitud_brazo_manual": {
+      "obtenido": true,
+      "resultado": {
+        "advertencias": [
+          "La exclusion de los casos discordantes (E1 distinto de E2) sesga la referencia hacia casos faciles y tiende a sobrestimar la exactitud de ambos brazos.",
+          "Las coberturas de los operadores difieren (casos exclusivos de cada uno): la comparacion entre operadores mezcla operador con dificultad de los casos."
+        ],
+        "agregada": {
+          "aciertos_estrictos": 125,
+          "aciertos_laxos": 130,
+          "casos": 138,
+          "etiquetas": 151,
+          "exactitud_estricta": 0.8278145695364238,
+          "exactitud_laxa": 0.8609271523178808,
+          "ic_estricta": [
+            0.7647058823529411,
+            0.8881578947368421
+          ],
+          "ic_laxa": [
+            0.80125,
+            0.9183673469387755
+          ],
+          "metodo_ic": "bootstrap percentil por caso",
+          "nivel_confianza": 0.95,
+          "remuestreos": 2000,
+          "semilla": 20261021
+        },
+        "automatizado": {
+          "aciertos_estrictos": 110,
+          "aciertos_laxos": 117,
+          "casos": 138,
+          "exactitud_estricta": 0.7971014492753623,
+          "exactitud_laxa": 0.8478260869565217,
+          "ic_estricta": [
+            0.7223853476451637,
+            0.8557248937593508
+          ],
+          "ic_laxa": [
+            0.7785488691229401,
+            0.8982631208140526
+          ]
+        },
+        "cobertura": [
+          {
+            "compartidos": 20,
+            "etiquetados": 110,
+            "evaluados": 80,
+            "excluidos_por_discordancia": 30,
+            "exclusivos": 90,
+            "id_etiquetador": "O1"
+          },
+          {
+            "compartidos": 20,
+            "etiquetados": 110,
+            "evaluados": 71,
+            "excluidos_por_discordancia": 39,
+            "exclusivos": 90,
+            "id_etiquetador": "O2"
+          }
+        ],
+        "contraste_vs_automatizado": [
+          {
+            "id_etiquetador": "O1",
+            "mcnemar": {
+              "ambas": 62,
+              "aplicable": true,
+              "criterio": "exacto",
+              "estadistico": 1.2307692307692308,
+              "ninguna": 5,
+              "p_corregido": 0.2672574931543847,
+              "p_exacto": 0.266845703125,
+              "p_primario": 0.266845703125,
+              "pares": 80,
+              "solo_a": 9,
+              "solo_b": 4
+            },
+            "pares_clave": [
+              [
+                "R005",
+                "O1"
+              ],
+              [
+                "R017",
+                "O1"
+              ],
+              [
+                "R018",
+                "O1"
+              ],
+              [
+                "R019",
+                "O1"
+              ],
+              [
+                "R020",
+                "O1"
+              ],
+              [
+                "R023",
+                "O1"
+              ],
+              [
+                "R025",
+                "O1"
+              ],
+              [
+                "R026",
+                "O1"
+              ],
+              [
+                "R029",
+                "O1"
+              ],
+              [
+                "R031",
+                "O1"
+              ],
+              [
+                "R032",
+                "O1"
+              ],
+              [
+                "R034",
+                "O1"
+              ],
+              [
+                "R036",
+                "O1"
+              ],
+              [
+                "R040",
+                "O1"
+              ],
+              [
+                "R042",
+                "O1"
+              ],
+              [
+                "R055",
+                "O1"
+              ],
+              [
+                "R065",
+                "O1"
+              ],
+              [
+                "R066",
+                "O1"
+              ],
+              [
+                "R067",
+                "O1"
+              ],
+              [
+                "R069",
+                "O1"
+              ],
+              [
+                "R070",
+                "O1"
+              ],
+              [
+                "R071",
+                "O1"
+              ],
+              [
+                "R074",
+                "O1"
+              ],
+              [
+                "R081",
+                "O1"
+              ],
+              [
+                "R082",
+                "O1"
+              ],
+              [
+                "R087",
+                "O1"
+              ],
+              [
+                "R089",
+                "O1"
+              ],
+              [
+                "R090",
+                "O1"
+              ],
+              [
+                "R093",
+                "O1"
+              ],
+              [
+                "R096",
+                "O1"
+              ],
+              [
+                "R098",
+                "O1"
+              ],
+              [
+                "R099",
+                "O1"
+              ],
+              [
+                "R102",
+                "O1"
+              ],
+              [
+                "R103",
+                "O1"
+              ],
+              [
+                "R104",
+                "O1"
+              ],
+              [
+                "R107",
+                "O1"
+              ],
+              [
+                "R108",
+                "O1"
+              ],
+              [
+                "R109",
+                "O1"
+              ],
+              [
+                "R110",
+                "O1"
+              ],
+              [
+                "R111",
+                "O1"
+              ],
+              [
+                "R113",
+                "O1"
+              ],
+              [
+                "R116",
+                "O1"
+              ],
+              [
+                "R117",
+                "O1"
+              ],
+              [
+                "R122",
+                "O1"
+              ],
+              [
+                "R123",
+                "O1"
+              ],
+              [
+                "R129",
+                "O1"
+              ],
+              [
+                "R131",
+                "O1"
+              ],
+              [
+                "R132",
+                "O1"
+              ],
+              [
+                "R135",
+                "O1"
+              ],
+              [
+                "R138",
+                "O1"
+              ],
+              [
+                "R141",
+                "O1"
+              ],
+              [
+                "R145",
+                "O1"
+              ],
+              [
+                "R146",
+                "O1"
+              ],
+              [
+                "R147",
+                "O1"
+              ],
+              [
+                "R149",
+                "O1"
+              ],
+              [
+                "R150",
+                "O1"
+              ],
+              [
+                "R151",
+                "O1"
+              ],
+              [
+                "R152",
+                "O1"
+              ],
+              [
+                "R154",
+                "O1"
+              ],
+              [
+                "R155",
+                "O1"
+              ],
+              [
+                "R156",
+                "O1"
+              ],
+              [
+                "R158",
+                "O1"
+              ],
+              [
+                "R159",
+                "O1"
+              ],
+              [
+                "R163",
+                "O1"
+              ],
+              [
+                "R166",
+                "O1"
+              ],
+              [
+                "R169",
+                "O1"
+              ],
+              [
+                "R170",
+                "O1"
+              ],
+              [
+                "R174",
+                "O1"
+              ],
+              [
+                "R175",
+                "O1"
+              ],
+              [
+                "R179",
+                "O1"
+              ],
+              [
+                "R180",
+                "O1"
+              ],
+              [
+                "R181",
+                "O1"
+              ],
+              [
+                "R182",
+                "O1"
+              ],
+              [
+                "R185",
+                "O1"
+              ],
+              [
+                "R189",
+                "O1"
+              ],
+              [
+                "R190",
+                "O1"
+              ],
+              [
+                "R191",
+                "O1"
+              ],
+              [
+                "R192",
+                "O1"
+              ],
+              [
+                "R194",
+                "O1"
+              ],
+              [
+                "R195",
+                "O1"
+              ]
+            ],
+            "sin_prediccion": []
+          },
+          {
+            "id_etiquetador": "O2",
+            "mcnemar": {
+              "ambas": 45,
+              "aplicable": true,
+              "criterio": "exacto",
+              "estadistico": 0.0,
+              "ninguna": 9,
+              "p_corregido": 1.0,
+              "p_exacto": 1.0,
+              "p_primario": 1.0,
+              "pares": 71,
+              "solo_a": 9,
+              "solo_b": 8
+            },
+            "pares_clave": [
+              [
+                "R005",
+                "O2"
+              ],
+              [
+                "R007",
+                "O2"
+              ],
+              [
+                "R013",
+                "O2"
+              ],
+              [
+                "R016",
+                "O2"
+              ],
+              [
+                "R022",
+                "O2"
+              ],
+              [
+                "R027",
+                "O2"
+              ],
+              [
+                "R028",
+                "O2"
+              ],
+              [
+                "R030",
+                "O2"
+              ],
+              [
+                "R037",
+                "O2"
+              ],
+              [
+                "R039",
+                "O2"
+              ],
+              [
+                "R042",
+                "O2"
+              ],
+              [
+                "R043",
+                "O2"
+              ],
+              [
+                "R045",
+                "O2"
+              ],
+              [
+                "R046",
+                "O2"
+              ],
+              [
+                "R047",
+                "O2"
+              ],
+              [
+                "R048",
+                "O2"
+              ],
+              [
+                "R071",
+                "O2"
+              ],
+              [
+                "R086",
+                "O2"
+              ],
+              [
+                "R090",
+                "O2"
+              ],
+              [
+                "R091",
+                "O2"
+              ],
+              [
+                "R092",
+                "O2"
+              ],
+              [
+                "R097",
+                "O2"
+              ],
+              [
+                "R099",
+                "O2"
+              ],
+              [
+                "R100",
+                "O2"
+              ],
+              [
+                "R101",
+                "O2"
+              ],
+              [
+                "R105",
+                "O2"
+              ],
+              [
+                "R106",
+                "O2"
+              ],
+              [
+                "R110",
+                "O2"
+              ],
+              [
+                "R118",
+                "O2"
+              ],
+              [
+                "R120",
+                "O2"
+              ],
+              [
+                "R121",
+                "O2"
+              ],
+              [
+                "R122",
+                "O2"
+              ],
+              [
+                "R124",
+                "O2"
+              ],
+              [
+                "R125",
+                "O2"
+              ],
+              [
+                "R126",
+                "O2"
+              ],
+              [
+                "R127",
+                "O2"
+              ],
+              [
+                "R128",
+                "O2"
+              ],
+              [
+                "R130",
+                "O2"
+              ],
+              [
+                "R134",
+                "O2"
+              ],
+              [
+                "R136",
+                "O2"
+              ],
+              [
+                "R137",
+                "O2"
+              ],
+              [
+                "R139",
+                "O2"
+              ],
+              [
+                "R140",
+                "O2"
+              ],
+              [
+                "R142",
+                "O2"
+              ],
+              [
+                "R144",
+                "O2"
+              ],
+              [
+                "R148",
+                "O2"
+              ],
+              [
+                "R153",
+                "O2"
+              ],
+              [
+                "R157",
+                "O2"
+              ],
+              [
+                "R161",
+                "O2"
+              ],
+              [
+                "R163",
+                "O2"
+              ],
+              [
+                "R164",
+                "O2"
+              ],
+              [
+                "R165",
+                "O2"
+              ],
+              [
+                "R167",
+                "O2"
+              ],
+              [
+                "R168",
+                "O2"
+              ],
+              [
+                "R170",
+                "O2"
+              ],
+              [
+                "R171",
+                "O2"
+              ],
+              [
+                "R173",
+                "O2"
+              ],
+              [
+                "R174",
+                "O2"
+              ],
+              [
+                "R175",
+                "O2"
+              ],
+              [
+                "R183",
+                "O2"
+              ],
+              [
+                "R184",
+                "O2"
+              ],
+              [
+                "R186",
+                "O2"
+              ],
+              [
+                "R187",
+                "O2"
+              ],
+              [
+                "R188",
+                "O2"
+              ],
+              [
+                "R189",
+                "O2"
+              ],
+              [
+                "R190",
+                "O2"
+              ],
+              [
+                "R196",
+                "O2"
+              ],
+              [
+                "R197",
+                "O2"
+              ],
+              [
+                "R198",
+                "O2"
+              ],
+              [
+                "R199",
+                "O2"
+              ],
+              [
+                "R200",
+                "O2"
+              ]
+            ],
+            "sin_prediccion": []
+          }
+        ],
+        "discordantes": [
+          "R001",
+          "R002",
+          "R003",
+          "R004",
+          "R006",
+          "R008",
+          "R009",
+          "R010",
+          "R011",
+          "R012",
+          "R014",
+          "R015",
+          "R021",
+          "R024",
+          "R033",
+          "R035",
+          "R038",
+          "R041",
+          "R044",
+          "R049",
+          "R050",
+          "R051",
+          "R052",
+          "R053",
+          "R054",
+          "R056",
+          "R057",
+          "R058",
+          "R059",
+          "R060",
+          "R061",
+          "R062",
+          "R063",
+          "R064",
+          "R068",
+          "R072",
+          "R073",
+          "R075",
+          "R076",
+          "R077",
+          "R078",
+          "R079",
+          "R080",
+          "R083",
+          "R084",
+          "R085",
+          "R088",
+          "R094",
+          "R095",
+          "R112",
+          "R114",
+          "R115",
+          "R119",
+          "R133",
+          "R143",
+          "R160",
+          "R162",
+          "R172",
+          "R176",
+          "R177",
+          "R178",
+          "R193"
+        ],
+        "n_discordantes": 62,
+        "nivel_confianza": 0.95,
+        "nota_automatizado": "Exactitud de v9 contra la referencia consenso_doble_etiquetado sobre los 138 casos evaluados del brazo manual: es un numero nuevo, rotulado con su referencia, y no reemplaza los numeros canonicos de v9.",
+        "por_operador": {
+          "O1": {
+            "aciertos_estrictos": 71,
+            "aciertos_laxos": 73,
+            "casos": 80,
+            "exactitud_estricta": 0.8875,
+            "exactitud_laxa": 0.9125,
+            "ic_estricta": [
+              0.7998178190762713,
+              0.9396731305336952
+            ],
+            "ic_laxa": [
+              0.8302320449152499,
+              0.9569679982179401
+            ]
+          },
+          "O2": {
+            "aciertos_estrictos": 54,
+            "aciertos_laxos": 57,
+            "casos": 71,
+            "exactitud_estricta": 0.7605633802816901,
+            "exactitud_laxa": 0.8028169014084507,
+            "ic_estricta": [
+              0.6495877914390639,
+              0.8447905996695989
+            ],
+            "ic_laxa": [
+              0.6958031829491169,
+              0.8787446769879776
+            ]
+          }
+        },
+        "referencia_usada": "consenso_doble_etiquetado"
+      }
+    },
+    "fuera_de_muestra": {
+      "motivo": "no se obtuvo la evaluacion fuera de muestra: falta(n) predicciones_independiente.json, corpus_independiente.json; no se reemplaza por metricas in-sample.",
+      "obtenido": false
+    },
+    "intervencion": {
+      "obtenido": true,
+      "resultado": {
+        "tasa": {
+          "advertencias": [
+            "Un caso puede figurar en mas de un origen y en ambos valores de cambio_sector: los desgloses no suman la tasa."
+          ],
+          "casos_corrida": 200,
+          "casos_intervenidos": 147,
+          "contraste": {
+            "cota": 0.15,
+            "estimacion": 0.735,
+            "limite_inferior": 0.6698242380737758,
+            "limite_superior": 0.7913184585289088,
+            "resultado": "refutada"
+          },
+          "filas": 147,
+          "no_vinculables": 0,
+          "por_cambio_sector": {
+            "false": {
+              "casos": 122,
+              "denominador": 200,
+              "ic": [
+                0.5409374595716976,
+                0.6749165686253038
+              ],
+              "proporcion": 0.61
+            },
+            "true": {
+              "casos": 25,
+              "denominador": 200,
+              "ic": [
+                0.08611974475712644,
+                0.17801425002582347
+              ],
+              "proporcion": 0.125
+            }
+          },
+          "por_origen": {
+            "completado_manual": {
+              "casos": 0,
+              "denominador": 200,
+              "ic": [
+                1.734723475976807e-18,
+                0.018845326377266575
+              ],
+              "proporcion": 0.0
+            },
+            "gate": {
+              "casos": 147,
+              "denominador": 200,
+              "ic": [
+                0.6698242380737758,
+                0.7913184585289088
+              ],
+              "proporcion": 0.735
+            },
+            "muestreo": {
+              "casos": 0,
+              "denominador": 200,
+              "ic": [
+                1.734723475976807e-18,
+                0.018845326377266575
+              ],
+              "proporcion": 0.0
+            },
+            "rederivacion": {
+              "casos": 0,
+              "denominador": 200,
+              "ic": [
+                1.734723475976807e-18,
+                0.018845326377266575
+              ],
+              "proporcion": 0.0
+            }
+          },
+          "tasa": {
+            "casos": 147,
+            "denominador": 200,
+            "ic": [
+              0.6698242380737758,
+              0.7913184585289088
+            ],
+            "proporcion": 0.735
+          }
+        },
+        "tiempo": {
+          "casos_incluidos": 191,
+          "casos_intervenidos": 147,
+          "cobertura": 0.9387755102040817,
+          "con_duracion_completa": 138,
+          "denominador_rotulo": "tiempo de registro automatizado",
+          "estimable": true,
+          "ic": [
+            0.4406701219926687,
+            0.6110730976266155
+          ],
+          "limitacion": "Limitacion: tiempo_automatizado_s mide solo el registro automatizado del caso; el denominador (registro automatizado + duracion de la intervencion) no es el tiempo total de atencion.",
+          "metodo_ic": "bootstrap percentil por caso del cociente de sumas",
+          "motivo": null,
+          "nivel_confianza": 0.95,
+          "proporcion": 0.5307217074198305,
+          "remuestreos": 2000,
+          "semilla": 20261021,
+          "sin_duracion": [
+            "R029",
+            "R036",
+            "R058",
+            "R069",
+            "R123",
+            "R154",
+            "R166",
+            "R181",
+            "R195"
+          ],
+          "sin_tiempo_automatizado": [],
+          "suma_duracion_s": 3044.717,
+          "suma_tiempo_automatizado_s": 2692.22
+        }
+      }
+    },
+    "kappa": {
+      "obtenido": true,
+      "resultado": {
+        "bootstrap_computable": true,
+        "declaraciones": [
+          "Fleiss fuera del alcance: el kappa se calcula solo para exactamente dos etiquetadores.",
+          "kappa de etiquetadores nuevos, no IC del 0,87 original"
+        ],
+        "error_estandar": 0.04305833833118357,
+        "etiquetadores": [
+          "E1",
+          "E2"
+        ],
+        "ic_asintotico": [
+          0.47246518776682334,
+          0.6412507724933438
+        ],
+        "ic_bootstrap": [
+          0.4750996879718248,
+          0.638734512365087
+        ],
+        "kappa": 0.5568579801300836,
+        "motivo_bootstrap": null,
+        "n": 200,
+        "nivel_confianza": 0.95,
+        "nota_rotulo_ic": "El rotulo de Landis y Koch corresponde al valor puntual; el rotulo del IC puede abarcar dos o mas categorias (IC asintotico: moderado y sustancial; IC bootstrap: moderado y sustancial).",
+        "p_e": 0.30045,
+        "p_o": 0.69,
+        "pabak": 0.6124999999999999,
+        "remuestras_degeneradas": 0,
+        "remuestreos": 2000,
+        "rotulo": "moderado",
+        "rotulos_ic_asintotico": [
+          "moderado",
+          "sustancial"
+        ],
+        "rotulos_ic_bootstrap": [
+          "moderado",
+          "sustancial"
+        ],
+        "semilla": 20261021
+      }
+    },
+    "orden": {
+      "obtenido": true,
+      "resultado": {
+        "diseno": "grupos_independientes",
+        "nota": "Un resultado no significativo no es ausencia de efecto: solo descarta efectos mayores que el efecto minimo detectable (MDE) de cada contraste.",
+        "por_operador": [
+          {
+            "casos_con_duracion": 110,
+            "condicion": {
+              "acierto": {
+                "aplicable": true,
+                "automatizado_primero": {
+                  "casos": 37,
+                  "denominador": 43,
+                  "ic": [
+                    0.7273641203261714,
+                    0.9344427657203511
+                  ],
+                  "proporcion": 0.8604651162790697
+                },
+                "diseno": "grupos_independientes",
+                "lectura": "no significativo; efectos menores que el MDE no son detectables",
+                "manual_primero": {
+                  "casos": 34,
+                  "denominador": 37,
+                  "ic": [
+                    0.7869932065071162,
+                    0.9720394258995521
+                  ],
+                  "proporcion": 0.918918918918919
+                },
+                "mcnemar": null,
+                "motivo": null,
+                "p_fisher": 0.493882349021845
+              },
+              "contraste": {
+                "aplicable": true,
+                "escala_mde": "d",
+                "estadistico_u": 1552.5,
+                "lectura": "no significativo; efectos menores que el MDE no son detectables",
+                "mde": 0.577142001556638,
+                "motivo": null,
+                "n_a": 50,
+                "n_b": 60,
+                "n_efectivo": 27.272727272727273,
+                "p": 0.7545365051984703,
+                "r": 0.03499999999999992
+              },
+              "diseno": "grupos_independientes"
+            },
+            "id_etiquetador": "O1",
+            "posicion": {
+              "casos_con_desvio": [
+                "R003",
+                "R004",
+                "R006",
+                "R009",
+                "R011",
+                "R014",
+                "R015",
+                "R017",
+                "R018",
+                "R019",
+                "R020",
+                "R021",
+                "R023",
+                "R025",
+                "R026",
+                "R029",
+                "R031",
+                "R032",
+                "R034",
+                "R036",
+                "R038",
+                "R040",
+                "R049",
+                "R050",
+                "R052",
+                "R053",
+                "R055",
+                "R058",
+                "R059",
+                "R060",
+                "R063",
+                "R065",
+                "R066",
+                "R067",
+                "R069",
+                "R070",
+                "R072",
+                "R074",
+                "R075",
+                "R076",
+                "R078",
+                "R080",
+                "R081",
+                "R082",
+                "R087",
+                "R093",
+                "R094",
+                "R095",
+                "R096",
+                "R098",
+                "R099",
+                "R102",
+                "R103",
+                "R104",
+                "R107",
+                "R108",
+                "R109",
+                "R110",
+                "R111",
+                "R113",
+                "R116",
+                "R117",
+                "R122",
+                "R123",
+                "R129",
+                "R131",
+                "R132",
+                "R135",
+                "R138",
+                "R141",
+                "R143",
+                "R145",
+                "R146",
+                "R147",
+                "R149",
+                "R150",
+                "R151",
+                "R152",
+                "R154",
+                "R155",
+                "R156",
+                "R158",
+                "R159",
+                "R166",
+                "R169",
+                "R170",
+                "R174",
+                "R175",
+                "R179",
+                "R180",
+                "R181",
+                "R182",
+                "R185",
+                "R190",
+                "R191",
+                "R192",
+                "R194",
+                "R195"
+              ],
+              "desvios": 98,
+              "mitades": {
+                "aplicable": true,
+                "escala_mde": "d",
+                "estadistico_u": 390.5,
+                "lectura": "no significativo; efectos menores que el MDE no son detectables",
+                "mde": 0.9996392698780929,
+                "motivo": null,
+                "n_a": 100,
+                "n_b": 10,
+                "n_efectivo": 9.090909090909092,
+                "p": 0.25630438199896444,
+                "r": -0.21899999999999997
+              },
+              "spearman": {
+                "aplicable": true,
+                "escala_mde": "rho (aproximacion de Fisher con n - 3)",
+                "lectura": "no significativo; efectos menores que el MDE no son detectables",
+                "mde": 0.2834015929824635,
+                "motivo": null,
+                "n": 110,
+                "p": 0.5146511237712036,
+                "rho": -0.06278470537160674
+              }
+            }
+          },
+          {
+            "casos_con_duracion": 110,
+            "condicion": {
+              "acierto": {
+                "aplicable": true,
+                "automatizado_primero": {
+                  "casos": 29,
+                  "denominador": 38,
+                  "ic": [
+                    0.607931876367602,
+                    0.8700629298294591
+                  ],
+                  "proporcion": 0.7631578947368421
+                },
+                "diseno": "grupos_independientes",
+                "lectura": "no significativo; efectos menores que el MDE no son detectables",
+                "manual_primero": {
+                  "casos": 25,
+                  "denominador": 33,
+                  "ic": [
+                    0.5897538017044264,
+                    0.8716828662282499
+                  ],
+                  "proporcion": 0.7575757575757576
+                },
+                "mcnemar": null,
+                "motivo": null,
+                "p_fisher": 1.0
+              },
+              "contraste": {
+                "aplicable": true,
+                "escala_mde": "d",
+                "estadistico_u": 1326.5,
+                "lectura": "no significativo; efectos menores que el MDE no son detectables",
+                "mde": 0.577142001556638,
+                "motivo": null,
+                "n_a": 50,
+                "n_b": 60,
+                "n_efectivo": 27.272727272727273,
+                "p": 0.2988256271523603,
+                "r": -0.1156666666666667
+              },
+              "diseno": "grupos_independientes"
+            },
+            "id_etiquetador": "O2",
+            "posicion": {
+              "casos_con_desvio": [
+                "R001",
+                "R002",
+                "R007",
+                "R008",
+                "R010",
+                "R012",
+                "R013",
+                "R016",
+                "R024",
+                "R027",
+                "R028",
+                "R030",
+                "R033",
+                "R035",
+                "R037",
+                "R039",
+                "R041",
+                "R042",
+                "R043",
+                "R044",
+                "R045",
+                "R046",
+                "R047",
+                "R048",
+                "R051",
+                "R054",
+                "R056",
+                "R057",
+                "R061",
+                "R062",
+                "R064",
+                "R068",
+                "R071",
+                "R073",
+                "R077",
+                "R079",
+                "R083",
+                "R084",
+                "R085",
+                "R086",
+                "R088",
+                "R090",
+                "R091",
+                "R092",
+                "R097",
+                "R100",
+                "R101",
+                "R105",
+                "R106",
+                "R112",
+                "R114",
+                "R115",
+                "R118",
+                "R119",
+                "R120",
+                "R121",
+                "R124",
+                "R125",
+                "R126",
+                "R127",
+                "R128",
+                "R130",
+                "R133",
+                "R134",
+                "R136",
+                "R137",
+                "R139",
+                "R140",
+                "R142",
+                "R144",
+                "R148",
+                "R153",
+                "R157",
+                "R160",
+                "R161",
+                "R162",
+                "R163",
+                "R164",
+                "R165",
+                "R167",
+                "R168",
+                "R171",
+                "R172",
+                "R173",
+                "R176",
+                "R177",
+                "R178",
+                "R183",
+                "R184",
+                "R186",
+                "R187",
+                "R188",
+                "R193",
+                "R196",
+                "R197",
+                "R198",
+                "R199",
+                "R200"
+              ],
+              "desvios": 98,
+              "mitades": {
+                "aplicable": true,
+                "escala_mde": "d",
+                "estadistico_u": 888.5,
+                "lectura": "significativo (p < 0,05)",
+                "mde": 0.9996392698780929,
+                "motivo": null,
+                "n_a": 10,
+                "n_b": 100,
+                "n_efectivo": 9.090909090909092,
+                "p": 5.4387730675595223e-05,
+                "r": 0.7769999999999999
+              },
+              "spearman": {
+                "aplicable": true,
+                "escala_mde": "rho (aproximacion de Fisher con n - 3)",
+                "lectura": "significativo (p < 0,05)",
+                "mde": 0.2834015929824635,
+                "motivo": null,
+                "n": 110,
+                "p": 0.00011016629279475025,
+                "rho": -0.3603566945474636
+              }
+            }
+          }
+        ],
+        "respuesta": "duracion del brazo manual (timestamp - inicio), en segundos"
+      }
+    }
+  },
+  "semilla": 20261021
+}

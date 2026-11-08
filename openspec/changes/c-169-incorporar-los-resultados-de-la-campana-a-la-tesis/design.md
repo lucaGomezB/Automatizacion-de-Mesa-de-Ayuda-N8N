@@ -284,3 +284,26 @@ verificación. Rollback: revertir los commits del change; sin migraciones.
 - Si la exactitud de v9 contra la referencia nueva difiere mucho del `73,5 %`, la
   discusión debe tratar la diferencia de referencias; el alcance de ese párrafo se
   decide al aplicar.
+
+## Ramas resueltas (apply, 2026-11-08; tarea 0.5)
+
+Salidas de `evaluation/data/campana/analisis/resultados.json` (c-167) sobre la campaña
+versionada. Sin reemplazo de valores canónicos. Gate 0: 0.1 OK (c-165 a c-168 archivados
+y fuera de `openspec list`), 0.2 OK (tablas, entradas y `analisis/` con SHA-256
+coincidente), 0.3 OK (registro de 8 filas sin solapes; `validar_registro_sujetos` devuelve
+`E1, E2, O1, O2`), 0.4 OK con el entorno de CI (`pytest evaluation/`: 1190 passed).
+
+| Ítem | Rama | Evidencia (resultados.json) |
+|---|---|---|
+| (a) exactitud manual | medida (positiva) | registro sin solapes; estricta agregada `0,8278` (125/138), IC bootstrap `[0,7647; 0,8882]`, laxa `0,8609`; por operador Wilson: O1 `0,8875` (71/80), O2 `0,7606` (54/71); automatizado estricto `0,7971` (110/138) |
+| (b) intervención | contrastada: refutada | tasa `0,735` (147/200), Wilson `[0,6698; 0,7913]`, cota `0,15`; estimación ≥ 0,15 |
+| (b') proporción de tiempo | estimable | cobertura `0,9388` (≥ 0,80); proporción `0,5307`, IC bootstrap `[0,4407; 0,6111]` |
+| (c) efecto de orden | estimado | condición entre grupos independientes O1 `p=0,7545` (r=0,035) / O2 `p=0,2988` (r=-0,1157), MDE `d=0,5771`; posición O1 `rho=-0,0628 p=0,5147` / O2 `rho=-0,3604 p=0,00011` (significativo), MDE `rho=0,2834` |
+| (d) fuera de muestra | sin corpus independiente declarado | faltan `predicciones_independiente.json` y `corpus_independiente.json`; no se reemplaza por métricas in-sample |
+| (e) kappa | con IC (positiva) | kappa `0,5569`, IC asintótico `[0,4725; 0,6413]`, IC bootstrap `[0,4751; 0,6387]`, p_o `0,69`, p_e `0,30045`, PABAK `0,6125`, rótulo puntual "moderado" (ICs abarcan moderado y sustancial); el `0,87` sigue sin IC |
+
+Consecuencias de rama: el objetivo 4 sube a "Alcanzado" (`(a)` medida y `(b)` contrastada
+en su rama refutada); la hipótesis principal queda "confirmada en tiempo, refutada en
+clasificación y refutada en intervención"; el balance neto usa la tasa manual derivada
+`1 - 0,8278 = 0,1722` y `a*` recalculada, condicional al costo (la salida de c-167 no
+cronometra reasignaciones).
