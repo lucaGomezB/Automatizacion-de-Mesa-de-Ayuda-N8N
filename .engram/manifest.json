@@ -968,6 +968,14 @@
       "sessions": 1,
       "memories": 13,
       "prompts": 18
+    },
+    {
+      "id": "9632207b",
+      "created_by": "skywalker",
+      "created_at": "2026-11-08T22:53:51Z",
+      "sessions": 0,
+      "memories": 14,
+      "prompts": 8
     }
   ]
 }
