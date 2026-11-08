@@ -1,6 +1,6 @@
-# Tesis UTN-FRM 2026 - Tesis para agentes (v10 / v1.2.9)
+# Tesis UTN-FRM 2026 - Tesis para agentes (v10 / v1.2.10)
 
-> Documento generado a partir de las fuentes LaTeX de `docs/Tesis/v10 (IA)/paper/sections/` (version de trabajo v10, release `v1.2.9`). Render Markdown de referencia para agentes. Los valores numericos son verbatim de las fuentes.
+> Documento generado a partir de las fuentes LaTeX de `docs/Tesis/v10 (IA)/paper/sections/` (version de trabajo v10, release `v1.2.10`). Render Markdown de referencia para agentes. Los valores numericos son verbatim de las fuentes.
 
 ---
 
@@ -352,7 +352,7 @@ La literatura reciente sobre clasificación de tickets no respalda un desplazami
 
 *Fuente:* elaboración propia sobre las obras citadas (resumen y texto abierto; consulta 26-10-2026).
 
-La evaluación de modelos de lenguaje en escenarios de pocos ejemplos ha documentado que el rendimiento de clasificación depende fuertemente del idioma del corpus, con resultados que favorecen a los idiomas con más recursos [ahuja2023mega, xuan2025mmluprox]. Para el español y sus variantes regionales, [grandury2025laleaderboard] construyen una tabla comparativa de LLM específica para las variedades del español de España y Latinoamérica, mientras que [mayorrocher2026spanish] evalúan modelos con pruebas de español como lengua extranjera, [bernalbeltran2025mexicanspanish] comparan ajuste fino y aprendizaje en contexto sobre español mexicano, y [ramonferrer2026tripletotext] evalúan modelos de bajos recursos sobre un corpus en español. Esta línea evidencia que el español, y en particular sus variantes regionales como el rioplatense, ha recibido una atención notablemente menor en las evaluaciones sistemáticas publicadas. Cabe acotar, además, una brecha concreta en el alcance revisado: en las fuentes consultadas hasta la fecha de corte del protocolo de revisión de este capítulo (21 de octubre de 2026), con las cadenas de búsqueda allí declaradas, no se identificó artículo arbitrado 2023-2026 que evalúe Google Gemini sobre tickets de soporte en español. Esta ausencia relativa al alcance revisado constituye una de las motivaciones académicas del presente trabajo.
+La evaluación de modelos de lenguaje en escenarios de pocos ejemplos ha documentado que el rendimiento de clasificación depende fuertemente del idioma del corpus, con resultados que favorecen a los idiomas con más recursos en el benchmark multilingüe MEGA, que incluye tareas de clasificación [ahuja2023mega]; en un plano más general, el desempeño multilingüe también disminuye en los idiomas con menos recursos [xuan2025mmluprox]. Para el español y sus variantes regionales, [grandury2025laleaderboard] construyen una tabla comparativa de LLM específica para las variedades del español de España y Latinoamérica, mientras que [mayorrocher2026spanish] evalúan modelos con pruebas de español como lengua extranjera, [bernalbeltran2025mexicanspanish] comparan ajuste fino y aprendizaje en contexto sobre español mexicano, y [ramonferrer2026tripletotext] evalúan modelos de bajos recursos sobre un corpus en español. Esta línea evidencia que el español, y en particular sus variantes regionales como el rioplatense, ha recibido una atención notablemente menor en las evaluaciones sistemáticas publicadas. Cabe acotar, además, una brecha concreta en el alcance revisado: en las fuentes consultadas hasta la fecha de corte del protocolo de revisión de este capítulo (21 de octubre de 2026), con las cadenas de búsqueda allí declaradas, no se identificó artículo arbitrado 2023-2026 que evalúe Google Gemini sobre tickets de soporte en español. Esta ausencia relativa al alcance revisado constituye una de las motivaciones académicas del presente trabajo.
 
 ### Calibración de la confianza y cascadas de modelos
 
@@ -495,7 +495,7 @@ La Tabla `tab:capas` sintetiza las cinco capas y sus responsabilidades específi
 
 La trazabilidad operativa se garantiza mediante registros estructurados en cada capa, accesibles desde la capa de orquestación. La Figura `fig:arquitectura` representa esquemáticamente el flujo de información entre capas. El despliegue del entorno local —servicios, red Docker, volúmenes y servicios externos— se detalla en la Figura `fig:despliegue`, y el flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión, en la Figura `fig:secuencia` (Anexo `sec:anexo-diagrama-arquitectura`).
 
-[Figura: Diagrama de arquitectura del sistema: cinco capas y tres canales de entrada (correo, formulario web y telefonía), en la configuración entregada (release `v1.2.9] (`fig:arquitectura`)
+[Figura: Diagrama de arquitectura del sistema: cinco capas y tres canales de entrada (correo, formulario web y telefonía), en la configuración entregada (release `v1.2.10] (`fig:arquitectura`)
 
 [Figura: Diagrama de despliegue del entorno local. Servicios, red Docker, volúmenes y servicios externos.] (`fig:despliegue`)
 
@@ -527,7 +527,7 @@ El camino de clasificación es único para los tres canales de entrada. Tanto el
 
 La persistencia se realiza sobre PostgreSQL 15.5, desplegado en contenedor Docker bajo configuración de respaldo diario y replicación física opcional para entornos productivos [PostgreSQL2024_docs]. El modelo de datos se organiza alrededor de siete entidades principales, descritas en la Tabla `tab:entidades` y en el diagrama entidad-relación de la Figura `fig:er_modelo_datos`.
 
-**Tabla: Entidades principales del modelo de datos de la configuración entregada (release `v1.2.9**
+**Tabla: Entidades principales del modelo de datos de la configuración entregada (release `v1.2.10**
 
 ); el atributo reportante_empleado_id`, el cuarto rol del directorio y el cifrado del contacto son posteriores a la campaña de medición (c-82, c-86 y c-153).
 
@@ -546,7 +546,7 @@ La persistencia se realiza sobre PostgreSQL 15.5, desplegado en contenedor Docke
 
 El canal de origen constituye una entrada opcional del backend: el esquema de creación de incidentes acepta `canal_origen_id` como campo anulable, de modo que un incidente puede registrarse sin canal conocido. La entidad central `incidente` referencia mediante claves foráneas a los catálogos de sector, estado y canal de origen, y mantiene una relación uno a muchos con `clasificacion_log` para preservar la trazabilidad histórica de las decisiones del clasificador. El número de incidente que se comunica al usuario corresponde al identificador único del registro, formateado para su legibilidad; la incorporación de un prefijo configurable se prevé como evolución futura (§`sec:recomendaciones`). El esquema completo, incluyendo restricciones de integridad referencial e índices secundarios, se documenta en el Anexo C. El directorio de empleados (`directorio_empleado`) se vincula opcionalmente con la tabla de autenticación mediante `user_id` y referencia el catálogo de sectores mediante `sector_id`; su campo `rol` distingue al usuario final, a la mesa de ayuda, al administrador del directorio y a la gestión de incidentes (cuatro valores; §`tab:entidades`).
 
-[Figura: Diagrama entidad-relación de las siete entidades principales del modelo de datos de la configuración entregada (release `v1.2.9] (`fig:er_modelo_datos`)
+[Figura: Diagrama entidad-relación de las siete entidades principales del modelo de datos de la configuración entregada (release `v1.2.10] (`fig:er_modelo_datos`)
 
 ### Contrato de la interfaz REST
 
@@ -582,7 +582,7 @@ Los códigos de estado HTTP se utilizan conforme a su semántica original: 201 c
 
 La implementación del sistema se llevó a cabo combinando componentes de código abierto —Python, FastAPI y PostgreSQL— con N8N, cuya licencia Sustainable Use (*fair-code*) permite auditar su código fuente, con el objetivo de garantizar la portabilidad, la reproducibilidad y la auditoría de seguridad de la solución en organizaciones medianas. Toda la infraestructura se encapsula mediante contenedores Docker, orquestados localmente por Docker Compose para los entornos de desarrollo y preproducción; la migración a un cluster Kubernetes 1.30 para el entorno productivo se plantea como trabajo futuro y no cuenta con manifiestos de despliegue en esta versión (§`sec:recomendaciones`).
 
-Las versiones específicas de los componentes de la configuración evaluada (commit `d6bb474`) son: N8N 2.11.2, Python 3.12, PostgreSQL 15.5 con volumen persistente, FastAPI 0.115, Uvicorn 0.30.6, SQLAlchemy 2.0, y el cliente google-genai >=2.20.0 (SDK unificado de Google Generative AI) para la comunicación con el modelo `gemini-3.6-flash`. Todos los servicios se despliegan sobre imágenes Docker oficiales (`python:3.12-slim` y `postgres:15.5-alpine`). La gestión de dependencias del módulo Python se realiza mediante un archivo `requirements.txt` con versiones fijadas (*pinned*) para garantizar la reproducibilidad de las compilaciones en distintos entornos. La configuración entregada (`v1.2.9`) actualiza las del *backend* y el *frontend* (Tabla `tab:configuracion-evaluada-entregada`).
+Las versiones específicas de los componentes de la configuración evaluada (commit `d6bb474`) son: N8N 2.11.2, Python 3.12, PostgreSQL 15.5 con volumen persistente, FastAPI 0.115, Uvicorn 0.30.6, SQLAlchemy 2.0, y el cliente google-genai >=2.20.0 (SDK unificado de Google Generative AI) para la comunicación con el modelo `gemini-3.6-flash`. Todos los servicios se despliegan sobre imágenes Docker oficiales (`python:3.12-slim` y `postgres:15.5-alpine`). La gestión de dependencias del módulo Python se realiza mediante un archivo `requirements.txt` con versiones fijadas (*pinned*) para garantizar la reproducibilidad de las compilaciones en distintos entornos. La configuración entregada (`v1.2.10`) actualiza las del *backend* y el *frontend* (Tabla `tab:configuracion-evaluada-entregada`).
 
 ### Construcción del módulo Python
 
@@ -749,7 +749,7 @@ La Tabla `tab:cumplimiento-nist` cubre las seis funciones de NIST CSF 2.0 y su m
 | RS (Responder) | Plan de respuesta y mitigación | 2 | Plan de respuesta a incidentes vigente (C-61; 5.24–5.27) y manejo de evidencia (5.28 parcial, C-156); residual: operación en producción del adoptante |
 | RC (Recuperar) | Recuperación y restauración | 2 | Respaldo cifrado y continuidad con RTO/RPO; copia fuera del host y redundancia como acción del adoptante (5.29, 5.30, 8.13, 8.14) |
 
-*Fuente:* elaboración propia a partir del gap assessment ISO/IEC 27001:2022/27002:2022 y NIST CSF 2.0 (`docs/cumplimiento/gap-assessment-iso27001-27002-nist-csf2.md`, sección 4), con el estado reconciliado al 28-10-2026 (release `v1.2.9`).
+*Fuente:* elaboración propia a partir del gap assessment ISO/IEC 27001:2022/27002:2022 y NIST CSF 2.0 (`docs/cumplimiento/gap-assessment-iso27001-27002-nist-csf2.md`, sección 4), con el estado reconciliado al 28-10-2026 (release `v1.2.10`).
 
 #### Brechas principales y hoja de ruta
 
@@ -864,7 +864,7 @@ Los valores de precisión, sensibilidad (recall) y F1 por clase, con su interval
 
 *Fuente:* elaboración propia a partir del corpus de validación (\(n = 200\)). IC de precisión y sensibilidad por Wilson; IC de F1 por bootstrap percentil (2000 remuestreos).
 
-Estas métricas confirman un desempeño desigual entre las clases objetivo [Sokolova2009_performance_measures]. Este desequilibrio importa en el contexto operativo, porque un clasificador que concentra sus errores en una clase minoritaria genera derivaciones erróneas en un sector específico y puede erosionar la confianza de ese equipo en la herramienta, independientemente de sus métricas agregadas.
+Las métricas por clase, calculadas según las definiciones de precisión, sensibilidad y F1 de [Sokolova2009_performance_measures], muestran un desempeño desigual entre las clases objetivo. Este desequilibrio importa en el contexto operativo, porque un clasificador que concentra sus errores en una clase minoritaria genera derivaciones erróneas en un sector específico y puede erosionar la confianza de ese equipo en la herramienta, independientemente de sus métricas agregadas.
 
 La inspección de la matriz de confusión revela que los 53 errores totales se concentran en fronteras entre sectores léxicamente próximos, con Soporte Tecnico Software como categoría central; su análisis cualitativo, agrupado por frontera de confusión, se desarrolla en la §`subsec:analisis-errores`.
 
@@ -980,7 +980,7 @@ La evidencia de [Revina2020_it_tickets] resulta, en apariencia, contraria al enf
 
 La literatura de calibración y cascadas (§`subsec:calibracion-cascadas`) permite leer dos resultados. La confianza de la etapa Gemini se concentró en el extremo superior de la escala y no discriminó aciertos de errores en su rango observado (§`subsec:calibracion`), en línea con la sobreconfianza y la baja discriminación que [Xiong2024_confidence_elicitation] documentan para la confianza verbalizada, aunque [Tian2023_verbalized_confidence] muestran que depende de la elicitación. En las cascadas la derivación exige una señal de fiabilidad correlacionada con el acierto y un umbral [Varshney2022_model_cascading, Chen2024_frugalgpt]: el cortocircuito de la etapa determinística la adopta con el puntaje de correctitud, que ordena la correctitud esperada sin ser una probabilidad calibrada, mientras que la revisión humana depende de la confianza verbalizada de Gemini, la señal que esa literatura describe como sobreconfiada. La eficiencia del esquema híbrido frente a una alternativa solo-modelo sigue sin contrastarse (§`subsec:interpretacion-resultados`).
 
-La novedad del aporte radica en la validación específica sobre español rioplatense aplicado a un dominio de mesa de ayuda de organización mediana, segmento escasamente cubierto por la literatura previa. Diversos trabajos han señalado que el ajuste y la evaluación de los LLM se concentran en el inglés y que su rendimiento cae en los idiomas con menos recursos [lai2023okapi, xuan2025mmluprox], y los resultados del presente trabajo (F1 macro = 0,6508 sobre las cuatro clases estimables) sugieren que el desempeño en español rioplatense resulta inferior al reportado para el inglés, brecha que se atribuye, al menos en parte, al esquema multietiqueta de cinco sectores adoptado en esta evaluación.
+La novedad del aporte radica en la validación específica sobre español rioplatense aplicado a un dominio de mesa de ayuda de organización mediana, segmento escasamente cubierto por la literatura previa. Diversos trabajos han señalado que el ajuste y la evaluación de los LLM se concentran en el inglés y que su rendimiento cae en los idiomas con menos recursos [lai2023okapi, xuan2025mmluprox], y los resultados del presente trabajo (F1 macro = 0,6508 sobre las cuatro clases estimables) sugieren, de forma indirecta y no comparable con las cifras de etiqueta única de la literatura revisada, que el desempeño en español rioplatense resulta inferior al reportado para el inglés, brecha que se atribuye, al menos en parte, al esquema multietiqueta de cinco sectores adoptado en esta evaluación.
 
 ### Limitaciones del estudio
 
@@ -1145,7 +1145,7 @@ Su adopción estuvo condicionada por la madurez de las interfaces de audio bidir
 
 ## Diagrama de arquitectura del sistema
 
-El Anexo A inventaría los diagramas de la arquitectura del sistema entregado (release `v1.2.9`). Los diagramas de arquitectura y despliegue se incluyen como figuras de la §`sec:arquitectura` y no se reproducen aquí; los diagramas de secuencia, componentes y cronograma se reproducen a continuación. Los cinco artefactos son:
+El Anexo A inventaría los diagramas de la arquitectura del sistema entregado (release `v1.2.10`). Los diagramas de arquitectura y despliegue se incluyen como figuras de la §`sec:arquitectura` y no se reproducen aquí; los diagramas de secuencia, componentes y cronograma se reproducen a continuación. Los cinco artefactos son:
 
  - **Diagrama de arquitectura del sistema** (Figura `fig:arquitectura`, §`sec:arquitectura`): las cinco capas de la Tabla `tab:capas` y los tres canales de entrada (correo, formulario web y telefonía), sin versiones de bibliotecas, que constan en la Tabla `tab:capas` y en la §`tab:configuracion-evaluada-entregada`. Fuente versionada: docs/diagrams/arquitectura_sistema.md.
  - **Diagrama de despliegue** (Figura `fig:despliegue`, §`sec:arquitectura`): los cinco componentes principales (N8N, FastAPI, PostgreSQL, Gemini 3.6 Flash, Twilio), el proxy inverso Nginx, que provee terminación TLS 1.2/1.3 verificada en el despliegue de referencia y que forma parte del stack base sobre el que corrió la ingesta del 2 de octubre (la medición telefónica del 5 y 6 de octubre usó el perfil aislado `corpus`, sin proxy), y las relaciones de comunicación entre ellos. Fuente versionada: docs/diagrams/despliegue.md.
@@ -1155,24 +1155,24 @@ El Anexo A inventaría los diagramas de la arquitectura del sistema entregado (r
 
 Los diagramas se generan a partir de fuentes Mermaid versionadas en formato `.md` en el directorio `docs/diagrams/` del repositorio y se renderizan a imágenes PNG para su inclusión en el documento [Gomez2026_repositorio].
 
-[Figura: Diagrama de secuencia del flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión humana, en la configuración entregada (release `v1.2.9] (`fig:secuencia`)
+[Figura: Diagrama de secuencia del flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión humana, en la configuración entregada (release `v1.2.10] (`fig:secuencia`)
 
-[Figura: Diagrama de componentes del módulo Python organizado en capas (routes, services, repositories, classifiers). Describe la configuración entregada (release v1.2.9] (`fig:componentes`)
+[Figura: Diagrama de componentes del módulo Python organizado en capas (routes, services, repositories, classifiers). Describe la configuración entregada (release v1.2.10] (`fig:componentes`)
 
 [Figura: Cronograma de la construcción, las campañas y la versión del modelo (barras con precisión de mes; hitos, de día). Fuente: historial del repositorio para los hitos, incluido el recálculo del tiempo telefónico del 19-10-2026 (c-77); las fechas de la corrida telefónica (el 5 y 6 de octubre de 2026) provienen de la respuesta de los autores del 2026-10-28, y la confirmación del 9-10-2026 cubre las ventanas de las campañas. La campaña complementaria de medición (programa c-165 a c-168) corrió en noviembre de 2026; su plan pre-registrado se versionó el 2026-11-01 y sus tablas primarias y análisis, entre el 2026-11-04 y el 2026-11-08.] (`fig:cronograma`)
 
 ## Repositorio de código fuente
 
-El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto [Gomez2026_repositorio`, accesible en https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N]. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado `v1.2.9`, creado sobre el commit que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, la rama principal registra después un commit que solo consigna el hash que figura a continuación, y los commits posteriores no modifican las fuentes de la tesis.
+El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto [Gomez2026_repositorio`, accesible en https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N]. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado `v1.2.10`, creado sobre el commit que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, la rama principal registra después un commit que solo consigna el hash que figura a continuación, y los commits posteriores no modifican las fuentes de la tesis.
 
-El hash completo de ese commit es ` e52845bc754d2ed5520f3f32c19d27adc4ca67b2`, que constituye la referencia verificable de la versión corregida.
+El hash completo de ese commit es ` bda6903e65ab40b073daf4bd001eaa9ff85e42cc`, que constituye la referencia verificable de la versión corregida.
 
-La versión entregada no es la que se evaluó. La *configuración evaluada* es la del commit `d6bb474` (7-10-2026), primera revisión que versiona la cascada `hybrid-v3`; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (§`subsec:protocolo-pruebas`). La *configuración entregada* es la del tag `v1.2.9`. La *configuración de la campaña de medición* corrió sobre el clasificador congelado `hybrid-v3` con la instrumentación de intervención de `c-165` aplicada (§`subsec:resultados-campana-medicion`). La §`tab:configuracion-evaluada-entregada` consigna, con valores verificados sobre las tres revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella.
+La versión entregada no es la que se evaluó. La *configuración evaluada* es la del commit `d6bb474` (7-10-2026), primera revisión que versiona la cascada `hybrid-v3`; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (§`subsec:protocolo-pruebas`). La *configuración entregada* es la del tag `v1.2.10`. La *configuración de la campaña de medición* corrió sobre el clasificador congelado `hybrid-v3` con la instrumentación de intervención de `c-165` aplicada (§`subsec:resultados-campana-medicion`). La §`tab:configuracion-evaluada-entregada` consigna, con valores verificados sobre las tres revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella.
 
 **Tabla: Configuración evaluada, configuración entregada y configuración de la campaña de medición**
 
 4pt
-| Elemento | Configuración evaluada (`d6bb474`) | Configuración entregada (`v1.2.9`) | Configuración de la campaña de medición |
+| Elemento | Configuración evaluada (`d6bb474`) | Configuración entregada (`v1.2.10`) | Configuración de la campaña de medición |
 | — | — | — | — |
 | FastAPI y Uvicorn | 0.115.0 y 0.30.6 | 0.162.0 y 0.54.0 | — |
 | SQLAlchemy | 2.0.36 | 2.1.6 | — |
@@ -1187,7 +1187,7 @@ La versión entregada no es la que se evaluó. La *configuración evaluada* es l
 | `classifier_``version` | `hybrid-v3` | `hybrid-v3` | `hybrid-v3` |
 | Sin cambios | N8N 2.11.2, Python 3.12-slim, PostgreSQL 15.5-alpine, `gemini-3.6-flash` con sus parámetros, umbrales (0,5166 y 0,70), vocabulario y *prompt*; la lógica del clasificador solo cambió en comentarios e importaciones diferidas | — |
 
-*Fuente:* elaboración propia a partir de `git show d6bb474:`*archivo*, `git show v1.2.9:`*archivo* y `git show d6bb474:App/Backend/app/constants.py` sobre `requirements.txt`, `package-lock.json`, `n8n/workflow.json`, `docker-compose.yml` y `settings.py`, y de los changes archivados. La *configuración de la campaña de medición* corrió sobre el clasificador congelado `hybrid-v3` (la misma configuración evaluada, commit `d6bb474`) con la instrumentación de intervención de `c-165` aplicada; se consigna la fila `classifier_version`, que coincide con la evaluada, y las celdas no verificadas para esa corrida quedan sin declarar.
+*Fuente:* elaboración propia a partir de `git show d6bb474:`*archivo*, `git show v1.2.10:`*archivo* y `git show d6bb474:App/Backend/app/constants.py` sobre `requirements.txt`, `package-lock.json`, `n8n/workflow.json`, `docker-compose.yml` y `settings.py`, y de los changes archivados. La *configuración de la campaña de medición* corrió sobre el clasificador congelado `hybrid-v3` (la misma configuración evaluada, commit `d6bb474`) con la instrumentación de intervención de `c-165` aplicada; se consigna la fila `classifier_version`, que coincide con la evaluada, y las celdas no verificadas para esa corrida quedan sin declarar.
 
 La estructura del repositorio separa el módulo de procesamiento (`App/Backend/`, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (`App/Frontend/`, React con TypeScript), la definición del flujo de orquestación (`n8n/workflow.json`), los artefactos de evaluación (`evaluation/`), el corpus pseudonimizado (`data/`), los scripts auxiliares (`scripts/`) y la documentación (`docs/`), junto con las especificaciones de los changes (`openspec/`) y los archivos de orquestación local `docker-compose.yml` y `Makefile`. El archivo `README.md` describe esta organización y reúne las instrucciones detalladas para el despliegue local en menos de 15 minutos, por lo que constituye el punto de entrada al código fuente disponible en el repositorio público [Gomez2026_repositorio].
 
@@ -1315,18 +1315,18 @@ El dictamen del 22 de octubre de 2026, aplicable por igual a `v1.1.1`, formuló 
 | B6 | `c-133` | §`subsec:analisis-estadistico`, §`subsec:matriz-metricas`, §`tab:cumplimiento-objetivos` |
 | B7 | `c-134`, `c-131` | §`tab:tiempos-canal`; §`tab:exactitud-etapa-canal` |
 | B8 | `c-131` | §`subsec:analisis-estadistico`, §`subsec:matriz-metricas`, §`tab:exactitud-etapa-canal` |
-| B9 | `c-135` | §`subsec:gestion-scrumban`, §`subsec:conexion-scrumban`, §`fig:cronograma`, §`subsec:limitaciones-estudio`; residuos en A1 del 28-10 y pendiente (fechas de las iteraciones Scrumban) |
+| B9 | `c-135` | §`subsec:gestion-scrumban`, §`subsec:conexion-scrumban`, §`fig:cronograma`, §`subsec:limitaciones-estudio`; residuos en A1 del 28-10; las fechas de las iteraciones Scrumban no son recuperables (el tablero técnico fue Jira y su prueba se dio de baja sin export, el campo de iteración de GitHub Projects no es legible con el token local y el autor confirmó que el número de iteraciones se ajustó durante el proyecto), lo que se declara como limitación y no como pendiente |
 | B10 | `c-135`, `c-146` | §`sec:resultados`, §`tab:comparativa`, §`tab:trabajos-academicos` |
 | B11 | `c-136` | §`sec:recomendaciones`, §`subsec:calibracion-gate`, §`subsec:medicion-intervencion`, §`subsec:aprendizaje-activo` |
 | B12 | `c-134` | §`subsec:analisis-estadistico`, §`subsec:amenazas-validez`, §`subsec:poblacion-muestra-corpus` |
 | B13 | `c-135`, `c-134` | §`subsec:cumplimiento-objetivos`; §`subsec:diseno-experimental`, §`subsec:consentimiento-derechos` |
-| B14 | `c-137` | Todo el documento (revisión ortotipográfica); residuos en A3 y A4 del 28-10 y pendientes (erratas de figuras y *seudonimizado*) |
+| B14 | `c-137`, `c-159`, `c-163` | Todo el documento (revisión ortotipográfica); residuos en A3 y A4 del 28-10 cerrados por c-159 y c-163 (erratas de figuras y *pseudonimizado*) |
 | B15 | `c-139` | §`subsec:cumplimiento`, §`subsec:analisis-estadistico` |
-| B16 | `c-139`, `c-141` | §`sec:anexo-repositorio` y Referencias bibliográficas; residuos en A2 del 28-10 y pendiente (fecha de consulta de una referencia) |
+| B16 | `c-139`, `c-141`, `c-163` | §`sec:anexo-repositorio` y Referencias bibliográficas; residuos en A2 del 28-10 cerrados por c-163 (fecha de consulta de una referencia) |
 
 *Fuente:* elaboración propia a partir de docs/Tesis/Correcciones/dictamen-correcciones.md.
 
-El dictamen del 28 de octubre de 2026, sobre la versión `v1.2.5`, formuló observaciones de método (A1 y A2), de coherencia entre figuras, tablas y texto (A3), de evidencia cualitativa (A4) y de residuos del proceso de corrección y consistencia interna (B5 a B8); la §`tab:anexo-trazabilidad-2810` indica el change responsable y las secciones donde se las atendió. Las demás observaciones de ese dictamen se atienden en changes posteriores del repositorio, entre ellos `c-169`, que cierra los cinco límites estructurales que el dictamen consignó (la fila ``Lím.'' de la tabla).
+El dictamen del 28 de octubre de 2026, sobre la versión `v1.2.5`, formuló observaciones de método (A1 y A2), de coherencia entre figuras, tablas y texto (A3), de evidencia cualitativa (A4) y de residuos del proceso de corrección y consistencia interna (B5 a B8); la §`tab:anexo-trazabilidad-2810` indica el change responsable y las secciones donde se las atendió. Las demás observaciones de ese dictamen se atienden en changes posteriores del repositorio, entre ellos `c-169`, que resuelve cuatro de los cinco límites estructurales que el dictamen consignó y declara el quinto —la validación fuera de muestra— como limitación negativa (la fila ``Lím.'' de la tabla).
 
 **Tabla: Recomendaciones del dictamen del 28 de octubre de 2026, change responsable y secciones donde se atendieron.**
 
@@ -1341,7 +1341,7 @@ El dictamen del 28 de octubre de 2026, sobre la versión `v1.2.5`, formuló obse
 | B6 | `c-160` | §`sec:anexo-trazabilidad` |
 | B7 | `c-160` | Resumen y *abstract*, §`subsec:cumplimiento-objetivos`, §`tab:cumplimiento-objetivos` |
 | B8 | `c-160` | §`subsec:vision-general`, §`subsec:human-in-the-loop`, §`subsec:subsistema-clasificacion`, §`subsec:construccion-flujo-n8n`, §`subsec:consentimiento-derechos`, §`subsec:sensibilidad-ajustes`, §`subsec:calibracion-gate`, §`subsec:anexo-parametros-config`, §`sec:anexo-documentacion-operativa` |
-| Lím. | `c-169` | Los cinco límites estructurales que el dictamen consignó sin computarlos como incumplimiento (la exactitud del brazo manual, la proporción de intervención humana, el efecto de orden, las métricas dentro de la muestra y el intervalo del kappa) se cierran con la campaña complementaria de medición: §`subsec:resultados-campana-medicion`, §`subsec:reduccion-intervencion`, §`subsec:balance-neto`, §`subsec:limitaciones-estudio`; Resumen y *abstract*; §`sec:anexo-repositorio` (Tabla `tab:configuracion-evaluada-entregada`) |
+| Lím. | `c-169` | De los cinco límites estructurales que el dictamen consignó sin computarlos como incumplimiento —la exactitud del brazo manual, la proporción de intervención humana, el efecto de orden, la validación fuera de muestra y el intervalo del kappa—, la campaña complementaria de medición resuelve cuatro (§`subsec:resultados-campana-medicion`, §`subsec:reduccion-intervencion`, §`subsec:balance-neto`); el quinto, la validación fuera de muestra, permanece como limitación negativa declarada por ausencia de un corpus independiente y no se cierra (§`subsec:limitaciones-estudio`); Resumen y *abstract*; §`sec:anexo-repositorio` (Tabla `tab:configuracion-evaluada-entregada`) |
 
 *Fuente:* elaboración propia a partir de docs/Tesis/Correcciones/dictamen-correcciones.md.
 

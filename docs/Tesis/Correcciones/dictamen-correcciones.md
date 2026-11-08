@@ -3758,3 +3758,111 @@ exactitud; el abstract EN se ubica dentro de la variante de conteo ya documentad
   commit en este apply.
 - **`v1.2.8` queda superada** (permanece inmutable, en `e52845bc754d2ed5520f3f32c19d27adc4ca67b2`).
 
+---
+
+## Residuales de la última auditoría (dictamen CONEAU v1.2.5) - c-186 - 2026-11-08
+
+Cierre de cinco residuales de documentación, redacción y trazabilidad que el dictamen CONEAU del
+2026-10-28 sobre `v1.2.5` (`auditorias/Dictamen_Tesis_v10_v1.2.5_CONEAU_2026-10-28.md`) dejó
+abiertos. Change `c-186-cerrar-los-residuales-de-la-ultima-auditoria` (gobernanza LOW/MEDIUM,
+docs-only). No se modificó `App/`, `n8n/`, `evaluation/`, valores canónicos, `openspec/config.yaml`,
+`CHANGES.md` ni `docs/Tesis/v9 (IA)/`.
+
+### Residuales y corrección
+
+- **Xuan et al. (2025) en 3.3** (`03-estado-del-arte.tex:56`): la afirmación de CLASIFICACIÓN
+  queda respaldada por el benchmark multilingüe MEGA, que incluye tareas de clasificación
+  (`ahuja2023mega`); `xuan2025mmluprox` (razonamiento de opción múltiple) pasa a respaldar solo la
+  brecha de desempeño multilingüe. Sin cambios en `Bibliography_base.bib`.
+- **Sokolova y Lapalme (2009)** (`07-resultados.tex:153`): se retiró el verbo "confirman"; el
+  desempeño desigual entre clases se presenta como hallazgo propio y la obra se cita por las
+  definiciones de las métricas. Las citas de `:130`, `02-marco-teorico.tex:78` y
+  `04-marco-metodologico.tex:69` permanecen intactas (definicionales).
+- **Tensión de 9.2** (`08-discusion.tex:38` frente a `:32`): la comparación con el F1 macro del
+  inglés se califica de forma explícita como indirecta y no comparable con las cifras de etiqueta
+  única, coherente con la declaración de no comparabilidad de `:32`. El dato se conserva.
+- **Anexo I, filas B14 y B16** (`12-anexos.tex:229` y `:231`): se retira "pendiente"; B14 declara
+  cerradas las erratas de figuras y `seudonimizado` -> `pseudonimizado` por c-159 y c-163; B16
+  declara cerrada la fecha de consulta de una referencia por c-163.
+- **Anexo I, fila B9** (`12-anexos.tex:224`): la no recuperabilidad de las fechas de las
+  iteraciones Scrumban (el tablero técnico fue Jira y su prueba se dio de baja sin export; el campo
+  de iteración de GitHub Projects no es legible con el token local; el autor confirmó que el número
+  de iteraciones se ajustó durante el proyecto) se declara como limitación, no como pendiente. El
+  cuerpo (`06-implementacion.tex:68`) conserva "sin fechar por separado" (decisión del autor: la
+  causa no se agrega al cuerpo). Coherente con `docs/diagrams/cronograma.md` (OQ-1).
+- **Anexo I, fila Lím.** (`12-anexos.tex:258`, y la narración de `:238`): se reformula para declarar
+  que la campaña complementaria de medición resuelve cuatro de los cinco límites estructurales y
+  que (d) validación fuera de muestra permanece como limitación negativa declarada, por ausencia de
+  un corpus independiente. No se fabrica su cierre.
+
+### Registro y verificación (MEDIDO 2026-11-08, `texlive-thesis`, `latexmk main.tex`)
+
+- Compilación: exit 0; `main.log` con 0 `^!`, 0 `undefined` y 0 `multiply defined`; 0 `??` en el
+  texto extraído; `pdfinfo` = **118 páginas totales** (sin cambio frente a la línea base `v1.2.9`).
+  Encabezado `Anexos` en la p. 106 (`main.toc`) => cuerpo 105 y anexos 13.
+- `python3 "docs/Tesis/v10 (IA)/verify_citations.py"`: **PASS** (82 entradas, 0 huérfanas, 0 sin uso).
+- `python3 "docs/Tesis/v10 (IA)/revision_tildes.py" --check`: 7 candidatos AMBIGUO preexistentes,
+  sin hallazgos nuevos.
+- `openspec validate c-186-cerrar-los-residuales-de-la-ultima-auditoria --strict --no-interactive`:
+  **valid**.
+- Renders (`tesis_para_agente.md`, `tesis_completa_extraida.txt`, `tesis_para_evaluacion.txt`): NO
+  regenerados en este apply (se regeneran en el paso de release).
+
+### Libro mayor de paginas (c-186)
+
+| Change | Commit | Total | Cuerpo sin anexos | Anexos | Delta total | Delta cuerpo | Regla vigente | Estado |
+|---|---|---|---|---|---|---|---|---|
+| release `v1.2.9` (linea base) | `bda6903e65ab40b073daf4bd001eaa9ff85e42cc` | 118 | 105 | 13 | - | - | **total <= 100 (G0.1, fuente catedra)** | Medido |
+| `+c-186` (residuales docs) | sin commit (lo crea el orquestador) | 118 | 105 | 13 | 0 | 0 | **total <= 100 (G0.1, fuente catedra)** | Medido (2026-11-08): 0 errores, 0 indefinidas, 0 `??` |
+
+---
+
+## Release v1.2.10 (c-186) - 2026-11-08
+
+Entrada de trazabilidad de la release que publica el change ya aplicado
+`c-186-cerrar-los-residuales-de-la-ultima-auditoria`, que cierra los residuales de la última
+auditoría (Xuan et al. en 3.3, Sokolova y Lapalme en 7, la tensión de 9.2, las filas B14 y B16 del
+Anexo I y su fila Lím., y la fila B9). Preparación de release (gobernanza BAJA, integración
+documental); no se modificó `App/`, `n8n/`, `evaluation/`, `openspec/config.yaml`, las cinco cadenas
+canónicas ni `docs/Tesis/v9 (IA)/`.
+
+### Alcance (patrón de `ea5e01a`, release `v1.2.6`)
+
+- **Bump de versión `v1.2.9` -> `v1.2.10`** en las referencias de la versión entregada: Anexo A y
+  Anexo B (`12-anexos.tex`, 7 ocurrencias), el capítulo de arquitectura (`05`, 3), el de
+  implementación (`06`, 1), el legal (`11`, 1) y la entrada bibliográfica `Gomez2026_repositorio`
+  (versión `1.2.10`; el `urldate` 2026-11-08 no cambia).
+- **Renders regenerados**: `build_tesis_para_agente.py v1.2.10` (`tesis_para_agente.md`),
+  `pdftotext -enc UTF-8 main.pdf ../tesis_para_evaluacion.txt` y `tr -s '[:space:]' ' '`
+  (`tesis_completa_extraida.txt`); `tesis_para_evaluacion.txt` con 118 saltos de página (`\f`).
+- **`CHANGES.md`**: la línea "Release vigente" pasa a `v1.2.10` (tag anotado sobre el placeholder
+  `HASH_PENDIENTE_V1210`, que resuelve el commit de consignación); **`v1.2.9` queda superada**
+  (inmutable, en `bda6903e65ab40b073daf4bd001eaa9ff85e42cc`).
+- **El hash del Anexo B** (`12-anexos.tex:46`, "El hash completo de ese commit es ...") NO se toca:
+  conserva el valor de `v1.2.9` (`bda6903e65ab40b073daf4bd001eaa9ff85e42cc`) hasta el commit de
+  consignación del hash, que publica el orquestador (patrón de dos commits de `ea5e01a` + `756aabe`).
+
+### Recuento de palabras (regla de c-106)
+
+`00-resumen.tex` NO fue editado por c-186 (el diff del change toca `03`, `07`, `08` y `12`, no el
+resumen), de modo que el resumen, el abstract y el párrafo de viabilidad quedan idénticos a los
+medidos por c-169 y confirmados en `v1.2.9`: resumen ES 245 (tope 250), abstract EN 240 (tope 250),
+párrafo de viabilidad ES 34 (tope 34) y EN 31 (tope 34).
+
+### Verificación (MEDIDO 2026-11-08, `texlive-thesis`, `latexmk main.tex`)
+
+- Compilación: exit 0; `main.log` con 0 `^!`, 0 `undefined` y 0 `multiply defined`; `pdfinfo` =
+  **118 páginas totales** (sin cambio frente a la línea base `v1.2.9`).
+- `python3 "docs/Tesis/v10 (IA)/verify_citations.py"`: **PASS** (82 entradas, 0 huérfanas, 0 sin uso).
+- `python3 "docs/Tesis/v10 (IA)/revision_tildes.py" --check`: 7 candidatos AMBIGUO preexistentes,
+  sin hallazgos nuevos.
+- `\f` en `tesis_para_evaluacion.txt`: 118.
+
+### Trazabilidad de release
+
+- **Nota de release (planificada, NO publicada en este apply):** el tag anotado **`v1.2.10`**, el
+  commit de consignación del hash y el registro en `CHANGES.md` los publica el orquestador sobre el
+  commit de contenido de esta preparación (placeholder `HASH_PENDIENTE_V1210`). No se creó tag ni
+  commit en este apply.
+- **`v1.2.9` queda superada** (inmutable, en `bda6903e65ab40b073daf4bd001eaa9ff85e42cc`).
+

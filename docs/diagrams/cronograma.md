@@ -100,8 +100,12 @@ del repositorio, en solo lectura.
 
 - **Iteraciones.** La tesis declara "iteraciones de duración variable"
   (`04-marco-metodologico.tex`, `06-implementacion.tex`, `12-anexos.tex`), sin número
-  fijo ni calendario por iteración (OQ-1, confirmada el 2026-10-26). La figura ubica la
-  construcción en los dos períodos de actividad del repositorio.
+  fijo ni calendario por iteración (OQ-1, confirmada el 2026-10-26). Las fechas de las
+  iteraciones no son recuperables por ausencia de fuente primaria (el tablero técnico fue
+  Jira y su prueba se dio de baja sin export; el campo de iteración de GitHub Projects no
+  es legible con el token local): se declaran como limitación en la fila B9 del Anexo I
+  (`docs/Tesis/v10 (IA)/paper/sections/12-anexos.tex`). La figura ubica la construcción en
+  los dos períodos de actividad del repositorio.
 - **Campañas.** La campaña manual (junio a agosto de 2026) no es una etapa de
   construcción; la campaña automatizada (septiembre a octubre de 2026) corresponde a la
   etapa de validación experimental. La campaña complementaria de medición (noviembre de

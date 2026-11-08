@@ -150,7 +150,7 @@ Bases de Datos            & \multicolumn{3}{c}{no estimable (\(n = 1\))} \\
 {\footnotesize\textit{Fuente:} elaboración propia a partir del corpus de validación (\(n = 200\)). IC de precisión y sensibilidad por Wilson; IC de F1 por bootstrap percentil (2000 remuestreos).\par}
 \end{table}
 
-Estas métricas confirman un desempeño desigual entre las clases objetivo \parencite{Sokolova2009_performance_measures}. Este desequilibrio importa en el contexto operativo, porque un clasificador que concentra sus errores en una clase minoritaria genera derivaciones erróneas en un sector específico y puede erosionar la confianza de ese equipo en la herramienta, independientemente de sus métricas agregadas.
+Las métricas por clase, calculadas según las definiciones de precisión, sensibilidad y F1 de \textcite{Sokolova2009_performance_measures}, muestran un desempeño desigual entre las clases objetivo. Este desequilibrio importa en el contexto operativo, porque un clasificador que concentra sus errores en una clase minoritaria genera derivaciones erróneas en un sector específico y puede erosionar la confianza de ese equipo en la herramienta, independientemente de sus métricas agregadas.
 
 La inspección de la matriz de confusión revela que los 53 errores totales se concentran en fronteras entre sectores léxicamente próximos, con Soporte Tecnico Software como categoría central; su análisis cualitativo, agrupado por frontera de confusión, se desarrolla en la \autoref{subsec:analisis-errores}.
 
