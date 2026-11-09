@@ -5,7 +5,7 @@ Generado por `docs/Tesis/Correcciones/resumir_registro_compilacion.py` a partir 
 
 | Concepto | Valor |
 |---|---|
-| Fuente compilada | arbol de trabajo sobre f72e6c8 (tag v1.2.15) |
+| Fuente compilada | arbol de trabajo sobre 8ea9325 |
 | Motor | XeTeX 3.141592653-2.6-0.999998 (TeX Live 2026) |
 | Biber | 2.22 |
 | Paginas | 118 |
@@ -16,4 +16,4 @@ Generado por `docs/Tesis/Correcciones/resumir_registro_compilacion.py` a partir 
 | Overfull \hbox (maximo) | 7 (8,2 pt) |
 | Lineas WARN de biber | 0 |
 | Lineas ERROR de biber | 0 |
-| SHA-256 de main.pdf | `98a5a1aea18411433c71262aa30dae769fe2cee4c8a39928c02710bac2321bfb` |
+| SHA-256 de main.pdf | `72a3dd113bba0bd7ee6cb67619500b86dff0981ef7b48074f5f393d5a7968643` |

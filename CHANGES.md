@@ -2600,6 +2600,18 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Governance**: MEDIUM/HIGH (datos personales y etica).
 - **Leer antes**: `openspec/changes/c-193-acreditar-el-nivel-pago-y-el-consentimiento/{proposal,design,tasks}.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-193).
 
+## FASE 59 — Residuales C del dictamen v1.2.13 (release v1.2.16)
+
+> Cierra los tres residuos de las recomendaciones C1/C2 que quedaron tras v1.2.15: la fila "Lim." del Anexo I, la nota de Zendesk y la atribucion a Zanzotto. Solo documentacion.
+
+### [C-194] `residuales-c-dictamen-v1-2-13` — APLICADO (2026-11-09, MEDIUM)
+
+- **Estado**: aplicado en la rama `change/c-194-residuales-c-dictamen-v1-2-13` y publicado como release `v1.2.16`.
+- **Scope**: fila "Lim." como secuencia temporal (c-169 -> c-190); nota de Zendesk sin "precios"; oracion de Zanzotto partida en dos; referencias de version entregada a v1.2.16.
+- **Dependencias**: C-192 y C-193 (archivados), dictamen v1.2.13.
+- **Governance**: MEDIUM.
+- **Leer antes**: `openspec/changes/c-194-residuales-c-dictamen-v1-2-13/{proposal,design,tasks}.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-194).
+
 ---
 
 ## Notas del analisis
