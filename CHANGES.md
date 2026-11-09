@@ -2574,6 +2574,20 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Governance**: MEDIUM (cambios documentales que tocan el veredicto de una sub-hipotesis y la descripcion etica del procedimiento).
 - **Leer antes**: `openspec/changes/c-190-atender-el-dictamen-coneau-v1-2-12/{proposal,design,tasks}.md`, `auditorias/Dictamen_Tesis_v10_v1.2.12_CONEAU_2026-11-09.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-190).
 
+## FASE 57 — Dictamen CONEAU v10/v1.2.13 y release v1.2.14 (2026-11-09)
+
+> Octavo dictamen de la serie: aprueba con observaciones (`v1.2.13`, 9,00) y formula cuatro observaciones nuevas (A1-A3, B1-B4) más el ítem 12 del inventario y residuos menores. Ninguna exige mediciones nuevas. El nivel pago de la Gemini API y el consentimiento de los cuatro participantes quedan para `v1.2.15`.
+
+### [C-192] `atender-el-dictamen-v1-2-13` — APLICADO y ARCHIVADO (2026-11-09, MEDIUM)
+
+- **Estado**: aplicado en la rama `change/c-192-atender-el-dictamen-v1-2-13` y publicado como release `v1.2.14` (tag anotado sobre el commit de contenido, con el hash consignado en el commit posterior). El archivo del change se hace despues de la release.
+- **Scope**: (A1) trazabilidad del PDF del tag: el commit de contenido lleva la oracion de verificacion (`git rev-list -n1 v1.2.14`) y el hash real va en el commit posterior; (A2) una sola lectura de la sub-hipotesis 2 ("refutada" con la regla declarada mas el matiz del IC y la binomial; 122/200 = 61,0 % y 122/147 = 83,0 %; Tabla 18 sin "sin medicion valida"); (A3) 1.6 separa 0,87 (analista-autor) de 0,5569 (E1/E2); (B1) conjunto laxo por interseccion (130/151); (B2) MDE del Spearman 0,276 con la eficiencia 9/pi^2 ≈ 0,912; (C1) VIS desarrollada y 6.3 callback; (C2) Xiong en el capitulo 3 y FrugalGPT con arXiv; 7.5 sin "en consonancia con el consentimiento informado" hasta la constancia de v1.2.15; 118 paginas como minimo declarado.
+- **Decisiones de los autores**: D2 = valor correcto de Spearman (0,276); D3 = se conserva "refutada" con el matiz; D6 = VIS en el primer uso, FrugalGPT TMLR + arXiv, 118 paginas; D8 = dictamen versionado en `auditorias/`.
+- **Registro**: seccion c-192 en `dictamen-correcciones.md`; `numeros-canonicos.md` 3.16 corregido.
+- **Dependencias**: C-190 (archivado), dictamen v1.2.13 (PR #78).
+- **Governance**: MEDIUM.
+- **Leer antes**: `openspec/changes/c-192-atender-el-dictamen-v1-2-13/{proposal,design,tasks}.md`, `auditorias/Dictamen_Tesis_v10_v1.2.13_CONEAU_2026-11-09.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-192).
+
 ---
 
 ## Notas del analisis

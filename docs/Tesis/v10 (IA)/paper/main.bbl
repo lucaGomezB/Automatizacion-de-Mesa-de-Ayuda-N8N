@@ -696,6 +696,7 @@
       \field{labeltitlesource}{title}
       \field{issn}{2835-8856}
       \field{journaltitle}{Transactions on Machine Learning Research}
+      \field{note}{TMLR; versión previa: arXiv:2305.05176}
       \field{title}{{FrugalGPT}: How to use large language models while reducing cost and improving performance}
       \field{year}{2024}
       \verb{urlraw}
@@ -6146,6 +6147,7 @@
       \field{labeltitlesource}{title}
       \field{issn}{2835-8856}
       \field{journaltitle}{Transactions on Machine Learning Research}
+      \field{note}{TMLR; versión previa: arXiv:2305.05176}
       \field{title}{{FrugalGPT}: How to use large language models while reducing cost and improving performance}
       \field{year}{2024}
       \verb{urlraw}
