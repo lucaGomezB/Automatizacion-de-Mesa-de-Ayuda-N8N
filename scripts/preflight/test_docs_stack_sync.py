@@ -381,6 +381,81 @@ def test_chequeo_6_n8n_de_claude_diverge_falla(tmp_path):
     _assert_fails_naming(checks, "1.62")
 
 
+def _dockerfile(base, texto, contexto="ctx", nombre="Dockerfile"):
+    destino = base / contexto / nombre
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    destino.write_text(texto, encoding="utf-8")
+
+
+def _compose_build(build):
+    return {"services": {"n8n": {"build": build}}}
+
+
+_COMPOSE_BUILD_TXT = (
+    "services:\n"
+    "  postgres:\n    image: postgres:15.5-alpine\n"
+    "  backend:\n    build: ./App/Backend\n"
+    "  n8n:\n    build:\n      context: ./docker/n8n\n      dockerfile: Dockerfile\n"
+    "  nginx:\n    image: nginx:1.31.7-alpine\n"
+    "  ngrok:\n    image: ngrok/ngrok:3.39.8-debian\n"
+)
+
+
+def test_n8n_tag_desde_build_dict_toma_el_from_del_dockerfile(tmp_path):
+    _dockerfile(tmp_path, "FROM n8nio/n8n:2.11.2\nRUN echo x\n")
+    compose = _compose_build({"context": "./ctx", "dockerfile": "Dockerfile"})
+    assert docs_stack_sync._n8n_tag(compose, tmp_path) == "2.11.2"
+
+
+def test_n8n_tag_ignora_alias_as_y_platform(tmp_path):
+    _dockerfile(tmp_path, "FROM --platform=linux/amd64 n8nio/n8n:9.8.7 AS base\n")
+    compose = _compose_build({"context": "./ctx"})
+    assert docs_stack_sync._n8n_tag(compose, tmp_path) == "9.8.7"
+
+
+def test_n8n_tag_build_como_cadena_usa_dockerfile_por_defecto(tmp_path):
+    _dockerfile(tmp_path, "# comentario\nFROM n8nio/n8n:3.0.1\n")
+    assert docs_stack_sync._n8n_tag(_compose_build("./ctx"), tmp_path) == "3.0.1"
+
+
+def test_n8n_tag_sin_dockerfile_devuelve_none(tmp_path):
+    compose = _compose_build({"context": "./ctx"})
+    assert docs_stack_sync._n8n_tag(compose, tmp_path) is None
+
+
+def test_n8n_tag_dockerfile_sin_from_devuelve_none(tmp_path):
+    _dockerfile(tmp_path, "RUN echo x\n")
+    assert docs_stack_sync._n8n_tag(_compose_build({"context": "./ctx"}), tmp_path) is None
+
+
+def test_n8n_tag_from_de_otra_imagen_devuelve_none(tmp_path):
+    _dockerfile(tmp_path, "FROM python:3.12-slim\n")
+    assert docs_stack_sync._n8n_tag(_compose_build({"context": "./ctx"}), tmp_path) is None
+
+
+def test_n8n_tag_image_literal_sigue_funcionando():
+    compose = {"services": {"n8n": {"image": "n8nio/n8n:7.7.7"}}}
+    assert docs_stack_sync._n8n_tag(compose) == "7.7.7"
+
+
+def test_chequeo_6_pasa_con_build_y_dockerfile(tmp_path):
+    raiz = _arbol_sincronizado(tmp_path)
+    (raiz / COMPOSE_REL).write_text(_COMPOSE_BUILD_TXT, encoding="utf-8")
+    _dockerfile(raiz, "FROM n8nio/n8n:2.11.2\n", contexto="docker/n8n")
+
+    checks = _checks(raiz)
+    assert all(c.status == "PASS" for c in checks), _summary(checks)
+
+
+def test_chequeo_6_con_build_detecta_divergencia(tmp_path):
+    raiz = _arbol_sincronizado(tmp_path)
+    (raiz / COMPOSE_REL).write_text(_COMPOSE_BUILD_TXT, encoding="utf-8")
+    _dockerfile(raiz, "FROM n8nio/n8n:2.12.0\n", contexto="docker/n8n")
+
+    checks = _checks(raiz)
+    _assert_fails_naming(checks, "2.12.0")
+
+
 # ===========================================================================
 # Chequeo 7 - servicios descritos que no existen en el compose
 # ===========================================================================
@@ -996,3 +1071,25 @@ def test_el_modulo_no_usa_red_ni_credenciales():
 
 if __name__ == "__main__":
     sys.exit(pytest.main([__file__, "-q"]))
+
+
+def test_chequeo_17_deriva_n8n_del_dockerfile_del_build(tmp_path):
+    """(triangulacion) con `build`, el tag esperado sale del FROM del Dockerfile."""
+    kb = tmp_path / "kb"
+    kb.mkdir()
+    (kb / "componentes.md").write_text("| Orquestación | N8N | 7.7.7 |\n", encoding="utf-8")
+    _dockerfile(tmp_path, "FROM n8nio/n8n:7.7.7 AS base\n", contexto="ctx")
+    compose = _compose_build({"context": "./ctx"})
+    requirements = {"fastapi": "==9.9.9", "uvicorn": "==8.8.8"}
+
+    ok = docs_stack_sync._check_versiones_componentes(
+        requirements, compose, kb, compose_dir=tmp_path
+    )
+    assert ok.status == "PASS", ok.detail
+
+    _dockerfile(tmp_path, "FROM n8nio/n8n:6.6.6\n", contexto="ctx")
+    mal = docs_stack_sync._check_versiones_componentes(
+        requirements, compose, kb, compose_dir=tmp_path
+    )
+    assert mal.status == "FAIL"
+    assert "7.7.7" in mal.detail

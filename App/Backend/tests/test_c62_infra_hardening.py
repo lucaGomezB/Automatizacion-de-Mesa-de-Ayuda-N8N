@@ -19,6 +19,7 @@ archivos de configuracion de forma determinista.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import yaml
@@ -31,6 +32,8 @@ NGINX_CONF_PATH = REPO_ROOT / "nginx" / "nginx.conf"
 LOOPBACK_PREFIX = "127.0.0.1:"
 N8N_IMAGE = "n8nio/n8n:2.11.2"
 NOTIF_WEBHOOK_SUFFIX = "/webhook/notificacion-clasificacion"
+# `FROM [--platform=...] imagen[:tag] [AS alias]` (el alias no es parte de la imagen).
+_FROM_LINE = re.compile(r"^\s*FROM\s+(?:--\S+\s+)*(?P<image>\S+)(?:\s+AS\s+\S+)?\s*$", re.IGNORECASE)
 
 # Pares (automatizacion, datos) que NUNCA deben compartir una red Docker.
 FORBIDDEN_SERVICE_PAIRS = (
@@ -48,6 +51,30 @@ def _compose() -> dict:
 
 def _services() -> dict:
     return _compose()["services"]
+
+
+def resolver_imagen_n8n(services: dict, repo_root: Path) -> str:
+    """Devuelve la imagen base efectiva del servicio `n8n` ('' si no se resuelve).
+
+    Desde c-182 el servicio puede declarar `image:` o `build:`; en el segundo
+    caso el pin vive en el primer `FROM` del Dockerfile del contexto de build.
+    """
+    service = services["n8n"]
+    if service.get("image"):
+        return str(service["image"])
+    build = service.get("build")
+    if not build:
+        return ""
+    if isinstance(build, str):
+        build = {"context": build}
+    dockerfile = repo_root / build.get("context", ".") / build.get("dockerfile", "Dockerfile")
+    if not dockerfile.is_file():
+        return ""
+    for line in dockerfile.read_text(encoding="utf-8").splitlines():
+        match = _FROM_LINE.match(line)
+        if match:
+            return match.group("image")
+    return ""
 
 
 def _ports(service: dict) -> list[str]:
@@ -359,10 +386,59 @@ def test_default_compose_does_not_enable_development_app_posture():
 
 
 def test_n8n_image_stays_pinned():
-    image = str(_services()["n8n"].get("image", ""))
+    image = resolver_imagen_n8n(_services(), REPO_ROOT)
     assert image == N8N_IMAGE, (
         f"La imagen de n8n debe seguir pineada a {N8N_IMAGE!r}; hallado {image!r}"
     )
+
+
+def _escribir_dockerfile(tmp_path: Path, contenido: str) -> None:
+    carpeta = tmp_path / "docker" / "n8n"
+    carpeta.mkdir(parents=True)
+    (carpeta / "Dockerfile").write_text(contenido, encoding="utf-8")
+
+
+_BUILD_N8N = {"build": {"context": "./docker/n8n", "dockerfile": "Dockerfile"}}
+
+
+def test_resolver_imagen_n8n_acepta_la_imagen_literal(tmp_path):
+    services = {"n8n": {"image": N8N_IMAGE}}
+    assert resolver_imagen_n8n(services, tmp_path) == N8N_IMAGE
+
+
+def test_resolver_imagen_n8n_lee_el_from_del_dockerfile_del_build(tmp_path):
+    _escribir_dockerfile(
+        tmp_path, f"# syntax=docker/dockerfile:1\nFROM {N8N_IMAGE}\nUSER node\n"
+    )
+    assert resolver_imagen_n8n({"n8n": _BUILD_N8N}, tmp_path) == N8N_IMAGE
+
+
+def test_resolver_imagen_n8n_acepta_build_como_cadena_de_contexto(tmp_path):
+    _escribir_dockerfile(tmp_path, f"FROM {N8N_IMAGE}\n")
+    assert resolver_imagen_n8n({"n8n": {"build": "./docker/n8n"}}, tmp_path) == N8N_IMAGE
+
+
+def test_resolver_imagen_n8n_ignora_el_alias_del_stage(tmp_path):
+    _escribir_dockerfile(tmp_path, f"FROM {N8N_IMAGE} AS base\n")
+    assert resolver_imagen_n8n({"n8n": _BUILD_N8N}, tmp_path) == N8N_IMAGE
+
+
+def test_resolver_imagen_n8n_sin_image_ni_build_devuelve_vacio(tmp_path):
+    assert resolver_imagen_n8n({"n8n": {}}, tmp_path) == ""
+
+
+def test_resolver_imagen_n8n_con_from_latest_no_cumple_el_pin(tmp_path):
+    _escribir_dockerfile(tmp_path, "FROM n8nio/n8n:latest\n")
+    assert resolver_imagen_n8n({"n8n": _BUILD_N8N}, tmp_path) != N8N_IMAGE
+
+
+def test_resolver_imagen_n8n_con_otra_version_no_cumple_el_pin(tmp_path):
+    _escribir_dockerfile(tmp_path, "FROM n8nio/n8n:2.12.0\n")
+    assert resolver_imagen_n8n({"n8n": _BUILD_N8N}, tmp_path) != N8N_IMAGE
+
+
+def test_resolver_imagen_n8n_sin_dockerfile_devuelve_vacio(tmp_path):
+    assert resolver_imagen_n8n({"n8n": _BUILD_N8N}, tmp_path) == ""
 
 
 def test_n8n_webhook_url_keeps_the_dedicated_route():

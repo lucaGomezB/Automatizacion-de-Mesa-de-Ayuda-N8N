@@ -20,6 +20,7 @@ from __future__ import annotations
 import argparse
 import json
 import pathlib
+import re
 from dataclasses import dataclass
 from typing import Callable, Iterable, List, Optional
 
@@ -411,18 +412,56 @@ def _iter_environment_values(compose: dict, key: str) -> Iterable[str]:
             yield str(env[key])
 
 
-def _check_pinned_image(compose: dict) -> Check:
+# Primer `FROM` de un Dockerfile: ignora flags (`--platform=...`) y el alias `AS`.
+_FROM_LINE = re.compile(
+    r"^\s*FROM\s+(?:--\S+\s+)*(?P<image>\S+)(?:\s+AS\s+\S+)?\s*$", re.IGNORECASE
+)
+
+
+def _resolve_n8n_image(compose: dict, compose_dir: pathlib.Path) -> "tuple[str, str]":
+    """Devuelve (imagen efectiva, origen) del servicio n8n.
+
+    Desde c-182 el servicio puede declarar `image:` o `build:`; en el segundo caso
+    el pin vive en el primer `FROM` del Dockerfile, resuelto contra `compose_dir`.
+    Si no se puede resolver devuelve ('', motivo).
+    """
     services = compose.get("services", {}) if isinstance(compose, dict) else {}
     n8n = services.get("n8n", {}) if isinstance(services, dict) else {}
-    image = str(n8n.get("image", "")) if isinstance(n8n, dict) else ""
+    if not isinstance(n8n, dict):
+        return "", "El servicio n8n no declara image ni build"
+    if n8n.get("image"):
+        return str(n8n["image"]), "image"
+    build = n8n.get("build")
+    if not build:
+        return "", "El servicio n8n no declara image ni build"
+    if isinstance(build, str):
+        build = {"context": build}
+    if not isinstance(build, dict):
+        return "", "El build del servicio n8n no es interpretable"
+    dockerfile = (
+        compose_dir / str(build.get("context", ".")) / str(build.get("dockerfile", "Dockerfile"))
+    )
+    try:
+        lines = dockerfile.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return "", f"No se pudo leer el Dockerfile del build de n8n: {dockerfile}"
+    for line in lines:
+        match = _FROM_LINE.match(line)
+        if match:
+            return match.group("image"), f"build ({dockerfile})"
+    return "", f"El Dockerfile del build de n8n no tiene FROM: {dockerfile}"
+
+
+def _check_pinned_image(compose: dict, compose_dir: "pathlib.Path | None" = None) -> Check:
+    image, source = _resolve_n8n_image(compose, compose_dir or pathlib.Path("."))
     if not image:
-        return _failing(COMPOSE_GUARD_IMAGE, "El servicio n8n no declara image")
+        return _failing(COMPOSE_GUARD_IMAGE, source)
     tag = image.rsplit(":", 1)[1] if ":" in image.rsplit("/", 1)[-1] else ""
     if not tag or tag == "latest":
         return _failing(
             COMPOSE_GUARD_IMAGE, f"La imagen no esta pineada a version explicita: {image!r}"
         )
-    return _passing(COMPOSE_GUARD_IMAGE, image)
+    return _passing(COMPOSE_GUARD_IMAGE, image if source == "image" else f"{image} via {source}")
 
 
 def _check_webhook_url(compose: dict) -> Check:
@@ -504,7 +543,7 @@ def check_compose(path: "pathlib.Path | str") -> List[Check]:
         ]
 
     checks = [
-        _check_pinned_image(compose),
+        _check_pinned_image(compose, pathlib.Path(path).resolve().parent),
         _check_webhook_url(compose),
         _check_executions_timeout_present(compose),
         _check_executions_timeout_coherent(compose),
