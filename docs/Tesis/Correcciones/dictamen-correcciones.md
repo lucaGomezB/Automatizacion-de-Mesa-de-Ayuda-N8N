@@ -3266,7 +3266,7 @@ Lineas leidas despues de aplicar el change, en `docs/Tesis/v10 (IA)/paper/sectio
 | B6b | Punteros de B6 y B8 corregidos; B10 +c-146; B12 +4.8; A5 +c-154 | c-160 | `12-anexos.tex:226` | `tab:anexo-trazabilidad` | `\autoref{subsec:matriz-metricas}, \autoref{tab:cumplimiento-objetivos}` | cerrada |
 | B6c | Residuos de A1, B4, B9, B14 y B16 registrados como remision o pendiente | c-160 | `12-anexos.tex:219` | `tab:anexo-trazabilidad` | `residuos en A3 y B8 del 28-10` | cerrada |
 | B6d | Tabla del dictamen del 28-10 con A1 a A4 y B5 a B8 | c-160 | `12-anexos.tex:259` | `tab:anexo-trazabilidad-2810` | `\texttt{c-160}` | cerrada |
-| B6e | Decisiones c-72, c-74 y c-82 con `\autoref{sec:implementacion}` | c-160 | `12-anexos.tex:331` | `sec:anexo-trazabilidad` | `incorporada el 13 de octubre de 2026 (\texttt{c-82})` | cerrada |
+| B6e | Decisiones c-72, c-74 y c-82 con `\autoref{sec:implementacion}` | c-160 | `12-anexos.tex:331` | `sec:anexo-trazabilidad` | `incorporada el 13 de octubre de 2026 (\texttt{c-82})` | SUPERADA por c-194 |
 | B7a | Tabla 18: TLS verificado despues de la campana | c-160 | `09-conclusiones.tex:23` | `tab:cumplimiento-objetivos` | `verificado después de la campaña, en el despliegue de referencia` | cerrada |
 | B7b | Prosa de 10.1: TLS en el despliegue de referencia, no en la configuracion evaluada | c-160 | `09-conclusiones.tex:35` | `subsec:cumplimiento-objetivos` | `no en la configuración evaluada ni en la instancia operativa` | cerrada |
 | B7c | Objetivo 3 alcanzado parcialmente en la prosa | c-160 | `09-conclusiones.tex:39` | `subsec:cumplimiento-objetivos` | `se alcanza parcialmente (latencia y exactitud medidas por canal)` | cerrada |
