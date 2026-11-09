@@ -1,14 +1,20 @@
-"""Verifica la matriz de trazabilidad del dictamen v10 / v1.1.0 (c-141, tarea 6.1).
+"""Verifica las matrices de trazabilidad de los dictamenes v10 (c-141, c-188).
 
-Para cada fila de la matriz de la seccion "Dictamen v10 / v1.1.0 (2026-10-22) -
-cobertura por change (FASE 36)" de dictamen-correcciones.md comprueba que la
-linea citada contiene el fragmento verificable y que el \\label ancla existe en
-el mismo archivo. Las filas cuyo estado empieza con PENDIENTE se omiten.
+Recorre TODA tabla de 7 columnas con encabezado "Fragmento verificable" de
+dictamen-correcciones.md, en cualquier seccion `## ` (dictamenes del 22-10, del
+28-10 y del 8-11). Para cada fila comprueba que el fragmento verificable
+aparece en el archivo citado y que el \\label ancla existe en el. Si el
+fragmento esta en otra linea que la citada, la fila pasa con el aviso
+"desplazada N -> M" (las anclas de linea son orientativas); con --estricto la
+linea exacta es obligatoria. Las filas cuyo estado empieza con PENDIENTE o
+SUPERADA (esta ultima debe nombrar el change que reescribio el parrafo, por
+ejemplo "SUPERADA por c-187") se omiten.
 
 Uso, desde la raiz del repositorio:
 
-    python docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py
-    python docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py --rev v1.2.0
+    python -I docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py
+    python -I docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py --estricto
+    python -I docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py --rev v1.2.12
 
 Con --rev lee los archivos con `git show REV:ruta` (el arbol etiquetado); sin
 el, lee el arbol de trabajo. Codigo de salida 0 si todas las filas pasan.
@@ -19,7 +25,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-TITULO_SECCION = "cobertura por change (FASE 36)"
+ENCABEZADO = "Fragmento verificable"
 RAIZ = Path(__file__).resolve().parents[3]
 REGISTRO = Path(__file__).resolve().parent / "dictamen-correcciones.md"
 BASE_TESIS = "docs/Tesis/v10 (IA)/paper/"
@@ -29,35 +35,41 @@ def _celda(texto):
     return texto.strip().strip("`").strip()
 
 
+def resolver_ruta(archivo):
+    """Un nombre suelto (sin directorio) es un archivo de `paper/sections/`."""
+    if "/" in archivo:
+        return archivo
+    return BASE_TESIS + "sections/" + archivo
+
+
 def parsear_matriz(texto):
-    """Devuelve las filas de la matriz de la seccion de cobertura como dicts."""
-    en_seccion = False
+    """Devuelve las filas de toda matriz con "Fragmento verificable" como dicts."""
+    seccion = ""
     en_matriz = False
     filas = []
     for linea in texto.splitlines():
         linea = linea.rstrip("\r")
         if linea.startswith("## "):
-            en_seccion = TITULO_SECCION in linea
+            seccion = linea[3:].strip()
             en_matriz = False
-            continue
-        if not en_seccion:
             continue
         if not linea.startswith("|"):
             en_matriz = False  # una linea que no es de tabla cierra la tabla
             continue
-        if linea.lstrip("| ").startswith("Rec "):
-            en_matriz = "Archivo:linea" in linea
+        celdas = linea.strip().strip("|").split("|")
+        if ENCABEZADO in linea and len(celdas) == 7:
+            en_matriz = True
             continue
         if not en_matriz:
             continue
-        celdas = [c for c in linea.strip().strip("|").split("|")]
         if len(celdas) != 7:
             continue
-        if celdas[0].strip() in ("Rec", "---") or set(celdas[0].strip()) <= {"-"}:
+        if set(celdas[0].strip()) <= {"-"}:
             continue
         archivo, _, numero = _celda(celdas[3]).rpartition(":")
         filas.append(
             {
+                "seccion": seccion,
                 "rec": _celda(celdas[0]),
                 "change": _celda(celdas[2]),
                 "archivo": archivo,
@@ -70,21 +82,37 @@ def parsear_matriz(texto):
     return filas
 
 
-def verificar_fila(fila, leer):
+def verificar_fila(fila, leer, estricto=False):
     """Verifica una fila; `leer(ruta)` devuelve la lista de lineas del archivo."""
-    if fila["estado"].upper().startswith("PENDIENTE"):
+    estado = fila["estado"].upper()
+    if estado.startswith("PENDIENTE"):
+        return True, f"{fila['rec']}: omitida ({fila['estado'][:40]})"
+    if estado.startswith("SUPERADA"):
+        if not re.search(r"\bc-\d+\b", fila["estado"]):
+            return False, f"{fila['rec']}: SUPERADA debe nombrar el change (c-NNN)"
         return True, f"{fila['rec']}: omitida ({fila['estado'][:40]})"
     lineas = leer(fila["archivo"])
     n = fila["linea"]
-    if not 1 <= n <= len(lineas):
-        return False, f"{fila['rec']}: linea {n} fuera de rango ({len(lineas)} lineas)"
-    if fila["fragmento"] not in lineas[n - 1]:
-        return False, f"{fila['rec']}: el fragmento no esta en {fila['archivo']}:{n}"
+    exacta = 1 <= n <= len(lineas) and fila["fragmento"] in lineas[n - 1]
+    aviso = ""
+    if not exacta:
+        real = reubicar_fila(fila, leer)
+        if real is None:
+            return False, (
+                f"{fila['rec']}: el fragmento \"{fila['fragmento']}\" no esta en {fila['archivo']}"
+            )
+        if estricto:
+            return False, (
+                f"{fila['rec']}: linea {n} sin el fragmento en {fila['archivo']} "
+                f"(esta en la {real}; --estricto)"
+            )
+        aviso = f" desplazada {n} -> {real}"
+        n = real
     ancla = fila["ancla"]
     if ancla not in ("", "-"):
         if not any("\\label{" + ancla + "}" in l for l in lineas):
             return False, f"{fila['rec']}: el ancla {ancla} no existe en {fila['archivo']}"
-    return True, f"{fila['rec']}: ok ({fila['archivo']}:{n})"
+    return True, f"{fila['rec']}: ok{aviso} ({fila['archivo']}:{n})"
 
 
 def reubicar_fila(fila, leer):
@@ -100,8 +128,27 @@ def reemplazar_linea(texto, archivo, vieja, nueva):
     return texto.replace(f"`{archivo}:{vieja}`", f"`{archivo}:{nueva}`")
 
 
+def resumen_por_seccion(resultados):
+    """`resultados`: lista de (seccion, ok, mensaje). Devuelve conteos por seccion."""
+    r = {}
+    for seccion, ok, msg in resultados:
+        c = r.setdefault(seccion, {"filas": 0, "avisos": 0, "fallas": 0})
+        c["filas"] += 1
+        c["avisos"] += 1 if "desplazada" in msg else 0
+        c["fallas"] += 0 if ok else 1
+    return r
+
+
+def formatear_resumen(resumen):
+    return "\n".join(
+        f"[{s}] filas: {c['filas']}; avisos: {c['avisos']}; fallas: {c['fallas']}"
+        for s, c in resumen.items()
+    )
+
+
 def _lector(rev):
     def leer(ruta):
+        ruta = resolver_ruta(ruta)
         if rev:
             salida = subprocess.run(
                 ["git", "show", f"{rev}:{ruta}"], cwd=RAIZ, capture_output=True, check=True
@@ -121,31 +168,40 @@ def main(argv=None):
         action="store_true",
         help="reescribe en el registro la linea de las filas cuyo fragmento se desplazo (solo arbol de trabajo)",
     )
+    ap.add_argument(
+        "--estricto",
+        action="store_true",
+        help="exige que el fragmento este en la linea citada (sin avisos de desplazamiento)",
+    )
     args = ap.parse_args(argv)
     original = REGISTRO.read_bytes().decode("utf-8")
     texto = original
     filas = parsear_matriz(texto)
     if not filas:
-        print("No se encontro la matriz de cobertura en el registro.")
+        print("No se encontro ninguna matriz con 'Fragmento verificable' en el registro.")
         return 2
     leer = _lector(args.rev)
     fallas = 0
+    resultados = []
     for fila in filas:
         try:
-            ok, msg = verificar_fila(fila, leer)
-            if not ok and args.reubicar and not args.rev:
-                nueva = reubicar_fila(fila, leer)
-                if nueva is not None:
+            ok, msg = verificar_fila(fila, leer, estricto=args.estricto)
+            if args.reubicar and not args.rev:
+                nueva = None if ok and "desplazada" not in msg else reubicar_fila(fila, leer)
+                if nueva is not None and nueva != fila["linea"]:
                     texto = reemplazar_linea(texto, fila["archivo"], fila["linea"], nueva)
                     ok, msg = True, f"{fila['rec']}: reubicada {fila['linea']} -> {nueva}"
         except (OSError, subprocess.CalledProcessError) as exc:
             ok, msg = False, f"{fila['rec']}: no se pudo leer {fila['archivo']} ({exc.__class__.__name__})"
         print(("OK   " if ok else "FALLA ") + msg)
+        resultados.append((fila["seccion"], ok, msg))
         fallas += 0 if ok else 1
     if texto != original:
         REGISTRO.write_bytes(texto.encode("utf-8"))
         print("Registro actualizado con las lineas reubicadas.")
-    print(f"Filas: {len(filas)}; fallas: {fallas}")
+    print(formatear_resumen(resumen_por_seccion(resultados)))
+    avisos = sum(1 for _, _, m in resultados if "desplazada" in m)
+    print(f"Filas: {len(filas)}; avisos: {avisos}; fallas: {fallas}")
     return 1 if fallas else 0
 
 

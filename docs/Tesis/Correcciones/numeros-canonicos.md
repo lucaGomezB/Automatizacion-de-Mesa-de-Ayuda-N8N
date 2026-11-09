@@ -867,6 +867,26 @@ declarado).**
 |---|---|---|
 | "no se obtuvo la evaluacion fuera de muestra: falta(n) `predicciones_independiente.json`, `corpus_independiente.json`; no se reemplaza por metricas in-sample" | `analisis/resultados.json:820-823` | vigente (nuevo) |
 
+### 3.15 Verificación de la definición de las métricas multietiqueta (c-188, B4)
+
+Solo verificación; **ningún valor vigente cambia** (subset accuracy 0,43; Hamming loss 0,3586;
+micro-F1 0,6654). Recomputo del 2026-11-09 con `evaluation.metrics` sobre
+`data/corpus_evaluacion_pseudonimizado.json` (verdad = `sector_asignado` más `sectores_adicionales`) y
+`evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` (200 casos; 8 con
+`sectores_adicionales`, todos de la etapa `deterministic`):
+
+| Conjunto predicho | Subset accuracy | Hamming loss (unión del caso) | micro-F1 | Hamming por 5 clases |
+|---|---|---|---|---|
+| Principal + adicionales (definición del texto y de `run_evaluation.py`) | 0,43 | 0,35858 | 0,66544 | 0,182 |
+| Solo la etiqueta principal (alternativa descartada) | 0,44 | 0,35275 | 0,66916 | 0,177 |
+
+Comando: cargar ambos JSON, armar `verdad = frozenset([c["sector_asignado"], *c["sectores_adicionales"]])`
+y `predicho = frozenset(e for e in (p["sector_predicho"], *p["sectores_adicionales"]) if e in CLASES)`, y
+llamar a `exactitud_subconjunto`, `perdida_hamming` y `f1_micro`; la Hamming por cinco clases es
+`sum(len(v ^ s) / 5 for v, s in zip(verdad, predicho)) / 200`. Nota: el design de c-188 atribuía 0,182 a
+la variante de solo etiqueta principal; el recomputo da 0,182 con los adicionales y 0,177 sin ellos.
+El texto declara la definición vigente (4.7 y 8.2) y no incorpora estas cifras.
+
 ## 4. Contingencia del gate de intervención humana
 
 Tabla reconstruida desde `evaluation/predicciones.json` con

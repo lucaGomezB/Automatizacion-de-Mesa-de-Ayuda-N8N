@@ -2,11 +2,12 @@
 % Glosario de siglas y acronimos
 % Material preliminar — manual, en orden alfabético.
 % Sin paquete glossaries ni paso makeglossaries (c-105, decisión D2).
-% Entradas: 79 siglas inventariadas sobre sections/*.tex (c-163 agregó BERT,
+% Entradas: 81 siglas inventariadas sobre sections/*.tex (c-163 agregó BERT,
 % CMDB, CSF, ECE, HITL, IC, ISO, KMS, MFA, NIST, PAM, RAG, RTO, SAST, SBOM,
-% SIEM y TOTP; retiró HMM y WIP).
+% SIEM y TOTP; retiró HMM y WIP; c-188 agregó CONEAU, GPT, NLBSE, PABAK, RGPD
+% y UTC, y retiró APA, FRM, UML y UTN, que no se usan en el cuerpo).
 % Disposición en dos columnas por bloques alfabéticos: la columna izquierda
-% cubre ACID..KMS y la derecha LLM..VM, de modo que la lectura descendente
+% cubre ACID..LLM y la derecha MFA..VM, de modo que la lectura descendente
 % de la primera columna seguida de la segunda preserva el orden alfabético.
 %==============================================================================
 \newpage
@@ -18,46 +19,47 @@
 \small
 \setlength{\tabcolsep}{4pt}
 \noindent\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.47\textwidth}@{\hspace{0.05\textwidth}}>{\raggedright\arraybackslash}p{0.47\textwidth}@{}}
-\textbf{ACID} Atomicity, Consistency, Isolation, Durability & \textbf{LLM} Large Language Model \\
-\textbf{AES} Advanced Encryption Standard & \textbf{MFA} Multi-Factor Authentication \\
-\textbf{AI} Artificial Intelligence & \textbf{MVCC} Multi-Version Concurrency Control \\
-\textbf{APA} American Psychological Association & \textbf{N8N} plataforma de orquestación de flujos (\emph{nodemation}) \\
+\textbf{ACID} Atomicity, Consistency, Isolation, Durability & \textbf{MFA} Multi-Factor Authentication \\
+\textbf{AES} Advanced Encryption Standard & \textbf{MVCC} Multi-Version Concurrency Control \\
+\textbf{AI} Artificial Intelligence & \textbf{N8N} plataforma de orquestación de flujos (\emph{nodemation}) \\
 \textbf{API} Application Programming Interface & \textbf{NIST} National Institute of Standards and Technology \\
-\textbf{ARCO} Acceso, Rectificación, Cancelación y Oposición & \textbf{NLP} Natural Language Processing \\
-\textbf{ASGI} Asynchronous Server Gateway Interface & \textbf{ORM} Object-Relational Mapper \\
-\textbf{ASR} Automatic Speech Recognition & \textbf{PAM} Privileged Access Management \\
-\textbf{BERT} Bidirectional Encoder Representations from Transformers & \textbf{PATCH} método HTTP de actualización parcial \\
-\textbf{BPA} Business Process Automation & \textbf{PCM} Pulse Code Modulation \\
-\textbf{CBC} Cipher Block Chaining & \textbf{PK} Primary Key \\
-\textbf{CE} Comunidad Europea & \textbf{PNG} Portable Network Graphics \\
-\textbf{CI} Continuous Integration & \textbf{POST} método HTTP de creación \\
-\textbf{CIA} Confidentiality, Integrity, Availability & \textbf{RAG} Retrieval-Augmented Generation \\
-\textbf{CMDB} Configuration Management Database & \textbf{REST} Representational State Transfer \\
-\textbf{CRUD} Create, Read, Update, Delete & \textbf{RTO} Recovery Time Objective \\
-\textbf{CSF} Cybersecurity Framework & \textbf{SAST} Static Application Security Testing \\
-\textbf{DAG} Directed Acyclic Graph & \textbf{SBOM} Software Bill of Materials \\
-\textbf{ECE} Expected Calibration Error & \textbf{SDK} Software Development Kit \\
-\textbf{ETL} Extract, Transform, Load & \textbf{SHA} Secure Hash Algorithm \\
-\textbf{FK} Foreign Key & \textbf{SIEM} Security Information and Event Management \\
-\textbf{FRM} Facultad Regional Mendoza & \textbf{SLA} Service Level Agreement \\
-\textbf{GB} Gigabyte & \textbf{SMTP} Simple Mail Transfer Protocol \\
-\textbf{GET} método HTTP de lectura & \textbf{SPA} Single Page Application \\
-\textbf{GPU} Graphics Processing Unit & \textbf{SPOC} Single Point of Contact \\
-\textbf{HMAC} Hash-based Message Authentication Code & \textbf{SQL} Structured Query Language \\
-\textbf{HITL} Human In The Loop & \textbf{SSD} Solid-State Drive \\
-\textbf{HTTP} Hypertext Transfer Protocol & \textbf{SSO} Single Sign-On \\
-\textbf{IA} Inteligencia Artificial & \textbf{SVM} Support Vector Machine \\
-\textbf{IC} Intervalo de Confianza & \textbf{TF} Term Frequency \\
-\textbf{IDF} Inverse Document Frequency & \textbf{TLS} Transport Layer Security \\
-\textbf{IMAP} Internet Message Access Protocol & \textbf{TOTP} Time-based One-Time Password \\
-\textbf{IP} Internet Protocol & \textbf{TSO} The Stationery Office \\
-\textbf{ISO} International Organization for Standardization & \textbf{UI} User Interface \\
-\textbf{IT} Information Technology & \textbf{UML} Unified Modeling Language \\
-\textbf{ITIL} Information Technology Infrastructure Library & \textbf{USD} United States Dollar \\
-\textbf{ITSM} Information Technology Service Management & \textbf{UTN} Universidad Tecnológica Nacional \\
-\textbf{JSON} JavaScript Object Notation & \textbf{UUID} Universally Unique Identifier \\
-\textbf{JWT} JSON Web Token & \textbf{VM} Virtual Machine \\
-\textbf{KMS} Key Management Service & \\
+\textbf{ARCO} Acceso, Rectificación, Cancelación y Oposición & \textbf{NLBSE} Natural Language-Based Software Engineering \\
+\textbf{ASGI} Asynchronous Server Gateway Interface & \textbf{NLP} Natural Language Processing \\
+\textbf{ASR} Automatic Speech Recognition & \textbf{ORM} Object-Relational Mapper \\
+\textbf{BERT} Bidirectional Encoder Representations from Transformers & \textbf{PABAK} Prevalence-Adjusted Bias-Adjusted Kappa \\
+\textbf{BPA} Business Process Automation & \textbf{PAM} Privileged Access Management \\
+\textbf{CBC} Cipher Block Chaining & \textbf{PATCH} método HTTP de actualización parcial \\
+\textbf{CE} Comunidad Europea & \textbf{PCM} Pulse Code Modulation \\
+\textbf{CI} Continuous Integration & \textbf{PK} Primary Key \\
+\textbf{CIA} Confidentiality, Integrity, Availability & \textbf{PNG} Portable Network Graphics \\
+\textbf{CMDB} Configuration Management Database & \textbf{POST} método HTTP de creación \\
+\textbf{CONEAU} Comisión Nacional de Evaluación y Acreditación Universitaria & \textbf{RAG} Retrieval-Augmented Generation \\
+\textbf{CRUD} Create, Read, Update, Delete & \textbf{REST} Representational State Transfer \\
+\textbf{CSF} Cybersecurity Framework & \textbf{RGPD} Reglamento General de Protección de Datos \\
+\textbf{DAG} Directed Acyclic Graph & \textbf{RTO} Recovery Time Objective \\
+\textbf{ECE} Expected Calibration Error & \textbf{SAST} Static Application Security Testing \\
+\textbf{ETL} Extract, Transform, Load & \textbf{SBOM} Software Bill of Materials \\
+\textbf{FK} Foreign Key & \textbf{SDK} Software Development Kit \\
+\textbf{GB} Gigabyte & \textbf{SHA} Secure Hash Algorithm \\
+\textbf{GET} método HTTP de lectura & \textbf{SIEM} Security Information and Event Management \\
+\textbf{GPT} Generative Pre-trained Transformer & \textbf{SLA} Service Level Agreement \\
+\textbf{GPU} Graphics Processing Unit & \textbf{SMTP} Simple Mail Transfer Protocol \\
+\textbf{HITL} Human In The Loop & \textbf{SPA} Single Page Application \\
+\textbf{HMAC} Hash-based Message Authentication Code & \textbf{SPOC} Single Point of Contact \\
+\textbf{HTTP} Hypertext Transfer Protocol & \textbf{SQL} Structured Query Language \\
+\textbf{IA} Inteligencia Artificial & \textbf{SSD} Solid-State Drive \\
+\textbf{IC} Intervalo de Confianza & \textbf{SSO} Single Sign-On \\
+\textbf{IDF} Inverse Document Frequency & \textbf{SVM} Support Vector Machine \\
+\textbf{IMAP} Internet Message Access Protocol & \textbf{TF} Term Frequency \\
+\textbf{IP} Internet Protocol & \textbf{TLS} Transport Layer Security \\
+\textbf{ISO} International Organization for Standardization & \textbf{TOTP} Time-based One-Time Password \\
+\textbf{IT} Information Technology & \textbf{TSO} The Stationery Office \\
+\textbf{ITIL} Information Technology Infrastructure Library & \textbf{UI} User Interface \\
+\textbf{ITSM} Information Technology Service Management & \textbf{USD} United States Dollar \\
+\textbf{JSON} JavaScript Object Notation & \textbf{UTC} Coordinated Universal Time \\
+\textbf{JWT} JSON Web Token & \textbf{UUID} Universally Unique Identifier \\
+\textbf{KMS} Key Management Service & \textbf{VM} Virtual Machine \\
+\textbf{LLM} Large Language Model & \\
 \end{tabular}
 \end{spacing}
 \newpage

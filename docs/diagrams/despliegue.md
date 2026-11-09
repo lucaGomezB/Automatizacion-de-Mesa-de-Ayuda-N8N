@@ -1,7 +1,10 @@
 # Diagrama de Despliegue — Anexo A
 
 Representa los servicios del entorno local definidos en `docker-compose.yml` (raíz del
-repositorio). Todos los servicios corren dentro de la red Docker `mesa_local_default`.
+repositorio, proyecto `mesa_local`). Los servicios se reparten en las redes Docker `edge`,
+`data` (interna, sin egreso), `automation` y `host_access`; el frontend es el bundle
+compilado por Vite, servido por `nginx:alpine` en el puerto 3000, y N8N se construye
+desde la imagen derivada de `docker/n8n/Dockerfile` (N8N 2.11.2 con el parche IMAP de c-182).
 
 > **Nota sobre el formato**: los diagramas se mantienen en Mermaid (texto versionable)
 > en lugar de `.drawio` binario, para facilitar diffs en revisiones de código. Mermaid
@@ -10,11 +13,11 @@ repositorio). Todos los servicios corren dentro de la red Docker `mesa_local_def
 ```mermaid
 graph TD
     subgraph Host["Host (máquina local)"]
-        subgraph Docker["Red Docker: mesa_local_default"]
+        subgraph Docker["Redes Docker: edge, data (interna), automation, host_access"]
             PG["PostgreSQL 15.5-alpine\npuerto host: 5433\nvolumen: postgres_data\nDB: mesa_de_ayuda"]
             BE["Backend FastAPI\n(sin puerto host)\nuvicorn app.main:app\nalembic upgrade head al iniciar"]
-            N8N["N8N 2.11.2\npuerto host: 5678\nacceso: cuenta owner (primer arranque)\nvolumen: n8n_data"]
-            FE["Frontend React 19 + Vite\n(sin puerto host)\nVite dev server :3000"]
+            N8N["N8N 2.11.2 derivada\n(c-182, parche IMAP)\npuerto host: 5678\nacceso: cuenta owner (primer arranque)\nvolumen: n8n_data"]
+            FE["Frontend (bundle Vite)\nsin puerto host\nnginx:alpine :3000"]
             NGX["Nginx alpine\npuerto host: 80, 443\nTLS 1.2/1.3 termination\nHTTP → HTTPS redirect\nHSTS header"]
         end
 
