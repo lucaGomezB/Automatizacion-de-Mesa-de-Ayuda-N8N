@@ -6,7 +6,7 @@
 
 \section{Diagrama de arquitectura del sistema}\label{sec:anexo-diagrama-arquitectura}
 
-El Anexo~A inventaría los diagramas de la arquitectura del sistema entregado (release \texttt{v1.2.10}). Los diagramas de arquitectura y despliegue se incluyen como figuras de la \autoref{sec:arquitectura} y no se reproducen aquí; los diagramas de secuencia, componentes y cronograma se reproducen a continuación. Los cinco artefactos son:
+El Anexo~A inventaría los diagramas de la arquitectura del sistema entregado (release \texttt{v1.2.11}). Los diagramas de arquitectura y despliegue se incluyen como figuras de la \autoref{sec:arquitectura} y no se reproducen aquí; los diagramas de secuencia, componentes y cronograma se reproducen a continuación. Los cinco artefactos son:
 
 \begin{itemize}
   \item \textbf{Diagrama de arquitectura del sistema} (Figura~\ref{fig:arquitectura}, \autoref{sec:arquitectura}): las cinco capas de la Tabla~\ref{tab:capas} y los tres canales de entrada (correo, formulario web y telefonía), sin versiones de bibliotecas, que constan en la Tabla~\ref{tab:capas} y en la \autoref{tab:configuracion-evaluada-entregada}. Fuente versionada: \path{docs/diagrams/arquitectura_sistema.md}.
@@ -21,14 +21,14 @@ Los diagramas se generan a partir de fuentes Mermaid versionadas en formato \tex
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.82\textwidth]{secuencia}
-\caption[Diagrama de secuencia del flujo extremo a extremo de un incidente]{Diagrama de secuencia del flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión humana, en la configuración entregada (release \texttt{v1.2.10}). El disparador por reportante no identificado en el directorio es posterior a la campaña (c-82, 13-10-2026): véase la \autoref{tab:configuracion-evaluada-entregada}.}
+\caption[Diagrama de secuencia del flujo extremo a extremo de un incidente]{Diagrama de secuencia del flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión humana, en la configuración entregada (release \texttt{v1.2.11}). El disparador por reportante no identificado en el directorio es posterior a la campaña 2026-10 (c-82, 13-10-2026): véase la \autoref{tab:configuracion-evaluada-entregada}.}
 \label{fig:secuencia}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.62\textwidth,height=0.78\textheight,keepaspectratio]{componentes}
-\caption[Diagrama de componentes del módulo Python organizado en capas]{Diagrama de componentes del módulo Python organizado en capas (routes, services, repositories, classifiers). Describe la configuración entregada (release \texttt{v1.2.10}): el filtro determinístico cortocircuita con señal dominante y puntaje de correctitud \(\geq 0{,}5166\) sin derivar por su confianza, la revisión por confianza menor que 0,70 rige solo sobre Gemini, la etapa de reserva deriva siempre, y el disparador por reportante no identificado en el directorio es posterior a la campaña (c-82, 13-10-2026; \autoref{tab:configuracion-evaluada-entregada}). Fuente: \texttt{docs/diagrams/componentes.md}.}
+\caption[Diagrama de componentes del módulo Python organizado en capas]{Diagrama de componentes del módulo Python organizado en capas (routes, services, repositories, classifiers). Describe la configuración entregada (release \texttt{v1.2.11}): el filtro determinístico cortocircuita con señal dominante y puntaje de correctitud \(\geq 0{,}5166\) sin derivar por su confianza, la revisión por confianza menor que 0,70 rige solo sobre Gemini, la etapa de reserva deriva siempre, y el disparador por reportante no identificado en el directorio es posterior a la campaña 2026-10 (c-82, 13-10-2026; \autoref{tab:configuracion-evaluada-entregada}). Fuente: \texttt{docs/diagrams/componentes.md}.}
 \label{fig:componentes}
 \end{figure}
 
@@ -41,39 +41,41 @@ Los diagramas se generan a partir de fuentes Mermaid versionadas en formato \tex
 
 \section{Repositorio de código fuente}\label{sec:anexo-repositorio}
 
-El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto \parencite{Gomez2026_repositorio}, accesible en \url{https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N}. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado \texttt{v1.2.10}, creado sobre el commit que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, la rama principal registra después un commit que solo consigna el hash que figura a continuación, y los commits posteriores no modifican las fuentes de la tesis.
+El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto \parencite{Gomez2026_repositorio}, accesible en \url{https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N}. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado \texttt{v1.2.11}, creado sobre el commit que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, la rama principal registra después un commit que solo consigna ese hash, y los commits posteriores no modifican las fuentes de la tesis.
 
-El hash completo de ese commit es \texttt{\small c3c63c84a94a79cddc21803868f437db59c3d2df}, que constituye la referencia verificable de la versión corregida.
+El PDF compilado en el propio tag no imprime ese hash: el hash completo de \texttt{v1.2.11} se consigna en el commit que sigue al tag en la rama principal. Se verifica con \texttt{git rev-list -n1 v1.2.11}, y un \texttt{git diff --stat} entre el tag y la rama principal sobre \texttt{docs/Tesis/v10 (IA)/paper/sections} muestra que ese commit solo cambia esa línea.
 
-La versión entregada no es la que se evaluó. La \emph{configuración evaluada} es la del commit \texttt{d6bb474} (7-10-2026), primera revisión que versiona la cascada \texttt{hybrid-v3}; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (\autoref{subsec:protocolo-pruebas}). La \emph{configuración entregada} es la del tag \texttt{v1.2.10}. La \emph{configuración de la campaña de medición} corrió sobre el clasificador congelado \texttt{hybrid-v3} con la instrumentación de intervención de \texttt{c-165} aplicada (\autoref{subsec:resultados-campana-medicion}). La \autoref{tab:configuracion-evaluada-entregada} consigna, con valores verificados sobre las tres revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella.
+La versión entregada no es la que se evaluó. La \emph{configuración evaluada} es la del commit \texttt{d6bb474} (7-10-2026), primera revisión que versiona la cascada \texttt{hybrid-v3}; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (\autoref{subsec:protocolo-pruebas}). La \emph{configuración entregada} es la del tag \texttt{v1.2.11}. La \emph{configuración de la campaña complementaria} no es un único commit: el brazo automatizado de correo y formulario web corrió desde \texttt{cda7712} (5-11-2026), el de telefonía el 6-11-2026 tras \texttt{c-174} y \texttt{c-175}, y las intervenciones se validaron entre el 7 y el 8-11-2026 (\texttt{c-177} a \texttt{c-183}), todas con \texttt{hybrid-v3}, la instrumentación de \texttt{c-165} y la derivación por reportante activas (\autoref{subsec:resultados-campana-medicion}). La \autoref{tab:configuracion-evaluada-entregada} consigna, con valores verificados sobre las tres revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella.
 
 \begin{table}[htbp]
-\small
+\footnotesize
 \centering
-\caption{Configuración evaluada, configuración entregada y configuración de la campaña de medición}
+\caption{Configuración evaluada, configuración entregada y configuración de la campaña complementaria}
 \label{tab:configuracion-evaluada-entregada}
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{4.9cm} >{\raggedright\arraybackslash}p{4.5cm} >{\raggedright\arraybackslash}p{2.7cm}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.4cm} >{\raggedright\arraybackslash}p{3.5cm} >{\raggedright\arraybackslash}p{5.2cm} >{\raggedright\arraybackslash}p{3.6cm}@{}}
 \toprule
-Elemento & Configuración evaluada (\texttt{d6bb474}) & Configuración entregada (\texttt{v1.2.10}) & Configuración de la campaña de medición \\
+Elemento & Configuración evaluada (\texttt{d6bb474}) & Configuración entregada (\texttt{v1.2.11}) & Campaña complementaria \\
 \midrule
-FastAPI y Uvicorn & 0.115.0 y 0.30.6 & 0.162.0 y 0.54.0 & --- \\
-SQLAlchemy & 2.0.36 & 2.1.6 & --- \\
-\texttt{google-genai} & \texttt{>=2.20.0} & \texttt{>=2.33.0,<3} & --- \\
-pytest y pytest-cov & 8.3.3 y 5.0.0 & 9.1.1 y 7.1.0 & --- \\
-React & 18.3.1 & 19.3.1 & --- \\
-Flujo N8N & 28 nodos (25 operativos y 3 notas); 38 (35 y 3) hasta c-72 & 32 nodos (29 operativos y 3 notas) & --- \\
-Reintentos del alta & No & Sí: hasta 3 intentos, espera fija de 5000~ms y tiempo de espera por intento de 10~s (inicio de sesión) y 75~s (alta) & --- \\
-Revisión por reportante no identificado & No & Sí (c-82) & --- \\
-Propagación del contacto del reportante en el POST & No & Sí (c-162, posterior a la campaña): el flujo N8N envía \texttt{reportante\_email} (correo) y \texttt{reportante\_telefono} (telefonía), que habilitan la resolución del reportante de c-82 & --- \\
-Prueba de humo E2E y verificación de TLS & No & Sí (c-140) & --- \\
+FastAPI y Uvicorn & 0.115.0 y 0.30.6 & 0.162.0 y 0.54.0 & Como la entregada \\
+SQLAlchemy & 2.0.36 & 2.1.6 & Como la entregada \\
+\texttt{google-genai} & \texttt{>=2.20.0} & \texttt{>=2.33.0,<3} & Como la entregada \\
+pytest y pytest-cov & 8.3.3 y 5.0.0 & 9.1.1 y 7.1.0 & Como la entregada \\
+React & 18.3.1 & 19.3.1 & Como la entregada \\
+Flujo N8N & 28 nodos (25 operativos y 3 notas); 38 (35 y 3) hasta c-72 & 32 nodos (29 operativos y 3 notas) & Como la entregada \\
+Reintentos del alta & No & Sí: hasta 3 intentos, espera fija de 5000~ms y tiempo de espera por intento de 10~s (inicio de sesión) y 75~s (alta) & Como la entregada \\
+Revisión por reportante no identificado & No & Sí (c-82) & Sí (c-82) \\
+Propagación del contacto del reportante en el POST & No & Sí (c-162, posterior a la campaña 2026-10): el flujo N8N envía \texttt{reportante\_email} (correo) y \texttt{reportante\_telefono} (telefonía), que habilitan la resolución del reportante de c-82 & Sí (c-162) \\
+Prueba de humo E2E y verificación de TLS & No & Sí (c-140) & No registrado \\
+Instrumentación de intervención & No & Sí (c-165) & Sí (c-165; parte de las de \texttt{O1} con un \emph{frontend} previo) \\
+Imagen de N8N & \texttt{n8nio/n8n:2.11.2} & Derivada de \texttt{n8nio/n8n:2.11.2} (\texttt{docker/n8n/Dockerfile}) con parche de la decodificación IMAP (c-182) & \texttt{n8nio/n8n:2.11.2}; la derivada es posterior (7-11-2026) \\
 \texttt{classifier\_}\allowbreak\texttt{version} & \texttt{hybrid-v3} & \texttt{hybrid-v3} & \texttt{hybrid-v3} \\
 \midrule
-Sin cambios & \multicolumn{2}{>{\raggedright\arraybackslash}p{9.4cm}}{N8N 2.11.2, Python 3.12-slim, PostgreSQL 15.5-alpine, \texttt{gemini-3.6-flash} con sus parámetros, umbrales (0,5166 y 0,70), vocabulario y \emph{prompt}; la lógica del clasificador solo cambió en comentarios e importaciones diferidas} & --- \\
+Sin cambios & \multicolumn{2}{>{\raggedright\arraybackslash}p{8.7cm}}{Python 3.12-slim, PostgreSQL 15.5-alpine, \texttt{gemini-3.6-flash} con sus parámetros, umbrales (0,5166 y 0,70), vocabulario y \emph{prompt}; la lógica del clasificador solo cambió en comentarios e importaciones diferidas} & Sin cambios \\
 \bottomrule
 \end{tabular}
 \par\smallskip
-{\footnotesize\textit{Fuente:} elaboración propia a partir de \texttt{git show d6bb474:}\emph{archivo}, \texttt{git show v1.2.10:}\emph{archivo} y \texttt{git show d6bb474:App/Backend/app/constants.py} sobre \texttt{requirements.txt}, \texttt{package-lock.json}, \texttt{n8n/workflow.json}, \texttt{docker-compose.yml} y \texttt{settings.py}, y de los changes archivados. La \emph{configuración de la campaña de medición} corrió sobre el clasificador congelado \texttt{hybrid-v3} (la misma configuración evaluada, commit \texttt{d6bb474}) con la instrumentación de intervención de \texttt{c-165} aplicada; se consigna la fila \texttt{classifier\_version}, que coincide con la evaluada, y las celdas no verificadas para esa corrida quedan sin declarar.\par}
+{\footnotesize\textit{Fuente:} elaboración propia a partir de \texttt{git show d6bb474:}\emph{archivo}, \texttt{git show v1.2.11:}\emph{archivo} y \texttt{git show d6bb474:App/Backend/app/constants.py} sobre \texttt{requirements.txt}, \texttt{package-lock.json}, \texttt{n8n/workflow.json}, \texttt{docker-compose.yml} y \texttt{settings.py}, y de los changes archivados, y de \texttt{git diff --stat cda7712 v1.2.11} (solo \texttt{docker-compose.yml} difiere, por la imagen derivada de N8N). La campaña complementaria usó \texttt{hybrid-v3} sobre un \emph{backend} posterior, con c-82 y c-162 activos; \emph{no registrado} señala lo que los artefactos no permiten recuperar.\par}
 \end{table}
 
 La estructura del repositorio separa el módulo de procesamiento (\texttt{App/Backend/}, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (\texttt{App/Frontend/}, React con TypeScript), la definición del flujo de orquestación (\texttt{n8n/workflow.json}), los artefactos de evaluación (\texttt{evaluation/}), el corpus pseudonimizado (\texttt{data/}), los scripts auxiliares (\texttt{scripts/}) y la documentación (\texttt{docs/}), junto con las especificaciones de los changes (\texttt{openspec/}) y los archivos de orquestación local \texttt{docker-compose.yml} y \texttt{Makefile}. El archivo \texttt{README.md} describe esta organización y reúne las instrucciones detalladas para el despliegue local en menos de 15 minutos, por lo que constituye el punto de entrada al código fuente disponible en el repositorio público \parencite{Gomez2026_repositorio}.
@@ -193,11 +195,11 @@ El prompt de la versión evaluada se ajustó de forma iterativa a partir de erro
 
 \subsection{Recomendaciones para futuras iteraciones}\label{subsec:anexo-recomendaciones-prompt}
 
-Ante una degradación de las métricas por cambios en el modelo, se recomienda ampliar los ejemplos por clase (partiendo del único ejemplo actual, hasta cuatro o cinco), agregar contraejemplos de incidentes limítrofes, especificar umbrales de confianza explícitos, incluir un diccionario de términos clave por categoría y, una vez acumulado un corpus del orden de 5.000 casos etiquetados (referencia indicativa de orden de magnitud, no derivada del corpus actual ni de un cálculo de potencia estadística), migrar a un modelo ajustado específicamente al dominio.
+Ante una degradación de las métricas por cambios en el modelo, se recomienda ampliar los ejemplos por clase (partiendo del único ejemplo actual, hasta cuatro o cinco), agregar contraejemplos de incidentes limítrofes, especificar umbrales de confianza explícitos, incluir un diccionario de términos clave por categoría y, una vez acumulado un corpus etiquetado del orden de magnitud indicado en la \autoref{subsec:implicancias-practicas}, migrar a un modelo ajustado específicamente al dominio.
 
 \section{Trazabilidad de las correcciones de los dictámenes}\label{sec:anexo-trazabilidad}
 
-Los dictámenes que motivan las correcciones de la tesis son autoevaluaciones de control de calidad interno frente a criterios de la CONEAU, esto es revisiones evaluativas previas a la defensa solicitadas por los propios autores y no una revisión por pares. Se elaboraron aplicando un perfil de evaluador con criterios de la CONEAU, versionado en \texttt{docs/Tesis/Correcciones/Prompt2.docx}, mediante un modelo de lenguaje; no los emitieron el jurado, la dirección, la cátedra ni la CONEAU, no constituyen una revisión por pares humana y no son vinculantes. La serie comprende cinco dictámenes fechados entre el 20 y el 28 de octubre de 2026, que se conservan en \texttt{auditorias/}; cada uno declara su alcance (lectura íntegra del manuscrito, recomputo de las cifras, verificación bibliográfica y cotejo con el repositorio). Este anexo traza los dos más recientes: el del 22 de octubre, sobre la versión \texttt{v1.1.0}, y el del 28 de octubre, sobre la \texttt{v1.2.5}. El registro acumulativo de las correcciones se conserva como artefacto versionado en \path{docs/Tesis/Correcciones/dictamen-correcciones.md} y vincula cada observación con el archivo y la línea corregidos.
+Los dictámenes que motivan las correcciones de la tesis son autoevaluaciones de control de calidad interno frente a criterios de la CONEAU, esto es revisiones evaluativas previas a la defensa solicitadas por los propios autores y no una revisión por pares. Se elaboraron aplicando un perfil de evaluador con criterios de la CONEAU, versionado en \texttt{docs/Tesis/Correcciones/Prompt2.docx}, mediante un modelo de lenguaje; no los emitieron el jurado, la dirección, la cátedra ni la CONEAU, no constituyen una revisión por pares humana y no son vinculantes. La serie comprende seis dictámenes fechados entre el 20 de octubre y el 8 de noviembre de 2026, que se conservan en \texttt{auditorias/}; cada uno declara su alcance (lectura íntegra del manuscrito, recomputo de las cifras, verificación bibliográfica y cotejo con el repositorio). Este anexo traza tres: el del 22 de octubre, sobre la versión \texttt{v1.1.0}, el del 28 de octubre, sobre la \texttt{v1.2.5}, y el del 8 de noviembre, sobre la \texttt{v1.2.10}. El registro acumulativo de las correcciones se conserva como artefacto versionado en \path{docs/Tesis/Correcciones/dictamen-correcciones.md} y vincula cada observación con el archivo y la línea corregidos.
 
 El dictamen del 22 de octubre de 2026, aplicable por igual a \texttt{v1.1.1}, formuló cinco observaciones de fondo (A1 a A5) y correcciones de consistencia (B4 a B16), atendidas mediante changes del repositorio; la \autoref{tab:anexo-trazabilidad} indica, para cada una, el change responsable y las secciones donde se la atendió. Cuando una recomendación se dividió en partes, figuran los changes que las atendieron, y los residuos que el dictamen siguiente volvió a señalar remiten a la fila que los atiende (\autoref{tab:anexo-trazabilidad-2810}) o figuran como pendientes.
 
@@ -207,7 +209,7 @@ El dictamen del 22 de octubre de 2026, aplicable por igual a \texttt{v1.1.1}, fo
 \caption{Recomendaciones del dictamen del 22 de octubre de 2026, change responsable y secciones donde se atendieron.}
 \label{tab:anexo-trazabilidad}
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.0cm} >{\raggedright\arraybackslash}p{3.3cm} >{\raggedright\arraybackslash}p{10.6cm}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.0cm} >{\raggedright\arraybackslash}p{1.6cm} >{\raggedright\arraybackslash}p{12.3cm}@{}}
 \toprule
 Rec. & Change & Secciones de la tesis \\
 \midrule
@@ -235,7 +237,7 @@ B16 & \texttt{c-139}, \texttt{c-141}, \texttt{c-163} & \autoref{sec:anexo-reposi
 {\footnotesize\textit{Fuente:} elaboración propia a partir de \path{docs/Tesis/Correcciones/dictamen-correcciones.md}.\par}
 \end{table}
 
-El dictamen del 28 de octubre de 2026, sobre la versión \texttt{v1.2.5}, formuló observaciones de método (A1 y A2), de coherencia entre figuras, tablas y texto (A3), de evidencia cualitativa (A4) y de residuos del proceso de corrección y consistencia interna (B5 a B8); la \autoref{tab:anexo-trazabilidad-2810} indica el change responsable y las secciones donde se las atendió. Las demás observaciones de ese dictamen se atienden en changes posteriores del repositorio, entre ellos \texttt{c-169}, que resuelve cuatro de los cinco límites estructurales que el dictamen consignó y declara el quinto ---la validación fuera de muestra--- como limitación negativa (la fila ``Lím.'' de la tabla).
+El dictamen del 28 de octubre de 2026, sobre la versión \texttt{v1.2.5}, formuló observaciones de método (A1 y A2), de coherencia entre figuras, tablas y texto (A3), de evidencia cualitativa (A4) y de residuos del proceso de corrección y consistencia interna (B5 a B8); la \autoref{tab:anexo-trazabilidad-2810} indica el change responsable y las secciones donde se las atendió. Las demás observaciones de ese dictamen se atienden en changes posteriores del repositorio, entre ellos \texttt{c-169}, que midió cuatro de los cinco límites estructurales que el dictamen consignó y declara el quinto ---la validación fuera de muestra--- como limitación negativa (la fila ``Lím.'' de la tabla); el dictamen del 8 de noviembre acotó después dos de esas mediciones (\autoref{tab:anexo-trazabilidad-0811}).
 
 \begin{table}[htbp]
 \small
@@ -243,7 +245,7 @@ El dictamen del 28 de octubre de 2026, sobre la versión \texttt{v1.2.5}, formul
 \caption{Recomendaciones del dictamen del 28 de octubre de 2026, change responsable y secciones donde se atendieron.}
 \label{tab:anexo-trazabilidad-2810}
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.0cm} >{\raggedright\arraybackslash}p{3.3cm} >{\raggedright\arraybackslash}p{10.6cm}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.0cm} >{\raggedright\arraybackslash}p{1.6cm} >{\raggedright\arraybackslash}p{12.3cm}@{}}
 \toprule
 Rec. & Change & Secciones de la tesis \\
 \midrule
@@ -255,7 +257,34 @@ B5 & \texttt{c-160} & \autoref{subsec:hipotesis-trabajo}, \autoref{subsec:subsis
 B6 & \texttt{c-160} & \autoref{sec:anexo-trazabilidad} \\
 B7 & \texttt{c-160} & Resumen y \emph{abstract}, \autoref{subsec:cumplimiento-objetivos}, \autoref{tab:cumplimiento-objetivos} \\
 B8 & \texttt{c-160} & \autoref{subsec:vision-general}, \autoref{subsec:human-in-the-loop}, \autoref{subsec:subsistema-clasificacion}, \autoref{subsec:construccion-flujo-n8n}, \autoref{subsec:consentimiento-derechos}, \autoref{subsec:sensibilidad-ajustes}, \autoref{subsec:calibracion-gate}, \autoref{subsec:anexo-parametros-config}, \autoref{sec:anexo-documentacion-operativa} \\
-Lím. & \texttt{c-169} & De los cinco límites estructurales que el dictamen consignó sin computarlos como incumplimiento ---la exactitud del brazo manual, la proporción de intervención humana, el efecto de orden, la validación fuera de muestra y el intervalo del kappa---, la campaña complementaria de medición resuelve cuatro (\autoref{subsec:resultados-campana-medicion}, \autoref{subsec:reduccion-intervencion}, \autoref{subsec:balance-neto}); el quinto, la validación fuera de muestra, permanece como limitación negativa declarada por ausencia de un corpus independiente y no se cierra (\autoref{subsec:limitaciones-estudio}); Resumen y \emph{abstract}; \autoref{sec:anexo-repositorio} (Tabla~\ref{tab:configuracion-evaluada-entregada}) \\
+Lím. & \texttt{c-169} & De los cinco límites estructurales que el dictamen consignó sin computarlos como incumplimiento, la campaña complementaria resuelve dos ---la exactitud del brazo manual y el intervalo del kappa--- (\autoref{subsec:resultados-campana-medicion}, \autoref{subsec:balance-neto}), deja no concluyente la proporción de intervención humana (\autoref{subsec:reduccion-intervencion}) y no resuelve el efecto de orden (\autoref{subsec:diseno-experimental}); el quinto, la validación fuera de muestra, permanece como limitación negativa declarada por ausencia de un corpus independiente y no se cierra (\autoref{subsec:limitaciones-estudio}); Resumen y \emph{abstract}; \autoref{sec:anexo-repositorio} (Tabla~\ref{tab:configuracion-evaluada-entregada}) \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+{\footnotesize\textit{Fuente:} elaboración propia a partir de \path{docs/Tesis/Correcciones/dictamen-correcciones.md}.\par}
+\end{table}
+
+El dictamen del 8 de noviembre de 2026, sobre la versión \texttt{v1.2.10}, formuló cinco observaciones de fondo (A1 a A5) y de consistencia; la \autoref{tab:anexo-trazabilidad-0811} indica las secciones que el change \texttt{c-187} corrigió.
+
+\begin{table}[htbp]
+\footnotesize
+\centering
+\caption{Recomendaciones del dictamen del 8 de noviembre de 2026, secciones donde se atendieron (change responsable: \texttt{c-187}, salvo donde se indica).}
+\label{tab:anexo-trazabilidad-0811}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.9cm} >{\raggedright\arraybackslash}p{12.3cm}@{}}
+\toprule
+Rec. & Secciones de la tesis \\
+\midrule
+A1 & \autoref{subsec:reduccion-intervencion}, \autoref{subsec:hipotesis-trabajo}, \autoref{subsec:interpretacion-resultados}, \autoref{tab:cumplimiento-objetivos}, \autoref{subsec:medicion-intervencion}, Resumen y \emph{abstract} \\
+A2 & \autoref{subsec:diseno-experimental}, \autoref{subsec:protocolo-pruebas}, \autoref{subsec:amenazas-validez}, \autoref{subsec:resultados-campana-medicion}, \autoref{subsec:interpretacion-resultados} \\
+A3 & \autoref{subsec:poblacion-muestra-corpus}, \autoref{subsec:amenazas-validez}, \autoref{subsec:limitaciones-estudio}, \autoref{subsec:aportes-generalizacion}, Resumen y \emph{abstract} \\
+A4 & \autoref{subsec:resultados-campana-medicion}, \autoref{subsec:balance-neto} \\
+A5 & \autoref{sec:anexo-repositorio}, \autoref{tab:configuracion-evaluada-entregada}, \autoref{subsec:entorno-despliegue}, portada \\
+B1, B2 & \autoref{subsec:resultados-campana-medicion}, \autoref{subsec:reduccion-intervencion}, párrafo inicial de la \autoref{sec:resultados} \\
+B3 & Figuras~\ref{fig:secuencia} y~\ref{fig:componentes}, \autoref{tab:entidades}, \autoref{tab:configuracion-evaluada-entregada} \\
+B6 & \autoref{subsec:aportes-generalizacion}, \autoref{subsec:limitaciones-estudio}, \autoref{subsec:medicion-intervencion}, Resumen y \emph{abstract} \\
+B4, B5, B7, C1 a C5 & Change posterior; sin atender en este change \\
 \bottomrule
 \end{tabular}
 \par\smallskip

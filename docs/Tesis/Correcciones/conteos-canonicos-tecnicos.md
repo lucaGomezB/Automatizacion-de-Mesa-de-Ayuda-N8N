@@ -276,6 +276,29 @@ segun la regla del design de c-169 ("`classifier_version` debe coincidir con la 
 si no coincide, las metricas de la campana se rotulan como de otra configuracion del
 clasificador").
 
+### 7.2 Tabla 19 completada por c-187 (dictamen CONEAU 2026-11-08, A1 y A5)
+
+c-187 reemplaza las celdas `---` de la columna (ahora "Campana complementaria") con valores
+verificados por diferencia de commits, y agrega las filas "Instrumentacion de intervencion",
+"Imagen de N8N" y "Revision del repositorio". La campana **no corrio sobre un unico commit**:
+correo y web desde `cda7712` (5-11-2026 20:45 -03; sidecars 5-11 23:47 UTC a 6-11 17:55 UTC);
+telefonia el 6-11 (17:33 a 19:45 -03) tras c-174 (`e7dfd17`) y c-175 (`fce5ec6`); intervenciones
+(`validado_en`) del 7-11 08:47 al 8-11 16:55 -03, mientras se confirmaban c-177 a c-183.
+
+| Clave | Evaluada (`d6bb474`) | Entregada | Campana complementaria | Comando de verificacion |
+|---|---|---|---|---|
+| FastAPI, Uvicorn, SQLAlchemy, `google-genai`, pytest, React, flujo N8N (32 nodos), reintentos | ver 7 | ver 7 | como la entregada | `git diff --stat cda7712 v1.2.10 -- App/Backend/requirements.txt App/Frontend/package-lock.json n8n/workflow.json App/Backend/app/constants.py App/Backend/app/config/settings.py` (sin diferencias); `git diff --stat cda7712 fce5ec6 -- App/Backend/requirements.txt n8n/workflow.json docker-compose.yml` (sin diferencias) |
+| Revision por reportante no identificado (c-82) | No | Si | Si | `git show cda7712:App/Backend/app/services/incidente_service.py \| grep -n "reportante_empleado_id is None"` |
+| Propagacion del contacto (c-162, 29-10-2026, `337a8af`) | No | Si | Si | `git show cda7712:n8n/workflow.json \| grep -c reportante_email` |
+| Instrumentacion de intervencion (c-165) | No | Si | Si (parte de las de `O1` con un frontend previo a c-165) | `evaluation/data/campana/README.md:225` |
+| Imagen de N8N | `n8nio/n8n:2.11.2` | derivada de `n8nio/n8n:2.11.2` (`docker/n8n/Dockerfile` + parche IMAP, c-182) | `n8nio/n8n:2.11.2` (la derivada es posterior: `000abeb`, 7-11-2026 18:18 -03) | `git show cda7712:docker-compose.yml \| grep -n "n8nio/n8n"`; `git show v1.2.10:docker/n8n/Dockerfile \| grep -n "^FROM"`; `git show 000abeb --stat` |
+| Prueba de humo E2E y TLS (c-140) | No | Si | No registrado | no recuperable de los sidecars |
+| `classifier_version` | `hybrid-v3` | `hybrid-v3` | `hybrid-v3` | ver 7.1 |
+
+Unica diferencia de `docker-compose.yml` entre `cda7712` y `v1.2.10`: la imagen derivada de N8N
+(`git diff cda7712 v1.2.10 -- docker-compose.yml`). El commit de generacion de la cache
+in-sample sigue sin recuperarse (README de la campana, linea 191).
+
 ---
 
 

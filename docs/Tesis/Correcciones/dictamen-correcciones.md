@@ -3866,3 +3866,117 @@ párrafo de viabilidad ES 34 (tope 34) y EN 31 (tope 34).
   commit en este apply.
 - **`v1.2.9` queda superada** (inmutable, en `bda6903e65ab40b073daf4bd001eaa9ff85e42cc`).
 
+
+---
+
+## Dictamen v10 / v1.2.10 (2026-11-08) - c-187
+
+Atención de las observaciones de fondo A1-A5 y de las de consistencia B1, B2, B3 y B6 del dictamen
+CONEAU del 2026-11-08 sobre `v1.2.10` (`auditorias/Dictamen_Tesis_v10_v1.2.10_CONEAU_2026-11-08.md`).
+Change `c-187-atender-el-dictamen-coneau-v1-2-10` (docs-only; gobernanza LOW). No se modificó
+`App/`, `n8n/`, `evaluation/` ni `analisis/resultados.json`.
+
+### Verificación del mecanismo de derivación (D0; solo lectura, MEDIDA 2026-11-08)
+
+**Veredicto: mecanismo c-82 (reportante no identificado) CONFIRMADO.**
+
+- **Código.** `App/Backend/app/services/incidente_service.py:411-420`: `requiere_revision =
+  bool(result.requiere_revision_humana) or (reportante_empleado_id is None)` (VIS-005, c-82, D10).
+  `App/Backend/app/routes/incidentes.py:207-241` (`resolver_reportante`, VIS-004): telefonía
+  resuelve por `reportante_telefono`, correo por `reportante_email` y cualquier otro canal
+  (formulario web) por la cuenta autenticada (`resolver_por_usuario(current_user.id)`,
+  `contact_resolution_service.py:104-117`); el reportante es NULL ante NO ENCONTRADO, AMBIGUO o
+  contacto ausente. El flujo N8N propaga el contacto desde c-162 (`n8n/workflow.json`,
+  `reportante_email` solo en correo, `reportante_telefono` solo en telefonía; el web queda fuera).
+- **Otras causas de `requiere_revision_humana`.** Solo la etapa Gemini (`gemini_classifier.py:530`,
+  confianza < 0,70), la segunda línea de defensa de `hybrid.py:252-256` y la etapa `fallback`
+  (`hybrid.py:226/244`, confianza 0,0). La etapa determinística fija `False`
+  (`deterministic.py:249/294`). En la caché `predicciones_hybrid-v3_2026-10-07.json`: 0 de 200 casos
+  con Gemini < 0,70; entre los 147 intervenidos, 92 determinísticos y 55 Gemini con confianza
+  mínima 0,85. Ninguna derivación por confianza. Los 53 casos web con `revision = false` muestran
+  además que el pipeline no cayó en `fallback` en ese brazo.
+- **Datos (script descartable, sin escribir en el repo).** `intervenciones.csv`: 147 filas, todas
+  `origen_intervencion = gate` (el backend lo deriva del flag del log: `clasificacion_service.py:282`),
+  122 `cambio_sector = false` y 25 `true`. Cruce por `case_id` con los ocho `sidecar_*.json`
+  (200 casos): correo 66/66 con `revision = true`; telefonía 81/81 con `revision` nulo (el alta por
+  llamada no devuelve el indicador al sidecar; el flag está en el log, porque la intervención es
+  `gate`); web 0/53 intervenidos, los 53 con `revision = false`. Es decir, todo caso de correo y de
+  telefonía fue derivado y ningún caso web lo fue.
+- **Formulario web.** El reportante se resuelve por la cuenta autenticada que invoca la API. Que la
+  cuenta de la ingesta tuviera empleado vinculado explica 0/53; el repositorio no registra qué
+  cuenta se usó, de modo que esa parte es inferencia del camino de código, coherente con el dato.
+- **Directorio.** `App/Backend/scripts/seed_directorio.py` siembra solo cuatro personas sintéticas
+  (`@example.test`, teléfonos `+54911000000xx`). `corpus-RXXX@corpus.local` es el dominio por
+  defecto del harness de ingesta (`INGEST_CORPUS_MAIL_DOMAIN`) y el número del softphone sale de un
+  `softphone.env` ignorado; ningún artefacto documenta la carga de esos contactos en el directorio.
+  Consistente con 66/66 y 81/81.
+- **Intervalo de Wilson de 25/200** con `evaluation.metrics.intervalo_wilson`: [0,0861; 0,1780],
+  es decir [8,6 %; 17,8 %] (coincide con lo esperado). Tasa bruta 147/200: [0,6698; 0,7913], es
+  decir [67,0 %; 79,1 %].
+
+### Rango de revisiones de la campaña (para la Tabla 19)
+
+La campaña NO corrió sobre un único commit. Fechas de `git log` y de los sidecars (hora -03):
+
+| Tramo | Fechas | Revisión / rango |
+|---|---|---|
+| Brazo automatizado, correo y web (sidecars `m*-automatizado-t*`) | 5-11 20:47 a 6-11 14:55 (UTC 5-11 23:47 a 6-11 17:55) | desde `cda7712` (5-11 20:45, c-172), sidecars versionados en `9109a03` |
+| Brazo automatizado, telefonía (sidecars `*-tel`) | 6-11 17:33 a 19:45 (UTC 20:33 a 22:45) | tras c-174 (`e7dfd17`) y c-175 (`fce5ec6`, 6-11 17:03); sidecars en `1d3ce6d` (6-11 19:49) |
+| Intervenciones humanas (`validado_en`) | 7-11 08:47 a 8-11 16:55 (UTC 7-11 11:47 a 8-11 19:55) | mientras se confirmaban c-177 a c-183 (`1cc0edb` ... `baeef8e`); parte de las de `O1` con una imagen del frontend previa a c-165 (README, export) |
+
+Imagen de N8N durante los tramos automatizados: la oficial `n8nio/n8n:2.11.2`; la imagen derivada
+(c-182, `000abeb`, 7-11 18:18 -03) es posterior a todas las corridas automatizadas. Precisión:
+c-82 está versionado desde el rediseño del 13-10 (`17a9495`), c-162 desde el 29-10 (`337a8af`) y
+c-165 y c-166 desde el 30-10, todos antes de la campaña. El rango del
+backend/clasificador es "no registrado en los sidecars"; solo se acota con `git log`.
+
+Nota: el change y su `tasks.md` decían "intervenciones validadas el 7-11"; `validado_en` llega hasta
+el 8-11 19:55 UTC (16:55 -03), previo al commit `baeef8e` (17:03 -03).
+
+### Decisiones del usuario (D7 y D2)
+
+- **D7 (A5), opción A.** En el commit etiquetado el Anexo B no imprime el hash de otra release: dice
+  que el hash de `v1.2.11` se consigna en el commit que sigue al tag y da el procedimiento de
+  verificación (`git rev-list -n1 v1.2.11`; `git log -1 --format=%H v1.2.11^{commit}`;
+  `git diff --stat v1.2.11 HEAD -- "docs/Tesis/v10 (IA)/paper/sections"`). El commit del hash
+  (orquestador) reemplaza esa oración (`12-anexos.tex`, párrafo que empieza "El PDF compilado en el
+  propio tag no imprime ese hash") por "El hash completo de ese commit es ...". Sin cambios de scripts.
+  Portada (`00-portada.tex`): "8 de noviembre de 2026" (fecha de la release `v1.2.11`; el orquestador
+  la ajusta si la release se demora).
+- **D2 (A1), grado del OE4 = "Alcanzado parcialmente"** en la Tabla 18, limitado a tiempo y exactitud
+  del brazo manual; la sub-hipótesis de intervención se informa "no concluyente", no refutada.
+
+### Matriz recomendación -> ubicación -> corrección
+
+| Rec. | Ubicación (archivo, sección compilada) | Corrección |
+|---|---|---|
+| A1 | `07-resultados.tex` 8.3 (`subsec:reduccion-intervencion`, título nuevo "Derivación e intervención humana en la campaña complementaria") y 8.7; `01-introduccion.tex` 1.4; `00-resumen.tex`; `08-discusion.tex` 9.1; `09-conclusiones.tex` 10.1 y Tabla 18; `10-recomendaciones.tex` 11.1 y 11.3 | Derivación por confianza (0 casos) separada de derivación por reportante (147: 66/66 correo, 81/81 telefonía, 0/53 web); la tasa bruta 147/200 se rotula como tal; la sub-hipótesis 2 queda no concluyente con 25/200 = 12,5 % [8,6 %; 17,8 %]; el 65,5 % se rotula como cobertura de la etapa determinística; OE4 "Alcanzado parcialmente". |
+| A2 | `04-marco-metodologico.tex` 4.2, 4.4, 4.5, 4.6, 4.7; `07-resultados.tex` 8.7; `08-discusion.tex` 9.1 | Orden ejecutado (manual 5-11 09:20-18:49 -03; automatizado 5-11 23:47 UTC a 6-11 22:45 UTC; sin turno 1 a turno 2): contrabalanceo planificado, no ejecutado; efecto de orden como amenaza no resuelta; se retiran del cuerpo los p del contraste de condición (quedan en el memo); se conserva el Spearman. |
+| A3 | `04-marco-metodologico.tex` 4.4 y 4.7; `08-discusion.tex` 9.4 (Sexto, nuevo Octavo); `09-conclusiones.tex` 10.2; `00-resumen.tex` | Un analista original (`T1`) es autor; ambos operaron el brazo manual de 2026-10; kappa 0,87 (sin intervalo ni tabla) frente a 0,5569 [0,4725; 0,6413]; consenso `E1 = E2` = referencia original en 116/138 (84,1 %). |
+| A4 | `07-resultados.tex` 8.7; `08-discusion.tex` 9.6; `numeros-canonicos.md` | 0,8278 = 125/151 derivaciones (80 de `O1`, 71 de `O2`) sobre 138 casos únicos; laxa 0,8609 = 130/151; unidades declaradas frente al 110/138 automatizado. |
+| A5 | `12-anexos.tex` Anexo B y Tabla 19; `06-implementacion.tex` 6.1; `00-portada.tex`; `conteos-canonicos-tecnicos.md` 7.2 | Patrón de release (D7-A), imagen derivada de N8N (c-182), columna "Campana complementaria" completada, portada 8-11-2026. |
+| B1 | `07-resultados.tex` 8.7 | 0,7971 (110/138) proviene de `predicciones_in_sample.json`, no de la salida en vivo (difiere en 13 casos: 7/119 escritos, 6/81 telefónicos); el McNemar usa la caché. |
+| B2 | `07-resultados.tex` párrafo inicial del capítulo 8, 8.3, 8.7 | "del 2 y del 5 y 6 de octubre"; 65,5 % rotulado; denominador de la proporción de tiempo = 191 casos con dato completo (incluidos los 53 sin intervención) más duración; "únicamente" retirado. |
+| B3 | `05-arquitectura.tex` pie de la Tabla 5; `12-anexos.tex` leyendas de las Figuras 3 y 4, Anexo B y Tabla 19 | "campaña de medición" -> "campaña 2026-10" / "campaña complementaria". Los rótulos están en las leyendas, no dentro de los PNG: sin regenerar figuras. |
+| B6 | `09-conclusiones.tex` 10.2; `08-discusion.tex` 9.4; `10-recomendaciones.tex` 11.2; `12-anexos.tex` | "dentro de la muestra"; "5.000 casos" una sola vez (9.5), con remisión en 11.2 y en el Anexo; "cota pesimista" como interpretación; kappa moderado y efecto de posición en el capítulo 10. |
+| B4, B5, B7, C1-C5 | - | Remitidas a un change posterior (Anexo I, última fila). |
+
+Omisión deliberada: el efecto de posición no se agregó al resumen ni al abstract por el tope de 250
+palabras; figura en 8.7, 4.7, 9.1 y el capítulo 10.
+
+Incoherencias del dictamen o del design halladas contra el repositorio: (1) las intervenciones se
+validaron del 7-11 al 8-11 (no solo el 7-11); (2) el web no "transporta reportante" pero se resuelve
+por la cuenta autenticada (0/53), de modo que no deriva; (3) en telefonía el sidecar no trae
+`revision` (nulo), el indicador está en el log; (4) la Tabla 19 de v1.2.10 tenía "Sin cambios: N8N
+2.11.2", que era falso para la entregada (imagen derivada).
+
+### Registro y verificación (apply de c-187, 2026-11-08)
+
+- Compilación y recorte (tareas 9.1 y 9.2): `texlive-thesis` (`MSYS_NO_PATHCONV=1 docker run ... latexmk main.tex`), 0 errores (`grep -c "^!" main.log`), 0 `undefined`, 0 `multiply defined`, `main.blg` sin WARN/ERROR, 0 `??` en `pdftotext`, Overfull máximo 8,2 pt. La primera compilación dejó **121 páginas** (línea base 118); se recortó prosa redundante en 4.2, 4.5, 4.7, 8.3, 8.7, 9.1, 9.3, 9.5, 11.3 y el Anexo B, y se compactaron la Tabla 19, la tercera tabla de trazabilidad (`tab:anexo-trazabilidad-0811`) y el ancho de columnas de la del 28 de octubre; tres iteraciones de compilación (121 -> 120 -> 120 -> **118 páginas**, `abspage@last` = 118; referencias en la 102 y anexos en la 106, como en la línea base). Las `rg` de los grupos 2 a 7 dan los mismos conteos antes y después del recorte.
+- Nota de proceso: la compilación anterior había fallado por filas de tabla terminadas en `\` en lugar de `\\` en `12-anexos.tex` (líneas 69-71 y 277-287), corregidas por el sub-agente de compilación.
+- Palabras de prosa (regla de c-106: math en línea como una palabra, `~` une, sin palabras clave): resumen **237** y abstract **237** (tope 250); con todos los tokens de `pdftotext`, ambos quedan en 248-251 (antes 258 / 254), conservando las dos lecturas de la sub-hipótesis 2 y los dos kappa. Párrafo de viabilidad de `00-resumen.tex`: sin cambios.
+- `openspec validate c-187-atender-el-dictamen-coneau-v1-2-10 --strict --no-interactive`: **valid**.
+- Pendientes del orquestador: bump `v1.2.10` -> `v1.2.11` (14 ocurrencias en `05`, `06`, `11` y `12-anexos.tex`
+  y la entrada `Gomez2026_repositorio`), renders, tag, commit del hash (reemplazar el párrafo que
+  empieza "El PDF compilado en el propio tag no imprime ese hash"), `CHANGES.md`, `engram sync` y PR.
+
