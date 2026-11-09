@@ -765,7 +765,7 @@ discordantes excluidos).**
 |---|---|---|
 | O1 estricta `0,8875` (71/80), IC Wilson `[0,7998; 0,9397]`; laxa `0,9125` (73/80) | `analisis/resultados.json:786-799` | vigente (nuevo) |
 | O2 estricta `0,7606` (54/71), IC Wilson `[0,6496; 0,8448]`; laxa `0,8028` (57/71) | `analisis/resultados.json:801-814` | vigente (nuevo) |
-| Agregada estricta `0,8278` (125/138), IC bootstrap `[0,7647; 0,8882]`; laxa `0,8609` (130/138), IC `[0,8013; 0,9184]` | `analisis/resultados.json:21-39` | vigente (nuevo) |
+| Agregada estricta `0,8278` (125/151 derivaciones de operador, 80 de O1 y 71 de O2, sobre 138 casos únicos, 13 con doble cobertura), IC bootstrap por caso `[0,7647; 0,8882]`; laxa `0,8609` (130/151), IC `[0,8013; 0,9184]` | `analisis/resultados.json:21-39` | vigente (nuevo; unidad corregida en c-187, valores intactos) |
 | McNemar del brazo manual frente al automatizado: O1 `p` exacto `0,2668`; O2 `p` exacto `1,0000` (no significativos) | `analisis/resultados.json:74-89,414-428` | vigente (nuevo) |
 
 **(a-bis) Exactitud de v9 contra la referencia nueva (entrada propia; no reemplaza
@@ -787,11 +787,18 @@ cambio.
 | `e_man = 1 − 0,8278 = 0,1722`; intervalo del IC de la exactitud estricta `[0,1118; 0,2353]` | derivado de `analisis/resultados.json:26,28-31` (fórmula de la Sección 3.11) | condicional |
 | `a* = 68,2 %` (5 min), `75,5 %` (10 min), `77,9 %` (15 min) | recálculo con `Δt = 43,82 s` (Sección 3.1) y `a* = 1 − e_man − Δt/c` | condicional |
 
+Rótulo de la unidad (c-187, dictamen CONEAU 2026-11-08, A4): el denominador de la agregada
+es por **derivación** (151 = 80 + 71), no por caso; los 138 son los casos únicos sobre los que
+se agrupa el bootstrap. `analisis/resultados.json` arrastra el rótulo "138" para esas dos
+exactitudes; es salida regenerable del análisis y **no se edita**. La exactitud del
+automatizado (`110/138`) es por caso: las unidades difieren y el contraste formal es el
+McNemar por operador. `e_man = 0,1722` y los `a*` no cambian (definición por derivación).
+
 Derivada, no medida: el costo `c` sigue siendo estimación propia (10 a 15 min) porque
 la salida de c-167 no cronometra reasignaciones; por eso el estado es `condicional` al
 costo. Reversible si una réplica mide `c` (ver Sección 3.11).
 
-**(b) Intervención humana de la campaña (entrada nueva; contrastada: refutada).**
+**(b) Intervención humana de la campaña (entrada nueva; tasa bruta no compatible con la cota; ver (b'') para el veredicto de la sub-hipótesis).**
 
 | Valor | Procedencia | Estado |
 |---|---|---|
@@ -805,6 +812,25 @@ superior de Wilson < `0,15`; refutada si la estimación ≥ `0,15`; no concluyen
 estimación < `0,15` ≤ límite superior); aquí la estimación (`0,735`) supera la cota,
 de modo que la segunda sub-hipótesis queda **refutada**. La tasa medida **no**
 reintroduce el `9,5 %` (`retirado`, Sección 3.4).
+
+Nota de c-187 (dictamen CONEAU 2026-11-08, A1): el veredicto "refutada" es el del script
+sobre la **tasa bruta** (cualquier intervención). La tesis lo rotula como tasa bruta no
+compatible con la cota y no como estado de la sub-hipótesis; el estado es **no concluyente**
+(ver (b'')). La tasa bruta `0,735` y su intervalo no cambian.
+
+**(b'') Intervenciones que cambiaron la derivación y mecanismo de derivación (entrada nueva, c-187; no concluyente).**
+
+| Valor | Procedencia | Estado |
+|---|---|---|
+| Proporción de intervenciones con cambio de derivación `25/200 = 0,125`, IC Wilson al 95 % `[0,086; 0,178]` (`[0,0861; 0,1780]` recomputado con `evaluation.metrics.intervalo_wilson`) | `evaluation/data/campana/intervenciones.csv` (`cambio_sector = true`) | vigente (nuevo) |
+| Veredicto frente a `0,15`: estimación `0,125 < 0,15` y límite superior `0,178 ≥ 0,15` → **no concluyente** (regla de tres vías de la Sección 3.12) | derivado | vigente (nuevo) |
+| Desglose de las 147 intervenciones por canal: correo `66/66` con `revision = true`; telefonía `81/81` (`revision` nulo en el sidecar; indicador en el log, origen `gate`); web `0/53` (`revision = false` en los 53) | `evaluation/data/campana/sidecar_*.json` cruzado por `case_id` con `intervenciones.csv` | vigente (nuevo) |
+| Mecanismo: derivación por reportante no identificado (c-82, VIS-005), no por confianza (0 casos con Gemini < 0,70; entre los 147: 92 determinísticos y 55 Gemini con confianza ≥ 0,85) | `App/Backend/app/services/incidente_service.py:411-420`; `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` | vigente (nuevo) |
+
+La tasa bruta `0,735` mide la configuración de la prueba (regla del reportante); la variable
+de la hipótesis son las intervenciones que cambian la derivación. Una medición válida exige
+una corrida con reportantes identificados. Verificación de c-187 en
+`dictamen-correcciones.md` (sección c-187).
 
 **(b') Proporción de tiempo de la campaña (entrada nueva; estimable).**
 
@@ -823,6 +849,11 @@ duración de la intervención, no el tiempo total de atención
 |---|---|---|
 | Condición (entre grupos independientes): O1 `p = 0,7545`, `r = 0,035`; O2 `p = 0,2988`, `r = −0,1157`; MDE `d = 0,5771` (`n_a = 50`, `n_b = 60`) | `analisis/resultados.json:1023-1035,1195-1207` | vigente (nuevo) |
 | Posición (Spearman): O1 `rho = −0,0628`, `p = 0,5147`; O2 `rho = −0,3604`, `p = 0,00011` (significativo); MDE `rho = 0,2834` | `analisis/resultados.json:1154-1163,1326-1335` | vigente (nuevo) |
+
+Nota de c-187 (A2): el brazo manual precedió al automatizado en los 200 casos; el contraste
+de condición compara dos subconjuntos con la misma condición en el mismo orden y **no estima
+el efecto de orden**; la tesis ya no lo cita en el cuerpo (los valores se conservan aquí).
+Solo el efecto de posición es evidencia (Spearman).
 
 Nota de lectura: un resultado no significativo no es ausencia de efecto; solo
 descarta efectos mayores que el MDE de cada contraste
