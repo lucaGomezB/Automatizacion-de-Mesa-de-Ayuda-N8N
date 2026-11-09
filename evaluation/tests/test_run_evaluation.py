@@ -1753,7 +1753,12 @@ async def test_c134_solo_tiempos_con_un_tiempo_distinto_cambia_solo_el_bloque(
     corte = original.index("## Tiempos")
     assert nuevo[:corte] == original[:corte]
     assert nuevo[corte:] != original[corte:]
-    assert "999" not in nuevo[:corte]
+    # La cabecera lleva la marca de generación con microsegundos (p. ej.
+    # "21.437999+00:00"); se la quita para que el chequeo no dependa del reloj.
+    import re
+
+    sin_marcas = re.sub(r"\d{4}-\d{2}-\d{2}[T ][0-9:.]+(?:[+-]\d{2}:\d{2}|Z)?", "", nuevo[:corte])
+    assert "999" not in sin_marcas
     assert nuevo.endswith("_Generado automáticamente por `evaluation/run_evaluation.py`_")
 
 
