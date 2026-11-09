@@ -925,13 +925,16 @@ denominador. Reproducción: script descartable (design D0 de c-190) que lee `int
 
 | Valor | Procedencia | Estado |
 |---|---|---|
-| `0,2834` con `n = 110` (`n − 3 = 107`) y `ARE = 0,864`: `tanh((z0,975 + z0,80)/sqrt(107 · 0,864))` | `evaluation/campana.py:1593` | vigente (rectificado en c-190) |
-| `0,2644` con la fórmula sin la corrección ARE | fórmula documentada del código, sin ARE | referencial |
+| `0,276` con `n = 110` (`n − 3 = 107`) y la eficiencia de Spearman frente a Pearson bajo normalidad (`9/pi^2 ≈ 0,912`): `tanh((z0,975 + z0,80)/sqrt(107 · 0,912))` | corrección de c-192 (la ARE del código es la de Wilcoxon) | vigente |
+| `0,2834` con `ARE = 0,864` (cota de Wilcoxon): `tanh((z0,975 + z0,80)/sqrt(107 · 0,864))` | `evaluation/campana.py:1593` (`ARE_WILCOXON_MINIMA`) | superado por c-192 |
+| `0,2644` sin corrección por eficiencia | fórmula sin ARE | referencial |
 
-El valor de `analisis/resultados.json:1154-1163,1326-1335` es `0,2834`; el `0,264` proviene de
-omitir la corrección por eficiencia relativa (`ARE_WILCOXON_MINIMA = 0,864`). c-190 declara
-`n = 110` y la fórmula completa en 8.7 (`07-resultados.tex`). No se edita
-`analisis/resultados.json`.
+El valor de `analisis/resultados.json:1154-1163,1326-1335` es `0,2834`; c-192 lo corrige a
+`0,276` porque el `0,864` es la cota de Hodges y Lehmann para la prueba de Wilcoxon frente a la
+*t*, que no corresponde a la correlación de Spearman: la eficiencia de Spearman frente a Pearson
+bajo normalidad es `9/pi^2 ≈ 0,912`. Sin corrección por eficiencia el valor sería `0,2644`. No
+se edita `analisis/resultados.json`; la discrepancia queda declarada. c-192 declara `n = 110` y
+la fórmula en 8.7 (`07-resultados.tex`).
 
 **(a) Canal telefónico y modelo de transcripción (B1).**
 

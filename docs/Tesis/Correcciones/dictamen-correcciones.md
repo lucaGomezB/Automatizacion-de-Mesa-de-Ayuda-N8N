@@ -2713,7 +2713,7 @@ Pendientes residuales: (1) la tarea 6.1 de c-146 sigue bloqueada por el acceso i
 | B14 | Revision ortotipografica: titulos acentuados de indices y bibliografia | c-137 | `docs/Tesis/v10 (IA)/paper/main.tex:79` | - | `Referencias bibliográficas` | cerrada |
 | B15 | Normas y metodos estadisticos con entrada bibliografica (ISO/IEC 27001:2022) | c-139 | `docs/Tesis/v10 (IA)/paper/sections/11-aspectos-legales.tex:42` | `subsec:cumplimiento-marco` | `ISO27001_2022` | cerrada |
 | B16a | Metadatos bibliograficos (Jurafsky y Martin: edicion 2026, URL y fecha de consulta) | c-139 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:108` | - | `@unpublished{Jurafsky2023_speech_language` | cerrada |
-| B16b | Version de Gomez2026_repositorio alineada con la release (1.2.0) | c-141 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:894` | - | `Versi{\'o}n 1.2.` | Aplicado en C1 (tarea 5.1, 2026-10-26); verificado por el script |
+| B16b | Version de Gomez2026_repositorio alineada con la release (1.2.0) | c-141 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:895` | - | `Versi{\'o}n 1.2.` | Aplicado en C1 (tarea 5.1, 2026-10-26); verificado por el script |
 | Criterio 5 (residual) | TLS no verificado e invocacion sincronica declarados como limite (c-140 excluido provisionalmente) | c-140 / limitacion declarada | `docs/Tesis/v10 (IA)/paper/sections/09-conclusiones.tex:23` | `tab:cumplimiento-objetivos` | `TLS no verificado` | SUPERADA por c-160 (filas B7a y B7b: TLS verificado despues de la campaña, en el despliegue de referencia) |
 | B11 | Aprendizaje activo: seleccion por senales independientes y confianza solo tras recalibracion | c-136 | `docs/Tesis/v10 (IA)/paper/sections/10-recomendaciones.tex:38` | `subsec:aprendizaje-activo` | `label{subsec:aprendizaje-activo}` | cerrada |
 | B12 | Contraste direccional: p unilateral global junto al bilateral de los tiempos | c-134 | `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex:75` | `subsec:analisis-estadistico` | `alternative=greater` | cerrada |
@@ -4101,7 +4101,7 @@ como inferencia propia (si alguien lo consulta, citar la página).
 | C4 | EMNLP con el anio en la lista de referencias | c-188 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:313` | - | `Processing (EMNLP 2025)}` | cerrada |
 | C4 | PMLR impresas como Proceedings of Machine Learning Research | c-188 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:178` | - | `journal = {Proceedings of Machine Learning Research},` | cerrada |
 | C4 | Mosqueira-Rey: A state of the art | c-188 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:476` | - | `machine learning: {A} state of the art` | cerrada |
-| C4 | Apellido Gomez como la portada | c-188 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:893` | - | `Gomez, Luca and Bustos` | cerrada |
+| C4 | Apellido Gomez como la portada | c-188 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:894` | - | `Gomez, Luca and Bustos` | cerrada |
 | C5 | Glosario: CONEAU agregada | c-188 | `00-glosario.tex:37` | - | `textbf{CONEAU}` | cerrada |
 | C5 | Glosario: NLBSE, PABAK, RGPD, UTC y GPT agregadas | c-188 | `00-glosario.tex:32` | - | `textbf{PABAK}` | cerrada |
 | Item 36 | Cronograma: tablas primarias hasta el 2026-11-08 | c-188 | `docs/diagrams/cronograma.md:74` | - | `entre el 2026-11-04 y el 2026-11-08` | cerrada |
@@ -4207,9 +4207,9 @@ de los residuos sin recomendación propia (grupo 10).
 | A2 | Enmascaramiento opero a lo sumo para el operador externo | c-190 | `04-marco-metodologico.tex:16` | `subsec:diseno-experimental` | `para él no hubo enmascaramiento` | cerrada |
 | A3 | Nota de la Tabla 19 acotada a los pines | c-190 | `12-anexos.tex:81` | - | `no cambian \texttt{requirements.txt}` | cerrada |
 | B1 | Twilio graba y el backend transcribe con la Gemini API | c-190 | `05-arquitectura.tex:50` | - | `Twilio graba la llamada y notifica la grabación al backend` | cerrada |
-| B2 | MDE del Spearman con n = 110 y ARE = 0,864 | c-190 | `07-resultados.tex:253` | - | `con un efecto mínimo detectable de $\rho = 0,2834$` | cerrada |
+| B2 | MDE del Spearman con n = 110 y ARE = 0,864 | c-190 | `07-resultados.tex:253` | - | `con un efecto mínimo detectable de $\rho = 0,276$` | SUPERADA por c-192 |
 | B3 | 4.5 matizada: regla del reportante activa y 13 diferencias con la cache | c-190 | `04-marco-metodologico.tex:65` | - | `con la regla del reportante activa y una salida en vivo que difiere de la caché en 13 casos` | cerrada |
-| B4 | 1.6 coherente con 4.4 y 9.3 | c-190 | `01-introduccion.tex:66` | - | `la validación es dentro de la muestra, con un doble etiquetado de acuerdo moderado` | cerrada |
+| B4 | 1.6 coherente con 4.4 y 9.3 | c-190 | `01-introduccion.tex:66` | - | `el acuerdo entre los dos analistas originales, uno de ellos autor, fue de` | SUPERADA por c-192 |
 | C1 | "ocho limitaciones" en 9.3 | c-190 | `08-discusion.tex:42` | `subsec:limitaciones-estudio` | `El estudio presenta ocho limitaciones` | cerrada |
 | C2 | Zanzotto reformulado como inferencia de los autores | c-190 | `02-marco-teorico.tex:32` | - | `los autores de esta tesis infieren que el diseño debe reservar a la persona` | cerrada |
 | 1 | inv. 1: sub-hipotesis 2 refutada sobre los casos revisados | c-190 | `07-resultados.tex:154` | - | `la sub-hipótesis resulta \emph{refutada}` | cerrada |
@@ -4223,11 +4223,11 @@ de los residuos sin recomendación propia (grupo 10).
 | 9 | inv. 9: leyenda del despliegue con las cuatro redes; transcripcion en el diagrama | c-190 | `05-arquitectura.tex:44` | `fig:despliegue` | `redes Docker (edge, data interna, automation y host\_access)` | cerrada |
 | 10 | inv. 10: denominador de la proporcion de tiempo declarado | c-190 | `07-resultados.tex:158` | - | `El denominador de esa proporción usa los tiempos automatizados de la campaña complementaria de medición` | cerrada |
 | 11 | inv. 11: salida en vivo telefonica, McNemar y laxa manual | c-190 | `07-resultados.tex:251` | - | `La salida en vivo telefónica proviene de la columna \texttt{sector\_predicho} del export de intervenciones` | cerrada |
-| 12 | inv. 12: MDE con n = 110 y ARE = 0,864 | c-190 | `07-resultados.tex:253` | - | `la corrección por eficiencia relativa de la prueba empleada (ARE $= 0{,}864$)` | cerrada |
+| 12 | inv. 12: MDE con n = 110 y ARE = 0,864 | c-190 | `07-resultados.tex:253` | - | `la eficiencia de la correlación de Spearman frente a la de Pearson` | SUPERADA por c-192 |
 | 13 | inv. 13: 4.5 matizada con la cache y las 13 diferencias | c-190 | `04-marco-metodologico.tex:65` | - | `sus métricas son comparables con las de la campaña 2026-10 solo calculadas sobre la caché` | cerrada |
 | 14 | inv. 14: "posterior a la campana 2026-10" en 5.5 | c-190 | `05-arquitectura.tex:68` | - | `Desde el 13 de octubre de 2026, posterior a la campaña 2026-10` | cerrada |
 | 15 | inv. 15: rotulo temporal dentro de los PNG de componentes y secuencia | c-190 | `docs/diagrams/componentes.md:17` | - | `posterior a la campaña 2026-10)` | cerrada |
-| 16 | inv. 16: 1.6 sin "validacion rigurosa ... doble etiquetado independiente" | c-190 | `01-introduccion.tex:66` | - | `la validación es dentro de la muestra, con un doble etiquetado de acuerdo moderado` | cerrada |
+| 16 | inv. 16: 1.6 sin "validacion rigurosa ... doble etiquetado independiente" | c-190 | `01-introduccion.tex:66` | - | `el acuerdo entre los dos analistas originales, uno de ellos autor, fue de` | SUPERADA por c-192 |
 | 17 | inv. 17: resumen y abstract con "respaldan" | c-190 | `00-resumen.tex:15` | - | `Los hallazgos respaldan la viabilidad técnica y económica` | cerrada |
 | 18 | inv. 18: OE1 con "configuracion entregada" en la Tabla 18 | c-190 | `09-conclusiones.tex:23` | `tab:cumplimiento-objetivos` | `reintentos idempotentes de la configuración entregada` | cerrada |
 | 19 | inv. 19: "ocho limitaciones" en 9.3 | c-190 | `08-discusion.tex:42` | - | `El estudio presenta ocho limitaciones` | cerrada |
@@ -4245,7 +4245,7 @@ de los residuos sin recomendación propia (grupo 10).
 | Res. 11.3 | Req. nuevos de 11.3 (todos los canales, referencia independiente) | c-190 | `10-recomendaciones.tex:18` | `subsec:medicion-intervencion` | `que la revisión alcance a todos los canales, o a una muestra aleatoria de cada uno` | cerrada |
 | Res. balance | Redondeo del balance laxo (Delta t = 43,8) | c-190 | `08-discusion.tex:92` | `subsec:balance-neto` | `Una decimal; con \(\Delta t = 43{,}8\)~s dos celdas difieren en 0,1.` | cerrada |
 | Res. repos | Repositorios regionales declarados como limitacion en 3 | c-190 | `03-estado-del-arte.tex:10` | `sec:estado-del-arte` | `la ausencia de búsquedas en repositorios regionales (SciELO, Redalyc y JAIIO)` | cerrada |
-| Res. ISBN | No se agregan ISBN (APA 7 no los exige) | c-190 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:800` | - | `@book{Efron1993_bootstrap,` | cerrada |
+| Res. ISBN | No se agregan ISBN (APA 7 no los exige) | c-190 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:801` | - | `@book{Efron1993_bootstrap,` | cerrada |
 | Res. main.log | main.log no versionado, cubierto por compilacion.md | c-190 | `12-anexos.tex:48` | - | `que registra las páginas, los errores y el SHA-256 del PDF` | cerrada |
 
 ### Tabla de fuentes de 9.4-9.6 (verificadas el 2026-11-09)
@@ -4282,3 +4282,44 @@ de los residuos sin recomendación propia (grupo 10).
   completo en el Anexo B (patrón D7-A de c-187; `git diff --stat v1.2.13 HEAD --
   "docs/Tesis/v10 (IA)/paper/sections"` muestra una línea). `v1.2.12` queda **superada**
   (inmutable, `7937efd063955f787a4fed6c10168b4744de8905`).
+
+## Dictamen v10 / v1.2.13 (2026-11-09) - c-192
+
+Atención del dictamen CONEAU del 2026-11-09 sobre `v1.2.13`
+(`auditorias/Dictamen_Tesis_v10_v1.2.13_CONEAU_2026-11-09.md`; documento escrito 9,00). Cuatro
+observaciones nuevas más el ítem 12 del inventario y residuos menores; todas se cierran con
+edición, sin mediciones nuevas. Change `c-192` (docs-only, gobernanza MEDIUM), release `v1.2.14`.
+El nivel pago de la Gemini API y el consentimiento de los cuatro participantes quedan para
+`v1.2.15` (evidencia en la carpeta física del director).
+
+### Correcciones
+
+| Rec | Observación | Corrección | Archivo | Estado |
+|---|---|---|---|---|
+| A1 | El PDF del tag imprime el hash de v1.2.12 | El commit de contenido del tag v1.2.14 lleva la oración de verificación (`git rev-list -n1 v1.2.14`); el hash real va en el commit posterior | `12-anexos.tex` | cerrada |
+| A2 | Dos lecturas de la sub-hipótesis 2; 61,0 % sobre 200 junto a 25/147 | Se conserva "refutada" con la regla declarada y el matiz (IC contiene 0,15; binomial p = 0,28); 122/200 = 61,0 % y 122/147 = 83,0 %; Tabla 18 sin "sin medición válida" | `07-resultados.tex`, `08-discusion.tex`, `09-conclusiones.tex` | cerrada |
+| A3 | 1.6 atribuye el kappa moderado al par autor/analista | 0,87 = par analista-autor (sin intervalo); 0,5569 = E1/E2 (moderado, con intervalo) | `01-introduccion.tex` | cerrada |
+| B1 | El conjunto laxo manual se define como "unión" | "intersección" de los adicionales de E1 y E2 (130/151; la unión daría 137) | `07-resultados.tex`, `numeros-canonicos.md` | cerrada |
+| B2 | El MDE del Spearman usa la ARE de Wilcoxon (0,864) | 0,276 con la eficiencia de Spearman (9/pi^2 ≈ 0,912); 0,2834 queda como valor previo y 0,2644 como referencial sin corrección | `07-resultados.tex`, `numeros-canonicos.md` | cerrada |
+| B3 | 7.5 afirma "en consonancia con el consentimiento informado" sin registro | Se retira la frase; queda "en consonancia con la pseudonimización" hasta la constancia de v1.2.15 | `11-aspectos-legales.tex` | cerrada |
+| C1 | VIS sin desarrollar | "regla de visibilidad y derivación por reportante no identificado (VIS-005)" | `07-resultados.tex` | cerrada |
+| C2 | Xiong sin atenuar en el capítulo 3 | "predecir las fallas sigue siendo un desafío" | `03-estado-del-arte.tex` | cerrada |
+| C2 | FrugalGPT en TMLR sin confirmar | Se conserva TMLR con la URL de OpenReview y se agrega arXiv:2305.05176 en la nota | `Bibliography_base.bib` | cerrada |
+| C1 | 6.3 "trigger de Twilio" | "callback de grabación de Twilio" | `06-implementacion.tex` | cerrada |
+| D6 | 118 páginas frente al tope de 100 | Exceso declarado; se mantiene 118, mínimo con la información necesaria | libro mayor | cerrada |
+
+### Decisiones
+
+- **D2 (MDE)**: se usa el valor correcto de Spearman (0,276) con la eficiencia 9/pi^2 ≈ 0,912;
+  no se edita `analisis/resultados.json` (conserva 0,2834) y la discrepancia queda declarada.
+- **D3 (sub-hipótesis)**: se conserva "refutada" según la regla declarada, con el matiz del IC y
+  la binomial; el resumen y el abstract no se tocan (tope de 250 palabras).
+- **D6 (residuos)**: VIS se desarrolla en el primer uso; FrugalGPT se conserva en TMLR con la
+  URL de OpenReview y el arXiv como respaldo; 118 páginas se mantiene como mínimo declarado.
+
+### Nota de release
+
+Tag anotado `v1.2.14` sobre el commit de contenido de c-192 (`8deb79f959afe22edb54a9b6c1def8e795c4ea70`), que versiona el dictamen
+`auditorias/Dictamen_Tesis_v10_v1.2.13_CONEAU_2026-11-09.md` en el mismo commit. El hash completo se
+consigna en el Anexo B del commit siguiente (patrón c-188); el PDF del tag no imprime el hash de
+otra release. `v1.2.13` queda superada (inmutable, `f527722e57369848358dc6bafa333fcfb97653ef`).
