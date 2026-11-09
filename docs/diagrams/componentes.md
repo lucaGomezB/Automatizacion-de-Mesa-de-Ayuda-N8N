@@ -14,7 +14,7 @@ graph TD
 
     subgraph Services["Capa de Servicios (app/services/)"]
         SI["IncidenteService<br/>create_and_classify()<br/>list_incidentes()<br/>get_by_id()<br/>update_incidente()<br/>revisión = clasificador OR<br/>reportante no identificado"]
-        SCR["ContactResolutionService<br/>resuelve el reportante en el directorio<br/>(c-82, desde el 13-10-2026;<br/>posterior a la campaña de medición)"]
+        SCR["ContactResolutionService<br/>resuelve el reportante en el directorio<br/>(c-82, desde el 13-10-2026;<br/>posterior a la campaña 2026-10)"]
         SC["ClasificacionService<br/>list_pending_review()<br/>list_by_incidente()<br/>validate()"]
         SN["notify_n8n()<br/>(fire-and-forget)"]
     end

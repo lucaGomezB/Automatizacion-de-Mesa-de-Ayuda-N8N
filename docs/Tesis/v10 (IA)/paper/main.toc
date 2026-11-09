@@ -22,7 +22,7 @@
 \contentsline {subsection}{\numberline {3.1}Soluciones comerciales de mesa de ayuda}{25}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}Plataformas de orquestación de flujos}{26}{subsection.3.2}%
 \contentsline {subsection}{\numberline {3.3}Trabajos académicos previos sobre clasificación de tickets}{26}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}Calibración de la confianza y cascadas de modelos}{28}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.4}Calibración de la confianza y cascadas de modelos}{29}{subsection.3.4}%
 \contentsline {subsection}{\numberline {3.5}Análisis comparativo y brecha identificada}{29}{subsection.3.5}%
 \contentsline {section}{\numberline {4}Marco metodológico}{31}{section.4}%
 \contentsline {subsection}{\numberline {4.1}Enfoque y tipo de investigación}{31}{subsection.4.1}%
@@ -35,7 +35,7 @@
 \contentsline {subsection}{\numberline {4.6}Métricas e instrumentos}{38}{subsection.4.6}%
 \contentsline {subsection}{\numberline {4.7}Análisis estadístico}{39}{subsection.4.7}%
 \contentsline {paragraph}{Análisis de la campaña complementaria de medición.}{40}{paragraph*.7}%
-\contentsline {subsection}{\numberline {4.8}Amenazas a la validez}{40}{subsection.4.8}%
+\contentsline {subsection}{\numberline {4.8}Amenazas a la validez}{41}{subsection.4.8}%
 \contentsline {subsection}{\numberline {4.9}Gestión del proyecto bajo enfoque Scrumban (método de construcción del artefacto)}{42}{subsection.4.9}%
 \contentsline {section}{\numberline {5}Arquitectura del sistema}{43}{section.5}%
 \contentsline {subsection}{\numberline {5.1}Visión general}{43}{subsection.5.1}%
@@ -62,8 +62,8 @@
 \contentsline {subsection}{\numberline {7.5}Consentimiento, derechos del usuario y supervisión humana}{64}{subsection.7.5}%
 \contentsline {subsection}{\numberline {7.6}Cumplimiento normativo y alineación con estándares}{66}{subsection.7.6}%
 \contentsline {subsubsection}{\numberline {7.6.1}Marco de referencia adoptado}{66}{subsubsection.7.6.1}%
-\contentsline {subsubsection}{\numberline {7.6.2}Estado de alineación con ISO/IEC 27002:2022}{66}{subsubsection.7.6.2}%
-\contentsline {subsubsection}{\numberline {7.6.3}Perfil de alineación con NIST CSF 2.0}{66}{subsubsection.7.6.3}%
+\contentsline {subsubsection}{\numberline {7.6.2}Estado de alineación con ISO/IEC 27002:2022}{67}{subsubsection.7.6.2}%
+\contentsline {subsubsection}{\numberline {7.6.3}Perfil de alineación con NIST CSF 2.0}{67}{subsubsection.7.6.3}%
 \contentsline {subsubsection}{\numberline {7.6.4}Brechas principales y hoja de ruta}{68}{subsubsection.7.6.4}%
 \contentsline {subsubsection}{\numberline {7.6.5}Alineación con el marco legal}{68}{subsubsection.7.6.5}%
 \contentsline {section}{\numberline {8}Resultados}{69}{section.8}%
@@ -73,10 +73,10 @@
 \contentsline {subsection}{\numberline {8.4}Calibración de la confianza}{74}{subsection.8.4}%
 \contentsline {subsection}{\numberline {8.5}Sensibilidad al ajuste del clasificador con el corpus}{75}{subsection.8.5}%
 \contentsline {subsection}{\numberline {8.6}Análisis de errores y casos límite}{76}{subsection.8.6}%
-\contentsline {subsection}{\numberline {8.7}Resultados de la campaña complementaria de medición}{77}{subsection.8.7}%
+\contentsline {subsection}{\numberline {8.7}Resultados de la campaña complementaria de medición}{78}{subsection.8.7}%
 \contentsline {paragraph}{Fiabilidad del doble etiquetado.}{78}{paragraph*.27}%
 \contentsline {paragraph}{Exactitud del brazo manual.}{78}{paragraph*.28}%
-\contentsline {paragraph}{Efecto de posición y de orden.}{78}{paragraph*.29}%
+\contentsline {paragraph}{Efecto de posición y de orden.}{79}{paragraph*.29}%
 \contentsline {paragraph}{Validación fuera de muestra.}{79}{paragraph*.30}%
 \contentsline {section}{\numberline {9}Discusión}{80}{section.9}%
 \contentsline {subsection}{\numberline {9.1}Interpretación de los resultados}{80}{subsection.9.1}%
@@ -102,7 +102,7 @@
 \contentsline {subsection}{\numberline {11.11}Evaluación de modelos de lenguaje de código abierto}{98}{subsection.11.11}%
 \contentsline {subsection}{\numberline {11.12}Base de conocimientos para resolución automática}{99}{subsection.11.12}%
 \contentsline {subsection}{\numberline {11.13}Automatización de la etapa de resolución técnica}{99}{subsection.11.13}%
-\contentsline {subsection}{\numberline {11.14}Agente conversacional telefónico en tiempo real}{99}{subsection.11.14}%
+\contentsline {subsection}{\numberline {11.14}Agente conversacional telefónico en tiempo real}{100}{subsection.11.14}%
 \contentsline {section}{Referencias bibliográficas}{101}{section*.33}%
 \contentsline {section}{Anexos}{105}{section*.34}%
 \contentsline {section}{\numberline {A}Diagrama de arquitectura del sistema}{105}{section.1.A}%

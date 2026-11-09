@@ -311,6 +311,62 @@ in-sample sigue sin recuperarse (README de la campana, linea 191).
 
 ---
 
+## 8. Dictamen CONEAU v10/v1.2.12: canal telefonico, pines y figuras (c-190, 2026-11-09)
+
+Conteos técnicos verificados para el dictamen del 2026-11-09 sobre el tag `v1.2.12` (change
+`c-190-atender-el-dictamen-coneau-v1-2-12`). Ninguno redefine un valor `vigente` de la
+Sección 2.
+
+### 8.1 Diferencia entre la campana complementaria y la entregada (nota de la Tabla 19)
+
+Comando (desde la raíz del repositorio):
+
+```bash
+git diff --stat cda7712 v1.2.12 -- App/ n8n/ docker/ docker-compose.yml
+```
+
+Salida: **24 archivos, 1323 inserciones y 75 supresiones**. Desglose: `docker-compose.yml` (1);
+`docker/n8n/` (3: `Dockerfile`, `apply-unified-patch.mjs`,
+`imap-simple-fromdata-charset.patch`); backend (7: `app/cost_guard/twiml.py`,
+`app/routes/cost_guard.py`, `scripts/reparar_encoding_descripciones.py` y cuatro pruebas);
+frontend (13, entre otros `Header`, `DetalleIncidente`, `ValidarClasificacionDialog`,
+`Administracion/index` y `ReportarIncidente/index` con sus pruebas y `utils/formatters`).
+Ninguno de los 24 interviene en la clasificación.
+
+Comando de los pines (salida vacía, 0 archivos):
+
+```bash
+git diff --stat cda7712 v1.2.12 -- App/Backend/requirements.txt App/Frontend/package-lock.json n8n/workflow.json App/Backend/app/config/settings.py
+```
+
+Modelo de transcripción declarado en la configuración entregada:
+
+```bash
+git show v1.2.12:App/Backend/app/config/settings.py | grep -n gemini_stt_model
+```
+
+devuelve `gemini_stt_model = "gemini-3.5-transcribe"` (línea 238), usado por
+`App/Backend/app/clients/gemini_stt.py`.
+
+### 8.2 Figuras regeneradas (c-190)
+
+Se regeneraron `figures/despliegue.png`, `figures/componentes.png` y `figures/secuencia.png`
+desde `docs/diagrams/{despliegue,componentes,secuencia}.md` con el pipeline de c-188:
+`npx -y @mermaid-js/mermaid-cli@12.0.0 -i <tmp>.mmd -o <figura>.png -b white -s 2` (bloque
+`mermaid` extraído a un `.mmd` temporal fuera del repositorio). Versión de `mermaid-cli`:
+**12.0.0**. Dimensiones: **por confirmar** (se anotan al cerrar el apply). La relación
+alto/ancho no supera la previa en más de un 5 %. Los PNG de `componentes` y `secuencia`
+llevaban el rótulo temporal dentro de la imagen (no solo en la leyenda): c-190 editó las
+fuentes Mermaid y los regeneró.
+
+### 8.3 Figura huérfana
+
+`figures/matriz_confusion.pdf` se retiro del directorio de figuras (inv. 23);
+`scripts/figures/matriz_confusion.py` puede regenerarlo fuera de `figures/`.
+Verificación: `rg -n "matriz_confusion" "docs/Tesis/v10 (IA)/paper/sections"` = 0.
+
+---
+
 
 _Producido por c-109. Cualquier rama que reescriba los conteos técnicos de `05`, `06`
 o `12` debe citar únicamente los valores `vigente` de la Sección 2 y MUST NOT

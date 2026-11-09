@@ -1,4 +1,4 @@
-PWD /work/paper
+PWD /workdir/paper
 INPUT /usr/local/texlive/2026/texmf.cnf
 INPUT /usr/local/texlive/2026/texmf-dist/web2c/texmf.cnf
 INPUT /usr/local/texlive/2026/texmf-var/web2c/xetex/xelatex.fmt
@@ -302,6 +302,12 @@ OUTPUT main.lof
 INPUT ./sections/00-glosario.tex
 INPUT ./sections/00-glosario.tex
 INPUT sections/00-glosario.tex
+INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/cm/cmmi9.tfm
+INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/cm/cmsy9.tfm
+INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex9.tfm
+INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm
+INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
+INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/cm/cmr9.tfm
 INPUT ./sections/01-introduccion.tex
 INPUT ./sections/01-introduccion.tex
 INPUT sections/01-introduccion.tex
@@ -321,12 +327,6 @@ INPUT ./figures/arquitectura_sistema.png
 INPUT ./figures/arquitectura_sistema.png
 INPUT ./figures/despliegue.png
 INPUT ./figures/despliegue.png
-INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/cm/cmmi9.tfm
-INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/cm/cmsy9.tfm
-INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex9.tfm
-INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm
-INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
-INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/cm/cmr9.tfm
 INPUT ./figures/er_modelo_datos.png
 INPUT ./figures/er_modelo_datos.png
 INPUT ./sections/06-implementacion.tex

@@ -2,12 +2,13 @@
 % Glosario de siglas y acronimos
 % Material preliminar — manual, en orden alfabético.
 % Sin paquete glossaries ni paso makeglossaries (c-105, decisión D2).
-% Entradas: 81 siglas inventariadas sobre sections/*.tex (c-163 agregó BERT,
+% Entradas: 87 siglas inventariadas sobre sections/*.tex (c-163 agregó BERT,
 % CMDB, CSF, ECE, HITL, IC, ISO, KMS, MFA, NIST, PAM, RAG, RTO, SAST, SBOM,
 % SIEM y TOTP; retiró HMM y WIP; c-188 agregó CONEAU, GPT, NLBSE, PABAK, RGPD
-% y UTC, y retiró APA, FRM, UML y UTN, que no se usan en el cuerpo).
+% y UTC, y retiró APA, FRM, UML y UTN, que no se usan en el cuerpo; c-190
+% agregó TI, URL, E2E, MDE, NB, LR y DT, y retiró IT, sin uso en el cuerpo).
 % Disposición en dos columnas por bloques alfabéticos: la columna izquierda
-% cubre ACID..LLM y la derecha MFA..VM, de modo que la lectura descendente
+% cubre ACID..LR y la derecha MDE..VM, de modo que la lectura descendente
 % de la primera columna seguida de la segunda preserva el orden alfabético.
 %==============================================================================
 \newpage
@@ -16,27 +17,29 @@
 \addcontentsline{toc}{section}{Glosario de siglas y acrónimos}
 
 \begin{spacing}{1}
-\small
-\setlength{\tabcolsep}{4pt}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
 \noindent\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.47\textwidth}@{\hspace{0.05\textwidth}}>{\raggedright\arraybackslash}p{0.47\textwidth}@{}}
-\textbf{ACID} Atomicity, Consistency, Isolation, Durability & \textbf{MFA} Multi-Factor Authentication \\
-\textbf{AES} Advanced Encryption Standard & \textbf{MVCC} Multi-Version Concurrency Control \\
-\textbf{AI} Artificial Intelligence & \textbf{N8N} plataforma de orquestación de flujos (\emph{nodemation}) \\
-\textbf{API} Application Programming Interface & \textbf{NIST} National Institute of Standards and Technology \\
-\textbf{ARCO} Acceso, Rectificación, Cancelación y Oposición & \textbf{NLBSE} Natural Language-Based Software Engineering \\
-\textbf{ASGI} Asynchronous Server Gateway Interface & \textbf{NLP} Natural Language Processing \\
-\textbf{ASR} Automatic Speech Recognition & \textbf{ORM} Object-Relational Mapper \\
-\textbf{BERT} Bidirectional Encoder Representations from Transformers & \textbf{PABAK} Prevalence-Adjusted Bias-Adjusted Kappa \\
-\textbf{BPA} Business Process Automation & \textbf{PAM} Privileged Access Management \\
-\textbf{CBC} Cipher Block Chaining & \textbf{PATCH} método HTTP de actualización parcial \\
-\textbf{CE} Comunidad Europea & \textbf{PCM} Pulse Code Modulation \\
-\textbf{CI} Continuous Integration & \textbf{PK} Primary Key \\
-\textbf{CIA} Confidentiality, Integrity, Availability & \textbf{PNG} Portable Network Graphics \\
-\textbf{CMDB} Configuration Management Database & \textbf{POST} método HTTP de creación \\
-\textbf{CONEAU} Comisión Nacional de Evaluación y Acreditación Universitaria & \textbf{RAG} Retrieval-Augmented Generation \\
-\textbf{CRUD} Create, Read, Update, Delete & \textbf{REST} Representational State Transfer \\
-\textbf{CSF} Cybersecurity Framework & \textbf{RGPD} Reglamento General de Protección de Datos \\
-\textbf{DAG} Directed Acyclic Graph & \textbf{RTO} Recovery Time Objective \\
+\textbf{ACID} Atomicity, Consistency, Isolation, Durability & \textbf{MDE} Minimum Detectable Effect \\
+\textbf{AES} Advanced Encryption Standard & \textbf{MFA} Multi-Factor Authentication \\
+\textbf{AI} Artificial Intelligence & \textbf{MVCC} Multi-Version Concurrency Control \\
+\textbf{API} Application Programming Interface & \textbf{N8N} plataforma de orquestación de flujos (\emph{nodemation}) \\
+\textbf{ARCO} Acceso, Rectificación, Cancelación y Oposición & \textbf{NB} Naive Bayes \\
+\textbf{ASGI} Asynchronous Server Gateway Interface & \textbf{NIST} National Institute of Standards and Technology \\
+\textbf{ASR} Automatic Speech Recognition & \textbf{NLBSE} Natural Language-Based Software Engineering \\
+\textbf{BERT} Bidirectional Encoder Representations from Transformers & \textbf{NLP} Natural Language Processing \\
+\textbf{BPA} Business Process Automation & \textbf{ORM} Object-Relational Mapper \\
+\textbf{CBC} Cipher Block Chaining & \textbf{PABAK} Prevalence-Adjusted Bias-Adjusted Kappa \\
+\textbf{CE} Comunidad Europea & \textbf{PAM} Privileged Access Management \\
+\textbf{CI} Continuous Integration & \textbf{PATCH} método HTTP de actualización parcial \\
+\textbf{CIA} Confidentiality, Integrity, Availability & \textbf{PCM} Pulse Code Modulation \\
+\textbf{CMDB} Configuration Management Database & \textbf{PK} Primary Key \\
+\textbf{CONEAU} Comisión Nacional de Evaluación y Acreditación Universitaria & \textbf{PNG} Portable Network Graphics \\
+\textbf{CRUD} Create, Read, Update, Delete & \textbf{POST} método HTTP de creación \\
+\textbf{CSF} Cybersecurity Framework & \textbf{RAG} Retrieval-Augmented Generation \\
+\textbf{DAG} Directed Acyclic Graph & \textbf{REST} Representational State Transfer \\
+\textbf{DT} Decision Tree (árbol de decisión) & \textbf{RGPD} Reglamento General de Protección de Datos \\
+\textbf{E2E} End-to-End (extremo a extremo) & \textbf{RTO} Recovery Time Objective \\
 \textbf{ECE} Expected Calibration Error & \textbf{SAST} Static Application Security Testing \\
 \textbf{ETL} Extract, Transform, Load & \textbf{SBOM} Software Bill of Materials \\
 \textbf{FK} Foreign Key & \textbf{SDK} Software Development Kit \\
@@ -51,15 +54,16 @@
 \textbf{IC} Intervalo de Confianza & \textbf{SSO} Single Sign-On \\
 \textbf{IDF} Inverse Document Frequency & \textbf{SVM} Support Vector Machine \\
 \textbf{IMAP} Internet Message Access Protocol & \textbf{TF} Term Frequency \\
-\textbf{IP} Internet Protocol & \textbf{TLS} Transport Layer Security \\
-\textbf{ISO} International Organization for Standardization & \textbf{TOTP} Time-based One-Time Password \\
-\textbf{IT} Information Technology & \textbf{TSO} The Stationery Office \\
-\textbf{ITIL} Information Technology Infrastructure Library & \textbf{UI} User Interface \\
-\textbf{ITSM} Information Technology Service Management & \textbf{USD} United States Dollar \\
-\textbf{JSON} JavaScript Object Notation & \textbf{UTC} Coordinated Universal Time \\
-\textbf{JWT} JSON Web Token & \textbf{UUID} Universally Unique Identifier \\
-\textbf{KMS} Key Management Service & \textbf{VM} Virtual Machine \\
-\textbf{LLM} Large Language Model & \\
+\textbf{IP} Internet Protocol & \textbf{TI} Tecnologías de la Información \\
+\textbf{ISO} International Organization for Standardization & \textbf{TLS} Transport Layer Security \\
+\textbf{ITIL} Information Technology Infrastructure Library & \textbf{TOTP} Time-based One-Time Password \\
+\textbf{ITSM} Information Technology Service Management & \textbf{TSO} The Stationery Office \\
+\textbf{JSON} JavaScript Object Notation & \textbf{UI} User Interface \\
+\textbf{JWT} JSON Web Token & \textbf{URL} Uniform Resource Locator \\
+\textbf{KMS} Key Management Service & \textbf{USD} United States Dollar \\
+\textbf{LLM} Large Language Model & \textbf{UTC} Coordinated Universal Time \\
+\textbf{LR} Logistic Regression (regresión logística) & \textbf{UUID} Universally Unique Identifier \\
+ & \textbf{VM} Virtual Machine \\
 \end{tabular}
 \end{spacing}
 \newpage

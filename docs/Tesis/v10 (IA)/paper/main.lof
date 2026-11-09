@@ -1,6 +1,6 @@
 \babel@toc {spanish}{}\relax 
 \contentsline {figure}{\numberline {1}{\ignorespaces Diagrama de arquitectura del sistema}}{44}{figure.caption.9}%
-\contentsline {figure}{\numberline {2}{\ignorespaces Diagrama de despliegue del entorno local. Servicios, red Docker, volúmenes y servicios externos.}}{45}{figure.caption.10}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Diagrama de despliegue del entorno local. Servicios, redes Docker (edge, data interna, automation y host\_access), volúmenes y servicios externos.}}{45}{figure.caption.10}%
 \contentsline {figure}{\numberline {3}{\ignorespaces Diagrama entidad-relación de las siete entidades principales}}{50}{figure.caption.12}%
 \contentsline {figure}{\numberline {4}{\ignorespaces Panel de administración del sistema}}{60}{figure.caption.14}%
 \contentsline {figure}{\numberline {5}{\ignorespaces Dashboard de analítica del panel de administración}}{61}{figure.caption.15}%
