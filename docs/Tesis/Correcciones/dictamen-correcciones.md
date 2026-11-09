@@ -4346,6 +4346,7 @@ director; el repositorio solo versiona la plantilla y el registro sin identidad.
 
 ### Nota de release
 
-Tag anotado `v1.2.15` sobre el commit de contenido de c-193; el commit siguiente consigna el
-hash completo en el Anexo B (patrón c-188). El PDF del tag no imprime el hash de otra release.
-`v1.2.14` queda superada (inmutable).
+Tag anotado `v1.2.15` sobre el commit de contenido de c-193
+(`f72e6c899ba3bce7ae11ffe1b0a980f57241a0ea`); el commit siguiente consigna el hash completo en
+el Anexo B (patrón c-188). El PDF del tag no imprime el hash de otra release. `v1.2.14` queda
+superada (inmutable, `8deb79f959afe22edb54a9b6c1def8e795c4ea70`).
