@@ -984,6 +984,14 @@
       "sessions": 0,
       "memories": 2,
       "prompts": 2
+    },
+    {
+      "id": "b44fd140",
+      "created_by": "Gonzalo",
+      "created_at": "2026-11-09T02:00:54Z",
+      "sessions": 0,
+      "memories": 5,
+      "prompts": 0
     }
   ]
 }
