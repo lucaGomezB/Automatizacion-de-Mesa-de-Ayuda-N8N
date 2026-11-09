@@ -15,6 +15,13 @@
 - [x] 1b.4 REFACTOR: `ruff check scripts/preflight` limpio; `test_c62_infra_hardening.py` sigue en 39 passed.
 - [x] 1b.5 Delta spec MODIFIED de `cost-readiness` (guardas del compose) y sincronizacion de `openspec/specs/cost-readiness/spec.md`.
 
+## 1c. Barrera docs_stack_sync (misma causa; Strict TDD)
+
+- [x] 1c.1 Red de seguridad: `pytest scripts/preflight/test_docs_stack_sync.py` = 67 passed; `docs_stack_sync.py` = 15/17 (chequeos 6 y 17 fallan: `_n8n_tag` solo leia `image`).
+- [x] 1c.2 RED: 10 tests nuevos (`_n8n_tag` con build dict/cadena, alias `AS`, `--platform`, sin Dockerfile, sin FROM, FROM ajeno, image literal; chequeo 6 con build pasa y detecta divergencia; chequeo 17 con build).
+- [x] 1c.3 GREEN: `_n8n_tag(compose, compose_dir)` + `_imagen_desde_build` + `_FROM_LINE`; `check_docs` pasa el directorio del compose. 17/17 PASS; `pytest scripts/preflight` = 133 passed; `ruff` limpio.
+- [x] 1c.4 Delta spec MODIFIED de `project-documentation` (DOC-005) y sincronizacion de `openspec/specs/project-documentation/spec.md`.
+
 ## 2. Spec y verificacion
 
 - [x] 2.1 Delta spec MODIFIED de INFRA-008 con los escenarios de imagen literal, build con FROM pineado y build con FROM distinto.
