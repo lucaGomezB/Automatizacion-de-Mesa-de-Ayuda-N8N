@@ -5,7 +5,7 @@ Generado por `docs/Tesis/Correcciones/resumir_registro_compilacion.py` a partir 
 
 | Concepto | Valor |
 |---|---|
-| Fuente compilada | commit de contenido de la release v1.2.12 (rama change/c-188-residuales-dictamen-v1-2-10) |
+| Fuente compilada | commit del hash de la release v1.2.12 (tag sobre 7937efd) |
 | Motor | XeTeX 3.141592653-2.6-0.999998 (TeX Live 2026) |
 | Biber | 2.22 |
 | Paginas | 118 |
@@ -16,4 +16,4 @@ Generado por `docs/Tesis/Correcciones/resumir_registro_compilacion.py` a partir 
 | Overfull \hbox (maximo) | 7 (8,2 pt) |
 | Lineas WARN de biber | 0 |
 | Lineas ERROR de biber | 0 |
-| SHA-256 de main.pdf | `bc6b31022b2caae167dc9f458d660c484b5d457f04da70a49021fdd70934c7ba` |
+| SHA-256 de main.pdf | `99e9ee616d8ad4f33e3e9746cd97629c262d540a832978974f0ba005e91f6d72` |
