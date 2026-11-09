@@ -4365,5 +4365,7 @@ Cierre de los tres residuos de las recomendaciones C1/C2 que quedaron tras v1.2.
 
 ### Nota de release
 
-Tag anotado `v1.2.16` sobre el commit de contenido de c-194; el hash real va en el commit
-posterior del Anexo B (patrón c-188). `v1.2.15` queda superada (inmutable).
+Tag anotado `v1.2.16` sobre el commit de contenido de c-194
+(`ca3c88510be5b1484ed413a8de8bcdffccedc417`); el commit siguiente consigna el hash completo en
+el Anexo B (patrón c-188). El PDF del tag no imprime el hash de otra release. `v1.2.15` queda
+superada (inmutable, `f72e6c899ba3bce7ae11ffe1b0a980f57241a0ea`).
