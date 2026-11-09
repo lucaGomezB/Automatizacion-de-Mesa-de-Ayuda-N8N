@@ -4323,3 +4323,30 @@ Tag anotado `v1.2.14` sobre el commit de contenido de c-192 (`8deb79f959afe22edb
 `auditorias/Dictamen_Tesis_v10_v1.2.13_CONEAU_2026-11-09.md` en el mismo commit. El hash completo se
 consigna en el Anexo B del commit siguiente (patrón c-188); el PDF del tag no imprime el hash de
 otra release. `v1.2.13` queda superada (inmutable, `f527722e57369848358dc6bafa333fcfb97653ef`).
+
+## Dictamen v10 / v1.2.13 (2026-11-09) - c-193 (nivel pago y consentimiento)
+
+Cierre de los dos puntos que el dictamen dejó a los autores (B4 e ítem 13). Release `v1.2.15`.
+Los originales físicos (comprobante de facturación y constancias firmadas) quedan en poder del
+director; el repositorio solo versiona la plantilla y el registro sin identidad.
+
+| Rec | Observación | Corrección | Archivo | Estado |
+|---|---|---|---|---|
+| B4 | El nivel pago se acreditaba solo con la guía de configuración | Se retira la guía como prueba; se declara que el comprobante de facturación lo custodia el director y no se versiona | `11-aspectos-legales.tex` | cerrada |
+| B4/13 | Sin registro del consentimiento de E1, E2, O1 y O2 | Se declara la información verbal y la confirmación escrita posterior; los originales firmados quedan en el expediente físico del director; el repo guarda la plantilla y el registro | `11-aspectos-legales.tex`, `docs/campana-medicion/confirmacion-posterior-consentimiento.md` | cerrada |
+
+### Decisiones
+
+- **D1 (nivel pago)**: se conserva el nivel pago con créditos prepagos y la cita de la página de
+  precios de la Gemini API; se retira la guía de configuración como prueba y se declara el
+  comprobante en custodia del director.
+- **D2/D3 (consentimiento)**: información verbal previa y confirmación escrita posterior; los
+  originales firmados van al expediente físico del director; el repositorio guarda la plantilla
+  y el registro `alias, rol, fecha_informacion_verbal, fecha_confirmacion, custodia`.
+
+### Nota de release
+
+Tag anotado `v1.2.15` sobre el commit de contenido de c-193
+(`f72e6c899ba3bce7ae11ffe1b0a980f57241a0ea`); el commit siguiente consigna el hash completo en
+el Anexo B (patrón c-188). El PDF del tag no imprime el hash de otra release. `v1.2.14` queda
+superada (inmutable, `8deb79f959afe22edb54a9b6c1def8e795c4ea70`).

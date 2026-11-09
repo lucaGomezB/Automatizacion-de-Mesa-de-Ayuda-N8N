@@ -64,7 +64,7 @@
 \contentsline {subsubsection}{\numberline {7.6.1}Marco de referencia adoptado}{66}{subsubsection.7.6.1}%
 \contentsline {subsubsection}{\numberline {7.6.2}Estado de alineación con ISO/IEC 27002:2022}{67}{subsubsection.7.6.2}%
 \contentsline {subsubsection}{\numberline {7.6.3}Perfil de alineación con NIST CSF 2.0}{67}{subsubsection.7.6.3}%
-\contentsline {subsubsection}{\numberline {7.6.4}Brechas principales y hoja de ruta}{68}{subsubsection.7.6.4}%
+\contentsline {subsubsection}{\numberline {7.6.4}Brechas principales y hoja de ruta}{67}{subsubsection.7.6.4}%
 \contentsline {subsubsection}{\numberline {7.6.5}Alineación con el marco legal}{68}{subsubsection.7.6.5}%
 \contentsline {section}{\numberline {8}Resultados}{69}{section.8}%
 \contentsline {subsection}{\numberline {8.1}Comparación de tiempos de registro}{69}{subsection.8.1}%
