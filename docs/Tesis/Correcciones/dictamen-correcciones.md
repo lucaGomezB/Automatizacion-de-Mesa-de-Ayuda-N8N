@@ -4319,7 +4319,7 @@ El nivel pago de la Gemini API y el consentimiento de los cuatro participantes q
 
 ### Nota de release
 
-Tag anotado `v1.2.14` sobre el commit de contenido de c-192, que versiona el dictamen
-`auditorias/Dictamen_Tesis_v10_v1.2.13_CONEAU_2026-11-09.md` en el mismo commit. El hash real se
-consigna en el commit siguiente del Anexo B (patrón c-188); el PDF del tag no imprime el hash de
+Tag anotado `v1.2.14` sobre el commit de contenido de c-192 (`8deb79f959afe22edb54a9b6c1def8e795c4ea70`), que versiona el dictamen
+`auditorias/Dictamen_Tesis_v10_v1.2.13_CONEAU_2026-11-09.md` en el mismo commit. El hash completo se
+consigna en el Anexo B del commit siguiente (patrón c-188); el PDF del tag no imprime el hash de
 otra release. `v1.2.13` queda superada (inmutable, `f527722e57369848358dc6bafa333fcfb97653ef`).
