@@ -4278,7 +4278,7 @@ de los residuos sin recomendación propia (grupo 10).
 
 - **Tag `v1.2.13`** (anotado) sobre el commit de contenido de c-190, que versiona además
   `auditorias/Dictamen_Tesis_v10_v1.2.12_CONEAU_2026-11-09.md` en el mismo commit. El hash del
-  tag queda **pendiente de crear por el orquestador**. El commit siguiente consigna el hash
+  tag es `f527722e57369848358dc6bafa333fcfb97653ef`. El commit siguiente consigna el hash
   completo en el Anexo B (patrón D7-A de c-187; `git diff --stat v1.2.13 HEAD --
   "docs/Tesis/v10 (IA)/paper/sections"` muestra una línea). `v1.2.12` queda **superada**
   (inmutable, `7937efd063955f787a4fed6c10168b4744de8905`).
