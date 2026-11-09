@@ -1040,6 +1040,14 @@
       "sessions": 2,
       "memories": 4,
       "prompts": 17
+    },
+    {
+      "id": "2c10c4a7",
+      "created_by": "Gonzalo",
+      "created_at": "2026-11-09T20:38:38Z",
+      "sessions": 0,
+      "memories": 1,
+      "prompts": 0
     }
   ]
 }
