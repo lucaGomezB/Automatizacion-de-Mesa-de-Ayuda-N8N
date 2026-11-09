@@ -137,6 +137,16 @@ def _write_compose(tmp_path, mutate) -> pathlib.Path:
     mutate(data)
     path = tmp_path / "docker-compose.yml"
     path.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
+    # El compose real declara `build` (c-182): la guarda resuelve el Dockerfile
+    # relativo al compose, asi que la fixture lleva una copia del real.
+    build = data["services"]["n8n"].get("build")
+    if isinstance(build, dict) and (REPO_ROOT / "docker" / "n8n" / "Dockerfile").is_file():
+        dockerfile = tmp_path / build.get("context", ".") / build.get("dockerfile", "Dockerfile")
+        dockerfile.parent.mkdir(parents=True, exist_ok=True)
+        dockerfile.write_text(
+            (REPO_ROOT / "docker" / "n8n" / "Dockerfile").read_text(encoding="utf-8"),
+            encoding="utf-8",
+        )
     return path
 
 
@@ -398,6 +408,90 @@ def test_valid_compose_all_guards_pass(tmp_path):
 def test_compose_latest_image_fails_named(tmp_path):
     def mutate(data):
         data["services"]["n8n"]["image"] = "n8nio/n8n:latest"
+
+    checks = check_compose(_write_compose(tmp_path, mutate))
+    _assert_single_named_fail(checks, "imagen")
+
+
+def _df(*lines: str) -> str:
+    """Dockerfile de prueba a partir de sus lineas."""
+    return "\n".join(lines) + "\n"
+
+
+def _compose_with_build(tmp_path, dockerfile_text, build=None):
+    """Compose sin `image` y con `build`; escribe el Dockerfile (o no, si es None)."""
+    def mutate(data):
+        data["services"]["n8n"].pop("image", None)
+        data["services"]["n8n"]["build"] = (
+            build if build is not None
+            else {"context": "./ctx", "dockerfile": "Dockerfile"}
+        )
+
+    path = _write_compose(tmp_path, mutate)
+    ctx = tmp_path / "ctx"
+    ctx.mkdir(exist_ok=True)
+    dockerfile = ctx / "Dockerfile"
+    dockerfile.unlink(missing_ok=True)  # _write_compose deja una copia del real
+    if dockerfile_text is not None:
+        dockerfile.write_text(dockerfile_text, encoding="utf-8")
+    return path
+
+
+def _image_check(checks):
+    return next(c for c in checks if "imagen" in c.name)
+
+
+def test_compose_build_with_pinned_from_passes(tmp_path):
+    checks = check_compose(
+        _compose_with_build(tmp_path, _df("FROM n8nio/n8n:2.11.2", "RUN true"))
+    )
+    assert all(c.status == "PASS" for c in checks), _summary(checks)
+    assert "n8nio/n8n:2.11.2" in _image_check(checks).detail
+    assert "Dockerfile" in _image_check(checks).detail
+
+
+def test_compose_build_with_latest_from_fails_named(tmp_path):
+    checks = check_compose(_compose_with_build(tmp_path, _df("FROM n8nio/n8n:latest")))
+    _assert_single_named_fail(checks, "imagen")
+
+
+def test_compose_build_without_tag_from_fails_named(tmp_path):
+    checks = check_compose(_compose_with_build(tmp_path, _df("FROM n8nio/n8n")))
+    _assert_single_named_fail(checks, "imagen")
+
+
+def test_compose_build_without_dockerfile_fails_named(tmp_path):
+    checks = check_compose(_compose_with_build(tmp_path, None))
+    _assert_single_named_fail(checks, "imagen")
+
+
+def test_compose_build_dockerfile_without_from_fails_named(tmp_path):
+    checks = check_compose(_compose_with_build(tmp_path, _df("# nada", "RUN true")))
+    _assert_single_named_fail(checks, "imagen")
+
+
+def test_compose_build_from_with_alias_and_platform_passes(tmp_path):
+    text = _df(
+        "# syntax=docker/dockerfile:1",
+        "FROM --platform=linux/amd64 n8nio/n8n:2.11.2 AS base",
+    )
+    checks = check_compose(_compose_with_build(tmp_path, text))
+    assert all(c.status == "PASS" for c in checks), _summary(checks)
+    assert "n8nio/n8n:2.11.2" in _image_check(checks).detail
+
+
+def test_compose_build_as_string_passes(tmp_path):
+    (tmp_path / "ctx").mkdir()
+    checks = check_compose(
+        _compose_with_build(tmp_path, _df("FROM n8nio/n8n:2.11.2"), build="./ctx")
+    )
+    assert all(c.status == "PASS" for c in checks), _summary(checks)
+
+
+def test_compose_without_image_nor_build_fails_named(tmp_path):
+    def mutate(data):
+        data["services"]["n8n"].pop("image", None)
+        data["services"]["n8n"].pop("build", None)
 
     checks = check_compose(_write_compose(tmp_path, mutate))
     _assert_single_named_fail(checks, "imagen")
