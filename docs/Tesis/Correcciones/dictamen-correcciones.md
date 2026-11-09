@@ -3266,7 +3266,7 @@ Lineas leidas despues de aplicar el change, en `docs/Tesis/v10 (IA)/paper/sectio
 | B6b | Punteros de B6 y B8 corregidos; B10 +c-146; B12 +4.8; A5 +c-154 | c-160 | `12-anexos.tex:226` | `tab:anexo-trazabilidad` | `\autoref{subsec:matriz-metricas}, \autoref{tab:cumplimiento-objetivos}` | cerrada |
 | B6c | Residuos de A1, B4, B9, B14 y B16 registrados como remision o pendiente | c-160 | `12-anexos.tex:219` | `tab:anexo-trazabilidad` | `residuos en A3 y B8 del 28-10` | cerrada |
 | B6d | Tabla del dictamen del 28-10 con A1 a A4 y B5 a B8 | c-160 | `12-anexos.tex:259` | `tab:anexo-trazabilidad-2810` | `\texttt{c-160}` | cerrada |
-| B6e | Decisiones c-72, c-74 y c-82 con `\autoref{sec:implementacion}` | c-160 | `12-anexos.tex:331` | `sec:anexo-trazabilidad` | `incorporada el 13 de octubre de 2026 (\texttt{c-82})` | cerrada |
+| B6e | Decisiones c-72, c-74 y c-82 con `\autoref{sec:implementacion}` | c-160 | `12-anexos.tex:331` | `sec:anexo-trazabilidad` | `incorporada el 13 de octubre de 2026 (\texttt{c-82})` | SUPERADA por c-194 |
 | B7a | Tabla 18: TLS verificado despues de la campana | c-160 | `09-conclusiones.tex:23` | `tab:cumplimiento-objetivos` | `verificado después de la campaña, en el despliegue de referencia` | cerrada |
 | B7b | Prosa de 10.1: TLS en el despliegue de referencia, no en la configuracion evaluada | c-160 | `09-conclusiones.tex:35` | `subsec:cumplimiento-objetivos` | `no en la configuración evaluada ni en la instancia operativa` | cerrada |
 | B7c | Objetivo 3 alcanzado parcialmente en la prosa | c-160 | `09-conclusiones.tex:39` | `subsec:cumplimiento-objetivos` | `se alcanza parcialmente (latencia y exactitud medidas por canal)` | cerrada |
@@ -4211,7 +4211,7 @@ de los residuos sin recomendación propia (grupo 10).
 | B3 | 4.5 matizada: regla del reportante activa y 13 diferencias con la cache | c-190 | `04-marco-metodologico.tex:65` | - | `con la regla del reportante activa y una salida en vivo que difiere de la caché en 13 casos` | cerrada |
 | B4 | 1.6 coherente con 4.4 y 9.3 | c-190 | `01-introduccion.tex:66` | - | `el acuerdo entre los dos analistas originales, uno de ellos autor, fue de` | SUPERADA por c-192 |
 | C1 | "ocho limitaciones" en 9.3 | c-190 | `08-discusion.tex:42` | `subsec:limitaciones-estudio` | `El estudio presenta ocho limitaciones` | cerrada |
-| C2 | Zanzotto reformulado como inferencia de los autores | c-190 | `02-marco-teorico.tex:32` | - | `los autores de esta tesis infieren que el diseño debe reservar a la persona` | cerrada |
+| C2 | Zanzotto reformulado como inferencia de los autores | c-190 | `02-marco-teorico.tex:32` | - | `los autores de esta tesis infieren que el diseño debe reservar a la persona` | SUPERADA por c-194 |
 | 1 | inv. 1: sub-hipotesis 2 refutada sobre los casos revisados | c-190 | `07-resultados.tex:154` | - | `la sub-hipótesis resulta \emph{refutada}` | cerrada |
 | 2 | inv. 2: cotejo con el consenso (11/85; 13 = 9 + 1 + 3) | c-190 | `07-resultados.tex:156` | - | `de las 85 confirmaciones con consenso disponible, 11 confirmaron un sector que el consenso considera incorrecto` | cerrada |
 | 3 | inv. 3: proposito comparativo ocultado a lo sumo al operador externo | c-190 | `04-marco-metodologico.tex:16` | - | `se ocultó, a lo sumo, al operador externo` | cerrada |
@@ -4236,8 +4236,8 @@ de los residuos sin recomendación propia (grupo 10).
 | 22 | inv. 22: portada con la fecha de la release | c-190 | `00-portada.tex:30` | - | `9 de noviembre de 2026` | cerrada |
 | 23 | inv. 23: matriz_confusion.pdf retirada del directorio de figuras | c-190 | `docs/Tesis/Correcciones/conteos-canonicos-tecnicos.md:364` | - | `se retiro del directorio de figuras (inv. 23)` | cerrada |
 | 24 | inv. 24: Anexo B nombra compilacion.md y el verificador | c-190 | `12-anexos.tex:48` | `sec:anexo-repositorio` | `La verificación de la compilación se conserva en \path{paper/compilacion.md}` | cerrada |
-| 25 | inv. 25: consentimiento de E1, E2, O1 y O2 declarado | c-190 | `11-aspectos-legales.tex:34` | - | `No se conservó un registro específico del procedimiento de información y consentimiento` | cerrada |
-| 26 | inv. 26: Zanzotto como inferencia de los autores | c-190 | `02-marco-teorico.tex:32` | - | `los autores de esta tesis infieren que el diseño debe reservar a la persona un rol activo` | cerrada |
+| 25 | inv. 25: consentimiento de E1, E2, O1 y O2 declarado | c-190 | `11-aspectos-legales.tex:34` | - | `No se conservó un registro específico del procedimiento de información y consentimiento` | SUPERADA por c-193 |
+| 26 | inv. 26: Zanzotto como inferencia de los autores | c-190 | `02-marco-teorico.tex:32` | - | `los autores de esta tesis infieren que el diseño debe reservar a la persona un rol activo` | SUPERADA por c-194 |
 | 27 | inv. 27: Xiong atenuado (predecir las fallas sigue siendo un desafio) | c-190 | `02-marco-teorico.tex:46` | - | `predecir cuáles de sus respuestas son fallas sigue siendo un desafío` | cerrada |
 | 28 | inv. 28: punto unico de contacto con ITIL (OGC2011_itil) | c-190 | `02-marco-teorico.tex:10` | - | `es propia de ITIL \parencite{OGC2011_itil}` | cerrada |
 | 29 | inv. 29: precios de la Gemini API y nivel de servicio pago declarado | c-190 | `11-aspectos-legales.tex:16` | `subsec:transferencia-internacional` | `El servicio de inferencia operó en el nivel pago de la Gemini API, con créditos prepagos` | cerrada |
@@ -4350,3 +4350,22 @@ Tag anotado `v1.2.15` sobre el commit de contenido de c-193
 (`f72e6c899ba3bce7ae11ffe1b0a980f57241a0ea`); el commit siguiente consigna el hash completo en
 el Anexo B (patrón c-188). El PDF del tag no imprime el hash de otra release. `v1.2.14` queda
 superada (inmutable, `8deb79f959afe22edb54a9b6c1def8e795c4ea70`).
+
+## Dictamen v10 / v1.2.13 (2026-11-09) - c-194 (residuales C)
+
+Cierre de los tres residuos de las recomendaciones C1/C2 que quedaron tras v1.2.15. Release
+`v1.2.16`.
+
+| Rec | Observación | Corrección | Archivo | Estado |
+|---|---|---|---|---|
+| C1 | Fila "Lím." del Anexo I ambigua | Reescrita como secuencia temporal (primero c-169, después c-190); columna Change `c-169`, `c-190` | `12-anexos.tex` | cerrada |
+| C2 | Nota de Zendesk con "precios" | Nota ajustada a la página de producto, sin "precios" | `Bibliography_base.bib` | cerrada |
+| C1 | Atribución a Zanzotto en una sola oración | Partida en dos: inferencia propia + paradigma HitAI atribuido a Zanzotto | `02-marco-teorico.tex` | cerrada |
+| D4 | Referencias de versión entregada en v1.2.15 | Alineadas a v1.2.16 | `05/06/11/12` | cerrada |
+
+### Nota de release
+
+Tag anotado `v1.2.16` sobre el commit de contenido de c-194
+(`ca3c88510be5b1484ed413a8de8bcdffccedc417`); el commit siguiente consigna el hash completo en
+el Anexo B (patrón c-188). El PDF del tag no imprime el hash de otra release. `v1.2.15` queda
+superada (inmutable, `f72e6c899ba3bce7ae11ffe1b0a980f57241a0ea`).
