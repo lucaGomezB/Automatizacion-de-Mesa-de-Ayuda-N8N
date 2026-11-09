@@ -2588,6 +2588,18 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Governance**: MEDIUM.
 - **Leer antes**: `openspec/changes/c-192-atender-el-dictamen-v1-2-13/{proposal,design,tasks}.md`, `auditorias/Dictamen_Tesis_v10_v1.2.13_CONEAU_2026-11-09.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-192).
 
+## FASE 58 — Nivel pago y consentimiento del dictamen v1.2.13 (release v1.2.15)
+
+> Cierra los dos puntos que el dictamen del 9-11 dejo a los autores (B4 e item 13). La evidencia son documentos fisicos en poder del director; el repositorio solo versiona la plantilla y el registro.
+
+### [C-193] `acreditar-el-nivel-pago-y-el-consentimiento` — APLICADO (2026-11-09, MEDIUM)
+
+- **Estado**: aplicado en la rama `change/c-193-acreditar-el-nivel-pago-y-el-consentimiento` y publicado como release `v1.2.15` (tag anotado sobre el commit de contenido, hash en el commit posterior).
+- **Scope**: (1) el nivel pago de la Gemini API se acredita con el comprobante de facturacion en custodia del director; se retira la guia de configuracion como prueba; (2) se declara la informacion verbal y la confirmacion escrita posterior de E1, E2, O1 y O2; los originales firmados quedan en el expediente fisico del director; se agrega la plantilla `docs/campana-medicion/confirmacion-posterior-consentimiento.md` y el registro sin identidad; (3) las referencias de version entregada pasan a `v1.2.15`.
+- **Dependencias**: C-192 (archivado), dictamen v1.2.13.
+- **Governance**: MEDIUM/HIGH (datos personales y etica).
+- **Leer antes**: `openspec/changes/c-193-acreditar-el-nivel-pago-y-el-consentimiento/{proposal,design,tasks}.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-193).
+
 ---
 
 ## Notas del analisis
