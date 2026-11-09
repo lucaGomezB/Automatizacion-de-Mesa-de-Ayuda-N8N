@@ -4105,3 +4105,7 @@ como inferencia propia (si alguien lo consulta, citar la página).
 | C5 | Glosario: CONEAU agregada | c-188 | `00-glosario.tex:36` | - | `textbf{CONEAU}` | cerrada |
 | C5 | Glosario: NLBSE, PABAK, RGPD, UTC y GPT agregadas | c-188 | `00-glosario.tex:29` | - | `textbf{PABAK}` | cerrada |
 | Item 36 | Cronograma: tablas primarias hasta el 2026-11-08 | c-188 | `docs/diagrams/cronograma.md:74` | - | `entre el 2026-11-04 y el 2026-11-08` | cerrada |
+
+### Trazabilidad de release
+
+- **Nota de release:** tag anotado **`v1.2.12`** sobre `7937efd063955f787a4fed6c10168b4744de8905` (rama `change/c-188-residuales-dictamen-v1-2-10`, 2026-11-09). El commit que consigna el hash en el Anexo B es posterior y lo registra el orquestador. `v1.2.11` queda superada (inmutable, `a42f005078a1a7f1d4eea8bd11a7757335f2ce58`).
