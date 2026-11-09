@@ -25,12 +25,17 @@ INFRA-008, que enuncia la imagen literal como unico cumplimiento.
   fallaban en el mismo job de CI). Ahora resuelve `image` o el primer `FROM` del Dockerfile del
   `build`, relativo al directorio del compose. Spec `cost-readiness` (MODIFIED).
 
+- **Preflight (`scripts/preflight/docs_stack_sync.py`)**: los chequeos 6 y 17 usaban `_n8n_tag`, que solo leia `image`
+  (el CI fallaba con 15/17). Ahora resuelve `image` o el primer `FROM` del Dockerfile del `build`, relativo al
+  compose. Spec `project-documentation` (DOC-005, MODIFIED).
+
 ## Capabilities
 
 ### Modified Capabilities
 
 - `infra-network-hardening`: requisito INFRA-008 (MODIFIED).
 - `cost-readiness`: requisito "Guardas del compose verificadas por el preflight" (MODIFIED).
+- `project-documentation`: requisito DOC-005 (MODIFIED).
 
 ## Impact
 

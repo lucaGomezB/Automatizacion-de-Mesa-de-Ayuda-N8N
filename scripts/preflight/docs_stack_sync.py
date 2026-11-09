@@ -338,10 +338,50 @@ def _modelo_normalizado(texto: str) -> str:
     return re.sub(r"\s+", "-", (texto or "").split("(")[0].strip().lower())
 
 
-def _n8n_tag(compose: Dict[str, Any]) -> Optional[str]:
+#: `FROM` de un Dockerfile: ignora `--platform=...` y el alias `AS` (misma semantica
+#: que `cost_readiness._FROM_LINE`).
+_FROM_LINE = re.compile(
+    r"^\s*FROM\s+(?:--\S+\s+)*(?P<image>\S+)(?:\s+AS\s+\S+)?\s*$", re.IGNORECASE
+)
+
+
+def _imagen_desde_build(build: Any, compose_dir: "pathlib.Path | str") -> Optional[str]:
+    """Imagen del primer `FROM` del Dockerfile de un `build` (dict o cadena).
+
+    Desde c-182 el servicio n8n declara `build:` y el pin vive en el Dockerfile,
+    resuelto contra el directorio del compose. None si no se puede resolver.
+    """
+    if isinstance(build, str):
+        build = {"context": build}
+    if not isinstance(build, dict):
+        return None
+    dockerfile = (
+        pathlib.Path(compose_dir)
+        / str(build.get("context", "."))
+        / str(build.get("dockerfile", "Dockerfile"))
+    )
+    try:
+        lineas = dockerfile.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return None
+    for linea in lineas:
+        coincidencia = _FROM_LINE.match(linea)
+        if coincidencia:
+            return coincidencia.group("image")
+    return None
+
+
+def _n8n_tag(
+    compose: Dict[str, Any], compose_dir: "pathlib.Path | str" = "."
+) -> Optional[str]:
+    """Tag de n8n: de `image` literal o, con `build`, del `FROM` del Dockerfile."""
     servicios = compose.get("services", {}) if isinstance(compose, dict) else {}
     for configuracion in (servicios or {}).values():
-        imagen = configuracion.get("image") if isinstance(configuracion, dict) else None
+        if not isinstance(configuracion, dict):
+            continue
+        imagen = configuracion.get("image")
+        if not isinstance(imagen, str) and "build" in configuracion:
+            imagen = _imagen_desde_build(configuracion["build"], compose_dir)
         if isinstance(imagen, str) and "n8nio/n8n" in imagen:
             return imagen.rsplit(":", 1)[-1]
     return None
@@ -619,12 +659,17 @@ def _check_genai(config: Dict[str, Any], claude: str, requirements: Dict[str, st
     return _passing(nombre)
 
 
-def _check_n8n(config: Dict[str, Any], claude: str, compose: Dict[str, Any]) -> Check:
+def _check_n8n(
+    config: Dict[str, Any],
+    claude: str,
+    compose: Dict[str, Any],
+    compose_dir: "pathlib.Path | str" = ".",
+) -> Check:
     nombre = "n8n: version declarada coincide con la imagen del compose"
-    tag = _n8n_tag(compose)
+    tag = _n8n_tag(compose, compose_dir)
     problemas: List[str] = []
     if tag is None:
-        problemas.append("docker-compose.yml no declara una imagen n8nio/n8n")
+        problemas.append("docker-compose.yml no declara una imagen n8nio/n8n (ni un build cuyo Dockerfile la pinee)")
     else:
         declarada_config = _extraer_version(
             str(_get(config, "stack", "orchestration", "tool", default="")), "N8N"
@@ -827,6 +872,7 @@ def _check_versiones_componentes(
     compose: Dict[str, Any],
     kb_dir: "pathlib.Path | str",
     referencia_paths: Sequence["pathlib.Path | str"] = (),
+    compose_dir: "pathlib.Path | str" = ".",
 ) -> Check:
     """Chequeo 17: las versiones de componentes coinciden con su fuente.
 
@@ -843,14 +889,14 @@ def _check_versiones_componentes(
     sin marcador reconocido).
     """
     nombre = "versiones de componentes: knowledge-base coincide con requirements.txt y el compose"
-    tag = _n8n_tag(compose)
+    tag = _n8n_tag(compose, compose_dir)
     fastapi_pin = _pin_exacto(requirements.get("fastapi", ""))
     uvicorn_pin = _pin_exacto(requirements.get("uvicorn", ""))
     genai_req = requirements.get("google-genai", "")
     problemas: List[str] = []
 
     if tag is None:
-        problemas.append("docker-compose.yml no declara una imagen n8nio/n8n")
+        problemas.append("docker-compose.yml no declara una imagen n8nio/n8n (ni un build cuyo Dockerfile la pinee)")
 
     for ruta in _leer_superficie_kb(kb_dir):
         for numero, linea, marcada in _lineas_con_marcador(ruta):
@@ -909,6 +955,7 @@ def check_docs(
     constantes = _leer_constantes(constants_path)
     requirements = _leer_requirements(requirements_path)
     compose = _leer_compose(compose_path)
+    compose_dir = pathlib.Path(compose_path).parent
     config, error_yaml = _cargar_yaml(config_path)
     claude = _leer_claude(claude_path)
     config = config if isinstance(config, dict) else {}
@@ -919,7 +966,7 @@ def check_docs(
         _check_muestreo(settings, config),
         _check_framework(config, requirements),
         _check_genai(config, claude, requirements),
-        _check_n8n(config, claude, compose),
+        _check_n8n(config, claude, compose, compose_dir),
         _check_servicios(claude, compose),
         _check_etapas(claude),
         _check_yaml(config if error_yaml is None else None, error_yaml),
@@ -930,7 +977,9 @@ def check_docs(
         _check_superficie_timeout(settings, kb_dir, referencia_paths),
         _check_superficie_cubierta(kb_dir, referencia_paths),
         _check_invariante_timeout_cliente(settings, api_ts_path),
-        _check_versiones_componentes(requirements, compose, kb_dir, referencia_paths),
+        _check_versiones_componentes(
+            requirements, compose, kb_dir, referencia_paths, compose_dir
+        ),
     ]
 
 
