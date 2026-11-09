@@ -344,8 +344,6 @@ INPUT ./sections/07-resultados.tex
 INPUT sections/07-resultados.tex
 INPUT ./figures/boxplot_tiempos.pdf
 INPUT ./figures/boxplot_tiempos.pdf
-INPUT ./figures/matriz_confusion.pdf
-INPUT ./figures/matriz_confusion.pdf
 INPUT ./sections/08-discusion.tex
 INPUT ./sections/08-discusion.tex
 INPUT sections/08-discusion.tex

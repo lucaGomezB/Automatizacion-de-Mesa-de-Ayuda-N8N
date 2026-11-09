@@ -217,6 +217,16 @@ Render: `npx -y @mermaid-js/mermaid-cli@12.0.0 -i <tmp>.mmd -o despliegue.png -b
 Nota: `mermaid-cli@11` produce el mismo diagrama en formato apaisado; el retrato del
 manuscrito requiere la version 12.
 
+**c-188 (2026-11-09):** `fig:despliegue` se regenero otra vez desde `docs/diagrams/despliegue.md`
+(frontend = bundle Vite servido por `nginx:alpine` :3000, antes "Vite dev server"; N8N = imagen
+derivada de `docker/n8n/Dockerfile` (2.11.2 + parche IMAP, c-182); redes `edge`, `data` (interna),
+`automation` y `host_access` de `docker-compose.yml`, antes `mesa_local_default`). Render con
+`@mermaid-js/mermaid-cli@12.0.0` (`-b white -s 2`); salida **1568x1780**, retrato; relacion
+alto/ancho 1,1352 frente a 1,0918 (+4,0 %, bajo el tope del 5 %).
+`fig:matriz_confusion` (Figura 7) se retiro del manuscrito: la matriz figura una sola vez, como
+`tab:matriz` (8.2). `scripts/figures/matriz_confusion.py` y `figures/matriz_confusion.pdf` se
+conservan como artefacto reproducible no embebido.
+
 ### 6.1 Libro de paginas de c-140 (BLOQUEO de la compuerta)
 
 - **Antes** (`main.pdf` en `HEAD`): total **109**; `Anexos` en p. 101; cuerpo **100**; anexos 9.
