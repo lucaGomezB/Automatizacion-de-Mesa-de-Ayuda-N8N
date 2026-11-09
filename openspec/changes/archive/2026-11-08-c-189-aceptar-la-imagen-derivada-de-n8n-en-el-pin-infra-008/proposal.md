@@ -20,14 +20,20 @@ INFRA-008, que enuncia la imagen literal como unico cumplimiento.
   imagen literal `n8nio/n8n:2.11.2` o con un `build` cuyo Dockerfile parta `FROM` de esa misma
   imagen pineada; un `FROM` distinto (otra version, `latest`) NO cumple.
 
+- **Preflight (`scripts/preflight/cost_readiness.py`)**: la guarda `compose: imagen del servicio n8n
+  pineada a version explicita` tambien leia solo `image` (7 tests de `test_cost_readiness.py`
+  fallaban en el mismo job de CI). Ahora resuelve `image` o el primer `FROM` del Dockerfile del
+  `build`, relativo al directorio del compose. Spec `cost-readiness` (MODIFIED).
+
 ## Capabilities
 
 ### Modified Capabilities
 
 - `infra-network-hardening`: requisito INFRA-008 (MODIFIED).
+- `cost-readiness`: requisito "Guardas del compose verificadas por el preflight" (MODIFIED).
 
 ## Impact
 
-- Solo test y spec. SIN cambios en `docker-compose.yml`, `docker/n8n/Dockerfile`, backend,
+- Solo test, guarda del preflight y spec. SIN cambios en `docker-compose.yml`, `docker/n8n/Dockerfile`, backend,
   nginx ni N8N (dominio C-62, gobernanza ALTA: no se toca la infraestructura).
 - Rollback: revertir el commit del test y la spec.

@@ -19,6 +19,10 @@ guard de c-62 solo conocia la forma `image:`.
 - **D4 — Sin cambios de infraestructura.** No se modifica el compose ni el Dockerfile
   (gobernanza ALTA de C-62): solo el guard y su spec.
 
+- **D5 — Misma semantica en el preflight.** `cost_readiness._resolve_n8n_image` replica la
+  resolucion (regex copiada: el preflight no importa desde `App/Backend/tests`); resuelve el
+  `context` contra el directorio del compose. El CI corre ambas suites y las dos leian `image`.
+
 ## Riesgos
 
 - Un `ARG` en el `FROM` (`FROM ${BASE}`) no se resuelve y el guard fallara de forma visible;
