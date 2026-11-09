@@ -28,7 +28,7 @@ graph TD
     end
 
     subgraph External["Servicios Externos"]
-        GEMINI["Google Gemini API\n(clasificación LLM)"]
+        GEMINI["Google Gemini API\n(clasificación y transcripción)"]
         IMAP["Gmail IMAP/SMTP\n(correo: trigger y envio)"]
         TWILIO["Twilio\n(voz / callback de grabación)"]
     end
@@ -42,7 +42,7 @@ graph TD
     %% Comunicación entre servicios
     BE -- "asyncpg (PostgreSQL protocol)" --> PG
     N8N -- "HTTP POST /api/v1/incidentes" --> BE
-    BE -- "HTTPS (google-genai SDK)" --> GEMINI
+    BE -- "HTTPS: clasificación y transcripción (google-genai SDK)" --> GEMINI
 
     %% Nginx proxy rutas
     NGX -- "/api/* → backend:8000" --> BE

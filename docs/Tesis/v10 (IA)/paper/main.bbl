@@ -1073,7 +1073,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{An introduction to the bootstrap}
-      \field{year}{1993}
+      \field{year}{1994}
       \verb{doi}
       \verb 10.1201/9780429246593
       \endverb
@@ -1291,8 +1291,8 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Software de computadora. GitHub}
-      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.2.12)}
-      \field{urlday}{8}
+      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.2.13)}
+      \field{urlday}{9}
       \field{urlmonth}{11}
       \field{urlyear}{2026}
       \field{year}{2026}
@@ -1378,39 +1378,41 @@
       \verb https://aistudio.google.com/docs/terms
       \endverb
     \endentry
-    \entry{Google2026_vertex_pricing}{online}{}{}
+    \entry{Google2026_gemini_api_pricing}{online}{}{}
       \name{author}{1}{}{%
-        {{un=0,uniquepart=base,hash=57f3af2a3d1051c172ab3c3db7d5409d}{%
-           family={{Google Cloud}},
+        {{un=0,uniquepart=base,hash=8b36e9207c24c76e6719268e49201d94}{%
+           family={{Google}},
            familyi={G\bibinitperiod}}}%
       }
-      \strng{namehash}{57f3af2a3d1051c172ab3c3db7d5409d}
-      \strng{fullhash}{57f3af2a3d1051c172ab3c3db7d5409d}
-      \strng{fullhashraw}{57f3af2a3d1051c172ab3c3db7d5409d}
-      \strng{bibnamehash}{57f3af2a3d1051c172ab3c3db7d5409d}
-      \strng{authorbibnamehash}{57f3af2a3d1051c172ab3c3db7d5409d}
-      \strng{authornamehash}{57f3af2a3d1051c172ab3c3db7d5409d}
-      \strng{authorfullhash}{57f3af2a3d1051c172ab3c3db7d5409d}
-      \strng{authorfullhashraw}{57f3af2a3d1051c172ab3c3db7d5409d}
+      \strng{namehash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{fullhash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{fullhashraw}{8b36e9207c24c76e6719268e49201d94}
+      \strng{bibnamehash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{authorbibnamehash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{authornamehash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{authorfullhash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{authorfullhashraw}{8b36e9207c24c76e6719268e49201d94}
+      \field{extraname}{3}
       \field{sortinit}{G}
       \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{extradate}{3}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Precios de lista}
-      \field{title}{{Vertex AI} {G}enerative {AI} pricing}
-      \field{urlday}{19}
-      \field{urlmonth}{10}
+      \field{note}{Precios de lista de la Gemini API}
+      \field{title}{{Gemini API} pricing}
+      \field{urlday}{9}
+      \field{urlmonth}{11}
       \field{urlyear}{2026}
       \field{year}{2026}
       \field{urldateera}{ce}
       \verb{urlraw}
-      \verb https://cloud.google.com/vertex-ai/generative-ai/pricing
+      \verb https://ai.google.dev/gemini-api/docs/pricing
       \endverb
       \verb{url}
-      \verb https://cloud.google.com/vertex-ai/generative-ai/pricing
+      \verb https://ai.google.dev/gemini-api/docs/pricing
       \endverb
     \endentry
     \entry{grandury2025laleaderboard}{article}{}{}
@@ -2091,7 +2093,7 @@
       \field{title}{The simple difference formula: An approach to teaching nonparametric correlation}
       \field{volume}{3}
       \field{year}{2014}
-      \field{pages}{Article 1}
+      \field{pages}{11.IT.3.1}
       \range{pages}{-1}
       \verb{doi}
       \verb 10.2466/11.IT.3.1
@@ -2896,6 +2898,64 @@
       \verb 10.1007/978-981-13-2514-4_28
       \endverb
     \endentry
+    \entry{Paramesh2018_csitss}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=260c67a8ad5e79dd75763e79d9366a48}{%
+           family={Paramesh},
+           familyi={P\bibinitperiod},
+           given={S.\bibnamedelimi P.},
+           giveni={S\bibinitperiod\bibinitdelim P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7f6a3ebcd1ad343bfd72675b299312c1}{%
+           family={Ramya},
+           familyi={R\bibinitperiod},
+           given={C.},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e614a755a923d2f3bfad3d9701cb37cb}{%
+           family={Shreedhara},
+           familyi={S\bibinitperiod},
+           given={K.\bibnamedelimi S.},
+           giveni={K\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{39386dfcb01e50197c529e761ba95c9f}
+      \strng{fullhash}{bfb65925607d1b9b5b9c1c41f87bb232}
+      \strng{fullhashraw}{bfb65925607d1b9b5b9c1c41f87bb232}
+      \strng{bibnamehash}{bfb65925607d1b9b5b9c1c41f87bb232}
+      \strng{authorbibnamehash}{bfb65925607d1b9b5b9c1c41f87bb232}
+      \strng{authornamehash}{39386dfcb01e50197c529e761ba95c9f}
+      \strng{authorfullhash}{bfb65925607d1b9b5b9c1c41f87bb232}
+      \strng{authorfullhashraw}{bfb65925607d1b9b5b9c1c41f87bb232}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{2018 3rd International Conference on Computational Systems and Information Technology for Sustainable Solutions ({CSITSS})}
+      \field{title}{Classifying the unstructured {IT} service desk tickets using ensemble of classifiers}
+      \field{urlday}{9}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{year}{2018}
+      \field{urldateera}{ce}
+      \field{pages}{221\bibrangedash 227}
+      \range{pages}{7}
+      \verb{doi}
+      \verb 10.1109/CSITSS.2018.8768734
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1109/CSITSS.2018.8768734
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1109/CSITSS.2018.8768734
+      \endverb
+    \endentry
     \entry{GDPR2016}{misc}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=584768e1bea5ebe983bb8f68913f73d1}{%
@@ -3086,17 +3146,17 @@
       \field{month}{11}
       \field{note}{Boletín Oficial de la República Argentina, 3 de diciembre de 2001}
       \field{title}{Decreto 1558/2001: Reglamentación de la Ley 25.326 de Protección de los Datos Personales}
-      \field{urlday}{25}
-      \field{urlmonth}{10}
+      \field{urlday}{9}
+      \field{urlmonth}{11}
       \field{urlyear}{2026}
       \field{year}{2001}
       \field{dateera}{ce}
       \field{urldateera}{ce}
       \verb{urlraw}
-      \verb http://servicios.infoleg.gob.ar/infolegInternet/anexos/70000-74999/70368/norma.htm
+      \verb https://www.argentina.gob.ar/normativa/nacional/decreto-1558-2001-70368/texto
       \endverb
       \verb{url}
-      \verb http://servicios.infoleg.gob.ar/infolegInternet/anexos/70000-74999/70368/norma.htm
+      \verb https://www.argentina.gob.ar/normativa/nacional/decreto-1558-2001-70368/texto
       \endverb
     \endentry
     \entry{Powers2011_evaluation}{article}{}{}
@@ -3364,65 +3424,6 @@
       \endverb
       \verb{url}
       \verb https://doi.org/10.1177/22104968261440701
-      \endverb
-    \endentry
-    \entry{ramya2021classifying}{misc}{}{}
-      \name{author}{3}{}{%
-        {{un=0,uniquepart=base,hash=7f6a3ebcd1ad343bfd72675b299312c1}{%
-           family={Ramya},
-           familyi={R\bibinitperiod},
-           given={C.},
-           giveni={C\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=260c67a8ad5e79dd75763e79d9366a48}{%
-           family={Paramesh},
-           familyi={P\bibinitperiod},
-           given={S.\bibnamedelimi P.},
-           giveni={S\bibinitperiod\bibinitdelim P\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=e614a755a923d2f3bfad3d9701cb37cb}{%
-           family={Shreedhara},
-           familyi={S\bibinitperiod},
-           given={K.\bibnamedelimi S.},
-           giveni={K\bibinitperiod\bibinitdelim S\bibinitperiod},
-           givenun=0}}%
-      }
-      \strng{namehash}{cebc390798e80da06517999d5fc439fb}
-      \strng{fullhash}{2416663b32035ad25a920ac83acb984c}
-      \strng{fullhashraw}{2416663b32035ad25a920ac83acb984c}
-      \strng{bibnamehash}{2416663b32035ad25a920ac83acb984c}
-      \strng{authorbibnamehash}{2416663b32035ad25a920ac83acb984c}
-      \strng{authornamehash}{cebc390798e80da06517999d5fc439fb}
-      \strng{authorfullhash}{2416663b32035ad25a920ac83acb984c}
-      \strng{authorfullhashraw}{2416663b32035ad25a920ac83acb984c}
-      \field{sortinit}{R}
-      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \true{uniqueprimaryauthor}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{eprintclass}{cs.LG}
-      \field{eprinttype}{arXiv}
-      \field{howpublished}{arXiv preprint}
-      \field{note}{Preprint de la versión arbitrada presentada en la 3rd IEEE International Conference on Computational Systems and Information Technology for Sustainable Solutions ({CSITSS}), 2018}
-      \field{title}{Classifying the unstructured {IT} service desk tickets using ensemble of classifiers}
-      \field{urlday}{29}
-      \field{urlmonth}{10}
-      \field{urlyear}{2026}
-      \field{year}{2021}
-      \field{urldateera}{ce}
-      \verb{doi}
-      \verb 10.48550/arXiv.2103.15822
-      \endverb
-      \verb{eprint}
-      \verb 2103.15822
-      \endverb
-      \verb{urlraw}
-      \verb https://arxiv.org/abs/2103.15822
-      \endverb
-      \verb{url}
-      \verb https://arxiv.org/abs/2103.15822
       \endverb
     \endentry
     \entry{Revina2020_it_tickets}{article}{}{}
@@ -5323,17 +5324,17 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Documentación de la plataforma (capacidades y precios)}
-      \field{title}{{Zendesk} {S}uite --- {S}oftware de mesa de ayuda}
+      \field{title}{{Zendesk} {S}uite --- software de servicio al cliente}
       \field{urlday}{19}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
       \field{year}{2026}
       \field{urldateera}{ce}
       \verb{urlraw}
-      \verb https://www.zendesk.com/service/help-desk-software/
+      \verb https://www.zendesk.com/service/
       \endverb
       \verb{url}
-      \verb https://www.zendesk.com/service/help-desk-software/
+      \verb https://www.zendesk.com/service/
       \endverb
     \endentry
     \entry{zhang2023multilingual}{article}{}{}
@@ -6522,7 +6523,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{An introduction to the bootstrap}
-      \field{year}{1993}
+      \field{year}{1994}
       \verb{doi}
       \verb 10.1201/9780429246593
       \endverb
@@ -6740,8 +6741,8 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Software de computadora. GitHub}
-      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.2.12)}
-      \field{urlday}{8}
+      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.2.13)}
+      \field{urlday}{9}
       \field{urlmonth}{11}
       \field{urlyear}{2026}
       \field{year}{2026}
@@ -6827,39 +6828,41 @@
       \verb https://aistudio.google.com/docs/terms
       \endverb
     \endentry
-    \entry{Google2026_vertex_pricing}{online}{}{}
+    \entry{Google2026_gemini_api_pricing}{online}{}{}
       \name{author}{1}{}{%
-        {{un=0,uniquepart=base,hash=57f3af2a3d1051c172ab3c3db7d5409d}{%
-           family={{Google Cloud}},
+        {{un=0,uniquepart=base,hash=8b36e9207c24c76e6719268e49201d94}{%
+           family={{Google}},
            familyi={G\bibinitperiod}}}%
       }
-      \strng{namehash}{57f3af2a3d1051c172ab3c3db7d5409d}
-      \strng{fullhash}{57f3af2a3d1051c172ab3c3db7d5409d}
-      \strng{fullhashraw}{57f3af2a3d1051c172ab3c3db7d5409d}
-      \strng{bibnamehash}{57f3af2a3d1051c172ab3c3db7d5409d}
-      \strng{authorbibnamehash}{57f3af2a3d1051c172ab3c3db7d5409d}
-      \strng{authornamehash}{57f3af2a3d1051c172ab3c3db7d5409d}
-      \strng{authorfullhash}{57f3af2a3d1051c172ab3c3db7d5409d}
-      \strng{authorfullhashraw}{57f3af2a3d1051c172ab3c3db7d5409d}
+      \strng{namehash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{fullhash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{fullhashraw}{8b36e9207c24c76e6719268e49201d94}
+      \strng{bibnamehash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{authorbibnamehash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{authornamehash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{authorfullhash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{authorfullhashraw}{8b36e9207c24c76e6719268e49201d94}
+      \field{extraname}{3}
       \field{sortinit}{G}
       \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{extradate}{3}
       \field{extradatescope}{labelyear}
       \field{labeldatesource}{}
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Precios de lista}
-      \field{title}{{Vertex AI} {G}enerative {AI} pricing}
-      \field{urlday}{19}
-      \field{urlmonth}{10}
+      \field{note}{Precios de lista de la Gemini API}
+      \field{title}{{Gemini API} pricing}
+      \field{urlday}{9}
+      \field{urlmonth}{11}
       \field{urlyear}{2026}
       \field{year}{2026}
       \field{urldateera}{ce}
       \verb{urlraw}
-      \verb https://cloud.google.com/vertex-ai/generative-ai/pricing
+      \verb https://ai.google.dev/gemini-api/docs/pricing
       \endverb
       \verb{url}
-      \verb https://cloud.google.com/vertex-ai/generative-ai/pricing
+      \verb https://ai.google.dev/gemini-api/docs/pricing
       \endverb
     \endentry
     \entry{grandury2025laleaderboard}{article}{}{}
@@ -7540,7 +7543,7 @@
       \field{title}{The simple difference formula: An approach to teaching nonparametric correlation}
       \field{volume}{3}
       \field{year}{2014}
-      \field{pages}{Article 1}
+      \field{pages}{11.IT.3.1}
       \range{pages}{-1}
       \verb{doi}
       \verb 10.2466/11.IT.3.1
@@ -8274,6 +8277,64 @@
       \verb https://doi.org/10.1109/ubmk63289.2024.10773473
       \endverb
     \endentry
+    \entry{Paramesh2018_csitss}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=260c67a8ad5e79dd75763e79d9366a48}{%
+           family={Paramesh},
+           familyi={P\bibinitperiod},
+           given={S.\bibnamedelimi P.},
+           giveni={S\bibinitperiod\bibinitdelim P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7f6a3ebcd1ad343bfd72675b299312c1}{%
+           family={Ramya},
+           familyi={R\bibinitperiod},
+           given={C.},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e614a755a923d2f3bfad3d9701cb37cb}{%
+           family={Shreedhara},
+           familyi={S\bibinitperiod},
+           given={K.\bibnamedelimi S.},
+           giveni={K\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{39386dfcb01e50197c529e761ba95c9f}
+      \strng{fullhash}{bfb65925607d1b9b5b9c1c41f87bb232}
+      \strng{fullhashraw}{bfb65925607d1b9b5b9c1c41f87bb232}
+      \strng{bibnamehash}{bfb65925607d1b9b5b9c1c41f87bb232}
+      \strng{authorbibnamehash}{bfb65925607d1b9b5b9c1c41f87bb232}
+      \strng{authornamehash}{39386dfcb01e50197c529e761ba95c9f}
+      \strng{authorfullhash}{bfb65925607d1b9b5b9c1c41f87bb232}
+      \strng{authorfullhashraw}{bfb65925607d1b9b5b9c1c41f87bb232}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{2018 3rd International Conference on Computational Systems and Information Technology for Sustainable Solutions ({CSITSS})}
+      \field{title}{Classifying the unstructured {IT} service desk tickets using ensemble of classifiers}
+      \field{urlday}{9}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{year}{2018}
+      \field{urldateera}{ce}
+      \field{pages}{221\bibrangedash 227}
+      \range{pages}{7}
+      \verb{doi}
+      \verb 10.1109/CSITSS.2018.8768734
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1109/CSITSS.2018.8768734
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1109/CSITSS.2018.8768734
+      \endverb
+    \endentry
     \entry{Paramesh2019_it_service_desk}{inbook}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=260c67a8ad5e79dd75763e79d9366a48}{%
@@ -8535,17 +8596,17 @@
       \field{month}{11}
       \field{note}{Boletín Oficial de la República Argentina, 3 de diciembre de 2001}
       \field{title}{Decreto 1558/2001: Reglamentación de la Ley 25.326 de Protección de los Datos Personales}
-      \field{urlday}{25}
-      \field{urlmonth}{10}
+      \field{urlday}{9}
+      \field{urlmonth}{11}
       \field{urlyear}{2026}
       \field{year}{2001}
       \field{dateera}{ce}
       \field{urldateera}{ce}
       \verb{urlraw}
-      \verb http://servicios.infoleg.gob.ar/infolegInternet/anexos/70000-74999/70368/norma.htm
+      \verb https://www.argentina.gob.ar/normativa/nacional/decreto-1558-2001-70368/texto
       \endverb
       \verb{url}
-      \verb http://servicios.infoleg.gob.ar/infolegInternet/anexos/70000-74999/70368/norma.htm
+      \verb https://www.argentina.gob.ar/normativa/nacional/decreto-1558-2001-70368/texto
       \endverb
     \endentry
     \entry{Powers2011_evaluation}{article}{}{}
@@ -8813,65 +8874,6 @@
       \endverb
       \verb{url}
       \verb https://doi.org/10.1177/22104968261440701
-      \endverb
-    \endentry
-    \entry{ramya2021classifying}{misc}{}{}
-      \name{author}{3}{}{%
-        {{un=0,uniquepart=base,hash=7f6a3ebcd1ad343bfd72675b299312c1}{%
-           family={Ramya},
-           familyi={R\bibinitperiod},
-           given={C.},
-           giveni={C\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=260c67a8ad5e79dd75763e79d9366a48}{%
-           family={Paramesh},
-           familyi={P\bibinitperiod},
-           given={S.\bibnamedelimi P.},
-           giveni={S\bibinitperiod\bibinitdelim P\bibinitperiod},
-           givenun=0}}%
-        {{un=0,uniquepart=base,hash=e614a755a923d2f3bfad3d9701cb37cb}{%
-           family={Shreedhara},
-           familyi={S\bibinitperiod},
-           given={K.\bibnamedelimi S.},
-           giveni={K\bibinitperiod\bibinitdelim S\bibinitperiod},
-           givenun=0}}%
-      }
-      \strng{namehash}{cebc390798e80da06517999d5fc439fb}
-      \strng{fullhash}{2416663b32035ad25a920ac83acb984c}
-      \strng{fullhashraw}{2416663b32035ad25a920ac83acb984c}
-      \strng{bibnamehash}{2416663b32035ad25a920ac83acb984c}
-      \strng{authorbibnamehash}{2416663b32035ad25a920ac83acb984c}
-      \strng{authornamehash}{cebc390798e80da06517999d5fc439fb}
-      \strng{authorfullhash}{2416663b32035ad25a920ac83acb984c}
-      \strng{authorfullhashraw}{2416663b32035ad25a920ac83acb984c}
-      \field{sortinit}{R}
-      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \true{uniqueprimaryauthor}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{eprintclass}{cs.LG}
-      \field{eprinttype}{arXiv}
-      \field{howpublished}{arXiv preprint}
-      \field{note}{Preprint de la versión arbitrada presentada en la 3rd IEEE International Conference on Computational Systems and Information Technology for Sustainable Solutions ({CSITSS}), 2018}
-      \field{title}{Classifying the unstructured {IT} service desk tickets using ensemble of classifiers}
-      \field{urlday}{29}
-      \field{urlmonth}{10}
-      \field{urlyear}{2026}
-      \field{year}{2021}
-      \field{urldateera}{ce}
-      \verb{doi}
-      \verb 10.48550/arXiv.2103.15822
-      \endverb
-      \verb{eprint}
-      \verb 2103.15822
-      \endverb
-      \verb{urlraw}
-      \verb https://arxiv.org/abs/2103.15822
-      \endverb
-      \verb{url}
-      \verb https://arxiv.org/abs/2103.15822
       \endverb
     \endentry
     \entry{Revina2020_it_tickets}{article}{}{}
@@ -10772,17 +10774,17 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Documentación de la plataforma (capacidades y precios)}
-      \field{title}{{Zendesk} {S}uite --- {S}oftware de mesa de ayuda}
+      \field{title}{{Zendesk} {S}uite --- software de servicio al cliente}
       \field{urlday}{19}
       \field{urlmonth}{10}
       \field{urlyear}{2026}
       \field{year}{2026}
       \field{urldateera}{ce}
       \verb{urlraw}
-      \verb https://www.zendesk.com/service/help-desk-software/
+      \verb https://www.zendesk.com/service/
       \endverb
       \verb{url}
-      \verb https://www.zendesk.com/service/help-desk-software/
+      \verb https://www.zendesk.com/service/
       \endverb
     \endentry
     \entry{zhang2023multilingual}{article}{}{}

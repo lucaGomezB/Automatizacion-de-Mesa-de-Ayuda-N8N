@@ -887,6 +887,65 @@ llamar a `exactitud_subconjunto`, `perdida_hamming` y `f1_micro`; la Hamming por
 la variante de solo etiqueta principal; el recomputo da 0,182 con los adicionales y 0,177 sin ellos.
 El texto declara la definición vigente (4.7 y 8.2) y no incorpora estas cifras.
 
+### 3.16 Dictamen v1.2.12 (c-190)
+
+Cifras y procedencias de la corrección del dictamen del 2026-11-09 sobre `v1.2.12` (change
+`c-190-atender-el-dictamen-coneau-v1-2-12`). Recomputadas el 2026-11-09 sobre los artefactos
+versionados de `evaluation/data/campana/` y el corpus; no se invoca al clasificador, a Gemini
+ni a la red.
+
+**(b''') Sub-hipótesis 2 según el denominador de los casos revisados (A1, inv. 1-2).**
+
+| Valor | Procedencia | Estado |
+|---|---|---|
+| Intervenciones: `147 = 66` correo `+ 81` telefonía `+ 0` web | `evaluation/data/campana/intervenciones.csv` | vigente |
+| Cambios de derivación: `25 = 14` telefonía `+ 11` correo `+ 0` web; `122` confirmaciones | `intervenciones.csv` (`cambio_sector`) | vigente |
+| Confirmaciones con consenso: `85`; de ellas `11` con sector distinto del consenso | cruce `intervenciones.csv` × `doble_etiquetado.csv` (consenso `E1 = E2`, 138 casos) | vigente |
+| Cambios con consenso: `13 = 9` correcciones `+ 1` empeoramiento `+ 3` de error a error | idem | vigente |
+| Web mal derivados: `10/53` frente a la referencia original (con caché) y `7/40` frente al consenso (`10` con el sidecar) | corpus + `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` | vigente |
+| Wilson de `25/200` `[0,0861; 0,1780]`; `25/147` `[0,1179; 0,2390]`; `28/138` `[0,1443; 0,2776]`; `53/200` `[0,2087; 0,3302]` | `evaluation.metrics.intervalo_wilson` | vigente |
+| Proporción de tiempo `0,5307` (denominador `corpus_campana.json`, 191 casos, suma automatizada `2692,22` s) | `analisis/resultados.json:910-927` (ver (b') de 3.14) | vigente |
+
+El estado de la sub-hipótesis sobre los casos revisables (`25/147 = 17,0 %`, refutada) es la
+lectura A1 de c-190; `25/200 = 12,5 %` se conserva como dato secundario con la advertencia del
+denominador. Reproducción: script descartable (design D0 de c-190) que lee `intervenciones.csv`,
+`doble_etiquetado.csv` y los sidecars por `case_id`, más
+`evaluation.metrics.intervalo_wilson` para los cuatro intervalos.
+
+**(b'') Procedencia de las cifras de la campaña (B2, inv. 10-12).**
+
+- Salida en vivo telefónica: columna `sector_predicho` del export de intervenciones; los 81
+  sidecars telefónicos tienen sector nulo.
+- Predicción del contraste: caché `predicciones_hybrid-v3_2026-10-07.json` (McNemar).
+- Conjunto de verdad laxo del brazo manual: consenso de `E1` y `E2` más la unión de los
+  sectores adicionales de ambos etiquetadores → laxa manual `130/151`; con los adicionales del
+  corpus original, `128/151`.
+
+**(c) Efecto mínimo detectable del Spearman (D5, inv. 12).**
+
+| Valor | Procedencia | Estado |
+|---|---|---|
+| `0,2834` con `n = 110` (`n − 3 = 107`) y `ARE = 0,864`: `tanh((z0,975 + z0,80)/sqrt(107 · 0,864))` | `evaluation/campana.py:1593` | vigente (rectificado en c-190) |
+| `0,2644` con la fórmula sin la corrección ARE | fórmula documentada del código, sin ARE | referencial |
+
+El valor de `analisis/resultados.json:1154-1163,1326-1335` es `0,2834`; el `0,264` proviene de
+omitir la corrección por eficiencia relativa (`ARE_WILCOXON_MINIMA = 0,864`). c-190 declara
+`n = 110` y la fórmula completa en 8.7 (`07-resultados.tex`). No se edita
+`analisis/resultados.json`.
+
+**(a) Canal telefónico y modelo de transcripción (B1).**
+
+- Backend (`settings.py` del tag): `gemini_stt_model = "gemini-3.5-transcribe"` (línea 238),
+  usado por `App/Backend/app/clients/gemini_stt.py`. Declarado en 6.4, la Tabla 19 y el Anexo H;
+  9.5 excluye su costo.
+
+**(d) Diferencia entre la campaña y la entregada (A3, inv. 5).**
+
+- `git diff --stat cda7712 v1.2.12 -- App/ n8n/ docker/ docker-compose.yml`: 24 archivos, 1323
+  inserciones y 75 supresiones; los pines (`requirements.txt`, `package-lock.json`,
+  `n8n/workflow.json`, `settings.py`) no cambian. Detalle en
+  `conteos-canonicos-tecnicos.md` (Sección 8).
+
 ## 4. Contingencia del gate de intervención humana
 
 Tabla reconstruida desde `evaluation/predicciones.json` con

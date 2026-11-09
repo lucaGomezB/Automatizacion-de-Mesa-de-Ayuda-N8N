@@ -4,7 +4,7 @@ Ilustra el flujo completo desde la recepción del incidente en un canal de entra
 hasta la confirmación al usuario o la derivación a revisión humana, en la
 configuración entregada (release `v1.2.5`). El disparador por reportante no
 identificado en el directorio es el change c-82 (13-10-2026), posterior a la
-campaña de medición.
+campaña 2026-10.
 
 Procedencia: `n8n/workflow.json`, `App/Backend/app/routes/incidentes.py`,
 `App/Backend/app/services/incidente_service.py` y
@@ -33,7 +33,7 @@ sequenceDiagram
     N8N->>BE: POST /api/v1/incidentes<br/>{ descripcion, prioridad, canal_origen_id }
 
     %% ── Alta del incidente ─────────────────────────────────────────────────
-    BE->>PG: Resolver reportante en el directorio<br/>(c-82, desde el 13-10-2026, posterior a la campaña)
+    BE->>PG: Resolver reportante en el directorio<br/>(c-82, desde el 13-10-2026, posterior a la campaña 2026-10)
     BE->>BE: Pseudonimizar descripción<br/>[EMAIL]/[TELEFONO]/[HOST]/[PERSONA]
     BE->>PG: INSERT incidente (descripcion_original cifrada,<br/>descripcion_pseudonimizada, estado="nuevo")
 
@@ -82,8 +82,8 @@ sequenceDiagram
   `score_correctitud` ≥ 0,5166 y no deriva a revisión por su confianza; el umbral de 0,70
   rige solo sobre la salida de Gemini; la reserva fija confianza 0,0 y revisión siempre.
 - **Disparador por directorio**: el backend deriva además a revisión cuando el reportante
-  no se identifica en el directorio (c-82, desde el 13-10-2026, posterior a la campaña de
-  medición), combinado por OR con la condición del clasificador.
+  no se identifica en el directorio (c-82, desde el 13-10-2026, posterior a la campaña
+  2026-10), combinado por OR con la condición del clasificador.
 - **Etapas del clasificador**: `deterministic` → `gemini` → reserva (error, timeout o guarda de costo).
 - **N8N** actúa exclusivamente como orquestador de canales; toda la lógica de clasificación
   y persistencia reside en el backend FastAPI.
