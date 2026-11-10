@@ -42,7 +42,7 @@ documento de campaña correspondiente.
 
 | alias | rol | fecha_informacion_verbal | fecha_confirmacion | custodia |
 |---|---|---|---|---|
-| E1 | etiquetador |  |  | director |
-| E2 | etiquetador |  |  | director |
-| O1 | operador |  |  | director |
-| O2 | operador |  |  | director |
+| E1 | etiquetador | 2026-11-01 | 2026-11-10 | director |
+| E2 | etiquetador | 2026-11-01 | 2026-11-10 | director |
+| O1 | operador | 2026-11-01 | 2026-11-10 | director |
+| O2 | operador | 2026-11-01 | 2026-11-10 | director |
