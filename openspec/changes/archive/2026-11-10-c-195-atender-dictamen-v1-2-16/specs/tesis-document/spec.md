@@ -250,6 +250,23 @@ el tag de la release. El archivo del dictamen
 - **WHEN** se cuentan los dictamenes `.md` de `auditorias/` y se lee el parrafo de presentacion del Anexo I
 - **THEN** el numero declarado coincide con el de los archivos versionados
 
+#### Scenario: Matriz completa del dictamen v1.2.13
+
+- **WHEN** se leen las secciones de c-192, c-193 y c-194 de `dictamen-correcciones.md`
+- **THEN** cada observacion, el item 12, el item 13, C1 y C2 tienen una fila con archivo, fragmento verificable y estado
+- **AND** `verificar_matriz_trazabilidad.py` reporta 0 fallas
+
+#### Scenario: Anexo I actualizado
+
+- **WHEN** se compila y se lee el Anexo I
+- **THEN** las tablas de trazabilidad del dictamen del 9-11 sobre v1.2.13 resuelven con sus `\autoref`
+
+#### Scenario: Versionado no bloqueante del dictamen
+
+- **WHEN** el archivo del dictamen no esta todavia en `auditorias/`
+- **THEN** la tarea de versionarlo queda declarada y la release no se bloquea
+- **AND** cuando el archivo se agrega, queda versionado en `auditorias/`
+
 ### Requirement: Verificador de la matriz de trazabilidad vigente
 
 `docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py` SHALL verificar todas las
