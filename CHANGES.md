@@ -567,6 +567,35 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
+## Residuales abiertos
+
+> Foto verificada el 2026-11-10 contra `openspec list`, los `tasks.md` archivados y el arbol. Todo lo no listado esta ARCHIVADO sin residuales de contenido. Ninguno de estos residuales bloquea la entrega al director: la tesis vigente es `v1.2.17` y la evidencia fisica esta completa.
+
+### Abiertos reales
+
+| Residual | Estado | Evidencia |
+|---|---|---|
+| **c-191** — validacion fuera de muestra (150 casos, etiquetadores `E3`/`E4`, corrida paga del clasificador congelado) | ABIERTO — change activo, 2/32 | `openspec/changes/c-191-validacion-fuera-de-muestra-150-casos/tasks.md` |
+| **C-146 tarea 6.1** — metricas directas de Paramesh y Shreedhara (2019), DOI `10.1007/978-981-13-2514-4_28`, y Paket et al. (2024), DOI `10.1109/UBMK63289.2024.10773473` | ABIERTO — BLOQUEADO por acceso institucional externo (UTN) | `openspec/changes/archive/2026-10-27-c-146-completar-metricas-trabajos-previos/tasks.md:44` |
+
+### Verificaciones manuales nunca confirmadas (bajo riesgo, declaradas al archivar)
+
+| Residual | Que |
+|---|---|
+| C-08 tarea 8.1 | Correr la evaluacion manual sobre el corpus real |
+| C-46 tareas 5.2 y 5.3 | Verificar en vivo en N8N el sello `ingresado_en` de telefonia |
+| C-47 tarea 5.4 | Verificar en vivo que el agente N8N recibe el item sellado |
+| C-182 tarea 6.1 | Documentar el rollback de la imagen N8N derivada |
+| C-183 tarea 6.2 | Verificacion en navegador (hard refresh) del header |
+
+### Cajas sin tildar que NO son pendientes
+
+- **Stale** (hecho, caja sin tildar): `C-123` (tag `v1.1.1` existe), `C-125`/`C-126` (spec `local-bootstrap` sincronizada, 9 requisitos), `C-158` tarea 7.1 (sin marcadores `PENDIENTE AUTORES`), `C-187` 9.5/9.6, `C-188` 11.6/11.7, `C-195` 8.1-8.3, `C-190` (release/tag/push hechos).
+- **Moot** por anotacion: `C-148` 9.1/9.2, `C-149` 7.1, `C-150` 8.1/8.2.
+- **Historicas** de changes viejos superseded: `C-22`, `C-24`, `C-26`, `C-67` (este ultimo archivado como NO REALIZADO).
+
+---
+
 ## FASE 7 — Documento de Tesis
 
 > C-11 opera sobre el documento academico de tesis (LaTeX), independiente del software.
