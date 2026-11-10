@@ -204,6 +204,81 @@ class ResumenPorSeccionTest(unittest.TestCase):
         self.assertIn("filas: 3", texto)
         self.assertIn("fallas: 1", texto)
 
+ENCAB = "| Rec | Sintesis | Change | Archivo:linea | Ancla | Fragmento verificable | Estado |\n|---|---|---|---|---|---|---|\n"
+FILA_OK = "| A1 | s | c-192 | `a/b.tex:3` | `subsec:uno` | `hola mundo` | cerrada |\n"
+
+
+class SeccionesSinMatrizTest(unittest.TestCase):
+    """c-195 A3: un ciclo de correcciones (change >= 190) sin matriz no pasa inadvertido."""
+
+    def test_seccion_c192_sin_matriz_se_devuelve(self):
+        texto = "## Dictamen v10 / v1.2.13 (2026-11-09) - c-192\n\n| a | b |\n|---|---|\n| 1 | 2 |\n"
+        self.assertEqual(
+            vmt.secciones_sin_matriz(texto),
+            ["Dictamen v10 / v1.2.13 (2026-11-09) - c-192"],
+        )
+
+    def test_seccion_c192_con_matriz_no_se_devuelve(self):
+        texto = "## Dictamen v10 / v1.2.13 (2026-11-09) - c-192\n\n" + ENCAB + FILA_OK
+        self.assertEqual(vmt.secciones_sin_matriz(texto), [])
+
+    def test_seccion_c188_sin_matriz_no_se_cuenta(self):
+        texto = "## Dictamen v10 / v1.2.10 (2026-11-08) - c-188\n\ntexto\n"
+        self.assertEqual(vmt.secciones_sin_matriz(texto), [])
+
+    def test_titulo_sin_change_no_se_cuenta(self):
+        texto = "## Dictamen v10 / v1.2.13 (2026-11-09)\n\ntexto\n"
+        self.assertEqual(vmt.secciones_sin_matriz(texto), [])
+
+    def test_dos_secciones_una_con_y_otra_sin_matriz(self):
+        texto = (
+            "## Dictamen v10 / v1.2.13 (2026-11-09) - c-192\n\n" + ENCAB + FILA_OK
+            + "\n## Dictamen v10 / v1.2.13 (2026-11-09) - c-193 (nivel pago)\n\ntexto\n"
+        )
+        self.assertEqual(
+            vmt.secciones_sin_matriz(texto),
+            ["Dictamen v10 / v1.2.13 (2026-11-09) - c-193 (nivel pago)"],
+        )
+
+    def test_se_usa_el_ultimo_change_del_titulo_y_el_umbral_es_parametro(self):
+        texto = "## Dictamen v10 / v1.2.13 - c-150 y c-195\n\ntexto\n"
+        self.assertEqual(len(vmt.secciones_sin_matriz(texto)), 1)
+        self.assertEqual(vmt.secciones_sin_matriz(texto, desde=196), [])
+
+
+class MainSeccionSinMatrizTest(unittest.TestCase):
+    def _correr(self, registro):
+        import contextlib
+        import io
+        import tempfile
+        from pathlib import Path
+        from unittest import mock
+
+        with tempfile.TemporaryDirectory() as d:
+            ruta = Path(d) / "registro.md"
+            ruta.write_text(registro, encoding="utf-8")
+            salida = io.StringIO()
+            with mock.patch.object(vmt, "REGISTRO", ruta), mock.patch.object(
+                vmt, "_lector", lambda rev: leer
+            ), contextlib.redirect_stdout(salida):
+                codigo = vmt.main([])
+        return codigo, salida.getvalue()
+
+    def test_registro_con_seccion_c19x_sin_matriz_devuelve_1_y_la_nombra(self):
+        registro = (
+            "## Dictamen v10 / v1.2.13 (2026-11-09) - c-192\n\n" + ENCAB + FILA_OK
+            + "\n## Dictamen v10 / v1.2.13 (2026-11-09) - c-194 (residuales C)\n\ntexto\n"
+        )
+        codigo, salida = self._correr(registro)
+        self.assertEqual(codigo, 1)
+        self.assertIn("seccion sin matriz", salida)
+        self.assertIn("c-194 (residuales C)", salida)
+
+    def test_registro_con_todas_las_secciones_con_matriz_devuelve_0(self):
+        registro = "## Dictamen v10 / v1.2.13 (2026-11-09) - c-192\n\n" + ENCAB + FILA_OK
+        codigo, _ = self._correr(registro)
+        self.assertEqual(codigo, 0)
+
 
 if __name__ == "__main__":
     unittest.main()

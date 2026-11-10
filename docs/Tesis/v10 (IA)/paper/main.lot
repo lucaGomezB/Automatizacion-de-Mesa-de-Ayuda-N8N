@@ -1,25 +1,27 @@
 \babel@toc {spanish}{}\relax 
-\contentsline {table}{\numberline {1}{\ignorespaces Trabajos académicos previos sobre clasificación de tickets}}{28}{table.caption.2}%
-\contentsline {table}{\numberline {2}{\ignorespaces Comparación de soluciones para gestión automatizada de mesa de ayuda}}{29}{table.caption.3}%
-\contentsline {table}{\numberline {3}{\ignorespaces Operacionalización de variables del estudio}}{33}{table.caption.4}%
-\contentsline {table}{\numberline {4}{\ignorespaces Capas funcionales de la arquitectura del sistema}}{44}{table.caption.8}%
-\contentsline {table}{\numberline {5}{\ignorespaces Entidades principales del modelo de datos}}{49}{table.caption.11}%
-\contentsline {table}{\numberline {6}{\ignorespaces Puntos de entrada principales de la interfaz REST}}{51}{table.caption.13}%
-\contentsline {table}{\numberline {7}{\ignorespaces Estado de alineación con los controles de ISO/IEC 27002:2022, agrupados por tema}}{67}{table.caption.16}%
-\contentsline {table}{\numberline {8}{\ignorespaces Perfil de alineación con las funciones de NIST CSF 2.0}}{68}{table.caption.17}%
-\contentsline {table}{\numberline {9}{\ignorespaces Estadísticos descriptivos de los tiempos de registro por flujo (\(n = 200\))}}{69}{table.caption.18}%
-\contentsline {table}{\numberline {10}{\ignorespaces Tiempo de registro por canal de origen: flujos manual y automatizado, reducción y contraste intra-canal (\(n = 200\))}}{70}{table.caption.19}%
-\contentsline {table}{\numberline {11}{\ignorespaces Matriz de confusión del clasificador automático (\(n = 200\)). Filas: sector asignado; columnas: sector predicho principal.}}{71}{table.caption.21}%
-\contentsline {table}{\numberline {12}{\ignorespaces Exactitud estricta y laxa por etapa del pipeline y por canal de origen}}{72}{table.caption.22}%
-\contentsline {table}{\numberline {13}{\ignorespaces Métricas de clasificación por clase con intervalo de confianza al 95~\% (una contra el resto)}}{72}{table.caption.23}%
-\contentsline {table}{\numberline {14}{\ignorespaces Exactitud por banda de confianza declarada y por etapa del pipeline}}{74}{table.caption.24}%
-\contentsline {table}{\numberline {15}{\ignorespaces Sensibilidad de la exactitud al vocabulario ajustado con el corpus}}{75}{table.caption.25}%
-\contentsline {table}{\numberline {16}{\ignorespaces Confusiones observadas en la clasificación automática, por frontera, con los aciertos laxos entre los errores estrictos}}{76}{table.caption.26}%
-\contentsline {table}{\numberline {17}{\ignorespaces Exactitud mínima de equilibrio y balance neto trimestral según la tasa de derivación errónea manual y el costo por derivación}}{88}{table.caption.31}%
-\contentsline {table}{\numberline {18}{\ignorespaces Cumplimiento de los objetivos del trabajo y evidencia de respaldo}}{91}{table.caption.32}%
-\contentsline {table}{\numberline {19}{\ignorespaces Configuración evaluada, configuración entregada y configuración de la campaña complementaria}}{109}{table.caption.38}%
-\contentsline {table}{\numberline {20}{\ignorespaces Parámetros de configuración de la inferencia con \texttt {gemini-3.6-flash}.}}{114}{table.caption.40}%
-\contentsline {table}{\numberline {21}{\ignorespaces Recomendaciones del dictamen del 22 de octubre de 2026, change responsable y secciones donde se atendieron.}}{116}{table.caption.41}%
-\contentsline {table}{\numberline {22}{\ignorespaces Recomendaciones del dictamen del 28 de octubre de 2026, change responsable y secciones donde se atendieron.}}{117}{table.caption.42}%
-\contentsline {table}{\numberline {23}{\ignorespaces Recomendaciones del dictamen del 8 de noviembre de 2026, secciones donde se atendieron (change responsable: \texttt {c-187} para A1 a A5, B1 a B3 y B6; \texttt {c-188} para B4, B5, B7 y C1 a C5).}}{118}{table.caption.43}%
-\contentsline {table}{\numberline {24}{\ignorespaces Recomendaciones del dictamen del 9 de noviembre de 2026, secciones donde se atendieron (change responsable: \texttt {c-190}).}}{118}{table.caption.44}%
+\contentsline {table}{\numberline {1}{\ignorespaces Trabajos académicos previos sobre clasificación de tickets}}{29}{table.caption.2}%
+\contentsline {table}{\numberline {2}{\ignorespaces Comparación de soluciones para gestión automatizada de mesa de ayuda}}{30}{table.caption.3}%
+\contentsline {table}{\numberline {3}{\ignorespaces Operacionalización de variables del estudio}}{34}{table.caption.4}%
+\contentsline {table}{\numberline {4}{\ignorespaces Capas funcionales de la arquitectura del sistema}}{45}{table.caption.8}%
+\contentsline {table}{\numberline {5}{\ignorespaces Entidades principales del modelo de datos}}{50}{table.caption.11}%
+\contentsline {table}{\numberline {6}{\ignorespaces Puntos de entrada principales de la interfaz REST}}{52}{table.caption.13}%
+\contentsline {table}{\numberline {7}{\ignorespaces Estado de alineación con los controles de ISO/IEC 27002:2022, agrupados por tema}}{68}{table.caption.16}%
+\contentsline {table}{\numberline {8}{\ignorespaces Perfil de alineación con las funciones de NIST CSF 2.0}}{69}{table.caption.17}%
+\contentsline {table}{\numberline {9}{\ignorespaces Estadísticos descriptivos de los tiempos de registro por flujo (\(n = 200\))}}{70}{table.caption.18}%
+\contentsline {table}{\numberline {10}{\ignorespaces Tiempo de registro por canal de origen: flujos manual y automatizado, reducción y contraste intra-canal (\(n = 200\))}}{71}{table.caption.19}%
+\contentsline {table}{\numberline {11}{\ignorespaces Matriz de confusión del clasificador automático (\(n = 200\)). Filas: sector asignado; columnas: sector predicho principal.}}{72}{table.caption.21}%
+\contentsline {table}{\numberline {12}{\ignorespaces Exactitud estricta y laxa por etapa del pipeline y por canal de origen}}{73}{table.caption.22}%
+\contentsline {table}{\numberline {13}{\ignorespaces Métricas de clasificación por clase con intervalo de confianza al 95~\% (una contra el resto)}}{73}{table.caption.23}%
+\contentsline {table}{\numberline {14}{\ignorespaces Exactitud por banda de confianza declarada y por etapa del pipeline}}{75}{table.caption.24}%
+\contentsline {table}{\numberline {15}{\ignorespaces Sensibilidad de la exactitud al vocabulario ajustado con el corpus}}{76}{table.caption.25}%
+\contentsline {table}{\numberline {16}{\ignorespaces Confusiones observadas en la clasificación automática, por frontera, con los aciertos laxos entre los errores estrictos}}{77}{table.caption.26}%
+\contentsline {table}{\numberline {17}{\ignorespaces Exactitud mínima de equilibrio y balance neto trimestral según la tasa de derivación errónea manual y el costo por derivación}}{89}{table.caption.31}%
+\contentsline {table}{\numberline {18}{\ignorespaces Cumplimiento de los objetivos del trabajo y evidencia de respaldo}}{92}{table.caption.32}%
+\contentsline {table}{\numberline {19}{\ignorespaces Configuración evaluada, configuración entregada y configuración de la campaña complementaria}}{110}{table.caption.38}%
+\contentsline {table}{\numberline {20}{\ignorespaces Parámetros de configuración de la inferencia con \texttt {gemini-3.6-flash}.}}{115}{table.caption.40}%
+\contentsline {table}{\numberline {21}{\ignorespaces Recomendaciones del dictamen del 22 de octubre de 2026, change responsable y secciones donde se atendieron.}}{117}{table.caption.41}%
+\contentsline {table}{\numberline {22}{\ignorespaces Recomendaciones del dictamen del 28 de octubre de 2026, change responsable y secciones donde se atendieron.}}{118}{table.caption.42}%
+\contentsline {table}{\numberline {23}{\ignorespaces Recomendaciones del dictamen del 8 de noviembre de 2026, secciones donde se atendieron (change responsable: \texttt {c-187} para A1 a A5, B1 a B3 y B6; \texttt {c-188} para B4, B5, B7 y C1 a C5).}}{119}{table.caption.43}%
+\contentsline {table}{\numberline {24}{\ignorespaces Recomendaciones del dictamen del 9 de noviembre de 2026, secciones donde se atendieron (change responsable: \texttt {c-190}).}}{119}{table.caption.44}%
+\contentsline {table}{\numberline {25}{\ignorespaces Recomendaciones del dictamen del 9 de noviembre de 2026 sobre la \texttt {v1.2.13}, changes responsables y secciones donde se atendieron.}}{119}{table.caption.45}%
+\contentsline {table}{\numberline {26}{\ignorespaces Recomendaciones del dictamen del 9 de noviembre de 2026 sobre la \texttt {v1.2.16}, secciones donde se atendieron (change responsable: \texttt {c-195}).}}{120}{table.caption.46}%

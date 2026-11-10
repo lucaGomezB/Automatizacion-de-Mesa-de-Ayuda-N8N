@@ -54,6 +54,7 @@ from evaluation.no_solape import SolapeError, verificar_no_solape
 from evaluation.plan_campana import BRAZO_AUTOMATIZADO, BRAZO_MANUAL, AsignacionCaso
 from evaluation.run_evaluation import Prediccion, cargar_cache_meta, cargar_predicciones
 from evaluation.stats import (
+    ARE_SPEARMAN,
     ARE_WILCOXON_MINIMA,
     ResultadoMcNemar,
     contraste_mcnemar,
@@ -1590,7 +1591,7 @@ def contraste_spearman(
     rho, p = float(resultado.statistic), float(resultado.pvalue)
     if math.isnan(rho) or math.isnan(p):
         return _spearman_no_aplicable(n, "la correlacion o su valor p es NaN.")
-    mde = math.tanh(efecto_minimo_detectable(n - 3, eficiencia_relativa=ARE_WILCOXON_MINIMA))
+    mde = math.tanh(efecto_minimo_detectable(n - 3, eficiencia_relativa=ARE_SPEARMAN))
     return ContrasteSpearman(
         aplicable=True,
         motivo=None,

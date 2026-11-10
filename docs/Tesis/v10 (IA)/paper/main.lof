@@ -1,11 +1,11 @@
 \babel@toc {spanish}{}\relax 
-\contentsline {figure}{\numberline {1}{\ignorespaces Diagrama de arquitectura del sistema}}{44}{figure.caption.9}%
-\contentsline {figure}{\numberline {2}{\ignorespaces Diagrama de despliegue del entorno local. Servicios, redes Docker (edge, data interna, automation y host\_access), volúmenes y servicios externos.}}{45}{figure.caption.10}%
-\contentsline {figure}{\numberline {3}{\ignorespaces Diagrama entidad-relación de las siete entidades principales}}{50}{figure.caption.12}%
-\contentsline {figure}{\numberline {4}{\ignorespaces Panel de administración del sistema}}{60}{figure.caption.14}%
-\contentsline {figure}{\numberline {5}{\ignorespaces Dashboard de analítica del panel de administración}}{61}{figure.caption.15}%
-\contentsline {figure}{\numberline {6}{\ignorespaces Distribución del tiempo de registro por canal de origen (manual frente a automatizado), para la corrida telefónica del 5 y 6 de octubre de 2026. El panel de telefonía incorpora la duración de la llamada grabada.}}{71}{figure.caption.20}%
-\contentsline {figure}{\numberline {7}{\ignorespaces Diagrama de secuencia del flujo extremo a extremo de un incidente}}{106}{figure.caption.35}%
-\contentsline {figure}{\numberline {8}{\ignorespaces Diagrama de componentes del módulo Python organizado en capas}}{107}{figure.caption.36}%
-\contentsline {figure}{\numberline {9}{\ignorespaces Cronograma de la construcción, las campañas y la versión del modelo}}{107}{figure.caption.37}%
-\contentsline {figure}{\numberline {10}{\ignorespaces Reconstrucción esquemática del flujo de orquestación N8N}}{111}{figure.caption.39}%
+\contentsline {figure}{\numberline {1}{\ignorespaces Diagrama de arquitectura del sistema}}{45}{figure.caption.9}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Diagrama de despliegue del entorno local. Servicios, redes Docker (edge, data interna, automation y host\_access), volúmenes y servicios externos.}}{46}{figure.caption.10}%
+\contentsline {figure}{\numberline {3}{\ignorespaces Diagrama entidad-relación de las siete entidades principales}}{51}{figure.caption.12}%
+\contentsline {figure}{\numberline {4}{\ignorespaces Panel de administración del sistema}}{61}{figure.caption.14}%
+\contentsline {figure}{\numberline {5}{\ignorespaces Dashboard de analítica del panel de administración}}{62}{figure.caption.15}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Distribución del tiempo de registro por canal de origen (manual frente a automatizado), para la corrida telefónica del 5 y 6 de octubre de 2026. El panel de telefonía incorpora la duración de la llamada grabada.}}{72}{figure.caption.20}%
+\contentsline {figure}{\numberline {7}{\ignorespaces Diagrama de secuencia del flujo extremo a extremo de un incidente}}{107}{figure.caption.35}%
+\contentsline {figure}{\numberline {8}{\ignorespaces Diagrama de componentes del módulo Python organizado en capas}}{108}{figure.caption.36}%
+\contentsline {figure}{\numberline {9}{\ignorespaces Cronograma de la construcción, las campañas y la versión del modelo}}{108}{figure.caption.37}%
+\contentsline {figure}{\numberline {10}{\ignorespaces Reconstrucción esquemática del flujo de orquestación N8N}}{112}{figure.caption.39}%

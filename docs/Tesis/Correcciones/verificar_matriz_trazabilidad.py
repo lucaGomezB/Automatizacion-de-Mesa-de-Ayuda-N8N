@@ -16,6 +16,9 @@ Uso, desde la raiz del repositorio:
     python -I docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py --estricto
     python -I docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py --rev v1.2.12
 
+Toda seccion `## Dictamen ...` cuyo titulo nombre un change c-NNN con NNN >= 190 debe
+tener al menos una fila de matriz; si no, cuenta como falla ("seccion sin matriz").
+
 Con --rev lee los archivos con `git show REV:ruta` (el arbol etiquetado); sin
 el, lee el arbol de trabajo. Codigo de salida 0 si todas las filas pasan.
 """
@@ -80,6 +83,25 @@ def parsear_matriz(texto):
             }
         )
     return filas
+
+
+def secciones_sin_matriz(texto, desde=190):
+    """Titulos `## Dictamen ...` con un change `c-NNN` >= `desde` y sin ninguna fila de matriz.
+
+    El change es el ULTIMO `c-NNN` del titulo. Detecta un ciclo de correcciones que no se
+    trazo (c-195, dictamen del 9-11 sobre v1.2.16). Las secciones anteriores a `desde`
+    y las de titulo sin change no se cuentan.
+    """
+    con_matriz = {f["seccion"] for f in parsear_matriz(texto)}
+    faltantes = []
+    for linea in texto.splitlines():
+        if not linea.startswith("## Dictamen"):
+            continue
+        titulo = linea[3:].strip()
+        cambios = re.findall(r"\bc-(\d+)\b", titulo)
+        if cambios and int(cambios[-1]) >= desde and titulo not in con_matriz:
+            faltantes.append(titulo)
+    return faltantes
 
 
 def verificar_fila(fila, leer, estricto=False):
@@ -199,6 +221,9 @@ def main(argv=None):
     if texto != original:
         REGISTRO.write_bytes(texto.encode("utf-8"))
         print("Registro actualizado con las lineas reubicadas.")
+    for titulo in secciones_sin_matriz(texto):
+        print(f"FALLA seccion sin matriz: {titulo}")
+        fallas += 1
     print(formatear_resumen(resumen_por_seccion(resultados)))
     avisos = sum(1 for _, _, m in resultados if "desplazada" in m)
     print(f"Filas: {len(filas)}; avisos: {avisos}; fallas: {fallas}")
