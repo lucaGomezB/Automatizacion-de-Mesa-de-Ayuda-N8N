@@ -25,7 +25,7 @@ medición son funciones puras (c-134, D2-D4). El desvío es siempre muestral
 from __future__ import annotations
 
 from dataclasses import dataclass
-from math import sqrt
+from math import pi, sqrt
 from statistics import NormalDist, fmean, median, stdev
 from typing import List, Optional, Sequence, Tuple
 
@@ -436,6 +436,11 @@ def tamano_efecto_dz(
 # Cota inferior de Hodges-Lehmann (108/125) de la eficiencia relativa
 # asintótica de la prueba de rangos con signo frente a la t pareada.
 ARE_WILCOXON_MINIMA = 0.864
+# Eficiencia relativa asintótica de la correlación de Spearman frente a la de
+# Pearson bajo normalidad: 9 / pi^2 ≈ 0,9119 (c-195). Se usa solo en el MDE del
+# contraste de Spearman; los contrastes de rangos con signo y de Mann-Whitney
+# conservan ARE_WILCOXON_MINIMA.
+ARE_SPEARMAN = 9 / pi**2
 
 
 def efecto_minimo_detectable(

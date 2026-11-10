@@ -4308,6 +4308,22 @@ El nivel pago de la Gemini API y el consentimiento de los cuatro participantes q
 | C1 | 6.3 "trigger de Twilio" | "callback de grabación de Twilio" | `06-implementacion.tex` | cerrada |
 | D6 | 118 páginas frente al tope de 100 | Exceso declarado; se mantiene 118, mínimo con la información necesaria | libro mayor | cerrada |
 
+### Matriz de trazabilidad (verificada por `verificar_matriz_trazabilidad.py`)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| A1 | Hash del PDF del tag | c-192 | `12-anexos.tex:46` | `sec:anexo-repositorio` | `El PDF compilado en el propio tag no imprime ese hash` | cerrada |
+| A2 | Sub-hipótesis 2 refutada con la regla declarada | c-192 | `07-resultados.tex:154` | `subsec:reduccion-intervencion` | `la estimación puntual alcanza la cota de 0,15, de modo que la sub-hipótesis resulta` | cerrada |
+| A2-matiz | Matiz del intervalo (lectura conservadora) | c-192 | `07-resultados.tex:0` | `subsec:reduccion-intervencion` | `no se puede descartar un valor cercano al umbral` | SUPERADA por c-195 (matiz reformulado) |
+| A3 | Kappa de 1.6 por par | c-192 | `01-introduccion.tex:66` | `subsec:justificacion` | `0{,}5569$ (moderado, con intervalo)` | cerrada |
+| B1 | Laxo por intersección | c-192 | `07-resultados.tex:251` | `subsec:resultados-campana-medicion` | `la intersección de los sectores adicionales que marcaron ambos etiquetadores` | cerrada |
+| B2 | MDE del Spearman 0,276 | c-192 | `07-resultados.tex:253` | `subsec:resultados-campana-medicion` | `9/\pi^2 \approx 0{,}912` | cerrada |
+| B3 | 7.5 sin consentimiento informado no respaldado | c-192 | `11-aspectos-legales.tex:34` | `subsec:consentimiento-derechos` | `consonancia con la pseudonimización descrita` | cerrada |
+| C1 | VIS sin desarrollar | c-192 | `07-resultados.tex:0` | `subsec:reduccion-intervencion` | `regla de visibilidad y derivación por reportante no identificado` | SUPERADA por c-195 |
+| C2 | Xiong atenuado (capítulo 3) | c-192 | `03-estado-del-arte.tex:62` | `subsec:calibracion-cascadas` | `sigue siendo un desafío` | cerrada |
+| C2-b | FrugalGPT con arXiv en la nota | c-192 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:571` | `-` | `2305.05176` | cerrada |
+| C1-b | 6.3 callback de grabación de Twilio | c-192 | `06-implementacion.tex:0` | `subsec:construccion-flujo-n8n` | `callback de grabación de Twilio` | SUPERADA por c-195 |
+
 ### Decisiones
 
 - **D2 (MDE)**: se usa el valor correcto de Spearman (0,276) con la eficiencia 9/pi^2 ≈ 0,912;
@@ -4334,6 +4350,13 @@ director; el repositorio solo versiona la plantilla y el registro sin identidad.
 |---|---|---|---|---|
 | B4 | El nivel pago se acreditaba solo con la guía de configuración | Se retira la guía como prueba; se declara que el comprobante de facturación lo custodia el director y no se versiona | `11-aspectos-legales.tex` | cerrada |
 | B4/13 | Sin registro del consentimiento de E1, E2, O1 y O2 | Se declara la información verbal y la confirmación escrita posterior; los originales firmados quedan en el expediente físico del director; el repo guarda la plantilla y el registro | `11-aspectos-legales.tex`, `docs/campana-medicion/confirmacion-posterior-consentimiento.md` | cerrada |
+
+### Matriz de trazabilidad (verificada por `verificar_matriz_trazabilidad.py`)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| B4 | Nivel pago: comprobante en custodia del director | c-193 | `11-aspectos-legales.tex:16` | `subsec:transferencia-internacional` | `comprobante de facturación se conserva en poder del director` | cerrada |
+| B4/13 | Consentimiento de E1, E2, O1 y O2 (7.5, plantilla y registro) | c-193 | `11-aspectos-legales.tex:0` | `subsec:consentimiento-derechos` | `firmaron una confirmación escrita` | PENDIENTE: la reescriben los autores al recabar las firmas (A1 diferida de c-195) |
 
 ### Decisiones
 
@@ -4363,9 +4386,114 @@ Cierre de los tres residuos de las recomendaciones C1/C2 que quedaron tras v1.2.
 | C1 | Atribución a Zanzotto en una sola oración | Partida en dos: inferencia propia + paradigma HitAI atribuido a Zanzotto | `02-marco-teorico.tex` | cerrada |
 | D4 | Referencias de versión entregada en v1.2.15 | Alineadas a v1.2.16 | `05/06/11/12` | cerrada |
 
+### Matriz de trazabilidad (verificada por `verificar_matriz_trazabilidad.py`)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| C1 | Fila Lím. como secuencia temporal | c-194 | `12-anexos.tex:263` | `tab:anexo-trazabilidad-2810` | `De los cinco límites estructurales que` | cerrada |
+| C2 | Nota de Zendesk sin precios | c-194 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:661` | `-` | `software de servicio al cliente de {Zendesk}` | cerrada |
+| C1-b | Zanzotto en dos oraciones | c-194 | `02-marco-teorico.tex:0` | `subsec:human-in-the-loop` | `sostener la supervisión humana` | SUPERADA por c-195 (se limita a retribuir) |
+| D4 | Referencias de versión entregada v1.2.16 | c-194 | `12-anexos.tex:0` | `sec:anexo-repositorio` | `v1.2.16` | SUPERADA por c-195 (v1.2.17) |
+
 ### Nota de release
 
 Tag anotado `v1.2.16` sobre el commit de contenido de c-194
 (`ca3c88510be5b1484ed413a8de8bcdffccedc417`); el commit siguiente consigna el hash completo en
 el Anexo B (patrón c-188). El PDF del tag no imprime el hash de otra release. `v1.2.15` queda
 superada (inmutable, `f72e6c899ba3bce7ae11ffe1b0a980f57241a0ea`).
+
+## Dictamen v10 / v1.2.16 (2026-11-09) - c-195
+
+Atención del dictamen CONEAU del 2026-11-09 sobre `v1.2.16`
+(`auditorias/Dictamen_Tesis_v10_v1.2.16_CONEAU_2026-11-09.md`; documento escrito 9,21, aprobado con
+observaciones). Change `c-195` (docs y código de evaluación, gobernanza MEDIUM), release `v1.2.17`.
+**La recomendación A1 (consentimiento) y los ítems 1 y 2 del inventario quedan diferidos a los
+autores**: el co-autor Luca Gomez reescribirá 7.5, la plantilla y el registro de la campaña cuando
+los cuatro participantes hayan firmado, con las fechas reales; c-195 no toca esos tres archivos.
+
+### Correcciones
+
+| Rec | Observación | Corrección | Archivo | Estado |
+|---|---|---|---|---|
+| A1 | 7.5 afirma firmas que no se recabaron | Diferida a los autores (la redacta Luca Gomez con las firmas) | `11-aspectos-legales.tex` | pendiente (diferida) |
+| A2 | Condición "válidas" y regla sin su asimetría | Condición de generalización en 8.3; asimetría declarada en 1.4 y 4.7; "el intervalo no permite descartar una proporción inferior a la cota" en 8.3 y 9.1 | `07-resultados.tex`, `08-discusion.tex`, `01-introduccion.tex`, `04-marco-metodologico.tex` | cerrada |
+| A3 | Anexo I dice siete y traza cuatro | Nueve dictámenes, traza seis; dos tablas nuevas; el verificador exige matriz desde c-190 | `12-anexos.tex`, `verificar_matriz_trazabilidad.py` | cerrada |
+| B1 | MDE 0,2834 en el análisis frente a 0,276 en el texto | `ARE_SPEARMAN` en `stats.py`, usada en `campana.py`; análisis regenerado | `evaluation/` | cerrada |
+| B2 | Propagación pendiente (6.3, 4.2, 8.7, memo) | Ver matriz | `06`, `04`, `07`, `numeros-canonicos.md` | cerrada |
+| B3 | Zanzotto sin página | Se limita a lo que el resumen respalda | `02-marco-teorico.tex` | cerrada |
+| C1/C2 | Forma y bibliografía | Ver matriz | `02`, `07`, `10`, `Bibliography_base.bib` | cerrada |
+
+### Matriz de trazabilidad (verificada por `verificar_matriz_trazabilidad.py`)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| A1 | Consentimiento: 7.5 afirma firmas no recabadas | c-195 | `11-aspectos-legales.tex:0` | `subsec:consentimiento-derechos` | `firmaron una confirmación escrita` | PENDIENTE: diferida; la atienden los autores al recabar las firmas |
+| 1 | 7.5: firmaron y registro de que se recabó | c-195 | `11-aspectos-legales.tex:0` | `subsec:consentimiento-derechos` | `el registro de que se recabó` | PENDIENTE: diferida; la atienden los autores al recabar las firmas |
+| 2 | Plantilla: columnas distintas y registro vacío | c-195 | `docs/campana-medicion/confirmacion-posterior-consentimiento.md:0` | `-` | `fecha_consentimiento` | PENDIENTE: diferida; la atienden los autores al recabar las firmas |
+| 3 | 8.3: condición de generalización | c-195 | `07-resultados.tex:154` | `subsec:reduccion-intervencion` | `Extender esta conclusión al formulario web y a reportantes identificados` | cerrada |
+| A2/4a | 1.4: asimetría de la regla | c-195 | `01-introduccion.tex:34` | `subsec:hipotesis-trabajo` | `La regla es asimétrica:` | cerrada |
+| A2/4b | 4.7: asimetría de la regla | c-195 | `04-marco-metodologico.tex:81` | `subsec:analisis-estadistico` | `La regla es asimétrica (véase` | cerrada |
+| A2/5a | 8.3: el intervalo no descarta una proporción inferior a la cota | c-195 | `07-resultados.tex:154` | `subsec:reduccion-intervencion` | `el intervalo no permite descartar una proporción inferior a la cota` | cerrada |
+| A2/5b | 9.1: ídem | c-195 | `08-discusion.tex:8` | `subsec:interpretacion-resultados` | `el intervalo no permite descartar una proporción inferior a la cota` | cerrada |
+| A3/6a | Anexo I: nueve dictámenes, traza seis | c-195 | `12-anexos.tex:205` | `sec:anexo-trazabilidad` | `La serie comprende nueve dictámenes` | cerrada |
+| A3/6b | Tabla del dictamen sobre v1.2.13 | c-195 | `12-anexos.tex:337` | `tab:anexo-trazabilidad-0911-v1213` | `label{tab:anexo-trazabilidad-0911-v1213}` | cerrada |
+| A3/6c | Tabla del dictamen sobre v1.2.16 | c-195 | `12-anexos.tex:364` | `tab:anexo-trazabilidad-0911-v1216` | `label{tab:anexo-trazabilidad-0911-v1216}` | cerrada |
+| B1/7a | Constante de la eficiencia de Spearman | c-195 | `evaluation/stats.py:443` | `-` | `ARE_SPEARMAN = 9 / pi**2` | cerrada |
+| B1/7b | MDE del Spearman usa ARE_SPEARMAN | c-195 | `evaluation/campana.py:1594` | `-` | `eficiencia_relativa=ARE_SPEARMAN` | cerrada |
+| B1/7c | Análisis regenerado: MDE 0,2763 | c-195 | `evaluation/data/campana/analisis/resultados.json:1158` | `-` | `0.2762543921274527` | cerrada |
+| B2/8 | 6.3: tres disparadores de canal y webhook telefonia-handoff | c-195 | `06-implementacion.tex:37` | `subsec:construccion-flujo-n8n` | `al webhook \texttt{telefonia-handoff}` | cerrada |
+| B2/9 | 4.2: el observador de A1 fue T1 | c-195 | `04-marco-metodologico.tex:16` | `subsec:diseno-experimental` | `su observador fue \texttt{T1}, autor del trabajo` | cerrada |
+| B2/10 | 8.7: las dos cachés tienen las mismas 200 predicciones | c-195 | `07-resultados.tex:251` | `subsec:resultados-campana-medicion` | `contiene las mismas 200 predicciones` | cerrada |
+| B2/11 | numeros-canonicos: refutada sobre los 147 revisados | c-195 | `docs/Tesis/Correcciones/numeros-canonicos.md:818` | `-` | `refutada sobre los 147 revisados` | cerrada |
+| B3/12 | Zanzotto limitado a retribuir a quienes aportan el conocimiento | c-195 | `02-marco-teorico.tex:32` | `subsec:human-in-the-loop` | `quienes aportan el conocimiento que usan los sistemas.` | cerrada |
+| C1/13 | Minúscula tras el punto y coma | c-195 | `02-marco-teorico.tex:32` | `subsec:human-in-the-loop` | `; los autores de esta tesis infieren` | cerrada |
+| C1/14 | VIS-005 como requisito de la especificación de visibilidad (c-82) | c-195 | `07-resultados.tex:154` | `subsec:reduccion-intervencion` | `requisito \texttt{VIS-005} de la especificación de visibilidad de incidentes` | cerrada |
+| C1/15 | Capítulo 11: la campaña refutó la sub-hipótesis | c-195 | `10-recomendaciones.tex:6` | `sec:recomendaciones` | `cuya sub-hipótesis la campaña complementaria refutó` | cerrada |
+| C2/16 | 11.3: requisito de tamaño muestral | c-195 | `10-recomendaciones.tex:18` | `subsec:medicion-intervencion` | `Tres requisitos acotan esa medición futura` | cerrada |
+| C2/17a | Zendesk sin Suite | c-195 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:657` | `-` | `{AI}-powered customer service software` | cerrada |
+| C2/17b | ServiceNow: URL sin respuesta (curl 2026-11-09, código 000); se conserva | c-195 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:673` | `-` | `ServiceNow2026_itsm` | cerrada |
+| 18 | 118 (ahora 120) páginas frente al tope de 100: decisión registrada | c-195 | `docs/Tesis/Correcciones/dictamen-correcciones.md:4455` | `-` | `Libro mayor de páginas y palabras (c-195)` | cerrada |
+
+### Decisiones
+
+- **D1 (consentimiento, diferida)**: decisión de los autores posterior a la propuesta. Luca Gomez
+  reescribe 7.5, la plantilla `docs/campana-medicion/confirmacion-posterior-consentimiento.md` y el
+  registro de `evaluation/data/campana/README.md` cuando los cuatro participantes firmen, con las
+  fechas reales. Hasta entonces el texto vigente de 7.5 es el que el dictamen observa; c-195 no lo
+  corrige. A1 y los ítems 1 y 2 constan como PENDIENTE (el verificador omite esas filas).
+- **D5 (MDE, camino preferido)**: tras la prueba escrita primero (RED), `ARE_SPEARMAN = 9 / pi**2`
+  en `evaluation/stats.py`, usada solo en el MDE del Spearman; se regeneró
+  `evaluation/data/campana/analisis/` con el comando de referencia, sin red. La comparación hoja
+  por hoja con la versión previa (859 hojas) mostró que solo cambian las dos rutas
+  `posicion.spearman.mde` (0,2834 → 0,2763); en `resultados.md` solo cambia la línea que contiene
+  esos valores y en `SHA256SUMS.txt` solo las filas de `resultados.json` y `resultados.md`. Se
+  aceptó. Huellas nuevas: `resultados.json` `0604a2b1...`, `resultados.md` `80b45978...`.
+- **D6 (6.3)**: la redacción final es "(el backend entrega la transcripción al webhook
+  `telefonia-handoff`)", reordenada respecto del design porque la versión original producía un
+  desborde de 35,9 pt en el justificado.
+- **D8**: `c-191` (activo, de otro autor) no se menciona en 11.8; fuera de alcance. La nota de
+  Zendesk y su título (`AI-powered customer service software`, el `<title>` verificado el
+  2026-11-09) se ajustaron; la URL de ServiceNow no respondió (`curl -sI`, código 000, 2026-11-09),
+  se conserva la entrada sin cambios y queda como residual.
+- **Rótulos**: el registro de c-192 rotula algunas recomendaciones distinto del dictamen sobre
+  `v1.2.13` (por ejemplo, Xiong figura como C2 en el registro y es B3 en el dictamen); la tabla del
+  Anexo I usa la numeración del dictamen.
+- **D9 (versión entregada)**: las menciones de la versión entregada pasan a `v1.2.17`; la nota de
+  la Tabla 19 conserva 24 archivos (`git diff --stat cda7712 HEAD -- App/ n8n/ docker/
+  docker-compose.yml`, sin cambios en esas rutas).
+
+### Libro mayor de páginas y palabras (c-195)
+
+| Concepto | Antes | Después | Causa | Fecha |
+|---|---|---|---|---|
+| Páginas del PDF | 118 | 120 | Las dos tablas nuevas del Anexo I y su texto de presentación; tope aceptado de 120 | 2026-11-09 |
+| Palabras del resumen y del abstract | ≤ 250 | ≤ 250 (sin cambios) | Sin cambios (no se tocaron) | 2026-11-09 |
+
+El exceso sobre el tope de 100 páginas del equipo se mantiene como residual declarado (decisión
+registrada; ítem 18 del dictamen).
+
+### Nota de release
+
+Tag anotado `v1.2.17` sobre el commit de contenido de c-195, que lleva la oración de verificación
+(`git rev-list -n1 v1.2.17`); el commit siguiente consigna el hash completo en el Anexo B (patrón
+c-188). `v1.2.16` queda superada (inmutable, `ca3c88510be5b1484ed413a8de8bcdffccedc417`).

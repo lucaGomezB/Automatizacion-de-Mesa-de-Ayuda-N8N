@@ -438,6 +438,32 @@ def test_efecto_minimo_detectable_triangula_are_n_y_lateralidad():
     )
 
 
+def test_are_spearman_es_9_sobre_pi_cuadrado_y_da_el_mde_de_fisher_de_n_110():
+    """
+    c-195 B1 (RED). ARE de Spearman frente a Pearson bajo normalidad = 9/pi^2 = 0.9119
+    (literal, no recalculado). Con n = 110 (n - 3 = 107) el MDE en escala rho es
+    tanh(2.80158 / sqrt(107 * 0.91189)) = tanh(0.28362) = 0.2763.
+    """
+    import math
+
+    from evaluation.stats import ARE_SPEARMAN, ARE_WILCOXON_MINIMA, efecto_minimo_detectable
+
+    assert ARE_SPEARMAN == pytest.approx(0.9119, abs=1e-4)
+    assert ARE_SPEARMAN != ARE_WILCOXON_MINIMA
+    mde = math.tanh(efecto_minimo_detectable(107, eficiencia_relativa=ARE_SPEARMAN))
+    assert mde == pytest.approx(0.2763, abs=1e-4)
+
+
+def test_are_spearman_triangula_con_otro_n():
+    """n = 15 (n - 3 = 12): 2.80158 / sqrt(12 * 0.91189) = 0.84693; tanh(0.84692) = 0.6895."""
+    import math
+
+    from evaluation.stats import ARE_SPEARMAN, efecto_minimo_detectable
+
+    mde = math.tanh(efecto_minimo_detectable(12, eficiencia_relativa=ARE_SPEARMAN))
+    assert mde == pytest.approx(0.6895, abs=1e-4)
+
+
 @pytest.mark.parametrize(
     "kwargs",
     [

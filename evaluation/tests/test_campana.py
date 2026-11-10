@@ -56,7 +56,7 @@ from evaluation.metrics import (
 )
 from evaluation.plan_campana import AsignacionCaso, leer_plan_csv, subplan
 from evaluation.run_evaluation import Prediccion, cargar_predicciones
-from evaluation.stats import ARE_WILCOXON_MINIMA, efecto_minimo_detectable
+from evaluation.stats import ARE_SPEARMAN, ARE_WILCOXON_MINIMA, efecto_minimo_detectable
 from evaluation.tests import helpers_campana as h
 
 SEG = "Seguridad Informatica"
@@ -1632,7 +1632,7 @@ def test_los_desvios_coinciden_con_los_que_informa_c165(planilla, plan):
 def test_el_mde_de_spearman_es_el_de_fisher_con_n_menos_tres_en_escala_de_correlacion(planilla, plan):
     spearman = _por_operador(efecto_orden(planilla, plan))["O1"].posicion.spearman
 
-    esperado = math.tanh(efecto_minimo_detectable(18 - 3, eficiencia_relativa=ARE_WILCOXON_MINIMA))
+    esperado = math.tanh(efecto_minimo_detectable(18 - 3, eficiencia_relativa=ARE_SPEARMAN))
     assert spearman.mde == pytest.approx(esperado, abs=1e-12)
     assert "rho" in spearman.escala_mde
 

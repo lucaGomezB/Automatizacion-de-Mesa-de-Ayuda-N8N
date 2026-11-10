@@ -739,8 +739,8 @@ python -m evaluation.analisis_campana \
 
 Con las mismas entradas, dos corridas producen `resultados.json`, `resultados.md` y
 `SHA256SUMS.txt` idénticos byte a byte; las salidas versionadas son `resultados.json`
-`e94b6bb80051b09fd48c1b7a054572c897af5264043460ac8315e5684117677c` y
-`resultados.md` `3c1564b1116994ce9f2101e41fbe9876bdcd126d4ce5b99bfcc7bfa00dc47d68`
+`0604a2b12b5de7b1025438ef8273da34a0b06b5c792f4ad07e08f38c5f658af1` y
+`resultados.md` `80b45978664748d5422be08b123f4112d02e4d575388da5fbea555874bc6e0a0`
 (`analisis/SHA256SUMS.txt:7-8`). El resumen legible de todos los valores siguientes
 está en `analisis/resultados.md:7-34`.
 
@@ -813,17 +813,19 @@ estimación < `0,15` ≤ límite superior); aquí la estimación (`0,735`) super
 de modo que la segunda sub-hipótesis queda **refutada**. La tasa medida **no**
 reintroduce el `9,5 %` (`retirado`, Sección 3.4).
 
-Nota de c-187 (dictamen CONEAU 2026-11-08, A1): el veredicto "refutada" es el del script
-sobre la **tasa bruta** (cualquier intervención). La tesis lo rotula como tasa bruta no
-compatible con la cota y no como estado de la sub-hipótesis; el estado es **no concluyente**
-(ver (b'')). La tasa bruta `0,735` y su intervalo no cambian.
+Nota histórica de c-187 (superada por c-190 y c-195): el veredicto "refutada" del script es el
+de la **tasa bruta** (cualquier intervención); c-187 rotulaba el estado de la sub-hipótesis como
+*no concluyente* (25/200). El estado vigente es **refutada sobre los 147 revisados** (ver (b'')).
+La tasa bruta `0,735` y su intervalo no cambian.
 
-**(b'') Intervenciones que cambiaron la derivación y mecanismo de derivación (entrada nueva, c-187; no concluyente).**
+**(b'') Intervenciones que cambiaron la derivación y mecanismo de derivación (entrada nueva, c-187; estado vigente c-190/c-195: refutada sobre los 147 revisados).**
+
+Estado vigente de la segunda sub-hipótesis: **refutada sobre los 147 revisados** (`25/147 = 0,170`; Wilson `[0,118; 0,239]`; binomial `p = 0,28`; el intervalo no descarta una proporción inferior a la cota; la regla de tres vías es asimétrica); `25/200 = 0,125` queda como dato secundario. Las filas siguientes con "no concluyente" sobre 25/200 son notas históricas de c-187, **superadas por c-190**.
 
 | Valor | Procedencia | Estado |
 |---|---|---|
 | Proporción de intervenciones con cambio de derivación `25/200 = 0,125`, IC Wilson al 95 % `[0,086; 0,178]` (`[0,0861; 0,1780]` recomputado con `evaluation.metrics.intervalo_wilson`) | `evaluation/data/campana/intervenciones.csv` (`cambio_sector = true`) | vigente (nuevo) |
-| Veredicto frente a `0,15`: estimación `0,125 < 0,15` y límite superior `0,178 ≥ 0,15` → **no concluyente** (regla de tres vías de la Sección 3.12) | derivado | vigente (nuevo) |
+| Veredicto frente a `0,15` sobre los 200: estimación `0,125 < 0,15` y límite superior `0,178 ≥ 0,15` → *no concluyente* (nota histórica de c-187, **superada por c-190**: el denominador vigente es 147) | derivado | superado por c-190 |
 | Desglose de las 147 intervenciones por canal: correo `66/66` con `revision = true`; telefonía `81/81` (`revision` nulo en el sidecar; indicador en el log, origen `gate`); web `0/53` (`revision = false` en los 53) | `evaluation/data/campana/sidecar_*.json` cruzado por `case_id` con `intervenciones.csv` | vigente (nuevo) |
 | Mecanismo: derivación por reportante no identificado (c-82, VIS-005), no por confianza (0 casos con Gemini < 0,70; entre los 147: 92 determinísticos y 55 Gemini con confianza ≥ 0,85) | `App/Backend/app/services/incidente_service.py:411-420`; `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json` | vigente (nuevo) |
 
@@ -848,7 +850,7 @@ duración de la intervención, no el tiempo total de atención
 | Valor | Procedencia | Estado |
 |---|---|---|
 | Condición (entre grupos independientes): O1 `p = 0,7545`, `r = 0,035`; O2 `p = 0,2988`, `r = −0,1157`; MDE `d = 0,5771` (`n_a = 50`, `n_b = 60`) | `analisis/resultados.json:1023-1035,1195-1207` | vigente (nuevo) |
-| Posición (Spearman): O1 `rho = −0,0628`, `p = 0,5147`; O2 `rho = −0,3604`, `p = 0,00011` (significativo); MDE `rho = 0,2834` | `analisis/resultados.json:1154-1163,1326-1335` | vigente (nuevo) |
+| Posición (Spearman): O1 `rho = −0,0628`, `p = 0,5147`; O2 `rho = −0,3604`, `p = 0,00011` (significativo); MDE `rho = 0,276` (`0,2762543921274527`; c-195, `ARE_SPEARMAN`; antes `0,2834`) | `analisis/resultados.json:1158,1330` | vigente (c-195) |
 
 Nota de c-187 (A2): el brazo manual precedió al automatizado en los 200 casos; el contraste
 de condición compara dos subconjuntos con la misma condición en el mismo orden y **no estima
@@ -917,23 +919,25 @@ denominador. Reproducción: script descartable (design D0 de c-190) que lee `int
 - Salida en vivo telefónica: columna `sector_predicho` del export de intervenciones; los 81
   sidecars telefónicos tienen sector nulo.
 - Predicción del contraste: caché `predicciones_hybrid-v3_2026-10-07.json` (McNemar).
-- Conjunto de verdad laxo del brazo manual: consenso de `E1` y `E2` más la unión de los
-  sectores adicionales de ambos etiquetadores → laxa manual `130/151`; con los adicionales del
+- Conjunto de verdad laxo del brazo manual: consenso de `E1` y `E2` más la intersección de los
+  sectores adicionales que marcaron ambos etiquetadores (c-192; la unión daría `137/151`) → laxa manual `130/151`; con los adicionales del
   corpus original, `128/151`.
 
 **(c) Efecto mínimo detectable del Spearman (D5, inv. 12).**
 
 | Valor | Procedencia | Estado |
 |---|---|---|
-| `0,276` con `n = 110` (`n − 3 = 107`) y la eficiencia de Spearman frente a Pearson bajo normalidad (`9/pi^2 ≈ 0,912`): `tanh((z0,975 + z0,80)/sqrt(107 · 0,912))` | corrección de c-192 (la ARE del código es la de Wilcoxon) | vigente |
-| `0,2834` con `ARE = 0,864` (cota de Wilcoxon): `tanh((z0,975 + z0,80)/sqrt(107 · 0,864))` | `evaluation/campana.py:1593` (`ARE_WILCOXON_MINIMA`) | superado por c-192 |
+| `0,276` (`0,2762543921274527`) con `n = 110` (`n − 3 = 107`) y la eficiencia de Spearman frente a Pearson bajo normalidad (`9/pi^2 ≈ 0,912`): `tanh((z0,975 + z0,80)/sqrt(107 · 0,912))` | `evaluation/stats.py` (`ARE_SPEARMAN`), usada en `evaluation/campana.py`; salida regenerada en `analisis/resultados.json:1158,1330` (c-195, camino preferido de D5) | vigente |
+| `0,2834` con `ARE = 0,864` (cota de Wilcoxon): `tanh((z0,975 + z0,80)/sqrt(107 · 0,864))` | `evaluation/campana.py` (`ARE_WILCOXON_MINIMA`, antes del MDE del Spearman; hoy solo Mann-Whitney y Wilcoxon) | superado por c-195 |
 | `0,2644` sin corrección por eficiencia | fórmula sin ARE | referencial |
 
-El valor de `analisis/resultados.json:1154-1163,1326-1335` es `0,2834`; c-192 lo corrige a
-`0,276` porque el `0,864` es la cota de Hodges y Lehmann para la prueba de Wilcoxon frente a la
-*t*, que no corresponde a la correlación de Spearman: la eficiencia de Spearman frente a Pearson
-bajo normalidad es `9/pi^2 ≈ 0,912`. Sin corrección por eficiencia el valor sería `0,2644`. No
-se edita `analisis/resultados.json`; la discrepancia queda declarada. c-192 declara `n = 110` y
+c-192 declaró `0,276` en la tesis mientras `analisis/resultados.json` conservaba `0,2834`; c-195
+(dictamen sobre `v1.2.16`, B1) alineó el análisis: constante `ARE_SPEARMAN = 9/pi^2` en
+`evaluation/stats.py`, usada solo en el MDE del Spearman; `resultados.json`, `resultados.md` y
+`SHA256SUMS.txt` se regeneraron con el comando de referencia y la comparación con la versión previa
+mostró que solo cambian las dos rutas `posicion.spearman.mde` (`0,2834` → `0,2763`). El `0,864` es
+la cota de Hodges y Lehmann para la prueba de Wilcoxon frente a la *t* y sigue en los MDE de
+Mann-Whitney y Wilcoxon. Sin corrección por eficiencia el valor sería `0,2644`. c-192 declaró `n = 110` y
 la fórmula en 8.7 (`07-resultados.tex`).
 
 **(a) Canal telefónico y modelo de transcripción (B1).**
