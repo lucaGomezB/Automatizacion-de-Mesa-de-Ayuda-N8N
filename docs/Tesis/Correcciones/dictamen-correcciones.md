@@ -3721,7 +3721,7 @@ Preparación de release (gobernanza BAJA, integración documental); no se modifi
 - **`CHANGES.md`**: la línea "Release vigente" pasa a `v1.2.9` (tag anotado sobre el placeholder
   `bda6903e65ab40b073daf4bd001eaa9ff85e42cc`, que resuelve el commit de consignación); **`v1.2.8` queda superada**
   (permanece inmutable, en `e52845bc754d2ed5520f3f32c19d27adc4ca67b2`).
-- **El hash del Anexo B** (`12-anexos.tex:46`, "El hash completo de ese commit es ...") NO se toca:
+- **El hash del Anexo B** (`12-anexos.tex:44`, "El hash completo de ese commit es ...") NO se toca:
   conserva el valor de `v1.2.8` hasta el commit de consignación del hash, que publica el
   orquestador (patrón de dos commits de `ea5e01a` + `756aabe`).
 
@@ -3838,7 +3838,7 @@ canónicas ni `docs/Tesis/v9 (IA)/`.
 - **`CHANGES.md`**: la línea "Release vigente" pasa a `v1.2.10` (tag anotado sobre el placeholder
   `c3c63c84a94a79cddc21803868f437db59c3d2df`, que resuelve el commit de consignación); **`v1.2.9` queda superada**
   (inmutable, en `bda6903e65ab40b073daf4bd001eaa9ff85e42cc`).
-- **El hash del Anexo B** (`12-anexos.tex:46`, "El hash completo de ese commit es ...") NO se toca:
+- **El hash del Anexo B** (`12-anexos.tex:44`, "El hash completo de ese commit es ...") NO se toca:
   conserva el valor de `v1.2.9` (`bda6903e65ab40b073daf4bd001eaa9ff85e42cc`) hasta el commit de
   consignación del hash, que publica el orquestador (patrón de dos commits de `ea5e01a` + `756aabe`).
 
@@ -4312,7 +4312,7 @@ El nivel pago de la Gemini API y el consentimiento de los cuatro participantes q
 
 | Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
 |---|---|---|---|---|---|---|
-| A1 | Hash del PDF del tag | c-192 | `12-anexos.tex:46` | `sec:anexo-repositorio` | `El PDF compilado en el propio tag no imprime ese hash` | cerrada |
+| A1 | Hash del PDF del tag | c-192 | `12-anexos.tex:44` | `sec:anexo-repositorio` | `creado sobre el commit que fija el contenido de la versión entregada` | cerrada |
 | A2 | Sub-hipótesis 2 refutada con la regla declarada | c-192 | `07-resultados.tex:154` | `subsec:reduccion-intervencion` | `la estimación puntual alcanza la cota de 0,15, de modo que la sub-hipótesis resulta` | cerrada |
 | A2-matiz | Matiz del intervalo (lectura conservadora) | c-192 | `07-resultados.tex:0` | `subsec:reduccion-intervencion` | `no se puede descartar un valor cercano al umbral` | SUPERADA por c-195 (matiz reformulado) |
 | A3 | Kappa de 1.6 por par | c-192 | `01-introduccion.tex:66` | `subsec:justificacion` | `0{,}5569$ (moderado, con intervalo)` | cerrada |
@@ -4494,6 +4494,6 @@ registrada; ítem 18 del dictamen).
 
 ### Nota de release
 
-Tag anotado `v1.2.17` sobre el commit de contenido de c-195, que lleva la oración de verificación
-(`git rev-list -n1 v1.2.17`); el commit siguiente consigna el hash completo en el Anexo B (patrón
+Tag anotado `v1.2.17` sobre el commit de contenido de c-195 (`1de114fcdc045b283f9b26bd75ea719f2aefa567`), que lleva la oración de verificación
+(`git rev-list -n1 v1.2.17`); el commit siguiente consigna el hash completo en el Anexo B; el PDF del tag no imprime el hash de otra release (patrón
 c-188). `v1.2.16` queda superada (inmutable, `ca3c88510be5b1484ed413a8de8bcdffccedc417`).
