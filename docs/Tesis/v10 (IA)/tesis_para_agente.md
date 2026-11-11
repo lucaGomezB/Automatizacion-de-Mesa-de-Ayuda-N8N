@@ -1210,7 +1210,7 @@ Los diagramas se generan a partir de fuentes Mermaid versionadas en formato `.md
 
 El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto [Gomez2026_repositorio`, accesible en https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N]. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado `v1.2.19`, creado sobre el commit que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, la rama principal registra después un commit que solo consigna ese hash, y los commits posteriores no modifican las fuentes de la tesis.
 
-El PDF compilado en el propio tag no imprime ese hash: el hash completo de `v1.2.19` se consigna en el commit que sigue al tag en la rama principal. Se verifica con `git rev-list -n1 v1.2.19`, y un `git diff –stat` entre el tag y la rama principal sobre `docs/Tesis/v10 (IA)/paper/sections` muestra que ese commit solo cambia esa línea.
+El hash completo de ese commit es ` 5e095293bec659b4b4bc931ef663aceea6e061c8`, que constituye la referencia verificable de la versión corregida.
 
 La verificación de la compilación se conserva en paper/compilacion.md`, que registra las páginas, los errores y el SHA-256 del PDF, y la de la matriz de trazabilidad de las correcciones, en docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py; ambos artefactos corresponden a este anexo de repositorio.
 
