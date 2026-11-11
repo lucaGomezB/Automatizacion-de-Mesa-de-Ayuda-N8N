@@ -40,7 +40,7 @@ openspec list --json
 │   │   ├── routes/           # API endpoints → delegates to services
 │   │   ├── services/         # Business logic (IncidenteService, ClasificacionService)
 │   │   ├── repositories/     # Data access pattern
-│   │   ├── models/           # SQLAlchemy ORM (5 tables + catalogs)
+│   │   ├── models/           # SQLAlchemy ORM (12 tablas + 3 catálogos = 15)
 │   │   ├── classifiers/      # Deterministic + Gemini + Hybrid (F1 se re-mide con el corpus real)
 │   │   ├── schemas/          # Pydantic v2 request/response models
 │   │   ├── utils/            # n8n_webhook, pseudonymizer, business_time (UTC-3 day boundaries)

@@ -84,3 +84,16 @@ evaluation/predicciones_calibracion.json
 evaluation/predicciones_sensibilidad_prompt_*.json
 # NOTA: evaluation/report.md NO se ignora. Es evidencia agregada del resultado de la
 # evaluacion (metricas, matriz de confusion, tiempos) y se versiona con el repositorio.
+
+# Intermedios de build de LaTeX (generados por latexmk/pdflatex; no se versionan).
+# Se ignoran en cualquier profundidad del arbol. NO se ignoran los fuente ni los
+# entregables (*.tex, *.pdf, *.toc, *.lof, *.lot, *.bbl).
+*.aux
+*.xdv
+*.bcf
+*.blg
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.run.xml
