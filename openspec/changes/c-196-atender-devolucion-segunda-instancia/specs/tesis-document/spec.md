@@ -283,6 +283,11 @@ El documento SHALL atribuir los rangos interpretativos del coeficiente Kappa a L
 - **THEN** el rotulo "moderado" acompaña al 0,5569
 - **AND** el 0,87 no lleva rotulo "casi perfecto" ni se presenta como respaldo de la fiabilidad
 
+#### Scenario: Rotulo "casi perfecto"
+- **WHEN** se lee la interpretacion de los dos coeficientes kappa en 4.4 y 4.8
+- **THEN** el rotulo "casi perfecto" no se aplica al `0,87` ni se presenta como respaldo de la fiabilidad
+- **AND** el rotulo interpretativo vigente del `0,5569` es "moderado"
+
 ### Requirement: Declaracion del intervalo de confianza del kappa
 
 La tesis SHALL tratar por separado los dos coeficientes kappa. El kappa `0,87` del doble
@@ -310,6 +315,13 @@ intervalo no estimable. La decision y los valores SHALL quedar registrados en el
 - **THEN** aparece una sola vez, en 4.4, junto a la declaracion de que sus planillas no se conservaron y de que no se presenta como evidencia
 - **AND** no se fabrica ni se estima un intervalo para el `0,87`
 - **AND** el pasaje remite a `subsec:nota-versiones`
+
+#### Scenario: Tabla no recuperable
+
+- **WHEN** se lee la declaracion sobre el kappa `0,87` en 4.4
+- **THEN** la tesis declara que sus planillas no se conservaron y que su intervalo de confianza no es estimable
+- **AND** no se fabrica ni se estima un intervalo para el `0,87`
+- **AND** no se presenta como evidencia de fiabilidad
 
 ### Requirement: Fiabilidad de la referencia de verdad discutida
 
@@ -343,6 +355,12 @@ efecto de posicion significativo para `O2`.
 - **THEN** la segunda contribucion menciona el kappa moderado de la campaña complementaria
 - **AND** el capitulo concluye sobre el efecto de posicion significativo para `O2`
 
+#### Scenario: Ambos kappa en el resumen
+
+- **WHEN** se lee el resumen y el abstract
+- **THEN** el unico kappa informado es el `0,5569`, con rotulo moderado e IC [0,4725; 0,6413]
+- **AND** el `0,87` no figura
+
 ### Requirement: Atribucion separada del kappa de 1.6 y del doble etiquetado de la campana
 
 La introduccion (`01-introduccion.tex`, contribuciones y alcance) SHALL atribuir el acuerdo
@@ -359,6 +377,13 @@ codigos y roles.
 - **THEN** el 0,5569 figura atribuido al par `E1`/`E2`
 - **AND** ningun pasaje atribuye el 0,5569 al par autor/analista
 - **AND** la introduccion no contiene el 0,87
+
+#### Scenario: Dos pares separados
+
+- **WHEN** se lee la introduccion y se comparan sus menciones con 4.4, 8.7 y 9.3
+- **THEN** el `0,5569` figura atribuido al par `E1`/`E2`
+- **AND** ningun pasaje lo atribuye al par analista externo + analista autor
+- **AND** la introduccion no informa el `0,87` ni presenta ambos valores como el mismo acuerdo
 
 ### Requirement: Estado de la segunda sub-hipotesis coherente con la variable medida
 
@@ -421,6 +446,32 @@ resumen (`00-resumen.tex`) y el abstract MUST NOT superar 250 palabras cada uno.
 - **THEN** no quedan conteos que sumen dos refutadas
 - **AND** el estado se enuncia como una corroborada, una no concluyente y una refutada
 
+#### Scenario: Matiz de incertidumbre declarado
+
+- **WHEN** se leen 8.3 y 9.1
+- **THEN** figuran el IC de Wilson [11,8 %; 23,9 %] que contiene 0,15 y la prueba binomial con p = 0,28 unilateral
+- **AND** se declara que la estimacion puntual queda por encima de la cota sin que el intervalo permita descartar una proporcion inferior
+- **AND** ninguna contiene "un valor cercano al umbral"
+
+#### Scenario: Estado unico de la sub-hipotesis 2
+
+- **WHEN** se comparan el resumen, el abstract, 1.4, 4.7, 8.3, 9.1, el capitulo 10, la Tabla 18, el capitulo 11 y el Anexo I
+- **THEN** todos declaran la sub-hipotesis 2 "no concluyente, con estimación puntual por encima de la cota" con 25 de 147
+- **AND** ninguno la declara refutada como estado vigente
+- **AND** la tercera sub-hipotesis sigue declarada refutada
+
+#### Scenario: Resumen sin ambiguedad de magnitud
+
+- **WHEN** se lee la oracion del resumen y del abstract que enuncia los estados por sub-hipotesis
+- **THEN** la cifra de intervencion nombra su magnitud y su denominador (25 de 147; 17,0 %)
+- **AND** no queda un parentesis con 73,5 % y [67,0 %, 79,1 %] adyacente a la intervencion humana
+
+#### Scenario: 11.3 reformulada
+
+- **WHEN** se lee `subsec:medicion-intervencion`
+- **THEN** no aparece "respecto del 73,5 %" como meta de reduccion
+- **AND** se propone medir la variable con reportantes identificados en el directorio
+
 ### Requirement: Propagacion del dictamen sobre v1.2.16 en el metodo, los resultados y el memo
 
 La seccion 4.2 (`04-marco-metodologico.tex`, protocolo de medicion en vivo) SHALL declarar que,
@@ -451,6 +502,12 @@ la union daria 137) y SHALL conservar la fila del MDE del Spearman y las huellas
 - **THEN** el estado vigente es "no concluyente, con estimación puntual por encima de la cota" y "refutada" figura solo como estado superado
 - **AND** "unión" no figura como criterio del laxo
 
+#### Scenario: Memo sin estados superados
+
+- **WHEN** se buscan en `numeros-canonicos.md` los estados superados de la segunda sub-hipotesis
+- **THEN** "refutada" no figura como estado vigente y queda registrada como superada por c-196
+- **AND** "unión" no figura como criterio del laxo
+
 ### Requirement: Formulaciones residuales del dictamen sobre v1.2.16
 
 La seccion 8.3 SHALL presentar la regla de derivacion por reportante no identificado como
@@ -471,6 +528,12 @@ vigente y MUST NOT decir que la campaña complementaria refuto la medicion.
 - **WHEN** se lee el primer parrafo de `sec:recomendaciones`
 - **THEN** la segunda sub-hipotesis figura como no concluyente y no como refutada
 
+#### Scenario: Capitulo 11 sin refutar la medicion
+
+- **WHEN** se busca "refut" en el primer parrafo de `sec:recomendaciones`
+- **THEN** ninguna formulacion declara que la campaña complementaria refuto la medicion
+- **AND** el estado de la segunda sub-hipotesis figura como no concluyente
+
 ### Requirement: Trazabilidad de los controles a los changes archivados
 
 El mapeo del capitulo de cumplimiento SHALL vincular cada control implementado con el artefacto
@@ -480,6 +543,12 @@ versionado del repositorio que lo evidencia y con una remision unica al Anexo I
 `C-63a/b`, `C-156`, `c-165` a `c-168`) ni la palabra "changes" (devolucion del 11-11-2026, N-07).
 Las brechas residuales de tipo organizacional SHALL declararse como responsabilidad de la
 organizacion adoptante, fuera del alcance del repositorio.
+
+#### Scenario: Controles trazables a los changes archivados
+
+- **WHEN** se lee la hoja de ruta del capitulo de cumplimiento
+- **THEN** los controles cerrados se asocian a su artefacto versionado y remiten a la tabla de trazabilidad del Anexo I, donde consta el change archivado que los cerro
+- **AND** se distinguen de las brechas residuales
 
 #### Scenario: Controles trazables sin identificadores en el cuerpo
 
@@ -503,6 +572,17 @@ byte con `App/Backend/app/constants.py` (devolucion del 11-11-2026, N-15). La co
 pasajes afectados SHALL constar en el registro de la revision. Las ocurrencias de las cinco
 cadenas canonicas en codigo, prompt y datos MUST NOT alterarse, y ningun reemplazo SHALL hacerse a
 ciegas.
+
+#### Scenario: Convencion canonica aplicada
+
+- **WHEN** se revisan las menciones de los cinco sectores segun la convencion vigente (prosa con tilde; cadena exacta del clasificador en monoespaciado y sin tilde)
+- **THEN** cada mencion coincide con la forma que le corresponde
+- **AND** la convencion consta en el registro de la revision
+
+#### Scenario: Excepcion documentada
+
+- **WHEN** un pasaje cita la cadena exacta del clasificador y conserva la forma canonica
+- **THEN** el registro de la revision consigna la convencion y la lista de pasajes afectados
 
 #### Scenario: Prosa con tilde
 
