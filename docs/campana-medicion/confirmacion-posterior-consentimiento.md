@@ -47,5 +47,5 @@ documento de campaña correspondiente.
 | E2 | etiquetador | 2026-11-01 | 2026-11-10 | director |
 | O1 | operador | 2026-11-01 | 2026-11-10 | director |
 | O2 | operador | 2026-11-01 | 2026-11-10 | director |
-| E3 | etiquetador | por completar | por completar | director |
-| E4 | etiquetador | por completar | por completar | director |
+| E3 | etiquetador | 2026-11-10 | por completar | director |
+| E4 | etiquetador | 2026-11-10 | por completar | director |
