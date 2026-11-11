@@ -177,25 +177,25 @@ Cuando una credencial se filtra, seguir los pasos en este orden:
 ### Caso de estudio: filtracion de la clave Google Gemini
 
 - Un archivo `Gestion_Incidentes/.env` con una `GEMINI_API_KEY` real fue
-  commiteado al historial (blob `be1ab368`, commits `0d430b5` y `eee5c84`).
+  commiteado al historial (blob `be1ab368`, commits `3e1aac6` y `db6784a`).
   `Gestion_Incidentes/.env` es una ruta historica (`ruta historica`): tras la
   reestructuracion el modulo vive en `App/Backend/`, por lo que hoy el archivo
   seria `App/Backend/.env`.
 - Google bloqueo la clave por estar expuesta ("leaked").
 - La clave fue **revocada** en Google y su valor fue rotado. El archivo se
-  removio del arbol en `02e845c`.
+  removio del arbol en `1e77209`.
 - La alerta de secret scanning numero `1` (`secret_type: google_api_key`) se
   resuelve como `revoked`, porque la clave ya no es valida. No se reescribio el
   historial de git.
-- La rotacion de los defaults de desarrollo local se formalizo en `597c03e`
+- La rotacion de los defaults de desarrollo local se formalizo en `9de3a8f`
   (`POSTGRES_PASSWORD` y `N8N_BASIC_AUTH_PASSWORD` parametrizados por entorno,
   sin defaults adivinables) y el destrackeo de archivos de settings locales en
-  `2784b1b`.
+  `427e351`.
   - Nota (c-98): `N8N_BASIC_AUTH_PASSWORD` se removio por vestigial. n8n elimino
     Basic Auth en su version 1.0 (imagen fijada `n8nio/n8n:2.11.2`), por lo que la
     variable era inerte. El acceso real a la UI es la cuenta owner creada en el
     primer arranque y persistida en el volumen `n8n_data`. El registro historico
-    del commit `597c03e` se conserva como evidencia.
+    del commit `9de3a8f` se conserva como evidencia.
 
 Este caso es la razon por la que el hook pre-commit existe: es la barrera
 automatica para que no vuelva a pasar.

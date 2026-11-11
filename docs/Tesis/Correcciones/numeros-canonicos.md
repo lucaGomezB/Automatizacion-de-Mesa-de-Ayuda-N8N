@@ -711,7 +711,7 @@ estado de las Secciones 3.1 a 3.13**, que siguen vigentes para la campaña 2026-
 Fecha de versionado: 2026-11-08. Semilla bootstrap `20261021`, `B = 2000`, nivel de
 confianza `0,95`, referencia del brazo manual `consenso_doble_etiquetado`
 (`analisis/resultados.json:10-12,1343`). Configuración del clasificador `hybrid-v3`
-(la misma configuración evaluada, commit `d6bb474`; el cache in-sample no registra
+(la misma configuración evaluada, commit `bf5e099`; el cache in-sample no registra
 su commit de generación, `evaluation/data/campana/README.md:164-191`). Sujetos:
 etiquetadores `E1`/`E2` y operadores `O1`/`O2`, sin solapes con los analistas
 originales, los autores ni entre sí (`evaluation/data/campana/README.md:45-53`).
@@ -1204,7 +1204,7 @@ decisión editorial adoptada y su condición de reversibilidad.
 
 8. **Variante por pliegues del vocabulario: no factible (c-142).** El dictamen
    sugiere reconstruir el vocabulario por pliegues. Eso exige saber qué casos del
-   corpus motivaron cada uno de los `62` patrones que agregó c-71 (commit `1368fd8`);
+   corpus motivaron cada uno de los `62` patrones que agregó c-71 (commit `c8112d2`);
    el diff solo trae cinco comentarios de bloque por sector y las propuestas, el diseño
    y las tareas de c-71 describen el procedimiento en forma genérica. Cualquier
    atribución por pliegues requeriría una regla no verificable cuyo resultado dependería
@@ -1217,7 +1217,7 @@ decisión editorial adoptada y su condición de reversibilidad.
 9. **Versión del prompt de la FORCE-ESCALATE (c-142, D9).** El `cache_meta.generated_at`
    de la copia congelada (`evaluation/evidence/predicciones_calibracion_hybrid-v2_2026-10-07.json`)
    es `2026-10-07T20:33:03.438926+00:00`, posterior a la aplicación de c-72
-   (`a76851e`, 2026-10-06T19:38:20Z). Clasificación según D9: **"posterior"**; el nivel b
+   (`27f8d8c`, 2026-10-06T19:38:20Z). Clasificación según D9: **"posterior"**; el nivel b
    de la sensibilidad del prompt (comparación pareada contra la corrida oficial) **no
    aplica**. La suposición de la propuesta de c-142 (cache generada el 2026-10-05, antes
    de las reglas de frontera) queda refutada por su `cache_meta`. Esto acota, sin cerrar,

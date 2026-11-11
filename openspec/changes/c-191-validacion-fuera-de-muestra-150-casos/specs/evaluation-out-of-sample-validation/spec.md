@@ -93,7 +93,7 @@ de sesgo hacia casos fáciles.
 ### Requirement: OOS-005 — Clasificador congelado y runner reutilizado
 
 La clasificación SHALL ejecutarse con el clasificador CONGELADO: `classifier_version` idéntica
-a la del in-sample (`hybrid-v3`) y commit `d6bb474`, sin recalibrar tau, el prompt, el
+a la del in-sample (`hybrid-v3`) y commit `bf5e099`, sin recalibrar tau, el prompt, el
 `KEYWORD_MAP` ni el vocabulario de sectores después de ver el corpus. La corrida SHALL
 reutilizar `evaluar_fuera_de_muestra` y el guard `--confirm-paid` de
 `evaluation/run_evaluation.py`, con `--corpus`, `--predicciones` y `--reporte` propios del
@@ -102,7 +102,7 @@ corpus independiente, sin escribir sobre los artefactos congelados de la v9.
 #### Scenario: Congelamiento verificado
 
 - **WHEN** se registra el control de clasificador congelado
-- **THEN** `git diff d6bb474 HEAD` sobre el clasificador, el prompt y las constantes solo admite diferencias ajenas a la clasificación
+- **THEN** `git diff bf5e099 HEAD` sobre el clasificador, el prompt y las constantes solo admite diferencias ajenas a la clasificación
 - **AND** el resultado del control y el commit se registran en `evaluation/data/campana/README.md`
 
 #### Scenario: Sin recalibración posterior

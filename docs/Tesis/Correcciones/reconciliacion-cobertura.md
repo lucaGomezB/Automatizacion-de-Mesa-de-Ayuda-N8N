@@ -1,7 +1,7 @@
 # Reconciliacion de cobertura — nueva auditoria vs changes C-76..C-80
 
 > Herramienta de trabajo. Cruza los hallazgos de la re-auditoria
-> `docs/Tesis/Correcciones/auditoria-capitulos.md` (105 hallazgos, commit `d7df92c`)
+> `docs/Tesis/Correcciones/auditoria-capitulos.md` (105 hallazgos, commit `2268126`)
 > contra los cinco changes ACTIVOS que cubren el dictamen CONEAU original
 > (`C-76`..`C-80`, todos 0 tareas, sin aplicar).
 >
@@ -74,7 +74,7 @@ resolver antes de aplicar.
 | A-16 | Sin tiempos desagregados por canal | c-77 E5.1 (tabla por canal) + c-80 F2 (boxplot por canal) | CUBIERTO |
 | A-17 | Figura 1 a mano alzada; no representa las 5 capas ni nombra componentes | c-80 F2 (6.1, 6.9) | CUBIERTO |
 | A-18 | Tabla 3 con nota interna "N8N 1.62 no en Docker Hub" | c-80 F6 (2.1, 2.2) | CUBIERTO |
-| A-19 | §5.6 "seis entidades" vs Anexo C "cinco tablas" | No reproduce (STALE): el `.tex` dice "siete" en cuerpo y anexo desde `8466cbe`; coincide con el modelo real (7 principales) | CUBIERTO (stale) |
+| A-19 | §5.6 "seis entidades" vs Anexo C "cinco tablas" | No reproduce (STALE): el `.tex` dice "siete" en cuerpo y anexo desde `8e7cd16`; coincide con el modelo real (7 principales) | CUBIERTO (stale) |
 | A-20 | §8.1 interpreta y no interroga; sin hipotesis alternativa | c-80 F7 baja valorativos, no agrega hipotesis rival | PARCIAL |
 | A-21 | §8.3 baseline TF-IDF+SVM (78 %, F1 0,764) en una sola oracion, sin procedimiento ni codigo | — | NUEVO |
 | A-22 | §8.1 "garantia metodologica" justo lo que el repo no permite verificar (C-01) | c-80 F7 (5.5) | CUBIERTO |
@@ -140,7 +140,7 @@ estan mapeados a C-76..C-80:
 | C-15 | Coincidencia no explicada: preliminar 2m45s = experimental 165,3 s | c-77 B2 | CUBIERTO |
 | C-16 | La compuerta de confianza (§6.3) se ejecuta antes del clasificador | c-77 C1/C2 | CUBIERTO |
 | C-17 | El agente telefonico no tiene modelo de lenguaje conectado | c-77 C1/C2 (+ c-76 A-13) | PARCIAL |
-| C-18 | El canal de origen nunca llega al backend (POST de 2 campos; Switch mal) | ARTEFACTO ya corregido por c-29 (commit ef656ac, 2026-09-17); texto: c-77 C3 | CUBIERTO (hallazgo stale) |
+| C-18 | El canal de origen nunca llega al backend (POST de 2 campos; Switch mal) | ARTEFACTO ya corregido por c-29 (commit d8b4115, 2026-09-17); texto: c-77 C3 | CUBIERTO (hallazgo stale) |
 | C-19 | No existe mecanismo de reintento pese a que §6.5 lo declara | c-77 C4 | CUBIERTO |
 | C-20 | TLS 1.3 y Nginx no existen en el despliegue publicado | c-77 C5 | CUBIERTO |
 | C-21 | Los autores catalogaron 27 brechas y decidieron no cerrar seis | c-77 C6 (anexar registro) | PARCIAL |
@@ -161,8 +161,8 @@ nucleo critico del dictamen ya tiene owner. Los PARCIAL son:
   las cuatro brechas que el informe dice que siguen afirmativas quedan cubiertas.
 
 **C-18 quedo RESUELTO (hallazgo stale).** La auditoria (PDF del 2026-08-04, sobre el commit
-`d7df92c` del 2026-07-02) describia el flujo **previo** a c-29. Verificado en el HEAD actual
-y con `git show ef656ac^:n8n/workflow.json`:
+`2268126` del 2026-07-02) describia el flujo **previo** a c-29. Verificado en el HEAD actual
+y con `git show d8b4115^:n8n/workflow.json`:
 
 - El nodo `HTTP POST a MESA-AYUDAS` (`n8n/workflow.json:101`) envia **seis** campos,
   incluido `canal_origen_id` (no dos).
@@ -171,7 +171,7 @@ y con `git show ef656ac^:n8n/workflow.json`:
   expression.
 - El backend acepta y persiste `canal_origen_id` (`IncidenteCreate.canal_origen_id:
   int | None`, `app/schemas/incidente.py:163`; `_resolve_canal`, `incidente_service.py:337,361`).
-- Commit `ef656ac` (2026-09-17, c-29/c-30/c-32) introdujo exactamente esos dos fixes.
+- Commit `d8b4115` (2026-09-17, c-29/c-30/c-32) introdujo exactamente esos dos fixes.
 
 Residuo: **solo el texto de la tesis** (Tabla 4 usa `id_canal` en vez de `canal_origen_id`;
 §5.3 describe dos llamadas en vez de una). Ya esta en **c-77 C3**. No requiere change nuevo
@@ -323,14 +323,14 @@ correccion es necesaria. PERO hay divergencia con el PDF auditado en un punto:
   (`:106`) y el Anexo C (`12-anexos.tex:25`). `tab:entidades` lista las 7 principales
   (`incidente`, `sector`, `estado`, `canal_origen`, `clasificacion_log`, `users`,
   `directorio_empleado`), coincidentes con `App/Backend/app/models/`. El texto "siete"
-  precede a esta sesion (commit `8466cbe`). La contradiccion "seis vs cinco" del informe
+  precede a esta sesion (commit `8e7cd16`). La contradiccion "seis vs cinco" del informe
   auditado corresponde a una revision anterior (el PDF). Residuo menor: `06-implementacion.tex:72`
   dice "seis entidades" al describir la iteracion de Semanas 3-4 (posible dato historico
   legitimo); alinear o marcar como historico al aplicar c-93.
 
 ### Matiz 2 — el repositorio evoluciono desde el commit auditado
 
-La auditoria es sobre `d7df92c` (2026-07-02). El HEAD actual tiene: **136** archivos
+La auditoria es sobre `2268126` (2026-07-02). El HEAD actual tiene: **136** archivos
 `test_*.py` en backend (el dictamen dice "22 suites"), **56** archivos de prueba frontend
 con **340** ocurrencias `it(` (el dictamen dice 68), y `docs/openapi.json` con **33
 rutas** (no 25). Los conteos del dictamen (A-11, A-12, M-13) son **stale respecto de

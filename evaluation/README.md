@@ -355,10 +355,10 @@ python -m evaluation.sensibilidad_ajustes \
 El historial del repositorio registra ajustes hechos sobre
 `data/corpus_evaluacion_pseudonimizado.json` antes de la corrida oficial: el
 vocabulario del filtro determinístico se amplió a partir de sus errores (c-71,
-commit `1368fd8`); las reglas de frontera del prompt se redactaron a partir de
-casos del corpus (c-72, commit `a76851e`; R002 y R038); y el punto de operación
+commit `c8112d2`); las reglas de frontera del prompt se redactaron a partir de
+casos del corpus (c-72, commit `27f8d8c`; R002 y R038); y el punto de operación
 del cortocircuito se derivó sobre el corpus por validación cruzada fuera de
-muestra (c-74, commit `d6bb474`). El protocolo fuera de muestra cubre el punto de
+muestra (c-74, commit `bf5e099`). El protocolo fuera de muestra cubre el punto de
 operación, no el vocabulario ni las reglas del prompt. No se dispuso de un corpus
 independiente de preproducción. Las métricas de `report.md` son, por lo tanto,
 estimaciones dentro de la muestra. `python -m evaluation.sensibilidad_ajustes` (sin

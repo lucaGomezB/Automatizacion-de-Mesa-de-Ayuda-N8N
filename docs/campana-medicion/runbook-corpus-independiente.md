@@ -69,7 +69,7 @@ Debe imprimir la cantidad de casos y `['I']`. Atención: `cargar_corpus` reescri
 
 ## 4. Doble etiquetado con la plantilla y el validador de c-168
 
-El corpus independiente se etiqueta con el **mismo procedimiento y el mismo validador** que el de ajuste (`docs/campana-medicion/runbook-doble-etiquetado.md`): hoja ciega con solo `id_caso` y descripción, dos etiquetadores `E1` y `E2`, el mismo codebook congelado y la planilla única `evaluation/data/plantilla_etiquetado.csv`. Cambia el corpus contra el que se valida, no el procedimiento:
+El corpus independiente se etiqueta con el **mismo procedimiento y el mismo validador** que el de ajuste (`docs/campana-medicion/runbook-doble-etiquetado.md`): hoja ciega con solo `id_caso` y descripción, dos etiquetadores `E3` y `E4`, el mismo codebook congelado y la planilla única `evaluation/data/plantilla_etiquetado.csv`. Cambia el corpus contra el que se valida, no el procedimiento:
 
 ```bash
 python -m evaluation.doble_etiquetado \
@@ -82,8 +82,8 @@ Debe salir con exit code `0` (los códigos por regla están en la sección 6 del
 
 Reglas que se mantienen:
 
-- **Sujetos**: `E1` y `E2` son personas distintas entre sí, de los dos analistas originales, de los autores y de los operadores `O*` (`registro_sujetos.csv`). Si no se consiguen etiquetadores nuevos, se declara como limitación y no como etiquetado ciego (sección 9 del runbook de c-168).
-- **Referencia**: la del runbook de c-168 (sección 8): los casos donde `sector_etiquetado` de `E1` y de `E2` **coinciden**. Los discordantes no entran en la referencia y se informa cuántos son; el JSON final contiene los casos con referencia y el recorte se documenta.
+- **Sujetos**: `E3` y `E4` son personas distintas entre sí, de los dos analistas originales, de los autores y de los operadores `O*` (`registro_sujetos.csv`). Si no se consiguen etiquetadores nuevos, se declara como limitación y no como etiquetado ciego (sección 9 del runbook de c-168).
+- **Referencia**: la del runbook de c-168 (sección 8): los casos donde `sector_etiquetado` de `E3` y de `E4` **coinciden**. Los discordantes no entran en la referencia y se informa cuántos son; el JSON final contiene los casos con referencia y el recorte se documenta.
 - **Tabla primaria**: se versiona con su SHA-256 como en la sección 7 del runbook de c-168. Para el corpus independiente se usa un nombre propio (por ejemplo `evaluation/data/campana/doble_etiquetado_independiente.csv`) para no pisar la del corpus de ajuste.
 
 ## 5. `verificar_no_solape`: paso previo obligatorio
@@ -117,11 +117,11 @@ El runner repite este control como paso previo obligatorio (sección 7): si fall
 La validación fuera de muestra solo tiene sentido si el clasificador es **el mismo** que el del in-sample (`hybrid-v3`, `evaluation/evidence/README.md`) y no se ajusta después de ver el corpus independiente.
 
 1. **`classifier_version`**: el cache independiente la registra sola (hoy `hybrid-v3`); debe ser idéntica a la del in-sample.
-2. **Commit y archivos del clasificador**: el cache independiente registra el `commit` de `HEAD` al generarlo. La corrida in-sample no registró commit (`evaluation/data/campana/README.md`, sección "Referencia in-sample"), así que se comprueba que **el clasificador no cambió** desde `d6bb474`, la primera revisión que versiona la cascada `hybrid-v3` (Anexo B de la tesis):
+2. **Commit y archivos del clasificador**: el cache independiente registra el `commit` de `HEAD` al generarlo. La corrida in-sample no registró commit (`evaluation/data/campana/README.md`, sección "Referencia in-sample"), así que se comprueba que **el clasificador no cambió** desde `bf5e099`, la primera revisión que versiona la cascada `hybrid-v3` (Anexo B de la tesis):
 
    ```bash
-   git diff d6bb474 HEAD -- App/Backend/app/classifiers docs/prompt_gemini.txt App/Backend/app/constants.py
-   git diff d6bb474 HEAD -- App/Backend/app/config/settings.py
+   git diff bf5e099 HEAD -- App/Backend/app/classifiers docs/prompt_gemini.txt App/Backend/app/constants.py
+   git diff bf5e099 HEAD -- App/Backend/app/config/settings.py
    ```
 
    Solo se admiten diferencias en comentarios, importaciones y campos ajenos a la clasificación. No pueden cambiar reglas, `KEYWORD_MAP`, el prompt, el vocabulario de sectores, `deterministic_score_threshold` (tau), `human_review_threshold`, el modelo ni los parámetros de Gemini. El resultado del control y el commit se anotan en el README de la carpeta.
