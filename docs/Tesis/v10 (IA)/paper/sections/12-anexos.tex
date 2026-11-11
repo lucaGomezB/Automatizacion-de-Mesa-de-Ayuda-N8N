@@ -6,13 +6,13 @@
 
 \section{Diagrama de arquitectura del sistema}\label{sec:anexo-diagrama-arquitectura}
 
-El Anexo~A inventaría los diagramas de la arquitectura del sistema entregado (release \texttt{v1.2.18}). Los diagramas de arquitectura y despliegue se incluyen como figuras de la \autoref{sec:arquitectura} y no se reproducen aquí; los diagramas de secuencia, componentes y cronograma se reproducen a continuación. Los cinco artefactos son:
+El Anexo~A inventaría los diagramas de la arquitectura del sistema entregado (release \texttt{v1.2.19}). Los diagramas de arquitectura y despliegue se incluyen como figuras de la \autoref{sec:arquitectura} y no se reproducen aquí; los diagramas de secuencia, componentes y cronograma se reproducen a continuación. Los cinco artefactos son:
 
 \begin{itemize}
   \item \textbf{Diagrama de arquitectura del sistema} (Figura~\ref{fig:arquitectura}, \autoref{sec:arquitectura}): las cinco capas de la Tabla~\ref{tab:capas} y los tres canales de entrada (correo, formulario web y telefonía), sin versiones de bibliotecas, que constan en la Tabla~\ref{tab:capas} y en la \autoref{tab:configuracion-evaluada-entregada}. Fuente versionada: \path{docs/diagrams/arquitectura_sistema.md}.
   \item \textbf{Diagrama de despliegue} (Figura~\ref{fig:despliegue}, \autoref{sec:arquitectura}): los cinco componentes principales (N8N, FastAPI, PostgreSQL, Gemini~3.6 Flash, Twilio), el proxy inverso Nginx, que provee terminación TLS 1.2/1.3 verificada en el despliegue de referencia y que forma parte del stack base sobre el que corrió la ingesta del 2 de octubre (la medición telefónica del 5 y 6 de octubre usó el perfil aislado \texttt{corpus}, sin proxy), y las relaciones de comunicación entre ellos. Fuente versionada: \path{docs/diagrams/despliegue.md}.
-  \item \textbf{Diagrama de secuencia} (Figura~\ref{fig:secuencia}): flujo extremo a extremo de un incidente desde su recepción en cualquiera de los tres canales (correo electrónico, formulario web o telefonía) hasta la confirmación al usuario o la derivación a revisión humana, incluyendo las interacciones con el clasificador híbrido y la base de datos. Fuente versionada: \path{docs/diagrams/secuencia.md}.
-  \item \textbf{Diagrama de componentes} (Figura~\ref{fig:componentes}): organización interna del módulo Python por capas (routes, services, repositories, models, classifiers), con sus dependencias y relaciones. Fuente versionada: \path{docs/diagrams/componentes.md}.
+  \item \textbf{Diagrama de secuencia} (Figuras~\ref{fig:secuencia} y~\ref{fig:secuencia_b}): flujo extremo a extremo de un incidente desde su recepción en cualquiera de los tres canales (correo electrónico, formulario web o telefonía) hasta la confirmación al usuario o la derivación a revisión humana, incluyendo las interacciones con el clasificador híbrido y la base de datos. Fuente versionada: \path{docs/diagrams/secuencia.md}.
+  \item \textbf{Diagrama de componentes} (Figuras~\ref{fig:componentes} y~\ref{fig:componentes_b}): organización interna del módulo Python por capas (routes, services, repositories, models, classifiers), con sus dependencias y relaciones. Fuente versionada: \path{docs/diagrams/componentes.md}.
   \item \textbf{Cronograma} (Figura~\ref{fig:cronograma}, \autoref{subsec:conexion-scrumban}): construcción, campañas de medición de la campaña 2026-10, campaña complementaria de medición y versión del modelo evaluada, con la procedencia de cada fecha. Fuente versionada: \path{docs/diagrams/cronograma.md}.
 \end{itemize}
 
@@ -20,34 +20,48 @@ Los diagramas se generan a partir de fuentes Mermaid versionadas en formato \tex
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.82\textwidth]{secuencia}
-\caption[Diagrama de secuencia del flujo extremo a extremo de un incidente]{Diagrama de secuencia del flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión humana, en la configuración entregada (release \texttt{v1.2.18}). El disparador por reportante no identificado en el directorio es posterior a la campaña 2026-10 (c-82, 13-10-2026): véase la \autoref{tab:configuracion-evaluada-entregada}.}
+\includegraphics[width=\textwidth]{secuencia_a}
+\caption[Diagrama de secuencia del flujo extremo a extremo de un incidente (parte A)]{Diagrama de secuencia del flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión humana, en la configuración entregada (release \texttt{v1.2.19}). El disparador por reportante no identificado en el directorio es posterior a la campaña 2026-10 (13-10-2026): véase la \autoref{tab:configuracion-evaluada-entregada}. Parte A: ingreso, alta y clasificación (mensajes 1 a 13), que continúa en la \autoref{fig:secuencia_b}.}
 \label{fig:secuencia}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.62\textwidth,height=0.78\textheight,keepaspectratio]{componentes}
-\caption[Diagrama de componentes del módulo Python organizado en capas]{Diagrama de componentes del módulo Python organizado en capas (routes, services, repositories, classifiers). Describe la configuración entregada (release \texttt{v1.2.18}): el filtro determinístico cortocircuita con señal dominante y puntaje de correctitud \(\geq 0{,}5166\) sin derivar por su confianza, la revisión por confianza menor que 0,70 rige solo sobre Gemini, la etapa de reserva deriva siempre, y el disparador por reportante no identificado en el directorio es posterior a la campaña 2026-10 (c-82, 13-10-2026; \autoref{tab:configuracion-evaluada-entregada}). Fuente: \texttt{docs/diagrams/componentes.md}.}
+\includegraphics[width=\textwidth]{secuencia_b}
+\caption[Diagrama de secuencia del flujo extremo a extremo (parte B)]{Diagrama de secuencia del flujo extremo a extremo de un incidente (continuación de la \autoref{fig:secuencia}). Parte B: persistencia del resultado, respuesta al canal y ciclo de revisión humana (mensajes 14 a 22).}
+\label{fig:secuencia_b}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.97\textwidth]{componentes_a}
+\caption[Diagrama de componentes del módulo Python organizado en capas (parte A)]{Diagrama de componentes del módulo Python organizado en capas (routes, services, repositories, classifiers). Describe la configuración entregada (release \texttt{v1.2.19}): el filtro determinístico cortocircuita con señal dominante y puntaje de correctitud \(\geq 0{,}5166\) sin derivar por su confianza, la revisión por confianza menor que 0,70 rige solo sobre Gemini, la etapa de reserva deriva siempre, y el disparador por reportante no identificado en el directorio es posterior a la campaña 2026-10 (13-10-2026; \autoref{tab:configuracion-evaluada-entregada}). Fuente: \texttt{docs/diagrams/componentes.md}. Parte A: capas de rutas, servicios y clasificadores, que continúa en la \autoref{fig:componentes_b}.}
 \label{fig:componentes}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
+\includegraphics[width=\textwidth]{componentes_b}
+\caption[Diagrama de componentes del módulo Python (parte B)]{Diagrama de componentes del módulo Python organizado en capas (continuación de la \autoref{fig:componentes}). Parte B: repositorios, modelos ORM, utilidades transversales y configuración.}
+\label{fig:componentes_b}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
 \includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{cronograma}
-\caption[Cronograma de la construcción, las campañas y la versión del modelo]{Cronograma de la construcción, las campañas y la versión del modelo (barras con precisión de mes; hitos, de día). Fuente: historial del repositorio para los hitos, incluido el recálculo del tiempo telefónico del 19-10-2026 (c-77); las fechas de la corrida telefónica (el 5 y 6 de octubre de 2026) provienen de la respuesta de los autores del 2026-10-28, y la confirmación del 9-10-2026 cubre las ventanas de las campañas. La campaña complementaria de medición (programa c-165 a c-168) corrió en noviembre de 2026; su plan pre-registrado se versionó el 2026-11-01 y sus tablas primarias y análisis, entre el 2026-11-04 y el 2026-11-08.}
+\caption[Cronograma de la construcción, las campañas y la versión del modelo]{Cronograma de la construcción, las campañas y la versión del modelo (barras con precisión de mes; hitos, de día). Fuente: historial del repositorio para los hitos, incluido el recálculo del tiempo telefónico del 19-10-2026; las fechas de la corrida telefónica (el 5 y 6 de octubre de 2026) provienen de la respuesta de los autores del 2026-10-28, y la confirmación del 9-10-2026 cubre las ventanas de las campañas. La campaña complementaria de medición corrió en noviembre de 2026; su plan pre-registrado se versionó el 2026-11-01 y sus tablas primarias y análisis, entre el 2026-11-04 y el 2026-11-08.}
 \label{fig:cronograma}
 \end{figure}
 
 \section{Repositorio de código fuente}\label{sec:anexo-repositorio}
 
-El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto \parencite{Gomez2026_repositorio}, accesible en \url{https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N}. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado \texttt{v1.2.18}, creado sobre el commit que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, la rama principal registra después un commit que solo consigna ese hash, y los commits posteriores no modifican las fuentes de la tesis.
+El código fuente del módulo Python, los scripts de migración de la base de datos PostgreSQL gestionados mediante Alembic, los archivos de configuración del despliegue en contenedores Docker y los flujos de integración continua sobre GitHub Actions se encuentran disponibles en el repositorio público del proyecto \parencite{Gomez2026_repositorio}, accesible en \url{https://github.com/lucaGomezB/Automatizacion-de-Mesa-de-Ayuda-N8N}. El commit de referencia para la versión entregada al jurado se identifica con el tag anotado \texttt{v1.2.19}, creado sobre el commit que fija el contenido de la versión entregada. Como un commit no puede contener su propio hash, la rama principal registra después un commit que solo consigna ese hash, y los commits posteriores no modifican las fuentes de la tesis.
 
-El hash completo de ese commit es \texttt{\small 457b14ae2c77ea221429345602aacc9213878640}, que constituye la referencia verificable de la versión corregida.
+El hash completo de ese commit es \texttt{\small 5e095293bec659b4b4bc931ef663aceea6e061c8}, que constituye la referencia verificable de la versión corregida.
 
 La verificación de la compilación se conserva en \path{paper/compilacion.md}, que registra las páginas, los errores y el SHA-256 del PDF, y la de la matriz de trazabilidad de las correcciones, en \path{docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py}; ambos artefactos corresponden a este anexo de repositorio.
 
-La versión entregada no es la que se evaluó. La \emph{configuración evaluada} es la del commit \texttt{d6bb474} (7-10-2026), primera revisión que versiona la cascada \texttt{hybrid-v3}; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (\autoref{subsec:protocolo-pruebas}). La \emph{configuración entregada} es la del tag \texttt{v1.2.18}. La \emph{configuración de la campaña complementaria} no es un único commit: el brazo automatizado de correo y formulario web corrió desde \texttt{cda7712} (5-11-2026), el de telefonía el 6-11-2026 tras \texttt{c-174} y \texttt{c-175}, y las intervenciones se validaron entre el 7 y el 8-11-2026 (\texttt{c-177} a \texttt{c-183}), todas con \texttt{hybrid-v3}, la instrumentación de \texttt{c-165} y la derivación por reportante activas (\autoref{subsec:resultados-campana-medicion}). La \autoref{tab:configuracion-evaluada-entregada} consigna, con valores verificados sobre las tres revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella.
+La versión entregada no es la que se evaluó. La \emph{configuración evaluada} es la del commit \texttt{d6bb474} (7-10-2026), primera revisión que versiona la cascada \texttt{hybrid-v3}; las corridas de tiempos usaron revisiones anteriores con las mismas dependencias (\autoref{subsec:protocolo-pruebas}). La \emph{configuración entregada} es la del tag \texttt{v1.2.19}. La \emph{configuración de la campaña complementaria} no es un único commit: el brazo automatizado de correo y formulario web corrió desde \texttt{cda7712} (5-11-2026), el de telefonía el 6-11-2026, tras ajustar el bloqueo de la llamada siguiente en el softphone y el aviso de voz, y las intervenciones se validaron entre el 7 y el 8-11-2026 (ajustes de la interfaz y de la codificación del correo), todas con \texttt{hybrid-v3}, la instrumentación de intervención y la derivación por reportante activas (\autoref{subsec:resultados-campana-medicion}). La \autoref{tab:configuracion-evaluada-entregada} consigna, con valores verificados sobre las tres revisiones, lo que cambió; los pasajes de la tesis que citan versiones o capacidades remiten a ella.
 
 \begin{table}[htbp]
 \footnotesize
@@ -57,20 +71,20 @@ La versión entregada no es la que se evaluó. La \emph{configuración evaluada}
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.4cm} >{\raggedright\arraybackslash}p{3.5cm} >{\raggedright\arraybackslash}p{5.2cm} >{\raggedright\arraybackslash}p{3.6cm}@{}}
 \toprule
-Elemento & Configuración evaluada (\texttt{d6bb474}) & Configuración entregada (\texttt{v1.2.18}) & Campaña complementaria \\
+Elemento & Configuración evaluada (\texttt{d6bb474}) & Configuración entregada (\texttt{v1.2.19}) & Campaña complementaria \\
 \midrule
 FastAPI y Uvicorn & 0.115.0 y 0.30.6 & 0.162.0 y 0.54.0 & Como la entregada \\
 SQLAlchemy & 2.0.36 & 2.1.6 & Como la entregada \\
 \texttt{google-genai} & \texttt{>=2.20.0} & \texttt{>=2.33.0,<3} & Como la entregada \\
 pytest y pytest-cov & 8.3.3 y 5.0.0 & 9.1.1 y 7.1.0 & Como la entregada \\
 React & 18.3.1 & 19.3.1 & Como la entregada \\
-Flujo N8N & 28 nodos (25 operativos y 3 notas); 38 (35 y 3) hasta c-72 & 32 nodos (29 operativos y 3 notas) & Como la entregada \\
+Flujo N8N & 28 nodos (25 operativos y 3 notas); 38 (35 y 3) hasta el retiro del agente LLM telefónico & 32 nodos (29 operativos y 3 notas) & Como la entregada \\
 Reintentos del alta & No & Sí: hasta 3 intentos, espera fija de 5000~ms y tiempo de espera por intento de 10~s (inicio de sesión) y 75~s (alta) & Como la entregada \\
-Revisión por reportante no identificado & No & Sí (c-82) & Sí (c-82) \\
-Propagación del contacto del reportante en el POST & No & Sí (c-162, posterior a la campaña 2026-10): el flujo N8N envía \texttt{reportante\_email} (correo) y \texttt{reportante\_telefono} (telefonía), que habilitan la resolución del reportante de c-82 & Sí (c-162) \\
-Prueba de humo E2E y verificación de TLS & No & Sí (c-140) & No registrado \\
-Instrumentación de intervención & No & Sí (c-165) & Sí (c-165; parte de las de \texttt{O1} con un \emph{frontend} previo) \\
-Imagen de N8N & \texttt{n8nio/n8n:2.11.2} & Derivada de \texttt{n8nio/n8n:2.11.2} (\texttt{docker/n8n/Dockerfile}) con parche de la decodificación IMAP (c-182) & \texttt{n8nio/n8n:2.11.2}; la derivada es posterior (7-11-2026) \\
+Revisión por reportante no identificado & No & Sí & Sí \\
+Propagación del contacto del reportante en el POST & No & Sí (posterior a la campaña 2026-10): el flujo N8N envía \texttt{reportante\_email} (correo) y \texttt{reportante\_telefono} (telefonía), que habilitan la resolución del reportante & Sí \\
+Prueba de humo E2E y verificación de TLS & No & Sí & No registrado \\
+Instrumentación de intervención & No & Sí & Sí (parte de las de \texttt{O1} con un \emph{frontend} previo) \\
+Imagen de N8N & \texttt{n8nio/n8n:2.11.2} & Derivada de \texttt{n8nio/n8n:2.11.2} (\texttt{docker/n8n/Dockerfile}) con parche de la decodificación IMAP & \texttt{n8nio/n8n:2.11.2}; la derivada es posterior (7-11-2026) \\
 \texttt{classifier\_}\allowbreak\texttt{version} & \texttt{hybrid-v3} & \texttt{hybrid-v3} & \texttt{hybrid-v3} \\
 Modelo de transcripción & \texttt{gemini-3.5-}\allowbreak\texttt{transcribe} & \texttt{gemini-3.5-}\allowbreak\texttt{transcribe} & Como la entregada \\
 \midrule
@@ -78,10 +92,10 @@ Sin cambios & \multicolumn{2}{>{\raggedright\arraybackslash}p{8.7cm}}{Python 3.1
 \bottomrule
 \end{tabular}
 \par\smallskip
-{\footnotesize\textit{Fuente:} elaboración propia a partir de \texttt{git show d6bb474:}\emph{archivo}, \texttt{git show v1.2.18:}\emph{archivo} y \texttt{git show d6bb474:App/Backend/app/constants.py} sobre \texttt{requirements.txt}, \texttt{package-lock.json}, \texttt{n8n/workflow.json}, \texttt{docker-compose.yml} y \texttt{settings.py}, y de los changes archivados, y de \texttt{git diff --stat cda7712 v1.2.18 -- App/ n8n/ docker/ docker-compose.yml} (24 archivos; no cambian \texttt{requirements.txt}, \texttt{package-lock.json}, \texttt{n8n/workflow.json} ni \texttt{settings.py}; cambian \texttt{docker-compose.yml} y \texttt{docker/n8n/}, por la imagen derivada de N8N, y archivos del backend y del frontend que no intervienen en la clasificación). La campaña complementaria usó \texttt{hybrid-v3} sobre un \emph{backend} posterior, con c-82 y c-162 activos; \emph{no registrado} señala lo que los artefactos no permiten recuperar.\par}
+{\footnotesize\textit{Fuente:} elaboración propia a partir de \texttt{git show d6bb474:}\emph{archivo}, \texttt{git show v1.2.19:}\emph{archivo} y \texttt{git show d6bb474:App/Backend/app/constants.py} sobre \texttt{requirements.txt}, \texttt{package-lock.json}, \texttt{n8n/workflow.json}, \texttt{docker-compose.yml} y \texttt{settings.py}, y de las especificaciones archivadas de los cambios, y de \texttt{git diff --stat cda7712 v1.2.19 -- App/ n8n/ docker/ docker-compose.yml} (24 archivos; no cambian \texttt{requirements.txt}, \texttt{package-lock.json}, \texttt{n8n/workflow.json} ni \texttt{settings.py}; cambian \texttt{docker-compose.yml} y \texttt{docker/n8n/}, por la imagen derivada de N8N, y archivos del backend y del frontend que no intervienen en la clasificación). La campaña complementaria usó \texttt{hybrid-v3} sobre un \emph{backend} posterior, con la derivación por reportante y la propagación de su contacto activas; \emph{no registrado} señala lo que los artefactos no permiten recuperar.\par}
 \end{table}
 
-La estructura del repositorio separa el módulo de procesamiento (\texttt{App/Backend/}, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (\texttt{App/Frontend/}, React con TypeScript), la definición del flujo de orquestación (\texttt{n8n/workflow.json}), los artefactos de evaluación (\texttt{evaluation/}), el corpus pseudonimizado (\texttt{data/}), los scripts auxiliares (\texttt{scripts/}) y la documentación (\texttt{docs/}), junto con las especificaciones de los changes (\texttt{openspec/}) y los archivos de orquestación local \texttt{docker-compose.yml} y \texttt{Makefile}. El archivo \texttt{README.md} describe esta organización y reúne las instrucciones detalladas para el despliegue local en menos de 15 minutos, por lo que constituye el punto de entrada al código fuente disponible en el repositorio público \parencite{Gomez2026_repositorio}.
+La estructura del repositorio separa el módulo de procesamiento (\texttt{App/Backend/}, con la aplicación FastAPI, las migraciones Alembic y las pruebas), la interfaz de usuario (\texttt{App/Frontend/}, React con TypeScript), la definición del flujo de orquestación (\texttt{n8n/workflow.json}), los artefactos de evaluación (\texttt{evaluation/}), el corpus pseudonimizado (\texttt{data/}), los scripts auxiliares (\texttt{scripts/}) y la documentación (\texttt{docs/}), junto con las especificaciones de los cambios (\texttt{openspec/}) y los archivos de orquestación local \texttt{docker-compose.yml} y \texttt{Makefile}. El archivo \texttt{README.md} describe esta organización y reúne las instrucciones detalladas para el despliegue local en menos de 15 minutos, por lo que constituye el punto de entrada al código fuente disponible en el repositorio público \parencite{Gomez2026_repositorio}.
 
 \section{Esquema de base de datos}\label{sec:anexo-esquema-bd}
 
@@ -105,18 +119,32 @@ A título ilustrativo, los 44 esquemas de datos comprenden las estructuras de lo
 
 La exportación del flujo de orquestación en formato JSON incluye la totalidad de los 32 nodos configurados, sus parámetros operativos, las credenciales referenciadas mediante identificadores opacos sin exposición de valores, y los conectores entre nodos. El archivo \texttt{n8n/workflow.json} contiene esta exportación. La importación de este artefacto en una instancia limpia de N8N~2.11.2 reproduce íntegramente el comportamiento operativo del sistema, sujeta únicamente a la provisión de las credenciales correspondientes a los servicios externos integrados (servidor IMAP de correo, cuenta Twilio y clave de API de Gemini) mediante el sistema de credenciales nativo de la plataforma.
 
-La Figura~\ref{fig:anexo_flujo_n8n} presenta una reconstrucción esquemática del flujo, derivada de la exportación JSON y agrupada por etapa funcional. Los 29 nodos operativos (más 3 notas adhesivas, 32 nodos en total) se organizan en siete etapas: entrada (triggers), con la recepción de correo por IMAP y los disparadores de telefonía, formulario web y notificación de clasificación; validación y normalización de la información de entrada, incluida la marca de canal y el sellado de ingreso; envío al backend, con la autenticación del operador y la solicitud POST del incidente; ruteo por canal de origen; revisión humana, con la notificación al operador designado y las respuestas de handoff; respuesta y auditoría del ticket; y aviso post-revisión. La parametrización completa de cada nodo reside en \texttt{n8n/workflow.json}.
+Las Figuras~\ref{fig:anexo_flujo_n8n} a~\ref{fig:anexo_flujo_n8n_c} presentan una reconstrucción esquemática del flujo, derivada de la exportación JSON y agrupada por etapa funcional. Los 29 nodos operativos (más 3 notas adhesivas, 32 nodos en total) se organizan en siete etapas: entrada (triggers), con la recepción de correo por IMAP y los disparadores de telefonía, formulario web y notificación de clasificación; validación y normalización de la información de entrada, incluida la marca de canal y el sellado de ingreso; envío al backend, con la autenticación del operador y la solicitud POST del incidente; ruteo por canal de origen; revisión humana, con la notificación al operador designado y las respuestas de handoff; respuesta y auditoría del ticket; y aviso post-revisión. La parametrización completa de cada nodo reside en \texttt{n8n/workflow.json}.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth]{flujo_n8n}
-\caption[Reconstrucción esquemática del flujo de orquestación N8N]{Reconstrucción esquemática del flujo de orquestación N8N: no es una captura de la interfaz; los 29 nodos operativos se agrupan por etapa funcional.}
+\includegraphics[width=0.9\textwidth]{flujo_n8n_a}
+\caption[Reconstrucción esquemática del flujo de orquestación N8N (parte A)]{Reconstrucción esquemática del flujo de orquestación N8N: no es una captura de la interfaz; los 29 nodos operativos se agrupan por etapa funcional. Parte A: etapas 1 a 3 (entrada, validación y envío al backend), que continúa en la \autoref{fig:anexo_flujo_n8n_b}. Los nodos punteados son referencias a las otras partes.}
 \label{fig:anexo_flujo_n8n}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{flujo_n8n_b}
+\caption[Reconstrucción esquemática del flujo de orquestación N8N (parte B)]{Reconstrucción esquemática del flujo de orquestación N8N (continuación de la \autoref{fig:anexo_flujo_n8n}). Parte B: etapas 4 a 6 (ruteo por canal de origen, revisión humana, respuesta y auditoría).}
+\label{fig:anexo_flujo_n8n_b}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.55\textwidth]{flujo_n8n_c}
+\caption[Reconstrucción esquemática del flujo de orquestación N8N (parte C)]{Reconstrucción esquemática del flujo de orquestación N8N (continuación de la \autoref{fig:anexo_flujo_n8n_b}). Parte C: etapa 7 (aviso posterior a la revisión).}
+\label{fig:anexo_flujo_n8n_c}
 \end{figure}
 
 \section{Corpus de validación}\label{sec:anexo-corpus}
 
-El corpus de 200 incidentes utilizado para la validación experimental reside en el repositorio en formato JSON, en su forma pseudonimizada y versionada, bajo la ruta \path{data/corpus_evaluacion_pseudonimizado.json}. Cada caso incluye el identificador anónimo, la descripción cruda pseudonimizada, el canal de origen, el sector asignado por consenso humano, los sectores adicionales de verdad y el tiempo de registro medido en cada flujo. La categoría predicha por el clasificador y la confianza asociada no forman parte del corpus: se conservan en la copia versionada de la caché, \path{evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json}. Los tiempos automatizados constan por caso en el corpus; sus registros primarios (base operativa del 2-10-2026 con los incidentes ingresados, respaldo del 9-10-2026 de los 81 ingresos telefónicos y ejecuciones de N8N) no se conservan en el repositorio. Se incluyen además las planillas de cronometraje del flujo manual.
+El corpus de 200 incidentes utilizado para la validación experimental reside en el repositorio en formato JSON, en su forma pseudonimizada y versionada, bajo la ruta \path{data/corpus_evaluacion_pseudonimizado.json}. Cada caso incluye el identificador anónimo, la descripción cruda pseudonimizada, el canal de origen, el sector asignado por consenso humano, los sectores adicionales de verdad y el tiempo de registro medido en cada flujo. La categoría predicha por el clasificador y la confianza asociada no forman parte del corpus: se conservan en la copia versionada de la caché, \path{evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json}. Los tiempos automatizados constan por caso en el corpus; sus registros primarios (base operativa del 2-10-2026 con los incidentes ingresados, respaldo del 9-10-2026 de los 81 ingresos telefónicos y ejecuciones de N8N) no se conservan en el repositorio. Los 81 tiempos telefónicos coinciden con el archivo versionado \path{data/corpus_resultados_telefonia.json}. Los 119 de correo y formulario web constan solo como valores del corpus, sin registro primario conservado, y \path{data/corpus_resultados.json} corresponde a otra corrida y no los respalda (\autoref{subsec:protocolo-pruebas}). Se incluyen además las planillas de cronometraje del flujo manual.
 
 Cada uno de los 200 casos del corpus se compone de siete campos: \texttt{id} (identificador anónimo, por ejemplo \texttt{R001}), \texttt{descripcion} (texto pseudonimizado, con los identificadores personales reemplazados por etiquetas genéricas como \texttt{[EMAIL]}, \texttt{[TELEFONO]}, \texttt{[HOST]} y \texttt{[PERSONA]}), \texttt{canal\_origen} (correo electrónico, formulario web o llamada telefónica), \texttt{sector\_asignado} (sector principal de verdad, exactamente uno de los cinco sectores canónicos), \texttt{sectores\_adicionales} (sectores de verdad complementarios, sin repetir el asignado), \texttt{tiempo\_manual\_s} (tiempo de clasificación manual, en segundos) y \texttt{tiempo\_automatizado\_s} (tiempo del sistema automatizado, en segundos). El corpus completo reside en \path{data/corpus_evaluacion_pseudonimizado.json} y las predicciones del clasificador en \path{evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json}.
 
@@ -202,7 +230,17 @@ Ante una degradación de las métricas por cambios en el modelo, se recomienda a
 
 \section{Trazabilidad de las correcciones de los dictámenes}\label{sec:anexo-trazabilidad}
 
-Los dictámenes que motivan las correcciones de la tesis son autoevaluaciones de control de calidad interno frente a criterios de la CONEAU, esto es revisiones evaluativas previas a la defensa solicitadas por los propios autores y no una revisión por pares. Se elaboraron aplicando un perfil de evaluador con criterios de la CONEAU, versionado en \texttt{docs/Tesis/Correcciones/Prompt2.docx}, mediante un modelo de lenguaje; no los emitieron el jurado, la dirección, la cátedra ni la CONEAU, no constituyen una revisión por pares humana y no son vinculantes. La serie comprende nueve dictámenes fechados entre el 20 de octubre y el 9 de noviembre de 2026, que se conservan en \texttt{auditorias/}; cada uno declara su alcance (lectura íntegra del manuscrito, recomputo de las cifras, verificación bibliográfica y cotejo con el repositorio). Este anexo traza seis: el del 22 de octubre, sobre la versión \texttt{v1.1.0}, el del 28 de octubre, sobre la \texttt{v1.2.5}, el del 8 de noviembre, sobre la \texttt{v1.2.10}, el del 9 de noviembre, sobre la \texttt{v1.2.12} (\autoref{tab:anexo-trazabilidad-0911}), el del mismo día sobre la \texttt{v1.2.13} (\autoref{tab:anexo-trazabilidad-0911-v1213}) y el del mismo día sobre la \texttt{v1.2.16} (\autoref{tab:anexo-trazabilidad-0911-v1216}). El registro acumulativo de las correcciones se conserva como artefacto versionado en \path{docs/Tesis/Correcciones/dictamen-correcciones.md} y vincula cada observación con el archivo y la línea corregidos.
+\subsection{Nota de versiones}\label{subsec:nota-versiones}
+
+% PENDIENTE-AUTORES(N-02): confirmar la fecha exacta de la versión de julio.
+La versión de julio de 2026 informó una reducción del tiempo medio de registro de 165,3 s a 18,2 s (89,0~\%), una exactitud de 92~\%, \(W = 0\) y un kappa de 0,87. Los tiempos, la exactitud y el estadístico provenían de un corpus sintético de 200 casos generado durante el desarrollo, no de incidentes reales. Ese corpus se descartó y se eliminó del repositorio. La versión actual los reemplaza por los del corpus real pseudonimizado: tiempo medio de 61,6 s a 17,76 s (reducción de 71,2~\%), exactitud de 73,5~\% y \(W = 363\). El kappa de 0,87 figuraba en aquella versión, pero sus planillas no se conservan. Por eso ya no se presenta como evidencia de fiabilidad (\autoref{subsec:poblacion-muestra-corpus}).
+
+\subsection{Revisiones que originaron las correcciones}
+
+% PENDIENTE-AUTORES(P16): declarar el uso de modelos de lenguaje en la redacción de la tesis.
+Las correcciones de la tesis responden a tres tipos de revisión. La primera es la auditoría integral del tribunal del 4 de agosto de 2026, que formuló 105 hallazgos, 28 de ellos críticos, y calificó el trabajo con 3,9/10; se conserva en \path{auditorias/Auditoria_Tesis_Gomez_Bustos_Sevilla_040802026.pdf}. Esa auditoría originó la reformulación del estudio con datos reales, y el cruce de sus hallazgos con los cambios del repositorio consta en \path{docs/Tesis/Correcciones/reconciliacion-cobertura.md}. La segunda es una serie de nueve autoevaluaciones internas, generadas con un modelo de lenguaje. La tercera es la devolución de segunda instancia del tribunal, del 11 de noviembre de 2026, que se conserva en \path{auditorias/Devolucion_Segunda_Instancia_Tribunal_2026-11-11.pdf}.
+
+Las nueve autoevaluaciones son revisiones de control de calidad interno frente a criterios de la CONEAU, previas a la defensa y solicitadas por los propios autores; no son una revisión por pares. Se elaboraron aplicando un perfil de evaluador con criterios de la CONEAU, versionado en \texttt{docs/Tesis/Correcciones/Prompt2.docx}, mediante un modelo de lenguaje; no las emitieron el jurado, la dirección, la cátedra ni la CONEAU, no constituyen una revisión por pares humana y no son vinculantes. La serie comprende nueve dictámenes fechados entre el 20 de octubre y el 9 de noviembre de 2026, que se conservan en \texttt{auditorias/}; cada uno declara su alcance (lectura íntegra del manuscrito, recomputo de las cifras, verificación bibliográfica y cotejo con el repositorio). Este anexo traza seis: el del 22 de octubre, sobre la versión \texttt{v1.1.0}, el del 28 de octubre, sobre la \texttt{v1.2.5}, el del 8 de noviembre, sobre la \texttt{v1.2.10}, el del 9 de noviembre, sobre la \texttt{v1.2.12} (\autoref{tab:anexo-trazabilidad-0911}), el del mismo día sobre la \texttt{v1.2.13} (\autoref{tab:anexo-trazabilidad-0911-v1213}) y el del mismo día sobre la \texttt{v1.2.16} (\autoref{tab:anexo-trazabilidad-0911-v1216}). El registro acumulativo de las correcciones se conserva como artefacto versionado en \path{docs/Tesis/Correcciones/dictamen-correcciones.md} y vincula cada observación con el archivo y la línea corregidos. La devolución de segunda instancia del 11 de noviembre de 2026 se traza en la \autoref{tab:trazabilidad-devolucion-segunda-instancia}, al final del anexo.
 
 El dictamen del 22 de octubre de 2026, aplicable por igual a \texttt{v1.1.1}, formuló cinco observaciones de fondo (A1 a A5) y correcciones de consistencia (B4 a B16), atendidas mediante changes del repositorio; la \autoref{tab:anexo-trazabilidad} indica, para cada una, el change responsable y las secciones donde se la atendió. Cuando una recomendación se dividió en partes, figuran los changes que las atendieron, y los residuos que el dictamen siguiente volvió a señalar remiten a la fila que los atiende (\autoref{tab:anexo-trazabilidad-2810}) o figuran como pendientes.
 
@@ -254,13 +292,13 @@ Rec. & Change & Secciones de la tesis \\
 \midrule
 A1 & \texttt{c-158} & \autoref{subsec:protocolo-pruebas}, párrafo inicial de la \autoref{sec:resultados}, \autoref{subsec:alcance-delimitaciones}, \autoref{subsec:interpretacion-resultados}, \autoref{subsec:integracion-canal-telefonico}, \autoref{fig:cronograma}, Anexo~\ref{sec:anexo-corpus} \\
 A2 & \texttt{c-158} & \autoref{tab:configuracion-evaluada-entregada} (Anexo~\ref{sec:anexo-repositorio}); Secciones~\ref{subsec:capa-procesamiento}, \ref{subsec:entorno-despliegue}, \ref{subsec:construccion-modulo-python}, \ref{subsec:construccion-flujo-n8n}, \ref{subsec:desafios-integracion}, \ref{subsec:pruebas-automatizadas}, \ref{subsec:seguridad-tecnica}, Anexo~\ref{subsec:anexo-parametros-config} \\
-A3 & \texttt{c-159} & Figuras~\ref{fig:componentes}, \ref{fig:arquitectura}, \ref{fig:secuencia} y \ref{fig:er_modelo_datos}; \autoref{tab:entidades}; \autoref{tab:cumplimiento-nist}; \autoref{subsec:cumplimiento-brechas} \\
+A3 & \texttt{c-159} & Figuras~\ref{fig:componentes}, \ref{fig:componentes_b}, \ref{fig:arquitectura}, \ref{fig:secuencia}, \ref{fig:secuencia_b} y \ref{fig:er_modelo_datos}; \autoref{tab:entidades}; \autoref{tab:cumplimiento-nist}; \autoref{subsec:cumplimiento-brechas} \\
 A4 & \texttt{c-159} & \autoref{subsec:analisis-errores}, \autoref{tab:errores} \\
 B5 & \texttt{c-160} & \autoref{subsec:hipotesis-trabajo}, \autoref{subsec:subsistema-clasificacion}, \autoref{subsec:construccion-flujo-n8n}, \autoref{subsec:sensibilidad-ajustes}, \autoref{subsec:interpretacion-resultados}, \autoref{subsec:implicancias-practicas} \\
 B6 & \texttt{c-160} & Anexo~\ref{sec:anexo-trazabilidad} \\
 B7 & \texttt{c-160} & Resumen y \emph{abstract}, \autoref{subsec:cumplimiento-objetivos}, \autoref{tab:cumplimiento-objetivos} \\
 B8 & \texttt{c-160} & \autoref{subsec:vision-general}, \autoref{subsec:human-in-the-loop}, \autoref{subsec:subsistema-clasificacion}, \autoref{subsec:construccion-flujo-n8n}, \autoref{subsec:consentimiento-derechos}, \autoref{subsec:sensibilidad-ajustes}, \autoref{subsec:calibracion-gate}, Anexo~\ref{subsec:anexo-parametros-config}, Anexo~\ref{sec:anexo-documentacion-operativa} \\
-Lím. & \texttt{c-169}, \texttt{c-190} & De los cinco límites estructurales que el dictamen consignó sin computarlos como incumplimiento, la campaña complementaria resolvió primero dos ---la exactitud del brazo manual y el intervalo del kappa--- (\autoref{subsec:resultados-campana-medicion}, \autoref{subsec:balance-neto}) y dejó sin concluir la proporción de intervención humana (\autoref{subsec:reduccion-intervencion}), que c-190 refutó después sobre los casos revisados. El efecto de orden no se resolvió (\autoref{subsec:diseno-experimental}) y la validación fuera de muestra permanece como limitación negativa declarada por ausencia de un corpus independiente (\autoref{subsec:limitaciones-estudio}); Resumen y \emph{abstract}; Anexo~\ref{sec:anexo-repositorio} (Tabla~\ref{tab:configuracion-evaluada-entregada}) \\
+Lím. & \texttt{c-169}, \texttt{c-190} & De los cinco límites estructurales que el dictamen consignó sin computarlos como incumplimiento, la campaña complementaria resolvió primero dos ---la exactitud del brazo manual y el intervalo del kappa--- (\autoref{subsec:resultados-campana-medicion}, \autoref{subsec:balance-neto}) y dejó sin concluir la proporción de intervención humana (\autoref{subsec:reduccion-intervencion}), que una versión intermedia (9-11-2026) declaró refutada al adoptar, después de conocer los datos, el denominador de los 147 casos revisados, y que la versión actual lee como no concluyente, con estimación puntual por encima de la cota. El efecto de orden no se resolvió (\autoref{subsec:diseno-experimental}) y la validación fuera de muestra permanece como limitación negativa declarada por ausencia de un corpus independiente (\autoref{subsec:limitaciones-estudio}); Resumen y \emph{abstract}; Anexo~\ref{sec:anexo-repositorio} (Tabla~\ref{tab:configuracion-evaluada-entregada}) \\
 \bottomrule
 \end{tabular}
 \par\smallskip
@@ -285,7 +323,7 @@ A3 & \autoref{subsec:poblacion-muestra-corpus}, \autoref{subsec:amenazas-validez
 A4 & \autoref{subsec:resultados-campana-medicion}, \autoref{subsec:balance-neto} \\
 A5 & Anexo~\ref{sec:anexo-repositorio}, \autoref{tab:configuracion-evaluada-entregada}, \autoref{subsec:entorno-despliegue}, portada \\
 B1, B2 & \autoref{subsec:resultados-campana-medicion}, \autoref{subsec:reduccion-intervencion}, párrafo inicial de la \autoref{sec:resultados} \\
-B3 & Figuras~\ref{fig:secuencia} y~\ref{fig:componentes}, \autoref{tab:entidades}, \autoref{tab:configuracion-evaluada-entregada} \\
+B3 & Figuras~\ref{fig:secuencia}, \ref{fig:secuencia_b}, \ref{fig:componentes} y~\ref{fig:componentes_b}, \autoref{tab:entidades}, \autoref{tab:configuracion-evaluada-entregada} \\
 B6 & \autoref{subsec:aportes-generalizacion}, \autoref{subsec:limitaciones-estudio}, \autoref{subsec:medicion-intervencion}, Resumen y \emph{abstract} \\
 B4 & \autoref{subsec:analisis-estadistico}, \autoref{subsec:matriz-metricas}, \autoref{subsec:subsistema-clasificacion}, \autoref{subsec:implicancias-practicas} \\
 B5 & \autoref{subsec:dashboard-analitica}, Figura~\ref{fig:despliegue}, \autoref{tab:matriz} \\
@@ -313,12 +351,12 @@ El dictamen del 9 de noviembre de 2026, sobre la versión \texttt{v1.2.12}, form
 \toprule
 Rec. & Change & Secciones de la tesis \\
 \midrule
-A1 & \texttt{c-190} & \autoref{subsec:reduccion-intervencion}, \autoref{subsec:hipotesis-trabajo}, \autoref{subsec:interpretacion-resultados}, \autoref{tab:cumplimiento-objetivos}, \autoref{subsec:medicion-intervencion}, Resumen y \emph{abstract} \\
+A1 & \texttt{c-190} & \autoref{subsec:reduccion-intervencion}, \autoref{subsec:hipotesis-trabajo}, \autoref{subsec:interpretacion-resultados}, \autoref{tab:cumplimiento-objetivos}, \autoref{subsec:medicion-intervencion}, Resumen y \emph{abstract}; la lectura de la proporción de intervención humana como refutada se revisó después (\autoref{tab:trazabilidad-devolucion-segunda-instancia}, N-09) \\
 A2 & \texttt{c-190} & \autoref{subsec:diseno-experimental}, \autoref{subsec:poblacion-muestra-corpus}, \autoref{subsec:amenazas-validez}, \autoref{subsec:interpretacion-resultados}, \autoref{subsec:consentimiento-derechos} \\
 A3 & \texttt{c-190} & \autoref{tab:configuracion-evaluada-entregada} \\
 B1 & \texttt{c-190} & \autoref{subsec:capa-canales}, \autoref{subsec:integracion-canal-telefonico}, \autoref{subsec:conexion-scrumban}, \autoref{tab:configuracion-evaluada-entregada}, Anexo~\ref{anexo:H}, \autoref{subsec:implicancias-practicas}, Figura~\ref{fig:despliegue} \\
 B2 & \texttt{c-190} & \autoref{subsec:reduccion-intervencion}, \autoref{subsec:resultados-campana-medicion}, \autoref{subsec:balance-neto} \\
-B3 & \texttt{c-190} & \autoref{subsec:human-in-the-loop}, \autoref{subsec:subsistema-clasificacion}, \autoref{subsec:construccion-flujo-n8n}, \autoref{subsec:consentimiento-derechos}, \autoref{subsec:protocolo-pruebas}, Figuras~\ref{fig:secuencia} y~\ref{fig:componentes} \\
+B3 & \texttt{c-190} & \autoref{subsec:human-in-the-loop}, \autoref{subsec:subsistema-clasificacion}, \autoref{subsec:construccion-flujo-n8n}, \autoref{subsec:consentimiento-derechos}, \autoref{subsec:protocolo-pruebas}, Figuras~\ref{fig:secuencia}, \ref{fig:secuencia_b}, \ref{fig:componentes} y~\ref{fig:componentes_b} \\
 B4 & \texttt{c-190} & \autoref{subsec:justificacion}, Resumen y \emph{abstract}, \autoref{tab:cumplimiento-objetivos} \\
 C1 & \texttt{c-190} & \autoref{subsec:limitaciones-estudio}, \autoref{subsec:reduccion-intervencion}, \autoref{tab:cumplimiento-objetivos}, Anexo~\ref{sec:anexo-repositorio}, Glosario de siglas y acrónimos, portada \\
 C2 & \texttt{c-190} & \autoref{subsec:human-in-the-loop}, \autoref{subsec:gestion-servicios-ti}, \autoref{subsec:implicancias-practicas}, \autoref{sec:aspectos-legales}, \autoref{subsec:trabajos-academicos} \\
@@ -355,7 +393,7 @@ C2 & \texttt{c-192}, \texttt{c-194} & Lista de referencias \\
 {\footnotesize\textit{Fuente:} elaboración propia a partir de \path{docs/Tesis/Correcciones/dictamen-correcciones.md}.\par}
 \end{table}
 
-El dictamen del mismo día sobre la versión \texttt{v1.2.16} formuló tres observaciones de fondo (A1 a A3), tres de consistencia (B1 a B3) y dos de forma y bibliografía (C1 y C2); su change responsable es \texttt{c-195}, y la \autoref{tab:anexo-trazabilidad-0911-v1216} indica las secciones que corrigió. La recomendación A1, sobre la confirmación escrita del consentimiento, queda diferida: la atienden los autores al recabar las firmas.
+El dictamen del mismo día sobre la versión \texttt{v1.2.16} formuló tres observaciones de fondo (A1 a A3), tres de consistencia (B1 a B3) y dos de forma y bibliografía (C1 y C2); su change responsable es \texttt{c-195}, y la \autoref{tab:anexo-trazabilidad-0911-v1216} indica las secciones que corrigió. La recomendación A1, sobre la confirmación escrita del consentimiento, fue atendida el 10 de noviembre de 2026, cuando los cuatro participantes firmaron la confirmación; los originales están en poder del director del trabajo.
 
 \begin{table}[htbp]
 \footnotesize
@@ -367,7 +405,7 @@ El dictamen del mismo día sobre la versión \texttt{v1.2.16} formuló tres obse
 \toprule
 Rec. & Secciones de la tesis \\
 \midrule
-A1 & Diferida: la atienden los autores al recabar las firmas (\autoref{subsec:consentimiento-derechos}) \\
+A1 & Atendida el 10 de noviembre de 2026 (\autoref{subsec:consentimiento-derechos}) \\
 A2 & \autoref{subsec:hipotesis-trabajo}, \autoref{subsec:analisis-estadistico}, \autoref{subsec:reduccion-intervencion}, \autoref{subsec:interpretacion-resultados} \\
 A3 & Anexo~\ref{sec:anexo-trazabilidad} \\
 B1 & \autoref{subsec:resultados-campana-medicion} \\
@@ -382,5 +420,41 @@ C2 & \autoref{subsec:medicion-intervencion}, Lista de referencias \\
 \end{table}
 
 La trazabilidad interna de tres decisiones de diseño de la \autoref{sec:implementacion} se conserva aquí: el retiro de la clasificación telefónica por agente LLM (LangChain) y el traslado de la superficie de costo al backend (\texttt{c-72}); el reemplazo del umbral de 0,90 por el punto de operación del puntaje de correctitud (\texttt{c-74}); y la derivación a revisión del reportante no identificado, del 13 de octubre de 2026 (\texttt{c-82}). El detalle figura en \path{docs/Tesis/Correcciones/dictamen-correcciones.md}.
+
+\subsection{Devolución de segunda instancia del 11 de noviembre de 2026}
+
+La devolución de segunda instancia del tribunal, del 11 de noviembre de 2026, sobre la versión \texttt{v1.2.18}, concluyó que el trabajo es apto para la defensa con observaciones mayores (7,0/10) y formuló dieciséis observaciones, de N-01 a N-16. Se conserva en \path{auditorias/Devolucion_Segunda_Instancia_Tribunal_2026-11-11.pdf}. Su change responsable es \texttt{c-196}. La \autoref{tab:trazabilidad-devolucion-segunda-instancia} indica la sección donde se atendió cada una y su estado.
+
+\begin{table}[htbp]
+\footnotesize
+\centering
+\caption{Observaciones de la devolución de segunda instancia del 11 de noviembre de 2026, secciones donde se atendieron y estado (change responsable: \texttt{c-196}).}
+\label{tab:trazabilidad-devolucion-segunda-instancia}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.0cm} >{\raggedright\arraybackslash}p{3.7cm} >{\raggedright\arraybackslash}p{5.8cm} >{\raggedright\arraybackslash}p{3.5cm}@{}}
+\toprule
+Obs. & Observación & Sección corregida & Estado \\
+\midrule
+N-01 & Kappa de 0,87 sin respaldo & Resumen y \emph{abstract}, \autoref{subsec:justificacion}, \autoref{subsec:poblacion-muestra-corpus}, \autoref{subsec:amenazas-validez}, \autoref{subsec:limitaciones-estudio} & Atendida: el valor se retiró como evidencia \\
+N-02 & Versión de julio y auditoría sin declarar & \autoref{subsec:nota-versiones}, Anexo~\ref{sec:anexo-trazabilidad} & Atendida en parte; resta un dato de los autores \\
+N-03 & Tiempos manuales de la campaña complementaria & \autoref{subsec:protocolo-pruebas}, \autoref{subsec:resultados-campana-medicion}, \autoref{subsec:interpretacion-resultados} & Atendida \\
+N-04 & Selección de los 200 casos contradictoria & Resumen y \emph{abstract}, \autoref{subsec:poblacion-muestra-corpus}, \autoref{subsec:amenazas-validez} & Atendida en parte; resta un dato de los autores \\
+N-05 & 119 tiempos automatizados sin registro primario & \autoref{subsec:protocolo-pruebas}, \autoref{subsec:comparacion-tiempos}, Anexo~\ref{sec:anexo-corpus} & Atendida en parte; resta un dato de los autores \\
+N-06 & Llamadas recitadas por un autor & \autoref{subsec:amenazas-validez}, \autoref{subsec:interpretacion-resultados} & Atendida \\
+N-07 & Concisión e identificadores de cambio & Capítulos 1, 4, 5, 6, 7, 8 y 9 y Anexos~\ref{sec:anexo-diagrama-arquitectura} y~\ref{sec:anexo-repositorio} & Atendida \\
+N-08 & Exactitud contra el consenso independiente & \autoref{subsec:matriz-metricas}, \autoref{tab:exactitud-etapa-canal}, \autoref{subsec:limitaciones-estudio} & Atendida \\
+N-09 & Regla de decisión fijada tras los datos & Resumen y \emph{abstract}, \autoref{subsec:hipotesis-trabajo}, \autoref{subsec:reduccion-intervencion}, \autoref{subsec:cumplimiento-objetivos} & Atendida \\
+N-10 & Cobertura del backend sin informar & \autoref{subsec:pruebas-automatizadas} & Atendida \\
+N-11 & Figuras ilegibles a tamaño de impresión & Figuras~\ref{fig:despliegue}, \ref{fig:secuencia}, \ref{fig:secuencia_b}, \ref{fig:componentes}, \ref{fig:componentes_b} y~\ref{fig:anexo_flujo_n8n} a~\ref{fig:anexo_flujo_n8n_c} & Atendida \\
+N-12 & Conclusiones con valoraciones sin respaldo & \autoref{subsec:cumplimiento-objetivos} & Atendida \\
+N-13 & Instrumento del artículo 12 no declarado & \autoref{subsec:transferencia-internacional} & Atendida: se declara que el instrumento no está suscrito \\
+N-14 & Consentimiento escrito aún diferido & Tabla~\ref{tab:anexo-trazabilidad-0911-v1216} & Atendida \\
+N-15 & Nombres de sector sin tilde & Todo el cuerpo del texto & Atendida \\
+N-16 & Paket et al. y Mayor-Rocher et al. & Lista de referencias & Atendida en parte: DOI verificados el 11-11-2026; resta la copia de Paket et al. \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+{\footnotesize\textit{Fuente:} elaboración propia a partir de la devolución de segunda instancia del tribunal y de \path{docs/Tesis/Correcciones/dictamen-correcciones.md}.\par}
+\end{table}
 
 \newpage

@@ -2685,7 +2685,7 @@ Pendientes residuales: (1) la tarea 6.1 de c-146 sigue bloqueada por el acceso i
 | A2 | Calibracion aparente invertida = efecto de composicion entre etapas, no anti-calibracion | c-131 | `docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex:188` | `subsec:calibracion` | `es un efecto de composición` | cerrada (cache de la corrida principal via c-143; PROVISIONAL) |
 | A2 | Exactitud estricta y laxa por etapa del pipeline (tab:exactitud-etapa-canal) | c-131 | `docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex:112` | `tab:exactitud-etapa-canal` | `Etapa determinística & 131 & 97/131` | cerrada |
 | A3 | Subseccion nueva de balance neto entre ahorro bruto de registro y derivaciones erroneas | c-132 | `docs/Tesis/v10 (IA)/paper/sections/08-discusion.tex:70` | `subsec:balance-neto` | `Balance neto de la automatización` | cerrada (revision del autor pendiente sobre resumen y conclusion) |
-| A3 | Conclusiones: tiempo bruto liberado con saldo neto indeterminado | c-132 | `docs/Tesis/v10 (IA)/paper/sections/09-conclusiones.tex:41` | `subsec:cumplimiento-objetivos` | `el saldo neto del ahorro de registro frente a las derivaciones erróneas permanece condicional` | cerrada |
+| A3 | Conclusiones: tiempo bruto liberado con saldo neto indeterminado | c-132 | `docs/Tesis/v10 (IA)/paper/sections/09-conclusiones.tex:41` | `subsec:cumplimiento-objetivos` | `el saldo neto del ahorro de registro frente a las derivaciones erróneas permanece condicional` | SUPERADA por c-196 |
 | A4 | Atribuciones de las fuentes sobre rendimiento multilingue acotadas a lo que sostienen | c-139 | `docs/Tesis/v10 (IA)/paper/sections/02-marco-teorico.tex:50` | `subsec:nlp-llm` | `tampoco es uniforme entre idiomas` | cerrada (acceso a texto completo parcial; PROVISIONAL) |
 | A4 | Hallazgo de Revina 2020 presentado como decision de diseno y no como resultado medido | c-139 | `docs/Tesis/v10 (IA)/paper/sections/03-estado-del-arte.tex:32` | `subsec:trabajos-academicos` | `no como resultado medido` | cerrada |
 | A4 | Literatura de calibracion de la confianza y cascadas de modelos (subseccion 3.4) | c-138 | `docs/Tesis/v10 (IA)/paper/sections/03-estado-del-arte.tex:60` | `subsec:calibracion-cascadas` | `Calibración de la confianza y cascadas de modelos` | cerrada |
@@ -2707,7 +2707,7 @@ Pendientes residuales: (1) la tarea 6.1 de c-146 sigue bloqueada por el acceso i
 | B10d | Metricas de los trabajos academicos completadas desde la fuente accesible | c-135 | `docs/Tesis/v10 (IA)/paper/sections/03-estado-del-arte.tex:48` | `tab:trabajos-academicos` | `20.000 reclamos + 35.000 issues` | cerrada parcialmente: Paket 2024 y Colavito 2025 sin acceso (OQ-5) |
 | B11 | Linea prioritaria: calibracion del gate | c-136 | `docs/Tesis/v10 (IA)/paper/sections/10-recomendaciones.tex:8` | `subsec:calibracion-gate` | `label{subsec:calibracion-gate}` | cerrada |
 | B11 | Linea prioritaria: correccion de la medicion de intervencion humana | c-136 | `docs/Tesis/v10 (IA)/paper/sections/10-recomendaciones.tex:16` | `subsec:medicion-intervencion` | `label{subsec:medicion-intervencion}` | cerrada |
-| B12 | Muestreo: asignacion proporcional no verificable frente al universo; clase con n = 1 no estimable | c-134 | `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex:45` | `subsec:poblacion-muestra-corpus` | `estratificado` | cerrada (OQ2 PROVISIONAL) |
+| B12 | Muestreo: asignacion proporcional no verificable frente al universo; clase con n = 1 no estimable | c-134 | `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex:45` | `subsec:poblacion-muestra-corpus` | `estratificado` | SUPERADA por c-196 |
 | B13a | Canal telefonico: duracion de 20,1 s como cota inferior por el tope de grabacion | c-135 | `docs/Tesis/v10 (IA)/paper/sections/09-conclusiones.tex:39` | `subsec:cumplimiento-objetivos` | `cota inferior` | cerrada |
 | B13b | Cronometraje en vivo: relato del procedimiento, efecto Hawthorne atenuado y residual | c-134 | `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex:16` | `subsec:diseno-experimental` | `Hawthorne` | cerrada (OQ1 PROVISIONAL) |
 | B14 | Revision ortotipografica: titulos acentuados de indices y bibliografia | c-137 | `docs/Tesis/v10 (IA)/paper/main.tex:79` | - | `Referencias bibliográficas` | cerrada |
@@ -2719,7 +2719,7 @@ Pendientes residuales: (1) la tarea 6.1 de c-146 sigue bloqueada por el acceso i
 | B12 | Contraste direccional: p unilateral global junto al bilateral de los tiempos | c-134 | `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex:75` | `subsec:analisis-estadistico` | `alternative=greater` | cerrada |
 | B12 | Potencia expresada en d_z con eficiencia relativa asintotica 0,864 | c-134 | `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex:93` | `subsec:amenazas-validez` | `0{,}864` | cerrada |
 | Residual criterio 4 (A1/B5) | Intervencion humana no medida: sin registro primario de la accion manual por caso | c-130 / c-133 | `docs/Tesis/v10 (IA)/paper/sections/08-discusion.tex:97` | `subsec:limitaciones-estudio` | `sin registro por caso de la derivación del operador` | residual declarado |
-| Residual criterio 4 (kappa) | Registros primarios del doble etiquetado no conservados: kappa sin incertidumbre cuantificada | - | `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex:55` | `subsec:poblacion-muestra-corpus` | `que no se conservaron en las fuentes disponibles` | residual declarado |
+| Residual criterio 4 (kappa) | Registros primarios del doble etiquetado no conservados: kappa sin incertidumbre cuantificada | - | `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex:55` | `subsec:poblacion-muestra-corpus` | `que no se conservaron en las fuentes disponibles` | SUPERADA por c-196 |
 
 Estados: *cerrada* (la correccion esta en el arbol integrado), *cerrada parcialmente* (con la justificacion indicada), *residual declarado* (limitacion que la tesis declara; no corregible con los datos disponibles) y *PENDIENTE* (se cierra en un paso posterior). Las decisiones PROVISIONALES de cada change figuran en sus grupos de este registro y en la lista consolidada de "Pendientes y verificaciones diferidas". El `Rec` A4 tiene dos duenos de parte (c-139 para la correspondencia texto-fuente; c-138 para las fuentes de calibracion y cascadas, seccion 4 del dictamen y criterio 3 residual); A5 se divide en A5a (c-130, a traves de la declaracion de c-144) y A5b (c-142).
 
@@ -3151,8 +3151,8 @@ Lineas leidas despues de aplicar el change, en `docs/Tesis/v10 (IA)/paper/sectio
 
 | Rec | Sintesis | Change | Archivo:linea | Ancla | Fragmento verificable | Estado |
 |---|---|---|---|---|---|---|
-| A3a | Figuras 1 y 4: gate por etapa y disparador por directorio con fecha | c-159 | `12-anexos.tex:24` | `fig:componentes` | `es posterior a la campaña 2026-10 (c-82, 13-10-2026)` | cerrada |
-| A3a | Figura 4 (secuencia): configuracion entregada y remision a la tabla de c-158 | c-159 | `12-anexos.tex:24` | `fig:secuencia` | `posterior a la campaña 2026-10 (c-82, 13-10-2026)` | cerrada |
+| A3a | Figuras 1 y 4: gate por etapa y disparador por directorio con fecha | c-159 | `12-anexos.tex:24` | `fig:componentes` | `es posterior a la campaña 2026-10 (c-82, 13-10-2026)` | SUPERADA por c-196 |
+| A3a | Figura 4 (secuencia): configuracion entregada y remision a la tabla de c-158 | c-159 | `12-anexos.tex:24` | `fig:secuencia` | `posterior a la campaña 2026-10 (c-82, 13-10-2026)` | SUPERADA por c-196 |
 | A3b | Figura 2 reemplazada por diagrama de cinco capas y tres canales con fuente versionada | c-159 | `05-arquitectura.tex:37` | `fig:arquitectura` | `cinco capas y tres canales de entrada` | cerrada |
 | A3b | Anexo A inventaria el diagrama de arquitectura | c-159 | `12-anexos.tex:12` | `sec:anexo-diagrama-arquitectura` | `arquitectura_sistema.md` | cerrada |
 | A3c | Tabla 5 con los atributos del ORM, contacto cifrado y cuatro roles | c-159 | `05-arquitectura.tex:68` | `tab:entidades` | `requiere\_revision\_humana` | cerrada |
@@ -3262,7 +3262,7 @@ Lineas leidas despues de aplicar el change, en `docs/Tesis/v10 (IA)/paper/sectio
 | B5e | R5: se retira la cifra previa de 180 horas-persona | c-160 | `08-discusion.tex:14` | `subsec:interpretacion-resultados` | `\approx 32{,}2\)~h-persona por trimestre.` | cerrada |
 | B5f | R6: la salvaguarda se describe con la regla de 0,70 que no derivo ningun caso | c-160 | `08-discusion.tex:16` | `subsec:interpretacion-resultados` | `la regla de 0,70 no derivó ningún caso` | cerrada |
 | B5g | R7: se retira la estimacion preliminar sin fuente | c-160 | `08-discusion.tex:66` | `subsec:implicancias-practicas` | `que se factura por separado.` | cerrada |
-| B6a | Naturaleza y autoria de los dictamenes declaradas con el instrumento real | c-160 | `12-anexos.tex:205` | `sec:anexo-trazabilidad` | `revisiones evaluativas previas a la defensa` | cerrada |
+| B6a | Naturaleza y autoria de los dictamenes declaradas con el instrumento real | c-160 | `12-anexos.tex:205` | `sec:anexo-trazabilidad` | `revisiones evaluativas previas a la defensa` | SUPERADA por c-196 |
 | B6b | Punteros de B6 y B8 corregidos; B10 +c-146; B12 +4.8; A5 +c-154 | c-160 | `12-anexos.tex:226` | `tab:anexo-trazabilidad` | `\autoref{subsec:matriz-metricas}, \autoref{tab:cumplimiento-objetivos}` | cerrada |
 | B6c | Residuos de A1, B4, B9, B14 y B16 registrados como remision o pendiente | c-160 | `12-anexos.tex:219` | `tab:anexo-trazabilidad` | `residuos en A3 y B8 del 28-10` | cerrada |
 | B6d | Tabla del dictamen del 28-10 con A1 a A4 y B5 a B8 | c-160 | `12-anexos.tex:259` | `tab:anexo-trazabilidad-2810` | `\texttt{c-160}` | cerrada |
@@ -4212,7 +4212,7 @@ de los residuos sin recomendación propia (grupo 10).
 | B4 | 1.6 coherente con 4.4 y 9.3 | c-190 | `01-introduccion.tex:66` | - | `el acuerdo entre los dos analistas originales, uno de ellos autor, fue de` | SUPERADA por c-192 |
 | C1 | "ocho limitaciones" en 9.3 | c-190 | `08-discusion.tex:42` | `subsec:limitaciones-estudio` | `El estudio presenta ocho limitaciones` | cerrada |
 | C2 | Zanzotto reformulado como inferencia de los autores | c-190 | `02-marco-teorico.tex:32` | - | `los autores de esta tesis infieren que el diseño debe reservar a la persona` | SUPERADA por c-194 |
-| 1 | inv. 1: sub-hipotesis 2 refutada sobre los casos revisados | c-190 | `07-resultados.tex:154` | - | `la sub-hipótesis resulta \emph{refutada}` | cerrada |
+| 1 | inv. 1: sub-hipotesis 2 refutada sobre los casos revisados | c-190 | `07-resultados.tex:154` | - | `la sub-hipótesis resulta \emph{refutada}` | SUPERADA por c-196 |
 | 2 | inv. 2: cotejo con el consenso (11/85; 13 = 9 + 1 + 3) | c-190 | `07-resultados.tex:156` | - | `de las 85 confirmaciones con consenso disponible, 11 confirmaron un sector que el consenso considera incorrecto` | cerrada |
 | 3 | inv. 3: proposito comparativo ocultado a lo sumo al operador externo | c-190 | `04-marco-metodologico.tex:16` | - | `se ocultó, a lo sumo, al operador externo` | cerrada |
 | 4 | inv. 4: amenaza Hawthorne con la condicion de autor | c-190 | `04-marco-metodologico.tex:89` | `subsec:amenazas-validez` | `el enmascaramiento del propósito comparativo no existió, de modo que el sesgo de novedad u observación no se distribuye por igual` | cerrada |
@@ -4313,7 +4313,7 @@ El nivel pago de la Gemini API y el consentimiento de los cuatro participantes q
 | Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
 |---|---|---|---|---|---|---|
 | A1 | Hash del PDF del tag | c-192 | `12-anexos.tex:44` | `sec:anexo-repositorio` | `creado sobre el commit que fija el contenido de la versión entregada` | cerrada |
-| A2 | Sub-hipótesis 2 refutada con la regla declarada | c-192 | `07-resultados.tex:154` | `subsec:reduccion-intervencion` | `la estimación puntual alcanza la cota de 0,15, de modo que la sub-hipótesis resulta` | cerrada |
+| A2 | Sub-hipótesis 2 refutada con la regla declarada | c-192 | `07-resultados.tex:154` | `subsec:reduccion-intervencion` | `la estimación puntual alcanza la cota de 0,15, de modo que la sub-hipótesis resulta` | SUPERADA por c-196 |
 | A2-matiz | Matiz del intervalo (lectura conservadora) | c-192 | `07-resultados.tex:0` | `subsec:reduccion-intervencion` | `no se puede descartar un valor cercano al umbral` | SUPERADA por c-195 (matiz reformulado) |
 | A3 | Kappa de 1.6 por par | c-192 | `01-introduccion.tex:66` | `subsec:justificacion` | `0{,}5569$ (moderado, con intervalo)` | cerrada |
 | B1 | Laxo por intersección | c-192 | `07-resultados.tex:251` | `subsec:resultados-campana-medicion` | `la intersección de los sectores adicionales que marcaron ambos etiquetadores` | cerrada |
@@ -4431,10 +4431,10 @@ los cuatro participantes hayan firmado, con las fechas reales; c-195 no toca eso
 | 1 | 7.5: firmaron y registro de que se recabó | c-195 | `11-aspectos-legales.tex:0` | `subsec:consentimiento-derechos` | `el registro de que se recabó` | PENDIENTE: diferida; la atienden los autores al recabar las firmas |
 | 2 | Plantilla: columnas distintas y registro vacío | c-195 | `docs/campana-medicion/confirmacion-posterior-consentimiento.md:0` | `-` | `fecha_consentimiento` | PENDIENTE: diferida; la atienden los autores al recabar las firmas |
 | 3 | 8.3: condición de generalización | c-195 | `07-resultados.tex:154` | `subsec:reduccion-intervencion` | `Extender esta conclusión al formulario web y a reportantes identificados` | cerrada |
-| A2/4a | 1.4: asimetría de la regla | c-195 | `01-introduccion.tex:34` | `subsec:hipotesis-trabajo` | `La regla es asimétrica:` | cerrada |
-| A2/4b | 4.7: asimetría de la regla | c-195 | `04-marco-metodologico.tex:81` | `subsec:analisis-estadistico` | `La regla es asimétrica (véase` | cerrada |
-| A2/5a | 8.3: el intervalo no descarta una proporción inferior a la cota | c-195 | `07-resultados.tex:154` | `subsec:reduccion-intervencion` | `el intervalo no permite descartar una proporción inferior a la cota` | cerrada |
-| A2/5b | 9.1: ídem | c-195 | `08-discusion.tex:8` | `subsec:interpretacion-resultados` | `el intervalo no permite descartar una proporción inferior a la cota` | cerrada |
+| A2/4a | 1.4: asimetría de la regla | c-195 | `01-introduccion.tex:34` | `subsec:hipotesis-trabajo` | `La regla es asimétrica:` | SUPERADA por c-196 |
+| A2/4b | 4.7: asimetría de la regla | c-195 | `04-marco-metodologico.tex:81` | `subsec:analisis-estadistico` | `La regla es asimétrica (véase` | SUPERADA por c-196 |
+| A2/5a | 8.3: el intervalo no descarta una proporción inferior a la cota | c-195 | `07-resultados.tex:154` | `subsec:reduccion-intervencion` | `el intervalo no permite descartar una proporción inferior a la cota` | SUPERADA por c-196 |
+| A2/5b | 9.1: ídem | c-195 | `08-discusion.tex:8` | `subsec:interpretacion-resultados` | `el intervalo no permite descartar una proporción inferior a la cota` | SUPERADA por c-196 |
 | A3/6a | Anexo I: nueve dictámenes, traza seis | c-195 | `12-anexos.tex:205` | `sec:anexo-trazabilidad` | `La serie comprende nueve dictámenes` | cerrada |
 | A3/6b | Tabla del dictamen sobre v1.2.13 | c-195 | `12-anexos.tex:337` | `tab:anexo-trazabilidad-0911-v1213` | `label{tab:anexo-trazabilidad-0911-v1213}` | cerrada |
 | A3/6c | Tabla del dictamen sobre v1.2.16 | c-195 | `12-anexos.tex:364` | `tab:anexo-trazabilidad-0911-v1216` | `label{tab:anexo-trazabilidad-0911-v1216}` | cerrada |
@@ -4448,7 +4448,7 @@ los cuatro participantes hayan firmado, con las fechas reales; c-195 no toca eso
 | B3/12 | Zanzotto limitado a retribuir a quienes aportan el conocimiento | c-195 | `02-marco-teorico.tex:32` | `subsec:human-in-the-loop` | `quienes aportan el conocimiento que usan los sistemas.` | cerrada |
 | C1/13 | Minúscula tras el punto y coma | c-195 | `02-marco-teorico.tex:32` | `subsec:human-in-the-loop` | `; los autores de esta tesis infieren` | cerrada |
 | C1/14 | VIS-005 como requisito de la especificación de visibilidad (c-82) | c-195 | `07-resultados.tex:154` | `subsec:reduccion-intervencion` | `requisito \texttt{VIS-005} de la especificación de visibilidad de incidentes` | cerrada |
-| C1/15 | Capítulo 11: la campaña refutó la sub-hipótesis | c-195 | `10-recomendaciones.tex:6` | `sec:recomendaciones` | `cuya sub-hipótesis la campaña complementaria refutó` | cerrada |
+| C1/15 | Capítulo 11: la campaña refutó la sub-hipótesis | c-195 | `10-recomendaciones.tex:6` | `sec:recomendaciones` | `cuya sub-hipótesis la campaña complementaria refutó` | SUPERADA por c-196 |
 | C2/16 | 11.3: requisito de tamaño muestral | c-195 | `10-recomendaciones.tex:18` | `subsec:medicion-intervencion` | `Tres requisitos acotan esa medición futura` | cerrada |
 | C2/17a | Zendesk sin Suite | c-195 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:657` | `-` | `{AI}-powered customer service software` | cerrada |
 | C2/17b | ServiceNow: URL sin respuesta (curl 2026-11-09, código 000); se conserva | c-195 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:673` | `-` | `ServiceNow2026_itsm` | cerrada |
@@ -4497,3 +4497,155 @@ registrada; ítem 18 del dictamen).
 Tag anotado `v1.2.17` sobre el commit de contenido de c-195 (`1de114fcdc045b283f9b26bd75ea719f2aefa567`), que lleva la oración de verificación
 (`git rev-list -n1 v1.2.17`); el commit siguiente consigna el hash completo en el Anexo B; el PDF del tag no imprime el hash de otra release (patrón
 c-188). `v1.2.16` queda superada (inmutable, `ca3c88510be5b1484ed413a8de8bcdffccedc417`).
+
+
+---
+
+## Dictamen v10 / v1.2.18 (2026-11-11) - c-196 (devolucion de segunda instancia)
+
+Atención de la devolución de segunda instancia del tribunal del 2026-11-11 sobre `v1.2.18`
+(apta para la defensa con observaciones mayores, 7,0/10; 16 observaciones, N-01 a N-16; las
+correcciones deben estar en el ejemplar de la defensa y la devolución indica que no requieren código
+nuevo ni nuevas mediciones). Change `c-196` (docs, gobernanza MEDIUM; el texto fáctico de la sección 7.3
+y del Anexo I es HIGH), release prevista `v1.2.19` (a cargo del orquestador con el usuario). La
+devolución completa se versiona en `auditorias/Devolucion_Segunda_Instancia_Tribunal_2026-11-11.pdf` y el Anexo I la cita como archivo del repositorio (tarea 6.10 del change).
+
+### Correcciones
+
+| Rec | Observación | Corrección | Archivo | Estado |
+|---|---|---|---|---|
+| N-01 | Kappa 0,87 sin respaldo | Retirado como evidencia; kappa vigente 0,5569 (E1/E2) | `00-resumen.tex`, `01-introduccion.tex`, `04-marco-metodologico.tex`, `07-resultados.tex`, `08-discusion.tex` | cerrada (respuesta del autor, ver Decisiones) |
+| N-02 | Versión de julio y auditoría del 4-8 sin declarar | Nota de versiones y fila de la auditoría en el Anexo I | `12-anexos.tex` | parcial: PENDIENTE (fecha exacta de la versión de julio y declaración del uso de modelos de lenguaje) |
+| N-03 | Tiempos manuales de la campaña complementaria sin definir | Definición de la tarea y tabla por operador | `04-marco-metodologico.tex`, `07-resultados.tex`, `08-discusion.tex` | cerrada |
+| N-04 | Selección de los 200 casos contradictoria | Muestreo no probabilístico por conveniencia; sesgo de selección | `00-resumen.tex`, `04-marco-metodologico.tex`, `08-discusion.tex` | parcial: PENDIENTE (período y criterio de selección) |
+| N-05 | 119 tiempos automatizados sin registro primario | Declarado en 4.5, 8.1 y el Anexo F | `04-marco-metodologico.tex`, `07-resultados.tex`, `12-anexos.tex` | parcial: PENDIENTE (de qué registro se transcribieron) |
+| N-06 | Llamadas recitadas por un autor | Amenaza a la validez y explicación rival | `04-marco-metodologico.tex`, `08-discusion.tex` | cerrada |
+| N-07 | Concisión e identificadores de cambio | Oraciones partidas; identificadores fuera del cuerpo | todos los capítulos | cerrada |
+| N-08 | Exactitud solo contra el original | Dos filas en la Tabla 12 y lectura contra el consenso | `07-resultados.tex`, `08-discusion.tex` | cerrada |
+| N-09 | Regla de decisión fijada tras los datos | Veredicto no concluyente, con estimación puntual por encima de la cota | `00-resumen.tex`, `01-introduccion.tex`, `04`, `07`, `08`, `09`, `10`, `12` | cerrada |
+| N-10 | Cobertura del backend sin informar | 90 % medido en la corrida de CI sobre `main` | `06-implementacion.tex` | cerrada |
+| N-11 | Figuras ilegibles | Figuras regeneradas y divididas | `05-arquitectura.tex`, `12-anexos.tex`, `paper/figures/` | cerrada |
+| N-12 | Conclusiones con valoraciones sin respaldo | Valoraciones retiradas | `09-conclusiones.tex` | cerrada |
+| N-13 | Instrumento del artículo 12 no declarado | Declarado como no suscrito; requisito para el adoptante | `11-aspectos-legales.tex` | cerrada (respuesta del autor, ver Decisiones) |
+| N-14 | Consentimiento escrito "diferido" en el Anexo I | Atendida el 10-11-2026 | `12-anexos.tex` | cerrada |
+| N-15 | Nombres de sector sin tilde | Tilde en prosa y `\texttt{}` en la cadena del sistema | `01`, `04`, `05`, `07`, `08` | cerrada |
+| N-16 | Paket et al. y Mayor-Rocher et al. | Marcadores en el `.bib` | `Bibliography_base.bib` | Atendida en parte: DOI verificados el 11-11-2026 (Crossref: Paket et al., UBMK 2024, pp. 135-140; Applied Linguistics, publicación anticipada del 10-09-2026, con versión preliminar arXiv:2409.15334); resta la copia de Paket et al. (acceso cerrado en IEEE Xplore) y confirmar la versión consultada de Mayor-Rocher et al. |
+
+### Matriz de trazabilidad (verificada por `verificar_matriz_trazabilidad.py`)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| N-01/1a | 4.4: el 0,87 no puede respaldarse y no es evidencia | c-196 | `04-marco-metodologico.tex:56` | `subsec:poblacion-muestra-corpus` | `no puede respaldarse con registros` | cerrada |
+| N-01/1b | Resumen: kappa 0,5569 de E1/E2 | c-196 | `00-resumen.tex:11` | `-` | `kappa de 0,5569` | cerrada |
+| N-02/2a | Nota de versiones del Anexo I | c-196 | `12-anexos.tex:233` | `subsec:nota-versiones` | `label{subsec:nota-versiones}` | PENDIENTE (dato de los autores: fecha exacta de la versión de julio) |
+| N-02/2b | Auditoría del 4-8-2026: 105 hallazgos, 28 críticos, 3,9/10 | c-196 | `12-anexos.tex:241` | `sec:anexo-trazabilidad` | `formuló 105 hallazgos, 28 de ellos críticos` | cerrada |
+| N-02/2c | Declaración del uso de modelos de lenguaje en la redacción | c-196 | `12-anexos.tex:240` | `sec:anexo-trazabilidad` | `PENDIENTE-AUTORES(P16)` | PENDIENTE (dato de los autores: P16) |
+| N-03/3a | Tabla de tiempos manuales por operador | c-196 | `07-resultados.tex:261` | `tab:tiempos-manual-complementaria` | `label{tab:tiempos-manual-complementaria}` | cerrada |
+| N-03/3b | 4.5: definición de la tarea manual de la campaña complementaria | c-196 | `04-marco-metodologico.tex:67` | `subsec:protocolo-pruebas` | `tab:tiempos-manual-complementaria` | cerrada |
+| N-03/3c | 9.1: dependencia del operador como explicación rival | c-196 | `08-discusion.tex:24` | `subsec:interpretacion-resultados` | `Quinto, la dependencia del operador` | cerrada |
+| N-04/4a | 4.4: muestreo no probabilístico por conveniencia | c-196 | `04-marco-metodologico.tex:46` | `subsec:poblacion-muestra-corpus` | `muestreo no probabilístico por conveniencia` | PENDIENTE (dato de los autores: período y criterio de selección) |
+| N-04/4b | 4.8: sesgo de selección como amenaza a la validez externa | c-196 | `04-marco-metodologico.tex:97` | `subsec:amenazas-validez` | `sesgo de selección` | cerrada |
+| N-04/4c | Abstract: convenience sample | c-196 | `00-resumen.tex:27` | `-` | `convenience sample` | cerrada |
+| N-05/5a | 4.5: 119 valores sin registro primario conservado | c-196 | `04-marco-metodologico.tex:65` | `subsec:protocolo-pruebas` | `no tienen registro primario conservado` | PENDIENTE (dato de los autores: registro de los 119 tiempos) |
+| N-05/5b | 8.1: 81 con registro primario y 119 sin él | c-196 | `07-resultados.tex:12` | `subsec:comparacion-tiempos` | `registro primario` | cerrada |
+| N-06/6a | 4.8: las 81 llamadas recitadas por un autor | c-196 | `04-marco-metodologico.tex:99` | `subsec:amenazas-validez` | `recitó las 81 llamadas` | cerrada |
+| N-07/7a | Oración de 85 palabras de 10.1 partida | c-196 | `09-conclusiones.tex:47` | `sec:conclusiones` | `Ese filtro absorbe los casos triviales y reduce el costo de inferencia.` | cerrada |
+| N-07/7b | Comando de cobertura unificado con el del CI en 4.5 | c-196 | `04-marco-metodologico.tex:60` | `subsec:protocolo-pruebas` | `pytest -m "not integration" --cov=app.routes` | cerrada |
+| N-08/8a | Tabla 12: fila con la referencia de consenso | c-196 | `07-resultados.tex:119` | `tab:exactitud-etapa-canal` | `110/138 = 0,797 [0,722; 0,856]` | cerrada |
+| N-08/8b | 9.3: el límite superior 0,856 supera el umbral de 0,85 | c-196 | `08-discusion.tex:60` | `subsec:limitaciones-estudio` | `(0,856) supera el umbral de 0,85` | cerrada |
+| N-09/9a | 8.3: no concluyente, con estimación puntual por encima de la cota | c-196 | `07-resultados.tex:159` | `subsec:reduccion-intervencion` | `no concluyente, con estimación puntual por encima de la cota` | cerrada |
+| N-09/9b | 1.4: la regla prefijada y su lectura posterior | c-196 | `01-introduccion.tex:34` | `subsec:hipotesis-trabajo` | `no concluyente, con estimación puntual por encima de la cota` | cerrada |
+| N-09/9c | 4.7: ídem | c-196 | `04-marco-metodologico.tex:83` | `subsec:analisis-estadistico` | `no concluyente, con estimación puntual por encima de la cota` | cerrada |
+| N-09/9d | 9.1: una corroborada, una no concluyente y una refutada | c-196 | `08-discusion.tex:8` | `subsec:interpretacion-resultados` | `una no concluyente (intervención humana) y una refutada` | cerrada |
+| N-09/9e | 10.1: ídem | c-196 | `09-conclusiones.tex:6` | `subsec:cumplimiento-objetivos` | `una sub-hipótesis corroborada, una no concluyente y una refutada` | cerrada |
+| N-09/9f | 11.3: la campaña la dejó no concluyente | c-196 | `10-recomendaciones.tex:18` | `subsec:medicion-intervencion` | `no concluyente, con estimación puntual por encima de la cota` | cerrada |
+| N-10/10 | 6.7: cobertura del 90 % (2.503 sentencias, 242 sin cubrir) | c-196 | `06-implementacion.tex:85` | `subsec:pruebas-automatizadas` | `2.503 sentencias, 242 sin cubrir` | cerrada |
+| N-11/11a | Figura 2: despliegue regenerado | c-196 | `05-arquitectura.tex:43` | `fig:despliegue` | `{despliegue}` | cerrada |
+| N-11/11b | Secuencia dividida en dos figuras | c-196 | `12-anexos.tex:30` | `fig:secuencia_b` | `{secuencia_b}` | cerrada |
+| N-11/11c | Componentes dividido en dos figuras | c-196 | `12-anexos.tex:44` | `fig:componentes_b` | `{componentes_b}` | cerrada |
+| N-11/11d | Flujo N8N dividido en tres figuras | c-196 | `12-anexos.tex:140` | `fig:anexo_flujo_n8n_c` | `{flujo_n8n_c}` | cerrada |
+| N-12/12 | 10.1: valoraciones retiradas y remisión a las llamadas recitadas | c-196 | `09-conclusiones.tex:6` | `subsec:cumplimiento-objetivos` | `Hay, en suma, una sub-hipótesis corroborada` | cerrada |
+| N-13/13 | 7.3: el instrumento está documentado pero no suscrito | c-196 | `11-aspectos-legales.tex:22` | `subsec:transferencia-internacional` | `pero no está suscrito` | cerrada |
+| N-14/14 | Anexo I: la recomendación A1 fue atendida el 10-11-2026 | c-196 | `12-anexos.tex:396` | `tab:anexo-trazabilidad-0911-v1216` | `atendida el 10 de noviembre de 2026` | cerrada |
+| N-15/15 | Tabla de variables: cadena canónica en `\texttt{}` | c-196 | `04-marco-metodologico.tex:36` | `tab:variables` | `\texttt{Seguridad Informatica}` | cerrada |
+| N-16/16a | Mayor-Rocher et al.: marcador en el `.bib` | c-196 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:334` | `-` | `PENDIENTE-AUTORES(N-16)` | PENDIENTE (DOI y versión de revista verificados el 11-11-2026; falta confirmar la versión consultada) |
+| N-16/16b | Paket et al.: marcador en el `.bib` | c-196 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:368` | `-` | `PENDIENTE-AUTORES(N-16)` | PENDIENTE (DOI verificado en Crossref el 11-11-2026; falta la copia del artículo) |
+| Páginas | Páginas: el total pasa de 120 a 132: decisión registrada | c-196 | `docs/Tesis/Correcciones/dictamen-correcciones.md:4633` | `-` | `Libro mayor de páginas y palabras (c-196)` | cerrada |
+
+### Decisiones
+
+- **D-N01 (0,87)**: respuesta de un autor (Lucas Gomez, 2026-11-11): el 0,87 "se coló" en el
+  resumen y no hay datos que lo respalden. Se retira como evidencia en el Resumen, el Abstract, 1.7,
+  4.8, 8.7 y 9.3; la sección 4.4 (`04-marco-metodologico.tex`) y la nota de versiones del Anexo I son los
+  únicos lugares donde aparece, para declararlo retirado. El marcador `PENDIENTE-AUTORES(N-01)` se
+  quitó. El kappa vigente es 0,5569 (moderado; IC asintótico `[0,4725; 0,6413]`).
+- **D-N13 (instrumento del artículo 12)**: respuesta del mismo autor, 2026-11-11: el instrumento
+  existe documentado en `docs/seguridad/instrumento-transferencia-internacional.md` pero no está
+  suscrito. La sección 7.3 lo declara, dice que no se suscribieron cláusulas contractuales modelo ni se
+  recabó el consentimiento, y deja el instrumento como requisito previo para la organización
+  adoptante. El marcador `PENDIENTE-AUTORES(N-13)` se quitó.
+- **D-N09 (regla de tres vías)**: la regla prefijada se enuncia tal cual (compatible si el límite
+  superior queda por debajo de 0,15; refutado si la estimación puntual alcanza o supera 0,15; no
+  concluyente si la estimación queda por debajo y el límite superior no). Sobre el denominador prefijado
+  (25 de 200, 12,5 %) da no concluyente. Sobre los 147 revisados la lectura literal daría refutada,
+  pero ese denominador se fijó después de conocer los datos y el intervalo `[11,8 %; 23,9 %]` contiene
+  0,15 (binomial `p = 0,28` unilateral, 0,49 bilateral). Veredicto: "no concluyente, con estimación
+  puntual por encima de la cota"; el texto dice que una versión anterior la declaró refutada. Conteo:
+  una corroborada, una no concluyente y una refutada.
+- **D-N08 (exactitud contra el consenso)**: el veredicto de la tercera sub-hipótesis se mantiene sobre
+  la referencia primaria (el etiquetado original, prefijada). Contra el consenso `E1 = E2` el límite
+  superior (0,856) supera 0,85 y el criterio sería no concluyente; el macro-F1 (0,757) sigue por
+  debajo. No se cambió la referencia primaria a posteriori. Macro-F1 solo puntual: no hay
+  implementación canónica del bootstrap en `evaluation/`.
+- **D-N10 (cobertura)**: 90 % (2.503 sentencias, 242 sin cubrir; 1.773 pruebas unitarias aprobadas),
+  corrida de CI 43043424002 sobre `main`, commit `03d1612` (código del backend idéntico al de la
+  `v1.2.18`), 2026-11-11; reproducida en forma local con el mismo total. Las pruebas de integración
+  son 61 (el texto de 6.7 ya decía 61; `conteos-canonicos-tecnicos.md` decía 54 y se actualizó).
+- **D-N15 (tildes)**: prosa con tilde; las cadenas canónicas del sistema (`Seguridad Informatica`,
+  `Soporte Tecnico Hardware`, `Soporte Tecnico Software`, `Bases de Datos`, `Sistemas`) van en
+  `\texttt{}` sin tilde, también dentro de la tabla de variables de 4.2.
+- **Auditoría del 4-8-2026**: los datos del Anexo I (105 hallazgos, 28 críticos, 3,9/10, fecha) se
+  verificaron contra `auditorias/Auditoria_Tesis_Gomez_Bustos_Sevilla_040802026.pdf` con `pdftotext`
+  y coinciden. El PDF no se identifica como emitido por el tribunal (lo titula "Auditoría integral de
+  tesis de grado", informe de aplicación del Prompt Maestro); la atribución al tribunal sigue a la
+  propia devolución del 11-11, que la llama "auditoría del tribunal del 4 de agosto".
+- **N-07 (identificadores)**: ningún `c-NNN`, `C-NN` ni la palabra "changes" queda fuera del Anexo I
+  y de comentarios LaTeX. El Anexo I y la tabla de la devolución sí los nombran.
+- **N-11 (figuras)**: la figura de despliegue se regeneró y la de secuencia, la de componentes y la
+  del flujo N8N se dividieron en partes a y b (y c); los `\label` existentes no cambiaron. Los
+  números de `autonumber` de la secuencia quedan en 4,5 a 5 pt (resto ≥ 6,15 pt).
+- **Filas anteriores reescritas**: las filas de las matrices de c-190, c-192 y c-195 cuyo párrafo
+  reescribe c-196 (la segunda sub-hipótesis "refutada", la asimetría de la regla, VIS-005 con el
+  identificador de cambio, el capítulo 11 con "refutó") se marcan `SUPERADA por c-196`.
+
+### Inventario de `PENDIENTE-AUTORES`
+
+| Marcador | Archivo:línea | Qué falta |
+|---|---|---|
+| N-04 | `04-marco-metodologico.tex:45` | Fechas exactas del período relevado y criterio con que se tomaron los 200 casos entre los 2.646 aproximados |
+| N-05 | `04-marco-metodologico.tex:64` | De qué registro se transcribieron los 119 tiempos del 2-10-2026; si existe, versionarlo |
+| N-02 | `12-anexos.tex:235` | Fecha exacta de la versión de julio |
+| P16 | `12-anexos.tex:240` | Declarar el uso de modelos de lenguaje en la redacción de la tesis |
+| N-16 | `Bibliography_base.bib:334` y `:368` | Copia del artículo de Paket et al. (DOI verificado en Crossref el 11-11-2026; IEEE Xplore cerrado) y confirmar que la versión consultada de Mayor-Rocher et al. fue la de la revista (DOI verificado; publicación anticipada del 10-09-2026, sin volumen ni páginas; preliminar arXiv:2409.15334) |
+
+Resueltos con respuesta del autor: N-01 y N-13. Resuelto con el valor entregado: N-10.
+
+### Libro mayor de páginas y palabras (c-196)
+
+| Concepto | Antes | Después | Causa | Fecha |
+|---|---|---|---|---|
+| Páginas del PDF | 120 | 132 | Figuras divididas en partes (secuencia, componentes y flujo N8N), tabla de tiempos por operador, dos filas nuevas de la Tabla 12 y tabla de la devolución en el Anexo I; sin forzar la paginación | 2026-11-11 |
+| Palabras del resumen y del abstract | ≤ 250 | 248 y 248 (≤ 250; método sobre el `.tex`, `wc.py`) | Kappa 0,5569, muestra por conveniencia y veredicto de la segunda sub-hipótesis | 2026-11-11 |
+| Oraciones de más de 60 palabras (`sent.py`) | sin registro previo | 0 en 00, 01, 04, 07 y 09; 2 falsos positivos en 08 (notas al pie de la tabla de costos) | N-07 | 2026-11-11 |
+
+El exceso sobre el tope de 100 páginas del equipo se mantiene como residual declarado (decisión
+registrada en c-195, ítem 18 del dictamen).
+
+### Nota de release
+
+Tag anotado `v1.2.19` sobre el commit de contenido de c-196, que lleva la oración de verificación
+(`git rev-list -n1 v1.2.19`); el commit siguiente consigna el hash completo en el Anexo B (patrón de
+c-188, c-192 y c-195). La portada imprime la versión 1.2.19 y conserva la fecha del 9 de noviembre de
+2026 (la verifican filas de c-190 y no cambió en `v1.2.18`). `v1.2.18` queda superada (inmutable,
+`457b14ae2c77ea221429345602aacc9213878640`). Pendiente del orquestador: `engram sync --project`
+(nunca `--all`), PR contra `main` con CI en verde y push del tag con confirmación del usuario.

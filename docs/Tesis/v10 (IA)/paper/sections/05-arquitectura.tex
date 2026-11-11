@@ -7,7 +7,7 @@
 
 El sistema propuesto se estructura como una arquitectura distribuida y modular compuesta por cinco capas claramente diferenciadas, siguiendo los principios de cohesión alta y acoplamiento bajo descritos por \textcite{Pressman2020_software_engineering}. En el diseño se previó proteger la comunicación con el exterior mediante TLS~1.2/1.3 a nivel de un proxy inverso (Nginx); la terminación TLS 1.2/1.3 se verifica de forma automatizada sobre el despliegue de referencia de la release v1.2.2 (prueba de humo de la \autoref{subsec:pruebas-automatizadas}, cuyo runbook se cita en el Anexo~\ref{sec:anexo-documentacion-operativa}; despliegue de referencia en el Anexo~\ref{sec:anexo-diagrama-arquitectura}), con certificado autofirmado de referencia; la campaña experimental usó dos despliegues, y la distinción es relevante: la medición telefónica del 5 y 6 de octubre de 2026 corrió sobre el perfil Compose aislado \texttt{corpus}, que no incluye el proxy inverso, mientras que la ingesta del brazo automático del 2 de octubre lo hizo sobre el stack base, que sí incluye Nginx con el certificado autofirmado de referencia; en ningún caso las mediciones de la \autoref{sec:resultados} dependen de TLS. En producción, el adoptante debe proveer un certificado emitido por una CA (autoridad certificadora). La comunicación interna entre los servicios del sistema (N8N, backend, PostgreSQL) se realiza sobre la red aislada de Docker, que constituye el perímetro de confianza. Todas las interfaces entre capas utilizan el estilo arquitectónico REST con cuerpos JSON para el intercambio estructurado de datos \parencite{Fielding2002_rest}. Esta separación de responsabilidades facilita el reemplazo independiente de cualquier componente sin afectar a los demás.
 
-La Tabla~\ref{tab:capas} sintetiza las cinco capas y sus responsabilidades específicas, y la Figura~\ref{fig:componentes} (Anexo~\ref{sec:anexo-diagrama-arquitectura}) detalla la organización en capas del módulo de procesamiento.
+La Tabla~\ref{tab:capas} sintetiza las cinco capas y sus responsabilidades específicas, y las Figuras~\ref{fig:componentes} y~\ref{fig:componentes_b} (Anexo~\ref{sec:anexo-diagrama-arquitectura}) detallan la organización en capas del módulo de procesamiento.
 
 \begin{table}[htbp]
 \centering
@@ -29,18 +29,18 @@ La Tabla~\ref{tab:capas} sintetiza las cinco capas y sus responsabilidades espec
 {\footnotesize\textit{Fuente:} elaboración propia.\par}
 \end{table}
 
-La trazabilidad operativa se garantiza mediante registros estructurados en cada capa, accesibles desde la capa de orquestación. La Figura~\ref{fig:arquitectura} representa esquemáticamente el flujo de información entre capas. El despliegue del entorno local ---servicios, redes Docker (edge, data interna, automation y host\_access), volúmenes y servicios externos--- se detalla en la Figura~\ref{fig:despliegue}, y el flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión, en la Figura~\ref{fig:secuencia} (Anexo~\ref{sec:anexo-diagrama-arquitectura}).
+La trazabilidad operativa se garantiza mediante registros estructurados en cada capa, accesibles desde la capa de orquestación. La Figura~\ref{fig:arquitectura} representa esquemáticamente el flujo de información entre capas. El despliegue del entorno local ---servicios, redes Docker (edge, data interna, automation y host\_access), volúmenes y servicios externos--- se detalla en la Figura~\ref{fig:despliegue}, y el flujo extremo a extremo de un incidente, desde el canal de entrada hasta la confirmación o la derivación a revisión, en las Figuras~\ref{fig:secuencia} y~\ref{fig:secuencia_b} (Anexo~\ref{sec:anexo-diagrama-arquitectura}).
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{arquitectura_sistema}
-\caption[Diagrama de arquitectura del sistema]{Diagrama de arquitectura del sistema: cinco capas y tres canales de entrada (correo, formulario web y telefonía), en la configuración entregada (release \texttt{v1.2.18}). Fuente versionada: \texttt{docs/diagrams/arquitectura\_sistema.md} (Anexo~\ref{sec:anexo-diagrama-arquitectura}).}
+\caption[Diagrama de arquitectura del sistema]{Diagrama de arquitectura del sistema: cinco capas y tres canales de entrada (correo, formulario web y telefonía), en la configuración entregada (release \texttt{v1.2.19}). Fuente versionada: \texttt{docs/diagrams/arquitectura\_sistema.md} (Anexo~\ref{sec:anexo-diagrama-arquitectura}).}
 \label{fig:arquitectura}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.92\textwidth]{despliegue}
+\includegraphics[width=\textwidth]{despliegue}
 \caption{Diagrama de despliegue del entorno local. Servicios, redes Docker (edge, data interna, automation y host\_access), volúmenes y servicios externos.}
 \label{fig:despliegue}
 \end{figure}
@@ -67,7 +67,7 @@ Este filtro resuelve de inmediato los incidentes con marcadores léxicos inequí
 
 La segunda etapa, activada únicamente cuando el filtro determinístico no resuelve el caso, consulta al modelo Gemini~3.6 Flash mediante un prompt estructurado en español que incluye una breve descripción de cada categoría, un único ejemplo representativo por sector y la solicitud explícita de devolver la categoría asignada y un valor numérico de confianza entre 0 y 1 en formato JSON estricto. El diseño compositivo reserva la capacidad semántica del modelo para los casos que el filtro no resuelve, lo que reduce la latencia y el costo de inferencia. El pipeline completo comprende tres etapas, aplicadas en orden: (1)~el filtro determinístico, (2)~el modelo Gemini y (3)~una etapa de reserva (\emph{fallback}) que, cuando el modelo no responde o no produce una salida válida, fija la confianza en 0,0 y marca siempre el caso para revisión humana. La regla \texttt{requiere\_revision\_humana = (confianza < 0{,}70)} se evalúa solo sobre la salida de la etapa Gemini; la etapa de reserva deriva siempre a revisión, con confianza 0,0, y la etapa determinística no deriva por su confianza. Desde el 13 de octubre de 2026, posterior a la campaña 2026-10, el backend deriva además a revisión el incidente cuyo reportante no se identifica en el directorio de empleados, condición independiente de la clasificación. El desglose de casos resueltos por cada etapa del pipeline sobre el corpus de validación se reporta en la \autoref{sec:resultados}.
 
-El camino de clasificación es único para los tres canales de entrada. Tanto el correo electrónico y el formulario web como la llamada telefónica resuelven su sector mediante esta misma cascada híbrida, aplicada sobre la descripción pseudonimizada del incidente: ningún canal aporta una clasificación precalculada que omita la cascada, de modo que las reglas determinísticas, el prompt y las reglas de frontera se ajustan una sola vez para todo el sistema. El prompt único incorpora reglas de desambiguación de frontera entre sectores adyacentes (acceder o iniciar sesión en una aplicación se orienta a Soporte Tecnico Software; la digitalización, el escáner o la impresora se orientan a Soporte Tecnico Hardware; el servidor, la red, SMTP o una VM se orientan a Sistemas). Desde el punto de vista del costo, la clasificación telefónica dejó de computarse sobre una invocación incondicional al modelo externo: el canal atraviesa el filtro determinístico y solo escala al modelo semántico cuando la cascada lo requiere.
+El camino de clasificación es único para los tres canales de entrada. Tanto el correo electrónico y el formulario web como la llamada telefónica resuelven su sector mediante esta misma cascada híbrida, aplicada sobre la descripción pseudonimizada del incidente: ningún canal aporta una clasificación precalculada que omita la cascada, de modo que las reglas determinísticas, el prompt y las reglas de frontera se ajustan una sola vez para todo el sistema. El prompt único incorpora reglas de desambiguación de frontera entre sectores adyacentes (acceder o iniciar sesión en una aplicación se orienta a Soporte Técnico Software; la digitalización, el escáner o la impresora se orientan a Soporte Técnico Hardware; el servidor, la red, SMTP o una VM se orientan a Sistemas). Desde el punto de vista del costo, la clasificación telefónica dejó de computarse sobre una invocación incondicional al modelo externo: el canal atraviesa el filtro determinístico y solo escala al modelo semántico cuando la cascada lo requiere.
 
 \subsection{Modelo de datos}\label{subsec:modelo-datos}
 
@@ -75,7 +75,7 @@ La persistencia se realiza sobre PostgreSQL~15.5, desplegado en contenedor Docke
 
 \begin{table}[htbp]
 \centering
-\caption[Entidades principales del modelo de datos]{Entidades principales del modelo de datos de la configuración entregada (release \texttt{v1.2.18}); el atributo \texttt{reportante\_empleado\_id}, el cuarto rol del directorio y el cifrado del contacto son posteriores a la campaña 2026-10 (c-82, c-86 y c-153).}
+\caption[Entidades principales del modelo de datos]{Entidades principales del modelo de datos de la configuración entregada (release \texttt{v1.2.19}); el atributo \texttt{reportante\_empleado\_id}, el cuarto rol del directorio y el cifrado del contacto son posteriores a la campaña 2026-10.}
 \label{tab:entidades}
 \footnotesize\singlespacing
 \setlength{\tabcolsep}{4pt}
@@ -84,12 +84,12 @@ La persistencia se realiza sobre PostgreSQL~15.5, desplegado en contenedor Docke
 \textbf{Tabla} & \textbf{Atributos clave} & \textbf{Descripción} \\
 \midrule
 \texttt{incidente} & id (PK), descripcion\_original (cifrada), descripcion\_pseudonimizada, prioridad, sector\_id (FK), estado\_id (FK), canal\_origen\_id (FK), reportante\_empleado\_id (FK), requiere\_revision\_humana & Tabla central: descripción original cifrada en reposo y descripción pseudonimizada, prioridad, sector asignado, estado actual, canal de origen, reportante resuelto en el directorio e indicador de revisión humana. \\
-\texttt{sector} & id (PK), nombre & Catálogo de los cinco sectores canónicos: Seguridad Informatica, Soporte Tecnico Hardware, Soporte Tecnico Software, Bases de Datos y Sistemas. \\
+\texttt{sector} & id (PK), nombre & Catálogo de los cinco sectores canónicos: \texttt{Seguridad Informatica}, \texttt{Soporte Tecnico Hardware}, \texttt{Soporte Tecnico Software}, \texttt{Bases de Datos} y \texttt{Sistemas}. \\
 \texttt{estado} & id (PK), nombre, es\_terminal & Catálogo de estados: nuevo, en proceso, en espera, resuelto y cerrado. \\
 \texttt{canal\_origen} & id (PK), nombre & Catálogo de canales: correo, formulario web y llamada telefónica. \\
 \texttt{clasificacion\_log} & id (PK), incidente\_id (FK), sector\_id\_predicho (FK), sector\_id\_validado (FK), confianza, etapa, requiere\_revision\_humana & Registro de cada decisión del clasificador, con el sector predicho, la confianza asociada, la etapa que resolvió, el indicador de revisión y el sector validado por el sector responsable. \\
 \texttt{users} & id (PK), username (UNIQUE), hashed\_password, is\_active & Almacena credenciales de operadores para autenticación JWT. \\
-\texttt{directorio\_empleado} & id (PK), legajo (UNIQUE), nombre, email y telefono (cifrados), email\_bidx (UNIQUE), telefono\_bidx, sector\_id (FK), rol, activo, fecha\_baja, user\_id (FK) & Directorio institucional de empleados para resolución de contacto y notificación. El correo y el teléfono se cifran en reposo con Fernet y se buscan mediante un índice ciego (HMAC-SHA-256), según la decisión de c-153; el campo \texttt{rol} admite cuatro valores: usuario final, mesa de ayuda, administrador del directorio y gestión de incidentes. La columna \texttt{fecha\_baja} registra la desactivación y sostiene la retención (relación laboral activa más un año). \\
+\texttt{directorio\_empleado} & id (PK), legajo (UNIQUE), nombre, email y telefono (cifrados), email\_bidx (UNIQUE), telefono\_bidx, sector\_id (FK), rol, activo, fecha\_baja, user\_id (FK) & Directorio institucional de empleados para resolución de contacto y notificación. El correo y el teléfono se cifran en reposo con Fernet y se buscan mediante un índice ciego (HMAC-SHA-256); el campo \texttt{rol} admite cuatro valores: usuario final, mesa de ayuda, administrador del directorio y gestión de incidentes. La columna \texttt{fecha\_baja} registra la desactivación y sostiene la retención (relación laboral activa más un año). \\
 \bottomrule
 \end{tabular}
 \par\smallskip
@@ -101,7 +101,7 @@ El canal de origen constituye una entrada opcional del backend: el esquema de cr
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{er_modelo_datos}
-\caption[Diagrama entidad-relación de las siete entidades principales]{Diagrama entidad-relación de las siete entidades principales del modelo de datos de la configuración entregada (release \texttt{v1.2.18}; esquema completo en el Anexo~C).}
+\caption[Diagrama entidad-relación de las siete entidades principales]{Diagrama entidad-relación de las siete entidades principales del modelo de datos de la configuración entregada (release \texttt{v1.2.19}; esquema completo en el Anexo~C).}
 \label{fig:er_modelo_datos}
 \end{figure}
 

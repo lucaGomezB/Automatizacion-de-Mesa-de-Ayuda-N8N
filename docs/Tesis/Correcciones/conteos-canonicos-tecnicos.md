@@ -189,7 +189,7 @@ reintentos del backend al modelo de la Seccion 2.
 | Tiempo de espera por intento del login | **10000 ms** | `n8n/workflow.json` (`parameters.options.timeout` de `Login operador`) | vigente |
 | Tiempo de espera por intento del alta | **75000 ms** | `n8n/workflow.json` (`parameters.options.timeout` de `HTTP POST a MESA-AYUDAS`) | vigente |
 | Tope de ejecucion de N8N | **300 s** (`EXECUTIONS_TIMEOUT`) | `docker-compose.yml` | vigente |
-| Pruebas de integracion PostgreSQL | **54** | `App/Backend/tests` | vigente |
+| Pruebas de integracion PostgreSQL | **61** | `App/Backend/tests` | vigente |
 | Nodos del flujo (totales / operativos) | **32 / 29** | `n8n/workflow.json` | vigente (sin cambio) |
 
 Peor caso del tramo: 40 s (`Login`) + 235 s (`POST`) = 275 s < 300 s.
@@ -207,7 +207,7 @@ for n in w['nodes']:
 "
 ```
 
-y, desde `App/Backend`, `pytest -m integration --collect-only -q` (informa `54/...`).
+y, desde `App/Backend`, `pytest -m integration --collect-only -q` (informa `61/1835`).
 
 Figura `fig:despliegue`: se regenero desde la fuente Mermaid versionada
 `docs/diagrams/despliegue.md` (rotulo "TLS 1.2/1.3", antes "TLS 1.3").
