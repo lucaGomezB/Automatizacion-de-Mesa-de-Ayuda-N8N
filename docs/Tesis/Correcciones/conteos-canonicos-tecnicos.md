@@ -64,12 +64,12 @@ Estados: `vigente` (valor citable), `retirado` (desmentido; NO citable) y `intoc
 | Nodos del flujo (totales) | **32** | `n8n/workflow.json` | vigente |
 | Nodos operativos | **29** | `n8n/workflow.json` (32 totales − 3 notas) | vigente |
 | Notas adhesivas (`stickyNote`) | **3** | `n8n/workflow.json` | vigente |
-| Paquete del SDK de Google | **`google-genai`** | `App/Backend/requirements.txt:34` (`google-genai>=2.20.0,<3`) | vigente como paquete; la cota `>=2.20.0,<3` queda **superada** (la configuracion evaluada `d6bb474` declara `>=2.20.0` y la entregada `v1.2.5` declara `>=2.33.0,<3`; ver la Seccion 7) |
+| Paquete del SDK de Google | **`google-genai`** | `App/Backend/requirements.txt:34` (`google-genai>=2.20.0,<3`) | vigente como paquete; la cota `>=2.20.0,<3` queda **superada** (la configuracion evaluada `bf5e099` declara `>=2.20.0` y la entregada `v1.2.5` declara `>=2.33.0,<3`; ver la Seccion 7) |
 | Paquete `google-generativeai` | **retirado** (SDK deprecado) | `App/Backend/requirements.txt:25` (comentario: reemplaza al deprecado) | retirado |
-| Tiempo de espera de la inferencia por intento (backend → modelo) | **30 s** | `App/Backend/app/config/settings.py:85` (`gemini_timeout_seconds`), introducido en el commit `11036be` (2026-09-24) | vigente |
-| Presupuesto total de reloj por clasificación | **60 s** | `App/Backend/app/config/settings.py:104` (`gemini_total_timeout_seconds`), introducido en el commit `429f2c9` (2026-09-29, c-58) | vigente |
-| Reintentos adicionales del backend al modelo | **2** (peor caso, 3 intentos) | `App/Backend/app/config/settings.py:97` (`gemini_max_retries`), commit `429f2c9` (2026-09-29) | vigente |
-| Tiempo de espera de la inferencia de 10 s | **retirado** | valor previo a `11036be` (2026-09-24); desmentido por `settings.py:85` | retirado |
+| Tiempo de espera de la inferencia por intento (backend → modelo) | **30 s** | `App/Backend/app/config/settings.py:85` (`gemini_timeout_seconds`), introducido en el commit `cf1cfb4` (2026-09-24) | vigente |
+| Presupuesto total de reloj por clasificación | **60 s** | `App/Backend/app/config/settings.py:104` (`gemini_total_timeout_seconds`), introducido en el commit `ed4beb9` (2026-09-29, c-58) | vigente |
+| Reintentos adicionales del backend al modelo | **2** (peor caso, 3 intentos) | `App/Backend/app/config/settings.py:97` (`gemini_max_retries`), commit `ed4beb9` (2026-09-29) | vigente |
+| Tiempo de espera de la inferencia de 10 s | **retirado** | valor previo a `cf1cfb4` (2026-09-24); desmentido por `settings.py:85` | retirado |
 
 ### 2.1 Las siete entidades principales (lista canónica)
 
@@ -152,9 +152,9 @@ Fuentes primarias (solo lectura, sin edición):
 Evidencia del upsert c-135 (solo lectura):
 
 - `git log -S "gemini_timeout_seconds: int = 30" --date=short --format='%ad %h %s' -- App/Backend/app/config/settings.py`
-  devuelve `2026-09-24 11036be fix(gemini): migrar el clasificador a Gemini 3.6 Flash y timeout de 30s`.
+  devuelve `2026-09-24 cf1cfb4 fix(gemini): migrar el clasificador a Gemini 3.6 Flash y timeout de 30s`.
 - `git log -S "gemini_total_timeout_seconds" ...` y `git log -S "gemini_max_retries" ...`
-  devuelven `2026-09-29 429f2c9 feat(c-58): resiliencia de Gemini (reintentos acotados, presupuesto y guard de costo)`.
+  devuelven `2026-09-29 ed4beb9 feat(c-58): resiliencia de Gemini (reintentos acotados, presupuesto y guard de costo)`.
 - Ambos commits son anteriores a las corridas de la campaña automatizada (2026-10-02
   y 2026-10-06).
 - Sin override versionado: `grep -rn -E "GEMINI_(TIMEOUT|TOTAL_TIMEOUT)_SECONDS" docs docker-compose.yml docker-compose.dev.yml`
@@ -242,12 +242,12 @@ conservan como artefacto reproducible no embebido.
 ## 7. Configuracion evaluada frente a entregada (c-158)
 
 Valores de la tabla `tab:configuracion-evaluada-entregada` (Anexo B de la tesis), verificados el
-2026-10-28 con `git show` sobre el commit evaluado `d6bb474` (7-10-2026, primera revision que
-versiona `hybrid-v3`) y el tag `v1.2.5` (`e5508850b5b48368c9cc446de2d616a5198c3f20`). Las
-dependencias no cambiaron entre `11036be` (24-09) y `d6bb474`, de modo que la columna evaluada
+2026-10-28 con `git show` sobre el commit evaluado `bf5e099` (7-10-2026, primera revision que
+versiona `hybrid-v3`) y el tag `v1.2.5` (`70895e21ce159fab94d8049b88a8606d460f6e4d`). Las
+dependencias no cambiaron entre `cf1cfb4` (24-09) y `bf5e099`, de modo que la columna evaluada
 rige para las tres corridas del brazo automatizado.
 
-| Elemento | `d6bb474` (evaluada) | `v1.2.5` (entregada) | Comando de verificacion |
+| Elemento | `bf5e099` (evaluada) | `v1.2.5` (entregada) | Comando de verificacion |
 |---|---|---|---|
 | FastAPI | 0.115.0 | 0.162.0 | `git show <rev>:App/Backend/requirements.txt \| grep -i fastapi` |
 | Uvicorn | 0.30.6 | 0.54.0 | idem, `uvicorn` |
@@ -255,13 +255,13 @@ rige para las tres corridas del brazo automatizado.
 | google-genai | `>=2.20.0` | `>=2.33.0,<3` | idem, `google-genai` |
 | pytest / pytest-cov | 8.3.3 / 5.0.0 | 9.1.1 / 7.1.0 | idem, `pytest` |
 | React (`package-lock.json`) | 18.3.1 | 19.3.1 | `git show <rev>:App/Frontend/package-lock.json` y lectura de `packages["node_modules/react"].version` |
-| Nodos del flujo N8N | 28 (25 operativos y 3 notas); 38 (35 y 3) hasta c-72 (`24ab238`) | 32 (29 y 3) | `git show <rev>:n8n/workflow.json` y conteo de `nodes` y de `stickyNote` |
+| Nodos del flujo N8N | 28 (25 operativos y 3 notas); 38 (35 y 3) hasta c-72 (`f0c07a3`) | 32 (29 y 3) | `git show <rev>:n8n/workflow.json` y conteo de `nodes` y de `stickyNote` |
 | Reintentos del alta | no (`continueErrorOutput` sin `retryOnFail`) | si: `retryOnFail`, `maxTries` 3, `waitBetweenTries` 5000 ms en `HTTP POST a MESA-AYUDAS` y `Login operador`; `options.timeout` 75000 y 10000 ms | idem, nodos con `retryOnFail` |
 | Revision por reportante no identificado | no | si (c-82, `incidente_service.py:302,412` en `v1.2.5`) | `git grep -n "reportante no identificado" <rev> -- App/Backend/app/services` |
-| Prueba de humo E2E y TLS del borde | no (solo `dry_run` sin `e2e_checks.py` ni `test_tls_checks.py`) | si (c-140; corrida 25/25 del 27-10 sobre `b4b3be9`) | `git ls-tree -r --name-only <rev> \| grep -E "e2e_checks\|test_tls_checks"` |
-| Sin cambios | N8N 2.11.2, Python 3.12-slim, PostgreSQL 15.5-alpine, `gemini-3.6-flash`, temperatura 0,3, top_p 0,9, 100 tokens, 30 s por intento, 60 s en total, 2 reintentos del backend al modelo, umbrales 0,5166 y 0,70 | igual | `git show <rev>:App/Backend/app/config/settings.py` y `docker-compose.yml`; `git diff d6bb474 v1.2.5 -- App/Backend/app/classifiers` solo muestra comentarios, importacion perezosa y docstrings |
+| Prueba de humo E2E y TLS del borde | no (solo `dry_run` sin `e2e_checks.py` ni `test_tls_checks.py`) | si (c-140; corrida 25/25 del 27-10 sobre `e3176da`) | `git ls-tree -r --name-only <rev> \| grep -E "e2e_checks\|test_tls_checks"` |
+| Sin cambios | N8N 2.11.2, Python 3.12-slim, PostgreSQL 15.5-alpine, `gemini-3.6-flash`, temperatura 0,3, top_p 0,9, 100 tokens, 30 s por intento, 60 s en total, 2 reintentos del backend al modelo, umbrales 0,5166 y 0,70 | igual | `git show <rev>:App/Backend/app/config/settings.py` y `docker-compose.yml`; `git diff bf5e099 v1.2.5 -- App/Backend/app/classifiers` solo muestra comentarios, importacion perezosa y docstrings |
 
-Contraste del borde: `git diff --stat b4b3be95 v1.2.5 -- nginx docker-compose.yml openssl n8n/workflow.json scripts/dry_run` es vacio. El nginx del compose pasa de
+Contraste del borde: `git diff --stat e3176da1 v1.2.5 -- nginx docker-compose.yml openssl n8n/workflow.json scripts/dry_run` es vacio. El nginx del compose pasa de
 `nginx:alpine` (evaluada) a `nginx:1.31.7-alpine` (entregada); no se agrego fila porque el
 proxy no formo parte de la campana (Anexo A y Seccion 7.4 de la tesis).
 
@@ -274,9 +274,9 @@ instrumentacion de intervencion de `c-165` aplicada, es decir, sobre la misma
 configuracion del clasificador que la evaluada; solo se consigna la fila
 `classifier_version`, que coincide con la evaluada.
 
-| Clave | `d6bb474` (evaluada) | `v1.2.7` (entregada) | Campana de medicion | Comando de verificacion |
+| Clave | `bf5e099` (evaluada) | `v1.2.7` (entregada) | Campana de medicion | Comando de verificacion |
 |---|---|---|---|---|
-| `classifier_version` (`HYBRID_CACHE_VERSION`) | `hybrid-v3` | `hybrid-v3` | `hybrid-v3` | `git show d6bb474:App/Backend/app/constants.py \| grep HYBRID_CACHE_VERSION`; `git show v1.2.7:App/Backend/app/constants.py \| grep HYBRID_CACHE_VERSION` |
+| `classifier_version` (`HYBRID_CACHE_VERSION`) | `hybrid-v3` | `hybrid-v3` | `hybrid-v3` | `git show bf5e099:App/Backend/app/constants.py \| grep HYBRID_CACHE_VERSION`; `git show v1.2.7:App/Backend/app/constants.py \| grep HYBRID_CACHE_VERSION` |
 | Configuracion de la campana (cache in-sample) | — | — | `hybrid-v3` | `evaluation/data/campana/README.md:167` (`classifier_version_in_sample: hybrid-v3`) |
 
 Las restantes filas de la columna de la campana quedan sin declarar (`---`) porque las
@@ -295,7 +295,7 @@ correo y web desde `cda7712` (5-11-2026 20:45 -03; sidecars 5-11 23:47 UTC a 6-1
 telefonia el 6-11 (17:33 a 19:45 -03) tras c-174 (`e7dfd17`) y c-175 (`fce5ec6`); intervenciones
 (`validado_en`) del 7-11 08:47 al 8-11 16:55 -03, mientras se confirmaban c-177 a c-183.
 
-| Clave | Evaluada (`d6bb474`) | Entregada | Campana complementaria | Comando de verificacion |
+| Clave | Evaluada (`bf5e099`) | Entregada | Campana complementaria | Comando de verificacion |
 |---|---|---|---|---|
 | FastAPI, Uvicorn, SQLAlchemy, `google-genai`, pytest, React, flujo N8N (32 nodos), reintentos | ver 7 | ver 7 | como la entregada | `git diff --stat cda7712 v1.2.10 -- App/Backend/requirements.txt App/Frontend/package-lock.json n8n/workflow.json App/Backend/app/constants.py App/Backend/app/config/settings.py` (sin diferencias); `git diff --stat cda7712 fce5ec6 -- App/Backend/requirements.txt n8n/workflow.json docker-compose.yml` (sin diferencias) |
 | Revision por reportante no identificado (c-82) | No | Si | Si | `git show cda7712:App/Backend/app/services/incidente_service.py \| grep -n "reportante_empleado_id is None"` |

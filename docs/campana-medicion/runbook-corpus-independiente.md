@@ -117,11 +117,11 @@ El runner repite este control como paso previo obligatorio (sección 7): si fall
 La validación fuera de muestra solo tiene sentido si el clasificador es **el mismo** que el del in-sample (`hybrid-v3`, `evaluation/evidence/README.md`) y no se ajusta después de ver el corpus independiente.
 
 1. **`classifier_version`**: el cache independiente la registra sola (hoy `hybrid-v3`); debe ser idéntica a la del in-sample.
-2. **Commit y archivos del clasificador**: el cache independiente registra el `commit` de `HEAD` al generarlo. La corrida in-sample no registró commit (`evaluation/data/campana/README.md`, sección "Referencia in-sample"), así que se comprueba que **el clasificador no cambió** desde `d6bb474`, la primera revisión que versiona la cascada `hybrid-v3` (Anexo B de la tesis):
+2. **Commit y archivos del clasificador**: el cache independiente registra el `commit` de `HEAD` al generarlo. La corrida in-sample no registró commit (`evaluation/data/campana/README.md`, sección "Referencia in-sample"), así que se comprueba que **el clasificador no cambió** desde `bf5e099`, la primera revisión que versiona la cascada `hybrid-v3` (Anexo B de la tesis):
 
    ```bash
-   git diff d6bb474 HEAD -- App/Backend/app/classifiers docs/prompt_gemini.txt App/Backend/app/constants.py
-   git diff d6bb474 HEAD -- App/Backend/app/config/settings.py
+   git diff bf5e099 HEAD -- App/Backend/app/classifiers docs/prompt_gemini.txt App/Backend/app/constants.py
+   git diff bf5e099 HEAD -- App/Backend/app/config/settings.py
    ```
 
    Solo se admiten diferencias en comentarios, importaciones y campos ajenos a la clasificación. No pueden cambiar reglas, `KEYWORD_MAP`, el prompt, el vocabulario de sectores, `deterministic_score_threshold` (tau), `human_review_threshold`, el modelo ni los parámetros de Gemini. El resultado del control y el commit se anotan en el README de la carpeta.

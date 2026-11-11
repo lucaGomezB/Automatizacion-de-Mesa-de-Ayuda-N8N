@@ -3624,7 +3624,7 @@ La version de trabajo de la tesis `docs/Tesis/v10 (IA)/` SHALL publicarse median
 #### Scenario: Tags previos inmutables
 
 - **WHEN** se comparan `git rev-parse v1.0.0^{commit}` y `git rev-parse v1.0.1^{commit}` con sus valores previos
-- **THEN** `v1.0.0` sigue en `61a6b117dd1321fbee25f9792d9f29b884e5ac8d` y `v1.0.1` sigue en `bac4c5f6f85c889b48a90d4396bbdaccc7a35ad0`
+- **THEN** `v1.0.0` sigue en `3ae34df1ac3924a8a106b84e734038ade5e7e29b` y `v1.0.1` sigue en `ee6a869eb3090d54533a1cb36cf0fbd96c0bba03`
 - **AND** ningun tag existente fue reescrito o re-creado
 
 ### Requirement: URL explicita del repositorio en el anexo de codigo fuente
@@ -3685,7 +3685,7 @@ La version de trabajo de la tesis `docs/Tesis/v10 (IA)/` SHALL publicarse median
 #### Scenario: Tags previos inmutables
 
 - **WHEN** se comparan `git rev-parse v1.0.0^{commit}`, `git rev-parse v1.0.1^{commit}` y `git rev-parse v1.1.0^{commit}` con sus valores previos
-- **THEN** `v1.0.0` sigue en `61a6b117dd1321fbee25f9792d9f29b884e5ac8d`, `v1.0.1` sigue en `bac4c5f6f85c889b48a90d4396bbdaccc7a35ad0` y `v1.1.0` sigue en `7103b649d8c4f51737ad6ad4095dad22c9406400`
+- **THEN** `v1.0.0` sigue en `3ae34df1ac3924a8a106b84e734038ade5e7e29b`, `v1.0.1` sigue en `ee6a869eb3090d54533a1cb36cf0fbd96c0bba03` y `v1.1.0` sigue en `ff4bc64ad66eb4478c2e74c7048d3159d1f96e5c`
 - **AND** ningun tag existente fue reescrito o re-creado
 
 ### Requirement: Procedencia declarada de los ajustes realizados sobre el corpus de validacion
@@ -5456,7 +5456,7 @@ como superado y MUST NOT borrarse, recrearse ni reapuntarse.
 
 #### Scenario: Tag publicado inmutable
 
-- **WHEN** se compara `git rev-parse v1.2.0^{commit}` con el valor registrado antes de este change (`a49d035c67b32ae17e633ec04b09ecdd2781aac6`)
+- **WHEN** se compara `git rev-parse v1.2.0^{commit}` con el valor registrado antes de este change (`1f83b0adabdd0ef19618e79ebd6fd2d8319b1be9`)
 - **THEN** el valor no cambio
 - **AND** el registro declara `v1.2.0` como superada por `v1.2.1`
 
@@ -5603,7 +5603,7 @@ La descripcion de los parametros de inferencia en el Anexo H (`subsec:anexo-para
 
 ### Requirement: Tiempo de espera de la inferencia coherente con la configuracion vigente durante la campana
 
-Las menciones del tiempo de espera de la inferencia con Gemini en `05-arquitectura.tex` (`subsec:capa-procesamiento`) y en la fila `timeout` de `tab:anexo_gemini_params` (`12-anexos.tex`) SHALL coincidir con la configuracion vigente durante la campana automatizada, determinada por `App/Backend/app/config/settings.py` y su historia en git: 30 s por intento (`gemini_timeout_seconds`, desde el commit `11036be`, 2026-09-24) y 60 s de presupuesto total por clasificacion (`gemini_total_timeout_seconds`, desde el commit `429f2c9`, 2026-09-29), salvo que los autores declaren un override aplicado durante la campana, que prevalece y se registra. El valor de 10 s MUST NOT presentarse como el del sistema evaluado. La procedencia SHALL registrarse en `docs/Tesis/Correcciones/conteos-canonicos-tecnicos.md`. El cambio MUST NOT introducir cifras que no surjan de `settings.py`, de la historia del repositorio o de la declaracion registrada de los autores.
+Las menciones del tiempo de espera de la inferencia con Gemini en `05-arquitectura.tex` (`subsec:capa-procesamiento`) y en la fila `timeout` de `tab:anexo_gemini_params` (`12-anexos.tex`) SHALL coincidir con la configuracion vigente durante la campana automatizada, determinada por `App/Backend/app/config/settings.py` y su historia en git: 30 s por intento (`gemini_timeout_seconds`, desde el commit `cf1cfb4`, 2026-09-24) y 60 s de presupuesto total por clasificacion (`gemini_total_timeout_seconds`, desde el commit `ed4beb9`, 2026-09-29), salvo que los autores declaren un override aplicado durante la campana, que prevalece y se registra. El valor de 10 s MUST NOT presentarse como el del sistema evaluado. La procedencia SHALL registrarse en `docs/Tesis/Correcciones/conteos-canonicos-tecnicos.md`. El cambio MUST NOT introducir cifras que no surjan de `settings.py`, de la historia del repositorio o de la declaracion registrada de los autores.
 
 #### Scenario: Tiempo de espera alineado en el capitulo 5 y en el Anexo H
 
@@ -5889,7 +5889,7 @@ La version de trabajo de la tesis `docs/Tesis/v10 (IA)/` SHALL publicarse median
 
 - **WHEN** se lee `sec:anexo-repositorio` en `git show v1.2.0:"docs/Tesis/v10 (IA)/paper/sections/12-anexos.tex"`
 - **THEN** figura el tag `v1.2.0`
-- **AND** no figura el hash `4160d84286623b073d2904353e6f9163ae211de7` de `v1.1.1`
+- **AND** no figura el hash `af6000bffde6d0039ef552c5a86e8c71bfe52064` de `v1.1.1`
 
 #### Scenario: Hash consignado y coherente con el tag
 
@@ -5900,7 +5900,7 @@ La version de trabajo de la tesis `docs/Tesis/v10 (IA)/` SHALL publicarse median
 #### Scenario: Tags previos inmutables
 
 - **WHEN** se comparan `git rev-parse v1.0.0^{commit}`, `git rev-parse v1.0.1^{commit}`, `git rev-parse v1.1.0^{commit}` y `git rev-parse v1.1.1^{commit}` con sus valores previos
-- **THEN** `v1.0.0` sigue en `61a6b117dd1321fbee25f9792d9f29b884e5ac8d`, `v1.0.1` en `bac4c5f6f85c889b48a90d4396bbdaccc7a35ad0`, `v1.1.0` en `7103b649d8c4f51737ad6ad4095dad22c9406400` y `v1.1.1` en `4160d84286623b073d2904353e6f9163ae211de7`
+- **THEN** `v1.0.0` sigue en `3ae34df1ac3924a8a106b84e734038ade5e7e29b`, `v1.0.1` en `ee6a869eb3090d54533a1cb36cf0fbd96c0bba03`, `v1.1.0` en `ff4bc64ad66eb4478c2e74c7048d3159d1f96e5c` y `v1.1.1` en `af6000bffde6d0039ef552c5a86e8c71bfe52064`
 - **AND** ningun tag existente fue reescrito ni re-creado
 
 #### Scenario: Tag alcanzable desde la rama principal
@@ -5910,7 +5910,7 @@ La version de trabajo de la tesis `docs/Tesis/v10 (IA)/` SHALL publicarse median
 
 ### Requirement: Publicacion de la release de integracion v1.2.2
 
-La version de trabajo de la tesis `docs/Tesis/v10 (IA)/` SHALL publicarse como release `v1.2.2` integrando los changes ya aplicados `c-146-completar-metricas-trabajos-previos` y `c-140-endurecimiento-tecnico-tls-reintentos-e2e`, mas la compactacion de forma aplicada en el commit `8c0cf6d`. La release SHALL usar el patron de dos commits: el commit C1 SHALL cambiar el tag del Anexo B a `v1.2.2`, retirar la linea del hash de la release anterior y actualizar la version de `Gomez2026_repositorio`, y el commit C2 SHALL consignar en el Anexo B el hash completo de 40 caracteres del commit etiquetado, coincidente con `git rev-parse v1.2.2^{commit}`, y registrar el mismo hash en `docs/Tesis/Correcciones/dictamen-correcciones.md`. El tag SHALL ser anotado y SHALL crearse sobre C1 solo despues de recompilar el PDF en el entorno de registro (`texlive-thesis`) y verificar cero errores fatales, cero referencias o citas indefinidas, cero etiquetas duplicadas y el conteo de paginas del tope vigente. El tag SHALL publicarse en `origin` y la integracion a `main` SHALL hacerse con merge commit (nunca squash ni rebase). Antes de etiquetar, las tareas pendientes de c-140 (3.8 de regresion de backend y 3.9 de documentacion de la guia del workflow) SHALL estar cerradas y la tarea 3.10 (reimportacion en la instancia operativa) SHALL figurar como ejecutada por el equipo, no por el agente. Los tags `v1.0.0`, `v1.0.1`, `v1.1.0`, `v1.1.1`, `v1.2.0` y `v1.2.1` MUST NOT moverse ni borrarse; `v1.2.1` queda registrada como superada.
+La version de trabajo de la tesis `docs/Tesis/v10 (IA)/` SHALL publicarse como release `v1.2.2` integrando los changes ya aplicados `c-146-completar-metricas-trabajos-previos` y `c-140-endurecimiento-tecnico-tls-reintentos-e2e`, mas la compactacion de forma aplicada en el commit `be9b746`. La release SHALL usar el patron de dos commits: el commit C1 SHALL cambiar el tag del Anexo B a `v1.2.2`, retirar la linea del hash de la release anterior y actualizar la version de `Gomez2026_repositorio`, y el commit C2 SHALL consignar en el Anexo B el hash completo de 40 caracteres del commit etiquetado, coincidente con `git rev-parse v1.2.2^{commit}`, y registrar el mismo hash en `docs/Tesis/Correcciones/dictamen-correcciones.md`. El tag SHALL ser anotado y SHALL crearse sobre C1 solo despues de recompilar el PDF en el entorno de registro (`texlive-thesis`) y verificar cero errores fatales, cero referencias o citas indefinidas, cero etiquetas duplicadas y el conteo de paginas del tope vigente. El tag SHALL publicarse en `origin` y la integracion a `main` SHALL hacerse con merge commit (nunca squash ni rebase). Antes de etiquetar, las tareas pendientes de c-140 (3.8 de regresion de backend y 3.9 de documentacion de la guia del workflow) SHALL estar cerradas y la tarea 3.10 (reimportacion en la instancia operativa) SHALL figurar como ejecutada por el equipo, no por el agente. Los tags `v1.0.0`, `v1.0.1`, `v1.1.0`, `v1.1.1`, `v1.2.0` y `v1.2.1` MUST NOT moverse ni borrarse; `v1.2.1` queda registrada como superada.
 
 #### Scenario: Tag anotado sobre C1
 
@@ -5922,7 +5922,7 @@ La version de trabajo de la tesis `docs/Tesis/v10 (IA)/` SHALL publicarse como r
 
 - **WHEN** se lee `sec:anexo-repositorio` en `git show v1.2.2:"docs/Tesis/v10 (IA)/paper/sections/12-anexos.tex"`
 - **THEN** figura el tag `v1.2.2`
-- **AND** no figura el hash `509ffff105c21fed0c07cbf9a46245ba6c53e0e1` de `v1.2.1`
+- **AND** no figura el hash `5285939371cf3c32d0f1112576584478bf00e5e2` de `v1.2.1`
 
 #### Scenario: Hash consignado y coherente con el tag
 
@@ -5945,7 +5945,7 @@ La version de trabajo de la tesis `docs/Tesis/v10 (IA)/` SHALL publicarse como r
 #### Scenario: Tags previos inmutables
 
 - **WHEN** se comparan `git rev-parse v1.0.0^{commit}`, `v1.0.1^{commit}`, `v1.1.0^{commit}`, `v1.1.1^{commit}`, `v1.2.0^{commit}` y `v1.2.1^{commit}` con sus valores previos
-- **THEN** `v1.0.0` sigue en `61a6b117dd1321fbee25f9792d9f29b884e5ac8d`, `v1.0.1` en `bac4c5f6f85c889b48a90d4396bbdaccc7a35ad0`, `v1.1.0` en `7103b649d8c4f51737ad6ad4095dad22c9406400`, `v1.1.1` en `4160d84286623b073d2904353e6f9163ae211de7`, `v1.2.0` en `a49d035c67b32ae17e633ec04b09ecdd2781aac6` y `v1.2.1` en `509ffff105c21fed0c07cbf9a46245ba6c53e0e1`
+- **THEN** `v1.0.0` sigue en `3ae34df1ac3924a8a106b84e734038ade5e7e29b`, `v1.0.1` en `ee6a869eb3090d54533a1cb36cf0fbd96c0bba03`, `v1.1.0` en `ff4bc64ad66eb4478c2e74c7048d3159d1f96e5c`, `v1.1.1` en `af6000bffde6d0039ef552c5a86e8c71bfe52064`, `v1.2.0` en `1f83b0adabdd0ef19618e79ebd6fd2d8319b1be9` y `v1.2.1` en `5285939371cf3c32d0f1112576584478bf00e5e2`
 - **AND** ningun tag existente fue reescrito, recreado ni borrado
 
 #### Scenario: Tag alcanzable desde la rama principal
@@ -6095,14 +6095,14 @@ La subseccion "Protocolo de pruebas" (`subsec:protocolo-pruebas`, `docs/Tesis/v1
 #### Scenario: Configuracion del clasificador por corrida segun el historial
 
 - **WHEN** se compara la configuracion declarada para cada corrida con `git log` y con los changes archivados c-68, c-70, c-71, c-72 y c-74
-- **THEN** la corrida del 2-10 se describe con la configuracion `hybrid-v1` del commit `24ab238`
+- **THEN** la corrida del 2-10 se describe con la configuracion `hybrid-v1` del commit `f0c07a3`
 - **AND** la corrida telefonica no se describe como anterior a c-71 ni se le asigna una revision unica, y se la declara anterior a c-74
 
 #### Scenario: Corrida de clasificacion fuera de linea
 
 - **WHEN** se lee la descripcion de la corrida de clasificacion
 - **THEN** remite a `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json`, consigna el hash del corpus que registra la evidencia y la presenta como ejecucion del framework de evaluacion sin pasar por los canales
-- **AND** la asocia a la version `hybrid-v3` que versiona el commit `d6bb474`, sin afirmar que se ejecuto sobre ese commit
+- **AND** la asocia a la version `hybrid-v3` que versiona el commit `bf5e099`, sin afirmar que se ejecuto sobre ese commit
 
 #### Scenario: Datos faltantes marcados y no inventados
 
@@ -6163,11 +6163,11 @@ La Seccion 6.4 (`06-implementacion.tex`, `subsec:integracion-canal-telefonico`) 
 
 ### Requirement: Tabla de configuracion evaluada frente a entregada
 
-El Anexo B (`sec:anexo-repositorio`, `12-anexos.tex`) SHALL incluir una tabla con etiqueta `tab:configuracion-evaluada-entregada` y tres columnas de configuracion: "Configuracion evaluada" (commit `d6bb474`, 7-10-2026), "Configuracion de la campaña complementaria" (la revision o el rango de revisiones sobre el que corrio la campaña complementaria de medicion, con c-165 a c-168 aplicados y el clasificador congelado, verificado con `git log` y con los artefactos de `evaluation/data/campana/` y `docs/campana-medicion/`) y "Configuracion entregada" (el tag que identifica el Anexo B en la release vigente). La tabla SHALL consignar solo valores verificados con `git show <revision>:<archivo>`, con `git log` o con los changes archivados: versiones de FastAPI, Uvicorn, SQLAlchemy, google-genai, pytest, pytest-cov y React; el flujo N8N versionado; la imagen de N8N (oficial `n8nio/n8n:2.11.2` o imagen derivada de `docker/n8n/Dockerfile` con el parche IMAP de c-182); los reintentos del tramo de alta (c-140); el disparador de revision por reportante no identificado en el directorio (c-82); la propagacion del contacto del reportante en el POST (c-162); la prueba de humo de extremo a extremo y la verificacion automatizada de TLS (c-140); la instrumentacion de intervencion (c-165) y la version del clasificador (`classifier_version`), que SHALL coincidir entre la configuracion evaluada y la de la campaña complementaria; y los componentes sin cambios. La columna de la campaña complementaria MUST NOT quedar vacia ("---") en las filas que la condicionan (revision por reportante, propagacion del contacto, instrumentacion, clasificador e imagen de N8N); cuando un valor no sea recuperable SHALL decir "no registrado" y acotar el rango con `git log`. La tabla y su nota de fuente MUST NOT afirmar que la campaña complementaria corrio sobre "la misma configuracion evaluada": SHALL decir que corrio con el mismo clasificador congelado (`hybrid-v3`) sobre un backend posterior con c-82 y c-162 activos. La fila "Sin cambios" MUST NOT incluir N8N 2.11.2 sin calificar si la configuracion entregada usa la imagen derivada. Cada valor SHALL registrarse en `docs/Tesis/Correcciones/conteos-canonicos-tecnicos.md` con su comando de verificacion. La tabla MUST NOT incluir valores no verificados.
+El Anexo B (`sec:anexo-repositorio`, `12-anexos.tex`) SHALL incluir una tabla con etiqueta `tab:configuracion-evaluada-entregada` y tres columnas de configuracion: "Configuracion evaluada" (commit `bf5e099`, 7-10-2026), "Configuracion de la campaña complementaria" (la revision o el rango de revisiones sobre el que corrio la campaña complementaria de medicion, con c-165 a c-168 aplicados y el clasificador congelado, verificado con `git log` y con los artefactos de `evaluation/data/campana/` y `docs/campana-medicion/`) y "Configuracion entregada" (el tag que identifica el Anexo B en la release vigente). La tabla SHALL consignar solo valores verificados con `git show <revision>:<archivo>`, con `git log` o con los changes archivados: versiones de FastAPI, Uvicorn, SQLAlchemy, google-genai, pytest, pytest-cov y React; el flujo N8N versionado; la imagen de N8N (oficial `n8nio/n8n:2.11.2` o imagen derivada de `docker/n8n/Dockerfile` con el parche IMAP de c-182); los reintentos del tramo de alta (c-140); el disparador de revision por reportante no identificado en el directorio (c-82); la propagacion del contacto del reportante en el POST (c-162); la prueba de humo de extremo a extremo y la verificacion automatizada de TLS (c-140); la instrumentacion de intervencion (c-165) y la version del clasificador (`classifier_version`), que SHALL coincidir entre la configuracion evaluada y la de la campaña complementaria; y los componentes sin cambios. La columna de la campaña complementaria MUST NOT quedar vacia ("---") en las filas que la condicionan (revision por reportante, propagacion del contacto, instrumentacion, clasificador e imagen de N8N); cuando un valor no sea recuperable SHALL decir "no registrado" y acotar el rango con `git log`. La tabla y su nota de fuente MUST NOT afirmar que la campaña complementaria corrio sobre "la misma configuracion evaluada": SHALL decir que corrio con el mismo clasificador congelado (`hybrid-v3`) sobre un backend posterior con c-82 y c-162 activos. La fila "Sin cambios" MUST NOT incluir N8N 2.11.2 sin calificar si la configuracion entregada usa la imagen derivada. Cada valor SHALL registrarse en `docs/Tesis/Correcciones/conteos-canonicos-tecnicos.md` con su comando de verificacion. La tabla MUST NOT incluir valores no verificados.
 
 #### Scenario: Valores verificados contra ambas revisiones
 
-- **WHEN** se compara cada celda de la tabla con `git show d6bb474:App/Backend/requirements.txt`, con el mismo archivo en la revision de la campaña complementaria y en el tag entregado, con los `package.json`/`package-lock.json` y con `n8n/workflow.json` de las tres revisiones
+- **WHEN** se compara cada celda de la tabla con `git show bf5e099:App/Backend/requirements.txt`, con el mismo archivo en la revision de la campaña complementaria y en el tag entregado, con los `package.json`/`package-lock.json` y con `n8n/workflow.json` de las tres revisiones
 - **THEN** cada version de la columna evaluada coincide con la registrada (FastAPI 0.115.0, Uvicorn 0.30.6, SQLAlchemy 2.0.36, google-genai >=2.20.0, pytest 8.3.3, pytest-cov 5.0.0, React 18.3.1) y las de las otras dos columnas coinciden con `git show` de su revision
 - **AND** las capacidades posteriores figuran como ausentes en la columna evaluada y presentes en las columnas posteriores con su change, incluida la instrumentacion de intervencion de c-165
 

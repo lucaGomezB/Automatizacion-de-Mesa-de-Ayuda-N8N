@@ -106,7 +106,7 @@ declarado: el control no detecta paráfrasis.
 
 ### D5 — Clasificador congelado y runner reutilizado
 
-`classifier_version = hybrid-v3`, commit `d6bb474`. Control `git diff d6bb474 HEAD` sobre
+`classifier_version = hybrid-v3`, commit `bf5e099`. Control `git diff bf5e099 HEAD` sobre
 `App/Backend/app/classifiers`, `docs/prompt_gemini.txt`, `App/Backend/app/constants.py` y
 `App/Backend/app/config/settings.py` (solo se admiten diferencias ajenas a la clasificación).
 Se corre `python -m evaluation.run_evaluation --corpus ... --predicciones ... --reporte ...
@@ -152,7 +152,7 @@ tag anotado y commit siguiente que consigna el hash. Archivo del change en
   exclusión junto al resultado; el IC (~8,4 pts) se acepta y se informa.
 - [No se consiguen etiquetadores nuevos] → `estado_cegado: limitacion_declarada` en el README;
   el resultado se reporta como limitación y NO como etiquetado ciego.
-- [Deriva del clasificador respecto de `d6bb474`] → control `git diff` antes de clasificar; si
+- [Deriva del clasificador respecto de `bf5e099`] → control `git diff` antes de clasificar; si
   cambió, se detiene y se reporta; no se mide fuera de muestra con un clasificador distinto.
 - [Sobremuestreo desbalancea el global] → se informan las métricas globales con y sin
   ponderación por la distribución del universo.

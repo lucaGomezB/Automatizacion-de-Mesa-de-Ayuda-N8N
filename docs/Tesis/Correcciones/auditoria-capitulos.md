@@ -833,4 +833,4 @@ pasar por el pseudonimizador del backend. ¿Cómo se concilia con el §11.3?
 
 Informe emitido el 4 de agosto de 2026. Auditoría realizada sobre el archivo Tesis_ultima_versión__1_.pd
 (74 páginas, 27.847 palabras) y sobre el repositorio público declarado en su Anexo B, en el
-estado del commit d7df92c del 2 de julio de 2026.
+estado del commit 2268126 del 2 de julio de 2026.

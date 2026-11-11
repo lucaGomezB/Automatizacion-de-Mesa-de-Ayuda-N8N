@@ -64,7 +64,7 @@ Verificación de los datos de tiempo del corpus (JSON, `Corpus Tesis.xlsx` y amb
   > Nota (c-77): esta tabla registra el análisis de sensibilidad tal como se
   > calculó sobre el corpus de c-76. La reducción "Reportado" se rebasó luego a
   > **71,2 %** (\(W = 363\), \(r = 0,9639\)) con el corpus actualizado por c-77
-  > (commit `4602bf5`); los escenarios conservadores quedan como registro histórico.
+  > (commit `d48254b`); los escenarios conservadores quedan como registro histórico.
 
 - **Pares invertidos**: en **12/200** casos el flujo automatizado NO fue más rápido
   (auto ≥ manual). La tesis afirma **W=0** ("sin una sola excepción"), que es
@@ -191,12 +191,12 @@ Cubierto por P1.0/P1 (declarar redondeo al alza + cota de sensibilidad; números
 
 - **Decisiones OQ (c-77, 2026-10-09)**: OQ1=c (rank-biserial directo `r=(T+−T−)/(n(n+1)/2)`), OQ2=c (retirar la sub-pregunta de exactitud humana y reformular H1), OQ3=b (reescribir 6.5 como limitación), OQ4=a (redacción condicional Nginx/TLS), OQ5=b (alinear tesis a 5 sectores), OQ6=diferido (tag).
 - **Acción diferida (OQ6)**: al **terminar** las correcciones (c-76 + c-77), crear el tag **`v1.0.0`** sobre el commit entregado al jurado y consignar el **hash completo** en el Anexo B de la tesis.
-- **OQ6 CERRADO (c-111, 2026-10-21)**: el tag anotado **`v1.0.0`** se creó sobre el commit **`61a6b117dd1321fbee25f9792d9f29b884e5ac8d`** y se publicó en `origin` (`git ls-remote --tags` lo devuelve). El hash completo quedó consignado en el Anexo B de la tesis (`12-anexos.tex`, §Repositorio de código fuente).
-- **Trazabilidad `v1.1.0` (c-121, 2026-10-22)**: el tag anotado **`v1.1.0`** se creó sobre el commit **`7103b649d8c4f51737ad6ad4095dad22c9406400`** y se publicó en `origin` (`git ls-remote --tags` lo devuelve). Ese commit cierra las observaciones del dictamen CONEAU de la v1.0.1 sobre la versión de trabajo `v10 (IA)`, que reproduce el contenido congelado de la v9. El hash completo quedó consignado en el Anexo B de la tesis (`12-anexos.tex`, §Repositorio de código fuente).
-- **Trazabilidad `v1.1.1` (c-123, 2026-10-22)**: el tag anotado **`v1.1.1`** se creó sobre el commit **`4160d84286623b073d2904353e6f9163ae211de7`** y se publicó en `origin`. Ese commit agrega la URL explícita del repositorio en el Anexo B (`12-anexos.tex`, §Repositorio de código fuente) y corrige la versión de la entrada bibliográfica `Gomez2026_repositorio` a `(Version 1.1.1)`. El hash completo quedó consignado en el Anexo B.
-- **Trazabilidad `v1.2.0` (c-141, 2026-10-26)**: el tag anotado **`v1.2.0`** se creo sobre el commit **`a49d035c67b32ae17e633ec04b09ecdd2781aac6`** (C1, `docs(tesis): integrar la FASE 36 y publicar v1.2.0 (c-141)`) y se publico en `origin` junto con `ramagonzalo` (`git ls-remote --tags` lo devuelve). Ese commit integra la FASE 36 (c-130 a c-139 y c-142): cierra las recomendaciones A1-A5 y B4-B16 del dictamen CONEAU del 2026-10-22 sobre `v1.1.0` (matriz de cobertura en este registro), con el Anexo I actualizado, el render y la base de conocimiento sincronizados y 109 paginas (cuerpo 100, anexos 9; regla (b), decision del equipo del 2026-10-26). c-140 no se aplico (excluido provisionalmente) y por eso no hubo prueba de humo. El hash completo quedo consignado en el Anexo B (`12-anexos.tex`, Repositorio de codigo fuente).
-- **Trazabilidad `v1.2.1` (c-145, 2026-10-26)**: el tag anotado **`v1.2.1`** se creó sobre el commit **`509ffff105c21fed0c07cbf9a46245ba6c53e0e1`** (C3, `docs(tesis): corregir afirmaciones factuales y sincronizar el memo (c-145)`). Ese commit corrige las afirmaciones que el repositorio desmentía en la release `v1.2.0` (recuento y omisión de las pruebas de integración PostgreSQL, recuentos congelados de frontend e identificadores internos `OQ1 = A`/`OQ2 = A` del cuerpo), sincroniza el memo canónico (margen 6,66 %), precisa la discusión, resuelve el placeholder `P4`, hace portable el arnés de sensibilidad y agrega la barrera `scripts/preflight/docs_stack_sync.py` de `DOC-005` (change c-145). **`v1.2.0` queda superada** (permanece inmutable, en `a49d035c67b32ae17e633ec04b09ecdd2781aac6`). El hash completo quedó consignado en el Anexo B (`12-anexos.tex`, Repositorio de código fuente); el push del tag y de la rama queda pendiente de confirmación explícita del usuario.
-- **Trazabilidad `v1.2.2` (c-147, 2026-10-27)**: el tag anotado **`v1.2.2`** se creó sobre el commit **`445a47b4f6fccca3d4611ee3cb7adea4e7350dcc`** (C1, `docs(tesis): integrar c-146 y c-140 y publicar v1.2.2 (c-147)`) y se publicó en `origin` junto con la rama `change/c-147-compactacion-y-release-v1-2-2`. Ese commit integra los changes ya aplicados `c-146-completar-metricas-trabajos-previos` y `c-140-endurecimiento-tecnico-tls-reintentos-e2e` y la compactación de forma del commit `8c0cf6d`: el PDF queda en **104 páginas totales** (cuerpo 96, anexos 8; exceso **+4** sobre el tope de 100 sobre el total de la cátedra, honrado y defendido — ver G0.1 del 2026-10-27), con 0 errores fatales, 0 referencias indefinidas y `verify_citations.py` en PASS. **`v1.2.1` queda superada** (permanece inmutable, en `509ffff105c21fed0c07cbf9a46245ba6c53e0e1`). El hash completo quedó consignado en el Anexo B (`12-anexos.tex`, Repositorio de código fuente).
+- **OQ6 CERRADO (c-111, 2026-10-21)**: el tag anotado **`v1.0.0`** se creó sobre el commit **`3ae34df1ac3924a8a106b84e734038ade5e7e29b`** y se publicó en `origin` (`git ls-remote --tags` lo devuelve). El hash completo quedó consignado en el Anexo B de la tesis (`12-anexos.tex`, §Repositorio de código fuente).
+- **Trazabilidad `v1.1.0` (c-121, 2026-10-22)**: el tag anotado **`v1.1.0`** se creó sobre el commit **`ff4bc64ad66eb4478c2e74c7048d3159d1f96e5c`** y se publicó en `origin` (`git ls-remote --tags` lo devuelve). Ese commit cierra las observaciones del dictamen CONEAU de la v1.0.1 sobre la versión de trabajo `v10 (IA)`, que reproduce el contenido congelado de la v9. El hash completo quedó consignado en el Anexo B de la tesis (`12-anexos.tex`, §Repositorio de código fuente).
+- **Trazabilidad `v1.1.1` (c-123, 2026-10-22)**: el tag anotado **`v1.1.1`** se creó sobre el commit **`af6000bffde6d0039ef552c5a86e8c71bfe52064`** y se publicó en `origin`. Ese commit agrega la URL explícita del repositorio en el Anexo B (`12-anexos.tex`, §Repositorio de código fuente) y corrige la versión de la entrada bibliográfica `Gomez2026_repositorio` a `(Version 1.1.1)`. El hash completo quedó consignado en el Anexo B.
+- **Trazabilidad `v1.2.0` (c-141, 2026-10-26)**: el tag anotado **`v1.2.0`** se creo sobre el commit **`1f83b0adabdd0ef19618e79ebd6fd2d8319b1be9`** (C1, `docs(tesis): integrar la FASE 36 y publicar v1.2.0 (c-141)`) y se publico en `origin` junto con `ramagonzalo` (`git ls-remote --tags` lo devuelve). Ese commit integra la FASE 36 (c-130 a c-139 y c-142): cierra las recomendaciones A1-A5 y B4-B16 del dictamen CONEAU del 2026-10-22 sobre `v1.1.0` (matriz de cobertura en este registro), con el Anexo I actualizado, el render y la base de conocimiento sincronizados y 109 paginas (cuerpo 100, anexos 9; regla (b), decision del equipo del 2026-10-26). c-140 no se aplico (excluido provisionalmente) y por eso no hubo prueba de humo. El hash completo quedo consignado en el Anexo B (`12-anexos.tex`, Repositorio de codigo fuente).
+- **Trazabilidad `v1.2.1` (c-145, 2026-10-26)**: el tag anotado **`v1.2.1`** se creó sobre el commit **`5285939371cf3c32d0f1112576584478bf00e5e2`** (C3, `docs(tesis): corregir afirmaciones factuales y sincronizar el memo (c-145)`). Ese commit corrige las afirmaciones que el repositorio desmentía en la release `v1.2.0` (recuento y omisión de las pruebas de integración PostgreSQL, recuentos congelados de frontend e identificadores internos `OQ1 = A`/`OQ2 = A` del cuerpo), sincroniza el memo canónico (margen 6,66 %), precisa la discusión, resuelve el placeholder `P4`, hace portable el arnés de sensibilidad y agrega la barrera `scripts/preflight/docs_stack_sync.py` de `DOC-005` (change c-145). **`v1.2.0` queda superada** (permanece inmutable, en `1f83b0adabdd0ef19618e79ebd6fd2d8319b1be9`). El hash completo quedó consignado en el Anexo B (`12-anexos.tex`, Repositorio de código fuente); el push del tag y de la rama queda pendiente de confirmación explícita del usuario.
+- **Trazabilidad `v1.2.2` (c-147, 2026-10-27)**: el tag anotado **`v1.2.2`** se creó sobre el commit **`2cb0022574f739e6393d9b51dae3f8b480e1160f`** (C1, `docs(tesis): integrar c-146 y c-140 y publicar v1.2.2 (c-147)`) y se publicó en `origin` junto con la rama `change/c-147-compactacion-y-release-v1-2-2`. Ese commit integra los changes ya aplicados `c-146-completar-metricas-trabajos-previos` y `c-140-endurecimiento-tecnico-tls-reintentos-e2e` y la compactación de forma del commit `be9b746`: el PDF queda en **104 páginas totales** (cuerpo 96, anexos 8; exceso **+4** sobre el tope de 100 sobre el total de la cátedra, honrado y defendido — ver G0.1 del 2026-10-27), con 0 errores fatales, 0 referencias indefinidas y `verify_citations.py` en PASS. **`v1.2.1` queda superada** (permanece inmutable, en `5285939371cf3c32d0f1112576584478bf00e5e2`). El hash completo quedó consignado en el Anexo B (`12-anexos.tex`, Repositorio de código fuente).
 - **O8 CERRADA (c-157, 2026-10-28)**: la observacion O8 (`timeout` de 10 s en la tesis y en el Anexo H frente a 30 s del backend) queda **RESUELTA**. En la tesis, el valor vigente es 30 s por intento y 60 s en total (Seccion 5.4, `05-arquitectura.tex:74`). Fuera de la tesis, el residual ya no existe: `openspec/config.yaml:34` declara `timeout_s: 30` y `total_timeout_s: 60`, y `CLAUDE.md` remite a esa seccion (`stack.inference`) en lugar de repetir el valor retirado de 10 s. El texto original del hecho registrado se conserva en la tabla de observaciones sin numero de recomendacion.
 - **Recompilacion diferida (c-157, 2026-10-28)**: las ediciones de `.tex` de este change (`10-recomendaciones.tex` y `12-anexos.tex`) dejan la fuente y el PDF (`docs/Tesis/v10 (IA)/paper/main.pdf`) desalineados. La recompilacion del PDF (XeLaTeX + biber) y su verificacion quedan **diferidas a una release posterior a `v1.2.4`** y NO se ejecutan en este change. No se etiqueta ninguna release desde c-157.
 - Este registro es acumulativo. Las correcciones que dependan de decisiones o de
@@ -459,7 +459,7 @@ Los 28 criticos del informe completo ya tienen owner en C-76..C-80 (26 CUBIERTO,
 ### C-18 — STALE
 
 C-18 (el canal de origen nunca llega al backend) describia el flujo PREVIO a
-c-29. El artefacto ya fue corregido por c-29 (commit `ef656ac`, 2026-09-17): el
+c-29. El artefacto ya fue corregido por c-29 (commit `d8b4115`, 2026-09-17): el
 POST envia seis campos incluido `canal_origen_id` y el Switch esta en modo
 `rules`. Es un hallazgo stale de software. Residuo: solo el texto de la tesis
 (Tabla 4 usa `id_canal`; §5.3 describe dos llamadas), ya asignado a **c-77 C3**.
@@ -467,7 +467,7 @@ No requiere change de software.
 
 ### Drift del HEAD
 
-La auditoria se hizo sobre el commit `d7df92c` (2026-07-02); el repositorio
+La auditoria se hizo sobre el commit `2268126` (2026-07-02); el repositorio
 evoluciono. Los conteos del informe estan stale respecto del HEAD (136 archivos
 `test_*.py` en backend, 56 archivos de prueba frontend con 340 `it(`, 33 rutas
 en `docs/openapi.json`). Las tareas de c-94 exigen re-medir en HEAD, no
@@ -557,11 +557,11 @@ modifica ningun valor numerico ni rotulo.
 
 **Evidencia verificada**:
 
-- `1368fd8` (c-71) amplio el vocabulario del filtro deterministico a partir de
+- `c8112d2` (c-71) amplio el vocabulario del filtro deterministico a partir de
   errores del corpus.
-- `a76851e` (c-72) redacto las reglas de frontera del prompt a partir de casos
+- `27f8d8c` (c-72) redacto las reglas de frontera del prompt a partir de casos
   del corpus (R002, R038).
-- `d6bb474` (c-74) fijo el punto de operacion `tau` por validacion cruzada fuera
+- `bf5e099` (c-74) fijo el punto de operacion `tau` por validacion cruzada fuera
   de muestra sobre el corpus.
 - Directorio `docs/prompt_gemini_history/` inexistente: sin commit, sin entrada
   en `git ls-files` y sin rama que lo contenga.
@@ -601,7 +601,7 @@ de sensibilidad completo.
 
 **Linea base y conteo de paginas**:
 
-- Commit de partida: `d9dfcb3` (rama `RamaLuca`).
+- Commit de partida: `3abdfec` (rama `RamaLuca`).
 - Linea base del PDF: `\@abspage@last{101}` (101 paginas).
 - Conteo tras aplicar c-144: `\@abspage@last{102}` (102 paginas), diferencia
   `+1`. Compilacion XeLaTeX (Docker `texlive-thesis`) sin errores fatales y con
@@ -614,7 +614,7 @@ de sensibilidad completo.
 **Origen**: change `c-141-integracion-release-v1-2-0`, grupo 1 (tareas 1.1 a 1.7), apply
 parcial al inicio de la familia, ANTES de aplicar c-130 (design D2). Registrado el
 **2026-10-25**. Rama de trabajo: `change/c-141-g0-decisiones` (cortada de `ramagonzalo` en
-`f6c121e`). Solo documentacion: no se modifica ningun `.tex`, codigo ni `CHANGES.md`.
+`1966571`). Solo documentacion: no se modifica ningun `.tex`, codigo ni `CHANGES.md`.
 
 **Convencion de estado de las decisiones**: el usuario (Gonzalo Sevilla, coautor) pidio
 aplicar la familia sin detenerse y NO respondio de forma explicita a OQ1, OQ2, OQ3, OQ4 ni
@@ -627,9 +627,9 @@ reescribir la entrada original.
 
 La linea base del dictamen era `v1.1.1` = 101 paginas (cuerpo sin anexos 93; encabezado
 "Anexos" en la p. 94). El 2026-10-23 Luca Gomez aplico y fusiono en `main` el change
-`c-144-declarar-procedencia-real-y-ausencia-de-preproduccion` (commit `0c7f5bc`, ya
+`c-144-declarar-procedencia-real-y-ausencia-de-preproduccion` (commit `4e217a3`, ya
 incluido en `ramagonzalo`), que recompilo el PDF. Evidencia verificada el 2026-10-25 sobre
-el arbol de `ramagonzalo` (`f6c121e`):
+el arbol de `ramagonzalo` (`1966571`):
 
 - `grep -o "abspage@last{[0-9]*}" "docs/Tesis/v10 (IA)/paper/main.aux"` devuelve
   `abspage@last{102}`.
@@ -715,7 +715,7 @@ Decision textual del usuario: "Tope total es <= 100" y "podemos defender si se p
 del limite". Se adopta la decision de compactar lo barato y defender el resto. Consecuencia:
 rige la metrica de total del PDF; la linea base del dictamen (`v1.1.1`, 101 totales) ya estaba
 +1 y la familia del dictamen la llevo a 111 (cuerpo 102, anexos 9) antes de la compactacion.
-La compactacion de forma del commit `8c0cf6d` (indices general y de tablas/figuras compactados
+La compactacion de forma del commit `be9b746` (indices general y de tablas/figuras compactados
 y fusionados, anexos en `\small`, figuras de la seccion 6.8 al 70 % de ancho y espaciado de la
 bibliografia) lleva el borrador de 111 a **104 totales** (cuerpo 96, anexos 8) sin quitar
 contenido cientifico, numeros canonicos, figuras, tablas ni referencias, y sin dejar
@@ -743,8 +743,8 @@ PENDIENTE del build Docker). Fecha: 2026-10-25.**
   -w /work/paper texlive-thesis latexmk main.tex`.
 
 Datos completados el 2026-10-25 (build de `texlive-thesis` terminado con exito en la PC de Gonzalo;
-compilacion sobre una copia aislada del arbol de `ramagonzalo` en `f6c121e`, fuente identica a
-`0c7f5bc` en `docs/Tesis/v10 (IA)/`, con los artefactos previos borrados y `latexmk main.tex`):
+compilacion sobre una copia aislada del arbol de `ramagonzalo` en `1966571`, fuente identica a
+`4e217a3` en `docs/Tesis/v10 (IA)/`, con los artefactos previos borrados y `latexmk main.tex`):
 
 - `xelatex --version`: `XeTeX 3.141592653-2.6-0.999998 (TeX Live 2026)`
 - `biber --version`: `biber version: 2.22`
@@ -756,7 +756,7 @@ compilacion sobre una copia aislada del arbol de `ramagonzalo` en `f6c121e`, fue
 
 Nota sobre la tarea 1.2 de `tasks.md`: su redaccion dice "verificar 101 paginas"; tras c-144
 el valor de reproduccion correcto es 102 (G0.0). El valor 101 se verifica solo, de forma
-opcional, compilando el commit `4160d84` (`v1.1.1`).
+opcional, compilando el commit `af6000b` (`v1.1.1`).
 
 ### G0.3 - Inclusion de c-140 (OQ4)
 
@@ -793,7 +793,7 @@ Hallazgos:
   confirma la regla `.gitignore:72`.
 - **Cambio frente a lo que supone la tarea 1.4**: el change
   `c-143-publicar-predicciones-como-evidencia-de-evaluacion` (Luca, archivado 2026-10-23,
-  13/13; commit `fec4c42`) publico copias congeladas byte-identicas de las caches bajo
+  13/13; commit `384d23f`) publico copias congeladas byte-identicas de las caches bajo
   `evaluation/evidence/`, **versionadas** (no ignoradas):
 
 | Archivo versionado | `classifier_version` | `corpus_hash` | `generated_at` | Estado frente al corpus vigente |
@@ -891,7 +891,7 @@ y en la seccion "Dictamen c-144" de este registro):
   subseccion `subsec:corpus-independiente`). No reescribe lo que c-144 ya dejo en `main`.
 - **c-142** **omite los requisitos ya cubiertos por c-144** (D11/D13/T08: los tres
   requisitos `ADDED` de procedencia, ubicacion veraz del historial del prompt y advertencia
-  metodologica; retirados de c-130 y c-142 en el commit `90b0b9b`). Conserva su analisis de
+  metodologica; retirados de c-130 y c-142 en el commit `91eb6d0`). Conserva su analisis de
   sensibilidad completo.
 - c-144 es la fuente canonica de esos tres requisitos; al fusionar el PR #40 los bloques
   `ADDED` correspondientes ya son no-op.
@@ -903,7 +903,7 @@ seccion propia toma el siguiente numero libre al aplicar y corrige sus propias r
 2026-10-25 con `grep -n "^## \|^### " numeros-canonicos.md`: las secciones vigentes son 3.1
 a 3.6 (3.6 = marco metrico unificado, c-108), 4, 5, 6 y 7; **no existe 3.7**.
 **c-144 NO ocupo un numero de la serie 3.N**: sus 15 lineas agregadas
-(`git show 0c7f5bc -- numeros-canonicos.md`) son el **item 6 de la seccion 7 "Decisiones no
+(`git show 4e217a3 -- numeros-canonicos.md`) son el **item 6 de la seccion 7 "Decisiones no
 resolubles"** (conjunto de ~100 incidentes de preproduccion, no verificable). No hay
 colision: la secuencia esperada se mantiene: **3.7 c-130, 3.8 c-131, 3.9 c-142, 3.10 c-132,
 3.11 c-133, 3.12 c-134**. La consolidacion de c-141 (tarea 2.7) no debe renumerar el item 6
@@ -1011,8 +1011,8 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 
 | Change | Commit | Total | Cuerpo sin anexos | Anexos | Delta total | Delta cuerpo | Regla vigente | Estado |
 |---|---|---|---|---|---|---|---|---|
-| base `v1.1.1` | `4160d84` | 101 | 93 | 8 | - | - | (a) total <= 101 | Medido (dictamen / `main.toc` de v1.1.1) |
-| `+c-144` (main) | `0c7f5bc` | 102 | 94 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{102}`; `Anexos` en p. 95 |
+| base `v1.1.1` | `af6000b` | 101 | 93 | 8 | - | - | (a) total <= 101 | Medido (dictamen / `main.toc` de v1.1.1) |
+| `+c-144` (main) | `4e217a3` | 102 | 94 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{102}`; `Anexos` en p. 95 |
 | `+c-130` (`change/c-130-gate-revision-humana-por-etapa`) | sin commit (lo crea el orquestador) | 103 | 95 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{103}`; `Anexos` en p. 96; brecha frente a 101: +2 (con C3 aplicada) |
 | `+c-131` (`change/c-131-metricas-por-etapa-canal-y-exactitud-laxa`) | sin commit (lo crea el orquestador) | 103 | 95 | 8 | 0 | 0 | (a) total <= 101 | Medido: `abspage@last{103}`; `Anexos` en p. 96; brecha frente a 101: +2 (sin compensar habria sido 105) |
 | `+c-142` (`change/c-142-sensibilidad-fuera-de-muestra-ajustes-clasificador`) | sin commit (lo crea el orquestador) | 104 | 96 | 8 | +1 | +1 | (a) total <= 101 | Medido: `abspage@last{104}`; `Anexos` en p. 97; brecha frente a 101: +3 (sin los recortes de `09` y la variante de T06 habria sido 105); C3 no aplicada (el total no supera 104) |
@@ -1028,10 +1028,10 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 | compactacion P7 (`change/c-141-integracion-release-v1-2-0`; tareas 3.3 a 3.6) | sin commit (lo crea el orquestador) | 109 | 100 | 9 | -1 | -1 | (b) cuerpo sin anexos <= 100 (confirmada 2026-10-26) | Medido: `abspage@last{109}`; `Anexos` en p. 101; delta frente a "integrado (pre-compactacion)" (110 / 101 / 9): -1 total y -1 cuerpo; **regla (b): cuerpo 100, margen 0 (cumple)**; `Referencias bibliograficas` sigue empezando en la p. 94 y pasa de 8 paginas (la ultima con 14 lineas) a 7 (la ultima, p. 100, con una sola entrada de 3 lineas); anexos 9 sin cambio; brecha frente a la rama (a) (101): +8, ya no vigente; acumulado de la familia: +7 total / +6 cuerpo / +1 anexos sobre `+c-144` (102 / 94 / 8) y +8 / +7 / +1 sobre la base `v1.1.1`. Palanca P7: una linea en el preambulo (ver "Compactacion P7") |
 | release v1.2.0 (C1) (`change/c-141-integracion-release-v1-2-0`; tareas 5.1 y 5.2) | sin commit (lo crea el orquestador) | 109 | 100 | 9 | 0 | 0 | (b) cuerpo sin anexos <= 100 (confirmada 2026-10-26) | Medido: `abspage@last{109}`; `Anexos` en p. 101 (`main.toc`); `Referencias bibliograficas` en p. 94; saltos de pagina de `pdftotext` 109; delta frente a "compactacion P7" (109 / 100 / 9): 0 / 0 (el cambio del tag y del titulo de `Gomez2026_repositorio` retira dos lineas del Anexo B y no mueve ninguna pagina); **regla (b): cuerpo 100, margen 0 (cumple)**; coincide con el cierre del libro mayor de la tarea 6.4 |
 | release v1.2.0 (C2) (`change/c-141-integracion-release-v1-2-0`; tareas 8.6 y 8.7) | sin commit (lo crea el orquestador) | 109 | 100 | 9 | 0 | 0 | (b) cuerpo sin anexos <= 100 (confirmada 2026-10-26) | Medido: `abspage@last{109}`; `Anexos` en p. 101 (`main.toc`); saltos de pagina de `pdftotext` 109; delta frente a "release v1.2.0 (C1)" (109 / 100 / 9): 0 / 0 (la linea del hash cabe en la p. 102 del Anexo B y no mueve ninguna pagina); **regla (b): cuerpo 100, margen 0 (cumple)**; el conteo final de la release es el de C1 |
-| release v1.2.1 (C1/C2) (`change/c-145-*`) | `509ffff` (C3) | 109 | 100 | 9 | 0 | 0 | (b) cuerpo sin anexos <= 100 (2026-10-26) | Medido en la release `v1.2.1`; regla (b) con margen 0; `v1.2.1` queda superada por `v1.2.2` |
-| borrador `v1.2.1` + `c-146` + `c-140` (`change/c-140-*`; base de c-147) | `9ce0bd2` | 111 | 102 | 9 | +2 | +2 | (b) cuerpo sin anexos <= 100 (2026-10-26); **total <= 100, fuente catedra (2026-10-27)** | Medido: `abspage@last{111}`; `Anexos` en p. 103; **cuerpo 102, margen -2** (bloqueo de la release); **exceso sobre el tope de 100 total: +11** |
-| compactacion c-147 (`change/c-147-*`) | `8c0cf6d` | 104 | 96 | 8 | -7 | -6 | **total <= 100, fuente catedra (2026-10-27)** | Medido: `abspage@last{104}`; `Anexos` en p. 97; `Referencias bibliograficas` en p. 93; **exceso +4 honrado y defendido**; palancas: indices general y de tablas/figuras compactados y fusionados, anexos en `\small`, figuras de 6.8 al 70 %, espaciado de bibliografia; sin contenido removido ni referencias colgadas |
-| release v1.2.2 (C1) (`change/c-147-*`) | `445a47b` | 104 | 96 | 8 | 0 | 0 | **total <= 100, fuente catedra (2026-10-27)** | Medido: `abspage@last{104}`; `Anexos` en p. 97; exceso +4 honrado y defendido; verificado de nuevo el 2026-10-27 sobre `07cc075` (PDF de 104 paginas) |
+| release v1.2.1 (C1/C2) (`change/c-145-*`) | `5285939` (C3) | 109 | 100 | 9 | 0 | 0 | (b) cuerpo sin anexos <= 100 (2026-10-26) | Medido en la release `v1.2.1`; regla (b) con margen 0; `v1.2.1` queda superada por `v1.2.2` |
+| borrador `v1.2.1` + `c-146` + `c-140` (`change/c-140-*`; base de c-147) | `852163c` | 111 | 102 | 9 | +2 | +2 | (b) cuerpo sin anexos <= 100 (2026-10-26); **total <= 100, fuente catedra (2026-10-27)** | Medido: `abspage@last{111}`; `Anexos` en p. 103; **cuerpo 102, margen -2** (bloqueo de la release); **exceso sobre el tope de 100 total: +11** |
+| compactacion c-147 (`change/c-147-*`) | `be9b746` | 104 | 96 | 8 | -7 | -6 | **total <= 100, fuente catedra (2026-10-27)** | Medido: `abspage@last{104}`; `Anexos` en p. 97; `Referencias bibliograficas` en p. 93; **exceso +4 honrado y defendido**; palancas: indices general y de tablas/figuras compactados y fusionados, anexos en `\small`, figuras de 6.8 al 70 %, espaciado de bibliografia; sin contenido removido ni referencias colgadas |
+| release v1.2.2 (C1) (`change/c-147-*`) | `2cb0022` | 104 | 96 | 8 | 0 | 0 | **total <= 100, fuente catedra (2026-10-27)** | Medido: `abspage@last{104}`; `Anexos` en p. 97; exceso +4 honrado y defendido; verificado de nuevo el 2026-10-27 sobre `7637fdb` (PDF de 104 paginas) |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -1082,7 +1082,7 @@ solo se agregaron tres subsecciones dentro de "## Tiempos"; las filas previas (W
 p, r, desglose por canal) y la huella canonica del corpus no cambiaron.
 
 **Actualizacion 2026-10-25 (c-134, bloque de tesis)**: los grupos 6 a 8 se aplicaron el mismo dia en la rama
-`change/c-134-contrastes-estadisticos-y-desagregado-canal` (sobre `0ac3160`, ya con c-133); ver la seccion
+`change/c-134-contrastes-estadisticos-y-desagregado-canal` (sobre `10bb9b3`, ya con c-133); ver la seccion
 "Dictamen v1.1.0 - B7a, B12 y B13b (c-134, bloque de tesis)" al final de este registro. La fila `+c-134 tesis`
 del libro mayor (105 / 97 / 8, delta 0 / 0) esta en la tabla de arriba.
 
@@ -1091,14 +1091,14 @@ del libro mayor (105 / 97 / 8, delta 0 / 0) esta en la tabla de arriba.
 **Origen**: change `c-130-gate-revision-humana-por-etapa` (dictamen CONEAU 2026-10-22 sobre
 v1.1.0/v1.1.1: VEREDICTO punto 1; secciones 5, 6 y 7(a); recomendacion A1). Aplicado el
 **2026-10-25** en la rama `change/c-130-gate-revision-humana-por-etapa`, cortada de
-`ramagonzalo` en `103f198` (merge del G0). Posicion 1 del orden de la familia (G0.6).
+`ramagonzalo` en `2634252` (merge del G0). Posicion 1 del orden de la familia (G0.6).
 
 ### Linea base (tarea 1.1)
 
-- Commit de partida: `103f198`.
+- Commit de partida: `2634252`.
 - `grep -o "abspage@last{[0-9]*}" "docs/Tesis/v10 (IA)/paper/main.aux"` devuelve
   **`abspage@last{102}`**, NO 101: la tarea 1.1 de `tasks.md` cita la linea base de `v1.1.1`
-  (101); c-144 (`0c7f5bc`) la movio a 102 (G0.0). `main.toc`: `Anexos` en p. 95, cuerpo sin
+  (101); c-144 (`4e217a3`) la movio a 102 (G0.0). `main.toc`: `Anexos` en p. 95, cuerpo sin
   anexos 94, anexos 8.
 
 ### Red de seguridad y re-verificacion offline (tareas 1.2 y 1.3)
@@ -1125,7 +1125,7 @@ confirmacion del autor)**.
 
 | OQ | Tema | Decision | Estado |
 |---|---|---|---|
-| OQ1 (D9) | Procedencia de los ajustes sobre el corpus | **RESUELTA por c-144** (`0c7f5bc`): los autores ya declararon la procedencia real al fusionarlo en `main`. T04, T12, T13 y T14 no se reescriben; se ejecutan solo sus verificaciones | Resuelta (hecho) |
+| OQ1 (D9) | Procedencia de los ajustes sobre el corpus | **RESUELTA por c-144** (`4e217a3`): los autores ya declararon la procedencia real al fusionarlo en `main`. T04, T12, T13 y T14 no se reescriben; se ejecutan solo sus verificaciones | Resuelta (hecho) |
 | OQ2 (D7) | Alcance de la salvaguarda legal; reasignacion solo por REST | Default del design: se aplica T15. **Confirmada por el autor (2026-10-26)**. Verificacion en codigo: la reasignacion esta en `PATCH /api/v1/incidentes/{id}` (campo `sector_id`) y en `PATCH /api/v1/clasificaciones/{log_id}/validar`; la interfaz web solo la expone para casos derivados; N8N no reasigna; no hay guarda de rol sobre `sector_id`, de modo que un `usuario_final` puede reasignar su propio incidente por REST. El texto de `11-aspectos-legales.tex:36` es exacto | Confirmada |
 | OQ3 (D12) | Comentarios y test en `App/Backend` | Si: bloque 7 aplicado | Confirmada |
 | OQ4 (D11) | Editar `CLAUDE.md` y `openspec/config.yaml` (solo las lineas del gate) | Si: bloque 8 aplicado | Superada por c-145 G |
@@ -1148,7 +1148,7 @@ Seccion 7, punto 7, de `numeros-canonicos.md`; reversible si el autor aporta la 
 | T01 | `02-marco-teorico.tex:34` | Aplicada (revision selectiva acotada por etapa) |
 | T02 | `02-marco-teorico.tex:46` | Aplicada (solo la oracion final) |
 | T03 | `05-arquitectura.tex:24` | Aplicada (celda de la capa 4) |
-| T04 | `05-arquitectura.tex:78` | Cubierta por c-144 `0c7f5bc`; verificada (`grep -c "sin acceso al corpus de validación"` = 0) |
+| T04 | `05-arquitectura.tex:78` | Cubierta por c-144 `4e217a3`; verificada (`grep -c "sin acceso al corpus de validación"` = 0) |
 | T05 | `05-arquitectura.tex:66` | Aplicada (parrafo completo; retira "superior al 90 %") |
 | T06 | `05-arquitectura.tex:68` | Aplicada (3 fragmentos; incluye C1) |
 | T07 | `06-implementacion.tex:39` | Aplicada (incluye C4) |
@@ -1162,16 +1162,16 @@ Seccion 7, punto 7, de `numeros-canonicos.md`; reversible si el autor aporta la 
 | T15 | `11-aspectos-legales.tex:36` | Aplicada [D7, PROVISIONAL] |
 | T16 | `12-anexos.tex` (tab:anexo_gemini_params) | Aplicada (fila nueva tras `timeout`, sin tocar `timeout`) |
 
-Tarea 9.1 (roles, agregada por Luca en `2236b26`): aplicada en `04-marco-metodologico.tex:95`.
-Evidencia `git shortlog -sne` sobre `224fa16` (re-medida el 2026-10-26): lucaGomezB 418,
+Tarea 9.1 (roles, agregada por Luca en `6ea257d`): aplicada en `04-marco-metodologico.tex:95`.
+Evidencia `git shortlog -sne` sobre `80c9cf1` (re-medida el 2026-10-26): lucaGomezB 418,
 GonzaloSevilla22 93, Gonzalo Sevilla 52, Luca Gomez 35, dependabot[bot] 1; **ningun commit a
 nombre de Carla Bustos** y ninguna mencion en los mensajes (`git log --grep`). Carla pasa a
 revisora de la tesis y colaboradora en anexos y corroboracion de fuentes. **Correccion del
 2026-10-26, confirmada por el autor**: la redaccion anterior atribuia a Luca Gomez "el desarrollo
 del modulo Python y el modelado de la base de datos" y a Gonzalo Sevilla "la integracion
 telefonica mediante Twilio"; el historial la contradice en tres puntos. El modulo inicial
-`Gestion_Incidentes` (`7db7fe1`, 2026-05-20) y el frontend inicial (`ca8e2b6`, 2026-05-21) los
-firmo `GonzaloSevilla22`, igual que las migraciones iniciales (`ec92689`); todos los commits con
+`Gestion_Incidentes` (`960392f`, 2026-05-20) y el frontend inicial (`a2d6c89`, 2026-05-21) los
+firmo `GonzaloSevilla22`, igual que las migraciones iniciales (`fd7b610`); todos los commits con
 Twilio son de `lucaGomezB`. El texto vigente atribuye la coordinacion general, la integracion de
 componentes y la integracion telefonica a Luca Gomez, y la implementacion inicial del modulo
 Python, el modelado inicial de la base de datos, el frontend y la configuracion del flujo N8N a
@@ -1241,7 +1241,7 @@ Gonzalo Sevilla. Se conserva la supervision del director.
 **Origen**: change `c-131-metricas-por-etapa-canal-y-exactitud-laxa` (dictamen CONEAU 2026-10-22: VEREDICTO
 punto 2 y recomendacion A2 condicionante; seccion 6, cuarta observacion; B7 parte de exactitud; B8). Aplicado
 el **2026-10-25** en la rama `change/c-131-metricas-por-etapa-canal-y-exactitud-laxa`, cortada de `ramagonzalo`
-en `dae365a` (merge del bloque de codigo de c-134). Posicion 3 del orden de la familia (G0.6). Sin commit
+en `6d4e3e5` (merge del bloque de codigo de c-134). Posicion 3 del orden de la familia (G0.6). Sin commit
 (lo crea el orquestador).
 
 ### Linea base (tareas 1.1 a 1.5)
@@ -1252,7 +1252,7 @@ en `dae365a` (merge del bloque de codigo de c-134). Posicion 3 del orden de la f
   (217 + 93 pruebas nuevas).
 - Paginas de partida: `abspage@last{103}`, `Anexos` en p. 96 (cuerpo 95, anexos 8): la tarea 1.3 dice 101;
   correccion: **102 tras c-144, 103 tras c-130**.
-- c-130 aplicado (37/37 `[x]`, `efc3d3e`): se ejecutan los bloques 10 y 11.
+- c-130 aplicado (37/37 `[x]`, `1e7d510`): se ejecutan los bloques 10 y 11.
 - Hash del corpus (bloque 2): la copia de trabajo hasheaba `7408cd2a...62134` (CRLF por `core.autocrlf=true`);
   tras `.gitattributes` (`data/corpus_evaluacion_pseudonimizado.json text eol=lf`) y refrescar la copia vale
   `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb`; `git diff --stat -- data/` vacio y blob
@@ -1366,7 +1366,7 @@ valores del memo no dependen de esas decisiones.
 **Origen**: change `c-142-sensibilidad-fuera-de-muestra-ajustes-clasificador` (dictamen CONEAU 2026-10-22: VEREDICTO
 punto 5; seccion 6, septima observacion; seccion 7, ultimo parrafo; recomendacion A5, mitad analitica). Aplicado el
 **2026-10-25** en la rama `change/c-142-sensibilidad-fuera-de-muestra-ajustes-clasificador`, cortada de `ramagonzalo`
-en `af32630` (merge de c-131). Posicion 4 del orden de la familia (G0.6). Sin commit (lo crea el orquestador).
+en `1c4d05b` (merge de c-131). Posicion 4 del orden de la familia (G0.6). Sin commit (lo crea el orquestador).
 Cero llamadas a Gemini en todo el change; sin `GEMINI_API_KEY` real.
 
 ### Linea base y pre-registro (tareas 1.1 a 1.7, 2.2 y 2.3)
@@ -1378,15 +1378,15 @@ Cero llamadas a Gemini en todo el change; sin `GEMINI_API_KEY` real.
 - c-130 (37/37) y c-131 (81/81) aplicados; `contraste_mcnemar` (`stats.py:608`) y `contraste_det_gem_en_s`
   (`deterministic_measurement.py:809`) presentes. SHA-256 del corpus
   `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb` (copia de trabajo con LF por `.gitattributes`).
-- Hechos de 1.6 verificados con el git del host: blob de `keywords.py` en `7925903` = `858f1c6...`; vigente = `334a8ed...`;
-  prompt en `a76851e^` = `1daceb3...`; vigente = `49267f4...`; `deterministic_score_threshold` = 0,5166. Ninguno cambio.
+- Hechos de 1.6 verificados con el git del host: blob de `keywords.py` en `0fe5e08` = `858f1c6...`; vigente = `334a8ed...`;
+  prompt en `27f8d8c^` = `1daceb3...`; vigente = `49267f4...`; `deterministic_score_threshold` = 0,5166. Ninguno cambio.
   El modulo recalcula los blobs vigentes sin git (`blob_git`) y el reporte los imprime.
-- Paginas de partida: `abspage@last{103}`, `Anexos` en p. 96 (cuerpo 95, anexos 8), commit de partida `af32630`.
+- Paginas de partida: `abspage@last{103}`, `Anexos` en p. 96 (cuerpo 95, anexos 8), commit de partida `1c4d05b`.
 - Seccion del memo: **3.10** (3.7 c-130, 3.8 c-134, 3.9 c-131). El choque de la "3.7" quedo resuelto por G0.6.
-- Tarea 2.3 (congelar el pre-registro): `git log --follow` sobre el `design.md` muestra `e378105` (propose) y `0977104`
+- Tarea 2.3 (congelar el pre-registro): `git log --follow` sobre el `design.md` muestra `a7a4b00` (propose) y `ee8e9cf`
   (renumeracion c-137 -> c-142); el segundo solo cambia identificadores de changes (c-125..c-137 -> c-130..c-142) y
-  `90b0b9b` solo toco `specs/`. D2-D4, D8, D9 y T01-T08 **no cambiaron** en contenido. Commit de referencia del
-  pre-registro: `0977104`. Ninguna variante se ejecuto sobre el corpus real antes de esta verificacion; los tests de
+  `91eb6d0` solo toco `specs/`. D2-D4, D8, D9 y T01-T08 **no cambiaron** en contenido. Commit de referencia del
+  pre-registro: `ee8e9cf`. Ninguna variante se ejecuto sobre el corpus real antes de esta verificacion; los tests de
   caracterizacion sobre el corpus (6.6) se ejecutaron despues.
 
 ### Checkpoint del bloque 2 (gobernanza HIGH) - PROVISIONAL, 2026-10-25 (FORCE-ESCALATE confirmada el 2026-10-26)
@@ -1430,7 +1430,7 @@ sobre `V1` reproduce `b = 16`, `c = 8`, `p = 0,1516` (`docs/deterministic_calibr
 - Caracterizacion 6.6: (a) `V1 + L1` = **131 cortocircuitados y 97 aciertos**; (b) `V0 + L0` reproduce **las 11 metricas**
   de la linea base de c-71 (72; 22/14/36; 37; 13/7/17; 55; 119; 126). Sin discrepancia que registrar.
 - Desvio de 4.4: el design dice "9:1 -> cortocircuito", pero `w/(w + r + 1e-6)` con 9:1 da 0,8999999 < 0,90 (la constante
-  deja el 9:1 apenas por debajo); la replica es fiel al codigo de `7925903` y no se toco. Las pruebas usan 10:1
+  deja el 9:1 apenas por debajo); la replica es fiel al codigo de `0fe5e08` y no se toco. Las pruebas usan 10:1
   (cortocircuita, 0,9091) y 9:1 y 8:1 (no cortocircuitan). Por eso el cortocircuito de la epoca exige ganador >= 10 x segundo.
 - Reportes: `evaluation/report_sensibilidad_ajustes.md` (98 lineas, regenerado offline; dos corridas dan archivo identico
   byte a byte; `report.md` y las caches oficiales sin cambios, verificado por SHA-256).
@@ -1465,7 +1465,7 @@ documentado) son consistentes con lo inferido de la linea base de c-71.
 | T05 | aplicado: item "Septimo" y cardinal "siete" en `subsec:limitaciones-estudio` (rama A, nivel a) |
 | T06 | aplicado con una variante mas corta (`; dentro de la muestra, \autoref{subsec:sensibilidad-ajustes}`) porque el texto del design hacia crecer el total una pagina; el estado "Alcanzado" no cambia |
 | T07 | aplicado ("La exactitud estricta, estimada dentro de la muestra, fue de ..."), con dos recortes de redaccion en `09:37` (" y sus valores" y "sin embargo,") sin perdida de contenido cientifico, para no agregar una pagina |
-| T08 | **cubierto por c-144 `0c7f5bc`; verificado** (`12-anexos.tex:136` ya ubica el historial en el repositorio y `prompt_gemini_history` no aparece); el nivel es "a", asi que no corresponde la clausula de nivel b o c |
+| T08 | **cubierto por c-144 `4e217a3`; verificado** (`12-anexos.tex:136` ya ubica el historial en el repositorio y `prompt_gemini_history` no aparece); el nivel es "a", asi que no corresponde la clausula de nivel b o c |
 | R01 | **cubierto por c-144; verificado** (`evaluation/README.md`, "Advertencia Metodologica"); delta aplicado: remision a `python -m evaluation.sensibilidad_ajustes` y a `report_sensibilidad_ajustes.md`, seccion de comandos (offline y brazos pagos con gate) |
 | R02 | **cubierto por c-144 en `:160`; `:162` con delta**: se agrego la remision a `evaluation/data/sensibilidad_ajustes/prompt_gemini_pre_c72.txt` |
 | Declaracion de procedencia (05:78, 06:75, 08:18, 12:135), `subsec:corpus-independiente` | de c-144; no se reescriben |
@@ -1531,7 +1531,7 @@ canonicos: si se rechazara, E3 y E4 pasan a "no computable" y la tabla pierde su
 
 **Origen**: change `c-132-balance-neto-derivaciones-erroneas` (dictamen CONEAU 2026-10-22: VEREDICTO punto 3, seccion 7 (c)
 y RECOMENDACION A3). Aplicado el **2026-10-25** en la rama `change/c-132-balance-neto-derivaciones-erroneas`, cortada de
-`ramagonzalo` en `31c143a` (merge de c-142). Posicion 5 del orden de la familia (G0.6). Solo documento (gobernanza LOW):
+`ramagonzalo` en `f1be2f2` (merge de c-142). Posicion 5 del orden de la familia (G0.6). Solo documento (gobernanza LOW):
 cero llamadas a Gemini, sin codigo, sin tags. Sin commit (lo crea el orquestador).
 
 **A3 - Balance neto de derivaciones erroneas - APLICADO por c-132 (2026-10-25).**
@@ -1642,7 +1642,7 @@ regenerar el render y recompilar. Si otro change cito `subsec:balance-neto` o `t
 
 **Origen**: change `c-133-hipotesis-objetivos-metrica-primaria` (dictamen CONEAU 2026-10-22: VEREDICTO dimensiones 2 y 3,
 RECOMENDACIONES B4, B5 y B6). Aplicado el **2026-10-25** en la rama `change/c-133-hipotesis-objetivos-metrica-primaria`, cortada
-de `ramagonzalo` en `d241c0b` (merge de c-132). Posicion 6 del orden de la familia (G0.6). Solo documento (gobernanza LOW): cero
+de `ramagonzalo` en `ed250a4` (merge de c-132). Posicion 6 del orden de la familia (G0.6). Solo documento (gobernanza LOW): cero
 llamadas a Gemini (ningun `--confirm-paid` ni `run_evaluation.py --force`), sin codigo, sin tags. Sin commit (lo crea el orquestador).
 
 ### Open Questions del design (tarea 1.1) - CONFIRMADAS el 2026-10-26 (registradas como PROVISIONAL el 2026-10-25)
@@ -1659,7 +1659,7 @@ default del design, **PROVISIONAL (pendiente de confirmacion del autor)**, regis
 ### Precondiciones y relevamiento (tarea 1.2)
 
 Los cuatro prerequisitos estan aplicados (37/37, 81/81, 91/91 y 29/29 tareas) y siguen en `openspec/changes/` (el archivo es de c-141).
-Rama cortada de `ramagonzalo` `d241c0b`. Relevado:
+Rama cortada de `ramagonzalo` `ed250a4`. Relevado:
 
 - **c-130**: terminologia "etapa determinista"/"etapa semantica" en el design; el manuscrito usa "etapa deterministica" (`07:129`, `08:10`,
   `08:16`) y "etapa semantica" (`02`, `10`, `11`). T14 se escribe con "filtro deterministico" y "etapa deterministica". El gate se evalua solo sobre la
@@ -1799,7 +1799,7 @@ docs/Tesis/Correcciones/dictamen-correcciones.md`, regenerar el render y recompi
 **Origen**: change `c-134-contrastes-estadisticos-y-desagregado-canal`, bloque de tesis (grupos 6, 7 y 8 de `tasks.md`; 20 tareas, 6.1 a 8.7)
 (dictamen CONEAU 2026-10-22: seccion 6, observaciones primera, segunda, tercera y quinta; seccion 7, desagregado por canal; recomendaciones B7a,
 B12 y B13b). Aplicado el **2026-10-25** en la rama `change/c-134-contrastes-estadisticos-y-desagregado-canal`, ya actualizada con `ramagonzalo`
-(`0ac3160`, merge de c-133); el bloque de codigo (grupos 1 a 5) estaba commiteado en `78957f7`. Posicion 7 del orden de la familia (G0.6). Cero
+(`10bb9b3`, merge de c-133); el bloque de codigo (grupos 1 a 5) estaba commiteado en `3c2e33c`. Posicion 7 del orden de la familia (G0.6). Cero
 llamadas a Gemini; `evaluation/`, `data/`, `App/`, `n8n/` y `CHANGES.md` sin cambios en este tramo (`git diff --quiet` verificado). Sin commit
 (lo crea el orquestador). Gobernanza MEDIUM: solo documento.
 
@@ -1881,7 +1881,7 @@ docs/Tesis/Correcciones/dictamen-correcciones.md`, regenerar el render y recompi
 
 ## Dictamen v1.1.0 - Seccion 4 y criterio 3 residual (c-138) - Estado del arte sobre calibracion y cascadas
 
-**Origen**: change `c-138-estado-del-arte-calibracion-y-cascadas` (dictamen CONEAU 2026-10-22: seccion 4, seccion 5 y recomendacion A4 en su parte de fuentes de calibracion). Aplicado el **2026-10-25** en la rama `change/c-138-estado-del-arte-calibracion-y-cascadas`, cortada de `ramagonzalo` en `738a3d4` (merge del bloque de tesis de c-134). Posicion 8 del orden de la familia (G0.6). Solo documento (gobernanza LOW): cero llamadas a Gemini, sin codigo, sin tags, sin commit (lo crea el orquestador). Archivos editados: `02-marco-teorico.tex`, `03-estado-del-arte.tex`, `08-discusion.tex`, `Bibliography_base.bib`, `bitacora-busqueda-c-110.md` (mas `tasks.md` y `design.md` del change y los artefactos de compilacion).
+**Origen**: change `c-138-estado-del-arte-calibracion-y-cascadas` (dictamen CONEAU 2026-10-22: seccion 4, seccion 5 y recomendacion A4 en su parte de fuentes de calibracion). Aplicado el **2026-10-25** en la rama `change/c-138-estado-del-arte-calibracion-y-cascadas`, cortada de `ramagonzalo` en `f300385` (merge del bloque de tesis de c-134). Posicion 8 del orden de la familia (G0.6). Solo documento (gobernanza LOW): cero llamadas a Gemini, sin codigo, sin tags, sin commit (lo crea el orquestador). Archivos editados: `02-marco-teorico.tex`, `03-estado-del-arte.tex`, `08-discusion.tex`, `Bibliography_base.bib`, `bitacora-busqueda-c-110.md` (mas `tasks.md` y `design.md` del change y los artefactos de compilacion).
 
 ### Open Questions del design - CONFIRMADAS el 2026-10-26 (registradas como PROVISIONAL el 2026-10-25)
 
@@ -1944,7 +1944,7 @@ Las seis superan las tres compuertas (existencia, metadatos, texto completo): Gu
 
 ## Dictamen v1.1.0 - B11 (c-136) - Recomendaciones: lineas prioritarias faltantes
 
-**Origen**: change `c-136-recomendaciones-lineas-faltantes` (dictamen CONEAU 2026-10-22: seccion 8 y recomendacion B11). Aplicado el **2026-10-25** en la rama `change/c-136-recomendaciones-lineas-faltantes`, cortada de `ramagonzalo` en `9443331` (merge de c-138). Posicion 9 del orden de la familia (G0.6). Solo documento (gobernanza LOW): sin codigo, sin Gemini, sin tags, sin commit (lo crea el orquestador). Archivos editados: `10-recomendaciones.tex` (unico fuente de tesis), este registro y los artefactos de compilacion versionados de `paper/` (`main.pdf`, `main.xdv`, `main.toc`, `main.aux`, `main.bbl`, `main.bcf`, `main.blg`, `main.lof`, `main.lot`, `main.out`, `main.fdb_latexmk`).
+**Origen**: change `c-136-recomendaciones-lineas-faltantes` (dictamen CONEAU 2026-10-22: seccion 8 y recomendacion B11). Aplicado el **2026-10-25** en la rama `change/c-136-recomendaciones-lineas-faltantes`, cortada de `ramagonzalo` en `adadc64` (merge de c-138). Posicion 9 del orden de la familia (G0.6). Solo documento (gobernanza LOW): sin codigo, sin Gemini, sin tags, sin commit (lo crea el orquestador). Archivos editados: `10-recomendaciones.tex` (unico fuente de tesis), este registro y los artefactos de compilacion versionados de `paper/` (`main.pdf`, `main.xdv`, `main.toc`, `main.aux`, `main.bbl`, `main.bcf`, `main.blg`, `main.lof`, `main.lot`, `main.out`, `main.fdb_latexmk`).
 
 ### Open Questions del design - CONFIRMADAS el 2026-10-26 (registradas como PROVISIONAL el 2026-10-25)
 
@@ -2025,7 +2025,7 @@ Compensaciones aplicadas (bloque 6): base de conocimientos -119 palabras, agente
 
 ## Dictamen v1.1.0 - B9, B10 y B13 (cota) (c-135) - Cronologia y consistencia redaccional
 
-**Origen**: change `c-135-cronologia-y-consistencia-redaccional` (dictamen CONEAU 2026-10-22: B9, B10, B13 parte cota telefonica; mas la consistencia del Anexo H y el tiempo de espera de la inferencia, asignados por el orquestador desde c-136). Aplicado el **2026-10-25** en la rama `change/c-135-cronologia-y-consistencia-redaccional`, cortada de `ramagonzalo` en `9865300` (merge de c-136). Posicion 10 del orden de la familia (G0.6). Solo documento y una figura (gobernanza LOW, checkpoint MEDIUM de OQ-3).
+**Origen**: change `c-135-cronologia-y-consistencia-redaccional` (dictamen CONEAU 2026-10-22: B9, B10, B13 parte cota telefonica; mas la consistencia del Anexo H y el tiempo de espera de la inferencia, asignados por el orquestador desde c-136). Aplicado el **2026-10-25** en la rama `change/c-135-cronologia-y-consistencia-redaccional`, cortada de `ramagonzalo` en `d28c39d` (merge de c-136). Posicion 10 del orden de la familia (G0.6). Solo documento y una figura (gobernanza LOW, checkpoint MEDIUM de OQ-3).
 
 ### Open Questions del design - CONFIRMADAS el 2026-10-26 (OQ-1 a OQ-5)
 
@@ -2048,17 +2048,17 @@ Compensaciones aplicadas (bloque 6): base de conocimientos -119 palabras, agente
 | Observacion | Correccion | Archivo |
 |---|---|---|
 | B9 cronologia no conciliada | Fuente unica `docs/diagrams/cronograma.md` (Gantt Mermaid + tabla de procedencia), figura `fig:cronograma` (Anexo A); se retiran los rotulos "Semanas k--k+1", "de dos semanas cada una" y "12 semanas"; 4.9 condensada (la lista de iteraciones se reemplaza por una remision a 6.6 y a la figura); 6.6 declara que la campana manual no es una iteracion y que la automatizada es la iteracion 6; campanas de `04:14` con remision a la figura; "junio de 2026" de la cuarta limitacion reemplazado por `gemini-3.6-flash` (integrada el 2026-09-24); delimitacion de `01:76` | `04`, `06`, `08`, `01`, `12-anexos` |
-| B9 (tarea 6.8) entregable de la iteracion 1 | Se retira "el documento de arquitectura y el contrato OpenAPI inicial" de la iteracion 1: `knowledge-base/08_arquitectura_propuesta.md` es de 2026-06-10 (`0ceebe0`) y `docs/openapi.json` de 2026-06-11 (`15f9516`) | `06` |
+| B9 (tarea 6.8) entregable de la iteracion 1 | Se retira "el documento de arquitectura y el contrato OpenAPI inicial" de la iteracion 1: `knowledge-base/08_arquitectura_propuesta.md` es de 2026-06-10 (`826757b`) y `docs/openapi.json` de 2026-06-11 (`bfa9c0b`) | `06` |
 | B10 resultados | Parrafo introductorio enumera los seis apartados vigentes; "intervencion humana" sin "reduccion" | `07` |
 | B10 comparativa | Tres dimensiones; sintesis sin telefonia; telefonia como rasgo propio en el posicionamiento | `03` |
 | B10 trabajos academicos | Metrica y corpus completados desde resumen o texto abierto; residuo con motivo; procedencia en `extraccion-metricas-trabajos-c-135.md` | `03` |
 | B13 cota | "es una cota inferior de la duracion real por el tope de 45 s de grabacion", con remision a `subsec:metricas-instrumentos`; 20,1 s sin cambios | `09` |
 | Anexo H (desde c-136) | "configuracion adoptada" en lugar de "optimizados"; `candidate_count`: "acota la latencia" | `12-anexos` |
-| Tiempo de espera (D15) | 10 s -> 30 s por intento y 60 s de presupuesto total (`settings.py:85`, `:104`; commits `11036be` y `429f2c9`); procedencia en `conteos-canonicos-tecnicos.md` | `05`, `12-anexos` |
+| Tiempo de espera (D15) | 10 s -> 30 s por intento y 60 s de presupuesto total (`settings.py:85`, `:104`; commits `cf1cfb4` y `ed4beb9`); procedencia en `conteos-canonicos-tecnicos.md` | `05`, `12-anexos` |
 
 ### Procedencia del cronograma y representacion de las iteraciones
 
-Tabla completa en `docs/diagrams/cronograma.md`. Resumen: desarrollo abril a julio (primer commit 2026-04-06; ultimo previo a la pausa 2026-07-10) y septiembre a octubre (primer commit tras la pausa 2026-09-10), precision de mes; campana manual junio a agosto y automatizada septiembre a octubre de 2026, precision de mes (confirmacion del autor 2026-10-09, T6); hitos de dia: 2026-09-24 (`11036be`), 2026-10-02 (c-68 6.4), 2026-10-06 (c-70 8.2), 2026-10-19 (`4602bf5`). Render: mmdc 11.17.0 (`npx -y @mermaid-js/mermaid-cli@11 ... -w 760`) mas recorte con Pillow.
+Tabla completa en `docs/diagrams/cronograma.md`. Resumen: desarrollo abril a julio (primer commit 2026-04-06; ultimo previo a la pausa 2026-07-10) y septiembre a octubre (primer commit tras la pausa 2026-09-10), precision de mes; campana manual junio a agosto y automatizada septiembre a octubre de 2026, precision de mes (confirmacion del autor 2026-10-09, T6); hitos de dia: 2026-09-24 (`cf1cfb4`), 2026-10-02 (c-68 6.4), 2026-10-06 (c-70 8.2), 2026-10-19 (`d48254b`). Render: mmdc 11.17.0 (`npx -y @mermaid-js/mermaid-cli@11 ... -w 760`) mas recorte con Pillow.
 
 ### Extraccion de metricas (D8)
 
@@ -2095,7 +2095,7 @@ Detalle por celda en `extraccion-metricas-trabajos-c-135.md`. Revina 2020: exact
 
 ## Dictamen v1.1.0 - A4, B15 y B16 (c-139) - Correspondencia texto-fuente y metadatos
 
-**Origen**: change `c-139-correspondencia-texto-fuente-y-metadatos` (dictamen CONEAU 2026-10-22: observacion 4 / recomendacion A4, correcciones B15 y B16). Aplicado el **2026-10-25** en la rama `change/c-139-correspondencia-texto-fuente-y-metadatos`, cortada de `ramagonzalo` en `69a9b34` (merge de c-135). Posicion 11 del orden de la familia (G0.6). Documental y bibliografico; un bloque TDD estricto sobre `verify_citations.py` (gobernanza LOW). Ningun numero canonico cambia.
+**Origen**: change `c-139-correspondencia-texto-fuente-y-metadatos` (dictamen CONEAU 2026-10-22: observacion 4 / recomendacion A4, correcciones B15 y B16). Aplicado el **2026-10-25** en la rama `change/c-139-correspondencia-texto-fuente-y-metadatos`, cortada de `ramagonzalo` en `32fdb1e` (merge de c-135). Posicion 11 del orden de la familia (G0.6). Documental y bibliografico; un bloque TDD estricto sobre `verify_citations.py` (gobernanza LOW). Ningun numero canonico cambia.
 
 ### Open Questions del design - CONFIRMADAS el 2026-10-26 (registradas como PROVISIONAL el 2026-10-25)
 
@@ -2219,20 +2219,20 @@ Comentario agregado al `.bib`: las claves conservan el ano historico (D8); el an
 
 ## Grupo: Revision ortotipografica (B14, c-137)
 
-**Origen**: change `c-137-revision-ortotipografica` (dictamen CONEAU 2026-10-22: seccion 1, tercer defecto de forma, y recomendacion B14). Bloque 1 (herramienta `revision_tildes.py` con TDD estricto) aplicado antes en el commit `b241ec8`; bloques 2 a 8 aplicados el **2026-10-25** en la rama `change/c-137-revision-ortotipografica`, con todo `ramagonzalo` fusionado (posicion 13 del orden de la familia, G0.6; c-140 excluido de este tramo, ver mas abajo). Sin commit propio de este apply (lo crea el orquestador). Gobernanza LOW: solo diacriticos, las comillas de seis cadenas de busqueda, una opcion de geometria (ver "Desvios") y, por OQ1, las menciones de sectores.
+**Origen**: change `c-137-revision-ortotipografica` (dictamen CONEAU 2026-10-22: seccion 1, tercer defecto de forma, y recomendacion B14). Bloque 1 (herramienta `revision_tildes.py` con TDD estricto) aplicado antes en el commit `7ea16a4`; bloques 2 a 8 aplicados el **2026-10-25** en la rama `change/c-137-revision-ortotipografica`, con todo `ramagonzalo` fusionado (posicion 13 del orden de la familia, G0.6; c-140 excluido de este tramo, ver mas abajo). Sin commit propio de este apply (lo crea el orquestador). Gobernanza LOW: solo diacriticos, las comillas de seis cadenas de busqueda, una opcion de geometria (ver "Desvios") y, por OQ1, las menciones de sectores.
 
-**Commit base de la pasada**: `f1fc134dc59673939a19c99364a13991f3468e4b` (merge de `ramagonzalo` en `change/c-137-revision-ortotipografica`; descendiente de `846189f`, c-139). Copia de las versiones base de `paper/sections/*.tex` (15 archivos), `paper/main.tex`, `paper/preambles/preamble.tex` y `Bibliography_base.bib` en un directorio temporal del repositorio, borrado al cerrar.
+**Commit base de la pasada**: `c0138f5c4a144a0de3fe78f60b38a34a766cde5c` (merge de `ramagonzalo` en `change/c-137-revision-ortotipografica`; descendiente de `d190dcd`, c-139). Copia de las versiones base de `paper/sections/*.tex` (15 archivos), `paper/main.tex`, `paper/preambles/preamble.tex` y `Bibliography_base.bib` en un directorio temporal del repositorio, borrado al cerrar.
 
 ### Open Questions del design - CONFIRMADAS el 2026-10-26 (registradas como PROVISIONAL el 2026-10-25)
 
 | Open Question | Decision PROVISIONAL (del orquestador) | Efecto |
 |---|---|---|
-| OQ1 - nombres de sector | **Si, unificar** a la cadena canonica sin tildes las 15 menciones con tilde de los 5 pasajes que presentan los sectores como "canonicos" (recomendacion D7; el default del design para "sin respuesta" era no unificar) | Ver "Decision OQ1". Reversible: `git checkout f1fc134 -- "docs/Tesis/v10 (IA)/paper/sections/01-introduccion.tex" ...` restaura las formas con tilde sin tocar el resto |
+| OQ1 - nombres de sector | **Si, unificar** a la cadena canonica sin tildes las 15 menciones con tilde de los 5 pasajes que presentan los sectores como "canonicos" (recomendacion D7; el default del design para "sin respuesta" era no unificar) | Ver "Decision OQ1". Reversible: `git checkout c0138f5 -- "docs/Tesis/v10 (IA)/paper/sections/01-introduccion.tex" ...` restaura las formas con tilde sin tocar el resto |
 | OQ2 - fe de errata del dictamen | **No** editar el dictamen auditado | La discrepancia de conteos se consigna solo aqui ("formula" verbal 1 y no 4; "continua" verbal 4 y no 11) |
 
 ### Precondiciones y linea base (tareas 2.1 a 2.5)
 
-- Predecesores (`openspec list --json`): c-130, c-131, c-132, c-133, c-134, c-136, c-138, c-139 y c-142 con todas sus tareas completas; c-135 con 34 de 35 (la 5.2 abierta); ninguno archivado. **c-140 no edito prosa de la tesis**: `git log --oneline -- "docs/Tesis/v10 (IA)/paper/sections"` no muestra commits de c-140 (ultimo: c-139, `c269f09`). c-140 queda excluido de este tramo por decision del orquestador, pendiente del usuario; si luego edita prosa, correr `revision_tildes.py --check` despues.
+- Predecesores (`openspec list --json`): c-130, c-131, c-132, c-133, c-134, c-136, c-138, c-139 y c-142 con todas sus tareas completas; c-135 con 34 de 35 (la 5.2 abierta); ninguno archivado. **c-140 no edito prosa de la tesis**: `git log --oneline -- "docs/Tesis/v10 (IA)/paper/sections"` no muestra commits de c-140 (ultimo: c-139, `eb91a3f`). c-140 queda excluido de este tramo por decision del orquestador, pendiente del usuario; si luego edita prosa, correr `revision_tildes.py --check` despues.
 - Arbol limpio en `docs/Tesis/v10 (IA)` al inicio. La herramienta (292 pruebas) estaba en verde.
 - Compilacion base (`texlive-thesis`, `latexmk main.tex`): `abspage@last{109}` (cuerpo 101, anexos 8; `Anexos` en p. 102 de `main.toc`), `grep -c "^!" main.log` = 0, referencias/citas indefinidas = 0, `main.blg` sin `WARN`/`ERROR`, **0 avisos de `fancyhdr`** (el unico `headheight` del log es el volcado del parametro `\headheight=12.0pt`), 33 avisos `Overfull`.
 - Conteos base en `sections/`: `Seguridad Informatica` 7, `Soporte Tecnico Hardware` 8, `Soporte Tecnico Software` 16, `Bases de Datos` 15, `Sistemas` 14; con tilde (Informatica, Tecnico): 5 menciones de cada una de las tres cadenas con acento posible. "mejora continua" 3, "integracion continua" 5, "la formula" (sustantivo) 3. `verify_citations.py`: PASS, 73 entradas, 0 huerfanas. 73 claves `@tipo{clave` en el `.bib`.
@@ -2325,7 +2325,7 @@ Las cadenas de busqueda A1, A2, A3, A4 y B1 del parrafo "Protocolo de revision" 
 ### Desvios y causa raiz
 
 - **Desvio (headheight)**: la mayuscula acentuada del encabezado ("AUTOMATIZACION" con tilde en la O) eleva la caja del encabezado a 12,56 pt y `fancyhdr` emitio **105 avisos** (`\headheight is too small (12.0pt)`) en la primera compilacion. Se agrego `headheight=13pt` a las opciones de `geometry` (`paper/preambles/preamble.tex:20`). Con `top=2.54cm` el cuerpo del texto no se mueve (el encabezado vive en el margen), y la paginacion se mantuvo en 109. Es una modificacion no diacritica, minima y reversible (quitar la opcion devuelve los 105 avisos, sin efecto visible). A confirmar por los autores.
-- **Causa raiz**: `docs/Tesis/acentuar_tesis.py` mapea de forma incondicional "hacia" (preposicion) a su forma con tilde (imperfecto de "hacer") y "aquellas" (determinante) a su forma con tilde (commit `e2bbd3f`, que tambien creo la utilidad); `acentuar_tesis_v9.py` (c-106) mantiene "formula" (verbo) -> forma con tilde del sustantivo y "fijo" (adjetivo) -> el preterito "fij" con tilde en la o ("se formula" con tilde indebida entra con `f0546ec`). Precedente: c-80 (F1) ya tuvo que revertir 50 erratas del mismo diccionario. Ambas utilidades quedan marcadas **DEPRECADO (c-137)** en su docstring de cabecera (sin cambios de logica; `grep -c DEPRECADO` = 1 en cada una; el diff solo agrega 7 lineas al docstring; compilan).
+- **Causa raiz**: `docs/Tesis/acentuar_tesis.py` mapea de forma incondicional "hacia" (preposicion) a su forma con tilde (imperfecto de "hacer") y "aquellas" (determinante) a su forma con tilde (commit `c56fc32`, que tambien creo la utilidad); `acentuar_tesis_v9.py` (c-106) mantiene "formula" (verbo) -> forma con tilde del sustantivo y "fijo" (adjetivo) -> el preterito "fij" con tilde en la o ("se formula" con tilde indebida entra con `17f42e7`). Precedente: c-80 (F1) ya tuvo que revertir 50 erratas del mismo diccionario. Ambas utilidades quedan marcadas **DEPRECADO (c-137)** en su docstring de cabecera (sin cambios de logica; `grep -c DEPRECADO` = 1 en cada una; el diff solo agrega 7 lineas al docstring; compilan).
 
 ### Procedimiento de la pasada corta (para c-141)
 
@@ -2338,13 +2338,13 @@ Despues de cualquier edicion tardia de la prosa, desde la raiz del repositorio: 
 
 ### Reversibilidad
 
-`git checkout f1fc134 -- "docs/Tesis/v10 (IA)/paper/sections" "docs/Tesis/v10 (IA)/paper/main.tex" "docs/Tesis/v10 (IA)/paper/preambles/preamble.tex" "docs/Tesis/v10 (IA)/Bibliography_base.bib" "docs/Tesis/v10 (IA)/tesis_para_agente.md" docs/Tesis/acentuar_tesis.py docs/Tesis/acentuar_tesis_v9.py`, recompilar y regenerar `tesis_para_agente.md`. La herramienta, sus pruebas y el registro de decisiones pueden conservarse. No se crean ni mueven tags.
+`git checkout c0138f5 -- "docs/Tesis/v10 (IA)/paper/sections" "docs/Tesis/v10 (IA)/paper/main.tex" "docs/Tesis/v10 (IA)/paper/preambles/preamble.tex" "docs/Tesis/v10 (IA)/Bibliography_base.bib" "docs/Tesis/v10 (IA)/tesis_para_agente.md" docs/Tesis/acentuar_tesis.py docs/Tesis/acentuar_tesis_v9.py`, recompilar y regenerar `tesis_para_agente.md`. La herramienta, sus pruebas y el registro de decisiones pueden conservarse. No se crean ni mueven tags.
 
-**Estado**: grupo aplicado (41 de 41 tareas; bloque 1 en `b241ec8`).
+**Estado**: grupo aplicado (41 de 41 tareas; bloque 1 en `7ea16a4`).
 
 ## Integracion c-141 - tramo de integracion (FASE 36, grupos 2 a 4 y 6)
 
-**Origen**: change `c-141-integracion-release-v1-2-0`, apply parcial del tramo de integracion: tareas 2.1 a 2.8, 3.1, 3.2, 4.1 a 4.6 y 6.1 a 6.3 de `tasks.md`. Aplicado el **2026-10-26** en la rama `change/c-141-integracion-release-v1-2-0` (cortada de `ramagonzalo` en `b3c6f0f`, merge de c-137). Sin commit (lo crea el orquestador), sin push, sin merge, sin tag, sin archivado de changes. **Actualizacion 2026-10-26 (tramo A del apply)**: con la decision del usuario sobre el tope de paginas se ejecutaron 3.3 a 3.6 y la parte permitida de 2.9 (ver "Compactacion P7" y "Archivo de la familia" mas abajo). **Actualizacion 2026-10-26 (tramo B del apply)**: se ejecutaron 5.1, 5.2, 5.3, 6.4, 7.1 a 7.7 y 8.1 (secciones "Contenido de C1 y compilacion de registro", "Cierre del libro mayor", "Renders y base de conocimiento" y "Verificacion previa al tag", mas abajo); 8.2 (commit C1) la hace el orquestador con este arbol; 8.3 no aplica (c-140 no aplicado). **No ejecutadas** (motivo): 8.4 a 8.8 y 9.x (tag, push, C2, PR y cierre documental: acciones publicas o posteriores al tag). Gobernanza MEDIUM. Cero llamadas a Gemini; `App/`, `n8n/`, `data/`, `evaluation/` (salvo lectura) y `CLAUDE.md` sin cambios en este tramo.
+**Origen**: change `c-141-integracion-release-v1-2-0`, apply parcial del tramo de integracion: tareas 2.1 a 2.8, 3.1, 3.2, 4.1 a 4.6 y 6.1 a 6.3 de `tasks.md`. Aplicado el **2026-10-26** en la rama `change/c-141-integracion-release-v1-2-0` (cortada de `ramagonzalo` en `d81c728`, merge de c-137). Sin commit (lo crea el orquestador), sin push, sin merge, sin tag, sin archivado de changes. **Actualizacion 2026-10-26 (tramo A del apply)**: con la decision del usuario sobre el tope de paginas se ejecutaron 3.3 a 3.6 y la parte permitida de 2.9 (ver "Compactacion P7" y "Archivo de la familia" mas abajo). **Actualizacion 2026-10-26 (tramo B del apply)**: se ejecutaron 5.1, 5.2, 5.3, 6.4, 7.1 a 7.7 y 8.1 (secciones "Contenido de C1 y compilacion de registro", "Cierre del libro mayor", "Renders y base de conocimiento" y "Verificacion previa al tag", mas abajo); 8.2 (commit C1) la hace el orquestador con este arbol; 8.3 no aplica (c-140 no aplicado). **No ejecutadas** (motivo): 8.4 a 8.8 y 9.x (tag, push, C2, PR y cierre documental: acciones publicas o posteriores al tag). Gobernanza MEDIUM. Cero llamadas a Gemini; `App/`, `n8n/`, `data/`, `evaluation/` (salvo lectura) y `CLAUDE.md` sin cambios en este tramo.
 
 ### Estado de la familia (tarea 2.1)
 
@@ -2376,7 +2376,7 @@ Contraste de los `proposal.md` y `tasks.md` de cada change y de los grupos de es
 | A2 | c-131 | Exactitud por etapa, calibracion por etapa y McNemar |
 | A3 | c-132 | Balance neto |
 | A4 | c-139 (correspondencia texto-fuente) y c-138 (fuentes de calibracion y cascadas, seccion 4 del dictamen y criterio 3 residual) | **Salvedad 1**: el `proposal.md` de c-138 y el de c-139 nombran ambos a A4. No hay solapamiento de texto (c-138 agrego seis entradas y la subseccion 3.4; c-139 corrige atribuciones y agrega ocho entradas). La matriz las separa en filas distintas |
-| A5a | c-130 (a traves de c-144, que ya declaro la procedencia en `0c7f5bc`) | T04, T12, T13 y T14 de c-130 solo se verificaron |
+| A5a | c-130 (a traves de c-144, que ya declaro la procedencia en `4e217a3`) | T04, T12, T13 y T14 de c-130 solo se verificaron |
 | A5b | c-142 | Sensibilidad fuera de muestra, septima limitacion y evidencia del objetivo 6 |
 | B4, B5, B6 | c-133 | |
 | B7a | c-134 | |
@@ -2397,14 +2397,14 @@ Observaciones no numeradas del dictamen (D10): `timeout` de 10 s frente a 30 s -
 
 ### Sincronizacion con el remoto (tarea 2.3)
 
-- `git fetch origin` (2026-10-26): sin errores. `origin/main` = `origin/RamaLuca` = `11e969c5919e56ca65bf10ca8e9c5bc4e43e19ac`.
+- `git fetch origin` (2026-10-26): sin errores. `origin/main` = `origin/RamaLuca` = `1f86972f0a6a018b7852b695b6dd113381ba9916`.
 - `git log --oneline ramagonzalo..origin/main | wc -l` = **0** y `git log --oneline ramagonzalo..origin/RamaLuca | wc -l` = **0**.
 - `git merge-base --is-ancestor origin/main HEAD` (y lo mismo para `origin/RamaLuca`): **verdadero**. `git diff --stat $(git merge-base HEAD origin/main) origin/main -- docs/Tesis/ knowledge-base/ evaluation/ CHANGES.md` vacio (idem `origin/RamaLuca`).
 - No hay nada que integrar: **no se hizo `git merge`** (instruccion del orquestador). Hay que repetir esta comprobacion antes de C1 (tarea 8.1).
 
 ### Regresion cruzada (tarea 2.4)
 
-Se re-ejecutaron sobre el arbol integrado (HEAD `b3c6f0f` mas las ediciones de este tramo) los comandos de verificacion automatizables de los `tasks.md` de c-130..c-139 y c-142 (greps de frase presente/ausente y de conteos, existencia de rotulos y claves del `.bib`, conteos de palabras del resumen) con un ejecutor propio (170 comprobaciones, mas las manuales de c-135, que no tiene greps en su `tasks.md`), mas las suites y herramientas. Las verificaciones de compilacion de cada `tasks.md` (sin indefinidas, sin `??`, `main.blg` limpio, `verify_citations.py`) se cumplen en el arbol final (ver "Compilacion de verificacion").
+Se re-ejecutaron sobre el arbol integrado (HEAD `d81c728` mas las ediciones de este tramo) los comandos de verificacion automatizables de los `tasks.md` de c-130..c-139 y c-142 (greps de frase presente/ausente y de conteos, existencia de rotulos y claves del `.bib`, conteos de palabras del resumen) con un ejecutor propio (170 comprobaciones, mas las manuales de c-135, que no tiene greps en su `tasks.md`), mas las suites y herramientas. Las verificaciones de compilacion de cada `tasks.md` (sin indefinidas, sin `??`, `main.blg` limpio, `verify_citations.py`) se cumplen en el arbol final (ver "Compilacion de verificacion").
 
 | Change | Resultado | Detalle |
 |---|---|---|
@@ -2455,7 +2455,7 @@ Archivo `docs/Tesis/Correcciones/numeros-canonicos.md` (solo estructura, referen
 - `evaluation/report.md` conserva sus secciones: Etapas del pipeline, Exactitud, Matriz de Confusion, Metricas por sector, Metricas de conjunto, **Exactitud por etapa** y **por canal** y **Calibracion de la confianza** (c-131), **Tiempos** con Normalidad (Shapiro-Wilk), Prueba de Wilcoxon, Reduccion de tiempos, Desglose por canal (y, de c-134, Descriptivos, Contraste direccional y Escenarios de sensibilidad del redondeo). Los valores canonicos coinciden con el memo (`0.7350`, `0.5207`, `0.6654`, `0.3586`, `61.5850`, `17.7606`, `71.16`, `W = 363`, `T+ = 19737`, `r = 0.9639`, `0.7405`, `0.7246`); los valores de cuatro decimales de `report.md` que el memo no registra son descriptivos que la tesis no cita.
 - `evaluation/report_sensibilidad_ajustes.md` existe (98 lineas); sus 32 valores de cuatro decimales figuran en el memo (3.10) salvo constantes de diseno (`0.2000`, `0.3000`, `0.5000`). Declara el nivel c "no computado; requiere autorizacion explicita y no se ejecuto".
 - **Sin invocaciones pagas**: la ablacion del prompt (G0.7a) no esta autorizada y `report_sensibilidad_ajustes.md` no registra corrida paga; ninguna tarea de este tramo invoco a Gemini.
-- `report.md` y las caches oficiales no fueron modificados por c-142 (`git show --stat 59b9967 -- evaluation/report.md evaluation/evidence` vacio; `git log -- evaluation/report.md` solo muestra c-134 codigo, c-131 y el versionado inicial).
+- `report.md` y las caches oficiales no fueron modificados por c-142 (`git show --stat dad9fef -- evaluation/report.md evaluation/evidence` vacio; `git log -- evaluation/report.md` solo muestra c-134 codigo, c-131 y el versionado inicial).
 - Huella del corpus: `git show HEAD:data/corpus_evaluacion_pseudonimizado.json | sha256sum` = `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb` (coincide con la esperada). Las copias vivas `evaluation/predicciones*.json` siguen ignoradas (`.gitignore:72`) y son copias locales de las evidencias versionadas de c-143.
 
 ### Anexo I y presupuesto de paginas (tareas 3.1 y 3.2)
@@ -2534,7 +2534,7 @@ Con esto, la tarea 2.9 queda **parcialmente cumplida**: faltan c-135 y c-140; `o
 
 ### Pasada ortotipografica corta (tarea 4.1)
 
-Commit de apply de c-137: `492f56c` (merge `b3c6f0f`). `git diff 492f56c..HEAD -- "docs/Tesis/v10 (IA)/paper/sections/"` esta **vacio**; el unico texto de prosa modificado despues de c-137 es el del Anexo I de este tramo (`git diff 492f56c -- sections/` = 36 lineas agregadas en `12-anexos.tex`). Verificaciones de c-137 sobre ese texto: `revision_tildes.py --check` codigo **0**; ninguna ocurrencia de los pares `hacia`/`hacia`, `formula`, `continua`, `esta`/`este`, `si`/`aun`/`solo` ni de las palabras enumeradas por el dictamen (`erronea`, `heterogeneos`, `multiples`, `inequivocos`, `antiguedad`, `perimetro`, `enganosa`, `escaner`, `decada`, `alla`, `guian`, `envian`, `demas`) en las lineas agregadas; se revisaron a mano. No se reaplicaron `acentuar_tesis.py` ni `acentuar_tesis_v9.py`.
+Commit de apply de c-137: `6ecb86a` (merge `d81c728`). `git diff 6ecb86a..HEAD -- "docs/Tesis/v10 (IA)/paper/sections/"` esta **vacio**; el unico texto de prosa modificado despues de c-137 es el del Anexo I de este tramo (`git diff 6ecb86a -- sections/` = 36 lineas agregadas en `12-anexos.tex`). Verificaciones de c-137 sobre ese texto: `revision_tildes.py --check` codigo **0**; ninguna ocurrencia de los pares `hacia`/`hacia`, `formula`, `continua`, `esta`/`este`, `si`/`aun`/`solo` ni de las palabras enumeradas por el dictamen (`erronea`, `heterogeneos`, `multiples`, `inequivocos`, `antiguedad`, `perimetro`, `enganosa`, `escaner`, `decada`, `alla`, `guian`, `envian`, `demas`) en las lineas agregadas; se revisaron a mano. No se reaplicaron `acentuar_tesis.py` ni `acentuar_tesis_v9.py`.
 
 ### Compilacion de verificacion (tareas 4.2 a 4.6) - arbol integrado pre-compactacion
 
@@ -2548,7 +2548,7 @@ Commit de apply de c-137: `492f56c` (merge `b3c6f0f`). `git diff 492f56c..HEAD -
 
 ### Contenido de C1 y compilacion de registro (tareas 5.1 a 5.3) - 2026-10-26
 
-- **5.1 Contenido de C1** (patron de `4160d84`): en `sec:anexo-repositorio` de `12-anexos.tex` el tag `v1.1.1` pasa a `v1.2.0` y se retira la linea del hash de `v1.1.1` (con su linea en blanco); en `Bibliography_base.bib`, `Gomez2026_repositorio` cambia solo el numero de version del titulo, `1.1.1` -> `1.2.0`, conservando la etiqueta acentuada `Versi{\'o}n` que dejo c-137, y su `urldate` pasa de 2026-10-25 a 2026-10-26 (consigna de c-139). Verificaciones: `grep -c "v1.2.0" sections/12-anexos.tex` = 1; `grep -c "4160d84286623b073d2904353e6f9163ae211de7" sections/12-anexos.tex` = 0; la linea `title` de `Gomez2026_repositorio` termina en `1.2.0)}`; `grep -c "1.1.1)\|1.0.0)"` sobre el `.bib` = 0. Queda en `12-anexos.tex:152` la mencion historica de `v1.1.0` y `v1.1.1` del Anexo I (el dictamen se emitio sobre `v1.1.0`, aplicable por igual a `v1.1.1`); no se toca.
+- **5.1 Contenido de C1** (patron de `af6000b`): en `sec:anexo-repositorio` de `12-anexos.tex` el tag `v1.1.1` pasa a `v1.2.0` y se retira la linea del hash de `v1.1.1` (con su linea en blanco); en `Bibliography_base.bib`, `Gomez2026_repositorio` cambia solo el numero de version del titulo, `1.1.1` -> `1.2.0`, conservando la etiqueta acentuada `Versi{\'o}n` que dejo c-137, y su `urldate` pasa de 2026-10-25 a 2026-10-26 (consigna de c-139). Verificaciones: `grep -c "v1.2.0" sections/12-anexos.tex` = 1; `grep -c "af6000bffde6d0039ef552c5a86e8c71bfe52064" sections/12-anexos.tex` = 0; la linea `title` de `Gomez2026_repositorio` termina en `1.2.0)}`; `grep -c "1.1.1)\|1.0.0)"` sobre el `.bib` = 0. Queda en `12-anexos.tex:152` la mencion historica de `v1.1.0` y `v1.1.1` del Anexo I (el dictamen se emitio sobre `v1.1.0`, aplicable por igual a `v1.1.1`); no se toca.
 - **5.2 Compilacion de registro**: `latexmk main.tex` en el arbol (artefactos versionados incluido `main.bbl`, que cambia por el titulo y el `urlday`). Fila "release v1.2.0 (C1)" agregada al libro mayor: **109 / 100 / 9**.
 - **5.3 Evidencia de compilacion (D6)** - los datos son:
   1. **Entorno y versiones**: Docker `texlive-thesis` (XeTeX 3.141592653-2.6-0.999998, TeX Live 2026; biber 2.22), el mismo de G0.2.
@@ -2594,18 +2594,18 @@ Resumen de la FASE 36 (todas las cifras en paginas: total / cuerpo sin anexos / 
 ### Verificacion previa al tag (tarea 8.1) - 2026-10-26
 
 - `git tag -l v1.2.0`: vacio. `git ls-remote --tags origin v1.2.0`: vacio.
-- Tags previos en sus commits: `v1.0.0` = `61a6b117dd1321fbee25f9792d9f29b884e5ac8d`; `v1.0.1` = `bac4c5f6f85c889b48a90d4396bbdaccc7a35ad0`; `v1.1.0` = `7103b649d8c4f51737ad6ad4095dad22c9406400`; `v1.1.1` = `4160d84286623b073d2904353e6f9163ae211de7` (los cuatro coinciden con `tasks.md`).
-- `git fetch origin` y `git merge-base --is-ancestor origin/main HEAD`: verdadero (`origin/main` = `11e969c5919e56ca65bf10ca8e9c5bc4e43e19ac`). No hizo falta repetir 2.3 ni los grupos 4 y 5. Repetir el fetch inmediatamente antes de crear el tag.
+- Tags previos en sus commits: `v1.0.0` = `3ae34df1ac3924a8a106b84e734038ade5e7e29b`; `v1.0.1` = `ee6a869eb3090d54533a1cb36cf0fbd96c0bba03`; `v1.1.0` = `ff4bc64ad66eb4478c2e74c7048d3159d1f96e5c`; `v1.1.1` = `af6000bffde6d0039ef552c5a86e8c71bfe52064` (los cuatro coinciden con `tasks.md`).
+- `git fetch origin` y `git merge-base --is-ancestor origin/main HEAD`: verdadero (`origin/main` = `1f86972f0a6a018b7852b695b6dd113381ba9916`). No hizo falta repetir 2.3 ni los grupos 4 y 5. Repetir el fetch inmediatamente antes de crear el tag.
 - 8.3 (prueba de humo de c-140): no aplicable, c-140 no se aplico (excluido provisionalmente; decision del usuario pendiente).
 
 ### Release v1.2.0 - C2 y cierre documental (tareas 8.6, 8.7, 9.1 y 9.2) - 2026-10-26
 
-- **8.6 Preparacion de C2** (patron de `e18b9c4`): en `sec:anexo-repositorio` de `12-anexos.tex`, despues de la oracion del tag, se agrego la linea con el hash completo de `git rev-parse v1.2.0^{commit}` con la redaccion de la linea de `v1.1.1` ("El hash completo de ese commit es ..., que constituye la referencia verificable de la version corregida."); el hash va en `\texttt{\small ...}` porque en `\texttt{}` al cuerpo normal desbordaba el margen 17,8 pt (un `Overfull \hbox` nuevo, 23 mayores de 10 pt) y con `\small` cabe (22, igual que en C1). La nota "Trazabilidad `v1.2.0` (c-141, 2026-10-26)" quedo en "## Notas" de este registro con tag, hash y alcance (FASE 36: A1-A5 y B4-B16; c-140 no aplicado, sin prueba de humo). Verificado: el hash de 40 caracteres (`a49d035c67b32ae17e633ec04b09ecdd2781aac6`) aparece **una vez** en `12-anexos.tex` y **una vez** en la nota de "## Notas"; `git cat-file -t v1.2.0` = `tag`, `git rev-parse v1.2.0^{commit}` = ese hash y `git ls-remote --tags origin v1.2.0` devuelve el tag y su linea `^{}` apuntando al mismo commit.
+- **8.6 Preparacion de C2** (patron de `5ae7134`): en `sec:anexo-repositorio` de `12-anexos.tex`, despues de la oracion del tag, se agrego la linea con el hash completo de `git rev-parse v1.2.0^{commit}` con la redaccion de la linea de `v1.1.1` ("El hash completo de ese commit es ..., que constituye la referencia verificable de la version corregida."); el hash va en `\texttt{\small ...}` porque en `\texttt{}` al cuerpo normal desbordaba el margen 17,8 pt (un `Overfull \hbox` nuevo, 23 mayores de 10 pt) y con `\small` cabe (22, igual que en C1). La nota "Trazabilidad `v1.2.0` (c-141, 2026-10-26)" quedo en "## Notas" de este registro con tag, hash y alcance (FASE 36: A1-A5 y B4-B16; c-140 no aplicado, sin prueba de humo). Verificado: el hash de 40 caracteres (`1f83b0adabdd0ef19618e79ebd6fd2d8319b1be9`) aparece **una vez** en `12-anexos.tex` y **una vez** en la nota de "## Notas"; `git cat-file -t v1.2.0` = `tag`, `git rev-parse v1.2.0^{commit}` = ese hash y `git ls-remote --tags origin v1.2.0` devuelve el tag y su linea `^{}` apuntando al mismo commit.
 - **8.7 Recompilacion** (Docker `texlive-thesis`, `latexmk main.tex`, mismo entorno que 5.2): `abspage@last{109}`; `Anexos` en p. 101 => cuerpo 100, anexos 9 (tope de 3.6 cumplido, margen 0); `grep -c "^!" main.log` = 0; `grep -i undefined main.log` vacio; `multiply defined` = 0; 30 `Overfull \hbox`, 22 mayores de 10 pt (igual que en C1); `main.blg` sin `WARN` ni `ERROR`, "Found 73 citekeys"; `main.bbl` sin cambios; `pdftotext -enc UTF-8 main.pdf - | grep -c "??"` = 0; `verify_citations.py` `STATUS: PASS`; `revision_tildes.py --check` codigo 0. El texto del PDF contiene el hash (p. 102).
 - **Renders de C2**: `tesis_para_agente.md` regenerado con `build_tesis_para_agente.py v1.2.0` (dos corridas, mismo SHA-256 de la salida LF `0a5c0d3d4c116312e4e186e83bf00de7c8e64df7242ac5bc57c9be68c3944c9f`; normalizado a CRLF en el checkout) y contiene el hash una vez; `tesis_para_evaluacion.txt` (109 saltos de pagina) y `tesis_completa_extraida.txt` regenerados con `pdftotext` desde el `main.pdf` de C2 y contienen el hash. La portada conserva "Prof. Alberto Cortez y Prof. Ariel Enferrel".
 - **Matriz de trazabilidad tras C2**: la linea del hash desplaza dos lineas la fila A5a (`12-anexos.tex:142` -> `:144`); se corrio `verificar_matriz_trazabilidad.py --reubicar` ("Filas: 41; fallas: 0") y la matriz queda calculada sobre el arbol de C2, que es la punta de la release. El tag `v1.2.0` apunta a C1, de modo que `--rev v1.2.0` da 40 aciertos y una falla esperada (A5a, 2 lineas de desfase); desde el commit C2 la verificacion sin `--rev` (o con `--rev` del commit C2) da 0 fallas.
 - **9.1 `CHANGES.md`**: FASE 36 con C-130, C-131, C-132, C-133, C-134, C-136, C-137, C-138, C-139 y C-142 como ARCHIVADO (2026-10-26, N/N), C-141 APLICADO, C-135 ACTIVO (34/35) y C-140 ACTIVO (0/73, excluido provisionalmente); nota fechada en "Notas del analisis" (release `v1.2.0`, hash, 109 paginas con cuerpo 100 y anexos 9, regla del tope); lineas Total y Fases y "Primer change recomendado" con 3 activos, C-01..C-144 y la release vigente `v1.2.0`.
-- **9.2 Verificacion final**: `openspec validate c-141-integracion-release-v1-2-0 --strict` valido; `openspec list --json` muestra solo c-141, c-135 y c-140; tags previos intactos (`v1.0.0` = `61a6b117dd1321fbee25f9792d9f29b884e5ac8d`, `v1.0.1` = `bac4c5f6f85c889b48a90d4396bbdaccc7a35ad0`, `v1.1.0` = `7103b649d8c4f51737ad6ad4095dad22c9406400`, `v1.1.1` = `4160d84286623b073d2904353e6f9163ae211de7`). **Por que siguen activos**: c-135 (34/35) tiene abierta la tarea 5.2, que espera las fechas reales de las iteraciones de los autores; c-140 (0/73) esta excluido provisionalmente de la integracion y espera la decision del usuario (incluirlo en una release posterior o archivarlo como NO REALIZADO con `--skip-specs`, precedente c-67); c-141 sigue activo hasta su fase archive.
+- **9.2 Verificacion final**: `openspec validate c-141-integracion-release-v1-2-0 --strict` valido; `openspec list --json` muestra solo c-141, c-135 y c-140; tags previos intactos (`v1.0.0` = `3ae34df1ac3924a8a106b84e734038ade5e7e29b`, `v1.0.1` = `ee6a869eb3090d54533a1cb36cf0fbd96c0bba03`, `v1.1.0` = `ff4bc64ad66eb4478c2e74c7048d3159d1f96e5c`, `v1.1.1` = `af6000bffde6d0039ef552c5a86e8c71bfe52064`). **Por que siguen activos**: c-135 (34/35) tiene abierta la tarea 5.2, que espera las fechas reales de las iteraciones de los autores; c-140 (0/73) esta excluido provisionalmente de la integracion y espera la decision del usuario (incluirlo en una release posterior o archivarlo como NO REALIZADO con `--skip-specs`, precedente c-67); c-141 sigue activo hasta su fase archive.
 - **Pasos siguientes** (en este orden): (1) actualizar el titulo y la descripcion del PR #40 `ramagonzalo` -> `main` (tag `v1.2.0`, hash, numeracion c-130..c-144, merge commit); (2) cerrar c-135 (fechas de los autores) y resolver c-140 (incluir o NO REALIZADO) y entonces la tarea 2.9; (3) archivar c-141 (fase archive: `CHANGES.md` pasa de APLICADO a ARCHIVADO); (4) mergear el PR #40 con **merge commit** (nunca squash ni rebase, que dejarian C1 fuera de la historia de `main`); (5) verificar `git merge-base --is-ancestor v1.2.0 origin/main` (debe ser verdadero) tras `git fetch origin`.
 
 ### Pendientes y verificaciones diferidas
@@ -2656,7 +2656,7 @@ El autor reviso las decisiones que habian quedado PROVISIONALES en los grupos c-
 
 ### Cierre de la familia (2026-10-27)
 
-Parte E de c-147 (rama `change/c-147-parte-e-archivo-y-cierre`, cortada de `main` en `07cc075`, merge del PR #48). La release vigente es `v1.2.2` (tag anotado sobre `445a47b4f6fccca3d4611ee3cb7adea4e7350dcc`; PDF de 104 paginas totales: cuerpo 96, anexos 8; regla de la catedra total <= 100 con exceso +4 honrado y defendido).
+Parte E de c-147 (rama `change/c-147-parte-e-archivo-y-cierre`, cortada de `main` en `7637fdb`, merge del PR #48). La release vigente es `v1.2.2` (tag anotado sobre `2cb0022574f739e6393d9b51dae3f8b480e1160f`; PDF de 104 paginas totales: cuerpo 96, anexos 8; regla de la catedra total <= 100 con exceso +4 honrado y defendido).
 
 | Change | Carpeta en `openspec/changes/archive/` | Tareas | Deltas sincronizados |
 |---|---|---|---|
@@ -2675,7 +2675,7 @@ Pendientes residuales: (1) la tarea 6.1 de c-146 sigue bloqueada por el acceso i
 
 **Origen**: change `c-141-integracion-release-v1-2-0`, tarea 6.1 (matriz de trazabilidad), 6.2 (observaciones no numeradas) y 6.3 (rubrica). Escrito el **2026-10-26**. La matriz da, por recomendacion o parte de recomendacion, el change dueno, el `archivo:linea`, el `\label` ancla mas cercano (el del flotante si la linea esta dentro de una tabla o figura; si no, el de la seccion o subseccion previa), un fragmento verificable y el estado.
 
-**Alcance de las lineas**: calculadas sobre el **arbol integrado pre-compactacion y pre-C1** (HEAD `b3c6f0f` mas las ediciones del tramo de integracion, Anexo I incluido). Valen en `v1.2.0` solo si C1 (tarea 5.1: Anexo B y titulo de `Gomez2026_repositorio`) y una eventual compactacion (3.4/3.5) no desplazan esas lineas: las filas de `12-anexos.tex` posteriores al Anexo B y la fila B16b son las sensibles. **Hay que recalcular tras C1 y antes de crear el tag** con `python docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py --reubicar` (arbol de trabajo) y verificar contra la etiqueta con `python docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py --rev v1.2.0` (la tarea 6.1 pide `git show v1.2.0:<archivo> | sed -n '<linea>p'` por fila; el script lo automatiza y comprueba el `\label`). Verificacion de este tramo: **todas las filas pasan** (41 filas; B16b se omitia por PENDIENTE). **Actualizacion 2026-10-26 (tramo B, tarea 5.1)**: con el contenido de C1 aplicado, la fila A5a se desplazo dos lineas (`12-anexos.tex:166` -> `:142`, por el retiro de la linea del hash y de su linea en blanco) y se reubico con `--reubicar`; la fila B16b ya no se omite (`Bibliography_base.bib:795`); resultado: 41 filas, 0 fallas. Repetir con `--rev v1.2.0` tras el tag.
+**Alcance de las lineas**: calculadas sobre el **arbol integrado pre-compactacion y pre-C1** (HEAD `d81c728` mas las ediciones del tramo de integracion, Anexo I incluido). Valen en `v1.2.0` solo si C1 (tarea 5.1: Anexo B y titulo de `Gomez2026_repositorio`) y una eventual compactacion (3.4/3.5) no desplazan esas lineas: las filas de `12-anexos.tex` posteriores al Anexo B y la fila B16b son las sensibles. **Hay que recalcular tras C1 y antes de crear el tag** con `python docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py --reubicar` (arbol de trabajo) y verificar contra la etiqueta con `python docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py --rev v1.2.0` (la tarea 6.1 pide `git show v1.2.0:<archivo> | sed -n '<linea>p'` por fila; el script lo automatiza y comprueba el `\label`). Verificacion de este tramo: **todas las filas pasan** (41 filas; B16b se omitia por PENDIENTE). **Actualizacion 2026-10-26 (tramo B, tarea 5.1)**: con el contenido de C1 aplicado, la fila A5a se desplazo dos lineas (`12-anexos.tex:166` -> `:142`, por el retiro de la linea del hash y de su linea en blanco) y se reubico con `--reubicar`; la fila B16b ya no se omite (`Bibliography_base.bib:795`); resultado: 41 filas, 0 fallas. Repetir con `--rev v1.2.0` tras el tag.
 
 | Rec | Sintesis | Change | Archivo:linea en v1.2.0 | Ancla | Fragmento verificable | Estado |
 |---|---|---|---|---|---|---|
@@ -2733,7 +2733,7 @@ Estados: *cerrada* (la correccion esta en el arbol integrado), *cerrada parcialm
 | O4 | `GDPR2016` y `Jurafsky2023_speech_language` sin enlace | c-139 (B16) | cerrada: URL y `urldate` en ambas |
 | O5 | Sede omitida en Liu et al. 2025 (`liu2025tickit`) | c-139 (B16) | cerrada: *FSE Companion '25*, Trondheim |
 | O6 | Ausencia de `main.log` en el repositorio | c-141 (D6) | cerrada por evidencia: la compilacion se consigna en este registro (seccion "Compilacion de verificacion"); la evidencia de la release se completo en 5.3 (seccion "Contenido de C1 y compilacion de registro") |
-| O7 | Version del modelo fechada en "junio de 2026" frente a `11036be` (24-09-2026) | c-135 (B9) | cerrada: la cuarta limitacion cita `gemini-3.6-flash`, integrada el 24-09-2026 |
+| O7 | Version del modelo fechada en "junio de 2026" frente a `cf1cfb4` (24-09-2026) | c-135 (B9) | cerrada: la cuarta limitacion cita `gemini-3.6-flash`, integrada el 24-09-2026 |
 | O8 | `timeout` de 10 s en la tesis y en el Anexo H frente a 30 s del backend | c-135 (D15); el residual de `CLAUDE.md` y `openspec/config.yaml` no tiene dueno (fuera de la tesis) | RESUELTA (2026-10-28, c-157): cerrada en la tesis (30 s por intento y 60 s en total) y cerrada fuera de la tesis (`openspec/config.yaml` con `timeout_s: 30` y `total_timeout_s: 60`; `CLAUDE.md` remite a esa seccion) |
 | O9 | Remision al inexistente `docs/prompt_gemini_history/` y afirmacion refutada en `evaluation/README.md` y `docs/anexo_h_prompt_gemini.md` | c-144 y c-142 | cerrada: `prompt_gemini_history` = 0 en `sections/` y en `docs/anexo_h_prompt_gemini.md`; `NO fue ajustado` = 0 en `evaluation/README.md` |
 | O10 | Afirmacion refutada en `knowledge-base/11_evaluacion_experimental.md` | c-141 (D9, tarea 7.6) | cerrada (2026-10-26): la linea "Anti data-leakage" se reemplazo por la procedencia real de los ajustes (c-71, c-72 y c-74 con el corpus de evaluacion); ver "Renders y base de conocimiento" |
@@ -2784,7 +2784,7 @@ Los nueve criterios evaluables figuran con todos los descuentos que enumera el d
 
 ## Correccion factual de la release v1.2.0 (c-145)
 
-**Origen**: change `c-145-correccion-factual-sincronizacion-del-memo-y-portabilidad-del-harness`, aplicado el **2026-10-26** sobre la rama `change/c-145-...` (cortada de `main` en `224fa16`, merge del PR #40 ya integrado). Corrige afirmaciones que el repositorio desmiente en la release `v1.2.0` (A1: 16 pruebas de integracion PostgreSQL con omision; A2: recuentos congelados de frontend; A3: identificadores internos `OQ1 = A`/`OQ2 = A del change c-72` en el cuerpo), sincroniza el memo canonico (B: margen `6,66 %` vigente y barrido de referencias), precisa la discusion (C), resuelve el placeholder `P4` (D), hace portable el arnes de sensibilidad (E) y agrega la barrera ejecutable `scripts/preflight/docs_stack_sync.py` de `DOC-005` (H). Gobernanza: A/B/C MEDIO; D/E/G/H BAJO; F (release) ALTO.
+**Origen**: change `c-145-correccion-factual-sincronizacion-del-memo-y-portabilidad-del-harness`, aplicado el **2026-10-26** sobre la rama `change/c-145-...` (cortada de `main` en `80c9cf1`, merge del PR #40 ya integrado). Corrige afirmaciones que el repositorio desmiente en la release `v1.2.0` (A1: 16 pruebas de integracion PostgreSQL con omision; A2: recuentos congelados de frontend; A3: identificadores internos `OQ1 = A`/`OQ2 = A del change c-72` en el cuerpo), sincroniza el memo canonico (B: margen `6,66 %` vigente y barrido de referencias), precisa la discusion (C), resuelve el placeholder `P4` (D), hace portable el arnes de sensibilidad (E) y agrega la barrera ejecutable `scripts/preflight/docs_stack_sync.py` de `DOC-005` (H). Gobernanza: A/B/C MEDIO; D/E/G/H BAJO; F (release) ALTO.
 
 ### Red de seguridad y linea base (tareas 1.1 a 1.5) - 2026-10-26
 
@@ -2792,7 +2792,7 @@ Los nueve criterios evaluables figuran con todos los descuentos que enumera el d
 - **1.2 Baseline de la suite de evaluacion**: `cd evaluation && python3 -m pytest -q` = **4 failed, 448 passed, 1 skipped** (28 warnings, 17,06 s). Coincide con el baseline esperado para 3.12.3. Los 4 fallos son de `tests/test_sensibilidad_ajustes.py` y el mensaje es `error: ambiguous option: --brazo could match --brazo-vigente, --brazo-sin-reglas` (`SystemExit: 2`). No se corrigen fallos preexistentes.
 - **1.3 Suite de sensibilidad aislada**: `cd evaluation && python3 -m pytest tests/test_sensibilidad_ajustes.py -q` = **4 failed, 137 passed** (6,97 s); los 4 fallos coinciden exactamente con los de 1.2.
 - **1.4 Linea base de paginas**: `pdfinfo "docs/Tesis/v10 (IA)/paper/main.pdf" | grep Pages` = **109**; `grep -n "contentsline {section}{Anexos}" main.toc` = linea 96, pagina **101**. Cuerpo = 101 - 1 = **100**; anexos = 109 - 100 = **9**. Ledger base: **109 / 100 / 9** (margen 0 de la regla cuerpo sin anexos <= 100).
-- **1.5 Estado de los tags**: `git rev-parse v1.2.0^{commit}` = `a49d035c67b32ae17e633ec04b09ecdd2781aac6`; `git cat-file -t v1.2.0` = `tag`; tags previos: `v1.0.0` = `61a6b117dd1321fbee25f9792d9f29b884e5ac8d`, `v1.0.1` = `bac4c5f6f85c889b48a90d4396bbdaccc7a35ad0`, `v1.1.0` = `7103b649d8c4f51737ad6ad4095dad22c9406400`, `v1.1.1` = `4160d84286623b073d2904353e6f9163ae211de7`. Los cinco coinciden con los valores de `tasks.md`.
+- **1.5 Estado de los tags**: `git rev-parse v1.2.0^{commit}` = `1f83b0adabdd0ef19618e79ebd6fd2d8319b1be9`; `git cat-file -t v1.2.0` = `tag`; tags previos: `v1.0.0` = `3ae34df1ac3924a8a106b84e734038ade5e7e29b`, `v1.0.1` = `ee6a869eb3090d54533a1cb36cf0fbd96c0bba03`, `v1.1.0` = `ff4bc64ad66eb4478c2e74c7048d3159d1f96e5c`, `v1.1.1` = `af6000bffde6d0039ef552c5a86e8c71bfe52064`. Los cinco coinciden con los valores de `tasks.md`.
 
 ### Portabilidad del arnes (bloque E, tareas 2.1 a 2.7) - 2026-10-26
 
@@ -2874,10 +2874,10 @@ RESULT: 4/12 chequeos en PASS (8 en FAIL). Documentacion desincronizada.
 
   | Hecho | Commit | Fecha | Efecto |
   |---|---|---|---|
-  | Se agregan 16 pruebas de integracion PostgreSQL con omision automatica | `a0436e0` (C-19) | 2026-07-03 | Nace la oracion "16 tests ... `pytest.skip`" |
-  | `conftest.py` pasa a fallo ruidoso y la suite crece | `ef656ac` (c-29/c-30/c-32) | 2026-09-17 | La oracion queda obsoleta |
-  | Copia de trabajo v9 | `8466cbe` | 2026-10-01 | Arrastra la oracion |
-  | Copia de trabajo v10 | `7408543` (c-122) | 2026-10-22 | La publica en v10 |
+  | Se agregan 16 pruebas de integracion PostgreSQL con omision automatica | `b27e1d0` (C-19) | 2026-07-03 | Nace la oracion "16 tests ... `pytest.skip`" |
+  | `conftest.py` pasa a fallo ruidoso y la suite crece | `d8b4115` (c-29/c-30/c-32) | 2026-09-17 | La oracion queda obsoleta |
+  | Copia de trabajo v9 | `8e7cd16` | 2026-10-01 | Arrastra la oracion |
+  | Copia de trabajo v10 | `710c23c` (c-122) | 2026-10-22 | La publica en v10 |
 
 - **5.7 Evidencia de A2**: `find "App/Frontend/src" -type f \( -name '*.test.ts' -o -name '*.test.tsx' \) | wc -l` = **59** archivos; `App/Frontend/node_modules` **ausente** en el worktree. Decision: retirar los recuentos congelados de la tesis (no se ejecuto `npm install` ni Vitest en esta fase) y dejar la cifra sujeta al reporte vigente del pipeline.
 - **Paginas (aviso para bloque 8)**: no se recompilo la tesis en estas tareas. El cuerpo sigue en **100** segun la linea base de 1.4; el bloque 8 debe re-medir el conteo tras estos cambios de texto.
@@ -2950,7 +2950,7 @@ Compilacion en el entorno de registro `texlive-thesis` (`latexmk main.tex`) y ve
 - **Evidencia de compilacion** (tareas 8.1 y 8.2): **0 errores fatales** (`grep -c "^!" main.log` = 0), **0 referencias indefinidas** (`grep -i undefined main.log` vacio), **73 citekeys** (`grep -c "^@" Bibliography_base.bib` = `Found 73 citekeys` en `main.blg`) y `verify_citations.py` = **`STATUS: PASS`** (73 entradas <-> 73 claves citadas, 126 comandos de cita, 0 huerfanas).
 - **Upsert del memo**: margen **`6,66 %` vigente** (`N ≈ 2.646`) y **`6,74 %` retirado** (fila conservada con nota de reemplazo); barrido de referencias `07-resultados.tex:<linea>` por correspondencia de contenido (diez correcciones: `:129 -> :128`, `:75 -> :74`, `:167-188 -> :166-187`, `:179-183 -> :178-182` y las restantes).
 - **Decision E2**: **E2-i incluido** (manejo limpio del `FileNotFoundError` de `--solo-tiempos` en `run_evaluation.py`) y **E2-ii excluido** (la identidad de las caches de predicciones en `construir_procedencia` queda como trabajo futuro declarado, design D8). **FORCE-ESCALATE confirmada por el autor (2026-10-26)**: se acepta el uso de la cache `hybrid-v2` (corpus_hash distinto del vigente), con la tension con la consigna de c-131 explicitada; la decision es reversible (si se rechazara, E3/E4 pasan a "no computable").
-- **Nota de release**: tag anotado **`v1.2.1`** sobre **C3 `509ffff105c21fed0c07cbf9a46245ba6c53e0e1`**; **C4 `fc579d8fae8984718c0a398e31977c6eb01903af`** consigna el hash de C3 en el Anexo B y en el REGISTRO; **PR #43** `docs(tesis): release v1.2.1 - correccion factual y sincronizacion del memo (c-145)` fusionado a `main` con **merge commit `13e9281e3f41ec990584e0c6b62e7034c13e422f`** (2026-10-26). **`v1.2.0` (`a49d035c67b32ae17e633ec04b09ecdd2781aac6`) queda superada** (inmutable). Ancestry: `git merge-base --is-ancestor v1.2.1 origin/main` = verdadero y `git merge-base --is-ancestor v1.2.0 origin/main` = verdadero.
+- **Nota de release**: tag anotado **`v1.2.1`** sobre **C3 `5285939371cf3c32d0f1112576584478bf00e5e2`**; **C4 `a5114972b7b701dfe51a8860d8c3eadbcdb77f12`** consigna el hash de C3 en el Anexo B y en el REGISTRO; **PR #43** `docs(tesis): release v1.2.1 - correccion factual y sincronizacion del memo (c-145)` fusionado a `main` con **merge commit `010077f5910c26adeecc6b82369631f00b30b907`** (2026-10-26). **`v1.2.0` (`1f83b0adabdd0ef19618e79ebd6fd2d8319b1be9`) queda superada** (inmutable). Ancestry: `git merge-base --is-ancestor v1.2.1 origin/main` = verdadero y `git merge-base --is-ancestor v1.2.0 origin/main` = verdadero.
 
 
 ## Completar metricas de trabajos previos (c-146) - 2026-10-26
@@ -2974,7 +2974,7 @@ extremo con N8N activo). Change `c-140-endurecimiento-tecnico-tls-reintentos-e2e
 bloques (1 TLS, 2 reintentos, 3 humo E2E) se aplicaron.
 
 - **Corrida de humo (tarea 9.1)**: corrida **local** (OQ2=local / CP6: sin workflow de CI de
-  humo) sobre el commit candidato `b4b3be95d3ea66f254751d4e6c03869d44fc3cd7`, fecha UTC
+  humo) sobre el commit candidato `e3176da12e92fe8c90e46300012f7b250e6ea55d`, fecha UTC
   2026-10-27T00:32:12Z, N8N 2.11.2. Grupos ejecutados: `stack`, `guardrail`, `n8n`,
   `preflight`, `e2e`, `tls`. Resultado **25/25 checks en verde**. Reporte JSON generado fuera
   del repositorio. Sin llamadas pagas (clave Gemini ficticia + `COST_GUARD_BUDGET_USD=0` en la
@@ -3011,7 +3011,7 @@ bloques (1 TLS, 2 reintentos, 3 humo E2E) se aplicaron.
   reintento del tramo de alta (c-140)" agregada a `docs/n8n-workflow-guide.md` (requisito
   `N8N-DOC-007`). La tarea **3.10** (CP5) se registra como accion del **equipo**: el agente no
   toco la instancia N8N operativa. El **BLOQUEO de tope de paginas** de arriba queda resuelto por
-  la compactacion de forma del commit `8c0cf6d` (111 -> 104 totales; ver G0.1 del 2026-10-27), sin
+  la compactacion de forma del commit `be9b746` (111 -> 104 totales; ver G0.1 del 2026-10-27), sin
   quitar contenido cientifico ni dejar referencias colgadas. Con esto c-140 queda **73/73**.
 
 ---
@@ -3082,7 +3082,7 @@ Lineas leidas despues de aplicar el change, en `docs/Tesis/v10 (IA)/paper/sectio
 |---|---|---|
 | A1 (a) corrida de correo y formulario del 2-10-2026 | Apartado `\paragraph{Procedencia de los datos del brazo automatizado.}` al final de la Seccion 4.5; reemplaza "misma infraestructura ... monitoreo continuo" por una remision | `04-marco-metodologico.tex:61` (remision) y `:68` (apartado) |
 | A1 (b) corrida telefonica concluida el 6-10-2026 | Mismo apartado: softphone de navegador, descripcion pseudonimizada leida en voz alta, grabacion de 45 s, entorno aislado, sin configuracion unica (25 casos del 5-10, c-71, c-72, anteriores a c-74) | `04-marco-metodologico.tex:68` |
-| A1 (c) clasificacion `hybrid-v3` del 7-10-2026 | Mismo apartado: ejecucion fuera de linea, 22:22 UTC, "que versiona el commit `d6bb474`", evidencia versionada y hash del corpus | `04-marco-metodologico.tex:68` |
+| A1 (c) clasificacion `hybrid-v3` del 7-10-2026 | Mismo apartado: ejecucion fuera de linea, 22:22 UTC, "que versiona el commit `bf5e099`", evidencia versionada y hash del corpus | `04-marco-metodologico.tex:68` |
 | A1 (d) recalculo del 19-10-2026 (c-77) y su motivo | Mismo apartado y leyenda de la Figura 10 | `04-marco-metodologico.tex:68`; `12-anexos.tex:21` |
 | A1, recordatorio al abrir la Seccion 8 | Parrafo propio tras la introduccion; la enumeracion de seis apartados queda identica | `07-resultados.tex:8` |
 | A1 conexa, Seccion 1.8 | "(desde el 24-09-2026)" pasa a fechar el modelo (integrado el 24-09) y las corridas (2, 6 y 7 de octubre) | `01-introduccion.tex:76` |
@@ -3090,7 +3090,7 @@ Lineas leidas despues de aplicar el change, en `docs/Tesis/v10 (IA)/paper/sectio
 | A1 conexa, Seccion 6.4 | El tiempo telefonico pasa a "duracion de la llamada grabada mas latencia hasta la persistencia" (recalculo del 19-10) | `06-implementacion.tex:52` |
 | A1 conexa, Figura 10 | Titulo corto para el indice y fuente desdoblada (hitos: historial, incluido el 19-10 de c-77; ventanas: confirmacion del 9-10) | `12-anexos.tex:21` |
 | A1 conexa, Anexo F | Predicciones en `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json`; registros primarios "no estan versionados"; rutas con `\path{}` (desaparece el Overfull de 106 pt) | `12-anexos.tex:95` y `:98` (marcador Q7 en `:96`) |
-| A2 tabla evaluada frente a entregada | Tabla `tab:configuracion-evaluada-entregada` en el Anexo B (Tabla 19), con `d6bb474` frente a `v1.2.5` | `12-anexos.tex:31-58` |
+| A2 tabla evaluada frente a entregada | Tabla `tab:configuracion-evaluada-entregada` en el Anexo B (Tabla 19), con `bf5e099` frente a `v1.2.5` | `12-anexos.tex:31-58` |
 | A2 remisiones | 5.4, 6.1, 6.2 (se quitan las versiones repetidas), 6.3, 6.5, 6.7, 7.4 y Anexo H | `05-arquitectura.tex:72,74`; `06-implementacion.tex:10,14,40,60,85,87,89`; `11-aspectos-legales.tex:24`; `12-anexos.tex:126,144` |
 | A2 / Anexo B "commit definitivo" | Patron de dos commits explicado | `12-anexos.tex:27` |
 | A2 / bibliografia | `Gomez2026_repositorio`: "Version 1.2.5", `urldate` 2026-10-28 | `Bibliography_base.bib:813,816` |
@@ -3101,7 +3101,7 @@ Lineas leidas despues de aplicar el change, en `docs/Tesis/v10 (IA)/paper/sectio
 Cada consulta tiene su marcador `% PENDIENTE AUTORES` en la fuente, salvo Q6 y Q8, que no cambian el texto.
 
 - **Q1 (fechas)** - PENDIENTE. La corrida telefonica, comenzo el 5-10 (25 casos medidos segun c-71, `tasks.md:71`, y c-72, `proposal.md:7`) y concluyo el 6-10? A que horas? Si se confirma, 1.8, 4.5, la leyenda de la Figura 10 y el cronograma pasan a "5 y 6 de octubre". Marcador: `04-marco-metodologico.tex:63`.
-- **Q2 (version desplegada)** - PENDIENTE. Que imagen de `backend-corpus` y que flujo importado en `n8n-corpus` procesaron los 56 casos del 6-10 (anteriores o posteriores a c-71, `1368fd8`, y a c-72, `a76851e`)? Marcador: `:64`.
+- **Q2 (version desplegada)** - PENDIENTE. Que imagen de `backend-corpus` y que flujo importado en `n8n-corpus` procesaron los 56 casos del 6-10 (anteriores o posteriores a c-71, `c8112d2`, y a c-72, `27f8d8c`)? Marcador: `:64`.
 - **Q3 (quien y como)** - PENDIENTE. Nombre de quien recito las 81 llamadas; si fue una sola persona; si leyo la descripcion tal como la mostraba el softphone; dispositivo, microfono, red y entorno; repeticiones ademas de R126 y R002. La tesis dice "uno de los autores" por "el autor" de c-70 (`tasks.md:96`, `proposal.md:9`). Marcador: `:65`.
 - **Q4 (arnes)** - PENDIENTE. Quien ejecuto `scripts/corpus_ingest/ingest_via_n8n.py` el 2-10, con que flags (en particular `--source`, por defecto `json`), contra que stack y `--base-url` (por defecto nginx) y que host SMTP. Marcador: `:66`.
 - **Q5 (disparador IMAP)** - PENDIENTE. Intervalo efectivo de recogida del buzon en la instancia del 2-10 (el flujo declara `everyMinute`, `n8n/workflow.json:5-13`; el repositorio no contiene una medicion). La tesis dice "configurado para sondear el buzon una vez por minuto". Marcador: `:67`.
@@ -3111,10 +3111,10 @@ Cada consulta tiene su marcador `% PENDIENTE AUTORES` en la fuente, salvo Q6 y Q
 
 ### Discrepancias con el dictamen y hallazgos adicionales
 
-1. **Corrida telefonica contemporanea de c-71 y c-72.** El dictamen afirma que ambas corridas usaron "la configuracion del clasificador anterior a c-71 y c-74". Es cierto para la del 2-10 y, para c-74, en ambas; no se sostiene para c-71 en la telefonica, que concluyo despues de `1368fd8` (5-10, 21:50) y es contemporanea de c-72 (`a76851e`, 6-10, 16:38). La tesis describe lo que el historial sostiene.
-2. **Hora de `hybrid-v3`.** 22:22 UTC son las 19:22 -0300, 27 minutos antes del commit `d6bb474` (19:49:21 -0300): la corrida se hizo sobre el arbol de trabajo y `d6bb474` es la primera revision versionada que contiene `hybrid-v3`. La tesis dice "que versiona el commit", nunca "ejecutada sobre el commit".
-3. **Hash del corpus reasociado.** `1fd17d7e...` corresponde a la version del corpus creada el 19-10 por `4602bf5`; la del 9-10 (`8f7e6ec`) es `5f062e14...`. Entre ambas solo cambiaron los 81 `tiempo_automatizado_s` telefonicos y `metadata.descripcion`, no descripciones ni etiquetas; la `cache_meta` fue reasociada sin reclasificar (Q6). Verificado: `sha256sum data/corpus_evaluacion_pseudonimizado.json` = `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb`, igual al `corpus_hash` de la evidencia.
-4. **React 19 en 6.7.** El inventario del dictamen no lo incluia; `package-lock.json` pasa de 18.3.1 (`d6bb474`) a 19.3.1 (`v1.2.5`, c-128). 6.7 dice ahora "React" con remision a la tabla.
+1. **Corrida telefonica contemporanea de c-71 y c-72.** El dictamen afirma que ambas corridas usaron "la configuracion del clasificador anterior a c-71 y c-74". Es cierto para la del 2-10 y, para c-74, en ambas; no se sostiene para c-71 en la telefonica, que concluyo despues de `c8112d2` (5-10, 21:50) y es contemporanea de c-72 (`27f8d8c`, 6-10, 16:38). La tesis describe lo que el historial sostiene.
+2. **Hora de `hybrid-v3`.** 22:22 UTC son las 19:22 -0300, 27 minutos antes del commit `bf5e099` (19:49:21 -0300): la corrida se hizo sobre el arbol de trabajo y `bf5e099` es la primera revision versionada que contiene `hybrid-v3`. La tesis dice "que versiona el commit", nunca "ejecutada sobre el commit".
+3. **Hash del corpus reasociado.** `1fd17d7e...` corresponde a la version del corpus creada el 19-10 por `d48254b`; la del 9-10 (`ea62576`) es `5f062e14...`. Entre ambas solo cambiaron los 81 `tiempo_automatizado_s` telefonicos y `metadata.descripcion`, no descripciones ni etiquetas; la `cache_meta` fue reasociada sin reclasificar (Q6). Verificado: `sha256sum data/corpus_evaluacion_pseudonimizado.json` = `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb`, igual al `corpus_hash` de la evidencia.
+4. **React 19 en 6.7.** El inventario del dictamen no lo incluia; `package-lock.json` pasa de 18.3.1 (`bf5e099`) a 19.3.1 (`v1.2.5`, c-128). 6.7 dice ahora "React" con remision a la tabla.
 5. **Seccion 6.4.** Decia "desde el inicio de la llamada hasta la confirmacion del numero de incidente"; el corpus registra duracion mas latencia posterior al cuelgue (c-77). Corregido.
 6. **Intervalo del disparador IMAP.** `pollTimes: everyMinute` es configuracion declarada; en n8n 2.11.2 el parametro podria ser inerte (herencia del disparador Outlook, c-39 `design.md:10`). La tesis no afirma un intervalo medido (Q5).
 7. **Libro mayor y `Gomez2026_repositorio`.** El requisito vigente reservaba la actualizacion de la entrada al change de la release, y las releases `v1.2.3`, `v1.2.4` y `v1.2.5` la omitieron (decia "Version 1.2.2", `urldate` 2026-10-26). c-158 la realinea a 1.2.5 / 2026-10-28. **Consigna para la proxima release** (la que publique c-158 a c-160): actualizar en el mismo commit que cambia el tag del Anexo B (patron de dos commits) la entrada bibliografica, la columna "entregada" de la tabla `tab:configuracion-evaluada-entregada` y la frase "commit que fija el contenido de la version entregada" (`12-anexos.tex:27`).
@@ -3129,7 +3129,7 @@ Compilacion en `texlive-thesis` (`latexmk main.tex`), exit 0: 0 errores (`grep -
 
 | Change | Commit | Total | Cuerpo sin anexos | Anexos | Delta total | Delta cuerpo | Regla vigente | Estado |
 |---|---|---|---|---|---|---|---|---|
-| base `v1.2.5` (`HEAD`) | `d186d73` | 106 | 98 | 8 | - | - | (b) cuerpo sin anexos <= 100 | Medido: `Anexos` en p. 99 (`main.toc`) |
+| base `v1.2.5` (`HEAD`) | `bc63eaf` | 106 | 98 | 8 | - | - | (b) cuerpo sin anexos <= 100 | Medido: `Anexos` en p. 99 (`main.toc`) |
 | `c-158` (`change/c-158-procedencia-de-datos-y-configuracion-evaluada-vs-entregada`) | sin commit | 109 | 100 | 9 | +3 | +2 | (b) cuerpo sin anexos <= 100 | Medido: `abspage@last{109}`; `Anexos` en p. 101; prevision del design +1 a +2 (cuerpo +0 a +1): el exceso de +1 total y +1 cuerpo se debe a que el apartado de 4.5 (unos 2000 caracteres) cae sobre una ultima pagina del capitulo 4 con holgura de unos 600, y a que las remisiones de 6.1 a 6.7 agregan unas 600 letras a un capitulo 6 cuyas dos figuras de 6.8 ya ocupan una pagina de flotantes dedicada (ver `conteos-canonicos-tecnicos.md`, 6.1). **Regla (b): cuerpo 100, margen 0 (cumple)** |
 
 Compensaciones aplicadas: apartado de 4.5 reducido de unas 410 a unas 340 palabras, remisiones sin "Anexo~B" repetido, titulo corto de la Figura 10, filas de la tabla del Anexo B acortadas, `\path{}` en las rutas del Anexo F. No se aplico ninguna palanca global (espaciado de flotantes, listas de referencias) para no desplazar tablas del capitulo 8 a los anexos.
@@ -3244,7 +3244,7 @@ Atencion de las recomendaciones B5, B6, B7 y B8 del dictamen CONEAU del 2026-10-
 release `v1.2.5` (`auditorias/Dictamen_Tesis_v10_v1.2.5_CONEAU_2026-10-28.md`). Change
 `c-160-residuos-de-correccion-anexo-i-y-consistencia-interna` (gobernanza MEDIO), aplicado despues de
 c-158 y c-159 sobre el arbol de trabajo de la rama `docs/dictamen-v1-2-5-y-changes-c-158-c-160` (commit
-base `e2db5a6`; c-158 y c-159 sin commit en el arbol). Ninguna medicion nueva ni valor canonico nuevo: el
+base `66c22a9`; c-158 y c-159 sin commit en el arbol). Ninguna medicion nueva ni valor canonico nuevo: el
 change retira residuos del proceso de correccion, reestructura el Anexo I, ajusta la seccion 10 y el
 resumen y unifica la formulacion del alcance del gate. No se tocaron `docs/Tesis/v9 (IA)/`, `App/`,
 `n8n/`, `evaluation/`, `openspec/config.yaml` ni `requirements.txt`.
@@ -3287,7 +3287,7 @@ Lineas leidas despues de aplicar el change, en `docs/Tesis/v10 (IA)/paper/sectio
 
 ### Residuos trasladados (B5)
 
-Texto literal retirado del cuerpo, con su ubicacion previa en el arbol `d186d73` y su destino.
+Texto literal retirado del cuerpo, con su ubicacion previa en el arbol `bc63eaf` y su destino.
 
 | # | Ubicacion previa | Texto retirado (literal) | Destino |
 |---|---|---|---|
@@ -3353,7 +3353,7 @@ Cierre de los items abiertos del dictamen CONEAU del 2026-10-28 (`auditorias/Dic
 
 ### Origen y linea base
 
-- Rama `main`; commit base de la linea base: `c0d3989` (merge del PR #63, que aplico y archivo c-158, c-159 y c-160).
+- Rama `main`; commit base de la linea base: `852d930` (merge del PR #63, que aplico y archivo c-158, c-159 y c-160).
 - Arbol congelado `docs/Tesis/v9 (IA)/` sin cambios (`git diff --quiet` limpio). Los cambios se aplican a `docs/Tesis/v10 (IA)/`.
 - Verificacion previa (2026-10-29): seis marcadores `% PENDIENTE AUTORES` (Q1 a Q5 en `04-marco-metodologico.tex`, Q7 en `12-anexos.tex`); tres frases Nginx; el `Diagrama de Capas.drawio` y su PNG aun en `docs/diagrams/` (archivados despues por este change); tres sidecars en `data/` (200, 4 y 81 filas); linea base de compilacion 109 paginas.
 
@@ -3366,7 +3366,7 @@ Cada consulta se cierra con la respuesta verificada del autor o con la declaraci
 | Q1 (fechas) | **CERRADA** | Corrida telefonica el 5-10-2026 (25 casos, ~2 h) y el 6-10-2026 (56 casos, ~3 h); horas de reloj exactas no constan | 1.8, 4.5, leyenda de la figura telefonica (`07-resultados.tex`, `fig:boxplot_tiempos`) y cronograma pasan a "5 y 6 de octubre" |
 | Q2 (version desplegada) | **CERRADA - no consta** | La imagen de `backend-corpus` y el flujo importado en `n8n-corpus` que procesaron los 56 casos del 6-10 no estan registrados en git | 4.5 declara "no consta" |
 | Q3 (quien y como) | **CERRADA** | Recito el autor Luca Gomez, con lectura parafraseada, softphone VoIP en la computadora SF20GM7; las unicas repeticiones fueron R126 y R002 (confirmado 2026-10-29) | 4.5 nombra al autor y el modo; declara las repeticiones sin apoyarse en el sidecar, que consolida una fila por caso |
-| Q4 (arnes) | **CERRADA - SMTP no consta** | Luca Gomez ejecuto `scripts/corpus_ingest/ingest_via_n8n.py` el 2-10 (commits `69b5328`, `1d32538`, `3840246`, `24ab238`, todos de `lucaGomezB`); flags por defecto `--source json` y `--insecure`; URL base por defecto `https://localhost` (Nginx); host SMTP en `scripts/corpus_ingest/ingest.env` (gitignored) => no consta | 4.5 agrega autor, flags, URL base y "no consta" del SMTP |
+| Q4 (arnes) | **CERRADA - SMTP no consta** | Luca Gomez ejecuto `scripts/corpus_ingest/ingest_via_n8n.py` el 2-10 (commits `38e79c9`, `361b06b`, `eb7ca59`, `f0c07a3`, todos de `lucaGomezB`); flags por defecto `--source json` y `--insecure`; URL base por defecto `https://localhost` (Nginx); host SMTP en `scripts/corpus_ingest/ingest.env` (gitignored) => no consta | 4.5 agrega autor, flags, URL base y "no consta" del SMTP |
 | Q5 (disparador IMAP) | **CERRADA - no consta** | El nodo IMAP declara `everyMinute` (`postProcessAction: read`, UNSEEN + SINCE 24h, `trackLastMessageId`); el intervalo efectivo no se midio en N8N 2.11.2 | 4.5 conserva "configurado para sondear" y agrega que el intervalo efectivo no se midio |
 | Q6 (hash del corpus) | **CERRADA - no consta** | La reasociacion de la `cache_meta` de `hybrid-v3` al hash `1fd17d7e...` del corpus del 19-10 no esta documentada; `evaluation/evidence/README.md` ya advierte del desajuste | Solo registro; no cambia la tesis |
 | Q7 (registros primarios) | **CERRADA - no conservados** | La base operativa del 2-10, el respaldo del 9-10 de los 81 ingresos telefonicos y las ejecuciones de N8N no se conservan en el repositorio | Anexo F lo declara; los sidecars completos se versionan (ver mas abajo) |
@@ -3498,7 +3498,7 @@ El delta +1 proviene de una pagina viuda de la subseccion 7.6.5 en el capitulo l
 
 ### Release
 
-- **Release:** c-163 quedo incluida en la release **v1.2.6** (tag anotado sobre `ea5e01ad7575ea41a1db6cad6923662c1795a3f9`, 2026-10-29), publicada por el orquestador.
+- **Release:** c-163 quedo incluida en la release **v1.2.6** (tag anotado sobre `d6e52bda6e05db56ffb2a14516172b6ea349dc32`, 2026-10-29), publicada por el orquestador.
 
 ---
 
@@ -3590,7 +3590,7 @@ c-169 los cierra con la campaña complementaria de medición, con la fila "Lím.
   **recomendaciones** (`10`): propagación del estado de cada ítem (editados en las fases 2A/2B).
 - **Anexo B** (`12-anexos.tex`, Tabla `tab:configuracion-evaluada-entregada`): tercera columna
   "Configuración de la campaña de medición" y fila `classifier_version` (`hybrid-v3`, la misma
-  configuración evaluada `d6bb474`); valores verificados con `git show` y registrados en
+  configuración evaluada `bf5e099`); valores verificados con `git show` y registrados en
   `conteos-canonicos-tecnicos.md` (§7.1).
 - **Cronograma** (`docs/diagrams/cronograma.md` y `fig:cronograma`): barra de la campaña
   complementaria de medición (noviembre de 2026); `figures/cronograma.png` regenarada (1467×512).
@@ -3624,7 +3624,7 @@ c-169 los cierra con la campaña complementaria de medición, con la fila "Lím.
 
 | Change | Commit | Total | Cuerpo sin anexos | Anexos | Delta total | Delta cuerpo | Regla vigente | Estado |
 |---|---|---|---|---|---|---|---|---|
-| release `v1.2.7` (linea base) | `bc6a63ca43c2738cd2904ebca8890529963ac3cd` | 112 | 101 | 11 | - | - | **total <= 100 (G0.1, fuente catedra)** | Medido; exceso +12 sobre el tope de 100 del total |
+| release `v1.2.7` (linea base) | `76ede799eb532d26647b270009da370e93e9f1f3` | 112 | 101 | 11 | - | - | **total <= 100 (G0.1, fuente catedra)** | Medido; exceso +12 sobre el tope de 100 del total |
 | `+c-169` (release `v1.2.8`) | sin commit (lo crea el orquestador) | 118 | 107 | 11 | +6 | +6 | **total <= 100 (G0.1, fuente catedra)** | Medido (2026-11-08): `latexmk` exit 0, `main.log` con 0 `^!` y 0 `undefined`, `pdfinfo` 118 totales; encabezado `Anexos` en la p. 108 (`main.toc`) => cuerpo 107, anexos 11 (conteo complementario); **exceso +18 sobre el tope de 100 del total** (G0.1), declarado y honrado |
 
 ### Release
@@ -3632,7 +3632,7 @@ c-169 los cierra con la campaña complementaria de medición, con la fila "Lím.
 - **Nota de release (planificada, NO publicada en este change):** c-169 se incorpora a la release
   `v1.2.8`; el tag, el commit del hash y el registro en `CHANGES.md` (tareas 8.9 y 8.10) los publica
   el orquestador. En este apply se actualizaron las referencias de versión (Anexo A, Anexo B, 05,
-  06, 11 y `Gomez2026_repositorio`) siguiendo el patrón de `ea5e01a`; no se creó tag ni commit.
+  06, 11 y `Gomez2026_repositorio`) siguiendo el patrón de `d6e52bd`; no se creó tag ni commit.
 
 ## Proporción de tiempo de la campaña complementaria (c-185) - 2026-11-08
 
@@ -3708,7 +3708,7 @@ Entrada de trazabilidad de la release que agrupa los dos changes ya aplicados
 Preparación de release (gobernanza BAJA, integración documental); no se modificó `App/`, `n8n/`,
 `evaluation/`, `openspec/config.yaml`, las cinco cadenas canónicas ni `docs/Tesis/v9 (IA)/`.
 
-### Alcance (patrón de `ea5e01a`, release `v1.2.6`)
+### Alcance (patrón de `d6e52bd`, release `v1.2.6`)
 
 - **Bump de versión `v1.2.8` -> `v1.2.9`** en las referencias de la versión entregada: Anexo A y
   Anexo B (`12-anexos.tex`, 7 ocurrencias), el capítulo de arquitectura (`05`, 3), el de
@@ -3723,7 +3723,7 @@ Preparación de release (gobernanza BAJA, integración documental); no se modifi
   (permanece inmutable, en `e52845bc754d2ed5520f3f32c19d27adc4ca67b2`).
 - **El hash del Anexo B** (`12-anexos.tex:44`, "El hash completo de ese commit es ...") NO se toca:
   conserva el valor de `v1.2.8` hasta el commit de consignación del hash, que publica el
-  orquestador (patrón de dos commits de `ea5e01a` + `756aabe`).
+  orquestador (patrón de dos commits de `d6e52bd` + `f24c05b`).
 
 ### Recuento de palabras (regla de c-106)
 
@@ -3826,7 +3826,7 @@ Anexo I y su fila Lím., y la fila B9). Preparación de release (gobernanza BAJA
 documental); no se modificó `App/`, `n8n/`, `evaluation/`, `openspec/config.yaml`, las cinco cadenas
 canónicas ni `docs/Tesis/v9 (IA)/`.
 
-### Alcance (patrón de `ea5e01a`, release `v1.2.6`)
+### Alcance (patrón de `d6e52bd`, release `v1.2.6`)
 
 - **Bump de versión `v1.2.9` -> `v1.2.10`** en las referencias de la versión entregada: Anexo A y
   Anexo B (`12-anexos.tex`, 7 ocurrencias), el capítulo de arquitectura (`05`, 3), el de
@@ -3840,7 +3840,7 @@ canónicas ni `docs/Tesis/v9 (IA)/`.
   (inmutable, en `bda6903e65ab40b073daf4bd001eaa9ff85e42cc`).
 - **El hash del Anexo B** (`12-anexos.tex:44`, "El hash completo de ese commit es ...") NO se toca:
   conserva el valor de `v1.2.9` (`bda6903e65ab40b073daf4bd001eaa9ff85e42cc`) hasta el commit de
-  consignación del hash, que publica el orquestador (patrón de dos commits de `ea5e01a` + `756aabe`).
+  consignación del hash, que publica el orquestador (patrón de dos commits de `d6e52bd` + `f24c05b`).
 
 ### Recuento de palabras (regla de c-106)
 
@@ -3991,7 +3991,7 @@ c-187 remitió a un change posterior. Change `c-188-residuales-de-forma-y-biblio
 ### Decisiones del usuario
 
 - **D3 (B5), opción A.** Se conservan las capturas de 6.8 y se declara su procedencia en las leyendas de
-  `fig:panel_admin` y `fig:dashboard` (c-80, commit `50d8b96`, captura del 21-10-2026, instancia local de
+  `fig:panel_admin` y `fig:dashboard` (c-80, commit `3a21b40`, captura del 21-10-2026, instancia local de
   desarrollo con rótulo v1.0.0, 145 incidentes, cola de revisión 94 = 64,8 %). No se recapturó.
 - **C4, apellido.** "Gomez" (como la portada) en `Gomez2026_repositorio`.
 - **D5 (B7), opción A.** `paper/compilacion.md` generado por `resumir_registro_compilacion.py`; `main.log`

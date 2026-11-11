@@ -11,7 +11,7 @@ Son los datos que la tesis necesita y que el repositorio no documenta. Cada resp
 ## Bloque 2 - Corrida telefonica (5 y 6 de octubre)
 
 - **Q1. Fechas y horas.** El historial muestra 25 casos ya medidos el 5-10 (antes de c-71 y c-72) y 56 el 6-10. Confirmas que la corrida telefonica empezo el 5-10 y termino el 6-10, y a que horas aproximadas cada tramo? Si se confirma, 1.8, 4.5, la Figura 10 y el cronograma pasan a decir "5 y 6 de octubre".
-- **Q2. Version desplegada para los 56 casos del 6-10.** Que imagen de `backend-corpus` y que flujo importado en `n8n-corpus` procesaron esos casos: anteriores o posteriores a c-71 (`1368fd8`, 5-10 21:50) y a c-72 (`a76851e`, 6-10 16:38)? Se reimporto el flujo de `n8n-corpus` despues de retirar el AI Agent?
+- **Q2. Version desplegada para los 56 casos del 6-10.** Que imagen de `backend-corpus` y que flujo importado en `n8n-corpus` procesaron esos casos: anteriores o posteriores a c-71 (`c8112d2`, 5-10 21:50) y a c-72 (`27f8d8c`, 6-10 16:38)? Se reimporto el flujo de `n8n-corpus` despues de retirar el AI Agent?
 - **OQ4. AI Agent de N8N.** Los 25 casos del 5-10 se clasificaron con el AI Agent de N8N (Gemini siempre). Los 81 tiempos telefonicos incluyen esa etapa, o alguno se midio con la cascada del backend?
 - **Q3. Quien recito y en que condiciones.** Nombre de quien recito las 81 llamadas, si fue una sola persona, si leyo la descripcion tal como la mostraba el softphone (literal) o la parafraseo, dispositivo, microfono, red y entorno (lugar silencioso o no), y si hubo repeticiones ademas de R126 y R002.
 

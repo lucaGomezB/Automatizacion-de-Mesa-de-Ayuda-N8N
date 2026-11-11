@@ -274,7 +274,7 @@ python3 -m pytest scripts/voip_softphone -q
 ## 9. Limitaciones / estado de c-52
 
 - El defecto de sesion de `memoryRedisChat` de n8n (`NodeOperationError:
-  "No session ID found"`) **YA FUE CORREGIDO en c-52** (commit `4946584`,
+  "No session ID found"`) **YA FUE CORREGIDO en c-52** (commit `698ac68`,
   `sessionIdType: customKey` + `sessionKey`). El intake telefonico es
   funcional y la verificacion end-to-end PUEDE confirmar la creacion del
   incidente. **No es un blocker.**

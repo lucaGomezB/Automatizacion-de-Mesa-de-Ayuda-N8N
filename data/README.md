@@ -19,10 +19,19 @@ Corpus de registro pseudonimizado (formato Hoja 1). **SI se versiona**.
 son los sidecars de trazabilidad de los harness de ingesta que corresponden a
 corridas completas. **SI se versionan** como evidencia agregada: son libres de PII
 por construcción (solo `case_id`, canal, `incidente_id`, sector, marcas temporales
-y latencias; sin descripciones de caso). El sidecar `corpus_resultados_n8n.json`
-tiene 4 filas locales frente a las 119 de la corrida del 2-10-2026: **NO se versiona**
-hasta confirmar cuál artefacto es el autoritativo (pregunta abierta OQ2); `.gitignore`
-lo excluye por defecto junto con cualquier otro sidecar del patrón.
+y latencias; sin descripciones de caso). También **SI se versiona**
+`corpus_resultados_web_correo.json` (118 filas), el registro primario
+pseudonimizado de la corrida de correo y formulario del 2026-10-02, extraído del
+respaldo de la base operativa (`backups/mesa_de_ayuda_20261009T141330.sql`, ISO
+2026-10-09T14:13:30; el respaldo no se versiona). No contiene descripciones; sus
+marcas de tiempo son las de ingreso y persistencia en la base, no el tiempo de
+extremo a extremo (que incluye el envío), por lo que respaldan la existencia y la
+procedencia de los incidentes, no la medición de extremo a extremo. Cubre 118 de
+los 119 casos de correo y formulario del corpus; `R001` es el único caso sin
+registro. El sidecar `corpus_resultados_n8n.json` tiene 4 filas locales frente a
+las 119 de la corrida del 2-10-2026: **NO se versiona** hasta confirmar cuál
+artefacto es el autoritativo (pregunta abierta OQ2); `.gitignore` lo excluye por
+defecto junto con cualquier otro sidecar del patrón.
 
 ## Archivos NO versionados (Ley 25.326)
 

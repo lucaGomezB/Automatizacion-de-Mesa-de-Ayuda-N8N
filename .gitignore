@@ -66,6 +66,8 @@ data/Corpus Tesis - Hoja 1.csv
 # Se versionan SOLO los sidecars completos y PII-free (sin descripciones):
 #   data/corpus_resultados.json            (200 filas)
 #   data/corpus_resultados_telefonia.json  (81 filas)
+#   data/corpus_resultados_web_correo.json (118 filas; registro primario pseudonimizado
+#                                          de los incidentes de correo y formulario del 2026-10-02)
 # Cualquier otro sidecar del patron queda excluido por defecto: en particular
 # data/corpus_resultados_n8n.json (pendiente de resolver su discrepancia de conteo,
 # 4 filas frente a 119; OQ2) y cualquier sidecar futuro que pudiera llevar
@@ -73,6 +75,7 @@ data/Corpus Tesis - Hoja 1.csv
 data/corpus_resultados*.json
 !data/corpus_resultados.json
 !data/corpus_resultados_telefonia.json
+!data/corpus_resultados_web_correo.json
 
 # Locks transitorios de LibreOffice sobre los archivos del corpus
 data/.~lock*

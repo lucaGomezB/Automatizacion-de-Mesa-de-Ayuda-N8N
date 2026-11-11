@@ -27,7 +27,7 @@ dictamen deja un residual de atribución bibliográfica (Galup 2009) que este ch
   (`consenso_doble_etiquetado`); conjunto de verdad laxo = sector consensuado más la
   INTERSECCIÓN de los adicionales que ambos marcaron. Los discordantes se EXCLUYEN y se
   informan con la advertencia de sesgo hacia casos fáciles.
-- **Clasificador CONGELADO** `classifier_version = hybrid-v3`, commit `d6bb474`; sin
+- **Clasificador CONGELADO** `classifier_version = hybrid-v3`, commit `bf5e099`; sin
   recalibrar tau, prompt ni vocabulario después de ver el corpus. Se REUTILIZAN
   `evaluar_fuera_de_muestra` y el guard `--confirm-paid`; no se agrega código salvo lo
   estrictamente necesario.
@@ -84,7 +84,7 @@ dictamen deja un residual de atribución bibliográfica (Galup 2009) que este ch
 |--------|--------------|------------|
 | Acuerdo `E3`/`E4` ~69 %, ~46 casos excluidos | Alta | Declarar n efectivo y sesgo de exclusión; IC de Wilson (semi-ancho ~8,4 pts) aceptado |
 | No se consiguen etiquetadores nuevos | Media | Registrar `estado_cegado: limitacion_declarada`; no presentarlo como ciego |
-| Deriva del clasificador respecto de `d6bb474` | Baja | Control `git diff d6bb474 HEAD`; registrar en README |
+| Deriva del clasificador respecto de `bf5e099` | Baja | Control `git diff bf5e099 HEAD`; registrar en README |
 | Sobremuestreo desbalancea el global | Media | Ponderar por distribución del universo; informar sin ponderar y ponderado |
 | Interpretar el resultado como confirmación fuerte | Media | Reportar con su IC, n efectivo y exclusión; no extrapolar |
 
