@@ -5,7 +5,7 @@ Generado por `docs/Tesis/Correcciones/resumir_registro_compilacion.py` a partir 
 
 | Concepto | Valor |
 |---|---|
-| Fuente compilada | arbol de trabajo sobre 7bcec0b |
+| Fuente compilada | arbol de trabajo sobre 8ac4d3f (tag v1.2.18) |
 | Motor | XeTeX 3.141592653-2.6-0.999998 (TeX Live 2026) |
 | Biber | 2.22 |
 | Paginas | 120 |
@@ -16,4 +16,4 @@ Generado por `docs/Tesis/Correcciones/resumir_registro_compilacion.py` a partir 
 | Overfull \hbox (maximo) | 7 (8,2 pt) |
 | Lineas WARN de biber | 0 |
 | Lineas ERROR de biber | 0 |
-| SHA-256 de main.pdf | `ad1733b3fed5f59b30bd507ceb2a0634ac684fdebcf9f74bbc6533aa0e65d988` |
+| SHA-256 de main.pdf | `6403c6d2c69ff3b0b11eea952b7c4f50b7531264a25f5e49ac9bf06607134ba2` |

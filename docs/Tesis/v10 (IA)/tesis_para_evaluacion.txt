@@ -4548,10 +4548,8 @@ análisis, entre el 2026-11-04 y el 2026-11-08.
 el tag anotado v1.2.18, creado sobre el commit que fija el contenido de la versión entregada. Como
 un commit no puede contener su propio hash, la rama principal registra después un commit que solo
 consigna ese hash, y los commits posteriores no modifican las fuentes de la tesis.
-El PDF compilado en el propio tag no imprime ese hash: el hash completo de v1.2.18
-se consigna en el commit que sigue al tag en la rama principal. Se verifica con git rev-list
--n1 v1.2.18, y un git diff --stat entre el tag y la rama principal sobre docs/Tesis/v10
-(IA)/paper/sections muestra que ese commit solo cambia esa línea.
+El hash completo de ese commit es 457b14ae2c77ea221429345602aacc9213878640, que
+constituye la referencia verificable de la versión corregida.
 La verificación de la compilación se conserva en paper/compilacion.md, que registra
 las páginas, los errores y el SHA-256 del PDF, y la de la matriz de trazabilidad de las correcciones,
 en docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py; ambos artefactos
@@ -4575,6 +4573,7 @@ El esquema completo de la base de datos PostgreSQL se documenta mediante scripts
 versionados que definen las siete entidades descritas en la Tabla 5 de la Sección 5, las restricciones de
 integridad referencial (claves foráneas con eliminación en cascada condicional), los índices secundarios sobre los atributos de búsqueda frecuente (fecha de creación, sector responsable y estado actual
 del ticket), y la generación de los identificadores de incidente. La capa de acceso a datos del módulo utiliza SQLAlchemy 2.0 como mapeador objeto-relacional y asyncpg como driver asincrónico para
+PostgreSQL, en coherencia con la Sección 5.4 y con el código del repositorio. Las migraciones incrementales se gestionan mediante Alembic, lo que permite reproducir el estado de la base en cualquier
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
@@ -4733,7 +4732,6 @@ con c-82 y c-162 activos; no registrado señala lo que los artefactos no permit
 
 111
 
-PostgreSQL, en coherencia con la Sección 5.4 y con el código del repositorio. Las migraciones incrementales se gestionan mediante Alembic, lo que permite reproducir el estado de la base en cualquier
 punto histórico del desarrollo y revertir cambios cuando resulte necesario.
 La migración inicial incluye la creación de las tablas de catálogo (sector, estado, canal_
 origen) con sus valores semilla, garantizando que un despliegue nuevo del sistema comience con los
@@ -4764,12 +4762,12 @@ E. Configuración del flujo N8N
 La exportación del flujo de orquestación en formato JSON incluye la totalidad de los 32 nodos
 configurados, sus parámetros operativos, las credenciales referenciadas mediante identificadores opacos sin exposición de valores, y los conectores entre nodos. El archivo n8n/workflow.json contiene
 esta exportación. La importación de este artefacto en una instancia limpia de N8N 2.11.2 reproduce
+íntegramente el comportamiento operativo del sistema, sujeta únicamente a la provisión de las credenciales correspondientes a los servicios externos integrados (servidor IMAP de correo, cuenta Twilio y
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 112
 
-íntegramente el comportamiento operativo del sistema, sujeta únicamente a la provisión de las credenciales correspondientes a los servicios externos integrados (servidor IMAP de correo, cuenta Twilio y
 clave de API de Gemini) mediante el sistema de credenciales nativo de la plataforma.
 La Figura 10 presenta una reconstrucción esquemática del flujo, derivada de la exportación
 JSON y agrupada por etapa funcional. Los 29 nodos operativos (más 3 notas adhesivas, 32 nodos
@@ -4789,14 +4787,13 @@ en formato JSON, en su forma pseudonimizada y versionada, bajo la ruta data/corp
 cion_pseudonimizado.json. Cada caso incluye el identificador anónimo, la descripción cruda
 pseudonimizada, el canal de origen, el sector asignado por consenso humano, los sectores adicionales de verdad y el tiempo de registro medido en cada flujo. La categoría predicha por el clasificador y
 la confianza asociada no forman parte del corpus: se conservan en la copia versionada de la caché,
-evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json. Los tiempos automa-
+evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json. Los tiempos automatizados constan por caso en el corpus; sus registros primarios (base operativa del 2-10-2026 con los
+incidentes ingresados, respaldo del 9-10-2026 de los 81 ingresos telefónicos y ejecuciones de N8N) no
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 113
 
-tizados constan por caso en el corpus; sus registros primarios (base operativa del 2-10-2026 con los
-incidentes ingresados, respaldo del 9-10-2026 de los 81 ingresos telefónicos y ejecuciones de N8N) no
 se conservan en el repositorio. Se incluyen además las planillas de cronometraje del flujo manual.
 Cada uno de los 200 casos del corpus se compone de siete campos: id (identificador anónimo,
 por ejemplo R001), descripcion (texto pseudonimizado, con los identificadores personales reemplazados por etiquetas genéricas como [EMAIL], [TELEFONO], [HOST] y [PERSONA]), canal_origen
@@ -4827,13 +4824,13 @@ un conjunto de reglas de desambiguación:
 1. Instrucción de rol: define que el modelo actúa como agente especializado en clasificación
 de incidentes técnicos en español rioplatense, lo que ancla el comportamiento en el dominio
 y el dialecto del estudio.
+2. Definición de categorías: presenta los cinco sectores canónicos con sus strings exactos
+(sensibles a mayúsculas y sin tildes), un ámbito descriptivo por sector y un único ejemplo
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 114
 
-2. Definición de categorías: presenta los cinco sectores canónicos con sus strings exactos
-(sensibles a mayúsculas y sin tildes), un ámbito descriptivo por sector y un único ejemplo
 representativo extraído del dominio real por clase (cinco en total).
 3. Formato de respuesta: solicita un JSON válido con exactamente dos campos, categoría
 (uno de los cinco valores canónicos) y confianza (número entre 0,0 y 1,0), sin texto adicional, comentarios ni explicaciones.
@@ -4865,12 +4862,16 @@ El Listado 1 resume la rutina de validación.
 3
 4
 5
+6
+7
 
 def validar_respuesta_gemini(response_text: str) -> tuple[bool, dict]:
 try:
 data = json.loads(response_text)
 except json.JSONDecodeError as e:
 return False, {"error": f"JSON invalido: {e}"}
+if "categoría" not in data:
+return False, {"error": "Falta campo 'categoría'"}
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
@@ -4956,8 +4957,6 @@ Fuente: elaboración propia a partir de la documentación del SDK google-genai.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
-6
-7
 8
 9
 10
@@ -4969,8 +4968,6 @@ Fuente: elaboración propia a partir de la documentación del SDK google-genai.
 
 116
 
-if "categoría" not in data:
-return False, {"error": "Falta campo 'categoría'"}
 if data["categoría"] not in SECTORES_CANONICOS:
 return False, {"error": f"Categoría invalida: {data['categoría']}"}
 if "confianza" not in data:
@@ -5001,13 +4998,14 @@ mediante un modelo de lenguaje; no los emitieron el jurado, la dirección, la c
 constituyen una revisión por pares humana y no son vinculantes. La serie comprende nueve dictámenes fechados entre el 20 de octubre y el 9 de noviembre de 2026, que se conservan en auditorias/;
 cada uno declara su alcance (lectura íntegra del manuscrito, recomputo de las cifras, verificación bibliográfica y cotejo con el repositorio). Este anexo traza seis: el del 22 de octubre, sobre la versión v1.1.0,
 el del 28 de octubre, sobre la v1.2.5, el del 8 de noviembre, sobre la v1.2.10, el del 9 de noviembre,
+sobre la v1.2.12 (Tabla 24), el del mismo día sobre la v1.2.13 (Tabla 25) y el del mismo día sobre
+la v1.2.16 (Tabla 26). El registro acumulativo de las correcciones se conserva como artefacto versio-
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 117
 
-sobre la v1.2.12 (Tabla 24), el del mismo día sobre la v1.2.13 (Tabla 25) y el del mismo día sobre
-la v1.2.16 (Tabla 26). El registro acumulativo de las correcciones se conserva como artefacto versionado en docs/Tesis/Correcciones/dictamen-correcciones.md y vincula cada observación
+nado en docs/Tesis/Correcciones/dictamen-correcciones.md y vincula cada observación
 con el archivo y la línea corregidos.
 El dictamen del 22 de octubre de 2026, aplicable por igual a v1.1.1, formuló cinco observaciones de fondo (A1 a A5) y correcciones de consistencia (B4 a B16), atendidas mediante changes
 del repositorio; la Tabla 21 indica, para cada una, el change responsable y las secciones donde se la
@@ -5110,12 +5108,13 @@ c-163 (fecha de consulta de una referencia)
 
 Fuente: elaboración propia a partir de docs/Tesis/Correcciones/dictamen-correcciones.md.
 
+El dictamen del 28 de octubre de 2026, sobre la versión v1.2.5, formuló observaciones de
+método (A1 y A2), de coherencia entre figuras, tablas y texto (A3), de evidencia cualitativa (A4) y de
+
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
 118
 
-El dictamen del 28 de octubre de 2026, sobre la versión v1.2.5, formuló observaciones de
-método (A1 y A2), de coherencia entre figuras, tablas y texto (A3), de evidencia cualitativa (A4) y de
 residuos del proceso de corrección y consistencia interna (B5 a B8); la Tabla 22 indica el change responsable y las secciones donde se las atendió. Las demás observaciones de ese dictamen se atienden
 en changes posteriores del repositorio, entre ellos c-169, que midió cuatro de los cinco límites estructurales que el dictamen consignó y declara el quinto —la validación fuera de muestra— como limitación
 negativa (la fila “Lím.” de la tabla); el dictamen del 8 de noviembre acotó después dos de esas mediciones (Tabla 23).
@@ -5187,6 +5186,8 @@ a A3), cuatro de consistencia (B1 a B4) y dos de forma y bibliografía (C1 y C2)
 changes responsables (c-192, c-193 y c-194) y las secciones que corrigieron.
 El dictamen del mismo día sobre la versión v1.2.16 formuló tres observaciones de fondo (A1
 a A3), tres de consistencia (B1 a B3) y dos de forma y bibliografía (C1 y C2); su change responsable
+es c-195, y la Tabla 26 indica las secciones que corrigió. La recomendación A1, sobre la confirmación
+escrita del consentimiento, queda diferida: la atienden los autores al recabar las firmas.
 
 AUTOMATIZACIÓN DE MESA DE AYUDA
 
@@ -5331,8 +5332,6 @@ Fuente: elaboración propia a partir de docs/Tesis/Correcciones/dictamen-correcc
 
 120
 
-es c-195, y la Tabla 26 indica las secciones que corrigió. La recomendación A1, sobre la confirmación
-escrita del consentimiento, queda diferida: la atienden los autores al recabar las firmas.
 Tabla 26. Recomendaciones del dictamen del 9 de noviembre de 2026 sobre la v1.2.16, secciones
 donde se atendieron (change responsable: c-195).
 Rec.
