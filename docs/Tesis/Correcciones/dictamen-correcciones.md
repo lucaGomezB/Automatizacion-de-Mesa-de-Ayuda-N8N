@@ -4508,7 +4508,7 @@ Atención de la devolución de segunda instancia del tribunal del 2026-11-11 sob
 correcciones deben estar en el ejemplar de la defensa y la devolución indica que no requieren código
 nuevo ni nuevas mediciones). Change `c-196` (docs, gobernanza MEDIUM; el texto fáctico de la sección 7.3
 y del Anexo I es HIGH), release prevista `v1.2.19` (a cargo del orquestador con el usuario). La
-devolución completa se versiona en `auditorias/Devolucion_Segunda_Instancia_Tribunal_2026-11-11.pdf` y el Anexo I la cita como archivo del repositorio (tarea 6.10 del change).
+devolución completa se versiona en `auditorias/Devolucion_Segunda_Instancia_TFI_v1.2.18_2026-11-11.pdf` y el Anexo I la cita como archivo del repositorio (tarea 6.10 del change).
 
 ### Correcciones
 
