@@ -34,7 +34,7 @@ La trazabilidad operativa se garantiza mediante registros estructurados en cada 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{arquitectura_sistema}
-\caption[Diagrama de arquitectura del sistema]{Diagrama de arquitectura del sistema: cinco capas y tres canales de entrada (correo, formulario web y telefonía), en la configuración entregada (release \texttt{v1.2.17}). Fuente versionada: \texttt{docs/diagrams/arquitectura\_sistema.md} (Anexo~\ref{sec:anexo-diagrama-arquitectura}).}
+\caption[Diagrama de arquitectura del sistema]{Diagrama de arquitectura del sistema: cinco capas y tres canales de entrada (correo, formulario web y telefonía), en la configuración entregada (release \texttt{v1.2.18}). Fuente versionada: \texttt{docs/diagrams/arquitectura\_sistema.md} (Anexo~\ref{sec:anexo-diagrama-arquitectura}).}
 \label{fig:arquitectura}
 \end{figure}
 
@@ -75,7 +75,7 @@ La persistencia se realiza sobre PostgreSQL~15.5, desplegado en contenedor Docke
 
 \begin{table}[htbp]
 \centering
-\caption[Entidades principales del modelo de datos]{Entidades principales del modelo de datos de la configuración entregada (release \texttt{v1.2.17}); el atributo \texttt{reportante\_empleado\_id}, el cuarto rol del directorio y el cifrado del contacto son posteriores a la campaña 2026-10 (c-82, c-86 y c-153).}
+\caption[Entidades principales del modelo de datos]{Entidades principales del modelo de datos de la configuración entregada (release \texttt{v1.2.18}); el atributo \texttt{reportante\_empleado\_id}, el cuarto rol del directorio y el cifrado del contacto son posteriores a la campaña 2026-10 (c-82, c-86 y c-153).}
 \label{tab:entidades}
 \footnotesize\singlespacing
 \setlength{\tabcolsep}{4pt}
@@ -101,13 +101,13 @@ El canal de origen constituye una entrada opcional del backend: el esquema de cr
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{er_modelo_datos}
-\caption[Diagrama entidad-relación de las siete entidades principales]{Diagrama entidad-relación de las siete entidades principales del modelo de datos de la configuración entregada (release \texttt{v1.2.17}; esquema completo en el Anexo~C).}
+\caption[Diagrama entidad-relación de las siete entidades principales]{Diagrama entidad-relación de las siete entidades principales del modelo de datos de la configuración entregada (release \texttt{v1.2.18}; esquema completo en el Anexo~C).}
 \label{fig:er_modelo_datos}
 \end{figure}
 
 \subsection{Contrato de la interfaz REST}\label{subsec:contrato-rest}
 
-La interfaz de programación de aplicaciones expuesta por el módulo Python sigue el estilo arquitectónico REST \parencite{Fielding2002_rest}, con representación de recursos mediante identificadores uniformes, uso semántico de los métodos HTTP estándar y comunicación sin estado del lado del servidor. La autenticación se realiza mediante tokens JWT (JSON Web Tokens) firmados con HS256 (HMAC-SHA256), validados en cada solicitud mediante el esquema OAuth2PasswordBearer de FastAPI. La Tabla~\ref{tab:api} sintetiza los principales puntos de entrada.
+La interfaz de programación de aplicaciones expuesta por el módulo Python sigue el estilo arquitectónico REST \parencite{Fielding2002_rest}, con representación de recursos mediante identificadores uniformes, uso semántico de los métodos HTTP estándar y comunicación sin estado del lado del servidor. La autenticación se realiza mediante tokens JWT (JSON Web Tokens) firmados con HS256 (HMAC-SHA-256), validados en cada solicitud mediante el esquema OAuth2PasswordBearer de FastAPI. La Tabla~\ref{tab:api} sintetiza los principales puntos de entrada.
 
 \begin{table}[htbp]
 \centering

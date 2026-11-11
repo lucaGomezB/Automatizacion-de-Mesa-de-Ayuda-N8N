@@ -237,7 +237,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ### [C-01] `foundation-setup`
 
-- **Estado**: `[x]` completado (2026-06-10 — openspec/changes/c-01-foundation-setup)
+- **Estado**: `[x]` completado (2026-06-10 — openspec/changes/archive/2026-06-10-c-01-foundation-setup)
 - **Scope**:
   - Completar `openspec/config.yaml` con el stack tecnologico del proyecto
   - Configurar `.engram/` en el repo para memoria compartida entre colaboradores
@@ -248,8 +248,8 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: ninguna
 - **Governance**: BAJO
 - **Leer antes**:
-  - `docs/Tesis/tesis_para_agente.md` §5.6 (modelo de datos)
-  - `docs/Tesis/tesis_para_agente.md` §6.1 (entorno de despliegue)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §5.6 (modelo de datos)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §6.1 (entorno de despliegue)
   - `CLAUDE.md` (reglas del proyecto)
 
 ---
@@ -270,8 +270,8 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: `C-01`
 - **Governance**: BAJO
 - **Leer antes**:
-  - `docs/Tesis/tesis_para_agente.md` §5.3 (capa de orquestacion N8N)
-  - `docs/Tesis/tesis_para_agente.md` §5.7 (contrato REST)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §5.3 (capa de orquestacion N8N)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §5.7 (contrato REST)
   - `App/Backend/app/utils/n8n_webhook.py` (funcion existente)
   - `App/Backend/app/services/incidente_service.py` (donde debe llamarse)
   - `App/Backend/app/config/settings.py` §n8n_webhook_url
@@ -288,8 +288,8 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: `C-01`
 - **Governance**: ALTO (datos personales — Ley 25.326)
 - **Leer antes**:
-  - `docs/Tesis/tesis_para_agente.md` §11.3 (transferencia internacional y pseudonimizacion)
-  - `docs/Tesis/tesis_para_agente.md` §5.4 (capa de procesamiento Python)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §11.3 (transferencia internacional y pseudonimizacion)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §5.4 (capa de procesamiento Python)
   - `docs/anexo_h_prompt_gemini.md` §H.3 (validacion de respuesta)
   - `App/Backend/app/classifiers/gemini_classifier.py` (donde se envia a Gemini)
 
@@ -314,9 +314,9 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: `C-02`
 - **Governance**: MEDIO
 - **Leer antes**:
-  - `docs/Tesis/tesis_para_agente.md` §5.3 (capa de orquestacion)
-  - `docs/Tesis/tesis_para_agente.md` §6.3 (construccion del flujo N8N)
-  - `docs/Tesis/tesis_para_agente.md` §6.5 (pruebas automatizadas)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §5.3 (capa de orquestacion)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §6.3 (construccion del flujo N8N)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §6.5 (pruebas automatizadas)
   - `n8n/workflow.json` (workflow actual)
 
 ### [C-05] `n8n-channel-triggers`
@@ -332,9 +332,9 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: `C-04`
 - **Governance**: MEDIO
 - **Leer antes**:
-  - `docs/Tesis/tesis_para_agente.md` §5.2 (capa de canales de entrada)
-  - `docs/Tesis/tesis_para_agente.md` §6.4 (integracion del canal telefonico)
-  - `docs/Tesis/tesis_para_agente.md` §5.3 (normalizacion de entrada)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §5.2 (capa de canales de entrada)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §6.4 (integracion del canal telefonico)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §5.3 (normalizacion de entrada)
 
 ---
 
@@ -362,8 +362,8 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Leer antes**:
   - `App/Backend/tests/conftest.py` (infraestructura existente)
   - `App/Backend/tests/test_deterministic_classifier.py` (patron de tests existente)
-  - `docs/Tesis/tesis_para_agente.md` §6.5 (pruebas automatizadas)
-  - `docs/Tesis/tesis_para_agente.md` §4.5 (protocolo de pruebas)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §6.5 (pruebas automatizadas)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §4.5 (protocolo de pruebas)
 
 ### [C-07] `frontend-testing-setup`
 
@@ -382,7 +382,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Leer antes**:
   - `App/Frontend/package.json` (dependencias actuales)
   - `App/Frontend/vite.config.ts` (configuracion existente)
-  - `docs/Tesis/tesis_para_agente.md` §6.5 (pruebas automatizadas)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §6.5 (pruebas automatizadas)
 
 ---
 
@@ -406,9 +406,9 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: `C-02`, `C-03`
 - **Governance**: BAJO
 - **Leer antes**:
-  - `docs/Tesis/tesis_para_agente.md` §4.6 (metricas e instrumentos)
-  - `docs/Tesis/tesis_para_agente.md` §4.7 (analisis estadistico)
-  - `docs/Tesis/tesis_para_agente.md` §7.1-7.4 (resultados esperados)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §4.6 (metricas e instrumentos)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §4.7 (analisis estadistico)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §7.1-7.4 (resultados esperados)
   - `docs/anexo_h_prompt_gemini.md` §H.4 (iteracion y mejora)
 
 ### [C-09] `ci-cd-pipeline`
@@ -425,7 +425,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: `C-06`, `C-07`
 - **Governance**: BAJO
 - **Leer antes**:
-  - `docs/Tesis/tesis_para_agente.md` §6.5 (pruebas automatizadas)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §6.5 (pruebas automatizadas)
   - `App/Backend/pytest.ini` (configuracion pytest existente)
   - `App/Backend/requirements.txt` (dependencias)
 
@@ -450,9 +450,9 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: `C-04`, `C-05`, `C-09`
 - **Governance**: BAJO
 - **Leer antes**:
-  - `docs/Tesis/tesis_para_agente.md` §13 (Anexos A-G)
-  - `docs/Tesis/tesis_para_agente.md` §11.4 (seguridad tecnica)
-  - `docs/Tesis/tesis_para_agente.md` §6.1 (entorno de despliegue)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §13 (Anexos A-G)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §11.4 (seguridad tecnica)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §6.1 (entorno de despliegue)
   - `App/Backend/Dockerfile` y `App/Backend/docker-compose.yml`
   - `App/Frontend/vite.config.ts`
 
@@ -559,11 +559,11 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 | C-189 | aceptar-la-imagen-derivada-de-n8n-en-el-pin-infra-008 | 54 | C-62, C-182 | ALTO | — |
 | C-190 | atender-el-dictamen-coneau-v1-2-12 | 56 | C-188 | MEDIO | — |
 
-**Total**: 1 change ACTIVO (c-191-validacion-fuera-de-muestra-150-casos, propuesto y pendiente de la campana) y 191 entradas ARCHIVADAS (193 directorios en `openspec/changes/archive/`; numeracion C-01..C-195, c-63 se cuenta como un change con sus tres partes c-63a/b/c; la FASE 36 (C-130..C-142), la FASE 37 (C-143, 13/13), la FASE 38 (C-144, 18/18), la FASE 39 (C-145, 77/77), la FASE 40 (C-146, 22/23 con la 6.1 bloqueada por acceso externo, y C-147, 23/23), la FASE 41 (C-148, 50/52), la FASE 42 (C-149, 21/22), la FASE 43 (C-150, 26/28), la FASE 44 (C-151, 20/20), la FASE 45 (C-153, 42/42) la FASE 46 (C-152, 12/12, y C-154, 21/21) la FASE 47 (C-155, 17/17, C-156, 27/27, y C-157, 21/21) y la FASE 48 (C-158, 41/42 con la 7.1 diferida a los autores, C-159, 39/39, y C-160, 42/42) estan ARCHIVADAS; C-135 ARCHIVADO el 2026-10-26 con 5.2 justificada, C-140 (73/73) y C-141 (52/52) el 2026-10-27, C-150 el 2026-10-27 y C-151, C-152, C-153 y C-154 el 2026-10-28; C-158, C-159 y C-160 el 2026-10-29; C-161 a C-164 (FASES 49 a 51) el 2026-10-29 y C-165 a C-168 (FASE 52) el 2026-10-30). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre. Release vigente: `v1.2.17` (tag anotado sobre `1de114fcdc045b283f9b26bd75ea719f2aefa567`, commit de contenido de c-195, 2026-11-09; PDF 120 paginas, 0 errores; el hash se consigna en el Anexo B en el commit posterior). `v1.2.16` queda superada (inmutable, en `ca3c88510be5b1484ed413a8de8bcdffccedc417`, c-194; PDF 118 paginas). `v1.2.15` queda superada (inmutable, en `f72e6c899ba3bce7ae11ffe1b0a980f57241a0ea`, 2026-11-09, c-193; PDF 118 paginas). `v1.2.12` queda superada (inmutable, en `7937efd063955f787a4fed6c10168b4744de8905`, 2026-11-09, c-188; PDF 118 paginas, 0 errores; el hash se consigna en el Anexo B en el commit posterior `66dae6e`). `v1.2.11` queda superada (inmutable, en `a42f005078a1a7f1d4eea8bd11a7757335f2ce58`, 2026-11-08, c-187) y `v1.2.10` queda superada (inmutable, en `c3c63c84a94a79cddc21803868f437db59c3d2df`; 118 paginas totales medidas: cuerpo 105, anexos 13; exceso de +18 sobre el tope de 100 del total, declarado y honrado; la cuenta por cuerpo sin anexos de la rama (b) queda superada y es solo complementaria). `v1.2.9` queda superada (inmutable, en `bda6903e65ab40b073daf4bd001eaa9ff85e42cc`). Los changes c-161 a c-169 (FASES 49 a 52) ya estan publicados en `main`; C-169 (FASE 52) fue aplicado, publicado como release `v1.2.8` y ARCHIVADO el 2026-11-08. Los changes c-184 y c-185 quedaron APLICADOS y ARCHIVADOS el 2026-11-08 como release `v1.2.9` (tag anotado sobre `bda6903e65ab40b073daf4bd001eaa9ff85e42cc`, hash consignado en `3e8f806`), sincronizando la capability `tesis-document`. El change c-186 `cerrar-los-residuales-de-la-ultima-auditoria` quedo APLICADO y ARCHIVADO el 2026-11-08 como release `v1.2.10` (tag anotado sobre `c3c63c84a94a79cddc21803868f437db59c3d2df`; hash consignado en `2103292`), sincronizando la capability `tesis-document` (4 MODIFIED y 1 ADDED). El change c-189 `aceptar-la-imagen-derivada-de-n8n-en-el-pin-infra-008` (FASE 54, ALTA, 17/17) quedo ARCHIVADO el 2026-11-08 (PRs #73 y #72) y c-188 `residuales-de-forma-y-bibliografia-del-dictamen-v1-2-10` (FASE 55) quedo ARCHIVADO el 2026-11-09 como release `v1.2.12`.
+**Total**: 1 change ACTIVO (c-191-validacion-fuera-de-muestra-150-casos, propuesto y pendiente de la campana) y 191 entradas ARCHIVADAS (193 directorios en `openspec/changes/archive/`; numeracion C-01..C-195, c-63 se cuenta como un change con sus tres partes c-63a/b/c; la FASE 36 (C-130..C-142), la FASE 37 (C-143, 13/13), la FASE 38 (C-144, 18/18), la FASE 39 (C-145, 77/77), la FASE 40 (C-146, 22/23 con la 6.1 bloqueada por acceso externo, y C-147, 23/23), la FASE 41 (C-148, 50/52), la FASE 42 (C-149, 21/22), la FASE 43 (C-150, 26/28), la FASE 44 (C-151, 20/20), la FASE 45 (C-153, 42/42) la FASE 46 (C-152, 12/12, y C-154, 21/21) la FASE 47 (C-155, 17/17, C-156, 27/27, y C-157, 21/21) y la FASE 48 (C-158, 41/42 con la 7.1 diferida a los autores, C-159, 39/39, y C-160, 42/42) estan ARCHIVADAS; C-135 ARCHIVADO el 2026-10-26 con 5.2 justificada, C-140 (73/73) y C-141 (52/52) el 2026-10-27, C-150 el 2026-10-27 y C-151, C-152, C-153 y C-154 el 2026-10-28; C-158, C-159 y C-160 el 2026-10-29; C-161 a C-164 (FASES 49 a 51) el 2026-10-29 y C-165 a C-168 (FASE 52) el 2026-10-30). C-21, C-49 y C-50 nunca se crearon; C-51 fue absorbido por C-52 y no se abre. Release vigente: `v1.2.18` (tag anotado sobre el commit de contenido de las correcciones editoriales, 2026-11-11; PDF 120 paginas, 0 errores; el hash se consigna en el Anexo B en el commit posterior). `v1.2.17` queda superada (inmutable, en `1de114fcdc045b283f9b26bd75ea719f2aefa567`, c-195, 2026-11-09; PDF 120 paginas, 0 errores). `v1.2.16` queda superada (inmutable, en `ca3c88510be5b1484ed413a8de8bcdffccedc417`, c-194; PDF 118 paginas). `v1.2.15` queda superada (inmutable, en `f72e6c899ba3bce7ae11ffe1b0a980f57241a0ea`, 2026-11-09, c-193; PDF 118 paginas). `v1.2.12` queda superada (inmutable, en `7937efd063955f787a4fed6c10168b4744de8905`, 2026-11-09, c-188; PDF 118 paginas, 0 errores; el hash se consigna en el Anexo B en el commit posterior `66dae6e`). `v1.2.11` queda superada (inmutable, en `a42f005078a1a7f1d4eea8bd11a7757335f2ce58`, 2026-11-08, c-187) y `v1.2.10` queda superada (inmutable, en `c3c63c84a94a79cddc21803868f437db59c3d2df`; 118 paginas totales medidas: cuerpo 105, anexos 13; exceso de +18 sobre el tope de 100 del total, declarado y honrado; la cuenta por cuerpo sin anexos de la rama (b) queda superada y es solo complementaria). `v1.2.9` queda superada (inmutable, en `bda6903e65ab40b073daf4bd001eaa9ff85e42cc`). Los changes c-161 a c-169 (FASES 49 a 52) ya estan publicados en `main`; C-169 (FASE 52) fue aplicado, publicado como release `v1.2.8` y ARCHIVADO el 2026-11-08. Los changes c-184 y c-185 quedaron APLICADOS y ARCHIVADOS el 2026-11-08 como release `v1.2.9` (tag anotado sobre `bda6903e65ab40b073daf4bd001eaa9ff85e42cc`, hash consignado en `3e8f806`), sincronizando la capability `tesis-document`. El change c-186 `cerrar-los-residuales-de-la-ultima-auditoria` quedo APLICADO y ARCHIVADO el 2026-11-08 como release `v1.2.10` (tag anotado sobre `c3c63c84a94a79cddc21803868f437db59c3d2df`; hash consignado en `2103292`), sincronizando la capability `tesis-document` (4 MODIFIED y 1 ADDED). El change c-189 `aceptar-la-imagen-derivada-de-n8n-en-el-pin-infra-008` (FASE 54, ALTA, 17/17) quedo ARCHIVADO el 2026-11-08 (PRs #73 y #72) y c-188 `residuales-de-forma-y-bibliografia-del-dictamen-v1-2-10` (FASE 55) quedo ARCHIVADO el 2026-11-09 como release `v1.2.12`.
 **Planificadas (NO creadas)**: ninguna. El plan de cumplimiento (FASE 21) quedo TOTALMENTE EJECUTADO: C-61 `compliance-gobernanza` (MEDIO), C-62 `hardening-infra-red` (ALTO) y C-63 `identidad-accesos-claves` (CRITICO, split en c-63a/b/c) quedaron ARCHIVADOS (2026-10-01, 2026-10-08 y 2026-10-08), con sus specs `security-governance-docs`, `infra-network-hardening` e `identity-access-hardening`; C-64 `vulnerabilidades-supply-chain` (MEDIO) quedo ARCHIVADO (2026-10-19, 33/33), con su spec `supply-chain-security` creada y `ci-pipeline` y `security-governance-docs` modificadas; C-65 `backup-continuidad` (ALTO) quedo ARCHIVADO (2026-10-19, 31/31), con su spec `continuity-planning` creada y `backup-scripts` modificada; y C-66 `privacidad-transferencias` (ALTO) quedo creado y ARCHIVADO (2026-10-19, 36/36), con su spec `privacy-runtime-surface` creada y `runtime-cost-guard`, `security-governance-docs` y `employee-directory` modificadas. Ver `docs/cumplimiento/plan-cambios-cumplimiento.md`.
 **Camino critico (software)**: 7 changes (C-01 → C-02 → C-04 → C-05 → C-08 → C-09 → C-10).
 **Gates de paralelismo**: 5 gates (permite hasta 3 agentes simultaneos).
-**Fases**: 1-56 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67 (archivado 2026-10-19 como NO REALIZADO), la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, TOTALMENTE EJECUTADA, con C-61 archivado (2026-10-01), C-62 archivado (2026-10-08), C-63a/b/c archivados (2026-10-08), C-64 archivado (2026-10-19), C-65 archivado (2026-10-19) y C-66 archivado (2026-10-19), la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 archivado (2026-10-05) y C-68 archivado (2026-10-09), la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 archivado (2026-10-06), la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 archivado (2026-10-06), la FASE 25 agrupa la unificacion de la clasificacion telefonica con C-72 archivado (2026-10-07), la FASE 26 agrupa la pseudonimizacion de numeros de tarjeta hablados con C-73 archivado (2026-10-07), la FASE 27 agrupa la calibracion del cortocircuito determinista con C-74 archivado (2026-10-07), y la FASE 28 agrupa la sincronizacion documental N8N con C-75 archivado (2026-10-08), y la FASE 29 agrupa las correcciones de la tesis por el dictamen CONEAU (C-76..C-80), con C-76..C-80 ARCHIVADOS (C-80 el 2026-10-21), independientes del software, aplicados en secuencia; y la FASE 30 agrupa el RBAC, el ciclo de cierre y la sesion (C-81..C-91), once changes ARCHIVADOS — C-81..C-83 el 2026-10-13 y C-84..C-91 el 2026-10-15; y la FASE 31 agrupa las correcciones de la tesis por la nueva auditoria (C-92..C-96), cinco changes ARCHIVADOS el 2026-10-20, independientes del software, aplicados en secuencia despues de la FASE 29; y las FASES 33, 34 y 35 agrupan el cierre post-roadmap: C-98..C-101 (2026-10-20), C-102..C-119 (2026-10-21) y C-120..C-124 (2026-10-22), todos ARCHIVADOS; la FASE 35 bis agrupa los changes de infraestructura y dependencias de Luca (C-125, C-126, C-127 y C-129, ARCHIVADOS el 2026-10-22, y C-128, ARCHIVADO el 2026-10-23 (22/22, alcance reducido)); y la FASE 36 agrupa las correcciones de la tesis por el dictamen CONEAU v10/v1.1.1 (C-130..C-142), trece changes (C-130..C-141 creados el 2026-10-22 y C-142 el 2026-10-23) aplicados en secuencia tras el gate G0 de C-141 y con la release `v1.2.0` publicada el 2026-10-26: todos ARCHIVADOS (C-130..C-139 y C-142 el 2026-10-26, con C-135 en 35/35 por la justificacion de la 5.2; C-140 (73/73) y C-141 (52/52) el 2026-10-27); y la FASE 37 agrupa la publicacion de la evidencia de evaluacion (C-143), un change ARCHIVADO el 2026-10-23 (13/13, BAJO) independiente de la FASE 36); y la FASE 38 agrupa la declaracion de procedencia real de los ajustes del clasificador y la ausencia de un corpus de preproduccion (C-144), un change ARCHIVADO el 2026-10-23 (18/18, MEDIO) que supersede parcialmente a C-130 (D9) y C-142 (D11/D13/T08) del PR #40); la FASE 39 agrupa la correccion factual y la release `v1.2.1` (C-145, ARCHIVADO el 2026-10-26, 77/77, ALTO); y la FASE 40 agrupa la compactacion y la release `v1.2.2` con C-146 (ARCHIVADO el 2026-10-27, 22/23, 6.1 bloqueada por acceso externo) y C-147 (ARCHIVADO el 2026-10-27, 23/23, ALTO)); la FASE 41 agrupa la sincronizacion de la base de conocimiento y los docs con el stack vigente (C-148, ARCHIVADO el 2026-10-27, 50/52); y la FASE 42 agrupa la actualizacion de dependencias del backend y el endurecimiento de la barrera documental (C-149, ARCHIVADO el 2026-10-27, 21/22); la FASE 43 agrupa el cierre de residuales y la separacion del contrato del corpus (C-150, ARCHIVADO el 2026-10-27, 26/28); la FASE 44 agrupa la correccion del pin de google-genai en el material de referencia y la ampliacion de la barrera documental (C-151, ARCHIVADO el 2026-10-28, 20/20); la FASE 45 agrupa el endurecimiento del directorio para datos reales (C-153, ARCHIVADO el 2026-10-28, 42/42); y la FASE 46 agrupa la regularizacion del indice (C-152, ARCHIVADO el 2026-10-28, 12/12, y C-154, ARCHIVADO el 2026-10-28, 21/21); la FASE 47 regulariza el indice con C-155 (ARCHIVADO el 2026-10-28, 17/17), C-156 (27/27) y C-157 (21/21); y la FASE 48 agrupa las correcciones de la tesis por el dictamen CONEAU v10/v1.2.5 del 2026-10-28, con C-158, C-159 y C-160 ARCHIVADOS el 2026-10-29; la FASE 49 agrupa el cierre de marcadores y decisiones del dictamen CONEAU v10/v1.2.5 (C-161 y C-162, ARCHIVADOS el 2026-10-29); la FASE 50 agrupa las recomendaciones 9 a 13 del dictamen (C-163, ARCHIVADO el 2026-10-29); la FASE 51 agrupa los residuales de deriva documental del dictamen (C-164, ARCHIVADO el 2026-10-29); y la FASE 52 agrupa el programa de medicion de la campana complementaria (C-165 a C-169, con C-165, C-166, C-167 y C-168 ARCHIVADOS el 2026-10-30 y C-169 como unico change restante, GATEADO a la espera de que la campana de campo corra y versione sus salidas)).
+**Fases**: 1-56 (la FASE 9 quedo vacia; los changes que alli se preveian se documentan en la FASE 12; la FASE 18 agrupa C-52..C-55, ya CERRADA, la FASE 19 agrupa los changes de endurecimiento, auditoria y herramientas C-56..C-60, la FASE 20 agrupa la notificacion SMS diferida C-67 (archivado 2026-10-19 como NO REALIZADO), la FASE 21 agrupa el plan de cumplimiento ISO/NIST/Ley 25.326, TOTALMENTE EJECUTADA, con C-61 archivado (2026-10-01), C-62 archivado (2026-10-08), C-63a/b/c archivados (2026-10-08), C-64 archivado (2026-10-19), C-65 archivado (2026-10-19) y C-66 archivado (2026-10-19), la FASE 22 agrupa la ingesta del corpus por el flujo N8N real con C-69 archivado (2026-10-05) y C-68 archivado (2026-10-09), la FASE 23 agrupa la medicion del corpus por telefonia real con C-70 archivado (2026-10-06), la FASE 24 agrupa el endurecimiento del clasificador determinista con C-71 archivado (2026-10-06), la FASE 25 agrupa la unificacion de la clasificacion telefonica con C-72 archivado (2026-10-07), la FASE 26 agrupa la pseudonimizacion de numeros de tarjeta hablados con C-73 archivado (2026-10-07), la FASE 27 agrupa la calibracion del cortocircuito determinista con C-74 archivado (2026-10-07), y la FASE 28 agrupa la sincronizacion documental N8N con C-75 archivado (2026-10-08), y la FASE 29 agrupa las correcciones de la tesis por el dictamen CONEAU (C-76..C-80), con C-76..C-80 ARCHIVADOS (C-80 el 2026-10-21), independientes del software, aplicados en secuencia; y la FASE 30 agrupa el RBAC, el ciclo de cierre y la sesion (C-81..C-91), once changes ARCHIVADOS — C-81..C-83 el 2026-10-13 y C-84..C-91 el 2026-10-15; y la FASE 31 agrupa las correcciones de la tesis por la nueva auditoria (C-92..C-96), cinco changes ARCHIVADOS el 2026-10-20, independientes del software, aplicados en secuencia despues de la FASE 29; y las FASES 33, 34 y 35 agrupan el cierre post-roadmap: C-98..C-101 (2026-10-20), C-102..C-119 (2026-10-21) y C-120..C-124 (2026-10-22), todos ARCHIVADOS; la FASE 35 bis agrupa los changes de infraestructura y dependencias de Luca (C-125, C-126, C-127 y C-129, ARCHIVADOS el 2026-10-22, y C-128, ARCHIVADO el 2026-10-23 (22/22, alcance reducido)); y la FASE 36 agrupa las correcciones de la tesis por el dictamen CONEAU v10/v1.1.1 (C-130..C-142), trece changes (C-130..C-141 creados el 2026-10-22 y C-142 el 2026-10-23) aplicados en secuencia tras el gate G0 de C-141 y con la release `v1.2.0` publicada el 2026-10-26: todos ARCHIVADOS (C-130..C-139 y C-142 el 2026-10-26, con C-135 en 35/35 por la justificacion de la 5.2; C-140 (73/73) y C-141 (52/52) el 2026-10-27); y la FASE 37 agrupa la publicacion de la evidencia de evaluacion (C-143), un change ARCHIVADO el 2026-10-23 (13/13, BAJO) independiente de la FASE 36); y la FASE 38 agrupa la declaracion de procedencia real de los ajustes del clasificador y la ausencia de un corpus de preproduccion (C-144), un change ARCHIVADO el 2026-10-23 (18/18, MEDIO) que supersede parcialmente a C-130 (D9) y C-142 (D11/D13/T08) del PR #40); la FASE 39 agrupa la correccion factual y la release `v1.2.1` (C-145, ARCHIVADO el 2026-10-26, 77/77, ALTO); y la FASE 40 agrupa la compactacion y la release `v1.2.2` con C-146 (ARCHIVADO el 2026-10-27, 22/23, 6.1 bloqueada por acceso externo) y C-147 (ARCHIVADO el 2026-10-27, 23/23, ALTO)); la FASE 41 agrupa la sincronizacion de la base de conocimiento y los docs con el stack vigente (C-148, ARCHIVADO el 2026-10-27, 50/52); y la FASE 42 agrupa la actualizacion de dependencias del backend y el endurecimiento de la barrera documental (C-149, ARCHIVADO el 2026-10-27, 21/22); la FASE 43 agrupa el cierre de residuales y la separacion del contrato del corpus (C-150, ARCHIVADO el 2026-10-27, 26/28); la FASE 44 agrupa la correccion del pin de google-genai en el material de referencia y la ampliacion de la barrera documental (C-151, ARCHIVADO el 2026-10-28, 20/20); la FASE 45 agrupa el endurecimiento del directorio para datos reales (C-153, ARCHIVADO el 2026-10-28, 42/42); y la FASE 46 agrupa la regularizacion del indice (C-152, ARCHIVADO el 2026-10-28, 12/12, y C-154, ARCHIVADO el 2026-10-28, 21/21); la FASE 47 regulariza el indice con C-155 (ARCHIVADO el 2026-10-28, 17/17), C-156 (27/27) y C-157 (21/21); y la FASE 48 agrupa las correcciones de la tesis por el dictamen CONEAU v10/v1.2.5 del 2026-10-28, con C-158, C-159 y C-160 ARCHIVADOS el 2026-10-29; la FASE 49 agrupa el cierre de marcadores y decisiones del dictamen CONEAU v10/v1.2.5 (C-161 y C-162, ARCHIVADOS el 2026-10-29); la FASE 50 agrupa las recomendaciones 9 a 13 del dictamen (C-163, ARCHIVADO el 2026-10-29); la FASE 51 agrupa los residuales de deriva documental del dictamen (C-164, ARCHIVADO el 2026-10-29); y la FASE 52 agrupa el programa de medicion de la campana complementaria (C-165 a C-169, con C-165, C-166, C-167 y C-168 ARCHIVADOS el 2026-10-30 y C-169 aplicado (62/62), publicado como release `v1.2.8` y ARCHIVADO el 2026-11-08)).
 
 ---
 
@@ -670,7 +670,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ### [C-26] `corpus-simulado-backup-retencion`
 
-- **Estado**: `[x]` completado (2026-07-03 — openspec/changes/c-26-corpus-simulado-backup-retencion)
+- **Estado**: `[x]` completado (2026-07-03 — openspec/changes/archive/2026-07-03-c-26-corpus-simulado-backup-retencion)
 - **Scope**:
   - (SUPERADO por C-27) Reemplazar corpus simulado por corpus calibrado que produce metricas exactas de tesis (92% accuracy, F1 macro ~0.919, matriz de confusion Tabla 7, Wilcoxon W=0, p<0.001)
   - Agregar columnas `tiempo_manual_s` y `tiempo_automatizado_s` al CSV del corpus
@@ -697,7 +697,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ### [C-27] `rediseno-sectores-json`
 
-- **Estado**: `[x]` completado (2026-09-11 — openspec/changes/c-27-rediseno-sectores-json)
+- **Estado**: `[x]` completado (2026-09-11 — openspec/changes/archive/2026-09-11-c-27-rediseno-sectores-json)
 - **Scope**:
   - Vocabulario canonico de 5 sectores sin tildes (`Seguridad Informatica`, `Soporte Tecnico Hardware`, `Soporte Tecnico Software`, `Bases de Datos`, `Sistemas`); `Operaciones` eliminado.
   - Migracion `004_sectores_multietiqueta.py`: tablas de union `incidente_sector_adicional`, `clasificacion_sector_predicho`, `clasificacion_sector_validado`.
@@ -709,7 +709,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Governance**: ALTA/CRITICA (strings de dominio persistidos + migracion de datos)
 - **Nota**: los numeros 82/64/54, exactitud 92 %, F1 ~0.919 y Tabla 7 del corpus sintetico quedan superados; se re-miden con el corpus real.
 - **Leer antes**:
-  - `openspec/changes/c-27-rediseno-sectores-json/design.md` (decisiones D1-D8)
+  - `openspec/changes/archive/2026-09-11-c-27-rediseno-sectores-json/design.md` (decisiones D1-D8)
   - `knowledge-base/05_reglas_de_negocio.md` (RN-CL-01/04, RN-VA-03)
   - `docs/anexo_f_corpus.md` (esquema JSON y 5 categorias)
 
@@ -764,7 +764,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Leer antes**:
   - `openspec/changes/archive/2026-07-02-c-16-twilio-twiml-script/proposal.md`
   - `openspec/changes/archive/2026-07-02-c-16-twilio-twiml-script/design.md`
-  - `docs/Tesis/tesis_para_agente.md` §6.4 (integracion del canal telefonico)
+  - `docs/Tesis/v10 (IA)/tesis_para_agente.md` §6.4 (integracion del canal telefonico)
 
 ### [C-17] `evaluation-corpus-simulado`
 
@@ -1367,7 +1367,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: `C-54` (directorio, roles, sector y seam de resolucion), `C-55` (nodos `emailSend`/SMTP del operador), `C-53` (numero de incidente), `C-38` (gate `Requiere revision humana`)
 - **Governance**: ALTO
 - **Leer antes**:
-  - `openspec/changes/c-56-notificaciones-por-rol/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-10-08-c-56-notificaciones-por-rol/{proposal,design,tasks}.md`
   - `knowledge-base/05_reglas_de_negocio.md`, `knowledge-base/06_funcionalidades.md`
   - `openspec/specs/n8n-workflow/spec.md`, `docs/n8n-workflow-guide.md`
 
@@ -1438,9 +1438,9 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: `C-54` (directorio, roles y visibilidad base) — prerequisito, ARCHIVADO 2026-10-01; `C-56` (consume roles/sector) — compatible, no bloqueante
 - **Governance**: ALTO
 - **Leer antes**:
-  - `openspec/changes/c-60-directorio-endurecimiento/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-10-06-c-60-directorio-endurecimiento/{proposal,design,tasks}.md`
   - `knowledge-base/05_reglas_de_negocio.md`, `knowledge-base/04_modelo_de_datos.md`
-  - `openspec/changes/c-54-directorio-usuarios/design.md`, `docs/directorio-usuarios.md`
+  - `openspec/changes/archive/2026-10-01-c-54-directorio-usuarios/design.md`, `docs/directorio-usuarios.md`
 
 ---
 
@@ -1566,7 +1566,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: **PREREQUISITO de `c-68-corpus-ingesta-n8n`** (OQ2/OQ6 delegadas). Reutiliza `incident-intake-guards` (idempotencia por origen) y `e2e-timing-instrumentation` (§6, replays sin re-medir). OQ-A..OQ-D RESUELTAS por el autor: OQ-A n8n genera el id (deterministico del llamador o unico por ejecucion; UUID backend opcional); OQ-B exponer `origen_message_id` en `IncidenteRead` + filtro exacto en el listado; OQ-C el formulario real no envia id (sin cambio de frontend); OQ-D sin backfill. Sin preguntas abiertas bloqueantes: apply-ready.
 - **Governance**: MEDIO
 - **Leer antes**:
-  - `openspec/changes/c-69-dedup-correlacion-altas/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-10-05-c-69-dedup-correlacion-altas/{proposal,design,tasks}.md`
   - `n8n/workflow.json` (nodo "Normalizar entrada del incidente")
   - `docs/medicion-latencia-e2e.md`
 
@@ -1607,7 +1607,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: `C-59` (softphone, archivado 2026-10-01; herramienta a extender); `C-52` (intake telefonico async, archivado 2026-09-30; flujo a preservar); `C-68` (write-back/merge/privacidad que reutiliza). OQ1..OQ6 RESUELTAS por el autor: OQ1 store keyed-by-CallSid (tabla efimera en PostgreSQL), OQ2 perfil `corpus` completo aislado, OQ3 endpoint `/corpus-cases`, OQ4 `t_espera_s` vacia/N-A, OQ5 endpoint de lectura dedicado, OQ6 `--replace` acotado con dry-run. Apply-ready.
 - **Governance**: ALTO
 - **Leer antes**:
-  - `openspec/changes/c-70-softphone-corpus-telefonia/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-10-06-c-70-softphone-corpus-telefonia/{proposal,design,tasks}.md`
   - `openspec/changes/archive/2026-10-01-c-59-softphone-voip-pruebas/{proposal,design,tasks}.md`
   - `docs/medicion-latencia-e2e.md` §5, `scripts/corpus_ingest/README.md`
 
@@ -1652,7 +1652,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: **C-71** (prerrequisito: la cascada solo conviene una vez endurecido el determinista). Relacionado con C-70.
 - **Governance**: ALTO
 - **Leer antes**:
-  - `openspec/changes/c-72-unificar-clasificacion-telefonica/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-10-07-c-72-unificar-clasificacion-telefonica/{proposal,design,tasks}.md`
   - `App/Backend/app/classifiers/{hybrid.py,deterministic.py}`, `docs/prompt_gemini.txt`, `n8n/workflow.json`
 
 ---
@@ -1669,7 +1669,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: ninguna.
 - **Governance**: HIGH (PII financiera, Ley 25.326).
 - **Leer antes**:
-  - `openspec/changes/c-73-pseudonimizacion-tarjeta/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-10-07-c-73-pseudonimizacion-tarjeta/{proposal,design,tasks}.md`
   - `App/Backend/app/utils/pseudonymizer.py`, `openspec/specs/data-pseudonymization/spec.md`
 
 ---
@@ -1720,7 +1720,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: ninguna (documento de tesis).
 - **Governance**: MEDIO
 - **Leer antes**:
-  - `openspec/changes/c-76-tesis-correcciones-dictamen/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-10-20-c-76-tesis-correcciones-dictamen/{proposal,design,tasks}.md`
   - `docs/Tesis/Correcciones/dictamen-correcciones.md` (P1.0/P1, T1-T7)
   - `data/corpus_evaluacion_pseudonimizado.json`, `evaluation/report.md`
 
@@ -1732,7 +1732,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: aplicar tras C-76.
 - **Governance**: MEDIO
 - **Leer antes**:
-  - `openspec/changes/c-77-tesis-errores-estadisticos-inferenciales/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-10-20-c-77-tesis-errores-estadisticos-inferenciales/{proposal,design,tasks}.md`
   - `evaluation/stats.py`, `evaluation/report.md`
 
 ### [C-78] `tesis-bibliografia-atribucion` — ARCHIVADO (2026-10-20, 25/25)
@@ -1743,7 +1743,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: aplicar tras C-77.
 - **Governance**: ALTO (integridad academica)
 - **Leer antes**:
-  - `openspec/changes/c-78-tesis-bibliografia-atribucion/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-10-20-c-78-tesis-bibliografia-atribucion/{proposal,design,tasks}.md`
   - `docs/Tesis/v9 (IA)/Bibliography_base.bib`, `docs/Tesis/v9 (IA)/verify_citations.py`
 
 ### [C-79] `tesis-aspectos-legales` — ARCHIVADO (2026-10-20, 25/25)
@@ -1754,7 +1754,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: aplicar tras C-78.
 - **Governance**: ALTO (legal / privacidad)
 - **Leer antes**:
-  - `openspec/changes/c-79-tesis-aspectos-legales/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-10-20-c-79-tesis-aspectos-legales/{proposal,design,tasks}.md`
   - `docs/cumplimiento/marco-legal-ar-2026.md`, `docs/seguridad/registro-requisitos-legales.md`
   - `docs/runbook-verificacion-telefonia-c52.md`
 
@@ -1766,7 +1766,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: aplicar tras C-79 (al final: comparte 08/09 con C-76/C-77).
 - **Governance**: BAJO
 - **Leer antes**:
-  - `openspec/changes/c-80-tesis-forma-evidencia-visual/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-10-21-c-80-tesis-forma-evidencia-visual/{proposal,design,tasks}.md`
   - `docs/diagrams/despliegue.md`, `docs/diagrams/secuencia.md`
   - `docs/anexo_h_prompt_gemini.md`, `docs/anexo_c_esquema_bd.md`
 
@@ -1912,7 +1912,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: aplicar tras C-80 (comparte `02-marco-teorico.tex` y `01-introduccion.tex`).
 - **Governance**: MEDIO
 - **Leer antes**:
-  - `openspec/changes/c-92-tesis-marco-teorico-profundidad/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-10-20-c-92-tesis-marco-teorico-profundidad/{proposal,design,tasks}.md`
   - `docs/Tesis/Correcciones/reconciliacion-cobertura.md` (N1)
 
 ### [C-93] `tesis-metodologia-rigor` — ARCHIVADO (2026-10-20, 29/29)
@@ -1924,7 +1924,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: aplicar tras C-92 (comparte `04-marco-metodologico.tex` y `01-introduccion.tex`).
 - **Governance**: MEDIO
 - **Leer antes**:
-  - `openspec/changes/c-93-tesis-metodologia-rigor/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-10-20-c-93-tesis-metodologia-rigor/{proposal,design,tasks}.md`
   - `docs/Tesis/Correcciones/reconciliacion-cobertura.md` (N2)
 
 ### [C-94] `tesis-implementacion-verificabilidad` — ARCHIVADO (2026-10-20, 25/25)
@@ -1936,7 +1936,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: aplicar tras C-93 (comparte `05-arquitectura.tex` y `06-implementacion.tex`; tambien despues de c-76/c-77/c-80 por coordinacion).
 - **Governance**: MEDIO
 - **Leer antes**:
-  - `openspec/changes/c-94-tesis-implementacion-verificabilidad/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-10-20-c-94-tesis-implementacion-verificabilidad/{proposal,design,tasks}.md`
   - `docs/Tesis/Correcciones/reconciliacion-cobertura.md` (N3)
 
 ### [C-95] `tesis-resultados-discusion-rigor` — ARCHIVADO (2026-10-20, 36/36)
@@ -1948,7 +1948,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: aplicar tras C-94 (comparte `07-resultados.tex`, `08-discusion.tex`, `09-conclusiones.tex` y `04-marco-metodologico.tex`).
 - **Governance**: MEDIO
 - **Leer antes**:
-  - `openspec/changes/c-95-tesis-resultados-discusion-rigor/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-10-20-c-95-tesis-resultados-discusion-rigor/{proposal,design,tasks}.md`
   - `docs/Tesis/Correcciones/reconciliacion-cobertura.md` (N4)
 
 ### [C-96] `tesis-citas-tablas-evidencia` — ARCHIVADO (2026-10-20, 28/28)
@@ -1960,7 +1960,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: aplicar tras C-95 (comparte `01-introduccion.tex`, `03-estado-del-arte.tex`, `05-arquitectura.tex`, `06-implementacion.tex`, `07-resultados.tex` y el `.bib`; tambien despues de c-78 y en coordinacion con c-80).
 - **Governance**: BAJO
 - **Leer antes**:
-  - `openspec/changes/c-96-tesis-citas-tablas-evidencia/{proposal,design,tasks}.md`
+  - `openspec/changes/archive/2026-10-20-c-96-tesis-citas-tablas-evidencia/{proposal,design,tasks}.md`
   - `docs/Tesis/Correcciones/reconciliacion-cobertura.md` (N5)
 
 ---
@@ -2092,7 +2092,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: requiere la version de trabajo v10 (C-122, archivado) y el gate G0 de C-141; es el primero de la familia y precede a C-131, C-132, C-133, C-136 y C-142, que consumen sus definiciones; se coordina con C-135 (`06-implementacion.tex:75`), C-137, C-139 (`02-marco-teorico.tex:46`), C-140 y C-141.
 - **Governance**: BAJO (reconciliacion documental con el codigo); dos bloques con checkpoint MEDIO de los autores: procedencia de los ajustes sobre el corpus (D9) y alcance de la salvaguarda en el capitulo legal (D7).
 - **Preguntas abiertas**: (1) los autores confirman que el vocabulario de C-71 y las reglas de frontera del prompt de C-72 se derivaron de casos del corpus de evaluacion (la divulgacion queda en C-130, D9; el analisis de sensibilidad offline se separo en C-142) (bloquea T04, T12, T13 y T14); (2) declarar en el capitulo legal que la reasignacion de incidentes no derivados solo existe por la interfaz REST, o abrir un change de codigo que la exponga en la interfaz web (bloquea T15); (3) editar comentarios y agregar un test en `App/Backend`; (4) editar `CLAUDE.md` y `openspec/config.yaml` (solo las lineas del gate); (5) aportar el `cache_meta` de `evaluation/predicciones_calibracion.json`; (6) fuera de alcance: la API permite a un `usuario_final` validar la clasificacion de su propio incidente (dominio CRITICO, solo analisis).
-- **Leer antes**: `openspec/changes/c-130-gate-revision-humana-por-etapa/{proposal,design,tasks}.md`
+- **Leer antes**: `openspec/changes/archive/2026-10-26-c-130-gate-revision-humana-por-etapa/{proposal,design,tasks}.md`
 
 ### [C-131] `metricas-por-etapa-canal-y-exactitud-laxa` — ARCHIVADO (2026-10-26, 81/81, MEDIO)
 
@@ -2100,7 +2100,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: requiere C-130 aplicado y el bloque de codigo de C-134 (huella del corpus independiente del fin de linea); alimenta C-132 (exactitud laxa como sensibilidad), C-133 (exactitud por etapa y por canal, y McNemar entre etapas), C-136 (el aprendizaje activo debe alinearse a la lectura por etapa) y C-142 (el McNemar es su referencia en muestra); en el orden definitivo C-142 va inmediatamente despues.
 - **Governance**: MEDIO (codigo de evaluacion y numeros de la tesis); checkpoint ALTO para la decision de datos (recuperacion de caches, corrida paga, versionado de predicciones).
 - **Preguntas abiertas**: (1) Luca Gomez puede compartir `evaluation/predicciones.json` y `evaluation/predicciones_calibracion.json` de su clon por un canal privado (recomendado; costo y deriva cero, y la FORCE-ESCALATE habilita ademas el McNemar); (2) solo si (1) falla, autorizar una corrida paga de reproduccion de los 69 casos Gemini (unos 0,05 USD) o declarar B7/B8 no computables; (3) versionar las caches (recomendado) o mantenerlas locales registrando solo su huella; (4) tope de paginas de v1.2.0 (se decide en C-141); (5) lectura del objetivo 2 con la exactitud laxa (la decide C-133).
-- **Leer antes**: `openspec/changes/c-131-metricas-por-etapa-canal-y-exactitud-laxa/{proposal,design,tasks}.md`
+- **Leer antes**: `openspec/changes/archive/2026-10-26-c-131-metricas-por-etapa-canal-y-exactitud-laxa/{proposal,design,tasks}.md`
 
 ### [C-132] `balance-neto-derivaciones-erroneas` — ARCHIVADO (2026-10-26, 29/29, BAJO)
 
@@ -2108,7 +2108,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: sin prerrequisito duro (aplica sobre v1.1.1); dependencia blanda de C-131 (exactitud laxa; con fallback si no esta aplicado); en el orden definitivo va despues de C-131 y C-142 (cuyo escenario E3 puede usar como sensibilidad del balance, sin exigirlo) y antes de C-133, que cita su `subsec:balance-neto`; coordinacion por parrafo con C-130 y C-133, y C-136 no debe duplicar su linea de replicacion.
 - **Governance**: BAJO (solo documento); se recomienda revision de los autores sobre la redaccion final del resumen y de la conclusion antes de la release.
 - **Preguntas abiertas**: (1) tope de paginas de v1.2.0 (este change agrega entre +1 y +3 paginas y apunta a <= +1; se decide en C-141); (2) incluir la correccion colateral de "costo operativo dominado por el consumo de API de inferencia" (`09-conclusiones.tex:49`; recomendado: si; alternativa: C-135); (3) aplicar con el fallback de D4 si C-131 no esta aplicado (recomendado) o esperar la exactitud laxa.
-- **Leer antes**: `openspec/changes/c-132-balance-neto-derivaciones-erroneas/{proposal,design,tasks}.md`
+- **Leer antes**: `openspec/changes/archive/2026-10-26-c-132-balance-neto-derivaciones-erroneas/{proposal,design,tasks}.md`
 
 ### [C-133] `hipotesis-objetivos-metrica-primaria` — ARCHIVADO (2026-10-26, 42/42, BAJO)
 
@@ -2116,7 +2116,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: despues de C-130, C-131 (cita su McNemar entre etapas si se recupero la cache FORCE-ESCALATE), C-142 (su analisis de sensibilidad de los ajustes aporta la evidencia del objetivo especifico 6 y condiciona el rotulo de la subsidiaria de eficiencia) y C-132 (cita su `subsec:balance-neto`); antes de C-134 (bloque de tesis), C-135, C-136 y C-140 (que puede revertir el calificativo del objetivo 1); C-141 fija el tope de paginas.
 - **Governance**: BAJO (solo documento); dos decisiones de autor a confirmar antes del apply.
 - **Preguntas abiertas**: (1) segunda sub-hipotesis: opcion A (cota `0,15 = 1 - 0,85`, estado "no contrastada") u opcion B (cobertura efectiva del gate, contrastable y refutada); (2) subsidiaria de eficiencia: rotulo "contrastada de forma acotada" con las salvedades de D3 o fallback "no contrastada" con retiro de la frase; (3) objetivo 3 tras C-131: aceptar que la complejidad percibida se satisface por construccion (sin esa aceptacion la fila queda "Alcanzado parcialmente").
-- **Leer antes**: `openspec/changes/c-133-hipotesis-objetivos-metrica-primaria/{proposal,design,tasks}.md`
+- **Leer antes**: `openspec/changes/archive/2026-10-26-c-133-hipotesis-objetivos-metrica-primaria/{proposal,design,tasks}.md`
 
 ### [C-134] `contrastes-estadisticos-y-desagregado-canal` — ARCHIVADO (2026-10-26, 47/47, MEDIO)
 
@@ -2124,7 +2124,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: en dos tramos: el bloque de codigo va despues de C-130 y antes de C-131 (la huella del corpus independiente del fin de linea debe existir antes de que C-131 regenere el reporte desde Windows); el bloque de tesis, despues de C-132 y C-133; sin dependencias nuevas de paquetes (`scipy` ya esta en `evaluation/requirements.txt`).
 - **Governance**: MEDIO (codigo de evaluacion y numeros canonicos con checkpoints); las redacciones sobre muestreo y cronometraje describen hechos del estudio y requieren confirmacion del autor.
 - **Preguntas abiertas**: (OQ1, bloquea P12, P14 y P15) como fue exactamente el cronometraje manual: quien cronometraba, si el operador sabia que se registraban tiempos y si la planilla registraba con resolucion de 5 s o 10 s por diseno; (OQ2, bloquea P10 y P11) distribucion del universo por sector del periodo relevado (unos 2.646 incidentes) y si los 200 casos se eligieron con cuotas por sector o son todos los cronometrados; (OQ3, no bloqueante) reportar o no el intervalo de confianza del tiempo medio (por defecto se retira la promesa de `04-marco-metodologico.tex:65`).
-- **Leer antes**: `openspec/changes/c-134-contrastes-estadisticos-y-desagregado-canal/{proposal,design,tasks}.md`
+- **Leer antes**: `openspec/changes/archive/2026-10-26-c-134-contrastes-estadisticos-y-desagregado-canal/{proposal,design,tasks}.md`
 
 ### [C-135] `cronologia-y-consistencia-redaccional` — ARCHIVADO (2026-10-26, 35/35 marcadas: 34 aplicadas y 5.2 justificada, sin fuente primaria de las fechas de las iteraciones; BAJO)
 
@@ -2133,7 +2133,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: duras C-130, C-131 y C-134 (estructura de resultados y oraciones compartidas de `04-marco-metodologico.tex`) y C-138 (`03-estado-del-arte.tex`); en el orden fijado por C-141 va despues de C-136 (sin depender de ella) y antes de C-139 (que necesita `tab:trabajos-academicos` ya completada) y C-140 (comparte con la figura la holgura de paginas del capitulo 6).
 - **Governance**: BAJO (documento y una figura); checkpoint MEDIO sobre la frase de validez de `06-implementacion.tex:75` (OQ-3) y bloqueo de toda escritura de fechas hasta resolver OQ-1 y OQ-2.
 - **Preguntas abiertas**: (OQ-1) fechas reales de inicio y fin de las seis iteraciones Scrumban (el historial del repositorio muestra actividad entre 2026-04-06 y 2026-10-22, con una pausa entre 2026-07-10 y 2026-09-10); (OQ-2) fechas de las campanas: ventana mensual confirmada el 2026-10-09 o dias exactos, y si hubo procesamiento automatizado en septiembre antes de la migracion de modelo del 2026-09-24; (OQ-3) que change reconcilia la frase "sin exposicion al corpus de validacion de 200 casos" de `06-implementacion.tex:75` (recomendado: C-135, con redaccion confirmada por los autores); (OQ-4) telefonia en `tab:comparativa`: retirarla de la afirmacion comparativa (recomendado) o agregar una columna; (OQ-5) acceso institucional al texto completo de Paket et al. (2024) y Colavito et al. (2025).
-- **Leer antes**: `openspec/changes/c-135-cronologia-y-consistencia-redaccional/{proposal,design,tasks}.md`
+- **Leer antes**: `openspec/changes/archive/2026-10-26-c-135-cronologia-y-consistencia-redaccional/{proposal,design,tasks}.md`
 
 ### [C-136] `recomendaciones-lineas-faltantes` — ARCHIVADO (2026-10-26, 24/24, BAJO)
 
@@ -2141,7 +2141,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: duras C-130 y C-131; blandas C-132, C-133, C-134 y C-138; C-139 y C-137 editan despues el mismo archivo; los rotulos `subsec:calibracion-gate` y `subsec:medicion-intervencion` quedan fijados desde este change para que los hermanos los citen por anticipado.
 - **Governance**: BAJO (documental; sin codigo ni datos de usuarios).
 - **Preguntas abiertas**: (1) extension de alcance D7: dar destino a las remisiones anticipadas de los capitulos 5 y 6 (parametros de inferencia, SSO, prefijo configurable del numero de incidente, Kubernetes), unas 40 palabras (recomendado), o derivarlo a C-135; (2) presupuesto de paginas: aceptar +1 pagina para el capitulo con renegociacion del tope en C-141 (recomendado) o exigir neutralidad estricta, lo que obliga a eliminar contenido; (3) esperar a que C-138 incorpore las citas de recalibracion (orden recomendado) o aplicar sin citas y que C-141 las agregue.
-- **Leer antes**: `openspec/changes/c-136-recomendaciones-lineas-faltantes/{proposal,design,tasks}.md`
+- **Leer antes**: `openspec/changes/archive/2026-10-26-c-136-recomendaciones-lineas-faltantes/{proposal,design,tasks}.md`
 
 ### [C-137] `revision-ortotipografica` — ARCHIVADO (2026-10-26, 41/41, BAJO)
 
@@ -2149,7 +2149,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: es el ultimo editor de prosa: se aplica despues de C-130..C-136, C-138, C-139 y C-140 (si llegara a editar prosa) y antes de C-141; el bloque de la herramienta (TDD) no toca la tesis y puede implementarse en paralelo.
 - **Governance**: BAJO (cambios diacriticos verificados por invariante); la unificacion de los nombres de sector (OQ1) requiere confirmacion del usuario por tocar el dominio de las cadenas canonicas.
 - **Preguntas abiertas**: (OQ1, bloquea solo la tarea de nombres de sector) unificar a la cadena canonica sin tildes las 15 menciones con tilde de los sectores en 5 pasajes (`01-introduccion.tex:48,72`, `04-marco-metodologico.tex:36,45`, `05-arquitectura.tex:100`; recomendado: si); (OQ2, no bloqueante) agregar una fe de errata al dictamen sobre los conteos de las palabras "formula" y "continua" (recomendado: no editar el dictamen y consignar la discrepancia solo en `dictamen-correcciones.md`).
-- **Leer antes**: `openspec/changes/c-137-revision-ortotipografica/{proposal,design,tasks}.md`
+- **Leer antes**: `openspec/changes/archive/2026-10-26-c-137-revision-ortotipografica/{proposal,design,tasks}.md`
 
 ### [C-138] `estado-del-arte-calibracion-y-cascadas` — ARCHIVADO (2026-10-26, 30/30, BAJO)
 
@@ -2157,7 +2157,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: los bloques de protocolo, verificacion, bibliografia, 2.5 y 3.x no tienen dependencias duras; el parrafo de discusion requiere C-130 y C-131; va antes de C-136 y C-139, que consumen sus fuentes (conmutativo con C-139 sobre `02-marco-teorico.tex` y el `.bib`).
 - **Governance**: BAJO (documental, aditivo y reversible).
 - **Preguntas abiertas**: (1) tope de paginas de v1.2.0 (este change agrega +2 paginas, +3 en el peor caso; se decide en C-141); (2) ITSM-BERT (SBBD 2026) y Alsac et al. (UBMK 2025), senaladas por el dictamen: incorporarlas como filas de `tab:trabajos-academicos` (despues de C-135) o dejarlas fuera (por defecto); (3) enunciar la vacancia acotada en el capitulo 3 solo si C1-C2 la confirman (por defecto) u omitirla; (4) texto completo de FrugalGPT (TMLR): descarga asistida por el usuario del PDF de OpenReview o atribucion minima verificada sobre arXiv v1.
-- **Leer antes**: `openspec/changes/c-138-estado-del-arte-calibracion-y-cascadas/{proposal,design,tasks}.md`
+- **Leer antes**: `openspec/changes/archive/2026-10-26-c-138-estado-del-arte-calibracion-y-cascadas/{proposal,design,tasks}.md`
 
 ### [C-139] `correspondencia-texto-fuente-y-metadatos` — ARCHIVADO (2026-10-26, 46/46, BAJO)
 
@@ -2165,7 +2165,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: despues de C-130 (frase del gate en `02-marco-teorico.tex:46`), C-133 (`01-introduccion.tex:48`), C-134 (`04-marco-metodologico.tex:71,91`), C-135 (necesita `tab:trabajos-academicos` ya completada) y C-136 (edita antes `10-recomendaciones.tex`); secuencial con C-138 (interfaz idempotente; C-141 fija C-138 antes); antes de C-137 y C-141.
 - **Governance**: BAJO (documentacion y una utilidad de solo lectura), con puntos de confirmacion del usuario declarados en las Open Questions de `design.md`.
 - **Preguntas abiertas**: (OQ1) acceso al texto completo del capitulo de Paramesh y Shreedhara (2019) para indicar la pagina de las cifras de 10.000 tickets y 87 % (si no, se aplica la rama B de D4); (OQ2) citar ISO/IEC 27701 en su edicion vigente 2025 en lugar de la 2019 retirada que nombra el dictamen; (OQ3) mantener 2021 para Russell y Norvig (ano de copyright, criterio uniforme) en lugar del 2020 del dictamen; (OQ4) incluir los dos hallazgos del registro del compilador (FastAPI, RGPD) y las precisiones de `11-aspectos-legales.tex:44` y `:68`; (OQ5) reservar la palanca tipografica de paginas para C-141 (por defecto) o autorizar a C-139 a aplicarla.
-- **Leer antes**: `openspec/changes/c-139-correspondencia-texto-fuente-y-metadatos/{proposal,design,tasks}.md`
+- **Leer antes**: `openspec/changes/archive/2026-10-26-c-139-correspondencia-texto-fuente-y-metadatos/{proposal,design,tasks}.md`
 
 ### [C-140] `endurecimiento-tecnico-tls-reintentos-e2e` — ARCHIVADO (2026-10-27, 73/73, ALTO/MEDIO)
 
@@ -2174,7 +2174,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: sin dependencias de codigo con C-130..C-139; su texto de tesis comparte `06-implementacion.tex` con C-130 y C-135 y `10-recomendaciones.tex` con C-136, y se aplica antes de C-137; interfaz con C-133 (rotulo del objetivo especifico 1) y con C-141 (la release v1.2.0 debe reejecutar la prueba de humo sobre el commit etiquetado); si se excluye, se archiva como NO REALIZADO (precedente C-67).
 - **Governance**: ALTO en el bloque 1 (TLS) y MEDIO en los bloques 2 (reintentos) y 3 (E2E); seis checkpoints de aprobacion humana (CP1-CP6), entre ellos la reimportacion del workflow en la instancia N8N operativa, que ejecuta el equipo y nunca el agente.
 - **Preguntas abiertas**: (OQ1) si la organizacion adoptante opera hoy con TLS en su borde (con evidencia, la tesis puede mencionarlo); (OQ2) instancia N8N para el E2E en CI (runner de GitHub con Docker) o ejecucion solo local con el resumen versionado, y si es aceptable el disparo por tag; (OQ3) mantener el objetivo especifico 1 como "Alcanzado parcialmente" con calificativo actualizado (recomendado) o reformularlo; (OQ4) variante de correo con servidor IMAP/SMTP simulado o humo limitado al canal web; (OQ5) confirmar los valores de reintento de D5 (3 intentos, 5000 ms, 10 s para el login y 75 s para el POST); ademas, la decision de incluir o no este change (OQ4 de C-141).
-- **Leer antes**: `openspec/changes/c-140-endurecimiento-tecnico-tls-reintentos-e2e/{proposal,design,tasks}.md`
+- **Leer antes**: `openspec/changes/archive/2026-10-27-c-140-endurecimiento-tecnico-tls-reintentos-e2e/{proposal,design,tasks}.md`
 
 ### [C-141] `integracion-release-v1-2-0` — ARCHIVADO (2026-10-27, 52/52, MEDIO)
 
@@ -2183,7 +2183,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: el gate G0 (grupo 1) se aplica ANTES de C-130; los grupos 2-9 van al final, con C-130..C-139 y C-142 aplicados, C-140 aplicado o excluido y C-137 aplicado antes de la verificacion final.
 - **Governance**: MEDIO (tag, push y PR; coordinacion con el equipo); dos checkpoints ALTO: la compactacion de la rama (a) del tope de paginas (eliminacion de contenido, precedente C-116) y la publicacion del tag y del PR (acciones publicas).
 - **Preguntas abiertas**: (OQ1, bloqueante en G0) tope de paginas: es una exigencia de la catedra, se mide sobre el total o sobre el cuerpo sin anexos y con que valor; con la estimacion de la familia (+5,4 a +12,2 paginas) las opciones son (i) confirmar la regla del plan de cumplimiento (cuerpo sin anexos <= 100, anexos sin limite), que en la estimacion central queda en el limite y exige compensaciones locales (recomendada, junto con la opcion C3 de C-142: su tabla a un anexo), (ii) total <= 101 con el cambio de interlineado P8, que solo puede autorizar la catedra, o (iii) total <= 101 sin P8, reduciendo el contenido de la familia; (OQ2) nombre de la release: `v1.2.0` (propuesto) o `v2.0.0` si el jurado o la catedra piden una version nueva numerada; (OQ3, bloqueante en G0) quien recompila y en que entorno de registro (MiKTeX local de Gonzalo, imagen `texlive-thesis` u Overleaf con Arial; no hay `xelatex`, `biber` ni `latexmk` en el PATH de la maquina de Gonzalo); (OQ4, bloqueante antes de C-140) inclusion de C-140; (OQ5) regenerar `paper/tesis.docx` (requiere pandoc) o declararlo render legado; (OQ6) quien aprueba y mergea el PR a `main` (merge commit) y si Luca modificara `docs/Tesis/`, `knowledge-base/` o `CHANGES.md` en `main` o `RamaLuca` durante la FASE 36; (OQ7, G0, checkpoints ALTO de C-142) autorizar la ablacion paga del prompt (138 invocaciones, unos 0,03 USD y como maximo 0,10 USD) y existencia, forma y etiquetado de los ~100 incidentes de preproduccion del Anexo H.
-- **Leer antes**: `openspec/changes/c-141-integracion-release-v1-2-0/{proposal,design,tasks}.md`
+- **Leer antes**: `openspec/changes/archive/2026-10-27-c-141-integracion-release-v1-2-0/{proposal,design,tasks}.md`
 
 ### [C-142] `sensibilidad-fuera-de-muestra-ajustes-clasificador` — ARCHIVADO (2026-10-26, 91/91, MEDIO; ALTO para la corrida paga y datos de preproduccion)
 
@@ -2192,7 +2192,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: requiere C-130 aplicado (definiciones de las magnitudes y parrafo de procedencia de `08-discusion.tex:18`) y C-131 aplicado (`contraste_mcnemar`, `contraste_det_gem_en_s`, `.gitattributes`, decision de datos y estructura de `07-resultados.tex`); precede a C-132 y C-133, que leen la limitacion nueva y la evidencia del objetivo especifico 6; sus tareas de tesis (grupos 12 y 13) solo corren con C-130 y C-131 aplicados; C-141 lo incorpora a su matriz de trazabilidad (A1-A5), a sus precondiciones y a los checkpoints ALTO de su gate G0 (G0.7).
 - **Governance**: MEDIO (codigo de evaluacion, numeros y texto de la tesis); checkpoints ALTO para la corrida paga y para cualquier dato de preproduccion (datos personales, Ley 25.326); BAJO para la documentacion del repositorio.
 - **Preguntas abiertas**: (1) autorizar la corrida paga de la ablacion del prompt (nivel c; 138 invocaciones, unos 0,03 USD y como maximo 0,10 USD; recomendado: si; sin autorizacion el change cierra con los niveles sin costo o con la declaracion de no cuantificado); (2) existencia de los ~100 incidentes de preproduccion del Anexo H: donde estan, si estan pseudonimizados y con que etiquetado (si estan pseudonimizados y etiquetados en los cinco sectores se usan como prueba externa respecto de los ajustes de C-71 y C-72; si no, se declara su ausencia); (3) aceptar la variante por pliegues como no factible (recomendado) o habilitar una aproximacion exploratoria fuera de la tesis; (4) estado del objetivo especifico 6: conservar "Alcanzado" con la salvedad en la evidencia (recomendado) o que C-133 lo cambie; (5) `cache_meta.generated_at` de `evaluation/predicciones_calibracion.json` (Luca Gomez; responde tambien la pregunta 5 de C-130); (6) versionado de las salidas de la corrida paga con las mismas reglas que las caches de C-131; (7) impacto de +1,0 a +1,4 paginas o compensacion C3 (tabla en un anexo), que se decide en C-141.
-- **Leer antes**: `openspec/changes/c-142-sensibilidad-fuera-de-muestra-ajustes-clasificador/{proposal,design,tasks}.md`
+- **Leer antes**: `openspec/changes/archive/2026-10-26-c-142-sensibilidad-fuera-de-muestra-ajustes-clasificador/{proposal,design,tasks}.md`
 
 ## FASE 37 — Publicacion de evidencia de evaluacion (2026-10-23)
 
@@ -2202,7 +2202,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 - **Scope**: publica una copia de evidencia congelada y versionada de las predicciones de la evaluacion (`evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json`, `predicciones_calibracion_hybrid-v2_2026-10-07.json` y un README) y mantiene la cache viva (`evaluation/predicciones*.json`) bajo `gitignore`; agrega el delta spec de la capability `evaluation-prediction-cache`. Corrige la razon "PII" del `gitignore`, que era inexacta: el corpus pseudonimizado ya esta versionado y la `descripcion` de las predicciones es identica byte a byte a la del corpus; las predicciones son evidencia por caso de las metricas de la tesis y de la auditoria CONEAU. Aplicado y comprometido en `main` (commits `fec4c42` y `73cc212`), 13/13 tareas.
 - **Dependencias**: ninguna dura; deriva de la cache de predicciones de C-34 (`evaluation-prediction-cache`) y se apoya en el corpus pseudonimizado versionado. No forma parte de la FASE 36 ni atiende observaciones del dictamen CONEAU.
-- **Leer antes**: `openspec/changes/c-143-publicar-predicciones-como-evidencia-de-evaluacion/{proposal,design,tasks}.md`, `openspec/specs/evaluation-prediction-cache/spec.md`
+- **Leer antes**: `openspec/changes/archive/2026-10-23-c-143-publicar-predicciones-como-evidencia-de-evaluacion/{proposal,design,tasks}.md`, `openspec/specs/evaluation-prediction-cache/spec.md`
 
 ## FASE 38 — Declaracion de procedencia real (2026-10-23)
 
@@ -2234,7 +2234,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Cierre de c-135 5.2**: la tarea 5.2 de `c-135-cronologia-y-consistencia-redaccional` se cerro como **no reconstruible con fuente primaria** (las fechas de las iteraciones de los autores no se pudieron recuperar); c-135 queda 35/35.
 - **Sucesion respecto del PR #40**: sucede al merge del PR #40 `ramagonzalo` -> `main` (`224fa160d27ff88aa417c34ef9a4026f8862805f`), ya integrado: corrige en `main` el defecto que ese merge dejo y publica `v1.2.1` mediante un PR propio.
 - **Dependencias**: PR #40 mergeado en `main` (`224fa16`); imagen `texlive-thesis`; Python 3.12.3 en la maquina de trabajo (CI usa 3.12.15).
-- **Leer antes**: `openspec/changes/c-145-correccion-factual-sincronizacion-del-memo-y-portabilidad-del-harness/{proposal,design,tasks}.md`, `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion "Correccion factual de la release v1.2.0 (c-145)"), `openspec/specs/tesis-document/spec.md`, `openspec/specs/tesis-numeros-canonicos/spec.md`, `openspec/specs/evaluation-framework/spec.md`, `openspec/specs/project-documentation/spec.md`.
+- **Leer antes**: `openspec/changes/archive/2026-10-26-c-145-correccion-factual-sincronizacion-del-memo-y-portabilidad-del-harness/{proposal,design,tasks}.md`, `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion "Correccion factual de la release v1.2.0 (c-145)"), `openspec/specs/tesis-document/spec.md`, `openspec/specs/tesis-numeros-canonicos/spec.md`, `openspec/specs/evaluation-framework/spec.md`, `openspec/specs/project-documentation/spec.md`.
 
 ## FASE 40 — Compactacion y release v1.2.2 (2026-10-27)
 
@@ -2278,7 +2278,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Hallazgo adyacente (fuera de alcance)**: los umbrales `0.90` de `docs/n8n-workflow-guide.md:598,610` pertenecen a DOC-004; se registran, no se corrigen.
 - **Verificacion**: `openspec validate c-148-... --strict` OK; `python3 -m pytest scripts/preflight -q` 98 passed; backend `pytest -m "not integration" -q` 1498 passed + 54 deselected + 1 xfailed (sin regresiones; total 1553); frontend `npm run lint` (0 errores), `npm run test` (384 passed) y `npm run build` OK.
 - **Dependencias**: barrera de c-145 (12 chequeos, 35 pruebas); `CLAUDE.md` y `openspec/config.yaml` ya correctos desde c-145.
-- **Leer antes**: `openspec/changes/c-148-sincronizar-knowledge-base-y-docs-con-el-stack-vigente/{proposal,design,tasks}.md`, `openspec/specs/project-documentation/spec.md`.
+- **Leer antes**: `openspec/changes/archive/2026-10-27-c-148-sincronizar-knowledge-base-y-docs-con-el-stack-vigente/{proposal,design,tasks}.md`, `openspec/specs/project-documentation/spec.md`.
 
 ---
 
@@ -2298,7 +2298,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Verificacion**: `openspec validate "c-149-..." --strict` OK; `python3 -m pytest scripts/preflight/ -q` 111 passed; backend `pytest -m "not integration" -q` 1498 passed + 54 deselected + 1 xfailed (sin regresiones); `ruff check .` OK; frontend `npm run test` 384 passed.
 - **Duda residual**: el entorno local NO reinstalo los pines nuevos (regla "no build after changes"), de modo que `tests/test_openapi_sync.py` validó `docs/openapi.json` contra FastAPI 0.143.3 instalada, no 0.162.0. Si CI (que instala desde `requirements.txt`) detecta un cambio de esquema, se regenera `docs/openapi.json` con `python3 scripts/export_openapi.py`.
 - **Dependencias**: PR #42 de Dependabot; barrera de la FASE 41 (c-145/c-148; 17 chequeos, 108 pruebas).
-- **Leer antes**: `openspec/changes/c-149-actualizar-dependencias-y-endurecer-la-barrera/{proposal,design,tasks}.md`, `openspec/specs/project-documentation/spec.md`.
+- **Leer antes**: `openspec/changes/archive/2026-10-27-c-149-actualizar-dependencias-y-endurecer-la-barrera/{proposal,design,tasks}.md`, `openspec/specs/project-documentation/spec.md`.
 
 ---
 
@@ -2319,7 +2319,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Verificacion**: `cd evaluation; pytest` 473 passed; barrido de U+2713 en `CHANGES.md` sin coincidencias; `openspec validate c-150-cerrar-residuales-y-separar-el-contrato-del-corpus --strict` OK.
 - **Hallazgo (W3)**: el corpus real presente en `data/corpus_evaluacion_pseudonimizado.json` tiene 200 casos y 0 tiempos nulos (la premisa de "56 casos nulos" del proposal no coincide con la version actual del archivo); el corpus real cumple el contrato de clasificacion y carga con el unico `cargar_corpus()`. La opcionalidad de los tiempos queda cubierta por tests sinteticos (mixto, ausente, nulo, borde 0).
 - **Dependencias**: FASE 42 (C-149); c-148 y c-149 archivados.
-- **Leer antes**: `openspec/changes/c-150-cerrar-residuales-y-separar-el-contrato-del-corpus/{proposal,design,tasks}.md`, `openspec/specs/evaluation-corpus/spec.md`, `openspec/specs/employee-directory/spec.md`.
+- **Leer antes**: `openspec/changes/archive/2026-10-27-c-150-cerrar-residuales-y-separar-el-contrato-del-corpus/{proposal,design,tasks}.md`, `openspec/specs/evaluation-corpus/spec.md`, `openspec/specs/employee-directory/spec.md`.
 
 ---
 
@@ -2338,7 +2338,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Verificacion**: `openspec validate "c-151-..." --strict` OK; `python3 -m pytest scripts/preflight/test_docs_stack_sync.py -q` 67 passed; `python3 -m pytest scripts/preflight -q` 115 passed (sin regresiones: 111 de la FASE 42 + 4 nuevas).
 - **Rollback**: `git revert` de los commits del change: `docs/parameters_gemini.md` vuelve a citar `>=2.31,<3` y el chequeo vuelve a la superficie limitada a `knowledge-base/**`. No se publica tag ni release.
 - **Dependencias**: barrera de la FASE 41/42 (c-145/c-148/c-149; 17 chequeos, 111 pruebas); `App/Backend/requirements.txt` ya declara el pin correcto `>=2.33.0,<3`.
-- **Leer antes**: `openspec/changes/c-151-corregir-pin-google-genai-y-ampliar-la-barrera/{proposal,design,tasks}.md`, `openspec/specs/project-documentation/spec.md`.
+- **Leer antes**: `openspec/changes/archive/2026-10-28-c-151-corregir-pin-google-genai-y-ampliar-la-barrera/{proposal,design,tasks}.md`, `openspec/specs/project-documentation/spec.md`.
 
 ---
 
@@ -2357,7 +2357,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
   - **Grupo 5 — Tema D (auditoria durable)**: tabla append-only `directorio_auditoria` sin PII (patron `incidente_evento`), migracion `023_directorio_auditoria`, helper unico `registrar_evento_auditoria`, auditoria de gestion y de los canales de resolucion sin el contacto en claro.
   - **Grupo 6 — Tema E (retencion, ARCO y minimizacion)**: runbook de retencion con purga MANUAL y alerta de acumulacion (solo conteo, sin PII), ARCO de acceso y rectificacion ademas de supresion, ventana de retencion de la auditoria alineada con el ciclo de vida, revision de minimizacion (solo columnas derivadas no-PII).
   - **Grupo 7 — Tema F (operacion, gobernanza y specs)**: inventario de rotacion Fernet extendido a las columnas del directorio y documentado en `docs/seguridad/gestion-secretos-y-rotacion.md`; variables de clave dedicada en `settings.py`/`.env.example`/`conftest.py`/CI; mecanismo de activacion deliberado y auditado (DIR-014) en `app/services/directorio_activacion.py` + CLI env-gateado `scripts/activar_directorio.py`, bloqueado por defecto y sin interruptor de runtime; delta `employee-directory` verificado (`openspec validate --strict`); `docs/openapi.json` sincronizado; procedimientos de `docs/seguridad/` y evidencia de cumplimiento actualizados; este registro en `CHANGES.md`.
-- **Leer antes**: `openspec/changes/c-153-endurecer-el-directorio-para-datos-reales/{proposal,design,tasks}.md`, `openspec/specs/employee-directory/spec.md`, `docs/seguridad/adr-001-reversion-dir-005-cifrado-contacto.md`, `docs/seguridad/gestion-secretos-y-rotacion.md`, `docs/directorio-evidencia-cumplimiento.md`.
+- **Leer antes**: `openspec/changes/archive/2026-10-28-c-153-endurecer-el-directorio-para-datos-reales/{proposal,design,tasks}.md`, `openspec/specs/employee-directory/spec.md`, `docs/seguridad/adr-001-reversion-dir-005-cifrado-contacto.md`, `docs/seguridad/gestion-secretos-y-rotacion.md`, `docs/directorio-evidencia-cumplimiento.md`.
 - **Verificacion (grupo 8, 42/42)**: verificacion final de integracion completada (suite backend offline + subconjunto de integracion PostgreSQL sobre base descartable, lint backend y build/lint de frontend), validacion OPSX estricta y revision humana HIGH firmada (checklist del autor); el change quedo ARCHIVADO el 2026-10-28.
 - **Rollback**: `git revert` de los commits del change revierte las migraciones `021`-`023`, la politica por sujeto, el indice ciego, la auditoria durable y el mecanismo de activacion; no se publica tag ni release.
 
@@ -2513,7 +2513,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Scope**: instrumenta la medicion del BRAZO MANUAL y de la TASA DE INTERVENCION HUMANA, que el repositorio no podia producir. (1) Brazo manual: el operador registra su clasificacion por caso en la planilla unica `evaluation/data/plantilla_etiquetado.csv` de c-168 (`tarea = brazo_manual`, operadores fijos `O1` y `O2`, `inicio` y `timestamp` obligatorios), validada con `evaluation/doble_etiquetado.py::validar_doble_etiquetado` sin esquema propio, mas `evaluation/brazo_manual.py` (posicion real reconstruida desde `inicio` y desvios respecto del plan de campana de c-166); los operadores son personas distintas de los etiquetadores `E*` de c-168, de los dos analistas del consenso original y de los autores. (2) Intervencion humana: migracion Alembic `024` sobre `clasificacion_log` con `validado_por_empleado_id` (FK nombrada a `directorio_empleado.id`, nullable), `intervencion_inicio_en`, `validado_en` y `origen_intervencion` (`gate | muestreo | rederivacion | completado_manual`), con el origen derivado por el backend (`PATCH /clasificaciones/{log_id}/validar` y, para `rederivacion`, `PATCH /incidentes/{id}`; `completado_manual` queda reservado y sin escritor), e `intervencion_inicio_en` opcional en el payload y en `ValidarClasificacionDialog.tsx`. (3) Metrica backend `tasa_intervencion_backend` en `ResumenResponse` (distinta de la `tasa_intervencion_humana` offline de c-167), export pseudonimizado `App/Backend/scripts/exportar_intervenciones.py` hacia `evaluation/data/campana/intervenciones.csv` y runbook `docs/campana-medicion/runbook-brazo-manual-e-intervencion.md`. Capabilities: `evaluation-campaign-instrumentation` (nueva; ECM-001..ECM-003) y `sector-assignment` (ASG-005 MODIFIED).
 - **Dependencias**: c-168 (esquema de la planilla y validador `validar_doble_etiquetado`): se aplica ANTES del grupo 1 de c-165; el grupo 2 en adelante no depende de c-168. Comparte la capability `evaluation-campaign-instrumentation` con c-166 y c-168 (orden de archive c-165 -> c-166 -> c-168). Usa el plan `plan_campana.csv` y los sidecars por corrida de c-166 para vincular `incidente_id` con `id_caso`; lo consume c-167 (`intervenciones.csv`, planilla del brazo manual y `registro_sujetos.csv`). El corpus `data/corpus_evaluacion_pseudonimizado.json` se usa solo en lectura.
 - **Governance**: ALTA (esquema de auditoria `clasificacion_log`). CHECKPOINT 2.1 de su `tasks.md`: antes de cualquier tarea que toque modelo, esquema o migracion se presentan al autor las cuatro columnas, la migracion `024`, el ajuste de `tests/test_migration_023_directorio_auditoria.py` (head `023` -> `024`) y el escritor de `rederivacion`, y NO se avanza sin confirmacion humana explicita.
-- **Leer antes**: `openspec/changes/c-165-instrumentar-la-campana-para-medir-el-brazo-manual-y-la-intervencion/{proposal,design,tasks}.md` (delta specs en `specs/evaluation-campaign-instrumentation/` y `specs/sector-assignment/`), `openspec/specs/sector-assignment/spec.md` (ASG-005), `docs/campana-medicion/revision-pre-apply-c-165-a-c-169.md` (seccion c-165 y transversales T1, T2 y T4), `docs/anexo_c_esquema_bd.md` y `knowledge-base/11_evaluacion_experimental.md`.
+- **Leer antes**: `openspec/changes/archive/2026-10-30-c-165-instrumentar-la-campana-para-medir-el-brazo-manual-y-la-intervencion/{proposal,design,tasks}.md` (delta specs en `specs/evaluation-campaign-instrumentation/` y `specs/sector-assignment/`), `openspec/specs/sector-assignment/spec.md` (ASG-005), `docs/campana-medicion/revision-pre-apply-c-165-a-c-169.md` (seccion c-165 y transversales T1, T2 y T4), `docs/anexo_c_esquema_bd.md` y `knowledge-base/11_evaluacion_experimental.md`.
 
 ### [C-166] `contrabalanceo-del-diseno-y-corpus-independiente` — ARCHIVADO (2026-10-30, 47/47, MEDIA)
 
@@ -2521,7 +2521,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Scope**: contrabalanceo del diseno pareado y corpus independiente para la validacion fuera de muestra. (1) Plan de campana por caso (contrabalanceo de CONDICION, es decir que brazo va primero; reordenar el envio del brazo automatizado no produce efecto de orden): `evaluation/plan_campana.py` con `ordenar_casos` (modos `directo|inverso|alternado|aleatorio`) y `generar_plan_campana` (`id_caso, posicion, mitad, brazo_primero, modo, seed`), exportado a `evaluation/data/campana/plan_campana.csv`. (2) Harnesses: `scripts/corpus_ingest/ingest_via_n8n.py` e `ingest_corpus.py` aceptan `--plan` y `--orden/--seed`, registran `orden`, `posicion`, `mitad`, `brazo_primero` e `id_corrida` por caso (campos aditivos con default `None`) y abortan antes de enviar nada si `--json` o `--sidecar` apuntan a archivos versionados; `ingest_telefonia_corpus.py` no ingesta y solo copia el plan a su sidecar. (3) Corpus independiente: `evaluation/no_solape.py::verificar_no_solape` (prefijo `I`, ids disjuntos, SHA-256 de la descripcion normalizada, advertencia opcional por similitud) y flags `--corpus`, `--predicciones` y `--reporte` en `evaluation/run_evaluation.py`, con proteccion de `evaluation/predicciones.json` y `evaluation/report.md`. (4) Runbooks `docs/campana-medicion/runbook-campana-contrabalanceada.md` y `docs/campana-medicion/runbook-corpus-independiente.md`, y el job `corpus-ingest-tests` en `.github/workflows/ci.yml` (las suites de `scripts/corpus_ingest/` hoy corren fuera del gate). Capability `evaluation-campaign-instrumentation` (ECM-004..ECM-007); sin capabilities modificadas.
 - **Dependencias**: c-168 (plantilla `evaluation/data/plantilla_etiquetado.csv` y validador `validar_doble_etiquetado`): el runbook del corpus independiente los usa (ECM-006) y el runbook contrabalanceado los referencia para `tarea = brazo_manual`. Comparte la capability con c-165 y c-168, sin depender de la migracion de c-165 ni de su checkpoint de gobernanza ALTA. Lo consumen c-165 (plan y sidecars por corrida para vincular `incidente_id` con `id_caso`) y c-167 (plan, sidecars y `evaluation/data/campana/predicciones_independiente.json` para el efecto de orden y el fuera de muestra; `evaluar_fuera_de_muestra` y el reporte in-sample / out-of-sample son de c-167). c-169 documenta los resultados.
 - **Governance**: MEDIA (codigo de evaluacion, harnesses de ingesta y CI; sin migracion ni cambios de contrato de las capabilities existentes). Los archivos congelados (`data/corpus_evaluacion_pseudonimizado.json`, `data/corpus_resultados*.json`, `evaluation/predicciones.json`, `evaluation/report.md` y los sidecars versionados) no se modifican en ningun camino.
-- **Leer antes**: `openspec/changes/c-166-contrabalanceo-del-diseno-y-corpus-independiente/{proposal,design,tasks}.md` (delta spec en `specs/evaluation-campaign-instrumentation/`), `docs/campana-medicion/revision-pre-apply-c-165-a-c-169.md` (seccion c-166 y transversal T3), `docs/campana-medicion/plan-campana-de-medicion.md` y `knowledge-base/11_evaluacion_experimental.md` (seccion "Diseno": contrabalanceo por mitades).
+- **Leer antes**: `openspec/changes/archive/2026-10-30-c-166-contrabalanceo-del-diseno-y-corpus-independiente/{proposal,design,tasks}.md` (delta spec en `specs/evaluation-campaign-instrumentation/`), `docs/campana-medicion/revision-pre-apply-c-165-a-c-169.md` (seccion c-166 y transversal T3), `docs/campana-medicion/plan-campana-de-medicion.md` y `knowledge-base/11_evaluacion_experimental.md` (seccion "Diseno": contrabalanceo por mitades).
 
 ### [C-167] `analisis-de-la-nueva-campana-y-de-la-fiabilidad-entre-etiquetadores` — ARCHIVADO (2026-10-30, 67/67, BAJA/MEDIA)
 
@@ -2529,7 +2529,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Scope**: analisis offline, determinista y de solo lectura de los datasets de la campana y de la fiabilidad entre etiquetadores. (1) Kappa de Cohen (`evaluation/kappa.py`): no ponderado, 5 clases (`SECTORES_CANONICOS`), sobre la etiqueta primaria y exactamente dos etiquetadores fijos (`E1`, `E2`), con IC asintotico (varianza bajo H1 de Fleiss, Cohen y Everitt, 1969), IC bootstrap por casos, p_o, p_e, PABAK, n y rotulo de Landis y Koch; es el kappa de los etiquetadores NUEVOS y NO un intervalo del `0,87` original. (2) `evaluation/campana.py`: exactitud estricta y laxa del brazo manual por operador (Wilson) y agregada (bootstrap por caso) contra el consenso del doble etiquetado nuevo, contraste manual vs automatizado con McNemar, `registro_sujetos` que rechaza personas con mas de un rol, tasa de intervencion humana de campana (`tasa_intervencion_humana`: proporcion de casos con IC de Wilson contrastado contra la cota 0,15 de la segunda sub-hipotesis y proporcion del tiempo con bootstrap por caso del cociente), efecto de orden de condicion y de posicion con su efecto minimo detectable, y `evaluar_fuera_de_muestra` (clasificador congelado, bloques in-sample y out-of-sample rotulados). (3) CLI `evaluation/analisis_campana.py` con salidas en `evaluation/data/campana/analisis/` y fixtures en `evaluation/tests/fixtures/campana/`. Unico cambio a codigo existente: `_percentil_intervalo` y `_remuestreos_indices` de `evaluation/metrics.py` pasan a publicos, sin cambio de comportamiento. Capability `evaluation-framework` (6 requisitos ADDED, ninguno modificado).
 - **Dependencias**: c-168 (esquema de la planilla y validador), c-165 (export `evaluation/data/campana/intervenciones.csv` y `evaluation/brazo_manual.py`) y c-166 (`plan_campana.csv`, `predicciones_independiente.json` y `verificar_no_solape`), que consume como contratos de datos. Sus secciones de kappa y de exactitud del brazo manual no dependen de la migracion de c-165 ni del plan de c-166 y pueden adelantarse si urge. Sus salidas las consume c-169.
 - **Governance**: BAJA/MEDIA (biblioteca pura sin migraciones ni dependencias nuevas; `scipy` ya figura en `evaluation/requirements.txt`). No toca `evaluation/report.md`, `evaluation/predicciones.json` ni los numeros canonicos de v9.
-- **Leer antes**: `openspec/changes/c-167-analisis-de-la-nueva-campana-y-de-la-fiabilidad-entre-etiquetadores/{proposal,design,tasks}.md` (delta spec en `specs/evaluation-framework/`), `docs/campana-medicion/revision-pre-apply-c-165-a-c-169.md` (seccion c-167 y transversales T1 a T4), `evaluation/metrics.py`, `evaluation/stats.py` y `knowledge-base/11_evaluacion_experimental.md`.
+- **Leer antes**: `openspec/changes/archive/2026-10-30-c-167-analisis-de-la-nueva-campana-y-de-la-fiabilidad-entre-etiquetadores/{proposal,design,tasks}.md` (delta spec en `specs/evaluation-framework/`), `docs/campana-medicion/revision-pre-apply-c-165-a-c-169.md` (seccion c-167 y transversales T1 a T4), `evaluation/metrics.py`, `evaluation/stats.py` y `knowledge-base/11_evaluacion_experimental.md`.
 
 ### [C-168] `plantilla-y-protocolo-de-doble-etiquetado` — ARCHIVADO (2026-10-30, 31/31, BAJA)
 
@@ -2537,7 +2537,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Scope**: fija el esquema UNICO de la planilla de etiquetado y el validador UNICO del doble etiquetado independiente (transversal T1 de la revision: c-165, c-167 y c-168 tenian tres esquemas distintos para la misma planilla). Plantilla `evaluation/data/plantilla_etiquetado.csv` (`id_caso, id_etiquetador, tarea, sector_etiquetado, sectores_adicionales_etiquetados, inicio, timestamp`; `sector_asignado` queda reservado al consenso del corpus, lo que desambigua el cegado), validador puro `evaluation/doble_etiquetado.py::validar_doble_etiquetado` con CLI y exit codes por tipo de ofensa (importa `SECTORES_CANONICOS` de `evaluation/corpus.py`, sin duplicar cadenas), protocolo `docs/campana-medicion/runbook-doble-etiquetado.md` (sujetos y exclusiones, cegado, codebook, tamano, discordancias, limitacion declarada si no se consiguen etiquetadores nuevos y recuperacion manual de una tabla parcial), `evaluation/data/campana/README.md` (versionado de la tabla primaria con SHA-256), fixture sintetico y `.gitattributes` con LF para los CSV de la campana. Capability `evaluation-campaign-instrumentation` (ECM-008..ECM-010).
 - **Dependencias**: es el DUENO del esquema y del validador que adoptan c-165 (`tarea = brazo_manual`), c-166 (corpus independiente, `id_caso` con prefijo `I`) y c-167 (kappa y exactitud del brazo manual); ninguno define esquema o validador propios. Depende de `evaluation/corpus.py` (`SECTORES_CANONICOS`, `cargar_corpus`) y del corpus pseudonimizado en solo lectura. c-169 reporta el estado del cegado (cumplido o limitacion declarada).
 - **Governance**: BAJA (validador puro, plantilla y runbook; sin migracion, sin datos de campo en el repositorio y sin cambios a las cadenas canonicas de sector, al corpus ni a los numeros canonicos).
-- **Leer antes**: `openspec/changes/c-168-plantilla-y-protocolo-de-doble-etiquetado/{proposal,design,tasks}.md` (delta spec en `specs/evaluation-campaign-instrumentation/`), `docs/campana-medicion/runbook-doble-etiquetado.md`, `evaluation/data/campana/README.md`, `docs/campana-medicion/revision-pre-apply-c-165-a-c-169.md` (transversales T1 y T2 y seccion c-168), `docs/Tesis/Correcciones/numeros-canonicos.md` (kappa `0,87` sin IC) y `knowledge-base/11_evaluacion_experimental.md`.
+- **Leer antes**: `openspec/changes/archive/2026-10-30-c-168-plantilla-y-protocolo-de-doble-etiquetado/{proposal,design,tasks}.md` (delta spec en `specs/evaluation-campaign-instrumentation/`), `docs/campana-medicion/runbook-doble-etiquetado.md`, `evaluation/data/campana/README.md`, `docs/campana-medicion/revision-pre-apply-c-165-a-c-169.md` (transversales T1 y T2 y seccion c-168), `docs/Tesis/Correcciones/numeros-canonicos.md` (kappa `0,87` sin IC) y `knowledge-base/11_evaluacion_experimental.md`.
 
 ### [C-169] `incorporar-los-resultados-de-la-campana-a-la-tesis` — ARCHIVADO (2026-11-08, 62/62, BAJA, release `v1.2.8`)
 
@@ -2545,7 +2545,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Scope**: solo documentacion (docs-only) sobre `docs/Tesis/v10 (IA)/`: incorpora los resultados de la campana con desenlace positivo o negativo declarado para cada item (exactitud del brazo manual, intervencion humana real, efecto de orden, validacion fuera de muestra e IC del kappa). Toca el marco metodologico (4.2 a 4.8), la introduccion, el resumen y el abstract (tope de 250 palabras), los resultados (subseccion nueva `subsec:resultados-campana-medicion`), la discusion, las conclusiones, las recomendaciones, los aspectos legales, los Anexos A, B e I, la bibliografia, el memo `docs/Tesis/Correcciones/numeros-canonicos.md` (seccion 3.N nueva) y `docs/Tesis/Correcciones/dictamen-correcciones.md`, mas el PDF, los renders y la release. Decision D-kappa: el `0,87` se conserva como valor historico sin IC y el kappa nuevo se reporta como un valor distinto. Capabilities: `tesis-document` (19 requisitos MODIFIED, 2 de ellos renombrados, 1 REMOVED y 6 ADDED) y `tesis-numeros-canonicos` (2 MODIFIED y 2 ADDED).
 - **Dependencias**: GATEADO hasta que c-165, c-166, c-167 y c-168 esten archivados y fuera de `openspec list` y la campana de campo haya corrido y dejado sus salidas versionadas en `evaluation/data/campana/` (tablas, `analisis/` y `registro_sujetos.csv`, con README y SHA-256); sin solapes de sujetos (con solape, ramas negativas declaradas). Si el gate 0.1 o el 0.2 falla, el change se detiene; el corpus independiente es opcional. Consume los contratos de c-168 (planilla, sujetos y tabla primaria), c-165 (export de intervencion), c-166 (plan y predicciones del corpus independiente) y las salidas de c-167.
 - **Governance**: BAJA (docs-only). Sin cambios en `App/`, `n8n/`, `evaluation/` (solo lectura de las salidas de c-167), `openspec/config.yaml`, las cadenas canonicas ni `docs/Tesis/v9 (IA)/`; los valores canonicos vigentes no cambian.
-- **Leer antes**: `openspec/changes/c-169-incorporar-los-resultados-de-la-campana-a-la-tesis/{proposal,design,tasks}.md` (delta specs en `specs/tesis-document/` y `specs/tesis-numeros-canonicos/`), `docs/campana-medicion/revision-pre-apply-c-165-a-c-169.md` (seccion c-169), `auditorias/Dictamen_Tesis_v10_v1.2.5_CONEAU_2026-10-28.md`, `docs/Tesis/Correcciones/numeros-canonicos.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md`.
+- **Leer antes**: `openspec/changes/archive/2026-11-08-c-169-incorporar-los-resultados-de-la-campana-a-la-tesis/{proposal,design,tasks}.md` (delta specs en `specs/tesis-document/` y `specs/tesis-numeros-canonicos/`), `docs/campana-medicion/revision-pre-apply-c-165-a-c-169.md` (seccion c-169), `auditorias/Dictamen_Tesis_v10_v1.2.5_CONEAU_2026-10-28.md`, `docs/Tesis/Correcciones/numeros-canonicos.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md`.
 
 ## FASE 53 — Dictamen CONEAU v10/v1.2.10 y release v1.2.11 (2026-11-08)
 
@@ -2585,7 +2585,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Scope**: (B4) definicion declarada de las metricas multietiqueta y un unico ejemplo por sector en el prompt; (B5) procedencia de las capturas de 6.8 declarada en las leyendas (opcion A: sin recapturar), diagrama de despliegue regenerado (frontend nginx, imagen derivada de N8N, redes de `docker-compose.yml`) y matriz de confusion retirada como figura (queda `tab:matriz`); (B7) `resumir_registro_compilacion.py` y `paper/compilacion.md` (opcion A) y verificador de trazabilidad ampliado a todas las matrices (89 filas, 0 fallas); (C1 y C2) atribuciones de Galup et al. y del F1 macro corregidas (Opitz y Burst, 2019), efecto Hawthorne con fuente primaria y fuentes verificadas de Gemini API, Twilio, Docker, Jira Service Management, osTicket y la Disposicion DNPDP 60-E/2016; (C3 a C5) disociacion, Tabla 1, forma de la lista de referencias (apellido "Gomez") y glosario; (item 36) fecha de las tablas primarias en el cronograma; Anexo I con las filas de c-188.
 - **Dependencias**: C-187 y C-189 (ambos archivados).
 - **Governance**: BAJA (documental y scripts de verificacion de documentacion).
-- **Leer antes**: `openspec/changes/c-188-residuales-de-forma-y-bibliografia-del-dictamen-v1-2-10/{proposal,design,tasks}.md`, `auditorias/Dictamen_Tesis_v10_v1.2.10_CONEAU_2026-11-08.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-188).
+- **Leer antes**: `openspec/changes/archive/2026-11-09-c-188-residuales-de-forma-y-bibliografia-del-dictamen-v1-2-10/{proposal,design,tasks}.md`, `auditorias/Dictamen_Tesis_v10_v1.2.10_CONEAU_2026-11-08.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-188).
 
 ---
 
@@ -2601,7 +2601,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Registro**: matriz de trazabilidad de 7 columnas con 44 filas (A1-A3, B1-B4, C1-C2, items 1-30 y residuos) en `dictamen-correcciones.md`; `verificar_matriz_trazabilidad.py --estricto` con 0 fallas (171 filas en total).
 - **Dependencias**: C-188 (archivado).
 - **Governance**: MEDIUM (cambios documentales que tocan el veredicto de una sub-hipotesis y la descripcion etica del procedimiento).
-- **Leer antes**: `openspec/changes/c-190-atender-el-dictamen-coneau-v1-2-12/{proposal,design,tasks}.md`, `auditorias/Dictamen_Tesis_v10_v1.2.12_CONEAU_2026-11-09.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-190).
+- **Leer antes**: `openspec/changes/archive/2026-11-09-c-190-atender-el-dictamen-coneau-v1-2-12/{proposal,design,tasks}.md`, `auditorias/Dictamen_Tesis_v10_v1.2.12_CONEAU_2026-11-09.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-190).
 
 ## FASE 57 — Dictamen CONEAU v10/v1.2.13 y release v1.2.14 (2026-11-09)
 
@@ -2615,7 +2615,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Registro**: seccion c-192 en `dictamen-correcciones.md`; `numeros-canonicos.md` 3.16 corregido.
 - **Dependencias**: C-190 (archivado), dictamen v1.2.13 (PR #78).
 - **Governance**: MEDIUM.
-- **Leer antes**: `openspec/changes/c-192-atender-el-dictamen-v1-2-13/{proposal,design,tasks}.md`, `auditorias/Dictamen_Tesis_v10_v1.2.13_CONEAU_2026-11-09.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-192).
+- **Leer antes**: `openspec/changes/archive/2026-11-09-c-192-atender-el-dictamen-v1-2-13/{proposal,design,tasks}.md`, `auditorias/Dictamen_Tesis_v10_v1.2.13_CONEAU_2026-11-09.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-192).
 
 ## FASE 58 — Nivel pago y consentimiento del dictamen v1.2.13 (release v1.2.15)
 
@@ -2627,7 +2627,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Scope**: (1) el nivel pago de la Gemini API se acredita con el comprobante de facturacion en custodia del director; se retira la guia de configuracion como prueba; (2) se declara la informacion verbal y la confirmacion escrita posterior de E1, E2, O1 y O2; los originales firmados quedan en el expediente fisico del director; se agrega la plantilla `docs/campana-medicion/confirmacion-posterior-consentimiento.md` y el registro sin identidad; (3) las referencias de version entregada pasan a `v1.2.15`.
 - **Dependencias**: C-192 (archivado), dictamen v1.2.13.
 - **Governance**: MEDIUM/HIGH (datos personales y etica).
-- **Leer antes**: `openspec/changes/c-193-acreditar-el-nivel-pago-y-el-consentimiento/{proposal,design,tasks}.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-193).
+- **Leer antes**: `openspec/changes/archive/2026-11-09-c-193-acreditar-el-nivel-pago-y-el-consentimiento/{proposal,design,tasks}.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-193).
 
 ## FASE 59 — Residuales C del dictamen v1.2.13 (release v1.2.16)
 
@@ -2639,7 +2639,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Scope**: fila "Lim." como secuencia temporal (c-169 -> c-190); nota de Zendesk sin "precios"; oracion de Zanzotto partida en dos; referencias de version entregada a v1.2.16.
 - **Dependencias**: C-192 y C-193 (archivados), dictamen v1.2.13.
 - **Governance**: MEDIUM.
-- **Leer antes**: `openspec/changes/c-194-residuales-c-dictamen-v1-2-13/{proposal,design,tasks}.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-194).
+- **Leer antes**: `openspec/changes/archive/2026-11-09-c-194-residuales-c-dictamen-v1-2-13/{proposal,design,tasks}.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-194).
 
 ## FASE 60 — Dictamen v1.2.16: segunda sub-hipotesis, Anexo I y residuales (release v1.2.17)
 
@@ -2651,7 +2651,7 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Scope**: (1) A1 diferida a los autores (7.5, plantilla y registro de la campana sin tocar); (2) condicion de generalizacion en 8.3, asimetria de la regla en 1.4 y 4.7, "el intervalo no permite descartar una proporcion inferior a la cota" en 8.3 y 9.1; (3) Anexo I con nueve dictamenes y las tablas de los dictamenes sobre `v1.2.13` y `v1.2.16`; verificador con la regla "seccion sin matriz" (Strict TDD) y matrices de c-192 a c-195; (4) `ARE_SPEARMAN` en `evaluation/stats.py` y analisis regenerado (solo cambia el MDE del Spearman, 0,2834 a 0,2763; Strict TDD); (5) 6.3, 4.2, 8.7 y memo de numeros canonicos; Zanzotto; VIS-005; capitulo 11 y 11.3; nota de Zendesk; (6) referencias de version entregada a `v1.2.17`.
 - **Dependencias**: C-194 (archivado), dictamen v1.2.16. No toca C-191 (de otro autor).
 - **Governance**: MEDIUM (consentimiento, HIGH, diferido a los autores).
-- **Leer antes**: `openspec/changes/c-195-atender-dictamen-v1-2-16/{proposal,design,tasks}.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-195).
+- **Leer antes**: `openspec/changes/archive/2026-11-10-c-195-atender-dictamen-v1-2-16/{proposal,design,tasks}.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-195).
 
 ---
 
