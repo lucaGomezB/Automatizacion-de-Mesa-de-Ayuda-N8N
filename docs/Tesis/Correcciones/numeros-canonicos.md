@@ -22,6 +22,7 @@ de las ramas consumidoras").
 - **Upsert c-159**: `c-159-reconciliar-figuras-tablas-y-evidencia-cualitativa` (aplicado el 2026-10-28) agrega la Sección 3.13 (errores estrictos por frontera de confusión y aciertos laxos entre ellos, recomputados por `docs/Tesis/Correcciones/recontar_errores_frontera.py`). No modifica ningún valor canónico de las Secciones 3.1 a 3.12; la Tabla 16 (`tab:errores`) pasa a tener entrada canónica.
 - **Upsert c-169**: `c-169-incorporar-los-resultados-de-la-campana-a-la-tesis` (aplicado el 2026-11-08) agrega la Sección 3.14 (resultados de la campaña complementaria de medición: kappa nuevo con IC, exactitud del brazo manual, exactitud de v9 contra la referencia nueva, tasa de intervención humana con su contraste, proporción de tiempo, efecto de orden y validación fuera de muestra) y cierra la entrada "IC del coeficiente kappa — no computable" de la Sección 3.6 con la nota de remisión. El `0,87` pasa a `vigente (sin IC)`. No modifica ningún otro valor ni estado de las Secciones 3.1 a 3.13. Fecha: 2026-11-08.
 - **Upsert c-160**: `c-160-residuos-de-correccion-anexo-i-y-consistencia-interna` (aplicado el 2026-10-29) no agrega ni modifica ningun valor canónico. Nota de consumo: la Sección 3.9 (`96/130 = 0,7385` frente a `88/130 = 0,6769`) pasa a consumirse también en la Sección 5.5 de la tesis (`05-arquitectura.tex`, comparación pareada del punto de operación del filtro, sobre los 130 casos con predicción de ambas etapas), en lugar de `0,7405 frente a 0,6769` (97/131 frente a 88/130).
+- **Upsert c-196**: `c-196-atender-devolucion-segunda-instancia` (aplicado el 2026-11-11) agrega la Sección 3.17 (devolución de segunda instancia del tribunal: kappa `0,87` retirado como evidencia, segunda sub-hipótesis "no concluyente, con estimación puntual por encima de la cota", tiempos del brazo manual por operador, exactitud contra el consenso independiente, cobertura del backend y pruebas de integración) y marca como `SUPERADA por c-196` las entradas de las Secciones 3.5, 3.6 y 3.14 que daban el `0,87` por vigente o la segunda sub-hipótesis por "refutada". Fecha: 2026-11-11.
 - **Artefacto**: este memo. No se edita ningún `.tex` en este change.
 - **Fecha de verificación**: 2026-10-21.
 - **SHA-256 del corpus** (`data/corpus_evaluacion_pseudonimizado.json`):
@@ -146,7 +147,7 @@ citable como resultado) y `condicional` (depende de una decisión editorial).
 |---|---|---|---|
 | SHA-256 del corpus | `report.md:256` | vigente | `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb`. |
 | Tamaño del corpus: `n = 200` | `report.md:3`, `04-marco-metodologico.tex:45` | vigente | |
-| Kappa de Cohen: `0,87` (doble etiquetado) | `00-resumen.tex:11` | vigente (sin IC) | Contexto de validez; no es una métrica del clasificador. Su IC **no es computable** desde las fuentes permitidas (ver 3.6); el `0,87` conserva su valor y se informa **sin IC**. |
+| Kappa de Cohen: `0,87` (doble etiquetado de la campaña 2026-10) | `00-resumen.tex:11` (versión previa) | **retirado como evidencia (sin respaldo); SUPERADA por c-196** | No existe registro de ese doble etiquetado y el valor no tiene datos que lo respalden (confirmación de un autor, 2026-11-11; ver Sección 3.17). La tesis ya no lo presenta como evidencia de fiabilidad; solo lo menciona la sección 4.4 (`04-marco-metodologico.tex`) y la nota de versiones del Anexo I (`subsec:nota-versiones`). La fiabilidad vigente es el kappa `0,5569` de `E1`/`E2` (Sección 3.14). |
 | Soporte `Bases de Datos`: `n = 1` | `report.md:54`, `08-discusion.tex:24` | vigente | Clase NO estimable (`F1 = 0,0000`). Ver ítem 6. |
 
 ### 3.6 Marco métrico unificado e incertidumbre (c-108)
@@ -215,6 +216,8 @@ estimable**; el `0,87` conserva su valor con estado `vigente (sin IC)`. La campa
 complementaria de medición aporta un kappa **distinto** (etiquetadores `E1`/`E2`),
 con su propio IC, en la entrada 3.14 de este memo; ese intervalo **no** es el IC del
 `0,87` y la tesis no debe presentarlo como tal (ver D-kappa del change).
+
+**Cierre (c-196, 2026-11-11).** El `0,87` queda **retirado como evidencia**: un autor confirmó que "se coló" en el resumen y que no hay datos que lo respalden. Las entradas anteriores de esta sección que lo daban por `vigente (sin IC)` quedan `SUPERADA por c-196`. El único kappa vigente de la tesis es `0,5569` (Sección 3.14).
 
 ### 3.7 Gate de revisión por etapa y punto de operación (c-130)
 
@@ -810,17 +813,17 @@ costo. Reversible si una réplica mide `c` (ver Sección 3.11).
 El veredicto sigue la regla de tres vías de la Sección 3.12 (compatible si el límite
 superior de Wilson < `0,15`; refutada si la estimación ≥ `0,15`; no concluyente si la
 estimación < `0,15` ≤ límite superior); aquí la estimación (`0,735`) supera la cota,
-de modo que la segunda sub-hipótesis queda **refutada**. La tasa medida **no**
+de modo que la lectura literal sobre la tasa bruta es "refutada" (**SUPERADA por c-196** para la segunda sub-hipótesis, que es no concluyente; ver Sección 3.17). La tasa medida **no**
 reintroduce el `9,5 %` (`retirado`, Sección 3.4).
 
 Nota histórica de c-187 (superada por c-190 y c-195): el veredicto "refutada" del script es el
 de la **tasa bruta** (cualquier intervención); c-187 rotulaba el estado de la sub-hipótesis como
-*no concluyente* (25/200). El estado vigente es **refutada sobre los 147 revisados** (ver (b'')).
+*no concluyente* (25/200). El estado vigente era **refutada sobre los 147 revisados** (ver (b'')); **SUPERADA por c-196**: el estado vigente es "no concluyente, con estimación puntual por encima de la cota" (Sección 3.17).
 La tasa bruta `0,735` y su intervalo no cambian.
 
 **(b'') Intervenciones que cambiaron la derivación y mecanismo de derivación (entrada nueva, c-187; estado vigente c-190/c-195: refutada sobre los 147 revisados).**
 
-Estado vigente de la segunda sub-hipótesis: **refutada sobre los 147 revisados** (`25/147 = 0,170`; Wilson `[0,118; 0,239]`; binomial `p = 0,28`; el intervalo no descarta una proporción inferior a la cota; la regla de tres vías es asimétrica); `25/200 = 0,125` queda como dato secundario. Las filas siguientes con "no concluyente" sobre 25/200 son notas históricas de c-187, **superadas por c-190**.
+**SUPERADA por c-196** (estado vigente: no concluyente, con estimación puntual por encima de la cota; Sección 3.17). Estado de c-190/c-195 de la segunda sub-hipótesis: **refutada sobre los 147 revisados** (`25/147 = 0,170`; Wilson `[0,118; 0,239]`; binomial `p = 0,28`; el intervalo no descarta una proporción inferior a la cota; la regla de tres vías es asimétrica); `25/200 = 0,125` queda como dato secundario. Las filas siguientes con "no concluyente" sobre 25/200 son notas históricas de c-187, **superadas por c-190**.
 
 | Valor | Procedencia | Estado |
 |---|---|---|
@@ -908,7 +911,7 @@ ni a la red.
 | Wilson de `25/200` `[0,0861; 0,1780]`; `25/147` `[0,1179; 0,2390]`; `28/138` `[0,1443; 0,2776]`; `53/200` `[0,2087; 0,3302]` | `evaluation.metrics.intervalo_wilson` | vigente |
 | Proporción de tiempo `0,5307` (denominador `corpus_campana.json`, 191 casos, suma automatizada `2692,22` s) | `analisis/resultados.json:910-927` (ver (b') de 3.14) | vigente |
 
-El estado de la sub-hipótesis sobre los casos revisables (`25/147 = 17,0 %`, refutada) es la
+El estado de la sub-hipótesis sobre los casos revisables (`25/147 = 17,0 %`, refutada; **SUPERADA por c-196**: no concluyente, con estimación puntual por encima de la cota) es la
 lectura A1 de c-190; `25/200 = 12,5 %` se conserva como dato secundario con la advertencia del
 denominador. Reproducción: script descartable (design D0 de c-190) que lee `intervenciones.csv`,
 `doble_etiquetado.csv` y los sidecars por `case_id`, más
@@ -952,6 +955,81 @@ la fórmula en 8.7 (`07-resultados.tex`).
   inserciones y 75 supresiones; los pines (`requirements.txt`, `package-lock.json`,
   `n8n/workflow.json`, `settings.py`) no cambian. Detalle en
   `conteos-canonicos-tecnicos.md` (Sección 8).
+
+### 3.17 Devolución de segunda instancia (c-196)
+
+Devolución del tribunal del 11-11-2026 sobre la `v1.2.18` (16 observaciones, N-01 a N-16).
+Todo valor se recalculó de solo lectura con scripts descartables del change (sin llamadas a
+Gemini, N8N ni Twilio) sobre `evaluation/data/campana/brazo_manual.csv`,
+`evaluation/data/campana/corpus_campana.json`, `evaluation/data/campana/doble_etiquetado.csv`,
+`evaluation/data/campana/intervenciones.csv`, `data/corpus_evaluacion_pseudonimizado.json` y
+`evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json`.
+
+**(a) Kappa `0,87` (N-01).** Retirado como evidencia (sin respaldo; confirmación de un autor,
+2026-11-11). El kappa vigente es `0,5569` (moderado; IC asintótico `[0,4725; 0,6413]`; Sección 3.14).
+La tesis menciona el `0,87` una vez en el cuerpo (sección 4.4 (`04-marco-metodologico.tex`) para
+declararlo retirado) y en la nota de versiones del Anexo I.
+
+**(b) Segunda sub-hipótesis (N-09).** Estado vigente: **no concluyente, con estimación puntual
+por encima de la cota**. Conteo de veredictos: una corroborada (tiempo), una no concluyente
+(intervención humana) y una refutada (exactitud y macro-F1). "Refutada" queda como estado
+**SUPERADA por c-196**.
+
+| Valor | Procedencia | Estado |
+|---|---|---|
+| `25/147 = 0,170` (17,0 %), IC de Wilson `[0,118; 0,239]` | `evaluation.metrics.intervalo_wilson` sobre `intervenciones.csv` | vigente (nuevo) |
+| Binomial contra `0,15` (H1: proporción mayor que `0,15`): `p = 0,28` unilateral (`0,2796`); `0,49` bilateral (`0,4882`) | `scipy.stats.binomtest` | vigente (nuevo) |
+| Aplicación prefijada de la regla: `25/200 = 0,125`, IC de Wilson `[0,086; 0,178]` → no concluyente | `intervenciones.csv` | vigente |
+| Lectura sobre 147: el denominador se fijó después de conocer los datos; la lectura literal daría "refutada" y no se sostiene porque el intervalo contiene `0,15` | decisión D-N09 de c-196 | vigente (nuevo) |
+
+**(c) Tiempos del brazo manual por operador (N-03).** Tarea de la campaña complementaria: decisión
+de sector (hoja con identificador y descripción; no incluye lectura, búsqueda ni carga del ticket).
+No reemplaza el contraste principal (`71,2 %`, Sección 3.1). Automatizado: el de la corrida propia
+de la campaña complementaria (`14,6 s`), no el del corpus canónico (`17,76 s`).
+
+| Operador | Casos | Manual: media (desvío) | Mediana | Automatizado, mismos casos | Reducción | `p` (Wilcoxon pareado) | `r` |
+|---|---|---|---|---|---|---|---|
+| `O1` | 110 | `20,1 s` (9,2) | `18,0 s` | `13,3 s` | `33,8 %` | `9,8 × 10⁻⁷` | `0,54` |
+| `O2` | 110 | `76,6 s` (21,4) | `73,0 s` | `15,5 s` | `79,7 %` | `9,0 × 10⁻²⁰` | `1,00` |
+| Agregado por caso | 200 | `47,6 s` (28,7) | `49,0 s` | `14,6 s` | `69,3 %` | `3,0 × 10⁻²⁸` | `0,90` |
+
+Hechos asociados (recálculo): 20 casos con doble cobertura (el agregado los promedia: 200 casos,
+220 registros); en esos 20, `20,1 s` (`O1`) y `92,8 s` (`O2`); el registro R025 de `O1` dura `0 s`
+(inicio = fin) y sin él `O1` da `20,3 s` y `34,3 %`; Spearman del tiempo manual entre campañas `0,15`
+(`O1`) y `-0,05` (`O2`); Spearman de los tiempos automatizados entre campañas `ρ = 0,70`; con los
+automatizados del corpus canónico las reducciones serían `19,6 %` (`O1`), `75,9 %` (`O2`) y `62,7 %`
+(agregado). Estado: vigente (nuevo).
+
+**(d) Exactitud contra el consenso independiente (N-08).** Referencia primaria: el etiquetado
+original (veredicto de la tercera sub-hipótesis, sin cambio). Contra el consenso `E1 = E2`:
+
+| Valor | Estado |
+|---|---|
+| Consenso `E1 = E2` en 138 casos; 62 sin consenso (`38/62 = 0,613` contra el original) | vigente (nuevo) |
+| Estricta contra el consenso `110/138 = 0,797`, Wilson `[0,722; 0,856]`; laxa `117/138 = 0,848` `[0,779; 0,898]` | vigente (nuevo) |
+| Estricta contra el original en los mismos 138 `109/138 = 0,790` `[0,714; 0,850]`; laxa `125/138 = 0,906` `[0,846; 0,944]` | vigente (nuevo) |
+| Consenso = original en `116/138` (`84,1 %`) | vigente (nuevo) |
+| Macro-F1 contra el consenso (cuatro clases estimables) `0,757` (puntual; sin implementación canónica del bootstrap en `evaluation/`) | vigente (nuevo) |
+
+Lectura: contra el consenso el límite superior (`0,856`) supera el umbral de `0,85`, de modo que con esa
+referencia el criterio de exactitud sería no concluyente; el macro-F1 sigue por debajo. El veredicto
+de la tercera sub-hipótesis se mantiene sobre la referencia primaria (refutada).
+
+**(e) Registro primario de los tiempos automatizados (N-05).** Los `81` tiempos telefónicos
+coinciden con `data/corpus_resultados_telefonia.json` (`81/81`); los `119` restantes (correo y
+formulario) no tienen registro primario conservado: `data/corpus_resultados.json` es de otra corrida
+(`0/119` coinciden; media `0,41 s`). Estado: vigente (nuevo).
+
+**(f) Muestreo (N-04).** No probabilístico, por conveniencia. Se retira "estratificado" y
+"asignación proporcional"; la fórmula del tamaño muestral se lee como margen de error implicado.
+
+**(g) Cobertura del backend y pruebas de integración (N-10).** Cobertura de sentencias de la suite
+unitaria sobre `app.routes`, `app.services` y `app.repositories`: `90 %` (`2.503` sentencias, `242` sin
+cubrir; `1.773` pruebas unitarias aprobadas y `1` marcada `xfail`). Procedencia: corrida de CI `43043424002`
+sobre `main`, commit `03d1612` (código del backend idéntico al de la `v1.2.18`), 2026-11-11; comando
+`pytest -m "not integration" --cov=app.routes --cov=app.services --cov=app.repositories --cov-report=term-missing`.
+Pruebas de integración: `61` (CI: `61 passed`; `pytest -m integration --collect-only -q` informa `61/1835`),
+en lugar de `54` (valor histórico de c-140, `SUPERADA por c-196`). Estado: vigente (nuevo).
 
 ## 4. Contingencia del gate de intervención humana
 

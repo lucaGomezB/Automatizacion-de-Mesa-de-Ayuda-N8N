@@ -11,53 +11,49 @@ desde la imagen derivada de `docker/n8n/Dockerfile` (N8N 2.11.2 con el parche IM
 > renderiza nativamente en GitHub y GitLab. (Decisión D1 del diseño de C-10.)
 
 ```mermaid
+%%{init: {"flowchart":{"useMaxWidth":false,"nodeSpacing":20,"rankSpacing":40,"padding":6,"wrappingWidth":400}}}%%
 graph TD
     subgraph Host["Host (máquina local)"]
         subgraph Docker["Redes Docker: edge, data (interna), automation, host_access"]
-            PG["PostgreSQL 15.5-alpine\npuerto host: 5433\nvolumen: postgres_data\nDB: mesa_de_ayuda"]
-            BE["Backend FastAPI\n(sin puerto host)\nuvicorn app.main:app\nalembic upgrade head al iniciar"]
-            N8N["N8N 2.11.2 derivada\n(c-182, parche IMAP)\npuerto host: 5678\nacceso: cuenta owner (primer arranque)\nvolumen: n8n_data"]
-            FE["Frontend (bundle Vite)\nsin puerto host\nnginx:alpine :3000"]
-            NGX["Nginx alpine\npuerto host: 80, 443\nTLS 1.2/1.3 termination\nHTTP → HTTPS redirect\nHSTS header"]
+            PG["PostgreSQL 15.5-alpine<br/>puerto host: 5433<br/>volumen: postgres_data<br/>DB: mesa_de_ayuda"]
+            BE["Backend FastAPI<br/>(sin puerto host)<br/>uvicorn app.main:app<br/>alembic upgrade head<br/>al iniciar"]
+            N8N["N8N 2.11.2 derivada<br/>(parche IMAP)<br/>puerto host: 5678<br/>acceso: cuenta owner<br/>(primer arranque)<br/>volumen: n8n_data"]
+            FE["Frontend (bundle Vite)<br/>sin puerto host<br/>nginx:alpine :3000"]
+            NGX["Nginx alpine<br/>puerto host: 80, 443<br/>TLS 1.2/1.3 termination<br/>HTTP → HTTPS redirect<br/>HSTS header"]
         end
 
-        ENV[".env\n(credenciales reales,\ngitignorado)"]
-        WF["n8n/workflow.json\n(workflow N8N, montado :ro)"]
-        PROMPT["docs/prompt_gemini.txt\n(prompt Gemini, montado :ro)"]
-        CERTS["openssl/\n(certificados TLS,\ngenerados con script)"]
+        ENV[".env<br/>(credenciales reales,<br/>gitignorado)"]
+        WF["n8n/workflow.json<br/>(workflow N8N,<br/>montado :ro)"]
+        PROMPT["docs/prompt_gemini.txt<br/>(prompt Gemini,<br/>montado :ro)"]
+        CERTS["openssl/<br/>(certificados TLS,<br/>generados con script)"]
     end
 
     subgraph External["Servicios Externos"]
-        GEMINI["Google Gemini API\n(clasificación y transcripción)"]
-        IMAP["Gmail IMAP/SMTP\n(correo: trigger y envio)"]
-        TWILIO["Twilio\n(voz / callback de grabación)"]
+        GEMINI["Google Gemini API<br/>(clasificación y<br/>transcripción)"]
+        IMAP["Gmail IMAP/SMTP<br/>(correo: trigger<br/>y envio)"]
+        TWILIO["Twilio<br/>(voz / callback<br/>de grabación)"]
     end
 
-    %% Dependencias de salud declaradas en el compose
-    PG -- "service_healthy (pg_isready)" --> BE
-    BE -- "service_healthy (/health)" --> N8N
+    PG -- "service_healthy<br/>(pg_isready)" --> BE
+    BE -- "service_healthy<br/>(/health)" --> N8N
     BE -- "service_started" --> NGX
     FE -- "service_started" --> NGX
 
-    %% Comunicación entre servicios
-    BE -- "asyncpg (PostgreSQL protocol)" --> PG
-    N8N -- "HTTP POST /api/v1/incidentes" --> BE
-    BE -- "HTTPS: clasificación y transcripción (google-genai SDK)" --> GEMINI
+    BE -- "asyncpg<br/>(PostgreSQL protocol)" --> PG
+    N8N -- "HTTP POST<br/>/api/v1/incidentes" --> BE
+    BE -- "HTTPS: clasificación y<br/>transcripción<br/>(google-genai SDK)" --> GEMINI
 
-    %% Nginx proxy rutas
-    NGX -- "/api/* → backend:8000" --> BE
-    NGX -- "/* → frontend:3000" --> FE
+    NGX -- "/api/* →<br/>backend:8000" --> BE
+    NGX -- "/* →<br/>frontend:3000" --> FE
 
-    %% Canales de entrada externos
-    IMAP -- "IMAP/SMTP (correo)" --> N8N
-    TWILIO -- "webhook de voz / callback" --> BE
-    BE -- "handoff pseudonimizado" --> N8N
+    IMAP -- "IMAP/SMTP<br/>(correo)" --> N8N
+    TWILIO -- "webhook de voz /<br/>callback" --> BE
+    BE -- "handoff<br/>pseudonimizado" --> N8N
 
-    %% Volúmenes y archivos
     ENV -. "env_file" .-> BE
-    WF -. "montado :ro en /data/" .-> N8N
-    PROMPT -. "montado :ro en /app/docs/" .-> BE
-    CERTS -. "montado :ro en /etc/nginx/certs/" .-> NGX
+    WF -. "montado :ro<br/>en /data/" .-> N8N
+    PROMPT -. "montado :ro<br/>en /app/docs/" .-> BE
+    CERTS -. "montado :ro en<br/>/etc/nginx/certs/" .-> NGX
 ```
 
 ## Puertos del host
