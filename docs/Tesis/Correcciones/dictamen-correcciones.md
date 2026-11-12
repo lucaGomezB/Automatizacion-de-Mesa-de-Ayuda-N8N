@@ -4720,3 +4720,42 @@ porcentaje de > 40 baja 3,14 puntos y el de > 60 baja de 50 a 11.
 por indicación del usuario. La verificación de 0 `Overfull \hbox` de la tabla nueva, 0 referencias
 indefinidas y el total de páginas queda para esa recompilación. `docs/Tesis/v10 (IA)/tesis_para_agente.md`
 se regeneró con `build_tesis_para_agente.py v1.2.19` (no vacío).
+
+## Dictamen v10 / v1.2.19 (2026-11-11) - c-198 (respuestas a las preguntas del tribunal)
+
+Producción del documento de respuestas del grupo a las 16 preguntas probables de la Sección 8 de la
+devolución de segunda instancia del tribunal del 2026-11-11 (change `c-198`, docs, gobernanza MEDIUM;
+el bloque legal Q15/Q16 HIGH en lo que afirma sobre hechos). Se aplica sobre `c-196` y `c-197`. No se
+recompiló `paper/main.pdf` en este apply: se recompila aparte, por indicación del usuario.
+
+### Entregables
+
+- `docs/defensa/respuestas-tribunal.md`: 16 respuestas (Q1 a Q16) en los cuatro bloques de la Sección 8.
+- `docs/Tesis/v10 (IA)/paper/sections/12-anexos.tex`: Anexo J (`sec:anexo-respuestas-tribunal`), última
+  sección de la serie de anexos (A-I pasa a A-J).
+- `docs/Tesis/Correcciones/numeros-canonicos.md`: sección 3.18 con los valores citados que no figuraban
+  ya en el memo.
+- `docs/Tesis/v10 (IA)/tesis_para_agente.md`: regenerado con `build_tesis_para_agente.py v1.2.19`.
+
+### Guardarraíles
+
+- El documento no se atribuye a un modelo de lenguaje; español neutro, sin emojis.
+- El kappa 0,87 no se reintroduce como evidencia; Q1 y Q2 lo declaran retirado.
+- No se crearon artefactos de release; no se tocaron `App/`, `n8n/`, `docker/` ni `evaluation/`.
+
+### Matriz de trazabilidad (verificada por `verificar_matriz_trazabilidad.py`)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| Q1/1a | Documento fuente con las 16 respuestas | c-198 | `docs/defensa/respuestas-tribunal.md:11` | `-` | `### Q1.` | vigente |
+| Q1/1b | Anexo J como última sección de la serie | c-198 | `12-anexos.tex:483` | `sec:anexo-respuestas-tribunal` | `Respuestas del grupo a las preguntas del tribunal` | vigente |
+| Q1/1c | Referencia al Anexo J desde el Anexo I | c-198 | `12-anexos.tex:447` | `-` | `se incorporan como Anexo~J` | vigente |
+| Q2/2a | Sección 3.18 del memo de números canónicos | c-198 | `docs/Tesis/Correcciones/numeros-canonicos.md:1034` | `-` | `3.18 Respuestas del tribunal` | vigente |
+| Q2/2b | Cifras de la versión de julio registradas como retiradas | c-198 | `docs/Tesis/Correcciones/numeros-canonicos.md:1045` | `-` | `165,3 s` | vigente |
+| Q2/2c | Cotejo de las revisiones con el consenso | c-198 | `docs/Tesis/Correcciones/numeros-canonicos.md:1055` | `-` | `confirmaciones humanas con consenso` | vigente |
+
+### Pendiente de compilación
+
+`paper/main.pdf` y `paper/compilacion.md` no se regeneraron en este apply: se recompilan aparte, por
+indicación del usuario. La verificación de 0 referencias indefinidas y el total de páginas queda para
+esa recompilación.

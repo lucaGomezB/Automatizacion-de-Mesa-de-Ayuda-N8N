@@ -2677,6 +2677,18 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Governance**: MEDIUM; Anexo I HIGH en lo factico.
 - **Leer antes**: `openspec/changes/c-197-afinar-escritura-y-correcciones-por-capitulo/{proposal,design,tasks}.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-197).
 
+## FASE 63 — Respuestas del grupo a las preguntas del tribunal (c-198)
+
+> Produce el artefacto que la devolucion de segunda instancia declaro evaluable: el documento de respuestas del grupo a las 16 preguntas probables de la Seccion 8 (change `c-198`). Solo documentos: no requiere codigo nuevo ni nuevas mediciones; no cambia cifras canonicas ni el contenido sustantivo de la tesis.
+
+### [C-198] `respuestas-a-las-preguntas-del-tribunal` — APLICADO (2026-11-11, MEDIUM)
+
+- **Estado**: APLICADO el 2026-11-11. Documento nuevo `docs/defensa/respuestas-tribunal.md` (16 respuestas, Q1 a Q16), Anexo J en `12-anexos.tex` (`sec:anexo-respuestas-tribunal`) y seccion 3.18 del memo de numeros canonicos; `tesis_para_agente.md` regenerado. `paper/main.pdf` y `paper/compilacion.md` se recompilan aparte, por indicacion del usuario. Pendiente del orquestador: release, `engram sync --project` (nunca `--all`), PR contra `main` con CI en verde.
+- **Scope**: (1) `docs/defensa/respuestas-tribunal.md`: 16 respuestas en los cuatro bloques de la Seccion 8 (procedencia Q1-Q4, tiempos Q5-Q9, clasificacion y supervision Q10-Q14, marco legal Q15-Q16), cada una verificable contra artefactos versionados; (2) Anexo J (`sec:anexo-respuestas-tribunal`) como ultima seccion de la serie (A-I pasa a A-J) y referencia desde el Anexo I; (3) `docs/Tesis/Correcciones/numeros-canonicos.md` seccion 3.18 con los valores citados que no figuraban ya en el memo (cifras de julio de 2026 retiradas, cotejo de las revisiones con el consenso y registro primario de los 119 tiempos); (4) `docs/Tesis/v10 (IA)/tesis_para_agente.md` regenerado.
+- **Dependencias**: `c-196` y `c-197` aplicados. No toca `c-191` (de otro autor) ni `App/`, `n8n/`, `docker/` ni `evaluation/`.
+- **Governance**: MEDIUM; el bloque legal (Q15 y Q16) HIGH en lo que afirma sobre hechos.
+- **Leer antes**: `openspec/changes/c-198-respuestas-a-las-preguntas-del-tribunal/{proposal,design,tasks}.md`, `docs/defensa/respuestas-tribunal.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-198).
+
 ---
 
 ## Notas del analisis

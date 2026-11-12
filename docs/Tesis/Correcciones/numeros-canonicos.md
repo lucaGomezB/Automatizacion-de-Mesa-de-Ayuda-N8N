@@ -1031,6 +1031,47 @@ sobre `main`, commit `03d1612` (código del backend idéntico al de la `v1.2.18`
 Pruebas de integración: `61` (CI: `61 passed`; `pytest -m integration --collect-only -q` informa `61/1835`),
 en lugar de `54` (valor histórico de c-140, `SUPERADA por c-196`). Estado: vigente (nuevo).
 
+### 3.18 Respuestas del tribunal: valores citados por el documento de respuestas (c-198)
+
+Registro de los valores de resultado que el documento `docs/defensa/respuestas-tribunal.md`
+(respuestas del grupo a las 16 preguntas de la Sección 8 de la devolución de segunda instancia) y
+su incorporación como Anexo J citan y que no figuraban ya en el memo. No modifica ningún valor
+`vigente` de las Secciones 3.1 a 3.17. Fecha: 2026-11-11.
+
+**Cifras de la versión de julio (Q2; `retirado`).**
+
+| Valor | Procedencia (archivo:línea) | Estado |
+|---|---|---|
+| Tiempo manual medio `165,3 s` y automatizado medio `18,2 s` (reducción `89,0 %`); exactitud `92 %`; `W = 0` | `docs/Tesis/v10 (IA)/paper/sections/12-anexos.tex:235`; `docs/anexo_f_corpus.md:22` | **retirado** (corpus sintético de 200 casos descartado en C-27) |
+
+Estas cifras provienen del corpus sintético descartado en C-27 y no son citables como resultado
+vigente; figuran en el Anexo I (nota de versiones) para declarar su origen y su reemplazo por las
+del corpus real (`61,6 s` a `17,76 s`, `71,2 %`, `73,5 %`, `W = 363`; Secciones 3.1 y 3.2).
+
+**Cotejo de las revisiones con el consenso del doble etiquetado nuevo (Q12; `vigente`).**
+
+| Valor | Procedencia (archivo:línea) | Estado |
+|---|---|---|
+| `11` de `85` confirmaciones humanas con consenso disponible confirmaron un sector que el consenso considera incorrecto | `docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex:161` | vigente (nuevo) |
+| `13` de los `25` cambios de derivación tienen consenso (`9` correcciones, `1` empeoramiento y `3` de un error a otro) | `docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex:161` | vigente (nuevo) |
+
+Derivación: cotejo de `evaluation/data/campana/intervenciones.csv` (columna `cambio_sector`) contra
+el consenso `E1 = E2` de `evaluation/data/campana/doble_etiquetado.csv`. Se informa como dato, sin
+lectura causal.
+
+**Registro primario de los tiempos de correo y formulario (Q4; `vigente`).**
+
+| Valor | Procedencia (archivo:línea) | Estado |
+|---|---|---|
+| `data/corpus_resultados_web_correo.json`: `118` de los `119` casos de correo y formulario del 2-10-2026; `R001` es el único caso sin registro | `data/README.md:23`; `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex:63` | vigente (nuevo) |
+
+El archivo se versiona en `data/corpus_resultados_web_correo.json` (`118` casos; extraído del
+respaldo `backups/mesa_de_ayuda_20261009T141330.sql`, no versionado). Respalda la existencia y la
+procedencia de los incidentes, no la medición de extremo a extremo. Complementa la sección 3.17e:
+el registro primario de los `119` tiempos de correo y formulario quedó versionado con
+posterioridad a c-196, de modo que la afirmación de 3.17e ("no tienen registro primario
+conservado") queda acotada al sidecar `data/corpus_resultados.json`.
+
 ## 4. Contingencia del gate de intervención humana
 
 Tabla reconstruida desde `evaluation/predicciones.json` con
