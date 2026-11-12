@@ -110,13 +110,12 @@ La copia de campaña tiene más valores nulos que el corpus canónico: es intenc
 
 ### SHA-256 por archivo
 
-Al versionar cada archivo se completa su SHA-256 (en minúsculas, calculado sobre el archivo tal como queda versionado, con fin de línea LF: `.gitattributes` lo fija para los `*.csv`, `*.json` y `*.md` de esta carpeta; un archivo generado en Windows con CRLF se normaliza antes con `sed -i 's/
-$//' <archivo>`), con el mismo patrón que `evaluation/evidence/README.md`. Mientras un archivo no exista, su hash queda en `pendiente`. Esta tabla no usa el formato `- campo: valor` de la sección de procedencia de la tabla primaria, que lee el test de integridad de c-168.
+Al versionar cada archivo se completa su SHA-256 (en minúsculas, calculado sobre el archivo tal como queda versionado, con fin de línea LF: `.gitattributes` lo fija para los `*.csv`, `*.json` y `*.md` de esta carpeta; un archivo generado en Windows con CRLF se normaliza antes con `sed -i 's/\r$//' <archivo>`), con el mismo patrón que `evaluation/evidence/README.md`. Mientras un archivo no exista, su hash queda en `pendiente`. Esta tabla no usa el formato `- campo: valor` de la sección de procedencia de la tabla primaria, que lee el test de integridad de c-168.
 
 | Archivo | SHA-256 |
 |---|---|
 | `plan_campana.csv` | b619a734092cbbf2b676636386e4b27bdbeaee76df3f97a19e4b7d1beeb43243 |
-| `registro_sujetos.csv` | f7a5653e733d423a3c4b5eee6b94a05d6ea02df38eb04997212865b329224ad2 |
+| `registro_sujetos.csv` | ab17eb2b6e660b78d206d130c21fac06739ba5512d2ac37d09cf532c2a3d36da |
 | `corpus_campana.json` | 99bbe84b90b6ba66b34aae08c85bd318cd0e9600ad540e58b1a4bd8eccec06a5 |
 | `corpus_independiente.json` | pendiente |
 | `predicciones_independiente.json` | pendiente |

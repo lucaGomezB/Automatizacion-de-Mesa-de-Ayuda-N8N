@@ -1,6 +1,6 @@
 # DICTAMEN DE EVALUACION ACADEMICA
 
-**Documento evaluado:** *Automatizacion inteligente del registro de incidentes en mesas de ayuda empresariales mediante orquestacion de flujos con N8N y procesamiento de lenguaje natural basado en modelos de lenguaje grandes*. Trabajo Final de Carrera, Tecnicatura Universitaria en Programacion, UTN Facultad Regional Mendoza. Version `v1.0.1`, commit `bac4c5f6f85c889b48a90d4396bbdaccc7a35ad0`, `docs/Tesis/v9 (IA)/paper/main.pdf`, 101 paginas. Autores: Gomez, Bustos y Sevilla.
+**Documento evaluado:** *Automatizacion inteligente del registro de incidentes en mesas de ayuda empresariales mediante orquestacion de flujos con N8N y procesamiento de lenguaje natural basado en modelos de lenguaje grandes*. Trabajo Final de Carrera, Tecnicatura Universitaria en Programacion, UTN Facultad Regional Mendoza. Version `v1.0.1`, commit `ee6a869eb3090d54533a1cb36cf0fbd96c0bba03`, `docs/Tesis/v9 (IA)/paper/main.pdf`, 101 paginas. Autores: Gomez, Bustos y Sevilla.
 
 **Fecha del dictamen:** 2026-10-22.
 
@@ -74,7 +74,7 @@ El segundo criterio de la justificacion del umbral del 85 % esta formulado en `0
 
 ### 1. Estructura general del documento
 
-**Cumple.** La arquitectura del documento es completa y logicamente progresiva: portada, resumen bilingue, indices (general, de tablas, de figuras), glosario de 64 siglas, capitulos 1-12, referencias y 9 anexos (A-I). Las remisiones cruzadas usan `\autoref`/`\ref` de forma consistente. Los defectos formales de versiones anteriores estan ausentes. La trazabilidad de la version esta cerrada: el tag v1.0.1 y el hash completo del commit (`bac4c5f6f85c889b48a90d4396bbdaccc7a35ad0`) constan en el Anexo I, lo que hace la version auditoriamente reproducible.
+**Cumple.** La arquitectura del documento es completa y logicamente progresiva: portada, resumen bilingue, indices (general, de tablas, de figuras), glosario de 64 siglas, capitulos 1-12, referencias y 9 anexos (A-I). Las remisiones cruzadas usan `\autoref`/`\ref` de forma consistente. Los defectos formales de versiones anteriores estan ausentes. La trazabilidad de la version esta cerrada: el tag v1.0.1 y el hash completo del commit (`ee6a869eb3090d54533a1cb36cf0fbd96c0bba03`) constan en el Anexo I, lo que hace la version auditoriamente reproducible.
 
 Observacion editorial menor: la tabla comparativa de `03-estado-del-arte.tex` tiene cuatro columnas (Solucion, Despliegue, Clasificacion automatica, Modelo de costo), pero el parrafo introductorio declara "cuatro dimensiones" e incluye "soberania sobre los datos" entre ellas. Esa dimension no aparece como columna de la tabla, sino solo en la prosa circundante.
 
@@ -158,6 +158,6 @@ El conteo de entradas es internamente consistente y no presenta discrepancia. La
 
 ## CONSIDERACION FINAL
 
-La version v1.0.1 cierra el ciclo de correcciones de forma satisfactoria. Las siete recomendaciones del dictamen anterior fueron incorporadas: las tres de mayor peso con precision textual demostrable; las cuatro de alcance menor con cumplimiento sustancial. El documento es verificable en su version de referencia (tag v1.0.1, hash `bac4c5f6f85c889b48a90d4396bbdaccc7a35ad0`), internamente consistente, y demuestra una integridad academica que es infrecuente para el nivel de una tecnicatura: declara sus limitaciones con exactitud, distingue entre lo medido y lo no medido, y sostiene sus resultados con contrastes estadisticos apropiados.
+La version v1.0.1 cierra el ciclo de correcciones de forma satisfactoria. Las siete recomendaciones del dictamen anterior fueron incorporadas: las tres de mayor peso con precision textual demostrable; las cuatro de alcance menor con cumplimiento sustancial. El documento es verificable en su version de referencia (tag v1.0.1, hash `ee6a869eb3090d54533a1cb36cf0fbd96c0bba03`), internamente consistente, y demuestra una integridad academica que es infrecuente para el nivel de una tecnicatura: declara sus limitaciones con exactitud, distingue entre lo medido y lo no medido, y sostiene sus resultados con contrastes estadisticos apropiados.
 
 Las observaciones que permanecen son de forma editorial y no comprometen el argumento central ni los aportes del trabajo. El trabajo esta en condiciones de ser sometido a defensa oral. **Se recomienda su aprobacion sin condiciones.**

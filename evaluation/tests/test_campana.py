@@ -17,6 +17,7 @@ import inspect
 import math
 import pathlib
 import random
+import re
 import warnings
 from datetime import datetime, timedelta, timezone
 
@@ -2085,20 +2086,20 @@ def test_un_rango_que_no_se_puede_interpretar_falla_y_lo_nombra():
 
 
 def test_un_commit_distinto_aborta_cuando_ambos_bloques_lo_registran(tmp_path):
-    in_sample = _cache_con_meta(h.PREDICCIONES_IN_SAMPLE, tmp_path, commit="d6bb474")
+    in_sample = _cache_con_meta(h.PREDICCIONES_IN_SAMPLE, tmp_path, commit="bf5e099")
 
     with pytest.raises(FueraDeMuestraError) as excinfo:
         _fuera_de_muestra_con(in_sample=in_sample)
 
     mensaje = str(excinfo.value)
-    assert "commit" in mensaje and "d6bb474" in mensaje and "c167aa1" in mensaje
+    assert "commit" in mensaje and "bf5e099" in mensaje and "c167aa1" in mensaje
 
 
 def test_un_commit_in_sample_provisto_por_parametro_tambien_se_compara():
     with pytest.raises(FueraDeMuestraError) as excinfo:
-        _fuera_de_muestra_con(commit_in_sample="d6bb474")
+        _fuera_de_muestra_con(commit_in_sample="bf5e099")
 
-    assert "d6bb474" in str(excinfo.value) and "c167aa1" in str(excinfo.value)
+    assert "bf5e099" in str(excinfo.value) and "c167aa1" in str(excinfo.value)
 
 
 def test_un_commit_igual_en_ambos_bloques_no_declara_la_limitacion_del_commit(tmp_path):
@@ -2387,3 +2388,122 @@ def test_un_corpus_con_total_casos_desincronizado_no_se_reescribe(tmp_path):
 
     assert resultado.obtenido is True
     assert desincronizado.read_bytes() == antes
+
+
+# ---------------------------------------------------------------------------
+# ECM-015 — verificacion offline de las tablas `| Archivo | SHA-256 |` del README de campana
+# ---------------------------------------------------------------------------
+README_CAMPANA = h.RAIZ_EVALUATION / "data" / "campana" / "README.md"
+
+_ENCABEZADO_SHA256 = ("Archivo", "SHA-256")
+_HASH_SHA256 = re.compile(r"[0-9a-f]{64}")
+
+
+def _filas_sha256_del_readme(texto: str) -> list[tuple[str, str]]:
+    """Pares (archivo, sha256 declarado) de cada tabla `| Archivo | SHA-256 |` del README.
+
+    Recorre todas las tablas con ese encabezado exacto; ignora el separador `|---|---|`
+    y las tablas con otro encabezado (por ejemplo `| Archivo | Qué es | Cómo se genera |`).
+    """
+    filas: list[tuple[str, str]] = []
+    en_tabla = False
+    for linea in texto.splitlines():
+        despojada = linea.strip()
+        if not despojada.startswith("|"):
+            en_tabla = False
+            continue
+        celdas = [celda.strip().strip("`") for celda in despojada.strip("|").split("|")]
+        if tuple(celdas) == _ENCABEZADO_SHA256:
+            en_tabla = True
+            continue
+        if not en_tabla or len(celdas) < 2:
+            continue
+        if all(set(celda) <= set("-: ") for celda in celdas):
+            continue  # separador |---|---|
+        filas.append((celdas[0], celdas[1]))
+    return filas
+
+
+def _ofensas_sha256(texto: str, directorio: pathlib.Path) -> list[str]:
+    """Hash declarado distinto del real en las tablas SHA-256 del README.
+
+    Omite las filas con valor literal `pendiente`, las de archivos ausentes del checkout
+    y las que no declaran un SHA-256 de 64 hex; solo compara las filas comparables.
+    """
+    ofensas: list[str] = []
+    for nombre, declarado in _filas_sha256_del_readme(texto):
+        if declarado == "pendiente" or not _HASH_SHA256.fullmatch(declarado):
+            continue
+        archivo = directorio / nombre
+        if not archivo.exists():
+            continue
+        real = hashlib.sha256(archivo.read_bytes()).hexdigest()
+        if real != declarado:
+            ofensas.append(f"{nombre}: declarado {declarado}, real {real}")
+    return ofensas
+
+
+def test_las_tablas_sha256_del_readme_de_campana_coinciden_con_los_archivos():
+    ofensas = _ofensas_sha256(README_CAMPANA.read_text(encoding="utf-8"), README_CAMPANA.parent)
+
+    assert ofensas == []
+
+
+def test_el_readme_de_campana_tiene_las_tres_tablas_sha256_con_las_filas_esperadas():
+    filas = dict(_filas_sha256_del_readme(README_CAMPANA.read_text(encoding="utf-8")))
+
+    # La tabla de c-166, la de intervenciones.csv (c-165) y la de brazo_manual.csv (c-165).
+    assert {"registro_sujetos.csv", "plan_campana.csv"} <= set(filas)
+    assert filas["intervenciones.csv"] != "pendiente"
+    assert filas["brazo_manual.csv"] != "pendiente"
+
+
+def test_el_parser_ignora_las_tablas_con_otro_encabezado():
+    texto = (
+        "| Archivo | Qué es | Cómo se genera |\n"
+        "|---|---|---|\n"
+        "| `x.csv` | algo | comando |\n"
+    )
+
+    assert _filas_sha256_del_readme(texto) == []
+
+
+def _readme_sintetico(filas: list[tuple[str, str]]) -> str:
+    lineas = ["# README sintetico", "", "| Archivo | SHA-256 |", "|---|---|"]
+    lineas += [f"| `{nombre}` | {declarado} |" for nombre, declarado in filas]
+    return "\n".join(lineas) + "\n"
+
+
+def test_una_fila_pendiente_de_la_tabla_sha256_se_omite():
+    texto = _readme_sintetico([("aun_no_versionado.json", "pendiente")])
+
+    assert _ofensas_sha256(texto, pathlib.Path("/tmp")) == []
+
+
+def test_una_fila_de_un_archivo_ausente_se_omite(tmp_path):
+    texto = _readme_sintetico([("no_esta_en_el_checkout.json", "0" * 64)])
+
+    assert _ofensas_sha256(texto, tmp_path) == []
+
+
+def test_una_fila_con_hash_correcto_pasa(tmp_path):
+    archivo = tmp_path / "presente.bin"
+    archivo.write_bytes(b"contenido de prueba\n")
+    real = hashlib.sha256(archivo.read_bytes()).hexdigest()
+    texto = _readme_sintetico([("presente.bin", real)])
+
+    assert _ofensas_sha256(texto, tmp_path) == []
+
+
+def test_una_fila_con_hash_desactualizado_falla_nombrando_archivo_y_ambos_hashes(tmp_path):
+    archivo = tmp_path / "presente.bin"
+    archivo.write_bytes(b"contenido de prueba\n")
+    real = hashlib.sha256(archivo.read_bytes()).hexdigest()
+    viejo = "f7a5653e" + "0" * 56
+    texto = _readme_sintetico([("presente.bin", viejo)])
+
+    ofensas = _ofensas_sha256(texto, tmp_path)
+
+    assert len(ofensas) == 1
+    assert "presente.bin" in ofensas[0]
+    assert viejo in ofensas[0] and real in ofensas[0]

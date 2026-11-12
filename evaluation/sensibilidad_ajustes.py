@@ -36,7 +36,7 @@ from evaluation.metrics import intervalo_wilson
 from evaluation.run_evaluation import CONFIRM_PAID_ENV_VAR
 from evaluation.stats import ResultadoMcNemar, contraste_mcnemar
 
-#: Umbral de cortocircuito por confianza de la logica previa a c-71 (settings.py:103 de 7925903).
+#: Umbral de cortocircuito por confianza de la logica previa a c-71 (settings.py:103 de 0fe5e08).
 UMBRAL_CONFIANZA_LEGADO = 0.90
 
 _REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -175,12 +175,12 @@ class ClasificadorLegadoPreC71:
     Replica de la etapa deterministica previa a c-71 (logica `L0`).
 
     Reproduce `DeterministicClassifier.classify` de
-    `git show 7925903:App/Backend/app/classifiers/deterministic.py`:
+    `git show 0fe5e08:App/Backend/app/classifiers/deterministic.py`:
     `confianza = w / (w + r + 1e-6)` (w: patrones distintos del ganador; r: los del
     segundo), acotada a 1; los sectores se ordenan de mayor a menor puntaje con
     orden estable, de modo que un empate (incluida la ausencia de coincidencias)
     lo gana el primer sector del mapa. El cortocircuito de la epoca era
-    `confianza >= 0.90` (`git show 7925903:App/Backend/app/classifiers/hybrid.py`,
+    `confianza >= 0.90` (`git show 0fe5e08:App/Backend/app/classifiers/hybrid.py`,
     linea 146; `deterministic_confidence_threshold = 0.90` en `settings.py:103`).
     Funcion de medicion pura: no usa `app`, `Settings` ni red.
     """
@@ -479,7 +479,7 @@ NO_COMPUTADO = "no computado"
 NO_APLICABLE = "no aplicable"
 
 MOTIVO_PLIEGUES = (
-    "El diff de c-71 (commit 1368fd8) solo agrega 62 patrones bajo cinco comentarios de "
+    "El diff de c-71 (commit c8112d2) solo agrega 62 patrones bajo cinco comentarios de "
     "bloque por sector y no registra que casos del corpus motivaron cada patron; el mensaje "
     "del commit y los artefactos de c-71 describen el procedimiento en forma generica. "
     "Reconstruir el vocabulario por pliegues exigiria una regla de atribucion por patron "
@@ -664,7 +664,7 @@ def _seccion_historica(r: ResultadosSensibilidad) -> List[str]:
     lineas = [
         "## Referencia historica: vocabulario y logica previos a c-71 (V0 + L0)",
         "",
-        "Replica pura de la logica de 7925903 (confianza w/(w + r + 1e-6), cortocircuito con "
+        "Replica pura de la logica de 0fe5e08 (confianza w/(w + r + 1e-6), cortocircuito con "
         "confianza >= 0.90). Sirve de control de fidelidad contra la linea base documentada "
         "por c-71 y de referencia del punto de partida; no se lee como cota del sesgo.",
         "",
@@ -818,9 +818,9 @@ def formatear_reporte_sensibilidad(r: ResultadosSensibilidad) -> str:
 # ---------------------------------------------------------------------------
 # Sensibilidad del prompt sin costo: niveles a y b (D9)
 # ---------------------------------------------------------------------------
-#: Propuesta de c-72 (commit 4fedce8, 2026-10-05 21:50 -0300).
+#: Propuesta de c-72 (commit 33c94d0, 2026-10-05 21:50 -0300).
 PROPUESTA_C72 = datetime(2026, 10, 6, 0, 50, 5, tzinfo=timezone.utc)
-#: Aplicacion de c-72 (commit a76851e, 2026-10-06 16:38 -0300).
+#: Aplicacion de c-72 (commit 27f8d8c, 2026-10-06 16:38 -0300).
 APLICACION_C72 = datetime(2026, 10, 6, 19, 38, 20, tzinfo=timezone.utc)
 #: Casos motivadores documentados de las reglas de frontera (propuesta de c-72 y su test).
 MOTIVADORES_C72 = ("R002", "R038", "R015")
@@ -1151,9 +1151,9 @@ def construir_procedencia(
         "tau": umbral,
         "pesos": dict(pesos),
         "blobs": {
-            "keywords_pre_c71 (7925903)": archivos["keywords_pre_c71.json"]["blob"],
+            "keywords_pre_c71 (0fe5e08)": archivos["keywords_pre_c71.json"]["blob"],
             "keywords_vigente": blob_git(KEYWORDS_VIGENTE_PATH.read_bytes()),
-            "prompt_pre_c72 (a76851e^)": archivos["prompt_gemini_pre_c72.txt"]["blob"],
+            "prompt_pre_c72 (27f8d8c^)": archivos["prompt_gemini_pre_c72.txt"]["blob"],
             "prompt_vigente": blob_git(PROMPT_VIGENTE_PATH.read_bytes()),
         },
         "sha256_artefactos": {

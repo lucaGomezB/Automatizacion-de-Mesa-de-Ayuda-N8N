@@ -1383,8 +1383,8 @@ def test_construir_procedencia_registra_los_blobs_vigentes_y_los_hashes_de_los_a
         pesos={"margen": 0.5},
     )
 
-    assert p["blobs"]["keywords_pre_c71 (7925903)"] == BLOB_KEYWORDS_PREVIO
-    assert p["blobs"]["prompt_pre_c72 (a76851e^)"] == BLOB_PROMPT_PREVIO
+    assert p["blobs"]["keywords_pre_c71 (0fe5e08)"] == BLOB_KEYWORDS_PREVIO
+    assert p["blobs"]["prompt_pre_c72 (27f8d8c^)"] == BLOB_PROMPT_PREVIO
     assert p["blobs"]["keywords_vigente"] == "334a8edb296cf8e88468164c9a35d57f80952c0e"
     assert p["blobs"]["prompt_vigente"] == "49267f4a5cf214bf46899c5177661f1cdbfd10fb"
     assert p["sha256_artefactos"]["keywords_pre_c71.json"] == _sha256(_DATOS / "keywords_pre_c71.json")

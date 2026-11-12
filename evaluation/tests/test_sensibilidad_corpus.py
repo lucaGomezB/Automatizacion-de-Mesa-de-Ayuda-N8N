@@ -7,7 +7,7 @@ evaluada (131 cortocircuitados, 97 aciertos) y (b) la replica historica reproduc
 linea base que documento c-71. SKIPPED si el corpus no esta presente.
 
 Si (a) falla hay deriva entre el codigo y la etapa evaluada; si (b) falla, la replica
-se revisa contra `git show 7925903:...` y la discrepancia se registra con su causa.
+se revisa contra `git show 0fe5e08:...` y la discrepancia se registra con su causa.
 Nunca se ajusta la replica a los datos ni el valor esperado sin consultar al usuario.
 """
 
