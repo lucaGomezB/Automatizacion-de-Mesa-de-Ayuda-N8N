@@ -60,8 +60,8 @@ evaluación ni contienen datos personales; se versionan con fin de línea LF
 (`.gitattributes`) para que sus SHA-256 coincidan en Windows y Linux.
 
 - `keywords_pre_c71.json`: `KEYWORD_MAP` previo a c-71 (89 patrones), extraído
-  del blob `858f1c6` (`git show 7925903:App/Backend/app/classifiers/keywords.py`).
+  del blob `858f1c6` (`git show 0fe5e08:App/Backend/app/classifiers/keywords.py`).
 - `prompt_gemini_pre_c72.txt`: prompt de Gemini previo a las reglas de frontera de
-  c-72, blob `1daceb3` (`git show a76851e^:docs/prompt_gemini.txt`).
+  c-72, blob `1daceb3` (`git show 27f8d8c^:docs/prompt_gemini.txt`).
 - `procedencia.json`: commit de origen, ruta, blob, fecha, comando de extracción y
   SHA-256 de cada archivo. Los tests verifican la integridad de ambos.
