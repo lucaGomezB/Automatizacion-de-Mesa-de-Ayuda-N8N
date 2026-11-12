@@ -23,6 +23,17 @@ import pytest
 from app.utils.pseudonymizer import PseudonymizationResult, pseudonymize
 
 
+def _assert_preservado_sin_persona(texto: str, subcadena: str) -> None:
+    """
+    Aserción compartida de c-201: la `subcadena` se conserva, no se inserta
+    [PERSONA] y el conteo de la categoría persona es cero.
+    """
+    resultado = pseudonymize(texto, [])
+    assert subcadena in resultado.texto
+    assert "[PERSONA]" not in resultado.texto
+    assert resultado.conteos["persona"] == 0
+
+
 # ─── Sección 1: esqueleto y contrato ─────────────────────────────────────────
 
 def test_pseudonymize_texto_sin_pii_devuelve_texto_intacto_y_conteos_en_cero() -> None:
@@ -547,6 +558,199 @@ def test_pseudonymize_r169_mencion_sin_digitos_no_altera_texto() -> None:
 
     assert resultado.texto == texto
     assert resultado.conteos["tarjeta"] == 0
+
+
+# ─── Sección 11: frontera del determinante inicial (c-201 D1) ─────────────────
+
+@pytest.mark.parametrize(
+    "texto, conservado",
+    [
+        ("Su PC se reinicia a cada rato", "Su PC"),
+        ("La PC no le responde", "La PC"),
+        ("El ID del equipo es 42", "El ID"),
+        ("Las Heras", "Las Heras"),
+    ],
+)
+def test_pseudonymize_determinante_mas_palabra_no_persona_se_preserva(
+    texto: str, conservado: str
+) -> None:
+    """
+    Un determinante/artículo/posesivo inicial seguido de una sola palabra
+    capitalizada NO es un nombre de persona: la frase completa se conserva,
+    no se inserta [PERSONA] y el conteo de persona es cero (c-201 D1).
+    """
+    _assert_preservado_sin_persona(texto, conservado)
+
+
+def test_pseudonymize_determinante_y_nombre_real_enmascara_solo_el_nombre() -> None:
+    """
+    D1: con determinante inicial y un nombre real de 2+ palabras a continuación,
+    se conserva el determinante y se enmascara únicamente el nombre.
+    """
+    resultado = pseudonymize("El Juan Pérez no responde", [])
+
+    assert resultado.texto == "El [PERSONA] no responde"
+    assert resultado.conteos["persona"] == 1
+
+
+# ─── Sección 12: allowlist de productos, áreas, frases y topónimos (c-201 D3) ─
+
+@pytest.mark.parametrize(
+    "texto, conservado",
+    [
+        ("Instalaron el Adobe PDF Reader en la estación", "Adobe PDF Reader"),
+        ("Actualizaron el Microsoft Vision en el equipo", "Microsoft Vision"),
+        ("Falla de NET Framework al arrancar", "NET Framework"),
+        ("El ticket lo deriva a Recursos Humanos", "Recursos Humanos"),
+        ("mostró el cartel de Acceso Denegado", "Acceso Denegado"),
+        ("la sucursal de San Juan no responde", "San Juan"),
+        ("reportó desde la Casa Matriz", "Casa Matriz"),
+        ("la zona de Rio Negro quedó sin servicio", "Rio Negro"),
+        ("la sucursal de Cordoba Capital informa", "Cordoba Capital"),
+    ],
+)
+def test_pseudonymize_productos_areas_frases_y_toponimos_se_preservan(
+    texto: str, conservado: str
+) -> None:
+    """
+    Productos, áreas organizacionales, frases de error y topónimos observados
+    NO se enmascaran como [PERSONA]: la frase se conserva y el conteo es cero
+    (c-201 D3).
+    """
+    _assert_preservado_sin_persona(texto, conservado)
+
+
+# ─── Sección 13: exclusión de sectores insensible a tildes (c-201 D2) ─────────
+
+def test_pseudonymize_sector_canonico_acentuado_se_preserva() -> None:
+    """
+    La variante acentuada de un sector canónico (`Seguridad Informática`) se
+    preserva aunque el string canónico no lleve tilde (c-201 D2).
+    """
+    _assert_preservado_sin_persona(
+        "Clasificado como Seguridad Informática por el modelo", "Seguridad Informática"
+    )
+
+
+# ─── Sección 14: no regresión del código DLL de R067 (c-201) ──────────────────
+
+def test_pseudonymize_r067_dll_no_se_clasifica_como_telefono() -> None:
+    """
+    La corrida de dígitos embebida en el nombre del DLL de R067
+    (sin forma telefónica) no se clasifica como [TELEFONO].
+    """
+    texto = (
+        'Le sale un cartel "Falta el dll axm0102301239999320002302" '
+        "al intentar iniciar el sistema principal"
+    )
+    resultado = pseudonymize(texto, [])
+
+    assert "[TELEFONO]" not in resultado.texto
+    assert resultado.conteos["telefono"] == 0
+
+
+# ─── Sección 15: TRIANGULATE — regresiones de PII genuina (c-201) ────────────
+
+def test_pseudonymize_nombre_real_junto_a_pc_y_determinante() -> None:
+    """
+    D1 no debilita la cobertura: en "La PC de Juan Pérez" se conserva "La PC"
+    y se enmascara el nombre real.
+    """
+    resultado = pseudonymize("La PC de Juan Pérez no responde", [])
+
+    assert "La PC" in resultado.texto
+    assert "Juan Pérez" not in resultado.texto
+    assert resultado.conteos["persona"] >= 1
+
+
+@pytest.mark.parametrize(
+    "texto,nombre",
+    [
+        ("El usuario Juan Pérez reportó el problema", "Juan Pérez"),
+        ("María Núñez", "María Núñez"),
+    ],
+)
+def test_pseudonymize_nombres_reales_siguen_enmascarandose(
+    texto: str, nombre: str
+) -> None:
+    """Un nombre real de 2+ palabras (con tilde o ñ) se sigue enmascarando."""
+    resultado = pseudonymize(texto, [])
+
+    assert "[PERSONA]" in resultado.texto
+    assert nombre not in resultado.texto
+    assert resultado.conteos["persona"] >= 1
+
+
+def test_pseudonymize_pii_genuina_completa_sigue_enmascarandose() -> None:
+    """
+    Regresión dura de la invariante: en una misma oración, un nombre con tilde,
+    un email, un teléfono argentino, un host interno y una tarjeta con disparador
+    contextual se siguen enmascarando y los conteos reflejan cada reemplazo.
+    Si este test falla, el change debilita cobertura de PII genuina.
+    """
+    texto = (
+        "María Núñez (maria.nunez@empresa.com) llamó al +54 261 555-9876 "
+        "porque srv-db01 y su tarjeta numero 4517 6712 3456 7890 no responden"
+    )
+    resultado = pseudonymize(texto, [])
+
+    assert "María Núñez" not in resultado.texto
+    assert "maria.nunez@empresa.com" not in resultado.texto
+    assert "+54 261 555-9876" not in resultado.texto
+    assert "srv-db01" not in resultado.texto
+    assert "4517 6712 3456 7890" not in resultado.texto
+
+    assert "[PERSONA]" in resultado.texto
+    assert "[EMAIL]" in resultado.texto
+    assert "[TELEFONO]" in resultado.texto
+    assert "[HOST]" in resultado.texto
+    assert "[TARJETA]" in resultado.texto
+
+    assert resultado.conteos["email"] == 1
+    assert resultado.conteos["telefono"] == 1
+    assert resultado.conteos["tarjeta"] == 1
+    assert resultado.conteos["host"] == 1
+    assert resultado.conteos["persona"] >= 1
+
+
+def test_pseudonymize_determinante_en_minuscula_no_matchea() -> None:
+    """Un determinante en minúscula dentro de oración no activa la heurística."""
+    resultado = pseudonymize("hoy la PC falla de nuevo", [])
+
+    assert resultado.texto == "hoy la PC falla de nuevo"
+    assert resultado.conteos["persona"] == 0
+
+
+@pytest.mark.parametrize(
+    "texto,conservado",
+    [
+        ("la zona de Río Negro quedó sin servicio", "Río Negro"),
+        ("la sucursal de Córdoba Capital informa", "Córdoba Capital"),
+        (
+            "Clasificado como Soporte Técnico Hardware por el modelo",
+            "Soporte Técnico Hardware",
+        ),
+    ],
+)
+def test_pseudonymize_variantes_acentuadas_se_preservan(
+    texto: str, conservado: str
+) -> None:
+    """
+    Las comparaciones insensibles a tildes cubren la variante acentuada de una
+    frase o de un sector canónico distinto de "Seguridad Informática".
+    """
+    _assert_preservado_sin_persona(texto, conservado)
+
+
+def test_pseudonymize_frase_preservada_junto_a_nombre_real() -> None:
+    """En una oración mixta, la frase preservada se conserva y el nombre se enmascara."""
+    resultado = pseudonymize(
+        "Instalaron el Adobe PDF Reader; lo reportó Juan Pérez", []
+    )
+
+    assert "Adobe PDF Reader" in resultado.texto
+    assert "Juan Pérez" not in resultado.texto
+    assert resultado.conteos["persona"] >= 1
 
 
 
