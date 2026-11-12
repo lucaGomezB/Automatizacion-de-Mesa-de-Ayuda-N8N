@@ -142,7 +142,7 @@ aplicarla de inmediato.
 
 ### D9 — Release y archivo
 
-Release `v1.2.14`: commit de contenido con el dictamen versionado y las fuentes actualizadas,
+Release `v1.3.0`: commit de contenido con el dictamen versionado y las fuentes actualizadas,
 tag anotado y commit siguiente que consigna el hash. Archivo del change en
 `openspec/changes/archive/2026-MM-DD-c-191-...`. `engram sync --project` antes del push.
 
@@ -167,7 +167,7 @@ Apply en el orden de `tasks.md`. El residual Galup (D8) y las actualizaciones de
 pueden aplicar de inmediato; el resto depende del trabajo de campo (recolección, doble
 etiquetado, corrida paga), que los autores hacen fuera del repositorio. La compilación de la
 tesis usa el entorno de registro y `verify_citations.py`. Release (orquestador): rama
-`change/c-191-validacion-fuera-de-muestra-150-casos`, commit de contenido, tag `v1.2.14`,
+`change/c-191-validacion-fuera-de-muestra-150-casos`, commit de contenido, tag `v1.3.0`,
 commit del hash, `engram sync --project`, PR contra `main`. Rollback: revertir las fuentes
 `.tex`, los memos y los artefactos nuevos de `evaluation/data/campana/`; el tag se elimina si
 no se publicó. No hay datos ni código productivo que revertir.

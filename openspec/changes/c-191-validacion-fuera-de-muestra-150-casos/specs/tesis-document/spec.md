@@ -93,5 +93,5 @@ dictamen correspondiente. El dictamen del 2026-11-09 SHALL permanecer versionado
 
 #### Scenario: Dictamen versionado
 
-- **WHEN** se ejecuta `git ls-tree v1.2.14 auditorias/`
+- **WHEN** se ejecuta `git ls-tree v1.3.0 auditorias/`
 - **THEN** figura `Dictamen_Tesis_v10_v1.2.12_CONEAU_2026-11-09.md`
