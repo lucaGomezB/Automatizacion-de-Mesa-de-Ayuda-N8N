@@ -70,7 +70,10 @@ _CATEGORIAS = ("email", "telefono", "host", "persona")
 # ── Escaneo residual (independiente del enmascarado) ────────────────────────
 
 _RE_RESIDUAL_EMAIL = re.compile(r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}")
-_RE_RESIDUAL_PHONE = re.compile(r"\+?\d[\d\s.\-()]{6,}\d")
+# El lookbehind `(?<![\w])` evita marcar corridas de dígitos EMBEBIDAS en un
+# token alfanumérico (p. ej. el nombre de un DLL como "axm0102301239999320002302"),
+# que no son teléfonos. Un teléfono genuino es un token delimitado (c-201).
+_RE_RESIDUAL_PHONE = re.compile(r"(?<![\w])\+?\d[\d\s.\-()]{6,}\d")
 
 # Un telefono argentino tiene >= 9 digitos (area + local). Exigir 9 evita
 # falsos positivos sobre rangos de anios ("2015-2022") o codigos cortos.

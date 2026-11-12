@@ -28,6 +28,7 @@ Referencias:
 """
 
 import re
+import unicodedata
 from dataclasses import dataclass, field
 
 from app.constants import SECTORES_CANONICOS
@@ -103,8 +104,13 @@ _RE_NUMERO_TARJETA = re.compile(
 # Exige al menos 8 dígitos totales para evitar capturar números cortos.
 # El tramo local final acepta 4+ dígitos (`\d{4,}`) para absorber corridas
 # contiguas más largas (p. ej. "261 555 12345") sin dejar un dígito huérfano.
+# El lookbehind `(?<![\w])` evita que una corrida de dígitos EMBEBIDA en un token
+# alfanumérico (p. ej. el código DLL "axm0102301239999320002302" de R067) se
+# fragmente como teléfono: un teléfono genuino es un token delimitado y nunca
+# empieza en medio de una palabra (c-201).
 _RE_TELEFONO = re.compile(
     r"""
+    (?<![\w])  # No arrancar en medio de un token alfanumérico
     (?:
         # Con prefijo internacional +54 (opcional)
         (?:\+54[\s\-]?)?
@@ -146,6 +152,32 @@ _RE_PERSONA = re.compile(
     r"\b",
     re.UNICODE,
 )
+
+# Determinantes, artículos y posesivos en español (c-201 D1).
+# Cuando el patrón de persona captura una frase encabezada por uno de estos
+# términos, el determinante NO forma parte del nombre: se separa y se evalúa
+# solo el resto. "Su PC" / "La PC" / "El ID" / "Las Heras" se preservan;
+# "El Juan Pérez" se enmascara como "El [PERSONA]".
+_DETERMINANTES: frozenset[str] = frozenset({
+    "El", "La", "Los", "Las", "Un", "Una", "Unos", "Unas",
+    "Su", "Sus", "Este", "Esta", "Estos", "Estas",
+    "Ese", "Esa", "Esos", "Esas", "Aquel", "Aquella",
+    "Mi", "Mis", "Tu", "Tus", "Nuestro", "Nuestra", "Nuestros", "Nuestras",
+})
+
+
+def _normalize_for_comparison(texto: str) -> str:
+    """
+    Normaliza un texto para comparaciones insensibles a tildes (c-201 D2/D3).
+
+    Descompone en NFKD, descarta los caracteres combinantes y pasa a minúsculas.
+    Así "Seguridad Informática" y "Seguridad Informatica" colisionan, al igual
+    que "Río Negro" y "Rio Negro". No altera los identificadores de dominio.
+    """
+    descompuesto = unicodedata.normalize("NFKD", texto)
+    sin_combinantes = "".join(c for c in descompuesto if not unicodedata.combining(c))
+    return sin_combinantes.lower()
+
 
 # Lista de exclusión: términos que empiezan con mayúscula pero NO son personas.
 # Incluye los cinco sectores canónicos del dominio (C-27) y arranques de oración
@@ -193,6 +225,19 @@ _TECHNICAL_TERMS: frozenset[str] = frozenset({
     "Microsoft Office",
     "Windows Defender",
     "Power BI",
+    # Productos, áreas, frases de error y topónimos observados (c-201 D3).
+    # Se agregan como FRASE COMPLETA; no se incorporan tokens ambiguos
+    # ("Reader", "Vision", "Framework") al mecanismo de composición, para no
+    # eximir por sí solos frases que podrían ser nombres reales.
+    "Adobe PDF Reader",
+    "Microsoft Vision",
+    "NET Framework",
+    "Recursos Humanos",
+    "Acceso Denegado",
+    "San Juan",
+    "Casa Matriz",
+    "Rio Negro",
+    "Cordoba Capital",
     # Tokens técnicos: permiten eximir frases compuestas solo por ellos
     "Windows",
     "Server",
@@ -212,14 +257,25 @@ _TECHNICAL_TERMS: frozenset[str] = frozenset({
     "Kubernetes",
 })
 
+# Versiones normalizadas (sin tildes, minúsculas) para comparar de forma
+# insensible a tildes sin tocar los strings canónicos de app/constants.py.
+_EXCLUSION_PERSONA_NORMALIZADA: frozenset[str] = frozenset(
+    _normalize_for_comparison(termino) for termino in _EXCLUSION_PERSONA
+)
+_TECHNICAL_TERMS_NORMALIZADA: frozenset[str] = frozenset(
+    _normalize_for_comparison(termino) for termino in _TECHNICAL_TERMS
+)
+
 
 def _is_excluded_persona(matched_text: str) -> bool:
     """
     Determina si un match de la heurística de persona debe preservarse.
 
     Un término se preserva si:
-        - está en la lista de exclusión (sectores canónicos, meses, etc.), o
-        - está en la allowlist de términos técnicos/productos/marcas, o
+        - está en la lista de exclusión (sectores canónicos, meses, etc.),
+          comparado de forma insensible a tildes (c-201 D2), o
+        - está en la allowlist de términos técnicos/productos/marcas/frases,
+          comparado de forma insensible a tildes (c-201 D3), o
         - está compuesto enteramente por tokens técnicos conocidos
           (por ejemplo "Windows Server 2019" o "Microsoft Active Directory").
 
@@ -229,9 +285,10 @@ def _is_excluded_persona(matched_text: str) -> bool:
     Returns:
         True si el texto debe conservarse tal cual; False si debe enmascararse.
     """
-    if matched_text in _EXCLUSION_PERSONA:
+    normalizado = _normalize_for_comparison(matched_text)
+    if normalizado in _EXCLUSION_PERSONA_NORMALIZADA:
         return True
-    if matched_text in _TECHNICAL_TERMS:
+    if normalizado in _TECHNICAL_TERMS_NORMALIZADA:
         return True
     tokens = matched_text.split()
     return bool(tokens) and all(token in _TECHNICAL_TERMS for token in tokens)
@@ -330,14 +387,25 @@ def pseudonymize(text: str, internal_domains: list[str]) -> PseudonymizationResu
     conteos["host"] += n
 
     # 5. PERSONA — heurística regex con lista de exclusión
+    def _es_persona(texto: str) -> bool:
+        """True si `texto` es un candidato a nombre de persona a enmascarar."""
+        return not _is_excluded_persona(texto)
+
     def _replace_persona(match: re.Match) -> str:
         matched_text = match.group(0)
-        if _is_excluded_persona(matched_text):
-            return matched_text
         # Excluir si es una etiqueta ya insertada (ej. [EMAIL])
         if matched_text.startswith("[") and matched_text.endswith("]"):
             return matched_text
-        return _LABEL_PERSONA
+        # D1: un determinante, artículo o posesivo inicial no forma parte del
+        # nombre. Se separa y se evalúa solo el resto con las reglas existentes,
+        # conservando el determinante. El resto de una sola palabra (p. ej.
+        # "Su PC", "El ID", "Las Heras") o un resto excluido se preservan.
+        determinante, _, resto = matched_text.partition(" ")
+        if determinante in _DETERMINANTES and resto:
+            if " " in resto and _es_persona(resto):
+                return f"{determinante} {_LABEL_PERSONA}"
+            return matched_text
+        return _LABEL_PERSONA if _es_persona(matched_text) else matched_text
 
     new_text = _RE_PERSONA.sub(_replace_persona, text)
     # Contar reemplazos de PERSONA

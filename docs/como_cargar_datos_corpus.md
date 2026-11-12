@@ -28,7 +28,10 @@ discrepancia de conteo (OQ2).
 ## 2. Esquema del JSON
 
 Codificacion UTF-8. El documento tiene tres claves de primer nivel:
-`schema_version`, `metadata` y `casos`.
+`schema_version`, `metadata` y `casos`. El bloque siguiente es **ilustrativo del
+formato**: las etiquetas `[HOST]` y `[PERSONA]` que muestra no figuran en el
+corpus del estudio, cuyos incidentes no incluian identificadores personales
+directos.
 
 ```json
 {
@@ -124,7 +127,9 @@ posible.
 
 Cada `descripcion` DEBE estar pseudonimizada antes de ingresar al JSON. Los
 tokens a usar (mismos que emite el modulo del proyecto en
-`App/Backend/app/utils/pseudonymizer.py`):
+`App/Backend/app/utils/pseudonymizer.py`) se listan a continuacion; la tabla es
+**ilustrativa del formato**. El corpus del estudio no contiene estas etiquetas,
+porque no habia identificadores personales directos:
 
 | Token | Reemplaza a |
 |-------|-------------|
@@ -140,7 +145,7 @@ tokens a usar (mismos que emite el modulo del proyecto en
 3. `[HOST]`
 4. `[PERSONA]` (ultimo; es la heuristica mas laxa)
 
-### Ejemplo
+### Ejemplo (ilustrativo del formato)
 
 Texto crudo:
 

@@ -212,6 +212,19 @@ def test_residual_scan_flags_dirty_input():
     assert pc.count_residual_pii("periodo 2015-2022") == {"email": 0, "telefono": 0}
 
 
+def test_residual_scan_ignores_digits_embedded_in_alphanumeric_token():
+    """
+    Una corrida de dígitos EMBEBIDA en un token alfanumérico (p. ej. el nombre
+    de un DLL como ``axm0102301239999320002302``) no es un teléfono: el escaneo
+    residual no debe marcarla (c-201). Un teléfono genuino delimitado por
+    espacios sí se sigue marcando.
+    """
+    dll = 'Falta el dll axm0102301239999320002302 al iniciar'
+    assert pc.count_residual_pii(dll) == {"email": 0, "telefono": 0}
+    # El teléfono genuino delimitado sigue detectándose.
+    assert pc.count_residual_pii("llamar al 261 555 1234") == {"email": 0, "telefono": 1}
+
+
 def test_run_exits_nonzero_when_residual_pii_remains(tmp_path, monkeypatch):
     csv_path = tmp_path / "corpus.csv"
     out_path = tmp_path / "out.csv"

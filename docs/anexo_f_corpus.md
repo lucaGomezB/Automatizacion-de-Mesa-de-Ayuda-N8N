@@ -37,7 +37,12 @@ es multietiqueta: el conjunto de verdad de un caso es
 
 ## Esquema del archivo JSON
 
-El corpus se almacena como un documento JSON codificado en UTF-8:
+El corpus se almacena como un documento JSON codificado en UTF-8. El bloque
+siguiente es **ilustrativo del formato** del esquema: muestra cómo se
+representarían las etiquetas de pseudonimización (`[HOST]`, `[PERSONA]`). El
+corpus del estudio **no** contiene esas etiquetas, porque sus incidentes no
+incluían identificadores personales directos (véase `docs/pseudonymization.md`,
+sección 6 bis).
 
 ```json
 {
@@ -87,7 +92,7 @@ coincidía, la escritura es idempotente (no reescribe).
 | Campo                    | Tipo    | Requerido | Descripción |
 |--------------------------|---------|-----------|-------------|
 | `id`                     | string  | sí        | Identificador único del caso (p. ej. `"R001"`) |
-| `descripcion`            | string  | sí        | Texto del incidente **pseudonimizado** (PII reemplazada por `[EMAIL]`, `[TELEFONO]`, `[HOST]`, `[PERSONA]`) |
+| `descripcion`            | string  | sí        | Texto del incidente **pseudonimizado** (salida del módulo de pseudonimización; en el corpus del estudio no aparecen etiquetas porque no había identificadores personales directos; véase `docs/pseudonymization.md`, sección 6 bis) |
 | `canal_origen`           | string  | sí        | Canal de ingreso (`correo electrónico`, `formulario web`, `llamada telefónica`) |
 | `sector_asignado`        | string  | sí        | Sector principal de verdad, exactamente uno de los cinco canónicos |
 | `sectores_adicionales`   | arreglo | sí        | Sectores adicionales de verdad; `[]` cuando no hay. **No repite** el sector asignado |

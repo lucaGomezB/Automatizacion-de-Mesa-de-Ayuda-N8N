@@ -23,9 +23,64 @@ La separación garantiza que los datos personales nunca crucen la frontera hacia
 | Categoría | Patrón | Etiqueta | Conteo |
 |-----------|--------|----------|--------|
 | Email | RFC-5321 básico (dominio con punto) | `[EMAIL]` | `email` |
+| Tarjeta | 16 dígitos (4-4-4-4 o contiguos) con disparador contextual "tarjeta" | `[TARJETA]` | `tarjeta` |
 | Teléfono | Formatos AR: `+54 261 555-1234`, `2615551234`, `261 555-1234` | `[TELEFONO]` | `telefono` |
 | Host interno | Dominios configurados + fallback: `srv-*`, `pc-*`, `*.local`, `localhost` | `[HOST]` | `host` |
 | Nombre propio | Heurística regex: secuencias de ≥2 palabras capitalizadas (con tildes y `ñ`) | `[PERSONA]` | `persona` |
+
+### Frontera de la heurística de persona (C-201)
+
+La heurística de persona enmascara **nombres reales de dos o más palabras** (con
+tildes y `ñ`), por ejemplo `Juan Pérez`, `María Núñez`. En cambio, **no** enmascara:
+
+- Un **determinante** (artículo o posesivo) inicial seguido de una sola palabra:
+  `Su PC`, `La PC`, `El ID`, `Las Heras`.
+- **Productos, marcas, áreas organizacionales, frases de error y topónimos**
+  listados en la allowlist: `Adobe PDF Reader`, `Microsoft Vision`,
+  `NET Framework`, `Recursos Humanos`, `Acceso Denegado`, `San Juan`,
+  `Casa Matriz`, `Rio Negro`, `Cordoba Capital`, y los términos técnicos ya
+  cubiertos (`Windows Server`, `Active Directory`, `SQL Server`, `Google Chrome`).
+
+#### Regla del determinante inicial (C-201 D1)
+
+Cuando la frase candidata empieza con un determinante, artículo o posesivo en
+español (`El`, `La`, `Los`, `Las`, `Un`, `Una`, `Su`, `Sus`, `Este`, `Ese`, `Mi`,
+`Tu`, `Nuestro`, ...), el determinante **no** forma parte del nombre: se separa y
+se evalúa solo el resto. Si el resto es una sola palabra (`PC`, `ID`) o un
+término excluido, se preserva la frase completa; si el resto sí es un nombre
+(`El Juan Pérez`), se enmascara solo el resto y se conserva el determinante. La
+cobertura de PII genuina NO se debilita: un nombre real en la misma oración se
+sigue enmascarando (`La PC de Juan Pérez` → `La PC de [PERSONA]`).
+
+#### Exclusión de sectores insensible a tildes (C-201 D2)
+
+La comparación contra los cinco sectores canónicos del dominio y contra la
+allowlist es **insensible a tildes**: se normaliza el candidato y cada término
+con `unicodedata` (NFKD, sin caracteres combinantes, minúsculas). Así
+`Seguridad Informática` se preserva igual que `Seguridad Informatica`, y
+`Río Negro` / `Córdoba Capital` caen en la misma entrada que `Rio Negro` /
+`Cordoba Capital`. La normalización es local al pseudonimizador; **no** se tocan
+los strings canónicos de `app/constants.py`.
+
+#### Allowlist por frase completa (C-201 D3)
+
+Las frases observadas se agregan como **frase completa**. No se incorporan
+tokens ambiguos (`Reader`, `Vision`, `Framework`) al mecanismo de composición por
+tokens, porque eximirían por sí solos frases que podrían ser nombres reales.
+
+#### Limitación residual de topónimos (C-201 D4)
+
+Un topónimo no listado y sin determinante inicial sigue siendo un falso positivo
+residual posible; se documenta como limitación, coherente con el trade-off del
+enfoque regex. No se promete cobertura universal de lugares.
+
+### Teléfonos embebidos en tokens alfanuméricos (C-201)
+
+Un teléfono es un token delimitado. Una corrida de dígitos **embebida** en un
+token alfanumérico (p. ej. el nombre de un DLL como
+`axm0102301239999320002302`) NO se clasifica como `[TELEFONO]`, tanto en el
+enmascarado como en el escaneo residual del script de ingesta del corpus. Un
+teléfono genuino delimitado (`261 555 1234`) se sigue enmascarando.
 
 ---
 
@@ -108,9 +163,35 @@ El pseudonymizer usa expresiones regulares, **no NER ni modelos de aprendizaje a
 - Palabras técnicas capitalizadas fuera del listado de exclusión → `[PERSONA]`
 - Números que coincidan con el patrón de teléfono (p. ej. números de versión largos)
 
+Las reglas de C-201 (determinante inicial, exclusión de sectores insensible a
+tildes y allowlist ampliada) **reducen** estos falsos positivos y NO debilitan la
+cobertura de PII genuina, que la suite de `tests/test_pseudonymizer.py` verifica
+con regresiones de nombres reales (con tildes y `ñ`), email, teléfono, host y
+tarjeta.
+
 ### Lista de exclusión
 
 Las cinco categorías canónicas del clasificador (`Seguridad Informatica`, `Soporte Tecnico Hardware`, `Soporte Tecnico Software`, `Bases de Datos`, `Sistemas`) y otras palabras del dominio se excluyen del patrón de nombres para no degradar la clasificación.
+
+---
+
+## 6 bis. Corpus publicado y métricas (C-201 D6)
+
+El archivo `data/Corpus Tesis - Hoja 1 (pseudonimizado).csv` es la salida del
+módulo corregido: NO contiene etiquetas `[PERSONA]` ni `[TELEFONO]` sobre el
+corpus de la tesis (las nueve observadas eran falsos positivos) y coincide con
+`data/corpus_evaluacion_pseudonimizado.json` en las 200 descripciones, ignorando
+espacios finales. El JSON del corpus evaluado NO se modifica. En el corpus del
+estudio no aparecen etiquetas porque los incidentes no contenían identificadores
+personales directos.
+
+**Las métricas reportadas no cambian.** El corpus evaluado es el texto crudo, que
+no contiene PII; con el módulo corregido la pseudonimización del crudo devuelve
+el mismo texto (0 etiquetas), igual que antes. Por eso repetir la corrida de
+clasificación es un **no-op** sobre la evaluación: las predicciones y métricas ya
+reportadas siguen siendo válidas y no se requiere una corrida paga. El único
+efecto observable es en producción: los incidentes nuevos dejan de perder
+términos como `PC`, `Adobe PDF Reader` o `Recursos Humanos` antes de clasificar.
 
 ---
 
