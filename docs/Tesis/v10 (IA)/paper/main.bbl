@@ -2400,7 +2400,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Applied Linguistics}
-      \field{note}{Publicación anticipada en línea (10 de septiembre de 2026). Versión preliminar: arXiv:2409.15334}
+      \field{note}{Versión de revista. Publicación anticipada en línea (10 de septiembre de 2026). Versión preliminar: arXiv:2409.15334}
       \field{title}{Evaluating large language models with tests of {S}panish as a foreign language: pass or fail?}
       \field{year}{2026}
       \verb{doi}
@@ -2814,6 +2814,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{2024 9th International Conference on Computer Science and Engineering (UBMK)}
+      \field{note}{Texto completo de acceso cerrado (IEEE); DOI verificado en Crossref y en OpenAlex (W4405272672) el 2026-11-11. Los datos que la tesis toma de esta obra provienen de su resumen publicado}
       \field{title}{{IT} service desk ticket classification via large language models}
       \field{year}{2024}
       \field{pages}{135\bibrangedash 140}
@@ -7851,7 +7852,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Applied Linguistics}
-      \field{note}{Publicación anticipada en línea (10 de septiembre de 2026). Versión preliminar: arXiv:2409.15334}
+      \field{note}{Versión de revista. Publicación anticipada en línea (10 de septiembre de 2026). Versión preliminar: arXiv:2409.15334}
       \field{title}{Evaluating large language models with tests of {S}panish as a foreign language: pass or fail?}
       \field{year}{2026}
       \verb{doi}
@@ -8265,6 +8266,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{2024 9th International Conference on Computer Science and Engineering (UBMK)}
+      \field{note}{Texto completo de acceso cerrado (IEEE); DOI verificado en Crossref y en OpenAlex (W4405272672) el 2026-11-11. Los datos que la tesis toma de esta obra provienen de su resumen publicado}
       \field{title}{{IT} service desk ticket classification via large language models}
       \field{year}{2024}
       \field{pages}{135\bibrangedash 140}

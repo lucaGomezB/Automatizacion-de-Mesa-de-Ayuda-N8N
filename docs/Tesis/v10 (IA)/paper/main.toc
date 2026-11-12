@@ -116,10 +116,15 @@
 \contentsline {section}{\numberline {H}Especificación del prompt de Gemini 3.6 Flash}{124}{section.1.H}%
 \contentsline {subsection}{\numberline {H.1}Estructura y contenido del prompt}{124}{subsection.1.H.1}%
 \contentsline {subsection}{\numberline {H.2}Parámetros de configuración}{125}{subsection.1.H.2}%
-\contentsline {subsection}{\numberline {H.3}Validación de la respuesta}{125}{subsection.1.H.3}%
+\contentsline {subsection}{\numberline {H.3}Validación de la respuesta}{126}{subsection.1.H.3}%
 \contentsline {subsection}{\numberline {H.4}Iteración y mejora del prompt}{126}{subsection.1.H.4}%
 \contentsline {subsection}{\numberline {H.5}Recomendaciones para futuras iteraciones}{126}{subsection.1.H.5}%
 \contentsline {section}{\numberline {I}Trazabilidad de las correcciones de los dictámenes}{127}{section.1.I}%
 \contentsline {subsection}{\numberline {I.1}Nota de versiones}{127}{subsection.1.I.1}%
 \contentsline {subsection}{\numberline {I.2}Revisiones que originaron las correcciones}{127}{subsection.1.I.2}%
-\contentsline {subsection}{\numberline {I.3}Devolución de segunda instancia del 11 de noviembre de 2026}{131}{subsection.1.I.3}%
+\contentsline {subsection}{\numberline {I.3}Devolución de segunda instancia del 11 de noviembre de 2026}{132}{subsection.1.I.3}%
+\contentsline {section}{\numberline {J}Respuestas del grupo a las preguntas del tribunal}{134}{section.1.J}%
+\contentsline {subsection}{\numberline {J.1}Bloque 1. Procedencia de los datos}{134}{subsection.1.J.1}%
+\contentsline {subsection}{\numberline {J.2}Bloque 2. Contraste de tiempos}{136}{subsection.1.J.2}%
+\contentsline {subsection}{\numberline {J.3}Bloque 3. Clasificación y supervisión humana}{138}{subsection.1.J.3}%
+\contentsline {subsection}{\numberline {J.4}Bloque 4. Marco legal}{140}{subsection.1.J.4}%
