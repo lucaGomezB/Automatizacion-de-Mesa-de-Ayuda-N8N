@@ -2665,6 +2665,18 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Governance**: MEDIUM (7.3 y Anexo I, HIGH en lo factico).
 - **Leer antes**: `openspec/changes/c-196-atender-devolucion-segunda-instancia/{proposal,design,tasks}.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-196).
 
+## FASE 62 — Afinar la escritura y las correcciones por capitulo (c-197)
+
+> Atiende los dos frentes que quedaron abiertos tras c-196: N-02 (auditoria integral del 4 de agosto de 2026 como primera fila de la trazabilidad del Anexo I) y N-07 (concision y claridad por capitulo). No cambia cifras canonicas ni contenido sustantivo; no toca 4.5, 4.8 ni 9.1 por la recitacion de llamadas (N-06, verificada como correcta).
+
+### [C-197] `afinar-escritura-y-correcciones-por-capitulo` — APLICADO (2026-11-11, MEDIUM)
+
+- **Estado**: APLICADO el 2026-11-11. Documentacion de la tesis y derivado `tesis_para_agente.md`; `paper/main.pdf` y `paper/compilacion.md` se recompilan aparte. Pendiente del orquestador: release, `engram sync --project` (nunca `--all`), PR contra `main` con CI en verde. La compilacion queda fuera de este apply por indicacion del usuario.
+- **Scope**: (1) N-02: tabla `tab:trazabilidad-revisiones` al inicio de `sec:anexo-trazabilidad`, con la auditoria del 4 de agosto de 2026 como primera fila (105 hallazgos, 28 criticos, 3,9/10) y las filas de las autoevaluaciones internas y de la devolucion del 11-11; (2) pase de escritura por capitulo: oraciones de mas de 60 palabras de 50 a 11 y de mas de 40 de 273 a 251; "de modo que" de 31 a 1; valoraciones residuales sin respaldo retiradas; (3) derivado `docs/Tesis/v10 (IA)/tesis_para_agente.md` regenerado. Medicion registrada en `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-197).
+- **Dependencias**: `c-196` debe archivarse antes que `c-197` porque el delta MODIFICA un requisito introducido por `c-196` (nota de versiones y trazabilidad del Anexo I). `c-196` esta aplicado y archivado en el arbol de trabajo; no se archiva `c-197` en este apply. No toca `c-191` (de otro autor) ni `c-198`.
+- **Governance**: MEDIUM; Anexo I HIGH en lo factico.
+- **Leer antes**: `openspec/changes/c-197-afinar-escritura-y-correcciones-por-capitulo/{proposal,design,tasks}.md` y `docs/Tesis/Correcciones/dictamen-correcciones.md` (seccion c-197).
+
 ---
 
 ## Notas del analisis

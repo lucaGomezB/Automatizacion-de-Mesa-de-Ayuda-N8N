@@ -4649,3 +4649,74 @@ c-188, c-192 y c-195). La portada imprime la versión 1.2.19 y conserva la fecha
 2026 (la verifican filas de c-190 y no cambió en `v1.2.18`). `v1.2.18` queda superada (inmutable,
 `457b14ae2c77ea221429345602aacc9213878640`). Pendiente del orquestador: `engram sync --project`
 (nunca `--all`), PR contra `main` con CI en verde y push del tag con confirmación del usuario.
+
+## Dictamen v10 / v1.2.19 (2026-11-11) - c-197 (afinar la escritura y las correcciones por capitulo)
+
+Atención de la devolución de segunda instancia del tribunal del 2026-11-11 sobre `v1.2.18`
+(7,0/10) en dos frentes: N-02 (auditoría integral del 4 de agosto de 2026 como primera fila de la
+trazabilidad del Anexo I) y N-07 (concisión y claridad por capítulo). Change `c-197` (docs,
+gobernanza MEDIUM; Anexo I HIGH en lo fáctico). No se recompiló `paper/main.pdf` en este apply: el
+PDF se recompila aparte, por indicación del usuario. El change se aplica sobre `c-196` (release
+`v1.2.19`), que debe archivarse antes que `c-197`.
+
+### N-02: fila de la auditoría del 4 de agosto de 2026
+
+Se agregó `tab:trazabilidad-revisiones` al inicio de `sec:anexo-trazabilidad`, después de la
+subsección "Revisiones que originaron las correcciones" y antes de `tab:anexo-trazabilidad`. La
+primera fila es la auditoría integral del tribunal del 4 de agosto de 2026 (105 hallazgos, 28
+críticos, 3,9/10; `auditorias/Auditoria_Tesis_Gomez_Bustos_Sevilla_040802026.pdf`). Las filas
+siguientes distinguen la serie de nueve autoevaluaciones internas con modelo de lenguaje y la
+devolución del 11 de noviembre de 2026. La prosa remite a la tabla
+(`\autoref{tab:trazabilidad-revisiones}`) y conserva la distinción de los tres tipos de revisión.
+
+### Regla de conteo y medición
+
+La regla D1 se registró en `docs/Tesis/Correcciones/sent_c197.py` (solo lectura): una oración por
+signo de cierre; excluye comandos LaTeX, matemáticas, entornos de tabla/figura/listado y
+comentarios; cuenta "de modo que". La línea base se midió sobre las copias de `HEAD` de las 15
+secciones (rama `main`, 2026-11-11) y el resultado final sobre el árbol de trabajo:
+
+| Medición | Línea base | Resultado |
+|---|---|---|
+| Oraciones | 1201 | 1281 |
+| > 40 palabras | 273 (22,73 %) | 251 (19,59 %) |
+| > 60 palabras | 50 | 11 |
+| "de modo que" | 31 | 1 |
+
+Comando: `python3 docs/Tesis/Correcciones/sent_c197.py <ruta>` (con la ruta de las copias de
+`HEAD` para la línea base y `docs/Tesis/v10 (IA)/paper/sections` para el resultado). La medición
+corrige los valores indicativos del brief (~24 > 60, ~8,8 % > 40, ~29 "de modo que"): la regla
+aplicada sobre las fuentes completas arroja 50 > 60, 22,73 % > 40 y 31 "de modo que". El
+porcentaje de > 40 baja 3,14 puntos y el de > 60 baja de 50 a 11.
+
+### Inventario de pasajes editados por capítulo
+
+| Capítulo | Archivo | Pasajes y motivo |
+|---|---|---|
+| 1 Introducción | `01-introduccion.tex` | Contexto argentino, planteamiento del problema y primer objetivo específico: oraciones partidas; "de modo que" reemplazado por "por lo tanto" (N-07) |
+| 2 Marco teórico | `02-marco-teorico.tex` | ITIL, HITL, calibración, rendimiento multilingüe, NLP y elección de motor: oraciones partidas y "de modo que" acotado (N-07) |
+| 3 Estado del arte | `03-estado-del-arte.tex` | Protocolo de revisión y comparación de modelos: oraciones partidas (N-07) |
+| 4 Marco metodológico | `04-marco-metodologico.tex` | Diseño secuencial, protocolo de medición y construcción del artefacto: oraciones partidas; 4.5 y 4.8 intactas por N-06 (N-07) |
+| 5 Arquitectura | `05-arquitectura.tex` | Capas, filtro determinístico, segunda etapa, camino único y canal de origen: oraciones partidas (N-07) |
+| 6 Implementación | `06-implementacion.tex` | Nodos, notificación, canal telefónico, trazabilidad, Twilio y desafíos: oraciones partidas y "de modo que" acotado (N-07) |
+| 7 Resultados | `07-resultados.tex` | Cobertura de tiempos, casos con error, exactitud del brazo manual, efecto de posición y validación fuera de muestra: oraciones partidas; remisión a cifras ya reportadas (N-07, N-12) |
+| 8 Discusión | `08-discusion.tex` | Dispersión, exactitud laxa, comparación con la literatura, límites y balance: oraciones partidas; 9.1 intacta por N-06 (N-07) |
+| 9 Conclusiones | `09-conclusiones.tex` | Objetivo general, arquitectura y contribuciones: valoraciones sin respaldo retiradas y oraciones partidas (N-07, N-12) |
+| 10 Recomendaciones | `10-recomendaciones.tex` | Calibración, segunda sub-hipótesis, outbox, CMDB, aprendizaje activo y validación fuera de muestra: oraciones partidas y "de modo que" acotado (N-07, N-12) |
+| 11 Aspectos legales | `11-aspectos-legales.tex` | Ley 25.326, transferencias, principios, medidas de seguridad y debriefing: oraciones partidas y "de modo que" acotado; sin cambio de sentido legal (N-07) |
+| 12 Anexos | `12-anexos.tex` | Anexo A (despliegue), Anexo B (configuración y repositorio), Anexo C (esquema), Anexo D (flujo N8N), Anexo E (corpus) y Anexo I (trazabilidad): oraciones partidas; tabla N-02 agregada (N-02, N-07) |
+
+### Guardarraíles
+
+- Cifras canónicas: la foto de `rg -n "73,5|0,6508|0,5207|71,2|W = 363|0,9639|2\.646|32,2|17,76|61,6|0,5569"` no cambió de valor; solo se partieron oraciones. El cotejo con `foto-cifras-c197.txt` no muestra cambios de cifras.
+- `4.5`, `4.8` y `9.1` no se tocaron por N-06 (recitación de llamadas, verificada como correcta).
+- `Bibliography_base.bib` sin cambios.
+- `c-196` no se reintrodujo: el kappa 0,87 sigue sin presentarse como evidencia; los identificadores de cambio siguen fuera del cuerpo (solo aparecen en el Anexo I y en rutas de archivo).
+- `python3 verify_citations.py` (desde `docs/Tesis/v10 (IA)/`) devuelve `STATUS: PASS` (91 entradas, 152 comandos de cita, 0 huérfanas, 0 sin uso).
+
+### Pendiente de compilación
+
+`paper/main.pdf` y `paper/compilacion.md` no se regeneraron en este apply: se recompilan aparte,
+por indicación del usuario. La verificación de 0 `Overfull \hbox` de la tabla nueva, 0 referencias
+indefinidas y el total de páginas queda para esa recompilación. `docs/Tesis/v10 (IA)/tesis_para_agente.md`
+se regeneró con `build_tesis_para_agente.py v1.2.19` (no vacío).
