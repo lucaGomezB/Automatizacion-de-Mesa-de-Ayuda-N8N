@@ -887,7 +887,7 @@ def test_el_readme_de_campana_registra_la_referencia_in_sample_coherente_con_la_
     assert evidencia["generated_at"].startswith("2026-10-07T22:22:01")
     assert "2026-10-07T22:22:01Z" in texto
     commit_in_sample = _campo_del_readme(texto, "commit_in_sample") or ""
-    assert "no registrado" in commit_in_sample and "fec4c42" in commit_in_sample
+    assert "no registrado" in commit_in_sample and "384d23f" in commit_in_sample
     pines_in_sample = _campo_del_readme(texto, "pines_in_sample") or ""
     assert "gemini-3.6-flash" in pines_in_sample and ">=2.20.0" in pines_in_sample
 
