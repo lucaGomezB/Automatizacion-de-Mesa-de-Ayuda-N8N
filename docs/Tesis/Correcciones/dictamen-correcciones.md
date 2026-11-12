@@ -4068,7 +4068,7 @@ como inferencia propia (si alguien lo consulta, citar la página).
 | Rec | Sintesis | Change | Archivo:linea | Ancla | Fragmento verificable | Estado |
 |---|---|---|---|---|---|---|
 | A1 | Derivacion por confianza (0 casos) separada de la derivacion por reportante (147) | c-187 | `07-resultados.tex:150` | `subsec:reduccion-intervencion` | `Derivación e intervención humana en la campaña complementaria` | cerrada |
-| A2 | Orden ejecutado: el contrabalanceo planificado no se ejecuto | c-187 | `04-marco-metodologico.tex:14` | - | `el contrabalanceo planificado no se ejecutó` | cerrada |
+| A2 | Orden ejecutado: el contrabalanceo planificado no se ejecuto | c-187 | `04-marco-metodologico.tex:14` | - | `El contrabalanceo planificado no se ejecutó` | cerrada |
 | A3 | Dos kappa declarados: 0,87 (campana 2026-10) y 0,5569 (complementaria) | c-187 | `07-resultados.tex:249` | - | `kappa de Cohen de 0,5569` | cerrada |
 | A4 | 0,8278 = 125/151 derivaciones de operador, con unidades declaradas | c-187 | `07-resultados.tex:251` | - | `la exactitud estricta fue de 0,8278 (125 de 151 derivaciones de operador` | cerrada |
 | A5 | Imagen derivada de N8N (c-182) declarada en 6.1 | c-187 | `06-implementacion.tex:10` | `subsec:entorno-despliegue` | `sustituye la imagen oficial de N8N por una imagen derivada de` | cerrada |
@@ -4242,7 +4242,7 @@ de los residuos sin recomendación propia (grupo 10).
 | 28 | inv. 28: punto unico de contacto con ITIL (OGC2011_itil) | c-190 | `02-marco-teorico.tex:10` | - | `es propia de ITIL \parencite{OGC2011_itil}` | cerrada |
 | 29 | inv. 29: precios de la Gemini API y nivel de servicio pago declarado | c-190 | `11-aspectos-legales.tex:16` | `subsec:transferencia-internacional` | `El servicio de inferencia operó en el nivel pago de la Gemini API, con créditos prepagos` | cerrada |
 | 30 | inv. 30: bibliografia (Ramya IEEE CSITSS 2018, Kerby, Efron, URLs) | c-190 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:415` | - | `@inproceedings{Paramesh2018_csitss,` | cerrada |
-| Res. 11.3 | Req. nuevos de 11.3 (todos los canales, referencia independiente) | c-190 | `10-recomendaciones.tex:18` | `subsec:medicion-intervencion` | `que la revisión alcance a todos los canales, o a una muestra aleatoria de cada uno` | cerrada |
+| Res. 11.3 | Req. nuevos de 11.3 (todos los canales, referencia independiente) | c-190 | `10-recomendaciones.tex:18` | `subsec:medicion-intervencion` | `Que la revisión alcance a todos los canales, o a una muestra aleatoria de cada uno` | cerrada |
 | Res. balance | Redondeo del balance laxo (Delta t = 43,8) | c-190 | `08-discusion.tex:92` | `subsec:balance-neto` | `Una decimal; con \(\Delta t = 43{,}8\)~s dos celdas difieren en 0,1.` | cerrada |
 | Res. repos | Repositorios regionales declarados como limitacion en 3 | c-190 | `03-estado-del-arte.tex:10` | `sec:estado-del-arte` | `la ausencia de búsquedas en repositorios regionales (SciELO, Redalyc y JAIIO)` | cerrada |
 | Res. ISBN | No se agregan ISBN (APA 7 no los exige) | c-190 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:801` | - | `@book{Efron1993_bootstrap,` | cerrada |
@@ -4446,7 +4446,7 @@ los cuatro participantes hayan firmado, con las fechas reales; c-195 no toca eso
 | B2/10 | 8.7: las dos cachés tienen las mismas 200 predicciones | c-195 | `07-resultados.tex:251` | `subsec:resultados-campana-medicion` | `contiene las mismas 200 predicciones` | cerrada |
 | B2/11 | numeros-canonicos: refutada sobre los 147 revisados | c-195 | `docs/Tesis/Correcciones/numeros-canonicos.md:818` | `-` | `refutada sobre los 147 revisados` | cerrada |
 | B3/12 | Zanzotto limitado a retribuir a quienes aportan el conocimiento | c-195 | `02-marco-teorico.tex:32` | `subsec:human-in-the-loop` | `quienes aportan el conocimiento que usan los sistemas.` | cerrada |
-| C1/13 | Minúscula tras el punto y coma | c-195 | `02-marco-teorico.tex:32` | `subsec:human-in-the-loop` | `; los autores de esta tesis infieren` | cerrada |
+| C1/13 | Minúscula tras el punto y coma | c-195 | `02-marco-teorico.tex:32` | `subsec:human-in-the-loop` | `; los autores de esta tesis infieren` | SUPERADA por c-197 |
 | C1/14 | VIS-005 como requisito de la especificación de visibilidad (c-82) | c-195 | `07-resultados.tex:154` | `subsec:reduccion-intervencion` | `requisito \texttt{VIS-005} de la especificación de visibilidad de incidentes` | cerrada |
 | C1/15 | Capítulo 11: la campaña refutó la sub-hipótesis | c-195 | `10-recomendaciones.tex:6` | `sec:recomendaciones` | `cuya sub-hipótesis la campaña complementaria refutó` | SUPERADA por c-196 |
 | C2/16 | 11.3: requisito de tamaño muestral | c-195 | `10-recomendaciones.tex:18` | `subsec:medicion-intervencion` | `Tres requisitos acotan esa medición futura` | cerrada |
@@ -4720,6 +4720,14 @@ porcentaje de > 40 baja 3,14 puntos y el de > 60 baja de 50 a 11.
 por indicación del usuario. La verificación de 0 `Overfull \hbox` de la tabla nueva, 0 referencias
 indefinidas y el total de páginas queda para esa recompilación. `docs/Tesis/v10 (IA)/tesis_para_agente.md`
 se regeneró con `build_tesis_para_agente.py v1.2.19` (no vacío).
+
+### Matriz de trazabilidad (verificada por `verificar_matriz_trazabilidad.py`)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| N-02 | Auditoría del 4 de agosto de 2026 como primera fila de la trazabilidad | c-197 | `12-anexos.tex:239` | `sec:anexo-trazabilidad` | `formuló 105 hallazgos, 28 de ellos críticos` | cerrada |
+| N-02 tabla | `tab:trazabilidad-revisiones` con la auditoría del 4 de agosto de 2026 | c-197 | `12-anexos.tex:255` | `tab:trazabilidad-revisiones` | `105 hallazgos, 28 de ellos críticos; calificación 3,9/10` | cerrada |
+| N-07 | Regla de conteo D1 de la concisión por capítulo | c-197 | `docs/Tesis/Correcciones/sent_c197.py:2` | `-` | `Regla de conteo D1 de c-197` | cerrada |
 
 ## Dictamen v10 / v1.2.19 (2026-11-11) - c-198 (respuestas a las preguntas del tribunal)
 

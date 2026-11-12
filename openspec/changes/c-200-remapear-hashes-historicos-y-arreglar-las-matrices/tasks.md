@@ -1,0 +1,27 @@
+## 1. Safety net y corrección de las matrices de trazabilidad (Goal 2)
+
+- [x] 1.1 Correr el safety net de `evaluation/` con las variables de CI (`DATABASE_URL`, `GEMINI_API_KEY`, `PSEUDONYMIZATION_ENCRYPTION_KEY`, `JWT_SECRET_KEY`, `COST_GUARD_CALLER_HMAC_KEY`, `DIRECTORY_BLIND_INDEX_KEY`): `cd evaluation && pytest tests/test_sensibilidad_ajustes.py tests/test_sensibilidad_corpus.py tests/test_campana.py -q`; registrar la línea base (158 + 2 + 198 passed) antes de tocar nada.
+- [x] 1.2 En `docs/Tesis/Correcciones/dictamen-correcciones.md`, fila c-188 A2 (~4071): actualizar el fragmento a `El contrabalanceo planificado no se ejecutó` (capitalización de c-197), manteniendo el estado `cerrada`; verificar que `sed -n '14p' "docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex"` contiene el fragmento.
+- [x] 1.3 En la misma fila, fila c-190 "Res. 11.3" (~4245): actualizar el fragmento a `Que la revisión alcance a todos los canales, o a una muestra aleatoria de cada uno`, estado `cerrada`; verificar contra `sed -n '18p' "docs/Tesis/v10 (IA)/paper/sections/10-recomendaciones.tex"`.
+- [x] 1.4 En la misma fila, fila c-195 "C1/13" (~4449): marcar el estado `SUPERADA por c-197` (el ítem "minúscula tras el punto y coma" quedó obsoleto cuando c-197 convirtió el `;` en `.` y mayusculó); verificar que el estado nombra `c-197`.
+- [x] 1.5 Agregar a la sección `## Dictamen v10 / v1.2.19 (2026-11-11) - c-197 ...` (~4653) una subsección "Matriz de trazabilidad (verificada por `verificar_matriz_trazabilidad.py`)" con el encabezado de 7 columnas y filas reales: N-02 (`12-anexos.tex:239`, ancla `sec:anexo-trazabilidad`, fragmento `formuló 105 hallazgos, 28 de ellos críticos`) y N-02 tabla (`12-anexos.tex:255`, ancla `tab:trazabilidad-revisiones`), y N-07 (fragmento verificable tomado de `docs/Tesis/Correcciones/sent_c197.py` o del registro); cada fila con `Change = c-197` y estado válido.
+- [x] 1.6 Correr `python3 docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py` y confirmar `Filas: 256; avisos: 80; fallas: 0` (mismo total de filas + 1 o más de la matriz nueva); ajustar anclas/fragmentos de las filas nuevas hasta que pasen.
+
+## 2. Remapeo de `evaluation/` (código, tests y datos) — Strict TDD
+
+- [x] 2.1 RED: en `evaluation/tests/test_campana.py` (aserciones de `d6bb474` en las líneas ~2088, ~2094, ~2099, ~2101) y en `evaluation/tests/test_sensibilidad_ajustes.py` (~1386 `7925903`, ~1387 `a76851e^`), actualizar las expectativas a los SHAs nuevos (`bf5e099`, `0fe5e08a`, `27f8d8c`); correr `cd evaluation && pytest tests/test_campana.py tests/test_sensibilidad_ajustes.py -q` y confirmar que FALLAN por la discrepancia (el código/dato aún emite el viejo). RED confirmado.
+- [x] 2.2 GREEN: en `evaluation/sensibilidad_ajustes.py` (9 ocurrencias: `1368fd8`, `4fedce8`, `7925903`, `a76851e`) y `evaluation/data/sensibilidad_ajustes/procedencia.json` (8 ocurrencias: `1368fd8`, `771b392d...`, `7925903` y su forma completa `7925903ab...`, `a76851e`, `c73fde4`), reemplazar los SHAs de commit por los nuevos; NO tocar los SHAs de blob (`858f1c67`, `334a8edb`, `49267f4a`, `1daceb38`, `e69de29b`); re-correr los tests hasta GREEN.
+- [x] 2.3 TRIANGULAR: verificar que la forma corta y la de 40 hex del mismo commit quedan remapeadas coherentemente (por ejemplo `7925903` y `7925903ab2691321fecedc42c38c42fb3d126a29` → `0fe5e08a...`), y que `evaluation/tests/test_sensibilidad_corpus.py` (comentario con `7925903`) sigue verde; correr los 3 archivos de test y confirmar 358 passed.
+- [x] 2.4 Confirmar que los 9 SHAs de blob siguen intactos: `rg -n '1daceb38|334a8edb|49267f4a|858f1c67|e69de29b' evaluation/` devuelve los mismos valores y `git cat-file -t <blob>` devuelve `blob`.
+
+## 3. Remapeo de `auditorias/` y de los `.txt` extraídos
+
+- [x] 3.1 En los 6 dictámenes de `auditorias/` (`Dictamen_Tesis_v1.0.1_CONEAU_2026-10-22.md`; `Dictamen_Tesis_v10_v1.1.0_CONEAU_2026-10-22.md`; `Dictamen_Tesis_v10_v1.2.5_CONEAU_2026-10-28.md`; `Dictamen_Tesis_v10_v1.2.10_CONEAU_2026-11-08.md`; `Dictamen_Tesis_v10_v1.2.12_CONEAU_2026-11-09.md`; `Dictamen_Tesis_v10_v1.2.13_CONEAU_2026-11-09.md`) reemplazar los 33 SHAs de commit por sus contrapartes saneadas; verificar con `rg -o '<patrón>' auditorias/ | wc -l` que no queda ninguno de los 14 tokens viejos.
+- [x] 3.2 En `docs/Tesis/v10 (IA)/tesis_completa_extraida.txt` y `docs/Tesis/v10 (IA)/tesis_para_evaluacion.txt` remapear las 12 ocurrencias de `d6bb474` a `bf5e099`; registrar en el change que estos `.txt` son instantáneas `pdftotext` de `main.pdf` y que la regeneración desde un PDF recompilado es la vía durable (diferida).
+- [x] 3.3 Verificar la alcanzabilidad: para cada SHA de commit citado en los 13 archivos, `git merge-base --is-ancestor <sha> HEAD` devuelve éxito; y `rg -o '<patrón de los 14 tokens viejos>' auditorias/ "docs/Tesis/v10 (IA)/tesis_completa_extraida.txt" "docs/Tesis/v10 (IA)/tesis_para_evaluacion.txt" evaluation/ | wc -l` devuelve 0.
+
+## 4. Verificación y control de alcance
+
+- [x] 4.1 Confirmar que no se tocaron las fuentes `.tex` ni el PDF: `git status --short -- "docs/Tesis/v10 (IA)/paper/"` no muestra cambios, y `12-anexos.tex` sigue con `bf5e099` (sin `d6bb474`).
+- [x] 4.2 Confirmar el alcance: `git status --short` muestra solo los 13 archivos objetivo, el registro `dictamen-correcciones.md` y los artefactos del change bajo `openspec/changes/c-200-.../`; nada en `App/`, `n8n/` ni el verificador.
+- [x] 4.3 Correr `openspec validate c-200-remapear-hashes-historicos-y-arreglar-las-matrices --strict` y confirmar que pasa.

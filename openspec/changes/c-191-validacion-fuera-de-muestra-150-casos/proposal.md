@@ -45,7 +45,7 @@ dictamen deja un residual de atribución bibliográfica (Galup 2009) que este ch
 - **Residual Galup**: en 2.1 la definición de ITSM pasa a ser general con
   `\parencite{Galup2009_itsm}` (sin atribuirle una afirmación específica) y en 1.2 se retira
   "de Galup".
-- **Release**: tag `v1.2.14` y archivo del change.
+- **Release**: tag `v1.3.0` y archivo del change.
 
 ## Capabilities
 
@@ -93,7 +93,7 @@ dictamen deja un residual de atribución bibliográfica (Galup 2009) que este ch
 El change no modifica `App/`, `n8n/`, `analisis/` ni datos canónicos. Revertir las fuentes
 `.tex`, los memos de `docs/Tesis/Correcciones/` y los artefactos nuevos de
 `evaluation/data/campana/` al commit previo deja el repositorio en el estado de `v1.2.13`; el
-tag `v1.2.14` se elimina si no se publicó. No hay migraciones ni datos productivos que revertir.
+tag `v1.3.0` se elimina si no se publicó. No hay migraciones ni datos productivos que revertir.
 
 ## Dependencies
 

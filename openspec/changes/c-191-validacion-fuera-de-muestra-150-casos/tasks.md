@@ -60,6 +60,6 @@ código de `App/`, `n8n/`, `evaluation/*.py` ni `analisis/`; sí se versionan ar
 ## 7. Release y archivo
 
 - [ ] 7.1 `openspec validate c-191-validacion-fuera-de-muestra-150-casos --strict --no-interactive`. Verificación: pasa.
-- [ ] 7.2 Commit de contenido con las fuentes, los memos y los artefactos nuevos de `E/`; tag anotado `v1.2.14`; commit siguiente con el hash. Verificación: `git ls-tree v1.2.14 auditorias/` incluye el dictamen; `git diff --stat v1.2.14 HEAD -- S/` muestra solo la línea del hash.
+- [ ] 7.2 Commit de contenido con las fuentes, los memos y los artefactos nuevos de `E/`; tag anotado `v1.3.0`; commit siguiente con el hash. Verificación: `git ls-tree v1.3.0 auditorias/` incluye el dictamen; `git diff --stat v1.3.0 HEAD -- S/` muestra solo la línea del hash. **Número de release definido por los autores (2026-11-12)**: `v1.3.0` es la release que se publica cuando el documento alcanza una puntuación estimada ≥ 9 con las correcciones que solicita la última auditoría del director.
 - [ ] 7.3 `engram sync --project "Automatizacion-de-Mesa-de-Ayuda-N8N"` y PR contra `main`. Verificación: la sincronización no reporta secretos; el PR queda abierto.
 - [ ] 7.4 Archivar el change en `openspec/changes/archive/2026-MM-DD-c-191-validacion-fuera-de-muestra-150-casos/`. Verificación: el directorio existe bajo `archive/`.

@@ -153,7 +153,7 @@ Esa reformulación es aceptable, aunque la oración resultante encadena la infer
 - **Procedencia y configuraciones.** La procedencia de las tres corridas automatizadas, la tabla de configuraciones con tres columnas verificadas y el orden ejecutado de la campaña complementaria están declarados con una precisión que excede la del nivel.
 - **Campaña complementaria.** Están declarados la naturaleza de cada kappa, el mecanismo de derivación por canal, las unidades de la exactitud manual y el denominador de la proporción de tiempo (tiempos de `corpus_campana.json`, 191 casos). También el origen de la salida en vivo telefónica (export de intervenciones) y la predicción que usa el McNemar (caché del 7-10).
 - **Enmascaramiento.** El operador autor queda explícitamente fuera de la atenuación del efecto Hawthorne, y su consecuencia llega a 9.1.
-- **Arquitectura e implementación.** El canal telefónico tiene una única descripción, coherente con el código y con las cuatro figuras. Los pines de la Tabla 19 coinciden con `requirements.txt`, `package-lock.json`, `docker-compose.yml` y `settings.py` del tag. La columna "evaluada" del modelo de transcripción es correcta, porque `gemini_stt_model` ya figuraba en `d6bb474`.
+- **Arquitectura e implementación.** El canal telefónico tiene una única descripción, coherente con el código y con las cuatro figuras. Los pines de la Tabla 19 coinciden con `requirements.txt`, `package-lock.json`, `docker-compose.yml` y `settings.py` del tag. La columna "evaluada" del modelo de transcripción es correcta, porque `gemini_stt_model` ya figuraba en `bf5e099`.
 
 *Observaciones de método.*
 
@@ -364,7 +364,7 @@ Se aplica la *Rúbrica de Evaluación de Tesis de Ingeniería* (`Rúbrica.docx`)
 
 - `git diff --stat cda7712 v1.2.13 -- App/ n8n/ docker/ docker-compose.yml`: 24 archivos, 1323 inserciones y 75 supresiones.
 - Sin cambios en `requirements.txt`, `package-lock.json`, `n8n/workflow.json` ni `settings.py`.
-- `gemini_stt_model = "gemini-3.5-transcribe"` en `settings.py` del tag (línea 238) y de `d6bb474` (línea 225).
+- `gemini_stt_model = "gemini-3.5-transcribe"` en `settings.py` del tag (línea 238) y de `bf5e099` (línea 225).
 
 **Pines.** FastAPI 0.162.0, Uvicorn 0.54.0, SQLAlchemy 2.1.6, `google-genai >=2.33.0,<3`, pytest 9.1.1, pytest-cov 7.1.0, React 19.3.1, Python 3.12-slim, PostgreSQL 15.5-alpine y N8N derivada de 2.11.2. En `settings.py`: `gemini-3.6-flash`, 0,3, 0,9, 100 tokens y 30 s. Todo coincide con la Tabla 19.
 
