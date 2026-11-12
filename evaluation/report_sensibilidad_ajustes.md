@@ -4,9 +4,9 @@
 
 - SHA-256 del corpus: `1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb`.
 - Punto de operacion vigente (Settings): tau = 0.5166; pesos del score de correctitud: margen = 0.5000, evidencia = 0.3000, densidad = 0.2000.
-- Blob `keywords_pre_c71 (7925903)`: `858f1c679c660e5e2a88a06544f2cdc3bfcb6328`.
+- Blob `keywords_pre_c71 (0fe5e08)`: `858f1c679c660e5e2a88a06544f2cdc3bfcb6328`.
 - Blob `keywords_vigente`: `334a8edb296cf8e88468164c9a35d57f80952c0e`.
-- Blob `prompt_pre_c72 (a76851e^)`: `1daceb384f0a585941afaf2a9b87de8bffb31db8`.
+- Blob `prompt_pre_c72 (27f8d8c^)`: `1daceb384f0a585941afaf2a9b87de8bffb31db8`.
 - Blob `prompt_vigente`: `49267f4a5cf214bf46899c5177661f1cdbfd10fb`.
 - SHA-256 de `keywords_pre_c71.json`: `8d9e646fae8ec5ff746fdaddecc5301a4db8f0df6e46da6d77eca26e56952e55`.
 - SHA-256 de `prompt_gemini_pre_c72.txt`: `934542f6d6a96ab77c58615419cb8f3265913f24ae01adbc326ecd723bdcc1ec`.
@@ -46,7 +46,7 @@ McNemar sobre los casos comunes (V1 frente a V0):
 
 ## Referencia historica: vocabulario y logica previos a c-71 (V0 + L0)
 
-Replica pura de la logica de 7925903 (confianza w/(w + r + 1e-6), cortocircuito con confianza >= 0.90). Sirve de control de fidelidad contra la linea base documentada por c-71 y de referencia del punto de partida; no se lee como cota del sesgo.
+Replica pura de la logica de 0fe5e08 (confianza w/(w + r + 1e-6), cortocircuito con confianza >= 0.90). Sirve de control de fidelidad contra la linea base documentada por c-71 y de referencia del punto de partida; no se lee como cota del sesgo.
 
 - Casos cortocircuitados: 72/200 (cobertura 0.3600).
 - Aciertos estrictos: 37/72; exactitud 0.5139; IC de Wilson al 95 %: [0.4007, 0.6257].
@@ -70,7 +70,7 @@ Control de fidelidad (documentado por c-71 frente a reproducido):
 
 ## Variante por pliegues
 
-- Estado: no factible. El diff de c-71 (commit 1368fd8) solo agrega 62 patrones bajo cinco comentarios de bloque por sector y no registra que casos del corpus motivaron cada patron; el mensaje del commit y los artefactos de c-71 describen el procedimiento en forma generica. Reconstruir el vocabulario por pliegues exigiria una regla de atribucion por patron que el repositorio no permite verificar, y el resultado dependeria de la regla elegida (un grado de libertad que el pre-registro D2 excluye). Reversible si los autores aportan la atribucion por patron.
+- Estado: no factible. El diff de c-71 (commit c8112d2) solo agrega 62 patrones bajo cinco comentarios de bloque por sector y no registra que casos del corpus motivaron cada patron; el mensaje del commit y los artefactos de c-71 describen el procedimiento en forma generica. Reconstruir el vocabulario por pliegues exigiria una regla de atribucion por patron que el repositorio no permite verificar, y el resultado dependeria de la regla elegida (un grado de libertad que el pre-registro D2 excluye). Reversible si los autores aportan la atribucion por patron.
 
 ## Sensibilidad global y piso comparativo
 

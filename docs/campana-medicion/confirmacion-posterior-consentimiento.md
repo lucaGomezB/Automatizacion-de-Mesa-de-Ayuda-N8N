@@ -1,7 +1,8 @@
 # Confirmación posterior de información y consentimiento
 
-Plantilla para los cuatro participantes de la campaña complementaria de medición (`E1`, `E2`,
-`O1` y `O2`). Se usa cuando la información y el consentimiento se dieron de forma **verbal** y
+Plantilla para los participantes de la campaña complementaria de medición (`E1`, `E2`,
+`O1` y `O2`) y de la validación fuera de muestra de c-191 (`E3` y `E4`). Se usa cuando la
+información y el consentimiento se dieron de forma **verbal** y
 no quedó un formulario firmado en el momento. Se firma con posterioridad y se conserva en
 **formato físico**, en poder del director del trabajo.
 
@@ -14,7 +15,7 @@ alias y la identidad queda en poder del director, fuera del repositorio.
 
 **Confirmación posterior de información y consentimiento**
 
-Yo, [nombre y apellido], con alias [E1/E2/O1/O2] y código [P<n>], confirmo que:
+Yo, [nombre y apellido], con alias [E1/E2/O1/O2/E3/E4] y código [P<n>], confirmo que:
 
 1. Fui informado/a verbalmente, antes de realizar mis tareas en la campaña complementaria de
    medición, del propósito del estudio, del carácter pseudonimizado de los registros, de la
@@ -31,7 +32,7 @@ Fecha de esta confirmación: ____________________
 
 Firma: ____________________________________________
 
-Alias: [E1/E2/O1/O2]        Código: [P<n>]
+Alias: [E1/E2/O1/O2/E3/E4]        Código: [P<n>]
 
 ---
 
@@ -46,3 +47,5 @@ documento de campaña correspondiente.
 | E2 | etiquetador | 2026-11-01 | 2026-11-10 | director |
 | O1 | operador | 2026-11-01 | 2026-11-10 | director |
 | O2 | operador | 2026-11-01 | 2026-11-10 | director |
+| E3 | etiquetador | 2026-11-10 | por completar | director |
+| E4 | etiquetador | 2026-11-10 | por completar | director |

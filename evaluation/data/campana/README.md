@@ -110,7 +110,8 @@ La copia de campaña tiene más valores nulos que el corpus canónico: es intenc
 
 ### SHA-256 por archivo
 
-Al versionar cada archivo se completa su SHA-256 (en minúsculas, calculado sobre el archivo tal como queda versionado, con fin de línea LF: `.gitattributes` lo fija para los `*.csv`, `*.json` y `*.md` de esta carpeta; un archivo generado en Windows con CRLF se normaliza antes con `sed -i 's/$//' <archivo>`), con el mismo patrón que `evaluation/evidence/README.md`. Mientras un archivo no exista, su hash queda en `pendiente`. Esta tabla no usa el formato `- campo: valor` de la sección de procedencia de la tabla primaria, que lee el test de integridad de c-168.
+Al versionar cada archivo se completa su SHA-256 (en minúsculas, calculado sobre el archivo tal como queda versionado, con fin de línea LF: `.gitattributes` lo fija para los `*.csv`, `*.json` y `*.md` de esta carpeta; un archivo generado en Windows con CRLF se normaliza antes con `sed -i 's/
+$//' <archivo>`), con el mismo patrón que `evaluation/evidence/README.md`. Mientras un archivo no exista, su hash queda en `pendiente`. Esta tabla no usa el formato `- campo: valor` de la sección de procedencia de la tabla primaria, que lee el test de integridad de c-168.
 
 | Archivo | SHA-256 |
 |---|---|
@@ -162,10 +163,10 @@ empezar, una **submuestra con doble cobertura**:
 
 ## Referencia in-sample de la validación fuera de muestra (c-166)
 
-La corrida in-sample de referencia es la de `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json`, copia congelada del cache de v9 (`generated_at` `2026-10-07T22:22:01Z`; evidencia publicada en `fec4c42`, c-143). El análisis de c-167 la compara con `predicciones_independiente.json` y recibe estos valores como parámetro (`pines_in_sample`). Esta sección usa el formato `- campo: valor`, con nombres distintos de los de la procedencia de la tabla primaria.
+La corrida in-sample de referencia es la de `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json`, copia congelada del cache de v9 (`generated_at` `2026-10-07T22:22:01Z`; evidencia publicada en `384d23f`, c-143). El análisis de c-167 la compara con `predicciones_independiente.json` y recibe estos valores como parámetro (`pines_in_sample`). Esta sección usa el formato `- campo: valor`, con nombres distintos de los de la procedencia de la tabla primaria.
 
 - classifier_version_in_sample: hybrid-v3
-- commit_in_sample: no registrado en la generación (2026-10-07); evidencia publicada en fec4c42 (c-143)
+- commit_in_sample: no registrado en la generación (2026-10-07); evidencia publicada en 384d23f (c-143)
 - pines_in_sample: google_genai >=2.20.0 (rango declarado, versión instalada no registrada); modelo gemini-3.6-flash
 
 Valor del parámetro `pines_in_sample` de c-167 (el `google_genai` del in-sample es un **rango declarado**, no una versión instalada):
@@ -177,18 +178,18 @@ Valor del parámetro `pines_in_sample` de c-167 (el `google_genai` del in-sample
 ### Fuentes de los pines
 
 1. **`openspec/config.yaml`, `stack.inference`**: hoy declara `Gemini 3.6 Flash (google-genai >=2.33,<3)`. El modelo coincide con el de v9; el rango de `google-genai` es el de la configuración **entregada** (`v1.2.7`), no el de la corrida in-sample.
-2. **Anexo B de la tesis (v10), Tabla "Configuración evaluada y configuración entregada"** (`docs/Tesis/v10 (IA)/paper/sections/12-anexos.tex`, etiqueta `tab:configuracion-evaluada-entregada`): la configuración evaluada es la del commit `d6bb474` (2026-10-07), con `google-genai >=2.20.0`, y el modelo `gemini-3.6-flash` figura "sin cambios" entre la evaluada y la entregada.
+2. **Anexo B de la tesis (v10), Tabla "Configuración evaluada y configuración entregada"** (`docs/Tesis/v10 (IA)/paper/sections/12-anexos.tex`, etiqueta `tab:configuracion-evaluada-entregada`): la configuración evaluada es la del commit `bf5e099` (2026-10-07), con `google-genai >=2.20.0`, y el modelo `gemini-3.6-flash` figura "sin cambios" entre la evaluada y la entregada.
 
-Verificación contra el commit evaluado: `git show d6bb474:App/Backend/requirements.txt` declara `google-genai>=2.20.0`, `git show d6bb474:App/Backend/app/config/settings.py` fija `gemini_model = "gemini-3.6-flash"` y `git show d6bb474:App/Backend/app/constants.py` fija `HYBRID_CACHE_VERSION = "hybrid-v3"`. En ese mismo commit `openspec/config.yaml` todavía decía `Gemini 2.5 Flash (google-genai >= 1.0)`: la fuente 1 se actualizó después y **no describe** la corrida de v9.
+Verificación contra el commit evaluado: `git show bf5e099:App/Backend/requirements.txt` declara `google-genai>=2.20.0`, `git show bf5e099:App/Backend/app/config/settings.py` fija `gemini_model = "gemini-3.6-flash"` y `git show bf5e099:App/Backend/app/constants.py` fija `HYBRID_CACHE_VERSION = "hybrid-v3"`. En ese mismo commit `openspec/config.yaml` todavía decía `Gemini 2.5 Flash (google-genai >= 1.0)`: la fuente 1 se actualizó después y **no describe** la corrida de v9.
 
-**Discrepancia declarada**: las dos fuentes difieren en el rango de `google-genai` (`>=2.20.0` evaluada frente a `>=2.33,<3` entregada). Para v9 vale la evaluada (fuente 2 y `git show d6bb474`); el rango de `openspec/config.yaml` es el vigente y se usa para el cache independiente solo como contexto.
+**Discrepancia declarada**: las dos fuentes difieren en el rango de `google-genai` (`>=2.20.0` evaluada frente a `>=2.33,<3` entregada). Para v9 vale la evaluada (fuente 2 y `git show bf5e099`); el rango de `openspec/config.yaml` es el vigente y se usa para el cache independiente solo como contexto.
 
 ### Limitación declarada
 
 La evidencia congelada no registró `commit` ni `pines`: su `cache_meta` trae solo `corpus_hash`, `corpus_count`, `classifier_version` y `generated_at`. Por eso:
 
 - La comparabilidad in-sample/out-of-sample se verifica por `classifier_version` idéntico (`hybrid-v3`) y por `pines`: el `modelo` debe coincidir exactamente. El in-sample solo conserva el **rango** declarado de `google-genai`, mientras que el cache independiente registra la versión **instalada**: la igualdad exacta de versiones instaladas no es verificable, y lo comprobable es que la versión del cache independiente cumpla el rango del in-sample; esa versión se informa junto con los resultados.
-- El `commit` es obligatorio solo en el cache independiente (se registra con `git rev-parse --short HEAD` al generarlo y la corrida falla antes de clasificar si no puede obtenerse). En el in-sample no se puede recuperar el commit de generación: solo se sabe que la cascada `hybrid-v3` está versionada desde `d6bb474` y que la evidencia se publicó en `fec4c42`.
+- El `commit` es obligatorio solo en el cache independiente (se registra con `git rev-parse --short HEAD` al generarlo y la corrida falla antes de clasificar si no puede obtenerse). En el in-sample no se puede recuperar el commit de generación: solo se sabe que la cascada `hybrid-v3` está versionada desde `bf5e099` y que la evidencia se publicó en `384d23f`.
 
 ## Export de intervenciones (c-165)
 
