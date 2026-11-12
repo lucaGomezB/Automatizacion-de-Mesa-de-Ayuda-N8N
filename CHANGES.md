@@ -588,6 +588,14 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 | C-182 tarea 6.1 | Documentar el rollback de la imagen N8N derivada |
 | C-183 tarea 6.2 | Verificacion en navegador (hard refresh) del header |
 
+### Residuales declarados al archivar c-201 y c-202 (2026-11-12)
+
+| Residual | Que |
+|---|---|
+| c-201 (D8) | La regex de telefono con lookbehind no detecta un telefono pegado a una palabra (por ejemplo `tel2615551234`). Tradeoff deliberado: evita fragmentar corridas de digitos embebidas (el codigo DLL de R067) a costa de un caso raro. |
+| c-201 (D4) | Un toponimo no listado y sin determinante puede seguir siendo un falso positivo de `[PERSONA]`; es cobertura por regex, no NER. |
+| c-202 | El PDF de la tesis (`main.pdf`) se recompila en el paso de release `v1.2.20`, fuera del alcance del change; c-202 solo toca las fuentes `.tex`. |
+
 ### Cajas sin tildar que NO son pendientes
 
 - **Stale** (hecho, caja sin tildar): `C-123` (tag `v1.1.1` existe), `C-125`/`C-126` (spec `local-bootstrap` sincronizada, 9 requisitos), `C-158` tarea 7.1 (sin marcadores `PENDIENTE AUTORES`), `C-187` 9.5/9.6, `C-188` 11.6/11.7, `C-195` 8.1-8.3, `C-190` (release/tag/push hechos).
