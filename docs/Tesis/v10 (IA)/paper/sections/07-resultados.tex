@@ -313,7 +313,7 @@ La reducción de la media va del 33,8~\% con \texttt{O1} al 79,7~\% con \texttt{
 
 La fiabilidad entre los dos etiquetadores independientes se calculó sobre el sector principal de los 150 casos. Coincidieron en 103 (acuerdo observado de 0,6867) y su kappa de Cohen fue de 0,6055, con un intervalo asintótico al 95~\% de [0,5186; 0,6924] y un intervalo bootstrap de [0,5175; 0,6839]. El rótulo de Landis y Koch del valor puntual es \emph{sustancial}, y ambos intervalos abarcan las categorías moderada y sustancial. Este valor es menor que el kappa del clasificador contra la referencia (0,7862), que se calcula solo sobre los casos en que los etiquetadores coinciden.
 
-El arbitraje de los 47 casos discordantes por un tercer etiquetador estaba planificado y no se ejecutó en esta versión: queda diferido. Por eso la exactitud fuera de muestra se informa únicamente sobre el n efectivo de 103, con el peor caso como cota, y no se presenta ningún resultado de arbitraje.
+El arbitraje de los casos discordantes se ejecutó en el change c-206: un tercer etiquetador (\texttt{E5}, código \texttt{P11}) arbitró los 64 casos discordantes (47 originales y 17 del refuerzo) y se sumaron 56 casos de refuerzo, de modo que la referencia cubre 206 casos sin exclusión. Sobre ese n, la exactitud estricta es de 0,6893 (142 de 206; IC de Wilson [0,6231; 0,7486]) y la laxa, de 0,7864 (162 de 206; [0,7255; 0,8369]). La estimación con exclusión sobre el n efectivo de 103 (exactitud estricta 0,8447) se conserva como etapa previa y como cota de sensibilidad. Con la referencia arbitrada, la clase \texttt{Sistemas} pasa a 61 casos y deja de ser no estimable (exactitud estricta 0,5082).
 
 \begin{table}[htbp]
 \centering
@@ -325,7 +325,7 @@ El arbitraje de los 47 casos discordantes por un tercer etiquetador estaba plani
 \textbf{Indicador} & \textbf{Valor} & \textbf{Intervalo o nota} \\
 \midrule
 Casos del corpus independiente (\(n\) primario) & 150 & --- \\
-Casos discordantes entre \texttt{E3} y \texttt{E4} (excluidos) & 47 & arbitraje diferido \\
+Casos discordantes entre \texttt{E3} y \texttt{E4} (excluidos del n de 103) & 47 & arbitrados por \texttt{E5} (c-206) \\
 \(n\) efectivo (consenso de \texttt{E3} y \texttt{E4}) & 103 & --- \\
 Acuerdo observado entre \texttt{E3} y \texttt{E4} & 0,6867 (103 de 150) & --- \\
 Kappa de Cohen entre \texttt{E3} y \texttt{E4} & 0,6055 & asintótico [0,5186; 0,6924]; bootstrap [0,5175; 0,6839] \\
@@ -338,10 +338,13 @@ Kappa del clasificador contra la referencia & 0,7862 & asintótico [0,6919; 0,88
 Peor caso (los 47 excluidos fallan) & 0,5800 (87 de 150) & cota inferior de sensibilidad \\
 Mejor caso (los 47 excluidos aciertan) & 0,8933 (134 de 150) & cota superior de sensibilidad \\
 Cota (excluidos a la tasa del límite inferior de Wilson) & 0,8189 & análisis de sensibilidad \\
+\(n\) efectivo (corpus arbitrado sin exclusión) & 206 & --- \\
+Exactitud estricta (corpus arbitrado) & 0,6893 (142 de 206) & Wilson [0,6231; 0,7486] \\
+Exactitud laxa (corpus arbitrado) & 0,7864 & Wilson [0,7255; 0,8369] \\
 \bottomrule
 \end{tabular}
 \par\smallskip
-{\footnotesize\textit{Nota:} los escenarios de peor caso, mejor caso y cota son análisis de sensibilidad al sesgo de exclusión, no mediciones del clasificador sobre los casos excluidos. La exclusión de los discordantes sesga la referencia hacia los casos más fáciles. \textit{Fuente:} elaboración propia a partir del corpus independiente y de las predicciones del clasificador congelado.\par}
+{\footnotesize\textit{Nota:} los escenarios de peor caso, mejor caso y cota son análisis de sensibilidad al sesgo de exclusión, no mediciones del clasificador sobre los casos excluidos. La exclusión de los discordantes sesga la referencia hacia los casos más fáciles. Las filas del corpus arbitrado (206 casos) provienen del arbitraje de \texttt{E5} (change c-206) y son mediciones sin exclusión. \textit{Fuente:} elaboración propia a partir del corpus independiente y de las predicciones del clasificador congelado.\par}
 \end{table}
 
 \paragraph{Comparación con una línea de base clásica.} La comparación con un clasificador supervisado clásico se realizó sobre el mismo n efectivo de 103 casos y con la misma referencia congelada de consenso de \texttt{E3} y \texttt{E4}, de modo que las cifras son comparables con las de la \autoref{tab:fuera-de-muestra}. La línea de base se entrenó con los 200 casos de ajuste y se evaluó con las mismas funciones puras de métricas que el híbrido. La \autoref{tab:linea-base-clasica} reúne las métricas globales. La línea de base (con re-ponderación de clases) queda por debajo del híbrido en las cuatro métricas: 0,6505 frente a 0,8447 en exactitud estricta (67 y 87 aciertos de 103), 0,6699 frente a 0,8738 en exactitud laxa, 0,4877 frente a 0,7447 en macro-F1 y 0,5271 frente a 0,7395 en \emph{balanced accuracy}. Por clase, la línea de base también queda por debajo en cuatro de las cinco clases: \texttt{Seguridad Informatica} 0,5532 frente a 0,8333; \texttt{Soporte Tecnico Hardware} 0,8049 frente a 0,9048; \texttt{Soporte Tecnico Software} 0,7170 frente a 0,8000; y \texttt{Bases de Datos} 0,0000 frente a 0,9630. La única excepción es \texttt{Sistemas}, donde la línea de base obtiene 0,3636 frente a 0,2222 del híbrido, pero sobre 5 casos: la línea de base no corrige la debilidad de esa clase. La caída de \texttt{Bases de Datos} a F1 0,0000 en la línea de base se explica por su único caso de ajuste: el clasificador clásico no puede aprender una clase con un solo ejemplo. La línea de base es un clasificador clásico de TF-IDF y regresión logística, no un modelo ajustado, por lo que la comparación no se presenta como un benchmark definitivo. La lectura ponderada a la prevalencia natural de los 200 casos da, para la línea de base, macro-F1 0,6971 y \emph{balanced accuracy} 0,7438; es una post-estratificación y no una medición nueva. \textit{Fuente:} línea de base, \texttt{evaluation/data/campana/analisis/linea\_de\_base\_clasica\_c210.json}; híbrido, \texttt{evaluation/data/campana/analisis/analisis\_fuera\_de\_muestra\_c205.json}.
