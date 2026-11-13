@@ -54,4 +54,4 @@ corpus de ajuste (`data/*`) ni `evaluation/doble_etiquetado.py`. En la prosa usa
 ## 7. Validación y archivo
 
 - [x] 7.1 `openspec validate c-206-arbitraje-de-los-discordantes-y-refuerzo-de-clases-chicas --strict --no-interactive`. Verificación: imprime `is valid` (exit 0).
-- [ ] 7.2 Archivar el change en `openspec/changes/archive/2026-MM-DD-c-206-arbitraje-de-los-discordantes-y-refuerzo-de-clases-chicas/` con las specs sincronizadas. Verificación: el directorio existe bajo `archive/`.
+- [x] 7.2 Archivar el change en `openspec/changes/archive/2026-MM-DD-c-206-arbitraje-de-los-discordantes-y-refuerzo-de-clases-chicas/` con las specs sincronizadas. Verificación: el directorio existe bajo `archive/`.
