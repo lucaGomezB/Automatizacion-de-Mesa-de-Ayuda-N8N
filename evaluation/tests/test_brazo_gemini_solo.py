@@ -257,3 +257,253 @@ def test_prompt_real_del_backend_coincide_con_docs_prompt_gemini():
 
     sha = bgs.verificar_prompt_congelado(gemini_classifier._PROMPT_TEMPLATE)
     assert len(sha) == 64
+
+
+# ---------------------------------------------------------------------------
+# 1.2 Cache JSONL reanudable y bucle de corrida
+# ---------------------------------------------------------------------------
+def caso(id_: str, desc: str = "no funciona la vpn", sector: str = SECTOR_OK) -> CasoEvaluacion:
+    return CasoEvaluacion(id=id_, descripcion=desc, sector_asignado=sector, sectores_adicionales=[])
+
+
+def casos_de(*ids: str, bloque: str = bgs.BLOQUE_FUERA):
+    return [(bloque, caso(i, f"descripcion {i}")) for i in ids]
+
+
+META = {
+    "corpus_hash_dentro": "a" * 64,
+    "corpus_hash_fuera": "b" * 64,
+    "modelo": "gemini-3.6-flash",
+    "temperatura": 0.3,
+    "top_p": 0.9,
+    "max_output_tokens": 100,
+    "max_reintentos": 2,
+    "prompt_sha256": "c" * 64,
+    "sdk_version": "2.34.0",
+    "precios_usd_por_millon": bgs.PRECIOS_USD_POR_MILLON,
+    "tope_llamadas": 400,
+    "commit": "abc1234",
+}
+
+
+def armar(cliente_base, tope=400):
+    contador = bgs.ContadorLlamadas(tope=tope)
+    cliente = bgs.ClienteInstrumentado(cliente_base, contador)
+    return cliente, clasificador_real(cliente)
+
+
+def contador_de_reloj(paso: float = 0.1):
+    t = {"v": 0.0}
+
+    def reloj():
+        t["v"] += paso
+        return t["v"]
+
+    return reloj
+
+
+def correr(casos, cliente, clasificador, ruta, meta=None, reloj=None):
+    return asyncio.run(
+        bgs.correr_brazo(
+            casos,
+            clasificador,
+            cliente,
+            ruta,
+            META if meta is None else meta,
+            reloj=reloj or contador_de_reloj(),
+            ahora=lambda: "2026-11-20T10:00:00+00:00",
+        )
+    )
+
+
+def lineas(ruta: pathlib.Path) -> List[dict]:
+    return [json.loads(x) for x in ruta.read_text(encoding="utf-8").splitlines()]
+
+
+def test_leer_cache_inexistente_devuelve_vacio(tmp_path):
+    meta, casos, descartes = bgs.leer_cache(tmp_path / "no_existe.jsonl")
+    assert meta is None and casos == {} and descartes == 0
+
+
+def test_corrida_registra_un_caso_por_linea_con_los_campos_comprometidos(tmp_path):
+    ruta = tmp_path / "cache.jsonl"
+    cliente, clasif = armar(ClienteFalso())
+    resultado = correr(casos_de("I001", "I002"), cliente, clasif, ruta)
+    assert (resultado.registrados, resultado.omitidos, resultado.pendientes) == (2, 0, 0)
+    registros = lineas(ruta)
+    assert [r["tipo"] for r in registros] == ["meta", "caso", "caso"]
+    primero = registros[1]
+    assert set(primero) == {
+        "tipo", "bloque", "caso_id", "sector_predicho", "confianza", "etapa", "intentos",
+        "latencia_ms", "latencias_intento_ms", "tokens_entrada", "tokens_salida", "tokens_total",
+        "tokens_origen", "error", "t_inicio_utc",
+    }
+    assert primero["caso_id"] == "I001" and primero["bloque"] == bgs.BLOQUE_FUERA
+    assert primero["sector_predicho"] == SECTOR_OK and primero["confianza"] == 0.9
+    assert primero["etapa"] == "gemini" and primero["error"] is None
+    assert primero["intentos"] == 1 and primero["tokens_entrada"] == 800
+    assert primero["t_inicio_utc"] == "2026-11-20T10:00:00+00:00"
+
+
+def test_corrida_envia_a_gemini_el_prompt_completo_con_la_descripcion(tmp_path):
+    base = ClienteFalso()
+    cliente, clasif = armar(base)
+    correr(casos_de("I001"), cliente, clasif, tmp_path / "c.jsonl")
+    enviado = base.llamadas[0]["contents"]
+    assert "descripcion I001" in enviado and "DESCRIPCIÓN DEL INCIDENTE" in enviado
+    assert base.llamadas[0]["model"] == "gemini-3.6-flash"
+
+
+def test_corrida_ningun_caso_queda_en_etapa_deterministica(tmp_path):
+    ruta = tmp_path / "c.jsonl"
+    cliente, clasif = armar(ClienteFalso())
+    correr(casos_de("A1", "A2", "A3", bloque=bgs.BLOQUE_DENTRO), cliente, clasif, ruta)
+    etapas = {r["etapa"] for r in lineas(ruta) if r["tipo"] == "caso"}
+    assert etapas == {"gemini"}
+
+
+def test_respuesta_invalida_se_registra_como_fallback_sin_reintento(tmp_path):
+    ruta = tmp_path / "c.jsonl"
+    cliente, clasif = armar(ClienteFalso(guion=["esto no es json"]))
+    correr(casos_de("I001"), cliente, clasif, ruta)
+    reg = lineas(ruta)[1]
+    assert reg["etapa"] == "fallback" and reg["confianza"] == 0.0
+    assert reg["error"] == "respuesta_invalida" and reg["intentos"] == 1
+
+
+def test_falla_transitoria_y_luego_exito_cuenta_dos_intentos(tmp_path):
+    ruta = tmp_path / "c.jsonl"
+    cliente, clasif = armar(ClienteFalso(guion=[TimeoutError("lento"), json_ok("Sistemas", 0.8)]))
+    correr(casos_de("I001"), cliente, clasif, ruta)
+    reg = lineas(ruta)[1]
+    assert reg["intentos"] == 2 and len(reg["latencias_intento_ms"]) == 2
+    assert reg["sector_predicho"] == "Sistemas" and reg["etapa"] == "gemini" and reg["error"] is None
+
+
+def test_agotados_los_intentos_se_registra_sin_sector_y_sigue_con_el_proximo(tmp_path):
+    ruta = tmp_path / "c.jsonl"
+    cliente, clasif = armar(ClienteFalso(guion=[TimeoutError("x")] * 3))
+    resultado = correr(casos_de("I001", "I002"), cliente, clasif, ruta)
+    registros = [r for r in lineas(ruta) if r["tipo"] == "caso"]
+    assert registros[0]["sector_predicho"] is None and registros[0]["etapa"] == "fallback"
+    assert registros[0]["error"] == "GeminiTimeoutError" and registros[0]["intentos"] == 3
+    assert registros[1]["etapa"] == "gemini"
+    assert resultado.registrados == 2
+
+
+def test_reanudacion_solo_llama_a_los_casos_no_registrados(tmp_path):
+    ruta = tmp_path / "c.jsonl"
+    cliente, clasif = armar(ClienteFalso())
+    correr(casos_de("I001", "I002"), cliente, clasif, ruta)
+    base2 = ClienteFalso()
+    cliente2, clasif2 = armar(base2)
+    resultado = correr(casos_de("I001", "I002", "I003", "I004"), cliente2, clasif2, ruta)
+    assert (resultado.registrados, resultado.omitidos, resultado.pendientes) == (2, 2, 0)
+    assert len(base2.llamadas) == 2
+    ids = [r["caso_id"] for r in lineas(ruta) if r["tipo"] == "caso"]
+    assert ids == ["I001", "I002", "I003", "I004"]
+    assert resultado.llamadas_totales == 4
+
+
+def test_reanudacion_con_todo_registrado_no_llama(tmp_path):
+    ruta = tmp_path / "c.jsonl"
+    cliente, clasif = armar(ClienteFalso())
+    correr(casos_de("I001"), cliente, clasif, ruta)
+    base2 = ClienteFalso()
+    cliente2, clasif2 = armar(base2)
+    resultado = correr(casos_de("I001"), cliente2, clasif2, ruta)
+    assert base2.llamadas == [] and resultado.omitidos == 1 and resultado.registrados == 0
+
+
+def test_cache_con_metadatos_incompatibles_aborta_sin_llamar_ni_modificar(tmp_path):
+    ruta = tmp_path / "c.jsonl"
+    cliente, clasif = armar(ClienteFalso())
+    correr(casos_de("I001"), cliente, clasif, ruta)
+    antes = ruta.read_bytes()
+    base2 = ClienteFalso()
+    cliente2, clasif2 = armar(base2)
+    otra = dict(META, modelo="otro-modelo")
+    with pytest.raises(bgs.CacheIncompatibleError) as exc:
+        correr(casos_de("I001", "I002"), cliente2, clasif2, ruta, meta=otra)
+    assert "modelo" in str(exc.value)
+    assert base2.llamadas == [] and ruta.read_bytes() == antes
+
+
+@pytest.mark.parametrize("clave,valor", [("prompt_sha256", "d" * 64), ("corpus_hash_fuera", "e" * 64)])
+def test_cache_incompatible_por_prompt_o_corpus(tmp_path, clave, valor):
+    ruta = tmp_path / "c.jsonl"
+    cliente, clasif = armar(ClienteFalso())
+    correr(casos_de("I001"), cliente, clasif, ruta)
+    cliente2, clasif2 = armar(ClienteFalso())
+    with pytest.raises(bgs.CacheIncompatibleError) as exc:
+        correr(casos_de("I002"), cliente2, clasif2, ruta, meta=dict(META, **{clave: valor}))
+    assert clave in str(exc.value)
+
+
+def test_metadatos_que_no_afectan_la_compatibilidad_se_ignoran(tmp_path):
+    ruta = tmp_path / "c.jsonl"
+    cliente, clasif = armar(ClienteFalso())
+    correr(casos_de("I001"), cliente, clasif, ruta)
+    cliente2, clasif2 = armar(ClienteFalso())
+    resultado = correr(casos_de("I001", "I002"), cliente2, clasif2, ruta, meta=dict(META, commit="otro999"))
+    assert resultado.registrados == 1
+
+
+def test_tope_alcanzado_conserva_lo_hecho_y_reporta_pendientes(tmp_path):
+    ruta = tmp_path / "c.jsonl"
+    base = ClienteFalso()
+    cliente, clasif = armar(base, tope=2)
+    resultado = correr(casos_de("I001", "I002", "I003", "I004"), cliente, clasif, ruta)
+    assert resultado.tope_alcanzado is True
+    assert (resultado.registrados, resultado.pendientes) == (2, 2)
+    assert len(base.llamadas) == 2
+    assert [r["caso_id"] for r in lineas(ruta) if r["tipo"] == "caso"] == ["I001", "I002"]
+
+
+def test_tope_alcanzado_en_pleno_reintento_descarta_el_caso_pero_cuenta_la_llamada(tmp_path):
+    ruta = tmp_path / "c.jsonl"
+    base = ClienteFalso(guion=[TimeoutError("x")])
+    cliente, clasif = armar(base, tope=1)
+    resultado = correr(casos_de("I001", "I002"), cliente, clasif, ruta)
+    assert resultado.tope_alcanzado and resultado.registrados == 0 and resultado.pendientes == 2
+    assert len(base.llamadas) == 1
+    assert lineas(ruta)[-1] == {"tipo": "descarte", "caso_id": "I001", "intentos": 1}
+    # Al reanudar con el mismo tope, el descarte cuenta: no queda margen para llamar.
+    base2 = ClienteFalso()
+    cliente2, clasif2 = armar(base2, tope=1)
+    resultado2 = correr(casos_de("I001", "I002"), cliente2, clasif2, ruta)
+    assert base2.llamadas == [] and resultado2.tope_alcanzado and resultado2.llamadas_totales == 1
+
+
+def test_el_tope_es_acumulado_entre_reanudaciones(tmp_path):
+    ruta = tmp_path / "c.jsonl"
+    cliente, clasif = armar(ClienteFalso(), tope=3)
+    correr(casos_de("I001", "I002"), cliente, clasif, ruta)
+    base2 = ClienteFalso()
+    cliente2, clasif2 = armar(base2, tope=3)
+    resultado = correr(casos_de("I001", "I002", "I003", "I004"), cliente2, clasif2, ruta)
+    assert len(base2.llamadas) == 1 and resultado.registrados == 1
+    assert resultado.tope_alcanzado and resultado.pendientes == 1
+
+
+def test_cola_truncada_por_un_corte_se_repara_y_el_caso_se_repite(tmp_path):
+    ruta = tmp_path / "c.jsonl"
+    cliente, clasif = armar(ClienteFalso())
+    correr(casos_de("I001", "I002"), cliente, clasif, ruta)
+    texto = ruta.read_text(encoding="utf-8")
+    corte = texto[: texto.rstrip("\n").rfind("\n") + 1] + '{"tipo": "caso", "caso_id": "I00'
+    ruta.write_text(corte, encoding="utf-8")
+    base2 = ClienteFalso()
+    cliente2, clasif2 = armar(base2)
+    correr(casos_de("I001", "I002"), cliente2, clasif2, ruta)
+    assert len(base2.llamadas) == 1
+    assert [r["caso_id"] for r in lineas(ruta) if r["tipo"] == "caso"] == ["I001", "I002"]
+
+
+def test_latencia_total_del_caso_usa_el_reloj_inyectado(tmp_path):
+    ruta = tmp_path / "c.jsonl"
+    cliente, clasif = armar(ClienteFalso())
+    correr(casos_de("I001"), cliente, clasif, ruta, reloj=reloj_falso([10.0, 10.75]))
+    reg = lineas(ruta)[1]
+    assert reg["latencia_ms"] == pytest.approx(750.0)
+    assert len(reg["latencias_intento_ms"]) == 1
