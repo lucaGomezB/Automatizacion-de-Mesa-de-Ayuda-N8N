@@ -18,7 +18,7 @@
 \contentsline {table}{\numberline {17}{\ignorespaces Confusiones observadas en la clasificación automática, por frontera, con los aciertos laxos entre los errores estrictos}}{86}{table.caption.30}%
 \contentsline {table}{\numberline {18}{\ignorespaces Tiempo del brazo manual de la campaña complementaria por operador y reducción frente al brazo automatizado de la misma campaña}}{88}{table.caption.33}%
 \contentsline {table}{\numberline {19}{\ignorespaces Validación fuera de muestra del clasificador congelado \texttt {hybrid-v3} sobre el corpus independiente}}{92}{table.caption.37}%
-\contentsline {table}{\numberline {20}{\ignorespaces Comparación de la línea de base clásica con el híbrido \texttt {hybrid-v3} sobre el mismo n efectivo de 103 casos}}{93}{table.caption.39}%
+\contentsline {table}{\numberline {20}{\ignorespaces Comparación de la línea de base clásica con el híbrido \texttt {hybrid-v3} sobre los 206 casos fuera de muestra arbitrados}}{93}{table.caption.39}%
 \contentsline {table}{\numberline {21}{\ignorespaces Exactitud mínima de equilibrio y balance neto trimestral según la tasa de derivación errónea manual y el costo por derivación}}{105}{table.caption.41}%
 \contentsline {table}{\numberline {22}{\ignorespaces Cumplimiento de los objetivos del trabajo y evidencia de respaldo}}{109}{table.caption.42}%
 \contentsline {table}{\numberline {23}{\ignorespaces Configuración evaluada, configuración entregada y configuración de la campaña complementaria}}{129}{table.caption.50}%
