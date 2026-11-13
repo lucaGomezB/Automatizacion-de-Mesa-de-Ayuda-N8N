@@ -28,6 +28,7 @@ de las ramas consumidoras").
 - **Upsert c-207**: `c-207-atender-el-dictamen-coneau-v1-3-0` (aplicado el 2026-11-13) agrega la Sección 3.21 (dictamen CONEAU sobre `v1.3.0`: IC al 95 % de la reducción relativa del tiempo de registro `0,7116`; acuerdo observado y kappa entre `E3` y `E4` sobre los `150` casos del corpus independiente; balance neto con referencia común y su IC por caso). No modifica ningún valor `vigente` de las Secciones 3.1 a 3.20; la lectura del balance de la Sección 3.11 (asimétrica: `e_aut` contra el etiquetado original y `e_man` contra el consenso de `E1`/`E2`) queda superada por la Sección 3.21 (c). Fecha: 2026-11-13.
 - **Upsert c-210**: `c-210-medicion-de-la-linea-de-base` (aplicado el 2026-11-13) agrega la Sección 3.22 (comparación de la línea de base clásica con el híbrido `hybrid-v3` sobre el mismo n efectivo de `103`: métricas globales, F1 por clase, lectura ponderada a la prevalencia natural y veredicto honesto) y registra la integración aditiva en la tesis. No modifica ningún valor ni estado `vigente` de las Secciones 3.1 a 3.21. Fecha: 2026-11-13.
 - **Upsert c-206**: `c-206-arbitraje-de-los-discordantes-y-refuerzo-de-clases-chicas` (aplicado el 2026-11-13) agrega la Sección 3.25 (validación fuera de muestra con el corpus independiente **arbitrado** de `206` casos: el tercer etiquetador `E5` arbitra los `64` discordantes y el refuerzo de `56` casos sube el n efectivo de `103` a `206`, sin exclusión; exactitud estricta y laxa globales con IC de Wilson y métricas por clase con `Sistemas` y `Bases de Datos` estimables). Rota las Secciones 3.19 y 3.20 como **estimación con exclusión** (etapa previa sobre `103`). No modifica ningún valor ni estado `vigente` de las Secciones 3.1 a 3.24. Fecha: 2026-11-13.
+- **Upsert c-213 (seguimiento n = 206)**: `c-213-integrar-la-linea-de-base-en-la-tesis` (aplicado el 2026-11-13) agrega la Sección 3.26 (repetición del contraste pareado de la Sección 3.23 sobre el corpus independiente arbitrado de c-206, `206` casos sin exclusión: tabla 2×2, McNemar exacta y corregida, diferencia de exactitudes con IC 95 % bootstrap pareado, y métricas globales y F1 por clase de la línea de base y del híbrido). No modifica ningún valor ni estado `vigente` de las Secciones 3.1 a 3.25; la Sección 3.23 (contraste sobre `103`) queda intacta. Fecha: 2026-11-13.
 - **Artefacto**: este memo. No se edita ningún `.tex` en este change.
 - **Fecha de verificación**: 2026-10-21.
 - **SHA-256 del corpus** (`data/corpus_evaluacion_pseudonimizado.json`):
@@ -1605,6 +1606,94 @@ Limitación declarada: el resultado **no** se pondera por la prevalencia del cor
 sección (la cifra cruda es la del corpus arbitrado); la lectura ponderada de la etapa con exclusión
 está en la Sección 3.19 (d). La incorporación de estas cifras a la prosa de la tesis se difiere a un
 change posterior (design D8 de c-206).
+
+### 3.26 Contraste pareado con la referencia arbitrada (c-213, c-206, n = 206)
+
+Segunda corrida del contraste pareado de la Sección 3.23 (c-213), esta vez **sobre la
+referencia arbitrada** de la Sección 3.25: el mismo híbrido congelado `hybrid-v3` frente a
+la misma línea de base clásica (TF-IDF de palabras y caracteres + regresión logística,
+entrenada con los `200` casos de ajuste), evaluados sobre los `206` casos del corpus
+`independiente_arbitrado` sin exclusión. **Aditiva**: NO reemplaza ninguna cifra de la
+Sección 3.23 (que sigue vigente sobre los `103` casos con consenso) ni ningún otro valor ni
+estado `vigente` de las Secciones 3.1 a 3.25. No es el brazo solo-LLM: la hipótesis de
+eficiencia sigue sin contrastarse y el objetivo 2 conserva el veredicto "No alcanzado".
+
+Fuente única de las cifras: `evaluation/data/campana/analisis/contraste_linea_de_base_c213_arbitrado.json`
+(y su vista `.md`), producido de solo lectura, sin red ni Gemini, por el MISMO
+`evaluation/data/campana/analisis/contraste_linea_de_base_c213.py`, que aborta sin escribir si el
+híbrido no reproduce sus `142/206` aciertos estrictos versionados (Sección 3.25) declarados con
+`--anclas hibrido=142`.
+
+Comando (desde la raíz del repositorio):
+
+```bash
+python3 evaluation/data/campana/analisis/contraste_linea_de_base_c213.py \
+  --referencia evaluation/data/campana/corpus_independiente_arbitrado.json \
+  --predicciones evaluation/data/campana/predicciones_arbitrado.json \
+  --n-esperado 206 \
+  --nombre contraste_linea_de_base_c213_arbitrado \
+  --anclas hibrido=142
+```
+
+SHA-256 de las salidas versionadas (blob con fin de línea LF):
+`contraste_linea_de_base_c213_arbitrado.json`
+`9fedd6cbda558c883e77d3879095adef759086ce3450abe55dafd6afa711d513`;
+`contraste_linea_de_base_c213_arbitrado.md`
+`6257e6103a3f96d5d4b57abdd86ab74fb2c09412a2d40dcd6f722ca11e29b28d`.
+
+Aciertos estrictos reconstruidos: híbrido `142/206`; línea de base balanceada `101/206`; línea de
+base sin re-ponderación `88/206`. Procedencia: idem (`aciertos`).
+
+**(a) Contraste pareado por variante** (`10000` remuestreos bootstrap percentil pareado, semilla
+`20261021`; McNemar con `evaluation/stats.py::contraste_mcnemar`). La tabla 2×2 se lee filas =
+híbrido, columnas = línea de base.
+
+| Variante | Ambos aciertan | Solo híbrido | Solo línea de base | Ninguno | McNemar exacta bilateral | McNemar corregida | Diferencia `(b − c)/n` | IC 95 % pareado | Estado |
+|---|---|---|---|---|---|---|---|---|---|
+| Balanceada | `81` | `61` | `20` | `44` | `5,656 × 10⁻⁶` | `8,812 × 10⁻⁶` | `0,1990` | `[0,1165; 0,2767]` | vigente (nuevo) |
+| Sin re-ponderación (sensibilidad) | `73` | `69` | `15` | `49` | `1,938 × 10⁻⁹` | `7,348 × 10⁻⁹` | `0,2621` | `[0,1845; 0,3398]` | vigente (nuevo) |
+
+Procedencia: `contraste_linea_de_base_c213_arbitrado.json`
+(`contrastes.balanceada.tabla_2x2`, `.mcnemar`, `.diferencia_exactitud`; idem para
+`sin_repoderacion`). En ambos contrastes `b + c ≥ 25`, de modo que el criterio de `stats.py`
+es la McNemar corregida por continuidad; la exacta se informa por coherencia con la
+Sección 3.23.
+
+**(b) Métricas globales de los tres sistemas (n = 206).**
+
+| Sistema | Exactitud estricta `k/n` (valor) | Exactitud laxa `k/n` (valor) | Macro-F1 (5 clases) | *Balanced accuracy* | Estado |
+|---|---|---|---|---|---|
+| Híbrido `hybrid-v3` | `142/206` (`0,6893`) | `162/206` (`0,7864`) | `0,7024` | `0,7177` | vigente (nuevo; estricta/laxa ya canónicas, Sección 3.25) |
+| Línea de base balanceada | `101/206` (`0,4903`) | `121/206` (`0,5874`) | `0,3884` | `0,4475` | vigente (nuevo) |
+| Línea de base sin re-ponderación | `88/206` (`0,4272`) | `104/206` (`0,5049`) | `0,2935` | `0,3805` | vigente (nuevo) |
+
+Procedencia: `contraste_linea_de_base_c213_arbitrado.json` (`metricas_globales.<sistema>`,
+calculado con `evaluation.linea_de_base.metricas_de_prediccion` sobre `evaluation/metrics.py`).
+La exactitud estricta y laxa del híbrido reproducen las cifras canónicas de la Sección 3.25
+(`142/206` y `162/206`).
+
+**(c) F1 por clase con soporte (n = 206).**
+
+| Sector | Soporte | F1 línea de base (balanceada) | F1 sin re-ponderación | F1 híbrido | Estado |
+|---|---|---|---|---|---|
+| Seguridad Informatica | `32` | `0,4368` | `0,3600` | `0,6349` | vigente (nuevo) |
+| Soporte Tecnico Hardware | `51` | `0,6957` | `0,6250` | `0,8224` | vigente (nuevo) |
+| Soporte Tecnico Software | `46` | `0,5565` | `0,4823` | `0,6408` | vigente (nuevo) |
+| Bases de Datos | `16` | `0,0000` | `0,0000` | `0,8235` | vigente (nuevo) |
+| Sistemas | `61` | `0,2532` | `0,0000` | `0,5905` | vigente (nuevo) |
+
+Procedencia: `contraste_linea_de_base_c213_arbitrado.json`
+(`metricas_globales.<sistema>.por_clase`).
+
+**(d) Lectura acotada.** Sobre los `206` casos del corpus arbitrado (sin exclusión), la diferencia
+de exactitud estricta a favor del híbrido frente a UN clasificador supervisado clásico entrenado con
+los mismos `200` casos es estadísticamente significativa en las dos variantes: `+0,1990` (IC 95 %
+`[0,1165; 0,2767]`) frente a la balanceada y `+0,2621` (IC 95 % `[0,1845; 0,3398]`) frente a la sin
+re-ponderación, con McNemar `p < 0,001` en ambos casos. No es una superioridad general: ambos
+sistemas se desarrollaron con los mismos `200` casos, la línea de base es un único modelo clásico
+sin afinar y la variante balanceada colapsa en `Bases de Datos` (`F1 0,0000`, un solo caso de
+ajuste en esa clase). Procedencia: `contraste_linea_de_base_c213_arbitrado.json`
+(`contrastes.*.diferencia_exactitud`, `metricas_globales.*.por_clase`).
 
 ## 4. Contingencia del gate de intervención humana
 
