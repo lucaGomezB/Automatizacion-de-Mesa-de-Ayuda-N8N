@@ -1,0 +1,54 @@
+# Analisis fuera de muestra (c-191)
+
+Solo lectura; reutiliza `evaluar_fuera_de_muestra` y `resumen_exactitud`. Sin red, sin Gemini.
+
+## Out-of-sample (n efectivo)
+
+- n efectivo: 103
+- Exactitud estricta: 87/103 = 0.8447 IC Wilson [0.7625; 0.9021]
+- Exactitud laxa: 90/103 = 0.8738 IC Wilson [0.7960; 0.9247]
+- Casos excluidos: 47 (de 150 en la tabla primaria; consenso n=103)
+
+Por etapa de la cascada:
+- deterministic: 69 casos; estricta 88.41 %
+- gemini: 34 casos; estricta 76.47 %
+- fallback: 0 casos; estricta n/a
+
+## In-sample (referencia)
+
+- n: 200
+- Exactitud estricta: 147/200 = 0.7350 IC Wilson [0.6698; 0.7913]
+- Exactitud laxa: 179/200 = 0.8950 IC Wilson [0.8448; 0.9303]
+- deterministic: 131 casos; estricta 74.05 %
+- gemini: 69 casos; estricta 72.46 %
+- fallback: 0 casos; estricta n/a
+
+## Global sin ponderar (bloque out-of-sample)
+
+- Estricta: 0.8447 IC Wilson [0.7625; 0.9021]
+- Laxa: 0.8738 IC Wilson [0.7960; 0.9247]
+
+## Global ponderada (design D2, composicion del corpus de 200)
+
+| Sector | n OOS | estricta OOS | w_200 | w*estricta | laxa OOS | w*laxa |
+|---|---|---|---|---|---|---|
+| Seguridad Informatica | 21 | 71.43 % | 0.1550 | 0.1107 | 71.43 % | 0.1107 |
+| Soporte Tecnico Hardware | 40 | 95.00 % | 0.4250 | 0.4037 | 95.00 % | 0.4037 |
+| Soporte Tecnico Software | 24 | 83.33 % | 0.3350 | 0.2792 | 95.83 % | 0.3210 |
+| Bases de Datos | 13 | 100.00 % | 0.0050 | 0.0050 | 100.00 % | 0.0050 |
+| Sistemas | 5 | 20.00 % | 0.0800 | 0.0160 | 20.00 % | 0.0160 |
+
+- Estricta ponderada: 0.8146
+- Laxa ponderada: 0.8565
+
+## Comparabilidad del clasificador
+
+- classifier_version: hybrid-v3; modelo: gemini-3.6-flash; google_genai instalada: 2.34.0
+- rango in-sample: >=2.20.0; rango vigente: >=2.33,<3; commit independiente: 561b3c4
+- limitacion: versión instalada in-sample no registrada: el in-sample solo conserva el rango declarado de google-genai (>=2.20.0); la versión instalada del cache independiente (2.34.0) cumple ese rango y el pin vigente (>=2.33,<3).
+- limitacion: commit in-sample no registrado; comparabilidad verificada por versión y pines
+
+
+## SHA-256 de las salidas
+- analisis_fuera_de_muestra_c191.json: 920cd9b6ec8f0401fc8a55e49650443e1bf31b6d2a28d505091cf0c3be083a88
+- analisis_fuera_de_muestra_c191.md: 573bb07133858df89f9885cb53c5ed9da7529d66c005574aeed889c5e1b2ceed

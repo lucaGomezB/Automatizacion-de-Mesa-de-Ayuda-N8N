@@ -1,0 +1,952 @@
+{
+  "cache_meta": {
+    "corpus_hash": "8cdbec6fc06be3f7c4535f0213919d6d90b69d36e7d820ff97a84b9180cef56d",
+    "corpus_count": 103,
+    "classifier_version": "hybrid-v3",
+    "generated_at": "2026-11-12T23:58:14.687248+00:00",
+    "commit": "561b3c4",
+    "pines": {
+      "google_genai": "2.34.0",
+      "modelo": "gemini-3.6-flash"
+    }
+  },
+  "predictions": [
+    {
+      "caso_id": "I001",
+      "descripcion": "Al usuario se le ha bloqueado su cuenta de dominio. Solicita un desbloqueo.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.5,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I002",
+      "descripcion": "El usuario tiene problemas para poner su nueva contraseña. Solicita un reseteo.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I003",
+      "descripcion": "El usuario cambió de teléfono y ahora tiene problemas en la doble autenticación requerida para loguearse a la VPN desde su casa.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I004",
+      "descripcion": "Al intentar ingresar a una carpeta de red compartida, el usuario tiene problemas de permisos.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I005",
+      "descripcion": "El ID de cliente que el usuario esta intentando buscar en el sistema principal le tira el error “no se han podido obtener los datos del cliente solicitado”. Se solicita revisión por parte de Bases de Datos",
+      "sector_asignado": "Bases de Datos",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I006",
+      "descripcion": "Un usuario reenvía un correo sospechoso de phishing. Solicita revisión de Seguridad Informática.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I007",
+      "descripcion": "Recursos Humanos levanta un alta de acceso para un nuevo ingreso al sector de ventas.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I009",
+      "descripcion": "No se registraron unas transacciones del cliente con ID REDACTADO. Se solicita revisar urgentemente en Bases de Datos",
+      "sector_asignado": "Bases de Datos",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I010",
+      "descripcion": "El usuario olvidó el PIN de su teléfono de empresa.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I011",
+      "descripcion": "Su impresora está atascada luego de que intentó remover unos papeles antes de que terminaran de imprimir.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I012",
+      "descripcion": "2 usuarios se han quedado trabados porque ejecutaron el mismo proceso con 1 minuto de diferencia, los procesos se han quedado tocando los mismos archivos. Se solicita revisión por parte de Bases de Datos",
+      "sector_asignado": "Bases de Datos",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I013",
+      "descripcion": "La impresora del sector de RRHH está atascada, no pueden destrabarla.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I014",
+      "descripcion": "El sector de ventas de sucursal Las Heras solicita un reemplazo de toner, porque el nivel actual de la impresora de ATP está a 10%.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.75,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I016",
+      "descripcion": "Cuando llovió el otro día, le cayó un pedazo de durloc a su monitor, trizandole la pantalla y haciendo ilegible la mitad de la misma.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.5,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I018",
+      "descripcion": "Al intentar abrir un excel pesado, se traba excel.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.5,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I019",
+      "descripcion": "Al intentar abrir un PDF, le sale un mensaje rojo de Adobe que iindica que el producto está sin activar.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.5,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I020",
+      "descripcion": "Un usuario nuevo del sector “Programación” solicita la instalación la última versión del editor Obsidian.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I021",
+      "descripcion": "El “ventilador” de su computadora hace un montón de ruido todo el tiempo.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I022",
+      "descripcion": "Al usuario le han dejado de funcionar todas las macros.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I026",
+      "descripcion": "El sector de adquisiciones pide 5 resmas de hojas formato A4.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.65,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I027",
+      "descripcion": "El ratón del usuario ha dejado de andar en un puerto USB, pero en otro que está más abajo funciona perfectamente.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I028",
+      "descripcion": "Al realizar llamadas telefónicas, se escuchan entrecortadas. ",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I029",
+      "descripcion": "En todo el sector de ATP de la sucursal de San Juan está caída la red.",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I030",
+      "descripcion": "Al intentar acceder al sitio del BCRA, la página web es bloqueada.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I031",
+      "descripcion": "La traba del cable de red de su computadora está floja, causando desconecciones. Solicita un reemplazo.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.16666666666666666,
+      "etapa": "deterministic",
+      "sectores_adicionales": [
+        "Sistemas"
+      ]
+    },
+    {
+      "caso_id": "I032",
+      "descripcion": "La cámara de la sala de directorio no logra conectarse a la reunión de Zoom",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I038",
+      "descripcion": "No puede conectar un pendrive que le dio su jefe a la PC, le figuran problemas de permisos.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.5,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I041",
+      "descripcion": "El usuario nuevo ID REDACTADO no puede acceder a la Base de Datos de consulta de Impuestos.",
+      "sector_asignado": "Bases de Datos",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.75,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I043",
+      "descripcion": "El dashboard gerencial muestra información de hace 3 días en lugar de los cierres de ayer.",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I044",
+      "descripcion": "El sistema de punto de venta (POS) en caja cobra un precio distinto al que figura en el sistema central.",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I046",
+      "descripcion": "El sistema de depósito no reconoce el formato de las etiquetas generadas por un nuevo proveedor.",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I048",
+      "descripcion": "Un usuario borró por error una carpeta importante de OneDrive y necesita recuperarla de la papelera de segundo nivel.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I049",
+      "descripcion": "El usuario solicita un desbloqueo para su cuenta de dominio.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I050",
+      "descripcion": "Al intentar abrir una pestaña de facturación en el sistema secundario, le sale un error “403 Forbidden”",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I051",
+      "descripcion": "El usuario siente una gran lentitud a la hora de ejecutar el script de reportes a partir de la base de datos de Compras mensuales",
+      "sector_asignado": "Bases de Datos",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.5,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I052",
+      "descripcion": "El usuario nota que los datos de su cliente están duplicados en el ID de cliente que le sigue a este. Se solicita corrección vía Bases de Datos.",
+      "sector_asignado": "Bases de Datos",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I053",
+      "descripcion": "Los correos del usuario se quedan atascados en la bandeja de salida y no se envían ni se reciben mensajes nuevos.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I054",
+      "descripcion": "Su notebook se apaga inmediatamente si se desconecta del cargador",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.5,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I055",
+      "descripcion": "El usuario ha vuelto de sus vacaciones, pero está suspendido su usuario de dominio todavía.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I057",
+      "descripcion": "Un contratista o pasante necesita renovar por 30 días más su cuenta antes de que caduque automáticamente.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I059",
+      "descripcion": "En las videollamadas el usuario escucha bien, pero los demás no pueden escucharlo.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I060",
+      "descripcion": "Al intentar hacer click en “Iniciar sesión con cuenta corporativa” en una herramienta externa, la página entra en un bucle de redirección.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I061",
+      "descripcion": "Le sale un cartel de actualización en Office que pide actualizar. No le deja editar ningún archivo.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.75,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I062",
+      "descripcion": "Un empleado que viaja por trabajo no puede ingresar al portal web porque el sistema detecta una IP de otro país.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I067",
+      "descripcion": "Su computadora se cayó del mesón, ahora tiene una pata torcida y no se puede ubicar apropiadamente sobre el mesón.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I068",
+      "descripcion": "Al buscar un número de expediente o factura existente en el portal, el sistema devuelve “0 resultados encontrados”",
+      "sector_asignado": "Sistemas",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I071",
+      "descripcion": "El backup nocturno de las Bases de Datos falló el 15/10/2026 y el 03/11/2026. Se solicita análisis por parte de Bases de Datos.",
+      "sector_asignado": "Bases de Datos",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.5,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I075",
+      "descripcion": "El usuario reporta que la rueda de su ratón ya no funciona. Solicita un reemplazo.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.98,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I076",
+      "descripcion": "La impresora del usuario tiene un cartel en el display que dice “fuera de línea”.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I077",
+      "descripcion": "El usuario reporta que ya no le anda la tecla Enter. Solicita un reemplazo de teclado.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I078",
+      "descripcion": "El usuario trabaja normalmente en su pantall aprincipal, pero su monitor secundario se apaga intermitentemente.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I079",
+      "descripcion": "Se solicita una limpieza de discos de backup de las bases de datos.",
+      "sector_asignado": "Bases de Datos",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.5,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I081",
+      "descripcion": "Sus programas se quedan trabados constantemente en “No responde”",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I083",
+      "descripcion": "Al conectar su laptop a la docking station en la base del escritorio, carga la batería, pero no reconoce los cables de red ni los monitores conectados a ella.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.6,
+      "etapa": "deterministic",
+      "sectores_adicionales": [
+        "Sistemas"
+      ]
+    },
+    {
+      "caso_id": "I084",
+      "descripcion": "El sistema MDM ha bloqueado el teléfono corporativo del usuario.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I085",
+      "descripcion": "Un empleado informa que se mudará de escritorio dentro de la oficina y necesita traslado de su equipo y punto de red.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.9,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I088",
+      "descripcion": "El usuario no puede usar el lector de código de barras, su computadora muestra el mensaje “No se ha podido identificar el dispositivo conectado”",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I090",
+      "descripcion": "El botón de “Agendar reuniones de Zoom” desapareció de la barra de herramientas de Outlook.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.5,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I091",
+      "descripcion": "El ícono de OneDrive muestra una cruz roja indicando que varios archivos locales no pueden subirse",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I092",
+      "descripcion": "El usuario siente una lentitud extrema al realizar una consulta a la Base de Datos de Impuestos",
+      "sector_asignado": "Bases de Datos",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.75,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I093",
+      "descripcion": "Se ha detectado una duplicación accidental de transacciones en la Base de Datos de Transacciones",
+      "sector_asignado": "Bases de Datos",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.5,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I095",
+      "descripcion": "La computadora del usuario no enciende.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.5,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I096",
+      "descripcion": "Al intentar encender el equipo, la pantalla se queda en negro.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.5,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I098",
+      "descripcion": "Su notebook se tarda un montón en cargar al 100% y se descarga muy rápidamente.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I099",
+      "descripcion": "Un asistente no puede ver las reuniones que su gerente agendó en el calendario grupal.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I100",
+      "descripcion": "Al imprimir un documento desde el software de diseño de Marketing, los márgenes salen cortados a pesar de estar bien configurados.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I101",
+      "descripcion": "No se escuchan las llamadas telefónicas que hace el usuario, pero este puede escuchar a quien llama.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I102",
+      "descripcion": "Adobe PDF Reader pide actualizarse para ser utilizado, pero el usuario no tiene los permisos para actualizar por su cuenta.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.75,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I103",
+      "descripcion": "Se solicitan 15 metros de cable coaxial RG59 para reemplazar en las camaras de seguridad de afuera de la sucursal de Casa Matriz.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I104",
+      "descripcion": "Accidentalmente se ha dado de baja el cliente con ID REDACTADO. Se solicita recuperación vía Bases de Datos del mismo.",
+      "sector_asignado": "Bases de Datos",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I105",
+      "descripcion": "Su PC se ha quedado atascada en un bucle de reinicios tras intentar instalar una actualización de Windows.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.375,
+      "etapa": "deterministic",
+      "sectores_adicionales": [
+        "Soporte Tecnico Hardware"
+      ]
+    },
+    {
+      "caso_id": "I106",
+      "descripcion": "Al intentar encender la computadora, el usuario solo ve el mensaje “stand by – no signal”.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I107",
+      "descripcion": "Se solicita un reemplazo de lente “telefoto” para Marketing. El que tenían se rayó.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I108",
+      "descripcion": "El usuario reporta que la pantalla se le queda azul con un error cada 30 minutos. Luego su máquina se resetea sola.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I109",
+      "descripcion": "No le funciona el click izquierdo del ratón, así que solicita un reemplazo.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I111",
+      "descripcion": "La laptop del usuario se pone muy caliente en una zona y luego de un rato se apaga.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I114",
+      "descripcion": "Al usuario le sale un error de conexión a base de datos al intentar entrar al sistema principal",
+      "sector_asignado": "Bases de Datos",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.16666666666666666,
+      "etapa": "deterministic",
+      "sectores_adicionales": [
+        "Sistemas"
+      ]
+    },
+    {
+      "caso_id": "I115",
+      "descripcion": "Durante la semana, la notebook del usuario tiene lineas color magenta horizontales alrededor de la pantalla.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.5,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I116",
+      "descripcion": "No se escucha en los auriculares del usuario, conectando desde el frente y desde atrás en la computadora.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.5,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I117",
+      "descripcion": "La impresora está prendida, pero aparece como “offline” en los equipos vinculados",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.5,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I118",
+      "descripcion": "Se solicita un reemplazo de toner para la impresora ID en sucursal Tupungato.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.75,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I119",
+      "descripcion": "Se solicita un cambio de rodillos para la impresora ID en sucursal Malargue.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I120",
+      "descripcion": "La computadora le muestra “sin conexión a internet”. El cable RJ45 no tiene luces",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.16666666666666666,
+      "etapa": "deterministic",
+      "sectores_adicionales": [
+        "Sistemas"
+      ]
+    },
+    {
+      "caso_id": "I121",
+      "descripcion": "El lector de código de barras de ATP no funciona. No tira la luz roja.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I123",
+      "descripcion": "El cable de Ethernet está conectado, pero la máquina lo muestra como desconectado",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Sistemas",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I124",
+      "descripcion": "El equipo del usuario se apaga automáticamente al pasar unos minutos encendido. Hace ruido fuerte.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I128",
+      "descripcion": "El gerente de la sucursal Malargue esta intentando importar un archivo masivo de la Base de Datos de consulta de Compras y Suministros, No puede y solicita revision.",
+      "sector_asignado": "Bases de Datos",
+      "sector_predicho": "Bases de Datos",
+      "confianza": 0.75,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I131",
+      "descripcion": "Se han bloqueado unas páginas de manera inesperada, estas son necesarias para el funcionamiento laboral.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I133",
+      "descripcion": "El usuario solicita un desbloqueo de su cuenta de dominio.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I134",
+      "descripcion": "El usuario necesita instalar software autorizado, pero no puede porque le faltan los permisos.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I135",
+      "descripcion": "Un empleado activo reporta que su usuario ha sido desactivado repentinamente.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.9,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I136",
+      "descripcion": "El usuario ha derramado café sobre el teclado. Solicita un reemplazo ya que este quedó inutilizable.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I139",
+      "descripcion": "El navegador no detecta su webcam para una reunión.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.85,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I140",
+      "descripcion": "El usuario aparece como conectado en otro equipo y no puede iniciar sesión en el suyo.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I141",
+      "descripcion": "RRHH ha enviado una solicitud urgente de bloqueo y respaldo de accesos de un trabajador que ha dejado la empresa.",
+      "sector_asignado": "Seguridad Informatica",
+      "sector_predicho": "Seguridad Informatica",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I142",
+      "descripcion": "El sistema operativo le advierte al usuario que necesita una limpieza de disco y su equipo se siente lento. Se solicita una limpieza de disco.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I143",
+      "descripcion": "El usuario eliminó accidentalmente un archivo importante de su escritorio y solicita recuperarlo.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I144",
+      "descripcion": "Outlook se queda tildado con un mensaje “actualizando”. No descarga mensajes nuevos.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I146",
+      "descripcion": "El navegador Edge se cierra inesperadamente. No se sabe por qué.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I147",
+      "descripcion": "OneDrive muestra un conflicto al sincronizar documentos.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I148",
+      "descripcion": "El usuario no puede entrar al sistema principal porque le falta .NET Framework.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I149",
+      "descripcion": "El teléfono del usuario no tiene tono.",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sector_predicho": "Soporte Tecnico Hardware",
+      "confianza": 0.0,
+      "etapa": "deterministic",
+      "sectores_adicionales": []
+    },
+    {
+      "caso_id": "I150",
+      "descripcion": "El empleado no puede configurar su cuenta de correo corporativa en su smartphone personal o institucional.",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sector_predicho": "Soporte Tecnico Software",
+      "confianza": 0.95,
+      "etapa": "gemini",
+      "sectores_adicionales": []
+    }
+  ]
+}

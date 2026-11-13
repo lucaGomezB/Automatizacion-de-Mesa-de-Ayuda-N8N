@@ -1,0 +1,956 @@
+{
+  "schema_version": 1,
+  "metadata": {
+    "descripcion": "Corpus independiente (c-191) de la validacion fuera de muestra: 103 casos con referencia por consenso del doble etiquetado E3/E4; 47 discordantes excluidos. Las descripciones son el texto pseudonimizado; los tiempos son null.",
+    "total_casos": 103
+  },
+  "casos": [
+    {
+      "id": "I001",
+      "descripcion": "Al usuario se le ha bloqueado su cuenta de dominio. Solicita un desbloqueo.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I002",
+      "descripcion": "El usuario tiene problemas para poner su nueva contraseña. Solicita un reseteo.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I003",
+      "descripcion": "El usuario cambió de teléfono y ahora tiene problemas en la doble autenticación requerida para loguearse a la VPN desde su casa.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I004",
+      "descripcion": "Al intentar ingresar a una carpeta de red compartida, el usuario tiene problemas de permisos.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I005",
+      "descripcion": "El ID de cliente que el usuario esta intentando buscar en el sistema principal le tira el error “no se han podido obtener los datos del cliente solicitado”. Se solicita revisión por parte de Bases de Datos",
+      "canal_origen": "Correo",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I006",
+      "descripcion": "Un usuario reenvía un correo sospechoso de phishing. Solicita revisión de Seguridad Informática.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I007",
+      "descripcion": "Recursos Humanos levanta un alta de acceso para un nuevo ingreso al sector de ventas.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I009",
+      "descripcion": "No se registraron unas transacciones del cliente con ID REDACTADO. Se solicita revisar urgentemente en Bases de Datos",
+      "canal_origen": "Correo",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I010",
+      "descripcion": "El usuario olvidó el PIN de su teléfono de empresa.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I011",
+      "descripcion": "Su impresora está atascada luego de que intentó remover unos papeles antes de que terminaran de imprimir.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I012",
+      "descripcion": "2 usuarios se han quedado trabados porque ejecutaron el mismo proceso con 1 minuto de diferencia, los procesos se han quedado tocando los mismos archivos. Se solicita revisión por parte de Bases de Datos",
+      "canal_origen": "Correo",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I013",
+      "descripcion": "La impresora del sector de RRHH está atascada, no pueden destrabarla.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I014",
+      "descripcion": "El sector de ventas de sucursal Las Heras solicita un reemplazo de toner, porque el nivel actual de la impresora de ATP está a 10%.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I016",
+      "descripcion": "Cuando llovió el otro día, le cayó un pedazo de durloc a su monitor, trizandole la pantalla y haciendo ilegible la mitad de la misma.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I018",
+      "descripcion": "Al intentar abrir un excel pesado, se traba excel.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I019",
+      "descripcion": "Al intentar abrir un PDF, le sale un mensaje rojo de Adobe que iindica que el producto está sin activar.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I020",
+      "descripcion": "Un usuario nuevo del sector “Programación” solicita la instalación la última versión del editor Obsidian.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I021",
+      "descripcion": "El “ventilador” de su computadora hace un montón de ruido todo el tiempo.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I022",
+      "descripcion": "Al usuario le han dejado de funcionar todas las macros.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I026",
+      "descripcion": "El sector de adquisiciones pide 5 resmas de hojas formato A4.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I027",
+      "descripcion": "El ratón del usuario ha dejado de andar en un puerto USB, pero en otro que está más abajo funciona perfectamente.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I028",
+      "descripcion": "Al realizar llamadas telefónicas, se escuchan entrecortadas. ",
+      "canal_origen": "Correo",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I029",
+      "descripcion": "En todo el sector de ATP de la sucursal de San Juan está caída la red.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I030",
+      "descripcion": "Al intentar acceder al sitio del BCRA, la página web es bloqueada.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I031",
+      "descripcion": "La traba del cable de red de su computadora está floja, causando desconecciones. Solicita un reemplazo.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I032",
+      "descripcion": "La cámara de la sala de directorio no logra conectarse a la reunión de Zoom",
+      "canal_origen": "Correo",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I038",
+      "descripcion": "No puede conectar un pendrive que le dio su jefe a la PC, le figuran problemas de permisos.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I041",
+      "descripcion": "El usuario nuevo ID REDACTADO no puede acceder a la Base de Datos de consulta de Impuestos.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I043",
+      "descripcion": "El dashboard gerencial muestra información de hace 3 días en lugar de los cierres de ayer.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I044",
+      "descripcion": "El sistema de punto de venta (POS) en caja cobra un precio distinto al que figura en el sistema central.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I046",
+      "descripcion": "El sistema de depósito no reconoce el formato de las etiquetas generadas por un nuevo proveedor.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I048",
+      "descripcion": "Un usuario borró por error una carpeta importante de OneDrive y necesita recuperarla de la papelera de segundo nivel.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I049",
+      "descripcion": "El usuario solicita un desbloqueo para su cuenta de dominio.",
+      "canal_origen": "Correo",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I050",
+      "descripcion": "Al intentar abrir una pestaña de facturación en el sistema secundario, le sale un error “403 Forbidden”",
+      "canal_origen": "Correo",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I051",
+      "descripcion": "El usuario siente una gran lentitud a la hora de ejecutar el script de reportes a partir de la base de datos de Compras mensuales",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I052",
+      "descripcion": "El usuario nota que los datos de su cliente están duplicados en el ID de cliente que le sigue a este. Se solicita corrección vía Bases de Datos.",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I053",
+      "descripcion": "Los correos del usuario se quedan atascados en la bandeja de salida y no se envían ni se reciben mensajes nuevos.",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I054",
+      "descripcion": "Su notebook se apaga inmediatamente si se desconecta del cargador",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I055",
+      "descripcion": "El usuario ha vuelto de sus vacaciones, pero está suspendido su usuario de dominio todavía.",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I057",
+      "descripcion": "Un contratista o pasante necesita renovar por 30 días más su cuenta antes de que caduque automáticamente.",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I059",
+      "descripcion": "En las videollamadas el usuario escucha bien, pero los demás no pueden escucharlo.",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I060",
+      "descripcion": "Al intentar hacer click en “Iniciar sesión con cuenta corporativa” en una herramienta externa, la página entra en un bucle de redirección.",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I061",
+      "descripcion": "Le sale un cartel de actualización en Office que pide actualizar. No le deja editar ningún archivo.",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I062",
+      "descripcion": "Un empleado que viaja por trabajo no puede ingresar al portal web porque el sistema detecta una IP de otro país.",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I067",
+      "descripcion": "Su computadora se cayó del mesón, ahora tiene una pata torcida y no se puede ubicar apropiadamente sobre el mesón.",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I068",
+      "descripcion": "Al buscar un número de expediente o factura existente en el portal, el sistema devuelve “0 resultados encontrados”",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Sistemas",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I071",
+      "descripcion": "El backup nocturno de las Bases de Datos falló el 15/10/2026 y el 03/11/2026. Se solicita análisis por parte de Bases de Datos.",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I075",
+      "descripcion": "El usuario reporta que la rueda de su ratón ya no funciona. Solicita un reemplazo.",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I076",
+      "descripcion": "La impresora del usuario tiene un cartel en el display que dice “fuera de línea”.",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I077",
+      "descripcion": "El usuario reporta que ya no le anda la tecla Enter. Solicita un reemplazo de teclado.",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I078",
+      "descripcion": "El usuario trabaja normalmente en su pantall aprincipal, pero su monitor secundario se apaga intermitentemente.",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I079",
+      "descripcion": "Se solicita una limpieza de discos de backup de las bases de datos.",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I081",
+      "descripcion": "Sus programas se quedan trabados constantemente en “No responde”",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I083",
+      "descripcion": "Al conectar su laptop a la docking station en la base del escritorio, carga la batería, pero no reconoce los cables de red ni los monitores conectados a ella.",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I084",
+      "descripcion": "El sistema MDM ha bloqueado el teléfono corporativo del usuario.",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I085",
+      "descripcion": "Un empleado informa que se mudará de escritorio dentro de la oficina y necesita traslado de su equipo y punto de red.",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I088",
+      "descripcion": "El usuario no puede usar el lector de código de barras, su computadora muestra el mensaje “No se ha podido identificar el dispositivo conectado”",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Soporte Tecnico Software"
+      ],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I090",
+      "descripcion": "El botón de “Agendar reuniones de Zoom” desapareció de la barra de herramientas de Outlook.",
+      "canal_origen": "Formulario Web",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I091",
+      "descripcion": "El ícono de OneDrive muestra una cruz roja indicando que varios archivos locales no pueden subirse",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I092",
+      "descripcion": "El usuario siente una lentitud extrema al realizar una consulta a la Base de Datos de Impuestos",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I093",
+      "descripcion": "Se ha detectado una duplicación accidental de transacciones en la Base de Datos de Transacciones",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I095",
+      "descripcion": "La computadora del usuario no enciende.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I096",
+      "descripcion": "Al intentar encender el equipo, la pantalla se queda en negro.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I098",
+      "descripcion": "Su notebook se tarda un montón en cargar al 100% y se descarga muy rápidamente.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I099",
+      "descripcion": "Un asistente no puede ver las reuniones que su gerente agendó en el calendario grupal.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I100",
+      "descripcion": "Al imprimir un documento desde el software de diseño de Marketing, los márgenes salen cortados a pesar de estar bien configurados.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Soporte Tecnico Hardware"
+      ],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I101",
+      "descripcion": "No se escuchan las llamadas telefónicas que hace el usuario, pero este puede escuchar a quien llama.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I102",
+      "descripcion": "Adobe PDF Reader pide actualizarse para ser utilizado, pero el usuario no tiene los permisos para actualizar por su cuenta.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I103",
+      "descripcion": "Se solicitan 15 metros de cable coaxial RG59 para reemplazar en las camaras de seguridad de afuera de la sucursal de Casa Matriz.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I104",
+      "descripcion": "Accidentalmente se ha dado de baja el cliente con ID REDACTADO. Se solicita recuperación vía Bases de Datos del mismo.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I105",
+      "descripcion": "Su PC se ha quedado atascada en un bucle de reinicios tras intentar instalar una actualización de Windows.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I106",
+      "descripcion": "Al intentar encender la computadora, el usuario solo ve el mensaje “stand by – no signal”.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I107",
+      "descripcion": "Se solicita un reemplazo de lente “telefoto” para Marketing. El que tenían se rayó.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I108",
+      "descripcion": "El usuario reporta que la pantalla se le queda azul con un error cada 30 minutos. Luego su máquina se resetea sola.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Soporte Tecnico Hardware"
+      ],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I109",
+      "descripcion": "No le funciona el click izquierdo del ratón, así que solicita un reemplazo.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I111",
+      "descripcion": "La laptop del usuario se pone muy caliente en una zona y luego de un rato se apaga.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I114",
+      "descripcion": "Al usuario le sale un error de conexión a base de datos al intentar entrar al sistema principal",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I115",
+      "descripcion": "Durante la semana, la notebook del usuario tiene lineas color magenta horizontales alrededor de la pantalla.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I116",
+      "descripcion": "No se escucha en los auriculares del usuario, conectando desde el frente y desde atrás en la computadora.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I117",
+      "descripcion": "La impresora está prendida, pero aparece como “offline” en los equipos vinculados",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [
+        "Sistemas"
+      ],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I118",
+      "descripcion": "Se solicita un reemplazo de toner para la impresora ID en sucursal Tupungato.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I119",
+      "descripcion": "Se solicita un cambio de rodillos para la impresora ID en sucursal Malargue.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I120",
+      "descripcion": "La computadora le muestra “sin conexión a internet”. El cable RJ45 no tiene luces",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I121",
+      "descripcion": "El lector de código de barras de ATP no funciona. No tira la luz roja.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I123",
+      "descripcion": "El cable de Ethernet está conectado, pero la máquina lo muestra como desconectado",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I124",
+      "descripcion": "El equipo del usuario se apaga automáticamente al pasar unos minutos encendido. Hace ruido fuerte.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I128",
+      "descripcion": "El gerente de la sucursal Malargue esta intentando importar un archivo masivo de la Base de Datos de consulta de Compras y Suministros, No puede y solicita revision.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Bases de Datos",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I131",
+      "descripcion": "Se han bloqueado unas páginas de manera inesperada, estas son necesarias para el funcionamiento laboral.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I133",
+      "descripcion": "El usuario solicita un desbloqueo de su cuenta de dominio.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I134",
+      "descripcion": "El usuario necesita instalar software autorizado, pero no puede porque le faltan los permisos.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I135",
+      "descripcion": "Un empleado activo reporta que su usuario ha sido desactivado repentinamente.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I136",
+      "descripcion": "El usuario ha derramado café sobre el teclado. Solicita un reemplazo ya que este quedó inutilizable.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I139",
+      "descripcion": "El navegador no detecta su webcam para una reunión.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Soporte Tecnico Hardware"
+      ],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I140",
+      "descripcion": "El usuario aparece como conectado en otro equipo y no puede iniciar sesión en el suyo.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I141",
+      "descripcion": "RRHH ha enviado una solicitud urgente de bloqueo y respaldo de accesos de un trabajador que ha dejado la empresa.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Seguridad Informatica",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I142",
+      "descripcion": "El sistema operativo le advierte al usuario que necesita una limpieza de disco y su equipo se siente lento. Se solicita una limpieza de disco.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I143",
+      "descripcion": "El usuario eliminó accidentalmente un archivo importante de su escritorio y solicita recuperarlo.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I144",
+      "descripcion": "Outlook se queda tildado con un mensaje “actualizando”. No descarga mensajes nuevos.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I146",
+      "descripcion": "El navegador Edge se cierra inesperadamente. No se sabe por qué.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I147",
+      "descripcion": "OneDrive muestra un conflicto al sincronizar documentos.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I148",
+      "descripcion": "El usuario no puede entrar al sistema principal porque le falta .NET Framework.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I149",
+      "descripcion": "El teléfono del usuario no tiene tono.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Hardware",
+      "sectores_adicionales": [],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    },
+    {
+      "id": "I150",
+      "descripcion": "El empleado no puede configurar su cuenta de correo corporativa en su smartphone personal o institucional.",
+      "canal_origen": "Telefono",
+      "sector_asignado": "Soporte Tecnico Software",
+      "sectores_adicionales": [
+        "Seguridad Informatica"
+      ],
+      "tiempo_manual_s": null,
+      "tiempo_automatizado_s": null
+    }
+  ]
+}

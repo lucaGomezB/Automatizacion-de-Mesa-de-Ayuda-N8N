@@ -1,0 +1,242 @@
+{
+  "change": "c-191-validacion-fuera-de-muestra-150-casos",
+  "entradas_sha256": {
+    "corpus_evaluacion_pseudonimizado.json": "1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb",
+    "corpus_independiente.json": "8cdbec6fc06be3f7c4535f0213919d6d90b69d36e7d820ff97a84b9180cef56d",
+    "doble_etiquetado_independiente.csv": "94dc2d739390a4c874e4ecfa70bf8b52266b752ec20d1e47801f2a93a562f6f7",
+    "predicciones_in_sample.json": "89cf956e82f660dd8675a2d23b7b4d17efd62da542c0ba35bea28e0e54572ede",
+    "predicciones_independiente.json": "d5ee19f7b0bf2b56a00026a1bd33a2e11ffeb9b224b6a8efa553460895a915a4"
+  },
+  "excluidos": {
+    "excluidos": 47,
+    "n_efectivo": 103,
+    "total_primaria": 150
+  },
+  "generador": "evaluation/data/campana/analisis/analisis_fuera_de_muestra_c191.py",
+  "global_ponderada": {
+    "estricta": 0.8146309523809524,
+    "formula": "suma_sector (w_sector * exactitud_sector)",
+    "laxa": 0.8565059523809525,
+    "pesos_200": {
+      "Bases de Datos": 0.005,
+      "Seguridad Informatica": 0.155,
+      "Sistemas": 0.08,
+      "Soporte Tecnico Hardware": 0.425,
+      "Soporte Tecnico Software": 0.335
+    },
+    "por_sector": {
+      "Bases de Datos": {
+        "aciertos_estrictos": 13,
+        "aciertos_laxos": 13,
+        "aporte_estricta": 0.005,
+        "aporte_laxa": 0.005,
+        "exactitud_estricta": 1.0,
+        "exactitud_laxa": 1.0,
+        "ic_estricta_wilson": [
+          0.7719046276458016,
+          0.9999999999999999
+        ],
+        "n_200": 1,
+        "n_out_of_sample": 13,
+        "peso_200": 0.005
+      },
+      "Seguridad Informatica": {
+        "aciertos_estrictos": 15,
+        "aciertos_laxos": 15,
+        "aporte_estricta": 0.11071428571428571,
+        "aporte_laxa": 0.11071428571428571,
+        "exactitud_estricta": 0.7142857142857143,
+        "exactitud_laxa": 0.7142857142857143,
+        "ic_estricta_wilson": [
+          0.5004361928391441,
+          0.8618613704787788
+        ],
+        "n_200": 31,
+        "n_out_of_sample": 21,
+        "peso_200": 0.155
+      },
+      "Sistemas": {
+        "aciertos_estrictos": 1,
+        "aciertos_laxos": 1,
+        "aporte_estricta": 0.016,
+        "aporte_laxa": 0.016,
+        "exactitud_estricta": 0.2,
+        "exactitud_laxa": 0.2,
+        "ic_estricta_wilson": [
+          0.03622410863243014,
+          0.6244653702374747
+        ],
+        "n_200": 16,
+        "n_out_of_sample": 5,
+        "peso_200": 0.08
+      },
+      "Soporte Tecnico Hardware": {
+        "aciertos_estrictos": 38,
+        "aciertos_laxos": 38,
+        "aporte_estricta": 0.40375,
+        "aporte_laxa": 0.40375,
+        "exactitud_estricta": 0.95,
+        "exactitud_laxa": 0.95,
+        "ic_estricta_wilson": [
+          0.8349612263085903,
+          0.9861793326138516
+        ],
+        "n_200": 85,
+        "n_out_of_sample": 40,
+        "peso_200": 0.425
+      },
+      "Soporte Tecnico Software": {
+        "aciertos_estrictos": 20,
+        "aciertos_laxos": 23,
+        "aporte_estricta": 0.2791666666666667,
+        "aporte_laxa": 0.3210416666666667,
+        "exactitud_estricta": 0.8333333333333334,
+        "exactitud_laxa": 0.9583333333333334,
+        "ic_estricta_wilson": [
+          0.6414692935030095,
+          0.9332132367136705
+        ],
+        "n_200": 67,
+        "n_out_of_sample": 24,
+        "peso_200": 0.335
+      }
+    }
+  },
+  "global_sin_ponderar": {
+    "estricta": 0.8446601941747572,
+    "ic_estricta_wilson": [
+      0.7624742780120963,
+      0.9020617624322336
+    ],
+    "ic_laxa_wilson": [
+      0.7959587945728204,
+      0.9247352211203261
+    ],
+    "laxa": 0.8737864077669902,
+    "origen": "bloque out-of-sample (cifras crudas)"
+  },
+  "in_sample_referencia": {
+    "classifier_version": "hybrid-v3",
+    "global": {
+      "aciertos_estrictos": 147,
+      "aciertos_laxos": 179,
+      "casos": 200,
+      "exactitud_estricta": 0.735,
+      "exactitud_laxa": 0.895,
+      "ic_estricta_wilson": [
+        0.6698242380737758,
+        0.7913184585289088
+      ],
+      "ic_laxa_wilson": [
+        0.8448196800887696,
+        0.9302925120731899
+      ]
+    },
+    "n": 200,
+    "por_etapa": {
+      "deterministic": {
+        "aciertos_estrictos": 97,
+        "aciertos_laxos": 119,
+        "casos": 131,
+        "exactitud_estricta": 0.7404580152671756,
+        "exactitud_laxa": 0.9083969465648855,
+        "ic_estricta_wilson": [
+          0.659298288754975,
+          0.8079170658621422
+        ],
+        "ic_laxa_wilson": [
+          0.8467026143464803,
+          0.9468218768286233
+        ]
+      },
+      "fallback": {
+        "aciertos_estrictos": 0,
+        "aciertos_laxos": 0,
+        "casos": 0,
+        "exactitud_estricta": null,
+        "exactitud_laxa": null,
+        "ic_estricta_wilson": null,
+        "ic_laxa_wilson": null
+      },
+      "gemini": {
+        "aciertos_estrictos": 50,
+        "aciertos_laxos": 60,
+        "casos": 69,
+        "exactitud_estricta": 0.7246376811594203,
+        "exactitud_laxa": 0.8695652173913043,
+        "ic_estricta_wilson": [
+          0.609527027856669,
+          0.8160547836815831
+        ],
+        "ic_laxa_wilson": [
+          0.7703170006041271,
+          0.9298337216039652
+        ]
+      }
+    },
+    "rotulo": "in-sample"
+  },
+  "metodo": "solo lectura; evaluar_fuera_de_muestra + resumen_exactitud; sin red ni Gemini; deterministico",
+  "out_of_sample": {
+    "classifier_version": "hybrid-v3",
+    "global": {
+      "aciertos_estrictos": 87,
+      "aciertos_laxos": 90,
+      "casos": 103,
+      "exactitud_estricta": 0.8446601941747572,
+      "exactitud_laxa": 0.8737864077669902,
+      "ic_estricta_wilson": [
+        0.7624742780120963,
+        0.9020617624322336
+      ],
+      "ic_laxa_wilson": [
+        0.7959587945728204,
+        0.9247352211203261
+      ]
+    },
+    "n": 103,
+    "por_etapa": {
+      "deterministic": {
+        "aciertos_estrictos": 61,
+        "aciertos_laxos": 62,
+        "casos": 69,
+        "exactitud_estricta": 0.8840579710144928,
+        "exactitud_laxa": 0.8985507246376812,
+        "ic_estricta_wilson": [
+          0.787542594696838,
+          0.9400650185782384
+        ],
+        "ic_laxa_wilson": [
+          0.8050811424505202,
+          0.9499833618915401
+        ]
+      },
+      "fallback": {
+        "aciertos_estrictos": 0,
+        "aciertos_laxos": 0,
+        "casos": 0,
+        "exactitud_estricta": null,
+        "exactitud_laxa": null,
+        "ic_estricta_wilson": null,
+        "ic_laxa_wilson": null
+      },
+      "gemini": {
+        "aciertos_estrictos": 26,
+        "aciertos_laxos": 28,
+        "casos": 34,
+        "exactitud_estricta": 0.7647058823529411,
+        "exactitud_laxa": 0.8235294117647058,
+        "ic_estricta_wilson": [
+          0.6000386207746361,
+          0.8756301446736042
+        ],
+        "ic_laxa_wilson": [
+          0.6648626260015724,
+          0.9165103095462768
+        ]
+      }
+    },
+    "rotulo": "out-of-sample"
+  },
+  "supuesto_d2": "exactitud_sector agrupa los casos out-of-sample por sector_asignado (referencia); w_sector es la proporcion del sector en data/corpus_evaluacion_pseudonimizado.json; exactitud_ponderada = suma_sector (w_sector * exactitud_sector). Un sector ausente del out-of-sample contribuiria 0."
+}
