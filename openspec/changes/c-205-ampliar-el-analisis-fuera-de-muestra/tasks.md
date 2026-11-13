@@ -8,12 +8,12 @@ usar "sección N (`archivo.tex`)" (gitleaks).
 
 ## 1. Script de análisis (TDD)
 
-- [ ] 1.1 (RED) Escribir `A/test_analisis_fuera_de_muestra_c205.py` con una prueba que importe el módulo inexistente y verifique que el documento JSON trae macro-F1, *balanced accuracy*, kappa del clasificador, matriz `5x5` y los escenarios de exclusión; correr `cd evaluation/data/campana/analisis; python -m pytest test_analisis_fuera_de_muestra_c205.py -q` y verificar que falla por módulo ausente.
-- [ ] 1.2 (GREEN) Crear `A/analisis_fuera_de_muestra_c205.py` que reutilice `evaluation/metrics.py`, `evaluation/kappa.py` y `evaluation/stats.py`, consuma los artefactos de c-191 vía `cargar_corpus_solo_lectura` y escriba `A/analisis_fuera_de_muestra_c205.{json,md}` (LF, UTF-8 sin BOM); correr la prueba de 1.1 y verificar que pasa.
-- [ ] 1.3 (TRIANGULATE) Agregar casos a la prueba (macro-F1 con una clase de soporte cero y el cálculo del semi-ancho de Wilson) y verificar que pasan.
-- [ ] 1.4 Ejecutar el script dos veces y verificar salidas idénticas byte a byte y `git status` limpio; registrar los SHA-256 de `analisis_fuera_de_muestra_c205.json` y `.md`. Verificación: hashes estables entre corridas y sin archivos modificados por la ejecución.
-- [ ] 1.5 Verificar que el JSON declara: macro-F1 de las cinco clases; por clase precisión/sensibilidad/F1/soporte; *balanced accuracy*; kappa del clasificador con `p_o`/`p_e`/PABAK/`n`/IC; matriz `5x5`; semi-ancho de Wilson observado del n efectivo `103` frente al objetivo D1 (~8,4 pts); escenarios peor/mejor caso y cota con la regla de decisión; y el bloque de balance neto o su declaración de no computable. Verificación: cada campo presente en `analisis_fuera_de_muestra_c205.json`.
-- [ ] 1.6 Documentar en `A/README.md` el nuevo script, sus entradas versionadas, el comando y el método. Verificación: la sección nueva figura con comando reproducible.
+- [x] 1.1 (RED) Escribir `A/test_analisis_fuera_de_muestra_c205.py` con una prueba que importe el módulo inexistente y verifique que el documento JSON trae macro-F1, *balanced accuracy*, kappa del clasificador, matriz `5x5` y los escenarios de exclusión; correr `cd evaluation/data/campana/analisis; python -m pytest test_analisis_fuera_de_muestra_c205.py -q` y verificar que falla por módulo ausente.
+- [x] 1.2 (GREEN) Crear `A/analisis_fuera_de_muestra_c205.py` que reutilice `evaluation/metrics.py`, `evaluation/kappa.py` y `evaluation/stats.py`, consuma los artefactos de c-191 vía `cargar_corpus_solo_lectura` y escriba `A/analisis_fuera_de_muestra_c205.{json,md}` (LF, UTF-8 sin BOM); correr la prueba de 1.1 y verificar que pasa.
+- [x] 1.3 (TRIANGULATE) Agregar casos a la prueba (macro-F1 con una clase de soporte cero y el cálculo del semi-ancho de Wilson) y verificar que pasan.
+- [x] 1.4 Ejecutar el script dos veces y verificar salidas idénticas byte a byte y `git status` limpio; registrar los SHA-256 de `analisis_fuera_de_muestra_c205.json` y `.md`. Verificación: hashes estables entre corridas y sin archivos modificados por la ejecución.
+- [x] 1.5 Verificar que el JSON declara: macro-F1 de las cinco clases; por clase precisión/sensibilidad/F1/soporte; *balanced accuracy*; kappa del clasificador con `p_o`/`p_e`/PABAK/`n`/IC; matriz `5x5`; semi-ancho de Wilson observado del n efectivo `103` frente al objetivo D1 (~8,4 pts); escenarios peor/mejor caso y cota con la regla de decisión; y el bloque de balance neto o su declaración de no computable. Verificación: cada campo presente en `analisis_fuera_de_muestra_c205.json`.
+- [x] 1.6 Documentar en `A/README.md` el nuevo script, sus entradas versionadas, el comando y el método. Verificación: la sección nueva figura con comando reproducible.
 
 ## 2. Registro canónico (`C/`)
 
