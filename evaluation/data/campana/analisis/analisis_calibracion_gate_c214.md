@@ -295,7 +295,7 @@ Barrido fuera de la muestra (descriptivo; no se elige con el):
 
 ## Entradas (SHA-256)
 
-- `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json`: `3fb5bacd04f2e9d303f580e4cf2ac4b4c6f2eab628a4fff80a6e1238029cd8fd`
+- `evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json`: `89cf956e82f660dd8675a2d23b7b4d17efd62da542c0ba35bea28e0e54572ede`
 - `evaluation/data/campana/predicciones_independiente.json`: `d5ee19f7b0bf2b56a00026a1bd33a2e11ffeb9b224b6a8efa553460895a915a4`
 - `evaluation/data/campana/plantilla_etiquetado.csv`: `c35a58b60aca98dbc5fd03ad280fbba2f8baf2d56444ba7982ada0715f8ccd09`
 - `evaluation/data/campana/senales_reglas_c214.csv`: `a7d4a703e2c5b70c3fc898a1c55c50fbad971255285b5e3630cf65f0c983c56a`

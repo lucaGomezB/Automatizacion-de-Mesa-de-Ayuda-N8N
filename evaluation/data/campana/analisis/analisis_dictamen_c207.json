@@ -8,7 +8,7 @@
     "evaluation/data/campana/predicciones_in_sample.json": "89cf956e82f660dd8675a2d23b7b4d17efd62da542c0ba35bea28e0e54572ede",
     "evaluation/data/campana/corpus_campana.json": "99bbe84b90b6ba66b34aae08c85bd318cd0e9600ad540e58b1a4bd8eccec06a5",
     "evaluation/data/campana/doble_etiquetado_independiente.csv": "94dc2d739390a4c874e4ecfa70bf8b52266b752ec20d1e47801f2a93a562f6f7",
-    "evaluation/data/campana/analisis/analisis_fuera_de_muestra_c205.json": "6d8d8d017ff80244e24e7677c804da8094f19015d73fb9560ba1ccc8bd2f6846"
+    "evaluation/data/campana/analisis/analisis_fuera_de_muestra_c205.json": "75fe4a4cae680add09adad8d9bbd9d4c7828256bbf8f78c85b1b86c5ffbf78c2"
   },
   "ic_reduccion_tiempo": {
     "n": 200,

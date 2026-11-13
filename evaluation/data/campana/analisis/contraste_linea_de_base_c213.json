@@ -9,8 +9,8 @@
     "corpus_campana.json": "99bbe84b90b6ba66b34aae08c85bd318cd0e9600ad540e58b1a4bd8eccec06a5",
     "corpus_independiente.json": "8cdbec6fc06be3f7c4535f0213919d6d90b69d36e7d820ff97a84b9180cef56d",
     "predicciones_independiente.json": "d5ee19f7b0bf2b56a00026a1bd33a2e11ffeb9b224b6a8efa553460895a915a4",
-    "analisis_fuera_de_muestra_c205.json": "6d8d8d017ff80244e24e7677c804da8094f19015d73fb9560ba1ccc8bd2f6846",
-    "linea_de_base_clasica_c210.json": "2eb775bbcbc69776175c2966f45f8caf7336a250fb0cd05697b537ab5416dc9a"
+    "analisis_fuera_de_muestra_c205.json": "75fe4a4cae680add09adad8d9bbd9d4c7828256bbf8f78c85b1b86c5ffbf78c2",
+    "linea_de_base_clasica_c210.json": "2866dc1c09bbc2054c088766da79bf8b90b38066d0db0e044fe980eebd50c1de"
   },
   "aciertos": {
     "hibrido": 87,

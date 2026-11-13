@@ -1289,9 +1289,9 @@ python3 evaluation/data/campana/analisis/analisis_dictamen_c207.py
 ```
 
 SHA-256 de las salidas: `analisis_dictamen_c207.json`
-`749e5fc16a193ee5d06f2b491736dec554fc866c79e08ced65d8416c6404f864`;
+`1c35ebd572289d45bd4f098c10a70635e0beb13f959250a2695c4a88e11a826d`;
 `analisis_dictamen_c207.md`
-`27e38534d679e27620f62c7b2313c53c5363dc7a21f289fe270a39593c005647`.
+`e8188a8dda954f44bb276248b0b2aa0a7010bda98282c22a5fef1e31542eedef`.
 
 **(a) IC de la reducción relativa del tiempo de registro (rec. 6).** Estadístico
 `R = 1 − media(automatizado) / media(manual)` sobre los `200` pares del corpus (el mismo que
@@ -1435,7 +1435,7 @@ python3 evaluation/data/campana/analisis/contraste_linea_de_base_c213.py
 ```
 
 SHA-256 de las salidas versionadas (blob con fin de línea LF): `contraste_linea_de_base_c213.json`
-`1abe227796af7bee8a685ceed44077729242f405a0ec99154bd6531066570d92`;
+`f5a56d300bec17e0fe6c1ab1cb10dcf4156117593d5e39c27f71e44a6f925c04`;
 `contraste_linea_de_base_c213.md`
 `2c56252b3ed59b7c324274b55d3ed35c9b00e2209533f713ce53a442118b6a65`.
 
@@ -1476,9 +1476,9 @@ python3 evaluation/data/campana/analisis/analisis_calibracion_gate_c214.py
 ```
 
 SHA-256 de las salidas: `analisis_calibracion_gate_c214.json`
-`a5e4bca568890f57ec3346dd9c54e4425793c26704c362785f07a8ff0e4b4afd`;
+`5e33b2d7bd2e068a9e7ab83309cb003c0ef533c608877c5e9f02d97f8d8e76cc`;
 `analisis_calibracion_gate_c214.md`
-`6cd5a9ec7bf3d90b3c771f02fe4c38f1bfff7e6e2db04ef6a67c79f10252517c`;
+`325a401982db21e8a26774b0e8a64e971d1ba4d720ec37de7677ac7efab3dbad`;
 `senales_reglas_c214.csv`
 `a7d4a703e2c5b70c3fc898a1c55c50fbad971255285b5e3630cf65f0c983c56a`.
 
