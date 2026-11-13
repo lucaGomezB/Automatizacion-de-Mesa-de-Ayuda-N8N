@@ -91,6 +91,60 @@ Significado de cada campo:
     `motivo_limitacion` se registra el motivo y los roles solapados. El resultado
     se reporta como limitación y **no** como etiquetado ciego.
 
+## Procedencia de la tabla primaria del corpus independiente (c-191)
+
+Tabla primaria del doble etiquetado `E3`/`E4` sobre los 150 casos del corpus independiente
+(campaña de validación fuera de muestra, c-191). Mismo formato `- campo: valor` que la sección
+anterior; el test de integridad de c-168 lee solo el primer `- sha256:` del README, que sigue
+siendo el de `doble_etiquetado.csv`.
+
+- archivo: evaluation/data/campana/doble_etiquetado_independiente.csv
+- sha256: 94dc2d739390a4c874e4ecfa70bf8b52266b752ec20d1e47801f2a93a562f6f7
+- fecha: 2026-11-12
+- corpus: /home/skywalker/Desktop/campana-hojas/campana_extra/corpus_independiente_trabajo.json (JSON de TRABAJO, fuera del repositorio)
+- corpus_sha256: ef09b5b85fd6ace9d1dfdbf28fdde27e311ccca9e5dce25e1246f9332de53339
+- corpus_final: evaluation/data/campana/corpus_independiente.json
+- corpus_final_sha256: 8cdbec6fc06be3f7c4535f0213919d6d90b69d36e7d820ff97a84b9180cef56d
+- tarea: doble_etiquetado
+- comando_de_validacion: `python -m evaluation.doble_etiquetado --planilla evaluation/data/campana/doble_etiquetado_independiente.csv --corpus /home/skywalker/Desktop/campana-hojas/campana_extra/corpus_independiente_trabajo.json --tarea doble_etiquetado` (exit 0: `n_casos=150`, `n_registros=300`, `etiquetadores=E3,E4`)
+- codebook_sha256: 82767d9510e0f93f90002ee3a222a2df0386fe723ddac26fc0679dc443774e36
+- estado_cegado: cumplido
+- motivo_limitacion: no aplica
+
+La validación corre contra el JSON de TRABAJO (150 casos) porque el JSON final solo contiene
+los 103 casos con consenso y el validador rechazaría los 47 ids discordantes como inexistentes.
+El `codebook_sha256` es el del codebook entregado a `E3`/`E4`; difiere del de `E1`/`E2`
+únicamente en el encabezado que identifica la campaña.
+
+### Corrida del clasificador congelado sobre el corpus independiente (c-191)
+
+La corrida paga de c-191 clasificó `corpus_independiente.json` (103 casos) con el clasificador
+`hybrid-v3` congelado y escribió `predicciones_independiente.json` y `reporte_independiente.md`.
+Su `cache_meta` registra el `commit` de `HEAD` al generar el cache y el resultado del control de
+congelamiento de la tarea 0.5 (sección 6 del runbook del corpus independiente). Mismo formato
+`- campo: valor` que la sección de referencia in-sample, con nombres propios.
+
+- corrida_independiente_commit: 561b3c4 (HEAD al generar el cache, `git rev-parse --short HEAD`)
+- corrida_independiente_classifier_version: hybrid-v3
+- corrida_independiente_generated_at: 2026-11-12T23:58:14.687248+00:00
+- corrida_independiente_corpus_hash: 8cdbec6fc06be3f7c4535f0213919d6d90b69d36e7d820ff97a84b9180cef56d (coincide con `corpus_independiente.json`)
+- corrida_independiente_pines: {"google_genai": "2.34.0", "modelo": "gemini-3.6-flash"} (versión **instalada**; el modelo coincide con el del in-sample)
+- corrida_independiente_control_congelamiento: `git diff bf5e099 HEAD -- App/Backend/app/classifiers docs/prompt_gemini.txt App/Backend/app/constants.py App/Backend/app/config/settings.py` solo muestra diferencias ajenas a la clasificación: docstrings/comentarios y el import perezoso del paquete (PEP 562) en `classifiers`; `CANAL_CORREO`/`ORIGEN_*` de c-165 en `constants.py`; seguridad/autenticación (claves, JWT, cookies, lockout, MFA, CORS) en `settings.py`; `docs/prompt_gemini.txt` sin diferencias. Ninguna diferencia cambia reglas, `KEYWORD_MAP`, el prompt, el vocabulario de sectores, los umbrales ni los parámetros de Gemini (control 0.5, verificado el 2026-11-12).
+
+El clasificador queda congelado en `hybrid-v3`: el `classifier_version` coincide con el de la
+referencia in-sample y el `modelo` de `pines` coincide exactamente (`gemini-3.6-flash`); la
+versión instalada de `google-genai` (`2.34.0`) cumple el rango declarado del in-sample
+(`>=2.20.0`). No hubo recalibración posterior (sección 6 del runbook).
+
+**Re-ejecución con el stack entregado (2026-11-12).** El entorno se actualizó de `google-genai`
+`2.32.0` a **`2.34.0`** para satisfacer el pin entregado (`openspec/config.yaml`,
+`stack.inference`: `google-genai >=2.33,<3`), y la corrida paga se re-ejecutó con `--force`, de
+modo que el cache registra ahora la versión del stack entregado. No cambian el `corpus_hash`
+(`8cdbec6f…`), el `commit` (`561b3c4`), el `classifier_version` (`hybrid-v3`) ni el `modelo`
+(`gemini-3.6-flash`); cambian solo `generated_at` y `pines.google_genai`. El SHA-256 de
+`predicciones_independiente.json` y de `reporte_independiente.md` de la tabla de abajo
+corresponde a esta re-ejecución.
+
 ## Artefactos de la campaña contrabalanceada y del corpus independiente (c-166)
 
 Esta carpeta también aloja, desde c-166, los artefactos de la campaña contrabalanceada y de la clasificación del corpus independiente. Ninguno contiene datos personales ni sobrescribe un artefacto de la v9: los harnesses y el runner abortan antes de escribir si se los apunta a `data/corpus_evaluacion_pseudonimizado.json`, a `data/corpus_resultados*.json`, a `evaluation/predicciones.json` o a `evaluation/report.md`. Los protocolos están en `docs/campana-medicion/runbook-campana-contrabalanceada.md` y `docs/campana-medicion/runbook-corpus-independiente.md`.
@@ -102,7 +156,7 @@ Esta carpeta también aloja, desde c-166, los artefactos de la campaña contraba
 | `corpus_campana.json` | Copia de campaña del corpus canónico con `tiempo_automatizado_s` y `tiempo_manual_s` en `null`: es el `--json` de las corridas con `--plan` | `python -m evaluation.plan_campana preparar-corpus` |
 | `sidecar_<id_corrida>.json` | Sidecar propio de una corrida (sin descripciones), con `orden`, `posicion`, `mitad`, `brazo_primero` e `id_corrida` por caso | `--sidecar` de los harnesses |
 | `sidecar_<id_corrida>.json.plan.csv` | Plan que dejó `--orden` junto al sidecar (solo si se usó ese atajo) | `--orden` de los harnesses |
-| `corpus_independiente.json` | Corpus independiente pseudonimizado (ids `I001..`), solo en su forma pseudonimizada; ruta recomendada | runbook del corpus independiente |
+| `corpus_independiente.json` | Corpus independiente pseudonimizado (ids `I001..`) con la referencia por consenso de `E3`/`E4` (103 casos; los 47 discordantes quedan excluidos y declarados), solo en su forma pseudonimizada; ruta recomendada | runbook del corpus independiente |
 | `predicciones_independiente.json` | Cache de predicciones del corpus independiente; su `cache_meta` trae `corpus_hash`, `corpus_count`, `classifier_version`, `generated_at`, `commit` y `pines` | `python -m evaluation.run_evaluation --corpus ... --predicciones ... --reporte ...` |
 | `reporte_independiente.md` | Reporte propio de esa corrida (ruta recomendada de `--reporte`) | idem |
 
@@ -117,9 +171,10 @@ Al versionar cada archivo se completa su SHA-256 (en minúsculas, calculado sobr
 | `plan_campana.csv` | b619a734092cbbf2b676636386e4b27bdbeaee76df3f97a19e4b7d1beeb43243 |
 | `registro_sujetos.csv` | ab17eb2b6e660b78d206d130c21fac06739ba5512d2ac37d09cf532c2a3d36da |
 | `corpus_campana.json` | 99bbe84b90b6ba66b34aae08c85bd318cd0e9600ad540e58b1a4bd8eccec06a5 |
-| `corpus_independiente.json` | pendiente |
-| `predicciones_independiente.json` | pendiente |
-| `reporte_independiente.md` | pendiente |
+| `doble_etiquetado_independiente.csv` | 94dc2d739390a4c874e4ecfa70bf8b52266b752ec20d1e47801f2a93a562f6f7 |
+| `corpus_independiente.json` | 8cdbec6fc06be3f7c4535f0213919d6d90b69d36e7d820ff97a84b9180cef56d |
+| `predicciones_independiente.json` | d5ee19f7b0bf2b56a00026a1bd33a2e11ffeb9b224b6a8efa553460895a915a4 |
+| `reporte_independiente.md` | 304dffcf4afdf1655c4ff7d9a6906d2ba8e134b6926281d65ca0465c629fbf92 |
 | `plantilla_etiquetado.csv` | c35a58b60aca98dbc5fd03ad280fbba2f8baf2d56444ba7982ada0715f8ccd09 |
 | `predicciones_in_sample.json` | 89cf956e82f660dd8675a2d23b7b4d17efd62da542c0ba35bea28e0e54572ede |
 | `subplan_m1_manual_t1.csv` | 8d42417274934764c24774d10bbbca8ac47807e1d2960a22167ddb564933c41a |

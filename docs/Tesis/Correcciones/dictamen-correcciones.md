@@ -4767,3 +4767,99 @@ recompiló `paper/main.pdf` en este apply: se recompila aparte, por indicación 
 `paper/main.pdf` y `paper/compilacion.md` no se regeneraron en este apply: se recompilan aparte, por
 indicación del usuario. La verificación de 0 referencias indefinidas y el total de páginas queda para
 esa recompilación.
+
+## Dictamen v10 / v1.2.19 (2026-11-12) - c-191 (validacion fuera de muestra)
+
+Cierre del único dock de rúbrica explícito del dictamen CONEAU del 2026-11-09 sobre la release
+`v1.2.12` (`auditorias/Dictamen_Tesis_v10_v1.2.12_CONEAU_2026-11-09.md`, criterio 4, metodología):
+la "validación fuera de muestra no realizada". Change `c-191-validacion-fuera-de-muestra-150-casos`
+(docs; gobernanza HIGH en la prosa de tesis y MEDIUM en los memos). Se aplica sobre `v1.2.19`. La
+release `v1.3.0` quedó definida por los autores para la tarea 7.2 (en espera): no se cambió la
+versión entregada ni los pasajes que la citan.
+
+### Cierre del dock (criterio 4)
+
+La validación se realizó con el clasificador CONGELADO `hybrid-v3` sobre un corpus independiente de
+150 casos nuevos (`I001..I150`), sin solape con los 200 de ajuste y pseudonimizados con el mismo
+protocolo. La referencia es el consenso de dos etiquetadores independientes `E3`/`E4`; los 47 casos
+discordantes quedan fuera (design D6) y el n efectivo es de 103. Resultado: exactitud estricta
+0,8447 (87/103; IC de Wilson 95 % [0,7625; 0,9021]) y laxa 0,8738 (90/103; [0,7960; 0,9247]); por
+etapa de la cascada, determinística 69 casos (0,8841) y Gemini 34 (0,7647), sin fallback; ponderada
+por la composición por sector del corpus de 200, estricta 0,8146 y laxa 0,8565. La exclusión de los
+47 discordantes sesga la referencia hacia los casos más fáciles: el resultado es una estimación
+sobre el n efectivo y no una confirmación fuerte.
+
+Fuente única de las cifras: `evaluation/data/campana/analisis/analisis_fuera_de_muestra_c191.json`
+(y sus vistas `.md`/`.txt`), reproducidas por el script de solo lectura
+`evaluation/data/campana/analisis/analisis_fuera_de_muestra_c191.py` (sin red ni Gemini) y
+registradas en `docs/Tesis/Correcciones/numeros-canonicos.md` (sección 3.19).
+
+### Decisiones de los autores y su estado
+
+- **D2 (estratos) — RESUELTA el 2026-11-09 (opción A).** Cuota 50 correo / 40 web / 60 telefonía,
+  con sobremuestreo de `Bases de Datos` (objetivo ≥ 10; 13 en el out-of-sample) y ponderación de la
+  exactitud global por la composición por sector del corpus de 200. Registrada en
+  `docs/campana-medicion/runbook-corpus-independiente.md` (sección 1). Estado: aplicada en la
+  recolección y el análisis (la ponderada estricta es 0,8146).
+- **D3 (etiquetadores) — RESUELTA.** Dos etiquetadores nuevos `E3`/`E4`, con códigos `P9`/`P10` en
+  `evaluation/data/campana/registro_sujetos.csv` (sin nombres; la correspondencia alias-identidad la
+  custodia el director fuera del repositorio). Estado: cerrada; sin solape por persona.
+
+### Resumen y abstract (decisión de 6.5)
+
+El resultado NO se incorporó al Resumen ni al abstract: no cambia el veredicto de la tercera
+sub-hipótesis, que se mantiene sobre la referencia primaria, dentro de la muestra. Los valores
+puntuales fuera de la muestra (0,8447 sin ponderar, 0,8146 ponderada) siguen por debajo del umbral
+de 0,85, la exclusión de los 47 discordantes sesga hacia los casos más fáciles y el macro-F1 no se
+mide fuera de la muestra; el intervalo estricto ([0,7625; 0,9021]) contiene el 0,85, por lo que
+tampoco sostiene una confirmación. `00-resumen.tex` no se modificó: el Resumen y el abstract siguen
+en 248 palabras cada uno (≤ 250; regla de c-106, medición de c-196). Se evitó sobreafirmar la
+confirmación.
+
+### Guardarraíles
+
+- No se cambió ningún número canónico; las cifras provienen de la salida de solo lectura de c-191.
+- No se tocaron `App/`, `n8n/`, `data/*` ni los artefactos canónicos del corpus; solo se versionan
+  artefactos nuevos de `E/`.
+- La versión entregada (`v1.2.19`) no se modificó: el bump a `v1.3.0` es la tarea 7.2 (en espera).
+- `python3 "docs/Tesis/v10 (IA)/verify_citations.py"`: PASS (91 entradas, 152 comandos de cita, 0
+  huérfanas, 0 sin uso).
+
+### Matriz de trazabilidad (verificada por `verificar_matriz_trazabilidad.py`)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| C4/1a | 8.7: validación declarada realizada con su resultado | c-191 | `07-resultados.tex:284` | `subsec:sensibilidad-ajustes` | `La validación fuera de muestra se realizó con el clasificador congelado` | cerrada |
+| C4/1b | 8.7: n efectivo 103 y 47 excluidos | c-191 | `07-resultados.tex:284` | `subsec:sensibilidad-ajustes` | `excluye los 47 casos discordantes y deja un n efectivo de 103` | cerrada |
+| C4/1c | 8.7: advertencia de sesgo de exclusión | c-191 | `07-resultados.tex:284` | `subsec:sensibilidad-ajustes` | `sesga la referencia hacia los casos más fáciles` | cerrada |
+| C4/2a | 9.1: interpretación con el resultado fuera de muestra | c-191 | `08-discusion.tex:8` | `subsec:interpretacion-resultados` | `La validación fuera de muestra, realizada después con el clasificador congelado` | cerrada |
+| C4/2b | 9.4: séptima limitación con la validación realizada | c-191 | `08-discusion.tex:58` | `subsec:limitaciones-estudio` | `Esa validación se realizó después con un corpus independiente de 150 casos` | cerrada |
+| C4/3a | 11.5: recomendación sobre el corpus independiente actualizada | c-191 | `10-recomendaciones.tex:44` | `subsec:corpus-independiente` | `La validación fuera de muestra se realizó con un corpus independiente de 150 casos nuevos` | cerrada |
+| C4/4a | Anexo I: fila Lím. con el cierre de la validación | c-191 | `12-anexos.tex:322` | `tab:anexo-trazabilidad-2810` | `se cerró con el corpus independiente de 150 casos del clasificador congelado` | cerrada |
+| C4/4b | Anexo I: frase de cabecera con el cierre | c-191 | `12-anexos.tex:302` | `sec:anexo-trazabilidad` | `cerró el quinto` | cerrada |
+| D2 | Estratos 50 correo / 40 web / 60 telefonía en el runbook | c-191 | `docs/campana-medicion/runbook-corpus-independiente.md:40` | `-` | `50 correo / 40 web / 60 telefonía` | cerrada |
+| D3 | Etiquetadores E3/E4 sin nombres en el registro | c-191 | `evaluation/data/campana/registro_sujetos.csv:10` | `-` | `E3,etiquetador,P9` | cerrada |
+| Cifras | Memo de números canónicos: Sección 3.19 (cifras fuera de muestra) | c-191 | `docs/Tesis/Correcciones/numeros-canonicos.md:1076` | `-` | `3.19 Validación fuera de muestra con el corpus independiente (c-191)` | vigente (nuevo) |
+
+### Registro de compilación y verificación (MEDIDO 2026-11-12, `texlive-thesis`, `latexmk main.tex`)
+
+- Compilación Docker `texlive-thesis` con exit 0; `main.log` con 0 errores (`grep -c "^!"` = 0), 0
+  referencias indefinidas, 0 citas indefinidas y 0 etiquetas `multiply defined`; `main.blg` sin WARN
+  ni ERROR; `Overfull \hbox` = 12 (máximo 52,5 pt).
+- `pdfinfo main.pdf | grep Pages` = **144** (antes 143; delta +1 por el párrafo de resultados y las
+  remisiones nuevas).
+- `paper/compilacion.md` regenerado con
+  `python3 docs/Tesis/Correcciones/resumir_registro_compilacion.py` (fuente "arbol de trabajo sobre
+  `561b3c4` (c-191, validacion fuera de muestra)"); SHA-256 de `main.pdf`
+  `9b8908353eb9166120810d64181112bd28c65d8c8ab60e5cb9c2a548118596e0`. `docs/Tesis/tesis_ultima_version.pdf`
+  actualizado con la copia de `main.pdf` (mismo SHA-256).
+- `python3 "docs/Tesis/v10 (IA)/verify_citations.py"`: PASS (91 entradas, 152 comandos de cita, 0
+  huérfanas, 0 sin uso). `python3 -I docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py`: 270
+  filas, 0 fallas.
+- Palabras: `00-resumen.tex` no se editó; el Resumen y el abstract siguen en 248 palabras cada uno
+  (≤ 250; regla de c-106, medición de c-196).
+
+### Pendiente de release
+
+El tag `v1.3.0`, el commit de contenido y el archivo del change son la tarea 7 (release del
+orquestador); no se ejecutaron en este apply.

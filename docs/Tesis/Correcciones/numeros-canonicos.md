@@ -23,6 +23,7 @@ de las ramas consumidoras").
 - **Upsert c-169**: `c-169-incorporar-los-resultados-de-la-campana-a-la-tesis` (aplicado el 2026-11-08) agrega la Sección 3.14 (resultados de la campaña complementaria de medición: kappa nuevo con IC, exactitud del brazo manual, exactitud de v9 contra la referencia nueva, tasa de intervención humana con su contraste, proporción de tiempo, efecto de orden y validación fuera de muestra) y cierra la entrada "IC del coeficiente kappa — no computable" de la Sección 3.6 con la nota de remisión. El `0,87` pasa a `vigente (sin IC)`. No modifica ningún otro valor ni estado de las Secciones 3.1 a 3.13. Fecha: 2026-11-08.
 - **Upsert c-160**: `c-160-residuos-de-correccion-anexo-i-y-consistencia-interna` (aplicado el 2026-10-29) no agrega ni modifica ningun valor canónico. Nota de consumo: la Sección 3.9 (`96/130 = 0,7385` frente a `88/130 = 0,6769`) pasa a consumirse también en la Sección 5.5 de la tesis (`05-arquitectura.tex`, comparación pareada del punto de operación del filtro, sobre los 130 casos con predicción de ambas etapas), en lugar de `0,7405 frente a 0,6769` (97/131 frente a 88/130).
 - **Upsert c-196**: `c-196-atender-devolucion-segunda-instancia` (aplicado el 2026-11-11) agrega la Sección 3.17 (devolución de segunda instancia del tribunal: kappa `0,87` retirado como evidencia, segunda sub-hipótesis "no concluyente, con estimación puntual por encima de la cota", tiempos del brazo manual por operador, exactitud contra el consenso independiente, cobertura del backend y pruebas de integración) y marca como `SUPERADA por c-196` las entradas de las Secciones 3.5, 3.6 y 3.14 que daban el `0,87` por vigente o la segunda sub-hipótesis por "refutada". Fecha: 2026-11-11.
+- **Upsert c-191**: `c-191-validacion-fuera-de-muestra-150-casos` (aplicado el 2026-11-12) agrega la Sección 3.19 (validación fuera de muestra del clasificador congelado sobre el corpus independiente de `103` casos con consenso `E3`/`E4`: exactitud estricta y laxa con IC de Wilson, desglose por etapa de la cascada, cifras globales sin ponderar y ponderadas por la composición por sector del corpus de 200, y la referencia in-sample). No modifica ningún valor ni estado de las Secciones 3.1 a 3.18. Fecha: 2026-11-12.
 - **Artefacto**: este memo. No se edita ningún `.tex` en este change.
 - **Fecha de verificación**: 2026-10-21.
 - **SHA-256 del corpus** (`data/corpus_evaluacion_pseudonimizado.json`):
@@ -1071,6 +1072,91 @@ procedencia de los incidentes, no la medición de extremo a extremo. Complementa
 el registro primario de los `119` tiempos de correo y formulario quedó versionado con
 posterioridad a c-196, de modo que la afirmación de 3.17e ("no tienen registro primario
 conservado") queda acotada al sidecar `data/corpus_resultados.json`.
+
+### 3.19 Validación fuera de muestra con el corpus independiente (c-191)
+
+Validación del clasificador **congelado** `hybrid-v3` sobre el corpus independiente de la campaña
+(`evaluation/data/campana/corpus_independiente.json`, `103` casos con consenso `E3`/`E4`; los `47`
+discordantes quedan fuera de la referencia, design D6). Cifras reproducidas de solo lectura, sin red
+ni Gemini, por `evaluation/data/campana/analisis/analisis_fuera_de_muestra_c191.py`, que reutiliza
+`evaluation.campana.evaluar_fuera_de_muestra` y `evaluation.metrics.resumen_exactitud` (no reimplementa
+el clasificador ni las métricas). Determinístico: dos corridas producen salidas idénticas byte a byte.
+Fuente única de las cifras: `analisis/analisis_fuera_de_muestra_c191.json` (y sus vistas `.md`/`.txt`).
+No modifica ningún valor ni estado `vigente` de las Secciones 3.1 a 3.18. Estado de la ejecución del
+clasificador: `evaluation/data/campana/README.md` (sección "Corrida del clasificador congelado…").
+
+Comando (desde la raíz del repositorio; solo lectura):
+
+```bash
+python3 evaluation/data/campana/analisis/analisis_fuera_de_muestra_c191.py
+```
+
+SHA-256 de las salidas: `analisis_fuera_de_muestra_c191.json`
+`920cd9b6ec8f0401fc8a55e49650443e1bf31b6d2a28d505091cf0c3be083a88`;
+`analisis_fuera_de_muestra_c191.md`
+`573bb07133858df89f9885cb53c5ed9da7529d66c005574aeed889c5e1b2ceed`;
+`analisis_fuera_de_muestra_c191.txt`
+`d70bfe56191ee6f72eede164520ac68bce057b175fd0b45dd12753e14c0a4152`.
+
+**(a) Resultado fuera de muestra (n efectivo).**
+
+| Valor canónico | Procedencia (archivo) | Estado |
+|---|---|---|
+| n efectivo: `103`; excluidos `47` (de `150` en la tabla primaria; discordantes sin consenso `E3`/`E4`) | `analisis/analisis_fuera_de_muestra_c191.json` (`out_of_sample.n`, `excluidos`) | vigente (nuevo) |
+| Exactitud estricta: `87/103 = 0,8447`, IC de Wilson 95 % `[0,7625; 0,9021]` | idem (`out_of_sample.global.estricta`, `ic_estricta_wilson`) | vigente (nuevo) |
+| Exactitud laxa: `90/103 = 0,8738`, IC de Wilson 95 % `[0,7960; 0,9247]` | idem (`out_of_sample.global.laxa`, `ic_laxa_wilson`) | vigente (nuevo) |
+
+**(b) Desglose por etapa de la cascada (out-of-sample).**
+
+| Etapa | Casos | Exactitud estricta | Procedencia | Estado |
+|---|---|---|---|---|
+| Determinística | `69` | `0,8841` | `analisis/…c191.json` (`out_of_sample.por_etapa.deterministic`) | vigente (nuevo) |
+| Gemini | `34` | `0,7647` | idem (`…gemini`) | vigente (nuevo) |
+| Fallback | `0` | no aplicable | idem (`…fallback`) | vigente (nuevo) |
+
+**(c) Referencia in-sample (bloque de comparación; ya canónico).**
+
+| Valor | Procedencia | Estado |
+|---|---|---|
+| `n = 200`; estricta `147/200 = 0,7350` `[0,6698; 0,7913]`; laxa `179/200 = 0,8950` `[0,8448; 0,9303]` | `analisis/…c191.json` (`in_sample_referencia`); Secciones 3.2 y 3.9 | vigente (ya canónico) |
+| Por etapa: determinística `131` (`0,7405`), Gemini `69` (`0,7246`), fallback `0` | idem (`in_sample_referencia.por_etapa`); Sección 3.3 | vigente (ya canónico) |
+
+**(d) Global sin ponderar y ponderada (design D2).**
+
+Sin ponderar son las cifras crudas del bloque out-of-sample. La ponderada usa la composición por
+**sector** del corpus de 200: `exactitud_ponderada = sum_sector (w_sector · exactitud_sector)`, con
+`w_sector` = proporción del sector en `data/corpus_evaluacion_pseudonimizado.json` y `exactitud_sector`
+agrupando los casos out-of-sample por su `sector_asignado` de referencia.
+
+| Modalidad | Exactitud estricta | Exactitud laxa | Procedencia | Estado |
+|---|---|---|---|---|
+| Sin ponderar | `0,8447` `[0,7625; 0,9021]` | `0,8738` `[0,7960; 0,9247]` | `analisis/…c191.json` (`global_sin_ponderar`) | vigente (nuevo) |
+| Ponderada (D2) | `0,8146` | `0,8565` | idem (`global_ponderada`) | vigente (nuevo) |
+
+Desglose por sector de la ponderada (traceabilidad):
+
+| Sector | n out-of-sample | Estricta | `w_200` | `w·estricta` | Laxa |
+|---|---|---|---|---|---|
+| Seguridad Informatica | `21` | `0,7143` | `0,1550` | `0,1107` | `0,7143` |
+| Soporte Tecnico Hardware | `40` | `0,9500` | `0,4250` | `0,4037` | `0,9500` |
+| Soporte Tecnico Software | `24` | `0,8333` | `0,3350` | `0,2792` | `0,9583` |
+| Bases de Datos | `13` | `1,0000` | `0,0050` | `0,0050` | `1,0000` |
+| Sistemas | `5` | `0,2000` | `0,0800` | `0,0160` | `0,2000` |
+
+El sobremuestreo de `Bases de Datos` (objetivo ≥ 10 casos; `13` en el out-of-sample, clasificados
+`100 %`) infla la cifra sin ponderar: al reponderar por la prevalencia del corpus de 200 (`0,5 %`) la
+exactitud estricta baja de `0,8447` a `0,8146`.
+
+**(e) Comparabilidad y limitaciones.**
+
+| Valor | Procedencia | Estado |
+|---|---|---|
+| `classifier_version` `hybrid-v3`; modelo `gemini-3.6-flash`; `google-genai` instalada `2.34.0`; commit independiente `561b3c4` | `analisis/…c191.json` (`comparabilidad`) | vigente (nuevo) |
+
+Limitación declarada: el in-sample no registra la versión **instalada** de `google-genai` (solo el
+rango declarado `>=2.20.0`) ni su commit de generación; la comparabilidad se verifica por
+`classifier_version` y modelo idénticos y porque la versión instalada (`2.34.0`) cumple el rango
+in-sample y el pin vigente (`>=2.33,<3`) (`analisis/…c191.json`, `comparabilidad` y `limitaciones`).
 
 ## 4. Contingencia del gate de intervención humana
 
