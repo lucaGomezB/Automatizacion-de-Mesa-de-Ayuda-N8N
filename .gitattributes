@@ -20,3 +20,9 @@ evaluation/data/plantilla_etiquetado.csv text eol=lf
 # Linux: se fija LF en toda plataforma (los *.csv ya estan cubiertos arriba).
 evaluation/data/campana/*.json text eol=lf
 evaluation/data/campana/*.md text eol=lf
+
+# Contexto de build de la imagen derivada de N8N (c-182). El parche se aplica por
+# coincidencia exacta de linea: con core.autocrlf=true (checkout Windows) el .patch se
+# extraia en CRLF y el build abortaba con "target line not found exactly once".
+# Se fija LF en toda plataforma.
+docker/n8n/* text eol=lf

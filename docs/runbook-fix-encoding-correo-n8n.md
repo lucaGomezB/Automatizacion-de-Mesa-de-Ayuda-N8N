@@ -107,6 +107,21 @@ docker run --rm --entrypoint sh "$IMG" -c \
 Esperado: una línea que contiene `part.params?.charset`. Si no aparece, abortar:
 la imagen no lleva el fix.
 
+Dos notas para un checkout de Windows (verificadas el 2026-11-12):
+
+- **Fin de línea del contexto de build.** El parche se aplica por coincidencia
+  exacta de línea. Con `core.autocrlf=true` los archivos de `docker/n8n/` se
+  extraían en CRLF y el build abortaba con
+  `apply-unified-patch: ERROR: target line not found exactly once (matches=0)`.
+  `.gitattributes` fija ahora `docker/n8n/* text eol=lf`. En un clon anterior a
+  esa regla hay que re-extraer los archivos una vez (borrar los tres archivos
+  de `docker/n8n/` y correr `git checkout -- docker/n8n`) y confirmar con
+  `git ls-files --eol docker/n8n` que la columna `w/` dice `lf`. Verificado: tras
+  ese paso `docker compose build n8n` termina con rc=0.
+- **Git Bash.** El `grep` de arriba recibe una ruta absoluta del contenedor; en
+  Git Bash hay que anteponer `MSYS_NO_PATHCONV=1` para que no la reescriba como
+  `C:/Program Files/Git/...`.
+
 ---
 
 ## 4. Verificación reproducible
@@ -226,13 +241,49 @@ datos**:
 2. Recrear los servicios:
 
 ```bash
-docker compose up -d --force-recreate n8n
-docker compose --profile corpus up -d --force-recreate n8n-corpus   # si aplica
+docker compose up -d --force-recreate --no-deps n8n
+docker compose --profile corpus up -d --force-recreate --no-deps n8n-corpus   # si aplica
 docker compose ps
 ```
 
+`--no-deps` limita la operación al servicio de N8N: sin esa bandera, como `n8n`
+declara `depends_on: backend: service_healthy`, la recreación también espera o
+toca al backend.
+
 El stack vuelve a la imagen upstream. Este rollback también sirve como imagen de
 CONTROL para la verificación de §4.4.
+
+### 5.1 Evidencia del rollback verificado (2026-11-12)
+
+Cierra la tarea 6.1 de `c-182`. Corrida sobre el stack local de desarrollo
+(proyecto `mesa_local`, volumen `mesa_local_n8n_data`), solo con el servicio
+`n8n` (`--no-deps`), sin disparar flujos ni enviar correo.
+
+| Estado | Imagen | Versión | `healthz` | Flujos | Credenciales | Parche |
+|---|---|---|---|---|---|---|
+| Derivada | `mesa_local-n8n` | 2.11.2 | ok | 1 | 1 | presente (`imap-simple.js:86`) |
+| Rollback | `n8nio/n8n:2.11.2` (`sha256:0d948060...`) | 2.11.2 | ok | 1 (idéntico) | 1 | ausente |
+| Restaurada | `mesa_local-n8n` | 2.11.2 | ok | 1 (idéntico) | 1 | presente |
+
+- **Sin migración ni restauración de datos:** el registro de arranque tras el
+  rollback no contiene ninguna línea de migración; la huella de datos
+  (`n8n list:workflow` y el conteo de credenciales) es idéntica en los tres
+  estados.
+- **Duración:** unos 12 s desde la recreación hasta `healthz` ok.
+- **INFRA-008:** el estado de rollback (`image: n8nio/n8n:2.11.2` literal) y el
+  estado derivado (línea `FROM` del Dockerfile, `c-189`) satisfacen ambos el pin
+  que controla `test_n8n_image_stays_pinned`; esa prueba no se ejecutó en esta
+  corrida.
+- **Advertencia:** el volumen local tiene el flujo marcado como activo, así que
+  N8N lo activa en cada arranque. Si el disparador IMAP tiene credenciales
+  vigentes, puede leer el buzón mientras el servicio esté en pie. En una
+  instancia con datos de evidencia la mitigación efectiva es **desactivar el
+  flujo antes del rollback** o bien **detener también el servicio `n8n`**:
+  detener únicamente el backend no alcanza, porque el disparador IMAP pertenece
+  a N8N, que es un servicio independiente y lo activa por su cuenta en cada
+  arranque.
+- **Límite:** la verificación se hizo sobre el stack local, no sobre la
+  instancia de campaña.
 
 ---
 
