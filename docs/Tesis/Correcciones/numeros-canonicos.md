@@ -24,6 +24,7 @@ de las ramas consumidoras").
 - **Upsert c-160**: `c-160-residuos-de-correccion-anexo-i-y-consistencia-interna` (aplicado el 2026-10-29) no agrega ni modifica ningun valor canónico. Nota de consumo: la Sección 3.9 (`96/130 = 0,7385` frente a `88/130 = 0,6769`) pasa a consumirse también en la Sección 5.5 de la tesis (`05-arquitectura.tex`, comparación pareada del punto de operación del filtro, sobre los 130 casos con predicción de ambas etapas), en lugar de `0,7405 frente a 0,6769` (97/131 frente a 88/130).
 - **Upsert c-196**: `c-196-atender-devolucion-segunda-instancia` (aplicado el 2026-11-11) agrega la Sección 3.17 (devolución de segunda instancia del tribunal: kappa `0,87` retirado como evidencia, segunda sub-hipótesis "no concluyente, con estimación puntual por encima de la cota", tiempos del brazo manual por operador, exactitud contra el consenso independiente, cobertura del backend y pruebas de integración) y marca como `SUPERADA por c-196` las entradas de las Secciones 3.5, 3.6 y 3.14 que daban el `0,87` por vigente o la segunda sub-hipótesis por "refutada". Fecha: 2026-11-11.
 - **Upsert c-191**: `c-191-validacion-fuera-de-muestra-150-casos` (aplicado el 2026-11-12) agrega la Sección 3.19 (validación fuera de muestra del clasificador congelado sobre el corpus independiente de `103` casos con consenso `E3`/`E4`: exactitud estricta y laxa con IC de Wilson, desglose por etapa de la cascada, cifras globales sin ponderar y ponderadas por la composición por sector del corpus de 200, y la referencia in-sample). No modifica ningún valor ni estado de las Secciones 3.1 a 3.18. Fecha: 2026-11-12.
+- **Upsert c-205**: `c-205-ampliar-el-analisis-fuera-de-muestra` (aplicado el 2026-11-12) agrega la Sección 3.20 (análisis ampliado fuera de muestra sobre el n efectivo `103`: macro-F1, métricas por clase con soporte, *balanced accuracy*, kappa del clasificador contra la referencia, matriz de confusión, precisión del n observado frente al objetivo D1, sensibilidad al sesgo de exclusión de los `47` discordantes con su regla de decisión y balance neto con la tasa de error fuera de muestra). No modifica ningún valor ni estado `vigente` de las Secciones 3.1 a 3.19. Fecha: 2026-11-12.
 - **Artefacto**: este memo. No se edita ningún `.tex` en este change.
 - **Fecha de verificación**: 2026-10-21.
 - **SHA-256 del corpus** (`data/corpus_evaluacion_pseudonimizado.json`):
@@ -1157,6 +1158,104 @@ Limitación declarada: el in-sample no registra la versión **instalada** de `go
 rango declarado `>=2.20.0`) ni su commit de generación; la comparabilidad se verifica por
 `classifier_version` y modelo idénticos y porque la versión instalada (`2.34.0`) cumple el rango
 in-sample y el pin vigente (`>=2.33,<3`) (`analisis/…c191.json`, `comparabilidad` y `limitaciones`).
+
+### 3.20 Análisis ampliado fuera de muestra (c-205)
+
+Amplía la Sección 3.19 con métricas que c-191 no publicó, sobre el **mismo** n efectivo de `103`
+casos con consenso `E3`/`E4` (los `47` discordantes quedan fuera de la referencia). Cifras
+reproducidas de solo lectura, sin red ni Gemini, por
+`evaluation/data/campana/analisis/analisis_fuera_de_muestra_c205.py`, que reutiliza
+`evaluation/metrics.py`, `evaluation/kappa.py` y `evaluation/stats.py` (no reimplementa el
+clasificador ni las métricas). Determinístico: dos corridas producen salidas idénticas byte a
+byte. Fuente única de las cifras: `analisis/analisis_fuera_de_muestra_c205.json` (y su vista `.md`).
+No modifica ningún valor ni estado `vigente` de las Secciones 3.1 a 3.19. Todas las métricas de
+esta sección son **estimaciones sobre el n efectivo `103`**; la macro-F1 NO es equivalente de la
+exactitud estricta de etiqueta única.
+
+Comando (desde la raíz del repositorio; solo lectura):
+
+```bash
+python3 evaluation/data/campana/analisis/analisis_fuera_de_muestra_c205.py
+```
+
+SHA-256 de las salidas: `analisis_fuera_de_muestra_c205.json`
+`75fe4a4cae680add09adad8d9bbd9d4c7828256bbf8f78c85b1b86c5ffbf78c2`;
+`analisis_fuera_de_muestra_c205.md`
+`9097a00e8f8dbc03bdf7df4b2e9d13cdc3f8405c621ca804d0eaf5a05081e365`.
+
+**(a) Métricas globales y por clase (n efectivo `103`).**
+
+| Valor canónico | Procedencia (archivo) | Estado |
+|---|---|---|
+| Macro-F1 de las cinco clases: `0,7447` (media aritmética de las F1 por clase, incluida toda clase de soporte cero) | `analisis/…c205.json` (`macro_f1`) | vigente (nuevo) |
+| *Balanced accuracy* (media de las sensibilidades por clase): `0,7395`; difiere de la exactitud estricta (`0,8447`) en `−0,1051` por el desbalance de clases | idem (`balanced_accuracy`) | vigente (nuevo) |
+| Exactitud estricta `87/103 = 0,8447`, IC de Wilson `[0,7625; 0,9021]`; laxa `90/103 = 0,8738` | idem; Sección 3.19 | vigente (ya canónico) |
+
+| Sector | Precisión | Sensibilidad | F1 | Soporte | Estado |
+|---|---|---|---|---|---|
+| Seguridad Informatica | `1,0000` | `0,7143` | `0,8333` | `21` | vigente (nuevo) |
+| Soporte Tecnico Hardware | `0,8636` | `0,9500` | `0,9048` | `40` | vigente (nuevo) |
+| Soporte Tecnico Software | `0,7692` | `0,8333` | `0,8000` | `24` | vigente (nuevo) |
+| Bases de Datos | `0,9286` | `1,0000` | `0,9630` | `13` | vigente (nuevo) |
+| Sistemas | `0,2500` | `0,2000` | `0,2222` | `5` | vigente (nuevo) |
+
+Procedencia: `analisis/…c205.json` (`por_clase`).
+
+**(b) Kappa del clasificador contra la referencia.** Concordancia del clasificador con la
+referencia humana (`E3`/`E4`); NO es fiabilidad inter-etiquetador (esa es de `E1`/`E2`, Sección
+3.14). `κ = 0,7862`, `p_o = 0,8447`, `p_e = 0,2734`, PABAK `0,8058`, `n = 103`; IC asintótico
+95 % `[0,6919; 0,8805]`; IC bootstrap 95 % `[0,6903; 0,8768]` (semilla `20261021`, `2000`
+remuestreos); rótulo de Landis y Koch: sustancial. Procedencia: `analisis/…c205.json`
+(`kappa_clasificador`). Estado: vigente (nuevo).
+
+**(c) Matriz de confusión 5×5** (filas = referencia, columnas = predicción; orden: Seguridad
+Informatica, Soporte Tecnico Hardware, Soporte Tecnico Software, Bases de Datos, Sistemas):
+
+| Referencia | SegInf | Hardware | Software | BBDD | Sistemas |
+|---|---|---|---|---|---|
+| Seguridad Informatica | `15` | `3` | `2` | `0` | `1` |
+| Soporte Tecnico Hardware | `0` | `38` | `1` | `0` | `1` |
+| Soporte Tecnico Software | `0` | `3` | `20` | `0` | `1` |
+| Bases de Datos | `0` | `0` | `0` | `13` | `0` |
+| Sistemas | `0` | `0` | `3` | `1` | `1` |
+
+La diagonal suma `87`. Frontera dominante: `3` casos de `Sistemas` predichos como `Soporte Tecnico
+Software` (`Sistemas`: `1/5` aciertos). Procedencia: `analisis/…c205.json` (`matriz_confusion`,
+`frontera_confusion`). Estado: vigente (nuevo).
+
+**(d) Potencia y precisión del n efectivo.** Semi-ancho del IC de Wilson observado con `n = 103`:
+`0,0698` (`6,98` puntos), frente al objetivo de diseño D1 de c-191 (`~8,4` puntos): **cumple**.
+Es la precisión alcanzada, no un tamaño muestral elegido. Efecto mínimo detectable
+`d_z = 0,2760` (`alfa = 0,05`, potencia `0,80`, bilateral; contraste pareado de `103` pares).
+Procedencia: `analisis/…c205.json` (`potencia_precision`). Estado: vigente (nuevo).
+
+**(e) Sesgo de exclusión de los `47` discordantes (análisis de SENSIBILIDAD; NO es una medición
+del clasificador sobre los excluidos).** Estado: `condicional`.
+
+| Escenario | Aciertos / universo | Exactitud |
+|---|---|---|
+| Peor caso (los `47` excluidos fallan) | `87/150` | `0,5800` |
+| Mejor caso (los `47` excluidos aciertan) | `134/150` | `0,8933` |
+| Cota (los excluidos aciertan a la tasa del límite inferior del IC de Wilson `0,7625`) | `122,84/150` | `0,8189` |
+
+Aciertos mínimos entre los `47` excluidos para alcanzar `0,85` sobre `150`: `41` (tasa
+`0,8723`). **Regla de decisión (D6):** el umbral `0,85` se sostiene sin condiciones solo si el
+peor caso lo alcanza; el peor caso (`87/150 = 0,5800`) queda muy por debajo, de modo que la
+exactitud sobre el n efectivo NO puede presentarse como superación del umbral sin el arbitraje
+de los `47` discordantes (c-206). La definición de la cota es una elección declarada del apply
+(design, Open Questions). Procedencia: `analisis/…c205.json` (`sesgo_exclusion`).
+
+**(f) Balance neto con la tasa de error fuera de muestra (extensión de la Sección 3.11;
+`condicional`).** `e_aut = 16/103 = 0,1553` (`1 − 0,8447`); `Δt = 43,82 s` y `N = 2.646` de las
+Secciones 3.1 y 3.4; `e_man` y `c` con las rejillas `condicional` de la Sección 3.11. Ahorro bruto
+`32,2 h`. `B` (h por trimestre, una decimal, mitad hacia arriba), `c = 5 / 10 / 15 min`:
+`e_man = 10 %`: `+20,0 / +7,8 / −4,4`; `15 %`: `+31,0 / +29,9 / +28,7`; `20 %`:
+`+42,1 / +51,9 / +61,8`; `26,5 %`: `+56,4 / +80,6 / +104,7`. La exactitud mínima de equilibrio `a*`
+no cambia respecto de la Sección 3.11. **No computable** (sin valor): el ahorro de tiempo por
+incidente medido en el corpus independiente (los artefactos fuera de muestra no registran
+tiempos; se usa el `Δt` del in-sample como supuesto) y `e_man` y `c` (no se midieron fuera de
+muestra). Esta extensión descansa en la tasa del n efectivo, sujeta al sesgo de exclusión de (e).
+Procedencia: `analisis/…c205.json` (`balance_neto`).
 
 ## 4. Contingencia del gate de intervención humana
 

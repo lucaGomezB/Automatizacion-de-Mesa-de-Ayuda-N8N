@@ -17,9 +17,9 @@ usar "sección N (`archivo.tex`)" (gitleaks).
 
 ## 2. Registro canónico (`C/`)
 
-- [ ] 2.1 Agregar la sección 3.20 del memo `C/numeros-canonicos.md` (posterior a 3.19) con macro-F1, métricas por clase con soporte, *balanced accuracy*, kappa del clasificador, matriz de confusión, potencia/precisión y escenarios de exclusión, cada valor con su procedencia (`A/analisis_fuera_de_muestra_c205.json`), su comando y su estado (`vigente`; escenarios de exclusión `condicional`). Verificación: toda cifra tiene archivo fuente y comando; la numeración de la Sección 3 sigue consecutiva.
-- [ ] 2.2 Agregar la entrada de upsert de c-205 al encabezado del memo y verificar que NO cambia ningún valor ni estado `vigente` de las Secciones 3.1 a 3.19. Verificación: `git diff` del memo limitado a la sección nueva y al encabezado; ningún valor previo modificado.
-- [ ] 2.3 Verificar que la regla de decisión de D6 figura explícita y ata el peor caso (`87/150 = 0,5800`) a la exactitud reportada. Verificación: la regla figura textual en la sección 3.20.
+- [x] 2.1 Agregar la sección 3.20 del memo `C/numeros-canonicos.md` (posterior a 3.19) con macro-F1, métricas por clase con soporte, *balanced accuracy*, kappa del clasificador, matriz de confusión, potencia/precisión y escenarios de exclusión, cada valor con su procedencia (`A/analisis_fuera_de_muestra_c205.json`), su comando y su estado (`vigente`; escenarios de exclusión `condicional`). Verificación: toda cifra tiene archivo fuente y comando; la numeración de la Sección 3 sigue consecutiva.
+- [x] 2.2 Agregar la entrada de upsert de c-205 al encabezado del memo y verificar que NO cambia ningún valor ni estado `vigente` de las Secciones 3.1 a 3.19. Verificación: `git diff` del memo limitado a la sección nueva y al encabezado; ningún valor previo modificado.
+- [x] 2.3 Verificar que la regla de decisión de D6 figura explícita y ata el peor caso (`87/150 = 0,5800`) a la exactitud reportada. Verificación: la regla figura textual en la sección 3.20.
 
 ## 3. Prosa de la tesis (`S/`)
 
