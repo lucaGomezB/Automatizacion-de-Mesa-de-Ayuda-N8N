@@ -585,8 +585,8 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 | C-08 tarea 8.1 | Correr la evaluacion manual sobre el corpus real |
 | C-46 tareas 5.2 y 5.3 | Verificar en vivo en N8N el sello `ingresado_en` de telefonia |
 | C-47 tarea 5.4 | Verificar en vivo que el agente N8N recibe el item sellado |
-| C-182 tarea 6.1 | Documentar el rollback de la imagen N8N derivada |
-| C-183 tarea 6.2 | Verificacion en navegador (hard refresh) del header |
+| ~~C-182 tarea 6.1~~ | CERRADO el 2026-11-12: rollback de la imagen N8N derivada verificado en el stack local (unos 12 s, sin migración, datos idénticos); evidencia en la sección 5.1 de `docs/runbook-fix-encoding-correo-n8n.md` |
+| C-183 tarea 6.2 | Verificacion en navegador (hard refresh) del header. Intentada el 2026-11-12 en el stack local: BLOQUEADA porque el backend no arranca sin `DIRECTORY_BLIND_INDEX_KEY` en el `.env` local (variable obligatoria desde c-153; ver `docs/seguridad/gestion-secretos-y-rotacion.md`) |
 
 ### Residuales declarados al archivar c-201 y c-202 (2026-11-12)
 
