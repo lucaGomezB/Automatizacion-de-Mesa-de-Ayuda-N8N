@@ -28,7 +28,7 @@ import sys
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
+from typing import Any, Callable, Dict, List, Mapping, Optional, Sequence, Tuple
 
 _REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
 
@@ -320,6 +320,23 @@ def leer_cache(ruta: pathlib.Path) -> Tuple[Optional[dict], Dict[str, dict], int
 def llamadas_acumuladas(casos: Dict[str, dict], descartados: int) -> int:
     """Llamadas ya hechas: intentos de los casos registrados mas los de los casos descartados."""
     return sum(int(r["intentos"]) for r in casos.values()) + descartados
+
+
+#: Errores de indisponibilidad o transporte del proveedor (la llamada no produjo respuesta del
+#: modelo). Una respuesta invalida del modelo (`respuesta_invalida`) NO es un fallo tecnico.
+ERRORES_TECNICOS_REINTENTABLES = frozenset({"GeminiUnavailableError", "GeminiTimeoutError"})
+
+
+def es_fallo_tecnico(registro: Mapping[str, Any]) -> bool:
+    """
+    Fallo tecnico reintentable (desviacion declarada del 2026-11-13): registro en `fallback`, con
+    un error de indisponibilidad o transporte y SIN tokens, es decir, sin respuesta del modelo.
+    """
+    return (
+        registro.get("etapa") == "fallback"
+        and registro.get("error") in ERRORES_TECNICOS_REINTENTABLES
+        and int(registro.get("tokens_total") or 0) == 0
+    )
 
 
 def _reparar_cola(ruta: pathlib.Path) -> None:

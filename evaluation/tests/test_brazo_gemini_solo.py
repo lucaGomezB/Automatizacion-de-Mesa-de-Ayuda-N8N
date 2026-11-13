@@ -696,3 +696,49 @@ def test_la_clave_no_se_filtra_en_un_error_del_proveedor(corpora, tmp_path, caps
     assert codigo == 0
     assert CLAVE_FALSA not in texto
     assert CLAVE_FALSA not in (tmp_path / "cache.jsonl").read_text(encoding="utf-8")
+
+
+# ---------------------------------------------------------------------------
+# 2.1 Desviacion declarada: reintento de fallos tecnicos (2026-11-13)
+# ---------------------------------------------------------------------------
+def reg_caso(caso_id="R001", **cambios) -> dict:
+    base = {
+        "tipo": "caso", "bloque": bgs.BLOQUE_DENTRO, "caso_id": caso_id, "sector_predicho": SECTOR_OK,
+        "confianza": 0.9, "etapa": "gemini", "intentos": 1, "latencia_ms": 100.0,
+        "latencias_intento_ms": [100.0], "tokens_entrada": 800, "tokens_salida": 20, "tokens_total": 820,
+        "tokens_origen": "api", "error": None, "t_inicio_utc": "2026-11-13T16:55:34+00:00",
+    }
+    base.update(cambios)
+    return base
+
+
+FALLO_TECNICO = dict(
+    sector_predicho=None, confianza=0.0, etapa="fallback", error="GeminiUnavailableError",
+    tokens_entrada=0, tokens_salida=0, tokens_total=0,
+)
+
+
+def test_fallo_de_indisponibilidad_sin_tokens_es_reintentable():
+    assert bgs.es_fallo_tecnico(reg_caso(**FALLO_TECNICO)) is True
+
+
+def test_fallo_de_timeout_sin_tokens_es_reintentable():
+    assert bgs.es_fallo_tecnico(reg_caso(**{**FALLO_TECNICO, "error": "GeminiTimeoutError", "intentos": 3})) is True
+
+
+def test_respuesta_invalida_con_tokens_no_es_reintentable():
+    invalido = reg_caso(
+        sector_predicho=None, confianza=0.0, etapa="fallback", error="respuesta_invalida"
+    )
+    assert bgs.es_fallo_tecnico(invalido) is False
+
+
+def test_fallo_de_indisponibilidad_con_tokens_no_es_reintentable():
+    # Hubo respuesta del modelo: es conducta del sistema, no un fallo de transporte.
+    assert bgs.es_fallo_tecnico(reg_caso(**{**FALLO_TECNICO, "tokens_total": 820})) is False
+
+
+def test_registro_exitoso_o_sin_error_no_es_reintentable():
+    assert bgs.es_fallo_tecnico(reg_caso()) is False
+    assert bgs.es_fallo_tecnico(reg_caso(**{**FALLO_TECNICO, "error": None})) is False
+    assert bgs.es_fallo_tecnico(reg_caso(**{**FALLO_TECNICO, "error": ""})) is False
