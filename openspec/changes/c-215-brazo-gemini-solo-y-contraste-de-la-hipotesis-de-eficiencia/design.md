@@ -229,3 +229,57 @@ la ejecuta.
 - [Una caída a mitad de corrida] → caché reanudable con contador acumulado de llamadas.
 - [SDK instalado local (2.8.0) por debajo del pin] → aborto explícito; la persona que corra debe
   instalar la versión del pin fuera de este change.
+
+## Desviaciones del prerregistro
+
+### 2026-11-13 — Reintento de fallos técnicos del brazo «Gemini solo»
+
+**Qué pasó.** Una persona hizo la corrida paga. El caché quedó con 303 registros de caso. Los 112
+primeros casos del bloque `dentro_muestra` (R001 a R112, la primera tanda de la corrida) se
+registraron con `etapa: "fallback"`, `error: "GeminiUnavailableError"`, un solo intento, 0 tokens y
+alrededor de 380 ms: la llamada nunca llegó a producir una respuesta del modelo (la causa más
+probable es una clave mal cargada en ese primer intento; no se verificó). El ejecutor los registró
+como definitivos y la reanudación los omitió. Los otros 88 casos de `dentro_muestra` y los 103 de
+`fuera_muestra` salieron sin fallos (`etapa: "gemini"`). Consecuencias: el bloque primario (fuera de
+muestra, 103 casos) es válido; el secundario (dentro de muestra, 200 casos) no, porque el 56 % de sus
+casos son fallos técnicos contados como errores del brazo (exactitud 59/200); y el control de deriva
+«pooled» (66/103) queda contaminado porque mezcla esos fallos con comparaciones reales.
+
+**Qué se agrega.** El ejecutor admite `--reintentar-fallos-tecnicos` (exige `--confirmar-costo`; con
+`--dry-run` informa cuántos casos se reintentarían y el costo estimado).
+
+- Definición estricta de «fallo técnico reintentable»: registro con `etapa == "fallback"`, `error` de
+  indisponibilidad o transporte (`GeminiUnavailableError` o `GeminiTimeoutError`) y `tokens_total == 0`,
+  es decir, sin respuesta del modelo. NO son reintentables las respuestas inválidas del modelo
+  (fallo de validación del Anexo H con tokens mayores que 0): son conducta del sistema y se conservan.
+- Trazabilidad: el caché sigue siendo append-only. No se borra ni se reescribe ningún registro viejo;
+  el reintento agrega un registro nuevo del mismo `caso_id` con `reintento_de_fallo_tecnico: true` y
+  `ronda` (2 la primera vez; un reintento que vuelve a fallar sube la ronda). La lectura toma como
+  vigente el último registro por caso. El análisis informa, leídos del caché, cuántos casos se
+  reintentaron, cuántos siguen fallidos y la contabilidad de llamadas, y calcula la concordancia del
+  control de deriva sin los casos cuyo registro vigente sigue siendo un fallo técnico, diciendo cuántos
+  excluyó, además del «pooled» y por bloque (dentro: 69 casos que H escaló; fuera: 34).
+- El modo sin el flag no re-paga lo ya hecho: ningún registro (exitoso, respuesta inválida o fallo
+  técnico) se vuelve a llamar.
+
+**Contabilidad del tope (cambia respecto de D3).** El tope de 400 se aplica a las llamadas que
+obtuvieron respuesta del modelo (tokens mayores que 0). Los intentos que fallaron antes de obtener
+respuesta se cuentan y se informan aparte (`intentos_sin_respuesta`) y no consumen ese tope; como
+cinturón de seguridad se agrega un tope separado de 600 intentos totales (con o sin respuesta), que
+tampoco puede subirse por línea de comandos. Con el caché actual: 191 llamadas con respuesta, 112
+intentos sin respuesta y 303 intentos totales; reintentar los 112 casos exige al menos 112 respuestas
+más (303 en total, dentro de 400) y, según el dry-run, como máximo 209 respuestas y 297 intentos
+adicionales. Los intentos sin respuesta no generan tokens ni costo; el costo del brazo se calcula con
+el registro vigente de cada caso.
+
+**Amenaza a la validez que se declara.** La decisión de reintentar se tomó DESPUÉS de ver los
+resultados del bloque primario y del secundario contaminado. No hay un mecanismo que garantice que
+el reintento no está motivado por esos resultados; se mitiga porque (i) la definición de fallo
+técnico es estricta y mecánica (sin respuesta del modelo), (ii) nada se borra y el registro original
+queda en el caché y (iii) el análisis reporta los conteos del incidente.
+
+**Qué NO cambia.** La regla de decisión de tres vías (D7), el margen de no inferioridad (0,05), el
+umbral de ahorro material (0,90), el tope de tasa de fallos (5 %) y el bloque primario (fuera de
+muestra). El veredicto del bloque primario se obtuvo sin fallos técnicos (los 103 casos salieron con
+respuesta del modelo) y no depende del reintento. El reintento solo repara el bloque secundario
+(dentro de muestra), que es informativo, y el control de deriva.

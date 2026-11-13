@@ -252,6 +252,28 @@ menor que 0,90, tope de 400 llamadas, una sola corrida) esta prerregistrada en
    python evaluation/data/campana/analisis/analisis_brazo_gemini_solo_c215.py
    ```
 
+### Reintento de fallos tecnicos (desviacion declarada del 2026-11-13)
+
+En la corrida paga, 112 casos de `dentro_muestra` quedaron como fallos tecnicos (sin respuesta del
+modelo: `GeminiUnavailableError`, 0 tokens). La desviacion y su amenaza a la validez estan en la
+seccion «Desviaciones del prerregistro» de `design.md`. Solo se reintentan los registros en
+`fallback` con error de indisponibilidad o transporte y sin tokens; las respuestas invalidas del
+modelo no se reintentan. El cache es append-only: el reintento agrega un registro nuevo con
+`reintento_de_fallo_tecnico: true` y `ronda`, y el analisis usa el ultimo registro de cada caso.
+
+Contabilidad: el tope de 400 rige las llamadas que obtuvieron respuesta del modelo; los intentos
+sin respuesta se cuentan aparte y un cinturon de 600 acota los intentos totales.
+
+```bash
+# sin costo: informa casos a reintentar, pendientes nuevos y costo estimado; no escribe nada
+python -m evaluation.brazo_gemini_solo --dry-run --reintentar-fallos-tecnicos
+
+# PAGA (requiere GEMINI_API_KEY bien cargada y el visto bueno de gasto)
+python -m evaluation.brazo_gemini_solo --confirmar-costo --reintentar-fallos-tecnicos
+```
+
+Sin `--reintentar-fallos-tecnicos` el ejecutor no vuelve a llamar ningun caso ya registrado.
+
 - Pruebas (cliente simulado, sin red): `python -m pytest evaluation/tests/test_brazo_gemini_solo.py -q`
   y `python -m pytest evaluation/data/campana/analisis/test_analisis_brazo_gemini_solo_c215.py -q`.
 - Limitaciones declaradas: los intentos fallidos sin respuesta no aportan tokens (el costo de un

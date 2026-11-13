@@ -44,3 +44,13 @@ puede cerrar un agente.
 - [ ] 5.1 [AUTORES] Registrar las cifras en `numeros-canonicos.md` (sección nueva, con procedencia y comando).
 - [ ] 5.2 [AUTORES] Escribir la prosa en introducción, resultados, discusión y conclusiones, incluido un veredicto desfavorable o no concluyente, y retirar o condicionar toda afirmación de eficiencia que el resultado no sostenga.
 - [ ] 5.3 [AUTORES] Agregar la FASE a `CHANGES.md` y recompilar el PDF (LaTeX no disponible en esta máquina).
+
+## 6. Desviación declarada (2026-11-13): reintento de fallos técnicos
+
+- [x] 6.1 Documentar la desviación en `design.md` (sección «Desviaciones del prerregistro»): incidente, definición estricta de fallo técnico, contabilidad del tope, amenaza a la validez y qué no cambia.
+- [x] 6.2 Ejecutor: `es_fallo_tecnico`, doble tope (400 respuestas del modelo y 600 intentos totales), historial append-only con `reintento_de_fallo_tecnico` y `ronda`, y `--reintentar-fallos-tecnicos` con dry-run. Probado con cliente simulado (Strict TDD).
+- [x] 6.3 Análisis: registro vigente por caso, control de deriva por bloque y pooled sin los fallos técnicos (con el número de excluidos) y sección «Desviaciones del prerregistro» con conteos leídos del caché.
+- [x] 6.4 `A/README.md`: comando exacto del reintento y la contabilidad de llamadas.
+- [x] 6.5 Verificación sin costo: `python -m evaluation.brazo_gemini_solo --dry-run --reintentar-fallos-tecnicos` sobre el caché real informa 112 casos a reintentar y 0 pendientes nuevos, sin modificar el caché (SHA-256 idéntico antes y después).
+- [ ] 6.6 [CORRIDA PAGA] Una persona con `GEMINI_API_KEY` bien cargada y visto bueno de gasto (hasta 209 respuestas, del orden de USD 0,08 a 0,15 a precio introductorio) corre `python -m evaluation.brazo_gemini_solo --confirmar-costo --reintentar-fallos-tecnicos`. Verificación: 0 casos con fallo técnico vigente y llamadas con respuesta menor o igual a 400.
+- [ ] 6.7 [AUTORES] Regenerar `analisis_brazo_gemini_solo_c215.{json,md}` y su `SHA256SUMS` con el caché completo y declarar la desviación y la amenaza a la validez en la prosa de la tesis.

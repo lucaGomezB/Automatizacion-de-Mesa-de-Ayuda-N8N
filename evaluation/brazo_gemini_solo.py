@@ -12,6 +12,10 @@ entorno, en tiempo de ejecucion, y jamas se imprime ni se guarda.
 
 Prerregistro (openspec/changes/c-215-*/design.md): tope duro de 400 llamadas, una sola corrida,
 SDK `google-genai` en `>=2.33,<3`, precios declarados en `PRECIOS_USD_POR_MILLON`.
+
+Desviacion declarada (2026-11-13, design.md): `--reintentar-fallos-tecnicos` vuelve a llamar los casos
+cuyo registro vigente es un fallo tecnico (sin respuesta del modelo); el tope de 400 rige las llamadas
+CON respuesta y un cinturon de 600 acota los intentos totales. El cache es append-only.
 """
 
 from __future__ import annotations
