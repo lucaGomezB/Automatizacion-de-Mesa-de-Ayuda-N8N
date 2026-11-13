@@ -23,13 +23,13 @@ usar "sección N (`archivo.tex`)" (gitleaks).
 
 ## 3. Prosa de la tesis (`S/`)
 
-- [ ] 3.1 `S/07-resultados.tex` (bloque fuera de muestra): agregar macro-F1, métricas por clase con soporte, *balanced accuracy* y kappa del clasificador, rotuladas como estimaciones sobre el n efectivo `103`, con los valores del memo. Verificación: las cifras figuran y coinciden con `C/numeros-canonicos.md`.
-- [ ] 3.2 `S/08-discusion.tex` (validación fuera de muestra / limitaciones): tratar explícitamente el sesgo de exclusión con los escenarios peor/mejor caso y la cota y la regla de decisión. Verificación: los escenarios y la regla figuran textuales; sin "no realizada".
-- [ ] 3.3 Verificar que ninguna sección presenta los escenarios como medición ni la macro-F1 fuera de muestra como equivalente de la exactitud estricta. Verificación: revisión de las secciones tocadas.
-- [ ] 3.4 Recompilar `main.pdf` en el entorno de registro, correr `verify_citations.py` y regenerar `compilacion.md`; registrar páginas y palabras. Verificación: sin errores fatales; `verify_citations.py` PASS; resumen y abstract ≤ 250 palabras.
+- [x] 3.1 `S/07-resultados.tex` (bloque fuera de muestra): agregar macro-F1, métricas por clase con soporte, *balanced accuracy* y kappa del clasificador, rotuladas como estimaciones sobre el n efectivo `103`, con los valores del memo. Verificación: las cifras figuran y coinciden con `C/numeros-canonicos.md`.
+- [x] 3.2 `S/08-discusion.tex` (validación fuera de muestra / limitaciones): tratar explícitamente el sesgo de exclusión con los escenarios peor/mejor caso y la cota y la regla de decisión. Verificación: los escenarios y la regla figuran textuales; sin "no realizada".
+- [x] 3.3 Verificar que ninguna sección presenta los escenarios como medición ni la macro-F1 fuera de muestra como equivalente de la exactitud estricta. Verificación: revisión de las secciones tocadas.
+- [x] 3.4 Recompilar `main.pdf` en el entorno de registro, correr `verify_citations.py` y regenerar `compilacion.md`; registrar páginas y palabras. Verificación: sin errores fatales; `verify_citations.py` PASS; resumen y abstract ≤ 250 palabras.
 
 ## 4. Validación y cierre
 
-- [ ] 4.1 Correr `cd evaluation/data/campana/analisis; python -m pytest test_analisis_fuera_de_muestra_c205.py -q` y verificar que pasa. Verificación: exit 0.
-- [ ] 4.2 Correr `openspec validate c-205-ampliar-el-analisis-fuera-de-muestra --strict --no-interactive` y verificar que pasa. Verificación: imprime `is valid` (exit 0).
+- [x] 4.1 Correr `cd evaluation/data/campana/analisis; python -m pytest test_analisis_fuera_de_muestra_c205.py -q` y verificar que pasa. Verificación: exit 0.
+- [x] 4.2 Correr `openspec validate c-205-ampliar-el-analisis-fuera-de-muestra --strict --no-interactive` y verificar que pasa. Verificación: imprime `is valid` (exit 0).
 - [ ] 4.3 Archivar el change en `openspec/changes/archive/2026-MM-DD-c-205-ampliar-el-analisis-fuera-de-muestra/` con las specs sincronizadas. Verificación: el directorio existe bajo `archive/`.

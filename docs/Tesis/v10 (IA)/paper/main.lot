@@ -16,15 +16,15 @@
 \contentsline {table}{\numberline {15}{\ignorespaces Sensibilidad de la exactitud al vocabulario ajustado con el corpus}}{81}{table.caption.25}%
 \contentsline {table}{\numberline {16}{\ignorespaces Confusiones observadas en la clasificación automática, por frontera, con los aciertos laxos entre los errores estrictos}}{82}{table.caption.26}%
 \contentsline {table}{\numberline {17}{\ignorespaces Tiempo del brazo manual de la campaña complementaria por operador y reducción frente al brazo automatizado de la misma campaña}}{84}{table.caption.29}%
-\contentsline {table}{\numberline {18}{\ignorespaces Exactitud mínima de equilibrio y balance neto trimestral según la tasa de derivación errónea manual y el costo por derivación}}{97}{table.caption.33}%
-\contentsline {table}{\numberline {19}{\ignorespaces Cumplimiento de los objetivos del trabajo y evidencia de respaldo}}{100}{table.caption.34}%
-\contentsline {table}{\numberline {20}{\ignorespaces Configuración evaluada, configuración entregada y configuración de la campaña complementaria}}{120}{table.caption.42}%
-\contentsline {table}{\numberline {21}{\ignorespaces Parámetros de configuración de la inferencia con \texttt {gemini-3.6-flash}.}}{128}{table.caption.46}%
-\contentsline {table}{\numberline {22}{\ignorespaces Revisiones que originaron las correcciones de la tesis, su alcance y su origen en el repositorio.}}{131}{table.caption.47}%
-\contentsline {table}{\numberline {23}{\ignorespaces Recomendaciones del dictamen del 22 de octubre de 2026, change responsable y secciones donde se atendieron.}}{132}{table.caption.48}%
-\contentsline {table}{\numberline {24}{\ignorespaces Recomendaciones del dictamen del 28 de octubre de 2026, change responsable y secciones donde se atendieron.}}{133}{table.caption.49}%
-\contentsline {table}{\numberline {25}{\ignorespaces Recomendaciones del dictamen del 8 de noviembre de 2026, secciones donde se atendieron (change responsable: \texttt {c-187} para A1 a A5, B1 a B3 y B6; \texttt {c-188} para B4, B5, B7 y C1 a C5).}}{133}{table.caption.50}%
-\contentsline {table}{\numberline {26}{\ignorespaces Recomendaciones del dictamen del 9 de noviembre de 2026, secciones donde se atendieron (change responsable: \texttt {c-190}).}}{134}{table.caption.51}%
-\contentsline {table}{\numberline {27}{\ignorespaces Recomendaciones del dictamen del 9 de noviembre de 2026 sobre la \texttt {v1.2.13}, changes responsables y secciones donde se atendieron.}}{134}{table.caption.52}%
-\contentsline {table}{\numberline {28}{\ignorespaces Recomendaciones del dictamen del 9 de noviembre de 2026 sobre la \texttt {v1.2.16}, secciones donde se atendieron (change responsable: \texttt {c-195}).}}{134}{table.caption.53}%
-\contentsline {table}{\numberline {29}{\ignorespaces Observaciones de la devolución de segunda instancia del 11 de noviembre de 2026, secciones donde se atendieron y estado (change responsable: \texttt {c-196}).}}{136}{table.caption.54}%
+\contentsline {table}{\numberline {18}{\ignorespaces Exactitud mínima de equilibrio y balance neto trimestral según la tasa de derivación errónea manual y el costo por derivación}}{98}{table.caption.33}%
+\contentsline {table}{\numberline {19}{\ignorespaces Cumplimiento de los objetivos del trabajo y evidencia de respaldo}}{101}{table.caption.34}%
+\contentsline {table}{\numberline {20}{\ignorespaces Configuración evaluada, configuración entregada y configuración de la campaña complementaria}}{121}{table.caption.42}%
+\contentsline {table}{\numberline {21}{\ignorespaces Parámetros de configuración de la inferencia con \texttt {gemini-3.6-flash}.}}{129}{table.caption.46}%
+\contentsline {table}{\numberline {22}{\ignorespaces Revisiones que originaron las correcciones de la tesis, su alcance y su origen en el repositorio.}}{132}{table.caption.47}%
+\contentsline {table}{\numberline {23}{\ignorespaces Recomendaciones del dictamen del 22 de octubre de 2026, change responsable y secciones donde se atendieron.}}{133}{table.caption.48}%
+\contentsline {table}{\numberline {24}{\ignorespaces Recomendaciones del dictamen del 28 de octubre de 2026, change responsable y secciones donde se atendieron.}}{134}{table.caption.49}%
+\contentsline {table}{\numberline {25}{\ignorespaces Recomendaciones del dictamen del 8 de noviembre de 2026, secciones donde se atendieron (change responsable: \texttt {c-187} para A1 a A5, B1 a B3 y B6; \texttt {c-188} para B4, B5, B7 y C1 a C5).}}{134}{table.caption.50}%
+\contentsline {table}{\numberline {26}{\ignorespaces Recomendaciones del dictamen del 9 de noviembre de 2026, secciones donde se atendieron (change responsable: \texttt {c-190}).}}{135}{table.caption.51}%
+\contentsline {table}{\numberline {27}{\ignorespaces Recomendaciones del dictamen del 9 de noviembre de 2026 sobre la \texttt {v1.2.13}, changes responsables y secciones donde se atendieron.}}{135}{table.caption.52}%
+\contentsline {table}{\numberline {28}{\ignorespaces Recomendaciones del dictamen del 9 de noviembre de 2026 sobre la \texttt {v1.2.16}, secciones donde se atendieron (change responsable: \texttt {c-195}).}}{135}{table.caption.53}%
+\contentsline {table}{\numberline {29}{\ignorespaces Observaciones de la devolución de segunda instancia del 11 de noviembre de 2026, secciones donde se atendieron y estado (change responsable: \texttt {c-196}).}}{137}{table.caption.54}%
