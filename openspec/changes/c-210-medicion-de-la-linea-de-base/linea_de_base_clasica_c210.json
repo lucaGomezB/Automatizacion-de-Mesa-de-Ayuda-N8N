@@ -1,0 +1,342 @@
+{
+  "aditivo": {
+    "declaracion": "Las cifras de esta medicion son aditivas: no reemplazan ningun numero canonico de la tesis ni el clasificador de produccion. El n de prueba es el efectivo 103; los 47 discordantes sin referencia no se usan y no se extrapola al 150.",
+    "no_se_reinterpreta_el_150": true,
+    "reemplaza_numeros_canonicos": false
+  },
+  "change": "c-210-medicion-de-la-linea-de-base",
+  "comparacion_hibrido": {
+    "balanced_accuracy": {
+      "definicion": "media aritmetica de las sensibilidades por clase",
+      "diferencia_con_estricta": -0.10513638465094766,
+      "exactitud_estricta": 0.8446601941747572,
+      "valor": 0.7395238095238096
+    },
+    "exactitud_estricta": {
+      "aciertos": 87,
+      "ic_wilson": [
+        0.7624742780120963,
+        0.9020617624322336
+      ],
+      "n": 103,
+      "valor": 0.8446601941747572
+    },
+    "exactitud_laxa": {
+      "aciertos": 90,
+      "ic_wilson": [
+        0.7959587945728204,
+        0.9247352211203261
+      ],
+      "n": 103,
+      "valor": 0.8737864077669902
+    },
+    "macro_f1": 0.7446560846560847,
+    "n": 103,
+    "por_clase": {
+      "Bases de Datos": {
+        "f1": 0.962962962962963,
+        "precision": 0.9285714285714286,
+        "sensibilidad": 1.0,
+        "soporte": 13
+      },
+      "Seguridad Informatica": {
+        "f1": 0.8333333333333333,
+        "precision": 1.0,
+        "sensibilidad": 0.7142857142857143,
+        "soporte": 21
+      },
+      "Sistemas": {
+        "f1": 0.22222222222222224,
+        "precision": 0.25,
+        "sensibilidad": 0.2,
+        "soporte": 5
+      },
+      "Soporte Tecnico Hardware": {
+        "f1": 0.9047619047619048,
+        "precision": 0.8636363636363636,
+        "sensibilidad": 0.95,
+        "soporte": 40
+      },
+      "Soporte Tecnico Software": {
+        "f1": 0.8,
+        "precision": 0.7692307692307693,
+        "sensibilidad": 0.8333333333333334,
+        "soporte": 24
+      }
+    },
+    "procedencia": "evaluation/data/campana/analisis/analisis_fuera_de_muestra_c205.json",
+    "rotulo": "cifras canonicas del hibrido en el mismo n efectivo 103; se LEEN del artefacto de c-205 y no se recalculan",
+    "sistema": "hybrid-v3"
+  },
+  "discordantes_excluidos": 47,
+  "entradas_sha256": {
+    "analisis_fuera_de_muestra_c205.json": "75fe4a4cae680add09adad8d9bbd9d4c7828256bbf8f78c85b1b86c5ffbf78c2",
+    "corpus_campana.json": "99bbe84b90b6ba66b34aae08c85bd318cd0e9600ad540e58b1a4bd8eccec06a5",
+    "corpus_independiente.json": "8cdbec6fc06be3f7c4535f0213919d6d90b69d36e7d820ff97a84b9180cef56d"
+  },
+  "excluidos": 47,
+  "generador": "evaluation/linea_de_base.py",
+  "metodo": "TF-IDF (palabras y caracteres) + regresion logistica regularizada (scikit-learn); metricas con evaluation/metrics.py; sin red ni Gemini; deterministico",
+  "n_entrenamiento": 200,
+  "n_prueba": 103,
+  "n_prueba_efectivo_declarado": 103,
+  "prevalencia_natural": {
+    "Bases de Datos": 0.005,
+    "Seguridad Informatica": 0.155,
+    "Sistemas": 0.08,
+    "Soporte Tecnico Hardware": 0.425,
+    "Soporte Tecnico Software": 0.335
+  },
+  "semilla": 42,
+  "total_primaria": 150,
+  "variantes": {
+    "balanceada": {
+      "class_weight": "balanced",
+      "lectura_muestral": {
+        "metricas": {
+          "balanced_accuracy": 0.5271428571428571,
+          "balanced_accuracy_definicion": "media aritmetica de las sensibilidades por clase",
+          "exactitud_estricta": {
+            "aciertos": 67,
+            "n": 103,
+            "valor": 0.6504854368932039
+          },
+          "exactitud_laxa": {
+            "aciertos": 69,
+            "n": 103,
+            "valor": 0.6699029126213593
+          },
+          "macro_f1": 0.487737406770805,
+          "macro_f1_definicion": "media aritmetica de las cinco F1 por clase, incluida toda clase de soporte cero (F1 = 0.0)",
+          "matriz_confusion": {
+            "celdas": {
+              "Bases de Datos": {
+                "Bases de Datos": 0,
+                "Seguridad Informatica": 10,
+                "Sistemas": 1,
+                "Soporte Tecnico Hardware": 0,
+                "Soporte Tecnico Software": 2
+              },
+              "Seguridad Informatica": {
+                "Bases de Datos": 0,
+                "Seguridad Informatica": 13,
+                "Sistemas": 1,
+                "Soporte Tecnico Hardware": 2,
+                "Soporte Tecnico Software": 5
+              },
+              "Sistemas": {
+                "Bases de Datos": 0,
+                "Seguridad Informatica": 0,
+                "Sistemas": 2,
+                "Soporte Tecnico Hardware": 3,
+                "Soporte Tecnico Software": 0
+              },
+              "Soporte Tecnico Hardware": {
+                "Bases de Datos": 0,
+                "Seguridad Informatica": 2,
+                "Sistemas": 2,
+                "Soporte Tecnico Hardware": 33,
+                "Soporte Tecnico Software": 3
+              },
+              "Soporte Tecnico Software": {
+                "Bases de Datos": 0,
+                "Seguridad Informatica": 1,
+                "Sistemas": 0,
+                "Soporte Tecnico Hardware": 4,
+                "Soporte Tecnico Software": 19
+              }
+            },
+            "columnas": "sector predicho principal",
+            "filas": "sector de referencia (sector_asignado)",
+            "orden": [
+              "Seguridad Informatica",
+              "Soporte Tecnico Hardware",
+              "Soporte Tecnico Software",
+              "Bases de Datos",
+              "Sistemas"
+            ]
+          },
+          "n": 103,
+          "por_clase": {
+            "Bases de Datos": {
+              "f1": 0.0,
+              "precision": 0.0,
+              "sensibilidad": 0.0,
+              "soporte": 13
+            },
+            "Seguridad Informatica": {
+              "f1": 0.5531914893617021,
+              "precision": 0.5,
+              "sensibilidad": 0.6190476190476191,
+              "soporte": 21
+            },
+            "Sistemas": {
+              "f1": 0.3636363636363636,
+              "precision": 0.3333333333333333,
+              "sensibilidad": 0.4,
+              "soporte": 5
+            },
+            "Soporte Tecnico Hardware": {
+              "f1": 0.8048780487804876,
+              "precision": 0.7857142857142857,
+              "sensibilidad": 0.825,
+              "soporte": 40
+            },
+            "Soporte Tecnico Software": {
+              "f1": 0.7169811320754716,
+              "precision": 0.6551724137931034,
+              "sensibilidad": 0.7916666666666666,
+              "soporte": 24
+            }
+          }
+        },
+        "procedencia": "corpus_independiente.json (referencia por consenso E3/E4)",
+        "rotulo": "metricas sobre los 103 casos fuera de muestra tal como estan"
+      },
+      "lectura_ponderada_prevalencia_natural": {
+        "balanced_accuracy": 0.7437857142857143,
+        "f1": 0.6970974399189631,
+        "f1_por_clase": {
+          "Bases de Datos": 0.0,
+          "Seguridad Informatica": 0.5531914893617021,
+          "Sistemas": 0.3636363636363636,
+          "Soporte Tecnico Hardware": 0.8048780487804876,
+          "Soporte Tecnico Software": 0.7169811320754716
+        },
+        "macro_f1": 0.6970974399189631,
+        "precision": 0.6575779967159278,
+        "procedencia": "distribucion de sector_asignado de corpus_campana.json",
+        "rotulo": "post-estratificacion a la prevalencia natural de los 200 casos in-sample; no es una medicion nueva",
+        "sensibilidad": 0.7437857142857143
+      }
+    },
+    "sin_repoderacion": {
+      "class_weight": null,
+      "lectura_muestral": {
+        "metricas": {
+          "balanced_accuracy": 0.3838095238095238,
+          "balanced_accuracy_definicion": "media aritmetica de las sensibilidades por clase",
+          "exactitud_estricta": {
+            "aciertos": 60,
+            "n": 103,
+            "valor": 0.5825242718446602
+          },
+          "exactitud_laxa": {
+            "aciertos": 62,
+            "n": 103,
+            "valor": 0.6019417475728155
+          },
+          "macro_f1": 0.3430614313414419,
+          "macro_f1_definicion": "media aritmetica de las cinco F1 por clase, incluida toda clase de soporte cero (F1 = 0.0)",
+          "matriz_confusion": {
+            "celdas": {
+              "Bases de Datos": {
+                "Bases de Datos": 0,
+                "Seguridad Informatica": 3,
+                "Sistemas": 0,
+                "Soporte Tecnico Hardware": 4,
+                "Soporte Tecnico Software": 6
+              },
+              "Seguridad Informatica": {
+                "Bases de Datos": 0,
+                "Seguridad Informatica": 6,
+                "Sistemas": 0,
+                "Soporte Tecnico Hardware": 6,
+                "Soporte Tecnico Software": 9
+              },
+              "Sistemas": {
+                "Bases de Datos": 0,
+                "Seguridad Informatica": 0,
+                "Sistemas": 0,
+                "Soporte Tecnico Hardware": 3,
+                "Soporte Tecnico Software": 2
+              },
+              "Soporte Tecnico Hardware": {
+                "Bases de Datos": 0,
+                "Seguridad Informatica": 0,
+                "Sistemas": 0,
+                "Soporte Tecnico Hardware": 37,
+                "Soporte Tecnico Software": 3
+              },
+              "Soporte Tecnico Software": {
+                "Bases de Datos": 0,
+                "Seguridad Informatica": 1,
+                "Sistemas": 0,
+                "Soporte Tecnico Hardware": 6,
+                "Soporte Tecnico Software": 17
+              }
+            },
+            "columnas": "sector predicho principal",
+            "filas": "sector de referencia (sector_asignado)",
+            "orden": [
+              "Seguridad Informatica",
+              "Soporte Tecnico Hardware",
+              "Soporte Tecnico Software",
+              "Bases de Datos",
+              "Sistemas"
+            ]
+          },
+          "n": 103,
+          "por_clase": {
+            "Bases de Datos": {
+              "f1": 0.0,
+              "precision": 0.0,
+              "sensibilidad": 0.0,
+              "soporte": 13
+            },
+            "Seguridad Informatica": {
+              "f1": 0.3870967741935483,
+              "precision": 0.6,
+              "sensibilidad": 0.2857142857142857,
+              "soporte": 21
+            },
+            "Sistemas": {
+              "f1": 0.0,
+              "precision": 0.0,
+              "sensibilidad": 0.0,
+              "soporte": 5
+            },
+            "Soporte Tecnico Hardware": {
+              "f1": 0.7708333333333333,
+              "precision": 0.6607142857142857,
+              "sensibilidad": 0.925,
+              "soporte": 40
+            },
+            "Soporte Tecnico Software": {
+              "f1": 0.5573770491803279,
+              "precision": 0.4594594594594595,
+              "sensibilidad": 0.7083333333333334,
+              "soporte": 24
+            }
+          }
+        },
+        "procedencia": "corpus_independiente.json (referencia por consenso E3/E4)",
+        "rotulo": "metricas sobre los 103 casos fuera de muestra tal como estan"
+      },
+      "lectura_ponderada_prevalencia_natural": {
+        "balanced_accuracy": 0.674702380952381,
+        "f1": 0.5743254781420765,
+        "f1_por_clase": {
+          "Bases de Datos": 0.0,
+          "Seguridad Informatica": 0.3870967741935483,
+          "Sistemas": 0.0,
+          "Soporte Tecnico Hardware": 0.7708333333333333,
+          "Soporte Tecnico Software": 0.5573770491803279
+        },
+        "macro_f1": 0.5743254781420765,
+        "precision": 0.5277224903474904,
+        "procedencia": "distribucion de sector_asignado de corpus_campana.json",
+        "rotulo": "post-estratificacion a la prevalencia natural de los 200 casos in-sample; no es una medicion nueva",
+        "sensibilidad": 0.674702380952381
+      }
+    }
+  },
+  "veredicto": {
+    "declaracion": "Veredicto honesto y sin maquillaje: se reportan las dos variantes de la linea de base y se declara el resultado tal como se mide, sea favorable o desfavorable.",
+    "diferencia_balanceada_menos_hibrido": -0.1941747572815533,
+    "exactitud_estricta_hibrido": 0.8446601941747572,
+    "exactitud_estricta_linea_de_base_balanceada": 0.6504854368932039,
+    "exactitud_estricta_linea_de_base_sin_repoderacion": 0.5825242718446602,
+    "lectura": "La linea de base balanceada queda por debajo del hibrido en exactitud estricta."
+  }
+}

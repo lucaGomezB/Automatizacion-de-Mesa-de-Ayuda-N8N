@@ -2753,6 +2753,29 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
+## FASE 68 — Linea de base clasica y su medicion (c-209, c-210)
+
+> Implementa y ejecuta la linea de base supervisada clasica (TF-IDF de palabras y caracteres + regresion logistica regularizada) que pide el dictamen CONEAU v1.3.0 para el criterio 4: sobre el mismo n efectivo de `103` casos de c-191/c-205, la linea de base (balanceada) obtiene exactitud estricta `0,6505` frente al `0,8447` del hibrido. Evidencia ADITIVA: no cambia ningun numero canonico ni el clasificador de produccion.
+
+### [C-209] `linea-de-base-clasica-desarrollo` — APLICADO (2026-11-13, LOW)
+
+- **Estado**: aplicado el 2026-11-13; `evaluation/linea_de_base.py` con 16 pruebas TDD en verde (`cd evaluation && pytest tests/test_linea_de_base.py -q`); SIN commit/PR todavia (por indicacion del usuario).
+- **Scope**: modulo `evaluation/linea_de_base.py` (TF-IDF de palabras `(1,2)` y de caracteres `(2,5)` + `LogisticRegression(max_iter=2000, solver="lbfgs", random_state=42)`) entrenado con los `200` casos in-sample (`corpus_campana.json`, verdad `sector_asignado`) y evaluado sobre los `103` fuera de muestra con referencia E3/E4; dos variantes (`class_weight="balanced"` primaria y `None` de sensibilidad); metricas con `evaluation/metrics.py` (exactitud estricta y laxa, macro-F1, *balanced accuracy* y F1 por clase con soporte); lectura muestral y lectura ponderada a la prevalencia natural de los `200`; deterministico (semilla `42`, SHA-256 impreso); offline (sin red, Gemini ni API paga).
+- **Dependencias**: `evaluation/metrics.py` (c-205) y los corpus versionados de c-191. No toca `App/`, `n8n/`, el clasificador de produccion, los corpus, los numeros canonicos ni la tesis.
+- **Governance**: LOW (herramienta de evaluacion de solo lectura, sin datos productivos).
+- **Leer antes**: `openspec/changes/c-209-linea-de-base-clasica-desarrollo/{proposal,design,tasks}.md`.
+
+### [C-210] `medicion-de-la-linea-de-base` — APLICADO (2026-11-13, LOW)
+
+- **Estado**: aplicado el 2026-11-13; dos corridas identicas byte a byte (SHA-256 `2866dc1c...` JSON y `f3e96559...` MD); `openspec validate --strict` valido; SIN commit/PR todavia (por indicacion del usuario).
+- **Scope**: ejecucion reproducible de `python3 -m evaluation.linea_de_base --salida <dir>`; artefactos versionados `linea_de_base_clasica_c210.json`/`.md` (LF, UTF-8 sin BOM, SHA-256) en `evaluation/data/campana/analisis/` y en el directorio del change; tabla comparativa linea de base vs hibrido sobre los mismos `103` casos leyendo las cifras del hibrido de `analisis_fuera_de_muestra_c205.json` (no se recalculan); lectura muestral y ponderada; veredicto honesto.
+- **Hallazgo**: la linea de base (balanceada) obtiene exactitud estricta `0,6505` (laxa `0,6699`, macro-F1 `0,4877`, *balanced accuracy* `0,5271`); la variante sin re-ponderacion, `0,5825` (macro-F1 `0,3431`). El hibrido conserva `0,8447`. La clase `Bases de Datos` (un solo caso de ajuste) cae a F1 `0,0` en la linea de base, mientras que es la mejor clase del hibrido (F1 `0,963`). El resultado es desfavorable a la linea de base y se reporta sin maquillaje.
+- **Dependencias**: c-209 (el modulo). No toca `App/`, `n8n/`, los corpus, los numeros canonicos ni los `.tex`.
+- **Governance**: LOW (medicion de solo lectura sobre artefactos ya versionados).
+- **Leer antes**: `openspec/changes/c-210-medicion-de-la-linea-de-base/{proposal,design,tasks}.md` y `evaluation/data/campana/analisis/README.md`.
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo; actualizado 2026-10-22)
