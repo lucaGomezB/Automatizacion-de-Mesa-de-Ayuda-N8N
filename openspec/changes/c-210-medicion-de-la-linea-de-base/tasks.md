@@ -3,7 +3,8 @@
 Convenciones: `E/` = `evaluation/`; `C/` = `openspec/changes/c-210-medicion-de-la-linea-de-base/`;
 `A/` = `evaluation/data/campana/analisis/`. Todo es solo lectura sobre los artefactos
 versionados. NO se edita `App/`, `n8n/`, el clasificador de produccion, los corpus, los numeros
-canonicos, `CHANGES.md`, los `.tex` ni changes ajenas.
+canonicos, `CHANGES.md` ni changes ajenas. La integracion en la tesis (seccion 5) es la unica
+excepcion: se editan los `.tex` de la tesis de forma aditiva, sin cambiar valores existentes.
 
 ## 1. Ejecucion y artefactos
 
