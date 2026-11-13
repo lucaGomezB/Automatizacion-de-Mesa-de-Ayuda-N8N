@@ -31,4 +31,4 @@
 
 ## 6. Rollback
 
-- [ ] 6.1 MANUAL/gated: definir y documentar el rollback (revertir `n8n`/`n8n-corpus` a `image: n8nio/n8n:2.11.2` y recrear); verificar que el stack vuelve a la imagen upstream sin migracion ni restauracion de datos.
+- [x] 6.1 (verificada el 2026-11-12 sobre el stack local; evidencia en la sección 5.1 de `docs/runbook-fix-encoding-correo-n8n.md`) MANUAL/gated: definir y documentar el rollback (revertir `n8n`/`n8n-corpus` a `image: n8nio/n8n:2.11.2` y recrear); verificar que el stack vuelve a la imagen upstream sin migracion ni restauracion de datos.
