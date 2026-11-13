@@ -1,0 +1,250 @@
+{
+  "change": "c-207-atender-el-dictamen-coneau-v1-3-0",
+  "generador": "evaluation/data/campana/analisis/analisis_dictamen_c207.py",
+  "metodo": "solo lectura; evaluation.metrics + evaluation.kappa + evaluation.campana; sin red ni Gemini; deterministico",
+  "entradas_sha256": {
+    "data/corpus_evaluacion_pseudonimizado.json": "1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb",
+    "evaluation/data/campana/plantilla_etiquetado.csv": "c35a58b60aca98dbc5fd03ad280fbba2f8baf2d56444ba7982ada0715f8ccd09",
+    "evaluation/data/campana/predicciones_in_sample.json": "89cf956e82f660dd8675a2d23b7b4d17efd62da542c0ba35bea28e0e54572ede",
+    "evaluation/data/campana/corpus_campana.json": "99bbe84b90b6ba66b34aae08c85bd318cd0e9600ad540e58b1a4bd8eccec06a5",
+    "evaluation/data/campana/doble_etiquetado_independiente.csv": "94dc2d739390a4c874e4ecfa70bf8b52266b752ec20d1e47801f2a93a562f6f7",
+    "evaluation/data/campana/analisis/analisis_fuera_de_muestra_c205.json": "6d8d8d017ff80244e24e7677c804da8094f19015d73fb9560ba1ccc8bd2f6846"
+  },
+  "ic_reduccion_tiempo": {
+    "n": 200,
+    "reduccion": 0.7116083461881952,
+    "ic_reduccion": [
+      0.6715833251027029,
+      0.7459099711276518
+    ],
+    "diferencia_medias_s": 43.8244,
+    "ic_diferencia_medias_s": [
+      37.93145312499999,
+      50.334367750000006
+    ],
+    "metodo": "bootstrap percentil remuestreando pares (casos) con reemplazo",
+    "nivel_confianza": 0.95,
+    "semilla": 20261021,
+    "remuestreos": 2000
+  },
+  "acuerdo_e3_e4": {
+    "etiquetadores": [
+      "E3",
+      "E4"
+    ],
+    "total": 150,
+    "concordantes": 103,
+    "discordantes": 47,
+    "acuerdo_observado": 0.6866666666666666,
+    "kappa": {
+      "n": 150,
+      "kappa": 0.6054840514829323,
+      "p_o": 0.6866666666666666,
+      "p_e": 0.20577777777777778,
+      "pabak": 0.6083333333333333,
+      "error_estandar": 0.044343002615082255,
+      "ic_asintotico": [
+        0.5185733633910057,
+        0.6923947395748589
+      ],
+      "ic_bootstrap": [
+        0.5174914310541553,
+        0.6838989035025549
+      ],
+      "nivel_confianza": 0.95,
+      "semilla": 20261021,
+      "remuestreos": 2000,
+      "rotulo_landis_koch": "sustancial",
+      "rotulos_ic_asintotico": [
+        "moderado",
+        "sustancial"
+      ],
+      "rotulos_ic_bootstrap": [
+        "moderado",
+        "sustancial"
+      ]
+    },
+    "rotulo": "fiabilidad inter-etiquetador E3/E4 sobre el sector principal de los 150 casos",
+    "n_efectivo_c205": 103
+  },
+  "balance_neto_referencia_comun": {
+    "estado": "condicional",
+    "formula": "B = (N / 3600) * [dt - (e_aut - e_man) * c]; a* = 1 - e_man - dt / c",
+    "insumos": {
+      "delta_t_s": 43.82,
+      "n_trimestral": 2646,
+      "ahorro_bruto_h": 32.2077,
+      "procedencia": "dt y N: Secciones 3.1 y 3.4 de numeros-canonicos.md; c: supuesto"
+    },
+    "verificacion": {
+      "e_aut_texto": {
+        "errores": 53,
+        "n": 200,
+        "tasa": 0.265,
+        "referencia": "etiquetado original del corpus (sector_asignado)",
+        "unidad": "por caso"
+      },
+      "e_man_texto": {
+        "errores": 26,
+        "n": 151,
+        "tasa": 0.17218543046357615,
+        "referencia": "consenso de E1 y E2 (138 casos; discordantes excluidos)",
+        "unidad": "por derivacion"
+      },
+      "e_aut_consenso": {
+        "errores": 28,
+        "n": 138,
+        "tasa": 0.2028985507246377,
+        "referencia": "consenso de E1 y E2 (138 casos; discordantes excluidos)",
+        "unidad": "por caso"
+      },
+      "asimetria_confirmada": true
+    },
+    "limites_no_igualables": [
+      {
+        "limite": "unidad de conteo",
+        "detalle": "e_aut se cuenta por caso y e_man por derivacion de operador (13 casos de la referencia de consenso y 20 del corpus completo tienen doble cobertura); el bootstrap empareja las derivaciones con su caso, pero la unidad no se iguala"
+      },
+      {
+        "limite": "origen del ahorro de tiempo",
+        "detalle": "dt = 43,82 s proviene de la campana 2026-10 (cronometraje con carga del ticket); el brazo manual de la campana complementaria mide solo la decision de sector. dt se trata como constante y su incertidumbre no entra en el IC de B"
+      },
+      {
+        "limite": "cobertura de la referencia de consenso",
+        "detalle": "la referencia de consenso excluye los casos discordantes entre E1 y E2, que tienden a ser los mas dificiles; ambas tasas quedan acotadas a los casos faciles"
+      },
+      {
+        "limite": "costo por derivacion erronea",
+        "detalle": "c (5, 10 o 15 min) es un supuesto propio: la campana no cronometra reasignaciones"
+      },
+      {
+        "limite": "referencia original para el brazo manual",
+        "detalle": "contra el etiquetado original, el acierto estricto del brazo manual es bajo porque el 53,5 % de los casos admite mas de un sector (la comparacion es estricta contra el sector asignado); se informa como segunda referencia comun, no como la principal"
+      }
+    ],
+    "referencia_consenso": {
+      "rotulo": "consenso de E1 y E2 (138 casos; discordantes excluidos)",
+      "casos": 138,
+      "errores_automatizado": 28,
+      "errores_manual": 26,
+      "derivaciones_manual": 151,
+      "e_aut": 0.2028985507246377,
+      "e_man": 0.17218543046357615,
+      "diferencia": 0.030713120261061544,
+      "diferencia_ic": [
+        -0.046040824464428136,
+        0.10699190969063435
+      ],
+      "escenarios": [
+        {
+          "costo_min": 5,
+          "balance_h": 25.43545698243593,
+          "balance_h_ic": [
+            8.615983913215128,
+            42.359701794406405
+          ],
+          "signo_fijado_por_ic": "positivo",
+          "a_estrella": 0.6817479028697572,
+          "a_estrella_ic": [
+            0.6186392156862744,
+            0.7420912280701755
+          ]
+        },
+        {
+          "costo_min": 10,
+          "balance_h": 18.663213964871858,
+          "balance_h_ic": [
+            -14.975732173569744,
+            52.51170358881279
+          ],
+          "signo_fijado_por_ic": "no fijado",
+          "a_estrella": 0.7547812362030906,
+          "a_estrella_ic": [
+            0.6916725490196078,
+            0.8151245614035088
+          ]
+        },
+        {
+          "costo_min": 15,
+          "balance_h": 11.890970947307787,
+          "balance_h_ic": [
+            -38.56744826035462,
+            62.663705383219195
+          ],
+          "signo_fijado_por_ic": "no fijado",
+          "a_estrella": 0.779125680647535,
+          "a_estrella_ic": [
+            0.7160169934640522,
+            0.8394690058479533
+          ]
+        }
+      ],
+      "metodo": "bootstrap percentil por caso (empareja las derivaciones manuales con su caso)",
+      "nivel_confianza": 0.95,
+      "semilla": 20261021,
+      "remuestreos": 2000
+    },
+    "referencia_original": {
+      "rotulo": "etiquetado original del corpus (sector_asignado)",
+      "casos": 200,
+      "errores_automatizado": 53,
+      "errores_manual": 77,
+      "derivaciones_manual": 220,
+      "e_aut": 0.265,
+      "e_man": 0.35,
+      "diferencia": -0.08499999999999996,
+      "diferencia_ic": [
+        -0.16000336322869957,
+        -0.012905773420479402
+      ],
+      "escenarios": [
+        {
+          "costo_min": 5,
+          "balance_h": 50.950199999999995,
+          "balance_h_ic": [
+            35.0534230392157,
+            67.48844159192826
+          ],
+          "signo_fijado_por_ic": "positivo",
+          "a_estrella": 0.5039333333333333,
+          "a_estrella_ic": [
+            0.4372666666666666,
+            0.57092715683786
+          ]
+        },
+        {
+          "costo_min": 10,
+          "balance_h": 69.69269999999999,
+          "balance_h_ic": [
+            37.8991460784314,
+            102.76918318385653
+          ],
+          "signo_fijado_por_ic": "positivo",
+          "a_estrella": 0.5769666666666666,
+          "a_estrella_ic": [
+            0.5103,
+            0.6439604901711933
+          ]
+        },
+        {
+          "costo_min": 15,
+          "balance_h": 88.43519999999997,
+          "balance_h_ic": [
+            40.74486911764709,
+            138.04992477578475
+          ],
+          "signo_fijado_por_ic": "positivo",
+          "a_estrella": 0.6013111111111111,
+          "a_estrella_ic": [
+            0.5346444444444444,
+            0.6683049346156378
+          ]
+        }
+      ],
+      "metodo": "bootstrap percentil por caso (empareja las derivaciones manuales con su caso)",
+      "nivel_confianza": 0.95,
+      "semilla": 20261021,
+      "remuestreos": 2000
+    }
+  }
+}
