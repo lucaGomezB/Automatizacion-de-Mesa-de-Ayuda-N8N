@@ -239,12 +239,15 @@ git add .engram && git commit -m "chore(engram): sync project memory"
 
 Never use `engram sync --all` — it exports ALL projects to this repo.
 
+Version in use (Engram 1.20.0, manifest v1), the known watermark defect, the CI integrity guard (`scripts/security/check_engram_chunk_integrity.py`) and the append-only recovery procedure: see `docs/engram-memory.md`.
+
 Reglas duras de la memoria de Engram:
 
 - La memoria se versiona en un repositorio PUBLICO y es evidencia para la auditoria de la tesis. Por eso NUNCA se destrackea ni se agrega `.engram/` al `.gitignore`.
 - Las credenciales se SANEAN antes de cada `engram sync`. Un valor real no debe llegar nunca a un chunk.
 - El guard es `scripts/security/scan_engram_secrets.py`, invocado con `python3 scripts/security/scan_engram_secrets.py .engram`. Esta cableado en el hook `.githooks/pre-commit` (seccion 4), que lo corre cuando hay archivos `.engram/` staged y bloquea el commit si encuentra hallazgos.
 - Los **prompts** del chat se exportan crudos a los chunks y pueden contener datos personales (nombres de colaboradores, correos). Por eso el hook (seccion 4a) los **redacta automaticamente** antes de commitear con `scripts/security/scrub_engram_prompts.py`: el `content` de cada prompt pasa a `[contenido no versionado: privacidad]` y se conservan los metadatos. El mapeo codigo-identidad de los sujetos (`P<n>`) va FUERA del repo y FUERA de Engram: NUNCA escribir el nombre real de un colaborador en un prompt, una observacion o cualquier archivo versionado.
+- La memoria exportada debe ser autocontenida: toda relacion referencia observaciones presentes en la union de chunks. La guarda `scripts/security/check_engram_chunk_integrity.py` (job `secret-scan`) lo verifica; los chunks son append-only (nunca se editan ni se borran) y la recuperacion de datos omitidos esta en `docs/engram-memory.md`.
 - Si el guard marca un falso positivo (por ejemplo, una referencia a codigo como `api_key=settings.gemini_api_key`), NO se debilita el patron: se evalua el caso y, si corresponde, se documenta. La memoria no se publica con un hallazgo sin resolver. <!-- gitleaks:allow -->
 
 ## External Sources (GitHub and Third-Party Code)

@@ -2803,6 +2803,18 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Governance**: MEDIUM (analisis); cualquier cambio de umbral productivo seria HIGH y queda fuera de alcance.
 - **Leer antes**: `openspec/changes/c-214-calibracion-y-punto-de-operacion-del-gate-de-confianza/{proposal,design,tasks}.md` y `evaluation/data/campana/analisis/README.md`.
 
+## FASE 72 — Integridad y restaurabilidad de la memoria de Engram (c-208)
+
+> Atiende el defecto por el cual un clon limpio no podia importar `.engram/` (relacion cuyo extremo no estaba en ningun chunk, causado por el watermark global `lastChunkTime` del export incremental de Engram 1.20.0): agrega una guarda de integridad en CI, un procedimiento de recuperacion append-only y la nota tecnica exacta sobre la version de Engram, sin tocar ningun chunk existente.
+
+### [C-208] `restaurar-la-integridad-de-la-memoria-de-engram` — EN APLICACION (2026-11-13, ALTO)
+
+- **Estado**: aplicado salvo las tareas 6.2 y 6.3 (reparacion real y su verificacion), que esperan la confirmacion de las autoras y los autores porque publican memoria nueva e inmutable en el repositorio publico; el codigo y las pruebas de la reparacion existen. Sin archivar.
+- **Scope**: `scripts/security/check_engram_chunk_integrity.py` (guarda, solo biblioteca estandar) y `scripts/security/test_check_engram_chunk_integrity.py`; paso nuevo en el job `secret-scan` de `.github/workflows/ci.yml`; `scripts/security/reexport_missing_engram_data.py` (deteccion de solo lectura por defecto, reparacion opt-in) y su suite; nota canonica `docs/engram-memory.md` enlazada desde `README.md` y `AGENTS.md`.
+- **Dependencias**: ninguna sobre otros changes; usa los guards existentes de `scripts/security/` y el hook `.githooks/pre-commit`. Append-only: ningun chunk existente se edita ni se borra; `engram sync --all` prohibido.
+- **Governance**: ALTO (integridad de la evidencia de auditoria y guardas de seguridad).
+- **Leer antes**: `openspec/changes/c-208-restaurar-la-integridad-de-la-memoria-de-engram/{proposal,design,tasks}.md` y `docs/engram-memory.md`.
+
 ---
 
 ## Notas del analisis
