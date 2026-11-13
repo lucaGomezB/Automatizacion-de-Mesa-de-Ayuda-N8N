@@ -26,6 +26,7 @@ de las ramas consumidoras").
 - **Upsert c-191**: `c-191-validacion-fuera-de-muestra-150-casos` (aplicado el 2026-11-12) agrega la Sección 3.19 (validación fuera de muestra del clasificador congelado sobre el corpus independiente de `103` casos con consenso `E3`/`E4`: exactitud estricta y laxa con IC de Wilson, desglose por etapa de la cascada, cifras globales sin ponderar y ponderadas por la composición por sector del corpus de 200, y la referencia in-sample). No modifica ningún valor ni estado de las Secciones 3.1 a 3.18. Fecha: 2026-11-12.
 - **Upsert c-205**: `c-205-ampliar-el-analisis-fuera-de-muestra` (aplicado el 2026-11-12) agrega la Sección 3.20 (análisis ampliado fuera de muestra sobre el n efectivo `103`: macro-F1, métricas por clase con soporte, *balanced accuracy*, kappa del clasificador contra la referencia, matriz de confusión, precisión del n observado frente al objetivo D1, sensibilidad al sesgo de exclusión de los `47` discordantes con su regla de decisión y balance neto con la tasa de error fuera de muestra). No modifica ningún valor ni estado `vigente` de las Secciones 3.1 a 3.19. Fecha: 2026-11-12.
 - **Upsert c-207**: `c-207-atender-el-dictamen-coneau-v1-3-0` (aplicado el 2026-11-13) agrega la Sección 3.21 (dictamen CONEAU sobre `v1.3.0`: IC al 95 % de la reducción relativa del tiempo de registro `0,7116`; acuerdo observado y kappa entre `E3` y `E4` sobre los `150` casos del corpus independiente; balance neto con referencia común y su IC por caso). No modifica ningún valor `vigente` de las Secciones 3.1 a 3.20; la lectura del balance de la Sección 3.11 (asimétrica: `e_aut` contra el etiquetado original y `e_man` contra el consenso de `E1`/`E2`) queda superada por la Sección 3.21 (c). Fecha: 2026-11-13.
+- **Upsert c-210**: `c-210-medicion-de-la-linea-de-base` (aplicado el 2026-11-13) agrega la Sección 3.22 (comparación de la línea de base clásica con el híbrido `hybrid-v3` sobre el mismo n efectivo de `103`: métricas globales, F1 por clase, lectura ponderada a la prevalencia natural y veredicto honesto) y registra la integración aditiva en la tesis. No modifica ningún valor ni estado `vigente` de las Secciones 3.1 a 3.21. Fecha: 2026-11-13.
 - **Artefacto**: este memo. No se edita ningún `.tex` en este change.
 - **Fecha de verificación**: 2026-10-21.
 - **SHA-256 del corpus** (`data/corpus_evaluacion_pseudonimizado.json`):
@@ -1352,6 +1353,60 @@ solo la decisión de sector; la referencia de consenso excluye los discordantes 
 difíciles) para ambas tasas; el costo `c` es un supuesto propio que la campaña no cronometró.
 La tabla de supuestos de la Sección 3.11 se conserva como sensibilidad. Procedencia:
 `analisis/…c207.json` (`balance_neto_referencia_comun`).
+
+### 3.22 Comparación con la línea de base clásica (c-210)
+
+Cifras aditivas de la comparación entre la línea de base clásica y el híbrido `hybrid-v3`
+sobre el mismo n efectivo de `103` casos con consenso `E3`/`E4` (los `47` discordantes quedan
+fuera de la referencia). La línea de base se entrenó con los `200` casos de ajuste y se evaluó
+con las funciones puras de `evaluation/metrics.py`; el híbrido se LEE de
+`analisis_fuera_de_muestra_c205.json` y no se recalcula. No modifica ningún valor ni estado
+`vigente` de las Secciones 3.1 a 3.21. Fuente única de las cifras:
+`evaluation/data/campana/analisis/linea_de_base_clasica_c210.json` (y su vista `.md`).
+
+Comando (desde la raíz del repositorio; solo lectura):
+
+```bash
+python3 -m evaluation.linea_de_base --salida evaluation/data/campana/analisis/
+```
+
+SHA-256 de las salidas: `linea_de_base_clasica_c210.json`
+`2866dc1c09bbc2054c088766da79bf8b90b38066d0db0e044fe980eebd50c1de`;
+`linea_de_base_clasica_c210.md`
+`f3e965590c060e844d722ba3409afc1fb19fb05c064a25f7729c0a38db4294bd`.
+
+**(a) Métricas globales (n efectivo `103`).**
+
+| Valor canónico | Procedencia (archivo) | Estado |
+|---|---|---|
+| Exactitud estricta: línea de base `0,6505` (`67/103`); híbrido `0,8447` (`87/103`) | `analisis/…c210.json`; `analisis/…c205.json` | vigente (nuevo; el híbrido ya es canónico, Sección 3.20) |
+| Exactitud laxa: línea de base `0,6699` (`69/103`); híbrido `0,8738` (`90/103`) | idem | vigente (nuevo; el híbrido ya es canónico, Sección 3.20) |
+| Macro-F1 de las cinco clases: línea de base `0,4877`; híbrido `0,7447` | idem | vigente (nuevo; el híbrido ya es canónico, Sección 3.20) |
+| *Balanced accuracy*: línea de base `0,5271`; híbrido `0,7395` | idem | vigente (nuevo; el híbrido ya es canónico, Sección 3.20) |
+
+**(b) F1 por clase con soporte.**
+
+| Sector | Línea de base | Híbrido `hybrid-v3` | Soporte | Estado |
+|---|---|---|---|---|
+| Seguridad Informatica | `0,5532` | `0,8333` | `21` | vigente (nuevo) |
+| Soporte Tecnico Hardware | `0,8049` | `0,9048` | `40` | vigente (nuevo) |
+| Soporte Tecnico Software | `0,7170` | `0,8000` | `24` | vigente (nuevo) |
+| Bases de Datos | `0,0000` | `0,9630` | `13` | vigente (nuevo) |
+| Sistemas | `0,3636` | `0,2222` | `5` | vigente (nuevo) |
+
+Procedencia: `analisis/…c210.json` (`variantes.balanceada.lectura_muestral.por_clase`) y
+`analisis/…c205.json` (`por_clase`).
+
+**(c) Lectura ponderada a la prevalencia natural de los `200`.** Macro-F1 `0,6971` y
+*balanced accuracy* `0,7438`; post-estratificación de la misma muestra, no medición nueva.
+Estado: `condicional`.
+
+**(d) Veredicto.** La línea de base queda por debajo del híbrido en las cuatro métricas
+globales y en cuatro de las cinco clases; la única excepción es `Sistemas` (`0,3636` frente a
+`0,2222`), pero sobre `5` casos y sin corregir la debilidad de la clase. La línea de base
+colapsa en `Bases de Datos` (`F1 0,0000`) porque tiene un solo caso de ajuste. Es un
+clasificador clásico de TF-IDF y regresión logística, no un modelo ajustado; la comparación no
+se presenta como un benchmark definitivo. Procedencia: `analisis/…c210.json` (`veredicto`).
 
 ## 4. Contingencia del gate de intervención humana
 
