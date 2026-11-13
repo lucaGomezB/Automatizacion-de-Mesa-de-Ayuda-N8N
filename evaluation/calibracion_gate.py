@@ -250,3 +250,112 @@ def aplicar_isotonica(
                 break
         salida.append(valor)
     return salida
+
+
+# ---------------------------------------------------------------------------
+# Senales de las reglas recomputadas offline (D5)
+# ---------------------------------------------------------------------------
+ACUERDO = "acuerdo"
+DESACUERDO = "desacuerdo"
+SIN_PREDICCION_REGLAS = "sin_prediccion_reglas"
+NO_APLICA = "no_aplica"
+TAU_CORTOCIRCUITO = 0.5166
+
+#: Entorno inerte para construir `Settings` del backend sin credenciales reales (sin red).
+ENTORNO_OFFLINE_C214 = {
+    "DATABASE_URL": "postgresql+asyncpg://ci:ci@localhost:5432/ci_dummy",
+    "GEMINI_API_KEY": "offline-dummy-key-sin-llamadas",  # gitleaks:allow (ficticio)
+    "PSEUDONYMIZATION_ENCRYPTION_KEY": "MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA=",  # gitleaks:allow (ficticio)
+    "JWT_SECRET_KEY": "ci-dummy-jwt-secret-key-for-testing-only",  # gitleaks:allow (ficticio)
+    "COST_GUARD_CALLER_HMAC_KEY": "ci-dummy-cost-guard-caller-hmac-key",  # gitleaks:allow (ficticio)
+    "DIRECTORY_BLIND_INDEX_KEY": "ci-dummy-directory-blind-index-key",  # gitleaks:allow (ficticio)
+}
+
+
+def asegurar_backend_en_path() -> None:
+    """Agrega `App/Backend` a `sys.path` para importar el clasificador real (diferido)."""
+    import pathlib
+    import sys
+
+    backend = str(pathlib.Path(__file__).resolve().parents[1] / "App" / "Backend")
+    if backend not in sys.path:
+        sys.path.insert(0, backend)
+
+
+def cargar_clasificador_deterministico():
+    """`DeterministicClassifier` real; requiere el entorno de `ENTORNO_OFFLINE_C214`."""
+    asegurar_backend_en_path()
+    from app.classifiers.deterministic import DeterministicClassifier  # type: ignore
+
+    return DeterministicClassifier()
+
+
+def recomputar_senales_reglas(
+    predicciones: Sequence, clasificador, *, tau: float = TAU_CORTOCIRCUITO
+) -> list[dict]:
+    """Recomputa `score_correctitud`, sector y acuerdo con Gemini de las reglas, caso a caso.
+
+    `predicciones` son mapeos con `caso_id`, `descripcion`, `etapa` y `sector_predicho`. El
+    cortocircuito replica `HybridClassifier`: sin ausencia de senal ni empate y
+    `score_correctitud >= tau`. El sector de las reglas es `None` si no hay ganador unico.
+    """
+    import asyncio
+
+    async def _correr() -> list:
+        return [await clasificador.classify(p["descripcion"]) for p in predicciones]
+
+    resultados = asyncio.run(_correr())
+    filas: list[dict] = []
+    for p, r in zip(predicciones, resultados):
+        sin_ganador = bool(r.sin_prediccion) or bool(r.ambiguo)
+        score = float(r.score_correctitud)
+        sector = None if sin_ganador else r.sector_predicho
+        cortocircuita = (not sin_ganador) and score >= tau
+        if cortocircuita:
+            acuerdo = NO_APLICA
+        elif sector is None:
+            acuerdo = SIN_PREDICCION_REGLAS
+        else:
+            acuerdo = ACUERDO if sector == p["sector_predicho"] else DESACUERDO
+        filas.append(
+            {
+                "caso_id": p["caso_id"],
+                "score_correctitud": score,
+                "sector_reglas": sector,
+                "cortocircuita": cortocircuita,
+                "acuerdo_con_gemini": acuerdo,
+            }
+        )
+    return filas
+
+
+def verificar_reproduccion_cortocircuito(
+    senales: Sequence[dict], predicciones: Sequence
+) -> dict:
+    """Exige que el recomputo reproduzca la etapa y el sector de los cortocircuitados.
+
+    Lanza `ValueError` («deriva») ante cualquier diferencia respecto de la cache.
+    """
+    if len(senales) != len(predicciones):
+        raise ValueError("deriva: distinta cantidad de casos entre el recomputo y la cache.")
+    diferencias: list[str] = []
+    cortos = 0
+    for s, p in zip(senales, predicciones):
+        if s["caso_id"] != p["caso_id"]:
+            diferencias.append(f"{s['caso_id']}!={p['caso_id']}: orden distinto")
+            continue
+        es_det = p["etapa"] == "deterministic"
+        if s["cortocircuita"] != es_det:
+            diferencias.append(f"{p['caso_id']}: etapa recomputada distinta de {p['etapa']}")
+        elif es_det:
+            cortos += 1
+            if s["sector_reglas"] != p["sector_predicho"]:
+                diferencias.append(
+                    f"{p['caso_id']}: sector {s['sector_reglas']} != {p['sector_predicho']}"
+                )
+    if diferencias:
+        raise ValueError(
+            f"deriva del clasificador determinista ({len(diferencias)} casos): "
+            + "; ".join(diferencias[:10])
+        )
+    return {"cortocircuitados": cortos, "total": len(predicciones)}

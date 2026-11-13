@@ -271,3 +271,136 @@ def test_isotonica_no_invierte_el_orden_y_conserva_el_auroc_si_no_hay_agrupacion
 def test_isotonica_rechaza_ajuste_vacio():
     with pytest.raises(ValueError):
         ajustar_isotonica([], [])
+
+
+# ======================================================================================
+# Grupo 3: senales de las reglas recomputadas (costo cero)
+# ======================================================================================
+import json  # noqa: E402
+import pathlib  # noqa: E402
+from types import SimpleNamespace  # noqa: E402
+
+from evaluation.calibracion_gate import (  # noqa: E402
+    ACUERDO,
+    DESACUERDO,
+    NO_APLICA,
+    SIN_PREDICCION_REGLAS,
+    cargar_clasificador_deterministico,
+    recomputar_senales_reglas,
+    verificar_reproduccion_cortocircuito,
+)
+
+RAIZ = pathlib.Path(__file__).resolve().parents[2]
+
+
+class ReglasSimuladas:
+    """Clasificador determinista simulado: resultado fijado por descripcion."""
+
+    def __init__(self, tabla):
+        self.tabla = tabla
+
+    async def classify(self, descripcion):
+        sector, score, sin_pred, ambiguo = self.tabla[descripcion]
+        return SimpleNamespace(
+            sector_predicho=sector,
+            score_correctitud=score,
+            sin_prediccion=sin_pred,
+            ambiguo=ambiguo,
+        )
+
+
+def _pred(caso_id, descripcion, etapa, sector):
+    return {"caso_id": caso_id, "descripcion": descripcion, "etapa": etapa, "sector_predicho": sector}
+
+
+def test_recomputar_clasifica_acuerdo_desacuerdo_sin_prediccion_y_no_aplica():
+    reglas = ReglasSimuladas(
+        {
+            "a": ("Sistemas", 0.30, False, False),  # escalado; Gemini coincide
+            "b": ("Sistemas", 0.20, False, False),  # escalado; Gemini discrepa
+            "c": (None, 0.0, True, False),  # escalado; sin senal
+            "d": (None, 0.0, False, True),  # escalado; empate (open question: sin prediccion)
+            "e": ("Bases de Datos", 0.80, False, False),  # cortocircuita
+        }
+    )
+    preds = [
+        _pred("1", "a", "gemini", "Sistemas"),
+        _pred("2", "b", "gemini", "Bases de Datos"),
+        _pred("3", "c", "gemini", "Sistemas"),
+        _pred("4", "d", "gemini", "Sistemas"),
+        _pred("5", "e", "deterministic", "Bases de Datos"),
+    ]
+    filas = recomputar_senales_reglas(preds, reglas, tau=0.5166)
+    assert [f["acuerdo_con_gemini"] for f in filas] == [
+        ACUERDO, DESACUERDO, SIN_PREDICCION_REGLAS, SIN_PREDICCION_REGLAS, NO_APLICA,
+    ]
+    assert [f["cortocircuita"] for f in filas] == [False, False, False, False, True]
+    assert [f["sector_reglas"] for f in filas] == ["Sistemas", "Sistemas", None, None, "Bases de Datos"]
+    assert filas[0]["score_correctitud"] == pytest.approx(0.30)
+    assert filas[4]["caso_id"] == "5"
+
+
+def test_recomputar_el_empate_con_score_alto_no_cortocircuita():
+    reglas = ReglasSimuladas({"x": (None, 0.9, False, True), "y": ("Sistemas", 0.5166, False, False)})
+    filas = recomputar_senales_reglas(
+        [_pred("1", "x", "gemini", "Sistemas"), _pred("2", "y", "deterministic", "Sistemas")],
+        reglas,
+        tau=0.5166,
+    )
+    assert filas[0]["cortocircuita"] is False  # ambiguo: escala aunque el score sea alto
+    assert filas[1]["cortocircuita"] is True  # score == tau cortocircuita (>=)
+
+
+def test_verificar_reproduccion_acepta_si_coincide_y_detiene_si_hay_deriva():
+    reglas = ReglasSimuladas({"a": ("Sistemas", 0.3, False, False), "e": ("Sistemas", 0.8, False, False)})
+    bien = [_pred("1", "a", "gemini", "Bases de Datos"), _pred("2", "e", "deterministic", "Sistemas")]
+    senales = recomputar_senales_reglas(bien, reglas, tau=0.5166)
+    assert verificar_reproduccion_cortocircuito(senales, bien) == {"cortocircuitados": 1, "total": 2}
+
+    otra_etapa = [_pred("1", "a", "deterministic", "Sistemas"), _pred("2", "e", "deterministic", "Sistemas")]
+    with pytest.raises(ValueError, match="deriva"):
+        verificar_reproduccion_cortocircuito(
+            recomputar_senales_reglas(otra_etapa, reglas, tau=0.5166), otra_etapa
+        )
+    otro_sector = [_pred("1", "a", "gemini", "Sistemas"), _pred("2", "e", "deterministic", "Bases de Datos")]
+    with pytest.raises(ValueError, match="deriva"):
+        verificar_reproduccion_cortocircuito(
+            recomputar_senales_reglas(otro_sector, reglas, tau=0.5166), otro_sector
+        )
+
+
+@pytest.fixture
+def entorno_backend_c214(monkeypatch):
+    from evaluation.calibracion_gate import ENTORNO_OFFLINE_C214, asegurar_backend_en_path
+
+    asegurar_backend_en_path()
+    pytest.importorskip("app.config.settings")
+    for clave, valor in ENTORNO_OFFLINE_C214.items():
+        monkeypatch.setenv(clave, valor)
+    from app.config.settings import get_settings
+
+    get_settings.cache_clear()
+    yield
+    get_settings.cache_clear()
+
+
+@pytest.mark.parametrize(
+    "ruta, total, cortos",
+    [
+        ("evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json", 200, 131),
+        ("evaluation/data/campana/predicciones_independiente.json", 103, 69),
+    ],
+)
+def test_el_recomputo_reproduce_los_cortocircuitados_de_las_caches(
+    entorno_backend_c214, ruta, total, cortos
+):
+    predicciones = json.loads((RAIZ / ruta).read_text(encoding="utf-8"))["predictions"]
+    from app.config.settings import get_settings
+
+    tau = get_settings().deterministic_score_threshold
+    assert tau == pytest.approx(0.5166)
+    senales = recomputar_senales_reglas(predicciones, cargar_clasificador_deterministico(), tau=tau)
+    assert verificar_reproduccion_cortocircuito(senales, predicciones) == {
+        "cortocircuitados": cortos,
+        "total": total,
+    }
