@@ -4525,11 +4525,11 @@ devolución completa se versiona en `auditorias/Devolucion_Segunda_Instancia_TFI
 | N-09 | Regla de decisión fijada tras los datos | Veredicto no concluyente, con estimación puntual por encima de la cota | `00-resumen.tex`, `01-introduccion.tex`, `04`, `07`, `08`, `09`, `10`, `12` | cerrada |
 | N-10 | Cobertura del backend sin informar | 90 % medido en la corrida de CI sobre `main` | `06-implementacion.tex` | cerrada |
 | N-11 | Figuras ilegibles | Figuras regeneradas y divididas | `05-arquitectura.tex`, `12-anexos.tex`, `paper/figures/` | cerrada |
-| N-12 | Conclusiones con valoraciones sin respaldo | Valoraciones retiradas | `09-conclusiones.tex` | cerrada |
+| N-12 | Conclusiones con valoraciones sin respaldo y repetición de cifras | Valoraciones retiradas y cifras de la validación fuera de muestra sintetizadas con remisión a la tabla | `09-conclusiones.tex`, `10-recomendaciones.tex` | cerrada (repetición reducida el 2026-11-13: la conclusión y la recomendación remiten a `tab:fuera-de-muestra`) |
 | N-13 | Instrumento del artículo 12 no declarado | Declarado como no suscrito; requisito para el adoptante | `11-aspectos-legales.tex` | cerrada (respuesta del autor, ver Decisiones) |
 | N-14 | Consentimiento escrito "diferido" en el Anexo I | Atendida el 10-11-2026 | `12-anexos.tex` | cerrada |
 | N-15 | Nombres de sector sin tilde | Tilde en prosa y `\texttt{}` en la cadena del sistema | `01`, `04`, `05`, `07`, `08` | cerrada |
-| N-16 | Paket et al. y Mayor-Rocher et al. | Marcadores en el `.bib` | `Bibliography_base.bib` | Atendida en parte: DOI verificados el 11-11-2026 (Crossref: Paket et al., UBMK 2024, pp. 135-140; Applied Linguistics, publicación anticipada del 10-09-2026, con versión preliminar arXiv:2409.15334); resta la copia de Paket et al. (acceso cerrado en IEEE Xplore) y confirmar la versión consultada de Mayor-Rocher et al. |
+| N-16 | Paket et al. y Mayor-Rocher et al. | Marcadores en el `.bib` | `Bibliography_base.bib` | Cerrada (41f8d79, 2026-11-11): DOI verificados en Crossref/OpenAlex; la devolución acepta «copia O DOI verificable», el DOI de Paket resuelve y el resumen publicado es la fuente declarada (texto completo cerrado en IEEE); Mayor-Rocher se cita en su versión de revista (publicación anticipada del 10-09-2026; preliminar arXiv:2409.15334) |
 
 ### Matriz de trazabilidad (verificada por `verificar_matriz_trazabilidad.py`)
 
@@ -4568,8 +4568,8 @@ devolución completa se versiona en `auditorias/Devolucion_Segunda_Instancia_TFI
 | N-13/13 | 7.3: el instrumento está documentado pero no suscrito | c-196 | `11-aspectos-legales.tex:22` | `subsec:transferencia-internacional` | `pero no está suscrito` | cerrada |
 | N-14/14 | Anexo I: la recomendación A1 fue atendida el 10-11-2026 | c-196 | `12-anexos.tex:396` | `tab:anexo-trazabilidad-0911-v1216` | `atendida el 10 de noviembre de 2026` | cerrada |
 | N-15/15 | Tabla de variables: cadena canónica en `\texttt{}` | c-196 | `04-marco-metodologico.tex:36` | `tab:variables` | `\texttt{Seguridad Informatica}` | cerrada |
-| N-16/16a | Mayor-Rocher et al.: marcador en el `.bib` | c-196 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:334` | `-` | `PENDIENTE-AUTORES(N-16)` | PENDIENTE (DOI y versión de revista verificados el 11-11-2026; falta confirmar la versión consultada) |
-| N-16/16b | Paket et al.: marcador en el `.bib` | c-196 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:368` | `-` | `PENDIENTE-AUTORES(N-16)` | PENDIENTE (DOI verificado en Crossref el 11-11-2026; falta la copia del artículo) |
+| N-16/16a | Mayor-Rocher et al.: versión de revista declarada en el `.bib` | c-196 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:341` | `-` | `Versión de revista` | cerrada (41f8d79, 2026-11-11) |
+| N-16/16b | Paket et al.: DOI verificado declarado en el `.bib` | c-196 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:378` | `-` | `DOI verificado en Crossref` | cerrada (41f8d79, 2026-11-11) |
 | Páginas | Páginas: el total pasa de 120 a 132: decisión registrada | c-196 | `docs/Tesis/Correcciones/dictamen-correcciones.md:4633` | `-` | `Libro mayor de páginas y palabras (c-196)` | cerrada |
 
 ### Decisiones
