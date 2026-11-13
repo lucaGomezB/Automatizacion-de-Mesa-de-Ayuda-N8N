@@ -30,5 +30,5 @@
 
 - [x] 4.1 `openspec validate c-213-integrar-la-linea-de-base-en-la-tesis --strict --no-interactive`.
 - [x] 4.2 Commits convencionales en español, sin atribución, sin tocar `.engram/`.
-- [ ] 4.3 MANUAL/BLOQUEADO (dueño): recompilar `main.pdf` con Docker y revisar la paginación de las tablas nuevas.
+- [x] 4.3 MANUAL/BLOQUEADO (dueño): recompilar `main.pdf` con Docker y revisar la paginación de las tablas nuevas. — COMPLETADO 2026-11-13: recompilado con Docker (`texlive-thesis`); 146 páginas, 0 errores fatales, tablas de la línea de base y del contraste pareado sin `Overfull` (el máximo global de 52,5 pt es previo).
 - [ ] 4.4 SEGUIMIENTO (cuando c-206 entregue el arbitraje): volver a correr el contraste con la referencia de 150 casos y sustituir las cifras señaladas (fuera del alcance de este change).

@@ -7,7 +7,9 @@ etiquetadores, la referencia por consenso, el muestreo estratificado con sobremu
 ponderación, el n efectivo con su sesgo de exclusión y el versionado de los resultados, de
 modo que la validación sea producible, registrada y verificable sin recalibrar el clasificador
 ni tocar los artefactos congelados de la v9.
+
 ## Requirements
+
 ### Requirement: OOS-001 — Alcance: solo la validación de clasificación del clasificador congelado
 
 La validación fuera de muestra SHALL medir únicamente la clasificación del clasificador
@@ -343,3 +345,21 @@ ni ningún valor canónico, y SHALL imprimir el SHA-256 de cada salida.
 - **THEN** sus entradas son los artefactos versionados de c-191 (`corpus_independiente.json`, `predicciones_independiente.json`, la tabla primaria del doble etiquetado)
 - **AND** no invoca al clasificador, a Gemini ni a la red
 
+### Requirement: OOS-019 — Acuerdo entre los etiquetadores E3 y E4
+
+El análisis de c-207 SHALL calcular, sobre los casos del doble etiquetado independiente, la
+proporción de acuerdo observada entre `E3` y `E4` en el sector principal y el kappa de Cohen
+con sus IC asintótico y bootstrap mediante `evaluation/kappa.py::kappa_cohen`. La cantidad de
+casos concordantes SHALL coincidir con el n efectivo declarado por c-191 (`103` de `150`); si
+no coincide, el análisis MUST fallar y no producir salidas. El valor SHALL rotularse como
+fiabilidad entre etiquetadores, distinto del kappa del clasificador contra la referencia.
+
+#### Scenario: Concordancia con el n efectivo
+
+- **WHEN** el análisis lee `doble_etiquetado_independiente.csv`
+- **THEN** cuenta `103` casos concordantes de `150` y reporta el kappa con sus IC
+
+#### Scenario: Inconsistencia detectada
+
+- **WHEN** la cantidad de concordantes difiere del n efectivo de c-191
+- **THEN** el análisis termina con error y no escribe los archivos de salida

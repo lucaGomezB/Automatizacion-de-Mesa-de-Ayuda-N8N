@@ -2713,7 +2713,7 @@ Pendientes residuales: (1) la tarea 6.1 de c-146 sigue bloqueada por el acceso i
 | B14 | Revision ortotipografica: titulos acentuados de indices y bibliografia | c-137 | `docs/Tesis/v10 (IA)/paper/main.tex:79` | - | `Referencias bibliográficas` | cerrada |
 | B15 | Normas y metodos estadisticos con entrada bibliografica (ISO/IEC 27001:2022) | c-139 | `docs/Tesis/v10 (IA)/paper/sections/11-aspectos-legales.tex:42` | `subsec:cumplimiento-marco` | `ISO27001_2022` | cerrada |
 | B16a | Metadatos bibliograficos (Jurafsky y Martin: edicion 2026, URL y fecha de consulta) | c-139 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:108` | - | `@unpublished{Jurafsky2023_speech_language` | cerrada |
-| B16b | Version de Gomez2026_repositorio alineada con la release (1.2.0) | c-141 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:895` | - | `Versi{\'o}n 1.2.` | Aplicado en C1 (tarea 5.1, 2026-10-26); verificado por el script |
+| B16b | Version de Gomez2026_repositorio alineada con la release (1.2.0) | c-141 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:914` | - | `Versi{\'o}n 1.3.0` | Aplicado en C1 (tarea 5.1, 2026-10-26); verificado por el script; version actualizada a 1.3.0 |
 | Criterio 5 (residual) | TLS no verificado e invocacion sincronica declarados como limite (c-140 excluido provisionalmente) | c-140 / limitacion declarada | `docs/Tesis/v10 (IA)/paper/sections/09-conclusiones.tex:23` | `tab:cumplimiento-objetivos` | `TLS no verificado` | SUPERADA por c-160 (filas B7a y B7b: TLS verificado despues de la campaña, en el despliegue de referencia) |
 | B11 | Aprendizaje activo: seleccion por senales independientes y confianza solo tras recalibracion | c-136 | `docs/Tesis/v10 (IA)/paper/sections/10-recomendaciones.tex:38` | `subsec:aprendizaje-activo` | `label{subsec:aprendizaje-activo}` | cerrada |
 | B12 | Contraste direccional: p unilateral global junto al bilateral de los tiempos | c-134 | `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex:75` | `subsec:analisis-estadistico` | `alternative=greater` | cerrada |
@@ -3158,7 +3158,7 @@ Lineas leidas despues de aplicar el change, en `docs/Tesis/v10 (IA)/paper/sectio
 | A3c | Tabla 5 con los atributos del ORM, contacto cifrado y cuatro roles | c-159 | `05-arquitectura.tex:68` | `tab:entidades` | `requiere\_revision\_humana` | cerrada |
 | A3c | Directorio: cifrado Fernet e indice ciego en lugar de texto plano | c-159 | `05-arquitectura.tex:92` | `tab:entidades` | `índice ciego (HMAC-SHA-256)` | cerrada |
 | A3c | Prosa de los roles alineada con la tabla | c-159 | `05-arquitectura.tex:99` | `tab:entidades` | `a la mesa de ayuda, al administrador del directorio y a la gestión de incidentes` | cerrada |
-| A3c | Figura 5 desde er_modelo_datos.md con la leyenda de configuracion entregada | c-159 | `05-arquitectura.tex:37` | `fig:er_modelo_datos` | `configuración entregada (release \texttt{v1.2.` | cerrada |
+| A3c | Figura 5 desde er_modelo_datos.md con la leyenda de configuracion entregada | c-159 | `05-arquitectura.tex:104` | `fig:er_modelo_datos` | `configuración entregada (release \texttt{v1.3.0}` | cerrada |
 | A3d | Tabla 8: GV 2 | c-159 | `11-aspectos-legales.tex:82` | `tab:cumplimiento-nist` | `& 2 & Política, roles y evaluación de proveedores vigentes` | cerrada |
 | A3d | Tabla 8: ID 2 | c-159 | `11-aspectos-legales.tex:83` | `tab:cumplimiento-nist` | `& 2 & Inventario de activos y clasificación y etiquetado vigentes` | cerrada |
 | A3d | Tabla 8: DE 1 con 8.15 parcial y brecha 8.16 | c-159 | `11-aspectos-legales.tex:85` | `tab:cumplimiento-nist` | `8.15 parcial` | cerrada |
@@ -3263,9 +3263,9 @@ Lineas leidas despues de aplicar el change, en `docs/Tesis/v10 (IA)/paper/sectio
 | B5f | R6: la salvaguarda se describe con la regla de 0,70 que no derivo ningun caso | c-160 | `08-discusion.tex:16` | `subsec:interpretacion-resultados` | `la regla de 0,70 no derivó ningún caso` | cerrada |
 | B5g | R7: se retira la estimacion preliminar sin fuente | c-160 | `08-discusion.tex:66` | `subsec:implicancias-practicas` | `que se factura por separado.` | cerrada |
 | B6a | Naturaleza y autoria de los dictamenes declaradas con el instrumento real | c-160 | `12-anexos.tex:205` | `sec:anexo-trazabilidad` | `revisiones evaluativas previas a la defensa` | SUPERADA por c-196 |
-| B6b | Punteros de B6 y B8 corregidos; B10 +c-146; B12 +4.8; A5 +c-154 | c-160 | `12-anexos.tex:226` | `tab:anexo-trazabilidad` | `\autoref{subsec:matriz-metricas}, \autoref{tab:cumplimiento-objetivos}` | cerrada |
-| B6c | Residuos de A1, B4, B9, B14 y B16 registrados como remision o pendiente | c-160 | `12-anexos.tex:219` | `tab:anexo-trazabilidad` | `residuos en A3 y B8 del 28-10` | cerrada |
-| B6d | Tabla del dictamen del 28-10 con A1 a A4 y B5 a B8 | c-160 | `12-anexos.tex:259` | `tab:anexo-trazabilidad-2810` | `\texttt{c-160}` | cerrada |
+| B6b | Punteros de B6 y B8 corregidos; B10 +c-146; B12 +4.8; A5 +c-154 | c-160 | `12-anexos.tex:239` | `tab:anexo-trazabilidad` | `se conserva como trazabilidad operativa del proyecto` | SUPERADA por c-212 (el Anexo I se redujo a una nota de versiones; la tabla se retiró) |
+| B6c | Residuos de A1, B4, B9, B14 y B16 registrados como remision o pendiente | c-160 | `12-anexos.tex:239` | `tab:anexo-trazabilidad` | `se conserva como trazabilidad operativa del proyecto` | SUPERADA por c-212 (el Anexo I se redujo a una nota de versiones; la tabla se retiró) |
+| B6d | Tabla del dictamen del 28-10 con A1 a A4 y B5 a B8 | c-160 | `12-anexos.tex:239` | `tab:anexo-trazabilidad-2810` | `se conserva como trazabilidad operativa del proyecto` | SUPERADA por c-212 (el Anexo I se redujo a una nota de versiones; la tabla se retiró) |
 | B6e | Decisiones c-72, c-74 y c-82 con `\autoref{sec:implementacion}` | c-160 | `12-anexos.tex:331` | `sec:anexo-trazabilidad` | `incorporada el 13 de octubre de 2026 (\texttt{c-82})` | SUPERADA por c-194 |
 | B7a | Tabla 18: TLS verificado despues de la campana | c-160 | `09-conclusiones.tex:23` | `tab:cumplimiento-objetivos` | `verificado después de la campaña, en el despliegue de referencia` | cerrada |
 | B7b | Prosa de 10.1: TLS en el despliegue de referencia, no en la configuracion evaluada | c-160 | `09-conclusiones.tex:35` | `subsec:cumplimiento-objetivos` | `no en la configuración evaluada ni en la instancia operativa` | cerrada |
@@ -4099,7 +4099,7 @@ como inferencia propia (si alguien lo consulta, citar la página).
 | C3 | Tabla 1: Zangari sin texto inaccesible | c-188 | `03-estado-del-arte.tex:48` | `tab:trabajos-academicos` | `idioma no consignado en el resumen del artículo` | cerrada |
 | C3 | Tabla 1: companero accesible de dos de los tres autores | c-188 | `03-estado-del-arte.tex:46` | `tab:trabajos-academicos` | `dos de los tres autores` | cerrada |
 | C4 | EMNLP con el anio en la lista de referencias | c-188 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:313` | - | `Processing (EMNLP 2025)}` | cerrada |
-| C4 | PMLR impresas como Proceedings of Machine Learning Research | c-188 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:178` | - | `journal = {Proceedings of Machine Learning Research},` | cerrada |
+| C4 | PMLR impresas como Proceedings of Machine Learning Research | c-188 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:179` | - | `series    = {Proceedings of Machine Learning Research},` | cerrada |
 | C4 | Mosqueira-Rey: A state of the art | c-188 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:476` | - | `machine learning: {A} state of the art` | cerrada |
 | C4 | Apellido Gomez como la portada | c-188 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:894` | - | `Gomez, Luca and Bustos` | cerrada |
 | C5 | Glosario: CONEAU agregada | c-188 | `00-glosario.tex:37` | - | `textbf{CONEAU}` | cerrada |
@@ -4390,7 +4390,7 @@ Cierre de los tres residuos de las recomendaciones C1/C2 que quedaron tras v1.2.
 
 | Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
 |---|---|---|---|---|---|---|
-| C1 | Fila Lím. como secuencia temporal | c-194 | `12-anexos.tex:263` | `tab:anexo-trazabilidad-2810` | `De los cinco límites estructurales que` | cerrada |
+| C1 | Fila Lím. como secuencia temporal | c-194 | `12-anexos.tex:239` | `tab:anexo-trazabilidad-2810` | `se conserva como trazabilidad operativa del proyecto` | SUPERADA por c-212 (el Anexo I se redujo a una nota de versiones; la tabla se retiró) |
 | C2 | Nota de Zendesk sin precios | c-194 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:661` | `-` | `software de servicio al cliente de {Zendesk}` | cerrada |
 | C1-b | Zanzotto en dos oraciones | c-194 | `02-marco-teorico.tex:0` | `subsec:human-in-the-loop` | `sostener la supervisión humana` | SUPERADA por c-195 (se limita a retribuir) |
 | D4 | Referencias de versión entregada v1.2.16 | c-194 | `12-anexos.tex:0` | `sec:anexo-repositorio` | `v1.2.16` | SUPERADA por c-195 (v1.2.17) |
@@ -4435,9 +4435,9 @@ los cuatro participantes hayan firmado, con las fechas reales; c-195 no toca eso
 | A2/4b | 4.7: asimetría de la regla | c-195 | `04-marco-metodologico.tex:81` | `subsec:analisis-estadistico` | `La regla es asimétrica (véase` | SUPERADA por c-196 |
 | A2/5a | 8.3: el intervalo no descarta una proporción inferior a la cota | c-195 | `07-resultados.tex:154` | `subsec:reduccion-intervencion` | `el intervalo no permite descartar una proporción inferior a la cota` | SUPERADA por c-196 |
 | A2/5b | 9.1: ídem | c-195 | `08-discusion.tex:8` | `subsec:interpretacion-resultados` | `el intervalo no permite descartar una proporción inferior a la cota` | SUPERADA por c-196 |
-| A3/6a | Anexo I: nueve dictámenes, traza seis | c-195 | `12-anexos.tex:205` | `sec:anexo-trazabilidad` | `La serie comprende nueve dictámenes` | cerrada |
-| A3/6b | Tabla del dictamen sobre v1.2.13 | c-195 | `12-anexos.tex:337` | `tab:anexo-trazabilidad-0911-v1213` | `label{tab:anexo-trazabilidad-0911-v1213}` | cerrada |
-| A3/6c | Tabla del dictamen sobre v1.2.16 | c-195 | `12-anexos.tex:364` | `tab:anexo-trazabilidad-0911-v1216` | `label{tab:anexo-trazabilidad-0911-v1216}` | cerrada |
+| A3/6a | Anexo I: nueve dictámenes, traza seis | c-195 | `12-anexos.tex:239` | `sec:anexo-trazabilidad` | `a una serie de autoevaluaciones internas frente a criterios de la CONEAU` | SUPERADA por c-212 (el Anexo I se redujo a una nota de versiones) |
+| A3/6b | Tabla del dictamen sobre v1.2.13 | c-195 | `12-anexos.tex:239` | `tab:anexo-trazabilidad-0911-v1213` | `se conserva como trazabilidad operativa del proyecto` | SUPERADA por c-212 (el Anexo I se redujo a una nota de versiones; la tabla se retiró) |
+| A3/6c | Tabla del dictamen sobre v1.2.16 | c-195 | `12-anexos.tex:239` | `tab:anexo-trazabilidad-0911-v1216` | `se conserva como trazabilidad operativa del proyecto` | SUPERADA por c-212 (el Anexo I se redujo a una nota de versiones; la tabla se retiró) |
 | B1/7a | Constante de la eficiencia de Spearman | c-195 | `evaluation/stats.py:443` | `-` | `ARE_SPEARMAN = 9 / pi**2` | cerrada |
 | B1/7b | MDE del Spearman usa ARE_SPEARMAN | c-195 | `evaluation/campana.py:1594` | `-` | `eficiencia_relativa=ARE_SPEARMAN` | cerrada |
 | B1/7c | Análisis regenerado: MDE 0,2763 | c-195 | `evaluation/data/campana/analisis/resultados.json:1158` | `-` | `0.2762543921274527` | cerrada |
@@ -4525,11 +4525,11 @@ devolución completa se versiona en `auditorias/Devolucion_Segunda_Instancia_TFI
 | N-09 | Regla de decisión fijada tras los datos | Veredicto no concluyente, con estimación puntual por encima de la cota | `00-resumen.tex`, `01-introduccion.tex`, `04`, `07`, `08`, `09`, `10`, `12` | cerrada |
 | N-10 | Cobertura del backend sin informar | 90 % medido en la corrida de CI sobre `main` | `06-implementacion.tex` | cerrada |
 | N-11 | Figuras ilegibles | Figuras regeneradas y divididas | `05-arquitectura.tex`, `12-anexos.tex`, `paper/figures/` | cerrada |
-| N-12 | Conclusiones con valoraciones sin respaldo | Valoraciones retiradas | `09-conclusiones.tex` | cerrada |
+| N-12 | Conclusiones con valoraciones sin respaldo y repetición de cifras | Valoraciones retiradas y cifras de la validación fuera de muestra sintetizadas con remisión a la tabla | `09-conclusiones.tex`, `10-recomendaciones.tex` | cerrada (repetición reducida el 2026-11-13: la conclusión y la recomendación remiten a `tab:fuera-de-muestra`) |
 | N-13 | Instrumento del artículo 12 no declarado | Declarado como no suscrito; requisito para el adoptante | `11-aspectos-legales.tex` | cerrada (respuesta del autor, ver Decisiones) |
 | N-14 | Consentimiento escrito "diferido" en el Anexo I | Atendida el 10-11-2026 | `12-anexos.tex` | cerrada |
 | N-15 | Nombres de sector sin tilde | Tilde en prosa y `\texttt{}` en la cadena del sistema | `01`, `04`, `05`, `07`, `08` | cerrada |
-| N-16 | Paket et al. y Mayor-Rocher et al. | Marcadores en el `.bib` | `Bibliography_base.bib` | Atendida en parte: DOI verificados el 11-11-2026 (Crossref: Paket et al., UBMK 2024, pp. 135-140; Applied Linguistics, publicación anticipada del 10-09-2026, con versión preliminar arXiv:2409.15334); resta la copia de Paket et al. (acceso cerrado en IEEE Xplore) y confirmar la versión consultada de Mayor-Rocher et al. |
+| N-16 | Paket et al. y Mayor-Rocher et al. | Marcadores en el `.bib` | `Bibliography_base.bib` | Cerrada (41f8d79, 2026-11-11): DOI verificados en Crossref/OpenAlex; la devolución acepta «copia O DOI verificable», el DOI de Paket resuelve y el resumen publicado es la fuente declarada (texto completo cerrado en IEEE); Mayor-Rocher se cita en su versión de revista (publicación anticipada del 10-09-2026; preliminar arXiv:2409.15334) |
 
 ### Matriz de trazabilidad (verificada por `verificar_matriz_trazabilidad.py`)
 
@@ -4538,7 +4538,7 @@ devolución completa se versiona en `auditorias/Devolucion_Segunda_Instancia_TFI
 | N-01/1a | 4.4: el 0,87 no puede respaldarse y no es evidencia | c-196 | `04-marco-metodologico.tex:56` | `subsec:poblacion-muestra-corpus` | `no puede respaldarse con registros` | cerrada |
 | N-01/1b | Resumen: kappa 0,5569 de E1/E2 | c-196 | `00-resumen.tex:11` | `-` | `kappa de 0,5569` | cerrada |
 | N-02/2a | Nota de versiones del Anexo I | c-196 | `12-anexos.tex:233` | `subsec:nota-versiones` | `label{subsec:nota-versiones}` | PENDIENTE (dato de los autores: fecha exacta de la versión de julio) |
-| N-02/2b | Auditoría del 4-8-2026: 105 hallazgos, 28 críticos, 3,9/10 | c-196 | `12-anexos.tex:241` | `sec:anexo-trazabilidad` | `formuló 105 hallazgos, 28 de ellos críticos` | cerrada |
+| N-02/2b | Auditoría del 4-8-2026: 105 hallazgos, 28 críticos, 3,9/10 | c-196 | `12-anexos.tex:239` | `sec:anexo-trazabilidad` | `la auditoría integral del tribunal del 4 de agosto de 2026` | SUPERADA por c-212 (el Anexo I se redujo a una nota de versiones; los guarismos de la auditoría ya no se consignan) |
 | N-02/2c | Declaración del uso de modelos de lenguaje en la redacción | c-196 | `12-anexos.tex:240` | `sec:anexo-trazabilidad` | `PENDIENTE-AUTORES(P16)` | PENDIENTE (dato de los autores: P16) |
 | N-03/3a | Tabla de tiempos manuales por operador | c-196 | `07-resultados.tex:261` | `tab:tiempos-manual-complementaria` | `label{tab:tiempos-manual-complementaria}` | cerrada |
 | N-03/3b | 4.5: definición de la tarea manual de la campaña complementaria | c-196 | `04-marco-metodologico.tex:67` | `subsec:protocolo-pruebas` | `tab:tiempos-manual-complementaria` | cerrada |
@@ -4554,7 +4554,7 @@ devolución completa se versiona en `auditorias/Devolucion_Segunda_Instancia_TFI
 | N-08/8a | Tabla 12: fila con la referencia de consenso | c-196 | `07-resultados.tex:119` | `tab:exactitud-etapa-canal` | `110/138 = 0,797 [0,722; 0,856]` | cerrada |
 | N-08/8b | 9.3: el límite superior 0,856 supera el umbral de 0,85 | c-196 | `08-discusion.tex:60` | `subsec:limitaciones-estudio` | `(0,856) supera el umbral de 0,85` | cerrada |
 | N-09/9a | 8.3: no concluyente, con estimación puntual por encima de la cota | c-196 | `07-resultados.tex:159` | `subsec:reduccion-intervencion` | `no concluyente, con estimación puntual por encima de la cota` | cerrada |
-| N-09/9b | 1.4: la regla prefijada y su lectura posterior | c-196 | `01-introduccion.tex:34` | `subsec:hipotesis-trabajo` | `no concluyente, con estimación puntual por encima de la cota` | cerrada |
+| N-09/9b | 1.4: la regla prefijada y su lectura posterior | c-196 | `01-introduccion.tex:34` | `subsec:hipotesis-trabajo` | `El denominador de 147 casos revisados se adoptó después de conocer los datos` | cerrada |
 | N-09/9c | 4.7: ídem | c-196 | `04-marco-metodologico.tex:83` | `subsec:analisis-estadistico` | `no concluyente, con estimación puntual por encima de la cota` | cerrada |
 | N-09/9d | 9.1: una corroborada, una no concluyente y una refutada | c-196 | `08-discusion.tex:8` | `subsec:interpretacion-resultados` | `una no concluyente (intervención humana) y una refutada` | cerrada |
 | N-09/9e | 10.1: ídem | c-196 | `09-conclusiones.tex:6` | `subsec:cumplimiento-objetivos` | `una sub-hipótesis corroborada, una no concluyente y una refutada` | cerrada |
@@ -4566,10 +4566,10 @@ devolución completa se versiona en `auditorias/Devolucion_Segunda_Instancia_TFI
 | N-11/11d | Flujo N8N dividido en tres figuras | c-196 | `12-anexos.tex:140` | `fig:anexo_flujo_n8n_c` | `{flujo_n8n_c}` | cerrada |
 | N-12/12 | 10.1: valoraciones retiradas y remisión a las llamadas recitadas | c-196 | `09-conclusiones.tex:6` | `subsec:cumplimiento-objetivos` | `Hay, en suma, una sub-hipótesis corroborada` | cerrada |
 | N-13/13 | 7.3: el instrumento está documentado pero no suscrito | c-196 | `11-aspectos-legales.tex:22` | `subsec:transferencia-internacional` | `pero no está suscrito` | cerrada |
-| N-14/14 | Anexo I: la recomendación A1 fue atendida el 10-11-2026 | c-196 | `12-anexos.tex:396` | `tab:anexo-trazabilidad-0911-v1216` | `atendida el 10 de noviembre de 2026` | cerrada |
+| N-14/14 | Anexo I: la recomendación A1 fue atendida el 10-11-2026 | c-196 | `12-anexos.tex:239` | `tab:anexo-trazabilidad-0911-v1216` | `se conserva como trazabilidad operativa del proyecto` | SUPERADA por c-212 (el Anexo I se redujo a una nota de versiones; la tabla se retiró) |
 | N-15/15 | Tabla de variables: cadena canónica en `\texttt{}` | c-196 | `04-marco-metodologico.tex:36` | `tab:variables` | `\texttt{Seguridad Informatica}` | cerrada |
-| N-16/16a | Mayor-Rocher et al.: marcador en el `.bib` | c-196 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:334` | `-` | `PENDIENTE-AUTORES(N-16)` | PENDIENTE (DOI y versión de revista verificados el 11-11-2026; falta confirmar la versión consultada) |
-| N-16/16b | Paket et al.: marcador en el `.bib` | c-196 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:368` | `-` | `PENDIENTE-AUTORES(N-16)` | PENDIENTE (DOI verificado en Crossref el 11-11-2026; falta la copia del artículo) |
+| N-16/16a | Mayor-Rocher et al.: versión de revista declarada en el `.bib` | c-196 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:341` | `-` | `Versión de revista` | cerrada (41f8d79, 2026-11-11) |
+| N-16/16b | Paket et al.: DOI verificado declarado en el `.bib` | c-196 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:378` | `-` | `DOI verificado en Crossref` | cerrada (41f8d79, 2026-11-11) |
 | Páginas | Páginas: el total pasa de 120 a 132: decisión registrada | c-196 | `docs/Tesis/Correcciones/dictamen-correcciones.md:4633` | `-` | `Libro mayor de páginas y palabras (c-196)` | cerrada |
 
 ### Decisiones
@@ -4725,8 +4725,8 @@ se regeneró con `build_tesis_para_agente.py v1.2.19` (no vacío).
 
 | Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
 |---|---|---|---|---|---|---|
-| N-02 | Auditoría del 4 de agosto de 2026 como primera fila de la trazabilidad | c-197 | `12-anexos.tex:239` | `sec:anexo-trazabilidad` | `formuló 105 hallazgos, 28 de ellos críticos` | cerrada |
-| N-02 tabla | `tab:trazabilidad-revisiones` con la auditoría del 4 de agosto de 2026 | c-197 | `12-anexos.tex:255` | `tab:trazabilidad-revisiones` | `105 hallazgos, 28 de ellos críticos; calificación 3,9/10` | cerrada |
+| N-02 | Auditoría del 4 de agosto de 2026 como primera fila de la trazabilidad | c-197 | `12-anexos.tex:239` | `sec:anexo-trazabilidad` | `la auditoría integral del tribunal del 4 de agosto de 2026` | SUPERADA por c-212 (el Anexo I se redujo a una nota de versiones; los guarismos de la auditoría ya no se consignan) |
+| N-02 tabla | `tab:trazabilidad-revisiones` con la auditoría del 4 de agosto de 2026 | c-197 | `12-anexos.tex:239` | `tab:trazabilidad-revisiones` | `se conserva como trazabilidad operativa del proyecto` | SUPERADA por c-212 (el Anexo I se redujo a una nota de versiones; la tabla se retiró) |
 | N-07 | Regla de conteo D1 de la concisión por capítulo | c-197 | `docs/Tesis/Correcciones/sent_c197.py:2` | `-` | `Regla de conteo D1 de c-197` | cerrada |
 
 ## Dictamen v10 / v1.2.19 (2026-11-11) - c-198 (respuestas a las preguntas del tribunal)
@@ -4757,7 +4757,7 @@ recompiló `paper/main.pdf` en este apply: se recompila aparte, por indicación 
 |---|---|---|---|---|---|---|
 | Q1/1a | Documento fuente con las 16 respuestas | c-198 | `docs/defensa/respuestas-tribunal.md:11` | `-` | `### Q1.` | vigente |
 | Q1/1b | Anexo J como última sección de la serie | c-198 | `12-anexos.tex:483` | `sec:anexo-respuestas-tribunal` | `Respuestas del grupo a las preguntas del tribunal` | vigente |
-| Q1/1c | Referencia al Anexo J desde el Anexo I | c-198 | `12-anexos.tex:447` | `-` | `se incorporan como Anexo~J` | vigente |
+| Q1/1c | Referencia al Anexo J desde el Anexo I | c-198 | `12-anexos.tex:239` | `-` | `se conserva como trazabilidad operativa del proyecto` | SUPERADA por c-212 (se retiró la remisión al Anexo J desde el Anexo I) |
 | Q2/2a | Sección 3.18 del memo de números canónicos | c-198 | `docs/Tesis/Correcciones/numeros-canonicos.md:1034` | `-` | `3.18 Respuestas del tribunal` | vigente |
 | Q2/2b | Cifras de la versión de julio registradas como retiradas | c-198 | `docs/Tesis/Correcciones/numeros-canonicos.md:1045` | `-` | `165,3 s` | vigente |
 | Q2/2c | Cotejo de las revisiones con el consenso | c-198 | `docs/Tesis/Correcciones/numeros-canonicos.md:1055` | `-` | `confirmaciones humanas con consenso` | vigente |
@@ -4834,9 +4834,9 @@ confirmación.
 | C4/1c | 8.7: advertencia de sesgo de exclusión | c-191 | `07-resultados.tex:284` | `subsec:sensibilidad-ajustes` | `sesga la referencia hacia los casos más fáciles` | cerrada |
 | C4/2a | 9.1: interpretación con el resultado fuera de muestra | c-191 | `08-discusion.tex:8` | `subsec:interpretacion-resultados` | `La validación fuera de muestra, realizada después con el clasificador congelado` | cerrada |
 | C4/2b | 9.4: séptima limitación con la validación realizada | c-191 | `08-discusion.tex:58` | `subsec:limitaciones-estudio` | `Esa validación se realizó después con un corpus independiente de 150 casos` | cerrada |
-| C4/3a | 11.5: recomendación sobre el corpus independiente actualizada | c-191 | `10-recomendaciones.tex:44` | `subsec:corpus-independiente` | `La validación fuera de muestra se realizó con un corpus independiente de 150 casos nuevos` | cerrada |
-| C4/4a | Anexo I: fila Lím. con el cierre de la validación | c-191 | `12-anexos.tex:322` | `tab:anexo-trazabilidad-2810` | `se cerró con el corpus independiente de 150 casos del clasificador congelado` | cerrada |
-| C4/4b | Anexo I: frase de cabecera con el cierre | c-191 | `12-anexos.tex:302` | `sec:anexo-trazabilidad` | `cerró el quinto` | cerrada |
+| C4/3a | 11.5: recomendación sobre el corpus independiente actualizada | c-191 | `10-recomendaciones.tex:26` | `subsec:corpus-independiente` | `La validación fuera de muestra con el clasificador congelado se realizó sobre un corpus independiente` | cerrada |
+| C4/4a | Anexo I: fila Lím. con el cierre de la validación | c-191 | `12-anexos.tex:239` | `tab:anexo-trazabilidad-2810` | `se conserva como trazabilidad operativa del proyecto` | SUPERADA por c-212 (el Anexo I se redujo a una nota de versiones; la tabla se retiró) |
+| C4/4b | Anexo I: frase de cabecera con el cierre | c-191 | `12-anexos.tex:239` | `sec:anexo-trazabilidad` | `se conserva como trazabilidad operativa del proyecto` | SUPERADA por c-212 (el Anexo I se redujo a una nota de versiones; el cierre del quinto límite ya no se consigna) |
 | D2 | Estratos 50 correo / 40 web / 60 telefonía en el runbook | c-191 | `docs/campana-medicion/runbook-corpus-independiente.md:40` | `-` | `50 correo / 40 web / 60 telefonía` | cerrada |
 | D3 | Etiquetadores E3/E4 sin nombres en el registro | c-191 | `evaluation/data/campana/registro_sujetos.csv:10` | `-` | `E3,etiquetador,P9` | cerrada |
 | Cifras | Memo de números canónicos: Sección 3.19 (cifras fuera de muestra) | c-191 | `docs/Tesis/Correcciones/numeros-canonicos.md:1076` | `-` | `3.19 Validación fuera de muestra con el corpus independiente (c-191)` | vigente (nuevo) |
@@ -4948,7 +4948,7 @@ recomendaciones 7 a 15 (consistencia y forma) quedan diferidas a un change poste
 | C7/2e | 2: generalización regional acotada | c-207 | `09-conclusiones.tex:49` | `subsec:aportes-generalizacion` | `es una hipótesis por validar` | cerrada |
 | C7/3a | 3: validación fuera de muestra en conclusiones con su límite | c-207 | `09-conclusiones.tex:37` | `subsec:cumplimiento-objetivos` | `Esa cifra no acredita el umbral` | cerrada |
 | C7/3b | 3: fila del objetivo 2 con la validación | c-207 | `09-conclusiones.tex:24` | `tab:cumplimiento-objetivos` | `fuera de muestra, 0,8447 sobre el n efectivo de 103` | cerrada |
-| C7/4a | 4: `E3`/`E4` en el capítulo legal, confirmación pendiente | c-207 | `11-aspectos-legales.tex:38` | `subsec:consentimiento-derechos` | `su confirmación escrita está pendiente` | parcial (firmas pendientes) |
+| C7/4a | 4: `E3`/`E4` en el capítulo legal, confirmación pendiente | c-207 | `11-aspectos-legales.tex:40` | `subsec:consentimiento-derechos` | `Los tres firmaron la confirmación posterior de esa información y de su consentimiento el 13 de noviembre de 2026` | cerrada (firmada el 2026-11-13; la afirmación de confirmación pendiente se retiró) |
 | C7/5a | 5: referencias distintas declaradas y recalculadas | c-207 | `08-discusion.tex:99` | `subsec:balance-neto` | `La rejilla combina, sin embargo, dos referencias distintas` | cerrada |
 | C7/5b | 5: lectura unificada del balance | c-207 | `08-discusion.tex:105` | `subsec:balance-neto` | `En síntesis, con una referencia común el balance neto no resulta negativo` | cerrada |
 | C7/5c | 5: balance en conclusiones | c-207 | `09-conclusiones.tex:6` | `sec:conclusiones` | `Con una referencia común, el balance neto estimado es positivo` | cerrada |

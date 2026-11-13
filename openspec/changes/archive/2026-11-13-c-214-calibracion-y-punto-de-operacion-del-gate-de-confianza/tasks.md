@@ -46,7 +46,7 @@ pendientes (no se edita ningún `.tex`: hay otro PR abierto sobre las secciones 
 
 - [x] 5.1 Sección nueva en `C/numeros-canonicos.md` con cada cifra, archivo y comando, la declaración de no ceguera y, si alguna política quedó `confirmada`, la recomendación para un change posterior (gobernanza HIGH). Verificación: ningún valor `vigente` previo cambia.
 - [x] 5.2 Prosa: sección 4 (`04-marco-metodologico.tex`) definición de ECE, Brier, AUROC y de la regla de selección; sección 7 (`07-resultados.tex`, `subsec:calibracion`) métricas dentro y fuera de la muestra, barrido y señales alternativas, incluido el caso fuera de la muestra con confianza menor que 0,70; sección 8 (`08-discusion.tex`) lectura; sección 9 (`09-conclusiones.tex`) fila del objetivo 6; sección 10 (`10-recomendaciones.tex`, `subsec:calibracion-gate`) pasar de propuesta a resultado y dejar como futuro solo lo que exige cambiar contrato o configuración. Verificación: cada cifra coincide con el memo.
-- [ ] 5.3 [LATEX] [AUTORES] Recompilar `main.pdf` y verificar las cifras con `pdftotext`.
+- [x] 5.3 [LATEX] [AUTORES] Recompilar `main.pdf` y verificar las cifras con `pdftotext`. — COMPLETADO 2026-11-13: recompilado con Docker (`texlive-thesis`); la tabla `tab:calibracion-gate` (7 columnas) entra en la página 84 sin `Overfull` y las cifras (0,7246 / 0,9114 / 0,1868 / 0,2362 / 0,5168 [0,3796; 0,6528] y 0,7647 / 0,9156 / 0,1715 / 0,1935 / 0,7163 [0,5138; 0,9139]) coinciden con el memo 3.24.
 
 ## 6. Validación y cierre
 

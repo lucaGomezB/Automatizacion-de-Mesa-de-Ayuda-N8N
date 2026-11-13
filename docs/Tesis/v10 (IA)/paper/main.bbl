@@ -414,6 +414,47 @@
       \verb https://doi.org/10.3390/fi17100445
       \endverb
     \endentry
+    \entry{Brier1950_verification}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=677d442ab23f30d2cbb1ce88ad375222}{%
+           family={Brier},
+           familyi={B\bibinitperiod},
+           given={Glenn\bibnamedelima W.},
+           giveni={G\bibinitperiod\bibinitdelim W\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{677d442ab23f30d2cbb1ce88ad375222}
+      \strng{fullhash}{677d442ab23f30d2cbb1ce88ad375222}
+      \strng{fullhashraw}{677d442ab23f30d2cbb1ce88ad375222}
+      \strng{bibnamehash}{677d442ab23f30d2cbb1ce88ad375222}
+      \strng{authorbibnamehash}{677d442ab23f30d2cbb1ce88ad375222}
+      \strng{authornamehash}{677d442ab23f30d2cbb1ce88ad375222}
+      \strng{authorfullhash}{677d442ab23f30d2cbb1ce88ad375222}
+      \strng{authorfullhashraw}{677d442ab23f30d2cbb1ce88ad375222}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Monthly Weather Review}
+      \field{number}{1}
+      \field{title}{Verification of forecasts expressed in terms of probability}
+      \field{volume}{78}
+      \field{year}{1950}
+      \field{pages}{1\bibrangedash 3}
+      \range{pages}{3}
+      \verb{doi}
+      \verb 10.1175/1520-0493(1950)078<0001:VOFEIT>2.0.CO;2
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1175/1520-0493(1950)078<0001:VOFEIT>2.0.CO;2
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1175/1520-0493(1950)078%3C0001:VOFEIT%3E2.0.CO;2
+      \endverb
+    \endentry
     \entry{Brown2020_few_shot}{article}{}{}
       \name{author}{31}{}{%
         {{un=1,uniquepart=given,hash=7c16e8d36475e58d4f2d161e6ecb7704}{%
@@ -1292,7 +1333,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Software de computadora. GitHub}
-      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.2.13)}
+      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.3.0)}
       \field{urlday}{9}
       \field{urlmonth}{11}
       \field{urlyear}{2026}
@@ -1632,6 +1673,9 @@
            giveni={K\bibinitperiod\bibinitdelim Q\bibinitperiod},
            givenun=0}}%
       }
+      \list{publisher}{1}{%
+        {PMLR}%
+      }
       \strng{namehash}{203b115999f73097be6ab32411fb1f42}
       \strng{fullhash}{f3833eed8ef776fc6c89f407c7d66c34}
       \strng{fullhashraw}{f3833eed8ef776fc6c89f407c7d66c34}
@@ -1647,7 +1691,8 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{Proceedings of Machine Learning Research}
+      \field{journaltitle}{Proceedings of the 34th International Conference on Machine Learning}
+      \field{series}{Proceedings of Machine Learning Research}
       \field{title}{On calibration of modern neural networks}
       \field{volume}{70}
       \field{year}{2017}
@@ -3311,6 +3356,9 @@
            giveni={I\bibinitperiod},
            givenun=0}}%
       }
+      \list{publisher}{1}{%
+        {PMLR}%
+      }
       \strng{namehash}{ca3baa5a22057195db1c71be39b4c922}
       \strng{fullhash}{e202abc1ca19ec84987f68e0aec49fa3}
       \strng{fullhashraw}{e202abc1ca19ec84987f68e0aec49fa3}
@@ -3326,7 +3374,8 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{Proceedings of Machine Learning Research}
+      \field{journaltitle}{Proceedings of the 40th International Conference on Machine Learning}
+      \field{series}{Proceedings of Machine Learning Research}
       \field{title}{Robust speech recognition via large-scale weak supervision}
       \field{volume}{202}
       \field{year}{2023}
@@ -5441,6 +5490,9 @@
            giveni={S\bibinitperiod},
            givenun=0}}%
       }
+      \list{publisher}{1}{%
+        {PMLR}%
+      }
       \strng{namehash}{1a9a9295531bb5a924ddd4d69b26eb38}
       \strng{fullhash}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
       \strng{fullhashraw}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
@@ -5456,7 +5508,8 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{Proceedings of Machine Learning Research}
+      \field{journaltitle}{Proceedings of the 38th International Conference on Machine Learning}
+      \field{series}{Proceedings of Machine Learning Research}
       \field{title}{Calibrate before use: Improving few-shot performance of language models}
       \field{volume}{139}
       \field{year}{2021}
@@ -5866,6 +5919,47 @@
       \verb https://doi.org/10.3390/fi17100445
       \endverb
     \endentry
+    \entry{Brier1950_verification}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=677d442ab23f30d2cbb1ce88ad375222}{%
+           family={Brier},
+           familyi={B\bibinitperiod},
+           given={Glenn\bibnamedelima W.},
+           giveni={G\bibinitperiod\bibinitdelim W\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{677d442ab23f30d2cbb1ce88ad375222}
+      \strng{fullhash}{677d442ab23f30d2cbb1ce88ad375222}
+      \strng{fullhashraw}{677d442ab23f30d2cbb1ce88ad375222}
+      \strng{bibnamehash}{677d442ab23f30d2cbb1ce88ad375222}
+      \strng{authorbibnamehash}{677d442ab23f30d2cbb1ce88ad375222}
+      \strng{authornamehash}{677d442ab23f30d2cbb1ce88ad375222}
+      \strng{authorfullhash}{677d442ab23f30d2cbb1ce88ad375222}
+      \strng{authorfullhashraw}{677d442ab23f30d2cbb1ce88ad375222}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Monthly Weather Review}
+      \field{number}{1}
+      \field{title}{Verification of forecasts expressed in terms of probability}
+      \field{volume}{78}
+      \field{year}{1950}
+      \field{pages}{1\bibrangedash 3}
+      \range{pages}{3}
+      \verb{doi}
+      \verb 10.1175/1520-0493(1950)078<0001:VOFEIT>2.0.CO;2
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1175/1520-0493(1950)078<0001:VOFEIT>2.0.CO;2
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1175/1520-0493(1950)078%3C0001:VOFEIT%3E2.0.CO;2
+      \endverb
+    \endentry
     \entry{Brown2020_few_shot}{article}{}{}
       \name{author}{31}{}{%
         {{un=1,uniquepart=given,hash=7c16e8d36475e58d4f2d161e6ecb7704}{%
@@ -6744,7 +6838,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Software de computadora. GitHub}
-      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.2.13)}
+      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.3.0)}
       \field{urlday}{9}
       \field{urlmonth}{11}
       \field{urlyear}{2026}
@@ -7084,6 +7178,9 @@
            giveni={K\bibinitperiod\bibinitdelim Q\bibinitperiod},
            givenun=0}}%
       }
+      \list{publisher}{1}{%
+        {PMLR}%
+      }
       \strng{namehash}{203b115999f73097be6ab32411fb1f42}
       \strng{fullhash}{f3833eed8ef776fc6c89f407c7d66c34}
       \strng{fullhashraw}{f3833eed8ef776fc6c89f407c7d66c34}
@@ -7099,7 +7196,8 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{Proceedings of Machine Learning Research}
+      \field{journaltitle}{Proceedings of the 34th International Conference on Machine Learning}
+      \field{series}{Proceedings of Machine Learning Research}
       \field{title}{On calibration of modern neural networks}
       \field{volume}{70}
       \field{year}{2017}
@@ -8763,6 +8861,9 @@
            giveni={I\bibinitperiod},
            givenun=0}}%
       }
+      \list{publisher}{1}{%
+        {PMLR}%
+      }
       \strng{namehash}{ca3baa5a22057195db1c71be39b4c922}
       \strng{fullhash}{e202abc1ca19ec84987f68e0aec49fa3}
       \strng{fullhashraw}{e202abc1ca19ec84987f68e0aec49fa3}
@@ -8778,7 +8879,8 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{Proceedings of Machine Learning Research}
+      \field{journaltitle}{Proceedings of the 40th International Conference on Machine Learning}
+      \field{series}{Proceedings of Machine Learning Research}
       \field{title}{Robust speech recognition via large-scale weak supervision}
       \field{volume}{202}
       \field{year}{2023}
@@ -10893,6 +10995,9 @@
            giveni={S\bibinitperiod},
            givenun=0}}%
       }
+      \list{publisher}{1}{%
+        {PMLR}%
+      }
       \strng{namehash}{1a9a9295531bb5a924ddd4d69b26eb38}
       \strng{fullhash}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
       \strng{fullhashraw}{c2af1fba0c75bfcd3bd4bbf6e6e62b7f}
@@ -10908,7 +11013,8 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{Proceedings of Machine Learning Research}
+      \field{journaltitle}{Proceedings of the 38th International Conference on Machine Learning}
+      \field{series}{Proceedings of Machine Learning Research}
       \field{title}{Calibrate before use: Improving few-shot performance of language models}
       \field{volume}{139}
       \field{year}{2021}
