@@ -80,3 +80,30 @@ python -m evaluation.preparar_entradas_analisis \
 - `SHA256SUMS.txt`: una linea `hash  nombre` por cada salida y por cada entrada leida. Sirve
   para verificar que una corrida uso exactamente las entradas esperadas y para comparar dos
   corridas. No incluye su propio hash. Su formato es el de `sha256sum`.
+
+## Analisis ampliado fuera de muestra (c-205)
+
+`analisis_fuera_de_muestra_c205.py` completa el bloque fuera de muestra de c-191 (n efectivo
+`103`) con macro-F1, metricas por clase con soporte, *balanced accuracy*, kappa del
+clasificador contra la referencia, matriz de confusion 5x5, precision/potencia del n
+observado frente al objetivo D1 de c-191, sensibilidad al sesgo de exclusion de los `47`
+discordantes (peor caso, mejor caso, cota y regla de decision) y el balance neto con la tasa
+de error fuera de muestra (`condicional`).
+
+- Entradas versionadas (solo lectura): `../corpus_independiente.json`,
+  `../predicciones_independiente.json`, `../doble_etiquetado_independiente.csv`.
+- Metodo: reutiliza `evaluation/metrics.py`, `evaluation/kappa.py` y `evaluation/stats.py`; no
+  reimplementa el clasificador ni las metricas; sin red ni Gemini; determinista.
+- Comando (desde la raiz del repositorio):
+
+  ```bash
+  python3 evaluation/data/campana/analisis/analisis_fuera_de_muestra_c205.py
+  ```
+
+- Salidas: `analisis_fuera_de_muestra_c205.json` (fuente unica de las cifras) y
+  `analisis_fuera_de_muestra_c205.md`; el script imprime el SHA-256 de cada una. Dos corridas
+  producen salidas identicas byte a byte.
+- Prueba: `cd evaluation/data/campana/analisis && python -m pytest test_analisis_fuera_de_muestra_c205.py -q`.
+- La cota del sesgo de exclusion es una definicion declarada (los excluidos aciertan a la
+  tasa del limite inferior del IC de Wilson del n efectivo); los escenarios son sensibilidad,
+  no medicion.

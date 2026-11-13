@@ -3,9 +3,7 @@
 ## Purpose
 
 Esta especificación define los criterios de calidad del documento de tesis en LaTeX: compilación a PDF, renderizado de citas, ecuaciones y tablas, eliminación de patrones de escritura generados por IA, profundidad de capítulos y consistencia de referencias.
-
 ## Requirements
-
 ### Requirement: Thesis PDF compilation
 
 La tesis SHALL compilar desde la fuente LaTeX de la version de trabajo vigente (`docs/Tesis/v10 (IA)/paper/main.tex`) a `docs/Tesis/v10 (IA)/paper/main.pdf` mediante XeLaTeX y biber, sin errores fatales, con las fuentes reales que declara el preambulo (Arial y Courier New) y en el entorno de compilacion de registro consignado en `docs/Tesis/Correcciones/dictamen-correcciones.md`. El PDF SHALL incluir todos los archivos de seccion que `main.tex` incorpora con `\input`, en el orden de `main.tex`. La compilacion de una release SHALL cumplir ademas: cero referencias y citas indefinidas, cero etiquetas duplicadas, biber sin advertencias ni errores, `verify_citations.py` con estado PASS y todo `\includegraphics` resuelto a un archivo existente. Como `main.log` no se versiona, la evidencia de la compilacion de cada release SHALL versionarse junto al PDF en `docs/Tesis/v10 (IA)/paper/compilacion.md`, generado por `docs/Tesis/Correcciones/resumir_registro_compilacion.py` a partir de `main.log`, `main.blg` y `main.pdf` del mismo commit, y `dictamen-correcciones.md` SHALL remitir a ese resumen. El resumen MUST NOT editarse a mano.
@@ -9198,3 +9196,42 @@ sea ancestro de `HEAD` SHALL considerarse evidencia invalida y corregirse.
 - **WHEN** se citan commits dentro de `tesis_completa_extraida.txt` o `tesis_para_evaluacion.txt`
 - **THEN** su contenido se reconoce como la extraccion con `pdftotext` de `main.pdf` versionada como instantanea
 - **AND** el remapeo mantiene coherente la instantanea; la regeneracion desde un `main.pdf` recompilado es la via durable y queda fuera de este change
+
+### Requirement: Reporte de las métricas ampliadas fuera de muestra y del sesgo de exclusión
+
+La tesis SHALL reportar, además de la exactitud estricta y laxa fuera de muestra ya
+declaradas, la macro-F1 de las cinco clases, las métricas por clase con su soporte, la
+*balanced accuracy* y el kappa de Cohen del clasificador contra la referencia, tomadas del
+memo canónico. `07-resultados.tex` SHALL presentar estas métricas en el bloque fuera de
+muestra, rotuladas como estimaciones sobre el n efectivo. `08-discusion.tex` SHALL tratar
+explícitamente el sesgo de la exclusión de los discordantes: SHALL declarar los escenarios
+de peor caso, mejor caso y la cota, y SHALL enunciar la regla de decisión que ata el peor
+caso a la exactitud reportada. La tesis MUST NOT presentar los escenarios de exclusión como
+una medición del clasificador sobre los casos excluidos, ni la macro-F1 fuera de muestra
+como equivalente de la exactitud de etiqueta única. Los valores SHALL tomarse del memo
+canónico y MUST NOT fijarse por separado.
+
+#### Scenario: Métricas ampliadas en Resultados
+
+- **WHEN** se lee el bloque fuera de muestra de `07-resultados.tex`
+- **THEN** figuran la macro-F1, las métricas por clase con soporte, la *balanced accuracy* y el kappa del clasificador
+- **AND** se rotulan como estimaciones sobre el n efectivo
+
+#### Scenario: Sesgo de exclusión tratado en Discusión
+
+- **WHEN** se lee `08-discusion.tex` en el tratamiento de la validación fuera de muestra
+- **THEN** figuran los escenarios de peor caso, mejor caso y cota de la exclusión y la regla de decisión asociada
+- **AND** los escenarios se rotulan como sensibilidad, no como medición
+
+#### Scenario: Sin equivalencia ni sobreafirmación
+
+- **WHEN** se lee la presentación de la macro-F1 fuera de muestra
+- **THEN** no se la presenta como equivalente de la exactitud estricta
+- **AND** no se afirma confirmación fuerte del resultado
+
+#### Scenario: Valores tomados del memo
+
+- **WHEN** se comparan las cifras de la tesis con el memo canónico
+- **THEN** cada cifra coincide con el valor `vigente` o `condicional` del memo
+- **AND** ninguna cifra se fija por separado del memo
+

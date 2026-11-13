@@ -1240,6 +1240,14 @@
       "sessions": 0,
       "memories": 3,
       "prompts": 4
+    },
+    {
+      "id": "db38a565",
+      "created_by": "Gonzalo",
+      "created_at": "2026-11-13T02:23:16Z",
+      "sessions": 0,
+      "memories": 1,
+      "prompts": 0
     }
   ]
 }

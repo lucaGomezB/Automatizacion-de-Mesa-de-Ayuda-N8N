@@ -1,0 +1,306 @@
+{
+  "balance_neto": {
+    "e_aut_fuera_de_muestra": {
+      "errores": 16,
+      "n": 103,
+      "valor": 0.1553398058252427
+    },
+    "escenarios": [
+      {
+        "a_estrella_pct": "75.4",
+        "balance_h": "20.0",
+        "costo_min": 5,
+        "e_man": "0.10"
+      },
+      {
+        "a_estrella_pct": "82.7",
+        "balance_h": "7.8",
+        "costo_min": 10,
+        "e_man": "0.10"
+      },
+      {
+        "a_estrella_pct": "85.1",
+        "balance_h": "-4.4",
+        "costo_min": 15,
+        "e_man": "0.10"
+      },
+      {
+        "a_estrella_pct": "70.4",
+        "balance_h": "31.0",
+        "costo_min": 5,
+        "e_man": "0.15"
+      },
+      {
+        "a_estrella_pct": "77.7",
+        "balance_h": "29.9",
+        "costo_min": 10,
+        "e_man": "0.15"
+      },
+      {
+        "a_estrella_pct": "80.1",
+        "balance_h": "28.7",
+        "costo_min": 15,
+        "e_man": "0.15"
+      },
+      {
+        "a_estrella_pct": "65.4",
+        "balance_h": "42.1",
+        "costo_min": 5,
+        "e_man": "0.20"
+      },
+      {
+        "a_estrella_pct": "72.7",
+        "balance_h": "51.9",
+        "costo_min": 10,
+        "e_man": "0.20"
+      },
+      {
+        "a_estrella_pct": "75.1",
+        "balance_h": "61.8",
+        "costo_min": 15,
+        "e_man": "0.20"
+      },
+      {
+        "a_estrella_pct": "58.9",
+        "balance_h": "56.4",
+        "costo_min": 5,
+        "e_man": "0.265"
+      },
+      {
+        "a_estrella_pct": "66.2",
+        "balance_h": "80.6",
+        "costo_min": 10,
+        "e_man": "0.265"
+      },
+      {
+        "a_estrella_pct": "68.6",
+        "balance_h": "104.7",
+        "costo_min": 15,
+        "e_man": "0.265"
+      }
+    ],
+    "estado": "condicional",
+    "formula": "B = (N / 3600) * [dt - (e_aut - e_man) * c]; a* = 1 - e_man - dt / c",
+    "insumos": {
+      "ahorro_bruto_h": "32.2",
+      "delta_t_s": "43.82",
+      "n_trimestral": "2646",
+      "procedencia": "dt y N: Secciones 3.1 y 3.4 de numeros-canonicos.md; e_man y c: Seccion 3.11 (supuestos condicional)"
+    },
+    "no_computable": [
+      {
+        "insumo": "ahorro de tiempo por incidente (dt) medido en el corpus independiente",
+        "motivo": "los artefactos fuera de muestra (corpus_independiente.json, predicciones_independiente.json, doble_etiquetado_independiente.csv) no registran tiempos de resolucion; dt se toma como supuesto condicional del in-sample"
+      },
+      {
+        "insumo": "tasa de derivacion erronea manual (e_man) y costo por derivacion (c)",
+        "motivo": "no se midieron en el corpus independiente; se mantienen las rejillas condicional de la Seccion 3.11"
+      }
+    ]
+  },
+  "balanced_accuracy": {
+    "definicion": "media aritmetica de las sensibilidades por clase",
+    "diferencia_con_estricta": -0.10513638465094766,
+    "exactitud_estricta": 0.8446601941747572,
+    "valor": 0.7395238095238096
+  },
+  "change": "c-205-ampliar-el-analisis-fuera-de-muestra",
+  "entradas_sha256": {
+    "corpus_independiente.json": "8cdbec6fc06be3f7c4535f0213919d6d90b69d36e7d820ff97a84b9180cef56d",
+    "doble_etiquetado_independiente.csv": "94dc2d739390a4c874e4ecfa70bf8b52266b752ec20d1e47801f2a93a562f6f7",
+    "predicciones_independiente.json": "d5ee19f7b0bf2b56a00026a1bd33a2e11ffeb9b224b6a8efa553460895a915a4"
+  },
+  "exactitud_estricta": {
+    "aciertos": 87,
+    "ic_wilson": [
+      0.7624742780120963,
+      0.9020617624322336
+    ],
+    "n": 103,
+    "valor": 0.8446601941747572
+  },
+  "exactitud_laxa": {
+    "aciertos": 90,
+    "ic_wilson": [
+      0.7959587945728204,
+      0.9247352211203261
+    ],
+    "n": 103,
+    "valor": 0.8737864077669902
+  },
+  "excluidos": 47,
+  "frontera_confusion": {
+    "errores_de_sistemas_por_prediccion": {
+      "Bases de Datos": 1,
+      "Seguridad Informatica": 0,
+      "Soporte Tecnico Hardware": 0,
+      "Soporte Tecnico Software": 3
+    },
+    "mayor_celda_fuera_de_diagonal": {
+      "casos": 3,
+      "prediccion": "Soporte Tecnico Software",
+      "referencia": "Sistemas"
+    },
+    "sistemas_aciertos": 1,
+    "sistemas_soporte": 5
+  },
+  "generador": "evaluation/data/campana/analisis/analisis_fuera_de_muestra_c205.py",
+  "kappa_clasificador": {
+    "declaraciones": [
+      "Fleiss fuera del alcance: el kappa se calcula solo para exactamente dos etiquetadores.",
+      "kappa de etiquetadores nuevos, no IC del 0,87 original"
+    ],
+    "error_estandar": 0.04811318623958815,
+    "ic_asintotico": [
+      0.6918960476228777,
+      0.8804962720449994
+    ],
+    "ic_bootstrap": [
+      0.690284496590924,
+      0.876846918800304
+    ],
+    "kappa": 0.7861961598339385,
+    "n": 103,
+    "nivel_confianza": 0.95,
+    "p_e": 0.27344707323970213,
+    "p_o": 0.8446601941747572,
+    "pabak": 0.8058252427184465,
+    "remuestreos": 2000,
+    "rotulo": "concordancia del clasificador contra la referencia humana (E3/E4); NO es fiabilidad inter-etiquetador",
+    "rotulo_landis_koch": "sustancial",
+    "semilla": 20261021
+  },
+  "macro_f1": 0.7446560846560847,
+  "macro_f1_definicion": "media aritmetica de las cinco F1 por clase, incluida toda clase de soporte cero (F1 = 0.0); NO es equivalente de la exactitud estricta de etiqueta unica",
+  "matriz_confusion": {
+    "celdas": {
+      "Bases de Datos": {
+        "Bases de Datos": 13,
+        "Seguridad Informatica": 0,
+        "Sistemas": 0,
+        "Soporte Tecnico Hardware": 0,
+        "Soporte Tecnico Software": 0
+      },
+      "Seguridad Informatica": {
+        "Bases de Datos": 0,
+        "Seguridad Informatica": 15,
+        "Sistemas": 1,
+        "Soporte Tecnico Hardware": 3,
+        "Soporte Tecnico Software": 2
+      },
+      "Sistemas": {
+        "Bases de Datos": 1,
+        "Seguridad Informatica": 0,
+        "Sistemas": 1,
+        "Soporte Tecnico Hardware": 0,
+        "Soporte Tecnico Software": 3
+      },
+      "Soporte Tecnico Hardware": {
+        "Bases de Datos": 0,
+        "Seguridad Informatica": 0,
+        "Sistemas": 1,
+        "Soporte Tecnico Hardware": 38,
+        "Soporte Tecnico Software": 1
+      },
+      "Soporte Tecnico Software": {
+        "Bases de Datos": 0,
+        "Seguridad Informatica": 0,
+        "Sistemas": 1,
+        "Soporte Tecnico Hardware": 3,
+        "Soporte Tecnico Software": 20
+      }
+    },
+    "columnas": "sector predicho principal",
+    "filas": "sector de referencia (sector_asignado)",
+    "orden": [
+      "Seguridad Informatica",
+      "Soporte Tecnico Hardware",
+      "Soporte Tecnico Software",
+      "Bases de Datos",
+      "Sistemas"
+    ]
+  },
+  "metodo": "solo lectura; evaluation.metrics + evaluation.kappa + evaluation.stats; sin red ni Gemini; deterministico",
+  "n_efectivo": 103,
+  "por_clase": {
+    "Bases de Datos": {
+      "f1": 0.962962962962963,
+      "precision": 0.9285714285714286,
+      "sensibilidad": 1.0,
+      "soporte": 13
+    },
+    "Seguridad Informatica": {
+      "f1": 0.8333333333333333,
+      "precision": 1.0,
+      "sensibilidad": 0.7142857142857143,
+      "soporte": 21
+    },
+    "Sistemas": {
+      "f1": 0.22222222222222224,
+      "precision": 0.25,
+      "sensibilidad": 0.2,
+      "soporte": 5
+    },
+    "Soporte Tecnico Hardware": {
+      "f1": 0.9047619047619048,
+      "precision": 0.8636363636363636,
+      "sensibilidad": 0.95,
+      "soporte": 40
+    },
+    "Soporte Tecnico Software": {
+      "f1": 0.8,
+      "precision": 0.7692307692307693,
+      "sensibilidad": 0.8333333333333334,
+      "soporte": 24
+    }
+  },
+  "potencia_precision": {
+    "cumple_objetivo_d1": true,
+    "efecto_minimo_detectable": {
+      "alfa": 0.05,
+      "bilateral": true,
+      "d_z": 0.27604839406790044,
+      "nota": "MDE en escala d_z para un contraste pareado de n pares (evaluation.stats)",
+      "potencia": 0.8
+    },
+    "n": 103,
+    "nota": "precision alcanzada con el n efectivo, no tamano muestral elegido; el objetivo D1 de c-191 (~8,4 pts) fue aceptado, no un requisito",
+    "objetivo_semi_ancho_d1": 0.084,
+    "semi_ancho_wilson_observado": 0.06979374221006862
+  },
+  "sesgo_exclusion": {
+    "aciertos_minimos_excluidos_para_umbral": {
+      "alcanzable": true,
+      "de": 47,
+      "minimo": 41,
+      "tasa_requerida": 0.8723404255319149
+    },
+    "cota": {
+      "aciertos_esperados": 122.83629106656852,
+      "definicion": "los excluidos aciertan a la tasa del limite inferior del IC de Wilson 95 % del n efectivo",
+      "exactitud": 0.8189086071104568,
+      "n": 150,
+      "tasa_excluidos": 0.7624742780120963
+    },
+    "excluidos": 47,
+    "mejor_caso": {
+      "aciertos": 134,
+      "exactitud": 0.8933333333333333,
+      "n": 150
+    },
+    "peor_caso": {
+      "aciertos": 87,
+      "exactitud": 0.58,
+      "n": 150
+    },
+    "regla_decision": {
+      "enunciado": "El umbral 0.85 se sostiene sin condiciones solo si el peor caso lo alcanza. El peor caso (87/150 = 0.5800) queda por debajo del umbral: la exactitud sobre el n efectivo NO puede presentarse como superacion del umbral sin el arbitraje de los 47 discordantes.",
+      "peor_caso_sostiene_umbral": false,
+      "umbral": 0.85
+    },
+    "rotulo": "analisis de sensibilidad; no es una medicion del clasificador sobre los excluidos",
+    "umbral": 0.85,
+    "universo": 150
+  },
+  "total_primaria": 150
+}

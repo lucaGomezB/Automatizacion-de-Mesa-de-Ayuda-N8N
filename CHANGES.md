@@ -2723,6 +2723,21 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
+## FASE 66 — Ampliar el análisis fuera de muestra (c-205)
+
+> Completa el análisis de la validación fuera de muestra de c-191 con los artefactos ya versionados: sin campo, sin corrida paga y sin tocar el clasificador ni el corpus. Reproduce los anclas de c-191 (n efectivo `103`, estricta `0,8447` con IC de Wilson `[0,7625; 0,9021]`, laxa `0,8738`) y agrega las métricas que faltaban.
+
+### [C-205] `ampliar-el-analisis-fuera-de-muestra` — APLICADO y ARCHIVADO (2026-11-13, MEDIUM/HIGH)
+
+- **Estado**: aplicado y archivado el 2026-11-13 (16/16); `openspec validate --strict` válido; PDF recompilado (145 páginas); sin tag de release todavía.
+- **Scope**: (1) script de solo lectura `evaluation/data/campana/analisis/analisis_fuera_de_muestra_c205.py` con sus pruebas (8) y salidas `.json`/`.md` determinísticas; (2) cifras nuevas sobre el n efectivo `103`: macro-F1 `0,7447`, *balanced accuracy* `0,7395`, kappa del clasificador contra la referencia `0,7862`, métricas por clase con soporte y matriz de confusión `5x5`; (3) precisión: semi-ancho de Wilson observado `6,98` pts frente al objetivo de `8,4` pts; (4) sesgo de exclusión de los `47` discordantes: peor caso `87/150 = 0,5800`, mejor caso `134/150 = 0,8933`, cota `0,8189`, con regla de decisión explícita (el peor caso queda por debajo de `0,85`, así que `0,8447` no se presenta como superación del umbral sin arbitraje); (5) sección 3.20 del memo `numeros-canonicos.md`; (6) prosa en `07-resultados.tex` y `08-discusion.tex`.
+- **Hallazgo**: la clase `Sistemas` (soporte `5`) tiene F1 `0,2222`; tres de sus cinco casos se predicen como `Soporte Tecnico Software`. Refuerza la necesidad de c-206.
+- **Dependencias**: artefactos de `c-191`. No toca `App/`, `n8n/`, `evaluation/*.py`, `data/*` ni el script de c-191.
+- **Governance**: MEDIUM/HIGH (cambia hechos de la tesis); toda cifra sale del JSON del script y queda registrada con fuente y comando.
+- **Leer antes**: `openspec/changes/archive/2026-11-13-c-205-ampliar-el-analisis-fuera-de-muestra/{proposal,design,tasks}.md` y `evaluation/data/campana/analisis/README.md`.
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo; actualizado 2026-10-22)
