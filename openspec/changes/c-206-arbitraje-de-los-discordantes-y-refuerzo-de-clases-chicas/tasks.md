@@ -21,10 +21,10 @@ corpus de ajuste (`data/*`) ni `evaluation/doble_etiquetado.py`. En la prosa usa
 
 ## 2. Validador y constructor de la referencia arbitrada (TDD)
 
-- [ ] 2.1 (RED) Escribir `evaluation/tests/test_arbitraje.py` con pruebas que importen el módulo inexistente y verifiquen: la validación de una planilla con `E3`/`E4`/`E5`; el rechazo de una planilla con menos o más etiquetadores; y que la referencia de un caso discordante toma la etiqueta de `E5`; correr `cd App/Backend; ...` o `pytest` desde la raíz de `evaluation/` y verificar que fallan por módulo ausente.
-- [ ] 2.2 (GREEN) Crear `evaluation/arbitraje.py` con el validador (exactamente `E3`, `E4`, `E5`) y el constructor de la referencia arbitrada (referencia = consenso de `E3`/`E4` cuando coinciden; etiqueta de `E5` cuando difieren; bandera en la discordancia de tres vías); reutilizar los helpers de `evaluation/doble_etiquetado.py` cuando apliquen, sin cambiar su contrato; correr las pruebas de 2.1 y verificar que pasan.
-- [ ] 2.3 (TRIANGULATE) Agregar pruebas para el conjunto laxo arbitrado (intersección de adicionales de al menos dos de los tres) y para la bandera de tres vías; verificar que pasan.
-- [ ] 2.4 Verificar que `evaluation/doble_etiquetado.py` sigue aceptando exactamente dos etiquetadores para la tarea `doble_etiquetado` (su contrato intacto). Verificación: `python -m pytest evaluation/tests -q` pasa y la prueba del contrato de dos etiquetadores sigue verde.
+- [x] 2.1 (RED) Escribir `evaluation/tests/test_arbitraje.py` con pruebas que importen el módulo inexistente y verifiquen: la validación de una planilla con `E3`/`E4`/`E5`; el rechazo de una planilla con menos o más etiquetadores; y que la referencia de un caso discordante toma la etiqueta de `E5`; correr `cd App/Backend; ...` o `pytest` desde la raíz de `evaluation/` y verificar que fallan por módulo ausente.
+- [x] 2.2 (GREEN) Crear `evaluation/arbitraje.py` con el validador (exactamente `E3`, `E4`, `E5`) y el constructor de la referencia arbitrada (referencia = consenso de `E3`/`E4` cuando coinciden; etiqueta de `E5` cuando difieren; bandera en la discordancia de tres vías); reutilizar los helpers de `evaluation/doble_etiquetado.py` cuando apliquen, sin cambiar su contrato; correr las pruebas de 2.1 y verificar que pasan.
+- [x] 2.3 (TRIANGULATE) Agregar pruebas para el conjunto laxo arbitrado (intersección de adicionales de al menos dos de los tres) y para la bandera de tres vías; verificar que pasan.
+- [x] 2.4 Verificar que `evaluation/doble_etiquetado.py` sigue aceptando exactamente dos etiquetadores para la tarea `doble_etiquetado` (su contrato intacto). Verificación: `python -m pytest evaluation/tests -q` pasa y la prueba del contrato de dos etiquetadores sigue verde.
 
 ## 3. Registro de sujetos
 
