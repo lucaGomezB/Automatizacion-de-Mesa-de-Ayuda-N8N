@@ -35,7 +35,7 @@ Todo se ejecuta desde la raíz del repositorio. La clasificación (sección 10) 
 
 ## 1. Decisiones pendientes de los autores
 
-Estas decisiones son **de los autores** y todavía NO están tomadas. Hasta que se registren acá, no se entrega nada a `E5` ni se reúnen casos de refuerzo. El runbook no las inventa: completar cada campo **sin nombres, correos ni legajos** (solo códigos y cifras).
+Estas decisiones son **de los autores** y quedaron registradas el `2026-11-13` (el material de campo ya ejecutado se documenta en la sección 14). El runbook no las inventa: cada campo se completa **sin nombres, correos ni legajos** (solo códigos y cifras).
 
 ### 1.1 Tercer etiquetador `E5` / `P11` y custodio de identidades (tarea 0.2)
 
@@ -43,23 +43,23 @@ Estas decisiones son **de los autores** y todavía NO están tomadas. Hasta que 
 |---|---|
 | Alias del tercer etiquetador | `E5` (fijado por el change) |
 | Código de persona | `P11` (fijado por el change) |
-| Persona identificada y que acepta etiquetar | **PENDIENTE** (la identidad NO se escribe acá: se custodia fuera del repositorio) |
-| Custodio de la correspondencia alias-identidad | **PENDIENTE** (rol, no nombre) |
-| Independencia de `E1`-`E4`, `A1`, `T1`-`T3` y `O1`/`O2` confirmada | **PENDIENTE** (sí / no, y fecha `AAAA-MM-DD` de la confirmación) |
-| `estado_cegado` resultante | **PENDIENTE** (`cumplido` o `limitacion_declarada`, ver sección 12) |
+| Persona identificada y que acepta etiquetar | Confirmada (`P11`); notificada verbalmente el `2026-11-12` y firmó el `2026-11-13` (la identidad NO se escribe acá: se custodia fuera del repositorio) |
+| Custodio de la correspondencia alias-identidad | Director de la tesis (rol, sin nombre) |
+| Independencia de `E1`-`E4`, `A1`, `T1`-`T3` y `O1`/`O2` confirmada | Sí, `2026-11-13` |
+| `estado_cegado` resultante | `cumplido` (ver sección 12) |
 
 ### 1.2 Cuota de refuerzo de clases chicas (tarea 0.3)
 
 | Clase | Casos nuevos a reunir |
 |---|---|
-| `Sistemas` | **PENDIENTE** (cifra a decidir por los autores) |
-| `Bases de Datos` | **PENDIENTE** (cifra a decidir por los autores) |
+| `Sistemas` | Reforzado con `40` casos de referencia arbitrada (de `56` reunidos en total) |
+| `Bases de Datos` | Reforzado con `2` casos de referencia arbitrada |
 
-La cuota debe quedar registrada ANTES de reunir casos. El objetivo del refuerzo es que las métricas por clase sean **estimables** (`MIN_SOPORTE_ESTIMABLE = 2` en `evaluation/metrics.py`); el change no fija un n por clase.
+La cuota se registra a partir del refuerzo ejecutado (`56` casos, `I151`..`I206`; sección 14), porque no quedó una cifra-objetivo separada antes de reunir casos. El objetivo del refuerzo es que las métricas por clase sean **estimables** (`MIN_SOPORTE_ESTIMABLE = 2` en `evaluation/metrics.py`); el change no fija un n por clase. Tras el refuerzo, `Sistemas` (n=`61`) y `Bases de Datos` (n=`16`) quedan estimables en el corpus arbitrado (Sección 3.25 de `numeros-canonicos.md`).
 
 ### 1.3 Regla del caso de tres etiquetas distintas (a confirmar)
 
-La propuesta del design es la de la sección 6 (`E5` como árbitro con bandera de discordancia residual). Los autores la **confirman o la ajustan** (por ejemplo, un cuarto juicio) antes de ver cualquier etiqueta de `E5`: **PENDIENTE** (confirmada sí / no, con fecha `AAAA-MM-DD`).
+La propuesta del design es la de la sección 6 (`E5` como árbitro con bandera de discordancia residual). Los autores la confirmaron antes de ver cualquier etiqueta de `E5`: confirmada, `2026-11-13` (se aplicó; el sidecar registra `6` casos de tres vías).
 
 ## 2. Sujetos
 

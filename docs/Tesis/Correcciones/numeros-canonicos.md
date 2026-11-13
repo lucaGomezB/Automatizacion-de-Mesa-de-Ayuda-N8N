@@ -1533,10 +1533,12 @@ empates y, como el AUROC cuenta los empates como `0,5`, este baja en consecuenci
 no crea capacidad de discriminación. Estado: `condicional`.
 
 **(f) Gobernanza y secundarios.** Ninguna política quedó confirmada fuera de la muestra; el
-change no modifica `openspec/config.yaml`, `settings.py`, el prompt ni el clasificador. Los
-secundarios (predicciones de un brazo Gemini solo, un change futuro no propuesto todavía; corpus
-arbitrado de c-206, aún inexistente) quedan `no ejecutado`. La prosa de la tesis (secciones 4, 7,
-8, 9 y 10) y la recompilación del PDF están pendientes (tareas 5.2 y 5.3 de c-214).
+change no modifica `openspec/config.yaml`, `settings.py`, el prompt ni el clasificador. El
+secundario de las predicciones de un brazo Gemini solo (un change futuro no propuesto todavía)
+queda `no ejecutado`. El corpus independiente arbitrado de c-206, registrado acá como aún
+inexistente al cerrar c-214, se materializó después: c-206 se aplicó el `2026-11-13` y sus cifras
+están en la Sección 3.25. La prosa de la tesis (secciones 4, 7, 8, 9 y 10) y la recompilación del
+PDF correspondientes a c-214 quedan según su propio estado (tareas 5.2 y 5.3 de c-214).
 
 ### 3.25 Validación fuera de muestra con el corpus independiente arbitrado (c-206)
 
