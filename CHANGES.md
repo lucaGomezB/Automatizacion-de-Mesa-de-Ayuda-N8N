@@ -2776,6 +2776,21 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
+## FASE 69 — Contraste pareado de la linea de base (c-213)
+
+> La integracion textual de la linea de base supervisada clasica (TF-IDF + regresion logistica, 200 casos de ajuste, 103 casos fuera de muestra con consenso) la hizo c-210 en `main`. c-213 agrega solo el contraste pareado que faltaba. Responde al criterio 4 del dictamen CONEAU sobre `v1.3.0`. Aditivo: ningun numero canonico cambia.
+
+### [C-213] `integrar-la-linea-de-base-en-la-tesis` (alcance reducido al contraste pareado) — APLICADO EN LA RAMA (2026-11-13, MEDIUM)
+
+- **Estado**: aplicado en la rama `change/c-213-integrar-la-linea-de-base-en-la-tesis` (commits locales, sin push ni archivo); pendiente manual: recompilar `main.pdf` con Docker y revisar la paginacion de las tablas nuevas; seguimiento cuando c-206 entregue el arbitraje (repetir el contraste con la referencia de 150 casos).
+- **Scope**: (1) script de solo lectura `evaluation/data/campana/analisis/contraste_linea_de_base_c213.py` con su prueba (TDD estricto) y salidas `.json`/`.md`/`SHA256SUMS` deterministicas: predicciones por caso de la linea de base, tabla 2x2, McNemar y diferencia de exactitudes con IC bootstrap pareado; aborta si no reproduce `67`, `60` y `87` aciertos sobre `103`. (2) Tesis: metodo (`04`), un parrafo de contraste pareado tras `tab:linea-base-clasica` (`07`) y una clausula de significacion en `08` y en `09`; `10` queda como en c-210. (3) Memo `numeros-canonicos.md` seccion 3.23 (la 3.22 es de c-210) y entrada en `dictamen-correcciones.md`.
+- **Hallazgo**: sobre los mismos `103` casos, el hibrido supera a la linea de base balanceada (`0,8447` frente a `0,6505`; discordantes `27` y `7`; McNemar exacta `p = 0,0008`; diferencia `0,1942`, IC 95 % `[0,0874; 0,3010]`). Lectura acotada: un unico supervisado clasico con 200 ejemplos; sin superioridad general; la hipotesis de eficiencia frente al LLM solo sigue sin contrastarse y el objetivo 2 sigue "No alcanzado".
+- **Dependencias**: c-209 y c-210 (PR 101, integrados). c-206 (arbitraje) es un seguimiento, no un requisito. No toca `App/`, `n8n/`, los corpus, `evaluation/linea_de_base.py`, ni los artefactos de c-205 y c-210.
+- **Governance**: MEDIUM (prosa de la tesis evaluada por el tribunal, con checkpoints); LOW para el script de solo lectura.
+- **Leer antes**: `openspec/changes/c-213-integrar-la-linea-de-base-en-la-tesis/{proposal,design,tasks}.md`, `docs/Tesis/Correcciones/numeros-canonicos.md` (secciones 3.22 y 3.23) y `evaluation/data/campana/analisis/README.md`.
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo; actualizado 2026-10-22)

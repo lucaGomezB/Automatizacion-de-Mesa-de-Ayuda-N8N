@@ -144,3 +144,30 @@ ningun artefacto previo contenia:
 - Prueba: `cd evaluation/data/campana/analisis && python -m pytest test_analisis_dictamen_c207.py -q`.
 - `dt` (`43,82 s`) y `N` (`2.646`) se toman como constantes del memo canonico; la
   incertidumbre de `dt` no entra en el IC de `B`.
+
+## Contraste pareado linea de base frente a hibrido (c-213)
+
+`contraste_linea_de_base_c213.py` reconstruye las predicciones por caso de la linea de base
+clasica (`evaluation.linea_de_base.predecir`, semilla `42`), lee las del hibrido de
+`../predicciones_independiente.json` y calcula, sobre los mismos `103` casos con consenso, la
+tabla 2x2 de aciertos estrictos, el contraste de McNemar (`evaluation/stats.py`) y la
+diferencia de exactitudes pareadas con IC 95 % bootstrap percentil pareado (`10000`
+remuestreos, `SEMILLA_BOOTSTRAP`). Aborta sin escribir salidas si no reproduce los aciertos
+agregados (`67` y `60` de la linea de base en c-210; `87` del hibrido en c-205).
+
+- Entradas versionadas (solo lectura): `../corpus_campana.json`, `../corpus_independiente.json`,
+  `../predicciones_independiente.json`, `analisis_fuera_de_muestra_c205.json` y
+  `linea_de_base_clasica_c210.json`.
+- Comando (desde la raiz del repositorio):
+
+  ```bash
+  python3 evaluation/data/campana/analisis/contraste_linea_de_base_c213.py
+  ```
+
+  Parametros: `--referencia` (corpus de prueba) y `--n-esperado`, para repetir el contraste
+  con la referencia arbitrada sin cambiar el codigo.
+- Salidas: `contraste_linea_de_base_c213.json` (fuente unica de las cifras, con las
+  predicciones por caso y el SHA-256 de cada entrada), `.md` y `.SHA256SUMS.txt`. Dos
+  corridas producen salidas identicas byte a byte.
+- Prueba: `cd evaluation/data/campana/analisis && python -m pytest test_contraste_linea_de_base_c213.py -q`.
+- Aditivo: no reemplaza ningun numero canonico; no es el brazo solo-LLM.

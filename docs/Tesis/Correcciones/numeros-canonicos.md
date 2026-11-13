@@ -1408,6 +1408,41 @@ colapsa en `Bases de Datos` (`F1 0,0000`) porque tiene un solo caso de ajuste. E
 clasificador clásico de TF-IDF y regresión logística, no un modelo ajustado; la comparación no
 se presenta como un benchmark definitivo. Procedencia: `analisis/…c210.json` (`veredicto`).
 
+### 3.23 Contraste pareado del híbrido frente a la línea de base (c-213)
+
+Contraste pareado de la comparación de la Sección 3.22 (c-210), sobre los mismos `103` casos con
+consenso de `E3`/`E4`. **Aditiva**: no modifica ningún valor ni estado `vigente` de las Secciones 3.1 a
+3.22. No es el brazo solo-LLM: la hipótesis de eficiencia sigue sin contrastarse y el objetivo 2 conserva
+el veredicto "No alcanzado". Fuente única: `evaluation/data/campana/analisis/contraste_linea_de_base_c213.json`,
+producido de solo lectura, sin red ni Gemini, por
+`evaluation/data/campana/analisis/contraste_linea_de_base_c213.py`, que aborta sin escribir si no reproduce
+`67`, `60` y `87` aciertos.
+
+Comando (desde la raíz del repositorio):
+
+```bash
+python3 evaluation/data/campana/analisis/contraste_linea_de_base_c213.py
+```
+
+SHA-256 de las salidas versionadas (blob con fin de línea LF): `contraste_linea_de_base_c213.json`
+`1abe227796af7bee8a685ceed44077729242f405a0ec99154bd6531066570d92`;
+`contraste_linea_de_base_c213.md`
+`2c56252b3ed59b7c324274b55d3ed35c9b00e2209533f713ce53a442118b6a65`.
+
+| Valor canónico | Procedencia (archivo y ruta JSON) | Estado |
+|---|---|---|
+| Tabla 2×2 híbrido frente a la línea de base balanceada: ambos aciertan `60`; solo híbrido `27`; solo línea de base `7`; ninguno `9` | `contraste_linea_de_base_c213.json` (`contrastes.balanceada.tabla_2x2`) | vigente (nuevo) |
+| McNemar híbrido frente a balanceada: `p` exacta bilateral `0,0008214`; corregida por continuidad `0,0011201` | idem (`contrastes.balanceada.mcnemar`) | vigente (nuevo) |
+| Diferencia de exactitudes pareadas `(b − c)/n = 0,1942`; IC 95 % bootstrap percentil pareado `[0,0874; 0,3010]` (`10000` remuestreos, semilla `20261021`) | idem (`contrastes.balanceada.diferencia_exactitud`) | vigente (nuevo) |
+| Tabla 2×2 híbrido frente a sin re-ponderación (sensibilidad): `56`; `31`; `4`; `12` | idem (`contrastes.sin_repoderacion.tabla_2x2`) | vigente (nuevo) |
+| McNemar frente a sin re-ponderación: exacta `3,465 × 10⁻⁶`; corregida `1,109 × 10⁻⁵`; diferencia `0,2621`, IC 95 % `[0,1650; 0,3592]` | idem (`contrastes.sin_repoderacion`) | vigente (nuevo) |
+
+Lectura acotada: sobre los `103` casos con consenso, la diferencia a favor del híbrido frente a UN
+clasificador supervisado clásico con `200` ejemplos es estadísticamente significativa. No es una
+superioridad general: ambos sistemas se desarrollaron con los mismos `200` casos, la prueba excluye los
+`47` discordantes y hay clases con pocos casos. Con el arbitraje de c-206 el contraste se repite sobre
+`150` casos corriendo el mismo script con la referencia arbitrada (`--referencia`, `--n-esperado`).
+
 ## 4. Contingencia del gate de intervención humana
 
 Tabla reconstruida desde `evaluation/predicciones.json` con
