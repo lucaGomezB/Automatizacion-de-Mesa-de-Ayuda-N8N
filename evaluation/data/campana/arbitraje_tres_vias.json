@@ -1,0 +1,1043 @@
+{
+  "schema_version": 1,
+  "metadata": {
+    "descripcion": "Sidecar del arbitraje (c-206): por caso, el origen de la referencia (consenso_e3_e4 | arbitraje_e5) y la bandera de discordancia residual de tres vias. Nace separado de corpus_independiente_arbitrado.json para no cambiar el esquema de cargar_corpus.",
+    "total_casos": 206,
+    "n_arbitraje_e5": 64,
+    "n_tres_vias": 6,
+    "corpus": "corpus_independiente_arbitrado.json",
+    "corpus_sha256": "cb2874e649fb932c00b536100025c0a0137b3314ab12d45234e4c29049adc67e"
+  },
+  "casos": [
+    {
+      "id": "I001",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I002",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I003",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I004",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I005",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I006",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I007",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I008",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I009",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I010",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I011",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I012",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I013",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I014",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I015",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I016",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I017",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I018",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I019",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I020",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I021",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I022",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I023",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I024",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I025",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I026",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I027",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I028",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I029",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I030",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I031",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I032",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I033",
+      "origen": "arbitraje_e5",
+      "tres_vias": true
+    },
+    {
+      "id": "I034",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I035",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I036",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I037",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I038",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I039",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I040",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I041",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I042",
+      "origen": "arbitraje_e5",
+      "tres_vias": true
+    },
+    {
+      "id": "I043",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I044",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I045",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I046",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I047",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I048",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I049",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I050",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I051",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I052",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I053",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I054",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I055",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I056",
+      "origen": "arbitraje_e5",
+      "tres_vias": true
+    },
+    {
+      "id": "I057",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I058",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I059",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I060",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I061",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I062",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I063",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I064",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I065",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I066",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I067",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I068",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I069",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I070",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I071",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I072",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I073",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I074",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I075",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I076",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I077",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I078",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I079",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I080",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I081",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I082",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I083",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I084",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I085",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I086",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I087",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I088",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I089",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I090",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I091",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I092",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I093",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I094",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I095",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I096",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I097",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I098",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I099",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I100",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I101",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I102",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I103",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I104",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I105",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I106",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I107",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I108",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I109",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I110",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I111",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I112",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I113",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I114",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I115",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I116",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I117",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I118",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I119",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I120",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I121",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I122",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I123",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I124",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I125",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I126",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I127",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I128",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I129",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I130",
+      "origen": "arbitraje_e5",
+      "tres_vias": true
+    },
+    {
+      "id": "I131",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I132",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I133",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I134",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I135",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I136",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I137",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I138",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I139",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I140",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I141",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I142",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I143",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I144",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I145",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I146",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I147",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I148",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I149",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I150",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I151",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I152",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I153",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I154",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I155",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I156",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I157",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I158",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I159",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I160",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I161",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I162",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I163",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I164",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I165",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I166",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I167",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I168",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I169",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I170",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I171",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I172",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I173",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I174",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I175",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I176",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I177",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I178",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I179",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I180",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I181",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I182",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I183",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I184",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I185",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I186",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I187",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I188",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I189",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I190",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I191",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I192",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I193",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I194",
+      "origen": "arbitraje_e5",
+      "tres_vias": true
+    },
+    {
+      "id": "I195",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I196",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I197",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I198",
+      "origen": "arbitraje_e5",
+      "tres_vias": true
+    },
+    {
+      "id": "I199",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I200",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I201",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I202",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I203",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I204",
+      "origen": "arbitraje_e5",
+      "tres_vias": false
+    },
+    {
+      "id": "I205",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    },
+    {
+      "id": "I206",
+      "origen": "consenso_e3_e4",
+      "tres_vias": false
+    }
+  ]
+}
