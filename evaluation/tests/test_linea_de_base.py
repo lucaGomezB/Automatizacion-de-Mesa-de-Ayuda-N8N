@@ -43,7 +43,7 @@ def test_documento_estructura_entrenamiento_prueba_y_metricas(documento):
     assert documento["excluidos"] == 47
     assert set(documento["variantes"]) == {"balanceada", "sin_repoderacion"}
     for variante in documento["variantes"].values():
-        metricas = variante["metricas"]
+        metricas = variante["lectura_muestral"]["metricas"]
         assert {"exactitud_estricta", "exactitud_laxa", "macro_f1", "balanced_accuracy"} <= set(
             metricas
         )
@@ -232,10 +232,12 @@ def test_lectura_ponderada_repondera_por_prevalencia():
 
 def test_documento_trae_ambas_lecturas_rotuladas(documento):
     for variante in documento["variantes"].values():
-        assert "muestral" in variante
-        assert "ponderada_prevalencia_natural" in variante
-        assert variante["ponderada_prevalencia_natural"]["rotulo"]
-        assert variante["ponderada_prevalencia_natural"]["procedencia"]
+        muestral = variante["lectura_muestral"]
+        ponderada = variante["lectura_ponderada_prevalencia_natural"]
+        assert muestral["rotulo"]
+        assert muestral["procedencia"]
+        assert ponderada["rotulo"]
+        assert ponderada["procedencia"]
 
 
 # ---------------------------------------------------------------------------
