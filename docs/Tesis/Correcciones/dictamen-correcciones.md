@@ -5034,3 +5034,62 @@ y esta sección registra la prosa (tarea 5.2). Es aditivo: ningún número canó
 | C14/f | Criterio 5: fila del objetivo 6 en las conclusiones | c-214 | `09-conclusiones.tex:28` | `tab:cumplimiento-objetivos` | `calibración y punto de operación medidos` | cerrada |
 | C14/g | Criterio 5: de propuesta a resultado en las recomendaciones | c-214 | `10-recomendaciones.tex:10` | `subsec:calibracion-gate` | `Lo que antes era una propuesta se midió` | cerrada |
 | Cifras | Memo de números canónicos: sección 3.24 | c-214 | `docs/Tesis/Correcciones/numeros-canonicos.md:1446` | `-` | `3.24 Calibración y punto de operación del gate de confianza (c-214)` | vigente (nuevo) |
+
+## Dictamen v10 / v1.3.0 (2026-11-13) - c-215 (brazo de modelo solo y contraste de la hipotesis de eficiencia)
+
+Atiende la observación del dictamen CONEAU del 13-11-2026 sobre `v1.3.0`
+(`auditorias/Dictamen_Tesis_v10_v1.3.0_CONEAU_2026-11-13.md`, no versionado) de que la hipótesis
+subsidiaria de eficiencia del esquema híbrido nunca se contrastó frente a un esquema de modelo de
+lenguaje solo. El change `c-215-brazo-gemini-solo-y-contraste-de-la-hipotesis-de-eficiencia` (ejecutor
+y análisis de solo lectura MEDIUM; corrida paga hecha por los autores; prosa de tesis MEDIUM) midió el
+brazo y esta sección registra las cifras y la prosa (tareas 5.1 y 5.2). Es aditivo: ningún número
+canónico existente cambia.
+
+### Qué cambió
+
+- **Medición**: `evaluation/data/campana/analisis/analisis_brazo_gemini_solo_c215.py` sobre el caché
+  versionado de la corrida (memo, sección 3.25). Resultado prerregistrado sobre el bloque primario
+  (103 casos fuera de muestra con consenso de `E3`/`E4`): **no concluyente**. El híbrido acierta
+  `87/103` y el brazo de modelo solo `90/103`; McNemar exacta `p = 0,5078`; diferencia `−0,0291`, IC
+  `[−0,0874; 0,0291]`, cuyo límite inferior queda por debajo del margen de no inferioridad de `0,05`
+  (exactitud indeterminada). El híbrido usó `0,3301` de las llamadas y `0,3295` del costo (ahorro
+  cumplido). El bloque dentro de la muestra (`147/200` frente a `136/200`) es informativo y no decide.
+- **Desviación declarada**: `112` casos dentro de la muestra fallaron en la primera tanda sin llegar al
+  modelo (fallo técnico) y se reintentaron; la decisión se tomó después de ver los resultados y se
+  declara como amenaza a la validez; el bloque primario no se vio afectado.
+- **Tesis**: el método (`04-marco-metodologico.tex`) describe el brazo, el margen, la regla de tres vías,
+  el control de deriva, el análisis no ciego y la desviación; `07-resultados.tex` agrega
+  `tab:gemini-solo` y el resultado, la eficiencia, el bloque secundario, el control de deriva y la
+  desviación; `01-introduccion.tex`, `08-discusion.tex`, `09-conclusiones.tex` y `10-recomendaciones.tex`
+  pasan de «no se contrastó» a «se contrastó con resultado no concluyente» y proponen repetir el
+  contraste con más casos fuera de muestra y corridas repetidas. El estado de ningún objetivo
+  específico cambia.
+- **Lectura**: la hipótesis de eficiencia no queda sostenida ni refutada. Se mide un ahorro de
+  aproximadamente un tercio de las llamadas y del costo de inferencia, y no se detectó diferencia de
+  exactitud, pero no se establece la no inferioridad con el margen fijado y la estimación puntual
+  fuera de muestra favorece al brazo de modelo solo. «No se detectó diferencia» no se escribe como
+  «equivalentes».
+
+### Pendientes
+
+- Recompilar `main.pdf` con Docker y verificar las cifras con `pdftotext` (tarea 5.3, del dueño).
+- No se agregó ninguna cita bibliográfica para el margen de no inferioridad: se redactó sin cita.
+
+### Matriz de trazabilidad (verificada por `verificar_matriz_trazabilidad.py`)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| C15/a | Hipótesis de eficiencia: método del brazo de modelo solo | c-215 | `04-marco-metodologico.tex:87` | `subsec:metricas-instrumentos` | `Brazo de modelo de lenguaje solo.` | cerrada |
+| C15/b | Hipótesis de eficiencia: párrafo del contraste y veredicto | c-215 | `07-resultados.tex:371` | `tab:gemini-solo` | `Contraste frente a un esquema de modelo de lenguaje solo` | cerrada |
+| C15/c | Hipótesis de eficiencia: tabla del contraste por bloque | c-215 | `07-resultados.tex:376` | `tab:gemini-solo` | `label{tab:gemini-solo}` | cerrada |
+| C15/d | Hipótesis de eficiencia: ahorro de llamadas y costo | c-215 | `07-resultados.tex:391` | `tab:gemini-solo` | `En eficiencia, el híbrido invocó` | cerrada |
+| C15/e | Hipótesis de eficiencia: bloque secundario, deriva y desviación | c-215 | `07-resultados.tex:393` | `tab:gemini-solo` | `El bloque dentro de la muestra (200 casos) es informativo` | cerrada |
+| C15/f | Hipótesis de eficiencia: introducción | c-215 | `01-introduccion.tex:38` | `subsec:hipotesis-trabajo` | `La de eficiencia se contrastó formalmente` | cerrada |
+| C15/g | Hipótesis de eficiencia: interpretación en la discusión | c-215 | `08-discusion.tex:10` | `subsec:interpretacion-resultados` | `se contrastó con un brazo de modelo de lenguaje solo, con resultado no concluyente` | cerrada |
+| C15/h | Hipótesis de eficiencia: cascadas en la discusión | c-215 | `08-discusion.tex:40` | `sec:discusion` | `se contrastó con resultado no concluyente: ahorro medido` | cerrada |
+| C15/i | Hipótesis de eficiencia: alternativas en la discusión | c-215 | `08-discusion.tex:56` | `subsec:limitaciones-estudio` | `se midió aparte, con resultado no concluyente` | cerrada |
+| C15/j | Hipótesis de eficiencia: sub-hipótesis en las conclusiones | c-215 | `09-conclusiones.tex:6` | `sec:conclusiones` | `La hipótesis subsidiaria de eficiencia se contrastó con resultado no concluyente` | cerrada |
+| C15/k | Hipótesis de eficiencia: estrategia compositiva en las conclusiones | c-215 | `09-conclusiones.tex:37` | `sec:conclusiones` | `se contrastó con resultado no concluyente: usó aproximadamente` | cerrada |
+| C15/l | Hipótesis de eficiencia: alcance de la conclusión acotada | c-215 | `09-conclusiones.tex:47` | `subsec:aportes-generalizacion` | `el esquema de modelo de lenguaje solo se midió con resultado no concluyente` | cerrada |
+| C15/m | Hipótesis de eficiencia: trabajo futuro | c-215 | `10-recomendaciones.tex:14` | `subsec:clasificador-supervisado` | `Para obtener un veredicto concluyente` | cerrada |
+| Cifras | Memo de números canónicos: sección 3.25 | c-215 | `docs/Tesis/Correcciones/numeros-canonicos.md:1524` | `-` | `3.25 Brazo «Gemini solo» y contraste de la hipótesis de eficiencia (c-215)` | vigente (nuevo) |

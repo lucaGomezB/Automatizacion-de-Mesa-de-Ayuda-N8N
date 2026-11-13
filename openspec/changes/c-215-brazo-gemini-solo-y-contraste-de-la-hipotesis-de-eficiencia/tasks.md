@@ -35,15 +35,15 @@ puede cerrar un agente.
 
 ## 4. Corrida paga y salidas reales
 
-- [ ] 4.1 [CORRIDA PAGA] Una persona con `GEMINI_API_KEY` y el visto bueno de gasto instala `google-genai` dentro del pin (`>=2.33,<3`), corre el dry-run, verifica el costo estimado y lanza la corrida real con `--confirmar-costo`. Verificación: caché con los 303 casos, llamadas acumuladas ≤ 400.
-- [ ] 4.2 [CORRIDA PAGA] Versionar `evaluation/data/campana/brazo_gemini_solo/cache_brazo_gemini_solo.jsonl` en un commit POSTERIOR al del prerregistro.
-- [ ] 4.3 [AUTORES] Correr el análisis y generar `analisis_brazo_gemini_solo_c215.{json,md}` con su `SHA256SUMS`; anotar el veredicto de tres vías tal como sale, favorable o no.
+- [x] 4.1 [CORRIDA PAGA] Una persona con `GEMINI_API_KEY` y el visto bueno de gasto instala `google-genai` dentro del pin (`>=2.33,<3`), corre el dry-run, verifica el costo estimado y lanza la corrida real con `--confirmar-costo`. Verificación: caché con los 303 casos, llamadas acumuladas ≤ 400.
+- [x] 4.2 [CORRIDA PAGA] Versionar `evaluation/data/campana/brazo_gemini_solo/cache_brazo_gemini_solo.jsonl` en un commit POSTERIOR al del prerregistro.
+- [x] 4.3 [AUTORES] Correr el análisis y generar `analisis_brazo_gemini_solo_c215.{json,md}` con su `SHA256SUMS`; anotar el veredicto de tres vías tal como sale, favorable o no.
 
 ## 5. Registro y prosa de la tesis
 
-- [ ] 5.1 [AUTORES] Registrar las cifras en `numeros-canonicos.md` (sección nueva, con procedencia y comando).
-- [ ] 5.2 [AUTORES] Escribir la prosa en introducción, resultados, discusión y conclusiones, incluido un veredicto desfavorable o no concluyente, y retirar o condicionar toda afirmación de eficiencia que el resultado no sostenga.
-- [ ] 5.3 [AUTORES] Agregar la FASE a `CHANGES.md` y recompilar el PDF (LaTeX no disponible en esta máquina).
+- [x] 5.1 [AUTORES] Registrar las cifras en `numeros-canonicos.md` (sección nueva, con procedencia y comando). Hecho: sección 3.25.
+- [x] 5.2 [AUTORES] Escribir la prosa en introducción, resultados, discusión y conclusiones, incluido un veredicto desfavorable o no concluyente, y retirar o condicionar toda afirmación de eficiencia que el resultado no sostenga.
+- [ ] 5.3 [AUTORES] Agregar la FASE a `CHANGES.md` (hecho: FASE 71) y recompilar el PDF (pendiente) (LaTeX no disponible en esta máquina).
 
 ## 6. Desviación declarada (2026-11-13): reintento de fallos técnicos
 
@@ -52,5 +52,5 @@ puede cerrar un agente.
 - [x] 6.3 Análisis: registro vigente por caso, control de deriva por bloque y pooled sin los fallos técnicos (con el número de excluidos) y sección «Desviaciones del prerregistro» con conteos leídos del caché.
 - [x] 6.4 `A/README.md`: comando exacto del reintento y la contabilidad de llamadas.
 - [x] 6.5 Verificación sin costo: `python -m evaluation.brazo_gemini_solo --dry-run --reintentar-fallos-tecnicos` sobre el caché real informa 112 casos a reintentar y 0 pendientes nuevos, sin modificar el caché (SHA-256 idéntico antes y después).
-- [ ] 6.6 [CORRIDA PAGA] Una persona con `GEMINI_API_KEY` bien cargada y visto bueno de gasto (hasta 209 respuestas, del orden de USD 0,08 a 0,15 a precio introductorio) corre `python -m evaluation.brazo_gemini_solo --confirmar-costo --reintentar-fallos-tecnicos`. Verificación: 0 casos con fallo técnico vigente y llamadas con respuesta menor o igual a 400.
-- [ ] 6.7 [AUTORES] Regenerar `analisis_brazo_gemini_solo_c215.{json,md}` y su `SHA256SUMS` con el caché completo y declarar la desviación y la amenaza a la validez en la prosa de la tesis.
+- [x] 6.6 [CORRIDA PAGA] Una persona con `GEMINI_API_KEY` bien cargada y visto bueno de gasto (hasta 209 respuestas, del orden de USD 0,08 a 0,15 a precio introductorio) corre `python -m evaluation.brazo_gemini_solo --confirmar-costo --reintentar-fallos-tecnicos`. Verificación: 0 casos con fallo técnico vigente y llamadas con respuesta menor o igual a 400.
+- [x] 6.7 [AUTORES] Regenerar `analisis_brazo_gemini_solo_c215.{json,md}` y su `SHA256SUMS` con el caché completo y declarar la desviación y la amenaza a la validez en la prosa de la tesis.

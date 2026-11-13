@@ -2803,6 +2803,20 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Governance**: MEDIUM (analisis); cualquier cambio de umbral productivo seria HIGH y queda fuera de alcance.
 - **Leer antes**: `openspec/changes/c-214-calibracion-y-punto-de-operacion-del-gate-de-confianza/{proposal,design,tasks}.md` y `evaluation/data/campana/analisis/README.md`.
 
+## FASE 71 — Brazo «Gemini solo» y contraste de la hipotesis de eficiencia (c-215)
+
+> Contrasta la hipotesis subsidiaria de eficiencia del esquema hibrido frente a un esquema de modelo de lenguaje solo: un brazo que clasifica cada caso unicamente con Gemini, pareado con el hibrido congelado, con una regla de decision de tres vias prerregistrada (margen de no inferioridad `0,05`; bloque primario: los `103` casos fuera de muestra con consenso `E3`/`E4`).
+
+### [C-215] `brazo-gemini-solo-y-contraste-de-la-hipotesis-de-eficiencia` — EN APLICACION (2026-11-13, MEDIUM)
+
+- **Estado**: aplicadas las tareas 0 a 3, la corrida paga y sus salidas (4.1 a 4.3, 6.6), el registro canonico (5.1, seccion 3.25 del memo) y la prosa (5.2: secciones 1, 4, 7, 8, 9 y 10, con `tab:gemini-solo`) en la rama `change/c-215-brazo-gemini-solo-y-contraste-de-la-hipotesis-de-eficiencia`; pendiente la recompilacion del PDF (5.3); sin archivar.
+- **Scope**: `evaluation/brazo_gemini_solo.py` (ejecutor con tope, cache reanudable y reintento de fallos tecnicos) y `analisis_brazo_gemini_solo_c215.py` con sus salidas `.json`/`.md`/`SHA256SUMS` y el cache versionado de la corrida; todo con pruebas TDD, sin red en las pruebas.
+- **Hallazgo**: veredicto prerregistrado **no concluyente**. Fuera de muestra el hibrido acierta `87/103` y el brazo solo `90/103` (McNemar exacta `p = 0,5078`; diferencia `−0,0291`, IC `[−0,0874; 0,0291]`, con el limite inferior por debajo del margen `−0,05`); el hibrido usa `0,3301` de las llamadas y `0,3295` del costo. Las reglas aportan ahorro, no exactitud. El bloque dentro de la muestra (`147/200` frente a `136/200`) es informativo y no decide.
+- **Desviacion declarada**: `112` casos dentro de la muestra fallaron sin llegar al modelo en la primera tanda y se reintentaron; la decision se tomo despues de ver los resultados (amenaza a la validez); el bloque primario no se vio afectado. Una sola corrida a temperatura `0,3`; analisis no ciego.
+- **Dependencias**: c-205 y c-207 (referencias y caches), c-213 y c-214 (rama apilada). No toca `App/`, `openspec/config.yaml`, el prompt ni `data/*`; edita los `.tex` de las secciones 1, 4, 7, 8, 9 y 10 (5.2). La hipotesis pasa de «no contrastada» a «contrastada con resultado no concluyente»; ningun objetivo especifico cambia de estado.
+- **Governance**: MEDIUM; la corrida paga la hicieron los autores con visto bueno de gasto.
+- **Leer antes**: `openspec/changes/c-215-brazo-gemini-solo-y-contraste-de-la-hipotesis-de-eficiencia/{proposal,design,tasks}.md` y `evaluation/data/campana/analisis/README.md`.
+
 ---
 
 ## Notas del analisis
