@@ -3,7 +3,9 @@
 ## Purpose
 
 Esta especificación define los criterios de calidad del documento de tesis en LaTeX: compilación a PDF, renderizado de citas, ecuaciones y tablas, eliminación de patrones de escritura generados por IA, profundidad de capítulos y consistencia de referencias.
+
 ## Requirements
+
 ### Requirement: Thesis PDF compilation
 
 La tesis SHALL compilar desde la fuente LaTeX de la version de trabajo vigente (`docs/Tesis/v10 (IA)/paper/main.tex`) a `docs/Tesis/v10 (IA)/paper/main.pdf` mediante XeLaTeX y biber, sin errores fatales, con las fuentes reales que declara el preambulo (Arial y Courier New) y en el entorno de compilacion de registro consignado en `docs/Tesis/Correcciones/dictamen-correcciones.md`. El PDF SHALL incluir todos los archivos de seccion que `main.tex` incorpora con `\input`, en el orden de `main.tex`. La compilacion de una release SHALL cumplir ademas: cero referencias y citas indefinidas, cero etiquetas duplicadas, biber sin advertencias ni errores, `verify_citations.py` con estado PASS y todo `\includegraphics` resuelto a un archivo existente. Como `main.log` no se versiona, la evidencia de la compilacion de cada release SHALL versionarse junto al PDF en `docs/Tesis/v10 (IA)/paper/compilacion.md`, generado por `docs/Tesis/Correcciones/resumir_registro_compilacion.py` a partir de `main.log`, `main.blg` y `main.pdf` del mismo commit, y `dictamen-correcciones.md` SHALL remitir a ese resumen. El resumen MUST NOT editarse a mano.
@@ -9235,3 +9237,193 @@ canónico y MUST NOT fijarse por separado.
 - **THEN** cada cifra coincide con el valor `vigente` o `condicional` del memo
 - **AND** ninguna cifra se fija por separado del memo
 
+### Requirement: Declaracion explicita de la clase medida mas debil
+
+La tesis SHALL declarar de forma explicita que `Sistemas` es la clase de peor desempeno medido del clasificador en la validacion fuera de muestra: F1 0,2222 sobre un soporte de 5 casos, con 3 de sus 5 casos predichos como `Soporte Tecnico Software`. La declaracion SHALL presentarse sin atenuar el valor medido y MUST NOT afirmar ni sugerir que el clasificador vaya a mejorar. La tesis SHALL caracterizar la frontera entre `Sistemas` y `Soporte Tecnico Software` como un problema de taxonomia o de criterio de etiquetado, SHALL senalar que el soporte pequeno vuelve imprecisa la estimacion, y SHALL proponer como proximo paso de medicion el sobremuestreo de las dos clases adyacentes con doble etiquetado y arbitraje de los casos discordantes. Los valores SHALL tomarse verbatim del artefacto versionado `evaluation/data/campana/analisis/analisis_fuera_de_muestra_c205.json` y MUST NOT fijarse por separado.
+
+#### Scenario: La clase debil se declara con su cifra
+
+- **WHEN** se lee la discusion de la tesis (`08-discusion.tex`) o las conclusiones (`09-conclusiones.tex`)
+- **THEN** `Sistemas` se identifica como la clase medida mas debil con F1 0,2222 sobre 5 casos
+- **AND** se declara que 3 de esos 5 casos se predijeron como `Soporte Tecnico Software`
+
+#### Scenario: No se sobreafirma una mejora
+
+- **WHEN** se lee el pasaje que declara la clase `Sistemas`
+- **THEN** no se afirma ni se sugiere que el clasificador vaya a mejorar esa clase
+- **AND** la debilidad se declara sin atenuarla en vaguedades
+
+#### Scenario: La frontera se caracteriza y tiene proximo paso
+
+- **WHEN** se busca en la tesis el tratamiento de la frontera `Sistemas`--`Soporte Tecnico Software`
+- **THEN** se la caracteriza como un problema de taxonomia o de criterio de etiquetado
+- **AND** se propone como proximo paso de medicion el sobremuestreo de ambas clases con doble etiquetado y arbitraje
+
+### Requirement: Trabajos futuros ordenados por prioridad y fundamentados
+
+La seccion de trabajos futuros (`10-recomendaciones.tex`) SHALL ordenar sus subsecciones de acuerdo con la prioridad declarada en su introduccion. Cada item SHALL estar fundamentado en una limitacion medida (con su cifra) o SHALL traer un criterio de exito explicito y/o un tamano de muestra. La seccion MUST NOT incluir items que no deriven de una limitacion medida sin rotularlos explicitamente como ampliaciones de producto no derivadas de una limitacion medida. La tesis MUST NOT cambiar ninguna cifra canonica al reordenar o fundamentar los items.
+
+#### Scenario: El orden sigue la prioridad declarada
+
+- **WHEN** se leen las subsecciones de `10-recomendaciones.tex` en orden
+- **THEN** primero figuran los items que atacan defectos medidos, luego los que fortalecen la evidencia o el clasificador, y al final las extensiones funcionales
+- **AND** el orden coincide con la prioridad declarada en el parrafo introductorio
+
+#### Scenario: Cada item esta fundamentado
+
+- **WHEN** se revisa cada subseccion de trabajos futuros
+- **THEN** cada item se ata a una limitacion medida con su cifra, o trae un criterio de exito explicito y/o un tamano de muestra
+
+#### Scenario: Las ampliaciones de producto se rotulan
+
+- **WHEN** se leen los items de expansion de producto (canales de mensajeria, panel de monitoreo, inventario/CMDB, base de conocimientos, automatizacion de la resolucion y agente conversacional telefonico)
+- **THEN** no aparecen como subsecciones prioritarias fundamentadas
+- **AND** se rotulan de forma explicita como ampliaciones de producto no derivadas de una limitacion medida
+
+### Requirement: La validacion fuera de muestra no se informa como trabajo futuro
+
+La tesis SHALL informar los resultados de la validacion fuera de muestra (exactitud estricta 0,8447, macro-F1 0,7447, n efectivo de 103 con 47 discordantes excluidos) en el capitulo de resultados, que es el lugar que les corresponde. La seccion de trabajos futuros MUST NOT re-informar esos resultados: SHALL limitarse al trabajo futuro derivado (repetir la validacion sobre otros corpus, con muestras mayores y sin el sesgo de exclusion) y remitir a resultados para las cifras.
+
+#### Scenario: Los resultados quedan en resultados
+
+- **WHEN** se lee la seccion de trabajos futuros (`10-recomendaciones.tex`)
+- **THEN** no figuran alli las cifras de exactitud, macro-F1 ni del n efectivo de la validacion fuera de muestra
+- **AND** la subseccion de validacion independiente remite a resultados para las cifras
+
+#### Scenario: El trabajo futuro derivado se conserva
+
+- **WHEN** se lee la subseccion de validacion sobre un corpus independiente
+- **THEN** se conserva la propuesta de repetir la validacion sobre otros corpus, con muestras mayores y sin el sesgo de exclusion
+
+### Requirement: Regla de tres vias asimetrica declarada en la introduccion y en la metodologia
+
+La introduccion y el marco metodologico SHALL declarar de forma expresa que la regla de tres vias de la segunda sub-hipotesis es asimetrica: la rama de refutacion se decide con la estimacion puntual y no con el intervalo, de modo que basta que la estimacion alcance o supere la cota de 0,15. Ambos pasajes SHALL declarar que el denominador de 147 casos revisados se adopto despues de conocer los datos. La declaracion MUST NOT cambiar la cota, la regla ni el veredicto de la sub-hipotesis.
+
+#### Scenario: La introduccion declara la asimetria
+
+- **WHEN** se lee la sub-hipotesis de intervencion humana en `01-introduccion.tex`
+- **THEN** el texto dice que la regla es asimetrica y que la refutacion se decide con la estimacion puntual sin usar el intervalo
+- **AND** declara que el denominador de 147 casos se adopto despues de conocer los datos
+
+#### Scenario: La metodologia declara la asimetria
+
+- **WHEN** se lee el parrafo de analisis de la campana complementaria en `04-marco-metodologico.tex`
+- **THEN** el texto dice que la regla es asimetrica y que la refutacion se decide con la estimacion puntual sin usar el intervalo
+- **AND** conserva la constancia de que el denominador se adopto despues de conocer los datos
+
+### Requirement: Enunciado y veredicto separados y umbral del 85 por ciento unificado
+
+En `01-introduccion.tex`, cada sub-hipotesis SHALL quedar enunciada con su contraste y su criterio de falsacion, sin incluir su veredicto ni los resultados observados; el veredicto pertenece a resultados y conclusiones. El umbral de desempeno del 85 por ciento SHALL presentarse como criterio de exito central del estudio, fijado a priori por los autores, y MUST NOT presentarse como un valor tomado de la literatura ni degradarse a criterio no definitorio del objetivo.
+
+#### Scenario: Introduccion sin veredictos
+
+- **WHEN** se buscan en las sub-hipotesis de `01-introduccion.tex` las expresiones de veredicto "se declara confirmada", "se declara refutada" o "se declara no concluyente"
+- **THEN** no aparecen en el enunciado de las sub-hipotesis
+- **AND** el texto remite a resultados o conclusiones para el veredicto
+
+#### Scenario: Umbral como criterio central
+
+- **WHEN** se lee el segundo objetivo especifico en `01-introduccion.tex`
+- **THEN** el umbral del 85 por ciento se declara criterio de exito del objetivo, fijado a priori por los autores
+- **AND** no se lo describe como "criterio de exito contingente" ni como ajeno a la definicion del objetivo
+- **AND** la literatura se describe como incapaz de fijar un piso comun, sin atribuirle el valor del umbral
+
+### Requirement: Objetivos primero y tercero consistentes con la implementacion y medibles
+
+El primer objetivo especifico SHALL describir la comunicacion entre componentes como sincronica, consistente con la implementacion y con las conclusiones. El tercer objetivo especifico MUST NOT exigir una reduccion de la complejidad operativa percibida si no existe metrica ni instrumento para medirla.
+
+#### Scenario: Objetivo 1 sincronico
+
+- **WHEN** se lee el primer objetivo especifico en `01-introduccion.tex`
+- **THEN** describe comunicacion sincronica entre componentes por interfaces REST sobre HTTP cifrado
+- **AND** no la describe como asincronica
+
+#### Scenario: Objetivo 3 sin clausula no medible
+
+- **WHEN** se lee el tercer objetivo especifico en `01-introduccion.tex`
+- **THEN** integra los tres canales en un unico flujo que normaliza la entrada y centraliza el procesamiento
+- **AND** no exige "sin incrementar la complejidad operativa percibida por los usuarios finales"
+
+### Requirement: Cuerpo sin prosa de versiones ni rutas internas y Anexo I reducido
+
+El cuerpo SHALL NOT contener la frase "una version anterior de esta tesis la declaro refutada" ni rutas internas del repositorio en el protocolo de revision del estado del arte. El Anexo I SHALL reducir la reproduccion de los dictamenes a una nota breve de versiones y conservar la divulgacion de asistencia de un modelo de lenguaje. La reduccion MUST NOT eliminar las etiquetas `sec:anexo-trazabilidad` ni `subsec:nota-versiones` de las que dependen remisiones externas.
+
+#### Scenario: Sin prosa de versiones en el cuerpo
+
+- **WHEN** se busca "version anterior de esta tesis" en `01-introduccion.tex` y `04-marco-metodologico.tex`
+- **THEN** no hay coincidencias
+- **AND** `03-estado-del-arte.tex` no contiene la ruta `docs/Tesis/Correcciones/bitacora-busqueda-c-110.md`
+
+#### Scenario: Anexo I reducido sin romper remisiones
+
+- **WHEN** se lee el Anexo I en `12-anexos.tex`
+- **THEN** conserva la nota de versiones y un parrafo breve de trazabilidad
+- **AND** no reproduce las tablas de los nueve dictamenes ni la tabla de la devolucion de segunda instancia
+- **AND** las etiquetas `sec:anexo-trazabilidad` y `subsec:nota-versiones` siguen existiendo
+
+### Requirement: Fundamentos teoricos del acuerdo entre anotadores, la clasificacion multietiqueta y las pruebas estadisticas
+
+El marco teorico SHALL presentar, antes de la metodologia, el acuerdo entre anotadores y el coeficiente kappa, la clasificacion multietiqueta y las pruebas estadisticas empleadas en la tesis (Wilcoxon, intervalos de Wilson, bootstrap y McNemar). Las citas SHALL usar claves existentes en `Bibliography_base.bib`.
+
+#### Scenario: Conceptos presentes en el marco teorico
+
+- **WHEN** se lee `02-marco-teorico.tex`
+- **THEN** contiene una subseccion sobre acuerdo entre anotadores y coeficiente kappa
+- **AND** contiene una subseccion sobre clasificacion multietiqueta
+- **AND** contiene una subseccion sobre las pruebas estadisticas empleadas
+
+#### Scenario: Citas sin huerfanas
+
+- **WHEN** se ejecuta el verificador de citas
+- **THEN** el estado es PASS con cero citas huerfanas y cero entradas sin usar
+
+### Requirement: Ubicacion del capitulo de aspectos legales justificada
+
+El capitulo de consideraciones eticas y legales SHALL conservar su posicion entre implementacion y resultados y SHALL declarar en una oracion por que esa posicion es pertinente. No se exige mover el capitulo ni renumerar secciones.
+
+#### Scenario: Justificacion explicita
+
+- **WHEN** se lee el inicio de `11-aspectos-legales.tex`
+- **THEN** una oracion explica que el capitulo se ubica entre implementacion y resultados porque el marco legal y etico condiciona la lectura de la evidencia
+- **AND** el orden de los `\input` de `main.tex` no cambia
+
+### Requirement: Metadatos bibliograficos de la release y de los tipos de entrada
+
+La entrada del repositorio propio SHALL declarar la version 1.3.0. Las entradas de PMLR cargadas como `@article` SHALL tipificarse como `@inproceedings` conservando sus datos. La atribucion a Zanzotto SHALL indicar la pagina 243. Los DOI de las entradas de 2025 y 2026 SHALL resolver contra su editor y MUST NOT modificarse sin verificacion.
+
+#### Scenario: Version del repositorio
+
+- **WHEN** se lee la entrada `Gomez2026_repositorio` en `Bibliography_base.bib`
+- **THEN** declara la version 1.3.0
+
+#### Scenario: Actas tipificadas como proceedings
+
+- **WHEN** se leen las entradas `Radford2023_whisper`, `Guo2017_calibration` y `Zhao2021_calibrate_before_use`
+- **THEN** estan tipificadas como `@inproceedings` con su `booktitle`
+- **AND** conservan volumen, paginas y URL
+
+#### Scenario: Pagina de Zanzotto
+
+- **WHEN** se busca la atribucion a Zanzotto en `02-marco-teorico.tex`
+- **THEN** la cita indica la pagina 243
+
+### Requirement: Glosario completado con iPaaS, SaaS, kNN y CoT
+
+El glosario SHALL incluir iPaaS, SaaS, kNN y CoT con su expansion, conservando el orden alfabetico de sus columnas.
+
+#### Scenario: Siglas presentes
+
+- **WHEN** se buscan las entradas `iPaaS`, `SaaS`, `kNN` y `CoT` en `00-glosario.tex`
+- **THEN** las cuatro existen con su expansion
+- **AND** el orden alfabetico de cada columna se conserva
+
+### Requirement: Vacancia del corpus en espanol acotada a la evidencia
+
+La afirmacion sobre la ausencia de trabajos con corpus en espanol SHALL formularse como una ausencia relativa al alcance revisado, reconociendo que el idioma no se informa en la mayoria de los trabajos relevados y que entre los que lo consignan ninguno declara espanol. MUST NOT afirmarse que ningun trabajo declara un corpus en espanol como si fuera una constatacion sobre toda la literatura.
+
+#### Scenario: Afirmacion acotada
+
+- **WHEN** se lee la justificacion academica en `01-introduccion.tex`
+- **THEN** el texto dice que el idioma del corpus no se informa en la mayoria de los trabajos relevados
+- **AND** acota la ausencia al alcance revisado
+- **AND** no afirma de forma absoluta que ningun trabajo declara un corpus en espanol
