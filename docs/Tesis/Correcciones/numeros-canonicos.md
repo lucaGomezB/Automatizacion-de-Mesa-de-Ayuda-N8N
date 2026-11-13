@@ -27,6 +27,7 @@ de las ramas consumidoras").
 - **Upsert c-205**: `c-205-ampliar-el-analisis-fuera-de-muestra` (aplicado el 2026-11-12) agrega la Sección 3.20 (análisis ampliado fuera de muestra sobre el n efectivo `103`: macro-F1, métricas por clase con soporte, *balanced accuracy*, kappa del clasificador contra la referencia, matriz de confusión, precisión del n observado frente al objetivo D1, sensibilidad al sesgo de exclusión de los `47` discordantes con su regla de decisión y balance neto con la tasa de error fuera de muestra). No modifica ningún valor ni estado `vigente` de las Secciones 3.1 a 3.19. Fecha: 2026-11-12.
 - **Upsert c-207**: `c-207-atender-el-dictamen-coneau-v1-3-0` (aplicado el 2026-11-13) agrega la Sección 3.21 (dictamen CONEAU sobre `v1.3.0`: IC al 95 % de la reducción relativa del tiempo de registro `0,7116`; acuerdo observado y kappa entre `E3` y `E4` sobre los `150` casos del corpus independiente; balance neto con referencia común y su IC por caso). No modifica ningún valor `vigente` de las Secciones 3.1 a 3.20; la lectura del balance de la Sección 3.11 (asimétrica: `e_aut` contra el etiquetado original y `e_man` contra el consenso de `E1`/`E2`) queda superada por la Sección 3.21 (c). Fecha: 2026-11-13.
 - **Upsert c-210**: `c-210-medicion-de-la-linea-de-base` (aplicado el 2026-11-13) agrega la Sección 3.22 (comparación de la línea de base clásica con el híbrido `hybrid-v3` sobre el mismo n efectivo de `103`: métricas globales, F1 por clase, lectura ponderada a la prevalencia natural y veredicto honesto) y registra la integración aditiva en la tesis. No modifica ningún valor ni estado `vigente` de las Secciones 3.1 a 3.21. Fecha: 2026-11-13.
+- **Upsert c-206**: `c-206-arbitraje-de-los-discordantes-y-refuerzo-de-clases-chicas` (aplicado el 2026-11-13) agrega la Sección 3.25 (validación fuera de muestra con el corpus independiente **arbitrado** de `206` casos: el tercer etiquetador `E5` arbitra los `64` discordantes y el refuerzo de `56` casos sube el n efectivo de `103` a `206`, sin exclusión; exactitud estricta y laxa globales con IC de Wilson y métricas por clase con `Sistemas` y `Bases de Datos` estimables). Rota las Secciones 3.19 y 3.20 como **estimación con exclusión** (etapa previa sobre `103`). No modifica ningún valor ni estado `vigente` de las Secciones 3.1 a 3.24. Fecha: 2026-11-13.
 - **Artefacto**: este memo. No se edita ningún `.tex` en este change.
 - **Fecha de verificación**: 2026-10-21.
 - **SHA-256 del corpus** (`data/corpus_evaluacion_pseudonimizado.json`):
@@ -1090,6 +1091,12 @@ Fuente única de las cifras: `analisis/analisis_fuera_de_muestra_c191.json` (y s
 No modifica ningún valor ni estado `vigente` de las Secciones 3.1 a 3.18. Estado de la ejecución del
 clasificador: `evaluation/data/campana/README.md` (sección "Corrida del clasificador congelado…").
 
+Esta sección queda rotulada como **estimación con exclusión**: los `47` casos discordantes entre `E3`
+y `E4` se excluyen de la referencia (design D6), de modo que el n efectivo es `103` de `150`. La
+estimación **sin exclusión**, sobre el corpus independiente arbitrado de `206` casos (upstream `E5`),
+es la Sección 3.25; esta entrada **no** se reemplaza ni se presenta como si fuera la del corpus
+arbitrado.
+
 Comando (desde la raíz del repositorio; solo lectura):
 
 ```bash
@@ -1173,7 +1180,9 @@ reproducidas de solo lectura, sin red ni Gemini, por
 clasificador ni las métricas). Determinístico: dos corridas producen salidas idénticas byte a
 byte. Fuente única de las cifras: `analisis/analisis_fuera_de_muestra_c205.json` (y su vista `.md`).
 No modifica ningún valor ni estado `vigente` de las Secciones 3.1 a 3.19. Todas las métricas de
-esta sección son **estimaciones sobre el n efectivo `103`**; la macro-F1 NO es equivalente de la
+esta sección son **estimaciones sobre el n efectivo `103`** (extensión de la **estimación con
+exclusión** de la Sección 3.19); la estimación sin exclusión, sobre el corpus arbitrado de `206`
+casos, es la Sección 3.25. La macro-F1 NO es equivalente de la
 exactitud estricta de etiqueta única.
 
 Comando (desde la raíz del repositorio; solo lectura):
@@ -1528,6 +1537,72 @@ change no modifica `openspec/config.yaml`, `settings.py`, el prompt ni el clasif
 secundarios (predicciones de un brazo Gemini solo, un change futuro no propuesto todavía; corpus
 arbitrado de c-206, aún inexistente) quedan `no ejecutado`. La prosa de la tesis (secciones 4, 7,
 8, 9 y 10) y la recompilación del PDF están pendientes (tareas 5.2 y 5.3 de c-214).
+
+### 3.25 Validación fuera de muestra con el corpus independiente arbitrado (c-206)
+
+Resultado del clasificador **congelado** `hybrid-v3` sobre el corpus independiente **arbitrado**
+(`evaluation/data/campana/corpus_independiente_arbitrado.json`, `206` casos). A diferencia de la
+Sección 3.19 (**estimación con exclusión**), la referencia **no excluye** los discordantes entre
+`E3` y `E4`: el tercer etiquetador `E5` (código `P11`) arbitró los `64` casos discordantes (los
+`47` del corpus original más los `17` del refuerzo de clases chicas) y cada uno entra a la
+referencia con la etiqueta de `E5` (runbook `docs/campana-medicion/runbook-arbitraje-discordantes.md`;
+design D2/D3 de c-206). El refuerzo (`56` casos, `I151`..`I206`) sube el n de `150` a `206` y hace
+estimables `Sistemas` y `Bases de Datos`. La bandera de discordancia residual (`tres_vias`: `6`
+casos) y el `origen` de cada referencia viven en el sidecar `arbitraje_tres_vias.json`, no en el
+esquema del corpus (decisión D9).
+
+Cifras reproducidas de solo lectura, sin red ni Gemini, por `evaluation/reporte_arbitrado.py`, que
+reutiliza `evaluation.campana.evaluar_fuera_de_muestra` y `evaluation.metrics.resumen_exactitud`
+(no reclasifica ni toca el clasificador). Fuente única de las cifras: `predicciones_arbitrado.json`
+(cache del clasificador) y `corpus_independiente_arbitrado.json`.
+
+Comando (desde la raíz del repositorio; solo lectura):
+
+```bash
+python3 -m evaluation.reporte_arbitrado \
+  --predicciones-arbitrado evaluation/data/campana/predicciones_arbitrado.json \
+  --corpus-arbitrado      evaluation/data/campana/corpus_independiente_arbitrado.json
+```
+
+SHA-256 de los artefactos (LF, calculados sobre el archivo versionado): `corpus_independiente_arbitrado.json`
+`cb2874e649fb932c00b536100025c0a0137b3314ab12d45234e4c29049adc67e`; `arbitraje_tres_vias.json`
+`4c85ab43bf28cac228caa35a6aaf3863deb327767cba31fbe850b43d2efe6a61`; `predicciones_arbitrado.json`
+`cb8aba6089dde9868c61740fba713fb75923ee32317370c46e0daeb52a01d5d5`; `doble_etiquetado_arbitrado.csv`
+`7993f3ffda7ae7b380833a41b226ed3a6b4f6aaa36f3fbed66fb52682a61d2a4`.
+
+**(a) Resultado fuera de muestra (n efectivo sin exclusión).**
+
+| Valor canónico | Procedencia (archivo) | Estado |
+|---|---|---|
+| n efectivo (sin exclusión): `206` (`150` originales más `56` de refuerzo; `64` con referencia de `E5`) | `predicciones_arbitrado.json` (`cache_meta.corpus_count`); `corpus_independiente_arbitrado.json` (`metadata.total_casos`) | vigente (nuevo) |
+| Exactitud estricta: `142/206 = 0,6893` (`68,93 %`), IC de Wilson 95 % `[0,6231; 0,7486]` | `evaluation.reporte_arbitrado` sobre las fuentes de arriba | vigente (nuevo) |
+| Exactitud laxa: `162/206 = 0,7864` (`78,64 %`), IC de Wilson 95 % `[0,7255; 0,8369]` | idem | vigente (nuevo) |
+
+**(b) Métricas por clase (sector de referencia), con `Sistemas` y `Bases de Datos` estimables.**
+
+| Sector | n | Estricta `k/n` | Exactitud estricta e IC Wilson 95 % | Laxa `k/n` | Estado |
+|---|---|---|---|---|---|
+| Seguridad Informatica | `32` | `20/32` | `0,6250` `[0,4525; 0,7707]` | `23/32` | vigente (nuevo; estimable) |
+| Soporte Tecnico Hardware | `51` | `44/51` | `0,8627` `[0,7428; 0,9319]` | `46/51` | vigente (nuevo; estimable) |
+| Soporte Tecnico Software | `46` | `33/46` | `0,7174` `[0,5745; 0,8268]` | `37/46` | vigente (nuevo; estimable) |
+| Bases de Datos | `16` | `14/16` | `0,8750` `[0,6398; 0,9650]` | `16/16` | vigente (nuevo; **estimable**, soporte ampliado) |
+| Sistemas | `61` | `31/61` | `0,5082` `[0,3860; 0,6294]` | `40/61` | vigente (nuevo; **estimable**, soporte ampliado) |
+
+`Sistemas` (`n = 5` con exclusión, Sección 3.19) pasa a `n = 61` y `Bases de Datos` (`n = 13`) a
+`n = 16`; ambas superan el soporte mínimo estimable (`MIN_SOPORTE_ESTIMABLE = 2` en
+`evaluation/metrics.py`), de modo que sus métricas por clase dejan de ser `no estimable`.
+
+**(c) Comparabilidad y procedencia del cache.**
+
+| Valor | Procedencia | Estado |
+|---|---|---|
+| `classifier_version` `hybrid-v3`; modelo `gemini-3.6-flash`; `google-genai` instalada `2.34.0`; commit arbitrado `1b62fdb`; `generated_at` `2026-11-13T22:03:39.167991+00:00` | `predicciones_arbitrado.json` (`cache_meta`) | vigente (nuevo) |
+| Control de clasificador congelado: `git diff bf5e099 HEAD` sobre `App/Backend/app/classifiers`, `docs/prompt_gemini.txt`, `App/Backend/app/constants.py` y `App/Backend/app/config/settings.py` solo muestra diferencias ajenas a la clasificación (docstrings/comentarios, import perezoso PEP 562, constantes de c-82/c-165 y seguridad/autenticación); los valores clasificatorios son idénticos a `bf5e099` | `evaluation/data/campana/README.md` (sección del arbitraje, c-206) | vigente (nuevo) |
+
+Limitación declarada: el resultado **no** se pondera por la prevalencia del corpus de `200` en esta
+sección (la cifra cruda es la del corpus arbitrado); la lectura ponderada de la etapa con exclusión
+está en la Sección 3.19 (d). La incorporación de estas cifras a la prosa de la tesis se difiere a un
+change posterior (design D8 de c-206).
 
 ## 4. Contingencia del gate de intervención humana
 

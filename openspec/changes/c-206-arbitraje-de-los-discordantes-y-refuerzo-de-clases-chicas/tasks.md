@@ -28,7 +28,7 @@ corpus de ajuste (`data/*`) ni `evaluation/doble_etiquetado.py`. En la prosa usa
 
 ## 3. Registro de sujetos
 
-- [ ] 3.1 Agregar `E5,etiquetador,P11` a `E/registro_sujetos.csv`; comprobar que no hay solapes por `persona` y que no hay nombre/correo/legajo. Verificación: `validar_registro_sujetos` no reporta solape y las columnas quedan `alias,rol,persona`.
+- [x] 3.1 Agregar `E5,etiquetador,P11` a `E/registro_sujetos.csv`; comprobar que no hay solapes por `persona` y que no hay nombre/correo/legajo. Verificación: `validar_registro_sujetos` no reporta solape y las columnas quedan `alias,rol,persona`.
 
 ## 4. Campo: arbitraje y refuerzo (autores, fuera del repositorio)
 
@@ -42,16 +42,16 @@ corpus de ajuste (`data/*`) ni `evaluation/doble_etiquetado.py`. En la prosa usa
 
 - [x] 5.1 Correr `verificar_no_solape` entre `data/corpus_evaluacion_pseudonimizado.json` y `E/corpus_independiente_arbitrado.json` con `umbral_jaccard=0.8`; revisar a mano cada advertencia. Verificación: sin `SolapeError`; advertencias revisadas y registradas.
 - [x] 5.2 Control de clasificador congelado: `git diff bf5e099 HEAD -- App/Backend/app/classifiers docs/prompt_gemini.txt App/Backend/app/constants.py App/Backend/app/config/settings.py`; solo diferencias ajenas a la clasificación. Verificación: el diff se inspecciona y su resultado se anota para el README.
-- [ ] 5.3 Clasificar con rutas propias: `PYTHONPATH=App/Backend python -m evaluation.run_evaluation --corpus E/corpus_independiente_arbitrado.json --predicciones E/predicciones_arbitrado.json --reporte E/reporte_arbitrado.md --confirm-paid`. Verificación: el cache trae `cache_meta` con `corpus_hash`, `corpus_count`, `classifier_version`, `generated_at`, `commit` y `pines`.
-- [ ] 5.4 Confirmar que los artefactos de la v9 no cambiaron: `git status` no muestra `data/corpus_evaluacion_pseudonimizado.json`, `data/corpus_resultados*.json` ni `evaluation/report.md`. Verificación: `git status` limpio sobre esas rutas.
+- [x] 5.3 Clasificar con rutas propias: `PYTHONPATH=App/Backend python -m evaluation.run_evaluation --corpus E/corpus_independiente_arbitrado.json --predicciones E/predicciones_arbitrado.json --reporte E/reporte_arbitrado.md --confirm-paid`. Verificación: el cache trae `cache_meta` con `corpus_hash`, `corpus_count`, `classifier_version`, `generated_at`, `commit` y `pines`.
+- [x] 5.4 Confirmar que los artefactos de la v9 no cambiaron: `git status` no muestra `data/corpus_evaluacion_pseudonimizado.json`, `data/corpus_resultados*.json` ni `evaluation/report.md`. Verificación: `git status` limpio sobre esas rutas.
 
 ## 6. Artefactos, registro y análisis
 
-- [ ] 6.1 Registrar en `E/README.md` el commit, el control de congelamiento (5.2), el `estado_cegado` y el SHA-256 de cada archivo nuevo. Verificación: la tabla SHA-256 queda completa y sin filas `pendiente`.
-- [ ] 6.2 Correr `evaluar_fuera_de_muestra` con el cache arbitrado y reportar el n efectivo `150` sin exclusión y las métricas por clase de `Sistemas` y `Bases de Datos` estimables. Verificación: devuelve `obtenido=True` con el n efectivo `150`.
-- [ ] 6.3 Registrar las cifras del corpus arbitrado en `C/numeros-canonicos.md` en una sección nueva, con procedencia y comando, conservando el resultado de c-191 sobre `103` rotulado como estimación con exclusión. Verificación: cada cifra nueva tiene archivo fuente y comando; ningún valor `vigente` previo cambia.
+- [x] 6.1 Registrar en `E/README.md` el commit, el control de congelamiento (5.2), el `estado_cegado` y el SHA-256 de cada archivo nuevo. Verificación: la tabla SHA-256 queda completa y sin filas `pendiente`.
+- [x] 6.2 Correr `evaluar_fuera_de_muestra` con el cache arbitrado y reportar el n efectivo `150` sin exclusión y las métricas por clase de `Sistemas` y `Bases de Datos` estimables. Verificación: devuelve `obtenido=True` con el n efectivo `150`.
+- [x] 6.3 Registrar las cifras del corpus arbitrado en `C/numeros-canonicos.md` en una sección nueva, con procedencia y comando, conservando el resultado de c-191 sobre `103` rotulado como estimación con exclusión. Verificación: cada cifra nueva tiene archivo fuente y comando; ningún valor `vigente` previo cambia.
 
 ## 7. Validación y archivo
 
-- [ ] 7.1 `openspec validate c-206-arbitraje-de-los-discordantes-y-refuerzo-de-clases-chicas --strict --no-interactive`. Verificación: imprime `is valid` (exit 0).
+- [x] 7.1 `openspec validate c-206-arbitraje-de-los-discordantes-y-refuerzo-de-clases-chicas --strict --no-interactive`. Verificación: imprime `is valid` (exit 0).
 - [ ] 7.2 Archivar el change en `openspec/changes/archive/2026-MM-DD-c-206-arbitraje-de-los-discordantes-y-refuerzo-de-clases-chicas/` con las specs sincronizadas. Verificación: el directorio existe bajo `archive/`.
