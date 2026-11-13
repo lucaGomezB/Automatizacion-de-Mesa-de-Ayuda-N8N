@@ -277,8 +277,11 @@ Cierra la tarea 6.1 de `c-182`. Corrida sobre el stack local de desarrollo
 - **Advertencia:** el volumen local tiene el flujo marcado como activo, así que
   N8N lo activa en cada arranque. Si el disparador IMAP tiene credenciales
   vigentes, puede leer el buzón mientras el servicio esté en pie. En una
-  instancia con datos de evidencia conviene hacer el rollback con el backend
-  detenido o con el flujo desactivado.
+  instancia con datos de evidencia la mitigación efectiva es **desactivar el
+  flujo antes del rollback** o bien **detener también el servicio `n8n`**:
+  detener únicamente el backend no alcanza, porque el disparador IMAP pertenece
+  a N8N, que es un servicio independiente y lo activa por su cuenta en cada
+  arranque.
 - **Límite:** la verificación se hizo sobre el stack local, no sobre la
   instancia de campaña.
 
