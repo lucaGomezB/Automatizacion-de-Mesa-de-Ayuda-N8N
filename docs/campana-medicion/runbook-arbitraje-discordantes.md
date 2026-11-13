@@ -71,7 +71,7 @@ La propuesta del design es la de la sección 6 (`E5` como árbitro con bandera d
 
 `E5` etiqueta **a ciegas**. Recibe SOLO:
 
-- la **hoja ciega** de los `47` casos (`id_caso` y descripción pseudonimizada);
+- la **hoja ciega** de los `64` casos (`id_caso` y descripción pseudonimizada): los `47` discordantes del corpus original de `150` más los `17` discordantes del refuerzo de clases (ver sección 14);
 - **una copia vacía** de `evaluation/data/plantilla_etiquetado.csv` (solo encabezado);
 - el **codebook congelado** (`evaluation/data/campana/codebook_doble_etiquetado.md`; contenido en `runbook-doble-etiquetado.md`, sección 3).
 
@@ -79,7 +79,7 @@ La propuesta del design es la de la sección 6 (`E5` como árbitro con bandera d
 
 ### 3.1 Generar la hoja ciega
 
-Las descripciones pseudonimizadas de los `47` discordantes están en el **JSON de trabajo** del corpus independiente (`runbook-corpus-independiente.md`, sección 3), que vive FUERA del repositorio (el JSON versionado `corpus_independiente.json` solo trae los `103` del consenso). La hoja se arma con el comando del validador nuevo, que toma los discordantes de la tabla primaria y las descripciones del JSON de trabajo:
+Las descripciones pseudonimizadas de los `47` discordantes del corpus original (más los del refuerzo, con la tabla `E3`/`E4` combinada; ver sección 14) están en el **JSON de trabajo** del corpus independiente (`runbook-corpus-independiente.md`, sección 3), que vive FUERA del repositorio (el JSON versionado `corpus_independiente.json` solo trae los `103` del consenso). La hoja se arma con el comando del validador nuevo, que toma los discordantes de la tabla primaria y las descripciones del JSON de trabajo:
 
 ```bash
 python -m evaluation.arbitraje hoja-ciega \
@@ -89,7 +89,7 @@ python -m evaluation.arbitraje hoja-ciega \
 ```
 
 - La hoja sale ordenada **por `id_caso`** (orden determinista, el mismo en toda corrida); si el orden de presentación debe aleatorizarse para `E5`, los autores lo deciden y lo declaran acá antes de entregar: **PENDIENTE** (`orden por id_caso` / `aleatorio con semilla declarada`).
-- Verificar `head -1 hoja_ciega_arbitraje.csv` (debe ser exactamente `id_caso,descripcion`) y `wc -l hoja_ciega_arbitraje.csv` (**48** líneas: encabezado más `47` casos).
+- Verificar `head -1 hoja_ciega_arbitraje.csv` (debe ser exactamente `id_caso,descripcion`) y `wc -l hoja_ciega_arbitraje.csv` (**65** líneas: encabezado más `64` casos, tras el refuerzo; ver sección 14).
 - Revisar a mano una muestra de las descripciones: son texto pseudonimizado (Ley 25.326) con el mismo protocolo que el corpus de ajuste, y la hoja NO contiene etiquetas, referencia ni predicciones (solo dos columnas).
 - La hoja contiene descripciones del organismo: **no se versiona** ni se deja dentro del repositorio; se genera fuera de él o se borra al terminar.
 
@@ -236,3 +236,12 @@ El arbitraje queda aceptado solo si se cumple todo lo siguiente:
 5. El control de clasificador congelado está registrado y no hubo recalibración posterior.
 6. Los artefactos nuevos están versionados con su SHA-256 y los de la v9 no cambiaron.
 7. `openspec validate c-206-arbitraje-de-los-discordantes-y-refuerzo-de-clases-chicas --strict` pasa.
+
+## 14. Registro de ejecución (2026-11-13)
+
+El refuerzo de clases chicas y la preparación del arbitraje ya se ejecutaron parcialmente. Este registro documenta lo hecho, sin reescribir el protocolo de arriba.
+
+- **Refuerzo de clases chicas**: se reunieron `56` casos nuevos (`I151`..`I206`) y los etiquetaron `E3` y `E4` (tarea `doble_etiquetado`), fuera del repositorio. Coinciden en `39` casos y discrepan en `17`. El consenso es mayoritariamente `Sistemas` (`33` de `39`), con `4` de `Soporte Tecnico Software` y `2` de `Seguridad Informatica`; los casos de infraestructura, servidores y red se cargaron a `Sistemas`. Con esto `Sistemas` deja de ser clase chica en el corpus arbitrado (pasa de `5` a unos `38` casos de consenso), que era el objetivo del refuerzo.
+- **Hoja ciega de `E5`**: pasó de `47` a `64` casos (los `47` del corpus original más los `17` del refuerzo). Se armó con el comando de la sección 3.1 sobre la **tabla `E3`/`E4` combinada** (`150` originales + `56` del refuerzo) y el JSON de trabajo de `206` casos. El paquete de `E5` (hoja ciega, plantilla y codebook) está en `~/Desktop/campana-hojas/campana_extra/E5/`; la hoja y la plantilla tienen `64` filas con los mismos `id_caso` (las versiones de `47` quedaron como `*.47.bak.csv`).
+- **Cegado**: la hoja contiene solo `id_caso` y descripción; no lleva etiquetas de `E3`/`E4`, referencia ni predicciones. El orden es por `id_caso`.
+- **Pendiente**: `E5` arbitra los `64` casos; después, `ensamblar` (sección 9) con la tabla combinada y la planilla de `E5`.
