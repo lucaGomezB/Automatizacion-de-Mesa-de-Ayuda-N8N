@@ -375,3 +375,5 @@ engram sync --import
 ```
 
 ⚠️ **Nunca usar `engram sync --all`**: exportaría la memoria de TODOS los proyectos de la máquina a este repositorio. El comando sin flags filtra automáticamente por este proyecto.
+
+Versión de Engram en uso, defecto conocido del export incremental (watermark global), guarda de integridad en CI y procedimiento de recuperación append-only: ver [`docs/engram-memory.md`](docs/engram-memory.md).
