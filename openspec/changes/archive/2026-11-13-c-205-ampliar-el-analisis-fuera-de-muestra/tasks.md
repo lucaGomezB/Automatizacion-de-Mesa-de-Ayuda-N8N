@@ -32,4 +32,4 @@ usar "sección N (`archivo.tex`)" (gitleaks).
 
 - [x] 4.1 Correr `cd evaluation/data/campana/analisis; python -m pytest test_analisis_fuera_de_muestra_c205.py -q` y verificar que pasa. Verificación: exit 0.
 - [x] 4.2 Correr `openspec validate c-205-ampliar-el-analisis-fuera-de-muestra --strict --no-interactive` y verificar que pasa. Verificación: imprime `is valid` (exit 0).
-- [ ] 4.3 Archivar el change en `openspec/changes/archive/2026-MM-DD-c-205-ampliar-el-analisis-fuera-de-muestra/` con las specs sincronizadas. Verificación: el directorio existe bajo `archive/`.
+- [x] 4.3 Archivar el change en `openspec/changes/archive/2026-MM-DD-c-205-ampliar-el-analisis-fuera-de-muestra/` con las specs sincronizadas. Verificación: el directorio existe bajo `archive/`.
