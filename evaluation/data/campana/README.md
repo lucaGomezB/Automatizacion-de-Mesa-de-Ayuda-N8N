@@ -145,6 +145,54 @@ modo que el cache registra ahora la versión del stack entregado. No cambian el 
 `predicciones_independiente.json` y de `reporte_independiente.md` de la tabla de abajo
 corresponde a esta re-ejecución.
 
+## Artefactos del arbitraje del corpus independiente (c-206)
+
+El arbitraje de los casos discordantes entre `E3` y `E4` por el tercer etiquetador `E5`
+(código `P11`) sube la referencia del corpus independiente de `103` a **`206`** casos: los
+`150` originales más los `56` del refuerzo de clases chicas (`I151`..`I206`). Con esto el n
+efectivo deja de excluir los discordantes y `Sistemas` y `Bases de Datos` pasan a ser
+estimables. La regla de arbitraje es la del runbook
+`docs/campana-medicion/runbook-arbitraje-discordantes.md` (design D2): la referencia es el
+consenso de `E3`/`E4` cuando coinciden y la etiqueta de `E5` cuando difieren; la bandera de
+discordancia residual (`tres_vias`) y el `origen` de cada referencia (`consenso_e3_e4` |
+`arbitraje_e5`) viven en el sidecar `arbitraje_tres_vias.json`, no en el esquema del corpus
+(decisión D9). Mismo formato `- campo: valor` que las secciones de procedencia, con nombres
+propios.
+
+- arbitraje_commit: 1b62fdb (HEAD al generar el cache arbitrado, `git rev-parse --short HEAD`)
+- arbitraje_classifier_version: hybrid-v3
+- arbitraje_generated_at: 2026-11-13T22:03:39.167991+00:00
+- arbitraje_corpus_hash: cb2874e649fb932c00b536100025c0a0137b3314ab12d45234e4c29049adc67e (coincide con `corpus_independiente_arbitrado.json`)
+- arbitraje_corpus_count: 206
+- arbitraje_pines: {"google_genai": "2.34.0", "modelo": "gemini-3.6-flash"} (versión **instalada**; el modelo coincide con el del in-sample)
+- arbitraje_n_arbitraje_e5: 64 (casos cuya referencia fijó `E5`; coincide con los discordantes de `E3`/`E4`)
+- arbitraje_n_tres_vias: 6 (casos con bandera de discordancia residual, `E3`, `E4` y `E5` distintos)
+- arbitraje_validacion_planilla: `python -m evaluation.arbitraje validar --planilla evaluation/data/campana/doble_etiquetado_arbitrado.csv --corpus /home/skywalker/Desktop/campana-hojas/campana_extra/corpus_independiente_trabajo_206.json` (exit 0: `n_casos=206`, `n_registros=476`, `etiquetadores=E3,E4,E5`)
+- arbitraje_no_solape: `verificar_no_solape(data/corpus_evaluacion_pseudonimizado.json, evaluation/data/campana/corpus_independiente_arbitrado.json, umbral_jaccard=0.8)` sin `SolapeError` y con `0` advertencias sobre el umbral
+- arbitraje_control_congelamiento: `git diff bf5e099 HEAD -- App/Backend/app/classifiers docs/prompt_gemini.txt App/Backend/app/constants.py App/Backend/app/config/settings.py` solo muestra diferencias ajenas a la clasificación: docstrings/comentarios y el import perezoso del paquete (PEP 562) en `classifiers`; `CANAL_CORREO` y `ORIGEN_*` de c-82/c-165 en `constants.py`; seguridad/autenticación (JWT, cookies, lockout, MFA, CORS) en `settings.py`; `docs/prompt_gemini.txt` sin diferencias. Los valores clasificatorios (`gemini_model`, `gemini_temperature`, `gemini_top_p`, `gemini_max_retries`, `deterministic_score_threshold`, `human_review_threshold`, `HYBRID_CACHE_VERSION`) son idénticos a `bf5e099`. Ninguna diferencia cambia reglas, `KEYWORD_MAP`, el prompt, el vocabulario de sectores, los umbrales ni los parámetros de Gemini.
+- arbitraje_estado_cegado: cumplido (`E5` es una persona distinta de `E1`-`E4`, `A1`, `T1`-`T3` y `O1`/`O2`; etiquetó a ciegas los `64` discordantes, sin ver las etiquetas de `E3`/`E4`, la referencia ni las predicciones del clasificador)
+
+SHA-256 de los artefactos del arbitraje (calculados sobre el archivo tal como queda
+versionado, con fin de línea LF; `.gitattributes` lo fija para los `*.csv`, `*.json` y `*.md`
+de esta carpeta):
+
+| Archivo | SHA-256 |
+|---|---|
+| `doble_etiquetado_arbitrado.csv` | 7993f3ffda7ae7b380833a41b226ed3a6b4f6aaa36f3fbed66fb52682a61d2a4 |
+| `corpus_independiente_arbitrado.json` | cb2874e649fb932c00b536100025c0a0137b3314ab12d45234e4c29049adc67e |
+| `arbitraje_tres_vias.json` | 4c85ab43bf28cac228caa35a6aaf3863deb327767cba31fbe850b43d2efe6a61 |
+| `predicciones_arbitrado.json` | cb8aba6089dde9868c61740fba713fb75923ee32317370c46e0daeb52a01d5d5 |
+| `reporte_arbitrado.md` | 139d104379568d092bd10afaeba0ff8352dfefc7e11966017282aebb98c0435e |
+| `registro_sujetos.csv` | 711373ecf74350ec81e49b0c11c760cf67f90994afcbb95c3a10ff82611c4d2e |
+
+La corrida paga se hizo con el clasificador congelado (`hybrid-v3`, idéntico al in-sample) y
+el `modelo` de `pines` coincide exactamente (`gemini-3.6-flash`); la versión instalada de
+`google-genai` (`2.34.0`) cumple el rango declarado (`>=2.33,<3`). No hubo recalibración
+posterior. El bloque fuera de muestra del corpus arbitrado reporta `n efectivo (sin
+exclusión): 206` con `Sistemas` (`n=61`) y `Bases de Datos` (`n=16`) estimables (tarea 6.2,
+`python -m evaluation.reporte_arbitrado`). Los artefactos de la v9 y el corpus de ajuste
+quedaron sin cambios.
+
 ## Artefactos de la campaña contrabalanceada y del corpus independiente (c-166)
 
 Esta carpeta también aloja, desde c-166, los artefactos de la campaña contrabalanceada y de la clasificación del corpus independiente. Ninguno contiene datos personales ni sobrescribe un artefacto de la v9: los harnesses y el runner abortan antes de escribir si se los apunta a `data/corpus_evaluacion_pseudonimizado.json`, a `data/corpus_resultados*.json`, a `evaluation/predicciones.json` o a `evaluation/report.md`. Los protocolos están en `docs/campana-medicion/runbook-campana-contrabalanceada.md` y `docs/campana-medicion/runbook-corpus-independiente.md`.
@@ -169,7 +217,7 @@ Al versionar cada archivo se completa su SHA-256 (en minúsculas, calculado sobr
 | Archivo | SHA-256 |
 |---|---|
 | `plan_campana.csv` | b619a734092cbbf2b676636386e4b27bdbeaee76df3f97a19e4b7d1beeb43243 |
-| `registro_sujetos.csv` | ab17eb2b6e660b78d206d130c21fac06739ba5512d2ac37d09cf532c2a3d36da |
+| `registro_sujetos.csv` | 711373ecf74350ec81e49b0c11c760cf67f90994afcbb95c3a10ff82611c4d2e |
 | `corpus_campana.json` | 99bbe84b90b6ba66b34aae08c85bd318cd0e9600ad540e58b1a4bd8eccec06a5 |
 | `doble_etiquetado_independiente.csv` | 94dc2d739390a4c874e4ecfa70bf8b52266b752ec20d1e47801f2a93a562f6f7 |
 | `corpus_independiente.json` | 8cdbec6fc06be3f7c4535f0213919d6d90b69d36e7d820ff97a84b9180cef56d |
