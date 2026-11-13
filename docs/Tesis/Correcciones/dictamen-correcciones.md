@@ -4955,3 +4955,42 @@ recomendaciones 7 a 15 (consistencia y forma) quedan diferidas a un change poste
 | C7/6a | 6: IC de la reducción en el texto | c-207 | `07-resultados.tex:12` | `subsec:comparacion-tiempos` | `El intervalo se obtuvo por bootstrap percentil` | cerrada |
 | C7/6b | 6: IC en la nota de la tabla | c-207 | `07-resultados.tex:31` | `tab:tiempos` | `bootstrap percentil por pares, 2000 remuestreos` | cerrada |
 | Cifras | Memo de números canónicos: sección 3.21 | c-207 | `docs/Tesis/Correcciones/numeros-canonicos.md:1263` | `-` | `3.21 Dictamen CONEAU sobre v1.3.0` | vigente (nuevo) |
+
+## Dictamen v10 / v1.3.0 (2026-11-13) - c-213 (contraste pareado de la linea de base)
+
+Atiende el criterio 4 (Metodología, peso 20, calificado con 7) del dictamen CONEAU del 13-11-2026 sobre
+`v1.3.0` (`auditorias/Dictamen_Tesis_v10_v1.3.0_CONEAU_2026-11-13.md`, no versionado). La integración
+textual de la línea de base (método, tabla `tab:linea-base-clasica`, discusión, conclusiones y
+recomendaciones) la hizo c-210, ya integrada. El change `c-213-integrar-la-linea-de-base-en-la-tesis`
+(script de solo lectura LOW; prosa de tesis MEDIUM) aporta solo lo que faltaba: el contraste pareado.
+Es aditivo: ningún número canónico cambia.
+
+### Qué cambió
+
+- **Contraste pareado nuevo**: `evaluation/data/campana/analisis/contraste_linea_de_base_c213.py` (con
+  `test_contraste_linea_de_base_c213.py`, TDD estricto) reconstruye las predicciones por caso de la línea de
+  base, lee las del híbrido, verifica las anclas `67`, `60` y `87` sobre `103` y calcula la tabla 2×2, el
+  McNemar y el IC pareado de la diferencia. Memo, sección 3.23.
+- **Tesis**: el método (`04-marco-metodologico.tex`) menciona el contraste pareado; un párrafo en
+  `07-resultados.tex` lo informa a continuación de la tabla de c-210; una cláusula en `08-discusion.tex` y
+  otra en `09-conclusiones.tex` dicen que la diferencia es estadísticamente significativa en ese contraste.
+  `10-recomendaciones.tex` queda como en c-210.
+- **Lectura**: sin superioridad general; la hipótesis de eficiencia sigue sin contrastarse y el objetivo 2
+  sigue "No alcanzado".
+
+### Pendientes
+
+- Recompilar `main.pdf` con Docker y revisar la paginación (tarea del dueño).
+- Cuando c-206 entregue el arbitraje: repetir el contraste con la referencia de `150` casos y sustituir las
+  cifras de la sección 3.23.
+
+### Matriz de trazabilidad (verificada por `verificar_matriz_trazabilidad.py`)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| C13/a | Criterio 4: método del contraste pareado de la línea de base | c-213 | `04-marco-metodologico.tex:83` | `subsec:analisis-estadistico` | `Esta línea de base no es el brazo que usa solo el modelo de lenguaje` | cerrada |
+| C13/b | Criterio 4: párrafo del contraste pareado | c-213 | `07-resultados.tex:341` | `tab:linea-base-clasica` | `Contraste pareado frente a la línea de base` | cerrada |
+| C13/c | Criterio 4: McNemar y diferencia con IC | c-213 | `07-resultados.tex:341` | `tab:linea-base-clasica` | `La prueba de McNemar exacta bilateral da` | cerrada |
+| C13/d | Criterio 4: cláusula en la discusión | c-213 | `08-discusion.tex:56` | `subsec:limitaciones-estudio` | `estadísticamente significativa en el contraste pareado` | cerrada |
+| C13/e | Criterio 4: cláusula en las conclusiones | c-213 | `09-conclusiones.tex:47` | `subsec:aportes-generalizacion` | `estadísticamente significativa en el contraste pareado` | cerrada |
+| Cifras | Memo de números canónicos: sección 3.23 | c-213 | `docs/Tesis/Correcciones/numeros-canonicos.md:1411` | `-` | `3.23 Contraste pareado del híbrido frente a la línea de base` | vigente (nuevo) |

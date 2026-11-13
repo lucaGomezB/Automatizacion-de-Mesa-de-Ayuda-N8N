@@ -1,5 +1,7 @@
 ## Context
 
+> **Alcance actualizado tras rebasar sobre `main` (9d348c4).** c-210 integró en `main` el texto de la línea de base (`tab:linea-base-clasica` en `07`, reescrituras en `08`, `09`, `10`, sección 3.22 del memo). D1, D2, D3, D4, D6 y la parte del contraste de D5 y D7 siguen vigentes. Lo que D5 y D7 asignaban a la subsección `subsec:linea-de-base`, a `tab:linea-de-base`, a la reescritura de `08`/`09`/`10` y a la sección 3.22 queda **cubierto por c-210** y no se duplica: c-213 agrega el párrafo de contraste pareado en `07` tras `tab:linea-base-clasica`, una cláusula en `08` y otra en `09`, el párrafo de método en `04`, la sección 3.23 y FASE 69. La numeración de cifras y pasajes de abajo describe el estado previo a c-210.
+
 c-209 implementó `evaluation/linea_de_base.py` (unión de TF-IDF de palabras `(1,2)` y de caracteres `(2,5)` + `LogisticRegression(solver="lbfgs", max_iter=2000, random_state=42)`, variantes `class_weight="balanced"` y `None`) y c-210 la midió: artefacto `evaluation/data/campana/analisis/linea_de_base_clasica_c210.json` (SHA-256 `2866dc1c…`), con borrador para la tesis en `openspec/changes/c-210-medicion-de-la-linea-de-base/borrador_07-resultados_linea_de_base.md`.
 
 Cifras versionadas (n = 103, consenso `E3`/`E4`, 47 discordantes excluidos):

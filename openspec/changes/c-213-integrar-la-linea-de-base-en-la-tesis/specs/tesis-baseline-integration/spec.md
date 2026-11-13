@@ -1,5 +1,7 @@
 ## ADDED Requirements
 
+> **Alcance actualizado (rebase sobre `main` 9d348c4).** c-210 cubre TLB-04 y la parte textual de TLB-02 y TLB-03 (tabla `tab:linea-base-clasica`, discusión, conclusiones, recomendaciones). c-213 aporta el contraste pareado: lo que sigue vale para el párrafo de `07-resultados.tex` tras esa tabla, las cláusulas de `08` y `09`, el método de `04` y la sección 3.23 del memo. Toda referencia a `tab:linea-de-base` o `subsec:linea-de-base` se lee como `tab:linea-base-clasica`; toda referencia a la sección 3.22 del memo para las cifras del contraste, como 3.23.
+
 ### Requirement: TLB-01 — Método de la línea de base en el marco metodológico
 
 La tesis SHALL describir en `04-marco-metodologico.tex` qué es la línea de base (TF-IDF de palabras y caracteres + regresión logística regularizada, dos variantes fijadas antes de medir), con qué datos se entrenó (los 200 casos de ajuste) y se probó (los 103 casos fuera de muestra con consenso de `E3` y `E4`), el control de filtración (los casos de prueba no intervienen en entrenamiento ni en la elección de variantes), el contraste pareado aplicado y qué NO es (no es el brazo solo-LLM ni un supervisado afinado).
