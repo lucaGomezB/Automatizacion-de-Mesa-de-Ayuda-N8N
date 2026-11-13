@@ -1449,11 +1449,15 @@ Cifras aditivas de la calibración (ECE, Brier, sobreconfianza) y la discriminac
 confianza por etapa, del barrido de umbral de la etapa Gemini y de dos señales alternativas de
 derivación, dentro de la muestra (`200` casos, referencia original) y fuera de ella (`103`
 casos con consenso `E3`/`E4`). No modifica ningún valor ni estado `vigente` de las Secciones
-3.1 a 3.22. Fuente única de las cifras:
+3.1 a 3.23. Fuente única de las cifras:
 `evaluation/data/campana/analisis/analisis_calibracion_gate_c214.json` (y su vista `.md`); las
 señales de las reglas recomputadas offline están en
 `evaluation/data/campana/senales_reglas_c214.csv` (el recomputo reproduce `131/131` y `69/69`
 casos cortocircuitados de las cachés).
+
+Parámetros: ECE con `10` bandas de igual ancho; IC95 bootstrap percentil por caso (`2000`
+remuestreos, semilla `20261021`); barrido de la etapa Gemini con el umbral vigente `0,70` y los
+candidatos `0,86`, `0,91`, `0,96`, `0,99` y derivar todo.
 
 Comando (desde la raíz del repositorio; solo lectura, sin red ni Gemini):
 
@@ -1485,7 +1489,8 @@ Distribución de la confianza de Gemini: dentro de la muestra `0,85` (`24`), `0,
 (`35`), `0,98` (`3`); fuera de la muestra `0,65` (`1`), `0,85` (`8`), `0,90` (`2`), `0,95`
 (`22`), `0,98` (`1`). Con el umbral vigente `0,70` el gate deriva `0` casos dentro de la muestra
 y `1` fuera de ella (ese caso acertó). Exactitud por nivel dentro de la muestra: `0,85` `18/24`;
-`0,90` `4/7`; `0,95` `25/35`; `0,98` `3/3`.
+`0,90` `4/7`; `0,95` `25/35`; `0,98` `3/3`. Fuera de ella: `0,65` `1/1`; `0,85` `3/8`;
+`0,90` `2/2`; `0,95` `19/22`; `0,98` `1/1`.
 
 **(b) Etapa determinista.** Dentro de la muestra (`131`): `score_correctitud` ECE `0,1172`, AUROC
 `0,4160` `[0,3252; 0,5050]`; `confianza` (fuerza de señal, no probabilidad) ECE `0,6272`, AUROC
@@ -1497,23 +1502,26 @@ Estado: `condicional`.
 **(c) Barrido de umbral y selección (regla prerregistrada: piso `φ = 0,85` y `φ' = 0,8278`,
 mínimo `10` aceptados, elección solo con los `200`).** Ningún umbral candidato (`0,70`, `0,86`,
 `0,91`, `0,96`, `0,99`, derivar todo) alcanza el piso con al menos `10` aceptados dentro de la
-muestra (exactitud selectiva `0,725`, `0,711`, `0,737` en `0,70`, `0,86`, `0,91`; en `0,96`,
-`1,000` con solo `3` aceptados). Resultado: la confianza autodeclarada no sostiene un umbral con
-el piso fijado; fuera de la muestra el barrido se informa solo como descripción (en `0,86`:
-`25` aceptados, exactitud selectiva `0,880`, `5` errores atrapados de `8`; no se elige con esos
-datos, por la regla). Estado: `vigente` (nuevo).
+muestra: exactitud selectiva `0,7246` (`69` aceptados), `0,7111` (`45` aceptados, IC de Wilson
+`[0,5663; 0,8227]`), `0,7368` (`38` aceptados, IC de Wilson `[0,5799; 0,8503]`) en `0,70`, `0,86` y
+`0,91`; en `0,96`, `1,000` con solo `3` aceptados. Resultado: la confianza autodeclarada no sostiene
+un umbral con el piso fijado; fuera de la muestra el barrido se informa solo como descripción (en
+`0,86`: `25` aceptados, exactitud selectiva `0,880`, `5` errores atrapados de `8` y `9` derivados; no
+se elige con esos datos, por la regla). Estado: `vigente` (nuevo).
 
 **(d) Señales alternativas S1 (acuerdo entre etapas) y S2 (`score_correctitud`).** En los `69`
 casos escalados dentro de la muestra y los `34` fuera de ella, las reglas no tienen predicción
 en ninguno (`score_correctitud = 0,0` y sin sector ganador único): S1 queda en una sola
-categoría y S2 tiene un único valor, de modo que ambas señales son degeneradas y su AUROC es
-`0,5000`. Ninguna política se selecciona ni se evalúa fuera de la muestra. Estado: `vigente`
-(nuevo).
+categoría (los `69` casos dentro de la muestra, con `50` aciertos de Gemini, exactitud `0,7246`, y
+los `34` fuera, con `26` aciertos, `0,7647`) y S2 tiene un único valor, de modo que ambas señales
+son degeneradas y su AUROC es `0,5000`. Ninguna política se selecciona ni se evalúa fuera de la
+muestra. Estado: `vigente` (nuevo).
 
 **(e) Recalibración isotónica (solo nivel; ajustada en los `200`).** Fuera de la muestra: ECE
-`0,1715` a `0,0435`; Brier `0,1935` a `0,1796`; AUROC `0,7163` a `0,7043` (la agrupación de
-niveles vecinos introduce empates). No cambia el orden ni la curva riesgo-cobertura. Estado:
-`condicional`.
+`0,1715` a `0,0435`; Brier `0,1935` a `0,1796`; AUROC `0,7163` a `0,7043`. La transformación es
+monótona (no altera el orden estricto de los puntajes), pero al agrupar niveles vecinos introduce
+empates y, como el AUROC cuenta los empates como `0,5`, este baja en consecuencia: la recalibración
+no crea capacidad de discriminación. Estado: `condicional`.
 
 **(f) Gobernanza y secundarios.** Ninguna política quedó confirmada fuera de la muestra; el
 change no modifica `openspec/config.yaml`, `settings.py`, el prompt ni el clasificador. Los

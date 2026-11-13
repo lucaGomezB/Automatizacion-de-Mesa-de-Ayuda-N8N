@@ -82,12 +82,20 @@ def entorno_inerte(monkeypatch):
     for clave, valor in bgs.ENTORNO_INERTE.items():
         monkeypatch.setenv(clave, valor)
     monkeypatch.setenv("GEMINI_API_KEY", CLAVE_FALSA)
+    import sys
+
+    previos = set(sys.modules)
     bgs.asegurar_backend_en_path()
     from app.config.settings import get_settings  # type: ignore
 
     get_settings.cache_clear()
     yield
     get_settings.cache_clear()
+    # No contaminar otras pruebas (p. ej. test_version_clasificador_real_no_exige_credenciales):
+    # se retiran los modulos `app.*` que importo esta prueba.
+    for nombre in set(sys.modules) - previos:
+        if nombre == "app" or nombre.startswith("app."):
+            del sys.modules[nombre]
 
 
 def clasificador_real(cliente: Any):
