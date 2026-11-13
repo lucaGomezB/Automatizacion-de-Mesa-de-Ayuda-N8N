@@ -316,4 +316,26 @@ Cota (excluidos a la tasa del límite inferior de Wilson) & 0,8189 & análisis d
 {\footnotesize\textit{Nota:} los escenarios de peor caso, mejor caso y cota son análisis de sensibilidad al sesgo de exclusión, no mediciones del clasificador sobre los casos excluidos. La exclusión de los discordantes sesga la referencia hacia los casos más fáciles. \textit{Fuente:} elaboración propia a partir del corpus independiente y de las predicciones del clasificador congelado.\par}
 \end{table}
 
+\paragraph{Comparación con una línea de base clásica.} La comparación con un clasificador supervisado clásico se realizó sobre el mismo n efectivo de 103 casos y con la misma referencia congelada de consenso de \texttt{E3} y \texttt{E4}, de modo que las cifras son comparables con las de la \autoref{tab:fuera-de-muestra}. La línea de base se entrenó con los 200 casos de ajuste y se evaluó con las mismas funciones puras de métricas que el híbrido. La \autoref{tab:linea-base-clasica} reúne las métricas globales. La línea de base (con re-ponderación de clases) queda por debajo del híbrido en las cuatro métricas: 0,6505 frente a 0,8447 en exactitud estricta (67 y 87 aciertos de 103), 0,6699 frente a 0,8738 en exactitud laxa, 0,4877 frente a 0,7447 en macro-F1 y 0,5271 frente a 0,7395 en \emph{balanced accuracy}. Por clase, la línea de base también queda por debajo en cuatro de las cinco clases: \texttt{Seguridad Informatica} 0,5532 frente a 0,8333; \texttt{Soporte Tecnico Hardware} 0,8049 frente a 0,9048; \texttt{Soporte Tecnico Software} 0,7170 frente a 0,8000; y \texttt{Bases de Datos} 0,0000 frente a 0,9630. La única excepción es \texttt{Sistemas}, donde la línea de base obtiene 0,3636 frente a 0,2222 del híbrido, pero sobre 5 casos: la línea de base no corrige la debilidad de esa clase. La caída de \texttt{Bases de Datos} a F1 0,0000 en la línea de base se explica por su único caso de ajuste: el clasificador clásico no puede aprender una clase con un solo ejemplo. La línea de base es un clasificador clásico de TF-IDF y regresión logística, no un modelo ajustado, por lo que la comparación no se presenta como un benchmark definitivo. La lectura ponderada a la prevalencia natural de los 200 casos da, para la línea de base, macro-F1 0,6971 y \emph{balanced accuracy} 0,7438; es una post-estratificación y no una medición nueva. \textit{Fuente:} línea de base, \texttt{evaluation/data/campana/analisis/linea\_de\_base\_clasica\_c210.json}; híbrido, \texttt{evaluation/data/campana/analisis/analisis\_fuera\_de\_muestra\_c205.json}.
+
+\begin{table}[htbp]
+\centering
+\caption{Comparación de la línea de base clásica con el híbrido \texttt{hybrid-v3} sobre el mismo n efectivo de 103 casos}
+\label{tab:linea-base-clasica}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.2cm} >{\centering\arraybackslash}p{2.6cm} >{\centering\arraybackslash}p{2.6cm} >{\centering\arraybackslash}p{2.2cm}@{}}
+\toprule
+\textbf{Métrica} & \textbf{Línea de base (balanceada)} & \textbf{Híbrido \texttt{hybrid-v3}} & \textbf{Diferencia} \\
+\midrule
+Exactitud estricta & 0,6505 (67 de 103) & 0,8447 (87 de 103) & \(-0,1942\) \\
+Exactitud laxa & 0,6699 (69 de 103) & 0,8738 (90 de 103) & \(-0,2039\) \\
+Macro-F1 (cinco clases) & 0,4877 & 0,7447 & \(-0,2570\) \\
+\emph{Balanced accuracy} & 0,5271 & 0,7395 & \(-0,2124\) \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+{\footnotesize\textit{Nota:} diferencia = línea de base menos híbrido. La línea de base es una unión de TF-IDF de palabras y caracteres con regresión logística regularizada (semilla 42), entrenada con los 200 casos de ajuste y evaluada sobre los 103 casos de consenso de \texttt{E3} y \texttt{E4}. No es un modelo ajustado. \textit{Fuente:} línea de base, \texttt{linea\_de\_base\_clasica\_c210.json}; híbrido, \texttt{analisis\_fuera\_de\_muestra\_c205.json}. \par}
+\end{table}
+
 \newpage
