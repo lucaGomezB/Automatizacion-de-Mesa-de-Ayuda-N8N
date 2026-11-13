@@ -40,16 +40,16 @@ pendientes (no se edita ningún `.tex`: hay otro PR abierto sobre las secciones 
 
 - [x] 4.1 (RED/GREEN) Test hermano `A/test_analisis_calibracion_gate_c214.py`: el JSON contiene, por etapa y corpus, fiabilidad, ECE, Brier, sobreconfianza, AUROC con IC, el barrido, `t*` y su evaluación fuera de muestra, S1 y S2 con su resultado de tres vías y los secundarios marcados ejecutados o no; dos ejecuciones dan el mismo SHA-256. Implementar `A/analisis_calibracion_gate_c214.py`.
 - [x] 4.2 Generar `A/analisis_calibracion_gate_c214.{json,md}` y registrar sus SHA-256 en `A/README.md` y `A/SHA256SUMS.txt`.
-- [ ] 4.3 Suite completa de `evaluation/` y `A/`: conteo base + pruebas nuevas, sin regresiones.
+- [x] 4.3 Suite completa de `evaluation/` y `A/`: conteo base + pruebas nuevas, sin regresiones.
 
 ## 5. Registro canónico y tesis
 
-- [ ] 5.1 Sección nueva en `C/numeros-canonicos.md` con cada cifra, archivo y comando, la declaración de no ceguera y, si alguna política quedó `confirmada`, la recomendación para un change posterior (gobernanza HIGH). Verificación: ningún valor `vigente` previo cambia.
+- [x] 5.1 Sección nueva en `C/numeros-canonicos.md` con cada cifra, archivo y comando, la declaración de no ceguera y, si alguna política quedó `confirmada`, la recomendación para un change posterior (gobernanza HIGH). Verificación: ningún valor `vigente` previo cambia.
 - [ ] 5.2 Prosa: sección 4 (`04-marco-metodologico.tex`) definición de ECE, Brier, AUROC y de la regla de selección; sección 7 (`07-resultados.tex`, `subsec:calibracion`) métricas dentro y fuera de la muestra, barrido y señales alternativas, incluido el caso fuera de la muestra con confianza menor que 0,70; sección 8 (`08-discusion.tex`) lectura; sección 9 (`09-conclusiones.tex`) fila del objetivo 6; sección 10 (`10-recomendaciones.tex`, `subsec:calibracion-gate`) pasar de propuesta a resultado y dejar como futuro solo lo que exige cambiar contrato o configuración. Verificación: cada cifra coincide con el memo.
 - [ ] 5.3 [LATEX] [AUTORES] Recompilar `main.pdf` y verificar las cifras con `pdftotext`.
 
 ## 6. Validación y cierre
 
-- [ ] 6.1 Confirmar que `git diff` no toca `openspec/config.yaml`, `App/Backend/` ni el prompt. Verificación: diff vacío en esas rutas.
-- [ ] 6.2 `openspec validate c-214-calibracion-y-punto-de-operacion-del-gate-de-confianza --strict --no-interactive`. Verificación: `is valid`.
-- [ ] 6.3 Registrar la fase 70 en `CHANGES.md` al aplicar y guardar el progreso en engram (`opsx/c-214-calibracion-y-punto-de-operacion-del-gate-de-confianza/apply`).
+- [x] 6.1 Confirmar que `git diff` no toca `openspec/config.yaml`, `App/Backend/` ni el prompt. Verificación: diff vacío en esas rutas.
+- [x] 6.2 `openspec validate c-214-calibracion-y-punto-de-operacion-del-gate-de-confianza --strict --no-interactive`. Verificación: `is valid`.
+- [x] 6.3 Registrar la fase 70 en `CHANGES.md` al aplicar y guardar el progreso en engram (`opsx/c-214-calibracion-y-punto-de-operacion-del-gate-de-confianza/apply`).

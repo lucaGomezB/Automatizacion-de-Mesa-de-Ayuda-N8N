@@ -1443,6 +1443,84 @@ superioridad general: ambos sistemas se desarrollaron con los mismos `200` casos
 `47` discordantes y hay clases con pocos casos. Con el arbitraje de c-206 el contraste se repite sobre
 `150` casos corriendo el mismo script con la referencia arbitrada (`--referencia`, `--n-esperado`).
 
+### 3.24 Calibración y punto de operación del gate de confianza (c-214)
+
+Cifras aditivas de la calibración (ECE, Brier, sobreconfianza) y la discriminación (AUROC) de la
+confianza por etapa, del barrido de umbral de la etapa Gemini y de dos señales alternativas de
+derivación, dentro de la muestra (`200` casos, referencia original) y fuera de ella (`103`
+casos con consenso `E3`/`E4`). No modifica ningún valor ni estado `vigente` de las Secciones
+3.1 a 3.22. Fuente única de las cifras:
+`evaluation/data/campana/analisis/analisis_calibracion_gate_c214.json` (y su vista `.md`); las
+señales de las reglas recomputadas offline están en
+`evaluation/data/campana/senales_reglas_c214.csv` (el recomputo reproduce `131/131` y `69/69`
+casos cortocircuitados de las cachés).
+
+Comando (desde la raíz del repositorio; solo lectura, sin red ni Gemini):
+
+```bash
+python3 evaluation/data/campana/analisis/analisis_calibracion_gate_c214.py
+```
+
+SHA-256 de las salidas: `analisis_calibracion_gate_c214.json`
+`a5e4bca568890f57ec3346dd9c54e4425793c26704c362785f07a8ff0e4b4afd`;
+`analisis_calibracion_gate_c214.md`
+`6cd5a9ec7bf3d90b3c771f02fe4c38f1bfff7e6e2db04ef6a67c79f10252517c`;
+`senales_reglas_c214.csv`
+`a7d4a703e2c5b70c3fc898a1c55c50fbad971255285b5e3630cf65f0c983c56a`.
+
+**Declaración de no ceguera (amenaza a la validez).** Antes de proponer el change se tabuló la
+distribución de confianzas y los aciertos por nivel en ambos corpus; las reglas de selección se
+fijaron por principio (recomendaciones de la sección 10) y se congelaron en el docstring del
+generador antes de generar las salidas, pero el prerregistro NO fue ciego.
+
+**(a) Etapa Gemini: calibración y discriminación (IC95 bootstrap, semilla fija).**
+
+| Valor canónico | Procedencia (archivo) | Estado |
+|---|---|---|
+| Dentro de la muestra (`69` escalados): exactitud `0,7246`; confianza media `0,9114`; ECE `0,1868` `[0,1003; 0,2945]`; Brier `0,2362` `[0,1581; 0,3242]`; sobreconfianza `0,1868` `[0,0940; 0,2942]`; AUROC `0,5168` `[0,3796; 0,6528]` | `analisis/…c214.json` (`corpora.dentro_muestra.etapas.gemini.confianza`) | vigente (nuevo) |
+| Fuera de la muestra (`34` escalados): exactitud `0,7647`; confianza media `0,9156`; ECE `0,1715` `[0,0685; 0,3038]`; Brier `0,1935` `[0,0881; 0,3051]`; sobreconfianza `0,1509` `[0,0229; 0,2912]`; AUROC `0,7163` `[0,5138; 0,9139]` | idem (`corpora.fuera_muestra…`) | vigente (nuevo; n chico) |
+| Control con consenso `E1`/`E2` (`44` escalados de los `138`): exactitud `0,7727`; ECE `0,1373`; Brier `0,1923`; AUROC `0,5794` `[0,4048; 0,7568]` | idem (`corpora.control_consenso_e1_e2…`) | condicional (control) |
+
+Distribución de la confianza de Gemini: dentro de la muestra `0,85` (`24`), `0,90` (`7`), `0,95`
+(`35`), `0,98` (`3`); fuera de la muestra `0,65` (`1`), `0,85` (`8`), `0,90` (`2`), `0,95`
+(`22`), `0,98` (`1`). Con el umbral vigente `0,70` el gate deriva `0` casos dentro de la muestra
+y `1` fuera de ella (ese caso acertó). Exactitud por nivel dentro de la muestra: `0,85` `18/24`;
+`0,90` `4/7`; `0,95` `25/35`; `0,98` `3/3`.
+
+**(b) Etapa determinista.** Dentro de la muestra (`131`): `score_correctitud` ECE `0,1172`, AUROC
+`0,4160` `[0,3252; 0,5050]`; `confianza` (fuerza de señal, no probabilidad) ECE `0,6272`, AUROC
+`0,4718`. Fuera de la muestra (`69`): `score_correctitud` ECE `0,0807`, AUROC `0,5748`
+`[0,4423; 0,6855]`; `confianza` ECE `0,6707`, AUROC `0,6629`. La `confianza` determinista no
+está en escala de probabilidad: su ECE no es una medida de calibración en sentido estricto.
+Estado: `condicional`.
+
+**(c) Barrido de umbral y selección (regla prerregistrada: piso `φ = 0,85` y `φ' = 0,8278`,
+mínimo `10` aceptados, elección solo con los `200`).** Ningún umbral candidato (`0,70`, `0,86`,
+`0,91`, `0,96`, `0,99`, derivar todo) alcanza el piso con al menos `10` aceptados dentro de la
+muestra (exactitud selectiva `0,725`, `0,711`, `0,737` en `0,70`, `0,86`, `0,91`; en `0,96`,
+`1,000` con solo `3` aceptados). Resultado: la confianza autodeclarada no sostiene un umbral con
+el piso fijado; fuera de la muestra el barrido se informa solo como descripción (en `0,86`:
+`25` aceptados, exactitud selectiva `0,880`, `5` errores atrapados de `8`; no se elige con esos
+datos, por la regla). Estado: `vigente` (nuevo).
+
+**(d) Señales alternativas S1 (acuerdo entre etapas) y S2 (`score_correctitud`).** En los `69`
+casos escalados dentro de la muestra y los `34` fuera de ella, las reglas no tienen predicción
+en ninguno (`score_correctitud = 0,0` y sin sector ganador único): S1 queda en una sola
+categoría y S2 tiene un único valor, de modo que ambas señales son degeneradas y su AUROC es
+`0,5000`. Ninguna política se selecciona ni se evalúa fuera de la muestra. Estado: `vigente`
+(nuevo).
+
+**(e) Recalibración isotónica (solo nivel; ajustada en los `200`).** Fuera de la muestra: ECE
+`0,1715` a `0,0435`; Brier `0,1935` a `0,1796`; AUROC `0,7163` a `0,7043` (la agrupación de
+niveles vecinos introduce empates). No cambia el orden ni la curva riesgo-cobertura. Estado:
+`condicional`.
+
+**(f) Gobernanza y secundarios.** Ninguna política quedó confirmada fuera de la muestra; el
+change no modifica `openspec/config.yaml`, `settings.py`, el prompt ni el clasificador. Los
+secundarios (predicciones de un brazo Gemini solo, un change futuro no propuesto todavía; corpus
+arbitrado de c-206, aún inexistente) quedan `no ejecutado`. La prosa de la tesis (secciones 4, 7,
+8, 9 y 10) y la recompilación del PDF están pendientes (tareas 5.2 y 5.3 de c-214).
+
 ## 4. Contingencia del gate de intervención humana
 
 Tabla reconstruida desde `evaluation/predicciones.json` con
