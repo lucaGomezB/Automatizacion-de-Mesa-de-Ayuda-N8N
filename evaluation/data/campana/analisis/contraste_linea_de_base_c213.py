@@ -21,7 +21,7 @@ import json
 import pathlib
 import random
 import sys
-from typing import Mapping, Optional, Sequence
+from typing import Iterable, Mapping, Optional, Sequence
 
 # Raiz del repositorio: evaluation/data/campana/analisis/ -> parents[4].
 ROOT = pathlib.Path(__file__).resolve().parents[4]
@@ -34,9 +34,11 @@ from evaluation.linea_de_base import (  # noqa: E402
     RUTA_CORPUS_INDEPENDIENTE,
     SEMILLA,
     VARIANTES,
+    metricas_de_prediccion,
     predecir,
 )
 from evaluation.metrics import (  # noqa: E402
+    CLASES,
     NIVEL_CONFIANZA,
     SEMILLA_BOOTSTRAP,
     percentil_intervalo,
@@ -60,12 +62,18 @@ N_ESPERADO = 103
 REMUESTREOS = 10_000
 SISTEMAS = ("hibrido", "balanceada", "sin_repoderacion")
 
-DECLARACION_ADITIVA = (
-    "Las cifras de este contraste son aditivas: no reemplazan ningun numero canonico de la "
-    "tesis ni el clasificador de produccion. Comparan al hibrido congelado con un unico "
-    "clasificador supervisado clasico entrenado con 200 casos, sobre los 103 casos con "
-    "consenso; no es el brazo solo-LLM ni contrasta la hipotesis de eficiencia."
-)
+
+def declaracion_aditiva(n: int) -> str:
+    """Declaracion aditiva; el conteo de casos se interpola para no mentir en el n."""
+    return (
+        "Las cifras de este contraste son aditivas: no reemplazan ningun numero canonico de la "
+        "tesis ni el clasificador de produccion. Comparan al hibrido congelado con un unico "
+        "clasificador supervisado clasico entrenado con 200 casos, sobre los "
+        f"{n} casos con consenso; no es el brazo solo-LLM ni contrasta la hipotesis de eficiencia."
+    )
+
+
+DECLARACION_ADITIVA = declaracion_aditiva(N_ESPERADO)
 
 
 class AnclaNoReproducida(RuntimeError):
@@ -156,6 +164,42 @@ def verificar_anclas(observados: Mapping[str, int], esperados: Mapping[str, int]
         raise AnclaNoReproducida("; ".join(diferencias))
 
 
+def parsear_anclas(tokens: Optional[Sequence[str]]) -> Optional[dict[str, int]]:
+    """Convierte `["hibrido=142", ...]` en `{"hibrido": 142, ...}` (None si vacio)."""
+    if not tokens:
+        return None
+    anclas: dict[str, int] = {}
+    for token in tokens:
+        if "=" not in token:
+            raise ValueError(f"ancla con formato invalido (se espera SISTEMA=N): {token!r}")
+        sistema, _, valor = token.partition("=")
+        sistema = sistema.strip()
+        if sistema not in SISTEMAS:
+            raise ValueError(
+                f"sistema desconocido en ancla: {sistema!r}; validos: {', '.join(SISTEMAS)}"
+            )
+        try:
+            anclas[sistema] = int(valor)
+        except ValueError as error:
+            raise ValueError(f"valor de ancla no entero en {token!r}") from error
+    return anclas
+
+
+def metricas_globales(
+    ids: Sequence[str],
+    referencia: Mapping[str, str],
+    predicciones: Mapping[str, Mapping[str, str]],
+    conjuntos_verdad: Sequence[Iterable[Iterable[str]]],
+) -> dict:
+    """Metricas globales y por clase de cada sistema (verdad = referencia del corpus)."""
+    reales = [referencia[i] for i in ids]
+    conjuntos = [frozenset(conjunto) for conjunto in conjuntos_verdad]
+    return {
+        nombre: metricas_de_prediccion(reales, [prediccion[i] for i in ids], conjuntos)
+        for nombre, prediccion in predicciones.items()
+    }
+
+
 # ---------------------------------------------------------------------------
 # Entradas
 # ---------------------------------------------------------------------------
@@ -182,6 +226,7 @@ def construir_documento(
     ruta_pred_hibrido: pathlib.Path = RUTA_PRED_HIBRIDO,
     anclas_esperadas: Optional[Mapping[str, int]] = None,
     remuestreos: int = REMUESTREOS,
+    con_metricas_globales: bool = False,
 ) -> dict:
     """Calcula el contraste; falla antes de devolver nada si no reproduce las anclas."""
     entrenamiento = cargar_corpus_solo_lectura(ruta_entrenamiento)
@@ -221,13 +266,13 @@ def construir_documento(
         }
         for k, i in enumerate(ids)
     ]
-    return {
+    documento = {
         "change": "c-213-integrar-la-linea-de-base-en-la-tesis",
         "generador": "evaluation/data/campana/analisis/contraste_linea_de_base_c213.py",
         "metodo": (
             "predicciones por caso de la linea de base reconstruidas con "
             "evaluation.linea_de_base.predecir (semilla 42); predicciones del hibrido leidas "
-            "de predicciones_independiente.json; McNemar con evaluation.stats.contraste_mcnemar; "
+            f"de {_nombre(ruta_pred_hibrido)}; McNemar con evaluation.stats.contraste_mcnemar; "
             "IC bootstrap percentil pareado de la diferencia de exactitudes; sin red ni Gemini"
         ),
         "semilla_linea_de_base": SEMILLA,
@@ -247,9 +292,17 @@ def construir_documento(
         "casos": casos,
         "aditivo": {
             "reemplaza_numeros_canonicos": False,
-            "declaracion": DECLARACION_ADITIVA,
+            "declaracion": declaracion_aditiva(len(ids)),
         },
     }
+    if con_metricas_globales:
+        documento["metricas_globales"] = metricas_globales(
+            ids,
+            referencia,
+            predicciones,
+            [caso.conjunto_verdad for caso in prueba],
+        )
+    return documento
 
 
 def _nombre(ruta: pathlib.Path) -> str:
@@ -301,20 +354,54 @@ def renderizar(doc: Mapping) -> tuple[str, str]:
             f"IC 95 % bootstrap pareado [{_num(d['ic95'][0])}; {_num(d['ic95'][1])}] "
             f"({d['remuestreos']} remuestreos, semilla {d['semilla']}).",
         ]
+    if "metricas_globales" in doc:
+        lineas += [
+            "",
+            f"## Metricas globales (n = {doc['n']})",
+            "",
+            "| Sistema | Exactitud estricta | Exactitud laxa | Macro-F1 | Balanced accuracy |",
+            "|---|---|---|---|---|",
+        ]
+        for nombre in SISTEMAS:
+            m = doc["metricas_globales"][nombre]
+            estricta, laxa = m["exactitud_estricta"], m["exactitud_laxa"]
+            lineas.append(
+                f"| {nombre} | {estricta['aciertos']}/{estricta['n']} ({_num(estricta['valor'])}) | "
+                f"{laxa['aciertos']}/{laxa['n']} ({_num(laxa['valor'])}) | {_num(m['macro_f1'])} | "
+                f"{_num(m['balanced_accuracy'])} |"
+            )
+        lineas += [
+            "",
+            "### F1 por clase con soporte",
+            "",
+            "| Sistema | Sector | Precision | Sensibilidad | F1 | Soporte |",
+            "|---|---|---|---|---|---|",
+        ]
+        for nombre in SISTEMAS:
+            for clase in CLASES:
+                datos = doc["metricas_globales"][nombre]["por_clase"][clase]
+                lineas.append(
+                    f"| {nombre} | {clase} | {_num(datos['precision'])} | "
+                    f"{_num(datos['sensibilidad'])} | {_num(datos['f1'])} | {datos['soporte']} |"
+                )
     return texto_json, "\n".join(lineas) + "\n"
 
 
-def escribir(doc: Mapping, directorio: pathlib.Path) -> list[pathlib.Path]:
+def escribir(
+    doc: Mapping,
+    directorio: pathlib.Path,
+    nombre_base: str = NOMBRE_BASE,
+) -> list[pathlib.Path]:
     """Escribe `.json`, `.md` y `SHA256SUMS` (UTF-8 sin BOM, LF)."""
     directorio.mkdir(parents=True, exist_ok=True)
     texto_json, texto_md = renderizar(doc)
     rutas = []
-    for nombre, texto in ((NOMBRE_JSON, texto_json), (NOMBRE_MD, texto_md)):
+    for nombre, texto in ((f"{nombre_base}.json", texto_json), (f"{nombre_base}.md", texto_md)):
         ruta = directorio / nombre
         ruta.write_bytes(texto.encode("utf-8"))
         rutas.append(ruta)
     sumas = "".join(f"{sha256(r)}  {r.name}\n" for r in rutas)
-    ruta_sumas = directorio / NOMBRE_SUMAS
+    ruta_sumas = directorio / f"{nombre_base}.SHA256SUMS.txt"
     ruta_sumas.write_bytes(sumas.encode("utf-8"))
     rutas.append(ruta_sumas)
     return rutas
@@ -325,19 +412,47 @@ def ejecutar(
     ruta_referencia: pathlib.Path = RUTA_CORPUS_INDEPENDIENTE,
     n_esperado: int = N_ESPERADO,
     anclas_esperadas: Optional[Mapping[str, int]] = None,
+    *,
+    ruta_pred_hibrido: pathlib.Path = RUTA_PRED_HIBRIDO,
+    nombre_base: str = NOMBRE_BASE,
+    con_metricas_globales: bool = False,
 ) -> list[pathlib.Path]:
-    doc = construir_documento(ruta_referencia, n_esperado, anclas_esperadas=anclas_esperadas)
-    return escribir(doc, salida)
+    doc = construir_documento(
+        ruta_referencia,
+        n_esperado,
+        ruta_pred_hibrido=ruta_pred_hibrido,
+        anclas_esperadas=anclas_esperadas,
+        con_metricas_globales=con_metricas_globales,
+    )
+    return escribir(doc, salida, nombre_base=nombre_base)
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--salida", type=pathlib.Path, default=SALIDA)
     parser.add_argument("--referencia", type=pathlib.Path, default=RUTA_CORPUS_INDEPENDIENTE)
+    parser.add_argument("--predicciones", type=pathlib.Path, default=RUTA_PRED_HIBRIDO)
     parser.add_argument("--n-esperado", type=int, default=N_ESPERADO)
+    parser.add_argument("--nombre", default=NOMBRE_BASE)
+    parser.add_argument(
+        "--anclas",
+        nargs="+",
+        default=None,
+        metavar="SISTEMA=N",
+        help="Aciertos estrictos esperados por sistema (p. ej. hibrido=142).",
+    )
     args = parser.parse_args(argv)
     try:
-        rutas = ejecutar(args.salida, args.referencia, args.n_esperado)
+        anclas = parsear_anclas(args.anclas)
+        rutas = ejecutar(
+            args.salida,
+            args.referencia,
+            args.n_esperado,
+            anclas_esperadas=anclas,
+            ruta_pred_hibrido=args.predicciones,
+            nombre_base=args.nombre,
+            con_metricas_globales=anclas is not None,
+        )
     except (AnclaNoReproducida, ValueError) as error:
         print(f"ABORTA sin escribir salidas: {error}", file=sys.stderr)
         return 1

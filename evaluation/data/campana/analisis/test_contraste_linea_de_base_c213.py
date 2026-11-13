@@ -188,3 +188,137 @@ def test_anclas_no_reproducidas_no_escribe_artefactos(tmp_path):
     with pytest.raises(c213.AnclaNoReproducida):
         c213.ejecutar(salida=tmp_path, anclas_esperadas={"balanceada": 1, "sin_repoderacion": 60, "hibrido": 87})
     assert list(tmp_path.iterdir()) == []
+
+
+# ---------------------------------------------------------------------------
+# Anclas declaradas por CLI (--anclas SISTEMA=N)
+# ---------------------------------------------------------------------------
+def test_parsear_anclas_none_o_vacio_devuelve_none():
+    assert c213.parsear_anclas(None) is None
+    assert c213.parsear_anclas([]) is None
+
+
+def test_parsear_anclas_un_par():
+    assert c213.parsear_anclas(["hibrido=142"]) == {"hibrido": 142}
+
+
+def test_parsear_anclas_varios_pares():
+    assert c213.parsear_anclas(["hibrido=142", "balanceada=101", "sin_repoderacion=88"]) == {
+        "hibrido": 142,
+        "balanceada": 101,
+        "sin_repoderacion": 88,
+    }
+
+
+def test_parsear_anclas_sistema_desconocido_aborta():
+    with pytest.raises(ValueError, match="desconocido"):
+        c213.parsear_anclas(["otro=1"])
+
+
+def test_parsear_anclas_sin_igual_aborta():
+    with pytest.raises(ValueError, match="formato"):
+        c213.parsear_anclas(["hibrido"])
+
+
+def test_parsear_anclas_valor_no_entero_aborta():
+    with pytest.raises(ValueError, match="entero"):
+        c213.parsear_anclas(["hibrido=abc"])
+
+
+# ---------------------------------------------------------------------------
+# Nombre base parametrizable (--nombre)
+# ---------------------------------------------------------------------------
+def test_escribir_usa_el_nombre_base(tmp_path, doc_real):
+    rutas = c213.escribir(doc_real, tmp_path, nombre_base="otro_nombre")
+    assert sorted(r.name for r in rutas) == [
+        "otro_nombre.SHA256SUMS.txt",
+        "otro_nombre.json",
+        "otro_nombre.md",
+    ]
+
+
+# ---------------------------------------------------------------------------
+# Metricas globales (bloque aditivo de la corrida arbitrada)
+# ---------------------------------------------------------------------------
+def test_documento_por_defecto_no_incluye_metricas_globales(doc_real):
+    assert "metricas_globales" not in doc_real
+
+
+def test_declaracion_aditiva_interpola_el_conteo(doc_real, doc_arbitrado):
+    assert "103 casos con consenso" in doc_real["aditivo"]["declaracion"]
+    assert "206 casos con consenso" in doc_arbitrado["aditivo"]["declaracion"]
+
+
+@pytest.fixture(scope="module")
+def doc_arbitrado():
+    return c213.construir_documento(
+        ruta_referencia=c213.CAMPANA / "corpus_independiente_arbitrado.json",
+        n_esperado=206,
+        ruta_pred_hibrido=c213.CAMPANA / "predicciones_arbitrado.json",
+        anclas_esperadas={"hibrido": 142},
+        con_metricas_globales=True,
+    )
+
+
+def test_documento_arbitrado_reproduce_el_ancla_y_el_contraste(doc_arbitrado):
+    assert doc_arbitrado["n"] == 206
+    assert doc_arbitrado["aciertos"] == {
+        "hibrido": 142,
+        "balanceada": 101,
+        "sin_repoderacion": 88,
+    }
+    balanceada = doc_arbitrado["contrastes"]["balanceada"]
+    assert balanceada["tabla_2x2"] == {
+        "ambos_aciertan": 81,
+        "solo_hibrido": 61,
+        "solo_linea_de_base": 20,
+        "ninguno": 44,
+    }
+    assert balanceada["mcnemar"]["p_exacto"] == pytest.approx(5.656214894965935e-06)
+    assert balanceada["mcnemar"]["p_corregido"] == pytest.approx(8.811927405178393e-06)
+    assert balanceada["diferencia_exactitud"]["valor"] == pytest.approx(0.19902912621359223)
+
+    sin_rep = doc_arbitrado["contrastes"]["sin_repoderacion"]
+    assert sin_rep["tabla_2x2"] == {
+        "ambos_aciertan": 73,
+        "solo_hibrido": 69,
+        "solo_linea_de_base": 15,
+        "ninguno": 49,
+    }
+    assert sin_rep["mcnemar"]["p_exacto"] == pytest.approx(1.938192405161976e-09)
+    assert sin_rep["mcnemar"]["p_corregido"] == pytest.approx(7.347870976139131e-09)
+    assert sin_rep["diferencia_exactitud"]["valor"] == pytest.approx(0.2621359223300971)
+
+
+def test_documento_arbitrado_trae_metricas_globales(doc_arbitrado):
+    metricas = doc_arbitrado["metricas_globales"]
+    assert set(metricas) == {"hibrido", "balanceada", "sin_repoderacion"}
+    for nombre in ("hibrido", "balanceada", "sin_repoderacion"):
+        assert metricas[nombre]["n"] == 206
+        assert metricas[nombre]["exactitud_estricta"]["n"] == 206
+        assert set(metricas[nombre]["por_clase"]) == set(c213.CLASES)
+    assert metricas["hibrido"]["exactitud_estricta"]["aciertos"] == 142
+    assert metricas["hibrido"]["exactitud_estricta"]["valor"] == pytest.approx(142 / 206)
+    assert metricas["hibrido"]["exactitud_laxa"]["aciertos"] == 162
+    assert metricas["hibrido"]["macro_f1"] == pytest.approx(0.7024265685465428)
+    assert metricas["hibrido"]["balanced_accuracy"] == pytest.approx(0.7176666247397034)
+    assert metricas["balanceada"]["exactitud_estricta"]["aciertos"] == 101
+    assert metricas["balanceada"]["macro_f1"] == pytest.approx(0.38842401584018116)
+    assert metricas["balanceada"]["balanced_accuracy"] == pytest.approx(0.4475300651265496)
+    assert metricas["sin_repoderacion"]["exactitud_estricta"]["aciertos"] == 88
+    assert metricas["sin_repoderacion"]["macro_f1"] == pytest.approx(0.2934539007092199)
+    hibrido_bd = metricas["hibrido"]["por_clase"]["Bases de Datos"]
+    assert hibrido_bd["f1"] == pytest.approx(0.823529411764706)
+    assert hibrido_bd["soporte"] == 16
+    assert metricas["balanceada"]["por_clase"]["Bases de Datos"]["f1"] == 0.0
+    assert metricas["balanceada"]["por_clase"]["Sistemas"]["soporte"] == 61
+
+
+def test_arbitrado_es_determinista_byte_a_byte(tmp_path, doc_arbitrado):
+    for carpeta in ("a", "b"):
+        c213.escribir(doc_arbitrado, tmp_path / carpeta, nombre_base="contraste_arbitrado")
+    for nombre in ("contraste_arbitrado.json", "contraste_arbitrado.md"):
+        a = (tmp_path / "a" / nombre).read_bytes()
+        b = (tmp_path / "b" / nombre).read_bytes()
+        assert a == b
+        assert b"\r" not in a and not a.startswith(b"\xef\xbb\xbf")

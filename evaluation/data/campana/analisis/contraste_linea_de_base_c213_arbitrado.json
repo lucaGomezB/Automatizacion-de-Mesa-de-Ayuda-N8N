@@ -1,0 +1,2441 @@
+{
+  "change": "c-213-integrar-la-linea-de-base-en-la-tesis",
+  "generador": "evaluation/data/campana/analisis/contraste_linea_de_base_c213.py",
+  "metodo": "predicciones por caso de la linea de base reconstruidas con evaluation.linea_de_base.predecir (semilla 42); predicciones del hibrido leidas de predicciones_arbitrado.json; McNemar con evaluation.stats.contraste_mcnemar; IC bootstrap percentil pareado de la diferencia de exactitudes; sin red ni Gemini",
+  "semilla_linea_de_base": 42,
+  "n": 206,
+  "n_entrenamiento": 200,
+  "entradas_sha256": {
+    "corpus_campana.json": "99bbe84b90b6ba66b34aae08c85bd318cd0e9600ad540e58b1a4bd8eccec06a5",
+    "corpus_independiente_arbitrado.json": "cb2874e649fb932c00b536100025c0a0137b3314ab12d45234e4c29049adc67e",
+    "predicciones_arbitrado.json": "cb8aba6089dde9868c61740fba713fb75923ee32317370c46e0daeb52a01d5d5",
+    "analisis_fuera_de_muestra_c205.json": "75fe4a4cae680add09adad8d9bbd9d4c7828256bbf8f78c85b1b86c5ffbf78c2",
+    "linea_de_base_clasica_c210.json": "2866dc1c09bbc2054c088766da79bf8b90b38066d0db0e044fe980eebd50c1de"
+  },
+  "aciertos": {
+    "hibrido": 142,
+    "balanceada": 101,
+    "sin_repoderacion": 88
+  },
+  "anclas_verificadas": {
+    "hibrido": 142
+  },
+  "contrastes": {
+    "balanceada": {
+      "n": 206,
+      "tabla_2x2": {
+        "ambos_aciertan": 81,
+        "solo_hibrido": 61,
+        "solo_linea_de_base": 20,
+        "ninguno": 44
+      },
+      "mcnemar": {
+        "aplicable": true,
+        "p_exacto": 5.656214894965935e-06,
+        "p_corregido": 8.811927405178393e-06,
+        "estadistico_corregido": 19.753086419753085,
+        "criterio_stats": "corregido",
+        "p_primario_stats": 8.811927405178393e-06
+      },
+      "diferencia_exactitud": {
+        "definicion": "exactitud(hibrido) - exactitud(linea de base) = (b - c) / n",
+        "valor": 0.19902912621359223,
+        "ic95": [
+          0.11650485436893204,
+          0.2766990291262136
+        ],
+        "metodo_ic": "bootstrap percentil pareado (remuestreo de casos)",
+        "remuestreos": 10000,
+        "semilla": 20261021
+      }
+    },
+    "sin_repoderacion": {
+      "n": 206,
+      "tabla_2x2": {
+        "ambos_aciertan": 73,
+        "solo_hibrido": 69,
+        "solo_linea_de_base": 15,
+        "ninguno": 49
+      },
+      "mcnemar": {
+        "aplicable": true,
+        "p_exacto": 1.938192405161976e-09,
+        "p_corregido": 7.347870976139131e-09,
+        "estadistico_corregido": 33.44047619047619,
+        "criterio_stats": "corregido",
+        "p_primario_stats": 7.347870976139131e-09
+      },
+      "diferencia_exactitud": {
+        "definicion": "exactitud(hibrido) - exactitud(linea de base) = (b - c) / n",
+        "valor": 0.2621359223300971,
+        "ic95": [
+          0.18446601941747573,
+          0.33980582524271846
+        ],
+        "metodo_ic": "bootstrap percentil pareado (remuestreo de casos)",
+        "remuestreos": 10000,
+        "semilla": 20261021
+      }
+    }
+  },
+  "variante_primaria": "balanceada",
+  "casos": [
+    {
+      "caso_id": "I001",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Seguridad Informatica",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I002",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I003",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I004",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Sistemas",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I005",
+      "referencia": "Bases de Datos",
+      "hibrido": "Bases de Datos",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Seguridad Informatica",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I006",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Seguridad Informatica",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I007",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I008",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Sistemas",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I009",
+      "referencia": "Bases de Datos",
+      "hibrido": "Bases de Datos",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I010",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I011",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I012",
+      "referencia": "Bases de Datos",
+      "hibrido": "Bases de Datos",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Seguridad Informatica",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I013",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I014",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I015",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I016",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I017",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I018",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I019",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I020",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I021",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I022",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Seguridad Informatica",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I023",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I024",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I025",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I026",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I027",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I028",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I029",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I030",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I031",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I032",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I033",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I034",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I035",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I036",
+      "referencia": "Sistemas",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I037",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I038",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I039",
+      "referencia": "Sistemas",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I040",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I041",
+      "referencia": "Bases de Datos",
+      "hibrido": "Bases de Datos",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Seguridad Informatica",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I042",
+      "referencia": "Bases de Datos",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I043",
+      "referencia": "Sistemas",
+      "hibrido": "Bases de Datos",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I044",
+      "referencia": "Sistemas",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Sistemas",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I045",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I046",
+      "referencia": "Sistemas",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I047",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I048",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I049",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Seguridad Informatica",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I050",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I051",
+      "referencia": "Bases de Datos",
+      "hibrido": "Bases de Datos",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I052",
+      "referencia": "Bases de Datos",
+      "hibrido": "Bases de Datos",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I053",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I054",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I055",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Seguridad Informatica",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I056",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I057",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I058",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I059",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I060",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I061",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I062",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I063",
+      "referencia": "Sistemas",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Sistemas",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I064",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I065",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I066",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I067",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I068",
+      "referencia": "Sistemas",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Sistemas",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I069",
+      "referencia": "Sistemas",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I070",
+      "referencia": "Sistemas",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I071",
+      "referencia": "Bases de Datos",
+      "hibrido": "Bases de Datos",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I072",
+      "referencia": "Sistemas",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I073",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I074",
+      "referencia": "Sistemas",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I075",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I076",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I077",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I078",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I079",
+      "referencia": "Bases de Datos",
+      "hibrido": "Bases de Datos",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I080",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I081",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I082",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I083",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I084",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Seguridad Informatica",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I085",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Sistemas",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I086",
+      "referencia": "Sistemas",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I087",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": false,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I088",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I089",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": false,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I090",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I091",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I092",
+      "referencia": "Bases de Datos",
+      "hibrido": "Bases de Datos",
+      "balanceada": "Sistemas",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I093",
+      "referencia": "Bases de Datos",
+      "hibrido": "Bases de Datos",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I094",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Sistemas",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I095",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I096",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I097",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I098",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I099",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I100",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I101",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I102",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I103",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I104",
+      "referencia": "Bases de Datos",
+      "hibrido": "Bases de Datos",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I105",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I106",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I107",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I108",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I109",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I110",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I111",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I112",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I113",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I114",
+      "referencia": "Bases de Datos",
+      "hibrido": "Bases de Datos",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I115",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Sistemas",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I116",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I117",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I118",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I119",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I120",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I121",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": false,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I122",
+      "referencia": "Sistemas",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Seguridad Informatica",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I123",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": false,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I124",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I125",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I126",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Sistemas",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Seguridad Informatica",
+      "acierto_hibrido": false,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I127",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Seguridad Informatica",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I128",
+      "referencia": "Bases de Datos",
+      "hibrido": "Bases de Datos",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I129",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I130",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I131",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I132",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I133",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Seguridad Informatica",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I134",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I135",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I136",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I137",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Seguridad Informatica",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I138",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Seguridad Informatica",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I139",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I140",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Sistemas",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I141",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I142",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I143",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I144",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I145",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I146",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I147",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I148",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I149",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I150",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I151",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Sistemas",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I152",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I153",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I154",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I155",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": false,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I156",
+      "referencia": "Sistemas",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I157",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I158",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Sistemas",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I159",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Sistemas",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I160",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I161",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Sistemas",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I162",
+      "referencia": "Sistemas",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I163",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I164",
+      "referencia": "Bases de Datos",
+      "hibrido": "Bases de Datos",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Seguridad Informatica",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I165",
+      "referencia": "Sistemas",
+      "hibrido": "Bases de Datos",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I166",
+      "referencia": "Bases de Datos",
+      "hibrido": "Sistemas",
+      "balanceada": "Sistemas",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I167",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I168",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Bases de Datos",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I169",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Sistemas",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I170",
+      "referencia": "Sistemas",
+      "hibrido": "Bases de Datos",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I171",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I172",
+      "referencia": "Sistemas",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Sistemas",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I173",
+      "referencia": "Sistemas",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I174",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I175",
+      "referencia": "Sistemas",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Seguridad Informatica",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I176",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I177",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I178",
+      "referencia": "Sistemas",
+      "hibrido": "Soporte Tecnico Hardware",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I179",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I180",
+      "referencia": "Sistemas",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Seguridad Informatica",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I181",
+      "referencia": "Sistemas",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I182",
+      "referencia": "Sistemas",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I183",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I184",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I185",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I186",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I187",
+      "referencia": "Sistemas",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I188",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I189",
+      "referencia": "Sistemas",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Sistemas",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I190",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I191",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I192",
+      "referencia": "Sistemas",
+      "hibrido": "Sistemas",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I193",
+      "referencia": "Sistemas",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I194",
+      "referencia": "Soporte Tecnico Hardware",
+      "hibrido": "Sistemas",
+      "balanceada": "Sistemas",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I195",
+      "referencia": "Sistemas",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I196",
+      "referencia": "Sistemas",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I197",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I198",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I199",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I200",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Hardware",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I201",
+      "referencia": "Sistemas",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I202",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I203",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Soporte Tecnico Software",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": true,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": true
+    },
+    {
+      "caso_id": "I204",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": false,
+      "acierto_balanceada": false,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I205",
+      "referencia": "Seguridad Informatica",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Seguridad Informatica",
+      "sin_repoderacion": "Soporte Tecnico Hardware",
+      "acierto_hibrido": true,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": false
+    },
+    {
+      "caso_id": "I206",
+      "referencia": "Soporte Tecnico Software",
+      "hibrido": "Seguridad Informatica",
+      "balanceada": "Soporte Tecnico Software",
+      "sin_repoderacion": "Soporte Tecnico Software",
+      "acierto_hibrido": false,
+      "acierto_balanceada": true,
+      "acierto_sin_repoderacion": true
+    }
+  ],
+  "aditivo": {
+    "reemplaza_numeros_canonicos": false,
+    "declaracion": "Las cifras de este contraste son aditivas: no reemplazan ningun numero canonico de la tesis ni el clasificador de produccion. Comparan al hibrido congelado con un unico clasificador supervisado clasico entrenado con 200 casos, sobre los 206 casos con consenso; no es el brazo solo-LLM ni contrasta la hipotesis de eficiencia."
+  },
+  "metricas_globales": {
+    "hibrido": {
+      "n": 206,
+      "exactitud_estricta": {
+        "aciertos": 142,
+        "n": 206,
+        "valor": 0.6893203883495146
+      },
+      "exactitud_laxa": {
+        "aciertos": 162,
+        "n": 206,
+        "valor": 0.7864077669902912
+      },
+      "macro_f1": 0.7024265685465428,
+      "macro_f1_definicion": "media aritmetica de las cinco F1 por clase, incluida toda clase de soporte cero (F1 = 0.0)",
+      "balanced_accuracy": 0.7176666247397034,
+      "balanced_accuracy_definicion": "media aritmetica de las sensibilidades por clase",
+      "por_clase": {
+        "Seguridad Informatica": {
+          "precision": 0.6451612903225806,
+          "sensibilidad": 0.625,
+          "f1": 0.634920634920635,
+          "soporte": 32
+        },
+        "Soporte Tecnico Hardware": {
+          "precision": 0.7857142857142857,
+          "sensibilidad": 0.8627450980392157,
+          "f1": 0.8224299065420562,
+          "soporte": 51
+        },
+        "Soporte Tecnico Software": {
+          "precision": 0.5789473684210527,
+          "sensibilidad": 0.717391304347826,
+          "f1": 0.6407766990291262,
+          "soporte": 46
+        },
+        "Bases de Datos": {
+          "precision": 0.7777777777777778,
+          "sensibilidad": 0.875,
+          "f1": 0.823529411764706,
+          "soporte": 16
+        },
+        "Sistemas": {
+          "precision": 0.7045454545454546,
+          "sensibilidad": 0.5081967213114754,
+          "f1": 0.5904761904761906,
+          "soporte": 61
+        }
+      },
+      "matriz_confusion": {
+        "filas": "sector de referencia (sector_asignado)",
+        "columnas": "sector predicho principal",
+        "orden": [
+          "Seguridad Informatica",
+          "Soporte Tecnico Hardware",
+          "Soporte Tecnico Software",
+          "Bases de Datos",
+          "Sistemas"
+        ],
+        "celdas": {
+          "Seguridad Informatica": {
+            "Seguridad Informatica": 20,
+            "Soporte Tecnico Hardware": 3,
+            "Soporte Tecnico Software": 5,
+            "Bases de Datos": 0,
+            "Sistemas": 4
+          },
+          "Soporte Tecnico Hardware": {
+            "Seguridad Informatica": 0,
+            "Soporte Tecnico Hardware": 44,
+            "Soporte Tecnico Software": 2,
+            "Bases de Datos": 0,
+            "Sistemas": 5
+          },
+          "Soporte Tecnico Software": {
+            "Seguridad Informatica": 3,
+            "Soporte Tecnico Hardware": 6,
+            "Soporte Tecnico Software": 33,
+            "Bases de Datos": 1,
+            "Sistemas": 3
+          },
+          "Bases de Datos": {
+            "Seguridad Informatica": 0,
+            "Soporte Tecnico Hardware": 0,
+            "Soporte Tecnico Software": 1,
+            "Bases de Datos": 14,
+            "Sistemas": 1
+          },
+          "Sistemas": {
+            "Seguridad Informatica": 8,
+            "Soporte Tecnico Hardware": 3,
+            "Soporte Tecnico Software": 16,
+            "Bases de Datos": 3,
+            "Sistemas": 31
+          }
+        }
+      }
+    },
+    "balanceada": {
+      "n": 206,
+      "exactitud_estricta": {
+        "aciertos": 101,
+        "n": 206,
+        "valor": 0.49029126213592233
+      },
+      "exactitud_laxa": {
+        "aciertos": 121,
+        "n": 206,
+        "valor": 0.587378640776699
+      },
+      "macro_f1": 0.38842401584018116,
+      "macro_f1_definicion": "media aritmetica de las cinco F1 por clase, incluida toda clase de soporte cero (F1 = 0.0)",
+      "balanced_accuracy": 0.4475300651265496,
+      "balanced_accuracy_definicion": "media aritmetica de las sensibilidades por clase",
+      "por_clase": {
+        "Seguridad Informatica": {
+          "precision": 0.34545454545454546,
+          "sensibilidad": 0.59375,
+          "f1": 0.43678160919540227,
+          "soporte": 32
+        },
+        "Soporte Tecnico Hardware": {
+          "precision": 0.625,
+          "sensibilidad": 0.7843137254901961,
+          "f1": 0.6956521739130435,
+          "soporte": 51
+        },
+        "Soporte Tecnico Software": {
+          "precision": 0.463768115942029,
+          "sensibilidad": 0.6956521739130435,
+          "f1": 0.5565217391304348,
+          "soporte": 46
+        },
+        "Bases de Datos": {
+          "precision": 0.0,
+          "sensibilidad": 0.0,
+          "f1": 0.0,
+          "soporte": 16
+        },
+        "Sistemas": {
+          "precision": 0.5555555555555556,
+          "sensibilidad": 0.16393442622950818,
+          "f1": 0.25316455696202533,
+          "soporte": 61
+        }
+      },
+      "matriz_confusion": {
+        "filas": "sector de referencia (sector_asignado)",
+        "columnas": "sector predicho principal",
+        "orden": [
+          "Seguridad Informatica",
+          "Soporte Tecnico Hardware",
+          "Soporte Tecnico Software",
+          "Bases de Datos",
+          "Sistemas"
+        ],
+        "celdas": {
+          "Seguridad Informatica": {
+            "Seguridad Informatica": 19,
+            "Soporte Tecnico Hardware": 3,
+            "Soporte Tecnico Software": 8,
+            "Bases de Datos": 0,
+            "Sistemas": 2
+          },
+          "Soporte Tecnico Hardware": {
+            "Seguridad Informatica": 2,
+            "Soporte Tecnico Hardware": 40,
+            "Soporte Tecnico Software": 5,
+            "Bases de Datos": 0,
+            "Sistemas": 4
+          },
+          "Soporte Tecnico Software": {
+            "Seguridad Informatica": 6,
+            "Soporte Tecnico Hardware": 8,
+            "Soporte Tecnico Software": 32,
+            "Bases de Datos": 0,
+            "Sistemas": 0
+          },
+          "Bases de Datos": {
+            "Seguridad Informatica": 11,
+            "Soporte Tecnico Hardware": 0,
+            "Soporte Tecnico Software": 3,
+            "Bases de Datos": 0,
+            "Sistemas": 2
+          },
+          "Sistemas": {
+            "Seguridad Informatica": 17,
+            "Soporte Tecnico Hardware": 13,
+            "Soporte Tecnico Software": 21,
+            "Bases de Datos": 0,
+            "Sistemas": 10
+          }
+        }
+      }
+    },
+    "sin_repoderacion": {
+      "n": 206,
+      "exactitud_estricta": {
+        "aciertos": 88,
+        "n": 206,
+        "valor": 0.42718446601941745
+      },
+      "exactitud_laxa": {
+        "aciertos": 104,
+        "n": 206,
+        "valor": 0.5048543689320388
+      },
+      "macro_f1": 0.2934539007092199,
+      "macro_f1_definicion": "media aritmetica de las cinco F1 por clase, incluida toda clase de soporte cero (F1 = 0.0)",
+      "balanced_accuracy": 0.38054667519181584,
+      "balanced_accuracy_definicion": "media aritmetica de las sensibilidades por clase",
+      "por_clase": {
+        "Seguridad Informatica": {
+          "precision": 0.5,
+          "sensibilidad": 0.28125,
+          "f1": 0.36,
+          "soporte": 32
+        },
+        "Soporte Tecnico Hardware": {
+          "precision": 0.4838709677419355,
+          "sensibilidad": 0.8823529411764706,
+          "f1": 0.625,
+          "soporte": 51
+        },
+        "Soporte Tecnico Software": {
+          "precision": 0.35789473684210527,
+          "sensibilidad": 0.7391304347826086,
+          "f1": 0.4822695035460993,
+          "soporte": 46
+        },
+        "Bases de Datos": {
+          "precision": 0.0,
+          "sensibilidad": 0.0,
+          "f1": 0.0,
+          "soporte": 16
+        },
+        "Sistemas": {
+          "precision": 0.0,
+          "sensibilidad": 0.0,
+          "f1": 0.0,
+          "soporte": 61
+        }
+      },
+      "matriz_confusion": {
+        "filas": "sector de referencia (sector_asignado)",
+        "columnas": "sector predicho principal",
+        "orden": [
+          "Seguridad Informatica",
+          "Soporte Tecnico Hardware",
+          "Soporte Tecnico Software",
+          "Bases de Datos",
+          "Sistemas"
+        ],
+        "celdas": {
+          "Seguridad Informatica": {
+            "Seguridad Informatica": 9,
+            "Soporte Tecnico Hardware": 8,
+            "Soporte Tecnico Software": 15,
+            "Bases de Datos": 0,
+            "Sistemas": 0
+          },
+          "Soporte Tecnico Hardware": {
+            "Seguridad Informatica": 0,
+            "Soporte Tecnico Hardware": 45,
+            "Soporte Tecnico Software": 6,
+            "Bases de Datos": 0,
+            "Sistemas": 0
+          },
+          "Soporte Tecnico Software": {
+            "Seguridad Informatica": 1,
+            "Soporte Tecnico Hardware": 11,
+            "Soporte Tecnico Software": 34,
+            "Bases de Datos": 0,
+            "Sistemas": 0
+          },
+          "Bases de Datos": {
+            "Seguridad Informatica": 4,
+            "Soporte Tecnico Hardware": 4,
+            "Soporte Tecnico Software": 8,
+            "Bases de Datos": 0,
+            "Sistemas": 0
+          },
+          "Sistemas": {
+            "Seguridad Informatica": 4,
+            "Soporte Tecnico Hardware": 25,
+            "Soporte Tecnico Software": 32,
+            "Bases de Datos": 0,
+            "Sistemas": 0
+          }
+        }
+      }
+    }
+  }
+}

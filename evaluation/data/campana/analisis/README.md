@@ -164,13 +164,50 @@ agregados (`67` y `60` de la linea de base en c-210; `87` del hibrido en c-205).
   python3 evaluation/data/campana/analisis/contraste_linea_de_base_c213.py
   ```
 
-  Parametros: `--referencia` (corpus de prueba) y `--n-esperado`, para repetir el contraste
-  con la referencia arbitrada sin cambiar el codigo.
+  Parametros: `--referencia` (corpus de prueba), `--predicciones` (predicciones del hibrido;
+  por defecto `../predicciones_independiente.json`), `--n-esperado`, `--nombre` (nombre base de
+  las salidas; por defecto `contraste_linea_de_base_c213`) y `--anclas SISTEMA=N` (aciertos
+  estrictos esperados por sistema; con `--anclas` se agrega el bloque `metricas_globales` al
+  artefacto). Sin `--anclas` el script conserva el comportamiento por defecto (anclas de c-205
+  y c-210) y la corrida por defecto queda byte a byte identica a la versionada.
 - Salidas: `contraste_linea_de_base_c213.json` (fuente unica de las cifras, con las
   predicciones por caso y el SHA-256 de cada entrada), `.md` y `.SHA256SUMS.txt`. Dos
   corridas producen salidas identicas byte a byte.
 - Prueba: `cd evaluation/data/campana/analisis && python -m pytest test_contraste_linea_de_base_c213.py -q`.
 - Aditivo: no reemplaza ningun numero canonico; no es el brazo solo-LLM.
+
+### Corrida sobre la referencia arbitrada (c-206, n = 206)
+
+`contraste_linea_de_base_c213_arbitrado.py` no existe: es el MISMO script corrido con la
+referencia arbitrada de c-206 y el nombre base de salida `contraste_linea_de_base_c213_arbitrado`,
+de modo que NO clobbea los artefactos de `103`. Reutiliza la linea de base clasica
+(`evaluation.linea_de_base.predecir`, semilla `42`) entrenada con los `200` casos de
+`../corpus_campana.json`, lee el hibrido de `../predicciones_arbitrado.json` y contrasta sobre
+la referencia `../corpus_independiente_arbitrado.json` (`206` casos, sin exclusion). Antes de
+escribir, el ancla declarada `--anclas hibrido=142` obliga a que el hibrido reproduzca sus
+`142/206` aciertos estrictos versionados (Seccion 3.25); si no, aborta sin escribir.
+
+- Entradas versionadas (solo lectura): `../corpus_campana.json`,
+  `../corpus_independiente_arbitrado.json`, `../predicciones_arbitrado.json`,
+  `analisis_fuera_de_muestra_c205.json` y `linea_de_base_clasica_c210.json`.
+- Comando (desde la raiz del repositorio):
+
+  ```bash
+  python3 evaluation/data/campana/analisis/contraste_linea_de_base_c213.py \
+    --referencia evaluation/data/campana/corpus_independiente_arbitrado.json \
+    --predicciones evaluation/data/campana/predicciones_arbitrado.json \
+    --n-esperado 206 \
+    --nombre contraste_linea_de_base_c213_arbitrado \
+    --anclas hibrido=142
+  ```
+
+- Salidas: `contraste_linea_de_base_c213_arbitrado.json` (fuente unica de las cifras; incluye
+  el contraste pareado por variante y el bloque `metricas_globales` de los tres sistemas),
+  `.md` y `.SHA256SUMS.txt`. Dos corridas producen salidas identicas byte a byte.
+  - `contraste_linea_de_base_c213_arbitrado.json`: `9fedd6cbda558c883e77d3879095adef759086ce3450abe55dafd6afa711d513`
+  - `contraste_linea_de_base_c213_arbitrado.md`: `6257e6103a3f96d5d4b57abdd86ab74fb2c09412a2d40dcd6f722ca11e29b28d`
+- Aditivo: NO reemplaza los numeros del contraste de `103` (Seccion 3.23 del memo) ni ningun
+  otro numero canonico; es la misma comparacion repetida sobre el n arbitrado.
 
 ## Calibracion y punto de operacion del gate de confianza (c-214)
 
