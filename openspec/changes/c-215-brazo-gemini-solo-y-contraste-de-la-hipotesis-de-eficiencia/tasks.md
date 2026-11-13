@@ -15,23 +15,23 @@ puede cerrar un agente.
 
 ## 1. Ejecutor del brazo «Gemini solo» (`E/brazo_gemini_solo.py`) — TDD, costo cero
 
-- [ ] 1.1 Cliente instrumentado y tope: mide latencia por intento, copia `usage_metadata`, cuenta intentos y se niega a emitir la llamada que superaría el tope (GSOLO-001, GSOLO-003). Probado con un cliente simulado y la etapa `GeminiClassifier` real.
-- [ ] 1.2 Caché JSONL reanudable con metadatos, `fsync` por caso, contador acumulado de llamadas y aborto ante metadatos incompatibles (GSOLO-002).
-- [ ] 1.3 Guardas: `--confirmar-costo`, versión del SDK `>=2.33,<3`, credencial solo del entorno y sin imprimirla, SHA-256 del prompt congelado, tope no superior a 400 (GSOLO-004).
-- [ ] 1.4 Modo `--dry-run`: casos pendientes, llamadas mínimas y máximas y costo estimado en ambos escenarios de precio, sin red, sin clave y sin escribir el caché (GSOLO-004).
-- [ ] 1.5 Bucle de corrida y CLI: códigos de salida 0 (completa), 2 (guarda), 3 (tope alcanzado); un fallo del proveedor se registra y no corta la corrida.
+- [x] 1.1 Cliente instrumentado y tope: mide latencia por intento, copia `usage_metadata`, cuenta intentos y se niega a emitir la llamada que superaría el tope (GSOLO-001, GSOLO-003). Probado con un cliente simulado y la etapa `GeminiClassifier` real.
+- [x] 1.2 Caché JSONL reanudable con metadatos, `fsync` por caso, contador acumulado de llamadas y aborto ante metadatos incompatibles (GSOLO-002).
+- [x] 1.3 Guardas: `--confirmar-costo`, versión del SDK `>=2.33,<3`, credencial solo del entorno y sin imprimirla, SHA-256 del prompt congelado, tope no superior a 400 (GSOLO-004).
+- [x] 1.4 Modo `--dry-run`: casos pendientes, llamadas mínimas y máximas y costo estimado en ambos escenarios de precio, sin red, sin clave y sin escribir el caché (GSOLO-004).
+- [x] 1.5 Bucle de corrida y CLI: códigos de salida 0 (completa), 2 (guarda), 3 (tope alcanzado); un fallo del proveedor se registra y no corta la corrida.
 
 ## 2. Análisis pareado (`A/analisis_brazo_gemini_solo_c215.py`) — TDD, cachés sintéticos
 
-- [ ] 2.1 Carga y alineación: caché del brazo, predicciones de H y corpus por bloque; aborta sin escribir ante caché inexistente, incompleto o con hash de corpus distinto (GSOLO-005).
-- [ ] 2.2 Calidad: exactitud estricta y laxa con Wilson, macro-F1, tabla 2×2, McNemar exacta y diferencia pareada con IC bootstrap de semilla 20261021 (GSOLO-005).
-- [ ] 2.3 Eficiencia: llamadas, tokens, costo (dos escenarios de precio) y latencia por caso para L y H imputado, razones con IC bootstrap pareado (GSOLO-005).
-- [ ] 2.4 Regla de tres vías, validez de la corrida, control de deriva y sensibilidad H\* (GSOLO-006).
-- [ ] 2.5 Salidas JSON y Markdown deterministas con SHA-256 y CLI con código distinto de cero si falta el caché (GSOLO-005).
+- [x] 2.1 Carga y alineación: caché del brazo, predicciones de H y corpus por bloque; aborta sin escribir ante caché inexistente, incompleto o con hash de corpus distinto (GSOLO-005).
+- [x] 2.2 Calidad: exactitud estricta y laxa con Wilson, macro-F1, tabla 2×2, McNemar exacta y diferencia pareada con IC bootstrap de semilla 20261021 (GSOLO-005).
+- [x] 2.3 Eficiencia: llamadas, tokens, costo (dos escenarios de precio) y latencia por caso para L y H imputado, razones con IC bootstrap pareado (GSOLO-005).
+- [x] 2.4 Regla de tres vías, validez de la corrida, control de deriva y sensibilidad H\* (GSOLO-006).
+- [x] 2.5 Salidas JSON y Markdown deterministas con SHA-256 y CLI con código distinto de cero si falta el caché (GSOLO-005).
 
 ## 3. Documentación operativa
 
-- [ ] 3.1 Comandos exactos de dry-run, corrida real y análisis en `A/README.md`, con requisitos de la corrida (versión del SDK, variables de entorno por nombre, tope y costo).
+- [x] 3.1 Comandos exactos de dry-run, corrida real y análisis en `A/README.md`, con requisitos de la corrida (versión del SDK, variables de entorno por nombre, tope y costo).
 
 ## 4. Corrida paga y salidas reales
 

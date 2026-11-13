@@ -200,3 +200,61 @@ casos y se evalua sin reajuste en los 103. No modifica la configuracion producti
   - `../senales_reglas_c214.csv`: `a7d4a703e2c5b70c3fc898a1c55c50fbad971255285b5e3630cf65f0c983c56a`
 - Prueba: `cd evaluation/data/campana/analisis && python -m pytest test_analisis_calibracion_gate_c214.py -q`
   y `python -m pytest evaluation/tests/test_calibracion_gate.py -q`.
+
+## Brazo «Gemini solo» y contraste de la hipotesis de eficiencia (c-215)
+
+El brazo «Gemini solo» manda TODOS los casos (200 dentro de la muestra y 103 fuera de muestra)
+a la misma etapa Gemini congelada del backend, sin reglas, y se compara de forma pareada con las
+predicciones congeladas de `hybrid-v3`. El codigo y el analisis estan listos y probados con
+clientes simulados; la corrida paga NO se hizo. La regla de decision (margen de no inferioridad
+0,05, ahorro material si el limite superior del IC de las razones de costo y de llamadas es
+menor que 0,90, tope de 400 llamadas, una sola corrida) esta prerregistrada en
+`openspec/changes/c-215-brazo-gemini-solo-y-contraste-de-la-hipotesis-de-eficiencia/design.md`.
+
+- Ejecutor: `evaluation/brazo_gemini_solo.py` (cache reanudable en
+  `evaluation/data/campana/brazo_gemini_solo/cache_brazo_gemini_solo.jsonl`, que NO existe hasta la
+  corrida paga). Analisis: `evaluation/data/campana/analisis/analisis_brazo_gemini_solo_c215.py`.
+
+### Requisitos de la corrida real (los cumple una persona, no un agente)
+
+- `google-genai` dentro de `>=2.33,<3` (pin de `openspec/config.yaml`). El ejecutor verifica la
+  version instalada y aborta con codigo 2 si no cumple; no instala paquetes.
+- Variable de entorno `GEMINI_API_KEY` con la clave real, exportada en la sesion que corre el
+  comando. Se lee solo del entorno, no se imprime ni se guarda. Si `Settings` del backend
+  requiere otras variables (`DATABASE_URL`, `PSEUDONYMIZATION_ENCRYPTION_KEY`, `JWT_SECRET_KEY`,
+  `COST_GUARD_CALLER_HMAC_KEY`, `DIRECTORY_BLIND_INDEX_KEY`), el ejecutor completa con valores
+  inertes las que falten y nunca pisa las existentes.
+- Visto bueno de gasto: unas 303 llamadas, del orden de USD 0,22 a precio introductorio y USD 0,43
+  a precio estandar; tope duro de 400 llamadas (USD 0,29 / 0,57 como maximo).
+- Ejecutar desde la raiz del repositorio y con el prerregistro ya commiteado.
+
+### Comandos exactos
+
+1. Dry-run (sin red, sin clave, sin escribir el cache; cuenta casos pendientes, llamadas y costo):
+
+   ```bash
+   python -m evaluation.brazo_gemini_solo --dry-run
+   ```
+
+2. Corrida real (PAGA; exige confirmacion explicita; reanudable: si se corta, se relanza el mismo
+   comando y no se vuelve a pagar lo ya registrado). Codigos de salida: 0 completa, 2 una guarda
+   impidio la corrida, 3 tope alcanzado con casos pendientes:
+
+   ```bash
+   python -m evaluation.brazo_gemini_solo --confirmar-costo
+   ```
+
+3. Analisis (solo lectura; sale con codigo distinto de cero y sin escribir si falta el cache o esta
+   incompleto; escribe `analisis_brazo_gemini_solo_c215.{json,md}` y `.SHA256SUMS.txt` en esta
+   carpeta):
+
+   ```bash
+   python evaluation/data/campana/analisis/analisis_brazo_gemini_solo_c215.py
+   ```
+
+- Pruebas (cliente simulado, sin red): `python -m pytest evaluation/tests/test_brazo_gemini_solo.py -q`
+  y `python -m pytest evaluation/data/campana/analisis/test_analisis_brazo_gemini_solo_c215.py -q`.
+- Limitaciones declaradas: los intentos fallidos sin respuesta no aportan tokens (el costo de un
+  caso con fallas queda subestimado); la latencia es del lado del cliente y desde la maquina de
+  quien corre; el control de deriva no separa deriva del modelo de azar de muestreo a temperatura
+  0,3.
