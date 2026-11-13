@@ -328,3 +328,209 @@ def test_hibrido_con_casos_faltantes_aborta(tmp_path, escenario):
     with pytest.raises(ana.CorridaIncompletaError) as exc:
         documento(escenario)
     assert "I010" in str(exc.value)
+
+
+# ---------------------------------------------------------------------------
+# Eficiencia (valores calculados a mano sobre S1)
+# ---------------------------------------------------------------------------
+def test_eficiencia_llamadas_tokens_y_costo_con_imputacion_para_el_hibrido(escenario):
+    e = documento(escenario)["bloques"]["fuera_muestra"]["eficiencia"]
+    # L: 9 casos x 1 intento + I004 x 2 = 11. H escala I004 (2), I005, I007, I008, I009 = 6.
+    assert e["llamadas"]["L"] == 11 and e["llamadas"]["H"] == 6
+    assert e["llamadas"]["razon"]["valor"] == pytest.approx(6 / 11)
+    assert e["tokens"]["L"] == {"entrada": 8800, "salida": 220}
+    assert e["tokens"]["H"] == {"entrada": 4800, "salida": 120}
+    assert e["costo_usd"]["introductorio"]["L"] == pytest.approx(8800e-6 * 0.75 + 220e-6 * 3.75)
+    assert e["costo_usd"]["introductorio"]["H"] == pytest.approx(4800e-6 * 0.75 + 120e-6 * 3.75)
+    assert e["costo_usd"]["estandar"]["L"] == pytest.approx(2 * e["costo_usd"]["introductorio"]["L"])
+    assert e["razon_costo"]["valor"] == pytest.approx(6 / 11)
+    assert e["casos_escalados_h"] == 5
+    lo, hi = e["razon_costo"]["ic95"]
+    assert 0 < lo <= 6 / 11 <= hi <= 1
+
+
+def test_eficiencia_latencia_media_por_caso_y_diferencia_con_ic(escenario):
+    lat = documento(escenario)["bloques"]["fuera_muestra"]["eficiencia"]["latencia_ms"]
+    # L: (9 x 100 + 300) / 10 = 120. H imputada: (300 + 100 x 4) / 10 = 70; reglas = 0 ms.
+    assert lat["media_L"] == pytest.approx(120.0) and lat["media_H"] == pytest.approx(70.0)
+    assert lat["diferencia_L_menos_H"]["valor"] == pytest.approx(50.0)
+    lo, hi = lat["diferencia_L_menos_H"]["ic95"]
+    assert 0 <= lo <= 50.0 <= hi
+    assert "no es tiempo de extremo a extremo" in lat["nota"]
+
+
+def test_los_precios_se_toman_de_los_metadatos_del_cache(tmp_path, escenario):
+    lineas = escenario["cache"].read_text(encoding="utf-8").splitlines()
+    meta = json.loads(lineas[0])
+    meta["precios_usd_por_millon"]["introductorio"] = {"entrada": 1.5, "salida": 7.5}
+    cache = tmp_path / "caro.jsonl"
+    cache.write_text("\n".join([json.dumps(meta)] + lineas[1:]) + "\n", encoding="utf-8")
+    doc = ana.construir_documento(cache, **{k: v for k, v in escenario.items() if k != "cache"}, remuestreos=200)
+    costo = doc["bloques"]["fuera_muestra"]["eficiencia"]["costo_usd"]["introductorio"]["L"]
+    assert costo == pytest.approx(8800e-6 * 1.5 + 220e-6 * 7.5)
+    assert doc["procedencia"]["precios_usd_por_millon"]["introductorio"]["entrada"] == 1.5
+
+
+def test_se_informa_cuantos_casos_usaron_tokens_supuestos(tmp_path, escenario):
+    lineas = escenario["cache"].read_text(encoding="utf-8").splitlines()
+    nuevas = [
+        l.replace('"tokens_origen": "api"', '"tokens_origen": "supuesto"') if '"I005"' in l else l
+        for l in lineas
+    ]
+    escenario["cache"].write_text("\n".join(nuevas) + "\n", encoding="utf-8")
+    e = documento(escenario)["bloques"]["fuera_muestra"]["eficiencia"]
+    assert e["tokens"]["casos_con_tokens_supuestos"] == 1
+
+
+# ---------------------------------------------------------------------------
+# Sensibilidad H*, control de deriva y veredicto
+# ---------------------------------------------------------------------------
+def test_sensibilidad_hstar_toma_la_nueva_prediccion_de_gemini_donde_h_escalo(escenario):
+    s = documento(escenario)["bloques"]["fuera_muestra"]["sensibilidad_hstar"]
+    assert s["exactitud_estricta"]["aciertos"] == 8
+    assert s["contraste"]["tabla_2x2"]["solo_hibrido"] == 1  # I006 (reglas acierta, L falla)
+    assert s["contraste"]["tabla_2x2"]["solo_gemini_solo"] == 0
+    assert s["contraste"]["diferencia_exactitud"]["valor"] == pytest.approx(0.1)
+
+
+def test_control_de_deriva_mide_concordancia_en_los_casos_que_h_ya_escalo(escenario):
+    d = documento(escenario)["control_deriva"]
+    # Fuera: I004, I005, I008 coinciden; I007 e I009 no. Dentro: R004 coincide; R002 no.
+    assert (d["fuera_muestra"]["n_escalados"], d["fuera_muestra"]["concordancia"]["aciertos"]) == (5, 3)
+    assert (d["dentro_muestra"]["n_escalados"], d["dentro_muestra"]["concordancia"]["aciertos"]) == (2, 1)
+    assert (d["total"]["n_escalados"], d["total"]["concordancia"]["aciertos"]) == (7, 4)
+    assert d["total"]["concordancia"]["valor"] == pytest.approx(4 / 7)
+    assert d["umbral"] == 0.90 and d["bandera"] is True
+    assert "deriva o ruido relevante" in d["lectura"]
+
+
+def variante(tmp_path, escenario, preds_fuera, **kw_registro):
+    """Cache con las predicciones de L indicadas para el bloque de fuera de muestra."""
+    registros = [registro_l(i, "dentro_muestra", p) for i, p in
+                 [("R001", SEG), ("R002", SIS), ("R003", SIS), ("R004", SEG)]]
+    for i, _, _, _ in FILAS_H_S1:
+        registros.append(registro_l(i, "fuera_muestra", preds_fuera[i], **kw_registro.get(i, {})))
+    cache = escribir_cache(
+        tmp_path / "variante.jsonl",
+        {"corpus_hash_dentro": _compute_corpus_hash(escenario["ruta_corpus_dentro"]),
+         "corpus_hash_fuera": _compute_corpus_hash(escenario["ruta_corpus_fuera"])},
+        registros,
+    )
+    return ana.construir_documento(cache, **{k: v for k, v in escenario.items() if k != "cache"}, remuestreos=400)
+
+
+def test_sin_deriva_la_bandera_no_se_levanta(tmp_path, escenario):
+    # L repite exactamente la prediccion cacheada de H en los casos escalados.
+    preds = {i: p for i, _, p, _ in FILAS_H_S1}
+    doc = variante(tmp_path, escenario, preds)
+    d = doc["control_deriva"]
+    assert d["fuera_muestra"]["concordancia"]["valor"] == pytest.approx(1.0)
+    assert d["dentro_muestra"]["concordancia"]["valor"] == pytest.approx(1.0)
+    assert d["bandera"] is False and "deriva o ruido relevante" not in d["lectura"]
+
+
+def test_hipotesis_sostenida_en_un_escenario_sin_discordancias_y_poco_escalado(tmp_path, escenario):
+    # L repite las predicciones de H: sin discordancias, delta = 0 sin variabilidad. Como H solo
+    # escala un caso de diez, el ahorro de llamadas y costo es material.
+    filas = [(i, s, p, "gemini" if i == "I001" else "deterministic") for i, s, p, _ in FILAS_H_S1]
+    escribir_hibrido(escenario["ruta_hibrido_fuera"], filas)
+    preds = {i: p for i, _, p, _ in FILAS_H_S1}
+    doc = variante(tmp_path, escenario, preds)
+    assert doc["bloques"]["fuera_muestra"]["decision"]["componente_exactitud"] == "no inferior"
+    assert doc["bloques"]["fuera_muestra"]["decision"]["componente_eficiencia"] == "cumplido"
+    assert doc["veredicto"]["veredicto"] == "sostenida" and doc["veredicto"]["bloque"] == "fuera_muestra"
+
+
+def test_hipotesis_no_sostenida_si_el_hibrido_es_claramente_inferior(tmp_path, escenario):
+    # H falla siempre; L acierta siempre: delta = -1 sin variabilidad.
+    filas = [(i, SEG, SIS, e) for i, _, _, e in FILAS_H_S1]
+    escribir_hibrido(escenario["ruta_hibrido_fuera"], filas)
+    doc = variante(tmp_path, escenario, {i: SEG for i, _, _, _ in FILAS_H_S1})
+    assert doc["bloques"]["fuera_muestra"]["decision"]["componente_exactitud"] == "inferior"
+    assert doc["veredicto"]["veredicto"] == "no sostenida"
+
+
+def test_demasiados_fallos_del_brazo_fuerzan_no_concluyente(tmp_path, escenario):
+    preds = {i: p for i, _, p, _ in FILAS_H_S1}
+    fallos = {i: {"etapa": "fallback", "error": "respuesta_invalida"} for i in ("I002", "I003")}
+    doc = variante(tmp_path, escenario, preds, **fallos)
+    b = doc["bloques"]["fuera_muestra"]["eficiencia"]
+    assert b["fallbacks_o_errores_l"] == 2 and b["tasa_fallos_l"] == pytest.approx(0.2)
+    assert doc["veredicto"]["veredicto"] == "no concluyente" and "fallback" in doc["veredicto"]["motivo"]
+
+
+def test_un_caso_con_error_del_proveedor_sin_sector_cuenta_como_no_acierto(tmp_path, escenario):
+    preds = {i: p for i, _, p, _ in FILAS_H_S1}
+    preds["I001"] = None
+    doc = variante(tmp_path, escenario, preds, I001={"etapa": "fallback", "error": "GeminiTimeoutError"})
+    assert doc["bloques"]["fuera_muestra"]["brazos"]["L"]["exactitud_estricta"]["aciertos"] == 6
+
+
+def test_los_analisis_secundarios_no_cambian_el_veredicto(tmp_path, escenario):
+    doc = documento(escenario)
+    primario = doc["bloques"]["fuera_muestra"]["decision"]
+    assert doc["veredicto"]["veredicto"] == primario["veredicto"]
+    assert "decision" in doc["bloques"]["dentro_muestra"]
+    assert "decision" in doc["bloques"]["fuera_muestra"]["sensibilidad_hstar"]
+
+
+# ---------------------------------------------------------------------------
+# Salidas deterministas y CLI
+# ---------------------------------------------------------------------------
+def test_las_salidas_son_deterministas_con_lf_y_sin_bom(tmp_path, escenario):
+    doc = documento(escenario)
+    rutas_1 = ana.escribir(doc, tmp_path / "s1")
+    rutas_2 = ana.escribir(documento(escenario), tmp_path / "s2")
+    for a, b in zip(rutas_1, rutas_2):
+        assert a.read_bytes() == b.read_bytes()
+        assert b"\r" not in a.read_bytes() and not a.read_bytes().startswith(b"\xef\xbb\xbf")
+    assert [r.name for r in rutas_1] == [ana.NOMBRE_JSON, ana.NOMBRE_MD, ana.NOMBRE_SUMAS]
+
+
+def test_las_sumas_sha256_coinciden_con_los_archivos(tmp_path, escenario):
+    rutas = ana.escribir(documento(escenario), tmp_path / "s")
+    sumas = rutas[2].read_text(encoding="utf-8").splitlines()
+    esperadas = [f"{hashlib.sha256(r.read_bytes()).hexdigest()}  {r.name}" for r in rutas[:2]]
+    assert sumas == esperadas
+
+
+def test_el_markdown_informa_veredicto_deriva_y_el_rotulo_aditivo(tmp_path, escenario):
+    doc = documento(escenario)
+    _, md = ana.renderizar(doc)
+    assert doc["veredicto"]["veredicto"] in md
+    assert "deriva o ruido relevante" in md
+    assert "aditivas" in md and "dentro de la muestra" in md.lower()
+    assert "H*" in md
+
+
+def argumentos(escenario, salida):
+    return [
+        "--cache", str(escenario["cache"]), "--salida", str(salida),
+        "--corpus-dentro", str(escenario["ruta_corpus_dentro"]), "--corpus-fuera", str(escenario["ruta_corpus_fuera"]),
+        "--hibrido-dentro", str(escenario["ruta_hibrido_dentro"]), "--hibrido-fuera", str(escenario["ruta_hibrido_fuera"]),
+    ]
+
+
+def test_cli_con_cache_inexistente_sale_distinto_de_cero_sin_escribir(tmp_path, escenario, capsys):
+    salida = tmp_path / "salida"
+    args = argumentos(escenario, salida)
+    args[1] = str(tmp_path / "no_existe.jsonl")
+    codigo = ana.main(args)
+    assert codigo != 0
+    assert "no existe el cache" in capsys.readouterr().err
+    assert not salida.exists()
+
+
+def test_cli_con_cache_incompleto_sale_con_codigo_1_sin_escribir(tmp_path, escenario, capsys):
+    lineas = escenario["cache"].read_text(encoding="utf-8").splitlines()
+    escenario["cache"].write_text("\n".join(l for l in lineas if '"I003"' not in l) + "\n", encoding="utf-8")
+    salida = tmp_path / "salida"
+    assert ana.main(argumentos(escenario, salida)) == 1
+    assert "I003" in capsys.readouterr().err and not salida.exists()
+
+
+def test_cli_ok_escribe_tres_archivos_e_imprime_las_sumas(tmp_path, escenario, capsys):
+    salida = tmp_path / "salida"
+    assert ana.main(argumentos(escenario, salida)) == 0
+    assert sorted(p.name for p in salida.iterdir()) == sorted([ana.NOMBRE_JSON, ana.NOMBRE_MD, ana.NOMBRE_SUMAS])
+    assert ana.NOMBRE_JSON in capsys.readouterr().out
