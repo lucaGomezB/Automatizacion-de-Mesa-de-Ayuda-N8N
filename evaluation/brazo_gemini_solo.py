@@ -16,7 +16,10 @@ SDK `google-genai` en `>=2.33,<3`, precios declarados en `PRECIOS_USD_POR_MILLON
 
 from __future__ import annotations
 
+import argparse
+import asyncio
 import hashlib
+import importlib.metadata
 import json
 import os
 import pathlib
@@ -460,3 +463,251 @@ async def correr_brazo(
 
     resultado.llamadas_totales = cliente.contador.total
     return resultado
+
+
+# ---------------------------------------------------------------------------
+# Dry-run
+# ---------------------------------------------------------------------------
+def plan_dry_run(*, pendientes: int, max_reintentos: int, ya_hechas: int, tope: int) -> Dict[str, Any]:
+    """Llamadas minimas y maximas y costo estimado (supuesto de la tesis) sin llamar a la API."""
+    restantes = max(0, tope - ya_hechas)
+    teoricas = pendientes * (max_reintentos + 1)
+    maximas = min(teoricas, restantes)
+    minimas = pendientes
+    return {
+        "pendientes": pendientes,
+        "ya_hechas": ya_hechas,
+        "tope": tope,
+        "llamadas_minimas": minimas,
+        "llamadas_maximas": maximas,
+        "alcanza_el_tope": teoricas > restantes,
+        "costo_usd": {
+            escenario: {
+                "minimo": minimas * costo_llamada_supuesta_usd(escenario),
+                "maximo": maximas * costo_llamada_supuesta_usd(escenario),
+            }
+            for escenario in PRECIOS_USD_POR_MILLON
+        },
+    }
+
+
+def _lineas_dry_run(
+    plan: Dict[str, Any], por_bloque: Dict[str, int], registrados: int, version: Optional[str]
+) -> List[str]:
+    lineas = [
+        "Dry-run del brazo 'Gemini solo' (sin red, sin clave y sin escribir el cache)",
+        f"Casos totales: {sum(por_bloque.values())} "
+        f"({BLOQUE_DENTRO}: {por_bloque[BLOQUE_DENTRO]}, {BLOQUE_FUERA}: {por_bloque[BLOQUE_FUERA]})",
+        f"ya registrados: {registrados}",
+        f"pendientes: {plan['pendientes']}",
+        f"llamadas minimas: {plan['llamadas_minimas']} (una por caso)",
+        f"llamadas maximas: {plan['llamadas_maximas']} (con reintentos, acotadas por el tope de "
+        f"{plan['tope']}; ya hechas: {plan['ya_hechas']})",
+        f"Costo estimado con el supuesto de la tesis ({TOKENS_SUPUESTOS_ENTRADA} tokens de entrada y "
+        f"{TOKENS_SUPUESTOS_SALIDA} de salida por llamada; orientativo, no es una factura):",
+    ]
+    for escenario, precio in PRECIOS_USD_POR_MILLON.items():
+        costo = plan["costo_usd"][escenario]
+        lineas.append(
+            f"- {escenario} ({precio['entrada']}/{precio['salida']} USD por millon de tokens de "
+            f"entrada/salida): minimo USD {costo['minimo']:.4f}, maximo USD {costo['maximo']:.4f}"
+        )
+    if version is None:
+        lineas.append(f"google-genai: no instalada (la corrida real exige {SDK_RANGO_TEXTO})")
+    else:
+        try:
+            verificar_version_sdk(version)
+            lineas.append(f"google-genai instalada: {version} (dentro de {SDK_RANGO_TEXTO})")
+        except VersionSdkIncompatibleError:
+            lineas.append(
+                f"google-genai instalada: {version} (NO cumple {SDK_RANGO_TEXTO}: la corrida real abortaria)"
+            )
+    return lineas
+
+
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
+RUTA_CORPUS_DENTRO = _REPO_ROOT / "data" / "corpus_evaluacion_pseudonimizado.json"
+RUTA_CORPUS_FUERA = _REPO_ROOT / "evaluation" / "data" / "campana" / "corpus_independiente.json"
+RUTA_CACHE_DEFECTO = (
+    _REPO_ROOT / "evaluation" / "data" / "campana" / "brazo_gemini_solo" / "cache_brazo_gemini_solo.jsonl"
+)
+
+CODIGO_OK = 0
+CODIGO_GUARDA = 2
+CODIGO_TOPE = 3
+
+
+def _version_sdk_instalada() -> Optional[str]:
+    try:
+        return importlib.metadata.version("google-genai")
+    except importlib.metadata.PackageNotFoundError:
+        return None
+
+
+def cargar_casos(dentro: pathlib.Path, fuera: pathlib.Path) -> List[Tuple[str, Any]]:
+    """Casos `(bloque, CasoEvaluacion)`: primero los de dentro de la muestra, luego los de fuera."""
+    from evaluation.campana import cargar_corpus_solo_lectura
+
+    casos = [(BLOQUE_DENTRO, c) for c in cargar_corpus_solo_lectura(dentro)]
+    casos += [(BLOQUE_FUERA, c) for c in cargar_corpus_solo_lectura(fuera)]
+    ids = [c.id for _, c in casos]
+    repetidos = sorted({i for i in ids if ids.count(i) > 1})
+    if repetidos:
+        raise ValueError(f"caso_id repetidos entre los corpus: {repetidos[:5]}")
+    return casos
+
+
+def _construir_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--dry-run", action="store_true", help="cuenta llamadas y costo sin red ni clave")
+    parser.add_argument(
+        "--confirmar-costo", action="store_true", help="confirma la corrida PAGA (obligatorio para llamar)"
+    )
+    parser.add_argument(
+        "--tope-llamadas", type=int, default=TOPE_LLAMADAS_DURO,
+        help=f"tope duro de llamadas, solo puede bajarse (prerregistrado: {TOPE_LLAMADAS_DURO})",
+    )
+    parser.add_argument("--corpus-dentro", type=pathlib.Path, default=RUTA_CORPUS_DENTRO)
+    parser.add_argument("--corpus-fuera", type=pathlib.Path, default=RUTA_CORPUS_FUERA)
+    parser.add_argument("--cache", type=pathlib.Path, default=RUTA_CACHE_DEFECTO)
+    return parser
+
+
+def _commit_o_desconocido() -> str:
+    try:
+        from evaluation.run_evaluation import obtener_commit_corto
+
+        return obtener_commit_corto()
+    except Exception:  # noqa: BLE001 - la procedencia no debe impedir la corrida
+        return "desconocido"
+
+
+def _cliente_real() -> Any:
+    from app.classifiers.gemini_classifier import get_genai_client  # type: ignore
+
+    return get_genai_client()
+
+
+def main(
+    argv: Optional[Sequence[str]] = None,
+    *,
+    entorno: Optional[Dict[str, str]] = None,
+    version_sdk: Optional[Callable[[], Optional[str]]] = None,
+    fabrica_cliente: Optional[Callable[[], Any]] = None,
+    sleep: Optional[Callable[[float], Any]] = None,
+) -> int:
+    """
+    Punto de entrada. Devuelve 0 (completo), 2 (una guarda impidio la corrida) o 3 (tope alcanzado).
+
+    Los parametros por palabra clave son inyectables para las pruebas; en uso real se usan el
+    entorno del proceso, la version instalada de `google-genai` y el cliente real del backend.
+    """
+    args = _construir_parser().parse_args(argv)
+    entorno = os.environ if entorno is None else entorno
+    version = (version_sdk or _version_sdk_instalada)()
+
+    if not args.dry_run and not args.confirmar_costo:
+        print(
+            "ERROR: corrida paga sin confirmar. Revisa el costo con --dry-run y confirma "
+            "explicitamente con --confirmar-costo.",
+            file=sys.stderr,
+        )
+        return CODIGO_GUARDA
+    try:
+        tope = verificar_tope(args.tope_llamadas)
+        if not args.dry_run:
+            verificar_version_sdk(version or "")
+            clave = entorno.get("GEMINI_API_KEY")
+            if not clave or clave == ENTORNO_INERTE["GEMINI_API_KEY"]:
+                raise RuntimeError(
+                    "falta GEMINI_API_KEY en el entorno: exportala antes de la corrida paga "
+                    "(el ejecutor no la imprime ni la guarda)"
+                )
+        casos = cargar_casos(args.corpus_dentro, args.corpus_fuera)
+    except (TopeNoPermitidoError, VersionSdkIncompatibleError, RuntimeError, ValueError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return CODIGO_GUARDA
+
+    for nombre, valor in ENTORNO_INERTE.items():  # completa lo que falte; nunca pisa lo existente
+        os.environ.setdefault(nombre, valor)
+    asegurar_backend_en_path()
+    from app.config.settings import get_settings  # type: ignore
+
+    if not args.dry_run:
+        get_settings.cache_clear()  # que `Settings` tome la clave real del entorno
+    settings = get_settings()
+
+    _, hechos, descartados = leer_cache(args.cache)
+    ya_hechas = llamadas_acumuladas(hechos, descartados)
+    pendientes = [c for _, c in casos if c.id not in hechos]
+    por_bloque = {
+        BLOQUE_DENTRO: sum(1 for b, _ in casos if b == BLOQUE_DENTRO),
+        BLOQUE_FUERA: sum(1 for b, _ in casos if b == BLOQUE_FUERA),
+    }
+
+    if args.dry_run:
+        plan = plan_dry_run(
+            pendientes=len(pendientes), max_reintentos=settings.gemini_max_retries,
+            ya_hechas=ya_hechas, tope=tope,
+        )
+        print("\n".join(_lineas_dry_run(plan, por_bloque, len(hechos), version)))
+        return CODIGO_OK
+
+    from app.classifiers import gemini_classifier  # type: ignore
+    from app.classifiers.gemini_classifier import GeminiClassifier  # type: ignore
+    from evaluation.run_evaluation import _compute_corpus_hash
+
+    try:
+        prompt_sha = verificar_prompt_congelado(gemini_classifier._PROMPT_TEMPLATE, PROMPT_CONGELADO_PATH)
+    except PromptNoCongeladoError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return CODIGO_GUARDA
+
+    meta = {
+        "change": "c-215-brazo-gemini-solo-y-contraste-de-la-hipotesis-de-eficiencia",
+        "modo": "gemini_solo",
+        "corpus_hash_dentro": _compute_corpus_hash(args.corpus_dentro),
+        "corpus_hash_fuera": _compute_corpus_hash(args.corpus_fuera),
+        "modelo": settings.gemini_model,
+        "temperatura": settings.gemini_temperature,
+        "top_p": settings.gemini_top_p,
+        "max_output_tokens": settings.gemini_max_output_tokens,
+        "max_reintentos": settings.gemini_max_retries,
+        "prompt_sha256": prompt_sha,
+        "sdk_version": version,
+        "precios_usd_por_millon": PRECIOS_USD_POR_MILLON,
+        "tokens_supuestos": {"entrada": TOKENS_SUPUESTOS_ENTRADA, "salida": TOKENS_SUPUESTOS_SALIDA},
+        "tope_llamadas": tope,
+        "commit": _commit_o_desconocido(),
+        "generado_en": _ahora_utc(),
+    }
+    base = (fabrica_cliente or _cliente_real)()
+    cliente = ClienteInstrumentado(base, ContadorLlamadas(tope=tope))
+    clasificador = GeminiClassifier(client=cliente, sleep=sleep)  # type: ignore[arg-type]
+    print(
+        f"Corrida PAGA confirmada: {len(pendientes)} casos pendientes, tope {tope} llamadas "
+        f"(ya hechas: {ya_hechas})."
+    )
+    try:
+        resultado = asyncio.run(correr_brazo(casos, clasificador, cliente, args.cache, meta))
+    except CacheIncompatibleError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return CODIGO_GUARDA
+
+    print(
+        f"registrados: {resultado.registrados}, omitidos: {resultado.omitidos}, "
+        f"pendientes: {resultado.pendientes}, llamadas acumuladas: {resultado.llamadas_totales}"
+    )
+    if resultado.tope_alcanzado:
+        print(
+            f"TOPE de {tope} llamadas alcanzado: el cache conserva lo hecho; pendientes: "
+            f"{resultado.pendientes}. No se emitieron mas llamadas."
+        )
+        return CODIGO_TOPE
+    return CODIGO_OK
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

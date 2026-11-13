@@ -507,3 +507,192 @@ def test_latencia_total_del_caso_usa_el_reloj_inyectado(tmp_path):
     reg = lineas(ruta)[1]
     assert reg["latencia_ms"] == pytest.approx(750.0)
     assert len(reg["latencias_intento_ms"]) == 1
+
+
+# ---------------------------------------------------------------------------
+# 1.4 / 1.5 Dry-run, guardas y CLI
+# ---------------------------------------------------------------------------
+def escribir_corpus(ruta: pathlib.Path, prefijo: str, n: int) -> pathlib.Path:
+    casos = [
+        {
+            "id": f"{prefijo}{i:03d}",
+            "descripcion": f"descripcion del caso {prefijo}{i:03d}",
+            "canal_origen": "email",
+            "sector_asignado": SECTOR_OK,
+            "sectores_adicionales": [],
+        }
+        for i in range(1, n + 1)
+    ]
+    ruta.write_text(
+        json.dumps({"schema_version": 1, "metadata": {"descripcion": "t", "total_casos": n}, "casos": casos}),
+        encoding="utf-8",
+    )
+    return ruta
+
+
+@pytest.fixture
+def corpora(tmp_path):
+    dentro = escribir_corpus(tmp_path / "dentro.json", "R", 3)
+    fuera = escribir_corpus(tmp_path / "fuera.json", "I", 2)
+    return ["--corpus-dentro", str(dentro), "--corpus-fuera", str(fuera), "--cache", str(tmp_path / "cache.jsonl")]
+
+
+def ejecutar(argv, capsys, **kwargs):
+    codigo = bgs.main(argv, **kwargs)
+    salida = capsys.readouterr()
+    return codigo, salida.out + salida.err
+
+
+def test_plan_dry_run_cuenta_llamadas_minimas_maximas_y_costos():
+    plan = bgs.plan_dry_run(pendientes=303, max_reintentos=2, ya_hechas=0, tope=400)
+    assert plan["llamadas_minimas"] == 303
+    assert plan["llamadas_maximas"] == 400  # 909 teoricas, acotadas por el tope
+    assert plan["costo_usd"]["introductorio"]["minimo"] == pytest.approx(303 * 0.0007125)
+    assert plan["costo_usd"]["estandar"]["minimo"] == pytest.approx(303 * 0.001425)
+    assert plan["costo_usd"]["introductorio"]["maximo"] == pytest.approx(400 * 0.0007125)
+
+
+def test_plan_dry_run_descuenta_lo_ya_hecho_del_tope():
+    plan = bgs.plan_dry_run(pendientes=10, max_reintentos=2, ya_hechas=395, tope=400)
+    assert plan["llamadas_minimas"] == 10
+    assert plan["llamadas_maximas"] == 5
+    assert plan["alcanza_el_tope"] is True
+    assert bgs.plan_dry_run(pendientes=10, max_reintentos=2, ya_hechas=0, tope=400)["alcanza_el_tope"] is False
+
+
+def test_dry_run_imprime_el_plan_sin_llamar_ni_escribir_el_cache(corpora, tmp_path, capsys):
+    def prohibida():
+        raise AssertionError("el dry-run no puede construir el cliente de la API")
+
+    codigo, texto = ejecutar(
+        ["--dry-run", *corpora], capsys, fabrica_cliente=prohibida, entorno={}, version_sdk=lambda: "2.8.0"
+    )
+    assert codigo == 0
+    assert "pendientes: 5" in texto and "introductorio" in texto and "estandar" in texto
+    assert "llamadas minimas: 5" in texto
+    assert not (tmp_path / "cache.jsonl").exists()
+
+
+def test_dry_run_no_imprime_la_credencial_aunque_este_en_el_entorno(corpora, capsys):
+    codigo, texto = ejecutar(
+        ["--dry-run", *corpora],
+        capsys,
+        fabrica_cliente=lambda: None,
+        entorno={"GEMINI_API_KEY": CLAVE_FALSA},
+        version_sdk=lambda: "2.34.0",
+    )
+    assert codigo == 0 and CLAVE_FALSA not in texto
+
+
+def test_dry_run_informa_la_version_del_sdk_y_si_incumple_el_pin(corpora, capsys):
+    _, incumple = ejecutar(["--dry-run", *corpora], capsys, entorno={}, version_sdk=lambda: "2.8.0")
+    _, cumple = ejecutar(["--dry-run", *corpora], capsys, entorno={}, version_sdk=lambda: "2.34.0")
+    assert "2.8.0" in incumple and "NO cumple" in incumple
+    assert "2.34.0" in cumple and "NO cumple" not in cumple
+
+
+def test_dry_run_sobre_los_corpus_reales_cuenta_303_casos(tmp_path, capsys):
+    codigo, texto = ejecutar(
+        ["--dry-run", "--cache", str(tmp_path / "c.jsonl")], capsys, entorno={}, version_sdk=lambda: "2.34.0"
+    )
+    assert codigo == 0
+    assert "pendientes: 303" in texto and "dentro_muestra: 200" in texto and "fuera_muestra: 103" in texto
+
+
+def test_dry_run_descuenta_los_casos_ya_registrados(corpora, tmp_path, capsys):
+    cliente, clasif = armar(ClienteFalso())
+    correr(casos_de("R001", "R002"), cliente, clasif, tmp_path / "cache.jsonl")
+    _, texto = ejecutar(["--dry-run", *corpora], capsys, entorno={}, version_sdk=lambda: "2.34.0")
+    assert "pendientes: 3" in texto and "ya registrados: 2" in texto
+
+
+def test_sin_confirmar_costo_aborta_con_codigo_2_sin_llamar(corpora, tmp_path, capsys):
+    def prohibida():
+        raise AssertionError("sin confirmacion no se construye el cliente")
+
+    codigo, texto = ejecutar(
+        [*corpora], capsys, fabrica_cliente=prohibida, entorno={"GEMINI_API_KEY": CLAVE_FALSA},
+        version_sdk=lambda: "2.34.0",
+    )
+    assert codigo == 2 and "--confirmar-costo" in texto
+    assert not (tmp_path / "cache.jsonl").exists()
+
+
+def test_la_confirmacion_se_exige_antes_que_cualquier_otra_guarda(corpora, capsys):
+    codigo, texto = ejecutar([*corpora], capsys, entorno={}, version_sdk=lambda: "2.8.0")
+    assert codigo == 2 and "--confirmar-costo" in texto and "2.8.0" not in texto
+
+
+def test_sdk_fuera_del_pin_aborta_con_codigo_2_citando_version_y_rango(corpora, capsys):
+    codigo, texto = ejecutar(
+        ["--confirmar-costo", *corpora], capsys, entorno={"GEMINI_API_KEY": CLAVE_FALSA},
+        version_sdk=lambda: "2.8.0", fabrica_cliente=lambda: pytest.fail("no debe construir cliente"),
+    )
+    assert codigo == 2 and "2.8.0" in texto and ">=2.33,<3" in texto
+
+
+@pytest.mark.parametrize("entorno", [{}, {"GEMINI_API_KEY": ""}, {"GEMINI_API_KEY": bgs.ENTORNO_INERTE["GEMINI_API_KEY"]}])
+def test_sin_credencial_real_en_el_entorno_aborta_sin_imprimir_nada_secreto(corpora, capsys, entorno):
+    codigo, texto = ejecutar(
+        ["--confirmar-costo", *corpora], capsys, entorno=entorno, version_sdk=lambda: "2.34.0",
+        fabrica_cliente=lambda: pytest.fail("no debe construir cliente"),
+    )
+    assert codigo == 2 and "GEMINI_API_KEY" in texto
+
+
+def test_prompt_no_congelado_aborta_con_codigo_2(corpora, tmp_path, capsys, monkeypatch):
+    otro = tmp_path / "prompt_otro.txt"
+    otro.write_text("un prompt distinto", encoding="utf-8")
+    monkeypatch.setattr(bgs, "PROMPT_CONGELADO_PATH", otro)
+    codigo, texto = ejecutar(
+        ["--confirmar-costo", *corpora], capsys, entorno={"GEMINI_API_KEY": CLAVE_FALSA},
+        version_sdk=lambda: "2.34.0", fabrica_cliente=lambda: pytest.fail("no debe construir cliente"),
+    )
+    assert codigo == 2 and "prompt" in texto.lower()
+
+
+def test_tope_superior_al_prerregistrado_aborta_antes_de_llamar(corpora, capsys):
+    codigo, texto = ejecutar(
+        ["--confirmar-costo", "--tope-llamadas", "500", *corpora], capsys,
+        entorno={"GEMINI_API_KEY": CLAVE_FALSA}, version_sdk=lambda: "2.34.0",
+        fabrica_cliente=lambda: pytest.fail("no debe construir cliente"),
+    )
+    assert codigo == 2 and "400" in texto
+
+
+def test_corrida_completa_con_cliente_simulado_escribe_el_cache_y_no_imprime_la_clave(corpora, tmp_path, capsys):
+    base = ClienteFalso()
+    codigo, texto = ejecutar(
+        ["--confirmar-costo", *corpora], capsys, entorno={"GEMINI_API_KEY": CLAVE_FALSA},
+        version_sdk=lambda: "2.34.0", fabrica_cliente=lambda: base, sleep=sin_espera,
+    )
+    assert codigo == 0 and CLAVE_FALSA not in texto
+    registros = lineas(tmp_path / "cache.jsonl")
+    assert [r["tipo"] for r in registros] == ["meta"] + ["caso"] * 5
+    assert {r["bloque"] for r in registros[1:]} == {bgs.BLOQUE_DENTRO, bgs.BLOQUE_FUERA}
+    meta = registros[0]
+    assert meta["sdk_version"] == "2.34.0" and meta["modelo"] == "gemini-3.6-flash"
+    assert meta["tope_llamadas"] == 400 and CLAVE_FALSA not in json.dumps(meta)
+    assert len(base.llamadas) == 5
+
+
+def test_corrida_que_alcanza_el_tope_sale_con_codigo_3_y_conserva_el_cache(corpora, tmp_path, capsys):
+    base = ClienteFalso()
+    codigo, texto = ejecutar(
+        ["--confirmar-costo", "--tope-llamadas", "2", *corpora], capsys,
+        entorno={"GEMINI_API_KEY": CLAVE_FALSA}, version_sdk=lambda: "2.34.0",
+        fabrica_cliente=lambda: base, sleep=sin_espera,
+    )
+    assert codigo == 3 and "pendientes: 3" in texto
+    assert len([r for r in lineas(tmp_path / "cache.jsonl") if r["tipo"] == "caso"]) == 2
+
+
+def test_la_clave_no_se_filtra_en_un_error_del_proveedor(corpora, tmp_path, capsys):
+    base = ClienteFalso(guion=[RuntimeError(f"fallo con {CLAVE_FALSA}")] * 5)
+    codigo, texto = ejecutar(
+        ["--confirmar-costo", *corpora], capsys, entorno={"GEMINI_API_KEY": CLAVE_FALSA},
+        version_sdk=lambda: "2.34.0", fabrica_cliente=lambda: base, sleep=sin_espera,
+    )
+    assert codigo == 0
+    assert CLAVE_FALSA not in texto
+    assert CLAVE_FALSA not in (tmp_path / "cache.jsonl").read_text(encoding="utf-8")
