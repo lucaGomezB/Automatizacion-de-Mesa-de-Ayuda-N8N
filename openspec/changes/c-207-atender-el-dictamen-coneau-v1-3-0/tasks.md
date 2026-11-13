@@ -11,7 +11,7 @@ salvo indicación expresa del usuario. Strict TDD: prueba primero, en rojo, ante
 ## 0. Preparación
 
 - [x] 0.1 Confirmar el estado: rama `change/c-207-atender-el-dictamen-coneau-v1-3-0` (apilada sobre c-205), `openspec validate c-207-atender-el-dictamen-coneau-v1-3-0 --strict` pasa y el dictamen no versionado `auditorias/Dictamen_Tesis_v10_v1.3.0_CONEAU_2026-11-13.md` sigue intacto. Verificación: los comandos sin error.
-- [ ] 0.2 Red de seguridad: correr `cd evaluation; python -m pytest -q` y `cd evaluation/data/campana/analisis; python -m pytest test_analisis_fuera_de_muestra_c205.py -q`; registrar el número de pruebas en verde. Verificación: todo en verde; si algo falla, detenerse y reportarlo como falla previa. (Registro: `evaluation` 1173 pasan y 24 fallan antes de tocar nada, por `Settings` sin variables de entorno en `tests/test_sensibilidad_ajustes.py` y `tests/test_sensibilidad_corpus.py`; el de c-205, 8 en verde. Falla previa reportada a los autores; sin corregir.)
+- [x] 0.2 Red de seguridad: correr `cd evaluation; python -m pytest -q` y `cd evaluation/data/campana/analisis; python -m pytest test_analisis_fuera_de_muestra_c205.py -q`; registrar el número de pruebas en verde. Verificación: todo en verde; si algo falla, detenerse y reportarlo como falla previa. (Registro: `evaluation` 1173 pasan y 24 fallan antes de tocar nada, por `Settings` sin variables de entorno en `tests/test_sensibilidad_ajustes.py` y `tests/test_sensibilidad_corpus.py`; el de c-205, 8 en verde. Falla previa reportada a los autores. RESUELTA el 2026-11-13: se agregó `DIRECTORY_BLIND_INDEX_KEY` (dummy de CI) a `ENTORNO_OFFLINE` en `evaluation/sensibilidad_ajustes.py`; `evaluation` pasa a 1297 en verde.)
 
 ## 1. Script de análisis c-207 (TDD; `A/analisis_dictamen_c207.py`)
 
@@ -55,5 +55,5 @@ salvo indicación expresa del usuario. Strict TDD: prueba primero, en rojo, ante
 
 ## 6. Validación
 
-- [ ] 6.1 Correr `cd evaluation/data/campana/analisis; python -m pytest test_analisis_dictamen_c207.py test_analisis_fuera_de_muestra_c205.py -q` y `cd evaluation; python -m pytest -q`. Verificación: exit 0 y el mismo número de pruebas previas en verde que en 0.2.
+- [x] 6.1 Correr `cd evaluation/data/campana/analisis; python -m pytest test_analisis_dictamen_c207.py test_analisis_fuera_de_muestra_c205.py -q` y `cd evaluation; python -m pytest -q`. Verificación: exit 0 y el mismo número de pruebas previas en verde que en 0.2. — COMPLETADO 2026-11-13: 28 pasan en el análisis y 1297 pasan en `evaluation` (exit 0), sin fallas.
 - [x] 6.2 Correr `openspec validate c-207-atender-el-dictamen-coneau-v1-3-0 --strict --no-interactive`. Verificación: `is valid`.
