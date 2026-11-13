@@ -41,21 +41,30 @@ metadatos del caché existente no coinciden con los de la corrida actual.
 
 ### Requirement: GSOLO-003 — Tope duro de llamadas
 
-El ejecutor SHALL contar como llamada cada intento a la API, reintentos incluidos, de forma
-acumulada entre reanudaciones, y MUST NOT emitir una llamada que superaría el tope. El tope por
-defecto SHALL ser 400 y MUST NOT poder aumentarse por línea de comandos. Al alcanzarlo SHALL
-conservar lo hecho, informar los casos pendientes y terminar con un código de salida distinto de
-cero específico.
+El ejecutor SHALL contar cada intento a la API, reintentos incluidos, de forma acumulada entre
+reanudaciones, y distinguir los intentos que obtuvieron respuesta del modelo de los que fallaron
+antes de obtenerla (fallo técnico: indisponibilidad o transporte, sin tokens). El tope de 400 SHALL
+aplicarse a las llamadas con respuesta del modelo; los intentos sin respuesta SHALL contarse e
+informarse aparte y no consumir ese tope. Un cinturón de seguridad SHALL acotar los intentos
+totales (con o sin respuesta) en 600. El ejecutor MUST NOT emitir una llamada que superaría
+cualquiera de los dos topes, y ninguno SHALL poder aumentarse por línea de comandos. Al alcanzar
+uno SHALL conservar lo hecho, informar los casos pendientes y terminar con un código de salida
+distinto de cero específico.
 
 #### Scenario: Tope alcanzado
 
-- **WHEN** el contador acumulado alcanza el tope con casos pendientes
+- **WHEN** el contador acumulado de llamadas con respuesta (400) o de intentos totales (600) alcanza su tope con casos pendientes
 - **THEN** el cliente instrumentado no emite más llamadas, el caché conserva los casos terminados y el ejecutor sale con código 3
 
 #### Scenario: Tope superior al prerregistrado
 
-- **WHEN** se pide un tope mayor que 400
+- **WHEN** se pide un tope de respuestas mayor que 400 o un tope de intentos mayor que 600
 - **THEN** el ejecutor aborta antes de llamar con un mensaje que cita el tope prerregistrado
+
+#### Scenario: Intento sin respuesta del modelo
+
+- **WHEN** un intento falla por indisponibilidad o transporte y no produce tokens
+- **THEN** se cuenta como intento, se informa como intento sin respuesta y no consume el tope de 400 respuestas
 
 ### Requirement: GSOLO-004 — Guardas de costo, entorno y credencial
 

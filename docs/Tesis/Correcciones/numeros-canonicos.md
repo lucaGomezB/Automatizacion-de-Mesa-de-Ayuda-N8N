@@ -1521,6 +1521,106 @@ secundarios (predicciones de un brazo Gemini solo, un change futuro no propuesto
 arbitrado de c-206, aún inexistente) quedan `no ejecutado`. La prosa de la tesis (secciones 4, 7,
 8, 9 y 10) y la recompilación del PDF están pendientes (tareas 5.2 y 5.3 de c-214).
 
+### 3.25 Brazo «Gemini solo» y contraste de la hipótesis de eficiencia (c-215)
+
+Contraste pareado del híbrido congelado (H) frente a un brazo que clasifica cada caso solo con Gemini
+(L, sin etapa determinística), que contrasta la hipótesis subsidiaria de eficiencia. **Aditivo**: no
+modifica ningún valor ni estado `vigente` de las Secciones 3.1 a 3.24 ni el clasificador de producción.
+Las frases de las Secciones 3.23 y 3.24 que dicen que la hipótesis de eficiencia seguía sin contrastarse
+describen el estado anterior a c-215 y quedan superadas por esta sección. Fuente única de las cifras:
+`evaluation/data/campana/analisis/analisis_brazo_gemini_solo_c215.json` (y su vista `.md`), producida
+sin red ni Gemini a partir del caché versionado
+`evaluation/data/campana/brazo_gemini_solo/cache_brazo_gemini_solo.jsonl` (SHA-256
+`3bf290168bda5e8ddb0536e8a1470054213692ef598227289198dec340cdcd31`, blob).
+
+Comando del análisis (desde la raíz del repositorio; solo lectura, sin red ni Gemini):
+
+```bash
+python3 evaluation/data/campana/analisis/analisis_brazo_gemini_solo_c215.py
+```
+
+La corrida paga del brazo se hizo con `python -m evaluation.brazo_gemini_solo --confirmar-costo` y,
+tras la desviación declarada abajo, con `--reintentar-fallos-tecnicos`.
+
+SHA-256 de las salidas versionadas (blob con fin de línea LF):
+`analisis_brazo_gemini_solo_c215.json`
+`75f6983875f85e55f3aea1f1e496b96f4fcdd9bc3c121b04dfe6e5458dff47bc`;
+`analisis_brazo_gemini_solo_c215.md`
+`77cdaaf76e1af00b733cda15a2ff90c05de9134b51e65e97d618b10ec7fc61a5`.
+
+**Procedencia de la corrida** (`procedencia`): modelo `gemini-3.6-flash`, temperatura `0,3`, `top_p`
+`0,9`, `google-genai` `2.34.0`, commit `f7b1582`, generada el `2026-11-13T16:55:34Z`; una sola corrida
+(más el reintento de fallos técnicos declarado); SHA-256 del prompt congelado
+`e2ad6f37ab9cd1e93076b59a4c2d8f85078e99b64502e3b7994440668e6955ed`. Precios declarados (USD por millón
+de tokens, entrada/salida): introductorio `0,75`/`3,75`; estándar `1,50`/`7,50`.
+
+**Prerregistro** (`prerregistro`; `openspec/changes/c-215-…/design.md`, D5 a D8, fijado en el commit de
+la propuesta, anterior a cualquier dato del brazo): bloque primario `fuera_muestra` (`103` casos con
+consenso de `E3`/`E4`); margen de no inferioridad `δ = 0,05` (cinco puntos porcentuales, una derivación
+equivocada más cada 20 incidentes, fijado por principio y no reajustado); ahorro material si el límite
+superior del IC95 de la razón de costo y de la razón de llamadas es menor que `0,90`; tope de fallos del
+brazo `5 %`; umbral de concordancia del control de deriva `0,90`; bootstrap percentil pareado de `10000`
+remuestreos con semilla `20261021`. Regla de tres vías sobre el bloque primario: «sostenida» si
+`Δ_inf > −δ` y el ahorro se cumple; «no sostenida» si `Δ_sup < −δ` o el ahorro no se cumple;
+«no concluyente» si la exactitud es indeterminada con el ahorro cumplido. Solo decide el bloque
+primario. Análisis **no ciego**: las exactitudes de H ya eran conocidas por los autores (amenaza a la
+validez declarada).
+
+**(a) Bloque primario (fuera de muestra, `103` casos con consenso `E3`/`E4`).**
+
+| Valor canónico | Procedencia (archivo y ruta JSON) | Estado |
+|---|---|---|
+| Exactitud estricta H `87/103 = 0,8447` (Wilson `[0,7625; 0,9021]`); L `90/103 = 0,8738` (`[0,7960; 0,9247]`). Exactitud laxa H `90/103 = 0,8738`; L `93/103 = 0,9029`. Macro-F1 H `0,7447`; L `0,7665` | `…c215.json` (`bloques.fuera_muestra.brazos`) | vigente (nuevo) |
+| Tabla 2×2 H frente a L: ambos aciertan `84`; solo H `3`; solo L `6`; ninguno `10` | idem (`bloques.fuera_muestra.contraste.tabla_2x2`) | vigente (nuevo) |
+| McNemar H frente a L: `p` exacta bilateral `0,5078` (criterio de `stats.py`: exacto); corregida por continuidad `0,5050` | idem (`…contraste.mcnemar`) | vigente (nuevo) |
+| Diferencia de exactitudes `H − L = (b − c)/n = −0,0291`; IC 95 % bootstrap percentil pareado `[−0,0874; 0,0291]` | idem (`…contraste.diferencia_exactitud`) | vigente (nuevo) |
+| Llamadas: L `103` (`1,000` por caso); H `34` (`0,3301` por caso); razón H/L `0,3301` `[0,2427; 0,4175]` | idem (`bloques.fuera_muestra.eficiencia.llamadas`) | vigente (nuevo) |
+| Tokens: L `80011` de entrada y `1929` de salida; H `26402` y `628`; casos con tokens supuestos `0` | idem (`…eficiencia.tokens`) | vigente (nuevo) |
+| Costo estimado (introductorio): L USD `0,0672`, H USD `0,0222`; (estándar): L USD `0,1345`, H USD `0,0443`. Razón de costo H/L `0,3295` `[0,2421; 0,4176]` (no depende del escenario) | idem (`…eficiencia.costo_usd`, `…razon_costo`) | vigente (nuevo) |
+| Latencia media por caso del lado del cliente: L `1076,3` ms; H `357,3` ms (imputada; cota inferior); diferencia `719,0` ms `[605,6; 838,9]`. No entra en la regla de decisión | idem (`…eficiencia.latencia_ms`) | condicional (medida desde la máquina de los autores; no es tiempo de extremo a extremo) |
+| Fallos o errores del brazo L: `0` de `103` (tasa `0,000`; tope `0,05`) | idem (`…eficiencia.fallbacks_o_errores_l`, `…decision.tasa_fallos`) | vigente (nuevo) |
+| Componente de exactitud: **indeterminado** (límite inferior `−0,0874` por debajo de `−0,05`; no se puede afirmar no inferioridad). Componente de eficiencia: **cumplido** (límites superiores `0,4175` y `0,4176` menores que `0,90`). Veredicto prerregistrado: **no concluyente** | idem (`veredicto`, `bloques.fuera_muestra.decision`) | vigente (nuevo) |
+| Sensibilidad H\* (H con la predicción nueva de L donde escaló): `87/103`; `H* − L = −0,0291` `[−0,0874; 0,0291]`; McNemar `p = 0,5078`; misma regla: no concluyente | idem (`bloques.fuera_muestra.sensibilidad_hstar`) | condicional |
+
+**(b) Bloque secundario (dentro de la muestra, `200` casos, referencia original; «no es prueba
+limpia»: optimista para el híbrido, cuyas reglas se ajustaron con esos casos).** Solo informativo; no
+decide ni rescata la hipótesis.
+
+| Valor canónico | Procedencia (archivo y ruta JSON) | Estado |
+|---|---|---|
+| Exactitud estricta H `147/200 = 0,7350`; L `136/200 = 0,6800`. Exactitud laxa H `179/200 = 0,8950`; L `173/200 = 0,8650`. Macro-F1 H `0,5207`; L `0,4559` | `…c215.json` (`bloques.dentro_muestra.brazos`) | condicional (secundario) |
+| Tabla 2×2: ambos `124`; solo H `23`; solo L `12`; ninguno `41`. McNemar exacta `p = 0,0895` (corregida `0,0910`; criterio de `stats.py`: corregido) | idem (`…contraste`) | condicional (secundario) |
+| Diferencia `H − L = 0,0550`; IC 95 % `[0,0000; 0,1150]` | idem (`…contraste.diferencia_exactitud`) | condicional (secundario) |
+| Llamadas: L `200`; H `69`; razón `0,3450` `[0,2800; 0,4100]`. Razón de costo `0,3457` `[0,2806; 0,4120]` | idem (`…eficiencia`) | condicional (secundario) |
+| Regla aplicada (informativa): «sostenida». H\*: `148/200`; `H* − L = 0,0600` `[0,0100; 0,1150]`; McNemar `p = 0,0428`. No cambia el veredicto, que solo decide el bloque primario | idem (`…decision`, `…sensibilidad_hstar`) | condicional (secundario) |
+
+**(c) Control de deriva** (concordancia de la nueva corrida con la predicción cacheada de H en los
+casos que H ya escaló; umbral `0,90`; bandera `false`; excluidos por fallo técnico `0`): dentro de la
+muestra `64/69 = 0,9275` `[0,8413; 0,9687]`; fuera de la muestra `34/34 = 1,0000` `[0,8985; 1,0000]`;
+conjunto `98/103 = 0,9515` `[0,8914; 0,9791]`. Procedencia: `…c215.json` (`control_deriva`). El control
+no separa deriva del modelo de azar de muestreo a temperatura `0,3`. Estado: `condicional`.
+
+**(d) Desviación del prerregistro declarada (2026-11-13)** (`desviaciones`; `design.md`, «Desviaciones
+del prerregistro»). Los `112` primeros casos del bloque dentro de la muestra fallaron en la primera
+tanda sin llegar al modelo (fallo técnico: indisponibilidad o transporte, sin tokens; causa más
+probable, una clave mal cargada, no verificada) y se reintentaron; `0` siguen fallidos; `0` de los
+fallos técnicos estaban en el bloque primario. Contabilidad: `303` llamadas con respuesta del modelo
+(tope `400`), `112` intentos sin respuesta e `415` intentos totales (cinturón `600`). La decisión de
+reintentar se tomó **después** de ver los resultados del bloque primario y del secundario
+contaminado: es una amenaza a la validez que se declara. No cambia la regla de decisión, el margen,
+el umbral de ahorro, el tope de fallos ni el bloque primario, cuyo veredicto no depende del reintento
+(`bloque_primario_afectado = false`). Estado: `vigente` (nuevo).
+
+**(e) Lectura acotada.** Veredicto: **no concluyente**. El híbrido usó aproximadamente un tercio de las
+llamadas (`0,3301`) y del costo de inferencia (`0,3295`) que el brazo Gemini solo; no se detectó
+diferencia de exactitud (McNemar `p = 0,5078`), pero no se puede afirmar no inferioridad con el margen
+fijado, y la estimación puntual fuera de muestra favorece a Gemini solo (`90` frente a `87`). «No se
+detectó diferencia» no equivale a «equivalentes». Las reglas determinísticas aportan ahorro, no
+exactitud, en el bloque primario. Una sola corrida a temperatura `0,3`; `n = 103` con `9` pares
+discordantes. La hipótesis subsidiaria de eficiencia pasa de «no contrastada» a «contrastada con
+resultado no concluyente». Ningún objetivo específico cambia de estado por este change. La
+prosa está en las secciones 4, 7, 8, 9 y 10 de la tesis; la recompilación del PDF queda pendiente (tarea 5.3 de c-215).
+
 ## 4. Contingencia del gate de intervención humana
 
 Tabla reconstruida desde `evaluation/predicciones.json` con
