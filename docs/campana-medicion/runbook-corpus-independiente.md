@@ -83,7 +83,7 @@ Debe salir con exit code `0` (los códigos por regla están en la sección 6 del
 Reglas que se mantienen:
 
 - **Sujetos**: `E3` y `E4` son personas distintas entre sí, de los dos analistas originales, de los autores y de los operadores `O*` (`registro_sujetos.csv`). Si no se consiguen etiquetadores nuevos, se declara como limitación y no como etiquetado ciego (sección 9 del runbook de c-168).
-- **Referencia**: la del runbook de c-168 (sección 8): los casos donde `sector_etiquetado` de `E3` y de `E4` **coinciden**. Los discordantes no entran en la referencia y se informa cuántos son; el JSON final contiene los casos con referencia y el recorte se documenta.
+- **Referencia**: la del runbook de c-168 (sección 8): los casos donde `sector_etiquetado` de `E3` y de `E4` **coinciden**. Los discordantes no entran en la referencia y se informa cuántos son; el JSON final contiene los casos con referencia y el recorte se documenta. Esa exclusión se levanta arbitrando los discordantes con un tercer etiquetador (sección 11).
 - **Tabla primaria**: se versiona con su SHA-256 como en la sección 7 del runbook de c-168. Para el corpus independiente se usa un nombre propio (por ejemplo `evaluation/data/campana/doble_etiquetado_independiente.csv`) para no pisar la del corpus de ajuste.
 
 ## 5. `verificar_no_solape`: paso previo obligatorio
@@ -180,3 +180,7 @@ El corpus independiente queda aceptado solo si se cumple todo lo siguiente:
 4. El control de clasificador congelado (sección 6) está registrado y no hubo recalibración posterior.
 5. `predicciones_independiente.json` trae en su `cache_meta` `corpus_hash`, `corpus_count`, `classifier_version`, `generated_at`, `commit` y `pines`.
 6. Los artefactos de la v9 no cambiaron (sección 8, punto 4) y todos los archivos nuevos están versionados con su SHA-256.
+
+## 11. Arbitraje de los discordantes y refuerzo de clases chicas (c-206)
+
+La exclusión de los `47` discordantes (sección 4) sesga la referencia hacia los casos fáciles y deja a `Sistemas` y `Bases de Datos` con soporte chico. Su resolución NO es un consenso a posteriori de `E3` y `E4`: los arbitra un tercer etiquetador `E5` (código `P11`), y se suman casos de refuerzo para esas dos clases, para reportar el resultado sobre `150` casos. El protocolo, los instrumentos (hoja ciega, plantilla, regla de arbitraje de dos y de tres vías), el validador (`python -m evaluation.arbitraje validar`) y el criterio de aceptación están en `docs/campana-medicion/runbook-arbitraje-discordantes.md`. Este runbook y el de arbitraje comparten el clasificador congelado (sección 6) y el control de no solape (sección 5). El resultado sobre `103` queda como estimación con exclusión.

@@ -9,15 +9,15 @@ corpus de ajuste (`data/*`) ni `evaluation/doble_etiquetado.py`. En la prosa usa
 
 ## 0. Preparación y decisiones (bloqueante)
 
-- [ ] 0.1 Confirmar el estado: `git status` limpio, rama `change/c-206-arbitraje-de-los-discordantes-y-refuerzo-de-clases-chicas` y `openspec validate c-206-arbitraje-de-los-discordantes-y-refuerzo-de-clases-chicas --strict` pasa. Verificación: los tres comandos sin error.
+- [x] 0.1 Confirmar el estado: `git status` limpio, rama `change/c-206-arbitraje-de-los-discordantes-y-refuerzo-de-clases-chicas` y `openspec validate c-206-arbitraje-de-los-discordantes-y-refuerzo-de-clases-chicas --strict` pasa. Verificación: los tres comandos sin error.
 - [ ] 0.2 Decisión de los autores: identificar al tercer etiquetador `E5` (código `P11`) y al custodio de identidades; confirmar que es independiente de `E1`-`E4`, `A1`, `T1`-`T3` y `O1`/`O2`. Verificación: la decisión queda registrada en el runbook sin nombres.
 - [ ] 0.3 Decisión de los autores: volumen del refuerzo de `Sistemas` y `Bases de Datos`. Verificación: la cuota queda registrada en el runbook antes de reunir casos.
 
 ## 1. Protocolo e instrumentos
 
-- [ ] 1.1 Crear `R/runbook-arbitraje-discordantes.md` con: quién etiqueta (`E5`), qué ve (hoja ciega + plantilla `C1` + codebook congelado), la regla de arbitraje de dos y de tres vías, el conjunto laxo arbitrado, el refuerzo de clases, la aceptación y el versionado. Verificación: el runbook nombra `E5`, el cegado, la regla de tres vías, el refuerzo y el criterio de aceptación, cada paso con comando o artefacto.
+- [x] 1.1 Crear `R/runbook-arbitraje-discordantes.md` con: quién etiqueta (`E5`), qué ve (hoja ciega + plantilla `C1` + codebook congelado), la regla de arbitraje de dos y de tres vías, el conjunto laxo arbitrado, el refuerzo de clases, la aceptación y el versionado. Verificación: el runbook nombra `E5`, el cegado, la regla de tres vías, el refuerzo y el criterio de aceptación, cada paso con comando o artefacto.
 - [ ] 1.2 Preparar el instrumento de arbitraje: hoja ciega de los `47` casos (solo `id_caso` y descripción) y una copia vacía de `evaluation/data/plantilla_etiquetado.csv`. Verificación: `head -1` de la hoja = `id_caso,descripcion`; 48 líneas.
-- [ ] 1.3 Actualizar `R/runbook-corpus-independiente.md` para remitir al arbitraje de los discordantes y al refuerzo. Verificación: la sección de referencia cruzada figura con su enlace.
+- [x] 1.3 Actualizar `R/runbook-corpus-independiente.md` para remitir al arbitraje de los discordantes y al refuerzo. Verificación: la sección de referencia cruzada figura con su enlace.
 
 ## 2. Validador y constructor de la referencia arbitrada (TDD)
 
