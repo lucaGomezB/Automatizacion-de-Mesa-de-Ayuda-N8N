@@ -2774,8 +2774,6 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Governance**: LOW (medicion de solo lectura sobre artefactos ya versionados).
 - **Leer antes**: `openspec/changes/c-210-medicion-de-la-linea-de-base/{proposal,design,tasks}.md` y `evaluation/data/campana/analisis/README.md`.
 
----
-
 ## FASE 69 — Contraste pareado de la linea de base (c-213)
 
 > La integracion textual de la linea de base supervisada clasica (TF-IDF + regresion logistica, 200 casos de ajuste, 103 casos fuera de muestra con consenso) la hizo c-210 en `main`. c-213 agrega solo el contraste pareado que faltaba. Responde al criterio 4 del dictamen CONEAU sobre `v1.3.0`. Aditivo: ningun numero canonico cambia.
@@ -2788,6 +2786,22 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Dependencias**: c-209 y c-210 (PR 101, integrados). c-206 (arbitraje) es un seguimiento, no un requisito. No toca `App/`, `n8n/`, los corpus, `evaluation/linea_de_base.py`, ni los artefactos de c-205 y c-210.
 - **Governance**: MEDIUM (prosa de la tesis evaluada por el tribunal, con checkpoints); LOW para el script de solo lectura.
 - **Leer antes**: `openspec/changes/c-213-integrar-la-linea-de-base-en-la-tesis/{proposal,design,tasks}.md`, `docs/Tesis/Correcciones/numeros-canonicos.md` (secciones 3.22 y 3.23) y `evaluation/data/campana/analisis/README.md`.
+
+---
+
+
+## FASE 70 — Calibracion y punto de operacion del gate de confianza (c-214)
+
+> Atiende el reparo del dictamen CONEAU v1.3.0 sobre la revision humana inoperante (criterio 5): mide la calibracion y la discriminacion de la confianza por etapa dentro y fuera de la muestra, barre los umbrales con una regla prerregistrada (seleccion en los `200`, evaluacion en los `103`) y evalua senales alternativas de derivacion, sin tocar la configuracion productiva.
+
+### [C-214] `calibracion-y-punto-de-operacion-del-gate-de-confianza` — EN APLICACION (2026-11-13, MEDIUM)
+
+- **Estado**: aplicadas las tareas 0 a 4, 5.1, 5.2 (prosa de las secciones 4, 7, 8, 9 y 10, con `tab:calibracion-gate`) y 6.1 a 6.3 en la rama `change/c-214-calibracion-y-punto-de-operacion-del-gate-de-confianza`; pendiente la recompilacion del PDF (5.3); sin archivar.
+- **Scope**: `evaluation/calibracion_gate.py` (ECE, Brier, sobreconfianza, AUROC, IC bootstrap, barrido, regla de seleccion, isotonica, recomputo de las senales de las reglas) con pruebas TDD; `analisis_calibracion_gate_c214.py` con sus salidas `.json`/`.md` y `senales_reglas_c214.csv` (SHA-256 registrados).
+- **Hallazgo**: la confianza de Gemini es degenerada (4 o 5 valores, siempre `>= 0,85` salvo un caso fuera de la muestra) y sobreconfiada (ECE `0,1868` dentro de la muestra, AUROC `0,5168`); ningun umbral alcanza el piso `0,85` dentro de la muestra, de modo que la confianza autodeclarada no sostiene un punto de operacion; las senales S1 y S2 son degeneradas porque las reglas no predicen en ningun caso escalado.
+- **Dependencias**: c-205 y c-207 (referencias y caches); independiente de c-208, c-209 y c-210. No toca `App/`, `openspec/config.yaml`, el prompt ni `data/*`; edita los `.tex` de las secciones 4, 7, 8, 9 y 10 (5.2).
+- **Governance**: MEDIUM (analisis); cualquier cambio de umbral productivo seria HIGH y queda fuera de alcance.
+- **Leer antes**: `openspec/changes/c-214-calibracion-y-punto-de-operacion-del-gate-de-confianza/{proposal,design,tasks}.md` y `evaluation/data/campana/analisis/README.md`.
 
 ---
 

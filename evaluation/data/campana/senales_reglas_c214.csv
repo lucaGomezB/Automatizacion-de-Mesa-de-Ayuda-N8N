@@ -1,0 +1,304 @@
+caso_id,corpus,score_correctitud,sector_reglas,acuerdo_con_gemini
+R001,dentro_muestra,0.0,,sin_prediccion_reglas
+R002,dentro_muestra,0.0,,sin_prediccion_reglas
+R003,dentro_muestra,0.8500000000000001,Soporte Tecnico Software,no_aplica
+R004,dentro_muestra,0.5166666666666666,Soporte Tecnico Hardware,no_aplica
+R005,dentro_muestra,0.8500000000000001,Soporte Tecnico Software,no_aplica
+R006,dentro_muestra,0.8500000000000001,Soporte Tecnico Hardware,no_aplica
+R007,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R008,dentro_muestra,0.8,Bases de Datos,no_aplica
+R009,dentro_muestra,0.8500000000000001,Bases de Datos,no_aplica
+R010,dentro_muestra,0.0,,sin_prediccion_reglas
+R011,dentro_muestra,0.8,Soporte Tecnico Software,no_aplica
+R012,dentro_muestra,0.0,,sin_prediccion_reglas
+R013,dentro_muestra,0.8799999999999999,Soporte Tecnico Software,no_aplica
+R014,dentro_muestra,0.0,,sin_prediccion_reglas
+R015,dentro_muestra,0.0,,sin_prediccion_reglas
+R016,dentro_muestra,0.0,,sin_prediccion_reglas
+R017,dentro_muestra,0.8799999999999999,Soporte Tecnico Hardware,no_aplica
+R018,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R019,dentro_muestra,0.8500000000000001,Soporte Tecnico Hardware,no_aplica
+R020,dentro_muestra,0.8,Sistemas,no_aplica
+R021,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R022,dentro_muestra,0.0,,sin_prediccion_reglas
+R023,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R024,dentro_muestra,0.0,,sin_prediccion_reglas
+R025,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R026,dentro_muestra,0.0,,sin_prediccion_reglas
+R027,dentro_muestra,0.0,,sin_prediccion_reglas
+R028,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R029,dentro_muestra,0.0,,sin_prediccion_reglas
+R030,dentro_muestra,0.0,,sin_prediccion_reglas
+R031,dentro_muestra,0.8799999999999999,Soporte Tecnico Software,no_aplica
+R032,dentro_muestra,0.8500000000000001,Soporte Tecnico Hardware,no_aplica
+R033,dentro_muestra,0.0,,sin_prediccion_reglas
+R034,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R035,dentro_muestra,0.0,,sin_prediccion_reglas
+R036,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R037,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R038,dentro_muestra,0.0,,sin_prediccion_reglas
+R039,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R040,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R041,dentro_muestra,0.8799999999999999,Bases de Datos,no_aplica
+R042,dentro_muestra,0.0,,sin_prediccion_reglas
+R043,dentro_muestra,0.0,,sin_prediccion_reglas
+R044,dentro_muestra,0.0,,sin_prediccion_reglas
+R045,dentro_muestra,0.8,Seguridad Informatica,no_aplica
+R046,dentro_muestra,0.8,Seguridad Informatica,no_aplica
+R047,dentro_muestra,0.0,,sin_prediccion_reglas
+R048,dentro_muestra,0.8,Seguridad Informatica,no_aplica
+R049,dentro_muestra,0.0,,sin_prediccion_reglas
+R050,dentro_muestra,0.8,Seguridad Informatica,no_aplica
+R051,dentro_muestra,0.5166666666666666,Seguridad Informatica,no_aplica
+R052,dentro_muestra,0.8799999999999999,Sistemas,no_aplica
+R053,dentro_muestra,0.8500000000000001,Sistemas,no_aplica
+R054,dentro_muestra,0.8,Sistemas,no_aplica
+R055,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R056,dentro_muestra,0.8,Sistemas,no_aplica
+R057,dentro_muestra,0.8799999999999999,Sistemas,no_aplica
+R058,dentro_muestra,0.0,,sin_prediccion_reglas
+R059,dentro_muestra,0.8500000000000001,Sistemas,no_aplica
+R060,dentro_muestra,0.5166666666666666,Seguridad Informatica,no_aplica
+R061,dentro_muestra,0.8500000000000001,Sistemas,no_aplica
+R062,dentro_muestra,0.0,,sin_prediccion_reglas
+R063,dentro_muestra,0.0,,sin_prediccion_reglas
+R064,dentro_muestra,0.8,Soporte Tecnico Software,no_aplica
+R065,dentro_muestra,0.8500000000000001,Soporte Tecnico Software,no_aplica
+R066,dentro_muestra,0.8500000000000001,Soporte Tecnico Software,no_aplica
+R067,dentro_muestra,0.0,,sin_prediccion_reglas
+R068,dentro_muestra,0.8,Bases de Datos,no_aplica
+R069,dentro_muestra,0.0,,sin_prediccion_reglas
+R070,dentro_muestra,0.8500000000000001,Soporte Tecnico Software,no_aplica
+R071,dentro_muestra,0.8,Soporte Tecnico Software,no_aplica
+R072,dentro_muestra,0.0,,sin_prediccion_reglas
+R073,dentro_muestra,0.8,Soporte Tecnico Software,no_aplica
+R074,dentro_muestra,0.0,,sin_prediccion_reglas
+R075,dentro_muestra,0.0,,sin_prediccion_reglas
+R076,dentro_muestra,0.0,,sin_prediccion_reglas
+R077,dentro_muestra,0.8,Soporte Tecnico Software,no_aplica
+R078,dentro_muestra,0.0,,sin_prediccion_reglas
+R079,dentro_muestra,0.8,Soporte Tecnico Software,no_aplica
+R080,dentro_muestra,0.0,,sin_prediccion_reglas
+R081,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R082,dentro_muestra,0.8,Soporte Tecnico Software,no_aplica
+R083,dentro_muestra,0.8,Soporte Tecnico Software,no_aplica
+R084,dentro_muestra,0.8500000000000001,Soporte Tecnico Hardware,no_aplica
+R085,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R086,dentro_muestra,0.8500000000000001,Soporte Tecnico Hardware,no_aplica
+R087,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R088,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R089,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R090,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R091,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R092,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R093,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R094,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R095,dentro_muestra,0.8500000000000001,Soporte Tecnico Hardware,no_aplica
+R096,dentro_muestra,0.8500000000000001,Soporte Tecnico Hardware,no_aplica
+R097,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R098,dentro_muestra,0.8,Soporte Tecnico Software,no_aplica
+R099,dentro_muestra,0.8999999999999999,Soporte Tecnico Hardware,no_aplica
+R100,dentro_muestra,0.8500000000000001,Soporte Tecnico Hardware,no_aplica
+R101,dentro_muestra,0.8500000000000001,Soporte Tecnico Hardware,no_aplica
+R102,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R103,dentro_muestra,0.0,,sin_prediccion_reglas
+R104,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R105,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R106,dentro_muestra,0.8500000000000001,Soporte Tecnico Hardware,no_aplica
+R107,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R108,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R109,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R110,dentro_muestra,0.0,,sin_prediccion_reglas
+R111,dentro_muestra,0.0,,sin_prediccion_reglas
+R112,dentro_muestra,0.0,,sin_prediccion_reglas
+R113,dentro_muestra,0.5166666666666666,Soporte Tecnico Hardware,no_aplica
+R114,dentro_muestra,0.0,,sin_prediccion_reglas
+R115,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R116,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R117,dentro_muestra,0.0,,sin_prediccion_reglas
+R118,dentro_muestra,0.0,,sin_prediccion_reglas
+R119,dentro_muestra,0.8,Seguridad Informatica,no_aplica
+R120,dentro_muestra,0.0,,sin_prediccion_reglas
+R121,dentro_muestra,0.8,Soporte Tecnico Software,no_aplica
+R122,dentro_muestra,0.5166666666666666,Soporte Tecnico Software,no_aplica
+R123,dentro_muestra,0.0,,sin_prediccion_reglas
+R124,dentro_muestra,0.0,,sin_prediccion_reglas
+R125,dentro_muestra,0.8,Seguridad Informatica,no_aplica
+R126,dentro_muestra,0.5166666666666666,Seguridad Informatica,no_aplica
+R127,dentro_muestra,0.8,Seguridad Informatica,no_aplica
+R128,dentro_muestra,0.8500000000000001,Sistemas,no_aplica
+R129,dentro_muestra,0.8,Seguridad Informatica,no_aplica
+R130,dentro_muestra,0.8500000000000001,Seguridad Informatica,no_aplica
+R131,dentro_muestra,0.8,Soporte Tecnico Software,no_aplica
+R132,dentro_muestra,0.0,,sin_prediccion_reglas
+R133,dentro_muestra,0.8,Seguridad Informatica,no_aplica
+R134,dentro_muestra,0.8,Seguridad Informatica,no_aplica
+R135,dentro_muestra,0.8,Seguridad Informatica,no_aplica
+R136,dentro_muestra,0.5166666666666666,Sistemas,no_aplica
+R137,dentro_muestra,0.8,Seguridad Informatica,no_aplica
+R138,dentro_muestra,0.8,Sistemas,no_aplica
+R139,dentro_muestra,0.0,,sin_prediccion_reglas
+R140,dentro_muestra,0.8,Sistemas,no_aplica
+R141,dentro_muestra,0.8,Sistemas,no_aplica
+R142,dentro_muestra,0.0,,sin_prediccion_reglas
+R143,dentro_muestra,0.8500000000000001,Soporte Tecnico Software,no_aplica
+R144,dentro_muestra,0.8500000000000001,Soporte Tecnico Software,no_aplica
+R145,dentro_muestra,0.8500000000000001,Sistemas,no_aplica
+R146,dentro_muestra,0.0,,sin_prediccion_reglas
+R147,dentro_muestra,0.0,,sin_prediccion_reglas
+R148,dentro_muestra,0.8,Seguridad Informatica,no_aplica
+R149,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R150,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R151,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R152,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R153,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R154,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R155,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R156,dentro_muestra,0.0,,sin_prediccion_reglas
+R157,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R158,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R159,dentro_muestra,0.0,,sin_prediccion_reglas
+R160,dentro_muestra,0.8500000000000001,Soporte Tecnico Hardware,no_aplica
+R161,dentro_muestra,0.8,Soporte Tecnico Software,no_aplica
+R162,dentro_muestra,0.0,,sin_prediccion_reglas
+R163,dentro_muestra,0.0,,sin_prediccion_reglas
+R164,dentro_muestra,0.0,,sin_prediccion_reglas
+R165,dentro_muestra,0.0,,sin_prediccion_reglas
+R166,dentro_muestra,0.0,,sin_prediccion_reglas
+R167,dentro_muestra,0.0,,sin_prediccion_reglas
+R168,dentro_muestra,0.0,,sin_prediccion_reglas
+R169,dentro_muestra,0.0,,sin_prediccion_reglas
+R170,dentro_muestra,0.8,Soporte Tecnico Software,no_aplica
+R171,dentro_muestra,0.0,,sin_prediccion_reglas
+R172,dentro_muestra,0.0,,sin_prediccion_reglas
+R173,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R174,dentro_muestra,0.8,Soporte Tecnico Software,no_aplica
+R175,dentro_muestra,0.8,Sistemas,no_aplica
+R176,dentro_muestra,0.0,,sin_prediccion_reglas
+R177,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R178,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R179,dentro_muestra,0.0,,sin_prediccion_reglas
+R180,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R181,dentro_muestra,0.5166666666666666,Soporte Tecnico Software,no_aplica
+R182,dentro_muestra,0.0,,sin_prediccion_reglas
+R183,dentro_muestra,0.0,,sin_prediccion_reglas
+R184,dentro_muestra,0.8,Soporte Tecnico Software,no_aplica
+R185,dentro_muestra,0.0,,sin_prediccion_reglas
+R186,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R187,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R188,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R189,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R190,dentro_muestra,0.0,,sin_prediccion_reglas
+R191,dentro_muestra,0.8,Soporte Tecnico Software,no_aplica
+R192,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R193,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R194,dentro_muestra,0.0,,sin_prediccion_reglas
+R195,dentro_muestra,0.0,,sin_prediccion_reglas
+R196,dentro_muestra,0.0,,sin_prediccion_reglas
+R197,dentro_muestra,0.8,Soporte Tecnico Software,no_aplica
+R198,dentro_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+R199,dentro_muestra,0.0,,sin_prediccion_reglas
+R200,dentro_muestra,0.8500000000000001,Soporte Tecnico Hardware,no_aplica
+I001,fuera_muestra,0.8500000000000001,Seguridad Informatica,no_aplica
+I002,fuera_muestra,0.8,Seguridad Informatica,no_aplica
+I003,fuera_muestra,0.0,,sin_prediccion_reglas
+I004,fuera_muestra,0.8,Sistemas,no_aplica
+I005,fuera_muestra,0.7951219512195122,Bases de Datos,no_aplica
+I006,fuera_muestra,0.8,Seguridad Informatica,no_aplica
+I007,fuera_muestra,0.0,,sin_prediccion_reglas
+I009,fuera_muestra,0.8,Bases de Datos,no_aplica
+I010,fuera_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+I011,fuera_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+I012,fuera_muestra,0.7970443349753694,Bases de Datos,no_aplica
+I013,fuera_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+I014,fuera_muestra,0.8799999999999999,Soporte Tecnico Hardware,no_aplica
+I016,fuera_muestra,0.8500000000000001,Soporte Tecnico Hardware,no_aplica
+I018,fuera_muestra,0.8500000000000001,Soporte Tecnico Software,no_aplica
+I019,fuera_muestra,0.8500000000000001,Soporte Tecnico Software,no_aplica
+I020,fuera_muestra,0.8,Soporte Tecnico Software,no_aplica
+I021,fuera_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+I022,fuera_muestra,0.0,,sin_prediccion_reglas
+I026,fuera_muestra,0.0,,sin_prediccion_reglas
+I027,fuera_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+I028,fuera_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+I029,fuera_muestra,0.8,Sistemas,no_aplica
+I030,fuera_muestra,0.8,Seguridad Informatica,no_aplica
+I031,fuera_muestra,0.5166666666666666,Soporte Tecnico Hardware,no_aplica
+I032,fuera_muestra,0.0,,sin_prediccion_reglas
+I038,fuera_muestra,0.8500000000000001,Soporte Tecnico Hardware,no_aplica
+I041,fuera_muestra,0.8799999999999999,Bases de Datos,no_aplica
+I043,fuera_muestra,0.0,,sin_prediccion_reglas
+I044,fuera_muestra,0.0,,sin_prediccion_reglas
+I046,fuera_muestra,0.0,,sin_prediccion_reglas
+I048,fuera_muestra,0.0,,sin_prediccion_reglas
+I049,fuera_muestra,0.8,Seguridad Informatica,no_aplica
+I050,fuera_muestra,0.0,,sin_prediccion_reglas
+I051,fuera_muestra,0.8500000000000001,Bases de Datos,no_aplica
+I052,fuera_muestra,0.8,Bases de Datos,no_aplica
+I053,fuera_muestra,0.0,,sin_prediccion_reglas
+I054,fuera_muestra,0.8500000000000001,Soporte Tecnico Hardware,no_aplica
+I055,fuera_muestra,0.0,,sin_prediccion_reglas
+I057,fuera_muestra,0.0,,sin_prediccion_reglas
+I059,fuera_muestra,0.0,,sin_prediccion_reglas
+I060,fuera_muestra,0.0,,sin_prediccion_reglas
+I061,fuera_muestra,0.8799999999999999,Soporte Tecnico Software,no_aplica
+I062,fuera_muestra,0.0,,sin_prediccion_reglas
+I067,fuera_muestra,0.0,,sin_prediccion_reglas
+I068,fuera_muestra,0.0,,sin_prediccion_reglas
+I071,fuera_muestra,0.8500000000000001,Bases de Datos,no_aplica
+I075,fuera_muestra,0.0,,sin_prediccion_reglas
+I076,fuera_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+I077,fuera_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+I078,fuera_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+I079,fuera_muestra,0.8500000000000001,Bases de Datos,no_aplica
+I081,fuera_muestra,0.8,Sistemas,no_aplica
+I083,fuera_muestra,0.7,Soporte Tecnico Hardware,no_aplica
+I084,fuera_muestra,0.0,,sin_prediccion_reglas
+I085,fuera_muestra,0.0,,sin_prediccion_reglas
+I088,fuera_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+I090,fuera_muestra,0.8500000000000001,Soporte Tecnico Software,no_aplica
+I091,fuera_muestra,0.0,,sin_prediccion_reglas
+I092,fuera_muestra,0.8799999999999999,Bases de Datos,no_aplica
+I093,fuera_muestra,0.8500000000000001,Bases de Datos,no_aplica
+I095,fuera_muestra,0.8500000000000001,Soporte Tecnico Hardware,no_aplica
+I096,fuera_muestra,0.8500000000000001,Soporte Tecnico Hardware,no_aplica
+I098,fuera_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+I099,fuera_muestra,0.0,,sin_prediccion_reglas
+I100,fuera_muestra,0.0,,sin_prediccion_reglas
+I101,fuera_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+I102,fuera_muestra,0.8799999999999999,Soporte Tecnico Software,no_aplica
+I103,fuera_muestra,0.0,,sin_prediccion_reglas
+I104,fuera_muestra,0.8,Bases de Datos,no_aplica
+I105,fuera_muestra,0.63,Soporte Tecnico Software,no_aplica
+I106,fuera_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+I107,fuera_muestra,0.0,,sin_prediccion_reglas
+I108,fuera_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+I109,fuera_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+I111,fuera_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+I114,fuera_muestra,0.5166666666666666,Bases de Datos,no_aplica
+I115,fuera_muestra,0.8500000000000001,Soporte Tecnico Hardware,no_aplica
+I116,fuera_muestra,0.8500000000000001,Soporte Tecnico Hardware,no_aplica
+I117,fuera_muestra,0.8500000000000001,Soporte Tecnico Hardware,no_aplica
+I118,fuera_muestra,0.8799999999999999,Soporte Tecnico Hardware,no_aplica
+I119,fuera_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+I120,fuera_muestra,0.5166666666666666,Soporte Tecnico Hardware,no_aplica
+I121,fuera_muestra,0.8,Soporte Tecnico Software,no_aplica
+I123,fuera_muestra,0.8,Sistemas,no_aplica
+I124,fuera_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+I128,fuera_muestra,0.8799999999999999,Bases de Datos,no_aplica
+I131,fuera_muestra,0.8,Seguridad Informatica,no_aplica
+I133,fuera_muestra,0.8,Seguridad Informatica,no_aplica
+I134,fuera_muestra,0.8,Soporte Tecnico Software,no_aplica
+I135,fuera_muestra,0.0,,sin_prediccion_reglas
+I136,fuera_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+I139,fuera_muestra,0.0,,sin_prediccion_reglas
+I140,fuera_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+I141,fuera_muestra,0.0,,sin_prediccion_reglas
+I142,fuera_muestra,0.0,,sin_prediccion_reglas
+I143,fuera_muestra,0.0,,sin_prediccion_reglas
+I144,fuera_muestra,0.8,Soporte Tecnico Software,no_aplica
+I146,fuera_muestra,0.8,Soporte Tecnico Software,no_aplica
+I147,fuera_muestra,0.0,,sin_prediccion_reglas
+I148,fuera_muestra,0.0,,sin_prediccion_reglas
+I149,fuera_muestra,0.8,Soporte Tecnico Hardware,no_aplica
+I150,fuera_muestra,0.0,,sin_prediccion_reglas

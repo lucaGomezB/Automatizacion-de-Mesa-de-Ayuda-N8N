@@ -327,3 +327,15 @@ La recomendación de esta sección se aplicó en c-170 (commit `8a72623`): el ga
 c-169 exige también `plantilla_etiquetado.csv` y `predicciones_in_sample.json`, con su
 SHA-256 coincidente, porque el análisis de c-167 no se puede correr end-to-end sin
 ellas.
+
+## Senales de las reglas recomputadas (c-214)
+
+`senales_reglas_c214.csv` guarda, para los 200 casos dentro de la muestra y los 103 fuera de
+ella, el `score_correctitud` y el sector que producen las reglas recomputados offline con
+`DeterministicClassifier` (sin red ni Gemini), y la categoria de acuerdo con Gemini en los casos
+escalados (`acuerdo`, `desacuerdo`, `sin_prediccion_reglas`, `no_aplica` para los
+cortocircuitados). El recomputo reproduce 131 de 131 y 69 de 69 cortocircuitados de las caches.
+Se regenera con
+`python evaluation/data/campana/analisis/analisis_calibracion_gate_c214.py --recomputar-senales`.
+
+- sha256: a7d4a703e2c5b70c3fc898a1c55c50fbad971255285b5e3630cf65f0c983c56a

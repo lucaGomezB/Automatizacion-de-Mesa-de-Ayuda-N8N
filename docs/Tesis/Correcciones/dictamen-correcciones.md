@@ -4994,3 +4994,43 @@ Es aditivo: ningún número canónico cambia.
 | C13/d | Criterio 4: cláusula en la discusión | c-213 | `08-discusion.tex:56` | `subsec:limitaciones-estudio` | `estadísticamente significativa en el contraste pareado` | cerrada |
 | C13/e | Criterio 4: cláusula en las conclusiones | c-213 | `09-conclusiones.tex:47` | `subsec:aportes-generalizacion` | `estadísticamente significativa en el contraste pareado` | cerrada |
 | Cifras | Memo de números canónicos: sección 3.23 | c-213 | `docs/Tesis/Correcciones/numeros-canonicos.md:1411` | `-` | `3.23 Contraste pareado del híbrido frente a la línea de base` | vigente (nuevo) |
+
+## Dictamen v10 / v1.3.0 (2026-11-13) - c-214 (calibracion y punto de operacion del gate de confianza)
+
+Atiende el criterio 5 del dictamen CONEAU del 13-11-2026 sobre `v1.3.0`
+(`auditorias/Dictamen_Tesis_v10_v1.3.0_CONEAU_2026-11-13.md`, no versionado): el umbral de confianza
+de 0,70 no derivó ningún caso a revisión humana. El change
+`c-214-calibracion-y-punto-de-operacion-del-gate-de-confianza` (análisis de solo lectura MEDIUM; prosa de
+tesis MEDIUM) midió la calibración y la discriminación de la confianza y la regla de selección del umbral,
+y esta sección registra la prosa (tarea 5.2). Es aditivo: ningún número canónico cambia.
+
+### Qué cambió
+
+- **Medición**: `evaluation/data/campana/analisis/analisis_calibracion_gate_c214.py` (memo, sección 3.24).
+  Resultado desfavorable: la confianza de Gemini es sobreconfiada y no discrimina dentro de la muestra
+  (AUROC `0,5168`); ningún umbral alcanza el piso prerregistrado; las señales alternativas son degeneradas;
+  la recalibración isotónica corrige el nivel y no el orden.
+- **Tesis**: el método (`04-marco-metodologico.tex`) define ECE, Brier, AUROC y la regla de selección, con la
+  declaración de análisis posterior y no ciego; `07-resultados.tex` agrega `tab:calibracion-gate` y el
+  barrido, las señales alternativas y el caso fuera de la muestra con confianza menor que 0,70;
+  `08-discusion.tex` y `09-conclusiones.tex` leen el resultado (el estado del objetivo 6 sigue
+  «Alcanzado parcialmente»); `10-recomendaciones.tex` pasa de proponer a informar que se midió y no alcanza.
+- **Lectura**: la derivación por confianza autodeclarada no se repara por recalibración en este corpus;
+  queda como trabajo futuro lo que exige cambiar el contrato o la configuración.
+
+### Pendientes
+
+- Recompilar `main.pdf` con Docker y verificar las cifras con `pdftotext` (tarea 5.3, del dueño).
+
+### Matriz de trazabilidad (verificada por `verificar_matriz_trazabilidad.py`)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| C14/a | Criterio 5: definición de ECE, Brier, AUROC y regla de selección | c-214 | `04-marco-metodologico.tex:85` | `subsec:metricas-instrumentos` | `Calibración y punto de operación del gate de confianza.` | cerrada |
+| C14/b | Criterio 5: resultados de calibración y punto de operación | c-214 | `07-resultados.tex:195` | `subsec:calibracion` | `Calibración, discriminación y punto de operación de la etapa Gemini` | cerrada |
+| C14/c | Criterio 5: tabla de calibración dentro y fuera de la muestra | c-214 | `07-resultados.tex:200` | `tab:calibracion-gate` | `label{tab:calibracion-gate}` | cerrada |
+| C14/d | Criterio 5: recalibración que no repara el orden | c-214 | `07-resultados.tex:221` | `subsec:calibracion` | `no se repara por recalibración` | cerrada |
+| C14/e | Criterio 5: lectura en la discusión | c-214 | `08-discusion.tex:40` | `sec:discusion` | `estuviera mal ubicado` | cerrada |
+| C14/f | Criterio 5: fila del objetivo 6 en las conclusiones | c-214 | `09-conclusiones.tex:28` | `tab:cumplimiento-objetivos` | `calibración y punto de operación medidos` | cerrada |
+| C14/g | Criterio 5: de propuesta a resultado en las recomendaciones | c-214 | `10-recomendaciones.tex:10` | `subsec:calibracion-gate` | `Lo que antes era una propuesta se midió` | cerrada |
+| Cifras | Memo de números canónicos: sección 3.24 | c-214 | `docs/Tesis/Correcciones/numeros-canonicos.md:1446` | `-` | `3.24 Calibración y punto de operación del gate de confianza (c-214)` | vigente (nuevo) |
