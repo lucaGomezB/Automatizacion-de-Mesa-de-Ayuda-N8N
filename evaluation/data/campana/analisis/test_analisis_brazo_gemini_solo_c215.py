@@ -534,3 +534,123 @@ def test_cli_ok_escribe_tres_archivos_e_imprime_las_sumas(tmp_path, escenario, c
     assert ana.main(argumentos(escenario, salida)) == 0
     assert sorted(p.name for p in salida.iterdir()) == sorted([ana.NOMBRE_JSON, ana.NOMBRE_MD, ana.NOMBRE_SUMAS])
     assert ana.NOMBRE_JSON in capsys.readouterr().out
+
+
+# ---------------------------------------------------------------------------
+# Desviacion declarada 2026-11-13: fallos tecnicos reintentados
+# ---------------------------------------------------------------------------
+def fallo_tecnico(caso_id, bloque, **extra):
+    r = registro_l(caso_id, bloque, None, etapa="fallback", error="GeminiUnavailableError", latencia=380.0)
+    r.update({"tokens_entrada": 0, "tokens_salida": 0, "tokens_total": 0, **extra})
+    return r
+
+
+def reintento_ok(caso_id, bloque, predicho, ronda=2):
+    r = registro_l(caso_id, bloque, predicho)
+    r.update({"reintento_de_fallo_tecnico": True, "ronda": ronda, "respuestas": 1})
+    return r
+
+
+def cache_modificado(tmp_path, escenario, *, reemplazos=None, agregados=()):
+    """Copia del cache del escenario con registros reemplazados (por caso_id) y otros agregados al final."""
+    reemplazos = reemplazos or {}
+    filas = [json.loads(x) for x in escenario["cache"].read_text(encoding="utf-8").splitlines()]
+    filas = [reemplazos.get(f.get("caso_id"), f) if f.get("tipo") == "caso" else f for f in filas]
+    ruta = tmp_path / "modificado.jsonl"
+    ruta.write_bytes("".join(json.dumps(f, ensure_ascii=False) + "\n" for f in [*filas, *agregados]).encode("utf-8"))
+    return {**escenario, "cache": ruta}
+
+
+def test_el_registro_vigente_por_caso_es_el_ultimo_del_historial(tmp_path, escenario):
+    esc = cache_modificado(
+        tmp_path, escenario,
+        reemplazos={"R002": fallo_tecnico("R002", "dentro_muestra")},
+        agregados=[reintento_ok("R002", "dentro_muestra", SEG)],
+    )
+    doc = documento(esc)
+    # Con el reintento vigente (L acierta SEG en R002), el analisis es el mismo que sin el fallo previo.
+    base = documento(escenario)
+    assert doc["bloques"]["dentro_muestra"]["brazos"]["L"] == base["bloques"]["dentro_muestra"]["brazos"]["L"]
+    assert doc["control_deriva"]["dentro_muestra"]["n_excluidos_fallo_tecnico"] == 0
+    assert doc["control_deriva"]["dentro_muestra"]["n_escalados"] == 2
+
+
+def test_la_deriva_excluye_los_casos_con_fallo_tecnico_vigente_y_dice_cuantos(tmp_path, escenario):
+    esc = cache_modificado(tmp_path, escenario, reemplazos={"R002": fallo_tecnico("R002", "dentro_muestra")})
+    d = documento(esc)["control_deriva"]
+    dentro = d["dentro_muestra"]
+    assert (dentro["n_escalados"], dentro["n_excluidos_fallo_tecnico"], dentro["n_comparados"]) == (2, 1, 1)
+    assert (dentro["concordancia"]["aciertos"], dentro["concordancia"]["n"]) == (1, 1)  # solo R004
+    fuera = d["fuera_muestra"]
+    assert (fuera["n_escalados"], fuera["n_excluidos_fallo_tecnico"], fuera["n_comparados"]) == (5, 0, 5)
+    total = d["total"]
+    assert (total["n_escalados"], total["n_excluidos_fallo_tecnico"], total["n_comparados"]) == (7, 1, 6)
+    assert (total["concordancia"]["aciertos"], total["concordancia"]["n"]) == (4, 6)
+
+
+def test_la_deriva_excluye_tambien_en_el_bloque_fuera_y_en_el_pooled(tmp_path, escenario):
+    esc = cache_modificado(
+        tmp_path, escenario,
+        reemplazos={"I007": fallo_tecnico("I007", "fuera_muestra"), "I009": fallo_tecnico("I009", "fuera_muestra")},
+    )
+    d = documento(esc)["control_deriva"]
+    fuera = d["fuera_muestra"]
+    assert (fuera["n_comparados"], fuera["n_excluidos_fallo_tecnico"]) == (3, 2)
+    assert fuera["concordancia"]["aciertos"] == 3 and fuera["concordancia"]["valor"] == pytest.approx(1.0)
+    assert (d["total"]["n_comparados"], d["total"]["n_excluidos_fallo_tecnico"]) == (5, 2)
+    assert d["total"]["concordancia"]["aciertos"] == 4  # I004, I005, I008 y R004
+
+
+def test_las_desviaciones_se_leen_del_cache_por_bloque(tmp_path, escenario):
+    esc = cache_modificado(
+        tmp_path, escenario,
+        reemplazos={
+            "R002": fallo_tecnico("R002", "dentro_muestra"),
+            "R004": fallo_tecnico("R004", "dentro_muestra", intentos=3),
+            "I007": fallo_tecnico("I007", "fuera_muestra"),
+        },
+        agregados=[reintento_ok("R002", "dentro_muestra", SEG)],
+    )
+    d = documento(esc)["desviaciones"]
+    assert d["fecha"] == "2026-11-13"
+    inc = d["fallos_tecnicos"]
+    assert inc["casos_con_fallo_tecnico_inicial"] == {"dentro_muestra": 2, "fuera_muestra": 1, "total": 3}
+    assert inc["casos_reintentados"] == {"dentro_muestra": 1, "fuera_muestra": 0, "total": 1}
+    assert inc["casos_que_siguen_fallidos"] == {"dentro_muestra": 1, "fuera_muestra": 1, "total": 2}
+    # sin respuesta: 3 (R004) + 1 (R002 inicial) + 1 (I007) + 1 (el intento previo de I004, que tuvo 2)
+    c = d["contabilidad_llamadas"]
+    assert c["intentos"] == c["respuestas"] + c["intentos_sin_respuesta"] == 18
+    assert c["intentos_sin_respuesta"] == 6 and c["respuestas"] == 12
+    assert d["bloque_primario_afectado"] is True  # I007 sigue fallido en el bloque primario
+
+
+def test_sin_fallos_tecnicos_las_desviaciones_informan_ceros(escenario):
+    d = documento(escenario)["desviaciones"]
+    assert d["fallos_tecnicos"]["casos_con_fallo_tecnico_inicial"]["total"] == 0
+    assert d["fallos_tecnicos"]["casos_reintentados"]["total"] == 0
+    assert d["bloque_primario_afectado"] is False
+    # unico intento sin respuesta del escenario: el primero de I004 (2 intentos, 1 respuesta)
+    assert d["contabilidad_llamadas"]["intentos_sin_respuesta"] == 1
+
+
+def test_el_markdown_incluye_la_seccion_de_desviaciones_y_la_deriva_por_bloque(tmp_path, escenario):
+    esc = cache_modificado(
+        tmp_path, escenario,
+        reemplazos={"R002": fallo_tecnico("R002", "dentro_muestra"), "R004": fallo_tecnico("R004", "dentro_muestra")},
+        agregados=[reintento_ok("R002", "dentro_muestra", SEG)],
+    )
+    doc = documento(esc)
+    texto_json, md = ana.renderizar(doc)
+    assert "## Desviaciones del prerregistro" in md and "2026-11-13" in md
+    assert "reintentados por fallo tecnico: 1" in md and "siguen fallidos: 1" in md
+    assert "Dentro de la muestra" in md and "Fuera de muestra" in md  # deriva por bloque
+    assert "excluidos por fallo tecnico" in md
+    assert json.loads(texto_json)["desviaciones"]["fallos_tecnicos"]["casos_reintentados"]["total"] == 1
+
+
+def test_el_veredicto_del_bloque_primario_no_depende_de_los_fallos_del_bloque_dentro(tmp_path, escenario):
+    esc = cache_modificado(tmp_path, escenario, reemplazos={"R002": fallo_tecnico("R002", "dentro_muestra")})
+    con_fallo = documento(esc)["veredicto"]
+    sin_fallo = documento(escenario)["veredicto"]
+    for clave in ("veredicto", "motivo", "componente_exactitud", "componente_eficiencia", "tasa_fallos"):
+        assert con_fallo[clave] == sin_fallo[clave]

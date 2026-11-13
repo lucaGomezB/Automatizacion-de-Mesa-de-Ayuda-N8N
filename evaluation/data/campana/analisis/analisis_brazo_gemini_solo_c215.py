@@ -9,6 +9,11 @@ fuera de muestra: 103) la calidad (exactitud estricta y laxa, macro-F1), el cont
 de la hipotesis de eficiencia, segun la regla PRERREGISTRADA en
 `openspec/changes/c-215-brazo-gemini-solo-y-contraste-de-la-hipotesis-de-eficiencia/design.md`.
 
+El registro vigente de cada caso es el ULTIMO del cache (append-only): un fallo tecnico
+reintentado queda reemplazado por su reintento (desviacion declarada del 2026-11-13). El analisis
+informa los fallos tecnicos, los reintentos y la contabilidad de llamadas en la seccion
+«Desviaciones del prerregistro».
+
 Sin red y sin Gemini. Si el cache real no existe o esta incompleto, sale con codigo distinto de
 cero y NO escribe salidas. Aditivo: no reemplaza ningun numero canonico.
 
@@ -37,7 +42,12 @@ from evaluation.brazo_gemini_solo import (  # noqa: E402
     RUTA_CACHE_DEFECTO,
     RUTA_CORPUS_DENTRO,
     RUTA_CORPUS_FUERA,
-    leer_cache,
+    TOPE_INTENTOS_DURO,
+    TOPE_LLAMADAS_DURO,
+    contabilidad_cache,
+    es_fallo_tecnico,
+    leer_historial,
+    vigentes_por_caso,
 )
 from evaluation.campana import cargar_corpus_solo_lectura  # noqa: E402
 from evaluation.corpus import SECTORES_CANONICOS  # noqa: E402
@@ -331,16 +341,16 @@ def _decision_de(contraste: Mapping, eficiencia: Mapping) -> dict:
     )
 
 
-def _deriva_de_un_bloque(
-    ids: Sequence[str], escalado: Sequence[bool], pred_h: Sequence[Optional[str]], pred_l: Sequence[Optional[str]],
-    reales: Sequence[str],
-) -> dict:
-    seleccion = [k for k, e in enumerate(escalado) if e]
-    concordantes = sum(1 for k in seleccion if pred_h[k] == pred_l[k])
-    mc = contraste_mcnemar([reales[k] == pred_h[k] for k in seleccion], [reales[k] == pred_l[k] for k in seleccion])
+def _resumen_deriva(pares: Sequence[tuple]) -> dict:
+    """Concordancia y McNemar sobre `(pred_h, pred_l, real, fallo_tecnico)`, SIN los fallos tecnicos."""
+    comparados = [(h, l, r) for h, l, r, tecnico in pares if not tecnico]
+    concordantes = sum(1 for h, l, _ in comparados if h == l)
+    mc = contraste_mcnemar([r == h for h, _, r in comparados], [r == l for _, l, r in comparados])
     return {
-        "n_escalados": len(seleccion),
-        "concordancia": _proporcion(concordantes, len(seleccion)),
+        "n_escalados": len(pares),
+        "n_excluidos_fallo_tecnico": len(pares) - len(comparados),
+        "n_comparados": len(comparados),
+        "concordancia": _proporcion(concordantes, len(comparados)),
         "mcnemar_aciertos_h_vs_nueva": {
             "aplicable": mc.aplicable,
             "p_exacto": mc.p_exacto,
@@ -366,6 +376,7 @@ def _analizar_bloque(
     pred_h = [hibrido[i].sector_predicho for i in ids]
     pred_l = [gemini_solo[i]["sector_predicho"] for i in ids]
     escalado = [hibrido[i].etapa != "deterministic" for i in ids]
+    tecnico = [es_fallo_tecnico(gemini_solo[i]) for i in ids]
     pred_hstar = [l if e else h for h, l, e in zip(pred_h, pred_l, escalado)]
     acierto_h = [r == p for r, p in zip(reales, pred_h)]
     acierto_l = [r == p for r, p in zip(reales, pred_l)]
@@ -392,32 +403,23 @@ def _analizar_bloque(
             "contraste": contraste_hstar,
             "decision": _decision_de(contraste_hstar, eficiencia),
         },
-        "_deriva": _deriva_de_un_bloque(ids, escalado, pred_h, pred_l, reales),
-        "_escalados": [(pred_h[k], pred_l[k], reales[k]) for k, e in enumerate(escalado) if e],
+        "_escalados": [(pred_h[k], pred_l[k], reales[k], tecnico[k]) for k, e in enumerate(escalado) if e],
     }
 
 
 def _control_deriva(bloques: Mapping[str, dict]) -> dict:
-    por_bloque = {nombre: b["_deriva"] for nombre, b in bloques.items()}
-    pares = [p for b in bloques.values() for p in b["_escalados"]]
-    concordantes = sum(1 for h, l, _ in pares if h == l)
-    mc = contraste_mcnemar([r == h for h, _, r in pares], [r == l for _, l, r in pares])
-    total = {
-        "n_escalados": len(pares),
-        "concordancia": _proporcion(concordantes, len(pares)),
-        "mcnemar_aciertos_h_vs_nueva": {
-            "aplicable": mc.aplicable,
-            "p_exacto": mc.p_exacto,
-            "solo_cache_h": mc.solo_a,
-            "solo_nueva_corrida": mc.solo_b,
-        },
-    }
-    bandera = bool(pares) and total["concordancia"]["valor"] < UMBRAL_CONCORDANCIA_DERIVA
+    por_bloque = {nombre: _resumen_deriva(b["_escalados"]) for nombre, b in bloques.items()}
+    total = _resumen_deriva([p for b in bloques.values() for p in b["_escalados"]])
+    bandera = total["n_comparados"] > 0 and total["concordancia"]["valor"] < UMBRAL_CONCORDANCIA_DERIVA
     return {
         **por_bloque,
         "total": total,
         "umbral": UMBRAL_CONCORDANCIA_DERIVA,
         "bandera": bandera,
+        "nota_exclusion": (
+            "La concordancia se calcula sin los casos que H escalo y cuyo registro vigente del brazo es un "
+            "fallo tecnico (sin respuesta del modelo): no hay prediccion nueva que comparar."
+        ),
         "lectura": (
             "deriva o ruido relevante: leer el contraste con cautela (la concordancia con la prediccion "
             "cacheada de H en los casos que H ya escalo es menor que el umbral; este control no separa "
@@ -426,6 +428,62 @@ def _control_deriva(bloques: Mapping[str, dict]) -> dict:
             else "sin senal de inestabilidad entre la nueva corrida y la cache de H en los casos que H ya escalo (este control no "
             "separa deriva del modelo de azar de muestreo a temperatura 0,3)"
         ),
+    }
+
+
+DESVIACION_FECHA = "2026-11-13"
+DESVIACION_DECISION = (
+    "La decision de reintentar los fallos tecnicos se tomo DESPUES de ver los resultados del bloque "
+    "primario y del bloque secundario contaminado: es una amenaza a la validez que se declara."
+)
+DESVIACION_SIN_CAMBIOS = (
+    "No cambian la regla de decision, el margen de no inferioridad, el umbral de eficiencia, el tope de "
+    "fallos ni el bloque primario."
+)
+DESVIACION_TOPE = (
+    f"Contabilidad del tope: el tope de {TOPE_LLAMADAS_DURO} se aplica a las llamadas que obtuvieron "
+    "respuesta del modelo; los intentos que fallaron antes de obtener respuesta se cuentan y se informan "
+    f"aparte, y un cinturon de seguridad acota los intentos totales en {TOPE_INTENTOS_DURO}."
+)
+
+
+def _por_bloque(bloque_de: Mapping[str, str], ids: Sequence[str]) -> dict:
+    cuenta = {BLOQUE_DENTRO: 0, BLOQUE_FUERA: 0}
+    for caso_id in ids:
+        cuenta[bloque_de[caso_id]] += 1
+    return {**cuenta, "total": sum(cuenta.values())}
+
+
+def _desviaciones(historial: Sequence[Mapping[str, Any]], descartados: int) -> dict:
+    """Fallos tecnicos, reintentos y contabilidad de llamadas, LEIDOS del cache (nada hardcodeado)."""
+    por_caso: Dict[str, List[Mapping[str, Any]]] = {}
+    for registro in historial:
+        por_caso.setdefault(registro["caso_id"], []).append(registro)
+    bloque_de = {i: rs[-1]["bloque"] for i, rs in por_caso.items()}
+    iniciales = [i for i, rs in por_caso.items() if es_fallo_tecnico(rs[0])]
+    reintentados = [i for i, rs in por_caso.items() if any(r.get("reintento_de_fallo_tecnico") for r in rs)]
+    siguen = [i for i, rs in por_caso.items() if es_fallo_tecnico(rs[-1])]
+    por_inicial = _por_bloque(bloque_de, iniciales)
+    return {
+        "fecha": DESVIACION_FECHA,
+        "decision": DESVIACION_DECISION,
+        "sin_cambios": DESVIACION_SIN_CAMBIOS,
+        "tope": DESVIACION_TOPE,
+        "fallos_tecnicos": {
+            "definicion": (
+                "registro en fallback con error de indisponibilidad o transporte y sin tokens (sin "
+                "respuesta del modelo); las respuestas invalidas del modelo NO son fallos tecnicos"
+            ),
+            "casos_con_fallo_tecnico_inicial": por_inicial,
+            "casos_reintentados": _por_bloque(bloque_de, reintentados),
+            "casos_que_siguen_fallidos": _por_bloque(bloque_de, siguen),
+        },
+        "contabilidad_llamadas": {
+            **contabilidad_cache(historial, descartados),
+            "tope_respuestas": TOPE_LLAMADAS_DURO,
+            "tope_intentos": TOPE_INTENTOS_DURO,
+        },
+        "bloque_primario_afectado": por_inicial[BLOQUE_PRIMARIO] > 0,
     }
 
 
@@ -444,7 +502,8 @@ def construir_documento(
         raise CacheAusenteError(
             f"no existe el cache del brazo 'Gemini solo' ({ruta_cache}): la corrida paga todavia no se hizo"
         )
-    meta, gemini_solo, _ = leer_cache(ruta_cache)
+    meta, historial, descartados = leer_historial(ruta_cache)
+    gemini_solo = vigentes_por_caso(historial)
     if meta is None:
         raise CorridaIncompletaError(f"el cache {ruta_cache.name} no tiene la linea de metadatos")
     for clave, ruta in (("corpus_hash_dentro", ruta_corpus_dentro), ("corpus_hash_fuera", ruta_corpus_fuera)):
@@ -463,7 +522,6 @@ def construir_documento(
         bloques[bloque] = _analizar_bloque(bloque, corpus, hibrido, gemini_solo, precios, remuestreos)
     deriva = _control_deriva(bloques)
     for b in bloques.values():
-        b.pop("_deriva")
         b.pop("_escalados")
     entradas = {
         pathlib.Path(r).name: sha256(r)
@@ -489,7 +547,8 @@ def construir_documento(
                 "prompt_sha256", "commit", "generado_en", "tope_llamadas", "precios_usd_por_millon",
             )
         },
-        "llamadas_totales_cache": sum(int(r["intentos"]) for r in gemini_solo.values()),
+        "llamadas_totales_cache": contabilidad_cache(historial, descartados)["intentos"],
+        "desviaciones": _desviaciones(historial, descartados),
         "entradas_sha256": entradas,
         "bloques": bloques,
         "control_deriva": deriva,
@@ -595,6 +654,60 @@ def _lineas_bloque(nombre: str, b: Mapping) -> List[str]:
     return lineas
 
 
+def _linea_deriva(rotulo: str, r: Mapping, umbral: float) -> str:
+    c = r["concordancia"]
+    return (
+        f"- {rotulo}: concordancia con la prediccion cacheada de H {c['aciertos']}/{r['n_comparados']} = "
+        f"{_num(c['valor'])} {_ic(c['ic95_wilson'])} (umbral {umbral}); casos que H escalo: "
+        f"{r['n_escalados']}; excluidos por fallo tecnico: {r['n_excluidos_fallo_tecnico']}."
+    )
+
+
+def _lineas_deriva(dv: Mapping) -> List[str]:
+    lineas = [
+        _linea_deriva("Dentro de la muestra", dv[BLOQUE_DENTRO], dv["umbral"]),
+        _linea_deriva("Fuera de muestra", dv[BLOQUE_FUERA], dv["umbral"]),
+        _linea_deriva("Pooled (ambos bloques)", dv["total"], dv["umbral"]),
+        "",
+        dv["nota_exclusion"],
+        "",
+        f"Lectura: {dv['lectura']}.",
+    ]
+    return lineas
+
+
+def _lineas_desviaciones(d: Mapping) -> List[str]:
+    f, c = d["fallos_tecnicos"], d["contabilidad_llamadas"]
+
+    def por_bloque(x: Mapping) -> str:
+        return f"{x['total']} (dentro de la muestra: {x[BLOQUE_DENTRO]}; fuera de muestra: {x[BLOQUE_FUERA]})"
+
+    return [
+        "## Desviaciones del prerregistro",
+        "",
+        f"Fecha de la desviacion: {d['fecha']}. El ejecutor se extendio con el reintento de los fallos "
+        "tecnicos del proveedor (indisponibilidad o transporte, sin respuesta del modelo). "
+        f"Definicion estricta: {f['definicion']}.",
+        "",
+        f"- Casos cuyo primer registro fue un fallo tecnico: {por_bloque(f['casos_con_fallo_tecnico_inicial'])}.",
+        f"- Casos reintentados por fallo tecnico: {por_bloque(f['casos_reintentados'])}.",
+        f"- Casos que siguen fallidos: {por_bloque(f['casos_que_siguen_fallidos'])}.",
+        f"- Llamadas con respuesta del modelo: {c['respuestas']} (tope {c['tope_respuestas']}); intentos "
+        f"sin respuesta: {c['intentos_sin_respuesta']}; intentos totales: {c['intentos']} "
+        f"(cinturon {c['tope_intentos']}).",
+        "",
+        d["decision"],
+        d["sin_cambios"],
+        d["tope"],
+        (
+            "Hubo fallos tecnicos en el bloque primario: su veredicto depende de los reintentos."
+            if d["bloque_primario_afectado"]
+            else "El bloque primario (fuera de muestra) no tuvo fallos tecnicos: su veredicto se obtuvo sin "
+            "reintentos y no depende de ellos."
+        ),
+    ]
+
+
 def renderizar(doc: Mapping) -> tuple[str, str]:
     """Devuelve `(json, md)` como texto con LF."""
     texto_json = json.dumps(doc, ensure_ascii=False, indent=2) + "\n"
@@ -615,15 +728,16 @@ def renderizar(doc: Mapping) -> tuple[str, str]:
         "",
         "## Control de deriva (casos que H ya escalo)",
         "",
-        f"Concordancia pooled con la prediccion cacheada de H: {dv['total']['concordancia']['aciertos']}/"
-        f"{dv['total']['n_escalados']} = {_num(dv['total']['concordancia']['valor'])} "
-        f"{_ic(dv['total']['concordancia']['ic95_wilson'])} (umbral {dv['umbral']}). {dv['lectura']}.",
+        *_lineas_deriva(dv),
+        "",
+        *_lineas_desviaciones(doc["desviaciones"]),
         "",
         "## Procedencia de la corrida",
         "",
         f"Modelo {p['modelo']}, temperatura {p['temperatura']}, google-genai {p['sdk_version']}, commit "
-        f"{p['commit']}, generada el {p['generado_en']}; una sola corrida; llamadas acumuladas en el "
-        f"cache: {doc['llamadas_totales_cache']} (tope {p['tope_llamadas']}). Precios (USD por millon "
+        f"{p['commit']}, generada el {p['generado_en']}; una sola corrida (mas el reintento de fallos "
+        f"tecnicos declarado abajo); intentos acumulados en el cache: {doc['llamadas_totales_cache']} (tope "
+        f"prerregistrado de respuestas: {p['tope_llamadas']}). Precios (USD por millon "
         f"de tokens de entrada/salida, parametro declarado): {json.dumps(p['precios_usd_por_millon'])}.",
     ]
     for nombre in (BLOQUE_FUERA, BLOQUE_DENTRO):
