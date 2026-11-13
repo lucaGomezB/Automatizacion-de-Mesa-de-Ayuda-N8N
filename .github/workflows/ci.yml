@@ -200,6 +200,13 @@ jobs:
       - name: Scan Engram memory (.engram) for secrets
         run: python3 scripts/security/scan_engram_secrets.py .engram
 
+      # c-208: guarda de integridad referencial de la memoria. Carga TODOS los
+      # chunks en una base SQLite temporal y falla si una relacion referencia
+      # una observacion ausente en la union (lo que rompe el import de un clon
+      # limpio). Solo biblioteca estandar, offline, sin secretos.
+      - name: Check Engram memory integrity (no dangling relations)
+        run: python3 scripts/security/check_engram_chunk_integrity.py .engram
+
   # -----------------------------------------------------------------------
   # Job 4: security-scan — auditoria de dependencias + SAST, en paralelo (C-64)
   # -----------------------------------------------------------------------
