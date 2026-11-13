@@ -4898,19 +4898,41 @@ recomendaciones 7 a 15 (consistencia y forma) quedan diferidas a un change poste
 
 ### Decisiones y pendientes
 
-- **Arbitraje de los 47 casos (rec. 1)**: el texto lo declara diferido y no informa resultado. La
-  decisión de ejecutar c-206 antes de la defensa es de los autores y queda **pendiente de registrar**
-  aquí (tarea 5.2 de c-207); por defecto se mantiene diferido.
-- **Consentimiento de `E3`/`E4` (rec. 4)**: no se editó
-  `docs/campana-medicion/confirmacion-posterior-consentimiento.md`. Pendiente de los autores:
-  adaptar el punto 1 de la plantilla (la tarea de `E3`/`E4` fue la validación fuera de muestra),
-  recabar las firmas y completar `fecha_confirmacion`; solo después se ajusta la frase del capítulo
-  legal.
-- **Recompilación**: sin `latexmk`/`xelatex`/`biber` en la máquina del apply; `main.pdf`,
-  `main.toc/.lof/.lot` y `paper/compilacion.md` no se tocaron. Pendiente en el entorno de registro.
+- **Arbitraje de los 47 casos (rec. 1)**: **DECIDIDO el 2026-11-13: se ejecuta.** Decisión de los
+  autores (tarea 5.2 de c-207). Un tercer etiquetador, independiente de `E3`, `E4` y de todo el
+  equipo previo, arbitra a ciegas los `47` discordantes del corpus independiente y los discordantes
+  nuevos del refuerzo de clases. Consecuencias registradas: el ensamblador del corpus arbitrado
+  (`python -m evaluation.arbitraje ensamblar`) y el reporte de la medición
+  (`python -m evaluation.reporte_arbitrado`) están implementados y probados; la integración requiere
+  además una corrida de clasificación sobre el corpus final (gate `--confirm-paid`), porque ninguno
+  de los discordantes tiene predicción persistida; y el texto debe reemplazar las cuatro frases que
+  declaran el arbitraje diferido (sección de resultados, su tabla y las conclusiones). Con el
+  arbitraje, el n efectivo fuera de muestra deja de excluir casos.
+- **Consentimiento de `E3`/`E4`/`E5` (rec. 4)**: **RESUELTO el 2026-11-13.** Se editó
+  `docs/campana-medicion/confirmacion-posterior-consentimiento.md`: el punto 1 cubre ahora la
+  campaña complementaria, la validación fuera de muestra y el arbitraje; se agregó la fila del
+  árbitro (rol `arbitro`, código `P<n>`, identidad solo en poder del director); y `E3`, `E4` y el
+  árbitro quedan registrados con información verbal `2026-11-12` y confirmación escrita
+  `2026-11-13`, sin «por completar». En `11-aspectos-legales.tex` se corrigió la fecha, se retiró la
+  equivalencia «en los mismos términos» (no respaldada por el registro) y se retiró la afirmación de
+  confirmación pendiente, que con las firmas pasó a ser falsa. Los originales firmados quedan en el
+  expediente físico del director.
+- **Recompilación**: **RESUELTA por vía Docker.** El host no tiene LaTeX nativo, pero el proyecto
+  compila con la imagen pineada `texlive-thesis` (ya construida), que reproduce el build:
+  `docker run --rm -v "<repo>/docs/Tesis/v10 (IA)":/work -w /work/paper texlive-thesis latexmk main.tex`.
+  Verificado el 2026-11-13 sobre una copia: compila desde cero, 145 páginas, 0 errores fatales, 0
+  referencias o citas indefinidas, 12 `Overfull \hbox` (máximo de 52,5 pt), y `verify_citations.py`
+  PASS. El PDF resultante es idéntico en contenido al commiteado; difiere solo en 58 bytes de
+  metadatos (`/ID` y `/CreationDate`), fijables con `\special{pdf:trailerid}` y `SOURCE_DATE_EPOCH`.
+  Advertencia: la imagen deriva de `texlive/texlive:latest`, un tag flotante; para reproducibilidad
+  estricta conviene fijarla por digest.
 - **Palabras** (regla de c-106 reproducida: math en línea como una palabra, `~` como separador salvo
   antes de un dígito): resumen ES **250** y abstract EN **249** (≤ 250); para no superar el tope se
   recortaron palabras sueltas de los párrafos 1 y 3 y se reemplazó el párrafo de viabilidad.
+  Actualización 2026-11-13: el diff de `00-resumen.tex` entre `6615376` y `main` (que incorpora lo
+  aplicado por c-207) tiene un delta neto de **-1 palabra**, medido con la misma regla sobre ambos
+  lados del diff, de modo que el conteo pasa a **249** y **248**: el tope de 250 sigue cumpliéndose.
+  Verificación pendiente contra el conteo real luego de recompilar.
 
 ### Matriz de trazabilidad (verificada por `verificar_matriz_trazabilidad.py`)
 
