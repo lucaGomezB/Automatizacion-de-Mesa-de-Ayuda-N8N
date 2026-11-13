@@ -171,3 +171,32 @@ agregados (`67` y `60` de la linea de base en c-210; `87` del hibrido en c-205).
   corridas producen salidas identicas byte a byte.
 - Prueba: `cd evaluation/data/campana/analisis && python -m pytest test_contraste_linea_de_base_c213.py -q`.
 - Aditivo: no reemplaza ningun numero canonico; no es el brazo solo-LLM.
+
+## Calibracion y punto de operacion del gate de confianza (c-214)
+
+`analisis_calibracion_gate_c214.py` mide la calibracion (ECE, Brier, sobreconfianza) y la
+discriminacion (AUROC, con IC95 bootstrap) de la confianza por etapa, dentro de la muestra (200
+casos) y fuera de ella (103), el barrido de umbral de la etapa Gemini y dos senales alternativas
+de derivacion (S1, acuerdo entre etapas; S2, `score_correctitud` de las reglas). La regla de
+seleccion esta prerregistrada en el docstring del generador y se fijo antes de generar las
+salidas; el prerregistro NO fue ciego (se declara alli). El umbral se elige solo con los 200
+casos y se evalua sin reajuste en los 103. No modifica la configuracion productiva.
+
+- Entradas versionadas (solo lectura): `../../../evidence/predicciones_hybrid-v3_2026-10-07.json`,
+  `../predicciones_independiente.json`, `../plantilla_etiquetado.csv` y
+  `../senales_reglas_c214.csv` (recomputo offline de las reglas; ver `../README.md`).
+- Comando (desde la raiz del repositorio):
+
+  ```bash
+  python3 evaluation/data/campana/analisis/analisis_calibracion_gate_c214.py
+  # regenerar ademas el CSV de senales con el backend (offline, sin red):
+  python3 evaluation/data/campana/analisis/analisis_calibracion_gate_c214.py --recomputar-senales
+  ```
+
+- Salidas (UTF-8 sin BOM, LF; dos corridas producen salidas identicas byte a byte), con su
+  SHA-256 (tambien en `analisis_calibracion_gate_c214.SHA256SUMS.txt`):
+  - `analisis_calibracion_gate_c214.json`: `a5e4bca568890f57ec3346dd9c54e4425793c26704c362785f07a8ff0e4b4afd`
+  - `analisis_calibracion_gate_c214.md`: `6cd5a9ec7bf3d90b3c771f02fe4c38f1bfff7e6e2db04ef6a67c79f10252517c`
+  - `../senales_reglas_c214.csv`: `a7d4a703e2c5b70c3fc898a1c55c50fbad971255285b5e3630cf65f0c983c56a`
+- Prueba: `cd evaluation/data/campana/analisis && python -m pytest test_analisis_calibracion_gate_c214.py -q`
+  y `python -m pytest evaluation/tests/test_calibracion_gate.py -q`.

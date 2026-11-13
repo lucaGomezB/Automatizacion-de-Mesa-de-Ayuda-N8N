@@ -39,7 +39,7 @@ pendientes (no se edita ningún `.tex`: hay otro PR abierto sobre las secciones 
 ## 4. Análisis y salidas
 
 - [x] 4.1 (RED/GREEN) Test hermano `A/test_analisis_calibracion_gate_c214.py`: el JSON contiene, por etapa y corpus, fiabilidad, ECE, Brier, sobreconfianza, AUROC con IC, el barrido, `t*` y su evaluación fuera de muestra, S1 y S2 con su resultado de tres vías y los secundarios marcados ejecutados o no; dos ejecuciones dan el mismo SHA-256. Implementar `A/analisis_calibracion_gate_c214.py`.
-- [ ] 4.2 Generar `A/analisis_calibracion_gate_c214.{json,md}` y registrar sus SHA-256 en `A/README.md` y `A/SHA256SUMS.txt`.
+- [x] 4.2 Generar `A/analisis_calibracion_gate_c214.{json,md}` y registrar sus SHA-256 en `A/README.md` y `A/SHA256SUMS.txt`.
 - [ ] 4.3 Suite completa de `evaluation/` y `A/`: conteo base + pruebas nuevas, sin regresiones.
 
 ## 5. Registro canónico y tesis

@@ -373,6 +373,9 @@ def test_verificar_reproduccion_acepta_si_coincide_y_detiene_si_hay_deriva():
 def entorno_backend_c214(monkeypatch):
     from evaluation.calibracion_gate import ENTORNO_OFFLINE_C214, asegurar_backend_en_path
 
+    import sys
+
+    previos = set(sys.modules)
     asegurar_backend_en_path()
     pytest.importorskip("app.config.settings")
     for clave, valor in ENTORNO_OFFLINE_C214.items():
@@ -382,6 +385,11 @@ def entorno_backend_c214(monkeypatch):
     get_settings.cache_clear()
     yield
     get_settings.cache_clear()
+    # No contaminar otras pruebas (p. ej. test_version_clasificador_real_no_exige_credenciales):
+    # se retiran los modulos `app.*` que importo este fixture.
+    for nombre in set(sys.modules) - previos:
+        if nombre == "app" or nombre.startswith("app."):
+            del sys.modules[nombre]
 
 
 @pytest.mark.parametrize(

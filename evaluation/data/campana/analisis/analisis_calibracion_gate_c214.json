@@ -1,0 +1,2548 @@
+{
+  "change": "c-214-calibracion-y-punto-de-operacion-del-gate-de-confianza",
+  "generador": "evaluation/data/campana/analisis/analisis_calibracion_gate_c214.py",
+  "metodo": "solo lectura; evaluation.calibracion_gate + evaluation.metrics; sin red ni Gemini; deterministico; regla de seleccion prerregistrada en el docstring del generador",
+  "no_ceguera": "el prerregistro NO fue ciego (ver docstring del generador)",
+  "entradas_sha256": {
+    "evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json": "3fb5bacd04f2e9d303f580e4cf2ac4b4c6f2eab628a4fff80a6e1238029cd8fd",
+    "evaluation/data/campana/predicciones_independiente.json": "d5ee19f7b0bf2b56a00026a1bd33a2e11ffeb9b224b6a8efa553460895a915a4",
+    "evaluation/data/campana/plantilla_etiquetado.csv": "c35a58b60aca98dbc5fd03ad280fbba2f8baf2d56444ba7982ada0715f8ccd09",
+    "evaluation/data/campana/senales_reglas_c214.csv": "a7d4a703e2c5b70c3fc898a1c55c50fbad971255285b5e3630cf65f0c983c56a"
+  },
+  "parametros": {
+    "umbrales_gemini": [
+      0.7,
+      0.86,
+      0.91,
+      0.96,
+      0.99,
+      "inf"
+    ],
+    "umbrales_s1": [
+      0.0,
+      1.0,
+      "inf"
+    ],
+    "umbrales_s2_fijados_en_los_200": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      "inf"
+    ],
+    "pisos": {
+      "piso_0.85": 0.85,
+      "piso_0.8278": 0.8278
+    },
+    "min_aceptados": 10,
+    "bandas_ece": 10
+  },
+  "reproduccion_reglas": {
+    "dentro_muestra": {
+      "cortocircuitados": 131,
+      "total": 200
+    },
+    "fuera_muestra": {
+      "cortocircuitados": 69,
+      "total": 103
+    }
+  },
+  "corpora": {
+    "dentro_muestra": {
+      "referencia": "etiquetado original del corpus (sector_asignado)",
+      "n": 200,
+      "escalados_a_gemini": 69,
+      "cortocircuitados": 131,
+      "etapas": {
+        "gemini": {
+          "confianza": {
+            "n": 69,
+            "aciertos": 50,
+            "exactitud": 0.7246376811594203,
+            "ic_wilson": [
+              0.609527027856669,
+              0.8160547836815831
+            ],
+            "confianza_media": 0.9114492753623189,
+            "fiabilidad": [
+              {
+                "valor": 0.85,
+                "casos": 24,
+                "aciertos": 18,
+                "exactitud": 0.75,
+                "ic_wilson": [
+                  0.55100555994846,
+                  0.8800063377140499
+                ]
+              },
+              {
+                "valor": 0.9,
+                "casos": 7,
+                "aciertos": 4,
+                "exactitud": 0.5714285714285714,
+                "ic_wilson": [
+                  0.2504583645276572,
+                  0.8417801447485302
+                ]
+              },
+              {
+                "valor": 0.95,
+                "casos": 35,
+                "aciertos": 25,
+                "exactitud": 0.7142857142857143,
+                "ic_wilson": [
+                  0.5494506513681738,
+                  0.836734637635653
+                ]
+              },
+              {
+                "valor": 0.98,
+                "casos": 3,
+                "aciertos": 3,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.4385029682449546,
+                  1.0
+                ]
+              }
+            ],
+            "ece": {
+              "valor": 0.18681159420289858,
+              "ic": [
+                0.10028985507246371,
+                0.29449637681159413
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "brier": {
+              "valor": 0.23621304347826086,
+              "ic": [
+                0.15808869565217393,
+                0.3242384420289855
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "sobreconfianza": {
+              "valor": 0.1868115942028986,
+              "ic": [
+                0.09404347826086948,
+                0.29421014492753617
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "auroc": {
+              "valor": 0.5168421052631579,
+              "ic": [
+                0.3796128707893414,
+                0.6527821258199165
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            }
+          }
+        },
+        "deterministic": {
+          "confianza": {
+            "n": 131,
+            "aciertos": 97,
+            "exactitud": 0.7404580152671756,
+            "ic_wilson": [
+              0.659298288754975,
+              0.8079170658621422
+            ],
+            "confianza_media": 0.15139949109414758,
+            "fiabilidad": [
+              {
+                "valor": 0.0,
+                "casos": 90,
+                "aciertos": 67,
+                "exactitud": 0.7444444444444445,
+                "ic_wilson": [
+                  0.6456235101244654,
+                  0.8232524062663082
+                ]
+              },
+              {
+                "valor": 0.16666666666666666,
+                "casos": 8,
+                "aciertos": 8,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.6755924351161198,
+                  1.0
+                ]
+              },
+              {
+                "valor": 0.5,
+                "casos": 26,
+                "aciertos": 19,
+                "exactitud": 0.7307692307692307,
+                "ic_wilson": [
+                  0.5391695962082381,
+                  0.8629555167798162
+                ]
+              },
+              {
+                "valor": 0.75,
+                "casos": 6,
+                "aciertos": 2,
+                "exactitud": 0.3333333333333333,
+                "ic_wilson": [
+                  0.09677141110578041,
+                  0.700006684861608
+                ]
+              },
+              {
+                "valor": 1.0,
+                "casos": 1,
+                "aciertos": 1,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.20654931437723745,
+                  1.0
+                ]
+              }
+            ],
+            "ece": {
+              "valor": 0.6272264631043257,
+              "ic": [
+                0.544529262086514,
+                0.7067589058524172
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "brier": {
+              "valor": 0.621607294317218,
+              "ic": [
+                0.5495122985581001,
+                0.6907946352841391
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "sobreconfianza": {
+              "valor": -0.589058524173028,
+              "ic": [
+                -0.6755884223918573,
+                -0.49235050890585247
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "auroc": {
+              "valor": 0.47180109157064887,
+              "ic": [
+                0.37444034865114884,
+                0.5704626654349005
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            }
+          },
+          "score_correctitud": {
+            "n": 131,
+            "aciertos": 97,
+            "exactitud": 0.7404580152671756,
+            "ic_wilson": [
+              0.659298288754975,
+              0.8079170658621422
+            ],
+            "confianza_media": 0.7970483460559797,
+            "fiabilidad": [
+              {
+                "valor": 0.5166666666666666,
+                "casos": 8,
+                "aciertos": 8,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.6755924351161198,
+                  1.0
+                ]
+              },
+              {
+                "valor": 0.8,
+                "casos": 90,
+                "aciertos": 67,
+                "exactitud": 0.7444444444444445,
+                "ic_wilson": [
+                  0.6456235101244654,
+                  0.8232524062663082
+                ]
+              },
+              {
+                "valor": 0.8500000000000001,
+                "casos": 26,
+                "aciertos": 19,
+                "exactitud": 0.7307692307692307,
+                "ic_wilson": [
+                  0.5391695962082381,
+                  0.8629555167798162
+                ]
+              },
+              {
+                "valor": 0.8799999999999999,
+                "casos": 6,
+                "aciertos": 2,
+                "exactitud": 0.3333333333333333,
+                "ic_wilson": [
+                  0.09677141110578041,
+                  0.700006684861608
+                ]
+              },
+              {
+                "valor": 0.8999999999999999,
+                "casos": 1,
+                "aciertos": 1,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.20654931437723745,
+                  1.0
+                ]
+              }
+            ],
+            "ece": {
+              "valor": 0.11715012722646315,
+              "ic": [
+                0.04307824427480908,
+                0.19501972010178112
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "brier": {
+              "valor": 0.21290296861747243,
+              "ic": [
+                0.16551066369804923,
+                0.2628155576759966
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "sobreconfianza": {
+              "valor": 0.056590330788804155,
+              "ic": [
+                -0.02033587786259541,
+                0.1376113231552162
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "auroc": {
+              "valor": 0.41600970285021227,
+              "ic": [
+                0.32519216191631295,
+                0.5049963980773075
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            }
+          }
+        }
+      },
+      "distribucion_confianza_gemini": {
+        "0.85": 24,
+        "0.9": 7,
+        "0.95": 35,
+        "0.98": 3
+      },
+      "barrido_gemini": [
+        {
+          "umbral": 0.7,
+          "escalados": 69,
+          "aceptados": 69,
+          "derivados": 0,
+          "cobertura": 1.0,
+          "aciertos_aceptados": 50,
+          "exactitud_selectiva": 0.7246376811594203,
+          "ic_wilson": [
+            0.609527027856669,
+            0.8160547836815831
+          ],
+          "exactitud_derivados": null,
+          "errores_atrapados": 0,
+          "errores_aceptados": 19,
+          "carga_revision": 0.0
+        },
+        {
+          "umbral": 0.86,
+          "escalados": 69,
+          "aceptados": 45,
+          "derivados": 24,
+          "cobertura": 0.6521739130434783,
+          "aciertos_aceptados": 32,
+          "exactitud_selectiva": 0.7111111111111111,
+          "ic_wilson": [
+            0.5663145942523844,
+            0.8226991751715074
+          ],
+          "exactitud_derivados": 0.75,
+          "errores_atrapados": 6,
+          "errores_aceptados": 13,
+          "carga_revision": 0.12
+        },
+        {
+          "umbral": 0.91,
+          "escalados": 69,
+          "aceptados": 38,
+          "derivados": 31,
+          "cobertura": 0.5507246376811594,
+          "aciertos_aceptados": 28,
+          "exactitud_selectiva": 0.7368421052631579,
+          "ic_wilson": [
+            0.5799115381253364,
+            0.8502837874520186
+          ],
+          "exactitud_derivados": 0.7096774193548387,
+          "errores_atrapados": 9,
+          "errores_aceptados": 10,
+          "carga_revision": 0.155
+        },
+        {
+          "umbral": 0.96,
+          "escalados": 69,
+          "aceptados": 3,
+          "derivados": 66,
+          "cobertura": 0.043478260869565216,
+          "aciertos_aceptados": 3,
+          "exactitud_selectiva": 1.0,
+          "ic_wilson": [
+            0.4385029682449546,
+            1.0
+          ],
+          "exactitud_derivados": 0.7121212121212122,
+          "errores_atrapados": 19,
+          "errores_aceptados": 0,
+          "carga_revision": 0.33
+        },
+        {
+          "umbral": 0.99,
+          "escalados": 69,
+          "aceptados": 0,
+          "derivados": 69,
+          "cobertura": 0.0,
+          "aciertos_aceptados": 0,
+          "exactitud_selectiva": null,
+          "ic_wilson": null,
+          "exactitud_derivados": 0.7246376811594203,
+          "errores_atrapados": 19,
+          "errores_aceptados": 0,
+          "carga_revision": 0.345
+        },
+        {
+          "umbral": "inf",
+          "escalados": 69,
+          "aceptados": 0,
+          "derivados": 69,
+          "cobertura": 0.0,
+          "aciertos_aceptados": 0,
+          "exactitud_selectiva": null,
+          "ic_wilson": null,
+          "exactitud_derivados": 0.7246376811594203,
+          "errores_atrapados": 19,
+          "errores_aceptados": 0,
+          "carga_revision": 0.345
+        }
+      ]
+    },
+    "fuera_muestra": {
+      "referencia": "consenso de E3 y E4 (sector_asignado de la cache independiente)",
+      "n": 103,
+      "escalados_a_gemini": 34,
+      "cortocircuitados": 69,
+      "etapas": {
+        "gemini": {
+          "confianza": {
+            "n": 34,
+            "aciertos": 26,
+            "exactitud": 0.7647058823529411,
+            "ic_wilson": [
+              0.6000386207746361,
+              0.8756301446736042
+            ],
+            "confianza_media": 0.9155882352941176,
+            "fiabilidad": [
+              {
+                "valor": 0.65,
+                "casos": 1,
+                "aciertos": 1,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.20654931437723745,
+                  1.0
+                ]
+              },
+              {
+                "valor": 0.85,
+                "casos": 8,
+                "aciertos": 3,
+                "exactitud": 0.375,
+                "ic_wilson": [
+                  0.13684428582359742,
+                  0.6942576053973727
+                ]
+              },
+              {
+                "valor": 0.9,
+                "casos": 2,
+                "aciertos": 2,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.34238022750665303,
+                  1.0
+                ]
+              },
+              {
+                "valor": 0.95,
+                "casos": 22,
+                "aciertos": 19,
+                "exactitud": 0.8636363636363636,
+                "ic_wilson": [
+                  0.6666501283342828,
+                  0.9525099628594474
+                ]
+              },
+              {
+                "valor": 0.98,
+                "casos": 1,
+                "aciertos": 1,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.20654931437723745,
+                  1.0
+                ]
+              }
+            ],
+            "ece": {
+              "valor": 0.17147058823529415,
+              "ic": [
+                0.06852205882352941,
+                0.3038235294117647
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "brier": {
+              "valor": 0.19346764705882352,
+              "ic": [
+                0.08808330882352941,
+                0.3050845588235293
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "sobreconfianza": {
+              "valor": 0.15088235294117647,
+              "ic": [
+                0.02294117647058824,
+                0.2912132352941174
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "auroc": {
+              "valor": 0.7163461538461539,
+              "ic": [
+                0.5137701149425288,
+                0.9139367816091953
+              ],
+              "remuestras_validas": 1999,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            }
+          }
+        },
+        "deterministic": {
+          "confianza": {
+            "n": 69,
+            "aciertos": 61,
+            "exactitud": 0.8840579710144928,
+            "ic_wilson": [
+              0.787542594696838,
+              0.9400650185782384
+            ],
+            "confianza_media": 0.21340579710144927,
+            "fiabilidad": [
+              {
+                "valor": 0.0,
+                "casos": 41,
+                "aciertos": 34,
+                "exactitud": 0.8292682926829268,
+                "ic_wilson": [
+                  0.6873738759959581,
+                  0.91474748022405
+                ]
+              },
+              {
+                "valor": 0.16666666666666666,
+                "casos": 3,
+                "aciertos": 3,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.4385029682449546,
+                  1.0
+                ]
+              },
+              {
+                "valor": 0.375,
+                "casos": 1,
+                "aciertos": 1,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.20654931437723745,
+                  1.0
+                ]
+              },
+              {
+                "valor": 0.5,
+                "casos": 16,
+                "aciertos": 15,
+                "exactitud": 0.9375,
+                "ic_wilson": [
+                  0.7167126242970107,
+                  0.9888806552353576
+                ]
+              },
+              {
+                "valor": 0.6,
+                "casos": 1,
+                "aciertos": 1,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.20654931437723745,
+                  1.0
+                ]
+              },
+              {
+                "valor": 0.75,
+                "casos": 7,
+                "aciertos": 7,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.6456695649333126,
+                  1.0
+                ]
+              }
+            ],
+            "ece": {
+              "valor": 0.6706521739130435,
+              "ic": [
+                0.5818840579710146,
+                0.7531461352657005
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "brier": {
+              "valor": 0.5952385265700483,
+              "ic": [
+                0.4973060336151369,
+                0.6871139291465378
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "sobreconfianza": {
+              "valor": -0.6706521739130435,
+              "ic": [
+                -0.7531461352657004,
+                -0.5818840579710145
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "auroc": {
+              "valor": 0.6629098360655737,
+              "ic": [
+                0.5118956043956043,
+                0.7678771321961619
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            }
+          },
+          "score_correctitud": {
+            "n": 69,
+            "aciertos": 61,
+            "exactitud": 0.8840579710144928,
+            "ic_wilson": [
+              0.787542594696838,
+              0.9400650185782384
+            ],
+            "confianza_media": 0.8033647287854331,
+            "fiabilidad": [
+              {
+                "valor": 0.5166666666666666,
+                "casos": 3,
+                "aciertos": 3,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.4385029682449546,
+                  1.0
+                ]
+              },
+              {
+                "valor": 0.63,
+                "casos": 1,
+                "aciertos": 1,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.20654931437723745,
+                  1.0
+                ]
+              },
+              {
+                "valor": 0.7,
+                "casos": 1,
+                "aciertos": 1,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.20654931437723745,
+                  1.0
+                ]
+              },
+              {
+                "valor": 0.7951219512195122,
+                "casos": 1,
+                "aciertos": 1,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.20654931437723745,
+                  1.0
+                ]
+              },
+              {
+                "valor": 0.7970443349753694,
+                "casos": 1,
+                "aciertos": 1,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.20654931437723745,
+                  1.0
+                ]
+              },
+              {
+                "valor": 0.8,
+                "casos": 39,
+                "aciertos": 32,
+                "exactitud": 0.8205128205128205,
+                "ic_wilson": [
+                  0.6733195433811838,
+                  0.9102273452678089
+                ]
+              },
+              {
+                "valor": 0.8500000000000001,
+                "casos": 16,
+                "aciertos": 15,
+                "exactitud": 0.9375,
+                "ic_wilson": [
+                  0.7167126242970107,
+                  0.9888806552353576
+                ]
+              },
+              {
+                "valor": 0.8799999999999999,
+                "casos": 7,
+                "aciertos": 7,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.6456695649333126,
+                  1.0
+                ]
+              }
+            ],
+            "ece": {
+              "valor": 0.08069324222905971,
+              "ic": [
+                0.02856948862966885,
+                0.15524197425096972
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "brier": {
+              "valor": 0.11495216449523223,
+              "ic": [
+                0.07144860648467224,
+                0.16057121051873546
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "sobreconfianza": {
+              "valor": -0.08069324222905971,
+              "ic": [
+                -0.1552419742509697,
+                -0.003201042771297275
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "auroc": {
+              "valor": 0.5747950819672131,
+              "ic": [
+                0.44229166666666664,
+                0.6854838709677419
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            }
+          }
+        }
+      },
+      "distribucion_confianza_gemini": {
+        "0.65": 1,
+        "0.85": 8,
+        "0.9": 2,
+        "0.95": 22,
+        "0.98": 1
+      },
+      "barrido_gemini": [
+        {
+          "umbral": 0.7,
+          "escalados": 34,
+          "aceptados": 33,
+          "derivados": 1,
+          "cobertura": 0.9705882352941176,
+          "aciertos_aceptados": 25,
+          "exactitud_selectiva": 0.7575757575757576,
+          "ic_wilson": [
+            0.5897538017044264,
+            0.8716828662282499
+          ],
+          "exactitud_derivados": 1.0,
+          "errores_atrapados": 0,
+          "errores_aceptados": 8,
+          "carga_revision": 0.009708737864077669
+        },
+        {
+          "umbral": 0.86,
+          "escalados": 34,
+          "aceptados": 25,
+          "derivados": 9,
+          "cobertura": 0.7352941176470589,
+          "aciertos_aceptados": 22,
+          "exactitud_selectiva": 0.88,
+          "ic_wilson": [
+            0.7004420607907267,
+            0.9583318284955964
+          ],
+          "exactitud_derivados": 0.4444444444444444,
+          "errores_atrapados": 5,
+          "errores_aceptados": 3,
+          "carga_revision": 0.08737864077669903
+        },
+        {
+          "umbral": 0.91,
+          "escalados": 34,
+          "aceptados": 23,
+          "derivados": 11,
+          "cobertura": 0.6764705882352942,
+          "aciertos_aceptados": 20,
+          "exactitud_selectiva": 0.8695652173913043,
+          "ic_wilson": [
+            0.6787251772990404,
+            0.9546234090636876
+          ],
+          "exactitud_derivados": 0.5454545454545454,
+          "errores_atrapados": 5,
+          "errores_aceptados": 3,
+          "carga_revision": 0.10679611650485436
+        },
+        {
+          "umbral": 0.96,
+          "escalados": 34,
+          "aceptados": 1,
+          "derivados": 33,
+          "cobertura": 0.029411764705882353,
+          "aciertos_aceptados": 1,
+          "exactitud_selectiva": 1.0,
+          "ic_wilson": [
+            0.20654931437723745,
+            1.0
+          ],
+          "exactitud_derivados": 0.7575757575757576,
+          "errores_atrapados": 8,
+          "errores_aceptados": 0,
+          "carga_revision": 0.32038834951456313
+        },
+        {
+          "umbral": 0.99,
+          "escalados": 34,
+          "aceptados": 0,
+          "derivados": 34,
+          "cobertura": 0.0,
+          "aciertos_aceptados": 0,
+          "exactitud_selectiva": null,
+          "ic_wilson": null,
+          "exactitud_derivados": 0.7647058823529411,
+          "errores_atrapados": 8,
+          "errores_aceptados": 0,
+          "carga_revision": 0.3300970873786408
+        },
+        {
+          "umbral": "inf",
+          "escalados": 34,
+          "aceptados": 0,
+          "derivados": 34,
+          "cobertura": 0.0,
+          "aciertos_aceptados": 0,
+          "exactitud_selectiva": null,
+          "ic_wilson": null,
+          "exactitud_derivados": 0.7647058823529411,
+          "errores_atrapados": 8,
+          "errores_aceptados": 0,
+          "carga_revision": 0.3300970873786408
+        }
+      ]
+    },
+    "control_consenso_e1_e2": {
+      "referencia": "consenso de E1 y E2 (138 casos; discordantes excluidos)",
+      "n": 138,
+      "escalados_a_gemini": 44,
+      "cortocircuitados": 94,
+      "etapas": {
+        "gemini": {
+          "confianza": {
+            "n": 44,
+            "aciertos": 34,
+            "exactitud": 0.7727272727272727,
+            "ic_wilson": [
+              0.6300764193536367,
+              0.8715805240508284
+            ],
+            "confianza_media": 0.91,
+            "fiabilidad": [
+              {
+                "valor": 0.85,
+                "casos": 16,
+                "aciertos": 12,
+                "exactitud": 0.75,
+                "ic_wilson": [
+                  0.5050168346449122,
+                  0.8981793250878696
+                ]
+              },
+              {
+                "valor": 0.9,
+                "casos": 5,
+                "aciertos": 3,
+                "exactitud": 0.6,
+                "ic_wilson": [
+                  0.2307242812760128,
+                  0.882379225767352
+                ]
+              },
+              {
+                "valor": 0.95,
+                "casos": 20,
+                "aciertos": 16,
+                "exactitud": 0.8,
+                "ic_wilson": [
+                  0.5839825677481064,
+                  0.919342337420202
+                ]
+              },
+              {
+                "valor": 0.98,
+                "casos": 3,
+                "aciertos": 3,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.4385029682449546,
+                  1.0
+                ]
+              }
+            ],
+            "ece": {
+              "valor": 0.1372727272727272,
+              "ic": [
+                0.04248863636363635,
+                0.27161363636363617
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "brier": {
+              "valor": 0.1923,
+              "ic": [
+                0.09951471590909092,
+                0.301350284090909
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "sobreconfianza": {
+              "valor": 0.13727272727272732,
+              "ic": [
+                0.02318181818181808,
+                0.267278409090909
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "auroc": {
+              "valor": 0.5794117647058824,
+              "ic": [
+                0.40476190476190477,
+                0.7567614489489489
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            }
+          }
+        },
+        "deterministic": {
+          "confianza": {
+            "n": 94,
+            "aciertos": 76,
+            "exactitud": 0.8085106382978723,
+            "ic_wilson": [
+              0.7174971706384233,
+              0.8752985695221128
+            ],
+            "confianza_media": 0.12854609929078015,
+            "fiabilidad": [
+              {
+                "valor": 0.0,
+                "casos": 69,
+                "aciertos": 54,
+                "exactitud": 0.782608695652174,
+                "ic_wilson": [
+                  0.6718170359123908,
+                  0.8635923398937974
+                ]
+              },
+              {
+                "valor": 0.16666666666666666,
+                "casos": 5,
+                "aciertos": 5,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.5655175352168251,
+                  1.0
+                ]
+              },
+              {
+                "valor": 0.5,
+                "casos": 16,
+                "aciertos": 13,
+                "exactitud": 0.8125,
+                "ic_wilson": [
+                  0.5699111903802586,
+                  0.9340840092857187
+                ]
+              },
+              {
+                "valor": 0.75,
+                "casos": 3,
+                "aciertos": 3,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.4385029682449546,
+                  1.0
+                ]
+              },
+              {
+                "valor": 1.0,
+                "casos": 1,
+                "aciertos": 1,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.20654931437723745,
+                  1.0
+                ]
+              }
+            ],
+            "ece": {
+              "valor": 0.6799645390070923,
+              "ic": [
+                0.5921985815602838,
+                0.7659574468085107
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "brier": {
+              "valor": 0.6559544917257684,
+              "ic": [
+                0.57194518321513,
+                0.7403221040189124
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "sobreconfianza": {
+              "valor": -0.6799645390070921,
+              "ic": [
+                -0.7659574468085106,
+                -0.5921764184397165
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "auroc": {
+              "valor": 0.5603070175438597,
+              "ic": [
+                0.45296741854636596,
+                0.66
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            }
+          },
+          "score_correctitud": {
+            "n": 94,
+            "aciertos": 76,
+            "exactitud": 0.8085106382978723,
+            "ic_wilson": [
+              0.7174971706384233,
+              0.8752985695221128
+            ],
+            "confianza_media": 0.7970567375886525,
+            "fiabilidad": [
+              {
+                "valor": 0.5166666666666666,
+                "casos": 5,
+                "aciertos": 5,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.5655175352168251,
+                  1.0
+                ]
+              },
+              {
+                "valor": 0.8,
+                "casos": 69,
+                "aciertos": 54,
+                "exactitud": 0.782608695652174,
+                "ic_wilson": [
+                  0.6718170359123908,
+                  0.8635923398937974
+                ]
+              },
+              {
+                "valor": 0.8500000000000001,
+                "casos": 16,
+                "aciertos": 13,
+                "exactitud": 0.8125,
+                "ic_wilson": [
+                  0.5699111903802586,
+                  0.9340840092857187
+                ]
+              },
+              {
+                "valor": 0.8799999999999999,
+                "casos": 3,
+                "aciertos": 3,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.4385029682449546,
+                  1.0
+                ]
+              },
+              {
+                "valor": 0.8999999999999999,
+                "casos": 1,
+                "aciertos": 1,
+                "exactitud": 1.0,
+                "ic_wilson": [
+                  0.20654931437723745,
+                  1.0
+                ]
+              }
+            ],
+            "ece": {
+              "valor": 0.04209219858156028,
+              "ic": [
+                0.01920478723404255,
+                0.12385638297872337
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "brier": {
+              "valor": 0.16426867612293145,
+              "ic": [
+                0.11644264479905438,
+                0.2128725886524823
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "sobreconfianza": {
+              "valor": -0.01145390070921981,
+              "ic": [
+                -0.08776773049645387,
+                0.07173936170212775
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            },
+            "auroc": {
+              "valor": 0.5054824561403509,
+              "ic": [
+                0.4038576357812427,
+                0.5957607428381079
+              ],
+              "remuestras_validas": 2000,
+              "nivel_confianza": 0.95,
+              "semilla": 20261021,
+              "remuestreos": 2000
+            }
+          }
+        }
+      },
+      "distribucion_confianza_gemini": {
+        "0.85": 16,
+        "0.9": 5,
+        "0.95": 20,
+        "0.98": 3
+      },
+      "barrido_gemini": [
+        {
+          "umbral": 0.7,
+          "escalados": 44,
+          "aceptados": 44,
+          "derivados": 0,
+          "cobertura": 1.0,
+          "aciertos_aceptados": 34,
+          "exactitud_selectiva": 0.7727272727272727,
+          "ic_wilson": [
+            0.6300764193536367,
+            0.8715805240508284
+          ],
+          "exactitud_derivados": null,
+          "errores_atrapados": 0,
+          "errores_aceptados": 10,
+          "carga_revision": 0.0
+        },
+        {
+          "umbral": 0.86,
+          "escalados": 44,
+          "aceptados": 28,
+          "derivados": 16,
+          "cobertura": 0.6363636363636364,
+          "aciertos_aceptados": 22,
+          "exactitud_selectiva": 0.7857142857142857,
+          "ic_wilson": [
+            0.6046141434627812,
+            0.8978753966710211
+          ],
+          "exactitud_derivados": 0.75,
+          "errores_atrapados": 4,
+          "errores_aceptados": 6,
+          "carga_revision": 0.11594202898550725
+        },
+        {
+          "umbral": 0.91,
+          "escalados": 44,
+          "aceptados": 23,
+          "derivados": 21,
+          "cobertura": 0.5227272727272727,
+          "aciertos_aceptados": 19,
+          "exactitud_selectiva": 0.8260869565217391,
+          "ic_wilson": [
+            0.6286235235977385,
+            0.9302134643693744
+          ],
+          "exactitud_derivados": 0.7142857142857143,
+          "errores_atrapados": 6,
+          "errores_aceptados": 4,
+          "carga_revision": 0.15217391304347827
+        },
+        {
+          "umbral": 0.96,
+          "escalados": 44,
+          "aceptados": 3,
+          "derivados": 41,
+          "cobertura": 0.06818181818181818,
+          "aciertos_aceptados": 3,
+          "exactitud_selectiva": 1.0,
+          "ic_wilson": [
+            0.4385029682449546,
+            1.0
+          ],
+          "exactitud_derivados": 0.7560975609756098,
+          "errores_atrapados": 10,
+          "errores_aceptados": 0,
+          "carga_revision": 0.2971014492753623
+        },
+        {
+          "umbral": 0.99,
+          "escalados": 44,
+          "aceptados": 0,
+          "derivados": 44,
+          "cobertura": 0.0,
+          "aciertos_aceptados": 0,
+          "exactitud_selectiva": null,
+          "ic_wilson": null,
+          "exactitud_derivados": 0.7727272727272727,
+          "errores_atrapados": 10,
+          "errores_aceptados": 0,
+          "carga_revision": 0.3188405797101449
+        },
+        {
+          "umbral": "inf",
+          "escalados": 44,
+          "aceptados": 0,
+          "derivados": 44,
+          "cobertura": 0.0,
+          "aciertos_aceptados": 0,
+          "exactitud_selectiva": null,
+          "ic_wilson": null,
+          "exactitud_derivados": 0.7727272727272727,
+          "errores_atrapados": 10,
+          "errores_aceptados": 0,
+          "carga_revision": 0.3188405797101449
+        }
+      ]
+    }
+  },
+  "s1_categorias": {
+    "dentro_muestra": {
+      "sin_prediccion_reglas": {
+        "casos": 69,
+        "aciertos_gemini": 50,
+        "exactitud_gemini": 0.7246376811594203
+      }
+    },
+    "fuera_muestra": {
+      "sin_prediccion_reglas": {
+        "casos": 34,
+        "aciertos_gemini": 26,
+        "exactitud_gemini": 0.7647058823529411
+      }
+    }
+  },
+  "politicas": {
+    "confianza_gemini": {
+      "piso_0.85": {
+        "piso": 0.85,
+        "min_aceptados": 10,
+        "umbral_seleccionado": null,
+        "barrido_dentro": [
+          {
+            "umbral": 0.7,
+            "escalados": 69,
+            "aceptados": 69,
+            "derivados": 0,
+            "cobertura": 1.0,
+            "aciertos_aceptados": 50,
+            "exactitud_selectiva": 0.7246376811594203,
+            "ic_wilson": [
+              0.609527027856669,
+              0.8160547836815831
+            ],
+            "exactitud_derivados": null,
+            "errores_atrapados": 0,
+            "errores_aceptados": 19,
+            "carga_revision": 0.0
+          },
+          {
+            "umbral": 0.86,
+            "escalados": 69,
+            "aceptados": 45,
+            "derivados": 24,
+            "cobertura": 0.6521739130434783,
+            "aciertos_aceptados": 32,
+            "exactitud_selectiva": 0.7111111111111111,
+            "ic_wilson": [
+              0.5663145942523844,
+              0.8226991751715074
+            ],
+            "exactitud_derivados": 0.75,
+            "errores_atrapados": 6,
+            "errores_aceptados": 13,
+            "carga_revision": 0.12
+          },
+          {
+            "umbral": 0.91,
+            "escalados": 69,
+            "aceptados": 38,
+            "derivados": 31,
+            "cobertura": 0.5507246376811594,
+            "aciertos_aceptados": 28,
+            "exactitud_selectiva": 0.7368421052631579,
+            "ic_wilson": [
+              0.5799115381253364,
+              0.8502837874520186
+            ],
+            "exactitud_derivados": 0.7096774193548387,
+            "errores_atrapados": 9,
+            "errores_aceptados": 10,
+            "carga_revision": 0.155
+          },
+          {
+            "umbral": 0.96,
+            "escalados": 69,
+            "aceptados": 3,
+            "derivados": 66,
+            "cobertura": 0.043478260869565216,
+            "aciertos_aceptados": 3,
+            "exactitud_selectiva": 1.0,
+            "ic_wilson": [
+              0.4385029682449546,
+              1.0
+            ],
+            "exactitud_derivados": 0.7121212121212122,
+            "errores_atrapados": 19,
+            "errores_aceptados": 0,
+            "carga_revision": 0.33
+          },
+          {
+            "umbral": 0.99,
+            "escalados": 69,
+            "aceptados": 0,
+            "derivados": 69,
+            "cobertura": 0.0,
+            "aciertos_aceptados": 0,
+            "exactitud_selectiva": null,
+            "ic_wilson": null,
+            "exactitud_derivados": 0.7246376811594203,
+            "errores_atrapados": 19,
+            "errores_aceptados": 0,
+            "carga_revision": 0.345
+          },
+          {
+            "umbral": "inf",
+            "escalados": 69,
+            "aceptados": 0,
+            "derivados": 69,
+            "cobertura": 0.0,
+            "aciertos_aceptados": 0,
+            "exactitud_selectiva": null,
+            "ic_wilson": null,
+            "exactitud_derivados": 0.7246376811594203,
+            "errores_atrapados": 19,
+            "errores_aceptados": 0,
+            "carga_revision": 0.345
+          }
+        ],
+        "fuera_de_muestra": {
+          "umbral": null,
+          "veredicto": "sin umbral seleccionado"
+        },
+        "barrido_fuera_descriptivo": [
+          {
+            "umbral": 0.7,
+            "escalados": 34,
+            "aceptados": 33,
+            "derivados": 1,
+            "cobertura": 0.9705882352941176,
+            "aciertos_aceptados": 25,
+            "exactitud_selectiva": 0.7575757575757576,
+            "ic_wilson": [
+              0.5897538017044264,
+              0.8716828662282499
+            ],
+            "exactitud_derivados": 1.0,
+            "errores_atrapados": 0,
+            "errores_aceptados": 8,
+            "carga_revision": 0.009708737864077669
+          },
+          {
+            "umbral": 0.86,
+            "escalados": 34,
+            "aceptados": 25,
+            "derivados": 9,
+            "cobertura": 0.7352941176470589,
+            "aciertos_aceptados": 22,
+            "exactitud_selectiva": 0.88,
+            "ic_wilson": [
+              0.7004420607907267,
+              0.9583318284955964
+            ],
+            "exactitud_derivados": 0.4444444444444444,
+            "errores_atrapados": 5,
+            "errores_aceptados": 3,
+            "carga_revision": 0.08737864077669903
+          },
+          {
+            "umbral": 0.91,
+            "escalados": 34,
+            "aceptados": 23,
+            "derivados": 11,
+            "cobertura": 0.6764705882352942,
+            "aciertos_aceptados": 20,
+            "exactitud_selectiva": 0.8695652173913043,
+            "ic_wilson": [
+              0.6787251772990404,
+              0.9546234090636876
+            ],
+            "exactitud_derivados": 0.5454545454545454,
+            "errores_atrapados": 5,
+            "errores_aceptados": 3,
+            "carga_revision": 0.10679611650485436
+          },
+          {
+            "umbral": 0.96,
+            "escalados": 34,
+            "aceptados": 1,
+            "derivados": 33,
+            "cobertura": 0.029411764705882353,
+            "aciertos_aceptados": 1,
+            "exactitud_selectiva": 1.0,
+            "ic_wilson": [
+              0.20654931437723745,
+              1.0
+            ],
+            "exactitud_derivados": 0.7575757575757576,
+            "errores_atrapados": 8,
+            "errores_aceptados": 0,
+            "carga_revision": 0.32038834951456313
+          },
+          {
+            "umbral": 0.99,
+            "escalados": 34,
+            "aceptados": 0,
+            "derivados": 34,
+            "cobertura": 0.0,
+            "aciertos_aceptados": 0,
+            "exactitud_selectiva": null,
+            "ic_wilson": null,
+            "exactitud_derivados": 0.7647058823529411,
+            "errores_atrapados": 8,
+            "errores_aceptados": 0,
+            "carga_revision": 0.3300970873786408
+          },
+          {
+            "umbral": "inf",
+            "escalados": 34,
+            "aceptados": 0,
+            "derivados": 34,
+            "cobertura": 0.0,
+            "aciertos_aceptados": 0,
+            "exactitud_selectiva": null,
+            "ic_wilson": null,
+            "exactitud_derivados": 0.7647058823529411,
+            "errores_atrapados": 8,
+            "errores_aceptados": 0,
+            "carga_revision": 0.3300970873786408
+          }
+        ],
+        "lectura": "la senal no sostiene un umbral con el piso fijado: ningun candidato alcanza 0.85 con al menos 10 aceptados dentro de la muestra; fuera de la muestra el barrido se informa solo como descripcion",
+        "auroc_dentro": {
+          "valor": 0.5168421052631579,
+          "ic": [
+            0.3796128707893414,
+            0.6527821258199165
+          ],
+          "remuestras_validas": 2000,
+          "nivel_confianza": 0.95,
+          "semilla": 20261021,
+          "remuestreos": 2000
+        },
+        "auroc_fuera": {
+          "valor": 0.7163461538461539,
+          "ic": [
+            0.5137701149425288,
+            0.9139367816091953
+          ],
+          "remuestras_validas": 1999,
+          "nivel_confianza": 0.95,
+          "semilla": 20261021,
+          "remuestreos": 2000
+        }
+      },
+      "piso_0.8278": {
+        "piso": 0.8278,
+        "min_aceptados": 10,
+        "umbral_seleccionado": null,
+        "barrido_dentro": [
+          {
+            "umbral": 0.7,
+            "escalados": 69,
+            "aceptados": 69,
+            "derivados": 0,
+            "cobertura": 1.0,
+            "aciertos_aceptados": 50,
+            "exactitud_selectiva": 0.7246376811594203,
+            "ic_wilson": [
+              0.609527027856669,
+              0.8160547836815831
+            ],
+            "exactitud_derivados": null,
+            "errores_atrapados": 0,
+            "errores_aceptados": 19,
+            "carga_revision": 0.0
+          },
+          {
+            "umbral": 0.86,
+            "escalados": 69,
+            "aceptados": 45,
+            "derivados": 24,
+            "cobertura": 0.6521739130434783,
+            "aciertos_aceptados": 32,
+            "exactitud_selectiva": 0.7111111111111111,
+            "ic_wilson": [
+              0.5663145942523844,
+              0.8226991751715074
+            ],
+            "exactitud_derivados": 0.75,
+            "errores_atrapados": 6,
+            "errores_aceptados": 13,
+            "carga_revision": 0.12
+          },
+          {
+            "umbral": 0.91,
+            "escalados": 69,
+            "aceptados": 38,
+            "derivados": 31,
+            "cobertura": 0.5507246376811594,
+            "aciertos_aceptados": 28,
+            "exactitud_selectiva": 0.7368421052631579,
+            "ic_wilson": [
+              0.5799115381253364,
+              0.8502837874520186
+            ],
+            "exactitud_derivados": 0.7096774193548387,
+            "errores_atrapados": 9,
+            "errores_aceptados": 10,
+            "carga_revision": 0.155
+          },
+          {
+            "umbral": 0.96,
+            "escalados": 69,
+            "aceptados": 3,
+            "derivados": 66,
+            "cobertura": 0.043478260869565216,
+            "aciertos_aceptados": 3,
+            "exactitud_selectiva": 1.0,
+            "ic_wilson": [
+              0.4385029682449546,
+              1.0
+            ],
+            "exactitud_derivados": 0.7121212121212122,
+            "errores_atrapados": 19,
+            "errores_aceptados": 0,
+            "carga_revision": 0.33
+          },
+          {
+            "umbral": 0.99,
+            "escalados": 69,
+            "aceptados": 0,
+            "derivados": 69,
+            "cobertura": 0.0,
+            "aciertos_aceptados": 0,
+            "exactitud_selectiva": null,
+            "ic_wilson": null,
+            "exactitud_derivados": 0.7246376811594203,
+            "errores_atrapados": 19,
+            "errores_aceptados": 0,
+            "carga_revision": 0.345
+          },
+          {
+            "umbral": "inf",
+            "escalados": 69,
+            "aceptados": 0,
+            "derivados": 69,
+            "cobertura": 0.0,
+            "aciertos_aceptados": 0,
+            "exactitud_selectiva": null,
+            "ic_wilson": null,
+            "exactitud_derivados": 0.7246376811594203,
+            "errores_atrapados": 19,
+            "errores_aceptados": 0,
+            "carga_revision": 0.345
+          }
+        ],
+        "fuera_de_muestra": {
+          "umbral": null,
+          "veredicto": "sin umbral seleccionado"
+        },
+        "barrido_fuera_descriptivo": [
+          {
+            "umbral": 0.7,
+            "escalados": 34,
+            "aceptados": 33,
+            "derivados": 1,
+            "cobertura": 0.9705882352941176,
+            "aciertos_aceptados": 25,
+            "exactitud_selectiva": 0.7575757575757576,
+            "ic_wilson": [
+              0.5897538017044264,
+              0.8716828662282499
+            ],
+            "exactitud_derivados": 1.0,
+            "errores_atrapados": 0,
+            "errores_aceptados": 8,
+            "carga_revision": 0.009708737864077669
+          },
+          {
+            "umbral": 0.86,
+            "escalados": 34,
+            "aceptados": 25,
+            "derivados": 9,
+            "cobertura": 0.7352941176470589,
+            "aciertos_aceptados": 22,
+            "exactitud_selectiva": 0.88,
+            "ic_wilson": [
+              0.7004420607907267,
+              0.9583318284955964
+            ],
+            "exactitud_derivados": 0.4444444444444444,
+            "errores_atrapados": 5,
+            "errores_aceptados": 3,
+            "carga_revision": 0.08737864077669903
+          },
+          {
+            "umbral": 0.91,
+            "escalados": 34,
+            "aceptados": 23,
+            "derivados": 11,
+            "cobertura": 0.6764705882352942,
+            "aciertos_aceptados": 20,
+            "exactitud_selectiva": 0.8695652173913043,
+            "ic_wilson": [
+              0.6787251772990404,
+              0.9546234090636876
+            ],
+            "exactitud_derivados": 0.5454545454545454,
+            "errores_atrapados": 5,
+            "errores_aceptados": 3,
+            "carga_revision": 0.10679611650485436
+          },
+          {
+            "umbral": 0.96,
+            "escalados": 34,
+            "aceptados": 1,
+            "derivados": 33,
+            "cobertura": 0.029411764705882353,
+            "aciertos_aceptados": 1,
+            "exactitud_selectiva": 1.0,
+            "ic_wilson": [
+              0.20654931437723745,
+              1.0
+            ],
+            "exactitud_derivados": 0.7575757575757576,
+            "errores_atrapados": 8,
+            "errores_aceptados": 0,
+            "carga_revision": 0.32038834951456313
+          },
+          {
+            "umbral": 0.99,
+            "escalados": 34,
+            "aceptados": 0,
+            "derivados": 34,
+            "cobertura": 0.0,
+            "aciertos_aceptados": 0,
+            "exactitud_selectiva": null,
+            "ic_wilson": null,
+            "exactitud_derivados": 0.7647058823529411,
+            "errores_atrapados": 8,
+            "errores_aceptados": 0,
+            "carga_revision": 0.3300970873786408
+          },
+          {
+            "umbral": "inf",
+            "escalados": 34,
+            "aceptados": 0,
+            "derivados": 34,
+            "cobertura": 0.0,
+            "aciertos_aceptados": 0,
+            "exactitud_selectiva": null,
+            "ic_wilson": null,
+            "exactitud_derivados": 0.7647058823529411,
+            "errores_atrapados": 8,
+            "errores_aceptados": 0,
+            "carga_revision": 0.3300970873786408
+          }
+        ],
+        "lectura": "la senal no sostiene un umbral con el piso fijado: ningun candidato alcanza 0.8278 con al menos 10 aceptados dentro de la muestra; fuera de la muestra el barrido se informa solo como descripcion",
+        "auroc_dentro": {
+          "valor": 0.5168421052631579,
+          "ic": [
+            0.3796128707893414,
+            0.6527821258199165
+          ],
+          "remuestras_validas": 2000,
+          "nivel_confianza": 0.95,
+          "semilla": 20261021,
+          "remuestreos": 2000
+        },
+        "auroc_fuera": {
+          "valor": 0.7163461538461539,
+          "ic": [
+            0.5137701149425288,
+            0.9139367816091953
+          ],
+          "remuestras_validas": 1999,
+          "nivel_confianza": 0.95,
+          "semilla": 20261021,
+          "remuestreos": 2000
+        }
+      }
+    },
+    "s1_acuerdo_entre_etapas": {
+      "piso_0.85": {
+        "piso": 0.85,
+        "min_aceptados": 10,
+        "umbral_seleccionado": null,
+        "barrido_dentro": [
+          {
+            "umbral": 0.0,
+            "escalados": 69,
+            "aceptados": 69,
+            "derivados": 0,
+            "cobertura": 1.0,
+            "aciertos_aceptados": 50,
+            "exactitud_selectiva": 0.7246376811594203,
+            "ic_wilson": [
+              0.609527027856669,
+              0.8160547836815831
+            ],
+            "exactitud_derivados": null,
+            "errores_atrapados": 0,
+            "errores_aceptados": 19,
+            "carga_revision": 0.0
+          },
+          {
+            "umbral": 1.0,
+            "escalados": 69,
+            "aceptados": 0,
+            "derivados": 69,
+            "cobertura": 0.0,
+            "aciertos_aceptados": 0,
+            "exactitud_selectiva": null,
+            "ic_wilson": null,
+            "exactitud_derivados": 0.7246376811594203,
+            "errores_atrapados": 19,
+            "errores_aceptados": 0,
+            "carga_revision": 0.345
+          },
+          {
+            "umbral": "inf",
+            "escalados": 69,
+            "aceptados": 0,
+            "derivados": 69,
+            "cobertura": 0.0,
+            "aciertos_aceptados": 0,
+            "exactitud_selectiva": null,
+            "ic_wilson": null,
+            "exactitud_derivados": 0.7246376811594203,
+            "errores_atrapados": 19,
+            "errores_aceptados": 0,
+            "carga_revision": 0.345
+          }
+        ],
+        "fuera_de_muestra": {
+          "umbral": null,
+          "veredicto": "sin umbral seleccionado"
+        },
+        "barrido_fuera_descriptivo": [
+          {
+            "umbral": 0.0,
+            "escalados": 34,
+            "aceptados": 34,
+            "derivados": 0,
+            "cobertura": 1.0,
+            "aciertos_aceptados": 26,
+            "exactitud_selectiva": 0.7647058823529411,
+            "ic_wilson": [
+              0.6000386207746361,
+              0.8756301446736042
+            ],
+            "exactitud_derivados": null,
+            "errores_atrapados": 0,
+            "errores_aceptados": 8,
+            "carga_revision": 0.0
+          },
+          {
+            "umbral": 1.0,
+            "escalados": 34,
+            "aceptados": 0,
+            "derivados": 34,
+            "cobertura": 0.0,
+            "aciertos_aceptados": 0,
+            "exactitud_selectiva": null,
+            "ic_wilson": null,
+            "exactitud_derivados": 0.7647058823529411,
+            "errores_atrapados": 8,
+            "errores_aceptados": 0,
+            "carga_revision": 0.3300970873786408
+          },
+          {
+            "umbral": "inf",
+            "escalados": 34,
+            "aceptados": 0,
+            "derivados": 34,
+            "cobertura": 0.0,
+            "aciertos_aceptados": 0,
+            "exactitud_selectiva": null,
+            "ic_wilson": null,
+            "exactitud_derivados": 0.7647058823529411,
+            "errores_atrapados": 8,
+            "errores_aceptados": 0,
+            "carga_revision": 0.3300970873786408
+          }
+        ],
+        "lectura": "la senal no sostiene un umbral con el piso fijado: ningun candidato alcanza 0.85 con al menos 10 aceptados dentro de la muestra; fuera de la muestra el barrido se informa solo como descripcion",
+        "auroc_dentro": {
+          "valor": 0.5,
+          "ic": [
+            0.5,
+            0.5
+          ],
+          "remuestras_validas": 2000,
+          "nivel_confianza": 0.95,
+          "semilla": 20261021,
+          "remuestreos": 2000
+        },
+        "auroc_fuera": {
+          "valor": 0.5,
+          "ic": [
+            0.5,
+            0.5
+          ],
+          "remuestras_validas": 1999,
+          "nivel_confianza": 0.95,
+          "semilla": 20261021,
+          "remuestreos": 2000
+        }
+      },
+      "piso_0.8278": {
+        "piso": 0.8278,
+        "min_aceptados": 10,
+        "umbral_seleccionado": null,
+        "barrido_dentro": [
+          {
+            "umbral": 0.0,
+            "escalados": 69,
+            "aceptados": 69,
+            "derivados": 0,
+            "cobertura": 1.0,
+            "aciertos_aceptados": 50,
+            "exactitud_selectiva": 0.7246376811594203,
+            "ic_wilson": [
+              0.609527027856669,
+              0.8160547836815831
+            ],
+            "exactitud_derivados": null,
+            "errores_atrapados": 0,
+            "errores_aceptados": 19,
+            "carga_revision": 0.0
+          },
+          {
+            "umbral": 1.0,
+            "escalados": 69,
+            "aceptados": 0,
+            "derivados": 69,
+            "cobertura": 0.0,
+            "aciertos_aceptados": 0,
+            "exactitud_selectiva": null,
+            "ic_wilson": null,
+            "exactitud_derivados": 0.7246376811594203,
+            "errores_atrapados": 19,
+            "errores_aceptados": 0,
+            "carga_revision": 0.345
+          },
+          {
+            "umbral": "inf",
+            "escalados": 69,
+            "aceptados": 0,
+            "derivados": 69,
+            "cobertura": 0.0,
+            "aciertos_aceptados": 0,
+            "exactitud_selectiva": null,
+            "ic_wilson": null,
+            "exactitud_derivados": 0.7246376811594203,
+            "errores_atrapados": 19,
+            "errores_aceptados": 0,
+            "carga_revision": 0.345
+          }
+        ],
+        "fuera_de_muestra": {
+          "umbral": null,
+          "veredicto": "sin umbral seleccionado"
+        },
+        "barrido_fuera_descriptivo": [
+          {
+            "umbral": 0.0,
+            "escalados": 34,
+            "aceptados": 34,
+            "derivados": 0,
+            "cobertura": 1.0,
+            "aciertos_aceptados": 26,
+            "exactitud_selectiva": 0.7647058823529411,
+            "ic_wilson": [
+              0.6000386207746361,
+              0.8756301446736042
+            ],
+            "exactitud_derivados": null,
+            "errores_atrapados": 0,
+            "errores_aceptados": 8,
+            "carga_revision": 0.0
+          },
+          {
+            "umbral": 1.0,
+            "escalados": 34,
+            "aceptados": 0,
+            "derivados": 34,
+            "cobertura": 0.0,
+            "aciertos_aceptados": 0,
+            "exactitud_selectiva": null,
+            "ic_wilson": null,
+            "exactitud_derivados": 0.7647058823529411,
+            "errores_atrapados": 8,
+            "errores_aceptados": 0,
+            "carga_revision": 0.3300970873786408
+          },
+          {
+            "umbral": "inf",
+            "escalados": 34,
+            "aceptados": 0,
+            "derivados": 34,
+            "cobertura": 0.0,
+            "aciertos_aceptados": 0,
+            "exactitud_selectiva": null,
+            "ic_wilson": null,
+            "exactitud_derivados": 0.7647058823529411,
+            "errores_atrapados": 8,
+            "errores_aceptados": 0,
+            "carga_revision": 0.3300970873786408
+          }
+        ],
+        "lectura": "la senal no sostiene un umbral con el piso fijado: ningun candidato alcanza 0.8278 con al menos 10 aceptados dentro de la muestra; fuera de la muestra el barrido se informa solo como descripcion",
+        "auroc_dentro": {
+          "valor": 0.5,
+          "ic": [
+            0.5,
+            0.5
+          ],
+          "remuestras_validas": 2000,
+          "nivel_confianza": 0.95,
+          "semilla": 20261021,
+          "remuestreos": 2000
+        },
+        "auroc_fuera": {
+          "valor": 0.5,
+          "ic": [
+            0.5,
+            0.5
+          ],
+          "remuestras_validas": 1999,
+          "nivel_confianza": 0.95,
+          "semilla": 20261021,
+          "remuestreos": 2000
+        }
+      }
+    },
+    "s2_score_reglas": {
+      "piso_0.85": {
+        "piso": 0.85,
+        "min_aceptados": 10,
+        "umbral_seleccionado": null,
+        "barrido_dentro": [
+          {
+            "umbral": 0.0,
+            "escalados": 69,
+            "aceptados": 69,
+            "derivados": 0,
+            "cobertura": 1.0,
+            "aciertos_aceptados": 50,
+            "exactitud_selectiva": 0.7246376811594203,
+            "ic_wilson": [
+              0.609527027856669,
+              0.8160547836815831
+            ],
+            "exactitud_derivados": null,
+            "errores_atrapados": 0,
+            "errores_aceptados": 19,
+            "carga_revision": 0.0
+          },
+          {
+            "umbral": 0.0,
+            "escalados": 69,
+            "aceptados": 69,
+            "derivados": 0,
+            "cobertura": 1.0,
+            "aciertos_aceptados": 50,
+            "exactitud_selectiva": 0.7246376811594203,
+            "ic_wilson": [
+              0.609527027856669,
+              0.8160547836815831
+            ],
+            "exactitud_derivados": null,
+            "errores_atrapados": 0,
+            "errores_aceptados": 19,
+            "carga_revision": 0.0
+          },
+          {
+            "umbral": 0.0,
+            "escalados": 69,
+            "aceptados": 69,
+            "derivados": 0,
+            "cobertura": 1.0,
+            "aciertos_aceptados": 50,
+            "exactitud_selectiva": 0.7246376811594203,
+            "ic_wilson": [
+              0.609527027856669,
+              0.8160547836815831
+            ],
+            "exactitud_derivados": null,
+            "errores_atrapados": 0,
+            "errores_aceptados": 19,
+            "carga_revision": 0.0
+          },
+          {
+            "umbral": 0.0,
+            "escalados": 69,
+            "aceptados": 69,
+            "derivados": 0,
+            "cobertura": 1.0,
+            "aciertos_aceptados": 50,
+            "exactitud_selectiva": 0.7246376811594203,
+            "ic_wilson": [
+              0.609527027856669,
+              0.8160547836815831
+            ],
+            "exactitud_derivados": null,
+            "errores_atrapados": 0,
+            "errores_aceptados": 19,
+            "carga_revision": 0.0
+          },
+          {
+            "umbral": "inf",
+            "escalados": 69,
+            "aceptados": 0,
+            "derivados": 69,
+            "cobertura": 0.0,
+            "aciertos_aceptados": 0,
+            "exactitud_selectiva": null,
+            "ic_wilson": null,
+            "exactitud_derivados": 0.7246376811594203,
+            "errores_atrapados": 19,
+            "errores_aceptados": 0,
+            "carga_revision": 0.345
+          }
+        ],
+        "fuera_de_muestra": {
+          "umbral": null,
+          "veredicto": "sin umbral seleccionado"
+        },
+        "barrido_fuera_descriptivo": [
+          {
+            "umbral": 0.0,
+            "escalados": 34,
+            "aceptados": 34,
+            "derivados": 0,
+            "cobertura": 1.0,
+            "aciertos_aceptados": 26,
+            "exactitud_selectiva": 0.7647058823529411,
+            "ic_wilson": [
+              0.6000386207746361,
+              0.8756301446736042
+            ],
+            "exactitud_derivados": null,
+            "errores_atrapados": 0,
+            "errores_aceptados": 8,
+            "carga_revision": 0.0
+          },
+          {
+            "umbral": 0.0,
+            "escalados": 34,
+            "aceptados": 34,
+            "derivados": 0,
+            "cobertura": 1.0,
+            "aciertos_aceptados": 26,
+            "exactitud_selectiva": 0.7647058823529411,
+            "ic_wilson": [
+              0.6000386207746361,
+              0.8756301446736042
+            ],
+            "exactitud_derivados": null,
+            "errores_atrapados": 0,
+            "errores_aceptados": 8,
+            "carga_revision": 0.0
+          },
+          {
+            "umbral": 0.0,
+            "escalados": 34,
+            "aceptados": 34,
+            "derivados": 0,
+            "cobertura": 1.0,
+            "aciertos_aceptados": 26,
+            "exactitud_selectiva": 0.7647058823529411,
+            "ic_wilson": [
+              0.6000386207746361,
+              0.8756301446736042
+            ],
+            "exactitud_derivados": null,
+            "errores_atrapados": 0,
+            "errores_aceptados": 8,
+            "carga_revision": 0.0
+          },
+          {
+            "umbral": 0.0,
+            "escalados": 34,
+            "aceptados": 34,
+            "derivados": 0,
+            "cobertura": 1.0,
+            "aciertos_aceptados": 26,
+            "exactitud_selectiva": 0.7647058823529411,
+            "ic_wilson": [
+              0.6000386207746361,
+              0.8756301446736042
+            ],
+            "exactitud_derivados": null,
+            "errores_atrapados": 0,
+            "errores_aceptados": 8,
+            "carga_revision": 0.0
+          },
+          {
+            "umbral": "inf",
+            "escalados": 34,
+            "aceptados": 0,
+            "derivados": 34,
+            "cobertura": 0.0,
+            "aciertos_aceptados": 0,
+            "exactitud_selectiva": null,
+            "ic_wilson": null,
+            "exactitud_derivados": 0.7647058823529411,
+            "errores_atrapados": 8,
+            "errores_aceptados": 0,
+            "carga_revision": 0.3300970873786408
+          }
+        ],
+        "lectura": "la senal no sostiene un umbral con el piso fijado: ningun candidato alcanza 0.85 con al menos 10 aceptados dentro de la muestra; fuera de la muestra el barrido se informa solo como descripcion",
+        "auroc_dentro": {
+          "valor": 0.5,
+          "ic": [
+            0.5,
+            0.5
+          ],
+          "remuestras_validas": 2000,
+          "nivel_confianza": 0.95,
+          "semilla": 20261021,
+          "remuestreos": 2000
+        },
+        "auroc_fuera": {
+          "valor": 0.5,
+          "ic": [
+            0.5,
+            0.5
+          ],
+          "remuestras_validas": 1999,
+          "nivel_confianza": 0.95,
+          "semilla": 20261021,
+          "remuestreos": 2000
+        }
+      },
+      "piso_0.8278": {
+        "piso": 0.8278,
+        "min_aceptados": 10,
+        "umbral_seleccionado": null,
+        "barrido_dentro": [
+          {
+            "umbral": 0.0,
+            "escalados": 69,
+            "aceptados": 69,
+            "derivados": 0,
+            "cobertura": 1.0,
+            "aciertos_aceptados": 50,
+            "exactitud_selectiva": 0.7246376811594203,
+            "ic_wilson": [
+              0.609527027856669,
+              0.8160547836815831
+            ],
+            "exactitud_derivados": null,
+            "errores_atrapados": 0,
+            "errores_aceptados": 19,
+            "carga_revision": 0.0
+          },
+          {
+            "umbral": 0.0,
+            "escalados": 69,
+            "aceptados": 69,
+            "derivados": 0,
+            "cobertura": 1.0,
+            "aciertos_aceptados": 50,
+            "exactitud_selectiva": 0.7246376811594203,
+            "ic_wilson": [
+              0.609527027856669,
+              0.8160547836815831
+            ],
+            "exactitud_derivados": null,
+            "errores_atrapados": 0,
+            "errores_aceptados": 19,
+            "carga_revision": 0.0
+          },
+          {
+            "umbral": 0.0,
+            "escalados": 69,
+            "aceptados": 69,
+            "derivados": 0,
+            "cobertura": 1.0,
+            "aciertos_aceptados": 50,
+            "exactitud_selectiva": 0.7246376811594203,
+            "ic_wilson": [
+              0.609527027856669,
+              0.8160547836815831
+            ],
+            "exactitud_derivados": null,
+            "errores_atrapados": 0,
+            "errores_aceptados": 19,
+            "carga_revision": 0.0
+          },
+          {
+            "umbral": 0.0,
+            "escalados": 69,
+            "aceptados": 69,
+            "derivados": 0,
+            "cobertura": 1.0,
+            "aciertos_aceptados": 50,
+            "exactitud_selectiva": 0.7246376811594203,
+            "ic_wilson": [
+              0.609527027856669,
+              0.8160547836815831
+            ],
+            "exactitud_derivados": null,
+            "errores_atrapados": 0,
+            "errores_aceptados": 19,
+            "carga_revision": 0.0
+          },
+          {
+            "umbral": "inf",
+            "escalados": 69,
+            "aceptados": 0,
+            "derivados": 69,
+            "cobertura": 0.0,
+            "aciertos_aceptados": 0,
+            "exactitud_selectiva": null,
+            "ic_wilson": null,
+            "exactitud_derivados": 0.7246376811594203,
+            "errores_atrapados": 19,
+            "errores_aceptados": 0,
+            "carga_revision": 0.345
+          }
+        ],
+        "fuera_de_muestra": {
+          "umbral": null,
+          "veredicto": "sin umbral seleccionado"
+        },
+        "barrido_fuera_descriptivo": [
+          {
+            "umbral": 0.0,
+            "escalados": 34,
+            "aceptados": 34,
+            "derivados": 0,
+            "cobertura": 1.0,
+            "aciertos_aceptados": 26,
+            "exactitud_selectiva": 0.7647058823529411,
+            "ic_wilson": [
+              0.6000386207746361,
+              0.8756301446736042
+            ],
+            "exactitud_derivados": null,
+            "errores_atrapados": 0,
+            "errores_aceptados": 8,
+            "carga_revision": 0.0
+          },
+          {
+            "umbral": 0.0,
+            "escalados": 34,
+            "aceptados": 34,
+            "derivados": 0,
+            "cobertura": 1.0,
+            "aciertos_aceptados": 26,
+            "exactitud_selectiva": 0.7647058823529411,
+            "ic_wilson": [
+              0.6000386207746361,
+              0.8756301446736042
+            ],
+            "exactitud_derivados": null,
+            "errores_atrapados": 0,
+            "errores_aceptados": 8,
+            "carga_revision": 0.0
+          },
+          {
+            "umbral": 0.0,
+            "escalados": 34,
+            "aceptados": 34,
+            "derivados": 0,
+            "cobertura": 1.0,
+            "aciertos_aceptados": 26,
+            "exactitud_selectiva": 0.7647058823529411,
+            "ic_wilson": [
+              0.6000386207746361,
+              0.8756301446736042
+            ],
+            "exactitud_derivados": null,
+            "errores_atrapados": 0,
+            "errores_aceptados": 8,
+            "carga_revision": 0.0
+          },
+          {
+            "umbral": 0.0,
+            "escalados": 34,
+            "aceptados": 34,
+            "derivados": 0,
+            "cobertura": 1.0,
+            "aciertos_aceptados": 26,
+            "exactitud_selectiva": 0.7647058823529411,
+            "ic_wilson": [
+              0.6000386207746361,
+              0.8756301446736042
+            ],
+            "exactitud_derivados": null,
+            "errores_atrapados": 0,
+            "errores_aceptados": 8,
+            "carga_revision": 0.0
+          },
+          {
+            "umbral": "inf",
+            "escalados": 34,
+            "aceptados": 0,
+            "derivados": 34,
+            "cobertura": 0.0,
+            "aciertos_aceptados": 0,
+            "exactitud_selectiva": null,
+            "ic_wilson": null,
+            "exactitud_derivados": 0.7647058823529411,
+            "errores_atrapados": 8,
+            "errores_aceptados": 0,
+            "carga_revision": 0.3300970873786408
+          }
+        ],
+        "lectura": "la senal no sostiene un umbral con el piso fijado: ningun candidato alcanza 0.8278 con al menos 10 aceptados dentro de la muestra; fuera de la muestra el barrido se informa solo como descripcion",
+        "auroc_dentro": {
+          "valor": 0.5,
+          "ic": [
+            0.5,
+            0.5
+          ],
+          "remuestras_validas": 2000,
+          "nivel_confianza": 0.95,
+          "semilla": 20261021,
+          "remuestreos": 2000
+        },
+        "auroc_fuera": {
+          "valor": 0.5,
+          "ic": [
+            0.5,
+            0.5
+          ],
+          "remuestras_validas": 1999,
+          "nivel_confianza": 0.95,
+          "semilla": 20261021,
+          "remuestreos": 2000
+        }
+      }
+    }
+  },
+  "isotonica": {
+    "ajuste": "regresion isotonica (PAVA) de aciertos sobre la confianza de Gemini, 200 casos",
+    "puntos": [
+      [
+        0.85,
+        0.7096774193548387
+      ],
+      [
+        0.9,
+        0.7096774193548387
+      ],
+      [
+        0.95,
+        0.7142857142857143
+      ],
+      [
+        0.98,
+        1.0
+      ]
+    ],
+    "fuera_de_muestra": {
+      "n": 34,
+      "ece_original": 0.17147058823529415,
+      "ece_recalibrada": 0.04350772567091354,
+      "brier_original": 0.19346764705882352,
+      "brier_recalibrada": 0.17957547222843354,
+      "auroc_original": 0.7163461538461539,
+      "auroc_recalibrada": 0.7043269230769231
+    },
+    "nota": "correccion de nivel solamente: la transformacion es monotona no decreciente y no invierte el orden; si agrupa niveles vecinos introduce empates y el AUROC puede cambiar"
+  },
+  "secundarios": {
+    "brazo_gemini_solo": "no ejecutado: requiere las predicciones de un brazo Gemini solo (change futuro, no propuesto todavia)",
+    "corpus_arbitrado_c206": "no ejecutado: el corpus arbitrado de c-206 todavia no existe"
+  },
+  "gobernanza": {
+    "cambia_configuracion": false,
+    "politicas_confirmadas_fuera_de_muestra": [],
+    "recomendacion": "ninguna politica quedo confirmada fuera de la muestra: la derivacion por confianza autodeclarada no es reparable por recalibracion en este corpus; la supervision debe apoyarse en otra senal o en muestreo",
+    "alcance": "el change informa; openspec/config.yaml, settings.py, el prompt y el clasificador no se modifican"
+  }
+}
