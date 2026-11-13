@@ -25,6 +25,7 @@ de las ramas consumidoras").
 - **Upsert c-196**: `c-196-atender-devolucion-segunda-instancia` (aplicado el 2026-11-11) agrega la Sección 3.17 (devolución de segunda instancia del tribunal: kappa `0,87` retirado como evidencia, segunda sub-hipótesis "no concluyente, con estimación puntual por encima de la cota", tiempos del brazo manual por operador, exactitud contra el consenso independiente, cobertura del backend y pruebas de integración) y marca como `SUPERADA por c-196` las entradas de las Secciones 3.5, 3.6 y 3.14 que daban el `0,87` por vigente o la segunda sub-hipótesis por "refutada". Fecha: 2026-11-11.
 - **Upsert c-191**: `c-191-validacion-fuera-de-muestra-150-casos` (aplicado el 2026-11-12) agrega la Sección 3.19 (validación fuera de muestra del clasificador congelado sobre el corpus independiente de `103` casos con consenso `E3`/`E4`: exactitud estricta y laxa con IC de Wilson, desglose por etapa de la cascada, cifras globales sin ponderar y ponderadas por la composición por sector del corpus de 200, y la referencia in-sample). No modifica ningún valor ni estado de las Secciones 3.1 a 3.18. Fecha: 2026-11-12.
 - **Upsert c-205**: `c-205-ampliar-el-analisis-fuera-de-muestra` (aplicado el 2026-11-12) agrega la Sección 3.20 (análisis ampliado fuera de muestra sobre el n efectivo `103`: macro-F1, métricas por clase con soporte, *balanced accuracy*, kappa del clasificador contra la referencia, matriz de confusión, precisión del n observado frente al objetivo D1, sensibilidad al sesgo de exclusión de los `47` discordantes con su regla de decisión y balance neto con la tasa de error fuera de muestra). No modifica ningún valor ni estado `vigente` de las Secciones 3.1 a 3.19. Fecha: 2026-11-12.
+- **Upsert c-207**: `c-207-atender-el-dictamen-coneau-v1-3-0` (aplicado el 2026-11-13) agrega la Sección 3.21 (dictamen CONEAU sobre `v1.3.0`: IC al 95 % de la reducción relativa del tiempo de registro `0,7116`; acuerdo observado y kappa entre `E3` y `E4` sobre los `150` casos del corpus independiente; balance neto con referencia común y su IC por caso). No modifica ningún valor `vigente` de las Secciones 3.1 a 3.20; la lectura del balance de la Sección 3.11 (asimétrica: `e_aut` contra el etiquetado original y `e_man` contra el consenso de `E1`/`E2`) queda superada por la Sección 3.21 (c). Fecha: 2026-11-13.
 - **Artefacto**: este memo. No se edita ningún `.tex` en este change.
 - **Fecha de verificación**: 2026-10-21.
 - **SHA-256 del corpus** (`data/corpus_evaluacion_pseudonimizado.json`):
@@ -597,6 +598,8 @@ el signo) y `a*(15 %, 15 min) = 80,1 %` supera su límite superior. `B > 0` con 
 estricta solo si `e_man ≥ 20 %` con `c ≤ 10 min`, con `e_man = 15 %` y `c = 5 min`, o en
 paridad (`e_man ≥ e_aut − Δt / c` = `11,9 / 19,2 / 21,6 %` para `5 / 10 / 15 min`).
 **El balance es indeterminado con el diseño actual**: la tesis no enuncia su signo como resultado.
+
+**Lectura superada (c-207).** El `e_aut` de esta sección (`53/200`) se mide contra el etiquetado original y el `e_man` de la campaña complementaria (`26/151`), contra el consenso de `E1`/`E2`: referencias distintas. La Sección 3.21 (c) recalcula `B` y `a*` con una referencia común, con IC por caso; los valores de esta sección se conservan solo como rejilla de sensibilidad (`condicional`).
 
 **Lectura laxa (rama "laxa disponible" de D4; `condicional`).** Con `e_aut = 1 − a_laxa = 0,105`
 (sector principal dentro del conjunto de verdad), el mismo comando devuelve `B` (h por trimestre,
@@ -1256,6 +1259,99 @@ incidente medido en el corpus independiente (los artefactos fuera de muestra no 
 tiempos; se usa el `Δt` del in-sample como supuesto) y `e_man` y `c` (no se midieron fuera de
 muestra). Esta extensión descansa en la tasa del n efectivo, sujeta al sesgo de exclusión de (e).
 Procedencia: `analisis/…c205.json` (`balance_neto`).
+
+### 3.21 Dictamen CONEAU sobre v1.3.0: IC de la reducción, acuerdo `E3`/`E4` y balance neto con referencia común (c-207)
+
+Cifras nuevas que el dictamen CONEAU del 13-11-2026 sobre `v1.3.0` (recomendaciones 1, 5 y 6)
+exigió y que ningún artefacto previo contenía. Reproducidas de solo lectura, sin red ni Gemini,
+por `evaluation/data/campana/analisis/analisis_dictamen_c207.py`, que reutiliza
+`evaluation/metrics.py`, `evaluation/kappa.py` y `evaluation/campana.py` sin editarlos.
+Determinístico: dos corridas producen salidas idénticas byte a byte. Fuente única de las cifras:
+`analisis/analisis_dictamen_c207.json` (y su vista `.md`, con el SHA-256 de cada entrada). No
+modifica ningún valor `vigente` de las Secciones 3.1 a 3.20; la lectura del balance de la
+Sección 3.11 queda superada por (c) de esta sección (marca de remisión en 3.11).
+
+Comando (desde la raíz del repositorio; solo lectura):
+
+```bash
+python3 evaluation/data/campana/analisis/analisis_dictamen_c207.py
+```
+
+SHA-256 de las salidas: `analisis_dictamen_c207.json`
+`749e5fc16a193ee5d06f2b491736dec554fc866c79e08ced65d8416c6404f864`;
+`analisis_dictamen_c207.md`
+`27e38534d679e27620f62c7b2313c53c5363dc7a21f289fe270a39593c005647`.
+
+**(a) IC de la reducción relativa del tiempo de registro (rec. 6).** Estadístico
+`R = 1 − media(automatizado) / media(manual)` sobre los `200` pares del corpus (el mismo que
+produce el `71,2 %`). IC bootstrap percentil al 95 % remuestreando pares (casos) con reemplazo,
+semilla `20261021`, `2000` remuestreos. El valor puntual reproduce el canónico antes de aceptar
+el IC.
+
+| Valor canónico | Procedencia (archivo) | Estado |
+|---|---|---|
+| Reducción de la media `R = 0,7116` (`71,2 %`); IC 95 % `[0,6716; 0,7459]` (`[67,2 %; 74,6 %]`) | `analisis/…c207.json` (`ic_reduccion_tiempo.reduccion`, `.ic_reduccion`) | vigente (nuevo; el puntual ya es canónico, Sección 3.1) |
+| Diferencia de medias `43,82 s`; IC 95 % `[37,93; 50,33]` s | idem (`diferencia_medias_s`, `ic_diferencia_medias_s`) | vigente (nuevo) |
+
+El intervalo es el de la muestra por conveniencia de `200` casos y no se extrapola; como el
+valor puntual, es una cota superior porque el manual se redondeó al alza (Sección 3.1).
+
+**(b) Acuerdo entre `E3` y `E4` (rec. 1).** Sobre los `150` casos de
+`doble_etiquetado_independiente.csv` (sector principal), `kappa_cohen` de `evaluation/kappa.py`.
+El script se detiene sin escribir salidas si las concordantes no coinciden con el n efectivo de
+c-205 (`103`). Es fiabilidad inter-etiquetador; NO es la concordancia del clasificador de la
+Sección 3.20 (b).
+
+| Valor canónico | Procedencia (archivo) | Estado |
+|---|---|---|
+| Casos con la misma etiqueta de sector: `103` de `150`; discordantes `47`; acuerdo observado `0,6867` | `analisis/…c207.json` (`acuerdo_e3_e4`) | vigente (nuevo) |
+| kappa de Cohen `0,6055` (`p_o = 0,6867`; `p_e = 0,2058`; PABAK `0,6083`); IC asintótico 95 % `[0,5186; 0,6924]`; IC bootstrap 95 % `[0,5175; 0,6839]` (semilla `20261021`, `2000` remuestreos); rótulo de Landis y Koch del puntual: sustancial, y ambos intervalos abarcan moderado y sustancial | idem (`acuerdo_e3_e4.kappa`) | vigente (nuevo) |
+
+El arbitraje de los `47` discordantes por un tercer etiquetador (c-206) NO se ejecutó: no hay
+resultado de arbitraje y no se informa ninguno.
+
+**(c) Balance neto con referencia común (rec. 5).** Estado: `condicional` (descansa en el costo
+`c`, supuesto propio). *Verificación (D4, paso 1)*: el texto vigente mide `e_aut = 53/200 = 0,2650`
+contra el **etiquetado original** del corpus y `e_man = 26/151 = 0,1722` contra el **consenso de
+`E1` y `E2`** (138 casos, discordantes excluidos); contra ese mismo consenso el automatizado da
+`28/138 = 0,2029`. `asimetria_confirmada = true`. Recálculo con `N = 2.646`, `Δt = 43,82 s`
+(constantes del memo; la incertidumbre de `Δt` no entra en los IC), ahorro bruto `32,2 h`,
+`B = (N / 3.600) × [Δt − (e_aut − e_man) × c]` y `a* = 1 − e_man − Δt / c`; IC 95 % bootstrap
+percentil **por caso** (empareja las derivaciones manuales con su caso; semilla `20261021`,
+`2000` remuestreos).
+
+Referencia principal: consenso de `E1`/`E2` (`138` casos; `e_aut = 28/138 = 0,2029`;
+`e_man = 26/151 = 0,1722`; `e_aut − e_man = +0,0307`, IC 95 % `[−0,0460; +0,1070]`).
+
+| `c` | `B` (h-persona por trimestre) | IC 95 % de `B` | Signo fijado por el IC | `a*` (%) | IC 95 % de `a*` (%) |
+|---|---|---|---|---|---|
+| 5 min | `+25,4` | `[+8,6; +42,4]` | positivo | `68,2` | `[61,9; 74,2]` |
+| 10 min | `+18,7` | `[−15,0; +52,5]` | no fijado | `75,5` | `[69,2; 81,5]` |
+| 15 min | `+11,9` | `[−38,6; +62,7]` | no fijado | `77,9` | `[71,6; 83,9]` |
+
+Segunda referencia común: etiquetado original (`200` casos; `e_aut = 53/200 = 0,2650`;
+`e_man = 77/220 = 0,3500` por derivación; `e_aut − e_man = −0,0850`, IC 95 % `[−0,1600; −0,0129]`).
+
+| `c` | `B` (h-persona por trimestre) | IC 95 % de `B` | Signo fijado por el IC | `a*` (%) | IC 95 % de `a*` (%) |
+|---|---|---|---|---|---|
+| 5 min | `+51,0` | `[+35,1; +67,5]` | positivo | `50,4` | `[43,7; 57,1]` |
+| 10 min | `+69,7` | `[+37,9; +102,8]` | positivo | `57,7` | `[51,0; 64,4]` |
+| 15 min | `+88,4` | `[+40,7; +138,0]` | positivo | `60,1` | `[53,5; 66,8]` |
+
+Lectura: con una referencia común el balance neto estimado es **positivo** (a diferencia de la
+lectura asimétrica de la Sección 3.11, que lo daba negativo con `e_man = 15 %` y `c` de 10 a 15
+minutos). El IC fija el signo positivo solo con `c = 5 min` en la referencia principal; con 10 y
+15 minutos incluye cero, por lo que el signo no queda fijado por la muestra. En la segunda
+referencia el signo es positivo en los tres costos, pero esa lectura es la menos exigente con
+el automatizado: el acierto estricto del brazo manual contra el sector original es bajo
+(`143/220`) porque el `53,5 %` de los casos admite más de un sector. *Límites no igualables
+(declarados en el JSON)*: unidad por caso (`e_aut`) frente a por derivación (`e_man`; `13`
+casos de la referencia principal y `20` del corpus completo con doble cobertura); `Δt` medido
+en la campaña 2026-10 con carga del ticket, mientras el brazo manual de la complementaria mide
+solo la decisión de sector; la referencia de consenso excluye los discordantes (los casos más
+difíciles) para ambas tasas; el costo `c` es un supuesto propio que la campaña no cronometró.
+La tabla de supuestos de la Sección 3.11 se conserva como sensibilidad. Procedencia:
+`analisis/…c207.json` (`balance_neto_referencia_comun`).
 
 ## 4. Contingencia del gate de intervención humana
 

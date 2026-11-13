@@ -107,3 +107,40 @@ de error fuera de muestra (`condicional`).
 - La cota del sesgo de exclusion es una definicion declarada (los excluidos aciertan a la
   tasa del limite inferior del IC de Wilson del n efectivo); los escenarios son sensibilidad,
   no medicion.
+
+## Analisis del dictamen CONEAU v1.3.0 (c-207)
+
+`analisis_dictamen_c207.py` calcula tres bloques de solo lectura que el dictamen pidio y que
+ningun artefacto previo contenia:
+
+- `ic_reduccion_tiempo`: IC 95 % de la reduccion relativa del tiempo de registro
+  (`1 - media(automatizado) / media(manual)`, valor puntual `0,7116`) y de la diferencia de
+  medias en segundos. Bootstrap percentil remuestreando los `200` pares (casos) con reemplazo.
+- `acuerdo_e3_e4`: proporcion de acuerdo observada (`103` de `150`) y kappa de Cohen entre
+  los etiquetadores independientes `E3` y `E4`, con IC asintotico y bootstrap. Se detiene sin
+  escribir salidas si la cuenta no coincide con el n efectivo de c-205.
+- `balance_neto_referencia_comun`: verifica contra que referencia mide cada tasa el balance
+  neto del texto (`e_aut = 53/200` contra el etiquetado original; `e_man = 26/151` contra el
+  consenso de `E1`/`E2`), y si la asimetria se confirma, recalcula `B` y `a*` con una
+  referencia comun (consenso de `E1`/`E2`: `28/138` y `26/151`; segunda referencia: etiquetado
+  original) para 5, 10 y 15 minutos, con IC bootstrap por caso. Declara los limites no
+  igualables (unidad por caso frente a por derivacion; `dt` de otra campana).
+
+- Entradas versionadas (solo lectura): `../../../../data/corpus_evaluacion_pseudonimizado.json`,
+  `../plantilla_etiquetado.csv`, `../predicciones_in_sample.json`, `../corpus_campana.json`,
+  `../doble_etiquetado_independiente.csv` y `analisis_fuera_de_muestra_c205.json`.
+- Metodo: reutiliza `evaluation/metrics.py` (`SEMILLA_BOOTSTRAP = 20261021`,
+  `REMUESTREOS_BOOTSTRAP = 2000`, `percentil_intervalo`), `evaluation/kappa.py` y
+  `evaluation/campana.py`; sin red ni Gemini; determinista.
+- Comando (desde la raiz del repositorio):
+
+  ```bash
+  python3 evaluation/data/campana/analisis/analisis_dictamen_c207.py
+  ```
+
+- Salidas: `analisis_dictamen_c207.json` (fuente unica de las cifras, con el SHA-256 de cada
+  entrada) y `analisis_dictamen_c207.md`; el script imprime el SHA-256 de cada una. Dos
+  corridas producen salidas identicas byte a byte.
+- Prueba: `cd evaluation/data/campana/analisis && python -m pytest test_analisis_dictamen_c207.py -q`.
+- `dt` (`43,82 s`) y `N` (`2.646`) se toman como constantes del memo canonico; la
+  incertidumbre de `dt` no entra en el IC de `B`.

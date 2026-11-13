@@ -2738,6 +2738,21 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ---
 
+## FASE 67 — Atender el dictamen CONEAU sobre v1.3.0 (c-207)
+
+> Atiende las recomendaciones 1 a 6 del dictamen CONEAU del 13-11-2026 sobre `v1.3.0`: tabla de la validación fuera de muestra con el acuerdo `E3`/`E4`, conclusiones y resumen sin afirmaciones que excedan la evidencia, consentimiento de `E3`/`E4`, balance neto con referencia común e IC de la reducción del tiempo. Las recomendaciones 7 a 15 quedan para un change posterior.
+
+### [C-207] `atender-el-dictamen-coneau-v1-3-0` — EN APLICACIÓN (2026-11-13, HIGH)
+
+- **Estado**: apply de código y prosa hecho en el árbol de trabajo (sin commit); pendientes manuales de los autores (firmas de `E3`/`E4`, decisión sobre c-206) y recompilación del PDF en el entorno de registro; sin archivar.
+- **Scope**: (1) script de solo lectura `evaluation/data/campana/analisis/analisis_dictamen_c207.py` con sus pruebas (TDD) y salidas `.json`/`.md` determinísticas: IC de la reducción relativa del tiempo, acuerdo y kappa `E3`/`E4`, balance neto con referencia común; (2) sección 3.21 del memo `numeros-canonicos.md`; (3) prosa en `00-resumen.tex`, `07-resultados.tex`, `08-discusion.tex`, `09-conclusiones.tex` y `11-aspectos-legales.tex`; (4) sección del dictamen v1.3.0 en `dictamen-correcciones.md`.
+- **Hallazgo**: la asimetría de referencias del balance neto se confirmó (`e_aut = 53/200` contra el etiquetado original; `e_man = 26/151` contra el consenso de `E1`/`E2`); con referencia común el balance estimado es positivo, pero el IC fija el signo solo con 5 minutos por derivación.
+- **Dependencias**: c-205 (PR 94, sin integrar; la rama está apilada sobre ella) y c-206 (PR 95, propuesto; el arbitraje de los `47` discordantes queda diferido). No toca `App/`, `n8n/`, `data/*`, `evaluation/*.py` del paquete ni los scripts de c-191 y c-205.
+- **Governance**: HIGH (cambia afirmaciones de la tesis y su lectura del balance y del consentimiento); toda cifra sale del JSON del script y queda registrada con fuente y comando.
+- **Leer antes**: `openspec/changes/c-207-atender-el-dictamen-coneau-v1-3-0/{proposal,design,tasks}.md`, `auditorias/Dictamen_Tesis_v10_v1.3.0_CONEAU_2026-11-13.md` y `evaluation/data/campana/analisis/README.md`.
+
+---
+
 ## Notas del analisis
 
 ### Estado actual del proyecto (verificado contra el codigo; actualizado 2026-10-22)

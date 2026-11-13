@@ -4228,7 +4228,7 @@ de los residuos sin recomendación propia (grupo 10).
 | 14 | inv. 14: "posterior a la campana 2026-10" en 5.5 | c-190 | `05-arquitectura.tex:68` | - | `Desde el 13 de octubre de 2026, posterior a la campaña 2026-10` | cerrada |
 | 15 | inv. 15: rotulo temporal dentro de los PNG de componentes y secuencia | c-190 | `docs/diagrams/componentes.md:17` | - | `posterior a la campaña 2026-10)` | cerrada |
 | 16 | inv. 16: 1.6 sin "validacion rigurosa ... doble etiquetado independiente" | c-190 | `01-introduccion.tex:66` | - | `el acuerdo entre los dos analistas originales, uno de ellos autor, fue de` | SUPERADA por c-192 |
-| 17 | inv. 17: resumen y abstract con "respaldan" | c-190 | `00-resumen.tex:15` | - | `Los hallazgos respaldan la viabilidad técnica y económica` | cerrada |
+| 17 | inv. 17: resumen y abstract con "respaldan" | c-190 | `00-resumen.tex:15` | - | `Los hallazgos respaldan la viabilidad técnica y económica` | SUPERADA por c-207 |
 | 18 | inv. 18: OE1 con "configuracion entregada" en la Tabla 18 | c-190 | `09-conclusiones.tex:23` | `tab:cumplimiento-objetivos` | `reintentos idempotentes de la configuración entregada` | cerrada |
 | 19 | inv. 19: "ocho limitaciones" en 9.3 | c-190 | `08-discusion.tex:42` | - | `El estudio presenta ocho limitaciones` | cerrada |
 | 20 | inv. 20: OE4 sin repetir "exactitud del brazo manual" | c-190 | `09-conclusiones.tex:26` | `tab:cumplimiento-objetivos` | `alcanzado en tiempo y en esa exactitud` | cerrada |
@@ -4549,7 +4549,7 @@ devolución completa se versiona en `auditorias/Devolucion_Segunda_Instancia_TFI
 | N-05/5a | 4.5: 119 valores sin registro primario conservado | c-196 | `04-marco-metodologico.tex:65` | `subsec:protocolo-pruebas` | `no tienen registro primario conservado` | PENDIENTE (dato de los autores: registro de los 119 tiempos) |
 | N-05/5b | 8.1: 81 con registro primario y 119 sin él | c-196 | `07-resultados.tex:12` | `subsec:comparacion-tiempos` | `registro primario` | cerrada |
 | N-06/6a | 4.8: las 81 llamadas recitadas por un autor | c-196 | `04-marco-metodologico.tex:99` | `subsec:amenazas-validez` | `recitó las 81 llamadas` | cerrada |
-| N-07/7a | Oración de 85 palabras de 10.1 partida | c-196 | `09-conclusiones.tex:47` | `sec:conclusiones` | `Ese filtro absorbe los casos triviales y reduce el costo de inferencia.` | cerrada |
+| N-07/7a | Oración de 85 palabras de 10.1 partida | c-196 | `09-conclusiones.tex:47` | `sec:conclusiones` | `Ese filtro absorbe los casos triviales y reduce el costo de inferencia.` | SUPERADA por c-207 |
 | N-07/7b | Comando de cobertura unificado con el del CI en 4.5 | c-196 | `04-marco-metodologico.tex:60` | `subsec:protocolo-pruebas` | `pytest -m "not integration" --cov=app.routes` | cerrada |
 | N-08/8a | Tabla 12: fila con la referencia de consenso | c-196 | `07-resultados.tex:119` | `tab:exactitud-etapa-canal` | `110/138 = 0,797 [0,722; 0,856]` | cerrada |
 | N-08/8b | 9.3: el límite superior 0,856 supera el umbral de 0,85 | c-196 | `08-discusion.tex:60` | `subsec:limitaciones-estudio` | `(0,856) supera el umbral de 0,85` | cerrada |
@@ -4863,3 +4863,73 @@ confirmación.
 
 El tag `v1.3.0`, el commit de contenido y el archivo del change son la tarea 7 (release del
 orquestador); no se ejecutaron en este apply.
+
+## Dictamen v10 / v1.3.0 (2026-11-13) - c-207 (atender el dictamen CONEAU sobre v1.3.0)
+
+Atiende las recomendaciones 1 a 6 del dictamen CONEAU del 13-11-2026 sobre la release `v1.3.0`
+(`auditorias/Dictamen_Tesis_v10_v1.3.0_CONEAU_2026-11-13.md`, no versionado). Change
+`c-207-atender-el-dictamen-coneau-v1-3-0` (docs y un script de análisis; gobernanza HIGH en la prosa
+de tesis y MEDIUM en el script y los memos), apilado sobre c-205 (PR 94, sin integrar). Las
+recomendaciones 7 a 15 (consistencia y forma) quedan diferidas a un change posterior.
+
+### Estado de cada recomendación
+
+| Rec | Síntesis | Estado | Dónde |
+|---|---|---|---|
+| 1 | Tabla de la validación fuera de muestra con peor caso, F1 macro y acuerdo de etiquetadores; arbitraje declarado | Atendida (arbitraje diferido, no ejecutado) | `07-resultados.tex` (`tab:fuera-de-muestra`); c-207 |
+| 2 | Conclusiones y resumen: barreras legales, costo de inferencia, viabilidad económica, generalización regional | Atendida | `09-conclusiones.tex`, `00-resumen.tex` (ES y EN), `12-anexos.tex` (coherencia); c-207 |
+| 3 | Validación fuera de muestra en las conclusiones, con su límite | Atendida | `09-conclusiones.tex` (párrafo y fila del objetivo 2); c-207 |
+| 4 | Consentimiento de `E3` y `E4` y mención en el capítulo legal | Parcial: el texto declara la confirmación escrita pendiente; el registro sigue sin `fecha_confirmacion` de `E3`/`E4` (tarea de los autores) | `11-aspectos-legales.tex`; c-207 |
+| 5 | Balance neto con la misma referencia para el error del sistema y el manual | Atendida (asimetría confirmada y recalculada con IC) | `08-discusion.tex` (`subsec:balance-neto`), `00-resumen.tex`, `09-conclusiones.tex`; c-207 |
+| 6 | IC de la reducción del tiempo | Atendida | `07-resultados.tex` (`subsec:comparacion-tiempos`, `tab:tiempos`); c-207 |
+| 7 a 15 | Consistencia y forma | Diferidas a un change posterior | - |
+
+### Resultados de los cálculos (script `analisis_dictamen_c207.py`; memo, sección 3.21)
+
+- **Rec. 6**: reducción `0,7116`, IC 95 % `[0,6716; 0,7459]` (bootstrap percentil por pares, semilla
+  `20261021`, `2000` remuestreos); diferencia de medias `43,82 s`, IC `[37,93; 50,33]`.
+- **Rec. 1**: acuerdo `E3`/`E4` `103` de `150` (`0,6867`), kappa `0,6055` (IC asintótico
+  `[0,5186; 0,6924]`; bootstrap `[0,5175; 0,6839]`). Arbitraje de los `47` discordantes: no ejecutado.
+- **Rec. 5**: la asimetría se confirmó (`e_aut = 53/200` contra el etiquetado original y
+  `e_man = 26/151` contra el consenso de `E1`/`E2`). Con el consenso como referencia común
+  (`28/138` y `26/151`), `B = +25,4 / +18,7 / +11,9` h por trimestre con `c = 5 / 10 / 15` min; el IC por
+  caso fija el signo positivo solo con 5 minutos. La lectura anterior (negativa con `e_man = 15 %`)
+  queda superada. Segunda referencia (original): `B` positivo con los tres costos.
+
+### Decisiones y pendientes
+
+- **Arbitraje de los 47 casos (rec. 1)**: el texto lo declara diferido y no informa resultado. La
+  decisión de ejecutar c-206 antes de la defensa es de los autores y queda **pendiente de registrar**
+  aquí (tarea 5.2 de c-207); por defecto se mantiene diferido.
+- **Consentimiento de `E3`/`E4` (rec. 4)**: no se editó
+  `docs/campana-medicion/confirmacion-posterior-consentimiento.md`. Pendiente de los autores:
+  adaptar el punto 1 de la plantilla (la tarea de `E3`/`E4` fue la validación fuera de muestra),
+  recabar las firmas y completar `fecha_confirmacion`; solo después se ajusta la frase del capítulo
+  legal.
+- **Recompilación**: sin `latexmk`/`xelatex`/`biber` en la máquina del apply; `main.pdf`,
+  `main.toc/.lof/.lot` y `paper/compilacion.md` no se tocaron. Pendiente en el entorno de registro.
+- **Palabras** (regla de c-106 reproducida: math en línea como una palabra, `~` como separador salvo
+  antes de un dígito): resumen ES **250** y abstract EN **249** (≤ 250); para no superar el tope se
+  recortaron palabras sueltas de los párrafos 1 y 3 y se reemplazó el párrafo de viabilidad.
+
+### Matriz de trazabilidad (verificada por `verificar_matriz_trazabilidad.py`)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| C7/1a | 1: acuerdo `E3`/`E4` y kappa en Resultados | c-207 | `07-resultados.tex:286` | `subsec:resultados-campana-medicion` | `su kappa de Cohen fue de 0,6055` | cerrada |
+| C7/1b | 1: arbitraje diferido, sin resultado | c-207 | `07-resultados.tex:288` | `subsec:resultados-campana-medicion` | `El arbitraje de los 47 casos discordantes por un tercer etiquetador estaba planificado y no se ejecutó en esta versión` | cerrada |
+| C7/1c | 1: tabla de la validación fuera de muestra | c-207 | `07-resultados.tex:293` | `tab:fuera-de-muestra` | `\label{tab:fuera-de-muestra}` | cerrada |
+| C7/2a | 2: resumen ES con lectura condicional | c-207 | `00-resumen.tex:15` | `-` | `la económica y operativa es condicional` | cerrada |
+| C7/2b | 2: abstract EN con lectura condicional | c-207 | `00-resumen.tex:31` | `-` | `economic and operational feasibility are conditional` | cerrada |
+| C7/2c | 2: barreras legales condicionadas al instrumento | c-207 | `09-conclusiones.tex:51` | `subsec:aportes-generalizacion` | `La operación con datos reales queda condicionada` | cerrada |
+| C7/2d | 2: costo de inferencia no afirmado | c-207 | `09-conclusiones.tex:47` | `subsec:aportes-generalizacion` | `Ese filtro resolvió 131 de los 200 casos sin invocar al modelo` | cerrada |
+| C7/2e | 2: generalización regional acotada | c-207 | `09-conclusiones.tex:49` | `subsec:aportes-generalizacion` | `es una hipótesis por validar` | cerrada |
+| C7/3a | 3: validación fuera de muestra en conclusiones con su límite | c-207 | `09-conclusiones.tex:37` | `subsec:cumplimiento-objetivos` | `Esa cifra no acredita el umbral` | cerrada |
+| C7/3b | 3: fila del objetivo 2 con la validación | c-207 | `09-conclusiones.tex:24` | `tab:cumplimiento-objetivos` | `fuera de muestra, 0,8447 sobre el n efectivo de 103` | cerrada |
+| C7/4a | 4: `E3`/`E4` en el capítulo legal, confirmación pendiente | c-207 | `11-aspectos-legales.tex:38` | `subsec:consentimiento-derechos` | `su confirmación escrita está pendiente` | parcial (firmas pendientes) |
+| C7/5a | 5: referencias distintas declaradas y recalculadas | c-207 | `08-discusion.tex:99` | `subsec:balance-neto` | `La rejilla combina, sin embargo, dos referencias distintas` | cerrada |
+| C7/5b | 5: lectura unificada del balance | c-207 | `08-discusion.tex:105` | `subsec:balance-neto` | `En síntesis, con una referencia común el balance neto no resulta negativo` | cerrada |
+| C7/5c | 5: balance en conclusiones | c-207 | `09-conclusiones.tex:6` | `sec:conclusiones` | `Con una referencia común, el balance neto estimado es positivo` | cerrada |
+| C7/6a | 6: IC de la reducción en el texto | c-207 | `07-resultados.tex:12` | `subsec:comparacion-tiempos` | `El intervalo se obtuvo por bootstrap percentil` | cerrada |
+| C7/6b | 6: IC en la nota de la tabla | c-207 | `07-resultados.tex:31` | `tab:tiempos` | `bootstrap percentil por pares, 2000 remuestreos` | cerrada |
+| Cifras | Memo de números canónicos: sección 3.21 | c-207 | `docs/Tesis/Correcciones/numeros-canonicos.md:1263` | `-` | `3.21 Dictamen CONEAU sobre v1.3.0` | vigente (nuevo) |
