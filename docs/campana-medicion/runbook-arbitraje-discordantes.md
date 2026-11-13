@@ -31,7 +31,7 @@ Todo se ejecuta desde la raíz del repositorio. La clasificación (sección 10) 
    ```
 
    Salida esperada: `150 casos; 47 discordantes`. Si el número es otro, **detenerse**: el protocolo parte de esos `47`.
-3. Correr las pruebas del validador nuevo: `cd evaluation && python -m pytest tests/test_arbitraje.py tests/test_doble_etiquetado.py -q` (desde `evaluation/`, con las variables de entorno dummy del job de CI).
+3. Correr las pruebas del validador y del ensamblador nuevos: `cd evaluation && python -m pytest tests/test_arbitraje.py tests/test_doble_etiquetado.py tests/test_ensamblado_arbitrado.py tests/test_reporte_arbitrado.py -q` (desde `evaluation/`, con las variables de entorno dummy del job de CI).
 
 ## 1. Decisiones pendientes de los autores
 
@@ -154,7 +154,21 @@ Debe salir con exit code `0`. Las reglas (c)-(j) son las del validador de `doble
 
 ## 9. Corpus final arbitrado, no solape y control de congelamiento
 
-1. **JSON final** `evaluation/data/campana/corpus_independiente_arbitrado.json`: mismo esquema que `corpus_independiente.json`, con la referencia que arma `construir_referencia` (consenso `E3`/`E4`; `E5` en los discordantes; adicionales según la sección 6) y los casos de refuerzo. **Punto abierto:** el repositorio todavía no tiene un comando que ensamble este JSON ni se decidió dónde queda registrada la bandera `tres_vias` por caso (el esquema de `cargar_corpus` no la contempla): **PENDIENTE** (definir antes de la tarea 4.5). Verificación: `cargar_corpus` carga los `150` casos (más el refuerzo) con prefijo `['I']`.
+1. **JSON final** `evaluation/data/campana/corpus_independiente_arbitrado.json`: mismo esquema que `corpus_independiente.json`, con la referencia que arma `construir_referencia` (consenso `E3`/`E4`; `E5` en los discordantes; adicionales según la sección 6) y los casos de refuerzo. Se ensambla con el subcomando `ensamblar` de `evaluation/arbitraje.py`, que valida la planilla unida (sección 8) y escribe el corpus junto con su sidecar en una sola corrida:
+
+   ```bash
+   python -m evaluation.arbitraje ensamblar \
+     --primaria  ~/Desktop/campana-hojas/campana_extra/doble_etiquetado_independiente.csv \
+     --arbitraje ~/Desktop/campana-hojas/campana_extra/E5/etiquetas_E5.csv \
+     --corpus    ~/Desktop/campana-hojas/campana_extra/corpus_independiente_trabajo.json \
+     --salida    evaluation/data/campana/corpus_independiente_arbitrado.json \
+     --sidecar   evaluation/data/campana/arbitraje_tres_vias.json
+   ```
+
+   Las tres entradas son rutas fuera del repositorio (la planilla `E5` todavía no existe: el comando falla con exit `2` hasta que el archivo llegue). El comando imprime el número de casos, el SHA-256 del corpus y del sidecar, y el conteo de casos de tres vías. Es determinista: dos corridas producen bytes idénticos. La planilla `E3`/`E4` versionada (`evaluation/data/campana/doble_etiquetado_independiente.csv`) es idéntica a la de `~/Desktop`; cualquiera de las dos sirve.
+
+   **Bandera `tres_vias` (decisión D9 del design):** el `origen` de cada referencia y la bandera `tres_vias` NO entran al esquema del corpus; viven en el sidecar `evaluation/data/campana/arbitraje_tres_vias.json` (`schema_version`, `metadata` con `corpus_sha256`, y una fila `{"id", "origen", "tres_vias"}` por caso). Se eligió el sidecar sobre un campo nuevo en `cargar_corpus` porque ese esquema lo consumen `run_evaluation.py`, `no_solape.py`, `evaluar_fuera_de_muestra` y `metrics.py`: cambiarlo el día de la entrega es riesgoso y `_parsear_caso` descartaría un campo extra en silencio. Verificación: `cargar_corpus` carga los `150` casos (más el refuerzo) con prefijo `['I']`; el sidecar tiene una fila por caso y su `corpus_sha256` coincide con el del corpus.
+
 2. **No solape** (paso previo obligatorio, repetido por el runner):
 
    ```bash
@@ -194,10 +208,18 @@ El runner se comporta como en `runbook-corpus-independiente.md`, sección 7 (rut
 
 ## 11. Versionar, registrar y analizar
 
-1. Dejar en `evaluation/data/campana/`: la tabla primaria `doble_etiquetado_arbitrado.csv`, `corpus_independiente_arbitrado.json`, `predicciones_arbitrado.json`, `reporte_arbitrado.md` y `registro_sujetos.csv` actualizado (con `E5,etiquetador,P11`).
+1. Dejar en `evaluation/data/campana/`: la tabla primaria `doble_etiquetado_arbitrado.csv`, `corpus_independiente_arbitrado.json`, el sidecar `arbitraje_tres_vias.json`, `predicciones_arbitrado.json`, `reporte_arbitrado.md` y `registro_sujetos.csv` actualizado (con `E5,etiquetador,P11`).
 2. Calcular el SHA-256 de cada archivo (`sha256sum`) y completarlo en `evaluation/data/campana/README.md`, junto con el `commit` del cache, el resultado del control de la sección 9 y el `estado_cegado`.
 3. Verificar que los artefactos de la v9 no cambiaron: `git status` no muestra `data/corpus_evaluacion_pseudonimizado.json`, `data/corpus_resultados*.json` ni `evaluation/report.md`.
-4. Correr `evaluar_fuera_de_muestra` con el cache arbitrado: debe devolver `obtenido=True` con el n efectivo `150` sin exclusión y las métricas por clase de `Sistemas` y `Bases de Datos` estimables. El resultado de c-191 sobre `103` se conserva rotulado como **estimación con exclusión**.
+4. Correr `evaluar_fuera_de_muestra` con el cache arbitrado (tarea 6.2). El comando reutiliza el módulo del repositorio (sin red ni Gemini: lee las predicciones persistidas de la sección 10) y reporta el n efectivo **sin exclusión** y las métricas por clase:
+
+   ```bash
+   python -m evaluation.reporte_arbitrado \
+     --predicciones-arbitrado evaluation/data/campana/predicciones_arbitrado.json \
+     --corpus-arbitrado       evaluation/data/campana/corpus_independiente_arbitrado.json
+   ```
+
+   Los otros dos artefactos (in-sample y corpus de ajuste) toman sus rutas por defecto. Debe imprimir `n efectivo (sin exclusion): 150` (o el total tras el refuerzo) y, por clase, `Sistemas` y `Bases de Datos` marcadas `estimable`. Si falta el cache arbitrado, sale con exit `2` nombrando el artefacto faltante sin caer a datos in-sample. El resultado de c-191 sobre `103` se conserva rotulado como **estimación con exclusión**.
 
 ## 12. Limitación declarada: no se consigue un `E5` independiente
 

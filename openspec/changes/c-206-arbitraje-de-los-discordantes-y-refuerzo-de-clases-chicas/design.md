@@ -92,6 +92,31 @@ El resultado arbitrado se versiona, pero su incorporación a la prosa de la tesi
 un change posterior (análogo a c-169), porque depende de que el campo concluya. Se declara
 como dependencia, no como residual oculto.
 
+### D9 — La bandera `tres_vias` vive en un sidecar, no en el esquema del corpus
+
+La bandera de discordancia residual (`tres_vias`) y el `origen` de cada referencia
+(`consenso_e3_e4` | `arbitraje_e5`) se persisten en un artefacto aparte,
+`evaluation/data/campana/arbitraje_tres_vias.json`, y **no** como campo nuevo de los casos de
+`corpus_independiente_arbitrado.json`.
+
+Motivo: el esquema de `evaluation/corpus.py::cargar_corpus` es un contrato compartido. Lo
+consumen `run_evaluation.py` (corpus_hash y clasificación), `no_solape.py`,
+`evaluacion.campana.evaluar_fuera_de_muestra`, `metrics.py` y la suite entera vía
+`CasoEvaluacion`. Añadir hoy un campo opcional exige tocar el loader, su validación y
+revisar cada consumidor el día de la entrega; un campo desconocido, además, sería ignorado en
+silencio por `_parsear_caso` (construye `CasoEvaluacion` campo por campo), con el riesgo de
+perder la bandera sin que nada falle. El sidecar es puramente aditivo: no toca ningún módulo
+existente, se escribe en la misma corrida que el corpus (el ensamblador garantiza que ambos
+salen juntos) y liga al corpus por su SHA-256 para que no se desincronicen.
+
+Consecuencia: el corpus final mantiene el esquema EXACTO de `corpus_independiente.json`
+(carga con `cargar_corpus` sin cambios) y el conteo de `tres_vias` se reporta leyendo el
+sidecar. Alternativa descartada: agregar `tres_vias` a `CasoEvaluacion`. Se verificó que
+`_parsear_caso` solo lee las claves que declara `CAMPOS_CASO_REQUERIDOS` más los tiempos
+opcionales, así que un campo extra en el JSON se descarta sin error (no sería una extensión
+transparente) y habilitarlo obligaría a editar `corpus.py` y sus pruebas justo antes de
+entregar.
+
 ## Risks / Trade-offs
 
 - [No se consigue `E5` independiente] → `estado_cegado: limitacion_declarada`; no se presenta como ciego.
