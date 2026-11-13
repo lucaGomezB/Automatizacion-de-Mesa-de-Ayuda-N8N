@@ -1304,6 +1304,14 @@
       "sessions": 0,
       "memories": 1,
       "prompts": 2
+    },
+    {
+      "id": "ff19ce45",
+      "created_by": "Gonzalo",
+      "created_at": "2026-11-13T19:36:12Z",
+      "sessions": 0,
+      "memories": 1,
+      "prompts": 0
     }
   ]
 }
