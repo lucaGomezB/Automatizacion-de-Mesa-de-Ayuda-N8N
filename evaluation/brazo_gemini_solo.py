@@ -32,8 +32,13 @@ from typing import Any, Callable, Dict, List, Mapping, Optional, Sequence, Tuple
 
 _REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
 
-#: Tope duro de llamadas (cada intento a la API cuenta) prerregistrado en design.md D3.
+#: Tope duro de llamadas que obtuvieron RESPUESTA del modelo, prerregistrado en design.md D3.
+#: Desviacion declarada (2026-11-13): los intentos que fallan antes de obtener respuesta ya no
+#: consumen este tope; se cuentan aparte y los acota `TOPE_INTENTOS_DURO`.
 TOPE_LLAMADAS_DURO = 400
+
+#: Cinturon de seguridad: tope de intentos totales a la API (con o sin respuesta).
+TOPE_INTENTOS_DURO = 600
 
 #: Rango de `google-genai` fijado por el proyecto (`openspec/config.yaml`, `stack.inference`).
 SDK_RANGO_TEXTO = ">=2.33,<3"
@@ -135,6 +140,17 @@ def verificar_tope(tope: int) -> int:
     return tope
 
 
+def verificar_tope_intentos(tope: int) -> int:
+    """El tope de intentos totales debe ser positivo y no superar el cinturon de seguridad."""
+    if tope <= 0:
+        raise TopeNoPermitidoError(f"el tope de intentos debe ser positivo (recibido {tope})")
+    if tope > TOPE_INTENTOS_DURO:
+        raise TopeNoPermitidoError(
+            f"tope de intentos {tope} supera el cinturon de seguridad de {TOPE_INTENTOS_DURO} intentos"
+        )
+    return tope
+
+
 def estimar_costo_usd(tokens_entrada: float, tokens_salida: float, escenario: str) -> float:
     """Costo en USD de `tokens_entrada` + `tokens_salida` al precio del `escenario`."""
     precio = PRECIOS_USD_POR_MILLON[escenario]
@@ -166,18 +182,41 @@ def verificar_prompt_congelado(
 # Cliente instrumentado
 # ---------------------------------------------------------------------------
 class ContadorLlamadas:
-    """Contador acumulado de llamadas (cada intento a la API cuenta) con tope duro."""
+    """
+    Contador acumulado con DOS topes duros: `tope` rige las llamadas que obtuvieron respuesta del
+    modelo (`respuestas`) y `tope_intentos` los intentos totales (`total`, con o sin respuesta).
+    `respuestas` parte de `acumuladas` si no se indica (cache sin distinguir intentos fallidos).
+    """
 
-    def __init__(self, tope: int, acumuladas: int = 0) -> None:
+    def __init__(
+        self,
+        tope: int,
+        acumuladas: int = 0,
+        *,
+        respuestas: Optional[int] = None,
+        tope_intentos: int = TOPE_INTENTOS_DURO,
+    ) -> None:
         self.tope = tope
+        self.tope_intentos = tope_intentos
         self.total = acumuladas
+        self.respuestas = acumuladas if respuestas is None else respuestas
 
     def reservar(self) -> None:
-        if self.total >= self.tope:
+        if self.respuestas >= self.tope:
             raise TopeDeLlamadasExcedido(
-                f"tope de {self.tope} llamadas alcanzado ({self.total} acumuladas); no se emite otra"
+                f"tope de {self.tope} llamadas con respuesta alcanzado ({self.respuestas} acumuladas, "
+                f"{self.total} intentos); no se emite otra"
+            )
+        if self.total >= self.tope_intentos:
+            raise TopeDeLlamadasExcedido(
+                f"tope de {self.tope_intentos} intentos totales alcanzado ({self.total} acumulados, "
+                f"{self.respuestas} con respuesta); no se emite otro"
             )
         self.total += 1
+
+    def confirmar_respuesta(self) -> None:
+        """Marca que el intento reservado obtuvo respuesta del modelo (consume el tope principal)."""
+        self.respuestas += 1
 
 
 @dataclass
@@ -185,6 +224,7 @@ class MedicionCaso:
     """Mediciones de las llamadas de UN caso."""
 
     intentos: int = 0
+    respuestas: int = 0
     latencias_intento_ms: List[float] = field(default_factory=list)
     tokens_entrada: int = 0
     tokens_salida: int = 0
@@ -253,6 +293,8 @@ class ClienteInstrumentado:
             respuesta = await self._base.aio.models.generate_content(**kwargs)
         finally:
             medicion.latencias_intento_ms.append((self._reloj() - inicio) * 1000.0)
+        self.contador.confirmar_respuesta()
+        medicion.respuestas += 1
         tokens = _tokens_de(respuesta)
         if tokens is None:
             tokens = (TOKENS_SUPUESTOS_ENTRADA, TOKENS_SUPUESTOS_SALIDA, TOKENS_SUPUESTOS_ENTRADA + TOKENS_SUPUESTOS_SALIDA)
@@ -289,18 +331,20 @@ class CacheIncompatibleError(RuntimeError):
     """El cache existente fue escrito con otra configuracion que la de la corrida actual."""
 
 
-def leer_cache(ruta: pathlib.Path) -> Tuple[Optional[dict], Dict[str, dict], int]:
+def leer_historial(ruta: pathlib.Path) -> Tuple[Optional[dict], List[dict], int]:
     """
-    Lee el cache: `(meta, casos_por_id, intentos_descartados)`.
+    Lee el cache SIN colapsar: `(meta, historial_de_casos, intentos_descartados)`, con todos los
+    registros de caso en orden de escritura (el cache es append-only: un reintento agrega un
+    registro nuevo del mismo `caso_id`; no reemplaza al viejo).
 
     Una ultima linea truncada (corte durante la escritura) se ignora. Un cache inexistente
-    devuelve `(None, {}, 0)`.
+    devuelve `(None, [], 0)`.
     """
     ruta = pathlib.Path(ruta)
     if not ruta.exists():
-        return None, {}, 0
+        return None, [], 0
     meta: Optional[dict] = None
-    casos: Dict[str, dict] = {}
+    historial: List[dict] = []
     descartados = 0
     for linea in ruta.read_text(encoding="utf-8").splitlines():
         try:
@@ -311,15 +355,50 @@ def leer_cache(ruta: pathlib.Path) -> Tuple[Optional[dict], Dict[str, dict], int
         if tipo == "meta":
             meta = registro
         elif tipo == "caso":
-            casos[registro["caso_id"]] = registro
+            historial.append(registro)
         elif tipo == "descarte":
             descartados += int(registro.get("intentos", 0))
-    return meta, casos, descartados
+    return meta, historial, descartados
 
 
-def llamadas_acumuladas(casos: Dict[str, dict], descartados: int) -> int:
-    """Llamadas ya hechas: intentos de los casos registrados mas los de los casos descartados."""
-    return sum(int(r["intentos"]) for r in casos.values()) + descartados
+def vigentes_por_caso(historial: Sequence[dict]) -> Dict[str, dict]:
+    """Registro vigente por caso: el ULTIMO escrito de cada `caso_id`."""
+    return {r["caso_id"]: r for r in historial}
+
+
+def leer_cache(ruta: pathlib.Path) -> Tuple[Optional[dict], Dict[str, dict], int]:
+    """
+    Lee el cache: `(meta, casos_vigentes_por_id, intentos_descartados)`. El registro vigente de
+    cada caso es el ultimo escrito (ver `leer_historial` para el historial completo).
+    """
+    meta, historial, descartados = leer_historial(ruta)
+    return meta, vigentes_por_caso(historial), descartados
+
+
+def respuestas_de(registro: Mapping[str, Any]) -> int:
+    """
+    Llamadas del registro que obtuvieron respuesta del modelo. Los registros nuevos traen el
+    campo `respuestas`; en los anteriores se deduce: el modelo respondio si hubo tokens (la
+    respuesta invalida no se reintenta, asi que un caso tiene a lo sumo una respuesta).
+    """
+    if "respuestas" in registro:
+        return int(registro["respuestas"])
+    return 1 if int(registro.get("tokens_total") or 0) > 0 else 0
+
+
+def contabilidad_cache(historial: Sequence[Mapping[str, Any]], descartados: int) -> Dict[str, int]:
+    """
+    Llamadas acumuladas sobre TODO el historial (no solo los registros vigentes): `intentos`
+    (con o sin respuesta, incluidos los de casos descartados), `respuestas` (las que consumen el
+    tope de 400) e `intentos_sin_respuesta` (fallaron antes de obtener respuesta del modelo).
+    """
+    intentos = sum(int(r["intentos"]) for r in historial) + descartados
+    respuestas = sum(respuestas_de(r) for r in historial)
+    return {
+        "intentos": intentos,
+        "respuestas": respuestas,
+        "intentos_sin_respuesta": intentos - respuestas,
+    }
 
 
 #: Errores de indisponibilidad o transporte del proveedor (la llamada no produjo respuesta del
@@ -377,7 +456,11 @@ class ResultadoCorrida:
     omitidos: int = 0
     pendientes: int = 0
     tope_alcanzado: bool = False
-    llamadas_totales: int = 0
+    llamadas_totales: int = 0  # intentos acumulados (con o sin respuesta); igual a `intentos_totales`
+    reintentados: int = 0
+    intentos_totales: int = 0
+    respuestas_totales: int = 0
+    intentos_sin_respuesta: int = 0
 
 
 def _ahora_utc() -> str:
@@ -393,6 +476,13 @@ def _causa_es_tope(exc: BaseException) -> bool:
     return False
 
 
+def _cerrar_contabilidad(resultado: ResultadoCorrida, cliente: ClienteInstrumentado) -> None:
+    contador = cliente.contador
+    resultado.llamadas_totales = resultado.intentos_totales = contador.total
+    resultado.respuestas_totales = contador.respuestas
+    resultado.intentos_sin_respuesta = contador.total - contador.respuestas
+
+
 async def correr_brazo(
     casos: Sequence[Tuple[str, Any]],
     clasificador: Any,
@@ -402,19 +492,28 @@ async def correr_brazo(
     *,
     reloj: Callable[[], float] = time.perf_counter,
     ahora: Callable[[], str] = _ahora_utc,
+    reintentar_fallos_tecnicos: bool = False,
 ) -> ResultadoCorrida:
     """
     Clasifica cada caso `(bloque, CasoEvaluacion)` pendiente con `clasificador` (la etapa Gemini
     real con `cliente` inyectado), persistiendo cada caso apenas termina.
 
-    Fija el contador del cliente en las llamadas ya acumuladas del cache (el tope es global entre
-    reanudaciones). Un fallo del proveedor se registra y no corta la corrida; alcanzar el tope si.
+    Fija el contador del cliente en las llamadas ya acumuladas del cache (los topes son globales
+    entre reanudaciones). Un fallo del proveedor se registra y no corta la corrida; alcanzar un
+    tope si.
+
+    Con `reintentar_fallos_tecnicos` (desviacion declarada del 2026-11-13) tambien se vuelven a
+    llamar los casos cuyo registro VIGENTE es un fallo tecnico (`es_fallo_tecnico`). El cache es
+    append-only: el reintento AGREGA un registro nuevo del mismo caso, marcado con
+    `reintento_de_fallo_tecnico` y `ronda`; el registro viejo no se toca. Las respuestas invalidas
+    del modelo y los casos exitosos nunca se reintentan.
 
     Raises:
         CacheIncompatibleError: el cache existente no coincide con `meta` (sin llamar ni escribir).
     """
     ruta_cache = pathlib.Path(ruta_cache)
-    existente, hechos, descartados = leer_cache(ruta_cache)
+    existente, historial, descartados = leer_historial(ruta_cache)
+    hechos = vigentes_por_caso(historial)
     if existente is not None:
         _verificar_compatibilidad(existente, meta)
         _reparar_cola(ruta_cache)
@@ -422,9 +521,16 @@ async def correr_brazo(
         ruta_cache.parent.mkdir(parents=True, exist_ok=True)
         _agregar(ruta_cache, {"tipo": "meta", **meta})
 
-    cliente.contador.total = llamadas_acumuladas(hechos, descartados)
-    resultado = ResultadoCorrida(omitidos=sum(1 for _, c in casos if c.id in hechos))
-    pendientes = [(bloque, c) for bloque, c in casos if c.id not in hechos]
+    previa = contabilidad_cache(historial, descartados)
+    cliente.contador.total = previa["intentos"]
+    cliente.contador.respuestas = previa["respuestas"]
+
+    def _a_llamar(caso_id: str) -> bool:
+        vigente = hechos.get(caso_id)
+        return vigente is None or (reintentar_fallos_tecnicos and es_fallo_tecnico(vigente))
+
+    pendientes = [(bloque, c) for bloque, c in casos if _a_llamar(c.id)]
+    resultado = ResultadoCorrida(omitidos=len(casos) - len(pendientes))
 
     for indice, (bloque, caso) in enumerate(pendientes):
         cliente.abrir_caso()
@@ -451,11 +557,19 @@ async def correr_brazo(
                     )
                 resultado.tope_alcanzado = True
                 resultado.pendientes = len(pendientes) - indice
-                resultado.llamadas_totales = cliente.contador.total
+                _cerrar_contabilidad(resultado, cliente)
                 return resultado
             error = type(exc).__name__
         latencia_ms = (reloj() - inicio) * 1000.0
         medicion = cliente.cerrar_caso()
+        previo = hechos.get(caso.id)
+        marca_reintento: Dict[str, Any] = {}
+        if previo is not None:
+            marca_reintento = {
+                "reintento_de_fallo_tecnico": True,
+                "ronda": int(previo.get("ronda", 1)) + 1,
+            }
+            resultado.reintentados += 1
         _agregar(
             ruta_cache,
             {
@@ -466,6 +580,7 @@ async def correr_brazo(
                 "confianza": confianza,
                 "etapa": etapa,
                 "intentos": medicion.intentos,
+                "respuestas": medicion.respuestas,
                 "latencia_ms": latencia_ms,
                 "latencias_intento_ms": medicion.latencias_intento_ms,
                 "tokens_entrada": medicion.tokens_entrada,
@@ -474,29 +589,53 @@ async def correr_brazo(
                 "tokens_origen": medicion.tokens_origen,
                 "error": error,
                 "t_inicio_utc": inicio_utc,
+                **marca_reintento,
             },
         )
         resultado.registrados += 1
 
-    resultado.llamadas_totales = cliente.contador.total
+    _cerrar_contabilidad(resultado, cliente)
     return resultado
 
 
 # ---------------------------------------------------------------------------
 # Dry-run
 # ---------------------------------------------------------------------------
-def plan_dry_run(*, pendientes: int, max_reintentos: int, ya_hechas: int, tope: int) -> Dict[str, Any]:
-    """Llamadas minimas y maximas y costo estimado (supuesto de la tesis) sin llamar a la API."""
+def plan_dry_run(
+    *,
+    pendientes: int,
+    max_reintentos: int,
+    ya_hechas: int,
+    tope: int,
+    reintentos_tecnicos: int = 0,
+    intentos_hechos: Optional[int] = None,
+    tope_intentos: int = TOPE_INTENTOS_DURO,
+) -> Dict[str, Any]:
+    """
+    Llamadas minimas y maximas y costo estimado (supuesto de la tesis) sin llamar a la API.
+
+    `pendientes` es el total a llamar (casos nuevos mas `reintentos_tecnicos`); `ya_hechas` son las
+    llamadas con respuesta del modelo (rigen el tope de 400) e `intentos_hechos` los intentos
+    totales (rigen el cinturon de 600; por defecto, igual a `ya_hechas`). Los intentos sin
+    respuesta no tienen costo de tokens: el costo maximo se acota por el tope de respuestas.
+    """
+    intentos_hechos = ya_hechas if intentos_hechos is None else intentos_hechos
     restantes = max(0, tope - ya_hechas)
+    restantes_intentos = max(0, tope_intentos - intentos_hechos)
     teoricas = pendientes * (max_reintentos + 1)
     maximas = min(teoricas, restantes)
     minimas = pendientes
     return {
         "pendientes": pendientes,
+        "reintentos_tecnicos": reintentos_tecnicos,
+        "pendientes_nuevos": pendientes - reintentos_tecnicos,
         "ya_hechas": ya_hechas,
+        "intentos_hechos": intentos_hechos,
         "tope": tope,
+        "tope_intentos": tope_intentos,
         "llamadas_minimas": minimas,
         "llamadas_maximas": maximas,
+        "intentos_maximos": min(teoricas, restantes_intentos),
         "alcanza_el_tope": teoricas > restantes,
         "costo_usd": {
             escenario: {
@@ -509,19 +648,44 @@ def plan_dry_run(*, pendientes: int, max_reintentos: int, ya_hechas: int, tope: 
 
 
 def _lineas_dry_run(
-    plan: Dict[str, Any], por_bloque: Dict[str, int], registrados: int, version: Optional[str]
+    plan: Dict[str, Any],
+    por_bloque: Dict[str, int],
+    registrados: int,
+    version: Optional[str],
+    *,
+    reintentar: bool = False,
+    reintentables_sin_reintentar: int = 0,
+    contabilidad: Optional[Dict[str, int]] = None,
 ) -> List[str]:
     lineas = [
         "Dry-run del brazo 'Gemini solo' (sin red, sin clave y sin escribir el cache)",
         f"Casos totales: {sum(por_bloque.values())} "
         f"({BLOQUE_DENTRO}: {por_bloque[BLOQUE_DENTRO]}, {BLOQUE_FUERA}: {por_bloque[BLOQUE_FUERA]})",
         f"ya registrados: {registrados}",
+    ]
+    if contabilidad is not None:
+        lineas.append(
+            f"respuestas del modelo acumuladas: {contabilidad['respuestas']} (tope {plan['tope']}); "
+            f"intentos sin respuesta: {contabilidad['intentos_sin_respuesta']}; "
+            f"intentos totales: {contabilidad['intentos']} (cinturon {plan['tope_intentos']})"
+        )
+    if reintentar:
+        lineas.append(f"casos a reintentar por fallo tecnico: {plan['reintentos_tecnicos']}")
+        lineas.append(f"pendientes nuevos (sin registro): {plan['pendientes_nuevos']}")
+    elif reintentables_sin_reintentar:
+        lineas.append(
+            "fallos tecnicos reintentables sin reintentar (falta --reintentar-fallos-tecnicos): "
+            f"{reintentables_sin_reintentar}"
+        )
+    lineas += [
         f"pendientes: {plan['pendientes']}",
         f"llamadas minimas: {plan['llamadas_minimas']} (una por caso)",
-        f"llamadas maximas: {plan['llamadas_maximas']} (con reintentos, acotadas por el tope de "
-        f"{plan['tope']}; ya hechas: {plan['ya_hechas']})",
+        f"llamadas maximas: {plan['llamadas_maximas']} (con respuesta, con reintentos, acotadas por el "
+        f"tope de {plan['tope']}; ya hechas: {plan['ya_hechas']}); intentos maximos: "
+        f"{plan['intentos_maximos']} (acotados por el cinturon de {plan['tope_intentos']}; ya hechos: "
+        f"{plan['intentos_hechos']})",
         f"Costo estimado con el supuesto de la tesis ({TOKENS_SUPUESTOS_ENTRADA} tokens de entrada y "
-        f"{TOKENS_SUPUESTOS_SALIDA} de salida por llamada; orientativo, no es una factura):",
+        f"{TOKENS_SUPUESTOS_SALIDA} de salida por llamada con respuesta; orientativo, no es una factura):",
     ]
     for escenario, precio in PRECIOS_USD_POR_MILLON.items():
         costo = plan["costo_usd"][escenario]
@@ -586,6 +750,15 @@ def _construir_parser() -> argparse.ArgumentParser:
         "--tope-llamadas", type=int, default=TOPE_LLAMADAS_DURO,
         help=f"tope duro de llamadas, solo puede bajarse (prerregistrado: {TOPE_LLAMADAS_DURO})",
     )
+    parser.add_argument(
+        "--tope-intentos", type=int, default=TOPE_INTENTOS_DURO,
+        help=f"cinturon de seguridad de intentos totales, solo puede bajarse (prerregistrado: {TOPE_INTENTOS_DURO})",
+    )
+    parser.add_argument(
+        "--reintentar-fallos-tecnicos", action="store_true",
+        help="DESVIACION declarada 2026-11-13: vuelve a llamar los casos cuyo registro vigente es un fallo "
+        "tecnico (indisponibilidad o transporte, sin respuesta del modelo); exige --confirmar-costo",
+    )
     parser.add_argument("--corpus-dentro", type=pathlib.Path, default=RUTA_CORPUS_DENTRO)
     parser.add_argument("--corpus-fuera", type=pathlib.Path, default=RUTA_CORPUS_FUERA)
     parser.add_argument("--cache", type=pathlib.Path, default=RUTA_CACHE_DEFECTO)
@@ -634,6 +807,7 @@ def main(
         return CODIGO_GUARDA
     try:
         tope = verificar_tope(args.tope_llamadas)
+        tope_intentos = verificar_tope_intentos(args.tope_intentos)
         if not args.dry_run:
             verificar_version_sdk(version or "")
             clave = entorno.get("GEMINI_API_KEY")
@@ -656,9 +830,14 @@ def main(
         get_settings.cache_clear()  # que `Settings` tome la clave real del entorno
     settings = get_settings()
 
-    _, hechos, descartados = leer_cache(args.cache)
-    ya_hechas = llamadas_acumuladas(hechos, descartados)
-    pendientes = [c for _, c in casos if c.id not in hechos]
+    _, historial, descartados = leer_historial(args.cache)
+    hechos = vigentes_por_caso(historial)
+    contabilidad = contabilidad_cache(historial, descartados)
+    ids_corpus = {c.id for _, c in casos}
+    reintentables = {i for i, r in hechos.items() if i in ids_corpus and es_fallo_tecnico(r)}
+    a_reintentar = reintentables if args.reintentar_fallos_tecnicos else set()
+    pendientes = [c for _, c in casos if c.id not in hechos or c.id in a_reintentar]
+    ya_hechas = contabilidad["respuestas"]
     por_bloque = {
         BLOQUE_DENTRO: sum(1 for b, _ in casos if b == BLOQUE_DENTRO),
         BLOQUE_FUERA: sum(1 for b, _ in casos if b == BLOQUE_FUERA),
@@ -667,9 +846,13 @@ def main(
     if args.dry_run:
         plan = plan_dry_run(
             pendientes=len(pendientes), max_reintentos=settings.gemini_max_retries,
-            ya_hechas=ya_hechas, tope=tope,
+            ya_hechas=ya_hechas, tope=tope, reintentos_tecnicos=len(a_reintentar),
+            intentos_hechos=contabilidad["intentos"], tope_intentos=tope_intentos,
         )
-        print("\n".join(_lineas_dry_run(plan, por_bloque, len(hechos), version)))
+        print("\n".join(_lineas_dry_run(
+            plan, por_bloque, len(hechos), version, reintentar=args.reintentar_fallos_tecnicos,
+            reintentables_sin_reintentar=len(reintentables), contabilidad=contabilidad,
+        )))
         return CODIGO_OK
 
     from app.classifiers import gemini_classifier  # type: ignore
@@ -701,26 +884,36 @@ def main(
         "generado_en": _ahora_utc(),
     }
     base = (fabrica_cliente or _cliente_real)()
-    cliente = ClienteInstrumentado(base, ContadorLlamadas(tope=tope))
+    cliente = ClienteInstrumentado(base, ContadorLlamadas(tope=tope, tope_intentos=tope_intentos))
     clasificador = GeminiClassifier(client=cliente, sleep=sleep)  # type: ignore[arg-type]
     print(
-        f"Corrida PAGA confirmada: {len(pendientes)} casos pendientes, tope {tope} llamadas "
-        f"(ya hechas: {ya_hechas})."
+        f"Corrida PAGA confirmada: {len(pendientes)} casos a llamar ({len(a_reintentar)} reintentos de "
+        f"fallos tecnicos), tope {tope} llamadas con respuesta (ya hechas: {ya_hechas}) y cinturon de "
+        f"{tope_intentos} intentos (ya hechos: {contabilidad['intentos']})."
     )
     try:
-        resultado = asyncio.run(correr_brazo(casos, clasificador, cliente, args.cache, meta))
+        resultado = asyncio.run(correr_brazo(
+            casos, clasificador, cliente, args.cache, meta,
+            reintentar_fallos_tecnicos=args.reintentar_fallos_tecnicos,
+        ))
     except CacheIncompatibleError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return CODIGO_GUARDA
 
     print(
         f"registrados: {resultado.registrados}, omitidos: {resultado.omitidos}, "
-        f"pendientes: {resultado.pendientes}, llamadas acumuladas: {resultado.llamadas_totales}"
+        f"pendientes: {resultado.pendientes}, reintentados: {resultado.reintentados}, "
+        f"llamadas acumuladas: {resultado.llamadas_totales}"
+    )
+    print(
+        f"respuestas del modelo acumuladas: {resultado.respuestas_totales} (tope {tope}); "
+        f"intentos sin respuesta: {resultado.intentos_sin_respuesta}; "
+        f"intentos totales: {resultado.intentos_totales} (cinturon {tope_intentos})"
     )
     if resultado.tope_alcanzado:
         print(
-            f"TOPE de {tope} llamadas alcanzado: el cache conserva lo hecho; pendientes: "
-            f"{resultado.pendientes}. No se emitieron mas llamadas."
+            f"TOPE alcanzado ({tope} llamadas con respuesta o {tope_intentos} intentos): el cache "
+            f"conserva lo hecho; pendientes: {resultado.pendientes}. No se emitieron mas llamadas."
         )
         return CODIGO_TOPE
     return CODIGO_OK

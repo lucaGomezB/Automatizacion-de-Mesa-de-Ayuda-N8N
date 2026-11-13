@@ -286,8 +286,8 @@ META = {
 }
 
 
-def armar(cliente_base, tope=400):
-    contador = bgs.ContadorLlamadas(tope=tope)
+def armar(cliente_base, tope=400, tope_intentos=bgs.TOPE_INTENTOS_DURO):
+    contador = bgs.ContadorLlamadas(tope=tope, tope_intentos=tope_intentos)
     cliente = bgs.ClienteInstrumentado(cliente_base, contador)
     return cliente, clasificador_real(cliente)
 
@@ -336,7 +336,7 @@ def test_corrida_registra_un_caso_por_linea_con_los_campos_comprometidos(tmp_pat
     assert set(primero) == {
         "tipo", "bloque", "caso_id", "sector_predicho", "confianza", "etapa", "intentos",
         "latencia_ms", "latencias_intento_ms", "tokens_entrada", "tokens_salida", "tokens_total",
-        "tokens_origen", "error", "t_inicio_utc",
+        "tokens_origen", "error", "t_inicio_utc", "respuestas",
     }
     assert primero["caso_id"] == "I001" and primero["bloque"] == bgs.BLOQUE_FUERA
     assert primero["sector_predicho"] == SECTOR_OK and primero["confianza"] == 0.9
@@ -463,14 +463,16 @@ def test_tope_alcanzado_conserva_lo_hecho_y_reporta_pendientes(tmp_path):
 def test_tope_alcanzado_en_pleno_reintento_descarta_el_caso_pero_cuenta_la_llamada(tmp_path):
     ruta = tmp_path / "c.jsonl"
     base = ClienteFalso(guion=[TimeoutError("x")])
-    cliente, clasif = armar(base, tope=1)
+    # Desviacion 2026-11-13: el intento fallido ya no consume el tope de respuestas; lo corta
+    # el tope de intentos totales (cinturon de seguridad).
+    cliente, clasif = armar(base, tope=400, tope_intentos=1)
     resultado = correr(casos_de("I001", "I002"), cliente, clasif, ruta)
     assert resultado.tope_alcanzado and resultado.registrados == 0 and resultado.pendientes == 2
     assert len(base.llamadas) == 1
     assert lineas(ruta)[-1] == {"tipo": "descarte", "caso_id": "I001", "intentos": 1}
     # Al reanudar con el mismo tope, el descarte cuenta: no queda margen para llamar.
     base2 = ClienteFalso()
-    cliente2, clasif2 = armar(base2, tope=1)
+    cliente2, clasif2 = armar(base2, tope=400, tope_intentos=1)
     resultado2 = correr(casos_de("I001", "I002"), cliente2, clasif2, ruta)
     assert base2.llamadas == [] and resultado2.tope_alcanzado and resultado2.llamadas_totales == 1
 
@@ -742,3 +744,327 @@ def test_registro_exitoso_o_sin_error_no_es_reintentable():
     assert bgs.es_fallo_tecnico(reg_caso()) is False
     assert bgs.es_fallo_tecnico(reg_caso(**{**FALLO_TECNICO, "error": None})) is False
     assert bgs.es_fallo_tecnico(reg_caso(**{**FALLO_TECNICO, "error": ""})) is False
+
+
+# ---------------------------------------------------------------------------
+# 2.2 Doble tope: respuestas del modelo (400) e intentos totales (600)
+# ---------------------------------------------------------------------------
+def test_el_tope_de_intentos_totales_prerregistrado_es_600():
+    assert bgs.TOPE_INTENTOS_DURO == 600
+    assert bgs.verificar_tope_intentos(600) == 600
+    with pytest.raises(bgs.TopeNoPermitidoError):
+        bgs.verificar_tope_intentos(601)
+    with pytest.raises(bgs.TopeNoPermitidoError):
+        bgs.verificar_tope_intentos(0)
+
+
+async def test_los_intentos_sin_respuesta_no_consumen_el_tope_de_respuestas():
+    base = ClienteFalso(guion=[TimeoutError("x"), TimeoutError("x"), TimeoutError("x")])
+    contador = bgs.ContadorLlamadas(tope=1)
+    cliente = bgs.ClienteInstrumentado(base, contador, reloj=reloj_falso([0.0, 0.1] * 6))
+    cliente.abrir_caso()
+    for _ in range(3):
+        with pytest.raises(TimeoutError):
+            await cliente.aio.models.generate_content(model="m", contents="p", config=None)
+    await cliente.aio.models.generate_content(model="m", contents="p", config=None)  # 4to intento: responde
+    assert (contador.total, contador.respuestas) == (4, 1)
+    assert cliente.cerrar_caso().respuestas == 1
+    with pytest.raises(bgs.TopeDeLlamadasExcedido):  # ahora si: 1 respuesta == tope
+        await cliente.aio.models.generate_content(model="m", contents="p", config=None)
+    assert len(base.llamadas) == 4
+
+
+async def test_el_tope_de_intentos_totales_corta_aunque_no_haya_respuestas():
+    base = ClienteFalso(guion=[TimeoutError("x")] * 5)
+    contador = bgs.ContadorLlamadas(tope=400, tope_intentos=2)
+    cliente = bgs.ClienteInstrumentado(base, contador, reloj=reloj_falso([0.0, 0.1] * 4))
+    cliente.abrir_caso()
+    for _ in range(2):
+        with pytest.raises(TimeoutError):
+            await cliente.aio.models.generate_content(model="m", contents="p", config=None)
+    with pytest.raises(bgs.TopeDeLlamadasExcedido) as exc:
+        await cliente.aio.models.generate_content(model="m", contents="p", config=None)
+    assert "intentos" in str(exc.value)
+    assert len(base.llamadas) == 2 and contador.respuestas == 0
+
+
+async def test_contador_reanudado_parte_de_intentos_y_respuestas_acumulados():
+    contador = bgs.ContadorLlamadas(tope=10, acumuladas=303, respuestas=191, tope_intentos=600)
+    assert (contador.total, contador.respuestas) == (303, 191)
+    cliente = bgs.ClienteInstrumentado(ClienteFalso(), contador, reloj=reloj_falso([0.0, 0.1]))
+    cliente.abrir_caso()
+    with pytest.raises(bgs.TopeDeLlamadasExcedido):  # 191 respuestas ya superan el tope de 10
+        await cliente.aio.models.generate_content(model="m", contents="p", config=None)
+
+
+# ---------------------------------------------------------------------------
+# 2.3 Cache append-only con historial y contabilidad separada
+# ---------------------------------------------------------------------------
+def escribir_jsonl(ruta: pathlib.Path, registros: List[dict]) -> None:
+    ruta.write_text("".join(json.dumps(r) + "\n" for r in registros), encoding="utf-8")
+
+
+def test_leer_historial_conserva_todos_los_registros_y_leer_cache_toma_el_ultimo(tmp_path):
+    ruta = tmp_path / "c.jsonl"
+    viejo = reg_caso("R001", **FALLO_TECNICO)
+    nuevo = reg_caso("R001", reintento_de_fallo_tecnico=True, ronda=2)
+    escribir_jsonl(ruta, [{"tipo": "meta", **META}, viejo, reg_caso("R002"), nuevo])
+    _, vigentes, _ = bgs.leer_cache(ruta)
+    assert vigentes["R001"]["ronda"] == 2 and vigentes["R001"]["etapa"] == "gemini"
+    meta, historial, descartados = bgs.leer_historial(ruta)
+    assert meta["modelo"] == "gemini-3.6-flash" and descartados == 0
+    assert [(r["caso_id"], r.get("ronda")) for r in historial] == [("R001", None), ("R002", None), ("R001", 2)]
+
+
+def test_contabilidad_separa_respuestas_de_intentos_sin_respuesta():
+    historial = [
+        reg_caso("R001", **FALLO_TECNICO),                              # 1 intento, 0 respuestas
+        reg_caso("R002", **{**FALLO_TECNICO, "intentos": 3}),           # 3 intentos, 0 respuestas
+        reg_caso("R003"),                                               # 1 intento, 1 respuesta
+        reg_caso("R004", intentos=2),                                   # 1 fallo + 1 respuesta
+        reg_caso("R005", etapa="fallback", error="respuesta_invalida"), # respuesta invalida: cuenta
+    ]
+    c = bgs.contabilidad_cache(historial, descartados=2)
+    assert c == {"intentos": 10, "respuestas": 3, "intentos_sin_respuesta": 7}
+
+
+def test_contabilidad_usa_el_campo_respuestas_cuando_existe():
+    historial = [reg_caso("R001", intentos=2, respuestas=1), reg_caso("R002", **{**FALLO_TECNICO, "respuestas": 0})]
+    assert bgs.contabilidad_cache(historial, 0) == {"intentos": 3, "respuestas": 1, "intentos_sin_respuesta": 2}
+
+
+def test_contabilidad_cuenta_el_historial_aunque_el_caso_se_reintente():
+    historial = [reg_caso("R001", **FALLO_TECNICO), reg_caso("R001", ronda=2, reintento_de_fallo_tecnico=True)]
+    assert bgs.contabilidad_cache(historial, 0) == {"intentos": 2, "respuestas": 1, "intentos_sin_respuesta": 1}
+
+
+# ---------------------------------------------------------------------------
+# 2.4 Bucle de corrida con reintento de fallos tecnicos
+# ---------------------------------------------------------------------------
+def cache_con_fallos(ruta: pathlib.Path, *, tecnicos=("R001", "R002"), invalido=None, ok=("R003",)) -> None:
+    registros: List[dict] = [{"tipo": "meta", **META}]
+    registros += [reg_caso(i, **FALLO_TECNICO) for i in tecnicos]
+    if invalido:
+        registros.append(reg_caso(invalido, sector_predicho=None, confianza=0.0, etapa="fallback", error="respuesta_invalida"))
+    registros += [reg_caso(i) for i in ok]
+    escribir_jsonl(ruta, registros)
+
+
+def correr_con_reintento(casos, base, ruta, *, tope=400, tope_intentos=600, reintentar=True):
+    cliente, clasif = armar(base, tope=tope, tope_intentos=tope_intentos)
+    resultado = asyncio.run(
+        bgs.correr_brazo(
+            casos, clasif, cliente, ruta, META, reloj=contador_de_reloj(),
+            ahora=lambda: "2026-11-13T20:00:00+00:00", reintentar_fallos_tecnicos=reintentar,
+        )
+    )
+    return resultado
+
+
+def test_los_registros_nuevos_traen_el_campo_respuestas(tmp_path):
+    ruta = tmp_path / "c.jsonl"
+    cliente, clasif = armar(ClienteFalso(guion=[TimeoutError("x"), json_ok()]))
+    correr(casos_de("I001"), cliente, clasif, ruta)
+    reg = lineas(ruta)[1]
+    assert reg["intentos"] == 2 and reg["respuestas"] == 1
+
+
+def test_sin_el_flag_los_fallos_tecnicos_no_se_reintentan_ni_se_repagan(tmp_path):
+    ruta = tmp_path / "c.jsonl"
+    cache_con_fallos(ruta)
+    antes = ruta.read_bytes()
+    base = ClienteFalso()
+    resultado = correr_con_reintento(casos_de("R001", "R002", "R003"), base, ruta, reintentar=False)
+    assert base.llamadas == [] and ruta.read_bytes() == antes
+    assert (resultado.registrados, resultado.omitidos, resultado.reintentados) == (0, 3, 0)
+
+
+def test_con_el_flag_reintenta_solo_los_fallos_tecnicos_y_agrega_registros_nuevos(tmp_path):
+    ruta = tmp_path / "c.jsonl"
+    cache_con_fallos(ruta, invalido="R004")
+    antes = ruta.read_text(encoding="utf-8")
+    base = ClienteFalso(guion=[json_ok("Sistemas", 0.8), json_ok("Sistemas", 0.7)])
+    resultado = correr_con_reintento(casos_de("R001", "R002", "R003", "R004"), base, ruta)
+    assert len(base.llamadas) == 2  # R003 (exitoso) y R004 (respuesta invalida) se conservan
+    assert (resultado.registrados, resultado.reintentados, resultado.omitidos) == (2, 2, 2)
+    despues = ruta.read_text(encoding="utf-8")
+    assert despues.startswith(antes)  # append-only: nada viejo se toca
+    nuevos = [json.loads(x) for x in despues[len(antes):].splitlines()]
+    assert [(r["caso_id"], r["reintento_de_fallo_tecnico"], r["ronda"], r["etapa"]) for r in nuevos] == [
+        ("R001", True, 2, "gemini"), ("R002", True, 2, "gemini"),
+    ]
+    _, vigentes, _ = bgs.leer_cache(ruta)
+    assert vigentes["R001"]["sector_predicho"] == "Sistemas" and vigentes["R003"].get("ronda") is None
+
+
+def test_los_casos_nuevos_no_llevan_la_marca_de_reintento(tmp_path):
+    ruta = tmp_path / "c.jsonl"
+    cache_con_fallos(ruta, tecnicos=("R001",), ok=())
+    correr_con_reintento(casos_de("R001", "R002"), ClienteFalso(), ruta)
+    nuevos = [r for r in lineas(ruta) if r["tipo"] == "caso"][1:]
+    por_id = {r["caso_id"]: r for r in nuevos}
+    assert por_id["R001"]["reintento_de_fallo_tecnico"] is True
+    assert "reintento_de_fallo_tecnico" not in por_id["R002"] and "ronda" not in por_id["R002"]
+
+
+def test_un_reintento_que_vuelve_a_fallar_sube_la_ronda_y_se_puede_reintentar_otra_vez(tmp_path):
+    ruta = tmp_path / "c.jsonl"
+    cache_con_fallos(ruta, tecnicos=("R001",), ok=())
+    base = ClienteFalso(guion=[TimeoutError("x")] * 3)
+    correr_con_reintento(casos_de("R001"), base, ruta)
+    _, vigentes, _ = bgs.leer_cache(ruta)
+    assert vigentes["R001"]["ronda"] == 2 and bgs.es_fallo_tecnico(vigentes["R001"])
+    correr_con_reintento(casos_de("R001"), ClienteFalso(), ruta)
+    _, vigentes, _ = bgs.leer_cache(ruta)
+    assert vigentes["R001"]["ronda"] == 3 and not bgs.es_fallo_tecnico(vigentes["R001"])
+
+
+def test_los_fallos_previos_sin_respuesta_no_consumen_el_tope_de_respuestas(tmp_path):
+    ruta = tmp_path / "c.jsonl"
+    cache_con_fallos(ruta, tecnicos=("R001", "R002"), ok=("R003",))  # 3 intentos, 1 respuesta
+    base = ClienteFalso()
+    # Con el conteo anterior (3 intentos) el tope 3 ya estaria agotado; ahora quedan 2 respuestas.
+    resultado = correr_con_reintento(casos_de("R001", "R002", "R003"), base, ruta, tope=3)
+    assert len(base.llamadas) == 2 and not resultado.tope_alcanzado
+    assert (resultado.respuestas_totales, resultado.intentos_totales) == (3, 5)
+    assert resultado.intentos_sin_respuesta == 2
+
+
+def test_el_tope_de_respuestas_corta_el_reintento_y_deja_pendientes(tmp_path):
+    ruta = tmp_path / "c.jsonl"
+    cache_con_fallos(ruta, tecnicos=("R001", "R002"), ok=("R003",))  # 1 respuesta previa
+    base = ClienteFalso()
+    resultado = correr_con_reintento(casos_de("R001", "R002", "R003"), base, ruta, tope=2)
+    assert resultado.tope_alcanzado and len(base.llamadas) == 1 and resultado.pendientes == 1
+
+
+def test_el_cinturon_de_intentos_totales_corta_el_reintento(tmp_path):
+    ruta = tmp_path / "c.jsonl"
+    cache_con_fallos(ruta, tecnicos=("R001", "R002"), ok=("R003",))  # 3 intentos hechos
+    base = ClienteFalso()
+    resultado = correr_con_reintento(casos_de("R001", "R002", "R003"), base, ruta, tope_intentos=4)
+    assert resultado.tope_alcanzado and len(base.llamadas) == 1
+
+
+# ---------------------------------------------------------------------------
+# 2.5 Dry-run y CLI con --reintentar-fallos-tecnicos
+# ---------------------------------------------------------------------------
+def test_plan_dry_run_con_reintentos_separa_respuestas_e_intentos():
+    plan = bgs.plan_dry_run(
+        pendientes=112, max_reintentos=2, ya_hechas=191, tope=400,
+        reintentos_tecnicos=112, intentos_hechos=303, tope_intentos=600,
+    )
+    assert plan["reintentos_tecnicos"] == 112 and plan["pendientes_nuevos"] == 0
+    assert plan["llamadas_minimas"] == 112
+    assert plan["llamadas_maximas"] == 209  # 336 teoricas, acotadas por 400 - 191 respuestas
+    assert plan["intentos_maximos"] == 297  # 336 teoricas, acotadas por 600 - 303 intentos
+    assert plan["costo_usd"]["introductorio"]["minimo"] == pytest.approx(112 * 0.0007125)
+    assert plan["costo_usd"]["introductorio"]["maximo"] == pytest.approx(209 * 0.0007125)
+
+
+def test_plan_dry_run_con_pocos_reintentos_no_se_acota():
+    plan = bgs.plan_dry_run(
+        pendientes=5, max_reintentos=2, ya_hechas=10, tope=400,
+        reintentos_tecnicos=3, intentos_hechos=40, tope_intentos=600,
+    )
+    assert (plan["pendientes_nuevos"], plan["llamadas_maximas"], plan["intentos_maximos"]) == (2, 15, 15)
+    assert plan["alcanza_el_tope"] is False
+
+
+def cache_sintetico(tmp_path, tecnicos=("R001", "R002"), ok=("R003",)) -> pathlib.Path:
+    ruta = tmp_path / "cache.jsonl"
+    cache_con_fallos(ruta, tecnicos=tecnicos, ok=ok)
+    return ruta
+
+
+def test_dry_run_con_flag_informa_reintentos_y_pendientes_nuevos_sin_escribir(corpora, tmp_path, capsys):
+    ruta = cache_sintetico(tmp_path)
+    antes = hashlib.sha256(ruta.read_bytes()).hexdigest()
+    codigo, texto = ejecutar(
+        ["--dry-run", "--reintentar-fallos-tecnicos", *corpora], capsys, entorno={},
+        version_sdk=lambda: "2.34.0", fabrica_cliente=lambda: pytest.fail("sin red"),
+    )
+    assert codigo == 0
+    assert "casos a reintentar por fallo tecnico: 2" in texto
+    assert "pendientes nuevos (sin registro): 2" in texto
+    assert "pendientes: 4" in texto and "introductorio" in texto
+    assert hashlib.sha256(ruta.read_bytes()).hexdigest() == antes
+
+
+def test_dry_run_con_flag_y_sin_pendientes_nuevos(corpora, tmp_path, capsys):
+    ruta = tmp_path / "cache.jsonl"
+    registros = [{"tipo": "meta", **META}] + [reg_caso(f"R00{i}", **FALLO_TECNICO) for i in (1, 2, 3)]
+    registros += [reg_caso(f"I00{i}") for i in (1, 2)]
+    escribir_jsonl(ruta, registros)
+    _, texto = ejecutar(
+        ["--dry-run", "--reintentar-fallos-tecnicos", *corpora], capsys, entorno={}, version_sdk=lambda: "2.34.0"
+    )
+    assert "casos a reintentar por fallo tecnico: 3" in texto
+    assert "pendientes nuevos (sin registro): 0" in texto and "pendientes: 3" in texto
+    assert "respuestas del modelo acumuladas: 2" in texto and "intentos sin respuesta: 3" in texto
+
+
+def test_dry_run_sin_flag_avisa_que_hay_fallos_tecnicos_que_no_se_reintentan(corpora, tmp_path, capsys):
+    cache_sintetico(tmp_path)
+    _, texto = ejecutar(["--dry-run", *corpora], capsys, entorno={}, version_sdk=lambda: "2.34.0")
+    assert "pendientes: 2" in texto  # solo los dos casos de fuera sin registro
+    assert "fallos tecnicos reintentables sin reintentar (falta --reintentar-fallos-tecnicos): 2" in texto
+
+
+def test_el_flag_de_reintento_exige_confirmar_el_costo(corpora, tmp_path, capsys):
+    cache_sintetico(tmp_path)
+    codigo, texto = ejecutar(
+        ["--reintentar-fallos-tecnicos", *corpora], capsys, entorno={"GEMINI_API_KEY": CLAVE_FALSA},
+        version_sdk=lambda: "2.34.0", fabrica_cliente=lambda: pytest.fail("no debe construir cliente"),
+    )
+    assert codigo == 2 and "--confirmar-costo" in texto
+
+
+def primera_corrida_con_dos_fallos_tecnicos(corpora, tmp_path, capsys) -> pathlib.Path:
+    """Corrida real (cliente simulado) donde R001 y R002 fallan sin respuesta del modelo."""
+    base = ClienteFalso(guion=[RuntimeError("caida")] * 2)
+    codigo, _ = ejecutar(
+        ["--confirmar-costo", *corpora], capsys, entorno={"GEMINI_API_KEY": CLAVE_FALSA},
+        version_sdk=lambda: "2.34.0", fabrica_cliente=lambda: base, sleep=sin_espera,
+    )
+    assert codigo == 0
+    ruta = tmp_path / "cache.jsonl"
+    vigentes = bgs.leer_cache(ruta)[1]
+    assert [i for i, r in vigentes.items() if bgs.es_fallo_tecnico(r)] == ["R001", "R002"]
+    return ruta
+
+
+def test_corrida_con_flag_reintenta_los_fallos_y_agrega_registros(corpora, tmp_path, capsys):
+    ruta = primera_corrida_con_dos_fallos_tecnicos(corpora, tmp_path, capsys)
+    base = ClienteFalso()
+    codigo, texto = ejecutar(
+        ["--confirmar-costo", "--reintentar-fallos-tecnicos", *corpora], capsys,
+        entorno={"GEMINI_API_KEY": CLAVE_FALSA}, version_sdk=lambda: "2.34.0",
+        fabrica_cliente=lambda: base, sleep=sin_espera,
+    )
+    assert codigo == 0 and CLAVE_FALSA not in texto
+    assert len(base.llamadas) == 2 and "reintentados: 2" in texto
+    assert "respuestas del modelo acumuladas: 5" in texto and "intentos sin respuesta: 2" in texto
+    reintentos = [r for r in lineas(ruta) if r.get("reintento_de_fallo_tecnico")]
+    assert [r["caso_id"] for r in reintentos] == ["R001", "R002"]
+    assert not bgs.leer_cache(ruta)[1]["R001"]["error"]
+
+
+def test_corrida_sin_flag_no_reintenta_los_fallos_tecnicos(corpora, tmp_path, capsys):
+    ruta = primera_corrida_con_dos_fallos_tecnicos(corpora, tmp_path, capsys)
+    antes = ruta.read_bytes()
+    base = ClienteFalso()
+    codigo, _ = ejecutar(
+        ["--confirmar-costo", *corpora], capsys, entorno={"GEMINI_API_KEY": CLAVE_FALSA},
+        version_sdk=lambda: "2.34.0", fabrica_cliente=lambda: base, sleep=sin_espera,
+    )
+    assert codigo == 0 and base.llamadas == [] and ruta.read_bytes() == antes
+
+
+def test_tope_de_intentos_sobre_el_cinturon_aborta_antes_de_llamar(corpora, capsys):
+    codigo, texto = ejecutar(
+        ["--confirmar-costo", "--tope-intentos", "601", *corpora], capsys,
+        entorno={"GEMINI_API_KEY": CLAVE_FALSA}, version_sdk=lambda: "2.34.0",
+        fabrica_cliente=lambda: pytest.fail("no debe construir cliente"),
+    )
+    assert codigo == 2 and "600" in texto
