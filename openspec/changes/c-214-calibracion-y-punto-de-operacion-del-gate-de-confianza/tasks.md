@@ -4,7 +4,7 @@ Convenciones: `A/` = `evaluation/data/campana/analisis/`; `E/` = `evaluation/dat
 `C/` = `docs/Tesis/Correcciones/`. Strict TDD. NO se edita `App/Backend/`,
 `openspec/config.yaml`, el prompt, `data/*` ni las cachés existentes. Sin red, sin Gemini, sin
 Docker. En la prosa usar «sección N (`archivo.tex`)» (gitleaks). **[AUTORES]**/**[LATEX]** marcan
-lo que requiere intervención humana. Alcance de esta aplicación: 0 a 4, 5.1 y 6.1 a 6.3; 5.2 y 5.3 quedan
+lo que requiere intervención humana. Alcance de esta aplicación: 0 a 4, 5.1, 5.2 y 6.1 a 6.3; 5.3 queda
 pendientes (no se edita ningún `.tex`: hay otro PR abierto sobre las secciones 7, 8 y 9).
 
 ## 0. Preparación y prerregistro (bloqueante)
@@ -45,7 +45,7 @@ pendientes (no se edita ningún `.tex`: hay otro PR abierto sobre las secciones 
 ## 5. Registro canónico y tesis
 
 - [x] 5.1 Sección nueva en `C/numeros-canonicos.md` con cada cifra, archivo y comando, la declaración de no ceguera y, si alguna política quedó `confirmada`, la recomendación para un change posterior (gobernanza HIGH). Verificación: ningún valor `vigente` previo cambia.
-- [ ] 5.2 Prosa: sección 4 (`04-marco-metodologico.tex`) definición de ECE, Brier, AUROC y de la regla de selección; sección 7 (`07-resultados.tex`, `subsec:calibracion`) métricas dentro y fuera de la muestra, barrido y señales alternativas, incluido el caso fuera de la muestra con confianza menor que 0,70; sección 8 (`08-discusion.tex`) lectura; sección 9 (`09-conclusiones.tex`) fila del objetivo 6; sección 10 (`10-recomendaciones.tex`, `subsec:calibracion-gate`) pasar de propuesta a resultado y dejar como futuro solo lo que exige cambiar contrato o configuración. Verificación: cada cifra coincide con el memo.
+- [x] 5.2 Prosa: sección 4 (`04-marco-metodologico.tex`) definición de ECE, Brier, AUROC y de la regla de selección; sección 7 (`07-resultados.tex`, `subsec:calibracion`) métricas dentro y fuera de la muestra, barrido y señales alternativas, incluido el caso fuera de la muestra con confianza menor que 0,70; sección 8 (`08-discusion.tex`) lectura; sección 9 (`09-conclusiones.tex`) fila del objetivo 6; sección 10 (`10-recomendaciones.tex`, `subsec:calibracion-gate`) pasar de propuesta a resultado y dejar como futuro solo lo que exige cambiar contrato o configuración. Verificación: cada cifra coincide con el memo.
 - [ ] 5.3 [LATEX] [AUTORES] Recompilar `main.pdf` y verificar las cifras con `pdftotext`.
 
 ## 6. Validación y cierre

@@ -2796,10 +2796,10 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 
 ### [C-214] `calibracion-y-punto-de-operacion-del-gate-de-confianza` — EN APLICACION (2026-11-13, MEDIUM)
 
-- **Estado**: aplicadas las tareas 0 a 4, 5.1 y 6.1 a 6.3 en la rama `change/c-214-calibracion-y-punto-de-operacion-del-gate-de-confianza`; pendientes la prosa de la tesis (5.2, secciones 4, 7, 8, 9 y 10) y la recompilacion del PDF (5.3); sin archivar.
+- **Estado**: aplicadas las tareas 0 a 4, 5.1, 5.2 (prosa de las secciones 4, 7, 8, 9 y 10, con `tab:calibracion-gate`) y 6.1 a 6.3 en la rama `change/c-214-calibracion-y-punto-de-operacion-del-gate-de-confianza`; pendiente la recompilacion del PDF (5.3); sin archivar.
 - **Scope**: `evaluation/calibracion_gate.py` (ECE, Brier, sobreconfianza, AUROC, IC bootstrap, barrido, regla de seleccion, isotonica, recomputo de las senales de las reglas) con pruebas TDD; `analisis_calibracion_gate_c214.py` con sus salidas `.json`/`.md` y `senales_reglas_c214.csv` (SHA-256 registrados).
 - **Hallazgo**: la confianza de Gemini es degenerada (4 o 5 valores, siempre `>= 0,85` salvo un caso fuera de la muestra) y sobreconfiada (ECE `0,1868` dentro de la muestra, AUROC `0,5168`); ningun umbral alcanza el piso `0,85` dentro de la muestra, de modo que la confianza autodeclarada no sostiene un punto de operacion; las senales S1 y S2 son degeneradas porque las reglas no predicen en ningun caso escalado.
-- **Dependencias**: c-205 y c-207 (referencias y caches); independiente de c-208, c-209 y c-210. No toca `App/`, `openspec/config.yaml`, el prompt, `data/*` ni los `.tex`.
+- **Dependencias**: c-205 y c-207 (referencias y caches); independiente de c-208, c-209 y c-210. No toca `App/`, `openspec/config.yaml`, el prompt ni `data/*`; edita los `.tex` de las secciones 4, 7, 8, 9 y 10 (5.2).
 - **Governance**: MEDIUM (analisis); cualquier cambio de umbral productivo seria HIGH y queda fuera de alcance.
 - **Leer antes**: `openspec/changes/c-214-calibracion-y-punto-de-operacion-del-gate-de-confianza/{proposal,design,tasks}.md` y `evaluation/data/campana/analisis/README.md`.
 
