@@ -43,7 +43,7 @@ puede cerrar un agente.
 
 - [x] 5.1 [AUTORES] Registrar las cifras en `numeros-canonicos.md` (sección nueva, con procedencia y comando). Hecho: sección 3.25.
 - [x] 5.2 [AUTORES] Escribir la prosa en introducción, resultados, discusión y conclusiones, incluido un veredicto desfavorable o no concluyente, y retirar o condicionar toda afirmación de eficiencia que el resultado no sostenga.
-- [ ] 5.3 [AUTORES] Agregar la FASE a `CHANGES.md` (hecho: FASE 71) y recompilar el PDF (pendiente) (LaTeX no disponible en esta máquina).
+- [x] 5.3 [AUTORES] Agregar la FASE a `CHANGES.md` (hecho: FASE 71) y recompilar el PDF (hecho el 2026-11-13 con Docker `texlive-thesis`: 149 páginas, 0 errores, 0 referencias o citas indefinidas, biber sin avisos, `verify_citations.py` PASS).
 
 ## 6. Desviación declarada (2026-11-13): reintento de fallos técnicos
 
