@@ -5,7 +5,7 @@ Generado por `docs/Tesis/Correcciones/resumir_registro_compilacion.py` a partir 
 
 | Concepto | Valor |
 |---|---|
-| Fuente compilada | arbol de trabajo sobre la rama de c-221 |
+| Fuente compilada | arbol de trabajo sobre la rama de c-222 (v1.4.1) |
 | Motor | XeTeX 3.141592653-2.6-0.999998 (TeX Live 2026) |
 | Biber | 2.22 |
 | Paginas | 155 |
@@ -16,4 +16,4 @@ Generado por `docs/Tesis/Correcciones/resumir_registro_compilacion.py` a partir 
 | Overfull \hbox (maximo) | 18 (82,3 pt) |
 | Lineas WARN de biber | 0 |
 | Lineas ERROR de biber | 0 |
-| SHA-256 de main.pdf | `290feb911599130280acb3581f65c93113f4ee5c5e349ea67a621a4b05a83cde` |
+| SHA-256 de main.pdf | `c6ee31ff0a8f973aa63133084f37a7237343007178eaa53d83beb93d5fd96746` |

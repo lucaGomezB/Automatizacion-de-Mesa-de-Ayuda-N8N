@@ -4246,7 +4246,7 @@ de los residuos sin recomendación propia (grupo 10).
 | 29 | inv. 29: precios de la Gemini API y nivel de servicio pago declarado | c-190 | `11-aspectos-legales.tex:16` | `subsec:transferencia-internacional` | `El servicio de inferencia operó en el nivel pago de la Gemini API, con créditos prepagos` | cerrada |
 | 30 | inv. 30: bibliografia (Ramya IEEE CSITSS 2018, Kerby, Efron, URLs) | c-190 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:415` | - | `@inproceedings{Paramesh2018_csitss,` | cerrada |
 | Res. 11.3 | Req. nuevos de 11.3 (todos los canales, referencia independiente) | c-190 | `10-recomendaciones.tex:18` | `subsec:medicion-intervencion` | `Que la revisión alcance a todos los canales, o a una muestra aleatoria de cada uno` | cerrada |
-| Res. balance | Redondeo del balance laxo (Delta t = 43,8) | c-190 | `08-discusion.tex:92` | `subsec:balance-neto` | `Una decimal; con \(\Delta t = 43{,}8\)~s dos celdas difieren en 0,1.` | cerrada |
+| Res. balance | Redondeo del balance laxo (Delta t = 43,8) | c-190 | `08-discusion.tex:92` | `subsec:balance-neto` | `Una decimal; con \(\Delta t = 43{,}8\)~s dos celdas difieren en 0,1.` | SUPERADA por c-222 (nota de la tabla reformulada) |
 | Res. repos | Repositorios regionales declarados como limitacion en 3 | c-190 | `03-estado-del-arte.tex:10` | `sec:estado-del-arte` | `la ausencia de búsquedas en repositorios regionales (SciELO, Redalyc y JAIIO)` | cerrada |
 | Res. ISBN | No se agregan ISBN (APA 7 no los exige) | c-190 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:801` | - | `@book{Efron1993_bootstrap,` | SUPERADA por c-221 (la clave se renombró a Efron1994_bootstrap) |
 | Res. main.log | main.log no versionado, cubierto por compilacion.md | c-190 | `12-anexos.tex:48` | - | `que registra las páginas, los errores y el SHA-256 del PDF` | cerrada |
@@ -4532,7 +4532,7 @@ devolución completa se versiona en `auditorias/Devolucion_Segunda_Instancia_TFI
 | N-13 | Instrumento del artículo 12 no declarado | Declarado como no suscrito; requisito para el adoptante | `11-aspectos-legales.tex` | cerrada (respuesta del autor, ver Decisiones) |
 | N-14 | Consentimiento escrito "diferido" en el Anexo I | Atendida el 10-11-2026 | `12-anexos.tex` | cerrada |
 | N-15 | Nombres de sector sin tilde | Tilde en prosa y `\texttt{}` en la cadena del sistema | `01`, `04`, `05`, `07`, `08` | cerrada |
-| N-16 | Paket et al. y Mayor-Rocher et al. | Marcadores en el `.bib` | `Bibliography_base.bib` | Cerrada (41f8d79, 2026-11-11): DOI verificados en Crossref/OpenAlex; la devolución acepta «copia O DOI verificable», el DOI de Paket resuelve y el resumen publicado es la fuente declarada (texto completo cerrado en IEEE); Mayor-Rocher se cita en su versión de revista (publicación anticipada del 10-09-2026; preliminar arXiv:2409.15334) |
+| N-16 | Paket et al. y Mayor-Rocher et al. | Marcadores en el `.bib` | `Bibliography_base.bib` | Cerrada (41f8d79, 2026-11-11): DOI verificados en Crossref/OpenAlex; la devolución acepta «copia O DOI verificable», el DOI de Paket resuelve y el texto completo se obtuvo el 2026-11-14 y se depositó en la carpeta de fuentes del proyecto; Mayor-Rocher se cita en su versión de revista (publicación anticipada del 10-09-2026; preliminar arXiv:2409.15334) |
 
 ### Matriz de trazabilidad (verificada por `verificar_matriz_trazabilidad.py`)
 
@@ -4629,7 +4629,7 @@ devolución completa se versiona en `auditorias/Devolucion_Segunda_Instancia_TFI
 | N-05 | `04-marco-metodologico.tex:64` | De qué registro se transcribieron los 119 tiempos del 2-10-2026; si existe, versionarlo |
 | N-02 | `12-anexos.tex:235` | Fecha exacta de la versión de julio |
 | P16 | `12-anexos.tex:240` | Declarar el uso de modelos de lenguaje en la redacción de la tesis |
-| N-16 | `Bibliography_base.bib:334` y `:368` | Copia del artículo de Paket et al. (DOI verificado en Crossref el 11-11-2026; IEEE Xplore cerrado) y confirmar que la versión consultada de Mayor-Rocher et al. fue la de la revista (DOI verificado; publicación anticipada del 10-09-2026, sin volumen ni páginas; preliminar arXiv:2409.15334) |
+| N-16 | `Bibliography_base.bib:334` y `:368` | Ninguna: la copia del artículo de Paket et al. se obtuvo el 2026-11-14 y se depositó en la carpeta de fuentes del proyecto; el DOI sigue verificable y Mayor-Rocher et al. se confirma en su versión de revista (DOI verificado; publicación anticipada del 10-09-2026, sin volumen ni páginas; preliminar arXiv:2409.15334) |
 
 Resueltos con respuesta del autor: N-01 y N-13. Resuelto con el valor entregado: N-10.
 
@@ -4944,8 +4944,8 @@ recomendaciones 7 a 15 (consistencia y forma) quedan diferidas a un change poste
 | C7/1a | 1: acuerdo `E3`/`E4` y kappa en Resultados | c-207 | `07-resultados.tex:286` | `subsec:resultados-campana-medicion` | `su kappa de Cohen fue de 0,6055` | cerrada |
 | C7/1b | 1: arbitraje ejecutado y documentado | c-207 | `07-resultados.tex:316` | `subsec:resultados-campana-medicion` | `El arbitraje de los casos discordantes se ejecutó en el change c-206` | SUPERADA por c-221 (se retiró «change c-206» del párrafo del arbitraje) |
 | C7/1c | 1: tabla de la validación fuera de muestra | c-207 | `07-resultados.tex:293` | `tab:fuera-de-muestra` | `\label{tab:fuera-de-muestra}` | cerrada |
-| C7/2a | 2: resumen ES con lectura condicional | c-207 | `00-resumen.tex:15` | `-` | `la económica y operativa es condicional` | cerrada |
-| C7/2b | 2: abstract EN con lectura condicional | c-207 | `00-resumen.tex:31` | `-` | `economic and operational feasibility are conditional` | cerrada |
+| C7/2a | 2: resumen ES con lectura condicional | c-207 | `00-resumen.tex:15` | `-` | `la económica y operativa es condicional` | SUPERADA por c-222 (resumen alineado a la lectura positiva) |
+| C7/2b | 2: abstract EN con lectura condicional | c-207 | `00-resumen.tex:31` | `-` | `economic and operational feasibility are conditional` | SUPERADA por c-222 (abstract alineado a la lectura positiva) |
 | C7/2c | 2: barreras legales condicionadas al instrumento | c-207 | `09-conclusiones.tex:51` | `subsec:aportes-generalizacion` | `La operación con datos reales queda condicionada` | cerrada |
 | C7/2d | 2: costo de inferencia no afirmado | c-207 | `09-conclusiones.tex:47` | `subsec:aportes-generalizacion` | `Ese filtro resolvió 131 de los 200 casos sin invocar al modelo` | cerrada |
 | C7/2e | 2: generalización regional acotada | c-207 | `09-conclusiones.tex:49` | `subsec:aportes-generalizacion` | `es una hipótesis por validar` | cerrada |
@@ -4953,8 +4953,8 @@ recomendaciones 7 a 15 (consistencia y forma) quedan diferidas a un change poste
 | C7/3b | 3: fila del objetivo 2 con la validación | c-207 | `09-conclusiones.tex:24` | `tab:cumplimiento-objetivos` | `fuera de muestra, 0,8447 sobre el n efectivo de 103` | SUPERADA por c-221 (la fila del objetivo 2 se reescribió con las tres lecturas) |
 | C7/4a | 4: `E3`/`E4` en el capítulo legal, confirmación pendiente | c-207 | `11-aspectos-legales.tex:40` | `subsec:consentimiento-derechos` | `Los tres firmaron la confirmación posterior de esa información y de su consentimiento el 13 de noviembre de 2026` | cerrada (firmada el 2026-11-13; la afirmación de confirmación pendiente se retiró) |
 | C7/5a | 5: referencias distintas declaradas y recalculadas | c-207 | `08-discusion.tex:99` | `subsec:balance-neto` | `La rejilla combina, sin embargo, dos referencias distintas` | cerrada |
-| C7/5b | 5: lectura unificada del balance | c-207 | `08-discusion.tex:105` | `subsec:balance-neto` | `En síntesis, con una referencia común el balance neto no resulta negativo` | cerrada |
-| C7/5c | 5: balance en conclusiones | c-207 | `09-conclusiones.tex:6` | `sec:conclusiones` | `Con una referencia común, el balance neto estimado es positivo` | cerrada |
+| C7/5b | 5: lectura unificada del balance | c-207 | `08-discusion.tex:105` | `subsec:balance-neto` | `En síntesis, con una referencia común el balance neto no resulta negativo` | SUPERADA por c-222 (síntesis reformulada con el costo medido) |
+| C7/5c | 5: balance en conclusiones | c-207 | `09-conclusiones.tex:6` | `sec:conclusiones` | `Con una referencia común, el balance neto estimado es positivo` | SUPERADA por c-222 (conclusiones alineadas a la lectura positiva) |
 | C7/6a | 6: IC de la reducción en el texto | c-207 | `07-resultados.tex:12` | `subsec:comparacion-tiempos` | `El intervalo se obtuvo por bootstrap percentil` | cerrada |
 | C7/6b | 6: IC en la nota de la tabla | c-207 | `07-resultados.tex:31` | `tab:tiempos` | `bootstrap percentil por pares, 2000 remuestreos` | cerrada |
 | Cifras | Memo de números canónicos: sección 3.21 | c-207 | `docs/Tesis/Correcciones/numeros-canonicos.md:1263` | `-` | `3.21 Dictamen CONEAU sobre v1.3.0` | vigente (nuevo) |
@@ -5845,3 +5845,123 @@ tarea.
 | C21/an | Bibliografía: clave Efron1994 alineada | c-221 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:823` | `-` | `@book{Efron1994_bootstrap,` | cerrada |
 | C21/ao | Bibliografía: ServiceNow a documentación oficial | c-221 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:699` | `-` | `https://www.servicenow.com/docs/` | cerrada |
 | C21/ap | Bibliografía: repositorio en versión 1.4.0 | c-221 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:917` | `-` | `(Versi{\'o}n 1.4.0)` | cerrada |
+
+### c-222: balance neto recalculado con el costo medido (checkpoint confirmado; grupos 0 a 4)
+
+- **Change**: `c-222-recalcular-el-balance-neto-con-el-costo-medido` (rama `change/c-222-...`, árbol de
+  trabajo; sin commit ni push).
+- **Fecha de registro**: 2026-11-14.
+- **Aplicado**: grupos 0 (preparación), 1 (análisis offline TDD), 2 (sección aditiva del memo), 3
+  (prosa de la tesis: `00`, `08`, `09`, `10`) y 4 (trazabilidad y cierre). `12-anexos.tex` queda sin
+  cambios porque no contiene una mención del balance (tarea 3.9). La tarea 3.11 (compilación XeLaTeX)
+  se difiere al paso de release por instrucción del orquestador; no se compiló en este apply.
+- **Sección nueva del memo**: `3.33` (primer número libre; el memo terminaba en `3.32`).
+
+#### Línea de base (tareas 0.2 y 0.3)
+
+- Rama `change/c-222-...` a la par de `origin/main` (`git rev-list --left-right --count
+  origin/main...HEAD` devuelve `0 0`); `git status` limpio antes de aplicar.
+- SHA-256 de los artefactos de partida (coinciden con el memo 3.21/3.31):
+  `analisis_costo_derivacion_c220.json`
+  `2de287514832044ed6a29b5d17a7110ca10af81e5ffc2696f730e67e5c231d1c`;
+  `analisis_propagacion_arbitraje_c221.json`
+  `2df409b1b6f6d6b9d490e40b5dbc30e1221a41b047aeff1f80511a51912a7e8c`;
+  `analisis_dictamen_c207.json`
+  `1c35ebd572289d45bd4f098c10a70635e0beb13f959250a2695c4a88e11a826d`.
+- `rg -n "10 a 15 min|estimación propia|69,51|5 min|10 min|15 min"` sobre `paper/sections/*.tex`:
+  coincidencias en `08-discusion.tex` (`:84`, `:95`, `:107`, `:111`, `:115`, `:117`),
+  `00-resumen.tex` (`:15`, `:31`), `09-conclusiones.tex` (`:6`), `01-introduccion.tex` (`:48`) y
+  `12-anexos.tex` (`:96`). Línea de base para la verificación del grupo 3.
+- Conteo de palabras (regla de c-106, mismo procedimiento antes y después; comandos LaTeX y línea
+  de palabras clave excluidos): el registro de c-221 anota `245 / 244`; el recuento propio del apply
+  da resumen ES `172` → `163`, abstract EN `172` → `158` y párrafo de viabilidad ES `43` → `34`
+  (tope `≤ 34`) y EN `43` → `29` (tope `≤ 31`). Ningún conteo aumenta y ambos topes se cumplen.
+
+#### Checkpoint de los autores (tarea 0.4) — CONFIRMADO el 2026-11-14
+
+- **Lectura central confirmada** (con el `c` medido `69,51 s` de la Sección 3.31, sobre la referencia
+  común de la Sección 3.21):
+  - `B` central `+30,6` horas-persona por trimestre; intervalo condicional con `c` fijo
+    `[+26,7; +34,6]`; cota combinada por suma de extremos `[+23,8; +35,8]`.
+  - El intervalo combinado no contiene el cero: el signo queda fijado **positivo**.
+  - `a* = 19,7 %` (IC condicional `[13,4; 25,8] %`); no se presenta como fundamento del umbral del
+    `85 %`, que se sostiene en la paridad medida de c-220 D6 (memo 3.33).
+- **Cambio de estatus confirmado**: la viabilidad operativa pasa de `condicional` a **positiva** con
+  el costo medido, en `00-resumen.tex`, `08-discusion.tex`, `09-conclusiones.tex` y
+  `10-recomendaciones.tex`; `12-anexos.tex` no contiene una mención del balance y queda sin cambios.
+- **Registro**: la confirmación consta en la Sección 3.33 del memo (`numeros-canonicos.md:2548`).
+
+#### Resultado aplicado en la prosa (tareas 3.1 a 3.10)
+
+- `08-discusion.tex:84`: `c = 69,51 s` e IC `[33,42; 106,56] s` como insumo central, tasas
+  `28/138` y `26/151` medidas contra la referencia común, supuesto previo rotulado como reemplazado.
+- `08-discusion.tex:88-115` (`tab:balance-neto`): bloque central con `a* = 19,7 %` y `B = +30,6`
+  h-persona; rejilla `5/10/15 min` rotulada como sensibilidad del supuesto superado con sus cifras;
+  nota con el método de propagación (condicional con `c` fijo y suma de extremos) y el redondeo.
+- `08-discusion.tex:117`: se conservan `304`, `50,7/76,1 h` y `−18,5/−43,9 h`, rotulados como
+  sensibilidad del supuesto superado.
+- `08-discusion.tex:121`: lectura central `B = +30,6`, intervalos condicional y combinado, signo
+  positivo fijado; `a* = 19,7 %` por debajo de la exactitud observada y del umbral, sin presentarlo
+  como fundamento de este; rejilla `+25,4/+18,7/+11,9` y `a* = 68,2/75,5/77,9 %` conservada y rotulada.
+- `08-discusion.tex:125`: sensibilidad mixta de c-221 (`+28,2/+25,1`) **intacta** en su línea.
+- `08-discusion.tex:127`: síntesis con el signo positivo y la viabilidad operativa positiva; el
+  cronometraje queda como refinamiento del tramo largo de `c`, no como condición.
+- `00-resumen.tex:15` y `:31`: misma lectura y signo; los conteos no aumentan.
+- `09-conclusiones.tex:6`, `:22` y `:41`: misma lectura y signo, con remisión a `subsec:balance-neto`.
+- `10-recomendaciones.tex:22` y `:34`: el registro y el cronometraje de reasignaciones se presentan
+  como refinamiento, no como condición para cerrar el balance.
+- `12-anexos.tex`: sin mención del balance; sin cambios (tarea 3.9, condicional no aplicada).
+
+#### Cierre de la decisión (i) de D5 de c-220 y de la observación del dictamen v1.3.0
+
+- **Decisión (i) de D5 de c-220** («recalcular el balance con el `c` medido en un change sucesor»):
+  ejecutada en c-222. `B` y `a*` se recomputan con `c = 69,51 s` y la referencia común, y quedan
+  registrados en la Sección 3.33 del memo.
+- **Observación del dictamen v1.3.0** («revisar el balance neto para que el error del sistema y el
+  manual se midan contra la misma referencia»): cerrada. La lectura central usa `e_aut = 28/138` y
+  `e_man = 26/151`, ambas contra el consenso `E1`/`E2` de la Sección 3.21. La rejilla que mezclaba
+  referencias se conserva solo como sensibilidad del supuesto superado y no como lectura vigente.
+- **Observación del dictamen v1.3.0 sobre el resumen** («dice que respaldan la viabilidad técnica y
+  económica mientras el balance se declara indeterminado»): cerrada. El resumen declara la lectura
+  central positiva con su intervalo y el signo fijado.
+- **Archivos afectados**: `08-discusion.tex`, `00-resumen.tex`, `09-conclusiones.tex`,
+  `10-recomendaciones.tex`, `docs/Tesis/Correcciones/numeros-canonicos.md` (Sección 3.33 y checkpoint),
+  `evaluation/data/campana/analisis/analisis_balance_neto_c222.*` y este registro.
+
+#### Archivos del árbol de trabajo (grupos 0 a 4)
+
+- Nuevo: `evaluation/data/campana/analisis/analisis_balance_neto_c222.py`,
+  `test_analisis_balance_neto_c222.py`, `.json`, `.md` y `.SHA256SUMS.txt`.
+- Nuevo (aditivo): Sección `3.33` en `docs/Tesis/Correcciones/numeros-canonicos.md`, la remisión
+  desde la `3.21` y esta entrada.
+- Modificados: `00-resumen.tex`, `08-discusion.tex`, `09-conclusiones.tex` y
+  `10-recomendaciones.tex`. Sin cambios: `12-anexos.tex`, `App/`, `n8n/`, el corpus y los artefactos
+  congelados.
+
+### Matriz de trazabilidad (C22/…)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| C22/a | Script de recomputo (solo lectura, determinista, anclado) | c-222 | `evaluation/data/campana/analisis/analisis_balance_neto_c222.py:2` | `-` | `Recomputo del balance neto con el costo medido` | cerrada |
+| C22/b | Pruebas TDD de las funciones puras | c-222 | `evaluation/data/campana/analisis/test_analisis_balance_neto_c222.py:1` | `-` | `Pruebas del recomputo offline del balance neto con el costo medido` | cerrada |
+| C22/c | Salida JSON con insumos, intervalos y trazabilidad | c-222 | `evaluation/data/campana/analisis/analisis_balance_neto_c222.json:2` | `-` | `"aditivo": {` | cerrada |
+| C22/d | Vista Markdown de la salida | c-222 | `evaluation/data/campana/analisis/analisis_balance_neto_c222.md:1` | `-` | `Balance neto recalculado con el costo medido (c-222)` | cerrada |
+| C22/e | Manifiesto SHA-256 de las salidas | c-222 | `evaluation/data/campana/analisis/analisis_balance_neto_c222.SHA256SUMS.txt:1` | `-` | `6b600043ed6e6cea8853d3cf0dafe65d51ef35aa444a931a9c6fcabb2126ee0b` | cerrada |
+| C22/f | Memo: Sección 3.33 aditiva | c-222 | `docs/Tesis/Correcciones/numeros-canonicos.md:2440` | `-` | `3.33 Balance neto recalculado con el costo medido` | vigente (nuevo) |
+| C22/g | Memo: remisión desde la Sección 3.21 | c-222 | `docs/Tesis/Correcciones/numeros-canonicos.md:1375` | `-` | `la grilla de 5, 10 y 15 minutos se conserva como` | cerrada |
+| C22/h | Memo: checkpoint 0.4 confirmado | c-222 | `docs/Tesis/Correcciones/numeros-canonicos.md:2548` | `-` | `confirmada por los autores el 2026-11-14` | cerrada |
+| C22/i | Discusión: definición del insumo central con el `c` medido | c-222 | `08-discusion.tex:84` | `subsec:balance-neto` | `el costo medido de cada derivación errónea` | cerrada |
+| C22/j | Discusión: tabla con lectura central y rejilla superada | c-222 | `08-discusion.tex:88` | `tab:balance-neto` | `con el costo medido y, como sensibilidad superada` | cerrada |
+| C22/k | Discusión: bloque central de la tabla | c-222 | `08-discusion.tex:91` | `tab:balance-neto` | `Lectura central (costo medido` | cerrada |
+| C22/l | Discusión: cifras de la rejilla conservadas y rotuladas | c-222 | `08-discusion.tex:117` | `subsec:balance-neto` | `Como sensibilidad del supuesto superado se conservan` | cerrada |
+| C22/m | Discusión: lectura central con los dos intervalos y el signo | c-222 | `08-discusion.tex:121` | `subsec:balance-neto` | `la lectura central del balance neto es positiva` | cerrada |
+| C22/n | Discusión: sensibilidad mixta de c-221 intacta | c-222 | `08-discusion.tex:125` | `subsec:balance-neto` | `Como sensibilidad adicional se recalcula el balance` | cerrada |
+| C22/o | Discusión: síntesis con viabilidad operativa positiva | c-222 | `08-discusion.tex:127` | `subsec:balance-neto` | `la viabilidad económica y operativa, antes condicional` | cerrada |
+| C22/p | Resumen ES con la lectura y el signo | c-222 | `00-resumen.tex:15` | `-` | `la operativa es positiva` | cerrada |
+| C22/q | Abstract EN con la lectura y el signo | c-222 | `00-resumen.tex:31` | `-` | `operational viability is positive` | cerrada |
+| C22/r | Conclusiones: párrafo inicial alineado | c-222 | `09-conclusiones.tex:6` | `-` | `el balance neto estimado es de` | cerrada |
+| C22/s | Conclusiones: fila del objetivo general | c-222 | `09-conclusiones.tex:22` | `-` | `viabilidad operativa positiva con el costo medido` | cerrada |
+| C22/t | Conclusiones: saldo neto positivo | c-222 | `09-conclusiones.tex:41` | `-` | `El saldo neto del ahorro de registro frente a las derivaciones erróneas es positivo` | cerrada |
+| C22/u | Recomendaciones: el registro refina, no condiciona | c-222 | `10-recomendaciones.tex:22` | `-` | `que el balance neto ya estima con la medición de la campaña` | cerrada |
+| C22/v | Recomendaciones: cronometraje como refinamiento del tramo largo | c-222 | `10-recomendaciones.tex:34` | `-` | `no es condición para cerrarlo` | cerrada |
+| C22/w | Anexos: sin mención del balance; sin cambios (3.9) | c-222 | `12-anexos.tex:96` | `-` | `despliegue local en menos de 15 minutos` | cerrada (sin cambio) |
