@@ -5455,10 +5455,11 @@ SHA-256 de las salidas: `…c220.json`
 - **Compuerta D5 (pre-registrada): Rama B.** El intervalo compuesto `[33,42; 106,56]` s **excluye** la
   banda canónica `[600; 900]` s. El valor previo (`10 a 15 min`) no es tiempo-persona activo. Por la
   regla, el change **no** recalcula `B` ni `a*`, y **no** edita `08`, `09`, `10`, `12` ni `00-resumen`.
-- **Pendiente — DECISIÓN DEL DUEÑO.** Elegir entre: (i) recalcular el balance neto con el `c` medido en
-  un change sucesor; (ii) mantener `10 a 15 min` rotulado explícitamente como **tiempo calendario
-  agregado** (no tiempo-persona); o (iii) ejecutar la medición controlada de campo para fijar el tramo
-  largo. El change no decide por su cuenta.
+- **Decisión del dueño (2026-11-14): opción (i).** Recalcular el balance neto `B` con el `c` medido
+  (`~69,51` s) en un **change sucesor**. Las opciones descartadas eran (ii) mantener `10 a 15 min`
+  rotulado explícitamente como **tiempo calendario agregado** (no tiempo-persona), y (iii) ejecutar la
+  medición controlada de campo para fijar el tramo largo. El change original no decidió por su cuenta;
+  la decisión se registra aquí con posterioridad a su aplicación.
 - **Pendiente.** El ancla de reanudación queda `no medido`; incorporarla requiere verificar una fuente
   primaria contra su texto completo y decidir su uso como cota superior (gobernanza del memo).
 - **Desviación del diseño (D3).** La tabla de valores esperados se reprodujo salvo el IC de la

@@ -2231,6 +2231,10 @@ activo. Por la regla D5 (Rama B) el memo registra el hallazgo y **remite a una d
 este change **no** recalcula el balance neto `B` ni `a*` y **no** edita `08`, `09`, `10`, `12` ni
 `00-resumen`.
 
+**Decisión del dueño (2026-11-14):** se elige la opción **(i)**, recalcular el balance neto `B` con el
+`c` medido en un change sucesor. La decisión queda registrada aquí; el balance de `08-discusion.tex` no
+se toca en este change.
+
 **(g) Justificación del umbral del 85 % (D6), sin mover el umbral.**
 
 | Ancla | Valor | Fuente | Estado |
