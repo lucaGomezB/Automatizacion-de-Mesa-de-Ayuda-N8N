@@ -1,0 +1,26 @@
+# compose.load-test.yml — Override de costo cero para el test de carga multicanal (c-218).
+#
+# `docker-compose.yml` toma GEMINI_API_KEY de `env_file: ./App/Backend/.env`, de modo
+# que exportar una variable de shell NO alcanza. `environment:` tiene mayor precedencia
+# que `env_file:`, por eso este override inyecta una clave FICTICIA en `backend-corpus`
+# (perfil `corpus`, base descartable `mesa_de_ayuda_corpus`). Las dos capas de la
+# guarda de costo cero son independientes:
+#   1. clave ficticia: el proveedor rechazaria cualquier llamada real;
+#   2. COST_GUARD_BUDGET_USD=0: la guarda deniega toda escalada antes de emitir la llamada.
+# El arnes (load_test.py) afirma ambos valores DENTRO del contenedor antes de enviar
+# nada y aborta con codigo distinto de cero si alguno no esta en efecto.
+#
+# Uso (siempre con la forma ACOTADA; un `up` a secas con el perfil `corpus` tambien
+# levantaria el stack base, ver docker-compose.yml):
+#   docker compose -f docker-compose.yml -f scripts/load_test/compose.load-test.yml \
+#       --profile corpus up -d postgres-corpus backend-corpus n8n-corpus
+services:
+  backend-corpus:
+    environment:
+      GEMINI_API_KEY: "load-test-dummy-gemini-key-not-real"  # gitleaks:allow
+      COST_GUARD_BUDGET_USD: "0"
+      # Clave de indice ciego del directorio: la exige Settings al arrancar. Si el
+      # `.env` local del backend no la define, el backend del corpus no levanta. Aqui
+      # va un valor ficticio: la base del perfil `corpus` es descartable y el test no
+      # cifra ni consulta datos reales del directorio.
+      DIRECTORY_BLIND_INDEX_KEY: "load-test-dummy-directory-blind-index-key"  # gitleaks:allow

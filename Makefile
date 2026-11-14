@@ -24,7 +24,7 @@ UP_COMMAND := bash scripts/up.sh
 PYTHON := python3
 endif
 
-.PHONY: up up-core tunnel down ps logs health dry-run dry-run-email smoke preflight
+.PHONY: up up-core tunnel down ps logs health dry-run dry-run-email smoke preflight load-test-up load-test load-test-stop
 
 up: ## Start the full local stack INCLUDING the ngrok tunnel (needs NGROK_AUTHTOKEN)
 	$(UP_COMMAND)
@@ -57,6 +57,19 @@ dry-run: ## Run the zero-cost local dry-run harness (scripts/dry_run/)
 
 dry-run-email: ## OPT-IN: dry-run harness plus the free email channel (needs DRY_RUN_EMAIL_* env)
 	$(PYTHON) scripts/dry_run/dry_run.py --with-email
+
+LOAD_TEST_COMPOSE := docker compose -f docker-compose.yml -f scripts/load_test/compose.load-test.yml --profile corpus
+LOAD_TEST_SERVICES := postgres-corpus backend-corpus n8n-corpus
+
+load-test-up: ## Start ONLY the disposable corpus stack with the zero-cost override (never the base stack)
+	$(LOAD_TEST_COMPOSE) up -d $(LOAD_TEST_SERVICES)
+
+load-test: ## Run the zero-cost multichannel load test against the corpus stack (scripts/load_test/)
+	$(PYTHON) scripts/load_test/load_test.py --json-out evaluation/evidence/load_test_multicanal_$(shell date -u +%Y-%m-%d).json
+
+load-test-stop: ## Stop and remove ONLY the three corpus containers (volumes untouched; never `down`)
+	$(LOAD_TEST_COMPOSE) stop $(LOAD_TEST_SERVICES)
+	$(LOAD_TEST_COMPOSE) rm -f $(LOAD_TEST_SERVICES)
 
 smoke: ## Run the smoke harness and version a JSON evidence report (local mode)
 	# Local smoke mode (OQ2=local): the harness runs on this machine and the JSON

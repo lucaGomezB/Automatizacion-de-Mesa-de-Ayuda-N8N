@@ -1856,6 +1856,41 @@
       \verb http://servicios.infoleg.gob.ar/infolegInternet/anexos/60000-64999/64790/norma.htm
       \endverb
     \endentry
+    \entry{INCIBE2017_glosario_ciberseguridad}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=b5ad2317f287bf06cab68e1b1c7406b8}{%
+           family={{INCIBE}},
+           familyi={I\bibinitperiod}}}%
+      }
+      \strng{namehash}{b5ad2317f287bf06cab68e1b1c7406b8}
+      \strng{fullhash}{b5ad2317f287bf06cab68e1b1c7406b8}
+      \strng{fullhashraw}{b5ad2317f287bf06cab68e1b1c7406b8}
+      \strng{bibnamehash}{b5ad2317f287bf06cab68e1b1c7406b8}
+      \strng{authorbibnamehash}{b5ad2317f287bf06cab68e1b1c7406b8}
+      \strng{authornamehash}{b5ad2317f287bf06cab68e1b1c7406b8}
+      \strng{authorfullhash}{b5ad2317f287bf06cab68e1b1c7406b8}
+      \strng{authorfullhashraw}{b5ad2317f287bf06cab68e1b1c7406b8}
+      \field{sortinit}{I}
+      \field{sortinithash}{8d291c51ee89b6cd86bf5379f0b151d8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Instituto Nacional de Ciberseguridad de España, colección Protege tu empresa, versión 1}
+      \field{title}{Glosario de términos de ciberseguridad: una guía de aproximación para el empresario}
+      \field{urlday}{13}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{year}{2017}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.incibe.es/sites/default/files/contenidos/guias/doc/guia_glosario_ciberseguridad_metad.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.incibe.es/sites/default/files/contenidos/guias/doc/guia_glosario_ciberseguridad_metad.pdf
+      \endverb
+    \endentry
     \entry{ISO27002_2022}{report}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=0828a8408614177181026ea908d5594a}{%
@@ -7359,6 +7394,41 @@
       \endverb
       \verb{url}
       \verb http://servicios.infoleg.gob.ar/infolegInternet/anexos/60000-64999/64790/norma.htm
+      \endverb
+    \endentry
+    \entry{INCIBE2017_glosario_ciberseguridad}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=b5ad2317f287bf06cab68e1b1c7406b8}{%
+           family={{INCIBE}},
+           familyi={I\bibinitperiod}}}%
+      }
+      \strng{namehash}{b5ad2317f287bf06cab68e1b1c7406b8}
+      \strng{fullhash}{b5ad2317f287bf06cab68e1b1c7406b8}
+      \strng{fullhashraw}{b5ad2317f287bf06cab68e1b1c7406b8}
+      \strng{bibnamehash}{b5ad2317f287bf06cab68e1b1c7406b8}
+      \strng{authorbibnamehash}{b5ad2317f287bf06cab68e1b1c7406b8}
+      \strng{authornamehash}{b5ad2317f287bf06cab68e1b1c7406b8}
+      \strng{authorfullhash}{b5ad2317f287bf06cab68e1b1c7406b8}
+      \strng{authorfullhashraw}{b5ad2317f287bf06cab68e1b1c7406b8}
+      \field{sortinit}{I}
+      \field{sortinithash}{8d291c51ee89b6cd86bf5379f0b151d8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Instituto Nacional de Ciberseguridad de España, colección Protege tu empresa, versión 1}
+      \field{title}{Glosario de términos de ciberseguridad: una guía de aproximación para el empresario}
+      \field{urlday}{13}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{year}{2017}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.incibe.es/sites/default/files/contenidos/guias/doc/guia_glosario_ciberseguridad_metad.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.incibe.es/sites/default/files/contenidos/guias/doc/guia_glosario_ciberseguridad_metad.pdf
       \endverb
     \endentry
     \entry{ISO27002_2022}{report}{}{}
