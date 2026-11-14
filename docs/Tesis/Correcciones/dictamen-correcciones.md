@@ -5758,7 +5758,7 @@ necesarias, seis de consistencia y cuatro de forma.
 | 4 | Incorporar al resumen la exactitud fuera de muestra y la comparación con la línea de base | cerrada | `00-resumen.tex:13`, `:29` (C21/e) |
 | 5 | Actualizar lo que se dice de `Sistemas` con los `61` casos y reformular las dos líneas ya ejecutadas | cerrada | `08-discusion.tex:28`, `09-conclusiones.tex:37`, `10-recomendaciones.tex:18`, `:26` (C21/z, C21/ad, C21/ag, C21/ah) |
 | 6 | Describir en la metodología el diseño fuera de muestra (procedencia, cuotas, refuerzo posterior, arbitraje, seis de tres vías) y sumar las amenazas | cerrada | `04-marco-metodologico.tex:58`, `:100`, `:104` (C21/l, C21/m, C21/n) |
-| 7 | Crear un tag nuevo y corregir con él el Anexo B, la entrada del repositorio y la portada | **parcial**: documentación lista en el árbol de trabajo (`v1.4.0`, `14-11-2026`); tag y push pendientes de la confirmación de los autores (OQ5, tareas 11.3 y 11.4) | `12-anexos.tex:58`, `Bibliography_base.bib:917`, `00-portada.tex:30-31` (C21/aj, C21/ap) |
+| 7 | Crear un tag nuevo y corregir con él el Anexo B, la entrada del repositorio y la portada | cerrada: tag anotado `v1.4.0` sobre `406ce2b` (C1), portada `14-11-2026` y `Gomez2026_repositorio` actualizados; C2 consigna el hash en el Anexo B; push de la rama y del tag en esta release (tareas 11.3 y 11.4) | `12-anexos.tex:58`, `Bibliography_base.bib:917`, `00-portada.tex:30-31` (C21/aj, C21/ap) |
 | 8 | Agregar al balance neto la sensibilidad con la tasa de error fuera de muestra | cerrada | `08-discusion.tex:115` (C21/ab) |
 | 9 | Dar a la validación fuera de muestra y a la línea de base una subsección propia y actualizar la frase de apartados | cerrada | `07-resultados.tex:6`, `:360`, `:425` (C21/q, C21/t, C21/w) |
 | 10 | Retirar los identificadores internos del cuerpo y de la tabla, y la afirmación de latencia y costo de la arquitectura | cerrada | `07-resultados.tex:366`, `09-conclusiones.tex:37`, `12-anexos.tex:151`, `05-arquitectura.tex:68` (C21/u, C21/ad, C21/ak, C21/o) |
@@ -5838,7 +5838,7 @@ tarea.
 | C21/ag | Recomendaciones: taxonomía con los 61 casos | c-221 | `10-recomendaciones.tex:18` | `subsec:frontera-sistemas` | `con la referencia arbitrada reúne 61 casos` | cerrada |
 | C21/ah | Recomendaciones: corpus de composición natural | c-221 | `10-recomendaciones.tex:26` | `subsec:corpus-independiente` | `repetirla sobre corpus de composición natural` | cerrada |
 | C21/ai | Capítulo legal: clave Stallings2018 alineada | c-221 | `11-aspectos-legales.tex:34` | `subsec:seguridad-tecnica` | `triada confidencialidad, integridad y disponibilidad (CIA) descrita por` | cerrada |
-| C21/aj | Anexo B: versión entregada v1.4.0 (D9) | c-221 | `12-anexos.tex:58` | `sec:anexo-repositorio` | `un commit inmediatamente posterior consigna en este anexo el hash completo` | cerrada |
+| C21/aj | Anexo B: versión entregada v1.4.0 (D9) | c-221 | `12-anexos.tex:58` | `sec:anexo-repositorio` | `un commit inmediatamente posterior consigna en este anexo ese hash` | cerrada |
 | C21/ak | Anexo: retiro del identificador interno c-201 | c-221 | `12-anexos.tex:151` | `sec:anexo-corpus` | `La corrección del sobreenmascarado ajustó esa heurística` | cerrada |
 | C21/al | Anexo: cronograma con los hitos de noviembre | c-221 | `12-anexos.tex:52` | `fig:cronograma` | `El doble etiquetado de los 150 casos originales por` | cerrada |
 | C21/am | Anexo J retirado; fuente de defensa conservada | c-221 | `docs/defensa/respuestas-tribunal.md:1` | `-` | `Respuestas del grupo a las preguntas del tribunal` | cerrada |

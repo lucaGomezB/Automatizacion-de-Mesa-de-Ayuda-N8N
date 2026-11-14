@@ -306,16 +306,16 @@ preparación sin requisito propio no llevan paréntesis.
 
 ## 11. Release (requiere confirmación de los autores)
 
-- [ ] 11.1 **[BLOQUEADA — OQ2]** Completar versión y fecha en portada, Anexo B y
+- [x] 11.1 **[BLOQUEADA — OQ2]** Completar versión y fecha en portada, Anexo B y
       `Gomez2026_repositorio`; recompilar. (TD «Versión entregada»)
-- [ ] 11.2 Commit C1 de contenido en una rama nueva (no `main`), con fuentes, PDF y
+- [x] 11.2 Commit C1 de contenido en una rama nueva (no `main`), con fuentes, PDF y
       `compilacion.md`; verificar con `git show C1:` que contiene los artefactos de evidencia que la
       tesis cita (lista de D9). (TD «Versión entregada»)
-- [ ] 11.3 **[CONFIRMACIÓN EXPRESA DE LOS AUTORES — OQ5]** Crear el tag anotado sobre C1; luego el
+- [x] 11.3 **[CONFIRMACIÓN EXPRESA DE LOS AUTORES — OQ5]** Crear el tag anotado sobre C1; luego el
       commit C2 que solo consigna el hash completo en el Anexo B y regenera el PDF; verificar
       `git rev-parse <tag>^{commit}` igual al hash del Anexo B y que
       `git diff <tag> C2 -- "docs/Tesis/v10 (IA)/paper/sections"` solo toca esa línea.
       (TD «Versión entregada»)
-- [ ] 11.4 **[CONFIRMACIÓN EXPRESA DE LOS AUTORES — OQ5]** Push de la rama y del tag y apertura del
+- [x] 11.4 **[CONFIRMACIÓN EXPRESA DE LOS AUTORES — OQ5]** Push de la rama y del tag y apertura del
       PR (la sincronización de la memoria la hacen los autores); esperar que todos los checks del
       CI pasen y, si alguno falla, diagnosticar y corregir antes de cerrar. (TD «Versión entregada»)
