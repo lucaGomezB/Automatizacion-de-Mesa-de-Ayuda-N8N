@@ -767,3 +767,55 @@ El memo `docs/Tesis/Correcciones/numeros-canonicos.md` SHALL registrar el contra
 - **WHEN** se lee la sección `3.28`
 - **THEN** consta la desviación del preregistro por el reintento de fallos técnicos con sus conteos y la declaración de que el bloque primario no se vio afectado
 - **AND** consta la amenaza a la validez por la decisión posterior de reintentar
+
+### Requirement: Registro del contraste de la hipótesis subsidiaria de integración multicanal con el test de carga
+
+El memo `docs/Tesis/Correcciones/numeros-canonicos.md` SHALL registrar el contraste de capacidad de la integración multicanal en una sección nueva y aditiva (sección `3.29`), posterior a la `3.28` vigente (de c-217), con procedencia por valor (archivo y ruta del reporte JSON del arnés de carga) y estado en `{vigente, retirado, condicional}`. La sección SHALL registrar: el entorno (perfil `corpus` desechable, costo cero), las constantes prerregistradas del criterio (niveles de concurrencia, techo de p95, tolerancia de throughput), las métricas por nivel (p50, p95, p99, media, throughput y tasa de error) para el punto de convergencia del backend y para el webhook web de N8N, el veredicto de tres vías y los límites declarados (medición en una sola máquina, camino determinístico sin inferencia paga, complejidad percibida no instrumentada). MUST NOT modificar ningún valor ni estado de las secciones `3.1` a `3.28`; las frases previas que declaran la hipótesis multicanal «sin contrastar» SHALL quedar superadas por remisión a la sección nueva, sin borrar ni reescribir su contenido.
+
+#### Scenario: Sección aditiva con procedencia
+
+- **WHEN** se recorre la sección `3.29` del memo
+- **THEN** cada valor declara su archivo y ruta de origen y un estado en `{vigente, retirado, condicional}`
+- **AND** la sección aparece después de la `3.28` sin renumerar ni alterar las secciones anteriores
+
+#### Scenario: Valores previos intactos
+
+- **WHEN** se comparan las secciones `3.1` a `3.28` antes y después del change
+- **THEN** ningún valor ni estado cambia
+- **AND** solo se agrega la sección `3.29` y, si corresponde, una remisión desde la sección que declaraba la hipótesis sin contrastar
+
+#### Scenario: Veredicto y métricas registrados
+
+- **WHEN** se lee la sección `3.29`
+- **THEN** figuran el veredicto de tres vías, las constantes prerregistradas y las métricas por nivel de las dos capas
+- **AND** figuran los límites declarados del contraste
+
+#### Scenario: Costo cero registrado
+
+- **WHEN** se lee la sección `3.29`
+- **THEN** consta que la corrida se hizo con la clave ficticia y el presupuesto nulo, sin invocaciones a Gemini ni a Twilio
+- **AND** consta el entorno desechable sobre el que se corrió
+
+### Requirement: Registro aditivo de los valores de la mitigación del sesgo de corpus y referencia
+
+El memo canónico `docs/Tesis/Correcciones/numeros-canonicos.md` SHALL incorporar una sección nueva
+(3.29) con una tabla de valores aditivos que incluya, como mínimo: los anclajes de la etapa
+determinística (`115` cortocircuitados y `88` aciertos, `0,7652`) y del híbrido (`142/206`,
+`0,6893`); para el vocabulario vigente `V1`, el vocabulario corpus-blind y el control `V0`, la
+cobertura, el número de casos de cortocircuito y la precisión con IC de Wilson; y la exactitud
+estricta del clasificador sobre el subconjunto de consenso (`n = 142`), el subconjunto arbitrado
+(`n = 64`) y el total (`206`), con sus intervalos de Wilson. Cada valor SHALL llevar su archivo
+fuente y el comando que lo produce, y la sección SHALL declarar que es aditiva. La sección MUST NOT
+modificar ni reemplazar ningún valor ni estado `vigente` de las secciones 3.1 a 3.28.
+
+#### Scenario: Sección aditiva con procedencia
+
+- **WHEN** se lee la sección 3.29 del memo canónico
+- **THEN** figuran los valores de la ablación de vocabulario y del análisis de subconjuntos con su archivo fuente y su comando
+- **AND** la sección declara que no reemplaza ningún valor de las secciones 3.1 a 3.28
+
+#### Scenario: Valores previos intactos
+
+- **WHEN** se comparan los valores de las secciones 3.1 a 3.28 antes y después del change
+- **THEN** cada valor conserva su cifra y su estado `vigente`, `condicional` o `superado`
+- **AND** no se retira ningún número canónico

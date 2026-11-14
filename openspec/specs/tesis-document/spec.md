@@ -4541,14 +4541,14 @@ lista SHALL declarar el numero real de limitaciones listadas.
 
 ### Requirement: Estado declarado de las hipotesis subsidiarias
 
-Las dos hipotesis subsidiarias de `01-introduccion.tex` SHALL tener un estado declarado y coherente en la introduccion, la discusion y las conclusiones. La de integracion multicanal sin cuellos de botella SHALL declararse "no contrastada" mientras no se mida la capacidad bajo carga concurrente. La de mayor eficiencia del esquema hibrido frente a un esquema solo de modelo SHALL declararse "contrastada: no concluyente" en todos los capitulos, porque se midio con el brazo «Gemini solo» bajo una regla de decision prerregistrada y el resultado fue no concluyente: el ahorro de llamadas y de costo se cumplio, pero la no inferioridad de la exactitud no se establecio. MUST NOT declararse "no contrastada" ni "confirmada". La discusion y las conclusiones MUST NOT afirmar consistencia con la hipotesis de eficiencia apoyandose solo en la proporcion de casos resueltos sin invocar al modelo.
+Las dos hipotesis subsidiarias de `01-introduccion.tex` SHALL tener un estado declarado y coherente en la introduccion, la metodologia, la discusion y las conclusiones. La de integracion multicanal sin cuellos de botella SHALL declararse "contrastada en su dimension de capacidad" porque se midio con un test de carga de costo cero sobre el tramo compartido: el estado SHALL informar el resultado medido (latencia p50/p95, throughput y tasa de error por nivel de concurrencia) y SHALL declarar que la complejidad operativa percibida permanece sin instrumento, de modo que el estado MUST NOT presentarse como un contraste total de la hipotesis. La de mayor eficiencia del esquema hibrido frente a un esquema solo de modelo SHALL declararse "contrastada: no concluyente" en todos los capitulos, porque se midio con el brazo «Gemini solo» bajo una regla de decision prerregistrada y el resultado fue no concluyente: el ahorro de llamadas y de costo se cumplio, pero la no inferioridad de la exactitud no se establecio. MUST NOT declararse "no contrastada" ni "confirmada". La discusion y las conclusiones MUST NOT afirmar consistencia con la hipotesis de eficiencia apoyandose solo en la proporcion de casos resueltos sin invocar al modelo, ni afirmar que la integracion multicanal elimino la complejidad operativa percibida.
 
 #### Scenario: Estados declarados en los tres capitulos
 
 - **WHEN** se leen la introduccion, la discusion y las conclusiones
 - **THEN** cada hipotesis subsidiaria tiene un estado explicito
 - **AND** la de eficiencia figura como "contrastada: no concluyente" en los tres capitulos
-- **AND** la de integracion multicanal figura como "no contrastada" en los tres capitulos
+- **AND** la de integracion multicanal figura como "contrastada en su dimension de capacidad" en los tres capitulos
 
 #### Scenario: Frase de consistencia sin sustento retirada
 
@@ -4559,8 +4559,15 @@ Las dos hipotesis subsidiarias de `01-introduccion.tex` SHALL tener un estado de
 #### Scenario: Subsidiaria multicanal no contrastada
 
 - **WHEN** se leen las conclusiones sobre la integracion de los tres canales
-- **THEN** el texto no afirma que la integracion "confirmo" la ausencia de dispersion operativa o de cuellos de botella
-- **AND** declara que la hipotesis subsidiaria de integracion multicanal no se contrasto
+- **THEN** el texto informa el resultado del test de carga con su veredicto de tres vias
+- **AND** no afirma que la integracion "confirmo" la ausencia de dispersion operativa ni la complejidad percibida
+- **AND** declara que la dimension de capacidad quedo contrastada y la de complejidad percibida no se midio
+
+#### Scenario: Estado no presentado como contraste total
+
+- **WHEN** se lee el estado de la subsidiaria multicanal en cualquier capitulo
+- **THEN** no se presenta como un contraste completo de la hipotesis
+- **AND** declara explicitamente que la complejidad percibida quedo fuera de la medicion
 
 ### Requirement: Contraste acotado de la hipotesis subsidiaria de eficiencia con salvedades declaradas
 
@@ -9575,3 +9582,60 @@ El documento SHALL declarar de forma explícita, allí donde informa el contrast
 - **WHEN** se busca en el texto una afirmación de que el brazo de modelo solo se corrió sobre los 206 casos arbitrados
 - **THEN** esa afirmación no aparece
 - **AND** el texto declara que el contraste se midió sobre el bloque de 103
+
+### Requirement: Declaracion del contraste de capacidad de la integracion multicanal
+
+El documento SHALL informar el contraste de la hipotesis subsidiaria de integracion multicanal como un test de carga sobre el tramo compartido donde convergen los canales, con un criterio de decision de tres vias fijado antes de observar datos (techo absoluto de p95, tolerancia de throughput y tasa de error cero). El pasaje SHALL declarar, con remision a la tabla correspondiente y al memo canonico: el entorno desechable y de costo cero, los niveles de concurrencia, la latencia p50/p95, el throughput y la tasa de error por nivel, el veredicto de tres vias, y los limites del contraste (medicion en una sola maquina, camino determinístico sin inferencia paga, y que los canales de correo y telefonia quedaron fuera de la inyeccion concurrente por sondado y por costo respectivamente). MUST NOT presentar el resultado como prueba de que la integracion elimina la complejidad operativa percibida ni como validacion en produccion, y MUST NOT extrapolar la capacidad a hardware distinto del medido.
+
+#### Scenario: Resultado de capacidad con procedencia
+
+- **WHEN** se leen las cifras del test de carga en los resultados
+- **THEN** coinciden con el reporte del arnes y con la seccion `3.29` del memo canonico
+- **AND** cada cifra figura en `docs/Tesis/Correcciones/numeros-canonicos.md` con su procedencia
+
+#### Scenario: Limites presentes
+
+- **WHEN** se lee el pasaje del contraste de capacidad
+- **THEN** declara el entorno desechable, el camino determinístico de costo cero, la medicion en una sola maquina y la exclusion de los canales de correo y telefonia
+- **AND** el estado se rotula "contrastada en su dimension de capacidad", no "confirmada" ni "no contrastada"
+
+#### Scenario: Sin sobreventa del resultado
+
+- **WHEN** se leen los pasajes de la subsidiaria multicanal en la metodologia, la discusion y las conclusiones
+- **THEN** ninguno afirma que la integracion elimina la complejidad operativa percibida
+- **AND** ninguno extrapola la capacidad medida a otro hardware o a produccion
+
+### Requirement: Mitigación del sesgo de corpus y de la fragilidad de la referencia en la tesis
+
+`04-marco-metodologico.tex` SHALL definir el método de las dos mediciones: la ablación con un
+vocabulario derivado de una fuente externa al corpus, con su independencia declarada como
+procedimental, y el análisis del subconjunto de consenso `E3 = E4` frente al arbitrado por `E5`,
+con sus supuestos y límites. `07-resultados.tex` SHALL incluir una subsección nueva, con etiqueta
+`subsec:sesgo-corpus-referencia`, que informe la cobertura y la precisión de la etapa determinística
+bajo el vocabulario vigente, el corpus-blind y el control de ablación, y la exactitud estricta sobre
+el subconjunto de consenso (`109/142`), el arbitrado (`33/64`) y el total (`142/206`), con sus
+intervalos de Wilson, rotulando el conjunto `E3` = `E4` = `E5` como vacío por construcción.
+`08-discusion.tex` SHALL leer ambos resultados como sensibilidad que acota —sin eliminar— las
+amenazas «ajuste y evaluación sobre el mismo corpus» y «referencia de verdad frágil» del criterio 4.
+La incorporación MUST NOT cambiar `142/206`, `0,6893`, `0,7024` ni ningún otro valor canónico, y su
+crecimiento neto de páginas SHALL ser de a lo sumo dos páginas, registrado en el libro mayor de
+`dictamen-correcciones.md`.
+
+#### Scenario: Subsección, método y lectura de discusión
+
+- **WHEN** se lee `07-resultados.tex`
+- **THEN** existe `subsec:sesgo-corpus-referencia` con la tabla de cobertura/precisión por vocabulario y la tabla de exactitud por subconjunto
+- **AND** el capítulo 4 define la ablación con vocabulario externo y el análisis de subconjuntos
+- **AND** `08-discusion.tex` remite a la subsección y la rotula como sensibilidad
+
+#### Scenario: Anclajes canónicos y ausencia de sobreafirmación
+
+- **WHEN** se comparan las cifras de la subsección con el memo canónico
+- **THEN** la exactitud total es `142/206` (`0,6893`) y el texto no presenta la ablación ni el análisis de subconjuntos como medición de una exactitud verdadera ni como causalidad de la referencia
+- **AND** se declara que el subconjunto `E3` = `E4` = `E5` es vacío por construcción
+
+#### Scenario: Crecimiento de páginas acotado y registrado
+
+- **WHEN** se compara el total de páginas del PDF con el de la release de partida
+- **THEN** el crecimiento neto es de a lo sumo dos páginas
+- **AND** el libro mayor registra el delta y su causa
