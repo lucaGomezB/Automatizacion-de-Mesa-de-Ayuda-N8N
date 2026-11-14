@@ -6,7 +6,7 @@ Hechos verificados en el repositorio (2026-11-13):
 - **`main` hoy usa la referencia arbitrada de 206** (c-206) para la validación fuera de muestra: exactitud estricta del híbrido `142/206 = 0,6893`; el memo termina en la sección `3.26` (c-213 + c-206, n = 206). El bloque de 103 casos con consenso `E3`/`E4` (`0,8447`) se conserva como «etapa previa y cota de sensibilidad».
 - **El contraste de c-215 es sobre los 103 de consenso** (bloque primario) y los 200 dentro de la muestra (secundario). Veredicto prerregistrado del bloque primario: **no concluyente**. Cifras del caché versionado: H `87/103 = 0,8447`; L `90/103 = 0,8738`; McNemar `p = 0,5078`; Δ `H−L = −0,0291` `[−0,0874; 0,0291]`; llamadas H/L `0,3301` `[0,2427; 0,4175]`; costo H/L `0,3295` `[0,2421; 0,4176]`; fallos `0/103`. Corrida paga ya hecha (303 llamadas con respuesta); el caché se versiona en la rama.
 - **La prosa de c-215 ya está escrita** para `01`, `04`, `07`, `08`, `09` y `10`, pero sobre el texto previo a c-206/c-213. Varios de esos pasajes hoy dicen «no se contrastó» en `main` y otros ya fueron reescritos con la referencia de 206, de modo que el merge tendrá conflictos.
-- **El memo colisiona**: c-215 agregó su sección como `3.25`; `main` ya usa `3.25` (c-206) y `3.26` (c-213). La sección nueva debe ser `3.27`.
+- **El memo colisiona**: c-215 agregó su sección como `3.25`; `main` ya usa `3.25` (c-206), `3.26` (c-213) y `3.27` (c-216). La sección nueva debe ser `3.28`.
 - **`c-216`** («robustecer la referencia, el gate y la forma») es dueño de los ítems L2-L5 (referencia, gate y forma). Este change NO los toca.
 
 ## Goals / Non-Goals
@@ -16,7 +16,7 @@ Hechos verificados en el repositorio (2026-11-13):
 - Dejar en `main` el código y las salidas de c-215 sin re-correr el brazo (costo cero) y sin tocar el clasificador, el corpus ni la referencia.
 - Resolver la deriva de referencia de forma explícita y honesta, con una decisión justificada y con su costo declarado.
 - Llevar la prosa de la tesis al veredicto honesto (ahorro medido, exactitud indeterminada) en `01/04/07/08/09/10`, sin contradicciones internas.
-- Registrar las cifras de forma aditiva (`numeros-canonicos.md` sección `3.27`) y documentar la decisión en `dictamen-correcciones.md`.
+- Registrar las cifras de forma aditiva (`numeros-canonicos.md` sección `3.28`) y documentar la decisión en `dictamen-correcciones.md`.
 
 **Non-Goals:**
 
@@ -54,7 +54,7 @@ Crear una rama desde `main` e integrar el contenido de c-215 con `git merge orig
 
 ### D4 — Numeración del memo
 
-La sección nueva del memo es la `3.27` (después de la `3.26` vigente). Es aditiva: no se renumera nada y las frases previas que declaran la eficiencia «sin contrastar» se declaran superadas por remisión, sin borrar contenido.
+La sección nueva del memo es la `3.28` (después de la `3.27` de c-216 y de la `3.26` vigente). Es aditiva: no se renumera nada y las frases previas que declaran la eficiencia «sin contrastar» se declaran superadas por remisión, sin borrar contenido.
 
 ### D5 — Gobernanza y costo
 
@@ -67,7 +67,7 @@ MEDIUM: prosa y análisis; sin cambio de conducta productiva, de configuración 
 - [Que el lector lea las dos referencias (103 y 206) como una sola] → requisito explícito de declarar la relación y no agrupar (delta `tesis-document`).
 - [Colisión con `c-216` en `tesis-dictamen-v1-3-0`] → el delta modifica solo el requisito del ahorro/eficiencia; si c-216 toca el mismo requisito, reconciliar al integrar y re-validar.
 - [Sobreventa del ahorro] → el requisito prohíbe afirmar no inferioridad de exactitud y exige el veredicto «no concluyente» junto al ahorro.
-- [Sección `3.25` duplicada] → usar `3.27` y verificar que la `3.26` siga intacta.
+- [Sección `3.25` duplicada] → usar `3.28` y verificar que la `3.26` y la `3.27` sigan intactas.
 
 ## Migration Plan
 
