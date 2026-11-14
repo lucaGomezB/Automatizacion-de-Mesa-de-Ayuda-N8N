@@ -237,3 +237,40 @@ casos y se evalua sin reajuste en los 103. No modifica la configuracion producti
   - `../senales_reglas_c214.csv`: `a7d4a703e2c5b70c3fc898a1c55c50fbad971255285b5e3630cf65f0c983c56a`
 - Prueba: `cd evaluation/data/campana/analisis && python -m pytest test_analisis_calibracion_gate_c214.py -q`
   y `python -m pytest evaluation/tests/test_calibracion_gate.py -q`.
+
+## Sensibilidad a referencias alternativas plausibles (c-216)
+
+`analisis_ruido_referencia_c216.py` mide, de solo lectura y sin red, cuánto del error
+observado del clasificador congelado `hybrid-v3` sobre la referencia arbitrada de `206`
+casos es atribuible a la fragilidad de esa referencia. Antes de simular reproduce los
+anclajes canónicos `142/206` (`0,6893`) y macro-F1 `0,7024`; si no los reproduce, aborta
+sin escribir salidas. Es aditivo: no reemplaza ningún número canónico, no reclasifica, no
+reentrena y no modifica el corpus, las predicciones ni los artefactos congelados.
+
+- Método (fijado en el docstring antes de correr; el prerregistro NO fue ciego): kernel
+  `5x5` fila-estocástico contra la referencia con las etiquetas de `E3`/`E4` sobre los `206`
+  casos y `E5` sobre los `64` arbitrados, suavizado de Laplace `0,5`; mezcla convexa
+  `Q_λ = (1−λ)·Q + λ·m` con la marginal empírica; calibración de `λ` por bisección al
+  kappa `0,6055 ± 0,005`; `B = 2000` réplicas con semilla `20261021`; cotas
+  distribution-free con `δ` de Wilson; rango de los `6` casos de tres vías.
+- Entradas versionadas (solo lectura): `../corpus_independiente_arbitrado.json`,
+  `../predicciones_arbitrado.json`, `../doble_etiquetado_arbitrado.csv` y
+  `../arbitraje_tres_vias.json`.
+- Comando (desde la raíz del repositorio):
+
+  ```bash
+  python3 evaluation/data/campana/analisis/analisis_ruido_referencia_c216.py
+  ```
+
+- Salidas (UTF-8 sin BOM, LF; dos corridas producen salidas idénticas byte a byte), con su
+  SHA-256 (también en `analisis_ruido_referencia_c216.SHA256SUMS.txt`):
+  - `analisis_ruido_referencia_c216.json`: `bda0a81769614b5a2a2a1ef03a95f8491b17a5bac3e71697cdd23e44d9f2cae2`
+  - `analisis_ruido_referencia_c216.md`: `c9889df98ed772a1a7aa21c3aea7b5813d182593d0897d4dc968649fd80e340f`
+- Prueba: `cd evaluation/data/campana/analisis && python -m pytest test_analisis_ruido_referencia_c216.py -q`.
+- Resultado registrado (sección 3.27 del memo): `λ* = 0,231391`; mediana de exactitud
+  `0,5097` con `q2,5 = 0,4515` y `q97,5 = 0,5631`; mediana de macro-F1 `0,5109`; `δ =
+  0,369817`, `m = 76` y cotas `[0,3204; 1,0000]`; rango de tres vías `142/206` a
+  `147/206`. La descomposición da error robusto `90` y error atribuible a la referencia
+  `−26`: el error observado (`64`) es MENOR que el extremo favorable simulado, de modo que
+  el análisis no atribuye el error observado al ruido de la referencia. La simulación se
+  rotula como sensibilidad, no como medición de la verdad latente.
