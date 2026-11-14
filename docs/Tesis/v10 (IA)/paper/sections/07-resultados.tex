@@ -371,4 +371,33 @@ Macro-F1 (cinco clases) & 0,3884 & 0,7024 & \(-0,3140\) \\
 
 \paragraph{Contraste pareado frente a la línea de base.} Como ambos sistemas se evaluaron sobre los mismos 206 casos, la diferencia de exactitud estricta se contrastó con una prueba pareada. En la variante primaria (balanceada), ambos aciertan en 81 casos, solo el híbrido en 61, solo la línea de base en 20 y ninguno en 44. La prueba de McNemar exacta bilateral da \(p = 5{,}7\times10^{-6}\) (con corrección por continuidad, \(p = 8{,}8\times10^{-6}\)). La diferencia de exactitudes pareadas es 0,1990, con un intervalo de confianza del 95~\% bootstrap percentil pareado de [0,1165; 0,2767] (10.000 remuestreos, semilla 20261021). La variante sin re-ponderación es más desfavorable para la línea de base: la diferencia es 0,2621, con intervalo [0,1845; 0,3398]. La diferencia es estadísticamente significativa en este contraste sobre este corpus (\autoref{tab:linea-base-clasica}). \textit{Fuente:} \texttt{evaluation/data/campana/analisis/contraste\_linea\_de\_base\_c213\_arbitrado.json}.
 
+\subsection{Sensibilidad a la referencia de verdad}\label{subsec:ruido-referencia}
+
+La pregunta es cuánto del error observado sobre la referencia arbitrada de 206 casos es atribuible a la fragilidad de esa referencia y cuánto persiste con una etiqueta independiente del acuerdo medido. El método se define en la \autoref{subsec:analisis-estadistico}: simulación calibrada al kappa 0,6055 de \texttt{E3} y \texttt{E4}, \(B=2000\), semilla 20261021, cotas con \(\delta\) de Wilson y rango de los 6 casos de tres vías. No corrige la exactitud ni mide la verdad latente: genera referencias alternativas plausibles y describe cuánto cambia la métrica.
+
+\begin{table}[htbp]
+\centering
+\caption{Sensibilidad de la exactitud estricta y la macro-F1 a referencias alternativas plausibles}
+\label{tab:ruido-referencia}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{5.0cm} >{\centering\arraybackslash}p{1.9cm} >{\centering\arraybackslash}p{1.9cm} >{\centering\arraybackslash}p{1.5cm} >{\centering\arraybackslash}p{1.5cm}@{}}
+\toprule
+\textbf{Indicador} & \textbf{Observado} & \textbf{Mediana} & \textbf{q2,5} & \textbf{q97,5} \\
+\midrule
+Exactitud estricta & 0,6893 & 0,5097 & 0,4515 & 0,5631 \\
+Macro-F1 (cinco clases) & 0,7024 & 0,5109 & 0,4513 & 0,5692 \\
+\midrule
+\(\delta\) (cota superior de Wilson al 95~\%) / cotas & \multicolumn{4}{c}{0,3698 / [0,3204; 1,0000]} \\
+Rango de los 6 casos de tres vías & \multicolumn{4}{c}{142/206 a 147/206} \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+{\footnotesize\textit{Nota:} 2000 réplicas con semilla 20261021. Las cotas son de sensibilidad bajo el supuesto de que a lo sumo 76 etiquetas de referencia son erróneas, no mediciones. La simulación no mide la verdad latente. \textit{Fuente:} \texttt{evaluation/data/campana/analisis/analisis\_ruido\_referencia\_c216.json}.\par}
+\end{table}
+
+Bajo 2000 referencias alternativas, la exactitud estricta tendría mediana 0,5097 e intervalo [0,4515; 0,5631] al 95~\%, y la macro-F1, mediana 0,5109 e intervalo [0,4513; 0,5692]; ninguna de las 2000 réplicas alcanza el valor observado de 0,6893. La diferencia con el valor observado no se lee como una exactitud corregida: mide cuán específica es la métrica de esta referencia.
+
+El error observado (64) queda por debajo del intervalo simulado [90; 113]; el error robusto es 90 y el componente atribuible a la referencia, \(-26\). El análisis no respalda que el ruido de la referencia infle el error observado; muestra que la exactitud de 0,6893 es específica de esta referencia y que una referencia independiente produciría una exactitud menor. Las cotas distribution-free, con \(\delta = 0{,}3698\) y \(m = 76\), dan [0,3204; 1,0000] bajo el supuesto de que a lo sumo 76 etiquetas son erróneas; son cotas de sensibilidad. Los 6 casos de tres vías mueven la exactitud entre 142/206 y 147/206 y no se resuelven eligiendo una etiqueta verdadera: el rango es el resultado.
+
 \newpage
