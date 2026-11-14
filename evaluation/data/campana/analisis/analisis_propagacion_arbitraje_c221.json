@@ -1,0 +1,757 @@
+{
+  "aditivo": {
+    "declaracion": "Las cifras de este analisis son aditivas: van a la seccion 3.32 del memo y no reemplazan ningun valor `vigente` de las secciones 3.1 a 3.31; no cambian el umbral de 85 %, el balance neto `B`, `a*` ni los artefactos congelados.",
+    "reemplaza_numeros_canonicos": false,
+    "seccion_memo": "3.32"
+  },
+  "anclajes": {
+    "arbitrados": 64,
+    "balance_6_9": 6.850199999999995,
+    "balance_referencia_comun": [
+      25.4,
+      18.7,
+      11.9
+    ],
+    "brier_34": 0.19346764705882352,
+    "discordantes_originales": 47,
+    "ece_34": 0.17147058823529415,
+    "lectura_103": [
+      87,
+      103
+    ],
+    "macro_f1": 0.7024265685465428,
+    "ponderada_103": 0.8146309523809524,
+    "refuerzo": 56,
+    "total": [
+      142,
+      206
+    ],
+    "tres_vias": 6
+  },
+  "balance": {
+    "anclajes": {
+      "celda_6_9": 6.850199999999995,
+      "referencia_comun": [
+        25.4,
+        18.7,
+        11.9
+      ]
+    },
+    "c_medido_s": 69.50741008771931,
+    "declaracion": "sensibilidad que mezcla corpus y referencias; NO reemplaza el balance con referencia comun de la seccion 3.21",
+    "delta_t_s": 43.82,
+    "e_man": 0.17218543046357615,
+    "es_coste_medido_incluido": true,
+    "formula": "B = (N/3600) * [dt - (e_aut - e_man) * c]",
+    "n": 2646,
+    "por_tasa": {
+      "cruda": {
+        "c_medido": 25.13231669280677,
+        "e_aut": 0.3106796116504854,
+        "fuente_e_aut": "tasa cruda sobre el corpus arbitrado (1 - 142/206)",
+        "rejilla": {
+          "10": -28.86823390342698,
+          "15": -59.40620085514048,
+          "5": 1.6697330482865107
+        }
+      },
+      "ponderada": {
+        "c_medido": 28.176039625253065,
+        "e_aut": 0.2511015086718935,
+        "fuente_e_aut": "complemento de la lectura ponderada (1 - valor)",
+        "rejilla": {
+          "10": -2.594290489867956,
+          "15": -19.995285734801932,
+          "5": 14.806704755066022
+        }
+      }
+    },
+    "rotulo": "sensibilidad"
+  },
+  "c219_origen": {
+    "arbitrado": [
+      33,
+      64
+    ],
+    "consenso": [
+      109,
+      142
+    ],
+    "presente": true
+  },
+  "calibracion": {
+    "arbitrado": {
+      "aciertos": 54,
+      "auroc": {
+        "ic": [
+          0.5768231121746747,
+          0.7922850218463074
+        ],
+        "nivel_confianza": 0.95,
+        "remuestras_validas": 2000,
+        "remuestreos": 2000,
+        "semilla": 20261021,
+        "valor": 0.6911911911911912
+      },
+      "barrido": [
+        {
+          "aceptados": 90,
+          "aciertos_aceptados": 53,
+          "carga_revision": 0.01098901098901099,
+          "cobertura": 0.989010989010989,
+          "derivados": 1,
+          "errores_aceptados": 37,
+          "errores_atrapados": 0,
+          "escalados": 91,
+          "exactitud_derivados": 1.0,
+          "exactitud_selectiva": 0.5888888888888889,
+          "ic_wilson": [
+            0.48563237347145555,
+            0.684867959761553
+          ],
+          "umbral": 0.7
+        },
+        {
+          "aceptados": 55,
+          "aciertos_aceptados": 41,
+          "carga_revision": 0.3956043956043956,
+          "cobertura": 0.6043956043956044,
+          "derivados": 36,
+          "errores_aceptados": 14,
+          "errores_atrapados": 23,
+          "escalados": 91,
+          "exactitud_derivados": 0.3611111111111111,
+          "exactitud_selectiva": 0.7454545454545455,
+          "ic_wilson": [
+            0.6169812871823414,
+            0.841878852269271
+          ],
+          "umbral": 0.86
+        },
+        {
+          "aceptados": 48,
+          "aciertos_aceptados": 37,
+          "carga_revision": 0.4725274725274725,
+          "cobertura": 0.5274725274725275,
+          "derivados": 43,
+          "errores_aceptados": 11,
+          "errores_atrapados": 26,
+          "escalados": 91,
+          "exactitud_derivados": 0.3953488372093023,
+          "exactitud_selectiva": 0.7708333333333334,
+          "ic_wilson": [
+            0.6346073590999655,
+            0.8669217373308877
+          ],
+          "umbral": 0.91
+        },
+        {
+          "aceptados": 5,
+          "aciertos_aceptados": 3,
+          "carga_revision": 0.945054945054945,
+          "cobertura": 0.054945054945054944,
+          "derivados": 86,
+          "errores_aceptados": 2,
+          "errores_atrapados": 35,
+          "escalados": 91,
+          "exactitud_derivados": 0.5930232558139535,
+          "exactitud_selectiva": 0.6,
+          "ic_wilson": [
+            0.2307242812760128,
+            0.882379225767352
+          ],
+          "umbral": 0.96
+        },
+        {
+          "aceptados": 0,
+          "aciertos_aceptados": 0,
+          "carga_revision": 1.0,
+          "cobertura": 0.0,
+          "derivados": 91,
+          "errores_aceptados": 0,
+          "errores_atrapados": 37,
+          "escalados": 91,
+          "exactitud_derivados": 0.5934065934065934,
+          "exactitud_selectiva": null,
+          "ic_wilson": null,
+          "umbral": 0.99
+        },
+        {
+          "aceptados": 0,
+          "aciertos_aceptados": 0,
+          "carga_revision": 1.0,
+          "cobertura": 0.0,
+          "derivados": 91,
+          "errores_aceptados": 0,
+          "errores_atrapados": 37,
+          "escalados": 91,
+          "exactitud_derivados": 0.5934065934065934,
+          "exactitud_selectiva": null,
+          "ic_wilson": null,
+          "umbral": "inf"
+        }
+      ],
+      "brier": {
+        "ic": [
+          0.2465481868131868,
+          0.40662060439560427
+        ],
+        "nivel_confianza": 0.95,
+        "remuestras_validas": 2000,
+        "remuestreos": 2000,
+        "semilla": 20261021,
+        "valor": 0.32579120879120876
+      },
+      "confianza_media": 0.9054945054945054,
+      "ece": {
+        "ic": [
+          0.22295879120879122,
+          0.42013186813186804
+        ],
+        "nivel_confianza": 0.95,
+        "remuestras_validas": 2000,
+        "remuestreos": 2000,
+        "semilla": 20261021,
+        "valor": 0.3208791208791208
+      },
+      "exactitud": 0.5934065934065934,
+      "n": 91,
+      "sobreconfianza": {
+        "ic": [
+          0.21417032967032965,
+          0.41035714285714275
+        ],
+        "nivel_confianza": 0.95,
+        "remuestras_validas": 2000,
+        "remuestreos": 2000,
+        "semilla": 20261021,
+        "valor": 0.312087912087912
+      },
+      "umbral_seleccionado": null
+    },
+    "contraste_34": {
+      "aciertos": 26,
+      "auroc": {
+        "ic": [
+          0.5137701149425288,
+          0.9139367816091953
+        ],
+        "nivel_confianza": 0.95,
+        "remuestras_validas": 1999,
+        "remuestreos": 2000,
+        "semilla": 20261021,
+        "valor": 0.7163461538461539
+      },
+      "barrido": [
+        {
+          "aceptados": 33,
+          "aciertos_aceptados": 25,
+          "carga_revision": 0.029411764705882353,
+          "cobertura": 0.9705882352941176,
+          "derivados": 1,
+          "errores_aceptados": 8,
+          "errores_atrapados": 0,
+          "escalados": 34,
+          "exactitud_derivados": 1.0,
+          "exactitud_selectiva": 0.7575757575757576,
+          "ic_wilson": [
+            0.5897538017044264,
+            0.8716828662282499
+          ],
+          "umbral": 0.7
+        },
+        {
+          "aceptados": 25,
+          "aciertos_aceptados": 22,
+          "carga_revision": 0.2647058823529412,
+          "cobertura": 0.7352941176470589,
+          "derivados": 9,
+          "errores_aceptados": 3,
+          "errores_atrapados": 5,
+          "escalados": 34,
+          "exactitud_derivados": 0.4444444444444444,
+          "exactitud_selectiva": 0.88,
+          "ic_wilson": [
+            0.7004420607907267,
+            0.9583318284955964
+          ],
+          "umbral": 0.86
+        },
+        {
+          "aceptados": 23,
+          "aciertos_aceptados": 20,
+          "carga_revision": 0.3235294117647059,
+          "cobertura": 0.6764705882352942,
+          "derivados": 11,
+          "errores_aceptados": 3,
+          "errores_atrapados": 5,
+          "escalados": 34,
+          "exactitud_derivados": 0.5454545454545454,
+          "exactitud_selectiva": 0.8695652173913043,
+          "ic_wilson": [
+            0.6787251772990404,
+            0.9546234090636876
+          ],
+          "umbral": 0.91
+        },
+        {
+          "aceptados": 1,
+          "aciertos_aceptados": 1,
+          "carga_revision": 0.9705882352941176,
+          "cobertura": 0.029411764705882353,
+          "derivados": 33,
+          "errores_aceptados": 0,
+          "errores_atrapados": 8,
+          "escalados": 34,
+          "exactitud_derivados": 0.7575757575757576,
+          "exactitud_selectiva": 1.0,
+          "ic_wilson": [
+            0.20654931437723745,
+            1.0
+          ],
+          "umbral": 0.96
+        },
+        {
+          "aceptados": 0,
+          "aciertos_aceptados": 0,
+          "carga_revision": 1.0,
+          "cobertura": 0.0,
+          "derivados": 34,
+          "errores_aceptados": 0,
+          "errores_atrapados": 8,
+          "escalados": 34,
+          "exactitud_derivados": 0.7647058823529411,
+          "exactitud_selectiva": null,
+          "ic_wilson": null,
+          "umbral": 0.99
+        },
+        {
+          "aceptados": 0,
+          "aciertos_aceptados": 0,
+          "carga_revision": 1.0,
+          "cobertura": 0.0,
+          "derivados": 34,
+          "errores_aceptados": 0,
+          "errores_atrapados": 8,
+          "escalados": 34,
+          "exactitud_derivados": 0.7647058823529411,
+          "exactitud_selectiva": null,
+          "ic_wilson": null,
+          "umbral": "inf"
+        }
+      ],
+      "brier": {
+        "ic": [
+          0.08808330882352941,
+          0.3050845588235293
+        ],
+        "nivel_confianza": 0.95,
+        "remuestras_validas": 2000,
+        "remuestreos": 2000,
+        "semilla": 20261021,
+        "valor": 0.19346764705882352
+      },
+      "confianza_media": 0.9155882352941176,
+      "ece": {
+        "ic": [
+          0.06852205882352941,
+          0.3038235294117647
+        ],
+        "nivel_confianza": 0.95,
+        "remuestras_validas": 2000,
+        "remuestreos": 2000,
+        "semilla": 20261021,
+        "valor": 0.17147058823529415
+      },
+      "exactitud": 0.7647058823529411,
+      "n": 34,
+      "sobreconfianza": {
+        "ic": [
+          0.02294117647058824,
+          0.2912132352941174
+        ],
+        "nivel_confianza": 0.95,
+        "remuestras_validas": 2000,
+        "remuestreos": 2000,
+        "semilla": 20261021,
+        "valor": 0.15088235294117647
+      },
+      "umbral_seleccionado": null
+    }
+  },
+  "change": "c-221-propagar-el-arbitraje-y-atender-el-dictamen-post-v1-3-0",
+  "cuotas": {
+    "canal_150": {
+      "Correo": 50,
+      "Formulario Web": 40,
+      "Telefono": 60
+    },
+    "canal_refuerzo": {
+      "Correo": 28,
+      "Formulario Web": 18,
+      "Telefono": 10
+    },
+    "sector_150": {
+      "Bases de Datos": 14,
+      "Seguridad Informatica": 28,
+      "Sistemas": 21,
+      "Soporte Tecnico Hardware": 49,
+      "Soporte Tecnico Software": 38
+    },
+    "sector_refuerzo": {
+      "Bases de Datos": 2,
+      "Seguridad Informatica": 4,
+      "Sistemas": 40,
+      "Soporte Tecnico Hardware": 2,
+      "Soporte Tecnico Software": 8
+    },
+    "ventana_refuerzo": {
+      "desde": "2026-11-13T12:12:44-03:00",
+      "filas": 129,
+      "hasta": "2026-11-13T18:12:03-03:00",
+      "por_etiquetador": {
+        "E3": [
+          "2026-11-13T12:35:15-03:00",
+          "2026-11-13T13:35:20-03:00"
+        ],
+        "E4": [
+          "2026-11-13T12:12:44-03:00",
+          "2026-11-13T13:09:25-03:00"
+        ],
+        "E5": [
+          "2026-11-13T17:53:51-03:00",
+          "2026-11-13T18:12:03-03:00"
+        ]
+      }
+    }
+  },
+  "desglose": {
+    "bloque": {
+      "consenso_diseno_original": {
+        "aciertos": 87,
+        "exactitud": 0.8446601941747572,
+        "ic_wilson": [
+          0.7624742780120963,
+          0.9020617624322336
+        ],
+        "n": 103
+      },
+      "discordantes_diseno_original": {
+        "aciertos": 25,
+        "exactitud": 0.5319148936170213,
+        "ic_wilson": [
+          0.39232383220194805,
+          0.6666831292343927
+        ],
+        "n": 47
+      },
+      "refuerzo": {
+        "aciertos": 30,
+        "exactitud": 0.5357142857142857,
+        "ic_wilson": [
+          0.40704181935661177,
+          0.6598014708777623
+        ],
+        "n": 56
+      }
+    },
+    "canal": {
+      "Correo": {
+        "aciertos": 50,
+        "exactitud": 0.6410256410256411,
+        "ic_wilson": [
+          0.5302680321422857,
+          0.738544380502993
+        ],
+        "n": 78
+      },
+      "Formulario Web": {
+        "aciertos": 36,
+        "exactitud": 0.6206896551724138,
+        "ic_wilson": [
+          0.492028071927689,
+          0.7343572732271242
+        ],
+        "n": 58
+      },
+      "Telefono": {
+        "aciertos": 56,
+        "exactitud": 0.8,
+        "ic_wilson": [
+          0.6918335550374695,
+          0.8769526075163705
+        ],
+        "n": 70
+      }
+    },
+    "etapa": {
+      "deterministic": {
+        "aciertos": 88,
+        "exactitud": 0.7652173913043478,
+        "ic_wilson": [
+          0.6799576884955273,
+          0.8333311974313588
+        ],
+        "n": 115
+      },
+      "gemini": {
+        "aciertos": 54,
+        "exactitud": 0.5934065934065934,
+        "ic_wilson": [
+          0.49069436047008386,
+          0.6885521442904551
+        ],
+        "n": 91
+      }
+    },
+    "origen": {
+      "arbitraje_e5": {
+        "aciertos": 33,
+        "exactitud": 0.515625,
+        "ic_wilson": [
+          0.39581601478580125,
+          0.6336644833456737
+        ],
+        "n": 64
+      },
+      "consenso_e3_e4": {
+        "aciertos": 109,
+        "exactitud": 0.7676056338028169,
+        "ic_wilson": [
+          0.6916482930088332,
+          0.8294655289081483
+        ],
+        "n": 142
+      }
+    }
+  },
+  "entradas_sha256": {
+    "arbitraje_tres_vias.json": "4c85ab43bf28cac228caa35a6aaf3863deb327767cba31fbe850b43d2efe6a61",
+    "corpus_evaluacion_pseudonimizado.json": "1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb",
+    "corpus_independiente_arbitrado.json": "cb2874e649fb932c00b536100025c0a0137b3314ab12d45234e4c29049adc67e",
+    "doble_etiquetado_arbitrado.csv": "7993f3ffda7ae7b380833a41b226ed3a6b4f6aaa36f3fbed66fb52682a61d2a4",
+    "predicciones_arbitrado.json": "cb8aba6089dde9868c61740fba713fb75923ee32317370c46e0daeb52a01d5d5",
+    "predicciones_independiente.json": "d5ee19f7b0bf2b56a00026a1bd33a2e11ffeb9b224b6a8efa553460895a915a4"
+  },
+  "generador": "evaluation/data/campana/analisis/analisis_propagacion_arbitraje_c221.py",
+  "lectura_103_etapa_previa": {
+    "aciertos": 87,
+    "etiqueta": "etapa_previa",
+    "exactitud": 0.8446601941747572,
+    "ic_wilson": [
+      0.7624742780120963,
+      0.9020617624322336
+    ],
+    "limite_superior_debajo_de_085": false,
+    "n": 103
+  },
+  "lecturas": {
+    "ciento_cincuenta": {
+      "aciertos": 112,
+      "etiqueta": "complementaria",
+      "exactitud": 0.7466666666666667,
+      "ic_wilson": [
+        0.6715059067359275,
+        0.8095087727091548
+      ],
+      "limite_superior_debajo_de_085": true,
+      "n": 150
+    },
+    "ponderada": {
+      "descartadas": 0,
+      "etiqueta": "complementaria",
+      "ic": [
+        0.6821859868588583,
+        0.8098501693895643
+      ],
+      "limite_superior_debajo_de_085": true,
+      "nivel_confianza": 0.95,
+      "remuestras_validas": 2000,
+      "remuestreos": 2000,
+      "semilla": 20261021,
+      "valor": 0.7488984913281065
+    },
+    "primaria": {
+      "aciertos": 142,
+      "etiqueta": "primaria",
+      "exactitud": 0.6893203883495146,
+      "ic_wilson": [
+        0.6231450504484284,
+        0.7485641458103036
+      ],
+      "limite_superior_debajo_de_085": true,
+      "n": 206
+    }
+  },
+  "metodo": "solo lectura; evaluation.metrics + evaluation.calibracion_gate; sin red ni Gemini; deterministico; metodo prerregistrado en el docstring del generador",
+  "metricas_por_clase": {
+    "f1": {
+      "Bases de Datos": 0.823529411764706,
+      "Seguridad Informatica": 0.634920634920635,
+      "Sistemas": 0.5904761904761906,
+      "Soporte Tecnico Hardware": 0.8224299065420562,
+      "Soporte Tecnico Software": 0.6407766990291262
+    },
+    "f1_macro": 0.7024265685465428,
+    "matriz": {
+      "Bases de Datos": {
+        "Bases de Datos": 14,
+        "Seguridad Informatica": 0,
+        "Sistemas": 1,
+        "Soporte Tecnico Hardware": 0,
+        "Soporte Tecnico Software": 1
+      },
+      "Seguridad Informatica": {
+        "Bases de Datos": 0,
+        "Seguridad Informatica": 20,
+        "Sistemas": 4,
+        "Soporte Tecnico Hardware": 3,
+        "Soporte Tecnico Software": 5
+      },
+      "Sistemas": {
+        "Bases de Datos": 3,
+        "Seguridad Informatica": 8,
+        "Sistemas": 31,
+        "Soporte Tecnico Hardware": 3,
+        "Soporte Tecnico Software": 16
+      },
+      "Soporte Tecnico Hardware": {
+        "Bases de Datos": 0,
+        "Seguridad Informatica": 0,
+        "Sistemas": 5,
+        "Soporte Tecnico Hardware": 44,
+        "Soporte Tecnico Software": 2
+      },
+      "Soporte Tecnico Software": {
+        "Bases de Datos": 1,
+        "Seguridad Informatica": 3,
+        "Sistemas": 3,
+        "Soporte Tecnico Hardware": 6,
+        "Soporte Tecnico Software": 33
+      }
+    },
+    "precision": {
+      "Bases de Datos": 0.7777777777777778,
+      "Seguridad Informatica": 0.6451612903225806,
+      "Sistemas": 0.7045454545454546,
+      "Soporte Tecnico Hardware": 0.7857142857142857,
+      "Soporte Tecnico Software": 0.5789473684210527
+    },
+    "sensibilidad": {
+      "Bases de Datos": 0.875,
+      "Seguridad Informatica": 0.625,
+      "Sistemas": 0.5081967213114754,
+      "Soporte Tecnico Hardware": 0.8627450980392157,
+      "Soporte Tecnico Software": 0.717391304347826
+    },
+    "soporte": {
+      "Bases de Datos": 16,
+      "Seguridad Informatica": 32,
+      "Sistemas": 61,
+      "Soporte Tecnico Hardware": 51,
+      "Soporte Tecnico Software": 46
+    }
+  },
+  "parametros": {
+    "B": 2000,
+    "bandas_ece": 10,
+    "c_medido_s": 69.50741008771931,
+    "nivel_confianza": 0.95,
+    "pesos": {
+      "Bases de Datos": 1,
+      "Seguridad Informatica": 31,
+      "Sistemas": 16,
+      "Soporte Tecnico Hardware": 85,
+      "Soporte Tecnico Software": 67
+    },
+    "rejilla_c_min": [
+      5,
+      10,
+      15
+    ],
+    "semilla": 20261021,
+    "umbral_objetivo": 0.85,
+    "umbrales": [
+      0.7,
+      0.86,
+      0.91,
+      0.96,
+      0.99,
+      "inf"
+    ]
+  },
+  "preregistro": {
+    "ciego": false,
+    "declaracion": "El metodo y los parametros se fijaron antes de generar las salidas. El preregistro NO fue ciego: los agregados canonicos ya se conocian; no se habia observado la distribucion bootstrap.",
+    "fijado_en_docstring": true
+  },
+  "reproducibilidad": {
+    "commits": {
+      "predicciones_arbitrado.json": {
+        "alcanzable_desde_main": true,
+        "commit": "1b62fdb",
+        "commit_que_versiono_el_archivo": null
+      },
+      "predicciones_independiente.json": {
+        "alcanzable_desde_main": false,
+        "commit": "561b3c4",
+        "commit_que_versiono_el_archivo": "1b17e55"
+      }
+    },
+    "diferencias": {
+      "casos_comunes": 103,
+      "confianza": [
+        "I026",
+        "I043",
+        "I050",
+        "I055",
+        "I067",
+        "I084",
+        "I085"
+      ],
+      "etapa": [],
+      "sector": []
+    },
+    "nota": "el commit declarado en predicciones_independiente.json puede existir como objeto colgante en el clon donde se hizo la corrida, pero no viaja con fetch ni con clone; se registra por alcanzabilidad desde origin/main y por el commit que versiono el archivo, no por la presencia local del objeto (git cat-file -t prohibido)."
+  },
+  "sistemas": {
+    "composicion_original": {
+      "Bases de Datos": 14,
+      "Seguridad Informatica": 28,
+      "Sistemas": 21,
+      "Soporte Tecnico Hardware": 49,
+      "Soporte Tecnico Software": 38
+    },
+    "composicion_refuerzo": {
+      "Bases de Datos": 2,
+      "Seguridad Informatica": 4,
+      "Sistemas": 40,
+      "Soporte Tecnico Hardware": 2,
+      "Soporte Tecnico Software": 8
+    },
+    "destinos_error": {
+      "Bases de Datos": 3,
+      "Seguridad Informatica": 8,
+      "Soporte Tecnico Hardware": 3,
+      "Soporte Tecnico Software": 16
+    },
+    "destinos_error_original": {
+      "Bases de Datos": 1,
+      "Seguridad Informatica": 1,
+      "Soporte Tecnico Hardware": 2,
+      "Soporte Tecnico Software": 9
+    },
+    "destinos_error_refuerzo": {
+      "Bases de Datos": 2,
+      "Seguridad Informatica": 7,
+      "Soporte Tecnico Hardware": 1,
+      "Soporte Tecnico Software": 7
+    },
+    "f1": 0.5904761904761906,
+    "original_n": 21,
+    "precision": 0.7045454545454546,
+    "refuerzo_n": 40,
+    "sensibilidad": 0.5081967213114754,
+    "soporte": 61
+  }
+}

@@ -942,7 +942,7 @@
       \field{title}{Agile testing: A practical guide for testers and agile teams}
       \field{year}{2009}
     \endentry
-    \entry{Date2003_database}{book}{}{}
+    \entry{Date2004_database}{book}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=9dd47a388701bcd9c10b3adf41ce90a1}{%
            family={Date},
@@ -1081,7 +1081,7 @@
       \verb https://docs.docker.com/compose/
       \endverb
     \endentry
-    \entry{Efron1993_bootstrap}{book}{}{}
+    \entry{Efron1994_bootstrap}{book}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=5470455fc7dceb3ccf6db38cb22a113d}{%
            family={Efron},
@@ -1333,8 +1333,8 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Software de computadora. GitHub}
-      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.3.0)}
-      \field{urlday}{9}
+      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.4.0)}
+      \field{urlday}{14}
       \field{urlmonth}{11}
       \field{urlyear}{2026}
       \field{year}{2026}
@@ -1782,7 +1782,7 @@
       \verb 10.1214/aoms/1177728261
       \endverb
     \endentry
-    \entry{Hohpe2003_eip}{book}{}{}
+    \entry{Hohpe2004_eip}{book}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=2ed2f5feceafdf9a03a27134da39d3d0}{%
            family={Hohpe},
@@ -2099,7 +2099,7 @@
       \verb https://doi.org/10.1145/3571730
       \endverb
     \endentry
-    \entry{Jurafsky2023_speech_language}{unpublished}{}{}
+    \entry{Jurafsky2026_speech_language}{unpublished}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=bd33d7a70284b5ead9c7985cb5c9929c}{%
            family={Jurafsky},
@@ -3651,18 +3651,18 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentación de la plataforma (capacidades y precios)}
+      \field{note}{Documentación oficial de la plataforma}
       \field{title}{{ServiceNow} {ITSM}}
-      \field{urlday}{19}
-      \field{urlmonth}{10}
+      \field{urlday}{14}
+      \field{urlmonth}{11}
       \field{urlyear}{2026}
       \field{year}{2026}
       \field{urldateera}{ce}
       \verb{urlraw}
-      \verb https://www.servicenow.com/products/itsm.html
+      \verb https://www.servicenow.com/docs/
       \endverb
       \verb{url}
-      \verb https://www.servicenow.com/products/itsm.html
+      \verb https://www.servicenow.com/docs/
       \endverb
     \endentry
     \entry{Shapiro1965_normality}{article}{}{}
@@ -3788,7 +3788,7 @@
       \verb 10.1016/j.ipm.2009.03.002
       \endverb
     \endentry
-    \entry{Stallings2017_computer_security}{book}{}{}
+    \entry{Stallings2018_computer_security}{book}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=0599c551bf066f66e0e9c44815384cb4}{%
            family={Stallings},
@@ -6482,7 +6482,7 @@
       \field{title}{Agile testing: A practical guide for testers and agile teams}
       \field{year}{2009}
     \endentry
-    \entry{Date2003_database}{book}{}{}
+    \entry{Date2004_database}{book}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=9dd47a388701bcd9c10b3adf41ce90a1}{%
            family={Date},
@@ -6621,7 +6621,7 @@
       \verb https://docs.docker.com/compose/
       \endverb
     \endentry
-    \entry{Efron1993_bootstrap}{book}{}{}
+    \entry{Efron1994_bootstrap}{book}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=5470455fc7dceb3ccf6db38cb22a113d}{%
            family={Efron},
@@ -6873,8 +6873,8 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Software de computadora. GitHub}
-      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.3.0)}
-      \field{urlday}{9}
+      \field{title}{Automatización de mesa de ayuda {N8N} (Versión 1.4.0)}
+      \field{urlday}{14}
       \field{urlmonth}{11}
       \field{urlyear}{2026}
       \field{year}{2026}
@@ -7322,7 +7322,7 @@
       \verb 10.1214/aoms/1177728261
       \endverb
     \endentry
-    \entry{Hohpe2003_eip}{book}{}{}
+    \entry{Hohpe2004_eip}{book}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=2ed2f5feceafdf9a03a27134da39d3d0}{%
            family={Hohpe},
@@ -7639,7 +7639,7 @@
       \verb https://doi.org/10.1145/3571730
       \endverb
     \endentry
-    \entry{Jurafsky2023_speech_language}{unpublished}{}{}
+    \entry{Jurafsky2026_speech_language}{unpublished}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=bd33d7a70284b5ead9c7985cb5c9929c}{%
            family={Jurafsky},
@@ -9191,18 +9191,18 @@
       \true{uniqueprimaryauthor}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{note}{Documentación de la plataforma (capacidades y precios)}
+      \field{note}{Documentación oficial de la plataforma}
       \field{title}{{ServiceNow} {ITSM}}
-      \field{urlday}{19}
-      \field{urlmonth}{10}
+      \field{urlday}{14}
+      \field{urlmonth}{11}
       \field{urlyear}{2026}
       \field{year}{2026}
       \field{urldateera}{ce}
       \verb{urlraw}
-      \verb https://www.servicenow.com/products/itsm.html
+      \verb https://www.servicenow.com/docs/
       \endverb
       \verb{url}
-      \verb https://www.servicenow.com/products/itsm.html
+      \verb https://www.servicenow.com/docs/
       \endverb
     \endentry
     \entry{Shapiro1965_normality}{article}{}{}
@@ -9328,7 +9328,7 @@
       \verb 10.1016/j.ipm.2009.03.002
       \endverb
     \endentry
-    \entry{Stallings2017_computer_security}{book}{}{}
+    \entry{Stallings2018_computer_security}{book}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=0599c551bf066f66e0e9c44815384cb4}{%
            family={Stallings},

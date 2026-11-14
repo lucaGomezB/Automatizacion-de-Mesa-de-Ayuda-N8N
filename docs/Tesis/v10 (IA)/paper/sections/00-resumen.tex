@@ -6,13 +6,13 @@
 
 La digitalización eleva la criticidad de la gestión de incidentes, pero en muchas organizaciones medianas el registro inicial es manual, con demoras, errores de clasificación y uso ineficiente de recursos.
 
-Esta investigación diseña, implementa y valida un sistema automatizado de mesa de ayuda que integra N8N, un módulo de lenguaje natural con FastAPI, Gemini~3.6 Flash, PostgreSQL y telefonía con Twilio. Recibe solicitudes por correo, formulario web y teléfono, y las deriva a uno de los cinco sectores mediante un clasificador híbrido de reglas y un modelo de lenguaje grande.
+Esta investigación diseña, implementa y valida un sistema automatizado de mesa de ayuda que integra N8N, FastAPI, Gemini~3.6 Flash, PostgreSQL y telefonía con Twilio. Recibe solicitudes por correo, formulario web y teléfono y las deriva a uno de los cinco sectores mediante un clasificador híbrido de reglas y un modelo de lenguaje grande.
 
-El estudio es cuantitativo y cuasiexperimental, de muestras pareadas, sobre los 200 casos (muestra por conveniencia). El doble etiquetado independiente de la campaña complementaria alcanzó un kappa de 0,5569 (moderado; IC del 95~\% [0,4725; 0,6413]).
+El estudio es cuantitativo y cuasiexperimental, de muestras pareadas, sobre los 200 casos (muestra por conveniencia). El doble etiquetado independiente de la campaña complementaria alcanzó un kappa de 0,5569 (moderado).
 
-El tiempo medio de registro se redujo significativamente, de 61,6~s a 17,76~s (71,2~\%). La prueba de Wilcoxon arrojó \(W = 363\) y un tamaño del efecto \(r = 0{,}9639\). Dentro de la muestra, la exactitud estricta alcanzó 73,5~\% y el macro-F1 de umbral, sobre las cuatro clases estimables, 0,6508. Por sub-hipótesis, una se corrobora (tiempo de registro), una resulta no concluyente (intervención humana: de 147 casos revisados, 25 cambiaron, 17,0~\%; denominador fijado tras conocer los datos; el intervalo incluye 0,15) y una se refuta (exactitud y macro-F1).
+El tiempo medio de registro se redujo significativamente, de 61,6~s a 17,76~s (71,2~\%). Dentro de la muestra, la exactitud estricta fue de 73,5~\% y el macro-F1 de umbral, 0,6508. Fuera de la muestra, sobre el corpus arbitrado, la exactitud estricta cruda fue de 0,6893 (ponderada, 0,7489), por debajo del umbral, y el híbrido superó a la línea de base clásica. Por sub-hipótesis, una se corrobora (tiempo), una resulta no concluyente (intervención humana: de 147 revisados, 25 cambiaron, 17,0~\%) y una se refuta (exactitud y macro-F1).
 
-Los hallazgos respaldan la viabilidad técnica; la económica y operativa es condicional: con referencia común, el balance neto estimado es positivo, pero su intervalo incluye cero. Se aporta una arquitectura reproducible y evidencia en español rioplatense.
+Los hallazgos respaldan la viabilidad técnica; la económica y operativa es condicional: con una referencia común el balance neto es positivo, pero la muestra solo fija su signo con 5 minutos por derivación. Se aporta una arquitectura reproducible y evidencia en español rioplatense.
 
 \bigskip
 \noindent\textbf{Palabras clave:} automatización, mesa de ayuda, procesamiento de lenguaje natural, modelo de lenguaje grande, N8N, FastAPI, clasificación de tickets, español rioplatense, human in the loop
@@ -22,13 +22,13 @@ Los hallazgos respaldan la viabilidad técnica; la económica y operativa es con
 
 Digitalization raises the criticality of incident management, yet in many medium-sized organizations initial registration is manual, with delays, classification errors, and inefficient use of resources.
 
-This thesis designs, implements, and validates an automated help desk system integrating N8N, a Python natural language processing module built with FastAPI, the Gemini~3.6 Flash model, PostgreSQL, and a Twilio telephony channel. It receives requests through email, web form, and phone calls with automatic transcription, and routes each incident to one of the five canonical sectors using a hybrid classifier that combines deterministic rules with a large language model.
+This thesis designs, implements, and validates an automated help desk system integrating N8N, FastAPI, the Gemini~3.6 Flash model, PostgreSQL, and a Twilio telephony channel. It receives requests through email, web form, and phone calls with automatic transcription, and routes each incident to one of the five canonical sectors using a hybrid classifier of rules and a large language model.
 
-The study is quantitative and quasi-experimental, with paired samples over 200 cases (convenience sample). The independent double labeling of the complementary campaign reached a kappa of 0.5569 (moderate; 95~\% CI [0.4725, 0.6413]).
+The study is quantitative and quasi-experimental, with paired samples over 200 cases (convenience sample). The independent double labeling of the complementary campaign reached a kappa of 0.5569 (moderate).
 
-Results show a significant reduction in mean registration time, from 61.6~s to 17.76~s (71.2~\%). The Wilcoxon signed-rank test yielded \(W = 363\) with an effect size \(r = 0.9639\). As in-sample estimates, strict classification accuracy reached 73.5~\% and the threshold macro-F1, over the four estimable classes, was 0.6508. Per sub-hypothesis, one is corroborated (registration time), one is inconclusive (human intervention: of 147 reviewed cases, 25 changed, 17.0~\%; denominator fixed after seeing the data; the interval includes 0.15), and one is refuted (accuracy and macro-F1).
+Results show a significant reduction in mean registration time, from 61.6~s to 17.76~s (71.2~\%). As in-sample estimates, strict classification accuracy was 73.5~\% and the threshold macro-F1 was 0.6508. Out of sample, on the arbitrated corpus, strict accuracy was 0.6893 (weighted, 0.7489), below the threshold, and the hybrid outperformed the classical baseline. Per sub-hypothesis, one is corroborated (registration time), one is inconclusive (human intervention: of 147 reviewed cases, 25 changed, 17.0~\%), and one is refuted (accuracy and macro-F1).
 
-The findings support technical feasibility; economic and operational feasibility are conditional: on a common reference, the estimated net balance is positive, but its interval includes zero. A reproducible architecture and evidence in Rioplatense Spanish are provided.
+The findings support technical feasibility; economic and operational feasibility are conditional: on a common reference, the estimated net balance is positive, but the sample only fixes its sign at 5 minutes per misrouting. A reproducible architecture and evidence in Rioplatense Spanish are provided.
 
 \bigskip
 \noindent\textbf{Keywords:} automation, help desk, natural language processing, large language model, N8N, FastAPI, ticket classification, Rioplatense Spanish, human in the loop

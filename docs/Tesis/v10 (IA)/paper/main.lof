@@ -1,15 +1,15 @@
 \babel@toc {spanish}{}\relax 
-\contentsline {figure}{\numberline {1}{\ignorespaces Diagrama de arquitectura del sistema}}{52}{figure.caption.15}%
-\contentsline {figure}{\numberline {2}{\ignorespaces Diagrama de despliegue del entorno local. Servicios, redes Docker (edge, data interna, automation y host\_access), volúmenes y servicios externos.}}{53}{figure.caption.16}%
-\contentsline {figure}{\numberline {3}{\ignorespaces Diagrama entidad-relación de las siete entidades principales}}{58}{figure.caption.18}%
-\contentsline {figure}{\numberline {4}{\ignorespaces Panel de administración del sistema}}{69}{figure.caption.20}%
-\contentsline {figure}{\numberline {5}{\ignorespaces Dashboard de analítica del panel de administración}}{69}{figure.caption.21}%
-\contentsline {figure}{\numberline {6}{\ignorespaces Distribución del tiempo de registro por canal de origen (manual frente a automatizado), para la corrida telefónica del 5 y 6 de octubre de 2026. El panel de telefonía incorpora la duración de la llamada grabada.}}{81}{figure.caption.26}%
-\contentsline {figure}{\numberline {7}{\ignorespaces Diagrama de secuencia del flujo extremo a extremo de un incidente (parte A)}}{133}{figure.caption.55}%
-\contentsline {figure}{\numberline {8}{\ignorespaces Diagrama de secuencia del flujo extremo a extremo (parte B)}}{134}{figure.caption.56}%
-\contentsline {figure}{\numberline {9}{\ignorespaces Diagrama de componentes del módulo Python organizado en capas (parte A)}}{135}{figure.caption.57}%
-\contentsline {figure}{\numberline {10}{\ignorespaces Diagrama de componentes del módulo Python (parte B)}}{136}{figure.caption.58}%
-\contentsline {figure}{\numberline {11}{\ignorespaces Cronograma de la construcción, las campañas y la versión del modelo}}{137}{figure.caption.59}%
-\contentsline {figure}{\numberline {12}{\ignorespaces Reconstrucción esquemática del flujo de orquestación N8N (parte A)}}{141}{figure.caption.61}%
-\contentsline {figure}{\numberline {13}{\ignorespaces Reconstrucción esquemática del flujo de orquestación N8N (parte B)}}{142}{figure.caption.62}%
-\contentsline {figure}{\numberline {14}{\ignorespaces Reconstrucción esquemática del flujo de orquestación N8N (parte C)}}{143}{figure.caption.63}%
+\contentsline {figure}{\numberline {1}{\ignorespaces Diagrama de arquitectura del sistema}}{56}{figure.caption.18}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Diagrama de despliegue del entorno local. Servicios, redes Docker (edge, data interna, automation y host\_access), volúmenes y servicios externos.}}{57}{figure.caption.19}%
+\contentsline {figure}{\numberline {3}{\ignorespaces Diagrama entidad-relación de las siete entidades principales}}{62}{figure.caption.21}%
+\contentsline {figure}{\numberline {4}{\ignorespaces Panel de administración del sistema}}{74}{figure.caption.23}%
+\contentsline {figure}{\numberline {5}{\ignorespaces Dashboard de analítica del panel de administración}}{74}{figure.caption.24}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Distribución del tiempo de registro por canal de origen (manual frente a automatizado), para la corrida telefónica del 5 y 6 de octubre de 2026. El panel de telefonía incorpora la duración de la llamada grabada.}}{86}{figure.caption.29}%
+\contentsline {figure}{\numberline {7}{\ignorespaces Diagrama de secuencia del flujo extremo a extremo de un incidente (parte A)}}{140}{figure.caption.58}%
+\contentsline {figure}{\numberline {8}{\ignorespaces Diagrama de secuencia del flujo extremo a extremo (parte B)}}{141}{figure.caption.59}%
+\contentsline {figure}{\numberline {9}{\ignorespaces Diagrama de componentes del módulo Python organizado en capas (parte A)}}{142}{figure.caption.60}%
+\contentsline {figure}{\numberline {10}{\ignorespaces Diagrama de componentes del módulo Python (parte B)}}{143}{figure.caption.61}%
+\contentsline {figure}{\numberline {11}{\ignorespaces Cronograma de la construcción, las campañas y la versión del modelo}}{144}{figure.caption.62}%
+\contentsline {figure}{\numberline {12}{\ignorespaces Reconstrucción esquemática del flujo de orquestación N8N (parte A)}}{148}{figure.caption.64}%
+\contentsline {figure}{\numberline {13}{\ignorespaces Reconstrucción esquemática del flujo de orquestación N8N (parte B)}}{149}{figure.caption.65}%
+\contentsline {figure}{\numberline {14}{\ignorespaces Reconstrucción esquemática del flujo de orquestación N8N (parte C)}}{150}{figure.caption.66}%

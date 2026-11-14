@@ -2263,6 +2263,174 @@ IC de la diferencia de medias: el diseño anticipaba `[4,19; 49,61]` y el análi
 particular, `c = 10 a 15 min` (Sección 3.11) conserva su cifra y su estado `condicional`, y el
 balance neto de las Secciones 3.11/3.21 no se recalcula.
 
+### 3.32 Propagación del arbitraje fuera de muestra: tres lecturas, desgloses, calibración descriptiva y sensibilidad del balance (c-221)
+
+Sección **aditiva**: no reemplaza ni cambia la cifra ni el estado de ningún valor de las secciones
+3.1 a 3.31. Registra las cifras nuevas que el análisis de c-221 produce sobre artefactos ya
+versionados, de solo lectura, sin red, sin Gemini y sin base de datos. No cambia el umbral del 85 %,
+el balance neto `B`, `a*`, las categorías ni ningún artefacto congelado; no re-elege el umbral del
+gate (la regla prerregistrada de c-214 elige solo con los `200` casos de ajuste). No reclasifica, no
+reentrena y no modifica el corpus, las predicciones ni los artefactos congelados.
+
+*Numeración.* El memo terminaba en la Sección `3.31` (c-220); esta sección es la `3.32`, la primera
+libre. Coincide con el número fijado en la tarea 0.5 (coordinación con c-218/c-219/c-220).
+
+Fuente única de las cifras: `evaluation/data/campana/analisis/analisis_propagacion_arbitraje_c221.json`
+(y su vista `.md`), generado por el script de solo lectura
+`evaluation/data/campana/analisis/analisis_propagacion_arbitraje_c221.py` (pruebas en
+`test_analisis_propagacion_arbitraje_c221.py`, `43` pruebas). Comando (desde la raíz del repositorio):
+
+```bash
+python3 evaluation/data/campana/analisis/analisis_propagacion_arbitraje_c221.py
+```
+
+Método: reutiliza `evaluation/metrics.py` y `evaluation/calibracion_gate.py`; `B = 2000`, semilla
+`20261021`, nivel `0,95`, `10` bandas de ECE; sin red ni Gemini; determinista. El método y los
+parámetros se fijaron en el docstring del generador antes de producir las salidas. El prerregistro
+**no** es ciego: los agregados canónicos ya se conocían; lo que no se había observado es la
+distribución bootstrap.
+
+SHA-256 de las salidas versionadas (UTF-8 sin BOM, LF; dos corridas idénticas byte a byte):
+`analisis_propagacion_arbitraje_c221.json`
+`2df409b1b6f6d6b9d490e40b5dbc30e1221a41b047aeff1f80511a51912a7e8c`;
+`analisis_propagacion_arbitraje_c221.md`
+`433fd7fc7b0b757fef4ac61d1b3de06d2b523582d4d542625c62d4bfb2e976ae`.
+
+Entradas leídas y su SHA-256 (normalización LF como c-213/c-214): `corpus_independiente_arbitrado.json`
+`cb2874e649fb932c00b536100025c0a0137b3314ab12d45234e4c29049adc67e`;
+`predicciones_arbitrado.json`
+`cb8aba6089dde9868c61740fba713fb75923ee32317370c46e0daeb52a01d5d5`;
+`predicciones_independiente.json`
+`d5ee19f7b0bf2b56a00026a1bd33a2e11ffeb9b224b6a8efa553460895a915a4`;
+`arbitraje_tres_vias.json`
+`4c85ab43bf28cac228caa35a6aaf3863deb327767cba31fbe850b43d2efe6a61`;
+`doble_etiquetado_arbitrado.csv`
+`7993f3ffda7ae7b380833a41b226ed3a6b4f6aaa36f3fbed66fb52682a61d2a4`;
+`corpus_evaluacion_pseudonimizado.json`
+`1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb`.
+
+**(a) Anclajes reproducidos antes de escribir (abortan si no coinciden).** Con el corpus arbitrado de
+`206` casos, la exactitud estricta cruda es `142/206` y el macro-F1 `0,7024`; sobre los `103` de
+`predicciones_independiente.json` (consenso `E3`/`E4`), `87/103` y la ponderada `0,8146`; sobre los
+`34` casos Gemini con consenso, ECE `0,1715` y Brier `0,1935`; celda `+6,9` de `tab:balance-neto`
+(`15 %`, `5` minutos, `e_aut = 53/200`) y `+25,4/+18,7/+11,9` con la referencia común; cardinalidades
+arbitrados `64`, discordantes originales `47`, refuerzo `56`, tres vías `6`, y `103` predicciones
+dentro de `I001`..`I150`. Fuente: `…c221.json` (`anclajes`). Estado: `vigente` (nuevo) como control de
+reproducción; no introduce cifras nuevas.
+
+**(b) Tres lecturas rotuladas de la exactitud estricta fuera de muestra (OOS-020, D1).**
+
+| Lectura | Rótulo | Aciertos | `n` | Exactitud | IC 95 % | Límite superior < `0,85` | Fuente |
+|---|---|---|---|---|---|---|---|
+| Cruda sobre el corpus arbitrado | **primaria** | `142` | `206` | `0,6893` | Wilson `[0,6231; 0,7486]` | `sí` | `…c221.json` (`lecturas.primaria`) |
+| Ponderada por la composición del corpus de `200` | complementaria | — | `206` | `0,7489` | bootstrap `[0,6822; 0,8099]` | `sí` | idem (`lecturas.ponderada`) |
+| `150` originales sin exclusión (`I001`..`I150`) | complementaria | `112` | `150` | `0,7467` | Wilson `[0,6715; 0,8095]` | `sí` | idem (`lecturas.ciento_cincuenta`) |
+
+La ponderada usa bootstrap percentil por caso de `2000` remuestreos, semilla `20261021`; réplicas
+descartadas por falta de alguna clase con peso: `0`. Las tres lecturas se rotulan: la cruda es la
+primaria y las otras dos son complementarias; ninguna reemplaza a la primaria ni al valor vigente. La
+lectura con exclusión sobre `103` se conserva como etapa previa: `87/103 = 0,8447`
+(`lectura_103_etapa_previa`). La ponderada y la de `150` citan como antecedente de la ponderación el
+diseño de c-191 y el de c-206. Estado: `vigente` (nuevo).
+
+**(c) Pesos leídos del corpus de ajuste (OOS-020).** Del campo `sector_asignado` de
+`data/corpus_evaluacion_pseudonimizado.json`: `Sistemas` `16`, `Soporte Tecnico Hardware` `85`,
+`Soporte Tecnico Software` `67`, `Seguridad Informatica` `31`, `Bases de Datos` `1` (suma `200`). El
+script aborta si el conteo leído difiere. Fuente: `…c221.json` (`parametros.pesos`). Estado: `vigente`
+(nuevo) como anclaje.
+
+**(d) Desglose por bloque, por etapa y por canal (OOS-021).** Aciertos, `n`, exactitud e IC de Wilson.
+
+| Corte | Grupo | Aciertos | `n` | Exactitud | IC 95 % (Wilson) |
+|---|---|---|---|---|---|
+| Bloque | consenso del diseño original | `87` | `103` | `0,8447` | `[0,7625; 0,9021]` |
+| Bloque | discordantes del diseño original | `25` | `47` | `0,5319` | `[0,3923; 0,6667]` |
+| Bloque | refuerzo (`I151`..`I206`) | `30` | `56` | `0,5357` | `[0,4070; 0,6598]` |
+| Etapa | determinística | `88` | `115` | `0,7652` | `[0,6800; 0,8333]` |
+| Etapa | Gemini | `54` | `91` | `0,5934` | `[0,4907; 0,6886]` |
+| Canal | correo | `50` | `78` | `0,6410` | `[0,5303; 0,7385]` |
+| Canal | formulario web | `36` | `58` | `0,6207` | `[0,4920; 0,7344]` |
+| Canal | teléfono | `56` | `70` | `0,8000` | `[0,6918; 0,8770]` |
+
+Fuente: `…c221.json` (`desglose.bloque`, `desglose.etapa`, `desglose.canal`). Estado: `vigente`
+(nuevo).
+
+*Exactitud por origen de la referencia (consenso de `E3` y `E4`, `n = 142`, frente a arbitraje de
+`E5`, `n = 64`).* No se registra de nuevo aquí: figura en la Sección `3.30` (c-219), que la produce en
+`analisis_sesgo_corpus_referencia_c219.json` (claves `subconjuntos.consenso` y
+`subconjuntos.arbitrado`), y se cita desde allí. El script de c-221 la conserva solo como **anclaje**
+(aborta sin escribir si difiere de `109/142` y `33/64`) y como base de las lecturas que c-219 no cubre
+(discordantes originales, refuerzo, etapa y canal). Esta remisión satisface la regla de no doble
+registro de OOS-021.
+
+**(e) Métricas por clase y matriz `5x5` del corpus arbitrado (OOS-018).**
+
+| Clase | Soporte | Precisión | Sensibilidad | F1 |
+|---|---|---|---|---|
+| `Seguridad Informatica` | `32` | `0,6452` | `0,6250` | `0,6349` |
+| `Soporte Tecnico Hardware` | `51` | `0,7857` | `0,8627` | `0,8224` |
+| `Soporte Tecnico Software` | `46` | `0,5789` | `0,7174` | `0,6408` |
+| `Bases de Datos` | `16` | `0,7778` | `0,8750` | `0,8235` |
+| `Sistemas` | `61` | `0,7045` | `0,5082` | `0,5905` |
+
+Macro-F1 `0,7024`; la matriz de confusión `5x5` completa está en `…c221.json`
+(`metricas_por_clase.matriz`). `Sistemas` y `Bases de Datos` quedan como estimables con el soporte
+ampliado. Fuente: `…c221.json` (`metricas_por_clase`). Estado: `vigente` (nuevo).
+
+**(f) `Sistemas` con soporte ampliado (OOS-021).** `61` casos (`21` originales y `40` del refuerzo);
+sensibilidad `31/61 = 0,5082`; precisión `0,7045`; F1 `0,5905`. Destinos de los `30` errores:
+`Soporte Tecnico Software` `16`, `Seguridad Informatica` `8`, `Soporte Tecnico Hardware` `3`,
+`Bases de Datos` `3` (el error se reparte en más de una clase; en los `21` originales los destinos son
+`9`/`1`/`2`/`1`). Composición del refuerzo por sector: `Sistemas` `40`, `Soporte Tecnico Software` `8`,
+`Seguridad Informatica` `4`, `Bases de Datos` `2`, `Soporte Tecnico Hardware` `2`. Fuente:
+`…c221.json` (`sistemas`). Estado: `vigente` (nuevo).
+
+**(g) Calibración descriptiva de la etapa Gemini del corpus arbitrado (CAL-007, D3).** Sobre los `91`
+casos Gemini del corpus arbitrado: exactitud `0,5934`, confianza media `0,9055`, sobreconfianza
+`0,3121`, ECE `0,3209` (IC `[0,2230; 0,4201]`), Brier `0,3258` (IC `[0,2465; 0,4066]`), AUROC `0,6912`
+(IC `[0,5768; 0,7923]`). Barrido descriptivo con los candidatos de la regla prerregistrada de c-214
+(`0,70` vigente, `0,86`, `0,91`, `0,96`, `0,99` y derivar todo lo escalado): umbral `0,70` → `90`
+aceptados, exactitud selectiva `0,5889`; `0,86` → `55`, `0,7455`; `0,91` → `48`, `0,7708`; `0,96` →
+`5`, `0,6000`; `0,99` y `inf` → `0`. **No se selecciona, confirma ni modifica ningún umbral**
+(`umbral_seleccionado` = `null`). La fila de `34` del prerregistro se conserva como contraste: ECE
+`0,1715`, Brier `0,1935`, AUROC `0,7163`, exactitud `0,7647`, confianza media `0,9156`. Fuente:
+`…c221.json` (`calibracion.arbitrado`, `calibracion.contraste_34`). Estado: `vigente` (nuevo) como
+descripción.
+
+**(h) Sensibilidad del balance neto con la tasa fuera de muestra (OOS-022).** `B = (N/3600)·[Δt −
+(e_aut − e_man)·c]` con `N = 2.646`, `Δt = 43,82` s y `e_man = 26/151 = 0,1722`. Con `e_aut` ponderada
+(`1 − 0,7489 = 0,2511`): rejilla `c ∈ {5, 10, 15}` min → `+14,8 / −2,6 / −20,0`; con el `c` medido
+`69,51` s de la Sección `3.31` (c-220) como escenario central adicional → `+28,2`. Con `e_aut` cruda
+(`64/206 = 0,3107`): `+1,7 / −28,9 / −59,4`; con `c = 69,51` s → `+25,1`. El resultado se rotula como
+**sensibilidad** que mezcla corpus y referencias y **no** reemplaza el balance con referencia común de
+la Sección `3.21`; el signo depende de la exactitud y del costo. Fuente: `…c221.json` (`balance`).
+Estado: `vigente` (nuevo) como sensibilidad.
+
+**(i) Controles de reproducibilidad entre corridas (OOS-023).** Casos comunes entre
+`predicciones_independiente.json` y `predicciones_arbitrado.json`: `103`; el sector y la etapa
+coinciden en todos (`[]`); la confianza de Gemini difiere en `7`: `I026`, `I043`, `I050`, `I055`,
+`I067`, `I084`, `I085`. El `commit` `1b62fdb` declarado en `predicciones_arbitrado.json` es alcanzable
+desde `origin/main` (`git merge-base --is-ancestor` → `0`); el `561b3c4` de
+`predicciones_independiente.json` **no** es alcanzable desde `main` ni desde ninguna rama publicada
+(código `1`) y el archivo lo versionó `1b17e55` (`git log --diff-filter=A --format=%h -- <archivo>`).
+El JSON registra la alcanzabilidad y el commit que versionó el archivo, no la presencia local del
+objeto (`git cat-file -t` no se usa: un commit colgante existe en el clon de la corrida y no viaja con
+`fetch` ni con `clone`). Fuente: `…c221.json` (`reproducibilidad.diferencias`,
+`reproducibilidad.commits`). Estado: `vigente` (nuevo).
+
+**(j) Cuotas observadas y ventana del refuerzo (OOS-021).** Canal de los `150`: correo `50`,
+formulario web `40`, teléfono `60`. Canal del refuerzo: correo `28`, formulario web `18`, teléfono
+`10`. Sector del refuerzo: `Sistemas` `40`, `Soporte Tecnico Software` `8`, `Seguridad Informatica`
+`4`, `Bases de Datos` `2`, `Soporte Tecnico Hardware` `2`. Ventana de etiquetado del refuerzo (desde
+`doble_etiquetado_arbitrado.csv`): `2026-11-13T12:12:44-03:00` a `2026-11-13T18:12:03-03:00` (`129`
+filas). Fuente: `…c221.json` (`cuotas`). Estado: `vigente` (nuevo).
+
+**(k) Valores previos intactos.** Ningún valor ni estado de las secciones 3.1 a 3.31 cambia. En
+particular, `142/206`, `0,6893`, `0,7024`, `0,8447/103`, `0,8146`, `0,1715`, `0,1935` y las celdas del
+balance neto conservan su cifra y su estado. La Sección `3.31` (c-220) no se reescribe; el `c` medido
+`69,51` s se cita como escenario del balance de sensibilidad sin alterar `B`. La verificación con
+`git diff` dirigido confirma que la sección 3.32 es aditiva (solo líneas agregadas).
+
 ## 4. Contingencia del gate de intervención humana
 
 Tabla reconstruida desde `evaluation/predicciones.json` con
