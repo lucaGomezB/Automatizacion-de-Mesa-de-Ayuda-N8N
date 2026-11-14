@@ -5584,17 +5584,18 @@ prosa de las fases siguientes debe citar la columna «actual».
 
 ### Estado de las preguntas abiertas OQ1 a OQ6 (tarea 0.4)
 
-Ninguna pregunta abierta del design fue respondida por los autores en esta corrida; se registran todas
-como **`pendiente`**. Las tareas bloqueadas (5.1, 8.5, 9.1 y 11) no se ejecutan sin respuesta.
+Durante la corrida del apply, los autores respondieron **OQ1**; las restantes (OQ2 a OQ6) quedaron
+como **`pendiente`** al cierre de la fase 1. Las tareas bloqueadas (5.1, 8.5, 9.1 y 11) no se ejecutan
+sin respuesta.
 
 | OQ | Bloquea | Pregunta | Estado |
 |---|---|---|---|
-| OQ1 | 5.1 | Procedencia y período de los `150` casos del corpus independiente (y de los `56` de refuerzo): sistema de origen, rango de fechas, criterio de extracción | `pendiente` |
+| OQ1 | 5.1 | Procedencia y período de los `150` casos del corpus independiente (y de los `56` de refuerzo): sistema de origen, rango de fechas, criterio de extracción | **respondida (2026-11-14)**: origen = una compañía financiera del ámbito laboral de un autor; los incidentes ocurrieron entre el `2-11-2025` y el `12-2-2026`; se incorporaron a los casos crudos el `12-11` y el `13-11-2026`; los `56` comparten el origen; la selección por cobertura insuficiente aplica a todos los casos |
 | OQ2 | 11.1 | Número de la versión nueva (se recomienda `v1.4.0`) y fecha de portada | `pendiente` |
 | OQ3 | 9.1 | Anexo J: ¿se retira (recomendado) o se conserva y se actualiza? | `pendiente` |
 | OQ4 | 8.5 | Resolución AAIP 198/2023: ¿se verifica en fuente oficial y se autoriza la oración en el capítulo legal? | `pendiente` |
 | OQ5 | 11.3, 11.4 | Confirmación expresa para crear el tag, pushear la rama y abrir el PR | `pendiente` |
-| OQ6 | 4.1 | Confirmación de la regla de lectura de D1 (primaria cruda; veredicto con las tres) antes de escribir la discusión | `pendiente` |
+| OQ6 | 4.1 | Confirmación de la regla de lectura de D1 (primaria cruda; veredicto con las tres) antes de escribir la discusión | **confirmada (2026-11-14)**: primaria cruda `142/206`; complementarias ponderada `0,7489` y 150 originales `112/150`; el veredicto del 85 % se lee con los tres límites superiores (los tres por debajo de 0,85); el resumen no cita `0,8447` |
 
 ### Sección `3.32` del memo y verificación aditiva (tareas 2.1 y 2.2)
 
@@ -5617,3 +5618,19 @@ como **`pendiente`**. Las tareas bloqueadas (5.1, 8.5, 9.1 y 11) no se ejecutan 
 Grupo 0 (0.1 a 0.5), grupo 1 (1.1 a 1.11) y grupo 2 (2.1 y 2.2) ejecutados. La prosa de la tesis
 (grupos 3 a 9), la matriz de trazabilidad `C21/…`, el libro mayor de páginas `+c-221` y el release
 (tareas 10 y 11) quedan para las fases posteriores.
+
+### Fase 2: prosa de los grupos 3 a 7 (tareas 3 a 7)
+
+- **4.1 Checkpoint de los autores (OQ6).** Antes de editar la discusión se mostró la regla de
+  lectura de D1 y el contenido mínimo de D6. Los autores **confirmaron (2026-11-14)** la regla:
+  primaria cruda `142/206` (`0,6893`); complementarias ponderada `0,7489` y `150` originales
+  `112/150` (`0,7467`); el veredicto del 85 % se lee con los tres límites superiores, todos por
+  debajo de `0,85`; el resumen no cita `0,8447`; fuera de `07-resultados.tex`, `0,8447` sobre `103`
+  aparece una sola vez (fila del objetivo 2 en `09-conclusiones.tex`), rotulada como etapa previa.
+  Se registra la conformidad y se ejecuta la prosa de los grupos 3 a 7.
+
+- **4.8 Verificación con `rg` (tras la prosa).** En `08`, `09` y `10` no quedan «sin el arbitraje»,
+  «41 de los 47» ni `0,2222`. `rg -n "0,8447" "docs/Tesis/v10 (IA)/paper/sections" -g
+  "!07-resultados.tex"` devuelve una sola línea (`09-conclusiones.tex:24`). `0,6893` en prosa
+  aparece como máximo una vez por capítulo (`08`: una, `09`: una en prosa más la celda exenta de la
+  tabla de objetivos, `10`: ninguna).

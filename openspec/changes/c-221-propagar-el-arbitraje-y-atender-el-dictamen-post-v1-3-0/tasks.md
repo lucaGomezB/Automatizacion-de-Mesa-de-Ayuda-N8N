@@ -127,62 +127,62 @@ preparación sin requisito propio no llevan paréntesis.
 
 ## 3. Resultados: estructura y cifras nuevas (`07-resultados.tex`)
 
-- [ ] 3.1 Crear `subsec:validacion-fuera-muestra` después de `subsec:resultados-campana-medicion`
+- [x] 3.1 Crear `subsec:validacion-fuera-muestra` después de `subsec:resultados-campana-medicion`
       y mover allí los párrafos de las líneas 312, 314 y 316 y `tab:fuera-de-muestra`, sin cambiar
       etiquetas. Crear `subsec:comparacion-alternativas` y mover los párrafos de 350, 372, 374 a
       396 con `tab:linea-base-clasica` y `tab:gemini-solo`, sin cambiar cifras. Ambas antes de
       `subsec:ruido-referencia`. (TD «Subsecciones propias»; TD «Reporte fuera de muestra»)
-- [ ] 3.2 Reescribir el párrafo del arbitraje (hoy `:316`): sin «change c-206»; cifra primaria y
+- [x] 3.2 Reescribir el párrafo del arbitraje (hoy `:316`): sin «change c-206»; cifra primaria y
       lecturas complementarias con su rótulo (D1); aciertos sobre los `47` discordantes, sobre los
       `56` de refuerzo y por etapa desde la sección de c-221; por origen de la referencia desde la
       sección de c-219 (o desde la de c-221 si c-219 no entró); `31/61` de `Sistemas` rotulado como
       sensibilidad. (OOS-018; OOS-020; OOS-021; DIC «Tabla y arbitraje ejecutado»; TD «Sistemas»)
-- [ ] 3.3 En `tab:fuera-de-muestra`: quitar «(c-206)» de la fila de discordantes (`:328`) y
+- [x] 3.3 En `tab:fuera-de-muestra`: quitar «(c-206)» de la fila de discordantes (`:328`) y
       «change c-206» de la nota (`:347`); rotular las filas de peor caso, mejor caso y cota como
       etapa previa; agregar las filas de las lecturas ponderada y de `150` con sus intervalos.
       (OOS-018; OOS-020; DIC «Tabla y arbitraje ejecutado»; TD «Identificadores internos»)
-- [ ] 3.4 Agregar `tab:fuera-de-muestra-clases` (matriz `5×5` del corpus arbitrado con precisión,
+- [x] 3.4 Agregar `tab:fuera-de-muestra-clases` (matriz `5×5` del corpus arbitrado con precisión,
       sensibilidad, F1 y soporte), con fuente en la nota; verificar contra
       `evaluation/data/campana/reporte_arbitrado.md` y contra la sección de c-221. (OOS-018;
       TD «Subsecciones propias»)
-- [ ] 3.5 En `subsec:calibracion` (`:195`-`:221`): fila descriptiva del corpus arbitrado en
+- [x] 3.5 En `subsec:calibracion` (`:195`-`:221`): fila descriptiva del corpus arbitrado en
       `tab:calibracion-gate` y nota de que el umbral no se eligió con ella; un párrafo con el
       barrido descriptivo sobre los casos Gemini del arbitrado (candidatos `0,70`, `0,86`, `0,91`,
       `0,96`, `0,99` y derivar todo) y la variación de la confianza entre corridas. La fila de `34`
       se conserva. (CAL-007; TD «Reproducibilidad»)
-- [ ] 3.6 Actualizar la frase de `07-resultados.tex:6` para enumerar los nueve apartados.
+- [x] 3.6 Actualizar la frase de `07-resultados.tex:6` para enumerar los nueve apartados.
       (TD «Subsecciones propias»)
-- [ ] 3.7 Redirigir a `subsec:validacion-fuera-muestra` las remisiones a contenido de la
+- [x] 3.7 Redirigir a `subsec:validacion-fuera-muestra` las remisiones a contenido de la
       validación (`08-discusion.tex:20`, `:28`, `:60`; `10-recomendaciones.tex:26`) y dejar las
       demás; compilar y verificar cero referencias indefinidas y cero etiquetas duplicadas.
       (TD «Subsecciones propias»; TD «Repetición de cifras»)
 
 ## 4. Discusión, conclusiones y recomendaciones
 
-- [ ] 4.1 **[CHECKPOINT DE LOS AUTORES — OQ6]** Mostrar la regla de lectura de D1 y el contenido
+- [x] 4.1 **[CHECKPOINT DE LOS AUTORES — OQ6]** Mostrar la regla de lectura de D1 y el contenido
       mínimo de D6 antes de editar; registrar la conformidad.
-- [ ] 4.2 `08-discusion.tex:8`: reemplazar la oración de `0,8447` por la cifra primaria, las
+- [x] 4.2 `08-discusion.tex:8`: reemplazar la oración de `0,8447` por la cifra primaria, las
       lecturas complementarias y la lectura del umbral con los tres límites superiores; remitir a
       `subsec:validacion-fuera-muestra`. (TD «Propagación»; TD «Repetición de cifras»)
-- [ ] 4.3 `08-discusion.tex:20`: reemplazar el análisis de escenarios por el resultado medido
+- [x] 4.3 `08-discusion.tex:20`: reemplazar el análisis de escenarios por el resultado medido
       (`25` de `47`, lectura de `150`); conservar la limitación del ajuste sobre el mismo corpus.
       (TD «Propagación»)
-- [ ] 4.4 `08-discusion.tex:28`: reescribir la lectura de `Sistemas` con el soporte arbitrado, la
+- [x] 4.4 `08-discusion.tex:28`: reescribir la lectura de `Sistemas` con el soporte arbitrado, la
       sensibilidad, los destinos de error y la proporción proveniente del refuerzo; retirar
       «dirigido a una única clase adyacente» si los destinos de la sección de c-221 lo contradicen.
       (TD «Sistemas»)
-- [ ] 4.5 `08-discusion.tex:60` (séptima limitación): retirar el bloque de cifras repetido y
+- [x] 4.5 `08-discusion.tex:60` (séptima limitación): retirar el bloque de cifras repetido y
       remitir a la subsección. (TD «Propagación»; TD «Repetición de cifras»)
-- [ ] 4.6 `09-conclusiones.tex:24` (fila del objetivo 2, única aparición de `0,8447` fuera de
+- [x] 4.6 `09-conclusiones.tex:24` (fila del objetivo 2, única aparición de `0,8447` fuera de
       resultados, rotulada como etapa previa), `:37` (sin «change c-206», `Sistemas`
       con `61`, sin la propuesta de sobremuestreo) y `:47` (matiz de viabilidad con `54/91` frente
       a `88/115` por etapa, efecto de selección de la etapa Gemini y remisión a `tab:gemini-solo`).
       (DIC «Conclusiones»; TD «Sistemas»; TD «Afirmaciones acotadas»; TD «Identificadores
       internos»; TD «Repetición de cifras»)
-- [ ] 4.7 `10-recomendaciones.tex:18` (taxonomía con los `61` casos y criterio de éxito) y `:26`
+- [x] 4.7 `10-recomendaciones.tex:18` (taxonomía con los `61` casos y criterio de éxito) y `:26`
       (corpus de composición natural, cuotas prefijadas, arbitraje por mayoría de tres); revisar el
       párrafo introductorio (`:6`) por coherencia. (TD «Trabajos futuros»; TD «Sistemas»)
-- [ ] 4.8 Verificar con `rg` en `08`, `09` y `10`: cero «sin el arbitraje», «41 de los 47» y
+- [x] 4.8 Verificar con `rg` en `08`, `09` y `10`: cero «sin el arbitraje», «41 de los 47» y
       `0,2222`; `rg -n "0,8447" "docs/Tesis/v10 (IA)/paper/sections" -g "!07-resultados.tex"`
       devuelve una sola línea, la fila del objetivo 2 en `09-conclusiones.tex`; `0,6893` en prosa a
       lo sumo una vez por capítulo; cada cifra nueva coincide con la sección de c-221 (o con la de
@@ -191,45 +191,45 @@ preparación sin requisito propio no llevan paréntesis.
 
 ## 5. Metodología del diseño fuera de muestra (`04-marco-metodologico.tex`)
 
-- [ ] 5.1 **[BLOQUEADA HASTA RESPUESTA DE LOS AUTORES — OQ1]** Escribir en
+- [x] 5.1 **[BLOQUEADA HASTA RESPUESTA DE LOS AUTORES — OQ1]** Escribir en
       `subsec:poblacion-muestra-corpus` el párrafo «Corpus independiente de validación» con la
       procedencia y el período que declaren los autores. Sin respuesta, no escribir nada en su
       lugar y dejar la tarea abierta. (TD «Apartado metodológico»)
-- [ ] 5.2 En el mismo párrafo (no bloqueado): cuotas y sobremuestreo de
+- [x] 5.2 En el mismo párrafo (no bloqueado): cuotas y sobremuestreo de
       `runbook-corpus-independiente.md`, composición observada desde la sección de c-221, doble etiquetado ciego,
       refuerzo de `56` casos con su fecha, su ventana de etiquetado y su carácter posterior a los
       datos sin cuota prefijada (`runbook-arbitraje-discordantes.md`, 1.2 y 14), regla de
       arbitraje no mayoritaria, referencias fijadas por `E5` y los `6` casos de tres vías con
       remisión a `subsec:ruido-referencia`. (TD «Apartado metodológico»)
-- [ ] 5.3 En `subsec:analisis-estadistico`: una oración por lectura de D1, la calibración
+- [x] 5.3 En `subsec:analisis-estadistico`: una oración por lectura de D1, la calibración
       descriptiva de D3 y la nota de que el orden del prerregistro de la calibración se demuestra
       con las fechas de autor (`git log --format='%h %ai %ci'` de los commits del prerregistro).
       (TD «Apartado metodológico»; TD «Reproducibilidad»)
-- [ ] 5.4 En `subsec:amenazas-validez` (`:93`): agregar las amenazas séptima y octava de D5 y
+- [x] 5.4 En `subsec:amenazas-validez` (`:93`): agregar las amenazas séptima y octava de D5 y
       actualizar el conteo; verificar que el número enunciado coincide con las enumeradas.
       (TD «Apartado metodológico»)
 
 ## 6. Resumen, alcance y arquitectura
 
-- [ ] 6.1 `00-resumen.tex` (ES y EN): incorporar la exactitud fuera de muestra (primaria y
+- [x] 6.1 `00-resumen.tex` (ES y EN): incorporar la exactitud fuera de muestra (primaria y
       ponderada, sin `0,8447`) y el resultado frente a la línea de base, recortando detalle
       prescindible; contar con la regla de c-106 y verificar ≤ 250 palabras en cada idioma;
       verificar que la lectura del balance coincide con la de la discusión y las conclusiones.
       (TD «Resumen»)
-- [ ] 6.2 `01-introduccion.tex:74`: precisar que lo excluido es un modelo supervisado afinado con el
+- [x] 6.2 `01-introduccion.tex:74`: precisar que lo excluido es un modelo supervisado afinado con el
       corpus acumulado en operación y que la línea de base clásica se usa como referencia.
       (TD «Afirmaciones acotadas»)
-- [ ] 6.3 `05-arquitectura.tex:68`: conciliar la afirmación de latencia y costo con lo medido en
+- [x] 6.3 `05-arquitectura.tex:68`: conciliar la afirmación de latencia y costo con lo medido en
       `tab:gemini-solo` (razón de llamadas y de costo; latencia solo como cota inferior);
       verificar coherencia con `08-discusion.tex:10`. (TD «Afirmaciones acotadas»)
 
 ## 7. Balance neto y reproducibilidad
 
-- [ ] 7.1 En `subsec:balance-neto` (`08-discusion.tex`): agregar el párrafo de sensibilidad con las
+- [x] 7.1 En `subsec:balance-neto` (`08-discusion.tex`): agregar el párrafo de sensibilidad con las
       tasas ponderada y cruda de la sección de c-221 y su rótulo; ajustar la síntesis final («con una referencia
       común el balance neto no resulta negativo») para declarar de qué exactitud depende el signo.
       (OOS-022; TD «Balance neto»)
-- [ ] 7.2 Verificar que la variación de la confianza entre corridas (3.5) y la nota de fechas de
+- [x] 7.2 Verificar que la variación de la confianza entre corridas (3.5) y la nota de fechas de
       autor (5.3) figuran en la tesis, y que el README de campaña registra el `commit` no
       alcanzable desde `main` y el que versionó el archivo (1.11). (TD «Reproducibilidad»;
       OOS-023)
