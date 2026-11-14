@@ -1032,6 +1032,7 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 | borrador `v1.2.1` + `c-146` + `c-140` (`change/c-140-*`; base de c-147) | `852163c` | 111 | 102 | 9 | +2 | +2 | (b) cuerpo sin anexos <= 100 (2026-10-26); **total <= 100, fuente catedra (2026-10-27)** | Medido: `abspage@last{111}`; `Anexos` en p. 103; **cuerpo 102, margen -2** (bloqueo de la release); **exceso sobre el tope de 100 total: +11** |
 | compactacion c-147 (`change/c-147-*`) | `be9b746` | 104 | 96 | 8 | -7 | -6 | **total <= 100, fuente catedra (2026-10-27)** | Medido: `abspage@last{104}`; `Anexos` en p. 97; `Referencias bibliograficas` en p. 93; **exceso +4 honrado y defendido**; palancas: indices general y de tablas/figuras compactados y fusionados, anexos en `\small`, figuras de 6.8 al 70 %, espaciado de bibliografia; sin contenido removido ni referencias colgadas |
 | release v1.2.2 (C1) (`change/c-147-*`) | `2cb0022` | 104 | 96 | 8 | 0 | 0 | **total <= 100, fuente catedra (2026-10-27)** | Medido: `abspage@last{104}`; `Anexos` en p. 97; exceso +4 honrado y defendido; verificado de nuevo el 2026-10-27 sobre `7637fdb` (PDF de 104 paginas) |
+| `+c-216` (L2, L3, L4, L5) | sin commit (lo crea el orquestador) | 149 | 124 | 25 | +2 | +2 | **total <= 100, fuente catedra (2026-10-27); exceso +49 declarado y honrado** | Medido: `abspage@last{149}`; `Anexos` en p. 125; delta frente a la release v1.3.0 de partida (147 / 122 / 25): +2 total, +2 cuerpo, 0 anexos. L2 aporta +1 pagina en el capitulo 4 y +1 en la discusion; L5 (repeticiones y cortes del capitulo 11) no agrega paginas. El exceso sobre el tope de 100 es +49 y queda declarado y honrado. |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -3260,7 +3261,7 @@ Lineas leidas despues de aplicar el change, en `docs/Tesis/v10 (IA)/paper/sectio
 | B5c | R3: la clasificacion telefonica se describe en presente y remite a la procedencia | c-160 | `06-implementacion.tex:44` | `subsec:construccion-flujo-n8n` | `se resuelve con la misma cascada híbrida del backend` | cerrada |
 | B5d | R4: se retira "Ningun valor canonico cambia" | c-160 | `07-resultados.tex:212` | `subsec:sensibilidad-ajustes` | `El análisis estima la sensibilidad de las métricas` | cerrada |
 | B5e | R5: se retira la cifra previa de 180 horas-persona | c-160 | `08-discusion.tex:14` | `subsec:interpretacion-resultados` | `\approx 32{,}2\)~h-persona por trimestre.` | cerrada |
-| B5f | R6: la salvaguarda se describe con la regla de 0,70 que no derivo ningun caso | c-160 | `08-discusion.tex:16` | `subsec:interpretacion-resultados` | `la regla de 0,70 no derivó ningún caso` | cerrada |
+| B5f | R6: la salvaguarda se describe con la regla de 0,70 que no derivó casos | c-160 | `08-discusion.tex:16` | `subsec:interpretacion-resultados` | `el gate de 0,70 no derivó casos por confianza` | cerrada |
 | B5g | R7: se retira la estimacion preliminar sin fuente | c-160 | `08-discusion.tex:66` | `subsec:implicancias-practicas` | `que se factura por separado.` | cerrada |
 | B6a | Naturaleza y autoria de los dictamenes declaradas con el instrumento real | c-160 | `12-anexos.tex:205` | `sec:anexo-trazabilidad` | `revisiones evaluativas previas a la defensa` | SUPERADA por c-196 |
 | B6b | Punteros de B6 y B8 corregidos; B10 +c-146; B12 +4.8; A5 +c-154 | c-160 | `12-anexos.tex:239` | `tab:anexo-trazabilidad` | `se conserva como trazabilidad operativa del proyecto` | SUPERADA por c-212 (el Anexo I se redujo a una nota de versiones; la tabla se retiró) |
@@ -4939,14 +4940,14 @@ recomendaciones 7 a 15 (consistencia y forma) quedan diferidas a un change poste
 | Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
 |---|---|---|---|---|---|---|
 | C7/1a | 1: acuerdo `E3`/`E4` y kappa en Resultados | c-207 | `07-resultados.tex:286` | `subsec:resultados-campana-medicion` | `su kappa de Cohen fue de 0,6055` | cerrada |
-| C7/1b | 1: arbitraje diferido, sin resultado | c-207 | `07-resultados.tex:288` | `subsec:resultados-campana-medicion` | `El arbitraje de los 47 casos discordantes por un tercer etiquetador estaba planificado y no se ejecutó en esta versión` | cerrada |
+| C7/1b | 1: arbitraje ejecutado y documentado | c-207 | `07-resultados.tex:316` | `subsec:resultados-campana-medicion` | `El arbitraje de los casos discordantes se ejecutó en el change c-206` | cerrada |
 | C7/1c | 1: tabla de la validación fuera de muestra | c-207 | `07-resultados.tex:293` | `tab:fuera-de-muestra` | `\label{tab:fuera-de-muestra}` | cerrada |
 | C7/2a | 2: resumen ES con lectura condicional | c-207 | `00-resumen.tex:15` | `-` | `la económica y operativa es condicional` | cerrada |
 | C7/2b | 2: abstract EN con lectura condicional | c-207 | `00-resumen.tex:31` | `-` | `economic and operational feasibility are conditional` | cerrada |
 | C7/2c | 2: barreras legales condicionadas al instrumento | c-207 | `09-conclusiones.tex:51` | `subsec:aportes-generalizacion` | `La operación con datos reales queda condicionada` | cerrada |
 | C7/2d | 2: costo de inferencia no afirmado | c-207 | `09-conclusiones.tex:47` | `subsec:aportes-generalizacion` | `Ese filtro resolvió 131 de los 200 casos sin invocar al modelo` | cerrada |
 | C7/2e | 2: generalización regional acotada | c-207 | `09-conclusiones.tex:49` | `subsec:aportes-generalizacion` | `es una hipótesis por validar` | cerrada |
-| C7/3a | 3: validación fuera de muestra en conclusiones con su límite | c-207 | `09-conclusiones.tex:37` | `subsec:cumplimiento-objetivos` | `Esa cifra no acredita el umbral` | cerrada |
+| C7/3a | 3: validación fuera de muestra en conclusiones con su límite | c-207 | `09-conclusiones.tex:37` | `subsec:cumplimiento-objetivos` | `por lo que la cifra no acredita el umbral` | cerrada |
 | C7/3b | 3: fila del objetivo 2 con la validación | c-207 | `09-conclusiones.tex:24` | `tab:cumplimiento-objetivos` | `fuera de muestra, 0,8447 sobre el n efectivo de 103` | cerrada |
 | C7/4a | 4: `E3`/`E4` en el capítulo legal, confirmación pendiente | c-207 | `11-aspectos-legales.tex:40` | `subsec:consentimiento-derechos` | `Los tres firmaron la confirmación posterior de esa información y de su consentimiento el 13 de noviembre de 2026` | cerrada (firmada el 2026-11-13; la afirmación de confirmación pendiente se retiró) |
 | C7/5a | 5: referencias distintas declaradas y recalculadas | c-207 | `08-discusion.tex:99` | `subsec:balance-neto` | `La rejilla combina, sin embargo, dos referencias distintas` | cerrada |
@@ -5034,3 +5035,116 @@ y esta sección registra la prosa (tarea 5.2). Es aditivo: ningún número canó
 | C14/f | Criterio 5: fila del objetivo 6 en las conclusiones | c-214 | `09-conclusiones.tex:28` | `tab:cumplimiento-objetivos` | `calibración y punto de operación medidos` | cerrada |
 | C14/g | Criterio 5: de propuesta a resultado en las recomendaciones | c-214 | `10-recomendaciones.tex:10` | `subsec:calibracion-gate` | `Lo que antes era una propuesta se midió` | cerrada |
 | Cifras | Memo de números canónicos: sección 3.24 | c-214 | `docs/Tesis/Correcciones/numeros-canonicos.md:1446` | `-` | `3.24 Calibración y punto de operación del gate de confianza (c-214)` | vigente (nuevo) |
+
+## Dictamen v10 / v1.3.0 (2026-11-13) - c-216 (robustecer la referencia, el gate y la forma)
+
+Atiende el dictamen CONEAU del 13-11-2026 sobre `v1.3.0` con cuatro palancas: L2 (criterio 4,
+sensibilidad a la referencia de verdad), L3 (criterios 4/5, reencuadre del human-in-the-loop),
+L4 (criterios 7/8, verificación y cierre de R4) y L5 (criterio 8, repetición y forma).
+Gobernanza: L2 y L5 MEDIUM; L3 MEDIUM con revisión del dueño del veredicto; L4 HIGH.
+
+### Qué cambió
+
+- **L2 (aditiva)**: script de solo lectura
+  `evaluation/data/campana/analisis/analisis_ruido_referencia_c216.py` (TDD estricto, con
+  `test_analisis_ruido_referencia_c216.py`), salidas `.json`, `.md` y `.SHA256SUMS.txt`, y sección
+  3.27 del memo canónico. Reproduce `142/206` (`0,6893`) y macro-F1 `0,7024` antes de simular; no
+  cambia ningún número canónico. Resultado: mediana de exactitud `0,5097` (`q2,5 = 0,4515`,
+  `q97,5 = 0,5631`); el error observado (`64`) queda por debajo del intervalo simulado `[90; 113]`
+  y el componente atribuible a la referencia es `−26`. El signo se informa tal cual: el análisis
+  **no** respalda que el ruido de la referencia infle el error y muestra que la exactitud medida es
+  específica de la referencia. Se recomienda revisión del dueño antes de publicar.
+- **Tesis, L2**: párrafo de método en `04-marco-metodologico.tex`; subsección
+  `subsec:ruido-referencia` y `tab:ruido-referencia` en `07-resultados.tex`; párrafo de lectura en
+  `08-discusion.tex`. La simulación se rotula como sensibilidad y no como verdad latente.
+- **L3**: `08-discusion.tex`, `09-conclusiones.tex` y `10-recomendaciones.tex` distinguen las dos
+  señales: el human-in-the-loop actuó por la regla del reportante (`147`; `66` de correo y `81` de
+  telefonía; `25` cambios, `17,0~\%`) y la confianza no discriminó (AUROC `0,5168`). Se declara que
+  la configuración entregada no se midió; **no** se ejecutó ninguna corrida paga (`--confirm-paid`
+  nunca se invocó). La rama por defecto de 5.3 queda cerrada con esa limitación.
+- **L4**: R4 verificado (ver abajo). `evaluation/data/campana/README.md` pasa de `8` a `11` filas
+  y lista los roles; `registro_sujetos.csv` tiene `11` filas y `E3`/`E4`/`E5` con rol
+  `etiquetador`, sin datos personales.
+- **L5**: en `08-discusion.tex`, `0,8447` en prosa pasa de `3` a `1` aparición; `09` y `10` ya
+  estaban dentro del límite. El capítulo 11 queda con `0` oraciones de más de `60` palabras
+  (`sent_c197.py`) y ningún párrafo de más de `2000` caracteres (máximo `1832`). Las cifras,
+  citas, remisiones y salvedades del capítulo 11 son idénticas (`verify_citations.py` PASS).
+
+### Verificación de R4 (PASS)
+
+- `docs/campana-medicion/confirmacion-posterior-consentimiento.md`: filas `E3`, `E4` y `E5` con
+  información verbal `2026-11-12` y confirmación `2026-11-13`, sin identidad.
+- `11-aspectos-legales.tex:48`: menciona a los tres con las mismas fechas y no afirma que la
+  confirmación esté pendiente.
+- `evaluation/data/campana/registro_sujetos.csv`: `11` filas; `E3`/`E4`/`E5` con rol
+  `etiquetador`; columnas solo `alias, rol, persona` (sin nombre, correo ni legajo).
+- `evaluation/data/campana/README.md:52`: informa `11` filas y los roles nuevos, en consistencia
+  con el CSV y con el registro de consentimiento.
+
+### Cortes de L5 en el capítulo legal (sin cambios de sentido, cifras ni citas)
+
+| Ubicación previa | Tipo | Corte | Ubicación posterior |
+|---|---|---|---|
+| línea 10 | párrafo | después de «autoridad de aplicación.» | dos párrafos en `subsec:marco-normativo` |
+| línea 14 | párrafo | después de «artículo~6 de la Ley~25.326.» | dos párrafos en `subsec:principios-datos` |
+| línea 18 | párrafo | después de «identificadores directos.» | dos párrafos en `subsec:transferencia-internacional` |
+| línea 38 | párrafo | después de «(\autoref{subsec:consentimiento-derechos}).» | dos párrafos en `subsec:consentimiento-derechos` |
+| línea 42 | párrafo | después de «Cabe precisar su alcance.» | dos párrafos en `subsec:consentimiento-derechos` |
+| línea 28 | oración | después de «el control de acceso por rol.» | dos oraciones |
+| línea 42 | oración | después de «del incidente descrita.»; se agregó «Está» para completar la oración | dos oraciones |
+| línea 102 | oración | después de «vulnerabilidades (8.8, 8.28, 8.29, 5.19--5.23).»; se agregó «Los otros dos... completaron el conjunto» | dos oraciones (corte adicional, necesario para `0` oraciones `> 60`; no estaba en la lista de la tarea 7.2) |
+
+El diff se conserva para revisión del dueño (gobernanza HIGH). La verificación automática dio
+`0` citas, remisiones, `\path` y números alterados.
+
+### Libro mayor de páginas
+
+Se agregó la fila `+c-216` al libro mayor: total `149`, cuerpo `124`, anexos `25`; delta `+2`
+total y `+2` cuerpo frente a la release de partida (`147 / 122 / 25`). El exceso sobre el tope de
+`100` es `+49` y queda declarado y honrado. La compilación final no registra errores fatales,
+referencias ni citas indefinidas, ni etiquetas duplicadas.
+
+### Matriz de trazabilidad (verificada por `verificar_matriz_trazabilidad.py`)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| C16/a | L2: script y memo 3.27 | c-216 | `evaluation/data/campana/analisis/analisis_ruido_referencia_c216.py:2` | `-` | `Sensibilidad del clasificador a referencias alternativas plausibles` | cerrada |
+| C16/b | L2: método en el capítulo 4 | c-216 | `04-marco-metodologico.tex:87` | `subsec:analisis-estadistico` | `La sensibilidad a la referencia se evalúa con una simulación Monte Carlo` | cerrada |
+| C16/c | L2: subsección y tabla en resultados | c-216 | `07-resultados.tex:381` | `subsec:ruido-referencia` | `label{tab:ruido-referencia}` | cerrada |
+| C16/d | L2: lectura como sensibilidad en la discusión | c-216 | `08-discusion.tex:64` | `subsec:limitaciones-estudio` | `La referencia de verdad se sometió a un análisis de sensibilidad` | cerrada |
+| C16/e | L3: las dos señales en la discusión | c-216 | `08-discusion.tex:16` | `subsec:interpretacion-resultados` | `actuó por la regla del reportante no identificado` | cerrada |
+| C16/f | L3: las dos señales en las conclusiones | c-216 | `09-conclusiones.tex:41` | `subsec:aportes-generalizacion` | `La revisión humana actuó por la regla del reportante` | cerrada |
+| C16/g | L3: las dos señales en las recomendaciones | c-216 | `10-recomendaciones.tex:10` | `subsec:calibracion-gate` | `la revisión humana actuó por la regla del reportante` | cerrada |
+| C16/h | L3: la configuración entregada no se midió | c-216 | `08-discusion.tex:66` | `subsec:limitaciones-estudio` | `La configuración entregada no se midió` | cerrada |
+| C16/i | L4: R4 verificado en el capítulo legal | c-216 | `11-aspectos-legales.tex:48` | `subsec:consentimiento-derechos` | `Los tres firmaron la confirmación posterior de esa información y de su consentimiento el 13 de noviembre de 2026` | cerrada (verificada) |
+| C16/j | L4: README de campaña con 11 filas | c-216 | `evaluation/data/campana/README.md:52` | `-` | `El registro queda con 11 filas` | cerrada |
+| C16/k | L5: repetición de la exactitud fuera de muestra | c-216 | `08-discusion.tex:20` | `subsec:limitaciones-estudio` | `la exactitud estricta fue la de la` | cerrada |
+| C16/l | L5: capítulo legal sin oraciones largas | c-216 | `11-aspectos-legales.tex:50` | `subsec:consentimiento-derechos` | `Cabe precisar su alcance.` | cerrada |
+| Cifras | Memo de números canónicos: sección 3.27 | c-216 | `docs/Tesis/Correcciones/numeros-canonicos.md:1698` | `-` | `3.27 Sensibilidad del clasificador a referencias alternativas plausibles` | vigente (nuevo) |
+
+### Cierre y evidencia (tarea 8.4)
+
+- Compilación final con `texlive-thesis`: `149` páginas, `0` errores fatales, `0` referencias
+  indefinidas, `0` citas indefinidas y `0` etiquetas duplicadas; `14` `Overfull \hbox` (máximo
+  `52,5` pt). `compilacion.md` se regeneró con el SHA-256 del PDF final.
+- `verify_citations.py`: PASS (92 entradas, 92 claves, 166 comandos, 0 huérfanas, 0 sin usar).
+  `sent_c197.py`: capítulo 11 con `0` oraciones de más de `60` palabras y párrafo máximo de
+  `1832` caracteres. `pytest` del script nuevo: `31` pruebas aprobadas.
+- `git diff` contra la línea de base: solo cambian los `.tex` del change, el memo (85 inserciones,
+  0 eliminaciones), los dos README, el dictamen, `compilacion.md`, los índices y el PDF, y las
+  salidas nuevas del análisis. Ningún archivo de `App/`, `n8n/`, `data/`, `evaluation/evidence/`
+  ni `evaluation/predicciones*` cambia; los cuatro SHA-256 de entrada coinciden con la línea de
+  base; el script reproduce `142/206` y macro-F1 `0,7024` antes de simular y declara el carácter
+  aditivo.
+- `verificar_matriz_trazabilidad.py`: `0` fallas (314 filas, 110 avisos). Se corrigieron tres
+  filas previas que habían quedado obsoletas por cambios de texto (B5f y dos de c-207) y la fila
+  nueva de c-216 pasa sin avisos.
+
+### Pendientes
+
+- **Corrida paga de la configuración entregada**: no autorizada por el dueño; se aplicó la rama
+  de limitación (tarea 5.3). Si se autoriza, debe ejecutarse con `--confirm-paid`, cache nuevo y
+  sin tocar los congelados.
+- **Revisión del diff del capítulo legal**: gobernanza HIGH; el diff exacto se entrega al dueño.
+- **Revisión del resultado L2**: el componente atribuible negativo se informa sin recortar; el
+  dueño decide si la lectura se mantiene en la tesis.

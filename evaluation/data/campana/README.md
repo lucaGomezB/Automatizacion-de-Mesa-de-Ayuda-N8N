@@ -24,7 +24,7 @@ versionados `plan_campana.csv`, los ocho sub-planes (4 manuales + 4 automatizado
 los tiempos automatizados de los 200 casos; sin nulls), los ocho sidecars de corrida
 (`sidecar_m<mitad>-automatizado-t<turno>.json` de web/correo y
 `sidecar_m<mitad>-automatizado-t<turno>-tel.json` de telefonía), `registro_sujetos.csv`
-(8 filas, sin solapes), `doble_etiquetado.csv` (400 registros
+(11 filas, sin solapes), `doble_etiquetado.csv` (400 registros
 de `E1` y `E2` sobre los 200 casos) y `brazo_manual.csv` (220 registros de `O1` y `O2`
 sobre los 200 casos, con 20 de doble cobertura). El test de integridad
 (`test_tabla_primaria_versionada_integra`) ya no se omite. Están versionados también
@@ -49,8 +49,13 @@ El consenso `sector_asignado` del corpus lo fijaron dos analistas originales: `A
 una fila `A2`: una versión previa de la plantilla la tenía, pero se eliminó al
 confirmarse que el segundo analista original es `T1`, que ya figura con el rol
 `autor`. La coincidencia analista-autor se declara como limitación en c-169 y no
-habilita a `T1` como etiquetador ni operador. El registro queda con 8 filas sin
-solapes: `E1`, `E2`, `O1`, `O2`, `A1`, `T1`, `T2`, `T3`.
+habilita a `T1` como etiquetador ni operador. El registro queda con 11 filas sin
+solapes: `E1`, `E2`, `O1`, `O2`, `A1`, `T1`, `T2`, `T3`, `E3`, `E4` y `E5`. Los tres
+últimos figuran con rol `etiquetador` y sin datos personales: `E3` y `E4` realizaron el
+doble etiquetado independiente de la validación fuera de muestra y `E5` arbitró los casos
+discordantes; su información verbal fue del `2026-11-12` y su confirmación escrita, del
+`2026-11-13`, según el registro canónico
+`docs/campana-medicion/confirmacion-posterior-consentimiento.md`.
 
 ## Procedencia de la tabla primaria
 
