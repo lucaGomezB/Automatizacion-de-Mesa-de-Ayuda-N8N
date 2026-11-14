@@ -236,22 +236,22 @@ preparación sin requisito propio no llevan paréntesis.
 
 ## 8. Marco teórico, glosario, estado del arte, bibliografía y capítulo legal
 
-- [ ] 8.1 `02-marco-teorico.tex`: párrafo breve sobre TF-IDF y regresión logística y otro sobre
+- [x] 8.1 `02-marco-teorico.tex`: párrafo breve sobre TF-IDF y regresión logística y otro sobre
       Brier y AUROC, con fuentes primarias ya presentes o nuevas verificadas;
       `00-glosario.tex`: agregar AUROC, Brier y TF-IDF en orden alfabético. (TD «Marco teórico»)
-- [ ] 8.2 Leer el texto completo de `MosqueiraRey2023_human_in_the_loop`; si respalda la frase de
+- [x] 8.2 Leer el texto completo de `MosqueiraRey2023_human_in_the_loop`; si respalda la frase de
       `02-marco-teorico.tex:32`, agregar la ubicación; si no, atenuarla a lo que el artículo hace.
       Registrar la evidencia. (TD «Marco teórico»)
-- [ ] 8.3 `03-estado-del-arte.tex` (`:34` y la fila `:51`): salvedad de que Colavito y
+- [x] 8.3 `03-estado-del-arte.tex` (`:34` y la fila `:51`): salvedad de que Colavito y
       colaboradores clasifican incidencias de GitHub; verificar en el texto completo las cifras
       atribuidas a Paramesh y a Colavito y declarar la fuente efectiva si solo constan en el
       resumen. (TD «Marco teórico»)
-- [ ] 8.4 Bibliografía: verificar el año de la edición citada de `Date2003_database`,
+- [x] 8.4 Bibliografía: verificar el año de la edición citada de `Date2003_database`,
       `Hohpe2003_eip`, `Stallings2017_computer_security`, `Efron1993_bootstrap` y
       `Jurafsky2023_speech_language`; alinear el campo y renombrar la clave (8 usos en
       `sections/`); comprobar la URL de `ServiceNow2026_itsm` y reemplazarla por una fuente
       oficial accesible si no responde; ejecutar `verify_citations.py`. (TD «Marco teórico»)
-- [ ] 8.5 **[BLOQUEADA — OQ4; gobernanza HIGH]** Verificar la Resolución AAIP 198/2023 en el
+- [x] 8.5 **[BLOQUEADA — OQ4; gobernanza HIGH]** Verificar la Resolución AAIP 198/2023 en el
       Boletín Oficial o en Infoleg (número, fecha, organismo, objeto). Solo si se verifica y los
       autores aprueban el diff, agregar la entrada bibliográfica y una oración en
       `11-aspectos-legales.tex` junto a la Disposición 60-E/2016. Si no, no citarla y registrar el
@@ -259,21 +259,21 @@ preparación sin requisito propio no llevan paréntesis.
 
 ## 9. Forma: Anexo J, identificadores, cronograma y versión
 
-- [ ] 9.1 **[BLOQUEADA — OQ3]** Según la decisión de los autores registrada en
+- [x] 9.1 **[BLOQUEADA — OQ3]** Según la decisión de los autores registrada en
       `dictamen-correcciones.md`: retirar de `12-anexos.tex` la sección
       `sec:anexo-respuestas-tribunal` (recomendado; la fuente sigue en
       `docs/defensa/respuestas-tribunal.md`), o conservarla y actualizar sus cifras al arbitraje en
       el anexo y en el documento fuente por igual. Verificar el escenario de `tesis-defensa` que
       corresponde a la rama elegida; el delta cubre las dos y no se descarta. (DEF «Anexo J»)
-- [ ] 9.2 Retirar los identificadores internos (`07-resultados.tex`, `09-conclusiones.tex:37`,
+- [x] 9.2 Retirar los identificadores internos (`07-resultados.tex`, `09-conclusiones.tex:37`,
       `12-anexos.tex:151` y los que haya agregado el rebase) y verificar que
       `rg -n "c-[0-9]{3}"` sobre `sections/*.tex` solo devuelve comentarios. (TD «Identificadores
       internos»)
-- [ ] 9.3 Actualizar `docs/diagrams/cronograma.md` con los hitos del 12 y 13-11-2026 y su
+- [x] 9.3 Actualizar `docs/diagrams/cronograma.md` con los hitos del 12 y 13-11-2026 y su
       evidencia (marcas de `doble_etiquetado_arbitrado.csv`, fechas de autor de los commits),
       regenerar `paper/figures/cronograma.png` con el comando documentado y revisar la leyenda de
       `fig:cronograma` en `12-anexos.tex`. (TD «Versión entregada»)
-- [ ] 9.4 Preparar, sin crear el tag, los textos de la versión nueva: Anexo B (`12-anexos.tex:58`)
+- [x] 9.4 Preparar, sin crear el tag, los textos de la versión nueva: Anexo B (`12-anexos.tex:58`)
       con la afirmación verificable de D9 en lugar de «los commits posteriores no modifican las
       fuentes de la tesis»; portada (`00-portada.tex:30-31`) y `Gomez2026_repositorio` con la
       versión y la fecha de OQ2 (placeholder explícito mientras OQ2 siga pendiente).

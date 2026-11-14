@@ -44,6 +44,8 @@ gantt
     Corrida de correo y formulario (02/10/2026)   :milestone, m2, 2026-10-02, 0d
     Corrida de telefonía (05-06/10/2026)          :milestone, m3, 2026-10-05, 0d
     Recálculo del tiempo telefónico (19/10/2026)  :milestone, m4, 2026-10-19, 0d
+    Doble etiquetado E3/E4 (12/11/2026)           :milestone, m5, 2026-11-12, 0d
+    Arbitraje y análisis posteriores (13/11/2026) :milestone, m6, 2026-11-13, 0d
 ```
 
 Las barras de "Construcción", "Campaña manual", "Campaña automatizada" y
@@ -51,7 +53,10 @@ Las barras de "Construcción", "Campaña manual", "Campaña automatizada" y
 último día de cada mes); los hitos tienen precisión de día. La campaña complementaria de
 medición (programa c-165 a c-168) corrió en noviembre de 2026: sus tablas primarias y
 salidas se versionaron entre el 1 y el 8 de noviembre de 2026, de modo que la barra se
-dibuja con la precisión de mes.
+dibuja con la precisión de mes. Sobre esa barra se agregan dos hitos de día: el doble
+etiquetado de `E3` y `E4` (12-11-2026) y el arbitraje de `E5` con el refuerzo de 56 casos,
+la línea de base, la calibración y los análisis posteriores (13-11-2026), con la
+procedencia de las marcas del CSV y de las fechas de autor de los commits.
 
 Render: `npx -y @mermaid-js/mermaid-cli@11 -i <tmp>.mmd -o <tmp>.png -b white -s 2 -w 760`
 (bloque `mermaid` extraído a un `.mmd` temporal fuera del repositorio; mmdc 11.17.0,
@@ -61,8 +66,8 @@ tesis la figura se reproduce en el Anexo A (decisión de paginación, design D12
 
 ## Procedencia
 
-Fecha de consulta de la evidencia: 2026-10-25. `git` y `gh` se ejecutaron desde la raíz
-del repositorio, en solo lectura.
+Fecha de consulta de la evidencia: 2026-10-25; actualizada el 2026-11-14 para los hitos de
+noviembre. `git` y `gh` se ejecutaron desde la raíz del repositorio, en solo lectura.
 
 | Elemento | Fecha o intervalo | Precisión | Evidencia | Comando o documento que la reproduce |
 |---|---|---|---|---|
@@ -72,6 +77,9 @@ del repositorio, en solo lectura.
 | Campaña manual | junio a agosto de 2026 | mes | Confirmación del autor, 2026-10-09 (T6, `docs/Tesis/Correcciones/dictamen-correcciones.md`, grupo "Trazabilidad y existencia de datos experimentales") | `grep -n "Ventana real" docs/Tesis/Correcciones/dictamen-correcciones.md` |
 | Campaña automatizada | septiembre a octubre de 2026 | mes | Confirmación del autor, 2026-10-09 (T6, mismo registro); instrumentación de tiempos de extremo a extremo (c-39, archivado 2026-09-20) y corridas del corpus del 2026-10-02 y 2026-10-06 | Ídem; `ls openspec/changes/archive/ \| grep c-39` |
 | Campaña complementaria de medición | noviembre de 2026 | mes | Campaña del programa c-165 a c-168, con sujetos independientes (`E1`, `E2`, `O1`, `O2`); el plan pre-registrado y el registro de sujetos se versionaron el 2026-11-01, las tablas primarias entre el 2026-11-04 y el 2026-11-08 (`intervenciones.csv` exportado el 2026-11-08, `38392c1`) y el análisis de c-167 el 2026-11-08 (`evaluation/data/campana/`) | `git log --date=short --format='%ad %h %s' -- evaluation/data/campana`; `evaluation/data/campana/README.md` |
+| Doble etiquetado `E3`/`E4` de los 150 originales | 2026-11-12 | día | Marcas de `doble_etiquetado_arbitrado.csv`: `150` filas de `E3` y `150` de `E4` con fecha 2026-11-12; la primera marca es de `E4` a las 15:01:18 (-03:00) | `cut -d, -f2,7 evaluation/data/campana/doble_etiquetado_arbitrado.csv \| sort \| uniq -c`; commit `ed4b386` (2026-11-11) registra `E3`/`E4` |
+| Arbitraje de `E5` y refuerzo de 56 casos | 2026-11-13 | día | Marcas del 13-11-2026 en `doble_etiquetado_arbitrado.csv`: `56` filas de `E3` y `56` de `E4` sobre el refuerzo y `64` de `E5`; commits `854cc9d` (18:50, corpus de 206 casos), `1b62fdb` (19:00, tabla primaria) y `1cf8333` (19:08, clasificación congelada) | `cut -d, -f2,3,7 evaluation/data/campana/doble_etiquetado_arbitrado.csv \| sort \| uniq -c`; `git log --date=iso --format='%ad %h %s' -- evaluation/data/campana` |
+| Línea de base, calibración, ruido y brazo solo-LLM | 2026-11-12 y 2026-11-13 | día | c-205 el 2026-11-12 (`16d170f`, 23:17); el 2026-11-13: línea de base `39f2b94` (10:17) y contraste `effc237` (10:43), prerregistro y calibración `0b300c4`, `2b44c70` y `2c96a4a` (12:29 a 12:40), contraste arbitrado `3d0fbd9` (19:43), ruido `976c6c7` (21:11) y brazo Gemini solo `e69af36` (21:45) | `git log --date=iso --format='%ad %h %s' -- evaluation/data/campana` |
 | Integración de `gemini-3.6-flash` | 2026-09-24 | día | Commit `cf1cfb4` ("migrar el clasificador a Gemini 3.6 Flash y timeout de 30s"); hasta ese commit el clasificador usó `gemini-2.5-flash` | `git log -S "gemini-3.6-flash" --date=short --format='%ad %h %s' -- App/Backend/app/config/settings.py`; `App/Backend/app/config/settings.py:78` |
 | Corrida de correo y formulario (119 casos) | 2026-10-02 | día | c-68, `tasks.md` 6.4 ("EJECUTADA (2026-10-02 ...) web 53/53, correo 66/66") | `openspec/changes/archive/2026-10-09-c-68-corpus-ingesta-n8n/tasks.md` |
 | Corrida de telefonía (81 casos) | 2026-10-05 y 2026-10-06 | día | Conclusión el 2026-10-06 (c-70, `tasks.md` 8.2, "REALIZADO (2026-10-06): 81/81 casos telefónicos"); inicio el 2026-10-05 confirmado por los autores (respuesta del 2026-10-28, Q1) | `openspec/changes/archive/2026-10-06-c-70-softphone-corpus-telefonia/tasks.md` |

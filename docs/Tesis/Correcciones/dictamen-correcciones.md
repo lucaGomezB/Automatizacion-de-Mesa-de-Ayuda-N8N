@@ -5592,8 +5592,8 @@ sin respuesta.
 |---|---|---|---|
 | OQ1 | 5.1 | Procedencia y período de los `150` casos del corpus independiente (y de los `56` de refuerzo): sistema de origen, rango de fechas, criterio de extracción | **respondida (2026-11-14)**: origen = una compañía financiera del ámbito laboral de un autor; los incidentes ocurrieron entre el `2-11-2025` y el `12-2-2026`; se incorporaron a los casos crudos el `12-11` y el `13-11-2026`; los `56` comparten el origen; la selección por cobertura insuficiente aplica a todos los casos |
 | OQ2 | 11.1 | Número de la versión nueva (se recomienda `v1.4.0`) y fecha de portada | `pendiente` |
-| OQ3 | 9.1 | Anexo J: ¿se retira (recomendado) o se conserva y se actualiza? | `pendiente` |
-| OQ4 | 8.5 | Resolución AAIP 198/2023: ¿se verifica en fuente oficial y se autoriza la oración en el capítulo legal? | `pendiente` |
+| OQ3 | 9.1 | Anexo J: ¿se retira (recomendado) o se conserva y se actualiza? | **decidida (2026-11-14): retirar** — se toma la recomendación del change y del dictamen; la fuente queda en `docs/defensa/respuestas-tribunal.md` |
+| OQ4 | 8.5 | Resolución AAIP 198/2023: ¿se verifica en fuente oficial y se autoriza la oración en el capítulo legal? | **decidida (2026-11-14): no citar** — no se verificó en fuente oficial; el motivo se registra en este archivo y no se agrega oración ni entrada bibliográfica en la tesis |
 | OQ5 | 11.3, 11.4 | Confirmación expresa para crear el tag, pushear la rama y abrir el PR | `pendiente` |
 | OQ6 | 4.1 | Confirmación de la regla de lectura de D1 (primaria cruda; veredicto con las tres) antes de escribir la discusión | **confirmada (2026-11-14)**: primaria cruda `142/206`; complementarias ponderada `0,7489` y 150 originales `112/150`; el veredicto del 85 % se lee con los tres límites superiores (los tres por debajo de 0,85); el resumen no cita `0,8447` |
 
@@ -5634,3 +5634,65 @@ Grupo 0 (0.1 a 0.5), grupo 1 (1.1 a 1.11) y grupo 2 (2.1 y 2.2) ejecutados. La p
   "!07-resultados.tex"` devuelve una sola línea (`09-conclusiones.tex:24`). `0,6893` en prosa
   aparece como máximo una vez por capítulo (`08`: una, `09`: una en prosa más la celda exenta de la
   tabla de objetivos, `10`: ninguna).
+
+### Fase 3: marco teórico, bibliografía y forma (tareas 8 y 9)
+
+- **8.1 Marco teórico y glosario.** En `02-marco-teorico.tex` se agregó, en
+  `subsec:nlp-llm`, un párrafo sobre TF-IDF y regresión logística como clasificador clásico de
+  texto, y en `sec:metricas-multiclase`, otro sobre el puntaje de Brier y el AUROC como medidas de
+  calibración y de discriminación. Las fuentes son entradas ya presentes y verificadas:
+  `Jurafsky2026_speech_language` (TF-IDF y regresión logística), `Brier1950_verification` (puntaje
+  de Brier) y `Sokolova2009_performance_measures` (AUROC, la misma que usa el capítulo 4). No se
+  agregó ninguna entrada bibliográfica. `00-glosario.tex` suma `AUROC`, `Brier` y `TF-IDF` en su
+  posición alfabética (de `91` a `94` entradas).
+- **8.2 Mosqueira-Rey et al.** No fue posible verificar la afirmación contra el texto completo en
+  esta corrida: el DOI resuelve al registro y la página del editor responde con un desafío de
+  JavaScript que impide la lectura automatizada. En consecuencia, la oración se **atenuó** a lo que
+  el título y el resumen sostienen —una revisión del estado del arte que sistematiza los esquemas de
+  aprendizaje con intervención humana— y se retiró la afirmación de que las correcciones mejoran la
+  calidad del modelo según el tamaño de los datos o la ambigüedad del dominio. Queda registrada la
+  limitación; no se agregó página ni sección.
+- **8.3 Estado del arte.** Se agregó la salvedad de que los corpus de Colavito y colaboradores son
+  incidencias (*issues*) de GitHub y no tickets de mesa de ayuda, tanto en la prosa de `03:34` como
+  en la fila `colavito2025benchmarking` de `tab:trabajos-academicos`. Las cifras se volvieron a
+  verificar en esta corrida contra el texto completo: en el manuscrito aceptado de Colavito, la
+  Tabla 5 da macro-F1 `0,74` (RoBERTa) y `0,82`/`0,87` (SETFIT base/issues) en NLBSE'23 y `0,79` y
+  `0,88` para los dos LLM de mejor desempeño; la Tabla 7 da `0,79` (RoBERTa), `0,82` (SETFIT) y un
+  máximo de `0,68` para los LLM en NLBSE'24. En `arXiv:2103.15822` (trabajo compañero arbitrado de
+  Paramesh), el texto completo reporta `90,60 %` para el árbol de decisión y `91,81 %` para
+  RandomForest. Ninguna cifra proviene solo del resumen, de modo que no se modificó su atribución:
+  `Paramesh2018_csitss` es la versión arbitrada del mismo trabajo.
+- **8.4 Bibliografía.** Se renombraron cinco claves para alinearlas con el año verificado de su
+  campo: `Date2004_database`, `Hohpe2004_eip`, `Stallings2018_computer_security`,
+  `Efron1994_bootstrap` y `Jurafsky2026_speech_language` (los años `2004`, `2004`, `2018`, `1994` y
+  `2026` constan verificados en las filas de c-139 y c-190 de este archivo). Se actualizaron los
+  `8` usos de `sections/` y la nota de convención del `.bib`. La URL de `ServiceNow2026_itsm`
+  (`…/products/itsm.html`) no respondió a la verificación automatizada (HTTP 403 y tiempo de espera
+  agotado); se reemplazó por la documentación oficial accesible (`https://www.servicenow.com/docs/`,
+  HTTP 200), con `urldate` del 2026-11-14, y se dejó constancia en la nota de fuente de
+  `tab:comparativa`. `verify_citations.py` termina en `PASS` (93 entradas, 93 claves citadas, 0
+  huérfanas y 0 sin uso).
+- **8.5 Resolución AAIP 198/2023 (OQ4).** Decisión de los autores: **no citarla**. No se verificó en
+  el Boletín Oficial ni en Infoleg en esta corrida y no se autorizó su incorporación. No se agregó
+  entrada bibliográfica ni oración en `11-aspectos-legales.tex`; el motivo queda registrado aquí y
+  en la tabla de OQ de esta fase, no en el cuerpo de la tesis.
+- **9.1 Anexo J (OQ3).** Decisión de los autores: **retirarlo**. Se eliminó la sección
+  `sec:anexo-respuestas-tribunal` de `12-anexos.tex`; el documento fuente
+  `docs/defensa/respuestas-tribunal.md` se conserva como material de defensa y ninguna sección de la
+  tesis remite a la etiqueta retirada (verificado con `rg`). Corresponde al escenario «Anexo J
+  retirado por decisión de los autores» del delta de `tesis-defensa`.
+- **9.2 Identificadores internos.** Se retiró la mención `(\texttt{c-201})` de
+  `12-anexos.tex:151`. `rg -n "c-[0-9]{3}"` sobre `sections/*.tex` solo devuelve líneas de
+  comentario (las de `00-glosario.tex` y `11-aspectos-legales.tex`).
+- **9.3 Cronograma.** Se agregaron a `docs/diagrams/cronograma.md` los hitos del 12 y 13-11-2026
+  (doble etiquetado `E3`/`E4`; arbitraje de `E5` y refuerzo; línea de base, calibración, ruido y
+  brazo solo-LLM) con su evidencia (marcas de `doble_etiquetado_arbitrado.csv` y fechas de autor de
+  los commits) y se actualizó la leyenda de `fig:cronograma` en `12-anexos.tex`. **El PNG no se
+  regeneró**: `@mermaid-js/mermaid-cli` y su navegador sin interfaz no están instalados en esta
+  máquina y el comando documentado requiere descargarlos. La regeneración de
+  `paper/figures/cronograma.png` queda pendiente para la compilación de cierre (tarea 10.1).
+- **9.4 Versión entregada (OQ2 pendiente).** En el Anexo B se reemplazó la afirmación no verificable
+  «los commits posteriores no modifican las fuentes de la tesis» por la de D9: el tag fija el
+  contenido y el commit siguiente solo consigna el hash. La portada y `Gomez2026_repositorio` usan
+  el mismo marcador explícito de versión (`vX.Y.Z`, provisional) y la portada, un marcador de fecha;
+  ambos se completan en la tarea 11.1. No se creó ningún tag.
