@@ -11,9 +11,14 @@ de eficiencia). Este design parte de `ebd2baa`, donde se volvió a verificar cad
 - `evaluation/data/campana/corpus_independiente_arbitrado.json`: `206` casos (`I001`..`I150`
   originales, `I151`..`I206` de refuerzo), con `canal_origen` y `sector_asignado`.
 - `evaluation/data/campana/predicciones_arbitrado.json`: `hybrid-v3` congelado sobre los `206`
-  (`commit` `1b62fdb`, existe en el historial).
+  (`commit` `1b62fdb`, alcanzable desde `origin/main`: `git merge-base --is-ancestor` devuelve `0`).
 - `evaluation/data/campana/predicciones_independiente.json`: primera corrida sobre los `103` con
-  consenso (`commit` registrado `561b3c4`, que **no existe** en el historial).
+  consenso (`commit` registrado `561b3c4`, **no alcanzable desde `main`** ni desde ninguna rama
+  publicada; el archivo lo versionó `1b17e55` según `git log --diff-filter=A`). En el clon donde
+  se hizo la corrida el objeto existe como commit colgante (`git cat-file -t` devuelve `commit`);
+  en otro clon `git cat-file -t` falla, porque un objeto colgante no viaja con `fetch` ni con
+  `clone`. Por eso la presencia local del objeto no prueba pertenencia al historial y el control
+  se hace por alcanzabilidad (D2). El dictamen corrigió la misma premisa en `c6b0cf9`.
 - `evaluation/data/campana/arbitraje_tres_vias.json`: `origen` por caso (`consenso_e3_e4` o
   `arbitraje_e5`) y bandera `tres_vias` (`64` arbitrados, `6` de tres vías: `I033`, `I042`,
   `I056`, `I130`, `I194`, `I198`).
@@ -55,7 +60,7 @@ año distinto); `analisis_calibracion_gate_c214.json` con `corpus_arbitrado_c206
 **Goals:**
 
 - Que todo el documento razone con el resultado arbitrado y que la estimación sobre `103` quede
-  como etapa previa, con una sola aparición fuera de resultados.
+  como etapa previa, con una sola aparición de `0,8447` fuera de resultados (criterio en D6).
 - Producir, con un único script versionado y probado, todas las cifras nuevas que pide el
   dictamen, registrarlas en el memo canónico y solo entonces llevarlas a la tesis.
 - Dar al diseño fuera de muestra su apartado metodológico y sus amenazas, sin inventar datos.
@@ -79,7 +84,11 @@ Es la más desfavorable de las tres y es una medición sin exclusión. Se agrega
 **complementarias**, rotuladas así en la tabla y en la prosa:
 
 1. **Ponderada por la composición del corpus de 200** (post-estratificación: sensibilidad de cada
-   clase sobre los `206` ponderada por `16/85/67/31/1` sobre `200`), con intervalo bootstrap
+   clase sobre los `206` ponderada por la composición del corpus de ajuste: `Sistemas` 16,
+   `Soporte Tecnico Hardware` 85, `Soporte Tecnico Software` 67, `Seguridad Informatica` 31 y
+   `Bases de Datos` 1, suma 200; el script la lee de `sector_asignado` en
+   `data/corpus_evaluacion_pseudonimizado.json`, como c-191, y usa ese vector como anclaje), con
+   intervalo bootstrap
    percentil por caso (`2000` remuestreos, semilla `20261021`). No es una elección posterior a los
    datos: la ponderación estaba prevista desde el diseño de c-191 (`runbook-corpus-independiente.md`,
    «Estratos de la campaña de 150»: ponderación por la composición del corpus de 200 y reporte de
@@ -129,15 +138,35 @@ macro-F1 `0,7024` sobre el arbitrado; `87/103` y la ponderada `0,8146` sobre los
 `calibracion_gate`); celda `+6,9` de `tab:balance-neto` (15 %, 5 minutos, `e_aut = 53/200`) y
 `+25,4/+18,7/+11,9` con la referencia común (valida `balance_neto`); `64` arbitrados, `47`
 discordantes originales, `56` de refuerzo, `6` de tres vías y los `103` incluidos en
-`I001`..`I150`. Los conjuntos se derivan de los archivos, no de constantes: el refuerzo es
+`I001`..`I150`; el vector de pesos `Sistemas` 16, `Soporte Tecnico Hardware` 85, `Soporte
+Tecnico Software` 67, `Seguridad Informatica` 31, `Bases de Datos` 1 leído del corpus de ajuste;
+y, si `analisis_sesgo_corpus_referencia_c219.json` está presente, los aciertos y el n por origen
+de la referencia de c-219 (`109/142` y `33/64` en la rama del PR 110). Los conjuntos se derivan de
+los archivos, no de constantes: el refuerzo es
 `I151`..`I206` según la sección 14 de `runbook-arbitraje-discordantes.md`, y el script verifica
 que esos `56` casos no están en `predicciones_independiente.json`.
+
+**Desglose por origen y c-219.** El script conserva el cálculo por origen de la referencia porque
+lo necesita como anclaje y como base de las lecturas que c-219 no cubre (`47` discordantes
+originales, `56` de refuerzo, por etapa y por canal). La cifra consenso frente a arbitrado no es
+una cifra nueva de c-221: si el artefacto de c-219 está presente, el script la verifica contra él
+y aborta si difiere, y el memo y la tesis la citan desde la sección de c-219; solo si c-219 no
+entró a `main` al aplicar, la sección de c-221 la registra con nota de conciliación (OOS-021).
+
+**Control del `commit` declarado.** Para cada archivo de predicciones el script ejecuta
+`git merge-base --is-ancestor <commit> origin/main`: `0` es alcanzable; `1` no lo es; cualquier
+otro código (por ejemplo `128`, objeto ausente del clon) se registra también como no alcanzable y
+la consola informa que el objeto no está en este clon. Si no es alcanzable, registra el commit
+que versionó el archivo con `git log --diff-filter=A --format=%h -- <archivo>`. El JSON guarda
+solo la alcanzabilidad y ese commit, para que las salidas no dependan del clon (OOS-023).
 
 Salidas del JSON: tres lecturas; desglose por origen, por bloque, por etapa y por canal; matriz y
 métricas por clase; destinos de error de `Sistemas` (total y por bloque); calibración descriptiva
 de los `91` casos y, como contraste, de los `34`; balance neto con `e_aut` ponderada (`1 − lectura
 ponderada`) y cruda (`64/206`), `e_man = 26/151`, `N = 2.646`, `Δt = 43,82` s y `c` de 5, 10 y 15
-minutos; diferencias entre corridas; cuotas observadas por canal y por sector de los `150` y de los
+minutos (rejilla propia, que no espera a c-220: si al aplicar c-220 ya fijó en el memo un costo
+con procedencia, se agrega como escenario adicional o se usa como central con la rejilla como
+sensibilidad; si no lo fijó, por ejemplo en su rama B, se corre solo con la rejilla); diferencias entre corridas; cuotas observadas por canal y por sector de los `150` y de los
 `56`; ventana de etiquetado del refuerzo desde `doble_etiquetado_arbitrado.csv`.
 
 Alternativas descartadas: ampliar `analisis_calibracion_gate_c214.py` (cambiaría un artefacto con
@@ -150,7 +179,8 @@ Se agrega a `tab:calibracion-gate` una tercera fila, «Fuera de la muestra, refe
 (descriptiva)», con los `91` casos de la etapa Gemini. La fila de `34` se conserva. La nota de la
 tabla dice que la regla prerregistrada de c-214 elige el umbral solo con los `200` casos de ajuste,
 que la fila nueva es descriptiva y que no cambia el resultado de la selección. El barrido sobre los
-`91` (umbrales `0,86`, `0,91`, `0,96`) se informa en prosa como descripción. Se agrega la
+`91`, con los mismos candidatos de la regla prerregistrada de c-214 (`0,70` vigente, `0,86`,
+`0,91`, `0,96`, `0,99` y derivar todo lo escalado), se informa en prosa como descripción. Se agrega la
 declaración de inestabilidad: entre las dos corridas sobre los `103` casos comunes, el sector y la
 etapa coinciden y la confianza de Gemini difiere en `7` de `34`. Alternativa descartada: reemplazar
 la fila de `34`, porque es la del prerregistro.
@@ -171,7 +201,9 @@ la fila de `34`, porque es la del prerregistro.
   `subsec:resultados-campana-medicion` que hablan de la validación fuera de muestra
   (`08-discusion.tex:20`, `:28`, `:60`; `10-recomendaciones.tex:26`) pasan a
   `subsec:validacion-fuera-muestra`; las que hablan del brazo manual o del doble etiquetado
-  `E1`/`E2` se conservan.
+  `E1`/`E2` se conservan. Como el requisito vigente «Reporte de la validacion fuera de muestra» de
+  `tesis-document` ubica ese reporte en `subsec:resultados-campana-medicion`, el delta lo modifica
+  para ubicarlo en `subsec:validacion-fuera-muestra`, con sus dos escenarios.
 - La frase de `07-resultados.tex:6` enumera los nueve apartados resultantes.
 - Se corrige en el párrafo del arbitraje el rótulo de `Sistemas`: `0,5082` es su sensibilidad
   (`31/61`), no una «exactitud estricta».
@@ -222,8 +254,21 @@ corridas. Alternativa descartada: una subsección metodológica nueva, por pagin
 | `01-introduccion.tex:74` | Lo excluido es un modelo supervisado afinado con el corpus acumulado en operación; la línea de base clásica se usa solo como referencia | La exclusión genérica |
 | `00-resumen.tex` (ES y EN) | Exactitud fuera de muestra (primaria y ponderada) y resultado frente a la línea de base, ≤ 250 palabras cada uno según la regla de c-106; la lectura del balance neto igual a la de la discusión | Detalle prescindible (por ejemplo `W` y `r`) para hacer lugar |
 
-Cada pasaje se verifica con `rg` (cadenas retiradas ausentes y anclajes nuevos presentes). En la
-prosa fuera de `07-resultados.tex`, `0,8447` con `103` aparece a lo sumo una vez por capítulo.
+Cada pasaje se verifica con `rg` (cadenas retiradas ausentes y anclajes nuevos presentes).
+
+**Criterio único para la estimación sobre `103`.** Fuera de `07-resultados.tex`, `0,8447` aparece
+una sola vez en todo `sections/*.tex`, tablas incluidas: en la fila del segundo objetivo de
+`tab:cumplimiento-objetivos` (`09-conclusiones.tex:24`), rotulada como etapa previa. Verificación:
+`rg -n "0,8447" "docs/Tesis/v10 (IA)/paper/sections" -g "!07-resultados.tex"` devuelve exactamente
+esa línea. Se elige este criterio, y no «a lo sumo una vez por capítulo», porque (a) se verifica
+con un solo comando sin distinguir prosa de tabla; (b) coincide con lo que el change reescribe:
+`08-discusion.tex:8` y `:60` retiran la cifra, `09-conclusiones.tex:24` la conserva como etapa
+previa, `10-recomendaciones.tex` y `00-resumen.tex` no la tienen; y (c) es más estricto que la
+regla vigente de c-216 («Repetición de cifras acotada y remisión a la tabla fuera de muestra»),
+cuyo texto y cuyo escenario además no coincidían (una vez fuera de resultados frente a una vez por
+capítulo). Esa regla se modifica en el delta de `tesis-document` para fijar este criterio para
+`0,8447`, conservar el de una vez por capítulo para `0,6893` y agregar
+`subsec:validacion-fuera-muestra` como destino válido de las remisiones.
 
 ### D7 — Identificadores internos
 
@@ -309,8 +354,11 @@ suma AUROC, Brier (como término) y TF-IDF en orden alfabético.
 - **Anexo J**: la recomendación es **retirarlo** de la tesis, porque su fuente
   (`docs/defensa/respuestas-tribunal.md`) ya existe y es material de defensa; ninguna referencia
   del cuerpo apunta a `sec:anexo-respuestas-tribunal`, y el retiro compensa páginas. Decisión de
-  los autores (OQ3). Si deciden conservarlo, se descarta el delta de `tesis-defensa` antes de
-  archivar y se actualizan sus cifras al arbitraje.
+  los autores (OQ3). El delta de `tesis-defensa` es condicional y tiene un escenario por rama:
+  si lo retiran, `12-anexos.tex` no contiene `sec:anexo-respuestas-tribunal` y el documento queda
+  como material de defensa; si lo conservan, el anexo reproduce el documento fuente y las cifras de
+  ambos se actualizan al arbitraje. Así, archivar el change no deja una spec falsa en ninguna de las
+  dos decisiones, y no hace falta descartar el delta.
 - **Cronograma**: se agregan a `docs/diagrams/cronograma.md` los hitos del 12 y 13-11-2026 (doble
   etiquetado `E3`/`E4`, arbitraje de `E5` y refuerzo, línea de base, calibración, análisis de
   ruido y brazo solo-LLM), con fecha de la evidencia (marcas del CSV y fechas de autor de los
@@ -353,8 +401,8 @@ suma AUROC, Brier (como término) y TF-IDF en orden alfabético.
 6. Compilación y verificaciones (tareas 10).
 7. Release con confirmación (tareas 11).
 
-**Rollback**: `git revert` de los commits del change; el script y sus salidas son aditivos; el
-la sección de c-221 del memo se retira sin tocar las anteriores. Un tag publicado no se borra: se supera con otro.
+**Rollback**: `git revert` de los commits del change; el script y sus salidas son aditivos; la
+sección de c-221 del memo se retira sin tocar las anteriores. Un tag publicado no se borra: se supera con otro.
 
 ## Open Questions
 
@@ -364,7 +412,9 @@ la sección de c-221 del memo se retira sin tocar las anteriores. Un tag publica
 - **OQ2 (autores, bloquea 11)**: número de la versión nueva (se recomienda `v1.4.0`) y fecha de la
   portada.
 - **OQ3 (autores, bloquea 9.1)**: ¿se retira el Anexo J (recomendado) o se traslada a otro
-  material? Si se conserva, se actualizan sus cifras y se descarta el delta de `tesis-defensa`.
+  material? Si se conserva, se actualizan sus cifras al arbitraje en el anexo y en el documento
+  fuente; el delta de `tesis-defensa` cubre las dos ramas y se verifica con el escenario de la
+  decisión registrada.
 - **OQ4 (autores, bloquea 8.5)**: si la Resolución AAIP 198/2023 se verifica en fuente oficial,
   ¿se autoriza la oración en el capítulo legal? Por defecto, sin verificación o sin autorización no
   se agrega.

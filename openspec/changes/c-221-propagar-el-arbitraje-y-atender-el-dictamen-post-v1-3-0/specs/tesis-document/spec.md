@@ -7,8 +7,10 @@ validación fuera de muestra a partir de la cifra primaria del corpus arbitrado 
 complementarias, con las cifras de la sección de c-221 del memo canónico. La discusión SHALL informar
 cuántos de los `47` discordantes originales acertó el clasificador y SHALL presentar el arbitraje
 como la medición que reemplazó al análisis de escenarios. La estimación sobre `103` casos SHALL
-quedar rotulada como etapa previa y SHALL aparecer en prosa a lo sumo una vez por capítulo fuera de
-`07-resultados.tex`. Esos capítulos MUST NOT afirmar que el arbitraje está pendiente, MUST NOT
+quedar rotulada como etapa previa y, fuera de `07-resultados.tex`, SHALL aparecer una sola vez en
+todo `sections/*.tex`, tablas incluidas: en la fila del segundo objetivo de
+`tab:cumplimiento-objetivos` (regla de «Repetición de cifras acotada y remisión a la tabla fuera de
+muestra», modificada por este change). Esos capítulos MUST NOT afirmar que el arbitraje está pendiente, MUST NOT
 contener «sin el arbitraje de los 47» ni el requisito de «41 de los 47», y MUST NOT usar el peor y
 el mejor caso como argumento principal.
 
@@ -20,8 +22,9 @@ el mejor caso como argumento principal.
 
 #### Scenario: Estimación previa acotada
 
-- **WHEN** se cuenta `0,8447` en prosa por capítulo fuera de `07-resultados.tex`
-- **THEN** aparece a lo sumo una vez por capítulo y rotulada como etapa previa
+- **WHEN** se ejecuta `rg -n "0,8447" "docs/Tesis/v10 (IA)/paper/sections" -g "!07-resultados.tex"`
+- **THEN** devuelve una sola línea, la fila del segundo objetivo de `tab:cumplimiento-objetivos` en `09-conclusiones.tex`
+- **AND** esa fila rotula la cifra como etapa previa
 
 ### Requirement: Clase Sistemas descrita con el soporte del corpus arbitrado
 
@@ -140,13 +143,20 @@ corpus y referencias, y SHALL ajustar su síntesis para declarar de qué exactit
 La tesis SHALL declarar que la confianza de Gemini difirió entre las dos corridas fuera de muestra
 en los casos comunes, con la cantidad registrada, y que el orden del prerregistro de la calibración
 se demuestra con las fechas de autor de los commits. La documentación de la campaña SHALL registrar
-que el `commit` declarado en `predicciones_independiente.json` no existe en el historial y cuál
-commit versionó el archivo.
+que el `commit` declarado en `predicciones_independiente.json` no es alcanzable desde `main` (puede
+existir como objeto colgante en el clon donde se hizo la corrida, pero no viaja con `fetch` ni con
+`clone`) y cuál commit versionó el archivo. MUST NOT afirmar que ese commit no existe.
 
 #### Scenario: Declaraciones presentes
 
 - **WHEN** se leen la calibración de resultados y la metodología
 - **THEN** figuran la variación entre corridas y la nota sobre las fechas de autor
+
+#### Scenario: Commit de la primera corrida descrito por alcanzabilidad
+
+- **WHEN** se lee el README de la campaña sobre `predicciones_independiente.json`
+- **THEN** dice que el `commit` declarado no es alcanzable desde `main` y nombra el commit que versionó el archivo
+- **AND** no afirma que el commit no exista
 
 ### Requirement: Sin identificadores internos de cambio en el cuerpo
 
@@ -199,3 +209,58 @@ expresa de los autores.
 
 - **WHEN** se lee `docs/diagrams/cronograma.md`
 - **THEN** figuran los hitos de noviembre de 2026 con su evidencia
+
+## MODIFIED Requirements
+
+### Requirement: Repetición de cifras acotada y remisión a la tabla fuera de muestra
+
+La exactitud estricta fuera de muestra `0,8447` con `n = 103` (estimación con exclusión, etapa
+previa) SHALL aparecer fuera de `07-resultados.tex` una sola vez en todo `sections/*.tex`, tablas
+incluidas: en la fila del segundo objetivo de `tab:cumplimiento-objetivos`, rotulada como etapa
+previa. La pareja exactitud estricta arbitrada `0,6893` con `n = 206` SHALL aparecer en prosa como
+máximo una vez por capítulo en `08-discusion.tex`, `09-conclusiones.tex` y
+`10-recomendaciones.tex`; para esta cifra las tablas, incluidas `tab:fuera-de-muestra` y la tabla
+de cumplimiento de objetivos, quedan exentas. Las menciones restantes SHALL reemplazarse por una
+remisión a `tab:fuera-de-muestra` o a `subsec:validacion-fuera-muestra`. La reducción MUST NOT
+cambiar el valor de ninguna cifra, cita ni afirmación sustantiva, y MUST NOT introducir referencias
+cruzadas sin destino.
+
+#### Scenario: Conteo de repeticiones en prosa
+
+- **WHEN** se ejecuta `rg -n "0,8447" "docs/Tesis/v10 (IA)/paper/sections" -g "!07-resultados.tex"` y se cuentan las apariciones en prosa de `0,6893` en los capítulos 8, 9 y 10
+- **THEN** `0,8447` devuelve una sola línea, la fila del segundo objetivo en `09-conclusiones.tex`
+- **AND** `0,6893` aparece en prosa como máximo una vez por capítulo
+- **AND** las demás menciones son remisiones a `tab:fuera-de-muestra` o a `subsec:validacion-fuera-muestra`
+
+#### Scenario: Cifras y citas intactas
+
+- **WHEN** se compara el texto antes y después de la reducción
+- **THEN** ninguna cifra canónica, cita o afirmación sustantiva cambia
+- **AND** todas las remisiones nuevas resuelven a una etiqueta existente
+
+### Requirement: Reporte de la validacion fuera de muestra
+
+La tesis SHALL reportar en `subsec:validacion-fuera-muestra` las metricas fuera de
+muestra por etapa del clasificador congelado sobre el corpus independiente
+(`evaluation/data/campana/predicciones_independiente.json`, reporte in-sample frente a
+out-of-sample de c-167, y `evaluation/data/campana/predicciones_arbitrado.json` sobre el corpus
+arbitrado), con su `n` e intervalos, contrastadas con las estimaciones
+dentro de la muestra, y SHALL actualizar `08-discusion.tex` (parrafo de procedencia de
+los datos de ajuste) y `subsec:corpus-independiente` en consecuencia. Si no existe
+`predicciones_independiente.json`, la tesis SHALL declarar "sin corpus independiente
+declarado" y que las metricas permanecen como estimaciones dentro de la muestra. La
+procedencia de los ajustes y la calificacion dentro de la muestra de los 200 casos se
+rigen por el requisito "Procedencia declarada de los ajustes realizados sobre el corpus
+de validacion"; este requisito solo agrega el resultado fuera de muestra.
+
+#### Scenario: Validacion fuera de muestra reportada
+
+- **WHEN** existe `predicciones_independiente.json` y se lee `subsec:validacion-fuera-muestra`
+- **THEN** se reportan las metricas por etapa sobre el corpus independiente con su `n` y sus intervalos, junto a las estimaciones dentro de la muestra
+- **AND** `subsec:corpus-independiente` se retitula como replicacion sobre corpus adicionales y remite a resultados
+
+#### Scenario: Sin corpus independiente declarado
+
+- **WHEN** no existe `predicciones_independiente.json`
+- **THEN** la tesis declara "sin corpus independiente declarado" en resultados, discusion y memo
+- **AND** `subsec:corpus-independiente` conserva la recomendacion de construir ese corpus

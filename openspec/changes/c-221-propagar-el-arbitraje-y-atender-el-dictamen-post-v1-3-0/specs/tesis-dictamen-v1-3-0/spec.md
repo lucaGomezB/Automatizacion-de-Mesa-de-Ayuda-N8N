@@ -1,6 +1,39 @@
-## MODIFIED Requirements
+## REMOVED Requirements
 
 ### Requirement: Tabla de la validación fuera de muestra y estado del arbitraje
+
+**Reason**: el requisito exigía declarar que el arbitraje de los casos discordantes por un tercer
+etiquetador no se ejecutó y quedaba diferido, y su escenario «Arbitraje declarado como diferido»
+exigía no informar ningún resultado del arbitraje. El arbitraje se ejecutó (`64` casos arbitrados
+por `E5`, corpus arbitrado de `206` casos, `142` aciertos) y `07-resultados.tex` ya informa su
+resultado: el requisito y ese escenario quedaron falsos y no pueden conservarse con su nombre.
+
+**Migration**: lo reemplaza el requisito «Tabla de la validación fuera de muestra y arbitraje
+ejecutado» de este mismo delta, que conserva la tabla de la etapa previa (peor caso, macro-F1,
+acuerdo `E3`/`E4`) y exige declarar el arbitraje como ejecutado, con la cifra primaria del corpus
+arbitrado y sus lecturas complementarias.
+
+## MODIFIED Requirements
+
+### Requirement: Validación fuera de muestra en las conclusiones
+
+`09-conclusiones.tex` SHALL incorporar la validación fuera de muestra en la prosa y en la fila
+del segundo objetivo de `tab:cumplimiento-objetivos`, con la cifra primaria del corpus arbitrado y
+sus lecturas complementarias. La estimación con exclusión sobre `103` casos SHALL figurar en esa
+fila rotulada como etapa previa, y la prosa SHALL remitir a ella sin repetir la cifra, según la
+regla de «Repetición de cifras acotada y remisión a la tabla fuera de muestra». MUST NOT
+presentarla como acreditación del umbral de `0,85` ni cambiar el estado del segundo objetivo.
+
+#### Scenario: Resultado con su límite
+
+- **WHEN** se leen las conclusiones sobre el segundo objetivo
+- **THEN** figura la exactitud fuera de muestra del corpus arbitrado con sus lecturas complementarias
+- **AND** la estimación sobre `103` casos figura solo en la fila del segundo objetivo, rotulada como etapa previa
+- **AND** el objetivo sigue como no alcanzado
+
+## ADDED Requirements
+
+### Requirement: Tabla de la validación fuera de muestra y arbitraje ejecutado
 
 `07-resultados.tex` SHALL presentar una tabla de la validación fuera de muestra con el n
 primario, los casos discordantes excluidos, el n efectivo, el acuerdo y el kappa entre los
@@ -25,16 +58,3 @@ como cobertura del corpus.
 - **WHEN** se lee el tratamiento de los casos discordantes en `07-resultados.tex`
 - **THEN** el texto dice que el arbitraje se ejecutó e informa la cifra primaria del corpus arbitrado y sus lecturas complementarias
 - **AND** no se describe el arbitraje como diferido
-
-### Requirement: Validación fuera de muestra en las conclusiones
-
-`09-conclusiones.tex` SHALL incorporar la validación fuera de muestra en la prosa y en la fila
-del segundo objetivo de `tab:cumplimiento-objetivos`, con la cifra primaria del corpus arbitrado,
-sus lecturas complementarias y la estimación con exclusión rotulada como etapa previa. MUST NOT
-presentarla como acreditación del umbral de `0,85` ni cambiar el estado del segundo objetivo.
-
-#### Scenario: Resultado con su límite
-
-- **WHEN** se leen las conclusiones sobre el segundo objetivo
-- **THEN** figura la exactitud fuera de muestra del corpus arbitrado con sus lecturas complementarias
-- **AND** el objetivo sigue como no alcanzado
