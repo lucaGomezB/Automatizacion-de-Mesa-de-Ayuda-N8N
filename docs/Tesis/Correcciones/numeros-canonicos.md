@@ -29,6 +29,7 @@ de las ramas consumidoras").
 - **Upsert c-210**: `c-210-medicion-de-la-linea-de-base` (aplicado el 2026-11-13) agrega la Sección 3.22 (comparación de la línea de base clásica con el híbrido `hybrid-v3` sobre el mismo n efectivo de `103`: métricas globales, F1 por clase, lectura ponderada a la prevalencia natural y veredicto honesto) y registra la integración aditiva en la tesis. No modifica ningún valor ni estado `vigente` de las Secciones 3.1 a 3.21. Fecha: 2026-11-13.
 - **Upsert c-206**: `c-206-arbitraje-de-los-discordantes-y-refuerzo-de-clases-chicas` (aplicado el 2026-11-13) agrega la Sección 3.25 (validación fuera de muestra con el corpus independiente **arbitrado** de `206` casos: el tercer etiquetador `E5` arbitra los `64` discordantes y el refuerzo de `56` casos sube el n efectivo de `103` a `206`, sin exclusión; exactitud estricta y laxa globales con IC de Wilson y métricas por clase con `Sistemas` y `Bases de Datos` estimables). Rota las Secciones 3.19 y 3.20 como **estimación con exclusión** (etapa previa sobre `103`). No modifica ningún valor ni estado `vigente` de las Secciones 3.1 a 3.24. Fecha: 2026-11-13.
 - **Upsert c-213 (seguimiento n = 206)**: `c-213-integrar-la-linea-de-base-en-la-tesis` (aplicado el 2026-11-13) agrega la Sección 3.26 (repetición del contraste pareado de la Sección 3.23 sobre el corpus independiente arbitrado de c-206, `206` casos sin exclusión: tabla 2×2, McNemar exacta y corregida, diferencia de exactitudes con IC 95 % bootstrap pareado, y métricas globales y F1 por clase de la línea de base y del híbrido). No modifica ningún valor ni estado `vigente` de las Secciones 3.1 a 3.25; la Sección 3.23 (contraste sobre `103`) queda intacta. Fecha: 2026-11-13.
+- **Upsert c-222**: `c-222-recalcular-el-balance-neto-con-el-costo-medido` (aplicado el 2026-11-14) agrega la Sección 3.33 (balance neto recalculado con el `c` medido de la Sección 3.31 sobre la referencia común de la Sección 3.21: insumos con procedencia, fórmulas de `B` y `a*`, escenario central con el intervalo condicional y la cota combinada, la grilla de 5, 10 y 15 minutos rotulada como sensibilidad del supuesto superado y la sensibilidad mixta de c-221 no promovida) y una remisión desde la Sección 3.21. No modifica ningún valor ni estado de las Secciones 3.1 a 3.32. Fecha: 2026-11-14.
 - **Artefacto**: este memo. No se edita ningún `.tex` en este change.
 - **Fecha de verificación**: 2026-10-21.
 - **SHA-256 del corpus** (`data/corpus_evaluacion_pseudonimizado.json`):
@@ -1370,6 +1371,11 @@ difíciles) para ambas tasas; el costo `c` es un supuesto propio que la campaña
 La tabla de supuestos de la Sección 3.11 se conserva como sensibilidad. Procedencia:
 `analisis/…c207.json` (`balance_neto_referencia_comun`).
 
+> **Remisión (c-222).** El balance de esta sección se recalcula con el `c` medido `69,51 s` de la
+> Sección `3.31` en la Sección `3.33`; allí la grilla de 5, 10 y 15 minutos se conserva como
+> sensibilidad del supuesto superado, con sus cifras. Ninguna cifra ni estado de esta sección
+> cambia.
+
 ### 3.22 Comparación con la línea de base clásica (c-210)
 
 Cifras aditivas de la comparación entre la línea de base clásica y el híbrido `hybrid-v3`
@@ -2430,6 +2436,120 @@ particular, `142/206`, `0,6893`, `0,7024`, `0,8447/103`, `0,8146`, `0,1715`, `0,
 balance neto conservan su cifra y su estado. La Sección `3.31` (c-220) no se reescribe; el `c` medido
 `69,51` s se cita como escenario del balance de sensibilidad sin alterar `B`. La verificación con
 `git diff` dirigido confirma que la sección 3.32 es aditiva (solo líneas agregadas).
+
+### 3.33 Balance neto recalculado con el costo medido (c-222)
+
+Sección **aditiva**: no reemplaza ni cambia la cifra ni el estado de ningún valor de las secciones
+3.1 a 3.32. Convierte el `c` medido de la Sección 3.31 (`69,51 s`) en el insumo central del balance
+neto `B` y de la exactitud mínima de equilibrio `a*` de la Sección 3.21, en lugar del costo supuesto
+de 5, 10 y 15 minutos. El supuesto «10 a 15 minutos» (Sección 3.11) se reemplaza como insumo central;
+la rejilla de 5, 10 y 15 minutos se conserva como sensibilidad del supuesto superado, con sus cifras.
+La sensibilidad mixta de c-221 (`+28,2` / `+25,1`, Sección 3.32 (h)) NO se promueve: mezcla corpus y
+referencias. No cambia el umbral del `85 %`, las categorías, el corpus ni ningún artefacto congelado.
+Corre offline, de solo lectura, sin red, sin Gemini y sin base de datos.
+
+*Numeración.* El memo terminaba en la Sección `3.32` (c-221); esta sección es la `3.33`, la primera
+libre (releída al aplicar).
+
+Fuente única de las cifras: `evaluation/data/campana/analisis/analisis_balance_neto_c222.json`
+(y su vista `.md`), generado por el script de solo lectura
+`evaluation/data/campana/analisis/analisis_balance_neto_c222.py` (pruebas en
+`test_analisis_balance_neto_c222.py`, `37` pruebas). Comando (desde la raíz del repositorio):
+
+```bash
+python3 evaluation/data/campana/analisis/analisis_balance_neto_c222.py
+```
+
+SHA-256 de las salidas versionadas (UTF-8 sin BOM, LF; dos corridas idénticas byte a byte):
+`analisis_balance_neto_c222.json`
+`6b600043ed6e6cea8853d3cf0dafe65d51ef35aa444a931a9c6fcabb2126ee0b`;
+`analisis_balance_neto_c222.md`
+`1f71b2fdc0525bab54b9507cb7dee4db479f1c29837177cf0bf49bf5e36ec348`.
+
+Método: reutiliza `evaluation/metrics.py` (`remuestreos_indices`, `percentil_intervalo`),
+`evaluation/campana.py` y `evaluation/run_evaluation.py`; `B = 2000`, semilla `20261021`, nivel
+`0,95`; sin red ni Gemini; determinista. El método y los parámetros se fijaron en el docstring del
+generador antes de producir las salidas; el prerregistro no es ciego.
+
+Entradas leídas y su SHA-256: `analisis_costo_derivacion_c220.json`
+`2de287514832044ed6a29b5d17a7110ca10af81e5ffc2696f730e67e5c231d1c`; `analisis_dictamen_c207.json`
+`1c35ebd572289d45bd4f098c10a70635e0beb13f959250a2695c4a88e11a826d`;
+`analisis_propagacion_arbitraje_c221.json`
+`2df409b1b6f6d6b9d490e40b5dbc30e1221a41b047aeff1f80511a51912a7e8c`; `plantilla_etiquetado.csv`
+`c35a58b60aca98dbc5fd03ad280fbba2f8baf2d56444ba7982ada0715f8ccd09`; `predicciones_in_sample.json`
+`89cf956e82f660dd8675a2d23b7b4d17efd62da542c0ba35bea28e0e54572ede`.
+
+El script **aborta sin escribir** si no reproduce, antes de calcular, los anclajes de la Sección 3.21:
+las celdas `+25,4 / +18,7 / +11,9` horas-persona por trimestre, el `69,51 s` de la Sección 3.31 y los
+tres IC `[+8,6; +42,4]`, `[−15,0; +52,5]` y `[−38,6; +62,7]`. Los insumos (`N`, `Δt`, `e_aut`,
+`e_man`, `c` y sus intervalos) se leen de los artefactos versionados, no de constantes.
+
+**(a) Insumos del balance (procedencia y estado).**
+
+| Valor | Procedencia | Estado |
+|---|---|---|
+| `N = 2.646` incidentes por trimestre | memo 3.11 / `analisis_dictamen_c207.json` (`balance_neto_referencia_comun.insumos.n_trimestral`) | vigente |
+| `Δt = 43,82 s` (constante; su incertidumbre no entra en el IC) | idem (`…insumos.delta_t_s`); memo 3.1 y 3.4 | vigente |
+| `e_aut = 28/138 = 0,2029` (consenso `E1`/`E2`, por caso) | `…c207.json` (`…referencia_consenso.e_aut`); memo 3.21 (c) | vigente |
+| `e_man = 26/151 = 0,1722` (consenso `E1`/`E2`, por derivación) | idem (`…referencia_consenso.e_man`) | vigente |
+| `e_aut − e_man = +0,0307`, IC 95 % `[−0,0460; +0,1070]` | idem (`…referencia_consenso.diferencia`, `…diferencia_ic`) | vigente |
+| `c = 69,51 s`, IC 95 % `[33,42; 106,56] s` | `analisis_costo_derivacion_c220.json` (`composicion.escenarios.bajo`); memo 3.31 (e) | vigente (nuevo, 3.31) |
+
+Fórmulas del balance: `B = (N / 3.600) × [Δt − (e_aut − e_man) × c]` y
+`a* = 1 − e_man − Δt / c`.
+
+**(b) Escenario central con el `c` medido (lectura central).** Dos intervalos rotulados: el
+**condicional con `c` fijo** (bootstrap percentil por caso al 95 %, `c = 69,51 s` constante; aísla la
+incertidumbre muestral de `e_aut − e_man`) y la **cota combinada por suma de extremos** (sobre el
+intervalo de `c` y el de `e_aut − e_man`: `B` se evalúa en las cuatro esquinas y se toma el mínimo y
+el máximo; cota exterior conservadora, no asume independencia). El IC condicional se **recomputa**, no
+se interpola desde la rejilla.
+
+| Magnitud | Valor | IC 95 % condicional (`c` fijo) | Cota combinada 95 % | Signo | Estado |
+|---|---|---|---|---|---|
+| `B` (h-persona por trimestre) | `+30,6` | `[+26,7; +34,6]` | `[+23,8; +35,8]` | positivo (fijo) | vigente (nuevo) |
+| `a*` (%) | `19,7` | `[13,4; 25,8]` | — | — | vigente (nuevo) |
+
+Con el `c` medido, el balance neto estimado es **positivo** y la cota combinada `[+23,8; +35,8]` no
+contiene el cero: el signo queda fijado por la muestra, a diferencia de la Sección 3.21, donde solo
+`c = 5 min` lo fijaba. `a* = 19,7 %` queda muy por debajo de la exactitud estricta observada contra
+la referencia común (`0,7971`, Sección 3.20) y del umbral del `85 %`; `a*` NO es el fundamento del
+umbral (lo es la paridad medida de la Sección 3.31 (g)), de modo que no debe reutilizarse como tal.
+
+**(c) Grilla de 5, 10 y 15 minutos (sensibilidad del supuesto superado).** Se conserva con sus cifras
+y se rotula como `condicional`; NO es insumo vigente. Valores idénticos a la Sección 3.21 (c),
+reproducidos como anclaje por el análisis de c-222.
+
+| `c` | `B` (h-persona por trimestre) | IC 95 % de `B` | Signo | `a*` (%) | IC 95 % de `a*` (%) |
+|---|---|---|---|---|---|
+| 5 min | `+25,4` | `[+8,6; +42,4]` | positivo | `68,2` | `[61,9; 74,2]` |
+| 10 min | `+18,7` | `[−15,0; +52,5]` | no fijado | `75,5` | `[69,2; 81,5]` |
+| 15 min | `+11,9` | `[−38,6; +62,7]` | no fijado | `77,9` | `[71,6; 83,9]` |
+
+La grilla se declara **superada** por el `c` medido: el costo supuesto de `10 a 15 minutos` (Sección
+3.11) fue reemplazado como insumo central. Sus cifras se conservan por trazabilidad.
+
+**(d) Sensibilidad mixta de c-221 (no promovida).** La sensibilidad de la Sección 3.32 (h) con la
+tasa fuera de muestra (`+28,2` con `e_aut` ponderada y `+25,1` con `e_aut` cruda, ambas con el `c`
+medido `69,51 s`) se cita y **no** se promueve: mezcla corpus y referencias. La lectura central sigue
+siendo la referencia común de la Sección 3.21.
+
+**(e) Comando reproducible y redondeo.** El comando de la cabecera reproduce `B` y `a*` del escenario
+medido y de cada celda de la rejilla; el `.json` conserva los valores con cuatro decimales y la
+convención de la tesis redondea `B` a un decimal (horas-persona por trimestre), y `a*` y los
+porcentajes a un decimal. Reejecutar el comando desde la raíz regenera las salidas idénticas byte a
+byte.
+
+**(f) Valores previos intactos.** Ningún valor ni estado de las secciones 3.1 a 3.32 cambia. En
+particular, las celdas `+25,4 / +18,7 / +11,9`, el `c = 69,51` s y la sensibilidad mixta `+28,2` /
+`+25,1` conservan su cifra y su estado; la Sección 3.21 solo recibe la remisión. La verificación con
+`git diff` dirigido confirma que la sección 3.33 es aditiva (solo líneas agregadas).
+
+La lectura del balance con el `c` medido quedó **confirmada por los autores el 2026-11-14**
+(checkpoint `0.4` de c-222): la lectura central es positiva y la viabilidad operativa pasa de
+`condicional` a positiva. La prosa de `00-resumen.tex`, `08-discusion.tex`, `09-conclusiones.tex` y
+`10-recomendaciones.tex` se alinea con esta sección; `12-anexos.tex` no contiene una mención del
+balance y queda sin cambios (ver `dictamen-correcciones.md`, c-222).
 
 ## 4. Contingencia del gate de intervención humana
 

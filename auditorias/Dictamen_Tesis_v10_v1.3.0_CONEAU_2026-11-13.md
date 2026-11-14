@@ -111,7 +111,7 @@ Las dos observaciones críticas (N-01, retiro del kappa de 0,87; N-02, nota sobr
 - **N-05, procedencia de los tiempos automatizados: resuelta en lo sustancial.** El archivo versionado contiene 118 de los 119 casos de correo y formulario; uno queda sin registro, y el texto lo dice.
 - **N-07 (oraciones largas), N-11 (legibilidad de figuras) y N-15 (tildes): no verificadas** en esta evaluación. Los identificadores internos de cambio fueron retirados del cuerpo.
 - **N-12: parcial.** Se quitó la expresión objetada; la repetición de cifras persiste (la validación fuera de muestra aparece cuatro veces).
-- **N-16: parcial.** Falta la copia del artículo de Paket et al.
+- **N-16: atendida.** El texto completo de Paket et al. se obtuvo el 14 de noviembre de 2026 y se depositó en la carpeta de fuentes del proyecto; la copia queda disponible para verificación. Mayor-Rocher et al. se cita en su versión de revista (preliminar en arXiv:2409.15334).
 
 ### Pendientes nuevos, posteriores a las devoluciones
 

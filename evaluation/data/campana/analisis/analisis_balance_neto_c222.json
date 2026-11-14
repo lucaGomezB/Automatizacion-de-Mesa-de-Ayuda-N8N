@@ -1,0 +1,193 @@
+{
+  "aditivo": {
+    "declaracion": "Las cifras de este analisis son aditivas: van a la seccion nueva del memo y no reemplazan ningun valor de las secciones 3.1 a 3.32; no cambian el umbral de 85 %, el costo supuesto de la rejilla, los artefactos congelados ni el corpus.",
+    "reemplaza_numeros_canonicos": false,
+    "seccion_memo": "nueva (aditiva; primer numero libre al aplicar)"
+  },
+  "anclajes": {
+    "c_s": 69.50741008771931,
+    "c_s_redondeado": 69.51,
+    "conteos": {
+      "casos": 138,
+      "derivaciones_manual": 151,
+      "errores_automatizado": 28,
+      "errores_manual": 26
+    },
+    "referencia_comun": [
+      25.43545698243593,
+      18.663213964871858,
+      11.890970947307787
+    ],
+    "referencia_comun_ic_redondeada": [
+      [
+        8.6,
+        42.4
+      ],
+      [
+        -15.0,
+        52.5
+      ],
+      [
+        -38.6,
+        62.7
+      ]
+    ],
+    "referencia_comun_redondeada": [
+      25.4,
+      18.7,
+      11.9
+    ]
+  },
+  "change": "c-222-recalcular-el-balance-neto-con-el-costo-medido",
+  "combinado": {
+    "balance_ic": [
+      23.827573398946534,
+      35.81384123950497
+    ],
+    "metodo": "suma de extremos: B en las cuatro esquinas (c x (e_aut - e_man)); cota exterior conservadora, no asume independencia",
+    "signo_fijado": "positivo"
+  },
+  "condicional_c_fijo": {
+    "a_estrella": 0.19737818952027075,
+    "a_estrella_ic": [
+      0.13426950233678803,
+      0.25772151472068905
+    ],
+    "balance": 30.6386297578816,
+    "balance_ic": [
+      26.741703050942665,
+      34.5598311731169
+    ],
+    "c_s": 69.50741008771931,
+    "metodo": "bootstrap percentil por caso al 95 % (empareja las derivaciones manuales con su caso) con c constante; recomputado, no interpolado",
+    "signo_fijado": "positivo"
+  },
+  "entradas_sha256": {
+    "analisis_costo_derivacion_c220.json": "2de287514832044ed6a29b5d17a7110ca10af81e5ffc2696f730e67e5c231d1c",
+    "analisis_dictamen_c207.json": "1c35ebd572289d45bd4f098c10a70635e0beb13f959250a2695c4a88e11a826d",
+    "analisis_propagacion_arbitraje_c221.json": "2df409b1b6f6d6b9d490e40b5dbc30e1221a41b047aeff1f80511a51912a7e8c",
+    "plantilla_etiquetado.csv": "c35a58b60aca98dbc5fd03ad280fbba2f8baf2d56444ba7982ada0715f8ccd09",
+    "predicciones_in_sample.json": "89cf956e82f660dd8675a2d23b7b4d17efd62da542c0ba35bea28e0e54572ede"
+  },
+  "generador": "evaluation/data/campana/analisis/analisis_balance_neto_c222.py",
+  "grilla_superada": [
+    {
+      "a_estrella": 0.6817479028697572,
+      "a_estrella_ic": [
+        0.6186392156862744,
+        0.7420912280701755
+      ],
+      "balance": 25.43545698243593,
+      "balance_ic": [
+        8.615983913215128,
+        42.359701794406405
+      ],
+      "c_min": 5,
+      "c_s": 300.0,
+      "estado": "condicional",
+      "rotulo": "sensibilidad del supuesto superado (costo supuesto)",
+      "signo_fijado": "positivo"
+    },
+    {
+      "a_estrella": 0.7547812362030906,
+      "a_estrella_ic": [
+        0.6916725490196078,
+        0.8151245614035088
+      ],
+      "balance": 18.663213964871858,
+      "balance_ic": [
+        -14.975732173569744,
+        52.51170358881279
+      ],
+      "c_min": 10,
+      "c_s": 600.0,
+      "estado": "condicional",
+      "rotulo": "sensibilidad del supuesto superado (costo supuesto)",
+      "signo_fijado": "no fijado"
+    },
+    {
+      "a_estrella": 0.779125680647535,
+      "a_estrella_ic": [
+        0.7160169934640522,
+        0.8394690058479533
+      ],
+      "balance": 11.890970947307787,
+      "balance_ic": [
+        -38.56744826035462,
+        62.663705383219195
+      ],
+      "c_min": 15,
+      "c_s": 900.0,
+      "estado": "condicional",
+      "rotulo": "sensibilidad del supuesto superado (costo supuesto)",
+      "signo_fijado": "no fijado"
+    }
+  ],
+  "insumos": {
+    "c_ic": [
+      33.41688739035088,
+      106.56443859649119
+    ],
+    "c_s": 69.50741008771931,
+    "casos": 138,
+    "delta_t_s": 43.82,
+    "derivaciones_manual": 151,
+    "diferencia": 0.030713120261061544,
+    "diferencia_ic": [
+      -0.046040824464428136,
+      0.10699190969063435
+    ],
+    "e_aut": 0.2028985507246377,
+    "e_man": 0.17218543046357615,
+    "errores_automatizado": 28,
+    "errores_manual": 26,
+    "fuente_c": "seccion 3.31 (c-220); composicion por suma de extremos",
+    "fuente_e_aut": "consenso de E1 y E2 (28/138, por caso)",
+    "fuente_e_man": "consenso de E1 y E2 (26/151, por derivacion)",
+    "n": 2646
+  },
+  "metodo": "Solo lectura, offline y determinista; reutiliza evaluation.metrics (remuestreos_indices, percentil_intervalo), evaluation.campana y evaluation.run_evaluation; sin red ni Gemini. Referencia comun de la seccion 3.21 con el c medido de la 3.31; bootstrap por caso con c fijo y cota combinada por suma de extremos.",
+  "parametros": {
+    "B": 2000,
+    "grilla_c_min": [
+      5,
+      10,
+      15
+    ],
+    "nivel_confianza": 0.95,
+    "semilla": 20261021
+  },
+  "preregistro": {
+    "ciego": false,
+    "declaracion": "El metodo y los parametros se fijaron antes de generar las salidas. El preregistro NO fue ciego: las celdas del balance de la 3.21, el c medido y los anclajes ya se conocian; no se habia observado la distribucion bootstrap recomputada con el c fijo.",
+    "fijado_en_docstring": true
+  },
+  "referencia_comun": {
+    "casos": 138,
+    "derivaciones_manual": 151,
+    "diferencia": 0.030713120261061544,
+    "diferencia_ic": [
+      -0.046040824464428136,
+      0.10699190969063435
+    ],
+    "e_aut": 0.2028985507246377,
+    "e_man": 0.17218543046357615,
+    "errores_automatizado": 28,
+    "errores_manual": 26,
+    "rotulo": "consenso de E1 y E2 (138 casos; discordantes excluidos)"
+  },
+  "sensibilidad_mixta_c221": {
+    "cruda_c_medido": 25.13231669280677,
+    "ponderada_c_medido": 28.176039625253065,
+    "promovida": false,
+    "rotulo": "sensibilidad que mezcla corpus y referencias (seccion 3.32); NO reemplaza el balance con referencia comun"
+  },
+  "trazabilidad": {
+    "a_estrella": "condicional_c_fijo.a_estrella",
+    "balance_central": "condicional_c_fijo.balance",
+    "celdas_3_21": "grilla_superada[*].balance",
+    "ic_3_21": "grilla_superada[*].balance_ic",
+    "intervalo_combinado": "combinado.balance_ic",
+    "intervalo_condicional": "condicional_c_fijo.balance_ic"
+  }
+}

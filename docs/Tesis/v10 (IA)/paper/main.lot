@@ -25,7 +25,7 @@
 \contentsline {table}{\numberline {24}{\ignorespaces Contraste pareado del híbrido frente al brazo de modelo de lenguaje solo, por bloque}}{105}{table.caption.51}%
 \contentsline {table}{\numberline {25}{\ignorespaces Latencia, throughput y tasa de error por nivel de concurrencia y por capa}}{106}{table.caption.52}%
 \contentsline {table}{\numberline {26}{\ignorespaces Sensibilidad de la exactitud estricta y la macro-F1 a referencias alternativas plausibles}}{107}{table.caption.53}%
-\contentsline {table}{\numberline {27}{\ignorespaces Exactitud mínima de equilibrio y balance neto trimestral según la tasa de derivación errónea manual y el costo por derivación}}{121}{table.caption.54}%
+\contentsline {table}{\numberline {27}{\ignorespaces Exactitud mínima de equilibrio y balance neto trimestral con el costo medido y, como sensibilidad superada, según la tasa de derivación errónea manual y el costo por derivación}}{121}{table.caption.54}%
 \contentsline {table}{\numberline {28}{\ignorespaces Cumplimiento de los objetivos del trabajo y evidencia de respaldo}}{125}{table.caption.55}%
 \contentsline {table}{\numberline {29}{\ignorespaces Configuración evaluada, configuración entregada y configuración de la campaña complementaria}}{145}{table.caption.63}%
 \contentsline {table}{\numberline {30}{\ignorespaces Parámetros de configuración de la inferencia con \texttt {gemini-3.6-flash}.}}{153}{table.caption.67}%
