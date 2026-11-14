@@ -281,27 +281,27 @@ preparación sin requisito propio no llevan paréntesis.
 
 ## 10. Compilación y verificación de cierre
 
-- [ ] 10.1 Compilar con Docker `texlive-thesis` (`latexmk main.tex`): cero errores fatales,
+- [x] 10.1 Compilar con Docker `texlive-thesis` (`latexmk main.tex`): cero errores fatales,
       referencias o citas indefinidas y etiquetas duplicadas; revisar visualmente los anexos por
       paginación; regenerar `paper/compilacion.md` con `resumir_registro_compilacion.py` y copiar
       el PDF a `docs/Tesis/tesis_ultima_version.pdf`. (TD «Subsecciones propias»; TD «Versión
       entregada»)
-- [ ] 10.2 Ejecutar `python -m pytest` de `evaluation/` (con las variables dummy del CI y desde su
+- [x] 10.2 Ejecutar `python -m pytest` de `evaluation/` (con las variables dummy del CI y desde su
       carpeta), `python "docs/Tesis/v10 (IA)/verify_citations.py"` y
       `python -I docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py` después de agregar las
       filas `C18/…` (archivo, línea, etiqueta y frase ancla por cada pasaje editado); todos en
       verde. (OOS-024; TD «Marco teórico»)
-- [ ] 10.3 Repetir los conteos de 0.3 y registrar el antes y el después (palabras del resumen,
+- [x] 10.3 Repetir los conteos de 0.3 y registrar el antes y el después (palabras del resumen,
       identificadores, salida del `rg` de `0,8447`, repeticiones, cadenas retiradas).
       (TD «Propagación»; TD «Repetición de cifras»; TD «Resumen»; TD «Identificadores internos»)
-- [ ] 10.4 Agregar la fila `+c-221` al libro mayor de páginas de `dictamen-correcciones.md` con el
+- [x] 10.4 Agregar la fila `+c-221` al libro mayor de páginas de `dictamen-correcciones.md` con el
       delta y su causa (presupuesto de D13) y la sección de trazabilidad del change con el estado
       de cada una de las 17 recomendaciones y de las observaciones por sección.
-- [ ] 10.5 Revisar el diff completo con el patrón del falso positivo de gitleaks (palabra que
+- [x] 10.5 Revisar el diff completo con el patrón del falso positivo de gitleaks (palabra que
       contiene «api», «key», «token», «auth» o «secret» seguida a menos de 20 caracteres de coma,
       dos puntos o igual y de una cadena de 10 o más caracteres sin espacios) y reescribir los
       casos; si hay Docker, correr gitleaks con `.gitleaks.toml` sobre el árbol de trabajo.
-- [ ] 10.6 Confirmar que ningún corpus, predicción, configuración ni artefacto congelado cambió
+- [x] 10.6 Confirmar que ningún corpus, predicción, configuración ni artefacto congelado cambió
       (`git diff --stat` contra la base) y agregar la fase del change en `CHANGES.md`. (OOS-024)
 
 ## 11. Release (requiere confirmación de los autores)

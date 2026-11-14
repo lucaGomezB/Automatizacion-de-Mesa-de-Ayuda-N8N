@@ -1,30 +1,31 @@
 \babel@toc {spanish}{}\relax 
-\contentsline {table}{\numberline {1}{\ignorespaces Trabajos académicos previos sobre clasificación de tickets}}{31}{table.caption.2}%
-\contentsline {table}{\numberline {2}{\ignorespaces Comparación de soluciones para gestión automatizada de mesa de ayuda}}{32}{table.caption.3}%
-\contentsline {table}{\numberline {3}{\ignorespaces Operacionalización de variables del estudio}}{36}{table.caption.4}%
-\contentsline {table}{\numberline {4}{\ignorespaces Capas funcionales de la arquitectura del sistema}}{52}{table.caption.14}%
-\contentsline {table}{\numberline {5}{\ignorespaces Entidades principales del modelo de datos}}{57}{table.caption.17}%
-\contentsline {table}{\numberline {6}{\ignorespaces Puntos de entrada principales de la interfaz REST}}{59}{table.caption.19}%
-\contentsline {table}{\numberline {7}{\ignorespaces Estado de alineación con los controles de ISO/IEC 27002:2022, agrupados por tema}}{77}{table.caption.22}%
-\contentsline {table}{\numberline {8}{\ignorespaces Perfil de alineación con las funciones de NIST CSF 2.0}}{77}{table.caption.23}%
-\contentsline {table}{\numberline {9}{\ignorespaces Estadísticos descriptivos de los tiempos de registro por flujo (\(n = 200\))}}{80}{table.caption.24}%
-\contentsline {table}{\numberline {10}{\ignorespaces Tiempo de registro por canal de origen: flujos manual y automatizado, reducción y contraste intra-canal (\(n = 200\))}}{80}{table.caption.25}%
-\contentsline {table}{\numberline {11}{\ignorespaces Matriz de confusión del clasificador automático (\(n = 200\)). Filas: sector asignado; columnas: sector predicho principal.}}{82}{table.caption.27}%
-\contentsline {table}{\numberline {12}{\ignorespaces Exactitud estricta y laxa por etapa del pipeline y por canal de origen}}{82}{table.caption.28}%
-\contentsline {table}{\numberline {13}{\ignorespaces Métricas de clasificación por clase con intervalo de confianza al 95~\% (una contra el resto)}}{83}{table.caption.29}%
-\contentsline {table}{\numberline {14}{\ignorespaces Exactitud por banda de confianza declarada y por etapa del pipeline}}{86}{table.caption.30}%
-\contentsline {table}{\numberline {15}{\ignorespaces Calibración y discriminación de la confianza de la etapa Gemini, dentro y fuera de la muestra}}{87}{table.caption.32}%
-\contentsline {table}{\numberline {16}{\ignorespaces Sensibilidad de la exactitud al vocabulario ajustado con el corpus}}{88}{table.caption.33}%
-\contentsline {table}{\numberline {17}{\ignorespaces Etapa determinística con tres vocabularios}}{89}{table.caption.34}%
-\contentsline {table}{\numberline {18}{\ignorespaces Exactitud estricta del clasificador congelado según el origen de la referencia}}{89}{table.caption.35}%
-\contentsline {table}{\numberline {19}{\ignorespaces Confusiones observadas en la clasificación automática, por frontera, con los aciertos laxos entre los errores estrictos}}{90}{table.caption.36}%
-\contentsline {table}{\numberline {20}{\ignorespaces Tiempo del brazo manual de la campaña complementaria por operador y reducción frente al brazo automatizado de la misma campaña}}{92}{table.caption.39}%
-\contentsline {table}{\numberline {21}{\ignorespaces Validación fuera de muestra del clasificador congelado \texttt {hybrid-v3} sobre el corpus independiente}}{96}{table.caption.43}%
-\contentsline {table}{\numberline {22}{\ignorespaces Comparación de la línea de base clásica con el híbrido \texttt {hybrid-v3} sobre los 206 casos fuera de muestra arbitrados}}{97}{table.caption.45}%
-\contentsline {table}{\numberline {23}{\ignorespaces Contraste pareado del híbrido frente al brazo de modelo de lenguaje solo, por bloque}}{98}{table.caption.48}%
-\contentsline {table}{\numberline {24}{\ignorespaces Latencia, throughput y tasa de error por nivel de concurrencia y por capa}}{100}{table.caption.49}%
-\contentsline {table}{\numberline {25}{\ignorespaces Sensibilidad de la exactitud estricta y la macro-F1 a referencias alternativas plausibles}}{101}{table.caption.50}%
-\contentsline {table}{\numberline {26}{\ignorespaces Exactitud mínima de equilibrio y balance neto trimestral según la tasa de derivación errónea manual y el costo por derivación}}{114}{table.caption.51}%
-\contentsline {table}{\numberline {27}{\ignorespaces Cumplimiento de los objetivos del trabajo y evidencia de respaldo}}{118}{table.caption.52}%
-\contentsline {table}{\numberline {28}{\ignorespaces Configuración evaluada, configuración entregada y configuración de la campaña complementaria}}{138}{table.caption.60}%
-\contentsline {table}{\numberline {29}{\ignorespaces Parámetros de configuración de la inferencia con \texttt {gemini-3.6-flash}.}}{146}{table.caption.64}%
+\contentsline {table}{\numberline {1}{\ignorespaces Trabajos académicos previos sobre clasificación de tickets}}{33}{table.caption.2}%
+\contentsline {table}{\numberline {2}{\ignorespaces Comparación de soluciones para gestión automatizada de mesa de ayuda}}{34}{table.caption.3}%
+\contentsline {table}{\numberline {3}{\ignorespaces Operacionalización de variables del estudio}}{38}{table.caption.4}%
+\contentsline {table}{\numberline {4}{\ignorespaces Capas funcionales de la arquitectura del sistema}}{56}{table.caption.17}%
+\contentsline {table}{\numberline {5}{\ignorespaces Entidades principales del modelo de datos}}{61}{table.caption.20}%
+\contentsline {table}{\numberline {6}{\ignorespaces Puntos de entrada principales de la interfaz REST}}{63}{table.caption.22}%
+\contentsline {table}{\numberline {7}{\ignorespaces Estado de alineación con los controles de ISO/IEC 27002:2022, agrupados por tema}}{82}{table.caption.25}%
+\contentsline {table}{\numberline {8}{\ignorespaces Perfil de alineación con las funciones de NIST CSF 2.0}}{82}{table.caption.26}%
+\contentsline {table}{\numberline {9}{\ignorespaces Estadísticos descriptivos de los tiempos de registro por flujo (\(n = 200\))}}{85}{table.caption.27}%
+\contentsline {table}{\numberline {10}{\ignorespaces Tiempo de registro por canal de origen: flujos manual y automatizado, reducción y contraste intra-canal (\(n = 200\))}}{85}{table.caption.28}%
+\contentsline {table}{\numberline {11}{\ignorespaces Matriz de confusión del clasificador automático (\(n = 200\)). Filas: sector asignado; columnas: sector predicho principal.}}{87}{table.caption.30}%
+\contentsline {table}{\numberline {12}{\ignorespaces Exactitud estricta y laxa por etapa del pipeline y por canal de origen}}{87}{table.caption.31}%
+\contentsline {table}{\numberline {13}{\ignorespaces Métricas de clasificación por clase con intervalo de confianza al 95~\% (una contra el resto)}}{89}{table.caption.32}%
+\contentsline {table}{\numberline {14}{\ignorespaces Exactitud por banda de confianza declarada y por etapa del pipeline}}{91}{table.caption.33}%
+\contentsline {table}{\numberline {15}{\ignorespaces Calibración y discriminación de la confianza de la etapa Gemini, dentro y fuera de la muestra}}{92}{table.caption.35}%
+\contentsline {table}{\numberline {16}{\ignorespaces Sensibilidad de la exactitud al vocabulario ajustado con el corpus}}{94}{table.caption.36}%
+\contentsline {table}{\numberline {17}{\ignorespaces Etapa determinística con tres vocabularios}}{95}{table.caption.37}%
+\contentsline {table}{\numberline {18}{\ignorespaces Exactitud estricta del clasificador congelado según el origen de la referencia}}{95}{table.caption.38}%
+\contentsline {table}{\numberline {19}{\ignorespaces Confusiones observadas en la clasificación automática, por frontera, con los aciertos laxos entre los errores estrictos}}{96}{table.caption.39}%
+\contentsline {table}{\numberline {20}{\ignorespaces Tiempo del brazo manual de la campaña complementaria por operador y reducción frente al brazo automatizado de la misma campaña}}{98}{table.caption.42}%
+\contentsline {table}{\numberline {21}{\ignorespaces Validación fuera de muestra del clasificador congelado \texttt {hybrid-v3} sobre el corpus independiente}}{102}{table.caption.45}%
+\contentsline {table}{\numberline {22}{\ignorespaces Matriz de confusión y métricas por clase del corpus arbitrado completo (\(n = 206\))}}{103}{table.caption.46}%
+\contentsline {table}{\numberline {23}{\ignorespaces Comparación de la línea de base clásica con el híbrido \texttt {hybrid-v3} sobre los 206 casos fuera de muestra arbitrados}}{103}{table.caption.48}%
+\contentsline {table}{\numberline {24}{\ignorespaces Contraste pareado del híbrido frente al brazo de modelo de lenguaje solo, por bloque}}{105}{table.caption.51}%
+\contentsline {table}{\numberline {25}{\ignorespaces Latencia, throughput y tasa de error por nivel de concurrencia y por capa}}{106}{table.caption.52}%
+\contentsline {table}{\numberline {26}{\ignorespaces Sensibilidad de la exactitud estricta y la macro-F1 a referencias alternativas plausibles}}{107}{table.caption.53}%
+\contentsline {table}{\numberline {27}{\ignorespaces Exactitud mínima de equilibrio y balance neto trimestral según la tasa de derivación errónea manual y el costo por derivación}}{121}{table.caption.54}%
+\contentsline {table}{\numberline {28}{\ignorespaces Cumplimiento de los objetivos del trabajo y evidencia de respaldo}}{125}{table.caption.55}%
+\contentsline {table}{\numberline {29}{\ignorespaces Configuración evaluada, configuración entregada y configuración de la campaña complementaria}}{145}{table.caption.63}%
+\contentsline {table}{\numberline {30}{\ignorespaces Parámetros de configuración de la inferencia con \texttt {gemini-3.6-flash}.}}{153}{table.caption.67}%

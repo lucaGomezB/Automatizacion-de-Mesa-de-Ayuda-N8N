@@ -2815,6 +2815,19 @@ C-97 actualizar-dependencias-seguridad (C-64)             [ARCHIVADO 2026-10-19 
 - **Governance**: ALTO (integridad de la evidencia de auditoria y guardas de seguridad).
 - **Leer antes**: `openspec/changes/c-208-restaurar-la-integridad-de-la-memoria-de-engram/{proposal,design,tasks}.md` y `docs/engram-memory.md`.
 
+## FASE 73 — Propagacion del arbitraje y atencion del dictamen post-v1.3.0 (c-221)
+
+> Atiende la observacion central del dictamen CONEAU posterior a v1.3.0: el resultado arbitrado fuera de muestra (`0,6893` sobre `206`) no estaba propagado al resumen, la discusion, las conclusiones ni las recomendaciones. Propaga las tres lecturas con su rotulo, agrega las subsecciones propias y la tabla por clase, describe el diseno fuera de muestra en la metodologia, corrige el rotulo de `Sistemas` y cierra las recomendaciones del dictamen, sin mover el umbral (85 %) ni el balance neto.
+
+### [C-221] `propagar-el-arbitraje-y-atender-el-dictamen-post-v1-3-0` — EN APLICACION (2026-11-14, MEDIUM)
+
+- **Estado**: aplicadas las tareas 0 a 10 (la compilacion 10.1 es verde: 155 paginas, 0 errores, 0 referencias indefinidas); pendiente el release (11.1 a 11.4, con confirmacion expresa de los autores) y la regeneracion de `fig:cronograma.png`. Sin archivar.
+- **Scope**: `evaluation/data/campana/analisis/analisis_propagacion_arbitraje_c221.py` (+ test TDD, 43 pruebas); seccion aditiva `3.32` de `numeros-canonicos.md`; prosa de `00-resumen`, `01` a `12`; `Bibliography_base.bib`; `docs/diagrams/cronograma.md`.
+- **Hallazgo**: la exactitud estricta fuera de muestra es `0,6893` cruda (`142/206`, primaria), `0,7489` ponderada y `112/150` sobre los originales sin exclusion; la `0,8447` sobre `103` queda rotulada como etapa previa; el arbitraje acerto `25` de los `47` discordantes originales.
+- **Dependencias**: c-218, c-219 y c-220 (numeracion del memo, anclaje por origen y el costo `c`); c-216 y c-217 (secciones que reordena). No toca `App/`, `n8n/`, el clasificador ni `docker-compose.yml`.
+- **Governance**: MEDIUM (analisis y prosa); HIGH en el capitulo legal, el tag y el push (confirmacion expresa).
+- **Leer antes**: `openspec/changes/c-221-propagar-el-arbitraje-y-atender-el-dictamen-post-v1-3-0/{proposal,design,tasks}.md` y `auditorias/Dictamen_Tesis_v10_post-v1.3.0_5734ea8_CONEAU_2026-11-13.md`.
+
 ---
 
 ## Notas del analisis

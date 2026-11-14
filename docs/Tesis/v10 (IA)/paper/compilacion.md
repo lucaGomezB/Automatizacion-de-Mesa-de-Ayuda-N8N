@@ -5,15 +5,15 @@ Generado por `docs/Tesis/Correcciones/resumir_registro_compilacion.py` a partir 
 
 | Concepto | Valor |
 |---|---|
-| Fuente compilada | arbol de trabajo sobre 153feb9 |
+| Fuente compilada | arbol de trabajo sobre la rama de c-221 |
 | Motor | XeTeX 3.141592653-2.6-0.999998 (TeX Live 2026) |
 | Biber | 2.22 |
-| Paginas | 156 |
+| Paginas | 155 |
 | Errores fatales | 0 |
 | Referencias indefinidas | 0 |
 | Citas indefinidas | 0 |
 | Etiquetas duplicadas (multiply defined) | 0 |
-| Overfull \hbox (maximo) | 19 (52,5 pt) |
+| Overfull \hbox (maximo) | 18 (82,3 pt) |
 | Lineas WARN de biber | 0 |
 | Lineas ERROR de biber | 0 |
-| SHA-256 de main.pdf | `e80c5993a0e492e7bc119eecd981efb118401fe5c21fa26ae60e809e18db4c25` |
+| SHA-256 de main.pdf | `9d19bf0bb91555942d112aaea8ddff390570c64df93307e7b741efc29c20cb41` |

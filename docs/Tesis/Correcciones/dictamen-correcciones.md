@@ -1034,6 +1034,7 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 | release v1.2.2 (C1) (`change/c-147-*`) | `2cb0022` | 104 | 96 | 8 | 0 | 0 | **total <= 100, fuente catedra (2026-10-27)** | Medido: `abspage@last{104}`; `Anexos` en p. 97; exceso +4 honrado y defendido; verificado de nuevo el 2026-10-27 sobre `7637fdb` (PDF de 104 paginas) |
 | `+c-216` (L2, L3, L4, L5) | sin commit (lo crea el orquestador) | 149 | 124 | 25 | +2 | +2 | **total <= 100, fuente catedra (2026-10-27); exceso +49 declarado y honrado** | Medido: `abspage@last{149}`; `Anexos` en p. 125; delta frente a la release v1.3.0 de partida (147 / 122 / 25): +2 total, +2 cuerpo, 0 anexos. L2 aporta +1 pagina en el capitulo 4 y +1 en la discusion; L5 (repeticiones y cortes del capitulo 11) no agrega paginas. El exceso sobre el tope de 100 es +49 y queda declarado y honrado. |
 | `+c-219` (`change/c-218-c-219-carga-multicanal-y-sesgo-de-referencia`) | sin commit (lo crea el orquestador) | 156 | 131 | 25 | +2 | +2 | **total <= 100, fuente catedra (2026-10-27)**; exceso heredado, no atribuible a este change | Medido: `abspage@last{156}`; `Anexos` en p. 132; delta frente a la compilacion de c-218 (154 / 129 / 25): +2 total, +2 cuerpo, 0 anexos; subseccion de resultados con dos tablas mas parrafos en 04 y 08 (una primera version sumaba +3 y se recorto) |
+| `+c-221` (`change/c-221-propagar-el-arbitraje-y-atender-el-dictamen-post-v1-3-0`) | sin commit (lo crea el orquestador) | 155 | 138 | 17 | -1 | +7 | **total <= 100, fuente catedra (2026-10-27)**; exceso heredado, no atribuible a este change; presupuesto de D13: <= 0 con el Anexo J retirado (cumple) | Medido: `abspage@last{155}`; `Anexos` en p. 139; delta frente a la compilacion de c-219 (156 / 131 / 25): -1 total, +7 cuerpo, -8 anexos. El retiro del Anexo J (material de defensa: `docs/defensa/respuestas-tribunal.md`), que aporta las 8 paginas de anexos menos, compensa el crecimiento del cuerpo (dos subsecciones nuevas en resultados, la tabla de matriz y metricas por clase, el apartado metodologico del corpus independiente, las amenazas septima y octava, el complemento descriptivo de calibracion y los parrafos de discusion, conclusiones y recomendaciones). El bloque incluye la prosa no compilada de c-220 (una fila de `tab:variables` y un parrafo en `04`), que no tuvo fila propia porque c-220 no compila; el delta neto total (-1) cumple el presupuesto <= 0 de D13. |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -2703,7 +2704,7 @@ Pendientes residuales: (1) la tarea 6.1 de c-146 sigue bloqueada por el acceso i
 | B8 | Exactitud laxa definida junto a la estricta (metrica secundaria) | c-131 | `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex:79` | `subsec:analisis-estadistico` | `exactitud laxa` | cerrada |
 | B9 | Cronograma con procedencia: figura en el Anexo A | c-135 | `docs/Tesis/v10 (IA)/paper/sections/12-anexos.tex:39` | `fig:cronograma` | `label{fig:cronograma}` | cerrada parcialmente: fechas de las seis iteraciones sin fuente primaria (tarea 5.2 de c-135 abierta) |
 | B9 | Cuarta limitacion: version del modelo vigente durante la campana (24-09-2026) | c-135 | `docs/Tesis/v10 (IA)/paper/sections/08-discusion.tex:50` | `subsec:limitaciones-estudio` | `integrada al clasificador el 24 de septiembre de 2026` | cerrada |
-| B10a | Introduccion de resultados enumera los siete apartados vigentes (la campaña complementaria agrego el septimo) | c-135 | `docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex:6` | `sec:resultados` | `Los resultados se presentan en siete apartados` | cerrada |
+| B10a | Introduccion de resultados enumera los siete apartados vigentes (la campaña complementaria agrego el septimo) | c-135 | `docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex:6` | `sec:resultados` | `Los resultados se presentan en siete apartados` | SUPERADA por c-221 (la frase pasó a enumerar doce apartados) |
 | B10b | Dimension nombrada como intervencion humana (sin 'reduccion') | c-135 | `docs/Tesis/v10 (IA)/paper/sections/07-resultados.tex:6` | `sec:resultados` | `intervención humana, calibración de la confianza` | cerrada |
 | B10c | Tabla comparativa: tres dimensiones; telefonia fuera de la afirmacion comparativa | c-135 | `docs/Tesis/v10 (IA)/paper/sections/03-estado-del-arte.tex:68` | `subsec:analisis-comparativo` | `tres dimensiones` | cerrada (OQ-4 PROVISIONAL) |
 | B10d | Metricas de los trabajos academicos completadas desde la fuente accesible | c-135 | `docs/Tesis/v10 (IA)/paper/sections/03-estado-del-arte.tex:48` | `tab:trabajos-academicos` | `20.000 reclamos + 35.000 issues` | cerrada parcialmente: Paket 2024 y Colavito 2025 sin acceso (OQ-5) |
@@ -2714,8 +2715,8 @@ Pendientes residuales: (1) la tarea 6.1 de c-146 sigue bloqueada por el acceso i
 | B13b | Cronometraje en vivo: relato del procedimiento, efecto Hawthorne atenuado y residual | c-134 | `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex:16` | `subsec:diseno-experimental` | `Hawthorne` | cerrada (OQ1 PROVISIONAL) |
 | B14 | Revision ortotipografica: titulos acentuados de indices y bibliografia | c-137 | `docs/Tesis/v10 (IA)/paper/main.tex:79` | - | `Referencias bibliográficas` | cerrada |
 | B15 | Normas y metodos estadisticos con entrada bibliografica (ISO/IEC 27001:2022) | c-139 | `docs/Tesis/v10 (IA)/paper/sections/11-aspectos-legales.tex:42` | `subsec:cumplimiento-marco` | `ISO27001_2022` | cerrada |
-| B16a | Metadatos bibliograficos (Jurafsky y Martin: edicion 2026, URL y fecha de consulta) | c-139 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:108` | - | `@unpublished{Jurafsky2023_speech_language` | cerrada |
-| B16b | Version de Gomez2026_repositorio alineada con la release (1.2.0) | c-141 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:914` | - | `Versi{\'o}n 1.3.0` | Aplicado en C1 (tarea 5.1, 2026-10-26); verificado por el script; version actualizada a 1.3.0 |
+| B16a | Metadatos bibliograficos (Jurafsky y Martin: edicion 2026, URL y fecha de consulta) | c-139 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:108` | - | `@unpublished{Jurafsky2023_speech_language` | SUPERADA por c-221 (la clave se renombró a Jurafsky2026_speech_language) |
+| B16b | Version de Gomez2026_repositorio alineada con la release (1.2.0) | c-141 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:914` | - | `Versi{\'o}n 1.3.0` | SUPERADA por c-221 (versión 1.4.0 y fecha 2026-11-14) |
 | Criterio 5 (residual) | TLS no verificado e invocacion sincronica declarados como limite (c-140 excluido provisionalmente) | c-140 / limitacion declarada | `docs/Tesis/v10 (IA)/paper/sections/09-conclusiones.tex:23` | `tab:cumplimiento-objetivos` | `TLS no verificado` | SUPERADA por c-160 (filas B7a y B7b: TLS verificado despues de la campaña, en el despliegue de referencia) |
 | B11 | Aprendizaje activo: seleccion por senales independientes y confianza solo tras recalibracion | c-136 | `docs/Tesis/v10 (IA)/paper/sections/10-recomendaciones.tex:38` | `subsec:aprendizaje-activo` | `label{subsec:aprendizaje-activo}` | cerrada |
 | B12 | Contraste direccional: p unilateral global junto al bilateral de los tiempos | c-134 | `docs/Tesis/v10 (IA)/paper/sections/04-marco-metodologico.tex:75` | `subsec:analisis-estadistico` | `alternative=greater` | cerrada |
@@ -3274,7 +3275,7 @@ Lineas leidas despues de aplicar el change, en `docs/Tesis/v10 (IA)/paper/sectio
 | B7c | Objetivo 3 alcanzado parcialmente en la prosa | c-160 | `09-conclusiones.tex:39` | `subsec:cumplimiento-objetivos` | `se alcanza parcialmente (latencia y exactitud medidas por canal)` | cerrada |
 | B7d | Objetivo 6 "Alcanzado parcialmente" en la Tabla 18 | c-160 | `09-conclusiones.tex:28` | `tab:cumplimiento-objetivos` | `Alcanzado parcialmente` | cerrada |
 | B7e | Prosa del objetivo 6 sin sugerir cumplimiento pleno | c-160 | `09-conclusiones.tex:43` | `subsec:cumplimiento-objetivos` | `sustenta parcialmente el sexto` | cerrada |
-| B7f | Resumen: exactitud y macro-F1 dentro de la muestra | c-160 | `00-resumen.tex:13` | `-` | `Dentro de la muestra, la exactitud estricta alcanzó 73,5` | cerrada |
+| B7f | Resumen: exactitud y macro-F1 dentro de la muestra | c-160 | `00-resumen.tex:13` | `-` | `Dentro de la muestra, la exactitud estricta alcanzó 73,5` | SUPERADA por c-221 (el resumen se reescribió con la exactitud fuera de muestra) |
 | B7g | Abstract: in-sample | c-160 | `00-resumen.tex:29` | `-` | `As in-sample estimates` | cerrada |
 | B8a | 5.5: 0,7385 frente a 0,6769 sobre los 130 casos con prediccion de ambas etapas | c-160 | `05-arquitectura.tex:66` | `subsec:subsistema-clasificacion` | `0,7385 frente a 0,6769 sobre los 130 casos` | cerrada |
 | B8b | 5.1: remision a la seccion de resultados y a los Anexos G y A | c-160 | `05-arquitectura.tex:8` | `subsec:vision-general` | `las mediciones de la \autoref{sec:resultados}` | cerrada |
@@ -4235,7 +4236,7 @@ de los residuos sin recomendación propia (grupo 10).
 | 19 | inv. 19: "nueve limitaciones" en 9.3 | c-190 | `08-discusion.tex:46` | - | `El estudio presenta nueve limitaciones` | cerrada |
 | 20 | inv. 20: OE4 sin repetir "exactitud del brazo manual" | c-190 | `09-conclusiones.tex:26` | `tab:cumplimiento-objetivos` | `alcanzado en tiempo y en esa exactitud` | cerrada |
 | 21 | inv. 21: glosario con TI, URL, E2E, MDE, NB, LR, DT (87 entradas) | c-190 | `00-glosario.tex:57` | - | `\textbf{TI} Tecnologías de la Información` | cerrada |
-| 22 | inv. 22: portada con la fecha de la release | c-190 | `00-portada.tex:30` | - | `9 de noviembre de 2026` | cerrada |
+| 22 | inv. 22: portada con la fecha de la release | c-190 | `00-portada.tex:30` | - | `9 de noviembre de 2026` | SUPERADA por c-221 (fecha de portada 14 de noviembre de 2026) |
 | 23 | inv. 23: matriz_confusion.pdf retirada del directorio de figuras | c-190 | `docs/Tesis/Correcciones/conteos-canonicos-tecnicos.md:364` | - | `se retiro del directorio de figuras (inv. 23)` | cerrada |
 | 24 | inv. 24: Anexo B nombra compilacion.md y el verificador | c-190 | `12-anexos.tex:48` | `sec:anexo-repositorio` | `La verificación de la compilación se conserva en \path{paper/compilacion.md}` | cerrada |
 | 25 | inv. 25: consentimiento de E1, E2, O1 y O2 declarado | c-190 | `11-aspectos-legales.tex:34` | - | `No se conservó un registro específico del procedimiento de información y consentimiento` | SUPERADA por c-193 |
@@ -4247,7 +4248,7 @@ de los residuos sin recomendación propia (grupo 10).
 | Res. 11.3 | Req. nuevos de 11.3 (todos los canales, referencia independiente) | c-190 | `10-recomendaciones.tex:18` | `subsec:medicion-intervencion` | `Que la revisión alcance a todos los canales, o a una muestra aleatoria de cada uno` | cerrada |
 | Res. balance | Redondeo del balance laxo (Delta t = 43,8) | c-190 | `08-discusion.tex:92` | `subsec:balance-neto` | `Una decimal; con \(\Delta t = 43{,}8\)~s dos celdas difieren en 0,1.` | cerrada |
 | Res. repos | Repositorios regionales declarados como limitacion en 3 | c-190 | `03-estado-del-arte.tex:10` | `sec:estado-del-arte` | `la ausencia de búsquedas en repositorios regionales (SciELO, Redalyc y JAIIO)` | cerrada |
-| Res. ISBN | No se agregan ISBN (APA 7 no los exige) | c-190 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:801` | - | `@book{Efron1993_bootstrap,` | cerrada |
+| Res. ISBN | No se agregan ISBN (APA 7 no los exige) | c-190 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:801` | - | `@book{Efron1993_bootstrap,` | SUPERADA por c-221 (la clave se renombró a Efron1994_bootstrap) |
 | Res. main.log | main.log no versionado, cubierto por compilacion.md | c-190 | `12-anexos.tex:48` | - | `que registra las páginas, los errores y el SHA-256 del PDF` | cerrada |
 
 ### Tabla de fuentes de 9.4-9.6 (verificadas el 2026-11-09)
@@ -4314,7 +4315,7 @@ El nivel pago de la Gemini API y el consentimiento de los cuatro participantes q
 
 | Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
 |---|---|---|---|---|---|---|
-| A1 | Hash del PDF del tag | c-192 | `12-anexos.tex:44` | `sec:anexo-repositorio` | `creado sobre el commit que fija el contenido de la versión entregada` | cerrada |
+| A1 | Hash del PDF del tag | c-192 | `12-anexos.tex:44` | `sec:anexo-repositorio` | `creado sobre el commit que fija el contenido de la versión entregada` | SUPERADA por c-221 (el Anexo B se reescribió: el tag fija el contenido) |
 | A2 | Sub-hipótesis 2 refutada con la regla declarada | c-192 | `07-resultados.tex:154` | `subsec:reduccion-intervencion` | `la estimación puntual alcanza la cota de 0,15, de modo que la sub-hipótesis resulta` | SUPERADA por c-196 |
 | A2-matiz | Matiz del intervalo (lectura conservadora) | c-192 | `07-resultados.tex:0` | `subsec:reduccion-intervencion` | `no se puede descartar un valor cercano al umbral` | SUPERADA por c-195 (matiz reformulado) |
 | A3 | Kappa de 1.6 por par | c-192 | `01-introduccion.tex:66` | `subsec:justificacion` | `0{,}5569$ (moderado, con intervalo)` | cerrada |
@@ -4758,7 +4759,7 @@ recompiló `paper/main.pdf` en este apply: se recompila aparte, por indicación 
 | Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
 |---|---|---|---|---|---|---|
 | Q1/1a | Documento fuente con las 16 respuestas | c-198 | `docs/defensa/respuestas-tribunal.md:11` | `-` | `### Q1.` | vigente |
-| Q1/1b | Anexo J como última sección de la serie | c-198 | `12-anexos.tex:483` | `sec:anexo-respuestas-tribunal` | `Respuestas del grupo a las preguntas del tribunal` | vigente |
+| Q1/1b | Anexo J como última sección de la serie | c-198 | `12-anexos.tex:483` | `sec:anexo-respuestas-tribunal` | `Respuestas del grupo a las preguntas del tribunal` | SUPERADA por c-221 (el Anexo J se retiró por decisión de los autores) |
 | Q1/1c | Referencia al Anexo J desde el Anexo I | c-198 | `12-anexos.tex:239` | `-` | `se conserva como trazabilidad operativa del proyecto` | SUPERADA por c-212 (se retiró la remisión al Anexo J desde el Anexo I) |
 | Q2/2a | Sección 3.18 del memo de números canónicos | c-198 | `docs/Tesis/Correcciones/numeros-canonicos.md:1034` | `-` | `3.18 Respuestas del tribunal` | vigente |
 | Q2/2b | Cifras de la versión de julio registradas como retiradas | c-198 | `docs/Tesis/Correcciones/numeros-canonicos.md:1045` | `-` | `165,3 s` | vigente |
@@ -4941,7 +4942,7 @@ recomendaciones 7 a 15 (consistencia y forma) quedan diferidas a un change poste
 | Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
 |---|---|---|---|---|---|---|
 | C7/1a | 1: acuerdo `E3`/`E4` y kappa en Resultados | c-207 | `07-resultados.tex:286` | `subsec:resultados-campana-medicion` | `su kappa de Cohen fue de 0,6055` | cerrada |
-| C7/1b | 1: arbitraje ejecutado y documentado | c-207 | `07-resultados.tex:316` | `subsec:resultados-campana-medicion` | `El arbitraje de los casos discordantes se ejecutó en el change c-206` | cerrada |
+| C7/1b | 1: arbitraje ejecutado y documentado | c-207 | `07-resultados.tex:316` | `subsec:resultados-campana-medicion` | `El arbitraje de los casos discordantes se ejecutó en el change c-206` | SUPERADA por c-221 (se retiró «change c-206» del párrafo del arbitraje) |
 | C7/1c | 1: tabla de la validación fuera de muestra | c-207 | `07-resultados.tex:293` | `tab:fuera-de-muestra` | `\label{tab:fuera-de-muestra}` | cerrada |
 | C7/2a | 2: resumen ES con lectura condicional | c-207 | `00-resumen.tex:15` | `-` | `la económica y operativa es condicional` | cerrada |
 | C7/2b | 2: abstract EN con lectura condicional | c-207 | `00-resumen.tex:31` | `-` | `economic and operational feasibility are conditional` | cerrada |
@@ -4949,7 +4950,7 @@ recomendaciones 7 a 15 (consistencia y forma) quedan diferidas a un change poste
 | C7/2d | 2: costo de inferencia no afirmado | c-207 | `09-conclusiones.tex:47` | `subsec:aportes-generalizacion` | `Ese filtro resolvió 131 de los 200 casos sin invocar al modelo` | cerrada |
 | C7/2e | 2: generalización regional acotada | c-207 | `09-conclusiones.tex:49` | `subsec:aportes-generalizacion` | `es una hipótesis por validar` | cerrada |
 | C7/3a | 3: validación fuera de muestra en conclusiones con su límite | c-207 | `09-conclusiones.tex:37` | `subsec:cumplimiento-objetivos` | `por lo que la cifra no acredita el umbral` | cerrada |
-| C7/3b | 3: fila del objetivo 2 con la validación | c-207 | `09-conclusiones.tex:24` | `tab:cumplimiento-objetivos` | `fuera de muestra, 0,8447 sobre el n efectivo de 103` | cerrada |
+| C7/3b | 3: fila del objetivo 2 con la validación | c-207 | `09-conclusiones.tex:24` | `tab:cumplimiento-objetivos` | `fuera de muestra, 0,8447 sobre el n efectivo de 103` | SUPERADA por c-221 (la fila del objetivo 2 se reescribió con las tres lecturas) |
 | C7/4a | 4: `E3`/`E4` en el capítulo legal, confirmación pendiente | c-207 | `11-aspectos-legales.tex:40` | `subsec:consentimiento-derechos` | `Los tres firmaron la confirmación posterior de esa información y de su consentimiento el 13 de noviembre de 2026` | cerrada (firmada el 2026-11-13; la afirmación de confirmación pendiente se retiró) |
 | C7/5a | 5: referencias distintas declaradas y recalculadas | c-207 | `08-discusion.tex:99` | `subsec:balance-neto` | `La rejilla combina, sin embargo, dos referencias distintas` | cerrada |
 | C7/5b | 5: lectura unificada del balance | c-207 | `08-discusion.tex:105` | `subsec:balance-neto` | `En síntesis, con una referencia común el balance neto no resulta negativo` | cerrada |
@@ -5119,7 +5120,7 @@ referencias ni citas indefinidas, ni etiquetas duplicadas.
 | C16/h | L3: equivalencia del clasificador entregado y evaluado | c-216 | `08-discusion.tex:66` | `subsec:limitaciones-estudio` | `la evaluación de clasificación se refiere también a la configuración entregada` | cerrada |
 | C16/i | L4: R4 verificado en el capítulo legal | c-216 | `11-aspectos-legales.tex:48` | `subsec:consentimiento-derechos` | `Los tres firmaron la confirmación posterior de esa información y de su consentimiento el 13 de noviembre de 2026` | cerrada (verificada) |
 | C16/j | L4: README de campaña con 11 filas | c-216 | `evaluation/data/campana/README.md:52` | `-` | `El registro queda con 11 filas` | cerrada |
-| C16/k | L5: repetición de la exactitud fuera de muestra | c-216 | `08-discusion.tex:20` | `subsec:limitaciones-estudio` | `la exactitud estricta fue la de la` | cerrada |
+| C16/k | L5: repetición de la exactitud fuera de muestra | c-216 | `08-discusion.tex:20` | `subsec:limitaciones-estudio` | `la exactitud estricta fue la de la` | SUPERADA por c-221 (el bloque de cifras se reemplazó por el resultado arbitrado) |
 | C16/l | L5: capítulo legal sin oraciones largas | c-216 | `11-aspectos-legales.tex:50` | `subsec:consentimiento-derechos` | `Cabe precisar su alcance.` | cerrada |
 | Cifras | Memo de números canónicos: sección 3.27 | c-216 | `docs/Tesis/Correcciones/numeros-canonicos.md:1698` | `-` | `3.27 Sensibilidad del clasificador a referencias alternativas plausibles` | vigente (nuevo) |
 
@@ -5696,3 +5697,151 @@ Grupo 0 (0.1 a 0.5), grupo 1 (1.1 a 1.11) y grupo 2 (2.1 y 2.2) ejecutados. La p
   contenido y el commit siguiente solo consigna el hash. La portada y `Gomez2026_repositorio` usan
   el mismo marcador explícito de versión (`vX.Y.Z`, provisional) y la portada, un marcador de fecha;
   ambos se completan en la tarea 11.1. No se creó ningún tag.
+
+
+### Fase 4: cierre (tareas 10.2 a 10.5)
+
+- **10.2 Verificación.** `python3 -m pytest` de `evaluation/` (variables dummy del CI, desde su
+  carpeta): **1392 passed, 1 skipped** (verde; igual a la línea de base de 0.3, sin fallas
+  preexistentes). `python3 "docs/Tesis/v10 (IA)/verify_citations.py"`: **PASS** (93 entradas, 93
+  claves citadas, 172 comandos, 0 huérfanas, 0 sin uso). `python3 -I
+  docs/Tesis/Correcciones/verificar_matriz_trazabilidad.py`: **0 fallas**. Antes de agregar las
+  filas `C21/…` el verificador daba **12 fallas**: la sección de c-221 sin matriz y **11 filas de
+  matrices previas** cuyos pasajes reescribió el change (`B10a`, `B16a`, `B16b`, `B7f`, `22`,
+  `Res. ISBN`, `A1`, `Q1/1b`, `C7/1b`, `C7/3b`, `C16/k`), que se rotularon `SUPERADA por c-221`.
+- **10.4 Libro mayor de páginas.** Fila `+c-221` agregada al libro mayor de la sección G0
+  (`155 / 138 / 17`; delta `-1 / +7 / -8` frente a la compilación de c-219). El presupuesto de D13
+  (crecimiento neto `<= 0` con el Anexo J retirado) se cumple: `-1` página total.
+- **10.5 Gitleaks.** Revisión textual del diff completo con el patrón conocido de falso positivo y
+  corrida de gitleaks sobre el árbol de trabajo; ver más abajo.
+- **Actualización de OQ2 (árbol de trabajo).** En el árbol de trabajo la portada, el Anexo B y
+  `Gomez2026_repositorio` ya usan `Versión 1.4.0` y la fecha `14 de noviembre de 2026` (el bloque de
+  la tarea 9.4 los dejó como marcador provisional `vX.Y.Z`; se completan al fijar OQ2 y se
+  recompila). El tag y el push siguen pendientes de la confirmación expresa de los autores (OQ5,
+  tareas 11.3 y 11.4), por lo que la recomendación 7 queda parcial.
+
+### Conteos antes y después (tarea 10.3)
+
+Conteo de palabras del resumen y del abstract con la regla de c-106 (math en línea como una palabra,
+`~` como separador salvo antes de un dígito, puntuación suelta excluida). El script de c-132/c-133 no
+se recuperó; se reprodujo una variante propia que devuelve los mismos valores de partida
+(`245 / 244`), de modo que el antes y el después son comparables.
+
+| Conteo | Antes (0.3, base `153feb9`) | Después (árbol de c-221) |
+|---|---|---|
+| Resumen ES (palabras, regla de c-106) | 245 | 243 |
+| Abstract EN (palabras, regla de c-106) | 244 | 234 |
+| `rg -n "c-[0-9]{3}"` en `sections/*.tex` | 11 coincidencias; 5 fuera de comentarios (`07:361`, `:373`, `:392`; `09:37`; `12:151`) | 6 coincidencias; **0 fuera de comentarios** (solo comentarios de `00-glosario.tex` y `11-aspectos-legales.tex`) |
+| `rg -n "0,8447" sections -g "!07-resultados.tex"` | 2 líneas (`08:8`, `09:24`) | **1 línea** (`09-conclusiones.tex:24`, fila del objetivo 2, rotulada como etapa previa) |
+| `0,6893` por capítulo | `07` 8, `09` 2 | `07` 8, `09` 2, `08` 1, `00-resumen` 1 (en prosa: `08` 1, `09` 1 más la celda exenta de la tabla de objetivos, `00-resumen` 1) |
+| `0,2222` por capítulo | `07`, `08`, `09`, `10` (una cada uno) | **`07` 1**; ninguno en `08`, `09` ni `10` |
+| «sin el arbitraje» | 1 (`08`) | **0** |
+| «41 de los 47» | 1 (`08`) | **0** |
+| Páginas totales | 156 | 155 |
+
+Cumple los criterios de la sección «Success Criteria» de `proposal.md`: `08`, `09` y `10` ya no
+contienen `0,2222`, «sin el arbitraje» ni «41 de los 47»; `0,8447` fuera de `07` aparece una sola vez;
+el resumen y el abstract quedan por debajo de 250 palabras; `rg "c-[0-9]{3}"` no devuelve líneas fuera
+de comentarios.
+
+### Estado de las 17 recomendaciones del dictamen post-v1.3.0 (tarea 10.4)
+
+Recomendaciones del dictamen CONEAU posterior a `v1.3.0` (evaluó `5734ea8`;
+`auditorias/Dictamen_Tesis_v10_post-v1.3.0_5734ea8_CONEAU_2026-11-13.md`, no versionado). Siete
+necesarias, seis de consistencia y cuatro de forma.
+
+| # | Recomendación (síntesis) | Estado | Evidencia (archivo:línea) |
+|---|---|---|---|
+| 1 | Reescribir los tres pasajes de la discusión desde el resultado arbitrado (`25` de `47`), sin el análisis de escenarios | cerrada | `08-discusion.tex:8`, `:20`, `:60` (C21/x, C21/y, C21/aa) |
+| 2 | Informar la exactitud fuera de muestra en tres lecturas y agregar la matriz y las métricas por clase del arbitrado | cerrada | `07-resultados.tex:366`, `:404` (C21/u, C21/v) |
+| 3 | Recalcular la calibración fuera de muestra sobre los `91` casos de la etapa Gemini, junto a los `34` | cerrada | `07-resultados.tex:209`, `:220` (C21/r, C21/s) |
+| 4 | Incorporar al resumen la exactitud fuera de muestra y la comparación con la línea de base | cerrada | `00-resumen.tex:13`, `:29` (C21/e) |
+| 5 | Actualizar lo que se dice de `Sistemas` con los `61` casos y reformular las dos líneas ya ejecutadas | cerrada | `08-discusion.tex:28`, `09-conclusiones.tex:37`, `10-recomendaciones.tex:18`, `:26` (C21/z, C21/ad, C21/ag, C21/ah) |
+| 6 | Describir en la metodología el diseño fuera de muestra (procedencia, cuotas, refuerzo posterior, arbitraje, seis de tres vías) y sumar las amenazas | cerrada | `04-marco-metodologico.tex:58`, `:100`, `:104` (C21/l, C21/m, C21/n) |
+| 7 | Crear un tag nuevo y corregir con él el Anexo B, la entrada del repositorio y la portada | **parcial**: documentación lista en el árbol de trabajo (`v1.4.0`, `14-11-2026`); tag y push pendientes de la confirmación de los autores (OQ5, tareas 11.3 y 11.4) | `12-anexos.tex:58`, `Bibliography_base.bib:917`, `00-portada.tex:30-31` (C21/aj, C21/ap) |
+| 8 | Agregar al balance neto la sensibilidad con la tasa de error fuera de muestra | cerrada | `08-discusion.tex:115` (C21/ab) |
+| 9 | Dar a la validación fuera de muestra y a la línea de base una subsección propia y actualizar la frase de apartados | cerrada | `07-resultados.tex:6`, `:360`, `:425` (C21/q, C21/t, C21/w) |
+| 10 | Retirar los identificadores internos del cuerpo y de la tabla, y la afirmación de latencia y costo de la arquitectura | cerrada | `07-resultados.tex:366`, `09-conclusiones.tex:37`, `12-anexos.tex:151`, `05-arquitectura.tex:68` (C21/u, C21/ad, C21/ak, C21/o) |
+| 11 | Matizar la conclusión sobre la viabilidad técnica del modelo de lenguaje | cerrada | `09-conclusiones.tex:47` (C21/ae) |
+| 12 | Declarar que la confianza de Gemini varió entre corridas en `7` de `34` casos | cerrada | `07-resultados.tex:220` (C21/s) |
+| 13 | Precisar en el alcance qué tipo de modelo supervisado queda fuera | cerrada | `01-introduccion.tex:74` (C21/f) |
+| 14 | Completar el glosario con AUROC, Brier y TF-IDF y agregar la línea de base al marco teórico | cerrada | `00-glosario.tex:31`, `02-marco-teorico.tex:54`, `:88` (C21/d, C21/g, C21/h) |
+| 15 | Reducir la repetición del bloque de cifras de la validación sobre los `103` casos | cerrada | `08-discusion.tex:8`, `:60`, `09-conclusiones.tex:37` (C21/x, C21/aa, C21/ad) |
+| 16 | Corregir las cinco claves con año distinto, la dirección de ServiceNow y la atribución a Mosqueira-Rey | cerrada | `Bibliography_base.bib:823`, `:699`, `:917`; `02-marco-teorico.tex:32` (C21/an, C21/ao, C21/ap, C21/i) |
+| 17 | Retirar el Anexo J o trasladarlo y actualizar el cronograma | **parcial**: Anexo J retirado y cronograma `.md` y leyenda actualizados; el PNG del cronograma no se regeneró (sin `mermaid-cli` en esta máquina) | `12-anexos.tex` (retiro), `docs/diagrams/cronograma.md`, `12-anexos.tex:52` (C21/al, C21/am) |
+
+### Observaciones por sección del dictamen (tarea 10.4)
+
+| Sección del dictamen | Estado | Evidencia | Nota |
+|---|---|---|---|
+| 1. Estructura general | cerrada (salvo el tag, rec. 7) | `07-resultados.tex:360`, `:425`; `00-portada.tex:30-31`; `12-anexos.tex:58`, `:151` | jerarquía de la validación y de la línea de base, identificación del documento, identificadores internos y Anexo J atendidos |
+| 2. Hipótesis | atendida fuera de c-221 | `01-introduccion.tex:38`, `08-discusion.tex:10` | la subsidiaria de eficiencia ya se contrastó con c-217; el umbral del 85 % se apoyaba en la estimación de costo que midió c-220 |
+| 3. Objetivos | cerrada | `01-introduccion.tex:74`; memo `3.31` | alcance precisado (rec. 13); el umbral se respalda con la medición de c-220 |
+| 4. Estado del arte | cerrada | `03-estado-del-arte.tex:34`, `:51` | salvedad de Colavito agregada; cifras de Paramesh y Colavito reverificadas contra el texto completo en esta corrida |
+| 5. Marco teórico | cerrada | `02-marco-teorico.tex:32`, `:54`, `:88`; `00-glosario.tex:31` | TF-IDF, regresión logística, Brier y AUROC agregados; Mosqueira-Rey atenuado |
+| 6. Desarrollo metodológico | cerrada | `04-marco-metodologico.tex:58`, `:100`, `:104`; `07-resultados.tex:209`, `:220`; `evaluation/data/campana/README.md` | apartado fuera de muestra, amenazas nuevas, calibración sobre el arbitrado y registro del commit no alcanzable |
+| 7. Conclusiones | cerrada | `08-discusion.tex:8`, `:20`, `:28`, `:60`, `:115`; `09-conclusiones.tex:37`, `:47`; `00-resumen.tex`; `05-arquitectura.tex:68` | propagación del arbitraje, `Sistemas`, resumen, balance y viabilidad del modelo de lenguaje |
+| 8. Trabajos futuros | cerrada | `10-recomendaciones.tex:18`, `:26` | las dos líneas que proponían lo ya ejecutado se reformularon hacia la taxonomía y hacia un corpus de composición natural |
+| 9. Bibliografía | cerrada | `Bibliography_base.bib:823`, `:699`, `:917`; `11-aspectos-legales.tex` | claves con año y dirección de ServiceNow corregidas; la Resolución AAIP 198/2023 no se cita por decisión de los autores (OQ4) |
+| Seguimiento del dictamen v1.3.0 y devolución de segunda instancia | cerrada | `08-discusion.tex:60`; `03-estado-del-arte.tex:51` | repetición de cifras reducida (rec. 15); la ficha de Paket sigue apoyada en el resumen, limitación que el texto declara |
+
+### Revisión de gitleaks (tarea 10.5)
+
+Docker está disponible. Se corrió la misma versión que el CI (gitleaks `v8.30.1`, imagen
+`ghcr.io/gitleaks/gitleaks:v8.30.1`) con `.gitleaks.toml` sobre una copia de los `33` archivos
+cambiados o nuevos del change (`.tex`, `.bib`, memo, registro, script y salidas): **`no leaks
+found`** (reporte vacío, `[]`). La revisión textual del diff con el patrón conocido de falso
+positivo —palabra que contiene `api`, `key`, `token`, `auth` o `secret` seguida, a menos de `20`
+caracteres, de `,`, `:` o `=` y de una cadena de `10` o más caracteres sin espacios— devuelve cuatro
+coincidencias en las líneas del diff: `FastAPI,` en el resumen (ES y EN) y `monkeypatch.setattr(...)`
+en las pruebas del script. Ninguna es una asignación con forma de secreto: son el nombre del marco de
+trabajo en una enumeración y la utilidad estándar de `pytest`, y gitleaks no las marca. No hubo casos
+que reescribir; editar un `.tex` además desincronizaría el PDF compilado, fuera del alcance de esta
+tarea.
+
+### Matriz de trazabilidad (C21/…)
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| C21/a | Script de análisis (TDD, solo lectura, determinista) | c-221 | `evaluation/data/campana/analisis/analisis_propagacion_arbitraje_c221.py:2` | `-` | `Propagacion del arbitraje fuera de muestra: tres lecturas` | cerrada |
+| C21/b | Pruebas TDD de las funciones puras | c-221 | `evaluation/data/campana/analisis/test_analisis_propagacion_arbitraje_c221.py:1` | `-` | `Pruebas del analisis de propagacion del arbitraje fuera de muestra` | cerrada |
+| C21/c | Memo: sección 3.32 aditiva | c-221 | `docs/Tesis/Correcciones/numeros-canonicos.md:2266` | `-` | `3.32 Propagación del arbitraje fuera de muestra` | vigente (nuevo) |
+| C21/d | Glosario: AUROC, Brier y TF-IDF | c-221 | `00-glosario.tex:31` | `-` | `AUROC} Area Under the Receiver Operating Characteristic curve` | cerrada |
+| C21/e | Resumen y abstract con la exactitud fuera de muestra | c-221 | `00-resumen.tex:13` | `-` | `la exactitud estricta cruda fue de 0,6893` | cerrada |
+| C21/f | Alcance: precisión del modelo supervisado excluido | c-221 | `01-introduccion.tex:74` | `subsec:alcance-delimitaciones` | `un modelo de aprendizaje supervisado afinado con el corpus acumulado` | cerrada |
+| C21/g | Marco teórico: TF-IDF y regresión logística | c-221 | `02-marco-teorico.tex:54` | `subsec:nlp-llm` | `la representación clásica que precede a los modelos neuronales es TF-IDF` | cerrada |
+| C21/h | Marco teórico: puntaje de Brier y AUROC | c-221 | `02-marco-teorico.tex:88` | `sec:metricas-multiclase` | `El puntaje de Brier es el error cuadrático medio entre la confianza declarada` | cerrada |
+| C21/i | Marco teórico: atribución a Mosqueira-Rey atenuada | c-221 | `02-marco-teorico.tex:32` | `subsec:human-in-the-loop` | `ofrecen una revisión del estado del arte del aprendizaje con intervención humana` | cerrada |
+| C21/j | Estado del arte: salvedad de Colavito en prosa | c-221 | `03-estado-del-arte.tex:34` | `subsec:trabajos-academicos` | `los corpus de Colavito y colaboradores son conjuntos de incidencias` | cerrada |
+| C21/k | Estado del arte: fila de Colavito con la salvedad | c-221 | `03-estado-del-arte.tex:51` | `tab:trabajos-academicos` | `no son tickets de mesa de ayuda` | cerrada |
+| C21/l | Método: apartado del corpus independiente (procedencia OQ1) | c-221 | `04-marco-metodologico.tex:58` | `subsec:poblacion-muestra-corpus` | `Corpus independiente de validación` | cerrada |
+| C21/m | Método: diseño de la validación fuera de muestra | c-221 | `04-marco-metodologico.tex:100` | `subsec:analisis-estadistico` | `Diseño de la validación fuera de muestra` | cerrada |
+| C21/n | Método: amenazas séptima y octava | c-221 | `04-marco-metodologico.tex:104` | `subsec:amenazas-validez` | `ocho amenazas a la validez` | cerrada |
+| C21/o | Arquitectura: latencia y costo conciliados con c-217 | c-221 | `05-arquitectura.tex:68` | `subsec:subsistema-clasificacion` | `el híbrido usó cerca de un tercio de las llamadas y del costo estimado` | cerrada |
+| C21/p | Implementación: clave Hohpe2004 | c-221 | `06-implementacion.tex:38` | `subsec:construccion-flujo-n8n` | `Hohpe2004_eip` | cerrada |
+| C21/q | Resultados: enumeración de doce apartados | c-221 | `07-resultados.tex:6` | `sec:resultados` | `Los resultados se presentan en doce apartados` | cerrada |
+| C21/r | Resultados: fila descriptiva de calibración (91 casos) | c-221 | `07-resultados.tex:209` | `tab:calibracion-gate` | `Fuera de la muestra, referencia arbitrada (descriptiva)` | cerrada |
+| C21/s | Resultados: complemento descriptivo y estabilidad de la confianza | c-221 | `07-resultados.tex:220` | `subsec:calibracion` | `El complemento descriptivo sobre el corpus arbitrado` | cerrada |
+| C21/t | Resultados: subsección de validación fuera de muestra | c-221 | `07-resultados.tex:360` | `subsec:validacion-fuera-muestra` | `\subsection{Validación fuera de muestra}` | cerrada |
+| C21/u | Resultados: arbitraje con tres lecturas y desgloses | c-221 | `07-resultados.tex:366` | `subsec:validacion-fuera-muestra` | `El arbitraje de los casos discordantes se ejecutó:` | cerrada |
+| C21/v | Resultados: tabla de matriz y métricas por clase | c-221 | `07-resultados.tex:404` | `tab:fuera-de-muestra-clases` | `Matriz de confusión y métricas por clase del corpus arbitrado` | cerrada |
+| C21/w | Resultados: subsección de comparación con esquemas alternativos | c-221 | `07-resultados.tex:425` | `subsec:comparacion-alternativas` | `\subsection{Comparación con esquemas alternativos}` | cerrada |
+| C21/x | Discusión: cifra primaria y lecturas complementarias | c-221 | `08-discusion.tex:8` | `subsec:interpretacion-resultados` | `da una exactitud estricta cruda de 0,6893` | cerrada |
+| C21/y | Discusión: el arbitraje reemplaza los escenarios | c-221 | `08-discusion.tex:20` | `subsec:interpretacion-resultados` | `el clasificador acertó 25 de los 47 discordantes originales` | cerrada |
+| C21/z | Discusión: Sistemas con 61 casos y destinos de error | c-221 | `08-discusion.tex:28` | `subsec:interpretacion-resultados` | `reúne 61 casos (21 del diseño original y 40 del refuerzo)` | cerrada |
+| C21/aa | Discusión: séptima limitación remite a la subsección | c-221 | `08-discusion.tex:60` | `subsec:limitaciones-estudio` | `Séptimo, el vocabulario del filtro determinístico` | cerrada |
+| C21/ab | Discusión: sensibilidad del balance con la tasa fuera de muestra | c-221 | `08-discusion.tex:115` | `subsec:balance-neto` | `Como sensibilidad adicional se recalcula el balance` | cerrada |
+| C21/ac | Conclusiones: fila del objetivo 2 con las tres lecturas | c-221 | `09-conclusiones.tex:24` | `tab:cumplimiento-objetivos` | `fuera de muestra, 0,6893 sobre el corpus arbitrado de 206 (primaria` | cerrada |
+| C21/ad | Conclusiones: arbitraje ejecutado y Sistemas con 61 | c-221 | `09-conclusiones.tex:37` | `sec:conclusiones` | `el arbitraje de los casos discordantes se ejecutó, la referencia arbitrada cubre 206` | cerrada |
+| C21/ae | Conclusiones: viabilidad del solo-LLM acotada | c-221 | `09-conclusiones.tex:47` | `subsec:aportes-generalizacion` | `aunque su exactitud no alcanza el umbral de 0,85 ni dentro ni fuera` | cerrada |
+| C21/af | Recomendaciones: párrafo introductorio coherente | c-221 | `10-recomendaciones.tex:6` | `sec:recomendaciones` | `el análisis de la taxonomía en la frontera entre` | cerrada |
+| C21/ag | Recomendaciones: taxonomía con los 61 casos | c-221 | `10-recomendaciones.tex:18` | `subsec:frontera-sistemas` | `con la referencia arbitrada reúne 61 casos` | cerrada |
+| C21/ah | Recomendaciones: corpus de composición natural | c-221 | `10-recomendaciones.tex:26` | `subsec:corpus-independiente` | `repetirla sobre corpus de composición natural` | cerrada |
+| C21/ai | Capítulo legal: clave Stallings2018 alineada | c-221 | `11-aspectos-legales.tex:34` | `subsec:seguridad-tecnica` | `triada confidencialidad, integridad y disponibilidad (CIA) descrita por` | cerrada |
+| C21/aj | Anexo B: versión entregada v1.4.0 (D9) | c-221 | `12-anexos.tex:58` | `sec:anexo-repositorio` | `un commit inmediatamente posterior consigna en este anexo el hash completo` | cerrada |
+| C21/ak | Anexo: retiro del identificador interno c-201 | c-221 | `12-anexos.tex:151` | `sec:anexo-corpus` | `La corrección del sobreenmascarado ajustó esa heurística` | cerrada |
+| C21/al | Anexo: cronograma con los hitos de noviembre | c-221 | `12-anexos.tex:52` | `fig:cronograma` | `El doble etiquetado de los 150 casos originales por` | cerrada |
+| C21/am | Anexo J retirado; fuente de defensa conservada | c-221 | `docs/defensa/respuestas-tribunal.md:1` | `-` | `Respuestas del grupo a las preguntas del tribunal` | cerrada |
+| C21/an | Bibliografía: clave Efron1994 alineada | c-221 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:823` | `-` | `@book{Efron1994_bootstrap,` | cerrada |
+| C21/ao | Bibliografía: ServiceNow a documentación oficial | c-221 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:699` | `-` | `https://www.servicenow.com/docs/` | cerrada |
+| C21/ap | Bibliografía: repositorio en versión 1.4.0 | c-221 | `docs/Tesis/v10 (IA)/Bibliography_base.bib:917` | `-` | `(Versi{\'o}n 1.4.0)` | cerrada |
