@@ -94,7 +94,7 @@
 \contentsline {subsection}{\numberline {9.2}Comparación con la literatura}{101}{subsection.9.2}%
 \contentsline {subsection}{\numberline {9.3}Limitaciones del estudio}{102}{subsection.9.3}%
 \contentsline {subsection}{\numberline {9.4}Implicancias prácticas}{105}{subsection.9.4}%
-\contentsline {subsection}{\numberline {9.5}Balance neto de la automatización}{106}{subsection.9.5}%
+\contentsline {subsection}{\numberline {9.5}Balance neto de la automatización}{107}{subsection.9.5}%
 \contentsline {subsection}{\numberline {9.6}Reflexiones sobre la generalización}{109}{subsection.9.6}%
 \contentsline {section}{\numberline {10}Conclusiones}{110}{section.10}%
 \contentsline {subsection}{\numberline {10.1}Cumplimiento de los objetivos del trabajo}{110}{subsection.10.1}%

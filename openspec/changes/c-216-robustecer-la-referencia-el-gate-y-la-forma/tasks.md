@@ -83,7 +83,11 @@
       registrar un cache nuevo sin tocar los congelados; si no la autoriza (por defecto),
       agregar en `08-discusion.tex` la limitación de que la configuración entregada no se midió
       y cerrar la tarea con esa rama. Verificar en ambos casos que la tesis no presenta
-      resultados de una corrida no ejecutada.
+      resultados de una corrida no ejecutada. **Cierre real (2026-11-13):** el dueño determinó
+      que la corrida era REDUNDANTE y no la autorizó; el clasificador entregado es lógicamente
+      idéntico al evaluado (`bf5e099`..`HEAD` solo cambia documentación e importación perezosa en
+      `app/classifiers`, sin tocar vocabulario, prompt ni umbrales), por lo que el texto declara
+      la equivalencia en `08-discusion.tex` en lugar de la limitación.
 
 ## 6. Verificación y cierre de R4 (L4)
 
