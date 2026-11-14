@@ -1033,6 +1033,7 @@ del encabezado "Anexos" en `main.toc` (`\contentsline {section}{Anexos}{N}`) men
 | compactacion c-147 (`change/c-147-*`) | `be9b746` | 104 | 96 | 8 | -7 | -6 | **total <= 100, fuente catedra (2026-10-27)** | Medido: `abspage@last{104}`; `Anexos` en p. 97; `Referencias bibliograficas` en p. 93; **exceso +4 honrado y defendido**; palancas: indices general y de tablas/figuras compactados y fusionados, anexos en `\small`, figuras de 6.8 al 70 %, espaciado de bibliografia; sin contenido removido ni referencias colgadas |
 | release v1.2.2 (C1) (`change/c-147-*`) | `2cb0022` | 104 | 96 | 8 | 0 | 0 | **total <= 100, fuente catedra (2026-10-27)** | Medido: `abspage@last{104}`; `Anexos` en p. 97; exceso +4 honrado y defendido; verificado de nuevo el 2026-10-27 sobre `7637fdb` (PDF de 104 paginas) |
 | `+c-216` (L2, L3, L4, L5) | sin commit (lo crea el orquestador) | 149 | 124 | 25 | +2 | +2 | **total <= 100, fuente catedra (2026-10-27); exceso +49 declarado y honrado** | Medido: `abspage@last{149}`; `Anexos` en p. 125; delta frente a la release v1.3.0 de partida (147 / 122 / 25): +2 total, +2 cuerpo, 0 anexos. L2 aporta +1 pagina en el capitulo 4 y +1 en la discusion; L5 (repeticiones y cortes del capitulo 11) no agrega paginas. El exceso sobre el tope de 100 es +49 y queda declarado y honrado. |
+| `+c-219` (`change/c-218-c-219-carga-multicanal-y-sesgo-de-referencia`) | sin commit (lo crea el orquestador) | 156 | 131 | 25 | +2 | +2 | **total <= 100, fuente catedra (2026-10-27)**; exceso heredado, no atribuible a este change | Medido: `abspage@last{156}`; `Anexos` en p. 132; delta frente a la compilacion de c-218 (154 / 129 / 25): +2 total, +2 cuerpo, 0 anexos; subseccion de resultados con dos tablas mas parrafos en 04 y 08 (una primera version sumaba +3 y se recorto) |
 
 Las filas siguientes se agregan al final de esta tabla, una por change, despues de su apply.
 Previsiones declaradas por cada change (se contrastan al cerrar):
@@ -5318,3 +5319,83 @@ Secciones 3.1 a 3.28 cambia.
 | C18/g | Interpretación en la discusión | c-218 | `08-discusion.tex:10` | `subsec:interpretacion-resultados` | `se contrastó en su dimensión de capacidad con un test de carga de costo cero` | cerrada |
 | C18/h | Sub-hipótesis en las conclusiones | c-218 | `09-conclusiones.tex:6` | `sec:conclusiones` | `se contrastó solo en su dimensión de capacidad` | cerrada |
 | C18/i | Canales integrados en las conclusiones | c-218 | `09-conclusiones.tex:39` | `sec:conclusiones` | `La capacidad del tramo compartido se contrastó con un test de carga de costo cero` | cerrada |
+
+## Dictamen v10 / v1.3.0 (2026-11-14) - c-219 (profundizar la mitigación del sesgo de corpus y de la referencia)
+
+Atiende el criterio 4 del dictamen CONEAU del 13-11-2026 sobre `v1.3.0`
+(`auditorias/Dictamen_Tesis_v10_v1.3.0_CONEAU_2026-11-13.md`, no versionado), que descuenta por «ajuste y
+evaluación sobre el mismo corpus» y por «referencia de verdad frágil» y pide evidencia nueva, no
+redacción. El change `c-219-profundizar-la-mitigacion-del-sesgo-de-corpus-y-referencia` (MEDIUM,
+costo cero, offline) mide (a) la etapa determinística con un vocabulario derivado de fuentes externas
+al corpus y (b) la exactitud del clasificador congelado por origen de la referencia. Es aditivo: ningún
+número canónico de las Secciones 3.1 a 3.29 cambia.
+
+### Qué cambió
+
+- **Script y pruebas** `evaluation/data/campana/analisis/analisis_sesgo_corpus_referencia_c219.py` (con
+  `test_analisis_sesgo_corpus_referencia_c219.py`, `26` pruebas): solo lectura, sin red ni Gemini;
+  reproduce antes de medir `115` cortocircuitados, `88/115`, cobertura `131`, `142/206`, macro-F1
+  `0,7024`, `109/142` y `33/64`, y que el adaptador de scoring coincide caso a caso con el clasificador
+  real; salidas `.json`, `.md` y `.SHA256SUMS.txt` idénticas byte a byte en dos corridas.
+- **Vocabulario corpus-blind** `vocabulario_corpus_blind_c219.json` (`90` patrones), fijado y hasheado el
+  2026-11-13 a las 23:52 (-03:00) antes de abrir descripciones del corpus; fuentes: las definiciones
+  canónicas de los cinco sectores (`CLAUDE.md`) y el «Glosario de términos de ciberseguridad: una guía de
+  aproximación para el empresario» (INCIBE, 2017, v1). Independencia **procedimental**; el prerregistro no
+  es ciego (quien lo derivó leyó `docs/prompt_gemini.txt` y excluyó los términos que aparecían solo en sus
+  ejemplos y reglas de frontera).
+- **Resultado** (Sección `3.30`): `V1` cobertura `131`, cortocircuito `115`, `88/115` (`0,7652`); corpus-blind
+  `83`, `75`, `54/75` (`0,7200`, `[0,6096; 0,8090]`); `V0` `97`, `88`, `65/88` (`0,7386`). Exactitud
+  estricta del híbrido: consenso `109/142` (`0,7676`), arbitrado `33/64` (`0,5156`), total `142/206`
+  (`0,6893`); el subconjunto `E3 = E4 = E5` es vacío por construcción. Rotulado como sensibilidad.
+- **Tesis**: `04-marco-metodologico.tex` agrega el método (párrafo en el análisis estadístico);
+  `07-resultados.tex` agrega `subsec:sesgo-corpus-referencia` con `tab:sesgo-vocabulario` y
+  `tab:sesgo-subconjuntos`; `08-discusion.tex` lee ambos resultados como sensibilidad y declara la
+  frontera offline. `Bibliography_base.bib` suma `INCIBE2017_glosario_ciberseguridad`.
+- **Recompilación**: `main.pdf` de `154` a `156` páginas (+2, dentro del presupuesto); `0` errores
+  fatales, `0` referencias o citas indefinidas y `0` etiquetas duplicadas; `verify_citations.py` en `PASS`.
+
+### Libro mayor de páginas (c-219)
+
+| Concepto | Total | Cuerpo sin anexos | Anexos |
+|---|---|---|---|
+| Compilación de partida (c-218) | 154 | 129 | 25 |
+| Tras c-219 | 156 | 131 | 25 |
+| Delta | +2 | +2 | 0 |
+
+El crecimiento se debe a la subsección de resultados (dos tablas y tres párrafos) y a los párrafos de `04`
+y `08`; se recortó el texto de una primera versión que sumaba `+3`.
+
+### Desviaciones respecto del diseño y las tareas
+
+- **Numeración**: el memo toma la Sección `3.30` y no la `3.29`, ocupada por c-218 (tarea 4.2).
+- **Orden de ejecución**: la tarea 2.5 (vocabulario corpus-blind) se hizo antes de 2.1 a 2.4 y de toda
+  lectura de descripciones, para preservar el prerregistro; la 1.1 se limitó a conteos y hashes sin leer
+  descripciones. Las pruebas de 2.1 a 2.3 usan vocabularios sintéticos.
+- **Fuente externa**: el diseño menciona un glosario de dominio en `App/Backend/app/constants.py`, que no
+  existe (el archivo solo define las cinco clases). La búsqueda de un glosario de mesa de ayuda o ITIL 4
+  en español no halló una fuente pública oficial legible; se usó el glosario de ciberseguridad de INCIBE,
+  que cubre mal Hardware y Software (límite declarado en el JSON, el README, el memo y la tesis).
+- **Corrida paga (OQ1, tarea 5.5)**: sin autorización; se aplicó la rama offline (frontera declarada en
+  `08-discusion.tex`); no hubo `--confirm-paid` ni llamadas externas.
+- **Pruebas de integración** (lectura de artefactos, anclajes, determinismo) escritas después de la
+  implementación de esas funciones; las pruebas de las funciones puras sí se escribieron antes y se vio
+  el rojo (`22` fallidas) antes del verde.
+- **Entorno**: el script se ejecuta en una carpeta sin `.env` para no cargar el `.env` local de la raíz.
+- **Bibliografía**: se agregó una entrada (`INCIBE2017_glosario_ciberseguridad`).
+
+### Pendientes
+
+- Los autores revisan la paginación de la subsección y el texto de las tablas en el PDF.
+- Una corrida paga que propague el vocabulario corpus-blind al híbrido completo queda sujeta a decisión
+  de dueño (OQ1).
+
+### Matriz de trazabilidad
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| C19/a | Memo: sección del sesgo de corpus y referencia | c-219 | `docs/Tesis/Correcciones/numeros-canonicos.md:2023` | `-` | `3.30 Sesgo del vocabulario ajustado con el corpus y fragilidad de la referencia` | vigente (nuevo) |
+| C19/b | Método de la ablación y del análisis de subconjuntos | c-219 | `04-marco-metodologico.tex:91` | `subsec:analisis-estadistico` | `Sesgo del vocabulario y dependencia de la referencia.` | cerrada |
+| C19/c | Subsección de resultados | c-219 | `07-resultados.tex:247` | `subsec:sesgo-corpus-referencia` | `label{subsec:sesgo-corpus-referencia}` | cerrada |
+| C19/d | Tabla de la etapa determinística por vocabulario | c-219 | `07-resultados.tex:254` | `tab:sesgo-vocabulario` | `label{tab:sesgo-vocabulario}` | cerrada |
+| C19/e | Tabla de exactitud por subconjunto | c-219 | `07-resultados.tex:275` | `tab:sesgo-subconjuntos` | `label{tab:sesgo-subconjuntos}` | cerrada |
+| C19/f | Lectura como sensibilidad y frontera offline | c-219 | `08-discusion.tex:66` | `subsec:limitaciones-estudio` | `Dos análisis adicionales acotan, sin eliminarlas` | cerrada |

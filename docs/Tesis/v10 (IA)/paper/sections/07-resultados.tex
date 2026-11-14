@@ -244,6 +244,51 @@ Vocabulario y lógica previos & 72 & 0,5139 [0,4007; 0,6257] & --- \\
 
 El efecto de la ampliación del vocabulario admite dos lecturas que conviene separar. Por un lado, un efecto de \emph{cobertura}, que es el dominante: el filtro determinístico pasó de resolver 74 casos a resolver 131. Por otro, un efecto de \emph{exactitud} sobre los casos que ambas configuraciones resuelven: en los 67 casos comunes, el vocabulario ampliado acertó 38 frente a los 37 del vocabulario previo, por lo que la ampliación no deterioró la exactitud sobre los casos que ya resolvía. La diferencia de 21,3 puntos entre las exactitudes de la etapa determinística (0,7405 sobre 131 casos frente a 0,5270 sobre 74) puede leerse como señal del sesgo, y entonces es una \emph{cota pesimista}. Es una interpretación de los autores, no una medición, porque las dos cifras se calculan sobre conjuntos de casos distintos. Además, el vocabulario previo carece del conocimiento del dominio que una ampliación hecha con datos independientes habría aportado. Con las predicciones de la etapa Gemini fijas, la exactitud global pasa de 146 a 128 aciertos sobre 200 casos (McNemar exacto \parencite{McNemar1947_sampling_error}, \(p < 0{,}001\)). El efecto de las reglas de frontera del prompt, limitado a los 69 casos de la etapa Gemini, se acotó con una ablación controlada de dos brazos sobre los mismos casos y en una misma sesión. Con el prompt vigente esa etapa acertó 50 de 69, y sin las reglas de frontera, 46 de 69 (reservas contadas como error: 0 en ambos brazos). Esa diferencia no alcanza significación (McNemar exacto entre brazos, \(p = 0{,}3438\)). Sin los casos que motivaron las reglas, la etapa con el prompt vigente acertó 48 de 66 (nivel a; \texttt{evaluation/report\_sensibilidad\_ajustes.md}, línea~95). El análisis estima la sensibilidad de las métricas y no sustituye la medición del sistema evaluado.
 
+\subsection{Sesgo del vocabulario y dependencia de la referencia}\label{subsec:sesgo-corpus-referencia}
+
+Hay dos preguntas (método en la \autoref{subsec:analisis-estadistico}). La primera es cuánto del desempeño de la etapa determinística depende de haber ajustado su vocabulario con el mismo corpus. La segunda es cuánto de la exactitud depende de la robustez de la referencia. Antes de medir se reprodujo que el vocabulario vigente cubre 131 de los 206 casos, cortocircuita 115 y acierta 88, y que el clasificador congelado acierta 142 de 206 (Tabla~\ref{tab:sesgo-vocabulario}).
+
+\begin{table}[htbp]
+\centering
+\caption{Etapa determinística con tres vocabularios}
+\label{tab:sesgo-vocabulario}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.2cm} c c c c c@{}}
+\toprule
+\textbf{Vocabulario} & \textbf{Patrones} & \textbf{Cobertura} & \textbf{Cortocircuito} & \textbf{Aciertos} & \textbf{Precisión (IC 95~\%)} \\
+\midrule
+Vigente & 151 & 131 & 115 & 88 & 0,7652 [0,6800; 0,8333] \\
+Externo al corpus & 90 & 83 & 75 & 54 & 0,7200 [0,6096; 0,8090] \\
+Previo a la ampliación & 89 & 97 & 88 & 65 & 0,7386 [0,6382; 0,8191] \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+{\footnotesize\textit{Nota:} 206 casos arbitrados; sensibilidad, no exactitud corregida; los conjuntos cortocircuitados difieren. \textit{Fuente:} \texttt{evaluation/data/campana/analisis/analisis\_sesgo\_corpus\_referencia\_c219.json}.\par}
+\end{table}
+
+El vocabulario externo cubre 48 casos menos y cortocircuita 40 menos que el vigente, con una precisión 4,5 puntos menor y con intervalos que se solapan. En los 54 casos que ambos cortocircuitan coinciden en el sector en 47 (aciertos: 40 y 43). Se lee como sensibilidad: la diferencia es sobre todo de cobertura, y el vocabulario previo va en la misma dirección. Los límites son la independencia procedimental, los conjuntos de casos distintos y una fuente pública de ciberseguridad y no de mesa de ayuda, con un vocabulario más pobre en las clases de soporte. Se mide la etapa determinística, no el híbrido de extremo a extremo.
+
+\begin{table}[htbp]
+\centering
+\caption{Exactitud estricta del clasificador congelado según el origen de la referencia}
+\label{tab:sesgo-subconjuntos}
+\footnotesize
+\begin{tabular}{@{}l c c c@{}}
+\toprule
+\textbf{Subconjunto} & \textbf{Casos} & \textbf{Aciertos} & \textbf{Exactitud (IC 95~\%)} \\
+\midrule
+Consenso de \texttt{E3} y \texttt{E4} & 142 & 109 & 0,7676 [0,6916; 0,8295] \\
+Arbitrado por \texttt{E5} & 64 & 33 & 0,5156 [0,3958; 0,6337] \\
+Total & 206 & 142 & 0,6893 [0,6231; 0,7486] \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+{\footnotesize\textit{Nota:} el subconjunto en que \texttt{E3}, \texttt{E4} y \texttt{E5} coinciden es vacío por construcción (0 casos). \textit{Fuente:} \texttt{evaluation/data/campana/analisis/analisis\_sesgo\_corpus\_referencia\_c219.json}.\par}
+\end{table}
+
+La exactitud es 0,7676 sobre el consenso y 0,5156 sobre lo arbitrado, con intervalos que no se solapan, y los 6 casos de tres vías, incluidos entre los arbitrados, no fueron acertados. La diferencia es descriptiva: con estos datos no se separa una referencia menos robusta de un caso más ambiguo. No se afirma causalidad y la cifra de 0,6893 no cambia.
+
 \subsection{Análisis de errores y casos límite}\label{subsec:analisis-errores}
 
 El análisis cualitativo de los 53 casos mal clasificados permitió identificar patrones de error recurrentes, agrupados por frontera de confusión y sintetizados en la Tabla~\ref{tab:errores}.

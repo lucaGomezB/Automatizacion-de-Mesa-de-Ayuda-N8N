@@ -2020,6 +2020,117 @@ de convergencia del backend. No es un contraste total (la complejidad percibida 
 validación en producción. Ningún objetivo específico cambia de estado por este change. La prosa está en
 las secciones 1, 4, 7, 8 y 9 de la tesis.
 
+### 3.30 Sesgo del vocabulario ajustado con el corpus y fragilidad de la referencia (c-219)
+
+Sección **aditiva**: no reemplaza ni cambia la cifra ni el estado de ningún valor de las
+secciones 3.1 a 3.29. Mide, de solo lectura, sin red y sin Gemini, (a) cuánto cambian la
+cobertura, el cortocircuito y la precisión de la etapa determinística cuando el vocabulario del
+filtro se deriva de una fuente externa al corpus y (b) cómo varía la exactitud estricta del
+clasificador congelado `hybrid-v3` entre el subconjunto de consenso `E3 = E4`, el arbitrado por
+`E5` y el total. Ambos resultados se rotulan como **sensibilidad**: no son una exactitud
+corregida, la comparación de precisión entre vocabularios no es pareada y no se afirma que la
+referencia cause las diferencias entre subconjuntos. No reclasifica, no reentrena y no modifica el
+vocabulario vigente `V1`, el corpus, las predicciones ni los artefactos congelados.
+
+*Numeración.* El change tomó originalmente la sección `3.29`; c-218 ya la había ocupado (test de
+carga multicanal), por lo que esta sección es la `3.30` (desviación registrada y renumerada).
+
+Fuente única de las cifras: `evaluation/data/campana/analisis/analisis_sesgo_corpus_referencia_c219.json`
+(y su vista `.md`), generado por el script de solo lectura
+`evaluation/data/campana/analisis/analisis_sesgo_corpus_referencia_c219.py`. Comando (desde la
+raíz del repositorio, con las variables de entorno inertes del job de CI; el script corre en una
+carpeta sin `.env`):
+
+```bash
+python3 evaluation/data/campana/analisis/analisis_sesgo_corpus_referencia_c219.py
+```
+
+SHA-256 de las salidas versionadas (UTF-8 sin BOM, LF; dos corridas idénticas byte a byte):
+`analisis_sesgo_corpus_referencia_c219.json`
+`768065f157ae4fdbfd047ea852bfb556a661343084f89fb0a14bd63a24d021fe`;
+`analisis_sesgo_corpus_referencia_c219.md`
+`2f1fba560228ba824448e213a3b59cda4b2216632c29b82979b36a8b70a26416`.
+
+Entradas leídas y su SHA-256: `corpus_independiente_arbitrado.json`
+`cb2874e649fb932c00b536100025c0a0137b3314ab12d45234e4c29049adc67e`;
+`predicciones_arbitrado.json`
+`cb8aba6089dde9868c61740fba713fb75923ee32317370c46e0daeb52a01d5d5`;
+`doble_etiquetado_arbitrado.csv`
+`7993f3ffda7ae7b380833a41b226ed3a6b4f6aaa36f3fbed66fb52682a61d2a4`;
+`arbitraje_tres_vias.json`
+`4c85ab43bf28cac228caa35a6aaf3863deb327767cba31fbe850b43d2efe6a61`; control `V0`
+(`evaluation/data/sensibilidad_ajustes/keywords_pre_c71.json`, c-142)
+`8d9e646fae8ec5ff746fdaddecc5301a4db8f0df6e46da6d77eca26e56952e55`; vocabulario corpus-blind
+`vocabulario_corpus_blind_c219.json`
+`2f4473a41be962eda23672120da98c7225a6e6cbd1b818f724a1b3496642beab`.
+
+**(a) Anclajes reproducidos antes de medir.** Con el corpus arbitrado de `206` casos, la etapa
+determinística `V1` cubre `131` casos, cortocircuita `115` y acierta `88/115` (`0,7652`); el
+híbrido congelado acierta `142/206` (`0,6893`) con macro-F1 `0,7024`; el adaptador de scoring
+sobre `V1` coincide caso a caso con el clasificador real; `V1` tiene `151` patrones, `V0` `89` y
+la diferencia (patrones derivados del corpus) es de `62`. Fuente:
+`analisis_sesgo_corpus_referencia_c219.json` (`anclajes`). Estado: `vigente` (nuevo).
+
+**(b) Vocabulario corpus-blind.** `90` patrones (`35` Seguridad Informatica, `12` Soporte Tecnico
+Hardware, `12` Soporte Tecnico Software, `11` Bases de Datos, `20` Sistemas), derivados de las
+definiciones canónicas de los cinco sectores (`CLAUDE.md`) y del «Glosario de términos de
+ciberseguridad: una guía de aproximación para el empresario» (INCIBE, 2017, v1;
+`https://www.incibe.es/sites/default/files/contenidos/guias/doc/guia_glosario_ciberseguridad_metad.pdf`;
+consultado el 2026-11-13). Fijado y hasheado el 2026-11-13 (23:52, -03:00) antes de abrir
+descripciones del corpus; SHA-256 del contenido
+`ec350b9615410defe531183e317c197a21f778638eb5ccccdbe9a77b2a34d581` (el script aborta si no
+coincide). **Independencia procedimental, no de contenido**: quien lo derivó no había leído las
+descripciones del corpus ni el vocabulario vigente; sí leyó `docs/prompt_gemini.txt` (ejemplos y
+reglas de frontera incluidos) y excluyó los términos que aparecían solo allí; el prerregistro no es
+ciego en sentido estricto y no se afirma que sus términos no aparezcan en el corpus. Límite: el
+glosario público es de ciberseguridad, no de mesa de ayuda ni ITIL; el vocabulario de Hardware y
+Software se apoya casi solo en la definición canónica. Estado: `vigente` (nuevo).
+
+**(c) Etapa determinística por vocabulario (`206` casos; sensibilidad).**
+
+| Vocabulario | Patrones | Cobertura | Cortocircuito | Aciertos | Precisión | IC 95 % (Wilson) | Delta cobertura | Delta cortocircuito | Delta precisión | Fuente |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `V1` vigente | `151` | `131` | `115` | `88` | `0,7652` | `[0,6800; 0,8333]` | — | — | — | `analisis_sesgo_corpus_referencia_c219.json` (`vocabularios.v1`) |
+| Corpus-blind | `90` | `83` | `75` | `54` | `0,7200` | `[0,6096; 0,8090]` | `−48` | `−40` | `−4,5` puntos | idem (`vocabularios.corpus_blind`) |
+| `V0` (control de c-142) | `89` | `97` | `88` | `65` | `0,7386` | `[0,6382; 0,8191]` | `−34` | `−27` | `−2,7` puntos | idem (`vocabularios.v0`) |
+
+Sobre los casos que cortocircuitan en ambos vocabularios (pareado): corpus-blind y `V1` coinciden en
+`54` casos (el corpus-blind acierta `40`, `V1` acierta `43`, mismo sector en `47`); `V0` y `V1`
+coinciden en `83` casos (`62` frente a `63` aciertos, mismo sector en `82`). Fuente: idem
+(`vocabularios.*.comun_con_v1`). Los conjuntos de casos cortocircuitados difieren entre
+vocabularios, de modo que la diferencia de precisión no es pareada. Estado: `vigente` (nuevo)
+como sensibilidad.
+
+*Control de fidelidad del adaptador (fuera del script y de la tesis).* Sobre los `200` casos de la
+corrida oficial original (`evaluation/evidence/predicciones_hybrid-v3_2026-10-07.json`), el mismo
+adaptador reproduce `V1` con cobertura `143`, cortocircuito `131` y `97` aciertos (sección 3.7), y `V0`
+con la lógica vigente con cortocircuito `74` y `39` aciertos (sección 3.10, c-142). Esos números no
+entran a la tesis desde esta sección.
+
+**(d) Exactitud estricta del híbrido por subconjunto de la referencia.**
+
+| Subconjunto | Casos | Aciertos | Exactitud | IC 95 % (Wilson) | Exactitud laxa | Fuente |
+|---|---|---|---|---|---|---|
+| Consenso `E3 = E4` | `142` | `109` | `0,7676` | `[0,6916; 0,8295]` | `0,8451` | `analisis_sesgo_corpus_referencia_c219.json` (`subconjuntos.consenso`) |
+| Arbitrado por `E5` | `64` | `33` | `0,5156` | `[0,3958; 0,6337]` | `0,6562` | idem (`subconjuntos.arbitrado`) |
+| Discordancia de tres vías (`6`, dentro de los arbitrados) | `6` | `0` | `0,0000` | `[0,0000; 0,3903]` | `0,5000` | idem (`subconjuntos.tres_vias`) |
+| Total | `206` | `142` | `0,6893` | `[0,6231; 0,7486]` | `0,7864` | idem (`subconjuntos.total`) |
+
+El subconjunto literal `E3 = E4 = E5` es **vacío** (`0` casos) por construcción: `E5` solo etiquetó
+los `64` casos discordantes. Se declara como hallazgo y no se fuerza un subconjunto. La diferencia de
+exactitud entre consenso y arbitrado es descriptiva (los arbitrados son, por construcción, los casos
+en que los dos primeros etiquetadores discreparon) y no afirma que la referencia la cause. Fuente:
+idem (`conjunto_literal_e3_e4_e5`). Estado: `vigente` (nuevo) como sensibilidad.
+
+**(e) Alcance y frontera offline.** La ablación mide la etapa determinística (regex pura), no el
+híbrido extremo a extremo: propagar el vocabulario corpus-blind al híbrido requeriría predicciones
+de Gemini para los casos que dejarían de cortocircuitar, que no están en la caché. No se ejecutó
+ninguna corrida paga (decisión de la pregunta abierta OQ1: sin autorización, rama offline).
+Estado: `vigente` (nuevo).
+
+**(f) Valores previos intactos.** Ningún valor ni estado de las secciones 3.1 a 3.29 cambia; `142/206`,
+`0,6893` y `0,7024` conservan su estado `vigente`.
+
 ## 4. Contingencia del gate de intervención humana
 
 Tabla reconstruida desde `evaluation/predicciones.json` con
