@@ -5240,3 +5240,81 @@ medida).
 | C17/m | Alcance de la conclusión acotada | c-217 | `09-conclusiones.tex:47` | `subsec:aportes-generalizacion` | `el esquema de modelo de lenguaje solo se midió con resultado no concluyente` | cerrada |
 | C17/n | Trabajo futuro | c-217 | `10-recomendaciones.tex:14` | `subsec:clasificador-supervisado` | `Para obtener un veredicto concluyente` | cerrada |
 | C17/o | Relación de referencias (103 previa / 206 complemento) | c-217 | `07-resultados.tex:374` | `tab:gemini-solo` | `la referencia arbitrada de 206 casos` | cerrada |
+
+## Dictamen v10 / v1.3.0 (2026-11-13) - c-218 (test de carga multicanal)
+
+Atiende la observación del dictamen CONEAU del 13-11-2026 sobre `v1.3.0`
+(`auditorias/Dictamen_Tesis_v10_v1.3.0_CONEAU_2026-11-13.md`, no versionado) que descuenta en el
+criterio 1 las «hipótesis subsidiarias sin contraste»: la de integración multicanal («no introduce
+cuellos de botella adicionales») nunca se había medido. El change
+`c-218-contrastar-la-hipotesis-multicanal-con-un-test-de-carga` (MEDIUM, costo cero) agrega un arnés de
+carga reproducible y contrasta la **dimensión de capacidad**. Es aditivo: ningún número canónico de las
+Secciones 3.1 a 3.28 cambia.
+
+### Qué cambió
+
+- **Arnés** `scripts/load_test/` (biblioteca estándar; pruebas offline con TDD): dispara solicitudes
+  concurrentes contra `POST /api/v1/incidentes/` y contra el webhook web de N8N en los niveles
+  `1/5/10/20` (`40` solicitudes por nivel, `3` repeticiones) y mide p50/p95/p99, throughput y tasa de
+  error; criterio de tres vías prerregistrado (design D6) y reporte determinista sin secretos.
+- **Entorno desechable y costo cero**: perfil `corpus` (base `mesa_de_ayuda_corpus`) con el override
+  `compose.load-test.yml` (clave de Gemini ficticia, `COST_GUARD_BUDGET_USD=0`, afirmados dentro del
+  contenedor antes de enviar) y un fixture de `28` descripciones determinísticas. `960/960` incidentes
+  en etapa determinística; ninguna llamada a Gemini ni a Twilio. **Decisión de no correr el camino
+  pago**: la corrida con una fracción de casos que escalen a Gemini (para medir la latencia con
+  inferencia) exigiría clave, autorización de gasto (centavos a décimas de USD) y un prerregistro
+  nuevo; queda diferida (Open Question de design) y no cambia el alcance.
+- **Resultado** (Sección `3.29`): capa `backend` **sostenida** (p95 máximo `1215,8 ms`; caída de
+  throughput `9,79 %` entre `10` y `20`); capa `n8n` **no sostenida** (p95 `6788,4 ms` con `20`
+  concurrentes, `1,36` veces el techo de `5000 ms`; throughput estable en torno a `3,8` solicitudes por
+  segundo desde `5`); `0` errores en `960` envíos. Veredicto global: **no sostenida**. La hipótesis
+  pasa de «no contrastada» a «contrastada en su dimensión de capacidad», con un resultado que **no** la
+  sostiene en la capa de orquestación a `20` concurrentes.
+- **Tesis**: `04-marco-metodologico.tex` describe el protocolo; `07-resultados.tex` agrega la
+  subsección de capacidad con `tab:carga-multicanal`; `01-introduccion.tex` reformula el enunciado sin
+  el veredicto; `08-discusion.tex` y `09-conclusiones.tex` informan el veredicto y los límites
+  (una máquina, camino determinístico, correo y telefonía fuera, complejidad percibida no medida,
+  sin extrapolar a producción).
+- **Recompilación**: `main.pdf` de `152` a `154` páginas; `0` errores, `0` referencias o citas
+  indefinidas y `0` etiquetas duplicadas; `verify_citations.py` en `PASS`.
+
+### Desviaciones respecto del diseño y las tareas
+
+- **Arranque acotado**: la tarea 2.1 escribe `up -d` sin nombrar servicios; se usó
+  `up -d postgres-corpus backend-corpus n8n-corpus` para no levantar el stack base (advertencia de
+  `docker-compose.yml`). Cierre con `stop`/`rm -f` de esos tres servicios; sin `down`.
+- **Archivos adicionales**: `scripts/load_test/preparar_n8n.py` (el N8N desechable arranca sin flujo;
+  importa una copia de costo cero de `workflow.json`, sin tocar el versionado) y tres metas del
+  `Makefile` (`load-test-up`, `load-test`, `load-test-stop`).
+- **Override**: además de la clave ficticia y el presupuesto nulo, inyecta `DIRECTORY_BLIND_INDEX_KEY`
+  ficticia, porque el `.env` local del backend no la define y `backend-corpus` no arrancaba.
+- **Prosa en `07-resultados.tex`**: las tareas 3.1 a 3.4 listan `01`, `04`, `08` y `09`; la subsección y
+  la tabla de resultados (`tab:carga-multicanal`) se agregaron en `07` porque el spec exige las cifras
+  «en los resultados» y la tarea 5.4 prevé la tabla de carga.
+- **Agregación de repeticiones**: el diseño no precisaba si el criterio se aplica por repetición o sobre
+  el agrupado; se aplicó sobre las `120` solicitudes agrupadas por nivel y se conservó cada repetición
+  en el reporte.
+- **Latencia de extremo a extremo** de la capa `backend` nula (el alta directa no sella `ingresado_en`);
+  no se reejecutó para corregirlo tras conocer el veredicto.
+- **Prueba de humo**: una corrida previa de 2 solicitudes por nivel y capa (`16` incidentes) no
+  integra el reporte.
+
+### Pendientes
+
+- Los autores revisan la paginación del párrafo de metodología y de `tab:carga-multicanal` en el PDF.
+- La corrida paga acotada (latencia con inferencia) y la exploración de la saturación de la
+  orquestación (causa, configuración de N8N) quedan como trabajo futuro, sujetos a decisión de dueño.
+
+### Matriz de trazabilidad
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| C18/a | Memo: sección del test de carga multicanal | c-218 | `docs/Tesis/Correcciones/numeros-canonicos.md:1905` | `-` | `3.29 Test de carga multicanal y contraste de la hipótesis de integración` | vigente (nuevo) |
+| C18/b | Protocolo del test de carga | c-218 | `04-marco-metodologico.tex:67` | `subsec:protocolo-pruebas` | `Test de carga del tramo compartido.` | cerrada |
+| C18/c | Subsección de capacidad en resultados | c-218 | `07-resultados.tex:398` | `subsec:carga-concurrente` | `Capacidad del tramo compartido bajo carga concurrente` | cerrada |
+| C18/d | Tabla de carga por nivel y capa | c-218 | `07-resultados.tex:405` | `tab:carga-multicanal` | `label{tab:carga-multicanal}` | cerrada |
+| C18/e | Capa de orquestación no cumple la regla | c-218 | `07-resultados.tex:427` | `subsec:carga-concurrente` | `no cumple la regla` | cerrada |
+| C18/f | Enunciado de la subsidiaria en la introducción | c-218 | `01-introduccion.tex:38` | `subsec:hipotesis-trabajo` | `se contrasta en su dimensión de capacidad bajo carga concurrente` | cerrada |
+| C18/g | Interpretación en la discusión | c-218 | `08-discusion.tex:10` | `subsec:interpretacion-resultados` | `se contrastó en su dimensión de capacidad con un test de carga de costo cero` | cerrada |
+| C18/h | Sub-hipótesis en las conclusiones | c-218 | `09-conclusiones.tex:6` | `sec:conclusiones` | `se contrastó solo en su dimensión de capacidad` | cerrada |
+| C18/i | Canales integrados en las conclusiones | c-218 | `09-conclusiones.tex:39` | `sec:conclusiones` | `La capacidad del tramo compartido se contrastó con un test de carga de costo cero` | cerrada |

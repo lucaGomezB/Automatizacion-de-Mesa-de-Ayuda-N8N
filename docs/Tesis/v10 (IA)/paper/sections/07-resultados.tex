@@ -395,6 +395,39 @@ En eficiencia el resultado es concluyente y favorable al híbrido. El híbrido i
 
 El bloque dentro de la muestra (200 casos) es informativo, rotulado como no limpio y optimista para el híbrido, y no se usa para sostener la hipótesis. Allí el híbrido acierta 147 casos (0,7350) y el brazo de modelo solo 136 (0,6800), con una diferencia de 0,0550 (intervalo [0,0000; 0,1150]), \(p = 0{,}0895\) y una razón de llamadas de 0,3450. El control de deriva no mostró señal de inestabilidad: en los casos que el híbrido ya había escalado al modelo, la nueva corrida coincide con la predicción cacheada en 64 de 69 casos dentro de la muestra, en 34 de 34 fuera de ella y en 98 de 103 en conjunto (0,9515), por encima del umbral de 0,90, aunque este control no separa la deriva del modelo del azar de muestreo a temperatura 0,3. Como desviación del prerregistro, 112 casos del bloque dentro de la muestra fallaron en la primera tanda sin llegar al modelo (fallo técnico del proveedor, sin respuesta) y se reintentaron, con 303 llamadas con respuesta del modelo en total; ninguno estaba en el bloque primario y ninguno sigue fallido. La decisión de reintentar se tomó después de ver los resultados, lo que se declara como amenaza a la validez; el veredicto del bloque primario no depende de ella. \textit{Fuente:} \texttt{evaluation/data/campana/analisis/analisis\_brazo\_gemini\_solo\_c215.json}.
 
+\subsection{Capacidad del tramo compartido bajo carga concurrente}\label{subsec:carga-concurrente}
+
+Para contrastar la dimensión de capacidad de la hipótesis subsidiaria de integración multicanal se midió el tramo en que convergen los canales con el protocolo de la \autoref{subsec:protocolo-pruebas}. La \autoref{tab:carga-multicanal} resume la latencia, el throughput y la tasa de error por nivel de concurrencia y por capa. Cada nivel agrupa 120 solicitudes (40 por repetición, 3 repeticiones). La tasa de error fue 0 en los 960 envíos, sin respuestas con error ni vencimientos de plazo, y el registro de clasificación de los 960 incidentes creados muestra la etapa determinística en todos: ninguno escaló al modelo.
+
+\begin{table}[htbp]
+\centering
+\caption{Latencia, throughput y tasa de error por nivel de concurrencia y por capa}
+\label{tab:carga-multicanal}
+\footnotesize
+\begin{tabular}{@{}llccccc@{}}
+\toprule
+\textbf{Capa} & \textbf{Concurrencia} & \textbf{p50 (ms)} & \textbf{p95 (ms)} & \textbf{p99 (ms)} & \textbf{Throughput (sol./s)} & \textbf{Tasa de error} \\
+\midrule
+Backend & 1 & 44,5 & 62,2 & 84,6 & 20,79 & 0 \\
+Backend & 5 & 186,9 & 290,6 & 324,5 & 25,19 & 0 \\
+Backend & 10 & 349,5 & 457,4 & 588,3 & 26,84 & 0 \\
+Backend & 20 & 594,8 & 1215,8 & 1293,8 & 24,21 & 0 \\
+\emph{Webhook} de N8N & 1 & 307,4 & 338,4 & 368,2 & 3,21 & 0 \\
+\emph{Webhook} de N8N & 5 & 1339,6 & 1804,2 & 2157,3 & 3,75 & 0 \\
+\emph{Webhook} de N8N & 10 & 2565,4 & 3526,5 & 4065,0 & 3,82 & 0 \\
+\emph{Webhook} de N8N & 20 & 4732,6 & 6788,4 & 7469,2 & 3,78 & 0 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+{\footnotesize\textit{Nota:} latencia medida por el cliente (envío a respuesta) sobre 120 solicitudes por nivel; la capa «Backend» es el alta autenticada de un incidente y la capa «\emph{Webhook} de N8N» es la entrada del canal web. Una sola máquina, entorno desechable y camino determinístico sin inferencia paga. Fuente: \texttt{evaluation/evidence/load\_test\_multicanal\_2026-11-13.json}.}
+\end{table}
+
+En la capa del backend la regla de decisión se cumple en los cuatro niveles. El p95 máximo es 1215,8~ms, muy por debajo del techo de 5000~ms, y el throughput sube de 20,79 a un máximo de 26,84 solicitudes por segundo con 10 concurrentes y baja a 24,21 con 20: una caída del 9,8~\%, dentro de la tolerancia del 10~\% por un margen estrecho. El control secundario (cociente de p95 de 19,5, frente a la cota de 20) también se cumple con poca holgura.
+
+La capa del \emph{webhook} de N8N no cumple la regla. Con 20 solicitudes concurrentes el p95 es 6788,4~ms, 1,36 veces el techo, mientras que con 1, 5 y 10 queda por debajo (338,4, 1804,2 y 3526,5~ms). Su throughput se estabiliza en torno a 3,8 solicitudes por segundo desde 5 concurrentes (3,75, 3,82 y 3,78) y la latencia crece con la concurrencia sin que el throughput aumente, que es el patrón de una cola frente a un recurso saturado; el control secundario tampoco se cumple (cociente de 20,06 frente a la cota de 20). No se diagnosticó el origen de la saturación. La latencia de extremo a extremo que registra el servidor para los incidentes creados por esta vía acompaña a la del cliente (mediana de 246,0~ms con 1 solicitud concurrente y de 4118,0~ms con 20); en el alta directa al backend el cliente no sella el instante de ingreso, por lo que solo se informa la latencia del cliente. El veredicto global es «no sostenida», por la violación del techo de latencia en la capa de orquestación con 20 concurrentes. Ninguna solicitud falló: el límite observado es de latencia y no de disponibilidad.
+
+Estas cifras valen para una sola máquina, un perfil desechable, una instancia de N8N con la configuración del \emph{stack} y el camino determinístico, sin inferencia paga; la latencia con inferencia no se midió. La copia del flujo que se activó en el N8N desechable conserva el camino del canal web pero omite los nodos que exigen credenciales externas (disparadores de correo y telefonía y envíos de correo), por lo que el tiempo de esos envíos no está incluido. Los niveles de 1 a 20 concurrentes se fijaron a priori como niveles de carga y no estiman la demanda real de una mesa de ayuda, que no se midió. Los canales de correo y telefonía quedaron fuera de la inyección concurrente, y el resultado no se extrapola a producción ni a otro hardware. La complejidad operativa percibida no se midió.
+
 \subsection{Sensibilidad a la referencia de verdad}\label{subsec:ruido-referencia}
 
 La pregunta es cuánto del error observado sobre la referencia arbitrada de 206 casos es atribuible a la fragilidad de esa referencia y cuánto persiste con una etiqueta independiente del acuerdo medido. El método se define en la \autoref{subsec:analisis-estadistico}: simulación calibrada al kappa 0,6055 de \texttt{E3} y \texttt{E4}, \(B=2000\), semilla 20261021, cotas con \(\delta\) de Wilson y rango de los 6 casos de tres vías. No corrige la exactitud ni mide la verdad latente: genera referencias alternativas plausibles y describe cuánto cambia la métrica.

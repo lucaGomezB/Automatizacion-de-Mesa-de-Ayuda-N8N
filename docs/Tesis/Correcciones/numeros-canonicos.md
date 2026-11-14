@@ -1902,6 +1902,124 @@ compatible con el del capítulo de resultados (el híbrido supera a la línea de
 `206` arbitrados, Sección 3.26) y no lo contradice: se trata de un contraste distinto, contra otro
 esquema y sobre el bloque de `103`. La prosa está en las secciones 1, 4, 7, 8, 9 y 10 de la tesis.
 
+### 3.29 Test de carga multicanal y contraste de la hipótesis de integración (c-218)
+
+Test de carga de costo cero sobre el tramo compartido donde convergen los canales de entrada, que
+contrasta la **dimensión de capacidad** de la hipótesis subsidiaria de integración multicanal («no
+introduce cuellos de botella adicionales»). **Aditivo**: no modifica ningún valor ni estado `vigente` de
+las Secciones 3.1 a 3.28 ni el clasificador, el corpus, la referencia, el gate, `docker-compose.yml`,
+`n8n/workflow.json` ni `App/**`. Las frases anteriores que declaran la hipótesis multicanal «sin
+contrastar» o «no contrastada» describen el estado previo a este change y quedan superadas por esta
+sección. Fuente única de las cifras: `evaluation/evidence/load_test_multicanal_2026-11-13.json` (y su
+vista `.md`), producida por `scripts/load_test/load_test.py`.
+
+Comando (perfil `corpus` levantado de forma acotada, ver `scripts/load_test/README.md`):
+
+```bash
+python scripts/load_test/load_test.py --json-out evaluation/evidence/load_test_multicanal_2026-11-13.json
+```
+
+SHA-256 de las salidas versionadas (UTF-8 sin BOM, LF): `load_test_multicanal_2026-11-13.json`
+`545b2b89eee0acfa6eeada8ecfec9f1bc866e94d6b61f4dcce279907460bca39`; `load_test_multicanal_2026-11-13.md`
+`13067c9fb648cee582ba08e1d502d355c112cb9bbe82297cafe5d9f7c3943001`; fixture
+`scripts/load_test/fixture_descripciones.json`
+`1f5c06caf6c48ae98e95fe52272b41dcdfe28ff815e632736e0ffb3e8cdf0aab`.
+
+**(a) Entorno y costo cero** (`commit`, `fecha_utc`, `n8n_version`, `perfil`, `corrida_id`,
+`fixture_sha256`). Corrida `fc3d37ce` del `2026-11-14T02:37:31Z` (`2026-11-13` 23:37 hora local). El
+campo `commit` (`a82a111`) es el commit base del árbol de trabajo: el arnés se ejecutó antes de
+versionarse. N8N `2.11.2`. Perfil `corpus` desechable (base `mesa_de_ayuda_corpus`, puertos `8001` y
+`5679`), con el override `scripts/load_test/compose.load-test.yml`. Costo cero en dos capas
+independientes: clave `GEMINI_API_KEY` ficticia y `COST_GUARD_BUDGET_USD=0`, ambas afirmadas **dentro
+del contenedor** antes de enviar nada (el arnés aborta con código `3` si no se cumplen). Verificación
+posterior: las `976` filas de `clasificacion_log` de la base descartable tienen `etapa = deterministic`
+(`960` de la corrida más `16` de una prueba de humo previa de 2 solicitudes por nivel y capa, no
+incluida en el reporte); el log del backend registra `976` cortocircuitos determinísticos y ninguna
+llamada a Gemini ni a Twilio; el log de N8N no menciona ninguno de los dos. La base operativa
+`mesa_de_ayuda` no se tocó (sus contenedores y volúmenes no se arrancaron ni se alteraron). Estado:
+`vigente` (nuevo).
+
+**(b) Constantes prerregistradas** (`constantes`; `openspec/changes/c-218-…/design.md`, D6, fijadas en
+el commit de la propuesta, anterior a cualquier dato, sin reajuste): niveles `1/5/10/20`;
+`40` solicitudes por nivel y repetición; `3` repeticiones; techo `p95 ≤ 5000 ms` (inclusivo); tolerancia
+de throughput `10 %` respecto del nivel anterior (inclusiva); tasa de error `0`; control secundario
+`p95(20)/p95(1) ≤ 20` (se informa, no decide). Veredicto por capa: «sostenida» si las tres condiciones
+primarias se cumplen en todos los niveles; «no sostenida» si algún nivel viola alguna; «no concluyente»
+si la corrida queda incompleta. Veredicto global: la peor capa. Interpretación fijada al implementar
+(el diseño no la precisaba): las métricas de cada nivel **agrupan las 3 repeticiones** (`120`
+solicitudes; throughput = solicitudes totales sobre la suma de las duraciones) y la latencia del
+criterio es la **medida por el cliente**; el reporte conserva cada repetición. Estado: `vigente`
+(nuevo).
+
+**(c) Capa `backend` (`POST /api/v1/incidentes/`, `Bearer`); `120` solicitudes por nivel, `0` errores.**
+Procedencia: `…json` (`capas.backend.niveles[i]`, campos `p50_ms`, `p95_ms`, `p99_ms`, `media_ms`,
+`throughput_rps`, `tasa_error`, `total`, `ok`).
+
+| Concurrencia | p50 (ms) | p95 (ms) | p99 (ms) | Media (ms) | Throughput (sol./s) | Error | Estado |
+|---|---|---|---|---|---|---|---|
+| 1 | `44,5` | `62,2` | `84,6` | `48,0` | `20,79` | `0/120` | vigente (nuevo) |
+| 5 | `186,9` | `290,6` | `324,5` | `193,8` | `25,19` | `0/120` | vigente (nuevo) |
+| 10 | `349,5` | `457,4` | `588,3` | `346,4` | `26,84` | `0/120` | vigente (nuevo) |
+| 20 | `594,8` | `1215,8` | `1293,8` | `700,3` | `24,21` | `0/120` | vigente (nuevo) |
+
+Caída de throughput entre el nivel 10 y el 20: `9,79 %` (dentro de la tolerancia del `10 %` por
+`0,21` puntos). Control secundario `p95(20)/p95(1) = 19,54` (`≤ 20`, se cumple por poco)
+(`capas.backend.criterio.control_escalado`). Veredicto de la capa: **sostenida**
+(`capas.backend.criterio`). La latencia de extremo a extremo del servidor (`e2e_*`) es nula en esta
+capa: el alta directa no sella `ingresado_en` (solo lo hace el disparador del canal web de N8N).
+
+**(d) Capa `n8n` (`POST /webhook/incidente-web`); `120` solicitudes por nivel, `0` errores.**
+Procedencia: `…json` (`capas.n8n.niveles[i]`, mismos campos más `e2e_p50_ms` y `e2e_p95_ms`).
+
+| Concurrencia | p50 (ms) | p95 (ms) | p99 (ms) | Media (ms) | Throughput (sol./s) | E2E del servidor p50 / p95 (ms) | Error | Estado |
+|---|---|---|---|---|---|---|---|---|
+| 1 | `307,4` | `338,4` | `368,2` | `311,7` | `3,21` | `246,0` / `274,1` | `0/120` | vigente (nuevo) |
+| 5 | `1339,6` | `1804,2` | `2157,3` | `1314,8` | `3,75` | `1122,5` / `1221,3` | `0/120` | vigente (nuevo) |
+| 10 | `2565,4` | `3526,5` | `4065,0` | `2522,6` | `3,82` | `2139,5` / `2807,9` | `0/120` | vigente (nuevo) |
+| 20 | `4732,6` | `6788,4` | `7469,2` | `4832,5` | `3,78` | `4118,0` / `5859,5` | `0/120` | vigente (nuevo) |
+
+Con 20 concurrentes el `p95 = 6788,4 ms` es `1,36` veces el techo de `5000 ms`: violación de
+`p95_techo` en el nivel `20` (`capas.n8n.criterio.violaciones`). El throughput se estabiliza en torno
+a `3,8` solicitudes por segundo desde `5` concurrentes (caídas respecto del nivel anterior: `-17,07 %`,
+`-1,88 %` y `+1,29 %`; ninguna supera la tolerancia). Control secundario `p95(20)/p95(1) = 20,06`
+(`> 20`, no se cumple; no decide). Veredicto de la capa: **no sostenida**. Los valores `e2e_*` provienen
+de `GET /api/v1/incidentes/{id}` de cada incidente creado (`e2e_n = 120` por nivel). Estado: `vigente`
+(nuevo) para las cifras; `condicional` para la lectura «saturación de la orquestación» (no se
+diagnosticó la causa).
+
+**(e) Veredicto global** (`veredicto`): **no sostenida**, por la violación del techo de latencia de la
+capa `n8n` con `20` concurrentes; la capa `backend` no muestra cuello de botella hasta `20`. Ninguna
+solicitud falló (`0/960`): el límite observado es de latencia, no de disponibilidad. Estado: `vigente`
+(nuevo).
+
+**(f) Límites declarados** (`exclusiones`). Una sola máquina (Windows 11, Docker 29.6), perfil
+desechable y camino determinístico sin inferencia paga: la latencia con inferencia **no** se midió y el
+resultado no se extrapola a producción ni a otro hardware. Los niveles `1` a `20` son niveles de carga
+fijados a priori, no una estimación de la demanda real de una mesa de ayuda (que no se midió). Los
+canales de correo (sondeo IMAP por minuto, no apto para inyección concurrente) y de telefonía (canal
+pago) quedaron fuera de la inyección; la convergencia de los tres en `POST /api/v1/incidentes/`
+justifica medir allí, pero no se midió la capacidad de esos canales. La **complejidad operativa
+percibida** no tiene instrumento y no se midió. Estado: `vigente` (nuevo).
+
+**(g) Adaptaciones del entorno, sin tocar artefactos versionados.** (i) `backend-corpus` no arrancaba
+porque el `.env` local del backend no define `DIRECTORY_BLIND_INDEX_KEY` (la exige `Settings`): el
+override inyecta un valor ficticio (base descartable, sin datos reales del directorio). (ii) El N8N
+desechable arranca sin flujo: `scripts/load_test/preparar_n8n.py` importa y activa una **copia** de
+`n8n/workflow.json` con la transformación del dry-run (login con las credenciales locales del operador
+apuntado a `backend-corpus`, `webhookId` estable y remoción de los cinco nodos que exigen credenciales
+externas: `Llega un email a Mesa de Ayuda`, `Notificar operador designado`, `Llamada telefonica`,
+`Correo de confirmacion al usuario` y `Notificar gestion post-revision`). El camino del canal web se
+conserva; el tiempo de los envíos de correo y de los disparadores de correo y telefonía no está
+incluido. (iii) La prueba de humo de 16 solicitudes se hizo antes de la corrida; no entra en el
+reporte. Estado: `vigente` (nuevo).
+
+**(h) Lectura acotada.** Veredicto: **no sostenida**. La hipótesis subsidiaria de integración
+multicanal pasa de «no contrastada» a «contrastada en su dimensión de capacidad»; el contraste no la
+sostiene en el nivel de `20` concurrentes sobre la capa de orquestación, y sí la sostiene para el punto
+de convergencia del backend. No es un contraste total (la complejidad percibida no se midió) ni una
+validación en producción. Ningún objetivo específico cambia de estado por este change. La prosa está en
+las secciones 1, 4, 7, 8 y 9 de la tesis.
+
 ## 4. Contingencia del gate de intervención humana
 
 Tabla reconstruida desde `evaluation/predicciones.json` con
