@@ -7,7 +7,7 @@ La tesis declara como hipótesis subsidiaria que el esquema híbrido (reglas + G
 - **Fusionar el contenido de c-215 en `main`**: `evaluation/brazo_gemini_solo.py`, `analisis_brazo_gemini_solo_c215.py` (y pruebas), el caché versionado y sus salidas. Código ya escrito; sin gasto.
 - **Resolver la deriva de referencia**: mantener los **103 casos de consenso `E3`/`E4`** como etapa previa y preregistrada del contraste de eficiencia, y presentar la **referencia arbitrada de 206** como el complemento de exactitud fuera de muestra. Sin corrida paga.
 - **Prosa de la tesis** con el veredicto honesto (no concluyente) en `04`, `07`, `08`, `09`; `01` (enunciado) y `10` (trabajo futuro) se incluyen para no dejar contradicción interna.
-- **Registro aditivo**: sección nueva `3.27` en `numeros-canonicos.md` (sin cambiar valores vigentes) y una entrada en `dictamen-correcciones.md`.
+- **Registro aditivo**: sección nueva `3.28` en `numeros-canonicos.md` (sin cambiar valores vigentes) y una entrada en `dictamen-correcciones.md`.
 
 ## Capabilities
 
@@ -33,5 +33,5 @@ La tesis declara como hipótesis subsidiaria que el esquema híbrido (reglas + G
 - [ ] `openspec validate c-217-… --strict --no-interactive` en verde.
 - [ ] El código y las salidas de c-215 están en `main` sin re-correr el brazo (caché intacto).
 - [ ] Las secciones 01/04/07/08/09/10 declaran la eficiencia como «contrastada: no concluyente» sin contradicciones.
-- [ ] La sección 3.27 es aditiva y ningún valor de 3.1-3.26 cambia.
+- [ ] La sección 3.28 es aditiva y ningún valor de 3.1-3.27 cambia.
 - [ ] El registro documenta la decisión de referencia (103 previa / 206 complemento) y su costo.

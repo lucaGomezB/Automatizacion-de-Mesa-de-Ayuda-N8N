@@ -5148,3 +5148,95 @@ referencias ni citas indefinidas, ni etiquetas duplicadas.
 - **Revisión del diff del capítulo legal**: gobernanza HIGH; el diff exacto se entrega al dueño.
 - **Revisión del resultado L2**: el componente atribuible negativo se informa sin recortar; el
   dueño decide si la lectura se mantiene en la tesis.
+
+## Dictamen v10 / v1.3.0 (2026-11-13) - c-217 (integración del contraste de eficiencia solo-LLM)
+
+Atiende la misma observación del dictamen CONEAU del 13-11-2026 sobre `v1.3.0`
+(`auditorias/Dictamen_Tesis_v10_v1.3.0_CONEAU_2026-11-13.md`, no versionado) que el change `c-215`,
+que quedó completo pero **sin fusionar**: la hipótesis subsidiaria de eficiencia del esquema híbrido
+frente a un esquema de modelo de lenguaje solo nunca se había contrastado en `main`. El change
+`c-217-integrar-el-contraste-de-eficiencia-solo-llm` (integración y prosa MEDIUM) **integra el código,
+el caché y las salidas de `c-215` en `main`** y lleva la prosa al veredicto honesto, resolviendo la
+deriva de referencia. Es aditivo: ningún número canónico existente cambia. Sube el criterio 1
+(hipótesis subsidiarias) y respalda el criterio 7 (el ahorro de costo pasa de aserción a magnitud
+medida).
+
+### Qué cambió
+
+- **Integración sin corrida paga**: se tomaron del árbol de `c-215`
+  `evaluation/brazo_gemini_solo.py`, su prueba, el análisis
+  `analisis_brazo_gemini_solo_c215.py` (y su prueba), el caché versionado
+  `brazo_gemini_solo/cache_brazo_gemini_solo.jsonl` (SHA-256 `3bf29016…`) y las salidas. **No se emitió
+  ninguna llamada nueva** a Gemini ni se invocó `--confirm-paid`.
+- **Decisión de referencia (design D1, opción (b))**: el contraste de eficiencia se informa sobre el
+  bloque **primario de 103 casos fuera de muestra con consenso de `E3`/`E4`** (etapa previa y
+  prerregistrada, con el margen `δ = 0,05` congelado antes de observar datos); la **referencia
+  arbitrada de 206 casos** (c-206/c-213) es el complemento de exactitud fuera de muestra, reportado por
+  separado. Las dos estimaciones no se agrupan. La alternativa (a) (re-expresar el contraste sobre los
+  206) requeriría una corrida paga nueva (~USD 0,07–0,15 a precio introductorio, hasta ~USD 0,28 a
+  precio estándar) y un prerregistro nuevo; queda diferida como trabajo futuro. **Costo de este
+  change: cero.**
+- **Veredicto honesto**: el componente de **eficiencia es concluyente y favorable** al híbrido
+  (aproximadamente un tercio de las llamadas `0,3301` y del costo `0,3295`, con ambos límites
+  superiores por debajo de `0,90`); el componente de **exactitud es indeterminado** (McNemar exacta
+  `p = 0,5078`; diferencia `−0,0291`, IC `[−0,0874; 0,0291]`; no se detectó diferencia, que no es
+  equivalencia). Con el ahorro cumplido y la exactitud indeterminada, el veredicto prerregistrado es
+  **no concluyente**: la hipótesis pasa a «contrastada: no concluyente». No se afirma no inferioridad ni
+  que el híbrido sea peor; el margen de `0,05` **no** se cambia.
+- **Desviación declarada**: `112` casos dentro de la muestra fallaron en la primera tanda sin llegar al
+  modelo (fallo técnico) y se reintentaron; la decisión se tomó después de ver los resultados y se
+  declara como amenaza a la validez; el bloque primario no se vio afectado.
+- **Deriva de H verificada**: sobre los 103 compartidos, la predicción de H coincide caso a caso entre
+  `predicciones_independiente.json` y `predicciones_arbitrado.json` (`0` discrepancias de sector/etapa;
+  la confianza difiere en `7` casos sin afectar la exactitud).
+- **Tesis**: `04-marco-metodologico.tex` describe el brazo, el margen, la regla de tres vías, el control
+  de deriva, el análisis no ciego y la desviación; `07-resultados.tex` agrega `tab:gemini-solo`, el
+  contraste, la eficiencia, el bloque secundario, la deriva y la desviación, y declara la relación de
+  referencias (103 previa / 206 complemento); `01-introduccion.tex`, `08-discusion.tex`,
+  `09-conclusiones.tex` y `10-recomendaciones.tex` pasan de «no se contrastó» a «contrastada: no
+  concluyente (ahorro concluyente y favorable; no inferioridad de la exactitud no establecida)» y
+  proponen repetir el contraste con más casos fuera de muestra y corridas repetidas. El estado de ningún
+  objetivo específico cambia. El resultado no contradice el del capítulo (el híbrido supera a la línea de
+  base supervisada sobre los 206 arbitrados, Sección 3.26): es un contraste contra otro esquema y sobre
+  el bloque de 103.
+
+### Desviaciones respecto del diseño y las tareas
+
+- **Numeración del memo**: la sección nueva es la **`3.28`**, no la `3.27` que anticipaban
+  `proposal.md`/`design.md`/`tasks.md`/specs de este change: la `3.27` la ocupó `c-216`
+  (sensibilidad a la referencia) al cerrarse antes. Los artefactos del change se actualizaron a `3.28`.
+- **Mecanismo de integración**: en lugar de un `git merge` de la rama de `c-215` (que precede a
+  c-206/c-208/c-216 y revertiría la prosa vigente de `main`), se tomaron los **archivos** de código,
+  caché y salidas con `git checkout <rama> -- <rutas>` y se **reescribió la prosa fresca** sobre el
+  texto vigente de `main`. Ningún archivo de `App/Backend/` se tocó.
+- **Hash de entrada del análisis**: el artefacto de la rama de `c-215` registraba el SHA-256 CRLF
+  `3fb5bacd…` de `predicciones_hybrid-v3_2026-10-07.json`; regenerado en `main` registra el hash
+  canónico LF `89cf956e…` (el mismo de la Sección 3.24). Las cifras no cambian; es el fin de línea del
+  archivo de entrada. Las salidas `.md` son byte-idénticas a las de la rama; el `.json` solo cambia en
+  esa línea de procedencia.
+
+### Pendientes
+
+- Recompilar `main.pdf` y verificar las cifras con el registro de compilación (tareas 4.4).
+- La alternativa (a) (corrida del brazo sobre la referencia de 206) queda diferida y sujeta a
+  autorización de gasto; no cambia el alcance de este change.
+
+### Matriz de trazabilidad
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| C17/a | Memo: sección del contraste de eficiencia | c-217 | `docs/Tesis/Correcciones/numeros-canonicos.md:1783` | `-` | `3.28 Brazo «Gemini solo» y contraste de la hipótesis de eficiencia` | vigente (nuevo) |
+| C17/b | Método del brazo de modelo solo | c-217 | `04-marco-metodologico.tex:89` | `subsec:metricas-instrumentos` | `Brazo de modelo de lenguaje solo.` | cerrada |
+| C17/c | Contraste y veredicto en resultados | c-217 | `07-resultados.tex:374` | `tab:gemini-solo` | `Contraste frente a un esquema de modelo de lenguaje solo` | cerrada |
+| C17/d | Tabla del contraste por bloque | c-217 | `07-resultados.tex:379` | `tab:gemini-solo` | `label{tab:gemini-solo}` | cerrada |
+| C17/e | Ahorro concluyente de llamadas y costo | c-217 | `07-resultados.tex:394` | `tab:gemini-solo` | `En eficiencia el resultado es concluyente y favorable` | cerrada |
+| C17/f | Bloque secundario, deriva y desviación | c-217 | `07-resultados.tex:396` | `tab:gemini-solo` | `El bloque dentro de la muestra (200 casos) es informativo` | cerrada |
+| C17/g | Enunciado de la hipótesis en la introducción | c-217 | `01-introduccion.tex:38` | `subsec:hipotesis-trabajo` | `La de eficiencia se contrastó formalmente` | cerrada |
+| C17/h | Interpretación en la discusión | c-217 | `08-discusion.tex:10` | `subsec:interpretacion-resultados` | `se contrastó con un brazo de modelo de lenguaje solo, con resultado no concluyente` | cerrada |
+| C17/i | Cascadas en la discusión | c-217 | `08-discusion.tex:40` | `sec:discusion` | `se contrastó con resultado no concluyente: ahorro medido` | cerrada |
+| C17/j | Alternativas en la discusión | c-217 | `08-discusion.tex:56` | `subsec:limitaciones-estudio` | `se midió aparte, con resultado no concluyente` | cerrada |
+| C17/k | Sub-hipótesis en las conclusiones | c-217 | `09-conclusiones.tex:6` | `sec:conclusiones` | `La hipótesis subsidiaria de eficiencia se contrastó con resultado no concluyente` | cerrada |
+| C17/l | Estrategia compositiva en las conclusiones | c-217 | `09-conclusiones.tex:37` | `sec:conclusiones` | `se contrastó con resultado no concluyente: usó aproximadamente` | cerrada |
+| C17/m | Alcance de la conclusión acotada | c-217 | `09-conclusiones.tex:47` | `subsec:aportes-generalizacion` | `el esquema de modelo de lenguaje solo se midió con resultado no concluyente` | cerrada |
+| C17/n | Trabajo futuro | c-217 | `10-recomendaciones.tex:14` | `subsec:clasificador-supervisado` | `Para obtener un veredicto concluyente` | cerrada |
+| C17/o | Relación de referencias (103 previa / 206 complemento) | c-217 | `07-resultados.tex:374` | `tab:gemini-solo` | `la referencia arbitrada de 206 casos` | cerrada |
