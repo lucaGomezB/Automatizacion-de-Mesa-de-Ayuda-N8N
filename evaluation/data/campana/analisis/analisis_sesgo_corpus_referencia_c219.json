@@ -1,0 +1,195 @@
+{
+  "analisis": "analisis_sesgo_corpus_referencia_c219",
+  "anclajes": {
+    "aciertos_det_v1": 88,
+    "aciertos_hibrido": 142,
+    "casos": 206,
+    "cobertura_esperada_131": 131,
+    "cobertura_reproduce_131": true,
+    "cobertura_v1": 131,
+    "cortocircuito_v1": 115,
+    "exactitud_hibrido": 0.6893203883495146,
+    "macro_f1_hibrido": 0.7024265685465428,
+    "patrones": {
+      "derivados_del_corpus": 62,
+      "v0": 89,
+      "v1": 151
+    },
+    "precision_det_v1": 0.7652173913043478
+  },
+  "conjunto_literal_e3_e4_e5": {
+    "casos": 0,
+    "ids": []
+  },
+  "entradas": {
+    "conteos": {
+      "arbitrados_e5": 64,
+      "casos": 206,
+      "consenso": 142,
+      "filas_etiquetado": 476,
+      "predicciones": 206,
+      "tres_vias": 6
+    },
+    "sha256": {
+      "arbitraje_tres_vias.json": "4c85ab43bf28cac228caa35a6aaf3863deb327767cba31fbe850b43d2efe6a61",
+      "corpus_independiente_arbitrado.json": "cb2874e649fb932c00b536100025c0a0137b3314ab12d45234e4c29049adc67e",
+      "doble_etiquetado_arbitrado.csv": "7993f3ffda7ae7b380833a41b226ed3a6b4f6aaa36f3fbed66fb52682a61d2a4",
+      "keywords_pre_c71.json": "8d9e646fae8ec5ff746fdaddecc5301a4db8f0df6e46da6d77eca26e56952e55",
+      "predicciones_arbitrado.json": "cb8aba6089dde9868c61740fba713fb75923ee32317370c46e0daeb52a01d5d5",
+      "vocabulario_corpus_blind_c219.json": "2f4473a41be962eda23672120da98c7225a6e6cbd1b818f724a1b3496642beab"
+    }
+  },
+  "rotulo": "sensibilidad (no exactitud corregida; la referencia no se afirma causal)",
+  "subconjuntos": {
+    "arbitrado": {
+      "aciertos": 33,
+      "aciertos_laxos": 42,
+      "casos": 64,
+      "exactitud": 0.515625,
+      "exactitud_laxa": 0.65625,
+      "ic": [
+        0.39581601478580125,
+        0.6336644833456737
+      ],
+      "ic_laxa": [
+        0.5340364020991819,
+        0.7607685792155665
+      ]
+    },
+    "consenso": {
+      "aciertos": 109,
+      "aciertos_laxos": 120,
+      "casos": 142,
+      "exactitud": 0.7676056338028169,
+      "exactitud_laxa": 0.8450704225352113,
+      "ic": [
+        0.6916482930088332,
+        0.8294655289081483
+      ],
+      "ic_laxa": [
+        0.7765573006771804,
+        0.8954052591631378
+      ]
+    },
+    "total": {
+      "aciertos": 142,
+      "aciertos_laxos": 162,
+      "casos": 206,
+      "exactitud": 0.6893203883495146,
+      "exactitud_laxa": 0.7864077669902912,
+      "ic": [
+        0.6231450504484284,
+        0.7485641458103036
+      ],
+      "ic_laxa": [
+        0.7254650897614435,
+        0.8368642071427917
+      ]
+    },
+    "tres_vias": {
+      "aciertos": 0,
+      "aciertos_laxos": 3,
+      "casos": 6,
+      "exactitud": 0.0,
+      "exactitud_laxa": 0.5,
+      "ic": [
+        2.7755575615628914e-17,
+        0.3903342879021653
+      ],
+      "ic_laxa": [
+        0.1876163064826506,
+        0.8123836935173494
+      ]
+    }
+  },
+  "vocabulario_corpus_blind": {
+    "consultada": "2026-11-13",
+    "derivado_en": "2026-11-13T23:52:31-03:00",
+    "fuente_publica": "Glosario de términos de ciberseguridad: una guía de aproximación para el empresario",
+    "independencia": "procedimental (prerregistro), no de contenido",
+    "organizacion": "INCIBE (Instituto Nacional de Ciberseguridad de España), colección Protege tu empresa",
+    "sha256_contenido": "ec350b9615410defe531183e317c197a21f778638eb5ccccdbe9a77b2a34d581",
+    "url": "https://www.incibe.es/sites/default/files/contenidos/guias/doc/guia_glosario_ciberseguridad_metad.pdf"
+  },
+  "vocabularios": {
+    "corpus_blind": {
+      "aciertos": 54,
+      "casos": 206,
+      "cobertura": 83,
+      "comun_con_v1": {
+        "aciertos_v1": 43,
+        "aciertos_vocabulario": 40,
+        "casos": 54,
+        "mismo_sector": 47
+      },
+      "cortocircuito": 75,
+      "delta_frente_a_v1": {
+        "cobertura": -48,
+        "cortocircuito": -40,
+        "precision_puntos": -4.521739130434788
+      },
+      "ic_precision": [
+        0.6095930981193548,
+        0.8089684111882106
+      ],
+      "nombre": "Corpus-blind (fuente externa)",
+      "patrones": {
+        "Bases de Datos": 11,
+        "Seguridad Informatica": 35,
+        "Sistemas": 20,
+        "Soporte Tecnico Hardware": 12,
+        "Soporte Tecnico Software": 12
+      },
+      "precision": 0.72
+    },
+    "v0": {
+      "aciertos": 65,
+      "casos": 206,
+      "cobertura": 97,
+      "comun_con_v1": {
+        "aciertos_v1": 63,
+        "aciertos_vocabulario": 62,
+        "casos": 83,
+        "mismo_sector": 82
+      },
+      "cortocircuito": 88,
+      "delta_frente_a_v1": {
+        "cobertura": -34,
+        "cortocircuito": -27,
+        "precision_puntos": -2.6581027667984203
+      },
+      "ic_precision": [
+        0.6382422002911137,
+        0.8190676088006423
+      ],
+      "nombre": "V0 (control de c-142, 89 patrones previos a c-71)",
+      "patrones": {
+        "Bases de Datos": 15,
+        "Seguridad Informatica": 14,
+        "Sistemas": 19,
+        "Soporte Tecnico Hardware": 20,
+        "Soporte Tecnico Software": 21
+      },
+      "precision": 0.7386363636363636
+    },
+    "v1": {
+      "aciertos": 88,
+      "casos": 206,
+      "cobertura": 131,
+      "cortocircuito": 115,
+      "ic_precision": [
+        0.6799576884955273,
+        0.8333311974313588
+      ],
+      "nombre": "V1 vigente",
+      "patrones": {
+        "Bases de Datos": 18,
+        "Seguridad Informatica": 26,
+        "Sistemas": 29,
+        "Soporte Tecnico Hardware": 40,
+        "Soporte Tecnico Software": 38
+      },
+      "precision": 0.7652173913043478
+    }
+  }
+}

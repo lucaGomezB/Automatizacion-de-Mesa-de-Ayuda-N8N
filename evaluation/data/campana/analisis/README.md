@@ -275,6 +275,51 @@ reentrena y no modifica el corpus, las predicciones ni los artefactos congelados
   el análisis no atribuye el error observado al ruido de la referencia. La simulación se
   rotula como sensibilidad, no como medición de la verdad latente.
 
+## Sesgo de corpus y fragilidad de la referencia (c-219)
+
+`analisis_sesgo_corpus_referencia_c219.py` mide, de solo lectura, sin red y sin Gemini, (a) cuánto
+cambian la cobertura, el cortocircuito y la precisión de la etapa determinística cuando el
+vocabulario del filtro se deriva de una fuente externa al corpus, y (b) cómo varía la exactitud
+estricta del híbrido congelado `hybrid-v3` entre el subconjunto de consenso `E3 = E4`, el arbitrado
+por `E5` y el total. Antes de medir reproduce los anclajes (`115` cortocircuitados, `88/115`, cobertura
+`131`, `142/206`, macro-F1 `0,7024`, `109/142`, `33/64`) y que el adaptador de scoring sobre `V1`
+coincide caso a caso con el clasificador real; si algo no se reproduce, aborta sin escribir salidas.
+Es aditivo: no reemplaza ningún número canónico y no modifica el corpus, las predicciones, el
+vocabulario vigente `V1` ni los artefactos congelados.
+
+- Método (fijado en el docstring antes de correr; el prerregistro NO es ciego en sentido estricto): el
+  vocabulario corpus-blind se derivó de las definiciones canónicas de los cinco sectores
+  (`CLAUDE.md`) y del «Glosario de términos de ciberseguridad: una guía de aproximación para el
+  empresario» (INCIBE, 2017, v1; consultado el 2026-11-13), sin leer descripciones del corpus ni el
+  vocabulario vigente; su independencia es procedimental. Se fijó y hasheó antes de medir en
+  `vocabulario_corpus_blind_c219.json` (`90` patrones; SHA-256 del contenido
+  `ec350b9615410defe531183e317c197a21f778638eb5ccccdbe9a77b2a34d581`; el script aborta si
+  no coincide). Límite: el glosario público es de ciberseguridad, no de mesa de ayuda; el
+  vocabulario de Hardware y Software es pobre.
+- Entradas versionadas (solo lectura): `../corpus_independiente_arbitrado.json`,
+  `../predicciones_arbitrado.json`, `../doble_etiquetado_arbitrado.csv`,
+  `../arbitraje_tres_vias.json`, el vocabulario corpus-blind y el control `V0`
+  (`../../sensibilidad_ajustes/keywords_pre_c71.json`, c-142).
+- Comando (desde la raíz del repositorio, con las variables de entorno inertes del job de CI; el
+  script se ejecuta en una carpeta sin `.env` para no cargar el `.env` local):
+
+  ```bash
+  python3 evaluation/data/campana/analisis/analisis_sesgo_corpus_referencia_c219.py
+  ```
+
+- Salidas (UTF-8 sin BOM, LF; dos corridas idénticas byte a byte), con su SHA-256 (también en
+  `analisis_sesgo_corpus_referencia_c219.SHA256SUMS.txt`):
+  - `analisis_sesgo_corpus_referencia_c219.json`: `768065f157ae4fdbfd047ea852bfb556a661343084f89fb0a14bd63a24d021fe`
+  - `analisis_sesgo_corpus_referencia_c219.md`: `2f1fba560228ba824448e213a3b59cda4b2216632c29b82979b36a8b70a26416`
+  - `vocabulario_corpus_blind_c219.json`: `2f4473a41be962eda23672120da98c7225a6e6cbd1b818f724a1b3496642beab`
+- Prueba: `cd evaluation/data/campana/analisis && python -m pytest test_analisis_sesgo_corpus_referencia_c219.py -q`.
+- Resultado registrado (sección 3.30 del memo): etapa determinística sobre los `206` casos, `V1` cobertura
+  `131`, cortocircuito `115`, `88/115` (`0,7652`); corpus-blind cobertura `83`, cortocircuito `75`,
+  `54/75` (`0,7200`, `[0,6096; 0,8090]`); `V0` cobertura `97`, cortocircuito `88`, `65/88` (`0,7386`).
+  Exactitud estricta del híbrido: consenso `109/142` (`0,7676`), arbitrado `33/64` (`0,5156`),
+  total `142/206` (`0,6893`); el subconjunto `E3 = E4 = E5` es vacío por construcción. Ambos
+  resultados se rotulan como sensibilidad, sin causalidad de la referencia.
+
 ## Brazo «Gemini solo» y contraste de la hipotesis de eficiencia (c-215; integrado por c-217)
 
 El brazo «Gemini solo» manda TODOS los casos (200 dentro de la muestra y 103 fuera de muestra) a la
