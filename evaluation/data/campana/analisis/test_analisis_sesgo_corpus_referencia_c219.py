@@ -31,6 +31,16 @@ def _evaluar(texto, vocab=VOCAB):
     return c219.evaluar_texto(texto, c219.compilar_vocabulario(vocab))
 
 
+@pytest.fixture(autouse=True)
+def _entorno_offline():
+    """Fija las variables inertes del CI antes de cada prueba.
+
+    La etapa determinista importa `app.classifiers`, que construye `Settings` y exige las
+    claves sin credenciales reales; sin esto, la suite no es autocontenida y falla en un
+    entorno limpio (solo pasa en CI, donde esas variables ya estan definidas)."""
+    c219.aplicar_entorno_offline()
+
+
 # ---------------------------------------------------------------------------
 # Adaptador de scoring (2.1 a 2.3)
 # ---------------------------------------------------------------------------
