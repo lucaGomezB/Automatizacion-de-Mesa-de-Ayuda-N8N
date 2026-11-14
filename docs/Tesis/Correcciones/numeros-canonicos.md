@@ -645,6 +645,12 @@ manual con etiquetadores distintos de los operadores y cronometraje de las reasi
 viabilidad operativa puede enunciarse en un sentido u otro. Hasta entonces los valores
 permanecen `condicional`.
 
+**Remisión (c-220).** La estimación de `c` de esta sección (`10 a 15 min`, `condicional`) se
+contrasta en la Sección 3.31, que mide `c` sobre los artefactos de la campaña complementaria. El
+tramo activo medido (`≈ 69,5 s`, IC `[33,4; 106,6] s`) excluye la banda `[600; 900] s`. Esta
+sección NO se reescribe y su valor conserva la cifra y el estado `condicional`; la Sección 3.31
+registra el hallazgo y remite a una decisión del dueño.
+
 ### 3.12 Hipótesis, objetivos y métrica primaria (c-133)
 
 Cifras que el texto de c-133 cita y su procedencia. c-133 no calcula nada nuevo ni invoca a
@@ -2130,6 +2136,128 @@ Estado: `vigente` (nuevo).
 
 **(f) Valores previos intactos.** Ningún valor ni estado de las secciones 3.1 a 3.29 cambia; `142/206`,
 `0,6893` y `0,7024` conservan su estado `vigente`.
+
+### 3.31 Costo de la derivación errónea: descomposición medida y cota anclada (c-220)
+
+Sección **aditiva**: no reemplaza ni cambia la cifra ni el estado de ningún valor de las secciones
+3.1 a 3.30. Convierte `c` ---el tiempo-persona adicional que una derivación errónea consume respecto
+de una correcta (definición operacional D2), no el tiempo calendario hasta que el caso llega al
+sector correcto--- en una magnitud con componentes medidos y un tramo declarado `no medido`. No
+cambia el umbral del 85 %, el balance neto `B`, `a*`, las categorías ni ningún artefacto congelado.
+Corre offline, de solo lectura, sin red, sin Gemini y sin base de datos. Se distinguen dos regímenes:
+**corto** (el error se detecta y corrige en la compuerta de revisión) y **largo** (el error escapa y
+el sector receptor lo rediagnostica y lo devuelve).
+
+*Numeración.* El memo terminaba en la Sección `3.30`; esta sección es la `3.31`, la primera libre.
+
+Fuente única de las cifras: `evaluation/data/campana/analisis/analisis_costo_derivacion_c220.json`
+(y su vista `.md`), generado por el script de solo lectura
+`evaluation/data/campana/analisis/analisis_costo_derivacion_c220.py`. Comando (desde la raíz del
+repositorio):
+
+```bash
+python3 evaluation/data/campana/analisis/analisis_costo_derivacion_c220.py
+```
+
+SHA-256 de las salidas versionadas (UTF-8 sin BOM, LF; dos corridas idénticas byte a byte):
+`analisis_costo_derivacion_c220.json`
+`2de287514832044ed6a29b5d17a7110ca10af81e5ffc2696f730e67e5c231d1c`;
+`analisis_costo_derivacion_c220.md`
+`766cd4e501b7102edb5ce15422c4d2eaf1da611fb3d03ff949f7a2e3973e3da4`.
+
+Entradas leídas y su SHA-256: `intervenciones.csv`
+`eccc094d46d5ad301296428885114e298f52efb0666be4f61c2e6a266d340ba3`; `brazo_manual.csv`
+`25ef12ba7e4c27ba5489d3daff099c697416d996858299e25ffa57dfa2a4d46f`; `resultados.json` (referencia de
+procedencia, no alimenta el cálculo)
+`0604a2b12b5de7b1025438ef8273da34a0b06b5c792f4ad07e08f38c5f658af1`. El análisis aborta sin
+escribir si los conteos no coinciden con los versionados (`147`, `138`, `25`, `220`).
+
+**(a) Cobertura de duraciones.** `147` intervenciones; `138` con `duracion_s` (`138/147 = 0,9388`);
+`9` sin dato, enumeradas y **no imputadas**: `R166`, `R181`, `R029`, `R036`, `R195`, `R123`, `R058`,
+`R069`, `R154`. Fuente: `analisis_costo_derivacion_c220.json` (`cobertura_duracion`); archivos
+`intervenciones.csv`. Estado: `vigente` (nuevo).
+
+**(b) Duraciones por `cambio_sector` (régimen corto).** `B = 2000` remuestreos, semilla `20261021`.
+
+| Grupo | `n` | Media (s) | Mediana (s) | Desvío (s) | IC 95 % media (s) | IC 95 % mediana (s) | Fuente | Estado |
+|---|---|---|---|---|---|---|---|---|
+| `cambio_sector=true` | `24` | `41,90` | `18,95` | `54,12` | `[22,75; 65,61]` | `[12,65; 32,02]` | `…c220.json` (`grupos_cambio_sector.true`) | vigente (nuevo) |
+| `cambio_sector=false` | `114` | `17,89` | `8,94` | `39,54` | `[11,94; 26,26]` | `[8,30; 9,98]` | idem (`…false`) | vigente (nuevo) |
+
+Las medias están traccionadas por colas (máximo `336,43` s en el grupo sin cambio, `211,83` s en el
+grupo con cambio); por eso se informan media y mediana juntas.
+
+**(c) Diferencia de medias (costo incremental de corregir en la compuerta).** `24,01` s, IC bootstrap
+independiente al 95 % `[3,42; 50,06]`. Es el estimador del costo incremental del régimen corto:
+tiempo adicional de las intervenciones que cambian el sector respecto de las que lo confirman.
+Fuente: idem (`diferencia_de_medias`). Estado: `vigente` (nuevo).
+
+**(d) Proxy de rediagnóstico (régimen largo).** Tiempo de decisión de sector del brazo manual; se
+informa agrupado y por operador.
+
+| Ámbito | `n` | Media (s) | Mediana (s) | IC 95 % mediana (s) | Fuente | Estado |
+|---|---|---|---|---|---|---|
+| Agrupado | `220` | `48,36` | `45,50` | `[30,00; 56,50]` | `…c220.json` (`brazo_manual`) | vigente (nuevo) |
+| `O1` | `110` | `20,10` | `18,00` | `[16,00; 19,00]` | idem (`brazo_manual.por_operador.O1`) | vigente (nuevo) |
+| `O2` | `110` | `76,62` | `73,00` | `[71,50; 75,50]` | idem (`….O2`) | vigente (nuevo) |
+
+No se elige el operador conveniente: el agrupado es la estimación y el operador lento (`O2`,
+`≈ 73 s`) es una cota superior de sensibilidad declarada. La dispersión entre operadores (`≈ 4×`)
+es, en sí misma, un hallazgo que acota la precisión del proxy.
+
+**(e) Composición de `c` y tramo anclado.** Tramo activo medido = corrección en la compuerta
+(`24,01` s) + re-decisión proxy (`45,50` s). El intervalo se propaga por **suma de extremos** de los
+intervalos bootstrap de cada tramo (cota exterior conservadora; no asume independencia ni aplica
+ninguna fracción para «calzar» la banda).
+
+| Escenario | Componentes | Punto (s) | Intervalo 95 % (s) | Fuente | Estado |
+|---|---|---|---|---|---|
+| Bajo (solo medido) | corrección + re-decisión | `69,51` | `[33,42; 106,56]` | `…c220.json` (`composicion.escenarios.bajo`) | vigente (nuevo) |
+| Alto (con ancla) | + reanudación | — | — | idem (`…alto`) | `no disponible` |
+
+El tramo de **reanudación tras la interrupción** no se mide en este corpus y su cota queda `no
+disponible`: el análisis corre offline y no puede verificar la fuente de interrupción contra su texto
+completo, de modo que no se inventa ni se cita ninguna (regla D4.3). `c` queda con dos tramos, sin
+ancla. Fuente: idem (`componentes.reanudacion`). Estado: `no medido` (cota `no disponible`).
+
+**(f) Compuerta de decisión D5 (pre-registrada).**
+
+| Intervalo compuesto (s) | Banda canónica (s) | Relación | Rama | Fuente | Estado |
+|---|---|---|---|---|---|
+| `[33,42; 106,56]` | `[600; 900]` | excluida | **B** | `…c220.json` (`compuerta_d5`) | vigente (nuevo) |
+
+El intervalo **excluye** la banda `[600; 900] s`: el valor previo (`10 a 15 min`) no es tiempo-persona
+activo. Por la regla D5 (Rama B) el memo registra el hallazgo y **remite a una decisión del dueño**;
+este change **no** recalcula el balance neto `B` ni `a*` y **no** edita `08`, `09`, `10`, `12` ni
+`00-resumen`.
+
+**(g) Justificación del umbral del 85 % (D6), sin mover el umbral.**
+
+| Ancla | Valor | Fuente | Estado |
+|---|---|---|---|
+| Paridad medida `1 − e_man` con `e_man = 26/151 = 0,1722` | `0,8278` | `…c220.json` (`justificacion_umbral.paridad_manual`); memo 3.14/3.21 | vigente (nuevo) |
+| Costo marginal por punto de exactitud (`N · 0,01 · c / 3600`) | `0,51` h-persona/trimestre | idem (`…costo_marginal_por_punto_horas_trimestre`); `N = 2.646` (Sección 3.11) | vigente (nuevo) |
+
+El umbral de `85 %` es **más exigente** que la paridad con la tasa de error manual medida
+(`82,78 %`). La referencia previa del `15 %` (paridad `85 %`, Sección 3.11) se conserva como
+aproximación y se declara superada por la medición. El costo marginal usa el `c` medido compuesto
+(`69,51` s); es información direccional, no un fundamento del número.
+
+**(h) Frontera con el tiempo de revisión ya contabilizado (D7).** El flujo automatizado **sí** agrega
+tiempo de revisión: `r = 22,06` s de media sobre las `138` intervenciones. Se informa como sensibilidad
+**separada y aditiva**: su efecto (`N · r / 3600 = 16,22` h-persona por trimestre) **no** se incorpora
+a `B` ni reescribe `08`; el `B` canónico no se modifica. Fuente: idem (`termino_revision`). Estado:
+`vigente` (nuevo) como sensibilidad.
+
+**(i) Desviación del diseño (D3).** La tabla de valores esperados del `design.md` se reprodujo salvo el
+IC de la diferencia de medias: el diseño anticipaba `[4,19; 49,61]` y el análisis da `[3,42; 50,06]`
+(el punto `24,01` sí coincide). El IC de la mediana del grupo con cambio difiere en el redondeo
+(`12,65` medido frente a `12,70` anticipado). Se registran las cifras del análisis y se retiran del
+`design.md` las que no se reprodujeron (tarea 3.2); no se forzó ninguna.
+
+**(j) Valores previos intactos.** Ningún valor ni estado de las secciones 3.1 a 3.30 cambia; en
+particular, `c = 10 a 15 min` (Sección 3.11) conserva su cifra y su estado `condicional`, y el
+balance neto de las Secciones 3.11/3.21 no se recalcula.
 
 ## 4. Contingencia del gate de intervención humana
 

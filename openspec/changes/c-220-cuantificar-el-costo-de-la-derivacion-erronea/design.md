@@ -55,18 +55,19 @@ El texto actual no distingue los regímenes y por eso el `10 a 15 min` no es con
 - Proxy de rediagnóstico: mediana del tiempo de decisión del brazo manual (`brazo_manual.csv`). Se informa **por operador** además del agrupado: `O1` y `O2` difieren casi cuatro veces (`≈18 s` vs `≈73 s`). No se elige el más conveniente: se reporta el agrupado como estimación y el operador lento como cota superior de sensibilidad. La dispersión entre operadores es, en sí misma, un hallazgo que acota la precisión del proxy.
 - Media y mediana se informan juntas porque la media está traccionada por colas (`máx. 336 s` en el grupo sin cambio, `máx. 212 s` en el grupo con cambio).
 
-**Valores esperados, a confirmar por el análisis** (calculados en la investigación previa, solo lectura):
+**Valores confirmados por el análisis** (el análisis reprodujo estas cifras; las que no se reprodujeron se retiraron del diseño y se reemplazaron por las del análisis en la tarea 3.2, sin forzar ninguna):
 
 | Cantidad | `n` | Media | Mediana | IC 95 % |
 |---|---|---|---|---|
-| Intervenciones con `cambio_sector=true` | 24 | 41,90 s | 18,95 s | media `[22,75; 65,61]`; mediana `[12,70; 32,02]` |
+| Intervenciones con `cambio_sector=true` | 24 | 41,90 s | 18,95 s | media `[22,75; 65,61]`; mediana `[12,65; 32,02]` |
 | Intervenciones con `cambio_sector=false` | 114 | 17,89 s | 8,94 s | — |
-| Diferencia de medias | — | 24,01 s | — | `[4,19; 49,61]` |
+| Diferencia de medias | — | 24,01 s | — | `[3,42; 50,06]` |
 | Decisión de sector, brazo manual | 220 | 48,36 s | 45,50 s | mediana `[30,00; 56,50]` |
 | Decisión de sector, `O1` / `O2` | 110 / 110 | 20,10 / 76,62 s | 18,00 / 73,00 s | — |
 | Término de revisión (todas las intervenciones) | 138 | 22,06 s | 9,96 s | — |
 
-Si el análisis no reproduce estas cifras, el memo registra las del análisis y estas se retiran del diseño en la misma tarea.
+El IC de la mediana del grupo con cambio quedó en `12,65` (redondeo) y el IC de la diferencia de medias
+en `[3,42; 50,06]`; el punto `24,01 s` sí coincidió. El memo registra las cifras del análisis.
 
 ### D4 — El tramo anclado: una cota declarada, no un parámetro calibrado
 

@@ -1,0 +1,218 @@
+{
+  "aditivo": {
+    "declaracion": "Las cifras de este analisis son aditivas: van a la seccion 3.31 del memo y no reemplazan ningun valor `vigente` de las secciones 3.1 a 3.30; no cambian el umbral de 85 %, el balance neto `B`, `a*` ni los artefactos congelados.",
+    "reemplaza_numeros_canonicos": false,
+    "seccion_memo": "3.31"
+  },
+  "brazo_manual": {
+    "desvio": 32.670297311874606,
+    "ic_media": [
+      44.035568181818185,
+      52.41375
+    ],
+    "ic_mediana": [
+      30.0,
+      56.5
+    ],
+    "media": 48.35909090909091,
+    "mediana": 45.5,
+    "n": 220,
+    "por_operador": {
+      "O1": {
+        "desvio": 9.133305684541208,
+        "ic_media": [
+          18.40909090909091,
+          21.827499999999997
+        ],
+        "ic_mediana": [
+          16.0,
+          19.0
+        ],
+        "media": 20.1,
+        "mediana": 18.0,
+        "n": 110
+      },
+      "O2": {
+        "desvio": 21.31025438958344,
+        "ic_media": [
+          72.68136363636364,
+          80.69136363636363
+        ],
+        "ic_mediana": [
+          71.5,
+          75.5
+        ],
+        "media": 76.61818181818182,
+        "mediana": 73.0,
+        "n": 110
+      }
+    }
+  },
+  "change": "c-220-cuantificar-el-costo-de-la-derivacion-erronea",
+  "cobertura_duracion": {
+    "con_duracion": 138,
+    "faltantes": [
+      "R166",
+      "R181",
+      "R029",
+      "R036",
+      "R195",
+      "R123",
+      "R058",
+      "R069",
+      "R154"
+    ],
+    "proporcion": 0.9387755102040817,
+    "total": 147
+  },
+  "componentes": {
+    "correccion_compuerta": {
+      "etiqueta": "correccion_compuerta",
+      "intervalo": [
+        3.416887390350881,
+        50.06443859649119
+      ],
+      "punto": 24.0074100877193
+    },
+    "reanudacion": {
+      "cota": "no disponible",
+      "estado": "no medido",
+      "etiqueta": "reanudacion",
+      "motivo": "no se mide en este corpus; la fuente de interrupcion no se pudo verificar contra su texto completo offline (regla D4.3)"
+    },
+    "redeccion_proxy": {
+      "etiqueta": "redeccion_proxy",
+      "intervalo": [
+        30.0,
+        56.5
+      ],
+      "punto": 45.5
+    }
+  },
+  "composicion": {
+    "escenarios": {
+      "alto": {
+        "disponible": false,
+        "motivo": "ancla de reanudacion no medido: cota no disponible (fuente de interrupcion no verificable offline, regla D4.3)"
+      },
+      "bajo": {
+        "componentes": [
+          "correccion_compuerta",
+          "redeccion_proxy"
+        ],
+        "intervalo": [
+          33.41688739035088,
+          106.56443859649119
+        ],
+        "punto": 69.50741008771931
+      }
+    },
+    "metodo": "propagacion por suma de extremos de los intervalos bootstrap de cada tramo (cota exterior conservadora; no asume independencia)"
+  },
+  "compuerta_d5": {
+    "banda": [
+      600.0,
+      900.0
+    ],
+    "banda_canonica": [
+      600.0,
+      900.0
+    ],
+    "intervalo": [
+      33.41688739035088,
+      106.56443859649119
+    ],
+    "rama": "B",
+    "regla": "A: el intervalo intersecta o contiene la banda; B: la excluye y remite a decision del dueno sin recalcular B ni a*",
+    "relacion": "excluida"
+  },
+  "diferencia_de_medias": {
+    "diferencia": 24.0074100877193,
+    "ic": [
+      3.416887390350881,
+      50.06443859649119
+    ],
+    "interpretacion": "costo incremental de corregir en la compuerta (regimen corto): tiempo adicional de las intervenciones que cambian el sector respecto de las que lo confirman"
+  },
+  "entradas_sha256": {
+    "brazo_manual.csv": "25ef12ba7e4c27ba5489d3daff099c697416d996858299e25ffa57dfa2a4d46f",
+    "intervenciones.csv": "eccc094d46d5ad301296428885114e298f52efb0666be4f61c2e6a266d340ba3",
+    "resultados.json": "0604a2b12b5de7b1025438ef8273da34a0b06b5c792f4ad07e08f38c5f658af1"
+  },
+  "generador": "evaluation/data/campana/analisis/analisis_costo_derivacion_c220.py",
+  "grupos_cambio_sector": {
+    "false": {
+      "desvio": 39.54299411675939,
+      "etiqueta": "cambio_sector_false",
+      "ic_media": [
+        11.936865131578948,
+        26.261769078947367
+      ],
+      "ic_mediana": [
+        8.303,
+        9.9825375
+      ],
+      "media": 17.8879649122807,
+      "mediana": 8.942499999999999,
+      "n": 114
+    },
+    "true": {
+      "desvio": 54.121714625318134,
+      "etiqueta": "cambio_sector_true",
+      "ic_media": [
+        22.753468750000003,
+        65.60659479166667
+      ],
+      "ic_mediana": [
+        12.648,
+        32.02
+      ],
+      "media": 41.895375,
+      "mediana": 18.945,
+      "n": 24
+    }
+  },
+  "justificacion_umbral": {
+    "c_medido_usado": 69.50741008771931,
+    "costo_marginal_por_punto_horas_trimestre": 0.510879464144737,
+    "e_man": 0.17218543046357615,
+    "formula": "N * 0,01 * c / 3600",
+    "paridad_manual": 0.8278145695364238,
+    "referencia_previa": "el 15 % de paridad (85 %) se conserva como aproximacion, superada por la medicion"
+  },
+  "metodo": "Descomposicion de `c` (tiempo-persona adicional de una derivacion erronea) en un tramo activo medido y un tramo anclado: duraciones por `cambio_sector` con IC bootstrap percentil al 95 %, diferencia de medias con IC independiente, tiempo de decision de sector del brazo manual como proxy del rediagnostico, y composicion por suma de extremos. Solo lectura, sin red ni Gemini; no reclasifica ni reentrena.",
+  "parametros": {
+    "B": 2000,
+    "banda_canonica": [
+      600.0,
+      900.0
+    ],
+    "e_man": 0.17218543046357615,
+    "n_universo": 2646,
+    "nivel_confianza": 0.95,
+    "remuestreos": 2000,
+    "semilla": 20261021
+  },
+  "preregistro": {
+    "ciego": false,
+    "declaracion": "El metodo y la regla de decision se fijaron antes de generar las salidas. El preregistro NO fue ciego: los conteos y los agregados ya se conocian; no se habia observado la distribucion bootstrap.",
+    "fijado_en_docstring": true
+  },
+  "termino_revision": {
+    "B_canonico_no_modificado": true,
+    "desvio": 43.40428705544031,
+    "efecto_sobre_b_horas_trimestre": 16.2164275,
+    "ic_media": [
+      15.489300905797105,
+      29.393332065217386
+    ],
+    "ic_mediana": [
+      8.848,
+      11.356
+    ],
+    "media": 22.063166666666667,
+    "mediana": 9.9565,
+    "n": 138,
+    "rotulo": "sensibilidad separada y aditiva (D7): el flujo automatizado SI agrega tiempo de revision, en contra del supuesto del balance; NO se incorpora a `B` ni reescribe 08"
+  }
+}

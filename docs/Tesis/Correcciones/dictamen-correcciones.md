@@ -4212,7 +4212,7 @@ de los residuos sin recomendación propia (grupo 10).
 | B2 | MDE del Spearman con n = 110 y ARE = 0,864 | c-190 | `07-resultados.tex:253` | - | `con un efecto mínimo detectable de $\rho = 0,276$` | SUPERADA por c-192 |
 | B3 | 4.5 matizada: regla del reportante activa y 13 diferencias con la cache | c-190 | `04-marco-metodologico.tex:65` | - | `con la regla del reportante activa y una salida en vivo que difiere de la caché en 13 casos` | cerrada |
 | B4 | 1.6 coherente con 4.4 y 9.3 | c-190 | `01-introduccion.tex:66` | - | `el acuerdo entre los dos analistas originales, uno de ellos autor, fue de` | SUPERADA por c-192 |
-| C1 | "ocho limitaciones" en 9.3 | c-190 | `08-discusion.tex:42` | `subsec:limitaciones-estudio` | `El estudio presenta ocho limitaciones` | cerrada |
+| C1 | "nueve limitaciones" en 9.3 | c-190 | `08-discusion.tex:46` | `subsec:limitaciones-estudio` | `El estudio presenta nueve limitaciones` | cerrada |
 | C2 | Zanzotto reformulado como inferencia de los autores | c-190 | `02-marco-teorico.tex:32` | - | `los autores de esta tesis infieren que el diseño debe reservar a la persona` | SUPERADA por c-194 |
 | 1 | inv. 1: sub-hipotesis 2 refutada sobre los casos revisados | c-190 | `07-resultados.tex:154` | - | `la sub-hipótesis resulta \emph{refutada}` | SUPERADA por c-196 |
 | 2 | inv. 2: cotejo con el consenso (11/85; 13 = 9 + 1 + 3) | c-190 | `07-resultados.tex:156` | - | `de las 85 confirmaciones con consenso disponible, 11 confirmaron un sector que el consenso considera incorrecto` | cerrada |
@@ -4232,7 +4232,7 @@ de los residuos sin recomendación propia (grupo 10).
 | 16 | inv. 16: 1.6 sin "validacion rigurosa ... doble etiquetado independiente" | c-190 | `01-introduccion.tex:66` | - | `el acuerdo entre los dos analistas originales, uno de ellos autor, fue de` | SUPERADA por c-192 |
 | 17 | inv. 17: resumen y abstract con "respaldan" | c-190 | `00-resumen.tex:15` | - | `Los hallazgos respaldan la viabilidad técnica y económica` | SUPERADA por c-207 |
 | 18 | inv. 18: OE1 con "configuracion entregada" en la Tabla 18 | c-190 | `09-conclusiones.tex:23` | `tab:cumplimiento-objetivos` | `reintentos idempotentes de la configuración entregada` | cerrada |
-| 19 | inv. 19: "ocho limitaciones" en 9.3 | c-190 | `08-discusion.tex:42` | - | `El estudio presenta ocho limitaciones` | cerrada |
+| 19 | inv. 19: "nueve limitaciones" en 9.3 | c-190 | `08-discusion.tex:46` | - | `El estudio presenta nueve limitaciones` | cerrada |
 | 20 | inv. 20: OE4 sin repetir "exactitud del brazo manual" | c-190 | `09-conclusiones.tex:26` | `tab:cumplimiento-objetivos` | `alcanzado en tiempo y en esa exactitud` | cerrada |
 | 21 | inv. 21: glosario con TI, URL, E2E, MDE, NB, LR, DT (87 entradas) | c-190 | `00-glosario.tex:57` | - | `\textbf{TI} Tecnologías de la Información` | cerrada |
 | 22 | inv. 22: portada con la fecha de la release | c-190 | `00-portada.tex:30` | - | `9 de noviembre de 2026` | cerrada |
@@ -5399,3 +5399,83 @@ y `08`; se recortó el texto de una primera versión que sumaba `+3`.
 | C19/d | Tabla de la etapa determinística por vocabulario | c-219 | `07-resultados.tex:254` | `tab:sesgo-vocabulario` | `label{tab:sesgo-vocabulario}` | cerrada |
 | C19/e | Tabla de exactitud por subconjunto | c-219 | `07-resultados.tex:275` | `tab:sesgo-subconjuntos` | `label{tab:sesgo-subconjuntos}` | cerrada |
 | C19/f | Lectura como sensibilidad y frontera offline | c-219 | `08-discusion.tex:66` | `subsec:limitaciones-estudio` | `Dos análisis adicionales acotan, sin eliminarlas` | cerrada |
+
+## Dictamen v10 / v1.3.0 (2026-11-14) - c-220 (cuantificar el costo de la derivación errónea)
+
+Atiende el criterio 1 del dictamen CONEAU del 13-11-2026 sobre `v1.3.0`
+(`auditorias/Dictamen_Tesis_v10_v1.3.0_CONEAU_2026-11-13.md`, no versionado), que descuenta el
+criterio 1 («Definición del problema») y el criterio 3 («Objetivos») porque el umbral del 85~\% «carece
+de fundamento numérico», con una de sus tres anclas fijada como «estimación de los autores, sin un
+registro cuantitativo conservado». El change
+`c-220-cuantificar-el-costo-de-la-derivacion-erronea` (MEDIUM, costo cero, offline) reemplaza esa
+estimación de `c` por una medición reproducible sobre dos artefactos ya versionados. Es aditivo:
+ningún número canónico de las Secciones 3.1 a 3.30 cambia, y el umbral del 85~\% no se mueve.
+
+### Qué cambió
+
+- **Script y pruebas** `evaluation/data/campana/analisis/analisis_costo_derivacion_c220.py` (con
+  `test_analisis_costo_derivacion_c220.py`, `31` pruebas): solo lectura, biblioteca estándar, sin red
+  ni Gemini; salidas `.json`, `.md` y `.SHA256SUMS.txt` idénticas byte a byte en dos corridas
+  (semilla `20261021`, `B = 2000`). Aborta sin escribir si los conteos no son `147/138`, `25` y `220`.
+- **Sección 3.31 del memo** (`numeros-canonicos.md`): aditiva, con cobertura de duraciones, grupos por
+  `cambio_sector`, diferencia de medias, proxy de rediagnóstico por operador, composición de `c`,
+  compuerta D5, justificación del umbral (D6) y término de revisión (D7). Se agregó una **remisión** en
+  la Sección 3.11 sin reescribirla (solo líneas agregadas: `128` inserciones, `0` eliminaciones).
+- **Tesis**: `01-introduccion.tex:48` reemplaza la oración de procedencia del segundo criterio (conserva
+  los tres criterios y el `85~\%`); `04-marco-metodologico.tex` agrega una fila a `tab:variables` y un
+  párrafo de método en `subsec:metricas-instrumentos` con la definición operacional (tiempo-persona, dos
+  regímenes).
+- **Bibliografía**: sin entrada nueva. El tramo de reanudación queda `no medido` (cota `no disponible`)
+  porque el análisis corre offline y no puede verificar la fuente de interrupción contra su texto
+  completo (regla D4.3); no se inventó ni se citó ninguna fuente.
+
+### Resultados de los cálculos
+
+| Cantidad | Valor | Fuente |
+|---|---|---|
+| Cobertura de `duracion_s` | `138/147 = 0,9388` (`9` sin dato, enumerados, no imputados) | `…c220.json` (`cobertura_duracion`) |
+| Grupo `cambio_sector=true` | `n = 24`; media `41,90` s; mediana `18,95` s; IC media `[22,75; 65,61]`; IC mediana `[12,65; 32,02]` | idem (`grupos_cambio_sector.true`) |
+| Grupo `cambio_sector=false` | `n = 114`; media `17,89` s; mediana `8,94` s; IC media `[11,94; 26,26]` | idem (`…false`) |
+| Diferencia de medias (régimen corto) | `24,01` s; IC `[3,42; 50,06]` | idem (`diferencia_de_medias`) |
+| Proxy de rediagnóstico (régimen largo) | `n = 220`; media `48,36` s; mediana `45,50` s; IC mediana `[30,00; 56,50]`; `O1` mediana `18,00` s; `O2` mediana `73,00` s | idem (`brazo_manual`) |
+| Composición de `c` (escenario medido) | `69,51` s; intervalo `[33,42; 106,56]` s | idem (`composicion.escenarios.bajo`) |
+| Compuerta D5 | relación `excluida`; rama **B** | idem (`compuerta_d5`) |
+| Paridad medida `1 − e_man` | `0,8278` (`e_man = 26/151`) | idem (`justificacion_umbral`) |
+| Costo marginal por punto | `0,51` h-persona/trimestre | idem (`…costo_marginal_por_punto_horas_trimestre`) |
+| Término de revisión `r` (D7) | `22,06` s (`138` casos); efecto `16,22` h-persona/trimestre (aditivo, no en `B`) | idem (`termino_revision`) |
+
+SHA-256 de las salidas: `…c220.json`
+`2de287514832044ed6a29b5d17a7110ca10af81e5ffc2696f730e67e5c231d1c`; `…c220.md`
+`766cd4e501b7102edb5ce15422c4d2eaf1da611fb3d03ff949f7a2e3973e3da4`. Entradas: `intervenciones.csv`
+`eccc094d46d5ad301296428885114e298f52efb0666be4f61c2e6a266d340ba3`; `brazo_manual.csv`
+`25ef12ba7e4c27ba5489d3daff099c697416d996858299e25ffa57dfa2a4d46f`.
+
+### Decisiones y pendientes
+
+- **Compuerta D5 (pre-registrada): Rama B.** El intervalo compuesto `[33,42; 106,56]` s **excluye** la
+  banda canónica `[600; 900]` s. El valor previo (`10 a 15 min`) no es tiempo-persona activo. Por la
+  regla, el change **no** recalcula `B` ni `a*`, y **no** edita `08`, `09`, `10`, `12` ni `00-resumen`.
+- **Pendiente — DECISIÓN DEL DUEÑO.** Elegir entre: (i) recalcular el balance neto con el `c` medido en
+  un change sucesor; (ii) mantener `10 a 15 min` rotulado explícitamente como **tiempo calendario
+  agregado** (no tiempo-persona); o (iii) ejecutar la medición controlada de campo para fijar el tramo
+  largo. El change no decide por su cuenta.
+- **Pendiente.** El ancla de reanudación queda `no medido`; incorporarla requiere verificar una fuente
+  primaria contra su texto completo y decidir su uso como cota superior (gobernanza del memo).
+- **Desviación del diseño (D3).** La tabla de valores esperados se reprodujo salvo el IC de la
+  diferencia de medias (`[4,19; 49,61]` esperado; `[3,42; 50,06]` medido) y el redondeo del IC de la
+  mediana del grupo con cambio (`12,65` medido frente a `12,70`); se registran las cifras del análisis y
+  se retiran del `design.md` las que no se reprodujeron.
+- **Numeración.** El memo terminaba en `3.30`; esta entrada usa la Sección `3.31`.
+- **Sin corrida paga ni recompilación**: análisis offline de costo cero; el change no compila LaTeX.
+
+### Matriz de trazabilidad
+
+| Rec | Síntesis | Change | Archivo:línea | Ancla | Fragmento verificable | Estado |
+|---|---|---|---|---|---|---|
+| C20/a | Script del analisis offline y determinista | c-220 | `evaluation/data/campana/analisis/analisis_costo_derivacion_c220.py:2` | `-` | `Costo de la derivacion erronea: descomposicion medida y cota anclada` | cerrada |
+| C20/b | Pruebas TDD de las funciones puras | c-220 | `evaluation/data/campana/analisis/test_analisis_costo_derivacion_c220.py:1` | `-` | `Pruebas del analisis del costo de la derivacion erronea` | cerrada |
+| C20/c | Memo: seccion 3.31 aditiva | c-220 | `docs/Tesis/Correcciones/numeros-canonicos.md:2140` | `-` | `3.31 Costo de la derivación errónea` | vigente (nuevo) |
+| C20/d | Memo: remision desde la seccion 3.11 sin reescribirla | c-220 | `docs/Tesis/Correcciones/numeros-canonicos.md:648` | `-` | `Remisión (c-220)` | cerrada |
+| C20/e | Prosa de introduccion: procedencia medida del segundo criterio | c-220 | `01-introduccion.tex:48` | `subsec:objetivos-especificos` | `el costo organizacional de una derivación errónea se mide` | cerrada |
+| C20/f | Prosa metodologica: definicion operacional en `tab:variables` | c-220 | `04-marco-metodologico.tex:35` | `subsec:operacionalizacion-variables` | `Costo de derivación errónea \(c\)` | cerrada |
+| C20/g | Prosa metodologica: metodo de medicion | c-220 | `04-marco-metodologico.tex:76` | `subsec:metricas-instrumentos` | `Costo de la derivación errónea \(c\).` | cerrada |
