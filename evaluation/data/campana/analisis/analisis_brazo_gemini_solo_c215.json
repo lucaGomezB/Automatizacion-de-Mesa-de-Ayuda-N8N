@@ -1,0 +1,548 @@
+{
+  "change": "c-215-brazo-gemini-solo-y-contraste-de-la-hipotesis-de-eficiencia",
+  "generador": "evaluation/data/campana/analisis/analisis_brazo_gemini_solo_c215.py",
+  "prerregistro": {
+    "bloque_primario": "fuera_muestra",
+    "margen_no_inferioridad": 0.05,
+    "umbral_razon_eficiencia": 0.9,
+    "tope_tasa_fallos": 0.05,
+    "umbral_concordancia_deriva": 0.9,
+    "semilla_bootstrap": 20261021,
+    "remuestreos": 10000,
+    "una_sola_corrida": true
+  },
+  "procedencia": {
+    "modelo": "gemini-3.6-flash",
+    "temperatura": 0.3,
+    "top_p": 0.9,
+    "max_output_tokens": 100,
+    "max_reintentos": 2,
+    "sdk_version": "2.34.0",
+    "prompt_sha256": "e2ad6f37ab9cd1e93076b59a4c2d8f85078e99b64502e3b7994440668e6955ed",
+    "commit": "f7b1582",
+    "generado_en": "2026-11-13T16:55:34.554737+00:00",
+    "tope_llamadas": 400,
+    "precios_usd_por_millon": {
+      "introductorio": {
+        "entrada": 0.75,
+        "salida": 3.75
+      },
+      "estandar": {
+        "entrada": 1.5,
+        "salida": 7.5
+      }
+    }
+  },
+  "llamadas_totales_cache": 415,
+  "desviaciones": {
+    "fecha": "2026-11-13",
+    "decision": "La decision de reintentar los fallos tecnicos se tomo DESPUES de ver los resultados del bloque primario y del bloque secundario contaminado: es una amenaza a la validez que se declara.",
+    "sin_cambios": "No cambian la regla de decision, el margen de no inferioridad, el umbral de eficiencia, el tope de fallos ni el bloque primario.",
+    "tope": "Contabilidad del tope: el tope de 400 se aplica a las llamadas que obtuvieron respuesta del modelo; los intentos que fallaron antes de obtener respuesta se cuentan y se informan aparte, y un cinturon de seguridad acota los intentos totales en 600.",
+    "fallos_tecnicos": {
+      "definicion": "registro en fallback con error de indisponibilidad o transporte y sin tokens (sin respuesta del modelo); las respuestas invalidas del modelo NO son fallos tecnicos",
+      "casos_con_fallo_tecnico_inicial": {
+        "dentro_muestra": 112,
+        "fuera_muestra": 0,
+        "total": 112
+      },
+      "casos_reintentados": {
+        "dentro_muestra": 112,
+        "fuera_muestra": 0,
+        "total": 112
+      },
+      "casos_que_siguen_fallidos": {
+        "dentro_muestra": 0,
+        "fuera_muestra": 0,
+        "total": 0
+      }
+    },
+    "contabilidad_llamadas": {
+      "intentos": 415,
+      "respuestas": 303,
+      "intentos_sin_respuesta": 112,
+      "tope_respuestas": 400,
+      "tope_intentos": 600
+    },
+    "bloque_primario_afectado": false
+  },
+  "entradas_sha256": {
+    "cache_brazo_gemini_solo.jsonl": "3bf290168bda5e8ddb0536e8a1470054213692ef598227289198dec340cdcd31",
+    "corpus_evaluacion_pseudonimizado.json": "1fd17d7ea90d418bb060b57bc3a645faa4a753c7c0c26424c06c58d884dac5cb",
+    "corpus_independiente.json": "8cdbec6fc06be3f7c4535f0213919d6d90b69d36e7d820ff97a84b9180cef56d",
+    "predicciones_hybrid-v3_2026-10-07.json": "89cf956e82f660dd8675a2d23b7b4d17efd62da542c0ba35bea28e0e54572ede",
+    "predicciones_independiente.json": "d5ee19f7b0bf2b56a00026a1bd33a2e11ffeb9b224b6a8efa553460895a915a4"
+  },
+  "bloques": {
+    "dentro_muestra": {
+      "n": 200,
+      "brazos": {
+        "H": {
+          "exactitud_estricta": {
+            "aciertos": 147,
+            "n": 200,
+            "valor": 0.735,
+            "ic95_wilson": [
+              0.6698242380737758,
+              0.7913184585289088
+            ]
+          },
+          "exactitud_laxa": {
+            "aciertos": 179,
+            "n": 200,
+            "valor": 0.895,
+            "ic95_wilson": [
+              0.8448196800887696,
+              0.9302925120731899
+            ]
+          },
+          "macro_f1": 0.520671201814059
+        },
+        "L": {
+          "exactitud_estricta": {
+            "aciertos": 136,
+            "n": 200,
+            "valor": 0.68,
+            "ic95_wilson": [
+              0.6124810156588646,
+              0.7407346668453195
+            ]
+          },
+          "exactitud_laxa": {
+            "aciertos": 173,
+            "n": 200,
+            "valor": 0.865,
+            "ic95_wilson": [
+              0.8107086162924745,
+              0.9055342954521209
+            ]
+          },
+          "macro_f1": 0.45586990859813864
+        }
+      },
+      "contraste": {
+        "n": 200,
+        "tabla_2x2": {
+          "ambos_aciertan": 124,
+          "solo_hibrido": 23,
+          "solo_gemini_solo": 12,
+          "ninguno": 41
+        },
+        "mcnemar": {
+          "aplicable": true,
+          "p_exacto": 0.08953107893466952,
+          "p_corregido": 0.09096894797535765,
+          "estadistico_corregido": 2.857142857142857,
+          "criterio_stats": "corregido"
+        },
+        "diferencia_exactitud": {
+          "definicion": "exactitud(hibrido) - exactitud(gemini solo) = (b - c) / n",
+          "valor": 0.055,
+          "ic95": [
+            0.0,
+            0.115
+          ],
+          "metodo_ic": "bootstrap percentil pareado (remuestreo de casos)",
+          "remuestreos": 10000,
+          "semilla": 20261021
+        }
+      },
+      "eficiencia": {
+        "llamadas": {
+          "L": 200,
+          "H": 69,
+          "por_caso_L": 1.0,
+          "por_caso_H": 0.345,
+          "razon": {
+            "valor": 0.345,
+            "ic95": [
+              0.28,
+              0.41
+            ]
+          }
+        },
+        "tokens": {
+          "L": {
+            "entrada": 153934,
+            "salida": 3812
+          },
+          "H": {
+            "entrada": 53177,
+            "salida": 1327
+          },
+          "casos_con_tokens_supuestos": 0
+        },
+        "costo_usd": {
+          "introductorio": {
+            "L": 0.12974549999999999,
+            "H": 0.044859
+          },
+          "estandar": {
+            "L": 0.25949099999999997,
+            "H": 0.089718
+          }
+        },
+        "razon_costo": {
+          "valor": 0.3457460952402974,
+          "ic95": [
+            0.28062629318889554,
+            0.4120401326501318
+          ],
+          "escenario": "introductorio",
+          "nota": "la razon no depende del escenario: ambos precios son proporcionales"
+        },
+        "latencia_ms": {
+          "media_L": 1282.7575484965928,
+          "media_H": 488.55065400362946,
+          "diferencia_L_menos_H": {
+            "valor": 794.2068944929633,
+            "ic95": [
+              706.282931141177,
+              879.5881710933754
+            ],
+            "remuestreos": 10000
+          },
+          "nota": "Latencia de clasificacion del lado del cliente, medida desde la maquina de los autores; no es tiempo de extremo a extremo. Para el hibrido se imputa la latencia de Gemini del mismo caso donde escalo y 0 ms donde resolvieron las reglas (cota inferior: las reglas tardan milisegundos). No entra en la regla de decision."
+        },
+        "casos_escalados_h": 69,
+        "fallbacks_o_errores_l": 0,
+        "tasa_fallos_l": 0.0
+      },
+      "decision": {
+        "margen_no_inferioridad": 0.05,
+        "umbral_razon": 0.9,
+        "tope_tasa_fallos": 0.05,
+        "tasa_fallos": 0.0,
+        "componente_exactitud": "no inferior",
+        "componente_eficiencia": "cumplido",
+        "veredicto": "sostenida",
+        "motivo": "no inferior en exactitud y con ahorro material de llamadas y costo"
+      },
+      "sensibilidad_hstar": {
+        "definicion": "H*: prediccion cacheada de H donde las reglas resolvieron y prediccion NUEVA de L donde H escalo; aisla el enrutamiento del ruido o la deriva del modelo",
+        "exactitud_estricta": {
+          "aciertos": 148,
+          "n": 200,
+          "valor": 0.74,
+          "ic95_wilson": [
+            0.6750925439746589,
+            0.7958616993642531
+          ]
+        },
+        "contraste": {
+          "n": 200,
+          "tabla_2x2": {
+            "ambos_aciertan": 127,
+            "solo_hibrido": 21,
+            "solo_gemini_solo": 9,
+            "ninguno": 43
+          },
+          "mcnemar": {
+            "aplicable": true,
+            "p_exacto": 0.042773945257067694,
+            "p_corregido": 0.04460971802493953,
+            "estadistico_corregido": 4.033333333333333,
+            "criterio_stats": "corregido"
+          },
+          "diferencia_exactitud": {
+            "definicion": "exactitud(hibrido) - exactitud(gemini solo) = (b - c) / n",
+            "valor": 0.06,
+            "ic95": [
+              0.01,
+              0.115
+            ],
+            "metodo_ic": "bootstrap percentil pareado (remuestreo de casos)",
+            "remuestreos": 10000,
+            "semilla": 20261021
+          }
+        },
+        "decision": {
+          "margen_no_inferioridad": 0.05,
+          "umbral_razon": 0.9,
+          "tope_tasa_fallos": 0.05,
+          "tasa_fallos": 0.0,
+          "componente_exactitud": "no inferior",
+          "componente_eficiencia": "cumplido",
+          "veredicto": "sostenida",
+          "motivo": "no inferior en exactitud y con ahorro material de llamadas y costo"
+        }
+      }
+    },
+    "fuera_muestra": {
+      "n": 103,
+      "brazos": {
+        "H": {
+          "exactitud_estricta": {
+            "aciertos": 87,
+            "n": 103,
+            "valor": 0.8446601941747572,
+            "ic95_wilson": [
+              0.7624742780120963,
+              0.9020617624322336
+            ]
+          },
+          "exactitud_laxa": {
+            "aciertos": 90,
+            "n": 103,
+            "valor": 0.8737864077669902,
+            "ic95_wilson": [
+              0.7959587945728204,
+              0.9247352211203261
+            ]
+          },
+          "macro_f1": 0.7446560846560846
+        },
+        "L": {
+          "exactitud_estricta": {
+            "aciertos": 90,
+            "n": 103,
+            "valor": 0.8737864077669902,
+            "ic95_wilson": [
+              0.7959587945728204,
+              0.9247352211203261
+            ]
+          },
+          "exactitud_laxa": {
+            "aciertos": 93,
+            "n": 103,
+            "valor": 0.9029126213592233,
+            "ic95_wilson": [
+              0.8304457619814031,
+              0.9464062289605603
+            ]
+          },
+          "macro_f1": 0.7664927102350021
+        }
+      },
+      "contraste": {
+        "n": 103,
+        "tabla_2x2": {
+          "ambos_aciertan": 84,
+          "solo_hibrido": 3,
+          "solo_gemini_solo": 6,
+          "ninguno": 10
+        },
+        "mcnemar": {
+          "aplicable": true,
+          "p_exacto": 0.5078125,
+          "p_corregido": 0.5049850750938457,
+          "estadistico_corregido": 0.4444444444444444,
+          "criterio_stats": "exacto"
+        },
+        "diferencia_exactitud": {
+          "definicion": "exactitud(hibrido) - exactitud(gemini solo) = (b - c) / n",
+          "valor": -0.02912621359223301,
+          "ic95": [
+            -0.08737864077669903,
+            0.02912621359223301
+          ],
+          "metodo_ic": "bootstrap percentil pareado (remuestreo de casos)",
+          "remuestreos": 10000,
+          "semilla": 20261021
+        }
+      },
+      "eficiencia": {
+        "llamadas": {
+          "L": 103,
+          "H": 34,
+          "por_caso_L": 1.0,
+          "por_caso_H": 0.3300970873786408,
+          "razon": {
+            "valor": 0.3300970873786408,
+            "ic95": [
+              0.24271844660194175,
+              0.41747572815533973
+            ]
+          }
+        },
+        "tokens": {
+          "L": {
+            "entrada": 80011,
+            "salida": 1929
+          },
+          "H": {
+            "entrada": 26402,
+            "salida": 628
+          },
+          "casos_con_tokens_supuestos": 0
+        },
+        "costo_usd": {
+          "introductorio": {
+            "L": 0.067242,
+            "H": 0.0221565
+          },
+          "estandar": {
+            "L": 0.134484,
+            "H": 0.044313
+          }
+        },
+        "razon_costo": {
+          "valor": 0.32950388150263227,
+          "ic95": [
+            0.24205388462429753,
+            0.4175856493677493
+          ],
+          "escenario": "introductorio",
+          "nota": "la razon no depende del escenario: ambos precios son proporcionales"
+        },
+        "latencia_ms": {
+          "media_L": 1076.3345436821467,
+          "media_H": 357.30329125744373,
+          "diferencia_L_menos_H": {
+            "valor": 719.0312524247029,
+            "ic95": [
+              605.5562018876833,
+              838.8936366911897
+            ],
+            "remuestreos": 10000
+          },
+          "nota": "Latencia de clasificacion del lado del cliente, medida desde la maquina de los autores; no es tiempo de extremo a extremo. Para el hibrido se imputa la latencia de Gemini del mismo caso donde escalo y 0 ms donde resolvieron las reglas (cota inferior: las reglas tardan milisegundos). No entra en la regla de decision."
+        },
+        "casos_escalados_h": 34,
+        "fallbacks_o_errores_l": 0,
+        "tasa_fallos_l": 0.0
+      },
+      "decision": {
+        "margen_no_inferioridad": 0.05,
+        "umbral_razon": 0.9,
+        "tope_tasa_fallos": 0.05,
+        "tasa_fallos": 0.0,
+        "componente_exactitud": "indeterminado",
+        "componente_eficiencia": "cumplido",
+        "veredicto": "no concluyente",
+        "motivo": "la no inferioridad en exactitud es indeterminada con el ahorro cumplido"
+      },
+      "sensibilidad_hstar": {
+        "definicion": "H*: prediccion cacheada de H donde las reglas resolvieron y prediccion NUEVA de L donde H escalo; aisla el enrutamiento del ruido o la deriva del modelo",
+        "exactitud_estricta": {
+          "aciertos": 87,
+          "n": 103,
+          "valor": 0.8446601941747572,
+          "ic95_wilson": [
+            0.7624742780120963,
+            0.9020617624322336
+          ]
+        },
+        "contraste": {
+          "n": 103,
+          "tabla_2x2": {
+            "ambos_aciertan": 84,
+            "solo_hibrido": 3,
+            "solo_gemini_solo": 6,
+            "ninguno": 10
+          },
+          "mcnemar": {
+            "aplicable": true,
+            "p_exacto": 0.5078125,
+            "p_corregido": 0.5049850750938457,
+            "estadistico_corregido": 0.4444444444444444,
+            "criterio_stats": "exacto"
+          },
+          "diferencia_exactitud": {
+            "definicion": "exactitud(hibrido) - exactitud(gemini solo) = (b - c) / n",
+            "valor": -0.02912621359223301,
+            "ic95": [
+              -0.08737864077669903,
+              0.02912621359223301
+            ],
+            "metodo_ic": "bootstrap percentil pareado (remuestreo de casos)",
+            "remuestreos": 10000,
+            "semilla": 20261021
+          }
+        },
+        "decision": {
+          "margen_no_inferioridad": 0.05,
+          "umbral_razon": 0.9,
+          "tope_tasa_fallos": 0.05,
+          "tasa_fallos": 0.0,
+          "componente_exactitud": "indeterminado",
+          "componente_eficiencia": "cumplido",
+          "veredicto": "no concluyente",
+          "motivo": "la no inferioridad en exactitud es indeterminada con el ahorro cumplido"
+        }
+      }
+    }
+  },
+  "control_deriva": {
+    "dentro_muestra": {
+      "n_escalados": 69,
+      "n_excluidos_fallo_tecnico": 0,
+      "n_comparados": 69,
+      "concordancia": {
+        "aciertos": 64,
+        "n": 69,
+        "valor": 0.927536231884058,
+        "ic95_wilson": [
+          0.8413260579060098,
+          0.9686522285700185
+        ]
+      },
+      "mcnemar_aciertos_h_vs_nueva": {
+        "aplicable": true,
+        "p_exacto": 1.0,
+        "solo_cache_h": 2,
+        "solo_nueva_corrida": 3
+      }
+    },
+    "fuera_muestra": {
+      "n_escalados": 34,
+      "n_excluidos_fallo_tecnico": 0,
+      "n_comparados": 34,
+      "concordancia": {
+        "aciertos": 34,
+        "n": 34,
+        "valor": 1.0,
+        "ic95_wilson": [
+          0.8984854458466761,
+          0.9999999999999999
+        ]
+      },
+      "mcnemar_aciertos_h_vs_nueva": {
+        "aplicable": false,
+        "p_exacto": null,
+        "solo_cache_h": 0,
+        "solo_nueva_corrida": 0
+      }
+    },
+    "total": {
+      "n_escalados": 103,
+      "n_excluidos_fallo_tecnico": 0,
+      "n_comparados": 103,
+      "concordancia": {
+        "aciertos": 98,
+        "n": 103,
+        "valor": 0.9514563106796117,
+        "ic95_wilson": [
+          0.8913594304491902,
+          0.9790891859074674
+        ]
+      },
+      "mcnemar_aciertos_h_vs_nueva": {
+        "aplicable": true,
+        "p_exacto": 1.0,
+        "solo_cache_h": 2,
+        "solo_nueva_corrida": 3
+      }
+    },
+    "umbral": 0.9,
+    "bandera": false,
+    "nota_exclusion": "La concordancia se calcula sin los casos que H escalo y cuyo registro vigente del brazo es un fallo tecnico (sin respuesta del modelo): no hay prediccion nueva que comparar.",
+    "lectura": "sin senal de inestabilidad entre la nueva corrida y la cache de H en los casos que H ya escalo (este control no separa deriva del modelo de azar de muestreo a temperatura 0,3)"
+  },
+  "veredicto": {
+    "bloque": "fuera_muestra",
+    "margen_no_inferioridad": 0.05,
+    "umbral_razon": 0.9,
+    "tope_tasa_fallos": 0.05,
+    "tasa_fallos": 0.0,
+    "componente_exactitud": "indeterminado",
+    "componente_eficiencia": "cumplido",
+    "veredicto": "no concluyente",
+    "motivo": "la no inferioridad en exactitud es indeterminada con el ahorro cumplido",
+    "bandera_deriva": false
+  },
+  "aditivo": {
+    "reemplaza_numeros_canonicos": false,
+    "declaracion": "Las cifras de este analisis son aditivas: no reemplazan ningun numero canonico de la tesis ni el clasificador de produccion. Comparan al hibrido congelado con el brazo «Gemini solo» (una sola corrida, temperatura 0,3), pareado caso a caso."
+  }
+}

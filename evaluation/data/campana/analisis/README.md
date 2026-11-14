@@ -274,3 +274,83 @@ reentrena y no modifica el corpus, las predicciones ni los artefactos congelados
   `−26`: el error observado (`64`) es MENOR que el extremo favorable simulado, de modo que
   el análisis no atribuye el error observado al ruido de la referencia. La simulación se
   rotula como sensibilidad, no como medición de la verdad latente.
+
+## Brazo «Gemini solo» y contraste de la hipotesis de eficiencia (c-215; integrado por c-217)
+
+El brazo «Gemini solo» manda TODOS los casos (200 dentro de la muestra y 103 fuera de muestra) a la
+misma etapa Gemini congelada del backend, sin reglas, y se compara de forma pareada con las predicciones
+congeladas de `hybrid-v3`. La corrida paga YA se hizo (2026-11-13, `gemini-3.6-flash`, temperatura 0,3,
+`google-genai` 2.34.0) y su caché se versiona. La regla de decisión (margen de no inferioridad 0,05,
+ahorro material si el límite superior del IC de las razones de costo y de llamadas es menor que 0,90,
+tope de 400 llamadas, una sola corrida) está prerregistrada en
+`openspec/changes/c-215-brazo-gemini-solo-y-contraste-de-la-hipotesis-de-eficiencia/design.md`.
+
+- Ejecutor: `evaluation/brazo_gemini_solo.py` (caché reanudable en
+  `evaluation/data/campana/brazo_gemini_solo/cache_brazo_gemini_solo.jsonl`, SHA-256
+  `3bf290168bda5e8ddb0536e8a1470054213692ef598227289198dec340cdcd31`; blob de git
+  `d0ea438581bf12dadc495e36f882352fa5778153`).
+- Análisis (solo lectura; sale con código distinto de cero y sin escribir si falta el caché o está
+  incompleto): `evaluation/data/campana/analisis/analisis_brazo_gemini_solo_c215.py`.
+
+### Comandos exactos
+
+1. Análisis (solo lectura):
+
+   ```bash
+   python3 evaluation/data/campana/analisis/analisis_brazo_gemini_solo_c215.py
+   ```
+
+2. Ejecutor (PAGA; exige `--confirmar-costo`; reanudable; NO se volvió a correr en c-217):
+
+   ```bash
+   python -m evaluation.brazo_gemini_solo --confirmar-costo
+   ```
+
+   Dry-run (sin red, sin clave, sin escribir el caché):
+
+   ```bash
+   python -m evaluation.brazo_gemini_solo --dry-run
+   ```
+
+### Salidas versionadas
+
+`analisis_brazo_gemini_solo_c215.{json,md}` y `analisis_brazo_gemini_solo_c215.SHA256SUMS.txt` (UTF-8
+sin BOM, LF; dos corridas idénticas byte a byte):
+
+- `analisis_brazo_gemini_solo_c215.json`: `bc936061a06b094e3b30aeeb4ff461d1ab7956642db44cbe704367f54abdc88b`
+- `analisis_brazo_gemini_solo_c215.md`: `77cdaaf76e1af00b733cda15a2ff90c05de9134b51e65e97d618b10ec7fc61a5`
+
+Nota: el artefacto de la rama de c-215 registraba el SHA-256 CRLF `3fb5bacd…` de
+`predicciones_hybrid-v3_2026-10-07.json`; regenerado en `main` registra el hash canónico LF
+`89cf956e…` (el mismo de la Sección 3.24 del memo). Las cifras no cambian; es el fin de línea del
+archivo de entrada. La salida `.md` es byte-idéntica a la de la rama.
+
+### Reintento de fallos técnicos (desviación declarada del 2026-11-13)
+
+En la corrida paga, 112 casos de `dentro_muestra` quedaron como fallos técnicos (sin respuesta del
+modelo: `GeminiUnavailableError`, 0 tokens). La desviación y su amenaza a la validez están en la sección
+«Desviaciones del prerregistro» de `design.md` de c-215 y en la sección 3.28 del memo. Solo se
+reintentan los registros en `fallback` con error de indisponibilidad o transporte y sin tokens; las
+respuestas inválidas del modelo no se reintentan. El caché es append-only.
+
+### Lectura registrada (sección 3.28 del memo)
+
+- Veredicto prerregistrado sobre el bloque primario (103 fuera de muestra con consenso de `E3`/`E4`):
+  **no concluyente**.
+- Componente de eficiencia: **cumplido y concluyente** (razón de llamadas `0,3301` `[0,2427; 0,4175]`;
+  razón de costo `0,3295` `[0,2421; 0,4176]`; ambos límites superiores menores que `0,90`).
+- Componente de exactitud: **indeterminado** (H `87/103`; L `90/103`; McNemar `p = 0,5078`; diferencia
+  `−0,0291` `[−0,0874; 0,0291]`).
+- Control de deriva: `98/103` `[0,8914; 0,9791]`, bandera `false`. Deriva de H verificada sobre los 103
+  compartidos con `predicciones_arbitrado.json`: `0` discrepancias de sector/etapa.
+
+### Pruebas
+
+`python -m pytest evaluation/tests/test_brazo_gemini_solo.py -q` y
+`python -m pytest evaluation/data/campana/analisis/test_analisis_brazo_gemini_solo_c215.py -q`
+(cliente simulado, sin red). Requieren que el `.env` raíz de docker compose NO se cargue como
+`sources` de `Settings` (en local, correr con ese `.env` fuera del directorio de trabajo, como en CI).
+
+- Limitaciones declaradas: los intentos fallidos sin respuesta no aportan tokens (el costo de un caso
+  con fallas queda subestimado); la latencia es del lado del cliente y desde la máquina de quien corre;
+  el control de deriva no separa deriva del modelo del azar de muestreo a temperatura 0,3.
