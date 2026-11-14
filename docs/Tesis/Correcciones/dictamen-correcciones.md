@@ -5115,7 +5115,7 @@ referencias ni citas indefinidas, ni etiquetas duplicadas.
 | C16/e | L3: las dos señales en la discusión | c-216 | `08-discusion.tex:16` | `subsec:interpretacion-resultados` | `actuó por la regla del reportante no identificado` | cerrada |
 | C16/f | L3: las dos señales en las conclusiones | c-216 | `09-conclusiones.tex:41` | `subsec:aportes-generalizacion` | `La revisión humana actuó por la regla del reportante` | cerrada |
 | C16/g | L3: las dos señales en las recomendaciones | c-216 | `10-recomendaciones.tex:10` | `subsec:calibracion-gate` | `la revisión humana actuó por la regla del reportante` | cerrada |
-| C16/h | L3: la configuración entregada no se midió | c-216 | `08-discusion.tex:66` | `subsec:limitaciones-estudio` | `La configuración entregada no se midió` | cerrada |
+| C16/h | L3: equivalencia del clasificador entregado y evaluado | c-216 | `08-discusion.tex:66` | `subsec:limitaciones-estudio` | `la evaluación de clasificación se refiere también a la configuración entregada` | cerrada |
 | C16/i | L4: R4 verificado en el capítulo legal | c-216 | `11-aspectos-legales.tex:48` | `subsec:consentimiento-derechos` | `Los tres firmaron la confirmación posterior de esa información y de su consentimiento el 13 de noviembre de 2026` | cerrada (verificada) |
 | C16/j | L4: README de campaña con 11 filas | c-216 | `evaluation/data/campana/README.md:52` | `-` | `El registro queda con 11 filas` | cerrada |
 | C16/k | L5: repetición de la exactitud fuera de muestra | c-216 | `08-discusion.tex:20` | `subsec:limitaciones-estudio` | `la exactitud estricta fue la de la` | cerrada |
