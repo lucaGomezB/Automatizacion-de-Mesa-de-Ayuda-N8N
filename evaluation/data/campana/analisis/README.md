@@ -433,3 +433,64 @@ respuestas inválidas del modelo no se reintentan. El caché es append-only.
 - Limitaciones declaradas: los intentos fallidos sin respuesta no aportan tokens (el costo de un caso
   con fallas queda subestimado); la latencia es del lado del cliente y desde la máquina de quien corre;
   el control de deriva no separa deriva del modelo del azar de muestreo a temperatura 0,3.
+
+## Propagación del arbitraje fuera de muestra (c-221)
+
+`analisis_propagacion_arbitraje_c221.py` calcula, de solo lectura, sin red y sin Gemini, las
+cifras de la propagación del arbitraje fuera de muestra: las tres lecturas rotuladas de la
+exactitud estricta (cruda primaria sobre el corpus arbitrado de `206`; ponderada por la
+composición del corpus de ajuste de `200`, con IC bootstrap percentil por caso y descarte
+contado de réplicas sin alguna clase; y de los `150` originales sin exclusión), el desglose por
+origen de la referencia, por bloque, por etapa y por canal, las métricas por clase con la matriz
+`5x5`, el soporte ampliado de `Sistemas` con sus destinos de error, la calibración descriptiva
+de la etapa Gemini sobre los `91` casos del corpus arbitrado (con la fila de `34` como
+contraste, sin re-elegir umbral), la sensibilidad del balance neto con la tasa fuera de muestra
+y los controles de reproducibilidad (diferencias entre corridas y alcanzabilidad del `commit`).
+
+Es aditivo: sus cifras van a la sección `3.32` del memo canónico y no reemplazan ningún número
+`vigente` de las secciones `3.1` a `3.31`; no cambia el umbral del `85 %`, el balance neto `B`,
+`a*` ni los artefactos congelados.
+
+- Anclajes que abortan antes de escribir (exit distinto de cero, sin salidas): `142/206` y
+  macro-F1 `0,7024`; `87/103` y la ponderada `0,8146` sobre los `103` de
+  `predicciones_independiente.json`; ECE `0,1715` y Brier `0,1935` sobre los `34` casos Gemini
+  con consenso; la celda `+6,9` del balance (`15 %`, `5` minutos, `e_aut = 53/200`) y
+  `+25,4/+18,7/+11,9` con la referencia común; el vector de pesos `Sistemas` `16`,
+  `Soporte Tecnico Hardware` `85`, `Soporte Tecnico Software` `67`, `Seguridad Informatica` `31`
+  y `Bases de Datos` `1` (suma `200`); las cardinalidades `64`/`47`/`56`/`6` y los `103` dentro
+  de `I001`..`I150`; y, si `analisis_sesgo_corpus_referencia_c219.json` está presente, los
+  aciertos y el n por origen de c-219 (`109/142` y `33/64`).
+- Método: reutiliza `evaluation/metrics.py` y `evaluation/calibracion_gate.py`; `B = 2000`,
+  semilla `20261021`, nivel `0,95`; sin red ni Gemini; determinista. El prerregistro NO fue ciego
+  (ver el docstring del generador).
+- Entradas versionadas (solo lectura): `../corpus_independiente_arbitrado.json`,
+  `../predicciones_arbitrado.json`, `../predicciones_independiente.json`,
+  `../arbitraje_tres_vias.json`, `../doble_etiquetado_arbitrado.csv` y
+  `../../../../data/corpus_evaluacion_pseudonimizado.json`.
+- Comando (desde la raíz del repositorio):
+
+  ```bash
+  python3 evaluation/data/campana/analisis/analisis_propagacion_arbitraje_c221.py
+  ```
+
+- Salidas (UTF-8 sin BOM, LF; dos corridas idénticas byte a byte), con su SHA-256 (también en
+  `analisis_propagacion_arbitraje_c221.SHA256SUMS.txt`):
+  - `analisis_propagacion_arbitraje_c221.json`: `2df409b1b6f6d6b9d490e40b5dbc30e1221a41b047aeff1f80511a51912a7e8c`
+  - `analisis_propagacion_arbitraje_c221.md`: `433fd7fc7b0b757fef4ac61d1b3de06d2b523582d4d542625c62d4bfb2e976ae`
+- Prueba: `python3 -m pytest evaluation/data/campana/analisis/test_analisis_propagacion_arbitraje_c221.py -q`
+  (`43` pruebas).
+- Resultado registrado (sección `3.32` del memo): cruda `142/206` (`0,6893`, Wilson
+  `[0,6231; 0,7486]`), ponderada `0,7489` (bootstrap `[0,6822; 0,8099]`; `0` réplicas
+  descartadas) y `150` sin exclusión `112/150` (`0,7467`, `[0,6715; 0,8095]`); los tres límites
+  superiores quedan por debajo de `0,85`. Desglose por origen: consenso `109/142` y arbitrado
+  `33/64` (remisión a la sección `3.30` de c-219); por bloque: consenso original `103`,
+  discordantes originales `25/47`, refuerzo `30/56`; por etapa: determinística `88/115`, Gemini
+  `54/91`. `Sistemas`: `61` casos, sensibilidad `31/61`, destinos `16`/`8`/`3`/`3` y `40` del
+  refuerzo. Calibración descriptiva de los `91`: exactitud `0,5934`, confianza media `0,9055`,
+  ECE `0,3209`, Brier `0,3258`, AUROC `0,6912`; sin umbral seleccionado. Balance de sensibilidad
+  con `e_aut` ponderada (`0,2511`) y cruda (`64/206`), rejilla `c ∈ {5, 10, 15}` min más el
+  `c` medido `69,51` s de la sección `3.31` como escenario central; rótulo de sensibilidad que
+  mezcla corpus y referencias. Reproducibilidad: diferencias entre corridas en `7` de los `103`
+  casos comunes (solo confianza, `I026`/`I043`/`I050`/`I055`/`I067`/`I084`/`I085`); el `commit`
+  `1b62fdb` de `predicciones_arbitrado.json` es alcanzable desde `main` y el `561b3c4` de
+  `predicciones_independiente.json` no lo es (lo versionó `1b17e55`).

@@ -12,14 +12,14 @@ preparación sin requisito propio no llevan paréntesis.
 
 ## 0. Preparación y línea de base
 
-- [ ] 0.1 Leer `proposal.md`, `design.md` y los seis specs delta del change, `.agents/SKILLS.md` y
+- [x] 0.1 Leer `proposal.md`, `design.md` y los seis specs delta del change, `.agents/SKILLS.md` y
       cargar `python-testing-patterns` (y `python-design-patterns` para el script). Registrar qué
       skills se cargaron.
-- [ ] 0.2 `git fetch` y comparar `origin/main` con la base del change (`ebd2baa`); si `main`
+- [x] 0.2 `git fetch` y comparar `origin/main` con la base del change (`ebd2baa`); si `main`
       avanzó y toca `sections/`, `Bibliography_base.bib`, `numeros-canonicos.md` o
       `evaluation/data/campana/`, rebasar antes de seguir y volver a verificar las líneas citadas
       en el design. Si el dictamen (PR 107) ya entró a `main`, citarlo por su ruta versionada.
-- [ ] 0.3 Capturar la línea de base y guardarla como evidencia de partida: conteo de palabras del
+- [x] 0.3 Capturar la línea de base y guardarla como evidencia de partida: conteo de palabras del
       resumen y del *abstract* con la regla de c-106; `rg -n "c-[0-9]{3}"` sobre
       `docs/Tesis/v10 (IA)/paper/sections/*.tex`; salida de
       `rg -n "0,8447" "docs/Tesis/v10 (IA)/paper/sections" -g "!07-resultados.tex"` (criterio de
@@ -28,11 +28,11 @@ preparación sin requisito propio no llevan paréntesis.
       Docker `texlive-thesis`, `MSYS_NO_PATHCONV=1`); `python -m pytest` de `evaluation/` desde su
       carpeta con las variables dummy del CI (baseline de pruebas en verde; si algo falla antes de
       empezar, reportarlo como falla preexistente y no corregirlo).
-- [ ] 0.4 Verificar el estado de las preguntas abiertas OQ1 a OQ6 del design con los autores y
+- [x] 0.4 Verificar el estado de las preguntas abiertas OQ1 a OQ6 del design con los autores y
       registrar la respuesta o «pendiente» en `dictamen-correcciones.md`. Las tareas bloqueadas
       (5.1, 8.5, 9.1, 11) no se ejecutan sin respuesta.
 
-- [ ] 0.5 Revisar el estado de c-218, c-219 y c-220 (sección «Coordinación» de `proposal.md`):
+- [x] 0.5 Revisar el estado de c-218, c-219 y c-220 (sección «Coordinación» de `proposal.md`):
       (a) fijar el número de la sección nueva del memo como el primero libre en `origin/main` al
       aplicar (en adelante «sección de c-221»): `main` termina hoy en la `3.28` y el PR 110 aplica
       c-218 como `3.29` y c-219 como `3.30`, de modo que será la `3.31` o posterior si el PR 110 y
@@ -46,7 +46,7 @@ preparación sin requisito propio no llevan paréntesis.
 
 ## 1. Script de análisis (TDD estricto)
 
-- [ ] 1.1 Fijar en el docstring de
+- [x] 1.1 Fijar en el docstring de
       `evaluation/data/campana/analisis/analisis_propagacion_arbitraje_c221.py` el método completo
       de D1 a D3 (lecturas; pesos leídos de `sector_asignado` en
       `data/corpus_evaluacion_pseudonimizado.json`, con el vector esperado `Sistemas` 16,
@@ -57,29 +57,29 @@ preparación sin requisito propio no llevan paréntesis.
       balance y rejilla de `c`) y los anclajes que abortan; declarar que el análisis es
       posterior y no ciego. Verificar que el docstring contiene esos parámetros antes de escribir
       código. (OOS-020; OOS-022; OOS-024; CAL-007)
-- [ ] 1.2 **RED** `exactitud_ponderada` e `ic_bootstrap_ponderada`: en
+- [x] 1.2 **RED** `exactitud_ponderada` e `ic_bootstrap_ponderada`: en
       `test_analisis_propagacion_arbitraje_c221.py`, casos sintéticos con resultado calculado a
       mano (dos clases con sensibilidades distintas y pesos desiguales; clase con peso y sin
       soporte que debe dar error; réplicas sin una clase que se descartan y se cuentan; misma
       semilla, mismo intervalo). Ejecutar
       `python -m pytest evaluation/data/campana/analisis/test_analisis_propagacion_arbitraje_c221.py -q`
       y confirmar que falla porque las funciones no existen. (OOS-020; OOS-024)
-- [ ] 1.3 **GREEN** implementar lo mínimo para pasar 1.2 reutilizando `metrics.matriz_confusion`,
+- [x] 1.3 **GREEN** implementar lo mínimo para pasar 1.2 reutilizando `metrics.matriz_confusion`,
       `sensibilidad_por_clase`, `remuestreos_indices` y `percentil_intervalo`; ejecutar y
       confirmar verde. (OOS-020; OOS-024)
-- [ ] 1.4 **RED → GREEN** `desglose`, `metricas_por_clase` y `destinos_de_error`: pruebas con
+- [x] 1.4 **RED → GREEN** `desglose`, `metricas_por_clase` y `destinos_de_error`: pruebas con
       grupos de distinto tamaño, un grupo vacío, una clase sin errores y una con errores a dos
       destinos; verificar los intervalos con `metrics.intervalo_wilson`. Ejecutar en rojo, luego
       implementar y ejecutar en verde. (OOS-018; OOS-021; OOS-024)
-- [ ] 1.5 **RED → GREEN** `calibracion_descriptiva`: pruebas con confianzas sintéticas de
+- [x] 1.5 **RED → GREEN** `calibracion_descriptiva`: pruebas con confianzas sintéticas de
       calibración perfecta, sobreconfianza constante y orden invertido (AUROC menor que `0,5`), y
       una prueba que verifique que la función no devuelve umbral seleccionado; reutilizar
       `calibracion_gate.ece`, `brier`, `auroc`, `sobreconfianza`, `ic_bootstrap_metrica` y
       `barrido_umbral`. (CAL-007; OOS-024)
-- [ ] 1.6 **RED → GREEN** `balance_neto` y `diferencias_entre_corridas`: el balance con valores
+- [x] 1.6 **RED → GREEN** `balance_neto` y `diferencias_entre_corridas`: el balance con valores
       sintéticos calculados a mano y con signo positivo y negativo; las diferencias con dos listas
       que difieren solo en confianza, solo en sector y en nada. (OOS-022; OOS-023; OOS-024)
-- [ ] 1.7 **TRIANGULATE**: agregar como pruebas los anclajes reales del design D2 (`142/206`,
+- [x] 1.7 **TRIANGULATE**: agregar como pruebas los anclajes reales del design D2 (`142/206`,
       macro-F1 `0,7024`, `87/103`, ponderada `0,8146` sobre los `103`, ECE `0,1715` y Brier
       `0,1935` sobre los `34`, `+6,9` de `tab:balance-neto`, `+25,4`/`+18,7`/`+11,9`), el vector de
       pesos leído del corpus de ajuste (`Sistemas` 16, `Soporte Tecnico Hardware` 85, `Soporte
@@ -87,7 +87,7 @@ preparación sin requisito propio no llevan paréntesis.
       (`64`, `47`, `56`, `6`, `103` dentro de `I001`..`I150`) y, si el artefacto de c-219 está
       presente, la coincidencia por origen con `subconjuntos.consenso` y `subconjuntos.arbitrado`.
       Ejecutar y confirmar verde. (OOS-018; OOS-020; OOS-021; OOS-022; CAL-007)
-- [ ] 1.8 Implementar la lectura de entradas con SHA-256 (normalización LF como c-213/c-214), la
+- [x] 1.8 Implementar la lectura de entradas con SHA-256 (normalización LF como c-213/c-214), la
       verificación de anclajes que aborta sin escribir, el control del `commit` declarado por cada
       archivo de predicciones y la escritura de `analisis_propagacion_arbitraje_c221.json`, `.md` y
       `.SHA256SUMS.txt`. El control usa `git merge-base --is-ancestor <commit> origin/main`:
@@ -100,14 +100,14 @@ preparación sin requisito propio no llevan paréntesis.
       commit que versionó el archivo, no la presencia local, para que las salidas no dependan del
       clon. Pruebas: una que fuerce un anclaje roto y verifique que no se escribe ningún archivo, y
       una del control con los tres códigos de salida simulados. (OOS-023; OOS-024)
-- [ ] 1.9 **REFACTOR**: extraer constantes (vector esperado de pesos como anclaje, semilla,
+- [x] 1.9 **REFACTOR**: extraer constantes (vector esperado de pesos como anclaje, semilla,
       candidatos de umbral, `N`, `Δt`, `e_man`, rejilla de `c`) y eliminar duplicación; ejecutar
       las pruebas después de cada paso. (OOS-024)
-- [ ] 1.10 Correr el script dos veces desde la raíz y verificar salidas idénticas byte a byte y
+- [x] 1.10 Correr el script dos veces desde la raíz y verificar salidas idénticas byte a byte y
       `git status` sin cambios fuera de `evaluation/data/campana/analisis/`. Comparar las cifras
       con el recomputo exploratorio del design y registrar cualquier diferencia (manda el script).
       (OOS-024)
-- [ ] 1.11 Agregar la entrada del análisis al README de `evaluation/data/campana/analisis/` y
+- [x] 1.11 Agregar la entrada del análisis al README de `evaluation/data/campana/analisis/` y
       registrar en `evaluation/data/campana/README.md` que el `commit` declarado en
       `predicciones_independiente.json` (`561b3c4`) no es alcanzable desde `main`, que puede existir
       como objeto colgante en el clon donde se hizo la corrida pero no viaja con `fetch` ni con
@@ -116,13 +116,13 @@ preparación sin requisito propio no llevan paréntesis.
 
 ## 2. Memo canónico (sección de c-221, aditiva)
 
-- [ ] 2.1 Agregar `### 3.N` (el primer número libre; ver 0.5) a `docs/Tesis/Correcciones/numeros-canonicos.md` con cada cifra del
+- [x] 2.1 Agregar `### 3.N` (el primer número libre; ver 0.5) a `docs/Tesis/Correcciones/numeros-canonicos.md` con cada cifra del
       JSON de c-221 (lecturas, desgloses, métricas por clase, `Sistemas`, calibración descriptiva,
       balance de sensibilidad, controles de reproducibilidad), cada una con archivo, clave del JSON
       y comando; la exactitud por origen de la referencia, como remisión a la sección de c-219 si
       existe (sin registrar el valor otra vez); declarar el carácter aditivo. (NC «Registro
       aditivo»; OOS-021)
-- [ ] 2.2 Verificar con un diff dirigido que ningún valor ni estado de las secciones previas del
+- [x] 2.2 Verificar con un diff dirigido que ningún valor ni estado de las secciones previas del
       memo cambió y registrar el resultado. (NC «Registro aditivo»)
 
 ## 3. Resultados: estructura y cifras nuevas (`07-resultados.tex`)

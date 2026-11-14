@@ -5480,3 +5480,140 @@ SHA-256 de las salidas: `…c220.json`
 | C20/e | Prosa de introduccion: procedencia medida del segundo criterio | c-220 | `01-introduccion.tex:48` | `subsec:objetivos-especificos` | `el costo organizacional de una derivación errónea se mide` | cerrada |
 | C20/f | Prosa metodologica: definicion operacional en `tab:variables` | c-220 | `04-marco-metodologico.tex:35` | `subsec:operacionalizacion-variables` | `Costo de derivación errónea \(c\)` | cerrada |
 | C20/g | Prosa metodologica: metodo de medicion | c-220 | `04-marco-metodologico.tex:76` | `subsec:metricas-instrumentos` | `Costo de la derivación errónea \(c\).` | cerrada |
+
+## Dictamen v10 / v1.3.0 (2026-11-14) - c-221 (propagar el arbitraje y atender el dictamen post v1.3.0)
+
+Change `c-221-propagar-el-arbitraje-y-atender-el-dictamen-post-v1-3-0` (MEDIUM, costo cero, offline).
+Atiende el dictamen CONEAU posterior a `v1.3.0` (PR 107, evaluó `5734ea8`; ver `proposal.md`). Esta
+entrada registra la **preparación (grupo 0), el script de análisis (grupo 1) y la sección aditiva del
+memo (grupo 2)**; la prosa de la tesis, la forma y el release son fases posteriores y no se ejecutan
+aquí. No se tocaron `App/`, `n8n/`, el clasificador, `docker-compose.yml`, `CHANGES.md` ni los
+`sections/*.tex`.
+
+### Preparación y línea de base (tareas 0.1 a 0.5)
+
+- **Skills cargadas (0.1).** `python-testing-patterns` (TDD estricto del script) y
+  `python-design-patterns` (diseño de las funciones puras), ambas leídas completas desde
+  `.agents/skills/`; el registro de skills es `.agents/SKILLS.md`.
+- **Línea de base (0.2).** `ebd2baa` (base del change) es ancestro de `HEAD` (`da5a6f2`). Entre
+  `ebd2baa` y `HEAD`, `main` incorporó `5` commits que tocan `sections/` (`fc5052a` c-218,
+  `153feb9` c-219, `f81336b`, `ab73028`, `2a92587` c-220), además de las propuestas c-218, c-219 y
+  c-220 ya fusionadas. Por eso se volvió a verificar cada línea citada por el design contra el árbol
+  de trabajo actual (tabla de remapeo abajo). El dictamen (PR 107) sigue **fuera** de `main`; se cita
+  por su ruta no versionada (`auditorias/Dictamen_Tesis_v10_v1.3.0_CONEAU_2026-11-13.md`).
+- **Evidencia de partida (0.3).** Resumen ES `245` palabras y abstract EN `244` (regla de c-106: math
+  en línea como una palabra, `~` como separador salvo antes de un dígito, puntuación suelta excluida;
+  variante propia, ver nota). `rg -n "c-[0-9]{3}"` sobre `sections/*.tex` devuelve `11` coincidencias,
+  `5` fuera de comentarios: `07-resultados.tex:361`, `:373`, `:392`; `09-conclusiones.tex:37`;
+  `12-anexos.tex:151` (las demás son comentarios del glosario y de `11`). `rg -n "0,8447"` sobre
+  `sections/` con `-g "!07-resultados.tex"` devuelve **dos** líneas: `08-discusion.tex:8` y
+  `09-conclusiones.tex:24` (el change las reduce a una, `09:24`). En prosa: `0,6893` en `07` (8) y
+  `09` (2); `0,2222` una vez por capítulo en `07`, `08`, `09`, `10`; «sin el arbitraje» y «41 de los
+  47» una vez, ambas en `08-discusion.tex`. Compilación de partida (`paper/compilacion.md` sobre
+  `153feb9`): `156` páginas, `0` errores fatales, `0` referencias indefinidas, `0` citas indefinidas,
+  `0` etiquetas duplicadas. `python3 -m pytest` de `evaluation/` con las variables dummy del CI, desde
+  su carpeta: **`1392` passed, `1` skipped** (línea de base en verde; sin fallas preexistentes).
+- **Coordinación (0.5).** (a) El memo terminaba en la Sección `3.31` (c-220, `numeros-canonicos.md`
+  línea `2140`); la sección nueva de c-221 es la **`3.32`**, primera libre (antes se anticipaba
+  `3.31` o posterior; c-220 ocupó la `3.31`). (b) `analisis_sesgo_corpus_referencia_c219.json` está
+  **presente** en el árbol (c-219 aplicado); el script de c-221 lo usa como anclaje de la exactitud por
+  origen (`109/142` y `33/64`) y aborta si difiere; la cifra se cita desde la Sección `3.30` y no se
+  registra de nuevo. (c) c-220 **está aplicado** y fijó el costo medido `c ≈ 69,51` s (memo `3.31`);
+  se agrega a la rejilla propia `{5, 10, 15}` min del balance de sensibilidad como escenario central
+  adicional, sin quitarla.
+
+### Remapeo de líneas citadas (tarea 0.2)
+
+El design citó líneas contra `ebd2baa`. La columna «actual» es la línea verificada en el árbol de
+trabajo (c-221, base `da5a6f2`) y el ancla es el fragmento que la confirma. Las que no figuran
+conservan su número.
+
+| Cita del design (base `ebd2baa`) | Línea actual | Ancla verificada |
+|---|---|---|
+| `07-resultados.tex:6` («siete apartados») | `07-resultados.tex:6` | `Los resultados se presentan en siete apartados` |
+| `07-resultados.tex:195-221` (calibración solo sobre `34`) | `07-resultados.tex:200` | `\label{tab:calibracion-gate}` |
+| `07-resultados.tex:312` (etapa con exclusión) | `07-resultados.tex:357` | `\paragraph{Validación fuera de muestra.}` |
+| `07-resultados.tex:314` (fiabilidad `E3`/`E4`) | `07-resultados.tex:357` | mismo párrafo (c-216 reencuadró la revisión humana) |
+| `07-resultados.tex:316` (arbitraje, «change c-206») | `07-resultados.tex:361` | `El arbitraje de los casos discordantes se ejecutó en el change c-206` |
+| `07-resultados.tex:328` (fila discordantes, `(c-206)`) | `07-resultados.tex:373` | `arbitrados por \texttt{E5} (c-206)` |
+| `07-resultados.tex:347` (nota, «change c-206») | `07-resultados.tex:392` | `provienen del arbitraje de \texttt{E5} (change c-206)` |
+| `07-resultados.tex:350` (línea de base) | `07-resultados.tex:395` | `\paragraph{Comparación con una línea de base clásica.}` |
+| `07-resultados.tex:372` (contraste pareado) | `07-resultados.tex:417` | `\paragraph{Contraste pareado frente a la línea de base.}` |
+| `07-resultados.tex:374-396` (modelo solo) | `07-resultados.tex:419`-`:436` | `\paragraph{Contraste frente a un esquema de modelo de lenguaje solo.}` |
+| `07-resultados.tex:394` (razón de llamadas) | `07-resultados.tex:436` | `razón de llamadas = llamadas del híbrido` |
+| `07-resultados.tex:398` | `07-resultados.tex:417`/`:419` | subsección de comparaciones alternativas |
+| `08-discusion.tex:8` (`0,8447`) | `08-discusion.tex:8` | `da una exactitud estricta de 0,8447` |
+| `08-discusion.tex:10` (c-217, eficiencia) | `08-discusion.tex:10` | `La hipótesis subsidiaria de eficiencia del esquema híbrido se contrastó` |
+| `08-discusion.tex:20` («sin el arbitraje» / «41 de los 47») | `08-discusion.tex:20` | `sin el arbitraje de los 47 discordantes` … `41 de los 47 excluidos` |
+| `08-discusion.tex:28` (`Sistemas`, `0,2222`, «única clase adyacente») | `08-discusion.tex:28` | `su F1 es de 0,2222` … `dirigido a una única clase adyacente` |
+| `08-discusion.tex:60` (séptima limitación) | `08-discusion.tex:60` | `Séptimo, el vocabulario del filtro determinístico` |
+| `09-conclusiones.tex:6` | `09-conclusiones.tex:6` | `la viabilidad económica y operativa queda condicionada` |
+| `09-conclusiones.tex:24` (fila objetivo 2, `0,8447`) | `09-conclusiones.tex:24` | `fuera de muestra, 0,8447 sobre el n efectivo de 103` |
+| `09-conclusiones.tex:37` («change c-206», `0,2222`) | `09-conclusiones.tex:37` | `el arbitraje de esos casos se ejecutó (change c-206)` |
+| `09-conclusiones.tex:39` (canales) | `09-conclusiones.tex:39` | `Los tres canales quedaron integrados en un único flujo` |
+| `09-conclusiones.tex:47` (viabilidad del solo-LLM) | `09-conclusiones.tex:47` | `una alternativa técnicamente viable para la clasificación de tickets` |
+| `10-recomendaciones.tex:18` (`Sistemas`, sobremuestreo) | `10-recomendaciones.tex:18` | `su F1 es de 0,2222 sobre un soporte de 5 casos` |
+| `10-recomendaciones.tex:26` (corpus independiente) | `10-recomendaciones.tex:26` | `el arbitraje de los casos discordantes se ejecute antes de reportar` |
+| `00-resumen.tex` (ES/EN) | `00-resumen.tex:7-15` / `:23-31` | resumen ES `245`, abstract EN `244` (regla c-106) |
+| `00-portada.tex:30-31` | `00-portada.tex:30-31` | `9 de noviembre de 2026` / `Versión 1.2.19` |
+| `12-anexos.tex:58` (afirmación sobre commits) | `12-anexos.tex:58` | `los commits posteriores no modifican las fuentes de la tesis` |
+| `12-anexos.tex:151` (identificador `c-201`) | `12-anexos.tex:151` | `La corrección del sobreenmascarado (\texttt{c-201})` |
+| `12-anexos.tex:245` (Anexo J) | `12-anexos.tex:245` | `\section{Respuestas del grupo a las preguntas del tribunal}` |
+| `04-marco-metodologico.tex:83` («no contrasta la eficiencia») | `04-marco-metodologico.tex:88` | `no contrasta la hipótesis de eficiencia del esquema híbrido` |
+| `04-marco-metodologico.tex:89` (amenazas; cita del dictamen) | `04-marco-metodologico.tex:98` | `\subsection{Amenazas a la validez}\label{subsec:amenazas-validez}` |
+| `04-marco-metodologico.tex:93` («seis amenazas») | `04-marco-metodologico.tex:100` | `Se identificaron y trataron explícitamente seis amenazas` |
+| `04-marco-metodologico.tex:67` (protocolo; c-218) | `04-marco-metodologico.tex:68` | `\paragraph{Test de carga del tramo compartido.}` |
+| `04-marco-metodologico.tex:91` (c-219) | `04-marco-metodologico.tex:94` | `\paragraph{Sesgo del vocabulario y dependencia de la referencia.}` |
+| `05-arquitectura.tex:68` (latencia y costo) | `05-arquitectura.tex:68` | `lo que reduce la latencia y el costo de inferencia` |
+| `01-introduccion.tex:38` (subsidiaria multicanal; c-218) | `01-introduccion.tex:38` | `la integración de múltiples canales de entrada` |
+| `01-introduccion.tex:48` (costo organizacional; c-220) | `01-introduccion.tex:48` | `el costo organizacional de una derivación errónea se mide` |
+| `01-introduccion.tex:66` (idioma del corpus) | `01-introduccion.tex:66` | `el idioma del corpus no se informa en la mayoría de los casos` |
+| `01-introduccion.tex:74` (exclusión genérica) | `01-introduccion.tex:74` | `modelos de aprendizaje supervisado entrenados con corpus propios` |
+| `02-marco-teorico.tex:32` (Mosqueira-Rey) | `02-marco-teorico.tex:32` | `\textcite{MosqueiraRey2023_human_in_the_loop} sistematizan` |
+| `03-estado-del-arte.tex:34` (Colavito, prosa) | `03-estado-del-arte.tex:34` | `\textcite{colavito2025benchmarking} reportan un macro-F1` |
+| `03-estado-del-arte.tex:51` (fila Colavito) | `03-estado-del-arte.tex:51` | `benchmark de 22 LLM generativos + 2 BERT` |
+| memo `numeros-canonicos.md:648` (3.11) | `numeros-canonicos.md:648` | `**Remisión (c-220).**` |
+| memo `numeros-canonicos.md:1905` (3.29, c-218) | `numeros-canonicos.md:1911` | `### 3.29 Test de carga multicanal` |
+| memo `numeros-canonicos.md:2023` (3.30, c-219) | `numeros-canonicos.md:2029` | `### 3.30 Sesgo del vocabulario` |
+| memo `numeros-canonicos.md:2140` (3.31, c-220) | `numeros-canonicos.md:2140` | `### 3.31 Costo de la derivación errónea` |
+
+**Conclusión del remapeo.** Los archivos `07-resultados.tex` (desplazamiento `+45`), `04` (`+5` a
+`+7`) y el memo (`+6` en la `3.29`/`3.30`) son los únicos con corrimiento; `08`, `09`, `10`, `01`,
+`02`, `03`, `05`, `11` y `12` conservan sus líneas. Ninguna etiqueta (`\label`) cambió de nombre. La
+prosa de las fases siguientes debe citar la columna «actual».
+
+### Estado de las preguntas abiertas OQ1 a OQ6 (tarea 0.4)
+
+Ninguna pregunta abierta del design fue respondida por los autores en esta corrida; se registran todas
+como **`pendiente`**. Las tareas bloqueadas (5.1, 8.5, 9.1 y 11) no se ejecutan sin respuesta.
+
+| OQ | Bloquea | Pregunta | Estado |
+|---|---|---|---|
+| OQ1 | 5.1 | Procedencia y período de los `150` casos del corpus independiente (y de los `56` de refuerzo): sistema de origen, rango de fechas, criterio de extracción | `pendiente` |
+| OQ2 | 11.1 | Número de la versión nueva (se recomienda `v1.4.0`) y fecha de portada | `pendiente` |
+| OQ3 | 9.1 | Anexo J: ¿se retira (recomendado) o se conserva y se actualiza? | `pendiente` |
+| OQ4 | 8.5 | Resolución AAIP 198/2023: ¿se verifica en fuente oficial y se autoriza la oración en el capítulo legal? | `pendiente` |
+| OQ5 | 11.3, 11.4 | Confirmación expresa para crear el tag, pushear la rama y abrir el PR | `pendiente` |
+| OQ6 | 4.1 | Confirmación de la regla de lectura de D1 (primaria cruda; veredicto con las tres) antes de escribir la discusión | `pendiente` |
+
+### Sección `3.32` del memo y verificación aditiva (tareas 2.1 y 2.2)
+
+- **2.1.** Se agregó la Sección `3.32` a `numeros-canonicos.md` (primera libre tras la `3.31`), con
+  cada cifra del JSON de c-221 y su archivo/clave/comando: tres lecturas rotuladas, pesos del corpus
+  de ajuste, desglose por bloque/etapa/canal, métricas por clase y matriz `5x5`, `Sistemas` con
+  soporte ampliado y destinos de error, calibración descriptiva de los `91` (y contraste de `34`),
+  balance de sensibilidad con la rejilla `{5, 10, 15}` min más el `c` medido `69,51` s, controles de
+  reproducibilidad y cuotas/ventana del refuerzo. La exactitud por origen de la referencia figura
+  como **remisión** a la Sección `3.30` (c-219), sin registrar de nuevo su valor. La sección declara
+  su carácter aditivo.
+- **2.2 (verificación con diff dirigido).** Se comprobó con `git diff` que la edición del memo es
+  **solo aditiva**: el único bloque agregado es la Sección `3.32`, insertada entre el cierre de la
+  `3.31` y el encabezado `## 4.`; ninguna línea de las Secciones 3.1 a 3.31 se modificó ni se
+  eliminó, y ningún valor ni estado previo cambió. La verificación exacta (`git diff --numstat`
+  del archivo) se registra en la fase de cierre (tarea 10.6).
+
+### Nota de alcance
+
+Grupo 0 (0.1 a 0.5), grupo 1 (1.1 a 1.11) y grupo 2 (2.1 y 2.2) ejecutados. La prosa de la tesis
+(grupos 3 a 9), la matriz de trazabilidad `C21/…`, el libro mayor de páginas `+c-221` y el release
+(tareas 10 y 11) quedan para las fases posteriores.
