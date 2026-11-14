@@ -1,0 +1,145 @@
+{
+  "descripcion": "Descripciones determinísticas por sector para el test de carga multicanal. Cada una se resuelve en la etapa determinística del clasificador (score de correctitud por encima del umbral 0,5166, con margen); ninguna debe escalar a Gemini.",
+  "casos": [
+    {
+      "id": "F01",
+      "sector": "Seguridad Informatica",
+      "descripcion": "Recibi un correo de phishing y el antivirus detecto malware en mi equipo"
+    },
+    {
+      "id": "F02",
+      "sector": "Seguridad Informatica",
+      "descripcion": "La VPN corporativa rechaza mi acceso y el firewall bloquea el ingreso"
+    },
+    {
+      "id": "F03",
+      "sector": "Seguridad Informatica",
+      "descripcion": "Sospecho de un ataque de phishing, hice clic y ahora hay malware en la maquina"
+    },
+    {
+      "id": "F04",
+      "sector": "Seguridad Informatica",
+      "descripcion": "Se detecto un virus y el firewall registra intentos de acceso no autorizado"
+    },
+    {
+      "id": "F05",
+      "sector": "Seguridad Informatica",
+      "descripcion": "Mi cuenta fue bloqueada por intentos de acceso sospechosos y la VPN no conecta"
+    },
+    {
+      "id": "F06",
+      "sector": "Seguridad Informatica",
+      "descripcion": "El antivirus informa un troyano y pide revisar la seguridad del acceso corporativo"
+    },
+    {
+      "id": "F07",
+      "sector": "Soporte Tecnico Hardware",
+      "descripcion": "La impresora del sector no enciende y la pantalla del equipo falla"
+    },
+    {
+      "id": "F08",
+      "sector": "Soporte Tecnico Hardware",
+      "descripcion": "El monitor no da imagen y el teclado dejo de responder en mi puesto"
+    },
+    {
+      "id": "F09",
+      "sector": "Soporte Tecnico Hardware",
+      "descripcion": "La impresora esta atascada y el mouse del equipo no funciona"
+    },
+    {
+      "id": "F10",
+      "sector": "Soporte Tecnico Hardware",
+      "descripcion": "El disco duro de la computadora hace ruido y el equipo no enciende"
+    },
+    {
+      "id": "F11",
+      "sector": "Soporte Tecnico Hardware",
+      "descripcion": "El teclado y el mouse fallan y la impresora muestra error de papel"
+    },
+    {
+      "id": "F12",
+      "sector": "Soporte Tecnico Software",
+      "descripcion": "No puedo instalar la aplicacion y el programa de escritorio se cierra solo"
+    },
+    {
+      "id": "F13",
+      "sector": "Soporte Tecnico Software",
+      "descripcion": "La aplicacion se congela al abrir y requiere reinstalar el software"
+    },
+    {
+      "id": "F14",
+      "sector": "Soporte Tecnico Software",
+      "descripcion": "Hay que actualizar el programa y configurar la instalacion de la aplicacion"
+    },
+    {
+      "id": "F15",
+      "sector": "Soporte Tecnico Software",
+      "descripcion": "El software de escritorio muestra error al iniciar y necesito asistencia remota"
+    },
+    {
+      "id": "F16",
+      "sector": "Soporte Tecnico Software",
+      "descripcion": "Pido instalacion de una aplicacion y soporte remoto para configurarla"
+    },
+    {
+      "id": "F17",
+      "sector": "Bases de Datos",
+      "descripcion": "La consulta SQL tarda demasiado y la base de datos no responde"
+    },
+    {
+      "id": "F18",
+      "sector": "Bases de Datos",
+      "descripcion": "Falla la replicacion de la base de datos y el backup no se restaura"
+    },
+    {
+      "id": "F19",
+      "sector": "Bases de Datos",
+      "descripcion": "Necesito restaurar un backup de la base de datos y revisar la consulta lenta"
+    },
+    {
+      "id": "F20",
+      "sector": "Bases de Datos",
+      "descripcion": "El motor de base de datos muestra error en las consultas y la replica esta caida"
+    },
+    {
+      "id": "F21",
+      "sector": "Bases de Datos",
+      "descripcion": "Se corrompio una tabla de la base de datos y hay que recuperar desde el backup"
+    },
+    {
+      "id": "F22",
+      "sector": "Bases de Datos",
+      "descripcion": "La consulta a la base de datos devuelve error y la replicacion esta atrasada"
+    },
+    {
+      "id": "F23",
+      "sector": "Sistemas",
+      "descripcion": "El servidor de produccion esta caido y la red de la oficina no tiene conexion"
+    },
+    {
+      "id": "F24",
+      "sector": "Sistemas",
+      "descripcion": "Hay falla en la infraestructura de red y el servidor no responde"
+    },
+    {
+      "id": "F25",
+      "sector": "Sistemas",
+      "descripcion": "El servidor de archivos no responde y el switch de la red esta caido"
+    },
+    {
+      "id": "F26",
+      "sector": "Sistemas",
+      "descripcion": "No hay conectividad de red en el edificio y el servidor de correo esta caido"
+    },
+    {
+      "id": "F27",
+      "sector": "Sistemas",
+      "descripcion": "Se cayo el servidor del dominio y la red interna no resuelve nombres"
+    },
+    {
+      "id": "F28",
+      "sector": "Sistemas",
+      "descripcion": "La infraestructura de servidores presenta falla y la red esta intermitente"
+    }
+  ]
+}

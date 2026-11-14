@@ -1,0 +1,380 @@
+{
+  "capas": {
+    "backend": {
+      "criterio": {
+        "control_escalado": {
+          "cumple": true,
+          "razon": 19.543947431132004
+        },
+        "motivo": "",
+        "veredicto": "sostenida",
+        "violaciones": []
+      },
+      "niveles": [
+        {
+          "completo": true,
+          "concurrencia": 1,
+          "e2e_n": 0,
+          "e2e_p50_ms": null,
+          "e2e_p95_ms": null,
+          "media_ms": 47.96847250060333,
+          "ok": 120,
+          "p50_ms": 44.51734997564927,
+          "p95_ms": 62.207224988378584,
+          "p99_ms": 84.64509999495932,
+          "repeticiones": [
+            {
+              "ok": 40,
+              "p95_ms": 66.4231299931998,
+              "segundos": 1.981041200022446,
+              "throughput_rps": 20.191402379489524,
+              "total": 40
+            },
+            {
+              "ok": 40,
+              "p95_ms": 55.03089499106862,
+              "segundos": 1.8174375999951735,
+              "throughput_rps": 22.009008727510768,
+              "total": 40
+            },
+            {
+              "ok": 40,
+              "p95_ms": 62.8055749766645,
+              "segundos": 1.972289900004398,
+              "throughput_rps": 20.28099418848659,
+              "total": 40
+            }
+          ],
+          "segundos": 5.770768700022018,
+          "tasa_error": 0.0,
+          "throughput_rps": 20.79445672455078,
+          "total": 120,
+          "verificadas_deterministicas": 120
+        },
+        {
+          "completo": true,
+          "concurrencia": 5,
+          "e2e_n": 0,
+          "e2e_p50_ms": null,
+          "e2e_p95_ms": null,
+          "media_ms": 193.83876083156792,
+          "ok": 120,
+          "p50_ms": 186.93905000691302,
+          "p95_ms": 290.583424999204,
+          "p99_ms": 324.4928480233648,
+          "repeticiones": [
+            {
+              "ok": 40,
+              "p95_ms": 239.55353000637837,
+              "segundos": 1.518749500013655,
+              "throughput_rps": 26.337457230201796,
+              "total": 40
+            },
+            {
+              "ok": 40,
+              "p95_ms": 284.4378750130999,
+              "segundos": 1.6016719000181183,
+              "throughput_rps": 24.973903831082705,
+              "total": 40
+            },
+            {
+              "ok": 40,
+              "p95_ms": 316.90744001680287,
+              "segundos": 1.6436269999830984,
+              "throughput_rps": 24.336421828317086,
+              "total": 40
+            }
+          ],
+          "segundos": 4.764048400014872,
+          "tasa_error": 0.0,
+          "throughput_rps": 25.18866097154374,
+          "total": 120,
+          "verificadas_deterministicas": 120
+        },
+        {
+          "completo": true,
+          "concurrencia": 10,
+          "e2e_n": 0,
+          "e2e_p50_ms": null,
+          "e2e_p95_ms": null,
+          "media_ms": 346.35345583374146,
+          "ok": 120,
+          "p50_ms": 349.4724500051234,
+          "p95_ms": 457.3811749898595,
+          "p99_ms": 588.2586350050408,
+          "repeticiones": [
+            {
+              "ok": 40,
+              "p95_ms": 463.7485949904654,
+              "segundos": 1.4646732000110205,
+              "throughput_rps": 27.309846319096323,
+              "total": 40
+            },
+            {
+              "ok": 40,
+              "p95_ms": 476.7955399976927,
+              "segundos": 1.544366899994202,
+              "throughput_rps": 25.900581008405563,
+              "total": 40
+            },
+            {
+              "ok": 40,
+              "p95_ms": 405.93068501184456,
+              "segundos": 1.4623997999879066,
+              "throughput_rps": 27.352301333965432,
+              "total": 40
+            }
+          ],
+          "segundos": 4.471439899993129,
+          "tasa_error": 0.0,
+          "throughput_rps": 26.83699271015236,
+          "total": 120,
+          "verificadas_deterministicas": 120
+        },
+        {
+          "completo": true,
+          "concurrencia": 20,
+          "e2e_n": 0,
+          "e2e_p50_ms": null,
+          "e2e_p95_ms": null,
+          "media_ms": 700.2765316644703,
+          "ok": 120,
+          "p50_ms": 594.7926999942865,
+          "p95_ms": 1215.7747350094724,
+          "p99_ms": 1293.84233898425,
+          "repeticiones": [
+            {
+              "ok": 40,
+              "p95_ms": 1280.7460950192763,
+              "segundos": 1.6850215999875218,
+              "throughput_rps": 23.738568099243484,
+              "total": 40
+            },
+            {
+              "ok": 40,
+              "p95_ms": 1172.4253949898412,
+              "segundos": 1.6641884000273421,
+              "throughput_rps": 24.035740183829432,
+              "total": 40
+            },
+            {
+              "ok": 40,
+              "p95_ms": 1164.8999900033232,
+              "segundos": 1.607445200002985,
+              "throughput_rps": 24.884207561119794,
+              "total": 40
+            }
+          ],
+          "segundos": 4.956655200017849,
+          "tasa_error": 0.0,
+          "throughput_rps": 24.209874432978086,
+          "total": 120,
+          "verificadas_deterministicas": 120
+        }
+      ]
+    },
+    "n8n": {
+      "criterio": {
+        "control_escalado": {
+          "cumple": false,
+          "razon": 20.058545820939827
+        },
+        "motivo": "",
+        "veredicto": "no sostenida",
+        "violaciones": [
+          {
+            "concurrencia": 20,
+            "condicion": "p95_techo"
+          }
+        ]
+      },
+      "niveles": [
+        {
+          "completo": true,
+          "concurrencia": 1,
+          "e2e_n": 120,
+          "e2e_p50_ms": 246.0,
+          "e2e_p95_ms": 274.05,
+          "media_ms": 311.70954333259334,
+          "ok": 120,
+          "p50_ms": 307.43934998463374,
+          "p95_ms": 338.43056000187056,
+          "p99_ms": 368.2038289771299,
+          "repeticiones": [
+            {
+              "ok": 40,
+              "p95_ms": 338.43056000187056,
+              "segundos": 12.610622300009709,
+              "throughput_rps": 3.1719291124886997,
+              "total": 40
+            },
+            {
+              "ok": 40,
+              "p95_ms": 328.86709498707205,
+              "segundos": 12.416003899998032,
+              "throughput_rps": 3.2216484725819345,
+              "total": 40
+            },
+            {
+              "ok": 40,
+              "p95_ms": 349.13445000420325,
+              "segundos": 12.393948999990243,
+              "throughput_rps": 3.227381361665397,
+              "total": 40
+            }
+          ],
+          "segundos": 37.420575199997984,
+          "tasa_error": 0.0,
+          "throughput_rps": 3.2067919682861117,
+          "total": 120,
+          "verificadas_deterministicas": 120
+        },
+        {
+          "completo": true,
+          "concurrencia": 5,
+          "e2e_n": 120,
+          "e2e_p50_ms": 1122.5,
+          "e2e_p95_ms": 1221.25,
+          "media_ms": 1314.82907416721,
+          "ok": 120,
+          "p50_ms": 1339.582700005849,
+          "p95_ms": 1804.1632699838372,
+          "p99_ms": 2157.3426609928724,
+          "repeticiones": [
+            {
+              "ok": 40,
+              "p95_ms": 1477.513680010451,
+              "segundos": 10.868235000001732,
+              "throughput_rps": 3.68045041352102,
+              "total": 40
+            },
+            {
+              "ok": 40,
+              "p95_ms": 1589.4559849853968,
+              "segundos": 10.621899100020528,
+              "throughput_rps": 3.765804930299394,
+              "total": 40
+            },
+            {
+              "ok": 40,
+              "p95_ms": 1857.8878349901056,
+              "segundos": 10.47410230000969,
+              "throughput_rps": 3.818943032469999,
+              "total": 40
+            }
+          ],
+          "segundos": 31.96423640003195,
+          "tasa_error": 0.0,
+          "throughput_rps": 3.7541957360783393,
+          "total": 120,
+          "verificadas_deterministicas": 120
+        },
+        {
+          "completo": true,
+          "concurrencia": 10,
+          "e2e_n": 120,
+          "e2e_p50_ms": 2139.5,
+          "e2e_p95_ms": 2807.85,
+          "media_ms": 2522.552434999428,
+          "ok": 120,
+          "p50_ms": 2565.4300499882083,
+          "p95_ms": 3526.5060349964187,
+          "p99_ms": 4065.0131010107,
+          "repeticiones": [
+            {
+              "ok": 40,
+              "p95_ms": 3461.176375018839,
+              "segundos": 10.253709799988428,
+              "throughput_rps": 3.901027118989182,
+              "total": 40
+            },
+            {
+              "ok": 40,
+              "p95_ms": 3363.9044600160555,
+              "segundos": 10.729396900016582,
+              "throughput_rps": 3.728075340370546,
+              "total": 40
+            },
+            {
+              "ok": 40,
+              "p95_ms": 3658.9500599991866,
+              "segundos": 10.392726000020048,
+              "throughput_rps": 3.848845817730867,
+              "total": 40
+            }
+          ],
+          "segundos": 31.375832700025057,
+          "tasa_error": 0.0,
+          "throughput_rps": 3.8245996894260648,
+          "total": 120,
+          "verificadas_deterministicas": 120
+        },
+        {
+          "completo": true,
+          "concurrencia": 20,
+          "e2e_n": 120,
+          "e2e_p50_ms": 4118.0,
+          "e2e_p95_ms": 5859.5,
+          "media_ms": 4832.519853331178,
+          "ok": 120,
+          "p50_ms": 4732.590400017216,
+          "p95_ms": 6788.424895003845,
+          "p99_ms": 7469.20588000241,
+          "repeticiones": [
+            {
+              "ok": 40,
+              "p95_ms": 6673.285369985387,
+              "segundos": 10.558108700002776,
+              "throughput_rps": 3.7885573199288505,
+              "total": 40
+            },
+            {
+              "ok": 40,
+              "p95_ms": 6534.931785015214,
+              "segundos": 10.608606800000416,
+              "throughput_rps": 3.7705233829571694,
+              "total": 40
+            },
+            {
+              "ok": 40,
+              "p95_ms": 6818.037405003268,
+              "segundos": 10.61975149999489,
+              "throughput_rps": 3.766566477569578,
+              "total": 40
+            }
+          ],
+          "segundos": 31.786466999998083,
+          "tasa_error": 0.0,
+          "throughput_rps": 3.7751914989485065,
+          "total": 120,
+          "verificadas_deterministicas": 120
+        }
+      ]
+    }
+  },
+  "commit": "a82a111",
+  "constantes": {
+    "control_escalado_max": 20.0,
+    "niveles": [
+      1,
+      5,
+      10,
+      20
+    ],
+    "repeticiones": 3,
+    "solicitudes_por_nivel": 40,
+    "tasa_error_max": 0.0,
+    "techo_p95_ms": 5000.0,
+    "tolerancia_throughput": 0.1
+  },
+  "corrida_id": "fc3d37ce",
+  "exclusiones": [
+    "correo: sondeo IMAP por minuto, no apto para inyeccion concurrente; la convergencia en POST /api/v1/incidentes/ es agnostica al canal",
+    "telefonia: canal pago (Twilio); no se invoca ni se mide"
+  ],
+  "fecha_utc": "2026-11-14T02:37:31Z",
+  "fixture_sha256": "1f5c06caf6c48ae98e95fe52272b41dcdfe28ff815e632736e0ffb3e8cdf0aab",
+  "n8n_version": "2.11.2",
+  "perfil": "corpus (postgres-corpus, backend-corpus, n8n-corpus) con override de costo cero",
+  "veredicto": "no sostenida"
+}
