@@ -1695,6 +1695,91 @@ sin afinar y la variante balanceada colapsa en `Bases de Datos` (`F1 0,0000`, un
 ajuste en esa clase). Procedencia: `contraste_linea_de_base_c213_arbitrado.json`
 (`contrastes.*.diferencia_exactitud`, `metricas_globales.*.por_clase`).
 
+### 3.27 Sensibilidad del clasificador a referencias alternativas plausibles (c-216)
+
+Sección **aditiva**: no reemplaza ni cambia la cifra ni el estado de ningún valor de las
+secciones 3.1 a 3.26. Mide, de solo lectura y sin red, cuánto del error observado del
+clasificador congelado `hybrid-v3` sobre la referencia arbitrada de `206` casos es
+atribuible a la fragilidad de esa referencia. La simulación se rotula como **sensibilidad**,
+no como medición de la verdad latente, y no reclasifica, reentrena ni modifica el corpus,
+las predicciones o los artefactos congelados.
+
+Fuente única de las cifras: `evaluation/data/campana/analisis/analisis_ruido_referencia_c216.json`
+(y su vista `.md`), generado por el script de solo lectura
+`evaluation/data/campana/analisis/analisis_ruido_referencia_c216.py`. Comando (desde la
+raíz del repositorio):
+
+```bash
+python3 evaluation/data/campana/analisis/analisis_ruido_referencia_c216.py
+```
+
+SHA-256 de las salidas versionadas (UTF-8 sin BOM, LF; dos corridas idénticas byte a byte):
+`analisis_ruido_referencia_c216.json`
+`bda0a81769614b5a2a2a1ef03a95f8491b17a5bac3e71697cdd23e44d9f2cae2`;
+`analisis_ruido_referencia_c216.md`
+`c9889df98ed772a1a7aa21c3aea7b5813d182593d0897d4dc968649fd80e340f`.
+
+Entradas leídas y su SHA-256: `corpus_independiente_arbitrado.json`
+`cb2874e649fb932c00b536100025c0a0137b3314ab12d45234e4c29049adc67e`;
+`predicciones_arbitrado.json`
+`cb8aba6089dde9868c61740fba713fb75923ee32317370c46e0daeb52a01d5d5`;
+`doble_etiquetado_arbitrado.csv`
+`7993f3ffda7ae7b380833a41b226ed3a6b4f6aaa36f3fbed66fb52682a61d2a4`;
+`arbitraje_tres_vias.json`
+`4c85ab43bf28cac228caa35a6aaf3863deb327767cba31fbe850b43d2efe6a61`.
+
+**(a) Anclajes y calibración.** El script reproduce `142/206` (`0,68932`) de exactitud
+estricta y macro-F1 `0,7024` antes de simular; sobre los primeros `150` casos reproduce el
+acuerdo `E3`/`E4` de `103/150` (`p_o = 0,686667`) y el kappa `0,605484`. El método queda
+fijado en el docstring antes de correr y el prerregistro **no fue ciego** (el corpus y los
+agregados ya se conocían; no se había observado la distribución simulada).
+
+| Valor | Cifra | Fuente | Estado |
+|---|---|---|---|
+| Kappa objetivo de la calibración | `0,6055` (`±0,005`) | `analisis_ruido_referencia_c216.json` (`calibracion.kappa_objetivo`) | vigente (nuevo) |
+| Intensidad calibrada `λ*` | `0,231391` | idem (`calibracion.lambda`) | vigente (nuevo) |
+| Kappa esperado de `Q_λ*` | `0,605500` | idem (`calibracion.kappa_esperado`) | vigente (nuevo) |
+| Kappa medio de las réplicas | `0,605313` (desvío `0,041223`; dentro de `±0,005`) | idem (`calibracion.verificacion_simulada`) | vigente (nuevo) |
+| `p_o` esperado de `Q_λ*` | `0,696107` | idem (`calibracion.p_o_esperado`) | vigente (nuevo) |
+| `p_o` observado `E3`/`E4` | `0,686667` (`103/150`) | idem (`anclajes.acuerdo_e3_e4`) | vigente (nuevo) |
+| Soporte del kernel por fila | `73`, `113`, `110`, `35`, `145` | idem (`kernel.soporte`) | vigente (nuevo) |
+
+**(b) Distribución bajo `B = 2000` referencias alternativas (semilla `20261021`).**
+
+| Indicador | Observado | Mediana | `q2,5` | `q97,5` | Fuente |
+|---|---|---|---|---|---|
+| Exactitud estricta | `0,689320` | `0,509709` | `0,451456` | `0,563107` | `analisis_ruido_referencia_c216.json` (`simulacion.exactitud`) |
+| Macro-F1 (cinco clases) | `0,702427` | `0,510917` | `0,451344` | `0,569243` | idem (`simulacion.macro_f1`) |
+| Errores (`206 − aciertos`) | `64` | `101` | `90` | `113` | idem (`simulacion.errores`) |
+
+La proporción de réplicas con exactitud mayor o igual a `0,6893` es `0,0000`
+(`simulacion.exactitud.proporcion_ge_0_6893`).
+
+**(c) Descomposición del error y cotas distribution-free.**
+
+| Valor | Cifra | Fuente | Estado |
+|---|---|---|---|
+| Errores observados | `64` | `analisis_ruido_referencia_c216.json` (`descomposicion.errores_observados`) | vigente (nuevo) |
+| Intervalo de errores simulados | `[90; 113]` | idem (`descomposicion.intervalo_errores`) | vigente (nuevo) |
+| Error robusto (extremo favorable) | `90` | idem (`descomposicion.error_robusto`) | vigente (nuevo) |
+| Error atribuible a la referencia | `−26` | idem (`descomposicion.error_atribuible_referencia`) | vigente (nuevo) |
+| `δ` (cota superior de Wilson al 95 %) | `0,369817` | idem (`cotas.delta`) | vigente (nuevo) |
+| `m = round(δ·206)` | `76` | idem (`cotas.m`) | vigente (nuevo) |
+| Cota inferior de exactitud estricta | `0,320388` | idem (`cotas.inferior`) | vigente (nuevo) |
+| Cota superior de exactitud estricta | `1,000000` | idem (`cotas.superior`) | vigente (nuevo) |
+
+El componente atribuible es **negativo**: el error observado (`64`) es menor que el extremo
+favorable de la simulación (`90`). Se informa sin recortarlo: el análisis **no** respalda la
+hipótesis de que el ruido de la referencia infle el error observado; muestra que la exactitud
+medida es específica de la referencia y que una referencia independiente igualmente fiable
+produciría una exactitud menor. Las cotas se rotulan como sensibilidad bajo un presupuesto
+`δ` de error de referencia, no como mediciones.
+
+**(d) Casos de tres vías (`6`).** `I033`, `I042`, `I056`, `I130`, `I194` e `I198`. El rango
+agregado de exactitud estricta es `142/206` a `147/206` (`0,689320` a `0,713592`); cada caso
+mueve como máximo `1/206`. No se elige una etiqueta "verdadera": el rango es el resultado.
+Fuente: `analisis_ruido_referencia_c216.json` (`tres_vias`).
+
 ## 4. Contingencia del gate de intervención humana
 
 Tabla reconstruida desde `evaluation/predicciones.json` con
