@@ -5,7 +5,7 @@ Generado por `docs/Tesis/Correcciones/resumir_registro_compilacion.py` a partir 
 
 | Concepto | Valor |
 |---|---|
-| Fuente compilada | arbol de trabajo sobre 42bb0dc |
+| Fuente compilada | arbol de trabajo sobre adb88b6 |
 | Motor | XeTeX 3.141592653-2.6-0.999998 (TeX Live 2026) |
 | Biber | 2.22 |
 | Paginas | 149 |
