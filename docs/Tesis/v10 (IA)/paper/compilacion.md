@@ -16,4 +16,4 @@ Generado por `docs/Tesis/Correcciones/resumir_registro_compilacion.py` a partir 
 | Overfull \hbox (maximo) | 18 (82,3 pt) |
 | Lineas WARN de biber | 0 |
 | Lineas ERROR de biber | 0 |
-| SHA-256 de main.pdf | `9d19bf0bb91555942d112aaea8ddff390570c64df93307e7b741efc29c20cb41` |
+| SHA-256 de main.pdf | `290feb911599130280acb3581f65c93113f4ee5c5e349ea67a621a4b05a83cde` |
