@@ -320,6 +320,40 @@ vocabulario vigente `V1` ni los artefactos congelados.
   total `142/206` (`0,6893`); el subconjunto `E3 = E4 = E5` es vacío por construcción. Ambos
   resultados se rotulan como sensibilidad, sin causalidad de la referencia.
 
+## Costo de la derivación errónea (c-220)
+
+`analisis_costo_derivacion_c220.py` mide, de solo lectura y offline (biblioteca estándar, sin red ni
+Gemini, sin base de datos), el costo `c` de una derivación errónea: el tiempo-persona adicional que
+consume respecto de una correcta. Descompone `c` en un tramo activo medido (corrección en la compuerta
+y re-decisión proxy del brazo manual) y un tramo anclado (reanudación tras interrupción) que queda
+`no medido`; compone un intervalo por suma de extremos y lo compara con la banda canónica
+`[600; 900] s` (compuerta D5, pre-registrada en el docstring). Es aditivo: no reemplaza ningún número
+canónico de las secciones 3.1 a 3.30, ni cambia el umbral del 85 %, el balance neto ni los artefactos
+congelados.
+
+- Cobertura de `duracion_s`: `138/147 = 0,9388`; `9` casos sin duración, enumerados y NO imputados:
+  `R166`, `R181`, `R029`, `R036`, `R195`, `R123`, `R058`, `R069`, `R154`.
+- Entradas (solo lectura): `../intervenciones.csv` y `../brazo_manual.csv`; `resultados.json` se usa
+  solo como referencia de procedencia.
+- Comando (desde la raíz del repositorio):
+
+  ```bash
+  python3 evaluation/data/campana/analisis/analisis_costo_derivacion_c220.py
+  ```
+
+- Salidas (UTF-8 sin BOM, LF; dos corridas idénticas byte a byte), con su SHA-256 (también en
+  `analisis_costo_derivacion_c220.SHA256SUMS.txt`):
+  - `analisis_costo_derivacion_c220.json`: `2de287514832044ed6a29b5d17a7110ca10af81e5ffc2696f730e67e5c231d1c`
+  - `analisis_costo_derivacion_c220.md`: `766cd4e501b7102edb5ce15422c4d2eaf1da611fb3d03ff949f7a2e3973e3da4`
+- Prueba: `python3 -m pytest evaluation/data/campana/analisis/test_analisis_costo_derivacion_c220.py -q`
+  (`31` pruebas).
+- Resultado registrado (sección 3.31 del memo): grupos por `cambio_sector` (`true`: `n = 24`, media
+  `41,90` s, mediana `18,95` s; `false`: `n = 114`, media `17,89` s, mediana `8,94` s); diferencia de
+  medias `24,01` s (IC `[3,42; 50,06]`); proxy del brazo manual `n = 220`, mediana `45,50` s
+  (`O1` `18,00` / `O2` `73,00`); composición medida `69,51` s (IC `[33,42; 106,56]`) que **excluye**
+  `[600; 900]` (rama B de D5); paridad `1 - e_man = 0,8278`; término de revisión `r = 22,06` s sobre
+  `138` casos.
+
 ## Brazo «Gemini solo» y contraste de la hipotesis de eficiencia (c-215; integrado por c-217)
 
 El brazo «Gemini solo» manda TODOS los casos (200 dentro de la muestra y 103 fuera de muestra) a la
