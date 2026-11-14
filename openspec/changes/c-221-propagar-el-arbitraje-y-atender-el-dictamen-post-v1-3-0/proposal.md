@@ -17,7 +17,7 @@ que se indican en la sección «Hallazgos que cambiaron al verificar contra `ebd
 
 | Bloque | Recomendaciones del dictamen | Qué cambia | Gobernanza |
 |---|---|---|---|
-| **A. Análisis** | 2, 3, 8, 12 | Script nuevo de solo lectura `analisis_propagacion_arbitraje_c218.py` (TDD) con las tres lecturas de la exactitud fuera de muestra, la matriz y las métricas por clase del corpus arbitrado, el desglose por origen de la referencia y por etapa, la calibración descriptiva de la etapa Gemini sobre los `91` casos, la sensibilidad del balance neto y los controles de reproducibilidad. Sección 3.29 aditiva del memo canónico. | MEDIUM |
+| **A. Análisis** | 2, 3, 8, 12 | Script nuevo de solo lectura `analisis_propagacion_arbitraje_c221.py` (TDD) con las tres lecturas de la exactitud fuera de muestra, la matriz y las métricas por clase del corpus arbitrado, el desglose por origen de la referencia y por etapa, la calibración descriptiva de la etapa Gemini sobre los `91` casos, la sensibilidad del balance neto y los controles de reproducibilidad. Sección de c-221 aditiva del memo canónico. | MEDIUM |
 | **B. Propagación del arbitraje** | 1, 5, 11, 15 | Reescritura de `08-discusion.tex:8`, `:20`, `:28`, `:60`; `09-conclusiones.tex:24`, `:37`, `:47`; `10-recomendaciones.tex:18`, `:26`, con el resultado arbitrado (`25` de `47` discordantes acertados), la clase `Sistemas` con `61` casos y una sola aparición del bloque de cifras sobre `103` fuera de resultados. | MEDIUM |
 | **C. Resultados y método** | 2, 3, 6, 9 | Subsecciones propias en `07-resultados.tex` para la validación fuera de muestra y para las comparaciones con esquemas alternativos; tabla nueva de matriz y métricas por clase; fila descriptiva de `91` casos en `tab:calibracion-gate`; apartado metodológico del diseño fuera de muestra y amenazas nuevas en `04-marco-metodologico.tex`. | MEDIUM |
 | **D. Resumen y alcance** | 4, 10, 11, 13 | Resumen y *abstract* con la exactitud fuera de muestra y la línea de base (límite de 250 palabras); alcance del capítulo 1 precisado; afirmación de latencia y costo de `05-arquitectura.tex:68` conciliada con lo medido por c-217; identificadores internos retirados del cuerpo. | MEDIUM |
@@ -57,7 +57,7 @@ Ninguna. Los requisitos se agregan o modifican sobre capacidades existentes.
   sensibilidad del balance neto y los controles de reproducibilidad.
 - `confidence-gate-calibration`: se agrega el complemento descriptivo de la calibración sobre los
   `91` casos de la etapa Gemini del corpus arbitrado, sin re-elegir umbral.
-- `tesis-numeros-canonicos`: sección 3.29 aditiva con cada cifra nueva, su fuente y su comando.
+- `tesis-numeros-canonicos`: sección de c-221 aditiva con cada cifra nueva, su fuente y su comando.
 - `tesis-document`: propagación del arbitraje, estructura de resultados, apartado metodológico,
   resumen, alcance, identificadores internos, marco teórico, glosario, bibliografía, cronograma e
   identificación de la versión entregada.
@@ -73,13 +73,28 @@ Ninguna. Los requisitos se agregan o modifican sobre capacidades existentes.
 | `evaluation/data/campana/analisis/` | Nuevo script con pruebas, JSON, MD y SHA256SUMS; entrada en el README de la carpeta |
 | `docs/Tesis/v10 (IA)/paper/sections/` | `00-glosario`, `00-portada`, `00-resumen`, `01`, `02`, `03`, `04`, `05`, `07`, `08`, `09`, `10`, `11` (solo si se verifica la resolución) y `12` |
 | `docs/Tesis/v10 (IA)/Bibliography_base.bib` | Claves o años corregidos, URL de ServiceNow, versión del repositorio, entrada nueva condicional |
-| `docs/Tesis/Correcciones/` | `numeros-canonicos.md` (3.29), `dictamen-correcciones.md` (filas C18, libro mayor) |
+| `docs/Tesis/Correcciones/` | `numeros-canonicos.md` (sección de c-221), `dictamen-correcciones.md` (filas C18, libro mayor) |
 | `docs/diagrams/cronograma.md` y `paper/figures/cronograma.png` | Hitos de noviembre |
 | `paper/compilacion.md`, `docs/Tesis/tesis_ultima_version.pdf` | Regenerados con la compilación final |
 | `CHANGES.md` | Fase nueva del change |
 | Repositorio remoto | Tag nuevo y push, solo con confirmación de los autores |
 
 Sin cambios en `App/`, `n8n/`, el clasificador, la configuración, los corpus ni las predicciones.
+
+## Coordinación con c-218, c-219 y c-220
+
+Este change se propuso como `c-218`. Mientras se revisaba, `main` incorporó las propuestas
+`c-218-contrastar-la-hipotesis-multicanal-con-un-test-de-carga`,
+`c-219-profundizar-la-mitigacion-del-sesgo-de-corpus-y-referencia` y
+`c-220-cuantificar-el-costo-de-la-derivacion-erronea` (`af77fa8`), por lo que se renumeró a
+`c-221`. Los cuatro tocan los mismos archivos y hay tres puntos de contacto:
+
+| Punto de contacto | Con qué change | Cómo se resuelve |
+|---|---|---|
+| Sección nueva del memo canónico | c-218, c-219 y c-220 reservan la `3.29` | La sección de este change (en adelante, «sección de c-221») toma el primer número libre al aplicar; se fija en la tarea 0.5 |
+| Exactitud por origen de la referencia (consenso de `E3` y `E4`, `n = 142`, frente a arbitrados por `E5`, `n = 64`) | c-219, parte (b) | Es el mismo desglose del bloque A. Quien aplique segundo reutiliza el artefacto y la cifra del primero y no la duplica en el memo ni en la prosa |
+| Costo por derivación errónea (hoy una estimación de 10 a 15 minutos) | c-220 | La sensibilidad del balance neto (bloque E) usa ese costo: conviene aplicar c-220 antes, o recalcular la sensibilidad con el costo que fije c-220 |
+| Prosa de `01`, `04`, `08` y `09` | c-218 (hipótesis multicanal) | Rebase y nueva verificación de las líneas citadas antes de cada bloque de prosa (tarea 0.2) |
 
 ## Risks and rollback
 
@@ -89,13 +104,13 @@ Sin cambios en `App/`, `n8n/`, el clasificador, la configuración, los corpus ni
   Anexo J y recortando el resumen; libro mayor con delta.
 - Regresión del hash del tag: patrón de dos commits con verificación explícita (design D9).
 - Colisión con trabajo en curso sobre `main`: `git fetch` y rebase antes de cada bloque de prosa.
-- Rollback: `git revert` de los `.tex`, del `.bib`, del script y sus salidas y de la sección 3.29;
+- Rollback: `git revert` de los `.tex`, del `.bib`, del script y sus salidas y de la sección de c-221;
   el tag, si ya se publicó, no se borra: se supera con uno nuevo.
 
 ## Success Criteria
 
 - [ ] El script reproduce `142/206`, `0,7024` y `0,8447/103` antes de calcular y es determinista.
-- [ ] Ninguna cifra nueva entra a la tesis sin estar antes en la sección 3.29 del memo.
+- [ ] Ninguna cifra nueva entra a la tesis sin estar antes en la sección de c-221 del memo.
 - [ ] `08-discusion.tex`, `09-conclusiones.tex` y `10-recomendaciones.tex` no contienen `0,2222`,
       «sin el arbitraje» ni «41 de los 47».
 - [ ] El resumen y el *abstract* mencionan la exactitud fuera de muestra y la línea de base con

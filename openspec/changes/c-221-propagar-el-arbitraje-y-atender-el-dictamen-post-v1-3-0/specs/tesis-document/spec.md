@@ -4,7 +4,7 @@
 
 `08-discusion.tex`, `09-conclusiones.tex` y `10-recomendaciones.tex` SHALL razonar sobre la
 validación fuera de muestra a partir de la cifra primaria del corpus arbitrado y de sus lecturas
-complementarias, con las cifras de la sección 3.29 del memo canónico. La discusión SHALL informar
+complementarias, con las cifras de la sección de c-221 del memo canónico. La discusión SHALL informar
 cuántos de los `47` discordantes originales acertó el clasificador y SHALL presentar el arbitraje
 como la medición que reemplazó al análisis de escenarios. La estimación sobre `103` casos SHALL
 quedar rotulada como etapa previa y SHALL aparecer en prosa a lo sumo una vez por capítulo fuera de
@@ -27,7 +27,7 @@ el mejor caso como argumento principal.
 
 La discusión, las conclusiones y las recomendaciones SHALL describir la clase `Sistemas` con el
 soporte, la F1, la sensibilidad y los destinos de error del corpus arbitrado registrados en la
-sección 3.29, y MUST NOT citar la F1 sobre `5` casos como estado vigente ni afirmar que la clase no
+sección de c-221, y MUST NOT citar la F1 sobre `5` casos como estado vigente ni afirmar que la clase no
 puede estimarse. El texto MUST NOT afirmar que el error de `Sistemas` se dirige a una única clase
 si los destinos de error registrados incluyen más de una con peso relevante. En
 `07-resultados.tex`, el valor `31/61` de `Sistemas` SHALL rotularse como sensibilidad.
@@ -94,7 +94,7 @@ procedencia ni el período: si los autores no los aportan, la tarea queda bloque
 ### Requirement: Resumen con la evidencia fuera de muestra
 
 `00-resumen.tex` SHALL mencionar, en el resumen y en el *abstract*, la exactitud fuera de muestra
-sin exclusión y el resultado frente a la línea de base clásica, con cifras de la sección 3.29 o de
+sin exclusión y el resultado frente a la línea de base clásica, con cifras de la sección de c-221 o de
 secciones vigentes del memo, y SHALL respetar el límite de 250 palabras con la regla de conteo de
 c-106. La lectura del balance neto SHALL coincidir con la de la discusión y las conclusiones.
 
@@ -127,7 +127,7 @@ y que la línea de base clásica se usa como referencia de comparación.
 ### Requirement: Balance neto con sensibilidad fuera de muestra
 
 `subsec:balance-neto` SHALL incluir la sensibilidad del balance con la tasa de error fuera de
-muestra (ponderada y cruda) registrada en la sección 3.29, rotulada como sensibilidad que mezcla
+muestra (ponderada y cruda) registrada en la sección de c-221, rotulada como sensibilidad que mezcla
 corpus y referencias, y SHALL ajustar su síntesis para declarar de qué exactitud depende el signo.
 
 #### Scenario: Sensibilidad presente

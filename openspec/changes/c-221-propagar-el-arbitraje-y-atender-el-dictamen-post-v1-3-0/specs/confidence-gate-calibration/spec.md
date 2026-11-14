@@ -3,7 +3,7 @@
 ### Requirement: CAL-007 — Complemento descriptivo sobre el corpus arbitrado
 
 Sobre los casos resueltos por la etapa Gemini en `predicciones_arbitrado.json` (corpus arbitrado
-completo), el análisis de c-218 SHALL calcular, reutilizando las funciones puras de
+completo), el análisis de c-221 SHALL calcular, reutilizando las funciones puras de
 `evaluation/calibracion_gate.py`, la exactitud, la confianza media, la sobreconfianza, el ECE con
 10 bandas de igual ancho, el puntaje de Brier y el AUROC con intervalo bootstrap percentil por caso
 (2000 remuestreos, semilla fija), y la descripción del barrido de los umbrales candidatos

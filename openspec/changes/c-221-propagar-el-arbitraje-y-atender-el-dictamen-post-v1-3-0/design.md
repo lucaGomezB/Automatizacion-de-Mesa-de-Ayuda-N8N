@@ -103,8 +103,8 @@ la composición por sector es la que el refuerzo alteró.
 
 ### D2 — Un único script de análisis nuevo
 
-Script `evaluation/data/campana/analisis/analisis_propagacion_arbitraje_c218.py`, pruebas en
-`test_analisis_propagacion_arbitraje_c218.py`, salidas `analisis_propagacion_arbitraje_c218.json`,
+Script `evaluation/data/campana/analisis/analisis_propagacion_arbitraje_c221.py`, pruebas en
+`test_analisis_propagacion_arbitraje_c221.py`, salidas `analisis_propagacion_arbitraje_c221.json`,
 `.md` y `.SHA256SUMS.txt` en la misma carpeta (UTF-8 sin BOM, LF). Solo lectura, sin red, sin
 Gemini, determinista; imprime los SHA-256 de entradas y salidas y registra los de entrada con la
 misma normalización LF que c-213, c-207 y c-214 (commit `64a14b5`).
@@ -240,7 +240,7 @@ trazabilidad que el tribunal valoró.
 
 1. Línea de base y estado (`git fetch`, conteos, compilación de partida).
 2. Script TDD y salidas con SHA-256.
-3. Sección 3.29 del memo con cada valor, archivo y comando.
+3. Sección de c-221 del memo con cada valor, archivo y comando.
 4. Recién entonces la prosa: estructura de resultados, método, discusión, conclusiones,
    recomendaciones, resumen.
 5. Marco teórico, glosario, bibliografía, forma.
@@ -260,7 +260,7 @@ de trazabilidad recibe filas `C18/…` con archivo, línea y frase ancla.
   Anexo B el hash completo de C1 y regenera el PDF. Riesgo conocido: regresiones previas del
   hash. Verificación obligatoria antes de publicar: `git rev-parse <tag>^{commit}` igual al hash del
   Anexo B de C2; `git diff <tag> C2 -- "docs/Tesis/v10 (IA)/paper/sections"` limitado a la línea del
-  hash; `git show <tag>:` de `analisis_propagacion_arbitraje_c218.json`,
+  hash; `git show <tag>:` de `analisis_propagacion_arbitraje_c221.json`,
   `predicciones_arbitrado.json`, `contraste_linea_de_base_c213_arbitrado.json`,
   `analisis_ruido_referencia_c216.json` y `analisis_brazo_gemini_solo_c215.json` existen.
 - **Redacción del Anexo B**: se reemplaza «los commits posteriores no modifican las fuentes de la
@@ -325,7 +325,7 @@ suma AUROC, Brier (como término) y TF-IDF en orden alfabético.
 - Tag, push y PR: **HIGH**, confirmación expresa.
 - Páginas: el PDF vigente tiene `152` (`paper/compilacion.md`, sobre `6e06ba1`); el tope de la
   cátedra es `100` totales con exceso declarado y honrado (`dictamen-correcciones.md`, G0.1 y libro
-  mayor). Presupuesto: crecimiento neto ≤ `0` si se retira el Anexo J, ≤ `+3` si no; fila `+c-218`
+  mayor). Presupuesto: crecimiento neto ≤ `0` si se retira el Anexo J, ≤ `+3` si no; fila `+c-221`
   en el libro mayor con el delta y su causa.
 
 ## Risks / Trade-offs
@@ -338,7 +338,7 @@ suma AUROC, Brier (como término) y TF-IDF en orden alfabético.
 | Resumen al límite de 250 palabras | Recorte explícito en D6; conteo con la regla de c-106 antes y después |
 | Crecimiento de páginas y desplazamientos que rompen la paginación del Anexo I | Retiro del Anexo J; compilación y libro mayor; revisión visual de los anexos |
 | Regresión del hash del tag | Patrón de dos commits con las verificaciones de D9 antes del push |
-| Colisión con trabajo en curso sobre `main` (Lucas) | `git fetch` y comparación con `origin/main` al iniciar cada bloque de prosa; rebase antes del PR |
+| Colisión con trabajo en curso sobre `main` (Lucas) | `git fetch` y comparación con `origin/main` al iniciar cada bloque de prosa; rebase antes del PR; puntos de contacto con c-218, c-219 y c-220 en la sección «Coordinación» de `proposal.md` y en la tarea 0.5 |
 | El dato de procedencia de los 150 no llega | Tarea bloqueada; el resto avanza; no se escribe nada en su lugar |
 | Falso positivo de gitleaks en prosa | Revisión del diff con el patrón conocido antes de cada commit |
 | Cambiar artefactos congelados por error | El script escribe solo tres nombres fijos; `git status` al final |
@@ -347,14 +347,14 @@ suma AUROC, Brier (como término) y TF-IDF en orden alfabético.
 
 1. Preparación y línea de base (tareas 0).
 2. Script TDD y salidas (tareas 1).
-3. Memo 3.29 (tareas 2).
+3. Memo, sección de c-221 (tareas 2).
 4. Prosa en el orden de D8 (tareas 3 a 7), con checkpoint de los autores antes de la 4.
 5. Forma, bibliografía, cronograma y Anexo J (tareas 8 y 9).
 6. Compilación y verificaciones (tareas 10).
 7. Release con confirmación (tareas 11).
 
 **Rollback**: `git revert` de los commits del change; el script y sus salidas son aditivos; el
-memo 3.29 se retira sin tocar 3.1 a 3.28. Un tag publicado no se borra: se supera con otro.
+la sección de c-221 del memo se retira sin tocar las anteriores. Un tag publicado no se borra: se supera con otro.
 
 ## Open Questions
 

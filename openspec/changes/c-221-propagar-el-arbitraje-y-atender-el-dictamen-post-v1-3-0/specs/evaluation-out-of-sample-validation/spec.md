@@ -36,7 +36,7 @@ SHALL conservarse rotulado como estimación con exclusión, sin reemplazarse sil
 
 ### Requirement: OOS-020 — Tres lecturas rotuladas de la exactitud fuera de muestra
 
-El análisis de c-218 (`evaluation/data/campana/analisis/analisis_propagacion_arbitraje_c218.py`)
+El análisis de c-221 (`evaluation/data/campana/analisis/analisis_propagacion_arbitraje_c221.py`)
 SHALL calcular sobre `predicciones_arbitrado.json` y `corpus_independiente_arbitrado.json` tres
 lecturas de la exactitud estricta: (i) la cruda sobre el corpus arbitrado completo, con intervalo
 de Wilson, rotulada como primaria; (ii) la ponderada por la composición por sector del corpus de
@@ -98,7 +98,7 @@ reemplazar el balance con referencia común.
 
 #### Scenario: Balance de sensibilidad rotulado
 
-- **WHEN** se leen las salidas del balance neto de c-218
+- **WHEN** se leen las salidas del balance neto de c-221
 - **THEN** figuran los tres costos para la tasa ponderada y para la cruda
 - **AND** el rótulo dice que es una sensibilidad y no una medición con referencia común
 
@@ -120,10 +120,10 @@ El análisis MUST NOT modificar ninguno de los dos archivos.
 - **WHEN** el `commit` declarado en un archivo de predicciones no existe en el historial
 - **THEN** la salida lo declara y nombra el commit que versionó el archivo, sin reescribir el archivo
 
-### Requirement: OOS-024 — Script de c-218 de solo lectura y determinista
+### Requirement: OOS-024 — Script de c-221 de solo lectura y determinista
 
-El script de c-218 SHALL ejecutarse sin red ni Gemini, SHALL escribir solo
-`analisis_propagacion_arbitraje_c218.json`, `.md` y `.SHA256SUMS.txt` en
+El script de c-221 SHALL ejecutarse sin red ni Gemini, SHALL escribir solo
+`analisis_propagacion_arbitraje_c221.json`, `.md` y `.SHA256SUMS.txt` en
 `evaluation/data/campana/analisis/` (UTF-8 sin BOM, LF), SHALL registrar el SHA-256 de cada entrada
 y SHALL producir salidas idénticas byte a byte en dos corridas. Sus funciones puras SHALL tener
 pruebas que ejerciten comportamiento con casos sintéticos, escritas antes de la implementación.
